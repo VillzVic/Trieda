@@ -1,0 +1,407 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<xs:schema 
+   elementFormDefault="qualified"
+   xmlns:xs="http://www.w3.org/2001/XMLSchema">
+   <xs:element name="Trieda_Input">
+      <xs:complexType>
+         <xs:sequence>
+            <xs:element name="DESLOCAMENTO">
+               <xs:complexType>
+                  <xs:attribute name="UNI_ORIG_ID" type="xs:int">
+                  </xs:attribute>
+                  <xs:attribute name="UNI_DEST_ID" type="xs:int">
+                  </xs:attribute>
+                  <xs:attribute name="DES_TEMPO" type="xs:int">
+                  </xs:attribute>
+               </xs:complexType>
+            </xs:element>
+            <xs:element name="DIVISAO_DE_CREDITOS">
+               <xs:complexType>
+                  <xs:attribute name="DCR_ID" type="xs:int">
+                  </xs:attribute>
+                  <xs:attribute name="DCR_CREDITOS" type="xs:int">
+                  </xs:attribute>
+                  <xs:attribute name="DCR_DIA1" type="xs:int">
+                  </xs:attribute>
+                  <xs:attribute name="DCR_DIA2" type="xs:int">
+                  </xs:attribute>
+                  <xs:attribute name="DCR_DIA3" type="xs:int">
+                  </xs:attribute>
+                  <xs:attribute name="DCR_DIA4" type="xs:int">
+                  </xs:attribute>
+                  <xs:attribute name="DCR_DIA5" type="xs:int">
+                  </xs:attribute>
+                  <xs:attribute name="DCR_DIA6" type="xs:int">
+                  </xs:attribute>
+               </xs:complexType>
+            </xs:element>
+            <xs:element name="CENARIOS">
+               <xs:complexType>
+                  <xs:sequence>
+                     <xs:element name="UNIDADES">
+                        <xs:complexType>
+                           <xs:sequence>
+                              <xs:element name="SALAS">
+                                 <xs:complexType>
+                                    <xs:sequence>
+                                       <xs:element name="HORARIO_DISPONIVEL_SALA">
+                                          <xs:complexType>
+                                             <xs:attribute name="HOR_ID" type="xs:int">
+                                             </xs:attribute>
+                                             <xs:attribute name="HDS_SEMANA" type="xs:int">
+                                             </xs:attribute>
+                                          </xs:complexType>
+                                       </xs:element>
+                                    </xs:sequence>
+                                    <xs:attribute name="SAL_ID" type="xs:int">
+                                    </xs:attribute>
+                                    <xs:attribute name="TSA_ID" type="xs:int">
+                                    </xs:attribute>
+                                    <xs:attribute name="CODIGO" type="xs:string">
+                                    </xs:attribute>
+                                    <xs:attribute name="SAL_NUM_SALA" type="xs:string">
+                                    </xs:attribute>
+                                    <xs:attribute name="SAL_ANDAR" type="xs:string">
+                                    </xs:attribute>
+                                    <xs:attribute name="SAL_CAPACIDADE" type="xs:int">
+                                    </xs:attribute>
+                                 </xs:complexType>
+                              </xs:element>
+                              <xs:element name="DEMANDA">
+                                 <xs:complexType>
+                                    <xs:attribute name="CUR_ID" type="xs:int">
+                                    </xs:attribute>
+                                    <xs:attribute name="TUR_ID" type="xs:int">
+                                    </xs:attribute>
+                                    <xs:attribute name="DIS_ID" type="xs:int">
+                                    </xs:attribute>
+                                    <xs:attribute name="DEM_QUANTIDADE" type="xs:int">
+                                    </xs:attribute>
+                                 </xs:complexType>
+                              </xs:element>
+                              <xs:element name="UNIDADE___CURRICULO">
+                                 <xs:complexType>
+                                    <xs:attribute name="TUR_ID" type="xs:int">
+                                    </xs:attribute>
+                                    <xs:attribute name="CRC_ID" type="xs:int">
+                                    </xs:attribute>
+                                 </xs:complexType>
+                              </xs:element>
+                              <xs:element name="HORARIO_DISPONIVEL_UNIDADE">
+                                 <xs:complexType>
+                                    <xs:attribute name="HOR_ID" type="xs:int">
+                                    </xs:attribute>
+                                    <xs:attribute name="HDU_SEMANA" type="xs:int">
+                                    </xs:attribute>
+                                 </xs:complexType>
+                              </xs:element>
+                           </xs:sequence>
+                           <xs:attribute name="UNI_ID" type="xs:int">
+                           </xs:attribute>
+                           <xs:attribute name="UNI_CODIGO" type="xs:string">
+                           </xs:attribute>
+                           <xs:attribute name="UNI_NOME" type="xs:string">
+                           </xs:attribute>
+                           <xs:attribute name="UNI_ENDERECO" type="xs:string">
+                           </xs:attribute>
+                           <xs:attribute name="UNI_NUM_MED_SALAS" type="xs:int">
+                           </xs:attribute>
+                           <xs:attribute name="UNI_CUST_MED_CRED" type="xs:double">
+                           </xs:attribute>
+                        </xs:complexType>
+                     </xs:element>
+                     <xs:element name="CURSOS">
+                        <xs:complexType>
+                           <xs:sequence>
+                              <xs:element name="CURRICULO">
+                                 <xs:complexType>
+                                    <xs:sequence>
+                                       <xs:element name="CURRICULO_DISCIPLINA">
+                                          <xs:complexType>
+                                             <xs:attribute name="DIS_ID" type="xs:int">
+                                             </xs:attribute>
+                                             <xs:attribute name="CDI_PERIODO" type="xs:int">
+                                             </xs:attribute>
+                                          </xs:complexType>
+                                       </xs:element>
+                                    </xs:sequence>
+                                    <xs:attribute name="CRC_ID" type="xs:int">
+                                    </xs:attribute>
+                                    <xs:attribute name="CRC_CODIGO" type="xs:string">
+                                    </xs:attribute>
+                                    <xs:attribute name="CRC_DESCRICAO" type="xs:string">
+                                    </xs:attribute>
+                                 </xs:complexType>
+                              </xs:element>
+                              <xs:element name="CURSO___AREA">
+                                 <xs:complexType>
+                                    <xs:attribute name="ATI_ID" type="xs:int">
+                                    </xs:attribute>
+                                 </xs:complexType>
+                              </xs:element>
+                           </xs:sequence>
+                           <xs:attribute name="CUR_ID" type="xs:int">
+                           </xs:attribute>
+                           <xs:attribute name="CUR_CODIGO" type="xs:string">
+                           </xs:attribute>
+                           <xs:attribute name="CUR_TIPO_CURSO" type="xs:string">
+                           </xs:attribute>
+                           <xs:attribute name="CUR_NUM_PERIODOS" type="xs:int">
+                           </xs:attribute>
+                           <xs:attribute name="CUR_MIN_DOUTORES" type="xs:int">
+                           </xs:attribute>
+                           <xs:attribute name="CUR_MIN_MESTRES" type="xs:int">
+                           </xs:attribute>
+                           <xs:attribute name="CUR_MAX_PROF_DISCIPINA" type="xs:int">
+                           </xs:attribute>
+                        </xs:complexType>
+                     </xs:element>
+                     <xs:element name="CALENDARIO">
+                        <xs:complexType>
+                           <xs:sequence>
+                              <xs:element name="TURNOS">
+                                 <xs:complexType>
+                                    <xs:sequence>
+                                       <xs:element name="HORARIO_DE_AULA">
+                                          <xs:complexType>
+                                             <xs:sequence>
+                                                <xs:element name="HORARIO_DISPONIVEL_CENARIO">
+                                                   <xs:complexType>
+                                                      <xs:attribute name="HDC_SEMANA" type="xs:int">
+                                                      </xs:attribute>
+                                                   </xs:complexType>
+                                                </xs:element>
+                                             </xs:sequence>   
+                                             <xs:attribute name="HOR_ID" type="xs:int">
+                                             </xs:attribute>
+                                             <xs:attribute name="HOR_INICIO" type="xs:time">
+                                             </xs:attribute>
+                                          </xs:complexType>
+                                       </xs:element>
+                                    </xs:sequence>   
+                                    <xs:attribute name="TUR_ID" type="xs:int">
+                                    </xs:attribute>
+                                    <xs:attribute name="TUR_NOME" type="xs:string">
+                                    </xs:attribute>
+                                 </xs:complexType>
+                              </xs:element>
+                           </xs:sequence>   
+                           <xs:attribute name="CAL_ID" type="xs:int">
+                           </xs:attribute>
+                           <xs:attribute name="CAL_CODIGO" type="xs:string">
+                           </xs:attribute>
+                           <xs:attribute name="CAL_DESCRICAO" type="xs:string">
+                           </xs:attribute>
+                           <xs:attribute name="CAL_TEMPO_AULA" type="xs:int">
+                           </xs:attribute>
+                        </xs:complexType>
+                     </xs:element>
+                     <xs:element name="PROFESSORES">
+                        <xs:complexType>
+                           <xs:sequence>
+                              <xs:element name="PROFESSORES___UNIDADES">
+                                 <xs:complexType>
+                                    <xs:attribute name="UNI_ID" type="xs:int">
+                                    </xs:attribute>
+                                 </xs:complexType>
+                              </xs:element>
+                              <xs:element name="PROFESSORES___DISCIPLINAS">
+                                 <xs:complexType>
+                                    <xs:attribute name="DIS_ID" type="xs:int">
+                                    </xs:attribute>
+                                    <xs:attribute name="PFD_RANKING" type="xs:int">
+                                    </xs:attribute>
+                                    <xs:attribute name="PFD_NOTA" type="xs:int">
+                                    </xs:attribute>
+                                 </xs:complexType>
+                              </xs:element>
+                              <xs:element name="HORARIO_DISPONIVEL_PROFESSOR">
+                                 <xs:complexType>
+                                    <xs:attribute name="HOR_ID" type="xs:int">
+                                    </xs:attribute>
+                                    <xs:attribute name="HDP_SEMANA" type="xs:int">
+                                    </xs:attribute>
+                                 </xs:complexType>
+                              </xs:element>
+                           </xs:sequence>
+                           <xs:attribute name="PRF_ID" type="xs:int">
+                           </xs:attribute>
+                           <xs:attribute name="TCO_ID" type="xs:int">
+                           </xs:attribute>
+                           <xs:attribute name="TIT_ID" type="xs:int">
+                           </xs:attribute>
+                           <xs:attribute name="ATI_ID" type="xs:int">
+                           </xs:attribute>
+                           <xs:attribute name="PRF_CPF" type="xs:string">
+                           </xs:attribute>
+                           <xs:attribute name="PRF_NOME" type="xs:string">
+                           </xs:attribute>
+                           <xs:attribute name="PRF_CH_MIN" type="xs:int">
+                           </xs:attribute>
+                           <xs:attribute name="PRF_CH_MAX" type="xs:int">
+                           </xs:attribute>
+                           <xs:attribute name="CRED_ANTERIOR" type="xs:string">
+                           </xs:attribute>
+                           <xs:attribute name="PRF_VALOR_CREDITO" type="xs:double">
+                           </xs:attribute>
+                        </xs:complexType>
+                     </xs:element>
+                     <xs:element name="DISCIPLINAS">
+                        <xs:complexType>
+                           <xs:sequence>
+                              <xs:element name="TURMA">
+                                 <xs:complexType>
+                                    <xs:sequence>
+                                       <xs:element name="OFERECIMENTO">
+                                          <xs:complexType>
+                                             <xs:sequence>
+                                                <xs:element name="ALOCACAO">
+                                                   <xs:complexType>
+                                                      <xs:attribute name="PRF_ID" type="xs:int">
+                                                      </xs:attribute>
+                                                      <xs:attribute name="HOR_ID" type="xs:int">
+                                                      </xs:attribute>
+                                                      <xs:attribute name="HDC_SEMANA" type="xs:int">
+                                                      </xs:attribute>
+                                                   </xs:complexType>
+                                                </xs:element>
+                                             </xs:sequence>
+                                             <xs:attribute name="OFE_ID" type="xs:int">
+                                             </xs:attribute>
+                                             <xs:attribute name="SAL_ID" type="xs:int">
+                                             </xs:attribute>
+                                             <xs:attribute name="OFE_DIA" type="xs:int">
+                                             </xs:attribute>
+                                             <xs:attribute name="OFE_CREDITOS" type="xs:int">
+                                             </xs:attribute>
+                                          </xs:complexType>
+                                       </xs:element>
+                                    </xs:sequence>
+                                    <xs:attribute name="TUM_ID" type="xs:int">
+                                    </xs:attribute>
+                                    <xs:attribute name="TUM_NOME" type="xs:string">
+                                    </xs:attribute>
+                                 </xs:complexType>
+                              </xs:element>
+                              <xs:element name="SALA_DISCIPLINA">
+                                 <xs:complexType>
+                                    <xs:attribute name="SAL_ID" type="xs:int">
+                                    </xs:attribute>
+                                 </xs:complexType>
+                              </xs:element>
+                              <xs:element name="HORARIO_DISPONIVEL_DISCIPLINA">
+                                 <xs:complexType>
+                                    <xs:attribute name="HOR_ID" type="xs:int">
+                                    </xs:attribute>
+                                    <xs:attribute name="HDD_SEMANA" type="xs:int">
+                                    </xs:attribute>
+                                 </xs:complexType>
+                              </xs:element>
+                              <xs:element name="EQUIVALENCIA">
+                                 <xs:complexType>
+                                    <xs:attribute name="DIS_CURSOU_ID" type="xs:int">
+                                    </xs:attribute>
+                                    <xs:attribute name="DIS_ELIMINA_ID" type="xs:int">
+                                    </xs:attribute>
+                                 </xs:complexType>
+                              </xs:element>
+                           </xs:sequence>   
+                           <xs:attribute name="DIS_ID" type="xs:int">
+                           </xs:attribute>
+                           <xs:attribute name="TDI_ID" type="xs:int">
+                           </xs:attribute>
+                           <xs:attribute name="DCR_ID" type="xs:int">
+                           </xs:attribute>
+                           <xs:attribute name="DIS_CODIGO" type="xs:string">
+                           </xs:attribute>
+                           <xs:attribute name="DIS_NOME" type="xs:string">
+                           </xs:attribute>
+                           <xs:attribute name="DIS_CRED_TEORICOS" type="xs:int">
+                           </xs:attribute>
+                           <xs:attribute name="DIS_CRED_PRATICOS" type="xs:int">
+                           </xs:attribute>
+                           <xs:attribute name="DIS_LABORATORIO" type="xs:boolean">
+                           </xs:attribute>
+                           <xs:attribute name="DIS_TIPO" type="xs:string">
+                           </xs:attribute>
+                        </xs:complexType>
+                     </xs:element>
+                     <xs:element name="REGRAS_DE_CREDITOS">
+                        <xs:complexType>
+                           <xs:attribute name="DCR_ID" type="xs:int">
+                           </xs:attribute>
+                        </xs:complexType>
+                     </xs:element>
+                     <xs:element name="COMPATIBILIDADE">
+                        <xs:complexType>
+                           <xs:attribute name="DIS1_ID" type="xs:int">
+                           </xs:attribute>
+                           <xs:attribute name="DIS2_ID" type="xs:int">
+                           </xs:attribute>
+                        </xs:complexType>
+                     </xs:element>
+                  </xs:sequence>   
+                  <xs:attribute name="CEN_ID" type="xs:int">
+                  </xs:attribute>
+                  <xs:attribute name="CEN_NOME" type="xs:string">
+                  </xs:attribute>
+                  <xs:attribute name="CEN_ANO" type="xs:int">
+                  </xs:attribute>
+                  <xs:attribute name="CEN_PERIODO" type="xs:int">
+                  </xs:attribute>
+                  <xs:attribute name="CEN_DT_CRIACAO" type="xs:dateTime">
+                  </xs:attribute>
+                  <xs:attribute name="CEN_DT_ATUALIZACAO" type="xs:dateTime">
+                  </xs:attribute>
+                  <xs:attribute name="CEN_COMENTARIO" type="xs:string">
+                  </xs:attribute>
+                  <xs:attribute name="CEN_OFICIAL" type="xs:boolean">
+                  </xs:attribute>
+               </xs:complexType>
+            </xs:element>
+            <xs:element name="TIPOS_SALA">
+               <xs:complexType>
+                  <xs:attribute name="TSA_ID" type="xs:int">
+                  </xs:attribute>
+                  <xs:attribute name="TSA_NOME" type="xs:string">
+                  </xs:attribute>
+                  <xs:attribute name="TSA_DESCRICAO" type="xs:string">
+                  </xs:attribute>
+               </xs:complexType>
+            </xs:element>
+            <xs:element name="TIPO_CONTRATO">
+               <xs:complexType>
+                  <xs:attribute name="TCO_ID" type="xs:int">
+                  </xs:attribute>
+                  <xs:attribute name="TCO_NOME" type="xs:string">
+                  </xs:attribute>
+               </xs:complexType>
+            </xs:element>
+            <xs:element name="TITULACOES">
+               <xs:complexType>
+                  <xs:attribute name="TIT_ID" type="xs:int">
+                  </xs:attribute>
+                  <xs:attribute name="TIT_NOME" type="xs:string">
+                  </xs:attribute>
+               </xs:complexType>
+            </xs:element>
+            <xs:element name="AREAS_DE_TITULACAO">
+               <xs:complexType>
+                  <xs:attribute name="ATI_ID" type="xs:int">
+                  </xs:attribute>
+                  <xs:attribute name="ATI_NOME" type="xs:string">
+                  </xs:attribute>
+               </xs:complexType>
+            </xs:element>
+            <xs:element name="TIPO_DE_DISCIPLINA">
+               <xs:complexType>
+                  <xs:attribute name="TDI_ID" type="xs:int">
+                  </xs:attribute>
+                  <xs:attribute name="TDI_NOME" type="xs:string">
+                  </xs:attribute>
+               </xs:complexType>
+            </xs:element>
+         </xs:sequence>   
+      </xs:complexType>
+   </xs:element>
+</xs:schema>
