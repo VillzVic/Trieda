@@ -44,7 +44,7 @@
                               <xs:element name="SALAS">
                                  <xs:complexType>
                                     <xs:sequence>
-                                       <xs:element name="HORARIO_DISPONIVEL_SALA">
+                                       <xs:element name="HORARIO_DISP_SALA">
                                           <xs:complexType>
                                              <xs:attribute name="HOR_ID" type="xs:int">
                                              </xs:attribute>
@@ -79,7 +79,7 @@
                                     </xs:attribute>
                                  </xs:complexType>
                               </xs:element>
-                              <xs:element name="UNIDADE___CURRICULO">
+                              <xs:element name="UNIDADE_CURRICULO">
                                  <xs:complexType>
                                     <xs:attribute name="TUR_ID" type="xs:int">
                                     </xs:attribute>
@@ -87,7 +87,7 @@
                                     </xs:attribute>
                                  </xs:complexType>
                               </xs:element>
-                              <xs:element name="HORARIO_DISPONIVEL_UNIDADE">
+                              <xs:element name="HORARIO_DISP_UNID">
                                  <xs:complexType>
                                     <xs:attribute name="HOR_ID" type="xs:int">
                                     </xs:attribute>
@@ -133,7 +133,7 @@
                                     </xs:attribute>
                                  </xs:complexType>
                               </xs:element>
-                              <xs:element name="CURSO___AREA">
+                              <xs:element name="CURSO_AREA">
                                  <xs:complexType>
                                     <xs:attribute name="ATI_ID" type="xs:int">
                                     </xs:attribute>
@@ -165,7 +165,7 @@
                                        <xs:element name="HORARIO_DE_AULA">
                                           <xs:complexType>
                                              <xs:sequence>
-                                                <xs:element name="HORARIO_DISPONIVEL_CENARIO">
+                                                <xs:element name="HORARIO_DISP_CEN">
                                                    <xs:complexType>
                                                       <xs:attribute name="HDC_SEMANA" type="xs:int">
                                                       </xs:attribute>
@@ -199,13 +199,13 @@
                      <xs:element name="PROFESSORES">
                         <xs:complexType>
                            <xs:sequence>
-                              <xs:element name="PROFESSORES___UNIDADES">
+                              <xs:element name="PROFESSORES_UNIDADES">
                                  <xs:complexType>
                                     <xs:attribute name="UNI_ID" type="xs:int">
                                     </xs:attribute>
                                  </xs:complexType>
                               </xs:element>
-                              <xs:element name="PROFESSORES___DISCIPLINAS">
+                              <xs:element name="PROFESSORES_DISCIPLINAS">
                                  <xs:complexType>
                                     <xs:attribute name="DIS_ID" type="xs:int">
                                     </xs:attribute>
@@ -215,7 +215,7 @@
                                     </xs:attribute>
                                  </xs:complexType>
                               </xs:element>
-                              <xs:element name="HORARIO_DISPONIVEL_PROFESSOR">
+                              <xs:element name="HORARIO_DISP_PROF">
                                  <xs:complexType>
                                     <xs:attribute name="HOR_ID" type="xs:int">
                                     </xs:attribute>
@@ -289,7 +289,7 @@
                                     </xs:attribute>
                                  </xs:complexType>
                               </xs:element>
-                              <xs:element name="HORARIO_DISPONIVEL_DISCIPLINA">
+                              <xs:element name="HORARIO_DISP_DISC">
                                  <xs:complexType>
                                     <xs:attribute name="HOR_ID" type="xs:int">
                                     </xs:attribute>
