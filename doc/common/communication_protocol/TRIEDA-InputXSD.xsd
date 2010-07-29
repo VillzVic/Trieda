@@ -73,8 +73,7 @@
   <xs:complexType name="ItemDeslocamento">
     <xs:sequence>
       <xs:element name="tempo" type="xs:int" />
-      <xs:element name="origem" type="ItemUnidade" />
-      <xs:element name="destino" type="ItemUnidade" />
+      <xs:element name="unidade" type="ItemUnidade" />
     </xs:sequence>
   </xs:complexType>
   <xs:complexType name="GrupoUnidade">
@@ -95,6 +94,7 @@
       <xs:element name="demanda" type="GrupoDemanda" />
       <xs:element name="unidadeCurriculo" type="GrupoUnidadeCurriculo" />
       <xs:element name="demanda" type="GrupoDemanda" />
+      <xs:element name="deslocamentos" type="GrupoDeslocamento" />
     </xs:sequence>
   </xs:complexType>
   <xs:complexType name="ItemDisciplina">
