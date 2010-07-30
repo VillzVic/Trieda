@@ -121,13 +121,13 @@
     </xs:sequence>
   </xs:complexType>
   <xs:complexType name="ItemCalendario">
-    <xs:choice>
+    <xs:sequence>
       <xs:element name="id" type="xs:int" />
       <xs:element name="turnos" type="GrupoTurno" />
       <xs:element name="codigo" type="xs:string" />
       <xs:element name="descricao" type="xs:string" />
       <xs:element name="tempoAula" type="xs:int" />
-    </xs:choice>
+    </xs:sequence>
   </xs:complexType>
   <xs:complexType name="ItemHorarioDisponivel">
     <xs:choice>
