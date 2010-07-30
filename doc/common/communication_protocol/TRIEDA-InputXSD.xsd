@@ -130,11 +130,11 @@
     </xs:sequence>
   </xs:complexType>
   <xs:complexType name="ItemHorarioDisponivel">
-    <xs:choice>
+    <xs:sequence>
       <xs:element name="id" type="xs:int" />
       <xs:element name="semana" type="xs:int" />
       <xs:element name="horarioAula" type="ItemHorarioAula" />
-    </xs:choice>
+    </xs:sequence>
   </xs:complexType>
   <xs:complexType name="GrupoHorarioDisponivel">
     <xs:sequence minOccurs="0" maxOccurs="unbounded">
