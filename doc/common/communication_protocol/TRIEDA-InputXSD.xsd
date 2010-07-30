@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<!--Created with Liquid XML Studio - FREE Community Edition 7.0.5.906 (http://www.liquid-technologies.com)-->
+<!--Created with Liquid XML Studio 6.1.18.0 - FREE Community Edition (http://www.liquid-technologies.com)-->
 <xs:schema elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
   <xs:element name="Trieda">
     <xs:complexType>
@@ -22,7 +22,7 @@
   </xs:complexType>
   <xs:complexType name="GrupoProfessorDisciplina">
     <xs:sequence minOccurs="0" maxOccurs="unbounded">
-      <xs:element name="professorDisciplina" type="ItemProfessorDisciplina" />
+      <xs:element name="ProfessorDisciplina" type="ItemProfessorDisciplina" />
     </xs:sequence>
   </xs:complexType>
   <xs:complexType name="ItemProfessor">
@@ -44,7 +44,7 @@
   </xs:complexType>
   <xs:complexType name="GrupoProfessor">
     <xs:sequence minOccurs="0" maxOccurs="unbounded">
-      <xs:element name="professor" type="ItemProfessor" />
+      <xs:element name="Professor" type="ItemProfessor" />
     </xs:sequence>
   </xs:complexType>
   <xs:complexType name="ItemDivisaoCreditos">
@@ -78,7 +78,7 @@
   </xs:complexType>
   <xs:complexType name="GrupoUnidade">
     <xs:sequence minOccurs="0" maxOccurs="unbounded">
-      <xs:element name="ItemUnidade" type="ItemUnidade" />
+      <xs:element name="Unidade" type="ItemUnidade" />
     </xs:sequence>
   </xs:complexType>
   <xs:complexType name="ItemUnidade">
@@ -138,7 +138,7 @@
   </xs:complexType>
   <xs:complexType name="GrupoHorarioDisponivel">
     <xs:sequence minOccurs="0" maxOccurs="unbounded">
-      <xs:element name="horarioDisponivel" type="ItemHorarioDisponivel" />
+      <xs:element name="HorarioDisponivel" type="ItemHorarioDisponivel" />
     </xs:sequence>
   </xs:complexType>
   <xs:complexType name="ItemHorarioAula">
@@ -194,12 +194,12 @@
   </xs:complexType>
   <xs:complexType name="GrupoCurriculo">
     <xs:sequence minOccurs="0" maxOccurs="unbounded">
-      <xs:element name="curriculo" type="ItemCurriculo" />
+      <xs:element name="Curriculo" type="ItemCurriculo" />
     </xs:sequence>
   </xs:complexType>
   <xs:complexType name="GrupoSala">
     <xs:sequence minOccurs="0" maxOccurs="unbounded">
-      <xs:element name="sala" type="ItemSala" />
+      <xs:element name="Sala" type="ItemSala" />
     </xs:sequence>
   </xs:complexType>
   <xs:complexType name="ItemCurso">
@@ -217,7 +217,7 @@
   </xs:complexType>
   <xs:complexType name="GrupoCurso">
     <xs:sequence minOccurs="0" maxOccurs="unbounded">
-      <xs:element name="curso" type="ItemCurso" />
+      <xs:element name="Curso" type="ItemCurso" />
     </xs:sequence>
   </xs:complexType>
   <xs:complexType name="ItemDemanda">
@@ -230,7 +230,7 @@
   </xs:complexType>
   <xs:complexType name="GrupoDemanda">
     <xs:sequence minOccurs="0" maxOccurs="unbounded">
-      <xs:element name="demanda" type="ItemDemanda" />
+      <xs:element name="Demanda" type="ItemDemanda" />
     </xs:sequence>
   </xs:complexType>
   <xs:complexType name="ItemUnidadeCurriculo">
@@ -241,7 +241,7 @@
   </xs:complexType>
   <xs:complexType name="GrupoUnidadeCurriculo">
     <xs:sequence minOccurs="0" maxOccurs="unbounded">
-      <xs:element name="unidadeCurriculo">
+      <xs:element name="UnidadeCurriculo">
         <xs:complexType>
           <xs:complexContent mixed="false">
             <xs:extension base="ItemUnidadeCurriculo" />
@@ -269,7 +269,7 @@
   </xs:complexType>
   <xs:complexType name="GrupoOferecimento">
     <xs:sequence minOccurs="0" maxOccurs="unbounded">
-      <xs:element name="oferecimento" type="ItemOferecimento" />
+      <xs:element name="Oferecimento" type="ItemOferecimento" />
     </xs:sequence>
   </xs:complexType>
   <xs:complexType name="ItemTurma">
@@ -282,7 +282,7 @@
   </xs:complexType>
   <xs:complexType name="GrupoTurma">
     <xs:sequence minOccurs="0" maxOccurs="unbounded">
-      <xs:element name="turma" type="ItemTurma" />
+      <xs:element name="Turma" type="ItemTurma" />
     </xs:sequence>
   </xs:complexType>
   <xs:complexType name="ItemTipoSala">
