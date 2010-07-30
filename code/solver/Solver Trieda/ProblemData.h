@@ -2,6 +2,13 @@
 #define PROBLEMDATA_H
 
 #include "GGroup.h"
+#include "Curso.h"
+#include "Unidade.h"
+#include "Disciplina.h"
+#include "DivisaoCreditos.h"
+#include "Professor.h"
+#include "Unidade.h"
+#include "Calendario.h"
 
 //Stores input data
 class ProblemData

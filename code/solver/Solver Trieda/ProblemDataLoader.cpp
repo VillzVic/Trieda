@@ -19,7 +19,7 @@ void ProblemDataLoader::load()
 //   std::auto_ptr<cenario> root;
 //   root = std::auto_ptr<cenario>(cenario_(filename.c_str(), xml_schema::flags::dont_validate));
 //   root->cadeia().get().capacidadesEstocagemEloProduto().get().capacidadeEstocagemEloProduto().begin()
-   root->unidades().ItemUnidade().begin()
+   root->unidades().ItemUnidade().begin();
 
 }
 
