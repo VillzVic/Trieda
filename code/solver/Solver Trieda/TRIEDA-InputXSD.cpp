@@ -125,22 +125,22 @@ disciplina (::std::auto_ptr< disciplina_type > x)
 // GrupoProfessorDisciplina
 // 
 
-const GrupoProfessorDisciplina::professorDisciplina_sequence& GrupoProfessorDisciplina::
-professorDisciplina () const
+const GrupoProfessorDisciplina::ProfessorDisciplina_sequence& GrupoProfessorDisciplina::
+ProfessorDisciplina () const
 {
-  return this->professorDisciplina_;
+  return this->ProfessorDisciplina_;
 }
 
-GrupoProfessorDisciplina::professorDisciplina_sequence& GrupoProfessorDisciplina::
-professorDisciplina ()
+GrupoProfessorDisciplina::ProfessorDisciplina_sequence& GrupoProfessorDisciplina::
+ProfessorDisciplina ()
 {
-  return this->professorDisciplina_;
+  return this->ProfessorDisciplina_;
 }
 
 void GrupoProfessorDisciplina::
-professorDisciplina (const professorDisciplina_sequence& s)
+ProfessorDisciplina (const ProfessorDisciplina_sequence& s)
 {
-  this->professorDisciplina_ = s;
+  this->ProfessorDisciplina_ = s;
 }
 
 
@@ -433,38 +433,38 @@ disciplinas (::std::auto_ptr< disciplinas_type > x)
 // GrupoProfessor
 // 
 
-const GrupoProfessor::professor_sequence& GrupoProfessor::
-professor () const
+const GrupoProfessor::Professor_sequence& GrupoProfessor::
+Professor () const
 {
-  return this->professor_;
+  return this->Professor_;
 }
 
-GrupoProfessor::professor_sequence& GrupoProfessor::
-professor ()
+GrupoProfessor::Professor_sequence& GrupoProfessor::
+Professor ()
 {
-  return this->professor_;
+  return this->Professor_;
 }
 
 void GrupoProfessor::
-professor (const professor_sequence& s)
+Professor (const Professor_sequence& s)
 {
-  this->professor_ = s;
+  this->Professor_ = s;
 }
 
 
 // ItemDivisaoCreditos
 // 
 
-const ItemDivisaoCreditos::id_optional& ItemDivisaoCreditos::
+const ItemDivisaoCreditos::id_type& ItemDivisaoCreditos::
 id () const
 {
-  return this->id_;
+  return this->id_.get ();
 }
 
-ItemDivisaoCreditos::id_optional& ItemDivisaoCreditos::
+ItemDivisaoCreditos::id_type& ItemDivisaoCreditos::
 id ()
 {
-  return this->id_;
+  return this->id_.get ();
 }
 
 void ItemDivisaoCreditos::
@@ -473,22 +473,16 @@ id (const id_type& x)
   this->id_.set (x);
 }
 
-void ItemDivisaoCreditos::
-id (const id_optional& x)
-{
-  this->id_ = x;
-}
-
-const ItemDivisaoCreditos::creditos_optional& ItemDivisaoCreditos::
+const ItemDivisaoCreditos::creditos_type& ItemDivisaoCreditos::
 creditos () const
 {
-  return this->creditos_;
+  return this->creditos_.get ();
 }
 
-ItemDivisaoCreditos::creditos_optional& ItemDivisaoCreditos::
+ItemDivisaoCreditos::creditos_type& ItemDivisaoCreditos::
 creditos ()
 {
-  return this->creditos_;
+  return this->creditos_.get ();
 }
 
 void ItemDivisaoCreditos::
@@ -497,22 +491,16 @@ creditos (const creditos_type& x)
   this->creditos_.set (x);
 }
 
-void ItemDivisaoCreditos::
-creditos (const creditos_optional& x)
-{
-  this->creditos_ = x;
-}
-
-const ItemDivisaoCreditos::dia1_optional& ItemDivisaoCreditos::
+const ItemDivisaoCreditos::dia1_type& ItemDivisaoCreditos::
 dia1 () const
 {
-  return this->dia1_;
+  return this->dia1_.get ();
 }
 
-ItemDivisaoCreditos::dia1_optional& ItemDivisaoCreditos::
+ItemDivisaoCreditos::dia1_type& ItemDivisaoCreditos::
 dia1 ()
 {
-  return this->dia1_;
+  return this->dia1_.get ();
 }
 
 void ItemDivisaoCreditos::
@@ -521,22 +509,16 @@ dia1 (const dia1_type& x)
   this->dia1_.set (x);
 }
 
-void ItemDivisaoCreditos::
-dia1 (const dia1_optional& x)
-{
-  this->dia1_ = x;
-}
-
-const ItemDivisaoCreditos::dia2_optional& ItemDivisaoCreditos::
+const ItemDivisaoCreditos::dia2_type& ItemDivisaoCreditos::
 dia2 () const
 {
-  return this->dia2_;
+  return this->dia2_.get ();
 }
 
-ItemDivisaoCreditos::dia2_optional& ItemDivisaoCreditos::
+ItemDivisaoCreditos::dia2_type& ItemDivisaoCreditos::
 dia2 ()
 {
-  return this->dia2_;
+  return this->dia2_.get ();
 }
 
 void ItemDivisaoCreditos::
@@ -545,22 +527,16 @@ dia2 (const dia2_type& x)
   this->dia2_.set (x);
 }
 
-void ItemDivisaoCreditos::
-dia2 (const dia2_optional& x)
-{
-  this->dia2_ = x;
-}
-
-const ItemDivisaoCreditos::dia3_optional& ItemDivisaoCreditos::
+const ItemDivisaoCreditos::dia3_type& ItemDivisaoCreditos::
 dia3 () const
 {
-  return this->dia3_;
+  return this->dia3_.get ();
 }
 
-ItemDivisaoCreditos::dia3_optional& ItemDivisaoCreditos::
+ItemDivisaoCreditos::dia3_type& ItemDivisaoCreditos::
 dia3 ()
 {
-  return this->dia3_;
+  return this->dia3_.get ();
 }
 
 void ItemDivisaoCreditos::
@@ -569,22 +545,16 @@ dia3 (const dia3_type& x)
   this->dia3_.set (x);
 }
 
-void ItemDivisaoCreditos::
-dia3 (const dia3_optional& x)
-{
-  this->dia3_ = x;
-}
-
-const ItemDivisaoCreditos::dia4_optional& ItemDivisaoCreditos::
+const ItemDivisaoCreditos::dia4_type& ItemDivisaoCreditos::
 dia4 () const
 {
-  return this->dia4_;
+  return this->dia4_.get ();
 }
 
-ItemDivisaoCreditos::dia4_optional& ItemDivisaoCreditos::
+ItemDivisaoCreditos::dia4_type& ItemDivisaoCreditos::
 dia4 ()
 {
-  return this->dia4_;
+  return this->dia4_.get ();
 }
 
 void ItemDivisaoCreditos::
@@ -593,22 +563,16 @@ dia4 (const dia4_type& x)
   this->dia4_.set (x);
 }
 
-void ItemDivisaoCreditos::
-dia4 (const dia4_optional& x)
-{
-  this->dia4_ = x;
-}
-
-const ItemDivisaoCreditos::dia5_optional& ItemDivisaoCreditos::
+const ItemDivisaoCreditos::dia5_type& ItemDivisaoCreditos::
 dia5 () const
 {
-  return this->dia5_;
+  return this->dia5_.get ();
 }
 
-ItemDivisaoCreditos::dia5_optional& ItemDivisaoCreditos::
+ItemDivisaoCreditos::dia5_type& ItemDivisaoCreditos::
 dia5 ()
 {
-  return this->dia5_;
+  return this->dia5_.get ();
 }
 
 void ItemDivisaoCreditos::
@@ -617,22 +581,16 @@ dia5 (const dia5_type& x)
   this->dia5_.set (x);
 }
 
-void ItemDivisaoCreditos::
-dia5 (const dia5_optional& x)
-{
-  this->dia5_ = x;
-}
-
-const ItemDivisaoCreditos::dia6_optional& ItemDivisaoCreditos::
+const ItemDivisaoCreditos::dia6_type& ItemDivisaoCreditos::
 dia6 () const
 {
-  return this->dia6_;
+  return this->dia6_.get ();
 }
 
-ItemDivisaoCreditos::dia6_optional& ItemDivisaoCreditos::
+ItemDivisaoCreditos::dia6_type& ItemDivisaoCreditos::
 dia6 ()
 {
-  return this->dia6_;
+  return this->dia6_.get ();
 }
 
 void ItemDivisaoCreditos::
@@ -641,34 +599,22 @@ dia6 (const dia6_type& x)
   this->dia6_.set (x);
 }
 
-void ItemDivisaoCreditos::
-dia6 (const dia6_optional& x)
-{
-  this->dia6_ = x;
-}
-
-const ItemDivisaoCreditos::dia7_optional& ItemDivisaoCreditos::
+const ItemDivisaoCreditos::dia7_type& ItemDivisaoCreditos::
 dia7 () const
 {
-  return this->dia7_;
+  return this->dia7_.get ();
 }
 
-ItemDivisaoCreditos::dia7_optional& ItemDivisaoCreditos::
+ItemDivisaoCreditos::dia7_type& ItemDivisaoCreditos::
 dia7 ()
 {
-  return this->dia7_;
+  return this->dia7_.get ();
 }
 
 void ItemDivisaoCreditos::
 dia7 (const dia7_type& x)
 {
   this->dia7_.set (x);
-}
-
-void ItemDivisaoCreditos::
-dia7 (const dia7_optional& x)
-{
-  this->dia7_ = x;
 }
 
 
@@ -765,22 +711,22 @@ unidade (::std::auto_ptr< unidade_type > x)
 // GrupoUnidade
 // 
 
-const GrupoUnidade::ItemUnidade_sequence& GrupoUnidade::
-ItemUnidade () const
+const GrupoUnidade::Unidade_sequence& GrupoUnidade::
+Unidade () const
 {
-  return this->ItemUnidade_;
+  return this->Unidade_;
 }
 
-GrupoUnidade::ItemUnidade_sequence& GrupoUnidade::
-ItemUnidade ()
+GrupoUnidade::Unidade_sequence& GrupoUnidade::
+Unidade ()
 {
-  return this->ItemUnidade_;
+  return this->Unidade_;
 }
 
 void GrupoUnidade::
-ItemUnidade (const ItemUnidade_sequence& s)
+Unidade (const Unidade_sequence& s)
 {
-  this->ItemUnidade_ = s;
+  this->Unidade_ = s;
 }
 
 
@@ -1381,16 +1327,16 @@ Disciplina (const Disciplina_sequence& s)
 // ItemCalendario
 // 
 
-const ItemCalendario::id_optional& ItemCalendario::
+const ItemCalendario::id_type& ItemCalendario::
 id () const
 {
-  return this->id_;
+  return this->id_.get ();
 }
 
-ItemCalendario::id_optional& ItemCalendario::
+ItemCalendario::id_type& ItemCalendario::
 id ()
 {
-  return this->id_;
+  return this->id_.get ();
 }
 
 void ItemCalendario::
@@ -1399,22 +1345,16 @@ id (const id_type& x)
   this->id_.set (x);
 }
 
-void ItemCalendario::
-id (const id_optional& x)
-{
-  this->id_ = x;
-}
-
-const ItemCalendario::turnos_optional& ItemCalendario::
+const ItemCalendario::turnos_type& ItemCalendario::
 turnos () const
 {
-  return this->turnos_;
+  return this->turnos_.get ();
 }
 
-ItemCalendario::turnos_optional& ItemCalendario::
+ItemCalendario::turnos_type& ItemCalendario::
 turnos ()
 {
-  return this->turnos_;
+  return this->turnos_.get ();
 }
 
 void ItemCalendario::
@@ -1424,27 +1364,21 @@ turnos (const turnos_type& x)
 }
 
 void ItemCalendario::
-turnos (const turnos_optional& x)
-{
-  this->turnos_ = x;
-}
-
-void ItemCalendario::
 turnos (::std::auto_ptr< turnos_type > x)
 {
   this->turnos_.set (x);
 }
 
-const ItemCalendario::codigo_optional& ItemCalendario::
+const ItemCalendario::codigo_type& ItemCalendario::
 codigo () const
 {
-  return this->codigo_;
+  return this->codigo_.get ();
 }
 
-ItemCalendario::codigo_optional& ItemCalendario::
+ItemCalendario::codigo_type& ItemCalendario::
 codigo ()
 {
-  return this->codigo_;
+  return this->codigo_.get ();
 }
 
 void ItemCalendario::
@@ -1454,27 +1388,21 @@ codigo (const codigo_type& x)
 }
 
 void ItemCalendario::
-codigo (const codigo_optional& x)
-{
-  this->codigo_ = x;
-}
-
-void ItemCalendario::
 codigo (::std::auto_ptr< codigo_type > x)
 {
   this->codigo_.set (x);
 }
 
-const ItemCalendario::descricao_optional& ItemCalendario::
+const ItemCalendario::descricao_type& ItemCalendario::
 descricao () const
 {
-  return this->descricao_;
+  return this->descricao_.get ();
 }
 
-ItemCalendario::descricao_optional& ItemCalendario::
+ItemCalendario::descricao_type& ItemCalendario::
 descricao ()
 {
-  return this->descricao_;
+  return this->descricao_.get ();
 }
 
 void ItemCalendario::
@@ -1484,27 +1412,21 @@ descricao (const descricao_type& x)
 }
 
 void ItemCalendario::
-descricao (const descricao_optional& x)
-{
-  this->descricao_ = x;
-}
-
-void ItemCalendario::
 descricao (::std::auto_ptr< descricao_type > x)
 {
   this->descricao_.set (x);
 }
 
-const ItemCalendario::tempoAula_optional& ItemCalendario::
+const ItemCalendario::tempoAula_type& ItemCalendario::
 tempoAula () const
 {
-  return this->tempoAula_;
+  return this->tempoAula_.get ();
 }
 
-ItemCalendario::tempoAula_optional& ItemCalendario::
+ItemCalendario::tempoAula_type& ItemCalendario::
 tempoAula ()
 {
-  return this->tempoAula_;
+  return this->tempoAula_.get ();
 }
 
 void ItemCalendario::
@@ -1513,26 +1435,20 @@ tempoAula (const tempoAula_type& x)
   this->tempoAula_.set (x);
 }
 
-void ItemCalendario::
-tempoAula (const tempoAula_optional& x)
-{
-  this->tempoAula_ = x;
-}
-
 
 // ItemHorarioDisponivel
 // 
 
-const ItemHorarioDisponivel::id_optional& ItemHorarioDisponivel::
+const ItemHorarioDisponivel::id_type& ItemHorarioDisponivel::
 id () const
 {
-  return this->id_;
+  return this->id_.get ();
 }
 
-ItemHorarioDisponivel::id_optional& ItemHorarioDisponivel::
+ItemHorarioDisponivel::id_type& ItemHorarioDisponivel::
 id ()
 {
-  return this->id_;
+  return this->id_.get ();
 }
 
 void ItemHorarioDisponivel::
@@ -1541,22 +1457,16 @@ id (const id_type& x)
   this->id_.set (x);
 }
 
-void ItemHorarioDisponivel::
-id (const id_optional& x)
-{
-  this->id_ = x;
-}
-
-const ItemHorarioDisponivel::semana_optional& ItemHorarioDisponivel::
+const ItemHorarioDisponivel::semana_type& ItemHorarioDisponivel::
 semana () const
 {
-  return this->semana_;
+  return this->semana_.get ();
 }
 
-ItemHorarioDisponivel::semana_optional& ItemHorarioDisponivel::
+ItemHorarioDisponivel::semana_type& ItemHorarioDisponivel::
 semana ()
 {
-  return this->semana_;
+  return this->semana_.get ();
 }
 
 void ItemHorarioDisponivel::
@@ -1565,34 +1475,22 @@ semana (const semana_type& x)
   this->semana_.set (x);
 }
 
-void ItemHorarioDisponivel::
-semana (const semana_optional& x)
-{
-  this->semana_ = x;
-}
-
-const ItemHorarioDisponivel::horarioAula_optional& ItemHorarioDisponivel::
+const ItemHorarioDisponivel::horarioAula_type& ItemHorarioDisponivel::
 horarioAula () const
 {
-  return this->horarioAula_;
+  return this->horarioAula_.get ();
 }
 
-ItemHorarioDisponivel::horarioAula_optional& ItemHorarioDisponivel::
+ItemHorarioDisponivel::horarioAula_type& ItemHorarioDisponivel::
 horarioAula ()
 {
-  return this->horarioAula_;
+  return this->horarioAula_.get ();
 }
 
 void ItemHorarioDisponivel::
 horarioAula (const horarioAula_type& x)
 {
   this->horarioAula_.set (x);
-}
-
-void ItemHorarioDisponivel::
-horarioAula (const horarioAula_optional& x)
-{
-  this->horarioAula_ = x;
 }
 
 void ItemHorarioDisponivel::
@@ -1605,22 +1503,22 @@ horarioAula (::std::auto_ptr< horarioAula_type > x)
 // GrupoHorarioDisponivel
 // 
 
-const GrupoHorarioDisponivel::horarioDisponivel_sequence& GrupoHorarioDisponivel::
-horarioDisponivel () const
+const GrupoHorarioDisponivel::HorarioDisponivel_sequence& GrupoHorarioDisponivel::
+HorarioDisponivel () const
 {
-  return this->horarioDisponivel_;
+  return this->HorarioDisponivel_;
 }
 
-GrupoHorarioDisponivel::horarioDisponivel_sequence& GrupoHorarioDisponivel::
-horarioDisponivel ()
+GrupoHorarioDisponivel::HorarioDisponivel_sequence& GrupoHorarioDisponivel::
+HorarioDisponivel ()
 {
-  return this->horarioDisponivel_;
+  return this->HorarioDisponivel_;
 }
 
 void GrupoHorarioDisponivel::
-horarioDisponivel (const horarioDisponivel_sequence& s)
+HorarioDisponivel (const HorarioDisponivel_sequence& s)
 {
-  this->horarioDisponivel_ = s;
+  this->HorarioDisponivel_ = s;
 }
 
 
@@ -2125,72 +2023,72 @@ descricao (::std::auto_ptr< descricao_type > x)
   this->descricao_.set (x);
 }
 
-const ItemCurriculo::DisciplinaPeriodo_type& ItemCurriculo::
-DisciplinaPeriodo () const
+const ItemCurriculo::DisciplinasPeriodo_type& ItemCurriculo::
+DisciplinasPeriodo () const
 {
-  return this->DisciplinaPeriodo_.get ();
+  return this->DisciplinasPeriodo_.get ();
 }
 
-ItemCurriculo::DisciplinaPeriodo_type& ItemCurriculo::
-DisciplinaPeriodo ()
+ItemCurriculo::DisciplinasPeriodo_type& ItemCurriculo::
+DisciplinasPeriodo ()
 {
-  return this->DisciplinaPeriodo_.get ();
-}
-
-void ItemCurriculo::
-DisciplinaPeriodo (const DisciplinaPeriodo_type& x)
-{
-  this->DisciplinaPeriodo_.set (x);
+  return this->DisciplinasPeriodo_.get ();
 }
 
 void ItemCurriculo::
-DisciplinaPeriodo (::std::auto_ptr< DisciplinaPeriodo_type > x)
+DisciplinasPeriodo (const DisciplinasPeriodo_type& x)
 {
-  this->DisciplinaPeriodo_.set (x);
+  this->DisciplinasPeriodo_.set (x);
+}
+
+void ItemCurriculo::
+DisciplinasPeriodo (::std::auto_ptr< DisciplinasPeriodo_type > x)
+{
+  this->DisciplinasPeriodo_.set (x);
 }
 
 
 // GrupoCurriculo
 // 
 
-const GrupoCurriculo::curriculo_sequence& GrupoCurriculo::
-curriculo () const
+const GrupoCurriculo::Curriculo_sequence& GrupoCurriculo::
+Curriculo () const
 {
-  return this->curriculo_;
+  return this->Curriculo_;
 }
 
-GrupoCurriculo::curriculo_sequence& GrupoCurriculo::
-curriculo ()
+GrupoCurriculo::Curriculo_sequence& GrupoCurriculo::
+Curriculo ()
 {
-  return this->curriculo_;
+  return this->Curriculo_;
 }
 
 void GrupoCurriculo::
-curriculo (const curriculo_sequence& s)
+Curriculo (const Curriculo_sequence& s)
 {
-  this->curriculo_ = s;
+  this->Curriculo_ = s;
 }
 
 
 // GrupoSala
 // 
 
-const GrupoSala::sala_sequence& GrupoSala::
-sala () const
+const GrupoSala::Sala_sequence& GrupoSala::
+Sala () const
 {
-  return this->sala_;
+  return this->Sala_;
 }
 
-GrupoSala::sala_sequence& GrupoSala::
-sala ()
+GrupoSala::Sala_sequence& GrupoSala::
+Sala ()
 {
-  return this->sala_;
+  return this->Sala_;
 }
 
 void GrupoSala::
-sala (const sala_sequence& s)
+Sala (const Sala_sequence& s)
 {
-  this->sala_ = s;
+  this->Sala_ = s;
 }
 
 
@@ -2387,22 +2285,22 @@ Curriculos (::std::auto_ptr< Curriculos_type > x)
 // GrupoCurso
 // 
 
-const GrupoCurso::curso_sequence& GrupoCurso::
-curso () const
+const GrupoCurso::Curso_sequence& GrupoCurso::
+Curso () const
 {
-  return this->curso_;
+  return this->Curso_;
 }
 
-GrupoCurso::curso_sequence& GrupoCurso::
-curso ()
+GrupoCurso::Curso_sequence& GrupoCurso::
+Curso ()
 {
-  return this->curso_;
+  return this->Curso_;
 }
 
 void GrupoCurso::
-curso (const curso_sequence& s)
+Curso (const Curso_sequence& s)
 {
-  this->curso_ = s;
+  this->Curso_ = s;
 }
 
 
@@ -2503,22 +2401,22 @@ curso (::std::auto_ptr< curso_type > x)
 // GrupoDemanda
 // 
 
-const GrupoDemanda::demanda_sequence& GrupoDemanda::
-demanda () const
+const GrupoDemanda::Demanda_sequence& GrupoDemanda::
+Demanda () const
 {
-  return this->demanda_;
+  return this->Demanda_;
 }
 
-GrupoDemanda::demanda_sequence& GrupoDemanda::
-demanda ()
+GrupoDemanda::Demanda_sequence& GrupoDemanda::
+Demanda ()
 {
-  return this->demanda_;
+  return this->Demanda_;
 }
 
 void GrupoDemanda::
-demanda (const demanda_sequence& s)
+Demanda (const Demanda_sequence& s)
 {
-  this->demanda_ = s;
+  this->Demanda_ = s;
 }
 
 
@@ -2577,22 +2475,22 @@ curriculo (::std::auto_ptr< curriculo_type > x)
 // GrupoUnidadeCurriculo
 // 
 
-const GrupoUnidadeCurriculo::unidadeCurriculo_sequence& GrupoUnidadeCurriculo::
-unidadeCurriculo () const
+const GrupoUnidadeCurriculo::UnidadeCurriculo_sequence& GrupoUnidadeCurriculo::
+UnidadeCurriculo () const
 {
-  return this->unidadeCurriculo_;
+  return this->UnidadeCurriculo_;
 }
 
-GrupoUnidadeCurriculo::unidadeCurriculo_sequence& GrupoUnidadeCurriculo::
-unidadeCurriculo ()
+GrupoUnidadeCurriculo::UnidadeCurriculo_sequence& GrupoUnidadeCurriculo::
+UnidadeCurriculo ()
 {
-  return this->unidadeCurriculo_;
+  return this->UnidadeCurriculo_;
 }
 
 void GrupoUnidadeCurriculo::
-unidadeCurriculo (const unidadeCurriculo_sequence& s)
+UnidadeCurriculo (const UnidadeCurriculo_sequence& s)
 {
-  this->unidadeCurriculo_ = s;
+  this->UnidadeCurriculo_ = s;
 }
 
 
@@ -2805,22 +2703,22 @@ alocacao (::std::auto_ptr< alocacao_type > x)
 // GrupoOferecimento
 // 
 
-const GrupoOferecimento::oferecimento_sequence& GrupoOferecimento::
-oferecimento () const
+const GrupoOferecimento::Oferecimento_sequence& GrupoOferecimento::
+Oferecimento () const
 {
-  return this->oferecimento_;
+  return this->Oferecimento_;
 }
 
-GrupoOferecimento::oferecimento_sequence& GrupoOferecimento::
-oferecimento ()
+GrupoOferecimento::Oferecimento_sequence& GrupoOferecimento::
+Oferecimento ()
 {
-  return this->oferecimento_;
+  return this->Oferecimento_;
 }
 
 void GrupoOferecimento::
-oferecimento (const oferecimento_sequence& s)
+Oferecimento (const Oferecimento_sequence& s)
 {
-  this->oferecimento_ = s;
+  this->Oferecimento_ = s;
 }
 
 
@@ -2921,22 +2819,22 @@ oferecimentos (::std::auto_ptr< oferecimentos_type > x)
 // GrupoTurma
 // 
 
-const GrupoTurma::turma_sequence& GrupoTurma::
-turma () const
+const GrupoTurma::Turma_sequence& GrupoTurma::
+Turma () const
 {
-  return this->turma_;
+  return this->Turma_;
 }
 
-GrupoTurma::turma_sequence& GrupoTurma::
-turma ()
+GrupoTurma::Turma_sequence& GrupoTurma::
+Turma ()
 {
-  return this->turma_;
+  return this->Turma_;
 }
 
 void GrupoTurma::
-turma (const turma_sequence& s)
+Turma (const Turma_sequence& s)
 {
-  this->turma_ = s;
+  this->Turma_ = s;
 }
 
 
@@ -3406,7 +3304,7 @@ regrasCredito (::std::auto_ptr< regrasCredito_type > x)
 }
 
 
-// unidadeCurriculo
+// UnidadeCurriculo
 // 
 
 
@@ -3519,7 +3417,7 @@ ItemProfessorDisciplina::
 GrupoProfessorDisciplina::
 GrupoProfessorDisciplina ()
 : ::xml_schema::type (),
-  professorDisciplina_ (::xml_schema::flags (), this)
+  ProfessorDisciplina_ (::xml_schema::flags (), this)
 {
 }
 
@@ -3528,7 +3426,7 @@ GrupoProfessorDisciplina (const GrupoProfessorDisciplina& x,
                           ::xml_schema::flags f,
                           ::xml_schema::container* c)
 : ::xml_schema::type (x, f, c),
-  professorDisciplina_ (x.professorDisciplina_, f, this)
+  ProfessorDisciplina_ (x.ProfessorDisciplina_, f, this)
 {
 }
 
@@ -3537,7 +3435,7 @@ GrupoProfessorDisciplina (const ::xercesc::DOMElement& e,
                           ::xml_schema::flags f,
                           ::xml_schema::container* c)
 : ::xml_schema::type (e, f | ::xml_schema::flags::base, c),
-  professorDisciplina_ (f, this)
+  ProfessorDisciplina_ (f, this)
 {
   if ((f & ::xml_schema::flags::base) == 0)
   {
@@ -3556,14 +3454,14 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
     const ::xsd::cxx::xml::qualified_name< char > n (
       ::xsd::cxx::xml::dom::name< char > (i));
 
-    // professorDisciplina
+    // ProfessorDisciplina
     //
-    if (n.name () == "professorDisciplina" && n.namespace_ ().empty ())
+    if (n.name () == "ProfessorDisciplina" && n.namespace_ ().empty ())
     {
-      ::std::auto_ptr< professorDisciplina_type > r (
-        professorDisciplina_traits::create (i, f, this));
+      ::std::auto_ptr< ProfessorDisciplina_type > r (
+        ProfessorDisciplina_traits::create (i, f, this));
 
-      this->professorDisciplina_.push_back (r);
+      this->ProfessorDisciplina_.push_back (r);
       continue;
     }
 
@@ -3985,7 +3883,7 @@ ItemProfessor::
 GrupoProfessor::
 GrupoProfessor ()
 : ::xml_schema::type (),
-  professor_ (::xml_schema::flags (), this)
+  Professor_ (::xml_schema::flags (), this)
 {
 }
 
@@ -3994,7 +3892,7 @@ GrupoProfessor (const GrupoProfessor& x,
                 ::xml_schema::flags f,
                 ::xml_schema::container* c)
 : ::xml_schema::type (x, f, c),
-  professor_ (x.professor_, f, this)
+  Professor_ (x.Professor_, f, this)
 {
 }
 
@@ -4003,7 +3901,7 @@ GrupoProfessor (const ::xercesc::DOMElement& e,
                 ::xml_schema::flags f,
                 ::xml_schema::container* c)
 : ::xml_schema::type (e, f | ::xml_schema::flags::base, c),
-  professor_ (f, this)
+  Professor_ (f, this)
 {
   if ((f & ::xml_schema::flags::base) == 0)
   {
@@ -4022,14 +3920,14 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
     const ::xsd::cxx::xml::qualified_name< char > n (
       ::xsd::cxx::xml::dom::name< char > (i));
 
-    // professor
+    // Professor
     //
-    if (n.name () == "professor" && n.namespace_ ().empty ())
+    if (n.name () == "Professor" && n.namespace_ ().empty ())
     {
-      ::std::auto_ptr< professor_type > r (
-        professor_traits::create (i, f, this));
+      ::std::auto_ptr< Professor_type > r (
+        Professor_traits::create (i, f, this));
 
-      this->professor_.push_back (r);
+      this->Professor_.push_back (r);
       continue;
     }
 
@@ -4053,17 +3951,25 @@ GrupoProfessor::
 //
 
 ItemDivisaoCreditos::
-ItemDivisaoCreditos ()
+ItemDivisaoCreditos (const id_type& id,
+                     const creditos_type& creditos,
+                     const dia1_type& dia1,
+                     const dia2_type& dia2,
+                     const dia3_type& dia3,
+                     const dia4_type& dia4,
+                     const dia5_type& dia5,
+                     const dia6_type& dia6,
+                     const dia7_type& dia7)
 : ::xml_schema::type (),
-  id_ (::xml_schema::flags (), this),
-  creditos_ (::xml_schema::flags (), this),
-  dia1_ (::xml_schema::flags (), this),
-  dia2_ (::xml_schema::flags (), this),
-  dia3_ (::xml_schema::flags (), this),
-  dia4_ (::xml_schema::flags (), this),
-  dia5_ (::xml_schema::flags (), this),
-  dia6_ (::xml_schema::flags (), this),
-  dia7_ (::xml_schema::flags (), this)
+  id_ (id, ::xml_schema::flags (), this),
+  creditos_ (creditos, ::xml_schema::flags (), this),
+  dia1_ (dia1, ::xml_schema::flags (), this),
+  dia2_ (dia2, ::xml_schema::flags (), this),
+  dia3_ (dia3, ::xml_schema::flags (), this),
+  dia4_ (dia4, ::xml_schema::flags (), this),
+  dia5_ (dia5, ::xml_schema::flags (), this),
+  dia6_ (dia6, ::xml_schema::flags (), this),
+  dia7_ (dia7, ::xml_schema::flags (), this)
 {
 }
 
@@ -4120,7 +4026,7 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
     //
     if (n.name () == "id" && n.namespace_ ().empty ())
     {
-      if (!this->id_)
+      if (!id_.present ())
       {
         this->id_.set (id_traits::create (i, f, this));
         continue;
@@ -4131,7 +4037,7 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
     //
     if (n.name () == "creditos" && n.namespace_ ().empty ())
     {
-      if (!this->creditos_)
+      if (!creditos_.present ())
       {
         this->creditos_.set (creditos_traits::create (i, f, this));
         continue;
@@ -4142,7 +4048,7 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
     //
     if (n.name () == "dia1" && n.namespace_ ().empty ())
     {
-      if (!this->dia1_)
+      if (!dia1_.present ())
       {
         this->dia1_.set (dia1_traits::create (i, f, this));
         continue;
@@ -4153,7 +4059,7 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
     //
     if (n.name () == "dia2" && n.namespace_ ().empty ())
     {
-      if (!this->dia2_)
+      if (!dia2_.present ())
       {
         this->dia2_.set (dia2_traits::create (i, f, this));
         continue;
@@ -4164,7 +4070,7 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
     //
     if (n.name () == "dia3" && n.namespace_ ().empty ())
     {
-      if (!this->dia3_)
+      if (!dia3_.present ())
       {
         this->dia3_.set (dia3_traits::create (i, f, this));
         continue;
@@ -4175,7 +4081,7 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
     //
     if (n.name () == "dia4" && n.namespace_ ().empty ())
     {
-      if (!this->dia4_)
+      if (!dia4_.present ())
       {
         this->dia4_.set (dia4_traits::create (i, f, this));
         continue;
@@ -4186,7 +4092,7 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
     //
     if (n.name () == "dia5" && n.namespace_ ().empty ())
     {
-      if (!this->dia5_)
+      if (!dia5_.present ())
       {
         this->dia5_.set (dia5_traits::create (i, f, this));
         continue;
@@ -4197,7 +4103,7 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
     //
     if (n.name () == "dia6" && n.namespace_ ().empty ())
     {
-      if (!this->dia6_)
+      if (!dia6_.present ())
       {
         this->dia6_.set (dia6_traits::create (i, f, this));
         continue;
@@ -4208,7 +4114,7 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
     //
     if (n.name () == "dia7" && n.namespace_ ().empty ())
     {
-      if (!this->dia7_)
+      if (!dia7_.present ())
       {
         this->dia7_.set (dia7_traits::create (i, f, this));
         continue;
@@ -4216,6 +4122,69 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
     }
 
     break;
+  }
+
+  if (!id_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "id",
+      "");
+  }
+
+  if (!creditos_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "creditos",
+      "");
+  }
+
+  if (!dia1_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "dia1",
+      "");
+  }
+
+  if (!dia2_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "dia2",
+      "");
+  }
+
+  if (!dia3_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "dia3",
+      "");
+  }
+
+  if (!dia4_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "dia4",
+      "");
+  }
+
+  if (!dia5_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "dia5",
+      "");
+  }
+
+  if (!dia6_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "dia6",
+      "");
+  }
+
+  if (!dia7_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "dia7",
+      "");
   }
 }
 
@@ -4488,7 +4457,7 @@ ItemDeslocamento::
 GrupoUnidade::
 GrupoUnidade ()
 : ::xml_schema::type (),
-  ItemUnidade_ (::xml_schema::flags (), this)
+  Unidade_ (::xml_schema::flags (), this)
 {
 }
 
@@ -4497,7 +4466,7 @@ GrupoUnidade (const GrupoUnidade& x,
               ::xml_schema::flags f,
               ::xml_schema::container* c)
 : ::xml_schema::type (x, f, c),
-  ItemUnidade_ (x.ItemUnidade_, f, this)
+  Unidade_ (x.Unidade_, f, this)
 {
 }
 
@@ -4506,7 +4475,7 @@ GrupoUnidade (const ::xercesc::DOMElement& e,
               ::xml_schema::flags f,
               ::xml_schema::container* c)
 : ::xml_schema::type (e, f | ::xml_schema::flags::base, c),
-  ItemUnidade_ (f, this)
+  Unidade_ (f, this)
 {
   if ((f & ::xml_schema::flags::base) == 0)
   {
@@ -4525,14 +4494,14 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
     const ::xsd::cxx::xml::qualified_name< char > n (
       ::xsd::cxx::xml::dom::name< char > (i));
 
-    // ItemUnidade
+    // Unidade
     //
-    if (n.name () == "ItemUnidade" && n.namespace_ ().empty ())
+    if (n.name () == "Unidade" && n.namespace_ ().empty ())
     {
-      ::std::auto_ptr< ItemUnidade_type > r (
-        ItemUnidade_traits::create (i, f, this));
+      ::std::auto_ptr< Unidade_type > r (
+        Unidade_traits::create (i, f, this));
 
-      this->ItemUnidade_.push_back (r);
+      this->Unidade_.push_back (r);
       continue;
     }
 
@@ -5394,13 +5363,32 @@ GrupoDisciplina::
 //
 
 ItemCalendario::
-ItemCalendario ()
+ItemCalendario (const id_type& id,
+                const turnos_type& turnos,
+                const codigo_type& codigo,
+                const descricao_type& descricao,
+                const tempoAula_type& tempoAula)
 : ::xml_schema::type (),
-  id_ (::xml_schema::flags (), this),
-  turnos_ (::xml_schema::flags (), this),
-  codigo_ (::xml_schema::flags (), this),
-  descricao_ (::xml_schema::flags (), this),
-  tempoAula_ (::xml_schema::flags (), this)
+  id_ (id, ::xml_schema::flags (), this),
+  turnos_ (turnos, ::xml_schema::flags (), this),
+  codigo_ (codigo, ::xml_schema::flags (), this),
+  descricao_ (descricao, ::xml_schema::flags (), this),
+  tempoAula_ (tempoAula, ::xml_schema::flags (), this)
+{
+}
+
+ItemCalendario::
+ItemCalendario (const id_type& id,
+                ::std::auto_ptr< turnos_type >& turnos,
+                const codigo_type& codigo,
+                const descricao_type& descricao,
+                const tempoAula_type& tempoAula)
+: ::xml_schema::type (),
+  id_ (id, ::xml_schema::flags (), this),
+  turnos_ (turnos, ::xml_schema::flags (), this),
+  codigo_ (codigo, ::xml_schema::flags (), this),
+  descricao_ (descricao, ::xml_schema::flags (), this),
+  tempoAula_ (tempoAula, ::xml_schema::flags (), this)
 {
 }
 
@@ -5449,7 +5437,7 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
     //
     if (n.name () == "id" && n.namespace_ ().empty ())
     {
-      if (!this->id_)
+      if (!id_.present ())
       {
         this->id_.set (id_traits::create (i, f, this));
         continue;
@@ -5463,7 +5451,7 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
       ::std::auto_ptr< turnos_type > r (
         turnos_traits::create (i, f, this));
 
-      if (!this->turnos_)
+      if (!turnos_.present ())
       {
         this->turnos_.set (r);
         continue;
@@ -5477,7 +5465,7 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
       ::std::auto_ptr< codigo_type > r (
         codigo_traits::create (i, f, this));
 
-      if (!this->codigo_)
+      if (!codigo_.present ())
       {
         this->codigo_.set (r);
         continue;
@@ -5491,7 +5479,7 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
       ::std::auto_ptr< descricao_type > r (
         descricao_traits::create (i, f, this));
 
-      if (!this->descricao_)
+      if (!descricao_.present ())
       {
         this->descricao_.set (r);
         continue;
@@ -5502,7 +5490,7 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
     //
     if (n.name () == "tempoAula" && n.namespace_ ().empty ())
     {
-      if (!this->tempoAula_)
+      if (!tempoAula_.present ())
       {
         this->tempoAula_.set (tempoAula_traits::create (i, f, this));
         continue;
@@ -5510,6 +5498,41 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
     }
 
     break;
+  }
+
+  if (!id_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "id",
+      "");
+  }
+
+  if (!turnos_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "turnos",
+      "");
+  }
+
+  if (!codigo_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "codigo",
+      "");
+  }
+
+  if (!descricao_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "descricao",
+      "");
+  }
+
+  if (!tempoAula_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "tempoAula",
+      "");
   }
 }
 
@@ -5529,11 +5552,24 @@ ItemCalendario::
 //
 
 ItemHorarioDisponivel::
-ItemHorarioDisponivel ()
+ItemHorarioDisponivel (const id_type& id,
+                       const semana_type& semana,
+                       const horarioAula_type& horarioAula)
 : ::xml_schema::type (),
-  id_ (::xml_schema::flags (), this),
-  semana_ (::xml_schema::flags (), this),
-  horarioAula_ (::xml_schema::flags (), this)
+  id_ (id, ::xml_schema::flags (), this),
+  semana_ (semana, ::xml_schema::flags (), this),
+  horarioAula_ (horarioAula, ::xml_schema::flags (), this)
+{
+}
+
+ItemHorarioDisponivel::
+ItemHorarioDisponivel (const id_type& id,
+                       const semana_type& semana,
+                       ::std::auto_ptr< horarioAula_type >& horarioAula)
+: ::xml_schema::type (),
+  id_ (id, ::xml_schema::flags (), this),
+  semana_ (semana, ::xml_schema::flags (), this),
+  horarioAula_ (horarioAula, ::xml_schema::flags (), this)
 {
 }
 
@@ -5578,7 +5614,7 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
     //
     if (n.name () == "id" && n.namespace_ ().empty ())
     {
-      if (!this->id_)
+      if (!id_.present ())
       {
         this->id_.set (id_traits::create (i, f, this));
         continue;
@@ -5589,7 +5625,7 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
     //
     if (n.name () == "semana" && n.namespace_ ().empty ())
     {
-      if (!this->semana_)
+      if (!semana_.present ())
       {
         this->semana_.set (semana_traits::create (i, f, this));
         continue;
@@ -5603,7 +5639,7 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
       ::std::auto_ptr< horarioAula_type > r (
         horarioAula_traits::create (i, f, this));
 
-      if (!this->horarioAula_)
+      if (!horarioAula_.present ())
       {
         this->horarioAula_.set (r);
         continue;
@@ -5611,6 +5647,27 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
     }
 
     break;
+  }
+
+  if (!id_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "id",
+      "");
+  }
+
+  if (!semana_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "semana",
+      "");
+  }
+
+  if (!horarioAula_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "horarioAula",
+      "");
   }
 }
 
@@ -5632,7 +5689,7 @@ ItemHorarioDisponivel::
 GrupoHorarioDisponivel::
 GrupoHorarioDisponivel ()
 : ::xml_schema::type (),
-  horarioDisponivel_ (::xml_schema::flags (), this)
+  HorarioDisponivel_ (::xml_schema::flags (), this)
 {
 }
 
@@ -5641,7 +5698,7 @@ GrupoHorarioDisponivel (const GrupoHorarioDisponivel& x,
                         ::xml_schema::flags f,
                         ::xml_schema::container* c)
 : ::xml_schema::type (x, f, c),
-  horarioDisponivel_ (x.horarioDisponivel_, f, this)
+  HorarioDisponivel_ (x.HorarioDisponivel_, f, this)
 {
 }
 
@@ -5650,7 +5707,7 @@ GrupoHorarioDisponivel (const ::xercesc::DOMElement& e,
                         ::xml_schema::flags f,
                         ::xml_schema::container* c)
 : ::xml_schema::type (e, f | ::xml_schema::flags::base, c),
-  horarioDisponivel_ (f, this)
+  HorarioDisponivel_ (f, this)
 {
   if ((f & ::xml_schema::flags::base) == 0)
   {
@@ -5669,14 +5726,14 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
     const ::xsd::cxx::xml::qualified_name< char > n (
       ::xsd::cxx::xml::dom::name< char > (i));
 
-    // horarioDisponivel
+    // HorarioDisponivel
     //
-    if (n.name () == "horarioDisponivel" && n.namespace_ ().empty ())
+    if (n.name () == "HorarioDisponivel" && n.namespace_ ().empty ())
     {
-      ::std::auto_ptr< horarioDisponivel_type > r (
-        horarioDisponivel_traits::create (i, f, this));
+      ::std::auto_ptr< HorarioDisponivel_type > r (
+        HorarioDisponivel_traits::create (i, f, this));
 
-      this->horarioDisponivel_.push_back (r);
+      this->HorarioDisponivel_.push_back (r);
       continue;
     }
 
@@ -6524,12 +6581,12 @@ ItemCurriculo::
 ItemCurriculo (const id_type& id,
                const codigo_type& codigo,
                const descricao_type& descricao,
-               const DisciplinaPeriodo_type& DisciplinaPeriodo)
+               const DisciplinasPeriodo_type& DisciplinasPeriodo)
 : ::xml_schema::type (),
   id_ (id, ::xml_schema::flags (), this),
   codigo_ (codigo, ::xml_schema::flags (), this),
   descricao_ (descricao, ::xml_schema::flags (), this),
-  DisciplinaPeriodo_ (DisciplinaPeriodo, ::xml_schema::flags (), this)
+  DisciplinasPeriodo_ (DisciplinasPeriodo, ::xml_schema::flags (), this)
 {
 }
 
@@ -6537,12 +6594,12 @@ ItemCurriculo::
 ItemCurriculo (const id_type& id,
                const codigo_type& codigo,
                const descricao_type& descricao,
-               ::std::auto_ptr< DisciplinaPeriodo_type >& DisciplinaPeriodo)
+               ::std::auto_ptr< DisciplinasPeriodo_type >& DisciplinasPeriodo)
 : ::xml_schema::type (),
   id_ (id, ::xml_schema::flags (), this),
   codigo_ (codigo, ::xml_schema::flags (), this),
   descricao_ (descricao, ::xml_schema::flags (), this),
-  DisciplinaPeriodo_ (DisciplinaPeriodo, ::xml_schema::flags (), this)
+  DisciplinasPeriodo_ (DisciplinasPeriodo, ::xml_schema::flags (), this)
 {
 }
 
@@ -6554,7 +6611,7 @@ ItemCurriculo (const ItemCurriculo& x,
   id_ (x.id_, f, this),
   codigo_ (x.codigo_, f, this),
   descricao_ (x.descricao_, f, this),
-  DisciplinaPeriodo_ (x.DisciplinaPeriodo_, f, this)
+  DisciplinasPeriodo_ (x.DisciplinasPeriodo_, f, this)
 {
 }
 
@@ -6566,7 +6623,7 @@ ItemCurriculo (const ::xercesc::DOMElement& e,
   id_ (f, this),
   codigo_ (f, this),
   descricao_ (f, this),
-  DisciplinaPeriodo_ (f, this)
+  DisciplinasPeriodo_ (f, this)
 {
   if ((f & ::xml_schema::flags::base) == 0)
   {
@@ -6624,16 +6681,16 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
       }
     }
 
-    // DisciplinaPeriodo
+    // DisciplinasPeriodo
     //
-    if (n.name () == "DisciplinaPeriodo" && n.namespace_ ().empty ())
+    if (n.name () == "DisciplinasPeriodo" && n.namespace_ ().empty ())
     {
-      ::std::auto_ptr< DisciplinaPeriodo_type > r (
-        DisciplinaPeriodo_traits::create (i, f, this));
+      ::std::auto_ptr< DisciplinasPeriodo_type > r (
+        DisciplinasPeriodo_traits::create (i, f, this));
 
-      if (!DisciplinaPeriodo_.present ())
+      if (!DisciplinasPeriodo_.present ())
       {
-        this->DisciplinaPeriodo_.set (r);
+        this->DisciplinasPeriodo_.set (r);
         continue;
       }
     }
@@ -6662,10 +6719,10 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
       "");
   }
 
-  if (!DisciplinaPeriodo_.present ())
+  if (!DisciplinasPeriodo_.present ())
   {
     throw ::xsd::cxx::tree::expected_element< char > (
-      "DisciplinaPeriodo",
+      "DisciplinasPeriodo",
       "");
   }
 }
@@ -6688,7 +6745,7 @@ ItemCurriculo::
 GrupoCurriculo::
 GrupoCurriculo ()
 : ::xml_schema::type (),
-  curriculo_ (::xml_schema::flags (), this)
+  Curriculo_ (::xml_schema::flags (), this)
 {
 }
 
@@ -6697,7 +6754,7 @@ GrupoCurriculo (const GrupoCurriculo& x,
                 ::xml_schema::flags f,
                 ::xml_schema::container* c)
 : ::xml_schema::type (x, f, c),
-  curriculo_ (x.curriculo_, f, this)
+  Curriculo_ (x.Curriculo_, f, this)
 {
 }
 
@@ -6706,7 +6763,7 @@ GrupoCurriculo (const ::xercesc::DOMElement& e,
                 ::xml_schema::flags f,
                 ::xml_schema::container* c)
 : ::xml_schema::type (e, f | ::xml_schema::flags::base, c),
-  curriculo_ (f, this)
+  Curriculo_ (f, this)
 {
   if ((f & ::xml_schema::flags::base) == 0)
   {
@@ -6725,14 +6782,14 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
     const ::xsd::cxx::xml::qualified_name< char > n (
       ::xsd::cxx::xml::dom::name< char > (i));
 
-    // curriculo
+    // Curriculo
     //
-    if (n.name () == "curriculo" && n.namespace_ ().empty ())
+    if (n.name () == "Curriculo" && n.namespace_ ().empty ())
     {
-      ::std::auto_ptr< curriculo_type > r (
-        curriculo_traits::create (i, f, this));
+      ::std::auto_ptr< Curriculo_type > r (
+        Curriculo_traits::create (i, f, this));
 
-      this->curriculo_.push_back (r);
+      this->Curriculo_.push_back (r);
       continue;
     }
 
@@ -6758,7 +6815,7 @@ GrupoCurriculo::
 GrupoSala::
 GrupoSala ()
 : ::xml_schema::type (),
-  sala_ (::xml_schema::flags (), this)
+  Sala_ (::xml_schema::flags (), this)
 {
 }
 
@@ -6767,7 +6824,7 @@ GrupoSala (const GrupoSala& x,
            ::xml_schema::flags f,
            ::xml_schema::container* c)
 : ::xml_schema::type (x, f, c),
-  sala_ (x.sala_, f, this)
+  Sala_ (x.Sala_, f, this)
 {
 }
 
@@ -6776,7 +6833,7 @@ GrupoSala (const ::xercesc::DOMElement& e,
            ::xml_schema::flags f,
            ::xml_schema::container* c)
 : ::xml_schema::type (e, f | ::xml_schema::flags::base, c),
-  sala_ (f, this)
+  Sala_ (f, this)
 {
   if ((f & ::xml_schema::flags::base) == 0)
   {
@@ -6795,14 +6852,14 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
     const ::xsd::cxx::xml::qualified_name< char > n (
       ::xsd::cxx::xml::dom::name< char > (i));
 
-    // sala
+    // Sala
     //
-    if (n.name () == "sala" && n.namespace_ ().empty ())
+    if (n.name () == "Sala" && n.namespace_ ().empty ())
     {
-      ::std::auto_ptr< sala_type > r (
-        sala_traits::create (i, f, this));
+      ::std::auto_ptr< Sala_type > r (
+        Sala_traits::create (i, f, this));
 
-      this->sala_.push_back (r);
+      this->Sala_.push_back (r);
       continue;
     }
 
@@ -7116,7 +7173,7 @@ ItemCurso::
 GrupoCurso::
 GrupoCurso ()
 : ::xml_schema::type (),
-  curso_ (::xml_schema::flags (), this)
+  Curso_ (::xml_schema::flags (), this)
 {
 }
 
@@ -7125,7 +7182,7 @@ GrupoCurso (const GrupoCurso& x,
             ::xml_schema::flags f,
             ::xml_schema::container* c)
 : ::xml_schema::type (x, f, c),
-  curso_ (x.curso_, f, this)
+  Curso_ (x.Curso_, f, this)
 {
 }
 
@@ -7134,7 +7191,7 @@ GrupoCurso (const ::xercesc::DOMElement& e,
             ::xml_schema::flags f,
             ::xml_schema::container* c)
 : ::xml_schema::type (e, f | ::xml_schema::flags::base, c),
-  curso_ (f, this)
+  Curso_ (f, this)
 {
   if ((f & ::xml_schema::flags::base) == 0)
   {
@@ -7153,14 +7210,14 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
     const ::xsd::cxx::xml::qualified_name< char > n (
       ::xsd::cxx::xml::dom::name< char > (i));
 
-    // curso
+    // Curso
     //
-    if (n.name () == "curso" && n.namespace_ ().empty ())
+    if (n.name () == "Curso" && n.namespace_ ().empty ())
     {
-      ::std::auto_ptr< curso_type > r (
-        curso_traits::create (i, f, this));
+      ::std::auto_ptr< Curso_type > r (
+        Curso_traits::create (i, f, this));
 
-      this->curso_.push_back (r);
+      this->Curso_.push_back (r);
       continue;
     }
 
@@ -7351,7 +7408,7 @@ ItemDemanda::
 GrupoDemanda::
 GrupoDemanda ()
 : ::xml_schema::type (),
-  demanda_ (::xml_schema::flags (), this)
+  Demanda_ (::xml_schema::flags (), this)
 {
 }
 
@@ -7360,7 +7417,7 @@ GrupoDemanda (const GrupoDemanda& x,
               ::xml_schema::flags f,
               ::xml_schema::container* c)
 : ::xml_schema::type (x, f, c),
-  demanda_ (x.demanda_, f, this)
+  Demanda_ (x.Demanda_, f, this)
 {
 }
 
@@ -7369,7 +7426,7 @@ GrupoDemanda (const ::xercesc::DOMElement& e,
               ::xml_schema::flags f,
               ::xml_schema::container* c)
 : ::xml_schema::type (e, f | ::xml_schema::flags::base, c),
-  demanda_ (f, this)
+  Demanda_ (f, this)
 {
   if ((f & ::xml_schema::flags::base) == 0)
   {
@@ -7388,14 +7445,14 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
     const ::xsd::cxx::xml::qualified_name< char > n (
       ::xsd::cxx::xml::dom::name< char > (i));
 
-    // demanda
+    // Demanda
     //
-    if (n.name () == "demanda" && n.namespace_ ().empty ())
+    if (n.name () == "Demanda" && n.namespace_ ().empty ())
     {
-      ::std::auto_ptr< demanda_type > r (
-        demanda_traits::create (i, f, this));
+      ::std::auto_ptr< Demanda_type > r (
+        Demanda_traits::create (i, f, this));
 
-      this->demanda_.push_back (r);
+      this->Demanda_.push_back (r);
       continue;
     }
 
@@ -7535,7 +7592,7 @@ ItemUnidadeCurriculo::
 GrupoUnidadeCurriculo::
 GrupoUnidadeCurriculo ()
 : ::xml_schema::type (),
-  unidadeCurriculo_ (::xml_schema::flags (), this)
+  UnidadeCurriculo_ (::xml_schema::flags (), this)
 {
 }
 
@@ -7544,7 +7601,7 @@ GrupoUnidadeCurriculo (const GrupoUnidadeCurriculo& x,
                        ::xml_schema::flags f,
                        ::xml_schema::container* c)
 : ::xml_schema::type (x, f, c),
-  unidadeCurriculo_ (x.unidadeCurriculo_, f, this)
+  UnidadeCurriculo_ (x.UnidadeCurriculo_, f, this)
 {
 }
 
@@ -7553,7 +7610,7 @@ GrupoUnidadeCurriculo (const ::xercesc::DOMElement& e,
                        ::xml_schema::flags f,
                        ::xml_schema::container* c)
 : ::xml_schema::type (e, f | ::xml_schema::flags::base, c),
-  unidadeCurriculo_ (f, this)
+  UnidadeCurriculo_ (f, this)
 {
   if ((f & ::xml_schema::flags::base) == 0)
   {
@@ -7572,14 +7629,14 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
     const ::xsd::cxx::xml::qualified_name< char > n (
       ::xsd::cxx::xml::dom::name< char > (i));
 
-    // unidadeCurriculo
+    // UnidadeCurriculo
     //
-    if (n.name () == "unidadeCurriculo" && n.namespace_ ().empty ())
+    if (n.name () == "UnidadeCurriculo" && n.namespace_ ().empty ())
     {
-      ::std::auto_ptr< unidadeCurriculo_type > r (
-        unidadeCurriculo_traits::create (i, f, this));
+      ::std::auto_ptr< UnidadeCurriculo_type > r (
+        UnidadeCurriculo_traits::create (i, f, this));
 
-      this->unidadeCurriculo_.push_back (r);
+      this->UnidadeCurriculo_.push_back (r);
       continue;
     }
 
@@ -7959,7 +8016,7 @@ ItemOferecimento::
 GrupoOferecimento::
 GrupoOferecimento ()
 : ::xml_schema::type (),
-  oferecimento_ (::xml_schema::flags (), this)
+  Oferecimento_ (::xml_schema::flags (), this)
 {
 }
 
@@ -7968,7 +8025,7 @@ GrupoOferecimento (const GrupoOferecimento& x,
                    ::xml_schema::flags f,
                    ::xml_schema::container* c)
 : ::xml_schema::type (x, f, c),
-  oferecimento_ (x.oferecimento_, f, this)
+  Oferecimento_ (x.Oferecimento_, f, this)
 {
 }
 
@@ -7977,7 +8034,7 @@ GrupoOferecimento (const ::xercesc::DOMElement& e,
                    ::xml_schema::flags f,
                    ::xml_schema::container* c)
 : ::xml_schema::type (e, f | ::xml_schema::flags::base, c),
-  oferecimento_ (f, this)
+  Oferecimento_ (f, this)
 {
   if ((f & ::xml_schema::flags::base) == 0)
   {
@@ -7996,14 +8053,14 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
     const ::xsd::cxx::xml::qualified_name< char > n (
       ::xsd::cxx::xml::dom::name< char > (i));
 
-    // oferecimento
+    // Oferecimento
     //
-    if (n.name () == "oferecimento" && n.namespace_ ().empty ())
+    if (n.name () == "Oferecimento" && n.namespace_ ().empty ())
     {
-      ::std::auto_ptr< oferecimento_type > r (
-        oferecimento_traits::create (i, f, this));
+      ::std::auto_ptr< Oferecimento_type > r (
+        Oferecimento_traits::create (i, f, this));
 
-      this->oferecimento_.push_back (r);
+      this->Oferecimento_.push_back (r);
       continue;
     }
 
@@ -8194,7 +8251,7 @@ ItemTurma::
 GrupoTurma::
 GrupoTurma ()
 : ::xml_schema::type (),
-  turma_ (::xml_schema::flags (), this)
+  Turma_ (::xml_schema::flags (), this)
 {
 }
 
@@ -8203,7 +8260,7 @@ GrupoTurma (const GrupoTurma& x,
             ::xml_schema::flags f,
             ::xml_schema::container* c)
 : ::xml_schema::type (x, f, c),
-  turma_ (x.turma_, f, this)
+  Turma_ (x.Turma_, f, this)
 {
 }
 
@@ -8212,7 +8269,7 @@ GrupoTurma (const ::xercesc::DOMElement& e,
             ::xml_schema::flags f,
             ::xml_schema::container* c)
 : ::xml_schema::type (e, f | ::xml_schema::flags::base, c),
-  turma_ (f, this)
+  Turma_ (f, this)
 {
   if ((f & ::xml_schema::flags::base) == 0)
   {
@@ -8231,14 +8288,14 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
     const ::xsd::cxx::xml::qualified_name< char > n (
       ::xsd::cxx::xml::dom::name< char > (i));
 
-    // turma
+    // Turma
     //
-    if (n.name () == "turma" && n.namespace_ ().empty ())
+    if (n.name () == "Turma" && n.namespace_ ().empty ())
     {
-      ::std::auto_ptr< turma_type > r (
-        turma_traits::create (i, f, this));
+      ::std::auto_ptr< Turma_type > r (
+        Turma_traits::create (i, f, this));
 
-      this->turma_.push_back (r);
+      this->Turma_.push_back (r);
       continue;
     }
 
@@ -9094,50 +9151,50 @@ Trieda::
 {
 }
 
-// unidadeCurriculo
+// UnidadeCurriculo
 //
 
-unidadeCurriculo::
-unidadeCurriculo (const turno_type& turno,
+UnidadeCurriculo::
+UnidadeCurriculo (const turno_type& turno,
                   const curriculo_type& curriculo)
 : ::ItemUnidadeCurriculo (turno,
                           curriculo)
 {
 }
 
-unidadeCurriculo::
-unidadeCurriculo (::std::auto_ptr< turno_type >& turno,
+UnidadeCurriculo::
+UnidadeCurriculo (::std::auto_ptr< turno_type >& turno,
                   ::std::auto_ptr< curriculo_type >& curriculo)
 : ::ItemUnidadeCurriculo (turno,
                           curriculo)
 {
 }
 
-unidadeCurriculo::
-unidadeCurriculo (const unidadeCurriculo& x,
+UnidadeCurriculo::
+UnidadeCurriculo (const UnidadeCurriculo& x,
                   ::xml_schema::flags f,
                   ::xml_schema::container* c)
 : ::ItemUnidadeCurriculo (x, f, c)
 {
 }
 
-unidadeCurriculo::
-unidadeCurriculo (const ::xercesc::DOMElement& e,
+UnidadeCurriculo::
+UnidadeCurriculo (const ::xercesc::DOMElement& e,
                   ::xml_schema::flags f,
                   ::xml_schema::container* c)
 : ::ItemUnidadeCurriculo (e, f, c)
 {
 }
 
-unidadeCurriculo* unidadeCurriculo::
+UnidadeCurriculo* UnidadeCurriculo::
 _clone (::xml_schema::flags f,
         ::xml_schema::container* c) const
 {
-  return new class unidadeCurriculo (*this, f, c);
+  return new class UnidadeCurriculo (*this, f, c);
 }
 
-unidadeCurriculo::
-~unidadeCurriculo ()
+UnidadeCurriculo::
+~UnidadeCurriculo ()
 {
 }
 
@@ -9167,11 +9224,11 @@ operator<< (::std::ostream& o, const ItemProfessorDisciplina& i)
 ::std::ostream&
 operator<< (::std::ostream& o, const GrupoProfessorDisciplina& i)
 {
-  for (GrupoProfessorDisciplina::professorDisciplina_const_iterator
-       b (i.professorDisciplina ().begin ()), e (i.professorDisciplina ().end ());
+  for (GrupoProfessorDisciplina::ProfessorDisciplina_const_iterator
+       b (i.ProfessorDisciplina ().begin ()), e (i.ProfessorDisciplina ().end ());
        b != e; ++b)
   {
-    o << ::std::endl << "professorDisciplina: " << *b;
+    o << ::std::endl << "ProfessorDisciplina: " << *b;
   }
 
   return o;
@@ -9199,11 +9256,11 @@ operator<< (::std::ostream& o, const ItemProfessor& i)
 ::std::ostream&
 operator<< (::std::ostream& o, const GrupoProfessor& i)
 {
-  for (GrupoProfessor::professor_const_iterator
-       b (i.professor ().begin ()), e (i.professor ().end ());
+  for (GrupoProfessor::Professor_const_iterator
+       b (i.Professor ().begin ()), e (i.Professor ().end ());
        b != e; ++b)
   {
-    o << ::std::endl << "professor: " << *b;
+    o << ::std::endl << "Professor: " << *b;
   }
 
   return o;
@@ -9212,51 +9269,15 @@ operator<< (::std::ostream& o, const GrupoProfessor& i)
 ::std::ostream&
 operator<< (::std::ostream& o, const ItemDivisaoCreditos& i)
 {
-  if (i.id ())
-  {
-    o << ::std::endl << "id: " << *i.id ();
-  }
-
-  if (i.creditos ())
-  {
-    o << ::std::endl << "creditos: " << *i.creditos ();
-  }
-
-  if (i.dia1 ())
-  {
-    o << ::std::endl << "dia1: " << *i.dia1 ();
-  }
-
-  if (i.dia2 ())
-  {
-    o << ::std::endl << "dia2: " << *i.dia2 ();
-  }
-
-  if (i.dia3 ())
-  {
-    o << ::std::endl << "dia3: " << *i.dia3 ();
-  }
-
-  if (i.dia4 ())
-  {
-    o << ::std::endl << "dia4: " << *i.dia4 ();
-  }
-
-  if (i.dia5 ())
-  {
-    o << ::std::endl << "dia5: " << *i.dia5 ();
-  }
-
-  if (i.dia6 ())
-  {
-    o << ::std::endl << "dia6: " << *i.dia6 ();
-  }
-
-  if (i.dia7 ())
-  {
-    o << ::std::endl << "dia7: " << *i.dia7 ();
-  }
-
+  o << ::std::endl << "id: " << i.id ();
+  o << ::std::endl << "creditos: " << i.creditos ();
+  o << ::std::endl << "dia1: " << i.dia1 ();
+  o << ::std::endl << "dia2: " << i.dia2 ();
+  o << ::std::endl << "dia3: " << i.dia3 ();
+  o << ::std::endl << "dia4: " << i.dia4 ();
+  o << ::std::endl << "dia5: " << i.dia5 ();
+  o << ::std::endl << "dia6: " << i.dia6 ();
+  o << ::std::endl << "dia7: " << i.dia7 ();
   return o;
 }
 
@@ -9297,11 +9318,11 @@ operator<< (::std::ostream& o, const ItemDeslocamento& i)
 ::std::ostream&
 operator<< (::std::ostream& o, const GrupoUnidade& i)
 {
-  for (GrupoUnidade::ItemUnidade_const_iterator
-       b (i.ItemUnidade ().begin ()), e (i.ItemUnidade ().end ());
+  for (GrupoUnidade::Unidade_const_iterator
+       b (i.Unidade ().begin ()), e (i.Unidade ().end ());
        b != e; ++b)
   {
-    o << ::std::endl << "ItemUnidade: " << *b;
+    o << ::std::endl << "Unidade: " << *b;
   }
 
   return o;
@@ -9366,63 +9387,31 @@ operator<< (::std::ostream& o, const GrupoDisciplina& i)
 ::std::ostream&
 operator<< (::std::ostream& o, const ItemCalendario& i)
 {
-  if (i.id ())
-  {
-    o << ::std::endl << "id: " << *i.id ();
-  }
-
-  if (i.turnos ())
-  {
-    o << ::std::endl << "turnos: " << *i.turnos ();
-  }
-
-  if (i.codigo ())
-  {
-    o << ::std::endl << "codigo: " << *i.codigo ();
-  }
-
-  if (i.descricao ())
-  {
-    o << ::std::endl << "descricao: " << *i.descricao ();
-  }
-
-  if (i.tempoAula ())
-  {
-    o << ::std::endl << "tempoAula: " << *i.tempoAula ();
-  }
-
+  o << ::std::endl << "id: " << i.id ();
+  o << ::std::endl << "turnos: " << i.turnos ();
+  o << ::std::endl << "codigo: " << i.codigo ();
+  o << ::std::endl << "descricao: " << i.descricao ();
+  o << ::std::endl << "tempoAula: " << i.tempoAula ();
   return o;
 }
 
 ::std::ostream&
 operator<< (::std::ostream& o, const ItemHorarioDisponivel& i)
 {
-  if (i.id ())
-  {
-    o << ::std::endl << "id: " << *i.id ();
-  }
-
-  if (i.semana ())
-  {
-    o << ::std::endl << "semana: " << *i.semana ();
-  }
-
-  if (i.horarioAula ())
-  {
-    o << ::std::endl << "horarioAula: " << *i.horarioAula ();
-  }
-
+  o << ::std::endl << "id: " << i.id ();
+  o << ::std::endl << "semana: " << i.semana ();
+  o << ::std::endl << "horarioAula: " << i.horarioAula ();
   return o;
 }
 
 ::std::ostream&
 operator<< (::std::ostream& o, const GrupoHorarioDisponivel& i)
 {
-  for (GrupoHorarioDisponivel::horarioDisponivel_const_iterator
-       b (i.horarioDisponivel ().begin ()), e (i.horarioDisponivel ().end ());
+  for (GrupoHorarioDisponivel::HorarioDisponivel_const_iterator
+       b (i.HorarioDisponivel ().begin ()), e (i.HorarioDisponivel ().end ());
        b != e; ++b)
   {
-    o << ::std::endl << "horarioDisponivel: " << *b;
+    o << ::std::endl << "HorarioDisponivel: " << *b;
   }
 
   return o;
@@ -9501,18 +9490,18 @@ operator<< (::std::ostream& o, const ItemCurriculo& i)
   o << ::std::endl << "id: " << i.id ();
   o << ::std::endl << "codigo: " << i.codigo ();
   o << ::std::endl << "descricao: " << i.descricao ();
-  o << ::std::endl << "DisciplinaPeriodo: " << i.DisciplinaPeriodo ();
+  o << ::std::endl << "DisciplinasPeriodo: " << i.DisciplinasPeriodo ();
   return o;
 }
 
 ::std::ostream&
 operator<< (::std::ostream& o, const GrupoCurriculo& i)
 {
-  for (GrupoCurriculo::curriculo_const_iterator
-       b (i.curriculo ().begin ()), e (i.curriculo ().end ());
+  for (GrupoCurriculo::Curriculo_const_iterator
+       b (i.Curriculo ().begin ()), e (i.Curriculo ().end ());
        b != e; ++b)
   {
-    o << ::std::endl << "curriculo: " << *b;
+    o << ::std::endl << "Curriculo: " << *b;
   }
 
   return o;
@@ -9521,11 +9510,11 @@ operator<< (::std::ostream& o, const GrupoCurriculo& i)
 ::std::ostream&
 operator<< (::std::ostream& o, const GrupoSala& i)
 {
-  for (GrupoSala::sala_const_iterator
-       b (i.sala ().begin ()), e (i.sala ().end ());
+  for (GrupoSala::Sala_const_iterator
+       b (i.Sala ().begin ()), e (i.Sala ().end ());
        b != e; ++b)
   {
-    o << ::std::endl << "sala: " << *b;
+    o << ::std::endl << "Sala: " << *b;
   }
 
   return o;
@@ -9549,11 +9538,11 @@ operator<< (::std::ostream& o, const ItemCurso& i)
 ::std::ostream&
 operator<< (::std::ostream& o, const GrupoCurso& i)
 {
-  for (GrupoCurso::curso_const_iterator
-       b (i.curso ().begin ()), e (i.curso ().end ());
+  for (GrupoCurso::Curso_const_iterator
+       b (i.Curso ().begin ()), e (i.Curso ().end ());
        b != e; ++b)
   {
-    o << ::std::endl << "curso: " << *b;
+    o << ::std::endl << "Curso: " << *b;
   }
 
   return o;
@@ -9572,11 +9561,11 @@ operator<< (::std::ostream& o, const ItemDemanda& i)
 ::std::ostream&
 operator<< (::std::ostream& o, const GrupoDemanda& i)
 {
-  for (GrupoDemanda::demanda_const_iterator
-       b (i.demanda ().begin ()), e (i.demanda ().end ());
+  for (GrupoDemanda::Demanda_const_iterator
+       b (i.Demanda ().begin ()), e (i.Demanda ().end ());
        b != e; ++b)
   {
-    o << ::std::endl << "demanda: " << *b;
+    o << ::std::endl << "Demanda: " << *b;
   }
 
   return o;
@@ -9593,11 +9582,11 @@ operator<< (::std::ostream& o, const ItemUnidadeCurriculo& i)
 ::std::ostream&
 operator<< (::std::ostream& o, const GrupoUnidadeCurriculo& i)
 {
-  for (GrupoUnidadeCurriculo::unidadeCurriculo_const_iterator
-       b (i.unidadeCurriculo ().begin ()), e (i.unidadeCurriculo ().end ());
+  for (GrupoUnidadeCurriculo::UnidadeCurriculo_const_iterator
+       b (i.UnidadeCurriculo ().begin ()), e (i.UnidadeCurriculo ().end ());
        b != e; ++b)
   {
-    o << ::std::endl << "unidadeCurriculo: " << *b;
+    o << ::std::endl << "UnidadeCurriculo: " << *b;
   }
 
   return o;
@@ -9627,11 +9616,11 @@ operator<< (::std::ostream& o, const ItemOferecimento& i)
 ::std::ostream&
 operator<< (::std::ostream& o, const GrupoOferecimento& i)
 {
-  for (GrupoOferecimento::oferecimento_const_iterator
-       b (i.oferecimento ().begin ()), e (i.oferecimento ().end ());
+  for (GrupoOferecimento::Oferecimento_const_iterator
+       b (i.Oferecimento ().begin ()), e (i.Oferecimento ().end ());
        b != e; ++b)
   {
-    o << ::std::endl << "oferecimento: " << *b;
+    o << ::std::endl << "Oferecimento: " << *b;
   }
 
   return o;
@@ -9650,11 +9639,11 @@ operator<< (::std::ostream& o, const ItemTurma& i)
 ::std::ostream&
 operator<< (::std::ostream& o, const GrupoTurma& i)
 {
-  for (GrupoTurma::turma_const_iterator
-       b (i.turma ().begin ()), e (i.turma ().end ());
+  for (GrupoTurma::Turma_const_iterator
+       b (i.Turma ().begin ()), e (i.Turma ().end ());
        b != e; ++b)
   {
-    o << ::std::endl << "turma: " << *b;
+    o << ::std::endl << "Turma: " << *b;
   }
 
   return o;
@@ -9734,7 +9723,7 @@ operator<< (::std::ostream& o, const Trieda& i)
 }
 
 ::std::ostream&
-operator<< (::std::ostream& o, const unidadeCurriculo& i)
+operator<< (::std::ostream& o, const UnidadeCurriculo& i)
 {
   o << static_cast< const ::ItemUnidadeCurriculo& > (i);
 
@@ -10218,15 +10207,15 @@ operator<< (::xercesc::DOMElement& e, const GrupoProfessorDisciplina& i)
 {
   e << static_cast< const ::xml_schema::type& > (i);
 
-  // professorDisciplina
+  // ProfessorDisciplina
   //
-  for (GrupoProfessorDisciplina::professorDisciplina_const_iterator
-       b (i.professorDisciplina ().begin ()), n (i.professorDisciplina ().end ());
+  for (GrupoProfessorDisciplina::ProfessorDisciplina_const_iterator
+       b (i.ProfessorDisciplina ().begin ()), n (i.ProfessorDisciplina ().end ());
        b != n; ++b)
   {
     ::xercesc::DOMElement& s (
       ::xsd::cxx::xml::dom::create_element (
-        "professorDisciplina",
+        "ProfessorDisciplina",
         e));
 
     s << *b;
@@ -10387,15 +10376,15 @@ operator<< (::xercesc::DOMElement& e, const GrupoProfessor& i)
 {
   e << static_cast< const ::xml_schema::type& > (i);
 
-  // professor
+  // Professor
   //
-  for (GrupoProfessor::professor_const_iterator
-       b (i.professor ().begin ()), n (i.professor ().end ());
+  for (GrupoProfessor::Professor_const_iterator
+       b (i.Professor ().begin ()), n (i.Professor ().end ());
        b != n; ++b)
   {
     ::xercesc::DOMElement& s (
       ::xsd::cxx::xml::dom::create_element (
-        "professor",
+        "Professor",
         e));
 
     s << *b;
@@ -10409,110 +10398,101 @@ operator<< (::xercesc::DOMElement& e, const ItemDivisaoCreditos& i)
 
   // id
   //
-  if (i.id ())
   {
     ::xercesc::DOMElement& s (
       ::xsd::cxx::xml::dom::create_element (
         "id",
         e));
 
-    s << *i.id ();
+    s << i.id ();
   }
 
   // creditos
   //
-  if (i.creditos ())
   {
     ::xercesc::DOMElement& s (
       ::xsd::cxx::xml::dom::create_element (
         "creditos",
         e));
 
-    s << *i.creditos ();
+    s << i.creditos ();
   }
 
   // dia1
   //
-  if (i.dia1 ())
   {
     ::xercesc::DOMElement& s (
       ::xsd::cxx::xml::dom::create_element (
         "dia1",
         e));
 
-    s << *i.dia1 ();
+    s << i.dia1 ();
   }
 
   // dia2
   //
-  if (i.dia2 ())
   {
     ::xercesc::DOMElement& s (
       ::xsd::cxx::xml::dom::create_element (
         "dia2",
         e));
 
-    s << *i.dia2 ();
+    s << i.dia2 ();
   }
 
   // dia3
   //
-  if (i.dia3 ())
   {
     ::xercesc::DOMElement& s (
       ::xsd::cxx::xml::dom::create_element (
         "dia3",
         e));
 
-    s << *i.dia3 ();
+    s << i.dia3 ();
   }
 
   // dia4
   //
-  if (i.dia4 ())
   {
     ::xercesc::DOMElement& s (
       ::xsd::cxx::xml::dom::create_element (
         "dia4",
         e));
 
-    s << *i.dia4 ();
+    s << i.dia4 ();
   }
 
   // dia5
   //
-  if (i.dia5 ())
   {
     ::xercesc::DOMElement& s (
       ::xsd::cxx::xml::dom::create_element (
         "dia5",
         e));
 
-    s << *i.dia5 ();
+    s << i.dia5 ();
   }
 
   // dia6
   //
-  if (i.dia6 ())
   {
     ::xercesc::DOMElement& s (
       ::xsd::cxx::xml::dom::create_element (
         "dia6",
         e));
 
-    s << *i.dia6 ();
+    s << i.dia6 ();
   }
 
   // dia7
   //
-  if (i.dia7 ())
   {
     ::xercesc::DOMElement& s (
       ::xsd::cxx::xml::dom::create_element (
         "dia7",
         e));
 
-    s << *i.dia7 ();
+    s << i.dia7 ();
   }
 }
 
@@ -10589,15 +10569,15 @@ operator<< (::xercesc::DOMElement& e, const GrupoUnidade& i)
 {
   e << static_cast< const ::xml_schema::type& > (i);
 
-  // ItemUnidade
+  // Unidade
   //
-  for (GrupoUnidade::ItemUnidade_const_iterator
-       b (i.ItemUnidade ().begin ()), n (i.ItemUnidade ().end ());
+  for (GrupoUnidade::Unidade_const_iterator
+       b (i.Unidade ().begin ()), n (i.Unidade ().end ());
        b != n; ++b)
   {
     ::xercesc::DOMElement& s (
       ::xsd::cxx::xml::dom::create_element (
-        "ItemUnidade",
+        "Unidade",
         e));
 
     s << *b;
@@ -10921,62 +10901,57 @@ operator<< (::xercesc::DOMElement& e, const ItemCalendario& i)
 
   // id
   //
-  if (i.id ())
   {
     ::xercesc::DOMElement& s (
       ::xsd::cxx::xml::dom::create_element (
         "id",
         e));
 
-    s << *i.id ();
+    s << i.id ();
   }
 
   // turnos
   //
-  if (i.turnos ())
   {
     ::xercesc::DOMElement& s (
       ::xsd::cxx::xml::dom::create_element (
         "turnos",
         e));
 
-    s << *i.turnos ();
+    s << i.turnos ();
   }
 
   // codigo
   //
-  if (i.codigo ())
   {
     ::xercesc::DOMElement& s (
       ::xsd::cxx::xml::dom::create_element (
         "codigo",
         e));
 
-    s << *i.codigo ();
+    s << i.codigo ();
   }
 
   // descricao
   //
-  if (i.descricao ())
   {
     ::xercesc::DOMElement& s (
       ::xsd::cxx::xml::dom::create_element (
         "descricao",
         e));
 
-    s << *i.descricao ();
+    s << i.descricao ();
   }
 
   // tempoAula
   //
-  if (i.tempoAula ())
   {
     ::xercesc::DOMElement& s (
       ::xsd::cxx::xml::dom::create_element (
         "tempoAula",
         e));
 
-    s << *i.tempoAula ();
+    s << i.tempoAula ();
   }
 }
 
@@ -10987,38 +10962,35 @@ operator<< (::xercesc::DOMElement& e, const ItemHorarioDisponivel& i)
 
   // id
   //
-  if (i.id ())
   {
     ::xercesc::DOMElement& s (
       ::xsd::cxx::xml::dom::create_element (
         "id",
         e));
 
-    s << *i.id ();
+    s << i.id ();
   }
 
   // semana
   //
-  if (i.semana ())
   {
     ::xercesc::DOMElement& s (
       ::xsd::cxx::xml::dom::create_element (
         "semana",
         e));
 
-    s << *i.semana ();
+    s << i.semana ();
   }
 
   // horarioAula
   //
-  if (i.horarioAula ())
   {
     ::xercesc::DOMElement& s (
       ::xsd::cxx::xml::dom::create_element (
         "horarioAula",
         e));
 
-    s << *i.horarioAula ();
+    s << i.horarioAula ();
   }
 }
 
@@ -11027,15 +10999,15 @@ operator<< (::xercesc::DOMElement& e, const GrupoHorarioDisponivel& i)
 {
   e << static_cast< const ::xml_schema::type& > (i);
 
-  // horarioDisponivel
+  // HorarioDisponivel
   //
-  for (GrupoHorarioDisponivel::horarioDisponivel_const_iterator
-       b (i.horarioDisponivel ().begin ()), n (i.horarioDisponivel ().end ());
+  for (GrupoHorarioDisponivel::HorarioDisponivel_const_iterator
+       b (i.HorarioDisponivel ().begin ()), n (i.HorarioDisponivel ().end ());
        b != n; ++b)
   {
     ::xercesc::DOMElement& s (
       ::xsd::cxx::xml::dom::create_element (
-        "horarioDisponivel",
+        "HorarioDisponivel",
         e));
 
     s << *b;
@@ -11331,15 +11303,15 @@ operator<< (::xercesc::DOMElement& e, const ItemCurriculo& i)
     s << i.descricao ();
   }
 
-  // DisciplinaPeriodo
+  // DisciplinasPeriodo
   //
   {
     ::xercesc::DOMElement& s (
       ::xsd::cxx::xml::dom::create_element (
-        "DisciplinaPeriodo",
+        "DisciplinasPeriodo",
         e));
 
-    s << i.DisciplinaPeriodo ();
+    s << i.DisciplinasPeriodo ();
   }
 }
 
@@ -11348,15 +11320,15 @@ operator<< (::xercesc::DOMElement& e, const GrupoCurriculo& i)
 {
   e << static_cast< const ::xml_schema::type& > (i);
 
-  // curriculo
+  // Curriculo
   //
-  for (GrupoCurriculo::curriculo_const_iterator
-       b (i.curriculo ().begin ()), n (i.curriculo ().end ());
+  for (GrupoCurriculo::Curriculo_const_iterator
+       b (i.Curriculo ().begin ()), n (i.Curriculo ().end ());
        b != n; ++b)
   {
     ::xercesc::DOMElement& s (
       ::xsd::cxx::xml::dom::create_element (
-        "curriculo",
+        "Curriculo",
         e));
 
     s << *b;
@@ -11368,15 +11340,15 @@ operator<< (::xercesc::DOMElement& e, const GrupoSala& i)
 {
   e << static_cast< const ::xml_schema::type& > (i);
 
-  // sala
+  // Sala
   //
-  for (GrupoSala::sala_const_iterator
-       b (i.sala ().begin ()), n (i.sala ().end ());
+  for (GrupoSala::Sala_const_iterator
+       b (i.Sala ().begin ()), n (i.Sala ().end ());
        b != n; ++b)
   {
     ::xercesc::DOMElement& s (
       ::xsd::cxx::xml::dom::create_element (
-        "sala",
+        "Sala",
         e));
 
     s << *b;
@@ -11493,15 +11465,15 @@ operator<< (::xercesc::DOMElement& e, const GrupoCurso& i)
 {
   e << static_cast< const ::xml_schema::type& > (i);
 
-  // curso
+  // Curso
   //
-  for (GrupoCurso::curso_const_iterator
-       b (i.curso ().begin ()), n (i.curso ().end ());
+  for (GrupoCurso::Curso_const_iterator
+       b (i.Curso ().begin ()), n (i.Curso ().end ());
        b != n; ++b)
   {
     ::xercesc::DOMElement& s (
       ::xsd::cxx::xml::dom::create_element (
-        "curso",
+        "Curso",
         e));
 
     s << *b;
@@ -11563,15 +11535,15 @@ operator<< (::xercesc::DOMElement& e, const GrupoDemanda& i)
 {
   e << static_cast< const ::xml_schema::type& > (i);
 
-  // demanda
+  // Demanda
   //
-  for (GrupoDemanda::demanda_const_iterator
-       b (i.demanda ().begin ()), n (i.demanda ().end ());
+  for (GrupoDemanda::Demanda_const_iterator
+       b (i.Demanda ().begin ()), n (i.Demanda ().end ());
        b != n; ++b)
   {
     ::xercesc::DOMElement& s (
       ::xsd::cxx::xml::dom::create_element (
-        "demanda",
+        "Demanda",
         e));
 
     s << *b;
@@ -11611,15 +11583,15 @@ operator<< (::xercesc::DOMElement& e, const GrupoUnidadeCurriculo& i)
 {
   e << static_cast< const ::xml_schema::type& > (i);
 
-  // unidadeCurriculo
+  // UnidadeCurriculo
   //
-  for (GrupoUnidadeCurriculo::unidadeCurriculo_const_iterator
-       b (i.unidadeCurriculo ().begin ()), n (i.unidadeCurriculo ().end ());
+  for (GrupoUnidadeCurriculo::UnidadeCurriculo_const_iterator
+       b (i.UnidadeCurriculo ().begin ()), n (i.UnidadeCurriculo ().end ());
        b != n; ++b)
   {
     ::xercesc::DOMElement& s (
       ::xsd::cxx::xml::dom::create_element (
-        "unidadeCurriculo",
+        "UnidadeCurriculo",
         e));
 
     s << *b;
@@ -11742,15 +11714,15 @@ operator<< (::xercesc::DOMElement& e, const GrupoOferecimento& i)
 {
   e << static_cast< const ::xml_schema::type& > (i);
 
-  // oferecimento
+  // Oferecimento
   //
-  for (GrupoOferecimento::oferecimento_const_iterator
-       b (i.oferecimento ().begin ()), n (i.oferecimento ().end ());
+  for (GrupoOferecimento::Oferecimento_const_iterator
+       b (i.Oferecimento ().begin ()), n (i.Oferecimento ().end ());
        b != n; ++b)
   {
     ::xercesc::DOMElement& s (
       ::xsd::cxx::xml::dom::create_element (
-        "oferecimento",
+        "Oferecimento",
         e));
 
     s << *b;
@@ -11812,15 +11784,15 @@ operator<< (::xercesc::DOMElement& e, const GrupoTurma& i)
 {
   e << static_cast< const ::xml_schema::type& > (i);
 
-  // turma
+  // Turma
   //
-  for (GrupoTurma::turma_const_iterator
-       b (i.turma ().begin ()), n (i.turma ().end ());
+  for (GrupoTurma::Turma_const_iterator
+       b (i.Turma ().begin ()), n (i.Turma ().end ());
        b != n; ++b)
   {
     ::xercesc::DOMElement& s (
       ::xsd::cxx::xml::dom::create_element (
-        "turma",
+        "Turma",
         e));
 
     s << *b;
@@ -12082,7 +12054,7 @@ operator<< (::xercesc::DOMElement& e, const Trieda& i)
 }
 
 void
-operator<< (::xercesc::DOMElement& e, const unidadeCurriculo& i)
+operator<< (::xercesc::DOMElement& e, const UnidadeCurriculo& i)
 {
   e << static_cast< const ::ItemUnidadeCurriculo& > (i);
 }

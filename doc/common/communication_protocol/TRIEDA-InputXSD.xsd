@@ -48,7 +48,7 @@
     </xs:sequence>
   </xs:complexType>
   <xs:complexType name="ItemDivisaoCreditos">
-    <xs:sequence minOccurs="0">
+    <xs:sequence>
       <xs:element name="id" type="xs:int" />
       <xs:element name="creditos" type="xs:int" />
       <xs:element name="dia1" type="xs:int" />
@@ -189,7 +189,7 @@
       <xs:element name="id" type="xs:int" />
       <xs:element name="codigo" type="xs:string" />
       <xs:element name="descricao" type="xs:string" />
-      <xs:element name="DisciplinaPeriodo" type="ItemDisciplinaPeriodo" />
+      <xs:element name="DisciplinasPeriodo" type="ItemDisciplinaPeriodo" />
     </xs:sequence>
   </xs:complexType>
   <xs:complexType name="GrupoCurriculo">
