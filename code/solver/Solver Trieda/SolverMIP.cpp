@@ -6,6 +6,7 @@
 SolverMIP::SolverMIP(ProblemData *aProblemData)
 :Solver(aProblemData)
 {
+   alpha = beta = gamma = delta = lambda = 1.0;
    try
    {
 	   lp = new OPT_CPLEX;
@@ -111,3 +112,200 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
       delete[] xSol;
 }
 
+
+int SolverMIP::cria_variaveis(void)
+{
+   int num_vars = 0;
+   num_vars += cria_variavel_creditos();
+   return num_vars;
+}
+
+int SolverMIP::cria_variavel_creditos(void)
+{
+   int num_vars = 0;
+
+   ITERA_GGROUP(it_unidades,problemData->unidades,Unidade) 
+   {
+      ITERA_GGROUP(it_salas,it_unidades->salas,Sala) 
+      {
+         ITERA_GGROUP(it_disc,problemData->disciplinas,Disciplina)
+         {
+            ITERA_GGROUP(it_turma,it_disc->turmas,Turma)
+            {
+               for(int dia=0;dia<7;dia++)
+               {
+                  Variable v;
+                  v.reset();
+                  v.setType(Variable::V_CREDITOS);
+                  v.setUnidade(*it_unidades);
+                  v.setSala(*it_salas);
+                  v.setDisciplina(*it_disc);
+                  v.setTurma(*it_turma);
+                  v.setDia(dia);
+                  if (vHash.find(v) == vHash.end())
+                  {
+                     vHash[v] = lp->getNumCols();
+
+                     OPT_COL col(OPT_COL::VAR_INTEGRAL,0.0,0.0,24.0,
+                        (char*)v.toString().c_str());
+
+                     lp->newCol(col);
+
+                     num_vars += 1;
+                  }
+               }
+            }
+         }
+      }
+   }
+
+   return num_vars;
+}
+
+int SolverMIP::cria_variavel_oferecimentos(void)
+{
+   int num_vars = 0;
+
+   ITERA_GGROUP(it_unidades,problemData->unidades,Unidade) 
+   {
+      ITERA_GGROUP(it_salas,it_unidades->salas,Sala) 
+      {
+         ITERA_GGROUP(it_disc,problemData->disciplinas,Disciplina)
+         {
+            ITERA_GGROUP(it_turma,it_disc->turmas,Turma)
+            {
+               for(int dia=0;dia<7;dia++)
+               {
+                  Variable v;
+                  v.reset();
+                  v.setType(Variable::V_OFERECIMENTO);
+                  v.setTurma(*it_turma);
+                  v.setDisciplina(*it_disc);
+                  v.setUnidade(*it_unidades);
+                  v.setSala(*it_salas);
+                  v.setDia(dia);
+                  if (vHash.find(v) == vHash.end())
+                  {
+                     vHash[v] = lp->getNumCols();
+
+                     OPT_COL col(OPT_COL::VAR_BINARY,0.0,0.0,1.0,
+                        (char*)v.toString().c_str());
+
+                     lp->newCol(col);
+
+                     num_vars += 1;
+                  }
+               }
+            }
+         }
+      }
+   }
+
+
+   return num_vars;
+}
+
+int SolverMIP::cria_variavel_abertura(void)
+{
+   int num_vars = 0;
+   ITERA_GGROUP(it_unidades,problemData->unidades,Unidade)
+   {
+      ITERA_GGROUP(it_disc,problemData->disciplinas,Disciplina)
+      {
+         ITERA_GGROUP(it_turma,it_disc->turmas,Turma)
+         {
+            Variable v;
+            v.reset();
+            v.setType(Variable::V_ABERTURA);
+            v.setTurma(*it_turma);
+            v.setDisciplina(*it_disc);
+            v.setUnidade(*it_unidades);
+
+            /* Para a implementação correta do coeficiente talvez 
+            seja prciso mudar os dados, fazendo com que demanda
+            seja filha de disciplina, e não de unidade */
+            double ratiodem = 1.0; //todo
+            double coeff = alpha + gamma*ratiodem;
+
+            if (vHash.find(v) == vHash.end())
+            {
+               vHash[v] = lp->getNumCols();
+
+               OPT_COL col(OPT_COL::VAR_BINARY,coeff,0.0,1.0,
+                  (char*)v.toString().c_str());
+
+               lp->newCol(col);
+
+               num_vars += 1;
+            }
+         }
+      }
+   }
+   return num_vars;
+}
+
+int SolverMIP::cria_variavel_alunos(void)
+{
+   int num_vars = 0;
+   ITERA_GGROUP(it_unidades,problemData->unidades,Unidade)
+   {
+      ITERA_GGROUP(it_disc,problemData->disciplinas,Disciplina)
+      {
+         ITERA_GGROUP(it_turma,it_disc->turmas,Turma)
+         {
+            Variable v;
+            v.reset();
+            v.setType(Variable::V_ALUNOS);
+            v.setTurma(*it_turma);
+            v.setDisciplina(*it_disc);
+            v.setUnidade(*it_unidades);
+
+            if (vHash.find(v) == vHash.end())
+            {
+               vHash[v] = lp->getNumCols();
+
+               OPT_COL col(OPT_COL::VAR_INTEGRAL,0.0,0.0,1000.0,
+                  (char*)v.toString().c_str());
+
+               lp->newCol(col);
+
+               num_vars += 1;
+            }
+         }
+      }
+   }
+   return num_vars;
+}
+
+int SolverMIP::cria_variavel_consecutivos(void)
+{
+   int num_vars = 0;
+   ITERA_GGROUP(it_disc,problemData->disciplinas,Disciplina)
+   {
+      ITERA_GGROUP(it_turma,it_disc->turmas,Turma)
+      {
+         for(int dia=1;dia<7;dia++) 
+         {
+            Variable v;
+            v.reset();
+            v.setType(Variable::V_DIAS_CONSECUTIVOS);
+            v.setTurma(*it_turma);
+            v.setDisciplina(*it_disc);
+            v.setDia(dia);
+
+            if (vHash.find(v) == vHash.end())
+            {
+               vHash[v] = lp->getNumCols();
+
+               OPT_COL col(OPT_COL::VAR_BINARY,delta,0.0,1.0,
+                  (char*)v.toString().c_str());
+
+               lp->newCol(col);
+
+               num_vars += 1;
+            }
+         }
+      }
+   }
+   return num_vars;
+}

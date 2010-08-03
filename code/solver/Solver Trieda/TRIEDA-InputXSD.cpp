@@ -907,22 +907,28 @@ horarios (::std::auto_ptr< horarios_type > x)
   this->horarios_.set (x);
 }
 
-const ItemUnidade::demanda_sequence& ItemUnidade::
-demanda () const
+const ItemUnidade::demandas_type& ItemUnidade::
+demandas () const
 {
-  return this->demanda_;
+  return this->demandas_.get ();
 }
 
-ItemUnidade::demanda_sequence& ItemUnidade::
-demanda ()
+ItemUnidade::demandas_type& ItemUnidade::
+demandas ()
 {
-  return this->demanda_;
+  return this->demandas_.get ();
 }
 
 void ItemUnidade::
-demanda (const demanda_sequence& s)
+demandas (const demandas_type& x)
 {
-  this->demanda_ = s;
+  this->demandas_.set (x);
+}
+
+void ItemUnidade::
+demandas (::std::auto_ptr< demandas_type > x)
+{
+  this->demandas_.set (x);
 }
 
 const ItemUnidade::unidadeCurriculo_type& ItemUnidade::
@@ -1061,12 +1067,6 @@ cred_teoricos (const cred_teoricos_type& x)
   this->cred_teoricos_.set (x);
 }
 
-void ItemDisciplina::
-cred_teoricos (::std::auto_ptr< cred_teoricos_type > x)
-{
-  this->cred_teoricos_.set (x);
-}
-
 const ItemDisciplina::cred_praticos_type& ItemDisciplina::
 cred_praticos () const
 {
@@ -1081,12 +1081,6 @@ cred_praticos ()
 
 void ItemDisciplina::
 cred_praticos (const cred_praticos_type& x)
-{
-  this->cred_praticos_.set (x);
-}
-
-void ItemDisciplina::
-cred_praticos (::std::auto_ptr< cred_praticos_type > x)
 {
   this->cred_praticos_.set (x);
 }
@@ -1131,30 +1125,6 @@ void ItemDisciplina::
 TipoDisciplina (::std::auto_ptr< TipoDisciplina_type > x)
 {
   this->TipoDisciplina_.set (x);
-}
-
-const ItemDisciplina::DivisaoCreditos_type& ItemDisciplina::
-DivisaoCreditos () const
-{
-  return this->DivisaoCreditos_.get ();
-}
-
-ItemDisciplina::DivisaoCreditos_type& ItemDisciplina::
-DivisaoCreditos ()
-{
-  return this->DivisaoCreditos_.get ();
-}
-
-void ItemDisciplina::
-DivisaoCreditos (const DivisaoCreditos_type& x)
-{
-  this->DivisaoCreditos_.set (x);
-}
-
-void ItemDisciplina::
-DivisaoCreditos (::std::auto_ptr< DivisaoCreditos_type > x)
-{
-  this->DivisaoCreditos_.set (x);
 }
 
 const ItemDisciplina::compatibilidades_type& ItemDisciplina::
@@ -2841,16 +2811,16 @@ Turma (const Turma_sequence& s)
 // ItemTipoSala
 // 
 
-const ItemTipoSala::id_optional& ItemTipoSala::
+const ItemTipoSala::id_type& ItemTipoSala::
 id () const
 {
-  return this->id_;
+  return this->id_.get ();
 }
 
-ItemTipoSala::id_optional& ItemTipoSala::
+ItemTipoSala::id_type& ItemTipoSala::
 id ()
 {
-  return this->id_;
+  return this->id_.get ();
 }
 
 void ItemTipoSala::
@@ -2859,22 +2829,16 @@ id (const id_type& x)
   this->id_.set (x);
 }
 
-void ItemTipoSala::
-id (const id_optional& x)
-{
-  this->id_ = x;
-}
-
-const ItemTipoSala::nome_optional& ItemTipoSala::
+const ItemTipoSala::nome_type& ItemTipoSala::
 nome () const
 {
-  return this->nome_;
+  return this->nome_.get ();
 }
 
-ItemTipoSala::nome_optional& ItemTipoSala::
+ItemTipoSala::nome_type& ItemTipoSala::
 nome ()
 {
-  return this->nome_;
+  return this->nome_.get ();
 }
 
 void ItemTipoSala::
@@ -2884,39 +2848,27 @@ nome (const nome_type& x)
 }
 
 void ItemTipoSala::
-nome (const nome_optional& x)
-{
-  this->nome_ = x;
-}
-
-void ItemTipoSala::
 nome (::std::auto_ptr< nome_type > x)
 {
   this->nome_.set (x);
 }
 
-const ItemTipoSala::descricao_optional& ItemTipoSala::
+const ItemTipoSala::descricao_type& ItemTipoSala::
 descricao () const
 {
-  return this->descricao_;
+  return this->descricao_.get ();
 }
 
-ItemTipoSala::descricao_optional& ItemTipoSala::
+ItemTipoSala::descricao_type& ItemTipoSala::
 descricao ()
 {
-  return this->descricao_;
+  return this->descricao_.get ();
 }
 
 void ItemTipoSala::
 descricao (const descricao_type& x)
 {
   this->descricao_.set (x);
-}
-
-void ItemTipoSala::
-descricao (const descricao_optional& x)
-{
-  this->descricao_ = x;
 }
 
 void ItemTipoSala::
@@ -4533,6 +4485,7 @@ ItemUnidade (const id_type& id,
              const custoMedCred_type& custoMedCred,
              const salas_type& salas,
              const horarios_type& horarios,
+             const demandas_type& demandas,
              const unidadeCurriculo_type& unidadeCurriculo,
              const deslocamentos_type& deslocamentos)
 : ::xml_schema::type (),
@@ -4544,7 +4497,7 @@ ItemUnidade (const id_type& id,
   custoMedCred_ (custoMedCred, ::xml_schema::flags (), this),
   salas_ (salas, ::xml_schema::flags (), this),
   horarios_ (horarios, ::xml_schema::flags (), this),
-  demanda_ (::xml_schema::flags (), this),
+  demandas_ (demandas, ::xml_schema::flags (), this),
   unidadeCurriculo_ (unidadeCurriculo, ::xml_schema::flags (), this),
   deslocamentos_ (deslocamentos, ::xml_schema::flags (), this)
 {
@@ -4559,6 +4512,7 @@ ItemUnidade (const id_type& id,
              const custoMedCred_type& custoMedCred,
              ::std::auto_ptr< salas_type >& salas,
              ::std::auto_ptr< horarios_type >& horarios,
+             ::std::auto_ptr< demandas_type >& demandas,
              ::std::auto_ptr< unidadeCurriculo_type >& unidadeCurriculo,
              ::std::auto_ptr< deslocamentos_type >& deslocamentos)
 : ::xml_schema::type (),
@@ -4570,7 +4524,7 @@ ItemUnidade (const id_type& id,
   custoMedCred_ (custoMedCred, ::xml_schema::flags (), this),
   salas_ (salas, ::xml_schema::flags (), this),
   horarios_ (horarios, ::xml_schema::flags (), this),
-  demanda_ (::xml_schema::flags (), this),
+  demandas_ (demandas, ::xml_schema::flags (), this),
   unidadeCurriculo_ (unidadeCurriculo, ::xml_schema::flags (), this),
   deslocamentos_ (deslocamentos, ::xml_schema::flags (), this)
 {
@@ -4589,7 +4543,7 @@ ItemUnidade (const ItemUnidade& x,
   custoMedCred_ (x.custoMedCred_, f, this),
   salas_ (x.salas_, f, this),
   horarios_ (x.horarios_, f, this),
-  demanda_ (x.demanda_, f, this),
+  demandas_ (x.demandas_, f, this),
   unidadeCurriculo_ (x.unidadeCurriculo_, f, this),
   deslocamentos_ (x.deslocamentos_, f, this)
 {
@@ -4608,7 +4562,7 @@ ItemUnidade (const ::xercesc::DOMElement& e,
   custoMedCred_ (f, this),
   salas_ (f, this),
   horarios_ (f, this),
-  demanda_ (f, this),
+  demandas_ (f, this),
   unidadeCurriculo_ (f, this),
   deslocamentos_ (f, this)
 {
@@ -4732,15 +4686,18 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
       }
     }
 
-    // demanda
+    // demandas
     //
-    if (n.name () == "demanda" && n.namespace_ ().empty ())
+    if (n.name () == "demandas" && n.namespace_ ().empty ())
     {
-      ::std::auto_ptr< demanda_type > r (
-        demanda_traits::create (i, f, this));
+      ::std::auto_ptr< demandas_type > r (
+        demandas_traits::create (i, f, this));
 
-      this->demanda_.push_back (r);
-      continue;
+      if (!demandas_.present ())
+      {
+        this->demandas_.set (r);
+        continue;
+      }
     }
 
     // unidadeCurriculo
@@ -4830,6 +4787,13 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
       "");
   }
 
+  if (!demandas_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "demandas",
+      "");
+  }
+
   if (!unidadeCurriculo_.present ())
   {
     throw ::xsd::cxx::tree::expected_element< char > (
@@ -4868,7 +4832,6 @@ ItemDisciplina (const id_type& id,
                 const cred_praticos_type& cred_praticos,
                 const laboratorio_type& laboratorio,
                 const TipoDisciplina_type& TipoDisciplina,
-                const DivisaoCreditos_type& DivisaoCreditos,
                 const compatibilidades_type& compatibilidades,
                 const equivalencia_type& equivalencia,
                 const horarios_type& horarios,
@@ -4883,7 +4846,6 @@ ItemDisciplina (const id_type& id,
   cred_praticos_ (cred_praticos, ::xml_schema::flags (), this),
   laboratorio_ (laboratorio, ::xml_schema::flags (), this),
   TipoDisciplina_ (TipoDisciplina, ::xml_schema::flags (), this),
-  DivisaoCreditos_ (DivisaoCreditos, ::xml_schema::flags (), this),
   compatibilidades_ (compatibilidades, ::xml_schema::flags (), this),
   equivalencia_ (equivalencia, ::xml_schema::flags (), this),
   horarios_ (horarios, ::xml_schema::flags (), this),
@@ -4901,7 +4863,6 @@ ItemDisciplina (const id_type& id,
                 const cred_praticos_type& cred_praticos,
                 const laboratorio_type& laboratorio,
                 ::std::auto_ptr< TipoDisciplina_type >& TipoDisciplina,
-                ::std::auto_ptr< DivisaoCreditos_type >& DivisaoCreditos,
                 ::std::auto_ptr< compatibilidades_type >& compatibilidades,
                 ::std::auto_ptr< equivalencia_type >& equivalencia,
                 ::std::auto_ptr< horarios_type >& horarios,
@@ -4916,7 +4877,6 @@ ItemDisciplina (const id_type& id,
   cred_praticos_ (cred_praticos, ::xml_schema::flags (), this),
   laboratorio_ (laboratorio, ::xml_schema::flags (), this),
   TipoDisciplina_ (TipoDisciplina, ::xml_schema::flags (), this),
-  DivisaoCreditos_ (DivisaoCreditos, ::xml_schema::flags (), this),
   compatibilidades_ (compatibilidades, ::xml_schema::flags (), this),
   equivalencia_ (equivalencia, ::xml_schema::flags (), this),
   horarios_ (horarios, ::xml_schema::flags (), this),
@@ -4938,7 +4898,6 @@ ItemDisciplina (const ItemDisciplina& x,
   cred_praticos_ (x.cred_praticos_, f, this),
   laboratorio_ (x.laboratorio_, f, this),
   TipoDisciplina_ (x.TipoDisciplina_, f, this),
-  DivisaoCreditos_ (x.DivisaoCreditos_, f, this),
   compatibilidades_ (x.compatibilidades_, f, this),
   equivalencia_ (x.equivalencia_, f, this),
   horarios_ (x.horarios_, f, this),
@@ -4960,7 +4919,6 @@ ItemDisciplina (const ::xercesc::DOMElement& e,
   cred_praticos_ (f, this),
   laboratorio_ (f, this),
   TipoDisciplina_ (f, this),
-  DivisaoCreditos_ (f, this),
   compatibilidades_ (f, this),
   equivalencia_ (f, this),
   horarios_ (f, this),
@@ -5028,12 +4986,9 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
     //
     if (n.name () == "cred_teoricos" && n.namespace_ ().empty ())
     {
-      ::std::auto_ptr< cred_teoricos_type > r (
-        cred_teoricos_traits::create (i, f, this));
-
       if (!cred_teoricos_.present ())
       {
-        this->cred_teoricos_.set (r);
+        this->cred_teoricos_.set (cred_teoricos_traits::create (i, f, this));
         continue;
       }
     }
@@ -5042,12 +4997,9 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
     //
     if (n.name () == "cred_praticos" && n.namespace_ ().empty ())
     {
-      ::std::auto_ptr< cred_praticos_type > r (
-        cred_praticos_traits::create (i, f, this));
-
       if (!cred_praticos_.present ())
       {
-        this->cred_praticos_.set (r);
+        this->cred_praticos_.set (cred_praticos_traits::create (i, f, this));
         continue;
       }
     }
@@ -5073,20 +5025,6 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
       if (!TipoDisciplina_.present ())
       {
         this->TipoDisciplina_.set (r);
-        continue;
-      }
-    }
-
-    // DivisaoCreditos
-    //
-    if (n.name () == "DivisaoCreditos" && n.namespace_ ().empty ())
-    {
-      ::std::auto_ptr< DivisaoCreditos_type > r (
-        DivisaoCreditos_traits::create (i, f, this));
-
-      if (!DivisaoCreditos_.present ())
-      {
-        this->DivisaoCreditos_.set (r);
         continue;
       }
     }
@@ -5224,13 +5162,6 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
   {
     throw ::xsd::cxx::tree::expected_element< char > (
       "TipoDisciplina",
-      "");
-  }
-
-  if (!DivisaoCreditos_.present ())
-  {
-    throw ::xsd::cxx::tree::expected_element< char > (
-      "DivisaoCreditos",
       "");
   }
 
@@ -8319,11 +8250,13 @@ GrupoTurma::
 //
 
 ItemTipoSala::
-ItemTipoSala ()
+ItemTipoSala (const id_type& id,
+              const nome_type& nome,
+              const descricao_type& descricao)
 : ::xml_schema::type (),
-  id_ (::xml_schema::flags (), this),
-  nome_ (::xml_schema::flags (), this),
-  descricao_ (::xml_schema::flags (), this)
+  id_ (id, ::xml_schema::flags (), this),
+  nome_ (nome, ::xml_schema::flags (), this),
+  descricao_ (descricao, ::xml_schema::flags (), this)
 {
 }
 
@@ -8368,7 +8301,7 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
     //
     if (n.name () == "id" && n.namespace_ ().empty ())
     {
-      if (!this->id_)
+      if (!id_.present ())
       {
         this->id_.set (id_traits::create (i, f, this));
         continue;
@@ -8382,7 +8315,7 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
       ::std::auto_ptr< nome_type > r (
         nome_traits::create (i, f, this));
 
-      if (!this->nome_)
+      if (!nome_.present ())
       {
         this->nome_.set (r);
         continue;
@@ -8396,7 +8329,7 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
       ::std::auto_ptr< descricao_type > r (
         descricao_traits::create (i, f, this));
 
-      if (!this->descricao_)
+      if (!descricao_.present ())
       {
         this->descricao_.set (r);
         continue;
@@ -8404,6 +8337,27 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
     }
 
     break;
+  }
+
+  if (!id_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "id",
+      "");
+  }
+
+  if (!nome_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "nome",
+      "");
+  }
+
+  if (!descricao_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "descricao",
+      "");
   }
 }
 
@@ -9339,13 +9293,7 @@ operator<< (::std::ostream& o, const ItemUnidade& i)
   o << ::std::endl << "custoMedCred: " << i.custoMedCred ();
   o << ::std::endl << "salas: " << i.salas ();
   o << ::std::endl << "horarios: " << i.horarios ();
-  for (ItemUnidade::demanda_const_iterator
-       b (i.demanda ().begin ()), e (i.demanda ().end ());
-       b != e; ++b)
-  {
-    o << ::std::endl << "demanda: " << *b;
-  }
-
+  o << ::std::endl << "demandas: " << i.demandas ();
   o << ::std::endl << "unidadeCurriculo: " << i.unidadeCurriculo ();
   o << ::std::endl << "deslocamentos: " << i.deslocamentos ();
   return o;
@@ -9361,7 +9309,6 @@ operator<< (::std::ostream& o, const ItemDisciplina& i)
   o << ::std::endl << "cred_praticos: " << i.cred_praticos ();
   o << ::std::endl << "laboratorio: " << i.laboratorio ();
   o << ::std::endl << "TipoDisciplina: " << i.TipoDisciplina ();
-  o << ::std::endl << "DivisaoCreditos: " << i.DivisaoCreditos ();
   o << ::std::endl << "compatibilidades: " << i.compatibilidades ();
   o << ::std::endl << "equivalencia: " << i.equivalencia ();
   o << ::std::endl << "horarios: " << i.horarios ();
@@ -9652,21 +9599,9 @@ operator<< (::std::ostream& o, const GrupoTurma& i)
 ::std::ostream&
 operator<< (::std::ostream& o, const ItemTipoSala& i)
 {
-  if (i.id ())
-  {
-    o << ::std::endl << "id: " << *i.id ();
-  }
-
-  if (i.nome ())
-  {
-    o << ::std::endl << "nome: " << *i.nome ();
-  }
-
-  if (i.descricao ())
-  {
-    o << ::std::endl << "descricao: " << *i.descricao ();
-  }
-
+  o << ::std::endl << "id: " << i.id ();
+  o << ::std::endl << "nome: " << i.nome ();
+  o << ::std::endl << "descricao: " << i.descricao ();
   return o;
 }
 
@@ -10677,18 +10612,15 @@ operator<< (::xercesc::DOMElement& e, const ItemUnidade& i)
     s << i.horarios ();
   }
 
-  // demanda
+  // demandas
   //
-  for (ItemUnidade::demanda_const_iterator
-       b (i.demanda ().begin ()), n (i.demanda ().end ());
-       b != n; ++b)
   {
     ::xercesc::DOMElement& s (
       ::xsd::cxx::xml::dom::create_element (
-        "demanda",
+        "demandas",
         e));
 
-    s << *b;
+    s << i.demandas ();
   }
 
   // unidadeCurriculo
@@ -10794,17 +10726,6 @@ operator<< (::xercesc::DOMElement& e, const ItemDisciplina& i)
         e));
 
     s << i.TipoDisciplina ();
-  }
-
-  // DivisaoCreditos
-  //
-  {
-    ::xercesc::DOMElement& s (
-      ::xsd::cxx::xml::dom::create_element (
-        "DivisaoCreditos",
-        e));
-
-    s << i.DivisaoCreditos ();
   }
 
   // compatibilidades
@@ -11806,38 +11727,35 @@ operator<< (::xercesc::DOMElement& e, const ItemTipoSala& i)
 
   // id
   //
-  if (i.id ())
   {
     ::xercesc::DOMElement& s (
       ::xsd::cxx::xml::dom::create_element (
         "id",
         e));
 
-    s << *i.id ();
+    s << i.id ();
   }
 
   // nome
   //
-  if (i.nome ())
   {
     ::xercesc::DOMElement& s (
       ::xsd::cxx::xml::dom::create_element (
         "nome",
         e));
 
-    s << *i.nome ();
+    s << i.nome ();
   }
 
   // descricao
   //
-  if (i.descricao ())
   {
     ::xercesc::DOMElement& s (
       ::xsd::cxx::xml::dom::create_element (
         "descricao",
         e));
 
-    s << *i.descricao ();
+    s << i.descricao ();
   }
 }
 

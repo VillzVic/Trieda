@@ -13,11 +13,7 @@ public:
    enum ConstraintType
    {
       C_ERROR = 0,
-
-      /*
-      ToDo:
-      All constraints should be defined here
-      */
+      C_CARGA_HORARIA = 1,
    };
 
    /** Default constructor. */

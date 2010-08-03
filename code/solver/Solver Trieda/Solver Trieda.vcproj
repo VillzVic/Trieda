@@ -2,7 +2,7 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9,00"
-	Name="Solver Trieda"
+	Name="Solver Tático"
 	ProjectGUID="{F1BE51D8-F246-4132-8DDC-04958EEACDBF}"
 	RootNamespace="SolverTrieda"
 	TargetFrameworkVersion="196613"
@@ -212,11 +212,23 @@
 				Name="Input"
 				>
 				<File
+					RelativePath=".\AreaTitulacao.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\Calendario.cpp"
 					>
 				</File>
 				<File
+					RelativePath=".\Curriculo.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\Curso.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\Demanda.cpp"
 					>
 				</File>
 				<File
@@ -225,6 +237,14 @@
 				</File>
 				<File
 					RelativePath=".\DivisaoCreditos.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\HorarioAula.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\HorarioDisponivel.cpp"
 					>
 				</File>
 				<File
@@ -244,7 +264,31 @@
 					>
 				</File>
 				<File
+					RelativePath=".\Sala.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\TipoCurso.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\TipoDisciplina.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\TipoSala.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\TRIEDA-InputXSD.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\Turma.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\Turno.cpp"
 					>
 				</File>
 				<File
@@ -255,6 +299,10 @@
 			<Filter
 				Name="Output"
 				>
+				<File
+					RelativePath=".\Oferecimento.cpp"
+					>
+				</File>
 				<File
 					RelativePath=".\ProblemSolution.cpp"
 					>
@@ -317,11 +365,23 @@
 				Name="Input"
 				>
 				<File
+					RelativePath=".\AreaTitulacao.h"
+					>
+				</File>
+				<File
 					RelativePath=".\Calendario.h"
 					>
 				</File>
 				<File
+					RelativePath=".\Curriculo.h"
+					>
+				</File>
+				<File
 					RelativePath=".\Curso.h"
+					>
+				</File>
+				<File
+					RelativePath=".\Demanda.h"
 					>
 				</File>
 				<File
@@ -330,6 +390,18 @@
 				</File>
 				<File
 					RelativePath=".\DivisaoCreditos.h"
+					>
+				</File>
+				<File
+					RelativePath=".\HorarioAula.h"
+					>
+				</File>
+				<File
+					RelativePath=".\HorarioDisponivel.h"
+					>
+				</File>
+				<File
+					RelativePath=".\input.h"
 					>
 				</File>
 				<File
@@ -349,7 +421,31 @@
 					>
 				</File>
 				<File
+					RelativePath=".\Sala.h"
+					>
+				</File>
+				<File
+					RelativePath=".\TipoCurso.h"
+					>
+				</File>
+				<File
+					RelativePath=".\TipoDisciplina.h"
+					>
+				</File>
+				<File
+					RelativePath=".\TipoSala.h"
+					>
+				</File>
+				<File
 					RelativePath=".\TRIEDA-InputXSD.h"
+					>
+				</File>
+				<File
+					RelativePath=".\Turma.h"
+					>
+				</File>
+				<File
+					RelativePath=".\Turno.h"
 					>
 				</File>
 				<File
@@ -360,6 +456,10 @@
 			<Filter
 				Name="Output"
 				>
+				<File
+					RelativePath=".\Oferecimento.h"
+					>
+				</File>
 				<File
 					RelativePath=".\ProblemSolution.h"
 					>

@@ -2,6 +2,7 @@
 #define VARIABLE_H
 
 #include <hash_map>
+#include "input.h"
 
 //Variables
 class Variable 
@@ -11,6 +12,14 @@ public:
    enum VariableType
    {
       V_ERROR = 0,
+      V_CREDITOS = 1, /** x_{idust} */
+      V_OFERECIMENTO = 2, /** o_{idust} */
+      V_ABERTURA = 3, /** z_{idu} */
+      V_ALUNOS = 4, /** a_{idu} */
+      V_TURMA_BLOCO = 5, /** w_{btu} */
+      V_DIAS_CONSECUTIVOS = 6, /** c_{idt} */
+      V_MIN_CRED_SEMANA = 7, /** h_{bi} */
+      V_MAX_CRED_SEMANA = 8, /** H_{bi} */
    };
 
    //Constructors
@@ -33,6 +42,12 @@ public:
    ToDo:
    All get methods of the private attributes should be defined here
    */
+   Turma* getTurma() const { return i; }
+   Disciplina* getDisciplina() const { return d; }
+   Unidade* getUnidade() const { return u; }
+   Sala* getSala() const { return s; }
+   int getDia() const { return t; }
+   /* /!\ */ TipoDisciplina* getBloco() const { return b; }
 
    //==================================================
    // SET METHODS 
@@ -50,6 +65,14 @@ public:
    ToDo:
    All set methods of the private attributes should be defined here
    */
+   void setTurma(Turma* ii) {  i = ii; }
+   void setDisciplina(Disciplina* dd) {  d = dd; }
+   void setUnidade(Unidade* uu) {  u = uu; }
+   void setSala(Sala* ss) {  s = ss; }
+   void setDia(int tt) {  t = tt; }
+   /* /!\ */  void setBloco(TipoDisciplina* bb) {  b = bb; } 
+
+
 
    //==================================================
    // OPERATORS 
@@ -71,7 +94,18 @@ private:
    /* ToDo:
    All attributes that define a variable should be declared here
    */
+   Turma* i;
+   Disciplina* d;
+   Unidade* u;
+   Sala* s;
+   int t /* dia */;
 
+   /*                /!\ W A R N I N G /!\  
+
+      Na verdade, abaixo deveria ser bloco curricular que, ao que 
+      parece, não está presente no modelo físico nem na especificação
+      do primeiro sprint :( */ 
+   TipoDisciplina* b; 
 };
 
 

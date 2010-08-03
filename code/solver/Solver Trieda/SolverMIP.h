@@ -5,6 +5,7 @@
 #include "Variable.h"
 #include "Constraint.h"
 #include "opt_lp.h"
+#include "input.h"
 
 /**
 * Implements a MIP Solver.
@@ -65,6 +66,14 @@ private:
    All methods of constraint creation should be defined here
    */
 
+   double alpha, beta, gamma, delta, lambda;
+public:
+   int cria_variaveis(void);
+   int cria_variavel_creditos(void);
+   int cria_variavel_oferecimentos(void);
+   int cria_variavel_abertura(void);
+   int cria_variavel_alunos(void);
+   int cria_variavel_consecutivos(void);
 };
 
 #endif

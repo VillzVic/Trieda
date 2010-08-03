@@ -3,8 +3,13 @@
 #include "TRIEDA-InputXSD.h"
 #include <iostream>
 
+using namespace std;
+
 ProblemDataLoader::ProblemDataLoader( char *inputFile, ProblemData* data )
 {
+   std::cout << "DataLoader" << std::endl;
+   this->inputFile = inputFile;
+   this->problemData  = data;
 }
 
 ProblemDataLoader::~ProblemDataLoader()
@@ -13,13 +18,8 @@ ProblemDataLoader::~ProblemDataLoader()
 
 void ProblemDataLoader::load()
 {
-   std::string filename = "HAha.xml";
-   std::auto_ptr<Trieda> root;
-   root = std::auto_ptr<Trieda>(Trieda_(filename.c_str(), xml_schema::flags::dont_validate));
-//   std::auto_ptr<cenario> root;
-//   root = std::auto_ptr<cenario>(cenario_(filename.c_str(), xml_schema::flags::dont_validate));
-//   root->cadeia().get().capacidadesEstocagemEloProduto().get().capacidadeEstocagemEloProduto().begin()
-   root->unidades().ItemUnidade().begin();
-
+   std::cout << "Loading" << std::endl;
+   root = std::auto_ptr<Trieda>(Trieda_(inputFile, xml_schema::flags::dont_validate));
+   std::cout << "ate encontrou o arquivo..." << std::endl;
+   problemData->le_arvore(*root);
 }
-

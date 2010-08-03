@@ -3,6 +3,7 @@
 
 #include <ostream>
 #include "GGroup.h"
+#include "Oferecimento.h"
 
 //Stores output data
 class ProblemSolution
@@ -38,6 +39,7 @@ private:
    ToDo:
    All objects that define the problem output should be declared here
    **/
+   GGroup<Oferecimento*> oferecimentos;
 
 };
 

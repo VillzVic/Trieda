@@ -9,9 +9,10 @@
 #include "Professor.h"
 #include "Unidade.h"
 #include "Calendario.h"
+#include <iostream>
 
 //Stores input data
-class ProblemData
+class ProblemData : public OFBase
 {
 public:
    //Constructor for initial state
@@ -32,13 +33,13 @@ public:
    //==================================================
    // GET METHODS 
    //==================================================
-
+   GGroup<Unidade*>* getUnidades() { return &unidades; }
    /**
    ToDo:
    All get methods of the private attributes should be defined here
    */
 
-private:
+//private:
 
    /**
    ToDo:
@@ -50,6 +51,8 @@ private:
    Calendario* calendario;
    GGroup<Disciplina*> disciplinas;
    GGroup<DivisaoCreditos*> regrasCredito;
+public:
+   virtual void le_arvore(Trieda& raiz);
 };
 
 #endif

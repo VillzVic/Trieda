@@ -17,6 +17,14 @@ void Variable::reset()
    /* ToDo:
    All pointers that define a variable should be addressed to NULL
    */
+   value = -1;
+   b = NULL;
+   i = NULL;
+   d = NULL;
+   u = NULL;
+   s = NULL;
+   t = -1;
+
 }
 
 Variable::~Variable()
@@ -26,7 +34,6 @@ Variable::~Variable()
 
 Variable& Variable::operator=(const Variable& var)
 {
-
    return *this;
 }
 
@@ -73,7 +80,24 @@ size_t VariableHasher::operator()(const Variable& v) const
    ToDo:
    All pointers different from NULL must be considered in the hash function
    **/
-
+   if (v.getBloco() != NULL) {
+      sum *= HASH_PRIME; sum+= intHash(v.getBloco()->getId());
+   }
+   if (v.getTurma() != NULL) {
+      sum *= HASH_PRIME; sum+= intHash(v.getTurma()->getId());
+   }
+   if (v.getDisciplina() != NULL) {
+      sum *= HASH_PRIME; sum+= intHash(v.getDisciplina()->getId());
+   }
+   if (v.getUnidade() != NULL) {
+      sum *= HASH_PRIME; sum+= intHash(v.getUnidade()->getId());
+   }
+   if (v.getSala() != NULL) {
+      sum *= HASH_PRIME; sum+= intHash(v.getSala()->getId());
+   }
+   if(v.getDia() >= 0) {
+      sum *= HASH_PRIME; sum+= intHash(v.getDia());
+   }
    return sum;
 }
 
