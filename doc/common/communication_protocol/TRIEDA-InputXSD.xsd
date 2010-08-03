@@ -91,9 +91,8 @@
       <xs:element name="custoMedCred" type="xs:int" />
       <xs:element name="salas" type="GrupoSala" />
       <xs:element name="horarios" type="GrupoHorarioDisponivel" />
-      <xs:element name="demanda" type="GrupoDemanda" />
+      <xs:element name="demandas" type="GrupoDemanda" />
       <xs:element name="unidadeCurriculo" type="GrupoUnidadeCurriculo" />
-      <xs:element name="demanda" type="GrupoDemanda" />
       <xs:element name="deslocamentos" type="GrupoDeslocamento" />
     </xs:sequence>
   </xs:complexType>
