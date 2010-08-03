@@ -3678,64 +3678,6 @@ class ItemUnidade: public ::xml_schema::type
   //@}
 
   /**
-   * @name demandas
-   *
-   * @brief Accessor and modifier functions for the %demandas
-   * required element.
-   */
-  //@{
-
-  /**
-   * @brief Element type.
-   */
-  typedef ::GrupoDemanda demandas_type;
-
-  /**
-   * @brief Element traits type.
-   */
-  typedef ::xsd::cxx::tree::traits< demandas_type, char > demandas_traits;
-
-  /**
-   * @brief Return a read-only (constant) reference to the element.
-   *
-   * @return A constant reference to the element.
-   */
-  const demandas_type&
-  demandas () const;
-
-  /**
-   * @brief Return a read-write reference to the element.
-   *
-   * @return A reference to the element.
-   */
-  demandas_type&
-  demandas ();
-
-  /**
-   * @brief Set the element value.
-   *
-   * @param x A new value to set.
-   *
-   * This function makes a copy of its argument and sets it as
-   * the new value of the element.
-   */
-  void
-  demandas (const demandas_type& x);
-
-  /**
-   * @brief Set the element value without copying.
-   *
-   * @param p A new value to use.
-   *
-   * This function will try to use the passed value directly instead
-   * of making a copy.
-   */
-  void
-  demandas (::std::auto_ptr< demandas_type > p);
-
-  //@}
-
-  /**
    * @name unidadeCurriculo
    *
    * @brief Accessor and modifier functions for the %unidadeCurriculo
@@ -3868,7 +3810,6 @@ class ItemUnidade: public ::xml_schema::type
                const custoMedCred_type&,
                const salas_type&,
                const horarios_type&,
-               const demandas_type&,
                const unidadeCurriculo_type&,
                const deslocamentos_type&);
 
@@ -3888,7 +3829,6 @@ class ItemUnidade: public ::xml_schema::type
                const custoMedCred_type&,
                ::std::auto_ptr< salas_type >&,
                ::std::auto_ptr< horarios_type >&,
-               ::std::auto_ptr< demandas_type >&,
                ::std::auto_ptr< unidadeCurriculo_type >&,
                ::std::auto_ptr< deslocamentos_type >&);
 
@@ -3959,7 +3899,6 @@ class ItemUnidade: public ::xml_schema::type
   ::xsd::cxx::tree::one< custoMedCred_type > custoMedCred_;
   ::xsd::cxx::tree::one< salas_type > salas_;
   ::xsd::cxx::tree::one< horarios_type > horarios_;
-  ::xsd::cxx::tree::one< demandas_type > demandas_;
   ::xsd::cxx::tree::one< unidadeCurriculo_type > unidadeCurriculo_;
   ::xsd::cxx::tree::one< deslocamentos_type > deslocamentos_;
 
@@ -4018,6 +3957,64 @@ class ItemDisciplina: public ::xml_schema::type
    */
   void
   id (const id_type& x);
+
+  //@}
+
+  /**
+   * @name demandas
+   *
+   * @brief Accessor and modifier functions for the %demandas
+   * required element.
+   */
+  //@{
+
+  /**
+   * @brief Element type.
+   */
+  typedef ::GrupoDemanda demandas_type;
+
+  /**
+   * @brief Element traits type.
+   */
+  typedef ::xsd::cxx::tree::traits< demandas_type, char > demandas_traits;
+
+  /**
+   * @brief Return a read-only (constant) reference to the element.
+   *
+   * @return A constant reference to the element.
+   */
+  const demandas_type&
+  demandas () const;
+
+  /**
+   * @brief Return a read-write reference to the element.
+   *
+   * @return A reference to the element.
+   */
+  demandas_type&
+  demandas ();
+
+  /**
+   * @brief Set the element value.
+   *
+   * @param x A new value to set.
+   *
+   * This function makes a copy of its argument and sets it as
+   * the new value of the element.
+   */
+  void
+  demandas (const demandas_type& x);
+
+  /**
+   * @brief Set the element value without copying.
+   *
+   * @param p A new value to use.
+   *
+   * This function will try to use the passed value directly instead
+   * of making a copy.
+   */
+  void
+  demandas (::std::auto_ptr< demandas_type > p);
 
   //@}
 
@@ -4694,6 +4691,7 @@ class ItemDisciplina: public ::xml_schema::type
    * initializers for required elements and attributes.
    */
   ItemDisciplina (const id_type&,
+                  const demandas_type&,
                   const codigo_type&,
                   const nome_type&,
                   const cred_teoricos_type&,
@@ -4716,6 +4714,7 @@ class ItemDisciplina: public ::xml_schema::type
    * instead of making copies.
    */
   ItemDisciplina (const id_type&,
+                  ::std::auto_ptr< demandas_type >&,
                   const codigo_type&,
                   const nome_type&,
                   const cred_teoricos_type&,
@@ -4789,6 +4788,7 @@ class ItemDisciplina: public ::xml_schema::type
 
   protected:
   ::xsd::cxx::tree::one< id_type > id_;
+  ::xsd::cxx::tree::one< demandas_type > demandas_;
   ::xsd::cxx::tree::one< codigo_type > codigo_;
   ::xsd::cxx::tree::one< nome_type > nome_;
   ::xsd::cxx::tree::one< cred_teoricos_type > cred_teoricos_;
@@ -8926,6 +8926,64 @@ class ItemDemanda: public ::xml_schema::type
   //@}
 
   /**
+   * @name unidade
+   *
+   * @brief Accessor and modifier functions for the %unidade
+   * required element.
+   */
+  //@{
+
+  /**
+   * @brief Element type.
+   */
+  typedef ::ItemUnidade unidade_type;
+
+  /**
+   * @brief Element traits type.
+   */
+  typedef ::xsd::cxx::tree::traits< unidade_type, char > unidade_traits;
+
+  /**
+   * @brief Return a read-only (constant) reference to the element.
+   *
+   * @return A constant reference to the element.
+   */
+  const unidade_type&
+  unidade () const;
+
+  /**
+   * @brief Return a read-write reference to the element.
+   *
+   * @return A reference to the element.
+   */
+  unidade_type&
+  unidade ();
+
+  /**
+   * @brief Set the element value.
+   *
+   * @param x A new value to set.
+   *
+   * This function makes a copy of its argument and sets it as
+   * the new value of the element.
+   */
+  void
+  unidade (const unidade_type& x);
+
+  /**
+   * @brief Set the element value without copying.
+   *
+   * @param p A new value to use.
+   *
+   * This function will try to use the passed value directly instead
+   * of making a copy.
+   */
+  void
+  unidade (::std::auto_ptr< unidade_type > p);
+
+  //@}
+
+  /**
    * @name Constructors
    */
   //@{
@@ -8937,7 +8995,8 @@ class ItemDemanda: public ::xml_schema::type
   ItemDemanda (const quantidade_type&,
                const turno_type&,
                const disciplina_type&,
-               const curso_type&);
+               const curso_type&,
+               const unidade_type&);
 
   /**
    * @brief Create an instance from the ultimate base and
@@ -8950,7 +9009,8 @@ class ItemDemanda: public ::xml_schema::type
   ItemDemanda (const quantidade_type&,
                ::std::auto_ptr< turno_type >&,
                ::std::auto_ptr< disciplina_type >&,
-               ::std::auto_ptr< curso_type >&);
+               ::std::auto_ptr< curso_type >&,
+               ::std::auto_ptr< unidade_type >&);
 
   /**
    * @brief Create an instance from a DOM element.
@@ -9015,6 +9075,7 @@ class ItemDemanda: public ::xml_schema::type
   ::xsd::cxx::tree::one< turno_type > turno_;
   ::xsd::cxx::tree::one< disciplina_type > disciplina_;
   ::xsd::cxx::tree::one< curso_type > curso_;
+  ::xsd::cxx::tree::one< unidade_type > unidade_;
 
   //@endcond
 };

@@ -1,8 +1,8 @@
 #pragma once
 #include "ofbase.h"
 #include "Turno.h"
-#include "Disciplina.h"
 #include "Curso.h"
+#include "Unidade.h"
 
 class Demanda :
    public OFBase
@@ -13,8 +13,8 @@ public:
    virtual void le_arvore(ItemDemanda& elem);
    bool operator < (const Demanda& right) 
    { 
-      if(disciplina != right.disciplina)
-         return (disciplina < right.disciplina); 
+      if(unidade != right.unidade)
+         return (unidade < right.unidade); 
       if(turno != right.turno)
          return (turno < right.turno);
       if(curso != right.curso)
@@ -27,6 +27,6 @@ public:
 
    int quantidade;
    Turno* turno;
-   Disciplina* disciplina;
+   Unidade* unidade;
    Curso* curso;
 };

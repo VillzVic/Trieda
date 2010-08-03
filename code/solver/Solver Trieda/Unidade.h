@@ -3,7 +3,6 @@
 #include "Sala.h"
 #include "HorarioDisponivel.h"
 #include "Curriculo.h"
-#include "Demanda.h"
 
 class Unidade :
    public OFBase
@@ -19,7 +18,6 @@ public:
    int custo_med_cred;
 
    GGroup<HorarioDisponivel*> horarios;
-   GGroup<Demanda*> demandas; 
 //   GGroup<UnidadeCurriculo*> curriculos; TODO
 //   GGroup<Deslocamento*> deslocamento; TODO
 public:

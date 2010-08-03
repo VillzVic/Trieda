@@ -40,4 +40,9 @@ void Disciplina::le_arvore(ItemDisciplina& elem)
       turma->le_arvore(*it_turma);
       turmas.add(turma);
    }
+   ITERA_SEQ(it_demanda,elem.demandas(),Demanda) {
+      Demanda* demanda = new Demanda();
+      demanda->le_arvore(*it_demanda);
+      demandas.add(demanda);
+   }
 }

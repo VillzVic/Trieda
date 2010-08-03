@@ -907,30 +907,6 @@ horarios (::std::auto_ptr< horarios_type > x)
   this->horarios_.set (x);
 }
 
-const ItemUnidade::demandas_type& ItemUnidade::
-demandas () const
-{
-  return this->demandas_.get ();
-}
-
-ItemUnidade::demandas_type& ItemUnidade::
-demandas ()
-{
-  return this->demandas_.get ();
-}
-
-void ItemUnidade::
-demandas (const demandas_type& x)
-{
-  this->demandas_.set (x);
-}
-
-void ItemUnidade::
-demandas (::std::auto_ptr< demandas_type > x)
-{
-  this->demandas_.set (x);
-}
-
 const ItemUnidade::unidadeCurriculo_type& ItemUnidade::
 unidadeCurriculo () const
 {
@@ -999,6 +975,30 @@ void ItemDisciplina::
 id (const id_type& x)
 {
   this->id_.set (x);
+}
+
+const ItemDisciplina::demandas_type& ItemDisciplina::
+demandas () const
+{
+  return this->demandas_.get ();
+}
+
+ItemDisciplina::demandas_type& ItemDisciplina::
+demandas ()
+{
+  return this->demandas_.get ();
+}
+
+void ItemDisciplina::
+demandas (const demandas_type& x)
+{
+  this->demandas_.set (x);
+}
+
+void ItemDisciplina::
+demandas (::std::auto_ptr< demandas_type > x)
+{
+  this->demandas_.set (x);
 }
 
 const ItemDisciplina::codigo_type& ItemDisciplina::
@@ -2365,6 +2365,30 @@ void ItemDemanda::
 curso (::std::auto_ptr< curso_type > x)
 {
   this->curso_.set (x);
+}
+
+const ItemDemanda::unidade_type& ItemDemanda::
+unidade () const
+{
+  return this->unidade_.get ();
+}
+
+ItemDemanda::unidade_type& ItemDemanda::
+unidade ()
+{
+  return this->unidade_.get ();
+}
+
+void ItemDemanda::
+unidade (const unidade_type& x)
+{
+  this->unidade_.set (x);
+}
+
+void ItemDemanda::
+unidade (::std::auto_ptr< unidade_type > x)
+{
+  this->unidade_.set (x);
 }
 
 
@@ -4485,7 +4509,6 @@ ItemUnidade (const id_type& id,
              const custoMedCred_type& custoMedCred,
              const salas_type& salas,
              const horarios_type& horarios,
-             const demandas_type& demandas,
              const unidadeCurriculo_type& unidadeCurriculo,
              const deslocamentos_type& deslocamentos)
 : ::xml_schema::type (),
@@ -4497,7 +4520,6 @@ ItemUnidade (const id_type& id,
   custoMedCred_ (custoMedCred, ::xml_schema::flags (), this),
   salas_ (salas, ::xml_schema::flags (), this),
   horarios_ (horarios, ::xml_schema::flags (), this),
-  demandas_ (demandas, ::xml_schema::flags (), this),
   unidadeCurriculo_ (unidadeCurriculo, ::xml_schema::flags (), this),
   deslocamentos_ (deslocamentos, ::xml_schema::flags (), this)
 {
@@ -4512,7 +4534,6 @@ ItemUnidade (const id_type& id,
              const custoMedCred_type& custoMedCred,
              ::std::auto_ptr< salas_type >& salas,
              ::std::auto_ptr< horarios_type >& horarios,
-             ::std::auto_ptr< demandas_type >& demandas,
              ::std::auto_ptr< unidadeCurriculo_type >& unidadeCurriculo,
              ::std::auto_ptr< deslocamentos_type >& deslocamentos)
 : ::xml_schema::type (),
@@ -4524,7 +4545,6 @@ ItemUnidade (const id_type& id,
   custoMedCred_ (custoMedCred, ::xml_schema::flags (), this),
   salas_ (salas, ::xml_schema::flags (), this),
   horarios_ (horarios, ::xml_schema::flags (), this),
-  demandas_ (demandas, ::xml_schema::flags (), this),
   unidadeCurriculo_ (unidadeCurriculo, ::xml_schema::flags (), this),
   deslocamentos_ (deslocamentos, ::xml_schema::flags (), this)
 {
@@ -4543,7 +4563,6 @@ ItemUnidade (const ItemUnidade& x,
   custoMedCred_ (x.custoMedCred_, f, this),
   salas_ (x.salas_, f, this),
   horarios_ (x.horarios_, f, this),
-  demandas_ (x.demandas_, f, this),
   unidadeCurriculo_ (x.unidadeCurriculo_, f, this),
   deslocamentos_ (x.deslocamentos_, f, this)
 {
@@ -4562,7 +4581,6 @@ ItemUnidade (const ::xercesc::DOMElement& e,
   custoMedCred_ (f, this),
   salas_ (f, this),
   horarios_ (f, this),
-  demandas_ (f, this),
   unidadeCurriculo_ (f, this),
   deslocamentos_ (f, this)
 {
@@ -4686,20 +4704,6 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
       }
     }
 
-    // demandas
-    //
-    if (n.name () == "demandas" && n.namespace_ ().empty ())
-    {
-      ::std::auto_ptr< demandas_type > r (
-        demandas_traits::create (i, f, this));
-
-      if (!demandas_.present ())
-      {
-        this->demandas_.set (r);
-        continue;
-      }
-    }
-
     // unidadeCurriculo
     //
     if (n.name () == "unidadeCurriculo" && n.namespace_ ().empty ())
@@ -4787,13 +4791,6 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
       "");
   }
 
-  if (!demandas_.present ())
-  {
-    throw ::xsd::cxx::tree::expected_element< char > (
-      "demandas",
-      "");
-  }
-
   if (!unidadeCurriculo_.present ())
   {
     throw ::xsd::cxx::tree::expected_element< char > (
@@ -4826,6 +4823,7 @@ ItemUnidade::
 
 ItemDisciplina::
 ItemDisciplina (const id_type& id,
+                const demandas_type& demandas,
                 const codigo_type& codigo,
                 const nome_type& nome,
                 const cred_teoricos_type& cred_teoricos,
@@ -4840,6 +4838,7 @@ ItemDisciplina (const id_type& id,
                 const turmas_type& turmas)
 : ::xml_schema::type (),
   id_ (id, ::xml_schema::flags (), this),
+  demandas_ (demandas, ::xml_schema::flags (), this),
   codigo_ (codigo, ::xml_schema::flags (), this),
   nome_ (nome, ::xml_schema::flags (), this),
   cred_teoricos_ (cred_teoricos, ::xml_schema::flags (), this),
@@ -4857,6 +4856,7 @@ ItemDisciplina (const id_type& id,
 
 ItemDisciplina::
 ItemDisciplina (const id_type& id,
+                ::std::auto_ptr< demandas_type >& demandas,
                 const codigo_type& codigo,
                 const nome_type& nome,
                 const cred_teoricos_type& cred_teoricos,
@@ -4871,6 +4871,7 @@ ItemDisciplina (const id_type& id,
                 ::std::auto_ptr< turmas_type >& turmas)
 : ::xml_schema::type (),
   id_ (id, ::xml_schema::flags (), this),
+  demandas_ (demandas, ::xml_schema::flags (), this),
   codigo_ (codigo, ::xml_schema::flags (), this),
   nome_ (nome, ::xml_schema::flags (), this),
   cred_teoricos_ (cred_teoricos, ::xml_schema::flags (), this),
@@ -4892,6 +4893,7 @@ ItemDisciplina (const ItemDisciplina& x,
                 ::xml_schema::container* c)
 : ::xml_schema::type (x, f, c),
   id_ (x.id_, f, this),
+  demandas_ (x.demandas_, f, this),
   codigo_ (x.codigo_, f, this),
   nome_ (x.nome_, f, this),
   cred_teoricos_ (x.cred_teoricos_, f, this),
@@ -4913,6 +4915,7 @@ ItemDisciplina (const ::xercesc::DOMElement& e,
                 ::xml_schema::container* c)
 : ::xml_schema::type (e, f | ::xml_schema::flags::base, c),
   id_ (f, this),
+  demandas_ (f, this),
   codigo_ (f, this),
   nome_ (f, this),
   cred_teoricos_ (f, this),
@@ -4950,6 +4953,20 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
       if (!id_.present ())
       {
         this->id_.set (id_traits::create (i, f, this));
+        continue;
+      }
+    }
+
+    // demandas
+    //
+    if (n.name () == "demandas" && n.namespace_ ().empty ())
+    {
+      ::std::auto_ptr< demandas_type > r (
+        demandas_traits::create (i, f, this));
+
+      if (!demandas_.present ())
+      {
+        this->demandas_.set (r);
         continue;
       }
     }
@@ -5120,6 +5137,13 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
   {
     throw ::xsd::cxx::tree::expected_element< char > (
       "id",
+      "");
+  }
+
+  if (!demandas_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "demandas",
       "");
   }
 
@@ -7175,12 +7199,14 @@ ItemDemanda::
 ItemDemanda (const quantidade_type& quantidade,
              const turno_type& turno,
              const disciplina_type& disciplina,
-             const curso_type& curso)
+             const curso_type& curso,
+             const unidade_type& unidade)
 : ::xml_schema::type (),
   quantidade_ (quantidade, ::xml_schema::flags (), this),
   turno_ (turno, ::xml_schema::flags (), this),
   disciplina_ (disciplina, ::xml_schema::flags (), this),
-  curso_ (curso, ::xml_schema::flags (), this)
+  curso_ (curso, ::xml_schema::flags (), this),
+  unidade_ (unidade, ::xml_schema::flags (), this)
 {
 }
 
@@ -7188,12 +7214,14 @@ ItemDemanda::
 ItemDemanda (const quantidade_type& quantidade,
              ::std::auto_ptr< turno_type >& turno,
              ::std::auto_ptr< disciplina_type >& disciplina,
-             ::std::auto_ptr< curso_type >& curso)
+             ::std::auto_ptr< curso_type >& curso,
+             ::std::auto_ptr< unidade_type >& unidade)
 : ::xml_schema::type (),
   quantidade_ (quantidade, ::xml_schema::flags (), this),
   turno_ (turno, ::xml_schema::flags (), this),
   disciplina_ (disciplina, ::xml_schema::flags (), this),
-  curso_ (curso, ::xml_schema::flags (), this)
+  curso_ (curso, ::xml_schema::flags (), this),
+  unidade_ (unidade, ::xml_schema::flags (), this)
 {
 }
 
@@ -7205,7 +7233,8 @@ ItemDemanda (const ItemDemanda& x,
   quantidade_ (x.quantidade_, f, this),
   turno_ (x.turno_, f, this),
   disciplina_ (x.disciplina_, f, this),
-  curso_ (x.curso_, f, this)
+  curso_ (x.curso_, f, this),
+  unidade_ (x.unidade_, f, this)
 {
 }
 
@@ -7217,7 +7246,8 @@ ItemDemanda (const ::xercesc::DOMElement& e,
   quantidade_ (f, this),
   turno_ (f, this),
   disciplina_ (f, this),
-  curso_ (f, this)
+  curso_ (f, this),
+  unidade_ (f, this)
 {
   if ((f & ::xml_schema::flags::base) == 0)
   {
@@ -7289,6 +7319,20 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
       }
     }
 
+    // unidade
+    //
+    if (n.name () == "unidade" && n.namespace_ ().empty ())
+    {
+      ::std::auto_ptr< unidade_type > r (
+        unidade_traits::create (i, f, this));
+
+      if (!unidade_.present ())
+      {
+        this->unidade_.set (r);
+        continue;
+      }
+    }
+
     break;
   }
 
@@ -7317,6 +7361,13 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
   {
     throw ::xsd::cxx::tree::expected_element< char > (
       "curso",
+      "");
+  }
+
+  if (!unidade_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "unidade",
       "");
   }
 }
@@ -9293,7 +9344,6 @@ operator<< (::std::ostream& o, const ItemUnidade& i)
   o << ::std::endl << "custoMedCred: " << i.custoMedCred ();
   o << ::std::endl << "salas: " << i.salas ();
   o << ::std::endl << "horarios: " << i.horarios ();
-  o << ::std::endl << "demandas: " << i.demandas ();
   o << ::std::endl << "unidadeCurriculo: " << i.unidadeCurriculo ();
   o << ::std::endl << "deslocamentos: " << i.deslocamentos ();
   return o;
@@ -9303,6 +9353,7 @@ operator<< (::std::ostream& o, const ItemUnidade& i)
 operator<< (::std::ostream& o, const ItemDisciplina& i)
 {
   o << ::std::endl << "id: " << i.id ();
+  o << ::std::endl << "demandas: " << i.demandas ();
   o << ::std::endl << "codigo: " << i.codigo ();
   o << ::std::endl << "nome: " << i.nome ();
   o << ::std::endl << "cred_teoricos: " << i.cred_teoricos ();
@@ -9502,6 +9553,7 @@ operator<< (::std::ostream& o, const ItemDemanda& i)
   o << ::std::endl << "turno: " << i.turno ();
   o << ::std::endl << "disciplina: " << i.disciplina ();
   o << ::std::endl << "curso: " << i.curso ();
+  o << ::std::endl << "unidade: " << i.unidade ();
   return o;
 }
 
@@ -10612,17 +10664,6 @@ operator<< (::xercesc::DOMElement& e, const ItemUnidade& i)
     s << i.horarios ();
   }
 
-  // demandas
-  //
-  {
-    ::xercesc::DOMElement& s (
-      ::xsd::cxx::xml::dom::create_element (
-        "demandas",
-        e));
-
-    s << i.demandas ();
-  }
-
   // unidadeCurriculo
   //
   {
@@ -10660,6 +10701,17 @@ operator<< (::xercesc::DOMElement& e, const ItemDisciplina& i)
         e));
 
     s << i.id ();
+  }
+
+  // demandas
+  //
+  {
+    ::xercesc::DOMElement& s (
+      ::xsd::cxx::xml::dom::create_element (
+        "demandas",
+        e));
+
+    s << i.demandas ();
   }
 
   // codigo
@@ -11448,6 +11500,17 @@ operator<< (::xercesc::DOMElement& e, const ItemDemanda& i)
         e));
 
     s << i.curso ();
+  }
+
+  // unidade
+  //
+  {
+    ::xercesc::DOMElement& s (
+      ::xsd::cxx::xml::dom::create_element (
+        "unidade",
+        e));
+
+    s << i.unidade ();
   }
 }
 

@@ -4,6 +4,7 @@
 #include "DivisaoCreditos.h"
 #include "HorarioDisponivel.h"
 #include "Sala.h"
+#include "Demanda.h"
 
 class Turma;
 #include "Turma.h"
@@ -24,6 +25,7 @@ public:
    bool e_lab;
    TipoDisciplina* tipo;
    DivisaoCreditos* divisao_creditos;
+   GGroup<Demanda*> demandas;
    GGroup<Disciplina*> compatibilidades; /* tem isso mesmo? */
    GGroup<Disciplina*> continencias;
    GGroup<HorarioDisponivel*> horarios;

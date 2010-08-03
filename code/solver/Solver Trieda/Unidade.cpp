@@ -25,10 +25,4 @@ void Unidade::le_arvore(ItemUnidade& elem)
       horario->le_arvore(*it_hora);
       horarios.add(horario);
    }
-   ITERA_SEQ(it_demanda,elem.demandas(),Demanda) {
-      Demanda* demanda = new Demanda();
-      demanda->le_arvore(*it_demanda);
-      demandas.add(demanda);
-   }
-
 }
