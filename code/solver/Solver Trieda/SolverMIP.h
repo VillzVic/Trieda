@@ -74,6 +74,7 @@ public:
    int cria_variavel_abertura(void);
    int cria_variavel_alunos(void);
    int cria_variavel_consecutivos(void);
+   int cria_restricao_carga(void);
 };
 
 #endif

@@ -2,6 +2,7 @@
 #define CONSTRAINT_H
 
 #include <hash_map>
+#include "input.h"
 
 /**
 * Class which defines a contraint in the LP.
@@ -46,6 +47,12 @@ public:
    //Return constraint type
    ConstraintType getType() const            { return type; }
 
+   Turma* getTurma() const { return i; }
+   Disciplina* getDisciplina() const { return d; }
+   Unidade* getUnidade() const { return u; }
+   Sala* getSala() const { return s; }
+   int getDia() const { return t; }
+
    /*
    ToDo:
    All get methods of the private attributes should be defined here
@@ -63,6 +70,13 @@ public:
    ToDo:
    All set methods of the private attributes should be defined here
    */
+   void setTurma(Turma* ii) {  i = ii; }
+   void setDisciplina(Disciplina* dd) {  d = dd; }
+   void setUnidade(Unidade* uu) {  u = uu; }
+   void setSala(Sala* ss) {  s = ss; }
+   void setDia(int tt) {  t = tt; }
+   /* /!\ */  void setBloco(TipoDisciplina* bb) {  b = bb; } 
+
 
 private:
 
@@ -73,6 +87,18 @@ private:
    ToDo:
    All atributes which define a constraint should be declared here
    **/
+   Unidade* u;
+   Disciplina* d;
+   Turma* i;
+   Sala* s;
+   int t /* dia */;
+
+   /*                /!\ W A R N I N G /!\  
+
+      Na verdade, abaixo deveria ser bloco curricular que, ao que 
+      parece, não está presente no modelo físico nem na especificação
+      do primeiro sprint :( */ 
+   TipoDisciplina* b; 
 
 };
 
