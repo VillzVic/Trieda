@@ -212,6 +212,14 @@ int SolverMIP::cria_variavel_abertura(void)
    {
       ITERA_GGROUP(it_disc,problemData->disciplinas,Disciplina)
       {
+         int max_demanda = -1;
+         int demanda_unidade = 0;
+         ITERA_GGROUP(it_dem,it_disc->demandas,Demanda) 
+         {
+            max_demanda = std::max(max_demanda,it_dem->quantidade);
+            if (it_dem->unidade == *it_unidades)
+               demanda_unidade += it_dem->quantidade;
+         }
          ITERA_GGROUP(it_turma,it_disc->turmas,Turma)
          {
             Variable v;
@@ -221,10 +229,8 @@ int SolverMIP::cria_variavel_abertura(void)
             v.setDisciplina(*it_disc);
             v.setUnidade(*it_unidades);
 
-            /* Para a implementação correta do coeficiente talvez 
-            seja prciso mudar os dados, fazendo com que demanda
-            seja filha de disciplina, e não de unidade */
-            double ratiodem = 1.0; //todo
+            double ratiodem = (max_demanda - demanda_unidade)/
+                              max_demanda;
             double coeff = alpha + gamma*ratiodem;
 
             if (vHash.find(v) == vHash.end())
