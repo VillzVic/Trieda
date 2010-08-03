@@ -102,11 +102,10 @@
       <xs:element name="id" type="xs:int" />
       <xs:element name="codigo" type="xs:string" />
       <xs:element name="nome" type="xs:string" />
-      <xs:element name="cred_teoricos" type="xs:string" />
-      <xs:element name="cred_praticos" type="xs:string" />
+      <xs:element name="cred_teoricos" type="xs:int" />
+      <xs:element name="cred_praticos" type="xs:int" />
       <xs:element name="laboratorio" type="xs:boolean" />
       <xs:element name="TipoDisciplina" type="ItemTipoDisciplina" />
-      <xs:element name="DivisaoCreditos" type="ItemDivisaoCreditos" />
       <xs:element name="compatibilidades" type="GrupoDisciplina" />
       <xs:element name="equivalencia" type="GrupoDisciplina" />
       <xs:element name="horarios" type="GrupoHorarioDisponivel" />
