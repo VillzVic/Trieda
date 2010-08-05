@@ -66,7 +66,7 @@ private:
    All methods of constraint creation should be defined here
    */
 
-   double alpha, beta, gamma, delta, lambda;
+   double alpha, beta, gamma, delta, lambda, M;
 public:
    int cria_variaveis(void);
    int cria_variavel_creditos(void);
@@ -84,6 +84,11 @@ public:
    int cria_variavel_turma_bloco(void);
    int cria_variavel_min_creds(void);
    int cria_variavel_max_creds(void);
+   int cria_restricao_turmas_bloco(void);
+   int cria_restricao_cap_demanda(void);
+   int cria_restricao_cap_sala(void);
+   int cria_restricao_cap_sala_unidade(void);
+   int cria_restricao_dias_consecutivos(void);
 };
 
 #endif

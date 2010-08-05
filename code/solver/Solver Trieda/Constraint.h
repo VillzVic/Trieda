@@ -23,6 +23,12 @@ public:
       C_TURMAS_BLOCO = 7,
       C_MAX_CREDITOS_BLOCO_SD = 8,
       C_MAX_CREDITOS = 9,
+      C_CAP_DEMANDA = 10,
+      C_CAP_SALA = 11,
+      C_CAP_SALA_U = 12,
+      C_DIAS_CONSECUTIVOS = 13,
+      C_MIN_CREDS_BLOCO = 14,
+      C_MAX_CREDS_BLOCO = 15,
    };
 
    /** Default constructor. */
