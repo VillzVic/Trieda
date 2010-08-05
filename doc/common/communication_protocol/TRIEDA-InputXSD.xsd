@@ -14,7 +14,7 @@
     </xs:complexType>
   </xs:element>
   <xs:complexType name="ItemProfessorDisciplina">
-    <xs:sequence minOccurs="0">
+    <xs:sequence>
       <xs:element name="nota" type="xs:int" />
       <xs:element name="ranking" type="xs:int" />
       <xs:element name="disciplina" type="ItemDisciplina" />
@@ -38,7 +38,7 @@
       <xs:element name="credAnterior" type="xs:int" />
       <xs:element name="valorCred" type="xs:double" />
       <xs:element name="unidades" type="GrupoUnidade" />
-      <xs:element name="horarios" type="ItemHorarioDisponivel" />
+      <xs:element name="horarios" type="GrupoHorarioDisponivel" />
       <xs:element name="disciplinas" type="GrupoProfessorDisciplina" />
     </xs:sequence>
   </xs:complexType>
