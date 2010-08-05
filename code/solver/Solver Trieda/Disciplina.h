@@ -19,7 +19,6 @@ public:
    Disciplina(void);
    ~Disciplina(void);
 //private:
-   int id;
    std::string codigo;
    std::string nome;
    int cred_teoricos;

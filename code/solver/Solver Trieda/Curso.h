@@ -16,7 +16,6 @@ public:
    virtual void le_arvore(ItemCurso& elem);
 
 //private:
-   int id;
    std::string codigo;
    TipoCurso* tipo;
    int num_periodos;
