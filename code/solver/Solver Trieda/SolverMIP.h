@@ -75,6 +75,12 @@ public:
    int cria_variavel_alunos(void);
    int cria_variavel_consecutivos(void);
    int cria_restricao_carga(void);
+   int cria_restricao_max_creditos_sd(void);
+   int cria_restricao_min_creditos(void);
+   int cria_restricao_ativacao(void);
+   int cria_restricao_sobreposicao(void);
+   int cria_restricao_mesma_unidade(void);
+   int cria_restricao_max_creditos(void);
 };
 
 #endif

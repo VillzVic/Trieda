@@ -15,6 +15,14 @@ public:
    {
       C_ERROR = 0,
       C_CARGA_HORARIA = 1,
+      C_MAX_CREDITOS_SD = 2,
+      C_MIN_CREDITOS = 3,
+      C_VAR_O = 4,
+      C_EVITA_SOBREPOSICAO = 5,
+      C_MESMA_UNIDADE = 6,
+      C_TURMAS_BLOCO = 7,
+      C_MAX_CREDITOS_BLOCO_SD = 8,
+      C_MAX_CREDITOS = 9,
    };
 
    /** Default constructor. */
