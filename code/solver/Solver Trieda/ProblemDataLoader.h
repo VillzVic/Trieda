@@ -27,13 +27,6 @@ public:
    void load();
 
 private:
-   void load_unidades(void);
-   void load_cursos(void);
-   void load_calendario(void);
-   void load_professores(void);
-   void load_disciplinas(void);
-   void load_regras_credito(void);
-
    // Input data object of the problem
    ProblemData *problemData;
    char *inputFile;

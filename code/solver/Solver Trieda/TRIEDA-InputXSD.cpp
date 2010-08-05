@@ -43,16 +43,16 @@
 // ItemProfessorDisciplina
 // 
 
-const ItemProfessorDisciplina::nota_optional& ItemProfessorDisciplina::
+const ItemProfessorDisciplina::nota_type& ItemProfessorDisciplina::
 nota () const
 {
-  return this->nota_;
+  return this->nota_.get ();
 }
 
-ItemProfessorDisciplina::nota_optional& ItemProfessorDisciplina::
+ItemProfessorDisciplina::nota_type& ItemProfessorDisciplina::
 nota ()
 {
-  return this->nota_;
+  return this->nota_.get ();
 }
 
 void ItemProfessorDisciplina::
@@ -61,22 +61,16 @@ nota (const nota_type& x)
   this->nota_.set (x);
 }
 
-void ItemProfessorDisciplina::
-nota (const nota_optional& x)
-{
-  this->nota_ = x;
-}
-
-const ItemProfessorDisciplina::ranking_optional& ItemProfessorDisciplina::
+const ItemProfessorDisciplina::ranking_type& ItemProfessorDisciplina::
 ranking () const
 {
-  return this->ranking_;
+  return this->ranking_.get ();
 }
 
-ItemProfessorDisciplina::ranking_optional& ItemProfessorDisciplina::
+ItemProfessorDisciplina::ranking_type& ItemProfessorDisciplina::
 ranking ()
 {
-  return this->ranking_;
+  return this->ranking_.get ();
 }
 
 void ItemProfessorDisciplina::
@@ -85,34 +79,22 @@ ranking (const ranking_type& x)
   this->ranking_.set (x);
 }
 
-void ItemProfessorDisciplina::
-ranking (const ranking_optional& x)
-{
-  this->ranking_ = x;
-}
-
-const ItemProfessorDisciplina::disciplina_optional& ItemProfessorDisciplina::
+const ItemProfessorDisciplina::disciplina_type& ItemProfessorDisciplina::
 disciplina () const
 {
-  return this->disciplina_;
+  return this->disciplina_.get ();
 }
 
-ItemProfessorDisciplina::disciplina_optional& ItemProfessorDisciplina::
+ItemProfessorDisciplina::disciplina_type& ItemProfessorDisciplina::
 disciplina ()
 {
-  return this->disciplina_;
+  return this->disciplina_.get ();
 }
 
 void ItemProfessorDisciplina::
 disciplina (const disciplina_type& x)
 {
   this->disciplina_.set (x);
-}
-
-void ItemProfessorDisciplina::
-disciplina (const disciplina_optional& x)
-{
-  this->disciplina_ = x;
 }
 
 void ItemProfessorDisciplina::
@@ -3312,11 +3294,24 @@ regrasCredito (::std::auto_ptr< regrasCredito_type > x)
 //
 
 ItemProfessorDisciplina::
-ItemProfessorDisciplina ()
+ItemProfessorDisciplina (const nota_type& nota,
+                         const ranking_type& ranking,
+                         const disciplina_type& disciplina)
 : ::xml_schema::type (),
-  nota_ (::xml_schema::flags (), this),
-  ranking_ (::xml_schema::flags (), this),
-  disciplina_ (::xml_schema::flags (), this)
+  nota_ (nota, ::xml_schema::flags (), this),
+  ranking_ (ranking, ::xml_schema::flags (), this),
+  disciplina_ (disciplina, ::xml_schema::flags (), this)
+{
+}
+
+ItemProfessorDisciplina::
+ItemProfessorDisciplina (const nota_type& nota,
+                         const ranking_type& ranking,
+                         ::std::auto_ptr< disciplina_type >& disciplina)
+: ::xml_schema::type (),
+  nota_ (nota, ::xml_schema::flags (), this),
+  ranking_ (ranking, ::xml_schema::flags (), this),
+  disciplina_ (disciplina, ::xml_schema::flags (), this)
 {
 }
 
@@ -3361,7 +3356,7 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
     //
     if (n.name () == "nota" && n.namespace_ ().empty ())
     {
-      if (!this->nota_)
+      if (!nota_.present ())
       {
         this->nota_.set (nota_traits::create (i, f, this));
         continue;
@@ -3372,7 +3367,7 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
     //
     if (n.name () == "ranking" && n.namespace_ ().empty ())
     {
-      if (!this->ranking_)
+      if (!ranking_.present ())
       {
         this->ranking_.set (ranking_traits::create (i, f, this));
         continue;
@@ -3386,7 +3381,7 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
       ::std::auto_ptr< disciplina_type > r (
         disciplina_traits::create (i, f, this));
 
-      if (!this->disciplina_)
+      if (!disciplina_.present ())
       {
         this->disciplina_.set (r);
         continue;
@@ -3394,6 +3389,27 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
     }
 
     break;
+  }
+
+  if (!nota_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "nota",
+      "");
+  }
+
+  if (!ranking_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "ranking",
+      "");
+  }
+
+  if (!disciplina_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "disciplina",
+      "");
   }
 }
 
@@ -9300,21 +9316,9 @@ UnidadeCurriculo::
 ::std::ostream&
 operator<< (::std::ostream& o, const ItemProfessorDisciplina& i)
 {
-  if (i.nota ())
-  {
-    o << ::std::endl << "nota: " << *i.nota ();
-  }
-
-  if (i.ranking ())
-  {
-    o << ::std::endl << "ranking: " << *i.ranking ();
-  }
-
-  if (i.disciplina ())
-  {
-    o << ::std::endl << "disciplina: " << *i.disciplina ();
-  }
-
+  o << ::std::endl << "nota: " << i.nota ();
+  o << ::std::endl << "ranking: " << i.ranking ();
+  o << ::std::endl << "disciplina: " << i.disciplina ();
   return o;
 }
 
@@ -10259,38 +10263,35 @@ operator<< (::xercesc::DOMElement& e, const ItemProfessorDisciplina& i)
 
   // nota
   //
-  if (i.nota ())
   {
     ::xercesc::DOMElement& s (
       ::xsd::cxx::xml::dom::create_element (
         "nota",
         e));
 
-    s << *i.nota ();
+    s << i.nota ();
   }
 
   // ranking
   //
-  if (i.ranking ())
   {
     ::xercesc::DOMElement& s (
       ::xsd::cxx::xml::dom::create_element (
         "ranking",
         e));
 
-    s << *i.ranking ();
+    s << i.ranking ();
   }
 
   // disciplina
   //
-  if (i.disciplina ())
   {
     ::xercesc::DOMElement& s (
       ::xsd::cxx::xml::dom::create_element (
         "disciplina",
         e));
 
-    s << *i.disciplina ();
+    s << i.disciplina ();
   }
 }
 

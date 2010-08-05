@@ -674,7 +674,7 @@ class ItemProfessorDisciplina: public ::xml_schema::type
    * @name nota
    *
    * @brief Accessor and modifier functions for the %nota
-   * optional element.
+   * required element.
    */
   //@{
 
@@ -684,30 +684,24 @@ class ItemProfessorDisciplina: public ::xml_schema::type
   typedef ::xml_schema::int_ nota_type;
 
   /**
-   * @brief Element optional container type.
-   */
-  typedef ::xsd::cxx::tree::optional< nota_type > nota_optional;
-
-  /**
    * @brief Element traits type.
    */
   typedef ::xsd::cxx::tree::traits< nota_type, char > nota_traits;
 
   /**
-   * @brief Return a read-only (constant) reference to the element
-   * container.
+   * @brief Return a read-only (constant) reference to the element.
    *
-   * @return A constant reference to the optional container.
+   * @return A constant reference to the element.
    */
-  const nota_optional&
+  const nota_type&
   nota () const;
 
   /**
-   * @brief Return a read-write reference to the element container.
+   * @brief Return a read-write reference to the element.
    *
-   * @return A reference to the optional container.
+   * @return A reference to the element.
    */
-  nota_optional&
+  nota_type&
   nota ();
 
   /**
@@ -721,25 +715,13 @@ class ItemProfessorDisciplina: public ::xml_schema::type
   void
   nota (const nota_type& x);
 
-  /**
-   * @brief Set the element value.
-   *
-   * @param x An optional container with the new value to set.
-   *
-   * If the value is present in @a x then this function makes a copy 
-   * of this value and sets it as the new value of the element.
-   * Otherwise the element container is set the 'not present' state.
-   */
-  void
-  nota (const nota_optional& x);
-
   //@}
 
   /**
    * @name ranking
    *
    * @brief Accessor and modifier functions for the %ranking
-   * optional element.
+   * required element.
    */
   //@{
 
@@ -749,30 +731,24 @@ class ItemProfessorDisciplina: public ::xml_schema::type
   typedef ::xml_schema::int_ ranking_type;
 
   /**
-   * @brief Element optional container type.
-   */
-  typedef ::xsd::cxx::tree::optional< ranking_type > ranking_optional;
-
-  /**
    * @brief Element traits type.
    */
   typedef ::xsd::cxx::tree::traits< ranking_type, char > ranking_traits;
 
   /**
-   * @brief Return a read-only (constant) reference to the element
-   * container.
+   * @brief Return a read-only (constant) reference to the element.
    *
-   * @return A constant reference to the optional container.
+   * @return A constant reference to the element.
    */
-  const ranking_optional&
+  const ranking_type&
   ranking () const;
 
   /**
-   * @brief Return a read-write reference to the element container.
+   * @brief Return a read-write reference to the element.
    *
-   * @return A reference to the optional container.
+   * @return A reference to the element.
    */
-  ranking_optional&
+  ranking_type&
   ranking ();
 
   /**
@@ -786,25 +762,13 @@ class ItemProfessorDisciplina: public ::xml_schema::type
   void
   ranking (const ranking_type& x);
 
-  /**
-   * @brief Set the element value.
-   *
-   * @param x An optional container with the new value to set.
-   *
-   * If the value is present in @a x then this function makes a copy 
-   * of this value and sets it as the new value of the element.
-   * Otherwise the element container is set the 'not present' state.
-   */
-  void
-  ranking (const ranking_optional& x);
-
   //@}
 
   /**
    * @name disciplina
    *
    * @brief Accessor and modifier functions for the %disciplina
-   * optional element.
+   * required element.
    */
   //@{
 
@@ -814,30 +778,24 @@ class ItemProfessorDisciplina: public ::xml_schema::type
   typedef ::ItemDisciplina disciplina_type;
 
   /**
-   * @brief Element optional container type.
-   */
-  typedef ::xsd::cxx::tree::optional< disciplina_type > disciplina_optional;
-
-  /**
    * @brief Element traits type.
    */
   typedef ::xsd::cxx::tree::traits< disciplina_type, char > disciplina_traits;
 
   /**
-   * @brief Return a read-only (constant) reference to the element
-   * container.
+   * @brief Return a read-only (constant) reference to the element.
    *
-   * @return A constant reference to the optional container.
+   * @return A constant reference to the element.
    */
-  const disciplina_optional&
+  const disciplina_type&
   disciplina () const;
 
   /**
-   * @brief Return a read-write reference to the element container.
+   * @brief Return a read-write reference to the element.
    *
-   * @return A reference to the optional container.
+   * @return A reference to the element.
    */
-  disciplina_optional&
+  disciplina_type&
   disciplina ();
 
   /**
@@ -850,18 +808,6 @@ class ItemProfessorDisciplina: public ::xml_schema::type
    */
   void
   disciplina (const disciplina_type& x);
-
-  /**
-   * @brief Set the element value.
-   *
-   * @param x An optional container with the new value to set.
-   *
-   * If the value is present in @a x then this function makes a copy 
-   * of this value and sets it as the new value of the element.
-   * Otherwise the element container is set the 'not present' state.
-   */
-  void
-  disciplina (const disciplina_optional& x);
 
   /**
    * @brief Set the element value without copying.
@@ -885,7 +831,21 @@ class ItemProfessorDisciplina: public ::xml_schema::type
    * @brief Create an instance from the ultimate base and
    * initializers for required elements and attributes.
    */
-  ItemProfessorDisciplina ();
+  ItemProfessorDisciplina (const nota_type&,
+                           const ranking_type&,
+                           const disciplina_type&);
+
+  /**
+   * @brief Create an instance from the ultimate base and
+   * initializers for required elements and attributes
+   * (auto_ptr version).
+   *
+   * This constructor will try to use the passed values directly
+   * instead of making copies.
+   */
+  ItemProfessorDisciplina (const nota_type&,
+                           const ranking_type&,
+                           ::std::auto_ptr< disciplina_type >&);
 
   /**
    * @brief Create an instance from a DOM element.
@@ -946,9 +906,9 @@ class ItemProfessorDisciplina: public ::xml_schema::type
          ::xml_schema::flags);
 
   protected:
-  nota_optional nota_;
-  ranking_optional ranking_;
-  disciplina_optional disciplina_;
+  ::xsd::cxx::tree::one< nota_type > nota_;
+  ::xsd::cxx::tree::one< ranking_type > ranking_;
+  ::xsd::cxx::tree::one< disciplina_type > disciplina_;
 
   //@endcond
 };
@@ -1702,7 +1662,7 @@ class ItemProfessor: public ::xml_schema::type
   /**
    * @brief Element type.
    */
-  typedef ::ItemHorarioDisponivel horarios_type;
+  typedef ::GrupoHorarioDisponivel horarios_type;
 
   /**
    * @brief Element traits type.

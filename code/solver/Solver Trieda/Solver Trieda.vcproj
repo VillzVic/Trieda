@@ -205,6 +205,10 @@
 			Filter="cpp;c;cc;cxx"
 			>
 			<File
+				RelativePath=".\Magisterio.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\Main.cpp"
 				>
 			</File>
@@ -365,6 +369,10 @@
 			Name="Header Files"
 			Filter="h;hpp;hxx"
 			>
+			<File
+				RelativePath=".\Magisterio.h"
+				>
+			</File>
 			<Filter
 				Name="Input"
 				>

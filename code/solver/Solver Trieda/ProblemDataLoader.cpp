@@ -7,7 +7,6 @@ using namespace std;
 
 ProblemDataLoader::ProblemDataLoader( char *inputFile, ProblemData* data )
 {
-   std::cout << "DataLoader" << std::endl;
    this->inputFile = inputFile;
    this->problemData  = data;
 }
@@ -18,11 +17,12 @@ ProblemDataLoader::~ProblemDataLoader()
 
 void ProblemDataLoader::load()
 {
-   std::cout << "Loading" << std::endl;
+   std::cout << "Loading file..." << std::endl;
    root = std::auto_ptr<Trieda>(Trieda_(inputFile, xml_schema::flags::dont_validate));
-   std::cout << "ate encontrou o arquivo..." << std::endl;
+   std::cout << "Extracting data..." << std::endl;
    problemData->le_arvore(*root);
 
+   std::cout << "Some preprocessing..." << std::endl;
    /* processamento */
    /* cria blocos curriculares */
    ITERA_GGROUP(it_curso,problemData->cursos,Curso)
