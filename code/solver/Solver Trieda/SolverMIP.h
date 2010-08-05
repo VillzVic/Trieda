@@ -81,6 +81,9 @@ public:
    int cria_restricao_sobreposicao(void);
    int cria_restricao_mesma_unidade(void);
    int cria_restricao_max_creditos(void);
+   int cria_variavel_turma_bloco(void);
+   int cria_variavel_min_creds(void);
+   int cria_variavel_max_creds(void);
 };
 
 #endif

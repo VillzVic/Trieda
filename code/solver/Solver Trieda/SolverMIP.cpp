@@ -760,3 +760,101 @@ int SolverMIP::cria_restricao_max_creditos(void)
    }
    return restricoes;
 }
+
+int SolverMIP::cria_variavel_turma_bloco(void)
+{
+   int num_vars = 0;
+   ITERA_GGROUP(it_unidades,problemData->unidades,Unidade)
+   {
+      ITERA_GGROUP(it_bloco,problemData->blocos,BlocoCurricular)
+      {
+         for(int dia=0;dia<7;dia++)
+         {
+            Variable v;
+            v.reset();
+            v.setType(Variable::V_TURMA_BLOCO);
+            v.setBloco(*it_bloco);
+            v.setDia(dia);
+            v.setUnidade(*it_unidades);
+
+            if (vHash.find(v) == vHash.end())
+            {
+               vHash[v] = lp->getNumCols();
+
+               /* PERGUNTAR PRO MARCELO OU PRO ANDRE */
+               OPT_COL col(OPT_COL::VAR_BINARY,beta/*coef*/,0.0,1.0,
+                  (char*)v.toString().c_str());
+
+               lp->newCol(col);
+
+               num_vars += 1;
+            }
+         }
+      }
+   }
+   return num_vars;
+}
+
+int SolverMIP::cria_variavel_min_creds(void)
+{
+   int num_vars = 0;
+   ITERA_GGROUP(it_bloco,problemData->blocos,BlocoCurricular)
+   {
+      ITERA_GGROUP(it_disc,it_bloco->disciplinas,Disciplina)
+      {
+         ITERA_GGROUP(it_turma,it_disc->turmas,Turma)
+         {
+            Variable v;
+            v.reset();
+            v.setType(Variable::V_MIN_CRED_SEMANA);
+            v.setTurma(*it_turma);
+            v.setBloco(*it_bloco);
+
+            if (vHash.find(v) == vHash.end())
+            {
+               vHash[v] = lp->getNumCols();
+
+               OPT_COL col(OPT_COL::VAR_INTEGRAL,-lambda,0.0,1000.0,
+                  (char*)v.toString().c_str());
+
+               lp->newCol(col);
+
+               num_vars += 1;
+            }
+         }
+      }
+   }
+   return num_vars;
+}
+
+int SolverMIP::cria_variavel_max_creds(void)
+{
+   int num_vars = 0;
+   ITERA_GGROUP(it_bloco,problemData->blocos,BlocoCurricular)
+   {
+      ITERA_GGROUP(it_disc,it_bloco->disciplinas,Disciplina)
+      {
+         ITERA_GGROUP(it_turma,it_disc->turmas,Turma)
+         {
+            Variable v;
+            v.reset();
+            v.setType(Variable::V_MAX_CRED_SEMANA);
+            v.setTurma(*it_turma);
+            v.setBloco(*it_bloco);
+
+            if (vHash.find(v) == vHash.end())
+            {
+               vHash[v] = lp->getNumCols();
+
+               OPT_COL col(OPT_COL::VAR_INTEGRAL,lambda,0.0,1000.0,
+                  (char*)v.toString().c_str());
+
+               lp->newCol(col);
+
+               num_vars += 1;
+            }
+         }
+      }
+   }
+   return num_vars;
+}
