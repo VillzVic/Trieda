@@ -22,11 +22,11 @@ public:
    virtual int getId() const { return id; }
    virtual void setId(int id) { this->id = id; }
    virtual void le_arvore(::xml_schema::type& raiz) { };// = 0;
-   bool operator < (const OFBase& right) 
+   virtual bool operator < (const OFBase& right) 
    { 
       return (getId() < right.getId()); 
    }
-   bool operator == (const OFBase& right) { 
+   virtual bool operator == (const OFBase& right) { 
       return (getId() == right.getId()); 
    }
 

@@ -6,7 +6,7 @@
 SolverMIP::SolverMIP(ProblemData *aProblemData)
 :Solver(aProblemData)
 {
-   alpha = beta = gamma = delta = lambda = 1.0;
+   alpha = beta = gamma = delta = lambda = M = 1.0;
    try
    {
 	   lp = new OPT_CPLEX;
@@ -37,21 +37,21 @@ int SolverMIP::solve()
    int varNum = 0;
    int constNum = 0;
 
-   lp->createLP("Solver Trieda", OPTSENSE_MAXIMIZE, PROB_LP);
+   lp->createLP("Solver Trieda", OPTSENSE_MINIMIZE, PROB_MIP);
 
 #ifdef DEBUG
    printf("Creating LP...\n");
 #endif
 
    /* Variable creation */
-   cria_variaveis();
+   varNum = cria_variaveis();
 
 #ifdef DEBUG
    printf("Total of Variables: %i\n\n",varNum);
 #endif
 
    /* Constraint creation */
-   cria_restricoes();
+   constNum = cria_restricoes();
 
 #ifdef DEBUG
    printf("Total of Constraints: %i\n",constNum);
@@ -61,7 +61,7 @@ int SolverMIP::solve()
    lp->writeProbLP("Solver Trieda");
 #endif
 
-   int status = lp->optimize(METHOD_PRIMAL);
+   int status = lp->optimize(METHOD_MIP);
 
    return status;
 }
@@ -174,7 +174,6 @@ int SolverMIP::cria_variavel_creditos(void)
                   if (vHash.find(v) == vHash.end())
                   {
                      vHash[v] = lp->getNumCols();
-
                      OPT_COL col(OPT_COL::VAR_INTEGRAL,0.0,0.0,24.0,
                         (char*)v.toString().c_str());
 
@@ -264,6 +263,7 @@ int SolverMIP::cria_variavel_abertura(void)
 
             if (vHash.find(v) == vHash.end())
             {
+               lp->getNumCols();
                vHash[v] = lp->getNumCols();
 
                OPT_COL col(OPT_COL::VAR_BINARY,coeff,0.0,1.0,
