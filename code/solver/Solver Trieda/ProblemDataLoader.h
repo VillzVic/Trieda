@@ -11,6 +11,7 @@
 #endif
 
 #include "ProblemData.h"
+#include "input.h"
 #include "TRIEDA-InputXSD.h"
 
 class ProblemDataLoader

@@ -205,6 +205,10 @@
 			Filter="cpp;c;cc;cxx"
 			>
 			<File
+				RelativePath=".\BlocoCurricular.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\Main.cpp"
 				>
 			</File>
@@ -366,6 +370,10 @@
 				>
 				<File
 					RelativePath=".\AreaTitulacao.h"
+					>
+				</File>
+				<File
+					RelativePath=".\BlocoCurricular.h"
 					>
 				</File>
 				<File

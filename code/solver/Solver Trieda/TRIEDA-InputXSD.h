@@ -648,6 +648,7 @@ class ItemTipoTitulacao;
 class ItemAreaTitulacao;
 class ItemTipoDisciplina;
 class ItemTipoCurso;
+class GrupoDisciplinaPeriodo;
 class Trieda;
 class UnidadeCurriculo;
 
@@ -7520,9 +7521,9 @@ class ItemCurriculo: public ::xml_schema::type
   //@}
 
   /**
-   * @name DisciplinasPeriodo
+   * @name disciplinasPeriodo
    *
-   * @brief Accessor and modifier functions for the %DisciplinasPeriodo
+   * @brief Accessor and modifier functions for the %disciplinasPeriodo
    * required element.
    */
   //@{
@@ -7530,28 +7531,28 @@ class ItemCurriculo: public ::xml_schema::type
   /**
    * @brief Element type.
    */
-  typedef ::ItemDisciplinaPeriodo DisciplinasPeriodo_type;
+  typedef ::GrupoDisciplinaPeriodo disciplinasPeriodo_type;
 
   /**
    * @brief Element traits type.
    */
-  typedef ::xsd::cxx::tree::traits< DisciplinasPeriodo_type, char > DisciplinasPeriodo_traits;
+  typedef ::xsd::cxx::tree::traits< disciplinasPeriodo_type, char > disciplinasPeriodo_traits;
 
   /**
    * @brief Return a read-only (constant) reference to the element.
    *
    * @return A constant reference to the element.
    */
-  const DisciplinasPeriodo_type&
-  DisciplinasPeriodo () const;
+  const disciplinasPeriodo_type&
+  disciplinasPeriodo () const;
 
   /**
    * @brief Return a read-write reference to the element.
    *
    * @return A reference to the element.
    */
-  DisciplinasPeriodo_type&
-  DisciplinasPeriodo ();
+  disciplinasPeriodo_type&
+  disciplinasPeriodo ();
 
   /**
    * @brief Set the element value.
@@ -7562,7 +7563,7 @@ class ItemCurriculo: public ::xml_schema::type
    * the new value of the element.
    */
   void
-  DisciplinasPeriodo (const DisciplinasPeriodo_type& x);
+  disciplinasPeriodo (const disciplinasPeriodo_type& x);
 
   /**
    * @brief Set the element value without copying.
@@ -7573,7 +7574,7 @@ class ItemCurriculo: public ::xml_schema::type
    * of making a copy.
    */
   void
-  DisciplinasPeriodo (::std::auto_ptr< DisciplinasPeriodo_type > p);
+  disciplinasPeriodo (::std::auto_ptr< disciplinasPeriodo_type > p);
 
   //@}
 
@@ -7589,7 +7590,7 @@ class ItemCurriculo: public ::xml_schema::type
   ItemCurriculo (const id_type&,
                  const codigo_type&,
                  const descricao_type&,
-                 const DisciplinasPeriodo_type&);
+                 const disciplinasPeriodo_type&);
 
   /**
    * @brief Create an instance from the ultimate base and
@@ -7602,7 +7603,7 @@ class ItemCurriculo: public ::xml_schema::type
   ItemCurriculo (const id_type&,
                  const codigo_type&,
                  const descricao_type&,
-                 ::std::auto_ptr< DisciplinasPeriodo_type >&);
+                 ::std::auto_ptr< disciplinasPeriodo_type >&);
 
   /**
    * @brief Create an instance from a DOM element.
@@ -7666,7 +7667,7 @@ class ItemCurriculo: public ::xml_schema::type
   ::xsd::cxx::tree::one< id_type > id_;
   ::xsd::cxx::tree::one< codigo_type > codigo_;
   ::xsd::cxx::tree::one< descricao_type > descricao_;
-  ::xsd::cxx::tree::one< DisciplinasPeriodo_type > DisciplinasPeriodo_;
+  ::xsd::cxx::tree::one< disciplinasPeriodo_type > disciplinasPeriodo_;
 
   //@endcond
 };
@@ -12100,6 +12101,153 @@ class ItemTipoCurso: public ::xml_schema::type
 };
 
 /**
+ * @brief Class corresponding to the %GrupoDisciplinaPeriodo schema type.
+ *
+ * @nosubgrouping
+ */
+class GrupoDisciplinaPeriodo: public ::xml_schema::type
+{
+  public:
+  /**
+   * @name DisciplinaPeriodo
+   *
+   * @brief Accessor and modifier functions for the %DisciplinaPeriodo
+   * sequence element.
+   */
+  //@{
+
+  /**
+   * @brief Element type.
+   */
+  typedef ::ItemDisciplinaPeriodo DisciplinaPeriodo_type;
+
+  /**
+   * @brief Element sequence container type.
+   */
+  typedef ::xsd::cxx::tree::sequence< DisciplinaPeriodo_type > DisciplinaPeriodo_sequence;
+
+  /**
+   * @brief Element iterator type.
+   */
+  typedef DisciplinaPeriodo_sequence::iterator DisciplinaPeriodo_iterator;
+
+  /**
+   * @brief Element constant iterator type.
+   */
+  typedef DisciplinaPeriodo_sequence::const_iterator DisciplinaPeriodo_const_iterator;
+
+  /**
+   * @brief Element traits type.
+   */
+  typedef ::xsd::cxx::tree::traits< DisciplinaPeriodo_type, char > DisciplinaPeriodo_traits;
+
+  /**
+   * @brief Return a read-only (constant) reference to the element
+   * sequence.
+   *
+   * @return A constant reference to the sequence container.
+   */
+  const DisciplinaPeriodo_sequence&
+  DisciplinaPeriodo () const;
+
+  /**
+   * @brief Return a read-write reference to the element sequence.
+   *
+   * @return A reference to the sequence container.
+   */
+  DisciplinaPeriodo_sequence&
+  DisciplinaPeriodo ();
+
+  /**
+   * @brief Copy elements from a given sequence.
+   *
+   * @param s A sequence to copy elements from.
+   *
+   * For each element in @a s this function makes a copy and adds it 
+   * to the sequence. Note that this operation completely changes the 
+   * sequence and all old elements will be lost.
+   */
+  void
+  DisciplinaPeriodo (const DisciplinaPeriodo_sequence& s);
+
+  //@}
+
+  /**
+   * @name Constructors
+   */
+  //@{
+
+  /**
+   * @brief Create an instance from the ultimate base and
+   * initializers for required elements and attributes.
+   */
+  GrupoDisciplinaPeriodo ();
+
+  /**
+   * @brief Create an instance from a DOM element.
+   *
+   * @param e A DOM element to extract the data from.
+   * @param f Flags to create the new instance with.
+   * @param c A pointer to the object that will contain the new
+   * instance.
+   */
+  GrupoDisciplinaPeriodo (const ::xercesc::DOMElement& e,
+                          ::xml_schema::flags f = 0,
+                          ::xml_schema::container* c = 0);
+
+  /**
+   * @brief Copy constructor.
+   *
+   * @param x An instance to make a copy of.
+   * @param f Flags to create the copy with.
+   * @param c A pointer to the object that will contain the copy.
+   *
+   * For polymorphic object models use the @c _clone function instead.
+   */
+  GrupoDisciplinaPeriodo (const GrupoDisciplinaPeriodo& x,
+                          ::xml_schema::flags f = 0,
+                          ::xml_schema::container* c = 0);
+
+  /**
+   * @brief Copy the instance polymorphically.
+   *
+   * @param f Flags to create the copy with.
+   * @param c A pointer to the object that will contain the copy.
+   * @return A pointer to the dynamically allocated copy.
+   *
+   * This function ensures that the dynamic type of the instance is
+   * used for copying and should be used for polymorphic object
+   * models instead of the copy constructor.
+   */
+  virtual GrupoDisciplinaPeriodo*
+  _clone (::xml_schema::flags f = 0,
+          ::xml_schema::container* c = 0) const;
+
+  //@}
+
+  /**
+   * @brief Destructor.
+   */
+  virtual 
+  ~GrupoDisciplinaPeriodo ();
+
+  // Implementation.
+  //
+
+  //@cond
+
+  protected:
+  void
+  parse (::xsd::cxx::xml::dom::parser< char >&,
+         ::xml_schema::flags);
+
+  protected:
+  DisciplinaPeriodo_sequence DisciplinaPeriodo_;
+
+  //@endcond
+};
+
+/**
  * @brief Class corresponding to the %Trieda schema type.
  *
  * @nosubgrouping
@@ -12761,6 +12909,9 @@ operator<< (::std::ostream&, const ItemTipoDisciplina&);
 operator<< (::std::ostream&, const ItemTipoCurso&);
 
 ::std::ostream&
+operator<< (::std::ostream&, const GrupoDisciplinaPeriodo&);
+
+::std::ostream&
 operator<< (::std::ostream&, const Trieda&);
 
 ::std::ostream&
@@ -13314,6 +13465,9 @@ operator<< (::xercesc::DOMElement&, const ItemTipoDisciplina&);
 
 void
 operator<< (::xercesc::DOMElement&, const ItemTipoCurso&);
+
+void
+operator<< (::xercesc::DOMElement&, const GrupoDisciplinaPeriodo&);
 
 void
 operator<< (::xercesc::DOMElement&, const Trieda&);

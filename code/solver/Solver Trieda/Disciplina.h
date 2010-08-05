@@ -4,6 +4,8 @@
 #include "DivisaoCreditos.h"
 #include "HorarioDisponivel.h"
 #include "Sala.h"
+
+class Demanda;
 #include "Demanda.h"
 
 class Turma;

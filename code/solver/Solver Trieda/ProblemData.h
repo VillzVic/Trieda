@@ -9,6 +9,7 @@
 #include "Professor.h"
 #include "Unidade.h"
 #include "Calendario.h"
+#include "BlocoCurricular.h"
 #include <iostream>
 
 //Stores input data
@@ -46,11 +47,12 @@ public:
    All objects that define the problem input should be declared here
    **/
    GGroup<Unidade*> unidades;
-   GGroup<Curso*> curso;
+   GGroup<Curso*> cursos;
    GGroup<Professor*> professores;
    Calendario* calendario;
    GGroup<Disciplina*> disciplinas;
-   GGroup<DivisaoCreditos*> regrasCredito;
+   GGroup<DivisaoCreditos*> regras_credito;
+   GGroup<BlocoCurricular*> blocos;
 public:
    virtual void le_arvore(Trieda& raiz);
 };

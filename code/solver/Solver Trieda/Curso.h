@@ -1,6 +1,8 @@
 #pragma once
 #include "ofbase.h"
 #include "AreaTitulacao.h"
+
+class Curriculo;
 #include "Curriculo.h"
 #include "TipoCurso.h"
 

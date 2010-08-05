@@ -20,7 +20,7 @@ void Curso::le_arvore(ItemCurso& elem)
    //area_titulacao = new AreaTitulacao();
    ITERA_SEQ(it_curriculo,elem.Curriculos(),Curriculo)
    {
-      Curriculo* curriculo = new Curriculo();
+      Curriculo* curriculo = new Curriculo(this);
       curriculo->le_arvore(*it_curriculo);
       curriculos.add(curriculo);
    }

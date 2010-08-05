@@ -2,6 +2,7 @@
 #include "ofbase.h"
 #include "Turno.h"
 #include "Curso.h"
+class Unidade;
 #include "Unidade.h"
 
 class Demanda :

@@ -7,6 +7,7 @@
 #include "DivisaoCreditos.h"
 #include "ProblemData.h"
 #include "Professor.h"
+#include "BlocoCurricular.h"
 #include "Turma.h"
 #include "Sala.h"
 #include "GGroup.h"

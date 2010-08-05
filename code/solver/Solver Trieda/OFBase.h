@@ -20,6 +20,7 @@ public:
    OFBase(void);
    ~OFBase(void);
    virtual int getId() const { return id; }
+   virtual void setId(int id) { this->id = id; }
    virtual void le_arvore(::xml_schema::type& raiz) { };// = 0;
    bool operator < (const OFBase& right) 
    { 
@@ -32,6 +33,6 @@ public:
 //protected:
    int id;
 
-};
+   }; 
 
 #endif

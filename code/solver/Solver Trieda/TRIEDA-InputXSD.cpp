@@ -1993,28 +1993,28 @@ descricao (::std::auto_ptr< descricao_type > x)
   this->descricao_.set (x);
 }
 
-const ItemCurriculo::DisciplinasPeriodo_type& ItemCurriculo::
-DisciplinasPeriodo () const
+const ItemCurriculo::disciplinasPeriodo_type& ItemCurriculo::
+disciplinasPeriodo () const
 {
-  return this->DisciplinasPeriodo_.get ();
+  return this->disciplinasPeriodo_.get ();
 }
 
-ItemCurriculo::DisciplinasPeriodo_type& ItemCurriculo::
-DisciplinasPeriodo ()
+ItemCurriculo::disciplinasPeriodo_type& ItemCurriculo::
+disciplinasPeriodo ()
 {
-  return this->DisciplinasPeriodo_.get ();
-}
-
-void ItemCurriculo::
-DisciplinasPeriodo (const DisciplinasPeriodo_type& x)
-{
-  this->DisciplinasPeriodo_.set (x);
+  return this->disciplinasPeriodo_.get ();
 }
 
 void ItemCurriculo::
-DisciplinasPeriodo (::std::auto_ptr< DisciplinasPeriodo_type > x)
+disciplinasPeriodo (const disciplinasPeriodo_type& x)
 {
-  this->DisciplinasPeriodo_.set (x);
+  this->disciplinasPeriodo_.set (x);
+}
+
+void ItemCurriculo::
+disciplinasPeriodo (::std::auto_ptr< disciplinasPeriodo_type > x)
+{
+  this->disciplinasPeriodo_.set (x);
 }
 
 
@@ -3129,6 +3129,28 @@ void ItemTipoCurso::
 nome (::std::auto_ptr< nome_type > x)
 {
   this->nome_.set (x);
+}
+
+
+// GrupoDisciplinaPeriodo
+// 
+
+const GrupoDisciplinaPeriodo::DisciplinaPeriodo_sequence& GrupoDisciplinaPeriodo::
+DisciplinaPeriodo () const
+{
+  return this->DisciplinaPeriodo_;
+}
+
+GrupoDisciplinaPeriodo::DisciplinaPeriodo_sequence& GrupoDisciplinaPeriodo::
+DisciplinaPeriodo ()
+{
+  return this->DisciplinaPeriodo_;
+}
+
+void GrupoDisciplinaPeriodo::
+DisciplinaPeriodo (const DisciplinaPeriodo_sequence& s)
+{
+  this->DisciplinaPeriodo_ = s;
 }
 
 
@@ -6536,12 +6558,12 @@ ItemCurriculo::
 ItemCurriculo (const id_type& id,
                const codigo_type& codigo,
                const descricao_type& descricao,
-               const DisciplinasPeriodo_type& DisciplinasPeriodo)
+               const disciplinasPeriodo_type& disciplinasPeriodo)
 : ::xml_schema::type (),
   id_ (id, ::xml_schema::flags (), this),
   codigo_ (codigo, ::xml_schema::flags (), this),
   descricao_ (descricao, ::xml_schema::flags (), this),
-  DisciplinasPeriodo_ (DisciplinasPeriodo, ::xml_schema::flags (), this)
+  disciplinasPeriodo_ (disciplinasPeriodo, ::xml_schema::flags (), this)
 {
 }
 
@@ -6549,12 +6571,12 @@ ItemCurriculo::
 ItemCurriculo (const id_type& id,
                const codigo_type& codigo,
                const descricao_type& descricao,
-               ::std::auto_ptr< DisciplinasPeriodo_type >& DisciplinasPeriodo)
+               ::std::auto_ptr< disciplinasPeriodo_type >& disciplinasPeriodo)
 : ::xml_schema::type (),
   id_ (id, ::xml_schema::flags (), this),
   codigo_ (codigo, ::xml_schema::flags (), this),
   descricao_ (descricao, ::xml_schema::flags (), this),
-  DisciplinasPeriodo_ (DisciplinasPeriodo, ::xml_schema::flags (), this)
+  disciplinasPeriodo_ (disciplinasPeriodo, ::xml_schema::flags (), this)
 {
 }
 
@@ -6566,7 +6588,7 @@ ItemCurriculo (const ItemCurriculo& x,
   id_ (x.id_, f, this),
   codigo_ (x.codigo_, f, this),
   descricao_ (x.descricao_, f, this),
-  DisciplinasPeriodo_ (x.DisciplinasPeriodo_, f, this)
+  disciplinasPeriodo_ (x.disciplinasPeriodo_, f, this)
 {
 }
 
@@ -6578,7 +6600,7 @@ ItemCurriculo (const ::xercesc::DOMElement& e,
   id_ (f, this),
   codigo_ (f, this),
   descricao_ (f, this),
-  DisciplinasPeriodo_ (f, this)
+  disciplinasPeriodo_ (f, this)
 {
   if ((f & ::xml_schema::flags::base) == 0)
   {
@@ -6636,16 +6658,16 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
       }
     }
 
-    // DisciplinasPeriodo
+    // disciplinasPeriodo
     //
-    if (n.name () == "DisciplinasPeriodo" && n.namespace_ ().empty ())
+    if (n.name () == "disciplinasPeriodo" && n.namespace_ ().empty ())
     {
-      ::std::auto_ptr< DisciplinasPeriodo_type > r (
-        DisciplinasPeriodo_traits::create (i, f, this));
+      ::std::auto_ptr< disciplinasPeriodo_type > r (
+        disciplinasPeriodo_traits::create (i, f, this));
 
-      if (!DisciplinasPeriodo_.present ())
+      if (!disciplinasPeriodo_.present ())
       {
-        this->DisciplinasPeriodo_.set (r);
+        this->disciplinasPeriodo_.set (r);
         continue;
       }
     }
@@ -6674,10 +6696,10 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
       "");
   }
 
-  if (!DisciplinasPeriodo_.present ())
+  if (!disciplinasPeriodo_.present ())
   {
     throw ::xsd::cxx::tree::expected_element< char > (
-      "DisciplinasPeriodo",
+      "disciplinasPeriodo",
       "");
   }
 }
@@ -8934,6 +8956,76 @@ ItemTipoCurso::
 {
 }
 
+// GrupoDisciplinaPeriodo
+//
+
+GrupoDisciplinaPeriodo::
+GrupoDisciplinaPeriodo ()
+: ::xml_schema::type (),
+  DisciplinaPeriodo_ (::xml_schema::flags (), this)
+{
+}
+
+GrupoDisciplinaPeriodo::
+GrupoDisciplinaPeriodo (const GrupoDisciplinaPeriodo& x,
+                        ::xml_schema::flags f,
+                        ::xml_schema::container* c)
+: ::xml_schema::type (x, f, c),
+  DisciplinaPeriodo_ (x.DisciplinaPeriodo_, f, this)
+{
+}
+
+GrupoDisciplinaPeriodo::
+GrupoDisciplinaPeriodo (const ::xercesc::DOMElement& e,
+                        ::xml_schema::flags f,
+                        ::xml_schema::container* c)
+: ::xml_schema::type (e, f | ::xml_schema::flags::base, c),
+  DisciplinaPeriodo_ (f, this)
+{
+  if ((f & ::xml_schema::flags::base) == 0)
+  {
+    ::xsd::cxx::xml::dom::parser< char > p (e, true, false);
+    this->parse (p, f);
+  }
+}
+
+void GrupoDisciplinaPeriodo::
+parse (::xsd::cxx::xml::dom::parser< char >& p,
+       ::xml_schema::flags f)
+{
+  for (; p.more_elements (); p.next_element ())
+  {
+    const ::xercesc::DOMElement& i (p.cur_element ());
+    const ::xsd::cxx::xml::qualified_name< char > n (
+      ::xsd::cxx::xml::dom::name< char > (i));
+
+    // DisciplinaPeriodo
+    //
+    if (n.name () == "DisciplinaPeriodo" && n.namespace_ ().empty ())
+    {
+      ::std::auto_ptr< DisciplinaPeriodo_type > r (
+        DisciplinaPeriodo_traits::create (i, f, this));
+
+      this->DisciplinaPeriodo_.push_back (r);
+      continue;
+    }
+
+    break;
+  }
+}
+
+GrupoDisciplinaPeriodo* GrupoDisciplinaPeriodo::
+_clone (::xml_schema::flags f,
+        ::xml_schema::container* c) const
+{
+  return new class GrupoDisciplinaPeriodo (*this, f, c);
+}
+
+GrupoDisciplinaPeriodo::
+~GrupoDisciplinaPeriodo ()
+{
+}
+
 // Trieda
 //
 
@@ -9488,7 +9580,7 @@ operator<< (::std::ostream& o, const ItemCurriculo& i)
   o << ::std::endl << "id: " << i.id ();
   o << ::std::endl << "codigo: " << i.codigo ();
   o << ::std::endl << "descricao: " << i.descricao ();
-  o << ::std::endl << "DisciplinasPeriodo: " << i.DisciplinasPeriodo ();
+  o << ::std::endl << "disciplinasPeriodo: " << i.disciplinasPeriodo ();
   return o;
 }
 
@@ -9694,6 +9786,19 @@ operator<< (::std::ostream& o, const ItemTipoCurso& i)
 {
   o << ::std::endl << "id: " << i.id ();
   o << ::std::endl << "nome: " << i.nome ();
+  return o;
+}
+
+::std::ostream&
+operator<< (::std::ostream& o, const GrupoDisciplinaPeriodo& i)
+{
+  for (GrupoDisciplinaPeriodo::DisciplinaPeriodo_const_iterator
+       b (i.DisciplinaPeriodo ().begin ()), e (i.DisciplinaPeriodo ().end ());
+       b != e; ++b)
+  {
+    o << ::std::endl << "DisciplinaPeriodo: " << *b;
+  }
+
   return o;
 }
 
@@ -11276,15 +11381,15 @@ operator<< (::xercesc::DOMElement& e, const ItemCurriculo& i)
     s << i.descricao ();
   }
 
-  // DisciplinasPeriodo
+  // disciplinasPeriodo
   //
   {
     ::xercesc::DOMElement& s (
       ::xsd::cxx::xml::dom::create_element (
-        "DisciplinasPeriodo",
+        "disciplinasPeriodo",
         e));
 
-    s << i.DisciplinasPeriodo ();
+    s << i.disciplinasPeriodo ();
   }
 }
 
@@ -11959,6 +12064,26 @@ operator<< (::xercesc::DOMElement& e, const ItemTipoCurso& i)
         e));
 
     s << i.nome ();
+  }
+}
+
+void
+operator<< (::xercesc::DOMElement& e, const GrupoDisciplinaPeriodo& i)
+{
+  e << static_cast< const ::xml_schema::type& > (i);
+
+  // DisciplinaPeriodo
+  //
+  for (GrupoDisciplinaPeriodo::DisciplinaPeriodo_const_iterator
+       b (i.DisciplinaPeriodo ().begin ()), n (i.DisciplinaPeriodo ().end ());
+       b != n; ++b)
+  {
+    ::xercesc::DOMElement& s (
+      ::xsd::cxx::xml::dom::create_element (
+        "DisciplinaPeriodo",
+        e));
+
+    s << *b;
   }
 }
 
