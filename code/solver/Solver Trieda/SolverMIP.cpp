@@ -44,12 +44,14 @@ int SolverMIP::solve()
 #endif
 
    /* Variable creation */
+   cria_variaveis();
 
 #ifdef DEBUG
    printf("Total of Variables: %i\n\n",varNum);
 #endif
 
    /* Constraint creation */
+   cria_restricoes();
 
 #ifdef DEBUG
    printf("Total of Constraints: %i\n",constNum);
@@ -116,8 +118,35 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
 int SolverMIP::cria_variaveis(void)
 {
    int num_vars = 0;
+
+   num_vars += cria_variavel_abertura();
+   num_vars += cria_variavel_alunos();
+   num_vars += cria_variavel_consecutivos();
    num_vars += cria_variavel_creditos();
+   num_vars += cria_variavel_max_creds();
+   num_vars += cria_variavel_min_creds();
+   num_vars += cria_variavel_oferecimentos();
+   num_vars += cria_variavel_turma_bloco();
+
    return num_vars;
+}
+int SolverMIP::cria_restricoes(void) {
+   int restricoes = 0;
+
+   restricoes += cria_restricao_carga();
+   restricoes += cria_restricao_max_creditos_sd();
+   restricoes += cria_restricao_min_creditos();
+   restricoes += cria_restricao_ativacao();
+   restricoes += cria_restricao_sobreposicao();
+   restricoes += cria_restricao_mesma_unidade();
+   restricoes += cria_restricao_max_creditos();
+   restricoes += cria_restricao_turmas_bloco();
+   restricoes += cria_restricao_cap_demanda();
+   restricoes += cria_restricao_cap_sala();
+   restricoes += cria_restricao_cap_sala_unidade();
+   restricoes += cria_restricao_dias_consecutivos();
+
+   return restricoes;
 }
 
 int SolverMIP::cria_variavel_creditos(void)
@@ -405,6 +434,10 @@ int SolverMIP::cria_restricao_max_creditos_sd(void)
             c.reset();
             c.setType(Constraint::C_MAX_CREDITOS_SD);
 
+            c.setUnidade(*it_unidade);
+            c.setSala(*it_sala);
+            c.setDia(dia);
+
             sprintf( name, "%s", c.toString().c_str() ); 
 
             if (cHash.find(c) != cHash.end()) continue;
@@ -468,6 +501,12 @@ int SolverMIP::cria_restricao_min_creditos(void)
 
                   c.reset();
                   c.setType(Constraint::C_MIN_CREDITOS);
+
+                  c.setUnidade(*it_unidade);
+                  c.setSala(*it_sala);
+                  c.setDia(dia);
+                  c.setDisciplina(*it_disc);
+                  c.setTurma(*it_turma);
 
                   sprintf( name, "%s", c.toString().c_str() ); 
 
@@ -544,6 +583,12 @@ int SolverMIP::cria_restricao_ativacao(void)
                   c.reset();
                   c.setType(Constraint::C_VAR_O);
 
+                  c.setUnidade(*it_unidade);
+                  c.setSala(*it_sala);
+                  c.setDia(dia);
+                  c.setDisciplina(*it_disc);
+                  c.setTurma(*it_turma);
+
                   sprintf( name, "%s", c.toString().c_str() ); 
 
                   if (cHash.find(c) != cHash.end()) continue;
@@ -618,6 +663,12 @@ int SolverMIP::cria_restricao_sobreposicao(void)
                c.reset();
                c.setType(Constraint::C_EVITA_SOBREPOSICAO);
 
+                  c.setUnidade(*it_unidade);
+                  //c.setSala(*it_sala);
+                  c.setDia(dia);
+                  c.setDisciplina(*it_disc);
+                  c.setTurma(*it_turma);
+
                sprintf( name, "%s", c.toString().c_str() ); 
 
                if (cHash.find(c) != cHash.end()) continue;
@@ -671,6 +722,12 @@ int SolverMIP::cria_restricao_mesma_unidade(void)
 
          c.reset();
          c.setType(Constraint::C_MESMA_UNIDADE);
+
+//         c.setUnidade(*it_unidade);
+//         c.setSala(*it_sala);
+         //         c.setDia(dia);
+         c.setDisciplina(*it_disc);
+         c.setTurma(*it_turma);
 
          sprintf( name, "%s", c.toString().c_str() ); 
 
@@ -726,6 +783,12 @@ int SolverMIP::cria_restricao_max_creditos(void)
 
                   c.reset();
                   c.setType(Constraint::C_MAX_CREDITOS);
+
+                  c.setUnidade(*it_unidade);
+                  c.setSala(*it_sala);
+                  c.setDia(dia);
+                  c.setDisciplina(*it_disc);
+                  c.setTurma(*it_turma);
 
                   sprintf( name, "%s", c.toString().c_str() ); 
 
@@ -881,6 +944,10 @@ int SolverMIP::cria_restricao_turmas_bloco(void)
 
             c.reset();
             c.setType(Constraint::C_TURMAS_BLOCO);
+
+            c.setUnidade(*it_unidade);
+            c.setBloco(*it_bloco);
+            c.setDia(dia);
 
             sprintf( name, "%s", c.toString().c_str() ); 
 

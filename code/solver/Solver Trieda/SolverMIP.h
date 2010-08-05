@@ -69,6 +69,7 @@ private:
    double alpha, beta, gamma, delta, lambda, M;
 public:
    int cria_variaveis(void);
+   int cria_restricoes(void);
    int cria_variavel_creditos(void);
    int cria_variavel_oferecimentos(void);
    int cria_variavel_abertura(void);

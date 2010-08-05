@@ -66,6 +66,7 @@ public:
    Unidade* getUnidade() const { return u; }
    Sala* getSala() const { return s; }
    int getDia() const { return t; }
+   BlocoCurricular* getBloco() const { return b; }
 
    /*
    ToDo:
@@ -89,7 +90,7 @@ public:
    void setUnidade(Unidade* uu) {  u = uu; }
    void setSala(Sala* ss) {  s = ss; }
    void setDia(int tt) {  t = tt; }
-   /* /!\ */  void setBloco(TipoDisciplina* bb) {  b = bb; } 
+   void setBloco(BlocoCurricular* bb) {  b = bb; } 
 
 
 private:
@@ -106,13 +107,7 @@ private:
    Turma* i;
    Sala* s;
    int t /* dia */;
-
-   /*                /!\ W A R N I N G /!\  
-
-      Na verdade, abaixo deveria ser bloco curricular que, ao que 
-      parece, não está presente no modelo físico nem na especificação
-      do primeiro sprint :( */ 
-   TipoDisciplina* b; 
+   BlocoCurricular* b; 
 
 };
 
