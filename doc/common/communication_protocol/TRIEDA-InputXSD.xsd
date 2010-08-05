@@ -187,7 +187,7 @@
       <xs:element name="id" type="xs:int" />
       <xs:element name="codigo" type="xs:string" />
       <xs:element name="descricao" type="xs:string" />
-      <xs:element name="DisciplinasPeriodo" type="ItemDisciplinaPeriodo" />
+      <xs:element name="disciplinasPeriodo" type="GrupoDisciplinaPeriodo" />
     </xs:sequence>
   </xs:complexType>
   <xs:complexType name="GrupoCurriculo">
@@ -319,6 +319,11 @@
     <xs:sequence>
       <xs:element name="id" type="xs:int" />
       <xs:element name="nome" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="GrupoDisciplinaPeriodo">
+    <xs:sequence minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="DisciplinaPeriodo" type="ItemDisciplinaPeriodo" />
     </xs:sequence>
   </xs:complexType>
 </xs:schema>
