@@ -23,10 +23,10 @@ public:
    virtual void le_arvore(::xml_schema::type& raiz) { };// = 0;
    bool operator < (const OFBase& right) 
    { 
-      return (id < right.id); 
+      return (getId() < right.getId()); 
    }
    bool operator == (const OFBase& right) { 
-      return (id == right.id); 
+      return (getId() == right.getId()); 
    }
 
 //protected:
