@@ -8,11 +8,13 @@ public class Services {
 	public static final String UNIDADES = "unidades_service";
 	public static final String SALAS = "salas_service";
 	public static final String CURSOS = "cursos_service";
+	public static final String DISCIPLINAS = "disciplinas_service";
 	
 	public static Object get(String id) {
 		if(id.equals(UNIDADES)) return unidades();
 		if(id.equals(SALAS)) return salas();
 		if(id.equals(CURSOS)) return cursos();
+		if(id.equals(DISCIPLINAS)) return disciplinas();
 		return null;
 	}
 	
@@ -39,6 +41,15 @@ public class Services {
 		if(service == null) {
 			service = GWT.create(CursosService.class);
 			Registry.register(CURSOS, service);
+		}
+		return service;
+	}
+	
+	public static DisciplinasServiceAsync disciplinas() {
+		DisciplinasServiceAsync service = (DisciplinasServiceAsync) Registry.get(DISCIPLINAS);
+		if(service == null) {
+			service = GWT.create(DisciplinasService.class);
+			Registry.register(DISCIPLINAS, service);
 		}
 		return service;
 	}

@@ -91,6 +91,12 @@ public class GToolBar extends ToolBar {
 		
 		MenuItem outros3 = new MenuItem("Disciplinas");
 		outros3.setIcon(AbstractImagePrototype.create(Resources.DEFAULTS.sala16()));
+		outros3.addSelectionListener(new SelectionListener<MenuEvent>() {
+			@Override
+			public void componentSelected(MenuEvent ce) {
+				Dispatcher.forwardEvent(AppEvents.DisciplinaList);
+			}
+		});
 		menuSalasBt.add(outros3);
 		
 		MenuItem outros4 = new MenuItem("Matrizes Curriculares");
