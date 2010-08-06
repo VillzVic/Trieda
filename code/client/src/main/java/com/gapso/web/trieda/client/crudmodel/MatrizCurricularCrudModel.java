@@ -63,7 +63,7 @@ public class MatrizCurricularCrudModel extends AbstractCrudModel {
 		if(id.equals("descricao")) return 300;
 		if(id.equals("curso")) return 100;
 		if(id.equals("num_periodos")) return 50;
-		return 0;
+		return super.getWidth(id);
 	}
 	
 }

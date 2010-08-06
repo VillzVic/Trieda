@@ -14,10 +14,10 @@ public interface SimpleCrudIcons extends ClientBundle  {
 	@Source("del16.png")
 	ImageResource del16();
 	
-	@Source("excel16.png")
+	@Source("excelExport16.png")
 	ImageResource excelExport16();
 	
-	@Source("excel16.png")
+	@Source("excelImport16.png")
 	ImageResource excelImport16();
 	
 	@Source("filter_clean16.png")

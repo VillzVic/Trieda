@@ -10,6 +10,7 @@ import com.extjs.gxt.ui.client.data.PagingLoader;
 import com.extjs.gxt.ui.client.data.RpcProxy;
 import com.extjs.gxt.ui.client.store.ListStore;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
+import com.extjs.gxt.ui.client.widget.grid.CheckColumnConfig;
 import com.extjs.gxt.ui.client.widget.grid.ColumnConfig;
 import com.extjs.gxt.ui.client.widget.grid.ColumnModel;
 import com.extjs.gxt.ui.client.widget.grid.Grid;
@@ -61,11 +62,17 @@ public class SimpleCrudGrid<M extends ModelData> extends ContentPanel {
 		paggingToolBar.bind(loader);
 		setBottomComponent(paggingToolBar);
 	}
-	 
+	
 	private List<ColumnConfig> columnConfigList() {
 		List<ColumnConfig> columnList = new ArrayList<ColumnConfig>();
 		for(String id : crudModel.getIds()) {
-			ColumnConfig column = new ColumnConfig(id, crudModel.getHeader(id), crudModel.getWidth(id));
+			ColumnConfig column = null;
+			if(crudModel.isBoolean(id)) {
+				column = new CheckColumnConfig(id, crudModel.getHeader(id), crudModel.getWidth(id));
+			} else {
+				column = new ColumnConfig(id, crudModel.getHeader(id), crudModel.getWidth(id));
+			}
+			column.setToolTip(crudModel.getHeader(id));
 			columnList.add(column);
 		}
 		return columnList;

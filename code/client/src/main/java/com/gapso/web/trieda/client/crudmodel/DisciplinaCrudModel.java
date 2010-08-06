@@ -48,7 +48,7 @@ public class DisciplinaCrudModel extends AbstractCrudModel {
 		if(id.equals("laboratorio")) return new CheckBox();
 		return new TextField<String>();
 	}
-		
+	
 	@Override
 	public boolean isIdFilter(String id) {
 		if(id.equals("codigo")) return true;
@@ -77,7 +77,7 @@ public class DisciplinaCrudModel extends AbstractCrudModel {
 	public int getWidth(String id) {
 		if(id.equals("codigo")) return 100;
 		if(id.equals("nome")) return 150;
-		return 0;
+		return super.getWidth(id);
 	}
 	
 }

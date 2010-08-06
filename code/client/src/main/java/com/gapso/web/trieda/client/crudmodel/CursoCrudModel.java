@@ -75,7 +75,7 @@ public class CursoCrudModel extends AbstractCrudModel {
 		if(id.equals("codigo")) return 100;
 		if(id.equals("nome")) return 150;
 		if(id.equals("tipo")) return 100;
-		return 0;
+		return super.getWidth(id);
 	}
 
 }

@@ -66,7 +66,7 @@ public class SalaCrudModel extends AbstractCrudModel {
 		if(id.equals("codigo")) return 100;
 		if(id.equals("unidade")) return 150;
 		if(id.equals("tipo")) return 100;
-		return 0;
+		return super.getWidth(id);
 	}
 	
 }

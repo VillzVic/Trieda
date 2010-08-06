@@ -2,6 +2,7 @@ package com.gapso.web.trieda.client.crudmodel;
 
 import java.util.List;
 
+import com.extjs.gxt.ui.client.widget.form.CheckBox;
 import com.extjs.gxt.ui.client.widget.form.Field;
 import com.extjs.gxt.ui.client.widget.form.TextField;
 
@@ -17,6 +18,11 @@ public abstract class AbstractCrudModel {
 		return new TextField<String>();
 	}
 
+	public boolean isBoolean(String id) {
+		Field<?> f = getField(id);
+		return (f instanceof CheckBox);
+	}
+	
 	public boolean isIdForm(String id) {
 		return true;
 	}
@@ -30,7 +36,7 @@ public abstract class AbstractCrudModel {
 	}
 	
 	public int getWidth(String id) {
-		return 0;
+		return 100;
 	}
 	
 	
