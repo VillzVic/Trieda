@@ -448,7 +448,7 @@ int SolverMIP::cria_restricao_max_creditos_sd(void)
             ITERA_GGROUP(it_disc,problemData->disciplinas,Disciplina)
                nnz += it_disc->turmas.size();
 
-            int max_creds = 0; //TODO, achar max_creds
+            int max_creds = 99999999; //TODO, achar max_creds
             OPT_ROW row( nnz, OPT_ROW::LESS , max_creds, name );
               
             ITERA_GGROUP(it_disc,problemData->disciplinas,Disciplina) {
@@ -798,7 +798,7 @@ int SolverMIP::cria_restricao_max_creditos(void)
 
                   nnz = 1;
 
-                  int max_creds = 0; //TODO, achar min_creds
+                  int max_creds = 99999999; //TODO, achar min_creds
                   
                   OPT_ROW row( nnz, OPT_ROW::LESS , max_creds, name );
               

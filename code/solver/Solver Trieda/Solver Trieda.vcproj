@@ -369,10 +369,6 @@
 			Name="Header Files"
 			Filter="h;hpp;hxx"
 			>
-			<File
-				RelativePath=".\Magisterio.h"
-				>
-			</File>
 			<Filter
 				Name="Input"
 				>
@@ -418,6 +414,10 @@
 				</File>
 				<File
 					RelativePath=".\input.h"
+					>
+				</File>
+				<File
+					RelativePath=".\Magisterio.h"
 					>
 				</File>
 				<File

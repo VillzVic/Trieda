@@ -12,9 +12,9 @@ void Demanda::le_arvore(ItemDemanda& elem)
 {
    quantidade = elem.quantidade();
    curso = new Curso;
-   curso->le_arvore(elem.curso());
-   unidade = new Unidade; /*não vai ser isso, ok? */
-   unidade->le_arvore(elem.unidade());
+   curso->id = elem.curso().id();
+   unidade = new Unidade; 
+   unidade->id = elem.unidade().id();
    turno = new Turno;
-   turno->le_arvore(elem.turno());
+   turno->id = elem.turno().id();
 }
