@@ -7,6 +7,16 @@
 
 	<display-name>TRIEDA</display-name>
 
+	<servlet>
+		<servlet-name>unidadesServlet</servlet-name>
+		<servlet-class>com.gapso.web.trieda.server.UnidadesServiceImpl</servlet-class>
+	</servlet>
+	
+	<servlet-mapping>
+		<servlet-name>unidadesServlet</servlet-name>
+		<url-pattern>/trieda/unidades</url-pattern>
+	</servlet-mapping>
+
 	<welcome-file-list>
 		<welcome-file>index.html</welcome-file>
 	</welcome-file-list>

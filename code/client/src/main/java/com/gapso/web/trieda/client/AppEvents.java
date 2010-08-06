@@ -6,4 +6,5 @@ public class AppEvents {
 
 	public static final EventType Init = new EventType();
 	
+	public static final EventType UnidadeList = new EventType();
 }

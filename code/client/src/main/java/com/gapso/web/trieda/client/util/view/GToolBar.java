@@ -5,6 +5,7 @@ import com.extjs.gxt.ui.client.Style.ButtonScale;
 import com.extjs.gxt.ui.client.Style.IconAlign;
 import com.extjs.gxt.ui.client.event.ButtonEvent;
 import com.extjs.gxt.ui.client.event.SelectionListener;
+import com.extjs.gxt.ui.client.mvc.Dispatcher;
 import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.button.ButtonGroup;
@@ -13,6 +14,7 @@ import com.extjs.gxt.ui.client.widget.layout.TableData;
 import com.extjs.gxt.ui.client.widget.menu.Menu;
 import com.extjs.gxt.ui.client.widget.menu.MenuItem;
 import com.extjs.gxt.ui.client.widget.toolbar.ToolBar;
+import com.gapso.web.trieda.client.AppEvents;
 import com.gapso.web.trieda.client.util.resources.Resources;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
@@ -51,6 +53,12 @@ public class GToolBar extends ToolBar {
 		group.add(campiBt, data);
 		
 		Button unidadesBt = new Button("Unidades");
+		unidadesBt.addSelectionListener(new SelectionListener<ButtonEvent>() {
+			@Override
+			public void componentSelected(ButtonEvent ce) {
+				Dispatcher.forwardEvent(AppEvents.UnidadeList);
+			}
+		});
 		unidadesBt.setIconAlign(IconAlign.LEFT);
 		unidadesBt.setIcon(AbstractImagePrototype.create(Resources.DEFAULTS.unidade16()));
 		group.add(unidadesBt);
