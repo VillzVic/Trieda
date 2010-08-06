@@ -23,6 +23,10 @@
 		<servlet-name>disciplinasServlet</servlet-name>
 		<servlet-class>com.gapso.web.trieda.server.DisciplinasServiceImpl</servlet-class>
 	</servlet>
+	<servlet>
+		<servlet-name>matrizesCurricularesServlet</servlet-name>
+		<servlet-class>com.gapso.web.trieda.server.MatrizesCurricularesServiceImpl</servlet-class>
+	</servlet>
 	
 	<servlet-mapping>
 		<servlet-name>unidadesServlet</servlet-name>
@@ -39,6 +43,10 @@
 	<servlet-mapping>
 		<servlet-name>disciplinasServlet</servlet-name>
 		<url-pattern>/trieda/disciplinas</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>matrizesCurricularesServlet</servlet-name>
+		<url-pattern>/trieda/matrizesCurriculares</url-pattern>
 	</servlet-mapping>
 
 	<welcome-file-list>
