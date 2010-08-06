@@ -11,10 +11,18 @@
 		<servlet-name>unidadesServlet</servlet-name>
 		<servlet-class>com.gapso.web.trieda.server.UnidadesServiceImpl</servlet-class>
 	</servlet>
+	<servlet>
+		<servlet-name>salasServlet</servlet-name>
+		<servlet-class>com.gapso.web.trieda.server.SalasServiceImpl</servlet-class>
+	</servlet>
 	
 	<servlet-mapping>
 		<servlet-name>unidadesServlet</servlet-name>
 		<url-pattern>/trieda/unidades</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>salasServlet</servlet-name>
+		<url-pattern>/trieda/salas</url-pattern>
 	</servlet-mapping>
 
 	<welcome-file-list>

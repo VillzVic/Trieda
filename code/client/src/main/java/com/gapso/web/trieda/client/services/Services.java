@@ -6,9 +6,11 @@ import com.google.gwt.core.client.GWT;
 public class Services {
 
 	public static final String UNIDADES = "unidades_service";
+	public static final String SALAS = "salas_service";
 	
 	public static Object get(String id) {
 		if(id.equals(UNIDADES)) return unidades();
+		if(id.equals(SALAS)) return salas();
 		return null;
 	}
 	
@@ -17,6 +19,15 @@ public class Services {
 		if(service == null) {
 			service = GWT.create(UnidadesService.class);
 			Registry.register(UNIDADES, service);
+		}
+		return service;
+	}
+	
+	public static SalasServiceAsync salas() {
+		SalasServiceAsync service = (SalasServiceAsync) Registry.get(SALAS);
+		if(service == null) {
+			service = GWT.create(SalasService.class);
+			Registry.register(SALAS, service);
 		}
 		return service;
 	}

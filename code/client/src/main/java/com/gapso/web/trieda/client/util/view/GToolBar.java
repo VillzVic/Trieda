@@ -64,6 +64,12 @@ public class GToolBar extends ToolBar {
 		group.add(unidadesBt);
 		
 		SplitButton salasBt = new SplitButton("Outros");
+		salasBt.addSelectionListener(new SelectionListener<ButtonEvent>() {
+			@Override
+			public void componentSelected(ButtonEvent ce) {
+				Dispatcher.forwardEvent(AppEvents.SalaList);
+			}
+		});
 		salasBt.setIconAlign(IconAlign.LEFT);
 		salasBt.setIcon(AbstractImagePrototype.create(Resources.DEFAULTS.sala16()));
 		Menu menuSalasBt = new Menu();
