@@ -4,6 +4,7 @@ import com.extjs.gxt.ui.client.Style.ButtonArrowAlign;
 import com.extjs.gxt.ui.client.Style.ButtonScale;
 import com.extjs.gxt.ui.client.Style.IconAlign;
 import com.extjs.gxt.ui.client.event.ButtonEvent;
+import com.extjs.gxt.ui.client.event.MenuEvent;
 import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.mvc.Dispatcher;
 import com.extjs.gxt.ui.client.widget.MessageBox;
@@ -64,22 +65,28 @@ public class GToolBar extends ToolBar {
 		group.add(unidadesBt);
 		
 		SplitButton salasBt = new SplitButton("Outros");
-		salasBt.addSelectionListener(new SelectionListener<ButtonEvent>() {
-			@Override
-			public void componentSelected(ButtonEvent ce) {
-				Dispatcher.forwardEvent(AppEvents.SalaList);
-			}
-		});
 		salasBt.setIconAlign(IconAlign.LEFT);
 		salasBt.setIcon(AbstractImagePrototype.create(Resources.DEFAULTS.sala16()));
 		Menu menuSalasBt = new Menu();
 		
 		MenuItem outros1 = new MenuItem("Salas");
+		outros1.addSelectionListener(new SelectionListener<MenuEvent>() {
+			@Override
+			public void componentSelected(MenuEvent ce) {
+				Dispatcher.forwardEvent(AppEvents.SalaList);
+			}
+		});
 		outros1.setIcon(AbstractImagePrototype.create(Resources.DEFAULTS.sala16()));
 		menuSalasBt.add(outros1);
 		
 		MenuItem outros2 = new MenuItem("Cursos");
 		outros2.setIcon(AbstractImagePrototype.create(Resources.DEFAULTS.sala16()));
+		outros2.addSelectionListener(new SelectionListener<MenuEvent>() {
+			@Override
+			public void componentSelected(MenuEvent ce) {
+				Dispatcher.forwardEvent(AppEvents.CursoList);
+			}
+		});
 		menuSalasBt.add(outros2);
 		
 		MenuItem outros3 = new MenuItem("Disciplinas");

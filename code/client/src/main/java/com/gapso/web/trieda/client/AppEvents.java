@@ -8,4 +8,5 @@ public class AppEvents {
 	
 	public static final EventType UnidadeList = new EventType();
 	public static final EventType SalaList = new EventType();
+	public static final EventType CursoList = new EventType();
 }
