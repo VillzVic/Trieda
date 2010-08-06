@@ -3,11 +3,15 @@ package com.gapso.web.trieda.client.util.view.simplecrud;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.extjs.gxt.ui.client.Style.SelectionMode;
 import com.extjs.gxt.ui.client.data.BasePagingLoader;
 import com.extjs.gxt.ui.client.data.ModelData;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoader;
 import com.extjs.gxt.ui.client.data.RpcProxy;
+import com.extjs.gxt.ui.client.event.Events;
+import com.extjs.gxt.ui.client.event.Listener;
+import com.extjs.gxt.ui.client.event.SelectionChangedEvent;
 import com.extjs.gxt.ui.client.store.ListStore;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
 import com.extjs.gxt.ui.client.widget.grid.CheckColumnConfig;
@@ -54,8 +58,13 @@ public class SimpleCrudGrid<M extends ModelData> extends ContentPanel {
 		grid.setStripeRows(true);
 		grid.setBorders(true);
 		setHeaderVisible(false);
+		setListeners();
 	}
 
+	private void setListeners() {
+		grid.getSelectionModel().setSelectionMode(SelectionMode.MULTI);
+	}
+	
 	private void pagingPanel() {
 		PagingToolBar paggingToolBar = new PagingToolBar(50);
 		paggingToolBar.bind(loader);
