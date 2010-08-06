@@ -6,7 +6,6 @@ import com.extjs.gxt.ui.client.util.Margins;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayout;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
-import com.gapso.web.trieda.client.crudmodel.AbstractCrudModel;
 
 public class SimpleCrud<M extends ModelData> extends ContentPanel {
 

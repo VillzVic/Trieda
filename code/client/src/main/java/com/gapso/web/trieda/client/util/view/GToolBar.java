@@ -80,7 +80,7 @@ public class GToolBar extends ToolBar {
 		menuSalasBt.add(outros1);
 		
 		MenuItem outros2 = new MenuItem("Cursos");
-		outros2.setIcon(AbstractImagePrototype.create(Resources.DEFAULTS.sala16()));
+		outros2.setIcon(AbstractImagePrototype.create(Resources.DEFAULTS.curso16()));
 		outros2.addSelectionListener(new SelectionListener<MenuEvent>() {
 			@Override
 			public void componentSelected(MenuEvent ce) {
@@ -90,7 +90,7 @@ public class GToolBar extends ToolBar {
 		menuSalasBt.add(outros2);
 		
 		MenuItem outros3 = new MenuItem("Disciplinas");
-		outros3.setIcon(AbstractImagePrototype.create(Resources.DEFAULTS.sala16()));
+		outros3.setIcon(AbstractImagePrototype.create(Resources.DEFAULTS.disciplina16()));
 		outros3.addSelectionListener(new SelectionListener<MenuEvent>() {
 			@Override
 			public void componentSelected(MenuEvent ce) {
@@ -100,7 +100,7 @@ public class GToolBar extends ToolBar {
 		menuSalasBt.add(outros3);
 		
 		MenuItem outros4 = new MenuItem("Matrizes Curriculares");
-		outros4.setIcon(AbstractImagePrototype.create(Resources.DEFAULTS.sala16()));
+		outros4.setIcon(AbstractImagePrototype.create(Resources.DEFAULTS.matrizCurricular16()));
 		outros4.addSelectionListener(new SelectionListener<MenuEvent>() {
 			@Override
 			public void componentSelected(MenuEvent ce) {

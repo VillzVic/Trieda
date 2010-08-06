@@ -1,12 +1,13 @@
 package com.gapso.web.trieda.client.util.view.simplecrud;
 
+import java.util.List;
+
 import com.extjs.gxt.ui.client.event.ButtonEvent;
 import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.toolbar.SeparatorToolItem;
 import com.extjs.gxt.ui.client.widget.toolbar.ToolBar;
-import com.gapso.web.trieda.client.crudmodel.AbstractCrudModel;
 import com.gapso.web.trieda.client.util.resources.Resources;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
@@ -16,8 +17,8 @@ public class SimpleCrudToolBar extends ToolBar {
 	private AbstractCrudModel crudModel;
 	
 	public SimpleCrudToolBar(AbstractCrudModel crudModel) {
-		createButtons();
 		this.crudModel = crudModel;
+		createButtons();
 	}
 	
 	private void createButtons() {
@@ -39,14 +40,14 @@ public class SimpleCrudToolBar extends ToolBar {
 		addButton("Editar", Resources.SIMPLE_CRUD.edit16(), new SelectionListener<ButtonEvent>() {
 			@Override
 			public void componentSelected(ButtonEvent ce) {
-				MessageBox.alert("Desenvolvimento", "Esta sessão está em desenvolvimento", null);				
+				MessageBox.alert("Desenvolvimento", "Esta sessão está em desenvolvimento", null);
 			}
 		});
 		// BOTÃO REMOVER
 		addButton("Remover", Resources.SIMPLE_CRUD.del16(), new SelectionListener<ButtonEvent>() {
 			@Override
 			public void componentSelected(ButtonEvent ce) {
-				MessageBox.alert("Desenvolvimento", "Esta sessão está em desenvolvimento", null);				
+				MessageBox.alert("Desenvolvimento", "Esta sessão está em desenvolvimento", null);
 			}
 		});
 		// SEPARADOR
@@ -55,21 +56,33 @@ public class SimpleCrudToolBar extends ToolBar {
 		addButton("Exportar para Excel", Resources.SIMPLE_CRUD.excelExport16(), new SelectionListener<ButtonEvent>() {
 			@Override
 			public void componentSelected(ButtonEvent ce) {
-				MessageBox.alert("Desenvolvimento", "Esta sessão está em desenvolvimento", null);				
+				MessageBox.alert("Desenvolvimento", "Esta sessão está em desenvolvimento", null);
 			}
 		});
 		// IMPORTAR PARA EXCEL
 		addButton("Importar para Excel", Resources.SIMPLE_CRUD.excelImport16(), new SelectionListener<ButtonEvent>() {
 			@Override
 			public void componentSelected(ButtonEvent ce) {
-				MessageBox.alert("Desenvolvimento", "Esta sessão está em desenvolvimento", null);				
+				MessageBox.alert("Desenvolvimento", "Esta sessão está em desenvolvimento", null);
 			}
 		});
 		
 	}
 	
 	private void createExtrasButtons() {
-		add(new SeparatorToolItem());
+		List<Button> buttons = crudModel.getExtrasButtons();
+		if(buttons != null && !buttons.isEmpty()) {
+			add(new SeparatorToolItem());
+			for(Button button : buttons) {
+				button.addSelectionListener(new SelectionListener<ButtonEvent>() {
+					@Override
+					public void componentSelected(ButtonEvent arg0) {
+						MessageBox.alert("Desenvolvimento", "Esta sessão está em desenvolvimento", null);						
+					}
+				});
+				add(button);
+			}
+		}
 	}
 	
 	private void addButton(String toolTip, ImageResource img, SelectionListener<ButtonEvent> sl) {

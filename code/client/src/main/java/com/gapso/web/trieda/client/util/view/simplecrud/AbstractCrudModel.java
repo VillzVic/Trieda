@@ -1,7 +1,8 @@
-package com.gapso.web.trieda.client.crudmodel;
+package com.gapso.web.trieda.client.util.view.simplecrud;
 
 import java.util.List;
 
+import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.CheckBox;
 import com.extjs.gxt.ui.client.widget.form.Field;
 import com.extjs.gxt.ui.client.widget.form.TextField;
@@ -39,5 +40,8 @@ public abstract class AbstractCrudModel {
 		return 100;
 	}
 	
+	public List<Button> getExtrasButtons() {
+		return null;
+	}
 	
 }

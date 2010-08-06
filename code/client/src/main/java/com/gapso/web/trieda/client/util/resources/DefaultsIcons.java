@@ -14,6 +14,21 @@ public interface DefaultsIcons extends ClientBundle  {
 	@Source("campi24.png")
 	ImageResource campi24();
 	
+	@Source("disciplina16.png")
+	ImageResource disciplina16();
+	
+	@Source("professores16.png")
+	ImageResource professores16();
+	
+	@Source("curso16.png")
+	ImageResource curso16();
+	
+	@Source("matrizcurricular16.png")
+	ImageResource matrizCurricular16();
+	
+	@Source("vazio16.png")
+	ImageResource areasDeTitulacao16();
+	
 	@Source("save16.png")
 	ImageResource save16();
 	

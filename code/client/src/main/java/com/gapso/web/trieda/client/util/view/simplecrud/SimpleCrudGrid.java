@@ -16,7 +16,6 @@ import com.extjs.gxt.ui.client.widget.grid.ColumnModel;
 import com.extjs.gxt.ui.client.widget.grid.Grid;
 import com.extjs.gxt.ui.client.widget.layout.FitLayout;
 import com.extjs.gxt.ui.client.widget.toolbar.PagingToolBar;
-import com.gapso.web.trieda.client.crudmodel.AbstractCrudModel;
 import com.gapso.web.trieda.client.services.Services;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 

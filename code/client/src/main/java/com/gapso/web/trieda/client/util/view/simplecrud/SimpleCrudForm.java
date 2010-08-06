@@ -5,7 +5,6 @@ import com.extjs.gxt.ui.client.widget.form.FieldSet;
 import com.extjs.gxt.ui.client.widget.form.FormPanel;
 import com.extjs.gxt.ui.client.widget.layout.FormData;
 import com.extjs.gxt.ui.client.widget.layout.FormLayout;
-import com.gapso.web.trieda.client.crudmodel.AbstractCrudModel;
 
 public class SimpleCrudForm extends FormPanel {
 
