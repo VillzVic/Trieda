@@ -29,11 +29,6 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>com.gapso.testeProjetos</groupId>
-			<artifactId>principal</artifactId>
-			<version>0.0.1</version>
-		</dependency>
-		<dependency>
 			<groupId>com.extjs</groupId>
 			<artifactId>gxt</artifactId>
 			<version>2.1.1</version>
@@ -89,25 +84,6 @@
 					<warSourceDirectory>src/main/webapp/</warSourceDirectory>
 					<webXml>src/main/webapp/WEB-INF/web.xml</webXml>
 					<warSourceExcludes>.gwt-tmp/**</warSourceExcludes>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>gwt-maven-plugin</artifactId>
-				<version>1.2.0-11137</version>
-				<executions>
-					<execution>
-						<goals>
-							<goal>compile</goal>
-							<goal>generateAsync</goal>
-							<goal>test</goal>
-						</goals>
-					</execution>
-				</executions>
-				<configuration>
-					<runTarget>trieda/Trieda.html</runTarget>
-					<hostedWebapp>${project.build.directory}/${project.build.finalName}</hostedWebapp>
-					<style>PRETTY</style>
 				</configuration>
 			</plugin>
 		</plugins>

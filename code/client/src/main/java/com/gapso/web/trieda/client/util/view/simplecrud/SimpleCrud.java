@@ -10,7 +10,7 @@ import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
 public class SimpleCrud<M extends ModelData> extends ContentPanel {
 
 	private SimpleCrudGrid<M> grid;
-	private SimpleCrudToolBar tb;
+	private SimpleCrudToolBar<M> tb;
 	private SimpleCrudFilter filter;
 	
 	private AbstractCrudModel crudModel;
@@ -35,7 +35,8 @@ public class SimpleCrud<M extends ModelData> extends ContentPanel {
 	}
 	
 	private void createToolBar() {
-		tb = new SimpleCrudToolBar(crudModel);
+		tb = new SimpleCrudToolBar<M>(crudModel);
+		tb.setGrid(grid);
 		setTopComponent(tb);
 	}
 	
