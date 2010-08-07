@@ -8,6 +8,7 @@ import com.gapso.web.trieda.client.controller.mvc.controller.MatrizCurricularCon
 import com.gapso.web.trieda.client.controller.mvc.controller.SalaController;
 import com.gapso.web.trieda.client.controller.mvc.controller.UnidadeController;
 import com.google.gwt.core.client.EntryPoint;
+import com.google.gwt.user.client.ui.RootPanel;
 
 /**
  * Entry point classes define <code>onModuleLoad()</code>.
@@ -27,5 +28,7 @@ public class Trieda implements EntryPoint {
 		dispatcher.addController(new MatrizCurricularController());
 		
 		dispatcher.dispatch(AppEvents.Init);
+		
+		RootPanel.get("loading").setVisible(false);
 	}
 }
