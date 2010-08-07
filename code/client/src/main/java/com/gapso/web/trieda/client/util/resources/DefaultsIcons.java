@@ -28,6 +28,9 @@ public interface DefaultsIcons extends ClientBundle  {
 	
 	@Source("vazio16.png")
 	ImageResource areasDeTitulacao16();
+
+	@Source("vazio16.png")
+	ImageResource demanda16();
 	
 	@Source("save16.png")
 	ImageResource save16();

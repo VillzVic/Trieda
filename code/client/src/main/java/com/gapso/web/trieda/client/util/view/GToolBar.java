@@ -109,6 +109,17 @@ public class GToolBar extends ToolBar {
 		});
 		menuSalasBt.add(outros4);
 		
+
+		MenuItem outros5 = new MenuItem("Oferta de Cursos em Campi");
+		outros5.setIcon(AbstractImagePrototype.create(Resources.DEFAULTS.curso16()));
+		outros5.addSelectionListener(new SelectionListener<MenuEvent>() {
+			@Override
+			public void componentSelected(MenuEvent ce) {
+				Dispatcher.forwardEvent(AppEvents.CursoCampusList);
+			}
+		});
+		menuSalasBt.add(outros5);
+		
 		salasBt.setMenu(menuSalasBt);
 		group.add(salasBt);
 		
