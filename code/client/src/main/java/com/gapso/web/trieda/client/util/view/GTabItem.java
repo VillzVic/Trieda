@@ -7,6 +7,8 @@ import com.extjs.gxt.ui.client.widget.TabItem;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayout;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
 import com.extjs.gxt.ui.client.widget.layout.FitLayout;
+import com.google.gwt.resources.client.ImageResource;
+import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
 public class GTabItem extends TabItem {
 
@@ -17,7 +19,11 @@ public class GTabItem extends TabItem {
 	}
 
 	public GTabItem(String text) {
+		this(text, null);
+	}
+	public GTabItem(String text, ImageResource icon) {
 		super(text);
+		if(icon != null) setIcon(AbstractImagePrototype.create(icon));
 		configuration();
 	}
 	

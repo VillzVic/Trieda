@@ -7,6 +7,7 @@ import com.extjs.gxt.ui.client.mvc.Controller;
 import com.extjs.gxt.ui.client.mvc.View;
 import com.gapso.web.trieda.client.AppEvents;
 import com.gapso.web.trieda.client.crudmodel.CursoCampusCrudModel;
+import com.gapso.web.trieda.client.util.resources.Resources;
 import com.gapso.web.trieda.client.util.view.GTab;
 import com.gapso.web.trieda.client.util.view.GTabItem;
 import com.gapso.web.trieda.client.util.view.simplecrud.SimpleCrud;
@@ -24,7 +25,7 @@ public class CursoCampusView extends View {
 	}
 	
 	private void initList() {
-		tabItem = new GTabItem("Oferta de Cursos em Campi");
+		tabItem = new GTabItem("Oferta de Cursos em Campi", Resources.DEFAULTS.curso16());
 		
 		tabItem.setContent(new SimpleCrud<ModelData>(new CursoCampusCrudModel()));
 		
