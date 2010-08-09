@@ -26,6 +26,7 @@ public class DemandaCrudModel extends AbstractCrudModel {
 		ids.add("campus");
 		ids.add("turno");
 		ids.add("curso");
+		ids.add("matrizcurricular");
 		ids.add("disciplina");
 		ids.add("demanda");
 		return ids;
@@ -39,6 +40,7 @@ public class DemandaCrudModel extends AbstractCrudModel {
 		if(id.equals("turno")) return cb; 
 		if(id.equals("curso")) return cb; 
 		if(id.equals("disciplina")) return cb; 
+		if(id.equals("matrizcurricular")) return cb; 
 		
 		if(id.equals("demanda")) return new NumberField();
 		
@@ -57,6 +59,7 @@ public class DemandaCrudModel extends AbstractCrudModel {
 		if(id.equals("turno")) return "Turno";
 		if(id.equals("curso")) return "Curso";
 		if(id.equals("disciplina")) return "Disciplina";
+		if(id.equals("matrizcurricular")) return "Matriz Curricular";
 		if(id.equals("demanda")) return "Demanda (em alunos)";
 		return null;
 	}
@@ -72,7 +75,7 @@ public class DemandaCrudModel extends AbstractCrudModel {
 //	public List<Button> getExtrasButtons() {
 //		List<Button> buttons = new ArrayList<Button>();
 //		
-//		Button bt1 = new Button("", AbstractImagePrototype.create(Resources.DEFAULTS.matrizCurricular16()));
+//		Button bt1 = new Button("", AbstractImagePrototype.create(Resources.DEFAULTS.demanda16()));
 //		bt1.setToolTip("Matrizes Curriculares");
 //		buttons.add(bt1);
 //		
