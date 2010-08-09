@@ -39,6 +39,10 @@
 		<servlet-name>demandasServlet</servlet-name>
 		<servlet-class>com.gapso.web.trieda.server.DemandasServiceImpl</servlet-class>
 	</servlet>
+	<servlet>
+		<servlet-name>divisoesCreditosServlet</servlet-name>
+		<servlet-class>com.gapso.web.trieda.server.DivisoesCreditosServiceImpl</servlet-class>
+	</servlet>
 		
 	<servlet-mapping>
 		<servlet-name>unidadesServlet</servlet-name>
@@ -71,6 +75,10 @@
 	<servlet-mapping>
 		<servlet-name>demandasServlet</servlet-name>
 		<url-pattern>/trieda/demandas</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>divisoesCreditosServlet</servlet-name>
+		<url-pattern>/trieda/divisoesCreditos</url-pattern>
 	</servlet-mapping>
 
 	<welcome-file-list>

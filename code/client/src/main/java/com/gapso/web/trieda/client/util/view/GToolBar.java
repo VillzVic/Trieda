@@ -139,6 +139,16 @@ public class GToolBar extends ToolBar {
 		});
 		menuSalasBt.add(outros7);
 		
+		MenuItem outros8 = new MenuItem("Preferência de Divisão de Créditos");
+		outros8.setIcon(AbstractImagePrototype.create(Resources.DEFAULTS.divisaoDeCreditos16()));
+		outros8.addSelectionListener(new SelectionListener<MenuEvent>() {
+			@Override
+			public void componentSelected(MenuEvent ce) {
+				Dispatcher.forwardEvent(AppEvents.DivisaoCreditosList);
+			}
+		});
+		menuSalasBt.add(outros8);
+		
 		salasBt.setMenu(menuSalasBt);
 		group.add(salasBt);
 		
