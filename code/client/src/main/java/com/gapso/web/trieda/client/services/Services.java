@@ -11,6 +11,7 @@ public class Services {
 	public static final String DISCIPLINAS = "disciplinas_service";
 	public static final String MATRIZESCURRICULARES = "matrizescurriculares_service";
 	public static final String CURSOSCAMPI = "cursoscampi_service";
+	public static final String PROFESSORES = "professores_service";
 	
 	public static Object get(String id) {
 		if(id.equals(UNIDADES)) return unidades();
@@ -19,6 +20,7 @@ public class Services {
 		if(id.equals(DISCIPLINAS)) return disciplinas();
 		if(id.equals(MATRIZESCURRICULARES)) return matrizesCurriculares();
 		if(id.equals(CURSOSCAMPI)) return cursosCampi();
+		if(id.equals(PROFESSORES)) return professores();
 		return null;
 	}
 	
@@ -72,6 +74,15 @@ public class Services {
 		if(service == null) {
 			service = GWT.create(CursosCampiService.class);
 			Registry.register(CURSOSCAMPI, service);
+		}
+		return service;
+	}
+	
+	public static ProfessoresServiceAsync professores() {
+		ProfessoresServiceAsync service = (ProfessoresServiceAsync) Registry.get(PROFESSORES);
+		if(service == null) {
+			service = GWT.create(ProfessoresService.class);
+			Registry.register(PROFESSORES, service);
 		}
 		return service;
 	}

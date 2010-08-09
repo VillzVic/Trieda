@@ -31,6 +31,10 @@
 		<servlet-name>cursosCampiServlet</servlet-name>
 		<servlet-class>com.gapso.web.trieda.server.CursosCampiServiceImpl</servlet-class>
 	</servlet>
+	<servlet>
+		<servlet-name>professoresServlet</servlet-name>
+		<servlet-class>com.gapso.web.trieda.server.ProfessoresServiceImpl</servlet-class>
+	</servlet>
 		
 	<servlet-mapping>
 		<servlet-name>unidadesServlet</servlet-name>
@@ -55,6 +59,10 @@
 	<servlet-mapping>
 		<servlet-name>cursosCampiServlet</servlet-name>
 		<url-pattern>/trieda/cursosCampi</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>professoresServlet</servlet-name>
+		<url-pattern>/trieda/professores</url-pattern>
 	</servlet-mapping>
 
 	<welcome-file-list>
