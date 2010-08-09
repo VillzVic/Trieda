@@ -11,10 +11,13 @@ import com.extjs.gxt.ui.client.data.PagingLoader;
 import com.extjs.gxt.ui.client.data.RpcProxy;
 import com.extjs.gxt.ui.client.store.ListStore;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
+import com.extjs.gxt.ui.client.widget.form.Time;
 import com.extjs.gxt.ui.client.widget.grid.CheckColumnConfig;
 import com.extjs.gxt.ui.client.widget.grid.ColumnConfig;
+import com.extjs.gxt.ui.client.widget.grid.ColumnData;
 import com.extjs.gxt.ui.client.widget.grid.ColumnModel;
 import com.extjs.gxt.ui.client.widget.grid.Grid;
+import com.extjs.gxt.ui.client.widget.grid.GridCellRenderer;
 import com.extjs.gxt.ui.client.widget.grid.GridSelectionModel;
 import com.extjs.gxt.ui.client.widget.layout.FitLayout;
 import com.extjs.gxt.ui.client.widget.toolbar.PagingToolBar;
@@ -77,6 +80,14 @@ public class SimpleCrudGrid<M extends ModelData> extends ContentPanel {
 				column = new CheckColumnConfig(id, crudModel.getHeader(id), crudModel.getWidth(id));
 			} else {
 				column = new ColumnConfig(id, crudModel.getHeader(id), crudModel.getWidth(id));
+			}
+			if(crudModel.isTime(id)) {
+				column.setRenderer(new GridCellRenderer<ModelData>() {  
+					public Object render(ModelData model, String property, ColumnData config, int rowIndex, int colIndex, ListStore<ModelData> store, Grid<ModelData> grid) {
+						Time time = (Time) model.get(property);
+						return time.getHour() + ":" + time.getMinutes();
+					}
+				});
 			}
 			column.setToolTip(crudModel.getHeader(id));
 			columnList.add(column);

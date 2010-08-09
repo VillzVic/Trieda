@@ -5,15 +5,16 @@ import com.google.gwt.core.client.GWT;
 
 public class Services {
 
-	public static final String UNIDADES = "unidades_service";
-	public static final String SALAS = "salas_service";
-	public static final String CURSOS = "cursos_service";
-	public static final String DISCIPLINAS = "disciplinas_service";
-	public static final String MATRIZESCURRICULARES = "matrizescurriculares_service";
-	public static final String CURSOSCAMPI = "cursoscampi_service";
-	public static final String PROFESSORES = "professores_service";
-	public static final String DEMANDAS = "demandas_service";
-	public static final String DIVISOESCREDITOS = "divisoescreditos_service";
+	public static final String UNIDADES = "unidades";
+	public static final String SALAS = "salas";
+	public static final String CURSOS = "cursos";
+	public static final String DISCIPLINAS = "disciplinas";
+	public static final String MATRIZESCURRICULARES = "matrizescurriculares";
+	public static final String CURSOSCAMPI = "cursoscampi";
+	public static final String PROFESSORES = "professores";
+	public static final String DEMANDAS = "demandas";
+	public static final String DIVISOESCREDITOS = "divisoescreditos";
+	public static final String PERIODOSAULA = "periodosaula";
 	
 	public static Object get(String id) {
 		if(id.equals(UNIDADES)) return unidades();
@@ -25,6 +26,7 @@ public class Services {
 		if(id.equals(PROFESSORES)) return professores();
 		if(id.equals(DEMANDAS)) return demandas();
 		if(id.equals(DIVISOESCREDITOS)) return divisoesCreditos();
+		if(id.equals(PERIODOSAULA)) return periodosAula();
 		return null;
 	}
 	
@@ -105,6 +107,15 @@ public class Services {
 		if(service == null) {
 			service = GWT.create(DivisoesCreditosService.class);
 			Registry.register(DIVISOESCREDITOS, service);
+		}
+		return service;
+	}
+	
+	public static PeriodosDeAulasServiceAsync periodosAula() {
+		PeriodosDeAulasServiceAsync service = (PeriodosDeAulasServiceAsync) Registry.get(PERIODOSAULA);
+		if(service == null) {
+			service = GWT.create(PeriodosDeAulasService.class);
+			Registry.register(PERIODOSAULA, service);
 		}
 		return service;
 	}

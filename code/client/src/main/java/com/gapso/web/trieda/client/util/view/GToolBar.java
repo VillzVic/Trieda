@@ -149,6 +149,16 @@ public class GToolBar extends ToolBar {
 		});
 		menuSalasBt.add(outros8);
 		
+		MenuItem outros9 = new MenuItem("Períodos de Aula");
+		outros9.setIcon(AbstractImagePrototype.create(Resources.DEFAULTS.periodoDeAula16()));
+		outros9.addSelectionListener(new SelectionListener<MenuEvent>() {
+			@Override
+			public void componentSelected(MenuEvent ce) {
+				Dispatcher.forwardEvent(AppEvents.PeriodoAulaList);
+			}
+		});
+		menuSalasBt.add(outros9);
+		
 		salasBt.setMenu(menuSalasBt);
 		group.add(salasBt);
 		

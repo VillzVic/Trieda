@@ -70,11 +70,6 @@ public class CursoCrudModel extends AbstractCrudModel {
 	}
 	
 	@Override
-	public String getLabel(String id) {
-		return getHeader(id);
-	}
-	
-	@Override
 	public int getWidth(String id) {
 		if(id.equals("codigo")) return 100;
 		if(id.equals("nome")) return 150;

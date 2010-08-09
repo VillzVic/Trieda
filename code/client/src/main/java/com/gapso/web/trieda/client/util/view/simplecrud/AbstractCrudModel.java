@@ -6,6 +6,7 @@ import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.CheckBox;
 import com.extjs.gxt.ui.client.widget.form.Field;
 import com.extjs.gxt.ui.client.widget.form.TextField;
+import com.extjs.gxt.ui.client.widget.form.TimeField;
 
 public abstract class AbstractCrudModel {
 	
@@ -22,6 +23,11 @@ public abstract class AbstractCrudModel {
 	public boolean isBoolean(String id) {
 		Field<?> f = getField(id);
 		return (f instanceof CheckBox);
+	}
+	
+	public boolean isTime(String id) {
+		Field<?> f = getField(id);
+		return (f instanceof TimeField);
 	}
 	
 	public boolean isIdForm(String id) {

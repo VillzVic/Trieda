@@ -15,5 +15,6 @@ public class AppEvents {
 	public static final EventType ProfessorList = new EventType();
 	public static final EventType DemandaList = new EventType();
 	public static final EventType DivisaoCreditosList = new EventType();
+	public static final EventType PeriodoAulaList = new EventType();
 	
 }
