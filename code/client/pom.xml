@@ -9,6 +9,7 @@
 
 	<properties>
 		<gwt.version>2.0.4</gwt.version>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 
 	<dependencies>
@@ -84,6 +85,25 @@
 					<warSourceDirectory>src/main/webapp/</warSourceDirectory>
 					<webXml>src/main/webapp/WEB-INF/web.xml</webXml>
 					<warSourceExcludes>.gwt-tmp/**</warSourceExcludes>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>gwt-maven-plugin</artifactId>
+				<version>1.2.0-11137</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>compile</goal>
+							<goal>generateAsync</goal>
+							<goal>test</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<runTarget>trieda/Trieda.html</runTarget>
+					<hostedWebapp>${project.build.directory}/${project.build.finalName}</hostedWebapp>
+					<style>PRETTY</style>
 				</configuration>
 			</plugin>
 		</plugins>
