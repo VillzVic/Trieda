@@ -5,12 +5,15 @@ import java.util.List;
 
 import com.extjs.gxt.ui.client.data.ModelData;
 import com.extjs.gxt.ui.client.store.ListStore;
+import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.ComboBox;
 import com.extjs.gxt.ui.client.widget.form.Field;
 import com.extjs.gxt.ui.client.widget.form.NumberField;
 import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.gapso.web.trieda.client.services.Services;
+import com.gapso.web.trieda.client.util.resources.Resources;
 import com.gapso.web.trieda.client.util.view.simplecrud.AbstractCrudModel;
+import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
 
 public class ProfessorCrudModel extends AbstractCrudModel {
@@ -86,15 +89,19 @@ public class ProfessorCrudModel extends AbstractCrudModel {
 		return super.getWidth(id);
 	}
 	
-//	@Override
-//	public List<Button> getExtrasButtons() {
-//		List<Button> buttons = new ArrayList<Button>();
-//		
-//		Button bt1 = new Button("", AbstractImagePrototype.create(Resources.DEFAULTS.matrizCurricular16()));
-//		bt1.setToolTip("Matrizes Curriculares");
-//		buttons.add(bt1);
-//		
-//		return buttons;
-//	}
+	@Override
+	public List<Button> getExtrasButtons() {
+		List<Button> buttons = new ArrayList<Button>();
+		
+		Button bt1 = new Button("", AbstractImagePrototype.create(Resources.DEFAULTS.disciplina16()));
+		bt1.setToolTip("Disciplinas Capaz de Lecionar");
+		buttons.add(bt1);
+		
+		Button bt2 = new Button("", AbstractImagePrototype.create(Resources.DEFAULTS.campi16()));
+		bt2.setToolTip("Campi em que Trabalha");
+		buttons.add(bt2);
+		
+		return buttons;
+	}
 
 }

@@ -11,6 +11,8 @@ public interface DefaultsIcons extends ClientBundle  {
 	@Source("blackboard16.png")
 	ImageResource sala16();
 	
+	@Source("campi16.png")
+	ImageResource campi16();
 	@Source("campi24.png")
 	ImageResource campi24();
 	
