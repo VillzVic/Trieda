@@ -25,8 +25,8 @@ public class CursoCampusCrudModel extends AbstractCrudModel {
 	@Override
 	public List<String> getIds() {
 		List<String> ids = new ArrayList<String>();
-		ids.add("turno");
 		ids.add("campus");
+		ids.add("turno");
 		ids.add("curso");
 		ids.add("matrizcurricular");
 		return ids;
