@@ -129,6 +129,16 @@ public class GToolBar extends ToolBar {
 		});
 		menuSalasBt.add(outros6);
 		
+		MenuItem outros7 = new MenuItem("Previssão de Demandas");
+		outros7.setIcon(AbstractImagePrototype.create(Resources.DEFAULTS.demanda16()));
+		outros7.addSelectionListener(new SelectionListener<MenuEvent>() {
+			@Override
+			public void componentSelected(MenuEvent ce) {
+				Dispatcher.forwardEvent(AppEvents.DemandaList);
+			}
+		});
+		menuSalasBt.add(outros7);
+		
 		salasBt.setMenu(menuSalasBt);
 		group.add(salasBt);
 		
