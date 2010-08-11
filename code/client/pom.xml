@@ -101,9 +101,9 @@
 					</execution>
 				</executions>
 				<configuration>
-					<runTarget>trieda/Trieda.html</runTarget>
+					<runTarget>trieda/trieda.html</runTarget>
 					<hostedWebapp>${project.build.directory}/${project.build.finalName}</hostedWebapp>
-					<style>PRETTY</style>
+					<style>OBF</style>
 				</configuration>
 			</plugin>
 		</plugins>
