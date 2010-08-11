@@ -26,6 +26,7 @@ public class CursoView extends View {
 	
 	private void initList() {
 		tabItem = new GTabItem("Cursos", Resources.DEFAULTS.curso16());
+		tabItem.setIdTabItem("cursos");
 		
 		tabItem.setContent(new SimpleCrud<ModelData>(new CursoCrudModel()));
 		

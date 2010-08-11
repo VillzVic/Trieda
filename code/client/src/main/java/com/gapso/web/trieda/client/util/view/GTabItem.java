@@ -13,6 +13,7 @@ import com.google.gwt.user.client.ui.AbstractImagePrototype;
 public class GTabItem extends TabItem {
 
 	private ContentPanel panel;
+	private String idTabItem;
 	
 	public GTabItem() {
 		configuration();
@@ -44,6 +45,14 @@ public class GTabItem extends TabItem {
 	public void setContent(Component widget) {
 		BorderLayoutData bld = new BorderLayoutData(LayoutRegion.CENTER);
 		panel.add(widget, bld);
+	}
+
+	public String getIdTabItem() {
+		return idTabItem;
+	}
+
+	public void setIdTabItem(String idTabItem) {
+		this.idTabItem = idTabItem;
 	}
 	
 }
