@@ -40,16 +40,16 @@ public class GToolBar extends ToolBar {
 		group.setHeading("Campi");
 
 		Button campiBt = new Button("Campi");
-		campiBt.addSelectionListener(new SelectionListener<ButtonEvent>() {
-			@Override
-			public void componentSelected(ButtonEvent ce) {
-				MessageBox.alert("Desenvolvimento", "Esta sessão está em desenvolvimento", null);
-			}
-		});
 		campiBt.setScale(ButtonScale.MEDIUM);
 		campiBt.setIconAlign(IconAlign.TOP);
 		campiBt.setArrowAlign(ButtonArrowAlign.BOTTOM);
 		campiBt.setIcon(AbstractImagePrototype.create(Resources.DEFAULTS.campi24()));
+		campiBt.addSelectionListener(new SelectionListener<ButtonEvent>() {
+			@Override
+			public void componentSelected(ButtonEvent ce) {
+				Dispatcher.forwardEvent(AppEvents.CampusList);
+			}
+		});
 
 		group.add(campiBt, data);
 		

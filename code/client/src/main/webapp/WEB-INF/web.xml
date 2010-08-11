@@ -8,6 +8,10 @@
 	<display-name>TRIEDA</display-name>
 
 	<servlet>
+		<servlet-name>campiServlet</servlet-name>
+		<servlet-class>com.gapso.web.trieda.server.CampiServiceImpl</servlet-class>
+	</servlet>
+	<servlet>
 		<servlet-name>unidadesServlet</servlet-name>
 		<servlet-class>com.gapso.web.trieda.server.UnidadesServiceImpl</servlet-class>
 	</servlet>
@@ -48,6 +52,10 @@
 		<servlet-class>com.gapso.web.trieda.server.PeriodosAulasServiceImpl</servlet-class>
 	</servlet>
 		
+	<servlet-mapping>
+		<servlet-name>campiServlet</servlet-name>
+		<url-pattern>/trieda/campi</url-pattern>
+	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>unidadesServlet</servlet-name>
 		<url-pattern>/trieda/unidades</url-pattern>
