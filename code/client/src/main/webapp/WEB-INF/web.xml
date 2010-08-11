@@ -12,6 +12,10 @@
 		<servlet-class>com.gapso.web.trieda.server.CampiServiceImpl</servlet-class>
 	</servlet>
 	<servlet>
+		<servlet-name>turnosServlet</servlet-name>
+		<servlet-class>com.gapso.web.trieda.server.TurnosServiceImpl</servlet-class>
+	</servlet>
+	<servlet>
 		<servlet-name>unidadesServlet</servlet-name>
 		<servlet-class>com.gapso.web.trieda.server.UnidadesServiceImpl</servlet-class>
 	</servlet>
@@ -55,6 +59,10 @@
 	<servlet-mapping>
 		<servlet-name>campiServlet</servlet-name>
 		<url-pattern>/trieda/campi</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>turnosServlet</servlet-name>
+		<url-pattern>/trieda/turnos</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>unidadesServlet</servlet-name>

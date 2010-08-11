@@ -7,7 +7,6 @@ import com.extjs.gxt.ui.client.event.ButtonEvent;
 import com.extjs.gxt.ui.client.event.MenuEvent;
 import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.mvc.Dispatcher;
-import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.button.ButtonGroup;
 import com.extjs.gxt.ui.client.widget.button.SplitButton;
@@ -158,6 +157,16 @@ public class GToolBar extends ToolBar {
 			}
 		});
 		menuSalasBt.add(outros9);
+		
+		MenuItem outros10 = new MenuItem("Turnos");
+		outros10.setIcon(AbstractImagePrototype.create(Resources.DEFAULTS.turnos16()));
+		outros10.addSelectionListener(new SelectionListener<MenuEvent>() {
+			@Override
+			public void componentSelected(MenuEvent ce) {
+				Dispatcher.forwardEvent(AppEvents.TurnoList);
+			}
+		});
+		menuSalasBt.add(outros10);
 		
 		salasBt.setMenu(menuSalasBt);
 		group.add(salasBt);
