@@ -49,5 +49,11 @@ public interface DefaultsIcons extends ClientBundle  {
 	@Source("cancel16.png")
 	ImageResource cancel16();
 	
+	@Source("toLeft24.png")
+	ImageResource toLeft24();
+	
+	@Source("toRight24.png")
+	ImageResource toRight24();
+	
 
 }

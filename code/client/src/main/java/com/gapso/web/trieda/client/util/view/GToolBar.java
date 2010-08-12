@@ -178,6 +178,16 @@ public class GToolBar extends ToolBar {
 		});
 		menuSalasBt.add(outros11);
 		
+		MenuItem outros12 = new MenuItem("Vincular Áreas de Titulação");
+		outros12.setIcon(AbstractImagePrototype.create(Resources.DEFAULTS.areasDeTitulacao16()));
+		outros12.addSelectionListener(new SelectionListener<MenuEvent>() {
+			@Override
+			public void componentSelected(MenuEvent ce) {
+				Dispatcher.forwardEvent(AppEvents.CursoAreaTitulacaoList);
+			}
+		});
+		menuSalasBt.add(outros12);
+		
 		salasBt.setMenu(menuSalasBt);
 		group.add(salasBt);
 		

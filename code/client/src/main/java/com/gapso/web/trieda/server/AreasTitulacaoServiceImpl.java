@@ -19,8 +19,8 @@ public class AreasTitulacaoServiceImpl extends RemoteServiceServlet implements A
 
 	public PagingLoadResult<ModelData> getList() {
 		List<ModelData> list = new ArrayList<ModelData>();
-		for(int i = 1; i <= 10; i++) {
-			list.add(new AreaTitulacaoModel("Codigo "+i, "Descrição "+i));
+		for(int i = 1; i <= 20; i++) {
+			list.add(new AreaTitulacaoModel("Área "+i, "Descrição "+i));
 		}
 		return new BasePagingLoadResult<ModelData>(list);
 	}
