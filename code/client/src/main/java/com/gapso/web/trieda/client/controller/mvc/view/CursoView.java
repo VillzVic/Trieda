@@ -1,11 +1,11 @@
 package com.gapso.web.trieda.client.controller.mvc.view;
 
 import com.extjs.gxt.ui.client.Registry;
-import com.extjs.gxt.ui.client.data.ModelData;
 import com.extjs.gxt.ui.client.mvc.AppEvent;
 import com.extjs.gxt.ui.client.mvc.Controller;
 import com.extjs.gxt.ui.client.mvc.View;
 import com.gapso.web.trieda.client.AppEvents;
+import com.gapso.web.trieda.client.controller.mvc.model.CursoModel;
 import com.gapso.web.trieda.client.crudmodel.CursoCrudModel;
 import com.gapso.web.trieda.client.util.resources.Resources;
 import com.gapso.web.trieda.client.util.view.GTab;
@@ -28,7 +28,7 @@ public class CursoView extends View {
 		tabItem = new GTabItem("Cursos", Resources.DEFAULTS.curso16());
 		tabItem.setIdTabItem("cursos");
 		
-		tabItem.setContent(new SimpleCrud<ModelData>(new CursoCrudModel()));
+		tabItem.setContent(new SimpleCrud<CursoModel>(new CursoCrudModel()));
 		
 		GTab tab = (GTab)Registry.get(AppView.TAB);
 		tab.add(tabItem);
