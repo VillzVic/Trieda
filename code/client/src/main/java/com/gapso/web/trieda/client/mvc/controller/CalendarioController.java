@@ -12,9 +12,14 @@ public class CalendarioController extends Controller {
 	
 	public CalendarioController() {
 		registerEventTypes(AppEvents.CalendarioList);
+		registerEventTypes(AppEvents.CalendarioView);
 	}
 
 	private void onList(AppEvent event) {
+		calendarioView = new CalendarioView(this);
+		forwardToView(calendarioView, event);
+	}
+	private void onView(AppEvent event) {
 		calendarioView = new CalendarioView(this);
 		forwardToView(calendarioView, event);
 	}
@@ -22,9 +27,8 @@ public class CalendarioController extends Controller {
 	@Override
 	public void handleEvent(AppEvent event) {
 		EventType type = event.getType();
-		if (type == AppEvents.CalendarioList) {
-			onList(event);
-		}
+		if (type == AppEvents.CalendarioList) onList(event);
+		if (type == AppEvents.CalendarioView) onView(event);
 	}
 
 }

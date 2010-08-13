@@ -6,6 +6,7 @@ import java.util.List;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.Field;
 import com.extjs.gxt.ui.client.widget.form.NumberField;
+import com.gapso.web.trieda.client.AppEvents;
 import com.gapso.web.trieda.client.services.Services;
 import com.gapso.web.trieda.client.util.resources.Resources;
 import com.gapso.web.trieda.client.util.view.simplecrud.AbstractCrudModel;
@@ -54,6 +55,7 @@ public class CalendarioCrudModel extends AbstractCrudModel {
 		
 		Button bt1 = new Button("", AbstractImagePrototype.create(Resources.DEFAULTS.periodoDeAula16()));
 		bt1.setToolTip("Dias de Aulas");
+		bt1.setData("event", AppEvents.CalendarioView);
 		buttons.add(bt1);
 		
 		return buttons;

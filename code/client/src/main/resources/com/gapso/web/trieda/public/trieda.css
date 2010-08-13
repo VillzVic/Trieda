@@ -66,3 +66,43 @@ h1 {
 #loading-msg {
   font: normal 10px arial, tahoma, sans-serif;
 }
+
+.toggle-image-button .x-btn-text {
+    cursor: pointer !important;
+    cursor: hand !important;
+    border: none !important;
+    /* Disable the button-style */
+    background-color: transparent !important;
+    background:none !important;
+    background-image:none !important;
+    padding: 0px !important;
+    color: #4784C3 !important;
+    text-decoration: none !important;
+
+}
+
+ /* remove images */
+.toggle-image-button .x-btn-tl,
+.toggle-image-button .x-btn-tr,
+.toggle-image-button .x-btn-tc,
+.toggle-image-button .x-btn-ml,
+.toggle-image-button .x-btn-mr,
+.toggle-image-button .x-btn-mc,
+.toggle-image-button .x-btn-bl,
+.toggle-image-button .x-btn-br,
+.toggle-image-button .x-btn-bc {
+    background-image: none !important;
+}
+
+/* remove little dots in FF */
+.toggle-image-button .x-btn-tl i,
+.toggle-image-button .x-btn-tr i,
+.toggle-image-button .x-btn-tc i,
+.toggle-image-button .x-btn-ml i,
+.toggle-image-button .x-btn-mr i,
+.toggle-image-button .x-btn-mc i,
+.toggle-image-button .x-btn-bl i,
+.toggle-image-button .x-btn-br i,
+.toggle-image-button .x-btn-bc i {
+    font-size: 0px;
+}

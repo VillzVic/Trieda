@@ -5,10 +5,12 @@ import java.util.List;
 
 import com.extjs.gxt.ui.client.data.ModelData;
 import com.extjs.gxt.ui.client.event.ButtonEvent;
+import com.extjs.gxt.ui.client.event.EventType;
 import com.extjs.gxt.ui.client.event.Events;
 import com.extjs.gxt.ui.client.event.Listener;
 import com.extjs.gxt.ui.client.event.SelectionChangedEvent;
 import com.extjs.gxt.ui.client.event.SelectionListener;
+import com.extjs.gxt.ui.client.mvc.Dispatcher;
 import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.toolbar.SeparatorToolItem;
@@ -87,8 +89,13 @@ public class SimpleCrudToolBar<M extends ModelData> extends ToolBar {
 			for(Button button : buttons) {
 				button.addSelectionListener(new SelectionListener<ButtonEvent>() {
 					@Override
-					public void componentSelected(ButtonEvent arg0) {
-						MessageBox.alert("Desenvolvimento", "Esta sessão está em desenvolvimento", null);						
+					public void componentSelected(ButtonEvent be) {
+						EventType event = be.getButton().getData("event");
+						if(event != null) {
+							Dispatcher.forwardEvent(event);
+						} else {
+							MessageBox.alert("Desenvolvimento", "Esta sessão está em desenvolvimento", null);
+						}
 					}
 				});
 				add(button);
