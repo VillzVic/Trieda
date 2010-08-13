@@ -34,6 +34,9 @@ public interface DefaultsIcons extends ClientBundle  {
 	@Source("divisaocreditos16.png")
 	ImageResource divisaoDeCreditos16();
 	
+	@Source("calendario16.png")
+	ImageResource calendario16();
+	
 	@Source("vazio16.png")
 	ImageResource turnos16();
 	

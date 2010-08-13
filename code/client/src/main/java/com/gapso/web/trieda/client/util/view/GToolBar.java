@@ -188,6 +188,16 @@ public class GToolBar extends ToolBar {
 		});
 		menuSalasBt.add(outros12);
 		
+		MenuItem outros13 = new MenuItem("Calendarios");
+		outros13.setIcon(AbstractImagePrototype.create(Resources.DEFAULTS.calendario16()));
+		outros13.addSelectionListener(new SelectionListener<MenuEvent>() {
+			@Override
+			public void componentSelected(MenuEvent ce) {
+				Dispatcher.forwardEvent(AppEvents.CalendarioList);
+			}
+		});
+		menuSalasBt.add(outros13);
+		
 		salasBt.setMenu(menuSalasBt);
 		group.add(salasBt);
 		

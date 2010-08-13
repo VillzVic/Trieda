@@ -18,6 +18,7 @@ public class Services {
 	public static final String DIVISOESCREDITOS = "divisoescreditos";
 	public static final String PERIODOSAULA = "periodosaula";
 	public static final String AREASTITULACAO = "areasTitulacao";
+	public static final String CALENDARIOS = "calendarios";
 	
 	public static Object get(String id) {
 		if(id.equals(CAMPI)) return campi();
@@ -33,6 +34,7 @@ public class Services {
 		if(id.equals(DIVISOESCREDITOS)) return divisoesCreditos();
 		if(id.equals(PERIODOSAULA)) return periodosAula();
 		if(id.equals(AREASTITULACAO)) return areasTitulacao();
+		if(id.equals(CALENDARIOS)) return calendarios();
 		return null;
 	}
 	
@@ -149,6 +151,15 @@ public class Services {
 		if(service == null) {
 			service = GWT.create(AreasTitulacaoService.class);
 			Registry.register(AREASTITULACAO, service);
+		}
+		return service;
+	}
+	
+	public static CalendariosServiceAsync calendarios() {
+		CalendariosServiceAsync service = (CalendariosServiceAsync) Registry.get(CALENDARIOS);
+		if(service == null) {
+			service = GWT.create(CalendariosService.class);
+			Registry.register(CALENDARIOS, service);
 		}
 		return service;
 	}

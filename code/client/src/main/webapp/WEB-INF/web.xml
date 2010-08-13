@@ -59,6 +59,10 @@
 		<servlet-name>areasTitulacaoServlet</servlet-name>
 		<servlet-class>com.gapso.web.trieda.server.AreasTitulacaoServiceImpl</servlet-class>
 	</servlet>
+	<servlet>
+		<servlet-name>calendariosServlet</servlet-name>
+		<servlet-class>com.gapso.web.trieda.server.CalendariosServiceImpl</servlet-class>
+	</servlet>
 		
 	<servlet-mapping>
 		<servlet-name>campiServlet</servlet-name>
@@ -111,6 +115,10 @@
 	<servlet-mapping>
 		<servlet-name>areasTitulacaoServlet</servlet-name>
 		<url-pattern>/trieda/areasTitulacao</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>calendariosServlet</servlet-name>
+		<url-pattern>/trieda/calendarios</url-pattern>
 	</servlet-mapping>
 
 	<welcome-file-list>
