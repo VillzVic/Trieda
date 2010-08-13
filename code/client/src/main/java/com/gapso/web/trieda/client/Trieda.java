@@ -1,21 +1,21 @@
 package com.gapso.web.trieda.client;
 
 import com.extjs.gxt.ui.client.mvc.Dispatcher;
-import com.gapso.web.trieda.client.controller.mvc.controller.AppController;
-import com.gapso.web.trieda.client.controller.mvc.controller.AreaTitulacaoController;
-import com.gapso.web.trieda.client.controller.mvc.controller.CampusController;
-import com.gapso.web.trieda.client.controller.mvc.controller.CursoAreaTitulacaoController;
-import com.gapso.web.trieda.client.controller.mvc.controller.CursoCampusController;
-import com.gapso.web.trieda.client.controller.mvc.controller.CursoController;
-import com.gapso.web.trieda.client.controller.mvc.controller.DemandaController;
-import com.gapso.web.trieda.client.controller.mvc.controller.DisciplinaController;
-import com.gapso.web.trieda.client.controller.mvc.controller.DivisaoCreditosController;
-import com.gapso.web.trieda.client.controller.mvc.controller.MatrizCurricularController;
-import com.gapso.web.trieda.client.controller.mvc.controller.PeriodoAulaController;
-import com.gapso.web.trieda.client.controller.mvc.controller.ProfessorController;
-import com.gapso.web.trieda.client.controller.mvc.controller.SalaController;
-import com.gapso.web.trieda.client.controller.mvc.controller.TurnoController;
-import com.gapso.web.trieda.client.controller.mvc.controller.UnidadeController;
+import com.gapso.web.trieda.client.mvc.controller.AppController;
+import com.gapso.web.trieda.client.mvc.controller.AreaTitulacaoController;
+import com.gapso.web.trieda.client.mvc.controller.CampusController;
+import com.gapso.web.trieda.client.mvc.controller.CursoAreaTitulacaoController;
+import com.gapso.web.trieda.client.mvc.controller.CursoCampusController;
+import com.gapso.web.trieda.client.mvc.controller.CursoController;
+import com.gapso.web.trieda.client.mvc.controller.DemandaController;
+import com.gapso.web.trieda.client.mvc.controller.DisciplinaController;
+import com.gapso.web.trieda.client.mvc.controller.DivisaoCreditosController;
+import com.gapso.web.trieda.client.mvc.controller.MatrizCurricularController;
+import com.gapso.web.trieda.client.mvc.controller.PeriodoAulaController;
+import com.gapso.web.trieda.client.mvc.controller.ProfessorController;
+import com.gapso.web.trieda.client.mvc.controller.SalaController;
+import com.gapso.web.trieda.client.mvc.controller.TurnoController;
+import com.gapso.web.trieda.client.mvc.controller.UnidadeController;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.user.client.ui.RootPanel;
 

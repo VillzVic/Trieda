@@ -6,7 +6,7 @@ import java.util.List;
 import com.extjs.gxt.ui.client.data.BasePagingLoadResult;
 import com.extjs.gxt.ui.client.data.ModelData;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
-import com.gapso.web.trieda.client.controller.mvc.model.MatrizCurricularModel;
+import com.gapso.web.trieda.client.mvc.model.MatrizCurricularModel;
 import com.gapso.web.trieda.client.services.MatrizesCurricularesService;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
