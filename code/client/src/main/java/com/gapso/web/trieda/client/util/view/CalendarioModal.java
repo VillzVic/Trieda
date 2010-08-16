@@ -30,7 +30,7 @@ public class CalendarioModal extends Window {
 	private void init() {
 	    final FlexTable flexTable = new FlexTable();
 	    flexTable.addStyleName("cw-FlexTable");
-	    flexTable.setCellSpacing(5);
+	    flexTable.setCellSpacing(0);
 	    flexTable.setCellPadding(3);
 	    flexTable.setBorderWidth(1);
 	    
@@ -50,6 +50,7 @@ public class CalendarioModal extends Window {
 	    boolean first = true;
 	    for(String turno : new String[]{"Manhã", "Tarde", "Noite"}) {
 	    	flexTable.setHTML(it, 0, turno);
+	    	cellFormatter.setWidth(it, 0, "100%");
 	    	cellFormatter.setRowSpan(it, 0, 5);
 	    	first = true;
 	    	for(String horario : new String[]{"08:00/08:50", "09:00/09:50", "10:00/10:50", "11:00/11:50", "12:00/12:50"}){
@@ -57,6 +58,7 @@ public class CalendarioModal extends Window {
 	    		for(int s = 2; s <= 8; s++) {
 		    		ToggleImageButton tb = new ToggleImageButton(it%2==0, Resources.DEFAULTS.save16(), Resources.DEFAULTS.cancel16());
 	    			flexTable.setWidget(it, s - (!first?1:0), tb);
+	    			cellFormatter.setStyleName(it, s - (!first?1:0), "cw-FlexTable-content");
 	    		}
 	    		first = false;
 	    		it++;

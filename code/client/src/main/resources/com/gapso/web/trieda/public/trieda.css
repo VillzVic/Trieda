@@ -106,3 +106,10 @@ h1 {
 .toggle-image-button .x-btn-bc i {
     font-size: 0px;
 }
+
+table.cw-FlexTable td {
+	text-align: center;
+}	
+table.cw-FlexTable td.cw-FlexTable-content {
+	padding:0 10px 0 10px;
+}
