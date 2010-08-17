@@ -48,6 +48,10 @@
 		<servlet-class>com.gapso.web.trieda.server.ProfessoresServiceImpl</servlet-class>
 	</servlet>
 	<servlet>
+		<servlet-name>professoresDisciplinasServlet</servlet-name>
+		<servlet-class>com.gapso.web.trieda.server.ProfessoresDisciplinasServiceImpl</servlet-class>
+	</servlet>
+	<servlet>
 		<servlet-name>demandasServlet</servlet-name>
 		<servlet-class>com.gapso.web.trieda.server.DemandasServiceImpl</servlet-class>
 	</servlet>
@@ -107,6 +111,10 @@
 	<servlet-mapping>
 		<servlet-name>professoresServlet</servlet-name>
 		<url-pattern>/trieda/professores</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>professoresDisciplinasServlet</servlet-name>
+		<url-pattern>/trieda/professoresDisciplinas</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>demandasServlet</servlet-name>

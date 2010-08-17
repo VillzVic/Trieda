@@ -18,7 +18,11 @@ public class AppEvents {
 	public static final EventType DisciplinaList = new EventType();
 	public static final EventType MatrizCurricularList = new EventType();
 	public static final EventType CursoCampusList = new EventType();
+	
 	public static final EventType ProfessorList = new EventType();
+	public static final EventType ProfessorDisciplinaList = new EventType();
+	public static final EventType ProfessorDisciplinaView = new EventType();
+	
 	public static final EventType DemandaList = new EventType();
 	public static final EventType DivisaoCreditosList = new EventType();
 	public static final EventType PeriodoAulaList = new EventType();
