@@ -9,8 +9,11 @@ public class AppEvents {
 	public static final EventType CampusList = new EventType();
 	public static final EventType TurnoList = new EventType();
 	public static final EventType UnidadeList = new EventType();
+	
 	public static final EventType SalaList = new EventType();
 	public static final EventType GrupoSalaList = new EventType();
+	public static final EventType GrupoSalaAssociadasView = new EventType();
+	
 	public static final EventType CursoList = new EventType();
 	public static final EventType DisciplinaList = new EventType();
 	public static final EventType MatrizCurricularList = new EventType();

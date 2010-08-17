@@ -65,32 +65,6 @@ public class CalendarioModal extends Window {
 	    	}
 	    }
 	    
-//	    flexTable.setHTML(1, 0, "Manhã");
-//	    cellFormatter.setRowSpan(1, 0, 5);
-//	    flexTable.setHTML(1, 1, "08:00/08:50");
-//	    flexTable.setWidget(1, 2, tb);
-//	    
-//	    flexTable.setHTML(2, 0, "09:00/09:50");
-//	    flexTable.setHTML(3, 0, "10:00/10:50");
-//	    flexTable.setHTML(4, 0, "11:00/11:50");
-//	    flexTable.setHTML(5, 0, "12:00/12:50");
-//	    
-//        flexTable.setHTML(6, 0, "Tarde");
-//        cellFormatter.setRowSpan(6, 0, 5);
-//	    flexTable.setHTML(6, 1, "08:00/08:50");
-//	    flexTable.setHTML(7, 0, "09:00/09:50");
-//	    flexTable.setHTML(8, 0, "10:00/10:50");
-//	    flexTable.setHTML(9, 0, "11:00/11:50");
-//	    flexTable.setHTML(10, 0, "12:00/12:50");
-//        
-//        flexTable.setHTML(11, 0, "Noite");
-//        cellFormatter.setRowSpan(11, 0, 5);
-//	    flexTable.setHTML(11, 1, "08:00/08:50");
-//	    flexTable.setHTML(12, 0, "09:00/09:50");
-//	    flexTable.setHTML(13, 0, "10:00/10:50");
-//	    flexTable.setHTML(14, 0, "11:00/11:50");
-//	    flexTable.setHTML(15, 0, "12:00/12:50");
-	    
 		add(flexTable);
 	}
 	

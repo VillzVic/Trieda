@@ -12,6 +12,7 @@ public class SalaController extends Controller {
 	public SalaController() {
 		registerEventTypes(AppEvents.SalaList);
 		registerEventTypes(AppEvents.GrupoSalaList);
+		registerEventTypes(AppEvents.GrupoSalaAssociadasView);
 	}
 
 	private void onList(AppEvent event) {
@@ -24,6 +25,11 @@ public class SalaController extends Controller {
 		forwardToView(grupoSalaView, event);
 	}
 	
+	private void onGrupoAssociadasList(AppEvent event) {
+		GrupoSalaView grupoSalaView = new GrupoSalaView(this);
+		forwardToView(grupoSalaView, event);
+	}
+	
 	
 	
 	@Override
@@ -31,7 +37,7 @@ public class SalaController extends Controller {
 		EventType type = event.getType();
 		if (type == AppEvents.SalaList) onList(event);
 		if (type == AppEvents.GrupoSalaList) onGrupoList(event);
-		
+		if (type == AppEvents.GrupoSalaAssociadasView) onGrupoAssociadasList(event);
 	}
 
 }
