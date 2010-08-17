@@ -9,6 +9,7 @@ public class Services {
 	public static final String TURNOS = "turnos";
 	public static final String UNIDADES = "unidades";
 	public static final String SALAS = "salas";
+	public static final String GRUPOSSALAS = "gruposalas";
 	public static final String CURSOS = "cursos";
 	public static final String DISCIPLINAS = "disciplinas";
 	public static final String MATRIZESCURRICULARES = "matrizescurriculares";
@@ -25,6 +26,7 @@ public class Services {
 		if(id.equals(TURNOS)) return turnos();
 		if(id.equals(UNIDADES)) return unidades();
 		if(id.equals(SALAS)) return salas();
+		if(id.equals(GRUPOSSALAS)) return grupoSalas();
 		if(id.equals(CURSOS)) return cursos();
 		if(id.equals(DISCIPLINAS)) return disciplinas();
 		if(id.equals(MATRIZESCURRICULARES)) return matrizesCurriculares();
@@ -70,6 +72,15 @@ public class Services {
 		if(service == null) {
 			service = GWT.create(SalasService.class);
 			Registry.register(SALAS, service);
+		}
+		return service;
+	}
+	
+	public static GruposSalasServiceAsync grupoSalas() {
+		GruposSalasServiceAsync service = (GruposSalasServiceAsync) Registry.get(GRUPOSSALAS);
+		if(service == null) {
+			service = GWT.create(GruposSalasService.class);
+			Registry.register(GRUPOSSALAS, service);
 		}
 		return service;
 	}

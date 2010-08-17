@@ -48,7 +48,6 @@ public class Trieda implements EntryPoint {
 		dispatcher.addController(new CalendarioController());
 		
 		dispatcher.dispatch(AppEvents.Init);
-		dispatcher.dispatch(AppEvents.CalendarioView);
 		
 		RootPanel.get("loading").setVisible(false);
 	}

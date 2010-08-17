@@ -24,6 +24,10 @@
 		<servlet-class>com.gapso.web.trieda.server.SalasServiceImpl</servlet-class>
 	</servlet>
 	<servlet>
+		<servlet-name>gruposSalasServlet</servlet-name>
+		<servlet-class>com.gapso.web.trieda.server.GruposSalasServiceImpl</servlet-class>
+	</servlet>
+	<servlet>
 		<servlet-name>cursosServlet</servlet-name>
 		<servlet-class>com.gapso.web.trieda.server.CursosServiceImpl</servlet-class>
 	</servlet>
@@ -79,6 +83,10 @@
 	<servlet-mapping>
 		<servlet-name>salasServlet</servlet-name>
 		<url-pattern>/trieda/salas</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>gruposSalasServlet</servlet-name>
+		<url-pattern>/trieda/gruposSalas</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>cursosServlet</servlet-name>
