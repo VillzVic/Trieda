@@ -10,6 +10,16 @@ drop index IDXCOD on CALENDARIO;
 
 drop table if exists CALENDARIO;
 
+drop table if exists CAMPI;
+
+drop index IDXUNI on CAMPUS_CURRICULO;
+
+drop index IDXCRC on CAMPUS_CURRICULO;
+
+drop index IDXTUR on CAMPUS_CURRICULO;
+
+drop table if exists CAMPUS_CURRICULO;
+
 drop index IDXNOMANOPER on CENARIOS;
 
 drop table if exists CENARIOS;
@@ -48,11 +58,13 @@ drop index IDXCURTURDIS on DEMANDA;
 
 drop table if exists DEMANDA;
 
-drop index IDXDESC on DESLOCAMENTO;
+drop table if exists DESLOCAMENTO_CAMPI;
 
-drop index IDXORIG on DESLOCAMENTO;
+drop index IDXDESC on DESLOCAMENTO_UNIDADE;
 
-drop table if exists DESLOCAMENTO;
+drop index IDXORIG on DESLOCAMENTO_UNIDADE;
+
+drop table if exists DESLOCAMENTO_UNIDADE;
 
 drop index IDXCODNOMLAB on DISCIPLINAS;
 
@@ -73,6 +85,8 @@ drop table if exists EQUIVALENCIA;
 drop index IDXTUR on HORARIO_DE_AULA;
 
 drop table if exists HORARIO_DE_AULA;
+
+drop table if exists HORARIO_DISPONIVEL_CAMPUS;
 
 drop index IDXHOR on HORARIO_DISP_CEN;
 
@@ -112,17 +126,17 @@ drop index INDEX_1 on PROFESSORES;
 
 drop table if exists PROFESSORES;
 
+drop index IDXPRF on PROFESSORES_CAMPUS;
+
+drop index IDXUNI on PROFESSORES_CAMPUS;
+
+drop table if exists PROFESSORES_CAMPUS;
+
 drop index IDXPRF on PROFESSORES_DISCIPLINAS;
 
 drop index IDXDIS on PROFESSORES_DISCIPLINAS;
 
 drop table if exists PROFESSORES_DISCIPLINAS;
-
-drop index IDXPRF on PROFESSORES_UNIDADES;
-
-drop index IDXUNI on PROFESSORES_UNIDADES;
-
-drop table if exists PROFESSORES_UNIDADES;
 
 drop index IDXDCR on REGRAS_DE_CREDITOS;
 
@@ -183,14 +197,6 @@ drop index IDXCODNOM on UNIDADES;
 drop index IDXCEN on UNIDADES;
 
 drop table if exists UNIDADES;
-
-drop index IDXUNI on UNIDADE_CURRICULO;
-
-drop index IDXCRC on UNIDADE_CURRICULO;
-
-drop index IDXTUR on UNIDADE_CURRICULO;
-
-drop table if exists UNIDADE_CURRICULO;
 
 drop index IDXNOM on USUARIOS;
 
@@ -256,6 +262,53 @@ create table CALENDARIO
 create index IDXCOD on CALENDARIO
 (
    CAL_CODIGO
+);
+
+/*==============================================================*/
+/* Table: CAMPI                                                 */
+/*==============================================================*/
+create table CAMPI
+(
+   CAM_ID               int(10) not null auto_increment,
+   CEN_ID               int(10),
+   CAM_CODIGO           varchar(255),
+   CAM_NOME             varchar(255),
+   primary key (CAM_ID)
+);
+
+/*==============================================================*/
+/* Table: CAMPUS_CURRICULO                                      */
+/*==============================================================*/
+create table CAMPUS_CURRICULO
+(
+   TUR_ID               int(10) not null,
+   CRC_ID               int(10) not null,
+   CAM_ID               int(10) not null,
+   primary key (TUR_ID, CRC_ID, CAM_ID)
+);
+
+/*==============================================================*/
+/* Index: IDXTUR                                                */
+/*==============================================================*/
+create index IDXTUR on CAMPUS_CURRICULO
+(
+   TUR_ID
+);
+
+/*==============================================================*/
+/* Index: IDXCRC                                                */
+/*==============================================================*/
+create index IDXCRC on CAMPUS_CURRICULO
+(
+   CRC_ID
+);
+
+/*==============================================================*/
+/* Index: IDXUNI                                                */
+/*==============================================================*/
+create index IDXUNI on CAMPUS_CURRICULO
+(
+   
 );
 
 /*==============================================================*/
@@ -373,6 +426,7 @@ create table CURSOS
    CUR_MIN_DOUTORES     int(3),
    CUR_MIN_MESTRES      int(3),
    CUR_MAX_PROF_DISCIPINA int(2),
+   CUR_ADM_MAIS_DE_UMA_DISC boolean,
    primary key (CUR_ID)
 );
 
@@ -450,20 +504,30 @@ create index IDXCURTURDIS on DEMANDA
 );
 
 /*==============================================================*/
-/* Table: DESLOCAMENTO                                          */
+/* Table: DESLOCAMENTO_CAMPI                                    */
 /*==============================================================*/
-create table DESLOCAMENTO
+create table DESLOCAMENTO_CAMPI
+(
+   CAM_DEST_ID          int(10),
+   CAM_ORIG_ID          int(10),
+   DEC_TEMPO            int(3) not null
+);
+
+/*==============================================================*/
+/* Table: DESLOCAMENTO_UNIDADE                                  */
+/*==============================================================*/
+create table DESLOCAMENTO_UNIDADE
 (
    UNI_ORIG_ID          int(10) not null,
    UNI_DEST_ID          int(10) not null,
-   DES_TEMPO            int(3),
+   DEU_TEMPO            int(3) not null,
    primary key (UNI_ORIG_ID, UNI_DEST_ID)
 );
 
 /*==============================================================*/
 /* Index: IDXORIG                                               */
 /*==============================================================*/
-create index IDXORIG on DESLOCAMENTO
+create index IDXORIG on DESLOCAMENTO_UNIDADE
 (
    UNI_ORIG_ID
 );
@@ -471,7 +535,7 @@ create index IDXORIG on DESLOCAMENTO
 /*==============================================================*/
 /* Index: IDXDESC                                               */
 /*==============================================================*/
-create index IDXDESC on DESLOCAMENTO
+create index IDXDESC on DESLOCAMENTO_UNIDADE
 (
    UNI_DEST_ID
 );
@@ -491,6 +555,9 @@ create table DISCIPLINAS
    DIS_CRED_PRATICOS    int(2) not null,
    DIS_LABORATORIO      boolean not null,
    DIS_TIPO             varchar(255) not null,
+   DIS_DIFICULDADE      int(1),
+   DIS_MAX_ALUN_TEORICOS int(2),
+   DIS_MAX_ALUN_PRATICOS int(2),
    primary key (DIS_ID)
 );
 
@@ -580,6 +647,15 @@ create table HORARIO_DE_AULA
 create index IDXTUR on HORARIO_DE_AULA
 (
    TUR_ID
+);
+
+/*==============================================================*/
+/* Table: HORARIO_DISPONIVEL_CAMPUS                             */
+/*==============================================================*/
+create table HORARIO_DISPONIVEL_CAMPUS
+(
+   HDC_ID               int(10),
+   CAM_ID               int(10)
 );
 
 /*==============================================================*/
@@ -744,6 +820,7 @@ create table PROFESSORES
    PRF_CH_MAX           int(3),
    CRED_ANTERIOR        varchar(3),
    PRF_VALOR_CREDITO    double(7,2),
+   PRF_NOTA             int(2),
    primary key (PRF_ID)
 );
 
@@ -765,14 +842,40 @@ create index INDEX_2 on PROFESSORES
 );
 
 /*==============================================================*/
+/* Table: PROFESSORES_CAMPUS                                    */
+/*==============================================================*/
+create table PROFESSORES_CAMPUS
+(
+   PRF_ID               int(10) not null,
+   CAM_ID               int(10) not null,
+   primary key (PRF_ID, CAM_ID)
+);
+
+/*==============================================================*/
+/* Index: IDXUNI                                                */
+/*==============================================================*/
+create index IDXUNI on PROFESSORES_CAMPUS
+(
+   
+);
+
+/*==============================================================*/
+/* Index: IDXPRF                                                */
+/*==============================================================*/
+create index IDXPRF on PROFESSORES_CAMPUS
+(
+   PRF_ID
+);
+
+/*==============================================================*/
 /* Table: PROFESSORES_DISCIPLINAS                               */
 /*==============================================================*/
 create table PROFESSORES_DISCIPLINAS
 (
    DIS_ID               int(10) not null,
    PRF_ID               int(10) not null,
-   PFD_RANKING          int(3) not null,
-   PFD_NOTA             int(3) not null,
+   PFD_PREFERENCIA      int(2) not null,
+   PFD_NOTA             int(2) not null,
    primary key (DIS_ID, PRF_ID)
 );
 
@@ -788,32 +891,6 @@ create index IDXDIS on PROFESSORES_DISCIPLINAS
 /* Index: IDXPRF                                                */
 /*==============================================================*/
 create index IDXPRF on PROFESSORES_DISCIPLINAS
-(
-   PRF_ID
-);
-
-/*==============================================================*/
-/* Table: PROFESSORES_UNIDADES                                  */
-/*==============================================================*/
-create table PROFESSORES_UNIDADES
-(
-   PRF_ID               int(10) not null,
-   UNI_ID               int(10) not null,
-   primary key (PRF_ID, UNI_ID)
-);
-
-/*==============================================================*/
-/* Index: IDXUNI                                                */
-/*==============================================================*/
-create index IDXUNI on PROFESSORES_UNIDADES
-(
-   UNI_ID
-);
-
-/*==============================================================*/
-/* Index: IDXPRF                                                */
-/*==============================================================*/
-create index IDXPRF on PROFESSORES_UNIDADES
 (
    PRF_ID
 );
@@ -853,7 +930,7 @@ create table SALAS
    TSA_ID               int(10) not null,
    UNI_ID               int(10) not null,
    SAL_CODIGO           varchar(255) not null,
-   SAL_NUM_SALA         varchar(255) not null,
+   SAL_NUM              varchar(255) not null,
    SAL_ANDAR            varchar(255) not null,
    SAL_CAPACIDADE       int(3) not null,
    primary key (SAL_ID)
@@ -943,7 +1020,7 @@ create index IDXNOM on TIPOS_CURSO
 /*==============================================================*/
 create table TIPOS_SALA
 (
-   TSA_ID               int(10) not null auto_increment,
+   TSA_ID               int(10) not null,
    TSA_NOME             varchar(255) not null,
    TSA_DESCRICAO        varchar(255),
    primary key (TSA_ID)
@@ -962,7 +1039,7 @@ create index IDXNOM on TIPOS_SALA
 /*==============================================================*/
 create table TIPO_CONTRATO
 (
-   TCO_ID               int(10) not null auto_increment,
+   TCO_ID               int(10) not null,
    TCO_NOME             varchar(255) not null,
    primary key (TCO_ID)
 );
@@ -980,7 +1057,7 @@ create index IDXNOM on TIPO_CONTRATO
 /*==============================================================*/
 create table TIPO_DE_DISCIPLINA
 (
-   TDI_ID               int(10) not null auto_increment,
+   TDI_ID               int(10) not null,
    TDI_NOME             varchar(255) not null,
    primary key (TDI_ID)
 );
@@ -998,7 +1075,7 @@ create index IDXNOM on TIPO_DE_DISCIPLINA
 /*==============================================================*/
 create table TITULACOES
 (
-   TIT_ID               int(10) not null auto_increment,
+   TIT_ID               int(10) not null,
    TIT_NOME             varchar(255) not null,
    primary key (TIT_ID)
 );
@@ -1071,7 +1148,6 @@ create index IDXCAL on TURNOS
 create table UNIDADES
 (
    UNI_ID               int(10) not null auto_increment,
-   CEN_ID               int(10) not null,
    UNI_CODIGO           varchar(255) not null,
    UNI_NOME             varchar(255) not null,
    UNI_ENDERECO         varchar(255),
@@ -1085,7 +1161,7 @@ create table UNIDADES
 /*==============================================================*/
 create index IDXCEN on UNIDADES
 (
-   CEN_ID
+   
 );
 
 /*==============================================================*/
@@ -1095,41 +1171,6 @@ create index IDXCODNOM on UNIDADES
 (
    UNI_CODIGO,
    UNI_NOME
-);
-
-/*==============================================================*/
-/* Table: UNIDADE_CURRICULO                                     */
-/*==============================================================*/
-create table UNIDADE_CURRICULO
-(
-   TUR_ID               int(10) not null,
-   CRC_ID               int(10) not null,
-   UNI_ID               int(10) not null,
-   primary key (TUR_ID, CRC_ID, UNI_ID)
-);
-
-/*==============================================================*/
-/* Index: IDXTUR                                                */
-/*==============================================================*/
-create index IDXTUR on UNIDADE_CURRICULO
-(
-   TUR_ID
-);
-
-/*==============================================================*/
-/* Index: IDXCRC                                                */
-/*==============================================================*/
-create index IDXCRC on UNIDADE_CURRICULO
-(
-   CRC_ID
-);
-
-/*==============================================================*/
-/* Index: IDXUNI                                                */
-/*==============================================================*/
-create index IDXUNI on UNIDADE_CURRICULO
-(
-   UNI_ID
 );
 
 /*==============================================================*/
@@ -1173,6 +1214,18 @@ alter table ALOCACAO add constraint FK_PFR_ALO foreign key (PRF_ID)
 
 alter table CALENDARIO add constraint FK_CEN_CAL foreign key (CEN_ID)
       references CENARIOS (CEN_ID) on delete cascade on update cascade;
+
+alter table CAMPI add constraint FK_CEN_CAM foreign key (CEN_ID)
+      references CENARIOS (CEN_ID) on delete cascade on update restrict;
+
+alter table CAMPUS_CURRICULO add constraint FK_CAM_CAC foreign key (CAM_ID)
+      references CAMPI (CAM_ID) on delete cascade on update restrict;
+
+alter table CAMPUS_CURRICULO add constraint FK_CRC_UNC foreign key (CRC_ID)
+      references CURRICULO (CRC_ID) on delete cascade on update cascade;
+
+alter table CAMPUS_CURRICULO add constraint FK_TUR_UNC foreign key (TUR_ID)
+      references TURNOS (TUR_ID) on delete cascade on update cascade;
 
 alter table CENARIOS add constraint FK_USU_CEN1 foreign key (USU_ATUALIZADO_ID)
       references USUARIOS (USU_ID) on delete set null on update set null;
@@ -1222,10 +1275,16 @@ alter table DEMANDA add constraint FK_TUR_DEM foreign key (TUR_ID)
 alter table DEMANDA add constraint FK_UNI_DEM foreign key (UNI_ID)
       references UNIDADES (UNI_ID) on delete cascade on update cascade;
 
-alter table DESLOCAMENTO add constraint FK_UNI_DES1 foreign key (UNI_ORIG_ID)
+alter table DESLOCAMENTO_CAMPI add constraint FK_CAM_DEC1 foreign key (CAM_DEST_ID)
+      references CAMPI (CAM_ID) on delete cascade on update restrict;
+
+alter table DESLOCAMENTO_CAMPI add constraint FK_CAM_DEC2 foreign key (CAM_ORIG_ID)
+      references CAMPI (CAM_ID) on delete cascade on update restrict;
+
+alter table DESLOCAMENTO_UNIDADE add constraint FK_UNI_DES1 foreign key (UNI_ORIG_ID)
       references UNIDADES (UNI_ID) on delete cascade on update cascade;
 
-alter table DESLOCAMENTO add constraint FK_UNI_DES2 foreign key (UNI_DEST_ID)
+alter table DESLOCAMENTO_UNIDADE add constraint FK_UNI_DES2 foreign key (UNI_DEST_ID)
       references UNIDADES (UNI_ID) on delete cascade on update cascade;
 
 alter table DISCIPLINAS add constraint FK_CEN_DIS foreign key (CEN_ID)
@@ -1245,6 +1304,12 @@ alter table EQUIVALENCIA add constraint FK_DIS_EQV2 foreign key (DIS_ELIMINA_ID)
 
 alter table HORARIO_DE_AULA add constraint FK_TUR_HOR foreign key (TUR_ID)
       references TURNOS (TUR_ID) on delete cascade on update cascade;
+
+alter table HORARIO_DISPONIVEL_CAMPUS add constraint FK_CAM_HDA foreign key (CAM_ID)
+      references CAMPI (CAM_ID) on delete cascade on update restrict;
+
+alter table HORARIO_DISPONIVEL_CAMPUS add constraint FK_HDC_HDA foreign key (HDC_ID)
+      references HORARIO_DISP_CEN (HDC_ID) on delete cascade on update restrict;
 
 alter table HORARIO_DISP_CEN add constraint FK_HOR_HDC foreign key (HOR_ID)
       references HORARIO_DE_AULA (HOR_ID) on delete cascade on update cascade;
@@ -1291,17 +1356,17 @@ alter table PROFESSORES add constraint FK_TCO_PRF foreign key (TCO_ID)
 alter table PROFESSORES add constraint FK_TIT_PRF foreign key (TIT_ID)
       references TITULACOES (TIT_ID) on delete restrict on update restrict;
 
+alter table PROFESSORES_CAMPUS add constraint FK_CAM_PRC foreign key (CAM_ID)
+      references CAMPI (CAM_ID) on delete cascade on update restrict;
+
+alter table PROFESSORES_CAMPUS add constraint FK_PRF_PFU foreign key (PRF_ID)
+      references PROFESSORES (PRF_ID) on delete cascade on update cascade;
+
 alter table PROFESSORES_DISCIPLINAS add constraint FK_DIS_PFD foreign key (DIS_ID)
       references DISCIPLINAS (DIS_ID) on delete cascade on update cascade;
 
 alter table PROFESSORES_DISCIPLINAS add constraint FK_PRF_PFD foreign key (PRF_ID)
       references PROFESSORES (PRF_ID) on delete cascade on update cascade;
-
-alter table PROFESSORES_UNIDADES add constraint FK_PRF_PFU foreign key (PRF_ID)
-      references PROFESSORES (PRF_ID) on delete cascade on update cascade;
-
-alter table PROFESSORES_UNIDADES add constraint FK_UNI_PFU foreign key (UNI_ID)
-      references UNIDADES (UNI_ID) on delete cascade on update cascade;
 
 alter table REGRAS_DE_CREDITOS add constraint FK_CEN_RCR foreign key (CEN_ID)
       references CENARIOS (CEN_ID) on delete cascade on update cascade;
@@ -1329,15 +1394,3 @@ alter table TURMA add constraint FK_DIS_TUR foreign key (DIS_ID)
 
 alter table TURNOS add constraint FK_CAL_TUR foreign key (CAL_ID)
       references CALENDARIO (CAL_ID) on delete cascade on update cascade;
-
-alter table UNIDADES add constraint FK_CEN_UNI foreign key (CEN_ID)
-      references CENARIOS (CEN_ID) on delete cascade on update cascade;
-
-alter table UNIDADE_CURRICULO add constraint FK_CRC_UNC foreign key (CRC_ID)
-      references CURRICULO (CRC_ID) on delete cascade on update cascade;
-
-alter table UNIDADE_CURRICULO add constraint FK_TUR_UNC foreign key (TUR_ID)
-      references TURNOS (TUR_ID) on delete cascade on update cascade;
-
-alter table UNIDADE_CURRICULO add constraint FK_UNI_UNC foreign key (UNI_ID)
-      references UNIDADES (UNI_ID) on delete cascade on update cascade;
