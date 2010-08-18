@@ -13,6 +13,7 @@ public class Services {
 	public static final String CURSOS = "cursos";
 	public static final String DISCIPLINAS = "disciplinas";
 	public static final String MATRIZESCURRICULARES = "matrizescurriculares";
+	public static final String MATRIZCURRIULARDISCIPLINAS = "matrizcurriculardisciplinas";
 	public static final String CURSOSCAMPI = "cursoscampi";
 	public static final String PROFESSORES = "professores";
 	public static final String PROFESSORESDISCIPLINAS = "professoresDisciplinas";
@@ -31,6 +32,7 @@ public class Services {
 		if(id.equals(CURSOS)) return cursos();
 		if(id.equals(DISCIPLINAS)) return disciplinas();
 		if(id.equals(MATRIZESCURRICULARES)) return matrizesCurriculares();
+		if(id.equals(MATRIZCURRIULARDISCIPLINAS)) return matrizCurricularDisciplinas();
 		if(id.equals(CURSOSCAMPI)) return cursosCampi();
 		if(id.equals(PROFESSORES)) return professores();
 		if(id.equals(PROFESSORESDISCIPLINAS)) return professoresDisciplinas();
@@ -110,6 +112,15 @@ public class Services {
 		if(service == null) {
 			service = GWT.create(MatrizesCurricularesService.class);
 			Registry.register(MATRIZESCURRICULARES, service);
+		}
+		return service;
+	}
+	
+	public static MatrizCurricularDisciplinasServiceAsync matrizCurricularDisciplinas() {
+		MatrizCurricularDisciplinasServiceAsync service = (MatrizCurricularDisciplinasServiceAsync) Registry.get(MATRIZCURRIULARDISCIPLINAS);
+		if(service == null) {
+			service = GWT.create(MatrizCurricularDisciplinasService.class);
+			Registry.register(MATRIZCURRIULARDISCIPLINAS, service);
 		}
 		return service;
 	}

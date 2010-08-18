@@ -12,6 +12,7 @@ public class MatrizCurricularController extends Controller {
 	
 	public MatrizCurricularController() {
 		registerEventTypes(AppEvents.MatrizCurricularList);
+		registerEventTypes(AppEvents.MatrizCurricularDisciplinaList);
 	}
 
 	private void onList(AppEvent event) {
@@ -19,12 +20,17 @@ public class MatrizCurricularController extends Controller {
 		forwardToView(matrizCurricularView, event);
 	}
 	
+	private void onMatrizCurricularDisciplinasList(AppEvent event) {
+		matrizCurricularView = new MatrizCurricularView(this);
+		forwardToView(matrizCurricularView, event);
+	}
+	
 	@Override
 	public void handleEvent(AppEvent event) {
 		EventType type = event.getType();
-		if (type == AppEvents.MatrizCurricularList) {
-			onList(event);
-		}
+		if (type == AppEvents.MatrizCurricularList) onList(event);
+		if (type == AppEvents.MatrizCurricularDisciplinaList) onMatrizCurricularDisciplinasList(event);
+		
 	}
 
 }

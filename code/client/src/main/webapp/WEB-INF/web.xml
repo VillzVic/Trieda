@@ -40,6 +40,10 @@
 		<servlet-class>com.gapso.web.trieda.server.MatrizesCurricularesServiceImpl</servlet-class>
 	</servlet>
 	<servlet>
+		<servlet-name>matrizCurricularDisciplinasServlet</servlet-name>
+		<servlet-class>com.gapso.web.trieda.server.MatrizCurricularDisciplinasServiceImpl</servlet-class>
+	</servlet>
+	<servlet>
 		<servlet-name>cursosCampiServlet</servlet-name>
 		<servlet-class>com.gapso.web.trieda.server.CursosCampiServiceImpl</servlet-class>
 	</servlet>
@@ -103,6 +107,10 @@
 	<servlet-mapping>
 		<servlet-name>matrizesCurricularesServlet</servlet-name>
 		<url-pattern>/trieda/matrizesCurriculares</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>matrizCurricularDisciplinasServlet</servlet-name>
+		<url-pattern>/trieda/matrizCurricularDisciplinas</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>cursosCampiServlet</servlet-name>

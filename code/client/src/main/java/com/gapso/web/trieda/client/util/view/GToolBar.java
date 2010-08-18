@@ -218,6 +218,16 @@ public class GToolBar extends ToolBar {
 		});
 		menuSalasBt.add(outros15);
 		
+		MenuItem outros16 = new MenuItem("Matriz Curricular/Disciplinas");
+		outros16.setIcon(AbstractImagePrototype.create(Resources.DEFAULTS.disciplina16()));
+		outros16.addSelectionListener(new SelectionListener<MenuEvent>() {
+			@Override
+			public void componentSelected(MenuEvent ce) {
+				Dispatcher.forwardEvent(AppEvents.MatrizCurricularDisciplinaList);
+			}
+		});
+		menuSalasBt.add(outros16);
+		
 		salasBt.setMenu(menuSalasBt);
 		group.add(salasBt);
 		
