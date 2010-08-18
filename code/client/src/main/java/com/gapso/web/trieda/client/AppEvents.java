@@ -11,6 +11,7 @@ public class AppEvents {
 	public static final EventType UnidadeList = new EventType();
 	
 	public static final EventType SalaList = new EventType();
+	public static final EventType SalaDisciplinaList = new EventType();
 	public static final EventType GrupoSalaList = new EventType();
 	public static final EventType GrupoSalaAssociadasView = new EventType();
 	
@@ -34,7 +35,6 @@ public class AppEvents {
 	public static final EventType PeriodoAulaList = new EventType();
 	
 	public static final EventType AreaTitulacaoList = new EventType();
-	
 	public static final EventType CursoAreaTitulacaoList = new EventType();
 	
 	public static final EventType CalendarioList = new EventType();
