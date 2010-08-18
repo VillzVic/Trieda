@@ -41,4 +41,6 @@ public class AppEvents {
 	
 	public static final EventType CalendarioView = new EventType();
 	
+	public static final EventType EquivalenciaList = new EventType();
+	
 }

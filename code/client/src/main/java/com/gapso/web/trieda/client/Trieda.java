@@ -11,6 +11,7 @@ import com.gapso.web.trieda.client.mvc.controller.CursoController;
 import com.gapso.web.trieda.client.mvc.controller.DemandaController;
 import com.gapso.web.trieda.client.mvc.controller.DisciplinaController;
 import com.gapso.web.trieda.client.mvc.controller.DivisaoCreditosController;
+import com.gapso.web.trieda.client.mvc.controller.EquivalenciaController;
 import com.gapso.web.trieda.client.mvc.controller.MatrizCurricularController;
 import com.gapso.web.trieda.client.mvc.controller.PeriodoAulaController;
 import com.gapso.web.trieda.client.mvc.controller.ProfessorController;
@@ -46,6 +47,7 @@ public class Trieda implements EntryPoint {
 		dispatcher.addController(new AreaTitulacaoController());
 		dispatcher.addController(new CursoAreaTitulacaoController());
 		dispatcher.addController(new CalendarioController());
+		dispatcher.addController(new EquivalenciaController());
 		
 		dispatcher.dispatch(AppEvents.Init);
 		

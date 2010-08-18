@@ -238,6 +238,16 @@ public class GToolBar extends ToolBar {
 		});
 		menuSalasBt.add(outros17);
 		
+		MenuItem outros18 = new MenuItem("Equivalência entre Disciplinas");
+		outros18.setIcon(AbstractImagePrototype.create(Resources.DEFAULTS.disciplina16()));
+		outros18.addSelectionListener(new SelectionListener<MenuEvent>() {
+			@Override
+			public void componentSelected(MenuEvent ce) {
+				Dispatcher.forwardEvent(AppEvents.EquivalenciaList);
+			}
+		});
+		menuSalasBt.add(outros18);
+		
 		salasBt.setMenu(menuSalasBt);
 		group.add(salasBt);
 		
