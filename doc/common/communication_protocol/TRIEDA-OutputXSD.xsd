@@ -1,319 +1,91 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<!--Created with Liquid XML Studio - FREE Community Edition 7.0.5.906 (http://www.liquid-technologies.com)-->
+<!--Created with Liquid XML Studio 6.1.18.0 - FREE Community Edition (http://www.liquid-technologies.com)-->
 <xs:schema elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
   <xs:element name="TriedaOutput">
     <xs:complexType>
       <xs:sequence>
-        <xs:element name="oferecimentos" type="GrupoOferecimento" />
+        <xs:element name="atendimentos" type="GrupoAtendimento">
+          <xs:annotation>
+            <xs:documentation>lista dos atendimentos retornados pelo resolvedor matemático</xs:documentation>
+          </xs:annotation>
+        </xs:element>
       </xs:sequence>
     </xs:complexType>
   </xs:element>
-  <xs:complexType name="ItemProfessorDisciplina">
-    <xs:sequence minOccurs="0">
-      <xs:element name="nota" type="xs:int" />
-      <xs:element name="ranking" type="xs:int" />
-      <xs:element name="disciplina" type="ItemDisciplina" />
-    </xs:sequence>
-  </xs:complexType>
-  <xs:complexType name="GrupoProfessorDisciplina">
-    <xs:sequence minOccurs="0" maxOccurs="unbounded">
-      <xs:element name="professorDisciplina" type="ItemProfessorDisciplina" />
-    </xs:sequence>
-  </xs:complexType>
-  <xs:complexType name="ItemProfessor">
+  <xs:complexType name="ItemAtendimento">
     <xs:sequence>
       <xs:element name="id" type="xs:int" />
-      <xs:element name="contrato" type="ItemTipoContrato" />
-      <xs:element name="titulacao" type="ItemTipoTitulacao" />
-      <xs:element name="areaTitulacao" type="ItemAreaTitulacao" />
-      <xs:element name="cpf" type="xs:string" />
-      <xs:element name="nome" type="xs:string" />
-      <xs:element name="chMin" type="xs:int" />
-      <xs:element name="chMax" type="xs:int" />
-      <xs:element name="credAnterior" type="xs:int" />
-      <xs:element name="valorCred" type="xs:double" />
-      <xs:element name="unidades" type="GrupoUnidade" />
-      <xs:element name="horarios" type="ItemHorarioDisponivel" />
-      <xs:element name="disciplinas" type="GrupoProfessorDisciplina" />
+      <xs:element name="ofertaCursoCampiId" type="xs:int">
+        <xs:annotation>
+          <xs:documentation>identificador (ItemOfertaCurso) de uma oferta de um curso em um campus</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="disciplinaId" type="xs:int">
+        <xs:annotation>
+          <xs:documentation>identificador da disciplina (ItemDisciplina)</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="turma" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>código da turma gerada pelo resolvedor matemático</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="quatidadeAlunos" type="xs:int">
+        <xs:annotation>
+          <xs:documentation>quantidade de alunos do curso alocados na turma</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="salaId" type="xs:int">
+        <xs:annotation>
+          <xs:documentation>identificador da sala (ItemSala) onde a turma será atendida</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="diaSemana" type="xs:int">
+        <xs:annotation>
+          <xs:documentation>dia da semana em que a turma será atendida (um inteiro que represente um dia da semana. Os valores possíveis são: (1 - Dom), (2 - Seg), (3 - Ter), (4 - Qua), (5 - Qua), (6 - Sex), (7 - SAb))</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:choice>
+        <xs:element name="alocacaoTatico" type="ItemTatico" />
+        <xs:element name="alocacaoOperacional" type="ItemOperacional" />
+      </xs:choice>
     </xs:sequence>
   </xs:complexType>
-  <xs:complexType name="GrupoProfessor">
+  <xs:complexType name="GrupoAtendimento">
     <xs:sequence minOccurs="0" maxOccurs="unbounded">
-      <xs:element name="professor" type="ItemProfessor" />
-    </xs:sequence>
-  </xs:complexType>
-  <xs:complexType name="ItemDivisaoCreditos">
-    <xs:sequence minOccurs="0">
-      <xs:element name="id" type="xs:int" />
-      <xs:element name="creditos" type="xs:int" />
-      <xs:element name="dia1" type="xs:int" />
-      <xs:element name="dia2" type="xs:int" />
-      <xs:element name="dia3" type="xs:int" />
-      <xs:element name="dia4" type="xs:int" />
-      <xs:element name="dia5" type="xs:int" />
-      <xs:element name="dia6" type="xs:int" />
-      <xs:element name="dia7" type="xs:int" />
-    </xs:sequence>
-  </xs:complexType>
-  <xs:complexType name="GrupoDivisaoCreditos">
-    <xs:sequence minOccurs="0" maxOccurs="unbounded">
-      <xs:element name="DivisaoCreditos" type="ItemDivisaoCreditos" />
-    </xs:sequence>
-  </xs:complexType>
-  <xs:complexType name="GrupoDeslocamento">
-    <xs:sequence minOccurs="0" maxOccurs="unbounded">
-      <xs:element name="Deslocamento" type="ItemDeslocamento" />
-    </xs:sequence>
-  </xs:complexType>
-  <xs:complexType name="ItemDeslocamento">
-    <xs:sequence>
-      <xs:element name="tempo" type="xs:int" />
-      <xs:element name="unidade" type="ItemUnidade" />
-    </xs:sequence>
-  </xs:complexType>
-  <xs:complexType name="GrupoUnidade">
-    <xs:sequence minOccurs="0" maxOccurs="unbounded">
-      <xs:element name="ItemUnidade" type="ItemUnidade" />
-    </xs:sequence>
-  </xs:complexType>
-  <xs:complexType name="ItemUnidade">
-    <xs:sequence>
-      <xs:element name="id" type="xs:int" />
-      <xs:element name="codigo" type="xs:string" />
-      <xs:element name="nome" type="xs:string" />
-      <xs:element name="endereco" type="xs:string" />
-      <xs:element name="numMedSalas" type="xs:int" />
-      <xs:element name="custoMedCred" type="xs:int" />
-      <xs:element name="salas" type="GrupoSala" />
-      <xs:element name="horarios" type="GrupoHorarioDisponivel" />
-      <xs:element name="demanda" type="GrupoDemanda" />
-      <xs:element name="unidadeCurriculo" type="GrupoUnidadeCurriculo" />
-      <xs:element name="demanda" type="GrupoDemanda" />
-      <xs:element name="deslocamentos" type="GrupoDeslocamento" />
-    </xs:sequence>
-  </xs:complexType>
-  <xs:complexType name="ItemDisciplina">
-    <xs:sequence>
-      <xs:element name="id" type="xs:int" />
-      <xs:element name="codigo" type="xs:string" />
-      <xs:element name="nome" type="xs:string" />
-      <xs:element name="cred_teoricos" type="xs:string" />
-      <xs:element name="cred_praticos" type="xs:string" />
-      <xs:element name="laboratorio" type="xs:boolean" />
-      <xs:element name="TipoDisciplina" type="ItemTipoDisciplina" />
-      <xs:element name="DivisaoCreditos" type="ItemDivisaoCreditos" />
-      <xs:element name="compatibilidades" type="GrupoDisciplina" />
-      <xs:element name="equivalencia" type="GrupoDisciplina" />
-      <xs:element name="horarios" type="GrupoHorarioDisponivel" />
-      <xs:element name="salas" type="GrupoSala" />
-      <xs:element name="divisaoDeCreditos" type="ItemDivisaoCreditos" />
-      <xs:element name="turmas" type="GrupoTurma" />
-    </xs:sequence>
-  </xs:complexType>
-  <xs:complexType name="GrupoDisciplina">
-    <xs:sequence minOccurs="0" maxOccurs="unbounded">
-      <xs:element name="Disciplina" type="ItemDisciplina" />
-    </xs:sequence>
-  </xs:complexType>
-  <xs:complexType name="ItemCalendario">
-    <xs:choice>
-      <xs:element name="id" type="xs:int" />
-      <xs:element name="turnos" type="GrupoTurno" />
-      <xs:element name="codigo" type="xs:string" />
-      <xs:element name="descricao" type="xs:string" />
-      <xs:element name="tempoAula" type="xs:int" />
-    </xs:choice>
-  </xs:complexType>
-  <xs:complexType name="ItemHorarioDisponivel">
-    <xs:choice>
-      <xs:element name="id" type="xs:int" />
-      <xs:element name="semana" type="xs:int" />
-      <xs:element name="horarioAula" type="ItemHorarioAula" />
-    </xs:choice>
-  </xs:complexType>
-  <xs:complexType name="GrupoHorarioDisponivel">
-    <xs:sequence minOccurs="0" maxOccurs="unbounded">
-      <xs:element name="horarioDisponivel" type="ItemHorarioDisponivel" />
-    </xs:sequence>
-  </xs:complexType>
-  <xs:complexType name="ItemHorarioAula">
-    <xs:sequence>
-      <xs:element name="horariosDisponiveis" type="GrupoHorarioDisponivel" />
-      <xs:element name="id" type="xs:int" />
-      <xs:element name="inicio" type="xs:time" />
-      <xs:element name="Turno" type="ItemTurno" />
-    </xs:sequence>
-  </xs:complexType>
-  <xs:complexType name="GrupoHorarioAula">
-    <xs:sequence minOccurs="0" maxOccurs="unbounded">
-      <xs:element name="HorarioAula" type="ItemHorarioAula" />
-    </xs:sequence>
-  </xs:complexType>
-  <xs:complexType name="ItemTurno">
-    <xs:sequence>
-      <xs:element name="id" type="xs:int" />
-      <xs:element name="nome" type="xs:string" />
-      <xs:element name="HorariosAula" type="GrupoHorarioAula" />
-      <xs:element name="Calendario" type="ItemCalendario" />
-    </xs:sequence>
-  </xs:complexType>
-  <xs:complexType name="GrupoTurno">
-    <xs:sequence minOccurs="0" maxOccurs="unbounded">
-      <xs:element name="Turno" type="ItemTurno" />
-    </xs:sequence>
-  </xs:complexType>
-  <xs:complexType name="ItemSala">
-    <xs:sequence>
-      <xs:element name="id" type="xs:int" />
-      <xs:element name="tipoSala" type="ItemTipoSala" />
-      <xs:element name="HorariosDisponiveis" type="GrupoHorarioDisponivel" />
-      <xs:element name="codigo" type="xs:string" />
-      <xs:element name="numSalas" type="xs:int" />
-      <xs:element name="andar" type="xs:string" />
-      <xs:element name="capacidade" type="xs:int" />
-    </xs:sequence>
-  </xs:complexType>
-  <xs:complexType name="ItemDisciplinaPeriodo">
-    <xs:sequence>
-      <xs:element name="periodo" type="xs:int" />
-      <xs:element name="disciplina" type="ItemDisciplina" />
-    </xs:sequence>
-  </xs:complexType>
-  <xs:complexType name="ItemCurriculo">
-    <xs:sequence>
-      <xs:element name="id" type="xs:int" />
-      <xs:element name="codigo" type="xs:string" />
-      <xs:element name="descricao" type="xs:string" />
-      <xs:element name="DisciplinaPeriodo" type="ItemDisciplinaPeriodo" />
-    </xs:sequence>
-  </xs:complexType>
-  <xs:complexType name="GrupoCurriculo">
-    <xs:sequence minOccurs="0" maxOccurs="unbounded">
-      <xs:element name="curriculo" type="ItemCurriculo" />
-    </xs:sequence>
-  </xs:complexType>
-  <xs:complexType name="GrupoSala">
-    <xs:sequence minOccurs="0" maxOccurs="unbounded">
-      <xs:element name="sala" type="ItemSala" />
-    </xs:sequence>
-  </xs:complexType>
-  <xs:complexType name="ItemCurso">
-    <xs:sequence>
-      <xs:element name="id" type="xs:int" />
-      <xs:element name="codigo" type="xs:string" />
-      <xs:element name="tipo" type="ItemTipoCurso" />
-      <xs:element name="numPeriodos" type="xs:int" />
-      <xs:element name="qtdMinDoutores" type="xs:int" />
-      <xs:element name="qtdMinMestres" type="xs:int" />
-      <xs:element name="qtdMaxProfDisc" type="xs:int" />
-      <xs:element name="areaTitulacao" type="ItemAreaTitulacao" />
-      <xs:element name="Curriculos" type="GrupoCurriculo" />
-    </xs:sequence>
-  </xs:complexType>
-  <xs:complexType name="GrupoCurso">
-    <xs:sequence minOccurs="0" maxOccurs="unbounded">
-      <xs:element name="curso" type="ItemCurso" />
-    </xs:sequence>
-  </xs:complexType>
-  <xs:complexType name="ItemDemanda">
-    <xs:sequence>
-      <xs:element name="quantidade" type="xs:int" />
-      <xs:element name="turno" type="ItemTurno" />
-      <xs:element name="disciplina" type="ItemDisciplina" />
-      <xs:element name="curso" type="ItemCurso" />
-    </xs:sequence>
-  </xs:complexType>
-  <xs:complexType name="GrupoDemanda">
-    <xs:sequence minOccurs="0" maxOccurs="unbounded">
-      <xs:element name="demanda" type="ItemDemanda" />
-    </xs:sequence>
-  </xs:complexType>
-  <xs:complexType name="ItemUnidadeCurriculo">
-    <xs:sequence>
-      <xs:element name="turno" type="ItemTurno" />
-      <xs:element name="curriculo" type="ItemCurriculo" />
-    </xs:sequence>
-  </xs:complexType>
-  <xs:complexType name="GrupoUnidadeCurriculo">
-    <xs:sequence minOccurs="0" maxOccurs="unbounded">
-      <xs:element name="unidadeCurriculo">
-        <xs:complexType>
-          <xs:complexContent mixed="false">
-            <xs:extension base="ItemUnidadeCurriculo" />
-          </xs:complexContent>
-        </xs:complexType>
+      <xs:element name="atendimento" type="ItemAtendimento">
+        <xs:annotation>
+          <xs:documentation>representa um atendimento</xs:documentation>
+        </xs:annotation>
       </xs:element>
     </xs:sequence>
   </xs:complexType>
-  <xs:complexType name="ItemAlocacao">
+  <xs:complexType name="ItemTatico">
     <xs:sequence>
-      <xs:element name="professor" type="ItemProfessor" />
-      <xs:element name="horario" type="ItemHorarioDisponivel" />
-      <xs:element name="oferecimento" type="ItemOferecimento" />
+      <xs:element name="qtdeCreditosTeoricos" type="xs:int">
+        <xs:annotation>
+          <xs:documentation>quantidade de créditos teóricos atendidos no dia</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="qtdeCreditosPraticos" type="xs:int">
+        <xs:annotation>
+          <xs:documentation>quantidade de créditos práticos atendidos no dia</xs:documentation>
+        </xs:annotation>
+      </xs:element>
     </xs:sequence>
   </xs:complexType>
-  <xs:complexType name="ItemOferecimento">
+  <xs:complexType name="ItemOperacional">
     <xs:sequence>
-      <xs:element name="id" type="xs:int" />
-      <xs:element name="sala" type="ItemSala" />
-      <xs:element name="semana" type="xs:int" />
-      <xs:element name="creditos" type="xs:int" />
-      <xs:element name="turma" type="ItemTurma" />
-      <xs:element name="alocacao" type="ItemAlocacao" />
-    </xs:sequence>
-  </xs:complexType>
-  <xs:complexType name="GrupoOferecimento">
-    <xs:sequence minOccurs="0" maxOccurs="unbounded">
-      <xs:element name="oferecimento" type="ItemOferecimento" />
-    </xs:sequence>
-  </xs:complexType>
-  <xs:complexType name="ItemTurma">
-    <xs:sequence>
-      <xs:element name="id" type="xs:int" />
-      <xs:element name="nome" type="xs:string" />
-      <xs:element name="disciplina" type="ItemDisciplina" />
-    </xs:sequence>
-  </xs:complexType>
-  <xs:complexType name="GrupoTurma">
-    <xs:sequence minOccurs="0" maxOccurs="unbounded">
-      <xs:element name="turma" type="ItemTurma" />
-    </xs:sequence>
-  </xs:complexType>
-  <xs:complexType name="ItemTipoSala">
-    <xs:sequence minOccurs="0">
-      <xs:element name="id" type="xs:int" />
-      <xs:element name="nome" type="xs:string" />
-      <xs:element name="descricao" type="xs:string" />
-    </xs:sequence>
-  </xs:complexType>
-  <xs:complexType name="ItemTipoContrato">
-    <xs:sequence>
-      <xs:element name="id" type="xs:int" />
-      <xs:element name="nome" type="xs:string" />
-    </xs:sequence>
-  </xs:complexType>
-  <xs:complexType name="ItemTipoTitulacao">
-    <xs:sequence>
-      <xs:element name="id" type="xs:int" />
-      <xs:element name="nome" type="xs:string" />
-    </xs:sequence>
-  </xs:complexType>
-  <xs:complexType name="ItemAreaTitulacao">
-    <xs:sequence>
-      <xs:element name="id" type="xs:int" />
-      <xs:element name="nome" type="xs:string" />
-    </xs:sequence>
-  </xs:complexType>
-  <xs:complexType name="ItemTipoDisciplina">
-    <xs:sequence>
-      <xs:element name="id" type="xs:int" />
-      <xs:element name="nome" type="xs:string" />
-    </xs:sequence>
-  </xs:complexType>
-  <xs:complexType name="ItemTipoCurso">
-    <xs:sequence>
-      <xs:element name="id" type="xs:int" />
-      <xs:element name="nome" type="xs:string" />
+      <xs:element name="horarioAulaId" type="xs:int">
+        <xs:annotation>
+          <xs:documentation>identificador (ItemHorarioAula) do horário em que a turma será atendida</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="professorId" type="xs:int">
+        <xs:annotation>
+          <xs:documentation>identificador (ItemProfessor) do professor que irá ministrar a aula para a turma</xs:documentation>
+        </xs:annotation>
+      </xs:element>
     </xs:sequence>
   </xs:complexType>
 </xs:schema>
