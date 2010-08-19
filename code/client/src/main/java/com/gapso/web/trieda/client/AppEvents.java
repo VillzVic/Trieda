@@ -7,6 +7,7 @@ public class AppEvents {
 	public static final EventType Init = new EventType();
 	
 	public static final EventType CampusList = new EventType();
+	public static final EventType CampusDeslocamento = new EventType();
 	public static final EventType CampusProfessorList = new EventType();
 	public static final EventType CampusProfessorView = new EventType();
 	

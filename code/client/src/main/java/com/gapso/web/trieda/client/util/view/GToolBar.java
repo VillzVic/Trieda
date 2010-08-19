@@ -261,6 +261,16 @@ public class GToolBar extends ToolBar {
 		});
 		menuSalasBt.add(outros19);
 		
+		MenuItem outros20 = new MenuItem("Matriz de Tempos de Deslocamento entre Campi");
+		outros20.setIcon(AbstractImagePrototype.create(Resources.DEFAULTS.campi16()));
+		outros20.addSelectionListener(new SelectionListener<MenuEvent>() {
+			@Override
+			public void componentSelected(MenuEvent ce) {
+				Dispatcher.forwardEvent(AppEvents.CampusDeslocamento);
+			}
+		});
+		menuSalasBt.add(outros20);
+		
 		add(group);
 	}
 	
