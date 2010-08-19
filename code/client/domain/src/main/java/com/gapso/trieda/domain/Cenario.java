@@ -48,12 +48,12 @@ public class Cenario implements java.io.Serializable {
     private int periodo;
 
     @NotNull
-    @Temporal(TemporalType.TIMESTAMP)
+    @Temporal(TemporalType.DATE)
     @DateTimeFormat(style = "S-")
     private Date criacao;
 
     @NotNull
-    @Temporal(TemporalType.TIMESTAMP)
+    @Temporal(TemporalType.DATE)
     @DateTimeFormat(style = "S-")
     private Date atualizacao;
 
