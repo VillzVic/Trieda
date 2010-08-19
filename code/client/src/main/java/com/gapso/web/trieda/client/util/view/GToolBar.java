@@ -251,6 +251,16 @@ public class GToolBar extends ToolBar {
 		salasBt.setMenu(menuSalasBt);
 		group.add(salasBt);
 		
+		MenuItem outros19 = new MenuItem("Campi/Professores");
+		outros19.setIcon(AbstractImagePrototype.create(Resources.DEFAULTS.professores16()));
+		outros19.addSelectionListener(new SelectionListener<MenuEvent>() {
+			@Override
+			public void componentSelected(MenuEvent ce) {
+				Dispatcher.forwardEvent(AppEvents.CampusProfessorList);
+			}
+		});
+		menuSalasBt.add(outros19);
+		
 		add(group);
 	}
 	

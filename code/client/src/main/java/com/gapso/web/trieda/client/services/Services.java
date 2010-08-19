@@ -6,6 +6,7 @@ import com.google.gwt.core.client.GWT;
 public class Services {
 
 	public static final String CAMPI = "campi";
+	public static final String CAMPIPROFESSORES = "campiProfessores";
 	public static final String TURNOS = "turnos";
 	public static final String UNIDADES = "unidades";
 	public static final String SALAS = "salas";
@@ -26,6 +27,7 @@ public class Services {
 	
 	public static Object get(String id) {
 		if(id.equals(CAMPI)) return campi();
+		if(id.equals(CAMPIPROFESSORES)) return campiProfessores();
 		if(id.equals(TURNOS)) return turnos();
 		if(id.equals(UNIDADES)) return unidades();
 		if(id.equals(SALAS)) return salas();
@@ -60,6 +62,15 @@ public class Services {
 		if(service == null) {
 			service = GWT.create(CampiService.class);
 			Registry.register(CAMPI, service);
+		}
+		return service;
+	}
+	
+	public static CampiProfessoresServiceAsync campiProfessores() {
+		CampiProfessoresServiceAsync service = (CampiProfessoresServiceAsync) Registry.get(CAMPIPROFESSORES);
+		if(service == null) {
+			service = GWT.create(CampiProfessoresService.class);
+			Registry.register(CAMPIPROFESSORES, service);
 		}
 		return service;
 	}
