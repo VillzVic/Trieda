@@ -1,0 +1,53 @@
+// Spring Roo 1.1.0.M2 [rev 0b3543e] log opened at 2010-08-19 10:20:54
+project --topLevelPackage com.gapso.trieda
+persistence setup --provider HIBERNATE --database HYPERSONIC_IN_MEMORY
+entity --class ~.domain.Campus --serializable 
+entity --class ~.domain.Cenario --serializable 
+entity --class ~.domain.Deslocamento --serializable 
+entity --class ~.domain.Endereco --serializable
+entity --class ~.domain.Professor --serializable
+entity --class ~.domain.Curriculo --serializable
+field string --fieldName codigo --sizeMax 255 --class ~.domain.Campus
+field string --fieldName descricao --sizeMax 255
+field reference --fieldName endereco --type ~.domain.Endereco --notNull 
+field set --fieldName curriculos --element ~.domain.Curriculo
+field set --fieldName professores --element ~.domain.Professor
+field string --fieldName codigo --sizeMax 255 --class ~.domain.Cenario
+field string --fieldName descricao --sizeMax 255
+field number --fieldName ano --primitive --type java.lang.Integer --min 2000 --max 3000
+field number --fieldName periodo --primitive --type java.lang.Integer --min 1 --max 12
+field date --fieldName criacao --type java.util.Date --notNull
+field date --fieldName atualizacao --type java.util.Date --notNull
+field string --fieldName comentario --sizeMax 1024
+field boolean --fieldName oficial --primitive
+field reference --fieldName origem --type ~.domain.Campus --notNull --class ~.domain.Deslocamento
+field reference --fieldName destino --type ~.domain.Campus --notNull 
+field number --fieldName horas --primitive  --type java.lang.Float --min 0 --max 1000 --digitsFraction 2 --digitsInteger 3
+enum type --class ~.misc.Estados
+enum constant --name RJ
+enum constant --name BA
+enum constant --name ES
+enum constant --name MG
+field string --fieldName municipio --sizeMax 30 --class ~.domain.Endereco
+field string --fieldName cidade --sizeMax 30
+field enum --fieldName estado --type ~.misc.Estados --notNull
+field string --fieldName logradouro --sizeMax 30
+field string --fieldName numero --sizeMax 10
+field string --fieldName codigo --sizeMax 255 --class ~.domain.Curriculo
+field string --fieldName descricao --sizeMax 255
+field string --fieldName cpf --sizeMax 14 --class ~.domain.Professor
+field string --fieldName nome --sizeMax 255
+field number --fieldName cargaHorariaMinima --type java.lang.Byte --primitive --min 0 --max 100
+field number --fieldName cargaHorariaMaxima --type java.lang.Byte --primitive --min 0 --max 100
+field number --fieldName credito --type java.lang.Float --primitive  --min 0 --max 1000 --digitsFraction 2 --digitsInteger 3
+field number --fieldName creditoAnterior --type java.lang.Float --primitive --min 0 --max 1000 --digitsFraction 2 --digitsInteger 3
+field number --fieldName nota --type java.lang.Float --primitive --min 0 --max 10 --digitsFraction 2 --digitsInteger 2
+perform eclipse
+// script ..\trieda.roo
+quit
+// Spring Roo 1.1.0.M2 [rev 0b3543e] log closed at 2010-08-19 10:21:18
+// Spring Roo 1.1.0.M2 [rev 0b3543e] log opened at 2010-08-19 16:48:06
+entity --class ~.domain.Cu --serializable
+quit
+// Spring Roo 1.1.0.M2 [rev 0b3543e] log closed at 2010-08-19 16:49:23
+// Spring Roo 1.1.0.M2 [rev 0b3543e] log opened at 2010-08-19 16:54:28
