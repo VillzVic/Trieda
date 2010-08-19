@@ -1,9 +1,0 @@
-<jboss-web>
-   <context-root>/trieda</context-root>
-   <class-loading java2ClassLoadingCompliance="false">
-      <loader-repository>
-         com.gapso.trieda:archive=gapso-trieda-0.0.1.war
-         <loader-repository-config>java2ParentDelegation=true</loader-repository-config>
-      </loader-repository>
-   </class-loading>
-</jboss-web>
