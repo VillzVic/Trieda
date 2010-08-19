@@ -271,6 +271,16 @@ public class GToolBar extends ToolBar {
 		});
 		menuSalasBt.add(outros20);
 		
+		MenuItem outros21 = new MenuItem("Matriz de Tempos de Deslocamento entre Unidades");
+		outros21.setIcon(AbstractImagePrototype.create(Resources.DEFAULTS.unidade16()));
+		outros21.addSelectionListener(new SelectionListener<MenuEvent>() {
+			@Override
+			public void componentSelected(MenuEvent ce) {
+				Dispatcher.forwardEvent(AppEvents.UnidadeDeslocamento);
+			}
+		});
+		menuSalasBt.add(outros21);
+		
 		add(group);
 	}
 	
