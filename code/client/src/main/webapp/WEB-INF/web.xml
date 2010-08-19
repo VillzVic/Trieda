@@ -7,6 +7,15 @@
 
 	<display-name>TRIEDA</display-name>
 
+	<context-param>
+		<param-name>contextConfigLocation</param-name>
+		<param-value>classpath*:META-INF/spring/applicationContext*.xml</param-value>
+	</context-param>
+
+	<listener>
+		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+	</listener>
+
 	<servlet>
 		<servlet-name>campiServlet</servlet-name>
 		<servlet-class>com.gapso.web.trieda.server.CampiServiceImpl</servlet-class>
@@ -83,7 +92,7 @@
 		<servlet-name>calendariosServlet</servlet-name>
 		<servlet-class>com.gapso.web.trieda.server.CalendariosServiceImpl</servlet-class>
 	</servlet>
-		
+
 	<servlet-mapping>
 		<servlet-name>campiServlet</servlet-name>
 		<url-pattern>/trieda/campi</url-pattern>
@@ -164,5 +173,5 @@
 	<welcome-file-list>
 		<welcome-file>trieda.html</welcome-file>
 	</welcome-file-list>
-	
+
 </web-app>

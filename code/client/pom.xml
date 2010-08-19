@@ -34,6 +34,16 @@
 			<artifactId>gxt</artifactId>
 			<version>2.1.1</version>
 		</dependency>
+		<dependency>
+			<groupId>com.gapso.trieda</groupId>
+			<artifactId>trieda-domain</artifactId>
+			<version>[0.1.0,)</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-web</artifactId>
+			<version>3.0.3.RELEASE</version>
+		</dependency>
 	</dependencies>
 
 	<build>
