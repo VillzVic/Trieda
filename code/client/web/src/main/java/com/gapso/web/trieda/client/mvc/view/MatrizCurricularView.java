@@ -9,6 +9,7 @@ import com.gapso.web.trieda.client.crudmodel.MatrizCurricularCrudModel;
 import com.gapso.web.trieda.client.crudmodel.MatrizCurricularDisciplinaCrudModel;
 import com.gapso.web.trieda.client.mvc.model.MatrizCurricularDisciplinaModel;
 import com.gapso.web.trieda.client.mvc.model.MatrizCurricularModel;
+import com.gapso.web.trieda.client.mvp.view.AppView;
 import com.gapso.web.trieda.client.util.resources.Resources;
 import com.gapso.web.trieda.client.util.view.GTab;
 import com.gapso.web.trieda.client.util.view.GTabItem;

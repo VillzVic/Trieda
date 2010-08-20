@@ -7,6 +7,7 @@ import com.extjs.gxt.ui.client.mvc.View;
 import com.gapso.web.trieda.client.AppEvents;
 import com.gapso.web.trieda.client.crudmodel.UnidadeCrudModel;
 import com.gapso.web.trieda.client.mvc.model.UnidadeModel;
+import com.gapso.web.trieda.client.mvp.view.AppView;
 import com.gapso.web.trieda.client.util.resources.Resources;
 import com.gapso.web.trieda.client.util.view.GTab;
 import com.gapso.web.trieda.client.util.view.GTabItem;

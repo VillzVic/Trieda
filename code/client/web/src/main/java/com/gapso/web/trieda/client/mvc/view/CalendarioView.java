@@ -8,6 +8,7 @@ import com.extjs.gxt.ui.client.mvc.View;
 import com.gapso.web.trieda.client.AppEvents;
 import com.gapso.web.trieda.client.crudmodel.CalendarioCrudModel;
 import com.gapso.web.trieda.client.mvc.model.CalendarioModel;
+import com.gapso.web.trieda.client.mvp.view.AppView;
 import com.gapso.web.trieda.client.util.resources.Resources;
 import com.gapso.web.trieda.client.util.view.CalendarioModal;
 import com.gapso.web.trieda.client.util.view.GTab;

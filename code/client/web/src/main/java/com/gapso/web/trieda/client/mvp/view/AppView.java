@@ -1,40 +1,35 @@
-package com.gapso.web.trieda.client.mvc.view;
+package com.gapso.web.trieda.client.mvp.view;
 
 import com.extjs.gxt.ui.client.Registry;
 import com.extjs.gxt.ui.client.Style.LayoutRegion;
-import com.extjs.gxt.ui.client.mvc.AppEvent;
-import com.extjs.gxt.ui.client.mvc.Controller;
-import com.extjs.gxt.ui.client.mvc.View;
 import com.extjs.gxt.ui.client.util.Margins;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
 import com.extjs.gxt.ui.client.widget.Viewport;
+import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayout;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
 import com.extjs.gxt.ui.client.widget.layout.FitLayout;
-import com.extjs.gxt.ui.client.widget.toolbar.ToolBar;
-import com.gapso.web.trieda.client.AppEvents;
+import com.gapso.web.trieda.client.mvp.presenter.AppPresenter;
 import com.gapso.web.trieda.client.util.view.GTab;
 import com.gapso.web.trieda.client.util.view.GToolBar;
 import com.gapso.web.trieda.client.util.view.GTreePanel;
-import com.google.gwt.user.client.ui.RootPanel;
+import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.Widget;
 
-public class AppView extends View {
+public class AppView extends Composite implements AppPresenter.Display {
 
 	public static final String TOOLBAR = "toolBar";
 	public static final String TAB = "tabPanel";
 	
 	private Viewport viewport;
 	private ContentPanel panel;
+	
 	private GToolBar toolBar;
 	private GTab tab;
 	private GTreePanel treePanel;
 	
-	public AppView(Controller controller) {
-		super(controller);
-	}
-
-	@Override
-	public void initialize() {
+	public AppView() {
+		initUI();
 	}
 	
 	private void initUI() {
@@ -51,7 +46,7 @@ public class AppView extends View {
 		Registry.register(TOOLBAR, toolBar);
 		Registry.register(TAB, tab);
 		
-		RootPanel.get().add(viewport);
+		initWidget(viewport);
 	}
 	
 	private void createNorth() {
@@ -76,12 +71,17 @@ public class AppView extends View {
 	    tab = new GTab();
 	    panel.add(tab, bld);
 	}
-	
+
 	@Override
-	protected void handleEvent(AppEvent event) {
-		if (event.getType() == AppEvents.Init) {
-			initUI();
-		}
+	public Button getCampusListButton() {
+		
+		return new Button();
 	}
 
+	@Override
+	public Widget asWidget() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
 }

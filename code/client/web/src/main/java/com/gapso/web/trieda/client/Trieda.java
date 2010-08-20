@@ -1,7 +1,6 @@
 package com.gapso.web.trieda.client;
 
 import com.extjs.gxt.ui.client.mvc.Dispatcher;
-import com.gapso.web.trieda.client.mvc.controller.AppController;
 import com.gapso.web.trieda.client.mvc.controller.AreaTitulacaoController;
 import com.gapso.web.trieda.client.mvc.controller.CalendarioController;
 import com.gapso.web.trieda.client.mvc.controller.CampusController;
@@ -18,6 +17,8 @@ import com.gapso.web.trieda.client.mvc.controller.ProfessorController;
 import com.gapso.web.trieda.client.mvc.controller.SalaController;
 import com.gapso.web.trieda.client.mvc.controller.TurnoController;
 import com.gapso.web.trieda.client.mvc.controller.UnidadeController;
+import com.gapso.web.trieda.client.mvp.presenter.AppPresenter;
+import com.gapso.web.trieda.client.mvp.view.AppView;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.user.client.ui.RootPanel;
 
@@ -31,7 +32,6 @@ public class Trieda implements EntryPoint {
 	 */
 	public void onModuleLoad() {
 		Dispatcher dispatcher = Dispatcher.get(); 
-		dispatcher.addController(new AppController());
 		dispatcher.addController(new TurnoController());
 		dispatcher.addController(new CampusController());
 		dispatcher.addController(new UnidadeController());
@@ -49,7 +49,10 @@ public class Trieda implements EntryPoint {
 		dispatcher.addController(new CalendarioController());
 		dispatcher.addController(new EquivalenciaController());
 		
-		dispatcher.dispatch(AppEvents.Init);
+//		dispatcher.dispatch(AppEvents.Init);
+		
+	    AppPresenter appViewer = new AppPresenter(new AppView());
+	    appViewer.go(RootPanel.get());
 		
 		RootPanel.get("loading").setVisible(false);
 	}

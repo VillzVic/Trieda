@@ -32,6 +32,7 @@ import com.extjs.gxt.ui.client.widget.layout.RowLayout;
 import com.extjs.gxt.ui.client.widget.toolbar.ToolBar;
 import com.gapso.web.trieda.client.AppEvents;
 import com.gapso.web.trieda.client.mvc.model.AreaTitulacaoModel;
+import com.gapso.web.trieda.client.mvp.view.AppView;
 import com.gapso.web.trieda.client.services.Services;
 import com.gapso.web.trieda.client.util.resources.Resources;
 import com.gapso.web.trieda.client.util.view.GTab;
