@@ -16,27 +16,236 @@ import com.extjs.gxt.ui.client.widget.menu.MenuItem;
 import com.extjs.gxt.ui.client.widget.toolbar.ToolBar;
 import com.gapso.web.trieda.client.AppEvents;
 import com.gapso.web.trieda.client.util.resources.Resources;
+import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
 public class GToolBar extends ToolBar {
 
+	// Cenário
+	private Button cenariosBt;
+	private Button parametrosBt;
+	private MenuItem calendarioMI;
+	private MenuItem divisaoCreditosMI;
+	
+	// Campi
+	private Button campiBt;
+	private Button novoCampusBt;
+	private Button deslocamentoCampiBt;
+
+	// Unidades
+	private Button unidadesBt;
+	private Button novoUnidadeBt;
+	private Button deslocamentoUnidadeBt;
+	
+	// Professores
+	private Button professoresBt;
+	private Button novoProfessorBt;
+	private Button deslocamentoProfessorBt;
+	
+	// Cursos
+	private Button cursosBt;
+	private Button novoCursoBt;
+	private Button deslocamentoCursoBt;
+	
+	// Disciplinas
+	private Button disciplinasBt;
+	private Button novoDisciplinaBt;
+	private Button deslocamentoDisciplinaBt;
+	
+	// Salas
+	private Button salasBt;
+	private Button novoSalaBt;
+	private Button deslocamentoSalaBt;
+	
+	
+	
+	
 	public GToolBar() {
 		createGroups();
 	}
 	
 	private void createGroups() {
+		createGroupCenarios();
+		createGroupCampi();
 		createGroupUnidades();
-		createGroupUnidades();
-		createGroupUnidades();
-		createGroupUnidades();
+		createGroupProfessores();
+		createGroupDisciplinas();
+		createGroupSalas();
+		createGroupCursos();
+		
+		createGroupPrototipo();
 	}
 	
+	private void createGroupCenarios() {
+		ButtonGroup group = new ButtonGroup(2);
+		group.setHeading("Cenários");
+		
+		TableData data = new TableData();
+		data.setRowspan(2);
+		
+		cenariosBt = createButtonList(Resources.DEFAULTS.cenario24());
+		group.add(cenariosBt, data);
+		
+		parametrosBt = createButton("Parâmetros", Resources.DEFAULTS.parametros16());
+		group.add(parametrosBt);
+		
+		SplitButton outrosUnidadesSBt = new SplitButton("Outros");
+		outrosUnidadesSBt.setIcon(AbstractImagePrototype.create(Resources.DEFAULTS.outros16()));
+		outrosUnidadesSBt.setIconAlign(IconAlign.LEFT);
+		Menu outros = new Menu();
+		
+		calendarioMI = createMenuItem("Calendário", Resources.DEFAULTS.calendario16());
+		outros.add(calendarioMI);
+		
+		divisaoCreditosMI = createMenuItem("Preferência de Divisão de Créditos", Resources.DEFAULTS.divisaoDeCreditos16());
+		outros.add(divisaoCreditosMI);
+		
+		outrosUnidadesSBt.setMenu(outros);
+		group.add(outrosUnidadesSBt);
+		
+		add(group);
+	}
+
+	private void createGroupCampi() {
+		ButtonGroup group = new ButtonGroup(2);
+		group.setHeading("Campi");
+		
+		TableData data = new TableData();
+		data.setRowspan(2);
+		
+		campiBt = createButtonList(Resources.DEFAULTS.campi24());
+		group.add(campiBt, data);
+
+		novoCampusBt = createButton("Novo", Resources.DEFAULTS.campus16());
+		group.add(novoCampusBt);
+		
+		deslocamentoCampiBt = createButton("Desloc.", Resources.DEFAULTS.deslocamento16());
+		group.add(deslocamentoCampiBt);
+		
+		add(group);
+	}
+
 	private void createGroupUnidades() {
+		ButtonGroup group = new ButtonGroup(2);
+		group.setHeading("Unidade");
+		
+		TableData data = new TableData();
+		data.setRowspan(2);
+		
+		unidadesBt = createButtonList(Resources.DEFAULTS.unidades24());
+		group.add(unidadesBt, data);
+
+		novoUnidadeBt = createButton("Novo", Resources.DEFAULTS.unidade16());
+		group.add(novoUnidadeBt);
+		
+		deslocamentoUnidadeBt = createButton("Desloc.", Resources.DEFAULTS.deslocamento16());
+		group.add(deslocamentoUnidadeBt);
+		
+		add(group);
+	}
+	
+	private void createGroupProfessores() {
+		ButtonGroup group = new ButtonGroup(2);
+		group.setHeading("Professores");
+		
+		TableData data = new TableData();
+		data.setRowspan(2);
+		
+		professoresBt = createButtonList(Resources.DEFAULTS.professores24());
+		group.add(professoresBt, data);
+
+		novoProfessorBt = createButton("Novo", Resources.DEFAULTS.professor16());
+		group.add(novoProfessorBt);
+		
+		deslocamentoProfessorBt = createButton("Desloc.", Resources.DEFAULTS.deslocamento16());
+		group.add(deslocamentoProfessorBt);
+		
+		add(group);
+	}
+	
+	private void createGroupCursos() {
+		ButtonGroup group = new ButtonGroup(2);
+		group.setHeading("Cursos");
+		
+		TableData data = new TableData();
+		data.setRowspan(2);
+		
+		cursosBt = createButtonList(Resources.DEFAULTS.cursos24());
+		group.add(cursosBt, data);
+		
+		novoCursoBt = createButton("Novo", Resources.DEFAULTS.curso16());
+		group.add(novoCursoBt);
+		
+		deslocamentoCursoBt = createButton("Desloc.", Resources.DEFAULTS.deslocamento16());
+		group.add(deslocamentoCursoBt);
+		
+		add(group);
+	}
+	
+	private void createGroupDisciplinas() {
+		ButtonGroup group = new ButtonGroup(2);
+		group.setHeading("Disciplinas");
+		
+		TableData data = new TableData();
+		data.setRowspan(2);
+		
+		disciplinasBt = createButtonList(Resources.DEFAULTS.professores24());
+		group.add(disciplinasBt, data);
+
+		novoDisciplinaBt = createButton("Novo", Resources.DEFAULTS.professor16());
+		group.add(novoDisciplinaBt);
+		
+		deslocamentoDisciplinaBt = createButton("Desloc.", Resources.DEFAULTS.deslocamento16());
+		group.add(deslocamentoDisciplinaBt);
+		
+		add(group);
+	}
+	
+	private void createGroupSalas() {
+		ButtonGroup group = new ButtonGroup(2);
+		group.setHeading("Salas");
+		
+		TableData data = new TableData();
+		data.setRowspan(2);
+		
+		salasBt = createButtonList(Resources.DEFAULTS.professores24());
+		group.add(salasBt, data);
+
+		novoSalaBt = createButton("Novo", Resources.DEFAULTS.professor16());
+		group.add(novoSalaBt);
+		
+		deslocamentoSalaBt = createButton("Desloc.", Resources.DEFAULTS.deslocamento16());
+		group.add(deslocamentoSalaBt);
+		
+		add(group);
+	}
+	
+	private Button createButtonList(ImageResource icon) {
+		Button bt = createButton("Listar", icon);
+		bt.setScale(ButtonScale.MEDIUM);
+		bt.setIconAlign(IconAlign.TOP);
+		bt.setArrowAlign(ButtonArrowAlign.BOTTOM);
+		
+		return bt;
+	}
+	
+	private Button createButton(String text, ImageResource icon) {
+		Button bt = new Button(text, AbstractImagePrototype.create(icon));
+		bt.setIconAlign(IconAlign.LEFT);
+		return bt;
+	}
+	
+	private MenuItem createMenuItem(String text, ImageResource icon) {
+		MenuItem mi = new MenuItem(text, AbstractImagePrototype.create(icon));
+		return mi;
+	}
+	
+	private void createGroupPrototipo() {
 		TableData data = new TableData();
 		data.setRowspan(2);
 		
 		ButtonGroup group = new ButtonGroup(2);
-		group.setHeading("Campi");
+		group.setHeading("Protótipo");
 
 		Button campiBt = new Button("Campi");
 		campiBt.setScale(ButtonScale.MEDIUM);
@@ -248,9 +457,6 @@ public class GToolBar extends ToolBar {
 		});
 		menuSalasBt.add(outros18);
 		
-		salasBt.setMenu(menuSalasBt);
-		group.add(salasBt);
-		
 		MenuItem outros19 = new MenuItem("Campi/Professores");
 		outros19.setIcon(AbstractImagePrototype.create(Resources.DEFAULTS.professores16()));
 		outros19.addSelectionListener(new SelectionListener<MenuEvent>() {
@@ -281,6 +487,9 @@ public class GToolBar extends ToolBar {
 		});
 		menuSalasBt.add(outros21);
 		
+		
+		salasBt.setMenu(menuSalasBt);
+		group.add(salasBt);
 		add(group);
 	}
 	

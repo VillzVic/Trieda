@@ -5,25 +5,39 @@ import com.google.gwt.resources.client.ImageResource;
 
 public interface DefaultsIcons extends ClientBundle  {
 
-	@Source("unidade16.png")
-	ImageResource unidade16();
+	@Source("outros16.png") ImageResource outros16();
+	
+	@Source("cenario16.png") ImageResource cenario16();
+	@Source("cenario24.png") ImageResource cenario24();
 
-	@Source("blackboard16.png")
-	ImageResource sala16();
+	@Source("parametros16.png") ImageResource parametros16();
+	@Source("parametros24.png") ImageResource parametros24();
 	
-	@Source("campi16.png")
-	ImageResource campi16();
-	@Source("campi24.png")
-	ImageResource campi24();
+	@Source("deslocamento16.png") ImageResource deslocamento16();
 	
-	@Source("disciplina16.png")
-	ImageResource disciplina16();
+	@Source("unidade16.png")  ImageResource unidade16();
+	@Source("unidade24.png")  ImageResource unidade24();
+	@Source("unidades16.png") ImageResource unidades16();
+	@Source("unidades24.png") ImageResource unidades24();
+
+	@Source("blackboard16.png") ImageResource sala16();
 	
-	@Source("professores16.png")
-	ImageResource professores16();
+	@Source("campi16.png") ImageResource campus16();
+	@Source("campi24.png") ImageResource campus24();
+	@Source("campi16.png") ImageResource campi16();
+	@Source("campi24.png") ImageResource campi24();
 	
-	@Source("curso16.png")
-	ImageResource curso16();
+	@Source("disciplina16.png") ImageResource disciplina16();
+	
+	@Source("professor16.png")   ImageResource professor16();
+	@Source("professor24.png")   ImageResource professor24();
+	@Source("professores16.png") ImageResource professores16();
+	@Source("professores24.png") ImageResource professores24();
+	
+	@Source("curso16.png") ImageResource curso16();
+	@Source("curso24.png") ImageResource curso24();
+	@Source("curso16.png") ImageResource cursos16();
+	@Source("curso24.png") ImageResource cursos24();
 	
 	@Source("periodoaula16.png")
 	ImageResource periodoDeAula16();
