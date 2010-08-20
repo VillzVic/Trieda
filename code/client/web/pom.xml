@@ -106,8 +106,8 @@
 					<execution>
 						<goals>
 							<goal>compile</goal>
-							<goal>test</goal>
 						</goals>
+						<phase>prepare-package</phase>
 					</execution>
 				</executions>
 				<configuration>
