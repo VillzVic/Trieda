@@ -59,10 +59,11 @@
 		id="entityManagerFactory">
 		<property name="dataSource" ref="dataSource" />
 	</bean>
-	    <bean class="com.gapso.trieda.domain.Campus" id="campusBean"></bean>
-    <bean class="com.gapso.trieda.domain.Cenario" id="cenarioBean"></bean>
-    <bean class="com.gapso.trieda.domain.Curriculo" id="curriculoBean"></bean>
-    <bean class="com.gapso.trieda.domain.Deslocamento" id="deslocamentoBean"></bean>
-    <bean class="com.gapso.trieda.domain.Professor" id="professorBean"></bean>	
-    <bean class="com.gapso.trieda.domain.Endereco" id="enderecoBean"></bean>	
+	
+    <bean class="com.gapso.trieda.domain.Campus"		id="campusBean"			scope="prototype"></bean>
+    <bean class="com.gapso.trieda.domain.Cenario"		id="cenarioBean"		scope="prototype"></bean>
+    <bean class="com.gapso.trieda.domain.Curriculo"		id="curriculoBean"		scope="prototype"></bean>
+    <bean class="com.gapso.trieda.domain.Deslocamento"	id="deslocamentoBean"	scope="prototype"></bean>
+    <bean class="com.gapso.trieda.domain.Professor"		id="professorBean"		scope="prototype"></bean>	
+    <bean class="com.gapso.trieda.domain.Endereco"		id="enderecoBean"		scope="prototype"></bean>
 </beans>
