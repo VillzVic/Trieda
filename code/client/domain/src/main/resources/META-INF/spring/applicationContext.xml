@@ -64,4 +64,5 @@
     <bean class="com.gapso.trieda.domain.Curriculo" id="curriculoBean"></bean>
     <bean class="com.gapso.trieda.domain.Deslocamento" id="deslocamentoBean"></bean>
     <bean class="com.gapso.trieda.domain.Professor" id="professorBean"></bean>	
+    <bean class="com.gapso.trieda.domain.Endereco" id="enderecoBean"></bean>	
 </beans>
