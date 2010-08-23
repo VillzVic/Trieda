@@ -1,26 +1,29 @@
 package com.gapso.web.trieda.client.mvp.presenter;
 
-import com.extjs.gxt.ui.client.widget.button.Button;
-import com.google.gwt.user.client.ui.HasWidgets;
+import com.extjs.gxt.ui.client.widget.ContentPanel;
+import com.gapso.web.trieda.client.mvp.view.ToolBarView;
+import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class AppPresenter implements Presenter {
 
 	public interface Display {
-		Button getCampusListButton();
+		ContentPanel getPanel();
 		Widget asWidget();
 	}
 	
+	private Display viewport;
 	
-	private Widget viewPort;
-	
-	public AppPresenter(Widget viewPort) {
-		this.viewPort = viewPort;
+	public AppPresenter(Display viewport) {
+		this.viewport = viewport;
 	}
 
 	@Override
-	public void go(HasWidgets container) {
-		container.add(viewPort);
+	public void go(Widget widget) {
+		RootPanel rp = (RootPanel) widget;
+		Presenter presenter = new ToolBarPresenter(new ToolBarView());
+		presenter.go(viewport.getPanel());
+		rp.add(viewport.asWidget());
 	}
 
 }

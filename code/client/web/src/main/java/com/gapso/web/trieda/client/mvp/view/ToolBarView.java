@@ -1,4 +1,4 @@
-package com.gapso.web.trieda.client.util.view;
+package com.gapso.web.trieda.client.mvp.view;
 
 import com.extjs.gxt.ui.client.Style.ButtonArrowAlign;
 import com.extjs.gxt.ui.client.Style.ButtonScale;
@@ -7,6 +7,8 @@ import com.extjs.gxt.ui.client.event.ButtonEvent;
 import com.extjs.gxt.ui.client.event.MenuEvent;
 import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.mvc.Dispatcher;
+import com.extjs.gxt.ui.client.widget.Component;
+import com.extjs.gxt.ui.client.widget.Composite;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.button.ButtonGroup;
 import com.extjs.gxt.ui.client.widget.button.SplitButton;
@@ -15,12 +17,15 @@ import com.extjs.gxt.ui.client.widget.menu.Menu;
 import com.extjs.gxt.ui.client.widget.menu.MenuItem;
 import com.extjs.gxt.ui.client.widget.toolbar.ToolBar;
 import com.gapso.web.trieda.client.AppEvents;
+import com.gapso.web.trieda.client.mvp.presenter.ToolBarPresenter;
 import com.gapso.web.trieda.client.util.resources.Resources;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
-public class GToolBar extends ToolBar {
+public class ToolBarView extends Composite implements ToolBarPresenter.Display {
 
+	private ToolBar toolBar;
+	
 	// Cenário
 	private Button cenariosBt;
 	private Button parametrosBt;
@@ -57,12 +62,16 @@ public class GToolBar extends ToolBar {
 	private Button novoSalaBt;
 	private Button deslocamentoSalaBt;
 	
-	
-	
-	
-	public GToolBar() {
-		createGroups();
+	public ToolBarView() {
+		initUI();
 	}
+	
+	private void initUI() {
+		toolBar = new ToolBar();
+		createGroups();
+		initComponent(toolBar);
+	}
+	
 	
 	private void createGroups() {
 		createGroupCenarios();
@@ -75,6 +84,10 @@ public class GToolBar extends ToolBar {
 		
 		createGroupPrototipo();
 	}
+	
+	/********************************
+	 * CRIAÇÃO DOS BOTÕES
+	 */
 	
 	private void createGroupCenarios() {
 		ButtonGroup group = new ButtonGroup(2);
@@ -103,7 +116,7 @@ public class GToolBar extends ToolBar {
 		outrosUnidadesSBt.setMenu(outros);
 		group.add(outrosUnidadesSBt);
 		
-		add(group);
+		toolBar.add(group);
 	}
 
 	private void createGroupCampi() {
@@ -122,7 +135,7 @@ public class GToolBar extends ToolBar {
 		deslocamentoCampiBt = createButton("Desloc.", Resources.DEFAULTS.deslocamento16());
 		group.add(deslocamentoCampiBt);
 		
-		add(group);
+		toolBar.add(group);
 	}
 
 	private void createGroupUnidades() {
@@ -141,7 +154,7 @@ public class GToolBar extends ToolBar {
 		deslocamentoUnidadeBt = createButton("Desloc.", Resources.DEFAULTS.deslocamento16());
 		group.add(deslocamentoUnidadeBt);
 		
-		add(group);
+		toolBar.add(group);
 	}
 	
 	private void createGroupProfessores() {
@@ -160,7 +173,7 @@ public class GToolBar extends ToolBar {
 		deslocamentoProfessorBt = createButton("Desloc.", Resources.DEFAULTS.deslocamento16());
 		group.add(deslocamentoProfessorBt);
 		
-		add(group);
+		toolBar.add(group);
 	}
 	
 	private void createGroupCursos() {
@@ -179,7 +192,7 @@ public class GToolBar extends ToolBar {
 		deslocamentoCursoBt = createButton("Desloc.", Resources.DEFAULTS.deslocamento16());
 		group.add(deslocamentoCursoBt);
 		
-		add(group);
+		toolBar.add(group);
 	}
 	
 	private void createGroupDisciplinas() {
@@ -198,7 +211,7 @@ public class GToolBar extends ToolBar {
 		deslocamentoDisciplinaBt = createButton("Desloc.", Resources.DEFAULTS.deslocamento16());
 		group.add(deslocamentoDisciplinaBt);
 		
-		add(group);
+		toolBar.add(group);
 	}
 	
 	private void createGroupSalas() {
@@ -217,7 +230,7 @@ public class GToolBar extends ToolBar {
 		deslocamentoSalaBt = createButton("Desloc.", Resources.DEFAULTS.deslocamento16());
 		group.add(deslocamentoSalaBt);
 		
-		add(group);
+		toolBar.add(group);
 	}
 	
 	private Button createButtonList(ImageResource icon) {
@@ -490,7 +503,31 @@ public class GToolBar extends ToolBar {
 		
 		salasBt.setMenu(menuSalasBt);
 		group.add(salasBt);
-		add(group);
+		toolBar.add(group);
+	}
+	
+	/********************************
+	 * GET BUTTONS
+	 */
+	
+	@Override
+	public Button getCampusListBt() {
+		return campiBt;
+	}
+
+	@Override
+	public Button getCampusNewBt() {
+		return novoCampusBt;
+	}
+
+	@Override
+	public Component asComponent() {
+		return this;
+	}
+
+	@Override
+	public ToolBar getToolBar() {
+		return toolBar;
 	}
 	
 }

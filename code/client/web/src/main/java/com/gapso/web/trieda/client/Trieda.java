@@ -18,6 +18,7 @@ import com.gapso.web.trieda.client.mvc.controller.SalaController;
 import com.gapso.web.trieda.client.mvc.controller.TurnoController;
 import com.gapso.web.trieda.client.mvc.controller.UnidadeController;
 import com.gapso.web.trieda.client.mvp.presenter.AppPresenter;
+import com.gapso.web.trieda.client.mvp.presenter.Presenter;
 import com.gapso.web.trieda.client.mvp.view.AppView;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.user.client.ui.RootPanel;
@@ -51,8 +52,8 @@ public class Trieda implements EntryPoint {
 		
 //		dispatcher.dispatch(AppEvents.Init);
 		
-	    AppPresenter appViewer = new AppPresenter(new AppView());
-	    appViewer.go(RootPanel.get());
+	    Presenter appPresenter = new AppPresenter(new AppView());
+	    appPresenter.go(RootPanel.get());
 		
 		RootPanel.get("loading").setVisible(false);
 	}
