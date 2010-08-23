@@ -6,7 +6,6 @@ import java.util.List;
 import com.extjs.gxt.ui.client.data.BasePagingLoadResult;
 import com.extjs.gxt.ui.client.data.ModelData;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
-import com.gapso.trieda.domain.Endereco;
 import com.gapso.web.trieda.client.mvc.model.CampusModel;
 import com.gapso.web.trieda.client.services.CampiService;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
@@ -22,8 +21,11 @@ public class CampiServiceImpl extends RemoteServiceServlet implements CampiServi
 		
 		List<ModelData> list = new ArrayList<ModelData>();
 		
-		for(Endereco c : Endereco.findAllEnderecoes()) {
-			list.add(new CampusModel(c.getCidade(), c.getLogradouro()));
+//		for(Endereco c : Endereco.findAllEnderecoes()) {
+//			list.add(new CampusModel(c.getCidade(), c.getLogradouro()));
+//		}
+		for(int i = 1; i <= 10; i++) {
+			list.add(new CampusModel("Código "+i, "Nome "+i));
 		}
 		return new BasePagingLoadResult<ModelData>(list);
 	}
