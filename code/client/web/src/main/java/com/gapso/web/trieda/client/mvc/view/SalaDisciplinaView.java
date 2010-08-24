@@ -18,10 +18,13 @@ import com.extjs.gxt.ui.client.widget.ContentPanel;
 import com.extjs.gxt.ui.client.widget.LayoutContainer;
 import com.extjs.gxt.ui.client.widget.ListView;
 import com.extjs.gxt.ui.client.widget.button.Button;
+import com.extjs.gxt.ui.client.widget.form.CheckBox;
 import com.extjs.gxt.ui.client.widget.form.FormPanel;
 import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayout;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
+import com.extjs.gxt.ui.client.widget.layout.ColumnData;
+import com.extjs.gxt.ui.client.widget.layout.ColumnLayout;
 import com.extjs.gxt.ui.client.widget.layout.FitLayout;
 import com.extjs.gxt.ui.client.widget.layout.FormData;
 import com.extjs.gxt.ui.client.widget.layout.RowData;
@@ -95,15 +98,43 @@ public class SalaDisciplinaView extends View {
 		unidadeField.setLabelStyle("text-align: right;");
 		panelField.add(unidadeField, formDataFilter);
 		
+		FormPanel panel2 = new FormPanel();
+		panel2.setLayout(new ColumnLayout());
+		panel2.setHeaderVisible(false);
+		panel2.setPadding(0);
+		panel2.setBodyBorder(false);
+		
+		
+		FormPanel panelField1 = new FormPanel();
+		panelField1.setPadding(0);
+		panelField1.setBodyBorder(false);
+		panelField1.setHeaderVisible(false);
 		TextField<String> andarField = getUnidadeField();
 		andarField.setFieldLabel("Andar");
 		andarField.setLabelStyle("text-align: right;");
-		panelField.add(andarField, formDataFilter);
-		
+		panelField1.add(andarField, formDataFilter);
 		TextField<String> salaField = getUnidadeField();
 		salaField.setFieldLabel("Sala");
 		salaField.setLabelStyle("text-align: right;");
-		panelField.add(salaField, formDataFilter);
+		panelField1.add(salaField, formDataFilter);
+		
+		FormPanel panelField2 = new FormPanel();
+		panelField2.setPadding(0);
+		panelField2.setBodyBorder(false);
+		panelField2.setHeaderVisible(false);
+		TextField<String> salaField2 = getUnidadeField();
+		salaField2.setFieldLabel("Grupo Sala");
+		salaField2.setLabelStyle("text-align: right;");
+		panelField2.add(salaField2, formDataFilter);
+		CheckBox laboratorioField = new CheckBox();
+		laboratorioField.setFieldLabel("Laboratório?");
+		laboratorioField.setLabelStyle("text-align: right;");
+		panelField2.add(laboratorioField, formDataFilter);
+		
+		panel2.add(panelField1, new ColumnData(.5));
+		panel2.add(panelField2, new ColumnData(.5));
+		
+		panelField.add(panel2);
 		
 		panelField.add(new Button());		
 		panelField.setCollapsible(true);

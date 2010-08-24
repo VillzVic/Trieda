@@ -94,7 +94,7 @@ public class GrupoSalaView extends View {
 		FormData formDataFilter = new FormData("-5");
 		
 		TextField<String> campusField = getCampusField();
-		campusField.setFieldLabel("Curso");
+		campusField.setFieldLabel("Campus");
 		campusField.setLabelStyle("text-align: right;");
 		panelField.add(campusField, formDataFilter);
 		
