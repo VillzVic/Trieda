@@ -130,7 +130,7 @@
       </xs:element>
       <xs:element name="tempoAula" type="xs:int">
         <xs:annotation>
-          <xs:documentation>Duração de uma aula (em minutos) no calendário em questão, por exemplo, 50 minutos.</xs:documentation>
+          <xs:documentation>Duração de uma aula (em minutos) do turno em questão, por exemplo, 50 minutos.</xs:documentation>
         </xs:annotation>
       </xs:element>
       <xs:element name="HorariosAula" type="GrupoHorarioAula">
@@ -553,6 +553,7 @@
           <xs:documentation>tempo em minutos para se deslocar da origem para o destino</xs:documentation>
         </xs:annotation>
       </xs:element>
+      <xs:element name="custo" type="xs:double" />
     </xs:sequence>
   </xs:complexType>
   <xs:complexType name="ItemDisciplina">
