@@ -772,11 +772,11 @@
     <xs:sequence>
       <xs:element name="id" type="xs:int" />
       <xs:element minOccurs="0" name="professorId" type="xs:int" />
-      <xs:element minOccurs="0" name="salaId" type="xs:int" />
       <xs:element minOccurs="0" name="disciplinaId" type="xs:int" />
+      <xs:element minOccurs="0" name="salaId" type="xs:int" />
+      <xs:element minOccurs="0" name="diaSemana" type="xs:int" />
       <xs:element minOccurs="0" name="turnoId" type="xs:int" />
       <xs:element minOccurs="0" name="horarioAulaId" type="xs:int" />
-      <xs:element minOccurs="0" name="diaSemana" type="xs:int" />
     </xs:sequence>
   </xs:complexType>
   <xs:complexType name="ItemParametrosPlanejamento">
@@ -801,14 +801,21 @@
           <xs:documentation>flag que determina se o resolvedor matemático tentará ou não minimizar o deslocamento de alunos (entre campi, unidades, andares e salas) com base nos campos temposDeslocamentosCampi e temposDeslocamentosUnidades (ver requisitos RF-O-5, RF-O-8, RF-PA-2, RF-PA-3, RF-PA-4).</xs:documentation>
         </xs:annotation>
       </xs:element>
+      <xs:element name="maxDeslocProfessor" type="xs:int">
+        <xs:annotation>
+          <xs:documentation>informa o limite superior de deslocamentos de um professor entre campi dentro do mesmo dia. Ver requisito RF-PP-11.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
       <xs:element name="maximizarAvaliacaoCursos" type="GrupoIdentificador">
         <xs:annotation>
-          <xs:documentation>lista os identificadores (ItemCurso) dos cursos cujo somatório das notas de desempenho (dos professores que ministram aulas no curso em questão) deverá ser maximizado. Ver requisito RF-O 12.</xs:documentation>
+          <xs:documentation>lista os identificadores (ItemCurso) dos cursos cujo somatório das notas de desempenho (dos professores que ministram aulas no curso em questão) deverá ser maximizado. Ver requisito RF-O-12.
+
+Maximizar/gerenciar a nota da avaliação institucional média coletiva do corpo docente por curso (MAXIMIZAR A MÉDIA DAS AVALIAÇÕES DOS DOCENTES DE UM MESMO CURSO, OU SEJA, PRIORIZAR QUALIDADE DOCENTE DE UM CURSO ESPECÍFICO)</xs:documentation>
         </xs:annotation>
       </xs:element>
       <xs:element name="minimizarCustoDocenteCursos" type="GrupoIdentificador">
         <xs:annotation>
-          <xs:documentation>lista os identificadores (ItemCurso) dos cursos cujo somatório do custo docente (dos professores que ministram aulas no curso em questão) deverá ser minimizado. Ver requisito RF-O 13.</xs:documentation>
+          <xs:documentation>lista os identificadores (ItemCurso) dos cursos cujo somatório do custo docente (dos professores que ministram aulas no curso em questão) deverá ser minimizado. Ver requisito RF-O-13.</xs:documentation>
         </xs:annotation>
       </xs:element>
       <xs:element name="permiteCompartilhamentoTurma" type="GrupoGrupo">
@@ -854,6 +861,11 @@
       <xs:element name="evitarReducaoCargaHorariaProf" type="xs:boolean">
         <xs:annotation>
           <xs:documentation>evitar redução grande de carga horária do docente em relação ao período anterior (para evitar problemas com sindicatos). Ver requisito RF-PP-9.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="evitarProfUltimoPrimeiroHor" type="xs:boolean">
+        <xs:annotation>
+          <xs:documentation>evitar alocação simultânea do professor no último horário do dia e no primeiro horário do dia seguinte. Ver requisito RF-PP-10.</xs:documentation>
         </xs:annotation>
       </xs:element>
     </xs:sequence>
