@@ -39,7 +39,7 @@ public class AreaTitulacao implements java.io.Serializable {
     @ManyToMany(cascade = CascadeType.ALL)
     private Set<com.gapso.trieda.domain.Curso> cursos = new java.util.HashSet<com.gapso.trieda.domain.Curso>();
 
-	private static final long serialVersionUID = -6385389232993894864L;
+	private static final long serialVersionUID = 8739246006672184100L;
 
 	@PersistenceContext
     transient EntityManager entityManager;

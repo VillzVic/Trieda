@@ -42,7 +42,7 @@ public class GrupoSala implements java.io.Serializable {
     @ManyToMany(cascade = CascadeType.ALL)
     private Set<com.gapso.trieda.domain.Disciplina> disciplinas = new java.util.HashSet<com.gapso.trieda.domain.Disciplina>();
 
-	private static final long serialVersionUID = -2234086299456762626L;
+	private static final long serialVersionUID = -3068409934520158819L;
 
 	public String getNome() {
         return this.nome;

@@ -81,7 +81,7 @@ public class CurriculoDisciplina implements java.io.Serializable {
         this.periodo = periodo;
     }
 
-	private static final long serialVersionUID = -1212851224869372713L;
+	private static final long serialVersionUID = -5429743673577487971L;
 
 	@PersistenceContext
     transient EntityManager entityManager;

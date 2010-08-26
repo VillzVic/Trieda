@@ -118,7 +118,7 @@ public class Endereco implements java.io.Serializable {
         return sb.toString();
     }
 
-	private static final long serialVersionUID = -5643489759251582328L;
+	private static final long serialVersionUID = 9077939403744877554L;
 
 	@PersistenceContext
     transient EntityManager entityManager;

@@ -64,7 +64,7 @@ public class Equivalencia implements java.io.Serializable {
         this.elimina = elimina;
     }
 
-	private static final long serialVersionUID = 2468817184139159704L;
+	private static final long serialVersionUID = -8632323368932009356L;
 
 	@PersistenceContext
     transient EntityManager entityManager;

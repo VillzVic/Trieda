@@ -155,7 +155,7 @@ public class DeslocamentoUnidade implements java.io.Serializable {
         return entityManager().createQuery("select o from DeslocamentoUnidade o").setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
 
-	private static final long serialVersionUID = -7515490800522918430L;
+	private static final long serialVersionUID = -8847212098556601964L;
 
 	public String toString() {
         StringBuilder sb = new StringBuilder();

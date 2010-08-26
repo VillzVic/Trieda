@@ -205,5 +205,5 @@ public class Curriculo implements java.io.Serializable {
         return sb.toString();
     }
 
-	private static final long serialVersionUID = 56256443889786102L;
+	private static final long serialVersionUID = -9204016994046445376L;
 }

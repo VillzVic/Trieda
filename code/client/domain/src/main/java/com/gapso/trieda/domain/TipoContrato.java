@@ -125,7 +125,7 @@ public class TipoContrato implements java.io.Serializable {
         return sb.toString();
     }
 
-	private static final long serialVersionUID = -5124543984613123985L;
+	private static final long serialVersionUID = -6475305286240446247L;
 
 	public String getNome() {
         return this.nome;

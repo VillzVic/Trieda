@@ -232,7 +232,7 @@ public class Disciplina implements java.io.Serializable {
         return entityManager().createQuery("select o from Disciplina o").setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
 
-	private static final long serialVersionUID = 4590606566369483340L;
+	private static final long serialVersionUID = 7980821696468062987L;
 
 	public Cenario getCenario() {
         return this.cenario;

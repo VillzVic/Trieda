@@ -167,5 +167,5 @@ public class HorarioAula implements java.io.Serializable {
         this.horario = horario;
     }
 
-	private static final long serialVersionUID = -2085494379463432562L;
+	private static final long serialVersionUID = 6415195416443296422L;
 }

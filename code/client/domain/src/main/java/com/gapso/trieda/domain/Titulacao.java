@@ -125,7 +125,7 @@ public class Titulacao implements java.io.Serializable {
         return entityManager().createQuery("select o from Titulacao o").setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
 
-	private static final long serialVersionUID = -4640366191671276965L;
+	private static final long serialVersionUID = 8929281662490204744L;
 
 	public String getNome() {
         return this.nome;

@@ -13,6 +13,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Table;
 import javax.persistence.Version;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 import org.springframework.beans.factory.annotation.Configurable;
@@ -39,6 +41,12 @@ public class Demanda implements java.io.Serializable {
     @JoinColumn(name = "DIS_ID")
     private Disciplina disciplina;
 
+    @NotNull
+    @Column(name = "DEM_QUANTIDADE")
+    @Min(1L)
+    @Max(999L)
+    private Integer quantidade;
+
 	public CampusCurriculo getCampusCurriculo() {
         return this.campusCurriculo;
     }
@@ -53,6 +61,14 @@ public class Demanda implements java.io.Serializable {
 
 	public void setDisciplina(Disciplina disciplina) {
         this.disciplina = disciplina;
+    }
+
+	public Integer getQuantidade() {
+        return this.quantidade;
+    }
+
+	public void setQuantidade(Integer quantidade) {
+        this.quantidade = quantidade;
     }
 
 	@PersistenceContext
@@ -144,9 +160,10 @@ public class Demanda implements java.io.Serializable {
         sb.append("Id: ").append(getId()).append(", ");
         sb.append("Version: ").append(getVersion()).append(", ");
         sb.append("CampusCurriculo: ").append(getCampusCurriculo()).append(", ");
-        sb.append("Disciplina: ").append(getDisciplina());
+        sb.append("Disciplina: ").append(getDisciplina()).append(", ");
+        sb.append("Quantidade: ").append(getQuantidade());
         return sb.toString();
     }
 
-	private static final long serialVersionUID = 7809711106775747893L;
+	private static final long serialVersionUID = -3935898184270072639L;
 }

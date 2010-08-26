@@ -148,7 +148,7 @@ public class ProfessorDisciplina implements java.io.Serializable {
         return sb.toString();
     }
 
-	private static final long serialVersionUID = -1923485134247568532L;
+	private static final long serialVersionUID = -6254398976446496178L;
 
 	public Professor getProfessor() {
         return this.professor;

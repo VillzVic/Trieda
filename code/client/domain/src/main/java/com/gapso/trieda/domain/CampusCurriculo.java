@@ -167,7 +167,7 @@ public class CampusCurriculo implements java.io.Serializable {
         this.demandas = demandas;
     }
 
-	private static final long serialVersionUID = 3275295167329675206L;
+	private static final long serialVersionUID = -976299446108675926L;
 
 	public String toString() {
         StringBuilder sb = new StringBuilder();

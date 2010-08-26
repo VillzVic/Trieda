@@ -174,5 +174,5 @@ public class Usuario implements java.io.Serializable {
         return entityManager().createQuery("select o from Usuario o").setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
 
-	private static final long serialVersionUID = 6734404779032606129L;
+	private static final long serialVersionUID = 2505879126546359228L;
 }

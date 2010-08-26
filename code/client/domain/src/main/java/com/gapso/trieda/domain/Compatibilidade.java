@@ -132,7 +132,7 @@ public class Compatibilidade implements java.io.Serializable {
         return sb.toString();
     }
 
-	private static final long serialVersionUID = 3004221982568018469L;
+	private static final long serialVersionUID = -6796413707742091455L;
 
 	public Disciplina getDisciplina1() {
         return this.disciplina1;

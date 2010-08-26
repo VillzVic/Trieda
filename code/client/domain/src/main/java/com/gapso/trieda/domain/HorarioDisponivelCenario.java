@@ -58,7 +58,7 @@ public class HorarioDisponivelCenario implements java.io.Serializable {
     @ManyToMany(cascade = CascadeType.ALL)
     private Set<com.gapso.trieda.domain.Professor> professores = new java.util.HashSet<com.gapso.trieda.domain.Professor>();
 
-	private static final long serialVersionUID = -6325702360524336129L;
+	private static final long serialVersionUID = 9128639869205918403L;
 
 	@PersistenceContext
     transient EntityManager entityManager;

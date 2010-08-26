@@ -133,5 +133,5 @@ public class TipoDisciplina implements java.io.Serializable {
         this.nome = nome;
     }
 
-	private static final long serialVersionUID = 142053975879315524L;
+	private static final long serialVersionUID = 3145587865770084666L;
 }

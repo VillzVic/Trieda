@@ -53,3 +53,229 @@ quit
 // Spring Roo 1.1.0.M2 [rev 0b3543e] log opened at 2010-08-19 16:54:28
 exit
 // Spring Roo 1.1.0.M2 [rev 0b3543e] log closed at 2010-08-19 17:16:35
+// Spring Roo UNKNOWN VERSION log opened at 2010-08-26 11:02:24
+enum type --class ~.misc.Semanas
+enum constant --name SEG --permitReservedWords true
+enum constant --name TER --permitReservedWords true
+enum constant --name QUA --permitReservedWords true
+enum constant --name QUI --permitReservedWords true
+enum constant --name SEX --permitReservedWords true
+enum constant --name SAB --permitReservedWords true
+enum constant --name DOM --permitReservedWords true
+enum type --class ~.misc.Dificuldades
+enum constant --name MEDIO --permitReservedWords true
+enum constant --name BAIXO --permitReservedWords true
+enum constant --name ALTO  --permitReservedWords true
+enum type --class ~.misc.Estados
+enum constant --name AC --permitReservedWords true
+enum constant --name AL --permitReservedWords true
+enum constant --name AP --permitReservedWords true
+enum constant --name AM --permitReservedWords true
+enum constant --name BA --permitReservedWords true
+enum constant --name CE --permitReservedWords true
+enum constant --name DF --permitReservedWords true
+enum constant --name GO --permitReservedWords true
+enum constant --name ES --permitReservedWords true
+enum constant --name MA --permitReservedWords true
+enum constant --name MT --permitReservedWords true
+enum constant --name MS --permitReservedWords true
+enum constant --name MG --permitReservedWords true
+enum constant --name PA --permitReservedWords true
+enum constant --name PB --permitReservedWords true
+enum constant --name PR --permitReservedWords true
+enum constant --name PE --permitReservedWords true
+enum constant --name PI --permitReservedWords true
+enum constant --name RJ --permitReservedWords true
+enum constant --name RN --permitReservedWords true
+enum constant --name RS --permitReservedWords true
+enum constant --name RO --permitReservedWords true
+enum constant --name RR --permitReservedWords true
+enum constant --name SP --permitReservedWords true
+enum constant --name SC --permitReservedWords true
+enum constant --name SE --permitReservedWords true
+enum constant --name TO --permitReservedWords true
+entity --table USUARIOS --class ~.domain.Usuario --identifierColumn USU_ID --serializable
+entity --table SESSOES --class ~.domain.Sessao --identifierColumn SES_ID --serializable
+entity --table TURNOS --class ~.domain.Turno --identifierColumn TUR_ID --serializable
+entity --table CENARIOS --class ~.domain.Cenario --identifierColumn CEN_ID --serializable
+entity --table CALENDARIOS --class ~.domain.Calendario --identifierColumn CAL_ID --serializable
+entity --table CAMPI --class ~.domain.Campus --identifierColumn CAM_ID --serializable
+entity --table ENDERECOS --class ~.domain.Endereco --identifierColumn END_ID --serializable
+entity --table UNIDADES --class ~.domain.Unidade --identifierColumn UNI_ID --serializable
+entity --table TIPOS_CONTRATO --class ~.domain.TipoContrato --identifierColumn TCO_ID --serializable
+entity --table TITULACOES --class ~.domain.Titulacao --identifierColumn TIT_ID --serializable
+entity --table AREAS_TITULACAO --class ~.domain.AreaTitulacao --identifierColumn ATI_ID --serializable
+entity --table PROFESSORES --class ~.domain.Professor --identifierColumn PRF_ID --serializable
+entity --table TIPOS_SALA --class ~.domain.TipoSala --identifierColumn TSA_ID --serializable
+entity --table SALAS --class ~.domain.Sala --identifierColumn SAL_ID --serializable
+entity --table DIVISOES_CREDITO --class ~.domain.DivisaoCredito --identifierColumn DCR_ID --serializable
+entity --table TIPOS_DISCIPLINA --class ~.domain.TipoDisciplina --identifierColumn TDI_ID --serializable
+entity --table DISCIPLINAS --class ~.domain.Disciplina --identifierColumn DIS_ID --serializable
+entity --table TIPOS_CURSO --class ~.domain.TipoCurso --identifierColumn TCU_ID --serializable
+entity --table CURSOS --class ~.domain.Curso --identifierColumn CUR_ID --serializable
+entity --table HORARIOS_AULA --class ~.domain.HorarioAula --identifierColumn HOR_ID --serializable
+entity --table DESLOCAMENTOS_CAMPI --class ~.domain.DeslocamentoCampus --identifierColumn DEC_ID --serializable
+entity --table DESLOCAMENTOS_UNIDADES --class ~.domain.DeslocamentoUnidade --identifierColumn DEU_ID --serializable
+entity --table HORARIO_DISPONIVEL_CENARIO --class ~.domain.HorarioDisponivelCenario --identifierColumn HDC_ID --serializable
+entity --table PROFESSORES_DISCIPLINAS --class ~.domain.ProfessorDisciplina --identifierColumn DIP_ID --serializable
+entity --table COMPATIBILIDADES --class ~.domain.Compatibilidade --identifierColumn COM_ID --serializable
+entity --table EQUIVALENCIAS --class ~.domain.Equivalencia --identifierColumn EQV_ID --serializable
+entity --table GRUPOS_SALA --class ~.domain.GrupoSala --identifierColumn GRS_ID --serializable
+entity --table CURRICULOS --class ~.domain.Curriculo --identifierColumn CRC_ID --serializable
+entity --table CURRICULOS_DISCIPLINAS --class ~.domain.CurriculoDisciplina --identifierColumn CDI_ID --serializable
+entity --table CAMPI_CURRICULOS --class ~.domain.CampusCurriculo --identifierColumn CAC_ID --serializable
+entity --table DEMANDAS --class ~.domain.Demanda --identifierColumn DEM_ID --serializable
+field string --type java.lang.String --fieldName nome  --column USU_NOME  --sizeMin 5 --sizeMax 50  --notNull --class ~.domain.Usuario
+field string --type java.lang.String --fieldName email --column USU_EMAIL --sizeMin 5 --sizeMax 100           --class ~.domain.Usuario
+field string --type java.lang.String --fieldName login --column USU_LOGIN --sizeMin 5 --sizeMax 20  --notNull --class ~.domain.Usuario
+field string --type java.lang.String --fieldName senha --column USU_SENHA --sizeMin 5 --sizeMax 255 --notNull --class ~.domain.Usuario
+field date      --type java.util.Date   --fieldName horario --column SES_HORARIO    --notNull --class ~.domain.Sessao
+field reference --type ~.domain.Usuario --fieldName usuario --joinColumnName USU_ID --notNull --class ~.domain.Sessao
+field string --type java.lang.String  --fieldName nome  --column TUR_NOME  --sizeMax 50        --notNull --class ~.domain.Turno
+field number --type java.lang.Integer --fieldName tempo --column TUR_TEMPO --min 1  --max 1000 --notNull --class ~.domain.Turno
+field set    --element ~.domain.CampusCurriculo --fieldName campusCurriculo  --cardinality ONE_TO_MANY --mappedBy turno --notNull --class ~.domain.Turno
+field reference --type ~.domain.Usuario  --fieldName criadoPor       --joinColumnName USU_CRIACAO_ID     --notNull                               --class ~.domain.Cenario
+field reference --type ~.domain.Usuario  --fieldName atualizadoPor   --joinColumnName USU_ATUALIZACAO_ID                                         --class ~.domain.Cenario
+field string    --type java.lang.String  --fieldName nome            --column CEN_NOME                   --notNull --sizeMin 5    --sizeMax 20   --class ~.domain.Cenario
+field number    --type java.lang.Integer --fieldName ano             --column CEN_ANO                              --min 1000     --max 1000     --class ~.domain.Cenario
+field number    --type java.lang.Integer --fieldName periodo         --column CEN_PERIODO                          --min 1        --max 12       --class ~.domain.Cenario
+field date      --type java.util.Date    --fieldName dataCriacao     --column CEN_DT_CRIACAO             --notNull                               --class ~.domain.Cenario
+field date      --type java.util.Date    --fieldName dataAtualizacao --column CEN_DT_ATUALIZACAO         --notNull                               --class ~.domain.Cenario
+field string    --type java.lang.String  --fieldName comentario      --column CEN_COMENTARIO                                                     --class ~.domain.Cenario
+field boolean   --type java.lang.Boolean --fieldName oficial         --column CEN_OFICIAL                                                        --class ~.domain.Cenario
+field set   --element ~.domain.DivisaoCredito --fieldName divisoesCredito --cardinality MANY_TO_MANY --mappedBy cenario                      --class ~.domain.Cenario
+field reference --type ~.domain.Cenario  --fieldName cenario       --joinColumnName CEN_ID        --notNull                           --class ~.domain.Calendario
+field string    --type java.lang.String  --fieldName codigo        --column CAL_CODIGO    --notNull --sizeMin 3 --sizeMax 20  --class ~.domain.Calendario
+field string    --type java.lang.String  --fieldName descricao     --column CAL_DESCRICAO                       --sizeMax 255 --class ~.domain.Calendario
+field reference --type ~.domain.Cenario      --fieldName cenario       --joinColumnName CEN_ID     --notNull                           --class ~.domain.Campus
+field string    --type java.lang.String      --fieldName codigo        --column CAL_CODIGO --notNull --sizeMin 3  --sizeMax 20 --class ~.domain.Campus
+field string    --type java.lang.String      --fieldName nome          --column CAL_NOME   --notNull --sizeMin 5  --sizeMax 20 --class ~.domain.Campus
+field set       --element ~.domain.DeslocamentoCampus --fieldName deslocamentos  --cardinality ONE_TO_MANY --mappedBy origem --notNull --class ~.domain.Campus
+field set       --element ~.domain.Professor --fieldName professores --cardinality MANY_TO_MANY --mappedBy campi --class ~.domain.Campus
+field set       --element ~.domain.HorarioDisponivelCenario --fieldName horarios --cardinality MANY_TO_MANY --mappedBy campi --class ~.domain.Campus
+field set       --element ~.domain.CampusCurriculo --fieldName campusCurriculo  --cardinality ONE_TO_MANY --mappedBy campus --notNull --class ~.domain.Campus
+field reference --type ~.domain.Campus  --fieldName campus     --joinColumnName CAM_ID         --notNull              --class ~.domain.Endereco
+field enum      --type ~.misc.Estados   --fieldName estado     --column END_ESTADO                            --class ~.domain.Endereco
+field string    --type java.lang.String --fieldName cidade     --column END_CIDADE               --sizeMax 25 --class ~.domain.Endereco
+field string    --type java.lang.String --fieldName municipio  --column END_MUNICIPIO            --sizeMax 25 --class ~.domain.Endereco
+field string    --type java.lang.String --fieldName logradouro --column END_LOGRADOURO           --sizeMax 25 --class ~.domain.Endereco
+field string    --type java.lang.String --fieldName numero     --column END_NUMERO               --sizeMax 25 --class ~.domain.Endereco
+field reference --type ~.domain.Campus   --fieldName campus    --joinColumnName CAM_ID     --notNull                   --class ~.domain.Unidade
+field string    --type java.lang.String  --fieldName codigo    --column UNI_CODIGO --notNull --sizeMin 3  --sizeMax 20 --class ~.domain.Unidade
+field string    --type java.lang.String  --fieldName nome      --column UNI_NOME   --notNull --sizeMin 5  --sizeMax 20 --class ~.domain.Unidade
+field set       --element ~.domain.DeslocamentoUnidade --fieldName deslocamentos  --cardinality ONE_TO_MANY --mappedBy origem --notNull --class ~.domain.Unidade
+field set       --element ~.domain.HorarioDisponivelCenario --fieldName horarios --cardinality MANY_TO_MANY --mappedBy unidades --class ~.domain.Unidade
+field string  --type java.lang.String --fieldName nome --column TCO_NOME  --notNull --sizeMin 3  --sizeMax 20 --class ~.domain.TipoContrato
+field string  --type java.lang.String --fieldName nome --column TIT_NOME  --notNull --sizeMin 3  --sizeMax 20 --class ~.domain.Titulacao
+field string  --type java.lang.String --fieldName nome --column ATI_NOME  --notNull --sizeMin 3  --sizeMax 255 --class ~.domain.AreaTitulacao
+field set       --element ~.domain.Curso --fieldName cursos --cardinality MANY_TO_MANY --class ~.domain.AreaTitulacao
+field reference --type ~.domain.Cenario       --fieldName cenario         --joinColumnName CEN_ID         --notNull                               --class ~.domain.Professor
+field reference --type ~.domain.TipoContrato  --fieldName tipoContrato    --joinColumnName TCO_ID         --notNull                               --class ~.domain.Professor
+field reference --type ~.domain.Titulacao     --fieldName titulacao       --joinColumnName TIT_ID         --notNull                               --class ~.domain.Professor
+field reference --type ~.domain.AreaTitulacao --fieldName areaTitulacao   --joinColumnName ATI_ID         --notNull                               --class ~.domain.Professor
+field string    --type java.lang.String       --fieldName cpf             --column PRF_CPF        --notNull --sizeMin 14 --sizeMax 14     --class ~.domain.Professor
+field string    --type java.lang.String       --fieldName nome            --column PRF_NOME       --notNull --sizeMin 3  --sizeMax 20     --class ~.domain.Professor
+field number    --type java.lang.Integer      --fieldName cargaHorariaMin --column PRF_CH_MIN                            --max 999        --class ~.domain.Professor
+field number    --type java.lang.Integer      --fieldName cargaHorariaMax --column PRF_CH_MAX                            --max 999        --class ~.domain.Professor
+field number    --type java.lang.Integer      --fieldName creditoAnterior --column PRF_CRED_ANTERIOR                     --max 999        --class ~.domain.Professor
+field number    --type java.lang.Double       --fieldName valorCredito    --column PRF_VALOR_CREDITO --digitsInteger 4 --digitsFraction 2 --class ~.domain.Professor
+field number    --type java.lang.Integer      --fieldName nota            --column PRF_NOTA                            --min 0 --max 100  --class ~.domain.Professor
+field set       --element ~.domain.Campus --fieldName campi --cardinality MANY_TO_MANY --class ~.domain.Professor
+field set       --element ~.domain.HorarioDisponivelCenario --fieldName horarios --cardinality MANY_TO_MANY --mappedBy professores --class ~.domain.Professor
+field set       --element ~.domain.ProfessorDisciplina   --fieldName disciplinas --cardinality ONE_TO_MANY --mappedBy disciplina --notNull --class ~.domain.Professor
+field string  --type java.lang.String --fieldName nome      --column TSA_NOME       --notNull --sizeMin 3  --sizeMax 255 --class ~.domain.TipoSala
+field string  --type java.lang.String --fieldName descricao --column TSA_DESCRICAO                         --sizeMax 255 --class ~.domain.TipoSala
+field reference --type ~.domain.TipoSala --fieldName tipoSala   --joinColumnName TSA_ID         --notNull                    --class ~.domain.Sala
+field reference --type ~.domain.Unidade  --fieldName unidade    --joinColumnName UNI_ID         --notNull                    --class ~.domain.Sala
+field string    --type java.lang.String  --fieldName codigo     --column SAL_CODIGO     --notNull --sizeMin 3  --sizeMax 20  --class ~.domain.Sala
+field string    --type java.lang.String  --fieldName numero     --column SAL_NUMERO     --notNull --sizeMin 1  --sizeMax 20  --class ~.domain.Sala
+field string    --type java.lang.String  --fieldName andar      --column SAL_ANDAR      --notNull --sizeMin 1  --sizeMax 20  --class ~.domain.Sala
+field number    --type java.lang.Integer --fieldName capacidade --column SAL_CAPACIDADE --notNull --min 1      --max 9999    --class ~.domain.Sala
+field set       --element ~.domain.HorarioDisponivelCenario --fieldName horarios --cardinality MANY_TO_MANY --mappedBy salas --class ~.domain.Sala
+field set       --element ~.domain.Disciplina --fieldName disciplinas --cardinality MANY_TO_MANY --mappedBy salas       --class ~.domain.Sala
+field set       --element ~.domain.GrupoSala  --fieldName gruposSala  --cardinality MANY_TO_MANY --mappedBy salas             --class ~.domain.Sala
+field number --type java.lang.Integer --fieldName creditos --column DRC_CREDITOS --notNull --min 1  --max 99 --class ~.domain.DivisaoCredito
+field number --type java.lang.Integer --fieldName dia1     --column DRC_DIA1     --notNull --min 1  --max 99 --class ~.domain.DivisaoCredito
+field number --type java.lang.Integer --fieldName dia2     --column DRC_DIA2     --notNull --min 1  --max 99 --class ~.domain.DivisaoCredito
+field number --type java.lang.Integer --fieldName dia3     --column DRC_DIA3     --notNull --min 1  --max 99 --class ~.domain.DivisaoCredito
+field number --type java.lang.Integer --fieldName dia4     --column DRC_DIA4     --notNull --min 1  --max 99 --class ~.domain.DivisaoCredito
+field number --type java.lang.Integer --fieldName dia5     --column DRC_DIA5     --notNull --min 1  --max 99 --class ~.domain.DivisaoCredito
+field number --type java.lang.Integer --fieldName dia6     --column DRC_DIA6     --notNull --min 1  --max 99 --class ~.domain.DivisaoCredito
+field number --type java.lang.Integer --fieldName dia7     --column DRC_DIA7     --notNull --min 1  --max 99 --class ~.domain.DivisaoCredito
+field set       --element ~.domain.Cenario --fieldName cenario --cardinality MANY_TO_MANY --class ~.domain.DivisaoCredito
+field string  --type java.lang.String --fieldName nome      --column TDI_NOME       --notNull --sizeMin 3  --sizeMax 255 --class ~.domain.TipoDisciplina
+field reference --type ~.domain.Cenario        --fieldName cenario          --joinColumnName CEN_ID               --notNull                   --class ~.domain.Disciplina
+field reference --type ~.domain.TipoDisciplina --fieldName tipoDisciplina   --joinColumnName TDI_ID               --notNull                   --class ~.domain.Disciplina
+field reference --type ~.domain.DivisaoCredito --fieldName divisaoCreditos  --joinColumnName DCR_ID                                           --class ~.domain.Disciplina
+field string    --type java.lang.String        --fieldName codigo           --column DIS_CODIGO           --notNull --sizeMin 3  --sizeMax 20 --class ~.domain.Disciplina
+field string    --type java.lang.String        --fieldName nome             --column DIS_NOME             --notNull --sizeMin 5  --sizeMax 20 --class ~.domain.Disciplina
+field number    --type java.lang.Integer       --fieldName creditosTeorico  --column DIS_CRED_TEORICO     --notNull --min 1      --max 99     --class ~.domain.Disciplina
+field number    --type java.lang.Integer       --fieldName creditosPratico  --column DIS_CRED_PRATICO     --notNull --min 1      --max 99     --class ~.domain.Disciplina
+field boolean   --type java.lang.Boolean       --fieldName laboratorio      --column DIS_LABORATORIO                                          --class ~.domain.Disciplina
+field enum      --type ~.misc.Dificuldades     --fieldName dificuldade      --column DIS_DIFICULDADE                                          --class ~.domain.Disciplina
+field number    --type java.lang.Integer       --fieldName maxAlunosTeorico --column DIS_MAX_ALUN_TEORICO --notNull --min 1      --max 99     --class ~.domain.Disciplina
+field number    --type java.lang.Integer       --fieldName maxAlunosPratico --column DIS_MAX_ALUN_PRATICO --notNull --min 1      --max 999    --class ~.domain.Disciplina
+field set       --element ~.domain.HorarioDisponivelCenario --fieldName horarios --cardinality MANY_TO_MANY --mappedBy disciplinas            --class ~.domain.Disciplina
+field set       --element ~.domain.ProfessorDisciplina   --fieldName professores --cardinality ONE_TO_MANY --mappedBy professor --notNull     --class ~.domain.Disciplina
+field set       --element ~.domain.Compatibilidade --fieldName compatibilidades  --cardinality ONE_TO_MANY --mappedBy disciplina1 --notNull --class ~.domain.Disciplina
+field set       --element ~.domain.Equivalencia --fieldName equivalencias  --cardinality ONE_TO_MANY --mappedBy cursou --notNull --class ~.domain.Disciplina
+field set       --element ~.domain.Sala --fieldName salas --cardinality MANY_TO_MANY --class ~.domain.Disciplina
+field set       --element ~.domain.GrupoSala --fieldName gruposSala --cardinality MANY_TO_MANY --mappedBy disciplinas --class ~.domain.Disciplina
+field set       --element ~.domain.CurriculoDisciplina --fieldName curriculos  --cardinality ONE_TO_MANY --mappedBy curriculo --notNull --class ~.domain.Disciplina
+field set     --element ~.domain.Demanda --fieldName demandas  --cardinality ONE_TO_MANY --mappedBy disciplina --notNull --class ~.domain.Disciplina
+field string  --type java.lang.String --fieldName nome      --column TCU_NOME       --notNull --sizeMin 3  --sizeMax 255 --class ~.domain.TipoCurso
+field reference --type ~.domain.TipoCurso --fieldName tipoCurso                   --joinColumnName TCU_ID            --notNull                            --class ~.domain.Curso
+field reference --type ~.domain.Cenario   --fieldName cenario                     --joinColumnName CEN_ID            --notNull                            --class ~.domain.Curso
+field string    --type java.lang.String   --fieldName codigo                      --column CUR_CODIGO        --notNull --sizeMin 3  --sizeMax 255 --class ~.domain.Curso
+field number    --type java.lang.Integer  --fieldName numMinDoutores              --column CUR_MIN_DOUTORES  --notNull --min 0      --max 99      --class ~.domain.Curso
+field number    --type java.lang.Integer  --fieldName numMinMestres               --column CUR_MIN_MESTRES   --notNull --min 0      --max 99      --class ~.domain.Curso
+field number    --type java.lang.Integer  --fieldName maxDisciplinasPeloProfessor --column CUR_MAX_DISC_PROF --notNull --min 1      --max 99      --class ~.domain.Curso
+field boolean   --type java.lang.Boolean  --fieldName admMaisDeUmDisciplina       --column CUR_ADM_MAIS_DE_UMA_DISC                               --class ~.domain.Curso
+field set       --element ~.domain.AreaTitulacao --fieldName areasTitulacao --cardinality MANY_TO_MANY --mappedBy cursos --class ~.domain.Curso
+field reference --type ~.domain.Calendario --fieldName calendario --joinColumnName CAL_ID      --notNull                   --class ~.domain.HorarioAula
+field reference --type ~.domain.Turno      --fieldName turno      --joinColumnName TUR_ID      --notNull                   --class ~.domain.HorarioAula
+field date      --type java.util.Date      --fieldName horario    --column HOR_HORARIO --notNull --dateFormat NONE --class ~.domain.HorarioAula
+field reference --type ~.domain.Campus   --fieldName origem  --joinColumnName CAM_ORIG_ID --notNull                                      --class ~.domain.DeslocamentoCampus
+field reference --type ~.domain.Campus   --fieldName destino --joinColumnName CAM_DEST_ID --notNull                                      --class ~.domain.DeslocamentoCampus
+field number    --type java.lang.Integer --fieldName tempo   --column DEC_TEMPO   --notNull --min 1 --max 999                    --class ~.domain.DeslocamentoCampus
+field number    --type java.lang.Double  --fieldName custo   --column DEC_CUSTO   --notNull --digitsInteger 4 --digitsFraction 2 --class ~.domain.DeslocamentoCampus
+field reference --type ~.domain.Unidade  --fieldName origem  --joinColumnName UNI_ORIG_ID --notNull                                      --class ~.domain.DeslocamentoUnidade
+field reference --type ~.domain.Unidade  --fieldName destino --joinColumnName UNI_DEST_ID --notNull                                      --class ~.domain.DeslocamentoUnidade
+field number    --type java.lang.Integer --fieldName tempo   --column DEC_TEMPO   --notNull --min 1 --max 999                    --class ~.domain.DeslocamentoUnidade
+field reference --type ~.domain.HorarioAula   --fieldName horarioAula --joinColumnName HOR_ID --notNull  --class ~.domain.HorarioDisponivelCenario
+field enum      --type ~.misc.Semanas         --fieldName semana      --column HDC_SEMANA                --class ~.domain.HorarioDisponivelCenario
+field set       --element ~.domain.Campus     --fieldName campi       --cardinality MANY_TO_MANY         --class ~.domain.HorarioDisponivelCenario
+field set       --element ~.domain.Unidade    --fieldName unidades    --cardinality MANY_TO_MANY         --class ~.domain.HorarioDisponivelCenario
+field set       --element ~.domain.Sala       --fieldName salas       --cardinality MANY_TO_MANY         --class ~.domain.HorarioDisponivelCenario
+field set       --element ~.domain.Disciplina --fieldName disciplinas --cardinality MANY_TO_MANY         --class ~.domain.HorarioDisponivelCenario
+field set       --element ~.domain.Professor  --fieldName professores --cardinality MANY_TO_MANY         --class ~.domain.HorarioDisponivelCenario
+field reference --type ~.domain.Professor  --fieldName professor   --joinColumnName PRF_ID  --notNull                   --class ~.domain.ProfessorDisciplina
+field reference --type ~.domain.Disciplina --fieldName disciplina  --joinColumnName DIS_ID  --notNull                   --class ~.domain.ProfessorDisciplina
+field number    --type java.lang.Integer   --fieldName nota        --column PRF_NOTA        --notNull --min 0 --max 100 --class ~.domain.ProfessorDisciplina
+field number    --type java.lang.Integer   --fieldName preferencia --column PRF_PREFERENCIA --notNull --min 0 --max 10  --class ~.domain.ProfessorDisciplina
+field reference --type ~.domain.Disciplina --fieldName disciplina1 --joinColumnName DIS1_ID --notNull --class ~.domain.Compatibilidade
+field reference --type ~.domain.Disciplina --fieldName disciplina2 --joinColumnName DIS2_ID --notNull --class ~.domain.Compatibilidade
+field reference --type ~.domain.Disciplina --fieldName cursou  --joinColumnName DIS_CURSOU_ID  --notNull --class ~.domain.Equivalencia
+field reference --type ~.domain.Disciplina --fieldName elimina --joinColumnName DIS_ELIMINA_ID --notNull --class ~.domain.Equivalencia
+field string --type java.lang.String       --fieldName nome        --column GRS_NOME  --notNull --sizeMin 3  --sizeMax 20 --class ~.domain.GrupoSala
+field set    --element ~.domain.Sala       --fieldName salas       --cardinality MANY_TO_MANY                             --class ~.domain.GrupoSala
+field set    --element ~.domain.Disciplina --fieldName disciplinas --cardinality MANY_TO_MANY                             --class ~.domain.GrupoSala
+field reference --type ~.domain.Curso   --fieldName curso   --joinColumnName CUR_ID --notNull --class ~.domain.Curriculo
+field reference --type ~.domain.Cenario --fieldName cenario --joinColumnName CEN_ID --notNull --class ~.domain.Curriculo
+field string --type java.lang.String       --fieldName codigo        --column CRC_COD  --notNull --sizeMin 3  --sizeMax 20  --class ~.domain.Curriculo
+field string --type java.lang.String       --fieldName descricao     --column CRC_DESCRICAO                   --sizeMax 255 --class ~.domain.Curriculo
+field set    --element ~.domain.CurriculoDisciplina --fieldName disciplinas  --cardinality ONE_TO_MANY --mappedBy disciplina --notNull --class ~.domain.Curriculo
+field set    --element ~.domain.CampusCurriculo --fieldName campusCurriculo  --cardinality ONE_TO_MANY --mappedBy curriculo --notNull --class ~.domain.Curriculo
+field reference --type ~.domain.Curriculo  --fieldName curriculo  --joinColumnName CRC_ID --notNull                  --class ~.domain.CurriculoDisciplina
+field reference --type ~.domain.Disciplina --fieldName disciplina --joinColumnName DIS_ID --notNull                  --class ~.domain.CurriculoDisciplina
+field number    --type java.lang.Integer   --fieldName periodo    --column CDI_PERIODO    --notNull --min 1 --max 99 --class ~.domain.CurriculoDisciplina
+field reference --type ~.domain.Curriculo  --fieldName curriculo  --joinColumnName CRC_ID --notNull --class ~.domain.CampusCurriculo
+field reference --type ~.domain.Campus     --fieldName campus     --joinColumnName CAM_ID --notNull --class ~.domain.CampusCurriculo
+field reference --type ~.domain.Turno      --fieldName turno      --joinColumnName TUR_ID --notNull --class ~.domain.CampusCurriculo
+field set     --element ~.domain.Demanda --fieldName demandas  --cardinality ONE_TO_MANY --mappedBy campusCurriculo --notNull --class ~.domain.CampusCurriculo
+field reference --type ~.domain.CampusCurriculo  --fieldName campusCurriculo --joinColumnName CAC_ID --notNull --class ~.domain.Demanda
+field reference --type ~.domain.Disciplina --fieldName disciplina --joinColumnName DIS_ID --notNull --class ~.domain.Demanda
+field number    --type java.lang.Integer   --fieldName quantidade    --column DEM_QUANTIDADE    --notNull --min 1 --max 999 --class ~.domain.Demanda
+// script trieda.roo
+quit
+// Spring Roo UNKNOWN VERSION log closed at 2010-08-26 11:04:00

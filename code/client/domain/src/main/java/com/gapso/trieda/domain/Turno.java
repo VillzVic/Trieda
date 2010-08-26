@@ -156,7 +156,7 @@ public class Turno implements java.io.Serializable {
         this.campusCurriculo = campusCurriculo;
     }
 
-	private static final long serialVersionUID = -8351186954472679228L;
+	private static final long serialVersionUID = 2608398950191790873L;
 
 	public String toString() {
         StringBuilder sb = new StringBuilder();

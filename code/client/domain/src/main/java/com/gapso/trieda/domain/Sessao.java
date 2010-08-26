@@ -153,5 +153,5 @@ public class Sessao implements java.io.Serializable {
         return entityManager().createQuery("select o from Sessao o").setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
 
-	private static final long serialVersionUID = -6827596762969982295L;
+	private static final long serialVersionUID = -1164221895650416996L;
 }

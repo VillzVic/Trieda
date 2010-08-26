@@ -255,5 +255,5 @@ public class DivisaoCredito implements java.io.Serializable {
         this.cenario = cenario;
     }
 
-	private static final long serialVersionUID = -444577823741587690L;
+	private static final long serialVersionUID = 4185000264330934580L;
 }

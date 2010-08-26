@@ -315,5 +315,5 @@ public class Professor implements java.io.Serializable {
         return entityManager().createQuery("select o from Professor o").setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
 
-	private static final long serialVersionUID = -3812405913778965911L;
+	private static final long serialVersionUID = 265242535107921721L;
 }

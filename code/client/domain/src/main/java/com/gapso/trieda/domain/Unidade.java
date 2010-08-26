@@ -140,7 +140,7 @@ public class Unidade implements java.io.Serializable {
         return entityManager().createQuery("select o from Unidade o").setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
 
-	private static final long serialVersionUID = 7606258130030160578L;
+	private static final long serialVersionUID = -5763084706316974453L;
 
 	public Campus getCampus() {
         return this.campus;

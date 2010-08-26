@@ -180,5 +180,5 @@ public class DeslocamentoCampus implements java.io.Serializable {
         this.custo = custo;
     }
 
-	private static final long serialVersionUID = -4408886804323533036L;
+	private static final long serialVersionUID = -7559927105823983148L;
 }

@@ -203,7 +203,7 @@ public class Campus implements java.io.Serializable {
         return entityManager().createQuery("select o from Campus o").setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
 
-	private static final long serialVersionUID = -7869385631377646287L;
+	private static final long serialVersionUID = 6690100103369325015L;
 
 	public String toString() {
         StringBuilder sb = new StringBuilder();

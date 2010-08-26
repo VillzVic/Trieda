@@ -69,7 +69,7 @@ public class Sala implements java.io.Serializable {
     @ManyToMany(cascade = CascadeType.ALL, mappedBy = "salas")
     private Set<com.gapso.trieda.domain.HorarioDisponivelCenario> horarios = new java.util.HashSet<com.gapso.trieda.domain.HorarioDisponivelCenario>();
 
-    @ManyToMany(cascade = CascadeType.ALL, mappedBy = "disciplinas")
+    @ManyToMany(cascade = CascadeType.ALL, mappedBy = "salas")
     private Set<com.gapso.trieda.domain.Disciplina> disciplinas = new java.util.HashSet<com.gapso.trieda.domain.Disciplina>();
 
     @ManyToMany(cascade = CascadeType.ALL, mappedBy = "salas")
@@ -247,5 +247,5 @@ public class Sala implements java.io.Serializable {
         this.gruposSala = gruposSala;
     }
 
-	private static final long serialVersionUID = 2012599980538126552L;
+	private static final long serialVersionUID = -2533999449644229682L;
 }

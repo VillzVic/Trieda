@@ -41,7 +41,7 @@ public class TipoCurso implements java.io.Serializable {
         return sb.toString();
     }
 
-	private static final long serialVersionUID = 3551194167808633426L;
+	private static final long serialVersionUID = 8519531461330290008L;
 
 	public String getNome() {
         return this.nome;

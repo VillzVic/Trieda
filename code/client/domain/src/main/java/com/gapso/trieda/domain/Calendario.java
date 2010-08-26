@@ -44,7 +44,7 @@ public class Calendario implements java.io.Serializable {
     @Size(max = 255)
     private String descricao;
 
-	private static final long serialVersionUID = 8987668892097072202L;
+	private static final long serialVersionUID = 6807360646327130208L;
 
 	public Cenario getCenario() {
         return this.cenario;

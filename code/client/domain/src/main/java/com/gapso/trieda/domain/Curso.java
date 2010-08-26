@@ -237,5 +237,5 @@ public class Curso implements java.io.Serializable {
         return entityManager().createQuery("select o from Curso o").setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
 
-	private static final long serialVersionUID = -5975441580934853778L;
+	private static final long serialVersionUID = 2645879541329424105L;
 }

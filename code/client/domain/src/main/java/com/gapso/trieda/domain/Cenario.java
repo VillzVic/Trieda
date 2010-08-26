@@ -265,5 +265,5 @@ public class Cenario implements java.io.Serializable {
         this.divisoesCredito = divisoesCredito;
     }
 
-	private static final long serialVersionUID = 3453500164175470562L;
+	private static final long serialVersionUID = -8610380359760552949L;
 }

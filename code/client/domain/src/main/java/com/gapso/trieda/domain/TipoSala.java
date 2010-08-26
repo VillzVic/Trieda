@@ -37,7 +37,7 @@ public class TipoSala implements java.io.Serializable {
     @Size(max = 255)
     private String descricao;
 
-	private static final long serialVersionUID = -5704500030105947941L;
+	private static final long serialVersionUID = -1633461518380764117L;
 
 	public String toString() {
         StringBuilder sb = new StringBuilder();
