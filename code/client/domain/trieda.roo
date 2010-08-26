@@ -73,6 +73,8 @@ entity --table EQUIVALENCIAS --class ~.domain.Equivalencia --identifierColumn EQ
 entity --table GRUPOS_SALA --class ~.domain.GrupoSala --identifierColumn GRS_ID --serializable
 entity --table CURRICULOS --class ~.domain.Curriculo --identifierColumn CRC_ID --serializable
 entity --table CURRICULOS_DISCIPLINAS --class ~.domain.CurriculoDisciplina --identifierColumn CDI_ID --serializable
+entity --table CAMPI_CURRICULOS --class ~.domain.CampusCurriculo --identifierColumn CAC_ID --serializable
+entity --table DEMANDAS --class ~.domain.Demanda --identifierColumn DEM_ID --serializable
 
 
 // USUARIOS
@@ -88,6 +90,7 @@ field reference --type ~.domain.Usuario --fieldName usuario --joinColumnName USU
 // TURNOS
 field string --type java.lang.String  --fieldName nome  --column TUR_NOME  --sizeMax 50        --notNull --class ~.domain.Turno
 field number --type java.lang.Integer --fieldName tempo --column TUR_TEMPO --min 1  --max 1000 --notNull --class ~.domain.Turno
+field set    --element ~.domain.CampusCurriculo --fieldName campusCurriculo  --cardinality ONE_TO_MANY --mappedBy turno --notNull --class ~.domain.Turno
 
 // CENARIOS
 field reference --type ~.domain.Usuario  --fieldName criadoPor       --joinColumnName USU_CRIACAO_ID     --notNull                               --class ~.domain.Cenario
@@ -113,6 +116,7 @@ field string    --type java.lang.String      --fieldName nome          --column 
 field set       --element ~.domain.DeslocamentoCampus --fieldName deslocamentos  --cardinality ONE_TO_MANY --mappedBy origem --notNull --class ~.domain.Campus
 field set       --element ~.domain.Professor --fieldName professores --cardinality MANY_TO_MANY --mappedBy campi --class ~.domain.Campus
 field set       --element ~.domain.HorarioDisponivelCenario --fieldName horarios --cardinality MANY_TO_MANY --mappedBy campi --class ~.domain.Campus
+field set       --element ~.domain.CampusCurriculo --fieldName campusCurriculo  --cardinality ONE_TO_MANY --mappedBy campus --notNull --class ~.domain.Campus
 
 // ENDERECOS
 field reference --type ~.domain.Campus  --fieldName campus     --joinColumnName CAM_ID         --notNull              --class ~.domain.Endereco
@@ -167,8 +171,8 @@ field string    --type java.lang.String  --fieldName numero     --column SAL_NUM
 field string    --type java.lang.String  --fieldName andar      --column SAL_ANDAR      --notNull --sizeMin 1  --sizeMax 20  --class ~.domain.Sala
 field number    --type java.lang.Integer --fieldName capacidade --column SAL_CAPACIDADE --notNull --min 1      --max 9999    --class ~.domain.Sala
 field set       --element ~.domain.HorarioDisponivelCenario --fieldName horarios --cardinality MANY_TO_MANY --mappedBy salas --class ~.domain.Sala
-field set       --element ~.domain.Disciplina --fieldName salas      --cardinality MANY_TO_MANY --mappedBy disciplinas       --class ~.domain.Sala
-field set       --element ~.domain.GrupoSala  --fieldName gruposSala --cardinality MANY_TO_MANY --mappedBy salas             --class ~.domain.Sala
+field set       --element ~.domain.Disciplina --fieldName disciplinas --cardinality MANY_TO_MANY --mappedBy disciplinas       --class ~.domain.Sala
+field set       --element ~.domain.GrupoSala  --fieldName gruposSala  --cardinality MANY_TO_MANY --mappedBy salas             --class ~.domain.Sala
 
 // DIVISOES_CREDITO
 field number --type java.lang.Integer --fieldName creditos --column DRC_CREDITOS --notNull --min 1  --max 99 --class ~.domain.DivisaoCredito
@@ -200,9 +204,10 @@ field set       --element ~.domain.HorarioDisponivelCenario --fieldName horarios
 field set       --element ~.domain.ProfessorDisciplina   --fieldName professores --cardinality ONE_TO_MANY --mappedBy professor --notNull     --class ~.domain.Disciplina
 field set       --element ~.domain.Compatibilidade --fieldName compatibilidades  --cardinality ONE_TO_MANY --mappedBy disciplina1 --notNull --class ~.domain.Disciplina
 field set       --element ~.domain.Equivalencia --fieldName equivalencias  --cardinality ONE_TO_MANY --mappedBy cursou --notNull --class ~.domain.Disciplina
-field set       --element ~.domain.Sala --fieldName salas --cardinality MANY_TO_MANY --mappedBy disciplinas --class ~.domain.Disciplina
+field set       --element ~.domain.Sala --fieldName salas --cardinality MANY_TO_MANY --class ~.domain.Disciplina
 field set       --element ~.domain.GrupoSala --fieldName gruposSala --cardinality MANY_TO_MANY --mappedBy disciplinas --class ~.domain.Disciplina
 field set       --element ~.domain.CurriculoDisciplina --fieldName curriculos  --cardinality ONE_TO_MANY --mappedBy curriculo --notNull --class ~.domain.Disciplina
+field set    	--element ~.domain.Demanda --fieldName demandas  --cardinality ONE_TO_MANY --mappedBy disciplina --notNull --class ~.domain.Disciplina
 
 // TIPOS_CURSO
 field string  --type java.lang.String --fieldName nome      --column TCU_NOME       --notNull --sizeMin 3  --sizeMax 255 --class ~.domain.TipoCurso
@@ -267,8 +272,19 @@ field reference --type ~.domain.Cenario --fieldName cenario --joinColumnName CEN
 field string --type java.lang.String       --fieldName codigo        --column CRC_COD  --notNull --sizeMin 3  --sizeMax 20  --class ~.domain.Curriculo
 field string --type java.lang.String       --fieldName descricao     --column CRC_DESCRICAO                   --sizeMax 255 --class ~.domain.Curriculo
 field set    --element ~.domain.CurriculoDisciplina --fieldName disciplinas  --cardinality ONE_TO_MANY --mappedBy disciplina --notNull --class ~.domain.Curriculo
+field set    --element ~.domain.CampusCurriculo --fieldName campusCurriculo  --cardinality ONE_TO_MANY --mappedBy curriculo --notNull --class ~.domain.Curriculo
 
 // CURRICULOS_DISCIPLINAS
 field reference --type ~.domain.Curriculo  --fieldName curriculo  --joinColumnName CRC_ID --notNull                  --class ~.domain.CurriculoDisciplina
 field reference --type ~.domain.Disciplina --fieldName disciplina --joinColumnName DIS_ID --notNull                  --class ~.domain.CurriculoDisciplina
 field number    --type java.lang.Integer   --fieldName periodo    --column CDI_PERIODO    --notNull --min 1 --max 99 --class ~.domain.CurriculoDisciplina
+
+// CAMPI_CURRICULOS
+field reference --type ~.domain.Curriculo  --fieldName curriculo  --joinColumnName CRC_ID --notNull --class ~.domain.CampusCurriculo
+field reference --type ~.domain.Campus 	   --fieldName campus     --joinColumnName CAM_ID --notNull --class ~.domain.CampusCurriculo
+field reference --type ~.domain.Turno      --fieldName turno      --joinColumnName TUR_ID --notNull --class ~.domain.CampusCurriculo
+field set    	--element ~.domain.Demanda --fieldName demandas  --cardinality ONE_TO_MANY --mappedBy campusCurriculo --notNull --class ~.domain.CampusCurriculo
+
+// DEMANDAS
+field reference --type ~.domain.CampusCurriculo  --fieldName campusCurriculo --joinColumnName CAC_ID --notNull --class ~.domain.Demanda
+field reference --type ~.domain.Disciplina --fieldName disciplina --joinColumnName DIS_ID --notNull --class ~.domain.Demanda

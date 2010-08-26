@@ -1,81 +1,103 @@
 package com.gapso.trieda.domain;
 
-import javax.persistence.Entity;
-import org.springframework.roo.addon.javabean.RooJavaBean;
-import org.springframework.roo.addon.tostring.RooToString;
-import org.springframework.roo.addon.entity.RooEntity;
-import org.springframework.roo.addon.serializable.RooSerializable;
-import org.springframework.transaction.annotation.Transactional;
-import javax.validation.constraints.Size;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.Max;
-import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
-import javax.validation.constraints.NotNull;
+import java.util.Set;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Entity;
 import javax.persistence.EntityManager;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Version;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.roo.addon.entity.RooEntity;
+import org.springframework.roo.addon.javabean.RooJavaBean;
+import org.springframework.roo.addon.tostring.RooToString;
+import org.springframework.transaction.annotation.Transactional;
 
 @Configurable
 @Entity
 @RooJavaBean
 @RooToString
-@RooEntity
-@RooSerializable
+@RooEntity(identifierColumn = "CEN_ID")
+@Table(name = "CENARIOS")
 public class Cenario implements java.io.Serializable {
 
-    @Size(max = 255)
-    private String codigo;
+    @NotNull
+    @ManyToOne(targetEntity = Usuario.class)
+    @JoinColumn(name = "USU_CRIACAO_ID")
+    private Usuario criadoPor;
 
-    @Size(max = 255)
-    private String descricao;
+    @ManyToOne(targetEntity = Usuario.class)
+    @JoinColumn(name = "USU_ATUALIZACAO_ID")
+    private Usuario atualizadoPor;
 
-    @Min(2000L)
-    @Max(3000L)
-    private int ano;
+    @NotNull
+    @Column(name = "CEN_NOME")
+    @Size(min = 5, max = 20)
+    private String nome;
 
+    @Column(name = "CEN_ANO")
+    @Min(1000L)
+    @Max(1000L)
+    private Integer ano;
+
+    @Column(name = "CEN_PERIODO")
     @Min(1L)
     @Max(12L)
-    private int periodo;
+    private Integer periodo;
 
     @NotNull
-    @Temporal(TemporalType.DATE)
+    @Column(name = "CEN_DT_CRIACAO")
+    @Temporal(TemporalType.TIMESTAMP)
     @DateTimeFormat(style = "S-")
-    private Date criacao;
+    private Date dataCriacao;
 
     @NotNull
-    @Temporal(TemporalType.DATE)
+    @Column(name = "CEN_DT_ATUALIZACAO")
+    @Temporal(TemporalType.TIMESTAMP)
     @DateTimeFormat(style = "S-")
-    private Date atualizacao;
+    private Date dataAtualizacao;
 
-    @Size(max = 1024)
+    @Column(name = "CEN_COMENTARIO")
     private String comentario;
 
-    private boolean oficial;
+    @Column(name = "CEN_OFICIAL")
+    private Boolean oficial;
 
-	private static final long serialVersionUID = -5852010979062684997L;
+    @ManyToMany(cascade = CascadeType.ALL, mappedBy = "cenario")
+    private Set<com.gapso.trieda.domain.DivisaoCredito> divisoesCredito = new java.util.HashSet<com.gapso.trieda.domain.DivisaoCredito>();
 
 	public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("Id: ").append(getId()).append(", ");
         sb.append("Version: ").append(getVersion()).append(", ");
-        sb.append("Codigo: ").append(getCodigo()).append(", ");
-        sb.append("Descricao: ").append(getDescricao()).append(", ");
+        sb.append("CriadoPor: ").append(getCriadoPor()).append(", ");
+        sb.append("AtualizadoPor: ").append(getAtualizadoPor()).append(", ");
+        sb.append("Nome: ").append(getNome()).append(", ");
         sb.append("Ano: ").append(getAno()).append(", ");
         sb.append("Periodo: ").append(getPeriodo()).append(", ");
-        sb.append("Criacao: ").append(getCriacao()).append(", ");
-        sb.append("Atualizacao: ").append(getAtualizacao()).append(", ");
+        sb.append("DataCriacao: ").append(getDataCriacao()).append(", ");
+        sb.append("DataAtualizacao: ").append(getDataAtualizacao()).append(", ");
         sb.append("Comentario: ").append(getComentario()).append(", ");
-        sb.append("Oficial: ").append(isOficial());
+        sb.append("Oficial: ").append(getOficial()).append(", ");
+        sb.append("DivisoesCredito: ").append(getDivisoesCredito() == null ? "null" : getDivisoesCredito().size());
         return sb.toString();
     }
 
@@ -84,7 +106,7 @@ public class Cenario implements java.io.Serializable {
 
 	@Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "id")
+    @Column(name = "CEN_ID")
     private Long id;
 
 	@Version
@@ -163,52 +185,60 @@ public class Cenario implements java.io.Serializable {
         return entityManager().createQuery("select o from Cenario o").setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
 
-	public String getCodigo() {
-        return this.codigo;
+	public Usuario getCriadoPor() {
+        return this.criadoPor;
     }
 
-	public void setCodigo(String codigo) {
-        this.codigo = codigo;
+	public void setCriadoPor(Usuario criadoPor) {
+        this.criadoPor = criadoPor;
     }
 
-	public String getDescricao() {
-        return this.descricao;
+	public Usuario getAtualizadoPor() {
+        return this.atualizadoPor;
     }
 
-	public void setDescricao(String descricao) {
-        this.descricao = descricao;
+	public void setAtualizadoPor(Usuario atualizadoPor) {
+        this.atualizadoPor = atualizadoPor;
     }
 
-	public int getAno() {
+	public String getNome() {
+        return this.nome;
+    }
+
+	public void setNome(String nome) {
+        this.nome = nome;
+    }
+
+	public Integer getAno() {
         return this.ano;
     }
 
-	public void setAno(int ano) {
+	public void setAno(Integer ano) {
         this.ano = ano;
     }
 
-	public int getPeriodo() {
+	public Integer getPeriodo() {
         return this.periodo;
     }
 
-	public void setPeriodo(int periodo) {
+	public void setPeriodo(Integer periodo) {
         this.periodo = periodo;
     }
 
-	public Date getCriacao() {
-        return this.criacao;
+	public Date getDataCriacao() {
+        return this.dataCriacao;
     }
 
-	public void setCriacao(Date criacao) {
-        this.criacao = criacao;
+	public void setDataCriacao(Date dataCriacao) {
+        this.dataCriacao = dataCriacao;
     }
 
-	public Date getAtualizacao() {
-        return this.atualizacao;
+	public Date getDataAtualizacao() {
+        return this.dataAtualizacao;
     }
 
-	public void setAtualizacao(Date atualizacao) {
-        this.atualizacao = atualizacao;
+	public void setDataAtualizacao(Date dataAtualizacao) {
+        this.dataAtualizacao = dataAtualizacao;
     }
 
 	public String getComentario() {
@@ -219,11 +249,21 @@ public class Cenario implements java.io.Serializable {
         this.comentario = comentario;
     }
 
-	public boolean isOficial() {
+	public Boolean getOficial() {
         return this.oficial;
     }
 
-	public void setOficial(boolean oficial) {
+	public void setOficial(Boolean oficial) {
         this.oficial = oficial;
     }
+
+	public Set<DivisaoCredito> getDivisoesCredito() {
+        return this.divisoesCredito;
+    }
+
+	public void setDivisoesCredito(Set<DivisaoCredito> divisoesCredito) {
+        this.divisoesCredito = divisoesCredito;
+    }
+
+	private static final long serialVersionUID = 3453500164175470562L;
 }

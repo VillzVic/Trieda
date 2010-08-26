@@ -1,56 +1,76 @@
 package com.gapso.trieda.domain;
 
-import java.io.Serializable;
 import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Table;
 import javax.persistence.Version;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
 import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.roo.addon.entity.RooEntity;
 import org.springframework.roo.addon.javabean.RooJavaBean;
 import org.springframework.roo.addon.tostring.RooToString;
-import org.springframework.roo.addon.entity.RooEntity;
-import org.springframework.roo.addon.serializable.RooSerializable;
 import org.springframework.transaction.annotation.Transactional;
-import javax.validation.constraints.Size;
+
 import com.gapso.trieda.misc.Estados;
-import javax.validation.constraints.NotNull;
-import javax.persistence.Enumerated;
 
 @Configurable
 @Entity
 @RooJavaBean
 @RooToString
-@RooEntity
-@RooSerializable
+@RooEntity(identifierColumn = "END_ID")
+@Table(name = "ENDERECOS")
 public class Endereco implements java.io.Serializable {
 
-    @Size(max = 30)
-    private String municipio;
-
-    @Size(max = 30)
-    private String cidade;
-
     @NotNull
+    @ManyToOne(targetEntity = Campus.class)
+    @JoinColumn(name = "CAM_ID")
+    private Campus campus;
+
     @Enumerated
     private Estados estado;
 
-    @Size(max = 30)
+    @Column(name = "END_CIDADE")
+    @Size(max = 25)
+    private String cidade;
+
+    @Column(name = "END_MUNICIPIO")
+    @Size(max = 25)
+    private String municipio;
+
+    @Column(name = "END_LOGRADOURO")
+    @Size(max = 25)
     private String logradouro;
 
-    @Size(max = 10)
+    @Column(name = "END_NUMERO")
+    @Size(max = 25)
     private String numero;
 
-	public String getMunicipio() {
-        return this.municipio;
+	public Campus getCampus() {
+        return this.campus;
     }
 
-	public void setMunicipio(String municipio) {
-        this.municipio = municipio;
+	public void setCampus(Campus campus) {
+        this.campus = campus;
+    }
+
+	public Estados getEstado() {
+        return this.estado;
+    }
+
+	public void setEstado(Estados estado) {
+        this.estado = estado;
     }
 
 	public String getCidade() {
@@ -61,12 +81,12 @@ public class Endereco implements java.io.Serializable {
         this.cidade = cidade;
     }
 
-	public Estados getEstado() {
-        return this.estado;
+	public String getMunicipio() {
+        return this.municipio;
     }
 
-	public void setEstado(Estados estado) {
-        this.estado = estado;
+	public void setMunicipio(String municipio) {
+        this.municipio = municipio;
     }
 
 	public String getLogradouro() {
@@ -89,20 +109,23 @@ public class Endereco implements java.io.Serializable {
         StringBuilder sb = new StringBuilder();
         sb.append("Id: ").append(getId()).append(", ");
         sb.append("Version: ").append(getVersion()).append(", ");
-        sb.append("Municipio: ").append(getMunicipio()).append(", ");
-        sb.append("Cidade: ").append(getCidade()).append(", ");
+        sb.append("Campus: ").append(getCampus()).append(", ");
         sb.append("Estado: ").append(getEstado()).append(", ");
+        sb.append("Cidade: ").append(getCidade()).append(", ");
+        sb.append("Municipio: ").append(getMunicipio()).append(", ");
         sb.append("Logradouro: ").append(getLogradouro()).append(", ");
         sb.append("Numero: ").append(getNumero());
         return sb.toString();
     }
+
+	private static final long serialVersionUID = -5643489759251582328L;
 
 	@PersistenceContext
     transient EntityManager entityManager;
 
 	@Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "id")
+    @Column(name = "END_ID")
     private Long id;
 
 	@Version
@@ -180,6 +203,4 @@ public class Endereco implements java.io.Serializable {
     public static List<Endereco> findEnderecoEntries(int firstResult, int maxResults) {
         return entityManager().createQuery("select o from Endereco o").setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
-
-	private static final long serialVersionUID = 2271600083274311427L;
 }

@@ -1,9 +1,7 @@
 package com.gapso.trieda.domain;
 
 import java.util.List;
-import java.util.Set;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
@@ -12,7 +10,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Table;
 import javax.persistence.Version;
@@ -29,14 +26,9 @@ import org.springframework.transaction.annotation.Transactional;
 @Entity
 @RooJavaBean
 @RooToString
-@RooEntity(identifierColumn = "CRC_ID")
-@Table(name = "CURRICULOS")
-public class Curriculo implements java.io.Serializable {
-
-    @NotNull
-    @ManyToOne(targetEntity = Curso.class)
-    @JoinColumn(name = "CUR_ID")
-    private Curso curso;
+@RooEntity(identifierColumn = "CAL_ID")
+@Table(name = "CALENDARIOS")
+public class Calendario implements java.io.Serializable {
 
     @NotNull
     @ManyToOne(targetEntity = Cenario.class)
@@ -44,29 +36,15 @@ public class Curriculo implements java.io.Serializable {
     private Cenario cenario;
 
     @NotNull
-    @Column(name = "CRC_COD")
+    @Column(name = "CAL_CODIGO")
     @Size(min = 3, max = 20)
     private String codigo;
 
-    @Column(name = "CRC_DESCRICAO")
+    @Column(name = "CAL_DESCRICAO")
     @Size(max = 255)
     private String descricao;
 
-    @NotNull
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "disciplina")
-    private Set<com.gapso.trieda.domain.CurriculoDisciplina> disciplinas = new java.util.HashSet<com.gapso.trieda.domain.CurriculoDisciplina>();
-
-    @NotNull
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "curriculo")
-    private Set<com.gapso.trieda.domain.CampusCurriculo> campusCurriculo = new java.util.HashSet<com.gapso.trieda.domain.CampusCurriculo>();
-
-	public Curso getCurso() {
-        return this.curso;
-    }
-
-	public void setCurso(Curso curso) {
-        this.curso = curso;
-    }
+	private static final long serialVersionUID = 8987668892097072202L;
 
 	public Cenario getCenario() {
         return this.cenario;
@@ -92,28 +70,12 @@ public class Curriculo implements java.io.Serializable {
         this.descricao = descricao;
     }
 
-	public Set<CurriculoDisciplina> getDisciplinas() {
-        return this.disciplinas;
-    }
-
-	public void setDisciplinas(Set<CurriculoDisciplina> disciplinas) {
-        this.disciplinas = disciplinas;
-    }
-
-	public Set<CampusCurriculo> getCampusCurriculo() {
-        return this.campusCurriculo;
-    }
-
-	public void setCampusCurriculo(Set<CampusCurriculo> campusCurriculo) {
-        this.campusCurriculo = campusCurriculo;
-    }
-
 	@PersistenceContext
     transient EntityManager entityManager;
 
 	@Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "CRC_ID")
+    @Column(name = "CAL_ID")
     private Long id;
 
 	@Version
@@ -148,7 +110,7 @@ public class Curriculo implements java.io.Serializable {
         if (this.entityManager.contains(this)) {
             this.entityManager.remove(this);
         } else {
-            Curriculo attached = this.entityManager.find(this.getClass(), this.id);
+            Calendario attached = this.entityManager.find(this.getClass(), this.id);
             this.entityManager.remove(attached);
         }
     }
@@ -160,50 +122,45 @@ public class Curriculo implements java.io.Serializable {
     }
 
 	@Transactional
-    public Curriculo merge() {
+    public Calendario merge() {
         if (this.entityManager == null) this.entityManager = entityManager();
-        Curriculo merged = this.entityManager.merge(this);
+        Calendario merged = this.entityManager.merge(this);
         this.entityManager.flush();
         return merged;
     }
 
 	public static final EntityManager entityManager() {
-        EntityManager em = new Curriculo().entityManager;
+        EntityManager em = new Calendario().entityManager;
         if (em == null) throw new IllegalStateException("Entity manager has not been injected (is the Spring Aspects JAR configured as an AJC/AJDT aspects library?)");
         return em;
     }
 
-	public static long countCurriculoes() {
-        return ((Number) entityManager().createQuery("select count(o) from Curriculo o").getSingleResult()).longValue();
+	public static long countCalendarios() {
+        return ((Number) entityManager().createQuery("select count(o) from Calendario o").getSingleResult()).longValue();
     }
 
 	@SuppressWarnings("unchecked")
-    public static List<Curriculo> findAllCurriculoes() {
-        return entityManager().createQuery("select o from Curriculo o").getResultList();
+    public static List<Calendario> findAllCalendarios() {
+        return entityManager().createQuery("select o from Calendario o").getResultList();
     }
 
-	public static Curriculo findCurriculo(Long id) {
+	public static Calendario findCalendario(Long id) {
         if (id == null) return null;
-        return entityManager().find(Curriculo.class, id);
+        return entityManager().find(Calendario.class, id);
     }
 
 	@SuppressWarnings("unchecked")
-    public static List<Curriculo> findCurriculoEntries(int firstResult, int maxResults) {
-        return entityManager().createQuery("select o from Curriculo o").setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
+    public static List<Calendario> findCalendarioEntries(int firstResult, int maxResults) {
+        return entityManager().createQuery("select o from Calendario o").setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
 
 	public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("Id: ").append(getId()).append(", ");
         sb.append("Version: ").append(getVersion()).append(", ");
-        sb.append("Curso: ").append(getCurso()).append(", ");
         sb.append("Cenario: ").append(getCenario()).append(", ");
         sb.append("Codigo: ").append(getCodigo()).append(", ");
-        sb.append("Descricao: ").append(getDescricao()).append(", ");
-        sb.append("Disciplinas: ").append(getDisciplinas() == null ? "null" : getDisciplinas().size()).append(", ");
-        sb.append("CampusCurriculo: ").append(getCampusCurriculo() == null ? "null" : getCampusCurriculo().size());
+        sb.append("Descricao: ").append(getDescricao());
         return sb.toString();
     }
-
-	private static final long serialVersionUID = 56256443889786102L;
 }

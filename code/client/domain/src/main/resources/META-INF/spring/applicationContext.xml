@@ -60,10 +60,35 @@
 		<property name="dataSource" ref="dataSource" />
 	</bean>
 	
-    <bean class="com.gapso.trieda.domain.Campus"		id="campusBean"			scope="prototype"></bean>
-    <bean class="com.gapso.trieda.domain.Cenario"		id="cenarioBean"		scope="prototype"></bean>
-    <bean class="com.gapso.trieda.domain.Curriculo"		id="curriculoBean"		scope="prototype"></bean>
-    <bean class="com.gapso.trieda.domain.Deslocamento"	id="deslocamentoBean"	scope="prototype"></bean>
-    <bean class="com.gapso.trieda.domain.Professor"		id="professorBean"		scope="prototype"></bean>	
-    <bean class="com.gapso.trieda.domain.Endereco"		id="enderecoBean"		scope="prototype"></bean>
+    <bean class="com.gapso.trieda.domain.Usuario"					id="usuarioBean"					scope="prototype"></bean>
+    <bean class="com.gapso.trieda.domain.Sessao"					id="sessaoBean"						scope="prototype"></bean>
+    <bean class="com.gapso.trieda.domain.Turno"						id="turnoBean"						scope="prototype"></bean>
+    <bean class="com.gapso.trieda.domain.Cenario"					id="cenarioBean"					scope="prototype"></bean>
+    <bean class="com.gapso.trieda.domain.Calendario"				id="calendarioBean"					scope="prototype"></bean>
+    <bean class="com.gapso.trieda.domain.Campus"					id="campusBean"						scope="prototype"></bean>
+    <bean class="com.gapso.trieda.domain.Endereco"					id="enderecoBean"					scope="prototype"></bean>
+    <bean class="com.gapso.trieda.domain.Unidade"					id="unidadeBean"					scope="prototype"></bean>
+    <bean class="com.gapso.trieda.domain.TipoContrato"				id="tipoContratoBean"				scope="prototype"></bean>
+    <bean class="com.gapso.trieda.domain.Titulacao"					id="titulacaoBean"					scope="prototype"></bean>
+    <bean class="com.gapso.trieda.domain.AreaTitulacao"				id="areaTitulacaoBean"				scope="prototype"></bean>
+    <bean class="com.gapso.trieda.domain.Professor"					id="professorBean"					scope="prototype"></bean>
+    <bean class="com.gapso.trieda.domain.TipoSala"					id="tipoSalaBean"					scope="prototype"></bean>
+    <bean class="com.gapso.trieda.domain.Sala"						id="salaBean"						scope="prototype"></bean>
+    <bean class="com.gapso.trieda.domain.DivisaoCredito"			id="divisaoCreditoBean"				scope="prototype"></bean>
+    <bean class="com.gapso.trieda.domain.TipoDisciplina"			id="tipoDisciplinaBean"				scope="prototype"></bean>
+    <bean class="com.gapso.trieda.domain.Disciplina"				id="disciplinaBean"					scope="prototype"></bean>
+    <bean class="com.gapso.trieda.domain.TipoCurso"					id="tipoCursoBean"					scope="prototype"></bean>
+    <bean class="com.gapso.trieda.domain.Curso"						id="cursoBean"						scope="prototype"></bean>
+    <bean class="com.gapso.trieda.domain.HorarioAula"				id="horarioAulaBean"				scope="prototype"></bean>
+    <bean class="com.gapso.trieda.domain.DeslocamentoCampus"		id="deslocamentoCampusBean"			scope="prototype"></bean>
+    <bean class="com.gapso.trieda.domain.DeslocamentoUnidade"		id="deslocamentoUnidadeBean"		scope="prototype"></bean>
+    <bean class="com.gapso.trieda.domain.HorarioDisponivelCenario"	id="horarioDisponivelCenarioBean"	scope="prototype"></bean>
+    <bean class="com.gapso.trieda.domain.ProfessorDisciplina"	   	id="professorDisciplinaBean"		scope="prototype"></bean>
+    <bean class="com.gapso.trieda.domain.Compatibilidade"			id="compatibilidadeBean"			scope="prototype"></bean>
+    <bean class="com.gapso.trieda.domain.Equivalencia"				id="equivalenciaBean"				scope="prototype"></bean>
+    <bean class="com.gapso.trieda.domain.GrupoSala"					id="grupoSalaBean"					scope="prototype"></bean>
+    <bean class="com.gapso.trieda.domain.Curriculo"	            	id="curriculoBean"					scope="prototype"></bean>
+    <bean class="com.gapso.trieda.domain.CurriculoDisciplina"		id="curriculoDisciplinaBean"		scope="prototype"></bean>
+    <bean class="com.gapso.trieda.domain.CampusCurriculo"			id="campusCurriculoBean"			scope="prototype"></bean>
+    <bean class="com.gapso.trieda.domain.Demanda"					id="demandaBean"					scope="prototype"></bean>
 </beans>
