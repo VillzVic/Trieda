@@ -171,7 +171,7 @@ field string    --type java.lang.String  --fieldName numero     --column SAL_NUM
 field string    --type java.lang.String  --fieldName andar      --column SAL_ANDAR      --notNull --sizeMin 1  --sizeMax 20  --class ~.domain.Sala
 field number    --type java.lang.Integer --fieldName capacidade --column SAL_CAPACIDADE --notNull --min 1      --max 9999    --class ~.domain.Sala
 field set       --element ~.domain.HorarioDisponivelCenario --fieldName horarios --cardinality MANY_TO_MANY --mappedBy salas --class ~.domain.Sala
-field set       --element ~.domain.Disciplina --fieldName disciplinas --cardinality MANY_TO_MANY --mappedBy disciplinas       --class ~.domain.Sala
+field set       --element ~.domain.Disciplina --fieldName disciplinas --cardinality MANY_TO_MANY --mappedBy salas       --class ~.domain.Sala
 field set       --element ~.domain.GrupoSala  --fieldName gruposSala  --cardinality MANY_TO_MANY --mappedBy salas             --class ~.domain.Sala
 
 // DIVISOES_CREDITO
@@ -288,3 +288,4 @@ field set    	--element ~.domain.Demanda --fieldName demandas  --cardinality ONE
 // DEMANDAS
 field reference --type ~.domain.CampusCurriculo  --fieldName campusCurriculo --joinColumnName CAC_ID --notNull --class ~.domain.Demanda
 field reference --type ~.domain.Disciplina --fieldName disciplina --joinColumnName DIS_ID --notNull --class ~.domain.Demanda
+field number    --type java.lang.Integer   --fieldName quantidade    --column DEM_QUANTIDADE    --notNull --min 1 --max 999 --class ~.domain.Demanda
