@@ -31,6 +31,7 @@ public class ToolBarView extends Composite implements ToolBarPresenter.Display {
 	private Button parametrosBt;
 	private MenuItem calendarioMI;
 	private MenuItem divisaoCreditosMI;
+	private MenuItem turnosListMI;
 	
 	// Campi
 	private Button campiBt;
@@ -112,6 +113,9 @@ public class ToolBarView extends Composite implements ToolBarPresenter.Display {
 		
 		divisaoCreditosMI = createMenuItem("Preferência de Divisão de Créditos", Resources.DEFAULTS.divisaoDeCreditos16());
 		outros.add(divisaoCreditosMI);
+		
+		turnosListMI = createMenuItem("Turnos", Resources.DEFAULTS.turnos16());
+		outros.add(turnosListMI);
 		
 		outrosUnidadesSBt.setMenu(outros);
 		group.add(outrosUnidadesSBt);
@@ -511,13 +515,18 @@ public class ToolBarView extends Composite implements ToolBarPresenter.Display {
 	 */
 	
 	@Override
-	public Button getCampusListBt() {
+	public Button getCampusListButton() {
 		return campiBt;
 	}
 
 	@Override
-	public Button getCampusNewBt() {
+	public Button getCampusNewButton() {
 		return novoCampusBt;
+	}
+	
+	@Override
+	public MenuItem getTurnosListMenuItem() {
+		return turnosListMI;
 	}
 
 	@Override

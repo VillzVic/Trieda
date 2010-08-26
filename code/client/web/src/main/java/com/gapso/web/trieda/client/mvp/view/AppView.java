@@ -64,6 +64,11 @@ public class AppView extends Composite implements AppPresenter.Display {
 	public ContentPanel getPanel() {
 		return panel;
 	}
+	
+	@Override
+	public GTab getGTab() {
+		return tab;
+	}
 
 	@Override
 	public Widget asWidget() {
