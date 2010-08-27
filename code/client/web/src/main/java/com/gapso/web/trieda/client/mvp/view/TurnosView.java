@@ -10,19 +10,19 @@ import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.grid.ColumnConfig;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayout;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
-import com.gapso.web.trieda.client.mvp.model.TurnoModel;
+import com.gapso.web.trieda.client.mvp.model.TurnoDTO;
 import com.gapso.web.trieda.client.mvp.presenter.TurnosPresenter;
 import com.gapso.web.trieda.client.services.Services;
 import com.gapso.web.trieda.client.util.resources.Resources;
 import com.gapso.web.trieda.client.util.view.GTabItem;
 import com.gapso.web.trieda.client.util.view.SimpleGrid;
 import com.gapso.web.trieda.client.util.view.SimpleToolBar;
-import com.gapso.web.trieda.client.util.view.simplecrud.ICrudService;
+import com.gapso.web.trieda.client.util.view.simplecrud.ISimpleGridService;
 
 public class TurnosView extends MyComposite implements TurnosPresenter.Display {
 
 	private SimpleToolBar toolBar;
-	private ContentPanel gridPanel;
+	private SimpleGrid<TurnoDTO> gridPanel;
 	private ContentPanel panel;
 	private GTabItem tabItem;
 	
@@ -53,9 +53,9 @@ public class TurnosView extends MyComposite implements TurnosPresenter.Display {
 		BorderLayoutData bld = new BorderLayoutData(LayoutRegion.CENTER);
 	    bld.setMargins(new Margins(5, 5, 5, 5));
 	    
-	    ICrudService service = (ICrudService)Services.get(Services.TURNOS);
-	    
-	    gridPanel = new SimpleGrid<TurnoModel>(getColumnList(), service);
+	    ISimpleGridService service = Services.turnos();
+	    	    
+	    gridPanel = new SimpleGrid<TurnoDTO>(getColumnList(), service);
 	    panel.add(gridPanel, bld);
 	}
 
@@ -77,8 +77,8 @@ public class TurnosView extends MyComposite implements TurnosPresenter.Display {
 	}
 
 	@Override
-	public Button getDeleteButton() {
-		return toolBar.getDeleteButton();
+	public Button getRemoveButton() {
+		return toolBar.getRemoveButton();
 	}
 
 	@Override
@@ -97,9 +97,8 @@ public class TurnosView extends MyComposite implements TurnosPresenter.Display {
 	}
 	
 	@Override
-	public Button getGrid() {
-		// TODO Auto-generated method stub
-		return null;
+	public SimpleGrid<TurnoDTO> getGrid() {
+		return gridPanel;
 	}
 
 }

@@ -1,32 +1,51 @@
 package com.gapso.web.trieda.client.mvp.model;
 
-import java.io.Serializable;
+import com.extjs.gxt.ui.client.data.BaseModel;
 
 
-public class TurnoDTO implements Serializable {
+public class TurnoDTO extends BaseModel {
 
-	private String nome;
-	private Integer tempo;
+	private static final long serialVersionUID = 5815525344760896272L;
+	
 
 	public TurnoDTO() {
 	}
 
-	public TurnoDTO(String nome, Integer tempo) {
-		this.nome = nome;
-		this.tempo = tempo;
+	public TurnoDTO(Long id, String nome, Integer tempo, Integer version) {
+		setId(id);
+		setNome(nome);
+		setTempo(tempo);
+		setVersion(version);
+		
+	}
+	
+	public void setId(Long value) {
+		set("id", value);
+	}
+	public Long getId() {
+		return get("id");
+	}
+	
+	public void setVersion(Integer value) {
+		set("version", value);
+	}
+	public Integer getVersion() {
+		return get("version");
 	}
 
+	public void setNome(String value) {
+		set("nome", value);
+	}
 	public String getNome() {
-		return nome;
-	}
-	public void setNome(String nome) {
-		this.nome = nome;
+		return get("nome");
 	}
 
+	public void setTempo(Integer value) {
+		set("tempo", value);
+	}
 	public Integer getTempo() {
-		return tempo;
+		return get("tempo");
 	}
-	public void setTempo(Integer tempo) {
-		this.tempo = tempo;
-	}
+	
+	
 }

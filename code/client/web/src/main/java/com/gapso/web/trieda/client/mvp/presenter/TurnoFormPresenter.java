@@ -9,6 +9,7 @@ import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.gapso.web.trieda.client.mvp.model.TurnoDTO;
 import com.gapso.web.trieda.client.services.Services;
 import com.gapso.web.trieda.client.services.TurnosServiceAsync;
+import com.gapso.web.trieda.client.util.view.SimpleGrid;
 import com.gapso.web.trieda.client.util.view.SimpleModal;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
@@ -19,11 +20,15 @@ public class TurnoFormPresenter implements Presenter {
 		Button getSalvarButton();
 		TextField<String> getNomeTextField();
 		NumberField getTempoTextField();
+		TurnoDTO getTurnoDTO();
+		
 		SimpleModal getSimpleModal();
 	}
-	private Display display; 
+	private SimpleGrid<TurnoDTO> gridPanel;
+	private Display display;
 	
-	public TurnoFormPresenter(Display display) {
+	public TurnoFormPresenter(Display display, SimpleGrid<TurnoDTO> gridPanel) {
+		this.gridPanel = gridPanel;
 		this.display = display;
 		setListeners();
 	}
@@ -43,17 +48,12 @@ public class TurnoFormPresenter implements Presenter {
 						public void onSuccess(Boolean result) {
 							if(result) {
 								display.getSimpleModal().hide();
+								gridPanel.updateList();
 							} else {
 								MessageBox.alert("ERRO!", "Deu falha no server", null);	
 							}
 						}
 					});
-//					RpcProxy<Boolean> proxy = new RpcProxy<Boolean>() {
-//						@Override
-//						protected void load(Object loadConfig, AsyncCallback<Boolean> callback) {
-//							service.save(getDTO(), callback);
-//						}
-//					};
 				} else {
 					MessageBox.alert("ERRO!", "Verifique os campos digitados", null);
 				}
@@ -66,7 +66,10 @@ public class TurnoFormPresenter implements Presenter {
 	}
 	
 	private TurnoDTO getDTO() {
-		return new TurnoDTO(display.getNomeTextField().getValue(), display.getTempoTextField().getValue().intValue());
+		TurnoDTO turnoDTO = display.getTurnoDTO();
+		turnoDTO.setNome(display.getNomeTextField().getValue());
+		turnoDTO.setTempo(display.getTempoTextField().getValue().intValue());
+		return turnoDTO;
 	}
 	
 	@Override

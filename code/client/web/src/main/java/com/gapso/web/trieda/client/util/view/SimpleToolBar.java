@@ -11,7 +11,7 @@ public class SimpleToolBar extends ToolBar {
 
 	private Button newButton;
 	private Button editButton;
-	private Button deleteButton;
+	private Button removeButton;
 	private Button importExcelButton;
 	private Button exportExcelButton;
 	
@@ -22,13 +22,13 @@ public class SimpleToolBar extends ToolBar {
 	private void initUI() {
 		newButton = createButton("Adicionar", Resources.SIMPLE_CRUD.add16());
 		editButton = createButton("Editar", Resources.SIMPLE_CRUD.edit16());
-		deleteButton = createButton("Remover", Resources.SIMPLE_CRUD.del16());
+		removeButton = createButton("Remover", Resources.SIMPLE_CRUD.del16());
 		importExcelButton = createButton("Exportar para Excel", Resources.SIMPLE_CRUD.excelExport16());
 		exportExcelButton = createButton("Importar para Excel", Resources.SIMPLE_CRUD.excelImport16());
 
 		add(newButton);
 		add(editButton);
-		add(deleteButton);
+		add(removeButton);
 		add(new SeparatorToolItem());
 		add(importExcelButton);
 		add(exportExcelButton);
@@ -36,17 +36,17 @@ public class SimpleToolBar extends ToolBar {
 	
 	public void activateEmptyState() {
 		editButton.setEnabled(false);
-		deleteButton.setEnabled(false);
+		removeButton.setEnabled(false);
 	}
 	
 	public void enableMultiState() {
 		editButton.setEnabled(false);
-		deleteButton.setEnabled(true);
+		removeButton.setEnabled(true);
 	}
 	
 	public void enableSimpleState() {
 		editButton.setEnabled(true);
-		deleteButton.setEnabled(true);
+		removeButton.setEnabled(true);
 	}
 	
 	public Button getNewButton() {
@@ -57,8 +57,8 @@ public class SimpleToolBar extends ToolBar {
 		return editButton;
 	}
 
-	public Button getDeleteButton() {
-		return deleteButton;
+	public Button getRemoveButton() {
+		return removeButton;
 	}
 
 	public Button getImportExcelButton() {

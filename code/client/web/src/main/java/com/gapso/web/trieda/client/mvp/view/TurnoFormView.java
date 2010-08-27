@@ -6,6 +6,7 @@ import com.extjs.gxt.ui.client.widget.form.FormPanel;
 import com.extjs.gxt.ui.client.widget.form.NumberField;
 import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.extjs.gxt.ui.client.widget.layout.FormData;
+import com.gapso.web.trieda.client.mvp.model.TurnoDTO;
 import com.gapso.web.trieda.client.mvp.presenter.TurnoFormPresenter;
 import com.gapso.web.trieda.client.util.resources.Resources;
 import com.gapso.web.trieda.client.util.view.SimpleModal;
@@ -16,8 +17,10 @@ public class TurnoFormView extends MyComposite implements TurnoFormPresenter.Dis
 	private FormPanel formPanel;
 	private TextField<String> nomeTF;
 	private NumberField tempoTF;
+	private TurnoDTO turnoDTO;
 	
-	public TurnoFormView() {
+	public TurnoFormView(TurnoDTO turnoDTO) {
+		this.turnoDTO = turnoDTO;
 		initUI();
 		// TODO
 		getParent();
@@ -38,12 +41,14 @@ public class TurnoFormView extends MyComposite implements TurnoFormPresenter.Dis
 		
 		nomeTF = new TextField<String>();
 		nomeTF.setName("nome");
+		nomeTF.setValue(turnoDTO.getNome());
 		nomeTF.setFieldLabel("Nome");
 		nomeTF.setAllowBlank(false);
 		formPanel.add(nomeTF, formData);
 		
 		tempoTF = new NumberField();
 		tempoTF.setName("tempo");
+		tempoTF.setValue(turnoDTO.getTempo());
 		tempoTF.setFieldLabel("Tempo");
 		tempoTF.setAllowBlank(false);
 		formPanel.add(tempoTF, formData);
@@ -71,5 +76,11 @@ public class TurnoFormView extends MyComposite implements TurnoFormPresenter.Dis
 	public NumberField getTempoTextField() {
 		return tempoTF;
 	}
+
+	@Override
+	public TurnoDTO getTurnoDTO() {
+		return turnoDTO;
+	}
+	
 
 }
