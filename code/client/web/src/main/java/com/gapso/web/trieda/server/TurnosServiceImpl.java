@@ -21,12 +21,9 @@ public class TurnosServiceImpl extends RemoteServiceServlet implements TurnosSer
 
 	public PagingLoadResult<ModelData> getList() {
 		List<ModelData> list = new ArrayList<ModelData>();
-		
-		list.add(new TurnoModel("Manhã", 10));
-		list.add(new TurnoModel("Tarde", 20));
-		list.add(new TurnoModel("Noite", 30));
-		list.add(new TurnoModel("Integral", 40));
-		
+		for(Turno turno : Turno.findAllTurnoes()) {
+			list.add(new TurnoModel(turno.getNome(), turno.getTempo()));
+		}
 		return new BasePagingLoadResult<ModelData>(list);
 	}
 
