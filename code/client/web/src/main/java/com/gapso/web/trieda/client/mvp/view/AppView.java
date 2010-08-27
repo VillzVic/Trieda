@@ -13,7 +13,7 @@ import com.gapso.web.trieda.client.util.view.GTab;
 import com.gapso.web.trieda.client.util.view.GTreePanel;
 import com.google.gwt.user.client.ui.Widget;
 
-public class AppView extends View implements AppPresenter.Display {
+public class AppView extends MyComposite implements AppPresenter.Display {
 
 	public static final String TAB = "tabPanel";
 	

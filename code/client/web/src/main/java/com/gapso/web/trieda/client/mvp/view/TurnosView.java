@@ -19,7 +19,7 @@ import com.gapso.web.trieda.client.util.view.SimpleGrid;
 import com.gapso.web.trieda.client.util.view.SimpleToolBar;
 import com.gapso.web.trieda.client.util.view.simplecrud.ICrudService;
 
-public class TurnosView extends View implements TurnosPresenter.Display {
+public class TurnosView extends MyComposite implements TurnosPresenter.Display {
 
 	private SimpleToolBar toolBar;
 	private ContentPanel gridPanel;

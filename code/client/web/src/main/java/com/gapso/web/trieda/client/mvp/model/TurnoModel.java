@@ -10,8 +10,9 @@ public class TurnoModel extends BaseModel {
 		super();
 	}
 
-	public TurnoModel(String nome) {
+	public TurnoModel(String nome, Integer tempo) {
 		setNome(nome);
+		setTempo(tempo);
 	}
 
 	public String getNome() {
@@ -20,5 +21,11 @@ public class TurnoModel extends BaseModel {
 	public void setNome(String value) {
 		set("nome", value);
 	}
-	
+
+	public Integer getTempo() {
+		return get("tempo");
+	}
+	public void setTempo(Integer value) {
+		set("tempo", value);
+	}
 }

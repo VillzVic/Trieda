@@ -12,6 +12,9 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class SimpleModal extends Window {
 
+	private Button salvarBt;
+	private Button cancelarBt;
+	
 	public SimpleModal(String heading, ImageResource icon) {
 		setHeading(heading);
 		setIcon(AbstractImagePrototype.create(icon));
@@ -22,7 +25,7 @@ public class SimpleModal extends Window {
 		setModal(true);
 		setLayout(new FitLayout());
 		setBodyBorder(false);
-		addButton();
+		addButtons();
 		setWidth(600);
 		setHeight(600);
 	}
@@ -31,19 +34,26 @@ public class SimpleModal extends Window {
 		add(widget);
 	}
 	
-	private boolean save() {
-		return true;
-	}
-	
-	private void addButton() {
-		Button salvarBt = new Button("Salvar");
-		salvarBt.setIcon(AbstractImagePrototype.create(Resources.DEFAULTS.save16()));
-		salvarBt.addSelectionListener(new SelectionListener<ButtonEvent>() {
+	private void addButtons() {
+		salvarBt = new Button("Salvar", AbstractImagePrototype.create(Resources.DEFAULTS.save16()));
+		addButton(salvarBt);
+		
+		cancelarBt = new Button("Cancelar", AbstractImagePrototype.create(Resources.DEFAULTS.cancel16()));
+		cancelarBt.addSelectionListener(new SelectionListener<ButtonEvent>() {
 			@Override
 			public void componentSelected(ButtonEvent ce) {
-				if(save()) hide();
+				hide();
 			}
 		});
-		addButton(salvarBt);
+		addButton(cancelarBt);
 	}
+
+	public Button getSalvarBt() {
+		return salvarBt;
+	}
+
+	public Button getCancelarBt() {
+		return cancelarBt;
+	}
+	
 }

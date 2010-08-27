@@ -20,7 +20,7 @@ import com.gapso.web.trieda.client.util.resources.Resources;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
-public class ToolBarView extends View implements ToolBarPresenter.Display {
+public class ToolBarView extends MyComposite implements ToolBarPresenter.Display {
 
 	private ToolBar toolBar;
 	

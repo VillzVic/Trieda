@@ -6,6 +6,7 @@ import java.util.List;
 import com.extjs.gxt.ui.client.data.BasePagingLoadResult;
 import com.extjs.gxt.ui.client.data.ModelData;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
+import com.gapso.trieda.domain.Turno;
 import com.gapso.web.trieda.client.mvp.model.TurnoModel;
 import com.gapso.web.trieda.client.services.TurnosService;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
@@ -20,12 +21,21 @@ public class TurnosServiceImpl extends RemoteServiceServlet implements TurnosSer
 	public PagingLoadResult<ModelData> getList() {
 		List<ModelData> list = new ArrayList<ModelData>();
 		
-		list.add(new TurnoModel("Manhã"));
-		list.add(new TurnoModel("Tarde"));
-		list.add(new TurnoModel("Noite"));
-		list.add(new TurnoModel("Integral"));
+		list.add(new TurnoModel("Manhã", 10));
+		list.add(new TurnoModel("Tarde", 20));
+		list.add(new TurnoModel("Noite", 30));
+		list.add(new TurnoModel("Integral", 40));
 		
 		return new BasePagingLoadResult<ModelData>(list);
+	}
+
+	@Override
+	public boolean save(TurnoModel turnoModel) {
+		Turno turno = new Turno();
+		turno.setNome(turnoModel.getNome());
+		turno.setTempo(turnoModel.getTempo());
+		turno.persist();
+		return true;
 	}
 
 }
