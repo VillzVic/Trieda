@@ -7,6 +7,7 @@ import com.extjs.gxt.ui.client.data.BasePagingLoadResult;
 import com.extjs.gxt.ui.client.data.ModelData;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.gapso.trieda.domain.Turno;
+import com.gapso.web.trieda.client.mvp.model.TurnoDTO;
 import com.gapso.web.trieda.client.mvp.model.TurnoModel;
 import com.gapso.web.trieda.client.services.TurnosService;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
@@ -30,10 +31,10 @@ public class TurnosServiceImpl extends RemoteServiceServlet implements TurnosSer
 	}
 
 	@Override
-	public boolean save(TurnoModel turnoModel) {
+	public boolean save(TurnoDTO turnoDTO) {
 		Turno turno = new Turno();
-		turno.setNome(turnoModel.getNome());
-		turno.setTempo(turnoModel.getTempo());
+		turno.setNome(turnoDTO.getNome());
+		turno.setTempo(turnoDTO.getTempo());
 		turno.persist();
 		return true;
 	}
