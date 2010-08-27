@@ -7,8 +7,6 @@ import com.extjs.gxt.ui.client.event.ButtonEvent;
 import com.extjs.gxt.ui.client.event.MenuEvent;
 import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.mvc.Dispatcher;
-import com.extjs.gxt.ui.client.widget.Component;
-import com.extjs.gxt.ui.client.widget.Composite;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.button.ButtonGroup;
 import com.extjs.gxt.ui.client.widget.button.SplitButton;
@@ -22,7 +20,7 @@ import com.gapso.web.trieda.client.util.resources.Resources;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
-public class ToolBarView extends Composite implements ToolBarPresenter.Display {
+public class ToolBarView extends View implements ToolBarPresenter.Display {
 
 	private ToolBar toolBar;
 	
@@ -527,16 +525,6 @@ public class ToolBarView extends Composite implements ToolBarPresenter.Display {
 	@Override
 	public MenuItem getTurnosListMenuItem() {
 		return turnosListMI;
-	}
-
-	@Override
-	public Component asComponent() {
-		return this;
-	}
-
-	@Override
-	public ToolBar getToolBar() {
-		return toolBar;
 	}
 	
 }

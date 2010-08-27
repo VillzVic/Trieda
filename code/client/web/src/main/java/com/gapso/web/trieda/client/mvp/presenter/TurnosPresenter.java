@@ -1,5 +1,6 @@
 package com.gapso.web.trieda.client.mvp.presenter;
 
+import com.extjs.gxt.ui.client.widget.Component;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.gapso.web.trieda.client.util.view.GTab;
 import com.gapso.web.trieda.client.util.view.GTabItem;
@@ -15,6 +16,7 @@ public class TurnosPresenter implements Presenter {
 		Button getExportExcelButton();
 		Button getGrid();
 		GTabItem getGTabItem();
+		Component getComponent();
 	}
 	private Display display; 
 	
@@ -25,8 +27,7 @@ public class TurnosPresenter implements Presenter {
 	@Override
 	public void go(Widget widget) {
 		GTab tab = (GTab)widget;
-		tab.add(display.getGTabItem());
-
+		tab.add((GTabItem)display.getComponent());
 	}
 
 }

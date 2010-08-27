@@ -5,11 +5,9 @@ import com.extjs.gxt.ui.client.event.MenuEvent;
 import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.mvc.Dispatcher;
 import com.extjs.gxt.ui.client.widget.Component;
-import com.extjs.gxt.ui.client.widget.ContentPanel;
 import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.menu.MenuItem;
-import com.extjs.gxt.ui.client.widget.toolbar.ToolBar;
 import com.gapso.web.trieda.client.AppEvents;
 import com.gapso.web.trieda.client.mvp.view.TurnosView;
 import com.gapso.web.trieda.client.util.view.GTab;
@@ -22,16 +20,14 @@ public class ToolBarPresenter implements Presenter {
 		Button getCampusNewButton();
 		MenuItem getTurnosListMenuItem();
 		
-		Component asComponent();
-		ToolBar getToolBar();
+		Component getComponent();
 	}
 	
 	private Display toolBar;
 	private GTab gTab;
 	
-	public ToolBarPresenter(Display toolBar, GTab gTab) {
+	public ToolBarPresenter(Display toolBar) {
 		this.toolBar = toolBar;
-		this.gTab = gTab;
 		addListeners();
 	}
 
@@ -59,8 +55,9 @@ public class ToolBarPresenter implements Presenter {
 	
 	@Override
 	public void go(Widget widget) {
-		ContentPanel container = (ContentPanel) widget;
-		container.setTopComponent(toolBar.getToolBar());
+		AppPresenter.Display container = (AppPresenter.Display) widget;
+		this.gTab = container.getGTab();
+		container.getPanel().setTopComponent(toolBar.getComponent());
 	}
 
 }

@@ -5,7 +5,6 @@ import java.util.List;
 
 import com.extjs.gxt.ui.client.Style.LayoutRegion;
 import com.extjs.gxt.ui.client.util.Margins;
-import com.extjs.gxt.ui.client.widget.Composite;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.grid.ColumnConfig;
@@ -20,7 +19,7 @@ import com.gapso.web.trieda.client.util.view.SimpleGrid;
 import com.gapso.web.trieda.client.util.view.SimpleToolBar;
 import com.gapso.web.trieda.client.util.view.simplecrud.ICrudService;
 
-public class TurnosView extends Composite implements TurnosPresenter.Display {
+public class TurnosView extends View implements TurnosPresenter.Display {
 
 	private SimpleToolBar toolBar;
 	private ContentPanel gridPanel;
@@ -33,21 +32,12 @@ public class TurnosView extends Composite implements TurnosPresenter.Display {
 	
 	private void initUI() {
 		panel = new ContentPanel(new BorderLayout());
+		panel.setHeading("Master Data » Turnos");
 		createToolBar();
 		createGrid();
 		createTabItem();
-		initComponent(panel);
+		initComponent(tabItem);
 	}
-	
-//	private void createWest() {
-//		BorderLayoutData bld = new BorderLayoutData(LayoutRegion.WEST);
-//	    bld.setMargins(new Margins(5, 0, 5, 5));
-//	    bld.setCollapsible(true);
-//	    bld.setFloatable(true);
-//	    
-//	    treePanel = new GTreePanel();
-//	    panel.add(treePanel, bld);
-//	}
 	
 	private void createTabItem() {
 		tabItem = new GTabItem("Turnos", Resources.DEFAULTS.turnos16());
@@ -110,5 +100,5 @@ public class TurnosView extends Composite implements TurnosPresenter.Display {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
+
 }

@@ -1,5 +1,6 @@
 package com.gapso.web.trieda.client.mvp.presenter;
 
+import com.extjs.gxt.ui.client.widget.Component;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
 import com.gapso.web.trieda.client.mvp.view.ToolBarView;
 import com.gapso.web.trieda.client.util.view.GTab;
@@ -12,6 +13,7 @@ public class AppPresenter implements Presenter {
 		ContentPanel getPanel();
 		GTab getGTab();
 		Widget asWidget();
+		Component getComponent();
 	}
 	
 	private Display viewport;
@@ -23,8 +25,8 @@ public class AppPresenter implements Presenter {
 	@Override
 	public void go(Widget widget) {
 		RootPanel rp = (RootPanel) widget;
-		Presenter presenter = new ToolBarPresenter(new ToolBarView(), viewport.getGTab());
-		presenter.go(viewport.getPanel());
+		Presenter presenter = new ToolBarPresenter(new ToolBarView());
+		presenter.go(viewport.asWidget());
 		rp.add(viewport.asWidget());
 	}
 

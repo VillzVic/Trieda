@@ -3,7 +3,6 @@ package com.gapso.web.trieda.client.mvp.view;
 import com.extjs.gxt.ui.client.Registry;
 import com.extjs.gxt.ui.client.Style.LayoutRegion;
 import com.extjs.gxt.ui.client.util.Margins;
-import com.extjs.gxt.ui.client.widget.Composite;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
 import com.extjs.gxt.ui.client.widget.Viewport;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayout;
@@ -14,7 +13,7 @@ import com.gapso.web.trieda.client.util.view.GTab;
 import com.gapso.web.trieda.client.util.view.GTreePanel;
 import com.google.gwt.user.client.ui.Widget;
 
-public class AppView extends Composite implements AppPresenter.Display {
+public class AppView extends View implements AppPresenter.Display {
 
 	public static final String TAB = "tabPanel";
 	
