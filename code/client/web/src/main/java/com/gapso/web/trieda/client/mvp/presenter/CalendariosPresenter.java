@@ -28,7 +28,7 @@ public class CalendariosPresenter implements Presenter {
 		Button getRemoveButton();
 		Button getImportExcelButton();
 		Button getExportExcelButton();
-		Button getPeriodoDeAulaButton();
+		Button getDiasDeAulaButton();
 		SimpleGrid<CalendarioDTO> getGrid();
 		GTabItem getGTabItem();
 		Component getComponent();
@@ -74,7 +74,7 @@ public class CalendariosPresenter implements Presenter {
 				});
 			}
 		});
-		display.getPeriodoDeAulaButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
+		display.getDiasDeAulaButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
 			@Override
 			public void componentSelected(ButtonEvent ce) {
 				Dispatcher.forwardEvent(AppEvents.CalendarioView);

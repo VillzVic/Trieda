@@ -26,7 +26,7 @@ public class CalendariosView extends MyComposite implements CalendariosPresenter
 	private SimpleGrid<CalendarioDTO> gridPanel;
 	private ContentPanel panel;
 	private GTabItem tabItem;
-	private Button periodoDeAulaButton;
+	private Button diasDeAulaButton;
 	
 	public CalendariosView() {
 		initUI();
@@ -49,8 +49,8 @@ public class CalendariosView extends MyComposite implements CalendariosPresenter
 	private void createToolBar() {
 		toolBar = new SimpleToolBar();
 		toolBar.add(new SeparatorToolItem());
-		periodoDeAulaButton = toolBar.createButton("Dias de Aula", Resources.DEFAULTS.periodoDeAula16());
-		toolBar.add(periodoDeAulaButton);
+		diasDeAulaButton = toolBar.createButton("Dias de Aula", Resources.DEFAULTS.periodoDeAula16());
+		toolBar.add(diasDeAulaButton);
 		panel.setTopComponent(toolBar);
 	}
 	
@@ -107,8 +107,8 @@ public class CalendariosView extends MyComposite implements CalendariosPresenter
 	}
 
 	@Override
-	public Button getPeriodoDeAulaButton() {
-		return periodoDeAulaButton;
+	public Button getDiasDeAulaButton() {
+		return diasDeAulaButton;
 	}
 
 }
