@@ -113,23 +113,27 @@ public class Turno implements java.io.Serializable {
         return em;
     }
 
-	public static long countTurnoes() {
-        return ((Number) entityManager().createQuery("select count(o) from Turno o").getSingleResult()).longValue();
+	public static int count() {
+        return ((Number) entityManager().createQuery("select count(o) from Turno o").getSingleResult()).intValue();
     }
 
 	@SuppressWarnings("unchecked")
-    public static List<Turno> findAllTurnoes() {
+    public static List<Turno> findAll() {
         return entityManager().createQuery("select o from Turno o").getResultList();
     }
 
-	public static Turno findTurno(Long id) {
+	public static Turno find(Long id) {
         if (id == null) return null;
         return entityManager().find(Turno.class, id);
     }
 
+	public static List<Turno> find(int firstResult, int maxResults) {
+		return find(firstResult, maxResults, null);
+	}
 	@SuppressWarnings("unchecked")
-    public static List<Turno> findTurnoEntries(int firstResult, int maxResults) {
-        return entityManager().createQuery("select o from Turno o").setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
+    public static List<Turno> find(int firstResult, int maxResults, String orderBy) {
+		orderBy = (orderBy != null)? "ORDER BY o."+orderBy : "";
+        return entityManager().createQuery("SELECT o FROM Turno o "+orderBy).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
 
 	public String getNome() {
