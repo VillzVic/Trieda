@@ -13,6 +13,7 @@ import com.extjs.gxt.ui.client.widget.button.SplitButton;
 import com.extjs.gxt.ui.client.widget.layout.TableData;
 import com.extjs.gxt.ui.client.widget.menu.Menu;
 import com.extjs.gxt.ui.client.widget.menu.MenuItem;
+import com.extjs.gxt.ui.client.widget.toolbar.SeparatorToolItem;
 import com.extjs.gxt.ui.client.widget.toolbar.ToolBar;
 import com.gapso.web.trieda.client.AppEvents;
 import com.gapso.web.trieda.client.mvp.presenter.ToolBarPresenter;
@@ -30,6 +31,7 @@ public class ToolBarView extends MyComposite implements ToolBarPresenter.Display
 	private MenuItem calendarioMI;
 	private MenuItem divisaoCreditosMI;
 	private MenuItem turnosListMI;
+	private MenuItem calendariosListMI;
 	
 	// Campi
 	private Button campiBt;
@@ -112,8 +114,12 @@ public class ToolBarView extends MyComposite implements ToolBarPresenter.Display
 		divisaoCreditosMI = createMenuItem("Preferência de Divisão de Créditos", Resources.DEFAULTS.divisaoDeCreditos16());
 		outros.add(divisaoCreditosMI);
 		
+		toolBar.add(new SeparatorToolItem());
+		
 		turnosListMI = createMenuItem("Turnos", Resources.DEFAULTS.turnos16());
 		outros.add(turnosListMI);
+		calendariosListMI = createMenuItem("Calendarios", Resources.DEFAULTS.calendario16());
+		outros.add(calendariosListMI);
 		
 		outrosUnidadesSBt.setMenu(outros);
 		group.add(outrosUnidadesSBt);
@@ -515,6 +521,10 @@ public class ToolBarView extends MyComposite implements ToolBarPresenter.Display
 	@Override
 	public MenuItem getTurnosListMenuItem() {
 		return turnosListMI;
+	}
+	@Override
+	public MenuItem getCalendariosListMenuItem() {
+		return calendariosListMI;
 	}
 	
 }

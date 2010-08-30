@@ -1,7 +1,10 @@
 package com.gapso.web.trieda.client.services;
 
-import com.extjs.gxt.ui.client.data.ModelData;
+import java.util.List;
+
+import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
+import com.gapso.web.trieda.client.mvp.model.CalendarioDTO;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
@@ -11,6 +14,8 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 @RemoteServiceRelativePath("calendarios")
 public interface CalendariosService extends RemoteService {
 	
-	public PagingLoadResult<ModelData> getList();
+	PagingLoadResult<CalendarioDTO> getList(PagingLoadConfig config);
+	void save(CalendarioDTO calendarioDTO);
+	void remove(List<CalendarioDTO> calendarioDTOList);
 	
 }

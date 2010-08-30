@@ -3,12 +3,11 @@ package com.gapso.web.trieda.client.mvp.presenter;
 import com.extjs.gxt.ui.client.event.ButtonEvent;
 import com.extjs.gxt.ui.client.event.MenuEvent;
 import com.extjs.gxt.ui.client.event.SelectionListener;
-import com.extjs.gxt.ui.client.mvc.Dispatcher;
 import com.extjs.gxt.ui.client.widget.Component;
 import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.menu.MenuItem;
-import com.gapso.web.trieda.client.AppEvents;
+import com.gapso.web.trieda.client.mvp.view.CalendariosView;
 import com.gapso.web.trieda.client.mvp.view.TurnosView;
 import com.gapso.web.trieda.client.util.view.GTab;
 import com.google.gwt.user.client.ui.Widget;
@@ -19,6 +18,7 @@ public class ToolBarPresenter implements Presenter {
 		Button getCampusListButton();
 		Button getCampusNewButton();
 		MenuItem getTurnosListMenuItem();
+		MenuItem getCalendariosListMenuItem();
 		
 		Component getComponent();
 	}
@@ -35,7 +35,7 @@ public class ToolBarPresenter implements Presenter {
 		toolBar.getCampusListButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
 			@Override
 			public void componentSelected(ButtonEvent ce) {
-				Dispatcher.forwardEvent(AppEvents.CampusList);
+				MessageBox.alert("Desenvolvimento", "Esta sessão está em desenvolvimento", null);
 			}
 		});
 		toolBar.getCampusNewButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
@@ -48,6 +48,13 @@ public class ToolBarPresenter implements Presenter {
 			@Override
 			public void componentSelected(MenuEvent ce) {
 				Presenter presenter = new TurnosPresenter(new TurnosView());
+				presenter.go(gTab);
+			}
+		});
+		toolBar.getCalendariosListMenuItem().addSelectionListener(new SelectionListener<MenuEvent>() {
+			@Override
+			public void componentSelected(MenuEvent ce) {
+				Presenter presenter = new CalendariosPresenter(new CalendariosView());
 				presenter.go(gTab);
 			}
 		});

@@ -25,7 +25,7 @@ public class CampiServiceImpl extends RemoteServiceServlet implements CampiServi
 //			list.add(new CampusModel(c.getCidade(), c.getLogradouro()));
 //		}
 		for(int i = 1; i <= 10; i++) {
-			list.add(new CampusModel("Código "+i, "Nome "+i));
+			list.add(new CampusModel("Código2 "+i, "Nome "+i));
 		}
 		return new BasePagingLoadResult<ModelData>(list);
 	}

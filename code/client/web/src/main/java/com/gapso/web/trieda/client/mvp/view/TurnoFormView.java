@@ -23,7 +23,6 @@ public class TurnoFormView extends MyComposite implements TurnoFormPresenter.Dis
 		this.turnoDTO = turnoDTO;
 		initUI();
 		// TODO
-		getParent();
 //		initComponent(simpleModal);
 //		setParent(null);
 	}

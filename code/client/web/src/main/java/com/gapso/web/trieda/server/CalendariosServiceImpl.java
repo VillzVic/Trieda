@@ -3,11 +3,14 @@ package com.gapso.web.trieda.server;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.extjs.gxt.ui.client.Style.SortDir;
 import com.extjs.gxt.ui.client.data.BasePagingLoadResult;
-import com.extjs.gxt.ui.client.data.ModelData;
+import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
-import com.gapso.web.trieda.client.mvc.model.CalendarioModel;
+import com.gapso.trieda.domain.Calendario;
+import com.gapso.web.trieda.client.mvp.model.CalendarioDTO;
 import com.gapso.web.trieda.client.services.CalendariosService;
+import com.gapso.web.trieda.server.util.ConvertBeans;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 /**
@@ -17,12 +20,44 @@ public class CalendariosServiceImpl extends RemoteServiceServlet implements Cale
 
 	private static final long serialVersionUID = 5250776996542788849L;
 
-	public PagingLoadResult<ModelData> getList() {
-		List<ModelData> list = new ArrayList<ModelData>();
-		for(int i = 1; i <= 20; i++) {
-			list.add(new CalendarioModel("Código "+i, "Descrição "+i, (i%2==0)?50:60));
+	@Override
+	public PagingLoadResult<CalendarioDTO> getList(PagingLoadConfig config) {
+		
+		List<CalendarioDTO> list = new ArrayList<CalendarioDTO>();
+		String orderBy = config.getSortField();
+		if(orderBy != null) {
+			if(config.getSortDir() != null && config.getSortDir().equals(SortDir.DESC)) {
+				orderBy = orderBy + " asc";
+			} else {
+				orderBy = orderBy + " desc";
+			}
 		}
-		return new BasePagingLoadResult<ModelData>(list);
+		
+		for(Calendario calendario : Calendario.find(config.getOffset(), config.getLimit(), orderBy)) {
+			list.add(ConvertBeans.toCalendarioDTO(calendario));
+		}
+		
+		BasePagingLoadResult<CalendarioDTO> result = new BasePagingLoadResult<CalendarioDTO>(list);
+		result.setOffset(config.getOffset());
+		result.setTotalLength(Calendario.count());
+		return result;
 	}
 
+	@Override
+	public void save(CalendarioDTO calendarioDTO) {
+		Calendario calendario = ConvertBeans.toCalendario(calendarioDTO);
+		if(calendario.getId() != null && calendario.getId() > 0) {
+			calendario.merge();
+		} else {
+			calendario.persist();
+		}
+	}
+	
+	@Override
+	public void remove(List<CalendarioDTO> calendarioDTOList) {
+		for(CalendarioDTO calendarioDTO : calendarioDTOList) {
+			ConvertBeans.toCalendario(calendarioDTO).remove();
+		}
+	}
+	
 }
