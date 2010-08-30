@@ -382,16 +382,6 @@ public class ToolBarView extends MyComposite implements ToolBarPresenter.Display
 		});
 		menuSalasBt.add(outros9);
 		
-		MenuItem outros10 = new MenuItem("Turnos");
-		outros10.setIcon(AbstractImagePrototype.create(Resources.DEFAULTS.turnos16()));
-		outros10.addSelectionListener(new SelectionListener<MenuEvent>() {
-			@Override
-			public void componentSelected(MenuEvent ce) {
-				Dispatcher.forwardEvent(AppEvents.TurnoList);
-			}
-		});
-		menuSalasBt.add(outros10);
-		
 		MenuItem outros11 = new MenuItem("Áreas de Titulação");
 		outros11.setIcon(AbstractImagePrototype.create(Resources.DEFAULTS.areasDeTitulacao16()));
 		outros11.addSelectionListener(new SelectionListener<MenuEvent>() {
