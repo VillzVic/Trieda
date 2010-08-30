@@ -30,7 +30,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Table(name = "CALENDARIOS")
 public class Calendario implements java.io.Serializable {
 
-    @NotNull
+	
+//  TODO  @NotNull
     @ManyToOne(targetEntity = Cenario.class)
     @JoinColumn(name = "CEN_ID")
     private Cenario cenario;
@@ -135,23 +136,27 @@ public class Calendario implements java.io.Serializable {
         return em;
     }
 
-	public static long countCalendarios() {
-        return ((Number) entityManager().createQuery("select count(o) from Calendario o").getSingleResult()).longValue();
+	public static int count() {
+        return ((Number) entityManager().createQuery("select count(o) from Calendario o").getSingleResult()).intValue();
     }
 
 	@SuppressWarnings("unchecked")
-    public static List<Calendario> findAllCalendarios() {
+    public static List<Calendario> findAll() {
         return entityManager().createQuery("select o from Calendario o").getResultList();
     }
 
-	public static Calendario findCalendario(Long id) {
+	public static Calendario find(Long id) {
         if (id == null) return null;
         return entityManager().find(Calendario.class, id);
     }
 
+	public static List<Calendario> find(int firstResult, int maxResults) {
+		return find(firstResult, maxResults, null);
+	}
 	@SuppressWarnings("unchecked")
-    public static List<Calendario> findCalendarioEntries(int firstResult, int maxResults) {
-        return entityManager().createQuery("select o from Calendario o").setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
+    public static List<Calendario> find(int firstResult, int maxResults, String orderBy) {
+		orderBy = (orderBy != null)? "ORDER BY o."+orderBy : "";
+        return entityManager().createQuery("select o from Calendario o "+orderBy).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
 
 	public String toString() {

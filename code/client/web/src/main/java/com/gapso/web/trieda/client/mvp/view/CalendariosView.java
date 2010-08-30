@@ -10,6 +10,7 @@ import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.grid.ColumnConfig;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayout;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
+import com.extjs.gxt.ui.client.widget.toolbar.SeparatorToolItem;
 import com.gapso.web.trieda.client.mvp.model.CalendarioDTO;
 import com.gapso.web.trieda.client.mvp.presenter.CalendariosPresenter;
 import com.gapso.web.trieda.client.services.Services;
@@ -25,6 +26,7 @@ public class CalendariosView extends MyComposite implements CalendariosPresenter
 	private SimpleGrid<CalendarioDTO> gridPanel;
 	private ContentPanel panel;
 	private GTabItem tabItem;
+	private Button periodoDeAulaButton;
 	
 	public CalendariosView() {
 		initUI();
@@ -46,6 +48,9 @@ public class CalendariosView extends MyComposite implements CalendariosPresenter
 	
 	private void createToolBar() {
 		toolBar = new SimpleToolBar();
+		toolBar.add(new SeparatorToolItem());
+		periodoDeAulaButton = toolBar.createButton("Dias de Aula", Resources.DEFAULTS.periodoDeAula16());
+		toolBar.add(periodoDeAulaButton);
 		panel.setTopComponent(toolBar);
 	}
 	
@@ -99,6 +104,11 @@ public class CalendariosView extends MyComposite implements CalendariosPresenter
 	@Override
 	public SimpleGrid<CalendarioDTO> getGrid() {
 		return gridPanel;
+	}
+
+	@Override
+	public Button getPeriodoDeAulaButton() {
+		return periodoDeAulaButton;
 	}
 
 }

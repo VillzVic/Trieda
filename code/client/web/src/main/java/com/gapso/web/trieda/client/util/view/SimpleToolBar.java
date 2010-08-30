@@ -69,7 +69,7 @@ public class SimpleToolBar extends ToolBar {
 		return exportExcelButton;
 	}
 
-	private Button createButton(String toolTip, ImageResource img) {
+	public Button createButton(String toolTip, ImageResource img) {
 		Button bt = new Button();
 		bt.setIcon(AbstractImagePrototype.create(img));
 		bt.setToolTip(toolTip);

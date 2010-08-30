@@ -4,10 +4,12 @@ import java.util.List;
 
 import com.extjs.gxt.ui.client.event.ButtonEvent;
 import com.extjs.gxt.ui.client.event.SelectionListener;
+import com.extjs.gxt.ui.client.mvc.Dispatcher;
 import com.extjs.gxt.ui.client.widget.Component;
 import com.extjs.gxt.ui.client.widget.Info;
 import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.button.Button;
+import com.gapso.web.trieda.client.AppEvents;
 import com.gapso.web.trieda.client.mvp.model.CalendarioDTO;
 import com.gapso.web.trieda.client.mvp.view.CalendarioFormView;
 import com.gapso.web.trieda.client.services.CalendariosServiceAsync;
@@ -26,6 +28,7 @@ public class CalendariosPresenter implements Presenter {
 		Button getRemoveButton();
 		Button getImportExcelButton();
 		Button getExportExcelButton();
+		Button getPeriodoDeAulaButton();
 		SimpleGrid<CalendarioDTO> getGrid();
 		GTabItem getGTabItem();
 		Component getComponent();
@@ -69,6 +72,12 @@ public class CalendariosPresenter implements Presenter {
 						Info.display("Removido", "Item removido com sucesso!");
 					}
 				});
+			}
+		});
+		display.getPeriodoDeAulaButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
+			@Override
+			public void componentSelected(ButtonEvent ce) {
+				Dispatcher.forwardEvent(AppEvents.CalendarioView);
 			}
 		});
 	}
