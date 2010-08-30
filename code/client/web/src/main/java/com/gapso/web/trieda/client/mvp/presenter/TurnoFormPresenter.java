@@ -2,6 +2,7 @@ package com.gapso.web.trieda.client.mvp.presenter;
 
 import com.extjs.gxt.ui.client.event.ButtonEvent;
 import com.extjs.gxt.ui.client.event.SelectionListener;
+import com.extjs.gxt.ui.client.widget.Info;
 import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.NumberField;
@@ -21,6 +22,7 @@ public class TurnoFormPresenter implements Presenter {
 		TextField<String> getNomeTextField();
 		NumberField getTempoTextField();
 		TurnoDTO getTurnoDTO();
+		boolean isValid();
 		
 		SimpleModal getSimpleModal();
 	}
@@ -39,19 +41,16 @@ public class TurnoFormPresenter implements Presenter {
 			public void componentSelected(ButtonEvent ce) {
 				if(isValid()) {
 					final TurnosServiceAsync service = Services.turnos();
-					service.save(getDTO(), new AsyncCallback<Boolean>() {
+					service.save(getDTO(), new AsyncCallback<Void>() {
 						@Override
 						public void onFailure(Throwable caught) {
 							MessageBox.alert("ERRO!", "Deu falha na conexão", null);
 						}
 						@Override
-						public void onSuccess(Boolean result) {
-							if(result) {
-								display.getSimpleModal().hide();
-								gridPanel.updateList();
-							} else {
-								MessageBox.alert("ERRO!", "Deu falha no server", null);	
-							}
+						public void onSuccess(Void result) {
+							display.getSimpleModal().hide();
+							gridPanel.updateList();
+							Info.display("Removido", "Item removido com sucesso!");
 						}
 					});
 				} else {
@@ -62,7 +61,7 @@ public class TurnoFormPresenter implements Presenter {
 	}
 	
 	private boolean isValid() {
-		return (!display.getNomeTextField().getValue().isEmpty()) && (display.getTempoTextField().getValue().intValue() > 0);
+		return display.isValid();
 	}
 	
 	private TurnoDTO getDTO() {

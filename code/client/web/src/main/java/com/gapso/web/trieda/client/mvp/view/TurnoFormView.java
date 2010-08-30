@@ -44,6 +44,7 @@ public class TurnoFormView extends MyComposite implements TurnoFormPresenter.Dis
 		nomeTF.setValue(turnoDTO.getNome());
 		nomeTF.setFieldLabel("Nome");
 		nomeTF.setAllowBlank(false);
+		nomeTF.setMaxLength(50);
 		formPanel.add(nomeTF, formData);
 		
 		tempoTF = new NumberField();
@@ -51,10 +52,18 @@ public class TurnoFormView extends MyComposite implements TurnoFormPresenter.Dis
 		tempoTF.setValue(turnoDTO.getTempo());
 		tempoTF.setFieldLabel("Tempo");
 		tempoTF.setAllowBlank(false);
+		tempoTF.setAllowDecimals(false);
+		tempoTF.setAllowNegative(false);
+		tempoTF.setMinValue(1);
+		tempoTF.setMaxValue(1000);
 		formPanel.add(tempoTF, formData);
 		
 		FormButtonBinding binding = new FormButtonBinding(formPanel);
 		binding.addButton(simpleModal.getSalvarBt());
+	}
+	
+	public boolean isValid() {
+		return formPanel.isValid();
 	}
 	
 	@Override

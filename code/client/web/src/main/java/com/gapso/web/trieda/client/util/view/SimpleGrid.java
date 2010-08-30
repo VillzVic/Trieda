@@ -6,6 +6,7 @@ import com.extjs.gxt.ui.client.Style.SelectionMode;
 import com.extjs.gxt.ui.client.data.BaseModel;
 import com.extjs.gxt.ui.client.data.BasePagingLoader;
 import com.extjs.gxt.ui.client.data.ModelData;
+import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoader;
 import com.extjs.gxt.ui.client.data.RpcProxy;
@@ -38,10 +39,10 @@ public class SimpleGrid<M extends BaseModel> extends ContentPanel {
 		RpcProxy<PagingLoadResult<BaseModel>> proxy = new RpcProxy<PagingLoadResult<BaseModel>>() {
 			@Override
 			public void load(Object loadConfig, AsyncCallback<PagingLoadResult<BaseModel>> callback) {
-				service.getList(callback);
+				service.getList((PagingLoadConfig)loadConfig, callback);
 			}
 		};
-		loader = new BasePagingLoader<PagingLoadResult<ModelData>>(proxy);  
+		loader = new BasePagingLoader<PagingLoadResult<ModelData>>(proxy);
 		loader.setRemoteSort(true);
 		
 		ListStore<M> store = new ListStore<M>(loader);  
@@ -71,7 +72,7 @@ public class SimpleGrid<M extends BaseModel> extends ContentPanel {
 	}
 	
 	private void pagingPanel() {
-		PagingToolBar paggingToolBar = new PagingToolBar(50);
+		PagingToolBar paggingToolBar = new PagingToolBar(25);
 		paggingToolBar.bind(loader);
 		setBottomComponent(paggingToolBar);
 	}

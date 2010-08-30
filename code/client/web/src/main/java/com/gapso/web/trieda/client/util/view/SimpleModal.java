@@ -26,8 +26,7 @@ public class SimpleModal extends Window {
 		setLayout(new FitLayout());
 		setBodyBorder(false);
 		addButtons();
-		setWidth(600);
-		setHeight(600);
+		setHeight(138);
 	}
 	
 	public void setContent(Widget widget) {

@@ -5,6 +5,7 @@ import java.util.List;
 import com.extjs.gxt.ui.client.event.ButtonEvent;
 import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.widget.Component;
+import com.extjs.gxt.ui.client.widget.Info;
 import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.gapso.web.trieda.client.mvp.model.TurnoDTO;
@@ -57,18 +58,15 @@ public class TurnosPresenter implements Presenter {
 			public void componentSelected(ButtonEvent ce) {
 				List<TurnoDTO> list = display.getGrid().getGrid().getSelectionModel().getSelectedItems();
 				final TurnosServiceAsync service = Services.turnos();
-				service.remove(list, new AsyncCallback<Boolean>() {
+				service.remove(list, new AsyncCallback<Void>() {
 					@Override
 					public void onFailure(Throwable caught) {
 						MessageBox.alert("ERRO!", "Deu falha na conexão", null);
 					}
 					@Override
-					public void onSuccess(Boolean result) {
-						if(result) {
-							display.getGrid().updateList();
-						} else {
-							MessageBox.alert("ERRO!", "Deu falha no server", null);	
-						}
+					public void onSuccess(Void result) {
+						display.getGrid().updateList();
+						Info.display("Removido", "Item removido com sucesso!");
 					}
 				});
 			}
