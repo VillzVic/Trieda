@@ -7,7 +7,6 @@ public class TurnoDTO extends BaseModel {
 
 	private static final long serialVersionUID = 5815525344760896272L;
 	
-
 	public TurnoDTO() {
 	}
 
@@ -16,7 +15,6 @@ public class TurnoDTO extends BaseModel {
 		setNome(nome);
 		setTempo(tempo);
 		setVersion(version);
-		
 	}
 	
 	public void setId(Long value) {

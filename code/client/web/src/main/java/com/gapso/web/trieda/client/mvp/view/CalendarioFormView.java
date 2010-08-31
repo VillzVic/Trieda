@@ -28,6 +28,7 @@ public class CalendarioFormView extends MyComposite implements CalendarioFormPre
 	
 	private void initUI() {
 		simpleModal = new SimpleModal("Calendario", Resources.DEFAULTS.calendario16());
+		simpleModal.setHeight(138);
 		createForm();
 		simpleModal.setContent(formPanel);
 	}

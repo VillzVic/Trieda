@@ -2,6 +2,7 @@ package com.gapso.web.trieda.client.services;
 
 import java.util.List;
 
+import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.gapso.web.trieda.client.mvp.model.TurnoDTO;
@@ -14,8 +15,9 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 @RemoteServiceRelativePath("turnos")
 public interface TurnosService extends RemoteService {
 	
+	PagingLoadResult<TurnoDTO> getList(PagingLoadConfig config);
+	ListLoadResult<TurnoDTO> getList();
 	void save(TurnoDTO turnoDTO);
 	void remove(List<TurnoDTO> turnoDTOList);
-	PagingLoadResult<TurnoDTO> getList(PagingLoadConfig config);
 	
 }

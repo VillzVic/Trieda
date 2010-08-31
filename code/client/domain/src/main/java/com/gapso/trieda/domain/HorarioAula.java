@@ -124,23 +124,27 @@ public class HorarioAula implements java.io.Serializable {
         return em;
     }
 
-	public static long countHorarioAulas() {
-        return ((Number) entityManager().createQuery("select count(o) from HorarioAula o").getSingleResult()).longValue();
+	public static int count() {
+        return ((Number) entityManager().createQuery("select count(o) from HorarioAula o").getSingleResult()).intValue();
     }
 
 	@SuppressWarnings("unchecked")
-    public static List<HorarioAula> findAllHorarioAulas() {
+    public static List<HorarioAula> findAll() {
         return entityManager().createQuery("select o from HorarioAula o").getResultList();
     }
 
-	public static HorarioAula findHorarioAula(Long id) {
+	public static HorarioAula find(Long id) {
         if (id == null) return null;
         return entityManager().find(HorarioAula.class, id);
     }
 
+	public static List<HorarioAula> find(int firstResult, int maxResults) {
+		return find(firstResult, maxResults, null);
+	}
 	@SuppressWarnings("unchecked")
-    public static List<HorarioAula> findHorarioAulaEntries(int firstResult, int maxResults) {
-        return entityManager().createQuery("select o from HorarioAula o").setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
+    public static List<HorarioAula> find(int firstResult, int maxResults, String orderBy) {
+		orderBy = (orderBy != null)? "ORDER BY o."+orderBy : "";
+        return entityManager().createQuery("select o from HorarioAula o "+orderBy).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
 
 	public Calendario getCalendario() {

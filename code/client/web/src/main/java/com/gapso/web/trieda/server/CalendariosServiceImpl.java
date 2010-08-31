@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.extjs.gxt.ui.client.Style.SortDir;
+import com.extjs.gxt.ui.client.data.BaseListLoadResult;
 import com.extjs.gxt.ui.client.data.BasePagingLoadResult;
+import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.gapso.trieda.domain.Calendario;
@@ -41,6 +43,15 @@ public class CalendariosServiceImpl extends RemoteServiceServlet implements Cale
 		result.setOffset(config.getOffset());
 		result.setTotalLength(Calendario.count());
 		return result;
+	}
+	
+	@Override
+	public ListLoadResult<CalendarioDTO> getList() {
+		List<CalendarioDTO> list = new ArrayList<CalendarioDTO>();
+		for(Calendario calendario : Calendario.findAll()) {
+			list.add(ConvertBeans.toCalendarioDTO(calendario));
+		}
+		return new BaseListLoadResult<CalendarioDTO>(list);
 	}
 
 	@Override

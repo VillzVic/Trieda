@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.extjs.gxt.ui.client.Style.SortDir;
+import com.extjs.gxt.ui.client.data.BaseListLoadResult;
 import com.extjs.gxt.ui.client.data.BasePagingLoadResult;
+import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.gapso.trieda.domain.Turno;
@@ -40,6 +42,15 @@ public class TurnosServiceImpl extends RemoteServiceServlet implements TurnosSer
 		return result;
 	}
 
+	@Override
+	public ListLoadResult<TurnoDTO> getList() {
+		List<TurnoDTO> list = new ArrayList<TurnoDTO>();
+		for(Turno turno : Turno.findAll()) {
+			list.add(ConvertBeans.toTurnoDTO(turno));
+		}
+		return new BaseListLoadResult<TurnoDTO>(list);
+	}
+	
 	@Override
 	public void save(TurnoDTO turnoDTO) {
 		Turno turno = ConvertBeans.toTurno(turnoDTO);

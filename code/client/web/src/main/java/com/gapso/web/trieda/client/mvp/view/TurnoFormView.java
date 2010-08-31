@@ -29,6 +29,7 @@ public class TurnoFormView extends MyComposite implements TurnoFormPresenter.Dis
 	
 	private void initUI() {
 		simpleModal = new SimpleModal("Turno", Resources.DEFAULTS.turnos16());
+		simpleModal.setHeight(138);
 		createForm();
 		simpleModal.setContent(formPanel);
 	}

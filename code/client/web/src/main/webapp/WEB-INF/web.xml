@@ -81,8 +81,8 @@
 		<servlet-class>com.gapso.web.trieda.server.DivisoesCreditosServiceImpl</servlet-class>
 	</servlet>
 	<servlet>
-		<servlet-name>periodosAulasServlet</servlet-name>
-		<servlet-class>com.gapso.web.trieda.server.PeriodosAulasServiceImpl</servlet-class>
+		<servlet-name>periodosDeAulaServlet</servlet-name>
+		<servlet-class>com.gapso.web.trieda.server.PeriodosDeAulaServiceImpl</servlet-class>
 	</servlet>
 	<servlet>
 		<servlet-name>areasTitulacaoServlet</servlet-name>
@@ -158,8 +158,8 @@
 		<url-pattern>/trieda/divisoesCreditos</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
-		<servlet-name>periodosAulasServlet</servlet-name>
-		<url-pattern>/trieda/periodosAulas</url-pattern>
+		<servlet-name>periodosDeAulaServlet</servlet-name>
+		<url-pattern>/trieda/periodosDeAula</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>areasTitulacaoServlet</servlet-name>

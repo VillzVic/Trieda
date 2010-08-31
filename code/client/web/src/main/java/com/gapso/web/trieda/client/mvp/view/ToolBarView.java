@@ -32,6 +32,7 @@ public class ToolBarView extends MyComposite implements ToolBarPresenter.Display
 	private MenuItem divisaoCreditosMI;
 	private MenuItem turnosListMI;
 	private MenuItem calendariosListMI;
+	private MenuItem periodosDeAulaListMI;
 	
 	// Campi
 	private Button campiBt;
@@ -120,6 +121,8 @@ public class ToolBarView extends MyComposite implements ToolBarPresenter.Display
 		outros.add(turnosListMI);
 		calendariosListMI = createMenuItem("Calendarios", Resources.DEFAULTS.calendario16());
 		outros.add(calendariosListMI);
+		periodosDeAulaListMI = createMenuItem("Períodos de Aula", Resources.DEFAULTS.periodoDeAula16());
+		outros.add(periodosDeAulaListMI);
 		
 		outrosUnidadesSBt.setMenu(outros);
 		group.add(outrosUnidadesSBt);
@@ -515,6 +518,10 @@ public class ToolBarView extends MyComposite implements ToolBarPresenter.Display
 	@Override
 	public MenuItem getCalendariosListMenuItem() {
 		return calendariosListMI;
+	}
+	@Override
+	public MenuItem getPeriodosDeAulaListMenuItem() {
+		return periodosDeAulaListMI;
 	}
 	
 }

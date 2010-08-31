@@ -192,10 +192,10 @@ public class Services {
 		return service;
 	}
 	
-	public static PeriodosDeAulasServiceAsync periodosAula() {
-		PeriodosDeAulasServiceAsync service = (PeriodosDeAulasServiceAsync) Registry.get(PERIODOSAULA);
+	public static PeriodosDeAulaServiceAsync periodosAula() {
+		PeriodosDeAulaServiceAsync service = (PeriodosDeAulaServiceAsync) Registry.get(PERIODOSAULA);
 		if(service == null) {
-			service = GWT.create(PeriodosDeAulasService.class);
+			service = GWT.create(PeriodosDeAulaService.class);
 			Registry.register(PERIODOSAULA, service);
 		}
 		return service;

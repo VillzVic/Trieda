@@ -1,8 +1,12 @@
 package com.gapso.web.trieda.server.util;
 
+import java.util.Calendar;
+
 import com.gapso.trieda.domain.Calendario;
+import com.gapso.trieda.domain.HorarioAula;
 import com.gapso.trieda.domain.Turno;
 import com.gapso.web.trieda.client.mvp.model.CalendarioDTO;
+import com.gapso.web.trieda.client.mvp.model.PeriodoDeAulaDTO;
 import com.gapso.web.trieda.client.mvp.model.TurnoDTO;
 
 public class ConvertBeans {
@@ -42,6 +46,36 @@ public class ConvertBeans {
 		dto.setVersion(domain.getVersion());
 		dto.setCodigo(domain.getCodigo());
 		dto.setDescricao(domain.getDescricao());
+		return dto;
+	}
+	
+	// PERIODO DE AULA
+	public static HorarioAula toHorarioAula(PeriodoDeAulaDTO dto) {
+		HorarioAula domain = new HorarioAula();
+		domain.setId(dto.getId());
+		domain.setVersion(dto.getVersion());
+		Calendario calendario = Calendario.find(dto.getCalendario());
+		domain.setCalendario(calendario);
+		Turno turno = Turno.find(dto.getTurno());
+		domain.setTurno(turno);
+		domain.setHorario(dto.getInicio());
+		return domain;
+	}
+	
+	public static PeriodoDeAulaDTO toPeriodoDeAulaDTO(HorarioAula domain) {
+		PeriodoDeAulaDTO dto = new PeriodoDeAulaDTO();
+		dto.setId(domain.getId());
+		dto.setVersion(domain.getVersion());
+		dto.setCalendario(domain.getCalendario().getId());
+		Turno turno = domain.getTurno();
+		dto.setTurno(turno.getId());
+		
+		dto.setInicio(domain.getHorario());
+		
+		Calendar fimCal = Calendar.getInstance();
+		fimCal.setTime(domain.getHorario());
+		fimCal.add(Calendar.MINUTE, turno.getTempo());
+		dto.setFim(fimCal.getTime());
 		return dto;
 	}
 
