@@ -2,18 +2,17 @@ package com.gapso.web.trieda.client.mvp.model;
 
 import com.extjs.gxt.ui.client.data.BaseModel;
 
+public class CampusDTO extends BaseModel {
 
-public class CalendarioDTO extends BaseModel {
+	private static final long serialVersionUID = -5134820110949139907L;
 
-	private static final long serialVersionUID = -5419695301010396477L;
-	
-	public CalendarioDTO() {
+	public CampusDTO() {
 	}
 
-	public CalendarioDTO(Long id, String codigo, String descricao, Integer version) {
+	public CampusDTO(Long id, String codigo, String nome, Integer version) {
 		setId(id);
 		setCodigo(codigo);
-		setDescricao(descricao);
+		setNome(nome);
 		setVersion(version);
 	}
 	
@@ -30,20 +29,19 @@ public class CalendarioDTO extends BaseModel {
 	public Integer getVersion() {
 		return get("version");
 	}
-
-	public void setCodigo(String value) {
-		set("codigo", value);
-	}
+	
 	public String getCodigo() {
 		return get("codigo");
 	}
-	
-	public void setDescricao(String value) {
-		set("descricao", value);
+	public void setCodigo(String value) {
+		set("codigo", value);
 	}
-	public String getDescricao() {
-		return get("descricao");
+
+	public String getNome() {
+		return get("nome");
 	}
-	
+	public void setNome(String value) {
+		set("nome", value);
+	}
 	
 }

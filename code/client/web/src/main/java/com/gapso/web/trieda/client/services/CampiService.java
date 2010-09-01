@@ -1,7 +1,11 @@
 package com.gapso.web.trieda.client.services;
 
-import com.extjs.gxt.ui.client.data.ModelData;
+import java.util.List;
+
+import com.extjs.gxt.ui.client.data.ListLoadResult;
+import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
+import com.gapso.web.trieda.client.mvp.model.CampusDTO;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
@@ -11,6 +15,9 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 @RemoteServiceRelativePath("campi")
 public interface CampiService extends RemoteService {
 	
-	public PagingLoadResult<ModelData> getList();
+	PagingLoadResult<CampusDTO> getList(PagingLoadConfig config);
+	ListLoadResult<CampusDTO> getList();
+	void save(CampusDTO campusDTO);
+	void remove(List<CampusDTO> campusDTOList);
 	
 }

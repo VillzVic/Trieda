@@ -3,13 +3,34 @@ package com.gapso.web.trieda.server.util;
 import java.util.Calendar;
 
 import com.gapso.trieda.domain.Calendario;
+import com.gapso.trieda.domain.Campus;
 import com.gapso.trieda.domain.HorarioAula;
 import com.gapso.trieda.domain.Turno;
 import com.gapso.web.trieda.client.mvp.model.CalendarioDTO;
+import com.gapso.web.trieda.client.mvp.model.CampusDTO;
 import com.gapso.web.trieda.client.mvp.model.HorarioAulaDTO;
 import com.gapso.web.trieda.client.mvp.model.TurnoDTO;
 
 public class ConvertBeans {
+	
+	// CAMPUS
+	public static Campus toCampus(CampusDTO dto) {
+		Campus domain = new Campus();
+		domain.setId(dto.getId());
+		domain.setVersion(dto.getVersion());
+		domain.setNome(dto.getNome());
+		domain.setCodigo(dto.getCodigo());
+		return domain;
+	}
+	
+	public static CampusDTO toCampusDTO(Campus domain) {
+		CampusDTO dto = new CampusDTO();
+		dto.setId(domain.getId());
+		dto.setVersion(domain.getVersion());
+		dto.setNome(domain.getNome());
+		dto.setCodigo(domain.getCodigo());
+		return dto;
+	}
 
 	// TURNO
 	public static Turno toTurno(TurnoDTO dto) {

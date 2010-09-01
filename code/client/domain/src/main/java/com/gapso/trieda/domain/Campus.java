@@ -34,7 +34,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Table(name = "CAMPI")
 public class Campus implements java.io.Serializable {
 
-    @NotNull
+//  TODO  @NotNull
     @ManyToOne(targetEntity = Cenario.class)
     @JoinColumn(name = "CEN_ID")
     private Cenario cenario;
@@ -184,23 +184,27 @@ public class Campus implements java.io.Serializable {
         return em;
     }
 
-	public static long countCampuses() {
-        return ((Number) entityManager().createQuery("select count(o) from Campus o").getSingleResult()).longValue();
+	public static int count() {
+        return ((Number) entityManager().createQuery("select count(o) from Campus o").getSingleResult()).intValue();
     }
 
 	@SuppressWarnings("unchecked")
-    public static List<Campus> findAllCampuses() {
+    public static List<Campus> findAll() {
         return entityManager().createQuery("select o from Campus o").getResultList();
     }
 
-	public static Campus findCampus(Long id) {
+	public static Campus find(Long id) {
         if (id == null) return null;
         return entityManager().find(Campus.class, id);
     }
 
+	public static List<Campus> find(int firstResult, int maxResults) {
+		return find(firstResult, maxResults, null);
+	}
 	@SuppressWarnings("unchecked")
-    public static List<Campus> findCampusEntries(int firstResult, int maxResults) {
-        return entityManager().createQuery("select o from Campus o").setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
+    public static List<Campus> find(int firstResult, int maxResults, String orderBy) {
+		orderBy = (orderBy != null)? "ORDER BY o."+orderBy : "";
+        return entityManager().createQuery("select o from Campus o "+orderBy).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
 
 	private static final long serialVersionUID = 6690100103369325015L;

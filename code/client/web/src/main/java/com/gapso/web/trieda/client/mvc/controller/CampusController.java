@@ -6,20 +6,13 @@ import com.extjs.gxt.ui.client.mvc.Controller;
 import com.gapso.web.trieda.client.AppEvents;
 import com.gapso.web.trieda.client.mvc.view.CampusDeslocamentoView;
 import com.gapso.web.trieda.client.mvc.view.CampusProfessorView;
-import com.gapso.web.trieda.client.mvc.view.CampusView;
 
 public class CampusController extends Controller {
 
 	public CampusController() {
-		registerEventTypes(AppEvents.CampusList);
 		registerEventTypes(AppEvents.CampusDeslocamento);
 		registerEventTypes(AppEvents.CampusProfessorList);
 		registerEventTypes(AppEvents.CampusProfessorView);
-	}
-
-	private void onList(AppEvent event) {
-		CampusView campusView = new CampusView(this);
-		forwardToView(campusView, event);
 	}
 	
 	private void onDeslocamentos(AppEvent event) {
@@ -40,7 +33,6 @@ public class CampusController extends Controller {
 	@Override
 	public void handleEvent(AppEvent event) {
 		EventType type = event.getType();
-		if (type == AppEvents.CampusList) onList(event);
 		if (type == AppEvents.CampusDeslocamento) onDeslocamentos(event);
 		if (type == AppEvents.CampusProfessorList) onProfessoresList(event);
 		if (type == AppEvents.CampusProfessorView) onProfessoresView(event);
