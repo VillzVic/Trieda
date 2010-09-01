@@ -68,8 +68,8 @@ public class HorarioAulaFormPresenter implements Presenter {
 	
 	private HorarioAulaDTO getDTO() {
 		HorarioAulaDTO dto = display.getHorarioAulaDTO();
-		dto.setCalendario(display.getCalendarioComboBox().getSelection().get(0).getId());
-		dto.setTurno(display.getTurnoComboBox().getSelection().get(0).getId());
+		dto.setCalendarioId(display.getCalendarioComboBox().getSelection().get(0).getId());
+		dto.setTurnoId(display.getTurnoComboBox().getSelection().get(0).getId());
 		dto.setInicio(display.getHorarioInicioTextField().getValue().getDate());
 		return dto;
 	}

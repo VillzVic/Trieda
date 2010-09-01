@@ -18,6 +18,7 @@ import com.gapso.web.trieda.client.util.view.GTabItem;
 import com.gapso.web.trieda.client.util.view.SimpleGrid;
 import com.gapso.web.trieda.client.util.view.SimpleToolBar;
 import com.gapso.web.trieda.client.util.view.simplecrud.ISimpleGridService;
+import com.google.gwt.i18n.client.DateTimeFormat;
 
 public class HorariosAulaView extends MyComposite implements HorariosAulaPresenter.Display {
 
@@ -25,6 +26,8 @@ public class HorariosAulaView extends MyComposite implements HorariosAulaPresent
 	private SimpleGrid<HorarioAulaDTO> gridPanel;
 	private ContentPanel panel;
 	private GTabItem tabItem;
+	
+	private DateTimeFormat dateTimeFormat = DateTimeFormat.getFormat("HH:mm");
 	
 	public HorariosAulaView() {
 		initUI();
@@ -61,10 +64,14 @@ public class HorariosAulaView extends MyComposite implements HorariosAulaPresent
 
 	public List<ColumnConfig> getColumnList() {
 		List<ColumnConfig> list = new ArrayList<ColumnConfig>();
-		list.add(new ColumnConfig("calendario", "Calendario", 100));
-		list.add(new ColumnConfig("turno", "Turno", 100));
-		list.add(new ColumnConfig("inicio", "Horário Início", 100));
-		list.add(new ColumnConfig("fim", "Horário Fim", 100));
+		list.add(new ColumnConfig("calendarioString", "Calendario", 100));
+		list.add(new ColumnConfig("turnoString", "Turno", 100));
+		ColumnConfig inicioColumn = new ColumnConfig("inicio", "Horário Início", 100);
+		inicioColumn.setDateTimeFormat(dateTimeFormat);
+		list.add(inicioColumn);
+		ColumnConfig fimColumn = new ColumnConfig("fim", "Horário Fim", 100);
+		fimColumn.setDateTimeFormat(dateTimeFormat);
+		list.add(fimColumn);
 		return list;
 	}
 

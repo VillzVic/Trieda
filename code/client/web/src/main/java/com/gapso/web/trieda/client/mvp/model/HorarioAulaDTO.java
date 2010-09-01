@@ -12,10 +12,12 @@ public class HorarioAulaDTO extends BaseModel {
 	public HorarioAulaDTO() {
 	}
 
-	public HorarioAulaDTO(Long id, Long calendario, Long turno, Date inicio, Date fim, Integer version) {
+	public HorarioAulaDTO(Long id, Long calendarioId, String calendarioString, String turnoString, Long turnoId, Date inicio, Date fim, Integer version) {
 		setId(id);
-		setCalendario(calendario);
-		setTurno(turno);
+		setCalendarioId(calendarioId);
+		setCalendarioString(calendarioString);
+		setTurnoId(turnoId);
+		setTurnoString(turnoString);
 		setInicio(inicio);
 		setFim(fim);
 		setVersion(version);
@@ -35,18 +37,32 @@ public class HorarioAulaDTO extends BaseModel {
 		return get("version");
 	}
 
-	public void setCalendario(Long value) {
-		set("calendario", value);
+	public void setCalendarioId(Long value) {
+		set("calendarioId", value);
 	}
-	public Long getCalendario() {
-		return get("calendario");
+	public Long getCalendarioId() {
+		return get("calendarioId");
+	}
+	
+	public void setCalendarioString(String value) {
+		set("calendarioString", value);
+	}
+	public String getCalendarioString() {
+		return get("calendarioString");
 	}
 
-	public void setTurno(Long value) {
-		set("turno", value);
+	public void setTurnoId(Long value) {
+		set("turnoId", value);
 	}
-	public Long getTurno() {
-		return get("turno");
+	public Long getTurnoId() {
+		return get("turnoId");
+	}
+	
+	public void setTurnoString(String value) {
+		set("turnoString", value);
+	}
+	public String getTurnoString() {
+		return get("turnoString");
 	}
 	
 	public void setInicio(Date value) {

@@ -54,9 +54,9 @@ public class ConvertBeans {
 		HorarioAula domain = new HorarioAula();
 		domain.setId(dto.getId());
 		domain.setVersion(dto.getVersion());
-		Calendario calendario = Calendario.find(dto.getCalendario());
+		Calendario calendario = Calendario.find(dto.getCalendarioId());
 		domain.setCalendario(calendario);
-		Turno turno = Turno.find(dto.getTurno());
+		Turno turno = Turno.find(dto.getTurnoId());
 		domain.setTurno(turno);
 		domain.setHorario(dto.getInicio());
 		return domain;
@@ -66,9 +66,11 @@ public class ConvertBeans {
 		HorarioAulaDTO dto = new HorarioAulaDTO();
 		dto.setId(domain.getId());
 		dto.setVersion(domain.getVersion());
-		dto.setCalendario(domain.getCalendario().getId());
+		dto.setCalendarioId(domain.getCalendario().getId());
+		dto.setCalendarioString(domain.getCalendario().getCodigo());
 		Turno turno = domain.getTurno();
-		dto.setTurno(turno.getId());
+		dto.setTurnoId(turno.getId());
+		dto.setTurnoString(turno.getNome());
 
 		dto.setInicio(domain.getHorario());
 
