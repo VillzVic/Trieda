@@ -29,5 +29,5 @@ public class TurnoComboBox extends ComboBox<TurnoDTO> {
 		setDisplayField("nome");
 		setStore(store);
 	}
-	
+
 }

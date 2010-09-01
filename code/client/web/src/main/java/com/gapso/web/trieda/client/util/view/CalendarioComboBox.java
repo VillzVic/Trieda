@@ -29,5 +29,5 @@ public class CalendarioComboBox extends ComboBox<CalendarioDTO> {
 		setDisplayField("codigo");
 		setStore(store);
 	}
-	
+
 }

@@ -3,7 +3,7 @@ package com.gapso.web.trieda.client.mvp.view;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.FormButtonBinding;
 import com.extjs.gxt.ui.client.widget.form.FormPanel;
-import com.extjs.gxt.ui.client.widget.form.TimeField;
+import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.extjs.gxt.ui.client.widget.layout.FormData;
 import com.gapso.web.trieda.client.mvp.model.HorarioAulaDTO;
 import com.gapso.web.trieda.client.mvp.presenter.HorarioAulaFormPresenter;
@@ -11,6 +11,7 @@ import com.gapso.web.trieda.client.util.resources.Resources;
 import com.gapso.web.trieda.client.util.view.CalendarioComboBox;
 import com.gapso.web.trieda.client.util.view.SimpleModal;
 import com.gapso.web.trieda.client.util.view.TurnoComboBox;
+import com.google.gwt.i18n.client.DateTimeFormat;
 
 public class HorarioAulaFormView extends MyComposite implements HorarioAulaFormPresenter.Display {
 
@@ -18,9 +19,11 @@ public class HorarioAulaFormView extends MyComposite implements HorarioAulaFormP
 	private FormPanel formPanel;
 	private CalendarioComboBox calendarioCB;
 	private TurnoComboBox turnoCB;
-	private TimeField horarioInicioTF;
-	private TimeField horarioFimTF;
+	private TextField<String> horarioInicioTF;
+	private TextField<String> horarioFimTF;
 	private HorarioAulaDTO horarioAulaDTO;
+	
+	DateTimeFormat df = DateTimeFormat.getFormat("HH:mm");
 	
 	public HorarioAulaFormView(HorarioAulaDTO horarioAulaDTO) {
 		this.horarioAulaDTO = horarioAulaDTO;
@@ -54,17 +57,24 @@ public class HorarioAulaFormView extends MyComposite implements HorarioAulaFormP
 		turnoCB.setAllowBlank(false);
 		formPanel.add(turnoCB, formData);
 		
-		horarioInicioTF = new TimeField();
+		horarioInicioTF = new TextField<String>();
+		horarioInicioTF.setRegex("([0-1][0-9]|2[0-4]):([0-5][0-9])$");
 		horarioInicioTF.setName("horarioInicio");
+		if(horarioAulaDTO.getInicio() != null) {
+			horarioInicioTF.setValue(df.format(horarioAulaDTO.getInicio()));
+		}
 		horarioInicioTF.setFieldLabel("Horário Início");
 		horarioInicioTF.setAllowBlank(false);
 		formPanel.add(horarioInicioTF, formData);
 		
-		horarioFimTF = new TimeField();
+		horarioFimTF = new TextField<String>();
+		horarioFimTF.setRegex("([0-1][0-9]|2[0-4]):([0-5][0-9])$");
 		horarioFimTF.setName("horarioFim");
+		if(horarioAulaDTO.getFim() != null) {
+			horarioFimTF.setValue(df.format(horarioAulaDTO.getFim()));
+		}
 		horarioFimTF.setFieldLabel("Horário Fim");
-		horarioFimTF.setEditable(false);
-		horarioFimTF.setHideTrigger(true);
+		horarioFimTF.setReadOnly(true);
 		formPanel.add(horarioFimTF, formData);
 		
 		FormButtonBinding binding = new FormButtonBinding(formPanel);
@@ -91,7 +101,7 @@ public class HorarioAulaFormView extends MyComposite implements HorarioAulaFormP
 	}
 
 	@Override
-	public TimeField getHorarioInicioTextField() {
+	public TextField<String> getHorarioInicioTextField() {
 		return horarioInicioTF;
 	}
 	
