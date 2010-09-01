@@ -10,8 +10,8 @@ import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.grid.ColumnConfig;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayout;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
-import com.gapso.web.trieda.client.mvp.model.PeriodoDeAulaDTO;
-import com.gapso.web.trieda.client.mvp.presenter.PeriodosDeAulaPresenter;
+import com.gapso.web.trieda.client.mvp.model.HorarioAulaDTO;
+import com.gapso.web.trieda.client.mvp.presenter.HorariosAulaPresenter;
 import com.gapso.web.trieda.client.services.Services;
 import com.gapso.web.trieda.client.util.resources.Resources;
 import com.gapso.web.trieda.client.util.view.GTabItem;
@@ -19,14 +19,14 @@ import com.gapso.web.trieda.client.util.view.SimpleGrid;
 import com.gapso.web.trieda.client.util.view.SimpleToolBar;
 import com.gapso.web.trieda.client.util.view.simplecrud.ISimpleGridService;
 
-public class PeriodosDeAulaView extends MyComposite implements PeriodosDeAulaPresenter.Display {
+public class HorariosAulaView extends MyComposite implements HorariosAulaPresenter.Display {
 
 	private SimpleToolBar toolBar;
-	private SimpleGrid<PeriodoDeAulaDTO> gridPanel;
+	private SimpleGrid<HorarioAulaDTO> gridPanel;
 	private ContentPanel panel;
 	private GTabItem tabItem;
 	
-	public PeriodosDeAulaView() {
+	public HorariosAulaView() {
 		initUI();
 	}
 	
@@ -53,9 +53,9 @@ public class PeriodosDeAulaView extends MyComposite implements PeriodosDeAulaPre
 		BorderLayoutData bld = new BorderLayoutData(LayoutRegion.CENTER);
 	    bld.setMargins(new Margins(5, 5, 5, 5));
 	    
-	    ISimpleGridService service = Services.periodosAula();
+	    ISimpleGridService service = Services.horariosAula();
 
-	    gridPanel = new SimpleGrid<PeriodoDeAulaDTO>(getColumnList(), service);
+	    gridPanel = new SimpleGrid<HorarioAulaDTO>(getColumnList(), service);
 	    panel.add(gridPanel, bld);
 	}
 
@@ -99,7 +99,7 @@ public class PeriodosDeAulaView extends MyComposite implements PeriodosDeAulaPre
 	}
 	
 	@Override
-	public SimpleGrid<PeriodoDeAulaDTO> getGrid() {
+	public SimpleGrid<HorarioAulaDTO> getGrid() {
 		return gridPanel;
 	}
 

@@ -6,8 +6,8 @@ import com.extjs.gxt.ui.client.widget.Info;
 import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.TimeField;
-import com.gapso.web.trieda.client.mvp.model.PeriodoDeAulaDTO;
-import com.gapso.web.trieda.client.services.PeriodosDeAulaServiceAsync;
+import com.gapso.web.trieda.client.mvp.model.HorarioAulaDTO;
+import com.gapso.web.trieda.client.services.HorariosAulaServiceAsync;
 import com.gapso.web.trieda.client.services.Services;
 import com.gapso.web.trieda.client.util.view.CalendarioComboBox;
 import com.gapso.web.trieda.client.util.view.SimpleGrid;
@@ -16,22 +16,22 @@ import com.gapso.web.trieda.client.util.view.TurnoComboBox;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
 
-public class PeriodoDeAulaFormPresenter implements Presenter {
+public class HorarioAulaFormPresenter implements Presenter {
 
 	public interface Display {
 		Button getSalvarButton();
 		CalendarioComboBox getCalendarioComboBox();
 		TurnoComboBox getTurnoComboBox();
 		TimeField getHorarioInicioTextField();
-		PeriodoDeAulaDTO getPeriodoDeAulaDTO();
+		HorarioAulaDTO getHorarioAulaDTO();
 		boolean isValid();
 		
 		SimpleModal getSimpleModal();
 	}
-	private SimpleGrid<PeriodoDeAulaDTO> gridPanel;
+	private SimpleGrid<HorarioAulaDTO> gridPanel;
 	private Display display;
 	
-	public PeriodoDeAulaFormPresenter(Display display, SimpleGrid<PeriodoDeAulaDTO> gridPanel) {
+	public HorarioAulaFormPresenter(Display display, SimpleGrid<HorarioAulaDTO> gridPanel) {
 		this.gridPanel = gridPanel;
 		this.display = display;
 		setListeners();
@@ -42,7 +42,7 @@ public class PeriodoDeAulaFormPresenter implements Presenter {
 			@Override
 			public void componentSelected(ButtonEvent ce) {
 				if(isValid()) {
-					final PeriodosDeAulaServiceAsync service = Services.periodosAula();
+					final HorariosAulaServiceAsync service = Services.horariosAula();
 					service.save(getDTO(), new AsyncCallback<Void>() {
 						@Override
 						public void onFailure(Throwable caught) {
@@ -66,8 +66,8 @@ public class PeriodoDeAulaFormPresenter implements Presenter {
 		return display.isValid();
 	}
 	
-	private PeriodoDeAulaDTO getDTO() {
-		PeriodoDeAulaDTO dto = display.getPeriodoDeAulaDTO();
+	private HorarioAulaDTO getDTO() {
+		HorarioAulaDTO dto = display.getHorarioAulaDTO();
 		dto.setCalendario(display.getCalendarioComboBox().getSelection().get(0).getId());
 		dto.setTurno(display.getTurnoComboBox().getSelection().get(0).getId());
 		dto.setInicio(display.getHorarioInicioTextField().getValue().getDate());

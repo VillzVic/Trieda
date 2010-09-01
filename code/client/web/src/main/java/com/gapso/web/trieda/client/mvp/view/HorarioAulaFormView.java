@@ -5,14 +5,14 @@ import com.extjs.gxt.ui.client.widget.form.FormButtonBinding;
 import com.extjs.gxt.ui.client.widget.form.FormPanel;
 import com.extjs.gxt.ui.client.widget.form.TimeField;
 import com.extjs.gxt.ui.client.widget.layout.FormData;
-import com.gapso.web.trieda.client.mvp.model.PeriodoDeAulaDTO;
-import com.gapso.web.trieda.client.mvp.presenter.PeriodoDeAulaFormPresenter;
+import com.gapso.web.trieda.client.mvp.model.HorarioAulaDTO;
+import com.gapso.web.trieda.client.mvp.presenter.HorarioAulaFormPresenter;
 import com.gapso.web.trieda.client.util.resources.Resources;
 import com.gapso.web.trieda.client.util.view.CalendarioComboBox;
 import com.gapso.web.trieda.client.util.view.SimpleModal;
 import com.gapso.web.trieda.client.util.view.TurnoComboBox;
 
-public class PeriodoDeAulaFormView extends MyComposite implements PeriodoDeAulaFormPresenter.Display {
+public class HorarioAulaFormView extends MyComposite implements HorarioAulaFormPresenter.Display {
 
 	private SimpleModal simpleModal;
 	private FormPanel formPanel;
@@ -20,10 +20,10 @@ public class PeriodoDeAulaFormView extends MyComposite implements PeriodoDeAulaF
 	private TurnoComboBox turnoCB;
 	private TimeField horarioInicioTF;
 	private TimeField horarioFimTF;
-	private PeriodoDeAulaDTO periodoDeAulaDTO;
+	private HorarioAulaDTO horarioAulaDTO;
 	
-	public PeriodoDeAulaFormView(PeriodoDeAulaDTO turnoDTO) {
-		this.periodoDeAulaDTO = turnoDTO;
+	public HorarioAulaFormView(HorarioAulaDTO horarioAulaDTO) {
+		this.horarioAulaDTO = horarioAulaDTO;
 		initUI();
 		// TODO
 //		initComponent(simpleModal);
@@ -31,7 +31,7 @@ public class PeriodoDeAulaFormView extends MyComposite implements PeriodoDeAulaF
 	}
 	
 	private void initUI() {
-		simpleModal = new SimpleModal("Turno", Resources.DEFAULTS.turnos16());
+		simpleModal = new SimpleModal("Horário de Aula", Resources.DEFAULTS.horarioAula16());
 		simpleModal.setHeight(187);
 		createForm();
 		simpleModal.setContent(formPanel);
@@ -101,8 +101,8 @@ public class PeriodoDeAulaFormView extends MyComposite implements PeriodoDeAulaF
 	}
 
 	@Override
-	public PeriodoDeAulaDTO getPeriodoDeAulaDTO() {
-		return periodoDeAulaDTO;
+	public HorarioAulaDTO getHorarioAulaDTO() {
+		return horarioAulaDTO;
 	}
 	
 

@@ -49,7 +49,7 @@ public class CalendariosView extends MyComposite implements CalendariosPresenter
 	private void createToolBar() {
 		toolBar = new SimpleToolBar();
 		toolBar.add(new SeparatorToolItem());
-		diasDeAulaButton = toolBar.createButton("Dias de Aula", Resources.DEFAULTS.periodoDeAula16());
+		diasDeAulaButton = toolBar.createButton("Dias de Aula", Resources.DEFAULTS.horarioAula16());
 		toolBar.add(diasDeAulaButton);
 		panel.setTopComponent(toolBar);
 	}

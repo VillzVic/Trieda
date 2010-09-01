@@ -39,8 +39,8 @@ public interface DefaultsIcons extends ClientBundle  {
 	@Source("curso16.png") ImageResource cursos16();
 	@Source("curso24.png") ImageResource cursos24();
 	
-	@Source("periodoaula16.png")
-	ImageResource periodoDeAula16();
+	@Source("horarioaula16.png")
+	ImageResource horarioAula16();
 	
 	@Source("matrizcurricular16.png")
 	ImageResource matrizCurricular16();

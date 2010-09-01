@@ -32,7 +32,7 @@ public class ToolBarView extends MyComposite implements ToolBarPresenter.Display
 	private MenuItem divisaoCreditosMI;
 	private MenuItem turnosListMI;
 	private MenuItem calendariosListMI;
-	private MenuItem periodosDeAulaListMI;
+	private MenuItem horariosAulaListMI;
 	
 	// Campi
 	private Button campiBt;
@@ -121,8 +121,8 @@ public class ToolBarView extends MyComposite implements ToolBarPresenter.Display
 		outros.add(turnosListMI);
 		calendariosListMI = createMenuItem("Calendarios", Resources.DEFAULTS.calendario16());
 		outros.add(calendariosListMI);
-		periodosDeAulaListMI = createMenuItem("Períodos de Aula", Resources.DEFAULTS.periodoDeAula16());
-		outros.add(periodosDeAulaListMI);
+		horariosAulaListMI = createMenuItem("Horários de Aula", Resources.DEFAULTS.horarioAula16());
+		outros.add(horariosAulaListMI);
 		
 		outrosUnidadesSBt.setMenu(outros);
 		group.add(outrosUnidadesSBt);
@@ -381,16 +381,6 @@ public class ToolBarView extends MyComposite implements ToolBarPresenter.Display
 		});
 		menuSalasBt.add(outros8);
 		
-		MenuItem outros9 = new MenuItem("Períodos de Aula");
-		outros9.setIcon(AbstractImagePrototype.create(Resources.DEFAULTS.periodoDeAula16()));
-		outros9.addSelectionListener(new SelectionListener<MenuEvent>() {
-			@Override
-			public void componentSelected(MenuEvent ce) {
-				Dispatcher.forwardEvent(AppEvents.PeriodoAulaList);
-			}
-		});
-		menuSalasBt.add(outros9);
-		
 		MenuItem outros11 = new MenuItem("Áreas de Titulação");
 		outros11.setIcon(AbstractImagePrototype.create(Resources.DEFAULTS.areasDeTitulacao16()));
 		outros11.addSelectionListener(new SelectionListener<MenuEvent>() {
@@ -520,8 +510,8 @@ public class ToolBarView extends MyComposite implements ToolBarPresenter.Display
 		return calendariosListMI;
 	}
 	@Override
-	public MenuItem getPeriodosDeAulaListMenuItem() {
-		return periodosDeAulaListMI;
+	public MenuItem getHorariosAulaListMenuItem() {
+		return horariosAulaListMI;
 	}
 	
 }

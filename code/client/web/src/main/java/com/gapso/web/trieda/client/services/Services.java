@@ -21,7 +21,7 @@ public class Services {
 	public static final String PROFESSORESDISCIPLINAS = "professoresDisciplinas";
 	public static final String DEMANDAS = "demandas";
 	public static final String DIVISOESCREDITOS = "divisoescreditos";
-	public static final String PERIODOSAULA = "periodosaula";
+	public static final String HORARIOSAULA = "horariosaula";
 	public static final String AREASTITULACAO = "areasTitulacao";
 	public static final String CALENDARIOS = "calendarios";
 	
@@ -42,7 +42,7 @@ public class Services {
 		if(id.equals(PROFESSORESDISCIPLINAS)) return professoresDisciplinas();
 		if(id.equals(DEMANDAS)) return demandas();
 		if(id.equals(DIVISOESCREDITOS)) return divisoesCreditos();
-		if(id.equals(PERIODOSAULA)) return periodosAula();
+		if(id.equals(HORARIOSAULA)) return horariosAula();
 		if(id.equals(AREASTITULACAO)) return areasTitulacao();
 		if(id.equals(CALENDARIOS)) return calendarios();
 		return null;
@@ -192,11 +192,11 @@ public class Services {
 		return service;
 	}
 	
-	public static PeriodosDeAulaServiceAsync periodosAula() {
-		PeriodosDeAulaServiceAsync service = (PeriodosDeAulaServiceAsync) Registry.get(PERIODOSAULA);
+	public static HorariosAulaServiceAsync horariosAula() {
+		HorariosAulaServiceAsync service = (HorariosAulaServiceAsync) Registry.get(HORARIOSAULA);
 		if(service == null) {
-			service = GWT.create(PeriodosDeAulaService.class);
-			Registry.register(PERIODOSAULA, service);
+			service = GWT.create(HorariosAulaService.class);
+			Registry.register(HORARIOSAULA, service);
 		}
 		return service;
 	}

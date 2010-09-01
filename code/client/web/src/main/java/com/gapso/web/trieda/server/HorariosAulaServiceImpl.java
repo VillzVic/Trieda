@@ -8,21 +8,21 @@ import com.extjs.gxt.ui.client.data.BasePagingLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.gapso.trieda.domain.HorarioAula;
-import com.gapso.web.trieda.client.mvp.model.PeriodoDeAulaDTO;
-import com.gapso.web.trieda.client.services.PeriodosDeAulaService;
+import com.gapso.web.trieda.client.mvp.model.HorarioAulaDTO;
+import com.gapso.web.trieda.client.services.HorariosAulaService;
 import com.gapso.web.trieda.server.util.ConvertBeans;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 /**
  * The server side implementation of the RPC service.
  */
-public class PeriodosDeAulaServiceImpl extends RemoteServiceServlet implements PeriodosDeAulaService {
+public class HorariosAulaServiceImpl extends RemoteServiceServlet implements HorariosAulaService {
 
 	private static final long serialVersionUID = 5250776996542788849L;
 
 	@Override
-	public PagingLoadResult<PeriodoDeAulaDTO> getList(PagingLoadConfig config) {
-		List<PeriodoDeAulaDTO> list = new ArrayList<PeriodoDeAulaDTO>();
+	public PagingLoadResult<HorarioAulaDTO> getList(PagingLoadConfig config) {
+		List<HorarioAulaDTO> list = new ArrayList<HorarioAulaDTO>();
 		String orderBy = config.getSortField();
 		if(orderBy != null) {
 			if(config.getSortDir() != null && config.getSortDir().equals(SortDir.DESC)) {
@@ -32,17 +32,17 @@ public class PeriodosDeAulaServiceImpl extends RemoteServiceServlet implements P
 			}
 		}
 		for(HorarioAula horarioAula : HorarioAula.find(config.getOffset(), config.getLimit(), orderBy)) {
-			list.add(ConvertBeans.toPeriodoDeAulaDTO(horarioAula));
+			list.add(ConvertBeans.toHorarioAulaDTO(horarioAula));
 		}
-		BasePagingLoadResult<PeriodoDeAulaDTO> result = new BasePagingLoadResult<PeriodoDeAulaDTO>(list);
+		BasePagingLoadResult<HorarioAulaDTO> result = new BasePagingLoadResult<HorarioAulaDTO>(list);
 		result.setOffset(config.getOffset());
 		result.setTotalLength(HorarioAula.count());
 		return result;
 	}
 
 	@Override
-	public void save(PeriodoDeAulaDTO periodoDeAulaDTO) {
-		HorarioAula horarioDeAula = ConvertBeans.toHorarioAula(periodoDeAulaDTO);
+	public void save(HorarioAulaDTO horarioAulaDTO) {
+		HorarioAula horarioDeAula = ConvertBeans.toHorarioAula(horarioAulaDTO);
 		if(horarioDeAula.getId() != null && horarioDeAula.getId() > 0) {
 			horarioDeAula.merge();
 		} else {
@@ -51,9 +51,9 @@ public class PeriodosDeAulaServiceImpl extends RemoteServiceServlet implements P
 	}
 	
 	@Override
-	public void remove(List<PeriodoDeAulaDTO> periodoDeAulaDTOList) {
-		for(PeriodoDeAulaDTO periodoDeAulaDTO : periodoDeAulaDTOList) {
-			ConvertBeans.toHorarioAula(periodoDeAulaDTO).remove();
+	public void remove(List<HorarioAulaDTO> horariosAulaDTOList) {
+		for(HorarioAulaDTO horarioAulaDTO : horariosAulaDTOList) {
+			ConvertBeans.toHorarioAula(horarioAulaDTO).remove();
 		}
 	}
 

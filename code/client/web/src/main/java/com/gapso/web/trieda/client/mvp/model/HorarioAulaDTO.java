@@ -5,14 +5,14 @@ import java.util.Date;
 import com.extjs.gxt.ui.client.data.BaseModel;
 
 
-public class PeriodoDeAulaDTO extends BaseModel {
+public class HorarioAulaDTO extends BaseModel {
 
 	private static final long serialVersionUID = -4670030478798237916L;
 	
-	public PeriodoDeAulaDTO() {
+	public HorarioAulaDTO() {
 	}
 
-	public PeriodoDeAulaDTO(Long id, Long calendario, Long turno, Date inicio, Date fim, Integer version) {
+	public HorarioAulaDTO(Long id, Long calendario, Long turno, Date inicio, Date fim, Integer version) {
 		setId(id);
 		setCalendario(calendario);
 		setTurno(turno);
