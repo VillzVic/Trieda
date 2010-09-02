@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.extjs.gxt.ui.client.Style.LayoutRegion;
+import com.extjs.gxt.ui.client.data.PagingLoadResult;
+import com.extjs.gxt.ui.client.data.RpcProxy;
 import com.extjs.gxt.ui.client.util.Margins;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
 import com.extjs.gxt.ui.client.widget.button.Button;
@@ -13,12 +15,10 @@ import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
 import com.extjs.gxt.ui.client.widget.toolbar.SeparatorToolItem;
 import com.gapso.web.trieda.client.mvp.model.CalendarioDTO;
 import com.gapso.web.trieda.client.mvp.presenter.CalendariosPresenter;
-import com.gapso.web.trieda.client.services.Services;
 import com.gapso.web.trieda.client.util.resources.Resources;
 import com.gapso.web.trieda.client.util.view.GTabItem;
 import com.gapso.web.trieda.client.util.view.SimpleGrid;
 import com.gapso.web.trieda.client.util.view.SimpleToolBar;
-import com.gapso.web.trieda.client.util.view.simplecrud.ISimpleGridService;
 
 public class CalendariosView extends MyComposite implements CalendariosPresenter.Display {
 
@@ -58,9 +58,7 @@ public class CalendariosView extends MyComposite implements CalendariosPresenter
 		BorderLayoutData bld = new BorderLayoutData(LayoutRegion.CENTER);
 	    bld.setMargins(new Margins(5, 5, 5, 5));
 	    
-	    ISimpleGridService service = Services.calendarios();
-	    	    
-	    gridPanel = new SimpleGrid<CalendarioDTO>(getColumnList(), service);
+	    gridPanel = new SimpleGrid<CalendarioDTO>(getColumnList());
 	    panel.add(gridPanel, bld);
 	}
 
@@ -111,4 +109,9 @@ public class CalendariosView extends MyComposite implements CalendariosPresenter
 		return diasDeAulaButton;
 	}
 
+	@Override
+	public void setProxy(RpcProxy<PagingLoadResult<CalendarioDTO>> proxy) {
+		gridPanel.setProxy(proxy);
+	}
+	
 }

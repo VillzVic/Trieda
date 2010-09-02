@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.extjs.gxt.ui.client.Style.LayoutRegion;
+import com.extjs.gxt.ui.client.data.PagingLoadResult;
+import com.extjs.gxt.ui.client.data.RpcProxy;
 import com.extjs.gxt.ui.client.util.Margins;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
 import com.extjs.gxt.ui.client.widget.button.Button;
@@ -12,12 +14,10 @@ import com.extjs.gxt.ui.client.widget.layout.BorderLayout;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
 import com.gapso.web.trieda.client.mvp.model.TurnoDTO;
 import com.gapso.web.trieda.client.mvp.presenter.TurnosPresenter;
-import com.gapso.web.trieda.client.services.Services;
 import com.gapso.web.trieda.client.util.resources.Resources;
 import com.gapso.web.trieda.client.util.view.GTabItem;
 import com.gapso.web.trieda.client.util.view.SimpleGrid;
 import com.gapso.web.trieda.client.util.view.SimpleToolBar;
-import com.gapso.web.trieda.client.util.view.simplecrud.ISimpleGridService;
 
 public class TurnosView extends MyComposite implements TurnosPresenter.Display {
 
@@ -38,7 +38,7 @@ public class TurnosView extends MyComposite implements TurnosPresenter.Display {
 		createTabItem();
 		initComponent(tabItem);
 	}
-	
+
 	private void createTabItem() {
 		tabItem = new GTabItem("Turnos", Resources.DEFAULTS.turnos16());
 		tabItem.setContent(panel);
@@ -53,9 +53,7 @@ public class TurnosView extends MyComposite implements TurnosPresenter.Display {
 		BorderLayoutData bld = new BorderLayoutData(LayoutRegion.CENTER);
 	    bld.setMargins(new Margins(5, 5, 5, 5));
 	    
-	    ISimpleGridService service = Services.turnos();
-	    	    
-	    gridPanel = new SimpleGrid<TurnoDTO>(getColumnList(), service);
+	    gridPanel = new SimpleGrid<TurnoDTO>(getColumnList());
 	    panel.add(gridPanel, bld);
 	}
 
@@ -99,6 +97,11 @@ public class TurnosView extends MyComposite implements TurnosPresenter.Display {
 	@Override
 	public SimpleGrid<TurnoDTO> getGrid() {
 		return gridPanel;
+	}
+	
+	@Override
+	public void setProxy(RpcProxy<PagingLoadResult<TurnoDTO>> proxy) {
+		gridPanel.setProxy(proxy);
 	}
 
 }

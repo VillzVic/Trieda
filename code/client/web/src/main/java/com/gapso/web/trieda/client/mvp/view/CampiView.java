@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.extjs.gxt.ui.client.Style.LayoutRegion;
+import com.extjs.gxt.ui.client.data.PagingLoadResult;
+import com.extjs.gxt.ui.client.data.RpcProxy;
 import com.extjs.gxt.ui.client.util.Margins;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
 import com.extjs.gxt.ui.client.widget.button.Button;
@@ -12,12 +14,10 @@ import com.extjs.gxt.ui.client.widget.layout.BorderLayout;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
 import com.gapso.web.trieda.client.mvp.model.CampusDTO;
 import com.gapso.web.trieda.client.mvp.presenter.CampiPresenter;
-import com.gapso.web.trieda.client.services.Services;
 import com.gapso.web.trieda.client.util.resources.Resources;
 import com.gapso.web.trieda.client.util.view.GTabItem;
 import com.gapso.web.trieda.client.util.view.SimpleGrid;
 import com.gapso.web.trieda.client.util.view.SimpleToolBar;
-import com.gapso.web.trieda.client.util.view.simplecrud.ISimpleGridService;
 
 public class CampiView extends MyComposite implements CampiPresenter.Display {
 
@@ -53,9 +53,7 @@ public class CampiView extends MyComposite implements CampiPresenter.Display {
 		BorderLayoutData bld = new BorderLayoutData(LayoutRegion.CENTER);
 	    bld.setMargins(new Margins(5, 5, 5, 5));
 	    
-	    ISimpleGridService service = Services.campi();
-	    	    
-	    gridPanel = new SimpleGrid<CampusDTO>(getColumnList(), service);
+	    gridPanel = new SimpleGrid<CampusDTO>(getColumnList());
 	    panel.add(gridPanel, bld);
 	}
 
@@ -101,4 +99,9 @@ public class CampiView extends MyComposite implements CampiPresenter.Display {
 		return gridPanel;
 	}
 
+	@Override
+	public void setProxy(RpcProxy<PagingLoadResult<CampusDTO>> proxy) {
+		gridPanel.setProxy(proxy);
+	}
+	
 }

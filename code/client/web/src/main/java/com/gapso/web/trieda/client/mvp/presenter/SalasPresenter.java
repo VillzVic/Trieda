@@ -2,6 +2,9 @@ package com.gapso.web.trieda.client.mvp.presenter;
 
 import java.util.List;
 
+import com.extjs.gxt.ui.client.data.PagingLoadConfig;
+import com.extjs.gxt.ui.client.data.PagingLoadResult;
+import com.extjs.gxt.ui.client.data.RpcProxy;
 import com.extjs.gxt.ui.client.event.ButtonEvent;
 import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.widget.Component;
@@ -10,8 +13,8 @@ import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.gapso.web.trieda.client.mvp.model.SalaDTO;
 import com.gapso.web.trieda.client.mvp.view.SalaFormView;
-import com.gapso.web.trieda.client.services.Services;
 import com.gapso.web.trieda.client.services.SalasServiceAsync;
+import com.gapso.web.trieda.client.services.Services;
 import com.gapso.web.trieda.client.util.view.GTab;
 import com.gapso.web.trieda.client.util.view.GTabItem;
 import com.gapso.web.trieda.client.util.view.SimpleGrid;
@@ -29,14 +32,27 @@ public class SalasPresenter implements Presenter {
 		SimpleGrid<SalaDTO> getGrid();
 		GTabItem getGTabItem();
 		Component getComponent();
+		void setProxy(RpcProxy<PagingLoadResult<SalaDTO>> proxy);
 	}
 	private Display display; 
 	
 	public SalasPresenter(Display display) {
 		this.display = display;
+		configureProxy();
 		setListeners();
 	}
 
+	private void configureProxy() {
+		final SalasServiceAsync service = Services.salas();
+		RpcProxy<PagingLoadResult<SalaDTO>> proxy = new RpcProxy<PagingLoadResult<SalaDTO>>() {
+			@Override
+			public void load(Object loadConfig, AsyncCallback<PagingLoadResult<SalaDTO>> callback) {
+				service.getList((PagingLoadConfig)loadConfig, callback);
+			}
+		};
+		display.setProxy(proxy);
+	}
+	
 	private void setListeners() {
 		display.getNewButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
 			@Override

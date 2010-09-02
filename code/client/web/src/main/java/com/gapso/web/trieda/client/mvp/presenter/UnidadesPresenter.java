@@ -2,6 +2,9 @@ package com.gapso.web.trieda.client.mvp.presenter;
 
 import java.util.List;
 
+import com.extjs.gxt.ui.client.data.PagingLoadConfig;
+import com.extjs.gxt.ui.client.data.PagingLoadResult;
+import com.extjs.gxt.ui.client.data.RpcProxy;
 import com.extjs.gxt.ui.client.event.ButtonEvent;
 import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.widget.Component;
@@ -29,14 +32,27 @@ public class UnidadesPresenter implements Presenter {
 		SimpleGrid<UnidadeDTO> getGrid();
 		GTabItem getGTabItem();
 		Component getComponent();
+		void setProxy(RpcProxy<PagingLoadResult<UnidadeDTO>> proxy);
 	}
 	private Display display; 
 	
 	public UnidadesPresenter(Display display) {
 		this.display = display;
+		configureProxy();
 		setListeners();
 	}
 
+	private void configureProxy() {
+		final UnidadesServiceAsync service = Services.unidades();
+		RpcProxy<PagingLoadResult<UnidadeDTO>> proxy = new RpcProxy<PagingLoadResult<UnidadeDTO>>() {
+			@Override
+			public void load(Object loadConfig, AsyncCallback<PagingLoadResult<UnidadeDTO>> callback) {
+				service.getList((PagingLoadConfig)loadConfig, callback);
+			}
+		};
+		display.setProxy(proxy);
+	}
+	
 	private void setListeners() {
 		display.getNewButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
 			@Override

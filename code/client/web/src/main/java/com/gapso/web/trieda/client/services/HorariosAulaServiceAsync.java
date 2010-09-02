@@ -5,10 +5,9 @@ import java.util.List;
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.gapso.web.trieda.client.mvp.model.HorarioAulaDTO;
-import com.gapso.web.trieda.client.util.view.simplecrud.ISimpleGridService;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-public interface HorariosAulaServiceAsync extends ISimpleGridService {
+public interface HorariosAulaServiceAsync {
 	
 	void getList(PagingLoadConfig config, AsyncCallback<PagingLoadResult<HorarioAulaDTO>> callback);
 	void save(HorarioAulaDTO horarioAulaDTO, AsyncCallback<Void> callback);

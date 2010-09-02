@@ -6,10 +6,9 @@ import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.gapso.web.trieda.client.mvp.model.TurnoDTO;
-import com.gapso.web.trieda.client.util.view.simplecrud.ISimpleGridService;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-public interface TurnosServiceAsync extends ISimpleGridService {
+public interface TurnosServiceAsync {
 	
 	void getList(PagingLoadConfig config, AsyncCallback<PagingLoadResult<TurnoDTO>> callback);
 	void getList(AsyncCallback<ListLoadResult<TurnoDTO>> callback);

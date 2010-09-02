@@ -6,10 +6,9 @@ import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.gapso.web.trieda.client.mvp.model.CampusDTO;
-import com.gapso.web.trieda.client.util.view.simplecrud.ISimpleGridService;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-public interface CampiServiceAsync extends ISimpleGridService {
+public interface CampiServiceAsync {
 	
 	void getList(PagingLoadConfig config, AsyncCallback<PagingLoadResult<CampusDTO>> callback);
 	void getList(AsyncCallback<ListLoadResult<CampusDTO>> callback);

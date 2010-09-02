@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.extjs.gxt.ui.client.Style.LayoutRegion;
+import com.extjs.gxt.ui.client.data.PagingLoadResult;
+import com.extjs.gxt.ui.client.data.RpcProxy;
 import com.extjs.gxt.ui.client.util.Margins;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
 import com.extjs.gxt.ui.client.widget.button.Button;
@@ -12,12 +14,10 @@ import com.extjs.gxt.ui.client.widget.layout.BorderLayout;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
 import com.gapso.web.trieda.client.mvp.model.SalaDTO;
 import com.gapso.web.trieda.client.mvp.presenter.SalasPresenter;
-import com.gapso.web.trieda.client.services.Services;
 import com.gapso.web.trieda.client.util.resources.Resources;
 import com.gapso.web.trieda.client.util.view.GTabItem;
 import com.gapso.web.trieda.client.util.view.SimpleGrid;
 import com.gapso.web.trieda.client.util.view.SimpleToolBar;
-import com.gapso.web.trieda.client.util.view.simplecrud.ISimpleGridService;
 
 public class SalasView extends MyComposite implements SalasPresenter.Display {
 
@@ -53,9 +53,7 @@ public class SalasView extends MyComposite implements SalasPresenter.Display {
 		BorderLayoutData bld = new BorderLayoutData(LayoutRegion.CENTER);
 	    bld.setMargins(new Margins(5, 5, 5, 5));
 	    
-	    ISimpleGridService service = Services.salas();
-	    
-	    gridPanel = new SimpleGrid<SalaDTO>(getColumnList(), service);
+	    gridPanel = new SimpleGrid<SalaDTO>(getColumnList());
 	    panel.add(gridPanel, bld);
 	}
 
@@ -105,4 +103,9 @@ public class SalasView extends MyComposite implements SalasPresenter.Display {
 		return gridPanel;
 	}
 
+	@Override
+	public void setProxy(RpcProxy<PagingLoadResult<SalaDTO>> proxy) {
+		gridPanel.setProxy(proxy);
+	}
+	
 }

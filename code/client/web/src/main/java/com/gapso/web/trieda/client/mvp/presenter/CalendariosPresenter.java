@@ -2,6 +2,9 @@ package com.gapso.web.trieda.client.mvp.presenter;
 
 import java.util.List;
 
+import com.extjs.gxt.ui.client.data.PagingLoadConfig;
+import com.extjs.gxt.ui.client.data.PagingLoadResult;
+import com.extjs.gxt.ui.client.data.RpcProxy;
 import com.extjs.gxt.ui.client.event.ButtonEvent;
 import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.mvc.Dispatcher;
@@ -32,14 +35,27 @@ public class CalendariosPresenter implements Presenter {
 		SimpleGrid<CalendarioDTO> getGrid();
 		GTabItem getGTabItem();
 		Component getComponent();
+		void setProxy(RpcProxy<PagingLoadResult<CalendarioDTO>> proxy);
 	}
 	private Display display; 
 	
 	public CalendariosPresenter(Display display) {
 		this.display = display;
+		configureProxy();
 		setListeners();
 	}
 
+	private void configureProxy() {
+		final CalendariosServiceAsync service = Services.calendarios();
+		RpcProxy<PagingLoadResult<CalendarioDTO>> proxy = new RpcProxy<PagingLoadResult<CalendarioDTO>>() {
+			@Override
+			public void load(Object loadConfig, AsyncCallback<PagingLoadResult<CalendarioDTO>> callback) {
+				service.getList((PagingLoadConfig)loadConfig, callback);
+			}
+		};
+		display.setProxy(proxy);
+	}
+	
 	private void setListeners() {
 		display.getNewButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
 			@Override

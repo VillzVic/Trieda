@@ -7,10 +7,9 @@ import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.gapso.web.trieda.client.mvp.model.SalaDTO;
 import com.gapso.web.trieda.client.mvp.model.TipoSalaDTO;
-import com.gapso.web.trieda.client.util.view.simplecrud.ISimpleGridService;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-public interface SalasServiceAsync extends ISimpleGridService {
+public interface SalasServiceAsync {
 
 	void getList(PagingLoadConfig config, AsyncCallback<PagingLoadResult<SalaDTO>> callback);
 	void getList(AsyncCallback<ListLoadResult<SalaDTO>> callback);

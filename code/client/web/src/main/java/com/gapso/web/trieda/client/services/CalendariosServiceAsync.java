@@ -6,10 +6,9 @@ import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.gapso.web.trieda.client.mvp.model.CalendarioDTO;
-import com.gapso.web.trieda.client.util.view.simplecrud.ISimpleGridService;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-public interface CalendariosServiceAsync extends ISimpleGridService {
+public interface CalendariosServiceAsync {
 	
 	void getList(PagingLoadConfig config, AsyncCallback<PagingLoadResult<CalendarioDTO>> callback);
 	void getList(AsyncCallback<ListLoadResult<CalendarioDTO>> callback);
