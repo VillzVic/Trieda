@@ -286,12 +286,6 @@ public class ToolBarView extends MyComposite implements ToolBarPresenter.Display
 		group.add(campiBt, data);
 		
 		Button unidadesBt = new Button("Unidades");
-		unidadesBt.addSelectionListener(new SelectionListener<ButtonEvent>() {
-			@Override
-			public void componentSelected(ButtonEvent ce) {
-				Dispatcher.forwardEvent(AppEvents.UnidadeList);
-			}
-		});
 		unidadesBt.setIconAlign(IconAlign.LEFT);
 		unidadesBt.setIcon(AbstractImagePrototype.create(Resources.DEFAULTS.unidade16()));
 		group.add(unidadesBt);

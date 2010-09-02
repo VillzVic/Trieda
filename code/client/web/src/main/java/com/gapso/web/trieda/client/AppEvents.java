@@ -10,7 +10,6 @@ public class AppEvents {
 	public static final EventType CampusProfessorList = new EventType();
 	public static final EventType CampusProfessorView = new EventType();
 	
-	public static final EventType UnidadeList = new EventType();
 	public static final EventType UnidadeDeslocamento= new EventType();
 	
 	public static final EventType SalaList = new EventType();
