@@ -156,23 +156,27 @@ public class Sala implements java.io.Serializable {
         return em;
     }
 
-	public static long countSalas() {
-        return ((Number) entityManager().createQuery("select count(o) from Sala o").getSingleResult()).longValue();
+	public static int count() {
+        return ((Number) entityManager().createQuery("select count(o) from Sala o").getSingleResult()).intValue();
     }
 
 	@SuppressWarnings("unchecked")
-    public static List<Sala> findAllSalas() {
+    public static List<Sala> findAll() {
         return entityManager().createQuery("select o from Sala o").getResultList();
     }
 
-	public static Sala findSala(Long id) {
+	public static Sala find(Long id) {
         if (id == null) return null;
         return entityManager().find(Sala.class, id);
     }
 
+	public static List<Sala> find(int firstResult, int maxResults) {
+		return find(firstResult, maxResults, null);
+	}
 	@SuppressWarnings("unchecked")
-    public static List<Sala> findSalaEntries(int firstResult, int maxResults) {
-        return entityManager().createQuery("select o from Sala o").setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
+    public static List<Sala> find(int firstResult, int maxResults, String orderBy) {
+		orderBy = (orderBy != null)? "ORDER BY o."+orderBy : "";
+        return entityManager().createQuery("select o from Sala o "+orderBy).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
 
 	public TipoSala getTipoSala() {

@@ -129,22 +129,26 @@ public class TipoSala implements java.io.Serializable {
         return em;
     }
 
-	public static long countTipoSalas() {
+	public static long count() {
         return ((Number) entityManager().createQuery("select count(o) from TipoSala o").getSingleResult()).longValue();
     }
 
 	@SuppressWarnings("unchecked")
-    public static List<TipoSala> findAllTipoSalas() {
+    public static List<TipoSala> findAll() {
         return entityManager().createQuery("select o from TipoSala o").getResultList();
     }
 
-	public static TipoSala findTipoSala(Long id) {
+	public static TipoSala find(Long id) {
         if (id == null) return null;
         return entityManager().find(TipoSala.class, id);
     }
 
+	public static List<TipoSala> find(int firstResult, int maxResults) {
+		return find(firstResult, maxResults, null);
+	}
 	@SuppressWarnings("unchecked")
-    public static List<TipoSala> findTipoSalaEntries(int firstResult, int maxResults) {
-        return entityManager().createQuery("select o from TipoSala o").setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
+    public static List<TipoSala> find(int firstResult, int maxResults, String orderBy) {
+		orderBy = (orderBy != null)? "ORDER BY o."+orderBy : "";
+        return entityManager().createQuery("select o from TipoSala o "+orderBy).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
 }
