@@ -11,6 +11,7 @@ import com.gapso.web.trieda.client.mvp.view.CalendariosView;
 import com.gapso.web.trieda.client.mvp.view.CampiView;
 import com.gapso.web.trieda.client.mvp.view.HorariosAulaView;
 import com.gapso.web.trieda.client.mvp.view.TurnosView;
+import com.gapso.web.trieda.client.mvp.view.UnidadesView;
 import com.gapso.web.trieda.client.util.view.GTab;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -24,6 +25,7 @@ public class ToolBarPresenter implements Presenter {
 		MenuItem getCalendariosListMenuItem();
 		MenuItem getHorariosAulaListMenuItem();
 		MenuItem getCampiListMenuItem();
+		MenuItem getUnidadesListMenuItem();
 		
 		Component getComponent();
 	}
@@ -74,6 +76,13 @@ public class ToolBarPresenter implements Presenter {
 			@Override
 			public void componentSelected(MenuEvent ce) {
 				Presenter presenter = new CampiPresenter(new CampiView());
+				presenter.go(gTab);
+			}
+		});
+		toolBar.getUnidadesListMenuItem().addSelectionListener(new SelectionListener<MenuEvent>() {
+			@Override
+			public void componentSelected(MenuEvent ce) {
+				Presenter presenter = new UnidadesPresenter(new UnidadesView());
 				presenter.go(gTab);
 			}
 		});

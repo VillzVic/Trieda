@@ -121,23 +121,27 @@ public class Unidade implements java.io.Serializable {
         return em;
     }
 
-	public static long countUnidades() {
-        return ((Number) entityManager().createQuery("select count(o) from Unidade o").getSingleResult()).longValue();
+	public static int count() {
+        return ((Number) entityManager().createQuery("select count(o) from Unidade o").getSingleResult()).intValue();
     }
 
 	@SuppressWarnings("unchecked")
-    public static List<Unidade> findAllUnidades() {
+    public static List<Unidade> findAll() {
         return entityManager().createQuery("select o from Unidade o").getResultList();
     }
 
-	public static Unidade findUnidade(Long id) {
+	public static Unidade find(Long id) {
         if (id == null) return null;
         return entityManager().find(Unidade.class, id);
     }
 
+	public static List<Unidade> find(int firstResult, int maxResults) {
+		return find(firstResult, maxResults, null);
+	}
 	@SuppressWarnings("unchecked")
-    public static List<Unidade> findUnidadeEntries(int firstResult, int maxResults) {
-        return entityManager().createQuery("select o from Unidade o").setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
+    public static List<Unidade> find(int firstResult, int maxResults, String orderBy) {
+		orderBy = (orderBy != null)? "ORDER BY o."+orderBy : "";
+        return entityManager().createQuery("select o from Unidade o "+orderBy).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
 
 	private static final long serialVersionUID = -5763084706316974453L;

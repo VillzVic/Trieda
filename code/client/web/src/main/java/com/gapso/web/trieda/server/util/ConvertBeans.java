@@ -6,10 +6,12 @@ import com.gapso.trieda.domain.Calendario;
 import com.gapso.trieda.domain.Campus;
 import com.gapso.trieda.domain.HorarioAula;
 import com.gapso.trieda.domain.Turno;
+import com.gapso.trieda.domain.Unidade;
 import com.gapso.web.trieda.client.mvp.model.CalendarioDTO;
 import com.gapso.web.trieda.client.mvp.model.CampusDTO;
 import com.gapso.web.trieda.client.mvp.model.HorarioAulaDTO;
 import com.gapso.web.trieda.client.mvp.model.TurnoDTO;
+import com.gapso.web.trieda.client.mvp.model.UnidadeDTO;
 
 public class ConvertBeans {
 	
@@ -29,6 +31,31 @@ public class ConvertBeans {
 		dto.setVersion(domain.getVersion());
 		dto.setNome(domain.getNome());
 		dto.setCodigo(domain.getCodigo());
+		return dto;
+	}
+	
+	// UNIDADE
+	public static Unidade toUnidade(UnidadeDTO dto) {
+		Unidade domain = new Unidade();
+		domain.setId(dto.getId());
+		domain.setVersion(dto.getVersion());
+		domain.setNome(dto.getNome());
+		domain.setCodigo(dto.getCodigo());
+		Campus campus = Campus.find(dto.getCampusId());
+		domain.setCampus(campus);
+		return domain;
+	}
+	
+	public static UnidadeDTO toUnidadeDTO(Unidade domain) {
+		UnidadeDTO dto = new UnidadeDTO();
+		dto.setId(domain.getId());
+		dto.setVersion(domain.getVersion());
+		dto.setNome(domain.getNome());
+		dto.setCodigo(domain.getCodigo());
+		
+		Campus campus = domain.getCampus();
+		dto.setCampusId(campus.getId());
+		dto.setCampusString(campus.getCodigo());
 		return dto;
 	}
 
