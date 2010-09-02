@@ -32,7 +32,7 @@ public class SimpleFilter extends FormPanel {
 	}
 
 	public void addField(Field<?> field) {
-		insert(field, 0, formDataFilter);
+		insert(field, getItemCount() - 1, formDataFilter);
 	}
 	
 	private void createButtons() {

@@ -52,7 +52,10 @@ public class TurnosPresenter implements Presenter {
 		RpcProxy<PagingLoadResult<TurnoDTO>> proxy = new RpcProxy<PagingLoadResult<TurnoDTO>>() {
 			@Override
 			public void load(Object loadConfig, AsyncCallback<PagingLoadResult<TurnoDTO>> callback) {
-				service.getList((PagingLoadConfig)loadConfig, callback);
+//				service.getList((PagingLoadConfig)loadConfig, callback);
+				String nome = display.getNomeBuscaTextField().getValue();
+				Number tempo = display.getTempoBuscaTextField().getValue();
+				service.getBuscaList(nome, (tempo==null)?null:tempo.intValue(), (PagingLoadConfig)loadConfig, callback);
 			}
 		};
 		display.setProxy(proxy);

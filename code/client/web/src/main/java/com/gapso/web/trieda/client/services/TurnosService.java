@@ -19,5 +19,6 @@ public interface TurnosService extends RemoteService {
 	ListLoadResult<TurnoDTO> getList();
 	void save(TurnoDTO turnoDTO);
 	void remove(List<TurnoDTO> turnoDTOList);
+	PagingLoadResult<TurnoDTO> getBuscaList(String nome, Integer tempo, PagingLoadConfig config);
 	
 }

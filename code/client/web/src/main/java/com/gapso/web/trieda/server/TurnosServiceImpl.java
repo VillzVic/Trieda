@@ -41,6 +41,26 @@ public class TurnosServiceImpl extends RemoteServiceServlet implements TurnosSer
 		result.setTotalLength(Turno.count());
 		return result;
 	}
+	
+	@Override
+	public PagingLoadResult<TurnoDTO> getBuscaList(String nome, Integer tempo, PagingLoadConfig config) {
+		List<TurnoDTO> list = new ArrayList<TurnoDTO>();
+		String orderBy = config.getSortField();
+		if(orderBy != null) {
+			if(config.getSortDir() != null && config.getSortDir().equals(SortDir.DESC)) {
+				orderBy = orderBy + " asc";
+			} else {
+				orderBy = orderBy + " desc";
+			}
+		}
+		for(Turno turno : Turno.findByNomeLikeAndTempo(nome, tempo, config.getOffset(), config.getLimit(), orderBy)) {
+			list.add(ConvertBeans.toTurnoDTO(turno));
+		}
+		BasePagingLoadResult<TurnoDTO> result = new BasePagingLoadResult<TurnoDTO>(list);
+		result.setOffset(config.getOffset());
+		result.setTotalLength(Turno.count());
+		return result;
+	}
 
 	@Override
 	public ListLoadResult<TurnoDTO> getList() {

@@ -14,5 +14,6 @@ public interface TurnosServiceAsync {
 	void getList(AsyncCallback<ListLoadResult<TurnoDTO>> callback);
 	void save(TurnoDTO turnoDTO, AsyncCallback<Void> callback);
 	void remove(List<TurnoDTO> turnoDTOList, AsyncCallback<Void> callback);
+	void getBuscaList(String nome, Integer tempo, PagingLoadConfig config, AsyncCallback<PagingLoadResult<TurnoDTO>> callback);
 	
 }
