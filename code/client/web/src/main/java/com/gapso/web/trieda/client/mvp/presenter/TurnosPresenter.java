@@ -11,6 +11,8 @@ import com.extjs.gxt.ui.client.widget.Component;
 import com.extjs.gxt.ui.client.widget.Info;
 import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.button.Button;
+import com.extjs.gxt.ui.client.widget.form.NumberField;
+import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.gapso.web.trieda.client.mvp.model.TurnoDTO;
 import com.gapso.web.trieda.client.mvp.view.TurnoFormView;
 import com.gapso.web.trieda.client.services.Services;
@@ -29,8 +31,11 @@ public class TurnosPresenter implements Presenter {
 		Button getRemoveButton();
 		Button getImportExcelButton();
 		Button getExportExcelButton();
+		TextField<String> getNomeBuscaTextField();
+		NumberField getTempoBuscaTextField();
+		Button getSubmitBuscaButton();
+		Button getResetBuscaButton();
 		SimpleGrid<TurnoDTO> getGrid();
-		GTabItem getGTabItem();
 		Component getComponent();
 		void setProxy(RpcProxy<PagingLoadResult<TurnoDTO>> proxy);
 	}
@@ -85,6 +90,20 @@ public class TurnosPresenter implements Presenter {
 						Info.display("Removido", "Item removido com sucesso!");
 					}
 				});
+			}
+		});
+		display.getResetBuscaButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
+			@Override
+			public void componentSelected(ButtonEvent ce) {
+				display.getNomeBuscaTextField().setValue(null);
+				display.getTempoBuscaTextField().setValue(null);
+				display.getGrid().updateList();
+			}
+		});
+		display.getSubmitBuscaButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
+			@Override
+			public void componentSelected(ButtonEvent ce) {
+				display.getGrid().updateList();
 			}
 		});
 	}
