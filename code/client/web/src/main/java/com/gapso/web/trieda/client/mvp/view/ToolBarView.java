@@ -3,7 +3,6 @@ package com.gapso.web.trieda.client.mvp.view;
 import com.extjs.gxt.ui.client.Style.ButtonArrowAlign;
 import com.extjs.gxt.ui.client.Style.ButtonScale;
 import com.extjs.gxt.ui.client.Style.IconAlign;
-import com.extjs.gxt.ui.client.event.ButtonEvent;
 import com.extjs.gxt.ui.client.event.MenuEvent;
 import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.mvc.Dispatcher;
@@ -35,6 +34,7 @@ public class ToolBarView extends MyComposite implements ToolBarPresenter.Display
 	private MenuItem horariosAulaListMI;
 	private MenuItem campiListMI;
 	private MenuItem unidadesListMI;
+	private MenuItem salasListMI;
 	
 	// Campi
 	private Button campiBt;
@@ -129,6 +129,8 @@ public class ToolBarView extends MyComposite implements ToolBarPresenter.Display
 		outros.add(campiListMI);
 		unidadesListMI = createMenuItem("Unidades", Resources.DEFAULTS.unidades16());
 		outros.add(unidadesListMI);
+		salasListMI = createMenuItem("Salas", Resources.DEFAULTS.sala16());
+		outros.add(salasListMI);
 		
 		outrosUnidadesSBt.setMenu(outros);
 		group.add(outrosUnidadesSBt);
@@ -514,6 +516,10 @@ public class ToolBarView extends MyComposite implements ToolBarPresenter.Display
 	@Override
 	public MenuItem getUnidadesListMenuItem() {
 		return unidadesListMI;
+	}
+	@Override
+	public MenuItem getSalasListMenuItem() {
+		return salasListMI;
 	}
 	
 }

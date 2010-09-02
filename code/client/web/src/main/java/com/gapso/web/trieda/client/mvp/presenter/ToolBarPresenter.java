@@ -10,6 +10,7 @@ import com.extjs.gxt.ui.client.widget.menu.MenuItem;
 import com.gapso.web.trieda.client.mvp.view.CalendariosView;
 import com.gapso.web.trieda.client.mvp.view.CampiView;
 import com.gapso.web.trieda.client.mvp.view.HorariosAulaView;
+import com.gapso.web.trieda.client.mvp.view.SalasView;
 import com.gapso.web.trieda.client.mvp.view.TurnosView;
 import com.gapso.web.trieda.client.mvp.view.UnidadesView;
 import com.gapso.web.trieda.client.util.view.GTab;
@@ -26,6 +27,7 @@ public class ToolBarPresenter implements Presenter {
 		MenuItem getHorariosAulaListMenuItem();
 		MenuItem getCampiListMenuItem();
 		MenuItem getUnidadesListMenuItem();
+		MenuItem getSalasListMenuItem();
 		
 		Component getComponent();
 	}
@@ -83,6 +85,13 @@ public class ToolBarPresenter implements Presenter {
 			@Override
 			public void componentSelected(MenuEvent ce) {
 				Presenter presenter = new UnidadesPresenter(new UnidadesView());
+				presenter.go(gTab);
+			}
+		});
+		toolBar.getSalasListMenuItem().addSelectionListener(new SelectionListener<MenuEvent>() {
+			@Override
+			public void componentSelected(MenuEvent ce) {
+				Presenter presenter = new SalasPresenter(new SalasView());
 				presenter.go(gTab);
 			}
 		});

@@ -1,7 +1,12 @@
 package com.gapso.web.trieda.client.services;
 
-import com.extjs.gxt.ui.client.data.ModelData;
+import java.util.List;
+
+import com.extjs.gxt.ui.client.data.ListLoadResult;
+import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
+import com.gapso.web.trieda.client.mvp.model.SalaDTO;
+import com.gapso.web.trieda.client.mvp.model.TipoSalaDTO;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
@@ -11,6 +16,10 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 @RemoteServiceRelativePath("salas")
 public interface SalasService extends RemoteService {
 	
-	public PagingLoadResult<ModelData> getList();
+	PagingLoadResult<SalaDTO> getList(PagingLoadConfig config);
+	ListLoadResult<SalaDTO> getList();
+	void save(SalaDTO salaDTO);
+	void remove(List<SalaDTO> salaDTOList);
+	ListLoadResult<TipoSalaDTO> getTipoSalaList();
 	
 }

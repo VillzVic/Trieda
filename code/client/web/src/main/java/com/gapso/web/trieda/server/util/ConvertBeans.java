@@ -5,11 +5,15 @@ import java.util.Calendar;
 import com.gapso.trieda.domain.Calendario;
 import com.gapso.trieda.domain.Campus;
 import com.gapso.trieda.domain.HorarioAula;
+import com.gapso.trieda.domain.Sala;
+import com.gapso.trieda.domain.TipoSala;
 import com.gapso.trieda.domain.Turno;
 import com.gapso.trieda.domain.Unidade;
 import com.gapso.web.trieda.client.mvp.model.CalendarioDTO;
 import com.gapso.web.trieda.client.mvp.model.CampusDTO;
 import com.gapso.web.trieda.client.mvp.model.HorarioAulaDTO;
+import com.gapso.web.trieda.client.mvp.model.SalaDTO;
+import com.gapso.web.trieda.client.mvp.model.TipoSalaDTO;
 import com.gapso.web.trieda.client.mvp.model.TurnoDTO;
 import com.gapso.web.trieda.client.mvp.model.UnidadeDTO;
 
@@ -56,6 +60,59 @@ public class ConvertBeans {
 		Campus campus = domain.getCampus();
 		dto.setCampusId(campus.getId());
 		dto.setCampusString(campus.getCodigo());
+		return dto;
+	}
+	
+	// SALA
+	public static Sala toSala(SalaDTO dto) {
+		Sala domain = new Sala();
+		domain.setId(dto.getId());
+		domain.setVersion(dto.getVersion());
+		domain.setCodigo(dto.getCodigo());
+		domain.setNumero(dto.getNumero());
+		domain.setAndar(dto.getAndar());
+		domain.setCapacidade(dto.getCapacidade());
+		
+		TipoSala tipoSala = TipoSala.find(dto.getTipoId());
+		domain.setTipoSala(tipoSala);
+		
+		Unidade unidade = Unidade.find(dto.getUnidadeId());
+		domain.setUnidade(unidade);
+		
+		return domain;
+	}
+	
+	public static SalaDTO toSalaDTO(Sala domain) {
+		SalaDTO dto = new SalaDTO();
+		dto.setId(domain.getId());
+		dto.setVersion(domain.getVersion());
+		dto.setCodigo(domain.getCodigo());
+		dto.setNumero(domain.getNumero());
+		dto.setAndar(domain.getAndar());
+		dto.setCapacidade(domain.getCapacidade());
+		dto.setTipoId(domain.getTipoSala().getId());
+		dto.setTipoString(domain.getTipoSala().getNome());
+		dto.setUnidadeId(domain.getUnidade().getId());
+		dto.setUnidadeString(domain.getUnidade().getCodigo());
+		return dto;
+	}
+	
+	// TIPO SALA
+	public static TipoSala toTipoSala(TipoSalaDTO dto) {
+		TipoSala domain = new TipoSala();
+		domain.setId(dto.getId());
+		domain.setVersion(dto.getVersion());
+		domain.setNome(dto.getNome());
+		domain.setDescricao(dto.getDescricao());
+		return domain;
+	}
+	
+	public static TipoSalaDTO toTipoSalaDTO(TipoSala domain) {
+		TipoSalaDTO dto = new TipoSalaDTO();
+		dto.setId(domain.getId());
+		dto.setVersion(domain.getVersion());
+		dto.setNome(domain.getNome());
+		dto.setDescricao(domain.getDescricao());
 		return dto;
 	}
 
