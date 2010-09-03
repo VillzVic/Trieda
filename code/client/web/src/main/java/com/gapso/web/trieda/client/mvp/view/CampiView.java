@@ -9,6 +9,7 @@ import com.extjs.gxt.ui.client.data.RpcProxy;
 import com.extjs.gxt.ui.client.util.Margins;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
 import com.extjs.gxt.ui.client.widget.button.Button;
+import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.extjs.gxt.ui.client.widget.grid.ColumnConfig;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayout;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
@@ -16,6 +17,7 @@ import com.gapso.web.trieda.client.mvp.model.CampusDTO;
 import com.gapso.web.trieda.client.mvp.presenter.CampiPresenter;
 import com.gapso.web.trieda.client.util.resources.Resources;
 import com.gapso.web.trieda.client.util.view.GTabItem;
+import com.gapso.web.trieda.client.util.view.SimpleFilter;
 import com.gapso.web.trieda.client.util.view.SimpleGrid;
 import com.gapso.web.trieda.client.util.view.SimpleToolBar;
 
@@ -23,6 +25,9 @@ public class CampiView extends MyComposite implements CampiPresenter.Display {
 
 	private SimpleToolBar toolBar;
 	private SimpleGrid<CampusDTO> gridPanel;
+	private SimpleFilter filter;
+	private TextField<String> nomeBuscaTextField;
+	private TextField<String> codigoBuscaTextField;
 	private ContentPanel panel;
 	private GTabItem tabItem;
 	
@@ -35,6 +40,7 @@ public class CampiView extends MyComposite implements CampiPresenter.Display {
 		panel.setHeading("Master Data » Campi");
 		createToolBar();
 		createGrid();
+		createFilter();
 		createTabItem();
 		initComponent(tabItem);
 	}
@@ -64,6 +70,22 @@ public class CampiView extends MyComposite implements CampiPresenter.Display {
 		return list;
 	}
 
+	private void createFilter() {
+		BorderLayoutData bld = new BorderLayoutData(LayoutRegion.EAST);
+		bld.setMargins(new Margins(0, 0, 0, 5));
+		bld.setCollapsible(true);
+		
+		filter = new SimpleFilter();
+		nomeBuscaTextField = new TextField<String>();
+		nomeBuscaTextField.setFieldLabel("Nome");
+		codigoBuscaTextField = new TextField<String>();
+		codigoBuscaTextField.setFieldLabel("Código");
+		filter.addField(nomeBuscaTextField);
+		filter.addField(codigoBuscaTextField);
+		
+		panel.add(filter, bld);
+	}
+	
 	@Override
 	public Button getNewButton() {
 		return toolBar.getNewButton();
@@ -90,11 +112,6 @@ public class CampiView extends MyComposite implements CampiPresenter.Display {
 	}
 
 	@Override
-	public GTabItem getGTabItem() {
-		return tabItem;
-	}
-	
-	@Override
 	public SimpleGrid<CampusDTO> getGrid() {
 		return gridPanel;
 	}
@@ -102,6 +119,26 @@ public class CampiView extends MyComposite implements CampiPresenter.Display {
 	@Override
 	public void setProxy(RpcProxy<PagingLoadResult<CampusDTO>> proxy) {
 		gridPanel.setProxy(proxy);
+	}
+	
+	@Override
+	public TextField<String> getNomeBuscaTextField() {
+		return nomeBuscaTextField;
+	}
+
+	@Override
+	public TextField<String> getCodigoBuscaTextField() {
+		return codigoBuscaTextField;
+	}
+
+	@Override
+	public Button getSubmitBuscaButton() {
+		return filter.getSubmitButton();
+	}
+
+	@Override
+	public Button getResetBuscaButton() {
+		return filter.getResetButton();
 	}
 	
 }

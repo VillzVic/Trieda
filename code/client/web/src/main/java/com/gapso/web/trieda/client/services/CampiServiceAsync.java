@@ -14,5 +14,6 @@ public interface CampiServiceAsync {
 	void getList(AsyncCallback<ListLoadResult<CampusDTO>> callback);
 	void save(CampusDTO campusDTO, AsyncCallback<Void> callback);
 	void remove(List<CampusDTO> campusDTOList, AsyncCallback<Void> callback);
+	void getBuscaList(String nome, String codigo, PagingLoadConfig config, AsyncCallback<PagingLoadResult<CampusDTO>> callback);
 	
 }

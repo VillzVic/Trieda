@@ -1,5 +1,6 @@
 package com.gapso.trieda.domain;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Set;
 
@@ -15,6 +16,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import javax.persistence.Table;
 import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
@@ -32,8 +34,10 @@ import org.springframework.transaction.annotation.Transactional;
 @RooToString
 @RooEntity(identifierColumn = "CAM_ID")
 @Table(name = "CAMPI")
-public class Campus implements java.io.Serializable {
+public class Campus implements Serializable {
 
+	private static final long serialVersionUID = 6690100103369325015L;
+	
 //  TODO  @NotNull
     @ManyToOne(targetEntity = Cenario.class)
     @JoinColumn(name = "CEN_ID")
@@ -207,8 +211,21 @@ public class Campus implements java.io.Serializable {
         return entityManager().createQuery("select o from Campus o "+orderBy).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
 
-	private static final long serialVersionUID = 6690100103369325015L;
-
+    @SuppressWarnings("unchecked")
+    public static List<Campus> findByNomeLikeAndCodigoLike(String nome, String codigo, int firstResult, int maxResults, String orderBy) {
+        nome = (nome == null)? "" : nome;
+        nome = "%" + nome.replace('*', '%') + "%";
+        codigo = (codigo == null)? "" : codigo;
+        codigo = "%" + codigo.replace('*', '%') + "%";
+        
+        EntityManager em = Turno.entityManager();
+        orderBy = (orderBy != null) ? "ORDER BY o." + orderBy : "";
+        Query q = em.createQuery("SELECT o FROM Campus o WHERE LOWER(o.nome) LIKE LOWER(:nome) AND LOWER(o.codigo) LIKE LOWER(:codigo) "+orderBy);
+        q.setParameter("nome", nome);
+        q.setParameter("codigo", codigo);
+        return q.setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
+    }
+	
 	public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("Id: ").append(getId()).append(", ");

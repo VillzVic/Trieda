@@ -11,6 +11,7 @@ import com.extjs.gxt.ui.client.widget.Component;
 import com.extjs.gxt.ui.client.widget.Info;
 import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.button.Button;
+import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.gapso.web.trieda.client.mvp.model.CampusDTO;
 import com.gapso.web.trieda.client.mvp.view.CampusFormView;
 import com.gapso.web.trieda.client.services.CampiServiceAsync;
@@ -29,8 +30,11 @@ public class CampiPresenter implements Presenter {
 		Button getRemoveButton();
 		Button getImportExcelButton();
 		Button getExportExcelButton();
+		TextField<String> getCodigoBuscaTextField();
+		TextField<String> getNomeBuscaTextField();
+		Button getSubmitBuscaButton();
+		Button getResetBuscaButton();
 		SimpleGrid<CampusDTO> getGrid();
-		GTabItem getGTabItem();
 		Component getComponent();
 		void setProxy(RpcProxy<PagingLoadResult<CampusDTO>> proxy);
 	}
@@ -47,7 +51,10 @@ public class CampiPresenter implements Presenter {
 		RpcProxy<PagingLoadResult<CampusDTO>> proxy = new RpcProxy<PagingLoadResult<CampusDTO>>() {
 			@Override
 			public void load(Object loadConfig, AsyncCallback<PagingLoadResult<CampusDTO>> callback) {
-				service.getList((PagingLoadConfig)loadConfig, callback);
+//				service.getList((PagingLoadConfig)loadConfig, callback);
+				String nome = display.getNomeBuscaTextField().getValue();
+				String codigo = display.getCodigoBuscaTextField().getValue();
+				service.getBuscaList(nome, codigo, (PagingLoadConfig)loadConfig, callback);
 			}
 		};
 		display.setProxy(proxy);
@@ -85,6 +92,20 @@ public class CampiPresenter implements Presenter {
 						Info.display("Removido", "Item removido com sucesso!");
 					}
 				});
+			}
+		});
+		display.getResetBuscaButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
+			@Override
+			public void componentSelected(ButtonEvent ce) {
+				display.getNomeBuscaTextField().setValue(null);
+				display.getCodigoBuscaTextField().setValue(null);
+				display.getGrid().updateList();
+			}
+		});
+		display.getSubmitBuscaButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
+			@Override
+			public void componentSelected(ButtonEvent ce) {
+				display.getGrid().updateList();
 			}
 		});
 	}
