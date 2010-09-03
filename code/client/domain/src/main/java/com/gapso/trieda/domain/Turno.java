@@ -136,10 +136,11 @@ public class Turno implements java.io.Serializable {
         return entityManager().createQuery("SELECT o FROM Turno o " + orderBy).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
 
-    public static Query findByNomeLikeAndTempo(String nome, Integer tempo) {
+    @SuppressWarnings("unchecked")
+    public static List<Turno> findByNomeLikeAndTempo(String nome, Integer tempo, int firstResult, int maxResults, String orderBy) {
     	nome = (nome == null || nome.length() == 0)? "" : nome;
         nome = nome.replace('*', '%');
-        if (nome.charAt(0) != '%') {
+        if (nome == "" || nome.charAt(0) != '%') {
             nome = "%" + nome;
         }
         if (nome.charAt(nome.length() -1) != '%') {
@@ -148,10 +149,11 @@ public class Turno implements java.io.Serializable {
         
         EntityManager em = Turno.entityManager();
         String queryTempo = (tempo != null)? "AND turno.tempo = :tempo" : "";
-        Query q = em.createQuery("SELECT Turno FROM Turno AS turno WHERE LOWER(turno.nome) LIKE LOWER(:nome) "+queryTempo);
+        orderBy = (orderBy != null) ? "ORDER BY o." + orderBy : "";
+        Query q = em.createQuery("SELECT Turno FROM Turno AS turno WHERE LOWER(turno.nome) LIKE LOWER(:nome) "+queryTempo+" "+orderBy);
         q.setParameter("nome", nome);
         if(tempo != null) q.setParameter("tempo", tempo);
-        return q;
+        return q.setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
     
     public String getNome() {
