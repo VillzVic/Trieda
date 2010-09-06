@@ -12,6 +12,7 @@ import com.extjs.gxt.ui.client.widget.Component;
 import com.extjs.gxt.ui.client.widget.Info;
 import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.button.Button;
+import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.gapso.web.trieda.client.AppEvents;
 import com.gapso.web.trieda.client.mvp.model.CalendarioDTO;
 import com.gapso.web.trieda.client.mvp.view.CalendarioFormView;
@@ -32,8 +33,11 @@ public class CalendariosPresenter implements Presenter {
 		Button getImportExcelButton();
 		Button getExportExcelButton();
 		Button getDiasDeAulaButton();
+		TextField<String> getCodigoBuscaTextField();
+		TextField<String> getDescricaoBuscaTextField();
+		Button getSubmitBuscaButton();
+		Button getResetBuscaButton();
 		SimpleGrid<CalendarioDTO> getGrid();
-		GTabItem getGTabItem();
 		Component getComponent();
 		void setProxy(RpcProxy<PagingLoadResult<CalendarioDTO>> proxy);
 	}
@@ -50,7 +54,10 @@ public class CalendariosPresenter implements Presenter {
 		RpcProxy<PagingLoadResult<CalendarioDTO>> proxy = new RpcProxy<PagingLoadResult<CalendarioDTO>>() {
 			@Override
 			public void load(Object loadConfig, AsyncCallback<PagingLoadResult<CalendarioDTO>> callback) {
-				service.getList((PagingLoadConfig)loadConfig, callback);
+//				service.getList((PagingLoadConfig)loadConfig, callback);
+				String codigo = display.getCodigoBuscaTextField().getValue();
+				String descricao = display.getDescricaoBuscaTextField().getValue();
+				service.getBuscaList(codigo, descricao, (PagingLoadConfig)loadConfig, callback);
 			}
 		};
 		display.setProxy(proxy);
@@ -94,6 +101,20 @@ public class CalendariosPresenter implements Presenter {
 			@Override
 			public void componentSelected(ButtonEvent ce) {
 				Dispatcher.forwardEvent(AppEvents.CalendarioView);
+			}
+		});
+		display.getResetBuscaButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
+			@Override
+			public void componentSelected(ButtonEvent ce) {
+				display.getCodigoBuscaTextField().setValue(null);
+				display.getDescricaoBuscaTextField().setValue(null);
+				display.getGrid().updateList();
+			}
+		});
+		display.getSubmitBuscaButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
+			@Override
+			public void componentSelected(ButtonEvent ce) {
+				display.getGrid().updateList();
 			}
 		});
 	}

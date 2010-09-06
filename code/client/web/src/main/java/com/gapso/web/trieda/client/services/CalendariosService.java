@@ -19,7 +19,7 @@ public interface CalendariosService extends RemoteService {
 	PagingLoadResult<CalendarioDTO> getList(PagingLoadConfig config);
 	ListLoadResult<CalendarioDTO> getList();
 	ListLoadResult<CalendarioDTO> getList(BasePagingLoadConfig loadConfig);
-	PagingLoadResult<CalendarioDTO> getBuscaList(String codigo, PagingLoadConfig config);
+	PagingLoadResult<CalendarioDTO> getBuscaList(String codigo, String descricao, PagingLoadConfig config);
 	void save(CalendarioDTO calendarioDTO);
 	void remove(List<CalendarioDTO> calendarioDTOList);
 	

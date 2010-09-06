@@ -161,14 +161,17 @@ public class Calendario implements java.io.Serializable {
     }
 
     @SuppressWarnings("unchecked")
-    public static List<Calendario> findByCodigoLike(String codigo, int firstResult, int maxResults, String orderBy) {
+    public static List<Calendario> findByCodigoLikeAndDescricaoLike(String codigo, String descricao, int firstResult, int maxResults, String orderBy) {
         codigo = (codigo == null)? "" : codigo;
         codigo = "%" + codigo.replace('*', '%') + "%";
+        descricao = (descricao == null)? "" : descricao;
+        descricao = "%" + descricao.replace('*', '%') + "%";
         
         EntityManager em = Turno.entityManager();
         orderBy = (orderBy != null) ? "ORDER BY o." + orderBy : "";
-        Query q = em.createQuery("SELECT o FROM Calendario o WHERE LOWER(o.codigo) LIKE LOWER(:codigo) "+orderBy);
+        Query q = em.createQuery("SELECT o FROM Calendario o WHERE LOWER(o.codigo) LIKE LOWER(:codigo) AND LOWER(o.descricao) LIKE LOWER(:descricao) "+orderBy);
         q.setParameter("codigo", codigo);
+        q.setParameter("descricao", descricao);
         return q.setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
 	

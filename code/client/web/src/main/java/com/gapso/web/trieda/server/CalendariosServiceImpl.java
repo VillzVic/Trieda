@@ -49,11 +49,11 @@ public class CalendariosServiceImpl extends RemoteServiceServlet implements Cale
 	
 	@Override
 	public ListLoadResult<CalendarioDTO> getList(BasePagingLoadConfig loadConfig) {
-		return getBuscaList(loadConfig.get("query").toString(), loadConfig);
+		return getBuscaList(loadConfig.get("query").toString(), null, loadConfig);
 	}
 	
 	@Override
-	public PagingLoadResult<CalendarioDTO> getBuscaList(String codigo, PagingLoadConfig config) {
+	public PagingLoadResult<CalendarioDTO> getBuscaList(String codigo, String descricao, PagingLoadConfig config) {
 		List<CalendarioDTO> list = new ArrayList<CalendarioDTO>();
 		String orderBy = config.getSortField();
 		if(orderBy != null) {
@@ -63,7 +63,7 @@ public class CalendariosServiceImpl extends RemoteServiceServlet implements Cale
 				orderBy = orderBy + " desc";
 			}
 		}
-		for(Calendario calendario : Calendario.findByCodigoLike(codigo, config.getOffset(), config.getLimit(), orderBy)) {
+		for(Calendario calendario : Calendario.findByCodigoLikeAndDescricaoLike(codigo, descricao, config.getOffset(), config.getLimit(), orderBy)) {
 			list.add(ConvertBeans.toCalendarioDTO(calendario));
 		}
 		BasePagingLoadResult<CalendarioDTO> result = new BasePagingLoadResult<CalendarioDTO>(list);

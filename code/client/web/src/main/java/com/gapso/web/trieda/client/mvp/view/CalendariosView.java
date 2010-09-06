@@ -9,6 +9,7 @@ import com.extjs.gxt.ui.client.data.RpcProxy;
 import com.extjs.gxt.ui.client.util.Margins;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
 import com.extjs.gxt.ui.client.widget.button.Button;
+import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.extjs.gxt.ui.client.widget.grid.ColumnConfig;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayout;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
@@ -17,6 +18,7 @@ import com.gapso.web.trieda.client.mvp.model.CalendarioDTO;
 import com.gapso.web.trieda.client.mvp.presenter.CalendariosPresenter;
 import com.gapso.web.trieda.client.util.resources.Resources;
 import com.gapso.web.trieda.client.util.view.GTabItem;
+import com.gapso.web.trieda.client.util.view.SimpleFilter;
 import com.gapso.web.trieda.client.util.view.SimpleGrid;
 import com.gapso.web.trieda.client.util.view.SimpleToolBar;
 
@@ -24,6 +26,9 @@ public class CalendariosView extends MyComposite implements CalendariosPresenter
 
 	private SimpleToolBar toolBar;
 	private SimpleGrid<CalendarioDTO> gridPanel;
+	private SimpleFilter filter;
+	private TextField<String> codigoBuscaTextField;
+	private TextField<String> descricaoBuscaTextField;
 	private ContentPanel panel;
 	private GTabItem tabItem;
 	private Button diasDeAulaButton;
@@ -37,6 +42,7 @@ public class CalendariosView extends MyComposite implements CalendariosPresenter
 		panel.setHeading("Master Data » Calendários");
 		createToolBar();
 		createGrid();
+		createFilter();
 		createTabItem();
 		initComponent(tabItem);
 	}
@@ -69,6 +75,22 @@ public class CalendariosView extends MyComposite implements CalendariosPresenter
 		return list;
 	}
 
+	private void createFilter() {
+		BorderLayoutData bld = new BorderLayoutData(LayoutRegion.EAST);
+		bld.setMargins(new Margins(0, 0, 0, 5));
+		bld.setCollapsible(true);
+		
+		filter = new SimpleFilter();
+		codigoBuscaTextField = new TextField<String>();
+		codigoBuscaTextField.setFieldLabel("Código");
+		descricaoBuscaTextField = new TextField<String>();
+		descricaoBuscaTextField.setFieldLabel("Descrição");
+		filter.addField(codigoBuscaTextField);
+		filter.addField(descricaoBuscaTextField);
+		
+		panel.add(filter, bld);
+	}
+	
 	@Override
 	public Button getNewButton() {
 		return toolBar.getNewButton();
@@ -93,11 +115,6 @@ public class CalendariosView extends MyComposite implements CalendariosPresenter
 	public Button getExportExcelButton() {
 		return toolBar.getExportExcelButton();
 	}
-
-	@Override
-	public GTabItem getGTabItem() {
-		return tabItem;
-	}
 	
 	@Override
 	public SimpleGrid<CalendarioDTO> getGrid() {
@@ -112,6 +129,26 @@ public class CalendariosView extends MyComposite implements CalendariosPresenter
 	@Override
 	public void setProxy(RpcProxy<PagingLoadResult<CalendarioDTO>> proxy) {
 		gridPanel.setProxy(proxy);
+	}
+
+	@Override
+	public TextField<String> getCodigoBuscaTextField() {
+		return codigoBuscaTextField;
+	}
+
+	@Override
+	public TextField<String> getDescricaoBuscaTextField() {
+		return descricaoBuscaTextField;
+	}
+
+	@Override
+	public Button getSubmitBuscaButton() {
+		return filter.getSubmitButton();
+	}
+
+	@Override
+	public Button getResetBuscaButton() {
+		return filter.getResetButton();
 	}
 	
 }

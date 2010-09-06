@@ -14,7 +14,7 @@ public interface CalendariosServiceAsync {
 	void getList(PagingLoadConfig config, AsyncCallback<PagingLoadResult<CalendarioDTO>> callback);
 	void getList(AsyncCallback<ListLoadResult<CalendarioDTO>> callback);
 	void getList(BasePagingLoadConfig loadConfig, AsyncCallback<ListLoadResult<CalendarioDTO>> callback);
-	void getBuscaList(String codigo, PagingLoadConfig config, AsyncCallback<PagingLoadResult<CalendarioDTO>> callback);
+	void getBuscaList(String codigo, String descricao, PagingLoadConfig config, AsyncCallback<PagingLoadResult<CalendarioDTO>> callback);
 	void save(CalendarioDTO calendarioDTO, AsyncCallback<Void> callback);
 	void remove(List<CalendarioDTO> calendarioDTOList, AsyncCallback<Void> callback);
 	
