@@ -46,7 +46,6 @@ public class CampiServiceImpl extends RemoteServiceServlet implements CampiServi
 	
 	@Override
 	public ListLoadResult<CampusDTO> getList(BasePagingLoadConfig loadConfig) {
-		
 		return getBuscaList(null, loadConfig.get("query").toString(), loadConfig);
 	}
 

@@ -11,6 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import javax.persistence.Table;
 import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
@@ -159,6 +160,18 @@ public class Calendario implements java.io.Serializable {
         return entityManager().createQuery("select o from Calendario o "+orderBy).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
 
+    @SuppressWarnings("unchecked")
+    public static List<Calendario> findByCodigoLike(String codigo, int firstResult, int maxResults, String orderBy) {
+        codigo = (codigo == null)? "" : codigo;
+        codigo = "%" + codigo.replace('*', '%') + "%";
+        
+        EntityManager em = Turno.entityManager();
+        orderBy = (orderBy != null) ? "ORDER BY o." + orderBy : "";
+        Query q = em.createQuery("SELECT o FROM Calendario o WHERE LOWER(o.codigo) LIKE LOWER(:codigo) "+orderBy);
+        q.setParameter("codigo", codigo);
+        return q.setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
+    }
+	
 	public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("Id: ").append(getId()).append(", ");

@@ -5,11 +5,13 @@ import java.util.List;
 
 import com.extjs.gxt.ui.client.Style.SortDir;
 import com.extjs.gxt.ui.client.data.BaseListLoadResult;
+import com.extjs.gxt.ui.client.data.BasePagingLoadConfig;
 import com.extjs.gxt.ui.client.data.BasePagingLoadResult;
 import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.gapso.trieda.domain.Calendario;
+import com.gapso.trieda.domain.Turno;
 import com.gapso.web.trieda.client.mvp.model.CalendarioDTO;
 import com.gapso.web.trieda.client.services.CalendariosService;
 import com.gapso.web.trieda.server.util.ConvertBeans;
@@ -42,6 +44,31 @@ public class CalendariosServiceImpl extends RemoteServiceServlet implements Cale
 		BasePagingLoadResult<CalendarioDTO> result = new BasePagingLoadResult<CalendarioDTO>(list);
 		result.setOffset(config.getOffset());
 		result.setTotalLength(Calendario.count());
+		return result;
+	}
+	
+	@Override
+	public ListLoadResult<CalendarioDTO> getList(BasePagingLoadConfig loadConfig) {
+		return getBuscaList(loadConfig.get("query").toString(), loadConfig);
+	}
+	
+	@Override
+	public PagingLoadResult<CalendarioDTO> getBuscaList(String codigo, PagingLoadConfig config) {
+		List<CalendarioDTO> list = new ArrayList<CalendarioDTO>();
+		String orderBy = config.getSortField();
+		if(orderBy != null) {
+			if(config.getSortDir() != null && config.getSortDir().equals(SortDir.DESC)) {
+				orderBy = orderBy + " asc";
+			} else {
+				orderBy = orderBy + " desc";
+			}
+		}
+		for(Calendario calendario : Calendario.findByCodigoLike(codigo, config.getOffset(), config.getLimit(), orderBy)) {
+			list.add(ConvertBeans.toCalendarioDTO(calendario));
+		}
+		BasePagingLoadResult<CalendarioDTO> result = new BasePagingLoadResult<CalendarioDTO>(list);
+		result.setOffset(config.getOffset());
+		result.setTotalLength(Turno.count());
 		return result;
 	}
 	
