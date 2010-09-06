@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.extjs.gxt.ui.client.Style.SortDir;
 import com.extjs.gxt.ui.client.data.BaseListLoadResult;
+import com.extjs.gxt.ui.client.data.BasePagingLoadConfig;
 import com.extjs.gxt.ui.client.data.BasePagingLoadResult;
 import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
@@ -45,6 +46,11 @@ public class UnidadesServiceImpl extends RemoteServiceServlet implements Unidade
 		return result;
 	}
 
+	@Override
+	public ListLoadResult<UnidadeDTO> getList(BasePagingLoadConfig loadConfig) {
+		return getBuscaList(null, null, loadConfig.get("query").toString(), loadConfig);
+	}
+	
 	@Override
 	public PagingLoadResult<UnidadeDTO> getBuscaList(CampusDTO campusDTO, String nome, String codigo, PagingLoadConfig config) {
 		List<UnidadeDTO> list = new ArrayList<UnidadeDTO>();

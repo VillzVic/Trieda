@@ -47,10 +47,10 @@ public class TurnoComboBox extends ComboBox<TurnoDTO> {
 
 	
 	private native String getTemplateCB() /*-{
-	return  [
-		'<tpl for=".">',
-		'<div class="x-combo-list-item">{nome} ({tempo}min)</div>',
-		'</tpl>'
-	].join("");
-}-*/;
+		return  [
+			'<tpl for=".">',
+			'<div class="x-combo-list-item">{nome} ({tempo}min)</div>',
+			'</tpl>'
+		].join("");
+	}-*/;
 }
