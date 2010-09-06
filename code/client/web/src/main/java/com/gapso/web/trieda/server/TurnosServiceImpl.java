@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.extjs.gxt.ui.client.Style.SortDir;
 import com.extjs.gxt.ui.client.data.BaseListLoadResult;
+import com.extjs.gxt.ui.client.data.BasePagingLoadConfig;
 import com.extjs.gxt.ui.client.data.BasePagingLoadResult;
 import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
@@ -40,6 +41,11 @@ public class TurnosServiceImpl extends RemoteServiceServlet implements TurnosSer
 		result.setOffset(config.getOffset());
 		result.setTotalLength(Turno.count());
 		return result;
+	}
+	
+	@Override
+	public ListLoadResult<TurnoDTO> getList(BasePagingLoadConfig loadConfig) {
+		return getBuscaList(loadConfig.get("query").toString(), null, loadConfig);
 	}
 	
 	@Override
