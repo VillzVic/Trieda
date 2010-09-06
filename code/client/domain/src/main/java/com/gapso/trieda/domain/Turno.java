@@ -149,7 +149,7 @@ public class Turno implements java.io.Serializable {
         
         String queryTempo = (tempo != null)? "AND turno.tempo = :tempo" : "";
         orderBy = (orderBy != null) ? "ORDER BY o." + orderBy : "";
-        Query q = entityManager().createQuery("SELECT Turno FROM Turno AS turno WHERE LOWER(turno.nome) LIKE LOWER(:nome) "+queryTempo+" "+orderBy);
+        Query q = entityManager().createQuery("SELECT o FROM Turno o WHERE LOWER(o.nome) LIKE LOWER(:nome) "+queryTempo+" "+orderBy);
         q.setParameter("nome", nome);
         if(tempo != null) q.setParameter("tempo", tempo);
         return q.setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
