@@ -5,6 +5,7 @@ import java.util.List;
 import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
+import com.gapso.web.trieda.client.mvp.model.CampusDTO;
 import com.gapso.web.trieda.client.mvp.model.UnidadeDTO;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -14,5 +15,6 @@ public interface UnidadesServiceAsync {
 	void getList(AsyncCallback<ListLoadResult<UnidadeDTO>> callback);
 	void save(UnidadeDTO unidadeDTO, AsyncCallback<Void> callback);
 	void remove(List<UnidadeDTO> unidadeDTOList, AsyncCallback<Void> callback);
+	void getBuscaList(CampusDTO campusDTO, String nome, String codigo, PagingLoadConfig config, AsyncCallback<PagingLoadResult<UnidadeDTO>> callback);
 	
 }

@@ -9,13 +9,16 @@ import com.extjs.gxt.ui.client.data.RpcProxy;
 import com.extjs.gxt.ui.client.util.Margins;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
 import com.extjs.gxt.ui.client.widget.button.Button;
+import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.extjs.gxt.ui.client.widget.grid.ColumnConfig;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayout;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
 import com.gapso.web.trieda.client.mvp.model.UnidadeDTO;
 import com.gapso.web.trieda.client.mvp.presenter.UnidadesPresenter;
 import com.gapso.web.trieda.client.util.resources.Resources;
+import com.gapso.web.trieda.client.util.view.CampusComboBox;
 import com.gapso.web.trieda.client.util.view.GTabItem;
+import com.gapso.web.trieda.client.util.view.SimpleFilter;
 import com.gapso.web.trieda.client.util.view.SimpleGrid;
 import com.gapso.web.trieda.client.util.view.SimpleToolBar;
 
@@ -23,6 +26,10 @@ public class UnidadesView extends MyComposite implements UnidadesPresenter.Displ
 
 	private SimpleToolBar toolBar;
 	private SimpleGrid<UnidadeDTO> gridPanel;
+	private SimpleFilter filter;
+	private TextField<String> nomeBuscaTextField;
+	private TextField<String> codigoBuscaTextField;
+	private CampusComboBox campusBuscaComboBox;
 	private ContentPanel panel;
 	private GTabItem tabItem;
 	
@@ -35,6 +42,7 @@ public class UnidadesView extends MyComposite implements UnidadesPresenter.Displ
 		panel.setHeading("Master Data » Unidades");
 		createToolBar();
 		createGrid();
+		createFilter();
 		createTabItem();
 		initComponent(tabItem);
 	}
@@ -65,6 +73,26 @@ public class UnidadesView extends MyComposite implements UnidadesPresenter.Displ
 		return list;
 	}
 
+	private void createFilter() {
+		BorderLayoutData bld = new BorderLayoutData(LayoutRegion.EAST);
+		bld.setMargins(new Margins(0, 0, 0, 5));
+		bld.setCollapsible(true);
+		
+		filter = new SimpleFilter();
+		campusBuscaComboBox = new CampusComboBox();
+		campusBuscaComboBox.setFieldLabel("Campus");
+		nomeBuscaTextField = new TextField<String>();
+		nomeBuscaTextField.setFieldLabel("Nome");
+		codigoBuscaTextField = new TextField<String>();
+		codigoBuscaTextField.setFieldLabel("Código");
+		
+		filter.addField(campusBuscaComboBox);
+		filter.addField(nomeBuscaTextField);
+		filter.addField(codigoBuscaTextField);
+		
+		panel.add(filter, bld);
+	}
+	
 	@Override
 	public Button getNewButton() {
 		return toolBar.getNewButton();
@@ -89,11 +117,6 @@ public class UnidadesView extends MyComposite implements UnidadesPresenter.Displ
 	public Button getExportExcelButton() {
 		return toolBar.getExportExcelButton();
 	}
-
-	@Override
-	public GTabItem getGTabItem() {
-		return tabItem;
-	}
 	
 	@Override
 	public SimpleGrid<UnidadeDTO> getGrid() {
@@ -103,6 +126,31 @@ public class UnidadesView extends MyComposite implements UnidadesPresenter.Displ
 	@Override
 	public void setProxy(RpcProxy<PagingLoadResult<UnidadeDTO>> proxy) {
 		gridPanel.setProxy(proxy);
+	}
+
+	@Override
+	public TextField<String> getNomeBuscaTextField() {
+		return nomeBuscaTextField;
+	}
+
+	@Override
+	public TextField<String> getCodigoBuscaTextField() {
+		return codigoBuscaTextField;
+	}
+	
+	@Override
+	public CampusComboBox getCampusBuscaComboBox() {
+		return campusBuscaComboBox;
+	}
+
+	@Override
+	public Button getSubmitBuscaButton() {
+		return filter.getSubmitButton();
+	}
+
+	@Override
+	public Button getResetBuscaButton() {
+		return filter.getResetButton();
 	}
 
 }

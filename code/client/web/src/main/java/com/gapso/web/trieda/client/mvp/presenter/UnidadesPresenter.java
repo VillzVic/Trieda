@@ -11,10 +11,13 @@ import com.extjs.gxt.ui.client.widget.Component;
 import com.extjs.gxt.ui.client.widget.Info;
 import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.button.Button;
+import com.extjs.gxt.ui.client.widget.form.TextField;
+import com.gapso.web.trieda.client.mvp.model.CampusDTO;
 import com.gapso.web.trieda.client.mvp.model.UnidadeDTO;
 import com.gapso.web.trieda.client.mvp.view.UnidadeFormView;
 import com.gapso.web.trieda.client.services.Services;
 import com.gapso.web.trieda.client.services.UnidadesServiceAsync;
+import com.gapso.web.trieda.client.util.view.CampusComboBox;
 import com.gapso.web.trieda.client.util.view.GTab;
 import com.gapso.web.trieda.client.util.view.GTabItem;
 import com.gapso.web.trieda.client.util.view.SimpleGrid;
@@ -29,8 +32,12 @@ public class UnidadesPresenter implements Presenter {
 		Button getRemoveButton();
 		Button getImportExcelButton();
 		Button getExportExcelButton();
+		TextField<String> getNomeBuscaTextField();
+		TextField<String> getCodigoBuscaTextField();
+		CampusComboBox getCampusBuscaComboBox();
+		Button getSubmitBuscaButton();
+		Button getResetBuscaButton();
 		SimpleGrid<UnidadeDTO> getGrid();
-		GTabItem getGTabItem();
 		Component getComponent();
 		void setProxy(RpcProxy<PagingLoadResult<UnidadeDTO>> proxy);
 	}
@@ -47,7 +54,11 @@ public class UnidadesPresenter implements Presenter {
 		RpcProxy<PagingLoadResult<UnidadeDTO>> proxy = new RpcProxy<PagingLoadResult<UnidadeDTO>>() {
 			@Override
 			public void load(Object loadConfig, AsyncCallback<PagingLoadResult<UnidadeDTO>> callback) {
-				service.getList((PagingLoadConfig)loadConfig, callback);
+//				service.getList((PagingLoadConfig)loadConfig, callback);
+				String nome = display.getNomeBuscaTextField().getValue();
+				String codigo = display.getCodigoBuscaTextField().getValue();
+				CampusDTO campusDTO = display.getCampusBuscaComboBox().getValue();
+				service.getBuscaList(campusDTO, nome, codigo, (PagingLoadConfig)loadConfig, callback);
 			}
 		};
 		display.setProxy(proxy);
@@ -85,6 +96,21 @@ public class UnidadesPresenter implements Presenter {
 						Info.display("Removido", "Item removido com sucesso!");
 					}
 				});
+			}
+		});
+		display.getResetBuscaButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
+			@Override
+			public void componentSelected(ButtonEvent ce) {
+				display.getNomeBuscaTextField().setValue(null);
+				display.getCodigoBuscaTextField().setValue(null);
+				display.getCampusBuscaComboBox().setValue(null);
+				display.getGrid().updateList();
+			}
+		});
+		display.getSubmitBuscaButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
+			@Override
+			public void componentSelected(ButtonEvent ce) {
+				display.getGrid().updateList();
 			}
 		});
 	}

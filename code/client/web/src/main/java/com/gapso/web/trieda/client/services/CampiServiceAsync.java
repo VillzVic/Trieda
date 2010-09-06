@@ -2,6 +2,7 @@ package com.gapso.web.trieda.client.services;
 
 import java.util.List;
 
+import com.extjs.gxt.ui.client.data.BasePagingLoadConfig;
 import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
@@ -12,6 +13,7 @@ public interface CampiServiceAsync {
 	
 	void getList(PagingLoadConfig config, AsyncCallback<PagingLoadResult<CampusDTO>> callback);
 	void getList(AsyncCallback<ListLoadResult<CampusDTO>> callback);
+	void getList(BasePagingLoadConfig loadConfig, AsyncCallback<ListLoadResult<CampusDTO>> callback);
 	void save(CampusDTO campusDTO, AsyncCallback<Void> callback);
 	void remove(List<CampusDTO> campusDTOList, AsyncCallback<Void> callback);
 	void getBuscaList(String nome, String codigo, PagingLoadConfig config, AsyncCallback<PagingLoadResult<CampusDTO>> callback);

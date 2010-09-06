@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.extjs.gxt.ui.client.Style.SortDir;
 import com.extjs.gxt.ui.client.data.BaseListLoadResult;
+import com.extjs.gxt.ui.client.data.BasePagingLoadConfig;
 import com.extjs.gxt.ui.client.data.BasePagingLoadResult;
 import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
@@ -41,6 +42,12 @@ public class CampiServiceImpl extends RemoteServiceServlet implements CampiServi
 		result.setOffset(config.getOffset());
 		result.setTotalLength(Campus.count());
 		return result;
+	}
+	
+	@Override
+	public ListLoadResult<CampusDTO> getList(BasePagingLoadConfig loadConfig) {
+		
+		return getBuscaList(null, loadConfig.get("query").toString(), loadConfig);
 	}
 
 	@Override

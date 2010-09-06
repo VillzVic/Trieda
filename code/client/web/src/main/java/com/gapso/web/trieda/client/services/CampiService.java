@@ -2,6 +2,7 @@ package com.gapso.web.trieda.client.services;
 
 import java.util.List;
 
+import com.extjs.gxt.ui.client.data.BasePagingLoadConfig;
 import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
@@ -17,6 +18,7 @@ public interface CampiService extends RemoteService {
 	
 	PagingLoadResult<CampusDTO> getList(PagingLoadConfig config);
 	ListLoadResult<CampusDTO> getList();
+	ListLoadResult<CampusDTO> getList(BasePagingLoadConfig loadConfig);
 	void save(CampusDTO campusDTO);
 	void remove(List<CampusDTO> campusDTOList);
 	PagingLoadResult<CampusDTO> getBuscaList(String nome, String codigo, PagingLoadConfig config);
