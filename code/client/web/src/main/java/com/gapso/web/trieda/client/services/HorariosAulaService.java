@@ -1,10 +1,13 @@
 package com.gapso.web.trieda.client.services;
 
+import java.util.Date;
 import java.util.List;
 
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
+import com.gapso.web.trieda.client.mvp.model.CalendarioDTO;
 import com.gapso.web.trieda.client.mvp.model.HorarioAulaDTO;
+import com.gapso.web.trieda.client.mvp.model.TurnoDTO;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
@@ -18,5 +21,7 @@ public interface HorariosAulaService extends RemoteService {
 	
 	void save(HorarioAulaDTO horarioAula);
 	void remove(List<HorarioAulaDTO> horariosAulaList);
+
+	PagingLoadResult<HorarioAulaDTO> getBuscaList(CalendarioDTO calendarioDTO, TurnoDTO turnoDTO, Date horario, PagingLoadConfig loadConfig);
 	
 }

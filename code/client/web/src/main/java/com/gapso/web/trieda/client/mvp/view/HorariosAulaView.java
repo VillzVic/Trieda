@@ -9,21 +9,29 @@ import com.extjs.gxt.ui.client.data.RpcProxy;
 import com.extjs.gxt.ui.client.util.Margins;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
 import com.extjs.gxt.ui.client.widget.button.Button;
+import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.extjs.gxt.ui.client.widget.grid.ColumnConfig;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayout;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
 import com.gapso.web.trieda.client.mvp.model.HorarioAulaDTO;
 import com.gapso.web.trieda.client.mvp.presenter.HorariosAulaPresenter;
 import com.gapso.web.trieda.client.util.resources.Resources;
+import com.gapso.web.trieda.client.util.view.CalendarioComboBox;
 import com.gapso.web.trieda.client.util.view.GTabItem;
+import com.gapso.web.trieda.client.util.view.SimpleFilter;
 import com.gapso.web.trieda.client.util.view.SimpleGrid;
 import com.gapso.web.trieda.client.util.view.SimpleToolBar;
+import com.gapso.web.trieda.client.util.view.TurnoComboBox;
 import com.google.gwt.i18n.client.DateTimeFormat;
 
 public class HorariosAulaView extends MyComposite implements HorariosAulaPresenter.Display {
 
 	private SimpleToolBar toolBar;
 	private SimpleGrid<HorarioAulaDTO> gridPanel;
+	private SimpleFilter filter;
+	private TextField<String> horarioBuscaTextField;
+	private CalendarioComboBox calendarioBuscaComboBox;
+	private TurnoComboBox turnoBuscaComboBox;
 	private ContentPanel panel;
 	private GTabItem tabItem;
 	
@@ -35,15 +43,16 @@ public class HorariosAulaView extends MyComposite implements HorariosAulaPresent
 	
 	private void initUI() {
 		panel = new ContentPanel(new BorderLayout());
-		panel.setHeading("Master Data » Períodos de Aula");
+		panel.setHeading("Master Data » Horário de Aula");
 		createToolBar();
 		createGrid();
+		createFilter();
 		createTabItem();
 		initComponent(tabItem);
 	}
 	
 	private void createTabItem() {
-		tabItem = new GTabItem("Períodos de Aula", Resources.DEFAULTS.calendario16());
+		tabItem = new GTabItem("Horário de Aula", Resources.DEFAULTS.calendario16());
 		tabItem.setContent(panel);
 	}
 	
@@ -62,7 +71,7 @@ public class HorariosAulaView extends MyComposite implements HorariosAulaPresent
 
 	public List<ColumnConfig> getColumnList() {
 		List<ColumnConfig> list = new ArrayList<ColumnConfig>();
-		list.add(new ColumnConfig("calendarioString", "Calendario", 100));
+		list.add(new ColumnConfig("calendarioString", "Calendário", 100));
 		list.add(new ColumnConfig("turnoString", "Turno", 100));
 		ColumnConfig inicioColumn = new ColumnConfig("inicio", "Horário Início", 100);
 		inicioColumn.setDateTimeFormat(dateTimeFormat);
@@ -73,6 +82,26 @@ public class HorariosAulaView extends MyComposite implements HorariosAulaPresent
 		return list;
 	}
 
+	private void createFilter() {
+		BorderLayoutData bld = new BorderLayoutData(LayoutRegion.EAST);
+		bld.setMargins(new Margins(0, 0, 0, 5));
+		bld.setCollapsible(true);
+		
+		filter = new SimpleFilter();
+		calendarioBuscaComboBox = new CalendarioComboBox();
+		calendarioBuscaComboBox.setFieldLabel("Calendário");
+		turnoBuscaComboBox = new TurnoComboBox();
+		turnoBuscaComboBox.setFieldLabel("Turno");
+		horarioBuscaTextField = new TextField<String>();
+		horarioBuscaTextField.setFieldLabel("Horário início");
+		
+		filter.addField(calendarioBuscaComboBox);
+		filter.addField(turnoBuscaComboBox);
+		filter.addField(horarioBuscaTextField);
+		
+		panel.add(filter, bld);
+	}
+	
 	@Override
 	public Button getNewButton() {
 		return toolBar.getNewButton();
@@ -97,11 +126,6 @@ public class HorariosAulaView extends MyComposite implements HorariosAulaPresent
 	public Button getExportExcelButton() {
 		return toolBar.getExportExcelButton();
 	}
-
-	@Override
-	public GTabItem getGTabItem() {
-		return tabItem;
-	}
 	
 	@Override
 	public SimpleGrid<HorarioAulaDTO> getGrid() {
@@ -111,6 +135,31 @@ public class HorariosAulaView extends MyComposite implements HorariosAulaPresent
 	@Override
 	public void setProxy(RpcProxy<PagingLoadResult<HorarioAulaDTO>> proxy) {
 		gridPanel.setProxy(proxy);
+	}
+
+	@Override
+	public TextField<String> getHorarioBuscaTextField() {
+		return horarioBuscaTextField;
+	}
+
+	@Override
+	public CalendarioComboBox getCalendarioBuscaComboBox() {
+		return calendarioBuscaComboBox;
+	}
+
+	@Override
+	public TurnoComboBox getTurnoBuscaComboBox() {
+		return turnoBuscaComboBox;
+	}
+
+	@Override
+	public Button getSubmitBuscaButton() {
+		return filter.getSubmitButton();
+	}
+
+	@Override
+	public Button getResetBuscaButton() {
+		return filter.getResetButton();
 	}
 	
 }

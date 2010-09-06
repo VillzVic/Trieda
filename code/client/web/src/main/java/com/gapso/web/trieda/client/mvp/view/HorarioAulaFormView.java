@@ -20,7 +20,6 @@ public class HorarioAulaFormView extends MyComposite implements HorarioAulaFormP
 	private CalendarioComboBox calendarioCB;
 	private TurnoComboBox turnoCB;
 	private TextField<String> horarioInicioTF;
-	private TextField<String> horarioFimTF;
 	private HorarioAulaDTO horarioAulaDTO;
 	
 	DateTimeFormat df = DateTimeFormat.getFormat("HH:mm");
@@ -66,16 +65,6 @@ public class HorarioAulaFormView extends MyComposite implements HorarioAulaFormP
 		horarioInicioTF.setFieldLabel("Horário Início");
 		horarioInicioTF.setAllowBlank(false);
 		formPanel.add(horarioInicioTF, formData);
-		
-		horarioFimTF = new TextField<String>();
-		horarioFimTF.setRegex("([0-1][0-9]|2[0-4]):([0-5][0-9])$");
-		horarioFimTF.setName("horarioFim");
-		if(horarioAulaDTO.getFim() != null) {
-			horarioFimTF.setValue(df.format(horarioAulaDTO.getFim()));
-		}
-		horarioFimTF.setFieldLabel("Horário Fim");
-		horarioFimTF.setReadOnly(true);
-		formPanel.add(horarioFimTF, formData);
 		
 		FormButtonBinding binding = new FormButtonBinding(formPanel);
 		binding.addButton(simpleModal.getSalvarBt());

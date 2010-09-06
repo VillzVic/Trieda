@@ -1,14 +1,19 @@
 package com.gapso.web.trieda.server;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import com.extjs.gxt.ui.client.Style.SortDir;
 import com.extjs.gxt.ui.client.data.BasePagingLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
+import com.gapso.trieda.domain.Calendario;
 import com.gapso.trieda.domain.HorarioAula;
+import com.gapso.trieda.domain.Turno;
+import com.gapso.web.trieda.client.mvp.model.CalendarioDTO;
 import com.gapso.web.trieda.client.mvp.model.HorarioAulaDTO;
+import com.gapso.web.trieda.client.mvp.model.TurnoDTO;
 import com.gapso.web.trieda.client.services.HorariosAulaService;
 import com.gapso.web.trieda.server.util.ConvertBeans;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
@@ -32,6 +37,28 @@ public class HorariosAulaServiceImpl extends RemoteServiceServlet implements Hor
 			}
 		}
 		for(HorarioAula horarioAula : HorarioAula.find(config.getOffset(), config.getLimit(), orderBy)) {
+			list.add(ConvertBeans.toHorarioAulaDTO(horarioAula));
+		}
+		BasePagingLoadResult<HorarioAulaDTO> result = new BasePagingLoadResult<HorarioAulaDTO>(list);
+		result.setOffset(config.getOffset());
+		result.setTotalLength(HorarioAula.count());
+		return result;
+	}
+	
+	@Override
+	public PagingLoadResult<HorarioAulaDTO> getBuscaList(CalendarioDTO calendarioDTO, TurnoDTO turnoDTO, Date horario, PagingLoadConfig config) {
+		List<HorarioAulaDTO> list = new ArrayList<HorarioAulaDTO>();
+		String orderBy = config.getSortField();
+		if(orderBy != null) {
+			if(config.getSortDir() != null && config.getSortDir().equals(SortDir.DESC)) {
+				orderBy = orderBy + " asc";
+			} else {
+				orderBy = orderBy + " desc";
+			}
+		}
+		Calendario calendario = (calendarioDTO == null)? null : ConvertBeans.toCalendario(calendarioDTO);
+		Turno turno = (turnoDTO == null)? null : ConvertBeans.toTurno(turnoDTO);
+		for(HorarioAula horarioAula : HorarioAula.findHorarioAulasByHorarioAndCalendarioAndTurno(calendario, turno, horario, config.getOffset(), config.getLimit(), orderBy)) {
 			list.add(ConvertBeans.toHorarioAulaDTO(horarioAula));
 		}
 		BasePagingLoadResult<HorarioAulaDTO> result = new BasePagingLoadResult<HorarioAulaDTO>(list);

@@ -1,5 +1,6 @@
 package com.gapso.web.trieda.client.mvp.presenter;
 
+import java.util.Date;
 import java.util.List;
 
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
@@ -11,13 +12,19 @@ import com.extjs.gxt.ui.client.widget.Component;
 import com.extjs.gxt.ui.client.widget.Info;
 import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.button.Button;
+import com.extjs.gxt.ui.client.widget.form.TextField;
+import com.gapso.web.trieda.client.mvp.model.CalendarioDTO;
 import com.gapso.web.trieda.client.mvp.model.HorarioAulaDTO;
+import com.gapso.web.trieda.client.mvp.model.TurnoDTO;
 import com.gapso.web.trieda.client.mvp.view.HorarioAulaFormView;
 import com.gapso.web.trieda.client.services.HorariosAulaServiceAsync;
 import com.gapso.web.trieda.client.services.Services;
+import com.gapso.web.trieda.client.util.view.CalendarioComboBox;
 import com.gapso.web.trieda.client.util.view.GTab;
 import com.gapso.web.trieda.client.util.view.GTabItem;
 import com.gapso.web.trieda.client.util.view.SimpleGrid;
+import com.gapso.web.trieda.client.util.view.TurnoComboBox;
+import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -29,8 +36,12 @@ public class HorariosAulaPresenter implements Presenter {
 		Button getRemoveButton();
 		Button getImportExcelButton();
 		Button getExportExcelButton();
+		TextField<String> getHorarioBuscaTextField();
+		CalendarioComboBox getCalendarioBuscaComboBox();
+		TurnoComboBox getTurnoBuscaComboBox();
+		Button getSubmitBuscaButton();
+		Button getResetBuscaButton();
 		SimpleGrid<HorarioAulaDTO> getGrid();
-		GTabItem getGTabItem();
 		Component getComponent();
 		void setProxy(RpcProxy<PagingLoadResult<HorarioAulaDTO>> proxy);
 	}
@@ -47,7 +58,13 @@ public class HorariosAulaPresenter implements Presenter {
 		RpcProxy<PagingLoadResult<HorarioAulaDTO>> proxy = new RpcProxy<PagingLoadResult<HorarioAulaDTO>>() {
 			@Override
 			public void load(Object loadConfig, AsyncCallback<PagingLoadResult<HorarioAulaDTO>> callback) {
-				service.getList((PagingLoadConfig)loadConfig, callback);
+//				service.getList((PagingLoadConfig)loadConfig, callback);
+				DateTimeFormat df = DateTimeFormat.getFormat("HH:mm");
+				String horarioString = display.getHorarioBuscaTextField().getValue();
+				Date horario = (horarioString == null)? null : df.parse(horarioString);
+				TurnoDTO turnoDTO = display.getTurnoBuscaComboBox().getValue();
+				CalendarioDTO calendarioDTO = display.getCalendarioBuscaComboBox().getValue();
+				service.getBuscaList(calendarioDTO, turnoDTO, horario, (PagingLoadConfig)loadConfig, callback);
 			}
 		};
 		display.setProxy(proxy);
@@ -85,6 +102,21 @@ public class HorariosAulaPresenter implements Presenter {
 						Info.display("Removido", "Item removido com sucesso!");
 					}
 				});
+			}
+		});
+		display.getResetBuscaButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
+			@Override
+			public void componentSelected(ButtonEvent ce) {
+				display.getHorarioBuscaTextField().setValue(null);
+				display.getCalendarioBuscaComboBox().setValue(null);
+				display.getTurnoBuscaComboBox().setValue(null);
+				display.getGrid().updateList();
+			}
+		});
+		display.getSubmitBuscaButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
+			@Override
+			public void componentSelected(ButtonEvent ce) {
+				display.getGrid().updateList();
 			}
 		});
 	}

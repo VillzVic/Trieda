@@ -2,7 +2,6 @@ package com.gapso.trieda.domain;
 
 import java.util.Date;
 import java.util.List;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
@@ -12,12 +11,12 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
-
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.roo.addon.entity.RooEntity;
@@ -49,7 +48,7 @@ public class HorarioAula implements java.io.Serializable {
     @DateTimeFormat(style = "--")
     private Date horario;
 
-	public String toString() {
+    public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("Id: ").append(getId()).append(", ");
         sb.append("Version: ").append(getVersion()).append(", ");
@@ -59,41 +58,41 @@ public class HorarioAula implements java.io.Serializable {
         return sb.toString();
     }
 
-	@PersistenceContext
+    @PersistenceContext
     transient EntityManager entityManager;
 
-	@Id
+    @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "HOR_ID")
     private Long id;
 
-	@Version
+    @Version
     @Column(name = "version")
     private Integer version;
 
-	public Long getId() {
+    public Long getId() {
         return this.id;
     }
 
-	public void setId(Long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
-	public Integer getVersion() {
+    public Integer getVersion() {
         return this.version;
     }
 
-	public void setVersion(Integer version) {
+    public void setVersion(Integer version) {
         this.version = version;
     }
 
-	@Transactional
+    @Transactional
     public void persist() {
         if (this.entityManager == null) this.entityManager = entityManager();
         this.entityManager.persist(this);
     }
 
-	@Transactional
+    @Transactional
     public void remove() {
         if (this.entityManager == null) this.entityManager = entityManager();
         if (this.entityManager.contains(this)) {
@@ -104,13 +103,13 @@ public class HorarioAula implements java.io.Serializable {
         }
     }
 
-	@Transactional
+    @Transactional
     public void flush() {
         if (this.entityManager == null) this.entityManager = entityManager();
         this.entityManager.flush();
     }
 
-	@Transactional
+    @Transactional
     public HorarioAula merge() {
         if (this.entityManager == null) this.entityManager = entityManager();
         HorarioAula merged = this.entityManager.merge(this);
@@ -118,58 +117,74 @@ public class HorarioAula implements java.io.Serializable {
         return merged;
     }
 
-	public static final EntityManager entityManager() {
+    public static final EntityManager entityManager() {
         EntityManager em = new HorarioAula().entityManager;
         if (em == null) throw new IllegalStateException("Entity manager has not been injected (is the Spring Aspects JAR configured as an AJC/AJDT aspects library?)");
         return em;
     }
 
-	public static int count() {
+    public static int count() {
         return ((Number) entityManager().createQuery("select count(o) from HorarioAula o").getSingleResult()).intValue();
     }
 
-	@SuppressWarnings("unchecked")
+    @SuppressWarnings("unchecked")
     public static List<HorarioAula> findAll() {
         return entityManager().createQuery("select o from HorarioAula o").getResultList();
     }
 
-	public static HorarioAula find(Long id) {
+    public static HorarioAula find(Long id) {
         if (id == null) return null;
         return entityManager().find(HorarioAula.class, id);
     }
 
-	public static List<HorarioAula> find(int firstResult, int maxResults) {
-		return find(firstResult, maxResults, null);
-	}
-	@SuppressWarnings("unchecked")
-    public static List<HorarioAula> find(int firstResult, int maxResults, String orderBy) {
-		orderBy = (orderBy != null)? "ORDER BY o."+orderBy : "";
-        return entityManager().createQuery("select o from HorarioAula o "+orderBy).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
+    public static List<HorarioAula> find(int firstResult, int maxResults) {
+        return find(firstResult, maxResults, null);
     }
 
-	public Calendario getCalendario() {
+    @SuppressWarnings("unchecked")
+    public static List<HorarioAula> find(int firstResult, int maxResults, String orderBy) {
+        orderBy = (orderBy != null) ? "ORDER BY o." + orderBy : "";
+        return entityManager().createQuery("select o from HorarioAula o " + orderBy).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
+    }
+
+    @SuppressWarnings("unchecked")
+    public static List<HorarioAula> findHorarioAulasByHorarioAndCalendarioAndTurno(Calendario calendario, Turno turno, Date horario, int firstResult, int maxResults, String orderBy) {
+    	orderBy = (orderBy != null) ? "ORDER BY o." + orderBy : "";
+
+        String horarioQuery = (horario == null)? "" : "o.horario = :horario AND";
+        String calendarioQuery = (calendario == null)? "" : "o.calendario = :calendario AND";
+        String turnoQuery = (turno == null)? "" : "o.turno = :turno AND";
+        
+        Query q = entityManager().createQuery("SELECT o FROM HorarioAula o WHERE "+horarioQuery+" "+calendarioQuery+" "+turnoQuery+" 1=1 " +orderBy);
+        if(horario != null) q.setParameter("horario", horario);
+        if(calendario != null) q.setParameter("calendario", calendario);
+        if(turno != null) q.setParameter("turno", turno);
+        return q.setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
+    }
+    
+    public Calendario getCalendario() {
         return this.calendario;
     }
 
-	public void setCalendario(Calendario calendario) {
+    public void setCalendario(Calendario calendario) {
         this.calendario = calendario;
     }
 
-	public Turno getTurno() {
+    public Turno getTurno() {
         return this.turno;
     }
 
-	public void setTurno(Turno turno) {
+    public void setTurno(Turno turno) {
         this.turno = turno;
     }
 
-	public Date getHorario() {
+    public Date getHorario() {
         return this.horario;
     }
 
-	public void setHorario(Date horario) {
+    public void setHorario(Date horario) {
         this.horario = horario;
     }
 
-	private static final long serialVersionUID = 6415195416443296422L;
+    private static final long serialVersionUID = 6415195416443296422L;
 }
