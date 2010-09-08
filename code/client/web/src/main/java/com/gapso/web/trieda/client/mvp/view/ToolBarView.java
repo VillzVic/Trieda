@@ -111,13 +111,13 @@ public class ToolBarView extends MyComposite implements ToolBarPresenter.Display
 		outrosUnidadesSBt.setIconAlign(IconAlign.LEFT);
 		Menu outros = new Menu();
 		
-		calendarioMI = createMenuItem("Calendário", Resources.DEFAULTS.calendario16());
-		outros.add(calendarioMI);
+//		calendarioMI = createMenuItem("Calendário", Resources.DEFAULTS.calendario16());
+//		outros.add(calendarioMI);
+//		
+//		divisaoCreditosMI = createMenuItem("Preferência de Divisão de Créditos", Resources.DEFAULTS.divisaoDeCreditos16());
+//		outros.add(divisaoCreditosMI);
 		
-		divisaoCreditosMI = createMenuItem("Preferência de Divisão de Créditos", Resources.DEFAULTS.divisaoDeCreditos16());
-		outros.add(divisaoCreditosMI);
-		
-		toolBar.add(new SeparatorToolItem());
+//		toolBar.add(new SeparatorToolItem());
 		
 		turnosListMI = createMenuItem("Turnos", Resources.DEFAULTS.turnos16());
 		outros.add(turnosListMI);
