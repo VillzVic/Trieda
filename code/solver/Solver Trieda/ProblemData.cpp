@@ -15,7 +15,7 @@ ProblemData::~ProblemData()
    */
 }
 
-void ProblemData::le_arvore(Trieda& raiz)
+void ProblemData::le_arvore(TriedaInput& raiz)
 {
    calendario = new Calendario();
    calendario->le_arvore(raiz.calendario());

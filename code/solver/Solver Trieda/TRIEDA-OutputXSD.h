@@ -607,49 +607,27 @@ namespace xml_schema
 
 // Forward declarations.
 //
-class ItemProfessorDisciplina;
-class GrupoProfessorDisciplina;
-class ItemProfessor;
-class GrupoProfessor;
-class ItemDivisaoCreditos;
-class GrupoDivisaoCreditos;
-class GrupoDeslocamento;
-class ItemDeslocamento;
-class GrupoUnidade;
-class ItemUnidade;
-class ItemDisciplina;
-class GrupoDisciplina;
-class ItemCalendario;
-class ItemHorarioDisponivel;
-class GrupoHorarioDisponivel;
-class ItemHorarioAula;
-class GrupoHorarioAula;
-class ItemTurno;
-class GrupoTurno;
-class ItemSala;
-class ItemDisciplinaPeriodo;
-class ItemCurriculo;
-class GrupoCurriculo;
-class GrupoSala;
-class ItemCurso;
-class GrupoCurso;
-class ItemDemanda;
-class GrupoDemanda;
-class ItemUnidadeCurriculo;
-class GrupoUnidadeCurriculo;
-class ItemAlocacao;
-class ItemOferecimento;
-class GrupoOferecimento;
-class ItemTurma;
-class GrupoTurma;
-class ItemTipoSala;
-class ItemTipoContrato;
-class ItemTipoTitulacao;
-class ItemAreaTitulacao;
-class ItemTipoDisciplina;
-class ItemTipoCurso;
+class ItemAtendimento;
+class GrupoAtendimento;
+class ItemTatico;
+class ItemOperacional;
+class ItemAtendimentoCampus;
+class ItemAtendimentoUnidade;
+class ItemAtendimentoSala;
+class ItemAtendimentoDiaSemana;
+class ItemAtendimentoTurno;
+class ItemAtendimentoHorarioAula;
+class ItemAtendimentoOferta;
+class ItemAtendimentoTatico;
+class GrupoAtendimentoCampus;
+class GrupoAtendimentoUnidade;
+class GrupoAtendimentoSala;
+class GrupoAtendimentoDiaSemana;
+class GrupoAtendimentoTurno;
+class GrupoAtendimentoHorarioAula;
+class GrupoAtendimentoOferta;
+class GrupoAtendimentoTatico;
 class TriedaOutput;
-class unidadeCurriculo;
 
 #include <memory>    // std::auto_ptr
 #include <algorithm> // std::binary_search
@@ -662,449 +640,11 @@ class unidadeCurriculo;
 #include <xsd/cxx/xml/dom/parsing-header.hxx>
 
 /**
- * @brief Class corresponding to the %ItemProfessorDisciplina schema type.
+ * @brief Class corresponding to the %ItemAtendimento schema type.
  *
  * @nosubgrouping
  */
-class ItemProfessorDisciplina: public ::xml_schema::type
-{
-  public:
-  /**
-   * @name nota
-   *
-   * @brief Accessor and modifier functions for the %nota
-   * optional element.
-   */
-  //@{
-
-  /**
-   * @brief Element type.
-   */
-  typedef ::xml_schema::int_ nota_type;
-
-  /**
-   * @brief Element optional container type.
-   */
-  typedef ::xsd::cxx::tree::optional< nota_type > nota_optional;
-
-  /**
-   * @brief Element traits type.
-   */
-  typedef ::xsd::cxx::tree::traits< nota_type, char > nota_traits;
-
-  /**
-   * @brief Return a read-only (constant) reference to the element
-   * container.
-   *
-   * @return A constant reference to the optional container.
-   */
-  const nota_optional&
-  nota () const;
-
-  /**
-   * @brief Return a read-write reference to the element container.
-   *
-   * @return A reference to the optional container.
-   */
-  nota_optional&
-  nota ();
-
-  /**
-   * @brief Set the element value.
-   *
-   * @param x A new value to set.
-   *
-   * This function makes a copy of its argument and sets it as
-   * the new value of the element.
-   */
-  void
-  nota (const nota_type& x);
-
-  /**
-   * @brief Set the element value.
-   *
-   * @param x An optional container with the new value to set.
-   *
-   * If the value is present in @a x then this function makes a copy 
-   * of this value and sets it as the new value of the element.
-   * Otherwise the element container is set the 'not present' state.
-   */
-  void
-  nota (const nota_optional& x);
-
-  //@}
-
-  /**
-   * @name ranking
-   *
-   * @brief Accessor and modifier functions for the %ranking
-   * optional element.
-   */
-  //@{
-
-  /**
-   * @brief Element type.
-   */
-  typedef ::xml_schema::int_ ranking_type;
-
-  /**
-   * @brief Element optional container type.
-   */
-  typedef ::xsd::cxx::tree::optional< ranking_type > ranking_optional;
-
-  /**
-   * @brief Element traits type.
-   */
-  typedef ::xsd::cxx::tree::traits< ranking_type, char > ranking_traits;
-
-  /**
-   * @brief Return a read-only (constant) reference to the element
-   * container.
-   *
-   * @return A constant reference to the optional container.
-   */
-  const ranking_optional&
-  ranking () const;
-
-  /**
-   * @brief Return a read-write reference to the element container.
-   *
-   * @return A reference to the optional container.
-   */
-  ranking_optional&
-  ranking ();
-
-  /**
-   * @brief Set the element value.
-   *
-   * @param x A new value to set.
-   *
-   * This function makes a copy of its argument and sets it as
-   * the new value of the element.
-   */
-  void
-  ranking (const ranking_type& x);
-
-  /**
-   * @brief Set the element value.
-   *
-   * @param x An optional container with the new value to set.
-   *
-   * If the value is present in @a x then this function makes a copy 
-   * of this value and sets it as the new value of the element.
-   * Otherwise the element container is set the 'not present' state.
-   */
-  void
-  ranking (const ranking_optional& x);
-
-  //@}
-
-  /**
-   * @name disciplina
-   *
-   * @brief Accessor and modifier functions for the %disciplina
-   * optional element.
-   */
-  //@{
-
-  /**
-   * @brief Element type.
-   */
-  typedef ::ItemDisciplina disciplina_type;
-
-  /**
-   * @brief Element optional container type.
-   */
-  typedef ::xsd::cxx::tree::optional< disciplina_type > disciplina_optional;
-
-  /**
-   * @brief Element traits type.
-   */
-  typedef ::xsd::cxx::tree::traits< disciplina_type, char > disciplina_traits;
-
-  /**
-   * @brief Return a read-only (constant) reference to the element
-   * container.
-   *
-   * @return A constant reference to the optional container.
-   */
-  const disciplina_optional&
-  disciplina () const;
-
-  /**
-   * @brief Return a read-write reference to the element container.
-   *
-   * @return A reference to the optional container.
-   */
-  disciplina_optional&
-  disciplina ();
-
-  /**
-   * @brief Set the element value.
-   *
-   * @param x A new value to set.
-   *
-   * This function makes a copy of its argument and sets it as
-   * the new value of the element.
-   */
-  void
-  disciplina (const disciplina_type& x);
-
-  /**
-   * @brief Set the element value.
-   *
-   * @param x An optional container with the new value to set.
-   *
-   * If the value is present in @a x then this function makes a copy 
-   * of this value and sets it as the new value of the element.
-   * Otherwise the element container is set the 'not present' state.
-   */
-  void
-  disciplina (const disciplina_optional& x);
-
-  /**
-   * @brief Set the element value without copying.
-   *
-   * @param p A new value to use.
-   *
-   * This function will try to use the passed value directly instead
-   * of making a copy.
-   */
-  void
-  disciplina (::std::auto_ptr< disciplina_type > p);
-
-  //@}
-
-  /**
-   * @name Constructors
-   */
-  //@{
-
-  /**
-   * @brief Create an instance from the ultimate base and
-   * initializers for required elements and attributes.
-   */
-  ItemProfessorDisciplina ();
-
-  /**
-   * @brief Create an instance from a DOM element.
-   *
-   * @param e A DOM element to extract the data from.
-   * @param f Flags to create the new instance with.
-   * @param c A pointer to the object that will contain the new
-   * instance.
-   */
-  ItemProfessorDisciplina (const ::xercesc::DOMElement& e,
-                           ::xml_schema::flags f = 0,
-                           ::xml_schema::container* c = 0);
-
-  /**
-   * @brief Copy constructor.
-   *
-   * @param x An instance to make a copy of.
-   * @param f Flags to create the copy with.
-   * @param c A pointer to the object that will contain the copy.
-   *
-   * For polymorphic object models use the @c _clone function instead.
-   */
-  ItemProfessorDisciplina (const ItemProfessorDisciplina& x,
-                           ::xml_schema::flags f = 0,
-                           ::xml_schema::container* c = 0);
-
-  /**
-   * @brief Copy the instance polymorphically.
-   *
-   * @param f Flags to create the copy with.
-   * @param c A pointer to the object that will contain the copy.
-   * @return A pointer to the dynamically allocated copy.
-   *
-   * This function ensures that the dynamic type of the instance is
-   * used for copying and should be used for polymorphic object
-   * models instead of the copy constructor.
-   */
-  virtual ItemProfessorDisciplina*
-  _clone (::xml_schema::flags f = 0,
-          ::xml_schema::container* c = 0) const;
-
-  //@}
-
-  /**
-   * @brief Destructor.
-   */
-  virtual 
-  ~ItemProfessorDisciplina ();
-
-  // Implementation.
-  //
-
-  //@cond
-
-  protected:
-  void
-  parse (::xsd::cxx::xml::dom::parser< char >&,
-         ::xml_schema::flags);
-
-  protected:
-  nota_optional nota_;
-  ranking_optional ranking_;
-  disciplina_optional disciplina_;
-
-  //@endcond
-};
-
-/**
- * @brief Class corresponding to the %GrupoProfessorDisciplina schema type.
- *
- * @nosubgrouping
- */
-class GrupoProfessorDisciplina: public ::xml_schema::type
-{
-  public:
-  /**
-   * @name professorDisciplina
-   *
-   * @brief Accessor and modifier functions for the %professorDisciplina
-   * sequence element.
-   */
-  //@{
-
-  /**
-   * @brief Element type.
-   */
-  typedef ::ItemProfessorDisciplina professorDisciplina_type;
-
-  /**
-   * @brief Element sequence container type.
-   */
-  typedef ::xsd::cxx::tree::sequence< professorDisciplina_type > professorDisciplina_sequence;
-
-  /**
-   * @brief Element iterator type.
-   */
-  typedef professorDisciplina_sequence::iterator professorDisciplina_iterator;
-
-  /**
-   * @brief Element constant iterator type.
-   */
-  typedef professorDisciplina_sequence::const_iterator professorDisciplina_const_iterator;
-
-  /**
-   * @brief Element traits type.
-   */
-  typedef ::xsd::cxx::tree::traits< professorDisciplina_type, char > professorDisciplina_traits;
-
-  /**
-   * @brief Return a read-only (constant) reference to the element
-   * sequence.
-   *
-   * @return A constant reference to the sequence container.
-   */
-  const professorDisciplina_sequence&
-  professorDisciplina () const;
-
-  /**
-   * @brief Return a read-write reference to the element sequence.
-   *
-   * @return A reference to the sequence container.
-   */
-  professorDisciplina_sequence&
-  professorDisciplina ();
-
-  /**
-   * @brief Copy elements from a given sequence.
-   *
-   * @param s A sequence to copy elements from.
-   *
-   * For each element in @a s this function makes a copy and adds it 
-   * to the sequence. Note that this operation completely changes the 
-   * sequence and all old elements will be lost.
-   */
-  void
-  professorDisciplina (const professorDisciplina_sequence& s);
-
-  //@}
-
-  /**
-   * @name Constructors
-   */
-  //@{
-
-  /**
-   * @brief Create an instance from the ultimate base and
-   * initializers for required elements and attributes.
-   */
-  GrupoProfessorDisciplina ();
-
-  /**
-   * @brief Create an instance from a DOM element.
-   *
-   * @param e A DOM element to extract the data from.
-   * @param f Flags to create the new instance with.
-   * @param c A pointer to the object that will contain the new
-   * instance.
-   */
-  GrupoProfessorDisciplina (const ::xercesc::DOMElement& e,
-                            ::xml_schema::flags f = 0,
-                            ::xml_schema::container* c = 0);
-
-  /**
-   * @brief Copy constructor.
-   *
-   * @param x An instance to make a copy of.
-   * @param f Flags to create the copy with.
-   * @param c A pointer to the object that will contain the copy.
-   *
-   * For polymorphic object models use the @c _clone function instead.
-   */
-  GrupoProfessorDisciplina (const GrupoProfessorDisciplina& x,
-                            ::xml_schema::flags f = 0,
-                            ::xml_schema::container* c = 0);
-
-  /**
-   * @brief Copy the instance polymorphically.
-   *
-   * @param f Flags to create the copy with.
-   * @param c A pointer to the object that will contain the copy.
-   * @return A pointer to the dynamically allocated copy.
-   *
-   * This function ensures that the dynamic type of the instance is
-   * used for copying and should be used for polymorphic object
-   * models instead of the copy constructor.
-   */
-  virtual GrupoProfessorDisciplina*
-  _clone (::xml_schema::flags f = 0,
-          ::xml_schema::container* c = 0) const;
-
-  //@}
-
-  /**
-   * @brief Destructor.
-   */
-  virtual 
-  ~GrupoProfessorDisciplina ();
-
-  // Implementation.
-  //
-
-  //@cond
-
-  protected:
-  void
-  parse (::xsd::cxx::xml::dom::parser< char >&,
-         ::xml_schema::flags);
-
-  protected:
-  professorDisciplina_sequence professorDisciplina_;
-
-  //@endcond
-};
-
-/**
- * @brief Class corresponding to the %ItemProfessor schema type.
- *
- * @nosubgrouping
- */
-class ItemProfessor: public ::xml_schema::type
+class ItemAtendimento: public ::xml_schema::type
 {
   public:
   /**
@@ -1155,9090 +695,40 @@ class ItemProfessor: public ::xml_schema::type
   //@}
 
   /**
-   * @name contrato
+   * @name ofertaCursoCampiId
    *
-   * @brief Accessor and modifier functions for the %contrato
+   * @brief Accessor and modifier functions for the %ofertaCursoCampiId
    * required element.
-   */
-  //@{
-
-  /**
-   * @brief Element type.
-   */
-  typedef ::ItemTipoContrato contrato_type;
-
-  /**
-   * @brief Element traits type.
-   */
-  typedef ::xsd::cxx::tree::traits< contrato_type, char > contrato_traits;
-
-  /**
-   * @brief Return a read-only (constant) reference to the element.
-   *
-   * @return A constant reference to the element.
-   */
-  const contrato_type&
-  contrato () const;
-
-  /**
-   * @brief Return a read-write reference to the element.
-   *
-   * @return A reference to the element.
-   */
-  contrato_type&
-  contrato ();
-
-  /**
-   * @brief Set the element value.
-   *
-   * @param x A new value to set.
-   *
-   * This function makes a copy of its argument and sets it as
-   * the new value of the element.
-   */
-  void
-  contrato (const contrato_type& x);
-
-  /**
-   * @brief Set the element value without copying.
-   *
-   * @param p A new value to use.
-   *
-   * This function will try to use the passed value directly instead
-   * of making a copy.
-   */
-  void
-  contrato (::std::auto_ptr< contrato_type > p);
-
-  //@}
-
-  /**
-   * @name titulacao
-   *
-   * @brief Accessor and modifier functions for the %titulacao
-   * required element.
-   */
-  //@{
-
-  /**
-   * @brief Element type.
-   */
-  typedef ::ItemTipoTitulacao titulacao_type;
-
-  /**
-   * @brief Element traits type.
-   */
-  typedef ::xsd::cxx::tree::traits< titulacao_type, char > titulacao_traits;
-
-  /**
-   * @brief Return a read-only (constant) reference to the element.
-   *
-   * @return A constant reference to the element.
-   */
-  const titulacao_type&
-  titulacao () const;
-
-  /**
-   * @brief Return a read-write reference to the element.
-   *
-   * @return A reference to the element.
-   */
-  titulacao_type&
-  titulacao ();
-
-  /**
-   * @brief Set the element value.
-   *
-   * @param x A new value to set.
-   *
-   * This function makes a copy of its argument and sets it as
-   * the new value of the element.
-   */
-  void
-  titulacao (const titulacao_type& x);
-
-  /**
-   * @brief Set the element value without copying.
-   *
-   * @param p A new value to use.
-   *
-   * This function will try to use the passed value directly instead
-   * of making a copy.
-   */
-  void
-  titulacao (::std::auto_ptr< titulacao_type > p);
-
-  //@}
-
-  /**
-   * @name areaTitulacao
-   *
-   * @brief Accessor and modifier functions for the %areaTitulacao
-   * required element.
-   */
-  //@{
-
-  /**
-   * @brief Element type.
-   */
-  typedef ::ItemAreaTitulacao areaTitulacao_type;
-
-  /**
-   * @brief Element traits type.
-   */
-  typedef ::xsd::cxx::tree::traits< areaTitulacao_type, char > areaTitulacao_traits;
-
-  /**
-   * @brief Return a read-only (constant) reference to the element.
-   *
-   * @return A constant reference to the element.
-   */
-  const areaTitulacao_type&
-  areaTitulacao () const;
-
-  /**
-   * @brief Return a read-write reference to the element.
-   *
-   * @return A reference to the element.
-   */
-  areaTitulacao_type&
-  areaTitulacao ();
-
-  /**
-   * @brief Set the element value.
-   *
-   * @param x A new value to set.
-   *
-   * This function makes a copy of its argument and sets it as
-   * the new value of the element.
-   */
-  void
-  areaTitulacao (const areaTitulacao_type& x);
-
-  /**
-   * @brief Set the element value without copying.
-   *
-   * @param p A new value to use.
-   *
-   * This function will try to use the passed value directly instead
-   * of making a copy.
-   */
-  void
-  areaTitulacao (::std::auto_ptr< areaTitulacao_type > p);
-
-  //@}
-
-  /**
-   * @name cpf
-   *
-   * @brief Accessor and modifier functions for the %cpf
-   * required element.
-   */
-  //@{
-
-  /**
-   * @brief Element type.
-   */
-  typedef ::xml_schema::string cpf_type;
-
-  /**
-   * @brief Element traits type.
-   */
-  typedef ::xsd::cxx::tree::traits< cpf_type, char > cpf_traits;
-
-  /**
-   * @brief Return a read-only (constant) reference to the element.
-   *
-   * @return A constant reference to the element.
-   */
-  const cpf_type&
-  cpf () const;
-
-  /**
-   * @brief Return a read-write reference to the element.
-   *
-   * @return A reference to the element.
-   */
-  cpf_type&
-  cpf ();
-
-  /**
-   * @brief Set the element value.
-   *
-   * @param x A new value to set.
-   *
-   * This function makes a copy of its argument and sets it as
-   * the new value of the element.
-   */
-  void
-  cpf (const cpf_type& x);
-
-  /**
-   * @brief Set the element value without copying.
-   *
-   * @param p A new value to use.
-   *
-   * This function will try to use the passed value directly instead
-   * of making a copy.
-   */
-  void
-  cpf (::std::auto_ptr< cpf_type > p);
-
-  //@}
-
-  /**
-   * @name nome
-   *
-   * @brief Accessor and modifier functions for the %nome
-   * required element.
-   */
-  //@{
-
-  /**
-   * @brief Element type.
-   */
-  typedef ::xml_schema::string nome_type;
-
-  /**
-   * @brief Element traits type.
-   */
-  typedef ::xsd::cxx::tree::traits< nome_type, char > nome_traits;
-
-  /**
-   * @brief Return a read-only (constant) reference to the element.
-   *
-   * @return A constant reference to the element.
-   */
-  const nome_type&
-  nome () const;
-
-  /**
-   * @brief Return a read-write reference to the element.
-   *
-   * @return A reference to the element.
-   */
-  nome_type&
-  nome ();
-
-  /**
-   * @brief Set the element value.
-   *
-   * @param x A new value to set.
-   *
-   * This function makes a copy of its argument and sets it as
-   * the new value of the element.
-   */
-  void
-  nome (const nome_type& x);
-
-  /**
-   * @brief Set the element value without copying.
-   *
-   * @param p A new value to use.
-   *
-   * This function will try to use the passed value directly instead
-   * of making a copy.
-   */
-  void
-  nome (::std::auto_ptr< nome_type > p);
-
-  //@}
-
-  /**
-   * @name chMin
-   *
-   * @brief Accessor and modifier functions for the %chMin
-   * required element.
-   */
-  //@{
-
-  /**
-   * @brief Element type.
-   */
-  typedef ::xml_schema::int_ chMin_type;
-
-  /**
-   * @brief Element traits type.
-   */
-  typedef ::xsd::cxx::tree::traits< chMin_type, char > chMin_traits;
-
-  /**
-   * @brief Return a read-only (constant) reference to the element.
-   *
-   * @return A constant reference to the element.
-   */
-  const chMin_type&
-  chMin () const;
-
-  /**
-   * @brief Return a read-write reference to the element.
-   *
-   * @return A reference to the element.
-   */
-  chMin_type&
-  chMin ();
-
-  /**
-   * @brief Set the element value.
-   *
-   * @param x A new value to set.
-   *
-   * This function makes a copy of its argument and sets it as
-   * the new value of the element.
-   */
-  void
-  chMin (const chMin_type& x);
-
-  //@}
-
-  /**
-   * @name chMax
-   *
-   * @brief Accessor and modifier functions for the %chMax
-   * required element.
-   */
-  //@{
-
-  /**
-   * @brief Element type.
-   */
-  typedef ::xml_schema::int_ chMax_type;
-
-  /**
-   * @brief Element traits type.
-   */
-  typedef ::xsd::cxx::tree::traits< chMax_type, char > chMax_traits;
-
-  /**
-   * @brief Return a read-only (constant) reference to the element.
-   *
-   * @return A constant reference to the element.
-   */
-  const chMax_type&
-  chMax () const;
-
-  /**
-   * @brief Return a read-write reference to the element.
-   *
-   * @return A reference to the element.
-   */
-  chMax_type&
-  chMax ();
-
-  /**
-   * @brief Set the element value.
-   *
-   * @param x A new value to set.
-   *
-   * This function makes a copy of its argument and sets it as
-   * the new value of the element.
-   */
-  void
-  chMax (const chMax_type& x);
-
-  //@}
-
-  /**
-   * @name credAnterior
-   *
-   * @brief Accessor and modifier functions for the %credAnterior
-   * required element.
-   */
-  //@{
-
-  /**
-   * @brief Element type.
-   */
-  typedef ::xml_schema::int_ credAnterior_type;
-
-  /**
-   * @brief Element traits type.
-   */
-  typedef ::xsd::cxx::tree::traits< credAnterior_type, char > credAnterior_traits;
-
-  /**
-   * @brief Return a read-only (constant) reference to the element.
-   *
-   * @return A constant reference to the element.
-   */
-  const credAnterior_type&
-  credAnterior () const;
-
-  /**
-   * @brief Return a read-write reference to the element.
-   *
-   * @return A reference to the element.
-   */
-  credAnterior_type&
-  credAnterior ();
-
-  /**
-   * @brief Set the element value.
-   *
-   * @param x A new value to set.
-   *
-   * This function makes a copy of its argument and sets it as
-   * the new value of the element.
-   */
-  void
-  credAnterior (const credAnterior_type& x);
-
-  //@}
-
-  /**
-   * @name valorCred
-   *
-   * @brief Accessor and modifier functions for the %valorCred
-   * required element.
-   */
-  //@{
-
-  /**
-   * @brief Element type.
-   */
-  typedef ::xml_schema::double_ valorCred_type;
-
-  /**
-   * @brief Element traits type.
-   */
-  typedef ::xsd::cxx::tree::traits< valorCred_type, char, ::xsd::cxx::tree::schema_type::double_ > valorCred_traits;
-
-  /**
-   * @brief Return a read-only (constant) reference to the element.
-   *
-   * @return A constant reference to the element.
-   */
-  const valorCred_type&
-  valorCred () const;
-
-  /**
-   * @brief Return a read-write reference to the element.
-   *
-   * @return A reference to the element.
-   */
-  valorCred_type&
-  valorCred ();
-
-  /**
-   * @brief Set the element value.
-   *
-   * @param x A new value to set.
-   *
-   * This function makes a copy of its argument and sets it as
-   * the new value of the element.
-   */
-  void
-  valorCred (const valorCred_type& x);
-
-  //@}
-
-  /**
-   * @name unidades
-   *
-   * @brief Accessor and modifier functions for the %unidades
-   * required element.
-   */
-  //@{
-
-  /**
-   * @brief Element type.
-   */
-  typedef ::GrupoUnidade unidades_type;
-
-  /**
-   * @brief Element traits type.
-   */
-  typedef ::xsd::cxx::tree::traits< unidades_type, char > unidades_traits;
-
-  /**
-   * @brief Return a read-only (constant) reference to the element.
-   *
-   * @return A constant reference to the element.
-   */
-  const unidades_type&
-  unidades () const;
-
-  /**
-   * @brief Return a read-write reference to the element.
-   *
-   * @return A reference to the element.
-   */
-  unidades_type&
-  unidades ();
-
-  /**
-   * @brief Set the element value.
-   *
-   * @param x A new value to set.
-   *
-   * This function makes a copy of its argument and sets it as
-   * the new value of the element.
-   */
-  void
-  unidades (const unidades_type& x);
-
-  /**
-   * @brief Set the element value without copying.
-   *
-   * @param p A new value to use.
-   *
-   * This function will try to use the passed value directly instead
-   * of making a copy.
-   */
-  void
-  unidades (::std::auto_ptr< unidades_type > p);
-
-  //@}
-
-  /**
-   * @name horarios
-   *
-   * @brief Accessor and modifier functions for the %horarios
-   * required element.
-   */
-  //@{
-
-  /**
-   * @brief Element type.
-   */
-  typedef ::ItemHorarioDisponivel horarios_type;
-
-  /**
-   * @brief Element traits type.
-   */
-  typedef ::xsd::cxx::tree::traits< horarios_type, char > horarios_traits;
-
-  /**
-   * @brief Return a read-only (constant) reference to the element.
-   *
-   * @return A constant reference to the element.
-   */
-  const horarios_type&
-  horarios () const;
-
-  /**
-   * @brief Return a read-write reference to the element.
-   *
-   * @return A reference to the element.
-   */
-  horarios_type&
-  horarios ();
-
-  /**
-   * @brief Set the element value.
-   *
-   * @param x A new value to set.
-   *
-   * This function makes a copy of its argument and sets it as
-   * the new value of the element.
-   */
-  void
-  horarios (const horarios_type& x);
-
-  /**
-   * @brief Set the element value without copying.
-   *
-   * @param p A new value to use.
-   *
-   * This function will try to use the passed value directly instead
-   * of making a copy.
-   */
-  void
-  horarios (::std::auto_ptr< horarios_type > p);
-
-  //@}
-
-  /**
-   * @name disciplinas
-   *
-   * @brief Accessor and modifier functions for the %disciplinas
-   * required element.
-   */
-  //@{
-
-  /**
-   * @brief Element type.
-   */
-  typedef ::GrupoProfessorDisciplina disciplinas_type;
-
-  /**
-   * @brief Element traits type.
-   */
-  typedef ::xsd::cxx::tree::traits< disciplinas_type, char > disciplinas_traits;
-
-  /**
-   * @brief Return a read-only (constant) reference to the element.
-   *
-   * @return A constant reference to the element.
-   */
-  const disciplinas_type&
-  disciplinas () const;
-
-  /**
-   * @brief Return a read-write reference to the element.
-   *
-   * @return A reference to the element.
-   */
-  disciplinas_type&
-  disciplinas ();
-
-  /**
-   * @brief Set the element value.
-   *
-   * @param x A new value to set.
-   *
-   * This function makes a copy of its argument and sets it as
-   * the new value of the element.
-   */
-  void
-  disciplinas (const disciplinas_type& x);
-
-  /**
-   * @brief Set the element value without copying.
-   *
-   * @param p A new value to use.
-   *
-   * This function will try to use the passed value directly instead
-   * of making a copy.
-   */
-  void
-  disciplinas (::std::auto_ptr< disciplinas_type > p);
-
-  //@}
-
-  /**
-   * @name Constructors
-   */
-  //@{
-
-  /**
-   * @brief Create an instance from the ultimate base and
-   * initializers for required elements and attributes.
-   */
-  ItemProfessor (const id_type&,
-                 const contrato_type&,
-                 const titulacao_type&,
-                 const areaTitulacao_type&,
-                 const cpf_type&,
-                 const nome_type&,
-                 const chMin_type&,
-                 const chMax_type&,
-                 const credAnterior_type&,
-                 const valorCred_type&,
-                 const unidades_type&,
-                 const horarios_type&,
-                 const disciplinas_type&);
-
-  /**
-   * @brief Create an instance from the ultimate base and
-   * initializers for required elements and attributes
-   * (auto_ptr version).
-   *
-   * This constructor will try to use the passed values directly
-   * instead of making copies.
-   */
-  ItemProfessor (const id_type&,
-                 ::std::auto_ptr< contrato_type >&,
-                 ::std::auto_ptr< titulacao_type >&,
-                 ::std::auto_ptr< areaTitulacao_type >&,
-                 const cpf_type&,
-                 const nome_type&,
-                 const chMin_type&,
-                 const chMax_type&,
-                 const credAnterior_type&,
-                 const valorCred_type&,
-                 ::std::auto_ptr< unidades_type >&,
-                 ::std::auto_ptr< horarios_type >&,
-                 ::std::auto_ptr< disciplinas_type >&);
-
-  /**
-   * @brief Create an instance from a DOM element.
-   *
-   * @param e A DOM element to extract the data from.
-   * @param f Flags to create the new instance with.
-   * @param c A pointer to the object that will contain the new
-   * instance.
-   */
-  ItemProfessor (const ::xercesc::DOMElement& e,
-                 ::xml_schema::flags f = 0,
-                 ::xml_schema::container* c = 0);
-
-  /**
-   * @brief Copy constructor.
-   *
-   * @param x An instance to make a copy of.
-   * @param f Flags to create the copy with.
-   * @param c A pointer to the object that will contain the copy.
-   *
-   * For polymorphic object models use the @c _clone function instead.
-   */
-  ItemProfessor (const ItemProfessor& x,
-                 ::xml_schema::flags f = 0,
-                 ::xml_schema::container* c = 0);
-
-  /**
-   * @brief Copy the instance polymorphically.
-   *
-   * @param f Flags to create the copy with.
-   * @param c A pointer to the object that will contain the copy.
-   * @return A pointer to the dynamically allocated copy.
-   *
-   * This function ensures that the dynamic type of the instance is
-   * used for copying and should be used for polymorphic object
-   * models instead of the copy constructor.
-   */
-  virtual ItemProfessor*
-  _clone (::xml_schema::flags f = 0,
-          ::xml_schema::container* c = 0) const;
-
-  //@}
-
-  /**
-   * @brief Destructor.
-   */
-  virtual 
-  ~ItemProfessor ();
-
-  // Implementation.
-  //
-
-  //@cond
-
-  protected:
-  void
-  parse (::xsd::cxx::xml::dom::parser< char >&,
-         ::xml_schema::flags);
-
-  protected:
-  ::xsd::cxx::tree::one< id_type > id_;
-  ::xsd::cxx::tree::one< contrato_type > contrato_;
-  ::xsd::cxx::tree::one< titulacao_type > titulacao_;
-  ::xsd::cxx::tree::one< areaTitulacao_type > areaTitulacao_;
-  ::xsd::cxx::tree::one< cpf_type > cpf_;
-  ::xsd::cxx::tree::one< nome_type > nome_;
-  ::xsd::cxx::tree::one< chMin_type > chMin_;
-  ::xsd::cxx::tree::one< chMax_type > chMax_;
-  ::xsd::cxx::tree::one< credAnterior_type > credAnterior_;
-  ::xsd::cxx::tree::one< valorCred_type > valorCred_;
-  ::xsd::cxx::tree::one< unidades_type > unidades_;
-  ::xsd::cxx::tree::one< horarios_type > horarios_;
-  ::xsd::cxx::tree::one< disciplinas_type > disciplinas_;
-
-  //@endcond
-};
-
-/**
- * @brief Class corresponding to the %GrupoProfessor schema type.
- *
- * @nosubgrouping
- */
-class GrupoProfessor: public ::xml_schema::type
-{
-  public:
-  /**
-   * @name professor
-   *
-   * @brief Accessor and modifier functions for the %professor
-   * sequence element.
-   */
-  //@{
-
-  /**
-   * @brief Element type.
-   */
-  typedef ::ItemProfessor professor_type;
-
-  /**
-   * @brief Element sequence container type.
-   */
-  typedef ::xsd::cxx::tree::sequence< professor_type > professor_sequence;
-
-  /**
-   * @brief Element iterator type.
-   */
-  typedef professor_sequence::iterator professor_iterator;
-
-  /**
-   * @brief Element constant iterator type.
-   */
-  typedef professor_sequence::const_iterator professor_const_iterator;
-
-  /**
-   * @brief Element traits type.
-   */
-  typedef ::xsd::cxx::tree::traits< professor_type, char > professor_traits;
-
-  /**
-   * @brief Return a read-only (constant) reference to the element
-   * sequence.
-   *
-   * @return A constant reference to the sequence container.
-   */
-  const professor_sequence&
-  professor () const;
-
-  /**
-   * @brief Return a read-write reference to the element sequence.
-   *
-   * @return A reference to the sequence container.
-   */
-  professor_sequence&
-  professor ();
-
-  /**
-   * @brief Copy elements from a given sequence.
-   *
-   * @param s A sequence to copy elements from.
-   *
-   * For each element in @a s this function makes a copy and adds it 
-   * to the sequence. Note that this operation completely changes the 
-   * sequence and all old elements will be lost.
-   */
-  void
-  professor (const professor_sequence& s);
-
-  //@}
-
-  /**
-   * @name Constructors
-   */
-  //@{
-
-  /**
-   * @brief Create an instance from the ultimate base and
-   * initializers for required elements and attributes.
-   */
-  GrupoProfessor ();
-
-  /**
-   * @brief Create an instance from a DOM element.
-   *
-   * @param e A DOM element to extract the data from.
-   * @param f Flags to create the new instance with.
-   * @param c A pointer to the object that will contain the new
-   * instance.
-   */
-  GrupoProfessor (const ::xercesc::DOMElement& e,
-                  ::xml_schema::flags f = 0,
-                  ::xml_schema::container* c = 0);
-
-  /**
-   * @brief Copy constructor.
-   *
-   * @param x An instance to make a copy of.
-   * @param f Flags to create the copy with.
-   * @param c A pointer to the object that will contain the copy.
-   *
-   * For polymorphic object models use the @c _clone function instead.
-   */
-  GrupoProfessor (const GrupoProfessor& x,
-                  ::xml_schema::flags f = 0,
-                  ::xml_schema::container* c = 0);
-
-  /**
-   * @brief Copy the instance polymorphically.
-   *
-   * @param f Flags to create the copy with.
-   * @param c A pointer to the object that will contain the copy.
-   * @return A pointer to the dynamically allocated copy.
-   *
-   * This function ensures that the dynamic type of the instance is
-   * used for copying and should be used for polymorphic object
-   * models instead of the copy constructor.
-   */
-  virtual GrupoProfessor*
-  _clone (::xml_schema::flags f = 0,
-          ::xml_schema::container* c = 0) const;
-
-  //@}
-
-  /**
-   * @brief Destructor.
-   */
-  virtual 
-  ~GrupoProfessor ();
-
-  // Implementation.
-  //
-
-  //@cond
-
-  protected:
-  void
-  parse (::xsd::cxx::xml::dom::parser< char >&,
-         ::xml_schema::flags);
-
-  protected:
-  professor_sequence professor_;
-
-  //@endcond
-};
-
-/**
- * @brief Class corresponding to the %ItemDivisaoCreditos schema type.
- *
- * @nosubgrouping
- */
-class ItemDivisaoCreditos: public ::xml_schema::type
-{
-  public:
-  /**
-   * @name id
-   *
-   * @brief Accessor and modifier functions for the %id
-   * optional element.
-   */
-  //@{
-
-  /**
-   * @brief Element type.
-   */
-  typedef ::xml_schema::int_ id_type;
-
-  /**
-   * @brief Element optional container type.
-   */
-  typedef ::xsd::cxx::tree::optional< id_type > id_optional;
-
-  /**
-   * @brief Element traits type.
-   */
-  typedef ::xsd::cxx::tree::traits< id_type, char > id_traits;
-
-  /**
-   * @brief Return a read-only (constant) reference to the element
-   * container.
-   *
-   * @return A constant reference to the optional container.
-   */
-  const id_optional&
-  id () const;
-
-  /**
-   * @brief Return a read-write reference to the element container.
-   *
-   * @return A reference to the optional container.
-   */
-  id_optional&
-  id ();
-
-  /**
-   * @brief Set the element value.
-   *
-   * @param x A new value to set.
-   *
-   * This function makes a copy of its argument and sets it as
-   * the new value of the element.
-   */
-  void
-  id (const id_type& x);
-
-  /**
-   * @brief Set the element value.
-   *
-   * @param x An optional container with the new value to set.
-   *
-   * If the value is present in @a x then this function makes a copy 
-   * of this value and sets it as the new value of the element.
-   * Otherwise the element container is set the 'not present' state.
-   */
-  void
-  id (const id_optional& x);
-
-  //@}
-
-  /**
-   * @name creditos
-   *
-   * @brief Accessor and modifier functions for the %creditos
-   * optional element.
-   */
-  //@{
-
-  /**
-   * @brief Element type.
-   */
-  typedef ::xml_schema::int_ creditos_type;
-
-  /**
-   * @brief Element optional container type.
-   */
-  typedef ::xsd::cxx::tree::optional< creditos_type > creditos_optional;
-
-  /**
-   * @brief Element traits type.
-   */
-  typedef ::xsd::cxx::tree::traits< creditos_type, char > creditos_traits;
-
-  /**
-   * @brief Return a read-only (constant) reference to the element
-   * container.
-   *
-   * @return A constant reference to the optional container.
-   */
-  const creditos_optional&
-  creditos () const;
-
-  /**
-   * @brief Return a read-write reference to the element container.
-   *
-   * @return A reference to the optional container.
-   */
-  creditos_optional&
-  creditos ();
-
-  /**
-   * @brief Set the element value.
-   *
-   * @param x A new value to set.
-   *
-   * This function makes a copy of its argument and sets it as
-   * the new value of the element.
-   */
-  void
-  creditos (const creditos_type& x);
-
-  /**
-   * @brief Set the element value.
-   *
-   * @param x An optional container with the new value to set.
-   *
-   * If the value is present in @a x then this function makes a copy 
-   * of this value and sets it as the new value of the element.
-   * Otherwise the element container is set the 'not present' state.
-   */
-  void
-  creditos (const creditos_optional& x);
-
-  //@}
-
-  /**
-   * @name dia1
-   *
-   * @brief Accessor and modifier functions for the %dia1
-   * optional element.
-   */
-  //@{
-
-  /**
-   * @brief Element type.
-   */
-  typedef ::xml_schema::int_ dia1_type;
-
-  /**
-   * @brief Element optional container type.
-   */
-  typedef ::xsd::cxx::tree::optional< dia1_type > dia1_optional;
-
-  /**
-   * @brief Element traits type.
-   */
-  typedef ::xsd::cxx::tree::traits< dia1_type, char > dia1_traits;
-
-  /**
-   * @brief Return a read-only (constant) reference to the element
-   * container.
-   *
-   * @return A constant reference to the optional container.
-   */
-  const dia1_optional&
-  dia1 () const;
-
-  /**
-   * @brief Return a read-write reference to the element container.
-   *
-   * @return A reference to the optional container.
-   */
-  dia1_optional&
-  dia1 ();
-
-  /**
-   * @brief Set the element value.
-   *
-   * @param x A new value to set.
-   *
-   * This function makes a copy of its argument and sets it as
-   * the new value of the element.
-   */
-  void
-  dia1 (const dia1_type& x);
-
-  /**
-   * @brief Set the element value.
-   *
-   * @param x An optional container with the new value to set.
-   *
-   * If the value is present in @a x then this function makes a copy 
-   * of this value and sets it as the new value of the element.
-   * Otherwise the element container is set the 'not present' state.
-   */
-  void
-  dia1 (const dia1_optional& x);
-
-  //@}
-
-  /**
-   * @name dia2
-   *
-   * @brief Accessor and modifier functions for the %dia2
-   * optional element.
-   */
-  //@{
-
-  /**
-   * @brief Element type.
-   */
-  typedef ::xml_schema::int_ dia2_type;
-
-  /**
-   * @brief Element optional container type.
-   */
-  typedef ::xsd::cxx::tree::optional< dia2_type > dia2_optional;
-
-  /**
-   * @brief Element traits type.
-   */
-  typedef ::xsd::cxx::tree::traits< dia2_type, char > dia2_traits;
-
-  /**
-   * @brief Return a read-only (constant) reference to the element
-   * container.
-   *
-   * @return A constant reference to the optional container.
-   */
-  const dia2_optional&
-  dia2 () const;
-
-  /**
-   * @brief Return a read-write reference to the element container.
-   *
-   * @return A reference to the optional container.
-   */
-  dia2_optional&
-  dia2 ();
-
-  /**
-   * @brief Set the element value.
-   *
-   * @param x A new value to set.
-   *
-   * This function makes a copy of its argument and sets it as
-   * the new value of the element.
-   */
-  void
-  dia2 (const dia2_type& x);
-
-  /**
-   * @brief Set the element value.
-   *
-   * @param x An optional container with the new value to set.
-   *
-   * If the value is present in @a x then this function makes a copy 
-   * of this value and sets it as the new value of the element.
-   * Otherwise the element container is set the 'not present' state.
-   */
-  void
-  dia2 (const dia2_optional& x);
-
-  //@}
-
-  /**
-   * @name dia3
-   *
-   * @brief Accessor and modifier functions for the %dia3
-   * optional element.
-   */
-  //@{
-
-  /**
-   * @brief Element type.
-   */
-  typedef ::xml_schema::int_ dia3_type;
-
-  /**
-   * @brief Element optional container type.
-   */
-  typedef ::xsd::cxx::tree::optional< dia3_type > dia3_optional;
-
-  /**
-   * @brief Element traits type.
-   */
-  typedef ::xsd::cxx::tree::traits< dia3_type, char > dia3_traits;
-
-  /**
-   * @brief Return a read-only (constant) reference to the element
-   * container.
-   *
-   * @return A constant reference to the optional container.
-   */
-  const dia3_optional&
-  dia3 () const;
-
-  /**
-   * @brief Return a read-write reference to the element container.
-   *
-   * @return A reference to the optional container.
-   */
-  dia3_optional&
-  dia3 ();
-
-  /**
-   * @brief Set the element value.
-   *
-   * @param x A new value to set.
-   *
-   * This function makes a copy of its argument and sets it as
-   * the new value of the element.
-   */
-  void
-  dia3 (const dia3_type& x);
-
-  /**
-   * @brief Set the element value.
-   *
-   * @param x An optional container with the new value to set.
-   *
-   * If the value is present in @a x then this function makes a copy 
-   * of this value and sets it as the new value of the element.
-   * Otherwise the element container is set the 'not present' state.
-   */
-  void
-  dia3 (const dia3_optional& x);
-
-  //@}
-
-  /**
-   * @name dia4
-   *
-   * @brief Accessor and modifier functions for the %dia4
-   * optional element.
-   */
-  //@{
-
-  /**
-   * @brief Element type.
-   */
-  typedef ::xml_schema::int_ dia4_type;
-
-  /**
-   * @brief Element optional container type.
-   */
-  typedef ::xsd::cxx::tree::optional< dia4_type > dia4_optional;
-
-  /**
-   * @brief Element traits type.
-   */
-  typedef ::xsd::cxx::tree::traits< dia4_type, char > dia4_traits;
-
-  /**
-   * @brief Return a read-only (constant) reference to the element
-   * container.
-   *
-   * @return A constant reference to the optional container.
-   */
-  const dia4_optional&
-  dia4 () const;
-
-  /**
-   * @brief Return a read-write reference to the element container.
-   *
-   * @return A reference to the optional container.
-   */
-  dia4_optional&
-  dia4 ();
-
-  /**
-   * @brief Set the element value.
-   *
-   * @param x A new value to set.
-   *
-   * This function makes a copy of its argument and sets it as
-   * the new value of the element.
-   */
-  void
-  dia4 (const dia4_type& x);
-
-  /**
-   * @brief Set the element value.
-   *
-   * @param x An optional container with the new value to set.
-   *
-   * If the value is present in @a x then this function makes a copy 
-   * of this value and sets it as the new value of the element.
-   * Otherwise the element container is set the 'not present' state.
-   */
-  void
-  dia4 (const dia4_optional& x);
-
-  //@}
-
-  /**
-   * @name dia5
-   *
-   * @brief Accessor and modifier functions for the %dia5
-   * optional element.
-   */
-  //@{
-
-  /**
-   * @brief Element type.
-   */
-  typedef ::xml_schema::int_ dia5_type;
-
-  /**
-   * @brief Element optional container type.
-   */
-  typedef ::xsd::cxx::tree::optional< dia5_type > dia5_optional;
-
-  /**
-   * @brief Element traits type.
-   */
-  typedef ::xsd::cxx::tree::traits< dia5_type, char > dia5_traits;
-
-  /**
-   * @brief Return a read-only (constant) reference to the element
-   * container.
-   *
-   * @return A constant reference to the optional container.
-   */
-  const dia5_optional&
-  dia5 () const;
-
-  /**
-   * @brief Return a read-write reference to the element container.
-   *
-   * @return A reference to the optional container.
-   */
-  dia5_optional&
-  dia5 ();
-
-  /**
-   * @brief Set the element value.
-   *
-   * @param x A new value to set.
-   *
-   * This function makes a copy of its argument and sets it as
-   * the new value of the element.
-   */
-  void
-  dia5 (const dia5_type& x);
-
-  /**
-   * @brief Set the element value.
-   *
-   * @param x An optional container with the new value to set.
-   *
-   * If the value is present in @a x then this function makes a copy 
-   * of this value and sets it as the new value of the element.
-   * Otherwise the element container is set the 'not present' state.
-   */
-  void
-  dia5 (const dia5_optional& x);
-
-  //@}
-
-  /**
-   * @name dia6
-   *
-   * @brief Accessor and modifier functions for the %dia6
-   * optional element.
-   */
-  //@{
-
-  /**
-   * @brief Element type.
-   */
-  typedef ::xml_schema::int_ dia6_type;
-
-  /**
-   * @brief Element optional container type.
-   */
-  typedef ::xsd::cxx::tree::optional< dia6_type > dia6_optional;
-
-  /**
-   * @brief Element traits type.
-   */
-  typedef ::xsd::cxx::tree::traits< dia6_type, char > dia6_traits;
-
-  /**
-   * @brief Return a read-only (constant) reference to the element
-   * container.
-   *
-   * @return A constant reference to the optional container.
-   */
-  const dia6_optional&
-  dia6 () const;
-
-  /**
-   * @brief Return a read-write reference to the element container.
-   *
-   * @return A reference to the optional container.
-   */
-  dia6_optional&
-  dia6 ();
-
-  /**
-   * @brief Set the element value.
-   *
-   * @param x A new value to set.
-   *
-   * This function makes a copy of its argument and sets it as
-   * the new value of the element.
-   */
-  void
-  dia6 (const dia6_type& x);
-
-  /**
-   * @brief Set the element value.
-   *
-   * @param x An optional container with the new value to set.
-   *
-   * If the value is present in @a x then this function makes a copy 
-   * of this value and sets it as the new value of the element.
-   * Otherwise the element container is set the 'not present' state.
-   */
-  void
-  dia6 (const dia6_optional& x);
-
-  //@}
-
-  /**
-   * @name dia7
-   *
-   * @brief Accessor and modifier functions for the %dia7
-   * optional element.
-   */
-  //@{
-
-  /**
-   * @brief Element type.
-   */
-  typedef ::xml_schema::int_ dia7_type;
-
-  /**
-   * @brief Element optional container type.
-   */
-  typedef ::xsd::cxx::tree::optional< dia7_type > dia7_optional;
-
-  /**
-   * @brief Element traits type.
-   */
-  typedef ::xsd::cxx::tree::traits< dia7_type, char > dia7_traits;
-
-  /**
-   * @brief Return a read-only (constant) reference to the element
-   * container.
-   *
-   * @return A constant reference to the optional container.
-   */
-  const dia7_optional&
-  dia7 () const;
-
-  /**
-   * @brief Return a read-write reference to the element container.
-   *
-   * @return A reference to the optional container.
-   */
-  dia7_optional&
-  dia7 ();
-
-  /**
-   * @brief Set the element value.
-   *
-   * @param x A new value to set.
-   *
-   * This function makes a copy of its argument and sets it as
-   * the new value of the element.
-   */
-  void
-  dia7 (const dia7_type& x);
-
-  /**
-   * @brief Set the element value.
-   *
-   * @param x An optional container with the new value to set.
-   *
-   * If the value is present in @a x then this function makes a copy 
-   * of this value and sets it as the new value of the element.
-   * Otherwise the element container is set the 'not present' state.
-   */
-  void
-  dia7 (const dia7_optional& x);
-
-  //@}
-
-  /**
-   * @name Constructors
-   */
-  //@{
-
-  /**
-   * @brief Create an instance from the ultimate base and
-   * initializers for required elements and attributes.
-   */
-  ItemDivisaoCreditos ();
-
-  /**
-   * @brief Create an instance from a DOM element.
-   *
-   * @param e A DOM element to extract the data from.
-   * @param f Flags to create the new instance with.
-   * @param c A pointer to the object that will contain the new
-   * instance.
-   */
-  ItemDivisaoCreditos (const ::xercesc::DOMElement& e,
-                       ::xml_schema::flags f = 0,
-                       ::xml_schema::container* c = 0);
-
-  /**
-   * @brief Copy constructor.
-   *
-   * @param x An instance to make a copy of.
-   * @param f Flags to create the copy with.
-   * @param c A pointer to the object that will contain the copy.
-   *
-   * For polymorphic object models use the @c _clone function instead.
-   */
-  ItemDivisaoCreditos (const ItemDivisaoCreditos& x,
-                       ::xml_schema::flags f = 0,
-                       ::xml_schema::container* c = 0);
-
-  /**
-   * @brief Copy the instance polymorphically.
-   *
-   * @param f Flags to create the copy with.
-   * @param c A pointer to the object that will contain the copy.
-   * @return A pointer to the dynamically allocated copy.
-   *
-   * This function ensures that the dynamic type of the instance is
-   * used for copying and should be used for polymorphic object
-   * models instead of the copy constructor.
-   */
-  virtual ItemDivisaoCreditos*
-  _clone (::xml_schema::flags f = 0,
-          ::xml_schema::container* c = 0) const;
-
-  //@}
-
-  /**
-   * @brief Destructor.
-   */
-  virtual 
-  ~ItemDivisaoCreditos ();
-
-  // Implementation.
-  //
-
-  //@cond
-
-  protected:
-  void
-  parse (::xsd::cxx::xml::dom::parser< char >&,
-         ::xml_schema::flags);
-
-  protected:
-  id_optional id_;
-  creditos_optional creditos_;
-  dia1_optional dia1_;
-  dia2_optional dia2_;
-  dia3_optional dia3_;
-  dia4_optional dia4_;
-  dia5_optional dia5_;
-  dia6_optional dia6_;
-  dia7_optional dia7_;
-
-  //@endcond
-};
-
-/**
- * @brief Class corresponding to the %GrupoDivisaoCreditos schema type.
- *
- * @nosubgrouping
- */
-class GrupoDivisaoCreditos: public ::xml_schema::type
-{
-  public:
-  /**
-   * @name DivisaoCreditos
-   *
-   * @brief Accessor and modifier functions for the %DivisaoCreditos
-   * sequence element.
-   */
-  //@{
-
-  /**
-   * @brief Element type.
-   */
-  typedef ::ItemDivisaoCreditos DivisaoCreditos_type;
-
-  /**
-   * @brief Element sequence container type.
-   */
-  typedef ::xsd::cxx::tree::sequence< DivisaoCreditos_type > DivisaoCreditos_sequence;
-
-  /**
-   * @brief Element iterator type.
-   */
-  typedef DivisaoCreditos_sequence::iterator DivisaoCreditos_iterator;
-
-  /**
-   * @brief Element constant iterator type.
-   */
-  typedef DivisaoCreditos_sequence::const_iterator DivisaoCreditos_const_iterator;
-
-  /**
-   * @brief Element traits type.
-   */
-  typedef ::xsd::cxx::tree::traits< DivisaoCreditos_type, char > DivisaoCreditos_traits;
-
-  /**
-   * @brief Return a read-only (constant) reference to the element
-   * sequence.
-   *
-   * @return A constant reference to the sequence container.
-   */
-  const DivisaoCreditos_sequence&
-  DivisaoCreditos () const;
-
-  /**
-   * @brief Return a read-write reference to the element sequence.
-   *
-   * @return A reference to the sequence container.
-   */
-  DivisaoCreditos_sequence&
-  DivisaoCreditos ();
-
-  /**
-   * @brief Copy elements from a given sequence.
-   *
-   * @param s A sequence to copy elements from.
-   *
-   * For each element in @a s this function makes a copy and adds it 
-   * to the sequence. Note that this operation completely changes the 
-   * sequence and all old elements will be lost.
-   */
-  void
-  DivisaoCreditos (const DivisaoCreditos_sequence& s);
-
-  //@}
-
-  /**
-   * @name Constructors
-   */
-  //@{
-
-  /**
-   * @brief Create an instance from the ultimate base and
-   * initializers for required elements and attributes.
-   */
-  GrupoDivisaoCreditos ();
-
-  /**
-   * @brief Create an instance from a DOM element.
-   *
-   * @param e A DOM element to extract the data from.
-   * @param f Flags to create the new instance with.
-   * @param c A pointer to the object that will contain the new
-   * instance.
-   */
-  GrupoDivisaoCreditos (const ::xercesc::DOMElement& e,
-                        ::xml_schema::flags f = 0,
-                        ::xml_schema::container* c = 0);
-
-  /**
-   * @brief Copy constructor.
-   *
-   * @param x An instance to make a copy of.
-   * @param f Flags to create the copy with.
-   * @param c A pointer to the object that will contain the copy.
-   *
-   * For polymorphic object models use the @c _clone function instead.
-   */
-  GrupoDivisaoCreditos (const GrupoDivisaoCreditos& x,
-                        ::xml_schema::flags f = 0,
-                        ::xml_schema::container* c = 0);
-
-  /**
-   * @brief Copy the instance polymorphically.
-   *
-   * @param f Flags to create the copy with.
-   * @param c A pointer to the object that will contain the copy.
-   * @return A pointer to the dynamically allocated copy.
-   *
-   * This function ensures that the dynamic type of the instance is
-   * used for copying and should be used for polymorphic object
-   * models instead of the copy constructor.
-   */
-  virtual GrupoDivisaoCreditos*
-  _clone (::xml_schema::flags f = 0,
-          ::xml_schema::container* c = 0) const;
-
-  //@}
-
-  /**
-   * @brief Destructor.
-   */
-  virtual 
-  ~GrupoDivisaoCreditos ();
-
-  // Implementation.
-  //
-
-  //@cond
-
-  protected:
-  void
-  parse (::xsd::cxx::xml::dom::parser< char >&,
-         ::xml_schema::flags);
-
-  protected:
-  DivisaoCreditos_sequence DivisaoCreditos_;
-
-  //@endcond
-};
-
-/**
- * @brief Class corresponding to the %GrupoDeslocamento schema type.
- *
- * @nosubgrouping
- */
-class GrupoDeslocamento: public ::xml_schema::type
-{
-  public:
-  /**
-   * @name Deslocamento
-   *
-   * @brief Accessor and modifier functions for the %Deslocamento
-   * sequence element.
-   */
-  //@{
-
-  /**
-   * @brief Element type.
-   */
-  typedef ::ItemDeslocamento Deslocamento_type;
-
-  /**
-   * @brief Element sequence container type.
-   */
-  typedef ::xsd::cxx::tree::sequence< Deslocamento_type > Deslocamento_sequence;
-
-  /**
-   * @brief Element iterator type.
-   */
-  typedef Deslocamento_sequence::iterator Deslocamento_iterator;
-
-  /**
-   * @brief Element constant iterator type.
-   */
-  typedef Deslocamento_sequence::const_iterator Deslocamento_const_iterator;
-
-  /**
-   * @brief Element traits type.
-   */
-  typedef ::xsd::cxx::tree::traits< Deslocamento_type, char > Deslocamento_traits;
-
-  /**
-   * @brief Return a read-only (constant) reference to the element
-   * sequence.
-   *
-   * @return A constant reference to the sequence container.
-   */
-  const Deslocamento_sequence&
-  Deslocamento () const;
-
-  /**
-   * @brief Return a read-write reference to the element sequence.
-   *
-   * @return A reference to the sequence container.
-   */
-  Deslocamento_sequence&
-  Deslocamento ();
-
-  /**
-   * @brief Copy elements from a given sequence.
-   *
-   * @param s A sequence to copy elements from.
-   *
-   * For each element in @a s this function makes a copy and adds it 
-   * to the sequence. Note that this operation completely changes the 
-   * sequence and all old elements will be lost.
-   */
-  void
-  Deslocamento (const Deslocamento_sequence& s);
-
-  //@}
-
-  /**
-   * @name Constructors
-   */
-  //@{
-
-  /**
-   * @brief Create an instance from the ultimate base and
-   * initializers for required elements and attributes.
-   */
-  GrupoDeslocamento ();
-
-  /**
-   * @brief Create an instance from a DOM element.
-   *
-   * @param e A DOM element to extract the data from.
-   * @param f Flags to create the new instance with.
-   * @param c A pointer to the object that will contain the new
-   * instance.
-   */
-  GrupoDeslocamento (const ::xercesc::DOMElement& e,
-                     ::xml_schema::flags f = 0,
-                     ::xml_schema::container* c = 0);
-
-  /**
-   * @brief Copy constructor.
-   *
-   * @param x An instance to make a copy of.
-   * @param f Flags to create the copy with.
-   * @param c A pointer to the object that will contain the copy.
-   *
-   * For polymorphic object models use the @c _clone function instead.
-   */
-  GrupoDeslocamento (const GrupoDeslocamento& x,
-                     ::xml_schema::flags f = 0,
-                     ::xml_schema::container* c = 0);
-
-  /**
-   * @brief Copy the instance polymorphically.
-   *
-   * @param f Flags to create the copy with.
-   * @param c A pointer to the object that will contain the copy.
-   * @return A pointer to the dynamically allocated copy.
-   *
-   * This function ensures that the dynamic type of the instance is
-   * used for copying and should be used for polymorphic object
-   * models instead of the copy constructor.
-   */
-  virtual GrupoDeslocamento*
-  _clone (::xml_schema::flags f = 0,
-          ::xml_schema::container* c = 0) const;
-
-  //@}
-
-  /**
-   * @brief Destructor.
-   */
-  virtual 
-  ~GrupoDeslocamento ();
-
-  // Implementation.
-  //
-
-  //@cond
-
-  protected:
-  void
-  parse (::xsd::cxx::xml::dom::parser< char >&,
-         ::xml_schema::flags);
-
-  protected:
-  Deslocamento_sequence Deslocamento_;
-
-  //@endcond
-};
-
-/**
- * @brief Class corresponding to the %ItemDeslocamento schema type.
- *
- * @nosubgrouping
- */
-class ItemDeslocamento: public ::xml_schema::type
-{
-  public:
-  /**
-   * @name tempo
-   *
-   * @brief Accessor and modifier functions for the %tempo
-   * required element.
-   */
-  //@{
-
-  /**
-   * @brief Element type.
-   */
-  typedef ::xml_schema::int_ tempo_type;
-
-  /**
-   * @brief Element traits type.
-   */
-  typedef ::xsd::cxx::tree::traits< tempo_type, char > tempo_traits;
-
-  /**
-   * @brief Return a read-only (constant) reference to the element.
-   *
-   * @return A constant reference to the element.
-   */
-  const tempo_type&
-  tempo () const;
-
-  /**
-   * @brief Return a read-write reference to the element.
-   *
-   * @return A reference to the element.
-   */
-  tempo_type&
-  tempo ();
-
-  /**
-   * @brief Set the element value.
-   *
-   * @param x A new value to set.
-   *
-   * This function makes a copy of its argument and sets it as
-   * the new value of the element.
-   */
-  void
-  tempo (const tempo_type& x);
-
-  //@}
-
-  /**
-   * @name unidade
-   *
-   * @brief Accessor and modifier functions for the %unidade
-   * required element.
-   */
-  //@{
-
-  /**
-   * @brief Element type.
-   */
-  typedef ::ItemUnidade unidade_type;
-
-  /**
-   * @brief Element traits type.
-   */
-  typedef ::xsd::cxx::tree::traits< unidade_type, char > unidade_traits;
-
-  /**
-   * @brief Return a read-only (constant) reference to the element.
-   *
-   * @return A constant reference to the element.
-   */
-  const unidade_type&
-  unidade () const;
-
-  /**
-   * @brief Return a read-write reference to the element.
-   *
-   * @return A reference to the element.
-   */
-  unidade_type&
-  unidade ();
-
-  /**
-   * @brief Set the element value.
-   *
-   * @param x A new value to set.
-   *
-   * This function makes a copy of its argument and sets it as
-   * the new value of the element.
-   */
-  void
-  unidade (const unidade_type& x);
-
-  /**
-   * @brief Set the element value without copying.
-   *
-   * @param p A new value to use.
-   *
-   * This function will try to use the passed value directly instead
-   * of making a copy.
-   */
-  void
-  unidade (::std::auto_ptr< unidade_type > p);
-
-  //@}
-
-  /**
-   * @name Constructors
-   */
-  //@{
-
-  /**
-   * @brief Create an instance from the ultimate base and
-   * initializers for required elements and attributes.
-   */
-  ItemDeslocamento (const tempo_type&,
-                    const unidade_type&);
-
-  /**
-   * @brief Create an instance from the ultimate base and
-   * initializers for required elements and attributes
-   * (auto_ptr version).
-   *
-   * This constructor will try to use the passed values directly
-   * instead of making copies.
-   */
-  ItemDeslocamento (const tempo_type&,
-                    ::std::auto_ptr< unidade_type >&);
-
-  /**
-   * @brief Create an instance from a DOM element.
-   *
-   * @param e A DOM element to extract the data from.
-   * @param f Flags to create the new instance with.
-   * @param c A pointer to the object that will contain the new
-   * instance.
-   */
-  ItemDeslocamento (const ::xercesc::DOMElement& e,
-                    ::xml_schema::flags f = 0,
-                    ::xml_schema::container* c = 0);
-
-  /**
-   * @brief Copy constructor.
-   *
-   * @param x An instance to make a copy of.
-   * @param f Flags to create the copy with.
-   * @param c A pointer to the object that will contain the copy.
-   *
-   * For polymorphic object models use the @c _clone function instead.
-   */
-  ItemDeslocamento (const ItemDeslocamento& x,
-                    ::xml_schema::flags f = 0,
-                    ::xml_schema::container* c = 0);
-
-  /**
-   * @brief Copy the instance polymorphically.
-   *
-   * @param f Flags to create the copy with.
-   * @param c A pointer to the object that will contain the copy.
-   * @return A pointer to the dynamically allocated copy.
-   *
-   * This function ensures that the dynamic type of the instance is
-   * used for copying and should be used for polymorphic object
-   * models instead of the copy constructor.
-   */
-  virtual ItemDeslocamento*
-  _clone (::xml_schema::flags f = 0,
-          ::xml_schema::container* c = 0) const;
-
-  //@}
-
-  /**
-   * @brief Destructor.
-   */
-  virtual 
-  ~ItemDeslocamento ();
-
-  // Implementation.
-  //
-
-  //@cond
-
-  protected:
-  void
-  parse (::xsd::cxx::xml::dom::parser< char >&,
-         ::xml_schema::flags);
-
-  protected:
-  ::xsd::cxx::tree::one< tempo_type > tempo_;
-  ::xsd::cxx::tree::one< unidade_type > unidade_;
-
-  //@endcond
-};
-
-/**
- * @brief Class corresponding to the %GrupoUnidade schema type.
- *
- * @nosubgrouping
- */
-class GrupoUnidade: public ::xml_schema::type
-{
-  public:
-  /**
-   * @name ItemUnidade
-   *
-   * @brief Accessor and modifier functions for the %ItemUnidade
-   * sequence element.
-   */
-  //@{
-
-  /**
-   * @brief Element type.
-   */
-  typedef ::ItemUnidade ItemUnidade_type;
-
-  /**
-   * @brief Element sequence container type.
-   */
-  typedef ::xsd::cxx::tree::sequence< ItemUnidade_type > ItemUnidade_sequence;
-
-  /**
-   * @brief Element iterator type.
-   */
-  typedef ItemUnidade_sequence::iterator ItemUnidade_iterator;
-
-  /**
-   * @brief Element constant iterator type.
-   */
-  typedef ItemUnidade_sequence::const_iterator ItemUnidade_const_iterator;
-
-  /**
-   * @brief Element traits type.
-   */
-  typedef ::xsd::cxx::tree::traits< ItemUnidade_type, char > ItemUnidade_traits;
-
-  /**
-   * @brief Return a read-only (constant) reference to the element
-   * sequence.
-   *
-   * @return A constant reference to the sequence container.
-   */
-  const ItemUnidade_sequence&
-  ItemUnidade () const;
-
-  /**
-   * @brief Return a read-write reference to the element sequence.
-   *
-   * @return A reference to the sequence container.
-   */
-  ItemUnidade_sequence&
-  ItemUnidade ();
-
-  /**
-   * @brief Copy elements from a given sequence.
-   *
-   * @param s A sequence to copy elements from.
-   *
-   * For each element in @a s this function makes a copy and adds it 
-   * to the sequence. Note that this operation completely changes the 
-   * sequence and all old elements will be lost.
-   */
-  void
-  ItemUnidade (const ItemUnidade_sequence& s);
-
-  //@}
-
-  /**
-   * @name Constructors
-   */
-  //@{
-
-  /**
-   * @brief Create an instance from the ultimate base and
-   * initializers for required elements and attributes.
-   */
-  GrupoUnidade ();
-
-  /**
-   * @brief Create an instance from a DOM element.
-   *
-   * @param e A DOM element to extract the data from.
-   * @param f Flags to create the new instance with.
-   * @param c A pointer to the object that will contain the new
-   * instance.
-   */
-  GrupoUnidade (const ::xercesc::DOMElement& e,
-                ::xml_schema::flags f = 0,
-                ::xml_schema::container* c = 0);
-
-  /**
-   * @brief Copy constructor.
-   *
-   * @param x An instance to make a copy of.
-   * @param f Flags to create the copy with.
-   * @param c A pointer to the object that will contain the copy.
-   *
-   * For polymorphic object models use the @c _clone function instead.
-   */
-  GrupoUnidade (const GrupoUnidade& x,
-                ::xml_schema::flags f = 0,
-                ::xml_schema::container* c = 0);
-
-  /**
-   * @brief Copy the instance polymorphically.
-   *
-   * @param f Flags to create the copy with.
-   * @param c A pointer to the object that will contain the copy.
-   * @return A pointer to the dynamically allocated copy.
-   *
-   * This function ensures that the dynamic type of the instance is
-   * used for copying and should be used for polymorphic object
-   * models instead of the copy constructor.
-   */
-  virtual GrupoUnidade*
-  _clone (::xml_schema::flags f = 0,
-          ::xml_schema::container* c = 0) const;
-
-  //@}
-
-  /**
-   * @brief Destructor.
-   */
-  virtual 
-  ~GrupoUnidade ();
-
-  // Implementation.
-  //
-
-  //@cond
-
-  protected:
-  void
-  parse (::xsd::cxx::xml::dom::parser< char >&,
-         ::xml_schema::flags);
-
-  protected:
-  ItemUnidade_sequence ItemUnidade_;
-
-  //@endcond
-};
-
-/**
- * @brief Class corresponding to the %ItemUnidade schema type.
- *
- * @nosubgrouping
- */
-class ItemUnidade: public ::xml_schema::type
-{
-  public:
-  /**
-   * @name id
-   *
-   * @brief Accessor and modifier functions for the %id
-   * required element.
-   */
-  //@{
-
-  /**
-   * @brief Element type.
-   */
-  typedef ::xml_schema::int_ id_type;
-
-  /**
-   * @brief Element traits type.
-   */
-  typedef ::xsd::cxx::tree::traits< id_type, char > id_traits;
-
-  /**
-   * @brief Return a read-only (constant) reference to the element.
-   *
-   * @return A constant reference to the element.
-   */
-  const id_type&
-  id () const;
-
-  /**
-   * @brief Return a read-write reference to the element.
-   *
-   * @return A reference to the element.
-   */
-  id_type&
-  id ();
-
-  /**
-   * @brief Set the element value.
-   *
-   * @param x A new value to set.
-   *
-   * This function makes a copy of its argument and sets it as
-   * the new value of the element.
-   */
-  void
-  id (const id_type& x);
-
-  //@}
-
-  /**
-   * @name codigo
-   *
-   * @brief Accessor and modifier functions for the %codigo
-   * required element.
-   */
-  //@{
-
-  /**
-   * @brief Element type.
-   */
-  typedef ::xml_schema::string codigo_type;
-
-  /**
-   * @brief Element traits type.
-   */
-  typedef ::xsd::cxx::tree::traits< codigo_type, char > codigo_traits;
-
-  /**
-   * @brief Return a read-only (constant) reference to the element.
-   *
-   * @return A constant reference to the element.
-   */
-  const codigo_type&
-  codigo () const;
-
-  /**
-   * @brief Return a read-write reference to the element.
-   *
-   * @return A reference to the element.
-   */
-  codigo_type&
-  codigo ();
-
-  /**
-   * @brief Set the element value.
-   *
-   * @param x A new value to set.
-   *
-   * This function makes a copy of its argument and sets it as
-   * the new value of the element.
-   */
-  void
-  codigo (const codigo_type& x);
-
-  /**
-   * @brief Set the element value without copying.
-   *
-   * @param p A new value to use.
-   *
-   * This function will try to use the passed value directly instead
-   * of making a copy.
-   */
-  void
-  codigo (::std::auto_ptr< codigo_type > p);
-
-  //@}
-
-  /**
-   * @name nome
-   *
-   * @brief Accessor and modifier functions for the %nome
-   * required element.
-   */
-  //@{
-
-  /**
-   * @brief Element type.
-   */
-  typedef ::xml_schema::string nome_type;
-
-  /**
-   * @brief Element traits type.
-   */
-  typedef ::xsd::cxx::tree::traits< nome_type, char > nome_traits;
-
-  /**
-   * @brief Return a read-only (constant) reference to the element.
-   *
-   * @return A constant reference to the element.
-   */
-  const nome_type&
-  nome () const;
-
-  /**
-   * @brief Return a read-write reference to the element.
-   *
-   * @return A reference to the element.
-   */
-  nome_type&
-  nome ();
-
-  /**
-   * @brief Set the element value.
-   *
-   * @param x A new value to set.
-   *
-   * This function makes a copy of its argument and sets it as
-   * the new value of the element.
-   */
-  void
-  nome (const nome_type& x);
-
-  /**
-   * @brief Set the element value without copying.
-   *
-   * @param p A new value to use.
-   *
-   * This function will try to use the passed value directly instead
-   * of making a copy.
-   */
-  void
-  nome (::std::auto_ptr< nome_type > p);
-
-  //@}
-
-  /**
-   * @name endereco
-   *
-   * @brief Accessor and modifier functions for the %endereco
-   * required element.
-   */
-  //@{
-
-  /**
-   * @brief Element type.
-   */
-  typedef ::xml_schema::string endereco_type;
-
-  /**
-   * @brief Element traits type.
-   */
-  typedef ::xsd::cxx::tree::traits< endereco_type, char > endereco_traits;
-
-  /**
-   * @brief Return a read-only (constant) reference to the element.
-   *
-   * @return A constant reference to the element.
-   */
-  const endereco_type&
-  endereco () const;
-
-  /**
-   * @brief Return a read-write reference to the element.
-   *
-   * @return A reference to the element.
-   */
-  endereco_type&
-  endereco ();
-
-  /**
-   * @brief Set the element value.
-   *
-   * @param x A new value to set.
-   *
-   * This function makes a copy of its argument and sets it as
-   * the new value of the element.
-   */
-  void
-  endereco (const endereco_type& x);
-
-  /**
-   * @brief Set the element value without copying.
-   *
-   * @param p A new value to use.
-   *
-   * This function will try to use the passed value directly instead
-   * of making a copy.
-   */
-  void
-  endereco (::std::auto_ptr< endereco_type > p);
-
-  //@}
-
-  /**
-   * @name numMedSalas
-   *
-   * @brief Accessor and modifier functions for the %numMedSalas
-   * required element.
-   */
-  //@{
-
-  /**
-   * @brief Element type.
-   */
-  typedef ::xml_schema::int_ numMedSalas_type;
-
-  /**
-   * @brief Element traits type.
-   */
-  typedef ::xsd::cxx::tree::traits< numMedSalas_type, char > numMedSalas_traits;
-
-  /**
-   * @brief Return a read-only (constant) reference to the element.
-   *
-   * @return A constant reference to the element.
-   */
-  const numMedSalas_type&
-  numMedSalas () const;
-
-  /**
-   * @brief Return a read-write reference to the element.
-   *
-   * @return A reference to the element.
-   */
-  numMedSalas_type&
-  numMedSalas ();
-
-  /**
-   * @brief Set the element value.
-   *
-   * @param x A new value to set.
-   *
-   * This function makes a copy of its argument and sets it as
-   * the new value of the element.
-   */
-  void
-  numMedSalas (const numMedSalas_type& x);
-
-  //@}
-
-  /**
-   * @name custoMedCred
-   *
-   * @brief Accessor and modifier functions for the %custoMedCred
-   * required element.
-   */
-  //@{
-
-  /**
-   * @brief Element type.
-   */
-  typedef ::xml_schema::int_ custoMedCred_type;
-
-  /**
-   * @brief Element traits type.
-   */
-  typedef ::xsd::cxx::tree::traits< custoMedCred_type, char > custoMedCred_traits;
-
-  /**
-   * @brief Return a read-only (constant) reference to the element.
-   *
-   * @return A constant reference to the element.
-   */
-  const custoMedCred_type&
-  custoMedCred () const;
-
-  /**
-   * @brief Return a read-write reference to the element.
-   *
-   * @return A reference to the element.
-   */
-  custoMedCred_type&
-  custoMedCred ();
-
-  /**
-   * @brief Set the element value.
-   *
-   * @param x A new value to set.
-   *
-   * This function makes a copy of its argument and sets it as
-   * the new value of the element.
-   */
-  void
-  custoMedCred (const custoMedCred_type& x);
-
-  //@}
-
-  /**
-   * @name salas
-   *
-   * @brief Accessor and modifier functions for the %salas
-   * required element.
-   */
-  //@{
-
-  /**
-   * @brief Element type.
-   */
-  typedef ::GrupoSala salas_type;
-
-  /**
-   * @brief Element traits type.
-   */
-  typedef ::xsd::cxx::tree::traits< salas_type, char > salas_traits;
-
-  /**
-   * @brief Return a read-only (constant) reference to the element.
-   *
-   * @return A constant reference to the element.
-   */
-  const salas_type&
-  salas () const;
-
-  /**
-   * @brief Return a read-write reference to the element.
-   *
-   * @return A reference to the element.
-   */
-  salas_type&
-  salas ();
-
-  /**
-   * @brief Set the element value.
-   *
-   * @param x A new value to set.
-   *
-   * This function makes a copy of its argument and sets it as
-   * the new value of the element.
-   */
-  void
-  salas (const salas_type& x);
-
-  /**
-   * @brief Set the element value without copying.
-   *
-   * @param p A new value to use.
-   *
-   * This function will try to use the passed value directly instead
-   * of making a copy.
-   */
-  void
-  salas (::std::auto_ptr< salas_type > p);
-
-  //@}
-
-  /**
-   * @name horarios
-   *
-   * @brief Accessor and modifier functions for the %horarios
-   * required element.
-   */
-  //@{
-
-  /**
-   * @brief Element type.
-   */
-  typedef ::GrupoHorarioDisponivel horarios_type;
-
-  /**
-   * @brief Element traits type.
-   */
-  typedef ::xsd::cxx::tree::traits< horarios_type, char > horarios_traits;
-
-  /**
-   * @brief Return a read-only (constant) reference to the element.
-   *
-   * @return A constant reference to the element.
-   */
-  const horarios_type&
-  horarios () const;
-
-  /**
-   * @brief Return a read-write reference to the element.
-   *
-   * @return A reference to the element.
-   */
-  horarios_type&
-  horarios ();
-
-  /**
-   * @brief Set the element value.
-   *
-   * @param x A new value to set.
-   *
-   * This function makes a copy of its argument and sets it as
-   * the new value of the element.
-   */
-  void
-  horarios (const horarios_type& x);
-
-  /**
-   * @brief Set the element value without copying.
-   *
-   * @param p A new value to use.
-   *
-   * This function will try to use the passed value directly instead
-   * of making a copy.
-   */
-  void
-  horarios (::std::auto_ptr< horarios_type > p);
-
-  //@}
-
-  /**
-   * @name demanda
-   *
-   * @brief Accessor and modifier functions for the %demanda
-   * sequence element.
-   */
-  //@{
-
-  /**
-   * @brief Element type.
-   */
-  typedef ::GrupoDemanda demanda_type;
-
-  /**
-   * @brief Element sequence container type.
-   */
-  typedef ::xsd::cxx::tree::sequence< demanda_type > demanda_sequence;
-
-  /**
-   * @brief Element iterator type.
-   */
-  typedef demanda_sequence::iterator demanda_iterator;
-
-  /**
-   * @brief Element constant iterator type.
-   */
-  typedef demanda_sequence::const_iterator demanda_const_iterator;
-
-  /**
-   * @brief Element traits type.
-   */
-  typedef ::xsd::cxx::tree::traits< demanda_type, char > demanda_traits;
-
-  /**
-   * @brief Return a read-only (constant) reference to the element
-   * sequence.
-   *
-   * @return A constant reference to the sequence container.
-   */
-  const demanda_sequence&
-  demanda () const;
-
-  /**
-   * @brief Return a read-write reference to the element sequence.
-   *
-   * @return A reference to the sequence container.
-   */
-  demanda_sequence&
-  demanda ();
-
-  /**
-   * @brief Copy elements from a given sequence.
-   *
-   * @param s A sequence to copy elements from.
-   *
-   * For each element in @a s this function makes a copy and adds it 
-   * to the sequence. Note that this operation completely changes the 
-   * sequence and all old elements will be lost.
-   */
-  void
-  demanda (const demanda_sequence& s);
-
-  //@}
-
-  /**
-   * @name unidadeCurriculo
-   *
-   * @brief Accessor and modifier functions for the %unidadeCurriculo
-   * required element.
-   */
-  //@{
-
-  /**
-   * @brief Element type.
-   */
-  typedef ::GrupoUnidadeCurriculo unidadeCurriculo_type;
-
-  /**
-   * @brief Element traits type.
-   */
-  typedef ::xsd::cxx::tree::traits< unidadeCurriculo_type, char > unidadeCurriculo_traits;
-
-  /**
-   * @brief Return a read-only (constant) reference to the element.
-   *
-   * @return A constant reference to the element.
-   */
-  const unidadeCurriculo_type&
-  unidadeCurriculo () const;
-
-  /**
-   * @brief Return a read-write reference to the element.
-   *
-   * @return A reference to the element.
-   */
-  unidadeCurriculo_type&
-  unidadeCurriculo ();
-
-  /**
-   * @brief Set the element value.
-   *
-   * @param x A new value to set.
-   *
-   * This function makes a copy of its argument and sets it as
-   * the new value of the element.
-   */
-  void
-  unidadeCurriculo (const unidadeCurriculo_type& x);
-
-  /**
-   * @brief Set the element value without copying.
-   *
-   * @param p A new value to use.
-   *
-   * This function will try to use the passed value directly instead
-   * of making a copy.
-   */
-  void
-  unidadeCurriculo (::std::auto_ptr< unidadeCurriculo_type > p);
-
-  //@}
-
-  /**
-   * @name deslocamentos
-   *
-   * @brief Accessor and modifier functions for the %deslocamentos
-   * required element.
-   */
-  //@{
-
-  /**
-   * @brief Element type.
-   */
-  typedef ::GrupoDeslocamento deslocamentos_type;
-
-  /**
-   * @brief Element traits type.
-   */
-  typedef ::xsd::cxx::tree::traits< deslocamentos_type, char > deslocamentos_traits;
-
-  /**
-   * @brief Return a read-only (constant) reference to the element.
-   *
-   * @return A constant reference to the element.
-   */
-  const deslocamentos_type&
-  deslocamentos () const;
-
-  /**
-   * @brief Return a read-write reference to the element.
-   *
-   * @return A reference to the element.
-   */
-  deslocamentos_type&
-  deslocamentos ();
-
-  /**
-   * @brief Set the element value.
-   *
-   * @param x A new value to set.
-   *
-   * This function makes a copy of its argument and sets it as
-   * the new value of the element.
-   */
-  void
-  deslocamentos (const deslocamentos_type& x);
-
-  /**
-   * @brief Set the element value without copying.
-   *
-   * @param p A new value to use.
-   *
-   * This function will try to use the passed value directly instead
-   * of making a copy.
-   */
-  void
-  deslocamentos (::std::auto_ptr< deslocamentos_type > p);
-
-  //@}
-
-  /**
-   * @name Constructors
-   */
-  //@{
-
-  /**
-   * @brief Create an instance from the ultimate base and
-   * initializers for required elements and attributes.
-   */
-  ItemUnidade (const id_type&,
-               const codigo_type&,
-               const nome_type&,
-               const endereco_type&,
-               const numMedSalas_type&,
-               const custoMedCred_type&,
-               const salas_type&,
-               const horarios_type&,
-               const unidadeCurriculo_type&,
-               const deslocamentos_type&);
-
-  /**
-   * @brief Create an instance from the ultimate base and
-   * initializers for required elements and attributes
-   * (auto_ptr version).
-   *
-   * This constructor will try to use the passed values directly
-   * instead of making copies.
-   */
-  ItemUnidade (const id_type&,
-               const codigo_type&,
-               const nome_type&,
-               const endereco_type&,
-               const numMedSalas_type&,
-               const custoMedCred_type&,
-               ::std::auto_ptr< salas_type >&,
-               ::std::auto_ptr< horarios_type >&,
-               ::std::auto_ptr< unidadeCurriculo_type >&,
-               ::std::auto_ptr< deslocamentos_type >&);
-
-  /**
-   * @brief Create an instance from a DOM element.
-   *
-   * @param e A DOM element to extract the data from.
-   * @param f Flags to create the new instance with.
-   * @param c A pointer to the object that will contain the new
-   * instance.
-   */
-  ItemUnidade (const ::xercesc::DOMElement& e,
-               ::xml_schema::flags f = 0,
-               ::xml_schema::container* c = 0);
-
-  /**
-   * @brief Copy constructor.
-   *
-   * @param x An instance to make a copy of.
-   * @param f Flags to create the copy with.
-   * @param c A pointer to the object that will contain the copy.
-   *
-   * For polymorphic object models use the @c _clone function instead.
-   */
-  ItemUnidade (const ItemUnidade& x,
-               ::xml_schema::flags f = 0,
-               ::xml_schema::container* c = 0);
-
-  /**
-   * @brief Copy the instance polymorphically.
-   *
-   * @param f Flags to create the copy with.
-   * @param c A pointer to the object that will contain the copy.
-   * @return A pointer to the dynamically allocated copy.
-   *
-   * This function ensures that the dynamic type of the instance is
-   * used for copying and should be used for polymorphic object
-   * models instead of the copy constructor.
-   */
-  virtual ItemUnidade*
-  _clone (::xml_schema::flags f = 0,
-          ::xml_schema::container* c = 0) const;
-
-  //@}
-
-  /**
-   * @brief Destructor.
-   */
-  virtual 
-  ~ItemUnidade ();
-
-  // Implementation.
-  //
-
-  //@cond
-
-  protected:
-  void
-  parse (::xsd::cxx::xml::dom::parser< char >&,
-         ::xml_schema::flags);
-
-  protected:
-  ::xsd::cxx::tree::one< id_type > id_;
-  ::xsd::cxx::tree::one< codigo_type > codigo_;
-  ::xsd::cxx::tree::one< nome_type > nome_;
-  ::xsd::cxx::tree::one< endereco_type > endereco_;
-  ::xsd::cxx::tree::one< numMedSalas_type > numMedSalas_;
-  ::xsd::cxx::tree::one< custoMedCred_type > custoMedCred_;
-  ::xsd::cxx::tree::one< salas_type > salas_;
-  ::xsd::cxx::tree::one< horarios_type > horarios_;
-  demanda_sequence demanda_;
-  ::xsd::cxx::tree::one< unidadeCurriculo_type > unidadeCurriculo_;
-  ::xsd::cxx::tree::one< deslocamentos_type > deslocamentos_;
-
-  //@endcond
-};
-
-/**
- * @brief Class corresponding to the %ItemDisciplina schema type.
- *
- * @nosubgrouping
- */
-class ItemDisciplina: public ::xml_schema::type
-{
-  public:
-  /**
-   * @name id
-   *
-   * @brief Accessor and modifier functions for the %id
-   * required element.
-   */
-  //@{
-
-  /**
-   * @brief Element type.
-   */
-  typedef ::xml_schema::int_ id_type;
-
-  /**
-   * @brief Element traits type.
-   */
-  typedef ::xsd::cxx::tree::traits< id_type, char > id_traits;
-
-  /**
-   * @brief Return a read-only (constant) reference to the element.
-   *
-   * @return A constant reference to the element.
-   */
-  const id_type&
-  id () const;
-
-  /**
-   * @brief Return a read-write reference to the element.
-   *
-   * @return A reference to the element.
-   */
-  id_type&
-  id ();
-
-  /**
-   * @brief Set the element value.
-   *
-   * @param x A new value to set.
-   *
-   * This function makes a copy of its argument and sets it as
-   * the new value of the element.
-   */
-  void
-  id (const id_type& x);
-
-  //@}
-
-  /**
-   * @name codigo
-   *
-   * @brief Accessor and modifier functions for the %codigo
-   * required element.
-   */
-  //@{
-
-  /**
-   * @brief Element type.
-   */
-  typedef ::xml_schema::string codigo_type;
-
-  /**
-   * @brief Element traits type.
-   */
-  typedef ::xsd::cxx::tree::traits< codigo_type, char > codigo_traits;
-
-  /**
-   * @brief Return a read-only (constant) reference to the element.
-   *
-   * @return A constant reference to the element.
-   */
-  const codigo_type&
-  codigo () const;
-
-  /**
-   * @brief Return a read-write reference to the element.
-   *
-   * @return A reference to the element.
-   */
-  codigo_type&
-  codigo ();
-
-  /**
-   * @brief Set the element value.
-   *
-   * @param x A new value to set.
-   *
-   * This function makes a copy of its argument and sets it as
-   * the new value of the element.
-   */
-  void
-  codigo (const codigo_type& x);
-
-  /**
-   * @brief Set the element value without copying.
-   *
-   * @param p A new value to use.
-   *
-   * This function will try to use the passed value directly instead
-   * of making a copy.
-   */
-  void
-  codigo (::std::auto_ptr< codigo_type > p);
-
-  //@}
-
-  /**
-   * @name nome
-   *
-   * @brief Accessor and modifier functions for the %nome
-   * required element.
-   */
-  //@{
-
-  /**
-   * @brief Element type.
-   */
-  typedef ::xml_schema::string nome_type;
-
-  /**
-   * @brief Element traits type.
-   */
-  typedef ::xsd::cxx::tree::traits< nome_type, char > nome_traits;
-
-  /**
-   * @brief Return a read-only (constant) reference to the element.
-   *
-   * @return A constant reference to the element.
-   */
-  const nome_type&
-  nome () const;
-
-  /**
-   * @brief Return a read-write reference to the element.
-   *
-   * @return A reference to the element.
-   */
-  nome_type&
-  nome ();
-
-  /**
-   * @brief Set the element value.
-   *
-   * @param x A new value to set.
-   *
-   * This function makes a copy of its argument and sets it as
-   * the new value of the element.
-   */
-  void
-  nome (const nome_type& x);
-
-  /**
-   * @brief Set the element value without copying.
-   *
-   * @param p A new value to use.
-   *
-   * This function will try to use the passed value directly instead
-   * of making a copy.
-   */
-  void
-  nome (::std::auto_ptr< nome_type > p);
-
-  //@}
-
-  /**
-   * @name cred_teoricos
-   *
-   * @brief Accessor and modifier functions for the %cred_teoricos
-   * required element.
-   */
-  //@{
-
-  /**
-   * @brief Element type.
-   */
-  typedef ::xml_schema::string cred_teoricos_type;
-
-  /**
-   * @brief Element traits type.
-   */
-  typedef ::xsd::cxx::tree::traits< cred_teoricos_type, char > cred_teoricos_traits;
-
-  /**
-   * @brief Return a read-only (constant) reference to the element.
-   *
-   * @return A constant reference to the element.
-   */
-  const cred_teoricos_type&
-  cred_teoricos () const;
-
-  /**
-   * @brief Return a read-write reference to the element.
-   *
-   * @return A reference to the element.
-   */
-  cred_teoricos_type&
-  cred_teoricos ();
-
-  /**
-   * @brief Set the element value.
-   *
-   * @param x A new value to set.
-   *
-   * This function makes a copy of its argument and sets it as
-   * the new value of the element.
-   */
-  void
-  cred_teoricos (const cred_teoricos_type& x);
-
-  /**
-   * @brief Set the element value without copying.
-   *
-   * @param p A new value to use.
-   *
-   * This function will try to use the passed value directly instead
-   * of making a copy.
-   */
-  void
-  cred_teoricos (::std::auto_ptr< cred_teoricos_type > p);
-
-  //@}
-
-  /**
-   * @name cred_praticos
-   *
-   * @brief Accessor and modifier functions for the %cred_praticos
-   * required element.
-   */
-  //@{
-
-  /**
-   * @brief Element type.
-   */
-  typedef ::xml_schema::string cred_praticos_type;
-
-  /**
-   * @brief Element traits type.
-   */
-  typedef ::xsd::cxx::tree::traits< cred_praticos_type, char > cred_praticos_traits;
-
-  /**
-   * @brief Return a read-only (constant) reference to the element.
-   *
-   * @return A constant reference to the element.
-   */
-  const cred_praticos_type&
-  cred_praticos () const;
-
-  /**
-   * @brief Return a read-write reference to the element.
-   *
-   * @return A reference to the element.
-   */
-  cred_praticos_type&
-  cred_praticos ();
-
-  /**
-   * @brief Set the element value.
-   *
-   * @param x A new value to set.
-   *
-   * This function makes a copy of its argument and sets it as
-   * the new value of the element.
-   */
-  void
-  cred_praticos (const cred_praticos_type& x);
-
-  /**
-   * @brief Set the element value without copying.
-   *
-   * @param p A new value to use.
-   *
-   * This function will try to use the passed value directly instead
-   * of making a copy.
-   */
-  void
-  cred_praticos (::std::auto_ptr< cred_praticos_type > p);
-
-  //@}
-
-  /**
-   * @name laboratorio
-   *
-   * @brief Accessor and modifier functions for the %laboratorio
-   * required element.
-   */
-  //@{
-
-  /**
-   * @brief Element type.
-   */
-  typedef ::xml_schema::boolean laboratorio_type;
-
-  /**
-   * @brief Element traits type.
-   */
-  typedef ::xsd::cxx::tree::traits< laboratorio_type, char > laboratorio_traits;
-
-  /**
-   * @brief Return a read-only (constant) reference to the element.
-   *
-   * @return A constant reference to the element.
-   */
-  const laboratorio_type&
-  laboratorio () const;
-
-  /**
-   * @brief Return a read-write reference to the element.
-   *
-   * @return A reference to the element.
-   */
-  laboratorio_type&
-  laboratorio ();
-
-  /**
-   * @brief Set the element value.
-   *
-   * @param x A new value to set.
-   *
-   * This function makes a copy of its argument and sets it as
-   * the new value of the element.
-   */
-  void
-  laboratorio (const laboratorio_type& x);
-
-  //@}
-
-  /**
-   * @name TipoDisciplina
-   *
-   * @brief Accessor and modifier functions for the %TipoDisciplina
-   * required element.
-   */
-  //@{
-
-  /**
-   * @brief Element type.
-   */
-  typedef ::ItemTipoDisciplina TipoDisciplina_type;
-
-  /**
-   * @brief Element traits type.
-   */
-  typedef ::xsd::cxx::tree::traits< TipoDisciplina_type, char > TipoDisciplina_traits;
-
-  /**
-   * @brief Return a read-only (constant) reference to the element.
-   *
-   * @return A constant reference to the element.
-   */
-  const TipoDisciplina_type&
-  TipoDisciplina () const;
-
-  /**
-   * @brief Return a read-write reference to the element.
-   *
-   * @return A reference to the element.
-   */
-  TipoDisciplina_type&
-  TipoDisciplina ();
-
-  /**
-   * @brief Set the element value.
-   *
-   * @param x A new value to set.
-   *
-   * This function makes a copy of its argument and sets it as
-   * the new value of the element.
-   */
-  void
-  TipoDisciplina (const TipoDisciplina_type& x);
-
-  /**
-   * @brief Set the element value without copying.
-   *
-   * @param p A new value to use.
-   *
-   * This function will try to use the passed value directly instead
-   * of making a copy.
-   */
-  void
-  TipoDisciplina (::std::auto_ptr< TipoDisciplina_type > p);
-
-  //@}
-
-  /**
-   * @name DivisaoCreditos
-   *
-   * @brief Accessor and modifier functions for the %DivisaoCreditos
-   * required element.
-   */
-  //@{
-
-  /**
-   * @brief Element type.
-   */
-  typedef ::ItemDivisaoCreditos DivisaoCreditos_type;
-
-  /**
-   * @brief Element traits type.
-   */
-  typedef ::xsd::cxx::tree::traits< DivisaoCreditos_type, char > DivisaoCreditos_traits;
-
-  /**
-   * @brief Return a read-only (constant) reference to the element.
-   *
-   * @return A constant reference to the element.
-   */
-  const DivisaoCreditos_type&
-  DivisaoCreditos () const;
-
-  /**
-   * @brief Return a read-write reference to the element.
-   *
-   * @return A reference to the element.
-   */
-  DivisaoCreditos_type&
-  DivisaoCreditos ();
-
-  /**
-   * @brief Set the element value.
-   *
-   * @param x A new value to set.
-   *
-   * This function makes a copy of its argument and sets it as
-   * the new value of the element.
-   */
-  void
-  DivisaoCreditos (const DivisaoCreditos_type& x);
-
-  /**
-   * @brief Set the element value without copying.
-   *
-   * @param p A new value to use.
-   *
-   * This function will try to use the passed value directly instead
-   * of making a copy.
-   */
-  void
-  DivisaoCreditos (::std::auto_ptr< DivisaoCreditos_type > p);
-
-  //@}
-
-  /**
-   * @name compatibilidades
-   *
-   * @brief Accessor and modifier functions for the %compatibilidades
-   * required element.
-   */
-  //@{
-
-  /**
-   * @brief Element type.
-   */
-  typedef ::GrupoDisciplina compatibilidades_type;
-
-  /**
-   * @brief Element traits type.
-   */
-  typedef ::xsd::cxx::tree::traits< compatibilidades_type, char > compatibilidades_traits;
-
-  /**
-   * @brief Return a read-only (constant) reference to the element.
-   *
-   * @return A constant reference to the element.
-   */
-  const compatibilidades_type&
-  compatibilidades () const;
-
-  /**
-   * @brief Return a read-write reference to the element.
-   *
-   * @return A reference to the element.
-   */
-  compatibilidades_type&
-  compatibilidades ();
-
-  /**
-   * @brief Set the element value.
-   *
-   * @param x A new value to set.
-   *
-   * This function makes a copy of its argument and sets it as
-   * the new value of the element.
-   */
-  void
-  compatibilidades (const compatibilidades_type& x);
-
-  /**
-   * @brief Set the element value without copying.
-   *
-   * @param p A new value to use.
-   *
-   * This function will try to use the passed value directly instead
-   * of making a copy.
-   */
-  void
-  compatibilidades (::std::auto_ptr< compatibilidades_type > p);
-
-  //@}
-
-  /**
-   * @name equivalencia
-   *
-   * @brief Accessor and modifier functions for the %equivalencia
-   * required element.
-   */
-  //@{
-
-  /**
-   * @brief Element type.
-   */
-  typedef ::GrupoDisciplina equivalencia_type;
-
-  /**
-   * @brief Element traits type.
-   */
-  typedef ::xsd::cxx::tree::traits< equivalencia_type, char > equivalencia_traits;
-
-  /**
-   * @brief Return a read-only (constant) reference to the element.
-   *
-   * @return A constant reference to the element.
-   */
-  const equivalencia_type&
-  equivalencia () const;
-
-  /**
-   * @brief Return a read-write reference to the element.
-   *
-   * @return A reference to the element.
-   */
-  equivalencia_type&
-  equivalencia ();
-
-  /**
-   * @brief Set the element value.
-   *
-   * @param x A new value to set.
-   *
-   * This function makes a copy of its argument and sets it as
-   * the new value of the element.
-   */
-  void
-  equivalencia (const equivalencia_type& x);
-
-  /**
-   * @brief Set the element value without copying.
-   *
-   * @param p A new value to use.
-   *
-   * This function will try to use the passed value directly instead
-   * of making a copy.
-   */
-  void
-  equivalencia (::std::auto_ptr< equivalencia_type > p);
-
-  //@}
-
-  /**
-   * @name horarios
-   *
-   * @brief Accessor and modifier functions for the %horarios
-   * required element.
-   */
-  //@{
-
-  /**
-   * @brief Element type.
-   */
-  typedef ::GrupoHorarioDisponivel horarios_type;
-
-  /**
-   * @brief Element traits type.
-   */
-  typedef ::xsd::cxx::tree::traits< horarios_type, char > horarios_traits;
-
-  /**
-   * @brief Return a read-only (constant) reference to the element.
-   *
-   * @return A constant reference to the element.
-   */
-  const horarios_type&
-  horarios () const;
-
-  /**
-   * @brief Return a read-write reference to the element.
-   *
-   * @return A reference to the element.
-   */
-  horarios_type&
-  horarios ();
-
-  /**
-   * @brief Set the element value.
-   *
-   * @param x A new value to set.
-   *
-   * This function makes a copy of its argument and sets it as
-   * the new value of the element.
-   */
-  void
-  horarios (const horarios_type& x);
-
-  /**
-   * @brief Set the element value without copying.
-   *
-   * @param p A new value to use.
-   *
-   * This function will try to use the passed value directly instead
-   * of making a copy.
-   */
-  void
-  horarios (::std::auto_ptr< horarios_type > p);
-
-  //@}
-
-  /**
-   * @name salas
-   *
-   * @brief Accessor and modifier functions for the %salas
-   * required element.
-   */
-  //@{
-
-  /**
-   * @brief Element type.
-   */
-  typedef ::GrupoSala salas_type;
-
-  /**
-   * @brief Element traits type.
-   */
-  typedef ::xsd::cxx::tree::traits< salas_type, char > salas_traits;
-
-  /**
-   * @brief Return a read-only (constant) reference to the element.
-   *
-   * @return A constant reference to the element.
-   */
-  const salas_type&
-  salas () const;
-
-  /**
-   * @brief Return a read-write reference to the element.
-   *
-   * @return A reference to the element.
-   */
-  salas_type&
-  salas ();
-
-  /**
-   * @brief Set the element value.
-   *
-   * @param x A new value to set.
-   *
-   * This function makes a copy of its argument and sets it as
-   * the new value of the element.
-   */
-  void
-  salas (const salas_type& x);
-
-  /**
-   * @brief Set the element value without copying.
-   *
-   * @param p A new value to use.
-   *
-   * This function will try to use the passed value directly instead
-   * of making a copy.
-   */
-  void
-  salas (::std::auto_ptr< salas_type > p);
-
-  //@}
-
-  /**
-   * @name divisaoDeCreditos
-   *
-   * @brief Accessor and modifier functions for the %divisaoDeCreditos
-   * required element.
-   */
-  //@{
-
-  /**
-   * @brief Element type.
-   */
-  typedef ::ItemDivisaoCreditos divisaoDeCreditos_type;
-
-  /**
-   * @brief Element traits type.
-   */
-  typedef ::xsd::cxx::tree::traits< divisaoDeCreditos_type, char > divisaoDeCreditos_traits;
-
-  /**
-   * @brief Return a read-only (constant) reference to the element.
-   *
-   * @return A constant reference to the element.
-   */
-  const divisaoDeCreditos_type&
-  divisaoDeCreditos () const;
-
-  /**
-   * @brief Return a read-write reference to the element.
-   *
-   * @return A reference to the element.
-   */
-  divisaoDeCreditos_type&
-  divisaoDeCreditos ();
-
-  /**
-   * @brief Set the element value.
-   *
-   * @param x A new value to set.
-   *
-   * This function makes a copy of its argument and sets it as
-   * the new value of the element.
-   */
-  void
-  divisaoDeCreditos (const divisaoDeCreditos_type& x);
-
-  /**
-   * @brief Set the element value without copying.
-   *
-   * @param p A new value to use.
-   *
-   * This function will try to use the passed value directly instead
-   * of making a copy.
-   */
-  void
-  divisaoDeCreditos (::std::auto_ptr< divisaoDeCreditos_type > p);
-
-  //@}
-
-  /**
-   * @name turmas
-   *
-   * @brief Accessor and modifier functions for the %turmas
-   * required element.
-   */
-  //@{
-
-  /**
-   * @brief Element type.
-   */
-  typedef ::GrupoTurma turmas_type;
-
-  /**
-   * @brief Element traits type.
-   */
-  typedef ::xsd::cxx::tree::traits< turmas_type, char > turmas_traits;
-
-  /**
-   * @brief Return a read-only (constant) reference to the element.
-   *
-   * @return A constant reference to the element.
-   */
-  const turmas_type&
-  turmas () const;
-
-  /**
-   * @brief Return a read-write reference to the element.
-   *
-   * @return A reference to the element.
-   */
-  turmas_type&
-  turmas ();
-
-  /**
-   * @brief Set the element value.
-   *
-   * @param x A new value to set.
-   *
-   * This function makes a copy of its argument and sets it as
-   * the new value of the element.
-   */
-  void
-  turmas (const turmas_type& x);
-
-  /**
-   * @brief Set the element value without copying.
-   *
-   * @param p A new value to use.
-   *
-   * This function will try to use the passed value directly instead
-   * of making a copy.
-   */
-  void
-  turmas (::std::auto_ptr< turmas_type > p);
-
-  //@}
-
-  /**
-   * @name Constructors
-   */
-  //@{
-
-  /**
-   * @brief Create an instance from the ultimate base and
-   * initializers for required elements and attributes.
-   */
-  ItemDisciplina (const id_type&,
-                  const codigo_type&,
-                  const nome_type&,
-                  const cred_teoricos_type&,
-                  const cred_praticos_type&,
-                  const laboratorio_type&,
-                  const TipoDisciplina_type&,
-                  const DivisaoCreditos_type&,
-                  const compatibilidades_type&,
-                  const equivalencia_type&,
-                  const horarios_type&,
-                  const salas_type&,
-                  const divisaoDeCreditos_type&,
-                  const turmas_type&);
-
-  /**
-   * @brief Create an instance from the ultimate base and
-   * initializers for required elements and attributes
-   * (auto_ptr version).
-   *
-   * This constructor will try to use the passed values directly
-   * instead of making copies.
-   */
-  ItemDisciplina (const id_type&,
-                  const codigo_type&,
-                  const nome_type&,
-                  const cred_teoricos_type&,
-                  const cred_praticos_type&,
-                  const laboratorio_type&,
-                  ::std::auto_ptr< TipoDisciplina_type >&,
-                  ::std::auto_ptr< DivisaoCreditos_type >&,
-                  ::std::auto_ptr< compatibilidades_type >&,
-                  ::std::auto_ptr< equivalencia_type >&,
-                  ::std::auto_ptr< horarios_type >&,
-                  ::std::auto_ptr< salas_type >&,
-                  ::std::auto_ptr< divisaoDeCreditos_type >&,
-                  ::std::auto_ptr< turmas_type >&);
-
-  /**
-   * @brief Create an instance from a DOM element.
-   *
-   * @param e A DOM element to extract the data from.
-   * @param f Flags to create the new instance with.
-   * @param c A pointer to the object that will contain the new
-   * instance.
-   */
-  ItemDisciplina (const ::xercesc::DOMElement& e,
-                  ::xml_schema::flags f = 0,
-                  ::xml_schema::container* c = 0);
-
-  /**
-   * @brief Copy constructor.
-   *
-   * @param x An instance to make a copy of.
-   * @param f Flags to create the copy with.
-   * @param c A pointer to the object that will contain the copy.
-   *
-   * For polymorphic object models use the @c _clone function instead.
-   */
-  ItemDisciplina (const ItemDisciplina& x,
-                  ::xml_schema::flags f = 0,
-                  ::xml_schema::container* c = 0);
-
-  /**
-   * @brief Copy the instance polymorphically.
-   *
-   * @param f Flags to create the copy with.
-   * @param c A pointer to the object that will contain the copy.
-   * @return A pointer to the dynamically allocated copy.
-   *
-   * This function ensures that the dynamic type of the instance is
-   * used for copying and should be used for polymorphic object
-   * models instead of the copy constructor.
-   */
-  virtual ItemDisciplina*
-  _clone (::xml_schema::flags f = 0,
-          ::xml_schema::container* c = 0) const;
-
-  //@}
-
-  /**
-   * @brief Destructor.
-   */
-  virtual 
-  ~ItemDisciplina ();
-
-  // Implementation.
-  //
-
-  //@cond
-
-  protected:
-  void
-  parse (::xsd::cxx::xml::dom::parser< char >&,
-         ::xml_schema::flags);
-
-  protected:
-  ::xsd::cxx::tree::one< id_type > id_;
-  ::xsd::cxx::tree::one< codigo_type > codigo_;
-  ::xsd::cxx::tree::one< nome_type > nome_;
-  ::xsd::cxx::tree::one< cred_teoricos_type > cred_teoricos_;
-  ::xsd::cxx::tree::one< cred_praticos_type > cred_praticos_;
-  ::xsd::cxx::tree::one< laboratorio_type > laboratorio_;
-  ::xsd::cxx::tree::one< TipoDisciplina_type > TipoDisciplina_;
-  ::xsd::cxx::tree::one< DivisaoCreditos_type > DivisaoCreditos_;
-  ::xsd::cxx::tree::one< compatibilidades_type > compatibilidades_;
-  ::xsd::cxx::tree::one< equivalencia_type > equivalencia_;
-  ::xsd::cxx::tree::one< horarios_type > horarios_;
-  ::xsd::cxx::tree::one< salas_type > salas_;
-  ::xsd::cxx::tree::one< divisaoDeCreditos_type > divisaoDeCreditos_;
-  ::xsd::cxx::tree::one< turmas_type > turmas_;
-
-  //@endcond
-};
-
-/**
- * @brief Class corresponding to the %GrupoDisciplina schema type.
- *
- * @nosubgrouping
- */
-class GrupoDisciplina: public ::xml_schema::type
-{
-  public:
-  /**
-   * @name Disciplina
-   *
-   * @brief Accessor and modifier functions for the %Disciplina
-   * sequence element.
-   */
-  //@{
-
-  /**
-   * @brief Element type.
-   */
-  typedef ::ItemDisciplina Disciplina_type;
-
-  /**
-   * @brief Element sequence container type.
-   */
-  typedef ::xsd::cxx::tree::sequence< Disciplina_type > Disciplina_sequence;
-
-  /**
-   * @brief Element iterator type.
-   */
-  typedef Disciplina_sequence::iterator Disciplina_iterator;
-
-  /**
-   * @brief Element constant iterator type.
-   */
-  typedef Disciplina_sequence::const_iterator Disciplina_const_iterator;
-
-  /**
-   * @brief Element traits type.
-   */
-  typedef ::xsd::cxx::tree::traits< Disciplina_type, char > Disciplina_traits;
-
-  /**
-   * @brief Return a read-only (constant) reference to the element
-   * sequence.
-   *
-   * @return A constant reference to the sequence container.
-   */
-  const Disciplina_sequence&
-  Disciplina () const;
-
-  /**
-   * @brief Return a read-write reference to the element sequence.
-   *
-   * @return A reference to the sequence container.
-   */
-  Disciplina_sequence&
-  Disciplina ();
-
-  /**
-   * @brief Copy elements from a given sequence.
-   *
-   * @param s A sequence to copy elements from.
-   *
-   * For each element in @a s this function makes a copy and adds it 
-   * to the sequence. Note that this operation completely changes the 
-   * sequence and all old elements will be lost.
-   */
-  void
-  Disciplina (const Disciplina_sequence& s);
-
-  //@}
-
-  /**
-   * @name Constructors
-   */
-  //@{
-
-  /**
-   * @brief Create an instance from the ultimate base and
-   * initializers for required elements and attributes.
-   */
-  GrupoDisciplina ();
-
-  /**
-   * @brief Create an instance from a DOM element.
-   *
-   * @param e A DOM element to extract the data from.
-   * @param f Flags to create the new instance with.
-   * @param c A pointer to the object that will contain the new
-   * instance.
-   */
-  GrupoDisciplina (const ::xercesc::DOMElement& e,
-                   ::xml_schema::flags f = 0,
-                   ::xml_schema::container* c = 0);
-
-  /**
-   * @brief Copy constructor.
-   *
-   * @param x An instance to make a copy of.
-   * @param f Flags to create the copy with.
-   * @param c A pointer to the object that will contain the copy.
-   *
-   * For polymorphic object models use the @c _clone function instead.
-   */
-  GrupoDisciplina (const GrupoDisciplina& x,
-                   ::xml_schema::flags f = 0,
-                   ::xml_schema::container* c = 0);
-
-  /**
-   * @brief Copy the instance polymorphically.
-   *
-   * @param f Flags to create the copy with.
-   * @param c A pointer to the object that will contain the copy.
-   * @return A pointer to the dynamically allocated copy.
-   *
-   * This function ensures that the dynamic type of the instance is
-   * used for copying and should be used for polymorphic object
-   * models instead of the copy constructor.
-   */
-  virtual GrupoDisciplina*
-  _clone (::xml_schema::flags f = 0,
-          ::xml_schema::container* c = 0) const;
-
-  //@}
-
-  /**
-   * @brief Destructor.
-   */
-  virtual 
-  ~GrupoDisciplina ();
-
-  // Implementation.
-  //
-
-  //@cond
-
-  protected:
-  void
-  parse (::xsd::cxx::xml::dom::parser< char >&,
-         ::xml_schema::flags);
-
-  protected:
-  Disciplina_sequence Disciplina_;
-
-  //@endcond
-};
-
-/**
- * @brief Class corresponding to the %ItemCalendario schema type.
- *
- * @nosubgrouping
- */
-class ItemCalendario: public ::xml_schema::type
-{
-  public:
-  /**
-   * @name id
-   *
-   * @brief Accessor and modifier functions for the %id
-   * optional element.
-   */
-  //@{
-
-  /**
-   * @brief Element type.
-   */
-  typedef ::xml_schema::int_ id_type;
-
-  /**
-   * @brief Element optional container type.
-   */
-  typedef ::xsd::cxx::tree::optional< id_type > id_optional;
-
-  /**
-   * @brief Element traits type.
-   */
-  typedef ::xsd::cxx::tree::traits< id_type, char > id_traits;
-
-  /**
-   * @brief Return a read-only (constant) reference to the element
-   * container.
-   *
-   * @return A constant reference to the optional container.
-   */
-  const id_optional&
-  id () const;
-
-  /**
-   * @brief Return a read-write reference to the element container.
-   *
-   * @return A reference to the optional container.
-   */
-  id_optional&
-  id ();
-
-  /**
-   * @brief Set the element value.
-   *
-   * @param x A new value to set.
-   *
-   * This function makes a copy of its argument and sets it as
-   * the new value of the element.
-   */
-  void
-  id (const id_type& x);
-
-  /**
-   * @brief Set the element value.
-   *
-   * @param x An optional container with the new value to set.
-   *
-   * If the value is present in @a x then this function makes a copy 
-   * of this value and sets it as the new value of the element.
-   * Otherwise the element container is set the 'not present' state.
-   */
-  void
-  id (const id_optional& x);
-
-  //@}
-
-  /**
-   * @name turnos
-   *
-   * @brief Accessor and modifier functions for the %turnos
-   * optional element.
-   */
-  //@{
-
-  /**
-   * @brief Element type.
-   */
-  typedef ::GrupoTurno turnos_type;
-
-  /**
-   * @brief Element optional container type.
-   */
-  typedef ::xsd::cxx::tree::optional< turnos_type > turnos_optional;
-
-  /**
-   * @brief Element traits type.
-   */
-  typedef ::xsd::cxx::tree::traits< turnos_type, char > turnos_traits;
-
-  /**
-   * @brief Return a read-only (constant) reference to the element
-   * container.
-   *
-   * @return A constant reference to the optional container.
-   */
-  const turnos_optional&
-  turnos () const;
-
-  /**
-   * @brief Return a read-write reference to the element container.
-   *
-   * @return A reference to the optional container.
-   */
-  turnos_optional&
-  turnos ();
-
-  /**
-   * @brief Set the element value.
-   *
-   * @param x A new value to set.
-   *
-   * This function makes a copy of its argument and sets it as
-   * the new value of the element.
-   */
-  void
-  turnos (const turnos_type& x);
-
-  /**
-   * @brief Set the element value.
-   *
-   * @param x An optional container with the new value to set.
-   *
-   * If the value is present in @a x then this function makes a copy 
-   * of this value and sets it as the new value of the element.
-   * Otherwise the element container is set the 'not present' state.
-   */
-  void
-  turnos (const turnos_optional& x);
-
-  /**
-   * @brief Set the element value without copying.
-   *
-   * @param p A new value to use.
-   *
-   * This function will try to use the passed value directly instead
-   * of making a copy.
-   */
-  void
-  turnos (::std::auto_ptr< turnos_type > p);
-
-  //@}
-
-  /**
-   * @name codigo
-   *
-   * @brief Accessor and modifier functions for the %codigo
-   * optional element.
-   */
-  //@{
-
-  /**
-   * @brief Element type.
-   */
-  typedef ::xml_schema::string codigo_type;
-
-  /**
-   * @brief Element optional container type.
-   */
-  typedef ::xsd::cxx::tree::optional< codigo_type > codigo_optional;
-
-  /**
-   * @brief Element traits type.
-   */
-  typedef ::xsd::cxx::tree::traits< codigo_type, char > codigo_traits;
-
-  /**
-   * @brief Return a read-only (constant) reference to the element
-   * container.
-   *
-   * @return A constant reference to the optional container.
-   */
-  const codigo_optional&
-  codigo () const;
-
-  /**
-   * @brief Return a read-write reference to the element container.
-   *
-   * @return A reference to the optional container.
-   */
-  codigo_optional&
-  codigo ();
-
-  /**
-   * @brief Set the element value.
-   *
-   * @param x A new value to set.
-   *
-   * This function makes a copy of its argument and sets it as
-   * the new value of the element.
-   */
-  void
-  codigo (const codigo_type& x);
-
-  /**
-   * @brief Set the element value.
-   *
-   * @param x An optional container with the new value to set.
-   *
-   * If the value is present in @a x then this function makes a copy 
-   * of this value and sets it as the new value of the element.
-   * Otherwise the element container is set the 'not present' state.
-   */
-  void
-  codigo (const codigo_optional& x);
-
-  /**
-   * @brief Set the element value without copying.
-   *
-   * @param p A new value to use.
-   *
-   * This function will try to use the passed value directly instead
-   * of making a copy.
-   */
-  void
-  codigo (::std::auto_ptr< codigo_type > p);
-
-  //@}
-
-  /**
-   * @name descricao
-   *
-   * @brief Accessor and modifier functions for the %descricao
-   * optional element.
-   */
-  //@{
-
-  /**
-   * @brief Element type.
-   */
-  typedef ::xml_schema::string descricao_type;
-
-  /**
-   * @brief Element optional container type.
-   */
-  typedef ::xsd::cxx::tree::optional< descricao_type > descricao_optional;
-
-  /**
-   * @brief Element traits type.
-   */
-  typedef ::xsd::cxx::tree::traits< descricao_type, char > descricao_traits;
-
-  /**
-   * @brief Return a read-only (constant) reference to the element
-   * container.
-   *
-   * @return A constant reference to the optional container.
-   */
-  const descricao_optional&
-  descricao () const;
-
-  /**
-   * @brief Return a read-write reference to the element container.
-   *
-   * @return A reference to the optional container.
-   */
-  descricao_optional&
-  descricao ();
-
-  /**
-   * @brief Set the element value.
-   *
-   * @param x A new value to set.
-   *
-   * This function makes a copy of its argument and sets it as
-   * the new value of the element.
-   */
-  void
-  descricao (const descricao_type& x);
-
-  /**
-   * @brief Set the element value.
-   *
-   * @param x An optional container with the new value to set.
-   *
-   * If the value is present in @a x then this function makes a copy 
-   * of this value and sets it as the new value of the element.
-   * Otherwise the element container is set the 'not present' state.
-   */
-  void
-  descricao (const descricao_optional& x);
-
-  /**
-   * @brief Set the element value without copying.
-   *
-   * @param p A new value to use.
-   *
-   * This function will try to use the passed value directly instead
-   * of making a copy.
-   */
-  void
-  descricao (::std::auto_ptr< descricao_type > p);
-
-  //@}
-
-  /**
-   * @name tempoAula
-   *
-   * @brief Accessor and modifier functions for the %tempoAula
-   * optional element.
-   */
-  //@{
-
-  /**
-   * @brief Element type.
-   */
-  typedef ::xml_schema::int_ tempoAula_type;
-
-  /**
-   * @brief Element optional container type.
-   */
-  typedef ::xsd::cxx::tree::optional< tempoAula_type > tempoAula_optional;
-
-  /**
-   * @brief Element traits type.
-   */
-  typedef ::xsd::cxx::tree::traits< tempoAula_type, char > tempoAula_traits;
-
-  /**
-   * @brief Return a read-only (constant) reference to the element
-   * container.
-   *
-   * @return A constant reference to the optional container.
-   */
-  const tempoAula_optional&
-  tempoAula () const;
-
-  /**
-   * @brief Return a read-write reference to the element container.
-   *
-   * @return A reference to the optional container.
-   */
-  tempoAula_optional&
-  tempoAula ();
-
-  /**
-   * @brief Set the element value.
-   *
-   * @param x A new value to set.
-   *
-   * This function makes a copy of its argument and sets it as
-   * the new value of the element.
-   */
-  void
-  tempoAula (const tempoAula_type& x);
-
-  /**
-   * @brief Set the element value.
-   *
-   * @param x An optional container with the new value to set.
-   *
-   * If the value is present in @a x then this function makes a copy 
-   * of this value and sets it as the new value of the element.
-   * Otherwise the element container is set the 'not present' state.
-   */
-  void
-  tempoAula (const tempoAula_optional& x);
-
-  //@}
-
-  /**
-   * @name Constructors
-   */
-  //@{
-
-  /**
-   * @brief Create an instance from the ultimate base and
-   * initializers for required elements and attributes.
-   */
-  ItemCalendario ();
-
-  /**
-   * @brief Create an instance from a DOM element.
-   *
-   * @param e A DOM element to extract the data from.
-   * @param f Flags to create the new instance with.
-   * @param c A pointer to the object that will contain the new
-   * instance.
-   */
-  ItemCalendario (const ::xercesc::DOMElement& e,
-                  ::xml_schema::flags f = 0,
-                  ::xml_schema::container* c = 0);
-
-  /**
-   * @brief Copy constructor.
-   *
-   * @param x An instance to make a copy of.
-   * @param f Flags to create the copy with.
-   * @param c A pointer to the object that will contain the copy.
-   *
-   * For polymorphic object models use the @c _clone function instead.
-   */
-  ItemCalendario (const ItemCalendario& x,
-                  ::xml_schema::flags f = 0,
-                  ::xml_schema::container* c = 0);
-
-  /**
-   * @brief Copy the instance polymorphically.
-   *
-   * @param f Flags to create the copy with.
-   * @param c A pointer to the object that will contain the copy.
-   * @return A pointer to the dynamically allocated copy.
-   *
-   * This function ensures that the dynamic type of the instance is
-   * used for copying and should be used for polymorphic object
-   * models instead of the copy constructor.
-   */
-  virtual ItemCalendario*
-  _clone (::xml_schema::flags f = 0,
-          ::xml_schema::container* c = 0) const;
-
-  //@}
-
-  /**
-   * @brief Destructor.
-   */
-  virtual 
-  ~ItemCalendario ();
-
-  // Implementation.
-  //
-
-  //@cond
-
-  protected:
-  void
-  parse (::xsd::cxx::xml::dom::parser< char >&,
-         ::xml_schema::flags);
-
-  protected:
-  id_optional id_;
-  turnos_optional turnos_;
-  codigo_optional codigo_;
-  descricao_optional descricao_;
-  tempoAula_optional tempoAula_;
-
-  //@endcond
-};
-
-/**
- * @brief Class corresponding to the %ItemHorarioDisponivel schema type.
- *
- * @nosubgrouping
- */
-class ItemHorarioDisponivel: public ::xml_schema::type
-{
-  public:
-  /**
-   * @name id
-   *
-   * @brief Accessor and modifier functions for the %id
-   * optional element.
-   */
-  //@{
-
-  /**
-   * @brief Element type.
-   */
-  typedef ::xml_schema::int_ id_type;
-
-  /**
-   * @brief Element optional container type.
-   */
-  typedef ::xsd::cxx::tree::optional< id_type > id_optional;
-
-  /**
-   * @brief Element traits type.
-   */
-  typedef ::xsd::cxx::tree::traits< id_type, char > id_traits;
-
-  /**
-   * @brief Return a read-only (constant) reference to the element
-   * container.
-   *
-   * @return A constant reference to the optional container.
-   */
-  const id_optional&
-  id () const;
-
-  /**
-   * @brief Return a read-write reference to the element container.
-   *
-   * @return A reference to the optional container.
-   */
-  id_optional&
-  id ();
-
-  /**
-   * @brief Set the element value.
-   *
-   * @param x A new value to set.
-   *
-   * This function makes a copy of its argument and sets it as
-   * the new value of the element.
-   */
-  void
-  id (const id_type& x);
-
-  /**
-   * @brief Set the element value.
-   *
-   * @param x An optional container with the new value to set.
-   *
-   * If the value is present in @a x then this function makes a copy 
-   * of this value and sets it as the new value of the element.
-   * Otherwise the element container is set the 'not present' state.
-   */
-  void
-  id (const id_optional& x);
-
-  //@}
-
-  /**
-   * @name semana
-   *
-   * @brief Accessor and modifier functions for the %semana
-   * optional element.
-   */
-  //@{
-
-  /**
-   * @brief Element type.
-   */
-  typedef ::xml_schema::int_ semana_type;
-
-  /**
-   * @brief Element optional container type.
-   */
-  typedef ::xsd::cxx::tree::optional< semana_type > semana_optional;
-
-  /**
-   * @brief Element traits type.
-   */
-  typedef ::xsd::cxx::tree::traits< semana_type, char > semana_traits;
-
-  /**
-   * @brief Return a read-only (constant) reference to the element
-   * container.
-   *
-   * @return A constant reference to the optional container.
-   */
-  const semana_optional&
-  semana () const;
-
-  /**
-   * @brief Return a read-write reference to the element container.
-   *
-   * @return A reference to the optional container.
-   */
-  semana_optional&
-  semana ();
-
-  /**
-   * @brief Set the element value.
-   *
-   * @param x A new value to set.
-   *
-   * This function makes a copy of its argument and sets it as
-   * the new value of the element.
-   */
-  void
-  semana (const semana_type& x);
-
-  /**
-   * @brief Set the element value.
-   *
-   * @param x An optional container with the new value to set.
-   *
-   * If the value is present in @a x then this function makes a copy 
-   * of this value and sets it as the new value of the element.
-   * Otherwise the element container is set the 'not present' state.
-   */
-  void
-  semana (const semana_optional& x);
-
-  //@}
-
-  /**
-   * @name horarioAula
-   *
-   * @brief Accessor and modifier functions for the %horarioAula
-   * optional element.
-   */
-  //@{
-
-  /**
-   * @brief Element type.
-   */
-  typedef ::ItemHorarioAula horarioAula_type;
-
-  /**
-   * @brief Element optional container type.
-   */
-  typedef ::xsd::cxx::tree::optional< horarioAula_type > horarioAula_optional;
-
-  /**
-   * @brief Element traits type.
-   */
-  typedef ::xsd::cxx::tree::traits< horarioAula_type, char > horarioAula_traits;
-
-  /**
-   * @brief Return a read-only (constant) reference to the element
-   * container.
-   *
-   * @return A constant reference to the optional container.
-   */
-  const horarioAula_optional&
-  horarioAula () const;
-
-  /**
-   * @brief Return a read-write reference to the element container.
-   *
-   * @return A reference to the optional container.
-   */
-  horarioAula_optional&
-  horarioAula ();
-
-  /**
-   * @brief Set the element value.
-   *
-   * @param x A new value to set.
-   *
-   * This function makes a copy of its argument and sets it as
-   * the new value of the element.
-   */
-  void
-  horarioAula (const horarioAula_type& x);
-
-  /**
-   * @brief Set the element value.
-   *
-   * @param x An optional container with the new value to set.
-   *
-   * If the value is present in @a x then this function makes a copy 
-   * of this value and sets it as the new value of the element.
-   * Otherwise the element container is set the 'not present' state.
-   */
-  void
-  horarioAula (const horarioAula_optional& x);
-
-  /**
-   * @brief Set the element value without copying.
-   *
-   * @param p A new value to use.
-   *
-   * This function will try to use the passed value directly instead
-   * of making a copy.
-   */
-  void
-  horarioAula (::std::auto_ptr< horarioAula_type > p);
-
-  //@}
-
-  /**
-   * @name Constructors
-   */
-  //@{
-
-  /**
-   * @brief Create an instance from the ultimate base and
-   * initializers for required elements and attributes.
-   */
-  ItemHorarioDisponivel ();
-
-  /**
-   * @brief Create an instance from a DOM element.
-   *
-   * @param e A DOM element to extract the data from.
-   * @param f Flags to create the new instance with.
-   * @param c A pointer to the object that will contain the new
-   * instance.
-   */
-  ItemHorarioDisponivel (const ::xercesc::DOMElement& e,
-                         ::xml_schema::flags f = 0,
-                         ::xml_schema::container* c = 0);
-
-  /**
-   * @brief Copy constructor.
-   *
-   * @param x An instance to make a copy of.
-   * @param f Flags to create the copy with.
-   * @param c A pointer to the object that will contain the copy.
-   *
-   * For polymorphic object models use the @c _clone function instead.
-   */
-  ItemHorarioDisponivel (const ItemHorarioDisponivel& x,
-                         ::xml_schema::flags f = 0,
-                         ::xml_schema::container* c = 0);
-
-  /**
-   * @brief Copy the instance polymorphically.
-   *
-   * @param f Flags to create the copy with.
-   * @param c A pointer to the object that will contain the copy.
-   * @return A pointer to the dynamically allocated copy.
-   *
-   * This function ensures that the dynamic type of the instance is
-   * used for copying and should be used for polymorphic object
-   * models instead of the copy constructor.
-   */
-  virtual ItemHorarioDisponivel*
-  _clone (::xml_schema::flags f = 0,
-          ::xml_schema::container* c = 0) const;
-
-  //@}
-
-  /**
-   * @brief Destructor.
-   */
-  virtual 
-  ~ItemHorarioDisponivel ();
-
-  // Implementation.
-  //
-
-  //@cond
-
-  protected:
-  void
-  parse (::xsd::cxx::xml::dom::parser< char >&,
-         ::xml_schema::flags);
-
-  protected:
-  id_optional id_;
-  semana_optional semana_;
-  horarioAula_optional horarioAula_;
-
-  //@endcond
-};
-
-/**
- * @brief Class corresponding to the %GrupoHorarioDisponivel schema type.
- *
- * @nosubgrouping
- */
-class GrupoHorarioDisponivel: public ::xml_schema::type
-{
-  public:
-  /**
-   * @name horarioDisponivel
-   *
-   * @brief Accessor and modifier functions for the %horarioDisponivel
-   * sequence element.
-   */
-  //@{
-
-  /**
-   * @brief Element type.
-   */
-  typedef ::ItemHorarioDisponivel horarioDisponivel_type;
-
-  /**
-   * @brief Element sequence container type.
-   */
-  typedef ::xsd::cxx::tree::sequence< horarioDisponivel_type > horarioDisponivel_sequence;
-
-  /**
-   * @brief Element iterator type.
-   */
-  typedef horarioDisponivel_sequence::iterator horarioDisponivel_iterator;
-
-  /**
-   * @brief Element constant iterator type.
-   */
-  typedef horarioDisponivel_sequence::const_iterator horarioDisponivel_const_iterator;
-
-  /**
-   * @brief Element traits type.
-   */
-  typedef ::xsd::cxx::tree::traits< horarioDisponivel_type, char > horarioDisponivel_traits;
-
-  /**
-   * @brief Return a read-only (constant) reference to the element
-   * sequence.
-   *
-   * @return A constant reference to the sequence container.
-   */
-  const horarioDisponivel_sequence&
-  horarioDisponivel () const;
-
-  /**
-   * @brief Return a read-write reference to the element sequence.
-   *
-   * @return A reference to the sequence container.
-   */
-  horarioDisponivel_sequence&
-  horarioDisponivel ();
-
-  /**
-   * @brief Copy elements from a given sequence.
-   *
-   * @param s A sequence to copy elements from.
-   *
-   * For each element in @a s this function makes a copy and adds it 
-   * to the sequence. Note that this operation completely changes the 
-   * sequence and all old elements will be lost.
-   */
-  void
-  horarioDisponivel (const horarioDisponivel_sequence& s);
-
-  //@}
-
-  /**
-   * @name Constructors
-   */
-  //@{
-
-  /**
-   * @brief Create an instance from the ultimate base and
-   * initializers for required elements and attributes.
-   */
-  GrupoHorarioDisponivel ();
-
-  /**
-   * @brief Create an instance from a DOM element.
-   *
-   * @param e A DOM element to extract the data from.
-   * @param f Flags to create the new instance with.
-   * @param c A pointer to the object that will contain the new
-   * instance.
-   */
-  GrupoHorarioDisponivel (const ::xercesc::DOMElement& e,
-                          ::xml_schema::flags f = 0,
-                          ::xml_schema::container* c = 0);
-
-  /**
-   * @brief Copy constructor.
-   *
-   * @param x An instance to make a copy of.
-   * @param f Flags to create the copy with.
-   * @param c A pointer to the object that will contain the copy.
-   *
-   * For polymorphic object models use the @c _clone function instead.
-   */
-  GrupoHorarioDisponivel (const GrupoHorarioDisponivel& x,
-                          ::xml_schema::flags f = 0,
-                          ::xml_schema::container* c = 0);
-
-  /**
-   * @brief Copy the instance polymorphically.
-   *
-   * @param f Flags to create the copy with.
-   * @param c A pointer to the object that will contain the copy.
-   * @return A pointer to the dynamically allocated copy.
-   *
-   * This function ensures that the dynamic type of the instance is
-   * used for copying and should be used for polymorphic object
-   * models instead of the copy constructor.
-   */
-  virtual GrupoHorarioDisponivel*
-  _clone (::xml_schema::flags f = 0,
-          ::xml_schema::container* c = 0) const;
-
-  //@}
-
-  /**
-   * @brief Destructor.
-   */
-  virtual 
-  ~GrupoHorarioDisponivel ();
-
-  // Implementation.
-  //
-
-  //@cond
-
-  protected:
-  void
-  parse (::xsd::cxx::xml::dom::parser< char >&,
-         ::xml_schema::flags);
-
-  protected:
-  horarioDisponivel_sequence horarioDisponivel_;
-
-  //@endcond
-};
-
-/**
- * @brief Class corresponding to the %ItemHorarioAula schema type.
- *
- * @nosubgrouping
- */
-class ItemHorarioAula: public ::xml_schema::type
-{
-  public:
-  /**
-   * @name horariosDisponiveis
-   *
-   * @brief Accessor and modifier functions for the %horariosDisponiveis
-   * required element.
-   */
-  //@{
-
-  /**
-   * @brief Element type.
-   */
-  typedef ::GrupoHorarioDisponivel horariosDisponiveis_type;
-
-  /**
-   * @brief Element traits type.
-   */
-  typedef ::xsd::cxx::tree::traits< horariosDisponiveis_type, char > horariosDisponiveis_traits;
-
-  /**
-   * @brief Return a read-only (constant) reference to the element.
-   *
-   * @return A constant reference to the element.
-   */
-  const horariosDisponiveis_type&
-  horariosDisponiveis () const;
-
-  /**
-   * @brief Return a read-write reference to the element.
-   *
-   * @return A reference to the element.
-   */
-  horariosDisponiveis_type&
-  horariosDisponiveis ();
-
-  /**
-   * @brief Set the element value.
-   *
-   * @param x A new value to set.
-   *
-   * This function makes a copy of its argument and sets it as
-   * the new value of the element.
-   */
-  void
-  horariosDisponiveis (const horariosDisponiveis_type& x);
-
-  /**
-   * @brief Set the element value without copying.
-   *
-   * @param p A new value to use.
-   *
-   * This function will try to use the passed value directly instead
-   * of making a copy.
-   */
-  void
-  horariosDisponiveis (::std::auto_ptr< horariosDisponiveis_type > p);
-
-  //@}
-
-  /**
-   * @name id
-   *
-   * @brief Accessor and modifier functions for the %id
-   * required element.
-   */
-  //@{
-
-  /**
-   * @brief Element type.
-   */
-  typedef ::xml_schema::int_ id_type;
-
-  /**
-   * @brief Element traits type.
-   */
-  typedef ::xsd::cxx::tree::traits< id_type, char > id_traits;
-
-  /**
-   * @brief Return a read-only (constant) reference to the element.
-   *
-   * @return A constant reference to the element.
-   */
-  const id_type&
-  id () const;
-
-  /**
-   * @brief Return a read-write reference to the element.
-   *
-   * @return A reference to the element.
-   */
-  id_type&
-  id ();
-
-  /**
-   * @brief Set the element value.
-   *
-   * @param x A new value to set.
-   *
-   * This function makes a copy of its argument and sets it as
-   * the new value of the element.
-   */
-  void
-  id (const id_type& x);
-
-  //@}
-
-  /**
-   * @name inicio
-   *
-   * @brief Accessor and modifier functions for the %inicio
-   * required element.
-   */
-  //@{
-
-  /**
-   * @brief Element type.
-   */
-  typedef ::xml_schema::time inicio_type;
-
-  /**
-   * @brief Element traits type.
-   */
-  typedef ::xsd::cxx::tree::traits< inicio_type, char > inicio_traits;
-
-  /**
-   * @brief Return a read-only (constant) reference to the element.
-   *
-   * @return A constant reference to the element.
-   */
-  const inicio_type&
-  inicio () const;
-
-  /**
-   * @brief Return a read-write reference to the element.
-   *
-   * @return A reference to the element.
-   */
-  inicio_type&
-  inicio ();
-
-  /**
-   * @brief Set the element value.
-   *
-   * @param x A new value to set.
-   *
-   * This function makes a copy of its argument and sets it as
-   * the new value of the element.
-   */
-  void
-  inicio (const inicio_type& x);
-
-  /**
-   * @brief Set the element value without copying.
-   *
-   * @param p A new value to use.
-   *
-   * This function will try to use the passed value directly instead
-   * of making a copy.
-   */
-  void
-  inicio (::std::auto_ptr< inicio_type > p);
-
-  //@}
-
-  /**
-   * @name Turno
-   *
-   * @brief Accessor and modifier functions for the %Turno
-   * required element.
-   */
-  //@{
-
-  /**
-   * @brief Element type.
-   */
-  typedef ::ItemTurno Turno_type;
-
-  /**
-   * @brief Element traits type.
-   */
-  typedef ::xsd::cxx::tree::traits< Turno_type, char > Turno_traits;
-
-  /**
-   * @brief Return a read-only (constant) reference to the element.
-   *
-   * @return A constant reference to the element.
-   */
-  const Turno_type&
-  Turno () const;
-
-  /**
-   * @brief Return a read-write reference to the element.
-   *
-   * @return A reference to the element.
-   */
-  Turno_type&
-  Turno ();
-
-  /**
-   * @brief Set the element value.
-   *
-   * @param x A new value to set.
-   *
-   * This function makes a copy of its argument and sets it as
-   * the new value of the element.
-   */
-  void
-  Turno (const Turno_type& x);
-
-  /**
-   * @brief Set the element value without copying.
-   *
-   * @param p A new value to use.
-   *
-   * This function will try to use the passed value directly instead
-   * of making a copy.
-   */
-  void
-  Turno (::std::auto_ptr< Turno_type > p);
-
-  //@}
-
-  /**
-   * @name Constructors
-   */
-  //@{
-
-  /**
-   * @brief Create an instance from the ultimate base and
-   * initializers for required elements and attributes.
-   */
-  ItemHorarioAula (const horariosDisponiveis_type&,
-                   const id_type&,
-                   const inicio_type&,
-                   const Turno_type&);
-
-  /**
-   * @brief Create an instance from the ultimate base and
-   * initializers for required elements and attributes
-   * (auto_ptr version).
-   *
-   * This constructor will try to use the passed values directly
-   * instead of making copies.
-   */
-  ItemHorarioAula (::std::auto_ptr< horariosDisponiveis_type >&,
-                   const id_type&,
-                   const inicio_type&,
-                   ::std::auto_ptr< Turno_type >&);
-
-  /**
-   * @brief Create an instance from a DOM element.
-   *
-   * @param e A DOM element to extract the data from.
-   * @param f Flags to create the new instance with.
-   * @param c A pointer to the object that will contain the new
-   * instance.
-   */
-  ItemHorarioAula (const ::xercesc::DOMElement& e,
-                   ::xml_schema::flags f = 0,
-                   ::xml_schema::container* c = 0);
-
-  /**
-   * @brief Copy constructor.
-   *
-   * @param x An instance to make a copy of.
-   * @param f Flags to create the copy with.
-   * @param c A pointer to the object that will contain the copy.
-   *
-   * For polymorphic object models use the @c _clone function instead.
-   */
-  ItemHorarioAula (const ItemHorarioAula& x,
-                   ::xml_schema::flags f = 0,
-                   ::xml_schema::container* c = 0);
-
-  /**
-   * @brief Copy the instance polymorphically.
-   *
-   * @param f Flags to create the copy with.
-   * @param c A pointer to the object that will contain the copy.
-   * @return A pointer to the dynamically allocated copy.
-   *
-   * This function ensures that the dynamic type of the instance is
-   * used for copying and should be used for polymorphic object
-   * models instead of the copy constructor.
-   */
-  virtual ItemHorarioAula*
-  _clone (::xml_schema::flags f = 0,
-          ::xml_schema::container* c = 0) const;
-
-  //@}
-
-  /**
-   * @brief Destructor.
-   */
-  virtual 
-  ~ItemHorarioAula ();
-
-  // Implementation.
-  //
-
-  //@cond
-
-  protected:
-  void
-  parse (::xsd::cxx::xml::dom::parser< char >&,
-         ::xml_schema::flags);
-
-  protected:
-  ::xsd::cxx::tree::one< horariosDisponiveis_type > horariosDisponiveis_;
-  ::xsd::cxx::tree::one< id_type > id_;
-  ::xsd::cxx::tree::one< inicio_type > inicio_;
-  ::xsd::cxx::tree::one< Turno_type > Turno_;
-
-  //@endcond
-};
-
-/**
- * @brief Class corresponding to the %GrupoHorarioAula schema type.
- *
- * @nosubgrouping
- */
-class GrupoHorarioAula: public ::xml_schema::type
-{
-  public:
-  /**
-   * @name HorarioAula
-   *
-   * @brief Accessor and modifier functions for the %HorarioAula
-   * sequence element.
-   */
-  //@{
-
-  /**
-   * @brief Element type.
-   */
-  typedef ::ItemHorarioAula HorarioAula_type;
-
-  /**
-   * @brief Element sequence container type.
-   */
-  typedef ::xsd::cxx::tree::sequence< HorarioAula_type > HorarioAula_sequence;
-
-  /**
-   * @brief Element iterator type.
-   */
-  typedef HorarioAula_sequence::iterator HorarioAula_iterator;
-
-  /**
-   * @brief Element constant iterator type.
-   */
-  typedef HorarioAula_sequence::const_iterator HorarioAula_const_iterator;
-
-  /**
-   * @brief Element traits type.
-   */
-  typedef ::xsd::cxx::tree::traits< HorarioAula_type, char > HorarioAula_traits;
-
-  /**
-   * @brief Return a read-only (constant) reference to the element
-   * sequence.
-   *
-   * @return A constant reference to the sequence container.
-   */
-  const HorarioAula_sequence&
-  HorarioAula () const;
-
-  /**
-   * @brief Return a read-write reference to the element sequence.
-   *
-   * @return A reference to the sequence container.
-   */
-  HorarioAula_sequence&
-  HorarioAula ();
-
-  /**
-   * @brief Copy elements from a given sequence.
-   *
-   * @param s A sequence to copy elements from.
-   *
-   * For each element in @a s this function makes a copy and adds it 
-   * to the sequence. Note that this operation completely changes the 
-   * sequence and all old elements will be lost.
-   */
-  void
-  HorarioAula (const HorarioAula_sequence& s);
-
-  //@}
-
-  /**
-   * @name Constructors
-   */
-  //@{
-
-  /**
-   * @brief Create an instance from the ultimate base and
-   * initializers for required elements and attributes.
-   */
-  GrupoHorarioAula ();
-
-  /**
-   * @brief Create an instance from a DOM element.
-   *
-   * @param e A DOM element to extract the data from.
-   * @param f Flags to create the new instance with.
-   * @param c A pointer to the object that will contain the new
-   * instance.
-   */
-  GrupoHorarioAula (const ::xercesc::DOMElement& e,
-                    ::xml_schema::flags f = 0,
-                    ::xml_schema::container* c = 0);
-
-  /**
-   * @brief Copy constructor.
-   *
-   * @param x An instance to make a copy of.
-   * @param f Flags to create the copy with.
-   * @param c A pointer to the object that will contain the copy.
-   *
-   * For polymorphic object models use the @c _clone function instead.
-   */
-  GrupoHorarioAula (const GrupoHorarioAula& x,
-                    ::xml_schema::flags f = 0,
-                    ::xml_schema::container* c = 0);
-
-  /**
-   * @brief Copy the instance polymorphically.
-   *
-   * @param f Flags to create the copy with.
-   * @param c A pointer to the object that will contain the copy.
-   * @return A pointer to the dynamically allocated copy.
-   *
-   * This function ensures that the dynamic type of the instance is
-   * used for copying and should be used for polymorphic object
-   * models instead of the copy constructor.
-   */
-  virtual GrupoHorarioAula*
-  _clone (::xml_schema::flags f = 0,
-          ::xml_schema::container* c = 0) const;
-
-  //@}
-
-  /**
-   * @brief Destructor.
-   */
-  virtual 
-  ~GrupoHorarioAula ();
-
-  // Implementation.
-  //
-
-  //@cond
-
-  protected:
-  void
-  parse (::xsd::cxx::xml::dom::parser< char >&,
-         ::xml_schema::flags);
-
-  protected:
-  HorarioAula_sequence HorarioAula_;
-
-  //@endcond
-};
-
-/**
- * @brief Class corresponding to the %ItemTurno schema type.
- *
- * @nosubgrouping
- */
-class ItemTurno: public ::xml_schema::type
-{
-  public:
-  /**
-   * @name id
-   *
-   * @brief Accessor and modifier functions for the %id
-   * required element.
-   */
-  //@{
-
-  /**
-   * @brief Element type.
-   */
-  typedef ::xml_schema::int_ id_type;
-
-  /**
-   * @brief Element traits type.
-   */
-  typedef ::xsd::cxx::tree::traits< id_type, char > id_traits;
-
-  /**
-   * @brief Return a read-only (constant) reference to the element.
-   *
-   * @return A constant reference to the element.
-   */
-  const id_type&
-  id () const;
-
-  /**
-   * @brief Return a read-write reference to the element.
-   *
-   * @return A reference to the element.
-   */
-  id_type&
-  id ();
-
-  /**
-   * @brief Set the element value.
-   *
-   * @param x A new value to set.
-   *
-   * This function makes a copy of its argument and sets it as
-   * the new value of the element.
-   */
-  void
-  id (const id_type& x);
-
-  //@}
-
-  /**
-   * @name nome
-   *
-   * @brief Accessor and modifier functions for the %nome
-   * required element.
-   */
-  //@{
-
-  /**
-   * @brief Element type.
-   */
-  typedef ::xml_schema::string nome_type;
-
-  /**
-   * @brief Element traits type.
-   */
-  typedef ::xsd::cxx::tree::traits< nome_type, char > nome_traits;
-
-  /**
-   * @brief Return a read-only (constant) reference to the element.
-   *
-   * @return A constant reference to the element.
-   */
-  const nome_type&
-  nome () const;
-
-  /**
-   * @brief Return a read-write reference to the element.
-   *
-   * @return A reference to the element.
-   */
-  nome_type&
-  nome ();
-
-  /**
-   * @brief Set the element value.
-   *
-   * @param x A new value to set.
-   *
-   * This function makes a copy of its argument and sets it as
-   * the new value of the element.
-   */
-  void
-  nome (const nome_type& x);
-
-  /**
-   * @brief Set the element value without copying.
-   *
-   * @param p A new value to use.
-   *
-   * This function will try to use the passed value directly instead
-   * of making a copy.
-   */
-  void
-  nome (::std::auto_ptr< nome_type > p);
-
-  //@}
-
-  /**
-   * @name HorariosAula
-   *
-   * @brief Accessor and modifier functions for the %HorariosAula
-   * required element.
-   */
-  //@{
-
-  /**
-   * @brief Element type.
-   */
-  typedef ::GrupoHorarioAula HorariosAula_type;
-
-  /**
-   * @brief Element traits type.
-   */
-  typedef ::xsd::cxx::tree::traits< HorariosAula_type, char > HorariosAula_traits;
-
-  /**
-   * @brief Return a read-only (constant) reference to the element.
-   *
-   * @return A constant reference to the element.
-   */
-  const HorariosAula_type&
-  HorariosAula () const;
-
-  /**
-   * @brief Return a read-write reference to the element.
-   *
-   * @return A reference to the element.
-   */
-  HorariosAula_type&
-  HorariosAula ();
-
-  /**
-   * @brief Set the element value.
-   *
-   * @param x A new value to set.
-   *
-   * This function makes a copy of its argument and sets it as
-   * the new value of the element.
-   */
-  void
-  HorariosAula (const HorariosAula_type& x);
-
-  /**
-   * @brief Set the element value without copying.
-   *
-   * @param p A new value to use.
-   *
-   * This function will try to use the passed value directly instead
-   * of making a copy.
-   */
-  void
-  HorariosAula (::std::auto_ptr< HorariosAula_type > p);
-
-  //@}
-
-  /**
-   * @name Calendario
-   *
-   * @brief Accessor and modifier functions for the %Calendario
-   * required element.
-   */
-  //@{
-
-  /**
-   * @brief Element type.
-   */
-  typedef ::ItemCalendario Calendario_type;
-
-  /**
-   * @brief Element traits type.
-   */
-  typedef ::xsd::cxx::tree::traits< Calendario_type, char > Calendario_traits;
-
-  /**
-   * @brief Return a read-only (constant) reference to the element.
-   *
-   * @return A constant reference to the element.
-   */
-  const Calendario_type&
-  Calendario () const;
-
-  /**
-   * @brief Return a read-write reference to the element.
-   *
-   * @return A reference to the element.
-   */
-  Calendario_type&
-  Calendario ();
-
-  /**
-   * @brief Set the element value.
-   *
-   * @param x A new value to set.
-   *
-   * This function makes a copy of its argument and sets it as
-   * the new value of the element.
-   */
-  void
-  Calendario (const Calendario_type& x);
-
-  /**
-   * @brief Set the element value without copying.
-   *
-   * @param p A new value to use.
-   *
-   * This function will try to use the passed value directly instead
-   * of making a copy.
-   */
-  void
-  Calendario (::std::auto_ptr< Calendario_type > p);
-
-  //@}
-
-  /**
-   * @name Constructors
-   */
-  //@{
-
-  /**
-   * @brief Create an instance from the ultimate base and
-   * initializers for required elements and attributes.
-   */
-  ItemTurno (const id_type&,
-             const nome_type&,
-             const HorariosAula_type&,
-             const Calendario_type&);
-
-  /**
-   * @brief Create an instance from the ultimate base and
-   * initializers for required elements and attributes
-   * (auto_ptr version).
-   *
-   * This constructor will try to use the passed values directly
-   * instead of making copies.
-   */
-  ItemTurno (const id_type&,
-             const nome_type&,
-             ::std::auto_ptr< HorariosAula_type >&,
-             ::std::auto_ptr< Calendario_type >&);
-
-  /**
-   * @brief Create an instance from a DOM element.
-   *
-   * @param e A DOM element to extract the data from.
-   * @param f Flags to create the new instance with.
-   * @param c A pointer to the object that will contain the new
-   * instance.
-   */
-  ItemTurno (const ::xercesc::DOMElement& e,
-             ::xml_schema::flags f = 0,
-             ::xml_schema::container* c = 0);
-
-  /**
-   * @brief Copy constructor.
-   *
-   * @param x An instance to make a copy of.
-   * @param f Flags to create the copy with.
-   * @param c A pointer to the object that will contain the copy.
-   *
-   * For polymorphic object models use the @c _clone function instead.
-   */
-  ItemTurno (const ItemTurno& x,
-             ::xml_schema::flags f = 0,
-             ::xml_schema::container* c = 0);
-
-  /**
-   * @brief Copy the instance polymorphically.
-   *
-   * @param f Flags to create the copy with.
-   * @param c A pointer to the object that will contain the copy.
-   * @return A pointer to the dynamically allocated copy.
-   *
-   * This function ensures that the dynamic type of the instance is
-   * used for copying and should be used for polymorphic object
-   * models instead of the copy constructor.
-   */
-  virtual ItemTurno*
-  _clone (::xml_schema::flags f = 0,
-          ::xml_schema::container* c = 0) const;
-
-  //@}
-
-  /**
-   * @brief Destructor.
-   */
-  virtual 
-  ~ItemTurno ();
-
-  // Implementation.
-  //
-
-  //@cond
-
-  protected:
-  void
-  parse (::xsd::cxx::xml::dom::parser< char >&,
-         ::xml_schema::flags);
-
-  protected:
-  ::xsd::cxx::tree::one< id_type > id_;
-  ::xsd::cxx::tree::one< nome_type > nome_;
-  ::xsd::cxx::tree::one< HorariosAula_type > HorariosAula_;
-  ::xsd::cxx::tree::one< Calendario_type > Calendario_;
-
-  //@endcond
-};
-
-/**
- * @brief Class corresponding to the %GrupoTurno schema type.
- *
- * @nosubgrouping
- */
-class GrupoTurno: public ::xml_schema::type
-{
-  public:
-  /**
-   * @name Turno
-   *
-   * @brief Accessor and modifier functions for the %Turno
-   * sequence element.
-   */
-  //@{
-
-  /**
-   * @brief Element type.
-   */
-  typedef ::ItemTurno Turno_type;
-
-  /**
-   * @brief Element sequence container type.
-   */
-  typedef ::xsd::cxx::tree::sequence< Turno_type > Turno_sequence;
-
-  /**
-   * @brief Element iterator type.
-   */
-  typedef Turno_sequence::iterator Turno_iterator;
-
-  /**
-   * @brief Element constant iterator type.
-   */
-  typedef Turno_sequence::const_iterator Turno_const_iterator;
-
-  /**
-   * @brief Element traits type.
-   */
-  typedef ::xsd::cxx::tree::traits< Turno_type, char > Turno_traits;
-
-  /**
-   * @brief Return a read-only (constant) reference to the element
-   * sequence.
-   *
-   * @return A constant reference to the sequence container.
-   */
-  const Turno_sequence&
-  Turno () const;
-
-  /**
-   * @brief Return a read-write reference to the element sequence.
-   *
-   * @return A reference to the sequence container.
-   */
-  Turno_sequence&
-  Turno ();
-
-  /**
-   * @brief Copy elements from a given sequence.
-   *
-   * @param s A sequence to copy elements from.
-   *
-   * For each element in @a s this function makes a copy and adds it 
-   * to the sequence. Note that this operation completely changes the 
-   * sequence and all old elements will be lost.
-   */
-  void
-  Turno (const Turno_sequence& s);
-
-  //@}
-
-  /**
-   * @name Constructors
-   */
-  //@{
-
-  /**
-   * @brief Create an instance from the ultimate base and
-   * initializers for required elements and attributes.
-   */
-  GrupoTurno ();
-
-  /**
-   * @brief Create an instance from a DOM element.
-   *
-   * @param e A DOM element to extract the data from.
-   * @param f Flags to create the new instance with.
-   * @param c A pointer to the object that will contain the new
-   * instance.
-   */
-  GrupoTurno (const ::xercesc::DOMElement& e,
-              ::xml_schema::flags f = 0,
-              ::xml_schema::container* c = 0);
-
-  /**
-   * @brief Copy constructor.
-   *
-   * @param x An instance to make a copy of.
-   * @param f Flags to create the copy with.
-   * @param c A pointer to the object that will contain the copy.
-   *
-   * For polymorphic object models use the @c _clone function instead.
-   */
-  GrupoTurno (const GrupoTurno& x,
-              ::xml_schema::flags f = 0,
-              ::xml_schema::container* c = 0);
-
-  /**
-   * @brief Copy the instance polymorphically.
-   *
-   * @param f Flags to create the copy with.
-   * @param c A pointer to the object that will contain the copy.
-   * @return A pointer to the dynamically allocated copy.
-   *
-   * This function ensures that the dynamic type of the instance is
-   * used for copying and should be used for polymorphic object
-   * models instead of the copy constructor.
-   */
-  virtual GrupoTurno*
-  _clone (::xml_schema::flags f = 0,
-          ::xml_schema::container* c = 0) const;
-
-  //@}
-
-  /**
-   * @brief Destructor.
-   */
-  virtual 
-  ~GrupoTurno ();
-
-  // Implementation.
-  //
-
-  //@cond
-
-  protected:
-  void
-  parse (::xsd::cxx::xml::dom::parser< char >&,
-         ::xml_schema::flags);
-
-  protected:
-  Turno_sequence Turno_;
-
-  //@endcond
-};
-
-/**
- * @brief Class corresponding to the %ItemSala schema type.
- *
- * @nosubgrouping
- */
-class ItemSala: public ::xml_schema::type
-{
-  public:
-  /**
-   * @name id
-   *
-   * @brief Accessor and modifier functions for the %id
-   * required element.
-   */
-  //@{
-
-  /**
-   * @brief Element type.
-   */
-  typedef ::xml_schema::int_ id_type;
-
-  /**
-   * @brief Element traits type.
-   */
-  typedef ::xsd::cxx::tree::traits< id_type, char > id_traits;
-
-  /**
-   * @brief Return a read-only (constant) reference to the element.
-   *
-   * @return A constant reference to the element.
-   */
-  const id_type&
-  id () const;
-
-  /**
-   * @brief Return a read-write reference to the element.
-   *
-   * @return A reference to the element.
-   */
-  id_type&
-  id ();
-
-  /**
-   * @brief Set the element value.
-   *
-   * @param x A new value to set.
-   *
-   * This function makes a copy of its argument and sets it as
-   * the new value of the element.
-   */
-  void
-  id (const id_type& x);
-
-  //@}
-
-  /**
-   * @name tipoSala
-   *
-   * @brief Accessor and modifier functions for the %tipoSala
-   * required element.
-   */
-  //@{
-
-  /**
-   * @brief Element type.
-   */
-  typedef ::ItemTipoSala tipoSala_type;
-
-  /**
-   * @brief Element traits type.
-   */
-  typedef ::xsd::cxx::tree::traits< tipoSala_type, char > tipoSala_traits;
-
-  /**
-   * @brief Return a read-only (constant) reference to the element.
-   *
-   * @return A constant reference to the element.
-   */
-  const tipoSala_type&
-  tipoSala () const;
-
-  /**
-   * @brief Return a read-write reference to the element.
-   *
-   * @return A reference to the element.
-   */
-  tipoSala_type&
-  tipoSala ();
-
-  /**
-   * @brief Set the element value.
-   *
-   * @param x A new value to set.
-   *
-   * This function makes a copy of its argument and sets it as
-   * the new value of the element.
-   */
-  void
-  tipoSala (const tipoSala_type& x);
-
-  /**
-   * @brief Set the element value without copying.
-   *
-   * @param p A new value to use.
-   *
-   * This function will try to use the passed value directly instead
-   * of making a copy.
-   */
-  void
-  tipoSala (::std::auto_ptr< tipoSala_type > p);
-
-  //@}
-
-  /**
-   * @name HorariosDisponiveis
-   *
-   * @brief Accessor and modifier functions for the %HorariosDisponiveis
-   * required element.
-   */
-  //@{
-
-  /**
-   * @brief Element type.
-   */
-  typedef ::GrupoHorarioDisponivel HorariosDisponiveis_type;
-
-  /**
-   * @brief Element traits type.
-   */
-  typedef ::xsd::cxx::tree::traits< HorariosDisponiveis_type, char > HorariosDisponiveis_traits;
-
-  /**
-   * @brief Return a read-only (constant) reference to the element.
-   *
-   * @return A constant reference to the element.
-   */
-  const HorariosDisponiveis_type&
-  HorariosDisponiveis () const;
-
-  /**
-   * @brief Return a read-write reference to the element.
-   *
-   * @return A reference to the element.
-   */
-  HorariosDisponiveis_type&
-  HorariosDisponiveis ();
-
-  /**
-   * @brief Set the element value.
-   *
-   * @param x A new value to set.
-   *
-   * This function makes a copy of its argument and sets it as
-   * the new value of the element.
-   */
-  void
-  HorariosDisponiveis (const HorariosDisponiveis_type& x);
-
-  /**
-   * @brief Set the element value without copying.
-   *
-   * @param p A new value to use.
-   *
-   * This function will try to use the passed value directly instead
-   * of making a copy.
-   */
-  void
-  HorariosDisponiveis (::std::auto_ptr< HorariosDisponiveis_type > p);
-
-  //@}
-
-  /**
-   * @name codigo
-   *
-   * @brief Accessor and modifier functions for the %codigo
-   * required element.
-   */
-  //@{
-
-  /**
-   * @brief Element type.
-   */
-  typedef ::xml_schema::string codigo_type;
-
-  /**
-   * @brief Element traits type.
-   */
-  typedef ::xsd::cxx::tree::traits< codigo_type, char > codigo_traits;
-
-  /**
-   * @brief Return a read-only (constant) reference to the element.
-   *
-   * @return A constant reference to the element.
-   */
-  const codigo_type&
-  codigo () const;
-
-  /**
-   * @brief Return a read-write reference to the element.
-   *
-   * @return A reference to the element.
-   */
-  codigo_type&
-  codigo ();
-
-  /**
-   * @brief Set the element value.
-   *
-   * @param x A new value to set.
-   *
-   * This function makes a copy of its argument and sets it as
-   * the new value of the element.
-   */
-  void
-  codigo (const codigo_type& x);
-
-  /**
-   * @brief Set the element value without copying.
-   *
-   * @param p A new value to use.
-   *
-   * This function will try to use the passed value directly instead
-   * of making a copy.
-   */
-  void
-  codigo (::std::auto_ptr< codigo_type > p);
-
-  //@}
-
-  /**
-   * @name numSalas
-   *
-   * @brief Accessor and modifier functions for the %numSalas
-   * required element.
-   */
-  //@{
-
-  /**
-   * @brief Element type.
-   */
-  typedef ::xml_schema::int_ numSalas_type;
-
-  /**
-   * @brief Element traits type.
-   */
-  typedef ::xsd::cxx::tree::traits< numSalas_type, char > numSalas_traits;
-
-  /**
-   * @brief Return a read-only (constant) reference to the element.
-   *
-   * @return A constant reference to the element.
-   */
-  const numSalas_type&
-  numSalas () const;
-
-  /**
-   * @brief Return a read-write reference to the element.
-   *
-   * @return A reference to the element.
-   */
-  numSalas_type&
-  numSalas ();
-
-  /**
-   * @brief Set the element value.
-   *
-   * @param x A new value to set.
-   *
-   * This function makes a copy of its argument and sets it as
-   * the new value of the element.
-   */
-  void
-  numSalas (const numSalas_type& x);
-
-  //@}
-
-  /**
-   * @name andar
-   *
-   * @brief Accessor and modifier functions for the %andar
-   * required element.
-   */
-  //@{
-
-  /**
-   * @brief Element type.
-   */
-  typedef ::xml_schema::string andar_type;
-
-  /**
-   * @brief Element traits type.
-   */
-  typedef ::xsd::cxx::tree::traits< andar_type, char > andar_traits;
-
-  /**
-   * @brief Return a read-only (constant) reference to the element.
-   *
-   * @return A constant reference to the element.
-   */
-  const andar_type&
-  andar () const;
-
-  /**
-   * @brief Return a read-write reference to the element.
-   *
-   * @return A reference to the element.
-   */
-  andar_type&
-  andar ();
-
-  /**
-   * @brief Set the element value.
-   *
-   * @param x A new value to set.
-   *
-   * This function makes a copy of its argument and sets it as
-   * the new value of the element.
-   */
-  void
-  andar (const andar_type& x);
-
-  /**
-   * @brief Set the element value without copying.
-   *
-   * @param p A new value to use.
-   *
-   * This function will try to use the passed value directly instead
-   * of making a copy.
-   */
-  void
-  andar (::std::auto_ptr< andar_type > p);
-
-  //@}
-
-  /**
-   * @name capacidade
-   *
-   * @brief Accessor and modifier functions for the %capacidade
-   * required element.
-   */
-  //@{
-
-  /**
-   * @brief Element type.
-   */
-  typedef ::xml_schema::int_ capacidade_type;
-
-  /**
-   * @brief Element traits type.
-   */
-  typedef ::xsd::cxx::tree::traits< capacidade_type, char > capacidade_traits;
-
-  /**
-   * @brief Return a read-only (constant) reference to the element.
-   *
-   * @return A constant reference to the element.
-   */
-  const capacidade_type&
-  capacidade () const;
-
-  /**
-   * @brief Return a read-write reference to the element.
-   *
-   * @return A reference to the element.
-   */
-  capacidade_type&
-  capacidade ();
-
-  /**
-   * @brief Set the element value.
-   *
-   * @param x A new value to set.
-   *
-   * This function makes a copy of its argument and sets it as
-   * the new value of the element.
-   */
-  void
-  capacidade (const capacidade_type& x);
-
-  //@}
-
-  /**
-   * @name Constructors
-   */
-  //@{
-
-  /**
-   * @brief Create an instance from the ultimate base and
-   * initializers for required elements and attributes.
-   */
-  ItemSala (const id_type&,
-            const tipoSala_type&,
-            const HorariosDisponiveis_type&,
-            const codigo_type&,
-            const numSalas_type&,
-            const andar_type&,
-            const capacidade_type&);
-
-  /**
-   * @brief Create an instance from the ultimate base and
-   * initializers for required elements and attributes
-   * (auto_ptr version).
-   *
-   * This constructor will try to use the passed values directly
-   * instead of making copies.
-   */
-  ItemSala (const id_type&,
-            ::std::auto_ptr< tipoSala_type >&,
-            ::std::auto_ptr< HorariosDisponiveis_type >&,
-            const codigo_type&,
-            const numSalas_type&,
-            const andar_type&,
-            const capacidade_type&);
-
-  /**
-   * @brief Create an instance from a DOM element.
-   *
-   * @param e A DOM element to extract the data from.
-   * @param f Flags to create the new instance with.
-   * @param c A pointer to the object that will contain the new
-   * instance.
-   */
-  ItemSala (const ::xercesc::DOMElement& e,
-            ::xml_schema::flags f = 0,
-            ::xml_schema::container* c = 0);
-
-  /**
-   * @brief Copy constructor.
-   *
-   * @param x An instance to make a copy of.
-   * @param f Flags to create the copy with.
-   * @param c A pointer to the object that will contain the copy.
-   *
-   * For polymorphic object models use the @c _clone function instead.
-   */
-  ItemSala (const ItemSala& x,
-            ::xml_schema::flags f = 0,
-            ::xml_schema::container* c = 0);
-
-  /**
-   * @brief Copy the instance polymorphically.
-   *
-   * @param f Flags to create the copy with.
-   * @param c A pointer to the object that will contain the copy.
-   * @return A pointer to the dynamically allocated copy.
-   *
-   * This function ensures that the dynamic type of the instance is
-   * used for copying and should be used for polymorphic object
-   * models instead of the copy constructor.
-   */
-  virtual ItemSala*
-  _clone (::xml_schema::flags f = 0,
-          ::xml_schema::container* c = 0) const;
-
-  //@}
-
-  /**
-   * @brief Destructor.
-   */
-  virtual 
-  ~ItemSala ();
-
-  // Implementation.
-  //
-
-  //@cond
-
-  protected:
-  void
-  parse (::xsd::cxx::xml::dom::parser< char >&,
-         ::xml_schema::flags);
-
-  protected:
-  ::xsd::cxx::tree::one< id_type > id_;
-  ::xsd::cxx::tree::one< tipoSala_type > tipoSala_;
-  ::xsd::cxx::tree::one< HorariosDisponiveis_type > HorariosDisponiveis_;
-  ::xsd::cxx::tree::one< codigo_type > codigo_;
-  ::xsd::cxx::tree::one< numSalas_type > numSalas_;
-  ::xsd::cxx::tree::one< andar_type > andar_;
-  ::xsd::cxx::tree::one< capacidade_type > capacidade_;
-
-  //@endcond
-};
-
-/**
- * @brief Class corresponding to the %ItemDisciplinaPeriodo schema type.
- *
- * @nosubgrouping
- */
-class ItemDisciplinaPeriodo: public ::xml_schema::type
-{
-  public:
-  /**
-   * @name periodo
-   *
-   * @brief Accessor and modifier functions for the %periodo
-   * required element.
-   */
-  //@{
-
-  /**
-   * @brief Element type.
-   */
-  typedef ::xml_schema::int_ periodo_type;
-
-  /**
-   * @brief Element traits type.
-   */
-  typedef ::xsd::cxx::tree::traits< periodo_type, char > periodo_traits;
-
-  /**
-   * @brief Return a read-only (constant) reference to the element.
-   *
-   * @return A constant reference to the element.
-   */
-  const periodo_type&
-  periodo () const;
-
-  /**
-   * @brief Return a read-write reference to the element.
-   *
-   * @return A reference to the element.
-   */
-  periodo_type&
-  periodo ();
-
-  /**
-   * @brief Set the element value.
-   *
-   * @param x A new value to set.
-   *
-   * This function makes a copy of its argument and sets it as
-   * the new value of the element.
-   */
-  void
-  periodo (const periodo_type& x);
-
-  //@}
-
-  /**
-   * @name disciplina
-   *
-   * @brief Accessor and modifier functions for the %disciplina
-   * required element.
-   */
-  //@{
-
-  /**
-   * @brief Element type.
-   */
-  typedef ::ItemDisciplina disciplina_type;
-
-  /**
-   * @brief Element traits type.
-   */
-  typedef ::xsd::cxx::tree::traits< disciplina_type, char > disciplina_traits;
-
-  /**
-   * @brief Return a read-only (constant) reference to the element.
-   *
-   * @return A constant reference to the element.
-   */
-  const disciplina_type&
-  disciplina () const;
-
-  /**
-   * @brief Return a read-write reference to the element.
-   *
-   * @return A reference to the element.
-   */
-  disciplina_type&
-  disciplina ();
-
-  /**
-   * @brief Set the element value.
-   *
-   * @param x A new value to set.
-   *
-   * This function makes a copy of its argument and sets it as
-   * the new value of the element.
-   */
-  void
-  disciplina (const disciplina_type& x);
-
-  /**
-   * @brief Set the element value without copying.
-   *
-   * @param p A new value to use.
-   *
-   * This function will try to use the passed value directly instead
-   * of making a copy.
-   */
-  void
-  disciplina (::std::auto_ptr< disciplina_type > p);
-
-  //@}
-
-  /**
-   * @name Constructors
-   */
-  //@{
-
-  /**
-   * @brief Create an instance from the ultimate base and
-   * initializers for required elements and attributes.
-   */
-  ItemDisciplinaPeriodo (const periodo_type&,
-                         const disciplina_type&);
-
-  /**
-   * @brief Create an instance from the ultimate base and
-   * initializers for required elements and attributes
-   * (auto_ptr version).
-   *
-   * This constructor will try to use the passed values directly
-   * instead of making copies.
-   */
-  ItemDisciplinaPeriodo (const periodo_type&,
-                         ::std::auto_ptr< disciplina_type >&);
-
-  /**
-   * @brief Create an instance from a DOM element.
-   *
-   * @param e A DOM element to extract the data from.
-   * @param f Flags to create the new instance with.
-   * @param c A pointer to the object that will contain the new
-   * instance.
-   */
-  ItemDisciplinaPeriodo (const ::xercesc::DOMElement& e,
-                         ::xml_schema::flags f = 0,
-                         ::xml_schema::container* c = 0);
-
-  /**
-   * @brief Copy constructor.
-   *
-   * @param x An instance to make a copy of.
-   * @param f Flags to create the copy with.
-   * @param c A pointer to the object that will contain the copy.
-   *
-   * For polymorphic object models use the @c _clone function instead.
-   */
-  ItemDisciplinaPeriodo (const ItemDisciplinaPeriodo& x,
-                         ::xml_schema::flags f = 0,
-                         ::xml_schema::container* c = 0);
-
-  /**
-   * @brief Copy the instance polymorphically.
-   *
-   * @param f Flags to create the copy with.
-   * @param c A pointer to the object that will contain the copy.
-   * @return A pointer to the dynamically allocated copy.
-   *
-   * This function ensures that the dynamic type of the instance is
-   * used for copying and should be used for polymorphic object
-   * models instead of the copy constructor.
-   */
-  virtual ItemDisciplinaPeriodo*
-  _clone (::xml_schema::flags f = 0,
-          ::xml_schema::container* c = 0) const;
-
-  //@}
-
-  /**
-   * @brief Destructor.
-   */
-  virtual 
-  ~ItemDisciplinaPeriodo ();
-
-  // Implementation.
-  //
-
-  //@cond
-
-  protected:
-  void
-  parse (::xsd::cxx::xml::dom::parser< char >&,
-         ::xml_schema::flags);
-
-  protected:
-  ::xsd::cxx::tree::one< periodo_type > periodo_;
-  ::xsd::cxx::tree::one< disciplina_type > disciplina_;
-
-  //@endcond
-};
-
-/**
- * @brief Class corresponding to the %ItemCurriculo schema type.
- *
- * @nosubgrouping
- */
-class ItemCurriculo: public ::xml_schema::type
-{
-  public:
-  /**
-   * @name id
-   *
-   * @brief Accessor and modifier functions for the %id
-   * required element.
-   */
-  //@{
-
-  /**
-   * @brief Element type.
-   */
-  typedef ::xml_schema::int_ id_type;
-
-  /**
-   * @brief Element traits type.
-   */
-  typedef ::xsd::cxx::tree::traits< id_type, char > id_traits;
-
-  /**
-   * @brief Return a read-only (constant) reference to the element.
-   *
-   * @return A constant reference to the element.
-   */
-  const id_type&
-  id () const;
-
-  /**
-   * @brief Return a read-write reference to the element.
-   *
-   * @return A reference to the element.
-   */
-  id_type&
-  id ();
-
-  /**
-   * @brief Set the element value.
-   *
-   * @param x A new value to set.
-   *
-   * This function makes a copy of its argument and sets it as
-   * the new value of the element.
-   */
-  void
-  id (const id_type& x);
-
-  //@}
-
-  /**
-   * @name codigo
-   *
-   * @brief Accessor and modifier functions for the %codigo
-   * required element.
-   */
-  //@{
-
-  /**
-   * @brief Element type.
-   */
-  typedef ::xml_schema::string codigo_type;
-
-  /**
-   * @brief Element traits type.
-   */
-  typedef ::xsd::cxx::tree::traits< codigo_type, char > codigo_traits;
-
-  /**
-   * @brief Return a read-only (constant) reference to the element.
-   *
-   * @return A constant reference to the element.
-   */
-  const codigo_type&
-  codigo () const;
-
-  /**
-   * @brief Return a read-write reference to the element.
-   *
-   * @return A reference to the element.
-   */
-  codigo_type&
-  codigo ();
-
-  /**
-   * @brief Set the element value.
-   *
-   * @param x A new value to set.
-   *
-   * This function makes a copy of its argument and sets it as
-   * the new value of the element.
-   */
-  void
-  codigo (const codigo_type& x);
-
-  /**
-   * @brief Set the element value without copying.
-   *
-   * @param p A new value to use.
-   *
-   * This function will try to use the passed value directly instead
-   * of making a copy.
-   */
-  void
-  codigo (::std::auto_ptr< codigo_type > p);
-
-  //@}
-
-  /**
-   * @name descricao
-   *
-   * @brief Accessor and modifier functions for the %descricao
-   * required element.
-   */
-  //@{
-
-  /**
-   * @brief Element type.
-   */
-  typedef ::xml_schema::string descricao_type;
-
-  /**
-   * @brief Element traits type.
-   */
-  typedef ::xsd::cxx::tree::traits< descricao_type, char > descricao_traits;
-
-  /**
-   * @brief Return a read-only (constant) reference to the element.
-   *
-   * @return A constant reference to the element.
-   */
-  const descricao_type&
-  descricao () const;
-
-  /**
-   * @brief Return a read-write reference to the element.
-   *
-   * @return A reference to the element.
-   */
-  descricao_type&
-  descricao ();
-
-  /**
-   * @brief Set the element value.
-   *
-   * @param x A new value to set.
-   *
-   * This function makes a copy of its argument and sets it as
-   * the new value of the element.
-   */
-  void
-  descricao (const descricao_type& x);
-
-  /**
-   * @brief Set the element value without copying.
-   *
-   * @param p A new value to use.
-   *
-   * This function will try to use the passed value directly instead
-   * of making a copy.
-   */
-  void
-  descricao (::std::auto_ptr< descricao_type > p);
-
-  //@}
-
-  /**
-   * @name DisciplinaPeriodo
-   *
-   * @brief Accessor and modifier functions for the %DisciplinaPeriodo
-   * required element.
-   */
-  //@{
-
-  /**
-   * @brief Element type.
-   */
-  typedef ::ItemDisciplinaPeriodo DisciplinaPeriodo_type;
-
-  /**
-   * @brief Element traits type.
-   */
-  typedef ::xsd::cxx::tree::traits< DisciplinaPeriodo_type, char > DisciplinaPeriodo_traits;
-
-  /**
-   * @brief Return a read-only (constant) reference to the element.
-   *
-   * @return A constant reference to the element.
-   */
-  const DisciplinaPeriodo_type&
-  DisciplinaPeriodo () const;
-
-  /**
-   * @brief Return a read-write reference to the element.
-   *
-   * @return A reference to the element.
-   */
-  DisciplinaPeriodo_type&
-  DisciplinaPeriodo ();
-
-  /**
-   * @brief Set the element value.
-   *
-   * @param x A new value to set.
-   *
-   * This function makes a copy of its argument and sets it as
-   * the new value of the element.
-   */
-  void
-  DisciplinaPeriodo (const DisciplinaPeriodo_type& x);
-
-  /**
-   * @brief Set the element value without copying.
-   *
-   * @param p A new value to use.
-   *
-   * This function will try to use the passed value directly instead
-   * of making a copy.
-   */
-  void
-  DisciplinaPeriodo (::std::auto_ptr< DisciplinaPeriodo_type > p);
-
-  //@}
-
-  /**
-   * @name Constructors
-   */
-  //@{
-
-  /**
-   * @brief Create an instance from the ultimate base and
-   * initializers for required elements and attributes.
-   */
-  ItemCurriculo (const id_type&,
-                 const codigo_type&,
-                 const descricao_type&,
-                 const DisciplinaPeriodo_type&);
-
-  /**
-   * @brief Create an instance from the ultimate base and
-   * initializers for required elements and attributes
-   * (auto_ptr version).
-   *
-   * This constructor will try to use the passed values directly
-   * instead of making copies.
-   */
-  ItemCurriculo (const id_type&,
-                 const codigo_type&,
-                 const descricao_type&,
-                 ::std::auto_ptr< DisciplinaPeriodo_type >&);
-
-  /**
-   * @brief Create an instance from a DOM element.
-   *
-   * @param e A DOM element to extract the data from.
-   * @param f Flags to create the new instance with.
-   * @param c A pointer to the object that will contain the new
-   * instance.
-   */
-  ItemCurriculo (const ::xercesc::DOMElement& e,
-                 ::xml_schema::flags f = 0,
-                 ::xml_schema::container* c = 0);
-
-  /**
-   * @brief Copy constructor.
-   *
-   * @param x An instance to make a copy of.
-   * @param f Flags to create the copy with.
-   * @param c A pointer to the object that will contain the copy.
-   *
-   * For polymorphic object models use the @c _clone function instead.
-   */
-  ItemCurriculo (const ItemCurriculo& x,
-                 ::xml_schema::flags f = 0,
-                 ::xml_schema::container* c = 0);
-
-  /**
-   * @brief Copy the instance polymorphically.
-   *
-   * @param f Flags to create the copy with.
-   * @param c A pointer to the object that will contain the copy.
-   * @return A pointer to the dynamically allocated copy.
-   *
-   * This function ensures that the dynamic type of the instance is
-   * used for copying and should be used for polymorphic object
-   * models instead of the copy constructor.
-   */
-  virtual ItemCurriculo*
-  _clone (::xml_schema::flags f = 0,
-          ::xml_schema::container* c = 0) const;
-
-  //@}
-
-  /**
-   * @brief Destructor.
-   */
-  virtual 
-  ~ItemCurriculo ();
-
-  // Implementation.
-  //
-
-  //@cond
-
-  protected:
-  void
-  parse (::xsd::cxx::xml::dom::parser< char >&,
-         ::xml_schema::flags);
-
-  protected:
-  ::xsd::cxx::tree::one< id_type > id_;
-  ::xsd::cxx::tree::one< codigo_type > codigo_;
-  ::xsd::cxx::tree::one< descricao_type > descricao_;
-  ::xsd::cxx::tree::one< DisciplinaPeriodo_type > DisciplinaPeriodo_;
-
-  //@endcond
-};
-
-/**
- * @brief Class corresponding to the %GrupoCurriculo schema type.
- *
- * @nosubgrouping
- */
-class GrupoCurriculo: public ::xml_schema::type
-{
-  public:
-  /**
-   * @name curriculo
-   *
-   * @brief Accessor and modifier functions for the %curriculo
-   * sequence element.
-   */
-  //@{
-
-  /**
-   * @brief Element type.
-   */
-  typedef ::ItemCurriculo curriculo_type;
-
-  /**
-   * @brief Element sequence container type.
-   */
-  typedef ::xsd::cxx::tree::sequence< curriculo_type > curriculo_sequence;
-
-  /**
-   * @brief Element iterator type.
-   */
-  typedef curriculo_sequence::iterator curriculo_iterator;
-
-  /**
-   * @brief Element constant iterator type.
-   */
-  typedef curriculo_sequence::const_iterator curriculo_const_iterator;
-
-  /**
-   * @brief Element traits type.
-   */
-  typedef ::xsd::cxx::tree::traits< curriculo_type, char > curriculo_traits;
-
-  /**
-   * @brief Return a read-only (constant) reference to the element
-   * sequence.
-   *
-   * @return A constant reference to the sequence container.
-   */
-  const curriculo_sequence&
-  curriculo () const;
-
-  /**
-   * @brief Return a read-write reference to the element sequence.
-   *
-   * @return A reference to the sequence container.
-   */
-  curriculo_sequence&
-  curriculo ();
-
-  /**
-   * @brief Copy elements from a given sequence.
-   *
-   * @param s A sequence to copy elements from.
-   *
-   * For each element in @a s this function makes a copy and adds it 
-   * to the sequence. Note that this operation completely changes the 
-   * sequence and all old elements will be lost.
-   */
-  void
-  curriculo (const curriculo_sequence& s);
-
-  //@}
-
-  /**
-   * @name Constructors
-   */
-  //@{
-
-  /**
-   * @brief Create an instance from the ultimate base and
-   * initializers for required elements and attributes.
-   */
-  GrupoCurriculo ();
-
-  /**
-   * @brief Create an instance from a DOM element.
-   *
-   * @param e A DOM element to extract the data from.
-   * @param f Flags to create the new instance with.
-   * @param c A pointer to the object that will contain the new
-   * instance.
-   */
-  GrupoCurriculo (const ::xercesc::DOMElement& e,
-                  ::xml_schema::flags f = 0,
-                  ::xml_schema::container* c = 0);
-
-  /**
-   * @brief Copy constructor.
-   *
-   * @param x An instance to make a copy of.
-   * @param f Flags to create the copy with.
-   * @param c A pointer to the object that will contain the copy.
-   *
-   * For polymorphic object models use the @c _clone function instead.
-   */
-  GrupoCurriculo (const GrupoCurriculo& x,
-                  ::xml_schema::flags f = 0,
-                  ::xml_schema::container* c = 0);
-
-  /**
-   * @brief Copy the instance polymorphically.
-   *
-   * @param f Flags to create the copy with.
-   * @param c A pointer to the object that will contain the copy.
-   * @return A pointer to the dynamically allocated copy.
-   *
-   * This function ensures that the dynamic type of the instance is
-   * used for copying and should be used for polymorphic object
-   * models instead of the copy constructor.
-   */
-  virtual GrupoCurriculo*
-  _clone (::xml_schema::flags f = 0,
-          ::xml_schema::container* c = 0) const;
-
-  //@}
-
-  /**
-   * @brief Destructor.
-   */
-  virtual 
-  ~GrupoCurriculo ();
-
-  // Implementation.
-  //
-
-  //@cond
-
-  protected:
-  void
-  parse (::xsd::cxx::xml::dom::parser< char >&,
-         ::xml_schema::flags);
-
-  protected:
-  curriculo_sequence curriculo_;
-
-  //@endcond
-};
-
-/**
- * @brief Class corresponding to the %GrupoSala schema type.
- *
- * @nosubgrouping
- */
-class GrupoSala: public ::xml_schema::type
-{
-  public:
-  /**
-   * @name sala
-   *
-   * @brief Accessor and modifier functions for the %sala
-   * sequence element.
-   */
-  //@{
-
-  /**
-   * @brief Element type.
-   */
-  typedef ::ItemSala sala_type;
-
-  /**
-   * @brief Element sequence container type.
-   */
-  typedef ::xsd::cxx::tree::sequence< sala_type > sala_sequence;
-
-  /**
-   * @brief Element iterator type.
-   */
-  typedef sala_sequence::iterator sala_iterator;
-
-  /**
-   * @brief Element constant iterator type.
-   */
-  typedef sala_sequence::const_iterator sala_const_iterator;
-
-  /**
-   * @brief Element traits type.
-   */
-  typedef ::xsd::cxx::tree::traits< sala_type, char > sala_traits;
-
-  /**
-   * @brief Return a read-only (constant) reference to the element
-   * sequence.
-   *
-   * @return A constant reference to the sequence container.
-   */
-  const sala_sequence&
-  sala () const;
-
-  /**
-   * @brief Return a read-write reference to the element sequence.
-   *
-   * @return A reference to the sequence container.
-   */
-  sala_sequence&
-  sala ();
-
-  /**
-   * @brief Copy elements from a given sequence.
-   *
-   * @param s A sequence to copy elements from.
-   *
-   * For each element in @a s this function makes a copy and adds it 
-   * to the sequence. Note that this operation completely changes the 
-   * sequence and all old elements will be lost.
-   */
-  void
-  sala (const sala_sequence& s);
-
-  //@}
-
-  /**
-   * @name Constructors
-   */
-  //@{
-
-  /**
-   * @brief Create an instance from the ultimate base and
-   * initializers for required elements and attributes.
-   */
-  GrupoSala ();
-
-  /**
-   * @brief Create an instance from a DOM element.
-   *
-   * @param e A DOM element to extract the data from.
-   * @param f Flags to create the new instance with.
-   * @param c A pointer to the object that will contain the new
-   * instance.
-   */
-  GrupoSala (const ::xercesc::DOMElement& e,
-             ::xml_schema::flags f = 0,
-             ::xml_schema::container* c = 0);
-
-  /**
-   * @brief Copy constructor.
-   *
-   * @param x An instance to make a copy of.
-   * @param f Flags to create the copy with.
-   * @param c A pointer to the object that will contain the copy.
-   *
-   * For polymorphic object models use the @c _clone function instead.
-   */
-  GrupoSala (const GrupoSala& x,
-             ::xml_schema::flags f = 0,
-             ::xml_schema::container* c = 0);
-
-  /**
-   * @brief Copy the instance polymorphically.
-   *
-   * @param f Flags to create the copy with.
-   * @param c A pointer to the object that will contain the copy.
-   * @return A pointer to the dynamically allocated copy.
-   *
-   * This function ensures that the dynamic type of the instance is
-   * used for copying and should be used for polymorphic object
-   * models instead of the copy constructor.
-   */
-  virtual GrupoSala*
-  _clone (::xml_schema::flags f = 0,
-          ::xml_schema::container* c = 0) const;
-
-  //@}
-
-  /**
-   * @brief Destructor.
-   */
-  virtual 
-  ~GrupoSala ();
-
-  // Implementation.
-  //
-
-  //@cond
-
-  protected:
-  void
-  parse (::xsd::cxx::xml::dom::parser< char >&,
-         ::xml_schema::flags);
-
-  protected:
-  sala_sequence sala_;
-
-  //@endcond
-};
-
-/**
- * @brief Class corresponding to the %ItemCurso schema type.
- *
- * @nosubgrouping
- */
-class ItemCurso: public ::xml_schema::type
-{
-  public:
-  /**
-   * @name id
-   *
-   * @brief Accessor and modifier functions for the %id
-   * required element.
-   */
-  //@{
-
-  /**
-   * @brief Element type.
-   */
-  typedef ::xml_schema::int_ id_type;
-
-  /**
-   * @brief Element traits type.
-   */
-  typedef ::xsd::cxx::tree::traits< id_type, char > id_traits;
-
-  /**
-   * @brief Return a read-only (constant) reference to the element.
-   *
-   * @return A constant reference to the element.
-   */
-  const id_type&
-  id () const;
-
-  /**
-   * @brief Return a read-write reference to the element.
-   *
-   * @return A reference to the element.
-   */
-  id_type&
-  id ();
-
-  /**
-   * @brief Set the element value.
-   *
-   * @param x A new value to set.
-   *
-   * This function makes a copy of its argument and sets it as
-   * the new value of the element.
-   */
-  void
-  id (const id_type& x);
-
-  //@}
-
-  /**
-   * @name codigo
-   *
-   * @brief Accessor and modifier functions for the %codigo
-   * required element.
-   */
-  //@{
-
-  /**
-   * @brief Element type.
-   */
-  typedef ::xml_schema::string codigo_type;
-
-  /**
-   * @brief Element traits type.
-   */
-  typedef ::xsd::cxx::tree::traits< codigo_type, char > codigo_traits;
-
-  /**
-   * @brief Return a read-only (constant) reference to the element.
-   *
-   * @return A constant reference to the element.
-   */
-  const codigo_type&
-  codigo () const;
-
-  /**
-   * @brief Return a read-write reference to the element.
-   *
-   * @return A reference to the element.
-   */
-  codigo_type&
-  codigo ();
-
-  /**
-   * @brief Set the element value.
-   *
-   * @param x A new value to set.
-   *
-   * This function makes a copy of its argument and sets it as
-   * the new value of the element.
-   */
-  void
-  codigo (const codigo_type& x);
-
-  /**
-   * @brief Set the element value without copying.
-   *
-   * @param p A new value to use.
-   *
-   * This function will try to use the passed value directly instead
-   * of making a copy.
-   */
-  void
-  codigo (::std::auto_ptr< codigo_type > p);
-
-  //@}
-
-  /**
-   * @name tipo
-   *
-   * @brief Accessor and modifier functions for the %tipo
-   * required element.
-   */
-  //@{
-
-  /**
-   * @brief Element type.
-   */
-  typedef ::ItemTipoCurso tipo_type;
-
-  /**
-   * @brief Element traits type.
-   */
-  typedef ::xsd::cxx::tree::traits< tipo_type, char > tipo_traits;
-
-  /**
-   * @brief Return a read-only (constant) reference to the element.
-   *
-   * @return A constant reference to the element.
-   */
-  const tipo_type&
-  tipo () const;
-
-  /**
-   * @brief Return a read-write reference to the element.
-   *
-   * @return A reference to the element.
-   */
-  tipo_type&
-  tipo ();
-
-  /**
-   * @brief Set the element value.
-   *
-   * @param x A new value to set.
-   *
-   * This function makes a copy of its argument and sets it as
-   * the new value of the element.
-   */
-  void
-  tipo (const tipo_type& x);
-
-  /**
-   * @brief Set the element value without copying.
-   *
-   * @param p A new value to use.
-   *
-   * This function will try to use the passed value directly instead
-   * of making a copy.
-   */
-  void
-  tipo (::std::auto_ptr< tipo_type > p);
-
-  //@}
-
-  /**
-   * @name numPeriodos
-   *
-   * @brief Accessor and modifier functions for the %numPeriodos
-   * required element.
-   */
-  //@{
-
-  /**
-   * @brief Element type.
-   */
-  typedef ::xml_schema::int_ numPeriodos_type;
-
-  /**
-   * @brief Element traits type.
-   */
-  typedef ::xsd::cxx::tree::traits< numPeriodos_type, char > numPeriodos_traits;
-
-  /**
-   * @brief Return a read-only (constant) reference to the element.
-   *
-   * @return A constant reference to the element.
-   */
-  const numPeriodos_type&
-  numPeriodos () const;
-
-  /**
-   * @brief Return a read-write reference to the element.
-   *
-   * @return A reference to the element.
-   */
-  numPeriodos_type&
-  numPeriodos ();
-
-  /**
-   * @brief Set the element value.
-   *
-   * @param x A new value to set.
-   *
-   * This function makes a copy of its argument and sets it as
-   * the new value of the element.
-   */
-  void
-  numPeriodos (const numPeriodos_type& x);
-
-  //@}
-
-  /**
-   * @name qtdMinDoutores
-   *
-   * @brief Accessor and modifier functions for the %qtdMinDoutores
-   * required element.
-   */
-  //@{
-
-  /**
-   * @brief Element type.
-   */
-  typedef ::xml_schema::int_ qtdMinDoutores_type;
-
-  /**
-   * @brief Element traits type.
-   */
-  typedef ::xsd::cxx::tree::traits< qtdMinDoutores_type, char > qtdMinDoutores_traits;
-
-  /**
-   * @brief Return a read-only (constant) reference to the element.
-   *
-   * @return A constant reference to the element.
-   */
-  const qtdMinDoutores_type&
-  qtdMinDoutores () const;
-
-  /**
-   * @brief Return a read-write reference to the element.
-   *
-   * @return A reference to the element.
-   */
-  qtdMinDoutores_type&
-  qtdMinDoutores ();
-
-  /**
-   * @brief Set the element value.
-   *
-   * @param x A new value to set.
-   *
-   * This function makes a copy of its argument and sets it as
-   * the new value of the element.
-   */
-  void
-  qtdMinDoutores (const qtdMinDoutores_type& x);
-
-  //@}
-
-  /**
-   * @name qtdMinMestres
-   *
-   * @brief Accessor and modifier functions for the %qtdMinMestres
-   * required element.
-   */
-  //@{
-
-  /**
-   * @brief Element type.
-   */
-  typedef ::xml_schema::int_ qtdMinMestres_type;
-
-  /**
-   * @brief Element traits type.
-   */
-  typedef ::xsd::cxx::tree::traits< qtdMinMestres_type, char > qtdMinMestres_traits;
-
-  /**
-   * @brief Return a read-only (constant) reference to the element.
-   *
-   * @return A constant reference to the element.
-   */
-  const qtdMinMestres_type&
-  qtdMinMestres () const;
-
-  /**
-   * @brief Return a read-write reference to the element.
-   *
-   * @return A reference to the element.
-   */
-  qtdMinMestres_type&
-  qtdMinMestres ();
-
-  /**
-   * @brief Set the element value.
-   *
-   * @param x A new value to set.
-   *
-   * This function makes a copy of its argument and sets it as
-   * the new value of the element.
-   */
-  void
-  qtdMinMestres (const qtdMinMestres_type& x);
-
-  //@}
-
-  /**
-   * @name qtdMaxProfDisc
-   *
-   * @brief Accessor and modifier functions for the %qtdMaxProfDisc
-   * required element.
-   */
-  //@{
-
-  /**
-   * @brief Element type.
-   */
-  typedef ::xml_schema::int_ qtdMaxProfDisc_type;
-
-  /**
-   * @brief Element traits type.
-   */
-  typedef ::xsd::cxx::tree::traits< qtdMaxProfDisc_type, char > qtdMaxProfDisc_traits;
-
-  /**
-   * @brief Return a read-only (constant) reference to the element.
-   *
-   * @return A constant reference to the element.
-   */
-  const qtdMaxProfDisc_type&
-  qtdMaxProfDisc () const;
-
-  /**
-   * @brief Return a read-write reference to the element.
-   *
-   * @return A reference to the element.
-   */
-  qtdMaxProfDisc_type&
-  qtdMaxProfDisc ();
-
-  /**
-   * @brief Set the element value.
-   *
-   * @param x A new value to set.
-   *
-   * This function makes a copy of its argument and sets it as
-   * the new value of the element.
-   */
-  void
-  qtdMaxProfDisc (const qtdMaxProfDisc_type& x);
-
-  //@}
-
-  /**
-   * @name areaTitulacao
-   *
-   * @brief Accessor and modifier functions for the %areaTitulacao
-   * required element.
-   */
-  //@{
-
-  /**
-   * @brief Element type.
-   */
-  typedef ::ItemAreaTitulacao areaTitulacao_type;
-
-  /**
-   * @brief Element traits type.
-   */
-  typedef ::xsd::cxx::tree::traits< areaTitulacao_type, char > areaTitulacao_traits;
-
-  /**
-   * @brief Return a read-only (constant) reference to the element.
-   *
-   * @return A constant reference to the element.
-   */
-  const areaTitulacao_type&
-  areaTitulacao () const;
-
-  /**
-   * @brief Return a read-write reference to the element.
-   *
-   * @return A reference to the element.
-   */
-  areaTitulacao_type&
-  areaTitulacao ();
-
-  /**
-   * @brief Set the element value.
-   *
-   * @param x A new value to set.
-   *
-   * This function makes a copy of its argument and sets it as
-   * the new value of the element.
-   */
-  void
-  areaTitulacao (const areaTitulacao_type& x);
-
-  /**
-   * @brief Set the element value without copying.
-   *
-   * @param p A new value to use.
-   *
-   * This function will try to use the passed value directly instead
-   * of making a copy.
-   */
-  void
-  areaTitulacao (::std::auto_ptr< areaTitulacao_type > p);
-
-  //@}
-
-  /**
-   * @name Curriculos
-   *
-   * @brief Accessor and modifier functions for the %Curriculos
-   * required element.
-   */
-  //@{
-
-  /**
-   * @brief Element type.
-   */
-  typedef ::GrupoCurriculo Curriculos_type;
-
-  /**
-   * @brief Element traits type.
-   */
-  typedef ::xsd::cxx::tree::traits< Curriculos_type, char > Curriculos_traits;
-
-  /**
-   * @brief Return a read-only (constant) reference to the element.
-   *
-   * @return A constant reference to the element.
-   */
-  const Curriculos_type&
-  Curriculos () const;
-
-  /**
-   * @brief Return a read-write reference to the element.
-   *
-   * @return A reference to the element.
-   */
-  Curriculos_type&
-  Curriculos ();
-
-  /**
-   * @brief Set the element value.
-   *
-   * @param x A new value to set.
-   *
-   * This function makes a copy of its argument and sets it as
-   * the new value of the element.
-   */
-  void
-  Curriculos (const Curriculos_type& x);
-
-  /**
-   * @brief Set the element value without copying.
-   *
-   * @param p A new value to use.
-   *
-   * This function will try to use the passed value directly instead
-   * of making a copy.
-   */
-  void
-  Curriculos (::std::auto_ptr< Curriculos_type > p);
-
-  //@}
-
-  /**
-   * @name Constructors
-   */
-  //@{
-
-  /**
-   * @brief Create an instance from the ultimate base and
-   * initializers for required elements and attributes.
-   */
-  ItemCurso (const id_type&,
-             const codigo_type&,
-             const tipo_type&,
-             const numPeriodos_type&,
-             const qtdMinDoutores_type&,
-             const qtdMinMestres_type&,
-             const qtdMaxProfDisc_type&,
-             const areaTitulacao_type&,
-             const Curriculos_type&);
-
-  /**
-   * @brief Create an instance from the ultimate base and
-   * initializers for required elements and attributes
-   * (auto_ptr version).
-   *
-   * This constructor will try to use the passed values directly
-   * instead of making copies.
-   */
-  ItemCurso (const id_type&,
-             const codigo_type&,
-             ::std::auto_ptr< tipo_type >&,
-             const numPeriodos_type&,
-             const qtdMinDoutores_type&,
-             const qtdMinMestres_type&,
-             const qtdMaxProfDisc_type&,
-             ::std::auto_ptr< areaTitulacao_type >&,
-             ::std::auto_ptr< Curriculos_type >&);
-
-  /**
-   * @brief Create an instance from a DOM element.
-   *
-   * @param e A DOM element to extract the data from.
-   * @param f Flags to create the new instance with.
-   * @param c A pointer to the object that will contain the new
-   * instance.
-   */
-  ItemCurso (const ::xercesc::DOMElement& e,
-             ::xml_schema::flags f = 0,
-             ::xml_schema::container* c = 0);
-
-  /**
-   * @brief Copy constructor.
-   *
-   * @param x An instance to make a copy of.
-   * @param f Flags to create the copy with.
-   * @param c A pointer to the object that will contain the copy.
-   *
-   * For polymorphic object models use the @c _clone function instead.
-   */
-  ItemCurso (const ItemCurso& x,
-             ::xml_schema::flags f = 0,
-             ::xml_schema::container* c = 0);
-
-  /**
-   * @brief Copy the instance polymorphically.
-   *
-   * @param f Flags to create the copy with.
-   * @param c A pointer to the object that will contain the copy.
-   * @return A pointer to the dynamically allocated copy.
-   *
-   * This function ensures that the dynamic type of the instance is
-   * used for copying and should be used for polymorphic object
-   * models instead of the copy constructor.
-   */
-  virtual ItemCurso*
-  _clone (::xml_schema::flags f = 0,
-          ::xml_schema::container* c = 0) const;
-
-  //@}
-
-  /**
-   * @brief Destructor.
-   */
-  virtual 
-  ~ItemCurso ();
-
-  // Implementation.
-  //
-
-  //@cond
-
-  protected:
-  void
-  parse (::xsd::cxx::xml::dom::parser< char >&,
-         ::xml_schema::flags);
-
-  protected:
-  ::xsd::cxx::tree::one< id_type > id_;
-  ::xsd::cxx::tree::one< codigo_type > codigo_;
-  ::xsd::cxx::tree::one< tipo_type > tipo_;
-  ::xsd::cxx::tree::one< numPeriodos_type > numPeriodos_;
-  ::xsd::cxx::tree::one< qtdMinDoutores_type > qtdMinDoutores_;
-  ::xsd::cxx::tree::one< qtdMinMestres_type > qtdMinMestres_;
-  ::xsd::cxx::tree::one< qtdMaxProfDisc_type > qtdMaxProfDisc_;
-  ::xsd::cxx::tree::one< areaTitulacao_type > areaTitulacao_;
-  ::xsd::cxx::tree::one< Curriculos_type > Curriculos_;
-
-  //@endcond
-};
-
-/**
- * @brief Class corresponding to the %GrupoCurso schema type.
- *
- * @nosubgrouping
- */
-class GrupoCurso: public ::xml_schema::type
-{
-  public:
-  /**
-   * @name curso
-   *
-   * @brief Accessor and modifier functions for the %curso
-   * sequence element.
-   */
-  //@{
-
-  /**
-   * @brief Element type.
-   */
-  typedef ::ItemCurso curso_type;
-
-  /**
-   * @brief Element sequence container type.
-   */
-  typedef ::xsd::cxx::tree::sequence< curso_type > curso_sequence;
-
-  /**
-   * @brief Element iterator type.
-   */
-  typedef curso_sequence::iterator curso_iterator;
-
-  /**
-   * @brief Element constant iterator type.
-   */
-  typedef curso_sequence::const_iterator curso_const_iterator;
-
-  /**
-   * @brief Element traits type.
-   */
-  typedef ::xsd::cxx::tree::traits< curso_type, char > curso_traits;
-
-  /**
-   * @brief Return a read-only (constant) reference to the element
-   * sequence.
-   *
-   * @return A constant reference to the sequence container.
-   */
-  const curso_sequence&
-  curso () const;
-
-  /**
-   * @brief Return a read-write reference to the element sequence.
-   *
-   * @return A reference to the sequence container.
-   */
-  curso_sequence&
-  curso ();
-
-  /**
-   * @brief Copy elements from a given sequence.
-   *
-   * @param s A sequence to copy elements from.
-   *
-   * For each element in @a s this function makes a copy and adds it 
-   * to the sequence. Note that this operation completely changes the 
-   * sequence and all old elements will be lost.
-   */
-  void
-  curso (const curso_sequence& s);
-
-  //@}
-
-  /**
-   * @name Constructors
-   */
-  //@{
-
-  /**
-   * @brief Create an instance from the ultimate base and
-   * initializers for required elements and attributes.
-   */
-  GrupoCurso ();
-
-  /**
-   * @brief Create an instance from a DOM element.
-   *
-   * @param e A DOM element to extract the data from.
-   * @param f Flags to create the new instance with.
-   * @param c A pointer to the object that will contain the new
-   * instance.
-   */
-  GrupoCurso (const ::xercesc::DOMElement& e,
-              ::xml_schema::flags f = 0,
-              ::xml_schema::container* c = 0);
-
-  /**
-   * @brief Copy constructor.
-   *
-   * @param x An instance to make a copy of.
-   * @param f Flags to create the copy with.
-   * @param c A pointer to the object that will contain the copy.
-   *
-   * For polymorphic object models use the @c _clone function instead.
-   */
-  GrupoCurso (const GrupoCurso& x,
-              ::xml_schema::flags f = 0,
-              ::xml_schema::container* c = 0);
-
-  /**
-   * @brief Copy the instance polymorphically.
-   *
-   * @param f Flags to create the copy with.
-   * @param c A pointer to the object that will contain the copy.
-   * @return A pointer to the dynamically allocated copy.
-   *
-   * This function ensures that the dynamic type of the instance is
-   * used for copying and should be used for polymorphic object
-   * models instead of the copy constructor.
-   */
-  virtual GrupoCurso*
-  _clone (::xml_schema::flags f = 0,
-          ::xml_schema::container* c = 0) const;
-
-  //@}
-
-  /**
-   * @brief Destructor.
-   */
-  virtual 
-  ~GrupoCurso ();
-
-  // Implementation.
-  //
-
-  //@cond
-
-  protected:
-  void
-  parse (::xsd::cxx::xml::dom::parser< char >&,
-         ::xml_schema::flags);
-
-  protected:
-  curso_sequence curso_;
-
-  //@endcond
-};
-
-/**
- * @brief Class corresponding to the %ItemDemanda schema type.
- *
- * @nosubgrouping
- */
-class ItemDemanda: public ::xml_schema::type
-{
-  public:
-  /**
-   * @name quantidade
-   *
-   * @brief Accessor and modifier functions for the %quantidade
-   * required element.
-   */
-  //@{
-
-  /**
-   * @brief Element type.
-   */
-  typedef ::xml_schema::int_ quantidade_type;
-
-  /**
-   * @brief Element traits type.
-   */
-  typedef ::xsd::cxx::tree::traits< quantidade_type, char > quantidade_traits;
-
-  /**
-   * @brief Return a read-only (constant) reference to the element.
-   *
-   * @return A constant reference to the element.
-   */
-  const quantidade_type&
-  quantidade () const;
-
-  /**
-   * @brief Return a read-write reference to the element.
-   *
-   * @return A reference to the element.
-   */
-  quantidade_type&
-  quantidade ();
-
-  /**
-   * @brief Set the element value.
-   *
-   * @param x A new value to set.
-   *
-   * This function makes a copy of its argument and sets it as
-   * the new value of the element.
-   */
-  void
-  quantidade (const quantidade_type& x);
-
-  //@}
-
-  /**
-   * @name turno
-   *
-   * @brief Accessor and modifier functions for the %turno
-   * required element.
-   */
-  //@{
-
-  /**
-   * @brief Element type.
-   */
-  typedef ::ItemTurno turno_type;
-
-  /**
-   * @brief Element traits type.
-   */
-  typedef ::xsd::cxx::tree::traits< turno_type, char > turno_traits;
-
-  /**
-   * @brief Return a read-only (constant) reference to the element.
-   *
-   * @return A constant reference to the element.
-   */
-  const turno_type&
-  turno () const;
-
-  /**
-   * @brief Return a read-write reference to the element.
-   *
-   * @return A reference to the element.
-   */
-  turno_type&
-  turno ();
-
-  /**
-   * @brief Set the element value.
-   *
-   * @param x A new value to set.
-   *
-   * This function makes a copy of its argument and sets it as
-   * the new value of the element.
-   */
-  void
-  turno (const turno_type& x);
-
-  /**
-   * @brief Set the element value without copying.
-   *
-   * @param p A new value to use.
-   *
-   * This function will try to use the passed value directly instead
-   * of making a copy.
-   */
-  void
-  turno (::std::auto_ptr< turno_type > p);
-
-  //@}
-
-  /**
-   * @name disciplina
-   *
-   * @brief Accessor and modifier functions for the %disciplina
-   * required element.
-   */
-  //@{
-
-  /**
-   * @brief Element type.
-   */
-  typedef ::ItemDisciplina disciplina_type;
-
-  /**
-   * @brief Element traits type.
-   */
-  typedef ::xsd::cxx::tree::traits< disciplina_type, char > disciplina_traits;
-
-  /**
-   * @brief Return a read-only (constant) reference to the element.
-   *
-   * @return A constant reference to the element.
-   */
-  const disciplina_type&
-  disciplina () const;
-
-  /**
-   * @brief Return a read-write reference to the element.
-   *
-   * @return A reference to the element.
-   */
-  disciplina_type&
-  disciplina ();
-
-  /**
-   * @brief Set the element value.
-   *
-   * @param x A new value to set.
-   *
-   * This function makes a copy of its argument and sets it as
-   * the new value of the element.
-   */
-  void
-  disciplina (const disciplina_type& x);
-
-  /**
-   * @brief Set the element value without copying.
-   *
-   * @param p A new value to use.
-   *
-   * This function will try to use the passed value directly instead
-   * of making a copy.
-   */
-  void
-  disciplina (::std::auto_ptr< disciplina_type > p);
-
-  //@}
-
-  /**
-   * @name curso
-   *
-   * @brief Accessor and modifier functions for the %curso
-   * required element.
-   */
-  //@{
-
-  /**
-   * @brief Element type.
-   */
-  typedef ::ItemCurso curso_type;
-
-  /**
-   * @brief Element traits type.
-   */
-  typedef ::xsd::cxx::tree::traits< curso_type, char > curso_traits;
-
-  /**
-   * @brief Return a read-only (constant) reference to the element.
-   *
-   * @return A constant reference to the element.
-   */
-  const curso_type&
-  curso () const;
-
-  /**
-   * @brief Return a read-write reference to the element.
-   *
-   * @return A reference to the element.
-   */
-  curso_type&
-  curso ();
-
-  /**
-   * @brief Set the element value.
-   *
-   * @param x A new value to set.
-   *
-   * This function makes a copy of its argument and sets it as
-   * the new value of the element.
-   */
-  void
-  curso (const curso_type& x);
-
-  /**
-   * @brief Set the element value without copying.
-   *
-   * @param p A new value to use.
-   *
-   * This function will try to use the passed value directly instead
-   * of making a copy.
-   */
-  void
-  curso (::std::auto_ptr< curso_type > p);
-
-  //@}
-
-  /**
-   * @name Constructors
-   */
-  //@{
-
-  /**
-   * @brief Create an instance from the ultimate base and
-   * initializers for required elements and attributes.
-   */
-  ItemDemanda (const quantidade_type&,
-               const turno_type&,
-               const disciplina_type&,
-               const curso_type&);
-
-  /**
-   * @brief Create an instance from the ultimate base and
-   * initializers for required elements and attributes
-   * (auto_ptr version).
-   *
-   * This constructor will try to use the passed values directly
-   * instead of making copies.
-   */
-  ItemDemanda (const quantidade_type&,
-               ::std::auto_ptr< turno_type >&,
-               ::std::auto_ptr< disciplina_type >&,
-               ::std::auto_ptr< curso_type >&);
-
-  /**
-   * @brief Create an instance from a DOM element.
-   *
-   * @param e A DOM element to extract the data from.
-   * @param f Flags to create the new instance with.
-   * @param c A pointer to the object that will contain the new
-   * instance.
-   */
-  ItemDemanda (const ::xercesc::DOMElement& e,
-               ::xml_schema::flags f = 0,
-               ::xml_schema::container* c = 0);
-
-  /**
-   * @brief Copy constructor.
-   *
-   * @param x An instance to make a copy of.
-   * @param f Flags to create the copy with.
-   * @param c A pointer to the object that will contain the copy.
-   *
-   * For polymorphic object models use the @c _clone function instead.
-   */
-  ItemDemanda (const ItemDemanda& x,
-               ::xml_schema::flags f = 0,
-               ::xml_schema::container* c = 0);
-
-  /**
-   * @brief Copy the instance polymorphically.
-   *
-   * @param f Flags to create the copy with.
-   * @param c A pointer to the object that will contain the copy.
-   * @return A pointer to the dynamically allocated copy.
-   *
-   * This function ensures that the dynamic type of the instance is
-   * used for copying and should be used for polymorphic object
-   * models instead of the copy constructor.
-   */
-  virtual ItemDemanda*
-  _clone (::xml_schema::flags f = 0,
-          ::xml_schema::container* c = 0) const;
-
-  //@}
-
-  /**
-   * @brief Destructor.
-   */
-  virtual 
-  ~ItemDemanda ();
-
-  // Implementation.
-  //
-
-  //@cond
-
-  protected:
-  void
-  parse (::xsd::cxx::xml::dom::parser< char >&,
-         ::xml_schema::flags);
-
-  protected:
-  ::xsd::cxx::tree::one< quantidade_type > quantidade_;
-  ::xsd::cxx::tree::one< turno_type > turno_;
-  ::xsd::cxx::tree::one< disciplina_type > disciplina_;
-  ::xsd::cxx::tree::one< curso_type > curso_;
-
-  //@endcond
-};
-
-/**
- * @brief Class corresponding to the %GrupoDemanda schema type.
- *
- * @nosubgrouping
- */
-class GrupoDemanda: public ::xml_schema::type
-{
-  public:
-  /**
-   * @name demanda
-   *
-   * @brief Accessor and modifier functions for the %demanda
-   * sequence element.
-   */
-  //@{
-
-  /**
-   * @brief Element type.
-   */
-  typedef ::ItemDemanda demanda_type;
-
-  /**
-   * @brief Element sequence container type.
-   */
-  typedef ::xsd::cxx::tree::sequence< demanda_type > demanda_sequence;
-
-  /**
-   * @brief Element iterator type.
-   */
-  typedef demanda_sequence::iterator demanda_iterator;
-
-  /**
-   * @brief Element constant iterator type.
-   */
-  typedef demanda_sequence::const_iterator demanda_const_iterator;
-
-  /**
-   * @brief Element traits type.
-   */
-  typedef ::xsd::cxx::tree::traits< demanda_type, char > demanda_traits;
-
-  /**
-   * @brief Return a read-only (constant) reference to the element
-   * sequence.
-   *
-   * @return A constant reference to the sequence container.
-   */
-  const demanda_sequence&
-  demanda () const;
-
-  /**
-   * @brief Return a read-write reference to the element sequence.
-   *
-   * @return A reference to the sequence container.
-   */
-  demanda_sequence&
-  demanda ();
-
-  /**
-   * @brief Copy elements from a given sequence.
-   *
-   * @param s A sequence to copy elements from.
-   *
-   * For each element in @a s this function makes a copy and adds it 
-   * to the sequence. Note that this operation completely changes the 
-   * sequence and all old elements will be lost.
-   */
-  void
-  demanda (const demanda_sequence& s);
-
-  //@}
-
-  /**
-   * @name Constructors
-   */
-  //@{
-
-  /**
-   * @brief Create an instance from the ultimate base and
-   * initializers for required elements and attributes.
-   */
-  GrupoDemanda ();
-
-  /**
-   * @brief Create an instance from a DOM element.
-   *
-   * @param e A DOM element to extract the data from.
-   * @param f Flags to create the new instance with.
-   * @param c A pointer to the object that will contain the new
-   * instance.
-   */
-  GrupoDemanda (const ::xercesc::DOMElement& e,
-                ::xml_schema::flags f = 0,
-                ::xml_schema::container* c = 0);
-
-  /**
-   * @brief Copy constructor.
-   *
-   * @param x An instance to make a copy of.
-   * @param f Flags to create the copy with.
-   * @param c A pointer to the object that will contain the copy.
-   *
-   * For polymorphic object models use the @c _clone function instead.
-   */
-  GrupoDemanda (const GrupoDemanda& x,
-                ::xml_schema::flags f = 0,
-                ::xml_schema::container* c = 0);
-
-  /**
-   * @brief Copy the instance polymorphically.
-   *
-   * @param f Flags to create the copy with.
-   * @param c A pointer to the object that will contain the copy.
-   * @return A pointer to the dynamically allocated copy.
-   *
-   * This function ensures that the dynamic type of the instance is
-   * used for copying and should be used for polymorphic object
-   * models instead of the copy constructor.
-   */
-  virtual GrupoDemanda*
-  _clone (::xml_schema::flags f = 0,
-          ::xml_schema::container* c = 0) const;
-
-  //@}
-
-  /**
-   * @brief Destructor.
-   */
-  virtual 
-  ~GrupoDemanda ();
-
-  // Implementation.
-  //
-
-  //@cond
-
-  protected:
-  void
-  parse (::xsd::cxx::xml::dom::parser< char >&,
-         ::xml_schema::flags);
-
-  protected:
-  demanda_sequence demanda_;
-
-  //@endcond
-};
-
-/**
- * @brief Class corresponding to the %ItemUnidadeCurriculo schema type.
- *
- * @nosubgrouping
- */
-class ItemUnidadeCurriculo: public ::xml_schema::type
-{
-  public:
-  /**
-   * @name turno
-   *
-   * @brief Accessor and modifier functions for the %turno
-   * required element.
-   */
-  //@{
-
-  /**
-   * @brief Element type.
-   */
-  typedef ::ItemTurno turno_type;
-
-  /**
-   * @brief Element traits type.
-   */
-  typedef ::xsd::cxx::tree::traits< turno_type, char > turno_traits;
-
-  /**
-   * @brief Return a read-only (constant) reference to the element.
-   *
-   * @return A constant reference to the element.
-   */
-  const turno_type&
-  turno () const;
-
-  /**
-   * @brief Return a read-write reference to the element.
-   *
-   * @return A reference to the element.
-   */
-  turno_type&
-  turno ();
-
-  /**
-   * @brief Set the element value.
-   *
-   * @param x A new value to set.
-   *
-   * This function makes a copy of its argument and sets it as
-   * the new value of the element.
-   */
-  void
-  turno (const turno_type& x);
-
-  /**
-   * @brief Set the element value without copying.
-   *
-   * @param p A new value to use.
-   *
-   * This function will try to use the passed value directly instead
-   * of making a copy.
-   */
-  void
-  turno (::std::auto_ptr< turno_type > p);
-
-  //@}
-
-  /**
-   * @name curriculo
-   *
-   * @brief Accessor and modifier functions for the %curriculo
-   * required element.
-   */
-  //@{
-
-  /**
-   * @brief Element type.
-   */
-  typedef ::ItemCurriculo curriculo_type;
-
-  /**
-   * @brief Element traits type.
-   */
-  typedef ::xsd::cxx::tree::traits< curriculo_type, char > curriculo_traits;
-
-  /**
-   * @brief Return a read-only (constant) reference to the element.
-   *
-   * @return A constant reference to the element.
-   */
-  const curriculo_type&
-  curriculo () const;
-
-  /**
-   * @brief Return a read-write reference to the element.
-   *
-   * @return A reference to the element.
-   */
-  curriculo_type&
-  curriculo ();
-
-  /**
-   * @brief Set the element value.
-   *
-   * @param x A new value to set.
-   *
-   * This function makes a copy of its argument and sets it as
-   * the new value of the element.
-   */
-  void
-  curriculo (const curriculo_type& x);
-
-  /**
-   * @brief Set the element value without copying.
-   *
-   * @param p A new value to use.
-   *
-   * This function will try to use the passed value directly instead
-   * of making a copy.
-   */
-  void
-  curriculo (::std::auto_ptr< curriculo_type > p);
-
-  //@}
-
-  /**
-   * @name Constructors
-   */
-  //@{
-
-  /**
-   * @brief Create an instance from the ultimate base and
-   * initializers for required elements and attributes.
-   */
-  ItemUnidadeCurriculo (const turno_type&,
-                        const curriculo_type&);
-
-  /**
-   * @brief Create an instance from the ultimate base and
-   * initializers for required elements and attributes
-   * (auto_ptr version).
-   *
-   * This constructor will try to use the passed values directly
-   * instead of making copies.
-   */
-  ItemUnidadeCurriculo (::std::auto_ptr< turno_type >&,
-                        ::std::auto_ptr< curriculo_type >&);
-
-  /**
-   * @brief Create an instance from a DOM element.
-   *
-   * @param e A DOM element to extract the data from.
-   * @param f Flags to create the new instance with.
-   * @param c A pointer to the object that will contain the new
-   * instance.
-   */
-  ItemUnidadeCurriculo (const ::xercesc::DOMElement& e,
-                        ::xml_schema::flags f = 0,
-                        ::xml_schema::container* c = 0);
-
-  /**
-   * @brief Copy constructor.
-   *
-   * @param x An instance to make a copy of.
-   * @param f Flags to create the copy with.
-   * @param c A pointer to the object that will contain the copy.
-   *
-   * For polymorphic object models use the @c _clone function instead.
-   */
-  ItemUnidadeCurriculo (const ItemUnidadeCurriculo& x,
-                        ::xml_schema::flags f = 0,
-                        ::xml_schema::container* c = 0);
-
-  /**
-   * @brief Copy the instance polymorphically.
-   *
-   * @param f Flags to create the copy with.
-   * @param c A pointer to the object that will contain the copy.
-   * @return A pointer to the dynamically allocated copy.
-   *
-   * This function ensures that the dynamic type of the instance is
-   * used for copying and should be used for polymorphic object
-   * models instead of the copy constructor.
-   */
-  virtual ItemUnidadeCurriculo*
-  _clone (::xml_schema::flags f = 0,
-          ::xml_schema::container* c = 0) const;
-
-  //@}
-
-  /**
-   * @brief Destructor.
-   */
-  virtual 
-  ~ItemUnidadeCurriculo ();
-
-  // Implementation.
-  //
-
-  //@cond
-
-  protected:
-  void
-  parse (::xsd::cxx::xml::dom::parser< char >&,
-         ::xml_schema::flags);
-
-  protected:
-  ::xsd::cxx::tree::one< turno_type > turno_;
-  ::xsd::cxx::tree::one< curriculo_type > curriculo_;
-
-  //@endcond
-};
-
-/**
- * @brief Class corresponding to the %GrupoUnidadeCurriculo schema type.
- *
- * @nosubgrouping
- */
-class GrupoUnidadeCurriculo: public ::xml_schema::type
-{
-  public:
-  /**
-   * @name unidadeCurriculo
-   *
-   * @brief Accessor and modifier functions for the %unidadeCurriculo
-   * sequence element.
-   */
-  //@{
-
-  /**
-   * @brief Element type.
-   */
-  typedef ::unidadeCurriculo unidadeCurriculo_type;
-
-  /**
-   * @brief Element sequence container type.
-   */
-  typedef ::xsd::cxx::tree::sequence< unidadeCurriculo_type > unidadeCurriculo_sequence;
-
-  /**
-   * @brief Element iterator type.
-   */
-  typedef unidadeCurriculo_sequence::iterator unidadeCurriculo_iterator;
-
-  /**
-   * @brief Element constant iterator type.
-   */
-  typedef unidadeCurriculo_sequence::const_iterator unidadeCurriculo_const_iterator;
-
-  /**
-   * @brief Element traits type.
-   */
-  typedef ::xsd::cxx::tree::traits< unidadeCurriculo_type, char > unidadeCurriculo_traits;
-
-  /**
-   * @brief Return a read-only (constant) reference to the element
-   * sequence.
-   *
-   * @return A constant reference to the sequence container.
-   */
-  const unidadeCurriculo_sequence&
-  unidadeCurriculo () const;
-
-  /**
-   * @brief Return a read-write reference to the element sequence.
-   *
-   * @return A reference to the sequence container.
-   */
-  unidadeCurriculo_sequence&
-  unidadeCurriculo ();
-
-  /**
-   * @brief Copy elements from a given sequence.
-   *
-   * @param s A sequence to copy elements from.
-   *
-   * For each element in @a s this function makes a copy and adds it 
-   * to the sequence. Note that this operation completely changes the 
-   * sequence and all old elements will be lost.
-   */
-  void
-  unidadeCurriculo (const unidadeCurriculo_sequence& s);
-
-  //@}
-
-  /**
-   * @name Constructors
-   */
-  //@{
-
-  /**
-   * @brief Create an instance from the ultimate base and
-   * initializers for required elements and attributes.
-   */
-  GrupoUnidadeCurriculo ();
-
-  /**
-   * @brief Create an instance from a DOM element.
-   *
-   * @param e A DOM element to extract the data from.
-   * @param f Flags to create the new instance with.
-   * @param c A pointer to the object that will contain the new
-   * instance.
-   */
-  GrupoUnidadeCurriculo (const ::xercesc::DOMElement& e,
-                         ::xml_schema::flags f = 0,
-                         ::xml_schema::container* c = 0);
-
-  /**
-   * @brief Copy constructor.
-   *
-   * @param x An instance to make a copy of.
-   * @param f Flags to create the copy with.
-   * @param c A pointer to the object that will contain the copy.
-   *
-   * For polymorphic object models use the @c _clone function instead.
-   */
-  GrupoUnidadeCurriculo (const GrupoUnidadeCurriculo& x,
-                         ::xml_schema::flags f = 0,
-                         ::xml_schema::container* c = 0);
-
-  /**
-   * @brief Copy the instance polymorphically.
-   *
-   * @param f Flags to create the copy with.
-   * @param c A pointer to the object that will contain the copy.
-   * @return A pointer to the dynamically allocated copy.
-   *
-   * This function ensures that the dynamic type of the instance is
-   * used for copying and should be used for polymorphic object
-   * models instead of the copy constructor.
-   */
-  virtual GrupoUnidadeCurriculo*
-  _clone (::xml_schema::flags f = 0,
-          ::xml_schema::container* c = 0) const;
-
-  //@}
-
-  /**
-   * @brief Destructor.
-   */
-  virtual 
-  ~GrupoUnidadeCurriculo ();
-
-  // Implementation.
-  //
-
-  //@cond
-
-  protected:
-  void
-  parse (::xsd::cxx::xml::dom::parser< char >&,
-         ::xml_schema::flags);
-
-  protected:
-  unidadeCurriculo_sequence unidadeCurriculo_;
-
-  //@endcond
-};
-
-/**
- * @brief Class corresponding to the %ItemAlocacao schema type.
- *
- * @nosubgrouping
- */
-class ItemAlocacao: public ::xml_schema::type
-{
-  public:
-  /**
-   * @name professor
-   *
-   * @brief Accessor and modifier functions for the %professor
-   * required element.
-   */
-  //@{
-
-  /**
-   * @brief Element type.
-   */
-  typedef ::ItemProfessor professor_type;
-
-  /**
-   * @brief Element traits type.
-   */
-  typedef ::xsd::cxx::tree::traits< professor_type, char > professor_traits;
-
-  /**
-   * @brief Return a read-only (constant) reference to the element.
-   *
-   * @return A constant reference to the element.
-   */
-  const professor_type&
-  professor () const;
-
-  /**
-   * @brief Return a read-write reference to the element.
-   *
-   * @return A reference to the element.
-   */
-  professor_type&
-  professor ();
-
-  /**
-   * @brief Set the element value.
-   *
-   * @param x A new value to set.
-   *
-   * This function makes a copy of its argument and sets it as
-   * the new value of the element.
-   */
-  void
-  professor (const professor_type& x);
-
-  /**
-   * @brief Set the element value without copying.
-   *
-   * @param p A new value to use.
-   *
-   * This function will try to use the passed value directly instead
-   * of making a copy.
-   */
-  void
-  professor (::std::auto_ptr< professor_type > p);
-
-  //@}
-
-  /**
-   * @name horario
-   *
-   * @brief Accessor and modifier functions for the %horario
-   * required element.
-   */
-  //@{
-
-  /**
-   * @brief Element type.
-   */
-  typedef ::ItemHorarioDisponivel horario_type;
-
-  /**
-   * @brief Element traits type.
-   */
-  typedef ::xsd::cxx::tree::traits< horario_type, char > horario_traits;
-
-  /**
-   * @brief Return a read-only (constant) reference to the element.
-   *
-   * @return A constant reference to the element.
-   */
-  const horario_type&
-  horario () const;
-
-  /**
-   * @brief Return a read-write reference to the element.
-   *
-   * @return A reference to the element.
-   */
-  horario_type&
-  horario ();
-
-  /**
-   * @brief Set the element value.
-   *
-   * @param x A new value to set.
-   *
-   * This function makes a copy of its argument and sets it as
-   * the new value of the element.
-   */
-  void
-  horario (const horario_type& x);
-
-  /**
-   * @brief Set the element value without copying.
-   *
-   * @param p A new value to use.
-   *
-   * This function will try to use the passed value directly instead
-   * of making a copy.
-   */
-  void
-  horario (::std::auto_ptr< horario_type > p);
-
-  //@}
-
-  /**
-   * @name oferecimento
-   *
-   * @brief Accessor and modifier functions for the %oferecimento
-   * required element.
-   */
-  //@{
-
-  /**
-   * @brief Element type.
-   */
-  typedef ::ItemOferecimento oferecimento_type;
-
-  /**
-   * @brief Element traits type.
-   */
-  typedef ::xsd::cxx::tree::traits< oferecimento_type, char > oferecimento_traits;
-
-  /**
-   * @brief Return a read-only (constant) reference to the element.
-   *
-   * @return A constant reference to the element.
-   */
-  const oferecimento_type&
-  oferecimento () const;
-
-  /**
-   * @brief Return a read-write reference to the element.
-   *
-   * @return A reference to the element.
-   */
-  oferecimento_type&
-  oferecimento ();
-
-  /**
-   * @brief Set the element value.
-   *
-   * @param x A new value to set.
-   *
-   * This function makes a copy of its argument and sets it as
-   * the new value of the element.
-   */
-  void
-  oferecimento (const oferecimento_type& x);
-
-  /**
-   * @brief Set the element value without copying.
-   *
-   * @param p A new value to use.
-   *
-   * This function will try to use the passed value directly instead
-   * of making a copy.
-   */
-  void
-  oferecimento (::std::auto_ptr< oferecimento_type > p);
-
-  //@}
-
-  /**
-   * @name Constructors
-   */
-  //@{
-
-  /**
-   * @brief Create an instance from the ultimate base and
-   * initializers for required elements and attributes.
-   */
-  ItemAlocacao (const professor_type&,
-                const horario_type&,
-                const oferecimento_type&);
-
-  /**
-   * @brief Create an instance from the ultimate base and
-   * initializers for required elements and attributes
-   * (auto_ptr version).
-   *
-   * This constructor will try to use the passed values directly
-   * instead of making copies.
-   */
-  ItemAlocacao (::std::auto_ptr< professor_type >&,
-                ::std::auto_ptr< horario_type >&,
-                ::std::auto_ptr< oferecimento_type >&);
-
-  /**
-   * @brief Create an instance from a DOM element.
-   *
-   * @param e A DOM element to extract the data from.
-   * @param f Flags to create the new instance with.
-   * @param c A pointer to the object that will contain the new
-   * instance.
-   */
-  ItemAlocacao (const ::xercesc::DOMElement& e,
-                ::xml_schema::flags f = 0,
-                ::xml_schema::container* c = 0);
-
-  /**
-   * @brief Copy constructor.
-   *
-   * @param x An instance to make a copy of.
-   * @param f Flags to create the copy with.
-   * @param c A pointer to the object that will contain the copy.
-   *
-   * For polymorphic object models use the @c _clone function instead.
-   */
-  ItemAlocacao (const ItemAlocacao& x,
-                ::xml_schema::flags f = 0,
-                ::xml_schema::container* c = 0);
-
-  /**
-   * @brief Copy the instance polymorphically.
-   *
-   * @param f Flags to create the copy with.
-   * @param c A pointer to the object that will contain the copy.
-   * @return A pointer to the dynamically allocated copy.
-   *
-   * This function ensures that the dynamic type of the instance is
-   * used for copying and should be used for polymorphic object
-   * models instead of the copy constructor.
-   */
-  virtual ItemAlocacao*
-  _clone (::xml_schema::flags f = 0,
-          ::xml_schema::container* c = 0) const;
-
-  //@}
-
-  /**
-   * @brief Destructor.
-   */
-  virtual 
-  ~ItemAlocacao ();
-
-  // Implementation.
-  //
-
-  //@cond
-
-  protected:
-  void
-  parse (::xsd::cxx::xml::dom::parser< char >&,
-         ::xml_schema::flags);
-
-  protected:
-  ::xsd::cxx::tree::one< professor_type > professor_;
-  ::xsd::cxx::tree::one< horario_type > horario_;
-  ::xsd::cxx::tree::one< oferecimento_type > oferecimento_;
-
-  //@endcond
-};
-
-/**
- * @brief Class corresponding to the %ItemOferecimento schema type.
- *
- * @nosubgrouping
- */
-class ItemOferecimento: public ::xml_schema::type
-{
-  public:
-  /**
-   * @name id
-   *
-   * @brief Accessor and modifier functions for the %id
-   * required element.
-   */
-  //@{
-
-  /**
-   * @brief Element type.
-   */
-  typedef ::xml_schema::int_ id_type;
-
-  /**
-   * @brief Element traits type.
-   */
-  typedef ::xsd::cxx::tree::traits< id_type, char > id_traits;
-
-  /**
-   * @brief Return a read-only (constant) reference to the element.
-   *
-   * @return A constant reference to the element.
-   */
-  const id_type&
-  id () const;
-
-  /**
-   * @brief Return a read-write reference to the element.
-   *
-   * @return A reference to the element.
-   */
-  id_type&
-  id ();
-
-  /**
-   * @brief Set the element value.
-   *
-   * @param x A new value to set.
-   *
-   * This function makes a copy of its argument and sets it as
-   * the new value of the element.
-   */
-  void
-  id (const id_type& x);
-
-  //@}
-
-  /**
-   * @name sala
    *
-   * @brief Accessor and modifier functions for the %sala
-   * required element.
+   * identificador (ItemOfertaCurso) de uma oferta de um curso em um campus
    */
   //@{
 
   /**
    * @brief Element type.
    */
-  typedef ::ItemSala sala_type;
+  typedef ::xml_schema::int_ ofertaCursoCampiId_type;
 
   /**
    * @brief Element traits type.
    */
-  typedef ::xsd::cxx::tree::traits< sala_type, char > sala_traits;
+  typedef ::xsd::cxx::tree::traits< ofertaCursoCampiId_type, char > ofertaCursoCampiId_traits;
 
   /**
    * @brief Return a read-only (constant) reference to the element.
    *
    * @return A constant reference to the element.
    */
-  const sala_type&
-  sala () const;
+  const ofertaCursoCampiId_type&
+  ofertaCursoCampiId () const;
 
   /**
    * @brief Return a read-write reference to the element.
    *
    * @return A reference to the element.
    */
-  sala_type&
-  sala ();
+  ofertaCursoCampiId_type&
+  ofertaCursoCampiId ();
 
   /**
    * @brief Set the element value.
@@ -10247,103 +737,47 @@ class ItemOferecimento: public ::xml_schema::type
    *
    * This function makes a copy of its argument and sets it as
    * the new value of the element.
-   */
-  void
-  sala (const sala_type& x);
-
-  /**
-   * @brief Set the element value without copying.
-   *
-   * @param p A new value to use.
-   *
-   * This function will try to use the passed value directly instead
-   * of making a copy.
    */
   void
-  sala (::std::auto_ptr< sala_type > p);
+  ofertaCursoCampiId (const ofertaCursoCampiId_type& x);
 
   //@}
 
   /**
-   * @name semana
+   * @name disciplinaId
    *
-   * @brief Accessor and modifier functions for the %semana
+   * @brief Accessor and modifier functions for the %disciplinaId
    * required element.
-   */
-  //@{
-
-  /**
-   * @brief Element type.
-   */
-  typedef ::xml_schema::int_ semana_type;
-
-  /**
-   * @brief Element traits type.
-   */
-  typedef ::xsd::cxx::tree::traits< semana_type, char > semana_traits;
-
-  /**
-   * @brief Return a read-only (constant) reference to the element.
-   *
-   * @return A constant reference to the element.
-   */
-  const semana_type&
-  semana () const;
-
-  /**
-   * @brief Return a read-write reference to the element.
-   *
-   * @return A reference to the element.
-   */
-  semana_type&
-  semana ();
-
-  /**
-   * @brief Set the element value.
-   *
-   * @param x A new value to set.
-   *
-   * This function makes a copy of its argument and sets it as
-   * the new value of the element.
-   */
-  void
-  semana (const semana_type& x);
-
-  //@}
-
-  /**
-   * @name creditos
    *
-   * @brief Accessor and modifier functions for the %creditos
-   * required element.
+   * identificador da disciplina (ItemDisciplina)
    */
   //@{
 
   /**
    * @brief Element type.
    */
-  typedef ::xml_schema::int_ creditos_type;
+  typedef ::xml_schema::int_ disciplinaId_type;
 
   /**
    * @brief Element traits type.
    */
-  typedef ::xsd::cxx::tree::traits< creditos_type, char > creditos_traits;
+  typedef ::xsd::cxx::tree::traits< disciplinaId_type, char > disciplinaId_traits;
 
   /**
    * @brief Return a read-only (constant) reference to the element.
    *
    * @return A constant reference to the element.
    */
-  const creditos_type&
-  creditos () const;
+  const disciplinaId_type&
+  disciplinaId () const;
 
   /**
    * @brief Return a read-write reference to the element.
    *
    * @return A reference to the element.
    */
-  creditos_type&
-  creditos ();
+  disciplinaId_type&
+  disciplinaId ();
 
   /**
    * @brief Set the element value.
@@ -10354,7 +788,7 @@ class ItemOferecimento: public ::xml_schema::type
    * the new value of the element.
    */
   void
-  creditos (const creditos_type& x);
+  disciplinaId (const disciplinaId_type& x);
 
   //@}
 
@@ -10363,13 +797,15 @@ class ItemOferecimento: public ::xml_schema::type
    *
    * @brief Accessor and modifier functions for the %turma
    * required element.
+   *
+   * c?digo da turma gerada pelo resolvedor matem?tico
    */
   //@{
 
   /**
    * @brief Element type.
    */
-  typedef ::ItemTurma turma_type;
+  typedef ::xml_schema::string turma_type;
 
   /**
    * @brief Element traits type.
@@ -10417,38 +853,40 @@ class ItemOferecimento: public ::xml_schema::type
   //@}
 
   /**
-   * @name alocacao
+   * @name quatidadeAlunos
    *
-   * @brief Accessor and modifier functions for the %alocacao
+   * @brief Accessor and modifier functions for the %quatidadeAlunos
    * required element.
+   *
+   * quantidade de alunos do curso alocados na turma
    */
   //@{
 
   /**
    * @brief Element type.
    */
-  typedef ::ItemAlocacao alocacao_type;
+  typedef ::xml_schema::int_ quatidadeAlunos_type;
 
   /**
    * @brief Element traits type.
    */
-  typedef ::xsd::cxx::tree::traits< alocacao_type, char > alocacao_traits;
+  typedef ::xsd::cxx::tree::traits< quatidadeAlunos_type, char > quatidadeAlunos_traits;
 
   /**
    * @brief Return a read-only (constant) reference to the element.
    *
    * @return A constant reference to the element.
    */
-  const alocacao_type&
-  alocacao () const;
+  const quatidadeAlunos_type&
+  quatidadeAlunos () const;
 
   /**
    * @brief Return a read-write reference to the element.
    *
    * @return A reference to the element.
    */
-  alocacao_type&
-  alocacao ();
+  quatidadeAlunos_type&
+  quatidadeAlunos ();
 
   /**
    * @brief Set the element value.
@@ -10459,7 +897,172 @@ class ItemOferecimento: public ::xml_schema::type
    * the new value of the element.
    */
   void
-  alocacao (const alocacao_type& x);
+  quatidadeAlunos (const quatidadeAlunos_type& x);
+
+  //@}
+
+  /**
+   * @name salaId
+   *
+   * @brief Accessor and modifier functions for the %salaId
+   * required element.
+   *
+   * identificador da sala (ItemSala) onde a turma ser? atendida
+   */
+  //@{
+
+  /**
+   * @brief Element type.
+   */
+  typedef ::xml_schema::int_ salaId_type;
+
+  /**
+   * @brief Element traits type.
+   */
+  typedef ::xsd::cxx::tree::traits< salaId_type, char > salaId_traits;
+
+  /**
+   * @brief Return a read-only (constant) reference to the element.
+   *
+   * @return A constant reference to the element.
+   */
+  const salaId_type&
+  salaId () const;
+
+  /**
+   * @brief Return a read-write reference to the element.
+   *
+   * @return A reference to the element.
+   */
+  salaId_type&
+  salaId ();
+
+  /**
+   * @brief Set the element value.
+   *
+   * @param x A new value to set.
+   *
+   * This function makes a copy of its argument and sets it as
+   * the new value of the element.
+   */
+  void
+  salaId (const salaId_type& x);
+
+  //@}
+
+  /**
+   * @name diaSemana
+   *
+   * @brief Accessor and modifier functions for the %diaSemana
+   * required element.
+   *
+   * dia da semana em que a turma ser? atendida (um inteiro que represente
+   * um dia da semana. Os valores poss?veis s?o: (1 - Dom), (2 - Seg), (3 -
+   * Ter), (4 - Qua), (5 - Qua), (6 - Sex), (7 - SAb))
+   */
+  //@{
+
+  /**
+   * @brief Element type.
+   */
+  typedef ::xml_schema::int_ diaSemana_type;
+
+  /**
+   * @brief Element traits type.
+   */
+  typedef ::xsd::cxx::tree::traits< diaSemana_type, char > diaSemana_traits;
+
+  /**
+   * @brief Return a read-only (constant) reference to the element.
+   *
+   * @return A constant reference to the element.
+   */
+  const diaSemana_type&
+  diaSemana () const;
+
+  /**
+   * @brief Return a read-write reference to the element.
+   *
+   * @return A reference to the element.
+   */
+  diaSemana_type&
+  diaSemana ();
+
+  /**
+   * @brief Set the element value.
+   *
+   * @param x A new value to set.
+   *
+   * This function makes a copy of its argument and sets it as
+   * the new value of the element.
+   */
+  void
+  diaSemana (const diaSemana_type& x);
+
+  //@}
+
+  /**
+   * @name alocacaoTatico
+   *
+   * @brief Accessor and modifier functions for the %alocacaoTatico
+   * optional element.
+   */
+  //@{
+
+  /**
+   * @brief Element type.
+   */
+  typedef ::ItemTatico alocacaoTatico_type;
+
+  /**
+   * @brief Element optional container type.
+   */
+  typedef ::xsd::cxx::tree::optional< alocacaoTatico_type > alocacaoTatico_optional;
+
+  /**
+   * @brief Element traits type.
+   */
+  typedef ::xsd::cxx::tree::traits< alocacaoTatico_type, char > alocacaoTatico_traits;
+
+  /**
+   * @brief Return a read-only (constant) reference to the element
+   * container.
+   *
+   * @return A constant reference to the optional container.
+   */
+  const alocacaoTatico_optional&
+  alocacaoTatico () const;
+
+  /**
+   * @brief Return a read-write reference to the element container.
+   *
+   * @return A reference to the optional container.
+   */
+  alocacaoTatico_optional&
+  alocacaoTatico ();
+
+  /**
+   * @brief Set the element value.
+   *
+   * @param x A new value to set.
+   *
+   * This function makes a copy of its argument and sets it as
+   * the new value of the element.
+   */
+  void
+  alocacaoTatico (const alocacaoTatico_type& x);
+
+  /**
+   * @brief Set the element value.
+   *
+   * @param x An optional container with the new value to set.
+   *
+   * If the value is present in @a x then this function makes a copy 
+   * of this value and sets it as the new value of the element.
+   * Otherwise the element container is set the 'not present' state.
+   */
+  void
+  alocacaoTatico (const alocacaoTatico_optional& x);
 
   /**
    * @brief Set the element value without copying.
@@ -10470,7 +1073,83 @@ class ItemOferecimento: public ::xml_schema::type
    * of making a copy.
    */
   void
-  alocacao (::std::auto_ptr< alocacao_type > p);
+  alocacaoTatico (::std::auto_ptr< alocacaoTatico_type > p);
+
+  //@}
+
+  /**
+   * @name alocacaoOperacional
+   *
+   * @brief Accessor and modifier functions for the %alocacaoOperacional
+   * optional element.
+   */
+  //@{
+
+  /**
+   * @brief Element type.
+   */
+  typedef ::ItemOperacional alocacaoOperacional_type;
+
+  /**
+   * @brief Element optional container type.
+   */
+  typedef ::xsd::cxx::tree::optional< alocacaoOperacional_type > alocacaoOperacional_optional;
+
+  /**
+   * @brief Element traits type.
+   */
+  typedef ::xsd::cxx::tree::traits< alocacaoOperacional_type, char > alocacaoOperacional_traits;
+
+  /**
+   * @brief Return a read-only (constant) reference to the element
+   * container.
+   *
+   * @return A constant reference to the optional container.
+   */
+  const alocacaoOperacional_optional&
+  alocacaoOperacional () const;
+
+  /**
+   * @brief Return a read-write reference to the element container.
+   *
+   * @return A reference to the optional container.
+   */
+  alocacaoOperacional_optional&
+  alocacaoOperacional ();
+
+  /**
+   * @brief Set the element value.
+   *
+   * @param x A new value to set.
+   *
+   * This function makes a copy of its argument and sets it as
+   * the new value of the element.
+   */
+  void
+  alocacaoOperacional (const alocacaoOperacional_type& x);
+
+  /**
+   * @brief Set the element value.
+   *
+   * @param x An optional container with the new value to set.
+   *
+   * If the value is present in @a x then this function makes a copy 
+   * of this value and sets it as the new value of the element.
+   * Otherwise the element container is set the 'not present' state.
+   */
+  void
+  alocacaoOperacional (const alocacaoOperacional_optional& x);
+
+  /**
+   * @brief Set the element value without copying.
+   *
+   * @param p A new value to use.
+   *
+   * This function will try to use the passed value directly instead
+   * of making a copy.
+   */
+  void
+  alocacaoOperacional (::std::auto_ptr< alocacaoOperacional_type > p);
 
   //@}
 
@@ -10483,27 +1162,13 @@ class ItemOferecimento: public ::xml_schema::type
    * @brief Create an instance from the ultimate base and
    * initializers for required elements and attributes.
    */
-  ItemOferecimento (const id_type&,
-                    const sala_type&,
-                    const semana_type&,
-                    const creditos_type&,
-                    const turma_type&,
-                    const alocacao_type&);
-
-  /**
-   * @brief Create an instance from the ultimate base and
-   * initializers for required elements and attributes
-   * (auto_ptr version).
-   *
-   * This constructor will try to use the passed values directly
-   * instead of making copies.
-   */
-  ItemOferecimento (const id_type&,
-                    ::std::auto_ptr< sala_type >&,
-                    const semana_type&,
-                    const creditos_type&,
-                    ::std::auto_ptr< turma_type >&,
-                    ::std::auto_ptr< alocacao_type >&);
+  ItemAtendimento (const id_type&,
+                   const ofertaCursoCampiId_type&,
+                   const disciplinaId_type&,
+                   const turma_type&,
+                   const quatidadeAlunos_type&,
+                   const salaId_type&,
+                   const diaSemana_type&);
 
   /**
    * @brief Create an instance from a DOM element.
@@ -10513,9 +1178,9 @@ class ItemOferecimento: public ::xml_schema::type
    * @param c A pointer to the object that will contain the new
    * instance.
    */
-  ItemOferecimento (const ::xercesc::DOMElement& e,
-                    ::xml_schema::flags f = 0,
-                    ::xml_schema::container* c = 0);
+  ItemAtendimento (const ::xercesc::DOMElement& e,
+                   ::xml_schema::flags f = 0,
+                   ::xml_schema::container* c = 0);
 
   /**
    * @brief Copy constructor.
@@ -10526,9 +1191,9 @@ class ItemOferecimento: public ::xml_schema::type
    *
    * For polymorphic object models use the @c _clone function instead.
    */
-  ItemOferecimento (const ItemOferecimento& x,
-                    ::xml_schema::flags f = 0,
-                    ::xml_schema::container* c = 0);
+  ItemAtendimento (const ItemAtendimento& x,
+                   ::xml_schema::flags f = 0,
+                   ::xml_schema::container* c = 0);
 
   /**
    * @brief Copy the instance polymorphically.
@@ -10541,7 +1206,7 @@ class ItemOferecimento: public ::xml_schema::type
    * used for copying and should be used for polymorphic object
    * models instead of the copy constructor.
    */
-  virtual ItemOferecimento*
+  virtual ItemAtendimento*
   _clone (::xml_schema::flags f = 0,
           ::xml_schema::container* c = 0) const;
 
@@ -10551,7 +1216,7 @@ class ItemOferecimento: public ::xml_schema::type
    * @brief Destructor.
    */
   virtual 
-  ~ItemOferecimento ();
+  ~ItemAtendimento ();
 
   // Implementation.
   //
@@ -10565,55 +1230,60 @@ class ItemOferecimento: public ::xml_schema::type
 
   protected:
   ::xsd::cxx::tree::one< id_type > id_;
-  ::xsd::cxx::tree::one< sala_type > sala_;
-  ::xsd::cxx::tree::one< semana_type > semana_;
-  ::xsd::cxx::tree::one< creditos_type > creditos_;
+  ::xsd::cxx::tree::one< ofertaCursoCampiId_type > ofertaCursoCampiId_;
+  ::xsd::cxx::tree::one< disciplinaId_type > disciplinaId_;
   ::xsd::cxx::tree::one< turma_type > turma_;
-  ::xsd::cxx::tree::one< alocacao_type > alocacao_;
+  ::xsd::cxx::tree::one< quatidadeAlunos_type > quatidadeAlunos_;
+  ::xsd::cxx::tree::one< salaId_type > salaId_;
+  ::xsd::cxx::tree::one< diaSemana_type > diaSemana_;
+  alocacaoTatico_optional alocacaoTatico_;
+  alocacaoOperacional_optional alocacaoOperacional_;
 
   //@endcond
 };
 
 /**
- * @brief Class corresponding to the %GrupoOferecimento schema type.
+ * @brief Class corresponding to the %GrupoAtendimento schema type.
  *
  * @nosubgrouping
  */
-class GrupoOferecimento: public ::xml_schema::type
+class GrupoAtendimento: public ::xml_schema::type
 {
   public:
   /**
-   * @name oferecimento
+   * @name atendimento
    *
-   * @brief Accessor and modifier functions for the %oferecimento
+   * @brief Accessor and modifier functions for the %atendimento
    * sequence element.
+   *
+   * representa um atendimento
    */
   //@{
 
   /**
    * @brief Element type.
    */
-  typedef ::ItemOferecimento oferecimento_type;
+  typedef ::ItemAtendimento atendimento_type;
 
   /**
    * @brief Element sequence container type.
    */
-  typedef ::xsd::cxx::tree::sequence< oferecimento_type > oferecimento_sequence;
+  typedef ::xsd::cxx::tree::sequence< atendimento_type > atendimento_sequence;
 
   /**
    * @brief Element iterator type.
    */
-  typedef oferecimento_sequence::iterator oferecimento_iterator;
+  typedef atendimento_sequence::iterator atendimento_iterator;
 
   /**
    * @brief Element constant iterator type.
    */
-  typedef oferecimento_sequence::const_iterator oferecimento_const_iterator;
+  typedef atendimento_sequence::const_iterator atendimento_const_iterator;
 
   /**
    * @brief Element traits type.
    */
-  typedef ::xsd::cxx::tree::traits< oferecimento_type, char > oferecimento_traits;
+  typedef ::xsd::cxx::tree::traits< atendimento_type, char > atendimento_traits;
 
   /**
    * @brief Return a read-only (constant) reference to the element
@@ -10621,16 +1291,16 @@ class GrupoOferecimento: public ::xml_schema::type
    *
    * @return A constant reference to the sequence container.
    */
-  const oferecimento_sequence&
-  oferecimento () const;
+  const atendimento_sequence&
+  atendimento () const;
 
   /**
    * @brief Return a read-write reference to the element sequence.
    *
    * @return A reference to the sequence container.
    */
-  oferecimento_sequence&
-  oferecimento ();
+  atendimento_sequence&
+  atendimento ();
 
   /**
    * @brief Copy elements from a given sequence.
@@ -10642,7 +1312,7 @@ class GrupoOferecimento: public ::xml_schema::type
    * sequence and all old elements will be lost.
    */
   void
-  oferecimento (const oferecimento_sequence& s);
+  atendimento (const atendimento_sequence& s);
 
   //@}
 
@@ -10655,7 +1325,7 @@ class GrupoOferecimento: public ::xml_schema::type
    * @brief Create an instance from the ultimate base and
    * initializers for required elements and attributes.
    */
-  GrupoOferecimento ();
+  GrupoAtendimento ();
 
   /**
    * @brief Create an instance from a DOM element.
@@ -10665,9 +1335,9 @@ class GrupoOferecimento: public ::xml_schema::type
    * @param c A pointer to the object that will contain the new
    * instance.
    */
-  GrupoOferecimento (const ::xercesc::DOMElement& e,
-                     ::xml_schema::flags f = 0,
-                     ::xml_schema::container* c = 0);
+  GrupoAtendimento (const ::xercesc::DOMElement& e,
+                    ::xml_schema::flags f = 0,
+                    ::xml_schema::container* c = 0);
 
   /**
    * @brief Copy constructor.
@@ -10678,9 +1348,9 @@ class GrupoOferecimento: public ::xml_schema::type
    *
    * For polymorphic object models use the @c _clone function instead.
    */
-  GrupoOferecimento (const GrupoOferecimento& x,
-                     ::xml_schema::flags f = 0,
-                     ::xml_schema::container* c = 0);
+  GrupoAtendimento (const GrupoAtendimento& x,
+                    ::xml_schema::flags f = 0,
+                    ::xml_schema::container* c = 0);
 
   /**
    * @brief Copy the instance polymorphically.
@@ -10693,7 +1363,7 @@ class GrupoOferecimento: public ::xml_schema::type
    * used for copying and should be used for polymorphic object
    * models instead of the copy constructor.
    */
-  virtual GrupoOferecimento*
+  virtual GrupoAtendimento*
   _clone (::xml_schema::flags f = 0,
           ::xml_schema::container* c = 0) const;
 
@@ -10703,7 +1373,7 @@ class GrupoOferecimento: public ::xml_schema::type
    * @brief Destructor.
    */
   virtual 
-  ~GrupoOferecimento ();
+  ~GrupoAtendimento ();
 
   // Implementation.
   //
@@ -10716,52 +1386,54 @@ class GrupoOferecimento: public ::xml_schema::type
          ::xml_schema::flags);
 
   protected:
-  oferecimento_sequence oferecimento_;
+  atendimento_sequence atendimento_;
 
   //@endcond
 };
 
 /**
- * @brief Class corresponding to the %ItemTurma schema type.
+ * @brief Class corresponding to the %ItemTatico schema type.
  *
  * @nosubgrouping
  */
-class ItemTurma: public ::xml_schema::type
+class ItemTatico: public ::xml_schema::type
 {
   public:
   /**
-   * @name id
+   * @name qtdeCreditosTeoricos
    *
-   * @brief Accessor and modifier functions for the %id
+   * @brief Accessor and modifier functions for the %qtdeCreditosTeoricos
    * required element.
+   *
+   * quantidade de cr?ditos te?ricos atendidos no dia
    */
   //@{
 
   /**
    * @brief Element type.
    */
-  typedef ::xml_schema::int_ id_type;
+  typedef ::xml_schema::int_ qtdeCreditosTeoricos_type;
 
   /**
    * @brief Element traits type.
    */
-  typedef ::xsd::cxx::tree::traits< id_type, char > id_traits;
+  typedef ::xsd::cxx::tree::traits< qtdeCreditosTeoricos_type, char > qtdeCreditosTeoricos_traits;
 
   /**
    * @brief Return a read-only (constant) reference to the element.
    *
    * @return A constant reference to the element.
    */
-  const id_type&
-  id () const;
+  const qtdeCreditosTeoricos_type&
+  qtdeCreditosTeoricos () const;
 
   /**
    * @brief Return a read-write reference to the element.
    *
    * @return A reference to the element.
    */
-  id_type&
-  id ();
+  qtdeCreditosTeoricos_type&
+  qtdeCreditosTeoricos ();
 
   /**
    * @brief Set the element value.
@@ -10772,43 +1444,45 @@ class ItemTurma: public ::xml_schema::type
    * the new value of the element.
    */
   void
-  id (const id_type& x);
+  qtdeCreditosTeoricos (const qtdeCreditosTeoricos_type& x);
 
   //@}
 
   /**
-   * @name nome
+   * @name qtdeCreditosPraticos
    *
-   * @brief Accessor and modifier functions for the %nome
+   * @brief Accessor and modifier functions for the %qtdeCreditosPraticos
    * required element.
+   *
+   * quantidade de cr?ditos pr?ticos atendidos no dia
    */
   //@{
 
   /**
    * @brief Element type.
    */
-  typedef ::xml_schema::string nome_type;
+  typedef ::xml_schema::int_ qtdeCreditosPraticos_type;
 
   /**
    * @brief Element traits type.
    */
-  typedef ::xsd::cxx::tree::traits< nome_type, char > nome_traits;
+  typedef ::xsd::cxx::tree::traits< qtdeCreditosPraticos_type, char > qtdeCreditosPraticos_traits;
 
   /**
    * @brief Return a read-only (constant) reference to the element.
    *
    * @return A constant reference to the element.
    */
-  const nome_type&
-  nome () const;
+  const qtdeCreditosPraticos_type&
+  qtdeCreditosPraticos () const;
 
   /**
    * @brief Return a read-write reference to the element.
    *
    * @return A reference to the element.
    */
-  nome_type&
-  nome ();
+  qtdeCreditosPraticos_type&
+  qtdeCreditosPraticos ();
 
   /**
    * @brief Set the element value.
@@ -10819,76 +1493,7 @@ class ItemTurma: public ::xml_schema::type
    * the new value of the element.
    */
   void
-  nome (const nome_type& x);
-
-  /**
-   * @brief Set the element value without copying.
-   *
-   * @param p A new value to use.
-   *
-   * This function will try to use the passed value directly instead
-   * of making a copy.
-   */
-  void
-  nome (::std::auto_ptr< nome_type > p);
-
-  //@}
-
-  /**
-   * @name disciplina
-   *
-   * @brief Accessor and modifier functions for the %disciplina
-   * required element.
-   */
-  //@{
-
-  /**
-   * @brief Element type.
-   */
-  typedef ::ItemDisciplina disciplina_type;
-
-  /**
-   * @brief Element traits type.
-   */
-  typedef ::xsd::cxx::tree::traits< disciplina_type, char > disciplina_traits;
-
-  /**
-   * @brief Return a read-only (constant) reference to the element.
-   *
-   * @return A constant reference to the element.
-   */
-  const disciplina_type&
-  disciplina () const;
-
-  /**
-   * @brief Return a read-write reference to the element.
-   *
-   * @return A reference to the element.
-   */
-  disciplina_type&
-  disciplina ();
-
-  /**
-   * @brief Set the element value.
-   *
-   * @param x A new value to set.
-   *
-   * This function makes a copy of its argument and sets it as
-   * the new value of the element.
-   */
-  void
-  disciplina (const disciplina_type& x);
-
-  /**
-   * @brief Set the element value without copying.
-   *
-   * @param p A new value to use.
-   *
-   * This function will try to use the passed value directly instead
-   * of making a copy.
-   */
-  void
-  disciplina (::std::auto_ptr< disciplina_type > p);
+  qtdeCreditosPraticos (const qtdeCreditosPraticos_type& x);
 
   //@}
 
@@ -10901,9 +1506,398 @@ class ItemTurma: public ::xml_schema::type
    * @brief Create an instance from the ultimate base and
    * initializers for required elements and attributes.
    */
-  ItemTurma (const id_type&,
-             const nome_type&,
-             const disciplina_type&);
+  ItemTatico (const qtdeCreditosTeoricos_type&,
+              const qtdeCreditosPraticos_type&);
+
+  /**
+   * @brief Create an instance from a DOM element.
+   *
+   * @param e A DOM element to extract the data from.
+   * @param f Flags to create the new instance with.
+   * @param c A pointer to the object that will contain the new
+   * instance.
+   */
+  ItemTatico (const ::xercesc::DOMElement& e,
+              ::xml_schema::flags f = 0,
+              ::xml_schema::container* c = 0);
+
+  /**
+   * @brief Copy constructor.
+   *
+   * @param x An instance to make a copy of.
+   * @param f Flags to create the copy with.
+   * @param c A pointer to the object that will contain the copy.
+   *
+   * For polymorphic object models use the @c _clone function instead.
+   */
+  ItemTatico (const ItemTatico& x,
+              ::xml_schema::flags f = 0,
+              ::xml_schema::container* c = 0);
+
+  /**
+   * @brief Copy the instance polymorphically.
+   *
+   * @param f Flags to create the copy with.
+   * @param c A pointer to the object that will contain the copy.
+   * @return A pointer to the dynamically allocated copy.
+   *
+   * This function ensures that the dynamic type of the instance is
+   * used for copying and should be used for polymorphic object
+   * models instead of the copy constructor.
+   */
+  virtual ItemTatico*
+  _clone (::xml_schema::flags f = 0,
+          ::xml_schema::container* c = 0) const;
+
+  //@}
+
+  /**
+   * @brief Destructor.
+   */
+  virtual 
+  ~ItemTatico ();
+
+  // Implementation.
+  //
+
+  //@cond
+
+  protected:
+  void
+  parse (::xsd::cxx::xml::dom::parser< char >&,
+         ::xml_schema::flags);
+
+  protected:
+  ::xsd::cxx::tree::one< qtdeCreditosTeoricos_type > qtdeCreditosTeoricos_;
+  ::xsd::cxx::tree::one< qtdeCreditosPraticos_type > qtdeCreditosPraticos_;
+
+  //@endcond
+};
+
+/**
+ * @brief Class corresponding to the %ItemOperacional schema type.
+ *
+ * @nosubgrouping
+ */
+class ItemOperacional: public ::xml_schema::type
+{
+  public:
+  /**
+   * @name horarioAulaId
+   *
+   * @brief Accessor and modifier functions for the %horarioAulaId
+   * required element.
+   *
+   * identificador (ItemHorarioAula) do hor?rio em que a turma ser?
+  atendida */
+  //@{
+
+  /**
+   * @brief Element type.
+   */
+  typedef ::xml_schema::int_ horarioAulaId_type;
+
+  /**
+   * @brief Element traits type.
+   */
+  typedef ::xsd::cxx::tree::traits< horarioAulaId_type, char > horarioAulaId_traits;
+
+  /**
+   * @brief Return a read-only (constant) reference to the element.
+   *
+   * @return A constant reference to the element.
+   */
+  const horarioAulaId_type&
+  horarioAulaId () const;
+
+  /**
+   * @brief Return a read-write reference to the element.
+   *
+   * @return A reference to the element.
+   */
+  horarioAulaId_type&
+  horarioAulaId ();
+
+  /**
+   * @brief Set the element value.
+   *
+   * @param x A new value to set.
+   *
+   * This function makes a copy of its argument and sets it as
+   * the new value of the element.
+   */
+  void
+  horarioAulaId (const horarioAulaId_type& x);
+
+  //@}
+
+  /**
+   * @name professorId
+   *
+   * @brief Accessor and modifier functions for the %professorId
+   * required element.
+   *
+   * identificador (ItemProfessor) do professor que ir? ministrar a aula
+   * para a turma
+   */
+  //@{
+
+  /**
+   * @brief Element type.
+   */
+  typedef ::xml_schema::int_ professorId_type;
+
+  /**
+   * @brief Element traits type.
+   */
+  typedef ::xsd::cxx::tree::traits< professorId_type, char > professorId_traits;
+
+  /**
+   * @brief Return a read-only (constant) reference to the element.
+   *
+   * @return A constant reference to the element.
+   */
+  const professorId_type&
+  professorId () const;
+
+  /**
+   * @brief Return a read-write reference to the element.
+   *
+   * @return A reference to the element.
+   */
+  professorId_type&
+  professorId ();
+
+  /**
+   * @brief Set the element value.
+   *
+   * @param x A new value to set.
+   *
+   * This function makes a copy of its argument and sets it as
+   * the new value of the element.
+   */
+  void
+  professorId (const professorId_type& x);
+
+  //@}
+
+  /**
+   * @name Constructors
+   */
+  //@{
+
+  /**
+   * @brief Create an instance from the ultimate base and
+   * initializers for required elements and attributes.
+   */
+  ItemOperacional (const horarioAulaId_type&,
+                   const professorId_type&);
+
+  /**
+   * @brief Create an instance from a DOM element.
+   *
+   * @param e A DOM element to extract the data from.
+   * @param f Flags to create the new instance with.
+   * @param c A pointer to the object that will contain the new
+   * instance.
+   */
+  ItemOperacional (const ::xercesc::DOMElement& e,
+                   ::xml_schema::flags f = 0,
+                   ::xml_schema::container* c = 0);
+
+  /**
+   * @brief Copy constructor.
+   *
+   * @param x An instance to make a copy of.
+   * @param f Flags to create the copy with.
+   * @param c A pointer to the object that will contain the copy.
+   *
+   * For polymorphic object models use the @c _clone function instead.
+   */
+  ItemOperacional (const ItemOperacional& x,
+                   ::xml_schema::flags f = 0,
+                   ::xml_schema::container* c = 0);
+
+  /**
+   * @brief Copy the instance polymorphically.
+   *
+   * @param f Flags to create the copy with.
+   * @param c A pointer to the object that will contain the copy.
+   * @return A pointer to the dynamically allocated copy.
+   *
+   * This function ensures that the dynamic type of the instance is
+   * used for copying and should be used for polymorphic object
+   * models instead of the copy constructor.
+   */
+  virtual ItemOperacional*
+  _clone (::xml_schema::flags f = 0,
+          ::xml_schema::container* c = 0) const;
+
+  //@}
+
+  /**
+   * @brief Destructor.
+   */
+  virtual 
+  ~ItemOperacional ();
+
+  // Implementation.
+  //
+
+  //@cond
+
+  protected:
+  void
+  parse (::xsd::cxx::xml::dom::parser< char >&,
+         ::xml_schema::flags);
+
+  protected:
+  ::xsd::cxx::tree::one< horarioAulaId_type > horarioAulaId_;
+  ::xsd::cxx::tree::one< professorId_type > professorId_;
+
+  //@endcond
+};
+
+/**
+ * @brief Class corresponding to the %ItemAtendimentoCampus schema type.
+ *
+ * @nosubgrouping
+ */
+class ItemAtendimentoCampus: public ::xml_schema::type
+{
+  public:
+  /**
+   * @name campusId
+   *
+   * @brief Accessor and modifier functions for the %campusId
+   * required element.
+   *
+   * identificador do campus que cont?m os atendimentos
+   */
+  //@{
+
+  /**
+   * @brief Element type.
+   */
+  typedef ::xml_schema::string campusId_type;
+
+  /**
+   * @brief Element traits type.
+   */
+  typedef ::xsd::cxx::tree::traits< campusId_type, char > campusId_traits;
+
+  /**
+   * @brief Return a read-only (constant) reference to the element.
+   *
+   * @return A constant reference to the element.
+   */
+  const campusId_type&
+  campusId () const;
+
+  /**
+   * @brief Return a read-write reference to the element.
+   *
+   * @return A reference to the element.
+   */
+  campusId_type&
+  campusId ();
+
+  /**
+   * @brief Set the element value.
+   *
+   * @param x A new value to set.
+   *
+   * This function makes a copy of its argument and sets it as
+   * the new value of the element.
+   */
+  void
+  campusId (const campusId_type& x);
+
+  /**
+   * @brief Set the element value without copying.
+   *
+   * @param p A new value to use.
+   *
+   * This function will try to use the passed value directly instead
+   * of making a copy.
+   */
+  void
+  campusId (::std::auto_ptr< campusId_type > p);
+
+  //@}
+
+  /**
+   * @name atendimentosUnidades
+   *
+   * @brief Accessor and modifier functions for the %atendimentosUnidades
+   * required element.
+   *
+   * lista de todos os atendimentos realizados em cada unidade de um
+   * determinado campus que foi considerado no planejamento
+   */
+  //@{
+
+  /**
+   * @brief Element type.
+   */
+  typedef ::GrupoAtendimentoUnidade atendimentosUnidades_type;
+
+  /**
+   * @brief Element traits type.
+   */
+  typedef ::xsd::cxx::tree::traits< atendimentosUnidades_type, char > atendimentosUnidades_traits;
+
+  /**
+   * @brief Return a read-only (constant) reference to the element.
+   *
+   * @return A constant reference to the element.
+   */
+  const atendimentosUnidades_type&
+  atendimentosUnidades () const;
+
+  /**
+   * @brief Return a read-write reference to the element.
+   *
+   * @return A reference to the element.
+   */
+  atendimentosUnidades_type&
+  atendimentosUnidades ();
+
+  /**
+   * @brief Set the element value.
+   *
+   * @param x A new value to set.
+   *
+   * This function makes a copy of its argument and sets it as
+   * the new value of the element.
+   */
+  void
+  atendimentosUnidades (const atendimentosUnidades_type& x);
+
+  /**
+   * @brief Set the element value without copying.
+   *
+   * @param p A new value to use.
+   *
+   * This function will try to use the passed value directly instead
+   * of making a copy.
+   */
+  void
+  atendimentosUnidades (::std::auto_ptr< atendimentosUnidades_type > p);
+
+  //@}
+
+  /**
+   * @name Constructors
+   */
+  //@{
+
+  /**
+   * @brief Create an instance from the ultimate base and
+   * initializers for required elements and attributes.
+   */
+  ItemAtendimentoCampus (const campusId_type&,
+                         const atendimentosUnidades_type&);
 
   /**
    * @brief Create an instance from the ultimate base and
@@ -10913,9 +1907,8 @@ class ItemTurma: public ::xml_schema::type
    * This constructor will try to use the passed values directly
    * instead of making copies.
    */
-  ItemTurma (const id_type&,
-             const nome_type&,
-             ::std::auto_ptr< disciplina_type >&);
+  ItemAtendimentoCampus (const campusId_type&,
+                         ::std::auto_ptr< atendimentosUnidades_type >&);
 
   /**
    * @brief Create an instance from a DOM element.
@@ -10925,9 +1918,9 @@ class ItemTurma: public ::xml_schema::type
    * @param c A pointer to the object that will contain the new
    * instance.
    */
-  ItemTurma (const ::xercesc::DOMElement& e,
-             ::xml_schema::flags f = 0,
-             ::xml_schema::container* c = 0);
+  ItemAtendimentoCampus (const ::xercesc::DOMElement& e,
+                         ::xml_schema::flags f = 0,
+                         ::xml_schema::container* c = 0);
 
   /**
    * @brief Copy constructor.
@@ -10938,9 +1931,9 @@ class ItemTurma: public ::xml_schema::type
    *
    * For polymorphic object models use the @c _clone function instead.
    */
-  ItemTurma (const ItemTurma& x,
-             ::xml_schema::flags f = 0,
-             ::xml_schema::container* c = 0);
+  ItemAtendimentoCampus (const ItemAtendimentoCampus& x,
+                         ::xml_schema::flags f = 0,
+                         ::xml_schema::container* c = 0);
 
   /**
    * @brief Copy the instance polymorphically.
@@ -10953,7 +1946,7 @@ class ItemTurma: public ::xml_schema::type
    * used for copying and should be used for polymorphic object
    * models instead of the copy constructor.
    */
-  virtual ItemTurma*
+  virtual ItemAtendimentoCampus*
   _clone (::xml_schema::flags f = 0,
           ::xml_schema::container* c = 0) const;
 
@@ -10963,7 +1956,7 @@ class ItemTurma: public ::xml_schema::type
    * @brief Destructor.
    */
   virtual 
-  ~ItemTurma ();
+  ~ItemAtendimentoCampus ();
 
   // Implementation.
   //
@@ -10976,53 +1969,1779 @@ class ItemTurma: public ::xml_schema::type
          ::xml_schema::flags);
 
   protected:
-  ::xsd::cxx::tree::one< id_type > id_;
-  ::xsd::cxx::tree::one< nome_type > nome_;
-  ::xsd::cxx::tree::one< disciplina_type > disciplina_;
+  ::xsd::cxx::tree::one< campusId_type > campusId_;
+  ::xsd::cxx::tree::one< atendimentosUnidades_type > atendimentosUnidades_;
 
   //@endcond
 };
 
 /**
- * @brief Class corresponding to the %GrupoTurma schema type.
+ * @brief Class corresponding to the %ItemAtendimentoUnidade schema type.
  *
  * @nosubgrouping
  */
-class GrupoTurma: public ::xml_schema::type
+class ItemAtendimentoUnidade: public ::xml_schema::type
 {
   public:
   /**
-   * @name turma
+   * @name unidadeId
    *
-   * @brief Accessor and modifier functions for the %turma
-   * sequence element.
+   * @brief Accessor and modifier functions for the %unidadeId
+   * required element.
+   *
+   * identificador da unidade (de um determinado campus) que cont?m os
+   * atendimentos
    */
   //@{
 
   /**
    * @brief Element type.
    */
-  typedef ::ItemTurma turma_type;
-
-  /**
-   * @brief Element sequence container type.
-   */
-  typedef ::xsd::cxx::tree::sequence< turma_type > turma_sequence;
-
-  /**
-   * @brief Element iterator type.
-   */
-  typedef turma_sequence::iterator turma_iterator;
-
-  /**
-   * @brief Element constant iterator type.
-   */
-  typedef turma_sequence::const_iterator turma_const_iterator;
+  typedef ::xml_schema::string unidadeId_type;
 
   /**
    * @brief Element traits type.
    */
-  typedef ::xsd::cxx::tree::traits< turma_type, char > turma_traits;
+  typedef ::xsd::cxx::tree::traits< unidadeId_type, char > unidadeId_traits;
+
+  /**
+   * @brief Return a read-only (constant) reference to the element.
+   *
+   * @return A constant reference to the element.
+   */
+  const unidadeId_type&
+  unidadeId () const;
+
+  /**
+   * @brief Return a read-write reference to the element.
+   *
+   * @return A reference to the element.
+   */
+  unidadeId_type&
+  unidadeId ();
+
+  /**
+   * @brief Set the element value.
+   *
+   * @param x A new value to set.
+   *
+   * This function makes a copy of its argument and sets it as
+   * the new value of the element.
+   */
+  void
+  unidadeId (const unidadeId_type& x);
+
+  /**
+   * @brief Set the element value without copying.
+   *
+   * @param p A new value to use.
+   *
+   * This function will try to use the passed value directly instead
+   * of making a copy.
+   */
+  void
+  unidadeId (::std::auto_ptr< unidadeId_type > p);
+
+  //@}
+
+  /**
+   * @name atendimentosSalas
+   *
+   * @brief Accessor and modifier functions for the %atendimentosSalas
+   * required element.
+   *
+   * lista de todos os atendimentos realizados em cada sala de uma
+   * determinada unidade de um determinado campus que foi considerado no
+   * planejamento
+   */
+  //@{
+
+  /**
+   * @brief Element type.
+   */
+  typedef ::GrupoAtendimentoSala atendimentosSalas_type;
+
+  /**
+   * @brief Element traits type.
+   */
+  typedef ::xsd::cxx::tree::traits< atendimentosSalas_type, char > atendimentosSalas_traits;
+
+  /**
+   * @brief Return a read-only (constant) reference to the element.
+   *
+   * @return A constant reference to the element.
+   */
+  const atendimentosSalas_type&
+  atendimentosSalas () const;
+
+  /**
+   * @brief Return a read-write reference to the element.
+   *
+   * @return A reference to the element.
+   */
+  atendimentosSalas_type&
+  atendimentosSalas ();
+
+  /**
+   * @brief Set the element value.
+   *
+   * @param x A new value to set.
+   *
+   * This function makes a copy of its argument and sets it as
+   * the new value of the element.
+   */
+  void
+  atendimentosSalas (const atendimentosSalas_type& x);
+
+  /**
+   * @brief Set the element value without copying.
+   *
+   * @param p A new value to use.
+   *
+   * This function will try to use the passed value directly instead
+   * of making a copy.
+   */
+  void
+  atendimentosSalas (::std::auto_ptr< atendimentosSalas_type > p);
+
+  //@}
+
+  /**
+   * @name Constructors
+   */
+  //@{
+
+  /**
+   * @brief Create an instance from the ultimate base and
+   * initializers for required elements and attributes.
+   */
+  ItemAtendimentoUnidade (const unidadeId_type&,
+                          const atendimentosSalas_type&);
+
+  /**
+   * @brief Create an instance from the ultimate base and
+   * initializers for required elements and attributes
+   * (auto_ptr version).
+   *
+   * This constructor will try to use the passed values directly
+   * instead of making copies.
+   */
+  ItemAtendimentoUnidade (const unidadeId_type&,
+                          ::std::auto_ptr< atendimentosSalas_type >&);
+
+  /**
+   * @brief Create an instance from a DOM element.
+   *
+   * @param e A DOM element to extract the data from.
+   * @param f Flags to create the new instance with.
+   * @param c A pointer to the object that will contain the new
+   * instance.
+   */
+  ItemAtendimentoUnidade (const ::xercesc::DOMElement& e,
+                          ::xml_schema::flags f = 0,
+                          ::xml_schema::container* c = 0);
+
+  /**
+   * @brief Copy constructor.
+   *
+   * @param x An instance to make a copy of.
+   * @param f Flags to create the copy with.
+   * @param c A pointer to the object that will contain the copy.
+   *
+   * For polymorphic object models use the @c _clone function instead.
+   */
+  ItemAtendimentoUnidade (const ItemAtendimentoUnidade& x,
+                          ::xml_schema::flags f = 0,
+                          ::xml_schema::container* c = 0);
+
+  /**
+   * @brief Copy the instance polymorphically.
+   *
+   * @param f Flags to create the copy with.
+   * @param c A pointer to the object that will contain the copy.
+   * @return A pointer to the dynamically allocated copy.
+   *
+   * This function ensures that the dynamic type of the instance is
+   * used for copying and should be used for polymorphic object
+   * models instead of the copy constructor.
+   */
+  virtual ItemAtendimentoUnidade*
+  _clone (::xml_schema::flags f = 0,
+          ::xml_schema::container* c = 0) const;
+
+  //@}
+
+  /**
+   * @brief Destructor.
+   */
+  virtual 
+  ~ItemAtendimentoUnidade ();
+
+  // Implementation.
+  //
+
+  //@cond
+
+  protected:
+  void
+  parse (::xsd::cxx::xml::dom::parser< char >&,
+         ::xml_schema::flags);
+
+  protected:
+  ::xsd::cxx::tree::one< unidadeId_type > unidadeId_;
+  ::xsd::cxx::tree::one< atendimentosSalas_type > atendimentosSalas_;
+
+  //@endcond
+};
+
+/**
+ * @brief Class corresponding to the %ItemAtendimentoSala schema type.
+ *
+ * @nosubgrouping
+ */
+class ItemAtendimentoSala: public ::xml_schema::type
+{
+  public:
+  /**
+   * @name salaId
+   *
+   * @brief Accessor and modifier functions for the %salaId
+   * required element.
+   *
+   * identificador da sala (de uma determinada unidade de um determinado
+   * campus) que cont?m os atendimentos
+   */
+  //@{
+
+  /**
+   * @brief Element type.
+   */
+  typedef ::xml_schema::string salaId_type;
+
+  /**
+   * @brief Element traits type.
+   */
+  typedef ::xsd::cxx::tree::traits< salaId_type, char > salaId_traits;
+
+  /**
+   * @brief Return a read-only (constant) reference to the element.
+   *
+   * @return A constant reference to the element.
+   */
+  const salaId_type&
+  salaId () const;
+
+  /**
+   * @brief Return a read-write reference to the element.
+   *
+   * @return A reference to the element.
+   */
+  salaId_type&
+  salaId ();
+
+  /**
+   * @brief Set the element value.
+   *
+   * @param x A new value to set.
+   *
+   * This function makes a copy of its argument and sets it as
+   * the new value of the element.
+   */
+  void
+  salaId (const salaId_type& x);
+
+  /**
+   * @brief Set the element value without copying.
+   *
+   * @param p A new value to use.
+   *
+   * This function will try to use the passed value directly instead
+   * of making a copy.
+   */
+  void
+  salaId (::std::auto_ptr< salaId_type > p);
+
+  //@}
+
+  /**
+   * @name atendimentosDiasSemana
+   *
+   * @brief Accessor and modifier functions for the %atendimentosDiasSemana
+   * required element.
+   *
+   * lista de todos os atendimentos realizados em cada dia da semana numa
+   * determinada sala de uma determinada unidade de um determinado campus
+   * que foi considerado no planejamento
+   */
+  //@{
+
+  /**
+   * @brief Element type.
+   */
+  typedef ::GrupoAtendimentoDiaSemana atendimentosDiasSemana_type;
+
+  /**
+   * @brief Element traits type.
+   */
+  typedef ::xsd::cxx::tree::traits< atendimentosDiasSemana_type, char > atendimentosDiasSemana_traits;
+
+  /**
+   * @brief Return a read-only (constant) reference to the element.
+   *
+   * @return A constant reference to the element.
+   */
+  const atendimentosDiasSemana_type&
+  atendimentosDiasSemana () const;
+
+  /**
+   * @brief Return a read-write reference to the element.
+   *
+   * @return A reference to the element.
+   */
+  atendimentosDiasSemana_type&
+  atendimentosDiasSemana ();
+
+  /**
+   * @brief Set the element value.
+   *
+   * @param x A new value to set.
+   *
+   * This function makes a copy of its argument and sets it as
+   * the new value of the element.
+   */
+  void
+  atendimentosDiasSemana (const atendimentosDiasSemana_type& x);
+
+  /**
+   * @brief Set the element value without copying.
+   *
+   * @param p A new value to use.
+   *
+   * This function will try to use the passed value directly instead
+   * of making a copy.
+   */
+  void
+  atendimentosDiasSemana (::std::auto_ptr< atendimentosDiasSemana_type > p);
+
+  //@}
+
+  /**
+   * @name Constructors
+   */
+  //@{
+
+  /**
+   * @brief Create an instance from the ultimate base and
+   * initializers for required elements and attributes.
+   */
+  ItemAtendimentoSala (const salaId_type&,
+                       const atendimentosDiasSemana_type&);
+
+  /**
+   * @brief Create an instance from the ultimate base and
+   * initializers for required elements and attributes
+   * (auto_ptr version).
+   *
+   * This constructor will try to use the passed values directly
+   * instead of making copies.
+   */
+  ItemAtendimentoSala (const salaId_type&,
+                       ::std::auto_ptr< atendimentosDiasSemana_type >&);
+
+  /**
+   * @brief Create an instance from a DOM element.
+   *
+   * @param e A DOM element to extract the data from.
+   * @param f Flags to create the new instance with.
+   * @param c A pointer to the object that will contain the new
+   * instance.
+   */
+  ItemAtendimentoSala (const ::xercesc::DOMElement& e,
+                       ::xml_schema::flags f = 0,
+                       ::xml_schema::container* c = 0);
+
+  /**
+   * @brief Copy constructor.
+   *
+   * @param x An instance to make a copy of.
+   * @param f Flags to create the copy with.
+   * @param c A pointer to the object that will contain the copy.
+   *
+   * For polymorphic object models use the @c _clone function instead.
+   */
+  ItemAtendimentoSala (const ItemAtendimentoSala& x,
+                       ::xml_schema::flags f = 0,
+                       ::xml_schema::container* c = 0);
+
+  /**
+   * @brief Copy the instance polymorphically.
+   *
+   * @param f Flags to create the copy with.
+   * @param c A pointer to the object that will contain the copy.
+   * @return A pointer to the dynamically allocated copy.
+   *
+   * This function ensures that the dynamic type of the instance is
+   * used for copying and should be used for polymorphic object
+   * models instead of the copy constructor.
+   */
+  virtual ItemAtendimentoSala*
+  _clone (::xml_schema::flags f = 0,
+          ::xml_schema::container* c = 0) const;
+
+  //@}
+
+  /**
+   * @brief Destructor.
+   */
+  virtual 
+  ~ItemAtendimentoSala ();
+
+  // Implementation.
+  //
+
+  //@cond
+
+  protected:
+  void
+  parse (::xsd::cxx::xml::dom::parser< char >&,
+         ::xml_schema::flags);
+
+  protected:
+  ::xsd::cxx::tree::one< salaId_type > salaId_;
+  ::xsd::cxx::tree::one< atendimentosDiasSemana_type > atendimentosDiasSemana_;
+
+  //@endcond
+};
+
+/**
+ * @brief Class corresponding to the %ItemAtendimentoDiaSemana schema type.
+ *
+ * @nosubgrouping
+ */
+class ItemAtendimentoDiaSemana: public ::xml_schema::type
+{
+  public:
+  /**
+   * @name diaSemana
+   *
+   * @brief Accessor and modifier functions for the %diaSemana
+   * required element.
+   *
+   * identificador do dia da semana que cont?m os atendimentos em uma
+   * determinada sala de uma determinada unidade de um determinado campus
+   */
+  //@{
+
+  /**
+   * @brief Element type.
+   */
+  typedef ::xml_schema::int_ diaSemana_type;
+
+  /**
+   * @brief Element traits type.
+   */
+  typedef ::xsd::cxx::tree::traits< diaSemana_type, char > diaSemana_traits;
+
+  /**
+   * @brief Return a read-only (constant) reference to the element.
+   *
+   * @return A constant reference to the element.
+   */
+  const diaSemana_type&
+  diaSemana () const;
+
+  /**
+   * @brief Return a read-write reference to the element.
+   *
+   * @return A reference to the element.
+   */
+  diaSemana_type&
+  diaSemana ();
+
+  /**
+   * @brief Set the element value.
+   *
+   * @param x A new value to set.
+   *
+   * This function makes a copy of its argument and sets it as
+   * the new value of the element.
+   */
+  void
+  diaSemana (const diaSemana_type& x);
+
+  //@}
+
+  /**
+   * @name atendimentosTatico
+   *
+   * @brief Accessor and modifier functions for the %atendimentosTatico
+   * optional element.
+   *
+   * lista de todas as ofertas atendidas no dia da semana em quest?o numa
+   * determinada sala de uma determinada unidade de um determinado campus
+   */
+  //@{
+
+  /**
+   * @brief Element type.
+   */
+  typedef ::GrupoAtendimentoTatico atendimentosTatico_type;
+
+  /**
+   * @brief Element optional container type.
+   */
+  typedef ::xsd::cxx::tree::optional< atendimentosTatico_type > atendimentosTatico_optional;
+
+  /**
+   * @brief Element traits type.
+   */
+  typedef ::xsd::cxx::tree::traits< atendimentosTatico_type, char > atendimentosTatico_traits;
+
+  /**
+   * @brief Return a read-only (constant) reference to the element
+   * container.
+   *
+   * @return A constant reference to the optional container.
+   */
+  const atendimentosTatico_optional&
+  atendimentosTatico () const;
+
+  /**
+   * @brief Return a read-write reference to the element container.
+   *
+   * @return A reference to the optional container.
+   */
+  atendimentosTatico_optional&
+  atendimentosTatico ();
+
+  /**
+   * @brief Set the element value.
+   *
+   * @param x A new value to set.
+   *
+   * This function makes a copy of its argument and sets it as
+   * the new value of the element.
+   */
+  void
+  atendimentosTatico (const atendimentosTatico_type& x);
+
+  /**
+   * @brief Set the element value.
+   *
+   * @param x An optional container with the new value to set.
+   *
+   * If the value is present in @a x then this function makes a copy 
+   * of this value and sets it as the new value of the element.
+   * Otherwise the element container is set the 'not present' state.
+   */
+  void
+  atendimentosTatico (const atendimentosTatico_optional& x);
+
+  /**
+   * @brief Set the element value without copying.
+   *
+   * @param p A new value to use.
+   *
+   * This function will try to use the passed value directly instead
+   * of making a copy.
+   */
+  void
+  atendimentosTatico (::std::auto_ptr< atendimentosTatico_type > p);
+
+  //@}
+
+  /**
+   * @name atendimentosTurnos
+   *
+   * @brief Accessor and modifier functions for the %atendimentosTurnos
+   * optional element.
+   *
+   * lista de todos os atendimentos realizados em cada turno de um
+   * determinado dia da semana numa determinada sala de uma determinada
+   * unidade de um determinado campus que foi considerado no planejamento
+   */
+  //@{
+
+  /**
+   * @brief Element type.
+   */
+  typedef ::GrupoAtendimentoTurno atendimentosTurnos_type;
+
+  /**
+   * @brief Element optional container type.
+   */
+  typedef ::xsd::cxx::tree::optional< atendimentosTurnos_type > atendimentosTurnos_optional;
+
+  /**
+   * @brief Element traits type.
+   */
+  typedef ::xsd::cxx::tree::traits< atendimentosTurnos_type, char > atendimentosTurnos_traits;
+
+  /**
+   * @brief Return a read-only (constant) reference to the element
+   * container.
+   *
+   * @return A constant reference to the optional container.
+   */
+  const atendimentosTurnos_optional&
+  atendimentosTurnos () const;
+
+  /**
+   * @brief Return a read-write reference to the element container.
+   *
+   * @return A reference to the optional container.
+   */
+  atendimentosTurnos_optional&
+  atendimentosTurnos ();
+
+  /**
+   * @brief Set the element value.
+   *
+   * @param x A new value to set.
+   *
+   * This function makes a copy of its argument and sets it as
+   * the new value of the element.
+   */
+  void
+  atendimentosTurnos (const atendimentosTurnos_type& x);
+
+  /**
+   * @brief Set the element value.
+   *
+   * @param x An optional container with the new value to set.
+   *
+   * If the value is present in @a x then this function makes a copy 
+   * of this value and sets it as the new value of the element.
+   * Otherwise the element container is set the 'not present' state.
+   */
+  void
+  atendimentosTurnos (const atendimentosTurnos_optional& x);
+
+  /**
+   * @brief Set the element value without copying.
+   *
+   * @param p A new value to use.
+   *
+   * This function will try to use the passed value directly instead
+   * of making a copy.
+   */
+  void
+  atendimentosTurnos (::std::auto_ptr< atendimentosTurnos_type > p);
+
+  //@}
+
+  /**
+   * @name Constructors
+   */
+  //@{
+
+  /**
+   * @brief Create an instance from the ultimate base and
+   * initializers for required elements and attributes.
+   */
+  ItemAtendimentoDiaSemana (const diaSemana_type&);
+
+  /**
+   * @brief Create an instance from a DOM element.
+   *
+   * @param e A DOM element to extract the data from.
+   * @param f Flags to create the new instance with.
+   * @param c A pointer to the object that will contain the new
+   * instance.
+   */
+  ItemAtendimentoDiaSemana (const ::xercesc::DOMElement& e,
+                            ::xml_schema::flags f = 0,
+                            ::xml_schema::container* c = 0);
+
+  /**
+   * @brief Copy constructor.
+   *
+   * @param x An instance to make a copy of.
+   * @param f Flags to create the copy with.
+   * @param c A pointer to the object that will contain the copy.
+   *
+   * For polymorphic object models use the @c _clone function instead.
+   */
+  ItemAtendimentoDiaSemana (const ItemAtendimentoDiaSemana& x,
+                            ::xml_schema::flags f = 0,
+                            ::xml_schema::container* c = 0);
+
+  /**
+   * @brief Copy the instance polymorphically.
+   *
+   * @param f Flags to create the copy with.
+   * @param c A pointer to the object that will contain the copy.
+   * @return A pointer to the dynamically allocated copy.
+   *
+   * This function ensures that the dynamic type of the instance is
+   * used for copying and should be used for polymorphic object
+   * models instead of the copy constructor.
+   */
+  virtual ItemAtendimentoDiaSemana*
+  _clone (::xml_schema::flags f = 0,
+          ::xml_schema::container* c = 0) const;
+
+  //@}
+
+  /**
+   * @brief Destructor.
+   */
+  virtual 
+  ~ItemAtendimentoDiaSemana ();
+
+  // Implementation.
+  //
+
+  //@cond
+
+  protected:
+  void
+  parse (::xsd::cxx::xml::dom::parser< char >&,
+         ::xml_schema::flags);
+
+  protected:
+  ::xsd::cxx::tree::one< diaSemana_type > diaSemana_;
+  atendimentosTatico_optional atendimentosTatico_;
+  atendimentosTurnos_optional atendimentosTurnos_;
+
+  //@endcond
+};
+
+/**
+ * @brief Class corresponding to the %ItemAtendimentoTurno schema type.
+ *
+ * @nosubgrouping
+ */
+class ItemAtendimentoTurno: public ::xml_schema::type
+{
+  public:
+  /**
+   * @name turnoId
+   *
+   * @brief Accessor and modifier functions for the %turnoId
+   * required element.
+   *
+   * identificador do turno (de um determinado dia da semana) que cont?m os
+   * atendimentos em uma determinada sala de uma determinada unidade de um
+   * determinado campus
+   */
+  //@{
+
+  /**
+   * @brief Element type.
+   */
+  typedef ::xml_schema::int_ turnoId_type;
+
+  /**
+   * @brief Element traits type.
+   */
+  typedef ::xsd::cxx::tree::traits< turnoId_type, char > turnoId_traits;
+
+  /**
+   * @brief Return a read-only (constant) reference to the element.
+   *
+   * @return A constant reference to the element.
+   */
+  const turnoId_type&
+  turnoId () const;
+
+  /**
+   * @brief Return a read-write reference to the element.
+   *
+   * @return A reference to the element.
+   */
+  turnoId_type&
+  turnoId ();
+
+  /**
+   * @brief Set the element value.
+   *
+   * @param x A new value to set.
+   *
+   * This function makes a copy of its argument and sets it as
+   * the new value of the element.
+   */
+  void
+  turnoId (const turnoId_type& x);
+
+  //@}
+
+  /**
+   * @name atendimentosHorariosAula
+   *
+   * @brief Accessor and modifier functions for the %atendimentosHorariosAula
+   * required element.
+   *
+   * lista de todos os atendimentos realizados em cada horario de aula (ou
+   * tempo de aula) de um determinado turno de um determinado dia da semana
+   * numa determinada sala de uma determinada unidade de um determinado
+   * campus que foi considerado no planejamento
+   */
+  //@{
+
+  /**
+   * @brief Element type.
+   */
+  typedef ::GrupoAtendimentoHorarioAula atendimentosHorariosAula_type;
+
+  /**
+   * @brief Element traits type.
+   */
+  typedef ::xsd::cxx::tree::traits< atendimentosHorariosAula_type, char > atendimentosHorariosAula_traits;
+
+  /**
+   * @brief Return a read-only (constant) reference to the element.
+   *
+   * @return A constant reference to the element.
+   */
+  const atendimentosHorariosAula_type&
+  atendimentosHorariosAula () const;
+
+  /**
+   * @brief Return a read-write reference to the element.
+   *
+   * @return A reference to the element.
+   */
+  atendimentosHorariosAula_type&
+  atendimentosHorariosAula ();
+
+  /**
+   * @brief Set the element value.
+   *
+   * @param x A new value to set.
+   *
+   * This function makes a copy of its argument and sets it as
+   * the new value of the element.
+   */
+  void
+  atendimentosHorariosAula (const atendimentosHorariosAula_type& x);
+
+  /**
+   * @brief Set the element value without copying.
+   *
+   * @param p A new value to use.
+   *
+   * This function will try to use the passed value directly instead
+   * of making a copy.
+   */
+  void
+  atendimentosHorariosAula (::std::auto_ptr< atendimentosHorariosAula_type > p);
+
+  //@}
+
+  /**
+   * @name Constructors
+   */
+  //@{
+
+  /**
+   * @brief Create an instance from the ultimate base and
+   * initializers for required elements and attributes.
+   */
+  ItemAtendimentoTurno (const turnoId_type&,
+                        const atendimentosHorariosAula_type&);
+
+  /**
+   * @brief Create an instance from the ultimate base and
+   * initializers for required elements and attributes
+   * (auto_ptr version).
+   *
+   * This constructor will try to use the passed values directly
+   * instead of making copies.
+   */
+  ItemAtendimentoTurno (const turnoId_type&,
+                        ::std::auto_ptr< atendimentosHorariosAula_type >&);
+
+  /**
+   * @brief Create an instance from a DOM element.
+   *
+   * @param e A DOM element to extract the data from.
+   * @param f Flags to create the new instance with.
+   * @param c A pointer to the object that will contain the new
+   * instance.
+   */
+  ItemAtendimentoTurno (const ::xercesc::DOMElement& e,
+                        ::xml_schema::flags f = 0,
+                        ::xml_schema::container* c = 0);
+
+  /**
+   * @brief Copy constructor.
+   *
+   * @param x An instance to make a copy of.
+   * @param f Flags to create the copy with.
+   * @param c A pointer to the object that will contain the copy.
+   *
+   * For polymorphic object models use the @c _clone function instead.
+   */
+  ItemAtendimentoTurno (const ItemAtendimentoTurno& x,
+                        ::xml_schema::flags f = 0,
+                        ::xml_schema::container* c = 0);
+
+  /**
+   * @brief Copy the instance polymorphically.
+   *
+   * @param f Flags to create the copy with.
+   * @param c A pointer to the object that will contain the copy.
+   * @return A pointer to the dynamically allocated copy.
+   *
+   * This function ensures that the dynamic type of the instance is
+   * used for copying and should be used for polymorphic object
+   * models instead of the copy constructor.
+   */
+  virtual ItemAtendimentoTurno*
+  _clone (::xml_schema::flags f = 0,
+          ::xml_schema::container* c = 0) const;
+
+  //@}
+
+  /**
+   * @brief Destructor.
+   */
+  virtual 
+  ~ItemAtendimentoTurno ();
+
+  // Implementation.
+  //
+
+  //@cond
+
+  protected:
+  void
+  parse (::xsd::cxx::xml::dom::parser< char >&,
+         ::xml_schema::flags);
+
+  protected:
+  ::xsd::cxx::tree::one< turnoId_type > turnoId_;
+  ::xsd::cxx::tree::one< atendimentosHorariosAula_type > atendimentosHorariosAula_;
+
+  //@endcond
+};
+
+/**
+ * @brief Class corresponding to the %ItemAtendimentoHorarioAula schema type.
+ *
+ * @nosubgrouping
+ */
+class ItemAtendimentoHorarioAula: public ::xml_schema::type
+{
+  public:
+  /**
+   * @name horarioAulaId
+   *
+   * @brief Accessor and modifier functions for the %horarioAulaId
+   * required element.
+   *
+   * identificador do hor?rio de aula  (de um determinado turno de um
+   * determinado dia da semana) que cont?m os atendimentos em uma
+   * determinada sala de uma determinada unidade de um determinado campus
+   */
+  //@{
+
+  /**
+   * @brief Element type.
+   */
+  typedef ::xml_schema::int_ horarioAulaId_type;
+
+  /**
+   * @brief Element traits type.
+   */
+  typedef ::xsd::cxx::tree::traits< horarioAulaId_type, char > horarioAulaId_traits;
+
+  /**
+   * @brief Return a read-only (constant) reference to the element.
+   *
+   * @return A constant reference to the element.
+   */
+  const horarioAulaId_type&
+  horarioAulaId () const;
+
+  /**
+   * @brief Return a read-write reference to the element.
+   *
+   * @return A reference to the element.
+   */
+  horarioAulaId_type&
+  horarioAulaId ();
+
+  /**
+   * @brief Set the element value.
+   *
+   * @param x A new value to set.
+   *
+   * This function makes a copy of its argument and sets it as
+   * the new value of the element.
+   */
+  void
+  horarioAulaId (const horarioAulaId_type& x);
+
+  //@}
+
+  /**
+   * @name professorId
+   *
+   * @brief Accessor and modifier functions for the %professorId
+   * required element.
+   *
+   * identificador do professor que dar? aula no hor?rio de aula em quest?o
+   * (de um determinado turno de um determinado dia da semana) que cont?m
+   * os atendimentos em uma determinada sala de uma determinada unidade de
+   * um determinado campus
+   */
+  //@{
+
+  /**
+   * @brief Element type.
+   */
+  typedef ::xml_schema::string professorId_type;
+
+  /**
+   * @brief Element traits type.
+   */
+  typedef ::xsd::cxx::tree::traits< professorId_type, char > professorId_traits;
+
+  /**
+   * @brief Return a read-only (constant) reference to the element.
+   *
+   * @return A constant reference to the element.
+   */
+  const professorId_type&
+  professorId () const;
+
+  /**
+   * @brief Return a read-write reference to the element.
+   *
+   * @return A reference to the element.
+   */
+  professorId_type&
+  professorId ();
+
+  /**
+   * @brief Set the element value.
+   *
+   * @param x A new value to set.
+   *
+   * This function makes a copy of its argument and sets it as
+   * the new value of the element.
+   */
+  void
+  professorId (const professorId_type& x);
+
+  /**
+   * @brief Set the element value without copying.
+   *
+   * @param p A new value to use.
+   *
+   * This function will try to use the passed value directly instead
+   * of making a copy.
+   */
+  void
+  professorId (::std::auto_ptr< professorId_type > p);
+
+  //@}
+
+  /**
+   * @name creditoTeorico
+   *
+   * @brief Accessor and modifier functions for the %creditoTeorico
+   * required element.
+   *
+   * informa se o cr?dito do hor?rio de aula em quest?o se refere a cr?dito
+   * te?rico ou n?o (caso n?o seja te?rico significa que ? pr?tico)
+   */
+  //@{
+
+  /**
+   * @brief Element type.
+   */
+  typedef ::xml_schema::boolean creditoTeorico_type;
+
+  /**
+   * @brief Element traits type.
+   */
+  typedef ::xsd::cxx::tree::traits< creditoTeorico_type, char > creditoTeorico_traits;
+
+  /**
+   * @brief Return a read-only (constant) reference to the element.
+   *
+   * @return A constant reference to the element.
+   */
+  const creditoTeorico_type&
+  creditoTeorico () const;
+
+  /**
+   * @brief Return a read-write reference to the element.
+   *
+   * @return A reference to the element.
+   */
+  creditoTeorico_type&
+  creditoTeorico ();
+
+  /**
+   * @brief Set the element value.
+   *
+   * @param x A new value to set.
+   *
+   * This function makes a copy of its argument and sets it as
+   * the new value of the element.
+   */
+  void
+  creditoTeorico (const creditoTeorico_type& x);
+
+  //@}
+
+  /**
+   * @name atendimentosOfertas
+   *
+   * @brief Accessor and modifier functions for the %atendimentosOfertas
+   * required element.
+   *
+   * lista de todas as ofertas atendidas pelo professor em quest?o no
+   * horario de aula (ou tempo de aula) em quest?o de um determinado turno
+   * de um determinado dia da semana numa determinada sala de uma
+   * determinada unidade de um determinado campus
+   */
+  //@{
+
+  /**
+   * @brief Element type.
+   */
+  typedef ::GrupoAtendimentoOferta atendimentosOfertas_type;
+
+  /**
+   * @brief Element traits type.
+   */
+  typedef ::xsd::cxx::tree::traits< atendimentosOfertas_type, char > atendimentosOfertas_traits;
+
+  /**
+   * @brief Return a read-only (constant) reference to the element.
+   *
+   * @return A constant reference to the element.
+   */
+  const atendimentosOfertas_type&
+  atendimentosOfertas () const;
+
+  /**
+   * @brief Return a read-write reference to the element.
+   *
+   * @return A reference to the element.
+   */
+  atendimentosOfertas_type&
+  atendimentosOfertas ();
+
+  /**
+   * @brief Set the element value.
+   *
+   * @param x A new value to set.
+   *
+   * This function makes a copy of its argument and sets it as
+   * the new value of the element.
+   */
+  void
+  atendimentosOfertas (const atendimentosOfertas_type& x);
+
+  /**
+   * @brief Set the element value without copying.
+   *
+   * @param p A new value to use.
+   *
+   * This function will try to use the passed value directly instead
+   * of making a copy.
+   */
+  void
+  atendimentosOfertas (::std::auto_ptr< atendimentosOfertas_type > p);
+
+  //@}
+
+  /**
+   * @name Constructors
+   */
+  //@{
+
+  /**
+   * @brief Create an instance from the ultimate base and
+   * initializers for required elements and attributes.
+   */
+  ItemAtendimentoHorarioAula (const horarioAulaId_type&,
+                              const professorId_type&,
+                              const creditoTeorico_type&,
+                              const atendimentosOfertas_type&);
+
+  /**
+   * @brief Create an instance from the ultimate base and
+   * initializers for required elements and attributes
+   * (auto_ptr version).
+   *
+   * This constructor will try to use the passed values directly
+   * instead of making copies.
+   */
+  ItemAtendimentoHorarioAula (const horarioAulaId_type&,
+                              const professorId_type&,
+                              const creditoTeorico_type&,
+                              ::std::auto_ptr< atendimentosOfertas_type >&);
+
+  /**
+   * @brief Create an instance from a DOM element.
+   *
+   * @param e A DOM element to extract the data from.
+   * @param f Flags to create the new instance with.
+   * @param c A pointer to the object that will contain the new
+   * instance.
+   */
+  ItemAtendimentoHorarioAula (const ::xercesc::DOMElement& e,
+                              ::xml_schema::flags f = 0,
+                              ::xml_schema::container* c = 0);
+
+  /**
+   * @brief Copy constructor.
+   *
+   * @param x An instance to make a copy of.
+   * @param f Flags to create the copy with.
+   * @param c A pointer to the object that will contain the copy.
+   *
+   * For polymorphic object models use the @c _clone function instead.
+   */
+  ItemAtendimentoHorarioAula (const ItemAtendimentoHorarioAula& x,
+                              ::xml_schema::flags f = 0,
+                              ::xml_schema::container* c = 0);
+
+  /**
+   * @brief Copy the instance polymorphically.
+   *
+   * @param f Flags to create the copy with.
+   * @param c A pointer to the object that will contain the copy.
+   * @return A pointer to the dynamically allocated copy.
+   *
+   * This function ensures that the dynamic type of the instance is
+   * used for copying and should be used for polymorphic object
+   * models instead of the copy constructor.
+   */
+  virtual ItemAtendimentoHorarioAula*
+  _clone (::xml_schema::flags f = 0,
+          ::xml_schema::container* c = 0) const;
+
+  //@}
+
+  /**
+   * @brief Destructor.
+   */
+  virtual 
+  ~ItemAtendimentoHorarioAula ();
+
+  // Implementation.
+  //
+
+  //@cond
+
+  protected:
+  void
+  parse (::xsd::cxx::xml::dom::parser< char >&,
+         ::xml_schema::flags);
+
+  protected:
+  ::xsd::cxx::tree::one< horarioAulaId_type > horarioAulaId_;
+  ::xsd::cxx::tree::one< professorId_type > professorId_;
+  ::xsd::cxx::tree::one< creditoTeorico_type > creditoTeorico_;
+  ::xsd::cxx::tree::one< atendimentosOfertas_type > atendimentosOfertas_;
+
+  //@endcond
+};
+
+/**
+ * @brief Class corresponding to the %ItemAtendimentoOferta schema type.
+ *
+ * @nosubgrouping
+ */
+class ItemAtendimentoOferta: public ::xml_schema::type
+{
+  public:
+  /**
+   * @name ofertaCursoCampiId
+   *
+   * @brief Accessor and modifier functions for the %ofertaCursoCampiId
+   * required element.
+   *
+   * identificador da oferta atendida
+   */
+  //@{
+
+  /**
+   * @brief Element type.
+   */
+  typedef ::xml_schema::string ofertaCursoCampiId_type;
+
+  /**
+   * @brief Element traits type.
+   */
+  typedef ::xsd::cxx::tree::traits< ofertaCursoCampiId_type, char > ofertaCursoCampiId_traits;
+
+  /**
+   * @brief Return a read-only (constant) reference to the element.
+   *
+   * @return A constant reference to the element.
+   */
+  const ofertaCursoCampiId_type&
+  ofertaCursoCampiId () const;
+
+  /**
+   * @brief Return a read-write reference to the element.
+   *
+   * @return A reference to the element.
+   */
+  ofertaCursoCampiId_type&
+  ofertaCursoCampiId ();
+
+  /**
+   * @brief Set the element value.
+   *
+   * @param x A new value to set.
+   *
+   * This function makes a copy of its argument and sets it as
+   * the new value of the element.
+   */
+  void
+  ofertaCursoCampiId (const ofertaCursoCampiId_type& x);
+
+  /**
+   * @brief Set the element value without copying.
+   *
+   * @param p A new value to use.
+   *
+   * This function will try to use the passed value directly instead
+   * of making a copy.
+   */
+  void
+  ofertaCursoCampiId (::std::auto_ptr< ofertaCursoCampiId_type > p);
+
+  //@}
+
+  /**
+   * @name quantidade
+   *
+   * @brief Accessor and modifier functions for the %quantidade
+   * required element.
+   *
+   * quantidade de alunos atendidos da oferta
+   */
+  //@{
+
+  /**
+   * @brief Element type.
+   */
+  typedef ::xml_schema::int_ quantidade_type;
+
+  /**
+   * @brief Element traits type.
+   */
+  typedef ::xsd::cxx::tree::traits< quantidade_type, char > quantidade_traits;
+
+  /**
+   * @brief Return a read-only (constant) reference to the element.
+   *
+   * @return A constant reference to the element.
+   */
+  const quantidade_type&
+  quantidade () const;
+
+  /**
+   * @brief Return a read-write reference to the element.
+   *
+   * @return A reference to the element.
+   */
+  quantidade_type&
+  quantidade ();
+
+  /**
+   * @brief Set the element value.
+   *
+   * @param x A new value to set.
+   *
+   * This function makes a copy of its argument and sets it as
+   * the new value of the element.
+   */
+  void
+  quantidade (const quantidade_type& x);
+
+  //@}
+
+  /**
+   * @name Constructors
+   */
+  //@{
+
+  /**
+   * @brief Create an instance from the ultimate base and
+   * initializers for required elements and attributes.
+   */
+  ItemAtendimentoOferta (const ofertaCursoCampiId_type&,
+                         const quantidade_type&);
+
+  /**
+   * @brief Create an instance from a DOM element.
+   *
+   * @param e A DOM element to extract the data from.
+   * @param f Flags to create the new instance with.
+   * @param c A pointer to the object that will contain the new
+   * instance.
+   */
+  ItemAtendimentoOferta (const ::xercesc::DOMElement& e,
+                         ::xml_schema::flags f = 0,
+                         ::xml_schema::container* c = 0);
+
+  /**
+   * @brief Copy constructor.
+   *
+   * @param x An instance to make a copy of.
+   * @param f Flags to create the copy with.
+   * @param c A pointer to the object that will contain the copy.
+   *
+   * For polymorphic object models use the @c _clone function instead.
+   */
+  ItemAtendimentoOferta (const ItemAtendimentoOferta& x,
+                         ::xml_schema::flags f = 0,
+                         ::xml_schema::container* c = 0);
+
+  /**
+   * @brief Copy the instance polymorphically.
+   *
+   * @param f Flags to create the copy with.
+   * @param c A pointer to the object that will contain the copy.
+   * @return A pointer to the dynamically allocated copy.
+   *
+   * This function ensures that the dynamic type of the instance is
+   * used for copying and should be used for polymorphic object
+   * models instead of the copy constructor.
+   */
+  virtual ItemAtendimentoOferta*
+  _clone (::xml_schema::flags f = 0,
+          ::xml_schema::container* c = 0) const;
+
+  //@}
+
+  /**
+   * @brief Destructor.
+   */
+  virtual 
+  ~ItemAtendimentoOferta ();
+
+  // Implementation.
+  //
+
+  //@cond
+
+  protected:
+  void
+  parse (::xsd::cxx::xml::dom::parser< char >&,
+         ::xml_schema::flags);
+
+  protected:
+  ::xsd::cxx::tree::one< ofertaCursoCampiId_type > ofertaCursoCampiId_;
+  ::xsd::cxx::tree::one< quantidade_type > quantidade_;
+
+  //@endcond
+};
+
+/**
+ * @brief Class corresponding to the %ItemAtendimentoTatico schema type.
+ *
+ * @nosubgrouping
+ */
+class ItemAtendimentoTatico: public ::xml_schema::type
+{
+  public:
+  /**
+   * @name atendimentoOferta
+   *
+   * @brief Accessor and modifier functions for the %atendimentoOferta
+   * required element.
+   *
+   * representa uma oferta atendida
+   */
+  //@{
+
+  /**
+   * @brief Element type.
+   */
+  typedef ::ItemAtendimentoOferta atendimentoOferta_type;
+
+  /**
+   * @brief Element traits type.
+   */
+  typedef ::xsd::cxx::tree::traits< atendimentoOferta_type, char > atendimentoOferta_traits;
+
+  /**
+   * @brief Return a read-only (constant) reference to the element.
+   *
+   * @return A constant reference to the element.
+   */
+  const atendimentoOferta_type&
+  atendimentoOferta () const;
+
+  /**
+   * @brief Return a read-write reference to the element.
+   *
+   * @return A reference to the element.
+   */
+  atendimentoOferta_type&
+  atendimentoOferta ();
+
+  /**
+   * @brief Set the element value.
+   *
+   * @param x A new value to set.
+   *
+   * This function makes a copy of its argument and sets it as
+   * the new value of the element.
+   */
+  void
+  atendimentoOferta (const atendimentoOferta_type& x);
+
+  /**
+   * @brief Set the element value without copying.
+   *
+   * @param p A new value to use.
+   *
+   * This function will try to use the passed value directly instead
+   * of making a copy.
+   */
+  void
+  atendimentoOferta (::std::auto_ptr< atendimentoOferta_type > p);
+
+  //@}
+
+  /**
+   * @name qtdeCreditosTeoricos
+   *
+   * @brief Accessor and modifier functions for the %qtdeCreditosTeoricos
+   * required element.
+   *
+   * informa a quantidade de cr?ditos te?ricos consumidos pela atendimento
+   * da oferta em quest?o
+   */
+  //@{
+
+  /**
+   * @brief Element type.
+   */
+  typedef ::xml_schema::int_ qtdeCreditosTeoricos_type;
+
+  /**
+   * @brief Element traits type.
+   */
+  typedef ::xsd::cxx::tree::traits< qtdeCreditosTeoricos_type, char > qtdeCreditosTeoricos_traits;
+
+  /**
+   * @brief Return a read-only (constant) reference to the element.
+   *
+   * @return A constant reference to the element.
+   */
+  const qtdeCreditosTeoricos_type&
+  qtdeCreditosTeoricos () const;
+
+  /**
+   * @brief Return a read-write reference to the element.
+   *
+   * @return A reference to the element.
+   */
+  qtdeCreditosTeoricos_type&
+  qtdeCreditosTeoricos ();
+
+  /**
+   * @brief Set the element value.
+   *
+   * @param x A new value to set.
+   *
+   * This function makes a copy of its argument and sets it as
+   * the new value of the element.
+   */
+  void
+  qtdeCreditosTeoricos (const qtdeCreditosTeoricos_type& x);
+
+  //@}
+
+  /**
+   * @name qtdeCreditosPraticos
+   *
+   * @brief Accessor and modifier functions for the %qtdeCreditosPraticos
+   * required element.
+   *
+   * informa a quantidade de cr?ditos pr?ticos consumidos pela atendimento
+   * da oferta em quest?o
+   */
+  //@{
+
+  /**
+   * @brief Element type.
+   */
+  typedef ::xml_schema::int_ qtdeCreditosPraticos_type;
+
+  /**
+   * @brief Element traits type.
+   */
+  typedef ::xsd::cxx::tree::traits< qtdeCreditosPraticos_type, char > qtdeCreditosPraticos_traits;
+
+  /**
+   * @brief Return a read-only (constant) reference to the element.
+   *
+   * @return A constant reference to the element.
+   */
+  const qtdeCreditosPraticos_type&
+  qtdeCreditosPraticos () const;
+
+  /**
+   * @brief Return a read-write reference to the element.
+   *
+   * @return A reference to the element.
+   */
+  qtdeCreditosPraticos_type&
+  qtdeCreditosPraticos ();
+
+  /**
+   * @brief Set the element value.
+   *
+   * @param x A new value to set.
+   *
+   * This function makes a copy of its argument and sets it as
+   * the new value of the element.
+   */
+  void
+  qtdeCreditosPraticos (const qtdeCreditosPraticos_type& x);
+
+  //@}
+
+  /**
+   * @name Constructors
+   */
+  //@{
+
+  /**
+   * @brief Create an instance from the ultimate base and
+   * initializers for required elements and attributes.
+   */
+  ItemAtendimentoTatico (const atendimentoOferta_type&,
+                         const qtdeCreditosTeoricos_type&,
+                         const qtdeCreditosPraticos_type&);
+
+  /**
+   * @brief Create an instance from the ultimate base and
+   * initializers for required elements and attributes
+   * (auto_ptr version).
+   *
+   * This constructor will try to use the passed values directly
+   * instead of making copies.
+   */
+  ItemAtendimentoTatico (::std::auto_ptr< atendimentoOferta_type >&,
+                         const qtdeCreditosTeoricos_type&,
+                         const qtdeCreditosPraticos_type&);
+
+  /**
+   * @brief Create an instance from a DOM element.
+   *
+   * @param e A DOM element to extract the data from.
+   * @param f Flags to create the new instance with.
+   * @param c A pointer to the object that will contain the new
+   * instance.
+   */
+  ItemAtendimentoTatico (const ::xercesc::DOMElement& e,
+                         ::xml_schema::flags f = 0,
+                         ::xml_schema::container* c = 0);
+
+  /**
+   * @brief Copy constructor.
+   *
+   * @param x An instance to make a copy of.
+   * @param f Flags to create the copy with.
+   * @param c A pointer to the object that will contain the copy.
+   *
+   * For polymorphic object models use the @c _clone function instead.
+   */
+  ItemAtendimentoTatico (const ItemAtendimentoTatico& x,
+                         ::xml_schema::flags f = 0,
+                         ::xml_schema::container* c = 0);
+
+  /**
+   * @brief Copy the instance polymorphically.
+   *
+   * @param f Flags to create the copy with.
+   * @param c A pointer to the object that will contain the copy.
+   * @return A pointer to the dynamically allocated copy.
+   *
+   * This function ensures that the dynamic type of the instance is
+   * used for copying and should be used for polymorphic object
+   * models instead of the copy constructor.
+   */
+  virtual ItemAtendimentoTatico*
+  _clone (::xml_schema::flags f = 0,
+          ::xml_schema::container* c = 0) const;
+
+  //@}
+
+  /**
+   * @brief Destructor.
+   */
+  virtual 
+  ~ItemAtendimentoTatico ();
+
+  // Implementation.
+  //
+
+  //@cond
+
+  protected:
+  void
+  parse (::xsd::cxx::xml::dom::parser< char >&,
+         ::xml_schema::flags);
+
+  protected:
+  ::xsd::cxx::tree::one< atendimentoOferta_type > atendimentoOferta_;
+  ::xsd::cxx::tree::one< qtdeCreditosTeoricos_type > qtdeCreditosTeoricos_;
+  ::xsd::cxx::tree::one< qtdeCreditosPraticos_type > qtdeCreditosPraticos_;
+
+  //@endcond
+};
+
+/**
+ * @brief Class corresponding to the %GrupoAtendimentoCampus schema type.
+ *
+ * @nosubgrouping
+ */
+class GrupoAtendimentoCampus: public ::xml_schema::type
+{
+  public:
+  /**
+   * @name AtendimentoCampus
+   *
+   * @brief Accessor and modifier functions for the %AtendimentoCampus
+   * sequence element.
+   *
+   * cont?m os atendimentos realizados em um determinado campus que foi
+   * considerado no planejamento
+   */
+  //@{
+
+  /**
+   * @brief Element type.
+   */
+  typedef ::ItemAtendimentoCampus AtendimentoCampus_type;
+
+  /**
+   * @brief Element sequence container type.
+   */
+  typedef ::xsd::cxx::tree::sequence< AtendimentoCampus_type > AtendimentoCampus_sequence;
+
+  /**
+   * @brief Element iterator type.
+   */
+  typedef AtendimentoCampus_sequence::iterator AtendimentoCampus_iterator;
+
+  /**
+   * @brief Element constant iterator type.
+   */
+  typedef AtendimentoCampus_sequence::const_iterator AtendimentoCampus_const_iterator;
+
+  /**
+   * @brief Element traits type.
+   */
+  typedef ::xsd::cxx::tree::traits< AtendimentoCampus_type, char > AtendimentoCampus_traits;
 
   /**
    * @brief Return a read-only (constant) reference to the element
@@ -11030,16 +3749,16 @@ class GrupoTurma: public ::xml_schema::type
    *
    * @return A constant reference to the sequence container.
    */
-  const turma_sequence&
-  turma () const;
+  const AtendimentoCampus_sequence&
+  AtendimentoCampus () const;
 
   /**
    * @brief Return a read-write reference to the element sequence.
    *
    * @return A reference to the sequence container.
    */
-  turma_sequence&
-  turma ();
+  AtendimentoCampus_sequence&
+  AtendimentoCampus ();
 
   /**
    * @brief Copy elements from a given sequence.
@@ -11051,7 +3770,7 @@ class GrupoTurma: public ::xml_schema::type
    * sequence and all old elements will be lost.
    */
   void
-  turma (const turma_sequence& s);
+  AtendimentoCampus (const AtendimentoCampus_sequence& s);
 
   //@}
 
@@ -11064,7 +3783,7 @@ class GrupoTurma: public ::xml_schema::type
    * @brief Create an instance from the ultimate base and
    * initializers for required elements and attributes.
    */
-  GrupoTurma ();
+  GrupoAtendimentoCampus ();
 
   /**
    * @brief Create an instance from a DOM element.
@@ -11074,9 +3793,9 @@ class GrupoTurma: public ::xml_schema::type
    * @param c A pointer to the object that will contain the new
    * instance.
    */
-  GrupoTurma (const ::xercesc::DOMElement& e,
-              ::xml_schema::flags f = 0,
-              ::xml_schema::container* c = 0);
+  GrupoAtendimentoCampus (const ::xercesc::DOMElement& e,
+                          ::xml_schema::flags f = 0,
+                          ::xml_schema::container* c = 0);
 
   /**
    * @brief Copy constructor.
@@ -11087,9 +3806,9 @@ class GrupoTurma: public ::xml_schema::type
    *
    * For polymorphic object models use the @c _clone function instead.
    */
-  GrupoTurma (const GrupoTurma& x,
-              ::xml_schema::flags f = 0,
-              ::xml_schema::container* c = 0);
+  GrupoAtendimentoCampus (const GrupoAtendimentoCampus& x,
+                          ::xml_schema::flags f = 0,
+                          ::xml_schema::container* c = 0);
 
   /**
    * @brief Copy the instance polymorphically.
@@ -11102,7 +3821,7 @@ class GrupoTurma: public ::xml_schema::type
    * used for copying and should be used for polymorphic object
    * models instead of the copy constructor.
    */
-  virtual GrupoTurma*
+  virtual GrupoAtendimentoCampus*
   _clone (::xml_schema::flags f = 0,
           ::xml_schema::container* c = 0) const;
 
@@ -11112,7 +3831,7 @@ class GrupoTurma: public ::xml_schema::type
    * @brief Destructor.
    */
   virtual 
-  ~GrupoTurma ();
+  ~GrupoAtendimentoCampus ();
 
   // Implementation.
   //
@@ -11125,233 +3844,385 @@ class GrupoTurma: public ::xml_schema::type
          ::xml_schema::flags);
 
   protected:
-  turma_sequence turma_;
+  AtendimentoCampus_sequence AtendimentoCampus_;
 
   //@endcond
 };
 
 /**
- * @brief Class corresponding to the %ItemTipoSala schema type.
+ * @brief Class corresponding to the %GrupoAtendimentoUnidade schema type.
  *
  * @nosubgrouping
  */
-class ItemTipoSala: public ::xml_schema::type
+class GrupoAtendimentoUnidade: public ::xml_schema::type
 {
   public:
   /**
-   * @name id
+   * @name AtendimentoUnidade
    *
-   * @brief Accessor and modifier functions for the %id
-   * optional element.
+   * @brief Accessor and modifier functions for the %AtendimentoUnidade
+   * sequence element.
+   *
+   * cont?m os atendimentos realizados em uma determinada unidade de um
+   * determinado campus que foi considerado no planejamento
    */
   //@{
 
   /**
    * @brief Element type.
    */
-  typedef ::xml_schema::int_ id_type;
+  typedef ::ItemAtendimentoUnidade AtendimentoUnidade_type;
 
   /**
-   * @brief Element optional container type.
+   * @brief Element sequence container type.
    */
-  typedef ::xsd::cxx::tree::optional< id_type > id_optional;
+  typedef ::xsd::cxx::tree::sequence< AtendimentoUnidade_type > AtendimentoUnidade_sequence;
+
+  /**
+   * @brief Element iterator type.
+   */
+  typedef AtendimentoUnidade_sequence::iterator AtendimentoUnidade_iterator;
+
+  /**
+   * @brief Element constant iterator type.
+   */
+  typedef AtendimentoUnidade_sequence::const_iterator AtendimentoUnidade_const_iterator;
 
   /**
    * @brief Element traits type.
    */
-  typedef ::xsd::cxx::tree::traits< id_type, char > id_traits;
+  typedef ::xsd::cxx::tree::traits< AtendimentoUnidade_type, char > AtendimentoUnidade_traits;
 
   /**
    * @brief Return a read-only (constant) reference to the element
-   * container.
+   * sequence.
    *
-   * @return A constant reference to the optional container.
+   * @return A constant reference to the sequence container.
    */
-  const id_optional&
-  id () const;
+  const AtendimentoUnidade_sequence&
+  AtendimentoUnidade () const;
 
   /**
-   * @brief Return a read-write reference to the element container.
+   * @brief Return a read-write reference to the element sequence.
    *
-   * @return A reference to the optional container.
+   * @return A reference to the sequence container.
    */
-  id_optional&
-  id ();
+  AtendimentoUnidade_sequence&
+  AtendimentoUnidade ();
 
   /**
-   * @brief Set the element value.
+   * @brief Copy elements from a given sequence.
    *
-   * @param x A new value to set.
+   * @param s A sequence to copy elements from.
    *
-   * This function makes a copy of its argument and sets it as
-   * the new value of the element.
+   * For each element in @a s this function makes a copy and adds it 
+   * to the sequence. Note that this operation completely changes the 
+   * sequence and all old elements will be lost.
    */
   void
-  id (const id_type& x);
-
-  /**
-   * @brief Set the element value.
-   *
-   * @param x An optional container with the new value to set.
-   *
-   * If the value is present in @a x then this function makes a copy 
-   * of this value and sets it as the new value of the element.
-   * Otherwise the element container is set the 'not present' state.
-   */
-  void
-  id (const id_optional& x);
+  AtendimentoUnidade (const AtendimentoUnidade_sequence& s);
 
   //@}
 
   /**
-   * @name nome
+   * @name Constructors
+   */
+  //@{
+
+  /**
+   * @brief Create an instance from the ultimate base and
+   * initializers for required elements and attributes.
+   */
+  GrupoAtendimentoUnidade ();
+
+  /**
+   * @brief Create an instance from a DOM element.
    *
-   * @brief Accessor and modifier functions for the %nome
-   * optional element.
+   * @param e A DOM element to extract the data from.
+   * @param f Flags to create the new instance with.
+   * @param c A pointer to the object that will contain the new
+   * instance.
+   */
+  GrupoAtendimentoUnidade (const ::xercesc::DOMElement& e,
+                           ::xml_schema::flags f = 0,
+                           ::xml_schema::container* c = 0);
+
+  /**
+   * @brief Copy constructor.
+   *
+   * @param x An instance to make a copy of.
+   * @param f Flags to create the copy with.
+   * @param c A pointer to the object that will contain the copy.
+   *
+   * For polymorphic object models use the @c _clone function instead.
+   */
+  GrupoAtendimentoUnidade (const GrupoAtendimentoUnidade& x,
+                           ::xml_schema::flags f = 0,
+                           ::xml_schema::container* c = 0);
+
+  /**
+   * @brief Copy the instance polymorphically.
+   *
+   * @param f Flags to create the copy with.
+   * @param c A pointer to the object that will contain the copy.
+   * @return A pointer to the dynamically allocated copy.
+   *
+   * This function ensures that the dynamic type of the instance is
+   * used for copying and should be used for polymorphic object
+   * models instead of the copy constructor.
+   */
+  virtual GrupoAtendimentoUnidade*
+  _clone (::xml_schema::flags f = 0,
+          ::xml_schema::container* c = 0) const;
+
+  //@}
+
+  /**
+   * @brief Destructor.
+   */
+  virtual 
+  ~GrupoAtendimentoUnidade ();
+
+  // Implementation.
+  //
+
+  //@cond
+
+  protected:
+  void
+  parse (::xsd::cxx::xml::dom::parser< char >&,
+         ::xml_schema::flags);
+
+  protected:
+  AtendimentoUnidade_sequence AtendimentoUnidade_;
+
+  //@endcond
+};
+
+/**
+ * @brief Class corresponding to the %GrupoAtendimentoSala schema type.
+ *
+ * @nosubgrouping
+ */
+class GrupoAtendimentoSala: public ::xml_schema::type
+{
+  public:
+  /**
+   * @name AtendimentoSala
+   *
+   * @brief Accessor and modifier functions for the %AtendimentoSala
+   * sequence element.
+   *
+   * cont?m os atendimentos realizados em uma determinada sala de uma
+   * determinada unidade de um determinado campus que foi considerado no
+   * planejamento
    */
   //@{
 
   /**
    * @brief Element type.
    */
-  typedef ::xml_schema::string nome_type;
+  typedef ::ItemAtendimentoSala AtendimentoSala_type;
 
   /**
-   * @brief Element optional container type.
+   * @brief Element sequence container type.
    */
-  typedef ::xsd::cxx::tree::optional< nome_type > nome_optional;
+  typedef ::xsd::cxx::tree::sequence< AtendimentoSala_type > AtendimentoSala_sequence;
+
+  /**
+   * @brief Element iterator type.
+   */
+  typedef AtendimentoSala_sequence::iterator AtendimentoSala_iterator;
+
+  /**
+   * @brief Element constant iterator type.
+   */
+  typedef AtendimentoSala_sequence::const_iterator AtendimentoSala_const_iterator;
 
   /**
    * @brief Element traits type.
    */
-  typedef ::xsd::cxx::tree::traits< nome_type, char > nome_traits;
+  typedef ::xsd::cxx::tree::traits< AtendimentoSala_type, char > AtendimentoSala_traits;
 
   /**
    * @brief Return a read-only (constant) reference to the element
-   * container.
+   * sequence.
    *
-   * @return A constant reference to the optional container.
+   * @return A constant reference to the sequence container.
    */
-  const nome_optional&
-  nome () const;
+  const AtendimentoSala_sequence&
+  AtendimentoSala () const;
 
   /**
-   * @brief Return a read-write reference to the element container.
+   * @brief Return a read-write reference to the element sequence.
    *
-   * @return A reference to the optional container.
+   * @return A reference to the sequence container.
    */
-  nome_optional&
-  nome ();
+  AtendimentoSala_sequence&
+  AtendimentoSala ();
 
   /**
-   * @brief Set the element value.
+   * @brief Copy elements from a given sequence.
    *
-   * @param x A new value to set.
+   * @param s A sequence to copy elements from.
    *
-   * This function makes a copy of its argument and sets it as
-   * the new value of the element.
+   * For each element in @a s this function makes a copy and adds it 
+   * to the sequence. Note that this operation completely changes the 
+   * sequence and all old elements will be lost.
    */
   void
-  nome (const nome_type& x);
-
-  /**
-   * @brief Set the element value.
-   *
-   * @param x An optional container with the new value to set.
-   *
-   * If the value is present in @a x then this function makes a copy 
-   * of this value and sets it as the new value of the element.
-   * Otherwise the element container is set the 'not present' state.
-   */
-  void
-  nome (const nome_optional& x);
-
-  /**
-   * @brief Set the element value without copying.
-   *
-   * @param p A new value to use.
-   *
-   * This function will try to use the passed value directly instead
-   * of making a copy.
-   */
-  void
-  nome (::std::auto_ptr< nome_type > p);
+  AtendimentoSala (const AtendimentoSala_sequence& s);
 
   //@}
 
   /**
-   * @name descricao
+   * @name Constructors
+   */
+  //@{
+
+  /**
+   * @brief Create an instance from the ultimate base and
+   * initializers for required elements and attributes.
+   */
+  GrupoAtendimentoSala ();
+
+  /**
+   * @brief Create an instance from a DOM element.
    *
-   * @brief Accessor and modifier functions for the %descricao
-   * optional element.
+   * @param e A DOM element to extract the data from.
+   * @param f Flags to create the new instance with.
+   * @param c A pointer to the object that will contain the new
+   * instance.
+   */
+  GrupoAtendimentoSala (const ::xercesc::DOMElement& e,
+                        ::xml_schema::flags f = 0,
+                        ::xml_schema::container* c = 0);
+
+  /**
+   * @brief Copy constructor.
+   *
+   * @param x An instance to make a copy of.
+   * @param f Flags to create the copy with.
+   * @param c A pointer to the object that will contain the copy.
+   *
+   * For polymorphic object models use the @c _clone function instead.
+   */
+  GrupoAtendimentoSala (const GrupoAtendimentoSala& x,
+                        ::xml_schema::flags f = 0,
+                        ::xml_schema::container* c = 0);
+
+  /**
+   * @brief Copy the instance polymorphically.
+   *
+   * @param f Flags to create the copy with.
+   * @param c A pointer to the object that will contain the copy.
+   * @return A pointer to the dynamically allocated copy.
+   *
+   * This function ensures that the dynamic type of the instance is
+   * used for copying and should be used for polymorphic object
+   * models instead of the copy constructor.
+   */
+  virtual GrupoAtendimentoSala*
+  _clone (::xml_schema::flags f = 0,
+          ::xml_schema::container* c = 0) const;
+
+  //@}
+
+  /**
+   * @brief Destructor.
+   */
+  virtual 
+  ~GrupoAtendimentoSala ();
+
+  // Implementation.
+  //
+
+  //@cond
+
+  protected:
+  void
+  parse (::xsd::cxx::xml::dom::parser< char >&,
+         ::xml_schema::flags);
+
+  protected:
+  AtendimentoSala_sequence AtendimentoSala_;
+
+  //@endcond
+};
+
+/**
+ * @brief Class corresponding to the %GrupoAtendimentoDiaSemana schema type.
+ *
+ * @nosubgrouping
+ */
+class GrupoAtendimentoDiaSemana: public ::xml_schema::type
+{
+  public:
+  /**
+   * @name AtendimentoDiaSemana
+   *
+   * @brief Accessor and modifier functions for the %AtendimentoDiaSemana
+   * sequence element.
+   *
+   * cont?m os atendimentos realizados num determinado dia da semana em uma
+   * determinada sala de uma determinada unidade de um determinado campus
+   * que foi considerado no planejamento
    */
   //@{
 
   /**
    * @brief Element type.
    */
-  typedef ::xml_schema::string descricao_type;
+  typedef ::ItemAtendimentoDiaSemana AtendimentoDiaSemana_type;
 
   /**
-   * @brief Element optional container type.
+   * @brief Element sequence container type.
    */
-  typedef ::xsd::cxx::tree::optional< descricao_type > descricao_optional;
+  typedef ::xsd::cxx::tree::sequence< AtendimentoDiaSemana_type > AtendimentoDiaSemana_sequence;
+
+  /**
+   * @brief Element iterator type.
+   */
+  typedef AtendimentoDiaSemana_sequence::iterator AtendimentoDiaSemana_iterator;
+
+  /**
+   * @brief Element constant iterator type.
+   */
+  typedef AtendimentoDiaSemana_sequence::const_iterator AtendimentoDiaSemana_const_iterator;
 
   /**
    * @brief Element traits type.
    */
-  typedef ::xsd::cxx::tree::traits< descricao_type, char > descricao_traits;
+  typedef ::xsd::cxx::tree::traits< AtendimentoDiaSemana_type, char > AtendimentoDiaSemana_traits;
 
   /**
    * @brief Return a read-only (constant) reference to the element
-   * container.
+   * sequence.
    *
-   * @return A constant reference to the optional container.
+   * @return A constant reference to the sequence container.
    */
-  const descricao_optional&
-  descricao () const;
+  const AtendimentoDiaSemana_sequence&
+  AtendimentoDiaSemana () const;
 
   /**
-   * @brief Return a read-write reference to the element container.
+   * @brief Return a read-write reference to the element sequence.
    *
-   * @return A reference to the optional container.
+   * @return A reference to the sequence container.
    */
-  descricao_optional&
-  descricao ();
+  AtendimentoDiaSemana_sequence&
+  AtendimentoDiaSemana ();
 
   /**
-   * @brief Set the element value.
+   * @brief Copy elements from a given sequence.
    *
-   * @param x A new value to set.
+   * @param s A sequence to copy elements from.
    *
-   * This function makes a copy of its argument and sets it as
-   * the new value of the element.
+   * For each element in @a s this function makes a copy and adds it 
+   * to the sequence. Note that this operation completely changes the 
+   * sequence and all old elements will be lost.
    */
   void
-  descricao (const descricao_type& x);
-
-  /**
-   * @brief Set the element value.
-   *
-   * @param x An optional container with the new value to set.
-   *
-   * If the value is present in @a x then this function makes a copy 
-   * of this value and sets it as the new value of the element.
-   * Otherwise the element container is set the 'not present' state.
-   */
-  void
-  descricao (const descricao_optional& x);
-
-  /**
-   * @brief Set the element value without copying.
-   *
-   * @param p A new value to use.
-   *
-   * This function will try to use the passed value directly instead
-   * of making a copy.
-   */
-  void
-  descricao (::std::auto_ptr< descricao_type > p);
+  AtendimentoDiaSemana (const AtendimentoDiaSemana_sequence& s);
 
   //@}
 
@@ -11364,7 +4235,7 @@ class ItemTipoSala: public ::xml_schema::type
    * @brief Create an instance from the ultimate base and
    * initializers for required elements and attributes.
    */
-  ItemTipoSala ();
+  GrupoAtendimentoDiaSemana ();
 
   /**
    * @brief Create an instance from a DOM element.
@@ -11374,9 +4245,9 @@ class ItemTipoSala: public ::xml_schema::type
    * @param c A pointer to the object that will contain the new
    * instance.
    */
-  ItemTipoSala (const ::xercesc::DOMElement& e,
-                ::xml_schema::flags f = 0,
-                ::xml_schema::container* c = 0);
+  GrupoAtendimentoDiaSemana (const ::xercesc::DOMElement& e,
+                             ::xml_schema::flags f = 0,
+                             ::xml_schema::container* c = 0);
 
   /**
    * @brief Copy constructor.
@@ -11387,9 +4258,9 @@ class ItemTipoSala: public ::xml_schema::type
    *
    * For polymorphic object models use the @c _clone function instead.
    */
-  ItemTipoSala (const ItemTipoSala& x,
-                ::xml_schema::flags f = 0,
-                ::xml_schema::container* c = 0);
+  GrupoAtendimentoDiaSemana (const GrupoAtendimentoDiaSemana& x,
+                             ::xml_schema::flags f = 0,
+                             ::xml_schema::container* c = 0);
 
   /**
    * @brief Copy the instance polymorphically.
@@ -11402,7 +4273,7 @@ class ItemTipoSala: public ::xml_schema::type
    * used for copying and should be used for polymorphic object
    * models instead of the copy constructor.
    */
-  virtual ItemTipoSala*
+  virtual GrupoAtendimentoDiaSemana*
   _clone (::xml_schema::flags f = 0,
           ::xml_schema::container* c = 0) const;
 
@@ -11412,7 +4283,7 @@ class ItemTipoSala: public ::xml_schema::type
    * @brief Destructor.
    */
   virtual 
-  ~ItemTipoSala ();
+  ~GrupoAtendimentoDiaSemana ();
 
   // Implementation.
   //
@@ -11425,123 +4296,84 @@ class ItemTipoSala: public ::xml_schema::type
          ::xml_schema::flags);
 
   protected:
-  id_optional id_;
-  nome_optional nome_;
-  descricao_optional descricao_;
+  AtendimentoDiaSemana_sequence AtendimentoDiaSemana_;
 
   //@endcond
 };
 
 /**
- * @brief Class corresponding to the %ItemTipoContrato schema type.
+ * @brief Class corresponding to the %GrupoAtendimentoTurno schema type.
  *
  * @nosubgrouping
  */
-class ItemTipoContrato: public ::xml_schema::type
+class GrupoAtendimentoTurno: public ::xml_schema::type
 {
   public:
   /**
-   * @name id
+   * @name AtendimentoTurno
    *
-   * @brief Accessor and modifier functions for the %id
-   * required element.
+   * @brief Accessor and modifier functions for the %AtendimentoTurno
+   * sequence element.
+   *
+   * cont?m os atendimentos realizados num determinado turno de um
+   * determinado dia da semana em uma determinada sala de uma determinada
+   * unidade de um determinado campus que foi considerado no planejamento
    */
   //@{
 
   /**
    * @brief Element type.
    */
-  typedef ::xml_schema::int_ id_type;
+  typedef ::ItemAtendimentoTurno AtendimentoTurno_type;
+
+  /**
+   * @brief Element sequence container type.
+   */
+  typedef ::xsd::cxx::tree::sequence< AtendimentoTurno_type > AtendimentoTurno_sequence;
+
+  /**
+   * @brief Element iterator type.
+   */
+  typedef AtendimentoTurno_sequence::iterator AtendimentoTurno_iterator;
+
+  /**
+   * @brief Element constant iterator type.
+   */
+  typedef AtendimentoTurno_sequence::const_iterator AtendimentoTurno_const_iterator;
 
   /**
    * @brief Element traits type.
    */
-  typedef ::xsd::cxx::tree::traits< id_type, char > id_traits;
+  typedef ::xsd::cxx::tree::traits< AtendimentoTurno_type, char > AtendimentoTurno_traits;
 
   /**
-   * @brief Return a read-only (constant) reference to the element.
+   * @brief Return a read-only (constant) reference to the element
+   * sequence.
    *
-   * @return A constant reference to the element.
+   * @return A constant reference to the sequence container.
    */
-  const id_type&
-  id () const;
+  const AtendimentoTurno_sequence&
+  AtendimentoTurno () const;
 
   /**
-   * @brief Return a read-write reference to the element.
+   * @brief Return a read-write reference to the element sequence.
    *
-   * @return A reference to the element.
+   * @return A reference to the sequence container.
    */
-  id_type&
-  id ();
+  AtendimentoTurno_sequence&
+  AtendimentoTurno ();
 
   /**
-   * @brief Set the element value.
+   * @brief Copy elements from a given sequence.
    *
-   * @param x A new value to set.
+   * @param s A sequence to copy elements from.
    *
-   * This function makes a copy of its argument and sets it as
-   * the new value of the element.
-   */
-  void
-  id (const id_type& x);
-
-  //@}
-
-  /**
-   * @name nome
-   *
-   * @brief Accessor and modifier functions for the %nome
-   * required element.
-   */
-  //@{
-
-  /**
-   * @brief Element type.
-   */
-  typedef ::xml_schema::string nome_type;
-
-  /**
-   * @brief Element traits type.
-   */
-  typedef ::xsd::cxx::tree::traits< nome_type, char > nome_traits;
-
-  /**
-   * @brief Return a read-only (constant) reference to the element.
-   *
-   * @return A constant reference to the element.
-   */
-  const nome_type&
-  nome () const;
-
-  /**
-   * @brief Return a read-write reference to the element.
-   *
-   * @return A reference to the element.
-   */
-  nome_type&
-  nome ();
-
-  /**
-   * @brief Set the element value.
-   *
-   * @param x A new value to set.
-   *
-   * This function makes a copy of its argument and sets it as
-   * the new value of the element.
+   * For each element in @a s this function makes a copy and adds it 
+   * to the sequence. Note that this operation completely changes the 
+   * sequence and all old elements will be lost.
    */
   void
-  nome (const nome_type& x);
-
-  /**
-   * @brief Set the element value without copying.
-   *
-   * @param p A new value to use.
-   *
-   * This function will try to use the passed value directly instead
-   * of making a copy.
-   */
-  void
-  nome (::std::auto_ptr< nome_type > p);
+  AtendimentoTurno (const AtendimentoTurno_sequence& s);
 
   //@}
 
@@ -11554,8 +4386,7 @@ class ItemTipoContrato: public ::xml_schema::type
    * @brief Create an instance from the ultimate base and
    * initializers for required elements and attributes.
    */
-  ItemTipoContrato (const id_type&,
-                    const nome_type&);
+  GrupoAtendimentoTurno ();
 
   /**
    * @brief Create an instance from a DOM element.
@@ -11565,9 +4396,9 @@ class ItemTipoContrato: public ::xml_schema::type
    * @param c A pointer to the object that will contain the new
    * instance.
    */
-  ItemTipoContrato (const ::xercesc::DOMElement& e,
-                    ::xml_schema::flags f = 0,
-                    ::xml_schema::container* c = 0);
+  GrupoAtendimentoTurno (const ::xercesc::DOMElement& e,
+                         ::xml_schema::flags f = 0,
+                         ::xml_schema::container* c = 0);
 
   /**
    * @brief Copy constructor.
@@ -11578,9 +4409,9 @@ class ItemTipoContrato: public ::xml_schema::type
    *
    * For polymorphic object models use the @c _clone function instead.
    */
-  ItemTipoContrato (const ItemTipoContrato& x,
-                    ::xml_schema::flags f = 0,
-                    ::xml_schema::container* c = 0);
+  GrupoAtendimentoTurno (const GrupoAtendimentoTurno& x,
+                         ::xml_schema::flags f = 0,
+                         ::xml_schema::container* c = 0);
 
   /**
    * @brief Copy the instance polymorphically.
@@ -11593,7 +4424,7 @@ class ItemTipoContrato: public ::xml_schema::type
    * used for copying and should be used for polymorphic object
    * models instead of the copy constructor.
    */
-  virtual ItemTipoContrato*
+  virtual GrupoAtendimentoTurno*
   _clone (::xml_schema::flags f = 0,
           ::xml_schema::container* c = 0) const;
 
@@ -11603,7 +4434,7 @@ class ItemTipoContrato: public ::xml_schema::type
    * @brief Destructor.
    */
   virtual 
-  ~ItemTipoContrato ();
+  ~GrupoAtendimentoTurno ();
 
   // Implementation.
   //
@@ -11616,122 +4447,85 @@ class ItemTipoContrato: public ::xml_schema::type
          ::xml_schema::flags);
 
   protected:
-  ::xsd::cxx::tree::one< id_type > id_;
-  ::xsd::cxx::tree::one< nome_type > nome_;
+  AtendimentoTurno_sequence AtendimentoTurno_;
 
   //@endcond
 };
 
 /**
- * @brief Class corresponding to the %ItemTipoTitulacao schema type.
+ * @brief Class corresponding to the %GrupoAtendimentoHorarioAula schema type.
  *
  * @nosubgrouping
  */
-class ItemTipoTitulacao: public ::xml_schema::type
+class GrupoAtendimentoHorarioAula: public ::xml_schema::type
 {
   public:
   /**
-   * @name id
+   * @name AtendimentoHorarioAula
    *
-   * @brief Accessor and modifier functions for the %id
-   * required element.
+   * @brief Accessor and modifier functions for the %AtendimentoHorarioAula
+   * sequence element.
+   *
+   * cont?m os atendimentos realizados num determinado horario de aula (ou
+   * tempo de aula) de um determinado turno de um determinado dia da semana
+   * em uma determinada sala de uma determinada unidade de um determinado
+   * campus que foi considerado no planejamento
    */
   //@{
 
   /**
    * @brief Element type.
    */
-  typedef ::xml_schema::int_ id_type;
+  typedef ::ItemAtendimentoHorarioAula AtendimentoHorarioAula_type;
+
+  /**
+   * @brief Element sequence container type.
+   */
+  typedef ::xsd::cxx::tree::sequence< AtendimentoHorarioAula_type > AtendimentoHorarioAula_sequence;
+
+  /**
+   * @brief Element iterator type.
+   */
+  typedef AtendimentoHorarioAula_sequence::iterator AtendimentoHorarioAula_iterator;
+
+  /**
+   * @brief Element constant iterator type.
+   */
+  typedef AtendimentoHorarioAula_sequence::const_iterator AtendimentoHorarioAula_const_iterator;
 
   /**
    * @brief Element traits type.
    */
-  typedef ::xsd::cxx::tree::traits< id_type, char > id_traits;
+  typedef ::xsd::cxx::tree::traits< AtendimentoHorarioAula_type, char > AtendimentoHorarioAula_traits;
 
   /**
-   * @brief Return a read-only (constant) reference to the element.
+   * @brief Return a read-only (constant) reference to the element
+   * sequence.
    *
-   * @return A constant reference to the element.
+   * @return A constant reference to the sequence container.
    */
-  const id_type&
-  id () const;
+  const AtendimentoHorarioAula_sequence&
+  AtendimentoHorarioAula () const;
 
   /**
-   * @brief Return a read-write reference to the element.
+   * @brief Return a read-write reference to the element sequence.
    *
-   * @return A reference to the element.
+   * @return A reference to the sequence container.
    */
-  id_type&
-  id ();
+  AtendimentoHorarioAula_sequence&
+  AtendimentoHorarioAula ();
 
   /**
-   * @brief Set the element value.
+   * @brief Copy elements from a given sequence.
    *
-   * @param x A new value to set.
+   * @param s A sequence to copy elements from.
    *
-   * This function makes a copy of its argument and sets it as
-   * the new value of the element.
-   */
-  void
-  id (const id_type& x);
-
-  //@}
-
-  /**
-   * @name nome
-   *
-   * @brief Accessor and modifier functions for the %nome
-   * required element.
-   */
-  //@{
-
-  /**
-   * @brief Element type.
-   */
-  typedef ::xml_schema::string nome_type;
-
-  /**
-   * @brief Element traits type.
-   */
-  typedef ::xsd::cxx::tree::traits< nome_type, char > nome_traits;
-
-  /**
-   * @brief Return a read-only (constant) reference to the element.
-   *
-   * @return A constant reference to the element.
-   */
-  const nome_type&
-  nome () const;
-
-  /**
-   * @brief Return a read-write reference to the element.
-   *
-   * @return A reference to the element.
-   */
-  nome_type&
-  nome ();
-
-  /**
-   * @brief Set the element value.
-   *
-   * @param x A new value to set.
-   *
-   * This function makes a copy of its argument and sets it as
-   * the new value of the element.
+   * For each element in @a s this function makes a copy and adds it 
+   * to the sequence. Note that this operation completely changes the 
+   * sequence and all old elements will be lost.
    */
   void
-  nome (const nome_type& x);
-
-  /**
-   * @brief Set the element value without copying.
-   *
-   * @param p A new value to use.
-   *
-   * This function will try to use the passed value directly instead
-   * of making a copy.
-   */
-  void
-  nome (::std::auto_ptr< nome_type > p);
+  AtendimentoHorarioAula (const AtendimentoHorarioAula_sequence& s);
 
   //@}
 
@@ -11744,8 +4538,7 @@ class ItemTipoTitulacao: public ::xml_schema::type
    * @brief Create an instance from the ultimate base and
    * initializers for required elements and attributes.
    */
-  ItemTipoTitulacao (const id_type&,
-                     const nome_type&);
+  GrupoAtendimentoHorarioAula ();
 
   /**
    * @brief Create an instance from a DOM element.
@@ -11755,9 +4548,9 @@ class ItemTipoTitulacao: public ::xml_schema::type
    * @param c A pointer to the object that will contain the new
    * instance.
    */
-  ItemTipoTitulacao (const ::xercesc::DOMElement& e,
-                     ::xml_schema::flags f = 0,
-                     ::xml_schema::container* c = 0);
+  GrupoAtendimentoHorarioAula (const ::xercesc::DOMElement& e,
+                               ::xml_schema::flags f = 0,
+                               ::xml_schema::container* c = 0);
 
   /**
    * @brief Copy constructor.
@@ -11768,9 +4561,9 @@ class ItemTipoTitulacao: public ::xml_schema::type
    *
    * For polymorphic object models use the @c _clone function instead.
    */
-  ItemTipoTitulacao (const ItemTipoTitulacao& x,
-                     ::xml_schema::flags f = 0,
-                     ::xml_schema::container* c = 0);
+  GrupoAtendimentoHorarioAula (const GrupoAtendimentoHorarioAula& x,
+                               ::xml_schema::flags f = 0,
+                               ::xml_schema::container* c = 0);
 
   /**
    * @brief Copy the instance polymorphically.
@@ -11783,7 +4576,7 @@ class ItemTipoTitulacao: public ::xml_schema::type
    * used for copying and should be used for polymorphic object
    * models instead of the copy constructor.
    */
-  virtual ItemTipoTitulacao*
+  virtual GrupoAtendimentoHorarioAula*
   _clone (::xml_schema::flags f = 0,
           ::xml_schema::container* c = 0) const;
 
@@ -11793,7 +4586,7 @@ class ItemTipoTitulacao: public ::xml_schema::type
    * @brief Destructor.
    */
   virtual 
-  ~ItemTipoTitulacao ();
+  ~GrupoAtendimentoHorarioAula ();
 
   // Implementation.
   //
@@ -11806,122 +4599,82 @@ class ItemTipoTitulacao: public ::xml_schema::type
          ::xml_schema::flags);
 
   protected:
-  ::xsd::cxx::tree::one< id_type > id_;
-  ::xsd::cxx::tree::one< nome_type > nome_;
+  AtendimentoHorarioAula_sequence AtendimentoHorarioAula_;
 
   //@endcond
 };
 
 /**
- * @brief Class corresponding to the %ItemAreaTitulacao schema type.
+ * @brief Class corresponding to the %GrupoAtendimentoOferta schema type.
  *
  * @nosubgrouping
  */
-class ItemAreaTitulacao: public ::xml_schema::type
+class GrupoAtendimentoOferta: public ::xml_schema::type
 {
   public:
   /**
-   * @name id
+   * @name AtendimentoOferta
    *
-   * @brief Accessor and modifier functions for the %id
-   * required element.
+   * @brief Accessor and modifier functions for the %AtendimentoOferta
+   * sequence element.
+   *
+   * representa uma oferta atendida
    */
   //@{
 
   /**
    * @brief Element type.
    */
-  typedef ::xml_schema::int_ id_type;
+  typedef ::ItemAtendimentoOferta AtendimentoOferta_type;
+
+  /**
+   * @brief Element sequence container type.
+   */
+  typedef ::xsd::cxx::tree::sequence< AtendimentoOferta_type > AtendimentoOferta_sequence;
+
+  /**
+   * @brief Element iterator type.
+   */
+  typedef AtendimentoOferta_sequence::iterator AtendimentoOferta_iterator;
+
+  /**
+   * @brief Element constant iterator type.
+   */
+  typedef AtendimentoOferta_sequence::const_iterator AtendimentoOferta_const_iterator;
 
   /**
    * @brief Element traits type.
    */
-  typedef ::xsd::cxx::tree::traits< id_type, char > id_traits;
+  typedef ::xsd::cxx::tree::traits< AtendimentoOferta_type, char > AtendimentoOferta_traits;
 
   /**
-   * @brief Return a read-only (constant) reference to the element.
+   * @brief Return a read-only (constant) reference to the element
+   * sequence.
    *
-   * @return A constant reference to the element.
+   * @return A constant reference to the sequence container.
    */
-  const id_type&
-  id () const;
+  const AtendimentoOferta_sequence&
+  AtendimentoOferta () const;
 
   /**
-   * @brief Return a read-write reference to the element.
+   * @brief Return a read-write reference to the element sequence.
    *
-   * @return A reference to the element.
+   * @return A reference to the sequence container.
    */
-  id_type&
-  id ();
+  AtendimentoOferta_sequence&
+  AtendimentoOferta ();
 
   /**
-   * @brief Set the element value.
+   * @brief Copy elements from a given sequence.
    *
-   * @param x A new value to set.
+   * @param s A sequence to copy elements from.
    *
-   * This function makes a copy of its argument and sets it as
-   * the new value of the element.
-   */
-  void
-  id (const id_type& x);
-
-  //@}
-
-  /**
-   * @name nome
-   *
-   * @brief Accessor and modifier functions for the %nome
-   * required element.
-   */
-  //@{
-
-  /**
-   * @brief Element type.
-   */
-  typedef ::xml_schema::string nome_type;
-
-  /**
-   * @brief Element traits type.
-   */
-  typedef ::xsd::cxx::tree::traits< nome_type, char > nome_traits;
-
-  /**
-   * @brief Return a read-only (constant) reference to the element.
-   *
-   * @return A constant reference to the element.
-   */
-  const nome_type&
-  nome () const;
-
-  /**
-   * @brief Return a read-write reference to the element.
-   *
-   * @return A reference to the element.
-   */
-  nome_type&
-  nome ();
-
-  /**
-   * @brief Set the element value.
-   *
-   * @param x A new value to set.
-   *
-   * This function makes a copy of its argument and sets it as
-   * the new value of the element.
+   * For each element in @a s this function makes a copy and adds it 
+   * to the sequence. Note that this operation completely changes the 
+   * sequence and all old elements will be lost.
    */
   void
-  nome (const nome_type& x);
-
-  /**
-   * @brief Set the element value without copying.
-   *
-   * @param p A new value to use.
-   *
-   * This function will try to use the passed value directly instead
-   * of making a copy.
-   */
-  void
-  nome (::std::auto_ptr< nome_type > p);
+  AtendimentoOferta (const AtendimentoOferta_sequence& s);
 
   //@}
 
@@ -11934,8 +4687,7 @@ class ItemAreaTitulacao: public ::xml_schema::type
    * @brief Create an instance from the ultimate base and
    * initializers for required elements and attributes.
    */
-  ItemAreaTitulacao (const id_type&,
-                     const nome_type&);
+  GrupoAtendimentoOferta ();
 
   /**
    * @brief Create an instance from a DOM element.
@@ -11945,9 +4697,9 @@ class ItemAreaTitulacao: public ::xml_schema::type
    * @param c A pointer to the object that will contain the new
    * instance.
    */
-  ItemAreaTitulacao (const ::xercesc::DOMElement& e,
-                     ::xml_schema::flags f = 0,
-                     ::xml_schema::container* c = 0);
+  GrupoAtendimentoOferta (const ::xercesc::DOMElement& e,
+                          ::xml_schema::flags f = 0,
+                          ::xml_schema::container* c = 0);
 
   /**
    * @brief Copy constructor.
@@ -11958,9 +4710,9 @@ class ItemAreaTitulacao: public ::xml_schema::type
    *
    * For polymorphic object models use the @c _clone function instead.
    */
-  ItemAreaTitulacao (const ItemAreaTitulacao& x,
-                     ::xml_schema::flags f = 0,
-                     ::xml_schema::container* c = 0);
+  GrupoAtendimentoOferta (const GrupoAtendimentoOferta& x,
+                          ::xml_schema::flags f = 0,
+                          ::xml_schema::container* c = 0);
 
   /**
    * @brief Copy the instance polymorphically.
@@ -11973,7 +4725,7 @@ class ItemAreaTitulacao: public ::xml_schema::type
    * used for copying and should be used for polymorphic object
    * models instead of the copy constructor.
    */
-  virtual ItemAreaTitulacao*
+  virtual GrupoAtendimentoOferta*
   _clone (::xml_schema::flags f = 0,
           ::xml_schema::container* c = 0) const;
 
@@ -11983,7 +4735,7 @@ class ItemAreaTitulacao: public ::xml_schema::type
    * @brief Destructor.
    */
   virtual 
-  ~ItemAreaTitulacao ();
+  ~GrupoAtendimentoOferta ();
 
   // Implementation.
   //
@@ -11996,122 +4748,82 @@ class ItemAreaTitulacao: public ::xml_schema::type
          ::xml_schema::flags);
 
   protected:
-  ::xsd::cxx::tree::one< id_type > id_;
-  ::xsd::cxx::tree::one< nome_type > nome_;
+  AtendimentoOferta_sequence AtendimentoOferta_;
 
   //@endcond
 };
 
 /**
- * @brief Class corresponding to the %ItemTipoDisciplina schema type.
+ * @brief Class corresponding to the %GrupoAtendimentoTatico schema type.
  *
  * @nosubgrouping
  */
-class ItemTipoDisciplina: public ::xml_schema::type
+class GrupoAtendimentoTatico: public ::xml_schema::type
 {
   public:
   /**
-   * @name id
+   * @name AtendimentoTatico
    *
-   * @brief Accessor and modifier functions for the %id
-   * required element.
+   * @brief Accessor and modifier functions for the %AtendimentoTatico
+   * sequence element.
+   *
+   * representa uma oferta atendida
    */
   //@{
 
   /**
    * @brief Element type.
    */
-  typedef ::xml_schema::int_ id_type;
+  typedef ::ItemAtendimentoTatico AtendimentoTatico_type;
+
+  /**
+   * @brief Element sequence container type.
+   */
+  typedef ::xsd::cxx::tree::sequence< AtendimentoTatico_type > AtendimentoTatico_sequence;
+
+  /**
+   * @brief Element iterator type.
+   */
+  typedef AtendimentoTatico_sequence::iterator AtendimentoTatico_iterator;
+
+  /**
+   * @brief Element constant iterator type.
+   */
+  typedef AtendimentoTatico_sequence::const_iterator AtendimentoTatico_const_iterator;
 
   /**
    * @brief Element traits type.
    */
-  typedef ::xsd::cxx::tree::traits< id_type, char > id_traits;
+  typedef ::xsd::cxx::tree::traits< AtendimentoTatico_type, char > AtendimentoTatico_traits;
 
   /**
-   * @brief Return a read-only (constant) reference to the element.
+   * @brief Return a read-only (constant) reference to the element
+   * sequence.
    *
-   * @return A constant reference to the element.
+   * @return A constant reference to the sequence container.
    */
-  const id_type&
-  id () const;
+  const AtendimentoTatico_sequence&
+  AtendimentoTatico () const;
 
   /**
-   * @brief Return a read-write reference to the element.
+   * @brief Return a read-write reference to the element sequence.
    *
-   * @return A reference to the element.
+   * @return A reference to the sequence container.
    */
-  id_type&
-  id ();
+  AtendimentoTatico_sequence&
+  AtendimentoTatico ();
 
   /**
-   * @brief Set the element value.
+   * @brief Copy elements from a given sequence.
    *
-   * @param x A new value to set.
+   * @param s A sequence to copy elements from.
    *
-   * This function makes a copy of its argument and sets it as
-   * the new value of the element.
-   */
-  void
-  id (const id_type& x);
-
-  //@}
-
-  /**
-   * @name nome
-   *
-   * @brief Accessor and modifier functions for the %nome
-   * required element.
-   */
-  //@{
-
-  /**
-   * @brief Element type.
-   */
-  typedef ::xml_schema::string nome_type;
-
-  /**
-   * @brief Element traits type.
-   */
-  typedef ::xsd::cxx::tree::traits< nome_type, char > nome_traits;
-
-  /**
-   * @brief Return a read-only (constant) reference to the element.
-   *
-   * @return A constant reference to the element.
-   */
-  const nome_type&
-  nome () const;
-
-  /**
-   * @brief Return a read-write reference to the element.
-   *
-   * @return A reference to the element.
-   */
-  nome_type&
-  nome ();
-
-  /**
-   * @brief Set the element value.
-   *
-   * @param x A new value to set.
-   *
-   * This function makes a copy of its argument and sets it as
-   * the new value of the element.
+   * For each element in @a s this function makes a copy and adds it 
+   * to the sequence. Note that this operation completely changes the 
+   * sequence and all old elements will be lost.
    */
   void
-  nome (const nome_type& x);
-
-  /**
-   * @brief Set the element value without copying.
-   *
-   * @param p A new value to use.
-   *
-   * This function will try to use the passed value directly instead
-   * of making a copy.
-   */
-  void
-  nome (::std::auto_ptr< nome_type > p);
+  AtendimentoTatico (const AtendimentoTatico_sequence& s);
 
   //@}
 
@@ -12124,8 +4836,7 @@ class ItemTipoDisciplina: public ::xml_schema::type
    * @brief Create an instance from the ultimate base and
    * initializers for required elements and attributes.
    */
-  ItemTipoDisciplina (const id_type&,
-                      const nome_type&);
+  GrupoAtendimentoTatico ();
 
   /**
    * @brief Create an instance from a DOM element.
@@ -12135,9 +4846,9 @@ class ItemTipoDisciplina: public ::xml_schema::type
    * @param c A pointer to the object that will contain the new
    * instance.
    */
-  ItemTipoDisciplina (const ::xercesc::DOMElement& e,
-                      ::xml_schema::flags f = 0,
-                      ::xml_schema::container* c = 0);
+  GrupoAtendimentoTatico (const ::xercesc::DOMElement& e,
+                          ::xml_schema::flags f = 0,
+                          ::xml_schema::container* c = 0);
 
   /**
    * @brief Copy constructor.
@@ -12148,9 +4859,9 @@ class ItemTipoDisciplina: public ::xml_schema::type
    *
    * For polymorphic object models use the @c _clone function instead.
    */
-  ItemTipoDisciplina (const ItemTipoDisciplina& x,
-                      ::xml_schema::flags f = 0,
-                      ::xml_schema::container* c = 0);
+  GrupoAtendimentoTatico (const GrupoAtendimentoTatico& x,
+                          ::xml_schema::flags f = 0,
+                          ::xml_schema::container* c = 0);
 
   /**
    * @brief Copy the instance polymorphically.
@@ -12163,7 +4874,7 @@ class ItemTipoDisciplina: public ::xml_schema::type
    * used for copying and should be used for polymorphic object
    * models instead of the copy constructor.
    */
-  virtual ItemTipoDisciplina*
+  virtual GrupoAtendimentoTatico*
   _clone (::xml_schema::flags f = 0,
           ::xml_schema::container* c = 0) const;
 
@@ -12173,7 +4884,7 @@ class ItemTipoDisciplina: public ::xml_schema::type
    * @brief Destructor.
    */
   virtual 
-  ~ItemTipoDisciplina ();
+  ~GrupoAtendimentoTatico ();
 
   // Implementation.
   //
@@ -12186,198 +4897,7 @@ class ItemTipoDisciplina: public ::xml_schema::type
          ::xml_schema::flags);
 
   protected:
-  ::xsd::cxx::tree::one< id_type > id_;
-  ::xsd::cxx::tree::one< nome_type > nome_;
-
-  //@endcond
-};
-
-/**
- * @brief Class corresponding to the %ItemTipoCurso schema type.
- *
- * @nosubgrouping
- */
-class ItemTipoCurso: public ::xml_schema::type
-{
-  public:
-  /**
-   * @name id
-   *
-   * @brief Accessor and modifier functions for the %id
-   * required element.
-   */
-  //@{
-
-  /**
-   * @brief Element type.
-   */
-  typedef ::xml_schema::int_ id_type;
-
-  /**
-   * @brief Element traits type.
-   */
-  typedef ::xsd::cxx::tree::traits< id_type, char > id_traits;
-
-  /**
-   * @brief Return a read-only (constant) reference to the element.
-   *
-   * @return A constant reference to the element.
-   */
-  const id_type&
-  id () const;
-
-  /**
-   * @brief Return a read-write reference to the element.
-   *
-   * @return A reference to the element.
-   */
-  id_type&
-  id ();
-
-  /**
-   * @brief Set the element value.
-   *
-   * @param x A new value to set.
-   *
-   * This function makes a copy of its argument and sets it as
-   * the new value of the element.
-   */
-  void
-  id (const id_type& x);
-
-  //@}
-
-  /**
-   * @name nome
-   *
-   * @brief Accessor and modifier functions for the %nome
-   * required element.
-   */
-  //@{
-
-  /**
-   * @brief Element type.
-   */
-  typedef ::xml_schema::string nome_type;
-
-  /**
-   * @brief Element traits type.
-   */
-  typedef ::xsd::cxx::tree::traits< nome_type, char > nome_traits;
-
-  /**
-   * @brief Return a read-only (constant) reference to the element.
-   *
-   * @return A constant reference to the element.
-   */
-  const nome_type&
-  nome () const;
-
-  /**
-   * @brief Return a read-write reference to the element.
-   *
-   * @return A reference to the element.
-   */
-  nome_type&
-  nome ();
-
-  /**
-   * @brief Set the element value.
-   *
-   * @param x A new value to set.
-   *
-   * This function makes a copy of its argument and sets it as
-   * the new value of the element.
-   */
-  void
-  nome (const nome_type& x);
-
-  /**
-   * @brief Set the element value without copying.
-   *
-   * @param p A new value to use.
-   *
-   * This function will try to use the passed value directly instead
-   * of making a copy.
-   */
-  void
-  nome (::std::auto_ptr< nome_type > p);
-
-  //@}
-
-  /**
-   * @name Constructors
-   */
-  //@{
-
-  /**
-   * @brief Create an instance from the ultimate base and
-   * initializers for required elements and attributes.
-   */
-  ItemTipoCurso (const id_type&,
-                 const nome_type&);
-
-  /**
-   * @brief Create an instance from a DOM element.
-   *
-   * @param e A DOM element to extract the data from.
-   * @param f Flags to create the new instance with.
-   * @param c A pointer to the object that will contain the new
-   * instance.
-   */
-  ItemTipoCurso (const ::xercesc::DOMElement& e,
-                 ::xml_schema::flags f = 0,
-                 ::xml_schema::container* c = 0);
-
-  /**
-   * @brief Copy constructor.
-   *
-   * @param x An instance to make a copy of.
-   * @param f Flags to create the copy with.
-   * @param c A pointer to the object that will contain the copy.
-   *
-   * For polymorphic object models use the @c _clone function instead.
-   */
-  ItemTipoCurso (const ItemTipoCurso& x,
-                 ::xml_schema::flags f = 0,
-                 ::xml_schema::container* c = 0);
-
-  /**
-   * @brief Copy the instance polymorphically.
-   *
-   * @param f Flags to create the copy with.
-   * @param c A pointer to the object that will contain the copy.
-   * @return A pointer to the dynamically allocated copy.
-   *
-   * This function ensures that the dynamic type of the instance is
-   * used for copying and should be used for polymorphic object
-   * models instead of the copy constructor.
-   */
-  virtual ItemTipoCurso*
-  _clone (::xml_schema::flags f = 0,
-          ::xml_schema::container* c = 0) const;
-
-  //@}
-
-  /**
-   * @brief Destructor.
-   */
-  virtual 
-  ~ItemTipoCurso ();
-
-  // Implementation.
-  //
-
-  //@cond
-
-  protected:
-  void
-  parse (::xsd::cxx::xml::dom::parser< char >&,
-         ::xml_schema::flags);
-
-  protected:
-  ::xsd::cxx::tree::one< id_type > id_;
-  ::xsd::cxx::tree::one< nome_type > nome_;
+  AtendimentoTatico_sequence AtendimentoTatico_;
 
   //@endcond
 };
@@ -12391,38 +4911,40 @@ class TriedaOutput: public ::xml_schema::type
 {
   public:
   /**
-   * @name oferecimentos
+   * @name atendimentos1
    *
-   * @brief Accessor and modifier functions for the %oferecimentos
+   * @brief Accessor and modifier functions for the %atendimentos1
    * required element.
+   *
+   * lista dos atendimentos retornados pelo resolvedor matem?tico
    */
   //@{
 
   /**
    * @brief Element type.
    */
-  typedef ::GrupoOferecimento oferecimentos_type;
+  typedef ::GrupoAtendimento atendimentos1_type;
 
   /**
    * @brief Element traits type.
    */
-  typedef ::xsd::cxx::tree::traits< oferecimentos_type, char > oferecimentos_traits;
+  typedef ::xsd::cxx::tree::traits< atendimentos1_type, char > atendimentos1_traits;
 
   /**
    * @brief Return a read-only (constant) reference to the element.
    *
    * @return A constant reference to the element.
    */
-  const oferecimentos_type&
-  oferecimentos () const;
+  const atendimentos1_type&
+  atendimentos1 () const;
 
   /**
    * @brief Return a read-write reference to the element.
    *
    * @return A reference to the element.
    */
-  oferecimentos_type&
-  oferecimentos ();
+  atendimentos1_type&
+  atendimentos1 ();
 
   /**
    * @brief Set the element value.
@@ -12433,7 +4955,7 @@ class TriedaOutput: public ::xml_schema::type
    * the new value of the element.
    */
   void
-  oferecimentos (const oferecimentos_type& x);
+  atendimentos1 (const atendimentos1_type& x);
 
   /**
    * @brief Set the element value without copying.
@@ -12444,7 +4966,68 @@ class TriedaOutput: public ::xml_schema::type
    * of making a copy.
    */
   void
-  oferecimentos (::std::auto_ptr< oferecimentos_type > p);
+  atendimentos1 (::std::auto_ptr< atendimentos1_type > p);
+
+  //@}
+
+  /**
+   * @name atendimentos2
+   *
+   * @brief Accessor and modifier functions for the %atendimentos2
+   * required element.
+   *
+   * lista de todos os atendimentos realizados em cada campus que foi
+   * considerado no planejamento
+   */
+  //@{
+
+  /**
+   * @brief Element type.
+   */
+  typedef ::GrupoAtendimentoCampus atendimentos2_type;
+
+  /**
+   * @brief Element traits type.
+   */
+  typedef ::xsd::cxx::tree::traits< atendimentos2_type, char > atendimentos2_traits;
+
+  /**
+   * @brief Return a read-only (constant) reference to the element.
+   *
+   * @return A constant reference to the element.
+   */
+  const atendimentos2_type&
+  atendimentos2 () const;
+
+  /**
+   * @brief Return a read-write reference to the element.
+   *
+   * @return A reference to the element.
+   */
+  atendimentos2_type&
+  atendimentos2 ();
+
+  /**
+   * @brief Set the element value.
+   *
+   * @param x A new value to set.
+   *
+   * This function makes a copy of its argument and sets it as
+   * the new value of the element.
+   */
+  void
+  atendimentos2 (const atendimentos2_type& x);
+
+  /**
+   * @brief Set the element value without copying.
+   *
+   * @param p A new value to use.
+   *
+   * This function will try to use the passed value directly instead
+   * of making a copy.
+   */
+  void
+  atendimentos2 (::std::auto_ptr< atendimentos2_type > p);
 
   //@}
 
@@ -12457,7 +5040,8 @@ class TriedaOutput: public ::xml_schema::type
    * @brief Create an instance from the ultimate base and
    * initializers for required elements and attributes.
    */
-  TriedaOutput (const oferecimentos_type&);
+  TriedaOutput (const atendimentos1_type&,
+                const atendimentos2_type&);
 
   /**
    * @brief Create an instance from the ultimate base and
@@ -12467,7 +5051,8 @@ class TriedaOutput: public ::xml_schema::type
    * This constructor will try to use the passed values directly
    * instead of making copies.
    */
-  TriedaOutput (::std::auto_ptr< oferecimentos_type >&);
+  TriedaOutput (::std::auto_ptr< atendimentos1_type >&,
+                ::std::auto_ptr< atendimentos2_type >&);
 
   /**
    * @brief Create an instance from a DOM element.
@@ -12528,221 +5113,76 @@ class TriedaOutput: public ::xml_schema::type
          ::xml_schema::flags);
 
   protected:
-  ::xsd::cxx::tree::one< oferecimentos_type > oferecimentos_;
+  ::xsd::cxx::tree::one< atendimentos1_type > atendimentos1_;
+  ::xsd::cxx::tree::one< atendimentos2_type > atendimentos2_;
 
   //@endcond
-};
-
-/**
- * @brief Class corresponding to the %unidadeCurriculo schema type.
- *
- * @nosubgrouping
- */
-class unidadeCurriculo: public ::ItemUnidadeCurriculo
-{
-  public:
-  /**
-   * @name Constructors
-   */
-  //@{
-
-  /**
-   * @brief Create an instance from the ultimate base and
-   * initializers for required elements and attributes.
-   */
-  unidadeCurriculo (const turno_type&,
-                    const curriculo_type&);
-
-  /**
-   * @brief Create an instance from the ultimate base and
-   * initializers for required elements and attributes
-   * (auto_ptr version).
-   *
-   * This constructor will try to use the passed values directly
-   * instead of making copies.
-   */
-  unidadeCurriculo (::std::auto_ptr< turno_type >&,
-                    ::std::auto_ptr< curriculo_type >&);
-
-  /**
-   * @brief Create an instance from a DOM element.
-   *
-   * @param e A DOM element to extract the data from.
-   * @param f Flags to create the new instance with.
-   * @param c A pointer to the object that will contain the new
-   * instance.
-   */
-  unidadeCurriculo (const ::xercesc::DOMElement& e,
-                    ::xml_schema::flags f = 0,
-                    ::xml_schema::container* c = 0);
-
-  /**
-   * @brief Copy constructor.
-   *
-   * @param x An instance to make a copy of.
-   * @param f Flags to create the copy with.
-   * @param c A pointer to the object that will contain the copy.
-   *
-   * For polymorphic object models use the @c _clone function instead.
-   */
-  unidadeCurriculo (const unidadeCurriculo& x,
-                    ::xml_schema::flags f = 0,
-                    ::xml_schema::container* c = 0);
-
-  /**
-   * @brief Copy the instance polymorphically.
-   *
-   * @param f Flags to create the copy with.
-   * @param c A pointer to the object that will contain the copy.
-   * @return A pointer to the dynamically allocated copy.
-   *
-   * This function ensures that the dynamic type of the instance is
-   * used for copying and should be used for polymorphic object
-   * models instead of the copy constructor.
-   */
-  virtual unidadeCurriculo*
-  _clone (::xml_schema::flags f = 0,
-          ::xml_schema::container* c = 0) const;
-
-  //@}
-
-  /**
-   * @brief Destructor.
-   */
-  virtual 
-  ~unidadeCurriculo ();
 };
 
 #include <iosfwd>
 
 ::std::ostream&
-operator<< (::std::ostream&, const ItemProfessorDisciplina&);
+operator<< (::std::ostream&, const ItemAtendimento&);
 
 ::std::ostream&
-operator<< (::std::ostream&, const GrupoProfessorDisciplina&);
+operator<< (::std::ostream&, const GrupoAtendimento&);
 
 ::std::ostream&
-operator<< (::std::ostream&, const ItemProfessor&);
+operator<< (::std::ostream&, const ItemTatico&);
 
 ::std::ostream&
-operator<< (::std::ostream&, const GrupoProfessor&);
+operator<< (::std::ostream&, const ItemOperacional&);
 
 ::std::ostream&
-operator<< (::std::ostream&, const ItemDivisaoCreditos&);
+operator<< (::std::ostream&, const ItemAtendimentoCampus&);
 
 ::std::ostream&
-operator<< (::std::ostream&, const GrupoDivisaoCreditos&);
+operator<< (::std::ostream&, const ItemAtendimentoUnidade&);
 
 ::std::ostream&
-operator<< (::std::ostream&, const GrupoDeslocamento&);
+operator<< (::std::ostream&, const ItemAtendimentoSala&);
 
 ::std::ostream&
-operator<< (::std::ostream&, const ItemDeslocamento&);
+operator<< (::std::ostream&, const ItemAtendimentoDiaSemana&);
 
 ::std::ostream&
-operator<< (::std::ostream&, const GrupoUnidade&);
+operator<< (::std::ostream&, const ItemAtendimentoTurno&);
 
 ::std::ostream&
-operator<< (::std::ostream&, const ItemUnidade&);
+operator<< (::std::ostream&, const ItemAtendimentoHorarioAula&);
 
 ::std::ostream&
-operator<< (::std::ostream&, const ItemDisciplina&);
+operator<< (::std::ostream&, const ItemAtendimentoOferta&);
 
 ::std::ostream&
-operator<< (::std::ostream&, const GrupoDisciplina&);
+operator<< (::std::ostream&, const ItemAtendimentoTatico&);
 
 ::std::ostream&
-operator<< (::std::ostream&, const ItemCalendario&);
+operator<< (::std::ostream&, const GrupoAtendimentoCampus&);
 
 ::std::ostream&
-operator<< (::std::ostream&, const ItemHorarioDisponivel&);
+operator<< (::std::ostream&, const GrupoAtendimentoUnidade&);
 
 ::std::ostream&
-operator<< (::std::ostream&, const GrupoHorarioDisponivel&);
+operator<< (::std::ostream&, const GrupoAtendimentoSala&);
 
 ::std::ostream&
-operator<< (::std::ostream&, const ItemHorarioAula&);
+operator<< (::std::ostream&, const GrupoAtendimentoDiaSemana&);
 
 ::std::ostream&
-operator<< (::std::ostream&, const GrupoHorarioAula&);
+operator<< (::std::ostream&, const GrupoAtendimentoTurno&);
 
 ::std::ostream&
-operator<< (::std::ostream&, const ItemTurno&);
+operator<< (::std::ostream&, const GrupoAtendimentoHorarioAula&);
 
 ::std::ostream&
-operator<< (::std::ostream&, const GrupoTurno&);
+operator<< (::std::ostream&, const GrupoAtendimentoOferta&);
 
 ::std::ostream&
-operator<< (::std::ostream&, const ItemSala&);
-
-::std::ostream&
-operator<< (::std::ostream&, const ItemDisciplinaPeriodo&);
-
-::std::ostream&
-operator<< (::std::ostream&, const ItemCurriculo&);
-
-::std::ostream&
-operator<< (::std::ostream&, const GrupoCurriculo&);
-
-::std::ostream&
-operator<< (::std::ostream&, const GrupoSala&);
-
-::std::ostream&
-operator<< (::std::ostream&, const ItemCurso&);
-
-::std::ostream&
-operator<< (::std::ostream&, const GrupoCurso&);
-
-::std::ostream&
-operator<< (::std::ostream&, const ItemDemanda&);
-
-::std::ostream&
-operator<< (::std::ostream&, const GrupoDemanda&);
-
-::std::ostream&
-operator<< (::std::ostream&, const ItemUnidadeCurriculo&);
-
-::std::ostream&
-operator<< (::std::ostream&, const GrupoUnidadeCurriculo&);
-
-::std::ostream&
-operator<< (::std::ostream&, const ItemAlocacao&);
-
-::std::ostream&
-operator<< (::std::ostream&, const ItemOferecimento&);
-
-::std::ostream&
-operator<< (::std::ostream&, const GrupoOferecimento&);
-
-::std::ostream&
-operator<< (::std::ostream&, const ItemTurma&);
-
-::std::ostream&
-operator<< (::std::ostream&, const GrupoTurma&);
-
-::std::ostream&
-operator<< (::std::ostream&, const ItemTipoSala&);
-
-::std::ostream&
-operator<< (::std::ostream&, const ItemTipoContrato&);
-
-::std::ostream&
-operator<< (::std::ostream&, const ItemTipoTitulacao&);
-
-::std::ostream&
-operator<< (::std::ostream&, const ItemAreaTitulacao&);
-
-::std::ostream&
-operator<< (::std::ostream&, const ItemTipoDisciplina&);
-
-::std::ostream&
-operator<< (::std::ostream&, const ItemTipoCurso&);
+operator<< (::std::ostream&, const GrupoAtendimentoTatico&);
 
 ::std::ostream&
 operator<< (::std::ostream&, const TriedaOutput&);
-
-::std::ostream&
-operator<< (::std::ostream&, const unidadeCurriculo&);
 
 #include <iosfwd>
 
@@ -12759,133 +5199,67 @@ operator<< (::std::ostream&, const unidadeCurriculo&);
 #include <xsd/cxx/xml/dom/auto-ptr.hxx>
 
 void
-operator<< (::xercesc::DOMElement&, const ItemProfessorDisciplina&);
+operator<< (::xercesc::DOMElement&, const ItemAtendimento&);
 
 void
-operator<< (::xercesc::DOMElement&, const GrupoProfessorDisciplina&);
+operator<< (::xercesc::DOMElement&, const GrupoAtendimento&);
 
 void
-operator<< (::xercesc::DOMElement&, const ItemProfessor&);
+operator<< (::xercesc::DOMElement&, const ItemTatico&);
 
 void
-operator<< (::xercesc::DOMElement&, const GrupoProfessor&);
+operator<< (::xercesc::DOMElement&, const ItemOperacional&);
 
 void
-operator<< (::xercesc::DOMElement&, const ItemDivisaoCreditos&);
+operator<< (::xercesc::DOMElement&, const ItemAtendimentoCampus&);
 
 void
-operator<< (::xercesc::DOMElement&, const GrupoDivisaoCreditos&);
+operator<< (::xercesc::DOMElement&, const ItemAtendimentoUnidade&);
 
 void
-operator<< (::xercesc::DOMElement&, const GrupoDeslocamento&);
+operator<< (::xercesc::DOMElement&, const ItemAtendimentoSala&);
 
 void
-operator<< (::xercesc::DOMElement&, const ItemDeslocamento&);
+operator<< (::xercesc::DOMElement&, const ItemAtendimentoDiaSemana&);
 
 void
-operator<< (::xercesc::DOMElement&, const GrupoUnidade&);
+operator<< (::xercesc::DOMElement&, const ItemAtendimentoTurno&);
 
 void
-operator<< (::xercesc::DOMElement&, const ItemUnidade&);
+operator<< (::xercesc::DOMElement&, const ItemAtendimentoHorarioAula&);
 
 void
-operator<< (::xercesc::DOMElement&, const ItemDisciplina&);
+operator<< (::xercesc::DOMElement&, const ItemAtendimentoOferta&);
 
 void
-operator<< (::xercesc::DOMElement&, const GrupoDisciplina&);
+operator<< (::xercesc::DOMElement&, const ItemAtendimentoTatico&);
 
 void
-operator<< (::xercesc::DOMElement&, const ItemCalendario&);
+operator<< (::xercesc::DOMElement&, const GrupoAtendimentoCampus&);
 
 void
-operator<< (::xercesc::DOMElement&, const ItemHorarioDisponivel&);
+operator<< (::xercesc::DOMElement&, const GrupoAtendimentoUnidade&);
 
 void
-operator<< (::xercesc::DOMElement&, const GrupoHorarioDisponivel&);
+operator<< (::xercesc::DOMElement&, const GrupoAtendimentoSala&);
 
 void
-operator<< (::xercesc::DOMElement&, const ItemHorarioAula&);
+operator<< (::xercesc::DOMElement&, const GrupoAtendimentoDiaSemana&);
 
 void
-operator<< (::xercesc::DOMElement&, const GrupoHorarioAula&);
+operator<< (::xercesc::DOMElement&, const GrupoAtendimentoTurno&);
 
 void
-operator<< (::xercesc::DOMElement&, const ItemTurno&);
+operator<< (::xercesc::DOMElement&, const GrupoAtendimentoHorarioAula&);
 
 void
-operator<< (::xercesc::DOMElement&, const GrupoTurno&);
+operator<< (::xercesc::DOMElement&, const GrupoAtendimentoOferta&);
 
 void
-operator<< (::xercesc::DOMElement&, const ItemSala&);
-
-void
-operator<< (::xercesc::DOMElement&, const ItemDisciplinaPeriodo&);
-
-void
-operator<< (::xercesc::DOMElement&, const ItemCurriculo&);
-
-void
-operator<< (::xercesc::DOMElement&, const GrupoCurriculo&);
-
-void
-operator<< (::xercesc::DOMElement&, const GrupoSala&);
-
-void
-operator<< (::xercesc::DOMElement&, const ItemCurso&);
-
-void
-operator<< (::xercesc::DOMElement&, const GrupoCurso&);
-
-void
-operator<< (::xercesc::DOMElement&, const ItemDemanda&);
-
-void
-operator<< (::xercesc::DOMElement&, const GrupoDemanda&);
-
-void
-operator<< (::xercesc::DOMElement&, const ItemUnidadeCurriculo&);
-
-void
-operator<< (::xercesc::DOMElement&, const GrupoUnidadeCurriculo&);
-
-void
-operator<< (::xercesc::DOMElement&, const ItemAlocacao&);
-
-void
-operator<< (::xercesc::DOMElement&, const ItemOferecimento&);
-
-void
-operator<< (::xercesc::DOMElement&, const GrupoOferecimento&);
-
-void
-operator<< (::xercesc::DOMElement&, const ItemTurma&);
-
-void
-operator<< (::xercesc::DOMElement&, const GrupoTurma&);
-
-void
-operator<< (::xercesc::DOMElement&, const ItemTipoSala&);
-
-void
-operator<< (::xercesc::DOMElement&, const ItemTipoContrato&);
-
-void
-operator<< (::xercesc::DOMElement&, const ItemTipoTitulacao&);
-
-void
-operator<< (::xercesc::DOMElement&, const ItemAreaTitulacao&);
-
-void
-operator<< (::xercesc::DOMElement&, const ItemTipoDisciplina&);
-
-void
-operator<< (::xercesc::DOMElement&, const ItemTipoCurso&);
+operator<< (::xercesc::DOMElement&, const GrupoAtendimentoTatico&);
 
 void
 operator<< (::xercesc::DOMElement&, const TriedaOutput&);
-
-void
-operator<< (::xercesc::DOMElement&, const unidadeCurriculo&);
 
 #include <xsd/cxx/post.hxx>
 

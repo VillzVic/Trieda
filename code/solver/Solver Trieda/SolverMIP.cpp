@@ -940,8 +940,6 @@ int SolverMIP::cria_restricao_turmas_bloco(void)
       {
          ITERA_GGROUP(it_bloco,problemData->blocos,BlocoCurricular) 
          {
-
-
             c.reset();
             c.setType(Constraint::C_TURMAS_BLOCO);
 

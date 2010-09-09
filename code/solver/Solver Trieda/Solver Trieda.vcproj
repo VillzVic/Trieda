@@ -228,6 +228,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\Campus.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\Curriculo.cpp"
 					>
 				</File>
@@ -248,11 +252,19 @@
 					>
 				</File>
 				<File
+					RelativePath=".\Horario.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\HorarioAula.cpp"
 					>
 				</File>
 				<File
 					RelativePath=".\HorarioDisponivel.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\NivelDificuldade.cpp"
 					>
 				</File>
 				<File
@@ -385,6 +397,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\Campus.h"
+					>
+				</File>
+				<File
 					RelativePath=".\Curriculo.h"
 					>
 				</File>
@@ -405,6 +421,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\Horario.h"
+					>
+				</File>
+				<File
 					RelativePath=".\HorarioAula.h"
 					>
 				</File>
@@ -418,6 +438,10 @@
 				</File>
 				<File
 					RelativePath=".\Magisterio.h"
+					>
+				</File>
+				<File
+					RelativePath=".\NivelDificuldade.h"
 					>
 				</File>
 				<File
