@@ -49,13 +49,9 @@ public class Endereco implements java.io.Serializable {
     @Size(max = 25)
     private String municipio;
 
-    @Column(name = "END_LOGRADOURO")
+    @Column(name = "BAIRRO")
     @Size(max = 25)
-    private String logradouro;
-
-    @Column(name = "END_NUMERO")
-    @Size(max = 25)
-    private String numero;
+    private String bairro;
 
 	public Campus getCampus() {
         return this.campus;
@@ -89,20 +85,12 @@ public class Endereco implements java.io.Serializable {
         this.municipio = municipio;
     }
 
-	public String getLogradouro() {
-        return this.logradouro;
+	public String getBairro() {
+        return this.bairro;
     }
 
-	public void setLogradouro(String logradouro) {
-        this.logradouro = logradouro;
-    }
-
-	public String getNumero() {
-        return this.numero;
-    }
-
-	public void setNumero(String numero) {
-        this.numero = numero;
+	public void setBairro(String bairro) {
+        this.bairro = bairro;
     }
 
 	public String toString() {
@@ -113,8 +101,7 @@ public class Endereco implements java.io.Serializable {
         sb.append("Estado: ").append(getEstado()).append(", ");
         sb.append("Cidade: ").append(getCidade()).append(", ");
         sb.append("Municipio: ").append(getMunicipio()).append(", ");
-        sb.append("Logradouro: ").append(getLogradouro()).append(", ");
-        sb.append("Numero: ").append(getNumero());
+        sb.append("Bairro: ").append(getBairro());
         return sb.toString();
     }
 
