@@ -24,7 +24,7 @@ public class SimpleToolBar extends ToolBar {
 		editButton = createButton("Editar", Resources.SIMPLE_CRUD.edit16());
 		removeButton = createButton("Remover", Resources.SIMPLE_CRUD.del16());
 		importExcelButton = createButton("Exportar para Excel", Resources.SIMPLE_CRUD.excelExport16());
-		exportExcelButton = createButton("Importar para Excel", Resources.SIMPLE_CRUD.excelImport16());
+		exportExcelButton = createButton("Importar de Excel", Resources.SIMPLE_CRUD.excelImport16());
 
 		add(newButton);
 		add(editButton);
