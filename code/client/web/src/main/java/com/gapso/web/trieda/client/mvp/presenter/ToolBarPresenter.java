@@ -7,7 +7,7 @@ import com.extjs.gxt.ui.client.widget.Component;
 import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.menu.MenuItem;
-import com.gapso.web.trieda.client.mvp.view.CalendariosView;
+import com.gapso.web.trieda.client.mvp.view.SemanasLetivaView;
 import com.gapso.web.trieda.client.mvp.view.CampiView;
 import com.gapso.web.trieda.client.mvp.view.HorariosAulaView;
 import com.gapso.web.trieda.client.mvp.view.SalasView;
@@ -23,7 +23,7 @@ public class ToolBarPresenter implements Presenter {
 		Button getCampusNewButton();
 		
 		MenuItem getTurnosListMenuItem();
-		MenuItem getCalendariosListMenuItem();
+		MenuItem getSemanasLetivaListMenuItem();
 		MenuItem getHorariosAulaListMenuItem();
 		MenuItem getCampiListMenuItem();
 		MenuItem getUnidadesListMenuItem();
@@ -60,10 +60,10 @@ public class ToolBarPresenter implements Presenter {
 				presenter.go(gTab);
 			}
 		});
-		toolBar.getCalendariosListMenuItem().addSelectionListener(new SelectionListener<MenuEvent>() {
+		toolBar.getSemanasLetivaListMenuItem().addSelectionListener(new SelectionListener<MenuEvent>() {
 			@Override
 			public void componentSelected(MenuEvent ce) {
-				Presenter presenter = new CalendariosPresenter(new CalendariosView());
+				Presenter presenter = new SemanasLetivaPresenter(new SemanasLetivaView());
 				presenter.go(gTab);
 			}
 		});

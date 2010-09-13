@@ -23,7 +23,7 @@ public class Services {
 	public static final String DIVISOESCREDITOS = "divisoescreditos";
 	public static final String HORARIOSAULA = "horariosaula";
 	public static final String AREASTITULACAO = "areasTitulacao";
-	public static final String CALENDARIOS = "calendarios";
+	public static final String SEMANASLETIVA = "semanasLetiva";
 	
 	public static Object get(String id) {
 		if(id.equals(CAMPI)) return campi();
@@ -44,7 +44,7 @@ public class Services {
 		if(id.equals(DIVISOESCREDITOS)) return divisoesCreditos();
 		if(id.equals(HORARIOSAULA)) return horariosAula();
 		if(id.equals(AREASTITULACAO)) return areasTitulacao();
-		if(id.equals(CALENDARIOS)) return calendarios();
+		if(id.equals(SEMANASLETIVA)) return semanasLetiva();
 		return null;
 	}
 	
@@ -210,11 +210,11 @@ public class Services {
 		return service;
 	}
 	
-	public static CalendariosServiceAsync calendarios() {
-		CalendariosServiceAsync service = (CalendariosServiceAsync) Registry.get(CALENDARIOS);
+	public static SemanasLetivaServiceAsync semanasLetiva() {
+		SemanasLetivaServiceAsync service = (SemanasLetivaServiceAsync) Registry.get(SEMANASLETIVA);
 		if(service == null) {
-			service = GWT.create(CalendariosService.class);
-			Registry.register(CALENDARIOS, service);
+			service = GWT.create(SemanasLetivaService.class);
+			Registry.register(SEMANASLETIVA, service);
 		}
 		return service;
 	}

@@ -14,9 +14,9 @@ import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.gapso.web.trieda.client.AppEvents;
-import com.gapso.web.trieda.client.mvp.model.CalendarioDTO;
-import com.gapso.web.trieda.client.mvp.view.CalendarioFormView;
-import com.gapso.web.trieda.client.services.CalendariosServiceAsync;
+import com.gapso.web.trieda.client.mvp.model.SemanaLetivaDTO;
+import com.gapso.web.trieda.client.mvp.view.SemanaLetivaFormView;
+import com.gapso.web.trieda.client.services.SemanasLetivaServiceAsync;
 import com.gapso.web.trieda.client.services.Services;
 import com.gapso.web.trieda.client.util.view.GTab;
 import com.gapso.web.trieda.client.util.view.GTabItem;
@@ -24,7 +24,7 @@ import com.gapso.web.trieda.client.util.view.SimpleGrid;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
 
-public class CalendariosPresenter implements Presenter {
+public class SemanasLetivaPresenter implements Presenter {
 
 	public interface Display {
 		Button getNewButton();
@@ -37,23 +37,23 @@ public class CalendariosPresenter implements Presenter {
 		TextField<String> getDescricaoBuscaTextField();
 		Button getSubmitBuscaButton();
 		Button getResetBuscaButton();
-		SimpleGrid<CalendarioDTO> getGrid();
+		SimpleGrid<SemanaLetivaDTO> getGrid();
 		Component getComponent();
-		void setProxy(RpcProxy<PagingLoadResult<CalendarioDTO>> proxy);
+		void setProxy(RpcProxy<PagingLoadResult<SemanaLetivaDTO>> proxy);
 	}
 	private Display display; 
 	
-	public CalendariosPresenter(Display display) {
+	public SemanasLetivaPresenter(Display display) {
 		this.display = display;
 		configureProxy();
 		setListeners();
 	}
 
 	private void configureProxy() {
-		final CalendariosServiceAsync service = Services.calendarios();
-		RpcProxy<PagingLoadResult<CalendarioDTO>> proxy = new RpcProxy<PagingLoadResult<CalendarioDTO>>() {
+		final SemanasLetivaServiceAsync service = Services.semanasLetiva();
+		RpcProxy<PagingLoadResult<SemanaLetivaDTO>> proxy = new RpcProxy<PagingLoadResult<SemanaLetivaDTO>>() {
 			@Override
-			public void load(Object loadConfig, AsyncCallback<PagingLoadResult<CalendarioDTO>> callback) {
+			public void load(Object loadConfig, AsyncCallback<PagingLoadResult<SemanaLetivaDTO>> callback) {
 //				service.getList((PagingLoadConfig)loadConfig, callback);
 				String codigo = display.getCodigoBuscaTextField().getValue();
 				String descricao = display.getDescricaoBuscaTextField().getValue();
@@ -67,23 +67,23 @@ public class CalendariosPresenter implements Presenter {
 		display.getNewButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
 			@Override
 			public void componentSelected(ButtonEvent ce) {
-				Presenter presenter = new CalendarioFormPresenter(new CalendarioFormView(new CalendarioDTO()), display.getGrid());
+				Presenter presenter = new SemanaLetivaFormPresenter(new SemanaLetivaFormView(new SemanaLetivaDTO()), display.getGrid());
 				presenter.go(null);
 			}
 		});
 		display.getEditButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
 			@Override
 			public void componentSelected(ButtonEvent ce) {
-				CalendarioDTO dto = display.getGrid().getGrid().getSelectionModel().getSelectedItem();
-				Presenter presenter = new CalendarioFormPresenter(new CalendarioFormView(dto), display.getGrid());
+				SemanaLetivaDTO dto = display.getGrid().getGrid().getSelectionModel().getSelectedItem();
+				Presenter presenter = new SemanaLetivaFormPresenter(new SemanaLetivaFormView(dto), display.getGrid());
 				presenter.go(null);
 			}
 		});
 		display.getRemoveButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
 			@Override
 			public void componentSelected(ButtonEvent ce) {
-				List<CalendarioDTO> list = display.getGrid().getGrid().getSelectionModel().getSelectedItems();
-				final CalendariosServiceAsync service = Services.calendarios();
+				List<SemanaLetivaDTO> list = display.getGrid().getGrid().getSelectionModel().getSelectedItems();
+				final SemanasLetivaServiceAsync service = Services.semanasLetiva();
 				service.remove(list, new AsyncCallback<Void>() {
 					@Override
 					public void onFailure(Throwable caught) {
@@ -100,7 +100,7 @@ public class CalendariosPresenter implements Presenter {
 		display.getDiasDeAulaButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
 			@Override
 			public void componentSelected(ButtonEvent ce) {
-				Dispatcher.forwardEvent(AppEvents.CalendarioView);
+				Dispatcher.forwardEvent(AppEvents.SemanaLetivaView);
 			}
 		});
 		display.getResetBuscaButton().addSelectionListener(new SelectionListener<ButtonEvent>(){

@@ -36,7 +36,7 @@ public class AppEvents {
 	public static final EventType AreaTitulacaoList = new EventType();
 	public static final EventType CursoAreaTitulacaoList = new EventType();
 	
-	public static final EventType CalendarioView = new EventType();
+	public static final EventType SemanaLetivaView = new EventType();
 	
 	public static final EventType EquivalenciaList = new EventType();
 	

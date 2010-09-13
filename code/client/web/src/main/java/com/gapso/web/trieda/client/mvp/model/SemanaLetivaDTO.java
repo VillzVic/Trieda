@@ -3,14 +3,14 @@ package com.gapso.web.trieda.client.mvp.model;
 import com.extjs.gxt.ui.client.data.BaseModel;
 
 
-public class CalendarioDTO extends BaseModel {
+public class SemanaLetivaDTO extends BaseModel {
 
 	private static final long serialVersionUID = -5419695301010396477L;
 	
-	public CalendarioDTO() {
+	public SemanaLetivaDTO() {
 	}
 
-	public CalendarioDTO(Long id, String codigo, String descricao, Integer version) {
+	public SemanaLetivaDTO(Long id, String codigo, String descricao, Integer version) {
 		setId(id);
 		setCodigo(codigo);
 		setDescricao(descricao);

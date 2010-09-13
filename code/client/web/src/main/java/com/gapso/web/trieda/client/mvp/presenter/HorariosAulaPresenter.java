@@ -13,13 +13,13 @@ import com.extjs.gxt.ui.client.widget.Info;
 import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.TextField;
-import com.gapso.web.trieda.client.mvp.model.CalendarioDTO;
+import com.gapso.web.trieda.client.mvp.model.SemanaLetivaDTO;
 import com.gapso.web.trieda.client.mvp.model.HorarioAulaDTO;
 import com.gapso.web.trieda.client.mvp.model.TurnoDTO;
 import com.gapso.web.trieda.client.mvp.view.HorarioAulaFormView;
 import com.gapso.web.trieda.client.services.HorariosAulaServiceAsync;
 import com.gapso.web.trieda.client.services.Services;
-import com.gapso.web.trieda.client.util.view.CalendarioComboBox;
+import com.gapso.web.trieda.client.util.view.SemanaLetivaComboBox;
 import com.gapso.web.trieda.client.util.view.GTab;
 import com.gapso.web.trieda.client.util.view.GTabItem;
 import com.gapso.web.trieda.client.util.view.SimpleGrid;
@@ -37,7 +37,7 @@ public class HorariosAulaPresenter implements Presenter {
 		Button getImportExcelButton();
 		Button getExportExcelButton();
 		TextField<String> getHorarioBuscaTextField();
-		CalendarioComboBox getCalendarioBuscaComboBox();
+		SemanaLetivaComboBox getSemanaLetivaBuscaComboBox();
 		TurnoComboBox getTurnoBuscaComboBox();
 		Button getSubmitBuscaButton();
 		Button getResetBuscaButton();
@@ -63,8 +63,8 @@ public class HorariosAulaPresenter implements Presenter {
 				String horarioString = display.getHorarioBuscaTextField().getValue();
 				Date horario = (horarioString == null)? null : df.parse(horarioString);
 				TurnoDTO turnoDTO = display.getTurnoBuscaComboBox().getValue();
-				CalendarioDTO calendarioDTO = display.getCalendarioBuscaComboBox().getValue();
-				service.getBuscaList(calendarioDTO, turnoDTO, horario, (PagingLoadConfig)loadConfig, callback);
+				SemanaLetivaDTO semanaLetivaDTO = display.getSemanaLetivaBuscaComboBox().getValue();
+				service.getBuscaList(semanaLetivaDTO, turnoDTO, horario, (PagingLoadConfig)loadConfig, callback);
 			}
 		};
 		display.setProxy(proxy);
@@ -108,7 +108,7 @@ public class HorariosAulaPresenter implements Presenter {
 			@Override
 			public void componentSelected(ButtonEvent ce) {
 				display.getHorarioBuscaTextField().setValue(null);
-				display.getCalendarioBuscaComboBox().setValue(null);
+				display.getSemanaLetivaBuscaComboBox().setValue(null);
 				display.getTurnoBuscaComboBox().setValue(null);
 				display.getGrid().updateList();
 			}

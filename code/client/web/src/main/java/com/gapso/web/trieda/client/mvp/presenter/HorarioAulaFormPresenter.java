@@ -9,7 +9,7 @@ import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.gapso.web.trieda.client.mvp.model.HorarioAulaDTO;
 import com.gapso.web.trieda.client.services.HorariosAulaServiceAsync;
 import com.gapso.web.trieda.client.services.Services;
-import com.gapso.web.trieda.client.util.view.CalendarioComboBox;
+import com.gapso.web.trieda.client.util.view.SemanaLetivaComboBox;
 import com.gapso.web.trieda.client.util.view.SimpleGrid;
 import com.gapso.web.trieda.client.util.view.SimpleModal;
 import com.gapso.web.trieda.client.util.view.TurnoComboBox;
@@ -21,7 +21,7 @@ public class HorarioAulaFormPresenter implements Presenter {
 
 	public interface Display {
 		Button getSalvarButton();
-		CalendarioComboBox getCalendarioComboBox();
+		SemanaLetivaComboBox getSemanaLetivaComboBox();
 		TurnoComboBox getTurnoComboBox();
 		TextField<String> getHorarioInicioTextField();
 		HorarioAulaDTO getHorarioAulaDTO();
@@ -69,7 +69,7 @@ public class HorarioAulaFormPresenter implements Presenter {
 	
 	private HorarioAulaDTO getDTO() {
 		HorarioAulaDTO dto = display.getHorarioAulaDTO();
-		dto.setCalendarioId(display.getCalendarioComboBox().getSelection().get(0).getId());
+		dto.setSemanaLetivaId(display.getSemanaLetivaComboBox().getSelection().get(0).getId());
 		dto.setTurnoId(display.getTurnoComboBox().getSelection().get(0).getId());
 		DateTimeFormat df = DateTimeFormat.getFormat("HH:mm");
 		dto.setInicio(df.parse(display.getHorarioInicioTextField().getValue()));

@@ -5,21 +5,21 @@ import com.extjs.gxt.ui.client.widget.form.FormButtonBinding;
 import com.extjs.gxt.ui.client.widget.form.FormPanel;
 import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.extjs.gxt.ui.client.widget.layout.FormData;
-import com.gapso.web.trieda.client.mvp.model.CalendarioDTO;
-import com.gapso.web.trieda.client.mvp.presenter.CalendarioFormPresenter;
+import com.gapso.web.trieda.client.mvp.model.SemanaLetivaDTO;
+import com.gapso.web.trieda.client.mvp.presenter.SemanaLetivaFormPresenter;
 import com.gapso.web.trieda.client.util.resources.Resources;
 import com.gapso.web.trieda.client.util.view.SimpleModal;
 
-public class CalendarioFormView extends MyComposite implements CalendarioFormPresenter.Display {
+public class SemanaLetivaFormView extends MyComposite implements SemanaLetivaFormPresenter.Display {
 
 	private SimpleModal simpleModal;
 	private FormPanel formPanel;
 	private TextField<String> codigoTF;
 	private TextField<String> descricaoTF;
-	private CalendarioDTO calendarioDTO;
+	private SemanaLetivaDTO semanaLetivaDTO;
 	
-	public CalendarioFormView(CalendarioDTO calendarioDTO) {
-		this.calendarioDTO = calendarioDTO;
+	public SemanaLetivaFormView(SemanaLetivaDTO semanaLetivaDTO) {
+		this.semanaLetivaDTO = semanaLetivaDTO;
 		initUI();
 		// TODO
 //		initComponent(simpleModal);
@@ -27,8 +27,8 @@ public class CalendarioFormView extends MyComposite implements CalendarioFormPre
 	}
 	
 	private void initUI() {
-		String title = (calendarioDTO.getId() == null)? "Inserção de Calendário" : "Edição de Calendário";
-		simpleModal = new SimpleModal(title, Resources.DEFAULTS.calendario16());
+		String title = (semanaLetivaDTO.getId() == null)? "Inserção de Semana Letiva" : "Edição de Semana Letiva";
+		simpleModal = new SimpleModal(title, Resources.DEFAULTS.semanaLetiva16());
 		simpleModal.setHeight(138);
 		createForm();
 		simpleModal.setContent(formPanel);
@@ -41,7 +41,7 @@ public class CalendarioFormView extends MyComposite implements CalendarioFormPre
 		
 		codigoTF = new TextField<String>();
 		codigoTF.setName("codigo");
-		codigoTF.setValue(calendarioDTO.getCodigo());
+		codigoTF.setValue(semanaLetivaDTO.getCodigo());
 		codigoTF.setFieldLabel("Codigo");
 		codigoTF.setAllowBlank(false);
 		codigoTF.setMinLength(3);
@@ -50,7 +50,7 @@ public class CalendarioFormView extends MyComposite implements CalendarioFormPre
 		
 		descricaoTF = new TextField<String>();
 		descricaoTF.setName("descricao");
-		descricaoTF.setValue(calendarioDTO.getDescricao());
+		descricaoTF.setValue(semanaLetivaDTO.getDescricao());
 		descricaoTF.setFieldLabel("Descrição");
 		descricaoTF.setMaxLength(255);
 		formPanel.add(descricaoTF, formData);
@@ -84,8 +84,8 @@ public class CalendarioFormView extends MyComposite implements CalendarioFormPre
 	}
 
 	@Override
-	public CalendarioDTO getCalendarioDTO() {
-		return calendarioDTO;
+	public SemanaLetivaDTO getSemanaLetivaDTO() {
+		return semanaLetivaDTO;
 	}
 	
 

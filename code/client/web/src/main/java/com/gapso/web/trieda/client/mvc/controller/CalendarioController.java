@@ -11,7 +11,7 @@ public class CalendarioController extends Controller {
 	private CalendarioView calendarioView;
 	
 	public CalendarioController() {
-		registerEventTypes(AppEvents.CalendarioView);
+		registerEventTypes(AppEvents.SemanaLetivaView);
 	}
 
 	private void onView(AppEvent event) {
@@ -22,7 +22,7 @@ public class CalendarioController extends Controller {
 	@Override
 	public void handleEvent(AppEvent event) {
 		EventType type = event.getType();
-		if (type == AppEvents.CalendarioView) onView(event);
+		if (type == AppEvents.SemanaLetivaView) onView(event);
 	}
 
 }

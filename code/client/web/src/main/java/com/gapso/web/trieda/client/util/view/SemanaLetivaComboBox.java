@@ -12,24 +12,24 @@ import com.extjs.gxt.ui.client.data.RpcProxy;
 import com.extjs.gxt.ui.client.event.Listener;
 import com.extjs.gxt.ui.client.store.ListStore;
 import com.extjs.gxt.ui.client.widget.form.ComboBox;
-import com.gapso.web.trieda.client.mvp.model.CalendarioDTO;
-import com.gapso.web.trieda.client.services.CalendariosServiceAsync;
+import com.gapso.web.trieda.client.mvp.model.SemanaLetivaDTO;
+import com.gapso.web.trieda.client.services.SemanasLetivaServiceAsync;
 import com.gapso.web.trieda.client.services.Services;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-public class CalendarioComboBox extends ComboBox<CalendarioDTO> {
+public class SemanaLetivaComboBox extends ComboBox<SemanaLetivaDTO> {
 
-	private ListStore<CalendarioDTO> store;
+	private ListStore<SemanaLetivaDTO> store;
 	
-	public CalendarioComboBox() {
-		final CalendariosServiceAsync service = Services.calendarios();
-		RpcProxy<ListLoadResult<CalendarioDTO>> proxy = new RpcProxy<ListLoadResult<CalendarioDTO>>() {
+	public SemanaLetivaComboBox() {
+		final SemanasLetivaServiceAsync service = Services.semanasLetiva();
+		RpcProxy<ListLoadResult<SemanaLetivaDTO>> proxy = new RpcProxy<ListLoadResult<SemanaLetivaDTO>>() {
 			@Override
-			public void load(Object loadConfig, AsyncCallback<ListLoadResult<CalendarioDTO>> callback) {
+			public void load(Object loadConfig, AsyncCallback<ListLoadResult<SemanaLetivaDTO>> callback) {
 				service.getList((BasePagingLoadConfig)loadConfig, callback);
 			}
 		};
-		ListLoader<BaseListLoadResult<CalendarioDTO>> load = new BaseListLoader<BaseListLoadResult<CalendarioDTO>>(proxy);
+		ListLoader<BaseListLoadResult<SemanaLetivaDTO>> load = new BaseListLoader<BaseListLoadResult<SemanaLetivaDTO>>(proxy);
 		load.addListener(Loader.BeforeLoad, new Listener<LoadEvent>() {
 			public void handleEvent(LoadEvent be) {
 				
@@ -37,7 +37,7 @@ public class CalendarioComboBox extends ComboBox<CalendarioDTO> {
 				be.<ModelData> getConfig().set("limit", 10);
 			}
 		});
-		store = new ListStore<CalendarioDTO>(load);
+		store = new ListStore<SemanaLetivaDTO>(load);
 		setDisplayField("codigo");
 		setStore(store);
 		setHideTrigger(true);  

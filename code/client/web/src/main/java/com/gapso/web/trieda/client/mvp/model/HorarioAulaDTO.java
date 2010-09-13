@@ -12,10 +12,10 @@ public class HorarioAulaDTO extends BaseModel {
 	public HorarioAulaDTO() {
 	}
 
-	public HorarioAulaDTO(Long id, Long calendarioId, String calendarioString, String turnoString, Long turnoId, Date inicio, Date fim, Integer version) {
+	public HorarioAulaDTO(Long id, Long semanaLetivaId, String semanaLetivaString, String turnoString, Long turnoId, Date inicio, Date fim, Integer version) {
 		setId(id);
-		setCalendarioId(calendarioId);
-		setCalendarioString(calendarioString);
+		setSemanaLetivaId(semanaLetivaId);
+		setSemanaLetivaString(semanaLetivaString);
 		setTurnoId(turnoId);
 		setTurnoString(turnoString);
 		setInicio(inicio);
@@ -37,18 +37,18 @@ public class HorarioAulaDTO extends BaseModel {
 		return get("version");
 	}
 
-	public void setCalendarioId(Long value) {
-		set("calendarioId", value);
+	public void setSemanaLetivaId(Long value) {
+		set("semanaLetivaId", value);
 	}
-	public Long getCalendarioId() {
-		return get("calendarioId");
+	public Long getSemanaLetivaId() {
+		return get("semanaLetivaId");
 	}
 	
-	public void setCalendarioString(String value) {
-		set("calendarioString", value);
+	public void setSemanaLetivaString(String value) {
+		set("semanaLetivaString", value);
 	}
-	public String getCalendarioString() {
-		return get("calendarioString");
+	public String getSemanaLetivaString() {
+		return get("semanaLetivaString");
 	}
 
 	public void setTurnoId(Long value) {

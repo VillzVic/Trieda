@@ -14,18 +14,18 @@ import com.extjs.gxt.ui.client.widget.grid.ColumnConfig;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayout;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
 import com.extjs.gxt.ui.client.widget.toolbar.SeparatorToolItem;
-import com.gapso.web.trieda.client.mvp.model.CalendarioDTO;
-import com.gapso.web.trieda.client.mvp.presenter.CalendariosPresenter;
+import com.gapso.web.trieda.client.mvp.model.SemanaLetivaDTO;
+import com.gapso.web.trieda.client.mvp.presenter.SemanasLetivaPresenter;
 import com.gapso.web.trieda.client.util.resources.Resources;
 import com.gapso.web.trieda.client.util.view.GTabItem;
 import com.gapso.web.trieda.client.util.view.SimpleFilter;
 import com.gapso.web.trieda.client.util.view.SimpleGrid;
 import com.gapso.web.trieda.client.util.view.SimpleToolBar;
 
-public class CalendariosView extends MyComposite implements CalendariosPresenter.Display {
+public class SemanasLetivaView extends MyComposite implements SemanasLetivaPresenter.Display {
 
 	private SimpleToolBar toolBar;
-	private SimpleGrid<CalendarioDTO> gridPanel;
+	private SimpleGrid<SemanaLetivaDTO> gridPanel;
 	private SimpleFilter filter;
 	private TextField<String> codigoBuscaTextField;
 	private TextField<String> descricaoBuscaTextField;
@@ -33,7 +33,7 @@ public class CalendariosView extends MyComposite implements CalendariosPresenter
 	private GTabItem tabItem;
 	private Button diasDeAulaButton;
 	
-	public CalendariosView() {
+	public SemanasLetivaView() {
 		initUI();
 	}
 	
@@ -48,7 +48,7 @@ public class CalendariosView extends MyComposite implements CalendariosPresenter
 	}
 	
 	private void createTabItem() {
-		tabItem = new GTabItem("Calendarios", Resources.DEFAULTS.calendario16());
+		tabItem = new GTabItem("Semana Letiva", Resources.DEFAULTS.semanaLetiva16());
 		tabItem.setContent(panel);
 	}
 	
@@ -64,7 +64,7 @@ public class CalendariosView extends MyComposite implements CalendariosPresenter
 		BorderLayoutData bld = new BorderLayoutData(LayoutRegion.CENTER);
 	    bld.setMargins(new Margins(5, 5, 5, 5));
 	    
-	    gridPanel = new SimpleGrid<CalendarioDTO>(getColumnList());
+	    gridPanel = new SimpleGrid<SemanaLetivaDTO>(getColumnList());
 	    panel.add(gridPanel, bld);
 	}
 
@@ -117,7 +117,7 @@ public class CalendariosView extends MyComposite implements CalendariosPresenter
 	}
 	
 	@Override
-	public SimpleGrid<CalendarioDTO> getGrid() {
+	public SimpleGrid<SemanaLetivaDTO> getGrid() {
 		return gridPanel;
 	}
 
@@ -127,7 +127,7 @@ public class CalendariosView extends MyComposite implements CalendariosPresenter
 	}
 
 	@Override
-	public void setProxy(RpcProxy<PagingLoadResult<CalendarioDTO>> proxy) {
+	public void setProxy(RpcProxy<PagingLoadResult<SemanaLetivaDTO>> proxy) {
 		gridPanel.setProxy(proxy);
 	}
 

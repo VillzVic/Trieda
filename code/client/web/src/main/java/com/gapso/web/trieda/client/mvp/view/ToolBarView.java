@@ -27,7 +27,7 @@ public class ToolBarView extends MyComposite implements ToolBarPresenter.Display
 	private Button cenariosBt;
 	private Button parametrosBt;
 	private MenuItem turnosListMI;
-	private MenuItem calendariosListMI;
+	private MenuItem semanasLetivaListMI;
 	private MenuItem horariosAulaListMI;
 	private MenuItem campiListMI;
 	private MenuItem unidadesListMI;
@@ -110,8 +110,8 @@ public class ToolBarView extends MyComposite implements ToolBarPresenter.Display
 		
 		turnosListMI = createMenuItem("Turnos", Resources.DEFAULTS.turnos16());
 		outros.add(turnosListMI);
-		calendariosListMI = createMenuItem("Calendarios", Resources.DEFAULTS.calendario16());
-		outros.add(calendariosListMI);
+		semanasLetivaListMI = createMenuItem("Semanas Letiva", Resources.DEFAULTS.semanaLetiva16());
+		outros.add(semanasLetivaListMI);
 		horariosAulaListMI = createMenuItem("Horários de Aula", Resources.DEFAULTS.horarioAula16());
 		outros.add(horariosAulaListMI);
 		campiListMI = createMenuItem("Campi", Resources.DEFAULTS.campi16());
@@ -481,8 +481,8 @@ public class ToolBarView extends MyComposite implements ToolBarPresenter.Display
 		return turnosListMI;
 	}
 	@Override
-	public MenuItem getCalendariosListMenuItem() {
-		return calendariosListMI;
+	public MenuItem getSemanasLetivaListMenuItem() {
+		return semanasLetivaListMI;
 	}
 	@Override
 	public MenuItem getHorariosAulaListMenuItem() {

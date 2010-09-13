@@ -6,29 +6,29 @@ import com.extjs.gxt.ui.client.widget.Info;
 import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.TextField;
-import com.gapso.web.trieda.client.mvp.model.CalendarioDTO;
-import com.gapso.web.trieda.client.services.CalendariosServiceAsync;
+import com.gapso.web.trieda.client.mvp.model.SemanaLetivaDTO;
+import com.gapso.web.trieda.client.services.SemanasLetivaServiceAsync;
 import com.gapso.web.trieda.client.services.Services;
 import com.gapso.web.trieda.client.util.view.SimpleGrid;
 import com.gapso.web.trieda.client.util.view.SimpleModal;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
 
-public class CalendarioFormPresenter implements Presenter {
+public class SemanaLetivaFormPresenter implements Presenter {
 
 	public interface Display {
 		Button getSalvarButton();
 		TextField<String> getCodigoTextField();
 		TextField<String> getDescricaoTextField();
-		CalendarioDTO getCalendarioDTO();
+		SemanaLetivaDTO getSemanaLetivaDTO();
 		boolean isValid();
 		
 		SimpleModal getSimpleModal();
 	}
-	private SimpleGrid<CalendarioDTO> gridPanel;
+	private SimpleGrid<SemanaLetivaDTO> gridPanel;
 	private Display display;
 	
-	public CalendarioFormPresenter(Display display, SimpleGrid<CalendarioDTO> gridPanel) {
+	public SemanaLetivaFormPresenter(Display display, SimpleGrid<SemanaLetivaDTO> gridPanel) {
 		this.gridPanel = gridPanel;
 		this.display = display;
 		setListeners();
@@ -39,7 +39,7 @@ public class CalendarioFormPresenter implements Presenter {
 			@Override
 			public void componentSelected(ButtonEvent ce) {
 				if(isValid()) {
-					final CalendariosServiceAsync service = Services.calendarios();
+					final SemanasLetivaServiceAsync service = Services.semanasLetiva();
 					service.save(getDTO(), new AsyncCallback<Void>() {
 						@Override
 						public void onFailure(Throwable caught) {
@@ -63,8 +63,8 @@ public class CalendarioFormPresenter implements Presenter {
 		return display.isValid();
 	}
 	
-	private CalendarioDTO getDTO() {
-		CalendarioDTO dto = display.getCalendarioDTO();
+	private SemanaLetivaDTO getDTO() {
+		SemanaLetivaDTO dto = display.getSemanaLetivaDTO();
 		dto.setCodigo(display.getCodigoTextField().getValue());
 		dto.setDescricao(display.getDescricaoTextField().getValue());
 		return dto;

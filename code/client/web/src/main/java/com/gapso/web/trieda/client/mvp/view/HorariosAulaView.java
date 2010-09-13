@@ -16,7 +16,7 @@ import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
 import com.gapso.web.trieda.client.mvp.model.HorarioAulaDTO;
 import com.gapso.web.trieda.client.mvp.presenter.HorariosAulaPresenter;
 import com.gapso.web.trieda.client.util.resources.Resources;
-import com.gapso.web.trieda.client.util.view.CalendarioComboBox;
+import com.gapso.web.trieda.client.util.view.SemanaLetivaComboBox;
 import com.gapso.web.trieda.client.util.view.GTabItem;
 import com.gapso.web.trieda.client.util.view.SimpleFilter;
 import com.gapso.web.trieda.client.util.view.SimpleGrid;
@@ -30,7 +30,7 @@ public class HorariosAulaView extends MyComposite implements HorariosAulaPresent
 	private SimpleGrid<HorarioAulaDTO> gridPanel;
 	private SimpleFilter filter;
 	private TextField<String> horarioBuscaTextField;
-	private CalendarioComboBox calendarioBuscaComboBox;
+	private SemanaLetivaComboBox semanaLetivaBuscaComboBox;
 	private TurnoComboBox turnoBuscaComboBox;
 	private ContentPanel panel;
 	private GTabItem tabItem;
@@ -52,7 +52,7 @@ public class HorariosAulaView extends MyComposite implements HorariosAulaPresent
 	}
 	
 	private void createTabItem() {
-		tabItem = new GTabItem("Horário de Aula", Resources.DEFAULTS.calendario16());
+		tabItem = new GTabItem("Horário de Aula", Resources.DEFAULTS.semanaLetiva16());
 		tabItem.setContent(panel);
 	}
 	
@@ -71,7 +71,7 @@ public class HorariosAulaView extends MyComposite implements HorariosAulaPresent
 
 	public List<ColumnConfig> getColumnList() {
 		List<ColumnConfig> list = new ArrayList<ColumnConfig>();
-		list.add(new ColumnConfig("calendarioString", "Calendário", 100));
+		list.add(new ColumnConfig("semanaLetivaString", "Semana Letiva", 100));
 		list.add(new ColumnConfig("turnoString", "Turno", 100));
 		ColumnConfig inicioColumn = new ColumnConfig("inicio", "Horário Início", 100);
 		inicioColumn.setDateTimeFormat(dateTimeFormat);
@@ -88,14 +88,14 @@ public class HorariosAulaView extends MyComposite implements HorariosAulaPresent
 		bld.setCollapsible(true);
 		
 		filter = new SimpleFilter();
-		calendarioBuscaComboBox = new CalendarioComboBox();
-		calendarioBuscaComboBox.setFieldLabel("Calendário");
+		semanaLetivaBuscaComboBox = new SemanaLetivaComboBox();
+		semanaLetivaBuscaComboBox.setFieldLabel("Semana Letiva");
 		turnoBuscaComboBox = new TurnoComboBox();
 		turnoBuscaComboBox.setFieldLabel("Turno");
 		horarioBuscaTextField = new TextField<String>();
 		horarioBuscaTextField.setFieldLabel("Horário início");
 		
-		filter.addField(calendarioBuscaComboBox);
+		filter.addField(semanaLetivaBuscaComboBox);
 		filter.addField(turnoBuscaComboBox);
 		filter.addField(horarioBuscaTextField);
 		
@@ -143,8 +143,8 @@ public class HorariosAulaView extends MyComposite implements HorariosAulaPresent
 	}
 
 	@Override
-	public CalendarioComboBox getCalendarioBuscaComboBox() {
-		return calendarioBuscaComboBox;
+	public SemanaLetivaComboBox getSemanaLetivaBuscaComboBox() {
+		return semanaLetivaBuscaComboBox;
 	}
 
 	@Override

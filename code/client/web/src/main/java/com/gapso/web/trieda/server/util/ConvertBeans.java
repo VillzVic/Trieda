@@ -2,7 +2,7 @@ package com.gapso.web.trieda.server.util;
 
 import java.util.Calendar;
 
-import com.gapso.trieda.domain.Calendario;
+import com.gapso.trieda.domain.SemanaLetiva;
 import com.gapso.trieda.domain.Campus;
 import com.gapso.trieda.domain.HorarioAula;
 import com.gapso.trieda.domain.Sala;
@@ -10,7 +10,7 @@ import com.gapso.trieda.domain.TipoSala;
 import com.gapso.trieda.domain.Turno;
 import com.gapso.trieda.domain.Unidade;
 import com.gapso.trieda.misc.Estados;
-import com.gapso.web.trieda.client.mvp.model.CalendarioDTO;
+import com.gapso.web.trieda.client.mvp.model.SemanaLetivaDTO;
 import com.gapso.web.trieda.client.mvp.model.CampusDTO;
 import com.gapso.web.trieda.client.mvp.model.HorarioAulaDTO;
 import com.gapso.web.trieda.client.mvp.model.SalaDTO;
@@ -150,8 +150,8 @@ public class ConvertBeans {
 	}
 
 	// CALENDÁRIO
-	public static Calendario toCalendario(CalendarioDTO dto) {
-		Calendario domain = new Calendario();
+	public static SemanaLetiva toSemanaLetiva(SemanaLetivaDTO dto) {
+		SemanaLetiva domain = new SemanaLetiva();
 		domain.setId(dto.getId());
 		domain.setVersion(dto.getVersion());
 		domain.setCodigo(dto.getCodigo());
@@ -159,8 +159,8 @@ public class ConvertBeans {
 		return domain;
 	}
 
-	public static CalendarioDTO toCalendarioDTO(Calendario domain) {
-		CalendarioDTO dto = new CalendarioDTO();
+	public static SemanaLetivaDTO toSemanaLetivaDTO(SemanaLetiva domain) {
+		SemanaLetivaDTO dto = new SemanaLetivaDTO();
 		dto.setId(domain.getId());
 		dto.setVersion(domain.getVersion());
 		dto.setCodigo(domain.getCodigo());
@@ -173,8 +173,8 @@ public class ConvertBeans {
 		HorarioAula domain = new HorarioAula();
 		domain.setId(dto.getId());
 		domain.setVersion(dto.getVersion());
-		Calendario calendario = Calendario.find(dto.getCalendarioId());
-		domain.setCalendario(calendario);
+		SemanaLetiva calendario = SemanaLetiva.find(dto.getSemanaLetivaId());
+		domain.setSemanaLetiva(calendario);
 		Turno turno = Turno.find(dto.getTurnoId());
 		domain.setTurno(turno);
 		domain.setHorario(dto.getInicio());
@@ -185,8 +185,8 @@ public class ConvertBeans {
 		HorarioAulaDTO dto = new HorarioAulaDTO();
 		dto.setId(domain.getId());
 		dto.setVersion(domain.getVersion());
-		dto.setCalendarioId(domain.getCalendario().getId());
-		dto.setCalendarioString(domain.getCalendario().getCodigo());
+		dto.setSemanaLetivaId(domain.getSemanaLetiva().getId());
+		dto.setSemanaLetivaString(domain.getSemanaLetiva().getCodigo());
 		Turno turno = domain.getTurno();
 		dto.setTurnoId(turno.getId());
 		dto.setTurnoString(turno.getNome());

@@ -33,9 +33,9 @@ import org.springframework.transaction.annotation.Transactional;
 public class HorarioAula implements java.io.Serializable {
 
     @NotNull
-    @ManyToOne(targetEntity = Calendario.class)
-    @JoinColumn(name = "CAL_ID")
-    private Calendario calendario;
+    @ManyToOne(targetEntity = SemanaLetiva.class)
+    @JoinColumn(name = "SLE_ID")
+    private SemanaLetiva semanaLetiva;
 
     @NotNull
     @ManyToOne(targetEntity = Turno.class)
@@ -52,7 +52,7 @@ public class HorarioAula implements java.io.Serializable {
         StringBuilder sb = new StringBuilder();
         sb.append("Id: ").append(getId()).append(", ");
         sb.append("Version: ").append(getVersion()).append(", ");
-        sb.append("Calendario: ").append(getCalendario()).append(", ");
+        sb.append("Semana LEtiva: ").append(getSemanaLetiva()).append(", ");
         sb.append("Turno: ").append(getTurno()).append(", ");
         sb.append("Horario: ").append(getHorario());
         return sb.toString();
@@ -148,26 +148,26 @@ public class HorarioAula implements java.io.Serializable {
     }
 
     @SuppressWarnings("unchecked")
-    public static List<HorarioAula> findHorarioAulasByHorarioAndCalendarioAndTurno(Calendario calendario, Turno turno, Date horario, int firstResult, int maxResults, String orderBy) {
+    public static List<HorarioAula> findHorarioAulasByHorarioAndSemanaLetivaAndTurno(SemanaLetiva semanaLetiva, Turno turno, Date horario, int firstResult, int maxResults, String orderBy) {
     	orderBy = (orderBy != null) ? "ORDER BY o." + orderBy : "";
 
         String horarioQuery = (horario == null)? "" : "o.horario = :horario AND";
-        String calendarioQuery = (calendario == null)? "" : "o.calendario = :calendario AND";
+        String semanaLetivaQuery = (semanaLetiva == null)? "" : "o.semanaLetiva = :semanaLetiva AND";
         String turnoQuery = (turno == null)? "" : "o.turno = :turno AND";
         
-        Query q = entityManager().createQuery("SELECT o FROM HorarioAula o WHERE "+horarioQuery+" "+calendarioQuery+" "+turnoQuery+" 1=1 " +orderBy);
+        Query q = entityManager().createQuery("SELECT o FROM HorarioAula o WHERE "+horarioQuery+" "+semanaLetivaQuery+" "+turnoQuery+" 1=1 " +orderBy);
         if(horario != null) q.setParameter("horario", horario);
-        if(calendario != null) q.setParameter("calendario", calendario);
+        if(semanaLetiva != null) q.setParameter("semanaLetiva", semanaLetiva);
         if(turno != null) q.setParameter("turno", turno);
         return q.setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
     
-    public Calendario getCalendario() {
-        return this.calendario;
+    public SemanaLetiva getSemanaLetiva() {
+        return this.semanaLetiva;
     }
 
-    public void setCalendario(Calendario calendario) {
-        this.calendario = calendario;
+    public void setSemanaLetiva(SemanaLetiva semanaLetiva) {
+        this.semanaLetiva = semanaLetiva;
     }
 
     public Turno getTurno() {

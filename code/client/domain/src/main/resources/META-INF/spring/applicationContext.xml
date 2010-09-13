@@ -64,7 +64,7 @@
     <bean class="com.gapso.trieda.domain.Sessao"					id="sessaoBean"						scope="prototype"></bean>
     <bean class="com.gapso.trieda.domain.Turno"						id="turnoBean"						scope="prototype"></bean>
     <bean class="com.gapso.trieda.domain.Cenario"					id="cenarioBean"					scope="prototype"></bean>
-    <bean class="com.gapso.trieda.domain.Calendario"				id="calendarioBean"					scope="prototype"></bean>
+    <bean class="com.gapso.trieda.domain.SemanaLetiva"				id="semanaLetivaBean"				scope="prototype"></bean>
     <bean class="com.gapso.trieda.domain.Campus"					id="campusBean"						scope="prototype"></bean>
     <bean class="com.gapso.trieda.domain.Unidade"					id="unidadeBean"					scope="prototype"></bean>
     <bean class="com.gapso.trieda.domain.TipoContrato"				id="tipoContratoBean"				scope="prototype"></bean>

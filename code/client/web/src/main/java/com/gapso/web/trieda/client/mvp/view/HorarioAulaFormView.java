@@ -8,7 +8,7 @@ import com.extjs.gxt.ui.client.widget.layout.FormData;
 import com.gapso.web.trieda.client.mvp.model.HorarioAulaDTO;
 import com.gapso.web.trieda.client.mvp.presenter.HorarioAulaFormPresenter;
 import com.gapso.web.trieda.client.util.resources.Resources;
-import com.gapso.web.trieda.client.util.view.CalendarioComboBox;
+import com.gapso.web.trieda.client.util.view.SemanaLetivaComboBox;
 import com.gapso.web.trieda.client.util.view.SimpleModal;
 import com.gapso.web.trieda.client.util.view.TurnoComboBox;
 import com.google.gwt.i18n.client.DateTimeFormat;
@@ -17,7 +17,7 @@ public class HorarioAulaFormView extends MyComposite implements HorarioAulaFormP
 
 	private SimpleModal simpleModal;
 	private FormPanel formPanel;
-	private CalendarioComboBox calendarioCB;
+	private SemanaLetivaComboBox semanaLetivaCB;
 	private TurnoComboBox turnoCB;
 	private TextField<String> horarioInicioTF;
 	private HorarioAulaDTO horarioAulaDTO;
@@ -45,11 +45,11 @@ public class HorarioAulaFormView extends MyComposite implements HorarioAulaFormP
 		formPanel = new FormPanel();
 		formPanel.setHeaderVisible(false);
 		
-		calendarioCB = new CalendarioComboBox();
-		calendarioCB.setName("calendario");
-		calendarioCB.setFieldLabel("Calendário");
-		calendarioCB.setAllowBlank(false);
-		formPanel.add(calendarioCB, formData);
+		semanaLetivaCB = new SemanaLetivaComboBox();
+		semanaLetivaCB.setName("semanaLetiva");
+		semanaLetivaCB.setFieldLabel("Semana Letiva");
+		semanaLetivaCB.setAllowBlank(false);
+		formPanel.add(semanaLetivaCB, formData);
 		
 		turnoCB = new TurnoComboBox();
 		turnoCB.setName("turno");
@@ -81,8 +81,8 @@ public class HorarioAulaFormView extends MyComposite implements HorarioAulaFormP
 	}
 
 	@Override
-	public CalendarioComboBox getCalendarioComboBox() {
-		return calendarioCB;
+	public SemanaLetivaComboBox getSemanaLetivaComboBox() {
+		return semanaLetivaCB;
 	}
 
 	@Override

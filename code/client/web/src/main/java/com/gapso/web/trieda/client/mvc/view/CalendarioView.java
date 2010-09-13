@@ -18,14 +18,14 @@ public class CalendarioView extends View {
 	}
 	
 	private void initView() {
-		CalendarioModal calendarioModal = new CalendarioModal("Dias de Aula do Calendário");
+		CalendarioModal calendarioModal = new CalendarioModal("Dias e Horários de Aula");
 		calendarioModal.show();
 	}
 	
 	@Override
 	protected void handleEvent(AppEvent event) {
 		EventType type = event.getType();
-		if(type == AppEvents.CalendarioView) initView();  
+		if(type == AppEvents.SemanaLetivaView) initView();  
 	}
 
 }

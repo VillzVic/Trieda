@@ -27,9 +27,9 @@ import org.springframework.transaction.annotation.Transactional;
 @Entity
 @RooJavaBean
 @RooToString
-@RooEntity(identifierColumn = "CAL_ID")
-@Table(name = "CALENDARIOS")
-public class Calendario implements java.io.Serializable {
+@RooEntity(identifierColumn = "SLE_ID")
+@Table(name = "SEMANA_LETIVA")
+public class SemanaLetiva implements java.io.Serializable {
 
 	
 //  TODO  @NotNull
@@ -38,11 +38,11 @@ public class Calendario implements java.io.Serializable {
     private Cenario cenario;
 
     @NotNull
-    @Column(name = "CAL_CODIGO")
+    @Column(name = "SLE_CODIGO")
     @Size(min = 3, max = 20)
     private String codigo;
 
-    @Column(name = "CAL_DESCRICAO")
+    @Column(name = "SLE_DESCRICAO")
     @Size(max = 255)
     private String descricao;
 
@@ -77,7 +77,7 @@ public class Calendario implements java.io.Serializable {
 
 	@Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "CAL_ID")
+    @Column(name = "SLE_ID")
     private Long id;
 
 	@Version
@@ -112,7 +112,7 @@ public class Calendario implements java.io.Serializable {
         if (this.entityManager.contains(this)) {
             this.entityManager.remove(this);
         } else {
-            Calendario attached = this.entityManager.find(this.getClass(), this.id);
+            SemanaLetiva attached = this.entityManager.find(this.getClass(), this.id);
             this.entityManager.remove(attached);
         }
     }
@@ -124,44 +124,44 @@ public class Calendario implements java.io.Serializable {
     }
 
 	@Transactional
-    public Calendario merge() {
+    public SemanaLetiva merge() {
         if (this.entityManager == null) this.entityManager = entityManager();
-        Calendario merged = this.entityManager.merge(this);
+        SemanaLetiva merged = this.entityManager.merge(this);
         this.entityManager.flush();
         return merged;
     }
 
 	public static final EntityManager entityManager() {
-        EntityManager em = new Calendario().entityManager;
+        EntityManager em = new SemanaLetiva().entityManager;
         if (em == null) throw new IllegalStateException("Entity manager has not been injected (is the Spring Aspects JAR configured as an AJC/AJDT aspects library?)");
         return em;
     }
 
 	public static int count() {
-        return ((Number) entityManager().createQuery("select count(o) from Calendario o").getSingleResult()).intValue();
+        return ((Number) entityManager().createQuery("select count(o) from SemanaLetiva o").getSingleResult()).intValue();
     }
 
 	@SuppressWarnings("unchecked")
-    public static List<Calendario> findAll() {
-        return entityManager().createQuery("select o from Calendario o").getResultList();
+    public static List<SemanaLetiva> findAll() {
+        return entityManager().createQuery("select o from SemanaLetiva o").getResultList();
     }
 
-	public static Calendario find(Long id) {
+	public static SemanaLetiva find(Long id) {
         if (id == null) return null;
-        return entityManager().find(Calendario.class, id);
+        return entityManager().find(SemanaLetiva.class, id);
     }
 
-	public static List<Calendario> find(int firstResult, int maxResults) {
+	public static List<SemanaLetiva> find(int firstResult, int maxResults) {
 		return find(firstResult, maxResults, null);
 	}
 	@SuppressWarnings("unchecked")
-    public static List<Calendario> find(int firstResult, int maxResults, String orderBy) {
+    public static List<SemanaLetiva> find(int firstResult, int maxResults, String orderBy) {
 		orderBy = (orderBy != null)? "ORDER BY o."+orderBy : "";
-        return entityManager().createQuery("select o from Calendario o "+orderBy).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
+        return entityManager().createQuery("select o from SemanaLetiva o "+orderBy).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
 
     @SuppressWarnings("unchecked")
-    public static List<Calendario> findByCodigoLikeAndDescricaoLike(String codigo, String descricao, int firstResult, int maxResults, String orderBy) {
+    public static List<SemanaLetiva> findByCodigoLikeAndDescricaoLike(String codigo, String descricao, int firstResult, int maxResults, String orderBy) {
         codigo = (codigo == null)? "" : codigo;
         codigo = "%" + codigo.replace('*', '%') + "%";
         descricao = (descricao == null)? "" : descricao;
@@ -169,7 +169,7 @@ public class Calendario implements java.io.Serializable {
         
         EntityManager em = Turno.entityManager();
         orderBy = (orderBy != null) ? "ORDER BY o." + orderBy : "";
-        Query q = em.createQuery("SELECT o FROM Calendario o WHERE LOWER(o.codigo) LIKE LOWER(:codigo) AND LOWER(o.descricao) LIKE LOWER(:descricao) "+orderBy);
+        Query q = em.createQuery("SELECT o FROM SemanaLetiva o WHERE LOWER(o.codigo) LIKE LOWER(:codigo) AND LOWER(o.descricao) LIKE LOWER(:descricao) "+orderBy);
         q.setParameter("codigo", codigo);
         q.setParameter("descricao", descricao);
         return q.setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
