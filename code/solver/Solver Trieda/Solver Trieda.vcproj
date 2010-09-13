@@ -343,6 +343,10 @@
 					RelativePath=".\ProblemSolution.cpp"
 					>
 				</File>
+				<File
+					RelativePath=".\TRIEDA-OutputXSD.cpp"
+					>
+				</File>
 			</Filter>
 			<Filter
 				Name="Utility"
@@ -534,6 +538,10 @@
 				</File>
 				<File
 					RelativePath=".\ProblemSolution.h"
+					>
+				</File>
+				<File
+					RelativePath=".\TRIEDA-OutputXSD.h"
 					>
 				</File>
 			</Filter>

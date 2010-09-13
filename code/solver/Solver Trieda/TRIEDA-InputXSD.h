@@ -4307,42 +4307,40 @@ class ItemHorario: public ::xml_schema::type
 {
   public:
   /**
-   * @name diaSemana
+   * @name turnoId
    *
-   * @brief Accessor and modifier functions for the %diaSemana
+   * @brief Accessor and modifier functions for the %turnoId
    * required element.
    *
-   * um inteiro que represente um dia da semana. Os valores poss?veis s?o:
-   * (1 - Dom), (2 - Seg), (3 - Ter), (4 - Qua), (5 - Qua), (6 - Sex), (7 -
-   * SAb)
+   * identificador de um ItemTurno
    */
   //@{
 
   /**
    * @brief Element type.
    */
-  typedef ::xml_schema::int_ diaSemana_type;
+  typedef ::xml_schema::int_ turnoId_type;
 
   /**
    * @brief Element traits type.
    */
-  typedef ::xsd::cxx::tree::traits< diaSemana_type, char > diaSemana_traits;
+  typedef ::xsd::cxx::tree::traits< turnoId_type, char > turnoId_traits;
 
   /**
    * @brief Return a read-only (constant) reference to the element.
    *
    * @return A constant reference to the element.
    */
-  const diaSemana_type&
-  diaSemana () const;
+  const turnoId_type&
+  turnoId () const;
 
   /**
    * @brief Return a read-write reference to the element.
    *
    * @return A reference to the element.
    */
-  diaSemana_type&
-  diaSemana ();
+  turnoId_type&
+  turnoId ();
 
   /**
    * @brief Set the element value.
@@ -4353,7 +4351,7 @@ class ItemHorario: public ::xml_schema::type
    * the new value of the element.
    */
   void
-  diaSemana (const diaSemana_type& x);
+  turnoId (const turnoId_type& x);
 
   //@}
 
@@ -4407,40 +4405,42 @@ class ItemHorario: public ::xml_schema::type
   //@}
 
   /**
-   * @name turnoId
+   * @name diasSemana
    *
-   * @brief Accessor and modifier functions for the %turnoId
+   * @brief Accessor and modifier functions for the %diasSemana
    * required element.
    *
-   * identificador de um ItemTurno
+   * um inteiro que represente um dia da semana. Os valores poss?veis s?o:
+   * (1 - Dom), (2 - Seg), (3 - Ter), (4 - Qua), (5 - Qua), (6 - Sex), (7 -
+   * SAb)
    */
   //@{
 
   /**
    * @brief Element type.
    */
-  typedef ::xml_schema::int_ turnoId_type;
+  typedef ::GrupoDiaSemana diasSemana_type;
 
   /**
    * @brief Element traits type.
    */
-  typedef ::xsd::cxx::tree::traits< turnoId_type, char > turnoId_traits;
+  typedef ::xsd::cxx::tree::traits< diasSemana_type, char > diasSemana_traits;
 
   /**
    * @brief Return a read-only (constant) reference to the element.
    *
    * @return A constant reference to the element.
    */
-  const turnoId_type&
-  turnoId () const;
+  const diasSemana_type&
+  diasSemana () const;
 
   /**
    * @brief Return a read-write reference to the element.
    *
    * @return A reference to the element.
    */
-  turnoId_type&
-  turnoId ();
+  diasSemana_type&
+  diasSemana ();
 
   /**
    * @brief Set the element value.
@@ -4451,7 +4451,18 @@ class ItemHorario: public ::xml_schema::type
    * the new value of the element.
    */
   void
-  turnoId (const turnoId_type& x);
+  diasSemana (const diasSemana_type& x);
+
+  /**
+   * @brief Set the element value without copying.
+   *
+   * @param p A new value to use.
+   *
+   * This function will try to use the passed value directly instead
+   * of making a copy.
+   */
+  void
+  diasSemana (::std::auto_ptr< diasSemana_type > p);
 
   //@}
 
@@ -4464,9 +4475,21 @@ class ItemHorario: public ::xml_schema::type
    * @brief Create an instance from the ultimate base and
    * initializers for required elements and attributes.
    */
-  ItemHorario (const diaSemana_type&,
+  ItemHorario (const turnoId_type&,
                const horarioAulaId_type&,
-               const turnoId_type&);
+               const diasSemana_type&);
+
+  /**
+   * @brief Create an instance from the ultimate base and
+   * initializers for required elements and attributes
+   * (auto_ptr version).
+   *
+   * This constructor will try to use the passed values directly
+   * instead of making copies.
+   */
+  ItemHorario (const turnoId_type&,
+               const horarioAulaId_type&,
+               ::std::auto_ptr< diasSemana_type >&);
 
   /**
    * @brief Create an instance from a DOM element.
@@ -4527,9 +4550,9 @@ class ItemHorario: public ::xml_schema::type
          ::xml_schema::flags);
 
   protected:
-  ::xsd::cxx::tree::one< diaSemana_type > diaSemana_;
-  ::xsd::cxx::tree::one< horarioAulaId_type > horarioAulaId_;
   ::xsd::cxx::tree::one< turnoId_type > turnoId_;
+  ::xsd::cxx::tree::one< horarioAulaId_type > horarioAulaId_;
+  ::xsd::cxx::tree::one< diasSemana_type > diasSemana_;
 
   //@endcond
 };
@@ -8852,6 +8875,53 @@ class ItemOfertaCurso: public ::xml_schema::type
 {
   public:
   /**
+   * @name id
+   *
+   * @brief Accessor and modifier functions for the %id
+   * required element.
+   */
+  //@{
+
+  /**
+   * @brief Element type.
+   */
+  typedef ::xml_schema::int_ id_type;
+
+  /**
+   * @brief Element traits type.
+   */
+  typedef ::xsd::cxx::tree::traits< id_type, char > id_traits;
+
+  /**
+   * @brief Return a read-only (constant) reference to the element.
+   *
+   * @return A constant reference to the element.
+   */
+  const id_type&
+  id () const;
+
+  /**
+   * @brief Return a read-write reference to the element.
+   *
+   * @return A reference to the element.
+   */
+  id_type&
+  id ();
+
+  /**
+   * @brief Set the element value.
+   *
+   * @param x A new value to set.
+   *
+   * This function makes a copy of its argument and sets it as
+   * the new value of the element.
+   */
+  void
+  id (const id_type& x);
+
+  //@}
+
+  /**
    * @name curriculoId
    *
    * @brief Accessor and modifier functions for the %curriculoId
@@ -9058,7 +9128,8 @@ class ItemOfertaCurso: public ::xml_schema::type
    * @brief Create an instance from the ultimate base and
    * initializers for required elements and attributes.
    */
-  ItemOfertaCurso (const curriculoId_type&,
+  ItemOfertaCurso (const id_type&,
+                   const curriculoId_type&,
                    const cursoId_type&,
                    const turnoId_type&,
                    const campusId_type&);
@@ -9122,6 +9193,7 @@ class ItemOfertaCurso: public ::xml_schema::type
          ::xml_schema::flags);
 
   protected:
+  ::xsd::cxx::tree::one< id_type > id_;
   ::xsd::cxx::tree::one< curriculoId_type > curriculoId_;
   ::xsd::cxx::tree::one< cursoId_type > cursoId_;
   ::xsd::cxx::tree::one< turnoId_type > turnoId_;

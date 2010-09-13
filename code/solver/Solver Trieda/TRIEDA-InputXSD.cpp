@@ -1019,22 +1019,22 @@ salas (::std::auto_ptr< salas_type > x)
 // ItemHorario
 // 
 
-const ItemHorario::diaSemana_type& ItemHorario::
-diaSemana () const
+const ItemHorario::turnoId_type& ItemHorario::
+turnoId () const
 {
-  return this->diaSemana_.get ();
+  return this->turnoId_.get ();
 }
 
-ItemHorario::diaSemana_type& ItemHorario::
-diaSemana ()
+ItemHorario::turnoId_type& ItemHorario::
+turnoId ()
 {
-  return this->diaSemana_.get ();
+  return this->turnoId_.get ();
 }
 
 void ItemHorario::
-diaSemana (const diaSemana_type& x)
+turnoId (const turnoId_type& x)
 {
-  this->diaSemana_.set (x);
+  this->turnoId_.set (x);
 }
 
 const ItemHorario::horarioAulaId_type& ItemHorario::
@@ -1055,22 +1055,28 @@ horarioAulaId (const horarioAulaId_type& x)
   this->horarioAulaId_.set (x);
 }
 
-const ItemHorario::turnoId_type& ItemHorario::
-turnoId () const
+const ItemHorario::diasSemana_type& ItemHorario::
+diasSemana () const
 {
-  return this->turnoId_.get ();
+  return this->diasSemana_.get ();
 }
 
-ItemHorario::turnoId_type& ItemHorario::
-turnoId ()
+ItemHorario::diasSemana_type& ItemHorario::
+diasSemana ()
 {
-  return this->turnoId_.get ();
+  return this->diasSemana_.get ();
 }
 
 void ItemHorario::
-turnoId (const turnoId_type& x)
+diasSemana (const diasSemana_type& x)
 {
-  this->turnoId_.set (x);
+  this->diasSemana_.set (x);
+}
+
+void ItemHorario::
+diasSemana (::std::auto_ptr< diasSemana_type > x)
+{
+  this->diasSemana_.set (x);
 }
 
 
@@ -2346,6 +2352,24 @@ disciplinaId (const disciplinaId_type& x)
 
 // ItemOfertaCurso
 // 
+
+const ItemOfertaCurso::id_type& ItemOfertaCurso::
+id () const
+{
+  return this->id_.get ();
+}
+
+ItemOfertaCurso::id_type& ItemOfertaCurso::
+id ()
+{
+  return this->id_.get ();
+}
+
+void ItemOfertaCurso::
+id (const id_type& x)
+{
+  this->id_.set (x);
+}
 
 const ItemOfertaCurso::curriculoId_type& ItemOfertaCurso::
 curriculoId () const
@@ -5984,13 +6008,24 @@ ItemUnidade::
 //
 
 ItemHorario::
-ItemHorario (const diaSemana_type& diaSemana,
+ItemHorario (const turnoId_type& turnoId,
              const horarioAulaId_type& horarioAulaId,
-             const turnoId_type& turnoId)
+             const diasSemana_type& diasSemana)
 : ::xml_schema::type (),
-  diaSemana_ (diaSemana, ::xml_schema::flags (), this),
+  turnoId_ (turnoId, ::xml_schema::flags (), this),
   horarioAulaId_ (horarioAulaId, ::xml_schema::flags (), this),
-  turnoId_ (turnoId, ::xml_schema::flags (), this)
+  diasSemana_ (diasSemana, ::xml_schema::flags (), this)
+{
+}
+
+ItemHorario::
+ItemHorario (const turnoId_type& turnoId,
+             const horarioAulaId_type& horarioAulaId,
+             ::std::auto_ptr< diasSemana_type >& diasSemana)
+: ::xml_schema::type (),
+  turnoId_ (turnoId, ::xml_schema::flags (), this),
+  horarioAulaId_ (horarioAulaId, ::xml_schema::flags (), this),
+  diasSemana_ (diasSemana, ::xml_schema::flags (), this)
 {
 }
 
@@ -5999,9 +6034,9 @@ ItemHorario (const ItemHorario& x,
              ::xml_schema::flags f,
              ::xml_schema::container* c)
 : ::xml_schema::type (x, f, c),
-  diaSemana_ (x.diaSemana_, f, this),
+  turnoId_ (x.turnoId_, f, this),
   horarioAulaId_ (x.horarioAulaId_, f, this),
-  turnoId_ (x.turnoId_, f, this)
+  diasSemana_ (x.diasSemana_, f, this)
 {
 }
 
@@ -6010,9 +6045,9 @@ ItemHorario (const ::xercesc::DOMElement& e,
              ::xml_schema::flags f,
              ::xml_schema::container* c)
 : ::xml_schema::type (e, f | ::xml_schema::flags::base, c),
-  diaSemana_ (f, this),
+  turnoId_ (f, this),
   horarioAulaId_ (f, this),
-  turnoId_ (f, this)
+  diasSemana_ (f, this)
 {
   if ((f & ::xml_schema::flags::base) == 0)
   {
@@ -6031,13 +6066,13 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
     const ::xsd::cxx::xml::qualified_name< char > n (
       ::xsd::cxx::xml::dom::name< char > (i));
 
-    // diaSemana
+    // turnoId
     //
-    if (n.name () == "diaSemana" && n.namespace_ ().empty ())
+    if (n.name () == "turnoId" && n.namespace_ ().empty ())
     {
-      if (!diaSemana_.present ())
+      if (!turnoId_.present ())
       {
-        this->diaSemana_.set (diaSemana_traits::create (i, f, this));
+        this->turnoId_.set (turnoId_traits::create (i, f, this));
         continue;
       }
     }
@@ -6053,13 +6088,16 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
       }
     }
 
-    // turnoId
+    // diasSemana
     //
-    if (n.name () == "turnoId" && n.namespace_ ().empty ())
+    if (n.name () == "diasSemana" && n.namespace_ ().empty ())
     {
-      if (!turnoId_.present ())
+      ::std::auto_ptr< diasSemana_type > r (
+        diasSemana_traits::create (i, f, this));
+
+      if (!diasSemana_.present ())
       {
-        this->turnoId_.set (turnoId_traits::create (i, f, this));
+        this->diasSemana_.set (r);
         continue;
       }
     }
@@ -6067,10 +6105,10 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
     break;
   }
 
-  if (!diaSemana_.present ())
+  if (!turnoId_.present ())
   {
     throw ::xsd::cxx::tree::expected_element< char > (
-      "diaSemana",
+      "turnoId",
       "");
   }
 
@@ -6081,10 +6119,10 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
       "");
   }
 
-  if (!turnoId_.present ())
+  if (!diasSemana_.present ())
   {
     throw ::xsd::cxx::tree::expected_element< char > (
-      "turnoId",
+      "diasSemana",
       "");
   }
 }
@@ -8133,11 +8171,13 @@ ItemDisciplinaPeriodo::
 //
 
 ItemOfertaCurso::
-ItemOfertaCurso (const curriculoId_type& curriculoId,
+ItemOfertaCurso (const id_type& id,
+                 const curriculoId_type& curriculoId,
                  const cursoId_type& cursoId,
                  const turnoId_type& turnoId,
                  const campusId_type& campusId)
 : ::xml_schema::type (),
+  id_ (id, ::xml_schema::flags (), this),
   curriculoId_ (curriculoId, ::xml_schema::flags (), this),
   cursoId_ (cursoId, ::xml_schema::flags (), this),
   turnoId_ (turnoId, ::xml_schema::flags (), this),
@@ -8150,6 +8190,7 @@ ItemOfertaCurso (const ItemOfertaCurso& x,
                  ::xml_schema::flags f,
                  ::xml_schema::container* c)
 : ::xml_schema::type (x, f, c),
+  id_ (x.id_, f, this),
   curriculoId_ (x.curriculoId_, f, this),
   cursoId_ (x.cursoId_, f, this),
   turnoId_ (x.turnoId_, f, this),
@@ -8162,6 +8203,7 @@ ItemOfertaCurso (const ::xercesc::DOMElement& e,
                  ::xml_schema::flags f,
                  ::xml_schema::container* c)
 : ::xml_schema::type (e, f | ::xml_schema::flags::base, c),
+  id_ (f, this),
   curriculoId_ (f, this),
   cursoId_ (f, this),
   turnoId_ (f, this),
@@ -8183,6 +8225,17 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
     const ::xercesc::DOMElement& i (p.cur_element ());
     const ::xsd::cxx::xml::qualified_name< char > n (
       ::xsd::cxx::xml::dom::name< char > (i));
+
+    // id
+    //
+    if (n.name () == "id" && n.namespace_ ().empty ())
+    {
+      if (!id_.present ())
+      {
+        this->id_.set (id_traits::create (i, f, this));
+        continue;
+      }
+    }
 
     // curriculoId
     //
@@ -8229,6 +8282,13 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
     }
 
     break;
+  }
+
+  if (!id_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "id",
+      "");
   }
 
   if (!curriculoId_.present ())
@@ -11904,9 +11964,9 @@ operator<< (::std::ostream& o, const ItemUnidade& i)
 ::std::ostream&
 operator<< (::std::ostream& o, const ItemHorario& i)
 {
-  o << ::std::endl << "diaSemana: " << i.diaSemana ();
-  o << ::std::endl << "horarioAulaId: " << i.horarioAulaId ();
   o << ::std::endl << "turnoId: " << i.turnoId ();
+  o << ::std::endl << "horarioAulaId: " << i.horarioAulaId ();
+  o << ::std::endl << "diasSemana: " << i.diasSemana ();
   return o;
 }
 
@@ -12045,6 +12105,7 @@ operator<< (::std::ostream& o, const ItemDisciplinaPeriodo& i)
 ::std::ostream&
 operator<< (::std::ostream& o, const ItemOfertaCurso& i)
 {
+  o << ::std::endl << "id: " << i.id ();
   o << ::std::endl << "curriculoId: " << i.curriculoId ();
   o << ::std::endl << "cursoId: " << i.cursoId ();
   o << ::std::endl << "turnoId: " << i.turnoId ();
@@ -13546,15 +13607,15 @@ operator<< (::xercesc::DOMElement& e, const ItemHorario& i)
 {
   e << static_cast< const ::xml_schema::type& > (i);
 
-  // diaSemana
+  // turnoId
   //
   {
     ::xercesc::DOMElement& s (
       ::xsd::cxx::xml::dom::create_element (
-        "diaSemana",
+        "turnoId",
         e));
 
-    s << i.diaSemana ();
+    s << i.turnoId ();
   }
 
   // horarioAulaId
@@ -13568,15 +13629,15 @@ operator<< (::xercesc::DOMElement& e, const ItemHorario& i)
     s << i.horarioAulaId ();
   }
 
-  // turnoId
+  // diasSemana
   //
   {
     ::xercesc::DOMElement& s (
       ::xsd::cxx::xml::dom::create_element (
-        "turnoId",
+        "diasSemana",
         e));
 
-    s << i.turnoId ();
+    s << i.diasSemana ();
   }
 }
 
@@ -14307,6 +14368,17 @@ void
 operator<< (::xercesc::DOMElement& e, const ItemOfertaCurso& i)
 {
   e << static_cast< const ::xml_schema::type& > (i);
+
+  // id
+  //
+  {
+    ::xercesc::DOMElement& s (
+      ::xsd::cxx::xml::dom::create_element (
+        "id",
+        e));
+
+    s << i.id ();
+  }
 
   // curriculoId
   //
