@@ -21,5 +21,7 @@ public interface SalasService extends RemoteService {
 	void save(SalaDTO salaDTO);
 	void remove(List<SalaDTO> salaDTOList);
 	ListLoadResult<TipoSalaDTO> getTipoSalaList();
+	SalaDTO getSala(Long id);
+	TipoSalaDTO getTipoSala(Long id);
 	
 }

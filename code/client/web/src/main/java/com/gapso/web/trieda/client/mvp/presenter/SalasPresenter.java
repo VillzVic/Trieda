@@ -12,9 +12,12 @@ import com.extjs.gxt.ui.client.widget.Info;
 import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.gapso.web.trieda.client.mvp.model.SalaDTO;
+import com.gapso.web.trieda.client.mvp.model.TipoSalaDTO;
+import com.gapso.web.trieda.client.mvp.model.UnidadeDTO;
 import com.gapso.web.trieda.client.mvp.view.SalaFormView;
 import com.gapso.web.trieda.client.services.SalasServiceAsync;
 import com.gapso.web.trieda.client.services.Services;
+import com.gapso.web.trieda.client.services.UnidadesServiceAsync;
 import com.gapso.web.trieda.client.util.view.GTab;
 import com.gapso.web.trieda.client.util.view.GTabItem;
 import com.gapso.web.trieda.client.util.view.SimpleGrid;
@@ -59,7 +62,7 @@ public class SalasPresenter implements Presenter {
 		display.getNewButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
 			@Override
 			public void componentSelected(ButtonEvent ce) {
-				Presenter presenter = new SalaFormPresenter(new SalaFormView(new SalaDTO()), display.getGrid());
+				Presenter presenter = new SalaFormPresenter(new SalaFormView(new SalaDTO(), null, null), display.getGrid());
 				presenter.go(null);
 			}
 		});
@@ -67,7 +70,20 @@ public class SalasPresenter implements Presenter {
 			@Override
 			public void componentSelected(ButtonEvent ce) {
 				SalaDTO salaDTO = display.getGrid().getGrid().getSelectionModel().getSelectedItem();
-				Presenter presenter = new SalaFormPresenter(new SalaFormView(salaDTO), display.getGrid());
+				
+				UnidadesServiceAsync unidadesService = Services.unidades();
+				SalasServiceAsync salasService = Services.salas();
+				
+				MyAsyncCallback<UnidadeDTO> myAsyncCallback1 = new MyAsyncCallback<UnidadeDTO>();
+				unidadesService.getUnidade(salaDTO.getUnidadeId(), myAsyncCallback1);
+				
+				MyAsyncCallback<TipoSalaDTO> myAsyncCallback2 = new MyAsyncCallback<TipoSalaDTO>();
+				salasService.getTipoSala(salaDTO.getTipoId(), myAsyncCallback2);
+				
+				UnidadeDTO unidadeDTO = myAsyncCallback1.getDto();
+				TipoSalaDTO tipoSalaDTO = myAsyncCallback2.getDto();
+				
+				Presenter presenter = new SalaFormPresenter(new SalaFormView(salaDTO, unidadeDTO, tipoSalaDTO), display.getGrid());
 				presenter.go(null);
 			}
 		});
@@ -97,4 +113,19 @@ public class SalasPresenter implements Presenter {
 		tab.add((GTabItem)display.getComponent());
 	}
 
+	private class MyAsyncCallback<D> implements AsyncCallback<D> {
+		private D dto;
+		@Override
+		public void onFailure(Throwable caught) {
+			caught.printStackTrace();
+		}
+		@Override
+		public void onSuccess(D result) {
+			dto = result;
+		}
+		
+		public D getDto() {
+			return dto;
+		}
+	}
 }

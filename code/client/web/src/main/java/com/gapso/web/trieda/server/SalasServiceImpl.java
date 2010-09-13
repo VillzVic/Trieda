@@ -25,6 +25,16 @@ public class SalasServiceImpl extends RemoteServiceServlet implements SalasServi
 	private static final long serialVersionUID = -5850050305078103981L;
 
 	@Override
+	public SalaDTO getSala(Long id) {
+		return ConvertBeans.toSalaDTO(Sala.find(id));
+	}
+	
+	@Override
+	public TipoSalaDTO getTipoSala(Long id) {
+		return ConvertBeans.toTipoSalaDTO(TipoSala.find(id));
+	}
+	
+	@Override
 	public PagingLoadResult<SalaDTO> getList(PagingLoadConfig config) {
 		List<SalaDTO> list = new ArrayList<SalaDTO>();
 		String orderBy = config.getSortField();

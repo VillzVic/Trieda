@@ -27,6 +27,11 @@ public class UnidadesServiceImpl extends RemoteServiceServlet implements Unidade
 	private static final long serialVersionUID = 5250776996542788849L;
 
 	@Override
+	public UnidadeDTO getUnidade(Long id) {
+		return ConvertBeans.toUnidadeDTO(Unidade.find(id));
+	}
+	
+	@Override
 	public PagingLoadResult<UnidadeDTO> getList(PagingLoadConfig config) {
 		List<UnidadeDTO> list = new ArrayList<UnidadeDTO>();
 		String orderBy = config.getSortField();

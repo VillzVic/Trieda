@@ -23,4 +23,5 @@ public interface UnidadesService extends RemoteService {
 	void remove(List<UnidadeDTO> unidadeDTOList);
 	PagingLoadResult<UnidadeDTO> getBuscaList(CampusDTO campusDTO, String nome, String codigo, PagingLoadConfig config);
 	ListLoadResult<UnidadeDTO> getList(BasePagingLoadConfig loadConfig);
+	UnidadeDTO getUnidade(Long id);
 }

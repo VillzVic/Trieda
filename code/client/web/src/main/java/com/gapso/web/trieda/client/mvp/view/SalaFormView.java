@@ -7,6 +7,8 @@ import com.extjs.gxt.ui.client.widget.form.NumberField;
 import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.extjs.gxt.ui.client.widget.layout.FormData;
 import com.gapso.web.trieda.client.mvp.model.SalaDTO;
+import com.gapso.web.trieda.client.mvp.model.TipoSalaDTO;
+import com.gapso.web.trieda.client.mvp.model.UnidadeDTO;
 import com.gapso.web.trieda.client.mvp.presenter.SalaFormPresenter;
 import com.gapso.web.trieda.client.util.resources.Resources;
 import com.gapso.web.trieda.client.util.view.SimpleModal;
@@ -24,9 +26,13 @@ public class SalaFormView extends MyComposite implements SalaFormPresenter.Displ
 	private UnidadeComboBox unidadeCB;
 	private TipoSalaComboBox tipoSalaCB;
 	private SalaDTO salaDTO;
+	private UnidadeDTO unidadeDTO;
+	private TipoSalaDTO tipoSalaDTO;
 	
-	public SalaFormView(SalaDTO salaDTO) {
+	public SalaFormView(SalaDTO salaDTO, UnidadeDTO unidadeDTO, TipoSalaDTO tipoSalaDTO) {
 		this.salaDTO = salaDTO;
+		this.unidadeDTO = unidadeDTO;
+		this.tipoSalaDTO = tipoSalaDTO;
 		initUI();
 		// TODO
 //		initComponent(simpleModal);
@@ -50,12 +56,14 @@ public class SalaFormView extends MyComposite implements SalaFormPresenter.Displ
 		unidadeCB.setName("unidade");
 		unidadeCB.setFieldLabel("Unidade");
 		unidadeCB.setAllowBlank(false);
+		unidadeCB.setValue(unidadeDTO);
 		formPanel.add(unidadeCB, formData);
 		
 		tipoSalaCB = new TipoSalaComboBox();
 		tipoSalaCB.setName("tipoSala");
 		tipoSalaCB.setFieldLabel("Tipo");
 		tipoSalaCB.setAllowBlank(false);
+		tipoSalaCB.setValue(tipoSalaDTO);
 		formPanel.add(tipoSalaCB, formData);
 		
 		codigoTF = new TextField<String>();

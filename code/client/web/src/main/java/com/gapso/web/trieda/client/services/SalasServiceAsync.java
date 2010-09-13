@@ -17,5 +17,7 @@ public interface SalasServiceAsync extends ICrudService {
 	void save(SalaDTO salaDTO, AsyncCallback<Void> callback);
 	void remove(List<SalaDTO> salaDTOList, AsyncCallback<Void> callback);
 	void getTipoSalaList(AsyncCallback<ListLoadResult<TipoSalaDTO>> callback);
+	void getSala(Long id, AsyncCallback<SalaDTO> callback);
+	void getTipoSala(Long id, AsyncCallback<TipoSalaDTO> callback);
 	
 }
