@@ -340,7 +340,15 @@
 					>
 				</File>
 				<File
+					RelativePath=".\Operacional.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\ProblemSolution.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\Tatico.cpp"
 					>
 				</File>
 				<File
@@ -537,7 +545,15 @@
 					>
 				</File>
 				<File
+					RelativePath=".\Operacional.h"
+					>
+				</File>
+				<File
 					RelativePath=".\ProblemSolution.h"
+					>
+				</File>
+				<File
+					RelativePath=".\Tatico.h"
 					>
 				</File>
 				<File
