@@ -33,7 +33,8 @@ public class HorarioAulaFormView extends MyComposite implements HorarioAulaFormP
 	}
 	
 	private void initUI() {
-		simpleModal = new SimpleModal("Horário de Aula", Resources.DEFAULTS.horarioAula16());
+		String title = (horarioAulaDTO.getId() == null)? "Inserção de Horário de Aula" : "Edição de Horário de Aula";
+		simpleModal = new SimpleModal(title, Resources.DEFAULTS.horarioAula16());
 		simpleModal.setHeight(187);
 		createForm();
 		simpleModal.setContent(formPanel);

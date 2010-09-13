@@ -29,7 +29,8 @@ public class UnidadeFormView extends MyComposite implements UnidadeFormPresenter
 	}
 	
 	private void initUI() {
-		simpleModal = new SimpleModal("Unidade", Resources.DEFAULTS.unidade16());
+		String title = (unidadeDTO.getId() == null)? "Inserção de Unidade" : "Edição de Unidade";
+		simpleModal = new SimpleModal(title, Resources.DEFAULTS.unidade16());
 		simpleModal.setHeight(160);
 		createForm();
 		simpleModal.setContent(formPanel);

@@ -34,7 +34,8 @@ public class SalaFormView extends MyComposite implements SalaFormPresenter.Displ
 	}
 	
 	private void initUI() {
-		simpleModal = new SimpleModal("Sala", Resources.DEFAULTS.sala16());
+		String title = (salaDTO.getId() == null)? "Inserção de Sala" : "Edição de Sala";
+		simpleModal = new SimpleModal(title, Resources.DEFAULTS.sala16());
 		simpleModal.setHeight(240);
 		createForm();
 		simpleModal.setContent(formPanel);

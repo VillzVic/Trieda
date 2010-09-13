@@ -27,7 +27,8 @@ public class CalendarioFormView extends MyComposite implements CalendarioFormPre
 	}
 	
 	private void initUI() {
-		simpleModal = new SimpleModal("Calendario", Resources.DEFAULTS.calendario16());
+		String title = (calendarioDTO.getId() == null)? "Inserção de Calendário" : "Edição de Calendário";
+		simpleModal = new SimpleModal(title, Resources.DEFAULTS.calendario16());
 		simpleModal.setHeight(138);
 		createForm();
 		simpleModal.setContent(formPanel);
