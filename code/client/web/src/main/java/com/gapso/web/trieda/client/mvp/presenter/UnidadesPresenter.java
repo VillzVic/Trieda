@@ -16,6 +16,7 @@ import com.gapso.web.trieda.client.mvp.model.CampusDTO;
 import com.gapso.web.trieda.client.mvp.model.UnidadeDTO;
 import com.gapso.web.trieda.client.mvp.view.SalasView;
 import com.gapso.web.trieda.client.mvp.view.UnidadeFormView;
+import com.gapso.web.trieda.client.services.CampiServiceAsync;
 import com.gapso.web.trieda.client.services.Services;
 import com.gapso.web.trieda.client.services.UnidadesServiceAsync;
 import com.gapso.web.trieda.client.util.view.CampusComboBox;
@@ -72,16 +73,27 @@ public class UnidadesPresenter implements Presenter {
 		display.getNewButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
 			@Override
 			public void componentSelected(ButtonEvent ce) {
-				Presenter presenter = new UnidadeFormPresenter(new UnidadeFormView(new UnidadeDTO()), display.getGrid());
+				Presenter presenter = new UnidadeFormPresenter(new UnidadeFormView(new UnidadeDTO(), null), display.getGrid());
 				presenter.go(null);
 			}
 		});
 		display.getEditButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
 			@Override
 			public void componentSelected(ButtonEvent ce) {
-				UnidadeDTO unidadeDTO = display.getGrid().getGrid().getSelectionModel().getSelectedItem();
-				Presenter presenter = new UnidadeFormPresenter(new UnidadeFormView(unidadeDTO), display.getGrid());
-				presenter.go(null);
+				final UnidadeDTO unidadeDTO = display.getGrid().getGrid().getSelectionModel().getSelectedItem();
+				final CampiServiceAsync campus = Services.campi();
+				campus.getCampus(unidadeDTO.getCampusId(), new AsyncCallback<CampusDTO>() {
+					@Override
+					public void onFailure(Throwable caught) {
+						caught.printStackTrace();
+					}
+					@Override
+					public void onSuccess(CampusDTO campusDTO) {
+						Presenter presenter = new UnidadeFormPresenter(new UnidadeFormView(unidadeDTO, campusDTO), display.getGrid());
+						presenter.go(null);
+					}
+				});
+
 			}
 		});
 		display.getRemoveButton().addSelectionListener(new SelectionListener<ButtonEvent>(){

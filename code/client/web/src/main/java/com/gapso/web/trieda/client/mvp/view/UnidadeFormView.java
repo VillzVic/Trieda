@@ -5,6 +5,7 @@ import com.extjs.gxt.ui.client.widget.form.FormButtonBinding;
 import com.extjs.gxt.ui.client.widget.form.FormPanel;
 import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.extjs.gxt.ui.client.widget.layout.FormData;
+import com.gapso.web.trieda.client.mvp.model.CampusDTO;
 import com.gapso.web.trieda.client.mvp.model.UnidadeDTO;
 import com.gapso.web.trieda.client.mvp.presenter.UnidadeFormPresenter;
 import com.gapso.web.trieda.client.util.resources.Resources;
@@ -19,9 +20,11 @@ public class UnidadeFormView extends MyComposite implements UnidadeFormPresenter
 	private TextField<String> codigoTF;
 	private CampusComboBox campusCB;
 	private UnidadeDTO unidadeDTO;
+	private CampusDTO campusDTO;
 	
-	public UnidadeFormView(UnidadeDTO unidadeDTO) {
+	public UnidadeFormView(UnidadeDTO unidadeDTO, CampusDTO campusDTO) {
 		this.unidadeDTO = unidadeDTO;
+		this.campusDTO = campusDTO;
 		initUI();
 		// TODO
 //		initComponent(simpleModal);
@@ -45,6 +48,7 @@ public class UnidadeFormView extends MyComposite implements UnidadeFormPresenter
 		campusCB.setName("campus");
 		campusCB.setFieldLabel("Campus");
 		campusCB.setAllowBlank(false);
+		campusCB.setValue(campusDTO);
 		formPanel.add(campusCB, formData);
 		
 		nomeTF = new TextField<String>();

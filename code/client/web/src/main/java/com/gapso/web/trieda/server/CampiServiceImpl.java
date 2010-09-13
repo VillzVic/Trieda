@@ -26,6 +26,11 @@ public class CampiServiceImpl extends RemoteServiceServlet implements CampiServi
 	private static final long serialVersionUID = 5250776996542788849L;
 
 	@Override
+	public CampusDTO getCampus(Long id) {
+		return ConvertBeans.toCampusDTO(Campus.find(id));
+	}
+	
+	@Override
 	public PagingLoadResult<CampusDTO> getList(PagingLoadConfig config) {
 		List<CampusDTO> list = new ArrayList<CampusDTO>();
 		String orderBy = config.getSortField();
