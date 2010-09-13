@@ -25,29 +25,29 @@ void ProblemDataLoader::load()
    std::cout << "Some preprocessing..." << std::endl;
    /* processamento */
    /* cria blocos curriculares */
-   ITERA_GGROUP(it_curso,problemData->cursos,Curso)
-   {
-      ITERA_GGROUP(it_curr,it_curso->curriculos,Curriculo)
-      {
-         GGroup<DisciplinaPeriodo>::iterator it_dp = 
-            it_curr->disciplinas_periodo.begin();
-         for(;it_dp != it_curr->disciplinas_periodo.end(); ++it_dp)
-         {
-            DisciplinaPeriodo dp = *it_dp;
-            int p = dp.first;
-            Disciplina* d = dp.second;
-            BlocoCurricular* b = new BlocoCurricular;
-            b->curso = *it_curso;
-            b->periodo = p;
-            GGroup<BlocoCurricular*>::iterator it_bc = 
-               problemData->blocos.find(b);
-            if (it_bc != problemData->blocos.end())
-            {
-               delete b;
-               b = *it_bc;
-            }
-            b->disciplinas.add(d);
-         }
-      }
-   }
+   //ITERA_GGROUP(it_curso,problemData->cursos,Curso)
+   //{
+   //   ITERA_GGROUP(it_curr,it_curso->curriculos,Curriculo)
+   //   {
+   //      GGroup<DisciplinaPeriodo>::iterator it_dp = 
+   //         it_curr->disciplinas_periodo.begin();
+   //      for(;it_dp != it_curr->disciplinas_periodo.end(); ++it_dp)
+   //      {
+   //         DisciplinaPeriodo dp = *it_dp;
+   //         int p = dp.first;
+   //         Disciplina* d = dp.second;
+   //         BlocoCurricular* b = new BlocoCurricular;
+   //         b->curso = *it_curso;
+   //         b->periodo = p;
+   //         GGroup<BlocoCurricular*>::iterator it_bc = 
+   //            problemData->blocos.find(b);
+   //         if (it_bc != problemData->blocos.end())
+   //         {
+   //            delete b;
+   //            b = *it_bc;
+   //         }
+   //         b->disciplinas.add(d);
+   //      }
+   //   }
+   //}
 }

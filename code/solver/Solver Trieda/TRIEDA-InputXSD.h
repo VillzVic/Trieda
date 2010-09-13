@@ -11367,9 +11367,9 @@ class GrupoDiaSemana: public ::xml_schema::type
 {
   public:
   /**
-   * @name diaSemana
+   * @name DiaSemana
    *
-   * @brief Accessor and modifier functions for the %diaSemana
+   * @brief Accessor and modifier functions for the %DiaSemana
    * sequence element.
    *
    * um inteiro que represente um dia da semana. Os valores poss?veis s?o:
@@ -11381,27 +11381,27 @@ class GrupoDiaSemana: public ::xml_schema::type
   /**
    * @brief Element type.
    */
-  typedef ::xml_schema::int_ diaSemana_type;
+  typedef ::xml_schema::int_ DiaSemana_type;
 
   /**
    * @brief Element sequence container type.
    */
-  typedef ::xsd::cxx::tree::sequence< diaSemana_type > diaSemana_sequence;
+  typedef ::xsd::cxx::tree::sequence< DiaSemana_type > DiaSemana_sequence;
 
   /**
    * @brief Element iterator type.
    */
-  typedef diaSemana_sequence::iterator diaSemana_iterator;
+  typedef DiaSemana_sequence::iterator DiaSemana_iterator;
 
   /**
    * @brief Element constant iterator type.
    */
-  typedef diaSemana_sequence::const_iterator diaSemana_const_iterator;
+  typedef DiaSemana_sequence::const_iterator DiaSemana_const_iterator;
 
   /**
    * @brief Element traits type.
    */
-  typedef ::xsd::cxx::tree::traits< diaSemana_type, char > diaSemana_traits;
+  typedef ::xsd::cxx::tree::traits< DiaSemana_type, char > DiaSemana_traits;
 
   /**
    * @brief Return a read-only (constant) reference to the element
@@ -11409,16 +11409,16 @@ class GrupoDiaSemana: public ::xml_schema::type
    *
    * @return A constant reference to the sequence container.
    */
-  const diaSemana_sequence&
-  diaSemana () const;
+  const DiaSemana_sequence&
+  DiaSemana () const;
 
   /**
    * @brief Return a read-write reference to the element sequence.
    *
    * @return A reference to the sequence container.
    */
-  diaSemana_sequence&
-  diaSemana ();
+  DiaSemana_sequence&
+  DiaSemana ();
 
   /**
    * @brief Copy elements from a given sequence.
@@ -11430,7 +11430,7 @@ class GrupoDiaSemana: public ::xml_schema::type
    * sequence and all old elements will be lost.
    */
   void
-  diaSemana (const diaSemana_sequence& s);
+  DiaSemana (const DiaSemana_sequence& s);
 
   //@}
 
@@ -11504,7 +11504,7 @@ class GrupoDiaSemana: public ::xml_schema::type
          ::xml_schema::flags);
 
   protected:
-  diaSemana_sequence diaSemana_;
+  DiaSemana_sequence DiaSemana_;
 
   //@endcond
 };
@@ -13310,7 +13310,7 @@ class GrupoCreditoDisponivel: public ::xml_schema::type
    * @name CreditoDisponivel
    *
    * @brief Accessor and modifier functions for the %CreditoDisponivel
-   * required element.
+   * sequence element.
    */
   //@{
 
@@ -13320,47 +13320,53 @@ class GrupoCreditoDisponivel: public ::xml_schema::type
   typedef ::ItemCreditoDisponivel CreditoDisponivel_type;
 
   /**
+   * @brief Element sequence container type.
+   */
+  typedef ::xsd::cxx::tree::sequence< CreditoDisponivel_type > CreditoDisponivel_sequence;
+
+  /**
+   * @brief Element iterator type.
+   */
+  typedef CreditoDisponivel_sequence::iterator CreditoDisponivel_iterator;
+
+  /**
+   * @brief Element constant iterator type.
+   */
+  typedef CreditoDisponivel_sequence::const_iterator CreditoDisponivel_const_iterator;
+
+  /**
    * @brief Element traits type.
    */
   typedef ::xsd::cxx::tree::traits< CreditoDisponivel_type, char > CreditoDisponivel_traits;
 
   /**
-   * @brief Return a read-only (constant) reference to the element.
+   * @brief Return a read-only (constant) reference to the element
+   * sequence.
    *
-   * @return A constant reference to the element.
+   * @return A constant reference to the sequence container.
    */
-  const CreditoDisponivel_type&
+  const CreditoDisponivel_sequence&
   CreditoDisponivel () const;
 
   /**
-   * @brief Return a read-write reference to the element.
+   * @brief Return a read-write reference to the element sequence.
    *
-   * @return A reference to the element.
+   * @return A reference to the sequence container.
    */
-  CreditoDisponivel_type&
+  CreditoDisponivel_sequence&
   CreditoDisponivel ();
 
   /**
-   * @brief Set the element value.
+   * @brief Copy elements from a given sequence.
    *
-   * @param x A new value to set.
+   * @param s A sequence to copy elements from.
    *
-   * This function makes a copy of its argument and sets it as
-   * the new value of the element.
+   * For each element in @a s this function makes a copy and adds it 
+   * to the sequence. Note that this operation completely changes the 
+   * sequence and all old elements will be lost.
    */
   void
-  CreditoDisponivel (const CreditoDisponivel_type& x);
-
-  /**
-   * @brief Set the element value without copying.
-   *
-   * @param p A new value to use.
-   *
-   * This function will try to use the passed value directly instead
-   * of making a copy.
-   */
-  void
-  CreditoDisponivel (::std::auto_ptr< CreditoDisponivel_type > p);
+  CreditoDisponivel (const CreditoDisponivel_sequence& s);
 
   //@}
 
@@ -13373,17 +13379,7 @@ class GrupoCreditoDisponivel: public ::xml_schema::type
    * @brief Create an instance from the ultimate base and
    * initializers for required elements and attributes.
    */
-  GrupoCreditoDisponivel (const CreditoDisponivel_type&);
-
-  /**
-   * @brief Create an instance from the ultimate base and
-   * initializers for required elements and attributes
-   * (auto_ptr version).
-   *
-   * This constructor will try to use the passed values directly
-   * instead of making copies.
-   */
-  GrupoCreditoDisponivel (::std::auto_ptr< CreditoDisponivel_type >&);
+  GrupoCreditoDisponivel ();
 
   /**
    * @brief Create an instance from a DOM element.
@@ -13444,7 +13440,7 @@ class GrupoCreditoDisponivel: public ::xml_schema::type
          ::xml_schema::flags);
 
   protected:
-  ::xsd::cxx::tree::one< CreditoDisponivel_type > CreditoDisponivel_;
+  CreditoDisponivel_sequence CreditoDisponivel_;
 
   //@endcond
 };
@@ -15093,9 +15089,9 @@ class GrupoIdentificador: public ::xml_schema::type
 {
   public:
   /**
-   * @name id
+   * @name Identificador
    *
-   * @brief Accessor and modifier functions for the %id
+   * @brief Accessor and modifier functions for the %Identificador
    * sequence element.
    *
    * represente o identificador de alguma entidade
@@ -15105,27 +15101,27 @@ class GrupoIdentificador: public ::xml_schema::type
   /**
    * @brief Element type.
    */
-  typedef ::xml_schema::int_ id_type;
+  typedef ::xml_schema::int_ Identificador_type;
 
   /**
    * @brief Element sequence container type.
    */
-  typedef ::xsd::cxx::tree::sequence< id_type > id_sequence;
+  typedef ::xsd::cxx::tree::sequence< Identificador_type > Identificador_sequence;
 
   /**
    * @brief Element iterator type.
    */
-  typedef id_sequence::iterator id_iterator;
+  typedef Identificador_sequence::iterator Identificador_iterator;
 
   /**
    * @brief Element constant iterator type.
    */
-  typedef id_sequence::const_iterator id_const_iterator;
+  typedef Identificador_sequence::const_iterator Identificador_const_iterator;
 
   /**
    * @brief Element traits type.
    */
-  typedef ::xsd::cxx::tree::traits< id_type, char > id_traits;
+  typedef ::xsd::cxx::tree::traits< Identificador_type, char > Identificador_traits;
 
   /**
    * @brief Return a read-only (constant) reference to the element
@@ -15133,16 +15129,16 @@ class GrupoIdentificador: public ::xml_schema::type
    *
    * @return A constant reference to the sequence container.
    */
-  const id_sequence&
-  id () const;
+  const Identificador_sequence&
+  Identificador () const;
 
   /**
    * @brief Return a read-write reference to the element sequence.
    *
    * @return A reference to the sequence container.
    */
-  id_sequence&
-  id ();
+  Identificador_sequence&
+  Identificador ();
 
   /**
    * @brief Copy elements from a given sequence.
@@ -15154,7 +15150,7 @@ class GrupoIdentificador: public ::xml_schema::type
    * sequence and all old elements will be lost.
    */
   void
-  id (const id_sequence& s);
+  Identificador (const Identificador_sequence& s);
 
   //@}
 
@@ -15228,7 +15224,7 @@ class GrupoIdentificador: public ::xml_schema::type
          ::xml_schema::flags);
 
   protected:
-  id_sequence id_;
+  Identificador_sequence Identificador_;
 
   //@endcond
 };
@@ -17110,6 +17106,259 @@ operator<< (::std::ostream&, const cargaHorariaSemanalAluno&);
 #include <xercesc/dom/DOMDocument.hpp>
 #include <xercesc/dom/DOMErrorHandler.hpp>
 
+/**
+ * @name Parsing functions for the %TriedaInput document root.
+ */
+//@{
+
+/**
+ * @brief Parse a URI or a local file.
+ *
+ * @param uri A URI or a local file name.
+ * @param f Parsing flags.
+ * @param p Parsing properties. 
+ * @return A pointer to the root of the object model.
+ *
+ * This function uses exceptions to report parsing errors.
+ */
+::std::auto_ptr< ::TriedaInput >
+TriedaInput_ (const ::std::string& uri,
+              ::xml_schema::flags f = 0,
+              const ::xml_schema::properties& p = ::xml_schema::properties ());
+
+/**
+ * @brief Parse a URI or a local file with an error handler.
+ *
+ * @param uri A URI or a local file name.
+ * @param eh An error handler.
+ * @param f Parsing flags.
+ * @param p Parsing properties. 
+ * @return A pointer to the root of the object model.
+ *
+ * This function reports parsing errors by calling the error handler.
+ */
+::std::auto_ptr< ::TriedaInput >
+TriedaInput_ (const ::std::string& uri,
+              ::xml_schema::error_handler& eh,
+              ::xml_schema::flags f = 0,
+              const ::xml_schema::properties& p = ::xml_schema::properties ());
+
+/**
+ * @brief Parse a URI or a local file with a Xerces-C++ DOM error
+ * handler.
+ *
+ * @param uri A URI or a local file name.
+ * @param eh A Xerces-C++ DOM error handler.
+ * @param f Parsing flags.
+ * @param p Parsing properties. 
+ * @return A pointer to the root of the object model.
+ *
+ * This function reports parsing errors by calling the error handler.
+ */
+::std::auto_ptr< ::TriedaInput >
+TriedaInput_ (const ::std::string& uri,
+              ::xercesc::DOMErrorHandler& eh,
+              ::xml_schema::flags f = 0,
+              const ::xml_schema::properties& p = ::xml_schema::properties ());
+
+/**
+ * @brief Parse a standard input stream.
+ *
+ * @param is A standrad input stream.
+ * @param f Parsing flags.
+ * @param p Parsing properties. 
+ * @return A pointer to the root of the object model.
+ *
+ * This function uses exceptions to report parsing errors.
+ */
+::std::auto_ptr< ::TriedaInput >
+TriedaInput_ (::std::istream& is,
+              ::xml_schema::flags f = 0,
+              const ::xml_schema::properties& p = ::xml_schema::properties ());
+
+/**
+ * @brief Parse a standard input stream with an error handler.
+ *
+ * @param is A standrad input stream.
+ * @param eh An error handler.
+ * @param f Parsing flags.
+ * @param p Parsing properties. 
+ * @return A pointer to the root of the object model.
+ *
+ * This function reports parsing errors by calling the error handler.
+ */
+::std::auto_ptr< ::TriedaInput >
+TriedaInput_ (::std::istream& is,
+              ::xml_schema::error_handler& eh,
+              ::xml_schema::flags f = 0,
+              const ::xml_schema::properties& p = ::xml_schema::properties ());
+
+/**
+ * @brief Parse a standard input stream with a Xerces-C++ DOM error
+ * handler.
+ *
+ * @param is A standrad input stream.
+ * @param eh A Xerces-C++ DOM error handler.
+ * @param f Parsing flags.
+ * @param p Parsing properties. 
+ * @return A pointer to the root of the object model.
+ *
+ * This function reports parsing errors by calling the error handler.
+ */
+::std::auto_ptr< ::TriedaInput >
+TriedaInput_ (::std::istream& is,
+              ::xercesc::DOMErrorHandler& eh,
+              ::xml_schema::flags f = 0,
+              const ::xml_schema::properties& p = ::xml_schema::properties ());
+
+/**
+ * @brief Parse a standard input stream with a resource id.
+ *
+ * @param is A standrad input stream.
+ * @param id A resource id.
+ * @param f Parsing flags.
+ * @param p Parsing properties. 
+ * @return A pointer to the root of the object model.
+ *
+ * The resource id is used to identify the document being parsed in
+ * diagnostics as well as to resolve relative paths.
+ *
+ * This function uses exceptions to report parsing errors.
+ */
+::std::auto_ptr< ::TriedaInput >
+TriedaInput_ (::std::istream& is,
+              const ::std::string& id,
+              ::xml_schema::flags f = 0,
+              const ::xml_schema::properties& p = ::xml_schema::properties ());
+
+/**
+ * @brief Parse a standard input stream with a resource id and an
+ * error handler.
+ *
+ * @param is A standrad input stream.
+ * @param id A resource id.
+ * @param eh An error handler.
+ * @param f Parsing flags.
+ * @param p Parsing properties. 
+ * @return A pointer to the root of the object model.
+ *
+ * The resource id is used to identify the document being parsed in
+ * diagnostics as well as to resolve relative paths.
+ *
+ * This function reports parsing errors by calling the error handler.
+ */
+::std::auto_ptr< ::TriedaInput >
+TriedaInput_ (::std::istream& is,
+              const ::std::string& id,
+              ::xml_schema::error_handler& eh,
+              ::xml_schema::flags f = 0,
+              const ::xml_schema::properties& p = ::xml_schema::properties ());
+
+/**
+ * @brief Parse a standard input stream with a resource id and a
+ * Xerces-C++ DOM error handler.
+ *
+ * @param is A standrad input stream.
+ * @param id A resource id.
+ * @param eh A Xerces-C++ DOM error handler.
+ * @param f Parsing flags.
+ * @param p Parsing properties. 
+ * @return A pointer to the root of the object model.
+ *
+ * The resource id is used to identify the document being parsed in
+ * diagnostics as well as to resolve relative paths.
+ *
+ * This function reports parsing errors by calling the error handler.
+ */
+::std::auto_ptr< ::TriedaInput >
+TriedaInput_ (::std::istream& is,
+              const ::std::string& id,
+              ::xercesc::DOMErrorHandler& eh,
+              ::xml_schema::flags f = 0,
+              const ::xml_schema::properties& p = ::xml_schema::properties ());
+
+/**
+ * @brief Parse a Xerces-C++ input source.
+ *
+ * @param is A Xerces-C++ input source.
+ * @param f Parsing flags.
+ * @param p Parsing properties. 
+ * @return A pointer to the root of the object model.
+ *
+ * This function uses exceptions to report parsing errors.
+ */
+::std::auto_ptr< ::TriedaInput >
+TriedaInput_ (::xercesc::InputSource& is,
+              ::xml_schema::flags f = 0,
+              const ::xml_schema::properties& p = ::xml_schema::properties ());
+
+/**
+ * @brief Parse a Xerces-C++ input source with an error handler.
+ *
+ * @param is A Xerces-C++ input source.
+ * @param eh An error handler.
+ * @param f Parsing flags.
+ * @param p Parsing properties. 
+ * @return A pointer to the root of the object model.
+ *
+ * This function reports parsing errors by calling the error handler.
+ */
+::std::auto_ptr< ::TriedaInput >
+TriedaInput_ (::xercesc::InputSource& is,
+              ::xml_schema::error_handler& eh,
+              ::xml_schema::flags f = 0,
+              const ::xml_schema::properties& p = ::xml_schema::properties ());
+
+/**
+ * @brief Parse a Xerces-C++ input source with a Xerces-C++ DOM
+ * error handler.
+ *
+ * @param is A Xerces-C++ input source.
+ * @param eh A Xerces-C++ DOM error handler.
+ * @param f Parsing flags.
+ * @param p Parsing properties. 
+ * @return A pointer to the root of the object model.
+ *
+ * This function reports parsing errors by calling the error handler.
+ */
+::std::auto_ptr< ::TriedaInput >
+TriedaInput_ (::xercesc::InputSource& is,
+              ::xercesc::DOMErrorHandler& eh,
+              ::xml_schema::flags f = 0,
+              const ::xml_schema::properties& p = ::xml_schema::properties ());
+
+/**
+ * @brief Parse a Xerces-C++ DOM document.
+ *
+ * @param d A Xerces-C++ DOM document.
+ * @param f Parsing flags.
+ * @param p Parsing properties. 
+ * @return A pointer to the root of the object model.
+ */
+::std::auto_ptr< ::TriedaInput >
+TriedaInput_ (const ::xercesc::DOMDocument& d,
+              ::xml_schema::flags f = 0,
+              const ::xml_schema::properties& p = ::xml_schema::properties ());
+
+/**
+ * @brief Parse a Xerces-C++ DOM document.
+ *
+ * @param d A pointer to the Xerces-C++ DOM document.
+ * @param f Parsing flags.
+ * @param p Parsing properties. 
+ * @return A pointer to the root of the object model.
+ *
+ * This function is normally used together with the keep_dom and
+ * own_dom parsing flags to assign ownership of the DOM document
+ * to the object model.
+ */
+::std::auto_ptr< ::TriedaInput >
+TriedaInput_ (::xml_schema::dom::auto_ptr< ::xercesc::DOMDocument >& d,
+              ::xml_schema::flags f = 0,
+              const ::xml_schema::properties& p = ::xml_schema::properties ());
+
+//@}
+
 #include <iosfwd>
 
 #include <xercesc/dom/DOMDocument.hpp>
@@ -17117,6 +17366,165 @@ operator<< (::std::ostream&, const cargaHorariaSemanalAluno&);
 #include <xercesc/framework/XMLFormatter.hpp>
 
 #include <xsd/cxx/xml/dom/auto-ptr.hxx>
+
+/**
+ * @name Serialization functions for the %TriedaInput document root.
+ */
+//@{
+
+/**
+ * @brief Serialize to a standard output stream.
+ *
+ * @param os A standrad output stream.
+ * @param x An object model to serialize.
+ * @param m A namespace information map.
+ * @param e A character encoding to produce XML in.
+ * @param f Serialization flags.
+ *
+ * This function uses exceptions to report serialization errors.
+ */
+void
+TriedaInput_ (::std::ostream& os,
+              const ::TriedaInput& x, 
+              const ::xml_schema::namespace_infomap& m = ::xml_schema::namespace_infomap (),
+              const ::std::string& e = "UTF-8",
+              ::xml_schema::flags f = 0);
+
+/**
+ * @brief Serialize to a standard output stream with an error handler.
+ *
+ * @param os A standrad output stream.
+ * @param x An object model to serialize.
+ * @param eh An error handler.
+ * @param m A namespace information map.
+ * @param e A character encoding to produce XML in.
+ * @param f Serialization flags.
+ *
+ * This function reports serialization errors by calling the error
+ * handler.
+ */
+void
+TriedaInput_ (::std::ostream& os,
+              const ::TriedaInput& x, 
+              ::xml_schema::error_handler& eh,
+              const ::xml_schema::namespace_infomap& m = ::xml_schema::namespace_infomap (),
+              const ::std::string& e = "UTF-8",
+              ::xml_schema::flags f = 0);
+
+/**
+ * @brief Serialize to a standard output stream with a Xerces-C++ DOM
+ * error handler.
+ *
+ * @param os A standrad output stream.
+ * @param x An object model to serialize.
+ * @param eh A Xerces-C++ DOM error handler.
+ * @param m A namespace information map.
+ * @param e A character encoding to produce XML in.
+ * @param f Serialization flags.
+ *
+ * This function reports serialization errors by calling the error
+ * handler.
+ */
+void
+TriedaInput_ (::std::ostream& os,
+              const ::TriedaInput& x, 
+              ::xercesc::DOMErrorHandler& eh,
+              const ::xml_schema::namespace_infomap& m = ::xml_schema::namespace_infomap (),
+              const ::std::string& e = "UTF-8",
+              ::xml_schema::flags f = 0);
+
+/**
+ * @brief Serialize to a Xerces-C++ XML format target.
+ *
+ * @param ft A Xerces-C++ XML format target.
+ * @param x An object model to serialize.
+ * @param m A namespace information map.
+ * @param e A character encoding to produce XML in.
+ * @param f Serialization flags.
+ *
+ * This function uses exceptions to report serialization errors.
+ */
+void
+TriedaInput_ (::xercesc::XMLFormatTarget& ft,
+              const ::TriedaInput& x, 
+              const ::xml_schema::namespace_infomap& m = ::xml_schema::namespace_infomap (),
+              const ::std::string& e = "UTF-8",
+              ::xml_schema::flags f = 0);
+
+/**
+ * @brief Serialize to a Xerces-C++ XML format target with an error
+ * handler.
+ *
+ * @param ft A Xerces-C++ XML format target.
+ * @param x An object model to serialize.
+ * @param eh An error handler.
+ * @param m A namespace information map.
+ * @param e A character encoding to produce XML in.
+ * @param f Serialization flags.
+ *
+ * This function reports serialization errors by calling the error
+ * handler.
+ */
+void
+TriedaInput_ (::xercesc::XMLFormatTarget& ft,
+              const ::TriedaInput& x, 
+              ::xml_schema::error_handler& eh,
+              const ::xml_schema::namespace_infomap& m = ::xml_schema::namespace_infomap (),
+              const ::std::string& e = "UTF-8",
+              ::xml_schema::flags f = 0);
+
+/**
+ * @brief Serialize to a Xerces-C++ XML format target with a
+ * Xerces-C++ DOM error handler.
+ *
+ * @param ft A Xerces-C++ XML format target.
+ * @param x An object model to serialize.
+ * @param eh A Xerces-C++ DOM error handler.
+ * @param m A namespace information map.
+ * @param e A character encoding to produce XML in.
+ * @param f Serialization flags.
+ *
+ * This function reports serialization errors by calling the error
+ * handler.
+ */
+void
+TriedaInput_ (::xercesc::XMLFormatTarget& ft,
+              const ::TriedaInput& x, 
+              ::xercesc::DOMErrorHandler& eh,
+              const ::xml_schema::namespace_infomap& m = ::xml_schema::namespace_infomap (),
+              const ::std::string& e = "UTF-8",
+              ::xml_schema::flags f = 0);
+
+/**
+ * @brief Serialize to an existing Xerces-C++ DOM document.
+ *
+ * @param d A Xerces-C++ DOM document.
+ * @param x An object model to serialize.
+ * @param f Serialization flags.
+ *
+ * Note that it is your responsibility to create the DOM document
+ * with the correct root element as well as set the necessary
+ * namespace mapping attributes.
+ */
+void
+TriedaInput_ (::xercesc::DOMDocument& d,
+              const ::TriedaInput& x,
+              ::xml_schema::flags f = 0);
+
+/**
+ * @brief Serialize to a new Xerces-C++ DOM document.
+ *
+ * @param x An object model to serialize.
+ * @param m A namespace information map.
+ * @param f Serialization flags.
+ * @return A pointer to the new Xerces-C++ DOM document.
+ */
+::xml_schema::dom::auto_ptr< ::xercesc::DOMDocument >
+TriedaInput_ (const ::TriedaInput& x, 
+              const ::xml_schema::namespace_infomap& m = ::xml_schema::namespace_infomap (),
+              ::xml_schema::flags f = 0);
+
+//@}
 
 void
 operator<< (::xercesc::DOMElement&, const ItemCalendario&);

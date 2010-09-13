@@ -39,7 +39,7 @@
 				GenSerialization="true"
 				GenOstream="true"
 				GenDoxygen="true"
-				RootElement="Trieda"
+				RootElement="TriedaInput"
 			/>
 			<Tool
 				Name="VCXMLDataGeneratorTool"
@@ -205,10 +205,6 @@
 			Filter="cpp;c;cc;cxx"
 			>
 			<File
-				RelativePath=".\Magisterio.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\Main.cpp"
 				>
 			</File>
@@ -232,6 +228,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\CreditoDisponivel.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\Curriculo.cpp"
 					>
 				</File>
@@ -244,11 +244,19 @@
 					>
 				</File>
 				<File
+					RelativePath=".\Deslocamento.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\Disciplina.cpp"
 					>
 				</File>
 				<File
 					RelativePath=".\DivisaoCreditos.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\Fixacao.cpp"
 					>
 				</File>
 				<File
@@ -260,7 +268,7 @@
 					>
 				</File>
 				<File
-					RelativePath=".\HorarioDisponivel.cpp"
+					RelativePath=".\Magisterio.cpp"
 					>
 				</File>
 				<File
@@ -269,6 +277,10 @@
 				</File>
 				<File
 					RelativePath=".\OFBase.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\Oferta.cpp"
 					>
 				</File>
 				<File
@@ -288,6 +300,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\TipoContrato.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\TipoCurso.cpp"
 					>
 				</File>
@@ -300,11 +316,11 @@
 					>
 				</File>
 				<File
-					RelativePath=".\TRIEDA-InputXSD.cpp"
+					RelativePath=".\TipoTitulacao.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\Turma.cpp"
+					RelativePath=".\TRIEDA-InputXSD.cpp"
 					>
 				</File>
 				<File
@@ -401,6 +417,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\CreditoDisponivel.h"
+					>
+				</File>
+				<File
 					RelativePath=".\Curriculo.h"
 					>
 				</File>
@@ -413,6 +433,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\Deslocamento.h"
+					>
+				</File>
+				<File
 					RelativePath=".\Disciplina.h"
 					>
 				</File>
@@ -421,15 +445,15 @@
 					>
 				</File>
 				<File
+					RelativePath=".\Fixacao.h"
+					>
+				</File>
+				<File
 					RelativePath=".\Horario.h"
 					>
 				</File>
 				<File
 					RelativePath=".\HorarioAula.h"
-					>
-				</File>
-				<File
-					RelativePath=".\HorarioDisponivel.h"
 					>
 				</File>
 				<File
@@ -449,6 +473,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\Oferta.h"
+					>
+				</File>
+				<File
 					RelativePath=".\ProblemData.h"
 					>
 				</File>
@@ -465,6 +493,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\TipoContrato.h"
+					>
+				</File>
+				<File
 					RelativePath=".\TipoCurso.h"
 					>
 				</File>
@@ -477,11 +509,11 @@
 					>
 				</File>
 				<File
-					RelativePath=".\TRIEDA-InputXSD.h"
+					RelativePath=".\TipoTitulacao.h"
 					>
 				</File>
 				<File
-					RelativePath=".\Turma.h"
+					RelativePath=".\TRIEDA-InputXSD.h"
 					>
 				</File>
 				<File

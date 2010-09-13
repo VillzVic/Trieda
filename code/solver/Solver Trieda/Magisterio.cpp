@@ -1,8 +1,7 @@
 #include "Magisterio.h"
 
-Magisterio::Magisterio(Professor* professor)
+Magisterio::Magisterio()
 {
-   this->professor = professor;
 }
 
 Magisterio::~Magisterio(void)
@@ -11,8 +10,7 @@ Magisterio::~Magisterio(void)
 
 void Magisterio::le_arvore(ItemProfessorDisciplina& elem)
 {
-   disciplina = new Disciplina;
-   /* Le apenas o id, porque árvore já foi lida alhures */
-   disciplina->id = elem.disciplina().id();
-
+   nota = elem.nota();
+   preferencia = elem.preferencia();
+   disciplina_id = elem.disciplinaId();
 }

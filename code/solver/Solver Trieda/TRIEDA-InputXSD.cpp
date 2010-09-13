@@ -3041,22 +3041,22 @@ HorarioAula (const HorarioAula_sequence& s)
 // GrupoDiaSemana
 // 
 
-const GrupoDiaSemana::diaSemana_sequence& GrupoDiaSemana::
-diaSemana () const
+const GrupoDiaSemana::DiaSemana_sequence& GrupoDiaSemana::
+DiaSemana () const
 {
-  return this->diaSemana_;
+  return this->DiaSemana_;
 }
 
-GrupoDiaSemana::diaSemana_sequence& GrupoDiaSemana::
-diaSemana ()
+GrupoDiaSemana::DiaSemana_sequence& GrupoDiaSemana::
+DiaSemana ()
 {
-  return this->diaSemana_;
+  return this->DiaSemana_;
 }
 
 void GrupoDiaSemana::
-diaSemana (const diaSemana_sequence& s)
+DiaSemana (const DiaSemana_sequence& s)
 {
-  this->diaSemana_ = s;
+  this->DiaSemana_ = s;
 }
 
 
@@ -3327,28 +3327,22 @@ Sala (const Sala_sequence& s)
 // GrupoCreditoDisponivel
 // 
 
-const GrupoCreditoDisponivel::CreditoDisponivel_type& GrupoCreditoDisponivel::
+const GrupoCreditoDisponivel::CreditoDisponivel_sequence& GrupoCreditoDisponivel::
 CreditoDisponivel () const
 {
-  return this->CreditoDisponivel_.get ();
+  return this->CreditoDisponivel_;
 }
 
-GrupoCreditoDisponivel::CreditoDisponivel_type& GrupoCreditoDisponivel::
+GrupoCreditoDisponivel::CreditoDisponivel_sequence& GrupoCreditoDisponivel::
 CreditoDisponivel ()
 {
-  return this->CreditoDisponivel_.get ();
+  return this->CreditoDisponivel_;
 }
 
 void GrupoCreditoDisponivel::
-CreditoDisponivel (const CreditoDisponivel_type& x)
+CreditoDisponivel (const CreditoDisponivel_sequence& s)
 {
-  this->CreditoDisponivel_.set (x);
-}
-
-void GrupoCreditoDisponivel::
-CreditoDisponivel (::std::auto_ptr< CreditoDisponivel_type > x)
-{
-  this->CreditoDisponivel_.set (x);
+  this->CreditoDisponivel_ = s;
 }
 
 
@@ -3597,22 +3591,22 @@ NivelDificuldadeHorario (const NivelDificuldadeHorario_sequence& s)
 // GrupoIdentificador
 // 
 
-const GrupoIdentificador::id_sequence& GrupoIdentificador::
-id () const
+const GrupoIdentificador::Identificador_sequence& GrupoIdentificador::
+Identificador () const
 {
-  return this->id_;
+  return this->Identificador_;
 }
 
-GrupoIdentificador::id_sequence& GrupoIdentificador::
-id ()
+GrupoIdentificador::Identificador_sequence& GrupoIdentificador::
+Identificador ()
 {
-  return this->id_;
+  return this->Identificador_;
 }
 
 void GrupoIdentificador::
-id (const id_sequence& s)
+Identificador (const Identificador_sequence& s)
 {
-  this->id_ = s;
+  this->Identificador_ = s;
 }
 
 
@@ -9252,7 +9246,7 @@ GrupoHorarioAula::
 GrupoDiaSemana::
 GrupoDiaSemana ()
 : ::xml_schema::type (),
-  diaSemana_ (::xml_schema::flags (), this)
+  DiaSemana_ (::xml_schema::flags (), this)
 {
 }
 
@@ -9261,7 +9255,7 @@ GrupoDiaSemana (const GrupoDiaSemana& x,
                 ::xml_schema::flags f,
                 ::xml_schema::container* c)
 : ::xml_schema::type (x, f, c),
-  diaSemana_ (x.diaSemana_, f, this)
+  DiaSemana_ (x.DiaSemana_, f, this)
 {
 }
 
@@ -9270,7 +9264,7 @@ GrupoDiaSemana (const ::xercesc::DOMElement& e,
                 ::xml_schema::flags f,
                 ::xml_schema::container* c)
 : ::xml_schema::type (e, f | ::xml_schema::flags::base, c),
-  diaSemana_ (f, this)
+  DiaSemana_ (f, this)
 {
   if ((f & ::xml_schema::flags::base) == 0)
   {
@@ -9289,11 +9283,11 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
     const ::xsd::cxx::xml::qualified_name< char > n (
       ::xsd::cxx::xml::dom::name< char > (i));
 
-    // diaSemana
+    // DiaSemana
     //
-    if (n.name () == "diaSemana" && n.namespace_ ().empty ())
+    if (n.name () == "DiaSemana" && n.namespace_ ().empty ())
     {
-      this->diaSemana_.push_back (diaSemana_traits::create (i, f, this));
+      this->DiaSemana_.push_back (DiaSemana_traits::create (i, f, this));
       continue;
     }
 
@@ -10157,16 +10151,9 @@ GrupoSala::
 //
 
 GrupoCreditoDisponivel::
-GrupoCreditoDisponivel (const CreditoDisponivel_type& CreditoDisponivel)
+GrupoCreditoDisponivel ()
 : ::xml_schema::type (),
-  CreditoDisponivel_ (CreditoDisponivel, ::xml_schema::flags (), this)
-{
-}
-
-GrupoCreditoDisponivel::
-GrupoCreditoDisponivel (::std::auto_ptr< CreditoDisponivel_type >& CreditoDisponivel)
-: ::xml_schema::type (),
-  CreditoDisponivel_ (CreditoDisponivel, ::xml_schema::flags (), this)
+  CreditoDisponivel_ (::xml_schema::flags (), this)
 {
 }
 
@@ -10210,21 +10197,11 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
       ::std::auto_ptr< CreditoDisponivel_type > r (
         CreditoDisponivel_traits::create (i, f, this));
 
-      if (!CreditoDisponivel_.present ())
-      {
-        this->CreditoDisponivel_.set (r);
-        continue;
-      }
+      this->CreditoDisponivel_.push_back (r);
+      continue;
     }
 
     break;
-  }
-
-  if (!CreditoDisponivel_.present ())
-  {
-    throw ::xsd::cxx::tree::expected_element< char > (
-      "CreditoDisponivel",
-      "");
   }
 }
 
@@ -11016,7 +10993,7 @@ GrupoNivelDificuldadeHorario::
 GrupoIdentificador::
 GrupoIdentificador ()
 : ::xml_schema::type (),
-  id_ (::xml_schema::flags (), this)
+  Identificador_ (::xml_schema::flags (), this)
 {
 }
 
@@ -11025,7 +11002,7 @@ GrupoIdentificador (const GrupoIdentificador& x,
                     ::xml_schema::flags f,
                     ::xml_schema::container* c)
 : ::xml_schema::type (x, f, c),
-  id_ (x.id_, f, this)
+  Identificador_ (x.Identificador_, f, this)
 {
 }
 
@@ -11034,7 +11011,7 @@ GrupoIdentificador (const ::xercesc::DOMElement& e,
                     ::xml_schema::flags f,
                     ::xml_schema::container* c)
 : ::xml_schema::type (e, f | ::xml_schema::flags::base, c),
-  id_ (f, this)
+  Identificador_ (f, this)
 {
   if ((f & ::xml_schema::flags::base) == 0)
   {
@@ -11053,11 +11030,11 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
     const ::xsd::cxx::xml::qualified_name< char > n (
       ::xsd::cxx::xml::dom::name< char > (i));
 
-    // id
+    // Identificador
     //
-    if (n.name () == "id" && n.namespace_ ().empty ())
+    if (n.name () == "Identificador" && n.namespace_ ().empty ())
     {
-      this->id_.push_back (id_traits::create (i, f, this));
+      this->Identificador_.push_back (Identificador_traits::create (i, f, this));
       continue;
     }
 
@@ -12179,11 +12156,11 @@ operator<< (::std::ostream& o, const GrupoHorarioAula& i)
 ::std::ostream&
 operator<< (::std::ostream& o, const GrupoDiaSemana& i)
 {
-  for (GrupoDiaSemana::diaSemana_const_iterator
-       b (i.diaSemana ().begin ()), e (i.diaSemana ().end ());
+  for (GrupoDiaSemana::DiaSemana_const_iterator
+       b (i.DiaSemana ().begin ()), e (i.DiaSemana ().end ());
        b != e; ++b)
   {
-    o << ::std::endl << "diaSemana: " << *b;
+    o << ::std::endl << "DiaSemana: " << *b;
   }
 
   return o;
@@ -12348,7 +12325,13 @@ operator<< (::std::ostream& o, const GrupoSala& i)
 ::std::ostream&
 operator<< (::std::ostream& o, const GrupoCreditoDisponivel& i)
 {
-  o << ::std::endl << "CreditoDisponivel: " << i.CreditoDisponivel ();
+  for (GrupoCreditoDisponivel::CreditoDisponivel_const_iterator
+       b (i.CreditoDisponivel ().begin ()), e (i.CreditoDisponivel ().end ());
+       b != e; ++b)
+  {
+    o << ::std::endl << "CreditoDisponivel: " << *b;
+  }
+
   return o;
 }
 
@@ -12498,11 +12481,11 @@ operator<< (::std::ostream& o, const GrupoNivelDificuldadeHorario& i)
 ::std::ostream&
 operator<< (::std::ostream& o, const GrupoIdentificador& i)
 {
-  for (GrupoIdentificador::id_const_iterator
-       b (i.id ().begin ()), e (i.id ().end ());
+  for (GrupoIdentificador::Identificador_const_iterator
+       b (i.Identificador ().begin ()), e (i.Identificador ().end ());
        b != e; ++b)
   {
-    o << ::std::endl << "id: " << *b;
+    o << ::std::endl << "Identificador: " << *b;
   }
 
   return o;
@@ -12570,9 +12553,431 @@ operator<< (::std::ostream& o, const cargaHorariaSemanalAluno& i)
 #include <xsd/cxx/xml/sax/std-input-source.hxx>
 #include <xsd/cxx/tree/error-handler.hxx>
 
+::std::auto_ptr< ::TriedaInput >
+TriedaInput_ (const ::std::string& u,
+              ::xml_schema::flags f,
+              const ::xml_schema::properties& p)
+{
+  ::xsd::cxx::xml::auto_initializer i (
+    (f & ::xml_schema::flags::dont_initialize) == 0,
+    (f & ::xml_schema::flags::keep_dom) == 0);
+
+  ::xsd::cxx::tree::error_handler< char > h;
+
+  ::xml_schema::dom::auto_ptr< ::xercesc::DOMDocument > d (
+    ::xsd::cxx::xml::dom::parse< char > (u, h, p, f));
+
+  h.throw_if_failed< ::xsd::cxx::tree::parsing< char > > ();
+
+  ::std::auto_ptr< ::TriedaInput > r (
+    ::TriedaInput_ (
+      d, f | ::xml_schema::flags::own_dom, p));
+
+  return r;
+}
+
+::std::auto_ptr< ::TriedaInput >
+TriedaInput_ (const ::std::string& u,
+              ::xml_schema::error_handler& h,
+              ::xml_schema::flags f,
+              const ::xml_schema::properties& p)
+{
+  ::xsd::cxx::xml::auto_initializer i (
+    (f & ::xml_schema::flags::dont_initialize) == 0,
+    (f & ::xml_schema::flags::keep_dom) == 0);
+
+  ::xml_schema::dom::auto_ptr< ::xercesc::DOMDocument > d (
+    ::xsd::cxx::xml::dom::parse< char > (u, h, p, f));
+
+  if (!d.get ())
+    throw ::xsd::cxx::tree::parsing< char > ();
+
+  ::std::auto_ptr< ::TriedaInput > r (
+    ::TriedaInput_ (
+      d, f | ::xml_schema::flags::own_dom, p));
+
+  return r;
+}
+
+::std::auto_ptr< ::TriedaInput >
+TriedaInput_ (const ::std::string& u,
+              ::xercesc::DOMErrorHandler& h,
+              ::xml_schema::flags f,
+              const ::xml_schema::properties& p)
+{
+  ::xml_schema::dom::auto_ptr< ::xercesc::DOMDocument > d (
+    ::xsd::cxx::xml::dom::parse< char > (u, h, p, f));
+
+  if (!d.get ())
+    throw ::xsd::cxx::tree::parsing< char > ();
+
+  ::std::auto_ptr< ::TriedaInput > r (
+    ::TriedaInput_ (
+      d, f | ::xml_schema::flags::own_dom, p));
+
+  return r;
+}
+
+::std::auto_ptr< ::TriedaInput >
+TriedaInput_ (::std::istream& is,
+              ::xml_schema::flags f,
+              const ::xml_schema::properties& p)
+{
+  ::xsd::cxx::xml::auto_initializer i (
+    (f & ::xml_schema::flags::dont_initialize) == 0,
+    (f & ::xml_schema::flags::keep_dom) == 0);
+
+  ::xsd::cxx::xml::sax::std_input_source isrc (is);
+  return ::TriedaInput_ (isrc, f, p);
+}
+
+::std::auto_ptr< ::TriedaInput >
+TriedaInput_ (::std::istream& is,
+              ::xml_schema::error_handler& h,
+              ::xml_schema::flags f,
+              const ::xml_schema::properties& p)
+{
+  ::xsd::cxx::xml::auto_initializer i (
+    (f & ::xml_schema::flags::dont_initialize) == 0,
+    (f & ::xml_schema::flags::keep_dom) == 0);
+
+  ::xsd::cxx::xml::sax::std_input_source isrc (is);
+  return ::TriedaInput_ (isrc, h, f, p);
+}
+
+::std::auto_ptr< ::TriedaInput >
+TriedaInput_ (::std::istream& is,
+              ::xercesc::DOMErrorHandler& h,
+              ::xml_schema::flags f,
+              const ::xml_schema::properties& p)
+{
+  ::xsd::cxx::xml::sax::std_input_source isrc (is);
+  return ::TriedaInput_ (isrc, h, f, p);
+}
+
+::std::auto_ptr< ::TriedaInput >
+TriedaInput_ (::std::istream& is,
+              const ::std::string& sid,
+              ::xml_schema::flags f,
+              const ::xml_schema::properties& p)
+{
+  ::xsd::cxx::xml::auto_initializer i (
+    (f & ::xml_schema::flags::dont_initialize) == 0,
+    (f & ::xml_schema::flags::keep_dom) == 0);
+
+  ::xsd::cxx::xml::sax::std_input_source isrc (is, sid);
+  return ::TriedaInput_ (isrc, f, p);
+}
+
+::std::auto_ptr< ::TriedaInput >
+TriedaInput_ (::std::istream& is,
+              const ::std::string& sid,
+              ::xml_schema::error_handler& h,
+              ::xml_schema::flags f,
+              const ::xml_schema::properties& p)
+{
+  ::xsd::cxx::xml::auto_initializer i (
+    (f & ::xml_schema::flags::dont_initialize) == 0,
+    (f & ::xml_schema::flags::keep_dom) == 0);
+
+  ::xsd::cxx::xml::sax::std_input_source isrc (is, sid);
+  return ::TriedaInput_ (isrc, h, f, p);
+}
+
+::std::auto_ptr< ::TriedaInput >
+TriedaInput_ (::std::istream& is,
+              const ::std::string& sid,
+              ::xercesc::DOMErrorHandler& h,
+              ::xml_schema::flags f,
+              const ::xml_schema::properties& p)
+{
+  ::xsd::cxx::xml::sax::std_input_source isrc (is, sid);
+  return ::TriedaInput_ (isrc, h, f, p);
+}
+
+::std::auto_ptr< ::TriedaInput >
+TriedaInput_ (::xercesc::InputSource& i,
+              ::xml_schema::flags f,
+              const ::xml_schema::properties& p)
+{
+  ::xsd::cxx::tree::error_handler< char > h;
+
+  ::xml_schema::dom::auto_ptr< ::xercesc::DOMDocument > d (
+    ::xsd::cxx::xml::dom::parse< char > (i, h, p, f));
+
+  h.throw_if_failed< ::xsd::cxx::tree::parsing< char > > ();
+
+  ::std::auto_ptr< ::TriedaInput > r (
+    ::TriedaInput_ (
+      d, f | ::xml_schema::flags::own_dom, p));
+
+  return r;
+}
+
+::std::auto_ptr< ::TriedaInput >
+TriedaInput_ (::xercesc::InputSource& i,
+              ::xml_schema::error_handler& h,
+              ::xml_schema::flags f,
+              const ::xml_schema::properties& p)
+{
+  ::xml_schema::dom::auto_ptr< ::xercesc::DOMDocument > d (
+    ::xsd::cxx::xml::dom::parse< char > (i, h, p, f));
+
+  if (!d.get ())
+    throw ::xsd::cxx::tree::parsing< char > ();
+
+  ::std::auto_ptr< ::TriedaInput > r (
+    ::TriedaInput_ (
+      d, f | ::xml_schema::flags::own_dom, p));
+
+  return r;
+}
+
+::std::auto_ptr< ::TriedaInput >
+TriedaInput_ (::xercesc::InputSource& i,
+              ::xercesc::DOMErrorHandler& h,
+              ::xml_schema::flags f,
+              const ::xml_schema::properties& p)
+{
+  ::xml_schema::dom::auto_ptr< ::xercesc::DOMDocument > d (
+    ::xsd::cxx::xml::dom::parse< char > (i, h, p, f));
+
+  if (!d.get ())
+    throw ::xsd::cxx::tree::parsing< char > ();
+
+  ::std::auto_ptr< ::TriedaInput > r (
+    ::TriedaInput_ (
+      d, f | ::xml_schema::flags::own_dom, p));
+
+  return r;
+}
+
+::std::auto_ptr< ::TriedaInput >
+TriedaInput_ (const ::xercesc::DOMDocument& d,
+              ::xml_schema::flags f,
+              const ::xml_schema::properties& p)
+{
+  if (f & ::xml_schema::flags::keep_dom)
+  {
+    ::xml_schema::dom::auto_ptr< ::xercesc::DOMDocument > c (
+      static_cast< ::xercesc::DOMDocument* > (d.cloneNode (true)));
+
+    ::std::auto_ptr< ::TriedaInput > r (
+      ::TriedaInput_ (
+        c, f | ::xml_schema::flags::own_dom, p));
+
+    return r;
+  }
+
+  const ::xercesc::DOMElement& e (*d.getDocumentElement ());
+  const ::xsd::cxx::xml::qualified_name< char > n (
+    ::xsd::cxx::xml::dom::name< char > (e));
+
+  if (n.name () == "TriedaInput" &&
+      n.namespace_ () == "")
+  {
+    ::std::auto_ptr< ::TriedaInput > r (
+      ::xsd::cxx::tree::traits< ::TriedaInput, char >::create (
+        e, f, 0));
+    return r;
+  }
+
+  throw ::xsd::cxx::tree::unexpected_element < char > (
+    n.name (),
+    n.namespace_ (),
+    "TriedaInput",
+    "");
+}
+
+::std::auto_ptr< ::TriedaInput >
+TriedaInput_ (::xml_schema::dom::auto_ptr< ::xercesc::DOMDocument >& d,
+              ::xml_schema::flags f,
+              const ::xml_schema::properties&)
+{
+  ::xml_schema::dom::auto_ptr< ::xercesc::DOMDocument > c (
+    ((f & ::xml_schema::flags::keep_dom) &&
+     !(f & ::xml_schema::flags::own_dom))
+    ? static_cast< ::xercesc::DOMDocument* > (d->cloneNode (true))
+    : 0);
+
+  ::xercesc::DOMDocument& doc (c.get () ? *c : *d);
+  const ::xercesc::DOMElement& e (*doc.getDocumentElement ());
+
+  const ::xsd::cxx::xml::qualified_name< char > n (
+    ::xsd::cxx::xml::dom::name< char > (e));
+
+  if (f & ::xml_schema::flags::keep_dom)
+    doc.setUserData (::xml_schema::dom::tree_node_key,
+                     (c.get () ? &c : &d),
+                     0);
+
+  if (n.name () == "TriedaInput" &&
+      n.namespace_ () == "")
+  {
+    ::std::auto_ptr< ::TriedaInput > r (
+      ::xsd::cxx::tree::traits< ::TriedaInput, char >::create (
+        e, f, 0));
+    return r;
+  }
+
+  throw ::xsd::cxx::tree::unexpected_element < char > (
+    n.name (),
+    n.namespace_ (),
+    "TriedaInput",
+    "");
+}
+
 #include <ostream>
 #include <xsd/cxx/xml/dom/serialization-source.hxx>
 #include <xsd/cxx/tree/error-handler.hxx>
+
+void
+TriedaInput_ (::std::ostream& o,
+              const ::TriedaInput& s,
+              const ::xml_schema::namespace_infomap& m,
+              const ::std::string& e,
+              ::xml_schema::flags f)
+{
+  ::xsd::cxx::xml::auto_initializer i (
+    (f & ::xml_schema::flags::dont_initialize) == 0);
+
+  ::xml_schema::dom::auto_ptr< ::xercesc::DOMDocument > d (
+    ::TriedaInput_ (s, m, f));
+
+  ::xsd::cxx::tree::error_handler< char > h;
+
+  ::xsd::cxx::xml::dom::ostream_format_target t (o);
+  if (!::xsd::cxx::xml::dom::serialize (t, *d, e, h, f))
+  {
+    h.throw_if_failed< ::xsd::cxx::tree::serialization< char > > ();
+  }
+}
+
+void
+TriedaInput_ (::std::ostream& o,
+              const ::TriedaInput& s,
+              ::xml_schema::error_handler& h,
+              const ::xml_schema::namespace_infomap& m,
+              const ::std::string& e,
+              ::xml_schema::flags f)
+{
+  ::xsd::cxx::xml::auto_initializer i (
+    (f & ::xml_schema::flags::dont_initialize) == 0);
+
+  ::xml_schema::dom::auto_ptr< ::xercesc::DOMDocument > d (
+    ::TriedaInput_ (s, m, f));
+  ::xsd::cxx::xml::dom::ostream_format_target t (o);
+  if (!::xsd::cxx::xml::dom::serialize (t, *d, e, h, f))
+  {
+    throw ::xsd::cxx::tree::serialization< char > ();
+  }
+}
+
+void
+TriedaInput_ (::std::ostream& o,
+              const ::TriedaInput& s,
+              ::xercesc::DOMErrorHandler& h,
+              const ::xml_schema::namespace_infomap& m,
+              const ::std::string& e,
+              ::xml_schema::flags f)
+{
+  ::xml_schema::dom::auto_ptr< ::xercesc::DOMDocument > d (
+    ::TriedaInput_ (s, m, f));
+  ::xsd::cxx::xml::dom::ostream_format_target t (o);
+  if (!::xsd::cxx::xml::dom::serialize (t, *d, e, h, f))
+  {
+    throw ::xsd::cxx::tree::serialization< char > ();
+  }
+}
+
+void
+TriedaInput_ (::xercesc::XMLFormatTarget& t,
+              const ::TriedaInput& s,
+              const ::xml_schema::namespace_infomap& m,
+              const ::std::string& e,
+              ::xml_schema::flags f)
+{
+  ::xml_schema::dom::auto_ptr< ::xercesc::DOMDocument > d (
+    ::TriedaInput_ (s, m, f));
+
+  ::xsd::cxx::tree::error_handler< char > h;
+
+  if (!::xsd::cxx::xml::dom::serialize (t, *d, e, h, f))
+  {
+    h.throw_if_failed< ::xsd::cxx::tree::serialization< char > > ();
+  }
+}
+
+void
+TriedaInput_ (::xercesc::XMLFormatTarget& t,
+              const ::TriedaInput& s,
+              ::xml_schema::error_handler& h,
+              const ::xml_schema::namespace_infomap& m,
+              const ::std::string& e,
+              ::xml_schema::flags f)
+{
+  ::xml_schema::dom::auto_ptr< ::xercesc::DOMDocument > d (
+    ::TriedaInput_ (s, m, f));
+  if (!::xsd::cxx::xml::dom::serialize (t, *d, e, h, f))
+  {
+    throw ::xsd::cxx::tree::serialization< char > ();
+  }
+}
+
+void
+TriedaInput_ (::xercesc::XMLFormatTarget& t,
+              const ::TriedaInput& s,
+              ::xercesc::DOMErrorHandler& h,
+              const ::xml_schema::namespace_infomap& m,
+              const ::std::string& e,
+              ::xml_schema::flags f)
+{
+  ::xml_schema::dom::auto_ptr< ::xercesc::DOMDocument > d (
+    ::TriedaInput_ (s, m, f));
+  if (!::xsd::cxx::xml::dom::serialize (t, *d, e, h, f))
+  {
+    throw ::xsd::cxx::tree::serialization< char > ();
+  }
+}
+
+void
+TriedaInput_ (::xercesc::DOMDocument& d,
+              const ::TriedaInput& s,
+              ::xml_schema::flags)
+{
+  ::xercesc::DOMElement& e (*d.getDocumentElement ());
+  const ::xsd::cxx::xml::qualified_name< char > n (
+    ::xsd::cxx::xml::dom::name< char > (e));
+
+  if (n.name () == "TriedaInput" &&
+      n.namespace_ () == "")
+  {
+    e << s;
+  }
+  else
+  {
+    throw ::xsd::cxx::tree::unexpected_element < char > (
+      n.name (),
+      n.namespace_ (),
+      "TriedaInput",
+      "");
+  }
+}
+
+::xml_schema::dom::auto_ptr< ::xercesc::DOMDocument >
+TriedaInput_ (const ::TriedaInput& s,
+              const ::xml_schema::namespace_infomap& m,
+              ::xml_schema::flags f)
+{
+  ::xml_schema::dom::auto_ptr< ::xercesc::DOMDocument > d (
+    ::xsd::cxx::xml::dom::serialize< char > (
+      "TriedaInput",
+      "",
+      m, f));
+
+  ::TriedaInput_ (*d, s, f);
+  return d;
+}
 
 void
 operator<< (::xercesc::DOMElement& e, const ItemCalendario& i)
@@ -14320,15 +14725,15 @@ operator<< (::xercesc::DOMElement& e, const GrupoDiaSemana& i)
 {
   e << static_cast< const ::xml_schema::type& > (i);
 
-  // diaSemana
+  // DiaSemana
   //
-  for (GrupoDiaSemana::diaSemana_const_iterator
-       b (i.diaSemana ().begin ()), n (i.diaSemana ().end ());
+  for (GrupoDiaSemana::DiaSemana_const_iterator
+       b (i.DiaSemana ().begin ()), n (i.DiaSemana ().end ());
        b != n; ++b)
   {
     ::xercesc::DOMElement& s (
       ::xsd::cxx::xml::dom::create_element (
-        "diaSemana",
+        "DiaSemana",
         e));
 
     s << *b;
@@ -14582,13 +14987,16 @@ operator<< (::xercesc::DOMElement& e, const GrupoCreditoDisponivel& i)
 
   // CreditoDisponivel
   //
+  for (GrupoCreditoDisponivel::CreditoDisponivel_const_iterator
+       b (i.CreditoDisponivel ().begin ()), n (i.CreditoDisponivel ().end ());
+       b != n; ++b)
   {
     ::xercesc::DOMElement& s (
       ::xsd::cxx::xml::dom::create_element (
         "CreditoDisponivel",
         e));
 
-    s << i.CreditoDisponivel ();
+    s << *b;
   }
 }
 
@@ -14817,15 +15225,15 @@ operator<< (::xercesc::DOMElement& e, const GrupoIdentificador& i)
 {
   e << static_cast< const ::xml_schema::type& > (i);
 
-  // id
+  // Identificador
   //
-  for (GrupoIdentificador::id_const_iterator
-       b (i.id ().begin ()), n (i.id ().end ());
+  for (GrupoIdentificador::Identificador_const_iterator
+       b (i.Identificador ().begin ()), n (i.Identificador ().end ());
        b != n; ++b)
   {
     ::xercesc::DOMElement& s (
       ::xsd::cxx::xml::dom::create_element (
-        "id",
+        "Identificador",
         e));
 
     s << *b;

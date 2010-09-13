@@ -12,5 +12,4 @@ void TipoSala::le_arvore(ItemTipoSala& elem)
 {
    id = elem.id();
    nome = elem.nome();
-   descricao = elem.descricao();
 }

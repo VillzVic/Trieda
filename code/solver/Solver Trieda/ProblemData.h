@@ -2,14 +2,22 @@
 #define PROBLEMDATA_H
 
 #include "GGroup.h"
-#include "Curso.h"
-#include "Unidade.h"
-#include "Disciplina.h"
-#include "DivisaoCreditos.h"
-#include "Professor.h"
-#include "Unidade.h"
 #include "Calendario.h"
-#include "BlocoCurricular.h"
+#include "TipoSala.h"
+#include "TipoContrato.h"
+#include "TipoTitulacao.h"
+#include "AreaTitulacao.h"
+#include "TipoDisciplina.h"
+#include "NivelDificuldade.h"
+#include "TipoCurso.h"
+#include "DivisaoCreditos.h"
+#include "Campus.h"
+#include "Deslocamento.h"
+#include "Disciplina.h"
+#include "Curso.h"
+#include "Oferta.h"
+#include "Demanda.h"
+#include "Fixacao.h"
 #include <iostream>
 
 //Stores input data
@@ -34,7 +42,7 @@ public:
    //==================================================
    // GET METHODS 
    //==================================================
-   GGroup<Unidade*>* getUnidades() { return &unidades; }
+   
    /**
    ToDo:
    All get methods of the private attributes should be defined here
@@ -46,15 +54,15 @@ public:
    ToDo:
    All objects that define the problem input should be declared here
    **/
-   GGroup<Unidade*> unidades;
-   GGroup<Curso*> cursos;
-   GGroup<Professor*> professores;
+      //GGroup<Curso*> cursos;
+   //GGroup<Professor*> professores;
    Calendario* calendario;
-   GGroup<Disciplina*> disciplinas;
-   GGroup<DivisaoCreditos*> regras_credito;
-   GGroup<BlocoCurricular*> blocos;
+   //GGroup<Disciplina*> disciplinas;
+   //GGroup<DivisaoCreditos*> regras_credito;
+   //GGroup<BlocoCurricular*> blocos;
+   GGroup<Campus*> campi;
 public:
-   virtual void le_arvore(Trieda& raiz);
+   virtual void le_arvore(TriedaInput& raiz);
 };
 
 #endif

@@ -32,7 +32,7 @@ private:
    char *inputFile;
 
    // XML parser
-	std::auto_ptr<Trieda> root;
+   std::auto_ptr<TriedaInput> root;
 
 };
 

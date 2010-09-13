@@ -12,16 +12,14 @@ void Unidade::le_arvore(ItemUnidade& elem)
 {
    id = elem.id();
    codigo = elem.codigo();
-   endereco = elem.endereco();
-   num_med_salas = elem.numMedSalas();
-   custo_med_cred = elem.custoMedCred();
+   nome = elem.nome();
    ITERA_SEQ(it_salas, elem.salas(), Sala) {
       Sala* sala = new Sala();
       sala->le_arvore(*it_salas);
       salas.add(sala);
    }
-   ITERA_SEQ(it_hora,elem.horarios(),HorarioDisponivel) {
-      HorarioDisponivel* horario = new HorarioDisponivel();
+   ITERA_SEQ(it_hora,elem.horariosDisponiveis(),Horario) {
+      Horario* horario = new Horario();
       horario->le_arvore(*it_hora);
       horarios.add(horario);
    }

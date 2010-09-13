@@ -11,6 +11,7 @@ public:
    virtual void le_arvore(ItemTurno& elem);
 
 //private:
-     std::string nome;
+   std::string nome;
+   int tempoAula;
    GGroup<HorarioAula*> horarios_aula;
 };

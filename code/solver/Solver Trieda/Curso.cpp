@@ -12,15 +12,27 @@ void Curso::le_arvore(ItemCurso& elem)
 {
    id = elem.id();
    codigo = elem.codigo();
-   //tipo = new TipoCurso();
-   //tipo->le_arvore(elem.tipo());
-   qtd_min_doutores = elem.qtdMinDoutores();
-   qtd_min_mestres = elem.qtdMinMestres();
+   tipo_id = elem.tipoId();
    qtd_max_prof_disc = elem.qtdMaxProfDisc();
-   //area_titulacao = new AreaTitulacao();
-   ITERA_SEQ(it_curriculo,elem.Curriculos(),Curriculo)
+   mais_de_uma = elem.maisDeUmaDiscPeriodo();
+
+   double pm; int tit_id;
+   pm = elem.regraPercMinMestres().percMinimo();
+   tit_id = elem.regraPercMinMestres().tipoTitulacaoId();
+   regra_min_mestres = std::make_pair(tit_id,pm);
+
+   pm = elem.regraPercMinDoutores().percMinimo();
+   tit_id = elem.regraPercMinDoutores().tipoTitulacaoId();
+   regra_min_doutores = std::make_pair(tit_id,pm);
+
+
+   ITERA_SEQ(it_areas,elem.areasTitulacao(),Identificador) {
+      area_ids.add(*it_areas);
+   }
+
+   ITERA_SEQ(it_curriculo,elem.curriculos(),Curriculo)
    {
-      Curriculo* curriculo = new Curriculo(this);
+      Curriculo* curriculo = new Curriculo();
       curriculo->le_arvore(*it_curriculo);
       curriculos.add(curriculo);
    }

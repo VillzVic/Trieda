@@ -61,7 +61,7 @@ public:
    //Return constraint type
    ConstraintType getType() const            { return type; }
 
-   Turma* getTurma() const { return i; }
+  // Turma* getTurma() const { return i; }
    Disciplina* getDisciplina() const { return d; }
    Unidade* getUnidade() const { return u; }
    Sala* getSala() const { return s; }
@@ -85,7 +85,7 @@ public:
    ToDo:
    All set methods of the private attributes should be defined here
    */
-   void setTurma(Turma* ii) {  i = ii; }
+  // void setTurma(Turma* ii) {  i = ii; }
    void setDisciplina(Disciplina* dd) {  d = dd; }
    void setUnidade(Unidade* uu) {  u = uu; }
    void setSala(Sala* ss) {  s = ss; }
@@ -104,7 +104,7 @@ private:
    **/
    Unidade* u;
    Disciplina* d;
-   Turma* i;
+  // Turma* i;
    Sala* s;
    int t /* dia */;
    BlocoCurricular* b; 

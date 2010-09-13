@@ -1,10 +1,6 @@
 #pragma once
 #include "ofbase.h"
-
-#include "AreaTitulacao.h"
-#include "Unidade.h"
-#include "HorarioDisponivel.h"
-#include "Disciplina.h"
+#include "Magisterio.h"
 
 class Professor :
    public OFBase
@@ -16,16 +12,14 @@ public:
 
    virtual void le_arvore(ItemProfessor& elem);
 
-   //TipoContrato* contrato; 
-   //TipoTitulacao* titulacao;
-   AreaTitulacao* area_titulacao;
    std::string cpf;
    std::string nome;
+   int tipo_contrato_id;
    int ch_min;
    int ch_max;
    int ch_anterior;
+   int titulacao_id;
+   int area_id;
    double valor_credito;
-   GGroup<Unidade*> unidades;
-   GGroup<HorarioDisponivel*> horarios;
-   //GGroup<Magisterio*> magisterio;
+   GGroup<Magisterio*> magisterio;
 };

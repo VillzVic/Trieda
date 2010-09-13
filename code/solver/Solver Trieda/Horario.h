@@ -12,9 +12,9 @@ public:
 
    virtual int getId();
 
-   int diaSemana,
-   horarioAulaId,
-   turnoId;
+   int diaSemana;
+   int horarioAulaId;
+   int turnoId;
 
 private:
    int id;

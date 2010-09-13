@@ -10,11 +10,25 @@ Sala::~Sala(void)
 
 void Sala::le_arvore(ItemSala& elem)
 {
+   bool tatico = true; //fixme!!!
+
    id = elem.id();
    codigo = elem.codigo();
-   num_salas = elem.numSalas();
-   capacidade = elem.capacidade();
    andar = elem.andar();
-   TipoSala* tipo = new TipoSala;
-   tipo->le_arvore(elem.tipoSala());
+   numero = elem.numero();
+   tipo_sala_id = elem.tipoSalaId();
+   capacidade = elem.capacidade();
+   if(tatico) {
+      ITERA_SEQ(it_cred,elem.creditosDispon_veis().get(),CreditoDisponivel) {
+         CreditoDisponivel* credito_disp = new CreditoDisponivel;
+         credito_disp->le_arvore(*it_cred);
+         creditos_disponiveis.add(credito_disp);
+      }
+   }
+   else {
+      // le horarios disponiveis 
+   }
+   ITERA_SEQ(it_disc,elem.disciplinasAssociadas(),Identificador) {
+      disciplinas_associadas.add(*it_disc);
+   }
 }

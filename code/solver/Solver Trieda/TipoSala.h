@@ -10,5 +10,4 @@ public:
    virtual void le_arvore(ItemTipoSala& elem);
 //private:
    std::string nome;
-   std::string descricao;
 };

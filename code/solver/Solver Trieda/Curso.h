@@ -17,12 +17,14 @@ public:
 
 //private:
    std::string codigo;
-   TipoCurso* tipo;
+   int tipo_id;
    int num_periodos;
-   int qtd_min_doutores;
-   int qtd_min_mestres;
    int qtd_max_prof_disc;
-   AreaTitulacao* area_titulacao;
+   bool mais_de_uma;
+   std::pair<int,double> regra_min_mestres;
+   std::pair<int,double> regra_min_doutores;
+
+   GGroup<int> area_ids;
    GGroup<Curriculo*> curriculos;
 
 };

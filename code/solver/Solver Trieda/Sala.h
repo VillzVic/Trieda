@@ -1,6 +1,8 @@
 #pragma once
 #include "ofbase.h"
 #include "TipoSala.h"
+#include "horario.h"
+#include "CreditoDisponivel.h"
 
 class Sala :
    public OFBase
@@ -9,11 +11,15 @@ public:
    Sala(void);
    ~Sala(void);
 //private:
-   TipoSala* tipo;
    std::string codigo;
-   int num_salas;
    std::string andar;
+   int numero;   
+   int tipo_sala_id; //alterar para ref, depois
    int capacidade;
+   GGroup<Horario*> horarios_disponiveis;
+   GGroup<CreditoDisponivel*> creditos_disponiveis;
+   GGroup<int> disciplinas_associadas; //alterar para ref, depois
+
 public:
    virtual void le_arvore(ItemSala& elem);
 };

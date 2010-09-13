@@ -2,15 +2,7 @@
 #include "ofbase.h"
 #include "TipoDisciplina.h"
 #include "DivisaoCreditos.h"
-#include "HorarioDisponivel.h"
-#include "Sala.h"
-
-class Demanda;
-#include "Demanda.h"
-
-class Turma;
-#include "Turma.h"
-
+#include "Horario.h"
 
 class Disciplina :
    public OFBase
@@ -24,14 +16,16 @@ public:
    int cred_teoricos;
    int cred_praticos;
    bool e_lab;
-   TipoDisciplina* tipo;
+   int max_alunos_t;
+   int max_alunos_p;
+   int tipo_disciplina_id;
+   int nivel_dificuldade_id;
+
    DivisaoCreditos* divisao_creditos;
-   GGroup<Demanda*> demandas;
-   GGroup<Disciplina*> compatibilidades; /* tem isso mesmo? */
-   GGroup<Disciplina*> continencias;
-   GGroup<HorarioDisponivel*> horarios;
-   GGroup<Sala*> salas;
-   GGroup<Turma*> turmas;
+   GGroup<int> equivalentes; 
+   GGroup<int> incompativeis;
+   GGroup<Horario*> horarios;
+
 public:
    virtual void le_arvore(ItemDisciplina& elem);
 };

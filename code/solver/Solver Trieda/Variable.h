@@ -42,7 +42,7 @@ public:
    ToDo:
    All get methods of the private attributes should be defined here
    */
-   Turma* getTurma() const { return i; }
+//   Turma* getTurma() const { return i; }
    Disciplina* getDisciplina() const { return d; }
    Unidade* getUnidade() const { return u; }
    Sala* getSala() const { return s; }
@@ -65,7 +65,7 @@ public:
    ToDo:
    All set methods of the private attributes should be defined here
    */
-   void setTurma(Turma* ii) {  i = ii; }
+//   void setTurma(Turma* ii) {  i = ii; }
    void setDisciplina(Disciplina* dd) {  d = dd; }
    void setUnidade(Unidade* uu) {  u = uu; }
    void setSala(Sala* ss) {  s = ss; }
@@ -94,7 +94,7 @@ private:
    /* ToDo:
    All attributes that define a variable should be declared here
    */
-   Turma* i;
+//   Turma* i;
    Disciplina* d;
    Unidade* u;
    Sala* s;

@@ -1,21 +1,18 @@
 #pragma once
 #include "ofbase.h"
-#include "Disciplina.h"
-#include "Professor.h"
 
 class Magisterio :
    public OFBase
 {
 public:
-   Magisterio(Professor* professor);
+   Magisterio();
    ~Magisterio(void);
 
    int nota;
-   int ranking;
-   Professor* professor;
-   Disciplina* disciplina;
+   int preferencia;
+   int disciplina_id;
 
-   int getId() { return 100000*disciplina->getId() + professor->getId(); }
+   int getId() { return disciplina_id; }
    virtual void le_arvore(ItemProfessorDisciplina& elem);
 
 
