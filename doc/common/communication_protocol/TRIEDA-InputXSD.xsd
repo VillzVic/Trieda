@@ -1106,7 +1106,7 @@ Maximizar/gerenciar a nota da avaliação institucional média coletiva do corpo
   </xs:complexType>
   <xs:complexType name="GrupoIdentificador">
     <xs:sequence minOccurs="0" maxOccurs="unbounded">
-      <xs:element name="id" type="xs:int">
+      <xs:element name="Identificador" type="xs:int">
         <xs:annotation>
           <xs:documentation>represente o identificador de alguma entidade</xs:documentation>
         </xs:annotation>
