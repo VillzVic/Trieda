@@ -1,5 +1,5 @@
-<?xml version="1.0" encoding="utf-8" ?>
-<!--Created with Liquid XML Studio - FREE Community Edition 7.0.5.906 (http://www.liquid-technologies.com)-->
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Created with Liquid XML Studio 1.0.8.0 (http://www.liquid-technologies.com) -->
 <xs:schema elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
   <xs:element name="TriedaInput">
     <xs:complexType>
@@ -371,9 +371,9 @@
   </xs:complexType>
   <xs:complexType name="ItemHorario">
     <xs:sequence>
-      <xs:element name="diaSemana" type="xs:int">
+      <xs:element name="turnoId" type="xs:int">
         <xs:annotation>
-          <xs:documentation>um inteiro que represente um dia da semana. Os valores possíveis são: (1 - Dom), (2 - Seg), (3 - Ter), (4 - Qua), (5 - Qua), (6 - Sex), (7 - SAb)</xs:documentation>
+          <xs:documentation>identificador de um ItemTurno</xs:documentation>
         </xs:annotation>
       </xs:element>
       <xs:element name="horarioAulaId" type="xs:int">
@@ -381,9 +381,9 @@
           <xs:documentation>identificador de um ItemHorarioAula</xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element name="turnoId" type="xs:int">
+      <xs:element name="diasSemana" type="GrupoDiaSemana">
         <xs:annotation>
-          <xs:documentation>identificador de um ItemTurno</xs:documentation>
+          <xs:documentation>um inteiro que represente um dia da semana. Os valores possíveis são: (1 - Dom), (2 - Seg), (3 - Ter), (4 - Qua), (5 - Qua), (6 - Sex), (7 - SAb)</xs:documentation>
         </xs:annotation>
       </xs:element>
     </xs:sequence>
@@ -728,6 +728,7 @@
   </xs:complexType>
   <xs:complexType name="ItemOfertaCurso">
     <xs:sequence>
+      <xs:element name="id" type="xs:int" />
       <xs:element name="curriculoId" type="xs:int">
         <xs:annotation>
           <xs:documentation>identificador da matriz curricular (ItemCurriculo) de um determinado curso que será oferecida num determinado turno de um determinado campus</xs:documentation>
