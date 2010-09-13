@@ -8,6 +8,7 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -28,6 +29,8 @@ import org.springframework.roo.addon.javabean.RooJavaBean;
 import org.springframework.roo.addon.tostring.RooToString;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.gapso.trieda.misc.Estados;
+
 @Configurable
 @Entity
 @RooJavaBean
@@ -44,14 +47,26 @@ public class Campus implements Serializable {
     private Cenario cenario;
 
     @NotNull
-    @Column(name = "CAL_CODIGO")
+    @Column(name = "CAM_CODIGO")
     @Size(min = 3, max = 20)
     private String codigo;
 
     @NotNull
-    @Column(name = "CAL_NOME")
+    @Column(name = "CAM_NOME")
     @Size(min = 5, max = 20)
     private String nome;
+    
+    @Enumerated
+    @Column(name = "CAM_ESTADO")
+    private Estados estado;
+
+    @Column(name = "CAM_MUNICIPIO")
+    @Size(max = 25)
+    private String municipio;
+
+    @Column(name = "CAM_BAIRRO")
+    @Size(max = 25)
+    private String bairro;
 
     @NotNull
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "origem")
@@ -90,6 +105,30 @@ public class Campus implements Serializable {
 	public void setNome(String nome) {
         this.nome = nome;
     }
+
+	public Estados getEstado() {
+		return estado;
+	}
+
+	public void setEstado(Estados estado) {
+		this.estado = estado;
+	}
+
+	public String getMunicipio() {
+		return municipio;
+	}
+
+	public void setMunicipio(String municipio) {
+		this.municipio = municipio;
+	}
+
+	public String getBairro() {
+		return bairro;
+	}
+
+	public void setBairro(String bairro) {
+		this.bairro = bairro;
+	}
 
 	public Set<DeslocamentoCampus> getDeslocamentos() {
         return this.deslocamentos;
@@ -233,6 +272,9 @@ public class Campus implements Serializable {
         sb.append("Cenario: ").append(getCenario()).append(", ");
         sb.append("Codigo: ").append(getCodigo()).append(", ");
         sb.append("Nome: ").append(getNome()).append(", ");
+        sb.append("Estado: ").append(getEstado().name()).append(", ");
+        sb.append("Municipio: ").append(getMunicipio()).append(", ");
+        sb.append("Bairro: ").append(getBairro()).append(", ");
         sb.append("Deslocamentos: ").append(getDeslocamentos() == null ? "null" : getDeslocamentos().size()).append(", ");
         sb.append("Professores: ").append(getProfessores() == null ? "null" : getProfessores().size()).append(", ");
         sb.append("Horarios: ").append(getHorarios() == null ? "null" : getHorarios().size()).append(", ");

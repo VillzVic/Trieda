@@ -9,10 +9,13 @@ public class CampusDTO extends BaseModel {
 	public CampusDTO() {
 	}
 
-	public CampusDTO(Long id, String codigo, String nome, Integer version) {
+	public CampusDTO(Long id, String codigo, String nome, String estado, String municipio, String Bairro, Integer version) {
 		setId(id);
 		setCodigo(codigo);
 		setNome(nome);
+		setEstado(estado);
+		setMunicipio(estado);
+		setBairro(estado);
 		setVersion(version);
 	}
 	
@@ -42,6 +45,27 @@ public class CampusDTO extends BaseModel {
 	}
 	public void setNome(String value) {
 		set("nome", value);
+	}
+	
+	public String getEstado() {
+		return get("estado");
+	}
+	public void setEstado(String value) {
+		set("estado", value);
+	}
+	
+	public String getMunicipio() {
+		return get("municipio");
+	}
+	public void setMunicipio(String value) {
+		set("municipio", value);
+	}
+	
+	public String getBairro() {
+		return get("bairro");
+	}
+	public void setBairro(String value) {
+		set("bairro", value);
 	}
 	
 }

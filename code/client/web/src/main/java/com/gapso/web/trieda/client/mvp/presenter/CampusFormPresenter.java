@@ -9,6 +9,7 @@ import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.gapso.web.trieda.client.mvp.model.CampusDTO;
 import com.gapso.web.trieda.client.services.CampiServiceAsync;
 import com.gapso.web.trieda.client.services.Services;
+import com.gapso.web.trieda.client.util.view.EstadoComboBox;
 import com.gapso.web.trieda.client.util.view.SimpleGrid;
 import com.gapso.web.trieda.client.util.view.SimpleModal;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -20,6 +21,9 @@ public class CampusFormPresenter implements Presenter {
 		Button getSalvarButton();
 		TextField<String> getNomeTextField();
 		TextField<String> getCodigoTextField();
+		EstadoComboBox getEstadoComboBox();
+		TextField<String> getMunicipioTextField();
+		TextField<String> getBairroTextField();
 		CampusDTO getCampusDTO();
 		boolean isValid();
 		
@@ -67,6 +71,9 @@ public class CampusFormPresenter implements Presenter {
 		CampusDTO campusDTO = display.getCampusDTO();
 		campusDTO.setNome(display.getNomeTextField().getValue());
 		campusDTO.setCodigo(display.getCodigoTextField().getValue());
+		campusDTO.setEstado(display.getEstadoComboBox().getValue().getValue().name());
+		campusDTO.setMunicipio(display.getMunicipioTextField().getValue());
+		campusDTO.setBairro(display.getBairroTextField().getValue());
 		return campusDTO;
 	}
 	

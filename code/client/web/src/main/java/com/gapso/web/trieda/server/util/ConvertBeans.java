@@ -9,6 +9,7 @@ import com.gapso.trieda.domain.Sala;
 import com.gapso.trieda.domain.TipoSala;
 import com.gapso.trieda.domain.Turno;
 import com.gapso.trieda.domain.Unidade;
+import com.gapso.trieda.misc.Estados;
 import com.gapso.web.trieda.client.mvp.model.CalendarioDTO;
 import com.gapso.web.trieda.client.mvp.model.CampusDTO;
 import com.gapso.web.trieda.client.mvp.model.HorarioAulaDTO;
@@ -26,6 +27,14 @@ public class ConvertBeans {
 		domain.setVersion(dto.getVersion());
 		domain.setNome(dto.getNome());
 		domain.setCodigo(dto.getCodigo());
+		for(Estados estadoEnum : Estados.values()) {
+			if(estadoEnum.name().equals(dto.getEstado())) {
+				domain.setEstado(estadoEnum);
+				break;
+			}
+		}
+		domain.setMunicipio(dto.getMunicipio());
+		domain.setBairro(dto.getBairro());
 		return domain;
 	}
 	
@@ -35,6 +44,11 @@ public class ConvertBeans {
 		dto.setVersion(domain.getVersion());
 		dto.setNome(domain.getNome());
 		dto.setCodigo(domain.getCodigo());
+		
+		dto.setEstado(domain.getEstado().name());
+		dto.setMunicipio(domain.getMunicipio());
+		dto.setBairro(domain.getBairro());
+		
 		return dto;
 	}
 	
