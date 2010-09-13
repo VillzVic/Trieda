@@ -12,7 +12,6 @@ import com.extjs.gxt.ui.client.widget.button.SplitButton;
 import com.extjs.gxt.ui.client.widget.layout.TableData;
 import com.extjs.gxt.ui.client.widget.menu.Menu;
 import com.extjs.gxt.ui.client.widget.menu.MenuItem;
-import com.extjs.gxt.ui.client.widget.toolbar.SeparatorToolItem;
 import com.extjs.gxt.ui.client.widget.toolbar.ToolBar;
 import com.gapso.web.trieda.client.AppEvents;
 import com.gapso.web.trieda.client.mvp.presenter.ToolBarPresenter;
@@ -27,8 +26,6 @@ public class ToolBarView extends MyComposite implements ToolBarPresenter.Display
 	// Cenário
 	private Button cenariosBt;
 	private Button parametrosBt;
-	private MenuItem calendarioMI;
-	private MenuItem divisaoCreditosMI;
 	private MenuItem turnosListMI;
 	private MenuItem calendariosListMI;
 	private MenuItem horariosAulaListMI;
@@ -110,14 +107,6 @@ public class ToolBarView extends MyComposite implements ToolBarPresenter.Display
 		outrosUnidadesSBt.setIcon(AbstractImagePrototype.create(Resources.DEFAULTS.outros16()));
 		outrosUnidadesSBt.setIconAlign(IconAlign.LEFT);
 		Menu outros = new Menu();
-		
-//		calendarioMI = createMenuItem("Calendário", Resources.DEFAULTS.calendario16());
-//		outros.add(calendarioMI);
-//		
-//		divisaoCreditosMI = createMenuItem("Preferência de Divisão de Créditos", Resources.DEFAULTS.divisaoDeCreditos16());
-//		outros.add(divisaoCreditosMI);
-		
-//		toolBar.add(new SeparatorToolItem());
 		
 		turnosListMI = createMenuItem("Turnos", Resources.DEFAULTS.turnos16());
 		outros.add(turnosListMI);

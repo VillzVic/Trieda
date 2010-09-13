@@ -13,6 +13,7 @@ import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.extjs.gxt.ui.client.widget.grid.ColumnConfig;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayout;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
+import com.extjs.gxt.ui.client.widget.toolbar.SeparatorToolItem;
 import com.gapso.web.trieda.client.mvp.model.UnidadeDTO;
 import com.gapso.web.trieda.client.mvp.presenter.UnidadesPresenter;
 import com.gapso.web.trieda.client.util.resources.Resources;
@@ -32,6 +33,8 @@ public class UnidadesView extends MyComposite implements UnidadesPresenter.Displ
 	private CampusComboBox campusBuscaComboBox;
 	private ContentPanel panel;
 	private GTabItem tabItem;
+	private Button deslocamentoUnidadesBT;
+	private Button salasBT;
 	
 	public UnidadesView() {
 		initUI();
@@ -49,6 +52,11 @@ public class UnidadesView extends MyComposite implements UnidadesPresenter.Displ
 	
 	private void createTabItem() {
 		tabItem = new GTabItem("Unidades", Resources.DEFAULTS.unidades16());
+		toolBar.add(new SeparatorToolItem());
+		deslocamentoUnidadesBT = toolBar.createButton("Deslocamento entre Unidades", Resources.DEFAULTS.deslocamento16());
+		toolBar.add(deslocamentoUnidadesBT);
+		salasBT = toolBar.createButton("Salas", Resources.DEFAULTS.sala16());
+		toolBar.add(salasBT);
 		tabItem.setContent(panel);
 	}
 	
@@ -151,6 +159,16 @@ public class UnidadesView extends MyComposite implements UnidadesPresenter.Displ
 	@Override
 	public Button getResetBuscaButton() {
 		return filter.getResetButton();
+	}
+
+	@Override
+	public Button getDeslocamentoUnidadesButton() {
+		return deslocamentoUnidadesBT;
+	}
+
+	@Override
+	public Button getSalasButton() {
+		return salasBT;
 	}
 
 }

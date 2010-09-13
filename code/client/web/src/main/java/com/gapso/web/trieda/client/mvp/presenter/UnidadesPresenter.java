@@ -14,6 +14,7 @@ import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.gapso.web.trieda.client.mvp.model.CampusDTO;
 import com.gapso.web.trieda.client.mvp.model.UnidadeDTO;
+import com.gapso.web.trieda.client.mvp.view.SalasView;
 import com.gapso.web.trieda.client.mvp.view.UnidadeFormView;
 import com.gapso.web.trieda.client.services.Services;
 import com.gapso.web.trieda.client.services.UnidadesServiceAsync;
@@ -32,6 +33,8 @@ public class UnidadesPresenter implements Presenter {
 		Button getRemoveButton();
 		Button getImportExcelButton();
 		Button getExportExcelButton();
+		Button getDeslocamentoUnidadesButton();
+		Button getSalasButton();
 		TextField<String> getNomeBuscaTextField();
 		TextField<String> getCodigoBuscaTextField();
 		CampusComboBox getCampusBuscaComboBox();
@@ -42,6 +45,7 @@ public class UnidadesPresenter implements Presenter {
 		void setProxy(RpcProxy<PagingLoadResult<UnidadeDTO>> proxy);
 	}
 	private Display display; 
+	private GTab gTab;
 	
 	public UnidadesPresenter(Display display) {
 		this.display = display;
@@ -113,12 +117,19 @@ public class UnidadesPresenter implements Presenter {
 				display.getGrid().updateList();
 			}
 		});
+		display.getSalasButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
+			@Override
+			public void componentSelected(ButtonEvent ce) {
+				Presenter presenter = new SalasPresenter(new SalasView());
+				presenter.go(gTab);
+			}
+		});
 	}
 	
 	@Override
 	public void go(Widget widget) {
-		GTab tab = (GTab)widget;
-		tab.add((GTabItem)display.getComponent());
+		gTab = (GTab)widget;
+		gTab.add((GTabItem)display.getComponent());
 	}
 
 }
