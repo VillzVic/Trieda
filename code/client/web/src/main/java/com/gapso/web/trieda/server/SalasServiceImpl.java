@@ -74,12 +74,20 @@ public class SalasServiceImpl extends RemoteServiceServlet implements SalasServi
 	public ListLoadResult<TipoSalaDTO> getTipoSalaList() {
 		// TODO REMOVER AS LINHAS DE BAIXO
 		if(TipoSala.count() == 0) {
-			for(int i = 1; i <= 4; i++) {
-				TipoSala tipo = new TipoSala();
-				tipo.setNome("Nome "+i);
-				tipo.setDescricao("Descrição "+i);
-				tipo.persist();
-			}
+			TipoSala tipo1 = new TipoSala();
+			tipo1.setNome("Sala de Aula");
+			tipo1.setDescricao("Sala de Aula");
+			tipo1.persist();
+			
+			TipoSala tipo2 = new TipoSala();
+			tipo2.setNome("Laboratório");
+			tipo2.setDescricao("Laboratório");
+			tipo2.persist();
+			
+			TipoSala tipo3 = new TipoSala();
+			tipo3.setNome("Auditório");
+			tipo3.setDescricao("Auditório");
+			tipo3.persist();
 		}
 		
 		
