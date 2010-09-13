@@ -12,6 +12,7 @@ import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.grid.ColumnConfig;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayout;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
+import com.extjs.gxt.ui.client.widget.toolbar.SeparatorToolItem;
 import com.gapso.web.trieda.client.mvp.model.SalaDTO;
 import com.gapso.web.trieda.client.mvp.presenter.SalasPresenter;
 import com.gapso.web.trieda.client.util.resources.Resources;
@@ -25,6 +26,8 @@ public class SalasView extends MyComposite implements SalasPresenter.Display {
 	private SimpleGrid<SalaDTO> gridPanel;
 	private ContentPanel panel;
 	private GTabItem tabItem;
+	private Button disciplinasAssociadasBT;
+	private Button gruposDeSalasBT;
 	
 	public SalasView() {
 		initUI();
@@ -46,6 +49,11 @@ public class SalasView extends MyComposite implements SalasPresenter.Display {
 	
 	private void createToolBar() {
 		toolBar = new SimpleToolBar();
+		toolBar.add(new SeparatorToolItem());
+		disciplinasAssociadasBT = toolBar.createButton("Disciplinas Associadas", Resources.DEFAULTS.disciplina16());
+		toolBar.add(disciplinasAssociadasBT);
+		gruposDeSalasBT = toolBar.createButton("Grupos de Salas", Resources.DEFAULTS.sala16());
+		toolBar.add(gruposDeSalasBT);
 		panel.setTopComponent(toolBar);
 	}
 	
@@ -106,6 +114,16 @@ public class SalasView extends MyComposite implements SalasPresenter.Display {
 	@Override
 	public void setProxy(RpcProxy<PagingLoadResult<SalaDTO>> proxy) {
 		gridPanel.setProxy(proxy);
+	}
+
+	@Override
+	public Button getDisciplinasAssociadasButton() {
+		return disciplinasAssociadasBT;
+	}
+
+	@Override
+	public Button getGruposDeSalasButton() {
+		return gruposDeSalasBT;
 	}
 	
 }

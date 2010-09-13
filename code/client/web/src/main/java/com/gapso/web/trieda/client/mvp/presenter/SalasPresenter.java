@@ -29,6 +29,8 @@ public class SalasPresenter implements Presenter {
 		Button getRemoveButton();
 		Button getImportExcelButton();
 		Button getExportExcelButton();
+		Button getDisciplinasAssociadasButton();
+		Button getGruposDeSalasButton();
 		SimpleGrid<SalaDTO> getGrid();
 		GTabItem getGTabItem();
 		Component getComponent();
