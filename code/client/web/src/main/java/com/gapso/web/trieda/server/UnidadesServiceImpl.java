@@ -38,7 +38,9 @@ public class UnidadesServiceImpl extends RemoteServiceServlet implements Unidade
 			}
 		}
 		for(Unidade unidade : Unidade.find(config.getOffset(), config.getLimit(), orderBy)) {
-			list.add(ConvertBeans.toUnidadeDTO(unidade));
+			UnidadeDTO unidadeDTO = ConvertBeans.toUnidadeDTO(unidade);
+			unidadeDTO.setCapSalas(Unidade.getCapacidadeMedia(unidade));
+			list.add(unidadeDTO);
 		}
 		BasePagingLoadResult<UnidadeDTO> result = new BasePagingLoadResult<UnidadeDTO>(list);
 		result.setOffset(config.getOffset());
@@ -67,7 +69,9 @@ public class UnidadesServiceImpl extends RemoteServiceServlet implements Unidade
 			campus = ConvertBeans.toCampus(campusDTO);
 		}
 		for(Unidade unidade : Unidade.findByCampusCodigoLikeAndNomeLikeAndCodigoLike(campus, nome, codigo, config.getOffset(), config.getLimit(), orderBy)) {
-			list.add(ConvertBeans.toUnidadeDTO(unidade));
+			UnidadeDTO unidadeDTO = ConvertBeans.toUnidadeDTO(unidade);
+			unidadeDTO.setCapSalas(Unidade.getCapacidadeMedia(unidade));
+			list.add(unidadeDTO);
 		}
 		BasePagingLoadResult<UnidadeDTO> result = new BasePagingLoadResult<UnidadeDTO>(list);
 		result.setOffset(config.getOffset());

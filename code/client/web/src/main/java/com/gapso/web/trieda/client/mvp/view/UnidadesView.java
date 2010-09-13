@@ -78,6 +78,7 @@ public class UnidadesView extends MyComposite implements UnidadesPresenter.Displ
 		list.add(new ColumnConfig("campusString", "Campus", 100));
 		list.add(new ColumnConfig("nome", "Nome", 100));
 		list.add(new ColumnConfig("codigo", "Código", 100));
+		list.add(new ColumnConfig("capSalas", "Capacidade Média das Salas de Aula", 200));
 		return list;
 	}
 

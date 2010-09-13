@@ -63,10 +63,10 @@ public class UnidadeDTO extends BaseModel {
 	}
 	
 	public Integer getCapSalas() {
-		return get("cap_salas");
+		return get("capSalas");
 	}
 	public void setCapSalas(Integer value) {
-		set("cap_salas", value);
+		set("capSalas", value);
 	}
 	
 	

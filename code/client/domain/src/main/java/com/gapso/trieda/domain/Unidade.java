@@ -145,7 +145,15 @@ public class Unidade implements java.io.Serializable {
         orderBy = (orderBy != null) ? "ORDER BY o." + orderBy : "";
         return entityManager().createQuery("select o from Unidade o " + orderBy).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
+    
+    public static Integer getCapacidadeMedia(Unidade unidade) {
+    	Query q =  entityManager().createQuery("SELECT AVG(o.capacidade) FROM Sala o WHERE o.unidade = :unidade");
+    	q.setParameter("unidade", unidade);
+    	return ((Number) q.getSingleResult()).intValue();
+    }
 
+    
+    
     @SuppressWarnings("unchecked")
 	public static List<Unidade> findByCampusCodigoLikeAndNomeLikeAndCodigoLike(Campus campus, String nome, String codigo, int firstResult, int maxResults, String orderBy) {
 
