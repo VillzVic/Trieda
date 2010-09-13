@@ -49,7 +49,7 @@ public class CalendarioFormPresenter implements Presenter {
 						public void onSuccess(Void result) {
 							display.getSimpleModal().hide();
 							gridPanel.updateList();
-							Info.display("Removido", "Item removido com sucesso!");
+							Info.display("Salvo", "Item salvo com sucesso!");
 						}
 					});
 				} else {
