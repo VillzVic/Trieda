@@ -1014,7 +1014,7 @@ Maximizar/gerenciar a nota da avaliação institucional média coletiva do corpo
     </xs:sequence>
   </xs:complexType>
   <xs:complexType name="GrupoCreditoDisponivel">
-    <xs:sequence>
+    <xs:sequence minOccurs="0" maxOccurs="unbounded">
       <xs:element name="CreditoDisponivel" type="ItemCreditoDisponivel" />
     </xs:sequence>
   </xs:complexType>
