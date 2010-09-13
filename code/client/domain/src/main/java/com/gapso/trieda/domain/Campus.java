@@ -251,17 +251,30 @@ public class Campus implements Serializable {
     }
 
     @SuppressWarnings("unchecked")
-    public static List<Campus> findByNomeLikeAndCodigoLike(String nome, String codigo, int firstResult, int maxResults, String orderBy) {
+    public static List<Campus> findByNomeLikeAndCodigoLikeAndEstadoAndMunicipioLikeAndBairroLike(String nome, String codigo, Estados estado, String municipio, String bairro, int firstResult, int maxResults, String orderBy) {
         nome = (nome == null)? "" : nome;
         nome = "%" + nome.replace('*', '%') + "%";
         codigo = (codigo == null)? "" : codigo;
         codigo = "%" + codigo.replace('*', '%') + "%";
+        municipio = (municipio == null)? "" : municipio;
+        municipio = "%" + municipio.replace('*', '%') + "%";
+        bairro = (bairro == null)? "" : bairro;
+        bairro = "%" + bairro.replace('*', '%') + "%";
         
         EntityManager em = Turno.entityManager();
         orderBy = (orderBy != null) ? "ORDER BY o." + orderBy : "";
-        Query q = em.createQuery("SELECT o FROM Campus o WHERE LOWER(o.nome) LIKE LOWER(:nome) AND LOWER(o.codigo) LIKE LOWER(:codigo) "+orderBy);
+        Query q = em.createQuery("SELECT o FROM Campus o WHERE " +
+        		"LOWER(o.nome) LIKE LOWER(:nome) AND " +
+        		"LOWER(o.codigo) LIKE LOWER(:codigo) AND " +
+        		"o.estado = :estado AND " +
+        		"LOWER(o.municipio) LIKE LOWER(:municipio) AND " +
+        		"LOWER(o.bairro) LIKE LOWER(:bairro) " +
+        		""+orderBy);
         q.setParameter("nome", nome);
         q.setParameter("codigo", codigo);
+        q.setParameter("estado", estado);
+        q.setParameter("municipio", municipio);
+        q.setParameter("bairro", bairro);
         return q.setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
 	

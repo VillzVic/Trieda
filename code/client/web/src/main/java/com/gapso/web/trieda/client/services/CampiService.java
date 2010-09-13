@@ -21,6 +21,6 @@ public interface CampiService extends RemoteService {
 	ListLoadResult<CampusDTO> getList(BasePagingLoadConfig loadConfig);
 	void save(CampusDTO campusDTO);
 	void remove(List<CampusDTO> campusDTOList);
-	PagingLoadResult<CampusDTO> getBuscaList(String nome, String codigo, PagingLoadConfig config);
+	PagingLoadResult<CampusDTO> getBuscaList(String nome, String codigo, String estadoString, String municipio, String bairro, PagingLoadConfig config);
 	
 }

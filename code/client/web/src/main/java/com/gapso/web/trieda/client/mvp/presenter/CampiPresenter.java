@@ -16,6 +16,7 @@ import com.gapso.web.trieda.client.mvp.model.CampusDTO;
 import com.gapso.web.trieda.client.mvp.view.CampusFormView;
 import com.gapso.web.trieda.client.services.CampiServiceAsync;
 import com.gapso.web.trieda.client.services.Services;
+import com.gapso.web.trieda.client.util.view.EstadoComboBox;
 import com.gapso.web.trieda.client.util.view.GTab;
 import com.gapso.web.trieda.client.util.view.GTabItem;
 import com.gapso.web.trieda.client.util.view.SimpleGrid;
@@ -32,6 +33,9 @@ public class CampiPresenter implements Presenter {
 		Button getExportExcelButton();
 		TextField<String> getCodigoBuscaTextField();
 		TextField<String> getNomeBuscaTextField();
+		EstadoComboBox getEstadoBuscaComboBox();
+		TextField<String> getMunicipioBuscaTextField();
+		TextField<String> getBairroBuscaTextField();
 		Button getSubmitBuscaButton();
 		Button getResetBuscaButton();
 		SimpleGrid<CampusDTO> getGrid();
@@ -54,7 +58,10 @@ public class CampiPresenter implements Presenter {
 //				service.getList((PagingLoadConfig)loadConfig, callback);
 				String nome = display.getNomeBuscaTextField().getValue();
 				String codigo = display.getCodigoBuscaTextField().getValue();
-				service.getBuscaList(nome, codigo, (PagingLoadConfig)loadConfig, callback);
+				String estado = (display.getEstadoBuscaComboBox().getValue() == null)? null : display.getEstadoBuscaComboBox().getValue().getValue().name();
+				String municipio = display.getMunicipioBuscaTextField().getValue();
+				String bairro = display.getBairroBuscaTextField().getValue();
+				service.getBuscaList(nome, codigo, estado, municipio, bairro, (PagingLoadConfig)loadConfig, callback);
 			}
 		};
 		display.setProxy(proxy);
@@ -99,6 +106,9 @@ public class CampiPresenter implements Presenter {
 			public void componentSelected(ButtonEvent ce) {
 				display.getNomeBuscaTextField().setValue(null);
 				display.getCodigoBuscaTextField().setValue(null);
+				display.getEstadoBuscaComboBox().setValueField(null);
+				display.getMunicipioBuscaTextField().setValue(null);
+				display.getBairroBuscaTextField().setValue(null);
 				display.getGrid().updateList();
 			}
 		});

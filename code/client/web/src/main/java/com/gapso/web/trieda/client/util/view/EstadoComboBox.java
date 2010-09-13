@@ -29,6 +29,7 @@ public class EstadoComboBox extends SimpleComboBox<Estado> {
 	}
 
 	public void setValue(String valueString) {
+		if(valueString == null) setValueField(null); 
 		for(SimpleComboValue<Estado> value : getStore().getModels()) {
 			if(value.getValue().name().equals(valueString)) {
 				super.setValue(value);

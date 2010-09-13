@@ -12,6 +12,7 @@ import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.gapso.trieda.domain.Campus;
 import com.gapso.trieda.domain.Turno;
+import com.gapso.trieda.misc.Estados;
 import com.gapso.web.trieda.client.mvp.model.CampusDTO;
 import com.gapso.web.trieda.client.services.CampiService;
 import com.gapso.web.trieda.server.util.ConvertBeans;
@@ -46,11 +47,11 @@ public class CampiServiceImpl extends RemoteServiceServlet implements CampiServi
 	
 	@Override
 	public ListLoadResult<CampusDTO> getList(BasePagingLoadConfig loadConfig) {
-		return getBuscaList(null, loadConfig.get("query").toString(), loadConfig);
+		return getBuscaList(null, loadConfig.get("query").toString(), null, null, null, loadConfig);
 	}
 
 	@Override
-	public PagingLoadResult<CampusDTO> getBuscaList(String nome, String codigo, PagingLoadConfig config) {
+	public PagingLoadResult<CampusDTO> getBuscaList(String nome, String codigo, String estadoString, String municipio, String bairro, PagingLoadConfig config) {
 		List<CampusDTO> list = new ArrayList<CampusDTO>();
 		String orderBy = config.getSortField();
 		if(orderBy != null) {
@@ -60,7 +61,14 @@ public class CampiServiceImpl extends RemoteServiceServlet implements CampiServi
 				orderBy = orderBy + " desc";
 			}
 		}
-		for(Campus campus : Campus.findByNomeLikeAndCodigoLike(nome, codigo, config.getOffset(), config.getLimit(), orderBy)) {
+		Estados estadoDomain = null;
+		for(Estados estado : Estados.values()) {
+			if(estado.name().equals(estadoString)) {
+				estadoDomain = estado;
+				break;
+			}
+		}
+		for(Campus campus : Campus.findByNomeLikeAndCodigoLikeAndEstadoAndMunicipioLikeAndBairroLike(nome, codigo, estadoDomain, municipio, bairro, config.getOffset(), config.getLimit(), orderBy)) {
 			list.add(ConvertBeans.toCampusDTO(campus));
 		}
 		BasePagingLoadResult<CampusDTO> result = new BasePagingLoadResult<CampusDTO>(list);

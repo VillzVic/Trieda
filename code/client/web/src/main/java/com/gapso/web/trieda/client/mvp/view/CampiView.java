@@ -16,6 +16,7 @@ import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
 import com.gapso.web.trieda.client.mvp.model.CampusDTO;
 import com.gapso.web.trieda.client.mvp.presenter.CampiPresenter;
 import com.gapso.web.trieda.client.util.resources.Resources;
+import com.gapso.web.trieda.client.util.view.EstadoComboBox;
 import com.gapso.web.trieda.client.util.view.GTabItem;
 import com.gapso.web.trieda.client.util.view.SimpleFilter;
 import com.gapso.web.trieda.client.util.view.SimpleGrid;
@@ -28,6 +29,9 @@ public class CampiView extends MyComposite implements CampiPresenter.Display {
 	private SimpleFilter filter;
 	private TextField<String> nomeBuscaTextField;
 	private TextField<String> codigoBuscaTextField;
+	private EstadoComboBox estadoBuscaComboBox;
+	private TextField<String> municipioBuscaTextField;
+	private TextField<String> bairroBuscaTextField;
 	private ContentPanel panel;
 	private GTabItem tabItem;
 	
@@ -67,6 +71,9 @@ public class CampiView extends MyComposite implements CampiPresenter.Display {
 		List<ColumnConfig> list = new ArrayList<ColumnConfig>();
 		list.add(new ColumnConfig("nome", "Nome", 100));
 		list.add(new ColumnConfig("codigo", "Código", 100));
+		list.add(new ColumnConfig("estado", "Estado", 100));
+		list.add(new ColumnConfig("municipio", "Município", 100));
+		list.add(new ColumnConfig("bairro", "Bairro", 100));
 		return list;
 	}
 
@@ -80,8 +87,17 @@ public class CampiView extends MyComposite implements CampiPresenter.Display {
 		nomeBuscaTextField.setFieldLabel("Nome");
 		codigoBuscaTextField = new TextField<String>();
 		codigoBuscaTextField.setFieldLabel("Código");
+		estadoBuscaComboBox = new EstadoComboBox();
+		estadoBuscaComboBox.setFieldLabel("Estado");
+		municipioBuscaTextField = new TextField<String>();
+		municipioBuscaTextField.setFieldLabel("Município");
+		bairroBuscaTextField = new TextField<String>();
+		bairroBuscaTextField.setFieldLabel("Bairro");
 		filter.addField(nomeBuscaTextField);
-		filter.addField(codigoBuscaTextField);
+		filter.addField(codigoBuscaTextField); 
+		filter.addField(estadoBuscaComboBox); 
+		filter.addField(municipioBuscaTextField); 
+		filter.addField(bairroBuscaTextField); 
 		
 		panel.add(filter, bld);
 	}
@@ -139,6 +155,21 @@ public class CampiView extends MyComposite implements CampiPresenter.Display {
 	@Override
 	public Button getResetBuscaButton() {
 		return filter.getResetButton();
+	}
+
+	@Override
+	public EstadoComboBox getEstadoBuscaComboBox() {
+		return estadoBuscaComboBox;
+	}
+
+	@Override
+	public TextField<String> getMunicipioBuscaTextField() {
+		return municipioBuscaTextField;
+	}
+
+	@Override
+	public TextField<String> getBairroBuscaTextField() {
+		return bairroBuscaTextField;
 	}
 	
 }
