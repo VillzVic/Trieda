@@ -58,7 +58,8 @@ public class CampiPresenter implements Presenter {
 //				service.getList((PagingLoadConfig)loadConfig, callback);
 				String nome = display.getNomeBuscaTextField().getValue();
 				String codigo = display.getCodigoBuscaTextField().getValue();
-				String estado = (display.getEstadoBuscaComboBox().getValue() == null)? null : display.getEstadoBuscaComboBox().getValue().getValue().name();
+				// TODO String estado = (display.getEstadoBuscaComboBox().getValue() == null)? null : display.getEstadoBuscaComboBox().getValue().getValue().name();
+				String estado = null;
 				String municipio = display.getMunicipioBuscaTextField().getValue();
 				String bairro = display.getBairroBuscaTextField().getValue();
 				service.getBuscaList(nome, codigo, estado, municipio, bairro, (PagingLoadConfig)loadConfig, callback);

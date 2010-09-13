@@ -62,10 +62,12 @@ public class CampiServiceImpl extends RemoteServiceServlet implements CampiServi
 			}
 		}
 		Estados estadoDomain = null;
-		for(Estados estado : Estados.values()) {
-			if(estado.name().equals(estadoString)) {
-				estadoDomain = estado;
-				break;
+		if(estadoString != null) {
+			for(Estados estado : Estados.values()) {
+				if(estado.name().equals(estadoString)) {
+					estadoDomain = estado;
+					break;
+				}
 			}
 		}
 		for(Campus campus : Campus.findByNomeLikeAndCodigoLikeAndEstadoAndMunicipioLikeAndBairroLike(nome, codigo, estadoDomain, municipio, bairro, config.getOffset(), config.getLimit(), orderBy)) {

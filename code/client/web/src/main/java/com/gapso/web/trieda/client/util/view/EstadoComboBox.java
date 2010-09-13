@@ -75,12 +75,11 @@ public class EstadoComboBox extends SimpleComboBox<Estado> {
 	    public String getNome() {
 	    	return nome;
 	    }
-
-		@Override
-		public String toString() {
-			return getNome();
-		}
 	    
+	    @Override
+	    public String toString() {
+	    	return getNome();
+	    }
 	    
 	}
 	

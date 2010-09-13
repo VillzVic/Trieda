@@ -95,7 +95,7 @@ public class CampiView extends MyComposite implements CampiPresenter.Display {
 		bairroBuscaTextField.setFieldLabel("Bairro");
 		filter.addField(nomeBuscaTextField);
 		filter.addField(codigoBuscaTextField); 
-		filter.addField(estadoBuscaComboBox); 
+//		TODO filter.addField(estadoBuscaComboBox); 
 		filter.addField(municipioBuscaTextField); 
 		filter.addField(bairroBuscaTextField); 
 		

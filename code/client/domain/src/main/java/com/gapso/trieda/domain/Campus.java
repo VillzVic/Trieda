@@ -263,16 +263,17 @@ public class Campus implements Serializable {
         
         EntityManager em = Turno.entityManager();
         orderBy = (orderBy != null) ? "ORDER BY o." + orderBy : "";
+        String estadoQuery = (estado==null)? "" : "o.estado = :estado AND ";
         Query q = em.createQuery("SELECT o FROM Campus o WHERE " +
         		"LOWER(o.nome) LIKE LOWER(:nome) AND " +
         		"LOWER(o.codigo) LIKE LOWER(:codigo) AND " +
-        		"o.estado = :estado AND " +
+        		estadoQuery +
         		"LOWER(o.municipio) LIKE LOWER(:municipio) AND " +
         		"LOWER(o.bairro) LIKE LOWER(:bairro) " +
         		""+orderBy);
         q.setParameter("nome", nome);
         q.setParameter("codigo", codigo);
-        q.setParameter("estado", estado);
+        if(estado != null) q.setParameter("estado", estado);
         q.setParameter("municipio", municipio);
         q.setParameter("bairro", bairro);
         return q.setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
