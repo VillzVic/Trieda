@@ -50,7 +50,7 @@ public class TurnoFormView extends MyComposite implements TurnoFormPresenter.Dis
 		tempoTF = new NumberField();
 		tempoTF.setName("tempo");
 		tempoTF.setValue(turnoDTO.getTempo());
-		tempoTF.setFieldLabel("Tempo");
+		tempoTF.setFieldLabel("Duração da Aula (min)");
 		tempoTF.setAllowBlank(false);
 		tempoTF.setAllowDecimals(false);
 		tempoTF.setAllowNegative(false);

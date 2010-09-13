@@ -67,7 +67,7 @@ public class TurnosView extends MyComposite implements TurnosPresenter.Display {
 	private List<ColumnConfig> getColumnList() {
 		List<ColumnConfig> list = new ArrayList<ColumnConfig>();
 		list.add(new ColumnConfig("nome", "Nome", 100));
-		list.add(new ColumnConfig("tempo", "Tempo", 100));
+		list.add(new ColumnConfig("tempo", "Duração da Aula (min)", 100));
 		return list;
 	}
 
@@ -80,7 +80,7 @@ public class TurnosView extends MyComposite implements TurnosPresenter.Display {
 		nomeBuscaTextField = new TextField<String>();
 		nomeBuscaTextField.setFieldLabel("Nome");
 		tempoBuscaTextField = new NumberField();
-		tempoBuscaTextField.setFieldLabel("Tempo");
+		tempoBuscaTextField.setFieldLabel("Duração da Aula (min)");
 		filter.addField(nomeBuscaTextField);
 		filter.addField(tempoBuscaTextField);
 		
