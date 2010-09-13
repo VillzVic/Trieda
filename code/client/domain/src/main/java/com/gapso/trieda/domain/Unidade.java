@@ -149,7 +149,9 @@ public class Unidade implements java.io.Serializable {
     public static Integer getCapacidadeMedia(Unidade unidade) {
     	Query q =  entityManager().createQuery("SELECT AVG(o.capacidade) FROM Sala o WHERE o.unidade = :unidade");
     	q.setParameter("unidade", unidade);
-    	return ((Number) q.getSingleResult()).intValue();
+    	Object obj = q.getSingleResult();
+    	if(obj == null) return 0;
+    	return ((Number) obj).intValue();
     }
 
     
