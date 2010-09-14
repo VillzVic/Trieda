@@ -276,11 +276,19 @@
 					>
 				</File>
 				<File
+					RelativePath=".\NivelDificuldadeHorario.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\OFBase.cpp"
 					>
 				</File>
 				<File
 					RelativePath=".\Oferta.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\ParametrosPlanejamento.cpp"
 					>
 				</File>
 				<File
@@ -481,11 +489,19 @@
 					>
 				</File>
 				<File
+					RelativePath=".\NivelDificuldadeHorario.h"
+					>
+				</File>
+				<File
 					RelativePath=".\OFBase.h"
 					>
 				</File>
 				<File
 					RelativePath=".\Oferta.h"
+					>
+				</File>
+				<File
+					RelativePath=".\ParametrosPlanejamento.h"
 					>
 				</File>
 				<File
