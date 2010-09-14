@@ -1,5 +1,6 @@
 package com.gapso.trieda.domain;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Set;
 
@@ -31,7 +32,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RooToString
 @RooEntity(identifierColumn = "GRS_ID")
 @Table(name = "GRUPOS_SALA")
-public class GrupoSala implements java.io.Serializable {
+public class GrupoSala implements Serializable {
 
 	@NotNull
     @ManyToOne(targetEntity = Unidade.class)

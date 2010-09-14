@@ -1,7 +1,9 @@
 package com.gapso.trieda.domain;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Set;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -20,6 +22,7 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.roo.addon.entity.RooEntity;
 import org.springframework.roo.addon.javabean.RooJavaBean;
@@ -32,7 +35,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RooToString
 @RooEntity(identifierColumn = "TUR_ID")
 @Table(name = "TURNOS")
-public class Turno implements java.io.Serializable {
+public class Turno implements Serializable {
 
 //  TODO  @NotNull
     @ManyToOne(targetEntity = Cenario.class)
