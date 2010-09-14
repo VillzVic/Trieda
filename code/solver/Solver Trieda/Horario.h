@@ -12,7 +12,7 @@ public:
 
    virtual int getId();
 
-   int diaSemana;
+   GGroup<int> dias_semana;
    int horarioAulaId;
    int turnoId;
 
