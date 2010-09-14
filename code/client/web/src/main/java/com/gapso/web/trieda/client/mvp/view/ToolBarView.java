@@ -32,6 +32,7 @@ public class ToolBarView extends MyComposite implements ToolBarPresenter.Display
 	private MenuItem campiListMI;
 	private MenuItem unidadesListMI;
 	private MenuItem salasListMI;
+	private MenuItem gruposSalasListMI;
 	
 	// Campi
 	private Button campiBt;
@@ -120,6 +121,8 @@ public class ToolBarView extends MyComposite implements ToolBarPresenter.Display
 		outros.add(unidadesListMI);
 		salasListMI = createMenuItem("Salas", Resources.DEFAULTS.sala16());
 		outros.add(salasListMI);
+		gruposSalasListMI = createMenuItem("Grupos de Salas", Resources.DEFAULTS.sala16());
+		outros.add(gruposSalasListMI);
 		
 		outrosUnidadesSBt.setMenu(outros);
 		group.add(outrosUnidadesSBt);
@@ -499,6 +502,10 @@ public class ToolBarView extends MyComposite implements ToolBarPresenter.Display
 	@Override
 	public MenuItem getSalasListMenuItem() {
 		return salasListMI;
+	}
+	@Override
+	public MenuItem getGruposSalasListMenuItem() {
+		return gruposSalasListMI;
 	}
 	
 }

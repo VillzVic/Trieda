@@ -7,10 +7,11 @@ import com.extjs.gxt.ui.client.widget.Component;
 import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.menu.MenuItem;
-import com.gapso.web.trieda.client.mvp.view.SemanasLetivaView;
 import com.gapso.web.trieda.client.mvp.view.CampiView;
+import com.gapso.web.trieda.client.mvp.view.GruposSalasView;
 import com.gapso.web.trieda.client.mvp.view.HorariosAulaView;
 import com.gapso.web.trieda.client.mvp.view.SalasView;
+import com.gapso.web.trieda.client.mvp.view.SemanasLetivaView;
 import com.gapso.web.trieda.client.mvp.view.TurnosView;
 import com.gapso.web.trieda.client.mvp.view.UnidadesView;
 import com.gapso.web.trieda.client.util.view.GTab;
@@ -28,6 +29,7 @@ public class ToolBarPresenter implements Presenter {
 		MenuItem getCampiListMenuItem();
 		MenuItem getUnidadesListMenuItem();
 		MenuItem getSalasListMenuItem();
+		MenuItem getGruposSalasListMenuItem();
 		
 		Component getComponent();
 	}
@@ -92,6 +94,13 @@ public class ToolBarPresenter implements Presenter {
 			@Override
 			public void componentSelected(MenuEvent ce) {
 				Presenter presenter = new SalasPresenter(new SalasView());
+				presenter.go(gTab);
+			}
+		});
+		toolBar.getGruposSalasListMenuItem().addSelectionListener(new SelectionListener<MenuEvent>() {
+			@Override
+			public void componentSelected(MenuEvent ce) {
+				Presenter presenter = new GruposSalasPresenter(new GruposSalasView());
 				presenter.go(gTab);
 			}
 		});

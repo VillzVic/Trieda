@@ -31,7 +31,7 @@ public class Services {
 		if(id.equals(TURNOS)) return turnos();
 		if(id.equals(UNIDADES)) return unidades();
 		if(id.equals(SALAS)) return salas();
-		if(id.equals(GRUPOSSALAS)) return grupoSalas();
+		if(id.equals(GRUPOSSALAS)) return gruposSalas();
 		if(id.equals(CURSOS)) return cursos();
 		if(id.equals(DISCIPLINAS)) return disciplinas();
 		if(id.equals(EQUIVALENCIAS)) return equivalencias();
@@ -93,7 +93,7 @@ public class Services {
 		return service;
 	}
 	
-	public static GruposSalasServiceAsync grupoSalas() {
+	public static GruposSalasServiceAsync gruposSalas() {
 		GruposSalasServiceAsync service = (GruposSalasServiceAsync) Registry.get(GRUPOSSALAS);
 		if(service == null) {
 			service = GWT.create(GruposSalasService.class);

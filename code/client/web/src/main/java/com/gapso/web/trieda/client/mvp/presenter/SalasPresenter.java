@@ -30,25 +30,15 @@ public class SalasPresenter implements Presenter {
 
 	public interface Display {
 		Button getNewButton();
-
 		Button getEditButton();
-
 		Button getRemoveButton();
-
 		Button getImportExcelButton();
-
 		Button getExportExcelButton();
-
 		Button getDisciplinasAssociadasButton();
-
 		Button getGruposDeSalasButton();
-
 		SimpleGrid<SalaDTO> getGrid();
-
 		GTabItem getGTabItem();
-
 		Component getComponent();
-
 		void setProxy(RpcProxy<PagingLoadResult<SalaDTO>> proxy);
 	}
 

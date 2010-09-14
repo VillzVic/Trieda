@@ -93,7 +93,6 @@ public class UnidadesPresenter implements Presenter {
 						presenter.go(null);
 					}
 				});
-
 			}
 		});
 		display.getRemoveButton().addSelectionListener(new SelectionListener<ButtonEvent>(){

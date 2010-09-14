@@ -15,6 +15,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import javax.persistence.Table;
 import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
@@ -39,6 +40,11 @@ public class GrupoSala implements Serializable {
     @JoinColumn(name = "UNI_ID")
     private Unidade unidade;
 	
+	@NotNull
+	@Column(name = "GRS_CODIGO")
+	@Size(min = 3, max = 20)
+	private String codigo;
+	
     @NotNull
     @Column(name = "GRS_NOME")
     @Size(min = 3, max = 20)
@@ -59,6 +65,14 @@ public class GrupoSala implements Serializable {
 	public void setUnidade(Unidade unidade) {
         this.unidade = unidade;
     }
+	
+	public String getCodigo() {
+		return this.codigo;
+	}
+	
+	public void setCodigo(String codigo) {
+		this.codigo = codigo;
+	}
 	
 	public String getNome() {
         return this.nome;
@@ -89,6 +103,7 @@ public class GrupoSala implements Serializable {
         sb.append("Id: ").append(getId()).append(", ");
         sb.append("Version: ").append(getVersion()).append(", ");
         sb.append("Unidade: ").append(getUnidade()).append(", ");
+        sb.append("Codigo: ").append(getCodigo()).append(", ");
         sb.append("Nome: ").append(getNome()).append(", ");
         sb.append("Salas: ").append(getSalas() == null ? "null" : getSalas().size()).append(", ");
         sb.append("Disciplinas: ").append(getDisciplinas() == null ? "null" : getDisciplinas().size());
@@ -160,22 +175,48 @@ public class GrupoSala implements Serializable {
         return em;
     }
 
-	public static long countGrupoSalas() {
-        return ((Number) entityManager().createQuery("select count(o) from GrupoSala o").getSingleResult()).longValue();
+    @SuppressWarnings("unchecked")
+    public static List<GrupoSala> findByNomeLikeAndCodigoLikeAndUnidade(String nome, String codigo, Unidade unidade, int firstResult, int maxResults, String orderBy) {
+        nome = (nome == null)? "" : nome;
+        nome = "%" + nome.replace('*', '%') + "%";
+        codigo = (codigo == null)? "" : codigo;
+        codigo = "%" + codigo.replace('*', '%') + "%";
+        
+        orderBy = (orderBy != null) ? "ORDER BY o." + orderBy : "";
+        String unidadeQuery = (unidade==null)? "" : "o.unidade = :unidade AND ";
+        Query q = entityManager().createQuery("SELECT o FROM GrupoSala o WHERE " +
+        		"LOWER(o.nome) LIKE LOWER(:nome) AND " +
+        		"LOWER(o.codigo) LIKE LOWER(:codigo) AND " +
+        		unidadeQuery +
+        		" 1=1 " +
+        		""+orderBy);
+        q.setParameter("nome", nome);
+        q.setParameter("codigo", codigo);
+        if(unidade != null) q.setParameter("unidade", unidade);
+        return q.setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
+    }
+	
+	public static int count() {
+        return ((Number) entityManager().createQuery("select count(o) from GrupoSala o").getSingleResult()).intValue();
     }
 
 	@SuppressWarnings("unchecked")
-    public static List<GrupoSala> findAllGrupoSalas() {
+    public static List<GrupoSala> findAll() {
         return entityManager().createQuery("select o from GrupoSala o").getResultList();
     }
 
-	public static GrupoSala findGrupoSala(Long id) {
+	public static GrupoSala find(Long id) {
         if (id == null) return null;
         return entityManager().find(GrupoSala.class, id);
     }
+	
+	public static List<GrupoSala> find(int firstResult, int maxResults) {
+		return find(firstResult, maxResults, null);
+	}
 
 	@SuppressWarnings("unchecked")
-    public static List<GrupoSala> findGrupoSalaEntries(int firstResult, int maxResults) {
-        return entityManager().createQuery("select o from GrupoSala o").setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
+	public static List<GrupoSala> find(int firstResult, int maxResults, String orderBy) {
+		orderBy = (orderBy != null) ? "ORDER BY o." + orderBy : "";
+        return entityManager().createQuery("select o from GrupoSala o " + orderBy).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
 }

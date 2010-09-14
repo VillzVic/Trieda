@@ -2,18 +2,20 @@ package com.gapso.web.trieda.server.util;
 
 import java.util.Calendar;
 
-import com.gapso.trieda.domain.SemanaLetiva;
 import com.gapso.trieda.domain.Campus;
+import com.gapso.trieda.domain.GrupoSala;
 import com.gapso.trieda.domain.HorarioAula;
 import com.gapso.trieda.domain.Sala;
+import com.gapso.trieda.domain.SemanaLetiva;
 import com.gapso.trieda.domain.TipoSala;
 import com.gapso.trieda.domain.Turno;
 import com.gapso.trieda.domain.Unidade;
 import com.gapso.trieda.misc.Estados;
-import com.gapso.web.trieda.client.mvp.model.SemanaLetivaDTO;
 import com.gapso.web.trieda.client.mvp.model.CampusDTO;
+import com.gapso.web.trieda.client.mvp.model.GrupoSalaDTO;
 import com.gapso.web.trieda.client.mvp.model.HorarioAulaDTO;
 import com.gapso.web.trieda.client.mvp.model.SalaDTO;
+import com.gapso.web.trieda.client.mvp.model.SemanaLetivaDTO;
 import com.gapso.web.trieda.client.mvp.model.TipoSalaDTO;
 import com.gapso.web.trieda.client.mvp.model.TurnoDTO;
 import com.gapso.web.trieda.client.mvp.model.UnidadeDTO;
@@ -77,6 +79,25 @@ public class ConvertBeans {
 		return dto;
 	}
 	
+	// TIPO SALA
+	public static TipoSala toTipoSala(TipoSalaDTO dto) {
+		TipoSala domain = new TipoSala();
+		domain.setId(dto.getId());
+		domain.setVersion(dto.getVersion());
+		domain.setNome(dto.getNome());
+		domain.setDescricao(dto.getDescricao());
+		return domain;
+	}
+	
+	public static TipoSalaDTO toTipoSalaDTO(TipoSala domain) {
+		TipoSalaDTO dto = new TipoSalaDTO();
+		dto.setId(domain.getId());
+		dto.setVersion(domain.getVersion());
+		dto.setNome(domain.getNome());
+		dto.setDescricao(domain.getDescricao());
+		return dto;
+	}
+	
 	// SALA
 	public static Sala toSala(SalaDTO dto) {
 		Sala domain = new Sala();
@@ -110,26 +131,32 @@ public class ConvertBeans {
 		dto.setUnidadeString(domain.getUnidade().getCodigo());
 		return dto;
 	}
-	
-	// TIPO SALA
-	public static TipoSala toTipoSala(TipoSalaDTO dto) {
-		TipoSala domain = new TipoSala();
+
+	// GRUPO DE SALA
+	public static GrupoSala toGrupoSala(GrupoSalaDTO dto) {
+		GrupoSala domain = new GrupoSala();
 		domain.setId(dto.getId());
 		domain.setVersion(dto.getVersion());
+		domain.setCodigo(dto.getCodigo());
 		domain.setNome(dto.getNome());
-		domain.setDescricao(dto.getDescricao());
+		
+		Unidade unidade = Unidade.find(dto.getUnidadeId());
+		domain.setUnidade(unidade);
+		
 		return domain;
 	}
 	
-	public static TipoSalaDTO toTipoSalaDTO(TipoSala domain) {
-		TipoSalaDTO dto = new TipoSalaDTO();
+	public static GrupoSalaDTO toGrupoSalaDTO(GrupoSala domain) {
+		GrupoSalaDTO dto = new GrupoSalaDTO();
 		dto.setId(domain.getId());
 		dto.setVersion(domain.getVersion());
+		dto.setCodigo(domain.getCodigo());
 		dto.setNome(domain.getNome());
-		dto.setDescricao(domain.getDescricao());
+		dto.setUnidadeId(domain.getUnidade().getId());
+		dto.setUnidadeString(domain.getUnidade().getCodigo());
 		return dto;
 	}
-
+	
 	// TURNO
 	public static Turno toTurno(TurnoDTO dto) {
 		Turno domain = new Turno();
