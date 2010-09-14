@@ -9,6 +9,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
@@ -32,6 +34,11 @@ import org.springframework.transaction.annotation.Transactional;
 @Table(name = "TURNOS")
 public class Turno implements java.io.Serializable {
 
+//  TODO  @NotNull
+    @ManyToOne(targetEntity = Cenario.class)
+    @JoinColumn(name = "CEN_ID")
+    private Cenario cenario;
+	
     @NotNull
     @Column(name = "TUR_NOME")
     @Size(max = 50)
@@ -155,6 +162,14 @@ public class Turno implements java.io.Serializable {
         return q.setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
     
+	public Cenario getCenario() {
+        return this.cenario;
+    }
+
+	public void setCenario(Cenario cenario) {
+        this.cenario = cenario;
+    }
+    
     public String getNome() {
         return this.nome;
     }
@@ -185,6 +200,7 @@ public class Turno implements java.io.Serializable {
         StringBuilder sb = new StringBuilder();
         sb.append("Id: ").append(getId()).append(", ");
         sb.append("Version: ").append(getVersion()).append(", ");
+        sb.append("Cenario: ").append(getCenario()).append(", ");
         sb.append("Nome: ").append(getNome()).append(", ");
         sb.append("Tempo: ").append(getTempo()).append(", ");
         sb.append("CampusCurriculo: ").append(getCampusCurriculo() == null ? "null" : getCampusCurriculo().size());

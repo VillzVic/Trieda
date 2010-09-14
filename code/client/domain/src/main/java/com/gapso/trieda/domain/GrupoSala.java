@@ -10,7 +10,9 @@ import javax.persistence.EntityManager;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Table;
 import javax.persistence.Version;
@@ -31,6 +33,11 @@ import org.springframework.transaction.annotation.Transactional;
 @Table(name = "GRUPOS_SALA")
 public class GrupoSala implements java.io.Serializable {
 
+	@NotNull
+    @ManyToOne(targetEntity = Unidade.class)
+    @JoinColumn(name = "UNI_ID")
+    private Unidade unidade;
+	
     @NotNull
     @Column(name = "GRS_NOME")
     @Size(min = 3, max = 20)
@@ -44,6 +51,14 @@ public class GrupoSala implements java.io.Serializable {
 
 	private static final long serialVersionUID = -3068409934520158819L;
 
+	public Unidade getUnidade() {
+        return this.unidade;
+    }
+
+	public void setUnidade(Unidade unidade) {
+        this.unidade = unidade;
+    }
+	
 	public String getNome() {
         return this.nome;
     }
@@ -72,6 +87,7 @@ public class GrupoSala implements java.io.Serializable {
         StringBuilder sb = new StringBuilder();
         sb.append("Id: ").append(getId()).append(", ");
         sb.append("Version: ").append(getVersion()).append(", ");
+        sb.append("Unidade: ").append(getUnidade()).append(", ");
         sb.append("Nome: ").append(getNome()).append(", ");
         sb.append("Salas: ").append(getSalas() == null ? "null" : getSalas().size()).append(", ");
         sb.append("Disciplinas: ").append(getDisciplinas() == null ? "null" : getDisciplinas().size());
