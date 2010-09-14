@@ -44,6 +44,16 @@
 			<artifactId>spring-web</artifactId>
 			<version>3.0.3.RELEASE</version>
 		</dependency>
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>5.1.13</version>
+		</dependency>
+		<dependency>
+			<groupId>com.googlecode.future</groupId>
+			<artifactId>gwt-async-future</artifactId>
+			<version>1.0.2</version>
+		</dependency>
 	</dependencies>
 
 	<build>

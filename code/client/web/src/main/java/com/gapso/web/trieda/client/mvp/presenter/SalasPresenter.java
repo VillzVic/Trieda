@@ -23,24 +23,37 @@ import com.gapso.web.trieda.client.util.view.GTabItem;
 import com.gapso.web.trieda.client.util.view.SimpleGrid;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
+import com.googlecode.future.FutureResult;
+import com.googlecode.future.FutureSynchronizer;
 
 public class SalasPresenter implements Presenter {
 
 	public interface Display {
 		Button getNewButton();
+
 		Button getEditButton();
+
 		Button getRemoveButton();
+
 		Button getImportExcelButton();
+
 		Button getExportExcelButton();
+
 		Button getDisciplinasAssociadasButton();
+
 		Button getGruposDeSalasButton();
+
 		SimpleGrid<SalaDTO> getGrid();
+
 		GTabItem getGTabItem();
+
 		Component getComponent();
+
 		void setProxy(RpcProxy<PagingLoadResult<SalaDTO>> proxy);
 	}
-	private Display display; 
-	
+
+	private Display display;
+
 	public SalasPresenter(Display display) {
 		this.display = display;
 		configureProxy();
@@ -52,42 +65,47 @@ public class SalasPresenter implements Presenter {
 		RpcProxy<PagingLoadResult<SalaDTO>> proxy = new RpcProxy<PagingLoadResult<SalaDTO>>() {
 			@Override
 			public void load(Object loadConfig, AsyncCallback<PagingLoadResult<SalaDTO>> callback) {
-				service.getList((PagingLoadConfig)loadConfig, callback);
+				service.getList((PagingLoadConfig) loadConfig, callback);
 			}
 		};
 		display.setProxy(proxy);
 	}
-	
+
 	private void setListeners() {
-		display.getNewButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
+		display.getNewButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
 			@Override
 			public void componentSelected(ButtonEvent ce) {
 				Presenter presenter = new SalaFormPresenter(new SalaFormView(new SalaDTO(), null, null), display.getGrid());
 				presenter.go(null);
 			}
 		});
-		display.getEditButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
+		display.getEditButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
 			@Override
 			public void componentSelected(ButtonEvent ce) {
-				SalaDTO salaDTO = display.getGrid().getGrid().getSelectionModel().getSelectedItem();
-				
+				final SalaDTO salaDTO = display.getGrid().getGrid().getSelectionModel().getSelectedItem();
+
 				UnidadesServiceAsync unidadesService = Services.unidades();
 				SalasServiceAsync salasService = Services.salas();
-				
-				MyAsyncCallback<UnidadeDTO> myAsyncCallback1 = new MyAsyncCallback<UnidadeDTO>();
-				unidadesService.getUnidade(salaDTO.getUnidadeId(), myAsyncCallback1);
-				
-				MyAsyncCallback<TipoSalaDTO> myAsyncCallback2 = new MyAsyncCallback<TipoSalaDTO>();
-				salasService.getTipoSala(salaDTO.getTipoId(), myAsyncCallback2);
-				
-				UnidadeDTO unidadeDTO = myAsyncCallback1.getDto();
-				TipoSalaDTO tipoSalaDTO = myAsyncCallback2.getDto();
-				
-				Presenter presenter = new SalaFormPresenter(new SalaFormView(salaDTO, unidadeDTO, tipoSalaDTO), display.getGrid());
-				presenter.go(null);
+
+				final FutureResult<UnidadeDTO> futureUnidadeDTO = new FutureResult<UnidadeDTO>();
+				final FutureResult<TipoSalaDTO> futureSalaDTO = new FutureResult<TipoSalaDTO>();
+				unidadesService.getUnidade(salaDTO.getUnidadeId(), futureUnidadeDTO);
+				salasService.getTipoSala(salaDTO.getTipoId(), futureSalaDTO);
+
+				FutureSynchronizer synch = new FutureSynchronizer(futureUnidadeDTO, futureSalaDTO);
+				synch.addCallback(new com.google.gwt.user.client.rpc.AsyncCallback<Boolean>() {
+					public void onFailure(Throwable caught) {}
+					public void onSuccess(Boolean result) {
+						UnidadeDTO unidadeDTO = futureUnidadeDTO.result();
+						TipoSalaDTO tipoSalaDTO = futureSalaDTO.result();
+						Presenter presenter = new SalaFormPresenter(new SalaFormView(salaDTO, unidadeDTO, tipoSalaDTO), display.getGrid());
+						presenter.go(null);
+					}
+				});
+
 			}
 		});
-		display.getRemoveButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
+		display.getRemoveButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
 			@Override
 			public void componentSelected(ButtonEvent ce) {
 				List<SalaDTO> list = display.getGrid().getGrid().getSelectionModel().getSelectedItems();
@@ -97,6 +115,7 @@ public class SalasPresenter implements Presenter {
 					public void onFailure(Throwable caught) {
 						MessageBox.alert("ERRO!", "Deu falha na conexão", null);
 					}
+
 					@Override
 					public void onSuccess(Void result) {
 						display.getGrid().updateList();
@@ -106,26 +125,10 @@ public class SalasPresenter implements Presenter {
 			}
 		});
 	}
-	
+
 	@Override
 	public void go(Widget widget) {
-		GTab tab = (GTab)widget;
-		tab.add((GTabItem)display.getComponent());
-	}
-
-	private class MyAsyncCallback<D> implements AsyncCallback<D> {
-		private D dto;
-		@Override
-		public void onFailure(Throwable caught) {
-			caught.printStackTrace();
-		}
-		@Override
-		public void onSuccess(D result) {
-			dto = result;
-		}
-		
-		public D getDto() {
-			return dto;
-		}
+		GTab tab = (GTab) widget;
+		tab.add((GTabItem) display.getComponent());
 	}
 }
