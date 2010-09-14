@@ -11,6 +11,5 @@ public:
    virtual void le_arvore(ItemNivelDificuldade& raiz);
 
    //private:
-   int id;
    std::string nome;
 };

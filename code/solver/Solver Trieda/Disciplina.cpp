@@ -21,7 +21,7 @@ void Disciplina::le_arvore(ItemDisciplina& elem)
    nivel_dificuldade_id = elem.nivelDificuldadeId();
    
    divisao_creditos = NULL;
-   if (elem.divisaoDeCreditos()) {
+   if (elem.divisaoDeCreditos().present()) {
       divisao_creditos = new DivisaoCreditos();
       divisao_creditos->le_arvore(elem.divisaoDeCreditos().get());
    }

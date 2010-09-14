@@ -15,7 +15,6 @@ public:
    virtual void le_arvore(ItemCampus& raiz);
 
 //private:
-   int id;
    std::string codigo;
    std::string nome;
 

@@ -17,6 +17,7 @@
 #include "Curso.h"
 #include "Oferta.h"
 #include "Demanda.h"
+#include "ParametrosPlanejamento.h"
 #include "Fixacao.h"
 #include <iostream>
 
@@ -69,6 +70,7 @@ public:
    GGroup<Disciplina*> disciplinas;
    GGroup<Curso*> cursos;
    GGroup<Oferta*> ofertas;
+   ParametrosPlanejamento* parametros;
    GGroup<Fixacao*> fixacoes;
 
 public:

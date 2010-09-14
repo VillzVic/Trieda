@@ -10,7 +10,6 @@ public:
    ~Calendario(void);
    virtual void le_arvore(ItemCalendario& raiz);
 //private:
-   int id;
    GGroup<Turno*> turnos;
    std::string codigo;
    std::string descricao;

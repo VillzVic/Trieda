@@ -11,7 +11,6 @@ public:
    virtual void le_arvore(ItemHorarioAula& elem);
 
 //private:
-   int id;
    DateTime inicio;
    GGroup<int> diasSemana;
 };

@@ -58,5 +58,7 @@ void ProblemData::le_arvore(TriedaInput& raiz)
       o->le_arvore(*it_of);
       ofertas.add(o);
    }
+   parametros = new ParametrosPlanejamento;
+   parametros->le_arvore(raiz.parametrosPlanejamento());
    LE_SEQ(fixacoes,raiz.fixacoes(),Fixacao);
 }
