@@ -557,6 +557,30 @@
 				Name="Output"
 				>
 				<File
+					RelativePath=".\AtendimentoCampus.h"
+					>
+				</File>
+				<File
+					RelativePath=".\AtendimentoDiaSemana.h"
+					>
+				</File>
+				<File
+					RelativePath=".\AtendimentoOferta.h"
+					>
+				</File>
+				<File
+					RelativePath=".\AtendimentoSala.h"
+					>
+				</File>
+				<File
+					RelativePath=".\AtendimentoTatico.h"
+					>
+				</File>
+				<File
+					RelativePath=".\AtendimentoUnidade.h"
+					>
+				</File>
+				<File
 					RelativePath=".\Oferecimento.h"
 					>
 				</File>
