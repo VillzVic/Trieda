@@ -54,13 +54,23 @@ public:
    ToDo:
    All objects that define the problem input should be declared here
    **/
-      //GGroup<Curso*> cursos;
-   //GGroup<Professor*> professores;
    Calendario* calendario;
-   //GGroup<Disciplina*> disciplinas;
-   //GGroup<DivisaoCreditos*> regras_credito;
-   //GGroup<BlocoCurricular*> blocos;
+   GGroup<TipoSala*> tipos_sala;
+   GGroup<TipoContrato*> tipos_contrato;
+   GGroup<TipoTitulacao*> tipos_titulacao;
+   GGroup<AreaTitulacao*> areas_titulacao;
+   GGroup<TipoDisciplina*> tipos_disciplina;
+   GGroup<NivelDificuldade*> niveis_dificuldade;
+   GGroup<TipoCurso*> tipos_curso;
+   GGroup<DivisaoCreditos*> regras_div;
    GGroup<Campus*> campi;
+   GGroup<Deslocamento*> tempo_campi;
+   GGroup<Deslocamento*> tempo_unidades;
+   GGroup<Disciplina*> disciplinas;
+   GGroup<Curso*> cursos;
+   GGroup<Oferta*> ofertas;
+   GGroup<Fixacao*> fixacoes;
+
 public:
    virtual void le_arvore(TriedaInput& raiz);
 };
