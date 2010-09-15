@@ -10,6 +10,7 @@ public:
 
    void le_arvore(ItemCreditoDisponivel& elem);
 
+   int turno_id;
    int dia_semana;
    int max_creditos;
 };
