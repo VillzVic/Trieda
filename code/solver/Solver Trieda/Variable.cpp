@@ -22,12 +22,15 @@ void Variable::reset()
    All pointers that define a variable should be addressed to NULL
    */
    value = -1;
+   i = -1;
    b = NULL;
    i = NULL;
    d = NULL;
    u = NULL;
    s = NULL;
    t = -1;
+   c = NULL;
+   j = -1;
 
 }
 
@@ -46,6 +49,8 @@ Variable& Variable::operator=(const Variable& var)
    this->u = var.getUnidade();
    this->s = var.getSala();
    this->t = var.getDia();
+   this->j = var.getSubBloco();
+   this->c = var.getCurso();
 
    return *this;
 }
@@ -56,12 +61,23 @@ bool Variable::operator <(const Variable& var) const
       return true;
    else if( (int)this->getType() > (int) var.getType() )
       return false;
-   if (E_MENOR(this->getTurma(),var.getTurma())) return true;
+   if (this->getTurma() < var.getTurma()) return true;
+
+   // ---
+   if(E_MENOR(this->getCurso(),var.getCurso())) return true;
+   // ---
+
    if (E_MENOR(this->getDisciplina(),var.getDisciplina())) return true;
    if (E_MENOR(this->getUnidade(),var.getUnidade())) return true;
    if (E_MENOR(this->getSala(),var.getSala())) return true;
    if (E_MENOR(this->getBloco(),var.getBloco())) return true;
+
+   // ---
+   if (this->getSubBloco() < var.getSubBloco()) return true;
+   // ---
+
    if (this->getDia() < var.getDia()) return true;
+
    return false;
 }
 
@@ -93,17 +109,26 @@ std::string Variable::toString()
          str << "o"; break;
       case V_TURMA_BLOCO:
          str << "w"; break;
+      case V_ALOC_ALUNO:
+         str << "b"; break;
       default:
          str << "!";
    }
    str << "_";
    bool hb = false;
    if (b != NULL) { str << "{" << b->getId(); hb = true; }
-   if (i != NULL) str << (hb?",":"{") << i->getId();
+  
+   //if (i != NULL) str << (hb?",":"{") << i->getId();
+   if (i >= 0) str << (hb?",":"{") << i;
+
    if (d != NULL) str << "," << d->getId();
    if (u != NULL) str << "," << u->getId();
    if (s != NULL) str << "," << s->getId();
    if (t >= 0) str << "," << t;
+
+   if (j >= 0) str << "," << j;
+   if (c) str << "," << c->getId();
+
    str << "}";
    str >> output;
    return output;
@@ -123,12 +148,13 @@ size_t VariableHasher::operator()(const Variable& v) const
    All pointers different from NULL must be considered in the hash function
    **/
    if (v.getBloco() != NULL) {
-      sum *= HASH_PRIME; sum+= intHash(v.getBloco()->getId());
+    
+  sum *= HASH_PRIME; sum+= intHash(v.getBloco()->getId());
    }
    if (v.getTurma() != NULL) {
-      sum *= HASH_PRIME; sum+= intHash(v.getTurma()->getId());
+      sum *= HASH_PRIME; sum+= intHash(v.getTurma());
    }
-   if (v.getDisciplina() != NULL) {
+   if (v.getDisciplina() >= 0) {
       sum *= HASH_PRIME; sum+= intHash(v.getDisciplina()->getId());
    }
    if (v.getUnidade() != NULL) {
@@ -140,6 +166,14 @@ size_t VariableHasher::operator()(const Variable& v) const
    if(v.getDia() >= 0) {
       sum *= HASH_PRIME; sum+= intHash(v.getDia());
    }
+   
+   if(v.getSubBloco() >= 0) {
+      sum *= HASH_PRIME; sum+= intHash(v.getSubBloco());
+   }
+   if(v.getCurso()) {
+      sum *= HASH_PRIME; sum+= intHash(v.getCurso()->getId());
+   }
+
    return sum;
 }
 

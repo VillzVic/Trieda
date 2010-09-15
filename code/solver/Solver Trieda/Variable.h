@@ -15,11 +15,12 @@ public:
       V_CREDITOS = 1,            /** x_{idust} */
       V_OFERECIMENTO = 2,        /** o_{idust} */
       V_ABERTURA = 3,            /** z_{idu} */
-      V_ALUNOS = 4,              /** a_{idu} */
-      V_TURMA_BLOCO = 5,         /** w_{btu} */
-      V_DIAS_CONSECUTIVOS = 6,   /** c_{idt} */
-      V_MIN_CRED_SEMANA = 7,     /** h_{bi} */
-      V_MAX_CRED_SEMANA = 8,     /** H_{bi} */
+      V_ALUNOS = 4,              /** a_{iduc} */
+      V_ALOC_ALUNO = 5,          /** b_{icdu} */
+      V_TURMA_BLOCO = 6,         /** w_{bjtu} */
+      V_DIAS_CONSECUTIVOS = 7,   /** c_{idt} */
+      V_MIN_CRED_SEMANA = 8,     /** h_{bi} */
+      V_MAX_CRED_SEMANA = 9      /** H_{bi} */
    };
 
    //Constructors
@@ -44,11 +45,16 @@ public:
    */
 
    // Turma* getTurma() const { return i; }
+   int getTurma() const { return i; }
+
    Disciplina* getDisciplina() const { return d; }
    Unidade* getUnidade() const { return u; }
    Sala* getSala() const { return s; }
    int getDia() const { return t; }
    BlocoCurricular* getBloco() const { return b; }
+
+   int getSubBloco() const { return j; }
+   Curso* getCurso() const { return c; }
 
    //==================================================
    // SET METHODS 
@@ -67,12 +73,16 @@ public:
    All set methods of the private attributes should be defined here
    */
 //   void setTurma(Turma* ii) {  i = ii; }
+   void setTurma(int ii) { i = ii; }
+
    void setDisciplina(Disciplina* dd) {  d = dd; }
    void setUnidade(Unidade* uu) {  u = uu; }
    void setSala(Sala* ss) {  s = ss; }
    void setDia(int tt) {  t = tt; }
    void setBloco(BlocoCurricular* bb) {  b = bb; } 
 
+   void setSubBloco(int jj) { j = jj; }
+   void setCurso(Curso* cc) { cc = c; }
 
 
    //==================================================
@@ -97,11 +107,15 @@ private:
    */
 
    //   Turma* i;
+   int i; // Turma
+
    Disciplina* d;
    Unidade* u;
    Sala* s;
    int t /* dia */;
    BlocoCurricular* b;
+   int j; // subbloco
+   Curso* c;
 };
 
 
