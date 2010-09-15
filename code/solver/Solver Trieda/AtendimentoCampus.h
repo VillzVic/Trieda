@@ -15,4 +15,9 @@ public:
    GGroup<AtendimentoUnidade*> atendimentos_unidades;
 
    //virtual void escreve_arvore(ItemAtendimentoCampus& elem);
+   
+   //virtual TriedaOutput& escreve_arvore(TriedaOutput& root);
+
 };
+
+std::ostream& operator << (std::ostream& out, AtendimentoCampus& campus);

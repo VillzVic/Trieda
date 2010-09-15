@@ -22,4 +22,6 @@ public:
    Operacional *alocacao_operacional;
 
    //virtual void escreve_arvore(ItemAtendimento& elem);
+   virtual void escreve_arvore();
+
 };

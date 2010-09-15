@@ -4,6 +4,8 @@
 
 #include "AtendimentoDiaSemana.h"
 
+using namespace std;
+
 class AtendimentoSala:
    public OFBase
 {
@@ -16,3 +18,5 @@ public:
 
    //virtual void escreve_arvore(ItemAtendimentoUnidade& elem);
 };
+
+std::ostream& operator << (std::ostream& out, AtendimentoSala& sala);

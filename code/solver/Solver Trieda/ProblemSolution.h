@@ -3,7 +3,12 @@
 
 #include <ostream>
 #include "GGroup.h"
-#include "Oferecimento.h"
+#include "ProblemData.h"
+
+//#include "Oferecimento.h"
+#include "AtendimentoCampus.h"
+
+using namespace std;
 
 //Stores output data
 class ProblemSolution
@@ -33,13 +38,16 @@ public:
    All get methods of the private attributes should be defined here
    */
 
-private:
+//private:
 
    /**
    ToDo:
    All objects that define the problem output should be declared here
    **/
-   GGroup<Oferecimento*> oferecimentos;
+
+   //GGroup<Oferecimento*> oferecimentos;
+   
+   GGroup<AtendimentoCampus*> atendimento_campus;
 
 };
 

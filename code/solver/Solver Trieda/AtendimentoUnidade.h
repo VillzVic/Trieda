@@ -4,6 +4,8 @@
 
 #include "AtendimentoSala.h"
 
+using namespace std;
+
 class AtendimentoUnidade:
    public OFBase
 {
@@ -15,4 +17,7 @@ public:
    GGroup<AtendimentoSala*> atendimentos_salas;
 
    //virtual void escreve_arvore(ItemAtendimentoUnidade& elem);
+
 };
+
+std::ostream& operator << (std::ostream& out, AtendimentoUnidade& unidade);
