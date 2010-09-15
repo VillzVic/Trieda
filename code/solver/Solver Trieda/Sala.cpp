@@ -28,7 +28,7 @@ void Sala::le_arvore(ItemSala& elem)
    else {
       // le horarios disponiveis 
    }
-   ITERA_SEQ(it_disc,elem.disciplinasAssociadas(),Identificador) {
+   ITERA_NSEQ(it_disc,elem.disciplinasAssociadas(),id,Identificador) {
       disciplinas_associadas.add(*it_disc);
    }
 }

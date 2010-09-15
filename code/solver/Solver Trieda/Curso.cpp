@@ -26,7 +26,7 @@ void Curso::le_arvore(ItemCurso& elem)
    regra_min_doutores = std::make_pair(tit_id,pm);
 
 
-   ITERA_SEQ(it_areas,elem.areasTitulacao(),Identificador) {
+   ITERA_NSEQ(it_areas,elem.areasTitulacao(),id,Identificador) {
       area_ids.add(*it_areas);
    }
 

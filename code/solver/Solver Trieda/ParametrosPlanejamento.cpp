@@ -21,11 +21,14 @@ void ParametrosPlanejamento::le_arvore(ItemParametrosPlanejamento& elem)
    minimizar_desloc_aluno = elem.minimizarDeslocAluno();
    maxDeslocProf = elem.maxDeslocProfessor();
 
-   ITERA_SEQ(it_maximizar_avaliacao_cursos,elem.maximizarAvaliacaoCursos(),Identificador) {
+   ITERA_NSEQ(it_maximizar_avaliacao_cursos,
+              elem.maximizarAvaliacaoCursos(),id,Identificador) 
+   {
       maximizar_avaliacao_cursos.add(*it_maximizar_avaliacao_cursos);
    }
 
-   ITERA_SEQ(it_minimizar_custo_docente_cursos,elem.minimizarCustoDocenteCursos(),Identificador) {
+   ITERA_NSEQ(it_minimizar_custo_docente_cursos,
+             elem.minimizarCustoDocenteCursos(),id,Identificador) {
       minimizar_custo_docente_cursos.add(*it_minimizar_custo_docente_cursos);
    }
 
@@ -33,7 +36,7 @@ void ParametrosPlanejamento::le_arvore(ItemParametrosPlanejamento& elem)
       elem.permiteCompartilhamentoTurma().GrupoIdentificador().begin();
    for(;it!=elem.permiteCompartilhamentoTurma().GrupoIdentificador().end();++it) {
       GGroup<int>* g = new GGroup<int>;
-      ITERA_SEQ(it_id,*it,Identificador) {
+      ITERA_NSEQ(it_id,*it,id,Identificador) {
         g->add(*it_id);
       }
       permite_compart_turma.add(g);

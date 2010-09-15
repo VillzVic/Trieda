@@ -11,7 +11,8 @@ Professor::~Professor(void)
 void Professor::le_arvore(ItemProfessor& elem)
 {
    id = elem.id();
-   area_id = elem.areaTitulacaoId();
+   if(elem.areaTitulacaoId().present())
+      area_id = elem.areaTitulacaoId().get();
    tipo_contrato_id = elem.tipoContratoId();
    titulacao_id = elem.titulacaoId();
 

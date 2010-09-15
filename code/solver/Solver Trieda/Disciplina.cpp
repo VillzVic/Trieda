@@ -15,8 +15,10 @@ void Disciplina::le_arvore(ItemDisciplina& elem)
    cred_teoricos = elem.credTeoricos();
    cred_praticos = elem.credPraticos();
    e_lab = elem.laboratorio();
-   max_alunos_t = elem.maxAlunosTeorico();
-   max_alunos_p = elem.maxAlunosPratico();
+   if(elem.maxAlunosTeorico().present())
+      max_alunos_t = elem.maxAlunosTeorico().get();
+   if(elem.maxAlunosPratico().present())
+      max_alunos_p = elem.maxAlunosPratico().get();
    tipo_disciplina_id = elem.tipoDisciplinaId();
    nivel_dificuldade_id = elem.nivelDificuldadeId();
    
@@ -26,11 +28,11 @@ void Disciplina::le_arvore(ItemDisciplina& elem)
       divisao_creditos->le_arvore(elem.divisaoDeCreditos().get());
    }
 
-   ITERA_SEQ(it_contem,elem.disciplinasEquivalentes(),Identificador) {
+   ITERA_NSEQ(it_contem,elem.disciplinasEquivalentes(),id,Identificador) {
       equivalentes.add(*it_contem);
    }
 
-   ITERA_SEQ(it_inc,elem.disciplinasIncompativeis(),Identificador) {
+   ITERA_NSEQ(it_inc,elem.disciplinasIncompativeis(),id,Identificador) {
       incompativeis.add(*it_inc);
    }
 

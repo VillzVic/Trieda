@@ -1291,6 +1291,24 @@ disciplinasAssociadas (::std::auto_ptr< disciplinasAssociadas_type > x)
 // ItemCreditoDisponivel
 // 
 
+const ItemCreditoDisponivel::turnoId_type& ItemCreditoDisponivel::
+turnoId () const
+{
+  return this->turnoId_.get ();
+}
+
+ItemCreditoDisponivel::turnoId_type& ItemCreditoDisponivel::
+turnoId ()
+{
+  return this->turnoId_.get ();
+}
+
+void ItemCreditoDisponivel::
+turnoId (const turnoId_type& x)
+{
+  this->turnoId_.set (x);
+}
+
 const ItemCreditoDisponivel::diaSemana_type& ItemCreditoDisponivel::
 diaSemana () const
 {
@@ -1469,22 +1487,28 @@ titulacaoId (const titulacaoId_type& x)
   this->titulacaoId_.set (x);
 }
 
-const ItemProfessor::areaTitulacaoId_type& ItemProfessor::
+const ItemProfessor::areaTitulacaoId_optional& ItemProfessor::
 areaTitulacaoId () const
 {
-  return this->areaTitulacaoId_.get ();
+  return this->areaTitulacaoId_;
 }
 
-ItemProfessor::areaTitulacaoId_type& ItemProfessor::
+ItemProfessor::areaTitulacaoId_optional& ItemProfessor::
 areaTitulacaoId ()
 {
-  return this->areaTitulacaoId_.get ();
+  return this->areaTitulacaoId_;
 }
 
 void ItemProfessor::
 areaTitulacaoId (const areaTitulacaoId_type& x)
 {
   this->areaTitulacaoId_.set (x);
+}
+
+void ItemProfessor::
+areaTitulacaoId (const areaTitulacaoId_optional& x)
+{
+  this->areaTitulacaoId_ = x;
 }
 
 const ItemProfessor::credAnterior_type& ItemProfessor::
@@ -1829,16 +1853,16 @@ laboratorio (const laboratorio_type& x)
   this->laboratorio_.set (x);
 }
 
-const ItemDisciplina::maxAlunosTeorico_type& ItemDisciplina::
+const ItemDisciplina::maxAlunosTeorico_optional& ItemDisciplina::
 maxAlunosTeorico () const
 {
-  return this->maxAlunosTeorico_.get ();
+  return this->maxAlunosTeorico_;
 }
 
-ItemDisciplina::maxAlunosTeorico_type& ItemDisciplina::
+ItemDisciplina::maxAlunosTeorico_optional& ItemDisciplina::
 maxAlunosTeorico ()
 {
-  return this->maxAlunosTeorico_.get ();
+  return this->maxAlunosTeorico_;
 }
 
 void ItemDisciplina::
@@ -1847,22 +1871,34 @@ maxAlunosTeorico (const maxAlunosTeorico_type& x)
   this->maxAlunosTeorico_.set (x);
 }
 
-const ItemDisciplina::maxAlunosPratico_type& ItemDisciplina::
-maxAlunosPratico () const
+void ItemDisciplina::
+maxAlunosTeorico (const maxAlunosTeorico_optional& x)
 {
-  return this->maxAlunosPratico_.get ();
+  this->maxAlunosTeorico_ = x;
 }
 
-ItemDisciplina::maxAlunosPratico_type& ItemDisciplina::
+const ItemDisciplina::maxAlunosPratico_optional& ItemDisciplina::
+maxAlunosPratico () const
+{
+  return this->maxAlunosPratico_;
+}
+
+ItemDisciplina::maxAlunosPratico_optional& ItemDisciplina::
 maxAlunosPratico ()
 {
-  return this->maxAlunosPratico_.get ();
+  return this->maxAlunosPratico_;
 }
 
 void ItemDisciplina::
 maxAlunosPratico (const maxAlunosPratico_type& x)
 {
   this->maxAlunosPratico_.set (x);
+}
+
+void ItemDisciplina::
+maxAlunosPratico (const maxAlunosPratico_optional& x)
+{
+  this->maxAlunosPratico_ = x;
 }
 
 const ItemDisciplina::tipoDisciplinaId_type& ItemDisciplina::
@@ -3065,22 +3101,22 @@ HorarioAula (const HorarioAula_sequence& s)
 // GrupoDiaSemana
 // 
 
-const GrupoDiaSemana::DiaSemana_sequence& GrupoDiaSemana::
-DiaSemana () const
+const GrupoDiaSemana::diaSemana_sequence& GrupoDiaSemana::
+diaSemana () const
 {
-  return this->DiaSemana_;
+  return this->diaSemana_;
 }
 
-GrupoDiaSemana::DiaSemana_sequence& GrupoDiaSemana::
-DiaSemana ()
+GrupoDiaSemana::diaSemana_sequence& GrupoDiaSemana::
+diaSemana ()
 {
-  return this->DiaSemana_;
+  return this->diaSemana_;
 }
 
 void GrupoDiaSemana::
-DiaSemana (const DiaSemana_sequence& s)
+diaSemana (const diaSemana_sequence& s)
 {
-  this->DiaSemana_ = s;
+  this->diaSemana_ = s;
 }
 
 
@@ -3615,22 +3651,22 @@ NivelDificuldadeHorario (const NivelDificuldadeHorario_sequence& s)
 // GrupoIdentificador
 // 
 
-const GrupoIdentificador::Identificador_sequence& GrupoIdentificador::
-Identificador () const
+const GrupoIdentificador::id_sequence& GrupoIdentificador::
+id () const
 {
-  return this->Identificador_;
+  return this->id_;
 }
 
-GrupoIdentificador::Identificador_sequence& GrupoIdentificador::
-Identificador ()
+GrupoIdentificador::id_sequence& GrupoIdentificador::
+id ()
 {
-  return this->Identificador_;
+  return this->id_;
 }
 
 void GrupoIdentificador::
-Identificador (const Identificador_sequence& s)
+id (const id_sequence& s)
 {
-  this->Identificador_ = s;
+  this->id_ = s;
 }
 
 
@@ -6416,9 +6452,11 @@ ItemSala::
 //
 
 ItemCreditoDisponivel::
-ItemCreditoDisponivel (const diaSemana_type& diaSemana,
+ItemCreditoDisponivel (const turnoId_type& turnoId,
+                       const diaSemana_type& diaSemana,
                        const maxCreditos_type& maxCreditos)
 : ::xml_schema::type (),
+  turnoId_ (turnoId, ::xml_schema::flags (), this),
   diaSemana_ (diaSemana, ::xml_schema::flags (), this),
   maxCreditos_ (maxCreditos, ::xml_schema::flags (), this)
 {
@@ -6429,6 +6467,7 @@ ItemCreditoDisponivel (const ItemCreditoDisponivel& x,
                        ::xml_schema::flags f,
                        ::xml_schema::container* c)
 : ::xml_schema::type (x, f, c),
+  turnoId_ (x.turnoId_, f, this),
   diaSemana_ (x.diaSemana_, f, this),
   maxCreditos_ (x.maxCreditos_, f, this)
 {
@@ -6439,6 +6478,7 @@ ItemCreditoDisponivel (const ::xercesc::DOMElement& e,
                        ::xml_schema::flags f,
                        ::xml_schema::container* c)
 : ::xml_schema::type (e, f | ::xml_schema::flags::base, c),
+  turnoId_ (f, this),
   diaSemana_ (f, this),
   maxCreditos_ (f, this)
 {
@@ -6458,6 +6498,17 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
     const ::xercesc::DOMElement& i (p.cur_element ());
     const ::xsd::cxx::xml::qualified_name< char > n (
       ::xsd::cxx::xml::dom::name< char > (i));
+
+    // turnoId
+    //
+    if (n.name () == "turnoId" && n.namespace_ ().empty ())
+    {
+      if (!turnoId_.present ())
+      {
+        this->turnoId_.set (turnoId_traits::create (i, f, this));
+        continue;
+      }
+    }
 
     // diaSemana
     //
@@ -6482,6 +6533,13 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
     }
 
     break;
+  }
+
+  if (!turnoId_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "turnoId",
+      "");
   }
 
   if (!diaSemana_.present ())
@@ -6522,7 +6580,6 @@ ItemProfessor (const id_type& id,
                const chMin_type& chMin,
                const chMax_type& chMax,
                const titulacaoId_type& titulacaoId,
-               const areaTitulacaoId_type& areaTitulacaoId,
                const credAnterior_type& credAnterior,
                const valorCred_type& valorCred,
                const horariosDisponiveis_type& horariosDisponiveis,
@@ -6535,7 +6592,7 @@ ItemProfessor (const id_type& id,
   chMin_ (chMin, ::xml_schema::flags (), this),
   chMax_ (chMax, ::xml_schema::flags (), this),
   titulacaoId_ (titulacaoId, ::xml_schema::flags (), this),
-  areaTitulacaoId_ (areaTitulacaoId, ::xml_schema::flags (), this),
+  areaTitulacaoId_ (::xml_schema::flags (), this),
   credAnterior_ (credAnterior, ::xml_schema::flags (), this),
   valorCred_ (valorCred, ::xml_schema::flags (), this),
   horariosDisponiveis_ (horariosDisponiveis, ::xml_schema::flags (), this),
@@ -6551,7 +6608,6 @@ ItemProfessor (const id_type& id,
                const chMin_type& chMin,
                const chMax_type& chMax,
                const titulacaoId_type& titulacaoId,
-               const areaTitulacaoId_type& areaTitulacaoId,
                const credAnterior_type& credAnterior,
                const valorCred_type& valorCred,
                ::std::auto_ptr< horariosDisponiveis_type >& horariosDisponiveis,
@@ -6564,7 +6620,7 @@ ItemProfessor (const id_type& id,
   chMin_ (chMin, ::xml_schema::flags (), this),
   chMax_ (chMax, ::xml_schema::flags (), this),
   titulacaoId_ (titulacaoId, ::xml_schema::flags (), this),
-  areaTitulacaoId_ (areaTitulacaoId, ::xml_schema::flags (), this),
+  areaTitulacaoId_ (::xml_schema::flags (), this),
   credAnterior_ (credAnterior, ::xml_schema::flags (), this),
   valorCred_ (valorCred, ::xml_schema::flags (), this),
   horariosDisponiveis_ (horariosDisponiveis, ::xml_schema::flags (), this),
@@ -6714,7 +6770,7 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
     //
     if (n.name () == "areaTitulacaoId" && n.namespace_ ().empty ())
     {
-      if (!areaTitulacaoId_.present ())
+      if (!this->areaTitulacaoId_)
       {
         this->areaTitulacaoId_.set (areaTitulacaoId_traits::create (i, f, this));
         continue;
@@ -6820,13 +6876,6 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
   {
     throw ::xsd::cxx::tree::expected_element< char > (
       "titulacaoId",
-      "");
-  }
-
-  if (!areaTitulacaoId_.present ())
-  {
-    throw ::xsd::cxx::tree::expected_element< char > (
-      "areaTitulacaoId",
       "");
   }
 
@@ -7145,8 +7194,6 @@ ItemDisciplina (const id_type& id,
                 const credTeoricos_type& credTeoricos,
                 const credPraticos_type& credPraticos,
                 const laboratorio_type& laboratorio,
-                const maxAlunosTeorico_type& maxAlunosTeorico,
-                const maxAlunosPratico_type& maxAlunosPratico,
                 const tipoDisciplinaId_type& tipoDisciplinaId,
                 const nivelDificuldadeId_type& nivelDificuldadeId,
                 const horariosDisponiveis_type& horariosDisponiveis,
@@ -7159,8 +7206,8 @@ ItemDisciplina (const id_type& id,
   credTeoricos_ (credTeoricos, ::xml_schema::flags (), this),
   credPraticos_ (credPraticos, ::xml_schema::flags (), this),
   laboratorio_ (laboratorio, ::xml_schema::flags (), this),
-  maxAlunosTeorico_ (maxAlunosTeorico, ::xml_schema::flags (), this),
-  maxAlunosPratico_ (maxAlunosPratico, ::xml_schema::flags (), this),
+  maxAlunosTeorico_ (::xml_schema::flags (), this),
+  maxAlunosPratico_ (::xml_schema::flags (), this),
   tipoDisciplinaId_ (tipoDisciplinaId, ::xml_schema::flags (), this),
   nivelDificuldadeId_ (nivelDificuldadeId, ::xml_schema::flags (), this),
   divisaoDeCreditos_ (::xml_schema::flags (), this),
@@ -7177,8 +7224,6 @@ ItemDisciplina (const id_type& id,
                 const credTeoricos_type& credTeoricos,
                 const credPraticos_type& credPraticos,
                 const laboratorio_type& laboratorio,
-                const maxAlunosTeorico_type& maxAlunosTeorico,
-                const maxAlunosPratico_type& maxAlunosPratico,
                 const tipoDisciplinaId_type& tipoDisciplinaId,
                 const nivelDificuldadeId_type& nivelDificuldadeId,
                 ::std::auto_ptr< horariosDisponiveis_type >& horariosDisponiveis,
@@ -7191,8 +7236,8 @@ ItemDisciplina (const id_type& id,
   credTeoricos_ (credTeoricos, ::xml_schema::flags (), this),
   credPraticos_ (credPraticos, ::xml_schema::flags (), this),
   laboratorio_ (laboratorio, ::xml_schema::flags (), this),
-  maxAlunosTeorico_ (maxAlunosTeorico, ::xml_schema::flags (), this),
-  maxAlunosPratico_ (maxAlunosPratico, ::xml_schema::flags (), this),
+  maxAlunosTeorico_ (::xml_schema::flags (), this),
+  maxAlunosPratico_ (::xml_schema::flags (), this),
   tipoDisciplinaId_ (tipoDisciplinaId, ::xml_schema::flags (), this),
   nivelDificuldadeId_ (nivelDificuldadeId, ::xml_schema::flags (), this),
   divisaoDeCreditos_ (::xml_schema::flags (), this),
@@ -7337,7 +7382,7 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
     //
     if (n.name () == "maxAlunosTeorico" && n.namespace_ ().empty ())
     {
-      if (!maxAlunosTeorico_.present ())
+      if (!this->maxAlunosTeorico_)
       {
         this->maxAlunosTeorico_.set (maxAlunosTeorico_traits::create (i, f, this));
         continue;
@@ -7348,7 +7393,7 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
     //
     if (n.name () == "maxAlunosPratico" && n.namespace_ ().empty ())
     {
-      if (!maxAlunosPratico_.present ())
+      if (!this->maxAlunosPratico_)
       {
         this->maxAlunosPratico_.set (maxAlunosPratico_traits::create (i, f, this));
         continue;
@@ -7475,20 +7520,6 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
   {
     throw ::xsd::cxx::tree::expected_element< char > (
       "laboratorio",
-      "");
-  }
-
-  if (!maxAlunosTeorico_.present ())
-  {
-    throw ::xsd::cxx::tree::expected_element< char > (
-      "maxAlunosTeorico",
-      "");
-  }
-
-  if (!maxAlunosPratico_.present ())
-  {
-    throw ::xsd::cxx::tree::expected_element< char > (
-      "maxAlunosPratico",
       "");
   }
 
@@ -9306,7 +9337,7 @@ GrupoHorarioAula::
 GrupoDiaSemana::
 GrupoDiaSemana ()
 : ::xml_schema::type (),
-  DiaSemana_ (::xml_schema::flags (), this)
+  diaSemana_ (::xml_schema::flags (), this)
 {
 }
 
@@ -9315,7 +9346,7 @@ GrupoDiaSemana (const GrupoDiaSemana& x,
                 ::xml_schema::flags f,
                 ::xml_schema::container* c)
 : ::xml_schema::type (x, f, c),
-  DiaSemana_ (x.DiaSemana_, f, this)
+  diaSemana_ (x.diaSemana_, f, this)
 {
 }
 
@@ -9324,7 +9355,7 @@ GrupoDiaSemana (const ::xercesc::DOMElement& e,
                 ::xml_schema::flags f,
                 ::xml_schema::container* c)
 : ::xml_schema::type (e, f | ::xml_schema::flags::base, c),
-  DiaSemana_ (f, this)
+  diaSemana_ (f, this)
 {
   if ((f & ::xml_schema::flags::base) == 0)
   {
@@ -9343,11 +9374,11 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
     const ::xsd::cxx::xml::qualified_name< char > n (
       ::xsd::cxx::xml::dom::name< char > (i));
 
-    // DiaSemana
+    // diaSemana
     //
-    if (n.name () == "DiaSemana" && n.namespace_ ().empty ())
+    if (n.name () == "diaSemana" && n.namespace_ ().empty ())
     {
-      this->DiaSemana_.push_back (DiaSemana_traits::create (i, f, this));
+      this->diaSemana_.push_back (diaSemana_traits::create (i, f, this));
       continue;
     }
 
@@ -11053,7 +11084,7 @@ GrupoNivelDificuldadeHorario::
 GrupoIdentificador::
 GrupoIdentificador ()
 : ::xml_schema::type (),
-  Identificador_ (::xml_schema::flags (), this)
+  id_ (::xml_schema::flags (), this)
 {
 }
 
@@ -11062,7 +11093,7 @@ GrupoIdentificador (const GrupoIdentificador& x,
                     ::xml_schema::flags f,
                     ::xml_schema::container* c)
 : ::xml_schema::type (x, f, c),
-  Identificador_ (x.Identificador_, f, this)
+  id_ (x.id_, f, this)
 {
 }
 
@@ -11071,7 +11102,7 @@ GrupoIdentificador (const ::xercesc::DOMElement& e,
                     ::xml_schema::flags f,
                     ::xml_schema::container* c)
 : ::xml_schema::type (e, f | ::xml_schema::flags::base, c),
-  Identificador_ (f, this)
+  id_ (f, this)
 {
   if ((f & ::xml_schema::flags::base) == 0)
   {
@@ -11090,11 +11121,11 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
     const ::xsd::cxx::xml::qualified_name< char > n (
       ::xsd::cxx::xml::dom::name< char > (i));
 
-    // Identificador
+    // id
     //
-    if (n.name () == "Identificador" && n.namespace_ ().empty ())
+    if (n.name () == "id" && n.namespace_ ().empty ())
     {
-      this->Identificador_.push_back (Identificador_traits::create (i, f, this));
+      this->id_.push_back (id_traits::create (i, f, this));
       continue;
     }
 
@@ -11996,6 +12027,7 @@ operator<< (::std::ostream& o, const ItemSala& i)
 ::std::ostream&
 operator<< (::std::ostream& o, const ItemCreditoDisponivel& i)
 {
+  o << ::std::endl << "turnoId: " << i.turnoId ();
   o << ::std::endl << "diaSemana: " << i.diaSemana ();
   o << ::std::endl << "maxCreditos: " << i.maxCreditos ();
   return o;
@@ -12011,7 +12043,11 @@ operator<< (::std::ostream& o, const ItemProfessor& i)
   o << ::std::endl << "chMin: " << i.chMin ();
   o << ::std::endl << "chMax: " << i.chMax ();
   o << ::std::endl << "titulacaoId: " << i.titulacaoId ();
-  o << ::std::endl << "areaTitulacaoId: " << i.areaTitulacaoId ();
+  if (i.areaTitulacaoId ())
+  {
+    o << ::std::endl << "areaTitulacaoId: " << *i.areaTitulacaoId ();
+  }
+
   o << ::std::endl << "credAnterior: " << i.credAnterior ();
   o << ::std::endl << "valorCred: " << i.valorCred ();
   o << ::std::endl << "horariosDisponiveis: " << i.horariosDisponiveis ();
@@ -12047,8 +12083,16 @@ operator<< (::std::ostream& o, const ItemDisciplina& i)
   o << ::std::endl << "credTeoricos: " << i.credTeoricos ();
   o << ::std::endl << "credPraticos: " << i.credPraticos ();
   o << ::std::endl << "laboratorio: " << i.laboratorio ();
-  o << ::std::endl << "maxAlunosTeorico: " << i.maxAlunosTeorico ();
-  o << ::std::endl << "maxAlunosPratico: " << i.maxAlunosPratico ();
+  if (i.maxAlunosTeorico ())
+  {
+    o << ::std::endl << "maxAlunosTeorico: " << *i.maxAlunosTeorico ();
+  }
+
+  if (i.maxAlunosPratico ())
+  {
+    o << ::std::endl << "maxAlunosPratico: " << *i.maxAlunosPratico ();
+  }
+
   o << ::std::endl << "tipoDisciplinaId: " << i.tipoDisciplinaId ();
   o << ::std::endl << "nivelDificuldadeId: " << i.nivelDificuldadeId ();
   if (i.divisaoDeCreditos ())
@@ -12217,11 +12261,11 @@ operator<< (::std::ostream& o, const GrupoHorarioAula& i)
 ::std::ostream&
 operator<< (::std::ostream& o, const GrupoDiaSemana& i)
 {
-  for (GrupoDiaSemana::DiaSemana_const_iterator
-       b (i.DiaSemana ().begin ()), e (i.DiaSemana ().end ());
+  for (GrupoDiaSemana::diaSemana_const_iterator
+       b (i.diaSemana ().begin ()), e (i.diaSemana ().end ());
        b != e; ++b)
   {
-    o << ::std::endl << "DiaSemana: " << *b;
+    o << ::std::endl << "diaSemana: " << *b;
   }
 
   return o;
@@ -12542,11 +12586,11 @@ operator<< (::std::ostream& o, const GrupoNivelDificuldadeHorario& i)
 ::std::ostream&
 operator<< (::std::ostream& o, const GrupoIdentificador& i)
 {
-  for (GrupoIdentificador::Identificador_const_iterator
-       b (i.Identificador ().begin ()), e (i.Identificador ().end ());
+  for (GrupoIdentificador::id_const_iterator
+       b (i.id ().begin ()), e (i.id ().end ());
        b != e; ++b)
   {
-    o << ::std::endl << "Identificador: " << *b;
+    o << ::std::endl << "id: " << *b;
   }
 
   return o;
@@ -13753,6 +13797,17 @@ operator<< (::xercesc::DOMElement& e, const ItemCreditoDisponivel& i)
 {
   e << static_cast< const ::xml_schema::type& > (i);
 
+  // turnoId
+  //
+  {
+    ::xercesc::DOMElement& s (
+      ::xsd::cxx::xml::dom::create_element (
+        "turnoId",
+        e));
+
+    s << i.turnoId ();
+  }
+
   // diaSemana
   //
   {
@@ -13860,13 +13915,14 @@ operator<< (::xercesc::DOMElement& e, const ItemProfessor& i)
 
   // areaTitulacaoId
   //
+  if (i.areaTitulacaoId ())
   {
     ::xercesc::DOMElement& s (
       ::xsd::cxx::xml::dom::create_element (
         "areaTitulacaoId",
         e));
 
-    s << i.areaTitulacaoId ();
+    s << *i.areaTitulacaoId ();
   }
 
   // credAnterior
@@ -14076,24 +14132,26 @@ operator<< (::xercesc::DOMElement& e, const ItemDisciplina& i)
 
   // maxAlunosTeorico
   //
+  if (i.maxAlunosTeorico ())
   {
     ::xercesc::DOMElement& s (
       ::xsd::cxx::xml::dom::create_element (
         "maxAlunosTeorico",
         e));
 
-    s << i.maxAlunosTeorico ();
+    s << *i.maxAlunosTeorico ();
   }
 
   // maxAlunosPratico
   //
+  if (i.maxAlunosPratico ())
   {
     ::xercesc::DOMElement& s (
       ::xsd::cxx::xml::dom::create_element (
         "maxAlunosPratico",
         e));
 
-    s << i.maxAlunosPratico ();
+    s << *i.maxAlunosPratico ();
   }
 
   // tipoDisciplinaId
@@ -14797,15 +14855,15 @@ operator<< (::xercesc::DOMElement& e, const GrupoDiaSemana& i)
 {
   e << static_cast< const ::xml_schema::type& > (i);
 
-  // DiaSemana
+  // diaSemana
   //
-  for (GrupoDiaSemana::DiaSemana_const_iterator
-       b (i.DiaSemana ().begin ()), n (i.DiaSemana ().end ());
+  for (GrupoDiaSemana::diaSemana_const_iterator
+       b (i.diaSemana ().begin ()), n (i.diaSemana ().end ());
        b != n; ++b)
   {
     ::xercesc::DOMElement& s (
       ::xsd::cxx::xml::dom::create_element (
-        "DiaSemana",
+        "diaSemana",
         e));
 
     s << *b;
@@ -15297,15 +15355,15 @@ operator<< (::xercesc::DOMElement& e, const GrupoIdentificador& i)
 {
   e << static_cast< const ::xml_schema::type& > (i);
 
-  // Identificador
+  // id
   //
-  for (GrupoIdentificador::Identificador_const_iterator
-       b (i.Identificador ().begin ()), n (i.Identificador ().end ());
+  for (GrupoIdentificador::id_const_iterator
+       b (i.id ().begin ()), n (i.id ().end ());
        b != n; ++b)
   {
     ::xercesc::DOMElement& s (
       ::xsd::cxx::xml::dom::create_element (
-        "Identificador",
+        "id",
         e));
 
     s << *b;

@@ -12,6 +12,10 @@
 #ifndef ITERA_SEQ
 #define ITERA_SEQ(it,addr,type) for (Grupo##type##::##type##_iterator it = \
    (addr).##type##().begin(); it != (addr).##type##().end(); ++it) 
+/* A macro ITERA_NSEQ serve quando o nome do tag não segue os padrões
+   de projeto */
+#define ITERA_NSEQ(it,addr,name,type) for (Grupo##type##::##name##_iterator \
+    it = (addr).##name##().begin(); it != (addr).##name##().end(); ++it) 
 #endif
 
 class OFBase

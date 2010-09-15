@@ -5219,6 +5219,55 @@ class ItemCreditoDisponivel: public ::xml_schema::type
 {
   public:
   /**
+   * @name turnoId
+   *
+   * @brief Accessor and modifier functions for the %turnoId
+   * required element.
+   *
+   * identificador de um ItemTurno
+   */
+  //@{
+
+  /**
+   * @brief Element type.
+   */
+  typedef ::xml_schema::int_ turnoId_type;
+
+  /**
+   * @brief Element traits type.
+   */
+  typedef ::xsd::cxx::tree::traits< turnoId_type, char > turnoId_traits;
+
+  /**
+   * @brief Return a read-only (constant) reference to the element.
+   *
+   * @return A constant reference to the element.
+   */
+  const turnoId_type&
+  turnoId () const;
+
+  /**
+   * @brief Return a read-write reference to the element.
+   *
+   * @return A reference to the element.
+   */
+  turnoId_type&
+  turnoId ();
+
+  /**
+   * @brief Set the element value.
+   *
+   * @param x A new value to set.
+   *
+   * This function makes a copy of its argument and sets it as
+   * the new value of the element.
+   */
+  void
+  turnoId (const turnoId_type& x);
+
+  //@}
+
+  /**
    * @name diaSemana
    *
    * @brief Accessor and modifier functions for the %diaSemana
@@ -5330,7 +5379,8 @@ class ItemCreditoDisponivel: public ::xml_schema::type
    * @brief Create an instance from the ultimate base and
    * initializers for required elements and attributes.
    */
-  ItemCreditoDisponivel (const diaSemana_type&,
+  ItemCreditoDisponivel (const turnoId_type&,
+                         const diaSemana_type&,
                          const maxCreditos_type&);
 
   /**
@@ -5392,6 +5442,7 @@ class ItemCreditoDisponivel: public ::xml_schema::type
          ::xml_schema::flags);
 
   protected:
+  ::xsd::cxx::tree::one< turnoId_type > turnoId_;
   ::xsd::cxx::tree::one< diaSemana_type > diaSemana_;
   ::xsd::cxx::tree::one< maxCreditos_type > maxCreditos_;
 
@@ -5781,7 +5832,7 @@ class ItemProfessor: public ::xml_schema::type
    * @name areaTitulacaoId
    *
    * @brief Accessor and modifier functions for the %areaTitulacaoId
-   * required element.
+   * optional element.
    *
    * identificador da ?rea de titula??o (ItemAreaTitulacao) do professor em
    * quest?o. Ver requisito RF-O-14.
@@ -5794,24 +5845,30 @@ class ItemProfessor: public ::xml_schema::type
   typedef ::xml_schema::int_ areaTitulacaoId_type;
 
   /**
+   * @brief Element optional container type.
+   */
+  typedef ::xsd::cxx::tree::optional< areaTitulacaoId_type > areaTitulacaoId_optional;
+
+  /**
    * @brief Element traits type.
    */
   typedef ::xsd::cxx::tree::traits< areaTitulacaoId_type, char > areaTitulacaoId_traits;
 
   /**
-   * @brief Return a read-only (constant) reference to the element.
+   * @brief Return a read-only (constant) reference to the element
+   * container.
    *
-   * @return A constant reference to the element.
+   * @return A constant reference to the optional container.
    */
-  const areaTitulacaoId_type&
+  const areaTitulacaoId_optional&
   areaTitulacaoId () const;
 
   /**
-   * @brief Return a read-write reference to the element.
+   * @brief Return a read-write reference to the element container.
    *
-   * @return A reference to the element.
+   * @return A reference to the optional container.
    */
-  areaTitulacaoId_type&
+  areaTitulacaoId_optional&
   areaTitulacaoId ();
 
   /**
@@ -5824,6 +5881,18 @@ class ItemProfessor: public ::xml_schema::type
    */
   void
   areaTitulacaoId (const areaTitulacaoId_type& x);
+
+  /**
+   * @brief Set the element value.
+   *
+   * @param x An optional container with the new value to set.
+   *
+   * If the value is present in @a x then this function makes a copy 
+   * of this value and sets it as the new value of the element.
+   * Otherwise the element container is set the 'not present' state.
+   */
+  void
+  areaTitulacaoId (const areaTitulacaoId_optional& x);
 
   //@}
 
@@ -6062,7 +6131,6 @@ class ItemProfessor: public ::xml_schema::type
                  const chMin_type&,
                  const chMax_type&,
                  const titulacaoId_type&,
-                 const areaTitulacaoId_type&,
                  const credAnterior_type&,
                  const valorCred_type&,
                  const horariosDisponiveis_type&,
@@ -6083,7 +6151,6 @@ class ItemProfessor: public ::xml_schema::type
                  const chMin_type&,
                  const chMax_type&,
                  const titulacaoId_type&,
-                 const areaTitulacaoId_type&,
                  const credAnterior_type&,
                  const valorCred_type&,
                  ::std::auto_ptr< horariosDisponiveis_type >&,
@@ -6155,7 +6222,7 @@ class ItemProfessor: public ::xml_schema::type
   ::xsd::cxx::tree::one< chMin_type > chMin_;
   ::xsd::cxx::tree::one< chMax_type > chMax_;
   ::xsd::cxx::tree::one< titulacaoId_type > titulacaoId_;
-  ::xsd::cxx::tree::one< areaTitulacaoId_type > areaTitulacaoId_;
+  areaTitulacaoId_optional areaTitulacaoId_;
   ::xsd::cxx::tree::one< credAnterior_type > credAnterior_;
   ::xsd::cxx::tree::one< valorCred_type > valorCred_;
   ::xsd::cxx::tree::one< horariosDisponiveis_type > horariosDisponiveis_;
@@ -7018,7 +7085,7 @@ class ItemDisciplina: public ::xml_schema::type
    * @name maxAlunosTeorico
    *
    * @brief Accessor and modifier functions for the %maxAlunosTeorico
-   * required element.
+   * optional element.
    *
    * quantidade m?xima de alunos de uma turma para a vers?o te?rica da
    * disciplina em quest?o
@@ -7031,24 +7098,30 @@ class ItemDisciplina: public ::xml_schema::type
   typedef ::xml_schema::int_ maxAlunosTeorico_type;
 
   /**
+   * @brief Element optional container type.
+   */
+  typedef ::xsd::cxx::tree::optional< maxAlunosTeorico_type > maxAlunosTeorico_optional;
+
+  /**
    * @brief Element traits type.
    */
   typedef ::xsd::cxx::tree::traits< maxAlunosTeorico_type, char > maxAlunosTeorico_traits;
 
   /**
-   * @brief Return a read-only (constant) reference to the element.
+   * @brief Return a read-only (constant) reference to the element
+   * container.
    *
-   * @return A constant reference to the element.
+   * @return A constant reference to the optional container.
    */
-  const maxAlunosTeorico_type&
+  const maxAlunosTeorico_optional&
   maxAlunosTeorico () const;
 
   /**
-   * @brief Return a read-write reference to the element.
+   * @brief Return a read-write reference to the element container.
    *
-   * @return A reference to the element.
+   * @return A reference to the optional container.
    */
-  maxAlunosTeorico_type&
+  maxAlunosTeorico_optional&
   maxAlunosTeorico ();
 
   /**
@@ -7062,13 +7135,25 @@ class ItemDisciplina: public ::xml_schema::type
   void
   maxAlunosTeorico (const maxAlunosTeorico_type& x);
 
+  /**
+   * @brief Set the element value.
+   *
+   * @param x An optional container with the new value to set.
+   *
+   * If the value is present in @a x then this function makes a copy 
+   * of this value and sets it as the new value of the element.
+   * Otherwise the element container is set the 'not present' state.
+   */
+  void
+  maxAlunosTeorico (const maxAlunosTeorico_optional& x);
+
   //@}
 
   /**
    * @name maxAlunosPratico
    *
    * @brief Accessor and modifier functions for the %maxAlunosPratico
-   * required element.
+   * optional element.
    *
    * quantidade m?xima de alunos de uma turma para a vers?o pr?tica da
    * disciplina em quest?o
@@ -7081,24 +7166,30 @@ class ItemDisciplina: public ::xml_schema::type
   typedef ::xml_schema::int_ maxAlunosPratico_type;
 
   /**
+   * @brief Element optional container type.
+   */
+  typedef ::xsd::cxx::tree::optional< maxAlunosPratico_type > maxAlunosPratico_optional;
+
+  /**
    * @brief Element traits type.
    */
   typedef ::xsd::cxx::tree::traits< maxAlunosPratico_type, char > maxAlunosPratico_traits;
 
   /**
-   * @brief Return a read-only (constant) reference to the element.
+   * @brief Return a read-only (constant) reference to the element
+   * container.
    *
-   * @return A constant reference to the element.
+   * @return A constant reference to the optional container.
    */
-  const maxAlunosPratico_type&
+  const maxAlunosPratico_optional&
   maxAlunosPratico () const;
 
   /**
-   * @brief Return a read-write reference to the element.
+   * @brief Return a read-write reference to the element container.
    *
-   * @return A reference to the element.
+   * @return A reference to the optional container.
    */
-  maxAlunosPratico_type&
+  maxAlunosPratico_optional&
   maxAlunosPratico ();
 
   /**
@@ -7111,6 +7202,18 @@ class ItemDisciplina: public ::xml_schema::type
    */
   void
   maxAlunosPratico (const maxAlunosPratico_type& x);
+
+  /**
+   * @brief Set the element value.
+   *
+   * @param x An optional container with the new value to set.
+   *
+   * If the value is present in @a x then this function makes a copy 
+   * of this value and sets it as the new value of the element.
+   * Otherwise the element container is set the 'not present' state.
+   */
+  void
+  maxAlunosPratico (const maxAlunosPratico_optional& x);
 
   //@}
 
@@ -7495,8 +7598,6 @@ class ItemDisciplina: public ::xml_schema::type
                   const credTeoricos_type&,
                   const credPraticos_type&,
                   const laboratorio_type&,
-                  const maxAlunosTeorico_type&,
-                  const maxAlunosPratico_type&,
                   const tipoDisciplinaId_type&,
                   const nivelDificuldadeId_type&,
                   const horariosDisponiveis_type&,
@@ -7517,8 +7618,6 @@ class ItemDisciplina: public ::xml_schema::type
                   const credTeoricos_type&,
                   const credPraticos_type&,
                   const laboratorio_type&,
-                  const maxAlunosTeorico_type&,
-                  const maxAlunosPratico_type&,
                   const tipoDisciplinaId_type&,
                   const nivelDificuldadeId_type&,
                   ::std::auto_ptr< horariosDisponiveis_type >&,
@@ -7590,8 +7689,8 @@ class ItemDisciplina: public ::xml_schema::type
   ::xsd::cxx::tree::one< credTeoricos_type > credTeoricos_;
   ::xsd::cxx::tree::one< credPraticos_type > credPraticos_;
   ::xsd::cxx::tree::one< laboratorio_type > laboratorio_;
-  ::xsd::cxx::tree::one< maxAlunosTeorico_type > maxAlunosTeorico_;
-  ::xsd::cxx::tree::one< maxAlunosPratico_type > maxAlunosPratico_;
+  maxAlunosTeorico_optional maxAlunosTeorico_;
+  maxAlunosPratico_optional maxAlunosPratico_;
   ::xsd::cxx::tree::one< tipoDisciplinaId_type > tipoDisciplinaId_;
   ::xsd::cxx::tree::one< nivelDificuldadeId_type > nivelDificuldadeId_;
   divisaoDeCreditos_optional divisaoDeCreditos_;
@@ -11439,9 +11538,9 @@ class GrupoDiaSemana: public ::xml_schema::type
 {
   public:
   /**
-   * @name DiaSemana
+   * @name diaSemana
    *
-   * @brief Accessor and modifier functions for the %DiaSemana
+   * @brief Accessor and modifier functions for the %diaSemana
    * sequence element.
    *
    * um inteiro que represente um dia da semana. Os valores poss?veis s?o:
@@ -11453,27 +11552,27 @@ class GrupoDiaSemana: public ::xml_schema::type
   /**
    * @brief Element type.
    */
-  typedef ::xml_schema::int_ DiaSemana_type;
+  typedef ::xml_schema::int_ diaSemana_type;
 
   /**
    * @brief Element sequence container type.
    */
-  typedef ::xsd::cxx::tree::sequence< DiaSemana_type > DiaSemana_sequence;
+  typedef ::xsd::cxx::tree::sequence< diaSemana_type > diaSemana_sequence;
 
   /**
    * @brief Element iterator type.
    */
-  typedef DiaSemana_sequence::iterator DiaSemana_iterator;
+  typedef diaSemana_sequence::iterator diaSemana_iterator;
 
   /**
    * @brief Element constant iterator type.
    */
-  typedef DiaSemana_sequence::const_iterator DiaSemana_const_iterator;
+  typedef diaSemana_sequence::const_iterator diaSemana_const_iterator;
 
   /**
    * @brief Element traits type.
    */
-  typedef ::xsd::cxx::tree::traits< DiaSemana_type, char > DiaSemana_traits;
+  typedef ::xsd::cxx::tree::traits< diaSemana_type, char > diaSemana_traits;
 
   /**
    * @brief Return a read-only (constant) reference to the element
@@ -11481,16 +11580,16 @@ class GrupoDiaSemana: public ::xml_schema::type
    *
    * @return A constant reference to the sequence container.
    */
-  const DiaSemana_sequence&
-  DiaSemana () const;
+  const diaSemana_sequence&
+  diaSemana () const;
 
   /**
    * @brief Return a read-write reference to the element sequence.
    *
    * @return A reference to the sequence container.
    */
-  DiaSemana_sequence&
-  DiaSemana ();
+  diaSemana_sequence&
+  diaSemana ();
 
   /**
    * @brief Copy elements from a given sequence.
@@ -11502,7 +11601,7 @@ class GrupoDiaSemana: public ::xml_schema::type
    * sequence and all old elements will be lost.
    */
   void
-  DiaSemana (const DiaSemana_sequence& s);
+  diaSemana (const diaSemana_sequence& s);
 
   //@}
 
@@ -11576,7 +11675,7 @@ class GrupoDiaSemana: public ::xml_schema::type
          ::xml_schema::flags);
 
   protected:
-  DiaSemana_sequence DiaSemana_;
+  diaSemana_sequence diaSemana_;
 
   //@endcond
 };
@@ -15161,9 +15260,9 @@ class GrupoIdentificador: public ::xml_schema::type
 {
   public:
   /**
-   * @name Identificador
+   * @name id
    *
-   * @brief Accessor and modifier functions for the %Identificador
+   * @brief Accessor and modifier functions for the %id
    * sequence element.
    *
    * represente o identificador de alguma entidade
@@ -15173,27 +15272,27 @@ class GrupoIdentificador: public ::xml_schema::type
   /**
    * @brief Element type.
    */
-  typedef ::xml_schema::int_ Identificador_type;
+  typedef ::xml_schema::int_ id_type;
 
   /**
    * @brief Element sequence container type.
    */
-  typedef ::xsd::cxx::tree::sequence< Identificador_type > Identificador_sequence;
+  typedef ::xsd::cxx::tree::sequence< id_type > id_sequence;
 
   /**
    * @brief Element iterator type.
    */
-  typedef Identificador_sequence::iterator Identificador_iterator;
+  typedef id_sequence::iterator id_iterator;
 
   /**
    * @brief Element constant iterator type.
    */
-  typedef Identificador_sequence::const_iterator Identificador_const_iterator;
+  typedef id_sequence::const_iterator id_const_iterator;
 
   /**
    * @brief Element traits type.
    */
-  typedef ::xsd::cxx::tree::traits< Identificador_type, char > Identificador_traits;
+  typedef ::xsd::cxx::tree::traits< id_type, char > id_traits;
 
   /**
    * @brief Return a read-only (constant) reference to the element
@@ -15201,16 +15300,16 @@ class GrupoIdentificador: public ::xml_schema::type
    *
    * @return A constant reference to the sequence container.
    */
-  const Identificador_sequence&
-  Identificador () const;
+  const id_sequence&
+  id () const;
 
   /**
    * @brief Return a read-write reference to the element sequence.
    *
    * @return A reference to the sequence container.
    */
-  Identificador_sequence&
-  Identificador ();
+  id_sequence&
+  id ();
 
   /**
    * @brief Copy elements from a given sequence.
@@ -15222,7 +15321,7 @@ class GrupoIdentificador: public ::xml_schema::type
    * sequence and all old elements will be lost.
    */
   void
-  Identificador (const Identificador_sequence& s);
+  id (const id_sequence& s);
 
   //@}
 
@@ -15296,7 +15395,7 @@ class GrupoIdentificador: public ::xml_schema::type
          ::xml_schema::flags);
 
   protected:
-  Identificador_sequence Identificador_;
+  id_sequence id_;
 
   //@endcond
 };

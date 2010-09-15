@@ -737,6 +737,30 @@ ofertaCursoCampiId (::std::auto_ptr< ofertaCursoCampiId_type > x)
   this->ofertaCursoCampiId_.set (x);
 }
 
+const ItemAtendimentoOferta::disciplinaId_type& ItemAtendimentoOferta::
+disciplinaId () const
+{
+  return this->disciplinaId_.get ();
+}
+
+ItemAtendimentoOferta::disciplinaId_type& ItemAtendimentoOferta::
+disciplinaId ()
+{
+  return this->disciplinaId_.get ();
+}
+
+void ItemAtendimentoOferta::
+disciplinaId (const disciplinaId_type& x)
+{
+  this->disciplinaId_.set (x);
+}
+
+void ItemAtendimentoOferta::
+disciplinaId (::std::auto_ptr< disciplinaId_type > x)
+{
+  this->disciplinaId_.set (x);
+}
+
 const ItemAtendimentoOferta::quantidade_type& ItemAtendimentoOferta::
 quantidade () const
 {
@@ -2295,9 +2319,11 @@ ItemAtendimentoHorarioAula::
 
 ItemAtendimentoOferta::
 ItemAtendimentoOferta (const ofertaCursoCampiId_type& ofertaCursoCampiId,
+                       const disciplinaId_type& disciplinaId,
                        const quantidade_type& quantidade)
 : ::xml_schema::type (),
   ofertaCursoCampiId_ (ofertaCursoCampiId, ::xml_schema::flags (), this),
+  disciplinaId_ (disciplinaId, ::xml_schema::flags (), this),
   quantidade_ (quantidade, ::xml_schema::flags (), this)
 {
 }
@@ -2308,6 +2334,7 @@ ItemAtendimentoOferta (const ItemAtendimentoOferta& x,
                        ::xml_schema::container* c)
 : ::xml_schema::type (x, f, c),
   ofertaCursoCampiId_ (x.ofertaCursoCampiId_, f, this),
+  disciplinaId_ (x.disciplinaId_, f, this),
   quantidade_ (x.quantidade_, f, this)
 {
 }
@@ -2318,6 +2345,7 @@ ItemAtendimentoOferta (const ::xercesc::DOMElement& e,
                        ::xml_schema::container* c)
 : ::xml_schema::type (e, f | ::xml_schema::flags::base, c),
   ofertaCursoCampiId_ (f, this),
+  disciplinaId_ (f, this),
   quantidade_ (f, this)
 {
   if ((f & ::xml_schema::flags::base) == 0)
@@ -2351,6 +2379,20 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
       }
     }
 
+    // disciplinaId
+    //
+    if (n.name () == "disciplinaId" && n.namespace_ ().empty ())
+    {
+      ::std::auto_ptr< disciplinaId_type > r (
+        disciplinaId_traits::create (i, f, this));
+
+      if (!disciplinaId_.present ())
+      {
+        this->disciplinaId_.set (r);
+        continue;
+      }
+    }
+
     // quantidade
     //
     if (n.name () == "quantidade" && n.namespace_ ().empty ())
@@ -2369,6 +2411,13 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
   {
     throw ::xsd::cxx::tree::expected_element< char > (
       "ofertaCursoCampiId",
+      "");
+  }
+
+  if (!disciplinaId_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "disciplinaId",
       "");
   }
 
@@ -3318,6 +3367,7 @@ operator<< (::std::ostream& o, const ItemAtendimentoHorarioAula& i)
 operator<< (::std::ostream& o, const ItemAtendimentoOferta& i)
 {
   o << ::std::endl << "ofertaCursoCampiId: " << i.ofertaCursoCampiId ();
+  o << ::std::endl << "disciplinaId: " << i.disciplinaId ();
   o << ::std::endl << "quantidade: " << i.quantidade ();
   return o;
 }
@@ -3851,6 +3901,17 @@ operator<< (::xercesc::DOMElement& e, const ItemAtendimentoOferta& i)
         e));
 
     s << i.ofertaCursoCampiId ();
+  }
+
+  // disciplinaId
+  //
+  {
+    ::xercesc::DOMElement& s (
+      ::xsd::cxx::xml::dom::create_element (
+        "disciplinaId",
+        e));
+
+    s << i.disciplinaId ();
   }
 
   // quantidade
