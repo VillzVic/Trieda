@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Created with Liquid XML Studio 1.0.8.0 (http://www.liquid-technologies.com) -->
-<TriedaInput xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="file:///C:/GAPSO/ffonseca/Projetos/TRIEDA/Reposit%C3%B3rio/doc/common/communication_protocol/TRIEDA-InputXSD.xsd">
+<TriedaInput xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="file:../../common/communication_protocol/TRIEDA-InputXSD.xsd">
   <calendario>
     <id>1</id>
     <codigo>CAL-1</codigo>
@@ -12,7 +12,7 @@
         <HorariosAula>
           <HorarioAula>
             <id>1</id>
-            <inicio>08:00:0</inicio>
+            <inicio>08:00:00</inicio>
             <diasSemana>
 			  <diaSemana>2</diaSemana>
 			  <diaSemana>3</diaSemana>
@@ -23,7 +23,7 @@
           </HorarioAula>
           <HorarioAula>
             <id>2</id>
-            <inicio>08:50:0</inicio>
+            <inicio>08:50:00</inicio>
             <diasSemana>
 			  <diaSemana>2</diaSemana>
 			  <diaSemana>3</diaSemana>
@@ -34,7 +34,7 @@
           </HorarioAula>
 		  <HorarioAula>
             <id>3</id>
-            <inicio>09:50:0</inicio>
+            <inicio>09:50:00</inicio>
             <diasSemana>
 			  <diaSemana>2</diaSemana>
 			  <diaSemana>3</diaSemana>
@@ -45,7 +45,7 @@
           </HorarioAula>
 		  <HorarioAula>
             <id>4</id>
-            <inicio>10:40:0</inicio>
+            <inicio>10:40:00</inicio>
             <diasSemana>
 			  <diaSemana>2</diaSemana>
 			  <diaSemana>3</diaSemana>
@@ -490,9 +490,8 @@
           <chMin>0</chMin>
           <chMax>4</chMax>
           <titulacaoId>4</titulacaoId>
-          <areaTitulacaoId />
           <credAnterior>20</credAnterior>
-          <valorCred>30,0</valorCred>
+          <valorCred>30.0</valorCred>
           <horariosDisponiveis>
             <Horario>
               <turnoId>1</turnoId>
@@ -600,9 +599,8 @@
           <chMin>0</chMin>
           <chMax>4</chMax>
           <titulacaoId>4</titulacaoId>
-          <areaTitulacaoId />
           <credAnterior>20</credAnterior>
-          <valorCred>30,0</valorCred>
+          <valorCred>30.0</valorCred>
           <horariosDisponiveis>
             <Horario>
               <turnoId>1</turnoId>
@@ -761,11 +759,8 @@
       <credTeoricos>2</credTeoricos>
       <credPraticos>0</credPraticos>
       <laboratorio>false</laboratorio>
-      <maxAlunosTeorico />
-      <maxAlunosPratico />
       <tipoDisciplinaId>1</tipoDisciplinaId>
       <nivelDificuldadeId>2</nivelDificuldadeId>
-      <divisaoDeCreditos />
       <horariosDisponiveis>
 		<Horario>
 		  <turnoId>1</turnoId>
@@ -822,11 +817,8 @@
       <credTeoricos>4</credTeoricos>
       <credPraticos>0</credPraticos>
       <laboratorio>false</laboratorio>
-      <maxAlunosTeorico />
-      <maxAlunosPratico />
       <tipoDisciplinaId>1</tipoDisciplinaId>
       <nivelDificuldadeId>2</nivelDificuldadeId>
-      <divisaoDeCreditos />
       <horariosDisponiveis>
 		<Horario>
 		  <turnoId>1</turnoId>
@@ -883,11 +875,8 @@
       <credTeoricos>0</credTeoricos>
       <credPraticos>4</credPraticos>
       <laboratorio>true</laboratorio>
-      <maxAlunosTeorico />
-      <maxAlunosPratico />
       <tipoDisciplinaId>1</tipoDisciplinaId>
       <nivelDificuldadeId>2</nivelDificuldadeId>
-      <divisaoDeCreditos />
       <horariosDisponiveis>
 		<Horario>
 		  <turnoId>1</turnoId>
@@ -944,11 +933,8 @@
       <credTeoricos>2</credTeoricos>
       <credPraticos>0</credPraticos>
       <laboratorio>false</laboratorio>
-      <maxAlunosTeorico />
-      <maxAlunosPratico />
       <tipoDisciplinaId>1</tipoDisciplinaId>
       <nivelDificuldadeId>2</nivelDificuldadeId>
-      <divisaoDeCreditos />
       <horariosDisponiveis>
 		<Horario>
 		  <turnoId>1</turnoId>
@@ -1005,11 +991,8 @@
       <credTeoricos>2</credTeoricos>
       <credPraticos>0</credPraticos>
       <laboratorio>false</laboratorio>
-      <maxAlunosTeorico />
-      <maxAlunosPratico />
       <tipoDisciplinaId>1</tipoDisciplinaId>
       <nivelDificuldadeId>2</nivelDificuldadeId>
-      <divisaoDeCreditos />
       <horariosDisponiveis>
 		<Horario>
 		  <turnoId>1</turnoId>
@@ -1066,11 +1049,8 @@
       <credTeoricos>2</credTeoricos>
       <credPraticos>0</credPraticos>
       <laboratorio>false</laboratorio>
-      <maxAlunosTeorico />
-      <maxAlunosPratico />
       <tipoDisciplinaId>1</tipoDisciplinaId>
       <nivelDificuldadeId>2</nivelDificuldadeId>
-      <divisaoDeCreditos />
       <horariosDisponiveis>
 		<Horario>
 		  <turnoId>1</turnoId>
@@ -1127,11 +1107,8 @@
       <credTeoricos>4</credTeoricos>
       <credPraticos>0</credPraticos>
       <laboratorio>false</laboratorio>
-      <maxAlunosTeorico />
-      <maxAlunosPratico />
       <tipoDisciplinaId>1</tipoDisciplinaId>
       <nivelDificuldadeId>2</nivelDificuldadeId>
-      <divisaoDeCreditos />
       <horariosDisponiveis>
 		<Horario>
 		  <turnoId>1</turnoId>
@@ -1188,8 +1165,6 @@
       <credTeoricos>4</credTeoricos>
       <credPraticos>0</credPraticos>
       <laboratorio>false</laboratorio>
-      <maxAlunosTeorico />
-      <maxAlunosPratico />
       <tipoDisciplinaId>1</tipoDisciplinaId>
       <nivelDificuldadeId>2</nivelDificuldadeId>
       <divisaoDeCreditos>
@@ -1259,11 +1234,8 @@
       <credTeoricos>2</credTeoricos>
       <credPraticos>0</credPraticos>
       <laboratorio>false</laboratorio>
-      <maxAlunosTeorico />
-      <maxAlunosPratico />
       <tipoDisciplinaId>1</tipoDisciplinaId>
       <nivelDificuldadeId>2</nivelDificuldadeId>
-      <divisaoDeCreditos />
       <horariosDisponiveis>
 		<Horario>
 		  <turnoId>1</turnoId>
@@ -1320,11 +1292,8 @@
       <credTeoricos>2</credTeoricos>
       <credPraticos>0</credPraticos>
       <laboratorio>false</laboratorio>
-      <maxAlunosTeorico />
-      <maxAlunosPratico />
       <tipoDisciplinaId>1</tipoDisciplinaId>
       <nivelDificuldadeId>2</nivelDificuldadeId>
-      <divisaoDeCreditos />
       <horariosDisponiveis>
 		<Horario>
 		  <turnoId>1</turnoId>
@@ -1381,11 +1350,8 @@
       <credTeoricos>6</credTeoricos>
       <credPraticos>0</credPraticos>
       <laboratorio>false</laboratorio>
-      <maxAlunosTeorico />
-      <maxAlunosPratico />
       <tipoDisciplinaId>1</tipoDisciplinaId>
       <nivelDificuldadeId>2</nivelDificuldadeId>
-      <divisaoDeCreditos />
       <horariosDisponiveis>
 		<Horario>
 		  <turnoId>1</turnoId>
@@ -1442,11 +1408,8 @@
       <credTeoricos>4</credTeoricos>
       <credPraticos>0</credPraticos>
       <laboratorio>false</laboratorio>
-      <maxAlunosTeorico />
-      <maxAlunosPratico />
       <tipoDisciplinaId>1</tipoDisciplinaId>
       <nivelDificuldadeId>2</nivelDificuldadeId>
-      <divisaoDeCreditos />
       <horariosDisponiveis>
 		<Horario>
 		  <turnoId>1</turnoId>
@@ -1503,11 +1466,8 @@
       <credTeoricos>2</credTeoricos>
       <credPraticos>0</credPraticos>
       <laboratorio>false</laboratorio>
-      <maxAlunosTeorico />
-      <maxAlunosPratico />
       <tipoDisciplinaId>1</tipoDisciplinaId>
       <nivelDificuldadeId>2</nivelDificuldadeId>
-      <divisaoDeCreditos />
       <horariosDisponiveis>
 		<Horario>
 		  <turnoId>1</turnoId>
@@ -1564,11 +1524,8 @@
       <credTeoricos>2</credTeoricos>
       <credPraticos>2</credPraticos>
       <laboratorio>true</laboratorio>
-      <maxAlunosTeorico />
-      <maxAlunosPratico />
       <tipoDisciplinaId>1</tipoDisciplinaId>
       <nivelDificuldadeId>2</nivelDificuldadeId>
-      <divisaoDeCreditos />
       <horariosDisponiveis>
 		<Horario>
 		  <turnoId>1</turnoId>
@@ -1625,11 +1582,8 @@
       <credTeoricos>2</credTeoricos>
       <credPraticos>0</credPraticos>
       <laboratorio>false</laboratorio>
-      <maxAlunosTeorico />
-      <maxAlunosPratico />
       <tipoDisciplinaId>1</tipoDisciplinaId>
       <nivelDificuldadeId>2</nivelDificuldadeId>
-      <divisaoDeCreditos />
       <horariosDisponiveis>
 		<Horario>
 		  <turnoId>1</turnoId>
@@ -1686,11 +1640,8 @@
       <credTeoricos>6</credTeoricos>
       <credPraticos>0</credPraticos>
       <laboratorio>false</laboratorio>
-      <maxAlunosTeorico />
-      <maxAlunosPratico />
       <tipoDisciplinaId>1</tipoDisciplinaId>
       <nivelDificuldadeId>2</nivelDificuldadeId>
-      <divisaoDeCreditos />
       <horariosDisponiveis>
 		<Horario>
 		  <turnoId>1</turnoId>

@@ -1,5 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- Created with Liquid XML Studio 1.0.8.0 (http://www.liquid-technologies.com) -->
+<?xml version="1.0" encoding="utf-8" ?>
+<!--Created with Liquid XML Studio 6.1.18.0 - FREE Community Edition (http://www.liquid-technologies.com)-->
 <xs:schema elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
   <xs:element name="TriedaInput">
     <xs:complexType>
@@ -495,7 +495,7 @@
           <xs:documentation>identificador do tipo de titulação (ItemTipoTitulacao) do professor em questão. Ver requisito RF-O-6.</xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element name="areaTitulacaoId" type="xs:int">
+      <xs:element minOccurs="0" name="areaTitulacaoId" type="xs:int">
         <xs:annotation>
           <xs:documentation>identificador da área de titulação (ItemAreaTitulacao) do professor em questão. Ver requisito RF-O-14.</xs:documentation>
         </xs:annotation>
@@ -593,12 +593,12 @@
           <xs:documentation>indica se os créditos práticos deverão ou não ser dados em salas do tipo laboratório.</xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element name="maxAlunosTeorico" type="xs:int">
+      <xs:element minOccurs="0" name="maxAlunosTeorico" type="xs:int">
         <xs:annotation>
           <xs:documentation>quantidade máxima de alunos de uma turma para a versão teórica da disciplina em questão</xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element name="maxAlunosPratico" type="xs:int">
+      <xs:element minOccurs="0" name="maxAlunosPratico" type="xs:int">
         <xs:annotation>
           <xs:documentation>quantidade máxima de alunos de uma turma para a versão prática da disciplina em questão</xs:documentation>
         </xs:annotation>
@@ -911,7 +911,7 @@ Maximizar/gerenciar a nota da avaliação institucional média coletiva do corpo
   </xs:complexType>
   <xs:complexType name="GrupoDiaSemana">
     <xs:sequence minOccurs="0" maxOccurs="unbounded">
-      <xs:element name="DiaSemana" type="xs:int">
+      <xs:element name="diaSemana" type="xs:int">
         <xs:annotation>
           <xs:documentation>um inteiro que represente um dia da semana. Os valores possíveis são: (1 - Dom), (2 - Seg), (3 - Ter), (4 - Qua), (5 - Qua), (6 - Sex), (7 - SAb)</xs:documentation>
         </xs:annotation>
@@ -1111,7 +1111,7 @@ Maximizar/gerenciar a nota da avaliação institucional média coletiva do corpo
   </xs:complexType>
   <xs:complexType name="GrupoIdentificador">
     <xs:sequence minOccurs="0" maxOccurs="unbounded">
-      <xs:element name="Identificador" type="xs:int">
+      <xs:element name="id" type="xs:int">
         <xs:annotation>
           <xs:documentation>represente o identificador de alguma entidade</xs:documentation>
         </xs:annotation>
