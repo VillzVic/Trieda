@@ -20,6 +20,7 @@ public:
    int max_alunos_p;
    int tipo_disciplina_id;
    int nivel_dificuldade_id;
+   int num_turmas;
 
    DivisaoCreditos* divisao_creditos;
    GGroup<int> equivalentes; 
