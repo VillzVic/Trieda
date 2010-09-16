@@ -13,8 +13,6 @@ public class AppEvents {
 	public static final EventType UnidadeDeslocamento= new EventType();
 	
 	public static final EventType SalaDisciplinaList = new EventType();
-	public static final EventType GrupoSalaList = new EventType();
-	public static final EventType GrupoSalaAssociadasView = new EventType();
 	
 	public static final EventType CursoList = new EventType();
 	
