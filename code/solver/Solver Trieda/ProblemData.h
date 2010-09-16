@@ -19,6 +19,7 @@
 #include "Demanda.h"
 #include "ParametrosPlanejamento.h"
 #include "Fixacao.h"
+#include "BlocoCurricular.h"
 #include <iostream>
 
 //Stores input data
@@ -72,6 +73,8 @@ public:
    GGroup<Oferta*> ofertas;
    ParametrosPlanejamento* parametros;
    GGroup<Fixacao*> fixacoes;
+
+   GGroup<BlocoCurricular*> blocos;
 
 public:
    virtual void le_arvore(TriedaInput& raiz);
