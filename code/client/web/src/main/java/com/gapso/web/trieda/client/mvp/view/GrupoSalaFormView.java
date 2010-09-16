@@ -11,6 +11,7 @@ import com.gapso.web.trieda.client.mvp.presenter.GrupoSalaFormPresenter;
 import com.gapso.web.trieda.client.util.resources.Resources;
 import com.gapso.web.trieda.client.util.view.SimpleModal;
 import com.gapso.web.trieda.client.util.view.UnidadeComboBox;
+import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
 public class GrupoSalaFormView extends MyComposite implements GrupoSalaFormPresenter.Display {
 
@@ -21,6 +22,7 @@ public class GrupoSalaFormView extends MyComposite implements GrupoSalaFormPrese
 	private UnidadeComboBox unidadeCB;
 	private GrupoSalaDTO grupoSalaDTO;
 	private UnidadeDTO unidadeDTO;
+	private Button salvarEAssociarBT;
 	
 	public GrupoSalaFormView(GrupoSalaDTO grupoSalaDTO, UnidadeDTO unidadeDTO) {
 		this.grupoSalaDTO = grupoSalaDTO;
@@ -34,6 +36,7 @@ public class GrupoSalaFormView extends MyComposite implements GrupoSalaFormPrese
 		String title = (grupoSalaDTO.getId() == null)? "Inserção de Grupo de Sala" : "Edição de Grupo de Sala";
 		simpleModal = new SimpleModal(title, Resources.DEFAULTS.sala16());
 		simpleModal.setHeight(165);
+		simpleModal.setWidth(350);
 		createForm();
 		simpleModal.setContent(formPanel);
 	}
@@ -67,6 +70,9 @@ public class GrupoSalaFormView extends MyComposite implements GrupoSalaFormPrese
 		nomeTF.setMinLength(3);
 		nomeTF.setMaxLength(20);
 		formPanel.add(nomeTF, formData);
+		
+		salvarEAssociarBT = new Button("Salar e Associar Salas", AbstractImagePrototype.create(Resources.DEFAULTS.save16()));
+		simpleModal.addButton(salvarEAssociarBT);
 		
 		FormButtonBinding binding = new FormButtonBinding(formPanel);
 		binding.addButton(simpleModal.getSalvarBt());
@@ -104,6 +110,11 @@ public class GrupoSalaFormView extends MyComposite implements GrupoSalaFormPrese
 	@Override
 	public SimpleModal getSimpleModal() {
 		return simpleModal;
+	}
+
+	@Override
+	public Button getSalvarEAssociarButton() {
+		return salvarEAssociarBT;
 	}
 
 }

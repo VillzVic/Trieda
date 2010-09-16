@@ -19,6 +19,7 @@ public class GrupoSalaFormPresenter implements Presenter {
 
 	public interface Display {
 		Button getSalvarButton();
+		Button getSalvarEAssociarButton();
 		TextField<String> getCodigoTextField();
 		TextField<String> getNomeTextField();
 		UnidadeComboBox getUnidadeComboBox();
@@ -52,6 +53,30 @@ public class GrupoSalaFormPresenter implements Presenter {
 							display.getSimpleModal().hide();
 							gridPanel.updateList();
 							Info.display("Salvo", "Item salvo com sucesso!");
+						}
+					});
+				} else {
+					MessageBox.alert("ERRO!", "Verifique os campos digitados", null);
+				}
+			}
+		});
+		display.getSalvarEAssociarButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
+			@Override
+			public void componentSelected(ButtonEvent ce) {
+				if(isValid()) {
+					final GruposSalasServiceAsync service = Services.gruposSalas();
+					service.save(getDTO(), new AsyncCallback<Void>() {
+						@Override
+						public void onFailure(Throwable caught) {
+							MessageBox.alert("ERRO!", "Deu falha na conexão", null);
+						}
+						@Override
+						public void onSuccess(Void result) {
+							display.getSimpleModal().hide();
+							gridPanel.updateList();
+							Info.display("Salvo", "Item salvo com sucesso!");
+//							Presenter presenter = new GrupoSalaAssociarSalaPresenter(new GrupoSalaAssociarSalaView(getDTO()), gridPanel);
+//							presenter.go(null);
 						}
 					});
 				} else {
