@@ -61,4 +61,18 @@ public class GrupoSalaDTO extends BaseModel {
 		set("unidadeString", value);
 	}
 	
+	public String getCampusString() {
+		return get("campusString");
+	}
+	public void setCampusString(String value) {
+		set("campusString", value);
+	}
+	
+	public String getSalasString() {
+		return get("salasString");
+	}
+	public void setSalasString(String value) {
+		set("salasString", value);
+	}
+	
 }

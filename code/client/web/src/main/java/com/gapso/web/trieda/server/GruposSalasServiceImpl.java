@@ -110,7 +110,14 @@ public class GruposSalasServiceImpl extends RemoteServiceServlet implements Grup
 			unidade = ConvertBeans.toUnidade(unidadeDTO);
 		}
 		for(GrupoSala grupoSala : GrupoSala.findByNomeLikeAndCodigoLikeAndUnidade(nome, codigo, unidade, config.getOffset(), config.getLimit(), orderBy)) {
-			list.add(ConvertBeans.toGrupoSalaDTO(grupoSala));
+			GrupoSalaDTO gsDTO = ConvertBeans.toGrupoSalaDTO(grupoSala);
+			String salasString = "";
+			for(Sala sala : grupoSala.getSalas()) {
+				salasString += sala.getCodigo() + " (Num. "+sala.getNumero()+" | Cap."+sala.getCapacidade()+"), ";
+			}
+			gsDTO.setSalasString(salasString);
+			gsDTO.setCampusString(grupoSala.getUnidade().getCampus().getCodigo());
+			list.add(gsDTO);
 		}
 		BasePagingLoadResult<GrupoSalaDTO> result = new BasePagingLoadResult<GrupoSalaDTO>(list);
 		result.setOffset(config.getOffset());

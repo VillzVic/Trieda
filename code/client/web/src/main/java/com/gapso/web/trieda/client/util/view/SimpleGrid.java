@@ -1,5 +1,6 @@
 package com.gapso.web.trieda.client.util.view;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.extjs.gxt.ui.client.Style.SelectionMode;
@@ -10,6 +11,7 @@ import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoader;
 import com.extjs.gxt.ui.client.data.RpcProxy;
 import com.extjs.gxt.ui.client.store.ListStore;
+import com.extjs.gxt.ui.client.widget.ComponentPlugin;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
 import com.extjs.gxt.ui.client.widget.grid.ColumnConfig;
 import com.extjs.gxt.ui.client.widget.grid.ColumnModel;
@@ -25,6 +27,7 @@ public class SimpleGrid<M extends BaseModel> extends ContentPanel {
 	RpcProxy<PagingLoadResult<M>> proxy;
 	private PagingLoader<PagingLoadResult<ModelData>> loader;
 	private List<ColumnConfig> columnList;
+	private List<ComponentPlugin> plugins = new ArrayList<ComponentPlugin>();
 	
 	public SimpleGrid(List<ColumnConfig> columnList) {
 		super(new FitLayout());
@@ -45,6 +48,9 @@ public class SimpleGrid<M extends BaseModel> extends ContentPanel {
 		grid.setStripeRows(true);
 		grid.setBorders(true);
 		grid.getSelectionModel().setSelectionMode(SelectionMode.MULTI);
+		for(ComponentPlugin plugin : plugins) {
+			grid.addPlugin(plugin);
+		}
 		pagingPanel();
 		add(grid);
 	}
@@ -61,6 +67,10 @@ public class SimpleGrid<M extends BaseModel> extends ContentPanel {
 	
 	public void updateList() {
 		loader.load();
+	}
+	
+	public void addPlugin(ComponentPlugin plugin) {
+		this.plugins.add(plugin);
 	}
 	
 	private void pagingPanel() {

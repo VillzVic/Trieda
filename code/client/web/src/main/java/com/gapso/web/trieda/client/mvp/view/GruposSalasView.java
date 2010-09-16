@@ -4,12 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.extjs.gxt.ui.client.Style.LayoutRegion;
+import com.extjs.gxt.ui.client.core.XTemplate;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.extjs.gxt.ui.client.data.RpcProxy;
 import com.extjs.gxt.ui.client.util.Margins;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.grid.ColumnConfig;
+import com.extjs.gxt.ui.client.widget.grid.RowExpander;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayout;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
 import com.extjs.gxt.ui.client.widget.toolbar.SeparatorToolItem;
@@ -27,6 +29,7 @@ public class GruposSalasView extends MyComposite implements GruposSalasPresenter
 	private ContentPanel panel;
 	private GTabItem tabItem;
 	private Button associarSalasBT;
+	private RowExpander expander;
 	
 	public GruposSalasView() {
 		initUI();
@@ -57,13 +60,17 @@ public class GruposSalasView extends MyComposite implements GruposSalasPresenter
 	private void createGrid() {
 		BorderLayoutData bld = new BorderLayoutData(LayoutRegion.CENTER);
 	    bld.setMargins(new Margins(5, 5, 5, 5));
-	    
 	    gridPanel = new SimpleGrid<GrupoSalaDTO>(getColumnList());
 	    panel.add(gridPanel, bld);
+	    gridPanel.addPlugin(expander);
 	}
 
 	public List<ColumnConfig> getColumnList() {
 		List<ColumnConfig> list = new ArrayList<ColumnConfig>();
+	    XTemplate tpl = XTemplate.create("<p><b>Salas:</b></p><p>{salasString}</p>");  
+	    expander = new RowExpander();  
+	    expander.setTemplate(tpl);
+	    list.add(expander);
 		list.add(new ColumnConfig("codigo", "Código", 100));
 		list.add(new ColumnConfig("nome", "Nome", 100));
 		list.add(new ColumnConfig("unidadeString", "Unidade", 100));

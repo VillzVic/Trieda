@@ -16,6 +16,7 @@ import com.gapso.web.trieda.client.mvp.model.SalaDTO;
 import com.gapso.web.trieda.client.services.GruposSalasServiceAsync;
 import com.gapso.web.trieda.client.services.SalasServiceAsync;
 import com.gapso.web.trieda.client.services.Services;
+import com.gapso.web.trieda.client.util.view.SimpleGrid;
 import com.gapso.web.trieda.client.util.view.SimpleModal;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
@@ -36,9 +37,11 @@ public class GrupoSalaAssociarSalaPresenter implements Presenter {
 		SimpleModal getSimpleModal();
 	}
 	private Display display;
+	SimpleGrid<GrupoSalaDTO> simpleGrid;
 	
-	public GrupoSalaAssociarSalaPresenter(Display display) {
+	public GrupoSalaAssociarSalaPresenter(Display display, SimpleGrid<GrupoSalaDTO> simpleGrid) {
 		this.display = display;
+		this.simpleGrid = simpleGrid;
 		setListeners();
 		populaListas();
 	}
@@ -93,6 +96,7 @@ public class GrupoSalaAssociarSalaPresenter implements Presenter {
 					public void onSuccess(Void result) {
 						Info.display("Atualizado", "Salas atualizadas com sucesso!");
 						display.getSimpleModal().hide();
+						simpleGrid.updateList();
 					}
 					
 				});

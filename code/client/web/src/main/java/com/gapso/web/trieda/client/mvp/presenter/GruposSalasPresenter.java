@@ -104,7 +104,7 @@ public class GruposSalasPresenter implements Presenter {
 			@Override
 			public void componentSelected(ButtonEvent ce) {
 				GrupoSalaDTO grupoSalaDTO = display.getGrid().getGrid().getSelectionModel().getSelectedItem();
-				Presenter presenter = new GrupoSalaAssociarSalaPresenter(new GrupoSalaAssociarSalaView(grupoSalaDTO));
+				Presenter presenter = new GrupoSalaAssociarSalaPresenter(new GrupoSalaAssociarSalaView(grupoSalaDTO), display.getGrid());
 				presenter.go(null);
 			}
 		});

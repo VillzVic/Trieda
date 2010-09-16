@@ -69,7 +69,7 @@ public class GrupoSalaAssociarSalaView extends MyComposite implements GrupoSalaA
 		formPanel.add(nomeGrupoTF, formData);
 		
 		nomeCampusTF = new TextField<String>();
-		nomeCampusTF.setValue("Nome do Campus");
+		nomeCampusTF.setValue(grupoSalaDTO.getCampusString());
 		nomeCampusTF.setFieldLabel("Campus");
 		nomeCampusTF.setReadOnly(true);
 		formPanel.add(nomeCampusTF, formData);
