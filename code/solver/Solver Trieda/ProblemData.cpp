@@ -53,6 +53,7 @@ void ProblemData::le_arvore(TriedaInput& raiz)
    LE_SEQ(tempo_unidades,raiz.temposDeslocamentosUnidades(),Deslocamento);
    LE_SEQ(disciplinas,raiz.disciplinas(),Disciplina);
    LE_SEQ(cursos,raiz.cursos(),Curso);
+   LE_SEQ(demandas,raiz.demandas(),Demanda);
    ITERA_SEQ(it_of,raiz.ofertaCursosCampi(),OfertaCurso) {
       Oferta* o = new Oferta;
       o->le_arvore(*it_of);

@@ -60,7 +60,7 @@ void ProblemDataLoader::load()
 template<class T> 
 void ProblemDataLoader::find_and_set(int id, 
                                      GGroup<T*> haystack, 
-                                     T*& needle) 
+                                     T*& needle)
 {
    T* finder = new T;
    finder->id = id;

@@ -70,6 +70,7 @@ public:
    GGroup<Deslocamento*> tempo_unidades;
    GGroup<Disciplina*> disciplinas;
    GGroup<Curso*> cursos;
+   GGroup<Demanda*> demandas;
    GGroup<Oferta*> ofertas;
    ParametrosPlanejamento* parametros;
    GGroup<Fixacao*> fixacoes;
