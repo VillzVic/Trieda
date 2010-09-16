@@ -1,15 +1,13 @@
-<?xml version="1.0" encoding="utf-8" ?>
-<!--Created with Liquid XML Studio 6.1.18.0 - FREE Community Edition (http://www.liquid-technologies.com)-->
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Created with Liquid XML Studio 1.0.8.0 (http://www.liquid-technologies.com) -->
 <xs:schema elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
-  <xs:element name="TriedaOutput">
+  <xs:element name="TriedaParaTotvs">
+    <xs:annotation>
+      <xs:documentation>Este documento representa o protocolo de comunicação de troca de dados do TRIEDA para o TOTVS Educacional cujo intuito é informar ao TOTVS Educacional o resultado de um planejamento para um ou mais campus (existe um outro documento que representa o protocolo de troca de dados do TOTVS Educacional para o TRIEDA).</xs:documentation>
+    </xs:annotation>
     <xs:complexType>
       <xs:sequence>
-        <xs:element name="atendimentos1" type="GrupoAtendimento">
-          <xs:annotation>
-            <xs:documentation>lista dos atendimentos retornados pelo resolvedor matemático</xs:documentation>
-          </xs:annotation>
-        </xs:element>
-        <xs:element name="atendimentos2" type="GrupoAtendimentoCampus">
+        <xs:element name="atendimentos" type="GrupoAtendimentoCampus">
           <xs:annotation>
             <xs:documentation>lista de todos os atendimentos realizados em cada campus que foi considerado no planejamento</xs:documentation>
           </xs:annotation>
@@ -17,92 +15,19 @@
       </xs:sequence>
     </xs:complexType>
   </xs:element>
-  <xs:complexType name="ItemAtendimento">
-    <xs:sequence>
-      <xs:element name="id" type="xs:int" />
-      <xs:element name="ofertaCursoCampiId" type="xs:int">
-        <xs:annotation>
-          <xs:documentation>identificador (ItemOfertaCurso) de uma oferta de um curso em um campus</xs:documentation>
-        </xs:annotation>
-      </xs:element>
-      <xs:element name="disciplinaId" type="xs:int">
-        <xs:annotation>
-          <xs:documentation>identificador da disciplina (ItemDisciplina)</xs:documentation>
-        </xs:annotation>
-      </xs:element>
-      <xs:element name="turma" type="xs:string">
-        <xs:annotation>
-          <xs:documentation>código da turma gerada pelo resolvedor matemático</xs:documentation>
-        </xs:annotation>
-      </xs:element>
-      <xs:element name="quatidadeAlunos" type="xs:int">
-        <xs:annotation>
-          <xs:documentation>quantidade de alunos do curso alocados na turma</xs:documentation>
-        </xs:annotation>
-      </xs:element>
-      <xs:element name="salaId" type="xs:int">
-        <xs:annotation>
-          <xs:documentation>identificador da sala (ItemSala) onde a turma será atendida</xs:documentation>
-        </xs:annotation>
-      </xs:element>
-      <xs:element name="diaSemana" type="xs:int">
-        <xs:annotation>
-          <xs:documentation>dia da semana em que a turma será atendida (um inteiro que represente um dia da semana. Os valores possíveis são: (1 - Dom), (2 - Seg), (3 - Ter), (4 - Qua), (5 - Qua), (6 - Sex), (7 - SAb))</xs:documentation>
-        </xs:annotation>
-      </xs:element>
-      <xs:choice>
-        <xs:element name="alocacaoTatico" type="ItemTatico" />
-        <xs:element name="alocacaoOperacional" type="ItemOperacional" />
-      </xs:choice>
-    </xs:sequence>
-  </xs:complexType>
-  <xs:complexType name="GrupoAtendimento">
-    <xs:sequence minOccurs="0" maxOccurs="unbounded">
-      <xs:element name="atendimento" type="ItemAtendimento">
-        <xs:annotation>
-          <xs:documentation>representa um atendimento</xs:documentation>
-        </xs:annotation>
-      </xs:element>
-    </xs:sequence>
-  </xs:complexType>
-  <xs:complexType name="ItemTatico">
-    <xs:sequence>
-      <xs:element name="qtdeCreditosTeoricos" type="xs:int">
-        <xs:annotation>
-          <xs:documentation>quantidade de créditos teóricos atendidos no dia</xs:documentation>
-        </xs:annotation>
-      </xs:element>
-      <xs:element name="qtdeCreditosPraticos" type="xs:int">
-        <xs:annotation>
-          <xs:documentation>quantidade de créditos práticos atendidos no dia</xs:documentation>
-        </xs:annotation>
-      </xs:element>
-    </xs:sequence>
-  </xs:complexType>
-  <xs:complexType name="ItemOperacional">
-    <xs:sequence>
-      <xs:element name="horarioAulaId" type="xs:int">
-        <xs:annotation>
-          <xs:documentation>identificador (ItemHorarioAula) do horário em que a turma será atendida</xs:documentation>
-        </xs:annotation>
-      </xs:element>
-      <xs:element name="professorId" type="xs:int">
-        <xs:annotation>
-          <xs:documentation>identificador (ItemProfessor) do professor que irá ministrar a aula para a turma</xs:documentation>
-        </xs:annotation>
-      </xs:element>
-    </xs:sequence>
-  </xs:complexType>
   <xs:complexType name="ItemAtendimentoCampus">
+    <xs:annotation>
+      <xs:documentation>Identificador do campus (ItemCampus) onde cursos serão oferecidos.</xs:documentation>
+    </xs:annotation>
     <xs:sequence>
       <xs:element name="campusId" type="xs:string">
         <xs:annotation>
-          <xs:documentation>identificador do campus que contém os atendimentos</xs:documentation>
+          <xs:documentation>Identificador do campus que contém informações sobre os atendimentos das demandas ocorridos no campus em questão.</xs:documentation>
         </xs:annotation>
       </xs:element>
       <xs:element name="atendimentosUnidades" type="GrupoAtendimentoUnidade">
         <xs:annotation>
-          <xs:documentation>lista de todos os atendimentos realizados em cada unidade de um determinado campus que foi considerado no planejamento</xs:documentation>
+          <xs:documentation>Lista de todos os atendimentos realizados em cada unidade do campus em questão.</xs:documentation>
         </xs:annotation>
       </xs:element>
     </xs:sequence>
@@ -111,12 +36,12 @@
     <xs:sequence>
       <xs:element name="unidadeId" type="xs:string">
         <xs:annotation>
-          <xs:documentation>identificador da unidade (de um determinado campus) que contém os atendimentos</xs:documentation>
+          <xs:documentation>Identificador da unidade que contém informações sobre os atendimentos das demandas ocorridos na unidade em questão.</xs:documentation>
         </xs:annotation>
       </xs:element>
       <xs:element name="atendimentosSalas" type="GrupoAtendimentoSala">
         <xs:annotation>
-          <xs:documentation>lista de todos os atendimentos realizados em cada sala de uma determinada unidade de um determinado campus que foi considerado no planejamento</xs:documentation>
+          <xs:documentation>Lista de todos os atendimentos realizados em cada sala da unidade em questão.</xs:documentation>
         </xs:annotation>
       </xs:element>
     </xs:sequence>
@@ -125,12 +50,12 @@
     <xs:sequence>
       <xs:element name="salaId" type="xs:string">
         <xs:annotation>
-          <xs:documentation>identificador da sala (de uma determinada unidade de um determinado campus) que contém os atendimentos</xs:documentation>
+          <xs:documentation>Identificador da sala que contém informações sobre os atendimentos das demandas ocorridos na sala em questão.</xs:documentation>
         </xs:annotation>
       </xs:element>
       <xs:element name="atendimentosDiasSemana" type="GrupoAtendimentoDiaSemana">
         <xs:annotation>
-          <xs:documentation>lista de todos os atendimentos realizados em cada dia da semana numa determinada sala de uma determinada unidade de um determinado campus que foi considerado no planejamento</xs:documentation>
+          <xs:documentation>Lista de todos os atendimentos realizados em cada dia da semana na sala em questão.</xs:documentation>
         </xs:annotation>
       </xs:element>
     </xs:sequence>
@@ -139,162 +64,237 @@
     <xs:sequence>
       <xs:element name="diaSemana" type="xs:int">
         <xs:annotation>
-          <xs:documentation>identificador do dia da semana que contém os atendimentos em uma determinada sala de uma determinada unidade de um determinado campus</xs:documentation>
+          <xs:documentation>Identificador do dia da semana que contém informações sobre os atendimentos das demandas ocorridos em uma determinada sala. Os valores possíveis são: (1 - Dom), (2 - Seg), (3 - Ter), (4 - Qua), (5 - Qui), (6 - Sex), (7 - Sab).</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="atendimentosTurnos" type="GrupoAtendimentoTurno">
+        <xs:annotation>
+          <xs:documentation>Lista de todos os atendimentos realizados em cada turno do dia da semana em questão.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="ItemAtendimentoTurno">
+    <xs:sequence>
+      <xs:element name="turnoId" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>Identificador do turno que contém informações sobre os atendimentos das demandas ocorridos no mesmo.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="atendimentosCursos" type="GrupoAtendimentoCurso">
+        <xs:annotation>
+          <xs:documentation>Lista de todos os atendimentos realizados para cada curso no turno em questão.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="ItemAtendimentoCurso">
+    <xs:sequence>
+      <xs:element name="cursoId" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>Identificador do curso que contém informações sobre os atendimentos das demandas ocorridos no mesmo.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="atendimentosCurriculos" type="GrupoAtendimentoCurriculo">
+        <xs:annotation>
+          <xs:documentation>Lista de todos os atendimentos realizados para cada matriz curricular do curso em questão.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="ItemAtendimentoCurriculo">
+    <xs:sequence>
+      <xs:element name="curriculoId" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>Identificador da matriz curricular que contém informações sobre os atendimentos das demandas da mesma.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="atendimentosPeriodosCurriculo" type="GrupoAtendimentoPeriodoCurriculo">
+        <xs:annotation>
+          <xs:documentation>Lista de todos os atendimentos realizados para cada período da matriz curricular em questão.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="ItemAtendimentoPeriodoCurriculo">
+    <xs:sequence>
+      <xs:element name="periodo" type="xs:int">
+        <xs:annotation>
+          <xs:documentation>Inteiro que identifica um período letivo de uma matriz curricular de um curso.</xs:documentation>
         </xs:annotation>
       </xs:element>
       <xs:choice>
         <xs:element name="atendimentosTatico" type="GrupoAtendimentoTatico">
           <xs:annotation>
-            <xs:documentation>lista de todas as ofertas atendidas no dia da semana em questão numa determinada sala de uma determinada unidade de um determinado campus</xs:documentation>
+            <xs:documentation>Lista de todas as ofertas atendidas no turno em questão para o modo de otimização tático. Para maiores informações consulte a seção "Objetivo do Problema" do documento de Regras de Decisão do TRIEDA.</xs:documentation>
           </xs:annotation>
         </xs:element>
-        <xs:element name="atendimentosTurnos" type="GrupoAtendimentoTurno">
+        <xs:element name="atendimentosOperacional" type="GrupoAtendimentoOperacional">
           <xs:annotation>
-            <xs:documentation>lista de todos os atendimentos realizados em cada turno de um determinado dia da semana numa determinada sala de uma determinada unidade de um determinado campus que foi considerado no planejamento</xs:documentation>
+            <xs:documentation>Lista de todas as ofertas atendidas no turno em questão para o modo de otimização operacional. Para maiores informações consulte a seção "Objetivo do Problema" do documento de Regras de Decisão do TRIEDA.</xs:documentation>
           </xs:annotation>
         </xs:element>
       </xs:choice>
     </xs:sequence>
   </xs:complexType>
-  <xs:complexType name="ItemAtendimentoTurno">
+  <xs:complexType name="ItemAtendimentoTatico">
     <xs:sequence>
-      <xs:element name="turnoId" type="xs:int">
+      <xs:element name="turmaId" type="xs:string">
         <xs:annotation>
-          <xs:documentation>identificador do turno (de um determinado dia da semana) que contém os atendimentos em uma determinada sala de uma determinada unidade de um determinado campus</xs:documentation>
+          <xs:documentation>String que identifica unicamente uma turma que será oferecida para atender uma demanda.</xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element name="atendimentosHorariosAula" type="GrupoAtendimentoHorarioAula">
+      <xs:element name="disciplinaId" type="xs:string">
         <xs:annotation>
-          <xs:documentation>lista de todos os atendimentos realizados em cada horario de aula (ou tempo de aula) de um determinado turno de um determinado dia da semana numa determinada sala de uma determinada unidade de um determinado campus que foi considerado no planejamento</xs:documentation>
-        </xs:annotation>
-      </xs:element>
-    </xs:sequence>
-  </xs:complexType>
-  <xs:complexType name="ItemAtendimentoHorarioAula">
-    <xs:sequence>
-      <xs:element name="horarioAulaId" type="xs:int">
-        <xs:annotation>
-          <xs:documentation>identificador do horário de aula  (de um determinado turno de um determinado dia da semana) que contém os atendimentos em uma determinada sala de uma determinada unidade de um determinado campus</xs:documentation>
-        </xs:annotation>
-      </xs:element>
-      <xs:element name="professorId" type="xs:string">
-        <xs:annotation>
-          <xs:documentation>identificador do professor que dará aula no horário de aula em questão (de um determinado turno de um determinado dia da semana) que contém os atendimentos em uma determinada sala de uma determinada unidade de um determinado campus</xs:documentation>
-        </xs:annotation>
-      </xs:element>
-      <xs:element name="creditoTeorico" type="xs:boolean">
-        <xs:annotation>
-          <xs:documentation>informa se o crédito do horário de aula em questão se refere a crédito teórico ou não (caso não seja teórico significa que é prático)</xs:documentation>
-        </xs:annotation>
-      </xs:element>
-      <xs:element name="atendimentosOfertas" type="GrupoAtendimentoOferta">
-        <xs:annotation>
-          <xs:documentation>lista de todas as ofertas atendidas pelo professor em questão no horario de aula (ou tempo de aula) em questão de um determinado turno de um determinado dia da semana numa determinada sala de uma determinada unidade de um determinado campus</xs:documentation>
-        </xs:annotation>
-      </xs:element>
-    </xs:sequence>
-  </xs:complexType>
-  <xs:complexType name="ItemAtendimentoOferta">
-    <xs:sequence>
-      <xs:element name="ofertaCursoCampiId" type="xs:string">
-        <xs:annotation>
-          <xs:documentation>identificador da oferta atendida</xs:documentation>
+          <xs:documentation>Identificador da disciplina para a qual a turma será oferecida.</xs:documentation>
         </xs:annotation>
       </xs:element>
       <xs:element name="quantidade" type="xs:int">
         <xs:annotation>
-          <xs:documentation>quantidade de alunos atendidos da oferta</xs:documentation>
-        </xs:annotation>
-      </xs:element>
-    </xs:sequence>
-  </xs:complexType>
-  <xs:complexType name="ItemAtendimentoTatico">
-    <xs:sequence>
-      <xs:element name="atendimentoOferta" type="ItemAtendimentoOferta">
-        <xs:annotation>
-          <xs:documentation>representa uma oferta atendida</xs:documentation>
+          <xs:documentation>Quantidade de alunos que irá compor a turma.</xs:documentation>
         </xs:annotation>
       </xs:element>
       <xs:element name="qtdeCreditosTeoricos" type="xs:int">
         <xs:annotation>
-          <xs:documentation>informa a quantidade de créditos teóricos consumidos pela atendimento da oferta em questão</xs:documentation>
+          <xs:documentation>Informa a quantidade de créditos teóricos consumidos pelo atendimento em questão.</xs:documentation>
         </xs:annotation>
       </xs:element>
       <xs:element name="qtdeCreditosPraticos" type="xs:int">
         <xs:annotation>
-          <xs:documentation>informa a quantidade de créditos práticos consumidos pela atendimento da oferta em questão</xs:documentation>
+          <xs:documentation>Informa a quantidade de créditos práticos consumidos pelo atendimento em questão.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="ItemAtendimentoOperacional">
+    <xs:sequence>
+      <xs:element name="turmaId" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>String que identifica unicamente uma turma que será oferecida para atender uma demanda.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="disciplinaId" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>Identificador da disciplina para a qual a turma será oferecida.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="quantidade" type="xs:int">
+        <xs:annotation>
+          <xs:documentation>Quantidade de alunos que irá compor a turma.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="creditoTeorico" type="xs:boolean">
+        <xs:annotation>
+          <xs:documentation>Informa se os créditos representados pelos horários de aula são teóricos ou não (caso não seja teórico significa que é prático).</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="professorId" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>Identificador do professor que ministrará as aulas em questão.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="horariosAula" type="GrupoHorarioAula">
+        <xs:annotation>
+          <xs:documentation>Listas dos horários de aula (tempos de aula).</xs:documentation>
         </xs:annotation>
       </xs:element>
     </xs:sequence>
   </xs:complexType>
   <xs:complexType name="GrupoAtendimentoCampus">
     <xs:sequence minOccurs="0" maxOccurs="unbounded">
-      <xs:element name="AtendimentoCampus" type="ItemAtendimentoCampus">
+      <xs:element name="atendimentoCampus" type="ItemAtendimentoCampus">
         <xs:annotation>
-          <xs:documentation>contém os atendimentos realizados em um determinado campus que foi considerado no planejamento</xs:documentation>
+          <xs:documentation>Representa um campus com informações sobre os atendimentos das demandas alí realizados.</xs:documentation>
         </xs:annotation>
       </xs:element>
     </xs:sequence>
   </xs:complexType>
   <xs:complexType name="GrupoAtendimentoUnidade">
     <xs:sequence minOccurs="0" maxOccurs="unbounded">
-      <xs:element name="AtendimentoUnidade" type="ItemAtendimentoUnidade">
+      <xs:element name="atendimentoUnidade" type="ItemAtendimentoUnidade">
         <xs:annotation>
-          <xs:documentation>contém os atendimentos realizados em uma determinada unidade de um determinado campus que foi considerado no planejamento</xs:documentation>
+          <xs:documentation>Representa uma unidade de um campus com informações sobre os atendimentos das demandas alí realizados.</xs:documentation>
         </xs:annotation>
       </xs:element>
     </xs:sequence>
   </xs:complexType>
   <xs:complexType name="GrupoAtendimentoSala">
     <xs:sequence minOccurs="0" maxOccurs="unbounded">
-      <xs:element name="AtendimentoSala" type="ItemAtendimentoSala">
+      <xs:element name="atendimentoSala" type="ItemAtendimentoSala">
         <xs:annotation>
-          <xs:documentation>contém os atendimentos realizados em uma determinada sala de uma determinada unidade de um determinado campus que foi considerado no planejamento</xs:documentation>
+          <xs:documentation>Representa uma sala de uma unidade com informações sobre os atendimentos das demandas alí realizados.</xs:documentation>
         </xs:annotation>
       </xs:element>
     </xs:sequence>
   </xs:complexType>
   <xs:complexType name="GrupoAtendimentoDiaSemana">
     <xs:sequence minOccurs="0" maxOccurs="unbounded">
-      <xs:element name="AtendimentoDiaSemana" type="ItemAtendimentoDiaSemana">
+      <xs:element name="atendimentoDiaSemana" type="ItemAtendimentoDiaSemana">
         <xs:annotation>
-          <xs:documentation>contém os atendimentos realizados num determinado dia da semana em uma determinada sala de uma determinada unidade de um determinado campus que foi considerado no planejamento</xs:documentation>
+          <xs:documentation>Representa um dia da semana com informações sobre os atendimentos das demandas ocorridos no dia em questão em uma dada sala.</xs:documentation>
         </xs:annotation>
       </xs:element>
     </xs:sequence>
   </xs:complexType>
   <xs:complexType name="GrupoAtendimentoTurno">
     <xs:sequence minOccurs="0" maxOccurs="unbounded">
-      <xs:element name="AtendimentoTurno" type="ItemAtendimentoTurno">
+      <xs:element name="atendimentoTurno" type="ItemAtendimentoTurno">
         <xs:annotation>
-          <xs:documentation>contém os atendimentos realizados num determinado turno de um determinado dia da semana em uma determinada sala de uma determinada unidade de um determinado campus que foi considerado no planejamento</xs:documentation>
+          <xs:documentation>Representa um turno com informações sobre os atendimentos das demandas ocorridos no mesmo.</xs:documentation>
         </xs:annotation>
       </xs:element>
     </xs:sequence>
   </xs:complexType>
-  <xs:complexType name="GrupoAtendimentoHorarioAula">
+  <xs:complexType name="GrupoAtendimentoCurso">
     <xs:sequence minOccurs="0" maxOccurs="unbounded">
-      <xs:element name="AtendimentoHorarioAula" type="ItemAtendimentoHorarioAula">
+      <xs:element name="atendimentoCurso" type="ItemAtendimentoCurso">
         <xs:annotation>
-          <xs:documentation>contém os atendimentos realizados num determinado horario de aula (ou tempo de aula) de um determinado turno de um determinado dia da semana em uma determinada sala de uma determinada unidade de um determinado campus que foi considerado no planejamento</xs:documentation>
+          <xs:documentation>Representa um curso com informações das demandas atendidas.</xs:documentation>
         </xs:annotation>
       </xs:element>
     </xs:sequence>
   </xs:complexType>
-  <xs:complexType name="GrupoAtendimentoOferta">
+  <xs:complexType name="GrupoAtendimentoCurriculo">
     <xs:sequence minOccurs="0" maxOccurs="unbounded">
-      <xs:element name="AtendimentoOferta" type="ItemAtendimentoOferta">
+      <xs:element name="atendimentoCurriculo" type="ItemAtendimentoCurriculo">
         <xs:annotation>
-          <xs:documentation>representa uma oferta atendida</xs:documentation>
+          <xs:documentation>Representa uma matriz curricular com informações das demandas atendidas.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="GrupoAtendimentoPeriodoCurriculo">
+    <xs:sequence minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="atendimentoPeriodoCurriculo" type="ItemAtendimentoPeriodoCurriculo">
+        <xs:annotation>
+          <xs:documentation>Representa um período letivo de uma matriz curricular com informações das demandas atendidas.</xs:documentation>
         </xs:annotation>
       </xs:element>
     </xs:sequence>
   </xs:complexType>
   <xs:complexType name="GrupoAtendimentoTatico">
     <xs:sequence minOccurs="0" maxOccurs="unbounded">
-      <xs:element name="AtendimentoTatico" type="ItemAtendimentoTatico">
+      <xs:element name="atendimentoTatico" type="ItemAtendimentoTatico">
         <xs:annotation>
-          <xs:documentation>representa uma oferta atendida</xs:documentation>
+          <xs:documentation>Representa uma oferta atendida para o modo de otimização tático. Para maiores informações consulte a seção "Objetivo do Problema" do documento de Regras de Decisão do TRIEDA.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="GrupoAtendimentoOperacional">
+    <xs:sequence minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="atendimentoOperacional" type="ItemAtendimentoOperacional">
+        <xs:annotation>
+          <xs:documentation>Representa uma oferta atendida para o modo de otimização operacional. Para maiores informações consulte a seção "Objetivo do Problema" do documento de Regras de Decisão do TRIEDA.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="GrupoHorarioAula">
+    <xs:sequence minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="horarioAulaId" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>Identificador de um horário de aula.</xs:documentation>
         </xs:annotation>
       </xs:element>
     </xs:sequence>

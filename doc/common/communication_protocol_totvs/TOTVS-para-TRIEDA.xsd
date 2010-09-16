@@ -704,7 +704,7 @@
     <xs:sequence>
       <xs:element name="campusId" type="xs:string">
         <xs:annotation>
-          <xs:documentation>Identificador do campus (ItemCampus) onde cursos serão oferecidos.</xs:documentation>
+          <xs:documentation>Identificador do campus (ItemCmapus) onde cursos serão oferecidos.</xs:documentation>
         </xs:annotation>
       </xs:element>
       <xs:element name="ofertasTurnos" type="GrupoOfertaTurno">
