@@ -2,6 +2,7 @@
 
 CreditoDisponivel::CreditoDisponivel(void)
 {
+   turno = NULL;
 }
 
 CreditoDisponivel::~CreditoDisponivel(void)

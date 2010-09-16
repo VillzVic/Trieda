@@ -1,5 +1,7 @@
 #pragma once
 #include "ofbase.h"
+#include "Turno.h"
+#include "HorarioAula.h"
 
 class Horario :
    public OFBase
@@ -15,8 +17,6 @@ public:
    GGroup<int> dias_semana;
    int horarioAulaId;
    int turnoId;
-
-private:
-   int id;
-
+   Turno* turno;
+   HorarioAula* horario_aula;
 };

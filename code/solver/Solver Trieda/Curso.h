@@ -1,11 +1,7 @@
 #pragma once
 #include "ofbase.h"
-#include "AreaTitulacao.h"
-
-class Curriculo;
-#include "Curriculo.h"
 #include "TipoCurso.h"
-
+#include "Curriculo.h"
 
 class Curso :
    public OFBase
@@ -26,5 +22,5 @@ public:
 
    GGroup<int> area_ids;
    GGroup<Curriculo*> curriculos;
-
+   TipoCurso* tipo_curso;
 };

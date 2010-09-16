@@ -25,6 +25,9 @@ public:
 
    // Load the XML file
    void load();
+   void gera_refs();
+   template<class T> 
+   void find_and_set(int id, GGroup<T*> haystack, T*& needle) ;
 
 private:
    // Input data object of the problem

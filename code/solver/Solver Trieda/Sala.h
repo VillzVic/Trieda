@@ -19,7 +19,9 @@ public:
    GGroup<Horario*> horarios_disponiveis;
    GGroup<CreditoDisponivel*> creditos_disponiveis;
    GGroup<int> disciplinas_associadas; //alterar para ref, depois
-
 public:
    virtual void le_arvore(ItemSala& elem);
+
+   TipoSala* tipo_sala;
+
 };

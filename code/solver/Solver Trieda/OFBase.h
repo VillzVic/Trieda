@@ -36,7 +36,6 @@ public:
 
 //protected:
    int id;
-
    }; 
 
 #endif

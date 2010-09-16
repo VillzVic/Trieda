@@ -1,5 +1,10 @@
 #pragma once
 #include "ofbase.h"
+#include "Professor.h"
+#include "Disciplina.h"
+#include "Sala.h"
+#include "Turno.h"
+#include "Horario.h"
 
 class Fixacao :
    public OFBase
@@ -16,4 +21,10 @@ public:
    int horario_id;
 
    void le_arvore(ItemFixacao& elem);
+   Professor* professor;
+   Disciplina* disciplina;
+   Sala* sala;
+   Turno* turno;
+   Horario* horario;
 };
+

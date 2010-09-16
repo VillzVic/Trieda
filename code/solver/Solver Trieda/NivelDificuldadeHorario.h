@@ -1,5 +1,6 @@
 #pragma once
 #include "ofbase.h"
+#include "NivelDificuldade.h"
 
 class NivelDificuldadeHorario :
    public OFBase
@@ -12,5 +13,7 @@ public:
    GGroup<int> horarios_aula; 
 
    virtual void le_arvore(ItemNivelDificuldadeHorario& elem);
+
+   NivelDificuldade* nivel_dificuldade;
 };
  

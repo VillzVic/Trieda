@@ -1,6 +1,9 @@
 #pragma once
 #include "ofbase.h"
 #include "Magisterio.h"
+#include "TipoContrato.h"
+#include "TipoTitulacao.h"
+#include "AreaTitulacao.h"
 
 class Professor :
    public OFBase
@@ -22,4 +25,7 @@ public:
    int area_id;
    double valor_credito;
    GGroup<Magisterio*> magisterio;
+   TipoContrato* tipo_contrato;
+   TipoTitulacao* titulacao; 
+   AreaTitulacao* area;
 };

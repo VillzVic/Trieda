@@ -1,6 +1,7 @@
 #pragma once
 #include "ofbase.h"
 #include "Oferta.h"
+#include "Disciplina.h"
 
 class Demanda :
    public OFBase
@@ -26,4 +27,6 @@ public:
    int quantidade;
    int oferta_id;
    int disciplina_id;
+   Oferta* oferta;
+   Disciplina* disciplina;
 };

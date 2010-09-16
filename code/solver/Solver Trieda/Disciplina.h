@@ -2,6 +2,7 @@
 #include "ofbase.h"
 #include "TipoDisciplina.h"
 #include "DivisaoCreditos.h"
+#include "NivelDificuldade.h"
 #include "Horario.h"
 
 class Disciplina :
@@ -26,6 +27,8 @@ public:
    GGroup<int> equivalentes; 
    GGroup<int> incompativeis;
    GGroup<Horario*> horarios;
+   TipoDisciplina* tipo_disciplina;
+   NivelDificuldade* nivel_dificuldade;
 
 public:
    virtual void le_arvore(ItemDisciplina& elem);

@@ -57,3 +57,55 @@ void ProblemDataLoader::load()
       }
    }
 }
+template<class T> 
+void ProblemDataLoader::find_and_set(int id, 
+                                     GGroup<T*> haystack, 
+                                     T*& needle) 
+{
+   T* finder = new T;
+   finder->id = id;
+   GGroup<T*>::iterator it_g = 
+      haystack.find(finder);
+   if (it_g != haystack.end()) 
+      needle = *it_g;
+   delete finder;
+}
+
+void ProblemDataLoader::gera_refs() {
+   ITERA_GGROUP(it_campi,problemData->campi,Campus) {
+      ITERA_GGROUP(it_unidades,it_campi->unidades,Unidade) {
+         ITERA_GGROUP(it_horario,it_unidades->horarios,Horario) {
+            find_and_set(it_horario->turnoId,
+               problemData->calendario->turnos,
+               it_horario->turno);
+            find_and_set(it_horario->horarioAulaId,
+               it_horario->turno->horarios_aula,
+               it_horario->horario_aula);
+         }
+         ITERA_GGROUP(it_salas,it_unidades->salas,Sala) {
+            find_and_set(it_salas->tipo_sala_id,
+               problemData->tipos_sala,
+               it_salas->tipo_sala);
+            ITERA_GGROUP(it_horario,it_salas->horarios_disponiveis,Horario)
+            {
+               find_and_set(it_horario->turnoId,
+                  problemData->calendario->turnos,
+                  it_horario->turno);
+               find_and_set(it_horario->horarioAulaId,
+                  it_horario->turno->horarios_aula,
+                  it_horario->horario_aula);
+            }
+            ITERA_GGROUP(it_credito,it_salas->creditos_disponiveis,
+                         CreditoDisponivel) 
+            {
+               find_and_set(it_credito->turno_id,
+                  problemData->calendario->turnos,
+                  it_credito->turno);
+            }
+            /* Disciplinas associadas ? 
+            TODO (ou não) */
+         }
+         // next: professor 
+      }
+   }
+}
