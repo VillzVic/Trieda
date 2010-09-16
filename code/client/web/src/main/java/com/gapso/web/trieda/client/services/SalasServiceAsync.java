@@ -19,5 +19,7 @@ public interface SalasServiceAsync extends ICrudService {
 	void getTipoSalaList(AsyncCallback<ListLoadResult<TipoSalaDTO>> callback);
 	void getSala(Long id, AsyncCallback<SalaDTO> callback);
 	void getTipoSala(Long id, AsyncCallback<TipoSalaDTO> callback);
+	void getAndaresList(AsyncCallback<ListLoadResult<SalaDTO>> callback);
+	void getSalasDoAndareList(List<String> andares, AsyncCallback<ListLoadResult<SalaDTO>> callback);
 	
 }

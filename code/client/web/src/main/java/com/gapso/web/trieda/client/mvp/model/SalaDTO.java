@@ -92,9 +92,5 @@ public class SalaDTO extends BaseModel {
 	public void setCapacidade(Integer value) {
 		set("capacidade", value);
 	}
-	
-	
-	
-	
-	
+
 }

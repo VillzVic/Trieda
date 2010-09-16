@@ -1,5 +1,6 @@
 package com.gapso.trieda.domain;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -14,6 +15,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import javax.persistence.Table;
 import javax.persistence.Version;
 import javax.validation.constraints.Max;
@@ -159,6 +161,26 @@ public class Sala implements java.io.Serializable {
 	public static int count() {
         return ((Number) entityManager().createQuery("select count(o) from Sala o").getSingleResult()).intValue();
     }
+	
+	@SuppressWarnings("unchecked")
+	public static List<Sala> findAndaresAll() {
+		return entityManager().createQuery("SELECT o FROM Sala o GROUP BY o.andar").getResultList();
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static List<Sala> findSalasDoAndarAll(List<String> andares) {
+		if(andares.size() == 0) return new ArrayList<Sala>();
+		String whereQuery = "SELECT o FROM Sala o WHERE ";
+		for(int i = 1; i < andares.size(); i++) {
+			whereQuery += " o.andar = :andares"+i+" OR ";
+		}
+		whereQuery += " o.andar = :andares0 ";
+		Query query = entityManager().createQuery(whereQuery);
+		for(int i = 0; i < andares.size(); i++) {
+			query.setParameter("andares"+i, andares.get(i));
+		}
+		return query.getResultList();
+	}
 
 	@SuppressWarnings("unchecked")
     public static List<Sala> findAll() {

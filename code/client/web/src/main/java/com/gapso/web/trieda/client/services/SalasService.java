@@ -23,5 +23,7 @@ public interface SalasService extends RemoteService {
 	ListLoadResult<TipoSalaDTO> getTipoSalaList();
 	SalaDTO getSala(Long id);
 	TipoSalaDTO getTipoSala(Long id);
+	ListLoadResult<SalaDTO> getAndaresList();
+	ListLoadResult<SalaDTO> getSalasDoAndareList(List<String> andares);
 	
 }

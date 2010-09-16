@@ -1,6 +1,7 @@
 package com.gapso.trieda.domain;
 
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -8,6 +9,7 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -50,11 +52,11 @@ public class GrupoSala implements Serializable {
     @Size(min = 3, max = 20)
     private String nome;
 
-    @ManyToMany(cascade = CascadeType.ALL)
-    private Set<com.gapso.trieda.domain.Sala> salas = new java.util.HashSet<com.gapso.trieda.domain.Sala>();
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private Set<Sala> salas = new HashSet<Sala>();
 
     @ManyToMany(cascade = CascadeType.ALL)
-    private Set<com.gapso.trieda.domain.Disciplina> disciplinas = new java.util.HashSet<com.gapso.trieda.domain.Disciplina>();
+    private Set<Disciplina> disciplinas = new HashSet<Disciplina>();
 
 	private static final long serialVersionUID = -3068409934520158819L;
 

@@ -13,6 +13,7 @@ import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.gapso.web.trieda.client.mvp.model.GrupoSalaDTO;
 import com.gapso.web.trieda.client.mvp.model.UnidadeDTO;
+import com.gapso.web.trieda.client.mvp.view.GrupoSalaAssociarSalaView;
 import com.gapso.web.trieda.client.mvp.view.GrupoSalaFormView;
 import com.gapso.web.trieda.client.services.GruposSalasServiceAsync;
 import com.gapso.web.trieda.client.services.Services;
@@ -31,6 +32,7 @@ public class GruposSalasPresenter implements Presenter {
 		Button getRemoveButton();
 		Button getImportExcelButton();
 		Button getExportExcelButton();
+		Button getAssociarSalasButton();
 		SimpleGrid<GrupoSalaDTO> getGrid();
 		Component getComponent();
 		void setProxy(RpcProxy<PagingLoadResult<GrupoSalaDTO>> proxy);
@@ -96,6 +98,14 @@ public class GruposSalasPresenter implements Presenter {
 						Info.display("Removido", "Item removido com sucesso!");
 					}
 				});
+			}
+		});
+		display.getAssociarSalasButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
+			@Override
+			public void componentSelected(ButtonEvent ce) {
+				GrupoSalaDTO grupoSalaDTO = display.getGrid().getGrid().getSelectionModel().getSelectedItem();
+				Presenter presenter = new GrupoSalaAssociarSalaPresenter(new GrupoSalaAssociarSalaView(grupoSalaDTO));
+				presenter.go(null);
 			}
 		});
 	}

@@ -26,6 +26,7 @@ public class GruposSalasView extends MyComposite implements GruposSalasPresenter
 	private SimpleGrid<GrupoSalaDTO> gridPanel;
 	private ContentPanel panel;
 	private GTabItem tabItem;
+	private Button associarSalasBT;
 	
 	public GruposSalasView() {
 		initUI();
@@ -48,6 +49,8 @@ public class GruposSalasView extends MyComposite implements GruposSalasPresenter
 	private void createToolBar() {
 		toolBar = new SimpleToolBar();
 		toolBar.add(new SeparatorToolItem());
+		associarSalasBT = toolBar.createButton("Associar Salas", Resources.DEFAULTS.sala16());
+		toolBar.add(associarSalasBT);
 		panel.setTopComponent(toolBar);
 	}
 	
@@ -100,6 +103,11 @@ public class GruposSalasView extends MyComposite implements GruposSalasPresenter
 	@Override
 	public void setProxy(RpcProxy<PagingLoadResult<GrupoSalaDTO>> proxy) {
 		gridPanel.setProxy(proxy);
+	}
+
+	@Override
+	public Button getAssociarSalasButton() {
+		return associarSalasBT;
 	}
 	
 }

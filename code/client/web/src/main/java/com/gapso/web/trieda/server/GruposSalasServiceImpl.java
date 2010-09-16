@@ -2,16 +2,20 @@ package com.gapso.web.trieda.server;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import com.extjs.gxt.ui.client.Style.SortDir;
+import com.extjs.gxt.ui.client.data.BaseListLoadResult;
 import com.extjs.gxt.ui.client.data.BasePagingLoadConfig;
 import com.extjs.gxt.ui.client.data.BasePagingLoadResult;
 import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.gapso.trieda.domain.GrupoSala;
+import com.gapso.trieda.domain.Sala;
 import com.gapso.trieda.domain.Unidade;
 import com.gapso.web.trieda.client.mvp.model.GrupoSalaDTO;
+import com.gapso.web.trieda.client.mvp.model.SalaDTO;
 import com.gapso.web.trieda.client.mvp.model.UnidadeDTO;
 import com.gapso.web.trieda.client.services.GruposSalasService;
 import com.gapso.web.trieda.server.util.ConvertBeans;
@@ -46,6 +50,50 @@ public class GruposSalasServiceImpl extends RemoteServiceServlet implements Grup
 		}
 	}
 
+	@Override
+	public ListLoadResult<SalaDTO> getSalas(GrupoSalaDTO grupoSalaDTO) {
+		GrupoSala grupoSala = GrupoSala.find(grupoSalaDTO.getId());
+		
+		List<SalaDTO> list = new ArrayList<SalaDTO>();
+		for(Sala sala : grupoSala.getSalas()) {
+			list.add(ConvertBeans.toSalaDTO(sala));
+		}
+		
+		return new BaseListLoadResult<SalaDTO>(list);
+	}
+	
+	@Override
+	public void saveSalas(List<SalaDTO> salaDTOList, GrupoSalaDTO grupoSalaDTO) {
+		GrupoSala grupoSala = ConvertBeans.toGrupoSala(grupoSalaDTO);
+		
+		List<Sala> removerSalas = new ArrayList<Sala>();
+		List<Sala> adicionarSalas = new ArrayList<Sala>();
+		
+		Set<Sala> salas = grupoSala.getSalas();
+		
+		for(SalaDTO sala2DTO : salaDTOList) {
+			Sala sala2 = ConvertBeans.toSala(sala2DTO);
+			boolean naoContem = true;
+			for(Sala sala1 : salas) {
+				if(sala2.getId().equals(sala1.getId())) {
+					naoContem = false;
+					break;
+				}
+			}
+			if(naoContem) {
+				adicionarSalas.add(sala2);
+			} else {
+				removerSalas.remove(sala2);
+			}
+		}
+		
+		salas.removeAll(removerSalas);
+		salas.addAll(adicionarSalas);
+		
+		grupoSala.merge();
+		
+	}
+	
 	@Override
 	public PagingLoadResult<GrupoSalaDTO> getBuscaList(String nome, String codigo, UnidadeDTO unidadeDTO, PagingLoadConfig config) {
 		List<GrupoSalaDTO> list = new ArrayList<GrupoSalaDTO>();

@@ -55,6 +55,24 @@ public class SalasServiceImpl extends RemoteServiceServlet implements SalasServi
 	}
 	
 	@Override
+	public ListLoadResult<SalaDTO> getAndaresList() {
+		List<SalaDTO> list = new ArrayList<SalaDTO>();
+		for(Sala sala : Sala.findAndaresAll()) {
+			list.add(ConvertBeans.toSalaDTO(sala));
+		}
+		return new BaseListLoadResult<SalaDTO>(list);
+	}
+	
+	@Override
+	public ListLoadResult<SalaDTO> getSalasDoAndareList(List<String> andares) {
+		List<SalaDTO> list = new ArrayList<SalaDTO>();
+		for(Sala sala : Sala.findSalasDoAndarAll(andares)) {
+			list.add(ConvertBeans.toSalaDTO(sala));
+		}
+		return new BaseListLoadResult<SalaDTO>(list);
+	}
+	
+	@Override
 	public ListLoadResult<SalaDTO> getList() {
 		List<SalaDTO> list = new ArrayList<SalaDTO>();
 		for(Sala sala : Sala.findAll()) {

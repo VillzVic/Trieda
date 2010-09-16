@@ -7,6 +7,7 @@ import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.gapso.web.trieda.client.mvp.model.GrupoSalaDTO;
+import com.gapso.web.trieda.client.mvp.model.SalaDTO;
 import com.gapso.web.trieda.client.mvp.model.UnidadeDTO;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -17,5 +18,7 @@ public interface GruposSalasServiceAsync {
 	void remove(List<GrupoSalaDTO> grupoSalaDTOList, AsyncCallback<Void> callback);
 	void getBuscaList(String nome, String codigo, UnidadeDTO unidadeDTO, PagingLoadConfig config, AsyncCallback<PagingLoadResult<GrupoSalaDTO>> callback);
 	void getList(BasePagingLoadConfig loadConfig, AsyncCallback<ListLoadResult<GrupoSalaDTO>> callback);
+	void getSalas(GrupoSalaDTO grupoSalaDTO, AsyncCallback<ListLoadResult<SalaDTO>> callback);
+	void saveSalas(List<SalaDTO> salaDTOList, GrupoSalaDTO grupoSalaDTO, AsyncCallback<Void> callback);
 	
 }
