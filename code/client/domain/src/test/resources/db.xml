@@ -1,0 +1,149 @@
+<dataset>
+  <table name="campi">
+    <column>cam_id</column>
+    <column>cam_bairro</column>
+    <column>cam_codigo</column>
+    <column>cam_estado</column>
+    <column>cam_municipio</column>
+    <column>cam_nome</column>
+    <column>version</column>
+    <column>cen_id</column>
+    <row>
+      <value>1</value>
+      <value>Savassi</value>
+      <value>IT-Campus</value>
+      <value>12</value>
+      <value><![CDATA[Belo Horizonte]]></value>
+      <value><![CDATA[Campus I. Trivial]]></value>
+      <value>0</value>
+      <null/>
+    </row>
+  </table>
+  <table name="unidades">
+    <column>uni_id</column>
+    <column>uni_codigo</column>
+    <column>uni_nome</column>
+    <column>version</column>
+    <column>cam_id</column>
+    <row>
+      <value>2</value>
+      <value>IT-Unidade</value>
+      <value><![CDATA[Unidade I. Trivial]]></value>
+      <value>0</value>
+      <value>1</value>
+    </row>
+  </table>
+  <table name="tipos_sala">
+    <column>tsa_id</column>
+    <column>tsa_descricao</column>
+    <column>tsa_nome</column>
+    <column>version</column>
+    <row>
+      <value>1</value>
+      <value><![CDATA[Sala de Aula]]></value>
+      <value><![CDATA[Sala de Aula]]></value>
+      <value>0</value>
+    </row>
+    <row>
+      <value>2</value>
+      <value>Laborat&#243;rio</value>
+      <value>Laborat&#243;rio</value>
+      <value>0</value>
+    </row>
+    <row>
+      <value>3</value>
+      <value>Audit&#243;rio</value>
+      <value>Audit&#243;rio</value>
+      <value>0</value>
+    </row>
+  </table>
+  <table name="salas">
+    <column>sal_id</column>
+    <column>sal_andar</column>
+    <column>sal_capacidade</column>
+    <column>sal_codigo</column>
+    <column>sal_numero</column>
+    <column>version</column>
+    <column>tsa_id</column>
+    <column>uni_id</column>
+    <row>
+      <value>4</value>
+      <value>1</value>
+      <value>60</value>
+      <value>IT-101</value>
+      <value>101</value>
+      <value>1</value>
+      <value>1</value>
+      <value>2</value>
+    </row>
+    <row>
+      <value>5</value>
+      <value>1</value>
+      <value>50</value>
+      <value>IT-102</value>
+      <value>102</value>
+      <value>1</value>
+      <value>1</value>
+      <value>2</value>
+    </row>
+    <row>
+      <value>6</value>
+      <value>1</value>
+      <value>50</value>
+      <value>IT-103</value>
+      <value>103</value>
+      <value>1</value>
+      <value>1</value>
+      <value>2</value>
+    </row>
+    <row>
+      <value>7</value>
+      <value>1</value>
+      <value>40</value>
+      <value>IT-104</value>
+      <value>104</value>
+      <value>1</value>
+      <value>1</value>
+      <value>2</value>
+    </row>
+    <row>
+      <value>8</value>
+      <value>1</value>
+      <value>20</value>
+      <value>IT-105</value>
+      <value>105</value>
+      <value>1</value>
+      <value>2</value>
+      <value>2</value>
+    </row>
+  </table>
+  <table name="grupos_sala">
+    <column>grs_id</column>
+    <column>grs_codigo</column>
+    <column>grs_nome</column>
+    <column>version</column>
+    <column>uni_id</column>
+    <row>
+      <value>1</value>
+      <value>IT-BlcA</value>
+      <value><![CDATA[Bloco A I. Trivial]]></value>
+      <value>1</value>
+      <value>2</value>
+    </row>
+  </table>
+  <table name="deslocamentos_campi">
+    <column>dec_id</column>
+    <column>dec_custo</column>
+    <column>dec_tempo</column>
+    <column>version</column>
+    <column>cam_dest_id</column>
+    <column>cam_orig_id</column>
+  </table>
+  <table name="deslocamentos_unidades">
+    <column>deu_id</column>
+    <column>dec_tempo</column>
+    <column>version</column>
+    <column>uni_dest_id</column>
+    <column>uni_orig_id</column>
+  </table>
+</dataset>
