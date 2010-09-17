@@ -4,44 +4,18 @@
 	xmlns:jee="http://www.springframework.org/schema/jee" xmlns:tx="http://www.springframework.org/schema/tx"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd   http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd   http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd   http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-3.0.xsd   http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.0.xsd">
-	<!-- This will automatically locate any and all property files you have 
-		within your classpath, provided they fall under the META-INF/spring directory. 
-		The located property files are parsed and their values can then be used within 
-		application context files in the form of ${propertyKey}. -->
+
+	<bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor" />
+
 	<context:property-placeholder location="classpath*:META-INF/spring/database.properties" />
-	<!-- Turn on AspectJ @Configurable support. As a result, any time you instantiate 
-		an object, Spring will attempt to perform dependency injection on that object. 
-		This occurs for instantiation via the "new" keyword, as well as via reflection. 
-		This is possible because AspectJ is used to "weave" Roo-based applications 
-		at compile time. In effect this feature allows dependency injection of any 
-		object at all in your system, which is a very useful feature (without @Configurable 
-		you'd only be able to dependency inject objects acquired from Spring or subsequently 
-		presented to a specific Spring dependency injection method). Roo applications 
-		use this useful feature in a number of areas, such as @PersistenceContext 
-		injection into entities. -->
+
 	<context:spring-configured />
-	<!-- This declaration will cause Spring to locate every @Component, @Repository 
-		and @Service in your application. In practical terms this allows you to write 
-		a POJO and then simply annotate the new POJO as an @Service and Spring will 
-		automatically detect, instantiate and dependency inject your service at startup 
-		time. Importantly, you can then also have your new service injected into 
-		any other class that requires it simply by declaring a field for your service 
-		inside the relying class and Spring will inject it. Note that two exclude 
-		filters are declared. The first ensures that Spring doesn't spend time introspecting 
-		Roo-specific ITD aspects. The second ensures Roo doesn't instantiate your 
-		@Controller classes, as these should be instantiated by a web tier application 
-		context. Refer to web.xml for more details about the web tier application 
-		context setup services. Furthermore, this turns on @Autowired, @PostConstruct 
-		etc support. These annotations allow you to use common Spring and Java Enterprise 
-		Edition annotations in your classes without needing to do any special configuration. 
-		The most commonly used annotation is @Autowired, which instructs Spring to 
-		dependency inject an object into your class. -->
+
 	<context:component-scan base-package="com.gapso.trieda">
-		<context:exclude-filter expression=".*_Roo_.*"
-			type="regex" />
-		<context:exclude-filter expression="org.springframework.stereotype.Controller"
-			type="annotation" />
+		<context:exclude-filter expression=".*_Roo_.*" type="regex" />
+		<context:exclude-filter expression="org.springframework.stereotype.Controller" type="annotation" />
 	</context:component-scan>
+
 	<bean class="org.apache.commons.dbcp.BasicDataSource"
 		destroy-method="close" id="dataSource">
 		<property name="driverClassName" value="${database.driverClassName}" />
@@ -49,45 +23,46 @@
 		<property name="username" value="${database.username}" />
 		<property name="password" value="${database.password}" />
 	</bean>
-	<bean class="org.springframework.orm.jpa.JpaTransactionManager"
-		id="transactionManager">
-		<property name="entityManagerFactory" ref="entityManagerFactory" />
-	</bean>
-	<tx:annotation-driven mode="aspectj" transaction-manager="transactionManager" />
-	<bean
-		class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean"
-		id="entityManagerFactory">
+
+	<bean class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean" id="entityManagerFactory">
 		<property name="dataSource" ref="dataSource" />
 	</bean>
-	
-    <bean class="com.gapso.trieda.domain.Usuario"					id="usuarioBean"					scope="prototype"></bean>
-    <bean class="com.gapso.trieda.domain.Sessao"					id="sessaoBean"						scope="prototype"></bean>
-    <bean class="com.gapso.trieda.domain.Turno"						id="turnoBean"						scope="prototype"></bean>
-    <bean class="com.gapso.trieda.domain.Cenario"					id="cenarioBean"					scope="prototype"></bean>
-    <bean class="com.gapso.trieda.domain.SemanaLetiva"				id="semanaLetivaBean"				scope="prototype"></bean>
-    <bean class="com.gapso.trieda.domain.Campus"					id="campusBean"						scope="prototype"></bean>
-    <bean class="com.gapso.trieda.domain.Unidade"					id="unidadeBean"					scope="prototype"></bean>
-    <bean class="com.gapso.trieda.domain.TipoContrato"				id="tipoContratoBean"				scope="prototype"></bean>
-    <bean class="com.gapso.trieda.domain.Titulacao"					id="titulacaoBean"					scope="prototype"></bean>
-    <bean class="com.gapso.trieda.domain.AreaTitulacao"				id="areaTitulacaoBean"				scope="prototype"></bean>
-    <bean class="com.gapso.trieda.domain.Professor"					id="professorBean"					scope="prototype"></bean>
-    <bean class="com.gapso.trieda.domain.TipoSala"					id="tipoSalaBean"					scope="prototype"></bean>
-    <bean class="com.gapso.trieda.domain.Sala"						id="salaBean"						scope="prototype"></bean>
-    <bean class="com.gapso.trieda.domain.DivisaoCredito"			id="divisaoCreditoBean"				scope="prototype"></bean>
-    <bean class="com.gapso.trieda.domain.TipoDisciplina"			id="tipoDisciplinaBean"				scope="prototype"></bean>
-    <bean class="com.gapso.trieda.domain.Disciplina"				id="disciplinaBean"					scope="prototype"></bean>
-    <bean class="com.gapso.trieda.domain.TipoCurso"					id="tipoCursoBean"					scope="prototype"></bean>
-    <bean class="com.gapso.trieda.domain.Curso"						id="cursoBean"						scope="prototype"></bean>
-    <bean class="com.gapso.trieda.domain.HorarioAula"				id="horarioAulaBean"				scope="prototype"></bean>
-    <bean class="com.gapso.trieda.domain.DeslocamentoCampus"		id="deslocamentoCampusBean"			scope="prototype"></bean>
-    <bean class="com.gapso.trieda.domain.DeslocamentoUnidade"		id="deslocamentoUnidadeBean"		scope="prototype"></bean>
-    <bean class="com.gapso.trieda.domain.HorarioDisponivelCenario"	id="horarioDisponivelCenarioBean"	scope="prototype"></bean>
-    <bean class="com.gapso.trieda.domain.ProfessorDisciplina"	   	id="professorDisciplinaBean"		scope="prototype"></bean>
-    <bean class="com.gapso.trieda.domain.Compatibilidade"			id="compatibilidadeBean"			scope="prototype"></bean>
-    <bean class="com.gapso.trieda.domain.Equivalencia"				id="equivalenciaBean"				scope="prototype"></bean>
-    <bean class="com.gapso.trieda.domain.GrupoSala"					id="grupoSalaBean"					scope="prototype"></bean>
-    <bean class="com.gapso.trieda.domain.Curriculo"	            	id="curriculoBean"					scope="prototype"></bean>
-    <bean class="com.gapso.trieda.domain.CurriculoDisciplina"		id="curriculoDisciplinaBean"		scope="prototype"></bean>
-    <bean class="com.gapso.trieda.domain.CampusCurriculo"			id="campusCurriculoBean"			scope="prototype"></bean>
-    <bean class="com.gapso.trieda.domain.Demanda"					id="demandaBean"					scope="prototype"></bean>
+
+	<bean class="org.springframework.orm.jpa.JpaTransactionManager" id="transactionManager">
+		<property name="entityManagerFactory" ref="entityManagerFactory" />
+	</bean>
+
+	<tx:annotation-driven mode="aspectj" transaction-manager="transactionManager" />
+
+	<bean class="com.gapso.trieda.domain.Usuario" id="usuarioBean" />
+	<bean class="com.gapso.trieda.domain.Sessao" id="sessaoBean" />
+	<bean class="com.gapso.trieda.domain.Turno" id="turnoBean" />
+	<bean class="com.gapso.trieda.domain.Cenario" id="cenarioBean" />
+	<bean class="com.gapso.trieda.domain.Calendario" id="calendarioBean" />
+	<bean class="com.gapso.trieda.domain.Campus" id="campusBean" />
+	<bean class="com.gapso.trieda.domain.Unidade" id="unidadeBean" />
+	<bean class="com.gapso.trieda.domain.TipoContrato" id="tipoContratoBean" />
+	<bean class="com.gapso.trieda.domain.Titulacao" id="titulacaoBean" />
+	<bean class="com.gapso.trieda.domain.AreaTitulacao" id="areaTitulacaoBean" />
+	<bean class="com.gapso.trieda.domain.Professor" id="professorBean" />
+	<bean class="com.gapso.trieda.domain.TipoSala" id="tipoSalaBean" />
+	<bean class="com.gapso.trieda.domain.Sala" id="salaBean" />
+	<bean class="com.gapso.trieda.domain.DivisaoCredito" id="divisaoCreditoBean" />
+	<bean class="com.gapso.trieda.domain.TipoDisciplina" id="tipoDisciplinaBean" />
+	<bean class="com.gapso.trieda.domain.Disciplina" id="disciplinaBean" />
+	<bean class="com.gapso.trieda.domain.TipoCurso" id="tipoCursoBean" />
+	<bean class="com.gapso.trieda.domain.Curso" id="cursoBean" />
+	<bean class="com.gapso.trieda.domain.HorarioAula" id="horarioAulaBean" />
+	<bean class="com.gapso.trieda.domain.DeslocamentoCampus" id="deslocamentoCampusBean" />
+	<bean class="com.gapso.trieda.domain.DeslocamentoUnidade" id="deslocamentoUnidadeBean" />
+	<bean class="com.gapso.trieda.domain.HorarioDisponivelCenario" id="horarioDisponivelCenarioBean" />
+	<bean class="com.gapso.trieda.domain.ProfessorDisciplina" id="professorDisciplinaBean" />
+	<bean class="com.gapso.trieda.domain.Compatibilidade" id="compatibilidadeBean" />
+	<bean class="com.gapso.trieda.domain.Equivalencia" id="equivalenciaBean" />
+	<bean class="com.gapso.trieda.domain.GrupoSala" id="grupoSalaBean" />
+	<bean class="com.gapso.trieda.domain.Curriculo" id="curriculoBean" />
+	<bean class="com.gapso.trieda.domain.CurriculoDisciplina" id="curriculoDisciplinaBean" />
+	<bean class="com.gapso.trieda.domain.CampusCurriculo" id="campusCurriculoBean" />
+	<bean class="com.gapso.trieda.domain.Demanda" id="demandaBean" />
+	<bean class="com.gapso.trieda.domain.SemanaLetiva" id="semanaLetivaBean" />
 </beans>
