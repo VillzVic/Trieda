@@ -21,7 +21,6 @@ public:
    int max_alunos_p;
    int tipo_disciplina_id;
    int nivel_dificuldade_id;
-   int num_turmas;
 
    DivisaoCreditos* divisao_creditos;
    GGroup<int> equivalentes; 
@@ -29,6 +28,10 @@ public:
    GGroup<Horario*> horarios;
    TipoDisciplina* tipo_disciplina;
    NivelDificuldade* nivel_dificuldade;
+
+   int demanda_total;
+   int max_demanda;
+   int num_turmas;
 
 public:
    virtual void le_arvore(ItemDisciplina& elem);

@@ -2,6 +2,10 @@
 
 Disciplina::Disciplina(void)
 {
+   max_demanda = 0;
+   demanda_total = 0;
+   max_alunos_t = -1;
+   max_alunos_p = -1;
 }
 
 Disciplina::~Disciplina(void)

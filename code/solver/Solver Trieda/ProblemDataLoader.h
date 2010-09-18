@@ -27,7 +27,11 @@ public:
    void load();
    void gera_refs();
    template<class T> 
-   void find_and_set(int id, GGroup<T*> haystack, T*& needle) ;
+   void find_and_set(int id, GGroup<T*>& haystack, T*& needle) ;
+   void cria_blocos_curriculares();
+   void calcula_demandas();
+   void estima_turmas();
+
 
 private:
    // Input data object of the problem

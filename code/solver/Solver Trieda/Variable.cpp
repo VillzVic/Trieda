@@ -154,7 +154,7 @@ size_t VariableHasher::operator()(const Variable& v) const
    if (v.getTurma() != NULL) {
       sum *= HASH_PRIME; sum+= intHash(v.getTurma());
    }
-   if (v.getDisciplina() >= 0) {
+   if (v.getDisciplina() != NULL) {
       sum *= HASH_PRIME; sum+= intHash(v.getDisciplina()->getId());
    }
    if (v.getUnidade() != NULL) {

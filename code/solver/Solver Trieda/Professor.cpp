@@ -28,4 +28,9 @@ void Professor::le_arvore(ItemProfessor& elem)
       m->le_arvore(*it_mag);
       magisterio.add(m);
    }
+   ITERA_SEQ(it_h,elem.horariosDisponiveis(),Horario) {
+      Horario* h = new Horario();
+      h->le_arvore(*it_h);
+      horarios.add(h);
+   }
 }

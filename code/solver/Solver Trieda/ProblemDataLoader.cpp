@@ -24,48 +24,25 @@ void ProblemDataLoader::load()
 
    std::cout << "Some preprocessing..." << std::endl;
    /* processamento */
-   /* cria blocos curriculares */
-   ITERA_GGROUP(it_curso,problemData->cursos,Curso)
-   {
-      ITERA_GGROUP(it_curr,it_curso->curriculos,Curriculo)
-      {
-         GGroup<DisciplinaPeriodo>::iterator it_dp = 
-            it_curr->disciplinas_periodo.begin();
-         for(;it_dp != it_curr->disciplinas_periodo.end(); ++it_dp)
-         {
-            DisciplinaPeriodo dp = *it_dp;
-            int p = dp.first;
-            int disc_id = dp.second;
-            Disciplina* d = new Disciplina;
-            d->id = disc_id;
-            if (problemData->disciplinas.find(d) != 
-                problemData->disciplinas.end())
-                d = *problemData->disciplinas.find(d);
-            
-            BlocoCurricular* b = new BlocoCurricular;
-            b->curso = *it_curso;
-            b->periodo = p;
-            GGroup<BlocoCurricular*>::iterator it_bc = 
-               problemData->blocos.find(b);
-            if (it_bc != problemData->blocos.end())
-            {
-               delete b;
-               b = *it_bc;
-            }
-            b->disciplinas.add(d);
-         }
-      }
-   }
+   gera_refs();
+   cria_blocos_curriculares();
+   calcula_demandas();
+   estima_turmas();
 }
 template<class T> 
 void ProblemDataLoader::find_and_set(int id, 
-                                     GGroup<T*> haystack, 
+                                     GGroup<T*>& haystack, 
                                      T*& needle)
 {
    T* finder = new T;
    finder->id = id;
    GGroup<T*>::iterator it_g = 
       haystack.find(finder);
+   /* Versão lenta... Entender o porquê depois */
+   it_g = haystack.begin();
+   while(it_g != haystack.end() && it_g->getId() != finder->getId())
+      ++it_g;
+   /* FIM */
    if (it_g != haystack.end()) 
       needle = *it_g;
    delete finder;
@@ -104,8 +81,166 @@ void ProblemDataLoader::gera_refs() {
             }
             /* Disciplinas associadas ? 
             TODO (ou não) */
-         }
-         // next: professor 
+         } // end salas
       }
+      ITERA_GGROUP(it_prof,it_campi->professores,Professor) {
+         find_and_set(it_prof->tipo_contrato_id, 
+                      problemData->tipos_contrato, 
+                      it_prof->tipo_contrato);
+         ITERA_GGROUP(it_horario,it_prof->horarios,Horario)
+         {
+            find_and_set(it_horario->turnoId,
+               problemData->calendario->turnos,
+               it_horario->turno);
+            find_and_set(it_horario->horarioAulaId,
+               it_horario->turno->horarios_aula,
+               it_horario->horario_aula);
+         }
+         ITERA_GGROUP(it_mag,it_prof->magisterio,Magisterio) {
+            find_and_set(it_mag->disciplina_id,
+               problemData->disciplinas,
+               it_mag->disciplina);
+         }
+      } // end professores
+      ITERA_GGROUP(it_horario,it_campi->horarios,Horario)
+      {
+         find_and_set(it_horario->turnoId,
+            problemData->calendario->turnos,
+            it_horario->turno);
+         find_and_set(it_horario->horarioAulaId,
+            it_horario->turno->horarios_aula,
+            it_horario->horario_aula);
+      } 
+   } // campus
+
+   ITERA_GGROUP(it_desl,problemData->tempo_campi,Deslocamento) {
+      find_and_set(it_desl->origem_id,
+         problemData->campi, (Campus*&) it_desl->origem);
+      find_and_set(it_desl->destino_id,
+         problemData->campi, (Campus*&) it_desl->destino);
+   } // deslocamento campi
+
+   ITERA_GGROUP(it_desl,problemData->tempo_unidades,Deslocamento) {
+      /* É preciso procurar a unidade nos campi */
+      ITERA_GGROUP(it_campi,problemData->campi,Campus) {
+         /* posso fazer find_and_set em todos sem ifs, porque ele
+         só seta se encontrar. Posso continuar fazendo mesmo depois de 
+         encontrar pelo mesmo motivo */
+         find_and_set(it_desl->origem_id,
+            it_campi->unidades, (Unidade*&) it_desl->origem);
+         find_and_set(it_desl->destino_id,
+            it_campi->unidades, (Unidade*&) it_desl->destino);
+      }
+   } // deslocamento unidades 
+
+   ITERA_GGROUP(it_disc,problemData->disciplinas,Disciplina) {
+      find_and_set(it_disc->tipo_disciplina_id,
+         problemData->tipos_disciplina, it_disc->tipo_disciplina);
+      find_and_set(it_disc->nivel_dificuldade_id,
+         problemData->niveis_dificuldade, it_disc->nivel_dificuldade);
+
+      ITERA_GGROUP(it_horario,it_disc->horarios,Horario)
+      {
+         find_and_set(it_horario->turnoId,
+            problemData->calendario->turnos,
+            it_horario->turno);
+         find_and_set(it_horario->horarioAulaId,
+            it_horario->turno->horarios_aula,
+            it_horario->horario_aula);
+      } 
+   } // disciplinas
+   /* Falta: cursos, oferta, parametros (?) e fixacoes */
+   ITERA_GGROUP(it_dem,problemData->demandas,Demanda) {
+      find_and_set(it_dem->oferta_id,
+         problemData->ofertas, it_dem->oferta);
+      find_and_set(it_dem->disciplina_id,
+         problemData->disciplinas, it_dem->disciplina);
+   }
+}
+
+void ProblemDataLoader::cria_blocos_curriculares() {
+   /* cria blocos curriculares */
+   ITERA_GGROUP(it_disc, problemData->disciplinas, Disciplina) {
+      it_disc->num_turmas = 10; // TODO FIXME 
+   }
+   ITERA_GGROUP(it_curso,problemData->cursos,Curso)
+   {
+      ITERA_GGROUP(it_curr,it_curso->curriculos,Curriculo)
+      {
+         GGroup<DisciplinaPeriodo>::iterator it_dp = 
+            it_curr->disciplinas_periodo.begin();
+         for(;it_dp != it_curr->disciplinas_periodo.end(); ++it_dp)
+         {
+            DisciplinaPeriodo dp = *it_dp;
+            int p = dp.first;
+            int disc_id = dp.second;
+            Disciplina* d = new Disciplina;
+            d->id = disc_id;
+            
+            if (problemData->disciplinas.find(d) != 
+               problemData->disciplinas.end())
+               d = *problemData->disciplinas.find(d);
+
+            /* Versão lenta, find não está funcionando :( */
+            for(GGroup<Disciplina*>::iterator it_d = 
+               problemData->disciplinas.begin();
+               it_d != problemData->disciplinas.end(); ++it_d) 
+            {
+               if (it_d->getId() == d->getId())
+                  d = *it_d;
+            }
+            /* FIM */            
+
+            BlocoCurricular* b = new BlocoCurricular;
+            b->curso = *it_curso;
+            b->periodo = p;
+            GGroup<BlocoCurricular*>::iterator it_bc = 
+               problemData->blocos.find(b);
+            if (it_bc != problemData->blocos.end())
+            {
+               delete b;
+               b = *it_bc;
+            }
+
+            else {
+               problemData->blocos.add(b);
+            }
+            b->disciplinas.add(d);
+         }
+      }
+   }
+}
+void ProblemDataLoader::calcula_demandas() {
+   ITERA_GGROUP(it_dem,problemData->demandas,Demanda) {
+      int dem = it_dem->quantidade;
+      it_dem->disciplina->max_demanda = 
+         std::max(it_dem->disciplina->max_demanda,dem);
+      it_dem->disciplina->demanda_total += dem;
+   }
+   /* é preciso saber a demanda de uma disciplina em uma dada unidade
+   e eu só sei a demanda por campus */
+}
+void ProblemDataLoader::estima_turmas() {
+   ITERA_GGROUP(it_disc,problemData->disciplinas, Disciplina) {
+      int tam_turma; // 10 alunos por turma
+      if(it_disc->max_alunos_t > 0 && 
+         it_disc->max_alunos_p > 0) 
+         tam_turma = std::min(it_disc->max_alunos_p,
+                              it_disc->max_alunos_t);
+      else 
+         tam_turma = std::max(it_disc->max_alunos_p,
+                              it_disc->max_alunos_t);
+      if (tam_turma < 0)
+         tam_turma = 10; 
+      else 
+         tam_turma /= 2; 
+
+      if(it_disc->demanda_total == 0)
+         it_disc->num_turmas = 0;
+      else
+         it_disc->num_turmas = it_disc->demanda_total/tam_turma + 1;
+
+      std::cout << "Decidi abrir " << it_disc->num_turmas << 
+         " turmas da disciplina " << it_disc->codigo << std::endl;
    }
 }

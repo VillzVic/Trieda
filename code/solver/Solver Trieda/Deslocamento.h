@@ -14,4 +14,7 @@ public:
    int destino_id;
    int tempo;
    double custo;
+
+   OFBase* origem;
+   OFBase* destino;
 };

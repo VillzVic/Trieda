@@ -122,12 +122,10 @@ int SolverMIP::cria_variaveis(void)
    num_vars += cria_variavel_creditos();
    num_vars += cria_variavel_abertura();
    num_vars += cria_variavel_alunos();
-
-   /*
-   
    num_vars += cria_variavel_consecutivos();
    num_vars += cria_variavel_max_creds();
    num_vars += cria_variavel_min_creds();
+   /*
    num_vars += cria_variavel_turma_bloco();
    */
    return num_vars;
@@ -270,7 +268,7 @@ int SolverMIP::cria_variavel_abertura(void)
                v.setUnidade(*it_unidades);   // u
 
                // Falta calcular a demanda maxima e a demanda da unidade
-               double ratioDem;// = ( max_demanda - demanda_unidade ) / max_demanda;
+               double ratioDem = 1;// = ( max_demanda - demanda_unidade ) / max_demanda;
                
                double coeff = alpha + gamma * ratioDem;
 
@@ -404,6 +402,69 @@ int SolverMIP::cria_variavel_consecutivos(void)
                vHash[v] = lp->getNumCols();
 
                OPT_COL col(OPT_COL::VAR_BINARY,delta,0.0,1.0,
+                  (char*)v.toString().c_str());
+
+               lp->newCol(col);
+
+               num_vars += 1;
+            }
+         }
+      }
+   }
+   return num_vars;
+}
+int SolverMIP::cria_variavel_min_creds(void)
+{
+   int num_vars = 0;
+   ITERA_GGROUP(it_bloco,problemData->blocos,BlocoCurricular)
+   {
+      ITERA_GGROUP(it_disc,it_bloco->disciplinas,Disciplina)
+      {
+         for(int i=0;i<it_disc->num_turmas;i++)
+         {
+            Variable v;
+            v.reset();
+            v.setType(Variable::V_MIN_CRED_SEMANA);
+            v.setTurma(i);
+            v.setBloco(*it_bloco);
+
+            if (vHash.find(v) == vHash.end())
+            {
+               vHash[v] = lp->getNumCols();
+
+               OPT_COL col(OPT_COL::VAR_INTEGRAL,-lambda,0.0,1000.0,
+                  (char*)v.toString().c_str());
+
+               lp->newCol(col);
+
+               num_vars += 1;
+            }
+         }
+      }
+   }
+   return num_vars;
+}
+
+int SolverMIP::cria_variavel_max_creds(void)
+{
+   int num_vars = 0;
+   ITERA_GGROUP(it_bloco,problemData->blocos,BlocoCurricular)
+   {
+      ITERA_GGROUP(it_disc,it_bloco->disciplinas,Disciplina)
+      {
+         for(int i=0;i<it_disc->num_turmas;i++)
+         {
+            Variable v;
+            v.reset();
+            v.setType(Variable::V_MAX_CRED_SEMANA);
+            v.setTurma(i);
+            v.setBloco(*it_bloco);
+
+            if (vHash.find(v) == vHash.end())
+            {
+               vHash[v] = lp->getNumCols();
+
+               OPT_COL col(OPT_COL::VAR_INTEGRAL,lambda,0.0,1000.0,
                   (char*)v.toString().c_str());
 
                lp->newCol(col);
@@ -931,71 +992,6 @@ int SolverMIP::cria_variavel_turma_bloco(void)
    }
    return num_vars;
 }
-
-int SolverMIP::cria_variavel_min_creds(void)
-{
-   int num_vars = 0;
-   ITERA_GGROUP(it_bloco,problemData->blocos,BlocoCurricular)
-   {
-      ITERA_GGROUP(it_disc,it_bloco->disciplinas,Disciplina)
-      {
-         ITERA_GGROUP(it_turma,it_disc->turmas,Turma)
-         {
-            Variable v;
-            v.reset();
-            v.setType(Variable::V_MIN_CRED_SEMANA);
-            v.setTurma(*it_turma);
-            v.setBloco(*it_bloco);
-
-            if (vHash.find(v) == vHash.end())
-            {
-               vHash[v] = lp->getNumCols();
-
-               OPT_COL col(OPT_COL::VAR_INTEGRAL,-lambda,0.0,1000.0,
-                  (char*)v.toString().c_str());
-
-               lp->newCol(col);
-
-               num_vars += 1;
-            }
-         }
-      }
-   }
-   return num_vars;
-}
-
-int SolverMIP::cria_variavel_max_creds(void)
-{
-   int num_vars = 0;
-   ITERA_GGROUP(it_bloco,problemData->blocos,BlocoCurricular)
-   {
-      ITERA_GGROUP(it_disc,it_bloco->disciplinas,Disciplina)
-      {
-         ITERA_GGROUP(it_turma,it_disc->turmas,Turma)
-         {
-            Variable v;
-            v.reset();
-            v.setType(Variable::V_MAX_CRED_SEMANA);
-            v.setTurma(*it_turma);
-            v.setBloco(*it_bloco);
-
-            if (vHash.find(v) == vHash.end())
-            {
-               vHash[v] = lp->getNumCols();
-
-               OPT_COL col(OPT_COL::VAR_INTEGRAL,lambda,0.0,1000.0,
-                  (char*)v.toString().c_str());
-
-               lp->newCol(col);
-
-               num_vars += 1;
-            }
-         }
-      }
-   }
-   return num_vars;
-}
-
 int SolverMIP::cria_restricao_turmas_bloco(void)
 {
    int restricoes = 0;

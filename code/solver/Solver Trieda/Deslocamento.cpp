@@ -2,6 +2,8 @@
 
 Deslocamento::Deslocamento(void)
 {
+   origem = NULL;
+   destino = NULL;
 }
 
 Deslocamento::~Deslocamento(void)

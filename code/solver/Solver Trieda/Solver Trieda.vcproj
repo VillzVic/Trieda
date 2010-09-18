@@ -376,10 +376,6 @@
 					>
 				</File>
 				<File
-					RelativePath=".\Oferecimento.cpp"
-					>
-				</File>
-				<File
 					RelativePath=".\Operacional.cpp"
 					>
 				</File>
@@ -618,10 +614,6 @@
 				</File>
 				<File
 					RelativePath=".\AtendimentoUnidade.h"
-					>
-				</File>
-				<File
-					RelativePath=".\Oferecimento.h"
 					>
 				</File>
 				<File

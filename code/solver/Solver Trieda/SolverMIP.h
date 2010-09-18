@@ -78,7 +78,8 @@ public:
    int cria_variavel_alunos(void);
    int cria_variavel_aloc_alunos(void);
    int cria_variavel_consecutivos(void);
-   //int cria_variavel_min_creds(void);
+   int cria_variavel_min_creds(void);
+   int cria_variavel_max_creds(void);
 
    /*
    int cria_restricao_carga(void);
@@ -90,7 +91,6 @@ public:
    int cria_restricao_max_creditos(void);
    int cria_variavel_turma_bloco(void);
    
-   int cria_variavel_max_creds(void);
    int cria_restricao_turmas_bloco(void);
    int cria_restricao_cap_demanda(void);
    int cria_restricao_cap_sala(void);

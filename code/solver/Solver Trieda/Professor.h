@@ -24,6 +24,7 @@ public:
    int titulacao_id;
    int area_id;
    double valor_credito;
+   GGroup<Horario*> horarios;
    GGroup<Magisterio*> magisterio;
    TipoContrato* tipo_contrato;
    TipoTitulacao* titulacao; 

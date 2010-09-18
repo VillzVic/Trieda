@@ -44,7 +44,7 @@ bool Constraint::operator< (const Constraint& cons) const
       return true;
    else if( (int)this->getType() > (int) cons.getType() )
       return false;
-   if (E_MENOR(this->getTurma(),cons.getTurma())) return true;
+   if (this->getTurma() < cons.getTurma()) return true;
    if (E_MENOR(this->getDisciplina(),cons.getDisciplina())) return true;
    if (E_MENOR(this->getUnidade(),cons.getUnidade())) return true;
    if (E_MENOR(this->getSala(),cons.getSala())) return true;
@@ -84,7 +84,7 @@ size_t ConstraintHasher::operator() (const Constraint& cons) const
       sum *= HASH_PRIME; sum+= intHash(cons.getBloco()->getId());
    }
    if (cons.getTurma() != NULL) {
-      sum *= HASH_PRIME; sum+= intHash(cons.getTurma()->getId());
+      sum *= HASH_PRIME; sum+= intHash(cons.getTurma());
    }
    if (cons.getDisciplina() != NULL) {
       sum *= HASH_PRIME; sum+= intHash(cons.getDisciplina()->getId());
