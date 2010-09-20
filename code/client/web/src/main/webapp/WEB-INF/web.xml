@@ -45,6 +45,10 @@
 		<servlet-class>com.gapso.web.trieda.server.CursosServiceImpl</servlet-class>
 	</servlet>
 	<servlet>
+		<servlet-name>tiposCursosServlet</servlet-name>
+		<servlet-class>com.gapso.web.trieda.server.TiposCursosServiceImpl</servlet-class>
+	</servlet>
+	<servlet>
 		<servlet-name>disciplinasServlet</servlet-name>
 		<servlet-class>com.gapso.web.trieda.server.DisciplinasServiceImpl</servlet-class>
 	</servlet>
@@ -120,6 +124,10 @@
 	<servlet-mapping>
 		<servlet-name>cursosServlet</servlet-name>
 		<url-pattern>/trieda/cursos</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>tiposCursosServlet</servlet-name>
+		<url-pattern>/trieda/tiposCursos</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>disciplinasServlet</servlet-name>

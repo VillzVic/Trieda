@@ -24,6 +24,7 @@ public class Services {
 	public static final String HORARIOSAULA = "horariosaula";
 	public static final String AREASTITULACAO = "areasTitulacao";
 	public static final String SEMANASLETIVA = "semanasLetiva";
+	public static final String TIPOSCURSOS = "tiposCursos";
 	
 	public static Object get(String id) {
 		if(id.equals(CAMPI)) return campi();
@@ -219,4 +220,12 @@ public class Services {
 		return service;
 	}
 	
+	public static TiposCursosServiceAsync tiposCursos() {
+		TiposCursosServiceAsync service = (TiposCursosServiceAsync) Registry.get(TIPOSCURSOS);
+		if(service == null) {
+			service = GWT.create(TiposCursosService.class);
+			Registry.register(TIPOSCURSOS, service);
+		}
+		return service;
+	}
 }

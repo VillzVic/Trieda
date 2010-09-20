@@ -31,7 +31,6 @@ public class AppEvents {
 	
 	public static final EventType DivisaoCreditosList = new EventType();
 	
-	public static final EventType AreaTitulacaoList = new EventType();
 	public static final EventType CursoAreaTitulacaoList = new EventType();
 	
 	public static final EventType SemanaLetivaView = new EventType();

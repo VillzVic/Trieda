@@ -33,6 +33,8 @@ public class ToolBarView extends MyComposite implements ToolBarPresenter.Display
 	private MenuItem unidadesListMI;
 	private MenuItem salasListMI;
 	private MenuItem gruposSalasListMI;
+	private MenuItem tiposCursosListMI;
+	private MenuItem areasTitulacaoListMI;
 	
 	// Campi
 	private Button campiBt;
@@ -123,6 +125,10 @@ public class ToolBarView extends MyComposite implements ToolBarPresenter.Display
 		outros.add(salasListMI);
 		gruposSalasListMI = createMenuItem("Grupos de Salas", Resources.DEFAULTS.sala16());
 		outros.add(gruposSalasListMI);
+		tiposCursosListMI = createMenuItem("Tipos de Curso", Resources.DEFAULTS.curso16());
+		outros.add(tiposCursosListMI);
+		areasTitulacaoListMI = createMenuItem("Áreas de Titulação", Resources.DEFAULTS.areasDeTitulacao16());
+		outros.add(areasTitulacaoListMI);
 		
 		outrosUnidadesSBt.setMenu(outros);
 		group.add(outrosUnidadesSBt);
@@ -359,16 +365,6 @@ public class ToolBarView extends MyComposite implements ToolBarPresenter.Display
 		});
 		menuSalasBt.add(outros8);
 		
-		MenuItem outros11 = new MenuItem("Áreas de Titulação");
-		outros11.setIcon(AbstractImagePrototype.create(Resources.DEFAULTS.areasDeTitulacao16()));
-		outros11.addSelectionListener(new SelectionListener<MenuEvent>() {
-			@Override
-			public void componentSelected(MenuEvent ce) {
-				Dispatcher.forwardEvent(AppEvents.AreaTitulacaoList);
-			}
-		});
-		menuSalasBt.add(outros11);
-		
 		MenuItem outros12 = new MenuItem("Vincular Áreas de Titulação");
 		outros12.setIcon(AbstractImagePrototype.create(Resources.DEFAULTS.areasDeTitulacao16()));
 		outros12.addSelectionListener(new SelectionListener<MenuEvent>() {
@@ -496,6 +492,14 @@ public class ToolBarView extends MyComposite implements ToolBarPresenter.Display
 	@Override
 	public MenuItem getGruposSalasListMenuItem() {
 		return gruposSalasListMI;
+	}
+	@Override
+	public MenuItem getTiposCursosListMenuItem() {
+		return tiposCursosListMI;
+	}
+	@Override
+	public MenuItem getAreasTitulacaoListMIMenuItem() {
+		return areasTitulacaoListMI;
 	}
 	
 }

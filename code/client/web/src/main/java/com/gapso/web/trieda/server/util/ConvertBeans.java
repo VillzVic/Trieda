@@ -6,23 +6,27 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import com.gapso.trieda.domain.AreaTitulacao;
 import com.gapso.trieda.domain.Campus;
 import com.gapso.trieda.domain.GrupoSala;
 import com.gapso.trieda.domain.HorarioAula;
 import com.gapso.trieda.domain.HorarioDisponivelCenario;
 import com.gapso.trieda.domain.Sala;
 import com.gapso.trieda.domain.SemanaLetiva;
+import com.gapso.trieda.domain.TipoCurso;
 import com.gapso.trieda.domain.TipoSala;
 import com.gapso.trieda.domain.Turno;
 import com.gapso.trieda.domain.Unidade;
 import com.gapso.trieda.misc.Estados;
 import com.gapso.trieda.misc.Semanas;
+import com.gapso.web.trieda.client.mvp.model.AreaTitulacaoDTO;
 import com.gapso.web.trieda.client.mvp.model.CampusDTO;
 import com.gapso.web.trieda.client.mvp.model.GrupoSalaDTO;
 import com.gapso.web.trieda.client.mvp.model.HorarioAulaDTO;
 import com.gapso.web.trieda.client.mvp.model.HorarioDisponivelCenarioDTO;
 import com.gapso.web.trieda.client.mvp.model.SalaDTO;
 import com.gapso.web.trieda.client.mvp.model.SemanaLetivaDTO;
+import com.gapso.web.trieda.client.mvp.model.TipoCursoDTO;
 import com.gapso.web.trieda.client.mvp.model.TipoSalaDTO;
 import com.gapso.web.trieda.client.mvp.model.TurnoDTO;
 import com.gapso.web.trieda.client.mvp.model.UnidadeDTO;
@@ -388,4 +392,41 @@ public class ConvertBeans {
 		return dto;
 	}
 	
+	// TIPO CURSO
+	public static TipoCurso toTipoCurso(TipoCursoDTO dto) {
+		TipoCurso domain = new TipoCurso();
+		domain.setId(dto.getId());
+		domain.setVersion(dto.getVersion());
+		domain.setCodigo(dto.getCodigo());
+		domain.setDescricao(dto.getDescricao());
+		return domain;
+	}
+
+	public static TipoCursoDTO toTipoCursoDTO(TipoCurso domain) {
+		TipoCursoDTO dto = new TipoCursoDTO();
+		dto.setId(domain.getId());
+		dto.setVersion(domain.getVersion());
+		dto.setCodigo(domain.getCodigo());
+		dto.setDescricao(domain.getDescricao());
+		return dto;
+	}
+	
+	// ÁREA DE TITULAÇÂO
+	public static AreaTitulacao toAreaTitulacao(AreaTitulacaoDTO dto) {
+		AreaTitulacao domain = new AreaTitulacao();
+		domain.setId(dto.getId());
+		domain.setVersion(dto.getVersion());
+		domain.setCodigo(dto.getCodigo());
+		domain.setDescricao(dto.getDescricao());
+		return domain;
+	}
+	
+	public static AreaTitulacaoDTO toAreaTitulacaoDTO(AreaTitulacao domain) {
+		AreaTitulacaoDTO dto = new AreaTitulacaoDTO();
+		dto.setId(domain.getId());
+		dto.setVersion(domain.getVersion());
+		dto.setCodigo(domain.getCodigo());
+		dto.setDescricao(domain.getDescricao());
+		return dto;
+	}
 }
