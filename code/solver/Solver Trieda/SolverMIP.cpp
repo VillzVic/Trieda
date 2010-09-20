@@ -267,9 +267,20 @@ int SolverMIP::cria_variavel_abertura(void)
                v.setDisciplina(*it_disc);    // d
                v.setUnidade(*it_unidades);   // u
 
-               // Falta calcular a demanda maxima e a demanda da unidade
-               double ratioDem = 1;// = ( max_demanda - demanda_unidade ) / max_demanda;
+               std::pair<int,int> dc = std::make_pair
+                  (it_disc->getId(),it_campus->getId());
+
+               if(problemData->demandas_campus.find(dc) !=
+                  problemData->demandas_campus.end())
+                  problemData->demandas_campus[dc] = 0;
                
+               
+
+               double ratioDem = ( it_disc->demanda_total - 
+                                   problemData->demandas_campus[dc] ) 
+                                 / (1.0 * it_disc->demanda_total);
+               // = ( max_demanda - demanda_unidade ) / max_demanda;
+
                double coeff = alpha + gamma * ratioDem;
 
                if (vHash.find(v) == vHash.end())

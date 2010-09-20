@@ -77,8 +77,8 @@ public:
 
    GGroup<BlocoCurricular*> blocos;
 
-   std::map<std::pair<int/*unidade_id*/,int/*curso_id*/>,int> 
-      demanda_curso;
+   std::map<std::pair<int/*disc_id*/,int/*campus_id*/>,int> 
+      demandas_campus;
 
 public:
    virtual void le_arvore(TriedaInput& raiz);

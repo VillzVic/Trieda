@@ -33,7 +33,6 @@ void ProblemData::le_arvore(TriedaInput& raiz)
    ITERA_SEQ(it_campi,raiz.campi(),Campus) {
       Campus* c = new Campus;
       c->le_arvore(*it_campi);
-      std::cout << "Li campus " << c->getId() << std::endl;
       campi.add(c);
    }
    ITERA_SEQ(it_tsalas,raiz.tiposSala(),TipoSala) {

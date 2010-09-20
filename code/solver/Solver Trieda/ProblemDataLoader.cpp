@@ -27,6 +27,7 @@ void ProblemDataLoader::load()
    gera_refs();
    cria_blocos_curriculares();
    calcula_demandas();
+   print_stats();
    estima_turmas();
 }
 template<class T> 
@@ -149,7 +150,22 @@ void ProblemDataLoader::gera_refs() {
             it_horario->horario_aula);
       } 
    } // disciplinas
-   /* Falta: cursos, oferta, parametros (?) e fixacoes */
+   /* Falta: cursos, parametros (?) e fixacoes */
+
+   ITERA_GGROUP(it_oferta,problemData->ofertas,Oferta) {
+      find_and_set(it_oferta->curso_id,
+         problemData->cursos,
+         it_oferta->curso);
+      find_and_set(it_oferta->curriculo_id,
+         it_oferta->curso->curriculos,
+         it_oferta->curriculo);
+      find_and_set(it_oferta->turno_id,
+         problemData->calendario->turnos,
+         it_oferta->turno);
+      find_and_set(it_oferta->campus_id,
+         problemData->campi,it_oferta->campus);
+   }
+
    ITERA_GGROUP(it_dem,problemData->demandas,Demanda) {
       find_and_set(it_dem->oferta_id,
          problemData->ofertas, it_dem->oferta);
@@ -216,9 +232,18 @@ void ProblemDataLoader::calcula_demandas() {
       it_dem->disciplina->max_demanda = 
          std::max(it_dem->disciplina->max_demanda,dem);
       it_dem->disciplina->demanda_total += dem;
+
+      std::pair<int,int> dc = std::make_pair(
+         it_dem->disciplina->getId(),
+         it_dem->oferta->campus->getId());
+
+      // inicializa com zero caso ainda não exista;
+      if(problemData->demandas_campus.find(dc) !=
+         problemData->demandas_campus.end())
+         problemData->demandas_campus[dc] = 0;
+
+      problemData->demandas_campus[dc] += dem;
    }
-   /* é preciso saber a demanda de uma disciplina em uma dada unidade
-   e eu só sei a demanda por campus */
 }
 void ProblemDataLoader::estima_turmas() {
    ITERA_GGROUP(it_disc,problemData->disciplinas, Disciplina) {
@@ -243,4 +268,36 @@ void ProblemDataLoader::estima_turmas() {
       std::cout << "Decidi abrir " << it_disc->num_turmas << 
          " turmas da disciplina " << it_disc->codigo << std::endl;
    }
+}
+void ProblemDataLoader::print_stats() {
+   int ncampi,nunidades,ndiscs,nprofs,ncursos,nofertas,tdemanda;
+
+   ncampi = problemData->campi.size();
+   nunidades = 0, nprofs = 0, ncursos = 0;
+   ITERA_GGROUP(it_campi,problemData->campi,Campus) {
+      nunidades += it_campi->unidades.size();
+      nprofs += it_campi->professores.size();
+      ncursos += problemData->cursos.size();
+   }
+   nofertas = problemData->ofertas.size();
+   ndiscs = problemData->disciplinas.size();
+   tdemanda = 0;
+   ITERA_GGROUP(it_disc,problemData->disciplinas,Disciplina) {
+      tdemanda += it_disc->demanda_total;
+   }
+
+
+   std::cout << std::endl;
+   std::cout << "Estatisticas de dados de entrada" << std::endl;
+   std::cout << "================================" << std::endl;
+   printf("Campi:        \t%4d\n",ncampi);
+   printf("Unidades:     \t%4d\n",nunidades);
+   printf("Disciplinas:  \t%4d\n",ndiscs);
+   printf("Professores:  \t%4d\n",nprofs);
+   printf("Cursos:       \t%4d\n",ncursos);
+   printf("Ofertas:      \t%4d\n",nofertas);
+   printf("Demanda total:\t%4d vagas\n",tdemanda);
+   std::cout << "================================" << std::endl
+      << std::endl;
+
 }

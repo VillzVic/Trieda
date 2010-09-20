@@ -31,7 +31,7 @@ public:
    void cria_blocos_curriculares();
    void calcula_demandas();
    void estima_turmas();
-
+   void print_stats();
 
 private:
    // Input data object of the problem
