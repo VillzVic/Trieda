@@ -150,8 +150,11 @@ void ProblemDataLoader::gera_refs() {
             it_horario->horario_aula);
       } 
    } // disciplinas
-   /* Falta: cursos, parametros (?) e fixacoes */
-
+   ITERA_GGROUP(it_curso, problemData->cursos, Curso) {
+      find_and_set(it_curso->tipo_id,
+         problemData->tipos_curso, it_curso->tipo_curso);
+   }
+ 
    ITERA_GGROUP(it_oferta,problemData->ofertas,Oferta) {
       find_and_set(it_oferta->curso_id,
          problemData->cursos,
@@ -171,6 +174,33 @@ void ProblemDataLoader::gera_refs() {
          problemData->ofertas, it_dem->oferta);
       find_and_set(it_dem->disciplina_id,
          problemData->disciplinas, it_dem->disciplina);
+   }
+   /* Falta: parametros (?) e fixacoes */
+   ITERA_GGROUP(it_ndh,
+      problemData->parametros->niveis_dificuldade_horario,
+                NivelDificuldadeHorario) {
+      find_and_set(it_ndh->nivel_dificuldade_id,
+         problemData->niveis_dificuldade,
+         it_ndh->nivel_dificuldade);
+   }
+   ITERA_GGROUP(it_fix,problemData->fixacoes,Fixacao) {
+      find_and_set(it_fix->disciplina_id, 
+         problemData->disciplinas,it_fix->disciplina);
+      find_and_set(it_fix->turno_id, 
+         problemData->calendario->turnos,
+         it_fix->turno);
+      find_and_set(it_fix->horario_id,
+         it_fix->turno->horarios_aula,
+         it_fix->horario);
+
+      ITERA_GGROUP(it_campi,problemData->campi,Campus) {
+         find_and_set(it_fix->professor_id, 
+            it_campi->professores, it_fix->professor);
+         ITERA_GGROUP(it_unidades,it_campi->unidades,Unidade) {
+            find_and_set(it_fix->sala_id,
+               it_unidades->salas, it_fix->sala);
+         }
+      }
    }
 }
 

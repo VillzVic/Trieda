@@ -25,6 +25,6 @@ public:
    Disciplina* disciplina;
    Sala* sala;
    Turno* turno;
-   Horario* horario;
+   HorarioAula* horario;
 };
 
