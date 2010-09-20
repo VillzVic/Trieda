@@ -6,6 +6,7 @@ import com.extjs.gxt.ui.client.data.BasePagingLoadConfig;
 import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
+import com.gapso.web.trieda.client.mvp.model.HorarioDisponivelCenarioDTO;
 import com.gapso.web.trieda.client.mvp.model.SemanaLetivaDTO;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -17,5 +18,7 @@ public interface SemanasLetivaServiceAsync {
 	void getBuscaList(String codigo, String descricao, PagingLoadConfig config, AsyncCallback<PagingLoadResult<SemanaLetivaDTO>> callback);
 	void save(SemanaLetivaDTO semanaLetivaDTO, AsyncCallback<Void> callback);
 	void remove(List<SemanaLetivaDTO> semanaLetivaDTOList, AsyncCallback<Void> callback);
+	void getHorariosDisponiveisCenario(SemanaLetivaDTO semanaLetivaDTO, AsyncCallback<PagingLoadResult<HorarioDisponivelCenarioDTO>> callback);
+	void saveHorariosDisponiveisCenario(List<HorarioDisponivelCenarioDTO> listDTO, AsyncCallback<Void> callback);
 	
 }

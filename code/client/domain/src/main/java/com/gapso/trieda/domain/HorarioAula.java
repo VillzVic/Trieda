@@ -1,15 +1,21 @@
 package com.gapso.trieda.domain;
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.Table;
@@ -17,6 +23,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
+
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.roo.addon.entity.RooEntity;
@@ -48,12 +55,16 @@ public class HorarioAula implements java.io.Serializable {
     @DateTimeFormat(style = "--")
     private Date horario;
 
+    @OneToMany(cascade = CascadeType.ALL, mappedBy="horarioAula", fetch = FetchType.EAGER)
+    private Set<HorarioDisponivelCenario> horariosDisponiveisCenario =  new HashSet<HorarioDisponivelCenario>();
+    
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("Id: ").append(getId()).append(", ");
         sb.append("Version: ").append(getVersion()).append(", ");
         sb.append("Semana LEtiva: ").append(getSemanaLetiva()).append(", ");
         sb.append("Turno: ").append(getTurno()).append(", ");
+        sb.append("HorariosDisponiveisCenario: ").append(getHorariosDisponiveisCenario() == null ? "null" : getHorariosDisponiveisCenario().size()).append(", ");
         sb.append("Horario: ").append(getHorario());
         return sb.toString();
     }
@@ -186,5 +197,14 @@ public class HorarioAula implements java.io.Serializable {
         this.horario = horario;
     }
 
+
+	public Set<HorarioDisponivelCenario> getHorariosDisponiveisCenario() {
+        return this.horariosDisponiveisCenario;
+    }
+
+	public void setHorariosDisponiveisCenario(Set<HorarioDisponivelCenario> horariosDisponiveisCenario) {
+        this.horariosDisponiveisCenario = horariosDisponiveisCenario;
+    }
+    
     private static final long serialVersionUID = 6415195416443296422L;
 }

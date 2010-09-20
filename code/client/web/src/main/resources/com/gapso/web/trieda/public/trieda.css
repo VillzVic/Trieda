@@ -113,3 +113,15 @@ table.cw-FlexTable td {
 table.cw-FlexTable td.cw-FlexTable-content {
 	padding:0 10px 0 10px;
 }
+
+.SemanaLetivaGrid .x-grid3-row {
+	border: 0;
+}
+.SemanaLetivaGrid td.x-grid3-cell {
+	vertical-align: middle;
+	padding-left: 0;
+	padding-right: 0;
+}
+.SemanaLetivaGrid .x-grid3-row-selected {
+	background-color: #FFF !important;
+	border-color: #FFF;

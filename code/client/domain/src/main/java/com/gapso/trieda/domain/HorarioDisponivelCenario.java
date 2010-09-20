@@ -1,5 +1,6 @@
 package com.gapso.trieda.domain;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -44,19 +45,19 @@ public class HorarioDisponivelCenario implements java.io.Serializable {
     private Semanas semana;
 
     @ManyToMany(cascade = CascadeType.ALL)
-    private Set<com.gapso.trieda.domain.Campus> campi = new java.util.HashSet<com.gapso.trieda.domain.Campus>();
+    private Set<Campus> campi = new HashSet<Campus>();
 
     @ManyToMany(cascade = CascadeType.ALL)
-    private Set<com.gapso.trieda.domain.Unidade> unidades = new java.util.HashSet<com.gapso.trieda.domain.Unidade>();
+    private Set<Unidade> unidades = new HashSet<Unidade>();
 
     @ManyToMany(cascade = CascadeType.ALL)
-    private Set<com.gapso.trieda.domain.Sala> salas = new java.util.HashSet<com.gapso.trieda.domain.Sala>();
+    private Set<Sala> salas = new HashSet<Sala>();
 
     @ManyToMany(cascade = CascadeType.ALL)
-    private Set<com.gapso.trieda.domain.Disciplina> disciplinas = new java.util.HashSet<com.gapso.trieda.domain.Disciplina>();
+    private Set<Disciplina> disciplinas = new HashSet<Disciplina>();
 
     @ManyToMany(cascade = CascadeType.ALL)
-    private Set<com.gapso.trieda.domain.Professor> professores = new java.util.HashSet<com.gapso.trieda.domain.Professor>();
+    private Set<Professor> professores = new HashSet<Professor>();
 
 	private static final long serialVersionUID = 9128639869205918403L;
 

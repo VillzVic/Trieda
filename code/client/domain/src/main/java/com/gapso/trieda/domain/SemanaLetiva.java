@@ -1,15 +1,19 @@
 package com.gapso.trieda.domain;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.Table;
@@ -45,6 +49,9 @@ public class SemanaLetiva implements java.io.Serializable {
     @Column(name = "SLE_DESCRICAO")
     @Size(max = 255)
     private String descricao;
+    
+    @OneToMany(mappedBy="semanaLetiva", fetch = FetchType.EAGER)
+    private Set<HorarioAula> horariosAula =  new HashSet<HorarioAula>();
 
 	private static final long serialVersionUID = 6807360646327130208L;
 
@@ -71,7 +78,15 @@ public class SemanaLetiva implements java.io.Serializable {
 	public void setDescricao(String descricao) {
         this.descricao = descricao;
     }
+	
+	public Set<HorarioAula> getHorariosAula() {
+        return this.horariosAula;
+    }
 
+	public void setHorariosAula(Set<HorarioAula> horariosAula) {
+        this.horariosAula = horariosAula;
+    }
+    
 	@PersistenceContext
     transient EntityManager entityManager;
 
@@ -148,7 +163,9 @@ public class SemanaLetiva implements java.io.Serializable {
 
 	public static SemanaLetiva find(Long id) {
         if (id == null) return null;
-        return entityManager().find(SemanaLetiva.class, id);
+        SemanaLetiva o = entityManager().find(SemanaLetiva.class, id);
+        o.getHorariosAula();
+        return o;
     }
 
 	public static List<SemanaLetiva> find(int firstResult, int maxResults) {
@@ -181,6 +198,7 @@ public class SemanaLetiva implements java.io.Serializable {
         sb.append("Version: ").append(getVersion()).append(", ");
         sb.append("Cenario: ").append(getCenario()).append(", ");
         sb.append("Codigo: ").append(getCodigo()).append(", ");
+        sb.append("HorariosAula: ").append(getHorariosAula() == null ? "null" : getHorariosAula().size()).append(", ");
         sb.append("Descricao: ").append(getDescricao());
         return sb.toString();
     }

@@ -1,19 +1,26 @@
 package com.gapso.web.trieda.server.util;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 import com.gapso.trieda.domain.Campus;
 import com.gapso.trieda.domain.GrupoSala;
 import com.gapso.trieda.domain.HorarioAula;
+import com.gapso.trieda.domain.HorarioDisponivelCenario;
 import com.gapso.trieda.domain.Sala;
 import com.gapso.trieda.domain.SemanaLetiva;
 import com.gapso.trieda.domain.TipoSala;
 import com.gapso.trieda.domain.Turno;
 import com.gapso.trieda.domain.Unidade;
 import com.gapso.trieda.misc.Estados;
+import com.gapso.trieda.misc.Semanas;
 import com.gapso.web.trieda.client.mvp.model.CampusDTO;
 import com.gapso.web.trieda.client.mvp.model.GrupoSalaDTO;
 import com.gapso.web.trieda.client.mvp.model.HorarioAulaDTO;
+import com.gapso.web.trieda.client.mvp.model.HorarioDisponivelCenarioDTO;
 import com.gapso.web.trieda.client.mvp.model.SalaDTO;
 import com.gapso.web.trieda.client.mvp.model.SemanaLetivaDTO;
 import com.gapso.web.trieda.client.mvp.model.TipoSalaDTO;
@@ -227,4 +234,158 @@ public class ConvertBeans {
 		return dto;
 	}
 
+
+	// HORARIO DISPONÍVEL CENÁRIO
+	public static List<HorarioDisponivelCenario> toHorarioDisponivelCenario(List<HorarioDisponivelCenarioDTO> listDTO) {
+		List<HorarioDisponivelCenario> listDomain = new ArrayList<HorarioDisponivelCenario>();
+		for(HorarioDisponivelCenarioDTO dto : listDTO) {
+			HorarioAula horarioAula = HorarioAula.find(dto.getHorarioDeAulaId());
+			HorarioDisponivelCenario domain = null;
+			if(dto.getSegunda()) {
+				domain = null;
+				if(dto.getSegundaId() == null) {
+					domain = new HorarioDisponivelCenario();
+					domain.setSemana(Semanas.SEG);
+					domain.setHorarioAula(horarioAula);
+				} else {
+					domain = HorarioDisponivelCenario.findHorarioDisponivelCenario(dto.getSegundaId());
+				}
+				if(domain != null) { listDomain.add(domain); }
+			}
+			if(dto.getTerca()) {
+				domain = null;
+				if(dto.getTercaId() == null) {
+					domain = new HorarioDisponivelCenario();
+					domain.setSemana(Semanas.TER);
+					domain.setHorarioAula(horarioAula);
+				} else {
+					domain = HorarioDisponivelCenario.findHorarioDisponivelCenario(dto.getTercaId());
+				}
+				if(domain != null) { listDomain.add(domain); }
+			}
+			if(dto.getQuarta()) {
+				domain = null;
+				if(dto.getQuartaId() == null) {
+					domain = new HorarioDisponivelCenario();
+					domain.setSemana(Semanas.QUA);
+					domain.setHorarioAula(horarioAula);
+				} else {
+					domain = HorarioDisponivelCenario.findHorarioDisponivelCenario(dto.getQuartaId());
+				}
+				if(domain != null) { listDomain.add(domain); }
+			}
+			if(dto.getQuinta()) {
+				domain = null;
+				if(dto.getQuintaId() == null) {
+					domain = new HorarioDisponivelCenario();
+					domain.setSemana(Semanas.QUI);
+					domain.setHorarioAula(horarioAula);
+				} else {
+					domain = HorarioDisponivelCenario.findHorarioDisponivelCenario(dto.getQuintaId());
+				}
+				if(domain != null) { listDomain.add(domain); }
+			} 
+			if(dto.getSexta()) {
+				domain = null;
+				if(dto.getSextaId() == null) {
+					domain = new HorarioDisponivelCenario();
+					domain.setSemana(Semanas.SEX);
+					domain.setHorarioAula(horarioAula);
+				} else {
+					domain = HorarioDisponivelCenario.findHorarioDisponivelCenario(dto.getSextaId());
+				}
+				if(domain != null) { listDomain.add(domain); }
+			}
+			if(dto.getSabado()) {
+				domain = null;
+				if(dto.getSabadoId() == null) {
+					domain = new HorarioDisponivelCenario();
+					domain.setSemana(Semanas.SAB);
+					domain.setHorarioAula(horarioAula);
+				} else {
+					domain = HorarioDisponivelCenario.findHorarioDisponivelCenario(dto.getSabadoId());
+				}
+				if(domain != null) { listDomain.add(domain); }
+			}
+			if(dto.getDomingo()) {
+				domain = null;
+				if(dto.getDomingoId() == null) {
+					domain = new HorarioDisponivelCenario();
+					domain.setSemana(Semanas.DOM);
+					domain.setHorarioAula(horarioAula);
+				} else {
+					domain = HorarioDisponivelCenario.findHorarioDisponivelCenario(dto.getDomingoId());
+				}
+				if(domain != null) { listDomain.add(domain); }
+ 			}
+		}
+		
+		return listDomain;
+	}
+
+	public static HorarioDisponivelCenarioDTO toHorarioDisponivelCenarioDTO(HorarioAula domain) {
+		
+		HorarioDisponivelCenarioDTO dto = new HorarioDisponivelCenarioDTO();
+		dto.setHorarioDeAulaId(domain.getId());
+		dto.setHorarioDeAulaVersion(domain.getVersion());
+		dto.setTurnoString(domain.getTurno().getNome());
+		
+		dto.setSegunda(false);
+		dto.setTerca(false);
+		dto.setQuarta(false);
+		dto.setQuinta(false);
+		dto.setSexta(false);
+		dto.setSabado(false);
+		dto.setDomingo(false);
+		
+		for(HorarioDisponivelCenario o : domain.getHorariosDisponiveisCenario()) {
+			switch (o.getSemana()) {
+			case SEG:
+				dto.setSegunda(true);
+				dto.setSegundaId(o.getId());
+				break;
+			case TER:
+				dto.setTerca(true);
+				dto.setTercaId(o.getId());
+			break;
+			case QUA:
+				dto.setQuarta(true);
+				dto.setQuartaId(o.getId());
+			break;
+			case QUI:
+				dto.setQuinta(true);
+				dto.setQuintaId(o.getId());
+			break;
+			case SEX:
+				dto.setSexta(true);
+				dto.setSextaId(o.getId());
+			break;
+			case SAB:
+				dto.setSabado(true);
+				dto.setSabadoId(o.getId());
+			break;
+			case DOM:
+				dto.setDomingo(true);
+				dto.setDomingoId(o.getId());
+			break;
+			default:
+				break;
+			}
+		}
+
+		DateFormat df = new SimpleDateFormat("HH:mm");
+		String inicio = df.format(domain.getHorario());
+		
+		Calendar fimCal = Calendar.getInstance();
+		fimCal.setTime(domain.getHorario());
+		fimCal.add(Calendar.MINUTE, domain.getTurno().getTempo());
+		String fim = df.format(fimCal.getTime());
+		
+		dto.setHorarioString(inicio + " / " + fim);
+		
+		dto.setHorario(domain.getHorario());
+		
+		return dto;
+	}
+	
 }

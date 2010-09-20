@@ -7,14 +7,13 @@ import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.extjs.gxt.ui.client.data.RpcProxy;
 import com.extjs.gxt.ui.client.event.ButtonEvent;
 import com.extjs.gxt.ui.client.event.SelectionListener;
-import com.extjs.gxt.ui.client.mvc.Dispatcher;
 import com.extjs.gxt.ui.client.widget.Component;
 import com.extjs.gxt.ui.client.widget.Info;
 import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.TextField;
-import com.gapso.web.trieda.client.AppEvents;
 import com.gapso.web.trieda.client.mvp.model.SemanaLetivaDTO;
+import com.gapso.web.trieda.client.mvp.view.HorarioDisponivelCenarioFormView;
 import com.gapso.web.trieda.client.mvp.view.SemanaLetivaFormView;
 import com.gapso.web.trieda.client.services.SemanasLetivaServiceAsync;
 import com.gapso.web.trieda.client.services.Services;
@@ -100,7 +99,10 @@ public class SemanasLetivaPresenter implements Presenter {
 		display.getDiasDeAulaButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
 			@Override
 			public void componentSelected(ButtonEvent ce) {
-				Dispatcher.forwardEvent(AppEvents.SemanaLetivaView);
+//				Dispatcher.forwardEvent(AppEvents.SemanaLetivaView);
+				SemanaLetivaDTO dto = display.getGrid().getGrid().getSelectionModel().getSelectedItem();
+				Presenter presenter = new HorarioDisponivelCenarioFormPresenter(new HorarioDisponivelCenarioFormView(dto));
+				presenter.go(null);
 			}
 		});
 		display.getResetBuscaButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
