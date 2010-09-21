@@ -27,7 +27,7 @@ public class GetDatabase {
 		dataSet.addTable("unidades");
 		dataSet.addTable("tipos_sala");
 		dataSet.addTable("salas");
-		dataSet.addTable("grupos_sala");
+		dataSet.addTable("grupos_sala_salas");
 		dataSet.addTable("deslocamentos_campi");
 		dataSet.addTable("deslocamentos_unidades");
 		XmlDataSetWriter writer = new XmlDataSetWriter(new FileWriter("db.xml") ,null);

@@ -6,7 +6,7 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd   http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd   http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd   http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-3.0.xsd   http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.0.xsd">
 
 	<bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor" />
-	
+
 	<context:property-placeholder location="classpath*:META-INF/spring/test-database.properties" />
 
 	<context:spring-configured />
@@ -24,33 +24,28 @@
 	</bean>
 
 	<bean class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean" id="entityManagerFactory">
-		<property name="persistenceUnitName" value="test-PU"/>
-		<property name="persistenceXmlLocation" value ="classpath:/META-INF/test-persistence.xml"/>
-		<property name="dataSource" ref="dataSource" />		
-    <property name="jpaVendorAdapter">
-      <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter"/>
-    </property>
-    <property name="jpaProperties">
-      <props>
-        <prop key="hibernate.ejb.naming_strategy">org.hibernate.cfg.ImprovedNamingStrategy</prop>
-        <prop key="hibernate.hbm2ddl.auto">create</prop>
-        <prop key="hibernate.format_sql">false</prop>
-        <prop key="hibernate.use_sql_comments">false</prop>
-      </props>
-    </property>
-    <property name="persistenceUnitPostProcessors">
-      <list><bean class="com.gapso.trieda.spring.TestPersistenceUnitPostProcessor"/></list>
-    </property>
+		<property name="persistenceUnitName" value="test-PU" />
+		<property name="persistenceXmlLocation" value="classpath:/META-INF/test-persistence.xml" />
+		<property name="dataSource" ref="dataSource" />
+		<property name="jpaVendorAdapter">
+			<bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter" />
+		</property>
+		<property name="jpaProperties">
+			<props>
+				<prop key="hibernate.ejb.naming_strategy">org.hibernate.cfg.ImprovedNamingStrategy</prop>
+				<prop key="hibernate.hbm2ddl.auto">create</prop>
+				<prop key="hibernate.show_sql">true</prop>
+				<prop key="hibernate.format_sql">false</prop>
+				<prop key="hibernate.use_sql_comments">false</prop>
+			</props>
+		</property>
 	</bean>
 
-	<bean class="org.springframework.orm.jpa.JpaTransactionManager"
-		id="transactionManager">
+	<bean class="org.springframework.orm.jpa.JpaTransactionManager" id="transactionManager">
 		<property name="entityManagerFactory" ref="entityManagerFactory" />
 	</bean>
 
-	<tx:annotation-driven mode="aspectj"
-		transaction-manager="transactionManager" />
-
+	<tx:annotation-driven mode="aspectj" transaction-manager="transactionManager" />
 
 	<bean class="com.gapso.trieda.domain.Usuario" id="usuarioBean" />
 	<bean class="com.gapso.trieda.domain.Sessao" id="sessaoBean" />

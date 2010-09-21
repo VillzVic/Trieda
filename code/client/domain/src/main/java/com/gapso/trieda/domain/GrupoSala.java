@@ -9,7 +9,6 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -52,7 +51,7 @@ public class GrupoSala implements Serializable {
     @Size(min = 3, max = 20)
     private String nome;
 
-    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @ManyToMany(cascade = CascadeType.ALL)
     private Set<Sala> salas = new HashSet<Sala>();
 
     @ManyToMany(cascade = CascadeType.ALL)

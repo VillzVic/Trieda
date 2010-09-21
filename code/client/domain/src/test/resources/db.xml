@@ -33,6 +33,21 @@
       <value>1</value>
     </row>
   </table>
+  <table name="deslocamentos_campi">
+    <column>dec_id</column>
+    <column>dec_custo</column>
+    <column>dec_tempo</column>
+    <column>version</column>
+    <column>cam_dest_id</column>
+    <column>cam_orig_id</column>
+  </table>
+  <table name="deslocamentos_unidades">
+    <column>deu_id</column>
+    <column>dec_tempo</column>
+    <column>version</column>
+    <column>uni_dest_id</column>
+    <column>uni_orig_id</column>
+  </table>
   <table name="tipos_sala">
     <column>tsa_id</column>
     <column>tsa_descricao</column>
@@ -131,19 +146,28 @@
       <value>2</value>
     </row>
   </table>
-  <table name="deslocamentos_campi">
-    <column>dec_id</column>
-    <column>dec_custo</column>
-    <column>dec_tempo</column>
-    <column>version</column>
-    <column>cam_dest_id</column>
-    <column>cam_orig_id</column>
-  </table>
-  <table name="deslocamentos_unidades">
-    <column>deu_id</column>
-    <column>dec_tempo</column>
-    <column>version</column>
-    <column>uni_dest_id</column>
-    <column>uni_orig_id</column>
+  <table name="grupos_sala_salas">
+    <column>grupos_sala</column>
+    <column>salas</column>
+    <row>
+      <value>1</value>
+      <value>4</value>
+    </row>
+    <row>
+      <value>1</value>
+      <value>5</value>
+    </row>
+    <row>
+      <value>1</value>
+      <value>6</value>
+    </row>
+    <row>
+      <value>1</value>
+      <value>7</value>
+    </row>
+    <row>
+      <value>1</value>
+      <value>8</value>
+    </row>
   </table>
 </dataset>

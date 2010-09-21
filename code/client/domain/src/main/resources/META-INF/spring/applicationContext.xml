@@ -16,8 +16,7 @@
 		<context:exclude-filter expression="org.springframework.stereotype.Controller" type="annotation" />
 	</context:component-scan>
 
-	<bean class="org.apache.commons.dbcp.BasicDataSource"
-		destroy-method="close" id="dataSource">
+	<bean class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close" id="dataSource">
 		<property name="driverClassName" value="${database.driverClassName}" />
 		<property name="url" value="${database.url}" />
 		<property name="username" value="${database.username}" />
@@ -38,7 +37,6 @@
 	<bean class="com.gapso.trieda.domain.Sessao" id="sessaoBean" />
 	<bean class="com.gapso.trieda.domain.Turno" id="turnoBean" />
 	<bean class="com.gapso.trieda.domain.Cenario" id="cenarioBean" />
-	<bean class="com.gapso.trieda.domain.Calendario" id="calendarioBean" />
 	<bean class="com.gapso.trieda.domain.Campus" id="campusBean" />
 	<bean class="com.gapso.trieda.domain.Unidade" id="unidadeBean" />
 	<bean class="com.gapso.trieda.domain.TipoContrato" id="tipoContratoBean" />
