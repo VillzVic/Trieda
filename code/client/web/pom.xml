@@ -152,6 +152,8 @@
 				</executions>
 				<configuration>
 					<outxml>true</outxml>
+                    <ajdtBuildDefFile>build.ajproperties</ajdtBuildDefFile>
+                    <verbose>true</verbose>
 					<aspectLibraries>
 						<aspectLibrary>
 							<groupId>org.springframework</groupId>
