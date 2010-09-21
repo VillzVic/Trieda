@@ -125,9 +125,13 @@ int SolverMIP::cria_variaveis(void)
    num_vars += cria_variavel_consecutivos();
    num_vars += cria_variavel_max_creds();
    num_vars += cria_variavel_min_creds();
-   /*
-   num_vars += cria_variavel_turma_bloco();
-   */
+   num_vars += cria_variavel_aloc_disciplina();
+   num_vars += cria_variavel_num_subblocos();
+
+   //printf("Total of Variables: %i\n\n",num_vars);
+
+   num_vars += cria_variavel_num_abertura_turma_bloco();
+
    return num_vars;
 }
 /*
@@ -249,8 +253,63 @@ int SolverMIP::cria_variavel_oferecimentos(void)
 
 int SolverMIP::cria_variavel_abertura(void)
 {
-   int num_vars = 0;
+	int num_vars = 0;
 
+	/*
+	Pode ser implementado de uma maneira melhor, listando apenas as disciplinas que podem
+	ser abertas em um campus (atraves do OFERTACURSO) e criando as suas respectivas variaveis.
+	Desse modo, variaveis desnecessárias (relacionadas à disciplinas que não existem em outros campus)
+	seriam evitadas.
+
+	VER <demandas_campus> em <ProblemData>
+	*/
+
+	ITERA_GGROUP(it_campus,problemData->campi,Campus)
+	{
+		ITERA_GGROUP(it_disc,problemData->disciplinas,Disciplina)
+		{
+			for(int turma=0;turma<it_disc->num_turmas;turma++)
+			{
+				Variable v;
+				v.reset();
+				v.setType(Variable::V_ABERTURA);
+
+				v.setTurma(turma);            // i
+				v.setDisciplina(*it_disc);    // d
+				v.setCampus(*it_campus);	  // ? -> Definir qual sera o indice para campus (ESPERAR NOVO MODELO)
+
+				std::pair<int,int> dc = std::make_pair
+					(it_disc->getId(),it_campus->getId());
+
+				
+				if(problemData->demandas_campus.find(dc) ==	problemData->demandas_campus.end())
+				{
+					problemData->demandas_campus[dc] = 0;
+				}
+
+				double ratioDem = ( it_disc->demanda_total - 
+				problemData->demandas_campus[dc] ) 
+				/ (1.0 * it_disc->demanda_total);
+
+				double coeff = alpha + gamma * ratioDem;
+
+				if (vHash.find(v) == vHash.end())
+				{
+					lp->getNumCols();
+					vHash[v] = lp->getNumCols();
+
+					OPT_COL col(OPT_COL::VAR_BINARY,coeff,0.0,1.0,
+						(char*)v.toString().c_str());
+
+					lp->newCol(col);
+
+					num_vars += 1;
+				}
+			}
+		}
+	}
+
+/***
    ITERA_GGROUP(it_campus,problemData->campi,Campus)
    {
       ITERA_GGROUP(it_unidades,it_campus->unidades,Unidade)
@@ -299,6 +358,7 @@ int SolverMIP::cria_variavel_abertura(void)
          }
       }
    }
+***/
 
    return num_vars;
 }
@@ -307,6 +367,41 @@ int SolverMIP::cria_variavel_alunos(void)
 {
    int num_vars = 0;
 
+   ITERA_GGROUP(it_campus,problemData->campi,Campus)
+   {
+	   ITERA_GGROUP(it_disc,problemData->disciplinas,Disciplina)
+	   {
+		   for(int turma=0;turma<it_disc->num_turmas;turma++)
+		   {
+			   ITERA_GGROUP(it_cursos,problemData->cursos,Curso)
+			   {
+				   Variable v;
+				   v.reset();
+				   v.setType(Variable::V_ALUNOS);
+
+				   v.setTurma(turma);            // i
+				   v.setDisciplina(*it_disc);    // d
+				   v.setCampus(*it_campus);		 // ? -> Definir qual sera o indice para campus (ESPERAR NOVO MODELO)
+				   v.setCurso(*it_cursos);       // c
+
+				   if (vHash.find(v) == vHash.end())
+				   {
+					   vHash[v] = lp->getNumCols();
+
+					   OPT_COL col(OPT_COL::VAR_INTEGRAL,0.0,0.0,1000.0,
+						   (char*)v.toString().c_str());
+
+					   lp->newCol(col);
+
+					   num_vars += 1;
+				   }
+
+			   }
+		   }
+	   }
+   }
+
+/***
    ITERA_GGROUP(it_campus,problemData->campi,Campus)
    {
       ITERA_GGROUP(it_unidades,it_campus->unidades,Unidade)
@@ -342,7 +437,7 @@ int SolverMIP::cria_variavel_alunos(void)
          }
       }
    }
-
+***/
    return num_vars;
 }
 
@@ -350,6 +445,41 @@ int SolverMIP::cria_variavel_aloc_alunos(void)
 {
    int num_vars = 0;
 
+   ITERA_GGROUP(it_campus,problemData->campi,Campus)
+   {
+	   ITERA_GGROUP(it_disc,problemData->disciplinas,Disciplina)
+	   {
+		   for(int turma=0;turma<it_disc->num_turmas;turma++)
+		   {
+			   ITERA_GGROUP(it_cursos,problemData->cursos,Curso)
+			   {
+				   Variable v;
+				   v.reset();
+				   v.setType(Variable::V_ALOC_ALUNO);
+
+				   v.setTurma(turma);            // i
+				   v.setDisciplina(*it_disc);    // d
+				   v.setCampus(*it_campus);		 // ? -> Definir qual sera o indice para campus (ESPERAR NOVO MODELO)
+				   v.setCurso(*it_cursos);       // c
+
+				   if (vHash.find(v) == vHash.end())
+				   {
+					   vHash[v] = lp->getNumCols();
+
+					   OPT_COL col(OPT_COL::VAR_BINARY,0,0.0,1.0,
+						   (char*)v.toString().c_str());
+
+					   lp->newCol(col);
+
+					   num_vars += 1;
+				   }
+			   }
+
+		   }
+	   }
+   }
+
+/***
    ITERA_GGROUP(it_campus,problemData->campi,Campus)
    {
       ITERA_GGROUP(it_unidades,it_campus->unidades,Unidade)
@@ -385,7 +515,7 @@ int SolverMIP::cria_variavel_aloc_alunos(void)
          }
       }
    }
-
+***/
    return num_vars;
 
 }
@@ -487,6 +617,150 @@ int SolverMIP::cria_variavel_max_creds(void)
    }
    return num_vars;
 }
+
+int SolverMIP::cria_variavel_aloc_disciplina(void)
+{
+	int num_vars = 0;
+
+	ITERA_GGROUP(it_campus,problemData->campi,Campus)
+	{
+		ITERA_GGROUP(it_unidades,it_campus->unidades,Unidade)
+		{
+			ITERA_GGROUP(it_salas,it_unidades->salas,Sala) 
+			{
+				ITERA_GGROUP(it_disc,problemData->disciplinas,Disciplina)
+				{
+					for(int turma=0;turma<it_disc->num_turmas;turma++)
+					{
+						Variable v;
+						v.reset();
+						v.setType(Variable::V_ALOC_DISCIPLINA);
+
+						v.setUnidade(*it_unidades);   // u
+						v.setSala(*it_salas);         // s  
+						v.setTurma(turma);            // i
+						v.setDisciplina(*it_disc);    // d
+
+						if (vHash.find(v) == vHash.end())
+						{
+							vHash[v] = lp->getNumCols();
+
+							OPT_COL col(OPT_COL::VAR_BINARY,0.0,0.0,1.0,
+								(char*)v.toString().c_str());
+
+							lp->newCol(col);
+
+							num_vars += 1;
+						}
+
+					}
+				}
+			}
+		}
+	}
+
+	return num_vars;
+}
+
+int SolverMIP::cria_variavel_num_subblocos(void)
+{
+   int num_vars = 0;
+
+      ITERA_GGROUP(it_bloco,problemData->blocos,BlocoCurricular)
+      {
+         for(int dia=0;dia<7;dia++)
+         {
+            Variable v;
+            v.reset();
+
+            v.setType(Variable::V_N_SUBBLOCOS);
+            v.setBloco(*it_bloco);
+            v.setDia(dia);
+            v.setCampus(it_bloco->campus);
+
+            if (vHash.find(v) == vHash.end())
+            {
+               vHash[v] = lp->getNumCols();
+
+               OPT_COL col(OPT_COL::VAR_INTEGRAL,rho,0.0,0.0,
+                  (char*)v.toString().c_str());
+
+               lp->newCol(col);
+
+               num_vars += 1;
+            }
+      }
+   }
+
+/***
+   ITERA_GGROUP(it_unidades,problemData->unidades,Unidade)
+   {
+      ITERA_GGROUP(it_bloco,problemData->blocos,BlocoCurricular)
+      {
+         for(int dia=0;dia<7;dia++)
+         {
+            Variable v;
+            v.reset();
+            v.setType(Variable::V_TURMA_BLOCO);
+            v.setBloco(*it_bloco);
+            v.setDia(dia);
+            v.setUnidade(*it_unidades);
+
+            if (vHash.find(v) == vHash.end())
+            {
+               vHash[v] = lp->getNumCols();
+
+               // PERGUNTAR PRO MARCELO OU PRO ANDRE
+               OPT_COL col(OPT_COL::VAR_BINARY,beta,0.0,1.0,
+                  (char*)v.toString().c_str());
+
+               lp->newCol(col);
+
+               num_vars += 1;
+            }
+         }
+      }
+   }
+***/
+
+   return num_vars;
+}
+
+
+int SolverMIP::cria_variavel_num_abertura_turma_bloco(void)
+{
+   int num_vars = 0;
+
+   ITERA_GGROUP(it_bloco,problemData->blocos,BlocoCurricular)
+   {
+      for(int dia=0;dia<7;dia++)
+      {
+         Variable v;
+         v.reset();
+
+         v.setType(Variable::V_N_ABERT_TURMA_BLOCO);
+         v.setBloco(*it_bloco);
+         v.setDia(dia);
+
+         if (vHash.find(v) == vHash.end())
+         {
+            vHash[v] = lp->getNumCols();
+
+            OPT_COL col(OPT_COL::VAR_INTEGRAL,beta,0.0,0.0,
+               (char*)v.toString().c_str());
+
+            lp->newCol(col);
+
+            num_vars += 1;
+         }
+
+      }
+   }
+
+   return num_vars;
+}
+
+
 /*
 int SolverMIP::cria_restricao_carga(void)
 {
@@ -969,40 +1243,9 @@ int SolverMIP::cria_restricao_max_creditos(void)
    }
    return restricoes;
 }
+*/
 
-int SolverMIP::cria_variavel_turma_bloco(void)
-{
-   int num_vars = 0;
-   ITERA_GGROUP(it_unidades,problemData->unidades,Unidade)
-   {
-      ITERA_GGROUP(it_bloco,problemData->blocos,BlocoCurricular)
-      {
-         for(int dia=0;dia<7;dia++)
-         {
-            Variable v;
-            v.reset();
-            v.setType(Variable::V_TURMA_BLOCO);
-            v.setBloco(*it_bloco);
-            v.setDia(dia);
-            v.setUnidade(*it_unidades);
-
-            if (vHash.find(v) == vHash.end())
-            {
-               vHash[v] = lp->getNumCols();
-
-               // PERGUNTAR PRO MARCELO OU PRO ANDRE
-               OPT_COL col(OPT_COL::VAR_BINARY,beta,0.0,1.0,
-                  (char*)v.toString().c_str());
-
-               lp->newCol(col);
-
-               num_vars += 1;
-            }
-         }
-      }
-   }
-   return num_vars;
-}
+/*
 int SolverMIP::cria_restricao_turmas_bloco(void)
 {
    int restricoes = 0;

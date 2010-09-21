@@ -74,7 +74,7 @@ void ProblemDataLoader::gera_refs() {
                   it_horario->horario_aula);
             }
             ITERA_GGROUP(it_credito,it_salas->creditos_disponiveis,
-                         CreditoDisponivel) 
+               CreditoDisponivel) 
             {
                find_and_set(it_credito->turno_id,
                   problemData->calendario->turnos,
@@ -86,8 +86,8 @@ void ProblemDataLoader::gera_refs() {
       }
       ITERA_GGROUP(it_prof,it_campi->professores,Professor) {
          find_and_set(it_prof->tipo_contrato_id, 
-                      problemData->tipos_contrato, 
-                      it_prof->tipo_contrato);
+            problemData->tipos_contrato, 
+            it_prof->tipo_contrato);
          ITERA_GGROUP(it_horario,it_prof->horarios,Horario)
          {
             find_and_set(it_horario->turnoId,
@@ -154,7 +154,7 @@ void ProblemDataLoader::gera_refs() {
       find_and_set(it_curso->tipo_id,
          problemData->tipos_curso, it_curso->tipo_curso);
    }
- 
+
    ITERA_GGROUP(it_oferta,problemData->ofertas,Oferta) {
       find_and_set(it_oferta->curso_id,
          problemData->cursos,
@@ -178,10 +178,10 @@ void ProblemDataLoader::gera_refs() {
    /* Falta: parametros (?) e fixacoes */
    ITERA_GGROUP(it_ndh,
       problemData->parametros->niveis_dificuldade_horario,
-                NivelDificuldadeHorario) {
-      find_and_set(it_ndh->nivel_dificuldade_id,
-         problemData->niveis_dificuldade,
-         it_ndh->nivel_dificuldade);
+      NivelDificuldadeHorario) {
+         find_and_set(it_ndh->nivel_dificuldade_id,
+            problemData->niveis_dificuldade,
+            it_ndh->nivel_dificuldade);
    }
    ITERA_GGROUP(it_fix,problemData->fixacoes,Fixacao) {
       find_and_set(it_fix->disciplina_id, 
@@ -206,52 +206,53 @@ void ProblemDataLoader::gera_refs() {
 
 void ProblemDataLoader::cria_blocos_curriculares() {
    /* cria blocos curriculares */
-   ITERA_GGROUP(it_disc, problemData->disciplinas, Disciplina) {
-      it_disc->num_turmas = 10; // TODO FIXME 
-   }
-   ITERA_GGROUP(it_curso,problemData->cursos,Curso)
-   {
-      ITERA_GGROUP(it_curr,it_curso->curriculos,Curriculo)
+   ITERA_GGROUP(it_campi,problemData->campi,Campus) {
+
+      ITERA_GGROUP(it_curso,problemData->cursos,Curso)
       {
-         GGroup<DisciplinaPeriodo>::iterator it_dp = 
-            it_curr->disciplinas_periodo.begin();
-         for(;it_dp != it_curr->disciplinas_periodo.end(); ++it_dp)
+         ITERA_GGROUP(it_curr,it_curso->curriculos,Curriculo)
          {
-            DisciplinaPeriodo dp = *it_dp;
-            int p = dp.first;
-            int disc_id = dp.second;
-            Disciplina* d = new Disciplina;
-            d->id = disc_id;
-            
-            if (problemData->disciplinas.find(d) != 
-               problemData->disciplinas.end())
-               d = *problemData->disciplinas.find(d);
-
-            /* Versão lenta, find não está funcionando :( */
-            for(GGroup<Disciplina*>::iterator it_d = 
-               problemData->disciplinas.begin();
-               it_d != problemData->disciplinas.end(); ++it_d) 
+            GGroup<DisciplinaPeriodo>::iterator it_dp = 
+               it_curr->disciplinas_periodo.begin();
+            for(;it_dp != it_curr->disciplinas_periodo.end(); ++it_dp)
             {
-               if (it_d->getId() == d->getId())
-                  d = *it_d;
-            }
-            /* FIM */            
+               DisciplinaPeriodo dp = *it_dp;
+               int p = dp.first;
+               int disc_id = dp.second;
+               Disciplina* d = new Disciplina;
+               d->id = disc_id;
 
-            BlocoCurricular* b = new BlocoCurricular;
-            b->curso = *it_curso;
-            b->periodo = p;
-            GGroup<BlocoCurricular*>::iterator it_bc = 
-               problemData->blocos.find(b);
-            if (it_bc != problemData->blocos.end())
-            {
-               delete b;
-               b = *it_bc;
-            }
+               if (problemData->disciplinas.find(d) != 
+                  problemData->disciplinas.end())
+                  d = *problemData->disciplinas.find(d);
 
-            else {
-               problemData->blocos.add(b);
+               /* Versão lenta, find não está funcionando :( */
+               for(GGroup<Disciplina*>::iterator it_d = 
+                  problemData->disciplinas.begin();
+                  it_d != problemData->disciplinas.end(); ++it_d) 
+               {
+                  if (it_d->getId() == d->getId())
+                     d = *it_d;
+               }
+               /* FIM */            
+
+               BlocoCurricular* b = new BlocoCurricular;
+               b->curso = *it_curso;
+               b->periodo = p;
+               b->campus = *it_campi;
+               GGroup<BlocoCurricular*>::iterator it_bc = 
+                  problemData->blocos.find(b);
+               if (it_bc != problemData->blocos.end())
+               {
+                  delete b;
+                  b = *it_bc;
+               }
+
+               else {
+                  problemData->blocos.add(b);
+               }
+               b->disciplinas.add(d);
             }
-            b->disciplinas.add(d);
          }
       }
    }
@@ -281,10 +282,10 @@ void ProblemDataLoader::estima_turmas() {
       if(it_disc->max_alunos_t > 0 && 
          it_disc->max_alunos_p > 0) 
          tam_turma = std::min(it_disc->max_alunos_p,
-                              it_disc->max_alunos_t);
+         it_disc->max_alunos_t);
       else 
          tam_turma = std::max(it_disc->max_alunos_p,
-                              it_disc->max_alunos_t);
+         it_disc->max_alunos_t);
       if (tam_turma < 0)
          tam_turma = 10; 
       else 

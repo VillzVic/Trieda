@@ -31,7 +31,7 @@ void Variable::reset()
    t = -1;
    c = NULL;
    j = -1;
-
+   campus = NULL;
 }
 
 Variable::~Variable()
@@ -51,6 +51,7 @@ Variable& Variable::operator=(const Variable& var)
    this->t = var.getDia();
    this->j = var.getSubBloco();
    this->c = var.getCurso();
+   this->campus = var.getCampus();
 
    return *this;
 }
@@ -107,7 +108,7 @@ std::string Variable::toString()
          str << "h"; break;
       case V_OFERECIMENTO:
          str << "o"; break;
-      case V_TURMA_BLOCO:
+      case V_N_SUBBLOCOS:
          str << "w"; break;
       case V_ALOC_ALUNO:
          str << "b"; break;
@@ -148,30 +149,33 @@ size_t VariableHasher::operator()(const Variable& v) const
    All pointers different from NULL must be considered in the hash function
    **/
    if (v.getBloco() != NULL) {
-    
-  sum *= HASH_PRIME; sum+= intHash(v.getBloco()->getId());
+
+	   sum *= HASH_PRIME; sum+= intHash(v.getBloco()->getId());
    }
    if (v.getTurma() != NULL) {
-      sum *= HASH_PRIME; sum+= intHash(v.getTurma());
+	   sum *= HASH_PRIME; sum+= intHash(v.getTurma());
    }
    if (v.getDisciplina() != NULL) {
-      sum *= HASH_PRIME; sum+= intHash(v.getDisciplina()->getId());
+	   sum *= HASH_PRIME; sum+= intHash(v.getDisciplina()->getId());
    }
    if (v.getUnidade() != NULL) {
-      sum *= HASH_PRIME; sum+= intHash(v.getUnidade()->getId());
+	   sum *= HASH_PRIME; sum+= intHash(v.getUnidade()->getId());
    }
    if (v.getSala() != NULL) {
-      sum *= HASH_PRIME; sum+= intHash(v.getSala()->getId());
+	   sum *= HASH_PRIME; sum+= intHash(v.getSala()->getId());
    }
    if(v.getDia() >= 0) {
-      sum *= HASH_PRIME; sum+= intHash(v.getDia());
+	   sum *= HASH_PRIME; sum+= intHash(v.getDia());
    }
-   
+
    if(v.getSubBloco() >= 0) {
-      sum *= HASH_PRIME; sum+= intHash(v.getSubBloco());
+	   sum *= HASH_PRIME; sum+= intHash(v.getSubBloco());
    }
    if(v.getCurso()) {
-      sum *= HASH_PRIME; sum+= intHash(v.getCurso()->getId());
+	   sum *= HASH_PRIME; sum+= intHash(v.getCurso()->getId());
+   }
+   if(v.getCampus() != NULL) {
+	   sum *= HASH_PRIME; sum+= intHash(v.getCampus()->getId());
    }
 
    return sum;

@@ -81,6 +81,11 @@ public:
    int cria_variavel_min_creds(void);
    int cria_variavel_max_creds(void);
 
+   int cria_variavel_aloc_disciplina(void);
+   int cria_variavel_num_subblocos(void);
+   int cria_variavel_num_abertura_turma_bloco(void);
+
+
    /*
    int cria_restricao_carga(void);
    int cria_restricao_max_creditos_sd(void);
