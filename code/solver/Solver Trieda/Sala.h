@@ -21,7 +21,7 @@ public:
    GGroup<int> disciplinas_associadas; //alterar para ref, depois
 public:
    virtual void le_arvore(ItemSala& elem);
-
+   int max_creds(int dia);
    TipoSala* tipo_sala;
 
 };

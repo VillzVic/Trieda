@@ -152,6 +152,10 @@ std::string Variable::toString()
 		  str << "w"; break;
 	  case V_ALOC_ALUNO:
 		  str << "b"; break;
+     case V_ALOC_DISCIPLINA:
+        str << "y"; break;
+     case V_N_ABERT_TURMA_BLOCO:
+        str << "v"; break;
 	  default:
 		  str << "!";
 	}
@@ -169,6 +173,7 @@ std::string Variable::toString()
 
 	if (j >= 0) str << "," << j;
 	if (c) str << "," << c->getId();
+	if (cp) str << "," << cp->getId();
 
 	str << "}";
 	str >> output;

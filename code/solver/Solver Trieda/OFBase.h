@@ -17,6 +17,9 @@
 #define ITERA_NSEQ(it,addr,name,type) for (Grupo##type##::##name##_iterator \
     it = (addr).##name##().begin(); it != (addr).##name##().end(); ++it) 
 #endif
+#ifndef ITERA_GGROUP
+#define ITERA_GGROUP(it,ggroup,type) for ( GGroup<type *>::iterator it = (ggroup).begin(); it != (ggroup).end(); ++it )
+#endif
 
 class OFBase
 {

@@ -127,9 +127,6 @@ int SolverMIP::cria_variaveis(void)
 	num_vars += cria_variavel_min_creds();
 	num_vars += cria_variavel_aloc_disciplina();
 	num_vars += cria_variavel_num_subblocos();
-
-	//printf("Total of Variables: %i\n\n",num_vars);
-
 	num_vars += cria_variavel_num_abertura_turma_bloco();
 
 	return num_vars;
