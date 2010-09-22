@@ -8,7 +8,7 @@
 class Variable 
 {
 public:
-   // All variable types
+	// All variable types
 	enum VariableType
 	{
 		V_ERROR = 0,
@@ -22,120 +22,121 @@ public:
 		V_MIN_CRED_SEMANA = 8,     /** h_{bi} */
 		V_MAX_CRED_SEMANA = 9,      /** H_{bi} */
 		V_ALOC_DISCIPLINA = 10,    /** y_{idsu} */
-        V_N_ABERT_TURMA_BLOCO = 11,  /** v_{bt} */
-        V_SLACK_ = 12
+		V_N_ABERT_TURMA_BLOCO = 11,  /** v_{bt} */
+		V_SLACK_ = 12
 	};
 
-   //Constructors
-   Variable();
-   Variable(const Variable& orig);
+	//Constructors
+	Variable();
+	Variable(const Variable& orig);
 
-   //Destructor
-   virtual ~Variable();
+	//Destructor
+	virtual ~Variable();
 
-   //==================================================
-   // GET METHODS 
-   //==================================================
-   //Return variable type
-   VariableType getType() const { return type; }
+	//==================================================
+	// GET METHODS 
+	//==================================================
+	//Return variable type
+	VariableType getType() const { return type; }
 
-   // Return value
-   double getValue() const { return value; }
+	// Return value
+	double getValue() const { return value; }
 
-   /*
-   ToDo:
-   All get methods of the private attributes should be defined here
-   */
+	/*
+	ToDo:
+	All get methods of the private attributes should be defined here
+	*/
 
-   // Turma* getTurma() const { return i; }
-   int getTurma() const { return i; }
+	Campus* getCampus() const { 
+			return cp; 
+	}
+	Unidade* getUnidade() const { return u; }
+	Sala* getSala() const { return s; }
 
-   Disciplina* getDisciplina() const { return d; }
-   Unidade* getUnidade() const { return u; }
-   Sala* getSala() const { return s; }
-   int getDia() const { return t; }
-   BlocoCurricular* getBloco() const { return b; }
+	int getTurma() const { return i; }
+	Curso* getCurso() const { return c; }
+	BlocoCurricular* getBloco() const { return b; }
+	Disciplina* getDisciplina() const { return d; }
 
-   int getSubBloco() const { return j; }
-   Curso* getCurso() const { return c; }
+	int getSubBloco() const { return j; }
 
-   Campus* getCampus() const { return campus; }
+	int getDia() const { return t; }
 
-   //==================================================
-   // SET METHODS 
-   //==================================================
-   // Reset variables values
-   void reset();
+	//==================================================
+	// SET METHODS 
+	//==================================================
+	// Reset variables values
+	void reset();
 
-   // Set variable type
-   void setType(VariableType t)                 { type = t; }
+	// Set variable type
+	void setType(VariableType t)                 { type = t; }
 
-   // Set value
-   void setValue(double v)                      { value = v; }
+	// Set value
+	void setValue(double v)                      { value = v; }
 
-   /*
-   ToDo:
-   All set methods of the private attributes should be defined here
-   */
-//   void setTurma(Turma* ii) {  i = ii; }
-   void setTurma(int ii) { i = ii; }
+	/*
+	ToDo:
+	All set methods of the private attributes should be defined here
+	*/
 
-   void setDisciplina(Disciplina* dd) {  d = dd; }
-   void setUnidade(Unidade* uu) {  u = uu; }
-   void setSala(Sala* ss) {  s = ss; }
-   void setDia(int tt) {  t = tt; }
-   void setBloco(BlocoCurricular* bb) {  b = bb; } 
+	void setCampus(Campus* cpp) { cp = cpp; }
+	void setUnidade(Unidade* uu) {  u = uu; }
+	void setSala(Sala* ss) {  s = ss; }
 
-   void setSubBloco(int jj) { j = jj; }
-   void setCurso(Curso* cc) { cc = c; }
+	void setTurma(int ii) { i = ii; }
+	void setCurso(Curso* cc) { cc = c; }
+	void setBloco(BlocoCurricular* bb) {  b = bb; } 
+	void setDisciplina(Disciplina* dd) {  d = dd; }
 
-	void setCampus(Campus* c) { campus = c; }
+	void setSubBloco(int jj) { j = jj; }   
 
+	void setDia(int tt) {  t = tt; }
 
-   //==================================================
-   // OPERATORS 
-   //==================================================
-   //Assignment 
-   Variable& operator=(const Variable& var);
-   //Less 
-   bool operator<(const Variable& var) const;
-   //Equals 
-   bool operator==(const Variable& var) const;
+	//==================================================
+	// OPERATORS 
+	//==================================================
+	//Assignment 
+	Variable& operator=(const Variable& var);
+	//Less 
+	bool operator<(const Variable& var) const;
+	//Equals 
+	bool operator==(const Variable& var) const;
 
-   //Variable name
-   std::string toString();
+	//Variable name
+	std::string toString();
 
 private:
-   VariableType type;
-   double value;
+	VariableType type;
+	double value;
 
-   /* ToDo:
-   All attributes that define a variable should be declared here
-   */
+	/* ToDo:
+	All attributes that define a variable should be declared here
+	*/
 
-   //   Turma* i;
-   int i; // Turma
+	Campus *cp;
+	Unidade* u;
+	Sala* s;
 
-   Disciplina* d;
-   Unidade* u;
-   Sala* s;
-   int t /* dia */;
-   BlocoCurricular* b;
-   int j; // subbloco
-   Curso* c;
+	int i; // Turma
+	Curso* c;
+	BlocoCurricular* b;
+	Disciplina* d;
 
-   Campus *campus;
+	int j; // subbloco
+
+	int t; // dia
+
 };
 
 
 class VariableHasher : public stdext::hash_compare<Variable>
 {
 public:
-   //Less operator
-   bool operator()(const Variable& v1, const Variable& v2) const;
+	//Less operator
+	bool operator()(const Variable& v1, const Variable& v2) const;
 
-   //Hash value
-   size_t operator()(const Variable& v) const;
+	//Hash value
+	size_t operator()(const Variable& v) const;
 };
 
 /**

@@ -257,6 +257,7 @@ void ProblemDataLoader::cria_blocos_curriculares() {
       }
    }
 }
+
 void ProblemDataLoader::calcula_demandas() {
    ITERA_GGROUP(it_dem,problemData->demandas,Demanda) {
       int dem = it_dem->quantidade;
