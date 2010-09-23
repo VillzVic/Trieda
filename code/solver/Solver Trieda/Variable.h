@@ -84,7 +84,7 @@ public:
 	void setSala(Sala* ss) {  s = ss; }
 
 	void setTurma(int ii) { i = ii; }
-	void setCurso(Curso* cc) { cc = c; }
+	void setCurso(Curso* cc) { c = cc; }
 	void setBloco(BlocoCurricular* bb) {  b = bb; } 
 	void setDisciplina(Disciplina* dd) {  d = dd; }
 
