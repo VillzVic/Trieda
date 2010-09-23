@@ -32,6 +32,7 @@ public:
    void calcula_demandas();
    void estima_turmas();
    void print_stats();
+   void cache();
 
 private:
    // Input data object of the problem

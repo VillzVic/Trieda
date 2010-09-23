@@ -16,6 +16,8 @@ public:
 
    GGroup<Horario*> horarios;
    GGroup<Sala*> salas;
+
+   int maior_sala;
 public:
    virtual void le_arvore(ItemUnidade& elem);
 };

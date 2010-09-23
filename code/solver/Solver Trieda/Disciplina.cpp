@@ -6,6 +6,8 @@ Disciplina::Disciplina(void)
    demanda_total = 0;
    max_alunos_t = -1;
    max_alunos_p = -1;
+
+   min_creds = 0;
 }
 
 Disciplina::~Disciplina(void)
@@ -18,6 +20,8 @@ void Disciplina::le_arvore(ItemDisciplina& elem)
    codigo = elem.codigo();
    cred_teoricos = elem.credTeoricos();
    cred_praticos = elem.credPraticos();
+   max_creds = cred_teoricos + cred_praticos;
+
    e_lab = elem.laboratorio();
    if(elem.maxAlunosTeorico().present())
       max_alunos_t = elem.maxAlunosTeorico().get();

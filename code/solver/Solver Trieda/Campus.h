@@ -22,4 +22,7 @@ public:
    GGroup<Professor*> professores;
    GGroup<Horario*> horarios;
 
+   int total_salas;
+   int maior_sala;
+
 };

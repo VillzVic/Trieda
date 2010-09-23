@@ -78,6 +78,8 @@ public:
    GGroup<BlocoCurricular*> blocos;
 
    std::map<std::pair<int/*disc_id*/,int/*campus_id*/>,int> demandas_campus;
+   int total_salas;
+   int total_turmas;
 
 public:
    virtual void le_arvore(TriedaInput& raiz);

@@ -18,4 +18,6 @@ public:
    Curso* curso;
    Campus* campus;
    GGroup<Disciplina*> disciplinas;
+
+   int total_turmas;
 };

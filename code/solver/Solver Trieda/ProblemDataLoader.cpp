@@ -29,6 +29,7 @@ void ProblemDataLoader::load()
    calcula_demandas();
    print_stats();
    estima_turmas();
+   cache();
 }
 template<class T> 
 void ProblemDataLoader::find_and_set(int id, 
@@ -332,4 +333,55 @@ void ProblemDataLoader::print_stats() {
    std::cout << "================================" << std::endl
       << std::endl;
 
+}
+/* Salva algumas informações que são usadas frequentemente */
+void ProblemDataLoader::cache() {
+   problemData->total_salas = 0;
+   ITERA_GGROUP(it_campus,problemData->campi,Campus) {
+      it_campus->total_salas = 0;
+      ITERA_GGROUP(it_u,it_campus->unidades,Unidade) {
+         it_campus->total_salas += it_u->salas.size();
+      }
+      problemData->total_salas += it_campus->total_salas;
+   }
+
+   problemData->total_turmas = 0;
+   ITERA_GGROUP(it_disciplinas,problemData->disciplinas,Disciplina) {
+      problemData->total_turmas += it_disciplinas->num_turmas;
+   }
+
+   ITERA_GGROUP(it_bloco,problemData->blocos,BlocoCurricular) {
+      it_bloco->total_turmas = 0;
+      ITERA_GGROUP(it_disciplinas,it_bloco->disciplinas,Disciplina) {
+         it_bloco->total_turmas += it_disciplinas->num_turmas;
+      }
+   }
+
+   ITERA_GGROUP(it_disc,problemData->disciplinas,Disciplina) {
+      if (it_disc->divisao_creditos != NULL) {
+         it_disc->min_creds = 24;
+         it_disc->max_creds = 0;
+         for(int t=0;t<8;t++) {
+            it_disc->min_creds = 
+               std::min(it_disc->min_creds,
+               it_disc->divisao_creditos->dia[t]);
+            it_disc->max_creds = 
+               std::max(it_disc->max_creds,
+               it_disc->divisao_creditos->dia[t]);
+
+         }
+      }
+   }
+   ITERA_GGROUP(it_campus,problemData->campi,Campus) {
+      it_campus->maior_sala = 0;
+      ITERA_GGROUP(it_u,it_campus->unidades,Unidade) {
+         it_u->maior_sala = 0;
+         ITERA_GGROUP(it_sala,it_u->salas,Sala)
+            it_u->maior_sala = std::max(it_u->maior_sala,
+                                        it_sala->capacidade);
+
+         it_campus->maior_sala = std::max(it_campus->maior_sala,
+                                          it_u->maior_sala);
+     }
+   }
 }

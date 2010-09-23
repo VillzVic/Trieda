@@ -32,6 +32,8 @@ public:
    int demanda_total;
    int max_demanda;
    int num_turmas;
+   int min_creds;
+   int max_creds;
 
 public:
    virtual void le_arvore(ItemDisciplina& elem);
