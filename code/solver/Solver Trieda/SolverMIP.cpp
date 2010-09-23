@@ -51,7 +51,7 @@ int SolverMIP::solve()
 #endif
 
 	/* Constraint creation */
-	constNum = cria_restricoes();
+   constNum = cria_restricoes();
 
 #ifdef DEBUG
 	printf("Total of Constraints: %i\n",constNum);
@@ -61,8 +61,8 @@ int SolverMIP::solve()
 	lp->writeProbLP("Solver Trieda");
 #endif
 
-	int status = lp->optimize(METHOD_MIP);
-
+   int status = lp->optimize(METHOD_MIP);
+   lp->writeSolution("Solver Trieda.sol");
 	return status;
 }
 
@@ -118,16 +118,17 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
 int SolverMIP::cria_variaveis(void)
 {
 	int num_vars = 0;
-	num_vars += cria_variavel_oferecimentos();
-	num_vars += cria_variavel_creditos();
-	num_vars += cria_variavel_abertura();
-	num_vars += cria_variavel_alunos();
-	num_vars += cria_variavel_consecutivos();
-	num_vars += cria_variavel_max_creds();
-	num_vars += cria_variavel_min_creds();
-	num_vars += cria_variavel_aloc_disciplina();
-	num_vars += cria_variavel_num_subblocos();
-	num_vars += cria_variavel_num_abertura_turma_bloco();
+	num_vars += cria_variavel_oferecimentos(); // o
+	num_vars += cria_variavel_creditos(); // x
+	num_vars += cria_variavel_abertura(); // z
+	num_vars += cria_variavel_alunos(); // a 
+	num_vars += cria_variavel_consecutivos(); // c
+	num_vars += cria_variavel_max_creds(); // H
+	num_vars += cria_variavel_min_creds(); // h
+	num_vars += cria_variavel_aloc_disciplina(); // y
+	num_vars += cria_variavel_num_subblocos(); // w
+	num_vars += cria_variavel_num_abertura_turma_bloco(); // v
+   num_vars += cria_variavel_aloc_alunos(); // b
 
 	return num_vars;
 }
@@ -1125,30 +1126,304 @@ int SolverMIP::cria_restricao_evita_sobreposicao(void)
 int SolverMIP::cria_restricao_disciplina_sala(void)
 {
 	int restricoes = 0;
+	char name[100];
+	int nnz;
+	Constraint c;
+	Variable v;
+	VariableHash::iterator it_v;
+
+   ITERA_GGROUP(it_campus,problemData->campi,Campus) {
+      ITERA_GGROUP(it_u,it_campus->unidades,Unidade) {
+         ITERA_GGROUP(it_sala,it_u->salas,Sala) {
+            ITERA_GGROUP(it_disc,problemData->disciplinas,Disciplina) {
+               for(int i=0;i<it_disc->num_turmas;++i) {
+                  c.reset();
+                  c.setType(Constraint::C_TURMA_DISCIPLINA_SALA);
+                  c.setUnidade(*it_u);
+                  c.setSala(*it_sala);
+                  c.setDisciplina(*it_disc);
+                  c.setTurma(i);
+
+						sprintf( name, "%s", c.toString().c_str() ); 
+
+						if (cHash.find(c) != cHash.end()) continue;
+
+						cHash[ c ] = lp->getNumRows();
+
+                  nnz = 8;
+                  OPT_ROW row( nnz, OPT_ROW::LESS , 0.0, name );
+
+                  for(int t=0;t<7;t++) {
+                     v.reset();
+                     v.setDia(t);
+                     v.setDisciplina(*it_disc);
+                     v.setUnidade(*it_u);
+                     v.setSala(*it_sala);
+                     v.setTurma(i);
+                     v.setType(Variable::V_OFERECIMENTO);
+
+                     it_v = vHash.find(v);
+                     if( it_v != vHash.end() )
+                     {
+                        row.insert(it_v->second, 1.0);
+                     }
+                  }
+                  v.reset();
+                  v.setTurma(i);
+                  v.setDisciplina(*it_disc);
+                  v.setUnidade(*it_u);
+                  v.setSala(*it_sala);
+                  v.setType(Variable::V_ALOC_DISCIPLINA);
+
+                  it_v = vHash.find(v);
+                  if( it_v != vHash.end() )
+                  {
+                     row.insert(it_v->second, -7.0);
+                  }
+                  lp->addRow(row);
+                  restricoes++;
+               }
+            }
+         }
+      }
+   }
 	return restricoes;
 }
 
 int SolverMIP::cria_restricao_turma_sala(void)
 {
 	int restricoes = 0;
+	char name[100];
+	int nnz;
+	Constraint c;
+	Variable v;
+	VariableHash::iterator it_v;
+
+   ITERA_GGROUP(it_disc,problemData->disciplinas,Disciplina) {
+      for(int i=0;i<it_disc->num_turmas;++i) {
+         c.reset();
+         c.setType(Constraint::C_TURMA_SALA);
+         c.setDisciplina(*it_disc);
+         c.setTurma(i);
+
+         sprintf( name, "%s", c.toString().c_str() ); 
+
+         if (cHash.find(c) != cHash.end()) continue;
+
+         cHash[ c ] = lp->getNumRows();
+
+         nnz = problemData->total_salas;
+         OPT_ROW row( nnz, OPT_ROW::LESS , 1.0, name );
+         
+         ITERA_GGROUP(it_campus,problemData->campi,Campus) {
+            ITERA_GGROUP(it_u,it_campus->unidades,Unidade) {
+               ITERA_GGROUP(it_sala,it_u->salas,Sala) {
+                  v.reset();
+                  v.setType(Variable::V_ALOC_DISCIPLINA);
+                  v.setTurma(i);
+                  v.setDisciplina(*it_disc);
+                  v.setUnidade(*it_u);
+                  v.setSala(*it_sala);
+
+                  it_v = vHash.find(v);
+                  if( it_v != vHash.end() )
+                  {
+                     row.insert(it_v->second, 1.0);
+                  }
+               }
+            }
+         }
+         lp->addRow(row);
+         restricoes++;
+      }
+   }
 	return restricoes;
 }
 
 int SolverMIP::cria_restricao_evita_turma_disc_camp_d(void)
 {
 	int restricoes = 0;
-	return restricoes;
+	char name[100];
+	int nnz;
+	Constraint c;
+	Variable v;
+	VariableHash::iterator it_v;
+
+   ITERA_GGROUP(it_disc,problemData->disciplinas,Disciplina) {
+      for(int i=0;i<it_disc->num_turmas;++i) {
+         c.reset();
+         c.setType(Constraint::C_EVITA_TURMA_DISC_CAMP_D);
+         c.setDisciplina(*it_disc);
+         c.setTurma(i);
+
+         sprintf( name, "%s", c.toString().c_str() ); 
+
+         if (cHash.find(c) != cHash.end()) continue;
+
+         cHash[ c ] = lp->getNumRows();
+
+         nnz = problemData->total_salas;
+         OPT_ROW row( nnz, OPT_ROW::LESS , 1.0, name );
+         
+         ITERA_GGROUP(it_campus,problemData->campi,Campus) {
+            v.reset();
+            v.setType(Variable::V_ABERTURA);
+            v.setTurma(i);
+            v.setDisciplina(*it_disc);
+            v.setCampus(*it_campus);
+
+            it_v = vHash.find(v);
+            if( it_v != vHash.end() )
+            {
+               row.insert(it_v->second, 1.0);
+            }
+         }
+         lp->addRow(row);
+         restricoes++;
+      }
+   }
+   return restricoes;
 }
 
 int SolverMIP::cria_restricao_turmas_bloco(void)
 {	
-	int restricoes = 0;
-	return restricoes;
+   int restricoes = 0;
+	char name[100];
+	int nnz;
+	Constraint c;
+	Variable v;
+	VariableHash::iterator it_v;
+
+   ITERA_GGROUP(it_campus,problemData->campi,Campus) {
+      for(int t=0;t<7;t++) {
+         ITERA_GGROUP(it_bloco,problemData->blocos,BlocoCurricular) {
+            c.reset();
+            c.setType(Constraint::C_TURMAS_BLOCO);
+            c.setBloco(*it_bloco);
+            c.setDia(t);
+            c.setCampus(*it_campus);
+
+            sprintf( name, "%s", c.toString().c_str() ); 
+
+            if (cHash.find(c) != cHash.end()) continue;
+
+            cHash[ c ] = lp->getNumRows();
+
+            nnz = it_bloco->total_turmas * 
+                  problemData->total_salas;
+
+            OPT_ROW row( nnz + 1, OPT_ROW::LESS , 0.0, name );
+
+            ITERA_GGROUP(it_disc,it_bloco->disciplinas,Disciplina) {
+               ITERA_GGROUP(it_u,it_campus->unidades,Unidade) {
+                  ITERA_GGROUP(it_sala,it_u->salas,Sala) {
+                     for(int i=0;i<it_disc->num_turmas;++i) {
+                        v.reset();
+                        v.setType(Variable::V_OFERECIMENTO);
+                        v.setTurma(i);
+                        v.setDisciplina(*it_disc);
+                        v.setUnidade(*it_u);
+                        v.setSala(*it_sala);
+                        v.setDia(t);
+
+                        it_v = vHash.find(v);
+                        if( it_v != vHash.end() )
+                        {
+                           row.insert(it_v->second, 1.0);
+                        }
+                     }
+                  }
+               }
+            }
+            v.reset();
+            v.setType(Variable::V_N_SUBBLOCOS);
+            v.setBloco(*it_bloco);
+            v.setDia(t);
+            v.setCampus(*it_campus);
+
+            it_v = vHash.find(v);
+            if( it_v != vHash.end() )
+            {
+               row.insert(it_v->second, -9999.0);
+            }
+            /* Provavelmente esta restrição é inútil */
+
+            lp->addRow(row);
+            ++restricoes;
+         }
+      }
+   }
+   return restricoes;
 }
 
 int SolverMIP::cria_restricao_max_cred_disc_bloco(void)
 {
 	int restricoes = 0;
+	char name[100];
+	int nnz;
+	Constraint c;
+	Variable v;
+	VariableHash::iterator it_v;
+
+   ITERA_GGROUP(it_campus,problemData->campi,Campus) {
+      for(int t=0;t<7;t++) {
+         ITERA_GGROUP(it_bloco,problemData->blocos,BlocoCurricular) {
+            c.reset();
+            c.setType(Constraint::C_MAX_CRED_DISC_BLOCO);
+            c.setBloco(*it_bloco);
+            c.setDia(t);
+            c.setCampus(*it_campus);
+
+            sprintf( name, "%s", c.toString().c_str() ); 
+
+            if (cHash.find(c) != cHash.end()) continue;
+
+            cHash[ c ] = lp->getNumRows();
+
+            nnz = it_bloco->total_turmas * 
+                  problemData->total_salas;
+
+            OPT_ROW row( nnz + 1, OPT_ROW::LESS , 0.0, name );
+
+            ITERA_GGROUP(it_disc,it_bloco->disciplinas,Disciplina) {
+               ITERA_GGROUP(it_u,it_campus->unidades,Unidade) {
+                  ITERA_GGROUP(it_sala,it_u->salas,Sala) {
+                     for(int i=0;i<it_disc->num_turmas;++i) {
+                        v.reset();
+                        v.setType(Variable::V_CREDITOS);
+                        v.setTurma(i);
+                        v.setDisciplina(*it_disc);
+                        v.setUnidade(*it_u);
+                        v.setSala(*it_sala);
+                        v.setDia(t);
+
+                        it_v = vHash.find(v);
+                        if( it_v != vHash.end() )
+                        {
+                           row.insert(it_v->second, 1.0);
+                        }
+                     }
+                  }
+               }
+            }
+            v.reset();
+            v.setType(Variable::V_N_SUBBLOCOS);
+            v.setBloco(*it_bloco);
+            v.setDia(t);
+            v.setCampus(*it_campus);
+
+            it_v = vHash.find(v);
+            if( it_v != vHash.end() )
+            {
+               row.insert(it_v->second, -24.0); // #Warning: FIXME
+            }
+            /* Descobrir valor de H_t */
+
+            lp->addRow(row);
+            ++restricoes;
+         }
+      }
+   }
 	return restricoes;
 }
 
@@ -1161,30 +1436,348 @@ int SolverMIP::cria_restricao_num_tur_bloc_dia_difunid(void)
 int SolverMIP::cria_restricao_lim_cred_diar_disc(void)
 {
 	int restricoes = 0;
-	return restricoes;
+
+	char name[100];
+	int nnz;
+	Constraint c;
+	Variable v;
+	VariableHash::iterator it_v;
+
+	ITERA_GGROUP(it_campus,problemData->campi,Campus) {
+		ITERA_GGROUP(it_u,it_campus->unidades,Unidade) {
+         ITERA_GGROUP(it_sala,it_u->salas,Sala) {
+				for(int t=0;t<7;t++) {
+					ITERA_GGROUP(it_disc,problemData->disciplinas,Disciplina) {
+						for(int i=0;i<it_disc->num_turmas;i++) {
+                     c.reset();
+                     c.setType(Constraint::C_LIM_CRED_DIAR_DISC);
+                     c.setTurma(i);
+                     c.setDisciplina(*it_disc);
+                     c.setUnidade(*it_u);
+                     c.setSala(*it_sala);
+                     c.setDia(t);
+
+                     sprintf( name, "%s", c.toString().c_str() ); 
+
+                     if (cHash.find(c) != cHash.end()) continue;
+
+                     cHash[ c ] = lp->getNumRows();
+
+                     nnz = 1;
+
+                     OPT_ROW row( 1, OPT_ROW::LESS , it_disc->max_creds , 
+                                  name );
+
+                     v.reset();
+                     v.setType(Variable::V_CREDITOS);
+                     v.setTurma(i);
+                     v.setDisciplina(*it_disc);
+                     v.setUnidade(*it_u);
+                     v.setSala(*it_sala);
+                     v.setDia(t);
+
+                     it_v = vHash.find(v);
+                     if( it_v != vHash.end() )
+                     {
+                        row.insert(it_v->second, 1.0);
+                     }
+
+                     lp->addRow(row);
+                     ++restricoes;
+                  }
+               }
+            }
+         }
+      }
+   }
+   return restricoes;
 }
 
 int SolverMIP::cria_restricao_cap_aloc_dem_disc(void)
 {
 	int restricoes = 0;
+	char name[100];
+	int nnz;
+	Constraint c;
+	Variable v;
+	VariableHash::iterator it_v;
+
+   ITERA_GGROUP(it_campus,problemData->campi,Campus) {
+      ITERA_GGROUP(it_disc,problemData->disciplinas,Disciplina) {
+         ITERA_GGROUP(it_curso,problemData->cursos,Curso) {
+            c.reset();
+            c.setType(Constraint::C_CAP_ALOC_DEM_DISC);
+            c.setCampus(*it_campus);
+            c.setDisciplina(*it_disc);
+            c.setCurso(*it_curso);
+
+            sprintf( name, "%s", c.toString().c_str() ); 
+
+            if (cHash.find(c) != cHash.end()) continue;
+
+            cHash[ c ] = lp->getNumRows();
+
+            nnz = it_disc->num_turmas;
+
+            int rhs = 0;
+            ITERA_GGROUP(it_dem,problemData->demandas,Demanda) {
+               if (it_dem->disciplina->getId() == it_disc->getId() &&
+                   it_dem->oferta->curso->getId() == it_curso->getId() &&
+                   it_dem->oferta->campus->getId() == it_campus->getId())
+               {
+                  rhs += it_dem->quantidade;
+               }
+            }
+
+            OPT_ROW row( nnz , OPT_ROW::LESS , rhs , name );
+
+            for(int i=0;i<it_disc->num_turmas;++i) {
+               v.reset();
+               v.setType(Variable::V_ALUNOS);
+               v.setTurma(i);
+               v.setDisciplina(*it_disc);
+               v.setCampus(*it_campus);
+               v.setCurso(*it_curso);
+
+               it_v = vHash.find(v);
+               if( it_v != vHash.end() )
+               {
+                  row.insert(it_v->second, 1.0);
+               }
+            }
+
+            lp->addRow(row);
+            ++restricoes;
+         }
+      }
+   }
 	return restricoes;
 }
 
 int SolverMIP::cria_restricao_cap_sala_compativel_turma(void)
 {
 	int restricoes = 0;
+	char name[100];
+	int nnz;
+	Constraint c;
+	Variable v;
+	VariableHash::iterator it_v;
+
+   ITERA_GGROUP(it_campus,problemData->campi,Campus) {
+      ITERA_GGROUP(it_disc,problemData->disciplinas,Disciplina) {
+         for(int i=0;i<it_disc->num_turmas;++i) {
+
+            c.reset();
+            c.setType(Constraint::C_CAP_SALA_COMPATIVEL_TURMA);
+            c.setCampus(*it_campus);
+            c.setDisciplina(*it_disc);
+            c.setTurma(i);
+
+            sprintf( name, "%s", c.toString().c_str() ); 
+
+            if (cHash.find(c) != cHash.end()) continue;
+
+            cHash[ c ] = lp->getNumRows();
+
+            nnz = problemData->cursos.size() +
+                  it_campus->total_salas * 7;
+
+            OPT_ROW row( nnz , OPT_ROW::LESS , 0.0 , name );
+
+            ITERA_GGROUP(it_curso,problemData->cursos,Curso) {
+               v.reset();
+               v.setType(Variable::V_ALUNOS);
+               v.setTurma(i);
+               v.setDisciplina(*it_disc);
+               v.setCampus(*it_campus);
+               v.setCurso(*it_curso);
+
+               it_v = vHash.find(v);
+               if( it_v != vHash.end() )
+               {
+                  row.insert(it_v->second, 1.0);
+               }
+            }
+
+            ITERA_GGROUP(it_u,it_campus->unidades,Unidade) {
+               ITERA_GGROUP(it_sala,it_u->salas,Sala) {
+                  for(int t=0;t<7;t++) {
+                     v.reset();
+                     v.setType(Variable::V_OFERECIMENTO);
+                     v.setTurma(i);
+                     v.setDisciplina(*it_disc);
+                     v.setUnidade(*it_u);
+                     v.setSala(*it_sala);
+                     v.setDia(t);
+
+                     it_v = vHash.find(v);
+                     if( it_v != vHash.end() )
+                     {
+                        row.insert(it_v->second, -it_sala->capacidade);
+                     }
+                  }
+               }
+            }
+            lp->addRow(row);
+            ++restricoes;
+         }
+      }
+   }
+
 	return restricoes;
 }
 
 int SolverMIP::cria_restricao_cap_sala_unidade(void)
 {
 	int restricoes = 0;
+
+	char name[100];
+	int nnz;
+	Constraint c;
+	Variable v;
+	VariableHash::iterator it_v;
+
+   ITERA_GGROUP(it_campus,problemData->campi,Campus) {
+      ITERA_GGROUP(it_u,it_campus->unidades,Unidade) {
+         ITERA_GGROUP(it_sala,it_u->salas,Sala) {
+            ITERA_GGROUP(it_disc,problemData->disciplinas,Disciplina) {
+               for(int i=0;i<it_disc->num_turmas;++i) {
+                  for(int t=0;t<7;t++) {
+                     c.reset();
+                     c.setType(Constraint::C_CAP_SALA_UNIDADE);
+                     c.setUnidade(*it_u);
+                     c.setSala(*it_sala);
+                     c.setDisciplina(*it_disc);
+                     c.setTurma(i);
+                     c.setCampus(*it_campus);
+                     c.setDia(t);
+
+                     sprintf( name, "%s", c.toString().c_str() ); 
+
+                     if (cHash.find(c) != cHash.end()) continue;
+
+                     cHash[ c ] = lp->getNumRows();
+
+                     nnz = problemData->cursos.size() + 1;
+                     int rhs = it_sala->capacidade + it_u->maior_sala;
+
+                     OPT_ROW row( nnz, OPT_ROW::LESS , rhs , name );
+
+                     v.reset();
+                     v.setDia(t);
+                     v.setDisciplina(*it_disc);
+                     v.setUnidade(*it_u);
+                     v.setSala(*it_sala);
+                     v.setTurma(i);
+                     v.setType(Variable::V_OFERECIMENTO);
+
+                     it_v = vHash.find(v);
+                     if( it_v != vHash.end() )
+                     {
+                        row.insert(it_v->second, it_u->maior_sala);
+                     }
+
+                     ITERA_GGROUP(it_curso,problemData->cursos,Curso) {
+
+                        v.reset();
+                        v.setTurma(i);
+                        v.setDisciplina(*it_disc);
+                        v.setCampus(*it_campus);
+                        v.setCurso(*it_curso);
+
+                        v.setType(Variable::V_ALUNOS);
+
+                        it_v = vHash.find(v);
+                        if( it_v != vHash.end() )
+                        {
+                           row.insert(it_v->second, 1.0);
+                        }
+                     }
+                     lp->addRow(row);
+                     restricoes++;
+                  }
+               }
+            }
+         }
+      }
+   }
 	return restricoes;
 }
 
 int SolverMIP::cria_restricao_turma_disc_dias_consec(void)
 {
 	int restricoes = 0;
+
+	char name[100];
+	int nnz;
+	Constraint c;
+	Variable v;
+	VariableHash::iterator it_v;
+
+   ITERA_GGROUP(it_disc,problemData->disciplinas,Disciplina) {
+      for(int i=0;i<it_disc->num_turmas;++i) {
+         for(int t=1;t<7;t++) {
+            c.reset();
+            c.setDisciplina(*it_disc);
+            c.setType(Constraint::C_TURMA_DISC_DIAS_CONSEC);
+            c.setTurma(i);
+            c.setDia(t);
+
+            sprintf( name, "%s", c.toString().c_str() ); 
+
+            if (cHash.find(c) != cHash.end()) continue;
+
+            cHash[ c ] = lp->getNumRows();
+
+            nnz = problemData->total_salas*2 + 1;
+
+            OPT_ROW row( nnz, OPT_ROW::GREATER , -1 , name );
+
+            v.reset();
+            v.setType(Variable::V_DIAS_CONSECUTIVOS);
+            v.setTurma(i);
+            v.setDisciplina(*it_disc);
+            v.setDia(t);
+
+            it_v = vHash.find(v);
+            if( it_v != vHash.end() )
+            {
+               row.insert(it_v->second, 1.0);
+            }
+
+            ITERA_GGROUP(it_campus,problemData->campi,Campus) {
+               ITERA_GGROUP(it_u,it_campus->unidades,Unidade) {
+                  ITERA_GGROUP(it_sala,it_u->salas,Sala) {
+                     v.reset();
+                     v.setType(Variable::V_OFERECIMENTO);
+                     v.setTurma(i);
+                     v.setDisciplina(*it_disc);
+                     v.setUnidade(*it_u);
+                     v.setSala(*it_sala);
+                     v.setDia(t);
+
+                     it_v = vHash.find(v);
+                     if( it_v != vHash.end() )
+                     {
+                        row.insert(it_v->second, -1.0);
+                     }
+
+                     v.setDia(t-1);
+
+                     it_v = vHash.find(v);
+                     if( it_v != vHash.end() )
+                     {
+                        row.insert(it_v->second, 1.0);
+                     }
+                  }
+               }
+            }
+            lp->addRow(row);
+            ++restricoes;
+         }
+      }
+   }
+
 	return restricoes;
 }
 
@@ -1203,12 +1796,84 @@ int SolverMIP::cria_restricao_max_creds_turm_bloco(void)
 int SolverMIP::cria_restricao_aluno_curso_disc(void)
 {
 	int restricoes = 0;
+
+	char name[100];
+	int nnz;
+	Constraint c;
+	Variable v;
+	VariableHash::iterator it_v;
+
+   ITERA_GGROUP(it_campus,problemData->campi,Campus) {
+      ITERA_GGROUP(it_disc,problemData->disciplinas,Disciplina) {
+         for(int i=0;i<it_disc->num_turmas;++i) {
+            ITERA_GGROUP(it_curso,problemData->cursos,Curso) {
+
+               c.reset();
+               c.setType(Constraint::C_ALUNO_CURSO_DISC);
+               c.setDisciplina(*it_disc);
+               c.setTurma(i);
+               c.setCurso(*it_curso);
+               c.setCampus(*it_campus);
+
+               sprintf( name, "%s", c.toString().c_str() ); 
+
+               if (cHash.find(c) != cHash.end()) continue;
+
+               cHash[ c ] = lp->getNumRows();
+
+               nnz = 2;
+
+               OPT_ROW row( nnz, OPT_ROW::LESS , 0.0 , name );
+
+               v.reset();
+               v.setType(Variable::V_ALUNOS);
+               v.setTurma(i);
+               v.setDisciplina(*it_disc);
+               v.setCurso(*it_curso);               
+               v.setCampus(*it_campus);
+
+               it_v = vHash.find(v);
+               if( it_v != vHash.end() )
+               {
+                  row.insert(it_v->second, 1.0);
+               }
+
+               v.setType(Variable::V_ALOC_ALUNO);
+               it_v = vHash.find(v);
+               if( it_v != vHash.end() )
+               {
+                  row.insert(it_v->second, -it_campus->maior_sala);
+               }
+               
+               lp->addRow(row);
+               ++restricoes;
+            }
+         }
+      }
+   }
 	return restricoes;
 }
 
 int SolverMIP::cria_restricao_alunos_cursos_dif(void)
 {
 	int restricoes = 0;
+	char name[100];
+	int nnz;
+	Constraint c;
+	Variable v;
+	VariableHash::iterator it_v;
+
+   /* Depende de regra de cursos compatíveis */
+   /* Impossível de executar sem adição desse dado à entrada */
+
+   //ITERA_GGROUP(it_campus,problemData->campi,Campus) {
+   //   ITERA_GGROUP(it_disc,problemData->disciplinas,Disciplina) {
+   //      for(int i=0;i<it_disc->num_turmas;++i) {
+   //         ITERA_GGROUP(it_curso,problemData->cursos,Curso) {
+   //         }
+   //      }
+   //   }
+   //}
 	return restricoes;
 }
 
