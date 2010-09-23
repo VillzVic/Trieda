@@ -1,6 +1,7 @@
 package com.gapso.trieda.domain;
 
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -68,19 +69,22 @@ public class Campus implements Serializable {
     @Size(max = 25)
     private String bairro;
 
+    @OneToMany(cascade = CascadeType.ALL, mappedBy="campus")
+    private Set<Unidade> unidades =  new HashSet<Unidade>();
+    
     @NotNull
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "origem")
-    private Set<com.gapso.trieda.domain.DeslocamentoCampus> deslocamentos = new java.util.HashSet<com.gapso.trieda.domain.DeslocamentoCampus>();
+    private Set<DeslocamentoCampus> deslocamentos = new HashSet<DeslocamentoCampus>();
 
     @ManyToMany(cascade = CascadeType.ALL, mappedBy = "campi")
-    private Set<com.gapso.trieda.domain.Professor> professores = new java.util.HashSet<com.gapso.trieda.domain.Professor>();
+    private Set<Professor> professores = new HashSet<Professor>();
 
     @ManyToMany(cascade = CascadeType.ALL, mappedBy = "campi")
-    private Set<com.gapso.trieda.domain.HorarioDisponivelCenario> horarios = new java.util.HashSet<com.gapso.trieda.domain.HorarioDisponivelCenario>();
+    private Set<HorarioDisponivelCenario> horarios = new HashSet<HorarioDisponivelCenario>();
 
     @NotNull
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "campus")
-    private Set<com.gapso.trieda.domain.CampusCurriculo> campusCurriculo = new java.util.HashSet<com.gapso.trieda.domain.CampusCurriculo>();
+    private Set<CampusCurriculo> campusCurriculo = new HashSet<CampusCurriculo>();
 
 	public Cenario getCenario() {
         return this.cenario;
@@ -128,6 +132,14 @@ public class Campus implements Serializable {
 
 	public void setBairro(String bairro) {
 		this.bairro = bairro;
+	}
+	
+	public Set<Unidade> getUnidades() {
+		return this.unidades;
+	}
+	
+	public void setUnidades(Set<Unidade> unidades) {
+		this.unidades = unidades;
 	}
 
 	public Set<DeslocamentoCampus> getDeslocamentos() {
@@ -256,10 +268,19 @@ public class Campus implements Serializable {
         nome = "%" + nome.replace('*', '%') + "%";
         codigo = (codigo == null)? "" : codigo;
         codigo = "%" + codigo.replace('*', '%') + "%";
-        municipio = (municipio == null)? "" : municipio;
-        municipio = "%" + municipio.replace('*', '%') + "%";
-        bairro = (bairro == null)? "" : bairro;
-        bairro = "%" + bairro.replace('*', '%') + "%";
+        
+        String municipioQuery = "";  
+        if(municipio != null) {
+        	municipioQuery = " LOWER(o.municipio) LIKE LOWER(:municipio) AND ";
+        	municipio = "%" + municipio.replace('*', '%') + "%";
+        }
+       
+        String bairroQuery = "";  
+        if(bairro != null) {
+        	bairroQuery = " LOWER(o.bairro) LIKE LOWER(:bairro) AND ";
+        	bairro = "%" + bairro.replace('*', '%') + "%";
+        }
+        
         
         EntityManager em = Turno.entityManager();
         orderBy = (orderBy != null) ? "ORDER BY o." + orderBy : "";
@@ -268,14 +289,14 @@ public class Campus implements Serializable {
         		"LOWER(o.nome) LIKE LOWER(:nome) AND " +
         		"LOWER(o.codigo) LIKE LOWER(:codigo) AND " +
         		estadoQuery +
-        		"LOWER(o.municipio) LIKE LOWER(:municipio) AND " +
-        		"LOWER(o.bairro) LIKE LOWER(:bairro) " +
-        		""+orderBy);
+        		bairroQuery +
+        		municipioQuery +
+        		" 1=1 "+orderBy);
         q.setParameter("nome", nome);
         q.setParameter("codigo", codigo);
         if(estado != null) q.setParameter("estado", estado);
-        q.setParameter("municipio", municipio);
-        q.setParameter("bairro", bairro);
+        if(municipio != null) q.setParameter("municipio", municipio);
+        if(bairro != null) q.setParameter("bairro", bairro);
         return q.setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
 	
@@ -289,6 +310,7 @@ public class Campus implements Serializable {
         sb.append("Estado: ").append(getEstado().name()).append(", ");
         sb.append("Municipio: ").append(getMunicipio()).append(", ");
         sb.append("Bairro: ").append(getBairro()).append(", ");
+        sb.append("Unidades: ").append(getUnidades() == null ? "null" : getUnidades().size()).append(", ");
         sb.append("Deslocamentos: ").append(getDeslocamentos() == null ? "null" : getDeslocamentos().size()).append(", ");
         sb.append("Professores: ").append(getProfessores() == null ? "null" : getProfessores().size()).append(", ");
         sb.append("Horarios: ").append(getHorarios() == null ? "null" : getHorarios().size()).append(", ");

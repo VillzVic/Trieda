@@ -7,6 +7,7 @@ import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.gapso.web.trieda.client.mvp.model.CampusDTO;
+import com.gapso.web.trieda.client.mvp.model.DeslocamentoUnidadeDTO;
 import com.gapso.web.trieda.client.mvp.model.UnidadeDTO;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -19,5 +20,7 @@ public interface UnidadesServiceAsync {
 	void getBuscaList(CampusDTO campusDTO, String nome, String codigo, PagingLoadConfig config, AsyncCallback<PagingLoadResult<UnidadeDTO>> callback);
 	void getList(BasePagingLoadConfig loadConfig, AsyncCallback<ListLoadResult<UnidadeDTO>> callback);
 	void getUnidade(Long id, AsyncCallback<UnidadeDTO> callback);
+	void getDeslocamento(CampusDTO campusDTO, AsyncCallback<List<DeslocamentoUnidadeDTO>> callback);
+	void saveDeslocamento(List<DeslocamentoUnidadeDTO> list, AsyncCallback<Void> callback);
 	
 }

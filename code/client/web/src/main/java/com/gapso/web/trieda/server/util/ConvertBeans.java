@@ -8,6 +8,7 @@ import java.util.List;
 
 import com.gapso.trieda.domain.AreaTitulacao;
 import com.gapso.trieda.domain.Campus;
+import com.gapso.trieda.domain.DeslocamentoUnidade;
 import com.gapso.trieda.domain.GrupoSala;
 import com.gapso.trieda.domain.HorarioAula;
 import com.gapso.trieda.domain.HorarioDisponivelCenario;
@@ -21,6 +22,7 @@ import com.gapso.trieda.misc.Estados;
 import com.gapso.trieda.misc.Semanas;
 import com.gapso.web.trieda.client.mvp.model.AreaTitulacaoDTO;
 import com.gapso.web.trieda.client.mvp.model.CampusDTO;
+import com.gapso.web.trieda.client.mvp.model.DeslocamentoUnidadeDTO;
 import com.gapso.web.trieda.client.mvp.model.GrupoSalaDTO;
 import com.gapso.web.trieda.client.mvp.model.HorarioAulaDTO;
 import com.gapso.web.trieda.client.mvp.model.HorarioDisponivelCenarioDTO;
@@ -428,5 +430,40 @@ public class ConvertBeans {
 		dto.setCodigo(domain.getCodigo());
 		dto.setDescricao(domain.getDescricao());
 		return dto;
+	}
+	
+	// DESLOCAMENTO UNIDADES
+	public static Unidade toDeslocamentoUnidade(DeslocamentoUnidadeDTO deslocamentoUnidadeDTO) {
+		Unidade unidade = Unidade.find(deslocamentoUnidadeDTO.getOrigemId());
+		unidade.getDeslocamentos().clear();
+		List<Long> listIds = new ArrayList<Long>();
+		for(String keyString : deslocamentoUnidadeDTO.getPropertyNames()) {
+			if(keyString.startsWith("destinoTempo")) {
+				Long id = Long.valueOf(keyString.replace("destinoTempo", ""));
+				listIds.add(id);
+			} else if(keyString.startsWith("destinoCusto")) {
+				Long id = Long.valueOf(keyString.replace("destinoCusto", ""));
+				listIds.add(id);
+			}
+		}
+		for(Long idUnidade : listIds) {
+			DeslocamentoUnidade du = new DeslocamentoUnidade();
+			du.setDestino(Unidade.find(idUnidade));
+			du.setOrigem(unidade);
+			du.setTempo(deslocamentoUnidadeDTO.getDestinoTempo(idUnidade));
+			du.setCusto(deslocamentoUnidadeDTO.getDestinoCusto(idUnidade));
+			unidade.getDeslocamentos().add(du);
+		}
+		return unidade;
+	}
+	
+	public static DeslocamentoUnidadeDTO toDeslocamentoUnidadeDTO(Unidade unidade) {
+		DeslocamentoUnidadeDTO deslocamentoUnidadeDTO = new DeslocamentoUnidadeDTO();
+		deslocamentoUnidadeDTO.setOrigemId(unidade.getId());
+		deslocamentoUnidadeDTO.setOrigemString(unidade.getCodigo());
+		for(DeslocamentoUnidade du : unidade.getDeslocamentos()) {
+			deslocamentoUnidadeDTO.addDestino(du.getId(), du.getDestino().getCodigo(), du.getTempo(), du.getCusto());
+		}
+		return deslocamentoUnidadeDTO;
 	}
 }

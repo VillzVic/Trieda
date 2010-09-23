@@ -35,6 +35,7 @@ public class ToolBarView extends MyComposite implements ToolBarPresenter.Display
 	private MenuItem gruposSalasListMI;
 	private MenuItem tiposCursosListMI;
 	private MenuItem areasTitulacaoListMI;
+	private MenuItem unidadeDeslocamentoListMI;
 	
 	// Campi
 	private Button campiBt;
@@ -129,6 +130,8 @@ public class ToolBarView extends MyComposite implements ToolBarPresenter.Display
 		outros.add(tiposCursosListMI);
 		areasTitulacaoListMI = createMenuItem("Áreas de Titulação", Resources.DEFAULTS.areasDeTitulacao16());
 		outros.add(areasTitulacaoListMI);
+		unidadeDeslocamentoListMI = createMenuItem("Deslocamento de Unidades", Resources.DEFAULTS.deslocamento16());
+		outros.add(unidadeDeslocamentoListMI);
 		
 		outrosUnidadesSBt.setMenu(outros);
 		group.add(outrosUnidadesSBt);
@@ -498,8 +501,12 @@ public class ToolBarView extends MyComposite implements ToolBarPresenter.Display
 		return tiposCursosListMI;
 	}
 	@Override
-	public MenuItem getAreasTitulacaoListMIMenuItem() {
+	public MenuItem getAreasTitulacaoListMenuItem() {
 		return areasTitulacaoListMI;
+	}
+	@Override
+	public MenuItem getUnidadeDeslocamentoListMenuItem() {
+		return unidadeDeslocamentoListMI;
 	}
 	
 }

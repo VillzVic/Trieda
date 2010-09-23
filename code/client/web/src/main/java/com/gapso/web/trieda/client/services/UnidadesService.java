@@ -7,6 +7,7 @@ import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.gapso.web.trieda.client.mvp.model.CampusDTO;
+import com.gapso.web.trieda.client.mvp.model.DeslocamentoUnidadeDTO;
 import com.gapso.web.trieda.client.mvp.model.UnidadeDTO;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
@@ -24,4 +25,6 @@ public interface UnidadesService extends RemoteService {
 	PagingLoadResult<UnidadeDTO> getBuscaList(CampusDTO campusDTO, String nome, String codigo, PagingLoadConfig config);
 	ListLoadResult<UnidadeDTO> getList(BasePagingLoadConfig loadConfig);
 	UnidadeDTO getUnidade(Long id);
+	List<DeslocamentoUnidadeDTO> getDeslocamento(CampusDTO campusDTO);
+	void saveDeslocamento(List<DeslocamentoUnidadeDTO> list);
 }

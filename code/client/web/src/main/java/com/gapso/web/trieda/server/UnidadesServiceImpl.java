@@ -3,6 +3,8 @@ package com.gapso.web.trieda.server;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import com.extjs.gxt.ui.client.Style.SortDir;
 import com.extjs.gxt.ui.client.data.BaseListLoadResult;
 import com.extjs.gxt.ui.client.data.BasePagingLoadConfig;
@@ -14,6 +16,7 @@ import com.gapso.trieda.domain.Campus;
 import com.gapso.trieda.domain.Turno;
 import com.gapso.trieda.domain.Unidade;
 import com.gapso.web.trieda.client.mvp.model.CampusDTO;
+import com.gapso.web.trieda.client.mvp.model.DeslocamentoUnidadeDTO;
 import com.gapso.web.trieda.client.mvp.model.UnidadeDTO;
 import com.gapso.web.trieda.client.services.UnidadesService;
 import com.gapso.web.trieda.server.util.ConvertBeans;
@@ -22,6 +25,7 @@ import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 /**
  * The server side implementation of the RPC service.
  */
+@Transactional
 public class UnidadesServiceImpl extends RemoteServiceServlet implements UnidadesService {
 
 	private static final long serialVersionUID = 5250776996542788849L;
@@ -110,4 +114,23 @@ public class UnidadesServiceImpl extends RemoteServiceServlet implements Unidade
 		}
 	}
 	
+	@Override
+	public List<DeslocamentoUnidadeDTO> getDeslocamento(CampusDTO campusDTO) {
+		List<DeslocamentoUnidadeDTO> list = new ArrayList<DeslocamentoUnidadeDTO>();
+		if(campusDTO != null) {
+			Campus campus = Campus.find(campusDTO.getId());
+			for(Unidade unidade : campus.getUnidades()) {
+				list.add(ConvertBeans.toDeslocamentoUnidadeDTO(unidade));
+			}
+		}
+		return list;
+	}
+	
+	@Override
+	public void saveDeslocamento(List<DeslocamentoUnidadeDTO> list) {
+		for(DeslocamentoUnidadeDTO deslocamentoUnidadeDTO : list) {
+			Unidade unidade = ConvertBeans.toDeslocamentoUnidade(deslocamentoUnidadeDTO);
+			unidade.merge();
+		}
+	}
 }

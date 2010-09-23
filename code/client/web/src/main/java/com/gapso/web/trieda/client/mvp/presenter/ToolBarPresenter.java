@@ -15,6 +15,7 @@ import com.gapso.web.trieda.client.mvp.view.SalasView;
 import com.gapso.web.trieda.client.mvp.view.SemanasLetivaView;
 import com.gapso.web.trieda.client.mvp.view.TiposCursosView;
 import com.gapso.web.trieda.client.mvp.view.TurnosView;
+import com.gapso.web.trieda.client.mvp.view.UnidadesDeslocamentoView;
 import com.gapso.web.trieda.client.mvp.view.UnidadesView;
 import com.gapso.web.trieda.client.util.view.GTab;
 import com.google.gwt.user.client.ui.Widget;
@@ -33,7 +34,8 @@ public class ToolBarPresenter implements Presenter {
 		MenuItem getSalasListMenuItem();
 		MenuItem getGruposSalasListMenuItem();
 		MenuItem getTiposCursosListMenuItem();
-		MenuItem getAreasTitulacaoListMIMenuItem();
+		MenuItem getAreasTitulacaoListMenuItem();
+		MenuItem getUnidadeDeslocamentoListMenuItem();
 		
 		Component getComponent();
 	}
@@ -115,10 +117,17 @@ public class ToolBarPresenter implements Presenter {
 				presenter.go(gTab);
 			}
 		});
-		toolBar.getAreasTitulacaoListMIMenuItem().addSelectionListener(new SelectionListener<MenuEvent>() {
+		toolBar.getAreasTitulacaoListMenuItem().addSelectionListener(new SelectionListener<MenuEvent>() {
 			@Override
 			public void componentSelected(MenuEvent ce) {
 				Presenter presenter = new AreasTitulacaoPresenter(new AreasTitulacaoView());
+				presenter.go(gTab);
+			}
+		});
+		toolBar.getUnidadeDeslocamentoListMenuItem().addSelectionListener(new SelectionListener<MenuEvent>() {
+			@Override
+			public void componentSelected(MenuEvent ce) {
+				Presenter presenter = new UnidadesDeslocamentoPresenter(new UnidadesDeslocamentoView());
 				presenter.go(gTab);
 			}
 		});

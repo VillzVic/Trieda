@@ -13,6 +13,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Table;
 import javax.persistence.Version;
+import javax.validation.constraints.Digits;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -46,6 +47,11 @@ public class DeslocamentoUnidade implements java.io.Serializable {
     @Min(1L)
     @Max(999L)
     private Integer tempo;
+    
+    @NotNull
+    @Column(name = "DEC_CUSTO")
+    @Digits(integer = 4, fraction = 2)
+    private Double custo;
 
 	public Unidade getOrigem() {
         return this.origem;
@@ -70,6 +76,14 @@ public class DeslocamentoUnidade implements java.io.Serializable {
 	public void setTempo(Integer tempo) {
         this.tempo = tempo;
     }
+	
+	public Double getCusto() {
+		return this.custo;
+	}
+	
+	public void setCusto(Double custo) {
+		this.custo = custo;
+	}
 
 	@PersistenceContext
     transient EntityManager entityManager;
@@ -136,22 +150,22 @@ public class DeslocamentoUnidade implements java.io.Serializable {
         return em;
     }
 
-	public static long countDeslocamentoUnidades() {
-        return ((Number) entityManager().createQuery("select count(o) from DeslocamentoUnidade o").getSingleResult()).longValue();
+	public static long count() {
+        return ((Number) entityManager().createQuery("select count(o) from DeslocamentoUnidade o").getSingleResult()).intValue();
     }
 
 	@SuppressWarnings("unchecked")
-    public static List<DeslocamentoUnidade> findAllDeslocamentoUnidades() {
+    public static List<DeslocamentoUnidade> findAll() {
         return entityManager().createQuery("select o from DeslocamentoUnidade o").getResultList();
     }
 
-	public static DeslocamentoUnidade findDeslocamentoUnidade(Long id) {
+	public static DeslocamentoUnidade find(Long id) {
         if (id == null) return null;
         return entityManager().find(DeslocamentoUnidade.class, id);
     }
 
 	@SuppressWarnings("unchecked")
-    public static List<DeslocamentoUnidade> findDeslocamentoUnidadeEntries(int firstResult, int maxResults) {
+    public static List<DeslocamentoUnidade> find(int firstResult, int maxResults) {
         return entityManager().createQuery("select o from DeslocamentoUnidade o").setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
 
@@ -163,6 +177,7 @@ public class DeslocamentoUnidade implements java.io.Serializable {
         sb.append("Version: ").append(getVersion()).append(", ");
         sb.append("Origem: ").append(getOrigem()).append(", ");
         sb.append("Destino: ").append(getDestino()).append(", ");
+        sb.append("Custo: ").append(getCusto()).append(", ");
         sb.append("Tempo: ").append(getTempo());
         return sb.toString();
     }

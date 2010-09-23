@@ -26,7 +26,7 @@ public class SimpleFilter extends FormPanel {
 
 	private void configuration() {
 		formDataFilter = new FormData("-5");
-		setHeading("Filtro");  
+		setHeading("Filtro");
 		setWidth(350);
 		createButtons();
 	}
