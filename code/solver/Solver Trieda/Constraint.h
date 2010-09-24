@@ -32,7 +32,7 @@ public:
 		C_TURMA_DISC_DIAS_CONSEC = 16,		// Restricao 1.2.18
 		C_MIN_CREDS_TURM_BLOCO = 17,		// Restricao 1.2.19
 		C_MAX_CREDS_TURM_BLOCO = 18,		// Restricao 1.2.20
-		C_ALUN0_CURSO_DISC = 19,			// Restricao 1.2.21
+		C_ALUNO_CURSO_DISC = 19,			// Restricao 1.2.21
 		C_ALUNOS_CURSOS_DIF = 20			// Restricao 1.2.22
 
 		/*
