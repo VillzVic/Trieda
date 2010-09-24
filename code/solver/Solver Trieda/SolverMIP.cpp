@@ -81,10 +81,39 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
 	FILE *fout = fopen("solucao.txt","wt");
 #endif
 
-	while (vit != vHash.end())
-	{
+   /**
+   ToDo:
+   Será preciso preencher as classes "Atendimento" da seguinte forma:
+   Ao encontrar um oferecimento, há de se verificar qual campus, 
+   unidade, sala, e dia da semana ele corresponde. 
+
+   As variáveis mais importantes são:
+   x_{i,d,u,s,t}: indica quantos créditos são oferecidos naquele 
+   dia naquela sala daquela disciplina
+   a_{i,d,c,cp}: para quantos alunos a disciplina será oferecida
+
+   Essas duas variáveis contêm toda a informação necessária para
+   construção da solução;
+
+   Sugiro guardar esses valores em alguns maps:
+   De <disciplina,turma> para um vetor de <dia,sala> (unidade)
+   De <disciplina,turma> para alunos.
+   */
+
+   typedef
+      std::map<std::pair<int,int>,std::vector<std::pair<int,int> > >
+      ParVetor;
+   typedef 
+      std::map<std::pair<int,int>,int>
+      ParInteiro;
+
+   ParVetor creditos_por_dia;
+   ParInteiro alunos;
+
+   while (vit != vHash.end())
+   {
 		Variable *v = new Variable(vit->first);
-		int col = vit->second;
+      int col = vit->second;
 
 		v->setValue( xSol[col] );
 
@@ -95,14 +124,71 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
 			lp->getColName(auxName,col,100);
 			fprintf(fout,"%s = %f\n",auxName,v->getValue());
 #endif
-			/**
-			ToDo:
-			*/
-		}
 
+         std::pair<int,int> key;
+
+         switch(v->getType()) {
+            case Variable::V_ERROR:
+               std::cout << "Variável inválida " << std::endl;
+               break;
+            case Variable::V_CREDITOS: 
+               key = std::make_pair(v->getDisciplina()->getId(),v->getTurma());
+
+               if (v->getValue() > 0)
+                  cout << "Oferta de " << v->getValue() << 
+                  " creditos da disciplina " << v->getDisciplina()->codigo
+                  << " para a turma " << v->getTurma()
+                  << " no dia " << v->getDia() << " e na sala " <<
+                  v->getSala()->getId() << std::endl;
+
+               if(creditos_por_dia[key].size() == 0) 
+                  creditos_por_dia[key] = 
+                  std::vector<std::pair<int,int> >(7);
+               creditos_por_dia[key][v->getDia()] = 
+                  std::make_pair((int)v->getValue(),v->getSala()->getId());
+               break;      
+            case Variable::V_OFERECIMENTO: break;
+            case Variable::V_ABERTURA: break;
+            case Variable::V_ALUNOS:
+               key = std::make_pair(v->getDisciplina()->getId(),v->getTurma());
+               if (v->getValue() > 0)
+                  cout << "Oferecimento de " << v->getValue() << 
+                  " vagas da disciplina " << v->getDisciplina()->codigo
+                  << " para a turma " << v->getTurma() << std::endl;
+               alunos[key] = (int) v->getValue();
+               break;
+            case Variable::V_ALOC_ALUNO: break;
+            case Variable::V_N_SUBBLOCOS: break;
+            case Variable::V_DIAS_CONSECUTIVOS: break;
+            case Variable::V_MIN_CRED_SEMANA: break;
+            case Variable::V_MAX_CRED_SEMANA: break;
+            case Variable::V_ALOC_DISCIPLINA: break;
+            case Variable::V_N_ABERT_TURMA_BLOCO: break;
+            case Variable::V_SLACK_: break;
+         }
+      }
 		vit++;
 	}
 
+   /* Depois do map montado, é possível gerar os dados de saída */
+   /* Como sugestão, vou escrever uma rotina de impressão */
+
+   std::cout << 
+   std::endl << "       RESUMO DA SOLUCAO       " << std::endl;
+   for(ParVetor::iterator it = creditos_por_dia.begin();
+       it != creditos_por_dia.end(); ++it) {
+          std::cout << "..............................." << std::endl;
+      std::cout << "Disciplina " << it->first.first << 
+         ", turma " << it->first.second << ": " << std::endl;
+      std::cout << "  Oferta: " << alunos[it->first] << " vagas" 
+         << std::endl;
+      for(int i=0;i<7;i++) {
+         if(it->second[i].first > 0)
+            std::cout << "   Dia " << i << ": " << it->second[i].first
+            << " creditos, sala " << it->second[i].second
+            << std::endl;
+      }
+   }
 	// Fill the solution
 
 #ifdef DEBUG
@@ -661,7 +747,7 @@ int SolverMIP::cria_variavel_num_subblocos(void)
 			{
 				vHash[v] = lp->getNumCols();
 
-				OPT_COL col(OPT_COL::VAR_INTEGRAL,rho,0.0,0.0,
+				OPT_COL col(OPT_COL::VAR_INTEGRAL,rho,0.0,4.0,
 					(char*)v.toString().c_str());
 
 				lp->newCol(col);
@@ -725,7 +811,7 @@ int SolverMIP::cria_variavel_num_abertura_turma_bloco(void)
 			{
 				vHash[v] = lp->getNumCols();
 
-				OPT_COL col(OPT_COL::VAR_INTEGRAL,beta,0.0,0.0,
+				OPT_COL col(OPT_COL::VAR_BINARY,beta,0.0,1.0,
 					(char*)v.toString().c_str());
 
 				lp->newCol(col);
@@ -825,15 +911,9 @@ int SolverMIP::cria_restricao_carga_horaria(void)
 
 				cHash[ c ] = lp->getNumRows();
 
-				int numSalasCampus = 0;
+				nnz = it_campus->total_salas * 7;
 
-				ITERA_GGROUP(it_unidade,it_campus->unidades,Unidade) {
-					numSalasCampus += it_unidade->salas.size();
-				}
-
-				nnz = numSalasCampus * 7;
-
-				OPT_ROW row( nnz + 1, OPT_ROW::EQUAL , 0, name );
+				OPT_ROW row( nnz + 1, OPT_ROW::EQUAL , 0 , name );
 
 				v.reset();
 				v.setType(Variable::V_CREDITOS);
@@ -959,6 +1039,90 @@ int SolverMIP::cria_restricao_max_cred_sd(void)
 int SolverMIP::cria_restricao_min_cred_dd(void)
 {
 	int restricoes = 0;
+	char name[100];
+	int nnz;
+
+	Constraint c;
+
+	Variable v;
+	VariableHash::iterator it_v;
+
+	ITERA_GGROUP(it_campus,problemData->campi,Campus) {
+
+		ITERA_GGROUP(it_unidade,it_campus->unidades,Unidade) {
+			ITERA_GGROUP(it_sala,it_unidade->salas,Sala) {
+				for(int dia=0;dia<7;dia++) {
+					ITERA_GGROUP(it_disc,problemData->disciplinas,Disciplina) {
+						for(int i=0;i<it_disc->num_turmas;i++) {
+
+							c.reset();
+							c.setType(Constraint::C_VAR_O);
+
+							c.setUnidade(*it_unidade);
+							c.setSala(*it_sala);
+
+							c.setDisciplina(*it_disc);
+							c.setTurma(i);
+
+							c.setDia(dia);
+
+							sprintf( name, "%s", c.toString().c_str() ); 
+
+							if (cHash.find(c) != cHash.end()) continue;
+
+							cHash[ c ] = lp->getNumRows();
+
+							nnz = 2;
+
+							OPT_ROW row( nnz, OPT_ROW::LESS , 0.0, name );
+
+							v.reset();
+							v.setType(Variable::V_OFERECIMENTO);
+
+							v.setUnidade(*it_unidade);
+							v.setSala(*it_sala);
+
+							v.setDisciplina(*it_disc);
+							v.setTurma(i);
+
+							v.setDia(dia);
+
+							it_v = vHash.find(v);
+							if( it_v != vHash.end() )
+							{
+								row.insert(it_v->second, 1.0); 
+                        // FIXME
+                        /* Minimo de um crédito, se é oferecida, só 
+                        para forçar o oferecimento */
+							}
+
+							v.reset();
+							v.setType(Variable::V_CREDITOS);
+
+							v.setUnidade(*it_unidade);
+							v.setSala(*it_sala);
+
+							v.setDisciplina(*it_disc);
+							v.setTurma(i);
+
+							v.setDia(dia);
+
+							it_v = vHash.find(v);
+							if( it_v != vHash.end() )
+							{
+								row.insert(it_v->second, -1.0);
+							}
+
+							lp->addRow(row);
+							restricoes++;
+						}
+					}
+				}
+			}
+		}
+	}
+
+
 	return restricoes;
 }
 
@@ -1529,7 +1693,7 @@ int SolverMIP::cria_restricao_cap_aloc_dem_disc(void)
                }
             }
 
-            OPT_ROW row( nnz , OPT_ROW::LESS , rhs , name );
+            OPT_ROW row( nnz , OPT_ROW::EQUAL , rhs , name );
 
             for(int i=0;i<it_disc->num_turmas;++i) {
                v.reset();
