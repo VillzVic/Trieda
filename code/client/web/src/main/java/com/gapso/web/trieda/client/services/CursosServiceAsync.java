@@ -1,10 +1,18 @@
 package com.gapso.web.trieda.client.services;
 
-import com.extjs.gxt.ui.client.data.ModelData;
+import java.util.List;
+
+import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
-import com.gapso.web.trieda.client.util.view.simplecrud.ICrudService;
+import com.gapso.web.trieda.client.mvp.model.CursoDTO;
+import com.gapso.web.trieda.client.mvp.model.TipoCursoDTO;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-public interface CursosServiceAsync extends ICrudService {
-	public void getList(AsyncCallback<PagingLoadResult<ModelData>> callback);
+
+public interface CursosServiceAsync {
+
+	void getBuscaList(String nome, String codigo, TipoCursoDTO tipoCurso, PagingLoadConfig config, AsyncCallback<PagingLoadResult<CursoDTO>> callback);
+	void save(CursoDTO cursoDTO, AsyncCallback<Void> callback);
+	void remove(List<CursoDTO> cursoDTOList, AsyncCallback<Void> callback);
+	
 }

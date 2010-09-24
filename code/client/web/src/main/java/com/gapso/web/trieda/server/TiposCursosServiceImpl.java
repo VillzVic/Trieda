@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.extjs.gxt.ui.client.Style.SortDir;
+import com.extjs.gxt.ui.client.data.BasePagingLoadConfig;
 import com.extjs.gxt.ui.client.data.BasePagingLoadResult;
+import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.gapso.trieda.domain.TipoCurso;
@@ -20,6 +22,11 @@ public class TiposCursosServiceImpl extends RemoteServiceServlet implements Tipo
 
 	private static final long serialVersionUID = 5250776996542788849L;
 
+	@Override
+	public TipoCursoDTO getTipoCurso(Long id) {
+		return ConvertBeans.toTipoCursoDTO(TipoCurso.find(id));
+	}
+	
 	@Override
 	public PagingLoadResult<TipoCursoDTO> getBuscaList(String nome, String descricao, PagingLoadConfig config) {
 		List<TipoCursoDTO> list = new ArrayList<TipoCursoDTO>();
@@ -40,6 +47,11 @@ public class TiposCursosServiceImpl extends RemoteServiceServlet implements Tipo
 		return result;
 	}
 
+	@Override
+	public ListLoadResult<TipoCursoDTO> getList(BasePagingLoadConfig loadConfig) {
+		return getBuscaList(loadConfig.get("query").toString(), null, loadConfig);
+	}
+	
 	@Override
 	public void save(TipoCursoDTO tipoCursoDTO) {
 		TipoCurso tipoCurso = ConvertBeans.toTipoCurso(tipoCursoDTO);

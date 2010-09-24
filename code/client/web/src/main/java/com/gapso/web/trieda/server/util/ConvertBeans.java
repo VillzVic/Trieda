@@ -9,6 +9,7 @@ import java.util.Set;
 
 import com.gapso.trieda.domain.AreaTitulacao;
 import com.gapso.trieda.domain.Campus;
+import com.gapso.trieda.domain.Curso;
 import com.gapso.trieda.domain.DeslocamentoCampus;
 import com.gapso.trieda.domain.DeslocamentoUnidade;
 import com.gapso.trieda.domain.GrupoSala;
@@ -24,6 +25,7 @@ import com.gapso.trieda.misc.Estados;
 import com.gapso.trieda.misc.Semanas;
 import com.gapso.web.trieda.client.mvp.model.AreaTitulacaoDTO;
 import com.gapso.web.trieda.client.mvp.model.CampusDTO;
+import com.gapso.web.trieda.client.mvp.model.CursoDTO;
 import com.gapso.web.trieda.client.mvp.model.DeslocamentoCampusDTO;
 import com.gapso.web.trieda.client.mvp.model.DeslocamentoUnidadeDTO;
 import com.gapso.web.trieda.client.mvp.model.GrupoSalaDTO;
@@ -413,6 +415,39 @@ public class ConvertBeans {
 		dto.setVersion(domain.getVersion());
 		dto.setCodigo(domain.getCodigo());
 		dto.setDescricao(domain.getDescricao());
+		return dto;
+	}
+	
+	// CURSO
+	public static Curso toCurso(CursoDTO dto) {
+		Curso domain = new Curso();
+		domain.setId(dto.getId());
+		domain.setVersion(dto.getVersion());
+		domain.setCodigo(dto.getCodigo());
+		domain.setNome(dto.getNome());
+		domain.setNumMinDoutores(dto.getNumMinDoutores());
+		domain.setNumMinMestres(dto.getNumMinMestres());
+		domain.setMaxDisciplinasPeloProfessor(dto.getMaxDisciplinasPeloProfessor());
+		domain.setAdmMaisDeUmDisciplina(dto.getAdmMaisDeUmDisciplina());
+		
+		TipoCurso tipoCurso = TipoCurso.find(dto.getTipoId());
+		domain.setTipoCurso(tipoCurso);
+		
+		return domain;
+	}
+	
+	public static CursoDTO toCursoDTO(Curso domain) {
+		CursoDTO dto = new CursoDTO();
+		dto.setId(domain.getId());
+		dto.setVersion(domain.getVersion());
+		dto.setCodigo(domain.getCodigo());
+		dto.setNome(domain.getNome());
+		dto.setNumMinDoutores(domain.getNumMinDoutores());
+		dto.setNumMinMestres(domain.getNumMinMestres());
+		dto.setMaxDisciplinasPeloProfessor(domain.getMaxDisciplinasPeloProfessor());
+		dto.setAdmMaisDeUmDisciplina(domain.getAdmMaisDeUmDisciplina());
+		dto.setTipoId(domain.getTipoCurso().getId());
+		dto.setTipoString(domain.getTipoCurso().getCodigo());
 		return dto;
 	}
 	

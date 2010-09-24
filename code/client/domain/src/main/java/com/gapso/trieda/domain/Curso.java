@@ -1,5 +1,6 @@
 package com.gapso.trieda.domain;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -14,6 +15,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import javax.persistence.Table;
 import javax.persistence.Version;
 import javax.validation.constraints.Max;
@@ -40,7 +42,7 @@ public class Curso implements java.io.Serializable {
     @JoinColumn(name = "TCU_ID")
     private TipoCurso tipoCurso;
 
-    @NotNull
+    // TODO @NotNull
     @ManyToOne(targetEntity = Cenario.class)
     @JoinColumn(name = "CEN_ID")
     private Cenario cenario;
@@ -49,6 +51,11 @@ public class Curso implements java.io.Serializable {
     @Column(name = "CUR_CODIGO")
     @Size(min = 3, max = 255)
     private String codigo;
+    
+    @NotNull
+    @Column(name = "CUR_NOME")
+    @Size(min = 3, max = 50)
+    private String nome;
 
     @NotNull
     @Column(name = "CUR_MIN_DOUTORES")
@@ -72,7 +79,7 @@ public class Curso implements java.io.Serializable {
     private Boolean admMaisDeUmDisciplina;
 
     @ManyToMany(cascade = CascadeType.ALL, mappedBy = "cursos")
-    private Set<com.gapso.trieda.domain.AreaTitulacao> areasTitulacao = new java.util.HashSet<com.gapso.trieda.domain.AreaTitulacao>();
+    private Set<AreaTitulacao> areasTitulacao = new HashSet<AreaTitulacao>();
 
 	public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -81,6 +88,7 @@ public class Curso implements java.io.Serializable {
         sb.append("TipoCurso: ").append(getTipoCurso()).append(", ");
         sb.append("Cenario: ").append(getCenario()).append(", ");
         sb.append("Codigo: ").append(getCodigo()).append(", ");
+        sb.append("Nome: ").append(getNome()).append(", ");
         sb.append("NumMinDoutores: ").append(getNumMinDoutores()).append(", ");
         sb.append("NumMinMestres: ").append(getNumMinMestres()).append(", ");
         sb.append("MaxDisciplinasPeloProfessor: ").append(getMaxDisciplinasPeloProfessor()).append(", ");
@@ -112,6 +120,14 @@ public class Curso implements java.io.Serializable {
 	public void setCodigo(String codigo) {
         this.codigo = codigo;
     }
+	
+	public String getNome() {
+		return this.nome;
+	}
+	
+	public void setNome(String nome) {
+		this.nome = nome;
+	}
 
 	public Integer getNumMinDoutores() {
         return this.numMinDoutores;
@@ -218,24 +234,50 @@ public class Curso implements java.io.Serializable {
         return em;
     }
 
-	public static long countCursoes() {
-        return ((Number) entityManager().createQuery("select count(o) from Curso o").getSingleResult()).longValue();
+	public static int count() {
+        return ((Number) entityManager().createQuery("select count(o) from Curso o").getSingleResult()).intValue();
     }
 
 	@SuppressWarnings("unchecked")
-    public static List<Curso> findAllCursoes() {
+    public static List<Curso> findAll() {
         return entityManager().createQuery("select o from Curso o").getResultList();
     }
 
-	public static Curso findCurso(Long id) {
+	public static Curso find(Long id) {
         if (id == null) return null;
         return entityManager().find(Curso.class, id);
     }
 
+	public static List<Curso> find(int firstResult, int maxResults) {
+		return find(firstResult, maxResults, null);
+	}
 	@SuppressWarnings("unchecked")
-    public static List<Curso> findCursoEntries(int firstResult, int maxResults) {
+    public static List<Curso> find(int firstResult, int maxResults, String orderBy) {
+		orderBy = (orderBy != null)? "ORDER BY o."+orderBy : "";
         return entityManager().createQuery("select o from Curso o").setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
 
+    @SuppressWarnings("unchecked")
+	public static List<Curso> findByCodigoLikeAndNomeLikeAndTipo(String codigo, String nome, TipoCurso tipoCurso, int firstResult, int maxResults, String orderBy) {
+
+        nome = (nome == null)? "" : nome;
+        nome = "%" + nome.replace('*', '%') + "%";
+        codigo = (codigo == null)? "" : codigo;
+        codigo = "%" + codigo.replace('*', '%') + "%";
+        
+        orderBy = (orderBy != null) ? " ORDER BY o." + orderBy : "";
+        String queryCampus = "";
+        if(tipoCurso != null) {
+        	queryCampus = " o.tipoCurso = :tipoCurso AND ";
+        }
+        Query q = entityManager().createQuery("SELECT o FROM Curso o WHERE "+queryCampus+" LOWER(o.nome) LIKE LOWER(:nome) AND LOWER(o.codigo) LIKE LOWER(:codigo)");
+        if(tipoCurso != null) {
+        	q.setParameter("tipoCurso", tipoCurso);
+        }
+        q.setParameter("nome", nome);
+        q.setParameter("codigo", codigo);
+        return q.setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
+    }
+	
 	private static final long serialVersionUID = 2645879541329424105L;
 }
