@@ -1,5 +1,7 @@
 package com.gapso.web.trieda.client.mvp.presenter;
 
+import java.util.List;
+
 import com.extjs.gxt.ui.client.event.ButtonEvent;
 import com.extjs.gxt.ui.client.event.MenuEvent;
 import com.extjs.gxt.ui.client.event.SelectionListener;
@@ -7,7 +9,9 @@ import com.extjs.gxt.ui.client.widget.Component;
 import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.menu.MenuItem;
+import com.gapso.web.trieda.client.mvp.model.DeslocamentoCampusDTO;
 import com.gapso.web.trieda.client.mvp.view.AreasTitulacaoView;
+import com.gapso.web.trieda.client.mvp.view.CampiDeslocamentoView;
 import com.gapso.web.trieda.client.mvp.view.CampiView;
 import com.gapso.web.trieda.client.mvp.view.GruposSalasView;
 import com.gapso.web.trieda.client.mvp.view.HorariosAulaView;
@@ -17,7 +21,10 @@ import com.gapso.web.trieda.client.mvp.view.TiposCursosView;
 import com.gapso.web.trieda.client.mvp.view.TurnosView;
 import com.gapso.web.trieda.client.mvp.view.UnidadesDeslocamentoView;
 import com.gapso.web.trieda.client.mvp.view.UnidadesView;
+import com.gapso.web.trieda.client.services.CampiServiceAsync;
+import com.gapso.web.trieda.client.services.Services;
 import com.gapso.web.trieda.client.util.view.GTab;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
 
 public class ToolBarPresenter implements Presenter {
@@ -36,6 +43,7 @@ public class ToolBarPresenter implements Presenter {
 		MenuItem getTiposCursosListMenuItem();
 		MenuItem getAreasTitulacaoListMenuItem();
 		MenuItem getUnidadeDeslocamentoListMenuItem();
+		MenuItem getCampusDeslocamentoListMenuItem();
 		
 		Component getComponent();
 	}
@@ -129,6 +137,25 @@ public class ToolBarPresenter implements Presenter {
 			public void componentSelected(MenuEvent ce) {
 				Presenter presenter = new UnidadesDeslocamentoPresenter(new UnidadesDeslocamentoView(null, null));
 				presenter.go(gTab);
+			}
+		});
+		toolBar.getCampusDeslocamentoListMenuItem().addSelectionListener(new SelectionListener<MenuEvent>() {
+			@Override
+			public void componentSelected(MenuEvent ce) {
+				// TODO ESTE CODIGO CODIGO NÂO PERTENCE AQUI, DEVE FICAR NO CAMPI DESLOCAMENTO
+				// QUANDO EU COLOCO LA, ELE BUGA O HEADER DA TABELA
+				CampiServiceAsync service = Services.campi();
+				service.getDeslocamento(null, null, null, null, null, new AsyncCallback<List<DeslocamentoCampusDTO>>() {
+					@Override
+					public void onFailure(Throwable caught) {
+						MessageBox.alert("ERRO!", "Deu falha na conexão", null);
+					}
+					@Override
+					public void onSuccess(List<DeslocamentoCampusDTO> result) {
+						Presenter presenter = new CampiDeslocamentoPresenter(new CampiDeslocamentoView(result));
+						presenter.go(gTab);	
+					}
+				});
 			}
 		});
 	}

@@ -18,9 +18,14 @@ public class SimpleFilter extends FormPanel {
 	private FormData formDataFilter;
 	private Button submitButton;
 	private Button resetButton;
+	private boolean hiddenResetButton;
 	
 	public SimpleFilter() {
+		this(false);
+	}
+	public SimpleFilter(boolean hiddenResetButton) {
 		super();
+		this.hiddenResetButton = hiddenResetButton;
 		configuration();
 	}
 
@@ -44,8 +49,10 @@ public class SimpleFilter extends FormPanel {
 		HBoxLayoutData hbld = new HBoxLayoutData(new Margins(0, 5, 0, 0));
 		submitButton = new Button("Filtrar", AbstractImagePrototype.create(Resources.SIMPLE_CRUD.filter16()));
 		lc.add(submitButton, hbld);
-		resetButton = new Button("Limpar",  AbstractImagePrototype.create(Resources.SIMPLE_CRUD.filterClean16()));
-		lc.add(resetButton, hbld);  
+		if(!hiddenResetButton) {
+			resetButton = new Button("Limpar",  AbstractImagePrototype.create(Resources.SIMPLE_CRUD.filterClean16()));
+			lc.add(resetButton, hbld);
+		}
 		add(lc);
 	}
 
@@ -55,6 +62,10 @@ public class SimpleFilter extends FormPanel {
 
 	public Button getResetButton() {
 		return resetButton;
+	}
+
+	public void hiddenResetButton(boolean hiddenResetButton) {
+		this.hiddenResetButton = hiddenResetButton;
 	}
 	
 }

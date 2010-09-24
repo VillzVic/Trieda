@@ -5,6 +5,7 @@ import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -33,22 +34,20 @@ import org.springframework.transaction.annotation.Transactional;
 public class DeslocamentoCampus implements java.io.Serializable {
 
     @NotNull
-    @ManyToOne(targetEntity = Campus.class)
+    @ManyToOne(targetEntity = Campus.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "CAM_ORIG_ID")
     private Campus origem;
 
     @NotNull
-    @ManyToOne(targetEntity = Campus.class)
+    @ManyToOne(targetEntity = Campus.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "CAM_DEST_ID")
     private Campus destino;
 
-    @NotNull
     @Column(name = "DEC_TEMPO")
-    @Min(1L)
+    @Min(0L)
     @Max(999L)
     private Integer tempo;
 
-    @NotNull
     @Column(name = "DEC_CUSTO")
     @Digits(integer = 4, fraction = 2)
     private Double custo;

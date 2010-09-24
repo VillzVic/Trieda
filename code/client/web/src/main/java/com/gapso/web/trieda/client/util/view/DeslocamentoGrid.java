@@ -21,18 +21,17 @@ import com.extjs.gxt.ui.client.widget.grid.GridCellRenderer;
 import com.extjs.gxt.ui.client.widget.grid.GridSelectionModel;
 import com.extjs.gxt.ui.client.widget.grid.HeaderGroupConfig;
 import com.extjs.gxt.ui.client.widget.layout.FitLayout;
-import com.gapso.web.trieda.client.mvc.model.UnidadeDeslocamentoModel;
 
 public class DeslocamentoGrid<M extends BaseModel> extends ContentPanel {
 
 	private EditorGrid<M> grid;
 	private ListStore<M> store;
 	private List<M> models;
-	private boolean containsCusto = false;
+	private boolean containsCusto;
 	
-	public DeslocamentoGrid(List<M> deslocamentoUnidadeDTOList) {
+	public DeslocamentoGrid(List<M> models) {
 		super(new FitLayout());
-		models = deslocamentoUnidadeDTOList;
+		this.models = models;
 		setHeaderVisible(false);
 	}
 
@@ -43,10 +42,15 @@ public class DeslocamentoGrid<M extends BaseModel> extends ContentPanel {
 		grid = new EditorGrid<M>(store, getColumnModel());
 		grid.setBorders(true);
 		
-		grid.getView().setEmptyText("Não foi encontrado nenhuma unidade por um dos seguintes motivos:<br />&bull; Nenhum campus foi selecionado ao lado;<br />&bull; Não existem nenhuma unidade cadastrada para este campus.");
+		// TERIA Q TER UMA FLAG FALANDO SE È DE UNIDADES OU DE CAMPUS
+		if(containsCusto) {
+			grid.getView().setEmptyText("Não foi encontrado nenhum campus por um dos seguintes motivos:<br />&bull; O Filtro ao lado não corresponde a nenhum campus;<br />&bull; Não existem nenhum campus cadastrado no sistema.");
+		} else {
+			grid.getView().setEmptyText("Não foi encontrado nenhuma unidade por um dos seguintes motivos:<br />&bull; Nenhum campus foi selecionado ao lado;<br />&bull; Não existem nenhuma unidade cadastrada para este campus.");
+		}
 		
-		grid.addListener(Events.BeforeEdit, new Listener<GridEvent<UnidadeDeslocamentoModel>>() {
-			public void handleEvent(GridEvent<UnidadeDeslocamentoModel> be) {
+		grid.addListener(Events.BeforeEdit, new Listener<GridEvent<M>>() {
+			public void handleEvent(GridEvent<M> be) {
 				int rowIndex = be.getRowIndex();
 				int colIndex = be.getColIndex();
 				if(isMeio(rowIndex, colIndex)) {
@@ -59,10 +63,8 @@ public class DeslocamentoGrid<M extends BaseModel> extends ContentPanel {
 	
 	@Override
 	protected void beforeRender() {
-		System.out.println("I beforeRender");
 		super.beforeRender();
 		createGrid();
-		System.out.println("F beforeRender");
 	}
 
 	public Grid<M> getGrid() {
@@ -70,12 +72,10 @@ public class DeslocamentoGrid<M extends BaseModel> extends ContentPanel {
 	}
 
 	public void updateList(List<M> models) {
-		System.out.println("I updateList");
 		this.models = models;
 		store.removeAll();
 		store.add(models);
 		grid.reconfigure(store, getColumnModel());
-		System.out.println("F updateList");
 	}
 	
 	public ColumnModel getColumnModel() {
@@ -84,7 +84,7 @@ public class DeslocamentoGrid<M extends BaseModel> extends ContentPanel {
 		ColumnModel columnModel = null;
 			
 		if(models != null && !models.isEmpty()) {
-			ColumnConfig column = new ColumnConfig("origemString", "Unidades", 120);
+			ColumnConfig column = new ColumnConfig("origemString", containsCusto?"Campus":"Unidades", 120);
 			column.setResizable(false);
 			column.setMenuDisabled(true);
 			column.setSortable(false);
@@ -112,7 +112,6 @@ public class DeslocamentoGrid<M extends BaseModel> extends ContentPanel {
 					} else {
 						config.style = "background-color: #FFFFFF;";
 					}
-//					return rowIndex+":"+colIndex;
 					return null;
 				}
 			};
@@ -122,9 +121,9 @@ public class DeslocamentoGrid<M extends BaseModel> extends ContentPanel {
 				String stringColumn = "Tempo";
 				list.add(createColumnConfig(idColumn, stringColumn, false, renderer));
 				
-				idColumn = "destinoCusto"+model.get("origemId");
-				stringColumn = "Custo";
 				if(containsCusto) {
+					idColumn = "destinoCusto"+model.get("origemId");
+					stringColumn = "Custo";
 					list.add(createColumnConfig(idColumn, stringColumn, true, renderer));
 				}
 			}
@@ -157,11 +156,19 @@ public class DeslocamentoGrid<M extends BaseModel> extends ContentPanel {
 		for(M itemOrigem : store.getModels()) {
 			for(M itemDestino : store.getModels()) {
 				itemDestino.set("destinoTempo"+itemOrigem.get("origemId"), itemOrigem.get("destinoTempo"+itemDestino.get("origemId")));
+				itemDestino.set("destinoCusto"+itemOrigem.get("origemId"), itemOrigem.get("destinoCusto"+itemDestino.get("origemId")));
 			}
 			store.update(itemOrigem);
 		}
 	}
 	
+	public boolean isContainsCusto() {
+		return containsCusto;
+	}
+	public void setContainsCusto(boolean containsCusto) {
+		this.containsCusto = containsCusto;
+	}
+
 	private boolean isMeio(int rowIndex, int colIndex) {
 		return ((containsCusto && rowIndex == ((colIndex-1)/2)) || (!containsCusto && rowIndex == (colIndex-1)));
 	}

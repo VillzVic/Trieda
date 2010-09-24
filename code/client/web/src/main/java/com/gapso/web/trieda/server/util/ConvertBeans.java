@@ -9,6 +9,7 @@ import java.util.Set;
 
 import com.gapso.trieda.domain.AreaTitulacao;
 import com.gapso.trieda.domain.Campus;
+import com.gapso.trieda.domain.DeslocamentoCampus;
 import com.gapso.trieda.domain.DeslocamentoUnidade;
 import com.gapso.trieda.domain.GrupoSala;
 import com.gapso.trieda.domain.HorarioAula;
@@ -23,6 +24,7 @@ import com.gapso.trieda.misc.Estados;
 import com.gapso.trieda.misc.Semanas;
 import com.gapso.web.trieda.client.mvp.model.AreaTitulacaoDTO;
 import com.gapso.web.trieda.client.mvp.model.CampusDTO;
+import com.gapso.web.trieda.client.mvp.model.DeslocamentoCampusDTO;
 import com.gapso.web.trieda.client.mvp.model.DeslocamentoUnidadeDTO;
 import com.gapso.web.trieda.client.mvp.model.GrupoSalaDTO;
 import com.gapso.web.trieda.client.mvp.model.HorarioAulaDTO;
@@ -436,7 +438,7 @@ public class ConvertBeans {
 	// DESLOCAMENTO UNIDADES
 	public static Unidade toDeslocamentoUnidade(DeslocamentoUnidadeDTO deslocamentoUnidadeDTO) {
 		Unidade unidade = Unidade.find(deslocamentoUnidadeDTO.getOrigemId());
-		// TODO O correto é remover somente os inexistentes e editar os alterados, atualemente está removendo todo mundo e adicionando tudo
+		// TODO O correto é remover somente os inexistentes e editar os alterados, atualmente está removendo todo mundo e adicionando tudo
 		unidade.getDeslocamentos().removeAll(unidade.getDeslocamentos());
 		
 		List<Long> listIds = new ArrayList<Long>();
@@ -445,7 +447,8 @@ public class ConvertBeans {
 				Long id = Long.valueOf(keyString.replace("destinoTempo", ""));
 				if(!listIds.contains(id)) listIds.add(id);
 			} else if(keyString.startsWith("destinoCusto")) {
-				Long id = Long.valueOf(keyString.replace("destinoCusto", ""));
+//				Long id = Long.valueOf(keyString.replace("destinoCusto", ""));
+				Long id = 0L;
 				if(!listIds.contains(id)) listIds.add(id);
 			}
 		}
@@ -475,5 +478,49 @@ public class ConvertBeans {
 			deslocamentoUnidadeDTO.addDestino(du.getDestino().getId(), du.getDestino().getCodigo(), du.getTempo(), du.getCusto());
 		}
 		return deslocamentoUnidadeDTO;
+	}
+	
+	// DESLOCAMENTO CAMPUS
+	public static Campus toDeslocamentoCampus(DeslocamentoCampusDTO deslocamentoCampusDTO) {
+		Campus campus = Campus.find(deslocamentoCampusDTO.getOrigemId());
+		// TODO O correto é remover somente os inexistentes e editar os alterados, atualmente está removendo todo mundo e adicionando tudo
+		campus.getDeslocamentos().removeAll(campus.getDeslocamentos());
+		
+		List<Long> listIds = new ArrayList<Long>();
+		for(String keyString : deslocamentoCampusDTO.getPropertyNames()) {
+			if(keyString.startsWith("destinoTempo")) {
+				Long id = Long.valueOf(keyString.replace("destinoTempo", ""));
+				if(!listIds.contains(id)) listIds.add(id);
+			} else if(keyString.startsWith("destinoCusto")) {
+				Long id = Long.valueOf(keyString.replace("destinoCusto", ""));
+				if(!listIds.contains(id)) listIds.add(id);
+			}
+		}
+		for(Long idCampus : listIds) {
+			Integer tempo = deslocamentoCampusDTO.getDestinoTempo(idCampus);
+			Double custo = deslocamentoCampusDTO.getDestinoCusto(idCampus);
+			if(tempo <= 0 && custo <= 0.0) continue;
+			DeslocamentoCampus du = new DeslocamentoCampus();
+			du.setDestino(Campus.find(idCampus));
+			du.setOrigem(campus);
+			du.setTempo(tempo);
+			du.setCusto(custo);
+			campus.getDeslocamentos().add(du);
+		}
+		return campus;
+	}
+	
+	public static DeslocamentoCampusDTO toDeslocamentoCampusDTO(Campus campus, List<Campus> campusDestinos) {
+		DeslocamentoCampusDTO deslocamentoCampusDTO = new DeslocamentoCampusDTO();
+		deslocamentoCampusDTO.setOrigemId(campus.getId());
+		deslocamentoCampusDTO.setOrigemString(campus.getCodigo());
+		Set<DeslocamentoCampus> set = campus.getDeslocamentos();
+		for(Campus u : campusDestinos) {
+			deslocamentoCampusDTO.addDestino(u.getId(), u.getCodigo(), 0, 0.0);
+		}
+		for(DeslocamentoCampus du : set) {
+			deslocamentoCampusDTO.addDestino(du.getDestino().getId(), du.getDestino().getCodigo(), du.getTempo(), du.getCusto());
+		}
+		return deslocamentoCampusDTO;
 	}
 }

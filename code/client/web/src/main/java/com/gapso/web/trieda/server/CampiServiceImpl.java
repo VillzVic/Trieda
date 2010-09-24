@@ -1,7 +1,11 @@
 package com.gapso.web.trieda.server;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+
+import org.springframework.transaction.annotation.Transactional;
 
 import com.extjs.gxt.ui.client.Style.SortDir;
 import com.extjs.gxt.ui.client.data.BaseListLoadResult;
@@ -14,6 +18,7 @@ import com.gapso.trieda.domain.Campus;
 import com.gapso.trieda.domain.Turno;
 import com.gapso.trieda.misc.Estados;
 import com.gapso.web.trieda.client.mvp.model.CampusDTO;
+import com.gapso.web.trieda.client.mvp.model.DeslocamentoCampusDTO;
 import com.gapso.web.trieda.client.services.CampiService;
 import com.gapso.web.trieda.server.util.ConvertBeans;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
@@ -21,6 +26,7 @@ import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 /**
  * The server side implementation of the RPC service.
  */
+@Transactional
 public class CampiServiceImpl extends RemoteServiceServlet implements CampiService {
 
 	private static final long serialVersionUID = 5250776996542788849L;
@@ -107,6 +113,40 @@ public class CampiServiceImpl extends RemoteServiceServlet implements CampiServi
 	public void remove(List<CampusDTO> campusDTOList) {
 		for(CampusDTO campusDTO : campusDTOList) {
 			ConvertBeans.toCampus(campusDTO).remove();
+		}
+	}
+	
+	@Override
+	public List<DeslocamentoCampusDTO> getDeslocamento(String nome, String codigo, String estadoString, String municipio, String bairro) {
+		List<DeslocamentoCampusDTO> list = new ArrayList<DeslocamentoCampusDTO>();
+		Estados estadoDomain = null;
+		if(estadoString != null) {
+			for(Estados estado : Estados.values()) {
+				if(estado.name().equals(estadoString)) {
+					estadoDomain = estado;
+					break;
+				}
+			}
+		}
+		List<Campus> listCampi = Campus.findByNomeLikeAndCodigoLikeAndEstadoAndMunicipioLikeAndBairroLike(nome, codigo, estadoDomain, municipio, bairro, 0, 999, null);
+		for(Campus unidade : listCampi) {
+			list.add(ConvertBeans.toDeslocamentoCampusDTO(unidade, listCampi));
+		}
+		
+		Collections.sort(list, new Comparator<DeslocamentoCampusDTO>() {
+			@Override
+			public int compare(DeslocamentoCampusDTO o1, DeslocamentoCampusDTO o2) {
+				return o1.get("origemString").toString().compareToIgnoreCase(o2.get("origemString").toString());
+			}
+		});
+		return list;
+	}
+	
+	@Override
+	public void saveDeslocamento(List<DeslocamentoCampusDTO> list) {
+		for(DeslocamentoCampusDTO deslocamentoCampusDTO : list) {
+			Campus campus = ConvertBeans.toDeslocamentoCampus(deslocamentoCampusDTO);
+			campus.merge();
 		}
 	}
 	
