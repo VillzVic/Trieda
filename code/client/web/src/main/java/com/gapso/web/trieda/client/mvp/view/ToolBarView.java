@@ -431,27 +431,6 @@ public class ToolBarView extends MyComposite implements ToolBarPresenter.Display
 		});
 		menuSalasBt.add(outros19);
 		
-		MenuItem outros20 = new MenuItem("Matriz de Tempos de Deslocamento entre Campi");
-		outros20.setIcon(AbstractImagePrototype.create(Resources.DEFAULTS.campi16()));
-		outros20.addSelectionListener(new SelectionListener<MenuEvent>() {
-			@Override
-			public void componentSelected(MenuEvent ce) {
-				Dispatcher.forwardEvent(AppEvents.CampusDeslocamento);
-			}
-		});
-		menuSalasBt.add(outros20);
-		
-		MenuItem outros21 = new MenuItem("Matriz de Tempos de Deslocamento entre Unidades");
-		outros21.setIcon(AbstractImagePrototype.create(Resources.DEFAULTS.unidade16()));
-		outros21.addSelectionListener(new SelectionListener<MenuEvent>() {
-			@Override
-			public void componentSelected(MenuEvent ce) {
-				Dispatcher.forwardEvent(AppEvents.UnidadeDeslocamento);
-			}
-		});
-		menuSalasBt.add(outros21);
-		
-		
 		salasBt.setMenu(menuSalasBt);
 		group.add(salasBt);
 		toolBar.add(group);
