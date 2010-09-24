@@ -32,31 +32,36 @@ public class UnidadesDeslocamentoPresenter implements Presenter {
 		CampusComboBox getCampusComboBox();
 		DeslocamentoGrid<DeslocamentoUnidadeDTO> getGrid();
 		Component getComponent();
+		CampusDTO getCampusDTO();
 	}
 	private Display display; 
 	private GTab gTab;
 	
 	public UnidadesDeslocamentoPresenter(Display display) {
 		this.display = display;
-		configureProxy();
+//		configureProxy();
 		setListeners();
 	}
-
-	private void configureProxy() {
-		UnidadesServiceAsync service = Services.unidades();
-		CampusDTO campusDTO = display.getCampusComboBox().getValue();
-		service.getDeslocamento(campusDTO, new AsyncCallback<List<DeslocamentoUnidadeDTO>>() {
-			@Override
-			public void onFailure(Throwable caught) {
-				MessageBox.alert("ERRO!", "Deu falha na conexão", null);
-			}
-
-			@Override
-			public void onSuccess(List<DeslocamentoUnidadeDTO> result) {
-				display.getGrid().updateList(result);
-			}
-		});
-	}
+	
+//	private void configureProxy() {
+//		UnidadesServiceAsync service = Services.unidades();
+//		CampusDTO campusDTO = display.getCampusDTO();
+//		
+//		final FutureResult<List<DeslocamentoUnidadeDTO>> futureDeslocamentoUnidadeDTOList = new FutureResult<List<DeslocamentoUnidadeDTO>>();
+//		service.getDeslocamento(campusDTO, futureDeslocamentoUnidadeDTOList);
+//		
+//		FutureSynchronizer synch = new FutureSynchronizer(futureDeslocamentoUnidadeDTOList);
+//		synch.addCallback(new AsyncCallback<Boolean>() {
+//			@Override
+//			public void onFailure(Throwable caught) {
+//				MessageBox.alert("ERRO!", "Deu falha na conexão", null);
+//			}
+//			@Override
+//			public void onSuccess(Boolean result) {
+//				display.getGrid().updateList(futureDeslocamentoUnidadeDTOList.result());	
+//			}
+//		});
+//	}
 	
 	private void setListeners() {
 		display.getSaveButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
@@ -71,6 +76,7 @@ public class UnidadesDeslocamentoPresenter implements Presenter {
 					}
 					@Override
 					public void onSuccess(Void result) {
+						display.getGrid().getStore().commitChanges();
 						Info.display("Salvo", "Deslocamentos atualizado com sucesso");
 					}
 				});
@@ -79,11 +85,14 @@ public class UnidadesDeslocamentoPresenter implements Presenter {
 		display.getCancelButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
 			@Override
 			public void componentSelected(ButtonEvent ce) {
+				display.getGrid().getStore().rejectChanges();
+				Info.display("Cancelado", "Alterações canceladas com sucesso");
 			}
 		});
 		display.getSimetricaButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
 			@Override
 			public void componentSelected(ButtonEvent ce) {
+				display.getGrid().igualarOrigemDestino();
 			}
 		});
 		display.getCampusComboBox().addSelectionChangedListener(new SelectionChangedListener<CampusDTO>() {

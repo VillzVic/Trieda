@@ -1,7 +1,10 @@
 package com.gapso.web.trieda.server;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.transaction.annotation.Transactional;
 
@@ -119,10 +122,17 @@ public class UnidadesServiceImpl extends RemoteServiceServlet implements Unidade
 		List<DeslocamentoUnidadeDTO> list = new ArrayList<DeslocamentoUnidadeDTO>();
 		if(campusDTO != null) {
 			Campus campus = Campus.find(campusDTO.getId());
-			for(Unidade unidade : campus.getUnidades()) {
-				list.add(ConvertBeans.toDeslocamentoUnidadeDTO(unidade));
+			Set<Unidade> listUnidades = campus.getUnidades();
+			for(Unidade unidade : listUnidades) {
+				list.add(ConvertBeans.toDeslocamentoUnidadeDTO(unidade, listUnidades));
 			}
 		}
+		Collections.sort(list, new Comparator<DeslocamentoUnidadeDTO>() {
+			@Override
+			public int compare(DeslocamentoUnidadeDTO o1, DeslocamentoUnidadeDTO o2) {
+				return o1.get("origemString").toString().compareToIgnoreCase(o2.get("origemString").toString());
+			}
+		});
 		return list;
 	}
 	

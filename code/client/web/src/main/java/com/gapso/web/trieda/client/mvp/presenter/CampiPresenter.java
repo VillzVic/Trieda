@@ -13,9 +13,12 @@ import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.gapso.web.trieda.client.mvp.model.CampusDTO;
+import com.gapso.web.trieda.client.mvp.model.DeslocamentoUnidadeDTO;
 import com.gapso.web.trieda.client.mvp.view.CampusFormView;
+import com.gapso.web.trieda.client.mvp.view.UnidadesDeslocamentoView;
 import com.gapso.web.trieda.client.services.CampiServiceAsync;
 import com.gapso.web.trieda.client.services.Services;
+import com.gapso.web.trieda.client.services.UnidadesServiceAsync;
 import com.gapso.web.trieda.client.util.view.EstadoComboBox;
 import com.gapso.web.trieda.client.util.view.GTab;
 import com.gapso.web.trieda.client.util.view.GTabItem;
@@ -31,6 +34,7 @@ public class CampiPresenter implements Presenter {
 		Button getRemoveButton();
 		Button getImportExcelButton();
 		Button getExportExcelButton();
+		Button getUnidadeDeslocamentosButton();
 		TextField<String> getCodigoBuscaTextField();
 		TextField<String> getNomeBuscaTextField();
 		EstadoComboBox getEstadoBuscaComboBox();
@@ -43,6 +47,7 @@ public class CampiPresenter implements Presenter {
 		void setProxy(RpcProxy<PagingLoadResult<CampusDTO>> proxy);
 	}
 	private Display display; 
+	private GTab gTab;
 	
 	public CampiPresenter(Display display) {
 		this.display = display;
@@ -102,6 +107,29 @@ public class CampiPresenter implements Presenter {
 				});
 			}
 		});
+		display.getUnidadeDeslocamentosButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
+			@Override
+			public void componentSelected(ButtonEvent ce) {
+
+				// TODO ESTE CODIGO CODIGO NÂO PERTENCE AQUI, DEVE FICAR NO UNIDADES DESLOCAMENTO
+				// QUANDO EU COLOCO LA, ELE BUGA O HEADER DA TABELA
+				UnidadesServiceAsync service = Services.unidades();
+				final CampusDTO campusDTO = display.getGrid().getGrid().getSelectionModel().getSelectedItem();
+				service.getDeslocamento(campusDTO, new AsyncCallback<List<DeslocamentoUnidadeDTO>>() {
+					@Override
+					public void onFailure(Throwable caught) {
+						MessageBox.alert("ERRO!", "Deu falha na conexão", null);
+					}
+					@Override
+					public void onSuccess(List<DeslocamentoUnidadeDTO> result) {
+						Presenter presenter = new UnidadesDeslocamentoPresenter(new UnidadesDeslocamentoView(campusDTO, result));
+						presenter.go(gTab);	
+					}
+				});
+				
+
+			}
+		});
 		display.getResetBuscaButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
 			@Override
 			public void componentSelected(ButtonEvent ce) {
@@ -123,8 +151,8 @@ public class CampiPresenter implements Presenter {
 	
 	@Override
 	public void go(Widget widget) {
-		GTab tab = (GTab)widget;
-		tab.add((GTabItem)display.getComponent());
+		gTab = (GTab)widget;
+		gTab.add((GTabItem)display.getComponent());
 	}
 
 }

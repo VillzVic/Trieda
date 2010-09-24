@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Set;
 
 import com.gapso.trieda.domain.AreaTitulacao;
 import com.gapso.trieda.domain.Campus;
@@ -435,34 +436,43 @@ public class ConvertBeans {
 	// DESLOCAMENTO UNIDADES
 	public static Unidade toDeslocamentoUnidade(DeslocamentoUnidadeDTO deslocamentoUnidadeDTO) {
 		Unidade unidade = Unidade.find(deslocamentoUnidadeDTO.getOrigemId());
-		unidade.getDeslocamentos().clear();
+		// TODO O correto é remover somente os inexistentes e editar os alterados, atualemente está removendo todo mundo e adicionando tudo
+		unidade.getDeslocamentos().removeAll(unidade.getDeslocamentos());
+		
 		List<Long> listIds = new ArrayList<Long>();
 		for(String keyString : deslocamentoUnidadeDTO.getPropertyNames()) {
 			if(keyString.startsWith("destinoTempo")) {
 				Long id = Long.valueOf(keyString.replace("destinoTempo", ""));
-				listIds.add(id);
+				if(!listIds.contains(id)) listIds.add(id);
 			} else if(keyString.startsWith("destinoCusto")) {
 				Long id = Long.valueOf(keyString.replace("destinoCusto", ""));
-				listIds.add(id);
+				if(!listIds.contains(id)) listIds.add(id);
 			}
 		}
 		for(Long idUnidade : listIds) {
+			Integer tempo = deslocamentoUnidadeDTO.getDestinoTempo(idUnidade);
+			Double custo = deslocamentoUnidadeDTO.getDestinoCusto(idUnidade);
+			if(tempo <= 0 && custo <= 0.0) continue;
 			DeslocamentoUnidade du = new DeslocamentoUnidade();
 			du.setDestino(Unidade.find(idUnidade));
 			du.setOrigem(unidade);
-			du.setTempo(deslocamentoUnidadeDTO.getDestinoTempo(idUnidade));
-			du.setCusto(deslocamentoUnidadeDTO.getDestinoCusto(idUnidade));
+			du.setTempo(tempo);
+			du.setCusto(custo);
 			unidade.getDeslocamentos().add(du);
 		}
 		return unidade;
 	}
 	
-	public static DeslocamentoUnidadeDTO toDeslocamentoUnidadeDTO(Unidade unidade) {
+	public static DeslocamentoUnidadeDTO toDeslocamentoUnidadeDTO(Unidade unidade, Set<Unidade> unidadesDestinos) {
 		DeslocamentoUnidadeDTO deslocamentoUnidadeDTO = new DeslocamentoUnidadeDTO();
 		deslocamentoUnidadeDTO.setOrigemId(unidade.getId());
 		deslocamentoUnidadeDTO.setOrigemString(unidade.getCodigo());
-		for(DeslocamentoUnidade du : unidade.getDeslocamentos()) {
-			deslocamentoUnidadeDTO.addDestino(du.getId(), du.getDestino().getCodigo(), du.getTempo(), du.getCusto());
+		Set<DeslocamentoUnidade> set = unidade.getDeslocamentos();
+		for(Unidade u : unidadesDestinos) {
+			deslocamentoUnidadeDTO.addDestino(u.getId(), u.getCodigo(), 0, 0.0);
+		}
+		for(DeslocamentoUnidade du : set) {
+			deslocamentoUnidadeDTO.addDestino(du.getDestino().getId(), du.getDestino().getCodigo(), du.getTempo(), du.getCusto());
 		}
 		return deslocamentoUnidadeDTO;
 	}

@@ -13,6 +13,7 @@ import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.extjs.gxt.ui.client.widget.grid.ColumnConfig;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayout;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
+import com.extjs.gxt.ui.client.widget.toolbar.SeparatorToolItem;
 import com.gapso.web.trieda.client.mvp.model.CampusDTO;
 import com.gapso.web.trieda.client.mvp.presenter.CampiPresenter;
 import com.gapso.web.trieda.client.util.resources.Resources;
@@ -32,6 +33,7 @@ public class CampiView extends MyComposite implements CampiPresenter.Display {
 	private EstadoComboBox estadoBuscaComboBox;
 	private TextField<String> municipioBuscaTextField;
 	private TextField<String> bairroBuscaTextField;
+	private Button unidadesDeslocamentoBT;
 	private ContentPanel panel;
 	private GTabItem tabItem;
 	
@@ -56,6 +58,9 @@ public class CampiView extends MyComposite implements CampiPresenter.Display {
 	
 	private void createToolBar() {
 		toolBar = new SimpleToolBar();
+		toolBar.add(new SeparatorToolItem());
+		unidadesDeslocamentoBT = toolBar.createButton("Deslocamento entre Unidades", Resources.DEFAULTS.deslocamento16());
+		toolBar.add(unidadesDeslocamentoBT);
 		panel.setTopComponent(toolBar);
 	}
 	
@@ -170,6 +175,11 @@ public class CampiView extends MyComposite implements CampiPresenter.Display {
 	@Override
 	public TextField<String> getBairroBuscaTextField() {
 		return bairroBuscaTextField;
+	}
+
+	@Override
+	public Button getUnidadeDeslocamentosButton() {
+		return unidadesDeslocamentoBT;
 	}
 	
 }

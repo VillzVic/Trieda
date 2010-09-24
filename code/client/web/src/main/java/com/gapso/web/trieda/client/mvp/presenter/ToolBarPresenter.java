@@ -127,7 +127,7 @@ public class ToolBarPresenter implements Presenter {
 		toolBar.getUnidadeDeslocamentoListMenuItem().addSelectionListener(new SelectionListener<MenuEvent>() {
 			@Override
 			public void componentSelected(MenuEvent ce) {
-				Presenter presenter = new UnidadesDeslocamentoPresenter(new UnidadesDeslocamentoView());
+				Presenter presenter = new UnidadesDeslocamentoPresenter(new UnidadesDeslocamentoView(null, null));
 				presenter.go(gTab);
 			}
 		});

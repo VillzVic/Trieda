@@ -1,5 +1,7 @@
 package com.gapso.trieda.domain;
 
+import java.io.Serializable;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -33,7 +35,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RooToString
 @RooEntity(identifierColumn = "UNI_ID")
 @Table(name = "UNIDADES")
-public class Unidade implements java.io.Serializable {
+public class Unidade implements Serializable {
 
     @NotNull
     @ManyToOne(targetEntity = Campus.class)
@@ -50,12 +52,11 @@ public class Unidade implements java.io.Serializable {
     @Size(min = 5, max = 20)
     private String nome;
 
-    @NotNull
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "origem")
-    private Set<com.gapso.trieda.domain.DeslocamentoUnidade> deslocamentos = new java.util.HashSet<com.gapso.trieda.domain.DeslocamentoUnidade>();
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "origem", orphanRemoval = true)
+    private Set<DeslocamentoUnidade> deslocamentos = new HashSet<DeslocamentoUnidade>();
 
     @ManyToMany(cascade = CascadeType.ALL, mappedBy = "unidades")
-    private Set<com.gapso.trieda.domain.HorarioDisponivelCenario> horarios = new java.util.HashSet<com.gapso.trieda.domain.HorarioDisponivelCenario>();
+    private Set<HorarioDisponivelCenario> horarios = new HashSet<HorarioDisponivelCenario>();
 
     @PersistenceContext
     transient EntityManager entityManager;

@@ -1,5 +1,7 @@
 package com.gapso.web.trieda.client.mvp.view;
 
+import java.util.List;
+
 import com.extjs.gxt.ui.client.Style.LayoutRegion;
 import com.extjs.gxt.ui.client.util.Margins;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
@@ -8,6 +10,7 @@ import com.extjs.gxt.ui.client.widget.form.FormPanel;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayout;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
 import com.extjs.gxt.ui.client.widget.layout.FormData;
+import com.gapso.web.trieda.client.mvp.model.CampusDTO;
 import com.gapso.web.trieda.client.mvp.model.DeslocamentoUnidadeDTO;
 import com.gapso.web.trieda.client.mvp.presenter.UnidadesDeslocamentoPresenter;
 import com.gapso.web.trieda.client.util.resources.Resources;
@@ -21,20 +24,24 @@ public class UnidadesDeslocamentoView extends MyComposite implements UnidadesDes
 	private CampusComboBox campusBuscaComboBox;
 	private DeslocamentoGrid<DeslocamentoUnidadeDTO> deslocamentoGrid;
 	private DeslocamentoToolBar deslocamentoToolBar;
+	private CampusDTO campusDTO;
+	private List<DeslocamentoUnidadeDTO> deslocamentoUnidadeDTOList;
 	
 	private ContentPanel panel;
 	private GTabItem tabItem;
 
-	public UnidadesDeslocamentoView() {
+	public UnidadesDeslocamentoView(CampusDTO campusDTO, List<DeslocamentoUnidadeDTO> deslocamentoUnidadeDTOList) {
+		this.campusDTO = campusDTO;
+		this.deslocamentoUnidadeDTOList = deslocamentoUnidadeDTOList;
 		initUI();
 	}
 	
 	private void initUI() {
 		panel = new ContentPanel(new BorderLayout());
 		panel.setHeading("Master Data » Deslocamentos de Unidades");
+		createFilter();
 		createToolBar();
 		createGrid();
-		createFilter();
 		createTabItem();
 		initComponent(tabItem);
 	}
@@ -53,7 +60,7 @@ public class UnidadesDeslocamentoView extends MyComposite implements UnidadesDes
 		BorderLayoutData bld = new BorderLayoutData(LayoutRegion.CENTER);
 	    bld.setMargins(new Margins(5, 5, 5, 5));
 	    
-	    deslocamentoGrid = new DeslocamentoGrid<DeslocamentoUnidadeDTO>();
+	    deslocamentoGrid = new DeslocamentoGrid<DeslocamentoUnidadeDTO>(deslocamentoUnidadeDTOList);
 	    panel.add(deslocamentoGrid, bld);
 	}
 
@@ -69,6 +76,9 @@ public class UnidadesDeslocamentoView extends MyComposite implements UnidadesDes
 		
 		campusBuscaComboBox = new CampusComboBox();
 		campusBuscaComboBox.setFieldLabel("Campus");
+		if(campusDTO != null) {
+			campusBuscaComboBox.setValue(campusDTO);
+		}
 		
 		filter.add(campusBuscaComboBox, formData);
 		
@@ -108,6 +118,11 @@ public class UnidadesDeslocamentoView extends MyComposite implements UnidadesDes
 	@Override
 	public DeslocamentoGrid<DeslocamentoUnidadeDTO> getGrid() {
 		return deslocamentoGrid;
+	}
+
+	@Override
+	public CampusDTO getCampusDTO() {
+		return campusDTO;
 	}
 
 }
