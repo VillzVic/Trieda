@@ -14,6 +14,7 @@ import com.gapso.web.trieda.client.mvp.view.AreasTitulacaoView;
 import com.gapso.web.trieda.client.mvp.view.CampiDeslocamentoView;
 import com.gapso.web.trieda.client.mvp.view.CampiView;
 import com.gapso.web.trieda.client.mvp.view.CursosView;
+import com.gapso.web.trieda.client.mvp.view.DisciplinasView;
 import com.gapso.web.trieda.client.mvp.view.GruposSalasView;
 import com.gapso.web.trieda.client.mvp.view.HorariosAulaView;
 import com.gapso.web.trieda.client.mvp.view.SalasView;
@@ -46,6 +47,7 @@ public class ToolBarPresenter implements Presenter {
 		MenuItem getUnidadeDeslocamentoListMenuItem();
 		MenuItem getCampusDeslocamentoListMenuItem();
 		MenuItem getCursosListMenuItem();
+		MenuItem getDisciplinasListMenuItem();
 		
 		Component getComponent();
 	}
@@ -164,6 +166,13 @@ public class ToolBarPresenter implements Presenter {
 			@Override
 			public void componentSelected(MenuEvent ce) {
 				Presenter presenter = new CursosPresenter(new CursosView());
+				presenter.go(gTab);
+			}
+		});
+		toolBar.getDisciplinasListMenuItem().addSelectionListener(new SelectionListener<MenuEvent>() {
+			@Override
+			public void componentSelected(MenuEvent ce) {
+				Presenter presenter = new DisciplinasPresenter(new DisciplinasView());
 				presenter.go(gTab);
 			}
 		});

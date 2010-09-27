@@ -106,22 +106,22 @@ public class TipoDisciplina implements java.io.Serializable {
         return em;
     }
 
-	public static long countTipoDisciplinas() {
-        return ((Number) entityManager().createQuery("select count(o) from TipoDisciplina o").getSingleResult()).longValue();
+	public static int count() {
+        return ((Number) entityManager().createQuery("select count(o) from TipoDisciplina o").getSingleResult()).intValue();
     }
 
 	@SuppressWarnings("unchecked")
-    public static List<TipoDisciplina> findAllTipoDisciplinas() {
+    public static List<TipoDisciplina> findAll() {
         return entityManager().createQuery("select o from TipoDisciplina o").getResultList();
     }
 
-	public static TipoDisciplina findTipoDisciplina(Long id) {
+	public static TipoDisciplina find(Long id) {
         if (id == null) return null;
         return entityManager().find(TipoDisciplina.class, id);
     }
 
 	@SuppressWarnings("unchecked")
-    public static List<TipoDisciplina> findTipoDisciplinaEntries(int firstResult, int maxResults) {
+    public static List<TipoDisciplina> find(int firstResult, int maxResults) {
         return entityManager().createQuery("select o from TipoDisciplina o").setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
 

@@ -1,10 +1,21 @@
 package com.gapso.web.trieda.client.services;
 
-import com.extjs.gxt.ui.client.data.ModelData;
+import java.util.List;
+
+import com.extjs.gxt.ui.client.data.ListLoadResult;
+import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
-import com.gapso.web.trieda.client.util.view.simplecrud.ICrudService;
+import com.gapso.web.trieda.client.mvp.model.DisciplinaDTO;
+import com.gapso.web.trieda.client.mvp.model.TipoDisciplinaDTO;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-public interface DisciplinasServiceAsync extends ICrudService {
-	public void getList(AsyncCallback<PagingLoadResult<ModelData>> callback);
+public interface DisciplinasServiceAsync {
+	
+	void getBuscaList(String nome, String codigo, TipoDisciplinaDTO tipoDisciplinaDTO, PagingLoadConfig config, AsyncCallback<PagingLoadResult<DisciplinaDTO>> callback);
+	void save(DisciplinaDTO disciplinaDTO, AsyncCallback<Void> callback);
+	void remove(List<DisciplinaDTO> disciplinaDTOList, AsyncCallback<Void> callback);
+	void getTipoDisciplinaList(AsyncCallback<ListLoadResult<TipoDisciplinaDTO>> callback);
+	void getTipoDisciplina(Long id, AsyncCallback<TipoDisciplinaDTO> callback);
+	
+	
 }

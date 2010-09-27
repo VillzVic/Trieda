@@ -1,7 +1,12 @@
 package com.gapso.web.trieda.client.services;
 
-import com.extjs.gxt.ui.client.data.ModelData;
+import java.util.List;
+
+import com.extjs.gxt.ui.client.data.ListLoadResult;
+import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
+import com.gapso.web.trieda.client.mvp.model.DisciplinaDTO;
+import com.gapso.web.trieda.client.mvp.model.TipoDisciplinaDTO;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
@@ -10,7 +15,11 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
  */
 @RemoteServiceRelativePath("disciplinas")
 public interface DisciplinasService extends RemoteService {
-	
-	public PagingLoadResult<ModelData> getList();
+
+	PagingLoadResult<DisciplinaDTO> getBuscaList(String nome, String codigo, TipoDisciplinaDTO tipoDisciplinaDTO, PagingLoadConfig config);
+	void save(DisciplinaDTO disciplinaDTO);
+	void remove(List<DisciplinaDTO> disciplinaDTOList);
+	ListLoadResult<TipoDisciplinaDTO> getTipoDisciplinaList();
+	TipoDisciplinaDTO getTipoDisciplina(Long id);
 	
 }

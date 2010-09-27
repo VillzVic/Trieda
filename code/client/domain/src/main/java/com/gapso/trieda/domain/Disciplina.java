@@ -16,6 +16,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import javax.persistence.Table;
 import javax.persistence.Version;
 import javax.validation.constraints.Max;
@@ -39,7 +40,7 @@ import com.gapso.trieda.misc.Dificuldades;
 @Table(name = "DISCIPLINAS")
 public class Disciplina implements java.io.Serializable {
 
-    @NotNull
+//    @NotNull
     @ManyToOne(targetEntity = Cenario.class)
     @JoinColumn(name = "CEN_ID")
     private Cenario cenario;
@@ -78,6 +79,7 @@ public class Disciplina implements java.io.Serializable {
     @Column(name = "DIS_LABORATORIO")
     private Boolean laboratorio;
 
+    @NotNull
     @Enumerated
     private Dificuldades dificuldade;
 
@@ -213,25 +215,52 @@ public class Disciplina implements java.io.Serializable {
         return em;
     }
 
-	public static long countDisciplinas() {
-        return ((Number) entityManager().createQuery("select count(o) from Disciplina o").getSingleResult()).longValue();
+	public static int count() {
+        return ((Number) entityManager().createQuery("select count(o) from Disciplina o").getSingleResult()).intValue();
     }
 
 	@SuppressWarnings("unchecked")
-    public static List<Disciplina> findAllDisciplinas() {
+    public static List<Disciplina> findAll() {
         return entityManager().createQuery("select o from Disciplina o").getResultList();
     }
 
-	public static Disciplina findDisciplina(Long id) {
+	public static Disciplina find(Long id) {
         if (id == null) return null;
         return entityManager().find(Disciplina.class, id);
     }
+	
+	public static List<Disciplina> find(int firstResult, int maxResults) {
+		return find(firstResult, maxResults, null); 
+	}
 
 	@SuppressWarnings("unchecked")
-    public static List<Disciplina> findDisciplinaEntries(int firstResult, int maxResults) {
-        return entityManager().createQuery("select o from Disciplina o").setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
+    public static List<Disciplina> find(int firstResult, int maxResults, String orderBy) {
+		orderBy = (orderBy != null)? "ORDER BY o."+orderBy : "";
+        return entityManager().createQuery("select o from Disciplina o "+orderBy).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
 
+    @SuppressWarnings("unchecked")
+	public static List<Disciplina> findByCodigoLikeAndNomeLikeAndTipo(String codigo, String nome, TipoDisciplina tipoDisciplina, int firstResult, int maxResults, String orderBy) {
+
+        nome = (nome == null)? "" : nome;
+        nome = "%" + nome.replace('*', '%') + "%";
+        codigo = (codigo == null)? "" : codigo;
+        codigo = "%" + codigo.replace('*', '%') + "%";
+        
+        orderBy = (orderBy != null) ? " ORDER BY o." + orderBy : "";
+        String queryCampus = "";
+        if(tipoDisciplina != null) {
+        	queryCampus = " o.tipoDisciplina = :tipoDisciplina AND ";
+        }
+        Query q = entityManager().createQuery("SELECT o FROM Disciplina o WHERE "+queryCampus+" LOWER(o.nome) LIKE LOWER(:nome) AND LOWER(o.codigo) LIKE LOWER(:codigo)");
+        if(tipoDisciplina != null) {
+        	q.setParameter("tipoDisciplina", tipoDisciplina);
+        }
+        q.setParameter("nome", nome);
+        q.setParameter("codigo", codigo);
+        return q.setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
+    }
+	
 	private static final long serialVersionUID = 7980821696468062987L;
 
 	public Cenario getCenario() {

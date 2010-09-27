@@ -12,15 +12,18 @@ import com.gapso.trieda.domain.Campus;
 import com.gapso.trieda.domain.Curso;
 import com.gapso.trieda.domain.DeslocamentoCampus;
 import com.gapso.trieda.domain.DeslocamentoUnidade;
+import com.gapso.trieda.domain.Disciplina;
 import com.gapso.trieda.domain.GrupoSala;
 import com.gapso.trieda.domain.HorarioAula;
 import com.gapso.trieda.domain.HorarioDisponivelCenario;
 import com.gapso.trieda.domain.Sala;
 import com.gapso.trieda.domain.SemanaLetiva;
 import com.gapso.trieda.domain.TipoCurso;
+import com.gapso.trieda.domain.TipoDisciplina;
 import com.gapso.trieda.domain.TipoSala;
 import com.gapso.trieda.domain.Turno;
 import com.gapso.trieda.domain.Unidade;
+import com.gapso.trieda.misc.Dificuldades;
 import com.gapso.trieda.misc.Estados;
 import com.gapso.trieda.misc.Semanas;
 import com.gapso.web.trieda.client.mvp.model.AreaTitulacaoDTO;
@@ -28,12 +31,14 @@ import com.gapso.web.trieda.client.mvp.model.CampusDTO;
 import com.gapso.web.trieda.client.mvp.model.CursoDTO;
 import com.gapso.web.trieda.client.mvp.model.DeslocamentoCampusDTO;
 import com.gapso.web.trieda.client.mvp.model.DeslocamentoUnidadeDTO;
+import com.gapso.web.trieda.client.mvp.model.DisciplinaDTO;
 import com.gapso.web.trieda.client.mvp.model.GrupoSalaDTO;
 import com.gapso.web.trieda.client.mvp.model.HorarioAulaDTO;
 import com.gapso.web.trieda.client.mvp.model.HorarioDisponivelCenarioDTO;
 import com.gapso.web.trieda.client.mvp.model.SalaDTO;
 import com.gapso.web.trieda.client.mvp.model.SemanaLetivaDTO;
 import com.gapso.web.trieda.client.mvp.model.TipoCursoDTO;
+import com.gapso.web.trieda.client.mvp.model.TipoDisciplinaDTO;
 import com.gapso.web.trieda.client.mvp.model.TipoSalaDTO;
 import com.gapso.web.trieda.client.mvp.model.TurnoDTO;
 import com.gapso.web.trieda.client.mvp.model.UnidadeDTO;
@@ -557,5 +562,56 @@ public class ConvertBeans {
 			deslocamentoCampusDTO.addDestino(du.getDestino().getId(), du.getDestino().getCodigo(), du.getTempo(), du.getCusto());
 		}
 		return deslocamentoCampusDTO;
+	}
+	
+	// TIPO DISCIPLINA
+	public static TipoDisciplina toTipoDisciplina(TipoDisciplinaDTO dto) {
+		TipoDisciplina domain = new TipoDisciplina();
+		domain.setId(dto.getId());
+		domain.setVersion(dto.getVersion());
+		domain.setNome(dto.getNome());
+		return domain;
+	}
+	
+	public static TipoDisciplinaDTO toTipoDisciplinaDTO(TipoDisciplina domain) {
+		TipoDisciplinaDTO dto = new TipoDisciplinaDTO();
+		dto.setId(domain.getId());
+		dto.setVersion(domain.getVersion());
+		dto.setNome(domain.getNome());
+		return dto;
+	}
+	
+	// DISCIPLINA
+	public static Disciplina toDisciplina(DisciplinaDTO dto) {
+		Disciplina domain = new Disciplina();
+		domain.setId(dto.getId());
+		domain.setVersion(dto.getVersion());
+		domain.setCodigo(dto.getCodigo());
+		domain.setNome(dto.getNome());
+		domain.setCreditosPratico(dto.getCreditosPratico());
+		domain.setCreditosTeorico(dto.getCreditosTeorico());
+		domain.setLaboratorio(dto.getLaboratorio());
+		domain.setMaxAlunosTeorico(dto.getMaxAlunosTeorico());
+		domain.setMaxAlunosPratico(dto.getMaxAlunosPratico());
+		domain.setDificuldade(Dificuldades.get(dto.getDificuldade()));
+		domain.setTipoDisciplina(TipoDisciplina.find(dto.getTipoId()));
+		return domain;
+	}
+	
+	public static DisciplinaDTO toDisciplinaDTO(Disciplina domain) {
+		DisciplinaDTO dto = new DisciplinaDTO();
+		dto.setId(domain.getId());
+		dto.setVersion(domain.getVersion());
+		dto.setCodigo(domain.getCodigo());
+		dto.setNome(domain.getNome());
+		dto.setCreditosPratico(domain.getCreditosPratico());
+		dto.setCreditosTeorico(domain.getCreditosTeorico());
+		dto.setLaboratorio(domain.getLaboratorio());
+		dto.setMaxAlunosTeorico(domain.getMaxAlunosTeorico());
+		dto.setMaxAlunosPratico(domain.getMaxAlunosPratico());
+		dto.setDificuldade(domain.getDificuldade().name());
+		dto.setTipoId(domain.getTipoDisciplina().getId());
+		dto.setTipoString(domain.getTipoDisciplina().getNome());
+		return dto;
 	}
 }

@@ -254,7 +254,7 @@ public class Curso implements java.io.Serializable {
 	@SuppressWarnings("unchecked")
     public static List<Curso> find(int firstResult, int maxResults, String orderBy) {
 		orderBy = (orderBy != null)? "ORDER BY o."+orderBy : "";
-        return entityManager().createQuery("select o from Curso o").setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
+        return entityManager().createQuery("select o from Curso o "+orderBy).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
 
     @SuppressWarnings("unchecked")
