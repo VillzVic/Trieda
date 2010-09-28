@@ -35,22 +35,15 @@ Constraint& Constraint::operator= (const Constraint& cons)
 
 	this->i = cons.getTurma();
 	this->c = cons.getCurso();
+
+	this->c_incompat = cons.getCursoIncompat();
+
 	this->b = cons.getBloco();
 	this->d = cons.getDisciplina();
 
 	this->j = cons.getSubBloco();
 
 	this->t = cons.getDia();
-
-	/*
-	this->type = cons.getType();
-	this->b = cons.getBloco();
-	this->i = cons.getTurma();
-	this->d = cons.getDisciplina();
-	this->u = cons.getUnidade();
-	this->s = cons.getSala();
-	this->t = cons.getDia();
-	*/
 
 	return *this;
 }
@@ -68,27 +61,15 @@ bool Constraint::operator< (const Constraint& cons) const
 
 	if (this->getTurma() < cons.getTurma()) return true;
 	if(E_MENOR(this->getCurso(),cons.getCurso())) return true;
+
+	if(E_MENOR(this->getCursoIncompat(),cons.getCursoIncompat())) return true;
+
 	if (E_MENOR(this->getBloco(),cons.getBloco())) return true;
 	if (E_MENOR(this->getDisciplina(),cons.getDisciplina())) return true;
 
 	if (this->getSubBloco() < cons.getSubBloco()) return true;
 
 	if (this->getDia() < cons.getDia()) return true;
-
-
-	/*
-	if( (int)this->getType() < (int) cons.getType() )
-	return true;
-	else if( (int)this->getType() > (int) cons.getType() )
-	return false;
-
-	if (this->getTurma() < cons.getTurma()) return true;
-	if (E_MENOR(this->getDisciplina(),cons.getDisciplina())) return true;
-	if (E_MENOR(this->getUnidade(),cons.getUnidade())) return true;
-	if (E_MENOR(this->getSala(),cons.getSala())) return true;
-	if (E_MENOR(this->getBloco(),cons.getBloco())) return true;
-	if (this->getDia() < cons.getDia()) return true;
-	*/
 
 	return false;
 
@@ -101,21 +82,15 @@ bool Constraint::operator== (const Constraint& cons) const
 
 void Constraint::reset()
 {
-	/*
-	b = NULL;
-	i = NULL;
-	d = NULL;
-	u = NULL;
-	s = NULL;
-	t = -1;
-	*/
-
 	cp = NULL;
 	u = NULL;
 	s = NULL;
 
 	i = -1;
 	c = NULL;;
+
+	c_incompat = NULL;
+
 	b = NULL;;
 	d = NULL;;
 
@@ -153,6 +128,12 @@ size_t ConstraintHasher::operator() (const Constraint& cons) const
 	if(cons.getCurso()) {
 		sum *= HASH_PRIME; sum+= intHash(cons.getCurso()->getId());
 	}
+
+	if(cons.getCursoIncompat()) {
+		sum *= HASH_PRIME; sum+= intHash(cons.getCursoIncompat()->getId());
+	}
+
+
 	if(cons.getBloco()) {
 		sum *= HASH_PRIME; sum+= intHash(cons.getBloco()->getId());
 	}
@@ -166,28 +147,6 @@ size_t ConstraintHasher::operator() (const Constraint& cons) const
 	if(cons.getDia() != -1) {
 		sum *= HASH_PRIME; sum+= intHash(cons.getDia());
 	}	
-
-
-	/*
-	if (cons.getBloco() != NULL) {
-		sum *= HASH_PRIME; sum+= intHash(cons.getBloco()->getId());
-	}
-	if (cons.getTurma() != NULL) {
-		sum *= HASH_PRIME; sum+= intHash(cons.getTurma());
-	}
-	if (cons.getDisciplina() != NULL) {
-		sum *= HASH_PRIME; sum+= intHash(cons.getDisciplina()->getId());
-	}
-	if (cons.getUnidade() != NULL) {
-		sum *= HASH_PRIME; sum+= intHash(cons.getUnidade()->getId());
-	}
-	if (cons.getSala() != NULL) {
-		sum *= HASH_PRIME; sum+= intHash(cons.getSala()->getId());
-	}
-	if(cons.getDia() >= 0) {
-		sum *= HASH_PRIME; sum+= intHash(cons.getDia());
-	}
-	*/
 
 	return sum;
 }

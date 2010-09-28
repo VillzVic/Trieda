@@ -33,20 +33,9 @@ public:
 		C_MIN_CREDS_TURM_BLOCO = 17,		// Restricao 1.2.19
 		C_MAX_CREDS_TURM_BLOCO = 18,		// Restricao 1.2.20
 		C_ALUNO_CURSO_DISC = 19,			// Restricao 1.2.21
-		C_ALUNOS_CURSOS_DIF = 20			// Restricao 1.2.22
+		C_ALUNOS_CURSOS_DIF = 20,			// Restricao 1.2.22
+		C_SLACK_DIST_CRED_DIA = 21			// Restricao 1.2.23
 
-		/*
-		C_MESMA_UNIDADE = 6,
-		C_TURMAS_BLOCO = 7,
-		C_MAX_CREDITOS_BLOCO_SD = 8,
-		C_MAX_CREDITOS = 9,
-		C_CAP_DEMANDA = 10,
-		C_CAP_SALA = 11,
-		C_CAP_SALA_U = 12,
-		C_DIAS_CONSECUTIVOS = 13,
-		C_MIN_CREDS_BLOCO = 14,
-		C_MAX_CREDS_BLOCO = 15,
-		*/
 	};
 
 	/** Default constructor. */
@@ -90,6 +79,9 @@ public:
 
 	int getTurma() const { return i; }
 	Curso* getCurso() const { return c; }
+
+	Curso* getCursoIncompat() const { return c_incompat; }
+
 	BlocoCurricular* getBloco() const { return b; }
 	Disciplina* getDisciplina() const { return d; }
 
@@ -116,7 +108,10 @@ public:
 	void setSala(Sala* ss) {  s = ss; }
 
 	void setTurma(int ii) { i = ii; }
-	void setCurso(Curso* cc) { cc = c; }
+	void setCurso(Curso* cc) { c = cc; }
+
+	void setCursoIncompat(Curso* cc) { c_incompat = cc; }
+
 	void setBloco(BlocoCurricular* bb) {  b = bb; } 
 	void setDisciplina(Disciplina* dd) {  d = dd; }
 
@@ -148,6 +143,9 @@ private:
 
 	int i; // Turma
 	Curso* c;
+
+	Curso* c_incompat;
+
 	BlocoCurricular* b;
 	Disciplina* d;
 

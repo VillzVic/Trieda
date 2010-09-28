@@ -12,18 +12,20 @@ public:
 	enum VariableType
 	{
 		V_ERROR = 0,
-		V_CREDITOS = 1,            /** x_{idust} */
-		V_OFERECIMENTO = 2,        /** o_{idust} */
-		V_ABERTURA = 3,            /** z_{idu} */
-		V_ALUNOS = 4,              /** a_{iduc} */
-		V_ALOC_ALUNO = 5,          /** b_{icdu} */
-		V_N_SUBBLOCOS = 6,         /** w_{bjtu} */
-		V_DIAS_CONSECUTIVOS = 7,   /** c_{idt} */
-		V_MIN_CRED_SEMANA = 8,     /** h_{bi} */
-		V_MAX_CRED_SEMANA = 9,      /** H_{bi} */
-		V_ALOC_DISCIPLINA = 10,    /** y_{idsu} */
-		V_N_ABERT_TURMA_BLOCO = 11,  /** v_{bt} */
-		V_SLACK_ = 12
+		V_CREDITOS = 1,							// x_{idust}
+		V_OFERECIMENTO = 2,						// o_{idust}
+		V_ABERTURA = 3,							// z_{idu}
+		V_ALUNOS = 4,							// a_{iduc}
+		V_ALOC_ALUNO = 5,				        // b_{icdu}
+		V_N_SUBBLOCOS = 6,				        // w_{bjtu}
+		V_DIAS_CONSECUTIVOS = 7,				// c_{idt}
+		V_MIN_CRED_SEMANA = 8,					// h_{bi}
+		V_MAX_CRED_SEMANA = 9,					// H_{bi}
+		V_ALOC_DISCIPLINA = 10,					// y_{idsu}
+		V_N_ABERT_TURMA_BLOCO = 11,				// v_{bt}
+		V_SLACK_DIST_CRED_DIA_SUPERIOR = 12,	// fcp_{dt}
+		V_SLACK_DIST_CRED_DIA_INFERIOR = 13		// fcm_{dt}
+
 	};
 
 	//Constructors
@@ -48,7 +50,7 @@ public:
 	*/
 
 	Campus* getCampus() const { 
-			return cp; 
+		return cp; 
 	}
 	Unidade* getUnidade() const { return u; }
 	Sala* getSala() const { return s; }

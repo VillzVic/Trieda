@@ -34,7 +34,7 @@ void Disciplina::le_arvore(ItemDisciplina& elem)
    if (elem.divisaoDeCreditos().present()) {
       divisao_creditos = new DivisaoCreditos();
       divisao_creditos->le_arvore(elem.divisaoDeCreditos().get());
-   }
+	}
 
    ITERA_NSEQ(it_contem,elem.disciplinasEquivalentes(),id,Identificador) {
       equivalentes.add(*it_contem);

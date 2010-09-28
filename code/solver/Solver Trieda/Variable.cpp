@@ -35,19 +35,6 @@ void Variable::reset()
 	j = -1;
 
 	t = -1;
-
-	/*
-	i = -1;
-	b = NULL;
-	d = NULL;
-	u = NULL;
-	s = NULL;
-	t = -1;
-	c = NULL;
-	j = -1;
-	cp = NULL;   
-	*/
-
 }
 
 Variable::~Variable()
@@ -152,10 +139,14 @@ std::string Variable::toString()
 		  str << "w"; break;
 	  case V_ALOC_ALUNO:
 		  str << "b"; break;
-     case V_ALOC_DISCIPLINA:
-        str << "y"; break;
-     case V_N_ABERT_TURMA_BLOCO:
-        str << "v"; break;
+	  case V_ALOC_DISCIPLINA:
+		  str << "y"; break;
+	  case V_N_ABERT_TURMA_BLOCO:
+		  str << "v"; break;
+	  case V_SLACK_DIST_CRED_DIA_SUPERIOR:
+		  str << "fcp"; break;
+	  case V_SLACK_DIST_CRED_DIA_INFERIOR:
+		  str << "fcm"; break;
 	  default:
 		  str << "!";
 	}
@@ -173,6 +164,7 @@ std::string Variable::toString()
 
 	if (j >= 0) str << "," << j;
 	if (c) str << "," << c->getId();
+
 	if (cp) str << "," << cp->getId();
 
 	str << "}";
@@ -223,38 +215,6 @@ size_t VariableHasher::operator()(const Variable& v) const
 	if(v.getDia() != -1) {
 		sum *= HASH_PRIME; sum+= intHash(v.getDia());
 	}	
-
-	/*
-	if (v.getBloco() != NULL) {
-
-	sum *= HASH_PRIME; sum+= intHash(v.getBloco()->getId());
-	}
-	if (v.getTurma() != NULL) {
-	sum *= HASH_PRIME; sum+= intHash(v.getTurma());
-	}
-	if (v.getDisciplina() != NULL) {
-	sum *= HASH_PRIME; sum+= intHash(v.getDisciplina()->getId());
-	}
-	if (v.getUnidade() != NULL) {
-	sum *= HASH_PRIME; sum+= intHash(v.getUnidade()->getId());
-	}
-	if (v.getSala() != NULL) {
-	sum *= HASH_PRIME; sum+= intHash(v.getSala()->getId());
-	}
-	if(v.getDia() >= 0) {
-	sum *= HASH_PRIME; sum+= intHash(v.getDia());
-	}
-
-	if(v.getSubBloco() >= 0) {
-	sum *= HASH_PRIME; sum+= intHash(v.getSubBloco());
-	}
-	if(v.getCurso()) {
-	sum *= HASH_PRIME; sum+= intHash(v.getCurso()->getId());
-	}
-	if(v.getCampus() != NULL) {
-	sum *= HASH_PRIME; sum+= intHash(v.getCampus()->getId());
-	}
-	*/
 
 	return sum;
 }

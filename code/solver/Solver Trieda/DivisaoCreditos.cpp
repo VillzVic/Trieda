@@ -20,5 +20,4 @@ void DivisaoCreditos::le_arvore(ItemDivisaoCreditos& elem)
    dia[5] = elem.dia5();
    dia[6] = elem.dia6();
    dia[7] = elem.dia7();
-   
 }

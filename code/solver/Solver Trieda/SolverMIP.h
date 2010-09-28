@@ -57,7 +57,7 @@ private:
 	All methods of variable creation should be defined here
 	*/
 
-	double alpha, beta, gamma, delta, lambda, rho, M;
+	double alpha, beta, gamma, delta, lambda, epsilon, rho, M;
 public:
 
 	int cria_variaveis(void);
@@ -73,6 +73,8 @@ public:
 	int cria_variavel_aloc_disciplina(void);
 	int cria_variavel_num_subblocos(void);
 	int cria_variavel_num_abertura_turma_bloco(void);
+	int cria_variavel_de_folga_dist_cred_dia_superior(void);
+	int cria_variavel_de_folga_dist_cred_dia_inferior(void);
 
 	/********************************************************************
 	**                    CONSTRAINT CREATION                          **
@@ -105,23 +107,8 @@ public:
 	int cria_restricao_max_creds_turm_bloco(void);			// Restricao 1.2.20
 	int cria_restricao_aluno_curso_disc(void);				// Restricao 1.2.21
 	int cria_restricao_alunos_cursos_dif(void);				// Restricao 1.2.22
+	int cria_restricao_de_folga_dist_cred_dia(void);		// Restricao 1.2.23
 
-	/*
-	int cria_restricao_carga(void);
-	int cria_restricao_max_creditos_sd(void);
-	int cria_restricao_min_creditos(void);
-	int cria_restricao_ativacao(void);
-	int cria_restricao_sobreposicao(void);
-	int cria_restricao_mesma_unidade(void);
-	int cria_restricao_max_creditos(void);
-	int cria_variavel_turma_bloco(void);
-
-	int cria_restricao_turmas_bloco(void);
-	int cria_restricao_cap_demanda(void);
-	int cria_restricao_cap_sala(void);
-	int cria_restricao_cap_sala_unidade(void);
-	int cria_restricao_dias_consecutivos(void);
-	*/
 };
 
 #endif

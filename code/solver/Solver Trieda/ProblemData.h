@@ -81,6 +81,9 @@ public:
    int total_salas;
    int total_turmas;
 
+   // std::map<std::pair<int/*cursoA_id*/,int/*cursoB_id*/>,bool/*sao_compat?*/> compat_cursos;
+   std::map<std::pair<Curso*,Curso*>,bool> compat_cursos;
+
 public:
    virtual void le_arvore(TriedaInput& raiz);
 };
