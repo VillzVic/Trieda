@@ -9,6 +9,7 @@ import java.util.Set;
 
 import com.gapso.trieda.domain.AreaTitulacao;
 import com.gapso.trieda.domain.Campus;
+import com.gapso.trieda.domain.Curriculo;
 import com.gapso.trieda.domain.Curso;
 import com.gapso.trieda.domain.DeslocamentoCampus;
 import com.gapso.trieda.domain.DeslocamentoUnidade;
@@ -28,6 +29,7 @@ import com.gapso.trieda.misc.Estados;
 import com.gapso.trieda.misc.Semanas;
 import com.gapso.web.trieda.client.mvp.model.AreaTitulacaoDTO;
 import com.gapso.web.trieda.client.mvp.model.CampusDTO;
+import com.gapso.web.trieda.client.mvp.model.CurriculoDTO;
 import com.gapso.web.trieda.client.mvp.model.CursoDTO;
 import com.gapso.web.trieda.client.mvp.model.DeslocamentoCampusDTO;
 import com.gapso.web.trieda.client.mvp.model.DeslocamentoUnidadeDTO;
@@ -612,6 +614,31 @@ public class ConvertBeans {
 		dto.setDificuldade(domain.getDificuldade().name());
 		dto.setTipoId(domain.getTipoDisciplina().getId());
 		dto.setTipoString(domain.getTipoDisciplina().getNome());
+		return dto;
+	}
+	
+	// CURRICULO (MATRIZ CURRICULAR)
+	public static Curriculo toCurriculo(CurriculoDTO dto) {
+		Curriculo domain = new Curriculo();
+		domain.setId(dto.getId());
+		domain.setVersion(dto.getVersion());
+		domain.setCodigo(dto.getCodigo());
+		domain.setDescricao(dto.getDescricao());
+		Curso curso = Curso.find(dto.getCursoId());
+		domain.setCurso(curso);
+		return domain;
+	}
+	
+	public static CurriculoDTO toCurriculoDTO(Curriculo domain) {
+		CurriculoDTO dto = new CurriculoDTO();
+		dto.setId(domain.getId());
+		dto.setVersion(domain.getVersion());
+		dto.setCodigo(domain.getCodigo());
+		dto.setDescricao(domain.getDescricao());
+		
+		Curso curso = domain.getCurso();
+		dto.setCursoId(curso.getId());
+		dto.setCursoString(curso.getCodigo());
 		return dto;
 	}
 }

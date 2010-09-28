@@ -6,7 +6,9 @@ import java.util.List;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.extjs.gxt.ui.client.Style.SortDir;
+import com.extjs.gxt.ui.client.data.BasePagingLoadConfig;
 import com.extjs.gxt.ui.client.data.BasePagingLoadResult;
+import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.gapso.trieda.domain.Curso;
@@ -24,7 +26,17 @@ import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 public class CursosServiceImpl extends RemoteServiceServlet implements CursosService {
 
 	private static final long serialVersionUID = 5250776996542788849L;
-
+	
+	@Override
+	public CursoDTO getCurso(Long id) {
+		return ConvertBeans.toCursoDTO(Curso.find(id));
+	}
+	
+	@Override
+	public ListLoadResult<CursoDTO> getList(BasePagingLoadConfig loadConfig) {
+		return getBuscaList(null, loadConfig.get("query").toString(), null, loadConfig);
+	}
+	
 	@Override
 	public PagingLoadResult<CursoDTO> getBuscaList(String nome, String codigo, TipoCursoDTO tipoCursoDTO, PagingLoadConfig config) {
 		List<CursoDTO> list = new ArrayList<CursoDTO>();
@@ -40,7 +52,7 @@ public class CursosServiceImpl extends RemoteServiceServlet implements CursosSer
 		if(tipoCursoDTO != null) {
 			tipoCurso = ConvertBeans.toTipoCurso(tipoCursoDTO);
 		}
-		for(Curso curso : Curso.findByCodigoLikeAndNomeLikeAndTipo(nome, codigo, tipoCurso, config.getOffset(), config.getLimit(), orderBy)) {
+		for(Curso curso : Curso.findByCodigoLikeAndNomeLikeAndTipo(codigo, nome, tipoCurso, config.getOffset(), config.getLimit(), orderBy)) {
 			CursoDTO cursoDTO = ConvertBeans.toCursoDTO(curso);
 			list.add(cursoDTO);
 		}

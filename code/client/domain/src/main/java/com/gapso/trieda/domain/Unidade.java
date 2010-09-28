@@ -140,7 +140,6 @@ public class Unidade implements Serializable {
     public static List<Unidade> find(int firstResult, int maxResults) {
         return find(firstResult, maxResults, null);
     }
-
     @SuppressWarnings("unchecked")
     public static List<Unidade> find(int firstResult, int maxResults, String orderBy) {
         orderBy = (orderBy != null) ? "ORDER BY o." + orderBy : "";

@@ -1,5 +1,7 @@
 package com.gapso.trieda.domain;
 
+import java.io.Serializable;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -14,6 +16,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import javax.persistence.Table;
 import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
@@ -31,14 +34,14 @@ import org.springframework.transaction.annotation.Transactional;
 @RooToString
 @RooEntity(identifierColumn = "CRC_ID")
 @Table(name = "CURRICULOS")
-public class Curriculo implements java.io.Serializable {
+public class Curriculo implements Serializable {
 
     @NotNull
     @ManyToOne(targetEntity = Curso.class)
     @JoinColumn(name = "CUR_ID")
     private Curso curso;
 
-    @NotNull
+//  TODO @NotNull
     @ManyToOne(targetEntity = Cenario.class)
     @JoinColumn(name = "CEN_ID")
     private Cenario cenario;
@@ -52,13 +55,11 @@ public class Curriculo implements java.io.Serializable {
     @Size(max = 255)
     private String descricao;
 
-    @NotNull
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "disciplina")
-    private Set<com.gapso.trieda.domain.CurriculoDisciplina> disciplinas = new java.util.HashSet<com.gapso.trieda.domain.CurriculoDisciplina>();
+    private Set<CurriculoDisciplina> disciplinas = new HashSet<CurriculoDisciplina>();
 
-    @NotNull
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "curriculo")
-    private Set<com.gapso.trieda.domain.CampusCurriculo> campusCurriculo = new java.util.HashSet<com.gapso.trieda.domain.CampusCurriculo>();
+    private Set<CampusCurriculo> campusCurriculo = new HashSet<CampusCurriculo>();
 
 	public Curso getCurso() {
         return this.curso;
@@ -173,25 +174,51 @@ public class Curriculo implements java.io.Serializable {
         return em;
     }
 
-	public static long countCurriculoes() {
-        return ((Number) entityManager().createQuery("select count(o) from Curriculo o").getSingleResult()).longValue();
+	public static int count() {
+        return ((Number) entityManager().createQuery("select count(o) from Curriculo o").getSingleResult()).intValue();
     }
 
 	@SuppressWarnings("unchecked")
-    public static List<Curriculo> findAllCurriculoes() {
+    public static List<Curriculo> findAll() {
         return entityManager().createQuery("select o from Curriculo o").getResultList();
     }
 
-	public static Curriculo findCurriculo(Long id) {
+	public static Curriculo find(Long id) {
         if (id == null) return null;
         return entityManager().find(Curriculo.class, id);
     }
 
+	public static List<Curriculo> find(int firstResult, int maxResults) {
+		return find(firstResult, maxResults, null);
+	}
 	@SuppressWarnings("unchecked")
-    public static List<Curriculo> findCurriculoEntries(int firstResult, int maxResults) {
-        return entityManager().createQuery("select o from Curriculo o").setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
+    public static List<Curriculo> find(int firstResult, int maxResults, String orderBy) {
+		orderBy = (orderBy != null) ? "ORDER BY o." + orderBy : "";
+        return entityManager().createQuery("select o from Curriculo o "+orderBy).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
 
+    @SuppressWarnings("unchecked")
+	public static List<Curriculo> findByCursoAndCodigoLikeAndDescricaoLike(Curso curso, String codigo, String descricao, int firstResult, int maxResults, String orderBy) {
+
+        codigo = (codigo == null)? "" : codigo;
+        codigo = "%" + codigo.replace('*', '%') + "%";
+        descricao = (descricao == null)? "" : descricao;
+        descricao = "%" + descricao.replace('*', '%') + "%";
+        
+        orderBy = (orderBy != null) ? "ORDER BY o." + orderBy : "";
+        String queryCurso = "";
+        if(curso != null) {
+        	queryCurso = "o.curso = :curso AND";
+        }
+        Query q = entityManager().createQuery("SELECT o FROM Curriculo o WHERE "+queryCurso+" LOWER(o.descricao) LIKE LOWER(:descricao) AND LOWER(o.codigo) LIKE LOWER(:codigo)");
+        if(curso != null) {
+        	q.setParameter("curso", curso);
+        }
+        q.setParameter("codigo", codigo);
+        q.setParameter("descricao", descricao);
+        return q.setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
+    }
+	
 	public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("Id: ").append(getId()).append(", ");

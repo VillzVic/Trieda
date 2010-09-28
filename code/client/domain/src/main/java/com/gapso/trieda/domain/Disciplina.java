@@ -40,7 +40,7 @@ import com.gapso.trieda.misc.Dificuldades;
 @Table(name = "DISCIPLINAS")
 public class Disciplina implements java.io.Serializable {
 
-//    @NotNull
+//  TODO  @NotNull
     @ManyToOne(targetEntity = Cenario.class)
     @JoinColumn(name = "CEN_ID")
     private Cenario cenario;
