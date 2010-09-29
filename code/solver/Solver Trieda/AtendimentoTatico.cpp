@@ -14,9 +14,9 @@ std::ostream& operator << (std::ostream& out, AtendimentoTatico& tatico)
 
    out << "<Oferta>" << (*tatico.atendimento_oferta) << "</Oferta>" << endl;
 
-   out << "<qtdeCreditosTeoricos>" << tatico.qtde_creditos_teoricos << "</qtdeCreditosTeoricos>";
+   out << "<qtdeCreditosTeoricos>" << tatico.qtde_creditos_teoricos << "</qtdeCreditosTeoricos>" << endl;
 
-   out << "<qtdeCreditosPraticos>" << tatico.qtde_creditos_praticos << "</qtdeCreditosPraticos>";
+   out << "<qtdeCreditosPraticos>" << tatico.qtde_creditos_praticos << "</qtdeCreditosPraticos>" << endl;
 
    out << "</Tatico>" << endl;
 

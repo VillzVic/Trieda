@@ -110,8 +110,19 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
 		std::map<std::pair<int,int>,int>
 		ParInteiro;
 
+	// >>>
+	// A chave deverá sempre ser um vetor de tamanho 3 com os respectivos atributos <disciplina,turma,curso,campus>.
+	typedef
+		std::map<std::vector<int>,int>
+		A___i_d_c_cp;
+	// <<<
+
 	ParVetor creditos_por_dia;
 	ParInteiro alunos;
+
+	// >>>
+	A___i_d_c_cp a;
+	// <<<
 
 	while (vit != vHash.end())
 	{
@@ -130,6 +141,10 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
 
 			std::pair<int,int> key;
 
+			// >>>
+			std::vector<int> key_alunos;
+			// <<<
+
 			switch(v->getType()) {
 			case Variable::V_ERROR:
 				std::cout << "Variável inválida " << std::endl;
@@ -137,7 +152,6 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
 			case Variable::V_CREDITOS: 
 				key = std::make_pair(v->getDisciplina()->getId(),v->getTurma());
 
-				if (v->getValue() > 0)
 					cout << "Oferta de " << v->getValue() << 
 					" creditos da disciplina " << v->getDisciplina()->codigo
 					<< " para a turma " << v->getTurma()
@@ -149,16 +163,30 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
 					std::vector<std::pair<int,int> >(7);
 				creditos_por_dia[key][v->getDia()] = 
 					std::make_pair((int)v->getValue(),v->getSala()->getId());
-				break;      
+
+				break;
 			case Variable::V_OFERECIMENTO: break;
 			case Variable::V_ABERTURA: break;
 			case Variable::V_ALUNOS:
 				key = std::make_pair(v->getDisciplina()->getId(),v->getTurma());
-				if (v->getValue() > 0)
+
 					cout << "Oferecimento de " << v->getValue() << 
 					" vagas da disciplina " << v->getDisciplina()->codigo
 					<< " para a turma " << v->getTurma() << std::endl;
+
 				alunos[key] = (int) v->getValue();
+
+				// >>>
+
+				key_alunos.push_back(v->getDisciplina()->getId());
+				key_alunos.push_back(v->getTurma());
+				key_alunos.push_back(v->getCurso()->getId());
+				key_alunos.push_back(v->getCampus()->getId());
+
+				a[key_alunos] = (int) v->getValue();
+
+				// <<<
+
 				break;
 			case Variable::V_ALOC_ALUNO: break;
 			case Variable::V_N_SUBBLOCOS: break;
@@ -167,14 +195,12 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
 			case Variable::V_MAX_CRED_SEMANA: break;
 			case Variable::V_ALOC_DISCIPLINA: break;
 			case Variable::V_N_ABERT_TURMA_BLOCO: break;
-			//case Variable::V_SLACK_DIST_CRED_DIA: break;
-				case Variable::V_SLACK_DIST_CRED_DIA_SUPERIOR: break;
-					case Variable::V_SLACK_DIST_CRED_DIA_INFERIOR: break;
+			case Variable::V_SLACK_DIST_CRED_DIA_SUPERIOR: break;
+			case Variable::V_SLACK_DIST_CRED_DIA_INFERIOR: break;
 			}
 		}
 		vit++;
 	}
-
 	/* Depois do map montado, é possível gerar os dados de saída */
 	/* Como sugestão, vou escrever uma rotina de impressão */
 
@@ -194,7 +220,84 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
 					<< std::endl;
 			}
 	}
+	
 	// Fill the solution
+
+	// >>>
+
+	for(A___i_d_c_cp::iterator it = a.begin(); it != a.end(); ++it) {
+		AtendimentoCampus *at_campus;// = new AtendimentoCampus;
+		//at_campus->setId(it->first.at(3));
+
+		if(problemSolution->atendimento_campus.size() > 0 ) {
+			ITERA_GGROUP(it_at_campus, problemSolution->atendimento_campus,AtendimentoCampus) {
+				//if(it_at_campus->getId() == at_campus->getId() ) {
+				if(it_at_campus->getId() == it->first.at(3) ) {
+					//std::cout << "ja tem .. ." << std::endl;
+				}
+				else {
+					//std::cout << "vou adicionar um novo campus .. ." << std::endl;
+				}
+			}
+		}
+		else {
+			
+			std::cout << "NENHUM CAMPUS .. ." << std::endl;
+			at_campus = new AtendimentoCampus;
+			at_campus->setId(it->first.at(3));
+			problemSolution->atendimento_campus.add(at_campus);
+			std::cout << "SIZE > 0 agora ? " << problemSolution->atendimento_campus.size() << std::endl;
+			
+		}
+		
+	}
+
+	exit(1);
+
+
+	// <<<
+
+	/* BKP
+	// >>>
+
+	ITERA_GGROUP(it_campus,problemData->campi,Campus) {
+		AtendimentoCampus *at_campus = new AtendimentoCampus;
+
+		at_campus->campus_id = it_campus->codigo;
+
+		ITERA_GGROUP(it_unidade,it_campus->unidades,Unidade) {			
+			AtendimentoUnidade *at_unidade = new AtendimentoUnidade;
+
+			at_unidade->unidade_id = it_unidade->codigo;
+
+			ITERA_GGROUP(it_sala,it_unidade->salas,Sala) {
+				AtendimentoSala *at_sala = new AtendimentoSala;
+
+				at_sala->sala_id = it_sala->codigo;
+
+				for(int dia_semana = 0; dia_semana < 7; ++dia_semana) {
+					AtendimentoDiaSemana *at_dia_semana = new AtendimentoDiaSemana;
+
+					at_dia_semana->dia_semana = dia_semana;
+
+					{
+						AtendimentoTatico *at_tatico = new AtendimentoTatico;
+					}
+
+
+					at_sala->atendimentos_dias_semana.add(at_dia_semana);
+				}
+				at_unidade->atendimentos_salas.add(at_sala);
+			}
+
+			at_campus->atendimentos_unidades.add(at_unidade);
+		}
+
+		problemSolution->atendimento_campus.add(at_campus);
+	}
+
+	// <<<
+	*/
 
 #ifdef DEBUG
 	if ( fout )

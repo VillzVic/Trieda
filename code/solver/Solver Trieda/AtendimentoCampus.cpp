@@ -12,7 +12,7 @@ std::ostream& operator << (std::ostream& out, AtendimentoCampus& campus)
 {
       out << "<Campus>" << endl;
 
-      out << "<CampusId>" << campus.campus_id << "</CampusId>";
+      out << "<CampusId>" << campus.campus_id << "</CampusId>" << endl;
       
       out << "<UnidadeSet>" << endl;
       
@@ -20,7 +20,8 @@ std::ostream& operator << (std::ostream& out, AtendimentoCampus& campus)
 
       for(; it_unidade != campus.atendimentos_unidades.end(); it_unidade++)
       {
-         out << (*it_unidade) << endl;
+         //out << (*it_unidade) << endl;
+		  out << **it_unidade;
       }
 
       out << "</UnidadeSet>" << endl;

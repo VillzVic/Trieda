@@ -12,9 +12,8 @@ std::ostream& operator << (std::ostream& out, AtendimentoDiaSemana& diaSem)
 {
    out << "<DiaSemana>" << endl;
 
-   out << "<diaSemana>" << diaSem.dia_semana << "</diaSemana>";
+   out << "<diaSemana>" << diaSem.dia_semana << "</diaSemana>" << endl;
 
-   // ver com o luis, como testar isso.. .
    if(diaSem.atendimentos_tatico.size() > 0)
    {
       out << "<TaticoSet>" << endl;
@@ -23,7 +22,8 @@ std::ostream& operator << (std::ostream& out, AtendimentoDiaSemana& diaSem)
 
       for(; it_tatico != diaSem.atendimentos_tatico.end(); it_tatico++)
       {
-         out << (*it_tatico) << endl;
+         //out << (*it_tatico) << endl;
+		  out << **it_tatico;
       }
 
       out << "</TaticoSet>" << endl;
@@ -36,7 +36,8 @@ std::ostream& operator << (std::ostream& out, AtendimentoDiaSemana& diaSem)
 
       for(; it_turno != diaSem.atendimentos_turno.end(); it_turno++)
       {
-         out << (*it_turno) << endl;
+         //out << (*it_turno) << endl;
+		  out << **it_turno;
       }
 
       out << "</TurnoSet>" << endl;

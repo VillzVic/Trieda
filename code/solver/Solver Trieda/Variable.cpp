@@ -118,6 +118,9 @@ std::string Variable::toString()
 {
 	std::stringstream str("");
 	std::string output;
+
+	bool cond_disc = false;
+
 	switch(type) {
 	  case V_ABERTURA:
 		  str << "z"; break;
@@ -144,20 +147,28 @@ std::string Variable::toString()
 	  case V_N_ABERT_TURMA_BLOCO:
 		  str << "v"; break;
 	  case V_SLACK_DIST_CRED_DIA_SUPERIOR:
-		  str << "fcp"; break;
+		  str << "fcp"; cond_disc = true; break;
 	  case V_SLACK_DIST_CRED_DIA_INFERIOR:
-		  str << "fcm"; break;
+		  str << "fcm"; cond_disc = true; break;
 	  default:
 		  str << "!";
 	}
 	str << "_";
+	
 	bool hb = false;
+
 	if (b != NULL) { str << "{" << b->getId(); hb = true; }
 
 	//if (i != NULL) str << (hb?",":"{") << i->getId();
 	if (i >= 0) str << (hb?",":"{") << i;
 
-	if (d != NULL) str << "," << d->getId();
+	if(cond_disc){
+		if (d != NULL) str << "{" << d->getId();
+	}
+	else {
+		if (d != NULL) str << "," << d->getId();
+	}
+
 	if (u != NULL) str << "," << u->getId();
 	if (s != NULL) str << "," << s->getId();
 	if (t >= 0) str << "," << t;

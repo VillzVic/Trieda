@@ -12,7 +12,7 @@ std::ostream& operator << (std::ostream& out, AtendimentoUnidade& unidade)
 {
    out << "<Unidade>" << endl;
 
-   out << "<unidadeId>" << unidade.unidade_id << "</unidadeId>";
+   out << "<unidadeId>" << unidade.unidade_id << "</unidadeId>" << endl;
 
    out << "<SalaSet>" << endl;
 
@@ -20,7 +20,8 @@ std::ostream& operator << (std::ostream& out, AtendimentoUnidade& unidade)
 
    for(; it_sala != unidade.atendimentos_salas.end(); it_sala++)
    {
-      out << (*it_sala) << endl;
+      //out << (*it_sala) << endl;
+	   out << **it_sala;
    }
 
    out << "</SalaSet>" << endl;

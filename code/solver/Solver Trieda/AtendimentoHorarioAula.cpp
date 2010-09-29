@@ -12,11 +12,11 @@ std::ostream& operator << (std::ostream& out, AtendimentoHorarioAula& horario_au
 {
    out << "<HorarioAula>" << endl;
 
-   out << "<horarioAulaId>" << horario_aula.horario_aula_id << "</horarioAulaId>";
+   out << "<horarioAulaId>" << horario_aula.horario_aula_id << "</horarioAulaId>" << endl;
 
-   out << "<professorId>" << horario_aula.professor_id << "</professorId>";
+   out << "<professorId>" << horario_aula.professor_id << "</professorId>" << endl;
 
-   out << "<creditoTeorico>" << horario_aula.credito_teorico << "</creditoTeorico>";
+   out << "<creditoTeorico>" << horario_aula.credito_teorico << "</creditoTeorico>" << endl;
 
    out << "<OfertaSet>" << endl;
 
@@ -24,7 +24,7 @@ std::ostream& operator << (std::ostream& out, AtendimentoHorarioAula& horario_au
 
    for(; it_oferta != horario_aula.atendimentos_ofertas.end(); it_oferta++)
    {
-      out << (*it_oferta) << endl;
+	   out << **it_oferta;
    }
 
    out << "</OfertaSet>" << endl;

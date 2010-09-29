@@ -12,7 +12,7 @@ std::ostream& operator << (std::ostream& out, AtendimentoSala& sala)
 {
    out << "<Sala>" << endl;
 
-   out << "<salaId>" << sala.sala_id << "</CampusId>";
+   out << "<salaId>" << sala.sala_id << "</salaId>" << endl;
 
    out << "<DiasSemanaSet>" << endl;
 
@@ -20,7 +20,8 @@ std::ostream& operator << (std::ostream& out, AtendimentoSala& sala)
 
    for(; it_diasSem != sala.atendimentos_dias_semana.end(); it_diasSem++)
    {
-      out << (*it_diasSem) << endl;
+      //out << (*it_diasSem) << endl;
+	   out << **it_diasSem;
    }
 
    out << "</DiasSemanaSet>" << endl;
