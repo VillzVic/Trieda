@@ -1,5 +1,6 @@
 package com.gapso.trieda.domain;
 
+import java.io.Serializable;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -29,7 +30,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RooToString
 @RooEntity(identifierColumn = "CDI_ID")
 @Table(name = "CURRICULOS_DISCIPLINAS")
-public class CurriculoDisciplina implements java.io.Serializable {
+public class CurriculoDisciplina implements Serializable {
 
     @NotNull
     @ManyToOne(targetEntity = Curriculo.class)
