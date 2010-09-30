@@ -10,40 +10,44 @@ AtendimentoDiaSemana::~AtendimentoDiaSemana(void)
 
 std::ostream& operator << (std::ostream& out, AtendimentoDiaSemana& diaSem)
 {
-   out << "<DiaSemana>" << endl;
+	out << "<DiaSemana>" << endl;
 
-   out << "<diaSemana>" << diaSem.dia_semana << "</diaSemana>" << endl;
+	//out << "<Id>" << diaSem.getId() << "</Id>" << endl;
 
-   if(diaSem.atendimentos_tatico.size() > 0)
-   {
-      out << "<TaticoSet>" << endl;
+	//out << "<diaSemana>" << diaSem.dia_semana << "</diaSemana>" << endl;
 
-      GGroup<AtendimentoTatico*>::GGroupIterator it_tatico = diaSem.atendimentos_tatico.begin();
+	out << "<diaSemana>" << diaSem.getId() << "</diaSemana>" << endl;
 
-      for(; it_tatico != diaSem.atendimentos_tatico.end(); it_tatico++)
-      {
-         //out << (*it_tatico) << endl;
-		  out << **it_tatico;
-      }
+	if(diaSem.atendimentos_tatico.size() > 0)
+	{
+		out << "<TaticoSet>" << endl;
 
-      out << "</TaticoSet>" << endl;
-   }
-   else if (diaSem.atendimentos_turno.size() > 0)
-   {
-      out << "<TurnoSet>" << endl;
+		GGroup<AtendimentoTatico*>::GGroupIterator it_tatico = diaSem.atendimentos_tatico.begin();
 
-      GGroup<AtendimentoTurno*>::GGroupIterator it_turno = diaSem.atendimentos_turno.begin();
+		for(; it_tatico != diaSem.atendimentos_tatico.end(); it_tatico++)
+		{
+			//out << (*it_tatico) << endl;
+			out << **it_tatico;
+		}
 
-      for(; it_turno != diaSem.atendimentos_turno.end(); it_turno++)
-      {
-         //out << (*it_turno) << endl;
-		  out << **it_turno;
-      }
+		out << "</TaticoSet>" << endl;
+	}
+	else if (diaSem.atendimentos_turno.size() > 0)
+	{
+		out << "<TurnoSet>" << endl;
 
-      out << "</TurnoSet>" << endl;
-   }
+		GGroup<AtendimentoTurno*>::GGroupIterator it_turno = diaSem.atendimentos_turno.begin();
 
-   out << "</DiaSemana>" << endl;
+		for(; it_turno != diaSem.atendimentos_turno.end(); it_turno++)
+		{
+			//out << (*it_turno) << endl;
+			out << **it_turno;
+		}
 
-   return out;
+		out << "</TurnoSet>" << endl;
+	}
+
+	out << "</DiaSemana>" << endl;
+
+	return out;
 }

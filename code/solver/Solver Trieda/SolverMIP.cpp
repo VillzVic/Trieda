@@ -111,6 +111,14 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
 		ParInteiro;
 
 	// >>>
+	// A chave deverá sempre ser um par de inteiros com os respectivos atributos <disciplina,turma>.
+	typedef
+		std::map<std::pair<int,int>,
+			std::vector/*vetor de dias*/<std::pair<int/*valor da variavel*/,
+				std::pair<int/*id_unidade*/,int/*id_sala*/> > > > X___i_d_u_s_t;
+	// <<<
+
+	// >>>
 	// A chave deverá sempre ser um vetor de tamanho 3 com os respectivos atributos <disciplina,turma,curso,campus>.
 	typedef
 		std::map<std::vector<int>,int>
@@ -119,6 +127,10 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
 
 	ParVetor creditos_por_dia;
 	ParInteiro alunos;
+
+	// >>>
+	X___i_d_u_s_t x;
+	// <<<
 
 	// >>>
 	A___i_d_c_cp a;
@@ -164,6 +176,18 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
 				creditos_por_dia[key][v->getDia()] = 
 					std::make_pair((int)v->getValue(),v->getSala()->getId());
 
+				// >>>
+				if(x[key].size() == 0) {
+					//x[key] = std::vector<std::pair<int,std::pair<int,int>> >(7);
+					x[key] = std::vector<std::pair<int,std::pair<int,int>> >
+						(7,std::make_pair(-1,std::make_pair(-1,-1)));
+				}
+				
+				x[key][v->getDia()] = std::make_pair((int)v->getValue(),
+					std::make_pair(v->getUnidade()->getId(),v->getSala()->getId()));
+				// <<<
+
+
 				break;
 			case Variable::V_OFERECIMENTO: break;
 			case Variable::V_ABERTURA: break;
@@ -177,14 +201,12 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
 				alunos[key] = (int) v->getValue();
 
 				// >>>
-
 				key_alunos.push_back(v->getDisciplina()->getId());
 				key_alunos.push_back(v->getTurma());
 				key_alunos.push_back(v->getCurso()->getId());
 				key_alunos.push_back(v->getCampus()->getId());
 
 				a[key_alunos] = (int) v->getValue();
-
 				// <<<
 
 				break;
@@ -223,80 +245,281 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
 	
 	// Fill the solution
 
+
+	problemSolution->addCampus(1,"CP_1");
+	problemSolution->addCampus(2,"CP_2");
+	problemSolution->addCampus(2,"CP_3");
+
+	GGroup<AtendimentoCampus*>::iterator at_campus = problemSolution->atendimento_campus.begin();
+
+	at_campus->addUnidade(1,"Unidade 1",1);
+	at_campus->addUnidade(2,"Unidade 2",1);
+	at_campus->addUnidade(2,"Unidade 3",2);
+	at_campus->addUnidade(4,"Unidade 4",3);
+
+
+
+	std::cout << "Saindo .. ." << std::endl;
+	exit(1);
+
+	/*
 	// >>>
 
-	for(A___i_d_c_cp::iterator it = a.begin(); it != a.end(); ++it) {
-		AtendimentoCampus *at_campus;// = new AtendimentoCampus;
-		//at_campus->setId(it->first.at(3));
+	std::cout << "\nIniciando .. ." << std::endl;
+
+	for(A___i_d_c_cp::iterator it_a = a.begin(); it_a != a.end(); it_a++) {
+		AtendimentoCampus *at_campus;
+		bool addCampus = true;
+
+		// Vai servir para ir adicionando os dados.
+		GGroup<AtendimentoCampus*>::iterator it_at_campus = 
+			problemSolution->atendimento_campus.end(); // end ou begin ?
 
 		if(problemSolution->atendimento_campus.size() > 0 ) {
-			ITERA_GGROUP(it_at_campus, problemSolution->atendimento_campus,AtendimentoCampus) {
-				//if(it_at_campus->getId() == at_campus->getId() ) {
-				if(it_at_campus->getId() == it->first.at(3) ) {
-					//std::cout << "ja tem .. ." << std::endl;
-				}
-				else {
-					//std::cout << "vou adicionar um novo campus .. ." << std::endl;
+			ITERA_GGROUP(it_cp, problemSolution->atendimento_campus,AtendimentoCampus) {
+				if(it_cp->getId() == it_a->first.at(3) ) {
+					std::cout << "CAMPUS encontrado nos registros." << std::endl;
+					addCampus = false;
+					it_at_campus = it_cp;
+					break;
 				}
 			}
 		}
 		else {
-			
-			std::cout << "NENHUM CAMPUS .. ." << std::endl;
+			std::cout << "Nao existe nenhum CAMPUS registrado ainda .. ." << std::endl;
 			at_campus = new AtendimentoCampus;
-			at_campus->setId(it->first.at(3));
+			at_campus->setId(it_a->first.at(3));
 			problemSolution->atendimento_campus.add(at_campus);
-			std::cout << "SIZE > 0 agora ? " << problemSolution->atendimento_campus.size() << std::endl;
-			
+			it_at_campus = problemSolution->atendimento_campus.begin();
+			addCampus = false;
+			std::cout << ".. . CAMPUS adicionado (" << problemSolution->atendimento_campus.size() << ")." << std::endl;
 		}
-		
-	}
 
-	exit(1);
+		if(addCampus) {
+			std::cout << "Adicionando um novo CAMPUS." << std::endl;
+			at_campus = new AtendimentoCampus;
+			at_campus->setId(it_a->first.at(3));
+			problemSolution->atendimento_campus.add(at_campus);
 
+			// ToDo : FALTA ATUALIZAR O ITERADOR DE CAMPUS ...
+			// PARA INSTANCIAS COM APENAS 1 CAMPUS NAO DEVERAO EXISTIR ERROS.
 
-	// <<<
+			std::cout << "Saindo -> ToDo : FALTA ATUALIZAR O ITERADOR DE CAMPUS ..." << std::endl;
+			exit(1);
+		}
 
-	/* BKP
-	// >>>
+		// LEMBRAR DE ADD DEPOIS
+		//GGroup<AtendimentoUnidade*> *at_unidade = new GGroup<AtendimentoUnidade*>;
 
-	ITERA_GGROUP(it_campus,problemData->campi,Campus) {
-		AtendimentoCampus *at_campus = new AtendimentoCampus;
+		X___i_d_u_s_t::iterator it_x = x.find(std::make_pair(it_a->first.at(0),it_a->first.at(1)));
 
-		at_campus->campus_id = it_campus->codigo;
+		while(it_x != x.end() && !x.empty()) {
+			std::cout << "..............................." << std::endl;
+			std::cout << "CAMPUS: " << it_a->first.at(3) << std::endl;
+			std::cout << "Disciplina " << it_x->first.first << 
+				", turma " << it_x->first.second << ": " << std::endl;
 
-		ITERA_GGROUP(it_unidade,it_campus->unidades,Unidade) {			
-			AtendimentoUnidade *at_unidade = new AtendimentoUnidade;
+			//GGroup<AtendimentoUnidade*> at_unidade = it_at_campus->atendimentos_unidades;
+			//AtendimentoUnidade *at_unidade = new AtendimentoUnidade;
+			AtendimentoUnidade *at_unidade;
 
-			at_unidade->unidade_id = it_unidade->codigo;
+			// Vai servir para ir adicionando os dados.
+			GGroup<AtendimentoUnidade*>::iterator it_at_unidade = 
+				it_at_campus->atendimentos_unidades.end(); // end ou begin ?
 
-			ITERA_GGROUP(it_sala,it_unidade->salas,Sala) {
-				AtendimentoSala *at_sala = new AtendimentoSala;
+			//std::vector<std::pair<int,std::pair<int,int> > >::iterator it_dia = it_x->second.begin();
+			std::vector<std::pair<int,std::pair<int,int> > >::iterator it_dia = it_x->second.begin();
 
-				at_sala->sala_id = it_sala->codigo;
+			// Precisa do iterador e da variavel declarada abaixo.
+			int dia_semana = 0;
 
-				for(int dia_semana = 0; dia_semana < 7; ++dia_semana) {
-					AtendimentoDiaSemana *at_dia_semana = new AtendimentoDiaSemana;
+			// DUVIDA: Precisa de criar uma unidade para cada dia?
+			// Se sim, basta descomentar o laço abaixo.
+			// LEMBRAR DE FECHA-LO ANTES DE DELETAR A VARIAVEL
+			for(;it_dia != it_x->second.end(); it_dia++) {
 
-					at_dia_semana->dia_semana = dia_semana;
+				bool add_unidade = true;
+				bool nova_sala = false;
 
-					{
-						AtendimentoTatico *at_tatico = new AtendimentoTatico;
+				//if(problemSolution->atendimento_campus.size() == 1) {
+				//if(addCampus) {
+				if( !(at_campus->atendimentos_unidades.size() > 0) ) {
+					// Caiu na condicao do <addCampus> = true e, portanto, ainda nao existem unidades.
+
+					if( it_dia->second.first != -1 ) {
+
+						std::cout << "Nao existe nenhuma UNIDADE registrada para o CAMPUS em questao.. ." << std::endl;
+
+						at_unidade = new AtendimentoUnidade;
+						at_unidade->setId(it_dia->second.first);
+						it_at_campus->atendimentos_unidades.add(at_unidade);
+
+						it_at_unidade = it_at_campus->atendimentos_unidades.begin();
+
+						std::cout << ".. . UNIDADE adicionada (" << at_campus->atendimentos_unidades.size() << ")." << std::endl;
+
+						nova_sala = true;
+
 					}
 
+					add_unidade = false;
+					//nova_sala = true;
 
-					at_sala->atendimentos_dias_semana.add(at_dia_semana);
 				}
-				at_unidade->atendimentos_salas.add(at_sala);
-			}
+				else {
+					// Pode ser que ja existam unidades .. .
+					// Iterar sobre elas, procurando a unidade desejada.
 
-			at_campus->atendimentos_unidades.add(at_unidade);
+					ITERA_GGROUP(it_und, it_at_campus->atendimentos_unidades,AtendimentoUnidade) {
+						if( it_dia->second.first != -1 ) {
+							if(it_und->getId() == it_dia->second.first) {
+								std::cout << "UNIDADE encontrada nos registros." << std::endl;
+								add_unidade = false;
+								nova_sala = true;
+								it_at_unidade = it_und;
+								break;
+							}
+						}
+						else{
+							add_unidade = false;
+							break;
+						}
+					}
+				}
+
+				if(add_unidade) {
+					std::cout << "Adicionando uma nova UNIDADE." << std::endl;
+					at_unidade = new AtendimentoUnidade;
+					at_unidade->setId(it_dia->second.first);
+					at_campus->atendimentos_unidades.add(at_unidade);
+
+					nova_sala = true;
+
+					// ToDo : FALTA ATUALIZAR O ITERADOR DE UNIDADES ...
+					// PARA INSTANCIAS COM APENAS 1 UNIDADE NAO DEVERAO EXISTIR ERROS.
+
+					std::cout << "Saindo -> ToDo : FALTA ATUALIZAR O ITERADOR DE UNIDADES ..." << std::endl;
+					exit(1);
+				}
+
+				if(nova_sala) {
+					AtendimentoSala *at_sala;// = new AtendimentoSala;
+					AtendimentoDiaSemana *at_dia_semana;
+
+					// Vai servir para ir adicionando os dados.
+					GGroup<AtendimentoSala*>::iterator it_at_sala = 
+						it_at_unidade->atendimentos_salas.end(); // end ou begin ?
+
+					bool add_sala = true;
+					bool add_dia_semana = true;
+
+					if( !(at_unidade->atendimentos_salas.size() > 0) ) {
+
+						std::cout << "Nao existe nenhuma SALA registrada para a UNIDADE em questao.. ." << std::endl;
+
+						at_sala = new AtendimentoSala;
+						at_sala->setId(it_dia->second.second);
+						it_at_unidade->atendimentos_salas.add(at_sala);
+
+						it_at_sala = it_at_unidade->atendimentos_salas.begin();
+
+						add_sala = false;
+
+						std::cout << ".. . SALA adicionada (" << at_unidade->atendimentos_salas.size() << ")." << std::endl;
+
+// >>>
+						std::cout << "Nao existe nenhum DIA_SEMANA registrado para a SALA em questao.. ." << std::endl;
+
+						at_dia_semana = new AtendimentoDiaSemana;
+						at_dia_semana->setId(dia_semana);
+						it_at_sala->atendimentos_dias_semana.add(at_dia_semana);
+
+						add_dia_semana = false;
+
+						std::cout << ".. . DIA_SEMANA adicionado (" << at_sala->atendimentos_dias_semana.size() << ")." << std::endl;
+// <<<
+
+					}
+					else {
+						// Pode ser que ja existam salas .. .
+						// Iterar sobre elas, procurando a sala desejada.
+
+						ITERA_GGROUP(it_sala, it_at_unidade->atendimentos_salas,AtendimentoSala) {
+							if(it_sala->getId() == it_dia->second.second) {
+								std::cout << "SALA encontrada nos registros." << std::endl;
+								add_sala = false;
+								it_at_sala = it_sala;
+								break;
+							}
+						}
+
+					}
+
+					if(add_sala) {
+						std::cout << "Adicionando uma nova SALA." << std::endl;
+						at_sala = new AtendimentoSala;
+						at_sala->setId(it_dia->second.second);
+						it_at_unidade->atendimentos_salas.add(at_sala);
+
+						// ToDo : FALTA ATUALIZAR O ITERADOR DE SALAS ...
+						// PARA INSTANCIAS COM APENAS 1 SALA NAO DEVERAO EXISTIR ERROS.
+
+						// Pode deletar isso .. .
+						// So pra garantir o garantido
+						bool aindaFalta = true;
+
+						ITERA_GGROUP(it_sala, it_at_unidade->atendimentos_salas,AtendimentoSala) {
+							if(it_sala->getId() == it_dia->second.second) {
+								it_at_sala = it_sala;
+								aindaFalta = false;
+								break;
+							}
+						}
+
+						if(aindaFalta) {
+							std::cout << "Saindo -> ToDo : FALTA ATUALIZAR O ITERADOR DE SALAS ..." << std::endl;
+							exit(1);
+						}
+					}
+
+					if(add_dia_semana) {
+						std::cout << "Adicionando um novo DIA_SEMANA." << std::endl;
+						at_dia_semana = new AtendimentoDiaSemana;
+						at_dia_semana->setId(dia_semana);
+						it_at_sala->atendimentos_dias_semana.add(at_dia_semana);
+
+						//it_at_dia_semana = it_at_sala->atendimentos_dias_semana.begin();
+
+						// ToDo : FALTA ATUALIZAR O ITERADOR DE DIA_SEMANA ...
+						// PARA INSTANCIAS COM APENAS 1 DIA_SEMANA NAO DEVERAO EXISTIR ERROS.
+
+						// Pode deletar isso .. .
+						// So pra garantir o garantido
+						bool aindaFalta = true;
+					}
+
+//					AtendimentoTatico *at_tatico = ;
+
+				}
+
+				dia_semana++;
+			} // FIM DO LACO DE DIAS !!!!
+
+			x.erase(it_x);
+			std::cout << "i-esima variavel X_{i} do map de variaveis X removida.\n";
+			it_x = x.find(std::make_pair(it_a->first.at(0),it_a->first.at(1)));
 		}
 
-		problemSolution->atendimento_campus.add(at_campus);
+
+		// REMOVER O CAMPUS QUE TRABALHEI EM CIMA .. . (DELETAR VARIAVEL A)
+		// APENAS PARA NAO FICAR NA MEMORIA. PARA A EXECUCAO DO PROGRAMA NAO FAZ DIFERENCA SE NAO REMOVER.
 	}
 
+	std::cout << "\nSaindo .. ." << std::endl;
+	//exit(1);
+
 	// <<<
+
 	*/
 
 #ifdef DEBUG

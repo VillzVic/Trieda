@@ -3,30 +3,34 @@
 AtendimentoUnidade::AtendimentoUnidade(void)
 {
 }
- 
+
 AtendimentoUnidade::~AtendimentoUnidade(void)
 {
 }
 
 std::ostream& operator << (std::ostream& out, AtendimentoUnidade& unidade)
 {
-   out << "<Unidade>" << endl;
+	out << "<Unidade>" << endl;
 
-   out << "<unidadeId>" << unidade.unidade_id << "</unidadeId>" << endl;
+	//out << "<Id>" << unidade.getId() << "</Id>" << endl;
 
-   out << "<SalaSet>" << endl;
+	//out << "<unidadeId>" << unidade.unidade_id << "</unidadeId>" << endl;
 
-   GGroup<AtendimentoSala*>::GGroupIterator it_sala = unidade.atendimentos_salas.begin();
+	out << "<unidadeId>" << unidade.getId() << "</unidadeId>" << endl;
 
-   for(; it_sala != unidade.atendimentos_salas.end(); it_sala++)
-   {
-      //out << (*it_sala) << endl;
-	   out << **it_sala;
-   }
+	out << "<SalaSet>" << endl;
 
-   out << "</SalaSet>" << endl;
+	GGroup<AtendimentoSala*>::GGroupIterator it_sala = unidade.atendimentos_salas.begin();
 
-   out << "</Unidade>" << endl;
+	for(; it_sala != unidade.atendimentos_salas.end(); it_sala++)
+	{
+		//out << (*it_sala) << endl;
+		out << **it_sala;
+	}
 
-   return out;
+	out << "</SalaSet>" << endl;
+
+	out << "</Unidade>" << endl;
+
+	return out;
 }

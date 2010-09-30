@@ -38,10 +38,10 @@ void ProblemDataLoader::find_and_set(int id,
 {
 	T* finder = new T;
 	finder->id = id;
-	GGroup<T*>::iterator it_g = 
-		haystack.find(finder);
+	GGroup<T*>::iterator it_g = haystack.begin();
+	//	haystack.find(finder);
 	/* Versão lenta... Entender o porquê depois */
-	it_g = haystack.begin();
+	//it_g = haystack.begin();
 	while(it_g != haystack.end() && it_g->getId() != finder->getId())
 		++it_g;
 	/* FIM */
