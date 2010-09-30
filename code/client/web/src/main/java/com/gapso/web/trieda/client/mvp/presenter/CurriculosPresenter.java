@@ -14,6 +14,7 @@ import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.gapso.web.trieda.client.mvp.model.CurriculoDTO;
 import com.gapso.web.trieda.client.mvp.model.CursoDTO;
+import com.gapso.web.trieda.client.mvp.view.CurriculoDisciplinasView;
 import com.gapso.web.trieda.client.mvp.view.CurriculoFormView;
 import com.gapso.web.trieda.client.services.CurriculosServiceAsync;
 import com.gapso.web.trieda.client.services.CursosServiceAsync;
@@ -128,8 +129,9 @@ public class CurriculosPresenter implements Presenter {
 		display.getAssociarDisciplinasButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
 			@Override
 			public void componentSelected(ButtonEvent ce) {
-//				Presenter presenter = new SalasPresenter(new SalasView());
-//				presenter.go(gTab);
+				CurriculoDTO curriculoDTO = display.getGrid().getGrid().getSelectionModel().getSelectedItem();
+				Presenter presenter = new CurriculoDisciplinasPresenter(new CurriculoDisciplinasView(curriculoDTO));
+				presenter.go(gTab);
 			}
 		});
 	}

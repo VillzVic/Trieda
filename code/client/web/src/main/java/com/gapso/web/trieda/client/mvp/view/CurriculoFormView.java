@@ -32,7 +32,7 @@ public class CurriculoFormView extends MyComposite implements CurriculoFormPrese
 	}
 	
 	private void initUI() {
-		String title = (curriculoDTO.getId() == null)? "Inserção de Curriculo" : "Edição de Curriculo";
+		String title = (curriculoDTO.getId() == null)? "Inserção de Matriz Curricular" : "Edição de Matriz Curricular";
 		simpleModal = new SimpleModal(title, Resources.DEFAULTS.matrizCurricular16());
 		simpleModal.setHeight(160);
 		createForm();

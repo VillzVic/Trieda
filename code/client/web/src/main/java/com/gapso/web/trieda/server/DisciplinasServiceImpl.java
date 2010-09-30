@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.extjs.gxt.ui.client.Style.SortDir;
 import com.extjs.gxt.ui.client.data.BaseListLoadResult;
+import com.extjs.gxt.ui.client.data.BasePagingLoadConfig;
 import com.extjs.gxt.ui.client.data.BasePagingLoadResult;
 import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
@@ -27,6 +28,11 @@ public class DisciplinasServiceImpl extends RemoteServiceServlet implements Disc
 
 	private static final long serialVersionUID = -4850774141421616870L;
 
+	@Override
+	public ListLoadResult<DisciplinaDTO> getList(BasePagingLoadConfig loadConfig) {
+		return getBuscaList(null, loadConfig.get("query").toString(), null, loadConfig);
+	}
+	
 	@Override
 	public PagingLoadResult<DisciplinaDTO> getBuscaList(String nome, String codigo, TipoDisciplinaDTO tipoDisciplinaDTO, PagingLoadConfig config) {
 		List<DisciplinaDTO> list = new ArrayList<DisciplinaDTO>();
@@ -68,7 +74,6 @@ public class DisciplinasServiceImpl extends RemoteServiceServlet implements Disc
 			ConvertBeans.toDisciplina(disciplinaDTO).remove();
 		}
 	}
-	
 	
 	@Override
 	public TipoDisciplinaDTO getTipoDisciplina(Long id) {

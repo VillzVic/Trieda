@@ -2,16 +2,21 @@ package com.gapso.web.trieda.server;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.transaction.annotation.Transactional;
 
 import com.extjs.gxt.ui.client.Style.SortDir;
+import com.extjs.gxt.ui.client.data.BaseListLoadResult;
 import com.extjs.gxt.ui.client.data.BasePagingLoadResult;
+import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.gapso.trieda.domain.Curriculo;
+import com.gapso.trieda.domain.CurriculoDisciplina;
 import com.gapso.trieda.domain.Curso;
 import com.gapso.web.trieda.client.mvp.model.CurriculoDTO;
+import com.gapso.web.trieda.client.mvp.model.CurriculoDisciplinaDTO;
 import com.gapso.web.trieda.client.mvp.model.CursoDTO;
 import com.gapso.web.trieda.client.services.CurriculosService;
 import com.gapso.web.trieda.server.util.ConvertBeans;
@@ -73,4 +78,30 @@ public class CurriculosServiceImpl extends RemoteServiceServlet implements Curri
 		}
 	}
 
+	@Override
+	public ListLoadResult<CurriculoDisciplinaDTO> getDisciplinasList(CurriculoDTO curriculoDTO) {
+		Curriculo curriculo = Curriculo.find(curriculoDTO.getId());
+		Set<CurriculoDisciplina> listCurriculoDisciplina = curriculo.getDisciplinas();
+		List<CurriculoDisciplinaDTO> listCurriculoDisciplinaDTO = new ArrayList<CurriculoDisciplinaDTO>();
+		for(CurriculoDisciplina cd : listCurriculoDisciplina) {
+			listCurriculoDisciplinaDTO.add(ConvertBeans.toCurriculoDisciplinaDTO(cd));
+		}
+		return new BaseListLoadResult<CurriculoDisciplinaDTO>(listCurriculoDisciplinaDTO);
+	}
+	
+	@Override
+	public void saveDisciplina(CurriculoDTO curriculoDTO, CurriculoDisciplinaDTO curriculoDisciplinaDTO) {
+		CurriculoDisciplina curriculoDisciplina = ConvertBeans.toCurriculoDisciplina(curriculoDisciplinaDTO);
+		Curriculo curriculo = Curriculo.find(curriculoDTO.getId());
+		curriculoDisciplina.setCurriculo(curriculo);
+		curriculoDisciplina.persist();
+	}
+	
+	@Override
+	public void removeDisciplina(List<CurriculoDisciplinaDTO> curriculoDisciplinaDTOList) {
+		for(CurriculoDisciplinaDTO curriculoDisciplinaDTO : curriculoDisciplinaDTOList) {
+			ConvertBeans.toCurriculoDisciplina(curriculoDisciplinaDTO).remove();
+		}
+	}
+	
 }

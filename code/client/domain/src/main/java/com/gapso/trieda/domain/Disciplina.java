@@ -117,7 +117,7 @@ public class Disciplina implements java.io.Serializable {
     private Set<com.gapso.trieda.domain.GrupoSala> gruposSala = new java.util.HashSet<com.gapso.trieda.domain.GrupoSala>();
 
     @NotNull
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "curriculo")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "disciplina")
     private Set<com.gapso.trieda.domain.CurriculoDisciplina> curriculos = new java.util.HashSet<com.gapso.trieda.domain.CurriculoDisciplina>();
 
     @NotNull

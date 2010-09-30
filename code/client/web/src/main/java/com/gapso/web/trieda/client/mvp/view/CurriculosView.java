@@ -41,7 +41,7 @@ public class CurriculosView extends MyComposite implements CurriculosPresenter.D
 	
 	private void initUI() {
 		panel = new ContentPanel(new BorderLayout());
-		panel.setHeading("Master Data » Curriculos");
+		panel.setHeading("Master Data » Matriz Curricular");
 		createToolBar();
 		createGrid();
 		createFilter();

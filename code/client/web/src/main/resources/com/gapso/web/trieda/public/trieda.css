@@ -125,3 +125,18 @@ table.cw-FlexTable td.cw-FlexTable-content {
 .SemanaLetivaGrid .x-grid3-row-selected {
 	background-color: #FFF !important;
 	border-color: #FFF;
+}
+
+.x-grid3-summary-row {
+	font: 11px arial,tahoma,helvetica,sans-serif;
+	background:none repeat scroll 0 50% #F1F2F4;
+	border-left:1px solid #FFFFFF;
+	border-right:1px solid #FFFFFF;
+	color:#333333;
+}
+
+.x-grid3-summary-row .x-grid3-cell-inner {
+	font-weight:bold;
+	padding-bottom:4px;
+}
+

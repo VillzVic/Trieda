@@ -10,28 +10,61 @@ import com.google.gwt.user.client.ui.AbstractImagePrototype;
 public class SimpleToolBar extends ToolBar {
 
 	private Button newButton;
+	private boolean showNewButton = true;
 	private Button editButton;
+	private boolean showEditButton = true;
 	private Button removeButton;
+	private boolean showRemoveButton = true;
 	private Button importExcelButton;
+	private boolean showImportExcelButton = true;
 	private Button exportExcelButton;
+	private boolean showExportExcelButton = true;
 	
 	public SimpleToolBar() {
+		super();
 		initUI();
 	}
 	
-	private void initUI() {
-		newButton = createButton("Adicionar", Resources.SIMPLE_CRUD.add16());
-		editButton = createButton("Editar", Resources.SIMPLE_CRUD.edit16());
-		removeButton = createButton("Remover", Resources.SIMPLE_CRUD.del16());
-		importExcelButton = createButton("Exportar para Excel", Resources.SIMPLE_CRUD.excelExport16());
-		exportExcelButton = createButton("Importar de Excel", Resources.SIMPLE_CRUD.excelImport16());
+	public SimpleToolBar(boolean showNewButton, boolean showEditButton, boolean showRemoveButton, boolean showImportExcelButton, boolean showExportExcelButton) {
+		super();
+		this.showNewButton = showNewButton;
+		this.showEditButton = showEditButton;
+		this.showRemoveButton = showRemoveButton;
+		this.showImportExcelButton = showImportExcelButton;
+		this.showExportExcelButton = showExportExcelButton;
+		initUI();
+	}
 
-		add(newButton);
-		add(editButton);
-		add(removeButton);
-		add(new SeparatorToolItem());
-		add(importExcelButton);
-		add(exportExcelButton);
+	private void initUI() {
+		if(showNewButton) {
+			newButton = createButton("Adicionar", Resources.SIMPLE_CRUD.add16());
+			add(newButton);
+		}
+		
+		if(showEditButton) {
+			editButton = createButton("Editar", Resources.SIMPLE_CRUD.edit16());
+			add(editButton);
+		}
+		
+		if(showRemoveButton) {
+			removeButton = createButton("Remover", Resources.SIMPLE_CRUD.del16());
+			add(removeButton);
+		}
+		
+		if(showImportExcelButton || showExportExcelButton) {
+			add(new SeparatorToolItem());
+		}
+		
+		if(showImportExcelButton) {
+			importExcelButton = createButton("Exportar para Excel", Resources.SIMPLE_CRUD.excelExport16());
+			add(importExcelButton);
+		}
+		
+		if(showExportExcelButton) {
+			exportExcelButton = createButton("Importar de Excel", Resources.SIMPLE_CRUD.excelImport16());
+			add(exportExcelButton);
+		}
+
 	}
 	
 	public void activateEmptyState() {
@@ -75,5 +108,5 @@ public class SimpleToolBar extends ToolBar {
 		bt.setToolTip(toolTip);
 		return bt;
 	}
-	
+
 }
