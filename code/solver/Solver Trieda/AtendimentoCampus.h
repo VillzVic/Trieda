@@ -18,49 +18,68 @@ public:
 
 	//virtual TriedaOutput& escreve_arvore(TriedaOutput& root);
 
-
 	// >>>
 
-	// ToDo : adiocionar esse cara ... 
-	static GGroup<int/*ids de campus existentes*/> campi_id;
+	static GGroup<int/*ids de campus existentes*/> *campi_id;
 
 	void addUnidade(int id, std::string unidadeId, int id_campus)
 	{
-		//if(campi_id.size > 0){
-		//if( campi_id.find(id_campus) != GGroup<int>::end() ) {
-		AtendimentoUnidade *at_unidade;
 		std::cout << ">> > >>" << std::endl;
-		if( atendimentos_unidades.size() == 0 ) {
-			std::cout << "Ainda nao existe nenhuma UNIDADE do CAMPUS \"" << id_campus << "\" adicionada a base.\n\tUNIDADE \"" <<
-				unidadeId << "\" com id \"" << id << "\"  adicionada." << std::endl;
-			at_unidade = new AtendimentoUnidade;
-			at_unidade->setId(id);
-			at_unidade->unidade_id = unidadeId;
-			atendimentos_unidades.add(at_unidade);
+		if(campi_id->size() == 0){
+			std::cout << "Ainda nao existe nenhum CAMPUS registrado. Para registrar uma UNIDADE, registre um CAMPUS antes." << std::endl;
 		}
 		else {
-			bool addUnidade = true;
-			ITERA_GGROUP(it_unidade, atendimentos_unidades,AtendimentoUnidade) {
-				if(it_unidade->getId() == id ) {
-					std::cout << "O id \"" << id << "\" especificado, da UNIDADE \"" 
-						<< unidadeId << "\"  ja existe." << std::endl;
-					addUnidade = false;
+			bool campus_encontrado = false;
+			GGroup<int>::iterator it_campi_id = campi_id->begin();
+			for(; it_campi_id != campi_id->end(); it_campi_id++ ) {
+				if( *it_campi_id == id_campus ) {
+					campus_encontrado = true;
 					break;
 				}
 			}
-			if(addUnidade) {
-				std::cout << "O id \"" << id << "\" especificado, da UNIDADE \"" 
-					<< unidadeId << "\" nao consta no CAMPUS \"" << id_campus << "\". \n\tAdicionando .. ." << std::endl;
-				at_unidade = new AtendimentoUnidade;
-				at_unidade->setId(id);
-				at_unidade->unidade_id = unidadeId;
-				atendimentos_unidades.add(at_unidade);
+
+			if(campus_encontrado) {
+				AtendimentoUnidade *at_unidade;
+				if( atendimentos_unidades.size() == 0 ) {
+					std::cout << "Ainda nao existe nenhuma UNIDADE do CAMPUS \"" << id_campus << "\" adicionada a base.\n\tUNIDADE \"" <<
+						unidadeId << "\" com id \"" << id << "\"  adicionada." << std::endl;
+					at_unidade = new AtendimentoUnidade;
+					at_unidade->setId(id);
+					at_unidade->unidade_id = unidadeId;
+					// >>>
+					at_unidade->__ids_cadastrados->add(id);
+					// <<<
+					atendimentos_unidades.add(at_unidade);
+				}
+				else {
+					bool addUnidade = true;
+					ITERA_GGROUP(it_unidade, atendimentos_unidades,AtendimentoUnidade) {
+						if(it_unidade->getId() == id ) {
+							std::cout << "O id \"" << id << "\" especificado, da UNIDADE \"" 
+								<< unidadeId << "\"  ja existe." << std::endl;
+							addUnidade = false;
+							break;
+						}
+					}
+					if(addUnidade) {
+						std::cout << "O id \"" << id << "\" especificado, da UNIDADE \"" 
+							<< unidadeId << "\" nao consta no CAMPUS \"" << id_campus << "\". \n\tAdicionando .. ." << std::endl;
+						at_unidade = new AtendimentoUnidade;
+						at_unidade->setId(id);
+						at_unidade->unidade_id = unidadeId;
+						// >>>
+						at_unidade->__ids_cadastrados->add(id);
+						// <<<
+						atendimentos_unidades.add(at_unidade);
+					}
+				}
+			}
+			else {
+				std::cout << "Id \"" << id_campus << "\" de CAMPUS invalido." << std::endl;
 			}
 		}
-		//	}
-		//std::cout << "O id do CAMPUS \"" << id_campus << "\" informado nao existe." << std::endl;
-		//}
-	};
+	}
+
 	// <<<
 
 };

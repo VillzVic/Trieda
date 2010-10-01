@@ -24,4 +24,8 @@ public:
    int max_creds(int dia);
    TipoSala* tipo_sala;
 
+   // >>>
+   int id_unidade;
+   // <<<
+
 };

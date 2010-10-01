@@ -203,6 +203,20 @@ void ProblemDataLoader::gera_refs() {
 			}
 		}
 	}
+
+
+	ITERA_GGROUP(it_campi,problemData->campi,Campus) {
+		ITERA_GGROUP(it_unidades,it_campi->unidades,Unidade) {
+			
+			it_unidades->id_campus = it_campi->getId();
+
+			ITERA_GGROUP(it_salas,it_unidades->salas,Sala) {
+				it_salas->id_unidade = it_unidades->getId();
+			}
+		}
+	}
+
+
 }
 
 void ProblemDataLoader::cria_blocos_curriculares() {

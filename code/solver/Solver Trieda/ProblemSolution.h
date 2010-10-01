@@ -60,6 +60,9 @@ public:
 			at_campus = new AtendimentoCampus;
 			at_campus->setId(id);
 			at_campus->campus_id = campusId;
+			// >>>
+			at_campus->campi_id->add(id);
+			// <<<
 			atendimento_campus.add(at_campus);
 		}
 		else {
@@ -74,10 +77,13 @@ public:
 			}
 			if(addCampus) {
 				std::cout << "O id \"" << id << "\" especificado, do CAMPUS \"" 
-						<< campusId << "\" nao consta na base de dados. \n\tAdicionando .. ." << std::endl;
+					<< campusId << "\" nao consta na base de dados. \n\tAdicionando .. ." << std::endl;
 				at_campus = new AtendimentoCampus;
 				at_campus->setId(id);
 				at_campus->campus_id = campusId;
+				// >>>
+				at_campus->campi_id->add(id);
+				// <<<
 				atendimento_campus.add(at_campus);
 			}
 		}

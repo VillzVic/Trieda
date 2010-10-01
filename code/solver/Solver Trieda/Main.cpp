@@ -10,6 +10,14 @@
 #include "SolverMIP.h"
 #include "ErrorHandler.h"
 
+// >>>
+GGroup<int/*ids de campus existentes*/> * AtendimentoCampus::campi_id = new GGroup<int>;
+
+GGroup<int/*ids de unidades existentes*/> * AtendimentoUnidade::__ids_cadastrados = new GGroup<int>;
+GGroup<int/*ids de salas existentes*/> * AtendimentoSala::__ids_cadastrados = new GGroup<int>;
+GGroup<int/*ids dos dias existentes*/> * AtendimentoDiaSemana::__ids_cadastrados = new GGroup<int>;
+// <<<
+
 #ifndef PATH_SEPARATOR
 #ifdef WIN32
 #define PATH_SEPARATOR "\\"

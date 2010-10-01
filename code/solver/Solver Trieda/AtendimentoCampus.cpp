@@ -12,11 +12,11 @@ std::ostream& operator << (std::ostream& out, AtendimentoCampus& campus)
 {
 	out << "<Campus>" << endl;
 
-	//out << "<Id>" << campus.getId() << "</Id>" << endl;
+	out << "<Id>" << campus.getId() << "</Id>" << endl;
 
-	//out << "<CampusId>" << campus.campus_id << "</CampusId>" << endl;
+	out << "<CampusId>" << campus.campus_id << "</CampusId>" << endl;
 
-	out << "<CampusId>" << campus.getId() << "</CampusId>" << endl;
+	//out << "<CampusId>" << campus.getId() << "</CampusId>" << endl;
 
 	out << "<UnidadeSet>" << endl;
 
