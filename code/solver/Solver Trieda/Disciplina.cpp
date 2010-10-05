@@ -8,6 +8,17 @@ Disciplina::Disciplina(void)
    max_alunos_p = -1;
 
    min_creds = 0;
+
+   divisao_creditos = NULL;
+
+	tipo_disciplina = NULL;
+	nivel_dificuldade = NULL;
+
+	demanda_total = -1;
+	max_demanda = -1;
+	num_turmas = -1;
+	min_creds = -1;
+	max_creds = -1;
 }
 
 Disciplina::~Disciplina(void)
@@ -21,8 +32,8 @@ void Disciplina::le_arvore(ItemDisciplina& elem)
    cred_teoricos = elem.credTeoricos();
    cred_praticos = elem.credPraticos();
    max_creds = cred_teoricos + cred_praticos;
-
    e_lab = elem.laboratorio();
+
    if(elem.maxAlunosTeorico().present())
       max_alunos_t = elem.maxAlunosTeorico().get();
    if(elem.maxAlunosPratico().present())

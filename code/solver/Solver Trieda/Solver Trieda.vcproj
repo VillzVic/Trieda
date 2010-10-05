@@ -78,7 +78,7 @@
 				Name="VCLinkerTool"
 				AdditionalDependencies="cplex112.lib xerces-c_3.lib"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="&quot;$(CPLEX112)\lib\x86_windows_vs2008\stat_mda&quot;;&quot;$(XSD)\lib\vc-9.0&quot;"
+				AdditionalLibraryDirectories="&quot;$(CPLEX112)\lib\x86_windows_vs2008\stat_mda&quot;;&quot;$(XSD)\lib\vc-8.0&quot;"
 				IgnoreDefaultLibraryNames="LIBCMT"
 				GenerateDebugInformation="true"
 				SubSystem="1"
@@ -164,9 +164,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="cplex112.lib"
+				AdditionalDependencies="cplex112.lib xerces-c_3.lib"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="$(CPLEX112)\lib\x86_windows_vs2008\stat_mda"
+				AdditionalLibraryDirectories="&quot;$(CPLEX112)\lib\x86_windows_vs2008\stat_mda&quot;;&quot;$(XSD)\lib\vc-8.0&quot;"
 				GenerateDebugInformation="false"
 				SubSystem="1"
 				OptimizeReferences="2"
@@ -397,6 +397,10 @@
 				>
 				<File
 					RelativePath="$(CODELIB)\DateTime.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\..\..\..\..\Bibliotecas\codelib\ErrorHandler.cpp"
 					>
 				</File>
 				<File
@@ -638,6 +642,10 @@
 				>
 				<File
 					RelativePath="$(CODELIB)\DateTime.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\..\..\..\..\Bibliotecas\codelib\ErrorHandler.h"
 					>
 				</File>
 				<File

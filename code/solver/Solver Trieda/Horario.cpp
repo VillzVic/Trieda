@@ -3,6 +3,8 @@
 
 Horario::Horario(void)
 {
+	turno = NULL;
+	horario_aula = NULL;
 }
 
 Horario::~Horario(void)

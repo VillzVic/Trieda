@@ -25,6 +25,7 @@ public:
 
    // Load the XML file
    void load();
+   void divideDisciplinas();
    void gera_refs();
    template<class T> 
    void find_and_set(int id, GGroup<T*>& haystack, T*& needle) ;
@@ -33,6 +34,7 @@ public:
    void estima_turmas();
    void print_stats();
    void cache();
+   void print_csv();
 
 private:
    // Input data object of the problem

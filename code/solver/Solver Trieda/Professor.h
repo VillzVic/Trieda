@@ -25,7 +25,7 @@ public:
    int area_id;
    double valor_credito;
    GGroup<Horario*> horarios;
-   GGroup<Magisterio*> magisterio;
+   GGroup<Magisterio*> magisterio; // esse eh o disciplinas do XSD de input
    TipoContrato* tipo_contrato;
    TipoTitulacao* titulacao; 
    AreaTitulacao* area;

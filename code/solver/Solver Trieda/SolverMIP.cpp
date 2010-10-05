@@ -3,6 +3,10 @@
 #include "ProblemSolution.h"
 #include "SolverMIP.h"
 
+// >>>
+#define PRINT_CSV
+// <<<
+
 SolverMIP::SolverMIP(ProblemData *aProblemData)
 :Solver(aProblemData)
 {
@@ -82,6 +86,14 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
 
 #ifdef DEBUG
 	FILE *fout = fopen("solucao.txt","wt");
+#endif
+
+#ifdef PRINT_CSV
+	FILE *f_V_CREDITOS = fopen("./CSV/V_CREDITOS.csv","wt");
+	bool printLegend_V_CREDITOS = true;
+
+	bool printLegend_V_ALUNOS = true;
+	FILE *f_V_ALUNOS = fopen("./CSV/V_ALUNOS.csv","wt");
 #endif
 
 	/**
@@ -187,6 +199,14 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
 					std::make_pair(v->getUnidade()->getId(),v->getSala()->getId()));
 				// <<<
 
+#ifdef PRINT_CSV
+				if(printLegend_V_CREDITOS){
+					fprintf(f_V_CREDITOS,"Var. x,\t\ti,\td,\tu,\ts,\t\tt,\n");
+					printLegend_V_CREDITOS = false;
+				}
+				fprintf(f_V_CREDITOS,"%f,\t%d,\t%d,\t%d,\t%d,\t%d,\n",v->getValue(),v->getTurma(),v->getDisciplina()->getId(),
+					v->getUnidade()->getId(),v->getSala()->getId(),v->getDia());
+#endif
 
 				break;
 			case Variable::V_OFERECIMENTO: break;
@@ -208,6 +228,15 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
 
 				a[key_alunos] = (int) v->getValue();
 				// <<<
+
+#ifdef PRINT_CSV
+				if(printLegend_V_ALUNOS){
+					fprintf(f_V_ALUNOS,"Var. a,\t\ti,\td,\tc,\tcp,\n");
+					printLegend_V_ALUNOS = false;
+				}
+				fprintf(f_V_ALUNOS,"%f,\t%d,\t%d,\t%d,\t%d,\n",v->getValue(),v->getTurma(),
+					v->getDisciplina()->getId(),v->getCurso()->getId(),v->getCampus()->getId());
+#endif
 
 				break;
 			case Variable::V_ALOC_ALUNO: break;
@@ -246,6 +275,7 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
 
 	// Fill the solution
 
+	/*
 	// >>> VERSAO MULTI CAMPUS .. . continuar ... 
 
 	// Coletando os ids dos campus, das unidades e das salas existentes  na entrada e suas respectivas descricoes.
@@ -316,7 +346,10 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
 	}
 
 	GGroup<AtendimentoSala*>::iterator at_sala = at_unidade->atendimentos_salas.begin();
-/*
+
+	*/
+
+	/* DANDO ERRO.
 	for(X___i_d_u_s_t::iterator it_x = x.begin(); it_x != x.end(); it_x++) {
 		for(int dia = 0; dia < it_x->second.size(); dia++) {
 			// poderia ser outro elemento de x. Escolhi o valor da variavel aleatoriamente.
@@ -369,10 +402,17 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
 		fclose(fout);
 #endif
 
+#ifdef PRINT_CSV
+	if (f_V_CREDITOS)
+		fclose(f_V_CREDITOS);
+
+	if(f_V_ALUNOS)
+		fclose(f_V_ALUNOS);
+#endif
+
 	if ( xSol )
 		delete[] xSol;
 }
-
 
 int SolverMIP::cria_variaveis(void)
 {
