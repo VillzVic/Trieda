@@ -1,7 +1,7 @@
 #pragma once
 #include "ofbase.h"
 
-typedef std::pair<int,int> DisciplinaPeriodo;
+typedef std::pair<int/*periodo*/,int/*disciplina_id*/> DisciplinaPeriodo;
 
 class Curriculo :
    public OFBase

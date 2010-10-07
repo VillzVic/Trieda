@@ -137,8 +137,8 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
 		A___i_d_c_cp;
 	// <<<
 
-	ParVetor creditos_por_dia;
-	ParInteiro alunos;
+	//ParVetor creditos_por_dia;
+	//ParInteiro alunos;
 
 	// >>>
 	X___i_d_u_s_t x;
@@ -167,36 +167,62 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
 
 			// >>>
 			std::vector<int> key_alunos;
+			int id_disc;
 			// <<<
 
 			switch(v->getType()) {
 			case Variable::V_ERROR:
 				std::cout << "Variável inválida " << std::endl;
 				break;
-			case Variable::V_CREDITOS: 
-				key = std::make_pair(v->getDisciplina()->getId(),v->getTurma());
+			case Variable::V_CREDITOS:
+				// >>> 07/10/2010
+				id_disc = v->getDisciplina()->getId();
+				if(id_disc < 0) {
+					id_disc = -id_disc;
+				}
+
+				//key = std::make_pair(v->getDisciplina()->getId(),v->getTurma());
+				key = std::make_pair(id_disc,v->getTurma());
+				// <<< 07/10/2010
 
 				cout << "Oferta de " << v->getValue() << 
+					// >>> 07/10/2010
 					" creditos da disciplina " << v->getDisciplina()->codigo
+					//" creditos da disciplina " << id_disc->codigo
+					// <<< 07/10/2010
 					<< " para a turma " << v->getTurma()
 					<< " no dia " << v->getDia() << " e na sala " <<
 					v->getSala()->getId() << std::endl;
-
+/*
 				if(creditos_por_dia[key].size() == 0) 
 					creditos_por_dia[key] = 
 					std::vector<std::pair<int,int> >(7);
 				creditos_por_dia[key][v->getDia()] = 
 					std::make_pair((int)v->getValue(),v->getSala()->getId());
-
+*/
 				// >>>
 				if(x[key].size() == 0) {
 					//x[key] = std::vector<std::pair<int,std::pair<int,int>> >(7);
 					x[key] = std::vector<std::pair<int,std::pair<int,int>> >
 						(7,std::make_pair(-1,std::make_pair(-1,-1)));
 				}
-
+				/**/
+				// >>> 07/10/2010
+				if(x[key][v->getDia()].first >= 0) {
+					x[key][v->getDia()] = std::make_pair(
+						(x[key][v->getDia()].first + (int)v->getValue()),
+						std::make_pair(v->getUnidade()->getId(),v->getSala()->getId()));
+				}
+				else{
+					x[key][v->getDia()] = std::make_pair((int)v->getValue(),
+						std::make_pair(v->getUnidade()->getId(),v->getSala()->getId()));
+				}
+				// <<< 07/10/2010
+				/**/
+				/*
 				x[key][v->getDia()] = std::make_pair((int)v->getValue(),
 					std::make_pair(v->getUnidade()->getId(),v->getSala()->getId()));
+				*/
 				// <<<
 
 #ifdef PRINT_CSV
@@ -204,29 +230,53 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
 					fprintf(f_V_CREDITOS,"Var. x,\t\ti,\td,\tu,\ts,\t\tt,\n");
 					printLegend_V_CREDITOS = false;
 				}
+				// >>> 07/10/2010
+				/*
 				fprintf(f_V_CREDITOS,"%f,\t%d,\t%d,\t%d,\t%d,\t%d,\n",v->getValue(),v->getTurma(),v->getDisciplina()->getId(),
 					v->getUnidade()->getId(),v->getSala()->getId(),v->getDia());
+				*/
+				fprintf(f_V_CREDITOS,"%f,\t%d,\t%d,\t%d,\t%d,\t%d,\n",v->getValue(),v->getTurma(),id_disc,
+					v->getUnidade()->getId(),v->getSala()->getId(),v->getDia());
+				// <<< 07/10/2010
 #endif
 
 				break;
 			case Variable::V_OFERECIMENTO: break;
 			case Variable::V_ABERTURA: break;
 			case Variable::V_ALUNOS:
-				key = std::make_pair(v->getDisciplina()->getId(),v->getTurma());
+				// >>> 07/10/2010
+				id_disc = v->getDisciplina()->getId();
+				if(id_disc < 0) {
+					id_disc = -id_disc;
+				}
+
+				//key = std::make_pair(v->getDisciplina()->getId(),v->getTurma());
+				key = std::make_pair(id_disc,v->getTurma());
+				// <<< 07/10/2010
 
 				cout << "Oferecimento de " << v->getValue() << 
+					// >>> 07/10/2010
 					" vagas da disciplina " << v->getDisciplina()->codigo
+					//" vagas da disciplina " << v->getDisciplina()->codigo
+					// <<< 07/10/2010
 					<< " para a turma " << v->getTurma() << std::endl;
 
-				alunos[key] = (int) v->getValue();
+				//alunos[key] = (int) v->getValue();
 
-				// >>>
-				key_alunos.push_back(v->getDisciplina()->getId());
+				// >>> 07/10/2010
+				//key_alunos.push_back(v->getDisciplina()->getId());
+				key_alunos.push_back(id_disc);
+				// <<< 07/10/2010
 				key_alunos.push_back(v->getTurma());
 				key_alunos.push_back(v->getCurso()->getId());
 				key_alunos.push_back(v->getCampus()->getId());
 
-				a[key_alunos] = (int) v->getValue();
+				if(a.find(key_alunos) != a.end()) {
+					a[key_alunos] += (int) v->getValue();
+				}
+				else {
+					a[key_alunos] = (int) v->getValue();
+				}
 				// <<<
 
 #ifdef PRINT_CSV
@@ -234,8 +284,15 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
 					fprintf(f_V_ALUNOS,"Var. a,\t\ti,\td,\tc,\tcp,\n");
 					printLegend_V_ALUNOS = false;
 				}
+
+				// >>> 07/10/2010
+				/*
 				fprintf(f_V_ALUNOS,"%f,\t%d,\t%d,\t%d,\t%d,\n",v->getValue(),v->getTurma(),
-					v->getDisciplina()->getId(),v->getCurso()->getId(),v->getCampus()->getId());
+				v->getDisciplina()->getId(),v->getCurso()->getId(),v->getCampus()->getId());
+				*/
+				fprintf(f_V_ALUNOS,"%f,\t%d,\t%d,\t%d,\t%d,\n",v->getValue(),v->getTurma(),
+					id_disc,v->getCurso()->getId(),v->getCampus()->getId());
+				// <<< 07/10/2010
 #endif
 
 				break;
@@ -255,7 +312,7 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
 
 	/* Depois do map montado, é possível gerar os dados de saída */
 	/* Como sugestão, vou escrever uma rotina de impressão */
-
+/*
 	std::cout << 
 		std::endl << "       RESUMO DA SOLUCAO       " << std::endl;
 	for(ParVetor::iterator it = creditos_por_dia.begin();
@@ -272,6 +329,43 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
 					<< std::endl;
 			}
 	}
+*/
+
+	std::cout << 
+		std::endl << "       RESUMO DA SOLUCAO       " << std::endl;
+	for(X___i_d_u_s_t::iterator it = x.begin(); it != x.end(); ++it) {
+			std::cout << "..............................." << std::endl;
+			std::cout << "Disciplina " << it->first.first << 
+				", turma " << it->first.second << ": " << std::endl;
+
+			std::vector<int> vt_key(4,-1);
+			vt_key.at(0) = it->first.first ;
+			vt_key.at(1) = it->first.second;
+			vt_key.at(2) = -1 ;
+			vt_key.at(3) = -1 ;
+
+			ITERA_GGROUP(it_cp,problemData->campi,Campus) {
+				ITERA_GGROUP(it_c,problemData->cursos,Curso) {
+					vt_key.at(2) = it_c->getId();
+					vt_key.at(3) = it_cp->getId() ;
+
+					if(a.find(vt_key) != a.end()) {
+						std::cout << "  Oferta: " << a[vt_key] << " vagas" 
+							<< std::endl;
+					}
+				}
+			}
+/*
+			std::cout << "  Oferta: " << a[it->first] << " vagas" 
+				<< std::endl;*/
+			for(int i=0;i<7;i++) {
+				if(it->second[i].first > 0)
+					std::cout << "   Dia " << i << ": " << it->second[i].first
+					<< " creditos, sala " << it->second[i].second.second
+					<< std::endl;
+			}
+	}
+
 
 	// Fill the solution
 
@@ -442,9 +536,13 @@ int SolverMIP::cria_variavel_creditos(void)
 	{
 		ITERA_GGROUP(it_unidades,it_campus->unidades,Unidade)
 		{
-			ITERA_GGROUP(it_salas,it_unidades->salas,Sala) 
+			ITERA_GGROUP(it_salas,it_unidades->salas,Sala)
 			{
-				ITERA_GGROUP(it_disc,problemData->disciplinas,Disciplina)
+
+				//ITERA_GGROUP(it_disc,problemData->disciplinas,Disciplina)
+				//>>>
+				ITERA_GGROUP(it_disc,it_salas->disc_assoc_PT,Disciplina)
+					/// <<<
 				{
 					for(int turma=0;turma<it_disc->num_turmas;turma++)
 					{

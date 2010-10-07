@@ -28,7 +28,7 @@ public:
    void divideDisciplinas();
    void gera_refs();
    template<class T> 
-   void find_and_set(int id, GGroup<T*>& haystack, T*& needle) ;
+   void find_and_set(int id, GGroup<T*>& haystack, T*& needle, bool print) ;
    void cria_blocos_curriculares();
    void calcula_demandas();
    void estima_turmas();

@@ -13,7 +13,7 @@ public:
    int preferencia;
    int disciplina_id;
 
-   int getId() { return disciplina_id; } // FIXME, isto está errado
+   //int getId() { return disciplina_id; } // FIXME, isto está errado
    virtual void le_arvore(ItemProfessorDisciplina& elem);
    Disciplina* disciplina;
 };
