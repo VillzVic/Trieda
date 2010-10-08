@@ -4,7 +4,7 @@
 #include "SolverMIP.h"
 
 // >>>
-#define PRINT_CSV
+//#define PRINT_CSV
 // <<<
 
 SolverMIP::SolverMIP(ProblemData *aProblemData)
@@ -137,8 +137,8 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
 		A___i_d_c_cp;
 	// <<<
 
-	//ParVetor creditos_por_dia;
-	//ParInteiro alunos;
+	ParVetor creditos_por_dia;
+	ParInteiro alunos;
 
 	// >>>
 	X___i_d_u_s_t x;
@@ -259,7 +259,8 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
 					" vagas da disciplina " << v->getDisciplina()->codigo
 					//" vagas da disciplina " << v->getDisciplina()->codigo
 					// <<< 07/10/2010
-					<< " para a turma " << v->getTurma() << std::endl;
+					<< " para a turma " << v->getTurma()
+					<< " do curso " << v->getCurso()->codigo << std::endl;
 
 				//alunos[key] = (int) v->getValue();
 
@@ -341,8 +342,6 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
 			std::vector<int> vt_key(4,-1);
 			vt_key.at(0) = it->first.first ;
 			vt_key.at(1) = it->first.second;
-			vt_key.at(2) = -1 ;
-			vt_key.at(3) = -1 ;
 
 			ITERA_GGROUP(it_cp,problemData->campi,Campus) {
 				ITERA_GGROUP(it_c,problemData->cursos,Curso) {
@@ -366,11 +365,7 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
 			}
 	}
 
-
 	// Fill the solution
-
-	/*
-	// >>> VERSAO MULTI CAMPUS .. . continuar ... 
 
 	// Coletando os ids dos campus, das unidades e das salas existentes  na entrada e suas respectivas descricoes.
 	std::map<int,std::string> input_cp_desc;
@@ -401,7 +396,7 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
 	GGroup<int> ids_sala;
 
 	for(X___i_d_u_s_t::iterator it_x = x.begin(); it_x != x.end(); it_x++) {
-		for(int dia = 0; dia < it_x->second.size(); dia++) {
+		for(unsigned dia = 0; dia < it_x->second.size(); dia++) {
 
 			int idU = it_x->second.at(dia).second.first;
 			int idS = it_x->second.at(dia).second.second;
@@ -441,20 +436,40 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
 
 	GGroup<AtendimentoSala*>::iterator at_sala = at_unidade->atendimentos_salas.begin();
 
-	*/
-
-	/* DANDO ERRO.
+	// Adicionando os dias da semana as classes de output
 	for(X___i_d_u_s_t::iterator it_x = x.begin(); it_x != x.end(); it_x++) {
-		for(int dia = 0; dia < it_x->second.size(); dia++) {
-			// poderia ser outro elemento de x. Escolhi o valor da variavel aleatoriamente.
-			int x = it_x->second.at(dia).first;
-			if( x != -1) {
-				at_sala->addDiaSemana(dia,"",it_x->second.at(dia).second.first);
+		for(unsigned dia = 0; dia < it_x->second.size(); dia++) {
+			// poderia ser outro elemento de x, tendo em vista que todos os elementos <.second> de uma variavel x tem o mesmo tamanho.
+			int var_value = it_x->second.at(dia).first;
+			if( var_value != -1) {
+				at_sala->addDiaSemana(dia,"",it_x->second.at(dia).second.second);
 			}
 		}
 	}
-*/
-	// Adicionando os dias da semana as classes de output
+
+// >>>
+	/*
+		Essa varredura que esta sendo realizada falha no caso de existirem dois <ItemOfertaCurso>
+		diferentes porém, com o msm id de campus, curso e turno (desconsiderado no tatico) iguais e,
+		de posse da variável a_{i,d,c,cp} deseja-se saber a qual <ItemOfertaCurso> a variável esta atendendo.
+
+		ToDo : Ver anotações.
+	*/
+
+	for(A___i_d_c_cp::iterator it_a = a.begin(); it_a != a.end(); it_a++) {
+		ITERA_GGROUP(it_oferta,problemData->ofertas,Oferta) {
+			if( it_a->first.at(3) == it_oferta->campus_id ) {
+				if( it_a->first.at(2) == it_oferta->curso_id ) {
+
+				}
+			}
+		}
+	}
+
+	//<<<
+
+	GGroup<AtendimentoDiaSemana*>::iterator at_dia_sem = at_sala->atendimentos_dias_semana.begin();
+
 
 	/*
 	//TESTES

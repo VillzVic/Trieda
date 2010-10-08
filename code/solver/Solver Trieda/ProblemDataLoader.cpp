@@ -33,7 +33,8 @@ void ProblemDataLoader::load()
 	print_stats();
 	estima_turmas();
 	cache();
-	print_csv();
+
+	//print_csv();
 
 }
 
