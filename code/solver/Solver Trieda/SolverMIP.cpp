@@ -214,7 +214,8 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
 						std::make_pair(v->getUnidade()->getId(),v->getSala()->getId()));
 				}
 				else{
-					x[key][v->getDia()] = std::make_pair((int)v->getValue(),
+					x[key][v->getDia()] = std::make_pair(
+						(int)v->getValue(),
 						std::make_pair(v->getUnidade()->getId(),v->getSala()->getId()));
 				}
 				// <<< 07/10/2010
@@ -449,13 +450,14 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
 
 // >>>
 	/*
-		Essa varredura que esta sendo realizada falha no caso de existirem dois <ItemOfertaCurso>
+		Essa varredura que esta sendo realizada no caso de existirem dois <ItemOfertaCurso>
 		diferentes porém, com o msm id de campus, curso e turno (desconsiderado no tatico) iguais e,
 		de posse da variável a_{i,d,c,cp} deseja-se saber a qual <ItemOfertaCurso> a variável esta atendendo.
 
 		ToDo : Ver anotações.
 	*/
 
+	/*
 	for(A___i_d_c_cp::iterator it_a = a.begin(); it_a != a.end(); it_a++) {
 		ITERA_GGROUP(it_oferta,problemData->ofertas,Oferta) {
 			if( it_a->first.at(3) == it_oferta->campus_id ) {
@@ -465,10 +467,13 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
 			}
 		}
 	}
+	*/
 
 	//<<<
 
-	GGroup<AtendimentoDiaSemana*>::iterator at_dia_sem = at_sala->atendimentos_dias_semana.begin();
+	//GGroup<AtendimentoDiaSemana*>::iterator at_dia_sem = at_sala->atendimentos_dias_semana.begin();
+
+	// CONTINUAR A IMPLEMENTAR A EXTRAÇÃO DE DADOS DAS VARIÁVEIS.
 
 
 	/*

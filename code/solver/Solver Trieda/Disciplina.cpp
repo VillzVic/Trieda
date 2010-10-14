@@ -19,6 +19,8 @@ Disciplina::Disciplina(void)
 	num_turmas = -1;
 	min_creds = -1;
 	max_creds = -1;
+
+	//foi_dividida = false;
 }
 
 Disciplina::~Disciplina(void)

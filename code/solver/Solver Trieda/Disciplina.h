@@ -36,6 +36,10 @@ public:
 	int min_creds;
 	int max_creds;
 
+	// >>> 14/10/2010
+	//bool foi_dividida;
+	// <<< 14/10/2010
+
 public:
 	virtual void le_arvore(ItemDisciplina& elem);
 

@@ -27,13 +27,15 @@ void ProblemDataLoader::load()
 	//>>>
 	divideDisciplinas();
 	// <<<
+	// >>> 14/10/2010
+	armz_disc_curriculo();
+	// <<< 14/10/2010
 	gera_refs();
 	cria_blocos_curriculares();
 	calcula_demandas();
 	print_stats();
 	estima_turmas();
 	cache();
-
 	//print_csv();
 
 }
@@ -335,6 +337,11 @@ void ProblemDataLoader::divideDisciplinas() {
 				problemData->demandas.add(nova_demanda);
 			}
 
+			// >>> 14/10/2010
+			//it_disc->foi_dividida = true;
+			//nova_disc->foi_dividida = true;
+			// <<< 14/10/2010
+
 			disciplinas_novas.add(nova_disc);
 		}
 	}
@@ -589,6 +596,7 @@ void ProblemDataLoader::cria_blocos_curriculares() {
 void ProblemDataLoader::calcula_demandas() {
 	ITERA_GGROUP(it_dem,problemData->demandas,Demanda) {
 		int dem = it_dem->quantidade;
+
 		it_dem->disciplina->max_demanda = 
 			std::max(it_dem->disciplina->max_demanda,dem);
 		it_dem->disciplina->demanda_total += dem;
@@ -846,6 +854,581 @@ void ProblemDataLoader::cache() {
 	}
 	// <<<
 }
+
+// >>> 14/10/2010
+void ProblemDataLoader::armz_disc_curriculo()
+{
+	unsigned novo_id = 1;
+
+	/*
+	Armazenando um map de pares onde cada posição possui um par de inteiros,
+	para associar o id de uma dada disciplina a um determinado curriculo.
+	A chave de cada posição do map será utilizada para setar um novo id para cada
+	disciplina
+	*/
+	ITERA_GGROUP(it_curso,problemData->cursos,Curso) {
+		ITERA_GGROUP(it_curric,it_curso->curriculos,Curriculo) {
+			std::pair<int,int> disc_curric = std::make_pair(
+				0,
+				it_curric->getId());
+
+			GGroup<DisciplinaPeriodo>::iterator it_disc_periodo =
+				it_curric->disciplinas_periodo.begin();
+
+			for(;it_disc_periodo != it_curric->disciplinas_periodo.end();it_disc_periodo++) {
+				int id_disc = (*it_disc_periodo).second;
+				if( id_disc > 0) {
+					disc_curric.first = id_disc;
+					problemData->relacao_disc_curriculo[novo_id] =
+						disc_curric;
+					novo_id++;
+				}
+			}
+
+			/*
+			Tratando as disciplinas que foram divididas e agora possuem id negativo.
+			O novo id delas deve ser o msm id que foi criado para a disciplina correspondente (com id positivo)
+			porém, negado.
+			*/
+			it_disc_periodo = it_curric->disciplinas_periodo.begin();
+
+			for(;it_disc_periodo != it_curric->disciplinas_periodo.end();it_disc_periodo++) {
+				int id_disc = (*it_disc_periodo).second;
+				if( id_disc < 0) {
+					for(unsigned id = 1; id < novo_id; id++) {
+						disc_curric.first = -id_disc;
+						if( problemData->relacao_disc_curriculo[id] == disc_curric ) {
+							disc_curric.first = -disc_curric.first;
+							problemData->relacao_disc_curriculo[-id] = disc_curric;
+							break;
+						}
+					}
+				}
+			}
+		}
+	}
+
+	// >>>
+	/*
+	Armazenando informações para saber qdo será necessário criar uma, ou mais, réplicas de
+	uma dada disciplina.
+	*/
+
+	// Qdo a disc pertence a mais de um curric, o set vai possuir mais de um elemento
+	std::map<int/*id_original_disc*/,
+		std::set<int/*cjto com os novos ids da disc em questao*/> > replicas_to_do;
+
+	std::map<int/*novo_id_Disc*/,std::pair<int/*id_Disc*/,int/*id_Curriculo*/> >::iterator
+		it_rel_disc_curric = problemData->relacao_disc_curriculo.begin();
+
+	// Contabilizando o numero de replicas de cada disciplina a serem realizadas
+	for(;it_rel_disc_curric != problemData->relacao_disc_curriculo.end();it_rel_disc_curric++) {
+		replicas_to_do[it_rel_disc_curric->second.first].insert(it_rel_disc_curric->first);
+	}
+
+	/*
+	Configurando as disciplinas com os novos ids e, quando necessário,
+	criando as réplicas.
+	*/
+
+	std::map<int/*id_original_disc*/,
+		std::set<int/*cjto com os novos ids da disc em questao*/> >::iterator
+		it_replicas_to_do = replicas_to_do.begin();
+
+	GGroup<Disciplina*> disciplinas_novas;
+
+	for(;it_replicas_to_do != replicas_to_do.end();it_replicas_to_do++) {
+		if(it_replicas_to_do->second.size() == 1) { // ou seja, não é necessário replicar.
+
+			ITERA_GGROUP(it_disc,problemData->disciplinas,Disciplina) {
+				if(it_disc->getId() == it_replicas_to_do->first) {
+
+					// >>>
+					ITERA_GGROUP(it_cp,problemData->campi,Campus) {
+
+						// Alterando os dados da disciplina em <Campi->Unidade->Sala->disciplinasAssociadas>
+						ITERA_GGROUP(it_und,it_cp->unidades,Unidade) {
+							ITERA_GGROUP(it_sala,it_und->salas,Sala) {
+								GGroup<int>::iterator it_disc_assoc = 
+									it_sala->disciplinas_associadas.begin();
+
+								// Copiando
+bool modificou = false;
+
+								GGroup<int/*discs_associadas*/> discs;
+								for(;it_disc_assoc != it_sala->disciplinas_associadas.end(); it_disc_assoc++) {
+									if( (*it_disc_assoc) == it_disc->getId() ) {
+										discs.add(*it_replicas_to_do->second.begin());
+										modificou = true;
+									}
+									else {
+										discs.add(*it_disc_assoc);
+									}
+								}
+
+								if(modificou) {
+								it_sala->disciplinas_associadas.clear();
+								it_sala->disciplinas_associadas = discs;
+								}
+
+							}
+						}
+
+						// Alterando os dados da disciplina em <Campi->Professor->disciplinas>:
+						ITERA_GGROUP(it_prof,it_cp->professores,Professor) {
+							ITERA_GGROUP(it_mag,it_prof->magisterio,Magisterio) {
+								if( it_mag->disciplina_id == it_disc->getId()) {
+									it_mag->disciplina_id = (*it_replicas_to_do->second.begin());
+									break; // Garantido que um mesmo professor nao possui preferencias diferentes em relacao a uma mesma disciplina.
+								}
+							}
+						}
+					}
+
+					/* ToDo : Fixacao (ToDo : futura issue : para criar uma nova fixacao, antes eh
+					necessario saber se uma disciplina pode ser replicada. Pode acontecer  um caso 
+					em que um determinada disciplina possua creditos teoricos e praticos e seja fixada
+					em um determinado dia, numa sala para aulas teorica e em outro horario diferente seja
+					fixada em um laboratorio. Nesse caso, nao seria necessario criar uma nova fixacao e sim,
+					alterar o id da disciplina da fixacao da aula pratica para o id da nova disciplina que
+					foi criada(se a nova discipliona for pratica).)
+
+					ITERA_GGROUP(it_fix,problemData->fixacoes,Fixacao) {
+					if(it_fix->disciplina_id == it_disc->getId() ) {
+					}
+					}
+					*/
+
+					// Alterando os dados da disciplina em <GrupoCurso->curriculos>
+					ITERA_GGROUP(it_curso,problemData->cursos,Curso) {
+						ITERA_GGROUP(it_curriculo,it_curso->curriculos,Curriculo) {
+							/* 
+							FIXME, isto está errado, deveria-se, de algum jeito,
+							saber o periodo da disciplina ou, iterar sobre todos os periodos 
+							validos de um curso e nao sobre uma estimativa.
+							*/
+
+							GGroup<DisciplinaPeriodo> prd_disc;
+							GGroup<DisciplinaPeriodo>::iterator it_prd_disc = it_curriculo->disciplinas_periodo.begin();
+
+							bool modificou = false;
+
+							for(;it_prd_disc != it_curriculo->disciplinas_periodo.end();it_prd_disc++) {
+								if( (*it_prd_disc).second == it_disc->getId() ) {
+									DisciplinaPeriodo aux = std::make_pair<int,int>(
+										(*it_prd_disc).first,
+										(*it_replicas_to_do->second.begin()) );
+
+									prd_disc.add(aux);
+
+									modificou = true;
+									//break;
+								}
+								else {
+									prd_disc.add( (*it_prd_disc) );
+								}
+							}
+
+							if(modificou) {
+								it_curriculo->disciplinas_periodo.clear();
+								it_curriculo->disciplinas_periodo = prd_disc;
+
+							}
+						}
+					}
+
+					// Alterando os dados da disciplina em <Demanda>
+					//Demanda *nova_demanda = NULL;
+					ITERA_GGROUP(it_dem,problemData->demandas,Demanda) {
+						int num_vezes_ecncontrado = 0;
+						if( it_dem->disciplina_id == it_disc->getId()) {
+							it_dem->disciplina_id = (*it_replicas_to_do->second.begin());
+
+							if(num_vezes_ecncontrado > 0) {
+								std::cout << "POSSIVEL ERRO EM <divideDisciplinas()> -> " << 
+									"Encontrei mais de uma demanda para uma dada disciplina de um " <<
+									"dado curso em um determinado campus." << std::endl;
+								getchar();
+							}
+							num_vezes_ecncontrado++;
+						}
+					}
+
+					it_disc->setId(*it_replicas_to_do->second.begin());
+
+					// <<<
+
+					break;
+				}
+			}
+		}
+		else if(it_replicas_to_do->second.size() > 1) {
+
+			GGroup<Disciplina*>::iterator it_disc = problemData->disciplinas.begin();
+
+			ITERA_GGROUP(it_d,problemData->disciplinas,Disciplina) {
+				if(it_d->getId() == it_replicas_to_do->first) {
+					// Alterando o id da disciplina que já está no conjunto de disciplinas.
+					//it_d->setId(*it_replicas_to_do->second.begin());
+					it_disc = it_d;
+					break;
+				}
+			}
+
+			// Criando as réplicas
+			{
+				std::set<int/*cjto com os novos ids da disc em questao*/>::iterator
+					it_novos_ids = it_replicas_to_do->second.begin();
+
+				++it_novos_ids; /* A primeira disciplina já consta no cjto de 
+								disciplinas originais. Não precisa replicar, 
+								basta alterar o id, o que já foi feito no início
+								desse else if*/
+
+				for(;it_novos_ids != it_replicas_to_do->second.end();it_novos_ids++) {
+					Disciplina *nova_disc = new Disciplina();
+
+					nova_disc->setId(*it_novos_ids);
+					//nova_disc->setId(it_disc->getId());
+
+					nova_disc->codigo = it_disc->codigo;
+					nova_disc->nome = it_disc->nome;
+
+					nova_disc->cred_teoricos = it_disc->cred_teoricos;
+					nova_disc->cred_praticos = it_disc->cred_praticos;
+
+					nova_disc->max_creds = it_disc->max_creds;
+
+					nova_disc->e_lab = it_disc->e_lab;
+
+					nova_disc->max_alunos_t = it_disc->max_alunos_t;
+
+					nova_disc->max_alunos_p = it_disc->max_alunos_p;
+
+					nova_disc->tipo_disciplina_id = it_disc->tipo_disciplina_id;
+					nova_disc->nivel_dificuldade_id = it_disc->nivel_dificuldade_id;
+
+					if(nova_disc->divisao_creditos != NULL){
+						nova_disc->divisao_creditos = new DivisaoCreditos();
+						nova_disc->divisao_creditos->setId(it_disc->divisao_creditos->getId());
+						nova_disc->divisao_creditos->creditos = it_disc->divisao_creditos->creditos;
+
+						for(int i=0;i<8;i++) {
+							nova_disc->divisao_creditos->dia[i] = it_disc->divisao_creditos->dia[i];
+						}
+					}
+
+					//>>> Copying HORARIO
+					ITERA_GGROUP(it_hr,it_disc->horarios,Horario) {
+						Horario *h =  new Horario;
+						h->setId(it_hr->getId());
+
+						//>>> >>> Copying DiaSemana
+						GGroup<int>::iterator it_dia = it_hr->dias_semana.begin();
+						for(unsigned dia =0;dia<it_hr->dias_semana.size();dia++) {
+							h->dias_semana.add(*it_dia);
+							it_dia++;
+						}
+						// <<< <<<
+
+						h->horarioAulaId = it_hr->horarioAulaId;
+
+						h->turnoId = it_hr->turnoId;
+
+						// >>> >>> Copying TURNO
+						Turno *tur;
+						if(it_hr->turno != NULL) {
+							tur = new Turno();
+							tur->setId(it_hr->turno->getId());
+
+							tur->nome = it_hr->turno->nome;
+
+							tur->tempoAula = it_hr->turno->tempoAula;
+
+							// >>> >>> >>> Copying HorariosAula
+							HorarioAula *hr_aula;
+							if(it_hr->turno->horarios_aula.size() > 0){
+								ITERA_GGROUP(it_hr_aula,tur->horarios_aula,HorarioAula) {
+									//HorarioAula *hr_aula = new HorarioAula();
+									hr_aula = new HorarioAula();
+									hr_aula->setId(it_hr_aula->getId());
+									hr_aula->inicio = it_hr_aula->inicio;
+
+									GGroup<int>::iterator it_dia_sem = it_hr_aula->diasSemana.begin();
+									for(unsigned dia =0;dia<it_hr_aula->diasSemana.size();dia++) {
+										hr_aula->diasSemana.add(*it_dia_sem);
+										it_dia_sem++;
+									}
+									//tur->horarios_aula = hr_aula;
+								}
+								tur->horarios_aula.add(hr_aula);
+							}
+							// <<< <<< <<<
+							h->turno = tur;
+							// <<< <<<
+						}
+
+						HorarioAula *hr_aula;
+						if(it_hr->horario_aula != NULL) {
+							hr_aula = new HorarioAula();
+							hr_aula->setId(it_hr->horario_aula->getId());
+							hr_aula->inicio = it_hr->horario_aula->inicio;
+
+							GGroup<int>::iterator it_dia_sem = it_hr->horario_aula->diasSemana.begin();
+							for(unsigned dia =0;dia<it_hr->horario_aula->diasSemana.size();dia++) {
+								hr_aula->diasSemana.add(*it_dia_sem);
+								it_dia_sem++;
+							}
+						}
+
+						nova_disc->horarios.add(h);
+					}
+
+					ITERA_GGROUP(it_cp,problemData->campi,Campus) {
+						// Adicionando os dados da nova disciplina em <Campi->Unidade->Sala->disciplinasAssociadas>:
+						ITERA_GGROUP(it_und,it_cp->unidades,Unidade) {
+							ITERA_GGROUP(it_sala,it_und->salas,Sala) {
+								if( (it_sala->disciplinas_associadas.find(it_disc->getId()) != 
+									it_sala->disciplinas_associadas.end() ) &&
+									(it_sala->tipo_sala_id != 1)){
+										/*
+										Removendo a associacao da disciplina teorica em questao com as salas 
+										incompativeis, no caso qualquer uma que nao seja uma sala de aula (de acordo
+										com inputTrivial)
+										*/
+
+										//it_sala->disciplinas_associadas.remove(it_disc->getId());
+
+										/*
+										Em relacao a nova disciplina (pratica), so adiciono uma associacao quando 
+										for com uma sala compativel, no caso LABORATORIO
+										*/
+
+										it_sala->disciplinas_associadas.add(nova_disc->getId());
+								}
+
+							}
+						}
+
+						// Adicionando os dados da nova disciplina em <Campi->Professor->disciplinas>:
+						Magisterio *novo_mag;
+						ITERA_GGROUP(it_prof,it_cp->professores,Professor) {
+							ITERA_GGROUP(it_mag,it_prof->magisterio,Magisterio) {
+								if( it_mag->disciplina_id == it_disc->getId()) {
+									//Magisterio *novo_mag = new Magisterio();
+									novo_mag = new Magisterio();
+
+									novo_mag->setId(-1); // Nem precisava.
+									novo_mag->nota = it_mag->nota;
+									novo_mag->preferencia = it_mag->preferencia;
+									novo_mag->disciplina_id = nova_disc->getId();
+									it_prof->magisterio.add(novo_mag);
+
+									break; // Garantido que um mesmo professor nao possui preferencias diferentes em relacao a uma mesma disciplina.
+								}
+							}
+						}
+					}
+
+					/* ToDo : Fixacao (ToDo : futura issue : para criar uma nova fixacao, antes eh
+					necessario saber se uma disciplina pode ser replicada. Pode acontecer  um caso 
+					em que um determinada disciplina possua creditos teoricos e praticos e seja fixada
+					em um determinado dia, numa sala para aulas teorica e em outro horario diferente seja
+					fixada em um laboratorio. Nesse caso, nao seria necessario criar uma nova fixacao e sim,
+					alterar o id da disciplina da fixacao da aula pratica para o id da nova disciplina que
+					foi criada(se a nova discipliona for pratica).)
+
+					ITERA_GGROUP(it_fix,problemData->fixacoes,Fixacao) {
+					if(it_fix->disciplina_id == it_disc->getId() ) {
+					}
+					}
+					*/
+
+					// Adicionando os dados da nova disciplina em <GrupoCurso->curriculos>
+					ITERA_GGROUP(it_curso,problemData->cursos,Curso) {
+						ITERA_GGROUP(it_curriculo,it_curso->curriculos,Curriculo) {
+							/* 
+							FIXME, isto está errado, deveria-se, de algum jeito,
+							saber o periodo da disciplina ou, iterar sobre todos os periodos 
+							validos de um curso e nao sobre uma estimativa.
+							*/
+							for(unsigned num_periodos = 0; num_periodos < 20; num_periodos++) {
+								DisciplinaPeriodo disc_periodo(num_periodos,it_disc->getId());
+								//std::cout << "<periodo,disc_id> : <" << disc_periodo.first << "," << disc_periodo.second << ">\n";
+								if(it_curriculo->disciplinas_periodo.find(disc_periodo) !=
+									it_curriculo->disciplinas_periodo.end()) {
+										//std::cout << "Found at <periodo,disc_id> : <" << disc_periodo.first << "," << disc_periodo.second << ">\n";
+										//DisciplinaPeriodo nova_disc_periodo(disc_periodo.first, -disc_periodo.second);
+										it_curriculo->disciplinas_periodo.add(DisciplinaPeriodo (disc_periodo.first, -disc_periodo.second));
+										break; // Garantido que uma disciplina aparece apenas uma vez em um curriculo de um curso.
+								}
+							}
+						}
+					}
+
+					// Adicionando os dados da nova disciplina em <Demanda>
+					Demanda *nova_demanda = NULL;
+					ITERA_GGROUP(it_dem,problemData->demandas,Demanda) {
+						int num_vezes_ecncontrado = 0;
+						if( it_dem->disciplina_id == it_disc->getId()) {
+							nova_demanda = new Demanda();
+
+							//nova_demanda->setId(-it_dem->getId());
+							nova_demanda->oferta_id = it_dem->oferta_id;
+							nova_demanda->disciplina_id = nova_disc->getId();
+							nova_demanda->quantidade = it_dem->quantidade;
+
+							if(num_vezes_ecncontrado > 0) {
+								std::cout << "POSSIVEL ERRO EM <divideDisciplinas()> -> " << 
+									"Encontrei mais de uma demanda para uma dada disciplina de um " <<
+									"dado curso em um determinado campus." << std::endl;
+								getchar();
+							}
+							num_vezes_ecncontrado++;
+						}
+					}
+
+					if(nova_demanda) { // != NULL
+						problemData->demandas.add(nova_demanda);
+					}
+
+					//nova_disc->setId(*it_novos_ids);
+					disciplinas_novas.add(nova_disc);
+				}
+			}
+
+			// >>>
+			//Alterando os dados da disciplina que já está no conjunto de disciplinas.
+
+			ITERA_GGROUP(it_cp,problemData->campi,Campus) {
+
+				// Alterando os dados da disciplina em <Campi->Unidade->Sala->disciplinasAssociadas>
+				ITERA_GGROUP(it_und,it_cp->unidades,Unidade) {
+					ITERA_GGROUP(it_sala,it_und->salas,Sala) {
+						GGroup<int>::iterator it_disc_assoc = 
+							it_sala->disciplinas_associadas.begin();
+
+						// Copiando
+						bool modificou = false;
+						GGroup<int/*discs_associadas*/> discs;
+						for(;it_disc_assoc != it_sala->disciplinas_associadas.end(); it_disc_assoc++) {
+							if( (*it_disc_assoc) == it_disc->getId() ) {
+								discs.add(*it_replicas_to_do->second.begin());
+								modificou = true;
+							}
+							else {
+								discs.add(*it_disc_assoc);
+							}
+						}
+
+						if(modificou) {
+						it_sala->disciplinas_associadas.clear();
+						it_sala->disciplinas_associadas = discs;
+						}
+
+					}
+				}
+
+				// Alterando os dados da disciplina em <Campi->Professor->disciplinas>:
+				ITERA_GGROUP(it_prof,it_cp->professores,Professor) {
+					ITERA_GGROUP(it_mag,it_prof->magisterio,Magisterio) {
+						if( it_mag->disciplina_id == it_disc->getId()) {
+							it_mag->disciplina_id = (*it_replicas_to_do->second.begin());
+							break; // Garantido que um mesmo professor nao possui preferencias diferentes em relacao a uma mesma disciplina.
+						}
+					}
+				}
+			}
+
+			/* ToDo : Fixacao (ToDo : futura issue : para criar uma nova fixacao, antes eh
+			necessario saber se uma disciplina pode ser replicada. Pode acontecer  um caso 
+			em que um determinada disciplina possua creditos teoricos e praticos e seja fixada
+			em um determinado dia, numa sala para aulas teorica e em outro horario diferente seja
+			fixada em um laboratorio. Nesse caso, nao seria necessario criar uma nova fixacao e sim,
+			alterar o id da disciplina da fixacao da aula pratica para o id da nova disciplina que
+			foi criada(se a nova discipliona for pratica).)
+
+			ITERA_GGROUP(it_fix,problemData->fixacoes,Fixacao) {
+			if(it_fix->disciplina_id == it_disc->getId() ) {
+			}
+			}
+			*/
+
+			// Alterando os dados da disciplina em <GrupoCurso->curriculos>
+			ITERA_GGROUP(it_curso,problemData->cursos,Curso) {
+				ITERA_GGROUP(it_curriculo,it_curso->curriculos,Curriculo) {
+					/* 
+					FIXME, isto está errado, deveria-se, de algum jeito,
+					saber o periodo da disciplina ou, iterar sobre todos os periodos 
+					validos de um curso e nao sobre uma estimativa.
+					*/
+
+					GGroup<DisciplinaPeriodo> prd_disc;
+					GGroup<DisciplinaPeriodo>::iterator it_prd_disc = it_curriculo->disciplinas_periodo.begin();
+
+					bool modificou = false;
+
+					for(;it_prd_disc != it_curriculo->disciplinas_periodo.end();it_prd_disc++) {
+						if( (*it_prd_disc).second == it_disc->getId() ) {
+							DisciplinaPeriodo aux = std::make_pair<int,int>(
+								(*it_prd_disc).first,
+								(*it_replicas_to_do->second.begin()) );
+
+							prd_disc.add(aux);
+
+							modificou = true;
+							//break;
+						}
+						else {
+							prd_disc.add( (*it_prd_disc) );
+						}
+					}
+
+					if(modificou) {
+						it_curriculo->disciplinas_periodo.clear();
+						it_curriculo->disciplinas_periodo = prd_disc;
+
+					}
+				}
+			}
+
+			// Alterando os dados da disciplina em <Demanda>
+			//Demanda *nova_demanda = NULL;
+			ITERA_GGROUP(it_dem,problemData->demandas,Demanda) {
+				int num_vezes_ecncontrado = 0;
+				if( it_dem->disciplina_id == it_disc->getId()) {
+					it_dem->disciplina_id = (*it_replicas_to_do->second.begin());
+
+					if(num_vezes_ecncontrado > 0) {
+						std::cout << "POSSIVEL ERRO EM <divideDisciplinas()> -> " << 
+							"Encontrei mais de uma demanda para uma dada disciplina de um " <<
+							"dado curso em um determinado campus." << std::endl;
+						getchar();
+					}
+					num_vezes_ecncontrado++;
+				}
+			}
+
+			it_disc->setId(*it_replicas_to_do->second.begin());
+
+			// <<<
+
+			// Alterando o id da disciplina que já está no conjunto de disciplinas.
+			//it_disc->setId(*it_replicas_to_do->second.begin());
+
+		}
+		else{
+			std::cout << "ERRO: ProblemDataLoader::armz_disc_curriculo() metodo." << std::endl;
+		}
+
+	}
+
+	ITERA_GGROUP(it_disc,disciplinas_novas,Disciplina) {
+		problemData->disciplinas.add(*it_disc);
+	}
+
+}
+// <<< 14/10/2010
 
 void ProblemDataLoader::print_csv(void)
 {

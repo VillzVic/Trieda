@@ -84,6 +84,12 @@ public:
    // std::map<std::pair<int/*cursoA_id*/,int/*cursoB_id*/>,bool/*sao_compat?*/> compat_cursos;
    std::map<std::pair<Curso*,Curso*>,bool> compat_cursos;
 
+
+   // >>> 14/10/2010
+   //GGroup<std::map<int/*novo_id_Disc*/,std::pair<int/*id_Disc*/,int/*id_Curriculo*/> > > relacao_disc_curriculo;
+   std::map<int/*novo_id_Disc*/,std::pair<int/*id_Disc*/,int/*id_Curriculo*/> > relacao_disc_curriculo;
+   // <<< 14/10/2010
+
 public:
    virtual void le_arvore(TriedaInput& raiz);
 };
