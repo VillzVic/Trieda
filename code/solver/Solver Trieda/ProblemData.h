@@ -87,8 +87,16 @@ public:
 
    // >>> 14/10/2010
    //GGroup<std::map<int/*novo_id_Disc*/,std::pair<int/*id_Disc*/,int/*id_Curriculo*/> > > relacao_disc_curriculo;
-   std::map<int/*novo_id_Disc*/,std::pair<int/*id_Disc*/,int/*id_Curriculo*/> > relacao_disc_curriculo;
+   //std::map<int/*novo_id_Disc*/,std::pair<int/*id_Disc*/,int/*id_Curriculo*/> > relacao_disc_curriculo;
    // <<< 14/10/2010
+
+   // >>> 15/10/2010
+   typedef std::map<int/*novo_id_Disc*/,std::pair<int/*id_Disc*/,int/*id_Curriculo*/> > relacao_disc_curriculo;
+
+   // Admitindo que o id de um curso seja único, construiremos um map de relacoes_disc_curriculo para cada curso
+   std::map<int/*id do curso*/,relacao_disc_curriculo> relacao_curso_discs_curric;
+
+   // <<< 15/10/2010
 
 public:
    virtual void le_arvore(TriedaInput& raiz);
