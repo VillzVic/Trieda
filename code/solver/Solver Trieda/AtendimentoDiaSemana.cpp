@@ -11,33 +11,26 @@ AtendimentoDiaSemana::~AtendimentoDiaSemana(void)
 
 std::ostream& operator << (std::ostream& out, AtendimentoDiaSemana& diaSem)
 {
-	out << "<DiaSemana>" << endl;
+   out << "<AtendimentoDiaSemana>" << endl;
 
-	//out << "<Id>" << diaSem.getId() << "</Id>" << endl;
-
-	//out << "<diaSemana>" << diaSem.dia_semana << "</diaSemana>" << endl;
-
-	//out << "<diaSemana>" << diaSem.getId() << "</diaSemana>" << endl;
-	
 	out << "<diaSemana>" << diaSem.getIdDia() << "</diaSemana>" << endl;
 
 	if(diaSem.atendimentos_tatico.size() > 0)
 	{
-		out << "<TaticoSet>" << endl;
+		out << "<atendimentosTatico>" << endl;
 
 		GGroup<AtendimentoTatico*>::GGroupIterator it_tatico = diaSem.atendimentos_tatico.begin();
 
 		for(; it_tatico != diaSem.atendimentos_tatico.end(); it_tatico++)
 		{
-			//out << (*it_tatico) << endl;
 			out << **it_tatico;
 		}
 
-		out << "</TaticoSet>" << endl;
+		out << "</atendimentosTatico>" << endl;
 	}
 	else if (diaSem.atendimentos_turno.size() > 0)
 	{
-		out << "<TurnoSet>" << endl;
+		out << "<atendimentosTurnos>" << endl;
 
 		GGroup<AtendimentoTurno*>::GGroupIterator it_turno = diaSem.atendimentos_turno.begin();
 
@@ -47,10 +40,10 @@ std::ostream& operator << (std::ostream& out, AtendimentoDiaSemana& diaSem)
 			out << **it_turno;
 		}
 
-		out << "</TurnoSet>" << endl;
+		out << "</atendimentosTurnos>" << endl;
 	}
 
-	out << "</DiaSemana>" << endl;
+	out << "</AtendimentoDiaSemana>" << endl;
 
 	return out;
 }

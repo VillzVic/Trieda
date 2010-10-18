@@ -2,6 +2,9 @@
 
 AtendimentoOferta::AtendimentoOferta(void)
 {
+   oferta_curso_campi_id = "";
+   disciplina_id = "";
+   quantidade = 0;
 }
 
 AtendimentoOferta::~AtendimentoOferta(void)
@@ -10,15 +13,15 @@ AtendimentoOferta::~AtendimentoOferta(void)
 
 std::ostream& operator << (std::ostream& out, AtendimentoOferta& oferta)
 {
-   out << "<Oferta>" << endl;
+   out << "<AtendimentoOferta>" << endl;
 
-   out << "<ofertaCursoCampiId>" << oferta.oferta_curso_campi_id << "</ofertaCursoCampiId>";
+   out << "<ofertaCursoCampiId>" << oferta.oferta_curso_campi_id << "</ofertaCursoCampiId>" << endl;
 
-   out << "<disciplinaId>" << oferta.disciplina_id << "</disciplinaId>";
+   out << "<disciplinaId>" << oferta.disciplina_id << "</disciplinaId>" << endl;
 
-   out << "<quantidade>" << oferta.quantidade << "</quantidade>";
+   out << "<quantidade>" << oferta.quantidade << "</quantidade>" << endl;
 
-   out << "</Oferta>" << endl;
+   out << "</AtendimentoOferta>" << endl;
 
    return out;
 }

@@ -11,9 +11,13 @@ std::ostream& operator << (std::ostream& out, ProblemSolution& solution )
 	The XML that describes the output should be written here
 	**/
 
-	out << "<Output>" << endl;
+   //out << "<?xml version=\"1.0\" encoding=\"utf-8\"?>" << endl;
+   out << "<?xml version=\"1.0\" encoding=\"ISO-8859-1\" standalone=\"yes\"?>" << endl;
 
-	out << "<CampusSet>" << endl;
+   //out << "<TriedaOutput xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">" << endl;
+   out << "<TriedaOutput>" << endl;
+
+	out << "<atendimentos>" << endl;
 
 	GGroup<AtendimentoCampus*>::GGroupIterator it_campus = solution.atendimento_campus.begin();
 
@@ -22,9 +26,9 @@ std::ostream& operator << (std::ostream& out, ProblemSolution& solution )
 		out << **it_campus;
 	}
 
-	out << "</CampusSet>" << endl;
+	out << "</atendimentos>" << endl;
 
-	out << "</Output>" << endl;
+   out << "</TriedaOutput>" << endl;
 
 	return out;
 }

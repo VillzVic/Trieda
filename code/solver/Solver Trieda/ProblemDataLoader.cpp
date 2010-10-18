@@ -28,7 +28,7 @@ void ProblemDataLoader::load()
 	divideDisciplinas();
 	// <<<
 	// >>> 14/10/2010
-	armz_disc_curriculo();
+	//armz_disc_curriculo();
 	// <<< 14/10/2010
 	gera_refs();
 	cria_blocos_curriculares();
@@ -78,7 +78,8 @@ void ProblemDataLoader::divideDisciplinas() {
 
 			nova_disc->setId(-it_disc->getId()); // alterado
 
-			nova_disc->codigo = it_disc->codigo + "-P";
+			//nova_disc->codigo = it_disc->codigo + "-P";
+         nova_disc->codigo = it_disc->codigo;
 			nova_disc->nome = it_disc->nome + "PRATICA";
 
 			//nova_disc->cred_teoricos = it_disc->cred_teoricos;

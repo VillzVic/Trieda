@@ -10,11 +10,11 @@ AtendimentoTurno::~AtendimentoTurno(void)
 
 std::ostream& operator << (std::ostream& out, AtendimentoTurno& turno)
 {
-   out << "<Turno>" << endl;
+   out << "<AtendimentoTurno>" << endl;
 
    out << "<turnoId>" << turno.turno_id << "</turnoId>" << endl;
 
-   out << "<HorarioAulaSet>" << endl;
+   out << "<atendimentosHorariosAula>" << endl;
 
    GGroup<AtendimentoHorarioAula*>::GGroupIterator it_horario_aula = turno.atendimentos_horarios_aula.begin();
 
@@ -23,9 +23,9 @@ std::ostream& operator << (std::ostream& out, AtendimentoTurno& turno)
 	   out << **it_horario_aula;
    }
 
-   out << "</HorarioAulaSet>" << endl;
+   out << "</atendimentosHorariosAula>" << endl;
 
-   out << "</Turno>" << endl;
+   out << "</AtendimentoTurno>" << endl;
 
    return out;
 }

@@ -10,15 +10,13 @@ AtendimentoSala::~AtendimentoSala(void)
 
 std::ostream& operator << (std::ostream& out, AtendimentoSala& sala)
 {
-	out << "<Sala>" << endl;
+   out << "<AtendimentoSala>" << endl;
 
-	out << "<Id>" << sala.getId() << "</Id>" << endl;
+	//out << "<Id>" << sala.getId() << "</Id>" << endl;
 
 	out << "<salaId>" << sala.sala_id.c_str() << "</salaId>" << endl;
 
-	//out << "<salaId>" << sala.getId() << "</salaId>" << endl;
-
-	out << "<DiasSemanaSet>" << endl;
+	out << "<atendimentosDiasSemana>" << endl;
 
 	GGroup<AtendimentoDiaSemana*>::GGroupIterator it_diasSem = sala.atendimentos_dias_semana.begin();
 
@@ -29,9 +27,9 @@ std::ostream& operator << (std::ostream& out, AtendimentoSala& sala)
 		}
 	}
 
-	out << "</DiasSemanaSet>" << endl;
+	out << "</atendimentosDiasSemana>" << endl;
 
-	out << "</Sala>" << endl;
+   out << "</AtendimentoSala>" << endl;
 
 	return out;
 }

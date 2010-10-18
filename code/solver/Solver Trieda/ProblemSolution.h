@@ -10,85 +10,96 @@
 
 using namespace std;
 
+//#define DBG_CP
+
 //Stores output data
 class ProblemSolution
 {
 public:
-	//Constructor
-	ProblemSolution();
+   //Constructor
+   ProblemSolution();
 
-	//Destructor
-	~ProblemSolution() {}
+   //Destructor
+   ~ProblemSolution() {}
 
-	//==================================================
-	// SET METHODS 
-	//==================================================
+   //==================================================
+   // SET METHODS 
+   //==================================================
 
-	/**
-	ToDo:
-	All set methods of the private attributes should be defined here
-	*/
+   /**
+   ToDo:
+   All set methods of the private attributes should be defined here
+   */
 
-	//==================================================
-	// GET METHODS 
-	//==================================================
+   //==================================================
+   // GET METHODS 
+   //==================================================
 
-	/**
-	ToDo:
-	All get methods of the private attributes should be defined here
-	*/
+   /**
+   ToDo:
+   All get methods of the private attributes should be defined here
+   */
 
-	//private:
+   //private:
 
-	/**
-	ToDo:
-	All objects that define the problem output should be declared here
-	**/
+   /**
+   ToDo:
+   All objects that define the problem output should be declared here
+   **/
 
-	//GGroup<Oferecimento*> oferecimentos;
+   //GGroup<Oferecimento*> oferecimentos;
 
-	GGroup<AtendimentoCampus*> atendimento_campus;
+   GGroup<AtendimentoCampus*> atendimento_campus;
 
-	// >>>
-	void addCampus(int id, std::string campusId)
-	{
-		AtendimentoCampus *at_campus;
-		std::cout << ">> > >>" << std::endl;
-		if( atendimento_campus.size() == 0 ) {
-			std::cout << "Ainda nao existe nenhum CAMPUS adicionado a base.\n\tCAMPUS \"" <<
-				campusId << "\" com id \"" << id << "\"  adicionado." << std::endl;
-			at_campus = new AtendimentoCampus;
-			at_campus->setId(id);
-			at_campus->campus_id = campusId;
-			// >>>
-			at_campus->campi_id->add(id);
-			// <<<
-			atendimento_campus.add(at_campus);
-		}
-		else {
-			bool addCampus = true;
-			ITERA_GGROUP(it_campus, atendimento_campus,AtendimentoCampus) {
-				if(it_campus->getId() == id ) {
-					std::cout << "O id \"" << id << "\" especificado, do CAMPUS \"" 
-						<< campusId << "\"  ja existe." << std::endl;
-					addCampus = false;
-					break;
-				}
-			}
-			if(addCampus) {
-				std::cout << "O id \"" << id << "\" especificado, do CAMPUS \"" 
-					<< campusId << "\" nao consta na base de dados. \n\tAdicionando .. ." << std::endl;
-				at_campus = new AtendimentoCampus;
-				at_campus->setId(id);
-				at_campus->campus_id = campusId;
-				// >>>
-				at_campus->campi_id->add(id);
-				// <<<
-				atendimento_campus.add(at_campus);
-			}
-		}
-	};
-	// <<<
+   // >>>
+   void addCampus(int id, std::string campusId)
+   {
+      AtendimentoCampus *at_campus;
+#ifdef DBG_CP
+      std::cout << ">> > >>" << std::endl;
+#endif
+      if( atendimento_campus.size() == 0 ) {
+#ifdef DBG_CP
+         std::cout << "Ainda nao existe nenhum CAMPUS adicionado a base.\n\tCAMPUS \"" <<
+            campusId << "\" com id \"" << id << "\"  adicionado." << std::endl;
+#endif
+
+         at_campus = new AtendimentoCampus;
+         at_campus->setId(id);
+         at_campus->campus_id = campusId;
+         // >>>
+         at_campus->campi_id->add(id);
+         // <<<
+         atendimento_campus.add(at_campus);
+      }
+      else {
+         bool addCampus = true;
+         ITERA_GGROUP(it_campus, atendimento_campus,AtendimentoCampus) {
+            if(it_campus->getId() == id ) {
+#ifdef DBG_CP
+               std::cout << "O id \"" << id << "\" especificado, do CAMPUS \"" 
+                  << campusId << "\"  ja existe." << std::endl;
+#endif
+               addCampus = false;
+               break;
+            }
+         }
+         if(addCampus) {
+#ifdef DBG_CP
+            std::cout << "O id \"" << id << "\" especificado, do CAMPUS \"" 
+               << campusId << "\" nao consta na base de dados. \n\tAdicionando .. ." << std::endl;
+#endif
+            at_campus = new AtendimentoCampus;
+            at_campus->setId(id);
+            at_campus->campus_id = campusId;
+            // >>>
+            at_campus->campi_id->add(id);
+            // <<<
+            atendimento_campus.add(at_campus);
+         }
+      }
+   };
+   // <<<
 
 };
 
