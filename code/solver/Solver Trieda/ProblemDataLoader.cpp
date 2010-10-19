@@ -538,7 +538,6 @@ void ProblemDataLoader::gera_refs() {
 	*/
 	//exit(1);
 
-
 }
 
 void ProblemDataLoader::cria_blocos_curriculares() {
@@ -615,6 +614,7 @@ void ProblemDataLoader::calcula_demandas() {
 		problemData->demandas_campus[dc] += dem;
 	}
 }
+
 void ProblemDataLoader::estima_turmas() {
 	ITERA_GGROUP(it_disc,problemData->disciplinas, Disciplina) {
 		/*
@@ -855,6 +855,7 @@ void ProblemDataLoader::cache() {
 		}
 	}
 	// <<<
+
 }
 
 // >>> 15/10/2010

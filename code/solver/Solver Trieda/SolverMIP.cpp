@@ -177,16 +177,17 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
 			case Variable::V_CREDITOS:
 
             id_disc = v->getDisciplina()->getId();
-
+            
             /*
             if(id_disc < 0) {
-            id_disc = -id_disc;
+               id_disc = -id_disc;
             }
             */
 
 				//key = std::make_pair(id_disc,v->getTurma());
             //key = std::make_pair(v->getDisciplina()->getId(),v->getTurma());
-            key = std::make_pair(v->getTurma(),v->getDisciplina()->getId());
+            //key = std::make_pair(v->getTurma(),v->getDisciplina()->getId());
+            key = std::make_pair(v->getTurma(),id_disc);
 
 				cout << "Oferta de " << v->getValue() << 
 					// >>> 07/10/2010
@@ -211,12 +212,14 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
 				}
 				/**/
 				// >>> 07/10/2010
-				if(x[key][v->getDia()].first >= 0) {
+				//if(x[key][v->getDia()].first >= 0) {
+            if(x[key][v->getDia()].first > 0) {
 					x[key][v->getDia()] = std::make_pair(
 						(x[key][v->getDia()].first + (int)v->getValue()),
 						std::make_pair(v->getUnidade()->getId(),v->getSala()->getId()));
 				}
-				else{
+				//else {
+            if(x[key][v->getDia()].first == -1) {
 					x[key][v->getDia()] = std::make_pair(
 						(int)v->getValue(),
 						std::make_pair(v->getUnidade()->getId(),v->getSala()->getId()));
@@ -252,14 +255,15 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
 				id_disc = v->getDisciplina()->getId();
             
             /*
-				if(id_disc < 0) {
-					id_disc = -id_disc;
-				}
+            if(id_disc < 0) {
+               id_disc = -id_disc;
+            }
             */
             
 				//key = std::make_pair(id_disc,v->getTurma());
             //key = std::make_pair(v->getDisciplina()->getId(),v->getTurma());
-            key = std::make_pair(v->getTurma(),v->getDisciplina()->getId());
+            //key = std::make_pair(v->getTurma(),v->getDisciplina()->getId());
+            key = std::make_pair(v->getTurma(),id_disc);
 
 				cout << "Oferecimento de " << v->getValue() << 
 					// >>> 07/10/2010
@@ -282,12 +286,19 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
 				key_alunos.push_back(v->getCurso()->getId());
 				key_alunos.push_back(v->getCampus()->getId());
 
+
+            if(a.find(key_alunos) == a.end()) {
+               a[key_alunos] = (int) v->getValue();
+            }
+
+            /*
 				if(a.find(key_alunos) != a.end()) {
 					a[key_alunos] += (int) v->getValue();
 				}
 				else {
 					a[key_alunos] = (int) v->getValue();
 				}
+            */
 				// <<<
 
 #ifdef PRINT_CSV
@@ -372,6 +383,29 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
             << std::endl;
       }
    }
+
+   /*
+   std::cout << "\nx\t -\t i\t d\t u\t s\t t" << std::endl;
+   for(X___i_d_u_s_t::iterator it_x = x.begin(); it_x != x.end(); it_x++) {
+      for(int i=0;i<7;i++) {
+            std::cout << it_x->second[i].first << "\t\t" <<
+               it_x->first.first << "\t" <<
+               it_x->first.second << "\t" <<
+               it_x->second[i].second.first << "\t" <<
+               it_x->second[i].second.second << "\t" <<
+               i << std::endl;
+      }
+   }
+
+   std::cout << "\na\t -\t i\t d\t c\t cp" << std::endl;
+   for(A___i_d_c_cp::iterator it_a = a.begin(); it_a != a.end(); it_a++) {
+      std::cout << it_a->second << "\t\t" <<
+         it_a->first.at(0) << "\t" <<
+         it_a->first.at(1) << "\t" <<
+         it_a->first.at(2) << "\t" <<
+         it_a->first.at(3) << "\t" << std::endl;
+   }
+   */
 
 	// Fill the solution
 
@@ -470,152 +504,109 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
       }
    }
 
+   std::map<int,Campus*> und_cp;
 
-   //std::cout << std::endl;
+   // Listando as unidades dos campus.
+   ITERA_GGROUP(it_cp,problemData->campi,Campus) {
+      ITERA_GGROUP(it_und,it_cp->unidades,Unidade) {
+         und_cp[it_und->getId()] = *it_cp;
+      }
+   }
 
-      /*
+   std::map<std::vector<int/*<d,c,cp,u,s,t>*/>,
+      //std::pair<std::vector<int/*i*/>,
+      std::pair<GGroup<int/*i*/>,
+      std::pair<int/*valor var x*/,int/*valor var a*/> > > solucao;
+
+   // Listando todas as disciplinas atendidas
+   GGroup<int> disciplinas_atendidas;
    for(X___i_d_u_s_t::iterator it_x = x.begin(); it_x != x.end(); it_x++) {
+      disciplinas_atendidas.add(it_x->first.second);
+   }
 
-      int dia_sem = -1;
+   for(X___i_d_u_s_t::iterator it_x = x.begin(); it_x != x.end(); it_x++) {
+      for(int dia = 0; dia < 7; dia++){
 
-      int qtde_creditos_teoricos = 0;
-      int qtde_creditos_praticos = 0;
+         int value_x = it_x->second.at(dia).first;
 
-      // Encontrando o dia certo.
-      for(dia_sem = 0; dia_sem < 7; dia_sem++) {
+         if(value_x >= 0) {
+            /*
+            std::cout << it_x->second[dia].first << "\t\t" <<
+               it_x->first.first << "\t" <<
+               it_x->first.second << "\t" <<
+               it_x->second[dia].second.first << "\t" <<
+               it_x->second[dia].second.second << "\t" <<
+               dia << std::endl;
+               */
 
-         int value_x = it_x->second.at(dia_sem).first;
+            std::vector<int/*<d,c,cp,u,s,t>*/> chave(6);
+            chave.at(0) = it_x->first.second;
 
-         if(value_x >= 0) { // Se TRUE -> dia certo
-
-            int id_disc = it_x->first.second;
-
-            // Buscando informações da disciplina em questão.
-            ITERA_GGROUP(it_disc,problemData->disciplinas,Disciplina){
-               if(it_disc->getId() == id_disc) {
-
-                  if (it_disc->cred_teoricos > 0 && it_disc->cred_praticos <= 0) {
-                     qtde_creditos_teoricos = value_x;
-                  }
-                  else if(it_disc->cred_praticos > 0 && it_disc->cred_teoricos <= 0) {
-                     qtde_creditos_praticos = value_x;
-                  }
-                  else {
-                     std::cout << "ERRO: SolverMIP::getSolution()" << std::endl;
-                     exit(1);
-                  }
-
-                  break; // Só existe uma disciplina com um determinado id.
+            chave.at(1) = -1;
+            for(A___i_d_c_cp::iterator it_a = a.begin(); it_a != a.end(); it_a++){
+               if(it_a->first.at(0) == it_x->first.first &&
+                  it_a->first.at(1) == it_x->first.second) {
+                     chave.at(1) = it_a->first.at(2);
                }
             }
+            chave.at(2) = und_cp.find(it_x->second.at(dia).second.first)->second->getId();
+            chave.at(3) = it_x->second.at(dia).second.first;
+            chave.at(4) = it_x->second.at(dia).second.second;
+            chave.at(5) = dia;
 
-            break; // x_{i,d,u,s,t} só pode ter um dia válido.
-         }
-      }
+            std::map<std::vector<int/*<d,c,cp,u,s,t>*/>,
+               std::pair<GGroup<int/*i*/>,
+               std::pair<int/*valor var x*/,int/*valor var a*/> > >::iterator 
+               it_solucao = solucao.find(chave);
 
-      int value_a = 0;
+            if( it_solucao == solucao.end() ){
+               solucao[chave].first.add(it_x->first.first);
+               
+               solucao[chave].second = 
+                  std::pair<int/*valor var x*/,int/*valor var a*/>(it_x->second.at(dia).first,0);
 
-      std::vector<int> vt_key(4,-1);
-      vt_key.at(0) = it_x->first.first ;
-      vt_key.at(1) = it_x->first.second;
-
-      ITERA_GGROUP(it_cp,problemData->campi,Campus) {
-         ITERA_GGROUP(it_c,problemData->cursos,Curso) {
-            vt_key.at(2) = it_c->getId();
-            vt_key.at(3) = it_cp->getId() ;
-
-            if(a.find(vt_key) != a.end()) {
-               value_a += a[vt_key];
             }
-         }
-      }
+            else {
+               solucao[chave].first.add(it_x->first.first);
 
-      // Procurando a posição correta para inserir
-      ITERA_GGROUP(it_at_cp,problemSolution->atendimento_campus,AtendimentoCampus) {
-         int id_at_cp = it_at_cp->getId();
-
-         ITERA_GGROUP(it_at_und,it_at_cp->atendimentos_unidades,AtendimentoUnidade) {
-            int id_at_und = it_at_und->getId();
-
-            ITERA_GGROUP(it_at_sala,it_at_und->atendimentos_salas,AtendimentoSala) {
-               int id_at_sala = it_at_sala->getId();
-
-               ITERA_GGROUP(it_at_dia_sem,it_at_sala->atendimentos_dias_semana,AtendimentoDiaSemana) {
-                  int id_at_dia_sem = it_at_dia_sem->key.second;
-
-                  if(id_at_dia_sem == dia_sem) {
-
-                     // Procurando o id do campus
-                     int id_cp = -1;
-                     ITERA_GGROUP(it_cp,problemData->campi,Campus) {
-                        ITERA_GGROUP(it_und,it_cp->unidades,Unidade) {
-                           if( it_und->getId() == id_at_und ) {
-                              id_cp = it_cp->getId();
-                              break;
-                           }
-                        }
-                     }
-
-                     int id_und = it_x->second.at(dia_sem).second.first;
-                     int id_sala = it_x->second.at(dia_sem).second.second;
-
-
-                     if( (id_at_cp == id_cp) && 
-                        (id_at_und == id_und ) && 
-                        (id_at_sala == id_sala) ){
-
-                           AtendimentoTatico *at_tatico;
-//
-//                           bool add = false;
-//
-//                           if(it_at_dia_sem->atendimentos_tatico.size() > 0) {
-//                              ITERA_GGROUP(it_at_tatico,it_at_dia_sem->atendimentos_tatico,AtendimentoTatico) {
-//                                 
-//
-//                                    add = false;
-//                                    break;
-//                                 }
-//                              }
-//                           }
-//
-//                           //else {
-//                           if(add) 
-//                          
-                           {
-                              at_tatico = new AtendimentoTatico();
-
-                              at_tatico->qtde_creditos_teoricos = qtde_creditos_teoricos;
-                              at_tatico->qtde_creditos_praticos = qtde_creditos_praticos;
-
-                              AtendimentoOferta *at_oferta = new AtendimentoOferta();
-
-                              // ToDo : SETAR ESSA BAGAÇA
-                              at_oferta->oferta_curso_campi_id = "";
-
-                              stringstream aux;
-                              aux << it_x->first.second;
-
-                              at_oferta->disciplina_id = aux.str();
-                              at_oferta->quantidade = value_a;
-
-                              at_tatico->atendimento_oferta = at_oferta;
-
-                              it_at_dia_sem->atendimentos_tatico.add(at_tatico);
-                           }
-
-                     }
-                  }
-               }
+               // adicionando o valor de x
+               solucao[chave].second.first += value_x;
             }
          }
       }
    }
 
-   */
+   std::map<std::vector<int/*<d,c,cp,u,s,t>*/>,
+      std::pair<GGroup<int/*i*/>,
+      std::pair<int/*valor var x*/,int/*valor var a*/> > >::iterator 
+      it_solucao = solucao.begin();
 
+   /* Para cada solucao registrada, procurar por todas vars. do tipo a que possuam 
+   o(s) par(es) (i,d) formados a partir da solução em questão.*/
+   for(; it_solucao != solucao.end(); it_solucao++) {
+      GGroup<int/*i*/>::iterator it_turma = 
+         it_solucao->second.first.begin();
 
-   /*
+      int disc = it_solucao->first.at(0);
 
+      for(; it_turma != it_solucao->second.first.end(); it_turma++) {
+         int turma = *it_turma;
+
+         for(A___i_d_c_cp::iterator it_a = a.begin(); it_a != a.end(); it_a++){
+            if(it_a->first.at(0) == turma && it_a->first.at(1) == disc) {
+               it_solucao->second.second.second += it_a->second;
+            }
+         }
+      }
+   }
+   
+   //Listando as disciplinas de acordo com o id.
+   std::map<int/*id_disc*/,Disciplina*> discs;
+   ITERA_GGROUP(it_disc,problemData->disciplinas,Disciplina) {
+      discs[it_disc->getId()] = *it_disc;
+   }
+
+   // Procurando a posição correta para inserir
    ITERA_GGROUP(it_at_cp,problemSolution->atendimento_campus,AtendimentoCampus) {
       int id_at_cp = it_at_cp->getId();
 
@@ -628,158 +619,76 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
             ITERA_GGROUP(it_at_dia_sem,it_at_sala->atendimentos_dias_semana,AtendimentoDiaSemana) {
                int id_at_dia_sem = it_at_dia_sem->key.second;
 
-               AtendimentoTatico *at_tatico = new AtendimentoTatico();
+               //std::map<std::vector<int/*<d,cp,u,s,t>*/>,
+               //   std::pair<std::vector<int/*i*/>,
+               //   std::pair<int/*valor var x*/,int/*valor var a*/> > >::iterator 
+                  it_solucao = solucao.begin();
 
-               // Procurando por todas as variaveis relacionadas ao atendimento tatico em questao.
+               //Registrando a solução no lugar certo.
+               for(; it_solucao != solucao.end(); it_solucao++) {
+                  
+                  if(it_solucao->first.at(0) > 0) {
 
-               int disc = 0;
+                     if( it_solucao->first.at(2) == id_at_cp &&
+                        it_solucao->first.at(3) == id_at_und &&
+                        it_solucao->first.at(4) == id_at_sala &&
+                        it_solucao->first.at(5) == id_at_dia_sem ) {
 
-               for(X___i_d_u_s_t::iterator it_x = x.begin(); it_x != x.end(); it_x++) {
-                  //int turma = it_x->first.first; -> nao interessa em atendimento tatico
-                  //int disc = it_x->first.second;
-                  disc = it_x->first.second;
-                  int und = it_x->second.at(id_at_dia_sem).second.first;
-                  int sala = it_x->second.at(id_at_dia_sem).second.second;
-                  int dia_sem = id_at_dia_sem;
-                  int value_x = it_x->second.at(id_at_dia_sem).first;
+                           AtendimentoOferta * at_oferta = new AtendimentoOferta();
 
-                  if( (und == id_at_und) && (sala == id_at_sala) ){
+                           // Procurando o id de <ofertaCursoCampus>
+                           ITERA_GGROUP(it_oferta,problemData->ofertas,Oferta) {
+                              if( (it_oferta->campus_id == id_at_cp) &&
+                                 (it_oferta->curso_id == it_solucao->first.at(1))) {
 
-                     ITERA_GGROUP(it_disc,problemData->disciplinas,Disciplina){
-                        if(it_disc->getId() == disc) {
+                                    std::stringstream aux;
+                                    aux << it_oferta->getId();
 
-                           if (it_disc->cred_teoricos > 0 && it_disc->cred_praticos <= 0) {
-                              at_tatico->qtde_creditos_teoricos += value_x;
+                                    at_oferta->oferta_curso_campi_id = aux.str();
+
+                                    break;
+                              }
                            }
-                           else if(it_disc->cred_praticos > 0 && it_disc->cred_teoricos <= 0) {
-                              at_tatico->qtde_creditos_praticos += value_x;
-                           }
-                           else {
-                              std::cout << "ERRO: SolverMIP::getSolution()" << std::endl;
-                              exit(1);
+
+                           std::stringstream aux;
+
+                           aux << it_solucao->first.at(0);
+                           at_oferta->disciplina_id = aux.str();
+                           at_oferta->quantidade = it_solucao->second.second.second;
+
+                           AtendimentoTatico * at_tatico = new AtendimentoTatico();
+
+                           at_tatico->atendimento_oferta = at_oferta;
+
+                           int creds_praticos = 0;
+
+                           std::vector<int> chave_negada(it_solucao->first);
+                           chave_negada.at(0) = -chave_negada.at(0);
+
+                           if(solucao.find(chave_negada) != solucao.end()) {
+                              creds_praticos = it_solucao->second.second.first;
+                                 //solucao[chave_negada].second.first;
                            }
 
-                           break;
-                        }
+                           if(discs[it_solucao->first.at(0)]->cred_teoricos > 0) {
+                              at_tatico->qtde_creditos_teoricos = it_solucao->second.second.first;
+                              //at_tatico->qtde_creditos_praticos = 0;
+                              at_tatico->qtde_creditos_praticos = creds_praticos;
+                           }
+                           else if(discs[it_solucao->first.at(0)]->cred_praticos > 0) {
+                              at_tatico->qtde_creditos_teoricos = 0;
+                              at_tatico->qtde_creditos_praticos = 
+                                 ( creds_praticos + it_solucao->second.second.first);
+                           }
+
+                           it_at_dia_sem->atendimentos_tatico.add(at_tatico);
                      }
-                     
-                     //break; 
-                     // Pode ser que exista mais de uma variavel configurada para um mesmo atendimento tatico.
-                     // Na maioria das vezes vai existir.
                   }
                }
-
-               // Procurando e armazenando os dados do ItemOferta no atendimento tático em questão.
-               AtendimentoOferta *at_oferta = new AtendimentoOferta();
-               
-               // Procurando pelo código da oferta em questão.
-               for(A___i_d_c_cp::iterator it_a = a.begin(); it_a != a.end(); it_a++) {
-                  //<turma,disciplina,curso,campus>
-                  if(it_a->first.at(1) == disc) {
-                     int id_curso = it_a->first.at(2);
-                     
-                     ITERA_GGROUP(it_oferta,problemData->ofertas,Oferta) {
-                        if( (it_oferta->campus_id == id_at_cp) &&
-                           (it_oferta->curso_id == id_curso)) {
-                              
-                              std::stringstream aux;
-                              aux << it_oferta->getId();
-
-                              //at_oferta->oferta_curso_campi_id = it_oferta->getId();
-                              at_oferta->oferta_curso_campi_id = aux.str();
-
-                              // Aproveitando e já somando o valor de a.
-                              //at_oferta->quantidade += it_a->second;
-                              at_oferta->quantidade = it_a->second;
-                           break;
-                        }
-                     }
-                     break;
-                  }
-               }
-
-               // Procurando pelo código da disciplina em questão.
-               ITERA_GGROUP(it_disc,problemData->disciplinas,Disciplina) {
-                  if(it_disc->getId() == disc) {
-                     at_oferta->disciplina_id = it_disc->codigo;
-                     break;
-                  }
-               }
-
-               at_tatico->atendimento_oferta = at_oferta;
-
-            
-               it_at_dia_sem->atendimentos_tatico.add(at_tatico);
             }
          }
       }
    }
-
-   */
-
-
-// >>>
-	/*
-		Essa varredura que esta sendo realizada no caso de existirem dois <ItemOfertaCurso>
-		diferentes porém, com o msm id de campus, curso e turno (desconsiderado no tatico) iguais e,
-		de posse da variável a_{i,d,c,cp} deseja-se saber a qual <ItemOfertaCurso> a variável esta atendendo.
-
-		ToDo : Ver anotações.
-	*/
-
-	/*
-	for(A___i_d_c_cp::iterator it_a = a.begin(); it_a != a.end(); it_a++) {
-		ITERA_GGROUP(it_oferta,problemData->ofertas,Oferta) {
-			if( it_a->first.at(3) == it_oferta->campus_id ) {
-				if( it_a->first.at(2) == it_oferta->curso_id ) {
-
-				}
-			}
-		}
-	}
-	*/
-
-	//<<<
-
-	//GGroup<AtendimentoDiaSemana*>::iterator at_dia_sem = at_sala->atendimentos_dias_semana.begin();
-
-	// CONTINUAR A IMPLEMENTAR A EXTRAÇÃO DE DADOS DAS VARIÁVEIS.
-
-
-	/*
-	//TESTES
-
-	problemSolution->addCampus(1,"CP_1");
-	problemSolution->addCampus(2,"CP_2");
-	problemSolution->addCampus(2,"CP_3");
-
-	GGroup<AtendimentoCampus*>::iterator at_campus = problemSolution->atendimento_campus.begin();
-
-	at_campus->addUnidade(1,"Unidade 1",1);
-	at_campus->addUnidade(2,"Unidade 2",1);
-	at_campus->addUnidade(2,"Unidade 3",2);
-	at_campus->addUnidade(4,"Unidade 4",3);
-
-	GGroup<AtendimentoUnidade*>::iterator at_unidade = at_campus->atendimentos_unidades.begin();
-
-	at_unidade->addSala(1,"Sala 1",1);
-	at_unidade->addSala(2,"Sala 2",5);
-	at_unidade->addSala(1,"Sala 3",4);
-	at_unidade->addSala(1,"Sala 4",2);
-	at_unidade->addSala(2,"Sala 5",2);
-	at_unidade->addSala(3,"Sala 5",2);
-
-	GGroup<AtendimentoSala*>::iterator at_sala = at_unidade->atendimentos_salas.begin();
-
-	at_sala->addDiaSemana(1,"Dia 1",1);
-	at_sala->addDiaSemana(1,"Dia 2",1);
-	at_sala->addDiaSemana(2,"Dia 3",1);
-
-	std::cout << "Saindo .. ." << std::endl;
-	exit(1);
-	*/
-
-	// <<<
 
 #ifdef DEBUG
 	if ( fout )
