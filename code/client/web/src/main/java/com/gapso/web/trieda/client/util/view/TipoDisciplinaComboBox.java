@@ -41,6 +41,7 @@ public class TipoDisciplinaComboBox extends ComboBox<TipoDisciplinaDTO> {
 		setHideTrigger(true);  
 		setTriggerAction(TriggerAction.QUERY);
 		setTemplate(getTemplateCB());
+		setMinChars(1);
 	}
 
 	private native String getTemplateCB() /*-{

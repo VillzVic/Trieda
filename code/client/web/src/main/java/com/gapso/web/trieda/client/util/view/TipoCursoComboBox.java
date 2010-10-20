@@ -42,6 +42,7 @@ public class TipoCursoComboBox extends ComboBox<TipoCursoDTO> {
 		setHideTrigger(true);  
 		setTriggerAction(TriggerAction.QUERY);
 		setTemplate(getTemplateCB());
+		setMinChars(1);
 	}
 
 	private native String getTemplateCB() /*-{

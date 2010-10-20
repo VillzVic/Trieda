@@ -43,6 +43,7 @@ public class UnidadeComboBox extends ComboBox<UnidadeDTO> {
 		setHideTrigger(true);  
 		setTriggerAction(TriggerAction.QUERY);
 		setTemplate(getTemplateCB());
+		setMinChars(1);
 	}
 
 	private native String getTemplateCB() /*-{

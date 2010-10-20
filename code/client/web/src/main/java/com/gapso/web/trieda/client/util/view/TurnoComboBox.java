@@ -43,6 +43,7 @@ public class TurnoComboBox extends ComboBox<TurnoDTO> {
 		setHideTrigger(true);  
 		setTriggerAction(TriggerAction.QUERY);
 		setTemplate(getTemplateCB());
+		setMinChars(1);
 	}
 
 	

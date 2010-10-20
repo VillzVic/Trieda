@@ -43,6 +43,7 @@ public class CampusComboBox extends ComboBox<CampusDTO> {
 		setHideTrigger(true);  
 		setTriggerAction(TriggerAction.QUERY);
 		setTemplate(getTemplateCB());
+		setMinChars(1);
 	}
 
 	private native String getTemplateCB() /*-{

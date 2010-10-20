@@ -39,7 +39,7 @@ public class SemanasLetivaView extends MyComposite implements SemanasLetivaPrese
 	
 	private void initUI() {
 		panel = new ContentPanel(new BorderLayout());
-		panel.setHeading("Master Data » Calendários");
+		panel.setHeading("Master Data » Semanas Letivas");
 		createToolBar();
 		createGrid();
 		createFilter();
