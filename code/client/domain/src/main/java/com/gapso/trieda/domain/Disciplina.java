@@ -66,13 +66,13 @@ public class Disciplina implements java.io.Serializable {
 
     @NotNull
     @Column(name = "DIS_CRED_TEORICO")
-    @Min(1L)
+    @Min(0L)
     @Max(99L)
     private Integer creditosTeorico;
 
     @NotNull
     @Column(name = "DIS_CRED_PRATICO")
-    @Min(1L)
+    @Min(0L)
     @Max(99L)
     private Integer creditosPratico;
 
@@ -85,13 +85,13 @@ public class Disciplina implements java.io.Serializable {
 
     @NotNull
     @Column(name = "DIS_MAX_ALUN_TEORICO")
-    @Min(1L)
+    @Min(0L)
     @Max(99L)
     private Integer maxAlunosTeorico;
 
     @NotNull
     @Column(name = "DIS_MAX_ALUN_PRATICO")
-    @Min(1L)
+    @Min(0L)
     @Max(999L)
     private Integer maxAlunosPratico;
 
