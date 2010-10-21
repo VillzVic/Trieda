@@ -41,7 +41,7 @@ public class CurriculosView extends MyComposite implements CurriculosPresenter.D
 	
 	private void initUI() {
 		panel = new ContentPanel(new BorderLayout());
-		panel.setHeading("Master Data » Matriz Curricular");
+		panel.setHeading("Master Data » Matrizes Curriculares");
 		createToolBar();
 		createGrid();
 		createFilter();
@@ -50,7 +50,7 @@ public class CurriculosView extends MyComposite implements CurriculosPresenter.D
 	}
 	
 	private void createTabItem() {
-		tabItem = new GTabItem("Matriz Curricular", Resources.DEFAULTS.unidades16());
+		tabItem = new GTabItem("Matrizes Curriculares", Resources.DEFAULTS.unidades16());
 		tabItem.setContent(panel);
 	}
 	
