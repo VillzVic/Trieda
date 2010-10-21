@@ -9,6 +9,7 @@ import java.util.Set;
 
 import com.gapso.trieda.domain.AreaTitulacao;
 import com.gapso.trieda.domain.Campus;
+import com.gapso.trieda.domain.CampusCurriculo;
 import com.gapso.trieda.domain.Curriculo;
 import com.gapso.trieda.domain.CurriculoDisciplina;
 import com.gapso.trieda.domain.Curso;
@@ -29,6 +30,7 @@ import com.gapso.trieda.misc.Dificuldades;
 import com.gapso.trieda.misc.Estados;
 import com.gapso.trieda.misc.Semanas;
 import com.gapso.web.trieda.client.mvp.model.AreaTitulacaoDTO;
+import com.gapso.web.trieda.client.mvp.model.CampusCurriculoDTO;
 import com.gapso.web.trieda.client.mvp.model.CampusDTO;
 import com.gapso.web.trieda.client.mvp.model.CurriculoDTO;
 import com.gapso.web.trieda.client.mvp.model.CurriculoDisciplinaDTO;
@@ -668,6 +670,40 @@ public class ConvertBeans {
 		dto.setCreditosTeorico(crTeorico);
 		dto.setCreditosPratico(crPratico);
 		dto.setCreditosTotal(crTeorico + crPratico);
+		return dto;
+	}
+	
+//	setCampusId(campusId);
+//	setCampusString(campusString);
+//	setCursoString(cursoString);
+//	setMatrizCurricularId(matrizCurricularId);
+//	setMatrizCurricularString(matrizCurricularString);
+//	setTurnoId(turnoId);
+//	setTurnoString(turnoString);
+	
+	// CAMPUS - CURRICULO (OFERTA DE CURSO EM UM CAMPUS)
+	public static CampusCurriculo toCampusCurriculo(CampusCurriculoDTO dto) {
+		CampusCurriculo domain = new CampusCurriculo();
+		domain.setId(dto.getId());
+		domain.setVersion(dto.getVersion());
+		domain.setCampus(Campus.find(dto.getCampusId()));
+		domain.setCurriculo(Curriculo.find(dto.getMatrizCurricularId()));
+		domain.setTurno(Turno.find(dto.getTurnoId()));
+		return domain;
+	}
+	
+	public static CampusCurriculoDTO toCampusCurriculoDTO(CampusCurriculo domain) {
+		CampusCurriculoDTO dto = new CampusCurriculoDTO();
+		dto.setId(domain.getId());
+		dto.setVersion(domain.getVersion());
+		dto.setCampusString(domain.getCampus().getCodigo());
+		dto.setCampusId(domain.getCampus().getId());
+		dto.setCursoString(domain.getCurriculo().getCurso().getCodigo());
+		dto.setMatrizCurricularString(domain.getCurriculo().getCodigo());
+		dto.setMatrizCurricularId(domain.getCurriculo().getId());
+		dto.setTurnoString(domain.getTurno().getNome());
+		dto.setTurnoId(domain.getTurno().getId());
+		
 		return dto;
 	}
 }

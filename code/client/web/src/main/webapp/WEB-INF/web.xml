@@ -57,16 +57,12 @@
 		<servlet-class>com.gapso.web.trieda.server.EquivalenciasServiceImpl</servlet-class>
 	</servlet>
 	<servlet>
-		<servlet-name>matrizesCurricularesServlet</servlet-name>
-		<servlet-class>com.gapso.web.trieda.server.MatrizesCurricularesServiceImpl</servlet-class>
-	</servlet>
-	<servlet>
-		<servlet-name>matrizCurricularDisciplinasServlet</servlet-name>
-		<servlet-class>com.gapso.web.trieda.server.MatrizCurricularDisciplinasServiceImpl</servlet-class>
-	</servlet>
-	<servlet>
 		<servlet-name>curriculosServlet</servlet-name>
 		<servlet-class>com.gapso.web.trieda.server.CurriculosServiceImpl</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>campiCurriculosServlet</servlet-name>
+		<servlet-class>com.gapso.web.trieda.server.CampiCurriculosServiceImpl</servlet-class>
 	</servlet>
 	<servlet>
 		<servlet-name>cursosCampiServlet</servlet-name>
@@ -142,16 +138,12 @@
 		<url-pattern>/trieda/equivalencias</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
-		<servlet-name>matrizesCurricularesServlet</servlet-name>
-		<url-pattern>/trieda/matrizesCurriculares</url-pattern>
-	</servlet-mapping>
-	<servlet-mapping>
-		<servlet-name>matrizCurricularDisciplinasServlet</servlet-name>
-		<url-pattern>/trieda/matrizCurricularDisciplinas</url-pattern>
-	</servlet-mapping>
-	<servlet-mapping>
 		<servlet-name>curriculosServlet</servlet-name>
 		<url-pattern>/trieda/curriculos</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>campiCurriculosServlet</servlet-name>
+		<url-pattern>/trieda/campiCurriculos</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>cursosCampiServlet</servlet-name>

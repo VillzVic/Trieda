@@ -40,6 +40,7 @@ public class ToolBarView extends MyComposite implements ToolBarPresenter.Display
 	private MenuItem cursosListMI;
 	private MenuItem disciplinasListMI;
 	private MenuItem curriculosListMI;
+	private MenuItem campiCurriculosListMI;
 	
 	// Campi
 	private Button campiBt;
@@ -144,6 +145,8 @@ public class ToolBarView extends MyComposite implements ToolBarPresenter.Display
 		outros.add(disciplinasListMI);
 		curriculosListMI = createMenuItem("Matrizes Curriculares", Resources.DEFAULTS.matrizCurricular16());
 		outros.add(curriculosListMI);
+		campiCurriculosListMI = createMenuItem("Oferta de Cursos em Campi", Resources.DEFAULTS.matrizCurricular16());
+		outros.add(campiCurriculosListMI);
 		
 		outrosUnidadesSBt.setMenu(outros);
 		group.add(outrosUnidadesSBt);
@@ -329,16 +332,6 @@ public class ToolBarView extends MyComposite implements ToolBarPresenter.Display
 			}
 		});
 		menuSalasBt.add(outros3);
-		
-		MenuItem outros4 = new MenuItem("Matrizes Curriculares");
-		outros4.setIcon(AbstractImagePrototype.create(Resources.DEFAULTS.matrizCurricular16()));
-		outros4.addSelectionListener(new SelectionListener<MenuEvent>() {
-			@Override
-			public void componentSelected(MenuEvent ce) {
-				Dispatcher.forwardEvent(AppEvents.MatrizCurricularList);
-			}
-		});
-		menuSalasBt.add(outros4);
 
 		MenuItem outros5 = new MenuItem("Oferta de Cursos em Campi");
 		outros5.setIcon(AbstractImagePrototype.create(Resources.DEFAULTS.curso16()));
@@ -399,16 +392,6 @@ public class ToolBarView extends MyComposite implements ToolBarPresenter.Display
 			}
 		});
 		menuSalasBt.add(outros15);
-		
-		MenuItem outros16 = new MenuItem("Matriz Curricular/Disciplinas");
-		outros16.setIcon(AbstractImagePrototype.create(Resources.DEFAULTS.disciplina16()));
-		outros16.addSelectionListener(new SelectionListener<MenuEvent>() {
-			@Override
-			public void componentSelected(MenuEvent ce) {
-				Dispatcher.forwardEvent(AppEvents.MatrizCurricularDisciplinaList);
-			}
-		});
-		menuSalasBt.add(outros16);
 		
 		MenuItem outros17 = new MenuItem("Associação de Disciplinas à Salas");
 		outros17.setIcon(AbstractImagePrototype.create(Resources.DEFAULTS.disciplina16()));
@@ -514,6 +497,10 @@ public class ToolBarView extends MyComposite implements ToolBarPresenter.Display
 	@Override
 	public MenuItem getCurriculosListMenuItem() {
 		return curriculosListMI;
+	}
+	@Override
+	public MenuItem getCampiCurriculosListMenuItem() {
+		return campiCurriculosListMI;
 	}
 	
 }

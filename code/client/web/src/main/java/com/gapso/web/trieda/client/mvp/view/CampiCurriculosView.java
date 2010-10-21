@@ -9,39 +9,40 @@ import com.extjs.gxt.ui.client.data.RpcProxy;
 import com.extjs.gxt.ui.client.util.Margins;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
 import com.extjs.gxt.ui.client.widget.button.Button;
-import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.extjs.gxt.ui.client.widget.grid.ColumnConfig;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayout;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
-import com.extjs.gxt.ui.client.widget.toolbar.SeparatorToolItem;
-import com.gapso.web.trieda.client.mvp.model.CurriculoDTO;
-import com.gapso.web.trieda.client.mvp.presenter.CurriculosPresenter;
+import com.gapso.web.trieda.client.mvp.model.CampusCurriculoDTO;
+import com.gapso.web.trieda.client.mvp.presenter.CampiCurriculosPresenter;
 import com.gapso.web.trieda.client.util.resources.Resources;
+import com.gapso.web.trieda.client.util.view.CampusComboBox;
+import com.gapso.web.trieda.client.util.view.CurriculoComboBox;
 import com.gapso.web.trieda.client.util.view.CursoComboBox;
 import com.gapso.web.trieda.client.util.view.GTabItem;
 import com.gapso.web.trieda.client.util.view.SimpleFilter;
 import com.gapso.web.trieda.client.util.view.SimpleGrid;
 import com.gapso.web.trieda.client.util.view.SimpleToolBar;
+import com.gapso.web.trieda.client.util.view.TurnoComboBox;
 
-public class CurriculosView extends MyComposite implements CurriculosPresenter.Display {
+public class CampiCurriculosView extends MyComposite implements CampiCurriculosPresenter.Display {
 
 	private SimpleToolBar toolBar;
-	private SimpleGrid<CurriculoDTO> gridPanel;
+	private SimpleGrid<CampusCurriculoDTO> gridPanel;
 	private SimpleFilter filter;
-	private TextField<String> codigoBuscaTextField;
-	private TextField<String> descricaoBuscaTextField;
+	private TurnoComboBox turnoBuscaComboBox;
+	private CampusComboBox campusBuscaComboBox;
 	private CursoComboBox cursoBuscaComboBox;
+	private CurriculoComboBox curriculoBuscaComboBox;
 	private ContentPanel panel;
 	private GTabItem tabItem;
-	private Button associarDisciplinasBT;
 	
-	public CurriculosView() {
+	public CampiCurriculosView() {
 		initUI();
 	}
 	
 	private void initUI() {
 		panel = new ContentPanel(new BorderLayout());
-		panel.setHeading("Master Data » Matriz Curricular");
+		panel.setHeading("Master Data » Oferta de Cursos em Campi");
 		createToolBar();
 		createGrid();
 		createFilter();
@@ -50,15 +51,12 @@ public class CurriculosView extends MyComposite implements CurriculosPresenter.D
 	}
 	
 	private void createTabItem() {
-		tabItem = new GTabItem("Matriz Curricular", Resources.DEFAULTS.unidades16());
+		tabItem = new GTabItem("Oferta de Cursos em Campi", Resources.DEFAULTS.unidades16());
 		tabItem.setContent(panel);
 	}
 	
 	private void createToolBar() {
 		toolBar = new SimpleToolBar();
-		toolBar.add(new SeparatorToolItem());
-		associarDisciplinasBT = toolBar.createButton("Associar Disciplinas", Resources.DEFAULTS.disciplina16());
-		toolBar.add(associarDisciplinasBT);
 		panel.setTopComponent(toolBar);
 	}
 	
@@ -66,16 +64,16 @@ public class CurriculosView extends MyComposite implements CurriculosPresenter.D
 		BorderLayoutData bld = new BorderLayoutData(LayoutRegion.CENTER);
 	    bld.setMargins(new Margins(5, 5, 5, 5));
 	    
-	    gridPanel = new SimpleGrid<CurriculoDTO>(getColumnList());
+	    gridPanel = new SimpleGrid<CampusCurriculoDTO>(getColumnList());
 	    panel.add(gridPanel, bld);
 	}
 
 	public List<ColumnConfig> getColumnList() {
 		List<ColumnConfig> list = new ArrayList<ColumnConfig>();
+		list.add(new ColumnConfig("campusString", "Campus", 100));
 		list.add(new ColumnConfig("cursoString", "Curso", 100));
-		list.add(new ColumnConfig("codigo", "Código", 100));
-		list.add(new ColumnConfig("descricao", "Descricao", 100));
-		list.add(new ColumnConfig("qtdPeriodos", "Número de períodos", 200));
+		list.add(new ColumnConfig("matrizCurricularString", "Matriz Curricular", 100));
+		list.add(new ColumnConfig("turnoString", "Turno", 200));
 		return list;
 	}
 
@@ -85,16 +83,19 @@ public class CurriculosView extends MyComposite implements CurriculosPresenter.D
 		bld.setCollapsible(true);
 		
 		filter = new SimpleFilter();
+		turnoBuscaComboBox = new TurnoComboBox();
+		turnoBuscaComboBox.setFieldLabel("Turno");
+		campusBuscaComboBox = new CampusComboBox();
+		campusBuscaComboBox.setFieldLabel("Campus");
 		cursoBuscaComboBox = new CursoComboBox();
 		cursoBuscaComboBox.setFieldLabel("Curso");
-		codigoBuscaTextField = new TextField<String>();
-		codigoBuscaTextField.setFieldLabel("Código");
-		descricaoBuscaTextField = new TextField<String>();
-		descricaoBuscaTextField.setFieldLabel("Descricao");
+		curriculoBuscaComboBox = new CurriculoComboBox();
+		curriculoBuscaComboBox.setFieldLabel("Matriz Curricular");
 		
+		filter.addField(turnoBuscaComboBox);
+		filter.addField(campusBuscaComboBox);
 		filter.addField(cursoBuscaComboBox);
-		filter.addField(codigoBuscaTextField);
-		filter.addField(descricaoBuscaTextField);
+		filter.addField(curriculoBuscaComboBox);
 		
 		panel.add(filter, bld);
 	}
@@ -125,28 +126,33 @@ public class CurriculosView extends MyComposite implements CurriculosPresenter.D
 	}
 	
 	@Override
-	public SimpleGrid<CurriculoDTO> getGrid() {
+	public SimpleGrid<CampusCurriculoDTO> getGrid() {
 		return gridPanel;
 	}
 	
 	@Override
-	public void setProxy(RpcProxy<PagingLoadResult<CurriculoDTO>> proxy) {
+	public void setProxy(RpcProxy<PagingLoadResult<CampusCurriculoDTO>> proxy) {
 		gridPanel.setProxy(proxy);
 	}
-
+	
 	@Override
-	public TextField<String> getDescricaoBuscaTextField() {
-		return descricaoBuscaTextField;
+	public TurnoComboBox getTurnoBuscaComboBox() {
+		return turnoBuscaComboBox;
 	}
-
+	
 	@Override
-	public TextField<String> getCodigoBuscaTextField() {
-		return codigoBuscaTextField;
+	public CampusComboBox getCampusBuscaComboBox() {
+		return campusBuscaComboBox;
 	}
 	
 	@Override
 	public CursoComboBox getCursoBuscaComboBox() {
 		return cursoBuscaComboBox;
+	}
+	
+	@Override
+	public CurriculoComboBox getCurriculoBuscaComboBox() {
+		return curriculoBuscaComboBox;
 	}
 
 	@Override
@@ -157,11 +163,6 @@ public class CurriculosView extends MyComposite implements CurriculosPresenter.D
 	@Override
 	public Button getResetBuscaButton() {
 		return filter.getResetButton();
-	}
-
-	@Override
-	public Button getAssociarDisciplinasButton() {
-		return associarDisciplinasBT;
 	}
 
 }

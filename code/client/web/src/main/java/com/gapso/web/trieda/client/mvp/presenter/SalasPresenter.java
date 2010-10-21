@@ -84,7 +84,7 @@ public class SalasPresenter implements Presenter {
 
 				FutureSynchronizer synch = new FutureSynchronizer(futureUnidadeDTO, futureSalaDTO);
 				synch.addCallback(new com.google.gwt.user.client.rpc.AsyncCallback<Boolean>() {
-					public void onFailure(Throwable caught) {}
+					public void onFailure(Throwable caught) { MessageBox.alert("ERRO!", "Deu falha na conexão", null); }
 					public void onSuccess(Boolean result) {
 						UnidadeDTO unidadeDTO = futureUnidadeDTO.result();
 						TipoSalaDTO tipoSalaDTO = futureSalaDTO.result();

@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.extjs.gxt.ui.client.Style.SortDir;
 import com.extjs.gxt.ui.client.data.BaseListLoadResult;
+import com.extjs.gxt.ui.client.data.BasePagingLoadConfig;
 import com.extjs.gxt.ui.client.data.BasePagingLoadResult;
 import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
@@ -35,6 +36,11 @@ public class CurriculosServiceImpl extends RemoteServiceServlet implements Curri
 		return ConvertBeans.toCurriculoDTO(Curriculo.find(id));
 	}
 
+	@Override
+	public ListLoadResult<CurriculoDTO> getList(BasePagingLoadConfig loadConfig) {
+		return getBuscaList(null, loadConfig.get("query").toString(), null, loadConfig);
+	}
+	
 	@Override
 	public PagingLoadResult<CurriculoDTO> getBuscaList(CursoDTO cursoDTO, String codigo, String descricao, PagingLoadConfig config) {
 		List<CurriculoDTO> list = new ArrayList<CurriculoDTO>();

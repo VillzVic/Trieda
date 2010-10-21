@@ -14,6 +14,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import javax.persistence.Table;
 import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
@@ -116,25 +117,48 @@ public class CampusCurriculo implements java.io.Serializable {
         return em;
     }
 
-	public static long countCampusCurriculoes() {
-        return ((Number) entityManager().createQuery("select count(o) from CampusCurriculo o").getSingleResult()).longValue();
+	public static int count() {
+        return ((Number) entityManager().createQuery("select count(o) from CampusCurriculo o").getSingleResult()).intValue();
     }
 
 	@SuppressWarnings("unchecked")
-    public static List<CampusCurriculo> findAllCampusCurriculoes() {
+    public static List<CampusCurriculo> findAll() {
         return entityManager().createQuery("select o from CampusCurriculo o").getResultList();
     }
 
-	public static CampusCurriculo findCampusCurriculo(Long id) {
+	public static CampusCurriculo find(Long id) {
         if (id == null) return null;
         return entityManager().find(CampusCurriculo.class, id);
     }
 
+	public static List<CampusCurriculo> find(int firstResult, int maxResults) {
+		return find(firstResult, maxResults, null);
+	}
 	@SuppressWarnings("unchecked")
-    public static List<CampusCurriculo> findCampusCurriculoEntries(int firstResult, int maxResults) {
-        return entityManager().createQuery("select o from CampusCurriculo o").setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
+    public static List<CampusCurriculo> find(int firstResult, int maxResults, String orderBy) {
+		orderBy = (orderBy != null) ? "ORDER BY o." + orderBy : "";
+        return entityManager().createQuery("select o from CampusCurriculo o "+orderBy).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
 
+    @SuppressWarnings("unchecked")
+	public static List<CampusCurriculo> findByCursoAndCodigoLikeAndDescricaoLike(Turno turno, Campus campus, Curso curso, Curriculo curriculo, int firstResult, int maxResults, String orderBy) {
+        
+        orderBy = (orderBy != null) ? "ORDER BY o." + orderBy : "";
+        
+        String queryTurno = (turno != null) ? " o.turno = :turno AND " : "";
+        String queryCampus = (campus != null) ? " o.campus = :campus AND " : "";
+        String queryCurso = (curso != null) ? " o.curso = :curso AND " : "";
+        String queryCurriculo = (curriculo != null) ? " o.curriculo = :curriculo AND " : "";
+        
+        Query q = entityManager().createQuery("SELECT o FROM CampusCurriculo o WHERE "+queryTurno+queryCampus+queryCurso+queryCurriculo+" 1=1 ");
+        if(turno != null) q.setParameter("turno", turno);
+        if(campus != null) q.setParameter("campus", campus);
+        if(curso != null) q.setParameter("curso", curso);
+        if(curriculo != null) q.setParameter("curriculo", curriculo);
+        
+        return q.setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
+    }
+    
 	public Curriculo getCurriculo() {
         return this.curriculo;
     }

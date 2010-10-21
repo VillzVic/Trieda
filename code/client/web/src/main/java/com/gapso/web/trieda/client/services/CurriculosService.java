@@ -2,6 +2,7 @@ package com.gapso.web.trieda.client.services;
 
 import java.util.List;
 
+import com.extjs.gxt.ui.client.data.BasePagingLoadConfig;
 import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
@@ -18,6 +19,7 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 public interface CurriculosService extends RemoteService {
 	
 	CurriculoDTO getCurriculo(Long id);
+	ListLoadResult<CurriculoDTO> getList(BasePagingLoadConfig loadConfig);
 	PagingLoadResult<CurriculoDTO> getBuscaList(CursoDTO cursoDTO, String codigo, String descricao, PagingLoadConfig config);
 	void save(CurriculoDTO curriculoDTO);
 	void remove(List<CurriculoDTO> curriculoDTOList);

@@ -24,6 +24,11 @@ public class TurnosServiceImpl extends RemoteServiceServlet implements TurnosSer
 	private static final long serialVersionUID = 5250776996542788849L;
 
 	@Override
+	public TurnoDTO getTurno(Long id) {
+		return ConvertBeans.toTurnoDTO(Turno.find(id));
+	}
+	
+	@Override
 	public PagingLoadResult<TurnoDTO> getList(PagingLoadConfig config) {
 		List<TurnoDTO> list = new ArrayList<TurnoDTO>();
 		String orderBy = config.getSortField();

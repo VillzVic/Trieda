@@ -11,6 +11,7 @@ import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.menu.MenuItem;
 import com.gapso.web.trieda.client.mvp.model.DeslocamentoCampusDTO;
 import com.gapso.web.trieda.client.mvp.view.AreasTitulacaoView;
+import com.gapso.web.trieda.client.mvp.view.CampiCurriculosView;
 import com.gapso.web.trieda.client.mvp.view.CampiDeslocamentoView;
 import com.gapso.web.trieda.client.mvp.view.CampiView;
 import com.gapso.web.trieda.client.mvp.view.CurriculosView;
@@ -50,6 +51,7 @@ public class ToolBarPresenter implements Presenter {
 		MenuItem getCursosListMenuItem();
 		MenuItem getDisciplinasListMenuItem();
 		MenuItem getCurriculosListMenuItem();
+		MenuItem getCampiCurriculosListMenuItem();
 		
 		Component getComponent();
 	}
@@ -182,6 +184,13 @@ public class ToolBarPresenter implements Presenter {
 			@Override
 			public void componentSelected(MenuEvent ce) {
 				Presenter presenter = new CurriculosPresenter(new CurriculosView());
+				presenter.go(gTab);
+			}
+		});
+		toolBar.getCampiCurriculosListMenuItem().addSelectionListener(new SelectionListener<MenuEvent>() {
+			@Override
+			public void componentSelected(MenuEvent ce) {
+				Presenter presenter = new CampiCurriculosPresenter(new CampiCurriculosView());
 				presenter.go(gTab);
 			}
 		});
