@@ -12,7 +12,7 @@ public:
    
    virtual void le_arvore(ItemHorario& raiz);
 
-   virtual int getId();
+   //virtual int getId();
 
    GGroup<int> dias_semana;
    int horarioAulaId;

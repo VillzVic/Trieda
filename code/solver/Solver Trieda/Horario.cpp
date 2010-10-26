@@ -20,7 +20,7 @@ void Horario::le_arvore(ItemHorario& elem)
    turnoId = elem.turnoId();
 }
 
-int Horario::getId()
-{
-   return ((turnoId * 1000) + (horarioAulaId * 10)/* + diaSemana*/);
-}
+//int Horario::getId()
+//{
+//   return ((turnoId * 1000) + (horarioAulaId * 10)/* + diaSemana*/);
+//}

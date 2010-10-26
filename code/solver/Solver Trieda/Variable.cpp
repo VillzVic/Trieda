@@ -150,6 +150,8 @@ std::string Variable::toString()
 		  str << "fcp"; cond_disc = true; break;
 	  case V_SLACK_DIST_CRED_DIA_INFERIOR:
 		  str << "fcm"; cond_disc = true; break;
+     case V_ABERTURA_SUBBLOCO_DE_BLC_DIA_CAMPUS:
+        str << "r"; break;
 	  default:
 		  str << "!";
 	}

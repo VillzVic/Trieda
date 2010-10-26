@@ -8,125 +8,127 @@
 class Variable 
 {
 public:
-	// All variable types
-	enum VariableType
-	{
-		V_ERROR = 0,
-		V_CREDITOS = 1,							// x_{idust}
-		V_OFERECIMENTO = 2,						// o_{idust}
-		V_ABERTURA = 3,							// z_{idu}
-		V_ALUNOS = 4,							// a_{iduc}
-		V_ALOC_ALUNO = 5,				        // b_{icdu}
-		V_N_SUBBLOCOS = 6,				        // w_{bjtu}
-		V_DIAS_CONSECUTIVOS = 7,				// c_{idt}
-		V_MIN_CRED_SEMANA = 8,					// h_{bi}
-		V_MAX_CRED_SEMANA = 9,					// H_{bi}
-		V_ALOC_DISCIPLINA = 10,					// y_{idsu}
-		V_N_ABERT_TURMA_BLOCO = 11,				// v_{bt}
-		V_SLACK_DIST_CRED_DIA_SUPERIOR = 12,	// fcp_{dt}
-		V_SLACK_DIST_CRED_DIA_INFERIOR = 13		// fcm_{dt}
+   // All variable types
+   enum VariableType
+   {
+      V_ERROR = 0,
+      V_CREDITOS = 1,							// x_{idust}
+      V_OFERECIMENTO = 2,						// o_{idust}
+      V_ABERTURA = 3,							// z_{idu}
+      V_ALUNOS = 4,							// a_{iduc}
+      V_ALOC_ALUNO = 5,				        // b_{icdu}
+      V_N_SUBBLOCOS = 6,				        // w_{bjtu} -> w_{b,t,cp}
+      V_DIAS_CONSECUTIVOS = 7,				// c_{idt}
+      V_MIN_CRED_SEMANA = 8,					// h_{bi}
+      V_MAX_CRED_SEMANA = 9,					// H_{bi}
+      V_ALOC_DISCIPLINA = 10,					// y_{idsu}
+      V_N_ABERT_TURMA_BLOCO = 11,				// v_{bt}
+      V_SLACK_DIST_CRED_DIA_SUPERIOR = 12,	// fcp_{dt}
+      V_SLACK_DIST_CRED_DIA_INFERIOR = 13,		// fcm_{dt}
+      V_ABERTURA_SUBBLOCO_DE_BLC_DIA_CAMPUS = 14		   // r_{b,t,cp}
 
-	};
 
-	//Constructors
-	Variable();
-	Variable(const Variable& orig);
+   };
 
-	//Destructor
-	virtual ~Variable();
+   //Constructors
+   Variable();
+   Variable(const Variable& orig);
 
-	//==================================================
-	// GET METHODS 
-	//==================================================
-	//Return variable type
-	VariableType getType() const { return type; }
+   //Destructor
+   virtual ~Variable();
 
-	// Return value
-	double getValue() const { return value; }
+   //==================================================
+   // GET METHODS 
+   //==================================================
+   //Return variable type
+   VariableType getType() const { return type; }
 
-	/*
-	ToDo:
-	All get methods of the private attributes should be defined here
-	*/
+   // Return value
+   double getValue() const { return value; }
 
-	Campus* getCampus() const { 
-		return cp; 
-	}
-	Unidade* getUnidade() const { return u; }
-	Sala* getSala() const { return s; }
+   /*
+   ToDo:
+   All get methods of the private attributes should be defined here
+   */
 
-	int getTurma() const { return i; }
-	Curso* getCurso() const { return c; }
-	BlocoCurricular* getBloco() const { return b; }
-	Disciplina* getDisciplina() const { return d; }
+   Campus* getCampus() const { 
+      return cp; 
+   }
+   Unidade* getUnidade() const { return u; }
+   Sala* getSala() const { return s; }
 
-	int getSubBloco() const { return j; }
+   int getTurma() const { return i; }
+   Curso* getCurso() const { return c; }
+   BlocoCurricular* getBloco() const { return b; }
+   Disciplina* getDisciplina() const { return d; }
 
-	int getDia() const { return t; }
+   int getSubBloco() const { return j; }
 
-	//==================================================
-	// SET METHODS 
-	//==================================================
-	// Reset variables values
-	void reset();
+   int getDia() const { return t; }
 
-	// Set variable type
-	void setType(VariableType t)                 { type = t; }
+   //==================================================
+   // SET METHODS 
+   //==================================================
+   // Reset variables values
+   void reset();
 
-	// Set value
-	void setValue(double v)                      { value = v; }
+   // Set variable type
+   void setType(VariableType t)                 { type = t; }
 
-	/*
-	ToDo:
-	All set methods of the private attributes should be defined here
-	*/
+   // Set value
+   void setValue(double v)                      { value = v; }
 
-	void setCampus(Campus* cpp) { cp = cpp; }
-	void setUnidade(Unidade* uu) {  u = uu; }
-	void setSala(Sala* ss) {  s = ss; }
+   /*
+   ToDo:
+   All set methods of the private attributes should be defined here
+   */
 
-	void setTurma(int ii) { i = ii; }
-	void setCurso(Curso* cc) { c = cc; }
-	void setBloco(BlocoCurricular* bb) {  b = bb; } 
-	void setDisciplina(Disciplina* dd) {  d = dd; }
+   void setCampus(Campus* cpp) { cp = cpp; }
+   void setUnidade(Unidade* uu) {  u = uu; }
+   void setSala(Sala* ss) {  s = ss; }
 
-	void setSubBloco(int jj) { j = jj; }   
+   void setTurma(int ii) { i = ii; }
+   void setCurso(Curso* cc) { c = cc; }
+   void setBloco(BlocoCurricular* bb) {  b = bb; } 
+   void setDisciplina(Disciplina* dd) {  d = dd; }
 
-	void setDia(int tt) {  t = tt; }
+   void setSubBloco(int jj) { j = jj; }   
 
-	//==================================================
-	// OPERATORS 
-	//==================================================
-	//Assignment 
-	Variable& operator=(const Variable& var);
-	//Less 
-	bool operator<(const Variable& var) const;
-	//Equals 
-	bool operator==(const Variable& var) const;
+   void setDia(int tt) {  t = tt; }
 
-	//Variable name
-	std::string toString();
+   //==================================================
+   // OPERATORS 
+   //==================================================
+   //Assignment 
+   Variable& operator=(const Variable& var);
+   //Less 
+   bool operator<(const Variable& var) const;
+   //Equals 
+   bool operator==(const Variable& var) const;
+
+   //Variable name
+   std::string toString();
 
 private:
-	VariableType type;
-	double value;
+   VariableType type;
+   double value;
 
-	/* ToDo:
-	All attributes that define a variable should be declared here
-	*/
+   /* ToDo:
+   All attributes that define a variable should be declared here
+   */
 
-	Campus *cp;
-	Unidade* u;
-	Sala* s;
+   Campus *cp;
+   Unidade* u;
+   Sala* s;
 
-	int i; // Turma
-	Curso* c;
-	BlocoCurricular* b;
-	Disciplina* d;
+   int i; // Turma
+   Curso* c;
+   BlocoCurricular* b;
+   Disciplina* d;
 
-	int j; // subbloco
+   int j; // subbloco
 
-	int t; // dia
+   int t; // dia
 
 };
 
@@ -134,11 +136,11 @@ private:
 class VariableHasher : public stdext::hash_compare<Variable>
 {
 public:
-	//Less operator
-	bool operator()(const Variable& v1, const Variable& v2) const;
+   //Less operator
+   bool operator()(const Variable& v1, const Variable& v2) const;
 
-	//Hash value
-	size_t operator()(const Variable& v) const;
+   //Hash value
+   size_t operator()(const Variable& v) const;
 };
 
 /**

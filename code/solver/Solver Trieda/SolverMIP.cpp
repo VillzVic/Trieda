@@ -514,15 +514,8 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
    }
 
    std::map<std::vector<int/*<d,c,cp,u,s,t>*/>,
-      //std::pair<std::vector<int/*i*/>,
       std::pair<GGroup<int/*i*/>,
       std::pair<int/*valor var x*/,int/*valor var a*/> > > solucao;
-
-   // Listando todas as disciplinas atendidas
-   GGroup<int> disciplinas_atendidas;
-   for(X___i_d_u_s_t::iterator it_x = x.begin(); it_x != x.end(); it_x++) {
-      disciplinas_atendidas.add(it_x->first.second);
-   }
 
    for(X___i_d_u_s_t::iterator it_x = x.begin(); it_x != x.end(); it_x++) {
       for(int dia = 0; dia < 7; dia++){
@@ -540,6 +533,7 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
                */
 
             std::vector<int/*<d,c,cp,u,s,t>*/> chave(6);
+
             chave.at(0) = it_x->first.second;
 
             chave.at(1) = -1;
@@ -549,6 +543,7 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
                      chave.at(1) = it_a->first.at(2);
                }
             }
+
             chave.at(2) = und_cp.find(it_x->second.at(dia).second.first)->second->getId();
             chave.at(3) = it_x->second.at(dia).second.first;
             chave.at(4) = it_x->second.at(dia).second.second;
@@ -606,89 +601,95 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
       discs[it_disc->getId()] = *it_disc;
    }
 
-   // Procurando a posição correta para inserir
-   ITERA_GGROUP(it_at_cp,problemSolution->atendimento_campus,AtendimentoCampus) {
-      int id_at_cp = it_at_cp->getId();
 
-      ITERA_GGROUP(it_at_und,it_at_cp->atendimentos_unidades,AtendimentoUnidade) {
-         int id_at_und = it_at_und->getId();
+   //// Procurando a posição correta para inserir
+   //ITERA_GGROUP(it_at_cp,problemSolution->atendimento_campus,AtendimentoCampus) {
+   //   int id_at_cp = it_at_cp->getId();
 
-         ITERA_GGROUP(it_at_sala,it_at_und->atendimentos_salas,AtendimentoSala) {
-            int id_at_sala = it_at_sala->getId();
+   //   ITERA_GGROUP(it_at_und,it_at_cp->atendimentos_unidades,AtendimentoUnidade) {
+   //      int id_at_und = it_at_und->getId();
 
-            ITERA_GGROUP(it_at_dia_sem,it_at_sala->atendimentos_dias_semana,AtendimentoDiaSemana) {
-               int id_at_dia_sem = it_at_dia_sem->key.second;
+   //      ITERA_GGROUP(it_at_sala,it_at_und->atendimentos_salas,AtendimentoSala) {
+   //         int id_at_sala = it_at_sala->getId();
 
-               //std::map<std::vector<int/*<d,cp,u,s,t>*/>,
-               //   std::pair<std::vector<int/*i*/>,
-               //   std::pair<int/*valor var x*/,int/*valor var a*/> > >::iterator 
-                  it_solucao = solucao.begin();
+   //         ITERA_GGROUP(it_at_dia_sem,it_at_sala->atendimentos_dias_semana,AtendimentoDiaSemana) {
+   //            int id_at_dia_sem = it_at_dia_sem->key.second;
 
-               //Registrando a solução no lugar certo.
-               for(; it_solucao != solucao.end(); it_solucao++) {
-                  
-                  if(it_solucao->first.at(0) > 0) {
+   //            //std::map<std::vector<int/*<d,cp,u,s,t>*/>,
+   //            //   std::pair<std::vector<int/*i*/>,
+   //            //   std::pair<int/*valor var x*/,int/*valor var a*/> > >::iterator 
+   //            it_solucao = solucao.begin();
 
-                     if( it_solucao->first.at(2) == id_at_cp &&
-                        it_solucao->first.at(3) == id_at_und &&
-                        it_solucao->first.at(4) == id_at_sala &&
-                        it_solucao->first.at(5) == id_at_dia_sem ) {
+   //            //Registrando a solução no lugar certo.
+   //            for(; it_solucao != solucao.end(); it_solucao++) {
 
-                           AtendimentoOferta * at_oferta = new AtendimentoOferta();
+   //               if(it_solucao->first.at(0) > 0) {
 
-                           // Procurando o id de <ofertaCursoCampus>
-                           ITERA_GGROUP(it_oferta,problemData->ofertas,Oferta) {
-                              if( (it_oferta->campus_id == id_at_cp) &&
-                                 (it_oferta->curso_id == it_solucao->first.at(1))) {
+   //                  if( it_solucao->first.at(2) == id_at_cp &&
+   //                     it_solucao->first.at(3) == id_at_und &&
+   //                     it_solucao->first.at(4) == id_at_sala &&
+   //                     it_solucao->first.at(5) == id_at_dia_sem ) {
 
-                                    std::stringstream aux;
-                                    aux << it_oferta->getId();
+   //                        AtendimentoOferta * at_oferta = new AtendimentoOferta();
 
-                                    at_oferta->oferta_curso_campi_id = aux.str();
+   //                        // Procurando o id de <ofertaCursoCampus>
+   //                        ITERA_GGROUP(it_oferta,problemData->ofertas,Oferta) {
+   //                           if( (it_oferta->campus_id == id_at_cp) &&
+   //                              (it_oferta->curso_id == it_solucao->first.at(1))) {
 
-                                    break;
-                              }
-                           }
+   //                                 std::stringstream aux;
+   //                                 aux << it_oferta->getId();
 
-                           std::stringstream aux;
+   //                                 at_oferta->oferta_curso_campi_id = aux.str();
 
-                           aux << it_solucao->first.at(0);
-                           at_oferta->disciplina_id = aux.str();
-                           at_oferta->quantidade = it_solucao->second.second.second;
+   //                                 break;
+   //                           }
+   //                        }
 
-                           AtendimentoTatico * at_tatico = new AtendimentoTatico();
+   //                        std::stringstream aux;
 
-                           at_tatico->atendimento_oferta = at_oferta;
+   //                        aux << it_solucao->first.at(0);
+   //                        at_oferta->disciplina_id = aux.str();
+   //                        at_oferta->quantidade = it_solucao->second.second.second;
 
-                           int creds_praticos = 0;
+   //                        AtendimentoTatico * at_tatico = new AtendimentoTatico();
 
-                           std::vector<int> chave_negada(it_solucao->first);
-                           chave_negada.at(0) = -chave_negada.at(0);
+   //                        at_tatico->atendimento_oferta = at_oferta;
 
-                           if(solucao.find(chave_negada) != solucao.end()) {
-                              creds_praticos = it_solucao->second.second.first;
-                                 //solucao[chave_negada].second.first;
-                           }
+   //                        //int creds_praticos = 0;
 
-                           if(discs[it_solucao->first.at(0)]->cred_teoricos > 0) {
-                              at_tatico->qtde_creditos_teoricos = it_solucao->second.second.first;
-                              //at_tatico->qtde_creditos_praticos = 0;
-                              at_tatico->qtde_creditos_praticos = creds_praticos;
-                           }
-                           else if(discs[it_solucao->first.at(0)]->cred_praticos > 0) {
-                              at_tatico->qtde_creditos_teoricos = 0;
-                              at_tatico->qtde_creditos_praticos = 
-                                 ( creds_praticos + it_solucao->second.second.first);
-                           }
+   //                        //std::vector<int> chave_negada(it_solucao->first);
+   //                        //chave_negada.at(0) = -chave_negada.at(0);
 
-                           it_at_dia_sem->atendimentos_tatico.add(at_tatico);
-                     }
-                  }
-               }
-            }
-         }
-      }
-   }
+   //                        /*
+   //                        if(solucao.find(chave_negada) != solucao.end()) {
+   //                        creds_praticos = it_solucao->second.second.first;
+   //                        //solucao[chave_negada].second.first;
+   //                        }
+   //                        */
+
+   //                        if(discs[it_solucao->first.at(0)]->cred_teoricos > 0) {
+   //                           at_tatico->qtde_creditos_teoricos = it_solucao->second.second.first;
+
+   //                           at_tatico->qtde_creditos_praticos = 0;
+   //                           //at_tatico->qtde_creditos_praticos = creds_praticos;
+   //                        }
+   //                        else if(discs[it_solucao->first.at(0)]->cred_praticos > 0) {
+   //                           at_tatico->qtde_creditos_teoricos = 0;
+   //                           at_tatico->qtde_creditos_praticos = 
+
+   //                              //( creds_praticos + it_solucao->second.second.first);
+   //                              it_solucao->second.second.first;
+   //                        }
+
+   //                        it_at_dia_sem->atendimentos_tatico.add(at_tatico);
+   //                  }
+   //               }
+   //            }
+   //         }
+   //      }
+   //   }
+   //}
 
 #ifdef DEBUG
 	if ( fout )
@@ -723,6 +724,7 @@ int SolverMIP::cria_variaveis(void)
 	num_vars += cria_variavel_aloc_alunos(); // b
 	num_vars += cria_variavel_de_folga_dist_cred_dia_superior(); // fcp
 	num_vars += cria_variavel_de_folga_dist_cred_dia_inferior(); // fcm
+   num_vars += cria_variavel_abertura_subbloco_de_blc_dia_campus(); // r
 
 	return num_vars;
 }
@@ -1254,7 +1256,38 @@ int SolverMIP::cria_variavel_de_folga_dist_cred_dia_inferior(void)
 	return num_vars;
 }
 
+int SolverMIP::cria_variavel_abertura_subbloco_de_blc_dia_campus()
+{
+   int num_vars = 0;
 
+   ITERA_GGROUP(it_bloco,problemData->blocos,BlocoCurricular)
+   {
+      for(int dia=0;dia<7;dia++)
+      {
+         Variable v;
+         v.reset();
+
+         v.setType(Variable::V_ABERTURA_SUBBLOCO_DE_BLC_DIA_CAMPUS);
+         v.setBloco(*it_bloco);
+         v.setDia(dia);
+         v.setCampus(it_bloco->campus);
+
+         if (vHash.find(v) == vHash.end())
+         {
+            vHash[v] = lp->getNumCols();
+
+            OPT_COL col(OPT_COL::VAR_BINARY,0,0.0,1.0,
+               (char*)v.toString().c_str());
+
+            lp->newCol(col);
+
+            num_vars += 1;
+         }
+      }
+   }
+
+   return num_vars;
+}
 
 // ==============================================================
 //							CONSTRAINTS
@@ -1267,7 +1300,7 @@ int SolverMIP::cria_restricoes(void)
 	restricoes += cria_restricao_carga_horaria();				// Restricao 1.2.3
 	restricoes += cria_restricao_max_cred_sd();					// Restricao 1.2.4
 	restricoes += cria_restricao_min_cred_dd();					// Restricao 1.2.5
-	restricoes += cria_restricao_ativacao();					// Restricao 1.2.6
+	restricoes += cria_restricao_ativacao_var_o();					// Restricao 1.2.6
 	restricoes += cria_restricao_evita_sobreposicao();			// Restricao 1.2.7
 	restricoes += cria_restricao_disciplina_sala();				// Restricao 1.2.8
 	restricoes += cria_restricao_turma_sala();					// Restricao 1.2.9
@@ -1285,6 +1318,7 @@ int SolverMIP::cria_restricoes(void)
 	restricoes += cria_restricao_aluno_curso_disc();			// Restricao 1.2.21
 	restricoes += cria_restricao_alunos_cursos_dif();			// Restricao 1.2.22
 	restricoes += cria_restricao_de_folga_dist_cred_dia();		// Restricao 1.2.23
+   restricoes += cria_restricao_ativacao_var_r();						// Restricao 1.2.24
 
 	return restricoes;
 }
@@ -1533,7 +1567,7 @@ int SolverMIP::cria_restricao_min_cred_dd(void)
 	return restricoes;
 }
 
-int SolverMIP::cria_restricao_ativacao(void)
+int SolverMIP::cria_restricao_ativacao_var_o(void)
 {
 	int restricoes = 0;
 	char name[100];
@@ -1905,6 +1939,7 @@ int SolverMIP::cria_restricao_turmas_bloco(void)
 						}
 					}
 				}
+
 				v.reset();
 				v.setType(Variable::V_N_SUBBLOCOS);
 				v.setBloco(*it_bloco);
@@ -2000,6 +2035,66 @@ int SolverMIP::cria_restricao_max_cred_disc_bloco(void)
 int SolverMIP::cria_restricao_num_tur_bloc_dia_difunid(void)
 {
 	int restricoes = 0;
+	char name[100];
+	int nnz;
+
+	Constraint c;
+
+	Variable v;
+	VariableHash::iterator it_v;
+
+   ITERA_GGROUP(it_bloco,problemData->blocos,BlocoCurricular) {
+      for(int dia = 0; dia < 7; dia++) {
+
+         c.reset();
+         c.setType(Constraint::C_NUM_TUR_BLOC_DIA_DIFUNID);
+
+         c.setBloco(*it_bloco);
+         c.setDia(dia);
+
+         sprintf( name, "%s", c.toString().c_str() ); 
+
+         if (cHash.find(c) != cHash.end()) continue;
+
+         cHash[ c ] = lp->getNumRows();
+
+         nnz = problemData->campi.size();
+
+         OPT_ROW row( nnz + 1, OPT_ROW::LESS , 1.0 , 
+            name );
+
+         ITERA_GGROUP(it_cp,problemData->campi,Campus) {
+            v.reset();
+            v.setType(Variable::V_ABERTURA_SUBBLOCO_DE_BLC_DIA_CAMPUS);
+
+            v.setBloco(*it_bloco);
+            v.setDia(dia);
+            v.setCampus(*it_cp);
+
+            it_v = vHash.find(v);
+            if( it_v != vHash.end() )
+            {
+               row.insert(it_v->second, 1.0);
+            }
+         }
+
+         v.reset();
+         v.setType(Variable::V_N_ABERT_TURMA_BLOCO);
+
+         v.setBloco(*it_bloco);
+         v.setDia(dia);
+
+         it_v = vHash.find(v);
+         if( it_v != vHash.end() )
+         {
+            row.insert(it_v->second, -1.0);
+         }
+
+         lp->addRow(row);
+         ++restricoes;
+      }
+   }
+
 	return restricoes;
 }
 
@@ -2050,10 +2145,13 @@ int SolverMIP::cria_restricao_lim_cred_diar_disc(void)
 							if( it_v != vHash.end() )
 							{
 								row.insert(it_v->second, 1.0);
+
+                        lp->addRow(row);
+                        ++restricoes;
 							}
 
-							lp->addRow(row);
-							++restricoes;
+							//lp->addRow(row);
+							//++restricoes;
 						}
 					}
 				}
@@ -2751,6 +2849,71 @@ int SolverMIP::cria_restricao_de_folga_dist_cred_dia(void)
 	}
 
 	return restricoes;
+}
+
+int SolverMIP::cria_restricao_ativacao_var_r()
+{
+   int restricoes = 0;
+   char name[100];
+   int nnz;
+
+   Constraint c;
+
+   Variable v;
+   VariableHash::iterator it_v;
+
+   ITERA_GGROUP(it_bloco,problemData->blocos,BlocoCurricular) {
+      for(int dia=0;dia<7;dia++) {
+
+			c.reset();
+         c.setType(Constraint::C_VAR_R);
+
+         c.setBloco(*it_bloco);
+         c.setCampus(it_bloco->campus);
+			c.setDia(dia);
+
+			sprintf( name, "%s", c.toString().c_str() ); 
+
+			if (cHash.find(c) != cHash.end()) continue;
+
+			cHash[ c ] = lp->getNumRows();
+
+         nnz = 2;
+
+         OPT_ROW row( nnz, OPT_ROW::LESS , 0.0, name );
+
+         v.reset();
+         v.setType(Variable::V_N_SUBBLOCOS);
+
+         v.setBloco(*it_bloco);
+			v.setDia(dia);
+         v.setCampus(it_bloco->campus);
+
+         it_v = vHash.find(v);
+         if( it_v != vHash.end() )
+         {
+            row.insert(it_v->second, 1.0);
+         }
+
+         v.reset();
+         v.setType(Variable::V_ABERTURA_SUBBLOCO_DE_BLC_DIA_CAMPUS);
+
+         v.setBloco(*it_bloco);
+			v.setDia(dia);
+         v.setCampus(it_bloco->campus);
+
+         it_v = vHash.find(v);
+         if( it_v != vHash.end() )
+         {
+            row.insert(it_v->second, -9999.0);
+         }
+
+         lp->addRow(row);
+         restricoes++;
+      }
+   }
+
+   return restricoes;
 }
 
 /*

@@ -34,7 +34,8 @@ public:
 		C_MAX_CREDS_TURM_BLOCO = 18,		// Restricao 1.2.20
 		C_ALUNO_CURSO_DISC = 19,			// Restricao 1.2.21
 		C_ALUNOS_CURSOS_DIF = 20,			// Restricao 1.2.22
-		C_SLACK_DIST_CRED_DIA = 21			// Restricao 1.2.23
+		C_SLACK_DIST_CRED_DIA = 21,			// Restricao 1.2.23
+      C_VAR_R = 22			            // Restricao 1.2.24
 
 	};
 

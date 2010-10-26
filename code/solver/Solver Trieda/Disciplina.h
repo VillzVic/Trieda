@@ -41,6 +41,15 @@ public:
 	// <<< 14/10/2010
 
 public:
+
+   void setCredsPraticos(int _creds_praticos) {
+      cred_praticos = _creds_praticos;
+   }
+
+   void setMaxCreds(int _max_creds) {
+      max_creds = _max_creds;
+   }
+
 	virtual void le_arvore(ItemDisciplina& elem);
 
 	//Disciplina& operator= (const Disciplina& d);

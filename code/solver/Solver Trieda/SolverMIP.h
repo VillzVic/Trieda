@@ -75,6 +75,7 @@ public:
 	int cria_variavel_num_abertura_turma_bloco(void);
 	int cria_variavel_de_folga_dist_cred_dia_superior(void);
 	int cria_variavel_de_folga_dist_cred_dia_inferior(void);
+   int cria_variavel_abertura_subbloco_de_blc_dia_campus(void);
 
 	/********************************************************************
 	**                    CONSTRAINT CREATION                          **
@@ -90,7 +91,7 @@ public:
 	int cria_restricao_carga_horaria(void);					// Restricao 1.2.3
 	int cria_restricao_max_cred_sd(void);					// Restricao 1.2.4
 	int cria_restricao_min_cred_dd(void);					// Restricao 1.2.5
-	int cria_restricao_ativacao(void);						// Restricao 1.2.6
+	int cria_restricao_ativacao_var_o(void);						// Restricao 1.2.6
 	int cria_restricao_evita_sobreposicao(void);			// Restricao 1.2.7
 	int cria_restricao_disciplina_sala(void);				// Restricao 1.2.8
 	int cria_restricao_turma_sala(void);					// Restricao 1.2.9
@@ -108,6 +109,7 @@ public:
 	int cria_restricao_aluno_curso_disc(void);				// Restricao 1.2.21
 	int cria_restricao_alunos_cursos_dif(void);				// Restricao 1.2.22
 	int cria_restricao_de_folga_dist_cred_dia(void);		// Restricao 1.2.23
+   int cria_restricao_ativacao_var_r(void);						// Restricao 1.2.24
 
 };
 

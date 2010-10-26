@@ -77,23 +77,28 @@ void ProblemDataLoader::divideDisciplinas() {
 			// <<<
 
 			nova_disc->setId(-it_disc->getId()); // alterado
+         //nova_disc->setId(it_disc->getId()*1000); // alterado
 
-			//nova_disc->codigo = it_disc->codigo + "-P";
-         nova_disc->codigo = it_disc->codigo;
+			nova_disc->codigo = it_disc->codigo + "-P";
+         //nova_disc->codigo = it_disc->codigo;
 			nova_disc->nome = it_disc->nome + "PRATICA";
 
 			//nova_disc->cred_teoricos = it_disc->cred_teoricos;
 			nova_disc->cred_teoricos = 0; // alterado
 
 			nova_disc->cred_praticos = it_disc->cred_praticos; // alterado
-			it_disc->cred_praticos = 0; // alterado
+			//it_disc->cred_praticos = 0; // alterado
+         it_disc->setCredsPraticos(0);
 
-			nova_disc->max_creds = it_disc->max_creds;
+			//nova_disc->max_creds = it_disc->max_creds;
+         nova_disc->max_creds = nova_disc->cred_praticos;
+         //it_disc->max_creds = it_disc->cred_teoricos;
+         it_disc->setMaxCreds(it_disc->cred_teoricos);
 
 			nova_disc->e_lab = it_disc->e_lab; // alterado
 			it_disc->e_lab = false; // alterado
 
-			nova_disc->max_alunos_t = it_disc->max_alunos_t; // alterado
+			//nova_disc->max_alunos_t = it_disc->max_alunos_t; // alterado
 			nova_disc->max_alunos_t = -1; // alterado
 
 			nova_disc->max_alunos_p = it_disc->max_alunos_p; // alterado
@@ -243,7 +248,7 @@ void ProblemDataLoader::divideDisciplinas() {
 								com inputTrivial)
 								*/
 
-								//it_sala->disciplinas_associadas.remove(it_disc->getId());
+								it_sala->disciplinas_associadas.remove(it_disc->getId());
 
 								/*
 								Em relacao a nova disciplina (pratica), so adiciono uma associacao quando 
@@ -542,56 +547,124 @@ void ProblemDataLoader::gera_refs() {
 
 void ProblemDataLoader::cria_blocos_curriculares() {
 	/* cria blocos curriculares */
-	ITERA_GGROUP(it_campi,problemData->campi,Campus) {
+/**/
+   ITERA_GGROUP(it_campi,problemData->campi,Campus) {
+      ITERA_GGROUP(it_curso,problemData->cursos,Curso) {
+         ITERA_GGROUP(it_curr,it_curso->curriculos,Curriculo) {
 
-		ITERA_GGROUP(it_curso,problemData->cursos,Curso)
-		{
-			ITERA_GGROUP(it_curr,it_curso->curriculos,Curriculo)
-			{
-				GGroup<DisciplinaPeriodo>::iterator it_dp = 
-					it_curr->disciplinas_periodo.begin();
-				for(;it_dp != it_curr->disciplinas_periodo.end(); ++it_dp)
-				{
-					DisciplinaPeriodo dp = *it_dp;
-					int p = dp.first;
-					int disc_id = dp.second;
-					Disciplina* d = new Disciplina;
-					d->id = disc_id;
+            GGroup<DisciplinaPeriodo>::iterator it_dp = 
+               it_curr->disciplinas_periodo.begin();
 
-					if (problemData->disciplinas.find(d) != 
-						problemData->disciplinas.end())
-						d = *problemData->disciplinas.find(d);
+            // Percorrendo todas as disciplinas de um curso cadastradas para um currículo.
+            for(;it_dp != it_curr->disciplinas_periodo.end(); ++it_dp) {
 
-					/* Versão lenta, find não está funcionando :( */
-					for(GGroup<Disciplina*>::iterator it_d = 
-						problemData->disciplinas.begin();
-						it_d != problemData->disciplinas.end(); ++it_d) 
-					{
-						if (it_d->getId() == d->getId())
-							d = *it_d;
-					}
-					/* FIM */            
+               DisciplinaPeriodo dp = *it_dp;
+               int periodo = dp.first;
+               int disc_id = dp.second;
 
-					BlocoCurricular* b = new BlocoCurricular;
-					b->curso = *it_curso;
-					b->periodo = p;
-					b->campus = *it_campi;
-					GGroup<BlocoCurricular*>::iterator it_bc = 
-						problemData->blocos.find(b);
-					if (it_bc != problemData->blocos.end())
-					{
-						delete b;
-						b = *it_bc;
-					}
+               Disciplina * d = new Disciplina();
 
-					else {
-						problemData->blocos.add(b);
-					}
-					b->disciplinas.add(d);
-				}
-			}
-		}
-	}
+               // Encontrando a disciplina em questão.
+               for(GGroup<Disciplina*>::iterator it_d = 
+                  problemData->disciplinas.begin();
+                  it_d != problemData->disciplinas.end(); ++it_d) {
+
+                     if (it_d->getId() == disc_id) {
+                        //d = new Disciplina();
+                        d = *it_d;
+                        break;
+                     }
+               }
+
+               GGroup<BlocoCurricular*>::iterator it_bc = 
+                  problemData->blocos.begin();
+
+               int id_blc = it_curso->getId() * 100 + periodo;
+
+               bool found = false;
+
+               // Verificando a existência do bloco curricular para a disciplina em questão.
+               for(;it_bc != problemData->blocos.end(); ++it_bc) {
+                  if(it_bc->getId() == id_blc) {
+                     it_bc->disciplinas.add(d);
+                     found = true;
+                     break;
+                  }
+               }
+
+               if(!found) {
+                  BlocoCurricular * b = new BlocoCurricular();
+
+                  b->setId(id_blc);
+                  b->periodo = periodo;
+                  b->campus = *it_campi;
+                  b->curso = *it_curso;
+
+                  b->disciplinas.add(d);
+
+                  problemData->blocos.add(b);
+               }
+
+            }
+
+         }
+      }
+   }
+
+/**/
+
+   /*
+   ITERA_GGROUP(it_campi,problemData->campi,Campus) {
+
+   ITERA_GGROUP(it_curso,problemData->cursos,Curso)
+   {
+   ITERA_GGROUP(it_curr,it_curso->curriculos,Curriculo)
+   {
+   GGroup<DisciplinaPeriodo>::iterator it_dp = 
+   it_curr->disciplinas_periodo.begin();
+   for(;it_dp != it_curr->disciplinas_periodo.end(); ++it_dp)
+   {
+   DisciplinaPeriodo dp = *it_dp;
+   int p = dp.first;
+   int disc_id = dp.second;
+   Disciplina* d = new Disciplina;
+   d->id = disc_id;
+
+   if (problemData->disciplinas.find(d) != 
+   problemData->disciplinas.end())
+   d = *problemData->disciplinas.find(d);
+
+   // Versão lenta, find não está funcionando :(
+   for(GGroup<Disciplina*>::iterator it_d = 
+   problemData->disciplinas.begin();
+   it_d != problemData->disciplinas.end(); ++it_d) 
+   {
+   if (it_d->getId() == d->getId())
+   d = *it_d;
+   }
+   // FIM
+
+   BlocoCurricular* b = new BlocoCurricular;
+   b->curso = *it_curso;
+   b->periodo = p;
+   b->campus = *it_campi;
+   GGroup<BlocoCurricular*>::iterator it_bc = 
+   problemData->blocos.find(b);
+   if (it_bc != problemData->blocos.end())
+   {
+   delete b;
+   b = *it_bc;
+   }
+
+   else {
+   problemData->blocos.add(b);
+   }
+   b->disciplinas.add(d);
+   }
+   }
+   }
+   }
+   */
 }
 
 void ProblemDataLoader::calcula_demandas() {
