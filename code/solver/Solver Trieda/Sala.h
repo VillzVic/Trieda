@@ -22,15 +22,35 @@ public:
 	GGroup<CreditoDisponivel*> creditos_disponiveis;
 	GGroup<int> disciplinas_associadas; //alterar para ref, depois
 
+   // >>> Dados para pré processamento.
+
+   /* Esta estrutura vai, futuramente, substituir a 
+   estrutura <GGroup<int> disciplinas_associadas> */
+   GGroup<Disciplina*> disciplinasAssociadas;
+   // <<<
+
 public:
 	virtual void le_arvore(ItemSala& elem);
+
 	int max_creds(int dia);
+
 	TipoSala* tipo_sala;
 
 	// >>>
 	int id_unidade;
 	// <<<
 
-	GGroup<Disciplina*> disc_assoc_PT;
+   
+   // =========== METODOS SET
+
+   // =========== METODOS GET
+   int getTipoSalaId() const { return tipo_sala_id; }
+
+   unsigned getCapacidade() const { return capacidade; }
+
+
+   // ToDo : implementar os métodos básicos para todos os membros da classe.
+
+	//GGroup<Disciplina*> disc_assoc_PT;
 
 };

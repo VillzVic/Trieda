@@ -32,10 +32,16 @@ void ProblemDataLoader::load()
 	// <<< 14/10/2010
 	gera_refs();
 	cria_blocos_curriculares();
-	calcula_demandas();
-	print_stats();
-	estima_turmas();
+	
+   calculaTamanhoMedioSalas();
+   calculaDemandas();
+	
+   estima_turmas();
 	cache();
+
+   carregaDisciplinasAssociadas();
+
+   print_stats();
 	//print_csv();
 
 }
@@ -667,13 +673,29 @@ void ProblemDataLoader::cria_blocos_curriculares() {
    */
 }
 
-void ProblemDataLoader::calcula_demandas() {
+void ProblemDataLoader::calculaTamanhoMedioSalas()
+{
+   unsigned somaCapSalas = 0;
+
+   ITERA_GGROUP(it_cp,problemData->campi,Campus) {
+      ITERA_GGROUP(it_und,it_cp->unidades,Unidade) {
+         ITERA_GGROUP(it_sala,it_und->salas,Sala) {
+            somaCapSalas += it_sala->getCapacidade();
+         }
+         problemData->und_medSalas[it_und->getId()] = (somaCapSalas/it_und->getNumSalas());
+      }
+   }
+}
+
+
+void ProblemDataLoader::calculaDemandas() {
 	ITERA_GGROUP(it_dem,problemData->demandas,Demanda) {
 		int dem = it_dem->quantidade;
 
-		it_dem->disciplina->max_demanda = 
-			std::max(it_dem->disciplina->max_demanda,dem);
-		it_dem->disciplina->demanda_total += dem;
+      it_dem->disciplina->setMaxDemanda(
+         std::max(it_dem->disciplina->getMaxDemanda(),dem));
+
+      it_dem->disciplina->adicionaDemandaTotal(dem);
 
 		std::pair<int,int> dc = std::make_pair(
 			it_dem->disciplina->getId(),
@@ -710,7 +732,22 @@ void ProblemDataLoader::estima_turmas() {
 		it_disc->num_turmas = it_disc->demanda_total/tam_turma + 1;
 		*/
 
-		int tam_turma = -1;
+      int tam_turma = -1;
+
+      if(it_disc->getMaxAlunosTeo() > 0 && it_disc->getMaxAlunosPrat() > 0){
+         tam_turma = std::min(it_disc->getMaxAlunosTeo(),it_disc->getMaxAlunosPrat());
+      }
+      else {
+         tam_turma = std::max(it_disc->getMaxAlunosTeo(),it_disc->getMaxAlunosPrat());
+
+         if( tam_turma <= 0) {
+            // ToDo : TAMANHO MEDIO DAS SALAS ->> MUDAR DE UNIDADE PARA CAMPUS <<-
+         }
+      }
+
+      // >>> 27/10/2010
+      /*
+      int tam_turma = -1;
 
 		if(it_disc->max_alunos_t > 0 && it_disc->max_alunos_p < 0){
 			tam_turma = it_disc->max_alunos_t;
@@ -719,6 +756,12 @@ void ProblemDataLoader::estima_turmas() {
 		if(it_disc->max_alunos_p > 0 && it_disc->max_alunos_t < 0){
 			tam_turma = it_disc->max_alunos_p;
 		}
+      */
+      // <<< 27/10/2010
+
+      // ToDo : os dois podem ser maior do que zero se e_lab for false..
+
+
 
 		// ToDo : Resolver melhor essa configuração de turmas. Ver com o Chico
 		/*
@@ -727,49 +770,72 @@ void ProblemDataLoader::estima_turmas() {
 		Caso contrário, o tamanho de uma turma será calculado com base na metade do número
 		máximo de alunos que uma disciplina pode ter.
 		*/
-		if (tam_turma < 0)
-			tam_turma = 10; 
-		else 
-			tam_turma /= 2; 
+      // >>> 27/10/2010
+      /*
+      if (tam_turma < 0)
+      tam_turma = 10; // ToDo : tam medio das salas e div pela demanda.
+      else 
+      tam_turma /= 2;
+      */
+      // <<< 27/10/2010
 
-		if(it_disc->demanda_total == 0)
+      if(it_disc->getDemandaTotal() == 0) {
 			it_disc->num_turmas = 0;
-		else
-			it_disc->num_turmas = it_disc->demanda_total/tam_turma + 1;
+      }
+      else {
+         it_disc->num_turmas = it_disc->getDemandaTotal()/tam_turma + 1;
+      }
 
-		std::cout << "Decidi abrir " << it_disc->num_turmas << 
-			" turmas da disciplina " << it_disc->codigo << std::endl;
+      /**/
+      std::cout << "Decidi abrir " << it_disc->num_turmas << 
+      " turmas da disciplina " << it_disc->codigo << std::endl;
+      /**/
 	}
 }
 void ProblemDataLoader::print_stats() {
-	int ncampi,nunidades,ndiscs,nprofs,ncursos,nofertas,tdemanda;
+	int ncampi(0),nunidades(0),nsalas(0),ndiscs(0),
+      nturmas(0),nprofs(0),ncursos(0),nofertas(0),tdemanda(0);
 
 	ncampi = problemData->campi.size();
-	nunidades = 0, nprofs = 0, ncursos = 0;
+
 	ITERA_GGROUP(it_campi,problemData->campi,Campus) {
 		nunidades += it_campi->unidades.size();
+
+      ITERA_GGROUP(it_und,it_campi->unidades,Unidade) {
+         nsalas += it_und->salas.size();
+      }
+
 		nprofs += it_campi->professores.size();
 		ncursos += problemData->cursos.size();
 	}
+
 	nofertas = problemData->ofertas.size();
-	ndiscs = problemData->disciplinas.size();
-	tdemanda = 0;
+	
+   ITERA_GGROUP(it_disc,problemData->disciplinas,Disciplina) {
+      if(it_disc->getId() > 0) {
+         ndiscs++;
+         nturmas += it_disc->num_turmas;
+      }
+   }
+
 	ITERA_GGROUP(it_disc,problemData->disciplinas,Disciplina) {
-		tdemanda += it_disc->demanda_total;
+      tdemanda += it_disc->getDemandaTotal();
 	}
 
-	std::cout << std::endl;
-	std::cout << "Estatisticas de dados de entrada" << std::endl;
-	std::cout << "================================" << std::endl;
-	printf("Campi:        \t%4d\n",ncampi);
-	printf("Unidades:     \t%4d\n",nunidades);
-	printf("Disciplinas:  \t%4d\n",ndiscs);
-	printf("Professores:  \t%4d\n",nprofs);
-	printf("Cursos:       \t%4d\n",ncursos);
-	printf("Ofertas:      \t%4d\n",nofertas);
-	printf("Demanda total:\t%4d vagas\n",tdemanda);
-	std::cout << "================================" << std::endl
-		<< std::endl;
+   std::cout << std::endl;
+   std::cout << "Estatisticas de dados de entrada" << std::endl;
+   std::cout << "================================" << std::endl;
+   printf("Campi:        \t%4d\n",ncampi);
+   printf("Unidades:     \t%4d\n",nunidades);
+   printf("Salas:        \t%4d\n",nsalas);
+   printf("Disciplinas:  \t%4d\n",ndiscs);
+   printf("Turmas:       \t%4d\n",nturmas);
+   printf("Professores:  \t%4d\n",nprofs);
+   printf("Cursos:       \t%4d\n",ncursos);
+   printf("Ofertas:      \t%4d\n",nofertas);
+   printf("Demanda total:\t%4d vagas\n",tdemanda);
+   std::cout << "================================" << std::endl
+      << std::endl;
 }
 /* Salva algumas informações que são usadas frequentemente */
 void ProblemDataLoader::cache() {
@@ -878,56 +944,103 @@ void ProblemDataLoader::cache() {
 	// <<<
 
 	// >>>
-	/* Adicionando às salas todas as disciplinas compativeis. 
-	OBS: Se a sala não possui disciplina compatível informada na
-	entrada, entao todas as disciplinas sao compativeis.*/
-	GGroup<int> disc_proibidas;
+	///* Adicionando às salas todas as disciplinas compativeis. 
+	//OBS: Se a sala não possui disciplina compatível informada na
+	//entrada, entao todas as disciplinas são compativeis.*/
+	//GGroup<int> disc_proibidas;
 
-	ITERA_GGROUP(it_cp,problemData->campi,Campus) {
-		ITERA_GGROUP(it_und,it_cp->unidades,Unidade) {
-			ITERA_GGROUP(it_sala,it_und->salas,Sala) {
-				GGroup<int>::iterator it_sala_disc_assoc = it_sala->disciplinas_associadas.begin();
-				for(;it_sala_disc_assoc != it_sala->disciplinas_associadas.end();it_sala_disc_assoc++ ) {
-					disc_proibidas.add(*it_sala_disc_assoc);
-				}
-			}
-		}
-	}
+	//ITERA_GGROUP(it_cp,problemData->campi,Campus) {
+	//	ITERA_GGROUP(it_und,it_cp->unidades,Unidade) {
+	//		ITERA_GGROUP(it_sala,it_und->salas,Sala) {
+	//			GGroup<int>::iterator it_sala_disc_assoc = it_sala->disciplinas_associadas.begin();
+	//			for(;it_sala_disc_assoc != it_sala->disciplinas_associadas.end();it_sala_disc_assoc++ ) {
+	//				disc_proibidas.add(*it_sala_disc_assoc);
+	//			}
+	//		}
+	//	}
+	//}
 
-	ITERA_GGROUP(it_cp,problemData->campi,Campus) {
-		ITERA_GGROUP(it_und,it_cp->unidades,Unidade) {
-			ITERA_GGROUP(it_sala,it_und->salas,Sala) {
-				ITERA_GGROUP(it_disc,problemData->disciplinas,Disciplina) {
-					if( it_sala->disciplinas_associadas.find(it_disc->getId()) !=
-						it_sala->disciplinas_associadas.end()) {
-							it_sala->disc_assoc_PT.add(*it_disc);
-					}
-				}
-			}
-		}
-	}
+	//ITERA_GGROUP(it_cp,problemData->campi,Campus) {
+	//	ITERA_GGROUP(it_und,it_cp->unidades,Unidade) {
+	//		ITERA_GGROUP(it_sala,it_und->salas,Sala) {
+	//			ITERA_GGROUP(it_disc,problemData->disciplinas,Disciplina) {
+	//				if( it_sala->disciplinas_associadas.find(it_disc->getId()) !=
+	//					it_sala->disciplinas_associadas.end()) {
+	//						//it_sala->disc_assoc_PT.add(*it_disc);
+ //                    it_sala->disciplinasAssociadas.add(*it_disc);
+	//				}
+	//			}
+	//		}
+	//	}
+	//}
 
-	ITERA_GGROUP(it_cp,problemData->campi,Campus) {
-		ITERA_GGROUP(it_und,it_cp->unidades,Unidade) {
-			ITERA_GGROUP(it_sala,it_und->salas,Sala) {
-				ITERA_GGROUP(it_disc,problemData->disciplinas,Disciplina) {
-					if( disc_proibidas.find(it_disc->getId()) == disc_proibidas.end() ) {
-						if(it_disc->cred_praticos > 0) {
-							if(it_sala->tipo_sala_id == 2 /*laboratorio, segundo instancia trivial*/) {
-								it_sala->disc_assoc_PT.add(*it_disc);
-							}
-						}
-						else {
-							if(it_disc->cred_teoricos > 0) {
-								it_sala->disc_assoc_PT.add(*it_disc);
-							}
-						}
-					}
-				}
-			}
-		}
-	}
+	//ITERA_GGROUP(it_cp,problemData->campi,Campus) {
+	//	ITERA_GGROUP(it_und,it_cp->unidades,Unidade) {
+	//		ITERA_GGROUP(it_sala,it_und->salas,Sala) {
+	//			ITERA_GGROUP(it_disc,problemData->disciplinas,Disciplina) {
+	//				if( disc_proibidas.find(it_disc->getId()) == disc_proibidas.end() ) {
+	//					if(it_disc->cred_praticos > 0) {
+	//						if(it_sala->tipo_sala_id == 2 /*laboratorio, segundo instancia trivial*/) {
+	//							//it_sala->disc_assoc_PT.add(*it_disc);
+ //                       it_sala->disciplinasAssociadas.add(*it_disc);
+	//						}
+	//					}
+	//					else {
+	//						if(it_disc->cred_teoricos > 0) {
+	//							//it_sala->disc_assoc_PT.add(*it_disc);
+ //                       it_sala->disciplinasAssociadas.add(*it_disc);
+	//						}
+	//					}
+	//				}
+	//			}
+	//		}
+	//	}
+	//}
 	// <<<
+
+}
+
+void ProblemDataLoader::carregaDisciplinasAssociadas() {
+
+   /* Adicionando às salas todas as disciplinas compativeis. 
+   OBS: Se a sala não possui disciplina compatível informada na
+   entrada, entao todas as disciplinas são compativeis.*/
+   GGroup<int> disc_proibidas;
+
+   /* Armazenando as disciplinas que são específicas de alguma sala e, portanto, não
+   deverão ser adicionadas às listas de disciplinas associadas de outras salas.*/
+   ITERA_GGROUP(it_cp,problemData->campi,Campus) {
+      ITERA_GGROUP(it_und,it_cp->unidades,Unidade) {
+         ITERA_GGROUP(it_sala,it_und->salas,Sala) {
+
+            GGroup<int>::iterator it_sala_disc_assoc = it_sala->disciplinas_associadas.begin();
+            for(; it_sala_disc_assoc != it_sala->disciplinas_associadas.end(); it_sala_disc_assoc++) {
+               disc_proibidas.add(*it_sala_disc_assoc);
+            }
+         }
+      }
+   }
+
+   // Adicionando as disciplinas, que não possuem restrição quanto à sala, as salas.
+   ITERA_GGROUP(it_cp,problemData->campi,Campus) {
+      ITERA_GGROUP(it_und,it_cp->unidades,Unidade) {
+         ITERA_GGROUP(it_sala,it_und->salas,Sala) {
+            ITERA_GGROUP(it_disc,problemData->disciplinas,Disciplina) {
+
+               if(it_disc->eLab()) {
+                  if(it_sala->getTipoSalaId() == 2) /*laboratório, segundo instancia trivial*/ {
+                     it_sala->disciplinasAssociadas.add(*it_disc);
+                  }
+               }
+               else {
+                  if(it_sala->getTipoSalaId() != 2) {
+                     it_sala->disciplinasAssociadas.add(*it_disc);
+                  }
+               }
+            }
+         }
+      }
+   }
 
 }
 
@@ -1699,7 +1812,8 @@ void ProblemDataLoader::print_csv(void)
 	ndiscs = problemData->disciplinas.size();
 	tdemanda = 0;
 	ITERA_GGROUP(it_disc,problemData->disciplinas,Disciplina) {
-		tdemanda += it_disc->demanda_total;
+		//tdemanda += it_disc->demanda_total;
+      tdemanda += it_disc->getDemandaTotal();
 	}
 
 	FILE *file = fopen("./CSV/PROBLEM_SETTINGS.csv","wt");

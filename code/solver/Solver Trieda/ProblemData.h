@@ -98,6 +98,23 @@ public:
 
    // <<< 15/10/2010
 
+//private:
+   // >>> Variáveis e/ou estruturas de dados para realizar o pré processamento dos dados.
+   std::map<int/*Id Unidade*/,unsigned/*Tamanho médio das salas*/> und_medSalas;
+
+   std::map<int/*Id Disciplina*/,GGroup<int/*Id Turma*/> > disc_turmas;
+
+   // <<<
+
+public:
+   // =========== METODOS SET
+
+   // =========== METODOS GET
+
+   // ToDo : implementar os métodos básicos para todos os membros da classe.
+
+   // <<<
+
 public:
    virtual void le_arvore(TriedaInput& raiz);
 };

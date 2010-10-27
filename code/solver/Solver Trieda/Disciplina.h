@@ -30,8 +30,18 @@ public:
 	TipoDisciplina* tipo_disciplina;
 	NivelDificuldade* nivel_dificuldade;
 
-	int demanda_total;
-	int max_demanda;
+private:
+   // Soma das demandas de uma disciplina.
+   int demanda_total;
+
+   // Maior demanda dentre a(s) demanda(s) de uma dada disciplina.
+  	int max_demanda;
+
+public:
+
+   // Estrutura responsável por armazenar os id's das turmas da disciplina em questão.
+   GGroup<int/*Id Turma*/> turmas;
+
 	int num_turmas;
 	int min_creds;
 	int max_creds;
@@ -41,16 +51,44 @@ public:
 	// <<< 14/10/2010
 
 public:
+   // >>> Métodos para realizar o pré processamento dos dados.
+
+   // =========== METODOS SET
+   void setMaxCreds(int _max_creds) {
+      max_creds = _max_creds;
+   }
 
    void setCredsPraticos(int _creds_praticos) {
       cred_praticos = _creds_praticos;
    }
 
-   void setMaxCreds(int _max_creds) {
-      max_creds = _max_creds;
-   }
+   void setDemandaTotal(int _demanda_total) { demanda_total = _demanda_total; }
 
+   void setMaxDemanda(int _max_demanda) { max_demanda = _max_demanda; }
+
+   void setMaxAlunosTeo(int _max_alunos_t) { max_alunos_t = _max_alunos_t; }
+
+   void setMaxAlunosPrat(int _max_alunos_p) { max_alunos_p = _max_alunos_p; }
+
+   // =========== METODOS GET
+   int getDemandaTotal() const { return demanda_total; }
+
+   int getMaxDemanda() const { return max_demanda; }
+
+   int getMaxAlunosTeo() const { return max_alunos_t; }
+
+   int getMaxAlunosPrat() const { return max_alunos_p; }
+
+   // =========== METODOS AUXILIARES
 	virtual void le_arvore(ItemDisciplina& elem);
+
+   bool eLab() const { return e_lab; }
+   
+   int adicionaDemandaTotal(int _demanda_total) { return (demanda_total += _demanda_total); }
+
+   // <<<
+
+
 
 	//Disciplina& operator= (const Disciplina& d);
 };

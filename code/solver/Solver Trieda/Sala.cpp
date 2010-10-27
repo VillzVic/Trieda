@@ -32,6 +32,7 @@ void Sala::le_arvore(ItemSala& elem)
 		disciplinas_associadas.add(*it_disc);
 	}
 }
+
 int Sala::max_creds(int dia) {
    int creds = 0;
    ITERA_GGROUP(it_creds,creditos_disponiveis,CreditoDisponivel) {

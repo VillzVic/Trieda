@@ -33,7 +33,6 @@ public:
 	template<class T> 
 	void find_and_set(int id, GGroup<T*>& haystack, T*& needle, bool print) ;
 	void cria_blocos_curriculares();
-	void calcula_demandas();
 	void estima_turmas();
 	void print_stats();
 	void cache();
@@ -46,6 +45,29 @@ private:
 
 	// XML parser
 	std::auto_ptr<TriedaInput> root;
+
+   // >>> Variáveis e/ou estruturas de dados para realizar o pré processamento dos dados.
+
+   // <<<
+
+   // >>> Métodos para realizar o pré processamento dos dados.
+
+   // =========== METODOS SET
+
+   // =========== METODOS GET
+
+   // =========== METODOS AUXILIARES
+
+   void calculaTamanhoMedioSalas();
+
+   /* Calcula a demanda máxima e demanda total da disciplina em questão. Esses valores
+   são armazenados na própria disciplina. */
+   void calculaDemandas();
+   
+   // Armazena em cada sala, referências para as disciplinas associadas.
+   void carregaDisciplinasAssociadas();
+
+   // <<<
 
 };
 

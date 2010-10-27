@@ -27,6 +27,7 @@ public:
    int quantidade;
    int oferta_id;
    int disciplina_id;
+
    Oferta* oferta;
    Disciplina* disciplina;
 };

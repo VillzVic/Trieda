@@ -25,4 +25,12 @@ public:
    int total_salas;
    int maior_sala;
 
+public:
+
+   // =========== METODOS SET
+
+   // =========== METODOS GET
+
+   // ToDo : implementar os métodos básicos para todos os membros da classe.
+
 };
