@@ -3,7 +3,7 @@
 Disciplina::Disciplina(void)
 {
    max_demanda = 0;
-   demanda_total = 0;
+   demandaTotal = 0;
    max_alunos_t = -1;
    max_alunos_p = -1;
 
@@ -14,7 +14,7 @@ Disciplina::Disciplina(void)
 	tipo_disciplina = NULL;
 	nivel_dificuldade = NULL;
 
-	demanda_total = -1;
+	//demanda_total = -1;
 	max_demanda = -1;
 	num_turmas = -1;
 	min_creds = -1;

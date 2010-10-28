@@ -17,7 +17,8 @@ public:
 	GGroup<Horario*> horarios;
 	GGroup<Sala*> salas;
 
-	int maior_sala;
+	//int maior_sala;
+   unsigned maiorSala;
 
 
 	// >>>

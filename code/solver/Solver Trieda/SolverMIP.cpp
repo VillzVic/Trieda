@@ -829,7 +829,20 @@ int SolverMIP::cria_variavel_creditos(void)
             {
                for(int turma=0;turma<it_disc->num_turmas;turma++)
                {
-                  for(int dia=0;dia<7;dia++) // ToDo : Basear no CALENDARIO
+                  /*
+                  GGroup<Horario*>::iterator it_horario =
+                  it_disc->horarios.begin();
+
+                  for(; it_horario != it_disc->horarios.end(); it_horario++)
+                  {
+                  GGroup<int>::iterator it_dia = it_horario->dias_semana.begin();
+                  */
+
+                  for(int dia=0;dia<7;dia++)
+                     /*
+                     //for(; it_dia != it_horario->dias_semana.begin(); it_dia++)
+                     for( int dia = 0; dia < it_horario->dias_semana.size(); dia++)
+                     */
                   {
                      Variable v;
                      v.reset();
@@ -840,6 +853,7 @@ int SolverMIP::cria_variavel_creditos(void)
                      v.setUnidade(*it_unidades);   // u
                      v.setSala(*it_salas);         // s  
                      v.setDia(dia);                // t
+                     //v.setDia(*it_dia);                // t
 
                      if (vHash.find(v) == vHash.end())
                      {
@@ -854,6 +868,7 @@ int SolverMIP::cria_variavel_creditos(void)
                      }
                   }
                }
+               //}
             }
          }
       }
@@ -1437,7 +1452,7 @@ int SolverMIP::cria_restricao_carga_horaria(void)
 
             cHash[ c ] = lp->getNumRows();
 
-            nnz = it_campus->total_salas * 7;
+            nnz = it_campus->totalSalas * 7;
 
             OPT_ROW row( nnz + 1, OPT_ROW::EQUAL , 0 , name );
 
@@ -1901,7 +1916,7 @@ int SolverMIP::cria_restricao_turma_sala(void)
 
          cHash[ c ] = lp->getNumRows();
 
-         nnz = problemData->total_salas;
+         nnz = problemData->totalSalas;
          OPT_ROW row( nnz, OPT_ROW::LESS , 1.0, name );
 
          ITERA_GGROUP(it_campus,problemData->campi,Campus) {
@@ -1951,7 +1966,7 @@ int SolverMIP::cria_restricao_evita_turma_disc_camp_d(void)
 
          cHash[ c ] = lp->getNumRows();
 
-         nnz = problemData->total_salas;
+         nnz = problemData->totalSalas;
          OPT_ROW row( nnz, OPT_ROW::LESS , 1.0, name );
 
          ITERA_GGROUP(it_campus,problemData->campi,Campus) {
@@ -1999,7 +2014,7 @@ int SolverMIP::cria_restricao_turmas_bloco(void)
             cHash[ c ] = lp->getNumRows();
 
             nnz = it_bloco->total_turmas * 
-               problemData->total_salas;
+               problemData->totalSalas;
 
             OPT_ROW row( nnz + 1, OPT_ROW::LESS , 0.0, name );
 
@@ -2071,7 +2086,7 @@ int SolverMIP::cria_restricao_max_cred_disc_bloco(void)
             cHash[ c ] = lp->getNumRows();
 
             nnz = it_bloco->total_turmas * 
-               problemData->total_salas;
+               problemData->totalSalas;
 
             OPT_ROW row( nnz + 1, OPT_ROW::LESS , 0.0, name );
 
@@ -2333,7 +2348,7 @@ int SolverMIP::cria_restricao_cap_sala_compativel_turma(void)
             cHash[ c ] = lp->getNumRows();
 
             nnz = problemData->cursos.size() +
-               it_campus->total_salas * 7;
+               it_campus->totalSalas * 7;
 
             OPT_ROW row( nnz , OPT_ROW::LESS , 0.0 , name );
 
@@ -2412,7 +2427,7 @@ int SolverMIP::cria_restricao_cap_sala_unidade(void)
                      cHash[ c ] = lp->getNumRows();
 
                      nnz = problemData->cursos.size() + 1;
-                     int rhs = it_sala->capacidade + it_u->maior_sala;
+                     int rhs = it_sala->capacidade + it_u->maiorSala;
 
                      OPT_ROW row( nnz, OPT_ROW::LESS , rhs , name );
 
@@ -2427,7 +2442,7 @@ int SolverMIP::cria_restricao_cap_sala_unidade(void)
                      it_v = vHash.find(v);
                      if( it_v != vHash.end() )
                      {
-                        row.insert(it_v->second, it_u->maior_sala);
+                        row.insert(it_v->second, it_u->maiorSala);
                      }
 
                      ITERA_GGROUP(it_curso,problemData->cursos,Curso) {
@@ -2482,7 +2497,7 @@ int SolverMIP::cria_restricao_turma_disc_dias_consec(void)
 
             cHash[ c ] = lp->getNumRows();
 
-            nnz = problemData->total_salas*2 + 1;
+            nnz = problemData->totalSalas * 2 + 1;
 
             OPT_ROW row( nnz, OPT_ROW::GREATER , -1 , name );
 
@@ -2562,7 +2577,7 @@ int SolverMIP::cria_restricao_min_creds_turm_bloco(void)
                cHash[ c ] = lp->getNumRows();
 
                // Conferir nnz depois.
-               nnz = (it_bloco->disciplinas.size() * problemData->total_salas) + 1;
+               nnz = (it_bloco->disciplinas.size() * problemData->totalSalas) + 1;
 
                OPT_ROW row( nnz, OPT_ROW::GREATER , 0.0 , name );
 
@@ -2639,7 +2654,7 @@ int SolverMIP::cria_restricao_max_creds_turm_bloco(void)
                cHash[ c ] = lp->getNumRows();
 
                // Conferir nnz depois.
-               nnz = (it_bloco->disciplinas.size() * problemData->total_salas) + 1;
+               nnz = (it_bloco->disciplinas.size() * problemData->totalSalas) + 1;
 
                OPT_ROW row( nnz, OPT_ROW::LESS , 0.0 , name );
 
@@ -2737,7 +2752,7 @@ int SolverMIP::cria_restricao_aluno_curso_disc(void)
                it_v = vHash.find(v);
                if( it_v != vHash.end() )
                {
-                  row.insert(it_v->second, -it_campus->maior_sala);
+                  row.insert(it_v->second, -it_campus->maiorSala );
                }
 
                lp->addRow(row);
@@ -2866,7 +2881,7 @@ int SolverMIP::cria_restricao_de_folga_dist_cred_dia(void)
 
          cHash[ c ] = lp->getNumRows();
 
-         nnz = problemData->total_salas * it_disc->num_turmas  + 1;
+         nnz = problemData->totalSalas * it_disc->num_turmas  + 1;
 
          int rhs = it_disc->max_creds;
          if( it_disc->divisao_creditos != NULL )

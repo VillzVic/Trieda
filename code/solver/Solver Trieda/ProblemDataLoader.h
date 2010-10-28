@@ -58,14 +58,20 @@ private:
 
    // =========== METODOS AUXILIARES
 
-   void calculaTamanhoMedioSalas();
+   void referenciaCampus();
+   void referenciaDisciplinas();
+
+   void calculaTamanhoMedioSalasCampus();
+   
+   // Armazena todas as disciplinas ofertadas em um campus.
+   void relacionaCampusDiscs();
 
    /* Calcula a demanda máxima e demanda total da disciplina em questão. Esses valores
    são armazenados na própria disciplina. */
    void calculaDemandas();
    
    // Armazena em cada sala, referências para as disciplinas associadas.
-   void carregaDisciplinasAssociadas();
+   void carregaDisciplinasAssociadasSalas();
 
    // <<<
 

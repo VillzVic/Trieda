@@ -46,7 +46,7 @@ public:
    // =========== METODOS GET
    int getTipoSalaId() const { return tipo_sala_id; }
 
-   unsigned getCapacidade() const { return capacidade; }
+   //unsigned getCapacidade() const { return capacidade; }
 
 
    // ToDo : implementar os métodos básicos para todos os membros da classe.

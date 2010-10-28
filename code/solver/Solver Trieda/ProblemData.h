@@ -78,8 +78,9 @@ public:
    GGroup<BlocoCurricular*> blocos;
 
    std::map<std::pair<int/*disc_id*/,int/*campus_id*/>,int> demandas_campus;
-   int total_salas;
-   int total_turmas;
+   
+   int totalSalas;
+   int totalTurmas;
 
    // std::map<std::pair<int/*cursoA_id*/,int/*cursoB_id*/>,bool/*sao_compat?*/> compat_cursos;
    std::map<std::pair<Curso*,Curso*>,bool> compat_cursos;
@@ -100,9 +101,29 @@ public:
 
 //private:
    // >>> Variáveis e/ou estruturas de dados para realizar o pré processamento dos dados.
-   std::map<int/*Id Unidade*/,unsigned/*Tamanho médio das salas*/> und_medSalas;
+   
+   std::map<int/*Id Campus*/,unsigned/*Tamanho médio das salas*/> cp_medSalas;
 
-   std::map<int/*Id Disciplina*/,GGroup<int/*Id Turma*/> > disc_turmas;
+   // Armazena todas as disciplinas ofertadas em um campus.
+   std::map<int/*Id Campus*/,GGroup<int>/*Id Discs*/> cp_discs;
+
+   /* Relaciona as turmas com alguma disciplina. Armazena tb o tamanho das turmas da
+   disc em questão. A princípio, todas as turmas vão ter o msm tamanho.
+   Lembrando que turmas são representadas por inteiros, definidos em estima_turmas.
+   Por equanto, os ids das turmas não estão sendo utilizados, ou seja, podem existir
+   duas turmas diferentes com o msm id. Isto não é considerado um erro pq, do modo que
+   está implementado, qdo isso acontecer, as turmas serão de discs diferentes. */
+   std::map<int/*Id Disciplina*/,GGroup<std::pair<int/*Id Turma*/,int/*Tamanho Turma*/> > > disc_turmas;
+
+   /* Estrutura responsavel por referenciar os campus.
+   Nao precisaria dessa estrutura se o FIND do GGroup estivesse funcionando normalmente.
+   VER ISSO DEPOIS */
+   std::map<int/*Id Campus*/,Campus*> refCampus;
+
+   /* Estrutura responsavel por referenciar as disciplinas.
+   Nao precisaria dessa estrutura se o FIND do GGroup estivesse funcionando normalmente.
+   VER ISSO DEPOIS */
+   std::map<int/*Id Disc*/,Disciplina*> refDisciplinas;
 
    // <<<
 

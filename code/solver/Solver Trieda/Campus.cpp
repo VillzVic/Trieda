@@ -3,6 +3,8 @@
 
 Campus::Campus(void)
 {
+   totalSalas = 0;
+   maiorSala =0;
 }
 
 Campus::~Campus(void)

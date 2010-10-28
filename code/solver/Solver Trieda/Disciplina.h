@@ -32,7 +32,7 @@ public:
 
 private:
    // Soma das demandas de uma disciplina.
-   int demanda_total;
+   int demandaTotal;
 
    // Maior demanda dentre a(s) demanda(s) de uma dada disciplina.
   	int max_demanda;
@@ -62,7 +62,7 @@ public:
       cred_praticos = _creds_praticos;
    }
 
-   void setDemandaTotal(int _demanda_total) { demanda_total = _demanda_total; }
+   void setDemandaTotal(int demanda_total) { demandaTotal = demanda_total; }
 
    void setMaxDemanda(int _max_demanda) { max_demanda = _max_demanda; }
 
@@ -71,7 +71,7 @@ public:
    void setMaxAlunosPrat(int _max_alunos_p) { max_alunos_p = _max_alunos_p; }
 
    // =========== METODOS GET
-   int getDemandaTotal() const { return demanda_total; }
+   int getDemandaTotal() const { return demandaTotal; }
 
    int getMaxDemanda() const { return max_demanda; }
 
@@ -84,7 +84,7 @@ public:
 
    bool eLab() const { return e_lab; }
    
-   int adicionaDemandaTotal(int _demanda_total) { return (demanda_total += _demanda_total); }
+   int adicionaDemandaTotal(int demanda_total) { return (demandaTotal += demanda_total); }
 
    // <<<
 

@@ -2,6 +2,7 @@
 
 Unidade::Unidade(void)
 {
+   maiorSala = 0;
 }
 
 Unidade::~Unidade(void)
