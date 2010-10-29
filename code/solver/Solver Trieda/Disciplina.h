@@ -40,7 +40,7 @@ private:
 public:
 
    // Estrutura responsável por armazenar os id's das turmas da disciplina em questão.
-   GGroup<int/*Id Turma*/> turmas;
+   //GGroup<int/*Id Turma*/> turmas;
 
 	int num_turmas;
 	int min_creds;

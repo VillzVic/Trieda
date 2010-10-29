@@ -7,6 +7,9 @@
 #include "opt_lp.h"
 #include "input.h"
 
+#define PRINT_cria_variaveis
+#define DEBUG
+
 /**
 * Implements a MIP Solver.
 */

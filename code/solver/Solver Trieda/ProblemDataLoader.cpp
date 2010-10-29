@@ -42,8 +42,9 @@ void ProblemDataLoader::load()
    calculaDemandas();
 
    carregaDisciplinasAssociadasSalas();
-	
-   estima_turmas();
+	estima_turmas();
+   removeDisciplinasAssociadasSalas();
+
 	cache();
 
    print_stats();
@@ -792,16 +793,17 @@ void ProblemDataLoader::estima_turmas() {
          // Número de turmas considerado para a disc em questão.
          unsigned numTurmas = 0;
 
+         /*
          if (problemData->refDisciplinas[(*it_discs)]->getMaxAlunosTeo() > 0 ||
             problemData->refDisciplinas[(*it_discs)]->getMaxAlunosPrat() > 0 ) {
 
                tamTurma = std::min(problemData->refDisciplinas[(*it_discs)]->getMaxAlunosTeo(),
                   problemData->refDisciplinas[(*it_discs)]->getMaxAlunosPrat());
 
-               /*numTurmas = problemData->refDisciplinas[(*it_discs)]->getDemandaTotal() /
-                  tamTurma + 1;*/
+               //numTurmas = problemData->refDisciplinas[(*it_discs)]->getDemandaTotal() /
+                  //tamTurma + 1;
          }
-         else {
+         else*/ {
 
             tamTurma = std::max(problemData->refDisciplinas[(*it_discs)]->getMaxAlunosTeo(),
                problemData->refDisciplinas[(*it_discs)]->getMaxAlunosPrat());
@@ -887,50 +889,71 @@ void ProblemDataLoader::estima_turmas() {
 }
 
 void ProblemDataLoader::print_stats() {
-	int ncampi(0),nunidades(0),nsalas(0),ndiscs(0),
-      nturmas(0),nprofs(0),ncursos(0),nofertas(0),tdemanda(0);
+   int ncampi(0),nunidades(0),nsalas(0),ndiscs(0),ndiscsDiv(0),
+      nturmas(0),nturmasDiscDiv(0),nprofs(0),ncursos(0),nofertas(0),
+      tdemanda(0),tdemandaDiv(0);
 
-	ncampi = problemData->campi.size();
+   ncampi = problemData->campi.size();
 
-	ITERA_GGROUP(it_campi,problemData->campi,Campus) {
-		nunidades += it_campi->unidades.size();
+   ITERA_GGROUP(it_campi,problemData->campi,Campus) {
+      nunidades += it_campi->unidades.size();
 
       ITERA_GGROUP(it_und,it_campi->unidades,Unidade) {
          nsalas += it_und->salas.size();
       }
 
-		nprofs += it_campi->professores.size();
-		ncursos += problemData->cursos.size();
-	}
+      nprofs += it_campi->professores.size();
+      ncursos += problemData->cursos.size();
+   }
 
-	nofertas = problemData->ofertas.size();
-	
+   nofertas = problemData->ofertas.size();
+
    ITERA_GGROUP(it_disc,problemData->disciplinas,Disciplina) {
       if(it_disc->getId() > 0) {
          ndiscs++;
          nturmas += it_disc->num_turmas;
+         tdemanda += it_disc->getDemandaTotal();
+      }
+      else {
+         ndiscsDiv++;
+         nturmasDiscDiv += it_disc->num_turmas;
+         tdemandaDiv += it_disc->getDemandaTotal();
       }
    }
 
-	ITERA_GGROUP(it_disc,problemData->disciplinas,Disciplina) {
-      tdemanda += it_disc->getDemandaTotal();
-	}
-
    std::cout << std::endl;
-   std::cout << "Estatisticas de dados de entrada" << std::endl;
-   std::cout << "================================" << std::endl;
-   printf("Campi:        \t%4d\n",ncampi);
-   printf("Unidades:     \t%4d\n",nunidades);
-   printf("Salas:        \t%4d\n",nsalas);
-   printf("Disciplinas:  \t%4d\n",ndiscs);
-   printf("Turmas:       \t%4d\n",nturmas);
-   printf("Professores:  \t%4d\n",nprofs);
-   printf("Cursos:       \t%4d\n",ncursos);
-   printf("Ofertas:      \t%4d\n",nofertas);
-   printf("Demanda total:\t%4d vagas\n",tdemanda);
+   std::cout << "Estatisticas de dados de entrada\n\n";// << std::endl;
+   //std::cout << "================================" << std::endl;
+   printf("<*> Campi:        \t%4d\n",ncampi);
+   printf("<*> Unidades:     \t%4d\n",nunidades);
+   printf("<*> Salas:        \t%4d\n",nsalas);
+
+   //printf("Disciplinas:  \t%4d\n",ndiscs);
+   printf("<*> Disciplinas:\n");
+   printf("\t - Entrada:    \t%4d\n",ndiscs);
+   printf("\t - Divididas:  \t%4d\n",ndiscsDiv);   
+   printf("\t - Total:  \t%4d\n",ndiscs+ndiscsDiv);
+
+   //printf("<*> Turmas:       \t%4d\n",nturmas);
+   printf("<*> Turmas:\n");
+   printf("\t - Entrada:    \t%4d\n",nturmas);
+   printf("\t - Divididas:  \t%4d\n",nturmasDiscDiv);   
+   printf("\t - Total:  \t%4d\n",nturmas+nturmasDiscDiv);   
+
+   printf("<*> Professores:  \t%4d\n",nprofs);
+   printf("<*> Cursos:       \t%4d\n",ncursos);
+   printf("<*> Ofertas:      \t%4d\n",nofertas);
+
+   //printf("<*> Demanda total:\t%4d vagas\n",tdemanda);
+   printf("<*> Demanda total\n");
+   printf("\t - Entrada:    \t%4d\n",tdemanda);
+   printf("\t - Divididas:  \t%4d\n",tdemandaDiv);   
+   printf("\t - Total:  \t%4d\n",tdemanda+tdemandaDiv);
+
    std::cout << "================================" << std::endl
       << std::endl;
 }
+
 /* Salva algumas informações que são usadas frequentemente */
 void ProblemDataLoader::cache() {
    problemData->totalSalas = 0;
@@ -1122,30 +1145,25 @@ void ProblemDataLoader::carregaDisciplinasAssociadasSalas() {
             }
          }
       }
-      //}
 
       // Adicionando as disciplinas, que não possuem restrição quanto à sala, as salas do campus em questão.
-      //ITERA_GGROUP(it_cp,problemData->campi,Campus) {
       ITERA_GGROUP(it_und,it_cp->unidades,Unidade) {
          ITERA_GGROUP(it_sala,it_und->salas,Sala) {
-            //ITERA_GGROUP(it_disc,problemData->disciplinas,Disciplina) {
             GGroup<int>::iterator it_disc = problemData->cp_discs[it_cp->getId()].begin();
             for(; it_disc != problemData->cp_discs[it_cp->getId()].end(); it_disc++ ) {
 
                if(disc_proibidas.find(*it_disc) == disc_proibidas.end()) {
 
-                  //if(it_disc->eLab()) {
                   if(problemData->refDisciplinas[*it_disc]->eLab()) {
                      if(it_sala->getTipoSalaId() == 2) /*laboratório, segundo instancia trivial*/ {
-                        //it_sala->disciplinasAssociadas.add(*it_disc);
                         it_sala->disciplinasAssociadas.add(problemData->refDisciplinas[*it_disc]);
                      }
                   }
                   else {
-                     /* Se o if abaixo estiver comentado disciplinas teóricas que não possuem restrição
+                     /* Se o if abaixo estiver comentado disciplinas que não possuem restrição
                      quanto a salas poderão ser associadas à laboratórios. Isso aumenta o número de 
-                     variáveis e restrições criadas. O ideal é o usuário cadastrar corretamente as 
-                     associações de disciplinas às salas. */
+                     variáveis e restrições criadas.
+                     O ideal é o usuário cadastrar corretamente as associações de disciplinas às salas. */
                      //if(it_sala->getTipoSalaId() != 2) {
                      //it_sala->disciplinasAssociadas.add(*it_disc);
                      it_sala->disciplinasAssociadas.add(problemData->refDisciplinas[*it_disc]);
@@ -1157,6 +1175,11 @@ void ProblemDataLoader::carregaDisciplinasAssociadasSalas() {
       }
    }
 
+}
+
+void ProblemDataLoader::removeDisciplinasAssociadasSalas()
+{
+   //IMPLEMENTAR !!!!
 }
 
 // >>> 15/10/2010
@@ -1905,9 +1928,7 @@ void ProblemDataLoader::armz_disc_curriculo()
 
 	// ToDo : Trocar os dados antigos com os novos.
 
-	std::cout << std::endl;
-
-
+	std::cout << "TERMINAR" << std::endl;
 	exit(1);
 }
 // <<< 15/10/2010

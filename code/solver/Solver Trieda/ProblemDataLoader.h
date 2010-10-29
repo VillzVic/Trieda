@@ -73,6 +73,11 @@ private:
    // Armazena em cada sala, referências para as disciplinas associadas.
    void carregaDisciplinasAssociadasSalas();
 
+   /* Remove de cada sala as disciplinas associadas que possuem turmas com demanda
+   (definida em estina_turmas()) superior à capacidade da sala. */
+   void removeDisciplinasAssociadasSalas();
+
+
    // <<<
 
 };

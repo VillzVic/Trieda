@@ -468,7 +468,7 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
    }
 
    GGroup<AtendimentoUnidade*>::iterator at_unidade = at_campus->atendimentos_unidades.begin();
-   
+
    // Adicionando as salas as classes de output
    for(GGroup<int>::iterator it_ids_sala = ids_sala.begin(); it_ids_sala != ids_sala.end(); it_ids_sala++) {
       int id = *it_ids_sala;
@@ -757,20 +757,108 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
 int SolverMIP::cria_variaveis()
 {
    int num_vars = 0;
+
+#ifdef PRINT_cria_variaveis
+   int numVarsAnterior = 0;
+#endif
+
    num_vars += cria_variavel_oferecimentos(); // o
+
+#ifdef PRINT_cria_variaveis
+   std::cout << "numVars \"o\": " << (num_vars - numVarsAnterior) << std::endl;
+   numVarsAnterior = num_vars;
+#endif
+
    num_vars += cria_variavel_creditos(); // x
+
+#ifdef PRINT_cria_variaveis
+   std::cout << "numVars \"x\": " << (num_vars - numVarsAnterior) << std::endl;
+   numVarsAnterior = num_vars;
+#endif
+
    num_vars += cria_variavel_abertura(); // z
+
+#ifdef PRINT_cria_variaveis
+   std::cout << "numVars \"z\": " << (num_vars - numVarsAnterior) << std::endl;
+   numVarsAnterior = num_vars;
+#endif
+
    num_vars += cria_variavel_alunos(); // a 
+
+#ifdef PRINT_cria_variaveis
+   std::cout << "numVars \"a\": " << (num_vars - numVarsAnterior) << std::endl;
+   numVarsAnterior = num_vars;
+#endif
+
    num_vars += cria_variavel_consecutivos(); // c
+
+#ifdef PRINT_cria_variaveis
+   std::cout << "numVars \"c\": " << (num_vars - numVarsAnterior) << std::endl;
+   numVarsAnterior = num_vars;
+#endif
+
    num_vars += cria_variavel_max_creds(); // H
+
+#ifdef PRINT_cria_variaveis
+   std::cout << "numVars \"H\": " << (num_vars - numVarsAnterior) << std::endl;
+   numVarsAnterior = num_vars;
+#endif
+
    num_vars += cria_variavel_min_creds(); // h
+
+#ifdef PRINT_cria_variaveis
+   std::cout << "numVars \"h\": " << (num_vars - numVarsAnterior) << std::endl;
+   numVarsAnterior = num_vars;
+#endif
+
    num_vars += cria_variavel_aloc_disciplina(); // y
+
+#ifdef PRINT_cria_variaveis
+   std::cout << "numVars \"y\": " << (num_vars - numVarsAnterior) << std::endl;
+   numVarsAnterior = num_vars;
+#endif
+
    num_vars += cria_variavel_num_subblocos(); // w
+
+#ifdef PRINT_cria_variaveis
+   std::cout << "numVars \"w\": " << (num_vars - numVarsAnterior) << std::endl;
+   numVarsAnterior = num_vars;
+#endif
+
    num_vars += cria_variavel_num_abertura_turma_bloco(); // v
+
+#ifdef PRINT_cria_variaveis
+   std::cout << "numVars \"v\": " << (num_vars - numVarsAnterior) << std::endl;
+   numVarsAnterior = num_vars;
+#endif
+
    num_vars += cria_variavel_aloc_alunos(); // b
+
+#ifdef PRINT_cria_variaveis
+   std::cout << "numVars \"b\": " << (num_vars - numVarsAnterior) << std::endl;
+   numVarsAnterior = num_vars;
+#endif
+
    num_vars += cria_variavel_de_folga_dist_cred_dia_superior(); // fcp
+
+#ifdef PRINT_cria_variaveis
+   std::cout << "numVars \"fcp\": " << (num_vars - numVarsAnterior) << std::endl;
+   numVarsAnterior = num_vars;
+#endif
+
    num_vars += cria_variavel_de_folga_dist_cred_dia_inferior(); // fcm
+
+#ifdef PRINT_cria_variaveis
+   std::cout << "numVars \"fcm\": " << (num_vars - numVarsAnterior) << std::endl;
+   numVarsAnterior = num_vars;
+#endif
+
    num_vars += cria_variavel_abertura_subbloco_de_blc_dia_campus(); // r
+
+#ifdef PRINT_cria_variaveis
+   std::cout << "numVars \"r\": " << (num_vars - numVarsAnterior) << std::endl;
+   numVarsAnterior = num_vars;
+#endif
 
    return num_vars;
 }
@@ -829,20 +917,7 @@ int SolverMIP::cria_variavel_creditos(void)
             {
                for(int turma=0;turma<it_disc->num_turmas;turma++)
                {
-                  /*
-                  GGroup<Horario*>::iterator it_horario =
-                  it_disc->horarios.begin();
-
-                  for(; it_horario != it_disc->horarios.end(); it_horario++)
-                  {
-                  GGroup<int>::iterator it_dia = it_horario->dias_semana.begin();
-                  */
-
                   for(int dia=0;dia<7;dia++)
-                     /*
-                     //for(; it_dia != it_horario->dias_semana.begin(); it_dia++)
-                     for( int dia = 0; dia < it_horario->dias_semana.size(); dia++)
-                     */
                   {
                      Variable v;
                      v.reset();
@@ -853,7 +928,6 @@ int SolverMIP::cria_variavel_creditos(void)
                      v.setUnidade(*it_unidades);   // u
                      v.setSala(*it_salas);         // s  
                      v.setDia(dia);                // t
-                     //v.setDia(*it_dia);                // t
 
                      if (vHash.find(v) == vHash.end())
                      {
@@ -868,11 +942,65 @@ int SolverMIP::cria_variavel_creditos(void)
                      }
                   }
                }
-               //}
             }
          }
       }
    }
+
+   //ITERA_GGROUP(it_campus,problemData->campi,Campus)
+   //{
+   //   ITERA_GGROUP(it_unidades,it_campus->unidades,Unidade)
+   //   {
+   //      ITERA_GGROUP(it_salas,it_unidades->salas,Sala)
+   //      {
+   //         ITERA_GGROUP(it_disc,it_salas->disciplinasAssociadas,Disciplina)
+   //         {
+   //            for(int turma=0;turma<it_disc->num_turmas;turma++)
+   //            {
+   //               /*
+   //               GGroup<Horario*>::iterator it_horario =
+   //               it_disc->horarios.begin();
+
+   //               for(; it_horario != it_disc->horarios.end(); it_horario++)
+   //               {
+   //               GGroup<int>::iterator it_dia = it_horario->dias_semana.begin();
+   //               */
+
+   //               for(int dia=0;dia<7;dia++)
+   //                  /*
+   //                  //for(; it_dia != it_horario->dias_semana.begin(); it_dia++)
+   //                  for( int dia = 0; dia < it_horario->dias_semana.size(); dia++)
+   //                  */
+   //               {
+   //                  Variable v;
+   //                  v.reset();
+   //                  v.setType(Variable::V_CREDITOS);
+
+   //                  v.setTurma(turma);            // i
+   //                  v.setDisciplina(*it_disc);    // d
+   //                  v.setUnidade(*it_unidades);   // u
+   //                  v.setSala(*it_salas);         // s  
+   //                  v.setDia(dia);                // t
+   //                  //v.setDia(*it_dia);                // t
+
+   //                  if (vHash.find(v) == vHash.end())
+   //                  {
+   //                     vHash[v] = lp->getNumCols();
+
+   //                     OPT_COL col(OPT_COL::VAR_INTEGRAL,0.0,0.0,24.0,
+   //                        (char*)v.toString().c_str());
+
+   //                     lp->newCol(col);
+
+   //                     num_vars += 1;
+   //                  }
+   //               }
+   //            }
+   //            //}
+   //         }
+   //      }
+   //   }
+   //}
 
    return num_vars;
 }
@@ -888,7 +1016,6 @@ int SolverMIP::cria_variavel_oferecimentos(void)
          ITERA_GGROUP(it_salas,it_unidades->salas,Sala) 
          {
             ITERA_GGROUP(it_disc,it_salas->disciplinasAssociadas,Disciplina)
-            //ITERA_GGROUP(it_disc,problemData->disciplinas,Disciplina)
             {
                for(int turma=0;turma<it_disc->num_turmas;turma++)
                {
@@ -921,6 +1048,46 @@ int SolverMIP::cria_variavel_oferecimentos(void)
          }
       }
    }
+
+   //ITERA_GGROUP(it_campus,problemData->campi,Campus)
+   //{
+   //   ITERA_GGROUP(it_unidades,it_campus->unidades,Unidade)
+   //   {
+   //      ITERA_GGROUP(it_salas,it_unidades->salas,Sala) 
+   //      {
+   //         ITERA_GGROUP(it_disc,problemData->disciplinas,Disciplina)
+   //         {
+   //            for(int turma=0;turma<it_disc->num_turmas;turma++)
+   //            {
+   //               for(int dia=0;dia<7;dia++)
+   //               {
+   //                  Variable v;
+   //                  v.reset();
+   //                  v.setType(Variable::V_OFERECIMENTO);
+
+   //                  v.setTurma(turma);            // i
+   //                  v.setDisciplina(*it_disc);    // d
+   //                  v.setUnidade(*it_unidades);   // u
+   //                  v.setSala(*it_salas);         // s  
+   //                  v.setDia(dia);                // t
+
+   //                  if (vHash.find(v) == vHash.end())
+   //                  {
+   //                     vHash[v] = lp->getNumCols();
+
+   //                     OPT_COL col(OPT_COL::VAR_BINARY,0.0,0.0,1.0,
+   //                        (char*)v.toString().c_str());
+
+   //                     lp->newCol(col);
+
+   //                     num_vars += 1;
+   //                  }
+   //               }
+   //            }
+   //         }
+   //      }
+   //   }
+   //}
 
    return num_vars;
 }
