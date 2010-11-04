@@ -44,6 +44,7 @@ public class CampusComboBox extends ComboBox<CampusDTO> {
 		setTriggerAction(TriggerAction.QUERY);
 		setTemplate(getTemplateCB());
 		setMinChars(1);
+		setUseQueryCache(false);
 	}
 
 	private native String getTemplateCB() /*-{
