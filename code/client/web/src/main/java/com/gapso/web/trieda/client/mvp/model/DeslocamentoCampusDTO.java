@@ -28,6 +28,7 @@ public class DeslocamentoCampusDTO extends BaseModel {
 		return get("origemString");
 	}
 	
+	// Adicionando um destino, não existe um set/get de cada destino pq a quantidade é dinamica.
 	public void addDestino(Long destinoId, String destinoString, Integer destinoTempo, Double destinoCusto) {
 		List<Long> listIdList = get("destinosIdList");
 		if(!listIdList.contains(destinoId)) listIdList.add(destinoId);

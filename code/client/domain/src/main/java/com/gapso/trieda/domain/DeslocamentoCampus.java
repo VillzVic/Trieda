@@ -129,12 +129,12 @@ public class DeslocamentoCampus implements java.io.Serializable {
     }
 
 	public static long countDeslocamentoCampuses() {
-        return ((Number) entityManager().createQuery("select count(o) from DeslocamentoCampus o").getSingleResult()).longValue();
+        return ((Number) entityManager().createQuery("SELECT count(o) FROM DeslocamentoCampus o").getSingleResult()).longValue();
     }
 
 	@SuppressWarnings("unchecked")
     public static List<DeslocamentoCampus> findAllDeslocamentoCampuses() {
-        return entityManager().createQuery("select o from DeslocamentoCampus o").getResultList();
+        return entityManager().createQuery("SELECT o FROM DeslocamentoCampus o").getResultList();
     }
 
 	public static DeslocamentoCampus findDeslocamentoCampus(Long id) {
@@ -144,7 +144,7 @@ public class DeslocamentoCampus implements java.io.Serializable {
 
 	@SuppressWarnings("unchecked")
     public static List<DeslocamentoCampus> findDeslocamentoCampusEntries(int firstResult, int maxResults) {
-        return entityManager().createQuery("select o from DeslocamentoCampus o").setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
+        return entityManager().createQuery("SELECT o FROM DeslocamentoCampus o").setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
 
 	public Campus getOrigem() {
