@@ -150,12 +150,12 @@ public class DeslocamentoUnidade implements java.io.Serializable {
     }
 
 	public static long count() {
-        return ((Number) entityManager().createQuery("select count(o) from DeslocamentoUnidade o").getSingleResult()).intValue();
+        return ((Number) entityManager().createQuery("SELECT count(o) FROM DeslocamentoUnidade o").getSingleResult()).intValue();
     }
 
 	@SuppressWarnings("unchecked")
     public static List<DeslocamentoUnidade> findAll() {
-        return entityManager().createQuery("select o from DeslocamentoUnidade o").getResultList();
+        return entityManager().createQuery("SELECT o FROM DeslocamentoUnidade o").getResultList();
     }
 
 	public static DeslocamentoUnidade find(Long id) {
@@ -165,7 +165,7 @@ public class DeslocamentoUnidade implements java.io.Serializable {
 
 	@SuppressWarnings("unchecked")
     public static List<DeslocamentoUnidade> find(int firstResult, int maxResults) {
-        return entityManager().createQuery("select o from DeslocamentoUnidade o").setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
+        return entityManager().createQuery("SELECT o FROM DeslocamentoUnidade o").setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
 
 	private static final long serialVersionUID = -8847212098556601964L;
