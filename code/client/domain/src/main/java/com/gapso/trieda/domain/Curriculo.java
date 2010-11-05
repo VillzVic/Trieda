@@ -59,7 +59,7 @@ public class Curriculo implements Serializable {
     private Set<CurriculoDisciplina> disciplinas = new HashSet<CurriculoDisciplina>();
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "curriculo")
-    private Set<CampusCurriculo> campusCurriculo = new HashSet<CampusCurriculo>();
+    private Set<Oferta> ofertas = new HashSet<Oferta>();
 
 	public Curso getCurso() {
         return this.curso;
@@ -101,12 +101,12 @@ public class Curriculo implements Serializable {
         this.disciplinas = disciplinas;
     }
 
-	public Set<CampusCurriculo> getCampusCurriculo() {
-        return this.campusCurriculo;
+	public Set<Oferta> getOfertas() {
+        return this.ofertas;
     }
 
-	public void setCampusCurriculo(Set<CampusCurriculo> campusCurriculo) {
-        this.campusCurriculo = campusCurriculo;
+	public void setOfertas(Set<Oferta> ofertas) {
+        this.ofertas = ofertas;
     }
 
 	@PersistenceContext
@@ -177,7 +177,7 @@ public class Curriculo implements Serializable {
 	public static int count() {
         return ((Number) entityManager().createQuery("select count(o) from Curriculo o").getSingleResult()).intValue();
     }
-
+	
 	@SuppressWarnings("unchecked")
     public static List<Curriculo> findAll() {
         return entityManager().createQuery("select o from Curriculo o").getResultList();
@@ -196,7 +196,14 @@ public class Curriculo implements Serializable {
 		orderBy = (orderBy != null) ? "ORDER BY o." + orderBy : "";
         return entityManager().createQuery("select o from Curriculo o "+orderBy).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
-
+	
+	@SuppressWarnings("unchecked")
+	public static List<Curriculo> findByCampus(Campus campus) {
+		Query q = entityManager().createQuery("SELECT o.curriculo FROM Oferta o WHERE o.campus = :campus");
+		q.setParameter("campus", campus);
+		return q.getResultList();
+	}
+	
     @SuppressWarnings("unchecked")
 	public static List<Curriculo> findByCursoAndCodigoLikeAndDescricaoLike(Curso curso, String codigo, String descricao, int firstResult, int maxResults, String orderBy) {
 
@@ -219,6 +226,7 @@ public class Curriculo implements Serializable {
         return q.setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
 	
+    
 	public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("Id: ").append(getId()).append(", ");
@@ -228,7 +236,7 @@ public class Curriculo implements Serializable {
         sb.append("Codigo: ").append(getCodigo()).append(", ");
         sb.append("Descricao: ").append(getDescricao()).append(", ");
         sb.append("Disciplinas: ").append(getDisciplinas() == null ? "null" : getDisciplinas().size()).append(", ");
-        sb.append("CampusCurriculo: ").append(getCampusCurriculo() == null ? "null" : getCampusCurriculo().size());
+        sb.append("Ofertas: ").append(getOfertas() == null ? "null" : getOfertas().size());
         return sb.toString();
     }
 

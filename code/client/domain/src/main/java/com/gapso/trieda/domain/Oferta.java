@@ -1,5 +1,7 @@
 package com.gapso.trieda.domain;
 
+import java.io.Serializable;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -29,9 +31,9 @@ import org.springframework.transaction.annotation.Transactional;
 @Entity
 @RooJavaBean
 @RooToString
-@RooEntity(identifierColumn = "CAC_ID")
-@Table(name = "CAMPI_CURRICULOS")
-public class CampusCurriculo implements java.io.Serializable {
+@RooEntity(identifierColumn = "OFE_ID")
+@Table(name = "OFERTAS")
+public class Oferta implements Serializable {
 
     @NotNull
     @ManyToOne(targetEntity = Curriculo.class)
@@ -49,8 +51,8 @@ public class CampusCurriculo implements java.io.Serializable {
     private Turno turno;
 
     @NotNull
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "campusCurriculo")
-    private Set<com.gapso.trieda.domain.Demanda> demandas = new java.util.HashSet<com.gapso.trieda.domain.Demanda>();
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "oferta")
+    private Set<Demanda> demandas = new HashSet<Demanda>();
 
 	@PersistenceContext
     transient EntityManager entityManager;
@@ -92,7 +94,7 @@ public class CampusCurriculo implements java.io.Serializable {
         if (this.entityManager.contains(this)) {
             this.entityManager.remove(this);
         } else {
-            CampusCurriculo attached = this.entityManager.find(this.getClass(), this.id);
+            Oferta attached = this.entityManager.find(this.getClass(), this.id);
             this.entityManager.remove(attached);
         }
     }
@@ -104,44 +106,44 @@ public class CampusCurriculo implements java.io.Serializable {
     }
 
 	@Transactional
-    public CampusCurriculo merge() {
+    public Oferta merge() {
         if (this.entityManager == null) this.entityManager = entityManager();
-        CampusCurriculo merged = this.entityManager.merge(this);
+        Oferta merged = this.entityManager.merge(this);
         this.entityManager.flush();
         return merged;
     }
 
 	public static final EntityManager entityManager() {
-        EntityManager em = new CampusCurriculo().entityManager;
+        EntityManager em = new Oferta().entityManager;
         if (em == null) throw new IllegalStateException("Entity manager has not been injected (is the Spring Aspects JAR configured as an AJC/AJDT aspects library?)");
         return em;
     }
 
 	public static int count() {
-        return ((Number) entityManager().createQuery("select count(o) from CampusCurriculo o").getSingleResult()).intValue();
+        return ((Number) entityManager().createQuery("select count(o) from Oferta o").getSingleResult()).intValue();
     }
 
 	@SuppressWarnings("unchecked")
-    public static List<CampusCurriculo> findAll() {
-        return entityManager().createQuery("select o from CampusCurriculo o").getResultList();
+    public static List<Oferta> findAll() {
+        return entityManager().createQuery("select o from Oferta o").getResultList();
     }
 
-	public static CampusCurriculo find(Long id) {
+	public static Oferta find(Long id) {
         if (id == null) return null;
-        return entityManager().find(CampusCurriculo.class, id);
+        return entityManager().find(Oferta.class, id);
     }
 
-	public static List<CampusCurriculo> find(int firstResult, int maxResults) {
+	public static List<Oferta> find(int firstResult, int maxResults) {
 		return find(firstResult, maxResults, null);
 	}
 	@SuppressWarnings("unchecked")
-    public static List<CampusCurriculo> find(int firstResult, int maxResults, String orderBy) {
+    public static List<Oferta> find(int firstResult, int maxResults, String orderBy) {
 		orderBy = (orderBy != null) ? "ORDER BY o." + orderBy : "";
-        return entityManager().createQuery("select o from CampusCurriculo o "+orderBy).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
+        return entityManager().createQuery("select o from Oferta o "+orderBy).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
 
     @SuppressWarnings("unchecked")
-	public static List<CampusCurriculo> findByCursoAndCodigoLikeAndDescricaoLike(Turno turno, Campus campus, Curso curso, Curriculo curriculo, int firstResult, int maxResults, String orderBy) {
+	public static List<Oferta> findByCursoAndCodigoLikeAndDescricaoLike(Turno turno, Campus campus, Curso curso, Curriculo curriculo, int firstResult, int maxResults, String orderBy) {
         
         orderBy = (orderBy != null) ? "ORDER BY o." + orderBy : "";
         
@@ -150,7 +152,7 @@ public class CampusCurriculo implements java.io.Serializable {
         String queryCurso = (curso != null) ? " o.curso = :curso AND " : "";
         String queryCurriculo = (curriculo != null) ? " o.curriculo = :curriculo AND " : "";
         
-        Query q = entityManager().createQuery("SELECT o FROM CampusCurriculo o WHERE "+queryTurno+queryCampus+queryCurso+queryCurriculo+" 1=1 ");
+        Query q = entityManager().createQuery("SELECT o FROM Oferta o WHERE "+queryTurno+queryCampus+queryCurso+queryCurriculo+" 1=1 ");
         if(turno != null) q.setParameter("turno", turno);
         if(campus != null) q.setParameter("campus", campus);
         if(curso != null) q.setParameter("curso", curso);

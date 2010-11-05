@@ -60,7 +60,7 @@
 	<bean class="com.gapso.trieda.domain.GrupoSala" id="grupoSalaBean" />
 	<bean class="com.gapso.trieda.domain.Curriculo" id="curriculoBean" />
 	<bean class="com.gapso.trieda.domain.CurriculoDisciplina" id="curriculoDisciplinaBean" />
-	<bean class="com.gapso.trieda.domain.CampusCurriculo" id="campusCurriculoBean" />
+	<bean class="com.gapso.trieda.domain.Oferta" id="OfertaBean" />
 	<bean class="com.gapso.trieda.domain.Demanda" id="demandaBean" />
 	<bean class="com.gapso.trieda.domain.SemanaLetiva" id="semanaLetivaBean" />
 </beans>

@@ -55,7 +55,7 @@ public class Turno implements Serializable {
 
     @NotNull
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "turno")
-    private Set<com.gapso.trieda.domain.CampusCurriculo> campusCurriculo = new java.util.HashSet<com.gapso.trieda.domain.CampusCurriculo>();
+    private Set<Oferta> ofertas = new java.util.HashSet<Oferta>();
 
     @PersistenceContext
     transient EntityManager entityManager;
@@ -125,10 +125,17 @@ public class Turno implements Serializable {
     public static int count() {
         return ((Number) entityManager().createQuery("select count(o) from Turno o").getSingleResult()).intValue();
     }
+    
+    @SuppressWarnings("unchecked")
+    public static List<Turno> findAllByCampus(Campus campus) {
+    	Query q = entityManager().createQuery("SELECT distinct(o.turno) FROM Oferta o WHERE o.campus = :campus");
+    	q.setParameter("campus", campus);
+    	return q.getResultList();
+    }
 
     @SuppressWarnings("unchecked")
     public static List<Turno> findAll() {
-        return entityManager().createQuery("select o from Turno o").getResultList();
+        return entityManager().createQuery("SELECT o FROM Turno o").getResultList();
     }
 
     public static Turno find(Long id) {
@@ -189,12 +196,12 @@ public class Turno implements Serializable {
         this.tempo = tempo;
     }
 
-    public Set<CampusCurriculo> getCampusCurriculo() {
-        return this.campusCurriculo;
+    public Set<Oferta> getOfertas() {
+        return this.ofertas;
     }
 
-    public void setCampusCurriculo(Set<CampusCurriculo> campusCurriculo) {
-        this.campusCurriculo = campusCurriculo;
+    public void setOfertas(Set<Oferta> ofertas) {
+        this.ofertas = ofertas;
     }
 
     private static final long serialVersionUID = 2608398950191790873L;
@@ -206,7 +213,7 @@ public class Turno implements Serializable {
         sb.append("Cenario: ").append(getCenario()).append(", ");
         sb.append("Nome: ").append(getNome()).append(", ");
         sb.append("Tempo: ").append(getTempo()).append(", ");
-        sb.append("CampusCurriculo: ").append(getCampusCurriculo() == null ? "null" : getCampusCurriculo().size());
+        sb.append("Oferta: ").append(getOfertas() == null ? "null" : getOfertas().size());
         return sb.toString();
     }
 }

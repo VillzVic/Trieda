@@ -44,7 +44,7 @@ public class GrupoSalaTest extends AbstractTransactionalJUnit4SpringContextTests
 	@Test(expected = LazyInitializationException.class)
 	public void testLIE_1() {
 		List<GrupoSala> grupos = GrupoSala.findAll();
-		grupos.get(0).getDisciplinas().add(new Disciplina());
+		grupos.get(0).getCurriculoDisciplinas().add(new CurriculoDisciplina());
 		grupos.get(0).merge();
 	}
 

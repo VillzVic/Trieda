@@ -1,5 +1,6 @@
 package com.gapso.trieda.domain;
 
+import java.io.Serializable;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -29,12 +30,12 @@ import org.springframework.transaction.annotation.Transactional;
 @RooToString
 @RooEntity(identifierColumn = "DEM_ID")
 @Table(name = "DEMANDAS")
-public class Demanda implements java.io.Serializable {
+public class Demanda implements Serializable {
 
     @NotNull
-    @ManyToOne(targetEntity = CampusCurriculo.class)
-    @JoinColumn(name = "CAC_ID")
-    private CampusCurriculo campusCurriculo;
+    @ManyToOne(targetEntity = Oferta.class)
+    @JoinColumn(name = "OFE_ID")
+    private Oferta oferta;
 
     @NotNull
     @ManyToOne(targetEntity = Disciplina.class)
@@ -47,12 +48,12 @@ public class Demanda implements java.io.Serializable {
     @Max(999L)
     private Integer quantidade;
 
-	public CampusCurriculo getCampusCurriculo() {
-        return this.campusCurriculo;
+	public Oferta getOferta() {
+        return this.oferta;
     }
 
-	public void setCampusCurriculo(CampusCurriculo campusCurriculo) {
-        this.campusCurriculo = campusCurriculo;
+	public void setOferta(Oferta oferta) {
+        this.oferta = oferta;
     }
 
 	public Disciplina getDisciplina() {
@@ -159,7 +160,7 @@ public class Demanda implements java.io.Serializable {
         StringBuilder sb = new StringBuilder();
         sb.append("Id: ").append(getId()).append(", ");
         sb.append("Version: ").append(getVersion()).append(", ");
-        sb.append("CampusCurriculo: ").append(getCampusCurriculo()).append(", ");
+        sb.append("Oferta: ").append(getOferta()).append(", ");
         sb.append("Disciplina: ").append(getDisciplina()).append(", ");
         sb.append("Quantidade: ").append(getQuantidade());
         return sb.toString();

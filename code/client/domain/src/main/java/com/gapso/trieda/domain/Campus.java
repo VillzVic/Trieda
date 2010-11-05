@@ -83,7 +83,7 @@ public class Campus implements Serializable {
 
     @NotNull
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "campus")
-    private Set<CampusCurriculo> campusCurriculo = new HashSet<CampusCurriculo>();
+    private Set<Oferta> ofertas = new HashSet<Oferta>();
 
 	public Cenario getCenario() {
         return this.cenario;
@@ -165,12 +165,12 @@ public class Campus implements Serializable {
         this.horarios = horarios;
     }
 
-	public Set<CampusCurriculo> getCampusCurriculo() {
-        return this.campusCurriculo;
+	public Set<Oferta> getOfertas() {
+        return this.ofertas;
     }
 
-	public void setCampusCurriculo(Set<CampusCurriculo> campusCurriculo) {
-        this.campusCurriculo = campusCurriculo;
+	public void setOfertas(Set<Oferta> ofertas) {
+        this.ofertas = ofertas;
     }
 
 	@PersistenceContext
@@ -313,7 +313,7 @@ public class Campus implements Serializable {
         sb.append("Deslocamentos: ").append(getDeslocamentos() == null ? "null" : getDeslocamentos().size()).append(", ");
         sb.append("Professores: ").append(getProfessores() == null ? "null" : getProfessores().size()).append(", ");
         sb.append("Horarios: ").append(getHorarios() == null ? "null" : getHorarios().size()).append(", ");
-        sb.append("CampusCurriculo: ").append(getCampusCurriculo() == null ? "null" : getCampusCurriculo().size());
+        sb.append("Ofertas: ").append(getOfertas() == null ? "null" : getOfertas().size());
         return sb.toString();
     }
 }

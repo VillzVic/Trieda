@@ -14,6 +14,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.Table;
@@ -81,6 +82,10 @@ public class Curso implements java.io.Serializable {
     @ManyToMany(cascade = CascadeType.ALL, mappedBy = "cursos")
     private Set<AreaTitulacao> areasTitulacao = new HashSet<AreaTitulacao>();
 
+    @OneToMany(mappedBy="curso")
+    private Set<Curriculo> curriculos;
+
+    
 	public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("Id: ").append(getId()).append(", ");
@@ -168,6 +173,14 @@ public class Curso implements java.io.Serializable {
 	public void setAreasTitulacao(Set<AreaTitulacao> areasTitulacao) {
         this.areasTitulacao = areasTitulacao;
     }
+
+	public Set<Curriculo> getCurriculos() {
+		return curriculos;
+	}
+
+	public void setCurriculos(Set<Curriculo> curriculos) {
+		this.curriculos = curriculos;
+	}
 
 	@PersistenceContext
     transient EntityManager entityManager;
@@ -257,6 +270,14 @@ public class Curso implements java.io.Serializable {
         return entityManager().createQuery("select o from Curso o "+orderBy).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
 
+	@SuppressWarnings("unchecked")
+	public static List<Curso> findByCampus(Campus campus) {
+		Query q = entityManager()
+			.createQuery("SELECT o FROM Curso o WHERE o IN (SELECT cc.curriculo.curso FROM Oferta cc WHERE cc.campus = :campus)")
+			.setParameter("campus", campus);
+		return q.getResultList();
+	}
+	
     @SuppressWarnings("unchecked")
 	public static List<Curso> findByCodigoLikeAndNomeLikeAndTipo(String codigo, String nome, TipoCurso tipoCurso, int firstResult, int maxResults, String orderBy) {
 
