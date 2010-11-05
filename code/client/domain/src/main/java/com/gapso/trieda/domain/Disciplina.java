@@ -1,5 +1,7 @@
 package com.gapso.trieda.domain;
 
+import java.io.Serializable;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -38,7 +40,7 @@ import com.gapso.trieda.misc.Dificuldades;
 @RooToString
 @RooEntity(identifierColumn = "DIS_ID")
 @Table(name = "DISCIPLINAS")
-public class Disciplina implements java.io.Serializable {
+public class Disciplina implements Serializable {
 
 //  TODO  @NotNull
     @ManyToOne(targetEntity = Cenario.class)
@@ -96,33 +98,27 @@ public class Disciplina implements java.io.Serializable {
     private Integer maxAlunosPratico;
 
     @ManyToMany(cascade = CascadeType.ALL, mappedBy = "disciplinas")
-    private Set<com.gapso.trieda.domain.HorarioDisponivelCenario> horarios = new java.util.HashSet<com.gapso.trieda.domain.HorarioDisponivelCenario>();
+    private Set<HorarioDisponivelCenario> horarios = new HashSet<HorarioDisponivelCenario>();
 
     @NotNull
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "professor")
-    private Set<com.gapso.trieda.domain.ProfessorDisciplina> professores = new java.util.HashSet<com.gapso.trieda.domain.ProfessorDisciplina>();
+    private Set<ProfessorDisciplina> professores = new HashSet<ProfessorDisciplina>();
 
     @NotNull
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "disciplina1")
-    private Set<com.gapso.trieda.domain.Compatibilidade> compatibilidades = new java.util.HashSet<com.gapso.trieda.domain.Compatibilidade>();
+    private Set<Compatibilidade> compatibilidades = new HashSet<Compatibilidade>();
 
     @NotNull
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "cursou")
-    private Set<com.gapso.trieda.domain.Equivalencia> equivalencias = new java.util.HashSet<com.gapso.trieda.domain.Equivalencia>();
-
-    @ManyToMany(cascade = CascadeType.ALL)
-    private Set<com.gapso.trieda.domain.Sala> salas = new java.util.HashSet<com.gapso.trieda.domain.Sala>();
-
-    @ManyToMany(cascade = CascadeType.ALL, mappedBy = "disciplinas")
-    private Set<com.gapso.trieda.domain.GrupoSala> gruposSala = new java.util.HashSet<com.gapso.trieda.domain.GrupoSala>();
+    private Set<Equivalencia> equivalencias = new HashSet<Equivalencia>();
 
     @NotNull
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "disciplina")
-    private Set<com.gapso.trieda.domain.CurriculoDisciplina> curriculos = new java.util.HashSet<com.gapso.trieda.domain.CurriculoDisciplina>();
+    private Set<CurriculoDisciplina> curriculos = new HashSet<CurriculoDisciplina>();
 
     @NotNull
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "disciplina")
-    private Set<com.gapso.trieda.domain.Demanda> demandas = new java.util.HashSet<com.gapso.trieda.domain.Demanda>();
+    private Set<Demanda> demandas = new HashSet<Demanda>();
 
 	public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -143,8 +139,6 @@ public class Disciplina implements java.io.Serializable {
         sb.append("Professores: ").append(getProfessores() == null ? "null" : getProfessores().size()).append(", ");
         sb.append("Compatibilidades: ").append(getCompatibilidades() == null ? "null" : getCompatibilidades().size()).append(", ");
         sb.append("Equivalencias: ").append(getEquivalencias() == null ? "null" : getEquivalencias().size()).append(", ");
-        sb.append("Salas: ").append(getSalas() == null ? "null" : getSalas().size()).append(", ");
-        sb.append("GruposSala: ").append(getGruposSala() == null ? "null" : getGruposSala().size()).append(", ");
         sb.append("Curriculos: ").append(getCurriculos() == null ? "null" : getCurriculos().size()).append(", ");
         sb.append("Demandas: ").append(getDemandas() == null ? "null" : getDemandas().size());
         return sb.toString();
@@ -238,7 +232,21 @@ public class Disciplina implements java.io.Serializable {
 		orderBy = (orderBy != null)? "ORDER BY o."+orderBy : "";
         return entityManager().createQuery("select o from Disciplina o "+orderBy).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
+	
+	@SuppressWarnings("unchecked")
+	public static List<Disciplina> findBySalas(List<Sala> salas) {
+		Query q = entityManager().createQuery("SELECT DISTINCT(o.disciplina) FROM SalasDisciplinas o WHERE o.sala IN (:salas)")
+		.setParameter("salas", salas);
+		return q.getResultList();
+	}
 
+	@SuppressWarnings("unchecked")
+	public static List<Disciplina> findByCursos(List<Curso> cursos) {
+		Query q = entityManager().createQuery("SELECT DISTINCT(o.disciplina) FROM CurriculoDisciplina o WHERE o.curriculo IN (SELECT c FROM Curriculo c WHERE c.curso IN (:cursos))")
+			.setParameter("cursos", cursos);
+		return q.getResultList();
+	}
+	
     @SuppressWarnings("unchecked")
 	public static List<Disciplina> findByCodigoLikeAndNomeLikeAndTipo(String codigo, String nome, TipoDisciplina tipoDisciplina, int firstResult, int maxResults, String orderBy) {
 
@@ -381,22 +389,6 @@ public class Disciplina implements java.io.Serializable {
 
 	public void setEquivalencias(Set<Equivalencia> equivalencias) {
         this.equivalencias = equivalencias;
-    }
-
-	public Set<Sala> getSalas() {
-        return this.salas;
-    }
-
-	public void setSalas(Set<Sala> salas) {
-        this.salas = salas;
-    }
-
-	public Set<GrupoSala> getGruposSala() {
-        return this.gruposSala;
-    }
-
-	public void setGruposSala(Set<GrupoSala> gruposSala) {
-        this.gruposSala = gruposSala;
     }
 
 	public Set<CurriculoDisciplina> getCurriculos() {

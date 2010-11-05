@@ -1,6 +1,8 @@
 package com.gapso.trieda.domain;
 
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -35,7 +37,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RooToString
 @RooEntity(identifierColumn = "SAL_ID")
 @Table(name = "SALAS")
-public class Sala implements java.io.Serializable {
+public class Sala implements Serializable {
 
     @NotNull
     @ManyToOne(targetEntity = TipoSala.class)
@@ -69,13 +71,13 @@ public class Sala implements java.io.Serializable {
     private Integer capacidade;
 
     @ManyToMany(cascade = CascadeType.ALL, mappedBy = "salas")
-    private Set<com.gapso.trieda.domain.HorarioDisponivelCenario> horarios = new java.util.HashSet<com.gapso.trieda.domain.HorarioDisponivelCenario>();
+    private Set<HorarioDisponivelCenario> horarios = new HashSet<HorarioDisponivelCenario>();
 
     @ManyToMany(cascade = CascadeType.ALL, mappedBy = "salas")
-    private Set<com.gapso.trieda.domain.Disciplina> disciplinas = new java.util.HashSet<com.gapso.trieda.domain.Disciplina>();
+    private Set<CurriculoDisciplina> curriculoDisciplinas = new HashSet<CurriculoDisciplina>();
 
     @ManyToMany(cascade = CascadeType.ALL, mappedBy = "salas")
-    private Set<com.gapso.trieda.domain.GrupoSala> gruposSala = new java.util.HashSet<com.gapso.trieda.domain.GrupoSala>();
+    private Set<GrupoSala> gruposSala = new HashSet<GrupoSala>();
 
 	public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -88,7 +90,7 @@ public class Sala implements java.io.Serializable {
         sb.append("Andar: ").append(getAndar()).append(", ");
         sb.append("Capacidade: ").append(getCapacidade()).append(", ");
         sb.append("Horarios: ").append(getHorarios() == null ? "null" : getHorarios().size()).append(", ");
-        sb.append("Disciplinas: ").append(getDisciplinas() == null ? "null" : getDisciplinas().size()).append(", ");
+        sb.append("CurriculoDisciplinas: ").append(getCurriculoDisciplinas() == null ? "null" : getCurriculoDisciplinas().size()).append(", ");
         sb.append("GruposSala: ").append(getGruposSala() == null ? "null" : getGruposSala().size());
         return sb.toString();
     }
@@ -162,9 +164,20 @@ public class Sala implements java.io.Serializable {
         return ((Number) entityManager().createQuery("select count(o) from Sala o").getSingleResult()).intValue();
     }
 	
-	@SuppressWarnings("unchecked")
 	public static List<Sala> findAndaresAll() {
-		return entityManager().createQuery("SELECT o FROM Sala o GROUP BY o.andar").getResultList();
+		return findAndaresAll(null);
+	}
+	@SuppressWarnings("unchecked")
+	public static List<Sala> findAndaresAll(Unidade unidade) {
+		List<Sala> list;
+		if(unidade == null) {
+			list = entityManager().createQuery("SELECT o FROM Sala o GROUP BY o.andar").getResultList();
+		} else {
+			list = entityManager().createQuery("SELECT o FROM Sala o WHERE o.unidade = :unidade GROUP BY o.andar")
+			.setParameter("unidade", unidade)
+			.getResultList();
+		}
+		return list;
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -184,7 +197,7 @@ public class Sala implements java.io.Serializable {
 
 	@SuppressWarnings("unchecked")
     public static List<Sala> findAll() {
-        return entityManager().createQuery("select o from Sala o").getResultList();
+        return entityManager().createQuery("SELECT o FROM Sala o").getResultList();
     }
 
 	public static Sala find(Long id) {
@@ -192,13 +205,20 @@ public class Sala implements java.io.Serializable {
         return entityManager().find(Sala.class, id);
     }
 
+	@SuppressWarnings("unchecked")
+	public static List<Sala> findByUnidade(Unidade unidade) {
+		return entityManager().createQuery("SELECT o FROM Sala o WHERE unidade = :unidade")
+		.setParameter("unidade", unidade)
+		.getResultList();
+	}
+	
 	public static List<Sala> find(int firstResult, int maxResults) {
 		return find(firstResult, maxResults, null);
 	}
 	@SuppressWarnings("unchecked")
     public static List<Sala> find(int firstResult, int maxResults, String orderBy) {
 		orderBy = (orderBy != null)? "ORDER BY o."+orderBy : "";
-        return entityManager().createQuery("select o from Sala o "+orderBy).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
+        return entityManager().createQuery("SELECT o FROM Sala o "+orderBy).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
 
 	public TipoSala getTipoSala() {
@@ -257,12 +277,12 @@ public class Sala implements java.io.Serializable {
         this.horarios = horarios;
     }
 
-	public Set<Disciplina> getDisciplinas() {
-        return this.disciplinas;
+	public Set<CurriculoDisciplina> getCurriculoDisciplinas() {
+        return this.curriculoDisciplinas;
     }
 
-	public void setDisciplinas(Set<Disciplina> disciplinas) {
-        this.disciplinas = disciplinas;
+	public void setCurriculoDisciplinas(Set<CurriculoDisciplina> curriculoDisciplinas) {
+        this.curriculoDisciplinas = curriculoDisciplinas;
     }
 
 	public Set<GrupoSala> getGruposSala() {

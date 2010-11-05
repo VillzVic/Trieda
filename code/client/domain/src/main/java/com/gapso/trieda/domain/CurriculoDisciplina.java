@@ -1,8 +1,11 @@
 package com.gapso.trieda.domain;
 
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
@@ -10,6 +13,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Table;
@@ -48,6 +52,12 @@ public class CurriculoDisciplina implements Serializable {
     @Max(99L)
     private Integer periodo;
 
+    @ManyToMany(cascade = CascadeType.ALL)
+    private Set<Sala> salas = new HashSet<Sala>();
+    
+    @ManyToMany(cascade = CascadeType.ALL, mappedBy = "curriculoDisciplinas")
+    private Set<GrupoSala> gruposSala = new HashSet<GrupoSala>();
+    
 	public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("Id: ").append(getId()).append(", ");
@@ -55,6 +65,8 @@ public class CurriculoDisciplina implements Serializable {
         sb.append("Curriculo: ").append(getCurriculo()).append(", ");
         sb.append("Disciplina: ").append(getDisciplina()).append(", ");
         sb.append("Periodo: ").append(getPeriodo());
+        sb.append("Salas: ").append(getSalas() == null ? "null" : getSalas().size()).append(", ");
+        sb.append("GruposSala: ").append(getGruposSala() == null ? "null" : getGruposSala().size()).append(", ");
         return sb.toString();
     }
 
@@ -82,6 +94,22 @@ public class CurriculoDisciplina implements Serializable {
         this.periodo = periodo;
     }
 
+	public Set<Sala> getSalas() {
+        return this.salas;
+    }
+
+	public void setSalas(Set<Sala> salas) {
+        this.salas = salas;
+    }
+
+	public Set<GrupoSala> getGruposSala() {
+        return this.gruposSala;
+    }
+
+	public void setGruposSala(Set<GrupoSala> gruposSala) {
+        this.gruposSala = gruposSala;
+    }
+	
 	private static final long serialVersionUID = -5429743673577487971L;
 
 	@PersistenceContext

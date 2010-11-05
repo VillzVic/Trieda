@@ -55,7 +55,7 @@ public class GrupoSala implements Serializable {
     private Set<Sala> salas = new HashSet<Sala>();
 
     @ManyToMany(cascade = CascadeType.ALL)
-    private Set<Disciplina> disciplinas = new HashSet<Disciplina>();
+    private Set<CurriculoDisciplina> curriculoDisciplinas = new HashSet<CurriculoDisciplina>();
 
 	private static final long serialVersionUID = -3068409934520158819L;
 
@@ -91,12 +91,12 @@ public class GrupoSala implements Serializable {
         this.salas = salas;
     }
 
-	public Set<Disciplina> getDisciplinas() {
-        return this.disciplinas;
+	public Set<CurriculoDisciplina> getCurriculoDisciplinas() {
+        return this.curriculoDisciplinas;
     }
 
-	public void setDisciplinas(Set<Disciplina> disciplinas) {
-        this.disciplinas = disciplinas;
+	public void setCurriculoDisciplinas(Set<CurriculoDisciplina> curriculoDisciplinas) {
+        this.curriculoDisciplinas = curriculoDisciplinas;
     }
 
 	public String toString() {
@@ -107,7 +107,7 @@ public class GrupoSala implements Serializable {
         sb.append("Codigo: ").append(getCodigo()).append(", ");
         sb.append("Nome: ").append(getNome()).append(", ");
         sb.append("Salas: ").append(getSalas() == null ? "null" : getSalas().size()).append(", ");
-        sb.append("Disciplinas: ").append(getDisciplinas() == null ? "null" : getDisciplinas().size());
+        sb.append("CurriculoDisciplinas: ").append(getCurriculoDisciplinas() == null ? "null" : getCurriculoDisciplinas().size());
         return sb.toString();
     }
 
