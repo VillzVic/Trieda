@@ -25,6 +25,9 @@ public:
 
 	// Load the XML file
 	void load();
+
+   void criaConjuntoSalas();
+
 	void divideDisciplinas();
 	// >>> 14/10/2010
 	void armz_disc_curriculo();
@@ -77,6 +80,11 @@ private:
    (definida em estina_turmas()) superior à capacidade da sala. */
    void removeDisciplinasAssociadasSalas();
 
+   /* Armazena referências para as disciplinas associadas em cada elemento do <ConjuntoSala>. 
+   Como o método carregaDisciplinasAssociadasSalas() já associou as disciplinas às salas, basta
+   percorrer o map de salas de um dado elemento do <ConjuntoSala> adicionando as salas ao map de
+   disciplinas associadas do <ConjuntoSala>.*/
+   void carregaDiscAssocConjuntoSalas();
 
    // <<<
 

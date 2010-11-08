@@ -469,6 +469,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\ConjuntoSala.h"
+					>
+				</File>
+				<File
 					RelativePath=".\CreditoDisponivel.h"
 					>
 				</File>

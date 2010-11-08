@@ -51,11 +51,11 @@ public:
    All get methods of the private attributes should be defined here
    */
 
-   Campus* getCampus() const { 
-      return cp; 
-   }
+   Campus* getCampus() const { return cp; }
    Unidade* getUnidade() const { return u; }
    Sala* getSala() const { return s; }
+
+   ConjuntoSala* getSubCjtSala() const { return tps; }
 
    int getTurma() const { return i; }
    Curso* getCurso() const { return c; }
@@ -65,6 +65,8 @@ public:
    int getSubBloco() const { return j; }
 
    int getDia() const { return t; }
+
+   Oferta * getOferta() const { return o; }
 
    //==================================================
    // SET METHODS 
@@ -87,6 +89,8 @@ public:
    void setUnidade(Unidade* uu) {  u = uu; }
    void setSala(Sala* ss) {  s = ss; }
 
+   void setSubCjtSala(ConjuntoSala * tpss)  { tps = tpss; }
+
    void setTurma(int ii) { i = ii; }
    void setCurso(Curso* cc) { c = cc; }
    void setBloco(BlocoCurricular* bb) {  b = bb; } 
@@ -95,6 +99,8 @@ public:
    void setSubBloco(int jj) { j = jj; }   
 
    void setDia(int tt) {  t = tt; }
+
+   void setOferta(Oferta * oferta) { o = oferta; }
 
    //==================================================
    // OPERATORS 
@@ -121,6 +127,8 @@ private:
    Unidade* u;
    Sala* s;
 
+   ConjuntoSala* tps;
+
    int i; // Turma
    Curso* c;
    BlocoCurricular* b;
@@ -129,6 +137,8 @@ private:
    int j; // subbloco
 
    int t; // dia
+
+   Oferta * o; // oferta
 
 };
 

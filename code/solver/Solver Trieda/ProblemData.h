@@ -20,6 +20,9 @@
 #include "ParametrosPlanejamento.h"
 #include "Fixacao.h"
 #include "BlocoCurricular.h"
+
+//#include "ConjuntoSala.h"
+
 #include <iostream>
 
 //Stores input data
@@ -77,6 +80,8 @@ public:
 
    GGroup<BlocoCurricular*> blocos;
 
+   //GGroup<ConjuntoSala*> conjutoSalas;
+
    std::map<std::pair<int/*disc_id*/,int/*campus_id*/>,int> demandas_campus;
    
    int totalSalas;
@@ -92,10 +97,10 @@ public:
    // <<< 14/10/2010
 
    // >>> 15/10/2010
-   typedef std::map<int/*novo_id_Disc*/,std::pair<int/*id_Disc*/,int/*id_Curriculo*/> > relacao_disc_curriculo;
+   //typedef std::map<int/*novo_id_Disc*/,std::pair<int/*id_Disc*/,int/*id_Curriculo*/> > relacao_disc_curriculo;
 
    // Admitindo que o id de um curso seja único, construiremos um map de relacoes_disc_curriculo para cada curso
-   std::map<int/*id do curso*/,relacao_disc_curriculo> relacao_curso_discs_curric;
+   //std::map<int/*id do curso*/,relacao_disc_curriculo> relacao_curso_discs_curric;
 
    // <<< 15/10/2010
 
@@ -113,7 +118,7 @@ public:
    Por equanto, os ids das turmas não estão sendo utilizados, ou seja, podem existir
    duas turmas diferentes com o msm id. Isto não é considerado um erro pq, do modo que
    está implementado, qdo isso acontecer, as turmas serão de discs diferentes. */
-   std::map<int/*Id Disciplina*/,GGroup<std::pair<int/*Id Turma*/,int/*Tamanho Turma*/> > > disc_turmas;
+   //std::map<int/*Id Disciplina*/,GGroup<std::pair<int/*Id Turma*/,int/*Tamanho Turma*/> > > disc_turmas;
 
    /* Estrutura responsavel por referenciar os campus.
    Nao precisaria dessa estrutura se o FIND do GGroup estivesse funcionando normalmente.

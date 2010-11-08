@@ -27,6 +27,8 @@ void Variable::reset()
 	u = NULL;
 	s = NULL;
 
+   tps = NULL;
+
 	i = -1;
 	c = NULL;;
 	b = NULL;;
@@ -35,6 +37,8 @@ void Variable::reset()
 	j = -1;
 
 	t = -1;
+
+   o = NULL;
 }
 
 Variable::~Variable()
@@ -51,6 +55,8 @@ Variable& Variable::operator=(const Variable& var)
 	this->u = var.getUnidade();
 	this->s = var.getSala();
 
+   this->tps = var.getSubCjtSala();
+
 	this->i = var.getTurma();
 	this->c = var.getCurso();
 	this->b = var.getBloco();
@@ -59,6 +65,8 @@ Variable& Variable::operator=(const Variable& var)
 	this->j = var.getSubBloco();
 
 	this->t = var.getDia();
+
+   this->o = var.getOferta();
 
 	return *this;
 }
@@ -74,6 +82,8 @@ bool Variable::operator <(const Variable& var) const
 	if (E_MENOR(this->getUnidade(),var.getUnidade())) return true;
 	if (E_MENOR(this->getSala(),var.getSala())) return true;
 
+   if (E_MENOR(this->getSubCjtSala(),var.getSubCjtSala())) return true;
+
 	if (this->getTurma() < var.getTurma()) return true;
 	if(E_MENOR(this->getCurso(),var.getCurso())) return true;
 	if (E_MENOR(this->getBloco(),var.getBloco())) return true;
@@ -82,6 +92,8 @@ bool Variable::operator <(const Variable& var) const
 	if (this->getSubBloco() < var.getSubBloco()) return true;
 
 	if (this->getDia() < var.getDia()) return true;
+
+   if (E_MENOR(this->getOferta(),var.getOferta())) return true;
 
 	/*
 	if( (int)this->getType() < (int) var.getType() )
@@ -173,12 +185,17 @@ std::string Variable::toString()
 
 	if (u != NULL) str << "," << u->getId();
 	if (s != NULL) str << "," << s->getId();
+   if (tps) str << "," << tps->getId();
+
+
 	if (t >= 0) str << "," << t;
 
 	if (j >= 0) str << "," << j;
 	if (c) str << "," << c->getId();
 
 	if (cp) str << "," << cp->getId();
+
+   if (o) str << "," << o->getId();
 
 	str << "}";
 	str >> output;
@@ -207,8 +224,10 @@ size_t VariableHasher::operator()(const Variable& v) const
 	}
 	if(v.getSala()) {
 		sum *= HASH_PRIME; sum+= intHash(v.getSala()->getId());
-
 	}
+   if(v.getSubCjtSala()){
+      sum *= HASH_PRIME; sum += intHash(v.getSubCjtSala()->getId());
+   }
 	if(v.getTurma() != -1) {
 		sum *= HASH_PRIME; sum+= intHash(v.getTurma());
 	}
@@ -227,6 +246,9 @@ size_t VariableHasher::operator()(const Variable& v) const
 	}
 	if(v.getDia() != -1) {
 		sum *= HASH_PRIME; sum+= intHash(v.getDia());
+	}	
+   if(v.getOferta()) {
+      sum *= HASH_PRIME; sum+= intHash(v.getOferta()->getId());
 	}	
 
 	return sum;

@@ -16,6 +16,9 @@ public:
    int curso_id;
    int turno_id;
    int campus_id;
+
+
+   // Dados pré-processados
    Curriculo* curriculo;
    Curso* curso;
    Turno* turno;

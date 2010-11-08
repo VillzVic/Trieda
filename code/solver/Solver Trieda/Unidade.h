@@ -3,6 +3,8 @@
 #include "Sala.h"
 #include "Horario.h"
 
+#include "ConjuntoSala.h"
+
 class Unidade :
 	public OFBase
 {
@@ -16,6 +18,8 @@ public:
 
 	GGroup<Horario*> horarios;
 	GGroup<Sala*> salas;
+
+   GGroup<ConjuntoSala*> conjutoSalas;
 
 	//int maior_sala;
    unsigned maiorSala;
