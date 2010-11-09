@@ -6,7 +6,9 @@ import com.extjs.gxt.ui.client.data.BasePagingLoadConfig;
 import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
+import com.gapso.web.trieda.client.mvp.model.CursoDTO;
 import com.gapso.web.trieda.client.mvp.model.DisciplinaDTO;
+import com.gapso.web.trieda.client.mvp.model.FileModel;
 import com.gapso.web.trieda.client.mvp.model.TipoDisciplinaDTO;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -18,5 +20,8 @@ public interface DisciplinasServiceAsync {
 	void remove(List<DisciplinaDTO> disciplinaDTOList, AsyncCallback<Void> callback);
 	void getTipoDisciplinaList(AsyncCallback<ListLoadResult<TipoDisciplinaDTO>> callback);
 	void getTipoDisciplina(Long id, AsyncCallback<TipoDisciplinaDTO> callback);
+	void getListByCursos(List<CursoDTO> cursos, AsyncCallback<ListLoadResult<DisciplinaDTO>> callback);
+	void getFolderChildren(FileModel loadConfig, AsyncCallback<List<FileModel>> callback);
+	void getFolderChildrenSalaToDisciplinba(FileModel model, AsyncCallback<List<FileModel>> callback);
 	
 }

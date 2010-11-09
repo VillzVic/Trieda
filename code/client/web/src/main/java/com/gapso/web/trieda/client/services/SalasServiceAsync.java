@@ -1,10 +1,12 @@
 package com.gapso.web.trieda.client.services;
 
 import java.util.List;
+import java.util.Map;
 
 import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
+import com.gapso.web.trieda.client.mvp.model.GrupoSalaDTO;
 import com.gapso.web.trieda.client.mvp.model.SalaDTO;
 import com.gapso.web.trieda.client.mvp.model.TipoSalaDTO;
 import com.gapso.web.trieda.client.util.view.simplecrud.ICrudService;
@@ -20,6 +22,9 @@ public interface SalasServiceAsync extends ICrudService {
 	void getSala(Long id, AsyncCallback<SalaDTO> callback);
 	void getTipoSala(Long id, AsyncCallback<TipoSalaDTO> callback);
 	void getAndaresList(AsyncCallback<ListLoadResult<SalaDTO>> callback);
+	void getAndaresList(Long unidadeId, AsyncCallback<ListLoadResult<SalaDTO>> callback);
 	void getSalasDoAndareList(List<String> andares, AsyncCallback<ListLoadResult<SalaDTO>> callback);
+	void getSalasEAndareMap(Long unidadeId, AsyncCallback<Map<String, List<SalaDTO>>> callback);
+	void getGruposDeSalas(Long unidadeId, AsyncCallback<List<GrupoSalaDTO>> callback);
 	
 }

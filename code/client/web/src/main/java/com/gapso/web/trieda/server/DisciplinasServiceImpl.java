@@ -2,6 +2,7 @@ package com.gapso.web.trieda.server;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.transaction.annotation.Transactional;
 
@@ -12,10 +13,22 @@ import com.extjs.gxt.ui.client.data.BasePagingLoadResult;
 import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
+import com.gapso.trieda.domain.Curriculo;
+import com.gapso.trieda.domain.CurriculoDisciplina;
+import com.gapso.trieda.domain.Curso;
 import com.gapso.trieda.domain.Disciplina;
+import com.gapso.trieda.domain.Sala;
 import com.gapso.trieda.domain.TipoDisciplina;
+import com.gapso.trieda.domain.Turno;
+import com.gapso.web.trieda.client.mvp.model.CampusDTO;
+import com.gapso.web.trieda.client.mvp.model.CurriculoDTO;
+import com.gapso.web.trieda.client.mvp.model.CurriculoDisciplinaDTO;
+import com.gapso.web.trieda.client.mvp.model.CursoDTO;
 import com.gapso.web.trieda.client.mvp.model.DisciplinaDTO;
+import com.gapso.web.trieda.client.mvp.model.FileModel;
+import com.gapso.web.trieda.client.mvp.model.SalaDTO;
 import com.gapso.web.trieda.client.mvp.model.TipoDisciplinaDTO;
+import com.gapso.web.trieda.client.mvp.model.TurnoDTO;
 import com.gapso.web.trieda.client.services.DisciplinasService;
 import com.gapso.web.trieda.server.util.ConvertBeans;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
@@ -28,6 +41,33 @@ public class DisciplinasServiceImpl extends RemoteServiceServlet implements Disc
 
 	private static final long serialVersionUID = -4850774141421616870L;
 
+	@Override
+	public ListLoadResult<DisciplinaDTO> getListByCursos(List<CursoDTO> cursosDTO) {
+		List<DisciplinaDTO> list = new ArrayList<DisciplinaDTO>();
+		List<Curso> cursos = new ArrayList<Curso>();
+		for(CursoDTO cursoDTO : cursosDTO) {
+			cursos.add(ConvertBeans.toCurso(cursoDTO));
+		}
+		List<Disciplina> disciplinas = Disciplina.findByCursos(cursos);
+		for(Disciplina disciplina : disciplinas) {
+			list.add(ConvertBeans.toDisciplinaDTO(disciplina));
+		}
+		return new BaseListLoadResult<DisciplinaDTO>(list);
+	}
+	
+	public ListLoadResult<DisciplinaDTO> getListBySalas(List<SalaDTO> salasDTO) {
+		List<DisciplinaDTO> list = new ArrayList<DisciplinaDTO>();
+		List<Sala> salas = new ArrayList<Sala>();
+		for(SalaDTO salaDTO : salasDTO) {
+			salas.add(ConvertBeans.toSala(salaDTO));
+		}
+		List<Disciplina> disciplinas = Disciplina.findBySalas(salas);
+		for(Disciplina disciplina : disciplinas) {
+			list.add(ConvertBeans.toDisciplinaDTO(disciplina));
+		}
+		return new BaseListLoadResult<DisciplinaDTO>(list);
+	}
+	
 	@Override
 	public ListLoadResult<DisciplinaDTO> getList(BasePagingLoadConfig loadConfig) {
 		return getBuscaList(null, loadConfig.get("query").toString(), null, loadConfig);
@@ -48,7 +88,8 @@ public class DisciplinasServiceImpl extends RemoteServiceServlet implements Disc
 		if(tipoDisciplinaDTO != null) {
 			tipoDisciplina = ConvertBeans.toTipoDisciplina(tipoDisciplinaDTO);
 		}
-		for(Disciplina disciplina : Disciplina.findByCodigoLikeAndNomeLikeAndTipo(nome, codigo, tipoDisciplina, config.getOffset(), config.getLimit(), orderBy)) {
+		List<Disciplina> disciplinas = Disciplina.findByCodigoLikeAndNomeLikeAndTipo(nome, codigo, tipoDisciplina, config.getOffset(), config.getLimit(), orderBy);
+		for(Disciplina disciplina : disciplinas) {
 			DisciplinaDTO disciplinaDTO = ConvertBeans.toDisciplinaDTO(disciplina);
 			list.add(disciplinaDTO);
 		}
@@ -102,5 +143,64 @@ public class DisciplinasServiceImpl extends RemoteServiceServlet implements Disc
 			list.add(ConvertBeans.toTipoDisciplinaDTO(tipo));
 		}
 		return new BaseListLoadResult<TipoDisciplinaDTO>(list);
+	}
+
+	@Override
+	public List<FileModel> getFolderChildren(FileModel model) {
+		List<FileModel> listDTO = new ArrayList<FileModel>();
+		if(model != null) {
+			if(model instanceof CurriculoDTO) {
+				Curriculo curriculo = Curriculo.find(((CurriculoDTO) model).getId());
+				Set<CurriculoDisciplina> disciplinas = curriculo.getDisciplinas();
+				for(CurriculoDisciplina o : disciplinas);
+				List<CurriculoDisciplina> list = new ArrayList<CurriculoDisciplina>(disciplinas);
+				List<Integer> periodos = new ArrayList<Integer>();
+				for(CurriculoDisciplina cd : list) {
+					CurriculoDisciplinaDTO curriculoDisciplinaDTO = ConvertBeans.toCurriculoDisciplinaDTO(cd);
+					curriculoDisciplinaDTO.setName("Período "+curriculoDisciplinaDTO.getPeriodo().toString());
+					curriculoDisciplinaDTO.setPath(model.getPath() + curriculoDisciplinaDTO.getPeriodo().toString() + "/");
+					if(!periodos.contains(curriculoDisciplinaDTO.getPeriodo())) {
+						periodos.add(curriculoDisciplinaDTO.getPeriodo());
+						listDTO.add(curriculoDisciplinaDTO);
+					}
+				}
+			} else if(model instanceof CurriculoDisciplinaDTO) {
+				Integer periodo = ((CurriculoDisciplinaDTO) model).getPeriodo();
+				Curriculo curriculo = Curriculo.find(((CurriculoDisciplinaDTO) model).getCurriculoId());
+				Set<CurriculoDisciplina> disciplinas = curriculo.getDisciplinas();
+				List<CurriculoDisciplina> list = new ArrayList<CurriculoDisciplina>(disciplinas);
+				for(CurriculoDisciplina cd : list) {
+					DisciplinaDTO disciplinaDTO = ConvertBeans.toDisciplinaDTO(cd.getDisciplina());
+					disciplinaDTO.setName(disciplinaDTO.getCodigo());
+					disciplinaDTO.setPath(model.getPath() + disciplinaDTO.getCodigo() + "/");
+					if(cd.getPeriodo().equals(periodo)) {
+						listDTO.add(disciplinaDTO);
+					}
+				}
+			}
+		}
+		return listDTO;
+	}
+	
+	@Override
+	public List<FileModel> getFolderChildrenSalaToDisciplinba(FileModel model) {
+		// TODO
+		List<FileModel> listDTO = new ArrayList<FileModel>();
+		if(model != null) {
+			if(model instanceof SalaDTO) {
+				Sala sala = Sala.find(((SalaDTO) model).getId());
+				
+			} else if(model instanceof CurriculoDisciplinaDTO) {
+				CurriculoDisciplina curriculoDisciplina = CurriculoDisciplina.find(((CurriculoDisciplinaDTO) model).getId());
+				
+			} else if(model instanceof TurnoDTO) {
+				Turno turno = Turno.find(((TurnoDTO) model).getId());
+			}
+		}
+		return listDTO;
+	}
+	
+	public void saveSalaToCurriculoDisciplina(CurriculoDisciplinaDTO curriculoDisciplinaDTO, SalaDTO salaDTO) {
+		CurriculoDisciplina curriculoDisciplina = CurriculoDisciplina.find(curriculoDisciplinaDTO.getId());
 	}
 }

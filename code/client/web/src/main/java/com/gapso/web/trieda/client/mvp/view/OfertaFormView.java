@@ -4,31 +4,31 @@ import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.FormButtonBinding;
 import com.extjs.gxt.ui.client.widget.form.FormPanel;
 import com.extjs.gxt.ui.client.widget.layout.FormData;
-import com.gapso.web.trieda.client.mvp.model.CampusCurriculoDTO;
+import com.gapso.web.trieda.client.mvp.model.OfertaDTO;
 import com.gapso.web.trieda.client.mvp.model.CampusDTO;
 import com.gapso.web.trieda.client.mvp.model.CurriculoDTO;
 import com.gapso.web.trieda.client.mvp.model.TurnoDTO;
-import com.gapso.web.trieda.client.mvp.presenter.CampusCurriculoFormPresenter;
+import com.gapso.web.trieda.client.mvp.presenter.OfertaFormPresenter;
 import com.gapso.web.trieda.client.util.resources.Resources;
 import com.gapso.web.trieda.client.util.view.CampusComboBox;
 import com.gapso.web.trieda.client.util.view.CurriculoComboBox;
 import com.gapso.web.trieda.client.util.view.SimpleModal;
 import com.gapso.web.trieda.client.util.view.TurnoComboBox;
 
-public class CampusCurriculoFormView extends MyComposite implements CampusCurriculoFormPresenter.Display {
+public class OfertaFormView extends MyComposite implements OfertaFormPresenter.Display {
 
 	private SimpleModal simpleModal;
 	private FormPanel formPanel;
 	private TurnoComboBox turnoCB;
 	private CampusComboBox campusCB;
 	private CurriculoComboBox curriculoCB;
-	private CampusCurriculoDTO campusCurriculoDTO;
+	private OfertaDTO ofertaDTO;
 	private TurnoDTO turnoDTO;
 	private CampusDTO campusDTO;
 	private CurriculoDTO curriculoDTO;
 	
-	public CampusCurriculoFormView(CampusCurriculoDTO campusCurriculoDTO, TurnoDTO turnoDTO, CampusDTO campusDTO, CurriculoDTO curriculoDTO) {
-		this.campusCurriculoDTO = campusCurriculoDTO;
+	public OfertaFormView(OfertaDTO ofertaDTO, TurnoDTO turnoDTO, CampusDTO campusDTO, CurriculoDTO curriculoDTO) {
+		this.ofertaDTO = ofertaDTO;
 		this.turnoDTO = turnoDTO;
 		this.campusDTO = campusDTO;
 		this.curriculoDTO = curriculoDTO;
@@ -39,7 +39,7 @@ public class CampusCurriculoFormView extends MyComposite implements CampusCurric
 	}
 	
 	private void initUI() {
-		String title = (campusCurriculoDTO.getId() == null)? "Inserção de Oferta de Curso em Campus" : "Edição de de Oferta de Curso em Campus";
+		String title = (ofertaDTO.getId() == null)? "Inserção de Oferta de Curso em Campus" : "Edição de de Oferta de Curso em Campus";
 		simpleModal = new SimpleModal(title, Resources.DEFAULTS.matrizCurricular16());
 		simpleModal.setHeight(160);
 		createForm();
@@ -106,8 +106,8 @@ public class CampusCurriculoFormView extends MyComposite implements CampusCurric
 	}
 
 	@Override
-	public CampusCurriculoDTO getCampusCurriculoDTO() {
-		return campusCurriculoDTO;
+	public OfertaDTO getOfertaDTO() {
+		return ofertaDTO;
 	}
 
 }

@@ -14,7 +14,7 @@ public class Services {
 	public static final String CURSOS = "cursos";
 	public static final String DISCIPLINAS = "disciplinas";
 	public static final String EQUIVALENCIAS = "equivalencias";
-	public static final String CAMPICURRICULOS = "campiCurriculos";
+	public static final String OFERTAS = "ofertas";
 	public static final String CURRICULOS = "curriculos";
 	public static final String CURSOSCAMPI = "cursoscampi";
 	public static final String PROFESSORES = "professores";
@@ -36,7 +36,7 @@ public class Services {
 		if(id.equals(CURSOS)) return cursos();
 		if(id.equals(DISCIPLINAS)) return disciplinas();
 		if(id.equals(EQUIVALENCIAS)) return equivalencias();
-		if(id.equals(CAMPICURRICULOS)) return campiCurriculos();
+		if(id.equals(OFERTAS)) return ofertas();
 		if(id.equals(CURRICULOS)) return curriculos();
 		if(id.equals(CURSOSCAMPI)) return cursosCampi();
 		if(id.equals(PROFESSORES)) return professores();
@@ -130,11 +130,11 @@ public class Services {
 		return service;
 	}
 	
-	public static CampiCurriculosServiceAsync campiCurriculos() {
-		CampiCurriculosServiceAsync service = (CampiCurriculosServiceAsync) Registry.get(CAMPICURRICULOS);
+	public static OfertasServiceAsync ofertas() {
+		OfertasServiceAsync service = (OfertasServiceAsync) Registry.get(OFERTAS);
 		if(service == null) {
-			service = GWT.create(CampiCurriculosService.class);
-			Registry.register(CAMPICURRICULOS, service);
+			service = GWT.create(OfertasService.class);
+			Registry.register(OFERTAS, service);
 		}
 		return service;
 	}

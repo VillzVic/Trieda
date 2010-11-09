@@ -6,13 +6,16 @@ import java.util.List;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.extjs.gxt.ui.client.Style.SortDir;
+import com.extjs.gxt.ui.client.data.BaseListLoadResult;
 import com.extjs.gxt.ui.client.data.BasePagingLoadConfig;
 import com.extjs.gxt.ui.client.data.BasePagingLoadResult;
 import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
+import com.gapso.trieda.domain.Campus;
 import com.gapso.trieda.domain.Curso;
 import com.gapso.trieda.domain.TipoCurso;
+import com.gapso.web.trieda.client.mvp.model.CampusDTO;
 import com.gapso.web.trieda.client.mvp.model.CursoDTO;
 import com.gapso.web.trieda.client.mvp.model.TipoCursoDTO;
 import com.gapso.web.trieda.client.services.CursosService;
@@ -59,6 +62,20 @@ public class CursosServiceImpl extends RemoteServiceServlet implements CursosSer
 		BasePagingLoadResult<CursoDTO> result = new BasePagingLoadResult<CursoDTO>(list);
 		result.setOffset(config.getOffset());
 		result.setTotalLength(Curso.count());
+		return result;
+	}
+	
+	@Override
+	public ListLoadResult<CursoDTO> getListByCampus(CampusDTO campusDTO) {
+		List<CursoDTO> list = new ArrayList<CursoDTO>();
+		
+		Campus campus = (campusDTO == null)? null : ConvertBeans.toCampus(campusDTO);
+		
+		for(Curso curso : Curso.findByCampus(campus)) {
+			list.add(ConvertBeans.toCursoDTO(curso));
+		}
+		
+		ListLoadResult<CursoDTO> result = new BaseListLoadResult<CursoDTO>(list);
 		return result;
 	}
 	

@@ -12,8 +12,8 @@ import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.grid.ColumnConfig;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayout;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
-import com.gapso.web.trieda.client.mvp.model.CampusCurriculoDTO;
-import com.gapso.web.trieda.client.mvp.presenter.CampiCurriculosPresenter;
+import com.gapso.web.trieda.client.mvp.model.OfertaDTO;
+import com.gapso.web.trieda.client.mvp.presenter.OfertasPresenter;
 import com.gapso.web.trieda.client.util.resources.Resources;
 import com.gapso.web.trieda.client.util.view.CampusComboBox;
 import com.gapso.web.trieda.client.util.view.CurriculoComboBox;
@@ -24,10 +24,10 @@ import com.gapso.web.trieda.client.util.view.SimpleGrid;
 import com.gapso.web.trieda.client.util.view.SimpleToolBar;
 import com.gapso.web.trieda.client.util.view.TurnoComboBox;
 
-public class CampiCurriculosView extends MyComposite implements CampiCurriculosPresenter.Display {
+public class OfertasView extends MyComposite implements OfertasPresenter.Display {
 
 	private SimpleToolBar toolBar;
-	private SimpleGrid<CampusCurriculoDTO> gridPanel;
+	private SimpleGrid<OfertaDTO> gridPanel;
 	private SimpleFilter filter;
 	private TurnoComboBox turnoBuscaComboBox;
 	private CampusComboBox campusBuscaComboBox;
@@ -36,7 +36,7 @@ public class CampiCurriculosView extends MyComposite implements CampiCurriculosP
 	private ContentPanel panel;
 	private GTabItem tabItem;
 	
-	public CampiCurriculosView() {
+	public OfertasView() {
 		initUI();
 	}
 	
@@ -64,7 +64,7 @@ public class CampiCurriculosView extends MyComposite implements CampiCurriculosP
 		BorderLayoutData bld = new BorderLayoutData(LayoutRegion.CENTER);
 	    bld.setMargins(new Margins(5, 5, 5, 5));
 	    
-	    gridPanel = new SimpleGrid<CampusCurriculoDTO>(getColumnList());
+	    gridPanel = new SimpleGrid<OfertaDTO>(getColumnList());
 	    panel.add(gridPanel, bld);
 	}
 
@@ -126,12 +126,12 @@ public class CampiCurriculosView extends MyComposite implements CampiCurriculosP
 	}
 	
 	@Override
-	public SimpleGrid<CampusCurriculoDTO> getGrid() {
+	public SimpleGrid<OfertaDTO> getGrid() {
 		return gridPanel;
 	}
 	
 	@Override
-	public void setProxy(RpcProxy<PagingLoadResult<CampusCurriculoDTO>> proxy) {
+	public void setProxy(RpcProxy<PagingLoadResult<OfertaDTO>> proxy) {
 		gridPanel.setProxy(proxy);
 	}
 	

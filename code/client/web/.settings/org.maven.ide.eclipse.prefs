@@ -1,9 +1,9 @@
-#Fri Aug 27 12:49:54 BRT 2010
+#Fri Nov 05 11:00:29 BRST 2010
 activeProfiles=
 eclipse.preferences.version=1
-fullBuildGoals=process-test-resources
+fullBuildGoals=compile
 includeModules=false
 resolveWorkspaceProjects=true
-resourceFilterGoals=process-resources resources\:testResources
+resourceFilterGoals=compile
 skipCompilerPlugin=true
 version=1

@@ -1,7 +1,11 @@
 package com.gapso.web.trieda.server;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import org.springframework.transaction.annotation.Transactional;
 
 import com.extjs.gxt.ui.client.Style.SortDir;
 import com.extjs.gxt.ui.client.data.BaseListLoadResult;
@@ -9,8 +13,11 @@ import com.extjs.gxt.ui.client.data.BasePagingLoadResult;
 import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
+import com.gapso.trieda.domain.GrupoSala;
 import com.gapso.trieda.domain.Sala;
 import com.gapso.trieda.domain.TipoSala;
+import com.gapso.trieda.domain.Unidade;
+import com.gapso.web.trieda.client.mvp.model.GrupoSalaDTO;
 import com.gapso.web.trieda.client.mvp.model.SalaDTO;
 import com.gapso.web.trieda.client.mvp.model.TipoSalaDTO;
 import com.gapso.web.trieda.client.services.SalasService;
@@ -20,6 +27,7 @@ import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 /**
  * The server side implementation of the RPC service.
  */
+@Transactional
 public class SalasServiceImpl extends RemoteServiceServlet implements SalasService {
 
 	private static final long serialVersionUID = -5850050305078103981L;
@@ -56,8 +64,13 @@ public class SalasServiceImpl extends RemoteServiceServlet implements SalasServi
 	
 	@Override
 	public ListLoadResult<SalaDTO> getAndaresList() {
+		return getAndaresList(null);
+	}
+	@Override
+	public ListLoadResult<SalaDTO> getAndaresList(Long unidadeId) {
 		List<SalaDTO> list = new ArrayList<SalaDTO>();
-		for(Sala sala : Sala.findAndaresAll()) {
+		Unidade unidade = Unidade.find(unidadeId);
+		for(Sala sala : Sala.findAndaresAll(unidade)) {
 			list.add(ConvertBeans.toSalaDTO(sala));
 		}
 		return new BaseListLoadResult<SalaDTO>(list);
@@ -73,12 +86,40 @@ public class SalasServiceImpl extends RemoteServiceServlet implements SalasServi
 	}
 	
 	@Override
+	public Map<String, List<SalaDTO>> getSalasEAndareMap(Long unidadeId) {
+		Unidade unidade = Unidade.find(unidadeId);
+		List<Sala> salas = Sala.findByUnidade(unidade);
+		Map<String, List<SalaDTO>> map = new HashMap<String, List<SalaDTO>>(); 
+		for(Sala sala : salas) {
+			if(!map.containsKey(sala.getAndar())) {
+				map.put(sala.getAndar(), new ArrayList<SalaDTO>());
+			}
+			SalaDTO salaDTO = ConvertBeans.toSalaDTO(sala);
+			salaDTO.setName(salaDTO.getCodigo());
+			map.get(sala.getAndar()).add(salaDTO);
+		}
+		return map;
+	}
+	
+	@Override
 	public ListLoadResult<SalaDTO> getList() {
 		List<SalaDTO> list = new ArrayList<SalaDTO>();
 		for(Sala sala : Sala.findAll()) {
 			list.add(ConvertBeans.toSalaDTO(sala));
 		}
 		return new BaseListLoadResult<SalaDTO>(list);
+	}
+	
+
+	@Override
+	public List<GrupoSalaDTO> getGruposDeSalas(Long unidadeId) {
+		Unidade unidade = Unidade.find(unidadeId);
+		List<GrupoSala> grupoSalas = GrupoSala.findByUnidade(unidade);
+		List<GrupoSalaDTO> grupoSalasDTO = new ArrayList<GrupoSalaDTO>();
+		for(GrupoSala gs : grupoSalas) {
+			grupoSalasDTO.add(ConvertBeans.toGrupoSalaDTO(gs));
+		}
+		return grupoSalasDTO;
 	}
 	
 	@Override

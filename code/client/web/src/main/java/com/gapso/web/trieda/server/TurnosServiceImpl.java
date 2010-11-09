@@ -10,7 +10,9 @@ import com.extjs.gxt.ui.client.data.BasePagingLoadResult;
 import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
+import com.gapso.trieda.domain.Campus;
 import com.gapso.trieda.domain.Turno;
+import com.gapso.web.trieda.client.mvp.model.CampusDTO;
 import com.gapso.web.trieda.client.mvp.model.TurnoDTO;
 import com.gapso.web.trieda.client.services.TurnosService;
 import com.gapso.web.trieda.server.util.ConvertBeans;
@@ -77,6 +79,17 @@ public class TurnosServiceImpl extends RemoteServiceServlet implements TurnosSer
 	public ListLoadResult<TurnoDTO> getList() {
 		List<TurnoDTO> list = new ArrayList<TurnoDTO>();
 		for(Turno turno : Turno.findAll()) {
+			list.add(ConvertBeans.toTurnoDTO(turno));
+		}
+		return new BaseListLoadResult<TurnoDTO>(list);
+	}
+	
+	@Override
+	public ListLoadResult<TurnoDTO> getListByCampus(CampusDTO campusDTO) {
+		List<TurnoDTO> list = new ArrayList<TurnoDTO>();
+		Campus campus = Campus.find(campusDTO.getId());
+		List<Turno> turnos = Turno.findAllByCampus(campus);
+		for(Turno turno : turnos) {
 			list.add(ConvertBeans.toTurnoDTO(turno));
 		}
 		return new BaseListLoadResult<TurnoDTO>(list);

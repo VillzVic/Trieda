@@ -62,7 +62,13 @@ public class UnidadesServiceImpl extends RemoteServiceServlet implements Unidade
 
 	@Override
 	public ListLoadResult<UnidadeDTO> getList(BasePagingLoadConfig loadConfig) {
-		return getBuscaList(null, null, loadConfig.get("query").toString(), loadConfig);
+		Long campusID = loadConfig.get("campusId");
+		System.out.println("Buscando: "+ campusID);
+		CampusDTO campusDTO = null;
+		if(campusID != null) {
+			campusDTO = ConvertBeans.toCampusDTO(Campus.find(campusID));
+		}
+		return getBuscaList(campusDTO, null, loadConfig.get("query").toString(), loadConfig);
 	}
 	
 	@Override

@@ -6,6 +6,7 @@ import com.extjs.gxt.ui.client.data.BasePagingLoadConfig;
 import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
+import com.gapso.web.trieda.client.mvp.model.CampusDTO;
 import com.gapso.web.trieda.client.mvp.model.TurnoDTO;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -18,5 +19,6 @@ public interface TurnosServiceAsync {
 	void save(TurnoDTO turnoDTO, AsyncCallback<Void> callback);
 	void remove(List<TurnoDTO> turnoDTOList, AsyncCallback<Void> callback);
 	void getBuscaList(String nome, Integer tempo, PagingLoadConfig config, AsyncCallback<PagingLoadResult<TurnoDTO>> callback);
+	void getListByCampus(CampusDTO campusDTO, AsyncCallback<ListLoadResult<TurnoDTO>> callback);
 	
 }

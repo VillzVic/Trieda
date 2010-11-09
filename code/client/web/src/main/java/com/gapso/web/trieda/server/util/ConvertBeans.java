@@ -9,7 +9,7 @@ import java.util.Set;
 
 import com.gapso.trieda.domain.AreaTitulacao;
 import com.gapso.trieda.domain.Campus;
-import com.gapso.trieda.domain.CampusCurriculo;
+import com.gapso.trieda.domain.Oferta;
 import com.gapso.trieda.domain.Curriculo;
 import com.gapso.trieda.domain.CurriculoDisciplina;
 import com.gapso.trieda.domain.Curso;
@@ -30,7 +30,7 @@ import com.gapso.trieda.misc.Dificuldades;
 import com.gapso.trieda.misc.Estados;
 import com.gapso.trieda.misc.Semanas;
 import com.gapso.web.trieda.client.mvp.model.AreaTitulacaoDTO;
-import com.gapso.web.trieda.client.mvp.model.CampusCurriculoDTO;
+import com.gapso.web.trieda.client.mvp.model.OfertaDTO;
 import com.gapso.web.trieda.client.mvp.model.CampusDTO;
 import com.gapso.web.trieda.client.mvp.model.CurriculoDTO;
 import com.gapso.web.trieda.client.mvp.model.CurriculoDisciplinaDTO;
@@ -459,6 +459,7 @@ public class ConvertBeans {
 		dto.setAdmMaisDeUmDisciplina(domain.getAdmMaisDeUmDisciplina());
 		dto.setTipoId(domain.getTipoCurso().getId());
 		dto.setTipoString(domain.getTipoCurso().getCodigo());
+		dto.setName(domain.getCodigo());
 		return dto;
 	}
 	
@@ -654,6 +655,8 @@ public class ConvertBeans {
 		domain.setPeriodo(dto.getPeriodo());
 		Disciplina disciplina = Disciplina.find(dto.getDisciplinaId());
 		domain.setDisciplina(disciplina);
+		Curriculo curriculo = Curriculo.find(dto.getCurriculoId());
+		domain.setCurriculo(curriculo);
 		return domain;
 	}
 	
@@ -670,20 +673,13 @@ public class ConvertBeans {
 		dto.setCreditosTeorico(crTeorico);
 		dto.setCreditosPratico(crPratico);
 		dto.setCreditosTotal(crTeorico + crPratico);
+		dto.setCurriculoId(domain.getCurriculo().getId());
 		return dto;
 	}
-	
-//	setCampusId(campusId);
-//	setCampusString(campusString);
-//	setCursoString(cursoString);
-//	setMatrizCurricularId(matrizCurricularId);
-//	setMatrizCurricularString(matrizCurricularString);
-//	setTurnoId(turnoId);
-//	setTurnoString(turnoString);
-	
-	// CAMPUS - CURRICULO (OFERTA DE CURSO EM UM CAMPUS)
-	public static CampusCurriculo toCampusCurriculo(CampusCurriculoDTO dto) {
-		CampusCurriculo domain = new CampusCurriculo();
+
+	// OFERTA DE CURSO EM UM CAMPUS
+	public static Oferta toOferta(OfertaDTO dto) {
+		Oferta domain = new Oferta();
 		domain.setId(dto.getId());
 		domain.setVersion(dto.getVersion());
 		domain.setCampus(Campus.find(dto.getCampusId()));
@@ -692,8 +688,8 @@ public class ConvertBeans {
 		return domain;
 	}
 	
-	public static CampusCurriculoDTO toCampusCurriculoDTO(CampusCurriculo domain) {
-		CampusCurriculoDTO dto = new CampusCurriculoDTO();
+	public static OfertaDTO toOfertaDTO(Oferta domain) {
+		OfertaDTO dto = new OfertaDTO();
 		dto.setId(domain.getId());
 		dto.setVersion(domain.getVersion());
 		dto.setCampusString(domain.getCampus().getCodigo());

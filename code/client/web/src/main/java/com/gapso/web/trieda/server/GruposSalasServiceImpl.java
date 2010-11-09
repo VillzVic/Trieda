@@ -32,6 +32,11 @@ public class GruposSalasServiceImpl extends RemoteServiceServlet implements Grup
 	private static final long serialVersionUID = 5250776996542788849L;
 
 	@Override
+	public ListLoadResult<GrupoSalaDTO> getList(BasePagingLoadConfig loadConfig) {
+		return getBuscaList(null, loadConfig.get("query").toString(), null, loadConfig);
+	}
+	
+	@Override
 	public GrupoSalaDTO getGrupoSala(Long id) {
 		return ConvertBeans.toGrupoSalaDTO(GrupoSala.find(id));
 	}
@@ -112,12 +117,14 @@ public class GruposSalasServiceImpl extends RemoteServiceServlet implements Grup
 		if(unidadeDTO != null) {
 			unidade = ConvertBeans.toUnidade(unidadeDTO);
 		}
-		for(GrupoSala grupoSala : GrupoSala.findByNomeLikeAndCodigoLikeAndUnidade(nome, codigo, unidade, config.getOffset(), config.getLimit(), orderBy)) {
-			GrupoSalaDTO gsDTO = ConvertBeans.toGrupoSalaDTO(grupoSala);
+		List<GrupoSala> listGruposSalas = GrupoSala.findByNomeLikeAndCodigoLikeAndUnidade(nome, codigo, unidade, config.getOffset(), config.getLimit(), orderBy);
+		for(GrupoSala grupoSala : listGruposSalas) {
 			String salasString = "";
-			for(Sala sala : grupoSala.getSalas()) {
+			Set<Sala> salas = grupoSala.getSalas();
+			for(Sala sala : salas) {
 				salasString += sala.getCodigo() + " (Num. "+sala.getNumero()+" | Cap."+sala.getCapacidade()+"), ";
 			}
+			GrupoSalaDTO gsDTO = ConvertBeans.toGrupoSalaDTO(grupoSala);
 			gsDTO.setSalasString(salasString);
 			gsDTO.setCampusString(grupoSala.getUnidade().getCampus().getCodigo());
 			list.add(gsDTO);
@@ -126,11 +133,6 @@ public class GruposSalasServiceImpl extends RemoteServiceServlet implements Grup
 		result.setOffset(config.getOffset());
 		result.setTotalLength(GrupoSala.count());
 		return result;
-	}
-
-	@Override
-	public ListLoadResult<GrupoSalaDTO> getList(BasePagingLoadConfig loadConfig) {
-		return getBuscaList(null, loadConfig.get("query").toString(), null, loadConfig);
 	}
 
 }

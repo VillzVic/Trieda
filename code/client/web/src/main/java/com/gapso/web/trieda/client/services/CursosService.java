@@ -6,6 +6,7 @@ import com.extjs.gxt.ui.client.data.BasePagingLoadConfig;
 import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
+import com.gapso.web.trieda.client.mvp.model.CampusDTO;
 import com.gapso.web.trieda.client.mvp.model.CursoDTO;
 import com.gapso.web.trieda.client.mvp.model.TipoCursoDTO;
 import com.google.gwt.user.client.rpc.RemoteService;
@@ -22,5 +23,6 @@ public interface CursosService extends RemoteService {
 	PagingLoadResult<CursoDTO> getBuscaList(String nome, String codigo, TipoCursoDTO tipoCurso, PagingLoadConfig config);
 	void save(CursoDTO cursoDTO);
 	void remove(List<CursoDTO> cursoDTOList);
+	ListLoadResult<CursoDTO> getListByCampus(CampusDTO campusDTO);
 	
 }

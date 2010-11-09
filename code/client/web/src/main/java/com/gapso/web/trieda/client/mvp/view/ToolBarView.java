@@ -40,7 +40,8 @@ public class ToolBarView extends MyComposite implements ToolBarPresenter.Display
 	private MenuItem cursosListMI;
 	private MenuItem disciplinasListMI;
 	private MenuItem curriculosListMI;
-	private MenuItem campiCurriculosListMI;
+	private MenuItem ofertasListMI;
+	private MenuItem associarDisciplinasSalasListMI;
 	
 	// Campi
 	private Button campiBt;
@@ -145,8 +146,10 @@ public class ToolBarView extends MyComposite implements ToolBarPresenter.Display
 		outros.add(disciplinasListMI);
 		curriculosListMI = createMenuItem("Matrizes Curriculares", Resources.DEFAULTS.matrizCurricular16());
 		outros.add(curriculosListMI);
-		campiCurriculosListMI = createMenuItem("Oferta de Cursos em Campi", Resources.DEFAULTS.matrizCurricular16());
-		outros.add(campiCurriculosListMI);
+		ofertasListMI = createMenuItem("Oferta de Cursos em Campi", Resources.DEFAULTS.matrizCurricular16());
+		outros.add(ofertasListMI);
+		associarDisciplinasSalasListMI = createMenuItem("Associação de Disciplinas à Salas", Resources.DEFAULTS.matrizCurricular16());
+		outros.add(associarDisciplinasSalasListMI);
 		
 		outrosUnidadesSBt.setMenu(outros);
 		group.add(outrosUnidadesSBt);
@@ -499,8 +502,12 @@ public class ToolBarView extends MyComposite implements ToolBarPresenter.Display
 		return curriculosListMI;
 	}
 	@Override
-	public MenuItem getCampiCurriculosListMenuItem() {
-		return campiCurriculosListMI;
+	public MenuItem getOfertasListMenuItem() {
+		return ofertasListMI;
+	}
+	@Override
+	public MenuItem getAssociarDisciplinasSalasListMenuItem() {
+		return associarDisciplinasSalasListMI;
 	}
 	
 }

@@ -12,48 +12,38 @@ import com.extjs.gxt.ui.client.data.RpcProxy;
 import com.extjs.gxt.ui.client.event.Listener;
 import com.extjs.gxt.ui.client.store.ListStore;
 import com.extjs.gxt.ui.client.widget.form.ComboBox;
-import com.gapso.web.trieda.client.mvp.model.UnidadeDTO;
+import com.gapso.web.trieda.client.mvp.model.GrupoSalaDTO;
+import com.gapso.web.trieda.client.services.GruposSalasServiceAsync;
 import com.gapso.web.trieda.client.services.Services;
-import com.gapso.web.trieda.client.services.UnidadesServiceAsync;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-public class UnidadeComboBox extends ComboBox<UnidadeDTO> {
+public class GrupoSalaComboBox extends ComboBox<GrupoSalaDTO> {
 
-	private ListStore<UnidadeDTO> store;
-	private Long campusId;
+	private ListStore<GrupoSalaDTO> store;
 	
-	public UnidadeComboBox() {
-		final UnidadesServiceAsync service = Services.unidades();
-		RpcProxy<ListLoadResult<UnidadeDTO>> proxy = new RpcProxy<ListLoadResult<UnidadeDTO>>() {
+	public GrupoSalaComboBox() {
+		final GruposSalasServiceAsync service = Services.gruposSalas();
+		RpcProxy<ListLoadResult<GrupoSalaDTO>> proxy = new RpcProxy<ListLoadResult<GrupoSalaDTO>>() {
 			@Override
-			public void load(Object loadConfig, AsyncCallback<ListLoadResult<UnidadeDTO>> callback) {
-				BasePagingLoadConfig bplc = (BasePagingLoadConfig)loadConfig;
-				bplc.set("campusId", getCampusId());
-				service.getList(bplc, callback);
+			public void load(Object loadConfig, AsyncCallback<ListLoadResult<GrupoSalaDTO>> callback) {
+				service.getList((BasePagingLoadConfig)loadConfig, callback);
 			}
 		};
-		ListLoader<BaseListLoadResult<UnidadeDTO>> load = new BaseListLoader<BaseListLoadResult<UnidadeDTO>>(proxy);
+		ListLoader<BaseListLoadResult<GrupoSalaDTO>> load = new BaseListLoader<BaseListLoadResult<GrupoSalaDTO>>(proxy);
 		load.addListener(Loader.BeforeLoad, new Listener<LoadEvent>() {
 			public void handleEvent(LoadEvent be) {
+				
 				be.<ModelData> getConfig().set("offset", 0);
 				be.<ModelData> getConfig().set("limit", 10);
 			}
 		});
-		store = new ListStore<UnidadeDTO>(load);
+		store = new ListStore<GrupoSalaDTO>(load);
 		setDisplayField("nome");
 		setStore(store);
 		setHideTrigger(true);  
 		setTriggerAction(TriggerAction.QUERY);
 		setTemplate(getTemplateCB());
 		setMinChars(1);
-	}
-
-	public Long getCampusId() {
-		return campusId;
-	}
-
-	public void setCampusId(Long campusId) {
-		this.campusId = campusId;
 	}
 
 	private native String getTemplateCB() /*-{

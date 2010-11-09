@@ -10,16 +10,16 @@ import com.extjs.gxt.ui.client.data.BasePagingLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.gapso.trieda.domain.Campus;
-import com.gapso.trieda.domain.CampusCurriculo;
+import com.gapso.trieda.domain.Oferta;
 import com.gapso.trieda.domain.Curriculo;
 import com.gapso.trieda.domain.Curso;
 import com.gapso.trieda.domain.Turno;
-import com.gapso.web.trieda.client.mvp.model.CampusCurriculoDTO;
+import com.gapso.web.trieda.client.mvp.model.OfertaDTO;
 import com.gapso.web.trieda.client.mvp.model.CampusDTO;
 import com.gapso.web.trieda.client.mvp.model.CurriculoDTO;
 import com.gapso.web.trieda.client.mvp.model.CursoDTO;
 import com.gapso.web.trieda.client.mvp.model.TurnoDTO;
-import com.gapso.web.trieda.client.services.CampiCurriculosService;
+import com.gapso.web.trieda.client.services.OfertasService;
 import com.gapso.web.trieda.server.util.ConvertBeans;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
@@ -27,18 +27,18 @@ import com.google.gwt.user.server.rpc.RemoteServiceServlet;
  * The server side implementation of the RPC service.
  */
 @Transactional
-public class CampiCurriculosServiceImpl extends RemoteServiceServlet implements CampiCurriculosService {
+public class OfertasServiceImpl extends RemoteServiceServlet implements OfertasService {
 
 	private static final long serialVersionUID = -3010939181486905949L;
 
 	@Override
-	public CampusCurriculoDTO getCampusCurriculo(Long id) {
-		return ConvertBeans.toCampusCurriculoDTO(CampusCurriculo.find(id));
+	public OfertaDTO getOferta(Long id) {
+		return ConvertBeans.toOfertaDTO(Oferta.find(id));
 	}
 
 	@Override
-	public PagingLoadResult<CampusCurriculoDTO> getBuscaList(TurnoDTO turnoDTO, CampusDTO campusDTO, CursoDTO cursoDTO, CurriculoDTO curriculoDTO, PagingLoadConfig config) {
-		List<CampusCurriculoDTO> list = new ArrayList<CampusCurriculoDTO>();
+	public PagingLoadResult<OfertaDTO> getBuscaList(TurnoDTO turnoDTO, CampusDTO campusDTO, CursoDTO cursoDTO, CurriculoDTO curriculoDTO, PagingLoadConfig config) {
+		List<OfertaDTO> list = new ArrayList<OfertaDTO>();
 		String orderBy = config.getSortField();
 		if(orderBy != null) {
 			if(config.getSortDir() != null && config.getSortDir().equals(SortDir.DESC)) {
@@ -52,29 +52,29 @@ public class CampiCurriculosServiceImpl extends RemoteServiceServlet implements 
 		Curso curso = (cursoDTO != null)? ConvertBeans.toCurso(cursoDTO) : null;
 		Curriculo curriculo = (curriculoDTO != null)? ConvertBeans.toCurriculo(curriculoDTO) : null;
 
-		for(CampusCurriculo campusCurriculo : CampusCurriculo.findByCursoAndCodigoLikeAndDescricaoLike(turno, campus, curso, curriculo, config.getOffset(), config.getLimit(), orderBy)) {
-			list.add(ConvertBeans.toCampusCurriculoDTO(campusCurriculo));
+		for(Oferta oferta : Oferta.findByCursoAndCodigoLikeAndDescricaoLike(turno, campus, curso, curriculo, config.getOffset(), config.getLimit(), orderBy)) {
+			list.add(ConvertBeans.toOfertaDTO(oferta));
 		}
-		BasePagingLoadResult<CampusCurriculoDTO> result = new BasePagingLoadResult<CampusCurriculoDTO>(list);
+		BasePagingLoadResult<OfertaDTO> result = new BasePagingLoadResult<OfertaDTO>(list);
 		result.setOffset(config.getOffset());
-		result.setTotalLength(CampusCurriculo.count());
+		result.setTotalLength(Oferta.count());
 		return result;
 	}
 
 	@Override
-	public void save(CampusCurriculoDTO campusCurriculoDTO) {
-		CampusCurriculo campusCurriculo = ConvertBeans.toCampusCurriculo(campusCurriculoDTO);
-		if(campusCurriculo.getId() != null && campusCurriculo.getId() > 0) {
-			campusCurriculo.merge();
+	public void save(OfertaDTO ofertaDTO) {
+		Oferta oferta = ConvertBeans.toOferta(ofertaDTO);
+		if(oferta.getId() != null && oferta.getId() > 0) {
+			oferta.merge();
 		} else {
-			campusCurriculo.persist();
+			oferta.persist();
 		}
 	}
 
 	@Override
-	public void remove(List<CampusCurriculoDTO> campusCurriculoDTOList) {
-		for(CampusCurriculoDTO campusCurriculoDTO : campusCurriculoDTOList) {
-			ConvertBeans.toCampusCurriculo(campusCurriculoDTO).remove();
+	public void remove(List<OfertaDTO> ofertaDTOList) {
+		for(OfertaDTO ofertaDTO : ofertaDTOList) {
+			ConvertBeans.toOferta(ofertaDTO).remove();
 		}
 	}
 

@@ -61,8 +61,8 @@
 		<servlet-class>com.gapso.web.trieda.server.CurriculosServiceImpl</servlet-class>
 	</servlet>
 	<servlet>
-		<servlet-name>campiCurriculosServlet</servlet-name>
-		<servlet-class>com.gapso.web.trieda.server.CampiCurriculosServiceImpl</servlet-class>
+		<servlet-name>ofertasServlet</servlet-name>
+		<servlet-class>com.gapso.web.trieda.server.OfertasServiceImpl</servlet-class>
 	</servlet>
 	<servlet>
 		<servlet-name>cursosCampiServlet</servlet-name>
@@ -142,8 +142,8 @@
 		<url-pattern>/trieda/curriculos</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
-		<servlet-name>campiCurriculosServlet</servlet-name>
-		<url-pattern>/trieda/campiCurriculos</url-pattern>
+		<servlet-name>ofertasServlet</servlet-name>
+		<url-pattern>/trieda/ofertas</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>cursosCampiServlet</servlet-name>

@@ -6,7 +6,9 @@ import com.extjs.gxt.ui.client.data.BasePagingLoadConfig;
 import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
+import com.gapso.web.trieda.client.mvp.model.CursoDTO;
 import com.gapso.web.trieda.client.mvp.model.DisciplinaDTO;
+import com.gapso.web.trieda.client.mvp.model.FileModel;
 import com.gapso.web.trieda.client.mvp.model.TipoDisciplinaDTO;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
@@ -23,5 +25,8 @@ public interface DisciplinasService extends RemoteService {
 	void remove(List<DisciplinaDTO> disciplinaDTOList);
 	ListLoadResult<TipoDisciplinaDTO> getTipoDisciplinaList();
 	TipoDisciplinaDTO getTipoDisciplina(Long id);
+	ListLoadResult<DisciplinaDTO> getListByCursos(List<CursoDTO> cursos);
+	List<FileModel> getFolderChildren(FileModel loadConfig);
+	List<FileModel> getFolderChildrenSalaToDisciplinba(FileModel model);
 	
 }
