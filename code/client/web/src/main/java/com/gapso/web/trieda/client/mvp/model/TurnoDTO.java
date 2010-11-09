@@ -1,9 +1,8 @@
 package com.gapso.web.trieda.client.mvp.model;
 
-import com.extjs.gxt.ui.client.data.BaseModel;
 
 
-public class TurnoDTO extends BaseModel {
+public class TurnoDTO extends FileModel {
 
 	private static final long serialVersionUID = 5815525344760896272L;
 	
@@ -44,6 +43,10 @@ public class TurnoDTO extends BaseModel {
 	public Integer getTempo() {
 		return get("tempo");
 	}
-	
+
+	@Override
+	public String toString() {
+		return getNome() + "(" + getTempo() +"min)";
+	}
 	
 }

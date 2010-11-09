@@ -11,13 +11,13 @@ import com.extjs.gxt.ui.client.widget.Component;
 import com.extjs.gxt.ui.client.widget.Info;
 import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.button.Button;
-import com.gapso.web.trieda.client.mvp.model.CampusCurriculoDTO;
+import com.gapso.web.trieda.client.mvp.model.OfertaDTO;
 import com.gapso.web.trieda.client.mvp.model.CampusDTO;
 import com.gapso.web.trieda.client.mvp.model.CurriculoDTO;
 import com.gapso.web.trieda.client.mvp.model.CursoDTO;
 import com.gapso.web.trieda.client.mvp.model.TurnoDTO;
-import com.gapso.web.trieda.client.mvp.view.CampusCurriculoFormView;
-import com.gapso.web.trieda.client.services.CampiCurriculosServiceAsync;
+import com.gapso.web.trieda.client.mvp.view.OfertaFormView;
+import com.gapso.web.trieda.client.services.OfertasServiceAsync;
 import com.gapso.web.trieda.client.services.CampiServiceAsync;
 import com.gapso.web.trieda.client.services.CurriculosServiceAsync;
 import com.gapso.web.trieda.client.services.Services;
@@ -34,7 +34,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.googlecode.future.FutureResult;
 import com.googlecode.future.FutureSynchronizer;
 
-public class CampiCurriculosPresenter implements Presenter {
+public class OfertasPresenter implements Presenter {
 
 	public interface Display {
 		Button getNewButton();
@@ -48,23 +48,23 @@ public class CampiCurriculosPresenter implements Presenter {
 		CurriculoComboBox getCurriculoBuscaComboBox();
 		Button getSubmitBuscaButton();
 		Button getResetBuscaButton();
-		SimpleGrid<CampusCurriculoDTO> getGrid();
+		SimpleGrid<OfertaDTO> getGrid();
 		Component getComponent();
-		void setProxy(RpcProxy<PagingLoadResult<CampusCurriculoDTO>> proxy);
+		void setProxy(RpcProxy<PagingLoadResult<OfertaDTO>> proxy);
 	}
 	private Display display; 
 	
-	public CampiCurriculosPresenter(Display display) {
+	public OfertasPresenter(Display display) {
 		this.display = display;
 		configureProxy();
 		setListeners();
 	}
 
 	private void configureProxy() {
-		final CampiCurriculosServiceAsync service = Services.campiCurriculos();
-		RpcProxy<PagingLoadResult<CampusCurriculoDTO>> proxy = new RpcProxy<PagingLoadResult<CampusCurriculoDTO>>() {
+		final OfertasServiceAsync service = Services.ofertas();
+		RpcProxy<PagingLoadResult<OfertaDTO>> proxy = new RpcProxy<PagingLoadResult<OfertaDTO>>() {
 			@Override
-			public void load(Object loadConfig, AsyncCallback<PagingLoadResult<CampusCurriculoDTO>> callback) {
+			public void load(Object loadConfig, AsyncCallback<PagingLoadResult<OfertaDTO>> callback) {
 				TurnoDTO turnoDTO = display.getTurnoBuscaComboBox().getValue();
 				CampusDTO campusDTO = display.getCampusBuscaComboBox().getValue();
 				CursoDTO cursoDTO = display.getCursoBuscaComboBox().getValue();
@@ -79,14 +79,14 @@ public class CampiCurriculosPresenter implements Presenter {
 		display.getNewButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
 			@Override
 			public void componentSelected(ButtonEvent ce) {
-				Presenter presenter = new CampusCurriculoFormPresenter(new CampusCurriculoFormView(new CampusCurriculoDTO(), null, null, null), display.getGrid());
+				Presenter presenter = new OfertaFormPresenter(new OfertaFormView(new OfertaDTO(), null, null, null), display.getGrid());
 				presenter.go(null);
 			}
 		});
 		display.getEditButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
 			@Override
 			public void componentSelected(ButtonEvent ce) {
-				final CampusCurriculoDTO campusCurriculoDTO = display.getGrid().getGrid().getSelectionModel().getSelectedItem();
+				final OfertaDTO ofertaDTO = display.getGrid().getGrid().getSelectionModel().getSelectedItem();
 				
 				final TurnosServiceAsync turnosService = Services.turnos();
 				final CampiServiceAsync campiService = Services.campi();
@@ -96,9 +96,9 @@ public class CampiCurriculosPresenter implements Presenter {
 				final FutureResult<CampusDTO> futureCampusDTO = new FutureResult<CampusDTO>();
 				final FutureResult<CurriculoDTO> futureCurriculoDTO = new FutureResult<CurriculoDTO>();
 				
-				turnosService.getTurno(campusCurriculoDTO.getTurnoId(), futureTurnoDTO);
-				campiService.getCampus(campusCurriculoDTO.getCampusId(), futureCampusDTO);
-				curriculosService.getCurriculo(campusCurriculoDTO.getMatrizCurricularId(), futureCurriculoDTO);
+				turnosService.getTurno(ofertaDTO.getTurnoId(), futureTurnoDTO);
+				campiService.getCampus(ofertaDTO.getCampusId(), futureCampusDTO);
+				curriculosService.getCurriculo(ofertaDTO.getMatrizCurricularId(), futureCurriculoDTO);
 				
 				FutureSynchronizer synch = new FutureSynchronizer(futureTurnoDTO, futureCampusDTO, futureCurriculoDTO);
 				synch.addCallback(new AsyncCallback<Boolean>() {
@@ -111,7 +111,7 @@ public class CampiCurriculosPresenter implements Presenter {
 						TurnoDTO turnoDTO = futureTurnoDTO.result();
 						CampusDTO campusDTO = futureCampusDTO.result();
 						CurriculoDTO curriculoDTO = futureCurriculoDTO.result();
-						Presenter presenter = new CampusCurriculoFormPresenter(new CampusCurriculoFormView(campusCurriculoDTO, turnoDTO, campusDTO, curriculoDTO), display.getGrid());
+						Presenter presenter = new OfertaFormPresenter(new OfertaFormView(ofertaDTO, turnoDTO, campusDTO, curriculoDTO), display.getGrid());
 						presenter.go(null);	
 					}
 				});
@@ -120,8 +120,8 @@ public class CampiCurriculosPresenter implements Presenter {
 		display.getRemoveButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
 			@Override
 			public void componentSelected(ButtonEvent ce) {
-				List<CampusCurriculoDTO> list = display.getGrid().getGrid().getSelectionModel().getSelectedItems();
-				final CampiCurriculosServiceAsync service = Services.campiCurriculos();
+				List<OfertaDTO> list = display.getGrid().getGrid().getSelectionModel().getSelectedItems();
+				final OfertasServiceAsync service = Services.ofertas();
 				service.remove(list, new AsyncCallback<Void>() {
 					@Override
 					public void onFailure(Throwable caught) {

@@ -1,8 +1,7 @@
 package com.gapso.web.trieda.client.mvp.model;
 
-import com.extjs.gxt.ui.client.data.BaseModel;
 
-public class CurriculoDisciplinaDTO extends BaseModel {
+public class CurriculoDisciplinaDTO extends FileModel {
 
 	private static final long serialVersionUID = -5134820110949139907L;
 
@@ -10,7 +9,7 @@ public class CurriculoDisciplinaDTO extends BaseModel {
 		super();
 	}
 
-	public CurriculoDisciplinaDTO(Long id, Long disciplinaId, String disciplinaString, Integer periodo, Integer creditosTeorico, Integer creditosPratico, Integer creditosTotal, Integer version) {
+	public CurriculoDisciplinaDTO(Long id, Long disciplinaId, String disciplinaString, Integer periodo, Integer creditosTeorico, Integer creditosPratico, Integer creditosTotal, Long curriculoId, Integer version) {
 		setId(id);
 		setDisciplinaId(disciplinaId);
 		setDisciplinaString(disciplinaString);
@@ -18,6 +17,7 @@ public class CurriculoDisciplinaDTO extends BaseModel {
 		setCreditosTeorico(creditosTeorico);
 		setCreditosPratico(creditosPratico);
 		setCreditosTotal(creditosTotal);
+		setCurriculoId(curriculoId);
 		setVersion(version);
 	}
 	
@@ -75,6 +75,13 @@ public class CurriculoDisciplinaDTO extends BaseModel {
 	}
 	public Integer getCreditosTotal() {
 		return get("creditosTotal");
+	}
+	
+	public void setCurriculoId(Long value) {
+		set("curriculoId", value);
+	}
+	public Long getCurriculoId() {
+		return get("curriculoId");
 	}
 	
 }

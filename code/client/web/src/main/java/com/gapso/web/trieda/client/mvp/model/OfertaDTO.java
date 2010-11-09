@@ -2,15 +2,15 @@ package com.gapso.web.trieda.client.mvp.model;
 
 import com.extjs.gxt.ui.client.data.BaseModel;
 
-public class CampusCurriculoDTO extends BaseModel {
+public class OfertaDTO extends BaseModel {
 
 	private static final long serialVersionUID = -5134820110949139907L;
 
-	public CampusCurriculoDTO() {
+	public OfertaDTO() {
 		super();
 	}
 
-	public CampusCurriculoDTO(Long id, Long campusId, String campusString, String cursoString, Long matrizCurricularId, String matrizCurricularString, Long turnoId, String turnoString, Integer version) {
+	public OfertaDTO(Long id, Long campusId, String campusString, String cursoString, Long matrizCurricularId, String matrizCurricularString, Long turnoId, String turnoString, Integer version) {
 		setId(id);
 		setCampusId(campusId);
 		setCampusString(campusString);

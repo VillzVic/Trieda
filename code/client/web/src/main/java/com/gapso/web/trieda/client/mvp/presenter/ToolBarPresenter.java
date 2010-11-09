@@ -11,11 +11,12 @@ import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.menu.MenuItem;
 import com.gapso.web.trieda.client.mvp.model.DeslocamentoCampusDTO;
 import com.gapso.web.trieda.client.mvp.view.AreasTitulacaoView;
-import com.gapso.web.trieda.client.mvp.view.CampiCurriculosView;
+import com.gapso.web.trieda.client.mvp.view.OfertasView;
 import com.gapso.web.trieda.client.mvp.view.CampiDeslocamentoView;
 import com.gapso.web.trieda.client.mvp.view.CampiView;
 import com.gapso.web.trieda.client.mvp.view.CurriculosView;
 import com.gapso.web.trieda.client.mvp.view.CursosView;
+import com.gapso.web.trieda.client.mvp.view.DisciplinasAssociarSalaView;
 import com.gapso.web.trieda.client.mvp.view.DisciplinasView;
 import com.gapso.web.trieda.client.mvp.view.GruposSalasView;
 import com.gapso.web.trieda.client.mvp.view.HorariosAulaView;
@@ -37,6 +38,8 @@ public class ToolBarPresenter implements Presenter {
 		Button getCampusListButton();
 		Button getCampusNewButton();
 		
+		Component getComponent();
+		
 		MenuItem getTurnosListMenuItem();
 		MenuItem getSemanasLetivaListMenuItem();
 		MenuItem getHorariosAulaListMenuItem();
@@ -51,9 +54,8 @@ public class ToolBarPresenter implements Presenter {
 		MenuItem getCursosListMenuItem();
 		MenuItem getDisciplinasListMenuItem();
 		MenuItem getCurriculosListMenuItem();
-		MenuItem getCampiCurriculosListMenuItem();
-		
-		Component getComponent();
+		MenuItem getOfertasListMenuItem();
+		MenuItem getAssociarDisciplinasSalasListMenuItem();
 	}
 	
 	private Display toolBar;
@@ -187,10 +189,17 @@ public class ToolBarPresenter implements Presenter {
 				presenter.go(gTab);
 			}
 		});
-		toolBar.getCampiCurriculosListMenuItem().addSelectionListener(new SelectionListener<MenuEvent>() {
+		toolBar.getOfertasListMenuItem().addSelectionListener(new SelectionListener<MenuEvent>() {
 			@Override
 			public void componentSelected(MenuEvent ce) {
-				Presenter presenter = new CampiCurriculosPresenter(new CampiCurriculosView());
+				Presenter presenter = new OfertasPresenter(new OfertasView());
+				presenter.go(gTab);
+			}
+		});
+		toolBar.getAssociarDisciplinasSalasListMenuItem().addSelectionListener(new SelectionListener<MenuEvent>() {
+			@Override
+			public void componentSelected(MenuEvent ce) {
+				Presenter presenter = new DisciplinasAssociarSalaPresenter(new DisciplinasAssociarSalaView());
 				presenter.go(gTab);
 			}
 		});
