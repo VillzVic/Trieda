@@ -198,9 +198,10 @@ public class Curriculo implements Serializable {
     }
 	
 	@SuppressWarnings("unchecked")
-	public static List<Curriculo> findByCampus(Campus campus) {
-		Query q = entityManager().createQuery("SELECT o.curriculo FROM Oferta o WHERE o.campus = :campus");
+	public static List<Curriculo> findByCampusAndTurno(Campus campus, Turno turno) {
+		Query q = entityManager().createQuery("SELECT o.curriculo FROM Oferta o WHERE o.campus = :campus AND o.turno = :turno");
 		q.setParameter("campus", campus);
+		q.setParameter("turno", turno);
 		return q.getResultList();
 	}
 	

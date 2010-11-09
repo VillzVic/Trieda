@@ -177,22 +177,22 @@ public class CurriculoDisciplina implements Serializable {
         return em;
     }
 
-	public static long countCurriculoDisciplinas() {
-        return ((Number) entityManager().createQuery("select count(o) from CurriculoDisciplina o").getSingleResult()).longValue();
+	public static int count() {
+        return ((Number) entityManager().createQuery("select count(o) from CurriculoDisciplina o").getSingleResult()).intValue();
     }
 
 	@SuppressWarnings("unchecked")
-    public static List<CurriculoDisciplina> findAllCurriculoDisciplinas() {
+    public static List<CurriculoDisciplina> findAll() {
         return entityManager().createQuery("select o from CurriculoDisciplina o").getResultList();
     }
 
-	public static CurriculoDisciplina findCurriculoDisciplina(Long id) {
+	public static CurriculoDisciplina find(Long id) {
         if (id == null) return null;
         return entityManager().find(CurriculoDisciplina.class, id);
     }
 
 	@SuppressWarnings("unchecked")
-    public static List<CurriculoDisciplina> findCurriculoDisciplinaEntries(int firstResult, int maxResults) {
+    public static List<CurriculoDisciplina> find(int firstResult, int maxResults) {
         return entityManager().createQuery("select o from CurriculoDisciplina o").setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
 }

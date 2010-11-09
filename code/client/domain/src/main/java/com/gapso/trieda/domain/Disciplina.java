@@ -247,6 +247,18 @@ public class Disciplina implements Serializable {
 		return q.getResultList();
 	}
 	
+//	CampusDTO campusDTO, TurnoDTO turnoDTO, Integer periodo
+	@SuppressWarnings("unchecked")
+	public static List<Disciplina> findByCampusAndTurnoAndPeriodo(Campus campus, Turno turno, Integer periodo) {
+		Query q = entityManager().createQuery("SELECT DISTINCT(o.disciplina) FROM CurriculoDisciplina o WHERE o.periodo = :periodo AND o.curriculo.turno = :turno AND o.curriculo.campus = :campus")
+		.setParameter("campus", campus)
+		.setParameter("turno", turno)
+		.setParameter("periodo", periodo);
+		return q.getResultList();
+	}
+	
+	
+	
     @SuppressWarnings("unchecked")
 	public static List<Disciplina> findByCodigoLikeAndNomeLikeAndTipo(String codigo, String nome, TipoDisciplina tipoDisciplina, int firstResult, int maxResults, String orderBy) {
 

@@ -176,6 +176,13 @@ public class GrupoSala implements Serializable {
         return em;
     }
 
+	@SuppressWarnings("unchecked")
+	public static List<GrupoSala> findByUnidade(Unidade unidade) {
+		return entityManager().createQuery("SELECT o FROM GrupoSala o WHERE unidade = :unidade")
+		.setParameter("unidade", unidade)
+		.getResultList();
+	}
+	
     @SuppressWarnings("unchecked")
     public static List<GrupoSala> findByNomeLikeAndCodigoLikeAndUnidade(String nome, String codigo, Unidade unidade, int firstResult, int maxResults, String orderBy) {
         nome = (nome == null)? "" : nome;
