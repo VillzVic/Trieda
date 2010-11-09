@@ -3,6 +3,8 @@
 
 #include "Sala.h"
 
+#include "CreditoDisponivel.h"
+
 class ConjuntoSala: public OFBase /* O <id> de um <ConjuntoSala> será igual à 
                                   <capacidade> das salas que o map de salas <salas> contem.
                                   Portanto, todas as salas de um <ConjuntoSala> deverão possuir
@@ -74,6 +76,20 @@ public:
       return NULL; /* Sala não removida, pois não existe uma <sala>
                    com o <id> para o <ConjuntoSala> em questão. */
    }
+
+   int maxCreds(int dia)
+   {
+      int totMaxCreds = 0;
+
+      std::map<int/*Id Sala*/,Sala*>::iterator itSala =
+         salas.begin();
+
+      for(; itSala != salas.end(); itSala++)
+      { totMaxCreds += itSala->second->max_creds(dia); }
+
+      return totMaxCreds;
+   }
+
 
 private:
 

@@ -8,6 +8,7 @@
 #include "input.h"
 
 #define PRINT_cria_variaveis
+#define PRINT_cria_restricoes
 #define DEBUG
 
 /**

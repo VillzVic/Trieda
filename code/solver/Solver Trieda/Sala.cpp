@@ -33,8 +33,10 @@ void Sala::le_arvore(ItemSala& elem)
 	}
 }
 
-int Sala::max_creds(int dia) {
+int Sala::max_creds(int dia)
+{
    int creds = 0;
+
    ITERA_GGROUP(it_creds,creditos_disponiveis,CreditoDisponivel) {
       if (it_creds->dia_semana == dia) {
          creds += it_creds->max_creditos;
