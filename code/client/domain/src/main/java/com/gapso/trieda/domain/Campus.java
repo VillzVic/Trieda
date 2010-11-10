@@ -42,7 +42,7 @@ public class Campus implements Serializable {
 
 	private static final long serialVersionUID = 6690100103369325015L;
 	
-//  TODO  @NotNull
+	@NotNull
     @ManyToOne(targetEntity = Cenario.class)
     @JoinColumn(name = "CEN_ID")
     private Cenario cenario;

@@ -1,6 +1,8 @@
 package com.gapso.trieda.domain;
 
+import java.io.Serializable;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -14,7 +16,9 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -37,16 +41,21 @@ import org.springframework.transaction.annotation.Transactional;
 @RooToString
 @RooEntity(identifierColumn = "CEN_ID")
 @Table(name = "CENARIOS")
-public class Cenario implements java.io.Serializable {
+public class Cenario implements Serializable {
 
-    @NotNull
+//    TODO @NotNull
     @ManyToOne(targetEntity = Usuario.class)
     @JoinColumn(name = "USU_CRIACAO_ID")
     private Usuario criadoPor;
 
+//   TODO @NotNull
     @ManyToOne(targetEntity = Usuario.class)
     @JoinColumn(name = "USU_ATUALIZACAO_ID")
     private Usuario atualizadoPor;
+    
+    @NotNull
+    @Column(name = "CEN_MASTERDATA")
+    private Boolean masterData;
 
     @NotNull
     @Column(name = "CEN_NOME")
@@ -54,22 +63,22 @@ public class Cenario implements java.io.Serializable {
     private String nome;
 
     @Column(name = "CEN_ANO")
-    @Min(1000L)
-    @Max(1000L)
+    @Min(1L)
+    @Max(9999L)
     private Integer ano;
 
-    @Column(name = "CEN_PERIODO")
+    @Column(name = "CEN_SEMESTRE")
     @Min(1L)
     @Max(12L)
-    private Integer periodo;
+    private Integer semestre;
 
-    @NotNull
+//    TODO @NotNull
     @Column(name = "CEN_DT_CRIACAO")
     @Temporal(TemporalType.TIMESTAMP)
     @DateTimeFormat(style = "S-")
     private Date dataCriacao;
 
-    @NotNull
+//    TODO @NotNull
     @Column(name = "CEN_DT_ATUALIZACAO")
     @Temporal(TemporalType.TIMESTAMP)
     @DateTimeFormat(style = "S-")
@@ -81,8 +90,12 @@ public class Cenario implements java.io.Serializable {
     @Column(name = "CEN_OFICIAL")
     private Boolean oficial;
 
+    @OneToOne
+    @JoinColumn(name="SLE_ID")
+    private SemanaLetiva semanaLetiva;
+    
     @ManyToMany(cascade = CascadeType.ALL, mappedBy = "cenario")
-    private Set<com.gapso.trieda.domain.DivisaoCredito> divisoesCredito = new java.util.HashSet<com.gapso.trieda.domain.DivisaoCredito>();
+    private Set<DivisaoCredito> divisoesCredito = new HashSet<DivisaoCredito>();
 
 	public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -90,13 +103,15 @@ public class Cenario implements java.io.Serializable {
         sb.append("Version: ").append(getVersion()).append(", ");
         sb.append("CriadoPor: ").append(getCriadoPor()).append(", ");
         sb.append("AtualizadoPor: ").append(getAtualizadoPor()).append(", ");
+        sb.append("MasterData: ").append(getMasterData()).append(", ");
         sb.append("Nome: ").append(getNome()).append(", ");
         sb.append("Ano: ").append(getAno()).append(", ");
-        sb.append("Periodo: ").append(getPeriodo()).append(", ");
+        sb.append("Semestre: ").append(getSemestre()).append(", ");
         sb.append("DataCriacao: ").append(getDataCriacao()).append(", ");
         sb.append("DataAtualizacao: ").append(getDataAtualizacao()).append(", ");
         sb.append("Comentario: ").append(getComentario()).append(", ");
         sb.append("Oficial: ").append(getOficial()).append(", ");
+        sb.append("SemanaLetiva: ").append(getSemanaLetiva()).append(", ");
         sb.append("DivisoesCredito: ").append(getDivisoesCredito() == null ? "null" : getDivisoesCredito().size());
         return sb.toString();
     }
@@ -166,25 +181,57 @@ public class Cenario implements java.io.Serializable {
         return em;
     }
 
-	public static long countCenarios() {
-        return ((Number) entityManager().createQuery("select count(o) from Cenario o").getSingleResult()).longValue();
+	public static int count() {
+        return ((Number) entityManager().createQuery("SELECT count(o) FROM Cenario o").getSingleResult()).intValue();
     }
 
 	@SuppressWarnings("unchecked")
-    public static List<Cenario> findAllCenarios() {
-        return entityManager().createQuery("select o from Cenario o").getResultList();
+    public static List<Cenario> findAll() {
+        Query q = entityManager().createQuery("SELECT o FROM Cenario o WHERE o.masterData = :masterData");
+        q.setParameter("masterData", false);
+        return q.getResultList();
     }
 
-	public static Cenario findCenario(Long id) {
+	public static Cenario find(Long id) {
         if (id == null) return null;
         return entityManager().find(Cenario.class, id);
     }
+	
+	public static Cenario findMasterData() {
+		Query q = entityManager().createQuery("SELECT o FROM Cenario o WHERE o.masterData = :masterData");
+		q.setParameter("masterData", true);
+		return (Cenario) q.getSingleResult(); 
+	}
 
+	public static List<Cenario> find(int firstResult, int maxResults) {
+		return find(firstResult, maxResults, null);
+	}
 	@SuppressWarnings("unchecked")
-    public static List<Cenario> findCenarioEntries(int firstResult, int maxResults) {
-        return entityManager().createQuery("select o from Cenario o").setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
+    public static List<Cenario> find(int firstResult, int maxResults, String orderBy) {
+		orderBy = (orderBy != null) ? "ORDER BY o." + orderBy : "";
+        Query q = entityManager().createQuery("SELECT o FROM Cenario o WHERE o.masterData = :masterData " + orderBy);
+        q.setParameter("masterData", false);
+        return q.setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
 
+    @SuppressWarnings("unchecked")
+	public static List<Cenario> findByAnoAndSemestre(Integer ano, Integer semestre, int firstResult, int maxResults, String orderBy) {
+        orderBy = (orderBy != null) ? "ORDER BY o." + orderBy : "";
+        
+        String queryAno = "";
+        String querySemestre = "";
+        if(ano != null) queryAno = "o.ano = :ano AND ";
+        if(ano != null) querySemestre = "o.semestre = :semestre AND ";
+        
+        Query q = entityManager().createQuery("SELECT o FROM Cenario o WHERE "+queryAno+querySemestre+" o.masterData = :masterData ");
+
+        q.setParameter("masterData", false);
+        if(ano != null) q.setParameter("ano", semestre);
+        if(semestre != null) q.setParameter("ano", semestre);
+        
+        return q.setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
+    }
+	
 	public Usuario getCriadoPor() {
         return this.criadoPor;
     }
@@ -200,6 +247,14 @@ public class Cenario implements java.io.Serializable {
 	public void setAtualizadoPor(Usuario atualizadoPor) {
         this.atualizadoPor = atualizadoPor;
     }
+
+	public Boolean getMasterData() {
+		return masterData;
+	}
+
+	public void setMasterData(Boolean masterData) {
+		this.masterData = masterData;
+	}
 
 	public String getNome() {
         return this.nome;
@@ -217,12 +272,12 @@ public class Cenario implements java.io.Serializable {
         this.ano = ano;
     }
 
-	public Integer getPeriodo() {
-        return this.periodo;
+	public Integer getSemestre() {
+        return this.semestre;
     }
 
-	public void setPeriodo(Integer periodo) {
-        this.periodo = periodo;
+	public void setSemestre(Integer semestre) {
+        this.semestre = semestre;
     }
 
 	public Date getDataCriacao() {
@@ -256,6 +311,14 @@ public class Cenario implements java.io.Serializable {
 	public void setOficial(Boolean oficial) {
         this.oficial = oficial;
     }
+	
+	public SemanaLetiva getSemanaLetiva() {
+		return this.semanaLetiva;
+	}
+	
+	public void setSemanaLetiva(SemanaLetiva semanaLetiva) {
+		this.semanaLetiva = semanaLetiva;
+	}
 
 	public Set<DivisaoCredito> getDivisoesCredito() {
         return this.divisoesCredito;

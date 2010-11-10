@@ -153,8 +153,6 @@ public class Unidade implements Serializable {
     	if(obj == null) return 0;
     	return ((Number) obj).intValue();
     }
-
-    
     
     @SuppressWarnings("unchecked")
 	public static List<Unidade> findByCampusCodigoLikeAndNomeLikeAndCodigoLike(Campus campus, String nome, String codigo, int firstResult, int maxResults, String orderBy) {

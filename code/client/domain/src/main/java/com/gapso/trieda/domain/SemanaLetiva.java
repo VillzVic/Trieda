@@ -11,9 +11,8 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.Table;
@@ -34,11 +33,8 @@ import org.springframework.transaction.annotation.Transactional;
 @RooEntity(identifierColumn = "SLE_ID")
 @Table(name = "SEMANA_LETIVA")
 public class SemanaLetiva implements java.io.Serializable {
-
 	
-//  TODO  @NotNull
-    @ManyToOne(targetEntity = Cenario.class)
-    @JoinColumn(name = "CEN_ID")
+    @OneToOne(mappedBy="semanaLetiva")
     private Cenario cenario;
 
     @NotNull
