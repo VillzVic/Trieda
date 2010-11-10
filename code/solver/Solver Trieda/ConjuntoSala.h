@@ -5,15 +5,15 @@
 
 #include "CreditoDisponivel.h"
 
-class ConjuntoSala: public OFBase /* O <id> de um <ConjuntoSala> será igual à 
-                                  <capacidade> das salas que o map de salas <salas> contem.
-                                  Portanto, todas as salas de um <ConjuntoSala> deverão possuir
-                                  a mesma capacidade */
+class ConjuntoSala: public OFBase
+   /* O <id> de um <ConjuntoSala> será igual à 
+   <capacidade> das salas que o map de salas <salas> contem.
+   Portanto, todas as salas de um <ConjuntoSala> deverão possuir
+   a mesma capacidade */
 {
 public:
    ConjuntoSala()
    {}
-   //{ idUnidade = -1; }
 
    ~ConjuntoSala();
 
@@ -21,10 +21,18 @@ public:
 
    //void setIdUnidade(int idUnidade) { this->idUnidade = idUnidade; }
 
+   //void setCapacidade(int cap)
+   //{ capacidade = cap; }
+
+   void setTipoSalas(int tpSalas)
+   { tipoSalas = tpSalas; }
 
    // =========== METODOS GET
 
    //int getIdUnidade() const { return idUnidade; }
+
+   //int getCapacidade()
+   //{ return capacidade; }
 
    Sala * getSala(int idSala) const
    {
@@ -46,6 +54,9 @@ public:
 
    /* Para não precisar criar os métodos de acesso ao GGROUP.*/
    GGroup<Disciplina*> & getDiscsAssociadas() { return disciplinasAssociadas; }
+
+   int getTipoSalas() const
+   { return tipoSalas; }
 
    // =========== METODOS AUXILIARES
 
@@ -90,10 +101,44 @@ public:
       return totMaxCreds;
    }
 
+   int capTotalSalas()
+   {
+      int capSalas = 0;
 
+      std::map<int/*Id Sala*/,Sala*>::iterator itSala =
+         salas.begin();
+
+      for(; itSala != salas.end(); itSala++)
+      { capSalas += itSala->second->capacidade; }
+
+      return capSalas;
+   }
+
+   // =========== OPERADORES
+   virtual bool operator == (ConjuntoSala const & right)
+   { 
+      return ( (this->getId() == right.getId()) && 
+         (this->getTipoSalas() < right.getTipoSalas()) ); 
+   }
+
+   virtual bool operator < (ConjuntoSala const & right) 
+   { 
+      if(this->getId() < right.getId())
+      { return true; }
+      else if( (this->getId() == right.getId()) && 
+         (this->getTipoSalas() < right.getTipoSalas()) )
+      { return true; }
+
+      return false;
+   }
+   
 private:
 
    std::map<int/*Id Sala*/,Sala*> salas;
+
+   //int capacidade;
+
+   int tipoSalas;
 
    // =========== PRÉ-PROCESSAMENTO
 

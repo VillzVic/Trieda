@@ -62,3 +62,21 @@ void ProblemData::le_arvore(TriedaInput& raiz)
    parametros->le_arvore(raiz.parametrosPlanejamento());
    LE_SEQ(fixacoes,raiz.fixacoes(),Fixacao);
 }
+
+/*
+Disciplina * ProblemData::discPresenteOferta(Disciplina & disc, Oferta & oferta)
+{
+   GGroup<DisciplinaPeriodo>::iterator itPrdDisc = 
+      oferta.curriculo->disciplinas_periodo.begin();
+
+   for(; itPrdDisc != oferta.curriculo->disciplinas_periodo.end(); itPrdDisc++)
+   { 
+      Disciplina * ptDisc = refDisciplinas[(*itPrdDisc).second];
+
+      if(ptDisc->getId() == disc.getId())
+      { return ptDisc; }
+   }
+
+   return NULL; // caso a oferta não possua a disc.
+}
+*/

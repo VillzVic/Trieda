@@ -40,7 +40,6 @@ public:
 	int id_unidade;
 	// <<<
 
-   
    // =========== METODOS SET
 
    // =========== METODOS GET

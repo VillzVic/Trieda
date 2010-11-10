@@ -7,7 +7,7 @@ gera uma iteração por ela que pode ser representada por um código
 mais legível e intuitivo, baseada nos padrões de projeto escolhidos */
 #ifndef ITERA_SEQ
 #define ITERA_SEQ(it,addr,type) for (Grupo##type##::##type##_iterator it = \
-	(addr).##type##().begin(); it != (addr).##type##().end(); ++it) 
+   (addr).##type##().begin(); it != (addr).##type##().end(); ++it) 
 #endif
 
 #include "ProblemData.h"
@@ -17,37 +17,37 @@ mais legível e intuitivo, baseada nos padrões de projeto escolhidos */
 class ProblemDataLoader
 {
 public:
-	// Constructor
-	ProblemDataLoader( char *inputFile, ProblemData* data );
+   // Constructor
+   ProblemDataLoader( char *inputFile, ProblemData* data );
 
-	// Destructor
-	~ProblemDataLoader();
+   // Destructor
+   ~ProblemDataLoader();
 
-	// Load the XML file
-	void load();
+   // Load the XML file
+   void load();
 
    void criaConjuntoSalas();
 
-	void divideDisciplinas();
-	// >>> 14/10/2010
-	void armz_disc_curriculo();
-	// <<< 14/10/2010
-	void gera_refs();
-	template<class T> 
-	void find_and_set(int id, GGroup<T*>& haystack, T*& needle, bool print) ;
-	void cria_blocos_curriculares();
-	void estima_turmas();
-	void print_stats();
-	void cache();
-	void print_csv();
+   void divideDisciplinas();
+   // >>> 14/10/2010
+   void armz_disc_curriculo();
+   // <<< 14/10/2010
+   void gera_refs();
+   template<class T> 
+   void find_and_set(int id, GGroup<T*>& haystack, T*& needle, bool print) ;
+   void cria_blocos_curriculares();
+   void estima_turmas();
+   void print_stats();
+   void cache();
+   void print_csv();
 
 private:
-	// Input data object of the problem
-	ProblemData *problemData;
-	char *inputFile;
+   // Input data object of the problem
+   ProblemData *problemData;
+   char *inputFile;
 
-	// XML parser
-	std::auto_ptr<TriedaInput> root;
+   // XML parser
+   std::auto_ptr<TriedaInput> root;
 
    // >>> Variáveis e/ou estruturas de dados para realizar o pré processamento dos dados.
 
@@ -65,14 +65,14 @@ private:
    void referenciaDisciplinas();
 
    void calculaTamanhoMedioSalasCampus();
-   
+
    // Armazena todas as disciplinas ofertadas em um campus.
    void relacionaCampusDiscs();
 
    /* Calcula a demanda máxima e demanda total da disciplina em questão. Esses valores
    são armazenados na própria disciplina. */
    void calculaDemandas();
-   
+
    // Armazena em cada sala, referências para as disciplinas associadas.
    void carregaDisciplinasAssociadasSalas();
 
@@ -85,6 +85,9 @@ private:
    percorrer o map de salas de um dado elemento do <ConjuntoSala> adicionando as salas ao map de
    disciplinas associadas do <ConjuntoSala>.*/
    void carregaDiscAssocConjuntoSalas();
+
+   /* Relaciona cada disciplina com as ofertas em que ela aparece. */
+   void relacionaDiscOfertas();
 
    // <<<
 

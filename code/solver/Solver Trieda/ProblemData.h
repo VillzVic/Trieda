@@ -86,6 +86,7 @@ public:
    
    int totalSalas;
    int totalTurmas;
+   int totalConjuntosSalas;
 
    // std::map<std::pair<int/*cursoA_id*/,int/*cursoB_id*/>,bool/*sao_compat?*/> compat_cursos;
    std::map<std::pair<Curso*,Curso*>,bool> compat_cursos;
@@ -129,6 +130,10 @@ public:
    Nao precisaria dessa estrutura se o FIND do GGroup estivesse funcionando normalmente.
    VER ISSO DEPOIS */
    std::map<int/*Id Disc*/,Disciplina*> refDisciplinas;
+
+   /* Listando todas as ofertas que contem uma disciplina especificada. */
+   //Disciplina * discPresenteOferta(Disciplina&,Oferta&);
+   std::map<int/*Id disc*/, GGroup<Oferta*> > ofertasDisc;
 
    // <<<
 
