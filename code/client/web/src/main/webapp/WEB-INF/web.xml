@@ -17,6 +17,10 @@
 	</listener>
 
 	<servlet>
+		<servlet-name>cenariosServlet</servlet-name>
+		<servlet-class>com.gapso.web.trieda.server.CenariosServiceImpl</servlet-class>
+	</servlet>
+	<servlet>
 		<servlet-name>campiServlet</servlet-name>
 		<servlet-class>com.gapso.web.trieda.server.CampiServiceImpl</servlet-class>
 	</servlet>
@@ -97,6 +101,10 @@
 		<servlet-class>com.gapso.web.trieda.server.SemanasLetivaServiceImpl</servlet-class>
 	</servlet>
 
+	<servlet-mapping>
+		<servlet-name>cenariosServlet</servlet-name>
+		<url-pattern>/trieda/cenarios</url-pattern>
+	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>campiServlet</servlet-name>
 		<url-pattern>/trieda/campi</url-pattern>

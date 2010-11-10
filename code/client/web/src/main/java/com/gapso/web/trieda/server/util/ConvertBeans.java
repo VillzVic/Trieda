@@ -9,7 +9,7 @@ import java.util.Set;
 
 import com.gapso.trieda.domain.AreaTitulacao;
 import com.gapso.trieda.domain.Campus;
-import com.gapso.trieda.domain.Oferta;
+import com.gapso.trieda.domain.Cenario;
 import com.gapso.trieda.domain.Curriculo;
 import com.gapso.trieda.domain.CurriculoDisciplina;
 import com.gapso.trieda.domain.Curso;
@@ -19,6 +19,7 @@ import com.gapso.trieda.domain.Disciplina;
 import com.gapso.trieda.domain.GrupoSala;
 import com.gapso.trieda.domain.HorarioAula;
 import com.gapso.trieda.domain.HorarioDisponivelCenario;
+import com.gapso.trieda.domain.Oferta;
 import com.gapso.trieda.domain.Sala;
 import com.gapso.trieda.domain.SemanaLetiva;
 import com.gapso.trieda.domain.TipoCurso;
@@ -30,8 +31,8 @@ import com.gapso.trieda.misc.Dificuldades;
 import com.gapso.trieda.misc.Estados;
 import com.gapso.trieda.misc.Semanas;
 import com.gapso.web.trieda.client.mvp.model.AreaTitulacaoDTO;
-import com.gapso.web.trieda.client.mvp.model.OfertaDTO;
 import com.gapso.web.trieda.client.mvp.model.CampusDTO;
+import com.gapso.web.trieda.client.mvp.model.CenarioDTO;
 import com.gapso.web.trieda.client.mvp.model.CurriculoDTO;
 import com.gapso.web.trieda.client.mvp.model.CurriculoDisciplinaDTO;
 import com.gapso.web.trieda.client.mvp.model.CursoDTO;
@@ -41,6 +42,7 @@ import com.gapso.web.trieda.client.mvp.model.DisciplinaDTO;
 import com.gapso.web.trieda.client.mvp.model.GrupoSalaDTO;
 import com.gapso.web.trieda.client.mvp.model.HorarioAulaDTO;
 import com.gapso.web.trieda.client.mvp.model.HorarioDisponivelCenarioDTO;
+import com.gapso.web.trieda.client.mvp.model.OfertaDTO;
 import com.gapso.web.trieda.client.mvp.model.SalaDTO;
 import com.gapso.web.trieda.client.mvp.model.SemanaLetivaDTO;
 import com.gapso.web.trieda.client.mvp.model.TipoCursoDTO;
@@ -50,6 +52,44 @@ import com.gapso.web.trieda.client.mvp.model.TurnoDTO;
 import com.gapso.web.trieda.client.mvp.model.UnidadeDTO;
 
 public class ConvertBeans {
+	
+	
+	// CENÁRIO
+	public static Cenario toCenario(CenarioDTO dto) {
+		Cenario domain = new Cenario();
+		domain.setId(dto.getId());
+		domain.setVersion(dto.getVersion());
+		domain.setNome(dto.getNome());
+		domain.setMasterData(dto.getMasterData());
+		domain.setOficial(dto.getOficial());
+		domain.setAno(dto.getAno());
+		domain.setSemestre(dto.getSemestre());
+		// TODO Criar ligação com o usuário (Edição e criação)
+		// TODO Criar ligação com data de edição e criação
+		domain.setComentario(dto.getComentario());
+		SemanaLetiva semanaLetiva = SemanaLetiva.find(dto.getSemanaLetivaId());
+		domain.setSemanaLetiva(semanaLetiva);
+		return domain;
+	}
+	
+	public static CenarioDTO toCenarioDTO(Cenario domain) {
+		CenarioDTO dto = new CenarioDTO();
+		dto.setId(domain.getId());
+		dto.setVersion(domain.getVersion());
+		dto.setNome(domain.getNome());
+		dto.setMasterData(domain.getMasterData());
+		dto.setOficial(domain.getOficial());
+		dto.setAno(domain.getAno());
+		dto.setSemestre(domain.getSemestre());
+		// TODO Criar ligação com o usuário (Edição e criação)
+		// TODO Criar ligação com data de edição e criação
+		dto.setComentario(domain.getComentario());
+		if(!domain.getMasterData()) {
+			dto.setSemanaLetivaId(domain.getSemanaLetiva().getId());
+			dto.setSemanaLetivaString(domain.getSemanaLetiva().getCodigo());
+		}
+		return dto;
+	}
 	
 	// CAMPUS
 	public static Campus toCampus(CampusDTO dto) {

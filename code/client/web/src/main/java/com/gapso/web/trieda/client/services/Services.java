@@ -5,6 +5,7 @@ import com.google.gwt.core.client.GWT;
 
 public class Services {
 
+	public static final String CENARIOS = "cenarios";
 	public static final String CAMPI = "campi";
 	public static final String CAMPIPROFESSORES = "campiProfessores";
 	public static final String TURNOS = "turnos";
@@ -47,6 +48,15 @@ public class Services {
 		if(id.equals(AREASTITULACAO)) return areasTitulacao();
 		if(id.equals(SEMANASLETIVA)) return semanasLetiva();
 		return null;
+	}
+	
+	public static CenariosServiceAsync cenarios() {
+		CenariosServiceAsync service = (CenariosServiceAsync) Registry.get(CENARIOS);
+		if(service == null) {
+			service = GWT.create(CenariosService.class);
+			Registry.register(CENARIOS, service);
+		}
+		return service;
 	}
 	
 	public static TurnosServiceAsync turnos() {

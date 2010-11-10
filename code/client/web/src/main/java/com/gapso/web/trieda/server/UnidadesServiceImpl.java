@@ -16,7 +16,6 @@ import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.gapso.trieda.domain.Campus;
-import com.gapso.trieda.domain.Turno;
 import com.gapso.trieda.domain.Unidade;
 import com.gapso.web.trieda.client.mvp.model.CampusDTO;
 import com.gapso.web.trieda.client.mvp.model.DeslocamentoUnidadeDTO;
@@ -93,7 +92,7 @@ public class UnidadesServiceImpl extends RemoteServiceServlet implements Unidade
 		}
 		BasePagingLoadResult<UnidadeDTO> result = new BasePagingLoadResult<UnidadeDTO>(list);
 		result.setOffset(config.getOffset());
-		result.setTotalLength(Turno.count());
+		result.setTotalLength(Unidade.count());
 		return result;
 	}
 	

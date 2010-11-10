@@ -11,15 +11,16 @@ import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.menu.MenuItem;
 import com.gapso.web.trieda.client.mvp.model.DeslocamentoCampusDTO;
 import com.gapso.web.trieda.client.mvp.view.AreasTitulacaoView;
-import com.gapso.web.trieda.client.mvp.view.OfertasView;
 import com.gapso.web.trieda.client.mvp.view.CampiDeslocamentoView;
 import com.gapso.web.trieda.client.mvp.view.CampiView;
+import com.gapso.web.trieda.client.mvp.view.CenariosView;
 import com.gapso.web.trieda.client.mvp.view.CurriculosView;
 import com.gapso.web.trieda.client.mvp.view.CursosView;
 import com.gapso.web.trieda.client.mvp.view.DisciplinasAssociarSalaView;
 import com.gapso.web.trieda.client.mvp.view.DisciplinasView;
 import com.gapso.web.trieda.client.mvp.view.GruposSalasView;
 import com.gapso.web.trieda.client.mvp.view.HorariosAulaView;
+import com.gapso.web.trieda.client.mvp.view.OfertasView;
 import com.gapso.web.trieda.client.mvp.view.SalasView;
 import com.gapso.web.trieda.client.mvp.view.SemanasLetivaView;
 import com.gapso.web.trieda.client.mvp.view.TiposCursosView;
@@ -40,6 +41,7 @@ public class ToolBarPresenter implements Presenter {
 		
 		Component getComponent();
 		
+		MenuItem getCenariosListMenuItem();
 		MenuItem getTurnosListMenuItem();
 		MenuItem getSemanasLetivaListMenuItem();
 		MenuItem getHorariosAulaListMenuItem();
@@ -77,6 +79,13 @@ public class ToolBarPresenter implements Presenter {
 			@Override
 			public void componentSelected(ButtonEvent ce) {
 				MessageBox.alert("Desenvolvimento", "Esta sessão está em desenvolvimento", null);
+			}
+		});
+		toolBar.getCenariosListMenuItem().addSelectionListener(new SelectionListener<MenuEvent>() {
+			@Override
+			public void componentSelected(MenuEvent ce) {
+				Presenter presenter = new CenariosPresenter(new CenariosView());
+				presenter.go(gTab);
 			}
 		});
 		toolBar.getTurnosListMenuItem().addSelectionListener(new SelectionListener<MenuEvent>() {
