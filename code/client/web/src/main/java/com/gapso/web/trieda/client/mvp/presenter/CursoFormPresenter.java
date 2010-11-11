@@ -8,6 +8,7 @@ import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.CheckBox;
 import com.extjs.gxt.ui.client.widget.form.NumberField;
 import com.extjs.gxt.ui.client.widget.form.TextField;
+import com.gapso.web.trieda.client.mvp.model.CenarioDTO;
 import com.gapso.web.trieda.client.mvp.model.CursoDTO;
 import com.gapso.web.trieda.client.services.CursosServiceAsync;
 import com.gapso.web.trieda.client.services.Services;
@@ -33,10 +34,12 @@ public class CursoFormPresenter implements Presenter {
 		
 		SimpleModal getSimpleModal();
 	}
+	private CenarioDTO cenario;
 	private SimpleGrid<CursoDTO> gridPanel;
 	private Display display;
 	
-	public CursoFormPresenter(Display display, SimpleGrid<CursoDTO> gridPanel) {
+	public CursoFormPresenter(CenarioDTO cenario, Display display, SimpleGrid<CursoDTO> gridPanel) {
+		this.cenario = cenario;
 		this.gridPanel = gridPanel;
 		this.display = display;
 		setListeners();
@@ -73,6 +76,7 @@ public class CursoFormPresenter implements Presenter {
 	
 	private CursoDTO getDTO() {
 		CursoDTO cursoDTO = display.getCursoDTO();
+		cursoDTO.setCenarioId(cenario.getId());
 		cursoDTO.setNome(display.getNomeTextField().getValue());
 		cursoDTO.setCodigo(display.getCodigoTextField().getValue());
 		cursoDTO.setNumMinDoutores(display.getNumMinDoutoresTextField().getValue().intValue());

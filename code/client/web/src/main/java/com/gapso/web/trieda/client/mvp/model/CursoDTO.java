@@ -9,18 +9,19 @@ public class CursoDTO extends FileModel {
 		super();
 	}
 
-	public CursoDTO(Long id, String codigo, String nome, Long tipoId, String tipoString, Integer numMinDoutores, Integer numMinMestres, Integer maxDisciplinasPeloProfessor, Boolean admMaisDeUmDisciplina, Integer version) {
-		setId(id);
-		setCodigo(codigo);
-		setNome(nome);
-		setTipoId(tipoId);
-		setTipoString(tipoString);
-		setNumMinDoutores(numMinDoutores);
-		setNumMinMestres(numMinMestres);
-		setMaxDisciplinasPeloProfessor(maxDisciplinasPeloProfessor);
-		setAdmMaisDeUmDisciplina(admMaisDeUmDisciplina);
-		setVersion(version);
-	}
+	/* == PROPRIEDADES ==
+	 * Long   : id
+	 * String : codigo
+	 * Long   : cenarioId
+	 * String : nome
+	 * Long   : tipoId
+	 * String : tipoString
+	 * Integer: numMinDoutores
+	 * Integer: numMinMestres
+	 * Integer: maxDisciplinasPeloProfessor
+	 * Boolean: admMaisDeUmDisciplina
+	 * Integer: version
+	 */
 	
 	public void setId(Long value) {
 		set("id", value);
@@ -34,6 +35,13 @@ public class CursoDTO extends FileModel {
 	}
 	public Integer getVersion() {
 		return get("version");
+	}
+	
+	public void setCenarioId(Long value) {
+		set("cenarioId", value);
+	}
+	public Long getCenarioId() {
+		return get("cenarioId");
 	}
 	
 	public String getCodigo() {

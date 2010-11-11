@@ -183,7 +183,7 @@ public class ToolBarPresenter implements Presenter {
 		toolBar.getCursosListMenuItem().addSelectionListener(new SelectionListener<MenuEvent>() {
 			@Override
 			public void componentSelected(MenuEvent ce) {
-				Presenter presenter = new CursosPresenter(new CursosView());
+				Presenter presenter = new CursosPresenter(masterData, new CursosView());
 				presenter.go(gTab);
 			}
 		});

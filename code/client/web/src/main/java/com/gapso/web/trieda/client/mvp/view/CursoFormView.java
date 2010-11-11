@@ -81,6 +81,7 @@ public class CursoFormView extends MyComposite implements CursoFormPresenter.Dis
 		numMinDoutoresTextField.setFieldLabel("% Min. PhD");
 		numMinDoutoresTextField.setAllowBlank(false);
 		numMinDoutoresTextField.setAllowDecimals(false);
+		numMinDoutoresTextField.setMaxValue(99);
 		formPanel.add(numMinDoutoresTextField, formData);
 		
 		numMinMestresTextField = new NumberField();
@@ -89,6 +90,7 @@ public class CursoFormView extends MyComposite implements CursoFormPresenter.Dis
 		numMinMestresTextField.setFieldLabel("% Min. MSc");
 		numMinMestresTextField.setAllowBlank(false);
 		numMinMestresTextField.setAllowDecimals(false);
+		numMinMestresTextField.setMaxValue(99);
 		formPanel.add(numMinMestresTextField, formData);
 		
 		maxDisciplinasPeloProfessorTextField = new NumberField();
@@ -97,6 +99,7 @@ public class CursoFormView extends MyComposite implements CursoFormPresenter.Dis
 		maxDisciplinasPeloProfessorTextField.setFieldLabel("Max. Disc. por Prof.");
 		maxDisciplinasPeloProfessorTextField.setAllowBlank(false);
 		maxDisciplinasPeloProfessorTextField.setAllowDecimals(false);
+		maxDisciplinasPeloProfessorTextField.setMaxValue(99);
 		formPanel.add(maxDisciplinasPeloProfessorTextField, formData);
 		
 		admMaisDeUmDisciplinaCheckBox = new CheckBox();

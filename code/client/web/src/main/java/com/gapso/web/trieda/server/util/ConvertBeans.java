@@ -479,6 +479,8 @@ public class ConvertBeans {
 		Curso domain = new Curso();
 		domain.setId(dto.getId());
 		domain.setVersion(dto.getVersion());
+		Cenario cenario = Cenario.find(dto.getCenarioId());
+		domain.setCenario(cenario);
 		domain.setCodigo(dto.getCodigo());
 		domain.setNome(dto.getNome());
 		domain.setNumMinDoutores(dto.getNumMinDoutores());
@@ -496,6 +498,7 @@ public class ConvertBeans {
 		CursoDTO dto = new CursoDTO();
 		dto.setId(domain.getId());
 		dto.setVersion(domain.getVersion());
+		dto.setCenarioId(domain.getCenario().getId());
 		dto.setCodigo(domain.getCodigo());
 		dto.setNome(domain.getNome());
 		dto.setNumMinDoutores(domain.getNumMinDoutores());
