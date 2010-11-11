@@ -77,6 +77,7 @@ public class DisciplinaFormView extends MyComposite implements DisciplinaFormPre
 		creditosTeoricoTF.setFieldLabel("Créditos Teóricos");
 		creditosTeoricoTF.setAllowBlank(false);
 		creditosTeoricoTF.setAllowDecimals(false);
+		creditosTeoricoTF.setMaxValue(99);
 		formPanel.add(creditosTeoricoTF, formData);
 		
 		creditosPraticoTF = new NumberField();
@@ -85,6 +86,7 @@ public class DisciplinaFormView extends MyComposite implements DisciplinaFormPre
 		creditosPraticoTF.setFieldLabel("Créditos Práticos");
 		creditosPraticoTF.setAllowBlank(false);
 		creditosPraticoTF.setAllowDecimals(false);
+		creditosPraticoTF.setMaxValue(99);
 		formPanel.add(creditosPraticoTF, formData);
 		
 		laboratorioCB = new CheckBox();
@@ -113,6 +115,7 @@ public class DisciplinaFormView extends MyComposite implements DisciplinaFormPre
 		maxAlunosTeoricoTF.setFieldLabel("Max. Alunos - Teórico");
 		maxAlunosTeoricoTF.setAllowBlank(false);
 		maxAlunosTeoricoTF.setAllowDecimals(false);
+		maxAlunosTeoricoTF.setMaxValue(999);
 		formPanel.add(maxAlunosTeoricoTF, formData);
 		
 		maxAlunosPraticoTF = new NumberField();
@@ -121,6 +124,7 @@ public class DisciplinaFormView extends MyComposite implements DisciplinaFormPre
 		maxAlunosPraticoTF.setFieldLabel("Max. Alunos - Prático");
 		maxAlunosPraticoTF.setAllowBlank(false);
 		maxAlunosPraticoTF.setAllowDecimals(false);
+		maxAlunosPraticoTF.setMaxValue(999);
 		formPanel.add(maxAlunosPraticoTF, formData);
 		
 		FormButtonBinding binding = new FormButtonBinding(formPanel);

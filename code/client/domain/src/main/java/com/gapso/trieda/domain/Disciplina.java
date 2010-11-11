@@ -88,7 +88,7 @@ public class Disciplina implements Serializable {
     @NotNull
     @Column(name = "DIS_MAX_ALUN_TEORICO")
     @Min(0L)
-    @Max(99L)
+    @Max(999L)
     private Integer maxAlunosTeorico;
 
     @NotNull
