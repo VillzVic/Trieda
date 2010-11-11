@@ -1,5 +1,6 @@
 package com.gapso.trieda.domain;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Set;
 
@@ -30,7 +31,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RooToString
 @RooEntity(identifierColumn = "ATI_ID")
 @Table(name = "AREAS_TITULACAO")
-public class AreaTitulacao implements java.io.Serializable {
+public class AreaTitulacao implements Serializable {
 
     @NotNull
     @Column(name = "ATI_CODIGO")
@@ -42,7 +43,7 @@ public class AreaTitulacao implements java.io.Serializable {
     private String descricao;
 
     @ManyToMany(cascade = CascadeType.ALL)
-    private Set<com.gapso.trieda.domain.Curso> cursos = new java.util.HashSet<com.gapso.trieda.domain.Curso>();
+    private Set<Curso> cursos = new java.util.HashSet<Curso>();
 
 	private static final long serialVersionUID = 8739246006672184100L;
 
