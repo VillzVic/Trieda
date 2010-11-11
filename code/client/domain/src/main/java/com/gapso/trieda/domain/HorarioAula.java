@@ -114,6 +114,12 @@ public class HorarioAula implements java.io.Serializable {
         }
     }
 
+	@Transactional
+	public void detach() {
+		if (this.entityManager == null) this.entityManager = entityManager();
+		this.entityManager.detach(this);
+	}
+    
     @Transactional
     public void flush() {
         if (this.entityManager == null) this.entityManager = entityManager();

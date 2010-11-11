@@ -9,9 +9,11 @@ import com.extjs.gxt.ui.client.Style.SortDir;
 import com.extjs.gxt.ui.client.data.BasePagingLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
+import com.gapso.trieda.domain.Campus;
 import com.gapso.trieda.domain.Cenario;
 import com.gapso.web.trieda.client.mvp.model.CenarioDTO;
 import com.gapso.web.trieda.client.services.CenariosService;
+import com.gapso.web.trieda.server.util.CenarioUtil;
 import com.gapso.web.trieda.server.util.ConvertBeans;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
@@ -91,7 +93,9 @@ public class CenariosServiceImpl extends RemoteServiceServlet implements Cenario
 		if(cenario.getId() != null && cenario.getId() > 0) {
 			cenario.merge();
 		} else {
-			cenario.persist();
+			List<Campus> campi = new ArrayList<Campus>();
+			CenarioUtil cenarioUtil = new CenarioUtil();
+			cenarioUtil.criaCenario(cenario, campi);
 		}
 	}
 	
@@ -101,5 +105,5 @@ public class CenariosServiceImpl extends RemoteServiceServlet implements Cenario
 			ConvertBeans.toCenario(cenarioDTO).remove();
 		}
 	}
-	
+
 }

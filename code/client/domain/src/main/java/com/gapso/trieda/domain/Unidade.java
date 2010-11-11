@@ -58,6 +58,12 @@ public class Unidade implements Serializable {
     @ManyToMany(cascade = CascadeType.ALL, mappedBy = "unidades")
     private Set<HorarioDisponivelCenario> horarios = new HashSet<HorarioDisponivelCenario>();
 
+    @OneToMany(mappedBy="unidade", orphanRemoval = true)
+    private Set<GrupoSala> gruposSalas = new HashSet<GrupoSala>();
+    
+    @OneToMany(mappedBy="unidade", orphanRemoval = true)
+    private Set<Sala> salas = new HashSet<Sala>();
+    
     @PersistenceContext
     transient EntityManager entityManager;
 
@@ -86,6 +92,13 @@ public class Unidade implements Serializable {
         this.version = version;
     }
 
+	
+	@Transactional
+	public void detach() {
+		if (this.entityManager == null) this.entityManager = entityManager();
+		this.entityManager.detach(this);
+	}
+    
     @Transactional
     public void persist() {
         if (this.entityManager == null) this.entityManager = entityManager();
@@ -217,6 +230,22 @@ public class Unidade implements Serializable {
     public void setHorarios(Set<HorarioDisponivelCenario> horarios) {
         this.horarios = horarios;
     }
+    
+    public Set<GrupoSala> getGruposSalas() {
+    	return this.gruposSalas;
+    }
+    
+    public void setGruposSalas(Set<GrupoSala> gruposSalas) {
+    	this.gruposSalas = gruposSalas;
+    }
+    
+    public Set<Sala> getSalas() {
+    	return this.salas;
+    }
+    
+    public void setSalas(Set<Sala> salas) {
+    	this.salas = salas;
+    }
 
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -227,6 +256,8 @@ public class Unidade implements Serializable {
         sb.append("Nome: ").append(getNome()).append(", ");
         sb.append("Deslocamentos: ").append(getDeslocamentos() == null ? "null" : getDeslocamentos().size()).append(", ");
         sb.append("Horarios: ").append(getHorarios() == null ? "null" : getHorarios().size());
+        sb.append("GruposSalas: ").append(getGruposSalas() == null ? "null" : getGruposSalas().size());
+        sb.append("Salas: ").append(getSalas() == null ? "null" : getSalas().size());
         return sb.toString();
     }
 }

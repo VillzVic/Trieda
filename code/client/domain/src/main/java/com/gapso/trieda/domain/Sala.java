@@ -122,7 +122,13 @@ public class Sala implements Serializable {
 	public void setVersion(Integer version) {
         this.version = version;
     }
-
+	
+	@Transactional
+	public void detach() {
+		if (this.entityManager == null) this.entityManager = entityManager();
+		this.entityManager.detach(this);
+	}
+	
 	@Transactional
     public void persist() {
         if (this.entityManager == null) this.entityManager = entityManager();

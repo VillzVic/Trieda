@@ -141,6 +141,12 @@ public class CurriculoDisciplina implements Serializable {
     }
 
 	@Transactional
+	public void detach() {
+		if (this.entityManager == null) this.entityManager = entityManager();
+		this.entityManager.detach(this);
+	}
+	
+	@Transactional
     public void persist() {
         if (this.entityManager == null) this.entityManager = entityManager();
         this.entityManager.persist(this);

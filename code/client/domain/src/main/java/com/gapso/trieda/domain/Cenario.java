@@ -16,6 +16,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
@@ -98,6 +99,25 @@ public class Cenario implements Serializable {
     @ManyToMany(cascade = CascadeType.ALL, mappedBy = "cenario")
     private Set<DivisaoCredito> divisoesCredito = new HashSet<DivisaoCredito>();
 
+    @OneToMany(mappedBy="cenario")
+    private Set<Turno> turnos = new HashSet<Turno>();
+    
+    @OneToMany(mappedBy="cenario")
+    private Set<Curso> cursos = new HashSet<Curso>();
+    
+    @OneToMany(mappedBy="cenario")
+    private Set<Campus> campi = new HashSet<Campus>();
+    
+    @OneToMany(mappedBy="cenario")
+    private Set<Disciplina> disciplinas = new HashSet<Disciplina>();
+    
+    @OneToMany(mappedBy="cenario")
+    private Set<Professor> professores = new HashSet<Professor>();
+    
+    @OneToMany(mappedBy="cenario")
+    private Set<Curriculo> curriculos = new HashSet<Curriculo>();
+
+    
 	public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("Id: ").append(getId()).append(", ");
@@ -114,6 +134,12 @@ public class Cenario implements Serializable {
         sb.append("Oficial: ").append(getOficial()).append(", ");
         sb.append("SemanaLetiva: ").append(getSemanaLetiva()).append(", ");
         sb.append("DivisoesCredito: ").append(getDivisoesCredito() == null ? "null" : getDivisoesCredito().size());
+        sb.append("Turnos: ").append(getTurnos() == null ? "null" : getTurnos().size());
+        sb.append("Cursos: ").append(getCursos() == null ? "null" : getCursos().size());
+        sb.append("Campi: ").append(getCampi() == null ? "null" : getCampi().size());
+        sb.append("Disciplinas: ").append(getDisciplinas() == null ? "null" : getDisciplinas().size());
+        sb.append("Professores: ").append(getProfessores() == null ? "null" : getProfessores().size());
+        sb.append("Curriculos: ").append(getCurriculos() == null ? "null" : getCurriculos().size());
         return sb.toString();
     }
 
@@ -144,6 +170,12 @@ public class Cenario implements Serializable {
 	public void setVersion(Integer version) {
         this.version = version;
     }
+	
+	@Transactional
+	public void detach() {
+		if (this.entityManager == null) this.entityManager = entityManager();
+		this.entityManager.detach(this);
+	}
 
 	@Transactional
     public void persist() {
@@ -332,6 +364,54 @@ public class Cenario implements Serializable {
 	public void setDivisoesCredito(Set<DivisaoCredito> divisoesCredito) {
         this.divisoesCredito = divisoesCredito;
     }
+	
+	public Set<Turno> getTurnos() {
+		return this.turnos;
+	}
+	
+	public void setTurnos(Set<Turno> turnos) {
+		this.turnos = turnos;
+	}
+	
+	public Set<Curso> getCursos() {
+		return this.cursos;
+	}
+	
+	public void setCursos(Set<Curso> cursos) {
+		this.cursos = cursos;
+	}
+	
+	public Set<Campus> getCampi() {
+		return this.campi;
+	}
+	
+	public void setCampi(Set<Campus> campi) {
+		this.campi = campi;
+	}
+	
+	public Set<Disciplina> getDisciplinas() {
+		return this.disciplinas;
+	}
+	
+	public void setDisciplinas(Set<Disciplina> disciplinas) {
+		this.disciplinas = disciplinas;
+	}
+	
+	public Set<Professor> getProfessores() {
+		return this.professores;
+	}
+	
+	public void setProfessores(Set<Professor> professores) {
+		this.professores = professores;
+	}
+	
+	public Set<Curriculo> getCurriculos() {
+		return this.curriculos;
+	}
+	
+	public void setCurriculos(Set<Curriculo> curriculos) {
+		this.curriculos = curriculos;
+	}
 
 	private static final long serialVersionUID = -8610380359760552949L;
 }
