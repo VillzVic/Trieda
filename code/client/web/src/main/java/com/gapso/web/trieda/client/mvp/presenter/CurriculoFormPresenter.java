@@ -6,9 +6,10 @@ import com.extjs.gxt.ui.client.widget.Info;
 import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.TextField;
+import com.gapso.web.trieda.client.mvp.model.CenarioDTO;
 import com.gapso.web.trieda.client.mvp.model.CurriculoDTO;
-import com.gapso.web.trieda.client.services.Services;
 import com.gapso.web.trieda.client.services.CurriculosServiceAsync;
+import com.gapso.web.trieda.client.services.Services;
 import com.gapso.web.trieda.client.util.view.CursoComboBox;
 import com.gapso.web.trieda.client.util.view.SimpleGrid;
 import com.gapso.web.trieda.client.util.view.SimpleModal;
@@ -27,10 +28,12 @@ public class CurriculoFormPresenter implements Presenter {
 		
 		SimpleModal getSimpleModal();
 	}
+	private CenarioDTO cenario;
 	private SimpleGrid<CurriculoDTO> gridPanel;
 	private Display display;
 	
-	public CurriculoFormPresenter(Display display, SimpleGrid<CurriculoDTO> gridPanel) {
+	public CurriculoFormPresenter(CenarioDTO cenario, Display display, SimpleGrid<CurriculoDTO> gridPanel) {
+		this.cenario = cenario;
 		this.gridPanel = gridPanel;
 		this.display = display;
 		setListeners();
@@ -67,6 +70,7 @@ public class CurriculoFormPresenter implements Presenter {
 	
 	private CurriculoDTO getDTO() {
 		CurriculoDTO curriculoDTO = display.getCurriculoDTO();
+		curriculoDTO.setCenarioId(cenario.getId());
 		curriculoDTO.setCodigo(display.getCodigoTextField().getValue());
 		curriculoDTO.setDescricao(display.getDescricaoTextField().getValue());
 		curriculoDTO.setCursoId(display.getCursoComboBox().getSelection().get(0).getId());

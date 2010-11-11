@@ -41,7 +41,7 @@ public class Curriculo implements Serializable {
     @JoinColumn(name = "CUR_ID")
     private Curso curso;
 
-//  TODO @NotNull
+    @NotNull
     @ManyToOne(targetEntity = Cenario.class)
     @JoinColumn(name = "CEN_ID")
     private Cenario cenario;

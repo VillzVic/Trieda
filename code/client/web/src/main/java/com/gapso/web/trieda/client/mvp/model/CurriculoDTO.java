@@ -9,15 +9,16 @@ public class CurriculoDTO extends FileModel {
 		super();
 	}
 
-	public CurriculoDTO(Long id, String codigo, String descricao, Long cursoId, String cursoString, Integer qtdPeriodos, Integer version) {
-		setId(id);
-		setCodigo(codigo);
-		setDescricao(descricao);
-		setCursoId(cursoId);
-		setCursoString(cursoString);
-		setQtdPeriodos(qtdPeriodos);
-		setVersion(version);
-	}
+	/* == PROPRIEDADES ==
+	 * Long   : id
+	 * Integer: version
+	 * Long   : cenarioId
+	 * String : codigo
+	 * String : descricao
+	 * Long   : cursoId
+	 * String : cursoString
+	 * Integer: qtdPeriodos
+	 */
 	
 	public void setId(Long value) {
 		set("id", value);
@@ -31,6 +32,13 @@ public class CurriculoDTO extends FileModel {
 	}
 	public Integer getVersion() {
 		return get("version");
+	}
+	
+	public void setCenarioId(Long value) {
+		set("cenarioId", value);
+	}
+	public Long getCenarioId() {
+		return get("cenarioId");
 	}
 	
 	public String getCodigo() {

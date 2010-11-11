@@ -12,6 +12,7 @@ import com.extjs.gxt.ui.client.widget.Info;
 import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.TextField;
+import com.gapso.web.trieda.client.mvp.model.CenarioDTO;
 import com.gapso.web.trieda.client.mvp.model.CurriculoDTO;
 import com.gapso.web.trieda.client.mvp.model.CursoDTO;
 import com.gapso.web.trieda.client.mvp.view.CurriculoDisciplinasView;
@@ -44,10 +45,12 @@ public class CurriculosPresenter implements Presenter {
 		Component getComponent();
 		void setProxy(RpcProxy<PagingLoadResult<CurriculoDTO>> proxy);
 	}
+	private CenarioDTO cenario;
 	private Display display; 
 	private GTab gTab;
 	
-	public CurriculosPresenter(Display display) {
+	public CurriculosPresenter(CenarioDTO cenario, Display display) {
+		this.cenario = cenario;
 		this.display = display;
 		configureProxy();
 		setListeners();
@@ -71,7 +74,7 @@ public class CurriculosPresenter implements Presenter {
 		display.getNewButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
 			@Override
 			public void componentSelected(ButtonEvent ce) {
-				Presenter presenter = new CurriculoFormPresenter(new CurriculoFormView(new CurriculoDTO(), null), display.getGrid());
+				Presenter presenter = new CurriculoFormPresenter(cenario, new CurriculoFormView(new CurriculoDTO(), null), display.getGrid());
 				presenter.go(null);
 			}
 		});
@@ -87,7 +90,7 @@ public class CurriculosPresenter implements Presenter {
 					}
 					@Override
 					public void onSuccess(CursoDTO cursoDTO) {
-						Presenter presenter = new CurriculoFormPresenter(new CurriculoFormView(curriculoDTO, cursoDTO), display.getGrid());
+						Presenter presenter = new CurriculoFormPresenter(cenario, new CurriculoFormView(curriculoDTO, cursoDTO), display.getGrid());
 						presenter.go(null);
 					}
 				});
