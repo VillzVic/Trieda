@@ -9,8 +9,6 @@ public class AppEvents {
 	public static final EventType CampusProfessorList = new EventType();
 	public static final EventType CampusProfessorView = new EventType();
 	
-	public static final EventType CursoCampusList = new EventType();
-	
 	public static final EventType ProfessorList = new EventType();
 	public static final EventType ProfessorDisciplinaList = new EventType();
 	public static final EventType ProfessorDisciplinaView = new EventType();
