@@ -9,15 +9,17 @@ public class CampusDTO extends BaseModel {
 	public CampusDTO() {
 	}
 
-	public CampusDTO(Long id, String codigo, String nome, String estado, String municipio, String Bairro, Integer version) {
-		setId(id);
-		setCodigo(codigo);
-		setNome(nome);
-		setEstado(estado);
-		setMunicipio(estado);
-		setBairro(estado);
-		setVersion(version);
-	}
+	/* == PROPRIEDADES ==
+	 * Long   : id
+	 * Integer: version
+	 * Long   : cenarioId
+	 * String : codigo
+	 * String : nome
+	 * String : estado
+	 * String : municipio
+	 * String : Bairro
+	 */
+	
 	
 	public void setId(Long value) {
 		set("id", value);
@@ -31,6 +33,13 @@ public class CampusDTO extends BaseModel {
 	}
 	public Integer getVersion() {
 		return get("version");
+	}
+	
+	public void setCenarioId(Long value) {
+		set("cenarioId", value);
+	}
+	public Long getCenarioId() {
+		return get("cenarioId");
 	}
 	
 	public String getCodigo() {

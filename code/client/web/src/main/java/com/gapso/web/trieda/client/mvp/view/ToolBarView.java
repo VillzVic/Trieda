@@ -22,7 +22,7 @@ import com.google.gwt.user.client.ui.AbstractImagePrototype;
 public class ToolBarView extends MyComposite implements ToolBarPresenter.Display {
 
 	private ToolBar toolBar;
-	
+		
 	// Cenário
 	private Button cenariosBt;
 	private Button parametrosBt;
@@ -96,7 +96,7 @@ public class ToolBarView extends MyComposite implements ToolBarPresenter.Display
 		
 		createGroupPrototipo();
 	}
-	
+
 	/********************************
 	 * CRIAÇÃO DOS BOTÕES
 	 */

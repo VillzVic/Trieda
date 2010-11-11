@@ -29,6 +29,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.roo.addon.entity.RooEntity;
 import org.springframework.roo.addon.javabean.RooJavaBean;
@@ -200,7 +201,11 @@ public class Cenario implements Serializable {
 	public static Cenario findMasterData() {
 		Query q = entityManager().createQuery("SELECT o FROM Cenario o WHERE o.masterData = :masterData");
 		q.setParameter("masterData", true);
-		return (Cenario) q.getSingleResult(); 
+		Cenario cenario = null;
+		try {
+		cenario = (Cenario)q.getSingleResult();
+		} catch (EmptyResultDataAccessException e) { }
+		return cenario; 
 	}
 
 	public static List<Cenario> find(int firstResult, int maxResults) {

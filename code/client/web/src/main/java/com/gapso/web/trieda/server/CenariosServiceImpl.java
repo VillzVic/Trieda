@@ -25,7 +25,19 @@ public class CenariosServiceImpl extends RemoteServiceServlet implements Cenario
 
 	@Override
 	public CenarioDTO getMasterData() {
-		return ConvertBeans.toCenarioDTO(Cenario.findMasterData());
+		Cenario cenario = Cenario.findMasterData();
+		if(cenario == null) {
+			cenario = new Cenario();
+			cenario.setOficial(false);
+			cenario.setMasterData(true);
+			cenario.setNome("MASTER DATA");
+			cenario.setAno(1);
+			cenario.setSemestre(1);
+			cenario.setComentario("MASTER DATA");
+			cenario.persist();
+			cenario = Cenario.findMasterData();
+		}
+		return ConvertBeans.toCenarioDTO(cenario);
 	}
 
 	@Override

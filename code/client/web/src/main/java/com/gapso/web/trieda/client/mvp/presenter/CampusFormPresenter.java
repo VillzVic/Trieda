@@ -7,6 +7,7 @@ import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.gapso.web.trieda.client.mvp.model.CampusDTO;
+import com.gapso.web.trieda.client.mvp.model.CenarioDTO;
 import com.gapso.web.trieda.client.services.CampiServiceAsync;
 import com.gapso.web.trieda.client.services.Services;
 import com.gapso.web.trieda.client.util.view.EstadoComboBox;
@@ -29,10 +30,12 @@ public class CampusFormPresenter implements Presenter {
 		
 		SimpleModal getSimpleModal();
 	}
+	private CenarioDTO cenario;
 	private SimpleGrid<CampusDTO> gridPanel;
 	private Display display;
 	
-	public CampusFormPresenter(Display display, SimpleGrid<CampusDTO> gridPanel) {
+	public CampusFormPresenter(CenarioDTO cenario, Display display, SimpleGrid<CampusDTO> gridPanel) {
+		this.cenario = cenario;
 		this.gridPanel = gridPanel;
 		this.display = display;
 		setListeners();
@@ -69,6 +72,7 @@ public class CampusFormPresenter implements Presenter {
 	
 	private CampusDTO getDTO() {
 		CampusDTO campusDTO = display.getCampusDTO();
+		campusDTO.setCenarioId(cenario.getId());
 		campusDTO.setNome(display.getNomeTextField().getValue());
 		campusDTO.setCodigo(display.getCodigoTextField().getValue());
 		campusDTO.setEstado(display.getEstadoComboBox().getValue().getValue().name());

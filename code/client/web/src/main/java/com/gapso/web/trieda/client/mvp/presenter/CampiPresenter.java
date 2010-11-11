@@ -13,6 +13,7 @@ import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.gapso.web.trieda.client.mvp.model.CampusDTO;
+import com.gapso.web.trieda.client.mvp.model.CenarioDTO;
 import com.gapso.web.trieda.client.mvp.model.DeslocamentoUnidadeDTO;
 import com.gapso.web.trieda.client.mvp.view.CampusFormView;
 import com.gapso.web.trieda.client.mvp.view.UnidadesDeslocamentoView;
@@ -46,10 +47,12 @@ public class CampiPresenter implements Presenter {
 		Component getComponent();
 		void setProxy(RpcProxy<PagingLoadResult<CampusDTO>> proxy);
 	}
+	private CenarioDTO cenario;
 	private Display display; 
 	private GTab gTab;
 	
-	public CampiPresenter(Display display) {
+	public CampiPresenter(CenarioDTO cenario, Display display) {
+		this.cenario = cenario;
 		this.display = display;
 		configureProxy();
 		setListeners();
@@ -77,7 +80,7 @@ public class CampiPresenter implements Presenter {
 		display.getNewButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
 			@Override
 			public void componentSelected(ButtonEvent ce) {
-				Presenter presenter = new CampusFormPresenter(new CampusFormView(new CampusDTO()), display.getGrid());
+				Presenter presenter = new CampusFormPresenter(cenario, new CampusFormView(new CampusDTO()), display.getGrid());
 				presenter.go(null);
 			}
 		});
@@ -85,7 +88,7 @@ public class CampiPresenter implements Presenter {
 			@Override
 			public void componentSelected(ButtonEvent ce) {
 				CampusDTO campusDTO = display.getGrid().getGrid().getSelectionModel().getSelectedItem();
-				Presenter presenter = new CampusFormPresenter(new CampusFormView(campusDTO), display.getGrid());
+				Presenter presenter = new CampusFormPresenter(cenario, new CampusFormView(campusDTO), display.getGrid());
 				presenter.go(null);
 			}
 		});

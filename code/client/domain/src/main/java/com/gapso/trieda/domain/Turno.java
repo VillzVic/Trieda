@@ -37,7 +37,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Table(name = "TURNOS")
 public class Turno implements Serializable {
 
-//  TODO  @NotNull
+	@NotNull
     @ManyToOne(targetEntity = Cenario.class)
     @JoinColumn(name = "CEN_ID")
     private Cenario cenario;

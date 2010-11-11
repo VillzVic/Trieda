@@ -1,5 +1,6 @@
 package com.gapso.trieda.domain;
 
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -32,7 +33,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RooToString
 @RooEntity(identifierColumn = "SLE_ID")
 @Table(name = "SEMANA_LETIVA")
-public class SemanaLetiva implements java.io.Serializable {
+public class SemanaLetiva implements Serializable {
 	
     @OneToOne(mappedBy="semanaLetiva")
     private Cenario cenario;

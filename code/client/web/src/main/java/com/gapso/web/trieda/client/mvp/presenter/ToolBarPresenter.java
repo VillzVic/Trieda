@@ -9,6 +9,7 @@ import com.extjs.gxt.ui.client.widget.Component;
 import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.menu.MenuItem;
+import com.gapso.web.trieda.client.mvp.model.CenarioDTO;
 import com.gapso.web.trieda.client.mvp.model.DeslocamentoCampusDTO;
 import com.gapso.web.trieda.client.mvp.view.AreasTitulacaoView;
 import com.gapso.web.trieda.client.mvp.view.CampiDeslocamentoView;
@@ -60,10 +61,12 @@ public class ToolBarPresenter implements Presenter {
 		MenuItem getAssociarDisciplinasSalasListMenuItem();
 	}
 	
+	private CenarioDTO masterData;
 	private Display toolBar;
 	private GTab gTab;
 	
-	public ToolBarPresenter(Display toolBar) {
+	public ToolBarPresenter(CenarioDTO masterData, Display toolBar) {
+		this.masterData = masterData;
 		this.toolBar = toolBar;
 		addListeners();
 	}
@@ -91,7 +94,7 @@ public class ToolBarPresenter implements Presenter {
 		toolBar.getTurnosListMenuItem().addSelectionListener(new SelectionListener<MenuEvent>() {
 			@Override
 			public void componentSelected(MenuEvent ce) {
-				Presenter presenter = new TurnosPresenter(new TurnosView());
+				Presenter presenter = new TurnosPresenter(masterData, new TurnosView());
 				presenter.go(gTab);
 			}
 		});
@@ -112,7 +115,7 @@ public class ToolBarPresenter implements Presenter {
 		toolBar.getCampiListMenuItem().addSelectionListener(new SelectionListener<MenuEvent>() {
 			@Override
 			public void componentSelected(MenuEvent ce) {
-				Presenter presenter = new CampiPresenter(new CampiView());
+				Presenter presenter = new CampiPresenter(masterData, new CampiView());
 				presenter.go(gTab);
 			}
 		});

@@ -7,6 +7,7 @@ import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.NumberField;
 import com.extjs.gxt.ui.client.widget.form.TextField;
+import com.gapso.web.trieda.client.mvp.model.CenarioDTO;
 import com.gapso.web.trieda.client.mvp.model.TurnoDTO;
 import com.gapso.web.trieda.client.services.Services;
 import com.gapso.web.trieda.client.services.TurnosServiceAsync;
@@ -26,10 +27,12 @@ public class TurnoFormPresenter implements Presenter {
 		
 		SimpleModal getSimpleModal();
 	}
+	private CenarioDTO cenario;
 	private SimpleGrid<TurnoDTO> gridPanel;
 	private Display display;
 	
-	public TurnoFormPresenter(Display display, SimpleGrid<TurnoDTO> gridPanel) {
+	public TurnoFormPresenter(CenarioDTO cenario, Display display, SimpleGrid<TurnoDTO> gridPanel) {
+		this.cenario = cenario;
 		this.gridPanel = gridPanel;
 		this.display = display;
 		setListeners();
@@ -66,6 +69,7 @@ public class TurnoFormPresenter implements Presenter {
 	
 	private TurnoDTO getDTO() {
 		TurnoDTO turnoDTO = display.getTurnoDTO();
+		turnoDTO.setCenarioId(cenario.getId());
 		turnoDTO.setNome(display.getNomeTextField().getValue());
 		turnoDTO.setTempo(display.getTempoTextField().getValue().intValue());
 		return turnoDTO;

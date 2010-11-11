@@ -9,12 +9,13 @@ public class TurnoDTO extends FileModel {
 	public TurnoDTO() {
 	}
 
-	public TurnoDTO(Long id, String nome, Integer tempo, Integer version) {
-		setId(id);
-		setNome(nome);
-		setTempo(tempo);
-		setVersion(version);
-	}
+	/* == PROPRIEDADES ==
+	 * Long   : id
+	 * Integer: version
+	 * Long   : cenarioId
+	 * String : nome
+	 * Integer: tempo
+	 */
 	
 	public void setId(Long value) {
 		set("id", value);
@@ -28,6 +29,13 @@ public class TurnoDTO extends FileModel {
 	}
 	public Integer getVersion() {
 		return get("version");
+	}
+	
+	public void setCenarioId(Long value) {
+		set("cenarioId", value);
+	}
+	public Long getCenarioId() {
+		return get("cenarioId");
 	}
 
 	public void setNome(String value) {

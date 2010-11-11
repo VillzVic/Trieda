@@ -96,6 +96,8 @@ public class ConvertBeans {
 		Campus domain = new Campus();
 		domain.setId(dto.getId());
 		domain.setVersion(dto.getVersion());
+		Cenario cenario = Cenario.find(dto.getCenarioId());
+		domain.setCenario(cenario);
 		domain.setNome(dto.getNome());
 		domain.setCodigo(dto.getCodigo());
 		for(Estados estadoEnum : Estados.values()) {
@@ -114,8 +116,8 @@ public class ConvertBeans {
 		dto.setId(domain.getId());
 		dto.setVersion(domain.getVersion());
 		dto.setNome(domain.getNome());
+		dto.setCenarioId(domain.getCenario().getId());
 		dto.setCodigo(domain.getCodigo());
-		
 		dto.setEstado(domain.getEstado().name());
 		dto.setMunicipio(domain.getMunicipio());
 		dto.setBairro(domain.getBairro());
@@ -231,6 +233,8 @@ public class ConvertBeans {
 		Turno domain = new Turno();
 		domain.setId(dto.getId());
 		domain.setVersion(dto.getVersion());
+		Cenario cenario = Cenario.find(dto.getCenarioId());
+		domain.setCenario(cenario);
 		domain.setNome(dto.getNome());
 		domain.setTempo(dto.getTempo());
 		return domain;
@@ -240,6 +244,7 @@ public class ConvertBeans {
 		TurnoDTO dto = new TurnoDTO();
 		dto.setId(domain.getId());
 		dto.setVersion(domain.getVersion());
+		dto.setCenarioId(domain.getCenario().getId());
 		dto.setNome(domain.getNome());
 		dto.setTempo(domain.getTempo());
 		return dto;

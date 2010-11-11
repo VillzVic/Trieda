@@ -13,6 +13,7 @@ import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.NumberField;
 import com.extjs.gxt.ui.client.widget.form.TextField;
+import com.gapso.web.trieda.client.mvp.model.CenarioDTO;
 import com.gapso.web.trieda.client.mvp.model.TurnoDTO;
 import com.gapso.web.trieda.client.mvp.view.TurnoFormView;
 import com.gapso.web.trieda.client.services.Services;
@@ -39,9 +40,11 @@ public class TurnosPresenter implements Presenter {
 		Component getComponent();
 		void setProxy(RpcProxy<PagingLoadResult<TurnoDTO>> proxy);
 	}
+	private CenarioDTO cenario;
 	private Display display; 
 	
-	public TurnosPresenter(Display display) {
+	public TurnosPresenter(CenarioDTO cenario, Display display) {
+		this.cenario = cenario;
 		this.display = display;
 		configureProxy();
 		setListeners();
@@ -62,18 +65,18 @@ public class TurnosPresenter implements Presenter {
 	}
 	
 	private void setListeners() {
-		display.getNewButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
+		display.getNewButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
 			@Override
 			public void componentSelected(ButtonEvent ce) {
-				Presenter presenter = new TurnoFormPresenter(new TurnoFormView(new TurnoDTO()), display.getGrid());
+				Presenter presenter = new TurnoFormPresenter(cenario, new TurnoFormView(new TurnoDTO()), display.getGrid());
 				presenter.go(null);
 			}
 		});
-		display.getEditButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
+		display.getEditButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
 			@Override
 			public void componentSelected(ButtonEvent ce) {
 				TurnoDTO turnoDTO = display.getGrid().getGrid().getSelectionModel().getSelectedItem();
-				Presenter presenter = new TurnoFormPresenter(new TurnoFormView(turnoDTO), display.getGrid());
+				Presenter presenter = new TurnoFormPresenter(cenario, new TurnoFormView(turnoDTO), display.getGrid());
 				presenter.go(null);
 			}
 		});
