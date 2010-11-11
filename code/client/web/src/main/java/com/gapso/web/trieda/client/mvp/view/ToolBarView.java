@@ -379,16 +379,6 @@ public class ToolBarView extends MyComposite implements ToolBarPresenter.Display
 		});
 		menuSalasBt.add(outros15);
 		
-		MenuItem outros17 = new MenuItem("Associação de Disciplinas à Salas");
-		outros17.setIcon(AbstractImagePrototype.create(Resources.DEFAULTS.disciplina16()));
-		outros17.addSelectionListener(new SelectionListener<MenuEvent>() {
-			@Override
-			public void componentSelected(MenuEvent ce) {
-				Dispatcher.forwardEvent(AppEvents.SalaDisciplinaList);
-			}
-		});
-		menuSalasBt.add(outros17);
-		
 		MenuItem outros18 = new MenuItem("Equivalência entre Disciplinas");
 		outros18.setIcon(AbstractImagePrototype.create(Resources.DEFAULTS.disciplina16()));
 		outros18.addSelectionListener(new SelectionListener<MenuEvent>() {
