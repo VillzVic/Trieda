@@ -11,8 +11,6 @@ public class AppEvents {
 	
 	public static final EventType SalaDisciplinaList = new EventType();
 	
-	public static final EventType CursoList = new EventType();
-	
 	public static final EventType CursoCampusList = new EventType();
 	
 	public static final EventType ProfessorList = new EventType();
