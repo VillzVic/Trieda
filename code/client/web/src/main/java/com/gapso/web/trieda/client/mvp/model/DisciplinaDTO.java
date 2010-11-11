@@ -1,6 +1,5 @@
 package com.gapso.web.trieda.client.mvp.model;
 
-import com.extjs.gxt.ui.client.data.BaseModel;
 
 public class DisciplinaDTO extends FileModel {
 
@@ -10,20 +9,21 @@ public class DisciplinaDTO extends FileModel {
 		super();
 	}
 
-	public DisciplinaDTO(Long id, String codigo, String nome, Integer creditosTeorico, Integer creditosPratico, Boolean laboratorio, Long tipoId, String tipoString, String dificuldade, Integer maxAlunosTeorico, Integer maxAlunosPratico, Integer version) {
-		setId(id);
-		setCodigo(codigo);
-		setNome(nome);
-		setCreditosTeorico(creditosTeorico);
-		setCreditosPratico(creditosPratico);
-		setLaboratorio(laboratorio);
-		setTipoId(tipoId);
-		setTipoString(tipoString);
-		setDificuldade(dificuldade);
-		setMaxAlunosTeorico(maxAlunosTeorico);
-		setMaxAlunosPratico(maxAlunosPratico);
-		setVersion(version);
-	}
+	/* == PROPRIEDADES ==
+	 * Long   : id
+	 * Integer: version
+	 * Long   : cenarioId
+	 * String : codigo
+	 * String : nome
+	 * Integer: creditosTeorico
+	 * Integer: creditosPratico
+	 * Boolean: laboratorio
+	 * Long   : tipoId
+	 * String : tipoString
+	 * String : dificuldade
+	 * Integer: maxAlunosTeorico
+	 * Integer: maxAlunosPratico
+	 */
 	
 	public void setId(Long value) {
 		set("id", value);
@@ -37,6 +37,13 @@ public class DisciplinaDTO extends FileModel {
 	}
 	public Integer getVersion() {
 		return get("version");
+	}
+	
+	public void setCenarioId(Long value) {
+		set("cenarioId", value);
+	}
+	public Long getCenarioId() {
+		return get("cenarioId");
 	}
 	
 	public String getCodigo() {

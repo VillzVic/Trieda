@@ -13,6 +13,7 @@ import com.extjs.gxt.ui.client.widget.Info;
 import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.TextField;
+import com.gapso.web.trieda.client.mvp.model.CenarioDTO;
 import com.gapso.web.trieda.client.mvp.model.DisciplinaDTO;
 import com.gapso.web.trieda.client.mvp.model.TipoDisciplinaDTO;
 import com.gapso.web.trieda.client.mvp.view.DisciplinaFormView;
@@ -45,10 +46,12 @@ public class DisciplinasPresenter implements Presenter {
 		Component getComponent();
 		void setProxy(RpcProxy<PagingLoadResult<DisciplinaDTO>> proxy);
 	}
+	private CenarioDTO cenario;
 	private Display display; 
 	private GTab gTab;
 	
-	public DisciplinasPresenter(Display display) {
+	public DisciplinasPresenter(CenarioDTO cenario, Display display) {
+		this.cenario = cenario;
 		this.display = display;
 		configureProxy();
 		setListeners();
@@ -72,7 +75,7 @@ public class DisciplinasPresenter implements Presenter {
 		display.getNewButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
 			@Override
 			public void componentSelected(ButtonEvent ce) {
-				Presenter presenter = new DisciplinaFormPresenter(new DisciplinaFormView(new DisciplinaDTO(), null), display.getGrid());
+				Presenter presenter = new DisciplinaFormPresenter(cenario, new DisciplinaFormView(new DisciplinaDTO(), null), display.getGrid());
 				presenter.go(null);
 			}
 		});
@@ -88,7 +91,7 @@ public class DisciplinasPresenter implements Presenter {
 					}
 					@Override
 					public void onSuccess(TipoDisciplinaDTO tipoDisciplinaDTO) {
-						Presenter presenter = new DisciplinaFormPresenter(new DisciplinaFormView(disciplinaDTO, tipoDisciplinaDTO), display.getGrid());
+						Presenter presenter = new DisciplinaFormPresenter(cenario, new DisciplinaFormView(disciplinaDTO, tipoDisciplinaDTO), display.getGrid());
 						presenter.go(null);
 					}
 				});

@@ -190,7 +190,7 @@ public class ToolBarPresenter implements Presenter {
 		toolBar.getDisciplinasListMenuItem().addSelectionListener(new SelectionListener<MenuEvent>() {
 			@Override
 			public void componentSelected(MenuEvent ce) {
-				Presenter presenter = new DisciplinasPresenter(new DisciplinasView());
+				Presenter presenter = new DisciplinasPresenter(masterData, new DisciplinasView());
 				presenter.go(gTab);
 			}
 		});

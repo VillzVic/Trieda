@@ -638,6 +638,8 @@ public class ConvertBeans {
 		Disciplina domain = new Disciplina();
 		domain.setId(dto.getId());
 		domain.setVersion(dto.getVersion());
+		Cenario cenario = Cenario.find(dto.getCenarioId());
+		domain.setCenario(cenario);
 		domain.setCodigo(dto.getCodigo());
 		domain.setNome(dto.getNome());
 		domain.setCreditosPratico(dto.getCreditosPratico());
@@ -654,6 +656,7 @@ public class ConvertBeans {
 		DisciplinaDTO dto = new DisciplinaDTO();
 		dto.setId(domain.getId());
 		dto.setVersion(domain.getVersion());
+		dto.setCenarioId(domain.getCenario().getId());
 		dto.setCodigo(domain.getCodigo());
 		dto.setNome(domain.getNome());
 		dto.setCreditosPratico(domain.getCreditosPratico());
