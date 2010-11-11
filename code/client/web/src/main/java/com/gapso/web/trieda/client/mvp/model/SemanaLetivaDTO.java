@@ -10,12 +10,12 @@ public class SemanaLetivaDTO extends BaseModel {
 	public SemanaLetivaDTO() {
 	}
 
-	public SemanaLetivaDTO(Long id, String codigo, String descricao, Integer version) {
-		setId(id);
-		setCodigo(codigo);
-		setDescricao(descricao);
-		setVersion(version);
-	}
+	/* == PROPRIEDADES ==
+	 * Long   : id
+	 * Integer: version
+	 * String : codigo
+	 * String : descricao
+	 */
 	
 	public void setId(Long value) {
 		set("id", value);
