@@ -174,7 +174,7 @@ std::string Variable::toString()
 	if (b != NULL) { str << "{" << b->getId(); hb = true; }
 
 	//if (i != NULL) str << (hb?",":"{") << i->getId();
-	if (i >= 0) str << (hb?",":"{") << i;
+   if (i >= 0) str << (hb?",":"{") << i;
 
 	if(cond_disc){
 		if (d != NULL) str << "{" << d->getId();

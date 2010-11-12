@@ -52,4 +52,10 @@ public:
 
 	//GGroup<Disciplina*> disc_assoc_PT;
 
+
+   /* Estrutura utilizada no pós-processamento de dados para auxiliar a alocação dos créditos indicados pelas 
+   variáveis x às salas. */
+   //std::map<int/*dia*/,int/*credsLivres*/> credsLivres;
+   std::vector<int/*credsLivres*/> credsLivres;
+
 };

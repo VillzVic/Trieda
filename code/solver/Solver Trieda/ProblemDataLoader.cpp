@@ -47,7 +47,6 @@ void ProblemDataLoader::load()
 
    carregaDisciplinasAssociadasSalas();
    estima_turmas();
-   removeDisciplinasAssociadasSalas();
 
    carregaDiscAssocConjuntoSalas();
 
@@ -993,6 +992,8 @@ void ProblemDataLoader::print_stats() {
    printf("\t - Divididas:  \t%4d\n",ndiscsDiv);   
    printf("\t - Total:  \t%4d\n",ndiscs+ndiscsDiv);
 
+   printf("<*> Blocos Curriculares:  \t%4d\n",problemData->blocos.size());
+
    //printf("<*> Turmas:       \t%4d\n",nturmas);
    printf("<*> Turmas:\n");
    printf("\t - Entrada:    \t%4d\n",nturmas);
@@ -1001,7 +1002,13 @@ void ProblemDataLoader::print_stats() {
 
    printf("<*> Professores:  \t%4d\n",nprofs);
    printf("<*> Cursos:       \t%4d\n",ncursos);
+
    printf("<*> Ofertas:      \t%4d\n",nofertas);
+   ITERA_GGROUP(itOferta,problemData->ofertas,Oferta)
+   { 
+      printf("\t - Oferta %d possui %d discs\n",itOferta->getId(),
+         itOferta->curriculo->disciplinas_periodo.size());
+   }
 
    //printf("<*> Demanda total:\t%4d vagas\n",tdemanda);
    printf("<*> Demanda total\n");
@@ -1077,28 +1084,52 @@ void ProblemDataLoader::cache() {
          std::pair<Curso*,Curso*> idCursos = 
             std::make_pair(*it_fix_curso,*it_alt_curso);
 
-         problemData->compat_cursos[idCursos] = false;
+         if(it_fix_curso == it_alt_curso)
+         { problemData->compat_cursos[idCursos] = true; }
+         else
+         { problemData->compat_cursos[idCursos] = false; }
+
       }
    }
 
-   ITERA_GGROUP(it_fix_curso,problemData->cursos,Curso) {
-
+   ITERA_GGROUP(it_fix_curso,problemData->cursos,Curso)
+   {
       GGroup<GGroup<int>*>::iterator it_list_compat =
          problemData->parametros->permite_compart_turma.begin();
 
-      for(;it_list_compat!=problemData->parametros->permite_compart_turma.end();++it_list_compat) {
-         if( it_list_compat->find(it_fix_curso->getId()) != it_list_compat->end() ) {
-            ITERA_GGROUP(it_alt_curso,problemData->cursos,Curso) {
-               if(it_list_compat->find(it_alt_curso->getId()) != it_list_compat->end()) {
-                  //std::pair<int,int> idCursos = std::make_pair(it_fix_curso->getId(),it_alt_curso->getId());
+      for(;it_list_compat!=problemData->parametros->permite_compart_turma.end();++it_list_compat)
+      {
+         if( it_list_compat->find(it_fix_curso->getId()) != it_list_compat->end() )
+         {
+            ITERA_GGROUP(it_alt_curso,problemData->cursos,Curso)
+            {
+               if(it_list_compat->find(it_alt_curso->getId()) != it_list_compat->end())
+               {
                   std::pair<Curso*,Curso*> idCursos =
                      std::make_pair(*it_fix_curso,*it_alt_curso);
 
                   problemData->compat_cursos[idCursos] = true;
+
                }
             }
          }
       }
+   }
+
+
+   std::map<std::pair<Curso*,Curso*>,bool>::iterator itCC = 
+      problemData->compat_cursos.begin();
+
+   for(; itCC != problemData->compat_cursos.end(); itCC++)
+   {
+      std::pair<Curso*,Curso*> normal = 
+         std::make_pair<Curso*,Curso*>(itCC->first.first,itCC->first.second);
+
+      std::pair<Curso*,Curso*> invertido =
+         std::make_pair<Curso*,Curso*>(itCC->first.second,itCC->first.first);
+
+      problemData->compat_cursos[invertido] = 
+         problemData->compat_cursos.find(normal)->second;
    }
 
    /*
@@ -1271,15 +1302,6 @@ void ProblemDataLoader::relacionaDiscOfertas()
       for(; itPrdDisc != itOferta->curriculo->disciplinas_periodo.end(); itPrdDisc++)
       { problemData->ofertasDisc[(*itPrdDisc).second].add(*itOferta); }
     }
-}
-
-void ProblemDataLoader::removeDisciplinasAssociadasSalas()
-{
-   //IMPLEMENTAR !!!!
-
-   /* Remove de cada sala as disciplinas associadas que possuem turmas com demanda
-   (definida em estina_turmas()) superior à capacidade da sala. */
-
 }
 
 // >>> 15/10/2010

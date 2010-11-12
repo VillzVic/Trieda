@@ -76,10 +76,6 @@ private:
    // Armazena em cada sala, referências para as disciplinas associadas.
    void carregaDisciplinasAssociadasSalas();
 
-   /* Remove de cada sala as disciplinas associadas que possuem turmas com demanda
-   (definida em estina_turmas()) superior à capacidade da sala. */
-   void removeDisciplinasAssociadasSalas();
-
    /* Armazena referências para as disciplinas associadas em cada elemento do <ConjuntoSala>. 
    Como o método carregaDisciplinasAssociadasSalas() já associou as disciplinas às salas, basta
    percorrer o map de salas de um dado elemento do <ConjuntoSala> adicionando as salas ao map de
