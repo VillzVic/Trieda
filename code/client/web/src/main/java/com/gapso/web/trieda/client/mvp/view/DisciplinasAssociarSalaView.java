@@ -4,10 +4,10 @@ import java.util.List;
 
 import com.extjs.gxt.ui.client.Style.LayoutRegion;
 import com.extjs.gxt.ui.client.Style.Orientation;
+import com.extjs.gxt.ui.client.Style.SelectionMode;
 import com.extjs.gxt.ui.client.data.BaseTreeLoader;
 import com.extjs.gxt.ui.client.data.RpcProxy;
 import com.extjs.gxt.ui.client.data.TreeLoader;
-import com.extjs.gxt.ui.client.data.TreeModel;
 import com.extjs.gxt.ui.client.dnd.DND.Operation;
 import com.extjs.gxt.ui.client.dnd.TreePanelDragSource;
 import com.extjs.gxt.ui.client.dnd.TreePanelDropTarget;
@@ -18,8 +18,10 @@ import com.extjs.gxt.ui.client.store.TreeStore;
 import com.extjs.gxt.ui.client.util.Margins;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
 import com.extjs.gxt.ui.client.widget.Info;
+import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.TabItem;
 import com.extjs.gxt.ui.client.widget.TabPanel;
+import com.extjs.gxt.ui.client.widget.button.ToolButton;
 import com.extjs.gxt.ui.client.widget.form.FormPanel;
 import com.extjs.gxt.ui.client.widget.form.FormPanel.LabelAlign;
 import com.extjs.gxt.ui.client.widget.form.SimpleComboBox;
@@ -32,17 +34,20 @@ import com.extjs.gxt.ui.client.widget.layout.RowData;
 import com.extjs.gxt.ui.client.widget.layout.RowLayout;
 import com.extjs.gxt.ui.client.widget.treepanel.TreePanel;
 import com.extjs.gxt.ui.client.widget.treepanel.TreePanel.TreeNode;
-import com.gapso.web.trieda.client.mvp.model.DisciplinaDTO;
+import com.gapso.web.trieda.client.mvp.model.CurriculoDisciplinaDTO;
 import com.gapso.web.trieda.client.mvp.model.FileModel;
 import com.gapso.web.trieda.client.mvp.model.GrupoSalaDTO;
+import com.gapso.web.trieda.client.mvp.model.OfertaDTO;
 import com.gapso.web.trieda.client.mvp.model.SalaDTO;
-import com.gapso.web.trieda.client.mvp.model.TurnoDTO;
 import com.gapso.web.trieda.client.mvp.presenter.DisciplinasAssociarSalaPresenter;
 import com.gapso.web.trieda.client.services.DisciplinasServiceAsync;
 import com.gapso.web.trieda.client.services.Services;
 import com.gapso.web.trieda.client.util.resources.Resources;
 import com.gapso.web.trieda.client.util.view.CampusComboBox;
 import com.gapso.web.trieda.client.util.view.GTabItem;
+import com.gapso.web.trieda.client.util.view.GrupoSalaComboBox;
+import com.gapso.web.trieda.client.util.view.SalaComboBox;
+import com.gapso.web.trieda.client.util.view.TurnoComboBox;
 import com.gapso.web.trieda.client.util.view.UnidadeComboBox;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
@@ -53,20 +58,22 @@ public class DisciplinasAssociarSalaView extends MyComposite implements Discipli
 	private ContentPanel panelLists;
 	
 	private CampusComboBox campusCB;
-	private SimpleComboBox<TurnoDTO> turnoCB;
+	private TurnoComboBox turnoCB;
 	
 	private UnidadeComboBox unidadeSalaCB;
 	private SimpleComboBox<String> andarCB;
-	private SimpleComboBox<SalaDTO> salaCB;
+	private SalaComboBox salaCB;
 	
 	private UnidadeComboBox unidadeGrupoSalaCB = new UnidadeComboBox();
-	private SimpleComboBox<GrupoSalaDTO> grupoSalaCB = new SimpleComboBox<GrupoSalaDTO>();
+	private GrupoSalaComboBox grupoSalaCB = new GrupoSalaComboBox();
 	
 	private TreeStore<FileModel> storeDisciplina;
 	private TreeStore<FileModel> storeSala;
 	
 	private TreePanel<FileModel> disciplinasList;
 	private TreePanel<FileModel> salasList;
+	
+	private ToolButton removeButton;
 	
 	private TabPanel tabs;
 	
@@ -96,6 +103,7 @@ public class DisciplinasAssociarSalaView extends MyComposite implements Discipli
 		formPanel.setLabelWidth(100);
 		formPanel.setLabelAlign(LabelAlign.RIGHT);
 		formPanel.setHeaderVisible(false);
+		formPanel.setAutoHeight(true);
 		
 		campusCB = new CampusComboBox() {
 			@Override
@@ -110,7 +118,7 @@ public class DisciplinasAssociarSalaView extends MyComposite implements Discipli
 		campusCB.setFieldLabel("Campus");
 		formPanel.add(campusCB, formData);
 		
-		turnoCB = new SimpleComboBox<TurnoDTO>(){
+		turnoCB = new TurnoComboBox() {
 			@Override
 			protected void onBlur(ComponentEvent ce) {
 				super.onBlur(ce);
@@ -122,19 +130,8 @@ public class DisciplinasAssociarSalaView extends MyComposite implements Discipli
 			}
 		};
 		turnoCB.setFieldLabel("Turno");
-		turnoCB.setDisplayField("value");
 		turnoCB.disable();
-//		turnoCB.setPropertyEditor(new ListModelPropertyEditor<SimpleComboValue<TurnoDTO>>() {
-//			@Override
-//			public String getDisplayProperty() {
-//				return "teste2";
-//			}
-//			@Override
-//			public String getStringValue(SimpleComboValue<TurnoDTO> value) {
-////				return value.getValue().toString();
-//				return "teste";
-//			}
-//		});
+		turnoCB.setDisplayField("nome");
 		formPanel.add(turnoCB, formData);
 		
 		BorderLayoutData bld = new BorderLayoutData(LayoutRegion.NORTH);
@@ -177,7 +174,7 @@ public class DisciplinasAssociarSalaView extends MyComposite implements Discipli
 		andarCB.setFieldLabel("Andar");
 		andarCB.disable();
 		salaTabItem.add(andarCB, formData);
-		salaCB = new SimpleComboBox<SalaDTO>();
+		salaCB = new SalaComboBox();
 		salaCB.setFieldLabel("Sala");
 		salaCB.disable();
 		salaTabItem.add(salaCB, formData);
@@ -207,25 +204,25 @@ public class DisciplinasAssociarSalaView extends MyComposite implements Discipli
 		disciplinasList = new TreePanel<FileModel>(getStoreDisciplina()) {
 			@Override
 			protected boolean hasChildren(FileModel model) {
-				if(model instanceof DisciplinaDTO) return false;
-				return true;
+				return !model.getFolha();
 			}
 		};
 		TreePanelDragSource source = new TreePanelDragSource(disciplinasList);
 		disciplinasList.getStyle().setLeafIcon(AbstractImagePrototype.create(Resources.DEFAULTS.disciplina16()));
 		disciplinasList.disable();
 		disciplinasList.setDisplayProperty("name");
+		disciplinasList.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
 		disciplinasListPanel.add(disciplinasList);
 		
 		source.setStatusText("{0} Selecionado(s)");
 		
 		ContentPanel salasListPanel = new ContentPanel(new FitLayout());
+		salasListPanel.getHeader().addTool(getRemoveButton());
 		salasListPanel.setHeading("Salas(s)");
 		salasList = new TreePanel<FileModel>(getStoreSala()) {
 			@Override
 			protected boolean hasChildren(FileModel model) {
-				if(model instanceof DisciplinaDTO) return false;
-				return true;
+				return !model.getFolha();
 			}
 		};
 		TreePanelDropTarget target = new TreePanelDropTarget(salasList) {
@@ -235,6 +232,9 @@ public class DisciplinasAssociarSalaView extends MyComposite implements Discipli
 		salasList.getStyle().setLeafIcon(AbstractImagePrototype.create(Resources.DEFAULTS.disciplina16()));
 		salasList.disable();
 		salasList.setDisplayProperty("name");
+		salasList.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+		salasList.setCaching(false);
+		
 		salasListPanel.add(salasList);
 		
 		target.setOperation(Operation.COPY);
@@ -245,7 +245,7 @@ public class DisciplinasAssociarSalaView extends MyComposite implements Discipli
 				TreeNode overItem = salasList.findNode(e.getTarget());
 				if (overItem != null && overItem.getModel() instanceof FileModel) {
 					FileModel fileModel = (FileModel) overItem.getModel();
-					if(!(fileModel instanceof SalaDTO)) {
+					if(!(fileModel instanceof SalaDTO) && !(fileModel instanceof GrupoSalaDTO)) {
 						e.setCancelled(true);
 						e.getStatus().setStatus(false);
 						return;
@@ -271,13 +271,53 @@ public class DisciplinasAssociarSalaView extends MyComposite implements Discipli
 			@SuppressWarnings({ "unchecked", "rawtypes" })
 			@Override
 			public void dragDrop(DNDEvent e) {
-				Info.display("Passou", "dragDrop!");
 				TreePanel<FileModel> treePanel = (TreePanel) e.getComponent();
-				FileModel fileModel = treePanel.getSelectionModel().getSelectedItem();
-				if (fileModel != null && fileModel instanceof FileModel) {
-					if(fileModel instanceof DisciplinaDTO) {
-						
+				FileModel sourceFileModel = treePanel.getSelectionModel().getSelectedItem();
+				OfertaDTO ofertaDTO = null;
+				Integer periodo = null;
+				CurriculoDisciplinaDTO cdDTO = null;
+				if(sourceFileModel instanceof OfertaDTO) {
+					ofertaDTO = (OfertaDTO)sourceFileModel;
+				} else if(sourceFileModel instanceof CurriculoDisciplinaDTO) {
+					FileModel sourceFileModelParent = treePanel.getStore().getParent(sourceFileModel);
+					if(sourceFileModelParent instanceof OfertaDTO) {
+						ofertaDTO = (OfertaDTO)sourceFileModelParent;
+						periodo = ((CurriculoDisciplinaDTO)sourceFileModel).getPeriodo();
+					} else {
+						ofertaDTO = (OfertaDTO)treePanel.getStore().getParent(sourceFileModelParent);
+						periodo = ((CurriculoDisciplinaDTO)sourceFileModelParent).getPeriodo();
+						cdDTO = (CurriculoDisciplinaDTO)sourceFileModel;
 					}
+				}
+				
+				FileModel fileModelTarget = salasList.findNode(e.getTarget()).getModel();
+				
+				if(fileModelTarget instanceof SalaDTO) {
+					SalaDTO salaDTO = (SalaDTO)fileModelTarget;
+					DisciplinasServiceAsync disciplinasService = Services.disciplinas();
+					disciplinasService.saveDisciplinaToSala(ofertaDTO, periodo, cdDTO, salaDTO, new AsyncCallback<Void>() {
+						@Override
+						public void onFailure(Throwable caught) {
+							MessageBox.alert("ERRO!", "Deu falha na conexão", null);
+						}
+						@Override
+						public void onSuccess(Void result) {
+							Info.display("Salvo", "Disciplinas associadas com sucesso!");
+						}
+					});
+				} else {
+					GrupoSalaDTO grupoSalaDTO = (GrupoSalaDTO)fileModelTarget;
+					DisciplinasServiceAsync disciplinasService = Services.disciplinas();
+					disciplinasService.saveDisciplinaToSala(ofertaDTO, periodo, cdDTO, grupoSalaDTO, new AsyncCallback<Void>() {
+						@Override
+						public void onFailure(Throwable caught) {
+							MessageBox.alert("ERRO!", "Deu falha na conexão", null);
+						}
+						@Override
+						public void onSuccess(Void result) {
+							Info.display("Salvo", "Disciplinas associadas com sucesso!");
+						}
+					});
 				}
 			}
 		});
@@ -288,6 +328,7 @@ public class DisciplinasAssociarSalaView extends MyComposite implements Discipli
 //				TreeGrid<FileModel> treeGrid = (TreeGrid<FileModel>)e.getComponent();
 //				FileModel fileModel = treeGrid.getSelectionModel().getSelectedItem();
 //				if(fileModel instanceof SalaDTO) {
+//					Info.display("Passou", "É Sala!");
 //					Info.display("Passou", "É Sala!");
 //				} else {
 //					e.setCancelled(true);
@@ -312,14 +353,14 @@ public class DisciplinasAssociarSalaView extends MyComposite implements Discipli
 		blankListPanel.setHeaderVisible(false);
 		blankListPanel.setBodyBorder(false);
 		
-		panelLists.add(disciplinasListPanel, new RowData(.5, 1, new Margins(0, 0, 0, 0)));
-		panelLists.add(blankListPanel, new RowData(30, 1, new Margins(0, 0, 0, 0)));
-		panelLists.add(salasListPanel, new RowData(.5, 1, new Margins(0, 0, 0, 0)));
+		panelLists.add(disciplinasListPanel, new RowData(.5, 1, new Margins(0, 0, 10, 10)));
+		panelLists.add(blankListPanel, new RowData(10, 1, new Margins(0, 0, 0, 0)));
+		panelLists.add(salasListPanel, new RowData(.5, 1, new Margins(0, 10, 10, 0)));
 		
 		bld = new BorderLayoutData(LayoutRegion.CENTER);
-		bld.setMargins(new Margins(0, 0, 0, 5));
-		bld.setCollapsible(true);
-		
+		bld.setMargins(new Margins(0, 0, 0, 0));
+		panel.setBodyBorder(false);
+		panelLists.setBodyStyle("background-color: #DFE8F6;");
 		panel.add(panelLists, bld);
 	}
 	
@@ -349,7 +390,7 @@ public class DisciplinasAssociarSalaView extends MyComposite implements Discipli
 	}
 	
 	@Override
-	public SimpleComboBox<TurnoDTO> getTurnoComboBox() {
+	public TurnoComboBox getTurnoComboBox() {
 		return turnoCB;
 	}
 
@@ -359,12 +400,12 @@ public class DisciplinasAssociarSalaView extends MyComposite implements Discipli
 	}
 
 	@Override
-	public SimpleComboBox<SalaDTO> getSalaComboBox() {
+	public SalaComboBox getSalaComboBox() {
 		return salaCB;
 	}
 
 	@Override
-	public SimpleComboBox<GrupoSalaDTO> getGrupoSalasComboBox() {
+	public GrupoSalaComboBox getGrupoSalasComboBox() {
 		return grupoSalaCB;
 	}
 	
@@ -392,6 +433,13 @@ public class DisciplinasAssociarSalaView extends MyComposite implements Discipli
 		}
 	}
 	
+	public ToolButton getRemoveButton() {
+		if(removeButton == null) {
+			removeButton = new ToolButton("x-tool-close");
+		}
+		return removeButton;
+	}
+	
 	public void setStoreDisciplina(TreeStore<FileModel> storeDisciplina) {
 		this.storeDisciplina = storeDisciplina;
 	}
@@ -406,7 +454,6 @@ public class DisciplinasAssociarSalaView extends MyComposite implements Discipli
 					service.getFolderChildren((FileModel) loadConfig, callback);
 				}
 			};
-			
 			final TreeLoader<FileModel> loader = new BaseTreeLoader<FileModel>(proxy);
 			TreeStore<FileModel> store = new TreeStore<FileModel>(loader);
 			setStoreDisciplina(store);
@@ -425,16 +472,12 @@ public class DisciplinasAssociarSalaView extends MyComposite implements Discipli
 			RpcProxy<List<FileModel>> proxy = new RpcProxy<List<FileModel>>() {
 				@Override
 				protected void load(Object loadConfig, AsyncCallback<List<FileModel>> callback) {
-					service.getFolderChildrenSalaToDisciplinba((FileModel) loadConfig, callback);
+					service.getFolderChildrenSala((FileModel) loadConfig, callback);
 				}
 			};
-			final TreeLoader<FileModel> loader = new BaseTreeLoader<FileModel>(proxy) {
-				@Override
-				public boolean hasChildren(FileModel parent) {
-					return !(parent instanceof DisciplinaDTO);
-				}
-			};
-			setStoreSala(new TreeStore<FileModel>(loader));
+			final TreeLoader<FileModel> loader = new BaseTreeLoader<FileModel>(proxy);
+			TreeStore<FileModel> store = new TreeStore<FileModel>(loader);
+			setStoreSala(store);
 		}
 		return this.storeSala;
 	}

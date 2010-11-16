@@ -13,17 +13,12 @@ import com.extjs.gxt.ui.client.data.BasePagingLoadResult;
 import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
-import com.gapso.trieda.domain.Campus;
 import com.gapso.trieda.domain.Curriculo;
 import com.gapso.trieda.domain.CurriculoDisciplina;
 import com.gapso.trieda.domain.Curso;
-import com.gapso.trieda.domain.Turno;
-import com.gapso.web.trieda.client.mvp.model.CampusDTO;
 import com.gapso.web.trieda.client.mvp.model.CurriculoDTO;
 import com.gapso.web.trieda.client.mvp.model.CurriculoDisciplinaDTO;
 import com.gapso.web.trieda.client.mvp.model.CursoDTO;
-import com.gapso.web.trieda.client.mvp.model.FileModel;
-import com.gapso.web.trieda.client.mvp.model.TurnoDTO;
 import com.gapso.web.trieda.client.services.CurriculosService;
 import com.gapso.web.trieda.server.util.ConvertBeans;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
@@ -88,30 +83,12 @@ public class CurriculosServiceImpl extends RemoteServiceServlet implements Curri
 			ConvertBeans.toCurriculo(curriculoDTO).remove();
 		}
 	}
-
-	@Override
-	public ListLoadResult<FileModel> getListByCampusAndTurno(CampusDTO campusDTO, TurnoDTO turnoDTO) {
-		List<FileModel> list = new ArrayList<FileModel>();
-		
-		Campus campus = (campusDTO == null)? null : ConvertBeans.toCampus(campusDTO);
-		Turno turno = (turnoDTO == null)? null : ConvertBeans.toTurno(turnoDTO);
-		
-		for(Curriculo curriculo : Curriculo.findByCampusAndTurno(campus, turno)) {
-			CurriculoDTO model = ConvertBeans.toCurriculoDTO(curriculo);
-			String name = model.getCodigo() + " (" + model.getCursoString() + ")";
-			model.setName(name);
-			model.setPath(name+"/");
-			list.add(model);
-		}
-		ListLoadResult<FileModel> result = new BaseListLoadResult<FileModel>(list);
-		return result;
-	}
 	
 	@Override
 	public ListLoadResult<CurriculoDisciplinaDTO> getDisciplinasList(CurriculoDTO curriculoDTO) {
 		Curriculo curriculo = Curriculo.find(curriculoDTO.getId());
-		Set<CurriculoDisciplina> listCurriculoDisciplina = curriculo.getDisciplinas();
 		List<CurriculoDisciplinaDTO> listCurriculoDisciplinaDTO = new ArrayList<CurriculoDisciplinaDTO>();
+		Set<CurriculoDisciplina> listCurriculoDisciplina = curriculo.getDisciplinas();
 		for(CurriculoDisciplina cd : listCurriculoDisciplina) {
 			listCurriculoDisciplinaDTO.add(ConvertBeans.toCurriculoDisciplinaDTO(cd));
 		}

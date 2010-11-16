@@ -170,6 +170,13 @@ public class Sala implements Serializable {
         return ((Number) entityManager().createQuery("select count(o) from Sala o").getSingleResult()).intValue();
     }
 	
+	@SuppressWarnings("unchecked")
+	public List<Curriculo> getCurriculos() {
+		Query q = entityManager().createQuery("SELECT DISTINCT(cd.curriculo) FROM CurriculoDisciplina cd WHERE :sala IN ELEMENTS(cd.salas)");
+		q.setParameter("sala", this);
+		return q.getResultList();
+	}
+	
 	public static List<Sala> findAndaresAll() {
 		return findAndaresAll(null);
 	}

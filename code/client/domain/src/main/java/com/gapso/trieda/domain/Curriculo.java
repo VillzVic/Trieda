@@ -55,7 +55,7 @@ public class Curriculo implements Serializable {
     @Size(max = 255)
     private String descricao;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "curriculo", orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "curriculo")
     private Set<CurriculoDisciplina> disciplinas = new HashSet<CurriculoDisciplina>();
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "curriculo")

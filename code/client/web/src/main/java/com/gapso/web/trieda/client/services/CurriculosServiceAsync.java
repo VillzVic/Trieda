@@ -6,12 +6,9 @@ import com.extjs.gxt.ui.client.data.BasePagingLoadConfig;
 import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
-import com.gapso.web.trieda.client.mvp.model.CampusDTO;
 import com.gapso.web.trieda.client.mvp.model.CurriculoDTO;
 import com.gapso.web.trieda.client.mvp.model.CurriculoDisciplinaDTO;
 import com.gapso.web.trieda.client.mvp.model.CursoDTO;
-import com.gapso.web.trieda.client.mvp.model.FileModel;
-import com.gapso.web.trieda.client.mvp.model.TurnoDTO;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public interface CurriculosServiceAsync {
@@ -24,6 +21,5 @@ public interface CurriculosServiceAsync {
 	void getDisciplinasList(CurriculoDTO curriculoDTO, AsyncCallback<ListLoadResult<CurriculoDisciplinaDTO>> callback);
 	void saveDisciplina(CurriculoDTO curriculoDTO, CurriculoDisciplinaDTO curriculoDisciplinaDTO, AsyncCallback<Void> callback);
 	void removeDisciplina(List<CurriculoDisciplinaDTO> curriculoDisciplinaDTOList, AsyncCallback<Void> callback);
-	void getListByCampusAndTurno(CampusDTO campusDTO, TurnoDTO turnoDTO, AsyncCallback<ListLoadResult<FileModel>> callback);
 	
 }

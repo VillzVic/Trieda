@@ -9,18 +9,18 @@ public class SalaDTO extends FileModel {
 		super();
 	}
 
-	public SalaDTO(Long id, String codigo, Long unidadeId, String unidadeString, String numero, String andar, Long tipoId, String tipoString, Integer capacidade, Integer version) {
-		setId(id);
-		setCodigo(codigo);
-		setUnidadeId(unidadeId);
-		setUnidadeString(unidadeString);
-		setNumero(numero);
-		setAndar(andar);
-		setTipoId(tipoId);
-		setTipoString(tipoString);
-		setCapacidade(capacidade);
-		setVersion(version);
-	}
+	/* == PROPRIEDADES ==
+	 * Long   : id
+	 * Integer: version
+	 * String : codigo
+	 * Long   : unidadeId
+	 * String : unidadeString
+	 * String : numero
+	 * String : andar
+	 * Long   : tipoId
+	 * String : tipoString
+	 * Integer: capacidade
+	 */
 	
 	public void setId(Long value) {
 		set("id", value);

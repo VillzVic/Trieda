@@ -54,7 +54,7 @@ public class TurnoDTO extends FileModel {
 
 	@Override
 	public String toString() {
-		return getNome() + "(" + getTempo() +"min)";
+		return getNome() + " (" + getTempo() +"min)";
 	}
 	
 }

@@ -16,6 +16,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import javax.persistence.Table;
 import javax.persistence.Version;
 import javax.validation.constraints.Max;
@@ -52,10 +53,10 @@ public class CurriculoDisciplina implements Serializable {
     @Max(99L)
     private Integer periodo;
 
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH})
     private Set<Sala> salas = new HashSet<Sala>();
     
-    @ManyToMany(cascade = CascadeType.ALL, mappedBy = "curriculoDisciplinas")
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH}, mappedBy = "curriculoDisciplinas")
     private Set<GrupoSala> gruposSala = new HashSet<GrupoSala>();
     
 	public String toString() {
@@ -184,12 +185,20 @@ public class CurriculoDisciplina implements Serializable {
     }
 
 	public static int count() {
-        return ((Number) entityManager().createQuery("select count(o) from CurriculoDisciplina o").getSingleResult()).intValue();
+        return ((Number) entityManager().createQuery("SELECT COUNT(o) FROM CurriculoDisciplina o").getSingleResult()).intValue();
     }
+	
+	@SuppressWarnings("unchecked")
+	public static List<CurriculoDisciplina> findAllByCurriculoAndPeriodo(Curriculo curriculo, Integer periodo) {
+		Query q = entityManager().createQuery("SELECT o FROM CurriculoDisciplina o WHERE o.curriculo = :curriculo AND o.periodo = :periodo");
+		q.setParameter("curriculo", curriculo);
+		q.setParameter("periodo", periodo);
+		return q.getResultList();
+	}
 
 	@SuppressWarnings("unchecked")
     public static List<CurriculoDisciplina> findAll() {
-        return entityManager().createQuery("select o from CurriculoDisciplina o").getResultList();
+        return entityManager().createQuery("SELECT o FROM CurriculoDisciplina o").getResultList();
     }
 
 	public static CurriculoDisciplina find(Long id) {

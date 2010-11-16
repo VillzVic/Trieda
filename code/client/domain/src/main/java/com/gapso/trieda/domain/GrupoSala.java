@@ -215,6 +215,13 @@ public class GrupoSala implements Serializable {
     }
 
 	@SuppressWarnings("unchecked")
+	public List<Curriculo> getCurriculos() {
+		Query q = entityManager().createQuery("SELECT DISTINCT(cd.curriculo) FROM CurriculoDisciplina cd WHERE :gruposSala IN ELEMENTS(cd.gruposSala)");
+		q.setParameter("gruposSala", this);
+		return q.getResultList();
+	}
+	
+	@SuppressWarnings("unchecked")
     public static List<GrupoSala> findAll() {
         return entityManager().createQuery("select o from GrupoSala o").getResultList();
     }

@@ -41,7 +41,15 @@ public class TurnosServiceImpl extends RemoteServiceServlet implements TurnosSer
 				orderBy = orderBy + " desc";
 			}
 		}
-		for(Turno turno : Turno.find(config.getOffset(), config.getLimit(), orderBy)) {
+		List<Turno> turnos = null;
+		CampusDTO campusDTO = config.get("campusDTO");
+		if(campusDTO == null) {
+			turnos = Turno.find(config.getOffset(), config.getLimit(), orderBy);
+		} else {
+			Campus campus = Campus.find(campusDTO.getId());
+			turnos = Turno.findAllByCampus(campus);
+		}
+		for(Turno turno : turnos) {
 			list.add(ConvertBeans.toTurnoDTO(turno));
 		}
 		BasePagingLoadResult<TurnoDTO> result = new BasePagingLoadResult<TurnoDTO>(list);
@@ -52,7 +60,20 @@ public class TurnosServiceImpl extends RemoteServiceServlet implements TurnosSer
 	
 	@Override
 	public ListLoadResult<TurnoDTO> getList(BasePagingLoadConfig loadConfig) {
-		return getBuscaList(loadConfig.get("query").toString(), null, loadConfig);
+		CampusDTO campusDTO = loadConfig.get("campusDTO");
+		ListLoadResult<TurnoDTO> list = null;
+		if(campusDTO == null) {
+			list = getBuscaList(loadConfig.get("query").toString(), null, loadConfig);
+		} else {
+			Campus campus = Campus.find(campusDTO.getId());
+			List<Turno> turnos = Turno.findAllByCampus(campus);
+			List<TurnoDTO> turnosDTO = new ArrayList<TurnoDTO>();
+			for(Turno turno : turnos) {
+				turnosDTO.add(ConvertBeans.toTurnoDTO(turno));
+			}
+			list = new BasePagingLoadResult<TurnoDTO>(turnosDTO);
+		}
+		return list;
 	}
 	
 	@Override

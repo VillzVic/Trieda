@@ -1,6 +1,7 @@
 package com.gapso.web.trieda.server;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -17,15 +18,18 @@ import com.gapso.trieda.domain.Curriculo;
 import com.gapso.trieda.domain.CurriculoDisciplina;
 import com.gapso.trieda.domain.Curso;
 import com.gapso.trieda.domain.Disciplina;
+import com.gapso.trieda.domain.GrupoSala;
+import com.gapso.trieda.domain.Oferta;
 import com.gapso.trieda.domain.Sala;
 import com.gapso.trieda.domain.TipoDisciplina;
 import com.gapso.trieda.domain.Turno;
-import com.gapso.web.trieda.client.mvp.model.CampusDTO;
 import com.gapso.web.trieda.client.mvp.model.CurriculoDTO;
 import com.gapso.web.trieda.client.mvp.model.CurriculoDisciplinaDTO;
 import com.gapso.web.trieda.client.mvp.model.CursoDTO;
 import com.gapso.web.trieda.client.mvp.model.DisciplinaDTO;
 import com.gapso.web.trieda.client.mvp.model.FileModel;
+import com.gapso.web.trieda.client.mvp.model.GrupoSalaDTO;
+import com.gapso.web.trieda.client.mvp.model.OfertaDTO;
 import com.gapso.web.trieda.client.mvp.model.SalaDTO;
 import com.gapso.web.trieda.client.mvp.model.TipoDisciplinaDTO;
 import com.gapso.web.trieda.client.mvp.model.TurnoDTO;
@@ -146,21 +150,19 @@ public class DisciplinasServiceImpl extends RemoteServiceServlet implements Disc
 	}
 
 	@Override
+	@Transactional
 	public List<FileModel> getFolderChildren(FileModel model) {
 		List<FileModel> listDTO = new ArrayList<FileModel>();
 		if(model != null) {
-			if(model instanceof CurriculoDTO) {
-				Curriculo curriculo = Curriculo.find(((CurriculoDTO) model).getId());
+			if(model instanceof OfertaDTO) {
+				Curriculo curriculo = Curriculo.find(((OfertaDTO) model).getMatrizCurricularId());
 				Set<CurriculoDisciplina> disciplinas = curriculo.getDisciplinas();
-				for(CurriculoDisciplina o : disciplinas);
-				List<CurriculoDisciplina> list = new ArrayList<CurriculoDisciplina>(disciplinas);
-				List<Integer> periodos = new ArrayList<Integer>();
-				for(CurriculoDisciplina cd : list) {
+				Set<Integer> periodos = new HashSet<Integer>();
+				for(CurriculoDisciplina cd : disciplinas) {
 					CurriculoDisciplinaDTO curriculoDisciplinaDTO = ConvertBeans.toCurriculoDisciplinaDTO(cd);
 					curriculoDisciplinaDTO.setName("Período "+curriculoDisciplinaDTO.getPeriodo().toString());
 					curriculoDisciplinaDTO.setPath(model.getPath() + curriculoDisciplinaDTO.getPeriodo().toString() + "/");
-					if(!periodos.contains(curriculoDisciplinaDTO.getPeriodo())) {
-						periodos.add(curriculoDisciplinaDTO.getPeriodo());
+					if(periodos.add(curriculoDisciplinaDTO.getPeriodo())) {
 						listDTO.add(curriculoDisciplinaDTO);
 					}
 				}
@@ -170,11 +172,12 @@ public class DisciplinasServiceImpl extends RemoteServiceServlet implements Disc
 				Set<CurriculoDisciplina> disciplinas = curriculo.getDisciplinas();
 				List<CurriculoDisciplina> list = new ArrayList<CurriculoDisciplina>(disciplinas);
 				for(CurriculoDisciplina cd : list) {
-					DisciplinaDTO disciplinaDTO = ConvertBeans.toDisciplinaDTO(cd.getDisciplina());
-					disciplinaDTO.setName(disciplinaDTO.getCodigo());
-					disciplinaDTO.setPath(model.getPath() + disciplinaDTO.getCodigo() + "/");
+					CurriculoDisciplinaDTO curriculoDisciplinaDTO = ConvertBeans.toCurriculoDisciplinaDTO(cd);
+					curriculoDisciplinaDTO.setName(curriculoDisciplinaDTO.getDisciplinaString());
+					curriculoDisciplinaDTO.setPath(model.getPath() + curriculoDisciplinaDTO.getDisciplinaString() + "/");
+					curriculoDisciplinaDTO.setFolha(true);
 					if(cd.getPeriodo().equals(periodo)) {
-						listDTO.add(disciplinaDTO);
+						listDTO.add(curriculoDisciplinaDTO);
 					}
 				}
 			}
@@ -183,24 +186,121 @@ public class DisciplinasServiceImpl extends RemoteServiceServlet implements Disc
 	}
 	
 	@Override
-	public List<FileModel> getFolderChildrenSalaToDisciplinba(FileModel model) {
-		// TODO
+	public List<FileModel> getFolderChildrenSala(FileModel model) {
 		List<FileModel> listDTO = new ArrayList<FileModel>();
 		if(model != null) {
 			if(model instanceof SalaDTO) {
-				Sala sala = Sala.find(((SalaDTO) model).getId());
-				
-			} else if(model instanceof CurriculoDisciplinaDTO) {
-				CurriculoDisciplina curriculoDisciplina = CurriculoDisciplina.find(((CurriculoDisciplinaDTO) model).getId());
-				
+				Sala sala = Sala.find(((SalaDTO)model).getId());
+				List<Curriculo> curriculos = sala.getCurriculos();
+				for(Curriculo c : curriculos) {
+					CurriculoDTO curriculoDTO = ConvertBeans.toCurriculoDTO(c);
+					curriculoDTO.setName(curriculoDTO.getCodigo() + " (" + curriculoDTO.getCursoString() + ")");
+					curriculoDTO.setPath(model.getPath() + curriculoDTO.getCodigo() + "/");
+					listDTO.add(curriculoDTO);
+				}
+			} else if(model instanceof GrupoSalaDTO) {
+				GrupoSala grupoSala = GrupoSala.find(((GrupoSalaDTO)model).getId());
+				List<Curriculo> curriculos = grupoSala.getCurriculos();
+				for(Curriculo c : curriculos) {
+					CurriculoDTO curriculoDTO = ConvertBeans.toCurriculoDTO(c);
+					curriculoDTO.setName(curriculoDTO.getCodigo() + " (" + curriculoDTO.getCursoString() + ")");
+					curriculoDTO.setPath(model.getPath() + curriculoDTO.getCodigo() + "/");
+					listDTO.add(curriculoDTO);
+				}
+			} else if(model instanceof CurriculoDTO) {
+				Curriculo curriculo = Curriculo.find(((CurriculoDTO)model).getId());
+				List<Turno> turnos = new ArrayList<Turno>();
+				Set<Oferta> ofertas = curriculo.getOfertas();
+				for(Oferta o : ofertas) {
+					Turno t = o.getTurno();
+					if(!turnos.contains(t)) turnos.add(t);
+				}
+				for(Turno t : turnos) {
+					TurnoDTO turnoDTO = ConvertBeans.toTurnoDTO(t);
+					turnoDTO.setName(turnoDTO.getNome());
+					turnoDTO.setPath(model.getPath() + turnoDTO.getNome() + "/");
+					listDTO.add(turnoDTO);
+				}
 			} else if(model instanceof TurnoDTO) {
-				Turno turno = Turno.find(((TurnoDTO) model).getId());
+				Turno turno = Turno.find(((TurnoDTO)model).getId());
+				Set<Oferta> ofertas = turno.getOfertas();
+				Set<CurriculoDisciplina> cds = new HashSet<CurriculoDisciplina>();
+				for(Oferta oferta : ofertas) {
+					Set<CurriculoDisciplina> cdsTodas = oferta.getCurriculo().getDisciplinas();
+					for(CurriculoDisciplina cd : cdsTodas) {
+						if(cd.getSalas().size() > 0) cds.add(cd);
+					}
+				}
+				for(CurriculoDisciplina cd : cds) {
+					CurriculoDisciplinaDTO cdDTO = ConvertBeans.toCurriculoDisciplinaDTO(cd);
+					cdDTO.setName(cdDTO.getDisciplinaString());
+					cdDTO.setPath(model.getPath() + cdDTO.getDisciplinaString() + "/");
+					cdDTO.setFolha(true);
+					listDTO.add(cdDTO);
+				}
 			}
 		}
 		return listDTO;
 	}
 	
-	public void saveSalaToCurriculoDisciplina(CurriculoDisciplinaDTO curriculoDisciplinaDTO, SalaDTO salaDTO) {
-		CurriculoDisciplina curriculoDisciplina = CurriculoDisciplina.find(curriculoDisciplinaDTO.getId());
+	@Override
+	public void saveDisciplinaToSala(OfertaDTO ofertaDTO, Integer periodo, CurriculoDisciplinaDTO cdDTO, SalaDTO salaDTO) {
+		Sala sala = Sala.find(salaDTO.getId());
+		Set<CurriculoDisciplina> list = new HashSet<CurriculoDisciplina>();
+		
+		if(ofertaDTO != null && periodo == null && cdDTO == null) {
+			Oferta oferta = Oferta.find(ofertaDTO.getId());
+			list.addAll(oferta.getCurriculo().getDisciplinas());
+		} else if(ofertaDTO != null && periodo != null && cdDTO == null) {
+			// Informou o periodo inteiro somente
+			Oferta oferta = Oferta.find(ofertaDTO.getId());
+			list.addAll(CurriculoDisciplina.findAllByCurriculoAndPeriodo(oferta.getCurriculo(), periodo));
+		} else if(ofertaDTO != null && periodo != null && cdDTO != null) {
+			// Informou a disciplina somente
+			list.add(CurriculoDisciplina.find(cdDTO.getId()));
+		}
+		
+		for(CurriculoDisciplina curriculoDisciplina : list) {
+			curriculoDisciplina.getSalas().add(sala);
+			curriculoDisciplina.persist();
+		}
+	}
+	
+	@Override
+	public void saveDisciplinaToSala(OfertaDTO ofertaDTO, Integer periodo, CurriculoDisciplinaDTO cdDTO, GrupoSalaDTO grupoSalaDTO) {
+		GrupoSala grupoSala = GrupoSala.find(grupoSalaDTO.getId());
+		Set<CurriculoDisciplina> list = new HashSet<CurriculoDisciplina>();
+		
+		if(ofertaDTO != null && periodo == null && cdDTO == null) {
+			Oferta oferta = Oferta.find(ofertaDTO.getId());
+			list.addAll(oferta.getCurriculo().getDisciplinas());
+		} else if(ofertaDTO != null && periodo != null && cdDTO == null) {
+			// Informou o periodo inteiro somente
+			Oferta oferta = Oferta.find(ofertaDTO.getId());
+			list.addAll(CurriculoDisciplina.findAllByCurriculoAndPeriodo(oferta.getCurriculo(), periodo));
+		} else if(ofertaDTO != null && periodo != null && cdDTO != null) {
+			// Informou a disciplina somente
+			list.add(CurriculoDisciplina.find(cdDTO.getId()));
+		}
+		
+		grupoSala.getCurriculoDisciplinas().addAll(list);
+		grupoSala.persist();
+	}
+	
+	@Override
+	public void removeDisciplinaToSala(GrupoSalaDTO grupoSalaDTO, CurriculoDisciplinaDTO cdDTO) {
+		GrupoSala grupoSala = GrupoSala.find(grupoSalaDTO.getId());
+		CurriculoDisciplina curriculoDisciplina = CurriculoDisciplina.find(cdDTO.getId());
+		
+		curriculoDisciplina.getGruposSala().remove(grupoSala);
+		curriculoDisciplina.merge();
+	}
+	@Override
+	public void removeDisciplinaToSala(SalaDTO salaDTO, CurriculoDisciplinaDTO cdDTO) {
+		Sala sala = Sala.find(salaDTO.getId());
+		CurriculoDisciplina curriculoDisciplina = CurriculoDisciplina.find(cdDTO.getId());
+		
+		curriculoDisciplina.getSalas().remove(sala);
+		curriculoDisciplina.merge();
 	}
 }

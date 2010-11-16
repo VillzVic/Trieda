@@ -117,7 +117,10 @@ public class SalasServiceImpl extends RemoteServiceServlet implements SalasServi
 		List<GrupoSala> grupoSalas = GrupoSala.findByUnidade(unidade);
 		List<GrupoSalaDTO> grupoSalasDTO = new ArrayList<GrupoSalaDTO>();
 		for(GrupoSala gs : grupoSalas) {
-			grupoSalasDTO.add(ConvertBeans.toGrupoSalaDTO(gs));
+			GrupoSalaDTO gsDTO = ConvertBeans.toGrupoSalaDTO(gs);
+			gsDTO.setName(gsDTO.getCodigo());
+			gsDTO.setPath(gsDTO.getCodigo() + "/");
+			grupoSalasDTO.add(gsDTO);
 		}
 		return grupoSalasDTO;
 	}

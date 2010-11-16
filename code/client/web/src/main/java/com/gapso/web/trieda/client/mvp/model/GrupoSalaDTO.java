@@ -1,8 +1,7 @@
 package com.gapso.web.trieda.client.mvp.model;
 
-import com.extjs.gxt.ui.client.data.BaseModel;
 
-public class GrupoSalaDTO extends BaseModel {
+public class GrupoSalaDTO extends FileModel {
 
 	private static final long serialVersionUID = -5134820110949139907L;
 

@@ -127,6 +127,8 @@ public class GruposSalasServiceImpl extends RemoteServiceServlet implements Grup
 			GrupoSalaDTO gsDTO = ConvertBeans.toGrupoSalaDTO(grupoSala);
 			gsDTO.setSalasString(salasString);
 			gsDTO.setCampusString(grupoSala.getUnidade().getCampus().getCodigo());
+			gsDTO.setName(gsDTO.getCodigo());
+			gsDTO.setPath(gsDTO.getCodigo() + "/");
 			list.add(gsDTO);
 		}
 		BasePagingLoadResult<GrupoSalaDTO> result = new BasePagingLoadResult<GrupoSalaDTO>(list);
