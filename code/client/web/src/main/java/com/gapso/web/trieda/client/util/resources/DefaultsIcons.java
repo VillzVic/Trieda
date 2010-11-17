@@ -5,6 +5,7 @@ import com.google.gwt.resources.client.ImageResource;
 
 public interface DefaultsIcons extends ClientBundle  {
 
+	@Source("clone16.png") ImageResource clone16();
 	@Source("document16.png") ImageResource document16();
 	
 	@Source("outros16.png") ImageResource outros16();

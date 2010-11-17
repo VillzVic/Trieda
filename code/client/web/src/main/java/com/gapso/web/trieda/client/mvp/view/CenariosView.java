@@ -28,6 +28,7 @@ public class CenariosView extends MyComposite implements CenariosPresenter.Displ
 	private SimpleToolBar toolBar;
 	private SimpleGrid<CenarioDTO> gridPanel;
 	private Button abrirCenarioBT;
+	private Button clonarCenarioBT;
 	private SimpleFilter filter;
 	private TextField<Integer> anoBuscaTextField;
 	private TextField<Integer> semestreBuscaTextField;
@@ -56,6 +57,8 @@ public class CenariosView extends MyComposite implements CenariosPresenter.Displ
 	private void createToolBar() {
 		toolBar = new SimpleToolBar();
 		toolBar.add(new SeparatorToolItem());
+		clonarCenarioBT = toolBar.createButton("Clonar cenário", Resources.DEFAULTS.clone16());
+		toolBar.add(clonarCenarioBT);
 		abrirCenarioBT = toolBar.createButton("Adicionar na árvore de cenários", Resources.DEFAULTS.abrirCenario16());
 		toolBar.add(abrirCenarioBT);
 		panel.setTopComponent(toolBar);
@@ -143,6 +146,11 @@ public class CenariosView extends MyComposite implements CenariosPresenter.Displ
 	@Override
 	public Button getAbrirCenarioButton() {
 		return abrirCenarioBT;
+	}
+
+	@Override
+	public Button getClonarCenarioButton() {
+		return clonarCenarioBT;
 	}
 	
 }

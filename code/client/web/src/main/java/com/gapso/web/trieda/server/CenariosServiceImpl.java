@@ -5,7 +5,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.extjs.gxt.ui.client.Style.SortDir;
@@ -15,7 +14,9 @@ import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.gapso.trieda.domain.Campus;
 import com.gapso.trieda.domain.Cenario;
 import com.gapso.trieda.domain.SemanaLetiva;
+import com.gapso.web.trieda.client.mvp.model.CampusDTO;
 import com.gapso.web.trieda.client.mvp.model.CenarioDTO;
+import com.gapso.web.trieda.client.mvp.model.SemanaLetivaDTO;
 import com.gapso.web.trieda.client.services.CenariosService;
 import com.gapso.web.trieda.server.util.CenarioUtil;
 import com.gapso.web.trieda.server.util.ConvertBeans;
@@ -93,7 +94,7 @@ public class CenariosServiceImpl extends RemoteServiceServlet implements Cenario
 		
 	@Override
 	@Transactional
-	public void save(CenarioDTO cenarioDTO) {
+	public void editar(CenarioDTO cenarioDTO) {
 		Cenario cenario = ConvertBeans.toCenario(cenarioDTO);
 		if(cenario.getId() != null && cenario.getId() > 0) {
 			cenario.merge();
@@ -103,6 +104,28 @@ public class CenariosServiceImpl extends RemoteServiceServlet implements Cenario
 			CenarioUtil cenarioUtil = new CenarioUtil();
 			cenarioUtil.criarCenario(cenario, semanaLetiva, campi);
 		}
+	}
+	
+	@Override
+	@Transactional
+	public void criar(CenarioDTO cenarioDTO, SemanaLetivaDTO semanaLetivaDTO, Set<CampusDTO> campiDTO) {
+		Cenario cenario = ConvertBeans.toCenario(cenarioDTO);
+		SemanaLetiva semanaLetiva = ConvertBeans.toSemanaLetiva(semanaLetivaDTO);
+		Set<Campus> campi = new HashSet<Campus>();
+		for(CampusDTO dto : campiDTO) {
+			campi.add(ConvertBeans.toCampus(dto));
+		}
+			
+		CenarioUtil cenarioUtil = new CenarioUtil();
+		cenarioUtil.criarCenario(cenario, semanaLetiva, campi);
+	}
+	
+	@Override
+	@Transactional
+	public void clonar(CenarioDTO cenarioDTO) {
+		Cenario cenario = ConvertBeans.toCenario(cenarioDTO);
+		CenarioUtil cenarioUtil = new CenarioUtil();
+		cenarioUtil.clonarCenario(cenario);
 	}
 	
 	@Override
