@@ -77,6 +77,8 @@ public class CenarioPanel extends ContentPanel {
 	
 	private class FolderTreeModel extends BaseTreeModel {
 
+		private static final long serialVersionUID = -380407385897290464L;
+
 		public FolderTreeModel(String name, BaseTreeModel[] children) {
 			set("name", name);
 			for (BaseTreeModel bmt : children) {
@@ -88,6 +90,8 @@ public class CenarioPanel extends ContentPanel {
 	
 	private class ItemTreeModel extends BaseTreeModel {
 		
+		private static final long serialVersionUID = -2172312572936370452L;
+
 		public ItemTreeModel(String name) {
 			set("name", name);
 		}
