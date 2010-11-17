@@ -144,6 +144,7 @@ public class CenarioUtil {
 			}
 			
 			for(Campus c : campusList) {
+				c.setCenario(cenario);
 				deslocamentoCampusList.addAll(c.getDeslocamentos());
 				
 				unidadeList.addAll(c.getUnidades());
