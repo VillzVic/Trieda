@@ -14,6 +14,7 @@ import com.extjs.gxt.ui.client.widget.grid.CheckColumnConfig;
 import com.extjs.gxt.ui.client.widget.grid.ColumnConfig;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayout;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
+import com.extjs.gxt.ui.client.widget.toolbar.SeparatorToolItem;
 import com.gapso.web.trieda.client.mvp.model.CenarioDTO;
 import com.gapso.web.trieda.client.mvp.presenter.CenariosPresenter;
 import com.gapso.web.trieda.client.util.resources.Resources;
@@ -26,6 +27,7 @@ public class CenariosView extends MyComposite implements CenariosPresenter.Displ
 
 	private SimpleToolBar toolBar;
 	private SimpleGrid<CenarioDTO> gridPanel;
+	private Button abrirCenarioBT;
 	private SimpleFilter filter;
 	private TextField<Integer> anoBuscaTextField;
 	private TextField<Integer> semestreBuscaTextField;
@@ -53,6 +55,9 @@ public class CenariosView extends MyComposite implements CenariosPresenter.Displ
 	
 	private void createToolBar() {
 		toolBar = new SimpleToolBar();
+		toolBar.add(new SeparatorToolItem());
+		abrirCenarioBT = toolBar.createButton("Adicionar na árvore de cenários", Resources.DEFAULTS.abrirCenario16());
+		toolBar.add(abrirCenarioBT);
 		panel.setTopComponent(toolBar);
 	}
 	
@@ -133,6 +138,11 @@ public class CenariosView extends MyComposite implements CenariosPresenter.Displ
 	@Override
 	public Button getResetBuscaButton() {
 		return filter.getResetButton();
+	}
+
+	@Override
+	public Button getAbrirCenarioButton() {
+		return abrirCenarioBT;
 	}
 	
 }

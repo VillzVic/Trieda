@@ -70,7 +70,7 @@ public class CampiPresenter implements Presenter {
 				String estado = null;
 				String municipio = display.getMunicipioBuscaTextField().getValue();
 				String bairro = display.getBairroBuscaTextField().getValue();
-				service.getBuscaList(nome, codigo, estado, municipio, bairro, (PagingLoadConfig)loadConfig, callback);
+				service.getBuscaList(cenario, nome, codigo, estado, municipio, bairro, (PagingLoadConfig)loadConfig, callback);
 			}
 		};
 		display.setProxy(proxy);

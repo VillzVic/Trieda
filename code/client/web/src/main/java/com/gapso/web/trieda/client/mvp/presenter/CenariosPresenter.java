@@ -16,6 +16,7 @@ import com.gapso.web.trieda.client.mvp.model.CenarioDTO;
 import com.gapso.web.trieda.client.mvp.view.CenarioFormView;
 import com.gapso.web.trieda.client.services.CenariosServiceAsync;
 import com.gapso.web.trieda.client.services.Services;
+import com.gapso.web.trieda.client.util.view.CenarioPanel;
 import com.gapso.web.trieda.client.util.view.GTab;
 import com.gapso.web.trieda.client.util.view.GTabItem;
 import com.gapso.web.trieda.client.util.view.SimpleGrid;
@@ -28,6 +29,7 @@ public class CenariosPresenter implements Presenter {
 		Button getNewButton();
 		Button getEditButton();
 		Button getRemoveButton();
+		Button getAbrirCenarioButton();
 		TextField<Integer> getAnoBuscaTextField();
 		TextField<Integer> getSemestreBuscaTextField();
 		Button getSubmitBuscaButton();
@@ -38,9 +40,11 @@ public class CenariosPresenter implements Presenter {
 	}
 	private Display display; 
 	private GTab gTab;
+	private CenarioPanel cenarioPanel;
 	
-	public CenariosPresenter(Display display) {
+	public CenariosPresenter(CenarioPanel cenarioPanel, Display display) {
 		this.display = display;
+		this.cenarioPanel = cenarioPanel;
 		configureProxy();
 		setListeners();
 	}
@@ -104,6 +108,13 @@ public class CenariosPresenter implements Presenter {
 			@Override
 			public void componentSelected(ButtonEvent ce) {
 				display.getGrid().updateList();
+			}
+		});
+		display.getAbrirCenarioButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
+			@Override
+			public void componentSelected(ButtonEvent ce) {
+				CenarioDTO cenarioDTO = display.getGrid().getSelectionModel().getSelectedItem();
+				cenarioPanel.addCenario(cenarioDTO);
 			}
 		});
 	}

@@ -15,9 +15,11 @@ import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.gapso.trieda.domain.Campus;
+import com.gapso.trieda.domain.Cenario;
 import com.gapso.trieda.domain.Turno;
 import com.gapso.trieda.misc.Estados;
 import com.gapso.web.trieda.client.mvp.model.CampusDTO;
+import com.gapso.web.trieda.client.mvp.model.CenarioDTO;
 import com.gapso.web.trieda.client.mvp.model.DeslocamentoCampusDTO;
 import com.gapso.web.trieda.client.services.CampiService;
 import com.gapso.web.trieda.server.util.ConvertBeans;
@@ -58,11 +60,14 @@ public class CampiServiceImpl extends RemoteServiceServlet implements CampiServi
 	
 	@Override
 	public ListLoadResult<CampusDTO> getList(BasePagingLoadConfig loadConfig) {
-		return getBuscaList(null, loadConfig.get("query").toString(), null, null, null, loadConfig);
+		// TODO
+		return getBuscaList(null, null, loadConfig.get("query").toString(), null, null, null, loadConfig);
 	}
 
 	@Override
-	public PagingLoadResult<CampusDTO> getBuscaList(String nome, String codigo, String estadoString, String municipio, String bairro, PagingLoadConfig config) {
+	public PagingLoadResult<CampusDTO> getBuscaList(CenarioDTO cenarioDTO, String nome, String codigo, String estadoString, String municipio, String bairro, PagingLoadConfig config) {
+		Cenario cenario = Cenario.find(cenarioDTO.getId());
+		
 		List<CampusDTO> list = new ArrayList<CampusDTO>();
 		String orderBy = config.getSortField();
 		if(orderBy != null) {
@@ -81,7 +86,8 @@ public class CampiServiceImpl extends RemoteServiceServlet implements CampiServi
 				}
 			}
 		}
-		for(Campus campus : Campus.findByNomeLikeAndCodigoLikeAndEstadoAndMunicipioLikeAndBairroLike(nome, codigo, estadoDomain, municipio, bairro, config.getOffset(), config.getLimit(), orderBy)) {
+		List<Campus> campi = Campus.findByNomeLikeAndCodigoLikeAndEstadoAndMunicipioLikeAndBairroLike(cenario, nome, codigo, estadoDomain, municipio, bairro, config.getOffset(), config.getLimit(), orderBy);
+		for(Campus campus : campi) {
 			list.add(ConvertBeans.toCampusDTO(campus));
 		}
 		BasePagingLoadResult<CampusDTO> result = new BasePagingLoadResult<CampusDTO>(list);
@@ -128,7 +134,8 @@ public class CampiServiceImpl extends RemoteServiceServlet implements CampiServi
 				}
 			}
 		}
-		List<Campus> listCampi = Campus.findByNomeLikeAndCodigoLikeAndEstadoAndMunicipioLikeAndBairroLike(nome, codigo, estadoDomain, municipio, bairro, 0, 999, null);
+		// TODO
+		List<Campus> listCampi = Campus.findByNomeLikeAndCodigoLikeAndEstadoAndMunicipioLikeAndBairroLike(null, nome, codigo, estadoDomain, municipio, bairro, 0, 999, null);
 		for(Campus unidade : listCampi) {
 			list.add(ConvertBeans.toDeslocamentoCampusDTO(unidade, listCampi));
 		}

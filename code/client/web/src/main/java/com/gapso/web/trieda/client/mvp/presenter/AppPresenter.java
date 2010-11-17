@@ -7,6 +7,7 @@ import com.gapso.web.trieda.client.mvp.view.ToolBarView;
 import com.gapso.web.trieda.client.services.CenariosServiceAsync;
 import com.gapso.web.trieda.client.services.Services;
 import com.gapso.web.trieda.client.util.view.GTab;
+import com.gapso.web.trieda.client.util.view.CenarioPanel;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -18,6 +19,7 @@ public class AppPresenter implements Presenter {
 		GTab getGTab();
 		Widget asWidget();
 		Component getComponent();
+		CenarioPanel getCenarioPanel();
 	}
 	
 	private Display viewport;
@@ -38,7 +40,7 @@ public class AppPresenter implements Presenter {
 			@Override
 			public void onSuccess(CenarioDTO masterData) {
 				RootPanel rp = (RootPanel) widget;
-				Presenter presenter = new ToolBarPresenter(masterData, new ToolBarView());
+				Presenter presenter = new ToolBarPresenter(masterData, viewport.getCenarioPanel(), new ToolBarView());
 				presenter.go(viewport.asWidget());
 				rp.add(viewport.asWidget());
 			}

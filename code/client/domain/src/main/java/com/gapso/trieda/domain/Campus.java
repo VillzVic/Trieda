@@ -268,7 +268,7 @@ public class Campus implements Serializable {
     }
 
     @SuppressWarnings("unchecked")
-    public static List<Campus> findByNomeLikeAndCodigoLikeAndEstadoAndMunicipioLikeAndBairroLike(String nome, String codigo, Estados estado, String municipio, String bairro, int firstResult, int maxResults, String orderBy) {
+    public static List<Campus> findByNomeLikeAndCodigoLikeAndEstadoAndMunicipioLikeAndBairroLike(Cenario cenario, String nome, String codigo, Estados estado, String municipio, String bairro, int firstResult, int maxResults, String orderBy) {
         nome = (nome == null)? "" : nome;
         nome = "%" + nome.replace('*', '%') + "%";
         codigo = (codigo == null)? "" : codigo;
@@ -293,12 +293,14 @@ public class Campus implements Serializable {
         Query q = em.createQuery("SELECT o FROM Campus o WHERE " +
         		"LOWER(o.nome) LIKE LOWER(:nome) AND " +
         		"LOWER(o.codigo) LIKE LOWER(:codigo) AND " +
+        		"o.cenario = :cenario AND " +
         		estadoQuery +
         		bairroQuery +
         		municipioQuery +
         		" 1=1 "+orderBy);
         q.setParameter("nome", nome);
         q.setParameter("codigo", codigo);
+        q.setParameter("cenario", cenario);
         if(estado != null) q.setParameter("estado", estado);
         if(municipio != null) q.setParameter("municipio", municipio);
         if(bairro != null) q.setParameter("bairro", bairro);

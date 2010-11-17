@@ -5,10 +5,14 @@ import com.google.gwt.resources.client.ImageResource;
 
 public interface DefaultsIcons extends ClientBundle  {
 
+	@Source("document16.png") ImageResource document16();
+	
 	@Source("outros16.png") ImageResource outros16();
 	
 	@Source("cenario16.png") ImageResource cenario16();
 	@Source("cenario24.png") ImageResource cenario24();
+	
+	@Source("abrircenario.png") ImageResource abrirCenario16();
 
 	@Source("parametros16.png") ImageResource parametros16();
 	@Source("parametros24.png") ImageResource parametros24();

@@ -2,7 +2,6 @@ package com.gapso.web.trieda.client.mvp.presenter;
 
 import java.util.List;
 
-import com.extjs.gxt.ui.client.event.ButtonEvent;
 import com.extjs.gxt.ui.client.event.MenuEvent;
 import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.widget.Component;
@@ -30,6 +29,7 @@ import com.gapso.web.trieda.client.mvp.view.UnidadesDeslocamentoView;
 import com.gapso.web.trieda.client.mvp.view.UnidadesView;
 import com.gapso.web.trieda.client.services.CampiServiceAsync;
 import com.gapso.web.trieda.client.services.Services;
+import com.gapso.web.trieda.client.util.view.CenarioPanel;
 import com.gapso.web.trieda.client.util.view.GTab;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
@@ -64,30 +64,20 @@ public class ToolBarPresenter implements Presenter {
 	private CenarioDTO masterData;
 	private Display toolBar;
 	private GTab gTab;
+	private CenarioPanel cenarioPanel;
 	
-	public ToolBarPresenter(CenarioDTO masterData, Display toolBar) {
+	public ToolBarPresenter(CenarioDTO masterData, CenarioPanel cenarioPanel, Display toolBar) {
 		this.masterData = masterData;
+		this.cenarioPanel = cenarioPanel;
 		this.toolBar = toolBar;
 		addListeners();
 	}
 
 	private void addListeners() {
-		toolBar.getCampusListButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
-			@Override
-			public void componentSelected(ButtonEvent ce) {
-				MessageBox.alert("Desenvolvimento", "Esta sessão está em desenvolvimento", null);
-			}
-		});
-		toolBar.getCampusNewButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
-			@Override
-			public void componentSelected(ButtonEvent ce) {
-				MessageBox.alert("Desenvolvimento", "Esta sessão está em desenvolvimento", null);
-			}
-		});
 		toolBar.getCenariosListMenuItem().addSelectionListener(new SelectionListener<MenuEvent>() {
 			@Override
 			public void componentSelected(MenuEvent ce) {
-				Presenter presenter = new CenariosPresenter(new CenariosView());
+				Presenter presenter = new CenariosPresenter(cenarioPanel, new CenariosView());
 				presenter.go(gTab);
 			}
 		});

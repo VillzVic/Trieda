@@ -10,7 +10,7 @@ import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
 import com.extjs.gxt.ui.client.widget.layout.FitLayout;
 import com.gapso.web.trieda.client.mvp.presenter.AppPresenter;
 import com.gapso.web.trieda.client.util.view.GTab;
-import com.gapso.web.trieda.client.util.view.GTreePanel;
+import com.gapso.web.trieda.client.util.view.CenarioPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class AppView extends MyComposite implements AppPresenter.Display {
@@ -21,7 +21,7 @@ public class AppView extends MyComposite implements AppPresenter.Display {
 	private ContentPanel panel;
 	
 	private GTab tab;
-	private GTreePanel treePanel;
+	private CenarioPanel cenarioPanel;
 	
 	public AppView() {
 		initUI();
@@ -47,8 +47,8 @@ public class AppView extends MyComposite implements AppPresenter.Display {
 	    bld.setCollapsible(true);
 	    bld.setFloatable(true);
 	    
-	    treePanel = new GTreePanel();
-	    panel.add(treePanel, bld);
+	    cenarioPanel = new CenarioPanel();
+	    panel.add(cenarioPanel, bld);
 	}
 	
 	private void createCenter() {
@@ -72,6 +72,11 @@ public class AppView extends MyComposite implements AppPresenter.Display {
 	@Override
 	public Widget asWidget() {
 		return this;
+	}
+
+	@Override
+	public CenarioPanel getCenarioPanel() {
+		return cenarioPanel;
 	}
 	
 }
