@@ -1,8 +1,11 @@
 package com.gapso.web.trieda.server;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.extjs.gxt.ui.client.Style.SortDir;
@@ -11,6 +14,7 @@ import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.gapso.trieda.domain.Campus;
 import com.gapso.trieda.domain.Cenario;
+import com.gapso.trieda.domain.SemanaLetiva;
 import com.gapso.web.trieda.client.mvp.model.CenarioDTO;
 import com.gapso.web.trieda.client.services.CenariosService;
 import com.gapso.web.trieda.server.util.CenarioUtil;
@@ -88,14 +92,16 @@ public class CenariosServiceImpl extends RemoteServiceServlet implements Cenario
 	}
 		
 	@Override
+	@Transactional
 	public void save(CenarioDTO cenarioDTO) {
 		Cenario cenario = ConvertBeans.toCenario(cenarioDTO);
 		if(cenario.getId() != null && cenario.getId() > 0) {
 			cenario.merge();
 		} else {
-			List<Campus> campi = new ArrayList<Campus>();
+			Set<Campus> campi = new HashSet<Campus>(Campus.findAll());
+			SemanaLetiva semanaLetiva = cenario.getSemanaLetiva();
 			CenarioUtil cenarioUtil = new CenarioUtil();
-			cenarioUtil.criaCenario(cenario, campi);
+			cenarioUtil.criarCenario(cenario, semanaLetiva, campi);
 		}
 	}
 	

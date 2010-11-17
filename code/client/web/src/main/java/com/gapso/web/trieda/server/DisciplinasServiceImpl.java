@@ -209,11 +209,11 @@ public class DisciplinasServiceImpl extends RemoteServiceServlet implements Disc
 				}
 			} else if(model instanceof CurriculoDTO) {
 				Curriculo curriculo = Curriculo.find(((CurriculoDTO)model).getId());
-				List<Turno> turnos = new ArrayList<Turno>();
+				Set<Turno> turnos = new HashSet<Turno>();
 				Set<Oferta> ofertas = curriculo.getOfertas();
 				for(Oferta o : ofertas) {
 					Turno t = o.getTurno();
-					if(!turnos.contains(t)) turnos.add(t);
+					turnos.add(t);
 				}
 				for(Turno t : turnos) {
 					TurnoDTO turnoDTO = ConvertBeans.toTurnoDTO(t);
