@@ -52,16 +52,16 @@ public class Unidade implements Serializable {
     @Size(min = 5, max = 20)
     private String nome;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "origem", orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "origem")
     private Set<DeslocamentoUnidade> deslocamentos = new HashSet<DeslocamentoUnidade>();
 
     @ManyToMany(cascade = CascadeType.ALL, mappedBy = "unidades")
     private Set<HorarioDisponivelCenario> horarios = new HashSet<HorarioDisponivelCenario>();
 
-    @OneToMany(mappedBy="unidade", orphanRemoval = true)
+    @OneToMany(mappedBy="unidade")
     private Set<GrupoSala> gruposSalas = new HashSet<GrupoSala>();
     
-    @OneToMany(mappedBy="unidade", orphanRemoval = true)
+    @OneToMany(mappedBy="unidade")
     private Set<Sala> salas = new HashSet<Sala>();
     
     @PersistenceContext
