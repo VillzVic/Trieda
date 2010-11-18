@@ -24,7 +24,7 @@ public class CenarioPanel extends ContentPanel {
 		treePanel = new TreePanel<ModelData>(store);
 		treePanel.setDisplayProperty("name");
 		treePanel.getStyle().setLeafIcon(AbstractImagePrototype.create(Resources.DEFAULTS.document16())); 
-		
+		treePanel.mask();
 		add(treePanel);
 		setHeading("Navegação");
 	}
@@ -35,6 +35,7 @@ public class CenarioPanel extends ContentPanel {
 		if(store.getAllItems().contains(model)) {
 			MessageBox.alert("Cenário já aberto!", "Cenário selecionado já se encontra na árvore de cenário.", null);
 		} else {
+			treePanel.unmask();
 			store.add(model, true);
 		}
 	}

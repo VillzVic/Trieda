@@ -253,21 +253,6 @@ public class DisciplinasAssociarSalaView extends MyComposite implements Discipli
 				}
 				super.dragMove(e);
 			}
-			@Override
-			public void dragStart(DNDEvent e) {
-				Info.display("Passou", "dragStart!");
-				super.dragStart(e);
-			}
-			@Override
-			public void dragEnter(DNDEvent e) {
-				Info.display("Passou", "dragEnter!");
-				super.dragEnter(e);
-			}
-			@Override
-			public void dragLeave(DNDEvent e) {
-				Info.display("Passou", "dragLeave!");
-				super.dragLeave(e);
-			}
 			@SuppressWarnings({ "unchecked", "rawtypes" })
 			@Override
 			public void dragDrop(DNDEvent e) {
@@ -321,33 +306,6 @@ public class DisciplinasAssociarSalaView extends MyComposite implements Discipli
 				}
 			}
 		});
-		
-//		TreeGridDropTarget target = new TreeGridDropTarget(salasList) {
-//			protected void onDragEnter(DNDEvent e) {
-//				@SuppressWarnings("unchecked")
-//				TreeGrid<FileModel> treeGrid = (TreeGrid<FileModel>)e.getComponent();
-//				FileModel fileModel = treeGrid.getSelectionModel().getSelectedItem();
-//				if(fileModel instanceof SalaDTO) {
-//					Info.display("Passou", "É Sala!");
-//					Info.display("Passou", "É Sala!");
-//				} else {
-//					e.setCancelled(true);
-//					e.getStatus().setStatus(false);
-//					Info.display("Passou", "Não é sala!");
-//					return;
-//				}
-//				super.onDragEnter(e);
-//			}
-//		};
-
-//			@Override
-//			protected void onDragEnter(DNDEvent e) {
-//				Info.display("Passou", "Passou por aqui!");
-//				e.getDropTarget().
-//				
-//			}
-//			
-//		};
 		
 		ContentPanel blankListPanel = new ContentPanel(new BorderLayout());
 		blankListPanel.setHeaderVisible(false);
