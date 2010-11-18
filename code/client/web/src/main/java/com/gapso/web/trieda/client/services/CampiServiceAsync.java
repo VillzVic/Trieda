@@ -13,6 +13,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public interface CampiServiceAsync {
 	
+	void getListAll(AsyncCallback<ListLoadResult<CampusDTO>> callback);
 	void getList(PagingLoadConfig config, AsyncCallback<PagingLoadResult<CampusDTO>> callback);
 	void getList(AsyncCallback<ListLoadResult<CampusDTO>> callback);
 	void getList(BasePagingLoadConfig loadConfig, AsyncCallback<ListLoadResult<CampusDTO>> callback);

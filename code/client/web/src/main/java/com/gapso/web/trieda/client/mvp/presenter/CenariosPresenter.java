@@ -14,7 +14,7 @@ import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.gapso.web.trieda.client.mvp.model.CenarioDTO;
 import com.gapso.web.trieda.client.mvp.view.CenarioCloneFormView;
-import com.gapso.web.trieda.client.mvp.view.CenarioFormView;
+import com.gapso.web.trieda.client.mvp.view.CenarioCriarFormView;
 import com.gapso.web.trieda.client.services.CenariosServiceAsync;
 import com.gapso.web.trieda.client.services.Services;
 import com.gapso.web.trieda.client.util.view.CenarioPanel;
@@ -68,7 +68,7 @@ public class CenariosPresenter implements Presenter {
 		display.getNewButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
 			@Override
 			public void componentSelected(ButtonEvent ce) {
-				Presenter presenter = new CenarioFormPresenter(new CenarioFormView(new CenarioDTO()), display.getGrid());
+				Presenter presenter = new CenarioCriarFormPresenter(new CenarioCriarFormView(new CenarioDTO()), display.getGrid());
 				presenter.go(null);
 			}
 		});
@@ -76,7 +76,7 @@ public class CenariosPresenter implements Presenter {
 			@Override
 			public void componentSelected(ButtonEvent ce) {
 				CenarioDTO cenarioDTO = display.getGrid().getGrid().getSelectionModel().getSelectedItem();
-				Presenter presenter = new CenarioFormPresenter(new CenarioFormView(cenarioDTO), display.getGrid());
+				Presenter presenter = new CenarioCriarFormPresenter(new CenarioCriarFormView(cenarioDTO), display.getGrid());
 				presenter.go(null);
 			}
 		});

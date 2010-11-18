@@ -19,6 +19,7 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 public interface CampiService extends RemoteService {
 	
 	PagingLoadResult<CampusDTO> getList(PagingLoadConfig config);
+	ListLoadResult<CampusDTO> getListAll();
 	ListLoadResult<CampusDTO> getList();
 	ListLoadResult<CampusDTO> getList(BasePagingLoadConfig loadConfig);
 	void save(CampusDTO campusDTO);

@@ -39,6 +39,16 @@ public class CampiServiceImpl extends RemoteServiceServlet implements CampiServi
 	}
 	
 	@Override
+	public ListLoadResult<CampusDTO> getListAll() {
+		List<CampusDTO> campiDTO = new ArrayList<CampusDTO>();
+		List<Campus> campi = Campus.findAll();
+		for(Campus c : campi) {
+			campiDTO.add(ConvertBeans.toCampusDTO(c));
+		}
+		return new BaseListLoadResult<CampusDTO>(campiDTO);
+	}	
+	
+	@Override
 	public PagingLoadResult<CampusDTO> getList(PagingLoadConfig config) {
 		List<CampusDTO> list = new ArrayList<CampusDTO>();
 		String orderBy = config.getSortField();
@@ -57,7 +67,7 @@ public class CampiServiceImpl extends RemoteServiceServlet implements CampiServi
 		result.setTotalLength(Campus.count());
 		return result;
 	}
-	
+
 	@Override
 	public ListLoadResult<CampusDTO> getList(BasePagingLoadConfig loadConfig) {
 		// TODO
