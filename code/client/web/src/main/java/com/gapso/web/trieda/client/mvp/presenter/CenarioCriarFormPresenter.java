@@ -1,13 +1,18 @@
 package com.gapso.web.trieda.client.mvp.presenter;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import com.extjs.gxt.ui.client.event.ButtonEvent;
 import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.widget.Info;
 import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.CheckBox;
+import com.extjs.gxt.ui.client.widget.form.DualListField;
 import com.extjs.gxt.ui.client.widget.form.NumberField;
 import com.extjs.gxt.ui.client.widget.form.TextField;
+import com.gapso.web.trieda.client.mvp.model.CampusDTO;
 import com.gapso.web.trieda.client.mvp.model.CenarioDTO;
 import com.gapso.web.trieda.client.mvp.model.SemanaLetivaDTO;
 import com.gapso.web.trieda.client.services.CenariosServiceAsync;
@@ -18,7 +23,7 @@ import com.gapso.web.trieda.client.util.view.SimpleModal;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
 
-public class CenarioFormPresenter implements Presenter {
+public class CenarioCriarFormPresenter implements Presenter {
 
 	public interface Display {
 		Button getSalvarButton();
@@ -29,6 +34,7 @@ public class CenarioFormPresenter implements Presenter {
 		TextField<String> getComentarioTextField();
 		SemanaLetivaComboBox getSemanaLetivaComboBox();
 		CenarioDTO getCenarioDTO();
+		DualListField<CampusDTO> getCampiDualList();
 		boolean isValid();
 		
 		SimpleModal getSimpleModal();
@@ -36,7 +42,7 @@ public class CenarioFormPresenter implements Presenter {
 	private SimpleGrid<CenarioDTO> gridPanel;
 	private Display display;
 	
-	public CenarioFormPresenter(Display display, SimpleGrid<CenarioDTO> gridPanel) {
+	public CenarioCriarFormPresenter(Display display, SimpleGrid<CenarioDTO> gridPanel) {
 		this.gridPanel = gridPanel;
 		this.display = display;
 		setListeners();
@@ -48,7 +54,9 @@ public class CenarioFormPresenter implements Presenter {
 			public void componentSelected(ButtonEvent ce) {
 				if(isValid()) {
 					final CenariosServiceAsync service = Services.cenarios();
-					service.editar(getDTO(), new AsyncCallback<Void>() {
+					SemanaLetivaDTO semanaLetivaDTO = display.getSemanaLetivaComboBox().getValue();
+					Set<CampusDTO> campiDTO = new HashSet<CampusDTO>(display.getCampiDualList().getToField().getStore().getModels());
+					service.criar(getDTO(), semanaLetivaDTO, campiDTO, new AsyncCallback<Void>() {
 						@Override
 						public void onFailure(Throwable caught) {
 							MessageBox.alert("ERRO!", "Deu falha na conexão", null);
