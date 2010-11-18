@@ -46,7 +46,7 @@ public class CenarioCriarFormView extends MyComposite implements CenarioCriarFor
 	}
 	
 	private void initUI() {
-		String title = (cenarioDTO.getId() == null)? "Inserção de Cenário" : "Edição de Cenário";
+		String title = "Inserção de Cenário";
 		simpleModal = new SimpleModal(title, Resources.DEFAULTS.cenario16());
 		simpleModal.setHeight(380);
 		simpleModal.setWidth(400);
@@ -198,21 +198,6 @@ public class CenarioCriarFormView extends MyComposite implements CenarioCriarFor
 				campiDualList.getFromField().getStore().add(result.getData());
 			}
 		});
-		
-//		RpcProxy<ListLoadResult<CampusDTO>> proxy = new RpcProxy<ListLoadResult<CampusDTO>>() {
-//			@Override
-//			public void load(Object loadConfig, AsyncCallback<ListLoadResult<CampusDTO>> callback) {
-//				service.getList((BasePagingLoadConfig)loadConfig, callback);
-//			}
-//		};
-//		ListLoader<BaseListLoadResult<CampusDTO>> load = new BaseListLoader<BaseListLoadResult<CampusDTO>>(proxy);
-//		load.addListener(Loader.BeforeLoad, new Listener<LoadEvent>() {
-//			public void handleEvent(LoadEvent be) {
-//				
-//				be.<ModelData> getConfig().set("offset", 0);
-//				be.<ModelData> getConfig().set("limit", 10);
-//			}
-//		});
 	}
 
 }

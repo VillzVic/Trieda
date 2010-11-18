@@ -96,14 +96,7 @@ public class CenariosServiceImpl extends RemoteServiceServlet implements Cenario
 	@Transactional
 	public void editar(CenarioDTO cenarioDTO) {
 		Cenario cenario = ConvertBeans.toCenario(cenarioDTO);
-		if(cenario.getId() != null && cenario.getId() > 0) {
-			cenario.merge();
-		} else {
-			Set<Campus> campi = new HashSet<Campus>(Campus.findAll());
-			SemanaLetiva semanaLetiva = cenario.getSemanaLetiva();
-			CenarioUtil cenarioUtil = new CenarioUtil();
-			cenarioUtil.criarCenario(cenario, semanaLetiva, campi);
-		}
+		cenario.merge();
 	}
 	
 	@Override

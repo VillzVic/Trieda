@@ -10,11 +10,11 @@ import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.extjs.gxt.ui.client.widget.layout.FormData;
 import com.extjs.gxt.ui.client.widget.layout.FormLayout;
 import com.gapso.web.trieda.client.mvp.model.CenarioDTO;
-import com.gapso.web.trieda.client.mvp.presenter.CenarioCloneFormPresenter;
+import com.gapso.web.trieda.client.mvp.presenter.CenarioEditarFormPresenter;
 import com.gapso.web.trieda.client.util.resources.Resources;
 import com.gapso.web.trieda.client.util.view.SimpleModal;
 
-public class CenarioCloneFormView extends MyComposite implements CenarioCloneFormPresenter.Display {
+public class CenarioEditarFormView extends MyComposite implements CenarioEditarFormPresenter.Display {
 
 	private SimpleModal simpleModal;
 	private FormPanel formPanel;
@@ -25,7 +25,7 @@ public class CenarioCloneFormView extends MyComposite implements CenarioCloneFor
 	private TextField<String> comentarioTF;
 	private CenarioDTO cenarioDTO;
 	
-	public CenarioCloneFormView(CenarioDTO cenarioDTO) {
+	public CenarioEditarFormView(CenarioDTO cenarioDTO) {
 		this.cenarioDTO = cenarioDTO;
 		initUI();
 		// TODO
@@ -34,16 +34,17 @@ public class CenarioCloneFormView extends MyComposite implements CenarioCloneFor
 	}
 	
 	private void initUI() {
-		String title = "Clonar Cenário";
-		simpleModal = new SimpleModal(title, Resources.DEFAULTS.clone16());
+		String title = "Edição de Cenário";
+		simpleModal = new SimpleModal(title, Resources.DEFAULTS.cenario16());
 		simpleModal.setHeight(220);
+		simpleModal.setWidth(400);
 		createForm();
 		simpleModal.setContent(formPanel);
 	}
 
 	private void createForm() {
 		FormData formData = new FormData("-20");
-
+		
 		FormLayout formLayout = new FormLayout(LabelAlign.RIGHT);
 		formLayout.setLabelWidth(75);
 		
@@ -85,13 +86,14 @@ public class CenarioCloneFormView extends MyComposite implements CenarioCloneFor
 		semestreTF.setMinValue(1);
 		semestreTF.setMaxValue(12);
 		formPanel.add(semestreTF, formData);
-
+		
 		comentarioTF = new TextField<String>();
 		comentarioTF.setName("comentario");
 		comentarioTF.setValue(cenarioDTO.getComentario());
 		comentarioTF.setFieldLabel("Comentário");
 		comentarioTF.setMaxLength(255);
 		formPanel.add(comentarioTF, formData);
+		formPanel.add(formPanel, formData);
 		
 		FormButtonBinding binding = new FormButtonBinding(formPanel);
 		binding.addButton(simpleModal.getSalvarBt());
