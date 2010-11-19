@@ -51,6 +51,7 @@ public class SimpleGrid<M extends BaseModel> extends ContentPanel {
 		for(ComponentPlugin plugin : plugins) {
 			grid.addPlugin(plugin);
 		}
+		grid.setBorders(false);
 		pagingPanel();
 		add(grid);
 	}

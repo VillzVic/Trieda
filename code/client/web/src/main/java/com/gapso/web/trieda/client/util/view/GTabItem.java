@@ -33,6 +33,7 @@ public class GTabItem extends TabItem {
 		setLayout(new FitLayout());
 		panel = new ContentPanel(new BorderLayout());
 		panel.setHeaderVisible(false);
+		panel.setBodyBorder(false);
 		add(panel);
 	}
 	

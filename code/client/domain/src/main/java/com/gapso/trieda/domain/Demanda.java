@@ -143,23 +143,23 @@ public class Demanda implements Serializable {
         return em;
     }
 
-	public static long countDemandas() {
-        return ((Number) entityManager().createQuery("select count(o) from Demanda o").getSingleResult()).longValue();
+	public static int count() {
+        return ((Number) entityManager().createQuery("SELECT COUNT(o) FROM Demanda o").getSingleResult()).intValue();
     }
 
 	@SuppressWarnings("unchecked")
-    public static List<Demanda> findAllDemandas() {
-        return entityManager().createQuery("select o from Demanda o").getResultList();
+    public static List<Demanda> findAll() {
+        return entityManager().createQuery("SELECT o FROM Demanda o").getResultList();
     }
 
-	public static Demanda findDemanda(Long id) {
+	public static Demanda find(Long id) {
         if (id == null) return null;
         return entityManager().find(Demanda.class, id);
     }
 
 	@SuppressWarnings("unchecked")
-    public static List<Demanda> findDemandaEntries(int firstResult, int maxResults) {
-        return entityManager().createQuery("select o from Demanda o").setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
+    public static List<Demanda> find(int firstResult, int maxResults) {
+        return entityManager().createQuery("SELECT o FROM Demanda o").setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
 
 	public String toString() {
