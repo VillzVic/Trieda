@@ -113,6 +113,9 @@ public:
    // Armazena todas as disciplinas ofertadas em um campus.
    std::map<int/*Id Campus*/,GGroup<int>/*Id Discs*/> cp_discs;
 
+   // Armazena todas as salas (sala de aula ou lab) em que uma disciplina pode ser oferecida.
+   std::map<int/*Id Disc*/,GGroup<Sala*> > discSalas;
+
    /* Relaciona as turmas com alguma disciplina. Armazena tb o tamanho das turmas da
    disc em questão. A princípio, todas as turmas vão ter o msm tamanho.
    Lembrando que turmas são representadas por inteiros, definidos em estima_turmas.
@@ -130,6 +133,11 @@ public:
    Nao precisaria dessa estrutura se o FIND do GGroup estivesse funcionando normalmente.
    VER ISSO DEPOIS */
    std::map<int/*Id Disc*/,Disciplina*> refDisciplinas;
+
+   /* Estrutura responsavel por referenciar as disciplinas.
+   Nao precisaria dessa estrutura se o FIND do GGroup estivesse funcionando normalmente.
+   VER ISSO DEPOIS */
+   std::map<int/*Id Oferta*/,Oferta*> refOfertas;
 
    /* Listando todas as ofertas que contem uma disciplina especificada. */
    //Disciplina * discPresenteOferta(Disciplina&,Oferta&);

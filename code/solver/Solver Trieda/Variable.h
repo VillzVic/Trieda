@@ -16,7 +16,7 @@ public:
       V_OFERECIMENTO = 2,						// o_{idust}
       V_ABERTURA = 3,							// z_{idu}
       V_ALUNOS = 4,							// a_{iduc}
-      V_ALOC_ALUNO = 5,				        // b_{icdu}
+      V_ALOC_ALUNO = 5,				        // b_{i,d,c,cp}
       V_N_SUBBLOCOS = 6,				        // w_{bjtu} -> w_{b,t,cp}
       V_DIAS_CONSECUTIVOS = 7,				// c_{idt}
       V_MIN_CRED_SEMANA = 8,					// h_{bi}
@@ -25,8 +25,9 @@ public:
       V_N_ABERT_TURMA_BLOCO = 11,				// v_{bt}
       V_SLACK_DIST_CRED_DIA_SUPERIOR = 12,	// fcp_{dt}
       V_SLACK_DIST_CRED_DIA_INFERIOR = 13,		// fcm_{dt}
-      V_ABERTURA_SUBBLOCO_DE_BLC_DIA_CAMPUS = 14		   // r_{b,t,cp}
+      V_ABERTURA_SUBBLOCO_DE_BLC_DIA_CAMPUS = 14,		   // r_{b,t,cp}
 
+      V_SLACK_ALOC_ALUNOS_CURSO_INCOMPAT = 15   // bs_{i,d,c,cp}
 
    };
 

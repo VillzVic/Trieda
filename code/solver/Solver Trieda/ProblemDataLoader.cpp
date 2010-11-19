@@ -36,6 +36,7 @@ void ProblemDataLoader::load()
 
    referenciaCampus();
    referenciaDisciplinas();
+   referenciaOfertas();
 
    gera_refs();
    cria_blocos_curriculares();
@@ -438,6 +439,12 @@ void ProblemDataLoader::referenciaDisciplinas()
    ITERA_GGROUP(it_disc,problemData->disciplinas,Disciplina) {
       problemData->refDisciplinas[it_disc->getId()] = *it_disc;
    }
+}
+
+void ProblemDataLoader::referenciaOfertas()
+{
+   ITERA_GGROUP(itOferta,problemData->ofertas,Oferta)
+   { problemData->refOfertas[itOferta->getId()] = *itOferta; }
 }
 
 void ProblemDataLoader::gera_refs() {
@@ -1058,6 +1065,7 @@ void ProblemDataLoader::cache() {
          }
       }
    }
+
    /*
    ITERA_GGROUP(it_campus,problemData->campi,Campus) {
    it_campus->maior_sala = 0;
@@ -1232,6 +1240,10 @@ void ProblemDataLoader::carregaDisciplinasAssociadasSalas() {
 
                it_sala->disciplinasAssociadas.add(problemData->refDisciplinas[*it_sala_disc_assoc]);
 
+               // >>>
+               problemData->discSalas[*it_sala_disc_assoc].add(*it_sala);
+               // <<<
+
             }
          }
       }
@@ -1247,6 +1259,10 @@ void ProblemDataLoader::carregaDisciplinasAssociadasSalas() {
                   if(problemData->refDisciplinas[*it_disc]->eLab()) {
                      if(it_sala->getTipoSalaId() == 2) /*laboratório, segundo instancia trivial*/ {
                         it_sala->disciplinasAssociadas.add(problemData->refDisciplinas[*it_disc]);
+
+                        // >>>
+                        problemData->discSalas[*it_disc].add(*it_sala);
+                        // <<<
                      }
                   }
                   else {
@@ -1257,6 +1273,11 @@ void ProblemDataLoader::carregaDisciplinasAssociadasSalas() {
                      //if(it_sala->getTipoSalaId() != 2) {
                      //it_sala->disciplinasAssociadas.add(*it_disc);
                      it_sala->disciplinasAssociadas.add(problemData->refDisciplinas[*it_disc]);
+                     
+                     // >>>
+                     problemData->discSalas[*it_disc].add(*it_sala);
+                     // <<<
+
                      //}
                   }
                }

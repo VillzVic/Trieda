@@ -88,7 +88,7 @@ public:
                    com o <id> para o <ConjuntoSala> em questão. */
    }
 
-   int maxCreds(int dia)
+   int maxCredsPermitidos(int dia)
    {
       int totMaxCreds = 0;
 
@@ -99,6 +99,22 @@ public:
       { totMaxCreds += itSala->second->max_creds(dia); }
 
       return totMaxCreds;
+   }
+
+   int credsMaiorSala(int dia)
+   {
+      int cdtMSl = 0;
+
+      std::map<int/*Id Sala*/,Sala*>::iterator itSala =
+         salas.begin();
+
+      for(; itSala != salas.end(); itSala++)
+      {
+         if(cdtMSl < itSala->second->max_creds(dia))
+         { cdtMSl = itSala->second->max_creds(dia); }
+      }
+
+      return cdtMSl;
    }
 
    int capTotalSalas()

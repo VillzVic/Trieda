@@ -69,8 +69,12 @@ int SolverMIP::solve()
 
    lp->setMIPScreenLog(4);
    //lp->setMIPEmphasis(2);
-   lp->setTimeLimit(100);
+   /*
+   lp->setTimeLimit(360);
    lp->setPolishAfterTime(60);
+   */
+
+   lp->setTimeLimit(10);
 
    int status = lp->optimize(METHOD_MIP);
    lp->writeSolution("Solver Trieda.sol");
@@ -129,7 +133,7 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
 
    // A chave deverá sempre ser um par de inteiros com os respectivos atributos <disciplina,turma>.
    typedef
-      std::map<std::pair<int,int>,
+      std::map<std::pair<int/*turma*/,int/*disciplina*/>,
       std::vector/*vetor de dias*/<std::pair<int/*valor da variavel*/,
       std::pair<int/*id_unidade*/,int/*id do tipo de sala*/> > > > X___i_d_u_tps_t;
 
@@ -175,7 +179,7 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
 
             key = std::make_pair(v->getTurma(),id_disc);
 
-/**/
+            /**/
             cout << "Oferta de " << v->getValue() << 
                " creditos da disciplina " << v->getDisciplina()->codigo
                << " para a turma " << v->getTurma()
@@ -183,13 +187,13 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
                << " no dia " << v->getDia() << " para alguma de sala com capacidade " <<
                //v->getSala()->getId() << std::endl;
                v->getSubCjtSala()->getId() << std::endl;
-/**/
+            /**/
             if(x[key].size() == 0) 
             {
                x[key] = std::vector<std::pair<int,std::pair<int,int> > >
                   (7,std::make_pair(-1,std::make_pair(-1,-1)));
             }
-            
+
             if(x[key][v->getDia()].first > 0)
             {
                x[key][v->getDia()] = std::make_pair(
@@ -383,12 +387,11 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
    //   }
    //}
 
-
    // ==============================================================
    // ==============================================================
    /* PÓS-PROCESSAMENTO 
-         
-         Alocando, de fato, os créditos das variáveis x em salas. */
+
+   Alocando, de fato, os créditos das variáveis x em salas. */
 
    /* Inicializando as estruturas presentes em cada Sala, que são responsáveis por 
    informar a quantidade de créditos livres em um dado dia letivo. */
@@ -399,7 +402,6 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
          ITERA_GGROUP(itSala,itUnidade->salas,Sala)
          {
             for(int dia = 0; dia < 7; dia++)
-            //{ itSala->credsLivres[dia] = 0; }
             { itSala->credsLivres.push_back(0); }
 
             ITERA_GGROUP(itCredsDisp,itSala->creditos_disponiveis,CreditoDisponivel)
@@ -408,41 +410,107 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
       }
    }
 
+   //// A chave deverá sempre ser um par de inteiros com os respectivos atributos <turma,disciplina>.
+   //typedef
+   //   std::map<std::pair<int,int>,
+   //   std::vector/*vetor de dias*/<std::pair<int/*valor da variavel*/,
+   //   std::pair<int/*id_unidade*/,int/*sala*/> > > > X___i_d_u_s_t;
+
    // A chave deverá sempre ser um par de inteiros com os respectivos atributos <turma,disciplina>.
    typedef
-      std::map<std::pair<int,int>,
-      std::vector/*vetor de dias*/<std::pair<int/*valor da variavel*/,
-      std::pair<int/*id_unidade*/,int/*sala*/> > > > X___i_d_u_s_t;
+      //std::map<std::pair<int,int>,
+      //std::pair<int/*valor da variavel*/,
+      //std::vector<int/*Id Und, Id Sala, Dia*/> > > X___i_d_u_s_t;
+      std::vector<std::vector<int/*i,d,u,s,t*/> > X___i_d_u_s_t;
 
    // Variável x após o pós-processamento.
    X___i_d_u_s_t vXpp;
 
    for(X___i_d_u_tps_t::iterator it_x = x.begin(); it_x != x.end(); it_x++)
    {
+      int turma = it_x->first.first;
+      int idDisc = it_x->first.second;
+
+      // Inicializando vXppp
+      std::pair<int,int> chaveTurmaDisc (turma,idDisc);
+
+      for(int dia = 0; dia < 7; dia++)
+      {
+         /* Se a var. x possui valor maior do que 0 */
+         if(it_x->second.at(dia).first > 0)
+         { 
+            int valorX = it_x->second.at(dia).first;
+            int und = it_x->second.at(dia).second.first;
+            int tipoSala = it_x->second.at(dia).second.second;
+
+            std::vector<int> vtAux;
+            vtAux.push_back(valorX);
+            vtAux.push_back(turma);
+            vtAux.push_back(idDisc);
+            vtAux.push_back(und);
+            vtAux.push_back(tipoSala);
+            vtAux.push_back(dia);
+
+            vXpp.push_back(vtAux);
+         }
+      }
+   }
+
+   sort(vXpp.begin(),vXpp.end(),ordenaPorCreditos);
+
+   for(X___i_d_u_s_t::iterator it_x = vXpp.begin(); it_x != vXpp.end(); it_x++)
+   {
+      int idDisc = it_x->at(2);
+      int dia = it_x->at(5);
+
+      ITERA_GGROUP(itSala,problemData->discSalas[idDisc],Sala)
+      {
+         /* Se a sala comporta o valor demandado */
+         if( (itSala->credsLivres.at(dia) - 
+            it_x->at(0)) >= 0)
+         {
+            // Subtraindo os créditos
+            itSala->credsLivres.at(dia) -= it_x->at(0);
+
+            // Setando a sala
+            it_x->at(4) = itSala->getId();
+            break; // Já aloquei, então posso parar
+         }
+      }
 
    }
 
+   std::cout << "\nx\t -\t i\t d\t u\t s\t t" << std::endl;
+   for(X___i_d_u_s_t::iterator it_x = vXpp.begin(); it_x != vXpp.end(); it_x++)
+   {
+      std::cout << it_x->at(0) << "\t\t" <<
+         it_x->at(1) << "\t" <<
+         it_x->at(2) << "\t" <<
+         it_x->at(3) << "\t" <<
+         it_x->at(4) << "\t" <<
+         it_x->at(5) << std::endl;
+   }
 
    // ==============================================================
    // ==============================================================
-
-   std::cout << "PAREI EM GETSOLUTION() -> VER ANOTACOES ANTES DE COMECAR A FAZER ALGUMA COISA.!!!" << std::endl;
-   exit(1);
 
    // Fill the solution
 
    // Coletando os ids dos campus, das unidades e das salas existentes  na entrada e suas respectivas descricoes.
-   std::map<int,std::string> input_cp_desc;
-   std::map<int,std::pair<std::string,int> > input_und_desc;
-   std::map<int,std::pair<std::string,int> > input_sala_desc;
+   std::map<int/*Id Campus*/,std::string/*Desc*/> input_cp_desc;
+   std::map<int/*Id Unidade*/,std::pair<std::string/*Desc*/,int/*Id Campus*/> > input_und_desc;
+   std::map<int/*Id Sala*/,std::pair<std::string/*Desc*/,int/*Id Unidade*/> > input_sala_desc;
 
-   ITERA_GGROUP(it_cp,problemData->campi,Campus) {
+   ITERA_GGROUP(it_cp,problemData->campi,Campus)
+   {
       input_cp_desc[it_cp->getId()] = it_cp->codigo;
 
-      ITERA_GGROUP(it_und,it_cp->unidades,Unidade) {
+      ITERA_GGROUP(it_und,it_cp->unidades,Unidade)
+      {
          input_und_desc[it_und->getId()] = std::make_pair(it_und->codigo,it_und->id_campus);
 
-         ITERA_GGROUP(it_sala,it_und->salas,Sala) {
+         ITERA_GGROUP(it_sala,it_und->salas,Sala)
+         {
             input_sala_desc[it_sala->getId()] = std::make_pair(it_sala->codigo,it_sala->id_unidade);
          }
       }
@@ -452,30 +520,30 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
    GGroup<int> ids_cp;
 
    for(A___i_d_o::iterator it_a = a.begin(); it_a != a.end(); it_a++)
-   { ids_cp.add(it_a->first.at(3)); }
+   { ids_cp.add(problemData->refOfertas[it_a->first.at(2)]->campus_id); }
 
    // Coletando todas as unidades e salas consideradas para a saida.
    GGroup<int> ids_und;
    GGroup<int> ids_sala;
 
-   for(X___i_d_u_tps_t::iterator it_x = x.begin(); it_x != x.end(); it_x++) {
-      for(unsigned dia = 0; dia < it_x->second.size(); dia++) {
+   for(X___i_d_u_s_t::iterator it_x = vXpp.begin(); it_x != vXpp.end(); it_x++) {
+      //for(unsigned dia = 0; dia < it_x->second.size(); dia++) {
+      for(unsigned dia = 0; dia < 7; dia++) {
 
-         int idU = it_x->second.at(dia).second.first;
-         int idS = it_x->second.at(dia).second.second;
+         int idU = it_x->at(3);
+         int idS = it_x->at(4);
 
-         if( idU != -1 ) {
-            ids_und.add(idU);
-         }
+         if( idU != -1 )
+         { ids_und.add(idU); }
 
-         if( idS != -1 ) {
-            ids_sala.add(idS);
-         }
+         if( idS != -1 )
+         { ids_sala.add(idS); }
       }
    }
 
    // Adicionando os campus as classes de output
-   for(GGroup<int>::iterator it_ids_cp = ids_cp.begin(); it_ids_cp != ids_cp.end(); it_ids_cp++) {
+   for(GGroup<int>::iterator it_ids_cp = ids_cp.begin(); it_ids_cp != ids_cp.end(); it_ids_cp++)
+   {
       int id = *it_ids_cp;
       problemSolution->addCampus(id,input_cp_desc[id]);
    }
@@ -502,23 +570,21 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
    // ToDo: Fazer o msm que fiz aqui em baixo pro cp e und acima. nao sei se cp vai precisar
 
    // Adicionando os dias da semana as classes de output
-   for(X___i_d_u_tps_t::iterator it_x = x.begin(); it_x != x.end(); it_x++) {
-      for(unsigned dia = 0; dia < it_x->second.size(); dia++) {
-
-         //GGroup<AtendimentoSala*>::iterator it_at_sala = at_unidade->atendimentos_salas.end();
+   for(X___i_d_u_s_t::iterator it_x = vXpp.begin(); it_x != vXpp.end(); it_x++) {
+      //for(unsigned dia = 0; dia < it_x->second.size(); dia++) {
+      for(unsigned dia = 0; dia < 7; dia++) {
 
          // Procurando pela sala certa para adicionar o dia da semana
          ITERA_GGROUP(it_at_cp,problemSolution->atendimento_campus,AtendimentoCampus){
             ITERA_GGROUP(it_at_und,it_at_cp->atendimentos_unidades,AtendimentoUnidade){
                ITERA_GGROUP(it_at_sala,it_at_und->atendimentos_salas,AtendimentoSala){
-                  if(it_at_sala->getId() == it_x->second.at(dia).second.second ) {
-
+                  if(it_at_sala->getId() == it_x->at(4))
+                  {
                      // poderia ser outro elemento de x, tendo em vista que todos os elementos <.second> de uma variavel x tem o mesmo tamanho.
-                     int var_value = it_x->second.at(dia).first;
+                     int var_value = it_x->at(0);
 
-                     if( var_value != -1) {
-                        it_at_sala->addDiaSemana(dia,"",it_x->second.at(dia).second.second);
-                     }
+                     if( var_value != -1)
+                     { it_at_sala->addDiaSemana(dia,"",it_x->at(4)); }
                   }
                }
             }
@@ -539,146 +605,100 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
 
    std::map<std::vector<int/*<d,c,cp,u,s,t>*/>,
       std::pair<GGroup<int/*i*/>,
-      // >>> 27/10/2010
-      //std::pair<int/*valor var x*/,int/*valor var a*/> > > solucao;
       std::pair<std::pair<int/*valor var x - c. teorico*/,int/*valor var x - pratico*/>,
       int/*valor var a*/> > > solucao;
-   // <<< 27/10/2010
 
-   for(X___i_d_u_tps_t::iterator it_x = x.begin(); it_x != x.end(); it_x++) {
-      for(int dia = 0; dia < 7; dia++){
+   for(X___i_d_u_s_t::iterator it_x = vXpp.begin(); it_x != vXpp.end(); it_x++) {
 
-         int value_x = it_x->second.at(dia).first;
+      int valorX = it_x->at(0);
 
-         if(value_x >= 0) {
-            /*
-            std::cout << it_x->second[dia].first << "\t\t" <<
-            it_x->first.first << "\t" <<
-            it_x->first.second << "\t" <<
-            it_x->second[dia].second.first << "\t" <<
-            it_x->second[dia].second.second << "\t" <<
-            dia << std::endl;
-            */
+      if(valorX >= 0)
+      {
+         std::vector<int/*<d,c,cp,u,s,t>*/> chave(6);
 
-            std::vector<int/*<d,c,cp,u,s,t>*/> chave(6);
+         bool disc_teo = true;
 
-            // >>> 27/10/2010
-            // chave.at(0) = it_x->first.second;
+         int disc = it_x->at(2);
+         if(disc < 0)
+         {
+            chave.at(0) = -disc;
+            disc_teo = false;
+         }
+         else {
+            chave.at(0) = disc;
+         }
 
-            bool disc_teo = true;
-            if(it_x->first.second < 0) {
-               chave.at(0) = -it_x->first.second;
-               disc_teo = false;
+         int turma = it_x->at(1);
+         chave.at(1) = -1;
+         for(A___i_d_o::iterator it_a = a.begin(); it_a != a.end(); it_a++)
+         {
+            if(it_a->first.at(0) == turma &&
+               it_a->first.at(1) == disc)
+            {
+               chave.at(1) = 
+                  problemData->refOfertas[it_a->first.at(2)]->curso_id;
             }
-            else {
-               chave.at(0) = it_x->first.second;
+         }
+
+         chave.at(2) = und_cp.find(it_x->at(3))->second->getId();
+         chave.at(3) = it_x->at(3);
+         chave.at(4) = it_x->at(4);
+         chave.at(5) = it_x->at(5);
+
+         std::map<std::vector<int/*<d,c,cp,u,s,t>*/>,
+            std::pair<GGroup<int/*i*/>,
+
+            std::pair<std::pair<int/*valor var x - c. teorico*/,int/*valor var x - pratico*/>,
+            int/*valor var a*/> > >::iterator 
+
+            it_solucao = solucao.find(chave);
+
+         // Adicionando a turma
+         solucao[chave].first.add(it_x->at(1));
+
+         if( it_solucao == solucao.end() ){
+
+            if(disc_teo)
+            {
+               solucao[chave].second = 
+                  std::pair<std::pair<int/*valor var x - c. teorico*/,int/*valor var x - pratico*/>,
+                  int/*valor var a*/>
+                  (std::make_pair<int,int>(valorX,0),0);
             }
-            // <<< 27/10/2010
-
-            chave.at(1) = -1;
-            for(A___i_d_o::iterator it_a = a.begin(); it_a != a.end(); it_a++){
-               if(it_a->first.at(0) == it_x->first.first &&
-                  it_a->first.at(1) == it_x->first.second) {
-                     chave.at(1) = it_a->first.at(2);
-               }
+            else 
+            {
+               solucao[chave].second = 
+                  std::pair<std::pair<int/*valor var x - c. teorico*/,int/*valor var x - pratico*/>,
+                  int/*valor var a*/>
+                  (std::make_pair<int,int>(0,valorX),0);
             }
 
-            chave.at(2) = und_cp.find(it_x->second.at(dia).second.first)->second->getId();
-            chave.at(3) = it_x->second.at(dia).second.first;
-            chave.at(4) = it_x->second.at(dia).second.second;
-            chave.at(5) = dia;
+         }
+         else {
+            if(disc_teo)
+            { solucao[chave].second.first.first += valorX; }
+            else
+            { solucao[chave].second.first.second += valorX; }
 
-            std::map<std::vector<int/*<d,c,cp,u,s,t>*/>,
-               std::pair<GGroup<int/*i*/>,
-
-               // >>> 27/10/2010
-               //std::pair<int/*valor var x*/,int/*valor var a*/> > >::iterator 
-
-               std::pair<std::pair<int/*valor var x - c. teorico*/,int/*valor var x - pratico*/>,
-               int/*valor var a*/> > >::iterator 
-               // <<< 27/10/2010
-
-               it_solucao = solucao.find(chave);
-
-            // >>> 27/10/2010
-
-            // Adicionando a turma
-            solucao[chave].first.add(it_x->first.first);
-
-            // <<< 27/10/2010
-
-            if( it_solucao == solucao.end() ){
-               // Adicionando a turma
-               //solucao[chave].first.add(it_x->first.first);
-
-               // >>> 27/10/2010
-
-               //solucao[chave].second = 
-               //std::pair<int/*valor var x*/,int/*valor var a*/>(it_x->second.at(dia).first,0);
-
-               if(disc_teo) {
-                  solucao[chave].second = 
-                     std::pair<std::pair<int/*valor var x - c. teorico*/,int/*valor var x - pratico*/>,
-                     int/*valor var a*/>
-                     (std::make_pair<int,int>(value_x,0),0);
-               }
-               else {
-                  solucao[chave].second = 
-                     std::pair<std::pair<int/*valor var x - c. teorico*/,int/*valor var x - pratico*/>,
-                     int/*valor var a*/>
-                     (std::make_pair<int,int>(0,value_x),0);
-               }
-
-               // <<< 27/10/2010
-
-            }
-            else {
-               // >>> 27/10/2010
-
-               // Adicionando a turma
-               //solucao[chave].first.add(it_x->first.first);
-
-               // Adicionando o valor de x
-               //solucao[chave].second.first += value_x;
-
-               if(disc_teo) {
-                  solucao[chave].second.first.first += value_x;
-               }
-               else {
-                  solucao[chave].second.first.second += value_x;
-               }
-
-               // <<< 27/10/2010
-            }
          }
       }
    }
 
    std::map<std::vector<int/*<d,c,cp,u,s,t>*/>,
       std::pair<GGroup<int/*i*/>,
-
-      // >>> 27/10/2010
-      //std::pair<int/*valor var x*/,int/*valor var a*/> > >::iterator 
-
       std::pair<std::pair<int/*valor var x - c. teorico*/,int/*valor var x - pratico*/>,
-      int/*valor var a*/> > >::iterator 
-      // <<< 27/10/2010
-
+      int/*valor var a*/> > >::iterator
       it_solucao = solucao.begin();
 
    /* Para cada solucao registrada, procurar por todas vars. do tipo a que possuam 
    o(s) par(es) (i,d) ou (-i,d) formados a partir da solução em questão.*/
-   for(; it_solucao != solucao.end(); it_solucao++) {
+   for(; it_solucao != solucao.end(); it_solucao++)
+   {
       GGroup<int/*i*/>::iterator it_turma = 
          it_solucao->second.first.begin();
 
-      // >>> 27/10/2010
-
-      //int disc = it_solucao->first.at(0);
       int disc = (it_solucao->second.second.first.first > 0 ? 
          it_solucao->first.at(0) : (-it_solucao->first.at(0)));
-
-      // <<< 27/10/2010
 
       for(; it_turma != it_solucao->second.first.end(); it_turma++) {
          int turma = *it_turma;
@@ -878,6 +898,13 @@ int SolverMIP::cria_variaveis()
 
 #ifdef PRINT_cria_variaveis
    std::cout << "numVars \"r\": " << (num_vars - numVarsAnterior) << std::endl;
+   numVarsAnterior = num_vars;
+#endif
+
+   num_vars += cria_variavel_de_folga_aloc_alunos_curso_incompat(); // bs
+
+#ifdef PRINT_cria_variaveis
+   std::cout << "numVars \"bs\": " << (num_vars - numVarsAnterior) << std::endl;
    numVarsAnterior = num_vars;
 #endif
 
@@ -1307,7 +1334,8 @@ int SolverMIP::cria_variavel_consecutivos(void)
             {
                vHash[v] = lp->getNumCols();
 
-               OPT_COL col(OPT_COL::VAR_BINARY,delta,0.0,1.0,
+               //OPT_COL col(OPT_COL::VAR_BINARY,delta,0.0,1.0,
+               OPT_COL col(OPT_COL::VAR_BINARY,0,0.0,1.0,
                   (char*)v.toString().c_str());
 
                lp->newCol(col);
@@ -1338,7 +1366,8 @@ int SolverMIP::cria_variavel_min_creds(void)
             {
                vHash[v] = lp->getNumCols();
 
-               OPT_COL col(OPT_COL::VAR_INTEGRAL,-lambda,0.0,1000.0,
+               //OPT_COL col(OPT_COL::VAR_INTEGRAL,-lambda,0.0,1000.0,
+               OPT_COL col(OPT_COL::VAR_INTEGRAL,0,0.0,1000.0,
                   (char*)v.toString().c_str());
 
                lp->newCol(col);
@@ -1370,7 +1399,8 @@ int SolverMIP::cria_variavel_max_creds(void)
             {
                vHash[v] = lp->getNumCols();
 
-               OPT_COL col(OPT_COL::VAR_INTEGRAL,lambda,0.0,1000.0,
+               //OPT_COL col(OPT_COL::VAR_INTEGRAL,lambda,0.0,1000.0,
+               OPT_COL col(OPT_COL::VAR_INTEGRAL,0,0.0,1000.0,
                   (char*)v.toString().c_str());
 
                lp->newCol(col);
@@ -1646,6 +1676,48 @@ int SolverMIP::cria_variavel_abertura_subbloco_de_blc_dia_campus()
    return num_vars;
 }
 
+int SolverMIP::cria_variavel_de_folga_aloc_alunos_curso_incompat()
+{
+   int num_vars = 0;
+
+   ITERA_GGROUP(it_campus,problemData->campi,Campus)
+   {
+      ITERA_GGROUP(it_disc,problemData->disciplinas,Disciplina)
+      {
+         for(int turma=0;turma<it_disc->num_turmas;turma++)
+         {
+            ITERA_GGROUP(it_cursos,problemData->cursos,Curso)
+            {
+               Variable v;
+               v.reset();
+               v.setType(Variable::V_SLACK_ALOC_ALUNOS_CURSO_INCOMPAT);
+
+               v.setTurma(turma);            // i
+               v.setDisciplina(*it_disc);    // d
+               v.setCurso(*it_cursos);       // c
+               v.setCampus(*it_campus);		 // cp
+
+               if (vHash.find(v) == vHash.end())
+               {
+                  vHash[v] = lp->getNumCols();
+
+                  OPT_COL col(OPT_COL::VAR_BINARY,0,0.0,1.0,
+                     (char*)v.toString().c_str());
+
+                  lp->newCol(col);
+
+                  num_vars += 1;
+               }
+            }
+
+         }
+      }
+   }
+
+   return num_vars;
+}
+
+
 // ==============================================================
 //							CONSTRAINTS
 // ==============================================================
@@ -1790,14 +1862,14 @@ int SolverMIP::cria_restricoes(void)
    std::cout << "numRest \"1.2.21\": " << (restricoes - numRestAnterior) << std::endl;
    numRestAnterior = restricoes;
 #endif
-/*
+
    restricoes += cria_restricao_alunos_cursos_dif();			// Restricao 1.2.22
 
 #ifdef PRINT_cria_restricoes
    std::cout << "numRest \"1.2.22\": " << (restricoes - numRestAnterior) << std::endl;
    numRestAnterior = restricoes;
 #endif
-*/
+
    restricoes += cria_restricao_de_folga_dist_cred_dia();		// Restricao 1.2.23
 
 #ifdef PRINT_cria_restricoes
@@ -1809,6 +1881,13 @@ int SolverMIP::cria_restricoes(void)
 
 #ifdef PRINT_cria_restricoes
    std::cout << "numRest \"1.2.24\": " << (restricoes - numRestAnterior) << std::endl;
+   numRestAnterior = restricoes;
+#endif
+
+   restricoes += cria_restricao_limita_abertura_turmas();						// Restricao NOVA
+
+#ifdef PRINT_cria_restricoes
+   std::cout << "numRest \"NOVA\": " << (restricoes - numRestAnterior) << std::endl;
    numRestAnterior = restricoes;
 #endif
 
@@ -2022,7 +2101,7 @@ int SolverMIP::cria_restricao_max_cred_sd(void)
                ITERA_GGROUP(itDisc,problemData->disciplinas,Disciplina)
                { nnz += itDisc->num_turmas; }
 
-               int maxCreds = itCjtSala->maxCreds(dia);
+               int maxCreds = itCjtSala->maxCredsPermitidos(dia);
 
                OPT_ROW row( nnz, OPT_ROW::LESS , maxCreds, name );
 
@@ -3288,8 +3367,7 @@ int SolverMIP::cria_restricao_lim_cred_diar_disc(void)
 
                      nnz = 1;
 
-                     OPT_ROW row( 1, OPT_ROW::LESS , itDisc->max_creds , 
-                        name );
+                     OPT_ROW row( 1, OPT_ROW::LESS , itCjtSala->credsMaiorSala(dia) , name );
 
                      v.reset();
                      v.setType(Variable::V_CREDITOS);
@@ -4295,7 +4373,7 @@ int SolverMIP::cria_restricao_aluno_curso_disc(void)
                   if( it_v != vHash.end() )
                   { row.insert(it_v->second, 1.0); }
                }
-               
+
                v.reset();
                v.setType(Variable::V_ALOC_ALUNO);
                v.setTurma(turma);
@@ -4305,7 +4383,7 @@ int SolverMIP::cria_restricao_aluno_curso_disc(void)
 
                it_v = vHash.find(v);
                if( it_v != vHash.end() )
-               //{ row.insert(it_v->second, -itCampus->maiorSala ); }
+                  //{ row.insert(it_v->second, -itCampus->maiorSala ); }
                { row.insert(it_v->second, -itCampus->maiorSala * 100 ); }
 
                if(row.getnnz() != 0)
@@ -4422,7 +4500,7 @@ int SolverMIP::cria_restricao_alunos_cursos_dif(void)
 
                   //cHash[ c ] = lp->getNumRows();
 
-                  nnz = 2;
+                  nnz = 3;
 
                   OPT_ROW row( nnz, OPT_ROW::LESS , 1.0 , name );
 
@@ -4433,8 +4511,8 @@ int SolverMIP::cria_restricao_alunos_cursos_dif(void)
 
                   v.setTurma(turma);
                   v.setDisciplina(*itDisc);
-                  v.setCampus(*itCampus);
                   v.setCurso(itCC->first.first);
+                  v.setCampus(*itCampus);
 
                   it_v = vHash.find(v);
                   if( it_v != vHash.end() )
@@ -4447,12 +4525,26 @@ int SolverMIP::cria_restricao_alunos_cursos_dif(void)
 
                   v.setTurma(turma);
                   v.setDisciplina(*itDisc);
-                  v.setCampus(*itCampus);
                   v.setCurso(itCC->first.second);
+                  v.setCampus(*itCampus);
 
                   it_v = vHash.find(v);
                   if( it_v != vHash.end() )
                   { row.insert(it_v->second, 1); }
+
+                  // ---
+
+                  v.reset();
+                  v.setType(Variable::V_SLACK_ALOC_ALUNOS_CURSO_INCOMPAT);
+
+                  v.setTurma(turma);
+                  v.setDisciplina(*itDisc);
+                  v.setCurso(itCC->first.second);
+                  v.setCampus(*itCampus);
+
+                  it_v = vHash.find(v);
+                  if( it_v != vHash.end() )
+                  { row.insert(it_v->second, -1); }
 
                   if(row.getnnz() != 0)
                   {
@@ -4485,8 +4577,8 @@ int SolverMIP::cria_restricao_de_folga_dist_cred_dia(void)
    Variable v;
    VariableHash::iterator it_v;
 
-      ITERA_GGROUP(itDisc,problemData->disciplinas,Disciplina)
-      {
+   ITERA_GGROUP(itDisc,problemData->disciplinas,Disciplina)
+   {
       for(int dia = 0; dia < 7; dia++)
       {
          c.reset();
@@ -4717,6 +4809,102 @@ int SolverMIP::cria_restricao_ativacao_var_r()
 
          //lp->addRow(row);
          //restricoes++;
+      }
+   }
+
+   return restricoes;
+}
+
+int SolverMIP::cria_restricao_limita_abertura_turmas()
+{
+   int restricoes = 0;
+   char name[100];
+   int nnz;
+
+   Constraint c;
+
+   Variable v;
+   VariableHash::iterator it_v;
+
+   ITERA_GGROUP(itCampus,problemData->campi,Campus)
+   {
+      ITERA_GGROUP(itUnidade,itCampus->unidades,Unidade)
+      {
+         ITERA_GGROUP(itCjtSala,itUnidade->conjutoSalas,ConjuntoSala)
+         {
+
+            int id = itCjtSala->getId();
+            std::cout << "id: " << id;
+
+            for(int dia = 0; dia < 7; dia++)
+            {
+
+               ITERA_GGROUP(itOferta,problemData->ofertas,Oferta)
+               {
+                  GGroup<DisciplinaPeriodo>::iterator itPrdDisc = 
+                     itOferta->curriculo->disciplinas_periodo.begin();
+
+                  for(; itPrdDisc != itOferta->curriculo->disciplinas_periodo.end(); itPrdDisc++)
+                  {
+                     Disciplina * ptDisc = problemData->refDisciplinas[(*itPrdDisc).second];
+
+                     if(itCjtSala->getDiscsAssociadas().find(ptDisc) != 
+                        itCjtSala->getDiscsAssociadas().end())
+                     {
+
+                        for(int turma = 0; turma < ptDisc->num_turmas; turma++)
+                        {
+                           c.reset();
+                           c.setType(Constraint::C_LIMITA_ABERTURA_TURMAS);
+
+                           c.setTurma(turma);
+                           c.setDisciplina(ptDisc);
+
+                           sprintf( name, "%s", c.toString().c_str() ); 
+
+                           if (cHash.find(c) != cHash.end()) continue;
+
+                           nnz = 2;
+
+                           OPT_ROW row( nnz, OPT_ROW::LESS , 0.0, name );
+
+                           v.reset();
+                           v.setType(Variable::V_OFERECIMENTO);
+
+                           v.setTurma(turma);
+                           v.setDisciplina(ptDisc);
+                           v.setUnidade(*itUnidade);
+                           //v.setSala(*itSala);
+                           v.setSubCjtSala(*itCjtSala);
+                           v.setDia(dia);
+
+                           it_v = vHash.find(v);
+                           if(it_v != vHash.end())
+                           { row.insert(it_v->second, 1.0); }
+
+                           v.reset();
+                           v.setType(Variable::V_ALUNOS);
+
+                           v.setTurma(turma);
+                           v.setDisciplina(ptDisc);
+                           v.setOferta(*itOferta);
+
+                           it_v = vHash.find(v);
+                           if(it_v != vHash.end())
+                           { row.insert(it_v->second, -1.0); }
+
+                           if(row.getnnz() != 0)
+                           {
+                              cHash[ c ] = lp->getNumRows();
+                              lp->addRow(row);
+                              restricoes++;
+                           }
+                        }
+                     }
+                  }
+               }
+            }
+         }
       }
    }
 

@@ -162,6 +162,8 @@ std::string Constraint::toString()
         ss << "__(FIX_DIST_CRED_DIA):"; break;
      case C_VAR_R:
         ss << "__(ATIVACAO_VAR_R):"; break;
+     case C_LIMITA_ABERTURA_TURMAS:
+         ss << "__(LIMITA_ABERTURA_TURMAS):"; break;
 
      default:
         ss << "!";

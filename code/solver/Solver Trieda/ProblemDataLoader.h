@@ -63,6 +63,7 @@ private:
 
    void referenciaCampus();
    void referenciaDisciplinas();
+   void referenciaOfertas();
 
    void calculaTamanhoMedioSalasCampus();
 
@@ -73,8 +74,12 @@ private:
    são armazenados na própria disciplina. */
    void calculaDemandas();
 
-   // Armazena em cada sala, referências para as disciplinas associadas.
+   /* Armazena em cada sala, referências para as disciplinas associadas. Armazena também,
+   para cada disciplina, ponteiros para as salas compatíveis.*/
    void carregaDisciplinasAssociadasSalas();
+
+   // Armazena, para cada disciplina, ponteiros para as salas compatíveis.
+   void carregaDiscSalas();
 
    /* Armazena referências para as disciplinas associadas em cada elemento do <ConjuntoSala>. 
    Como o método carregaDisciplinasAssociadasSalas() já associou as disciplinas às salas, basta

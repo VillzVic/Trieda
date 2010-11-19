@@ -169,6 +169,7 @@
 				AdditionalLibraryDirectories="&quot;$(CPLEX112)\lib\x86_windows_vs2008\stat_mda&quot;;&quot;$(XSD)\lib\vc-8.0&quot;"
 				GenerateDebugInformation="false"
 				SubSystem="1"
+				LargeAddressAware="2"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
 				LinkTimeCodeGeneration="1"
