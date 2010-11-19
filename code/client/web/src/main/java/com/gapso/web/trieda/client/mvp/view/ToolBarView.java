@@ -120,7 +120,7 @@ public class ToolBarView extends MyComposite implements ToolBarPresenter.Display
 		Menu outros = new Menu();
 		
 		cenariosListMI = createMenuItem("Cenários", Resources.DEFAULTS.cenario16());
-		outros.add(cenariosListMI);
+//		TODO outros.add(cenariosListMI);
 		turnosListMI = createMenuItem("Turnos", Resources.DEFAULTS.turnos16());
 		outros.add(turnosListMI);
 		semanasLetivaListMI = createMenuItem("Semanas Letivas", Resources.DEFAULTS.semanaLetiva16());
