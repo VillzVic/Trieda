@@ -37,6 +37,7 @@ public class DisciplinaComboBox extends ComboBox<DisciplinaDTO> {
 			}
 		});
 		store = new ListStore<DisciplinaDTO>(load);
+		setFieldLabel("Disciplina");
 		setDisplayField("codigo");
 		setStore(store);
 		setHideTrigger(true);  

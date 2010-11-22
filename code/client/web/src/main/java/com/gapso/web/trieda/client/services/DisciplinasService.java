@@ -23,6 +23,7 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 @RemoteServiceRelativePath("disciplinas")
 public interface DisciplinasService extends RemoteService {
 
+	DisciplinaDTO getDisciplina(Long id);
 	ListLoadResult<DisciplinaDTO> getList(BasePagingLoadConfig loadConfig);
 	PagingLoadResult<DisciplinaDTO> getBuscaList(String nome, String codigo, TipoDisciplinaDTO tipoDisciplinaDTO, PagingLoadConfig config);
 	void save(DisciplinaDTO disciplinaDTO);

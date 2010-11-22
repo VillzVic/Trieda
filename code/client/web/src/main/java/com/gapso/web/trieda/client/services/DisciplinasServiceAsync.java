@@ -18,6 +18,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public interface DisciplinasServiceAsync {
 	
+	void getDisciplina(Long id, AsyncCallback<DisciplinaDTO> callback);
 	void getList(BasePagingLoadConfig loadConfig, AsyncCallback<ListLoadResult<DisciplinaDTO>> callback);
 	void getBuscaList(String nome, String codigo, TipoDisciplinaDTO tipoDisciplinaDTO, PagingLoadConfig config, AsyncCallback<PagingLoadResult<DisciplinaDTO>> callback);
 	void save(DisciplinaDTO disciplinaDTO, AsyncCallback<Void> callback);

@@ -1,7 +1,15 @@
 package com.gapso.web.trieda.client.services;
 
-import com.extjs.gxt.ui.client.data.ModelData;
+import java.util.List;
+
+import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
+import com.gapso.web.trieda.client.mvp.model.CampusDTO;
+import com.gapso.web.trieda.client.mvp.model.CurriculoDTO;
+import com.gapso.web.trieda.client.mvp.model.CursoDTO;
+import com.gapso.web.trieda.client.mvp.model.DemandaDTO;
+import com.gapso.web.trieda.client.mvp.model.DisciplinaDTO;
+import com.gapso.web.trieda.client.mvp.model.TurnoDTO;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
@@ -10,7 +18,9 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
  */
 @RemoteServiceRelativePath("demandas")
 public interface DemandasService extends RemoteService {
-	
-	public PagingLoadResult<ModelData> getList();
+
+	PagingLoadResult<DemandaDTO> getBuscaList(CampusDTO campusDTO, CursoDTO cursoDTO, CurriculoDTO curriculoDTO, TurnoDTO turnoDTO, DisciplinaDTO disciplinaDTO, PagingLoadConfig config);
+	void save(DemandaDTO demandaDTO);
+	void remove(List<DemandaDTO> demandaDTOList);
 	
 }

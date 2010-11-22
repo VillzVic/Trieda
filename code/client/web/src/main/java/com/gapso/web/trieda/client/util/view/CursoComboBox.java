@@ -37,6 +37,7 @@ public class CursoComboBox extends ComboBox<CursoDTO> {
 			}
 		});
 		store = new ListStore<CursoDTO>(load);
+		setFieldLabel("Curso");
 		setDisplayField("codigo");
 		setStore(store);
 		setHideTrigger(true);  

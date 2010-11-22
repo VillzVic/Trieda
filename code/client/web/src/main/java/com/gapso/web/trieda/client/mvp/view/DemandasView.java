@@ -9,28 +9,32 @@ import com.extjs.gxt.ui.client.data.RpcProxy;
 import com.extjs.gxt.ui.client.util.Margins;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
 import com.extjs.gxt.ui.client.widget.button.Button;
-import com.extjs.gxt.ui.client.widget.form.NumberField;
-import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.extjs.gxt.ui.client.widget.grid.ColumnConfig;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayout;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
 import com.gapso.web.trieda.client.mvp.model.DemandaDTO;
 import com.gapso.web.trieda.client.mvp.presenter.DemandasPresenter;
 import com.gapso.web.trieda.client.util.resources.Resources;
+import com.gapso.web.trieda.client.util.view.CampusComboBox;
+import com.gapso.web.trieda.client.util.view.CurriculoComboBox;
+import com.gapso.web.trieda.client.util.view.CursoComboBox;
+import com.gapso.web.trieda.client.util.view.DisciplinaComboBox;
 import com.gapso.web.trieda.client.util.view.GTabItem;
 import com.gapso.web.trieda.client.util.view.SimpleFilter;
 import com.gapso.web.trieda.client.util.view.SimpleGrid;
 import com.gapso.web.trieda.client.util.view.SimpleToolBar;
+import com.gapso.web.trieda.client.util.view.TurnoComboBox;
 
 public class DemandasView extends MyComposite implements DemandasPresenter.Display {
 
 	private SimpleToolBar toolBar;
 	private SimpleGrid<DemandaDTO> gridPanel;
 	private SimpleFilter filter;
-	private TextField<String> nomeBuscaTextField;
-	private NumberField tempoBuscaTextField;
-	private Button saveBT;
-	private Button resetBT;
+	private CampusComboBox campusBuscaCB;
+	private CursoComboBox cursoBuscaCB;
+	private CurriculoComboBox curriculoBuscaCB;
+	private TurnoComboBox turnoBuscaCB;
+	private DisciplinaComboBox disciplinaBuscaCB;
 	private ContentPanel panel;
 	private GTabItem tabItem;
 	
@@ -54,14 +58,7 @@ public class DemandasView extends MyComposite implements DemandasPresenter.Displ
 	}
 	
 	private void createToolBar() {
-		toolBar = new SimpleToolBar(false, false, false, true, true);
-		
-		saveBT = toolBar.createButton("Salvar", Resources.DEFAULTS.save16());
-		resetBT = toolBar.createButton("Cancelar", Resources.DEFAULTS.cancel16());
-		
-		toolBar.insert(resetBT, 0);
-		toolBar.insert(saveBT, 0);
-		
+		toolBar = new SimpleToolBar();
 		panel.setTopComponent(toolBar);
 	}
 	
@@ -75,7 +72,7 @@ public class DemandasView extends MyComposite implements DemandasPresenter.Displ
 
 	private List<ColumnConfig> getColumnList() {
 		List<ColumnConfig> list = new ArrayList<ColumnConfig>();
-		list.add(new ColumnConfig("campusSting", "Campus", 100));
+		list.add(new ColumnConfig("campusString", "Campus", 100));
 		list.add(new ColumnConfig("cursoString", "Curso", 100));
 		list.add(new ColumnConfig("curriculoString", "Código de Matriz Curricular", 100));
 		list.add(new ColumnConfig("turnoString", "Turno", 100));
@@ -90,24 +87,20 @@ public class DemandasView extends MyComposite implements DemandasPresenter.Displ
 		bld.setCollapsible(true);
 		
 		filter = new SimpleFilter();
-		nomeBuscaTextField = new TextField<String>();
-		nomeBuscaTextField.setFieldLabel("Nome");
-		tempoBuscaTextField = new NumberField();
-		tempoBuscaTextField.setFieldLabel("Duração da Aula (min)");
-		filter.addField(nomeBuscaTextField);
-		filter.addField(tempoBuscaTextField);
+		
+		campusBuscaCB = new CampusComboBox();
+		cursoBuscaCB = new CursoComboBox();
+		curriculoBuscaCB = new CurriculoComboBox();
+		turnoBuscaCB = new TurnoComboBox();
+		disciplinaBuscaCB = new DisciplinaComboBox();
+		
+		filter.addField(campusBuscaCB);
+		filter.addField(cursoBuscaCB);
+		filter.addField(curriculoBuscaCB);
+		filter.addField(turnoBuscaCB);
+		filter.addField(disciplinaBuscaCB);
 		
 		panel.add(filter, bld);
-	}
-	
-	@Override
-	public Button getSaveButton() {
-		return saveBT;
-	}
-
-	@Override
-	public Button getResetButton() {
-		return resetBT;
 	}
 
 	@Override
@@ -128,6 +121,56 @@ public class DemandasView extends MyComposite implements DemandasPresenter.Displ
 	@Override
 	public void setProxy(RpcProxy<PagingLoadResult<DemandaDTO>> proxy) {
 		gridPanel.setProxy(proxy);
+	}
+
+	@Override
+	public Button getNewButton() {
+		return toolBar.getNewButton();
+	}
+
+	@Override
+	public Button getEditButton() {
+		return toolBar.getEditButton();
+	}
+
+	@Override
+	public Button getRemoveButton() {
+		return toolBar.getRemoveButton();
+	}
+
+	@Override
+	public CampusComboBox getCampusBuscaComboBox() {
+		return campusBuscaCB;
+	}
+
+	@Override
+	public CursoComboBox getCursoBuscaComboBox() {
+		return cursoBuscaCB;
+	}
+
+	@Override
+	public CurriculoComboBox getCurriculoBuscaComboBox() {
+		return curriculoBuscaCB;
+	}
+
+	@Override
+	public TurnoComboBox getTurnoBuscaComboBox() {
+		return turnoBuscaCB;
+	}
+
+	@Override
+	public DisciplinaComboBox getDisciplinaBuscaComboBox() {
+		return disciplinaBuscaCB;
+	}
+
+	@Override
+	public Button getSubmitBuscaButton() {
+		return filter.getSubmitButton();
+	}
+
+	@Override
+	public Button getResetBuscaButton() {
+		return filter.getResetButton();
 	}
 
 }

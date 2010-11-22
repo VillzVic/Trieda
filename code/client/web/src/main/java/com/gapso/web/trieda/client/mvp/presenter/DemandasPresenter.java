@@ -1,23 +1,59 @@
 package com.gapso.web.trieda.client.mvp.presenter;
 
+import java.util.List;
+
+import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.extjs.gxt.ui.client.data.RpcProxy;
+import com.extjs.gxt.ui.client.event.ButtonEvent;
+import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.widget.Component;
+import com.extjs.gxt.ui.client.widget.Info;
+import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.button.Button;
+import com.gapso.web.trieda.client.mvp.model.CampusDTO;
 import com.gapso.web.trieda.client.mvp.model.CenarioDTO;
+import com.gapso.web.trieda.client.mvp.model.CurriculoDTO;
+import com.gapso.web.trieda.client.mvp.model.CursoDTO;
 import com.gapso.web.trieda.client.mvp.model.DemandaDTO;
+import com.gapso.web.trieda.client.mvp.model.DisciplinaDTO;
+import com.gapso.web.trieda.client.mvp.model.TurnoDTO;
+import com.gapso.web.trieda.client.mvp.view.DemandaFormView;
+import com.gapso.web.trieda.client.services.CampiServiceAsync;
+import com.gapso.web.trieda.client.services.CurriculosServiceAsync;
+import com.gapso.web.trieda.client.services.CursosServiceAsync;
+import com.gapso.web.trieda.client.services.DemandasServiceAsync;
+import com.gapso.web.trieda.client.services.DisciplinasServiceAsync;
+import com.gapso.web.trieda.client.services.Services;
+import com.gapso.web.trieda.client.services.TurnosServiceAsync;
+import com.gapso.web.trieda.client.util.view.CampusComboBox;
+import com.gapso.web.trieda.client.util.view.CurriculoComboBox;
+import com.gapso.web.trieda.client.util.view.CursoComboBox;
+import com.gapso.web.trieda.client.util.view.DisciplinaComboBox;
 import com.gapso.web.trieda.client.util.view.GTab;
 import com.gapso.web.trieda.client.util.view.GTabItem;
 import com.gapso.web.trieda.client.util.view.SimpleGrid;
+import com.gapso.web.trieda.client.util.view.TurnoComboBox;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
+import com.googlecode.future.FutureResult;
+import com.googlecode.future.FutureSynchronizer;
 
 public class DemandasPresenter implements Presenter {
 
 	public interface Display {
-		Button getSaveButton();
-		Button getResetButton();
+		Button getNewButton();
+		Button getEditButton();
+		Button getRemoveButton();
 		Button getImportExcelButton();
 		Button getExportExcelButton();
+		CampusComboBox getCampusBuscaComboBox();
+		CursoComboBox getCursoBuscaComboBox();
+		CurriculoComboBox getCurriculoBuscaComboBox();
+		TurnoComboBox getTurnoBuscaComboBox();
+		DisciplinaComboBox getDisciplinaBuscaComboBox();
+		Button getSubmitBuscaButton();
+		Button getResetBuscaButton();
 		SimpleGrid<DemandaDTO> getGrid();
 		Component getComponent();
 		void setProxy(RpcProxy<PagingLoadResult<DemandaDTO>> proxy);
@@ -33,37 +69,117 @@ public class DemandasPresenter implements Presenter {
 	}
 
 	private void configureProxy() {
-//		final TurnosServiceAsync service = Services.turnos();
-//		RpcProxy<PagingLoadResult<TurnoDTO>> proxy = new RpcProxy<PagingLoadResult<TurnoDTO>>() {
-//			@Override
-//			public void load(Object loadConfig, AsyncCallback<PagingLoadResult<TurnoDTO>> callback) {
-//				String nome = display.getNomeBuscaTextField().getValue();
-//				Number tempo = display.getTempoBuscaTextField().getValue();
-//				service.getBuscaList(nome, (tempo==null)?null:tempo.intValue(), (PagingLoadConfig)loadConfig, callback);
-//			}
-//		};
-//		display.setProxy(proxy);
+		final DemandasServiceAsync service = Services.demandas();
+		RpcProxy<PagingLoadResult<DemandaDTO>> proxy = new RpcProxy<PagingLoadResult<DemandaDTO>>() {
+			@Override
+			public void load(Object loadConfig, AsyncCallback<PagingLoadResult<DemandaDTO>> callback) {
+				CampusDTO campus = display.getCampusBuscaComboBox().getValue();
+				CursoDTO curso = display.getCursoBuscaComboBox().getValue();
+				CurriculoDTO curriculo = display.getCurriculoBuscaComboBox().getValue();
+				TurnoDTO turno = display.getTurnoBuscaComboBox().getValue();
+				DisciplinaDTO disciplina = display.getDisciplinaBuscaComboBox().getValue();
+				
+				service.getBuscaList(campus, curso, curriculo, turno, disciplina, (PagingLoadConfig)loadConfig, callback);
+			}
+		};
+		display.setProxy(proxy);
 	}
 	
 	private void setListeners() {
-//		display.getRemoveButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
-//			@Override
-//			public void componentSelected(ButtonEvent ce) {
-//				List<TurnoDTO> list = display.getGrid().getGrid().getSelectionModel().getSelectedItems();
-//				final TurnosServiceAsync service = Services.turnos();
-//				service.remove(list, new AsyncCallback<Void>() {
-//					@Override
-//					public void onFailure(Throwable caught) {
-//						MessageBox.alert("ERRO!", "Deu falha na conexão", null);
-//					}
-//					@Override
-//					public void onSuccess(Void result) {
-//						display.getGrid().updateList();
-//						Info.display("Removido", "Item removido com sucesso!");
-//					}
-//				});
-//			}
-//		});
+
+		display.getNewButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
+			@Override
+			public void componentSelected(ButtonEvent ce) {
+				DemandaDTO demanda = new DemandaDTO();
+				CampusDTO campus = new CampusDTO();
+				CursoDTO curso = new CursoDTO();
+				CurriculoDTO curriculo = new CurriculoDTO();
+				TurnoDTO turno = new TurnoDTO();
+				DisciplinaDTO disciplina = new DisciplinaDTO();
+				
+				Presenter presenter = new DemandaFormPresenter(new DemandaFormView(demanda, campus, curso, curriculo, turno, disciplina), display.getGrid());
+				presenter.go(null);
+			}
+		});
+		display.getEditButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
+			@Override
+			public void componentSelected(ButtonEvent ce) {
+				final DemandaDTO demandaDTO = display.getGrid().getGrid().getSelectionModel().getSelectedItem();
+				
+				final CampiServiceAsync campiService = Services.campi();
+				final CursosServiceAsync cursosService = Services.cursos();
+				final CurriculosServiceAsync curriculosService = Services.curriculos();
+				final TurnosServiceAsync turnosService = Services.turnos();
+				final DisciplinasServiceAsync disciplinasService = Services.disciplinas();
+				
+				final FutureResult<CampusDTO> futureCampusDTO = new FutureResult<CampusDTO>();
+				final FutureResult<CursoDTO> futureCursoDTO = new FutureResult<CursoDTO>();
+				final FutureResult<CurriculoDTO> futureCurriculoDTO = new FutureResult<CurriculoDTO>();
+				final FutureResult<TurnoDTO> futureTurnoDTO = new FutureResult<TurnoDTO>();
+				final FutureResult<DisciplinaDTO> futureDisciplinaDTO = new FutureResult<DisciplinaDTO>();
+				
+				campiService.getCampus(demandaDTO.getCampusId(), futureCampusDTO);
+				cursosService.getCurso(demandaDTO.getCursoId(), futureCursoDTO);
+				curriculosService.getCurriculo(demandaDTO.getCurriculoId(), futureCurriculoDTO);
+				turnosService.getTurno(demandaDTO.getTurnoId(), futureTurnoDTO);
+				disciplinasService.getDisciplina(demandaDTO.getDisciplinaId(), futureDisciplinaDTO);
+				
+				FutureSynchronizer synch = new FutureSynchronizer(futureCampusDTO, futureCursoDTO, futureCurriculoDTO, futureTurnoDTO, futureDisciplinaDTO);
+				
+				synch.addCallback(new AsyncCallback<Boolean>() {
+					@Override
+					public void onFailure(Throwable caught) {
+						MessageBox.alert("ERRO!", "Deu falha na conexão", null);
+					}
+					@Override
+					public void onSuccess(Boolean result) {
+						CampusDTO campusDTO = futureCampusDTO.result();
+						CursoDTO cursoDTO = futureCursoDTO.result();
+						CurriculoDTO curriculoDTO = futureCurriculoDTO.result();
+						TurnoDTO turnoDTO = futureTurnoDTO.result();
+						DisciplinaDTO disciplinaDTO = futureDisciplinaDTO.result();
+						
+						Presenter presenter = new DemandaFormPresenter(new DemandaFormView(demandaDTO, campusDTO, cursoDTO, curriculoDTO, turnoDTO, disciplinaDTO), display.getGrid());
+						presenter.go(null);	
+					}
+				});
+			}
+		});
+		display.getRemoveButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
+			@Override
+			public void componentSelected(ButtonEvent ce) {
+				List<DemandaDTO> list = display.getGrid().getGrid().getSelectionModel().getSelectedItems();
+				final DemandasServiceAsync service = Services.demandas();
+				service.remove(list, new AsyncCallback<Void>() {
+					@Override
+					public void onFailure(Throwable caught) {
+						MessageBox.alert("ERRO!", "Deu falha na conexão", null);
+					}
+					@Override
+					public void onSuccess(Void result) {
+						display.getGrid().updateList();
+						Info.display("Removido", "Item removido com sucesso!");
+					}
+				});
+			}
+		});
+		display.getResetBuscaButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
+			@Override
+			public void componentSelected(ButtonEvent ce) {
+				display.getCampusBuscaComboBox().setValue(null);
+				display.getCursoBuscaComboBox().setValue(null);
+				display.getCurriculoBuscaComboBox().setValue(null);
+				display.getTurnoBuscaComboBox().setValue(null);
+				display.getDisciplinaBuscaComboBox().setValue(null);
+				display.getGrid().updateList();
+			}
+		});
+		display.getSubmitBuscaButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
+			@Override
+			public void componentSelected(ButtonEvent ce) {
+				display.getGrid().updateList();
+			}
+		});
 	}
 	
 	@Override

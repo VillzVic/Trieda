@@ -38,6 +38,7 @@ public class CampusComboBox extends ComboBox<CampusDTO> {
 			}
 		});
 		store = new ListStore<CampusDTO>(load);
+		setFieldLabel("Campus");
 		setDisplayField("codigo");
 		setStore(store);
 		setHideTrigger(true);  

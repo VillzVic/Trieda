@@ -37,6 +37,7 @@ public class CurriculoComboBox extends ComboBox<CurriculoDTO> {
 			}
 		});
 		store = new ListStore<CurriculoDTO>(load);
+		setFieldLabel("Matriz Curricular");
 		setDisplayField("codigo");
 		setStore(store);
 		setHideTrigger(true);  

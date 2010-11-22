@@ -13,6 +13,7 @@ public class DemandaDTO extends FileModel {
 	 * Long   : id
 	 * Integer: version
 	 * Long   : cenarioId
+	 * Long   : ofertaId
 	 * Long   : campusId
 	 * String : campusString
 	 * Long   : cursoId
@@ -47,6 +48,13 @@ public class DemandaDTO extends FileModel {
 		return get("cenarioId");
 	}
 	
+	public void setOfertaId(Long value) {
+		set("ofertaId", value);
+	}
+	public Long getOfertaId() {
+		return get("ofertaId");
+	}
+	
 	public void setCampusId(Long value) {
 		set("campusId", value);
 	}
@@ -59,6 +67,20 @@ public class DemandaDTO extends FileModel {
 	}
 	public String getCampusString() {
 		return get("campusString");
+	}
+	
+	public void setCursoId(Long value) {
+		set("cursoId", value);
+	}
+	public Long getCursoId() {
+		return get("cursoId");
+	}
+	
+	public void setCursoString(String value) {
+		set("cursoString", value);
+	}
+	public String getCursoString() {
+		return get("cursoString");
 	}
 	
 	public void setCurriculoId(Long value) {

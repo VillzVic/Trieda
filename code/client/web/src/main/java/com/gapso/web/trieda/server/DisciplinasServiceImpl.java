@@ -46,6 +46,11 @@ public class DisciplinasServiceImpl extends RemoteServiceServlet implements Disc
 	private static final long serialVersionUID = -4850774141421616870L;
 
 	@Override
+	public DisciplinaDTO getDisciplina(Long id) {
+		return ConvertBeans.toDisciplinaDTO(Disciplina.find(id));
+	}
+	
+	@Override
 	public ListLoadResult<DisciplinaDTO> getListByCursos(List<CursoDTO> cursosDTO) {
 		List<DisciplinaDTO> list = new ArrayList<DisciplinaDTO>();
 		List<Curso> cursos = new ArrayList<Curso>();

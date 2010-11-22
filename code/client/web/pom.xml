@@ -124,7 +124,7 @@
 					<style>OBF</style>
 				</configuration>
 			</plugin>
-					<plugin>
+			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>aspectj-maven-plugin</artifactId>
 				<version>1.0</version>
@@ -162,6 +162,6 @@
 					<target>1.6</target>
 				</configuration>
 			</plugin>
-			</plugins>
+		</plugins>
 	</build>
 </project>

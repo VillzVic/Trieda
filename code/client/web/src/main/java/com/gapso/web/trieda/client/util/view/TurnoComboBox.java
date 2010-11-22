@@ -42,6 +42,7 @@ public class TurnoComboBox extends ComboBox<TurnoDTO> {
 			}
 		});
 		store = new ListStore<TurnoDTO>(load);
+		setFieldLabel("Turno");
 		setDisplayField("nome");
 		setStore(store);
 		setHideTrigger(true);  

@@ -1,1 +1,1 @@
-src.includes = src/main/java/com/gapso/web/trieda/server/*Impl.java
+src.includes = src/main/java/com/gapso/web/trieda/server/*Impl.java,src/main/java/com/gapso/web/trieda/server/util/CenarioUtil.java

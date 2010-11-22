@@ -157,13 +157,13 @@ public class Oferta implements Serializable {
     }
 
     @SuppressWarnings("unchecked")
-	public static List<Oferta> findByCursoAndCodigoLikeAndDescricaoLike(Turno turno, Campus campus, Curso curso, Curriculo curriculo, int firstResult, int maxResults, String orderBy) {
+	public static List<Oferta> findByTurnoAndCampusAndCursoAndCurriculo(Turno turno, Campus campus, Curso curso, Curriculo curriculo, int firstResult, int maxResults, String orderBy) {
         
         orderBy = (orderBy != null) ? "ORDER BY o." + orderBy : "";
         
         String queryTurno = (turno != null) ? " o.turno = :turno AND " : "";
         String queryCampus = (campus != null) ? " o.campus = :campus AND " : "";
-        String queryCurso = (curso != null) ? " o.curso = :curso AND " : "";
+        String queryCurso = (curso != null) ? " o.curriculo.curso = :curso AND " : "";
         String queryCurriculo = (curriculo != null) ? " o.curriculo = :curriculo AND " : "";
         
         Query q = entityManager().createQuery("SELECT o FROM Oferta o WHERE "+queryTurno+queryCampus+queryCurso+queryCurriculo+" 1=1 ");

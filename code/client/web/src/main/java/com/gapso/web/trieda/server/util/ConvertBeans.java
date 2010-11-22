@@ -13,6 +13,7 @@ import com.gapso.trieda.domain.Cenario;
 import com.gapso.trieda.domain.Curriculo;
 import com.gapso.trieda.domain.CurriculoDisciplina;
 import com.gapso.trieda.domain.Curso;
+import com.gapso.trieda.domain.Demanda;
 import com.gapso.trieda.domain.DeslocamentoCampus;
 import com.gapso.trieda.domain.DeslocamentoUnidade;
 import com.gapso.trieda.domain.Disciplina;
@@ -36,6 +37,7 @@ import com.gapso.web.trieda.client.mvp.model.CenarioDTO;
 import com.gapso.web.trieda.client.mvp.model.CurriculoDTO;
 import com.gapso.web.trieda.client.mvp.model.CurriculoDisciplinaDTO;
 import com.gapso.web.trieda.client.mvp.model.CursoDTO;
+import com.gapso.web.trieda.client.mvp.model.DemandaDTO;
 import com.gapso.web.trieda.client.mvp.model.DeslocamentoCampusDTO;
 import com.gapso.web.trieda.client.mvp.model.DeslocamentoUnidadeDTO;
 import com.gapso.web.trieda.client.mvp.model.DisciplinaDTO;
@@ -753,6 +755,61 @@ public class ConvertBeans {
 		dto.setMatrizCurricularId(domain.getCurriculo().getId());
 		dto.setTurnoString(domain.getTurno().getNome());
 		dto.setTurnoId(domain.getTurno().getId());
+		
+		return dto;
+	}
+	
+	// DEMANDA
+	public static Demanda toDemanda(DemandaDTO dto) {
+		Demanda domain = new Demanda();
+		domain.setId(dto.getId());
+		domain.setVersion(dto.getVersion());
+		Oferta oferta = Oferta.find(dto.getOfertaId());
+		if(oferta != null) {
+			domain.setOferta(oferta);
+		} else {
+			Campus campus = Campus.find(dto.getCampusId());
+			Curso curso = Curso.find(dto.getCursoId());
+			Curriculo curriculo = Curriculo.find(dto.getCurriculoId());
+			Turno turno = Turno.find(dto.getTurnoId());
+			List<Oferta> ofertas = Oferta.findByTurnoAndCampusAndCursoAndCurriculo(turno, campus, curso, curriculo, 0, 1, null);
+			domain.setOferta(ofertas.get(0));
+		}
+		domain.setDisciplina(Disciplina.find(dto.getDisciplinaId()));
+		domain.setQuantidade(dto.getDemanda());
+		return domain;
+	}
+	
+	public static DemandaDTO toDemandaDTO(Demanda domain) {
+		DemandaDTO dto = new DemandaDTO();
+		dto.setId(domain.getId());
+		dto.setVersion(domain.getVersion());
+		
+		Oferta oferta = domain.getOferta();
+		
+		Campus campus = oferta.getCampus();
+		dto.setCampusString(campus.getCodigo());
+		dto.setCampusId(campus.getId());
+		
+		Curriculo curriculo = oferta.getCurriculo();
+		dto.setCurriculoString(curriculo.getCodigo());
+		dto.setCurriculoId(curriculo.getId());
+		
+		Curso curso = curriculo.getCurso();
+		dto.setCursoString(curso.getCodigo());
+		dto.setCursoId(curso.getId());
+		
+		Turno turno = oferta.getTurno();
+		dto.setTurnoString(turno.getNome());
+		dto.setTurnoId(turno.getId());
+		
+		Disciplina disciplina = domain.getDisciplina();
+		dto.setDisciplinaString(disciplina.getCodigo());
+		dto.setDisciplinaId(disciplina.getId());
+		
+		dto.setCenarioId(disciplina.getCenario().getId());
+		
+		dto.setDemanda(domain.getQuantidade());
 		
 		return dto;
 	}

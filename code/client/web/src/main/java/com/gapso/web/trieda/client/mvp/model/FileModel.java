@@ -45,7 +45,7 @@ public class FileModel extends BaseModel {
 	public boolean equals(Object obj) {
 		if (obj != null && obj instanceof FileModel) {
 			FileModel mobj = (FileModel) obj;
-			if (mobj.getName() != null) {
+			if (mobj.getName() != null && getName() != null) {
 				return getName().equals(mobj.getName())
 						&& getPath().equals(mobj.getPath());
 			}
