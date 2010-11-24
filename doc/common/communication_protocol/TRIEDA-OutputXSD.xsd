@@ -110,7 +110,7 @@
           <xs:documentation>identificador do horário de aula  (de um determinado turno de um determinado dia da semana) que contém os atendimentos em uma determinada sala de uma determinada unidade de um determinado campus</xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element name="professorId" type="xs:string">
+      <xs:element name="professorId" type="xs:int">
         <xs:annotation>
           <xs:documentation>identificador do professor que dará aula no horário de aula em questão (de um determinado turno de um determinado dia da semana) que contém os atendimentos em uma determinada sala de uma determinada unidade de um determinado campus</xs:documentation>
         </xs:annotation>
