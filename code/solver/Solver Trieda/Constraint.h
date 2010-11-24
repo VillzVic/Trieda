@@ -37,7 +37,8 @@ public:
       C_SLACK_DIST_CRED_DIA = 21,			// Restricao 1.2.23
       C_VAR_R = 22,			            // Restricao 1.2.24
 
-      C_LIMITA_ABERTURA_TURMAS = 23			            // Restricao NOVA
+      C_LIMITA_ABERTURA_TURMAS = 23,			            // Restricao NOVA
+      C_ABRE_TURMAS_EM_SEQUENCIA = 24			            // Restricao NOVA
 
    };
 

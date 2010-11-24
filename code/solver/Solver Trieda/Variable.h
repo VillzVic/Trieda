@@ -14,14 +14,14 @@ public:
       V_ERROR = 0,
       V_CREDITOS = 1,							// x_{idust}
       V_OFERECIMENTO = 2,						// o_{idust}
-      V_ABERTURA = 3,							// z_{idu}
-      V_ALUNOS = 4,							// a_{iduc}
-      V_ALOC_ALUNO = 5,				        // b_{i,d,c,cp}
+      V_ABERTURA = 3,							// z_{i,d,cp}
+      V_ALUNOS = 4,							   // a_{iduc}
+      V_ALOC_ALUNO = 5,				         // b_{i,d,c,cp}
       V_N_SUBBLOCOS = 6,				        // w_{bjtu} -> w_{b,t,cp}
       V_DIAS_CONSECUTIVOS = 7,				// c_{idt}
       V_MIN_CRED_SEMANA = 8,					// h_{bi}
       V_MAX_CRED_SEMANA = 9,					// H_{bi}
-      V_ALOC_DISCIPLINA = 10,					// y_{idsu}
+      V_ALOC_DISCIPLINA = 10,					// y_{i,d,tps,u}
       V_N_ABERT_TURMA_BLOCO = 11,				// v_{bt}
       V_SLACK_DIST_CRED_DIA_SUPERIOR = 12,	// fcp_{dt}
       V_SLACK_DIST_CRED_DIA_INFERIOR = 13,		// fcm_{dt}
@@ -59,7 +59,11 @@ public:
    ConjuntoSala* getSubCjtSala() const { return tps; }
 
    int getTurma() const { return i; }
+   
    Curso* getCurso() const { return c; }
+
+   Curso* getCursoIncompat() const { return c_incompat; }
+
    BlocoCurricular* getBloco() const { return b; }
    Disciplina* getDisciplina() const { return d; }
 
@@ -94,6 +98,9 @@ public:
 
    void setTurma(int ii) { i = ii; }
    void setCurso(Curso* cc) { c = cc; }
+
+   void setCursoIncompat(Curso* cc) { c_incompat = cc; }
+
    void setBloco(BlocoCurricular* bb) {  b = bb; } 
    void setDisciplina(Disciplina* dd) {  d = dd; }
 
@@ -132,6 +139,9 @@ private:
 
    int i; // Turma
    Curso* c;
+
+   Curso* c_incompat;
+
    BlocoCurricular* b;
    Disciplina* d;
 

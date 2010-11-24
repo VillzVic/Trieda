@@ -25,11 +25,12 @@ void ProblemDataLoader::load()
    std::cout << "Some preprocessing..." << std::endl;
    /* processamento */
 
+   estabeleceDiasLetivosDiscs();
+
    criaConjuntoSalas();
 
-   //>>>
    divideDisciplinas();
-   // <<<
+
    // >>> 14/10/2010
    //armz_disc_curriculo();
    // <<< 14/10/2010
@@ -53,9 +54,26 @@ void ProblemDataLoader::load()
 
    cache();
 
+   estabeleceDiasLetivosDiscSala();
+
    print_stats();
    //print_csv();
 
+}
+
+void ProblemDataLoader::estabeleceDiasLetivosDiscs()
+{
+   ITERA_GGROUP(itDisc,problemData->disciplinas,Disciplina)
+   {
+      ITERA_GGROUP(itHorario,itDisc->horarios,Horario)
+      {
+         GGroup<int>::iterator itDia =
+            itHorario->dias_semana.begin();
+
+         for(; itDia != itHorario->dias_semana.end(); itDia++)
+         { itDisc->diasLetivos.add(*itDia); }
+      }
+   }
 }
 
 void ProblemDataLoader::criaConjuntoSalas()
@@ -78,6 +96,15 @@ void ProblemDataLoader::criaConjuntoSalas()
                   {
                      itCjtSala->addSala(**itSala);
                      found = true;
+
+                     ITERA_GGROUP(itCredDisp,itSala->creditos_disponiveis,CreditoDisponivel)
+                     { 
+                        /* Adicionando os dias letivos ao conjunto de salas */
+                        itCjtSala->diasLetivos.add(itCredDisp->dia_semana);
+                        /* Adicionando os dias letivos ao campus em questão */
+                        itCampus->diasLetivos.add(itCredDisp->dia_semana);
+                     }
+
                      break;
                   }
                }
@@ -88,22 +115,65 @@ void ProblemDataLoader::criaConjuntoSalas()
                ConjuntoSala * cjtSala = new ConjuntoSala();
 
                cjtSala->setId(itSala->capacidade);
-               //cjtSala->setCapacidade(itSala->capacidade);
                cjtSala->setTipoSalas(itSala->tipo_sala_id);
 
                cjtSala->addSala(**itSala);
 
-               //cjtSala->setIdUnidade(itUnidade->getId());
-
-               //problemData->conjutoSalas.add(cjtSala);
                itUnidade->conjutoSalas.add(cjtSala);
 
                problemData->totalConjuntosSalas++;
+
+               ITERA_GGROUP(itCredDisp,itSala->creditos_disponiveis,CreditoDisponivel)
+               { 
+                  /* Adicionando os dias letivos ao conjunto de salas */
+                  cjtSala->diasLetivos.add(itCredDisp->dia_semana);
+                  /* Adicionando os dias letivos ao campus em questão */
+                  itCampus->diasLetivos.add(itCredDisp->dia_semana);
+               }
             }
          }
       }
    }
+}
 
+void ProblemDataLoader::estabeleceDiasLetivosDiscSala()
+{
+   ITERA_GGROUP(itCampus,problemData->campi,Campus)
+   {
+      ITERA_GGROUP(itUnidade,itCampus->unidades,Unidade)
+      {
+         ITERA_GGROUP(itCjtSala,itUnidade->conjutoSalas,ConjuntoSala)
+         {
+            int numDiasLetCjtSala = itCjtSala->diasLetivos.size();
+
+            ITERA_GGROUP(itDiscAssoc,itCjtSala->getDiscsAssociadas(),Disciplina)
+            {
+               /* Para cada disciplina associada ao conjunto de salas em questão,
+               verificar se os dias da semana em que ela é oferecida estão disponíveis
+               no conjunto de salas. */
+
+               int numDiasLetDisc = itDiscAssoc->diasLetivos.size();
+
+               if(numDiasLetDisc <= numDiasLetCjtSala)
+               {
+                  GGroup<int>::iterator itDiasLetDisc =
+                     itDiscAssoc->diasLetivos.begin();
+
+                  for(; itDiasLetDisc != itDiscAssoc->diasLetivos.end(); itDiasLetDisc++)
+                  {
+                     if( itCjtSala->diasLetivos.find(*itDiasLetDisc) != 
+                        itCjtSala->diasLetivos.end() )
+                     {
+                        problemData->discSala_Dias[std::make_pair<int,int>
+                           (itDiscAssoc->getId(),itCjtSala->getId())].add
+                           (*itDiasLetDisc);
+                     }
+                  }
+               }
+            }
+         }
+      }
+   }
 }
 
 template<class T> 
@@ -415,6 +485,12 @@ void ProblemDataLoader::divideDisciplinas() {
          //nova_disc->foi_dividida = true;
          // <<< 14/10/2010
 
+         GGroup<int>::iterator itDiasLetivosDiscs =
+            it_disc->diasLetivos.begin();
+
+         for(; itDiasLetivosDiscs != it_disc->diasLetivos.end(); itDiasLetivosDiscs++)
+         { nova_disc->diasLetivos.add(*itDiasLetivosDiscs); }
+
          disciplinas_novas.add(nova_disc);
       }
    }
@@ -631,19 +707,20 @@ void ProblemDataLoader::gera_refs() {
 
 }
 
-void ProblemDataLoader::cria_blocos_curriculares() {
-   /* cria blocos curriculares */
-   /**/
-   ITERA_GGROUP(it_campi,problemData->campi,Campus) {
-      ITERA_GGROUP(it_curso,problemData->cursos,Curso) {
-         ITERA_GGROUP(it_curr,it_curso->curriculos,Curriculo) {
-
+void ProblemDataLoader::cria_blocos_curriculares() 
+{
+   ITERA_GGROUP(it_campi,problemData->campi,Campus)
+   {
+      ITERA_GGROUP(it_curso,problemData->cursos,Curso)
+      {
+         ITERA_GGROUP(it_curr,it_curso->curriculos,Curriculo)
+         {
             GGroup<DisciplinaPeriodo>::iterator it_dp = 
                it_curr->disciplinas_periodo.begin();
 
             // Percorrendo todas as disciplinas de um curso cadastradas para um currículo.
-            for(;it_dp != it_curr->disciplinas_periodo.end(); ++it_dp) {
-
+            for(;it_dp != it_curr->disciplinas_periodo.end(); ++it_dp)
+            {
                DisciplinaPeriodo dp = *it_dp;
                int periodo = dp.first;
                int disc_id = dp.second;
@@ -653,13 +730,15 @@ void ProblemDataLoader::cria_blocos_curriculares() {
                // Encontrando a disciplina em questão.
                for(GGroup<Disciplina*>::iterator it_d = 
                   problemData->disciplinas.begin();
-                  it_d != problemData->disciplinas.end(); ++it_d) {
+                  it_d != problemData->disciplinas.end(); ++it_d)
+               {
 
-                     if (it_d->getId() == disc_id) {
-                        //d = new Disciplina();
-                        d = *it_d;
-                        break;
-                     }
+                  if (it_d->getId() == disc_id)
+                  {
+                     //d = new Disciplina();
+                     d = *it_d;
+                     break;
+                  }
                }
 
                GGroup<BlocoCurricular*>::iterator it_bc = 
@@ -670,15 +749,18 @@ void ProblemDataLoader::cria_blocos_curriculares() {
                bool found = false;
 
                // Verificando a existência do bloco curricular para a disciplina em questão.
-               for(;it_bc != problemData->blocos.end(); ++it_bc) {
-                  if(it_bc->getId() == id_blc) {
+               for(;it_bc != problemData->blocos.end(); ++it_bc) 
+               {
+                  if(it_bc->getId() == id_blc)
+                  {
                      it_bc->disciplinas.add(d);
                      found = true;
                      break;
                   }
                }
 
-               if(!found) {
+               if(!found) 
+               {
                   BlocoCurricular * b = new BlocoCurricular();
 
                   b->setId(id_blc);
@@ -690,14 +772,23 @@ void ProblemDataLoader::cria_blocos_curriculares() {
 
                   problemData->blocos.add(b);
                }
-
             }
-
          }
       }
    }
 
-   /**/
+   /* Setando os dias letivos de cada bloco. */
+   ITERA_GGROUP(itBlocoCurric,problemData->blocos,BlocoCurricular)
+   {
+      ITERA_GGROUP(itDisc,itBlocoCurric->disciplinas,Disciplina)
+      {
+         GGroup<int>::iterator itDiasLet =
+            itDisc->diasLetivos.begin();
+
+         for(; itDiasLet != itDisc->diasLetivos.end(); itDiasLet++)
+         { itBlocoCurric->diasLetivos.add(*itDiasLet); }
+      }
+   }
 
    /*
    ITERA_GGROUP(it_campi,problemData->campi,Campus) {
@@ -1005,7 +1096,7 @@ void ProblemDataLoader::print_stats() {
    printf("<*> Turmas:\n");
    printf("\t - Entrada:    \t%4d\n",nturmas);
    printf("\t - Divididas:  \t%4d\n",nturmasDiscDiv);   
-   printf("\t - Total:  \t%4d\n",nturmas+nturmasDiscDiv);   
+   printf("\t - Total:  \t%4d\n",nturmas+nturmasDiscDiv);
 
    printf("<*> Professores:  \t%4d\n",nprofs);
    printf("<*> Cursos:       \t%4d\n",ncursos);
@@ -1273,7 +1364,7 @@ void ProblemDataLoader::carregaDisciplinasAssociadasSalas() {
                      //if(it_sala->getTipoSalaId() != 2) {
                      //it_sala->disciplinasAssociadas.add(*it_disc);
                      it_sala->disciplinasAssociadas.add(problemData->refDisciplinas[*it_disc]);
-                     
+
                      // >>>
                      problemData->discSalas[*it_disc].add(*it_sala);
                      // <<<
@@ -1322,8 +1413,20 @@ void ProblemDataLoader::relacionaDiscOfertas()
 
       for(; itPrdDisc != itOferta->curriculo->disciplinas_periodo.end(); itPrdDisc++)
       { problemData->ofertasDisc[(*itPrdDisc).second].add(*itOferta); }
-    }
+   }
 }
+
+//void ProblemDataLoader::relacionaDiscCampusOfertas()
+//{
+//   std::map<int/*Id disc*/, GGroup<Oferta*> >::iterator itDiscOft
+//      problemData->ofertasDisc.begin();
+//
+//   for(; itDiscOft != problemData->ofertasDisc.end(); itDiscOft++)
+//   {
+//      ofertasCPDisc[std::pair<int,int>(itDiscOft->second.begin()->campus_id,
+//         itDiscOft->first)]
+//   }
+//}
 
 // >>> 15/10/2010
 //void ProblemDataLoader::armz_disc_curriculo()

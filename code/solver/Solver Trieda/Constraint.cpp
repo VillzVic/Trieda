@@ -164,6 +164,8 @@ std::string Constraint::toString()
         ss << "__(ATIVACAO_VAR_R):"; break;
      case C_LIMITA_ABERTURA_TURMAS:
          ss << "__(LIMITA_ABERTURA_TURMAS):"; break;
+     case C_ABRE_TURMAS_EM_SEQUENCIA:
+         ss << "__(ABRE_TURMAS_EM_SEQUENCIA):"; break;
 
      default:
         ss << "!";

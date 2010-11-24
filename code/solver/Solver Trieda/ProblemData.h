@@ -113,8 +113,11 @@ public:
    // Armazena todas as disciplinas ofertadas em um campus.
    std::map<int/*Id Campus*/,GGroup<int>/*Id Discs*/> cp_discs;
 
+   // >>> 22/11/2010
+   // Essa estrutura eu mudei para a classe problem solution.
    // Armazena todas as salas (sala de aula ou lab) em que uma disciplina pode ser oferecida.
    std::map<int/*Id Disc*/,GGroup<Sala*> > discSalas;
+   // <<< 22/11/2010
 
    /* Relaciona as turmas com alguma disciplina. Armazena tb o tamanho das turmas da
    disc em questão. A princípio, todas as turmas vão ter o msm tamanho.
@@ -142,6 +145,9 @@ public:
    /* Listando todas as ofertas que contem uma disciplina especificada. */
    //Disciplina * discPresenteOferta(Disciplina&,Oferta&);
    std::map<int/*Id disc*/, GGroup<Oferta*> > ofertasDisc;
+
+   /* Listando os dias letivos para uma dada disciplina e sala. */
+   std::map<std::pair<int/*idDisc*/,int/*idSala*/>, GGroup<int>/*Dias*/ > discSala_Dias;
 
    // <<<
 

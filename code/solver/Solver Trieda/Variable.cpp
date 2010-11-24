@@ -30,9 +30,12 @@ void Variable::reset()
    tps = NULL;
 
    i = -1;
-   c = NULL;;
-   b = NULL;;
-   d = NULL;;
+   c = NULL;
+   
+   c_incompat = NULL;
+
+   b = NULL;
+   d = NULL;
 
    j = -1;
 
@@ -59,6 +62,9 @@ Variable& Variable::operator=(const Variable& var)
 
    this->i = var.getTurma();
    this->c = var.getCurso();
+
+   this->c_incompat = var.getCursoIncompat();
+
    this->b = var.getBloco();
    this->d = var.getDisciplina();
 
@@ -85,7 +91,12 @@ bool Variable::operator <(const Variable& var) const
    if (E_MENOR(this->getSubCjtSala(),var.getSubCjtSala())) return true;
 
    if (this->getTurma() < var.getTurma()) return true;
+   
    if(E_MENOR(this->getCurso(),var.getCurso())) return true;
+   
+   if(E_MENOR(this->getCursoIncompat(),var.getCursoIncompat())) return true;
+
+
    if (E_MENOR(this->getBloco(),var.getBloco())) return true;
    if (E_MENOR(this->getDisciplina(),var.getDisciplina())) return true;
 

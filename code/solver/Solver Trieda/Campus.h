@@ -25,6 +25,9 @@ public:
    int totalSalas;
    int maiorSala;
 
+   /* Armazena os dias letivos para um determinado campus */
+   GGroup<int> diasLetivos;
+
 public:
 
    // =========== METODOS SET

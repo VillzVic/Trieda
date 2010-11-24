@@ -4753,7 +4753,7 @@ class ItemSala: public ::xml_schema::type
   /**
    * @brief Element type.
    */
-  typedef ::xml_schema::int_ numero_type;
+  typedef ::xml_schema::string numero_type;
 
   /**
    * @brief Element traits type.
@@ -4786,6 +4786,17 @@ class ItemSala: public ::xml_schema::type
    */
   void
   numero (const numero_type& x);
+
+  /**
+   * @brief Set the element value without copying.
+   *
+   * @param p A new value to use.
+   *
+   * This function will try to use the passed value directly
+   * instead of making a copy.
+   */
+  void
+  numero (::std::auto_ptr< numero_type > p);
 
   //@}
 
@@ -14071,8 +14082,8 @@ class GrupoDeslocamento: public ::xml_schema::type
 /**
  * @brief Class corresponding to the %GrupoDisciplina schema type.
  *
- * caso seja necess?rio, esta informa??o representar? a prefer?ncia de
- * divis?o de cr?dito desta disciplina
+ * caso seja necessario, esta informacao representara a preferencia de
+ * divisao de credito desta disciplina
  *
  * @nosubgrouping
  */

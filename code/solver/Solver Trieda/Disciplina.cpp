@@ -31,6 +31,7 @@ void Disciplina::le_arvore(ItemDisciplina& elem)
 {
    id = elem.id();
    codigo = elem.codigo();
+   nome = elem.nome();
    cred_teoricos = elem.credTeoricos();
    cred_praticos = elem.credPraticos();
    max_creds = cred_teoricos + cred_praticos;

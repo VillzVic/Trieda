@@ -21,5 +21,7 @@ public:
    Campus* campus;
    GGroup<Disciplina*> disciplinas;
 
+   GGroup<int> diasLetivos;
+
    int total_turmas;
 };

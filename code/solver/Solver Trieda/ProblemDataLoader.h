@@ -26,7 +26,11 @@ public:
    // Load the XML file
    void load();
 
+   void estabeleceDiasLetivosDiscs();
+
    void criaConjuntoSalas();
+
+   void estabeleceDiasLetivosDiscSala();
 
    void divideDisciplinas();
    // >>> 14/10/2010
@@ -89,6 +93,9 @@ private:
 
    /* Relaciona cada disciplina com as ofertas em que ela aparece. */
    void relacionaDiscOfertas();
+
+   /* Relaciona cada disciplina de um campus com as ofertas em que ela aparece. */
+   //void relacionaDiscCampusOfertas();
 
    // <<<
 

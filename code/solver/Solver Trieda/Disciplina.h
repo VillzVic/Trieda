@@ -88,6 +88,10 @@ public:
 
    // <<<
 
+   // Armazena os dias letivos em que a disciplina pode ser ministrada.
+   GGroup<int> diasLetivos;
+
+
 
 
 	//Disciplina& operator= (const Disciplina& d);

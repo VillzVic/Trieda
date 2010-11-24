@@ -15,7 +15,8 @@ public:
 	//private:
 	std::string codigo;
 	std::string andar;
-	int numero;   
+   std::string numero;   
+   //int numero;   
 	int tipo_sala_id; //alterar para ref, depois
 	int capacidade;
 	GGroup<Horario*> horarios_disponiveis;

@@ -40,264 +40,6 @@
 
 #include "TRIEDA-OutputXSD.h"
 
-// ItemAtendimento
-// 
-
-const ItemAtendimento::id_type& ItemAtendimento::
-id () const
-{
-  return this->id_.get ();
-}
-
-ItemAtendimento::id_type& ItemAtendimento::
-id ()
-{
-  return this->id_.get ();
-}
-
-void ItemAtendimento::
-id (const id_type& x)
-{
-  this->id_.set (x);
-}
-
-const ItemAtendimento::ofertaCursoCampiId_type& ItemAtendimento::
-ofertaCursoCampiId () const
-{
-  return this->ofertaCursoCampiId_.get ();
-}
-
-ItemAtendimento::ofertaCursoCampiId_type& ItemAtendimento::
-ofertaCursoCampiId ()
-{
-  return this->ofertaCursoCampiId_.get ();
-}
-
-void ItemAtendimento::
-ofertaCursoCampiId (const ofertaCursoCampiId_type& x)
-{
-  this->ofertaCursoCampiId_.set (x);
-}
-
-const ItemAtendimento::disciplinaId_type& ItemAtendimento::
-disciplinaId () const
-{
-  return this->disciplinaId_.get ();
-}
-
-ItemAtendimento::disciplinaId_type& ItemAtendimento::
-disciplinaId ()
-{
-  return this->disciplinaId_.get ();
-}
-
-void ItemAtendimento::
-disciplinaId (const disciplinaId_type& x)
-{
-  this->disciplinaId_.set (x);
-}
-
-const ItemAtendimento::turma_type& ItemAtendimento::
-turma () const
-{
-  return this->turma_.get ();
-}
-
-ItemAtendimento::turma_type& ItemAtendimento::
-turma ()
-{
-  return this->turma_.get ();
-}
-
-void ItemAtendimento::
-turma (const turma_type& x)
-{
-  this->turma_.set (x);
-}
-
-void ItemAtendimento::
-turma (::std::auto_ptr< turma_type > x)
-{
-  this->turma_.set (x);
-}
-
-const ItemAtendimento::quatidadeAlunos_type& ItemAtendimento::
-quatidadeAlunos () const
-{
-  return this->quatidadeAlunos_.get ();
-}
-
-ItemAtendimento::quatidadeAlunos_type& ItemAtendimento::
-quatidadeAlunos ()
-{
-  return this->quatidadeAlunos_.get ();
-}
-
-void ItemAtendimento::
-quatidadeAlunos (const quatidadeAlunos_type& x)
-{
-  this->quatidadeAlunos_.set (x);
-}
-
-const ItemAtendimento::salaId_type& ItemAtendimento::
-salaId () const
-{
-  return this->salaId_.get ();
-}
-
-ItemAtendimento::salaId_type& ItemAtendimento::
-salaId ()
-{
-  return this->salaId_.get ();
-}
-
-void ItemAtendimento::
-salaId (const salaId_type& x)
-{
-  this->salaId_.set (x);
-}
-
-const ItemAtendimento::diaSemana_type& ItemAtendimento::
-diaSemana () const
-{
-  return this->diaSemana_.get ();
-}
-
-ItemAtendimento::diaSemana_type& ItemAtendimento::
-diaSemana ()
-{
-  return this->diaSemana_.get ();
-}
-
-void ItemAtendimento::
-diaSemana (const diaSemana_type& x)
-{
-  this->diaSemana_.set (x);
-}
-
-const ItemAtendimento::alocacaoTatico_optional& ItemAtendimento::
-alocacaoTatico () const
-{
-  return this->alocacaoTatico_;
-}
-
-ItemAtendimento::alocacaoTatico_optional& ItemAtendimento::
-alocacaoTatico ()
-{
-  return this->alocacaoTatico_;
-}
-
-void ItemAtendimento::
-alocacaoTatico (const alocacaoTatico_type& x)
-{
-  this->alocacaoTatico_.set (x);
-}
-
-void ItemAtendimento::
-alocacaoTatico (const alocacaoTatico_optional& x)
-{
-  this->alocacaoTatico_ = x;
-}
-
-void ItemAtendimento::
-alocacaoTatico (::std::auto_ptr< alocacaoTatico_type > x)
-{
-  this->alocacaoTatico_.set (x);
-}
-
-const ItemAtendimento::alocacaoOperacional_optional& ItemAtendimento::
-alocacaoOperacional () const
-{
-  return this->alocacaoOperacional_;
-}
-
-ItemAtendimento::alocacaoOperacional_optional& ItemAtendimento::
-alocacaoOperacional ()
-{
-  return this->alocacaoOperacional_;
-}
-
-void ItemAtendimento::
-alocacaoOperacional (const alocacaoOperacional_type& x)
-{
-  this->alocacaoOperacional_.set (x);
-}
-
-void ItemAtendimento::
-alocacaoOperacional (const alocacaoOperacional_optional& x)
-{
-  this->alocacaoOperacional_ = x;
-}
-
-void ItemAtendimento::
-alocacaoOperacional (::std::auto_ptr< alocacaoOperacional_type > x)
-{
-  this->alocacaoOperacional_.set (x);
-}
-
-
-// GrupoAtendimento
-// 
-
-const GrupoAtendimento::atendimento_sequence& GrupoAtendimento::
-atendimento () const
-{
-  return this->atendimento_;
-}
-
-GrupoAtendimento::atendimento_sequence& GrupoAtendimento::
-atendimento ()
-{
-  return this->atendimento_;
-}
-
-void GrupoAtendimento::
-atendimento (const atendimento_sequence& s)
-{
-  this->atendimento_ = s;
-}
-
-
-// ItemTatico
-// 
-
-const ItemTatico::qtdeCreditosTeoricos_type& ItemTatico::
-qtdeCreditosTeoricos () const
-{
-  return this->qtdeCreditosTeoricos_.get ();
-}
-
-ItemTatico::qtdeCreditosTeoricos_type& ItemTatico::
-qtdeCreditosTeoricos ()
-{
-  return this->qtdeCreditosTeoricos_.get ();
-}
-
-void ItemTatico::
-qtdeCreditosTeoricos (const qtdeCreditosTeoricos_type& x)
-{
-  this->qtdeCreditosTeoricos_.set (x);
-}
-
-const ItemTatico::qtdeCreditosPraticos_type& ItemTatico::
-qtdeCreditosPraticos () const
-{
-  return this->qtdeCreditosPraticos_.get ();
-}
-
-ItemTatico::qtdeCreditosPraticos_type& ItemTatico::
-qtdeCreditosPraticos ()
-{
-  return this->qtdeCreditosPraticos_.get ();
-}
-
-void ItemTatico::
-qtdeCreditosPraticos (const qtdeCreditosPraticos_type& x)
-{
-  this->qtdeCreditosPraticos_.set (x);
-}
-
-
 // ItemOperacional
 // 
 
@@ -661,12 +403,6 @@ professorId (const professorId_type& x)
   this->professorId_.set (x);
 }
 
-void ItemAtendimentoHorarioAula::
-professorId (::std::auto_ptr< professorId_type > x)
-{
-  this->professorId_.set (x);
-}
-
 const ItemAtendimentoHorarioAula::creditoTeorico_type& ItemAtendimentoHorarioAula::
 creditoTeorico () const
 {
@@ -1023,471 +759,32 @@ AtendimentoTatico (const AtendimentoTatico_sequence& s)
 // TriedaOutput
 // 
 
-const TriedaOutput::atendimentos1_type& TriedaOutput::
-atendimentos1 () const
+const TriedaOutput::atendimentos_type& TriedaOutput::
+atendimentos () const
 {
-  return this->atendimentos1_.get ();
+  return this->atendimentos_.get ();
 }
 
-TriedaOutput::atendimentos1_type& TriedaOutput::
-atendimentos1 ()
+TriedaOutput::atendimentos_type& TriedaOutput::
+atendimentos ()
 {
-  return this->atendimentos1_.get ();
-}
-
-void TriedaOutput::
-atendimentos1 (const atendimentos1_type& x)
-{
-  this->atendimentos1_.set (x);
+  return this->atendimentos_.get ();
 }
 
 void TriedaOutput::
-atendimentos1 (::std::auto_ptr< atendimentos1_type > x)
+atendimentos (const atendimentos_type& x)
 {
-  this->atendimentos1_.set (x);
-}
-
-const TriedaOutput::atendimentos2_type& TriedaOutput::
-atendimentos2 () const
-{
-  return this->atendimentos2_.get ();
-}
-
-TriedaOutput::atendimentos2_type& TriedaOutput::
-atendimentos2 ()
-{
-  return this->atendimentos2_.get ();
+  this->atendimentos_.set (x);
 }
 
 void TriedaOutput::
-atendimentos2 (const atendimentos2_type& x)
+atendimentos (::std::auto_ptr< atendimentos_type > x)
 {
-  this->atendimentos2_.set (x);
-}
-
-void TriedaOutput::
-atendimentos2 (::std::auto_ptr< atendimentos2_type > x)
-{
-  this->atendimentos2_.set (x);
+  this->atendimentos_.set (x);
 }
 
 
 #include <xsd/cxx/xml/dom/parsing-source.hxx>
-
-// ItemAtendimento
-//
-
-ItemAtendimento::
-ItemAtendimento (const id_type& id,
-                 const ofertaCursoCampiId_type& ofertaCursoCampiId,
-                 const disciplinaId_type& disciplinaId,
-                 const turma_type& turma,
-                 const quatidadeAlunos_type& quatidadeAlunos,
-                 const salaId_type& salaId,
-                 const diaSemana_type& diaSemana)
-: ::xml_schema::type (),
-  id_ (id, ::xml_schema::flags (), this),
-  ofertaCursoCampiId_ (ofertaCursoCampiId, ::xml_schema::flags (), this),
-  disciplinaId_ (disciplinaId, ::xml_schema::flags (), this),
-  turma_ (turma, ::xml_schema::flags (), this),
-  quatidadeAlunos_ (quatidadeAlunos, ::xml_schema::flags (), this),
-  salaId_ (salaId, ::xml_schema::flags (), this),
-  diaSemana_ (diaSemana, ::xml_schema::flags (), this),
-  alocacaoTatico_ (::xml_schema::flags (), this),
-  alocacaoOperacional_ (::xml_schema::flags (), this)
-{
-}
-
-ItemAtendimento::
-ItemAtendimento (const ItemAtendimento& x,
-                 ::xml_schema::flags f,
-                 ::xml_schema::container* c)
-: ::xml_schema::type (x, f, c),
-  id_ (x.id_, f, this),
-  ofertaCursoCampiId_ (x.ofertaCursoCampiId_, f, this),
-  disciplinaId_ (x.disciplinaId_, f, this),
-  turma_ (x.turma_, f, this),
-  quatidadeAlunos_ (x.quatidadeAlunos_, f, this),
-  salaId_ (x.salaId_, f, this),
-  diaSemana_ (x.diaSemana_, f, this),
-  alocacaoTatico_ (x.alocacaoTatico_, f, this),
-  alocacaoOperacional_ (x.alocacaoOperacional_, f, this)
-{
-}
-
-ItemAtendimento::
-ItemAtendimento (const ::xercesc::DOMElement& e,
-                 ::xml_schema::flags f,
-                 ::xml_schema::container* c)
-: ::xml_schema::type (e, f | ::xml_schema::flags::base, c),
-  id_ (f, this),
-  ofertaCursoCampiId_ (f, this),
-  disciplinaId_ (f, this),
-  turma_ (f, this),
-  quatidadeAlunos_ (f, this),
-  salaId_ (f, this),
-  diaSemana_ (f, this),
-  alocacaoTatico_ (f, this),
-  alocacaoOperacional_ (f, this)
-{
-  if ((f & ::xml_schema::flags::base) == 0)
-  {
-    ::xsd::cxx::xml::dom::parser< char > p (e, true, false);
-    this->parse (p, f);
-  }
-}
-
-void ItemAtendimento::
-parse (::xsd::cxx::xml::dom::parser< char >& p,
-       ::xml_schema::flags f)
-{
-  for (; p.more_elements (); p.next_element ())
-  {
-    const ::xercesc::DOMElement& i (p.cur_element ());
-    const ::xsd::cxx::xml::qualified_name< char > n (
-      ::xsd::cxx::xml::dom::name< char > (i));
-
-    // id
-    //
-    if (n.name () == "id" && n.namespace_ ().empty ())
-    {
-      if (!id_.present ())
-      {
-        this->id_.set (id_traits::create (i, f, this));
-        continue;
-      }
-    }
-
-    // ofertaCursoCampiId
-    //
-    if (n.name () == "ofertaCursoCampiId" && n.namespace_ ().empty ())
-    {
-      if (!ofertaCursoCampiId_.present ())
-      {
-        this->ofertaCursoCampiId_.set (ofertaCursoCampiId_traits::create (i, f, this));
-        continue;
-      }
-    }
-
-    // disciplinaId
-    //
-    if (n.name () == "disciplinaId" && n.namespace_ ().empty ())
-    {
-      if (!disciplinaId_.present ())
-      {
-        this->disciplinaId_.set (disciplinaId_traits::create (i, f, this));
-        continue;
-      }
-    }
-
-    // turma
-    //
-    if (n.name () == "turma" && n.namespace_ ().empty ())
-    {
-      ::std::auto_ptr< turma_type > r (
-        turma_traits::create (i, f, this));
-
-      if (!turma_.present ())
-      {
-        this->turma_.set (r);
-        continue;
-      }
-    }
-
-    // quatidadeAlunos
-    //
-    if (n.name () == "quatidadeAlunos" && n.namespace_ ().empty ())
-    {
-      if (!quatidadeAlunos_.present ())
-      {
-        this->quatidadeAlunos_.set (quatidadeAlunos_traits::create (i, f, this));
-        continue;
-      }
-    }
-
-    // salaId
-    //
-    if (n.name () == "salaId" && n.namespace_ ().empty ())
-    {
-      if (!salaId_.present ())
-      {
-        this->salaId_.set (salaId_traits::create (i, f, this));
-        continue;
-      }
-    }
-
-    // diaSemana
-    //
-    if (n.name () == "diaSemana" && n.namespace_ ().empty ())
-    {
-      if (!diaSemana_.present ())
-      {
-        this->diaSemana_.set (diaSemana_traits::create (i, f, this));
-        continue;
-      }
-    }
-
-    // alocacaoTatico
-    //
-    if (n.name () == "alocacaoTatico" && n.namespace_ ().empty ())
-    {
-      ::std::auto_ptr< alocacaoTatico_type > r (
-        alocacaoTatico_traits::create (i, f, this));
-
-      if (!this->alocacaoTatico_)
-      {
-        this->alocacaoTatico_.set (r);
-        continue;
-      }
-    }
-
-    // alocacaoOperacional
-    //
-    if (n.name () == "alocacaoOperacional" && n.namespace_ ().empty ())
-    {
-      ::std::auto_ptr< alocacaoOperacional_type > r (
-        alocacaoOperacional_traits::create (i, f, this));
-
-      if (!this->alocacaoOperacional_)
-      {
-        this->alocacaoOperacional_.set (r);
-        continue;
-      }
-    }
-
-    break;
-  }
-
-  if (!id_.present ())
-  {
-    throw ::xsd::cxx::tree::expected_element< char > (
-      "id",
-      "");
-  }
-
-  if (!ofertaCursoCampiId_.present ())
-  {
-    throw ::xsd::cxx::tree::expected_element< char > (
-      "ofertaCursoCampiId",
-      "");
-  }
-
-  if (!disciplinaId_.present ())
-  {
-    throw ::xsd::cxx::tree::expected_element< char > (
-      "disciplinaId",
-      "");
-  }
-
-  if (!turma_.present ())
-  {
-    throw ::xsd::cxx::tree::expected_element< char > (
-      "turma",
-      "");
-  }
-
-  if (!quatidadeAlunos_.present ())
-  {
-    throw ::xsd::cxx::tree::expected_element< char > (
-      "quatidadeAlunos",
-      "");
-  }
-
-  if (!salaId_.present ())
-  {
-    throw ::xsd::cxx::tree::expected_element< char > (
-      "salaId",
-      "");
-  }
-
-  if (!diaSemana_.present ())
-  {
-    throw ::xsd::cxx::tree::expected_element< char > (
-      "diaSemana",
-      "");
-  }
-}
-
-ItemAtendimento* ItemAtendimento::
-_clone (::xml_schema::flags f,
-        ::xml_schema::container* c) const
-{
-  return new class ItemAtendimento (*this, f, c);
-}
-
-ItemAtendimento::
-~ItemAtendimento ()
-{
-}
-
-// GrupoAtendimento
-//
-
-GrupoAtendimento::
-GrupoAtendimento ()
-: ::xml_schema::type (),
-  atendimento_ (::xml_schema::flags (), this)
-{
-}
-
-GrupoAtendimento::
-GrupoAtendimento (const GrupoAtendimento& x,
-                  ::xml_schema::flags f,
-                  ::xml_schema::container* c)
-: ::xml_schema::type (x, f, c),
-  atendimento_ (x.atendimento_, f, this)
-{
-}
-
-GrupoAtendimento::
-GrupoAtendimento (const ::xercesc::DOMElement& e,
-                  ::xml_schema::flags f,
-                  ::xml_schema::container* c)
-: ::xml_schema::type (e, f | ::xml_schema::flags::base, c),
-  atendimento_ (f, this)
-{
-  if ((f & ::xml_schema::flags::base) == 0)
-  {
-    ::xsd::cxx::xml::dom::parser< char > p (e, true, false);
-    this->parse (p, f);
-  }
-}
-
-void GrupoAtendimento::
-parse (::xsd::cxx::xml::dom::parser< char >& p,
-       ::xml_schema::flags f)
-{
-  for (; p.more_elements (); p.next_element ())
-  {
-    const ::xercesc::DOMElement& i (p.cur_element ());
-    const ::xsd::cxx::xml::qualified_name< char > n (
-      ::xsd::cxx::xml::dom::name< char > (i));
-
-    // atendimento
-    //
-    if (n.name () == "atendimento" && n.namespace_ ().empty ())
-    {
-      ::std::auto_ptr< atendimento_type > r (
-        atendimento_traits::create (i, f, this));
-
-      this->atendimento_.push_back (r);
-      continue;
-    }
-
-    break;
-  }
-}
-
-GrupoAtendimento* GrupoAtendimento::
-_clone (::xml_schema::flags f,
-        ::xml_schema::container* c) const
-{
-  return new class GrupoAtendimento (*this, f, c);
-}
-
-GrupoAtendimento::
-~GrupoAtendimento ()
-{
-}
-
-// ItemTatico
-//
-
-ItemTatico::
-ItemTatico (const qtdeCreditosTeoricos_type& qtdeCreditosTeoricos,
-            const qtdeCreditosPraticos_type& qtdeCreditosPraticos)
-: ::xml_schema::type (),
-  qtdeCreditosTeoricos_ (qtdeCreditosTeoricos, ::xml_schema::flags (), this),
-  qtdeCreditosPraticos_ (qtdeCreditosPraticos, ::xml_schema::flags (), this)
-{
-}
-
-ItemTatico::
-ItemTatico (const ItemTatico& x,
-            ::xml_schema::flags f,
-            ::xml_schema::container* c)
-: ::xml_schema::type (x, f, c),
-  qtdeCreditosTeoricos_ (x.qtdeCreditosTeoricos_, f, this),
-  qtdeCreditosPraticos_ (x.qtdeCreditosPraticos_, f, this)
-{
-}
-
-ItemTatico::
-ItemTatico (const ::xercesc::DOMElement& e,
-            ::xml_schema::flags f,
-            ::xml_schema::container* c)
-: ::xml_schema::type (e, f | ::xml_schema::flags::base, c),
-  qtdeCreditosTeoricos_ (f, this),
-  qtdeCreditosPraticos_ (f, this)
-{
-  if ((f & ::xml_schema::flags::base) == 0)
-  {
-    ::xsd::cxx::xml::dom::parser< char > p (e, true, false);
-    this->parse (p, f);
-  }
-}
-
-void ItemTatico::
-parse (::xsd::cxx::xml::dom::parser< char >& p,
-       ::xml_schema::flags f)
-{
-  for (; p.more_elements (); p.next_element ())
-  {
-    const ::xercesc::DOMElement& i (p.cur_element ());
-    const ::xsd::cxx::xml::qualified_name< char > n (
-      ::xsd::cxx::xml::dom::name< char > (i));
-
-    // qtdeCreditosTeoricos
-    //
-    if (n.name () == "qtdeCreditosTeoricos" && n.namespace_ ().empty ())
-    {
-      if (!qtdeCreditosTeoricos_.present ())
-      {
-        this->qtdeCreditosTeoricos_.set (qtdeCreditosTeoricos_traits::create (i, f, this));
-        continue;
-      }
-    }
-
-    // qtdeCreditosPraticos
-    //
-    if (n.name () == "qtdeCreditosPraticos" && n.namespace_ ().empty ())
-    {
-      if (!qtdeCreditosPraticos_.present ())
-      {
-        this->qtdeCreditosPraticos_.set (qtdeCreditosPraticos_traits::create (i, f, this));
-        continue;
-      }
-    }
-
-    break;
-  }
-
-  if (!qtdeCreditosTeoricos_.present ())
-  {
-    throw ::xsd::cxx::tree::expected_element< char > (
-      "qtdeCreditosTeoricos",
-      "");
-  }
-
-  if (!qtdeCreditosPraticos_.present ())
-  {
-    throw ::xsd::cxx::tree::expected_element< char > (
-      "qtdeCreditosPraticos",
-      "");
-  }
-}
-
-ItemTatico* ItemTatico::
-_clone (::xml_schema::flags f,
-        ::xml_schema::container* c) const
-{
-  return new class ItemTatico (*this, f, c);
-}
-
-ItemTatico::
-~ItemTatico ()
-{
-}
 
 // ItemOperacional
 //
@@ -2235,12 +1532,9 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
     //
     if (n.name () == "professorId" && n.namespace_ ().empty ())
     {
-      ::std::auto_ptr< professorId_type > r (
-        professorId_traits::create (i, f, this));
-
       if (!professorId_.present ())
       {
-        this->professorId_.set (r);
+        this->professorId_.set (professorId_traits::create (i, f, this));
         continue;
       }
     }
@@ -3140,20 +2434,16 @@ GrupoAtendimentoTatico::
 //
 
 TriedaOutput::
-TriedaOutput (const atendimentos1_type& atendimentos1,
-              const atendimentos2_type& atendimentos2)
+TriedaOutput (const atendimentos_type& atendimentos)
 : ::xml_schema::type (),
-  atendimentos1_ (atendimentos1, ::xml_schema::flags (), this),
-  atendimentos2_ (atendimentos2, ::xml_schema::flags (), this)
+  atendimentos_ (atendimentos, ::xml_schema::flags (), this)
 {
 }
 
 TriedaOutput::
-TriedaOutput (::std::auto_ptr< atendimentos1_type >& atendimentos1,
-              ::std::auto_ptr< atendimentos2_type >& atendimentos2)
+TriedaOutput (::std::auto_ptr< atendimentos_type >& atendimentos)
 : ::xml_schema::type (),
-  atendimentos1_ (atendimentos1, ::xml_schema::flags (), this),
-  atendimentos2_ (atendimentos2, ::xml_schema::flags (), this)
+  atendimentos_ (atendimentos, ::xml_schema::flags (), this)
 {
 }
 
@@ -3162,8 +2452,7 @@ TriedaOutput (const TriedaOutput& x,
               ::xml_schema::flags f,
               ::xml_schema::container* c)
 : ::xml_schema::type (x, f, c),
-  atendimentos1_ (x.atendimentos1_, f, this),
-  atendimentos2_ (x.atendimentos2_, f, this)
+  atendimentos_ (x.atendimentos_, f, this)
 {
 }
 
@@ -3172,8 +2461,7 @@ TriedaOutput (const ::xercesc::DOMElement& e,
               ::xml_schema::flags f,
               ::xml_schema::container* c)
 : ::xml_schema::type (e, f | ::xml_schema::flags::base, c),
-  atendimentos1_ (f, this),
-  atendimentos2_ (f, this)
+  atendimentos_ (f, this)
 {
   if ((f & ::xml_schema::flags::base) == 0)
   {
@@ -3192,30 +2480,16 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
     const ::xsd::cxx::xml::qualified_name< char > n (
       ::xsd::cxx::xml::dom::name< char > (i));
 
-    // atendimentos1
+    // atendimentos
     //
-    if (n.name () == "atendimentos1" && n.namespace_ ().empty ())
+    if (n.name () == "atendimentos" && n.namespace_ ().empty ())
     {
-      ::std::auto_ptr< atendimentos1_type > r (
-        atendimentos1_traits::create (i, f, this));
+      ::std::auto_ptr< atendimentos_type > r (
+        atendimentos_traits::create (i, f, this));
 
-      if (!atendimentos1_.present ())
+      if (!atendimentos_.present ())
       {
-        this->atendimentos1_.set (r);
-        continue;
-      }
-    }
-
-    // atendimentos2
-    //
-    if (n.name () == "atendimentos2" && n.namespace_ ().empty ())
-    {
-      ::std::auto_ptr< atendimentos2_type > r (
-        atendimentos2_traits::create (i, f, this));
-
-      if (!atendimentos2_.present ())
-      {
-        this->atendimentos2_.set (r);
+        this->atendimentos_.set (r);
         continue;
       }
     }
@@ -3223,17 +2497,10 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
     break;
   }
 
-  if (!atendimentos1_.present ())
+  if (!atendimentos_.present ())
   {
     throw ::xsd::cxx::tree::expected_element< char > (
-      "atendimentos1",
-      "");
-  }
-
-  if (!atendimentos2_.present ())
-  {
-    throw ::xsd::cxx::tree::expected_element< char > (
-      "atendimentos2",
+      "atendimentos",
       "");
   }
 }
@@ -3251,50 +2518,6 @@ TriedaOutput::
 }
 
 #include <ostream>
-
-::std::ostream&
-operator<< (::std::ostream& o, const ItemAtendimento& i)
-{
-  o << ::std::endl << "id: " << i.id ();
-  o << ::std::endl << "ofertaCursoCampiId: " << i.ofertaCursoCampiId ();
-  o << ::std::endl << "disciplinaId: " << i.disciplinaId ();
-  o << ::std::endl << "turma: " << i.turma ();
-  o << ::std::endl << "quatidadeAlunos: " << i.quatidadeAlunos ();
-  o << ::std::endl << "salaId: " << i.salaId ();
-  o << ::std::endl << "diaSemana: " << i.diaSemana ();
-  if (i.alocacaoTatico ())
-  {
-    o << ::std::endl << "alocacaoTatico: " << *i.alocacaoTatico ();
-  }
-
-  if (i.alocacaoOperacional ())
-  {
-    o << ::std::endl << "alocacaoOperacional: " << *i.alocacaoOperacional ();
-  }
-
-  return o;
-}
-
-::std::ostream&
-operator<< (::std::ostream& o, const GrupoAtendimento& i)
-{
-  for (GrupoAtendimento::atendimento_const_iterator
-       b (i.atendimento ().begin ()), e (i.atendimento ().end ());
-       b != e; ++b)
-  {
-    o << ::std::endl << "atendimento: " << *b;
-  }
-
-  return o;
-}
-
-::std::ostream&
-operator<< (::std::ostream& o, const ItemTatico& i)
-{
-  o << ::std::endl << "qtdeCreditosTeoricos: " << i.qtdeCreditosTeoricos ();
-  o << ::std::endl << "qtdeCreditosPraticos: " << i.qtdeCreditosPraticos ();
-  return o;
-}
 
 ::std::ostream&
 operator<< (::std::ostream& o, const ItemOperacional& i)
@@ -3488,8 +2711,7 @@ operator<< (::std::ostream& o, const GrupoAtendimentoTatico& i)
 ::std::ostream&
 operator<< (::std::ostream& o, const TriedaOutput& i)
 {
-  o << ::std::endl << "atendimentos1: " << i.atendimentos1 ();
-  o << ::std::endl << "atendimentos2: " << i.atendimentos2 ();
+  o << ::std::endl << "atendimentos: " << i.atendimentos ();
   return o;
 }
 
@@ -3500,161 +2722,6 @@ operator<< (::std::ostream& o, const TriedaOutput& i)
 #include <ostream>
 #include <xsd/cxx/tree/error-handler.hxx>
 #include <xsd/cxx/xml/dom/serialization-source.hxx>
-
-void
-operator<< (::xercesc::DOMElement& e, const ItemAtendimento& i)
-{
-  e << static_cast< const ::xml_schema::type& > (i);
-
-  // id
-  //
-  {
-    ::xercesc::DOMElement& s (
-      ::xsd::cxx::xml::dom::create_element (
-        "id",
-        e));
-
-    s << i.id ();
-  }
-
-  // ofertaCursoCampiId
-  //
-  {
-    ::xercesc::DOMElement& s (
-      ::xsd::cxx::xml::dom::create_element (
-        "ofertaCursoCampiId",
-        e));
-
-    s << i.ofertaCursoCampiId ();
-  }
-
-  // disciplinaId
-  //
-  {
-    ::xercesc::DOMElement& s (
-      ::xsd::cxx::xml::dom::create_element (
-        "disciplinaId",
-        e));
-
-    s << i.disciplinaId ();
-  }
-
-  // turma
-  //
-  {
-    ::xercesc::DOMElement& s (
-      ::xsd::cxx::xml::dom::create_element (
-        "turma",
-        e));
-
-    s << i.turma ();
-  }
-
-  // quatidadeAlunos
-  //
-  {
-    ::xercesc::DOMElement& s (
-      ::xsd::cxx::xml::dom::create_element (
-        "quatidadeAlunos",
-        e));
-
-    s << i.quatidadeAlunos ();
-  }
-
-  // salaId
-  //
-  {
-    ::xercesc::DOMElement& s (
-      ::xsd::cxx::xml::dom::create_element (
-        "salaId",
-        e));
-
-    s << i.salaId ();
-  }
-
-  // diaSemana
-  //
-  {
-    ::xercesc::DOMElement& s (
-      ::xsd::cxx::xml::dom::create_element (
-        "diaSemana",
-        e));
-
-    s << i.diaSemana ();
-  }
-
-  // alocacaoTatico
-  //
-  if (i.alocacaoTatico ())
-  {
-    ::xercesc::DOMElement& s (
-      ::xsd::cxx::xml::dom::create_element (
-        "alocacaoTatico",
-        e));
-
-    s << *i.alocacaoTatico ();
-  }
-
-  // alocacaoOperacional
-  //
-  if (i.alocacaoOperacional ())
-  {
-    ::xercesc::DOMElement& s (
-      ::xsd::cxx::xml::dom::create_element (
-        "alocacaoOperacional",
-        e));
-
-    s << *i.alocacaoOperacional ();
-  }
-}
-
-void
-operator<< (::xercesc::DOMElement& e, const GrupoAtendimento& i)
-{
-  e << static_cast< const ::xml_schema::type& > (i);
-
-  // atendimento
-  //
-  for (GrupoAtendimento::atendimento_const_iterator
-       b (i.atendimento ().begin ()), n (i.atendimento ().end ());
-       b != n; ++b)
-  {
-    ::xercesc::DOMElement& s (
-      ::xsd::cxx::xml::dom::create_element (
-        "atendimento",
-        e));
-
-    s << *b;
-  }
-}
-
-void
-operator<< (::xercesc::DOMElement& e, const ItemTatico& i)
-{
-  e << static_cast< const ::xml_schema::type& > (i);
-
-  // qtdeCreditosTeoricos
-  //
-  {
-    ::xercesc::DOMElement& s (
-      ::xsd::cxx::xml::dom::create_element (
-        "qtdeCreditosTeoricos",
-        e));
-
-    s << i.qtdeCreditosTeoricos ();
-  }
-
-  // qtdeCreditosPraticos
-  //
-  {
-    ::xercesc::DOMElement& s (
-      ::xsd::cxx::xml::dom::create_element (
-        "qtdeCreditosPraticos",
-        e));
-
-    s << i.qtdeCreditosPraticos ();
-  }
-}
 
 void
 operator<< (::xercesc::DOMElement& e, const ItemOperacional& i)
@@ -4130,26 +3197,15 @@ operator<< (::xercesc::DOMElement& e, const TriedaOutput& i)
 {
   e << static_cast< const ::xml_schema::type& > (i);
 
-  // atendimentos1
+  // atendimentos
   //
   {
     ::xercesc::DOMElement& s (
       ::xsd::cxx::xml::dom::create_element (
-        "atendimentos1",
+        "atendimentos",
         e));
 
-    s << i.atendimentos1 ();
-  }
-
-  // atendimentos2
-  //
-  {
-    ::xercesc::DOMElement& s (
-      ::xsd::cxx::xml::dom::create_element (
-        "atendimentos2",
-        e));
-
-    s << i.atendimentos2 ();
+    s << i.atendimentos ();
   }
 }
 

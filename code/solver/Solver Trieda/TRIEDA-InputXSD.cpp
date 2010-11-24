@@ -1167,6 +1167,12 @@ numero (const numero_type& x)
   this->numero_.set (x);
 }
 
+void ItemSala::
+numero (::std::auto_ptr< numero_type > x)
+{
+  this->numero_.set (x);
+}
+
 const ItemSala::tipoSalaId_type& ItemSala::
 tipoSalaId () const
 {
@@ -6312,9 +6318,12 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
     //
     if (n.name () == "numero" && n.namespace_ ().empty ())
     {
+      ::std::auto_ptr< numero_type > r (
+        numero_traits::create (i, f, this));
+
       if (!numero_.present ())
       {
-        this->numero_.set (numero_traits::create (i, f, this));
+        this->numero_.set (r);
         continue;
       }
     }

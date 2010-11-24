@@ -147,6 +147,9 @@ public:
 
       return false;
    }
+
+   /* Armazena os dias letivos em que, pelo menos, uma sala possui algum crédito disponível */
+   GGroup<int> diasLetivos;
    
 private:
 
@@ -161,7 +164,7 @@ private:
    /* Armazena referências para todas as disciplinas associadas a, pelo menos,
    uma sala pertencente ao map <salas> */
    GGroup<Disciplina*> disciplinasAssociadas;
-   //std::map<int/*Id Disc.*/,Disciplina*> disciplinasAssociadas; 
+   //std::map<int/*Id Disc.*/,Disciplina*> disciplinasAssociadas;
 
    //int idUnidade;
    /* Evita a busca em todas as unidades para saber a qual unidade

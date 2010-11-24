@@ -125,6 +125,7 @@ public:
    int cria_restricao_ativacao_var_r(void);						// Restricao 1.2.24
 
    int cria_restricao_limita_abertura_turmas(void);      // Restricao NOVA
+   int cria_restricao_abre_turmas_em_sequencia(void);      // Restricao NOVA
 
 };
 
