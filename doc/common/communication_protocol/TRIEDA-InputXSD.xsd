@@ -1,5 +1,5 @@
-<?xml version="1.0" encoding="utf-8" ?>
-<!--Created with Liquid XML Studio 6.1.18.0 - FREE Community Edition (http://www.liquid-technologies.com)-->
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Created with Liquid XML Studio 1.0.8.0 (http://www.liquid-technologies.com) -->
 <xs:schema elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
   <xs:element name="TriedaInput">
     <xs:complexType>
@@ -405,7 +405,7 @@
           <xs:documentation>andar no prédio (unidade) em que sala está localizada, por exemplo: "1", "Subsolo"</xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element name="numero" type="xs:int">
+      <xs:element name="numero" type="xs:string">
         <xs:annotation>
           <xs:documentation>número da sala de aula, por exemplo, 1001</xs:documentation>
         </xs:annotation>
@@ -426,7 +426,7 @@
             <xs:documentation>lista com os horários disponíveis da sala em questão (caso seja considerado o planejamento operacional)</xs:documentation>
           </xs:annotation>
         </xs:element>
-        <xs:element name="creditosDisponíveis" type="GrupoCreditoDisponivel">
+        <xs:element name="creditosDisponiveis" type="GrupoCreditoDisponivel">
           <xs:annotation>
             <xs:documentation>lista com o máximo de créditos disponíveis por dia da sala em questão (caso seja considerado o planejamento tático). Ver requisito RF-O-9 (as disponibilidades de uma sala irão determinar, para o modelo tático, o número máximo de créditos disponíveis em uma sala de aula em um dado dia).</xs:documentation>
           </xs:annotation>
@@ -1052,7 +1052,7 @@ Maximizar/gerenciar a nota da avaliação institucional média coletiva do corpo
   </xs:complexType>
   <xs:complexType name="GrupoDisciplina">
     <xs:annotation>
-      <xs:documentation>caso seja necessário, esta informação representará a preferência de divisão de crédito desta disciplina</xs:documentation>
+      <xs:documentation>caso seja necessario, esta informacao representara a preferencia de divisao de credito desta disciplina</xs:documentation>
     </xs:annotation>
     <xs:sequence minOccurs="0" maxOccurs="unbounded">
       <xs:element name="Disciplina" type="ItemDisciplina">
