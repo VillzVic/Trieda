@@ -5,6 +5,10 @@ import com.google.gwt.resources.client.ImageResource;
 
 public interface DefaultsIcons extends ClientBundle  {
 
+	@Source("ajax-loader.gif") ImageResource ajax24();
+	
+	@Source("otimizar24.png") ImageResource otimizar24();
+	
 	@Source("clone16.png") ImageResource clone16();
 	@Source("document16.png") ImageResource document16();
 	

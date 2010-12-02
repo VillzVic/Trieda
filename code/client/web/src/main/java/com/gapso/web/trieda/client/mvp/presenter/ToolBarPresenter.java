@@ -2,9 +2,13 @@ package com.gapso.web.trieda.client.mvp.presenter;
 
 import java.util.List;
 
+import com.extjs.gxt.ui.client.event.ButtonEvent;
+import com.extjs.gxt.ui.client.event.Listener;
 import com.extjs.gxt.ui.client.event.MenuEvent;
+import com.extjs.gxt.ui.client.event.MessageBoxEvent;
 import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.widget.Component;
+import com.extjs.gxt.ui.client.widget.Info;
 import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.menu.MenuItem;
@@ -29,11 +33,17 @@ import com.gapso.web.trieda.client.mvp.view.TurnosView;
 import com.gapso.web.trieda.client.mvp.view.UnidadesDeslocamentoView;
 import com.gapso.web.trieda.client.mvp.view.UnidadesView;
 import com.gapso.web.trieda.client.services.CampiServiceAsync;
+import com.gapso.web.trieda.client.services.OtimizarServiceAsync;
 import com.gapso.web.trieda.client.services.Services;
+import com.gapso.web.trieda.client.util.resources.Resources;
 import com.gapso.web.trieda.client.util.view.CenarioPanel;
 import com.gapso.web.trieda.client.util.view.GTab;
+import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.Widget;
+import com.googlecode.future.FutureResult;
+import com.googlecode.future.FutureSynchronizer;
 
 public class ToolBarPresenter implements Presenter {
 
@@ -43,6 +53,7 @@ public class ToolBarPresenter implements Presenter {
 		
 		Component getComponent();
 		
+		Button getOtimizatButton();
 		MenuItem getCenariosListMenuItem();
 		MenuItem getTurnosListMenuItem();
 		MenuItem getSemanasLetivaListMenuItem();
@@ -76,6 +87,31 @@ public class ToolBarPresenter implements Presenter {
 	}
 
 	private void addListeners() {
+		toolBar.getOtimizatButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
+			@Override
+			public void componentSelected(ButtonEvent ce) {
+				MessageBox.confirm("Otimizar?", "Deseja otimizar o cenário?", new Listener<MessageBoxEvent>() {
+					@Override
+					public void handleEvent(MessageBoxEvent be) {
+						if(be.getButtonClicked().getText().equalsIgnoreCase("yes")) {
+							OtimizarServiceAsync service = Services.otimizar();
+							service.input(masterData, new AsyncCallback<Long>() {
+								@Override
+								public void onFailure(Throwable caught) {
+									MessageBox.alert("ERRO!", "Deu falha na conexão", null);
+								}
+								@Override
+								public void onSuccess(final Long round) {
+									Info.display("Otimizando", "Otimizando com sucesso!");
+									toolBar.getOtimizatButton().setIcon(AbstractImagePrototype.create(Resources.DEFAULTS.ajax24()));
+									checkSolver(round);
+								}
+							});
+						}
+					}
+				});
+			}
+		});
 		toolBar.getCenariosListMenuItem().addSelectionListener(new SelectionListener<MenuEvent>() {
 			@Override
 			public void componentSelected(MenuEvent ce) {
@@ -214,6 +250,34 @@ public class ToolBarPresenter implements Presenter {
 				presenter.go(gTab);
 			}
 		});
+	}
+	
+	private void checkSolver(final Long round) {
+		final Timer t = new Timer() {
+			@Override
+			public void run() {
+				final OtimizarServiceAsync otimizarService = Services.otimizar();
+				final FutureResult<Boolean> futureBoolean = new FutureResult<Boolean>();
+				otimizarService.isOptimizing(round, futureBoolean);
+				FutureSynchronizer synch = new FutureSynchronizer(futureBoolean);
+				synch.addCallback(new AsyncCallback<Boolean>() {
+					@Override
+					public void onFailure(Throwable caught) {
+						MessageBox.alert("ERRO!", "Impossível de verificar, servidor fora do ar", null);
+					}
+					@Override
+					public void onSuccess(Boolean result) {
+						if(futureBoolean.result()) {
+							checkSolver(round);
+						} else {
+							toolBar.getOtimizatButton().setIcon(AbstractImagePrototype.create(Resources.DEFAULTS.otimizar24()));
+							MessageBox.alert("OTIMIZADO", "Otimização finalizada", null);
+						}
+					}
+				});
+			}
+		};
+		t.schedule(5 * 1000);
 	}
 	
 	@Override

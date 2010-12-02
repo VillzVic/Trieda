@@ -24,6 +24,7 @@ public class ToolBarView extends MyComposite implements ToolBarPresenter.Display
 	private ToolBar toolBar;
 		
 	// Cenário
+	private Button otimizarBt;
 	private Button cenariosBt;
 	private Button parametrosBt;
 	private MenuItem cenariosListMI;
@@ -109,8 +110,9 @@ public class ToolBarView extends MyComposite implements ToolBarPresenter.Display
 		TableData data = new TableData();
 		data.setRowspan(2);
 		
-		cenariosBt = createButtonList(Resources.DEFAULTS.cenario24());
-		group.add(cenariosBt, data);
+		otimizarBt = createButtonList(Resources.DEFAULTS.otimizar24());
+		otimizarBt.setText("Otimizar");
+		group.add(otimizarBt, data);
 		
 		parametrosBt = createButton("Parâmetros", Resources.DEFAULTS.parametros16());
 		group.add(parametrosBt);
@@ -411,6 +413,10 @@ public class ToolBarView extends MyComposite implements ToolBarPresenter.Display
 		return novoCampusBt;
 	}
 	
+	@Override
+	public Button getOtimizatButton() {
+		return otimizarBt;
+	}
 	@Override
 	public MenuItem getCenariosListMenuItem() {
 		return cenariosListMI;
