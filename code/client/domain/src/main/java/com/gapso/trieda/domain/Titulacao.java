@@ -1,5 +1,6 @@
 package com.gapso.trieda.domain;
 
+import java.io.Serializable;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -26,7 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RooToString
 @RooEntity(identifierColumn = "TIT_ID")
 @Table(name = "TITULACOES")
-public class Titulacao implements java.io.Serializable {
+public class Titulacao implements Serializable {
 
     @NotNull
     @Column(name = "TIT_NOME")
@@ -106,23 +107,23 @@ public class Titulacao implements java.io.Serializable {
         return em;
     }
 
-	public static long countTitulacaos() {
-        return ((Number) entityManager().createQuery("select count(o) from Titulacao o").getSingleResult()).longValue();
+	public static int count() {
+        return ((Number) entityManager().createQuery("SELECT COUNT(o) FROM Titulacao o").getSingleResult()).intValue();
     }
 
 	@SuppressWarnings("unchecked")
-    public static List<Titulacao> findAllTitulacaos() {
-        return entityManager().createQuery("select o from Titulacao o").getResultList();
+    public static List<Titulacao> findAll() {
+        return entityManager().createQuery("SELECT o FROM Titulacao o").getResultList();
     }
 
-	public static Titulacao findTitulacao(Long id) {
+	public static Titulacao find(Long id) {
         if (id == null) return null;
         return entityManager().find(Titulacao.class, id);
     }
 
 	@SuppressWarnings("unchecked")
-    public static List<Titulacao> findTitulacaoEntries(int firstResult, int maxResults) {
-        return entityManager().createQuery("select o from Titulacao o").setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
+    public static List<Titulacao> find(int firstResult, int maxResults) {
+        return entityManager().createQuery("SELECT o FROM Titulacao o").setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
 
 	private static final long serialVersionUID = 8929281662490204744L;

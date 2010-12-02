@@ -1,6 +1,7 @@
 package com.gapso.trieda.domain;
 
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -55,8 +56,11 @@ public class Turno implements Serializable {
 
     @NotNull
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "turno")
-    private Set<Oferta> ofertas = new java.util.HashSet<Oferta>();
+    private Set<Oferta> ofertas = new HashSet<Oferta>();
 
+    @OneToMany(mappedBy="turno")
+    Set<HorarioAula> horariosAula = new HashSet<HorarioAula>();
+    
     @PersistenceContext
     transient EntityManager entityManager;
 
@@ -210,7 +214,15 @@ public class Turno implements Serializable {
         this.ofertas = ofertas;
     }
 
-    private static final long serialVersionUID = 2608398950191790873L;
+    public Set<HorarioAula> getHorariosAula() {
+		return horariosAula;
+	}
+
+	public void setHorariosAula(Set<HorarioAula> horariosAula) {
+		this.horariosAula = horariosAula;
+	}
+
+	private static final long serialVersionUID = 2608398950191790873L;
 
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -220,6 +232,7 @@ public class Turno implements Serializable {
         sb.append("Nome: ").append(getNome()).append(", ");
         sb.append("Tempo: ").append(getTempo()).append(", ");
         sb.append("Oferta: ").append(getOfertas() == null ? "null" : getOfertas().size());
+        sb.append("HorariosAula: ").append(getHorariosAula() == null ? "null" : getHorariosAula().size());
         return sb.toString();
     }
 }

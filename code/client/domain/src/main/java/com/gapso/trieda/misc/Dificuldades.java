@@ -11,4 +11,13 @@ public enum Dificuldades {
     	}
     	return null;
     }
+    
+    public static int toInt(Dificuldades dificuldade) {
+    	switch (dificuldade) {
+    		case BAIXO: return 1;
+			case MEDIO: return 2;
+			case ALTO:  return 3;
+		}
+    	return -1;
+    }
 }

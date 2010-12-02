@@ -1,5 +1,6 @@
 package com.gapso.trieda.domain;
 
+import java.io.Serializable;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -26,7 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RooToString
 @RooEntity(identifierColumn = "TCO_ID")
 @Table(name = "TIPOS_CONTRATO")
-public class TipoContrato implements java.io.Serializable {
+public class TipoContrato implements Serializable {
 
     @NotNull
     @Column(name = "TCO_NOME")
@@ -98,23 +99,23 @@ public class TipoContrato implements java.io.Serializable {
         return em;
     }
 
-	public static long countTipoContratoes() {
-        return ((Number) entityManager().createQuery("select count(o) from TipoContrato o").getSingleResult()).longValue();
+	public static int countTipoContratoes() {
+        return ((Number) entityManager().createQuery("SELECT COUNT(o) FROM TipoContrato o").getSingleResult()).intValue();
     }
 
 	@SuppressWarnings("unchecked")
-    public static List<TipoContrato> findAllTipoContratoes() {
-        return entityManager().createQuery("select o from TipoContrato o").getResultList();
+    public static List<TipoContrato> findAll() {
+        return entityManager().createQuery("SELECT o FROM TipoContrato o").getResultList();
     }
 
-	public static TipoContrato findTipoContrato(Long id) {
+	public static TipoContrato find(Long id) {
         if (id == null) return null;
         return entityManager().find(TipoContrato.class, id);
     }
 
 	@SuppressWarnings("unchecked")
-    public static List<TipoContrato> findTipoContratoEntries(int firstResult, int maxResults) {
-        return entityManager().createQuery("select o from TipoContrato o").setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
+    public static List<TipoContrato> find(int firstResult, int maxResults) {
+        return entityManager().createQuery("SELECT o FROM TipoContrato o").setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
 
 	public String toString() {

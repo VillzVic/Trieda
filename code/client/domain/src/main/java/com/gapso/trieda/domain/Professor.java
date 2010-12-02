@@ -1,5 +1,7 @@
 package com.gapso.trieda.domain;
 
+import java.io.Serializable;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -35,7 +37,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RooToString
 @RooEntity(identifierColumn = "PRF_ID")
 @Table(name = "PROFESSORES")
-public class Professor implements java.io.Serializable {
+public class Professor implements Serializable {
 
     @NotNull
     @ManyToOne(targetEntity = Cenario.class)
@@ -89,14 +91,14 @@ public class Professor implements java.io.Serializable {
     private Integer nota;
 
     @ManyToMany(cascade = CascadeType.ALL)
-    private Set<com.gapso.trieda.domain.Campus> campi = new java.util.HashSet<com.gapso.trieda.domain.Campus>();
+    private Set<Campus> campi = new HashSet<Campus>();
 
     @ManyToMany(cascade = CascadeType.ALL, mappedBy = "professores")
-    private Set<com.gapso.trieda.domain.HorarioDisponivelCenario> horarios = new java.util.HashSet<com.gapso.trieda.domain.HorarioDisponivelCenario>();
+    private Set<HorarioDisponivelCenario> horarios = new HashSet<HorarioDisponivelCenario>();
 
     @NotNull
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "disciplina")
-    private Set<com.gapso.trieda.domain.ProfessorDisciplina> disciplinas = new java.util.HashSet<com.gapso.trieda.domain.ProfessorDisciplina>();
+    private Set<ProfessorDisciplina> disciplinas = new HashSet<ProfessorDisciplina>();
 
 	public String toString() {
         StringBuilder sb = new StringBuilder();
