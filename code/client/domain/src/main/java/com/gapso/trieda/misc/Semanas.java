@@ -12,6 +12,19 @@ public enum Semanas {
     	return null;
     }
     
+    public static Semanas get(int intValue) {
+    	switch (intValue) {
+			case 1: return DOM;
+			case 2: return SEG;
+			case 3: return TER;
+			case 4: return QUA;
+			case 5: return QUI;
+			case 6: return SEX;
+			case 7: return SAB;
+    	}
+    	return null;
+    }
+    
     public static int toInt(Semanas semana) {
     	switch (semana) {
 			case DOM: return 1;

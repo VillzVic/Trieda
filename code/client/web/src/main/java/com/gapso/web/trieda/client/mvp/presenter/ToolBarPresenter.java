@@ -104,6 +104,7 @@ public class ToolBarPresenter implements Presenter {
 								public void onSuccess(final Long round) {
 									Info.display("Otimizando", "Otimizando com sucesso!");
 									toolBar.getOtimizatButton().setIcon(AbstractImagePrototype.create(Resources.DEFAULTS.ajax24()));
+									toolBar.getOtimizatButton().disable();
 									checkSolver(round);
 								}
 							});
@@ -264,6 +265,7 @@ public class ToolBarPresenter implements Presenter {
 					@Override
 					public void onFailure(Throwable caught) {
 						MessageBox.alert("ERRO!", "Impossível de verificar, servidor fora do ar", null);
+						toolBar.getOtimizatButton().enable();
 					}
 					@Override
 					public void onSuccess(Boolean result) {
@@ -271,13 +273,37 @@ public class ToolBarPresenter implements Presenter {
 							checkSolver(round);
 						} else {
 							toolBar.getOtimizatButton().setIcon(AbstractImagePrototype.create(Resources.DEFAULTS.otimizar24()));
-							MessageBox.alert("OTIMIZADO", "Otimização finalizada", null);
+							Info.display("OTIMIZADO", "Otimização finalizada!");
+							atualizaSaida(round);
 						}
 					}
 				});
 			}
 		};
 		t.schedule(5 * 1000);
+	}
+	
+	private void atualizaSaida(final Long round) {
+		final OtimizarServiceAsync otimizarService = Services.otimizar();
+		final FutureResult<Boolean> futureBoolean = new FutureResult<Boolean>();
+		otimizarService.saveContent(masterData, round, futureBoolean);
+		FutureSynchronizer synch = new FutureSynchronizer(futureBoolean);
+		synch.addCallback(new AsyncCallback<Boolean>() {
+			@Override
+			public void onFailure(Throwable caught) {
+				MessageBox.alert("ERRO!", "Erro ao pegar a saída", null);
+				toolBar.getOtimizatButton().enable();
+			}
+			@Override
+			public void onSuccess(Boolean result) {
+				if(futureBoolean.result()) {
+					MessageBox.alert("OTIMIZADO", "Saída salva com sucesso", null);
+				} else {
+					MessageBox.alert("ERRO!", "Erro ao salvar a saída", null);
+				}
+				toolBar.getOtimizatButton().enable();
+			}
+		});
 	}
 	
 	@Override

@@ -12,6 +12,6 @@ public interface OtimizarService extends RemoteService {
 
 	Long input(CenarioDTO cenarioDTO);
 	Boolean isOptimizing(Long round);
-	Boolean saveContent(Long round);
+	Boolean saveContent(CenarioDTO cenarioDTO, Long round);
 
 }

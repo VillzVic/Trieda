@@ -8,6 +8,6 @@ public interface OtimizarServiceAsync {
 
 	void input(CenarioDTO cenarioDTO, AsyncCallback<Long> callback);
 	void isOptimizing(Long round, AsyncCallback<Boolean> callback);
-	void saveContent(Long round, AsyncCallback<Boolean> callback);
+	void saveContent(CenarioDTO cenarioDTO, Long round, AsyncCallback<Boolean> callback);
 	
 }

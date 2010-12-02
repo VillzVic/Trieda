@@ -28,7 +28,7 @@
   </xs:complexType>
   <xs:complexType name="ItemAtendimentoCampus">
     <xs:sequence>
-      <xs:element name="campusId" type="xs:string">
+      <xs:element name="campusId" type="xs:int">
         <xs:annotation>
           <xs:documentation>identificador do campus que contém os atendimentos</xs:documentation>
         </xs:annotation>
@@ -43,7 +43,7 @@
   </xs:complexType>
   <xs:complexType name="ItemAtendimentoUnidade">
     <xs:sequence>
-      <xs:element name="unidadeId" type="xs:string">
+      <xs:element name="unidadeId" type="xs:int">
         <xs:annotation>
           <xs:documentation>identificador da unidade (de um determinado campus) que contém os atendimentos</xs:documentation>
         </xs:annotation>
@@ -58,7 +58,7 @@
   </xs:complexType>
   <xs:complexType name="ItemAtendimentoSala">
     <xs:sequence>
-      <xs:element name="salaId" type="xs:string">
+      <xs:element name="salaId" type="xs:int">
         <xs:annotation>
           <xs:documentation>identificador da sala (de uma determinada unidade de um determinado campus) que contém os atendimentos</xs:documentation>
         </xs:annotation>

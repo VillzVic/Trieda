@@ -70,7 +70,7 @@ public class SolverClient implements ISolverClient {
 	public byte[] getContent(Long round) {
 		MultivaluedMapImpl queryParams = new MultivaluedMapImpl();
 		queryParams.add("round", round);
-		SolverResponse sr = webResource.path("/requestOptimization/"+getProblemName()+"/")
+		SolverResponse sr = webResource.path("/getContent/"+getProblemName()+"/")
 			.queryParams(queryParams).post(SolverResponse.class);
 		return (sr.getStatus())? (byte[])sr.getObject() : null;
 	}
