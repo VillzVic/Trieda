@@ -33,6 +33,7 @@
           <xs:documentation>identificador do campus que contém os atendimentos</xs:documentation>
         </xs:annotation>
       </xs:element>
+      <xs:element name="campusCodigo" type="xs:string" />
       <xs:element name="atendimentosUnidades" type="GrupoAtendimentoUnidade">
         <xs:annotation>
           <xs:documentation>lista de todos os atendimentos realizados em cada unidade de um determinado campus que foi considerado no planejamento</xs:documentation>
@@ -47,6 +48,7 @@
           <xs:documentation>identificador da unidade (de um determinado campus) que contém os atendimentos</xs:documentation>
         </xs:annotation>
       </xs:element>
+      <xs:element name="unidadeCodigo" type="xs:string" />
       <xs:element name="atendimentosSalas" type="GrupoAtendimentoSala">
         <xs:annotation>
           <xs:documentation>lista de todos os atendimentos realizados em cada sala de uma determinada unidade de um determinado campus que foi considerado no planejamento</xs:documentation>
@@ -61,6 +63,7 @@
           <xs:documentation>identificador da sala (de uma determinada unidade de um determinado campus) que contém os atendimentos</xs:documentation>
         </xs:annotation>
       </xs:element>
+      <xs:element name="salaNome" type="xs:string" />
       <xs:element name="atendimentosDiasSemana" type="GrupoAtendimentoDiaSemana">
         <xs:annotation>
           <xs:documentation>lista de todos os atendimentos realizados em cada dia da semana numa determinada sala de uma determinada unidade de um determinado campus que foi considerado no planejamento</xs:documentation>
@@ -129,12 +132,12 @@
   </xs:complexType>
   <xs:complexType name="ItemAtendimentoOferta">
     <xs:sequence>
-      <xs:element name="ofertaCursoCampiId" type="xs:string">
+      <xs:element name="ofertaCursoCampiId" type="xs:int">
         <xs:annotation>
           <xs:documentation>identificador da oferta atendida</xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element name="disciplinaId" type="xs:string">
+      <xs:element name="disciplinaId" type="xs:int">
         <xs:annotation>
           <xs:documentation>identificador da disciplina atendida</xs:documentation>
         </xs:annotation>
