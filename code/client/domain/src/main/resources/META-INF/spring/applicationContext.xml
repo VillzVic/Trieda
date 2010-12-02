@@ -63,4 +63,6 @@
 	<bean class="com.gapso.trieda.domain.Oferta" id="OfertaBean" />
 	<bean class="com.gapso.trieda.domain.Demanda" id="demandaBean" />
 	<bean class="com.gapso.trieda.domain.SemanaLetiva" id="semanaLetivaBean" />
+	<bean class="com.gapso.trieda.domain.AtendimentoTatico" id="atendimentoTaticoBean" />
+	<bean class="com.gapso.trieda.domain.AtendimentoOperacional" id="atendimentoOperacionalBean" />
 </beans>
