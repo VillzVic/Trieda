@@ -11,7 +11,6 @@
 		<gwt.version>2.0.4</gwt.version>
 		<project.build.sourceEncoding>utf-8</project.build.sourceEncoding>
 	</properties>
-
 	<dependencies>
 		<dependency>
 			<groupId>com.google.gwt</groupId>
@@ -54,8 +53,71 @@
 			<artifactId>gwt-async-future</artifactId>
 			<version>1.0.2</version>
 		</dependency>
+		<dependency>
+			<groupId>com.sun.jersey</groupId>
+			<artifactId>jersey-client</artifactId>
+			<version>1.0.3</version>
+		</dependency>
+		<dependency>
+			<groupId>com.sun.jersey.contribs</groupId>
+			<artifactId>jersey-multipart</artifactId>
+			<version>1.0.1</version>
+		</dependency>
 	</dependencies>
-
+	<profiles>
+		<profile>
+			<id>inputTRIEDA</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.jvnet.jaxb2.maven2</groupId>
+						<artifactId>maven-jaxb2-plugin</artifactId>
+						<executions>
+							<execution>
+								<goals>
+									<goal>generate</goal>
+								</goals>
+							</execution>
+						</executions>
+						<configuration>
+							<generateDirectory>src/main/java</generateDirectory>
+							<generatePackage>com.gapso.web.trieda.server.xml.input</generatePackage>
+							<includeSchemas>
+								<includeSchema>TRIEDA-InputXSD.xsd</includeSchema>
+							</includeSchemas>
+							<verbose>true</verbose>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>outputTRIEDA</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.jvnet.jaxb2.maven2</groupId>
+						<artifactId>maven-jaxb2-plugin</artifactId>
+						<executions>
+							<execution>
+								<goals>
+									<goal>generate</goal>
+								</goals>
+							</execution>
+						</executions>
+						<configuration>
+							<generateDirectory>src/main/java</generateDirectory>
+							<generatePackage>com.gapso.web.trieda.server.xml.output</generatePackage>
+							<includeSchemas>
+								<includeSchema>TRIEDA-OutputXSD.xsd</includeSchema>
+							</includeSchemas>
+							<verbose>true</verbose>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 	<build>
 		<outputDirectory>${basedir}/src/main/webapp/WEB-INF/classes</outputDirectory>
 		<testOutputDirectory>${basedir}/src/main/webapp/WEB-INF/classes</testOutputDirectory>
@@ -82,9 +144,8 @@
 						<fileset>
 							<directory>src/main/webapp/trieda</directory>
 						</fileset>
-						<!-- fileset>
-							<directory>src/main/webapp/WEB-INF/classes</directory>
-						</fileset -->
+						<!-- fileset> <directory>src/main/webapp/WEB-INF/classes</directory> 
+							</fileset -->
 					</filesets>
 				</configuration>
 			</plugin>
@@ -150,8 +211,8 @@
 				</executions>
 				<configuration>
 					<outxml>true</outxml>
-                    <ajdtBuildDefFile>build.ajproperties</ajdtBuildDefFile>
-                    <verbose>true</verbose>
+					<ajdtBuildDefFile>build.ajproperties</ajdtBuildDefFile>
+					<verbose>true</verbose>
 					<aspectLibraries>
 						<aspectLibrary>
 							<groupId>org.springframework</groupId>

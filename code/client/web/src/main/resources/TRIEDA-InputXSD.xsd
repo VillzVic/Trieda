@@ -1,0 +1,1126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Created with Liquid XML Studio 1.0.8.0 (http://www.liquid-technologies.com) -->
+<xs:schema elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="TriedaInput">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="calendario" type="ItemCalendario">
+          <xs:annotation>
+            <xs:documentation>Define o calendário base, isto é, os turnos e horários de aula dos dias da semana que serão considerados no planejamento</xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:element name="tiposSala" type="GrupoTipoSala">
+          <xs:annotation>
+            <xs:documentation>lista dos tipos de sala de aula considerados</xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:element name="tiposContrato" type="GrupoTipoContrato">
+          <xs:annotation>
+            <xs:documentation>lista dos tipos de contrato (com professores) considerados</xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:element name="tiposTitulacao" type="GrupoTipoTitulacao">
+          <xs:annotation>
+            <xs:documentation>lista dos tipos de titulação (de um professor) considerados</xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:element name="areasTitulacao" type="GrupoAreaTitulacao">
+          <xs:annotation>
+            <xs:documentation>lista das áreas de titulação que serão consideradas no planejamento</xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:element name="tiposDisciplina" type="GrupoTipoDisciplina">
+          <xs:annotation>
+            <xs:documentation>lista dos tipos de disciplinas que serão considerados no planejamento</xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:element name="niveisDificuldade" type="GrupoNivelDificuldade">
+          <xs:annotation>
+            <xs:documentation>lista dos níveis de dificuldade das disciplinas que serão considerados no planejamento. Ver requisito RF-DP-1.</xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:element name="tiposCurso" type="GrupoTipoCurso">
+          <xs:annotation>
+            <xs:documentation>lista dos tipos de curso que serão considerados no planejamento</xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:element name="regrasDivisaoCredito" type="GrupoDivisaoCreditos">
+          <xs:annotation>
+            <xs:documentation>lista das regras de divisão de crédito que serão consideradas no planejamento</xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:element name="campi" type="GrupoCampus">
+          <xs:annotation>
+            <xs:documentation>lista de campi que serão considerados no planejamento</xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:element name="temposDeslocamentosCampi" type="GrupoDeslocamento">
+          <xs:annotation>
+            <xs:documentation>lista com os tempos para uma pessoa se deslocar de um campus para outro</xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:element name="temposDeslocamentosUnidades" type="GrupoDeslocamento">
+          <xs:annotation>
+            <xs:documentation>lista com os tempos para uma pessoa se deslocar de uma unidade para outra</xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:element name="disciplinas" type="GrupoDisciplina">
+          <xs:annotation>
+            <xs:documentation>lista de disciplinas que serão consideradas no planejamento</xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:element name="cursos" type="GrupoCurso">
+          <xs:annotation>
+            <xs:documentation>lista dos cursos que serão consideradas no planejamento</xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:element name="ofertaCursosCampi" type="GrupoOfertaCurso">
+          <xs:annotation>
+            <xs:documentation>lista das ofertas de cursos que serão consideradas no planejamento</xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:element name="demandas" type="GrupoDemanda">
+          <xs:annotation>
+            <xs:documentation>lista das demandas que serão consideradas no planejamento</xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:element name="parametrosPlanejamento" type="ItemParametrosPlanejamento">
+          <xs:annotation>
+            <xs:documentation>parâmetros de planejamento</xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:element name="fixacoes" type="GrupoFixacao">
+          <xs:annotation>
+            <xs:documentation>lista de fixações, isto é, regras informadas pelo usuário que o resolvedor matemático é obrigado a respeitar</xs:documentation>
+          </xs:annotation>
+        </xs:element>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:complexType name="ItemCalendario">
+    <xs:sequence>
+      <xs:element name="id" type="xs:int">
+        <xs:annotation>
+          <xs:documentation>identificador único do calendário</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="codigo" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>código do calendário, por exemplo, "CAL-01"</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="turnos" type="GrupoTurno">
+        <xs:annotation>
+          <xs:documentation>a lista de turnos que fazem parte do calendário</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="ItemTurno">
+    <xs:sequence>
+      <xs:element name="id" type="xs:int">
+        <xs:annotation>
+          <xs:documentation>identificador único do turno</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="nome" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>nome do turno, por exemplo, manhã</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="tempoAula" type="xs:int">
+        <xs:annotation>
+          <xs:documentation>Duração de uma aula (em minutos) do turno em questão, por exemplo, 50 minutos.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="HorariosAula" type="GrupoHorarioAula">
+        <xs:annotation>
+          <xs:documentation>lista dos horários de aula disponíveis no turno em questão</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="ItemHorarioAula">
+    <xs:sequence>
+      <xs:element name="id" type="xs:int">
+        <xs:annotation>
+          <xs:documentation>identificador do horário de aula</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="inicio" type="xs:time">
+        <xs:annotation>
+          <xs:documentation>hora de início do horário de aula, por exemplo, 08:00 AM. O hora final não é armazenada pois pode ser calculada a partir da hora de início de o tempo de aula (atributo tempoAula do ItemCalendario)</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="diasSemana" type="GrupoDiaSemana">
+        <xs:annotation>
+          <xs:documentation>lista dos dias da semana (seg, ter, qua, ...) em que este horário é oferecido no calendário em questão</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="ItemTipoSala">
+    <xs:sequence>
+      <xs:element name="id" type="xs:int">
+        <xs:annotation>
+          <xs:documentation>identificador único (as opções atualmente são: 1-Sala de Aula, 2-Laboratório, 3-Auditório)</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="nome" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>nome do tipo de sala (as opções atualmente são: Sala de Aula, Laboratório, Auditório)</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="ItemTipoContrato">
+    <xs:sequence>
+      <xs:element name="id" type="xs:int">
+        <xs:annotation>
+          <xs:documentation>identificador do tipo de contrato, atualmente as possíveis opções são: 1-Horista, 2-Integral</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="nome" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>nome do tipo de contrato, atualmente as possíveis opções são: Horista, Integral</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="ItemTipoTitulacao">
+    <xs:sequence>
+      <xs:element name="id" type="xs:int">
+        <xs:annotation>
+          <xs:documentation>identificador de um tipo de titulação. Atualmente, os possíveis valores são: 1-Licenciado, 2-Bacharel, 3-Especialista, 4-Mestre, 5-Doutor</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="nome" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>nome do tipo de titulação. Atualmente, os possíveis valores são: Licenciado, Bacharel, Especialista, Mestre, Doutor</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="ItemAreaTitulacao">
+    <xs:sequence>
+      <xs:element name="id" type="xs:int">
+        <xs:annotation>
+          <xs:documentation>identificador de uma área de titulação.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="nome" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>nome de uma área de titulação, por exemplo, "Computação Gráfica"</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="ItemTipoDisciplina">
+    <xs:sequence>
+      <xs:element name="id" type="xs:int">
+        <xs:annotation>
+          <xs:documentation>identificador de um tipo de disciplina. Atualmente, os possíveis valores são: 1-Presencial, 2-Telepresencial, 3-Online</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="nome" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>nome do tipo de disciplina. Atualmente, os possíveis valores são: Presencial, Telepresencial, Online</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="ItemNivelDificuldade">
+    <xs:sequence>
+      <xs:element name="id" type="xs:int">
+        <xs:annotation>
+          <xs:documentation>identificador de um nível de dificuldade. Atualmente, os possíveis valores são: 1-baixo, 2-médio, 3-alto</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="nome" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>nome de um nível de dificuldade. Atualmente, os possíveis valores são: baixo, médio, alto</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="ItemTipoCurso">
+    <xs:sequence>
+      <xs:element name="id" type="xs:int">
+        <xs:annotation>
+          <xs:documentation>identificador do tipo de curso</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="nome" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>nome do tipo de curso</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="ItemDivisaoCreditos">
+    <xs:sequence>
+      <xs:element name="id" type="xs:int">
+        <xs:annotation>
+          <xs:documentation>identificador da regra de divisão de crédito</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="creditos" type="xs:int">
+        <xs:annotation>
+          <xs:documentation>quantidade de créditos que serão divididos</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="dia1" type="xs:int">
+        <xs:annotation>
+          <xs:documentation>informa a quantidade de créditos que serão oferecidos neste dia</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="dia2" type="xs:int">
+        <xs:annotation>
+          <xs:documentation>informa a quantidade de créditos que serão oferecidos neste dia</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="dia3" type="xs:int">
+        <xs:annotation>
+          <xs:documentation>informa a quantidade de créditos que serão oferecidos neste dia</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="dia4" type="xs:int">
+        <xs:annotation>
+          <xs:documentation>informa a quantidade de créditos que serão oferecidos neste dia</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="dia5" type="xs:int">
+        <xs:annotation>
+          <xs:documentation>informa a quantidade de créditos que serão oferecidos neste dia</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="dia6" type="xs:int">
+        <xs:annotation>
+          <xs:documentation>informa a quantidade de créditos que serão oferecidos neste dia</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="dia7" type="xs:int">
+        <xs:annotation>
+          <xs:documentation>informa a quantidade de créditos que serão oferecidos neste dia</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="ItemCampus">
+    <xs:sequence>
+      <xs:element name="id" type="xs:int">
+        <xs:annotation>
+          <xs:documentation>identificador do campus</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="codigo" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>código do campus, por exemplo, "CAMP1"</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="nome" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>nome do campus, por exemplo, "Campus Barra da Tijuca"</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="unidades" type="GrupoUnidade">
+        <xs:annotation>
+          <xs:documentation>lista das unidades (prédios) que fazem parte do campus</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="professores" type="GrupoProfessor">
+        <xs:annotation>
+          <xs:documentation>lista dos professores que podem ministrar aulas no campus em questão</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="horariosDisponiveis" type="GrupoHorario">
+        <xs:annotation>
+          <xs:documentation>lista com os horários disponíveis no campus em questão</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="ItemUnidade">
+    <xs:sequence>
+      <xs:element name="id" type="xs:int">
+        <xs:annotation>
+          <xs:documentation>identificador da unidade</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="codigo" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>código da unidade, por exemplo, "UN1"</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="nome" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>nome da unidade, por exemplo, "Unidade Frings"</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="horariosDisponiveis" type="GrupoHorario">
+        <xs:annotation>
+          <xs:documentation>lista com os horários disponíveis na unidade em questão</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="salas" type="GrupoSala">
+        <xs:annotation>
+          <xs:documentation>lista das salas da unidade em questão</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="ItemHorario">
+    <xs:sequence>
+      <xs:element name="turnoId" type="xs:int">
+        <xs:annotation>
+          <xs:documentation>identificador de um ItemTurno</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="horarioAulaId" type="xs:int">
+        <xs:annotation>
+          <xs:documentation>identificador de um ItemHorarioAula</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="diasSemana" type="GrupoDiaSemana">
+        <xs:annotation>
+          <xs:documentation>um inteiro que represente um dia da semana. Os valores possíveis são: (1 - Dom), (2 - Seg), (3 - Ter), (4 - Qua), (5 - Qua), (6 - Sex), (7 - SAb)</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="ItemSala">
+    <xs:sequence>
+      <xs:element name="id" type="xs:int">
+        <xs:annotation>
+          <xs:documentation>identificador da sala</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="codigo" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>código da sala, por exemplo, "U1-1001"</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="andar" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>andar no prédio (unidade) em que sala está localizada, por exemplo: "1", "Subsolo"</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="numero" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>número da sala de aula, por exemplo, 1001</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="tipoSalaId" type="xs:int">
+        <xs:annotation>
+          <xs:documentation>identificador do tipo da sala (ItemTipoSala) que pode ser umas das três opções: 1-Sala de Aula, 2-Laboratório, 3-Auditório</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="capacidade" type="xs:int">
+        <xs:annotation>
+          <xs:documentation>capacidade máxima de alunos da sala, por exemplo, 30</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:choice>
+        <xs:element name="horariosDisponiveis" type="GrupoHorario">
+          <xs:annotation>
+            <xs:documentation>lista com os horários disponíveis da sala em questão (caso seja considerado o planejamento operacional)</xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:element name="creditosDisponíveis" type="GrupoCreditoDisponivel">
+          <xs:annotation>
+            <xs:documentation>lista com o máximo de créditos disponíveis por dia da sala em questão (caso seja considerado o planejamento tático). Ver requisito RF-O-9 (as disponibilidades de uma sala irão determinar, para o modelo tático, o número máximo de créditos disponíveis em uma sala de aula em um dado dia).</xs:documentation>
+          </xs:annotation>
+        </xs:element>
+      </xs:choice>
+      <xs:element name="disciplinasAssociadas" type="GrupoIdentificador">
+        <xs:annotation>
+          <xs:documentation>lista dos identificadores das disciplinas (ItemDisciplina) que podem ser oferecidas na sala de aula em questão</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="ItemCreditoDisponivel">
+    <xs:sequence>
+      <xs:element name="turnoId" type="xs:int">
+        <xs:annotation>
+          <xs:documentation>identificador de um ItemTurno</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="diaSemana" type="xs:int">
+        <xs:annotation>
+          <xs:documentation>um inteiro que represente um dia da semana. Os valores possíveis são: (1 - Dom), (2 - Seg), (3 - Ter), (4 - Qua), (5 - Qua), (6 - Sex), (7 - SAb)</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="maxCreditos" type="xs:int">
+        <xs:annotation>
+          <xs:documentation>quantidade máxima de créditos que podem ser oferecidos em um determinado dia da semana. Ver requisito RF-O-9 (as disponibilidades de uma sala irão determinar, para o modelo tático, o número máximo de créditos disponíveis em uma sala de aula em um dado dia).</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="ItemProfessor">
+    <xs:sequence>
+      <xs:element name="id" type="xs:int">
+        <xs:annotation>
+          <xs:documentation>identificador do professor</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="cpf" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>CPF do professor</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="nome" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>nome do professor, por exemplo, "Fulano"</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="tipoContratoId" type="xs:int">
+        <xs:annotation>
+          <xs:documentation>identificador do tipo de contrato (ItemTipoContrato) do professor em questão</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="chMin" type="xs:int">
+        <xs:annotation>
+          <xs:documentation>Carga horária mínima do professor na semana. Este campo é dado em quantidade de horários de aula (ItemHorarioAula), por exemplo, 3 (no mínimo 3 aulas na semana).</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="chMax" type="xs:int">
+        <xs:annotation>
+          <xs:documentation>Carga horária máxima do professor na semana. Este campo é dado em quantidade de horários de aula (ItemHorarioAula), por exemplo, 12 (no máximo 12 aulas na semana).</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="titulacaoId" type="xs:int">
+        <xs:annotation>
+          <xs:documentation>identificador do tipo de titulação (ItemTipoTitulacao) do professor em questão. Ver requisito RF-O-6.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="areaTitulacaoId" type="xs:int">
+        <xs:annotation>
+          <xs:documentation>identificador da área de titulação (ItemAreaTitulacao) do professor em questão. Ver requisito RF-O-14.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="credAnterior" type="xs:int">
+        <xs:annotation>
+          <xs:documentation>créditos alocados no período(geralmente, semestre) anterior. Ver requisito RF-PP-9.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="valorCred" type="xs:double">
+        <xs:annotation>
+          <xs:documentation>valor (em reais) do crédito pago ao professor</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="horariosDisponiveis" type="GrupoHorario">
+        <xs:annotation>
+          <xs:documentation>lista com os horários disponíveis do professor em questão</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="disciplinas" type="GrupoProfessorDisciplina">
+        <xs:annotation>
+          <xs:documentation>lista das disciplinas que o professor em questão é capaz de lecionar</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="ItemProfessorDisciplina">
+    <xs:sequence>
+      <xs:element name="nota" type="xs:int">
+        <xs:annotation>
+          <xs:documentation>nota de desempenho do professor na disciplina em questão</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="preferencia" type="xs:int">
+        <xs:annotation>
+          <xs:documentation>ranking de preferência que o professor relaciona com a disciplina em questão. 1 = Maior preferência, 10 = Menor preferência. Disciplinas com mesmo ranking são indiferentes para o professor. Ver requisitos RF-O-12 e RF-PP-16</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="disciplinaId" type="xs:int">
+        <xs:annotation>
+          <xs:documentation>identificador (ItemDisciplina) da disciplina que o professor é capaz de ministrar</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="ItemDeslocamento">
+    <xs:sequence>
+      <xs:element name="origemId" type="xs:int">
+        <xs:annotation>
+          <xs:documentation>identificador da entidade de origem que pode ser um campus (ItemCampus) ou de uma unidade (ItemUnidade)</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="destinoId" type="xs:int">
+        <xs:annotation>
+          <xs:documentation>identificador da entidade de destino que pode ser um campus (ItemCampus) ou de uma unidade (ItemUnidade)</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="tempo" type="xs:int">
+        <xs:annotation>
+          <xs:documentation>tempo em minutos para se deslocar da origem para o destino</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="custo" type="xs:double" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="ItemDisciplina">
+    <xs:sequence>
+      <xs:element name="id" type="xs:int">
+        <xs:annotation>
+          <xs:documentation>identificador da disciplina</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="codigo" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>código da disciplina, por exemplo, "INF332"</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="nome" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>nome da disciplina, por exemplo, "Análise de Algoritmos"</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="credTeoricos" type="xs:int">
+        <xs:annotation>
+          <xs:documentation>quantidade de créditos teóricos da disciplina. 1 crédito equivale a 1 horário aula (ItemHorarioAula).</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="credPraticos" type="xs:int">
+        <xs:annotation>
+          <xs:documentation>quantidade de créditos práticos da disciplina. 1 crédito equivale a 1 horário aula (ItemHorarioAula).</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="laboratorio" type="xs:boolean">
+        <xs:annotation>
+          <xs:documentation>indica se os créditos práticos deverão ou não ser dados em salas do tipo laboratório.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="maxAlunosTeorico" type="xs:int">
+        <xs:annotation>
+          <xs:documentation>quantidade máxima de alunos de uma turma para a versão teórica da disciplina em questão</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="maxAlunosPratico" type="xs:int">
+        <xs:annotation>
+          <xs:documentation>quantidade máxima de alunos de uma turma para a versão prática da disciplina em questão</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="tipoDisciplinaId" type="xs:int">
+        <xs:annotation>
+          <xs:documentation>identificador (ItemTipoDisciplina) do tipo da disciplina em questão. Disciplinas do tipo online não consomem créditos ao passo que todas as turmas de disciplinas do tipo telepresencial precisam ser oferecidas no mesmo dia.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="nivelDificuldadeId" type="xs:int">
+        <xs:annotation>
+          <xs:documentation>identificador (ItemNivelDificuldade) do nível de dificuldade da disciplina em questão. Serão 3 níveis de dificuldade (nível de exigência): 1-baixo, 2-médio, 3-alto. Ver requisito RF-DP-1.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="divisaoDeCreditos" type="ItemDivisaoCreditos">
+        <xs:annotation>
+          <xs:documentation>se necessário, este campo representa a preferência pela divisão do total de créditos (teóricos + práticos) da disciplina.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="horariosDisponiveis" type="GrupoHorario">
+        <xs:annotation>
+          <xs:documentation>lista com os horários disponíveis da disciplina em questão</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="disciplinasEquivalentes" type="GrupoIdentificador">
+        <xs:annotation>
+          <xs:documentation>lista dos identificadores (ItemDisciplina) das disciplinas equivalentes à disciplina em questão.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="disciplinasIncompativeis" type="GrupoIdentificador">
+        <xs:annotation>
+          <xs:documentation>lista dos identificadores (ItemDisciplina) das disciplinas não compatíveis com a disciplina em questão, isto é, as disciplinas que não poderão ser oferecidas no mesmo dia (por razões pedagócias) da disciplina em questão</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="ItemCurso">
+    <xs:sequence>
+      <xs:element name="id" type="xs:int">
+        <xs:annotation>
+          <xs:documentation>identificador do curso</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="codigo" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>código do curso, por exemplo, "INF"</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="tipoId" type="xs:int">
+        <xs:annotation>
+          <xs:documentation>identificador do tipo do curso (ItemTipoCurso). Este campo é necessário pois possibilita a funcionalidade de permitir/proibir compartilhamento de salas entre alunos de tipos de cursos diferentes que cursam uma mesma disciplina.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="regraPercMinMestres" type="ItemPercentualMinimo">
+        <xs:annotation>
+          <xs:documentation>regra que determina o percentual mínimo de mestres para o curso em questão</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="regraPercMinDoutores" type="ItemPercentualMinimo">
+        <xs:annotation>
+          <xs:documentation>regra que determina o percentual mínimo de doutores para o curso em questão</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="qtdMaxProfDisc" type="xs:int">
+        <xs:annotation>
+          <xs:documentation>numero máximo de disciplinas que um professor pode ministrar no curso em questão. Ex: Fulano pode ministrar no maximo 5 disciplinas para o curso de Administracao, nao importando em que periodo as disciplinas sao oferecidas. No entanto, em cada periodo, Fulano pode ministrar apenas 1 disciplina.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="maisDeUmaDiscPeriodo" type="xs:boolean">
+        <xs:annotation>
+          <xs:documentation>indica se um professor pode ou não ministrar mais de uma disciplina por período. Por exemplo, Fulano pode ministrar no maximo 5 disciplinas para o curso de Administracao, nao importando em que periodo as disciplinas sao oferecidas. No entanto, em cada periodo, Fulano pode ministrar apenas 1 disciplina.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="areasTitulacao" type="GrupoIdentificador">
+        <xs:annotation>
+          <xs:documentation>lista de identificadores (ItemAreaTitulacao) das áreas de titulação associadas ao curso em questão</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="curriculos" type="GrupoCurriculo">
+        <xs:annotation>
+          <xs:documentation>lista das matrizes curriculares do curso em questão</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="ItemPercentualMinimo">
+    <xs:sequence>
+      <xs:element name="percMinimo" type="xs:double">
+        <xs:annotation>
+          <xs:documentation>valor numérico que determina o percentual mínimo de professores de uma determinada titulação</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="tipoTitulacaoId" type="xs:int">
+        <xs:annotation>
+          <xs:documentation>identificador do tipo de titulação (ItemTipoTitulacao) da regra em questão</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="ItemCurriculo">
+    <xs:sequence>
+      <xs:element name="id" type="xs:int">
+        <xs:annotation>
+          <xs:documentation>identificador da matriz curricular</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="codigo" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>código da matriz curricular, por exemplo, "INF-MC1"</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="disciplinasPeriodo" type="GrupoDisciplinaPeriodo">
+        <xs:annotation>
+          <xs:documentation>disciplinas e períodos da matriz curricular</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="ItemDisciplinaPeriodo">
+    <xs:sequence>
+      <xs:element name="periodo" type="xs:int">
+        <xs:annotation>
+          <xs:documentation>número do período, por exemplo, 4 (quarto período)</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="disciplinaId" type="xs:int">
+        <xs:annotation>
+          <xs:documentation>identificador (ItemDisciplina) da disciplina que é oferecida no período da matriz curricular em questão</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="ItemOfertaCurso">
+    <xs:sequence>
+      <xs:element name="id" type="xs:int" />
+      <xs:element name="curriculoId" type="xs:int">
+        <xs:annotation>
+          <xs:documentation>identificador da matriz curricular (ItemCurriculo) de um determinado curso que será oferecida num determinado turno de um determinado campus</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="cursoId" type="xs:int">
+        <xs:annotation>
+          <xs:documentation>identificador do curso (ItemCurso) que será oferecido num determinado turno de um determinado campus</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="turnoId" type="xs:int">
+        <xs:annotation>
+          <xs:documentation>identificador (ItemTurno) de um turno</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="campusId" type="xs:int">
+        <xs:annotation>
+          <xs:documentation>identificador (ItemCampus) de um campus</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="ItemDemanda">
+    <xs:sequence>
+      <xs:element name="ofertaCursoCampiId" type="xs:int">
+        <xs:annotation>
+          <xs:documentation>identificador (ItemOfertaCurso) de uma oferta de um curso em um campus</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="disciplinaId" type="xs:int">
+        <xs:annotation>
+          <xs:documentation>identificador da disciplina (ItemDisciplina)</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="quantidade" type="xs:int">
+        <xs:annotation>
+          <xs:documentation>quantidade de alunos</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="ItemFixacao">
+    <xs:sequence>
+      <xs:element name="id" type="xs:int" />
+      <xs:element minOccurs="0" name="professorId" type="xs:int" />
+      <xs:element minOccurs="0" name="disciplinaId" type="xs:int" />
+      <xs:element minOccurs="0" name="salaId" type="xs:int" />
+      <xs:element minOccurs="0" name="diaSemana" type="xs:int" />
+      <xs:element minOccurs="0" name="turnoId" type="xs:int" />
+      <xs:element minOccurs="0" name="horarioAulaId" type="xs:int" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="ItemParametrosPlanejamento">
+    <xs:sequence>
+      <xs:element name="niveisDificuldadeHorario" type="GrupoNivelDificuldadeHorario">
+        <xs:annotation>
+          <xs:documentation>Parâmetro de planejamento onde é possível configurar as discipinas por nível de dificuldade que deverão ser evitadas em determinados horários de aula. Ver RF-DP-1.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="equilibrarDiversidadeDiscDia" type="xs:boolean">
+        <xs:annotation>
+          <xs:documentation>flag que determina se o resolvedor matemático tentará ou não equilibrar a diversidade de disciplinas oferecidas em um mesmo dia com base na compatibilidade entre disciplinas(ver campo disciplinasIncompativeis do ItemDisciplinas e ver requisito RF-DP-3).</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="minimizarDeslocProfessor" type="xs:boolean">
+        <xs:annotation>
+          <xs:documentation>flag que determina se o resolvedor matemático tentará ou não minimizar o deslocamento de professores (entre campi, unidades, andares e salas) com base nos campos temposDeslocamentosCampi e temposDeslocamentosUnidades (ver requisitos RF-O-5, RF-O-8, RF-PA-2, RF-PA-3, RF-PA-4).</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="minimizarDeslocAluno" type="xs:boolean">
+        <xs:annotation>
+          <xs:documentation>flag que determina se o resolvedor matemático tentará ou não minimizar o deslocamento de alunos (entre campi, unidades, andares e salas) com base nos campos temposDeslocamentosCampi e temposDeslocamentosUnidades (ver requisitos RF-O-5, RF-O-8, RF-PA-2, RF-PA-3, RF-PA-4).</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="maxDeslocProfessor" type="xs:int">
+        <xs:annotation>
+          <xs:documentation>informa o limite superior de deslocamentos de um professor entre campi dentro do mesmo dia. Ver requisito RF-PP-11.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="maximizarAvaliacaoCursos" type="GrupoIdentificador">
+        <xs:annotation>
+          <xs:documentation>lista os identificadores (ItemCurso) dos cursos cujo somatório das notas de desempenho (dos professores que ministram aulas no curso em questão) deverá ser maximizado. Ver requisito RF-O-12.
+
+Maximizar/gerenciar a nota da avaliação institucional média coletiva do corpo docente por curso (MAXIMIZAR A MÉDIA DAS AVALIAÇÕES DOS DOCENTES DE UM MESMO CURSO, OU SEJA, PRIORIZAR QUALIDADE DOCENTE DE UM CURSO ESPECÍFICO)</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="minimizarCustoDocenteCursos" type="GrupoIdentificador">
+        <xs:annotation>
+          <xs:documentation>lista os identificadores (ItemCurso) dos cursos cujo somatório do custo docente (dos professores que ministram aulas no curso em questão) deverá ser minimizado. Ver requisito RF-O-13.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="permiteCompartilhamentoTurma" type="GrupoGrupo">
+        <xs:annotation>
+          <xs:documentation>lista de listas de identificadores (ItemCurso) de cursos. Os cursos que pertencem a uma mesma lista permitem compartilhamento de turmas. Ver requisito RF-O-17.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="cargaHorariaSemanalAluno">
+        <xs:annotation>
+          <xs:documentation>Parâmetro de planejamento que determina ser a carga horária semanal do aluno deverá ser (ver requisito RF-PA-1):
+   - Equilibrada durante a semana (aulas em todos os dias, com duração equalizada);
+   - Alocada na menor quantidade de dias (Minimiza quantidade de dias);
+   - Indiferente</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+          <xs:choice>
+            <xs:element name="equilibrar" type="xs:anySimpleType" />
+            <xs:element name="minimizarDias" type="xs:anySimpleType" />
+            <xs:element name="indiferente" type="xs:anySimpleType" />
+          </xs:choice>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="minimizarHorariosVaziosProfessor" type="xs:boolean">
+        <xs:annotation>
+          <xs:documentation>parâmetro de planejamento que indica se o resolvedor matemático deverá ou não minimizar gaps (buracos) nos horários dos professores num mesmo dia. Ver requisito RF-PP-1.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="minimizarDiasSemanaProfessor" type="xs:boolean">
+        <xs:annotation>
+          <xs:documentation>parâmetro de planejamento que indica se o resolvedor matemático deverá ou não minimizar o número de dias em que o professor ministra aulas. Ver requisito RF-PP-2.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="desempenhoProfDisponibilidade" type="xs:boolean">
+        <xs:annotation>
+          <xs:documentation>considerar a avaliação de desempenho do professor para desempate de disponibilidade. Ver requisito RF-PP-6.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="custoProfDisponibilidade" type="xs:boolean">
+        <xs:annotation>
+          <xs:documentation>considerar a custo docente do professor para desempate de disponibilidade. Ver requisito RF-PP-7.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="evitarReducaoCargaHorariaProf" type="xs:boolean">
+        <xs:annotation>
+          <xs:documentation>evitar redução grande de carga horária do docente em relação ao período anterior (para evitar problemas com sindicatos). Ver requisito RF-PP-9.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="evitarProfUltimoPrimeiroHor" type="xs:boolean">
+        <xs:annotation>
+          <xs:documentation>evitar alocação simultânea do professor no último horário do dia e no primeiro horário do dia seguinte. Ver requisito RF-PP-10.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="ItemNivelDificuldadeHorario">
+    <xs:sequence>
+      <xs:element name="nivelDificuldadeId" type="xs:int">
+        <xs:annotation>
+          <xs:documentation>identificador (ItemNivelDificuldade) do nível de dificuldade de disciplina que deverá ser evitado em determinados horários de aula</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="horariosAula" type="GrupoIdentificador">
+        <xs:annotation>
+          <xs:documentation>lista de identificadores (ItemHorarioAula) dos horários de aula em que deverão ser evitadas disciplinas de determinado nível de dificuldade</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="GrupoTurno">
+    <xs:sequence minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="Turno" type="ItemTurno">
+        <xs:annotation>
+          <xs:documentation>representa a definição de um turno</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="GrupoHorarioAula">
+    <xs:sequence minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="HorarioAula" type="ItemHorarioAula">
+        <xs:annotation>
+          <xs:documentation>representa um horário de aula</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="GrupoDiaSemana">
+    <xs:sequence minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="diaSemana" type="xs:int">
+        <xs:annotation>
+          <xs:documentation>um inteiro que represente um dia da semana. Os valores possíveis são: (1 - Dom), (2 - Seg), (3 - Ter), (4 - Qua), (5 - Qua), (6 - Sex), (7 - SAb)</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="GrupoTipoSala">
+    <xs:sequence minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="TipoSala" type="ItemTipoSala">
+        <xs:annotation>
+          <xs:documentation>representa um tipo de sala de aula</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="GrupoTipoContrato">
+    <xs:sequence minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="TipoContrato" type="ItemTipoContrato">
+        <xs:annotation>
+          <xs:documentation>representa um tipo de contrato entre um professor e uma instituição</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="GrupoTipoTitulacao">
+    <xs:sequence minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="TipoTitulacao" type="ItemTipoTitulacao">
+        <xs:annotation>
+          <xs:documentation>representa um tipo de titulação</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="GrupoAreaTitulacao">
+    <xs:sequence minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="AreaTitulacao" type="ItemAreaTitulacao">
+        <xs:annotation>
+          <xs:documentation>representa uma área de titulação</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="GrupoTipoDisciplina">
+    <xs:sequence minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="TipoDisciplina" type="ItemTipoDisciplina">
+        <xs:annotation>
+          <xs:documentation>representa um tipo de disciplina</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="GrupoNivelDificuldade">
+    <xs:sequence minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="NivelDificuldade" type="ItemNivelDificuldade" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="GrupoTipoCurso">
+    <xs:sequence minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="TipoCurso" type="ItemTipoCurso">
+        <xs:annotation>
+          <xs:documentation>representa um tipo de curso, por exemplo: graduação, mestrado, doutorado. Além disso, este campo possibilita a funcionalidade de permitir/proibir compartilhamento de salas entre alunos de tipos de cursos diferentes que cursam uma mesma disciplina.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="GrupoDivisaoCreditos">
+    <xs:sequence minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="DivisaoCreditos" type="ItemDivisaoCreditos" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="GrupoCampus">
+    <xs:sequence minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="Campus" type="ItemCampus">
+        <xs:annotation>
+          <xs:documentation>representa um campus</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="GrupoUnidade">
+    <xs:sequence minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="Unidade" type="ItemUnidade">
+        <xs:annotation>
+          <xs:documentation>representa uma unidade (prédio) em um campus</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="GrupoHorario">
+    <xs:sequence minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="Horario" type="ItemHorario">
+        <xs:annotation>
+          <xs:documentation>representa um horário disponível, por exemplo, segunda-feira (diaSemana) das 8:00 às 8:50 (horarioAulaId) no turno da manhã (turnoId).</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="GrupoSala">
+    <xs:sequence minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="Sala" type="ItemSala">
+        <xs:annotation>
+          <xs:documentation>representa uma sala de aula</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="GrupoCreditoDisponivel">
+    <xs:sequence minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="CreditoDisponivel" type="ItemCreditoDisponivel" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="GrupoProfessor">
+    <xs:sequence minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="Professor" type="ItemProfessor">
+        <xs:annotation>
+          <xs:documentation>representa um professor</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="GrupoProfessorDisciplina">
+    <xs:sequence minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="ProfessorDisciplina" type="ItemProfessorDisciplina">
+        <xs:annotation>
+          <xs:documentation>representa um relacionamento professor-disciplina</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="GrupoDeslocamento">
+    <xs:sequence minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="Deslocamento" type="ItemDeslocamento">
+        <xs:annotation>
+          <xs:documentation>representa um deslocamento (que pode ser entre campi ou entre unidades)</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="GrupoDisciplina">
+    <xs:annotation>
+      <xs:documentation>caso seja necessario, esta informacao representara a preferencia de divisao de credito desta disciplina</xs:documentation>
+    </xs:annotation>
+    <xs:sequence minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="Disciplina" type="ItemDisciplina">
+        <xs:annotation>
+          <xs:documentation>representa uma disciplina</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="GrupoCurso">
+    <xs:sequence minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="Curso" type="ItemCurso" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="GrupoCurriculo">
+    <xs:sequence minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="Curriculo" type="ItemCurriculo">
+        <xs:annotation>
+          <xs:documentation>representação de uma matriz curricular</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="GrupoDisciplinaPeriodo">
+    <xs:sequence minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="DisciplinaPeriodo" type="ItemDisciplinaPeriodo">
+        <xs:annotation>
+          <xs:documentation>representa um par (disciplina, período)</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="GrupoOfertaCurso">
+    <xs:sequence minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="OfertaCurso" type="ItemOfertaCurso">
+        <xs:annotation>
+          <xs:documentation>uma oferta, isto é, uma matriz curricular de um determinado curso que será oferecida num determinado turno de um determinado campus</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="GrupoDemanda">
+    <xs:sequence minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="Demanda" type="ItemDemanda" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="GrupoFixacao">
+    <xs:sequence minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="Fixacao" type="ItemFixacao" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="GrupoNivelDificuldadeHorario">
+    <xs:sequence minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="NivelDificuldadeHorario" type="ItemNivelDificuldadeHorario" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="GrupoIdentificador">
+    <xs:sequence minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="id" type="xs:int">
+        <xs:annotation>
+          <xs:documentation>represente o identificador de alguma entidade</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="GrupoGrupo">
+    <xs:sequence minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="GrupoIdentificador" type="GrupoIdentificador" />
+    </xs:sequence>
+  </xs:complexType>
+</xs:schema>
