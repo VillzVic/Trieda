@@ -58,11 +58,9 @@ public class DemandasPresenter implements Presenter {
 		Component getComponent();
 		void setProxy(RpcProxy<PagingLoadResult<DemandaDTO>> proxy);
 	}
-	private CenarioDTO cenario;
 	private Display display; 
 	
 	public DemandasPresenter(CenarioDTO cenario, Display display) {
-		this.cenario = cenario;
 		this.display = display;
 		configureProxy();
 		setListeners();
@@ -90,14 +88,7 @@ public class DemandasPresenter implements Presenter {
 		display.getNewButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
 			@Override
 			public void componentSelected(ButtonEvent ce) {
-				DemandaDTO demanda = new DemandaDTO();
-				CampusDTO campus = new CampusDTO();
-				CursoDTO curso = new CursoDTO();
-				CurriculoDTO curriculo = new CurriculoDTO();
-				TurnoDTO turno = new TurnoDTO();
-				DisciplinaDTO disciplina = new DisciplinaDTO();
-				
-				Presenter presenter = new DemandaFormPresenter(new DemandaFormView(demanda, campus, curso, curriculo, turno, disciplina), display.getGrid());
+				Presenter presenter = new DemandaFormPresenter(new DemandaFormView(new DemandaDTO(), null, null, null, null, null), display.getGrid());
 				presenter.go(null);
 			}
 		});
