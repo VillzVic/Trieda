@@ -14,7 +14,9 @@ std::ostream& operator << (std::ostream& out, AtendimentoUnidade& unidade)
 
    //out << "<Id>" << unidade.getId() << "</Id>" << endl;
 
-   out << "<unidadeId>" << unidade.unidade_id << "</unidadeId>" << endl;
+   out << "<unidadeId>" << unidade.getId() << "</unidadeId>" << endl;
+
+   out << "<unidadeCodigo>" << unidade.unidade_id << "</unidadeCodigo>" << endl;
 
    out << "<atendimentosSalas>" << endl;
 

@@ -90,6 +90,8 @@ public:
 
    int cria_variavel_de_folga_aloc_alunos_curso_incompat(void);
 
+   int cria_variavel_de_folga_demanda_disciplina();
+
    /********************************************************************
    **                    CONSTRAINT CREATION                          **
    *********************************************************************/
@@ -126,6 +128,13 @@ public:
 
    int cria_restricao_limita_abertura_turmas(void);      // Restricao NOVA
    int cria_restricao_abre_turmas_em_sequencia(void);      // Restricao NOVA
+
+   /********************************************************************
+   **                        OTHER METHODS                            **
+   *********************************************************************/
+
+   void cria_solucao_inicial(int cnt, int *indices, double *valores);
+
 
 };
 

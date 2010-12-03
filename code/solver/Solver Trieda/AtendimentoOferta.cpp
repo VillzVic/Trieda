@@ -13,7 +13,7 @@ AtendimentoOferta::~AtendimentoOferta(void)
 
 std::ostream& operator << (std::ostream& out, AtendimentoOferta& oferta)
 {
-   out << "<AtendimentoOferta>" << endl;
+   //out << "<AtendimentoOferta>" << endl;
 
    out << "<ofertaCursoCampiId>" << oferta.oferta_curso_campi_id << "</ofertaCursoCampiId>" << endl;
 
@@ -21,7 +21,7 @@ std::ostream& operator << (std::ostream& out, AtendimentoOferta& oferta)
 
    out << "<quantidade>" << oferta.quantidade << "</quantidade>" << endl;
 
-   out << "</AtendimentoOferta>" << endl;
+   //out << "</AtendimentoOferta>" << endl;
 
    return out;
 }

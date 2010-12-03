@@ -27,7 +27,8 @@ public:
       V_SLACK_DIST_CRED_DIA_INFERIOR = 13,		// fcm_{dt}
       V_ABERTURA_SUBBLOCO_DE_BLC_DIA_CAMPUS = 14,		   // r_{b,t,cp}
 
-      V_SLACK_ALOC_ALUNOS_CURSO_INCOMPAT = 15   // bs_{i,d,c,cp}
+      V_SLACK_ALOC_ALUNOS_CURSO_INCOMPAT = 15,   // bs_{i,d,c,cp}
+      V_SLACK_DEMANDA = 16 // fd_{d,o}
 
    };
 

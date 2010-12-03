@@ -177,6 +177,8 @@ std::string Variable::toString()
         str << "r"; break;
      case V_SLACK_ALOC_ALUNOS_CURSO_INCOMPAT:
         str << "bs"; break;
+     case V_SLACK_DEMANDA:
+        str << "fd"; cond_disc = true; break;
      default:
         str << "!";
    }

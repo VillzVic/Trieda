@@ -82,6 +82,7 @@ public:
 
    //GGroup<ConjuntoSala*> conjutoSalas;
 
+   // Armazena para cada campus a demanda de cada disciplina.
    std::map<std::pair<int/*disc_id*/,int/*campus_id*/>,int> demandas_campus;
    
    int totalSalas;

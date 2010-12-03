@@ -14,7 +14,9 @@ std::ostream& operator << (std::ostream& out, AtendimentoSala& sala)
 
 	//out << "<Id>" << sala.getId() << "</Id>" << endl;
 
-	out << "<salaId>" << sala.sala_id.c_str() << "</salaId>" << endl;
+	out << "<salaId>" << sala.getId() << "</salaId>" << endl;
+
+   out << "<salaNome>" << sala.sala_id << "</salaNome>" << endl;
 
 	out << "<atendimentosDiasSemana>" << endl;
 

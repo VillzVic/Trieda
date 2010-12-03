@@ -14,7 +14,9 @@ std::ostream& operator << (std::ostream& out, AtendimentoCampus& campus)
 
    out << "<AtendimentoCampus>" << endl;
 
-	out << "<campusId>" << campus.campus_id << "</campusId>" << endl;
+	out << "<campusId>" << campus.getId() << "</campusId>" << endl;
+
+   out << "<campusCodigo>" << campus.campus_id << "</campusCodigo>" << endl;
 
 	out << "<atendimentosUnidades>" << endl;
 
