@@ -16,6 +16,7 @@ public class SalaComboBox extends ComboBox<SalaDTO> {
 		store.add(new ArrayList<SalaDTO>());
 		
 		setDisplayField("codigo");
+		setFieldLabel("Sala");
 		setStore(store);
 		setSimpleTemplate("{codigo}");
 	}

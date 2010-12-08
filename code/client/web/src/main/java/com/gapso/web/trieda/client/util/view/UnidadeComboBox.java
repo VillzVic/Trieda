@@ -41,6 +41,7 @@ public class UnidadeComboBox extends ComboBox<UnidadeDTO> {
 		});
 		store = new ListStore<UnidadeDTO>(load);
 		setDisplayField("nome");
+		setFieldLabel("Unidade");
 		setStore(store);
 		setHideTrigger(true);  
 		setTriggerAction(TriggerAction.QUERY);

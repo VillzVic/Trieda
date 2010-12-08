@@ -13,6 +13,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import javax.persistence.Table;
 import javax.persistence.Version;
 import javax.validation.constraints.Max;
@@ -166,9 +167,17 @@ public class AtendimentoTatico implements Serializable {
     }
 
 	@SuppressWarnings("unchecked")
-    public static List<AtendimentoTatico> findAll() {
-        return entityManager().createQuery("SELECT o FROM AtendimentoTatico o").getResultList();
+    public static List<AtendimentoTatico> findBySalaAndTurno(Sala sala, Turno turno) {
+        Query q = entityManager().createQuery("SELECT o FROM AtendimentoTatico o WHERE o.sala = :sala AND o.oferta.turno = :turno");
+        q.setParameter("sala", sala);
+        q.setParameter("turno", turno);
+        return q.getResultList();
     }
+	
+	@SuppressWarnings("unchecked")
+	public static List<AtendimentoTatico> findAll() {
+		return entityManager().createQuery("SELECT o FROM AtendimentoTatico o").getResultList();
+	}
 
 	public static AtendimentoTatico find(Long id) {
         if (id == null) return null;

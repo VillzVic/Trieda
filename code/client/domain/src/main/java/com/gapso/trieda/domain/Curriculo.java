@@ -232,7 +232,13 @@ public class Curriculo implements Serializable {
         q.setParameter("descricao", descricao);
         return q.setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
-	
+
+    public int getPeriodo(Disciplina disciplina) {
+    	Query q = entityManager().createQuery("SELECT o.periodo FROM CurriculoDisciplina o WHERE o.curriculo = :curriculo AND o.disciplina = :disciplina");
+    	q.setParameter("curriculo", this);
+    	q.setParameter("disciplina", disciplina);
+    	return (Integer) q.getSingleResult();
+    }
     
 	public String toString() {
         StringBuilder sb = new StringBuilder();

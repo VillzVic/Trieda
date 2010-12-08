@@ -140,3 +140,62 @@ table.cw-FlexTable td.cw-FlexTable-content {
 	padding-bottom:4px;
 }
 
+.GradeHorariaGrid .x-grid3-col-creditos {
+	font-size: 15px;
+	font-weight: bold;
+	display: table-cell;
+	vertical-align: middle;
+	text-align: center;
+}
+.GradeHorariaGrid .x-grid3-row {
+	border: none;
+}
+.GradeHorariaGrid .x-grid3-cell-inner {
+	height: 74px;
+	width: 80px;
+	overflow: visible;
+}
+.GradeHorariaGrid .x-grid3-row-table .horario {
+	position: absolute;
+	background-color: #D2E1F0;
+	border: 1px solid #8DB2E3;
+	border-radius: 7px;
+	webkit-border-radius: 7px;
+	width: 86px;
+}
+.GradeHorariaGrid .x-grid3-row-selected {
+	background-color: #FFF !important;
+	border-color: #FFF;
+}
+
+.GradeHorariaGrid .x-grid3-row-table .horario.c1  { top:    7px; _top:    7px; }
+.GradeHorariaGrid .x-grid3-row-table .horario.c2  { top:   87px; _top:   81px; }
+.GradeHorariaGrid .x-grid3-row-table .horario.c3  { top:  167px; _top:  155px; }
+.GradeHorariaGrid .x-grid3-row-table .horario.c4  { top:  247px; _top:  229px; }
+.GradeHorariaGrid .x-grid3-row-table .horario.c5  { top:  327px; _top:  303px; }
+.GradeHorariaGrid .x-grid3-row-table .horario.c6  { top:  407px; _top:  377px; }
+.GradeHorariaGrid .x-grid3-row-table .horario.c7  { top:  487px; _top:  451px; }
+.GradeHorariaGrid .x-grid3-row-table .horario.c8  { top:  567px; _top:  525px; }
+.GradeHorariaGrid .x-grid3-row-table .horario.c9  { top:  647px; _top:  599px; }
+.GradeHorariaGrid .x-grid3-row-table .horario.c10 { top:  727px; _top:  673px; }
+.GradeHorariaGrid .x-grid3-row-table .horario.c11 { top:  807px; _top:  747px; }
+.GradeHorariaGrid .x-grid3-row-table .horario.c12 { top:  887px; _top:  821px; }
+.GradeHorariaGrid .x-grid3-row-table .horario.c13 { top:  967px; _top:  895px; }
+.GradeHorariaGrid .x-grid3-row-table .horario.c14 { top: 1047px; _top:  969px; }
+.GradeHorariaGrid .x-grid3-row-table .horario.c15 { top: 1127px; _top: 1043px; }
+
+.GradeHorariaGrid .x-grid3-row-table .horario.tc1  { height:  66px; _height:  60px; }
+.GradeHorariaGrid .x-grid3-row-table .horario.tc2  { height: 146px; _height: 134px; }
+.GradeHorariaGrid .x-grid3-row-table .horario.tc3  { height: 226px; _height: 208px; }
+.GradeHorariaGrid .x-grid3-row-table .horario.tc4  { height: 306px; _height: 280px; }
+.GradeHorariaGrid .x-grid3-row-table .horario.tc5  { height: 386px; _height: 355px; }
+.GradeHorariaGrid .x-grid3-row-table .horario.tc6  { height: 466px; _height: 430px; }
+
+.GradeHorariaGrid .x-grid3-row-table .horario.s1 { left: 707px; }
+.GradeHorariaGrid .x-grid3-row-table .horario.s2 { left: 107px; }
+.GradeHorariaGrid .x-grid3-row-table .horario.s3 { left: 207px; }
+.GradeHorariaGrid .x-grid3-row-table .horario.s4 { left: 307px; }
+.GradeHorariaGrid .x-grid3-row-table .horario.s5 { left: 407px; }
+.GradeHorariaGrid .x-grid3-row-table .horario.s6 { left: 507px; }
+.GradeHorariaGrid .x-grid3-row-table .horario.s7 { left: 607px; }
+

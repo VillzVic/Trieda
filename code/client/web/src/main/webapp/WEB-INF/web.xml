@@ -110,6 +110,10 @@
 		<servlet-name>semanasLetivaServlet</servlet-name>
 		<servlet-class>com.gapso.web.trieda.server.SemanasLetivaServiceImpl</servlet-class>
 	</servlet>
+	<servlet>
+		<servlet-name>atendimentosServlet</servlet-name>
+		<servlet-class>com.gapso.web.trieda.server.AtendimentosServiceImpl</servlet-class>
+	</servlet>
 
 	<servlet-mapping>
 		<servlet-name>otimizarServlet</servlet-name>
@@ -194,6 +198,10 @@
 	<servlet-mapping>
 		<servlet-name>semanasLetivaServlet</servlet-name>
 		<url-pattern>/trieda/semanasLetiva</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>atendimentosServlet</servlet-name>
+		<url-pattern>/trieda/atendimentos</url-pattern>
 	</servlet-mapping>
 
 	<welcome-file-list>

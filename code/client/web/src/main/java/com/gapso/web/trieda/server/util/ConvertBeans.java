@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Set;
 
 import com.gapso.trieda.domain.AreaTitulacao;
+import com.gapso.trieda.domain.AtendimentoTatico;
 import com.gapso.trieda.domain.Campus;
 import com.gapso.trieda.domain.Cenario;
 import com.gapso.trieda.domain.Curriculo;
@@ -32,6 +33,7 @@ import com.gapso.trieda.misc.Dificuldades;
 import com.gapso.trieda.misc.Estados;
 import com.gapso.trieda.misc.Semanas;
 import com.gapso.web.trieda.client.mvp.model.AreaTitulacaoDTO;
+import com.gapso.web.trieda.client.mvp.model.AtendimentoTaticoDTO;
 import com.gapso.web.trieda.client.mvp.model.CampusDTO;
 import com.gapso.web.trieda.client.mvp.model.CenarioDTO;
 import com.gapso.web.trieda.client.mvp.model.CurriculoDTO;
@@ -810,6 +812,47 @@ public class ConvertBeans {
 		dto.setCenarioId(disciplina.getCenario().getId());
 		
 		dto.setDemanda(domain.getQuantidade());
+		
+		return dto;
+	}
+	
+	// ATENDIMENTO TÁTICO
+	public static AtendimentoTatico toAtendimentoTatico(AtendimentoTaticoDTO dto) {
+		AtendimentoTatico domain = new AtendimentoTatico();
+		domain.setId(dto.getId());
+		domain.setVersion(dto.getVersion());
+		domain.setCenario(Cenario.find(dto.getCenarioId()));
+		domain.setSala(Sala.find(dto.getSalaId()));
+		domain.setSemana(Semanas.get(dto.getSemana()));
+		domain.setOferta(Oferta.find(dto.getOfertaId()));
+		domain.setDisciplina(Disciplina.find(dto.getDisciplinaId()));
+		domain.setQuantidadeAlunos(dto.getQuantidadeAlunos());
+		domain.setCreditosTeorico(dto.getCreditosTeorico());
+		domain.setCreditosPratico(dto.getCreditosPratico());
+		return domain;
+	}
+
+	public static AtendimentoTaticoDTO toAtendimentoTaticoDTO(AtendimentoTatico domain) {
+		AtendimentoTaticoDTO dto = new AtendimentoTaticoDTO();
+		dto.setId(domain.getId());
+		dto.setVersion(domain.getVersion());
+		dto.setCenarioId(domain.getCenario().getId());
+		dto.setCampusId(domain.getSala().getUnidade().getCampus().getId());
+		dto.setCampusString(domain.getSala().getUnidade().getCampus().getCodigo());
+		dto.setUnidadeId(domain.getSala().getUnidade().getId());
+		dto.setUnidadeString(domain.getSala().getUnidade().getCodigo());
+		dto.setSalaId(domain.getSala().getId());
+		dto.setSalaString(domain.getSala().getCodigo());
+		dto.setSemana(Semanas.toInt(domain.getSemana()));
+		dto.setOfertaId(domain.getOferta().getId());
+		dto.setDisciplinaId(domain.getDisciplina().getId());
+		dto.setDisciplinaString(domain.getDisciplina().getCodigo());
+		dto.setQuantidadeAlunos(domain.getQuantidadeAlunos());
+		dto.setCreditosTeorico(domain.getCreditosTeorico());
+		dto.setCreditosPratico(domain.getCreditosPratico());
+		dto.setCursoString(domain.getOferta().getCurriculo().getCurso().getCodigo());
+		dto.setCurricularString(domain.getOferta().getCurriculo().getCodigo());
+		dto.setPeriodo(domain.getOferta().getCurriculo().getPeriodo(domain.getDisciplina()));
 		
 		return dto;
 	}
