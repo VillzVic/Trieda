@@ -1233,8 +1233,8 @@ void ProblemDataLoader::cache() {
       }
       else
       {
-         it_disc->min_creds = 0;
-         it_disc->max_creds = 24;
+         it_disc->min_creds = 1;
+         it_disc->max_creds = it_disc->cred_praticos + it_disc->cred_teoricos;
       }
    }
 

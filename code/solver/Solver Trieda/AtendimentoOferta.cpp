@@ -5,6 +5,7 @@ AtendimentoOferta::AtendimentoOferta(void)
    oferta_curso_campi_id = "";
    disciplina_id = "";
    quantidade = 0;
+   turma = 99999999;
 }
 
 AtendimentoOferta::~AtendimentoOferta(void)
@@ -20,6 +21,8 @@ std::ostream& operator << (std::ostream& out, AtendimentoOferta& oferta)
    out << "<disciplinaId>" << oferta.disciplina_id << "</disciplinaId>" << endl;
 
    out << "<quantidade>" << oferta.quantidade << "</quantidade>" << endl;
+
+   out << "<turma>" << oferta.turma << "</turma>" << endl;
 
    //out << "</AtendimentoOferta>" << endl;
 

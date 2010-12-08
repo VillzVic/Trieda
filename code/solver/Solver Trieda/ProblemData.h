@@ -147,8 +147,8 @@ public:
    //Disciplina * discPresenteOferta(Disciplina&,Oferta&);
    std::map<int/*Id disc*/, GGroup<Oferta*> > ofertasDisc;
 
-   /* Listando os dias letivos para uma dada disciplina e sala. */
-   std::map<std::pair<int/*idDisc*/,int/*idSala*/>, GGroup<int>/*Dias*/ > discSala_Dias;
+   /* Listando os dias letivos para uma dada disciplina e um conjunto de salas do mesmo tipo. */
+   std::map<std::pair<int/*idDisc*/,int/*idTipoSala*/>, GGroup<int>/*Dias*/ > discSala_Dias;
 
    // <<<
 

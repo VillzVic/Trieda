@@ -14,6 +14,7 @@ public:
    std::string oferta_curso_campi_id;
    std::string disciplina_id;
    int quantidade;
+   int turma;
    
    //virtual void escreve_arvore(ItemAtendimentoUnidade& elem);
 };
