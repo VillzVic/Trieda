@@ -3803,6 +3803,7 @@ int SolverMIP::cria_restricao_cap_aloc_dem_disc(void)
    return restricoes;
 }
 
+// TRIEDA-390
 int SolverMIP::cria_restricao_cap_sala_compativel_turma(void)
 {
    int restricoes = 0;
@@ -4282,6 +4283,8 @@ int SolverMIP::cria_restricao_cap_sala_unidade(void)
    return restricoes;
 }
 
+
+// TRIEDA-392
 int SolverMIP::cria_restricao_turma_disc_dias_consec(void)
 {
    int restricoes = 0;
@@ -4432,6 +4435,7 @@ int SolverMIP::cria_restricao_turma_disc_dias_consec(void)
    return restricoes;
 }
 
+// TRIEDA-393
 int SolverMIP::cria_restricao_min_creds_turm_bloco(void)
 {
    int restricoes = 0;
@@ -4577,6 +4581,7 @@ int SolverMIP::cria_restricao_min_creds_turm_bloco(void)
    return restricoes;
 }
 
+// TRIEDA-394
 int SolverMIP::cria_restricao_max_creds_turm_bloco(void)
 {
    int restricoes = 0;
@@ -4974,6 +4979,7 @@ int SolverMIP::cria_restricao_alunos_cursos_dif(void)
    return restricoes;
 }
 
+// TRIEDA-395
 int SolverMIP::cria_restricao_de_folga_dist_cred_dia(void)
 {
    int restricoes = 0;

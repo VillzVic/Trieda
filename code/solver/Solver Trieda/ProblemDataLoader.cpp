@@ -923,6 +923,7 @@ void ProblemDataLoader::calculaDemandas() {
    }
 }
 
+// TRIEDA-416
 void ProblemDataLoader::estima_turmas()
 {
    /* Estimando o número máximo de turmas de cada disciplina de acordo com o seguinte cálculo:

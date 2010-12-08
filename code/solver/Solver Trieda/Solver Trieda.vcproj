@@ -39,7 +39,7 @@
 				GenSerialization="true"
 				GenOstream="true"
 				GenDoxygen="true"
-				RootElement="TriedaInput"
+				RootElement=""
 			/>
 			<Tool
 				Name="VCXMLDataGeneratorTool"
