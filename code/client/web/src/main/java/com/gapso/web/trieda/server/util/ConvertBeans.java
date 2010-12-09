@@ -823,6 +823,7 @@ public class ConvertBeans {
 		domain.setId(dto.getId());
 		domain.setVersion(dto.getVersion());
 		domain.setCenario(Cenario.find(dto.getCenarioId()));
+		domain.setTurma(dto.getTurma());
 		domain.setSala(Sala.find(dto.getSalaId()));
 		domain.setSemana(Semanas.get(dto.getSemana()));
 		domain.setOferta(Oferta.find(dto.getOfertaId()));
@@ -838,6 +839,7 @@ public class ConvertBeans {
 		dto.setId(domain.getId());
 		dto.setVersion(domain.getVersion());
 		dto.setCenarioId(domain.getCenario().getId());
+		dto.setTurma(domain.getTurma());
 		dto.setCampusId(domain.getSala().getUnidade().getCampus().getId());
 		dto.setCampusString(domain.getSala().getUnidade().getCampus().getCodigo());
 		dto.setUnidadeId(domain.getSala().getUnidade().getId());

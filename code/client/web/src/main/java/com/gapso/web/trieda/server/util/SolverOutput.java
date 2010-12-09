@@ -57,9 +57,11 @@ public class SolverOutput {
 							Oferta oferta = Oferta.find(Long.valueOf(itemAtendimentoOferta.getOfertaCursoCampiId()));
 							Disciplina disciplina = Disciplina.find(Long.valueOf(itemAtendimentoOferta.getDisciplinaId()));
 							int quantidade = itemAtendimentoOferta.getQuantidade();
+							String turma = itemAtendimentoOferta.getTurma();
 							
 							AtendimentoTatico atendimentoTatico = new AtendimentoTatico();
 							atendimentoTatico.setCenario(cenario);
+							atendimentoTatico.setTurma(turma);
 							atendimentoTatico.setSala(sala);
 							atendimentoTatico.setSemana(semana);
 							atendimentoTatico.setCreditosTeorico(qtdeCreditosTeoricos);

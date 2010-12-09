@@ -13,6 +13,7 @@ public class AtendimentoTaticoDTO extends BaseModel {
 	 * Long   : id
 	 * Integer: version
 	 * Long   : cenarioId
+	 * String : turma
 	 * Long   : campusId
 	 * String : campusString
 	 * Long   : unidadeId
@@ -47,6 +48,13 @@ public class AtendimentoTaticoDTO extends BaseModel {
 	}
 	public Long getCenarioId() {
 		return get("cenarioId");
+	}
+	
+	public String getTurma() {
+		return get("turma");
+	}
+	public void setTurma(String value) {
+		set("turma", value);
 	}
 	
 	public void setCampusId(Long value) {

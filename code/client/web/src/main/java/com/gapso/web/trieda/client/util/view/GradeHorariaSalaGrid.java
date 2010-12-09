@@ -177,7 +177,7 @@ public class GradeHorariaSalaGrid extends ContentPanel {
 				
 				String content = atDTO.getDisciplinaString() + "<br />";
 				content += atDTO.getCursoString() + "<br />";
-				content += "<br />";
+				content += atDTO.getTurma() + "<br />";
 				content += atDTO.getQuantidadeAlunos() +" aluno(s)";
 				
 				final Html html = new Html(content) {
