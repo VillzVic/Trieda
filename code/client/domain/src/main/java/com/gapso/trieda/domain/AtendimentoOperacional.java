@@ -40,6 +40,9 @@ public class AtendimentoOperacional implements Serializable {
     private Cenario cenario;
 
     @NotNull
+    private String turma;
+	
+    @NotNull
     @ManyToOne(targetEntity = Sala.class)
     @JoinColumn(name = "SAL_ID")
     private Sala sala;
@@ -87,6 +90,7 @@ public class AtendimentoOperacional implements Serializable {
         sb.append("Id: ").append(getId()).append(", ");
         sb.append("Version: ").append(getVersion()).append(", ");
         sb.append("Cenario: ").append(getCenario()).append(", ");
+        sb.append("Turma: ").append(getTurma()).append(", ");
         sb.append("Sala: ").append(getSala()).append(", ");
         sb.append("HorarioDisponivelCenario: ").append(getHorarioDisponivelCenario()).append(", ");
         sb.append("Professor: ").append(getProfessor()).append(", ");
@@ -188,6 +192,14 @@ public class AtendimentoOperacional implements Serializable {
 		this.cenario = cenario;
 	}
 
+	public String getTurma() {
+		return turma;
+	}
+
+	public void setTurma(String turma) {
+		this.turma = turma;
+	}
+	
 	public Sala getSala() {
 		return sala;
 	}
