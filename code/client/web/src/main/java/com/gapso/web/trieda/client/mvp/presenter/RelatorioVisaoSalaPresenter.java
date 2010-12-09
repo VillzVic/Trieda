@@ -9,6 +9,7 @@ import com.extjs.gxt.ui.client.event.SelectionChangedListener;
 import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.widget.Component;
 import com.extjs.gxt.ui.client.widget.button.Button;
+import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.gapso.web.trieda.client.mvp.model.CampusDTO;
 import com.gapso.web.trieda.client.mvp.model.CenarioDTO;
 import com.gapso.web.trieda.client.mvp.model.SalaDTO;
@@ -33,6 +34,8 @@ public class RelatorioVisaoSalaPresenter implements Presenter {
 		UnidadeComboBox getUnidadeComboBox();
 		SalaComboBox getSalaComboBox();
 		TurnoComboBox getTurnoComboBox();
+		TextField<String> getCapacidadeTextField();
+		TextField<String> getTipoTextField();
 		GradeHorariaSalaGrid getGrid();
 		Component getComponent();
 	}
@@ -87,6 +90,19 @@ public class RelatorioVisaoSalaPresenter implements Presenter {
 						}
 					});
 
+				}
+			}
+		});
+		display.getSalaComboBox().addSelectionChangedListener(new SelectionChangedListener<SalaDTO>(){
+			@Override
+			public void selectionChanged(SelectionChangedEvent<SalaDTO> se) {
+				final SalaDTO salaDTO = se.getSelectedItem();
+				if(salaDTO == null) {
+					display.getCapacidadeTextField().setValue("");
+					display.getTipoTextField().setValue("");
+				} else {
+					display.getCapacidadeTextField().setValue(salaDTO.getCapacidade().toString());
+					display.getTipoTextField().setValue(salaDTO.getTipoString());
 				}
 			}
 		});

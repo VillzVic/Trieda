@@ -3,12 +3,18 @@ package com.gapso.web.trieda.client.util.view;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.extjs.gxt.ui.client.core.El;
 import com.extjs.gxt.ui.client.data.BaseModel;
+import com.extjs.gxt.ui.client.dnd.DragSource;
+import com.extjs.gxt.ui.client.dnd.GridDropTarget;
+import com.extjs.gxt.ui.client.event.DNDEvent;
+import com.extjs.gxt.ui.client.event.DNDListener;
 import com.extjs.gxt.ui.client.event.Events;
 import com.extjs.gxt.ui.client.event.GridEvent;
 import com.extjs.gxt.ui.client.event.Listener;
 import com.extjs.gxt.ui.client.store.ListStore;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
+import com.extjs.gxt.ui.client.widget.Html;
 import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.grid.ColumnConfig;
 import com.extjs.gxt.ui.client.widget.grid.ColumnData;
@@ -32,6 +38,7 @@ public class GradeHorariaSalaGrid extends ContentPanel {
 	private List<AtendimentoTaticoDTO> atendimentos;
 	private SalaDTO salaDTO;
 	private TurnoDTO turnoDTO;
+	private QuickTip quickTip;
 	
 	public GradeHorariaSalaGrid() {
 		super(new FitLayout());
@@ -41,8 +48,6 @@ public class GradeHorariaSalaGrid extends ContentPanel {
 	@Override
 	protected void beforeRender() {
 		super.beforeRender();
-				
-
 		
 		grid = new Grid<LinhaDeCredito>(getListStore(), new ColumnModel(getColumnList()));
 		grid.setTrackMouseOver(false);
@@ -55,9 +60,38 @@ public class GradeHorariaSalaGrid extends ContentPanel {
 		});
 		
 		grid.getView().setEmptyText("Não houve nenhum resultado");
-		QuickTip qt = new QuickTip(grid);
-		qt.getToolTipConfig().setDismissDelay(0);
+		quickTip = new QuickTip(grid);
+		quickTip.getToolTipConfig().setDismissDelay(0);
 		add(grid);
+		
+		GridDropTarget target = new GridDropTarget(grid) {
+			@Override
+			protected void onDragDrop(DNDEvent event) { }
+		};
+		target.addDNDListener(new DNDListener() {
+			@Override
+			public void dragMove(DNDEvent e) {
+				int linha = grid.getView().findRowIndex(e.getDragEvent().getTarget());
+				int coluna = grid.getView().findCellIndex(e.getDragEvent().getTarget(), null);
+				
+				if(linha < 0 || coluna < 1) {
+					e.setCancelled(true);
+					e.getStatus().setStatus(false);
+					return;	
+				}
+				
+				int credito = linha + 1;
+				int semana = coluna + 1;
+				semana = (semana == 8)? 1 : semana; 
+				System.out.println("Linha:  "+ credito);
+				System.out.println("Coluna: "+ semana);
+				System.out.println("--------------");
+				e.setCancelled(false);
+				e.getStatus().setStatus(true);
+				return;
+//				super.dragMove(e);
+			}
+		});
 		requestAtendimentos();
 	}
 
@@ -80,14 +114,13 @@ public class GradeHorariaSalaGrid extends ContentPanel {
 	public ListStore<LinhaDeCredito> getListStore() {
 		if(store == null) {
 			store = new ListStore<LinhaDeCredito>();
-			store.add(new LinhaDeCredito(1));
-			store.add(new LinhaDeCredito(2));
-			store.add(new LinhaDeCredito(3));
-			store.add(new LinhaDeCredito(4));
-			store.add(new LinhaDeCredito(5));
-			store.add(new LinhaDeCredito(6));
-			store.add(new LinhaDeCredito(7));
-			store.add(new LinhaDeCredito(8));
+		} else {
+			store.removeAll();
+		}	
+		if(turnoDTO != null) {
+			for(int i = 1; i <= turnoDTO.getMaxCreditos(); i++) {
+				store.add(new LinhaDeCredito(i));
+			}
 		}
 		return store;
 	}
@@ -115,9 +148,9 @@ public class GradeHorariaSalaGrid extends ContentPanel {
 	private void addColumn(List<ColumnConfig> list, String id, String name) {
 		
 		GridCellRenderer<LinhaDeCredito> change = new GridCellRenderer<LinhaDeCredito>() {
-			public String render(LinhaDeCredito model, String property, ColumnData config, int rowIndex, int colIndex, ListStore<LinhaDeCredito> store, Grid<LinhaDeCredito> grid) {
-				if(colIndex == 0) return String.valueOf(rowIndex + 1);
-				if(atendimentos == null || atendimentos.size() == 0) return "";
+			public Html render(LinhaDeCredito model, String property, ColumnData config, int rowIndex, int colIndex, ListStore<LinhaDeCredito> store, Grid<LinhaDeCredito> grid) {
+				if(colIndex == 0) return new Html(String.valueOf(rowIndex + 1));
+				if(atendimentos == null || atendimentos.size() == 0) new Html("");
 				
 				int semana = -1;
 				if(colIndex == 1) semana = 2;
@@ -130,24 +163,47 @@ public class GradeHorariaSalaGrid extends ContentPanel {
 				
 				AtendimentoTaticoDTO atDTO = getAtendimento(rowIndex + 1, semana);
 				
-				if(atDTO == null) return "";
+				if(atDTO == null) return new Html("");
 				
-				String title = atDTO.getDisciplinaString();
+				final String title = atDTO.getDisciplinaString();
 				
-				String contentToolTip = "<b>Curso:</b> "+ atDTO.getCursoString() +"<br />";
-				contentToolTip += "<b>Matriz Curricular:</b> "+ atDTO.getCurriculoString() +"<br />";
-				contentToolTip += "<b>Período:</b> "+ atDTO.getPeriodo() +"<br />";
-				contentToolTip += "<b>Turma:</b> "+ "<br />";
-				contentToolTip += "<b>Quantidade:</b> "+ atDTO.getQuantidadeAlunos() +"<br />";
-				contentToolTip += "<b>"+atDTO.getTotalCreditos()+" Crédito(s)</b><br />";
-				contentToolTip += "<b>"+((atDTO.isTeorico())? "Teórico" : "Prático") +"</b><br />";
+				final String contentToolTip = "<b>Curso:</b> "+ atDTO.getCursoString() +"<br />"
+					+ "<b>Matriz Curricular:</b> "+ atDTO.getCurriculoString() +"<br />"
+					+ "<b>Período:</b> "+ atDTO.getPeriodo() +"<br />"
+					+ "<b>Turma:</b> "+ "<br />"
+					+ "<b>Quantidade:</b> "+ atDTO.getQuantidadeAlunos() +"<br />"
+					+ "<b>"+atDTO.getTotalCreditos()+" Crédito(s)</b><br />"
+					+ "<b>"+((atDTO.isTeorico())? "Teórico" : "Prático") +"</b><br />";
 				
 				String content = atDTO.getDisciplinaString() + "<br />";
 				content += atDTO.getCursoString() + "<br />";
 				content += "<br />";
 				content += atDTO.getQuantidadeAlunos() +" aluno(s)";
 				
-				return "<div qtip=\""+contentToolTip+"\" qtitle=\""+title+"\" qwidth=\"200\" class=\"horario c"+(rowIndex + 1)+" tc"+atDTO.getTotalCreditos()+" s"+atDTO.getSemana()+"\">" + content + "</div>";
+				final Html html = new Html(content) {
+					@Override
+					protected void onRender(Element target, int index) {
+						super.onRender(target, index);
+						target.setAttribute("qtip", contentToolTip);
+						target.setAttribute("qtitle", title);
+						target.setAttribute("qwidth", "200px");
+					}
+				};
+				html.addStyleName("horario");
+				html.addStyleName("c"+(rowIndex + 1));
+				html.addStyleName("tc"+atDTO.getTotalCreditos());
+				html.addStyleName("s"+atDTO.getSemana());
+				
+				new DragSource(html) {
+					@Override
+					protected void onDragStart(DNDEvent event) {
+						event.setData(html);
+						event.getStatus().update(El.fly(html.getElement()).cloneNode(true));
+						quickTip.hide();
+					}
+				};
+				
+				return html;
 			}
 		};
 		
@@ -161,13 +217,15 @@ public class GradeHorariaSalaGrid extends ContentPanel {
 	
 	private AtendimentoTaticoDTO getAtendimento(int credito, int semana) {
 		int ocupado = 0;
-		for(AtendimentoTaticoDTO at : atendimentos) {
-			if(at.getSemana() == semana) {
-//				if(credito == 1) return at;
-				if(credito - 1 == ocupado) {
-					return at;
+		if(atendimentos != null) {
+			for(AtendimentoTaticoDTO at : atendimentos) {
+				if(at.getSemana() == semana) {
+	//				if(credito == 1) return at;
+					if(credito - 1 == ocupado) {
+						return at;
+					}
+					ocupado += at.getTotalCreditos();
 				}
-				ocupado += at.getTotalCreditos();
 			}
 		}
 		return null;

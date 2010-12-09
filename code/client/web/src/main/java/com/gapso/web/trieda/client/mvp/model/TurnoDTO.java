@@ -15,6 +15,7 @@ public class TurnoDTO extends FileModel {
 	 * Long   : cenarioId
 	 * String : nome
 	 * Integer: tempo
+	 * Integer: maxCreditos
 	 */
 	
 	public void setId(Long value) {
@@ -50,6 +51,13 @@ public class TurnoDTO extends FileModel {
 	}
 	public Integer getTempo() {
 		return get("tempo");
+	}
+	
+	public void setMaxCreditos(Integer value) {
+		set("maxCreditos", value);
+	}
+	public Integer getMaxCreditos() {
+		return get("maxCreditos");
 	}
 
 	@Override

@@ -251,6 +251,7 @@ public class ConvertBeans {
 		dto.setCenarioId(domain.getCenario().getId());
 		dto.setNome(domain.getNome());
 		dto.setTempo(domain.getTempo());
+		dto.setMaxCreditos(domain.getHorariosAula().size());
 		return dto;
 	}
 

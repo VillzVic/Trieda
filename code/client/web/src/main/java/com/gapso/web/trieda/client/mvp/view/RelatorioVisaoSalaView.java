@@ -150,4 +150,15 @@ public class RelatorioVisaoSalaView extends MyComposite implements RelatorioVisa
 		return turnoCB;
 	}
 
+	@Override
+	public TextField<String> getCapacidadeTextField() {
+		return capacidadeTF;
+	}
+
+	@Override
+	public TextField<String> getTipoTextField() {
+		// TODO Auto-generated method stub
+		return tipoSalaTF;
+	}
+
 }

@@ -148,7 +148,6 @@ table.cw-FlexTable td.cw-FlexTable-content {
 	text-align: center;
 }
 .GradeHorariaGrid .x-grid3-row {
-	border: none;
 }
 .GradeHorariaGrid .x-grid3-cell-inner {
 	height: 74px;
@@ -163,9 +162,15 @@ table.cw-FlexTable td.cw-FlexTable-content {
 	webkit-border-radius: 7px;
 	width: 86px;
 }
+.GradeHorariaGrid .x-grid3-row-table .drag .horario {
+	left: auto;
+	top: auto;
+}
 .GradeHorariaGrid .x-grid3-row-selected {
-	background-color: #FFF !important;
-	border-color: #FFF;
+	background-color:#FFFFFF !important;
+	border-color:#FFFFFF #EDEDED #EDEDED;
+	border-style:solid;
+	border-width:1px;
 }
 
 .GradeHorariaGrid .x-grid3-row-table .horario.c1  { top:    7px; _top:    7px; }
