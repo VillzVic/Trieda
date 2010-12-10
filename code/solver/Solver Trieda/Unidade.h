@@ -21,19 +21,16 @@ public:
 
    GGroup<ConjuntoSala*> conjutoSalas;
 
-	//int maior_sala;
    unsigned maiorSala;
 
-
-	// >>>
-	//Campus *campus;
 	int id_campus;
-	// <<<
+
+   /* Armazena os dias letivos em que, pelo menos, uma sala possui algum crédito disponível */
+   GGroup<int> diasLetivos;
 
 private:
       
-   // >>> Variáveis e/ou estruturas de dados para realizar o pré processamento dos dados.
-   // <<<
+   // Variáveis e/ou estruturas de dados para realizar o pré processamento dos dados.
 
 public:
 

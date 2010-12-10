@@ -104,6 +104,8 @@ void ProblemDataLoader::criaConjuntoSalas()
                         itCjtSala->diasLetivos.add(itCredDisp->dia_semana);
                         /* Adicionando os dias letivos ao campus em questão */
                         itCampus->diasLetivos.add(itCredDisp->dia_semana);
+                        /* Adicionando os dias letivos à unidade em questão */
+                        itUnidade->diasLetivos.add(itCredDisp->dia_semana);
                      }
 
                      break;
@@ -130,6 +132,8 @@ void ProblemDataLoader::criaConjuntoSalas()
                   cjtSala->diasLetivos.add(itCredDisp->dia_semana);
                   /* Adicionando os dias letivos ao campus em questão */
                   itCampus->diasLetivos.add(itCredDisp->dia_semana);
+                  /* Adicionando os dias letivos à unidade em questão */
+                  itUnidade->diasLetivos.add(itCredDisp->dia_semana);
                }
             }
          }
