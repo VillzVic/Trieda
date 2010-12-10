@@ -7,6 +7,8 @@
 #include "opt_lp.h"
 #include "input.h"
 
+#include "InitialSolution.h"
+
 #define PRINT_cria_variaveis
 #define PRINT_cria_restricoes
 #define DEBUG
@@ -126,8 +128,8 @@ public:
    int cria_restricao_de_folga_dist_cred_dia(void);		// Restricao 1.2.23
    int cria_restricao_ativacao_var_r(void);						// Restricao 1.2.24
 
-   int cria_restricao_limita_abertura_turmas(void);      // Restricao NOVA
-   int cria_restricao_abre_turmas_em_sequencia(void);      // Restricao NOVA
+   int cria_restricao_limita_abertura_turmas(void);      // Restricao 1.2.25
+   int cria_restricao_abre_turmas_em_sequencia(void);      // Restricao 1.2.26
 
    /********************************************************************
    **                        OTHER METHODS                            **

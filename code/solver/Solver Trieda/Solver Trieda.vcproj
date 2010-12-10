@@ -206,6 +206,10 @@
 			Filter="cpp;c;cc;cxx"
 			>
 			<File
+				RelativePath=".\InitialSolution.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\Main.cpp"
 				>
 			</File>
@@ -450,6 +454,10 @@
 			Name="Header Files"
 			Filter="h;hpp;hxx"
 			>
+			<File
+				RelativePath=".\InitialSolution.h"
+				>
+			</File>
 			<Filter
 				Name="Input"
 				>
