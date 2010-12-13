@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.gapso.web.trieda.client.mvp.model.AtendimentoTaticoDTO;
+import com.gapso.web.trieda.client.mvp.model.CurriculoDTO;
 import com.gapso.web.trieda.client.mvp.model.SalaDTO;
 import com.gapso.web.trieda.client.mvp.model.TurnoDTO;
 import com.google.gwt.user.client.rpc.RemoteService;
@@ -17,5 +18,6 @@ public interface AtendimentosService extends RemoteService {
 	
 	PagingLoadResult<AtendimentoTaticoDTO> getList();
 	List<AtendimentoTaticoDTO> getBusca(SalaDTO sala, TurnoDTO turno);
+	List<AtendimentoTaticoDTO> getBusca(CurriculoDTO curriculoDTO, Integer periodo, TurnoDTO turnoDTO);
 	
 }

@@ -26,6 +26,7 @@ import com.gapso.web.trieda.client.mvp.view.DisciplinasView;
 import com.gapso.web.trieda.client.mvp.view.GruposSalasView;
 import com.gapso.web.trieda.client.mvp.view.HorariosAulaView;
 import com.gapso.web.trieda.client.mvp.view.OfertasView;
+import com.gapso.web.trieda.client.mvp.view.RelatorioVisaoCursoView;
 import com.gapso.web.trieda.client.mvp.view.RelatorioVisaoSalaView;
 import com.gapso.web.trieda.client.mvp.view.SalasView;
 import com.gapso.web.trieda.client.mvp.view.SemanasLetivaView;
@@ -74,6 +75,7 @@ public class ToolBarPresenter implements Presenter {
 		MenuItem getAssociarDisciplinasSalasListMenuItem();
 		MenuItem getDemandasMenuItem();
 		MenuItem getRelatorioVisaoSalaMenuItem();
+		MenuItem getRelatorioVisaoCursoMenuItem();
 	}
 	
 	private CenarioDTO masterData;
@@ -257,6 +259,13 @@ public class ToolBarPresenter implements Presenter {
 			@Override
 			public void componentSelected(MenuEvent ce) {
 				Presenter presenter = new RelatorioVisaoSalaPresenter(masterData, new RelatorioVisaoSalaView());
+				presenter.go(gTab);
+			}
+		});
+		toolBar.getRelatorioVisaoCursoMenuItem().addSelectionListener(new SelectionListener<MenuEvent>() {
+			@Override
+			public void componentSelected(MenuEvent ce) {
+				Presenter presenter = new RelatorioVisaoCursoPresenter(masterData, new RelatorioVisaoCursoView());
 				presenter.go(gTab);
 			}
 		});

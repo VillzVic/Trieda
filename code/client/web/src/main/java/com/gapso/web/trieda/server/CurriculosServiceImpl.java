@@ -37,8 +37,9 @@ public class CurriculosServiceImpl extends RemoteServiceServlet implements Curri
 	}
 
 	@Override
-	public ListLoadResult<CurriculoDTO> getList(BasePagingLoadConfig loadConfig) {
-		return getBuscaList(null, loadConfig.get("query").toString(), null, loadConfig);
+	public ListLoadResult<CurriculoDTO> getList(BasePagingLoadConfig config) {
+		CursoDTO cursoDTO = config.get("cursoDTO");
+		return getBuscaList(cursoDTO, config.get("query").toString(), null, config);
 	}
 	
 	@Override
@@ -93,6 +94,12 @@ public class CurriculosServiceImpl extends RemoteServiceServlet implements Curri
 			listCurriculoDisciplinaDTO.add(ConvertBeans.toCurriculoDisciplinaDTO(cd));
 		}
 		return new BaseListLoadResult<CurriculoDisciplinaDTO>(listCurriculoDisciplinaDTO);
+	}
+	
+	@Override
+	public List<Integer> getPeriodos(CurriculoDTO curriculoDTO) {
+		Curriculo curriculo = Curriculo.find(curriculoDTO.getId());
+		return curriculo.getPeriodos();
 	}
 	
 	@Override

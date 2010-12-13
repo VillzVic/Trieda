@@ -6,9 +6,11 @@ import java.util.List;
 import com.extjs.gxt.ui.client.data.BasePagingLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.gapso.trieda.domain.AtendimentoTatico;
+import com.gapso.trieda.domain.Curriculo;
 import com.gapso.trieda.domain.Sala;
 import com.gapso.trieda.domain.Turno;
 import com.gapso.web.trieda.client.mvp.model.AtendimentoTaticoDTO;
+import com.gapso.web.trieda.client.mvp.model.CurriculoDTO;
 import com.gapso.web.trieda.client.mvp.model.SalaDTO;
 import com.gapso.web.trieda.client.mvp.model.TurnoDTO;
 import com.gapso.web.trieda.client.services.AtendimentosService;
@@ -41,6 +43,18 @@ public class AtendimentosServiceImpl extends RemoteServiceServlet implements Ate
 		Turno turno = Turno.find(turnoDTO.getId());
 		List<AtendimentoTaticoDTO> list = new ArrayList<AtendimentoTaticoDTO>();
 		List<AtendimentoTatico> atendimentosTatico = AtendimentoTatico.findBySalaAndTurno(sala, turno);
+		for(AtendimentoTatico atendimentoTatico : atendimentosTatico) {
+			list.add(ConvertBeans.toAtendimentoTaticoDTO(atendimentoTatico));
+		}
+		return list;
+	}
+	
+	@Override
+	public List<AtendimentoTaticoDTO> getBusca(CurriculoDTO curriculoDTO, Integer periodo, TurnoDTO turnoDTO) {
+		Curriculo curriculo = Curriculo.find(curriculoDTO.getId());
+		Turno turno = Turno.find(turnoDTO.getId());
+		List<AtendimentoTaticoDTO> list = new ArrayList<AtendimentoTaticoDTO>();
+		List<AtendimentoTatico> atendimentosTatico = AtendimentoTatico.findByCurriculoAndPeriodoAndTurno(curriculo, periodo, turno);
 		for(AtendimentoTatico atendimentoTatico : atendimentosTatico) {
 			list.add(ConvertBeans.toAtendimentoTaticoDTO(atendimentoTatico));
 		}

@@ -21,5 +21,6 @@ public interface CurriculosServiceAsync {
 	void getDisciplinasList(CurriculoDTO curriculoDTO, AsyncCallback<ListLoadResult<CurriculoDisciplinaDTO>> callback);
 	void saveDisciplina(CurriculoDTO curriculoDTO, CurriculoDisciplinaDTO curriculoDisciplinaDTO, AsyncCallback<Void> callback);
 	void removeDisciplina(List<CurriculoDisciplinaDTO> curriculoDisciplinaDTOList, AsyncCallback<Void> callback);
+	void getPeriodos(CurriculoDTO curriculoDTO, AsyncCallback<List<Integer>> callback);
 	
 }

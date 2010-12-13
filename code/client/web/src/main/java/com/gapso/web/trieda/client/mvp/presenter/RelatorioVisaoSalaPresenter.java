@@ -39,11 +39,9 @@ public class RelatorioVisaoSalaPresenter implements Presenter {
 		GradeHorariaSalaGrid getGrid();
 		Component getComponent();
 	}
-	private CenarioDTO cenario;
 	private Display display; 
 	
 	public RelatorioVisaoSalaPresenter(CenarioDTO cenario, Display display) {
-		this.cenario = cenario;
 		this.display = display;
 		setListeners();
 	}

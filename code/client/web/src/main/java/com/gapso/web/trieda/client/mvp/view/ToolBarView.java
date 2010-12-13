@@ -46,6 +46,7 @@ public class ToolBarView extends MyComposite implements ToolBarPresenter.Display
 	private MenuItem associarDisciplinasSalasListMI;
 	private MenuItem demandasMI;
 	private MenuItem relatorioVisaoSalaMI;
+	private MenuItem relatorioVisaoCursoMI;
 	
 	// Campi
 	private Button campiBt;
@@ -161,6 +162,8 @@ public class ToolBarView extends MyComposite implements ToolBarPresenter.Display
 		outros.add(demandasMI);
 		relatorioVisaoSalaMI = createMenuItem("Grade Horária Visão Sala", Resources.DEFAULTS.outros16());
 		outros.add(relatorioVisaoSalaMI);
+		relatorioVisaoCursoMI = createMenuItem("Grade Horária Visão Curso", Resources.DEFAULTS.outros16());
+		outros.add(relatorioVisaoCursoMI);
 		
 		outrosUnidadesSBt.setMenu(outros);
 		group.add(outrosUnidadesSBt);
@@ -495,6 +498,10 @@ public class ToolBarView extends MyComposite implements ToolBarPresenter.Display
 	@Override
 	public MenuItem getRelatorioVisaoSalaMenuItem() {
 		return relatorioVisaoSalaMI;
+	}
+	@Override
+	public MenuItem getRelatorioVisaoCursoMenuItem() {
+		return relatorioVisaoCursoMI;
 	}
 	
 }

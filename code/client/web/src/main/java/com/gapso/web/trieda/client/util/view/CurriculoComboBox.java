@@ -13,6 +13,7 @@ import com.extjs.gxt.ui.client.event.Listener;
 import com.extjs.gxt.ui.client.store.ListStore;
 import com.extjs.gxt.ui.client.widget.form.ComboBox;
 import com.gapso.web.trieda.client.mvp.model.CurriculoDTO;
+import com.gapso.web.trieda.client.mvp.model.CursoDTO;
 import com.gapso.web.trieda.client.services.CurriculosServiceAsync;
 import com.gapso.web.trieda.client.services.Services;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -20,12 +21,15 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 public class CurriculoComboBox extends ComboBox<CurriculoDTO> {
 
 	private ListStore<CurriculoDTO> store;
+	private CursoDTO cursoDTO;
 	
 	public CurriculoComboBox() {
 		final CurriculosServiceAsync service = Services.curriculos();
 		RpcProxy<ListLoadResult<CurriculoDTO>> proxy = new RpcProxy<ListLoadResult<CurriculoDTO>>() {
 			@Override
 			public void load(Object loadConfig, AsyncCallback<ListLoadResult<CurriculoDTO>> callback) {
+				BasePagingLoadConfig bplc = (BasePagingLoadConfig)loadConfig;
+				bplc.set("cursoDTO", getCursoDTO());
 				service.getList((BasePagingLoadConfig)loadConfig, callback);
 			}
 		};
@@ -46,6 +50,13 @@ public class CurriculoComboBox extends ComboBox<CurriculoDTO> {
 		setMinChars(1);
 	}
 
+	public CursoDTO getCursoDTO() {
+		return cursoDTO;
+	}
+	public void setCursoDTO(CursoDTO cursoDTO) {
+		this.cursoDTO = cursoDTO;
+	}
+	
 	private native String getTemplateCB() /*-{
 		return  [
 			'<tpl for=".">',

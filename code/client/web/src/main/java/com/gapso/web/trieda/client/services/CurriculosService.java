@@ -26,5 +26,6 @@ public interface CurriculosService extends RemoteService {
 	ListLoadResult<CurriculoDisciplinaDTO> getDisciplinasList(CurriculoDTO curriculoDTO);
 	void saveDisciplina(CurriculoDTO curriculoDTO, CurriculoDisciplinaDTO curriculoDisciplinaDTO);
 	void removeDisciplina(List<CurriculoDisciplinaDTO> curriculoDisciplinaDTOList);
+	List<Integer> getPeriodos(CurriculoDTO curriculoDTO);
 	
 }

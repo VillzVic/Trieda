@@ -240,6 +240,13 @@ public class Curriculo implements Serializable {
     	return (Integer) q.getSingleResult();
     }
     
+    @SuppressWarnings("unchecked")
+    public List<Integer> getPeriodos() {
+    	Query q = entityManager().createQuery("SELECT DISTINCT(o.periodo) FROM CurriculoDisciplina o WHERE o.curriculo = :curriculo");
+    	q.setParameter("curriculo", this);
+    	return (List<Integer>) q.getResultList();
+    }
+    
 	public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("Id: ").append(getId()).append(", ");
