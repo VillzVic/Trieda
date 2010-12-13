@@ -56,6 +56,8 @@
 
 \item $O_{d}$ - conjunto de ofertas de uma uma disciplina $d$. Os elementos desse conjunto são denotados por $oft_{d}$.
 
+\item $K_{d}$ - conjunto de combinações possíveis de divisão de créditos de uma uma disciplina $d$. Os elementos desse conjunto são denotados por $k$.
+
 \end{itemize}
 
 \newpage
@@ -90,9 +92,11 @@
 
 \item $FC_{d,t}$ - número de créditos fixados para a disciplina $d$ no dia $t$.
 
+\item $N_{d,k,t}$ - número de créditos determinados para a disciplina $d$ no dia $t$ na combinação de divisão de crédito $k$.
+
 \item $M$ - big $M$.
 
-\item $\alpha, \beta, \gamma, \delta, \lambda, \rho, \xi$ - pesos associados a cada item da função objetivo.
+\item $\alpha, \beta, \gamma, \delta, \lambda, \rho, \xi, \psi$ - pesos associados a cada item da função objetivo.
 
 \end{itemize}
 
@@ -128,13 +132,17 @@
 
 \item $\overline{h}_{bc,i}$ - máximo de créditos alocados na semana na $i$-ésima turma do bloco $bc$.
 
+\item $m_{d,i,k}$ - variável binária que indica se a combinação de divisão de créditos $k$ foi escolhida para a turma $i$ da disciplina $d$.
+
 \item $fcp_{d,t}$ - variável de folga superior para a restrição de fixação da distribuição de créditos por dia.
 
 \item $fcm_{d,t}$ - variável de folga inferior para a restrição de fixação da distribuição de créditos por dia.
 
 \item $bs_{i,d,c,c',cp}$ - variável de folga para a restrição em que o compartilhamento de turmas de alunos de cursos diferentes é proibido.
 
-\item $fd_{d,oft}$ - variável de folga para a restrição "Capacidade alocada tem que permitir atender demanda da disciplina''.
+\item $fd_{d,oft}$ - variável de folga para a restrição "Capacidade alocada tem que permitir atender demanda da disciplina".
+
+\item $fk_{d,i,k}$ - variável de folga para a restrição de combinação de divisão de créditos.
 
 \end{itemize}
 
@@ -175,6 +183,10 @@ $$
 &
 + \xi \cdot \sum\limits_{d \in D} 
 \sum\limits_{t \in T} fcm_{d,t}
+\\
+&
++ \psi \cdot \sum\limits_{d \in D} 
+\sum\limits_{t \in T} \sum\limits_{i \in I_{d}} fk_{d,i,k}
 \\
 &
 + \rho \cdot \sum\limits_{bc \in B}\sum\limits_{t \in T} (\sum\limits_{cp \in CP} w_{bc,t,cp})
@@ -404,6 +416,23 @@ z_{i,d,cp} \leq \sum\limits_{oft \in O_{cp}} a_{i,d,oft}  \nonumber \qquad
 \sum\limits_{u \in U} \sum\limits_{tps \in SCAP_{u}} \sum\limits_{t \in T} o_{i,d,u,tps,t} \geq \sum\limits_{u \in U} \sum\limits_{tps \in SCAP_{u}} \sum\limits_{t \in T} o_{i',d,u,tps,t} \nonumber \qquad 
 \forall d \in D \quad
 \forall i,i' \in I_{d}
+\end{eqnarray}
+
+\subsubsection{Regra de divisão de créditos}
+
+\begin{eqnarray}
+\sum\limits_{u \in U} \sum\limits_{tps \in SCAP_{u}} x_{i,d,u,tps,t} = \sum\limits_{k \in K_{d}}N_{d,k,t} \cdot m_{d,i,k} + fk_{d,i,k} \nonumber \qquad 
+\forall d \in D \quad
+\forall i \in I_{d} \quad
+\forall t \in T
+\end{eqnarray}
+
+\subsubsection{Somente uma combinação de regra de divisão de créditos pode ser escolhida}
+
+\begin{eqnarray}
+\sum\limits_{k \in K_{d}} m_{d,i,k} \leq 1 \nonumber \qquad 
+\forall d \in D \quad
+\forall i \in I_{d}
 \end{eqnarray}
 
 \clearpage
