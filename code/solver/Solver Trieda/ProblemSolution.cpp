@@ -1,4 +1,5 @@
 #include "ProblemSolution.h"
+#include "ErrorHandler.h"
 
 ProblemSolution::ProblemSolution()
 {
@@ -28,7 +29,10 @@ std::ostream& operator << (std::ostream& out, ProblemSolution& solution )
 
 	out << "</atendimentos>" << endl;
 
-   out << "</TriedaOutput>" << endl;
+	// Erros e warnings:
+	out << *ErrorHandler::getInstance();
+
+    out << "</TriedaOutput>" << endl;
 
 	return out;
 }

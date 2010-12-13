@@ -2887,6 +2887,7 @@ int SolverMIP::cria_restricao_disciplina_sala(void)
 	return restricoes;
 }
 
+// TRIEDA-413 - Garante que a mesma turma tenha que ser alocada no mesmo tipo de sala em dias diferentes
 int SolverMIP::cria_restricao_turma_sala(void)
 {
 	int restricoes = 0;
