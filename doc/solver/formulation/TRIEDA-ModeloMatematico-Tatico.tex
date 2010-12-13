@@ -142,7 +142,7 @@
 
 \item $fd_{d,oft}$ - variável de folga para a restrição "Capacidade alocada tem que permitir atender demanda da disciplina".
 
-\item $fk_{d,i,k}$ - variável de folga para a restrição de combinação de divisão de créditos.
+\item $fk_{d,i,t}$ - variável de folga para a restrição de combinação de divisão de créditos.
 
 \end{itemize}
 
@@ -421,7 +421,7 @@ z_{i,d,cp} \leq \sum\limits_{oft \in O_{cp}} a_{i,d,oft}  \nonumber \qquad
 \subsubsection{Regra de divisão de créditos}
 
 \begin{eqnarray}
-\sum\limits_{u \in U} \sum\limits_{tps \in SCAP_{u}} x_{i,d,u,tps,t} = \sum\limits_{k \in K_{d}}N_{d,k,t} \cdot m_{d,i,k} + fk_{d,i,k} \nonumber \qquad 
+\sum\limits_{u \in U} \sum\limits_{tps \in SCAP_{u}} x_{i,d,u,tps,t} = \sum\limits_{k \in K_{d}}N_{d,k,t} \cdot m_{d,i,k} + fk_{d,i,t} \nonumber \qquad 
 \forall d \in D \quad
 \forall i \in I_{d} \quad
 \forall t \in T
