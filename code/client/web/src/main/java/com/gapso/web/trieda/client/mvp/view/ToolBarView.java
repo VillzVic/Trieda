@@ -64,7 +64,7 @@ public class ToolBarView extends MyComposite implements ToolBarPresenter.Display
 	private Button associarDisciplinasSalasListDisciplinasBt;
 	
 	// Cenário
-	private Button otimizarBt;
+	private Button parametrosBt;
 	private Button relatorioVisaoSalaBt;
 	private Button relatorioVisaoCursoBt;
 	
@@ -275,8 +275,8 @@ public class ToolBarView extends MyComposite implements ToolBarPresenter.Display
 	}
 	
 	private void createPlanejamento() {
-		otimizarBt = createButton("Gerar Grade", "Gerar Grade", Resources.DEFAULTS.otimizar24());
-		planejamentoToolBar.add(otimizarBt);
+		parametrosBt = createButton("Gerar Grade", "Gerar Grade", Resources.DEFAULTS.otimizar24());
+		planejamentoToolBar.add(parametrosBt);
 		
 		relatorioVisaoSalaBt = createButton("Saida: Sala", "Grade Horária Visão Sala", Resources.DEFAULTS.otimizar24());
 		planejamentoToolBar.add(relatorioVisaoSalaBt);
@@ -305,8 +305,8 @@ public class ToolBarView extends MyComposite implements ToolBarPresenter.Display
 	 */
 	
 	@Override
-	public Button getOtimizatButton() {
-		return otimizarBt;
+	public Button getParametrosButton() {
+		return parametrosBt;
 	}
 	@Override
 	public Button getSemanasLetivaListCampiButton() {

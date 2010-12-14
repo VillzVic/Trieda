@@ -104,7 +104,7 @@ public class OtimizarServiceImpl extends RemoteServiceServlet implements Otimiza
 				ret.get("warning").add(warning.getMessage());
 			}
 			
-			if(triedaOutput.getErrors() == null || triedaOutput.getErrors().getError().isEmpty()) {
+			if(!triedaOutput.getErrors().getError().isEmpty()) {
 				return ret;
 			}
 			SolverOutput solverOutput = new SolverOutput(cenario, triedaOutput);
