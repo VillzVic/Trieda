@@ -8,21 +8,12 @@ class Demanda :
 {
 public:
    Demanda(void);
+
+   Demanda(Demanda const & demanda);
+
    ~Demanda(void);
+
    virtual void le_arvore(ItemDemanda& elem);
-   //bool operator < (const Demanda& right) 
-   //{ 
-   //   if(unidade != right.unidade)
-   //      return (unidade < right.unidade); 
-   //   if(turno != right.turno)
-   //      return (turno < right.turno);
-   //   if(curso != right.curso)
-   //      return (curso < right.curso);
-   //   return (quantidade < right.quantidade);
-   //}
-   //bool operator == (const Demanda& right) { 
-   //   return (id == right.id); 
-   //}
 
    int quantidade;
    int oferta_id;
@@ -30,4 +21,5 @@ public:
 
    Oferta* oferta;
    Disciplina* disciplina;
+
 };

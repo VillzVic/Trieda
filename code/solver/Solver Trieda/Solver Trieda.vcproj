@@ -206,10 +206,6 @@
 			Filter="cpp;c;cc;cxx"
 			>
 			<File
-				RelativePath=".\InitialSolution.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\Main.cpp"
 				>
 			</File>
@@ -448,16 +444,32 @@
 					RelativePath=".\Variable.cpp"
 					>
 				</File>
+				<Filter
+					Name="Initial Solution"
+					>
+					<File
+						RelativePath=".\InitialSolution.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\IS_Campus.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\IS_Sala.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\IS_Unidade.cpp"
+						>
+					</File>
+				</Filter>
 			</Filter>
 		</Filter>
 		<Filter
 			Name="Header Files"
 			Filter="h;hpp;hxx"
 			>
-			<File
-				RelativePath=".\InitialSolution.h"
-				>
-			</File>
 			<Filter
 				Name="Input"
 				>
@@ -705,6 +717,26 @@
 					RelativePath=".\Variable.h"
 					>
 				</File>
+				<Filter
+					Name="Initial Solution"
+					>
+					<File
+						RelativePath=".\InitialSolution.h"
+						>
+					</File>
+					<File
+						RelativePath=".\IS_Campus.h"
+						>
+					</File>
+					<File
+						RelativePath=".\IS_Sala.h"
+						>
+					</File>
+					<File
+						RelativePath=".\IS_Unidade.h"
+						>
+					</File>
+				</Filter>
 			</Filter>
 		</Filter>
 		<File

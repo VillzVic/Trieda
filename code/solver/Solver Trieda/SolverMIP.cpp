@@ -73,11 +73,8 @@ int SolverMIP::solve()
 	lp->writeProbLP("Solver Trieda");
 #endif
 
-   InitialSolution init_sol;
-
-   init_sol.add_Campus(**problemData->campi.begin());
-
-   exit(1);
+   InitialSolution init_sol(*problemData);
+   //exit(1);
 
 	/*
 	// >>>
@@ -361,23 +358,6 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
 				it_a->first.at(0) << "\t" <<
 				it_a->first.at(1) << "\t" <<
 				it_a->first.at(2) << "\t" << std::endl;
-		}
-	}
-
-	/* Inicializando as estruturas presentes em cada Sala, que são responsáveis por 
-	informar a quantidade de créditos livres em um dado dia letivo. */
-	ITERA_GGROUP(itCampus,problemData->campi,Campus)
-	{
-		ITERA_GGROUP(itUnidade,itCampus->unidades,Unidade)
-		{
-			ITERA_GGROUP(itSala,itUnidade->salas,Sala)
-			{
-				for(int dia = 0; dia < 7; dia++)
-				{ itSala->credsLivres.push_back(0); }
-
-				ITERA_GGROUP(itCredsDisp,itSala->creditos_disponiveis,CreditoDisponivel)
-				{ itSala->credsLivres.at(itCredsDisp->dia_semana) = itCredsDisp->max_creditos; }
-			}
 		}
 	}
 
@@ -823,17 +803,19 @@ int SolverMIP::cria_variaveis()
 	numVarsAnterior = num_vars;
 #endif
 
-	num_vars += cria_variavel_de_folga_dist_cred_dia_superior(); // fcp
+	//num_vars += cria_variavel_de_folga_dist_cred_dia_superior(); // fcp
 
 #ifdef PRINT_cria_variaveis
-	std::cout << "numVars \"fcp\": " << (num_vars - numVarsAnterior) << std::endl;
+	//std::cout << "numVars \"fcp\": " << (num_vars - numVarsAnterior) << std::endl;
+   std::cout << "numVars \"fcp\": NAO ESTA SENDO CRIADA DEVIDO A NOVA MODELAGEM QUE O MARCELO FEZ." << std::endl;
 	numVarsAnterior = num_vars;
 #endif
 
-	num_vars += cria_variavel_de_folga_dist_cred_dia_inferior(); // fcm
+	//num_vars += cria_variavel_de_folga_dist_cred_dia_inferior(); // fcm
 
 #ifdef PRINT_cria_variaveis
-	std::cout << "numVars \"fcm\": " << (num_vars - numVarsAnterior) << std::endl;
+	//std::cout << "numVars \"fcm\": " << (num_vars - numVarsAnterior) << std::endl;
+   std::cout << "numVars \"fcm\": NAO ESTA SENDO CRIADA DEVIDO A NOVA MODELAGEM QUE O MARCELO FEZ." << std::endl;
 	numVarsAnterior = num_vars;
 #endif
 
@@ -1922,10 +1904,11 @@ int SolverMIP::cria_restricoes(void)
 	numRestAnterior = restricoes;
 #endif
 
-	restricoes += cria_restricao_de_folga_dist_cred_dia();		// Restricao 1.2.23
+	//restricoes += cria_restricao_de_folga_dist_cred_dia();		// Restricao 1.2.23
 
 #ifdef PRINT_cria_restricoes
-	std::cout << "numRest \"1.2.23\": " << (restricoes - numRestAnterior) << std::endl;
+	//std::cout << "numRest \"1.2.23\": " << (restricoes - numRestAnterior) << std::endl;
+   std::cout << "numRest \"1.2.23\": NAO ESTA SENDO CRIADA DEVIDO A NOVA MODELAGEM QUE O MARCELO FEZ." << std::endl;
 	numRestAnterior = restricoes;
 #endif
 

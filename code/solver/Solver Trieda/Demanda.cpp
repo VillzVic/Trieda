@@ -6,6 +6,16 @@ Demanda::Demanda(void)
 	disciplina = NULL;
 }
 
+Demanda::Demanda(Demanda const & demanda)
+{
+   quantidade = demanda.quantidade;
+   disciplina_id = demanda.disciplina_id;
+   oferta_id = demanda.oferta_id;
+
+   oferta = demanda.oferta;
+   disciplina = demanda.disciplina;
+}
+
 Demanda::~Demanda(void)
 {
 }

@@ -97,6 +97,10 @@ private:
    /* Relaciona cada disciplina de um campus com as ofertas em que ela aparece. */
    //void relacionaDiscCampusOfertas();
 
+   /* Inicializando as estruturas presentes em cada Sala, que são responsáveis por 
+   informar a quantidade de créditos livres em um dado dia letivo. */
+   void calculaCredsLivresSalas();
+
    // <<<
 
 };

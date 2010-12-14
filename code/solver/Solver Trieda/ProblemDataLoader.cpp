@@ -57,6 +57,8 @@ void ProblemDataLoader::load()
 
    estabeleceDiasLetivosDiscSala();
 
+   calculaCredsLivresSalas();
+
    print_stats();
    //print_csv();
 
@@ -176,6 +178,24 @@ void ProblemDataLoader::estabeleceDiasLetivosDiscSala()
                   }
                }
             }
+         }
+      }
+   }
+}
+
+void ProblemDataLoader::calculaCredsLivresSalas()
+{
+   ITERA_GGROUP(itCampus,problemData->campi,Campus)
+   {
+      ITERA_GGROUP(itUnidade,itCampus->unidades,Unidade)
+      {
+         ITERA_GGROUP(itSala,itUnidade->salas,Sala)
+         {
+            for(int dia = 0; dia < 7; dia++)
+            { itSala->credsLivres.push_back(0); }
+
+            ITERA_GGROUP(itCredsDisp,itSala->creditos_disponiveis,CreditoDisponivel)
+            { itSala->credsLivres.at(itCredsDisp->dia_semana) = itCredsDisp->max_creditos; }
          }
       }
    }
