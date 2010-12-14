@@ -2,6 +2,10 @@ package com.gapso.web.trieda.server;
 
 import java.io.ByteArrayOutputStream;
 import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -19,8 +23,10 @@ import com.gapso.web.trieda.client.services.OtimizarService;
 import com.gapso.web.trieda.server.util.SolverInput;
 import com.gapso.web.trieda.server.util.SolverOutput;
 import com.gapso.web.trieda.server.util.solverclient.SolverClient;
+import com.gapso.web.trieda.server.xml.input.ErrorType;
 import com.gapso.web.trieda.server.xml.input.TriedaInput;
 import com.gapso.web.trieda.server.xml.input.TriedaOutput;
+import com.gapso.web.trieda.server.xml.input.WarningType;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 /**
@@ -71,27 +77,46 @@ public class OtimizarServiceImpl extends RemoteServiceServlet implements Otimiza
 	}
 
 	@Override
-	public Boolean saveContent(CenarioDTO cenarioDTO, Long round) {
+	public Map<String, List<String>> saveContent(CenarioDTO cenarioDTO, Long round) {
 		Cenario cenario = Cenario.find(cenarioDTO.getId());
+		
+		Map<String, List<String>> ret = new HashMap<String, List<String>>(2);
+		ret.put("warning", new ArrayList<String>());
+		ret.put("error", new ArrayList<String>());
+		
 		try {
 			SolverClient solverClient = new SolverClient("http://localhost:3402/SolverWS", "trieda");
 			byte[] xmlBytes = solverClient.getContent(round);
-			if(xmlBytes == null) return false;
+			if(xmlBytes == null) {
+				ret.get("error").add("Erro no servidor");
+				return ret;
+			}
 			
 			JAXBContext jc = JAXBContext.newInstance("com.gapso.web.trieda.server.xml.input");
 			Unmarshaller u = jc.createUnmarshaller();
 			StringBuffer xmlStr = new StringBuffer(new String(xmlBytes));
 			TriedaOutput triedaOutput = (TriedaOutput) u.unmarshal(new StreamSource(new StringReader(xmlStr.toString())));
 			
+			for(ErrorType erro : triedaOutput.getErrors().getError()) {
+				ret.get("error").add(erro.getMessage());
+			}
+			for(WarningType warning : triedaOutput.getWarnings().getWarning()) {
+				ret.get("warning").add(warning.getMessage());
+			}
+			
+			if(triedaOutput.getErrors() == null || triedaOutput.getErrors().getError().isEmpty()) {
+				return ret;
+			}
 			SolverOutput solverOutput = new SolverOutput(cenario, triedaOutput);
 			solverOutput.generateAtendimentosTatico();
 			solverOutput.salvarAtendimentosTatico();
 			
 		} catch (JAXBException e) {
 			e.printStackTrace();
-			return false;
+			ret.get("error").add("Erro ao salvar no banco");
+			return ret;
 		}
-		return true;
+		return ret;
 	}
 	
 }

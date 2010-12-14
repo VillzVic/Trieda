@@ -11,7 +11,6 @@ import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.layout.ColumnData;
 import com.extjs.gxt.ui.client.widget.layout.ColumnLayout;
 import com.extjs.gxt.ui.client.widget.layout.FitLayout;
-import com.extjs.gxt.ui.client.widget.menu.MenuItem;
 import com.extjs.gxt.ui.client.widget.toolbar.SeparatorToolItem;
 import com.extjs.gxt.ui.client.widget.toolbar.ToolBar;
 import com.gapso.web.trieda.client.mvp.presenter.ToolBarPresenter;
@@ -66,7 +65,6 @@ public class ToolBarView extends MyComposite implements ToolBarPresenter.Display
 	
 	// Cenário
 	private Button otimizarBt;
-	private Button parametrosBt;
 	private Button relatorioVisaoSalaBt;
 	private Button relatorioVisaoCursoBt;
 	
@@ -277,7 +275,7 @@ public class ToolBarView extends MyComposite implements ToolBarPresenter.Display
 	}
 	
 	private void createPlanejamento() {
-		otimizarBt = createButton("Otimizar", "Otimizar", Resources.DEFAULTS.otimizar24());
+		otimizarBt = createButton("Gerar Grade", "Gerar Grade", Resources.DEFAULTS.otimizar24());
 		planejamentoToolBar.add(otimizarBt);
 		
 		relatorioVisaoSalaBt = createButton("Saida: Sala", "Grade Horária Visão Sala", Resources.DEFAULTS.otimizar24());
@@ -301,12 +299,6 @@ public class ToolBarView extends MyComposite implements ToolBarPresenter.Display
 		bt.setArrowAlign(ButtonArrowAlign.BOTTOM);
 		return bt;
 	}
-	
-	private MenuItem createMenuItem(String text, ImageResource icon) {
-		MenuItem mi = new MenuItem(text, AbstractImagePrototype.create(icon));
-		return mi;
-	}
-	
 	
 	/********************************
 	 * GET BUTTONS

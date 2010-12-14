@@ -222,3 +222,7 @@ table.cw-FlexTable td.cw-FlexTable-content {
 .x-tab-strip .tabPanelMasterData .x-item-disabled span.x-tab-strip-text {
 	font-weight: bold;	
 }
+
+.errorList .x-panel-body {
+	padding: 10px;
+}

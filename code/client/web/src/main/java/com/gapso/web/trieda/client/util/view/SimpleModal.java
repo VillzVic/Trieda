@@ -15,6 +15,16 @@ public class SimpleModal extends Window {
 	private Button salvarBt;
 	private Button cancelarBt;
 	
+	private String textSalvar = "Salvar";
+	private String textCancelar = "Cancelar";
+	
+	public SimpleModal(String textSalvar, String textCancelar, String heading, ImageResource icon) {
+		this.textSalvar = textSalvar;
+		this.textCancelar = textCancelar;
+		setHeading(heading);
+		setIcon(AbstractImagePrototype.create(icon));
+		configuration();
+	}
 	public SimpleModal(String heading, ImageResource icon) {
 		setHeading(heading);
 		setIcon(AbstractImagePrototype.create(icon));
@@ -34,17 +44,21 @@ public class SimpleModal extends Window {
 	}
 	
 	private void addButtons() {
-		salvarBt = new Button("Salvar", AbstractImagePrototype.create(Resources.DEFAULTS.save16()));
-		addButton(salvarBt);
+		if(textSalvar != null) {
+			salvarBt = new Button(textSalvar, AbstractImagePrototype.create(Resources.DEFAULTS.save16()));
+			addButton(salvarBt);
+		}
 		
-		cancelarBt = new Button("Cancelar", AbstractImagePrototype.create(Resources.DEFAULTS.cancel16()));
-		cancelarBt.addSelectionListener(new SelectionListener<ButtonEvent>() {
-			@Override
-			public void componentSelected(ButtonEvent ce) {
-				hide();
-			}
-		});
-		addButton(cancelarBt);
+		if(textCancelar != null) {
+			cancelarBt = new Button(textCancelar, AbstractImagePrototype.create(Resources.DEFAULTS.cancel16()));
+			cancelarBt.addSelectionListener(new SelectionListener<ButtonEvent>() {
+				@Override
+				public void componentSelected(ButtonEvent ce) {
+					hide();
+				}
+			});
+			addButton(cancelarBt);
+		}
 	}
 
 	public Button getSalvarBt() {

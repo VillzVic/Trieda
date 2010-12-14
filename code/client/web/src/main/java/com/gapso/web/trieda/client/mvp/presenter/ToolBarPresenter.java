@@ -1,17 +1,16 @@
 package com.gapso.web.trieda.client.mvp.presenter;
 
 import java.util.List;
+import java.util.Map;
 
 import com.extjs.gxt.ui.client.event.ButtonEvent;
 import com.extjs.gxt.ui.client.event.Listener;
-import com.extjs.gxt.ui.client.event.MenuEvent;
 import com.extjs.gxt.ui.client.event.MessageBoxEvent;
 import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.widget.Component;
 import com.extjs.gxt.ui.client.widget.Info;
 import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.button.Button;
-import com.extjs.gxt.ui.client.widget.menu.MenuItem;
 import com.gapso.web.trieda.client.mvp.model.CenarioDTO;
 import com.gapso.web.trieda.client.mvp.model.DeslocamentoCampusDTO;
 import com.gapso.web.trieda.client.mvp.view.AreasTitulacaoView;
@@ -25,6 +24,7 @@ import com.gapso.web.trieda.client.mvp.view.DisciplinasView;
 import com.gapso.web.trieda.client.mvp.view.GruposSalasView;
 import com.gapso.web.trieda.client.mvp.view.HorariosAulaView;
 import com.gapso.web.trieda.client.mvp.view.OfertasView;
+import com.gapso.web.trieda.client.mvp.view.OtimizarMessagesView;
 import com.gapso.web.trieda.client.mvp.view.RelatorioVisaoCursoView;
 import com.gapso.web.trieda.client.mvp.view.RelatorioVisaoSalaView;
 import com.gapso.web.trieda.client.mvp.view.SalasView;
@@ -88,11 +88,9 @@ public class ToolBarPresenter implements Presenter {
 	private CenarioDTO masterData;
 	private Display toolBar;
 	private GTab gTab;
-	private CenarioPanel cenarioPanel;
 	
 	public ToolBarPresenter(CenarioDTO masterData, CenarioPanel cenarioPanel, Display toolBar) {
 		this.masterData = masterData;
-		this.cenarioPanel = cenarioPanel;
 		this.toolBar = toolBar;
 		addListeners();
 	}
@@ -345,7 +343,7 @@ public class ToolBarPresenter implements Presenter {
 	
 	private void atualizaSaida(final Long round) {
 		final OtimizarServiceAsync otimizarService = Services.otimizar();
-		final FutureResult<Boolean> futureBoolean = new FutureResult<Boolean>();
+		final FutureResult<Map<String, List<String>>> futureBoolean = new FutureResult<Map<String, List<String>>>();
 		otimizarService.saveContent(masterData, round, futureBoolean);
 		FutureSynchronizer synch = new FutureSynchronizer(futureBoolean);
 		synch.addCallback(new AsyncCallback<Boolean>() {
@@ -356,10 +354,12 @@ public class ToolBarPresenter implements Presenter {
 			}
 			@Override
 			public void onSuccess(Boolean result) {
-				if(futureBoolean.result()) {
+				Map<String, List<String>> ret = futureBoolean.result();
+				if(ret.get("warning").isEmpty() && ret.get("error").isEmpty()) {
 					MessageBox.alert("OTIMIZADO", "Saída salva com sucesso", null);
 				} else {
-					MessageBox.alert("ERRO!", "Erro ao salvar a saída", null);
+					Presenter presenter = new OtimizarMessagesPresenter(ret.get("warning"), ret.get("error"), new OtimizarMessagesView());
+					presenter.go(null);
 				}
 				toolBar.getOtimizatButton().enable();
 			}
