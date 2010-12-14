@@ -17,7 +17,6 @@ import com.gapso.web.trieda.client.mvp.model.DeslocamentoCampusDTO;
 import com.gapso.web.trieda.client.mvp.view.AreasTitulacaoView;
 import com.gapso.web.trieda.client.mvp.view.CampiDeslocamentoView;
 import com.gapso.web.trieda.client.mvp.view.CampiView;
-import com.gapso.web.trieda.client.mvp.view.CenariosView;
 import com.gapso.web.trieda.client.mvp.view.CurriculosView;
 import com.gapso.web.trieda.client.mvp.view.CursosView;
 import com.gapso.web.trieda.client.mvp.view.DemandasView;
@@ -50,32 +49,40 @@ import com.googlecode.future.FutureSynchronizer;
 public class ToolBarPresenter implements Presenter {
 
 	public interface Display {
-		Button getCampusListButton();
-		Button getCampusNewButton();
-		
 		Component getComponent();
 		
+//		MenuItem getCenariosListMenuItem();
+		
+		Button getCampiListCampiButton();
+		Button getCampusDeslocamentoListCampiButton();
+		Button getSemanasLetivaListCampiButton();
+		Button getHorariosAulaListCampiButton();
+		Button getTurnosListCampiButton();
+		Button getOfertasListCampiButton();
+		
+		Button getUnidadesListUnidadesButton();
+		Button getUnidadeDeslocamentoListUnidadesButton();
+		Button getSemanasLetivaListUnidadesButton();
+		Button getHorariosAulaListUnidadesButton();
+		
+		Button getSalasListSalasButton();
+		Button getGruposSalasListSalasButton();
+		Button getAssociarDisciplinasSalasListSalasButton();
+		
+		Button getCurriculosListCursosButton();
+		Button getCursosListCursosButton();
+		Button getAreasTitulacaoListCursosButton();
+		Button getTiposCursosListCursosButton();
+		Button getOfertasListCursosButton();
+		
+		Button getDisciplinasListDisciplinasButton();
+		Button getDemandasDisciplinasButton();
+		Button getAssociarDisciplinasSalasListDisciplinasButton();
+		Button getCurriculosListDisciplinasButton();
+		
 		Button getOtimizatButton();
-		MenuItem getCenariosListMenuItem();
-		MenuItem getTurnosListMenuItem();
-		MenuItem getSemanasLetivaListMenuItem();
-		MenuItem getHorariosAulaListMenuItem();
-		MenuItem getCampiListMenuItem();
-		MenuItem getUnidadesListMenuItem();
-		MenuItem getSalasListMenuItem();
-		MenuItem getGruposSalasListMenuItem();
-		MenuItem getTiposCursosListMenuItem();
-		MenuItem getAreasTitulacaoListMenuItem();
-		MenuItem getUnidadeDeslocamentoListMenuItem();
-		MenuItem getCampusDeslocamentoListMenuItem();
-		MenuItem getCursosListMenuItem();
-		MenuItem getDisciplinasListMenuItem();
-		MenuItem getCurriculosListMenuItem();
-		MenuItem getOfertasListMenuItem();
-		MenuItem getAssociarDisciplinasSalasListMenuItem();
-		MenuItem getDemandasMenuItem();
-		MenuItem getRelatorioVisaoSalaMenuItem();
-		MenuItem getRelatorioVisaoCursoMenuItem();
+		Button getRelatorioVisaoSalaButton();
+		Button getRelatorioVisaoCursoButton();
 	}
 	
 	private CenarioDTO masterData;
@@ -117,86 +124,100 @@ public class ToolBarPresenter implements Presenter {
 				});
 			}
 		});
-		toolBar.getCenariosListMenuItem().addSelectionListener(new SelectionListener<MenuEvent>() {
+//		toolBar.getCenariosListMenuItem().addSelectionListener(new SelectionListener<MenuEvent>() {
+//			@Override
+//			public void componentSelected(MenuEvent ce) {
+//				Presenter presenter = new CenariosPresenter(cenarioPanel, new CenariosView());
+//				presenter.go(gTab);
+//			}
+//		});
+		toolBar.getTurnosListCampiButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
 			@Override
-			public void componentSelected(MenuEvent ce) {
-				Presenter presenter = new CenariosPresenter(cenarioPanel, new CenariosView());
-				presenter.go(gTab);
-			}
-		});
-		toolBar.getTurnosListMenuItem().addSelectionListener(new SelectionListener<MenuEvent>() {
-			@Override
-			public void componentSelected(MenuEvent ce) {
+			public void componentSelected(ButtonEvent ce) {
 				Presenter presenter = new TurnosPresenter(masterData, new TurnosView());
 				presenter.go(gTab);
 			}
 		});
-		toolBar.getSemanasLetivaListMenuItem().addSelectionListener(new SelectionListener<MenuEvent>() {
+		toolBar.getSemanasLetivaListCampiButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
 			@Override
-			public void componentSelected(MenuEvent ce) {
+			public void componentSelected(ButtonEvent ce) {
 				Presenter presenter = new SemanasLetivaPresenter(new SemanasLetivaView());
 				presenter.go(gTab);
 			}
 		});
-		toolBar.getHorariosAulaListMenuItem().addSelectionListener(new SelectionListener<MenuEvent>() {
+		toolBar.getSemanasLetivaListUnidadesButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
 			@Override
-			public void componentSelected(MenuEvent ce) {
+			public void componentSelected(ButtonEvent ce) {
+				Presenter presenter = new SemanasLetivaPresenter(new SemanasLetivaView());
+				presenter.go(gTab);
+			}
+		});
+		toolBar.getHorariosAulaListCampiButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
+			@Override
+			public void componentSelected(ButtonEvent ce) {
 				Presenter presenter = new HorariosAulaPresenter(new HorariosAulaView());
 				presenter.go(gTab);
 			}
 		});
-		toolBar.getCampiListMenuItem().addSelectionListener(new SelectionListener<MenuEvent>() {
+		toolBar.getHorariosAulaListUnidadesButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
 			@Override
-			public void componentSelected(MenuEvent ce) {
+			public void componentSelected(ButtonEvent ce) {
+				Presenter presenter = new HorariosAulaPresenter(new HorariosAulaView());
+				presenter.go(gTab);
+			}
+		});
+		toolBar.getCampiListCampiButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
+			@Override
+			public void componentSelected(ButtonEvent ce) {
 				Presenter presenter = new CampiPresenter(masterData, new CampiView());
 				presenter.go(gTab);
 			}
 		});
-		toolBar.getUnidadesListMenuItem().addSelectionListener(new SelectionListener<MenuEvent>() {
+		toolBar.getUnidadesListUnidadesButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
 			@Override
-			public void componentSelected(MenuEvent ce) {
+			public void componentSelected(ButtonEvent ce) {
 				Presenter presenter = new UnidadesPresenter(new UnidadesView());
 				presenter.go(gTab);
 			}
 		});
-		toolBar.getSalasListMenuItem().addSelectionListener(new SelectionListener<MenuEvent>() {
+		toolBar.getSalasListSalasButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
 			@Override
-			public void componentSelected(MenuEvent ce) {
+			public void componentSelected(ButtonEvent ce) {
 				Presenter presenter = new SalasPresenter(new SalasView());
 				presenter.go(gTab);
 			}
 		});
-		toolBar.getGruposSalasListMenuItem().addSelectionListener(new SelectionListener<MenuEvent>() {
+		toolBar.getGruposSalasListSalasButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
 			@Override
-			public void componentSelected(MenuEvent ce) {
+			public void componentSelected(ButtonEvent ce) {
 				Presenter presenter = new GruposSalasPresenter(new GruposSalasView());
 				presenter.go(gTab);
 			}
 		});
-		toolBar.getTiposCursosListMenuItem().addSelectionListener(new SelectionListener<MenuEvent>() {
+		toolBar.getTiposCursosListCursosButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
 			@Override
-			public void componentSelected(MenuEvent ce) {
+			public void componentSelected(ButtonEvent ce) {
 				Presenter presenter = new TiposCursosPresenter(new TiposCursosView());
 				presenter.go(gTab);
 			}
 		});
-		toolBar.getAreasTitulacaoListMenuItem().addSelectionListener(new SelectionListener<MenuEvent>() {
+		toolBar.getAreasTitulacaoListCursosButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
 			@Override
-			public void componentSelected(MenuEvent ce) {
+			public void componentSelected(ButtonEvent ce) {
 				Presenter presenter = new AreasTitulacaoPresenter(new AreasTitulacaoView());
 				presenter.go(gTab);
 			}
 		});
-		toolBar.getUnidadeDeslocamentoListMenuItem().addSelectionListener(new SelectionListener<MenuEvent>() {
+		toolBar.getUnidadeDeslocamentoListUnidadesButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
 			@Override
-			public void componentSelected(MenuEvent ce) {
+			public void componentSelected(ButtonEvent ce) {
 				Presenter presenter = new UnidadesDeslocamentoPresenter(new UnidadesDeslocamentoView(null, null));
 				presenter.go(gTab);
 			}
 		});
-		toolBar.getCampusDeslocamentoListMenuItem().addSelectionListener(new SelectionListener<MenuEvent>() {
+		toolBar.getCampusDeslocamentoListCampiButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
 			@Override
-			public void componentSelected(MenuEvent ce) {
+			public void componentSelected(ButtonEvent ce) {
 				// TODO ESTE CODIGO CODIGO NÂO PERTENCE AQUI, DEVE FICAR NO CAMPI DESLOCAMENTO
 				// QUANDO EU COLOCO LA, ELE BUGA O HEADER DA TABELA
 				CampiServiceAsync service = Services.campi();
@@ -213,58 +234,79 @@ public class ToolBarPresenter implements Presenter {
 				});
 			}
 		});
-		toolBar.getCursosListMenuItem().addSelectionListener(new SelectionListener<MenuEvent>() {
+		toolBar.getCursosListCursosButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
 			@Override
-			public void componentSelected(MenuEvent ce) {
+			public void componentSelected(ButtonEvent ce) {
 				Presenter presenter = new CursosPresenter(masterData, new CursosView());
 				presenter.go(gTab);
 			}
 		});
-		toolBar.getDisciplinasListMenuItem().addSelectionListener(new SelectionListener<MenuEvent>() {
+		toolBar.getDisciplinasListDisciplinasButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
 			@Override
-			public void componentSelected(MenuEvent ce) {
+			public void componentSelected(ButtonEvent ce) {
 				Presenter presenter = new DisciplinasPresenter(masterData, new DisciplinasView());
 				presenter.go(gTab);
 			}
 		});
-		toolBar.getCurriculosListMenuItem().addSelectionListener(new SelectionListener<MenuEvent>() {
+		toolBar.getCurriculosListCursosButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
 			@Override
-			public void componentSelected(MenuEvent ce) {
+			public void componentSelected(ButtonEvent ce) {
 				Presenter presenter = new CurriculosPresenter(masterData, new CurriculosView());
 				presenter.go(gTab);
 			}
 		});
-		toolBar.getOfertasListMenuItem().addSelectionListener(new SelectionListener<MenuEvent>() {
+		toolBar.getCurriculosListDisciplinasButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
 			@Override
-			public void componentSelected(MenuEvent ce) {
+			public void componentSelected(ButtonEvent ce) {
+				Presenter presenter = new CurriculosPresenter(masterData, new CurriculosView());
+				presenter.go(gTab);
+			}
+		});
+		toolBar.getOfertasListCampiButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
+			@Override
+			public void componentSelected(ButtonEvent ce) {
 				Presenter presenter = new OfertasPresenter(new OfertasView());
 				presenter.go(gTab);
 			}
 		});
-		toolBar.getAssociarDisciplinasSalasListMenuItem().addSelectionListener(new SelectionListener<MenuEvent>() {
+		toolBar.getOfertasListCursosButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
 			@Override
-			public void componentSelected(MenuEvent ce) {
+			public void componentSelected(ButtonEvent ce) {
+				Presenter presenter = new OfertasPresenter(new OfertasView());
+				presenter.go(gTab);
+			}
+		});
+		toolBar.getAssociarDisciplinasSalasListSalasButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
+			@Override
+			public void componentSelected(ButtonEvent ce) {
 				Presenter presenter = new DisciplinasAssociarSalaPresenter(new DisciplinasAssociarSalaView());
 				presenter.go(gTab);
 			}
 		});
-		toolBar.getDemandasMenuItem().addSelectionListener(new SelectionListener<MenuEvent>() {
+		toolBar.getAssociarDisciplinasSalasListDisciplinasButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
 			@Override
-			public void componentSelected(MenuEvent ce) {
+			public void componentSelected(ButtonEvent ce) {
+				Presenter presenter = new DisciplinasAssociarSalaPresenter(new DisciplinasAssociarSalaView());
+				presenter.go(gTab);
+			}
+		});
+		toolBar.getDemandasDisciplinasButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
+			@Override
+			public void componentSelected(ButtonEvent ce) {
 				Presenter presenter = new DemandasPresenter(masterData, new DemandasView());
 				presenter.go(gTab);
 			}
 		});
-		toolBar.getRelatorioVisaoSalaMenuItem().addSelectionListener(new SelectionListener<MenuEvent>() {
+		toolBar.getRelatorioVisaoSalaButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
 			@Override
-			public void componentSelected(MenuEvent ce) {
+			public void componentSelected(ButtonEvent ce) {
 				Presenter presenter = new RelatorioVisaoSalaPresenter(masterData, new RelatorioVisaoSalaView());
 				presenter.go(gTab);
 			}
 		});
-		toolBar.getRelatorioVisaoCursoMenuItem().addSelectionListener(new SelectionListener<MenuEvent>() {
+		toolBar.getRelatorioVisaoCursoButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
 			@Override
-			public void componentSelected(MenuEvent ce) {
+			public void componentSelected(ButtonEvent ce) {
 				Presenter presenter = new RelatorioVisaoCursoPresenter(masterData, new RelatorioVisaoCursoView());
 				presenter.go(gTab);
 			}

@@ -3,17 +3,17 @@ package com.gapso.web.trieda.client.mvp.view;
 import com.extjs.gxt.ui.client.Style.ButtonArrowAlign;
 import com.extjs.gxt.ui.client.Style.ButtonScale;
 import com.extjs.gxt.ui.client.Style.IconAlign;
-import com.extjs.gxt.ui.client.event.MenuEvent;
-import com.extjs.gxt.ui.client.event.SelectionListener;
-import com.extjs.gxt.ui.client.mvc.Dispatcher;
+import com.extjs.gxt.ui.client.widget.ContentPanel;
+import com.extjs.gxt.ui.client.widget.LayoutContainer;
+import com.extjs.gxt.ui.client.widget.TabItem;
+import com.extjs.gxt.ui.client.widget.TabPanel;
 import com.extjs.gxt.ui.client.widget.button.Button;
-import com.extjs.gxt.ui.client.widget.button.ButtonGroup;
-import com.extjs.gxt.ui.client.widget.button.SplitButton;
-import com.extjs.gxt.ui.client.widget.layout.TableData;
-import com.extjs.gxt.ui.client.widget.menu.Menu;
+import com.extjs.gxt.ui.client.widget.layout.ColumnData;
+import com.extjs.gxt.ui.client.widget.layout.ColumnLayout;
+import com.extjs.gxt.ui.client.widget.layout.FitLayout;
 import com.extjs.gxt.ui.client.widget.menu.MenuItem;
+import com.extjs.gxt.ui.client.widget.toolbar.SeparatorToolItem;
 import com.extjs.gxt.ui.client.widget.toolbar.ToolBar;
-import com.gapso.web.trieda.client.AppEvents;
 import com.gapso.web.trieda.client.mvp.presenter.ToolBarPresenter;
 import com.gapso.web.trieda.client.util.resources.Resources;
 import com.google.gwt.resources.client.ImageResource;
@@ -21,282 +21,284 @@ import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
 public class ToolBarView extends MyComposite implements ToolBarPresenter.Display {
 
-	private ToolBar toolBar;
+	private LayoutContainer container;
+	private ToolBar campiToolBar;
+	private ToolBar unidadesToolBar;
+	private ToolBar salasToolBar;
+	private ToolBar cursosToolBar;
+	private ToolBar disciplinasToolBar;
+	private ToolBar professoresToolBar;
+	
+	private ToolBar cenarioToolBar;
+	private ToolBar planejamentoToolBar;
 		
-	// Cenário
-	private Button otimizarBt;
-	private Button cenariosBt;
-	private Button parametrosBt;
-	private MenuItem cenariosListMI;
-	private MenuItem turnosListMI;
-	private MenuItem semanasLetivaListMI;
-	private MenuItem horariosAulaListMI;
-	private MenuItem campiListMI;
-	private MenuItem unidadesListMI;
-	private MenuItem salasListMI;
-	private MenuItem gruposSalasListMI;
-	private MenuItem tiposCursosListMI;
-	private MenuItem areasTitulacaoListMI;
-	private MenuItem unidadeDeslocamentoListMI;
-	private MenuItem campusDeslocamentoListMI;
-	private MenuItem cursosListMI;
-	private MenuItem disciplinasListMI;
-	private MenuItem curriculosListMI;
-	private MenuItem ofertasListMI;
-	private MenuItem associarDisciplinasSalasListMI;
-	private MenuItem demandasMI;
-	private MenuItem relatorioVisaoSalaMI;
-	private MenuItem relatorioVisaoCursoMI;
-	
 	// Campi
-	private Button campiBt;
-	private Button novoCampusBt;
-	private Button deslocamentoCampiBt;
-
+	private Button campiListCampiBt;
+	private Button campusDeslocamentoListCampiBt;
+	private Button semanasLetivaListCampiBt;
+	private Button horariosAulaListCampiBt;
+	private Button turnosListCampiBt;
+	private Button ofertasListCampiBt;
+	
 	// Unidades
-	private Button unidadesBt;
-	private Button novoUnidadeBt;
-	private Button deslocamentoUnidadeBt;
-	
-	// Professores
-	private Button professoresBt;
-	private Button novoProfessorBt;
-	private Button deslocamentoProfessorBt;
-	
-	// Cursos
-	private Button cursosBt;
-	private Button novoCursoBt;
-	private Button deslocamentoCursoBt;
-	
-	// Disciplinas
-	private Button disciplinasBt;
-	private Button novoDisciplinaBt;
-	private Button deslocamentoDisciplinaBt;
+	private Button unidadesListUnidadesBt;
+	private Button unidadeDeslocamentoListUnidadesBt;
+	private Button semanasLetivaListUnidadesBt;
+	private Button horariosAulaListUnidadesBt;
 	
 	// Salas
-	private Button salasBt;
-	private Button novoSalaBt;
-	private Button deslocamentoSalaBt;
+	private Button salasListSalasBt;
+	private Button gruposSalasListSalasBt;
+	private Button associarDisciplinasSalasListSalasBt;
+	
+	// Cursos
+	private Button tiposCursosListCursosBt;
+	private Button areasTitulacaoListCursosBtI;
+	private Button cursosListCursosBt;
+	private Button curriculosListCursosBt;
+	private Button ofertasListCursosBt;
+	
+	// Disciplinas
+	private Button disciplinasListDisciplinasBt;
+	private Button demandasDisciplinasBt;
+	private Button curriculosListDisciplinasBt;
+	private Button associarDisciplinasSalasListDisciplinasBt;
+	
+	// Cenário
+	private Button otimizarBt;
+	private Button parametrosBt;
+	private Button relatorioVisaoSalaBt;
+	private Button relatorioVisaoCursoBt;
 	
 	public ToolBarView() {
 		initUI();
 	}
 	
 	private void initUI() {
-		toolBar = new ToolBar();
+		container = new LayoutContainer(new ColumnLayout());
+		
+		ContentPanel cenarioPanel = new ContentPanel();
+		cenarioPanel.setHeading("Cenário");
+		
+		ContentPanel planejamentoPanel = new ContentPanel();
+		planejamentoPanel.setHeading("Planejamento");
+		
+		ContentPanel masterDataPanel = new ContentPanel();
+		masterDataPanel.setHeaderVisible(false);
+		
+		cenarioPanel.setBodyBorder(false);
+		planejamentoPanel.setBodyBorder(false);
+		masterDataPanel.setBodyBorder(false);
+		
+		
+		container.add(cenarioPanel, new ColumnData(.2));
+		container.add(planejamentoPanel, new ColumnData(.2));
+		container.add(masterDataPanel, new ColumnData(.6));
+		
+		TabItem campiTabItem = new TabItem("Campi");
+		TabItem unidadesTabItem = new TabItem("Unidades");
+		TabItem salasTabItem = new TabItem("Salas");
+		TabItem cursosTabItem = new TabItem("Cursos");
+		TabItem disciplinasTabItem = new TabItem("Disciplinas");
+		TabItem professoresTabItem = new TabItem("Professores");
+		
+		cenarioToolBar = new ToolBar();
+		
+		planejamentoToolBar = new ToolBar();
+		
+		campiToolBar = new ToolBar();
+		campiToolBar.setLayoutData(new FitLayout());
+		unidadesToolBar = new ToolBar();
+		salasToolBar = new ToolBar();
+		cursosToolBar = new ToolBar();
+		disciplinasToolBar = new ToolBar();
+		professoresToolBar = new ToolBar();
+
+		campiTabItem.add(campiToolBar);
+		
+		
+		unidadesTabItem.add(unidadesToolBar);
+		salasTabItem.add(salasToolBar);
+		cursosTabItem.add(cursosToolBar);
+		disciplinasTabItem.add(disciplinasToolBar);
+		professoresTabItem.add(professoresToolBar);
+		
 		createGroups();
-		initComponent(toolBar);
+		
+		TabPanel masterDataTab = new TabPanel();
+		masterDataTab.addStyleName("tabPanelMasterData");
+		masterDataTab.setHeight(79);
+//		cenarioToolBar.setHeight(80);
+//		planejamentoToolBar.setHeight(80);
+
+		TabItem masterDataItem = new TabItem("Master Data");
+		masterDataItem.disable();
+		masterDataTab.add(masterDataItem);
+		masterDataTab.add(campiTabItem);
+		masterDataTab.setSelection(campiTabItem);
+		masterDataTab.add(unidadesTabItem);
+		masterDataTab.add(salasTabItem);
+		masterDataTab.add(cursosTabItem);
+		masterDataTab.add(disciplinasTabItem);
+		masterDataTab.add(professoresTabItem);
+		
+		cenarioPanel.add(cenarioToolBar);
+		planejamentoPanel.add(planejamentoToolBar);
+		masterDataPanel.setTopComponent(masterDataTab);
+		
+		initComponent(container);
 	}
 	
 	
 	private void createGroups() {
-		createGroupCenarios();
-		createGroupCampi();
-		createGroupUnidades();
-		createGroupProfessores();
-		createGroupDisciplinas();
-		createGroupSalas();
-		createGroupCursos();
+		createCampi();
+		createUnidades();
+		createSalas();
+		createCursos();
+		createDisciplinas();
+		createProfessores();
 		
-		createGroupPrototipo();
+		createCenario();
+		createPlanejamento();
 	}
 
 	/********************************
 	 * CRIAÇÃO DOS BOTÕES
 	 */
 	
-	private void createGroupCenarios() {
-		ButtonGroup group = new ButtonGroup(2);
-		group.setHeading("Cenários");
+	private void createCampi() {
+		// TODO Implementar o cadastro de campus pelo menu
+		campiToolBar.add(createButton("Novo", "Adicionar um campus", Resources.DEFAULTS.campi24()));
 		
-		TableData data = new TableData();
-		data.setRowspan(2);
+		campiListCampiBt = createButton("Listar", "Listar Campi", Resources.DEFAULTS.campi24());
+		campiToolBar.add(campiListCampiBt);
 		
-		otimizarBt = createButtonList(Resources.DEFAULTS.otimizar24());
-		otimizarBt.setText("Otimizar");
-		group.add(otimizarBt, data);
+		campiToolBar.add(new SeparatorToolItem());
 		
-		parametrosBt = createButton("Parâmetros", Resources.DEFAULTS.parametros16());
-		group.add(parametrosBt);
+		campusDeslocamentoListCampiBt = createButton("Desloc", "Deslocamento entre Campi", Resources.DEFAULTS.campi24());
+		campiToolBar.add(campusDeslocamentoListCampiBt);
 		
-		SplitButton outrosUnidadesSBt = new SplitButton("Outros");
-		outrosUnidadesSBt.setIcon(AbstractImagePrototype.create(Resources.DEFAULTS.outros16()));
-		outrosUnidadesSBt.setIconAlign(IconAlign.LEFT);
-		Menu outros = new Menu();
+		semanasLetivaListCampiBt = createButton("Sem. Let.", "Semanas Letivas", Resources.DEFAULTS.campi24());
+		campiToolBar.add(semanasLetivaListCampiBt);
 		
-		cenariosListMI = createMenuItem("Cenários", Resources.DEFAULTS.cenario16());
-//		TODO outros.add(cenariosListMI);
-		turnosListMI = createMenuItem("Turnos", Resources.DEFAULTS.turnos16());
-		outros.add(turnosListMI);
-		semanasLetivaListMI = createMenuItem("Semanas Letivas", Resources.DEFAULTS.semanaLetiva16());
-		outros.add(semanasLetivaListMI);
-		horariosAulaListMI = createMenuItem("Horários de Aula", Resources.DEFAULTS.horarioAula16());
-		outros.add(horariosAulaListMI);
-		campiListMI = createMenuItem("Campi", Resources.DEFAULTS.campi16());
-		outros.add(campiListMI);
-		unidadesListMI = createMenuItem("Unidades", Resources.DEFAULTS.unidades16());
-		outros.add(unidadesListMI);
-		salasListMI = createMenuItem("Salas", Resources.DEFAULTS.sala16());
-		outros.add(salasListMI);
-		gruposSalasListMI = createMenuItem("Grupos de Salas", Resources.DEFAULTS.sala16());
-		outros.add(gruposSalasListMI);
-		tiposCursosListMI = createMenuItem("Tipos de Curso", Resources.DEFAULTS.curso16());
-		outros.add(tiposCursosListMI);
-		areasTitulacaoListMI = createMenuItem("Áreas de Titulação", Resources.DEFAULTS.areasDeTitulacao16());
-		outros.add(areasTitulacaoListMI);
-		unidadeDeslocamentoListMI = createMenuItem("Deslocamento de Unidades", Resources.DEFAULTS.deslocamento16());
-		outros.add(unidadeDeslocamentoListMI);
-		campusDeslocamentoListMI = createMenuItem("Deslocamento de Campi", Resources.DEFAULTS.deslocamento16());
-		outros.add(campusDeslocamentoListMI);
-		cursosListMI = createMenuItem("Cursos", Resources.DEFAULTS.cursos16());
-		outros.add(cursosListMI);
-		disciplinasListMI = createMenuItem("Disciplinas", Resources.DEFAULTS.disciplina16());
-		outros.add(disciplinasListMI);
-		curriculosListMI = createMenuItem("Matrizes Curriculares", Resources.DEFAULTS.matrizCurricular16());
-		outros.add(curriculosListMI);
-		ofertasListMI = createMenuItem("Oferta de Cursos em Campi", Resources.DEFAULTS.matrizCurricular16());
-		outros.add(ofertasListMI);
-		associarDisciplinasSalasListMI = createMenuItem("Associação de Disciplinas à Salas", Resources.DEFAULTS.matrizCurricular16());
-		outros.add(associarDisciplinasSalasListMI);
-		demandasMI = createMenuItem("Previsão de demanda", Resources.DEFAULTS.demanda16());
-		outros.add(demandasMI);
-		relatorioVisaoSalaMI = createMenuItem("Grade Horária Visão Sala", Resources.DEFAULTS.outros16());
-		outros.add(relatorioVisaoSalaMI);
-		relatorioVisaoCursoMI = createMenuItem("Grade Horária Visão Curso", Resources.DEFAULTS.outros16());
-		outros.add(relatorioVisaoCursoMI);
+		horariosAulaListCampiBt = createButton("Horários", "Horários de Aula", Resources.DEFAULTS.campi24());
+		campiToolBar.add(horariosAulaListCampiBt);
 		
-		outrosUnidadesSBt.setMenu(outros);
-		group.add(outrosUnidadesSBt);
+		turnosListCampiBt = createButton("Turnos", "Turnos", Resources.DEFAULTS.campi24());
+		campiToolBar.add(turnosListCampiBt);
 		
-		toolBar.add(group);
-	}
-
-	private void createGroupCampi() {
-		ButtonGroup group = new ButtonGroup(2);
-		group.setHeading("Campi");
-		
-		TableData data = new TableData();
-		data.setRowspan(2);
-		
-		campiBt = createButtonList(Resources.DEFAULTS.campi24());
-		group.add(campiBt, data);
-
-		novoCampusBt = createButton("Novo", Resources.DEFAULTS.campus16());
-		group.add(novoCampusBt);
-		
-		deslocamentoCampiBt = createButton("Desloc.", Resources.DEFAULTS.deslocamento16());
-		group.add(deslocamentoCampiBt);
-		
-		toolBar.add(group);
-	}
-
-	private void createGroupUnidades() {
-		ButtonGroup group = new ButtonGroup(2);
-		group.setHeading("Unidade");
-		
-		TableData data = new TableData();
-		data.setRowspan(2);
-		
-		unidadesBt = createButtonList(Resources.DEFAULTS.unidades24());
-		group.add(unidadesBt, data);
-
-		novoUnidadeBt = createButton("Novo", Resources.DEFAULTS.unidade16());
-		group.add(novoUnidadeBt);
-		
-		deslocamentoUnidadeBt = createButton("Desloc.", Resources.DEFAULTS.deslocamento16());
-		group.add(deslocamentoUnidadeBt);
-		
-		toolBar.add(group);
+		ofertasListCampiBt = createButton("Ofertas", "Oferta de Cursos em Campi", Resources.DEFAULTS.campi24());
+		campiToolBar.add(ofertasListCampiBt);
 	}
 	
-	private void createGroupProfessores() {
-		ButtonGroup group = new ButtonGroup(2);
-		group.setHeading("Professores");
+	private void createUnidades() {
+		// TODO Implementar o cadastro de unidade pelo menu
+		unidadesToolBar.add(createButton("Nova", "Adicionar uma Unidade", Resources.DEFAULTS.campi24()));
 		
-		TableData data = new TableData();
-		data.setRowspan(2);
+		unidadesListUnidadesBt = createButton("Listar", "Listar Unidades", Resources.DEFAULTS.campi24());
+		unidadesToolBar.add(unidadesListUnidadesBt);
 		
-		professoresBt = createButtonList(Resources.DEFAULTS.professores24());
-		group.add(professoresBt, data);
+		unidadesToolBar.add(new SeparatorToolItem());
+		
+		unidadeDeslocamentoListUnidadesBt = createButton("Desloc.", "Deslocamento de Unidades", Resources.DEFAULTS.campi24());
+		unidadesToolBar.add(unidadeDeslocamentoListUnidadesBt);
+		
+		semanasLetivaListUnidadesBt = createButton("Sem. Let.", "Semanas Letivas", Resources.DEFAULTS.campi24());
+		unidadesToolBar.add(semanasLetivaListUnidadesBt);
+		
+		horariosAulaListUnidadesBt = createButton("Horários", "Horários de Aula", Resources.DEFAULTS.campi24());
+		unidadesToolBar.add(horariosAulaListUnidadesBt);
+	}
+	
+	private void createSalas() {
+		// TODO Implementar o cadastro de sala pelo menu
+		salasToolBar.add(createButton("Nova", "Adicionar uma Sala", Resources.DEFAULTS.campi24()));
+		
+		salasListSalasBt = createButton("Listar", "Listar Salas", Resources.DEFAULTS.campi24());
+		salasToolBar.add(salasListSalasBt);
+		
+		salasToolBar.add(new SeparatorToolItem());
+		
+		gruposSalasListSalasBt = createButton("Grupos", "Grupos de Salas", Resources.DEFAULTS.campi24());
+		salasToolBar.add(gruposSalasListSalasBt);
+		
+		associarDisciplinasSalasListSalasBt = createButton("Assoc. Salas", "Associação de Disciplinas à Salas", Resources.DEFAULTS.campi24());
+		salasToolBar.add(associarDisciplinasSalasListSalasBt);
+	}
+	
+	private void createCursos() {
+		// TODO Implementar o cadastro de curso pelo menu
+		cursosToolBar.add(createButton("Novo", "Adicionar um Curso", Resources.DEFAULTS.campi24()));
+		
+		cursosListCursosBt = createButton("Listar", "Listar Cursos", Resources.DEFAULTS.campi24());
+		cursosToolBar.add(cursosListCursosBt);
+		
+		cursosToolBar.add(new SeparatorToolItem());
+		
+		ofertasListCursosBt = createButton("Ofertas", "Oferta de Cursos em Campi", Resources.DEFAULTS.campi24());
+		cursosToolBar.add(ofertasListCursosBt);
+		
+		areasTitulacaoListCursosBtI = createButton("Áreas", "Áreas de Titulação", Resources.DEFAULTS.campi24());
+		cursosToolBar.add(areasTitulacaoListCursosBtI);
+		
+		cursosToolBar.add(createButton("Vinc. Áreas", "Vincular Áreas de Titulação", Resources.DEFAULTS.campi24()));
+		
+		curriculosListCursosBt = createButton("Matr. Curr.", "Matrizes Curriculares", Resources.DEFAULTS.campi24());
+		cursosToolBar.add(curriculosListCursosBt);
+		
+		tiposCursosListCursosBt = createButton("Tipos", "Tipos de Curso", Resources.DEFAULTS.campi24());
+		cursosToolBar.add(tiposCursosListCursosBt);
+	}
+	
+	private void createDisciplinas() {
+		// TODO Implementar o cadastro de disciplina pelo menu
+		disciplinasToolBar.add(createButton("Novo", "Adicionar um Curso", Resources.DEFAULTS.campi24()));
 
-		novoProfessorBt = createButton("Novo", Resources.DEFAULTS.professor16());
-		group.add(novoProfessorBt);
+		disciplinasListDisciplinasBt = createButton("Disciplinas", "Listar Disciplinas", Resources.DEFAULTS.campi24());
+		disciplinasToolBar.add(disciplinasListDisciplinasBt);
 		
-		deslocamentoProfessorBt = createButton("Desloc.", Resources.DEFAULTS.deslocamento16());
-		group.add(deslocamentoProfessorBt);
-		
-		toolBar.add(group);
-	}
-	
-	private void createGroupCursos() {
-		ButtonGroup group = new ButtonGroup(2);
-		group.setHeading("Cursos");
-		
-		TableData data = new TableData();
-		data.setRowspan(2);
-		
-		cursosBt = createButtonList(Resources.DEFAULTS.cursos24());
-		group.add(cursosBt, data);
-		
-		novoCursoBt = createButton("Novo", Resources.DEFAULTS.curso16());
-		group.add(novoCursoBt);
-		
-		deslocamentoCursoBt = createButton("Desloc.", Resources.DEFAULTS.deslocamento16());
-		group.add(deslocamentoCursoBt);
-		
-		toolBar.add(group);
-	}
-	
-	private void createGroupDisciplinas() {
-		ButtonGroup group = new ButtonGroup(2);
-		group.setHeading("Disciplinas");
-		
-		TableData data = new TableData();
-		data.setRowspan(2);
-		
-		disciplinasBt = createButtonList(Resources.DEFAULTS.professores24());
-		group.add(disciplinasBt, data);
+		disciplinasToolBar.add(new SeparatorToolItem());
 
-		novoDisciplinaBt = createButton("Novo", Resources.DEFAULTS.professor16());
-		group.add(novoDisciplinaBt);
+		associarDisciplinasSalasListDisciplinasBt = createButton("Assoc. Salas", "Associação de Disciplinas à Salas", Resources.DEFAULTS.campi24());
+		disciplinasToolBar.add(associarDisciplinasSalasListDisciplinasBt);
 		
-		deslocamentoDisciplinaBt = createButton("Desloc.", Resources.DEFAULTS.deslocamento16());
-		group.add(deslocamentoDisciplinaBt);
+		curriculosListDisciplinasBt = createButton("Matr. Curr.", "Matrizes Curriculares", Resources.DEFAULTS.campi24());
+		disciplinasToolBar.add(curriculosListDisciplinasBt);
 		
-		toolBar.add(group);
+		demandasDisciplinasBt = createButton("Demanda", "Previsão de demanda", Resources.DEFAULTS.campi24());
+		disciplinasToolBar.add(demandasDisciplinasBt);
 	}
 	
-	private void createGroupSalas() {
-		ButtonGroup group = new ButtonGroup(2);
-		group.setHeading("Salas");
-		
-		TableData data = new TableData();
-		data.setRowspan(2);
-		
-		salasBt = createButtonList(Resources.DEFAULTS.professores24());
-		group.add(salasBt, data);
-
-		novoSalaBt = createButton("Novo", Resources.DEFAULTS.professor16());
-		group.add(novoSalaBt);
-		
-		deslocamentoSalaBt = createButton("Desloc.", Resources.DEFAULTS.deslocamento16());
-		group.add(deslocamentoSalaBt);
-		
-		toolBar.add(group);
+	
+	private void createProfessores() {
+		professoresToolBar.add(createButton("Novo", "Adicionar novo Professor", Resources.DEFAULTS.campi24()));
+		professoresToolBar.add(createButton("Listar", "Listar Professores", Resources.DEFAULTS.campi24()));
+		professoresToolBar.add(new SeparatorToolItem());
 	}
 	
-	private Button createButtonList(ImageResource icon) {
-		Button bt = createButton("Listar", icon);
+	private void createPlanejamento() {
+		otimizarBt = createButton("Otimizar", "Otimizar", Resources.DEFAULTS.otimizar24());
+		planejamentoToolBar.add(otimizarBt);
+		
+		relatorioVisaoSalaBt = createButton("Saida: Sala", "Grade Horária Visão Sala", Resources.DEFAULTS.otimizar24());
+		planejamentoToolBar.add(relatorioVisaoSalaBt);
+		
+		relatorioVisaoCursoBt = createButton("Saida: Curso", "Grade Horária Visão Curso", Resources.DEFAULTS.otimizar24());
+		planejamentoToolBar.add(relatorioVisaoCursoBt);
+	}
+	
+	private void createCenario() {
+		cenarioToolBar.add(createButton("Novo", "Adicionar novo Cenário", Resources.DEFAULTS.cenario24()));
+		cenarioToolBar.add(createButton("Clonar", "Clonar um cenário", Resources.DEFAULTS.cenario24()));
+		cenarioToolBar.add(createButton("Abrir", "Abrir um cenário", Resources.DEFAULTS.cenario24()));
+	}
+	
+	private Button createButton(String text, String toolTip, ImageResource icon) {
+		Button bt = new Button(text, AbstractImagePrototype.create(icon));
+		bt.setToolTip(toolTip);
 		bt.setScale(ButtonScale.MEDIUM);
 		bt.setIconAlign(IconAlign.TOP);
 		bt.setArrowAlign(ButtonArrowAlign.BOTTOM);
-		
-		return bt;
-	}
-	
-	private Button createButton(String text, ImageResource icon) {
-		Button bt = new Button(text, AbstractImagePrototype.create(icon));
-		bt.setIconAlign(IconAlign.LEFT);
 		return bt;
 	}
 	
@@ -305,203 +307,118 @@ public class ToolBarView extends MyComposite implements ToolBarPresenter.Display
 		return mi;
 	}
 	
-	private void createGroupPrototipo() {
-		TableData data = new TableData();
-		data.setRowspan(2);
-		
-		ButtonGroup group = new ButtonGroup(2);
-		group.setHeading("Protótipo");
-
-		Button campiBt = new Button("Campi");
-		campiBt.setScale(ButtonScale.MEDIUM);
-		campiBt.setIconAlign(IconAlign.TOP);
-		campiBt.setArrowAlign(ButtonArrowAlign.BOTTOM);
-		campiBt.setIcon(AbstractImagePrototype.create(Resources.DEFAULTS.campi24()));
-
-		group.add(campiBt, data);
-		
-		Button unidadesBt = new Button("Unidades");
-		unidadesBt.setIconAlign(IconAlign.LEFT);
-		unidadesBt.setIcon(AbstractImagePrototype.create(Resources.DEFAULTS.unidade16()));
-		group.add(unidadesBt);
-		
-		SplitButton salasBt = new SplitButton("Outros");
-		salasBt.setIconAlign(IconAlign.LEFT);
-		salasBt.setIcon(AbstractImagePrototype.create(Resources.DEFAULTS.sala16()));
-		Menu menuSalasBt = new Menu();
-		
-		MenuItem outros6 = new MenuItem("Professores");
-		outros6.setIcon(AbstractImagePrototype.create(Resources.DEFAULTS.professores16()));
-		outros6.addSelectionListener(new SelectionListener<MenuEvent>() {
-			@Override
-			public void componentSelected(MenuEvent ce) {
-				Dispatcher.forwardEvent(AppEvents.ProfessorList);
-			}
-		});
-		menuSalasBt.add(outros6);
-		
-		MenuItem outros7 = new MenuItem("Previssão de Demandas");
-		outros7.setIcon(AbstractImagePrototype.create(Resources.DEFAULTS.demanda16()));
-		outros7.addSelectionListener(new SelectionListener<MenuEvent>() {
-			@Override
-			public void componentSelected(MenuEvent ce) {
-				Dispatcher.forwardEvent(AppEvents.DemandaList);
-			}
-		});
-		menuSalasBt.add(outros7);
-		
-		MenuItem outros8 = new MenuItem("Preferência de Divisão de Créditos");
-		outros8.setIcon(AbstractImagePrototype.create(Resources.DEFAULTS.divisaoDeCreditos16()));
-		outros8.addSelectionListener(new SelectionListener<MenuEvent>() {
-			@Override
-			public void componentSelected(MenuEvent ce) {
-				Dispatcher.forwardEvent(AppEvents.DivisaoCreditosList);
-			}
-		});
-		menuSalasBt.add(outros8);
-		
-		MenuItem outros12 = new MenuItem("Vincular Áreas de Titulação");
-		outros12.setIcon(AbstractImagePrototype.create(Resources.DEFAULTS.areasDeTitulacao16()));
-		outros12.addSelectionListener(new SelectionListener<MenuEvent>() {
-			@Override
-			public void componentSelected(MenuEvent ce) {
-				Dispatcher.forwardEvent(AppEvents.CursoAreaTitulacaoList);
-			}
-		});
-		menuSalasBt.add(outros12);
-		
-		MenuItem outros15 = new MenuItem("Professores/Disciplinas");
-		outros15.setIcon(AbstractImagePrototype.create(Resources.DEFAULTS.professores16()));
-		outros15.addSelectionListener(new SelectionListener<MenuEvent>() {
-			@Override
-			public void componentSelected(MenuEvent ce) {
-				Dispatcher.forwardEvent(AppEvents.ProfessorDisciplinaList);
-			}
-		});
-		menuSalasBt.add(outros15);
-		
-		MenuItem outros18 = new MenuItem("Equivalência entre Disciplinas");
-		outros18.setIcon(AbstractImagePrototype.create(Resources.DEFAULTS.disciplina16()));
-		outros18.addSelectionListener(new SelectionListener<MenuEvent>() {
-			@Override
-			public void componentSelected(MenuEvent ce) {
-				Dispatcher.forwardEvent(AppEvents.EquivalenciaList);
-			}
-		});
-		menuSalasBt.add(outros18);
-		
-		MenuItem outros19 = new MenuItem("Campi/Professores");
-		outros19.setIcon(AbstractImagePrototype.create(Resources.DEFAULTS.professores16()));
-		outros19.addSelectionListener(new SelectionListener<MenuEvent>() {
-			@Override
-			public void componentSelected(MenuEvent ce) {
-				Dispatcher.forwardEvent(AppEvents.CampusProfessorList);
-			}
-		});
-		menuSalasBt.add(outros19);
-		
-		salasBt.setMenu(menuSalasBt);
-		group.add(salasBt);
-		toolBar.add(group);
-	}
 	
 	/********************************
 	 * GET BUTTONS
 	 */
 	
 	@Override
-	public Button getCampusListButton() {
-		return campiBt;
-	}
-
-	@Override
-	public Button getCampusNewButton() {
-		return novoCampusBt;
-	}
-	
-	@Override
 	public Button getOtimizatButton() {
 		return otimizarBt;
 	}
 	@Override
-	public MenuItem getCenariosListMenuItem() {
-		return cenariosListMI;
+	public Button getSemanasLetivaListCampiButton() {
+		return semanasLetivaListCampiBt;
 	}
 	@Override
-	public MenuItem getTurnosListMenuItem() {
-		return turnosListMI;
+	public Button getHorariosAulaListCampiButton() {
+		return horariosAulaListCampiBt;
 	}
 	@Override
-	public MenuItem getSemanasLetivaListMenuItem() {
-		return semanasLetivaListMI;
+	public Button getSalasListSalasButton() {
+		return salasListSalasBt;
 	}
 	@Override
-	public MenuItem getHorariosAulaListMenuItem() {
-		return horariosAulaListMI;
+	public Button getGruposSalasListSalasButton() {
+		return gruposSalasListSalasBt;
 	}
 	@Override
-	public MenuItem getCampiListMenuItem() {
-		return campiListMI;
+	public Button getTiposCursosListCursosButton() {
+		return tiposCursosListCursosBt;
 	}
 	@Override
-	public MenuItem getUnidadesListMenuItem() {
-		return unidadesListMI;
+	public Button getAreasTitulacaoListCursosButton() {
+		return areasTitulacaoListCursosBtI;
 	}
 	@Override
-	public MenuItem getSalasListMenuItem() {
-		return salasListMI;
+	public Button getUnidadeDeslocamentoListUnidadesButton() {
+		return unidadeDeslocamentoListUnidadesBt;
 	}
 	@Override
-	public MenuItem getGruposSalasListMenuItem() {
-		return gruposSalasListMI;
+	public Button getCampusDeslocamentoListCampiButton() {
+		return campusDeslocamentoListCampiBt;
 	}
 	@Override
-	public MenuItem getTiposCursosListMenuItem() {
-		return tiposCursosListMI;
+	public Button getCursosListCursosButton() {
+		return cursosListCursosBt;
 	}
 	@Override
-	public MenuItem getAreasTitulacaoListMenuItem() {
-		return areasTitulacaoListMI;
+	public Button getDisciplinasListDisciplinasButton() {
+		return disciplinasListDisciplinasBt;
 	}
 	@Override
-	public MenuItem getUnidadeDeslocamentoListMenuItem() {
-		return unidadeDeslocamentoListMI;
+	public Button getCurriculosListCursosButton() {
+		return curriculosListCursosBt;
 	}
 	@Override
-	public MenuItem getCampusDeslocamentoListMenuItem() {
-		return campusDeslocamentoListMI;
+	public Button getOfertasListCampiButton() {
+		return ofertasListCampiBt;
 	}
 	@Override
-	public MenuItem getCursosListMenuItem() {
-		return cursosListMI;
+	public Button getAssociarDisciplinasSalasListSalasButton() {
+		return associarDisciplinasSalasListSalasBt;
 	}
 	@Override
-	public MenuItem getDisciplinasListMenuItem() {
-		return disciplinasListMI;
+	public Button getDemandasDisciplinasButton() {
+		return demandasDisciplinasBt;
 	}
 	@Override
-	public MenuItem getCurriculosListMenuItem() {
-		return curriculosListMI;
+	public Button getRelatorioVisaoSalaButton() {
+		return relatorioVisaoSalaBt;
 	}
 	@Override
-	public MenuItem getOfertasListMenuItem() {
-		return ofertasListMI;
+	public Button getRelatorioVisaoCursoButton() {
+		return relatorioVisaoCursoBt;
 	}
+
 	@Override
-	public MenuItem getAssociarDisciplinasSalasListMenuItem() {
-		return associarDisciplinasSalasListMI;
+	public Button getTurnosListCampiButton() {
+		return turnosListCampiBt;
 	}
+
 	@Override
-	public MenuItem getDemandasMenuItem() {
-		return demandasMI;
+	public Button getCampiListCampiButton() {
+		return campiListCampiBt;
 	}
+
 	@Override
-	public MenuItem getRelatorioVisaoSalaMenuItem() {
-		return relatorioVisaoSalaMI;
+	public Button getUnidadesListUnidadesButton() {
+		return unidadesListUnidadesBt;
 	}
+
 	@Override
-	public MenuItem getRelatorioVisaoCursoMenuItem() {
-		return relatorioVisaoCursoMI;
+	public Button getSemanasLetivaListUnidadesButton() {
+		return semanasLetivaListUnidadesBt;
+	}
+
+	@Override
+	public Button getHorariosAulaListUnidadesButton() {
+		return horariosAulaListUnidadesBt;
+	}
+
+	@Override
+	public Button getOfertasListCursosButton() {
+		return ofertasListCursosBt;
+	}
+
+	@Override
+	public Button getAssociarDisciplinasSalasListDisciplinasButton() {
+		return associarDisciplinasSalasListDisciplinasBt;
+	}
+
+	@Override
+	public Button getCurriculosListDisciplinasButton() {
+		return curriculosListDisciplinasBt;
 	}
 	
 }
