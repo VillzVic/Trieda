@@ -1,7 +1,9 @@
 #include "IS_Unidade.h"
 
-IS_Unidade::IS_Unidade(void)
+IS_Unidade::IS_Unidade(Unidade * _unidade)
 {
+   unidade = _unidade;
+   this->setId(_unidade->getId());
 }
 
 IS_Unidade::IS_Unidade(IS_Unidade const & is_unidade)

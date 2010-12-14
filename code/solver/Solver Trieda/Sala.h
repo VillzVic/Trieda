@@ -59,4 +59,7 @@ public:
    //std::map<int/*dia*/,int/*credsLivres*/> credsLivres;
    std::vector<int/*credsLivres*/> credsLivres;
 
+   /* Armazena os dias letivos para uma determinada sala */
+   GGroup<int> diasLetivos;
+
 };

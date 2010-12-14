@@ -4,10 +4,10 @@
 
 #include "IS_Unidade.h"
 
-class IS_Campus
+class IS_Campus : public OFBase
 {
 public:
-   IS_Campus(void);
+   IS_Campus(Campus * _campus);
 
    IS_Campus(IS_Campus const & is_campus);
 

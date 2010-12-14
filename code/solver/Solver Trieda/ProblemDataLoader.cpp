@@ -25,7 +25,8 @@ void ProblemDataLoader::load()
    std::cout << "Some preprocessing..." << std::endl;
    /* processamento */
 
-   estabeleceDiasLetivosDiscs();
+   carregaDiasLetivosDiscs();
+   carregaDiasLetivosSala();
 
    criaConjuntoSalas();
 
@@ -49,13 +50,13 @@ void ProblemDataLoader::load()
 
    estima_turmas();
 
-   carregaDisciplinasAssociadasSalas();
-
-   //carregaDiscAssocConjuntoSalas();
+   associaDisciplinasSalas();
+   associaDisciplinasConjuntoSalas();
 
    cache();
 
-   estabeleceDiasLetivosDiscSala();
+   estabeleceDiasLetivosDisciplinasSalas();
+   estabeleceDiasLetivosDiscCjtSala();
 
    calculaCredsLivresSalas();
 
@@ -64,7 +65,7 @@ void ProblemDataLoader::load()
 
 }
 
-void ProblemDataLoader::estabeleceDiasLetivosDiscs()
+void ProblemDataLoader::carregaDiasLetivosDiscs()
 {
    ITERA_GGROUP(itDisc,problemData->disciplinas,Disciplina)
    {
@@ -100,14 +101,17 @@ void ProblemDataLoader::criaConjuntoSalas()
                      itCjtSala->addSala(**itSala);
                      found = true;
 
-                     ITERA_GGROUP(itCredDisp,itSala->creditos_disponiveis,CreditoDisponivel)
+                     GGroup<int>::iterator itDiasLetivosSala =
+                        itSala->diasLetivos.begin();
+
+                     for(; itDiasLetivosSala != itSala->diasLetivos.end(); itDiasLetivosSala++)
                      { 
-                        /* Adicionando os dias letivos ao conjunto de salas */
-                        itCjtSala->diasLetivos.add(itCredDisp->dia_semana);
                         /* Adicionando os dias letivos ao campus em questão */
-                        itCampus->diasLetivos.add(itCredDisp->dia_semana);
+                        itCampus->diasLetivos.add(*itDiasLetivosSala);
                         /* Adicionando os dias letivos à unidade em questão */
-                        itUnidade->diasLetivos.add(itCredDisp->dia_semana);
+                        itUnidade->diasLetivos.add(*itDiasLetivosSala);
+                        /* Adicionando os dias letivos ao conjunto de salas */
+                        itCjtSala->diasLetivos.add(*itDiasLetivosSala);
                      }
 
                      break;
@@ -128,14 +132,17 @@ void ProblemDataLoader::criaConjuntoSalas()
 
                problemData->totalConjuntosSalas++;
 
-               ITERA_GGROUP(itCredDisp,itSala->creditos_disponiveis,CreditoDisponivel)
+               GGroup<int>::iterator itDiasLetivosSala =
+                  itSala->diasLetivos.begin();
+
+               for(; itDiasLetivosSala != itSala->diasLetivos.end(); itDiasLetivosSala++)
                { 
-                  /* Adicionando os dias letivos ao conjunto de salas */
-                  cjtSala->diasLetivos.add(itCredDisp->dia_semana);
                   /* Adicionando os dias letivos ao campus em questão */
-                  itCampus->diasLetivos.add(itCredDisp->dia_semana);
+                  itCampus->diasLetivos.add(*itDiasLetivosSala);
                   /* Adicionando os dias letivos à unidade em questão */
-                  itUnidade->diasLetivos.add(itCredDisp->dia_semana);
+                  itUnidade->diasLetivos.add(*itDiasLetivosSala);
+                  /* Adicionando os dias letivos ao conjunto de salas */
+                  cjtSala->diasLetivos.add(*itDiasLetivosSala);
                }
             }
          }
@@ -143,35 +150,86 @@ void ProblemDataLoader::criaConjuntoSalas()
    }
 }
 
-void ProblemDataLoader::estabeleceDiasLetivosDiscSala()
+void ProblemDataLoader::carregaDiasLetivosSala()
 {
    ITERA_GGROUP(itCampus,problemData->campi,Campus)
    {
       ITERA_GGROUP(itUnidade,itCampus->unidades,Unidade)
       {
+         ITERA_GGROUP(itSala,itUnidade->salas,Sala)
+         {
+            ITERA_GGROUP(itCredsDisp,itSala->creditos_disponiveis,CreditoDisponivel)
+            {
+               if(itCredsDisp->max_creditos > 0)
+               { itSala->diasLetivos.add(itCredsDisp->dia_semana); }
+            }
+         }
+      }
+   }
+}
+
+void ProblemDataLoader::estabeleceDiasLetivosDisciplinasSalas()
+{
+   ITERA_GGROUP(itCampus,problemData->campi,Campus)
+   {
+      ITERA_GGROUP(itUnidade,itCampus->unidades,Unidade)
+      {
+         ITERA_GGROUP(itSala,itUnidade->salas,Sala)
+         {
+            ITERA_GGROUP(itDiscAssoc,itSala->disciplinasAssociadas,Disciplina)
+            {
+               ITERA_GGROUP_N_PT(itDiasLetivosDisc,itDiscAssoc->diasLetivos,int)
+               {
+                  /* Se o dia letivo da disciplina é também um dia letivo da sala em questão, 
+                  adiciona-se ao map <disc_Salas_Dias> o dia em comum. */
+                  if(itSala->diasLetivos.find(*itDiasLetivosDisc) != itSala->diasLetivos.end())
+                  {
+                     std::pair<int,int> ids_Disc_Sala 
+                        (itDiscAssoc->getId(),itSala->getId());
+
+                     problemData->disc_Salas_Dias[ids_Disc_Sala].add(*itDiasLetivosDisc);
+                  }
+               }
+            }
+         }
+      }
+   }
+}
+
+void ProblemDataLoader::estabeleceDiasLetivosDiscCjtSala()
+{
+   /* Os dias letivos das disciplinas em relação aos conjuntos de salas são obtidos
+   via união dos dias letivos das disciplinas em relação às salas pertencentes ao conjunto
+   de salas em questão. */
+
+   ITERA_GGROUP(itCampus,problemData->campi,Campus)
+   {
+      ITERA_GGROUP(itUnidade,itCampus->unidades,Unidade)
+      {
+         // p tds conjuntos de salas de um campus
          ITERA_GGROUP(itCjtSala,itUnidade->conjutoSalas,ConjuntoSala)
          {
-            int numDiasLetCjtSala = itCjtSala->diasLetivos.size();
-
+            // p tds as discAssoc de um conjunto
             ITERA_GGROUP(itDiscAssoc,itCjtSala->getDiscsAssociadas(),Disciplina)
             {
-               /* Para cada disciplina associada ao conjunto de salas em questão,
-               verificar se os dias da semana em que ela é oferecida estão disponíveis
-               no conjunto de salas. */
+               std::map<int/*Id Sala*/,Sala*>::iterator itSala =
+                  itCjtSala->getTodasSalas().begin();
 
-               int numDiasLetDisc = itDiscAssoc->diasLetivos.size();
-
-               if(numDiasLetDisc <= numDiasLetCjtSala)
+               for(; itSala != itCjtSala->getTodasSalas().end(); itSala++)
                {
-                  GGroup<int>::iterator itDiasLetDisc =
-                     itDiscAssoc->diasLetivos.begin();
+                  std::pair<int/*idDisc*/,int/*idSala*/> ids_Disc_Sala 
+                     (itDiscAssoc->getId(),itSala->second->getId());
 
-                  for(; itDiasLetDisc != itDiscAssoc->diasLetivos.end(); itDiasLetDisc++)
+                  /* Se a disciplina se relaciona com a sala em questao. Como estamos 
+                  lidando com um conjunto de salas, podemos ter o caso em que uma disciplina
+                  é associada a uma sala do conjunto e a outra não. */
+                  if(problemData->disc_Salas_Dias.find(ids_Disc_Sala) !=
+                     problemData->disc_Salas_Dias.end())
                   {
-                     if( itCjtSala->diasLetivos.find(*itDiasLetDisc) != 
-                        itCjtSala->diasLetivos.end() )
+                     ITERA_GGROUP_N_PT(itDiasLetDisc,
+                        problemData->disc_Salas_Dias[ids_Disc_Sala],int)
                      {
-                        problemData->discSala_Dias[std::make_pair<int,int>
+                        problemData->disc_Conjutno_Salas__Dias[std::make_pair<int,int>
                            (itDiscAssoc->getId(),itCjtSala->getId())].add
                            (*itDiasLetDisc);
                      }
@@ -839,10 +897,12 @@ void ProblemDataLoader::calculaTamanhoMedioSalasCampus()
    unsigned somaCapSalas = 0;
    unsigned totalSalas = 0;
 
-   ITERA_GGROUP(it_cp,problemData->campi,Campus) {
-      ITERA_GGROUP(it_und,it_cp->unidades,Unidade) {
-         ITERA_GGROUP(it_sala,it_und->salas,Sala) {
-
+   ITERA_GGROUP(it_cp,problemData->campi,Campus)
+   {
+      ITERA_GGROUP(it_und,it_cp->unidades,Unidade)
+      {
+         ITERA_GGROUP(it_sala,it_und->salas,Sala)
+         {
             somaCapSalas += it_sala->capacidade;
 
             it_und->maiorSala = std::max(((int)it_und->maiorSala),((int)it_sala->capacidade));
@@ -1346,7 +1406,7 @@ void ProblemDataLoader::cache() {
 
 }
 
-void ProblemDataLoader::carregaDisciplinasAssociadasSalas() {
+void ProblemDataLoader::associaDisciplinasSalas() {
 
    /* Adicionando às salas todas as disciplinas compativeis. 
    OBS: Caso a sala não possua disciplina compatível informada na
@@ -1355,7 +1415,14 @@ void ProblemDataLoader::carregaDisciplinasAssociadasSalas() {
    Como já foi determinado o número de turmas para cada disciplina, pode-se estimar um tamanho específico
    para as turmas de uma dada disciplina (poderiamos estimar tamanhos diferentes para turmas de uma mesma 
    disciplina). Dado o tamanho das turmas de uma disciplina pode-se restringir a associação da disciplina em
-   questão apenas a salas compatíveis. */
+   questão apenas a salas compatíveis. 
+
+   ATENCAO : A ideia é associar disciplinas à salas que possuam, pelo menos, um dia letivo em comum. No caso das
+   disciplinas proibidas, admite-se que o usuário fez a associação correta (ou seja, que ele não tenha associado
+   uma disciplina com dias letivos (seg,ter,qua) a uma sala com dias letivos (qui,sex)). O tamanho das turmas
+   de uma dada disciplina tb foi levado em conta (ou seja, não associo disciplinas à salas com capacidade
+   inferior ao tamanho das turmas de uma dada disciplina).
+   */
 
    std::map<int/*Id Campus*/,GGroup<int>/*Id Discs*/>::iterator itCpDiscs =
       problemData->cp_discs.begin();
@@ -1397,9 +1464,9 @@ void ProblemDataLoader::carregaDisciplinasAssociadasSalas() {
       {
          if(disc_proibidas.find(*itDiscs) == disc_proibidas.end())
          {
-            /* Informa a menor sala com que as turmas, de uma dada disciplina, são compatíveis. */
             Disciplina * ptDisc = problemData->refDisciplinas[*itDiscs];
 
+            /* Informa a menor sala com que as turmas, de uma dada disciplina, são compatíveis. */
             int menorCapCompt = ((int) (ptDisc->getDemandaTotal() / ptDisc->num_turmas)) +
                (ptDisc->getDemandaTotal() % ptDisc->num_turmas);
 
@@ -1407,44 +1474,52 @@ void ProblemDataLoader::carregaDisciplinasAssociadasSalas() {
             {
                ITERA_GGROUP(itSala,itUnidade->salas,Sala)
                {
-                  if( ptDisc->eLab() && (itSala->getTipoSalaId() == 2 /*laboratório, segundo instancia trivial*/) )
+                  ITERA_GGROUP_N_PT(itDiasLetDisc,ptDisc->diasLetivos,int)
                   {
-                     if(itSala->capacidade >= menorCapCompt)
+                     /* Só continuo quando a sala possuir o dia letivo (pertencente à disciplina) em questão. */
+                     if(itSala->diasLetivos.find(*itDiasLetDisc) != itSala->diasLetivos.end())
                      {
-                        itSala->disciplinasAssociadas.add(ptDisc);
-                        problemData->discSalas[ptDisc->getId()].add(*itSala);
+                        if( ptDisc->eLab() && (itSala->getTipoSalaId() == 2 /*laboratório, segundo instancia trivial*/) )
+                        {
+                           if(itSala->capacidade >= menorCapCompt)
+                           {
+                              itSala->disciplinasAssociadas.add(ptDisc);
+
+                              problemData->discSalas[ptDisc->getId()].add(*itSala);
+                           }
+                        }
+                        else
+                           if( !ptDisc->eLab() && (itSala->getTipoSalaId() == 1 /*sala de aula, segundo instancia trivial*/) )
+                           {
+                              if(itSala->capacidade >= menorCapCompt)
+                              {
+                                 itSala->disciplinasAssociadas.add(ptDisc);
+
+                                 problemData->discSalas[ptDisc->getId()].add(*itSala);
+                              }
+                           }
                      }
                   }
-                  else
-                     if( !ptDisc->eLab() && (itSala->getTipoSalaId() == 1 /*sala de aula, segundo instancia trivial*/) )
-                     {
-                        if(itSala->capacidade >= menorCapCompt)
-                        {
-                           itSala->disciplinasAssociadas.add(ptDisc);
-                           problemData->discSalas[ptDisc->getId()].add(*itSala);
-                        }
-                     }
                }
             }
          }
       }
    }
 
-   ///* Adicionando às salas todas as disciplinas compativeis. 
-   //OBS: Se a sala não possui disciplina compatível informada na
-   //entrada, entao todas as disciplinas são compativeis.*/
-   ////GGroup<int> disc_proibidas;
-
-   //ITERA_GGROUP(it_cp,problemData->campi,Campus) {
+   //// Para cada Campus
+   //for(; itCpDiscs != problemData->cp_discs.end(); itCpDiscs++)
+   //{
+   //   Campus * ptCampus = problemData->refCampus[itCpDiscs->first];
 
    //   /* Armazenando as disciplinas que são específicas de alguma sala e, portanto, não
    //   deverão ser adicionadas às listas de disciplinas associadas de outras salas.*/
 
    //   GGroup<int> disc_proibidas;
 
-   //   ITERA_GGROUP(it_und,it_cp->unidades,Unidade) {
-   //      ITERA_GGROUP(it_sala,it_und->salas,Sala) {
-
+   //   ITERA_GGROUP(it_und,ptCampus->unidades,Unidade)
+   //   {
+   //      ITERA_GGROUP(it_sala,it_und->salas,Sala)
+   //      {
    //         GGroup<int>::iterator it_sala_disc_assoc = it_sala->disciplinas_associadas.begin();
 
    //         for(; it_sala_disc_assoc != it_sala->disciplinas_associadas.end(); it_sala_disc_assoc++) {
@@ -1453,56 +1528,56 @@ void ProblemDataLoader::carregaDisciplinasAssociadasSalas() {
    //            // copiando para a nova estrutura de disciplinasAssociadas -> temporario
    //            it_sala->disciplinasAssociadas.add(problemData->refDisciplinas[*it_sala_disc_assoc]);
 
-   //            // >>>
    //            problemData->discSalas[*it_sala_disc_assoc].add(*it_sala);
-   //            // <<<
-
    //         }
    //      }
    //   }
 
-   //   // Adicionando as disciplinas, que não possuem restrição quanto à sala, as salas do campus em questão.
-   //   ITERA_GGROUP(it_und,it_cp->unidades,Unidade) {
-   //      ITERA_GGROUP(it_sala,it_und->salas,Sala) {
-   //         GGroup<int>::iterator it_disc = problemData->cp_discs[it_cp->getId()].begin();
-   //         for(; it_disc != problemData->cp_discs[it_cp->getId()].end(); it_disc++ ) {
+   //   /* Associando as demais disciplinas às salas, levando em consideração o 
+   //   tamanho das turmas calculado para cada disciplina */
 
-   //            if(disc_proibidas.find(*it_disc) == disc_proibidas.end()) {
+   //   GGroup<int>::iterator itDiscs = itCpDiscs->second.begin();
 
-   //               if(problemData->refDisciplinas[*it_disc]->eLab()) {
-   //                  if(it_sala->getTipoSalaId() == 2) /*laboratório, segundo instancia trivial*/ {
-   //                     it_sala->disciplinasAssociadas.add(problemData->refDisciplinas[*it_disc]);
+   //   // Para cada disciplina associada ao campus em questao
+   //   for(; itDiscs != itCpDiscs->second.end(); itDiscs++)
+   //   {
+   //      if(disc_proibidas.find(*itDiscs) == disc_proibidas.end())
+   //      {
+   //         /* Informa a menor sala com que as turmas, de uma dada disciplina, são compatíveis. */
+   //         Disciplina * ptDisc = problemData->refDisciplinas[*itDiscs];
 
-   //                     // >>>
-   //                     problemData->discSalas[*it_disc].add(*it_sala);
-   //                     // <<<
+   //         int menorCapCompt = ((int) (ptDisc->getDemandaTotal() / ptDisc->num_turmas)) +
+   //            (ptDisc->getDemandaTotal() % ptDisc->num_turmas);
+
+   //         ITERA_GGROUP(itUnidade,ptCampus->unidades,Unidade)
+   //         {
+   //            ITERA_GGROUP(itSala,itUnidade->salas,Sala)
+   //            {
+   //               if( ptDisc->eLab() && (itSala->getTipoSalaId() == 2 /*laboratório, segundo instancia trivial*/) )
+   //               {
+   //                  if(itSala->capacidade >= menorCapCompt)
+   //                  {
+   //                     itSala->disciplinasAssociadas.add(ptDisc);
+   //                     problemData->discSalas[ptDisc->getId()].add(*itSala);
    //                  }
    //               }
-   //               else {
-   //                  /* Se o if abaixo estiver comentado disciplinas que não possuem restrição
-   //                  quanto a salas poderão ser associadas à laboratórios. Isso aumenta o número de 
-   //                  variáveis e restrições criadas.
-   //                  O ideal é o usuário cadastrar corretamente as associações de disciplinas às salas. */
-   //                  //if(it_sala->getTipoSalaId() != 2) {
-   //                  //it_sala->disciplinasAssociadas.add(*it_disc);
-   //                  it_sala->disciplinasAssociadas.add(problemData->refDisciplinas[*it_disc]);
-
-   //                  // >>>
-   //                  problemData->discSalas[*it_disc].add(*it_sala);
-   //                  // <<<
-
-   //                  //}
-   //               }
+   //               else
+   //                  if( !ptDisc->eLab() && (itSala->getTipoSalaId() == 1 /*sala de aula, segundo instancia trivial*/) )
+   //                  {
+   //                     if(itSala->capacidade >= menorCapCompt)
+   //                     {
+   //                        itSala->disciplinasAssociadas.add(ptDisc);
+   //                        problemData->discSalas[ptDisc->getId()].add(*itSala);
+   //                     }
+   //                  }
    //            }
    //         }
    //      }
    //   }
    //}
-
-   carregaDiscAssocConjuntoSalas();
 }
 
-void ProblemDataLoader::carregaDiscAssocConjuntoSalas()
+void ProblemDataLoader::associaDisciplinasConjuntoSalas()
 {
    ITERA_GGROUP(itCampus,problemData->campi,Campus)
    {

@@ -4,10 +4,10 @@
 
 #include "IS_Sala.h"
 
-class IS_Unidade
+class IS_Unidade : public OFBase
 {
 public:
-   IS_Unidade(void);
+   IS_Unidade(Unidade * _unidade);
 
    IS_Unidade(IS_Unidade const & is_unidade);
 

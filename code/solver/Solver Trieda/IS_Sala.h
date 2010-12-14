@@ -7,10 +7,10 @@
 
 using namespace std;
 
-class IS_Sala
+class IS_Sala : public OFBase
 {
 public:
-   IS_Sala(void);
+   IS_Sala(Sala * _sala);
    //IS_Sala(vector<pair<int/*dias*/,int/*creditos livres*/> > cred_Livre_Dia_Let);
 
    IS_Sala(IS_Sala const & is_sala);
@@ -20,6 +20,7 @@ public:
    //Sala const * sala;
    Sala * sala;
 
-   map<int/*dia*/,pair<int/*credsLivres*/,vector<Disciplina*> > > atendimento_Tatico;
+   map<int/*dia*/,pair<int/*credsLivres*/,vector<pair
+      <Disciplina*,int/*Demanda atendidad -> Representa a var. a_{i,d,o}*/> > > > atendimento_Tatico;
    //map<int/*dia*/,pair<int/*credsLivres*/,int> > atendimento_Tatico;
 };

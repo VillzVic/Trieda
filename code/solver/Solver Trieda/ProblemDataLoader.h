@@ -26,11 +26,16 @@ public:
    // Load the XML file
    void load();
 
-   void estabeleceDiasLetivosDiscs();
+   void carregaDiasLetivosDiscs();
+   void carregaDiasLetivosSala();
 
    void criaConjuntoSalas();
 
-   void estabeleceDiasLetivosDiscSala();
+   /* Establece os dias letivos comuns entre as salas e suas disciplinas associadas. */
+   void estabeleceDiasLetivosDisciplinasSalas();
+
+   /* Establece os dias letivos comuns entre os conjuntos de salas e suas disciplinas associadas. */
+   void estabeleceDiasLetivosDiscCjtSala();
 
    void divideDisciplinas();
    // >>> 14/10/2010
@@ -80,16 +85,17 @@ private:
 
    /* Armazena em cada sala, referências para as disciplinas associadas. Armazena também,
    para cada disciplina, ponteiros para as salas compatíveis.*/
-   void carregaDisciplinasAssociadasSalas();
+   //void carregaDisciplinasAssociadasSalas();
+   void associaDisciplinasSalas();
 
    // Armazena, para cada disciplina, ponteiros para as salas compatíveis.
    void carregaDiscSalas();
 
    /* Armazena referências para as disciplinas associadas em cada elemento do <ConjuntoSala>. 
-   Como o método carregaDisciplinasAssociadasSalas() já associou as disciplinas às salas, basta
+   Como o método associaDisciplinasSalas() já associou as disciplinas às salas, basta
    percorrer o map de salas de um dado elemento do <ConjuntoSala> adicionando as salas ao map de
    disciplinas associadas do <ConjuntoSala>.*/
-   void carregaDiscAssocConjuntoSalas();
+   void associaDisciplinasConjuntoSalas();
 
    /* Relaciona cada disciplina com as ofertas em que ela aparece. */
    void relacionaDiscOfertas();

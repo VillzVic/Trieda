@@ -73,7 +73,8 @@ int SolverMIP::solve()
 	lp->writeProbLP("Solver Trieda");
 #endif
 
-   InitialSolution init_sol(*problemData);
+   //InitialSolution init_sol(*problemData);
+   //init_sol.generate_Initial_Solution();
    //exit(1);
 
 	/*
@@ -858,11 +859,13 @@ int SolverMIP::cria_variavel_creditos(void)
 					for(int turma=0;turma<itDisc->num_turmas;turma++)
 					{
 						GGroup<int/*Dias*/>::iterator itDiscSala_Dias =
-							problemData->discSala_Dias[std::make_pair<int,int>
-							(itDisc->getId(),itCjtSala->getId())].begin();
+							//problemData->discSala_Dias[std::make_pair<int,int>
+                     problemData->disc_Conjutno_Salas__Dias[std::make_pair<int,int>
+                     (itDisc->getId(),itCjtSala->getId())].begin();
 
 						for(; itDiscSala_Dias != 
-							problemData->discSala_Dias[std::make_pair<int,int>
+                     problemData->disc_Conjutno_Salas__Dias[std::make_pair<int,int>
+							//problemData->discSala_Dias[std::make_pair<int,int>
 							(itDisc->getId(),itCjtSala->getId())].end(); itDiscSala_Dias++)
 							//for(int dia = 0; dia < 7; dia++)
 						{
@@ -959,11 +962,13 @@ int SolverMIP::cria_variavel_oferecimentos(void)
 					for(int turma=0;turma<itDisc->num_turmas;turma++)
 					{
 						GGroup<int/*Dias*/>::iterator itDiscSala_Dias =
-							problemData->discSala_Dias[std::make_pair<int,int>
+                     problemData->disc_Conjutno_Salas__Dias[std::make_pair<int,int>
+							//problemData->discSala_Dias[std::make_pair<int,int>
 							(itDisc->getId(),itCjtSala->getId())].begin();
 
-						for(; itDiscSala_Dias != 
-							problemData->discSala_Dias[std::make_pair<int,int>
+						for(; itDiscSala_Dias !=
+							problemData->disc_Conjutno_Salas__Dias[std::make_pair<int,int>
+                     //problemData->discSala_Dias[std::make_pair<int,int>
 							(itDisc->getId(),itCjtSala->getId())].end(); itDiscSala_Dias++)
 							//for(int dia = 0; dia < 7; dia++)
 						{
@@ -1981,11 +1986,13 @@ int SolverMIP::cria_restricao_carga_horaria(void)
 					ITERA_GGROUP(itCjtSala,itUnidade->conjutoSalas,ConjuntoSala)
 					{
 						GGroup<int/*Dias*/>::iterator itDiscSala_Dias =
-							problemData->discSala_Dias[std::make_pair<int,int>
+                     problemData->disc_Conjutno_Salas__Dias[std::make_pair<int,int>
+							//problemData->discSala_Dias[std::make_pair<int,int>
 							(itDisciplina->getId(),itCjtSala->getId())].begin();
 
 						for(; itDiscSala_Dias != 
-							problemData->discSala_Dias[std::make_pair<int,int>
+                     problemData->disc_Conjutno_Salas__Dias[std::make_pair<int,int>
+                     //problemData->discSala_Dias[std::make_pair<int,int>
 							(itDisciplina->getId(),itCjtSala->getId())].end(); itDiscSala_Dias++)
 						{
 
@@ -2272,11 +2279,13 @@ int SolverMIP::cria_restricao_min_cred_dd(void)
 				ITERA_GGROUP(itDisc,problemData->disciplinas,Disciplina)
 			 {
 				 GGroup<int/*Dias*/>::iterator itDiscSala_Dias =
-					 problemData->discSala_Dias[std::make_pair<int,int>
+                problemData->disc_Conjutno_Salas__Dias[std::make_pair<int,int>
+                //problemData->discSala_Dias[std::make_pair<int,int>
 					 (itDisc->getId(),itCjtSala->getId())].begin();
 
-				 for(; itDiscSala_Dias != 
-					 problemData->discSala_Dias[std::make_pair<int,int>
+				 for(; itDiscSala_Dias !=
+					 problemData->disc_Conjutno_Salas__Dias[std::make_pair<int,int>
+                //problemData->discSala_Dias[std::make_pair<int,int>
 					 (itDisc->getId(),itCjtSala->getId())].end(); itDiscSala_Dias++)
 				 {
 
@@ -2445,11 +2454,13 @@ int SolverMIP::cria_restricao_ativacao_var_o(void)
 				ITERA_GGROUP(itDisc,problemData->disciplinas,Disciplina)
 				{
 					GGroup<int/*Dias*/>::iterator itDiscSala_Dias =
-						problemData->discSala_Dias[std::make_pair<int,int>
+						problemData->disc_Conjutno_Salas__Dias[std::make_pair<int,int>
+                  //problemData->discSala_Dias[std::make_pair<int,int>
 						(itDisc->getId(),itCjtSala->getId())].begin();
 
-					for(; itDiscSala_Dias != 
-						problemData->discSala_Dias[std::make_pair<int,int>
+					for(; itDiscSala_Dias !=
+						problemData->disc_Conjutno_Salas__Dias[std::make_pair<int,int>
+                  //problemData->discSala_Dias[std::make_pair<int,int>
 						(itDisc->getId(),itCjtSala->getId())].end(); itDiscSala_Dias++)
 				 {
 					 for(int turma = 0; turma < itDisc->num_turmas; turma++)
@@ -2761,11 +2772,13 @@ int SolverMIP::cria_restricao_disciplina_sala(void)
 						OPT_ROW row( nnz, OPT_ROW::LESS , 0.0, name );
 
 						GGroup<int/*Dias*/>::iterator itDiscSala_Dias =
-							problemData->discSala_Dias[std::make_pair<int,int>
+							problemData->disc_Conjutno_Salas__Dias[std::make_pair<int,int>
+                     //problemData->discSala_Dias[std::make_pair<int,int>
 							(itDisc->getId(),itCjtSala->getId())].begin();
 
-						for(; itDiscSala_Dias != 
-							problemData->discSala_Dias[std::make_pair<int,int>
+						for(; itDiscSala_Dias !=                     
+                     problemData->disc_Conjutno_Salas__Dias[std::make_pair<int,int>
+							//problemData->discSala_Dias[std::make_pair<int,int>
 							(itDisc->getId(),itCjtSala->getId())].end(); itDiscSala_Dias++)
 						{
 
@@ -3427,11 +3440,13 @@ int SolverMIP::cria_restricao_lim_cred_diar_disc(void)
 				ITERA_GGROUP(itDisc,problemData->disciplinas,Disciplina)
 			 {
 				 GGroup<int/*Dias*/>::iterator itDiscSala_Dias =
-					 problemData->discSala_Dias[std::make_pair<int,int>
+                problemData->disc_Conjutno_Salas__Dias[std::make_pair<int,int>
+					 //problemData->discSala_Dias[std::make_pair<int,int>
 					 (itDisc->getId(),itCjtSala->getId())].begin();
 
 				 for(; itDiscSala_Dias != 
-					 problemData->discSala_Dias[std::make_pair<int,int>
+                problemData->disc_Conjutno_Salas__Dias[std::make_pair<int,int>
+					 //problemData->discSala_Dias[std::make_pair<int,int>
 					 (itDisc->getId(),itCjtSala->getId())].end(); itDiscSala_Dias++)
 				 {
 					 for(int turma = 0; turma < itDisc->num_turmas; turma++)
@@ -3727,11 +3742,13 @@ int SolverMIP::cria_restricao_cap_sala_compativel_turma(void)
 					ITERA_GGROUP(itCjtSala,itUnidade->conjutoSalas,ConjuntoSala)
 					{
 						GGroup<int/*Dias*/>::iterator itDiscSala_Dias =
-							problemData->discSala_Dias[std::make_pair<int,int>
+							problemData->disc_Conjutno_Salas__Dias[std::make_pair<int,int>
+                     //problemData->discSala_Dias[std::make_pair<int,int>
 							(itDisc->getId(),itCjtSala->getId())].begin();
 
-						for(; itDiscSala_Dias != 
-							problemData->discSala_Dias[std::make_pair<int,int>
+						for(; itDiscSala_Dias !=                     
+							problemData->disc_Conjutno_Salas__Dias[std::make_pair<int,int>
+                     //problemData->discSala_Dias[std::make_pair<int,int>
 							(itDisc->getId(),itCjtSala->getId())].end(); itDiscSala_Dias++)
 				  { 
 					  v.reset();
@@ -3928,12 +3945,14 @@ int SolverMIP::cria_restricao_cap_sala_unidade(void)
             {
                for(int turma = 0; turma < itDisc->num_turmas; turma++)
                {
-                  GGroup<int/*Dias*/>::iterator itDiscSala_Dias =
-                     problemData->discSala_Dias[std::make_pair<int,int>
+                  GGroup<int/*Dias*/>::iterator itDiscSala_Dias =                     
+                     problemData->disc_Conjutno_Salas__Dias[std::make_pair<int,int>
+                     //problemData->discSala_Dias[std::make_pair<int,int>
                      (itDisc->getId(),itCjtSala->getId())].begin();
 
-                  for(; itDiscSala_Dias != 
-                     problemData->discSala_Dias[std::make_pair<int,int>
+                  for(; itDiscSala_Dias !=
+                     problemData->disc_Conjutno_Salas__Dias[std::make_pair<int,int>
+                     //problemData->discSala_Dias[std::make_pair<int,int>
                      (itDisc->getId(),itCjtSala->getId())].end(); itDiscSala_Dias++)
                   {
                      c.reset();
@@ -5161,11 +5180,13 @@ int SolverMIP::cria_restricao_abre_turmas_em_sequencia(void)
 						ITERA_GGROUP(itCjtSala,itUnidade->conjutoSalas,ConjuntoSala)
 						{
 							GGroup<int/*Dias*/>::iterator itDiscSala_Dias =
-								problemData->discSala_Dias[std::make_pair<int,int>
+                        problemData->disc_Conjutno_Salas__Dias[std::make_pair<int,int>
+								//problemData->discSala_Dias[std::make_pair<int,int>
 								(itDisc->getId(),itCjtSala->getId())].begin();
 
 							for(; itDiscSala_Dias != 
-								problemData->discSala_Dias[std::make_pair<int,int>
+								problemData->disc_Conjutno_Salas__Dias[std::make_pair<int,int>
+                        //problemData->discSala_Dias[std::make_pair<int,int>
 								(itDisc->getId(),itCjtSala->getId())].end(); itDiscSala_Dias++)
 							{
 								v.reset();
