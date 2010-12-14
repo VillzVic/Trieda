@@ -17,16 +17,16 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for GrupoHorario complex type.
+ * <p>Java class for WarningsType complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="GrupoHorario">
+ * &lt;complexType name="WarningsType">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence maxOccurs="unbounded" minOccurs="0">
- *         &lt;element name="Horario" type="{}ItemHorario"/>
+ *         &lt;element name="Warning" type="{}WarningType"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -36,41 +36,41 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "GrupoHorario", propOrder = {
-    "horario"
+@XmlType(name = "WarningsType", propOrder = {
+    "warning"
 })
-public class GrupoHorario {
+public class WarningsType {
 
-    @XmlElement(name = "Horario")
-    protected List<ItemHorario> horario;
+    @XmlElement(name = "Warning")
+    protected List<WarningType> warning;
 
     /**
-     * Gets the value of the horario property.
+     * Gets the value of the warning property.
      * 
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the horario property.
+     * This is why there is not a <CODE>set</CODE> method for the warning property.
      * 
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
-     *    getHorario().add(newItem);
+     *    getWarning().add(newItem);
      * </pre>
      * 
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link ItemHorario }
+     * {@link WarningType }
      * 
      * 
      */
-    public List<ItemHorario> getHorario() {
-        if (horario == null) {
-            horario = new ArrayList<ItemHorario>();
+    public List<WarningType> getWarning() {
+        if (warning == null) {
+            warning = new ArrayList<WarningType>();
         }
-        return this.horario;
+        return this.warning;
     }
 
 }
