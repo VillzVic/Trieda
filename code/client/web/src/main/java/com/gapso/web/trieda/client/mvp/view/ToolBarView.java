@@ -175,13 +175,13 @@ public class ToolBarView extends MyComposite implements ToolBarPresenter.Display
 		
 		campiToolBar.add(new SeparatorToolItem());
 		
-		campusDeslocamentoListCampiBt = createButton("Desloc", "Deslocamento entre Campi", Resources.DEFAULTS.campi24());
+		campusDeslocamentoListCampiBt = createButton("Deslocamento", "Deslocamento entre Campi", Resources.DEFAULTS.campi24());
 		campiToolBar.add(campusDeslocamentoListCampiBt);
 		
-		semanasLetivaListCampiBt = createButton("Sem. Let.", "Semanas Letivas", Resources.DEFAULTS.campi24());
+		semanasLetivaListCampiBt = createButton("Semanas Letivas", "Semanas Letivas", Resources.DEFAULTS.campi24());
 		campiToolBar.add(semanasLetivaListCampiBt);
 		
-		horariosAulaListCampiBt = createButton("Horários", "Horários de Aula", Resources.DEFAULTS.campi24());
+		horariosAulaListCampiBt = createButton("Horários Aula", "Horários de Aula", Resources.DEFAULTS.campi24());
 		campiToolBar.add(horariosAulaListCampiBt);
 		
 		turnosListCampiBt = createButton("Turnos", "Turnos", Resources.DEFAULTS.campi24());
