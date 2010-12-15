@@ -218,7 +218,7 @@ public class DisciplinasAssociarSalaView extends MyComposite implements Discipli
 		
 		ContentPanel salasListPanel = new ContentPanel(new FitLayout());
 		salasListPanel.getHeader().addTool(getRemoveButton());
-		salasListPanel.setHeading("Salas(s)");
+		salasListPanel.setHeading("Sala(s)");
 		salasList = new TreePanel<FileModel>(getStoreSala()) {
 			@Override
 			protected boolean hasChildren(FileModel model) {

@@ -6,6 +6,7 @@ import com.extjs.gxt.ui.client.widget.TabPanel;
 public class GTab extends TabPanel {
 	
 	public GTab() {
+		setTabScroll(true);
 	}
 
 	@Override

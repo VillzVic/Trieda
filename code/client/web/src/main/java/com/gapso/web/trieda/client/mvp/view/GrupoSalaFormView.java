@@ -71,7 +71,7 @@ public class GrupoSalaFormView extends MyComposite implements GrupoSalaFormPrese
 		nomeTF.setMaxLength(20);
 		formPanel.add(nomeTF, formData);
 		
-		salvarEAssociarBT = new Button("Salar e Associar Salas", AbstractImagePrototype.create(Resources.DEFAULTS.save16()));
+		salvarEAssociarBT = new Button("Salvar e Associar Salas", AbstractImagePrototype.create(Resources.DEFAULTS.save16()));
 		simpleModal.addButton(salvarEAssociarBT);
 		
 		FormButtonBinding binding = new FormButtonBinding(formPanel);
