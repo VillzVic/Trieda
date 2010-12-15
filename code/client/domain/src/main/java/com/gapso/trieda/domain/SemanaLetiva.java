@@ -43,8 +43,9 @@ public class SemanaLetiva implements Serializable {
     @Size(min = 3, max = 20)
     private String codigo;
 
+    @NotNull
     @Column(name = "SLE_DESCRICAO")
-    @Size(max = 255)
+    @Size(max = 50)
     private String descricao;
     
     @OneToMany(mappedBy="semanaLetiva", fetch = FetchType.EAGER)

@@ -62,13 +62,13 @@ public class Curso implements Serializable {
     @NotNull
     @Column(name = "CUR_MIN_DOUTORES")
     @Min(0L)
-    @Max(99L)
+    @Max(100L)
     private Integer numMinDoutores;
 
     @NotNull
     @Column(name = "CUR_MIN_MESTRES")
     @Min(0L)
-    @Max(99L)
+    @Max(100L)
     private Integer numMinMestres;
 
     @NotNull
