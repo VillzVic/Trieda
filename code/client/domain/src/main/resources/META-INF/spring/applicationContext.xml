@@ -7,7 +7,7 @@
 
 	<bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor" />
 
-	<context:property-placeholder location="classpath*:META-INF/spring/database.properties" />
+	<context:property-placeholder location="classpath*:META-INF/spring/gapso-database.properties" />
 
 	<context:spring-configured />
 

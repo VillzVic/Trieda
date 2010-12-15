@@ -51,7 +51,7 @@ public class Sala implements Serializable {
 
     @NotNull
     @Column(name = "SAL_CODIGO")
-    @Size(min = 3, max = 20)
+    @Size(min = 1, max = 20)
     private String codigo;
 
     @NotNull

@@ -31,7 +31,7 @@ public class TipoContrato implements Serializable {
 
     @NotNull
     @Column(name = "TCO_NOME")
-    @Size(min = 3, max = 20)
+    @Size(min = 1, max = 50)
     private String nome;
 
 	@PersistenceContext

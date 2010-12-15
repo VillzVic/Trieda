@@ -51,12 +51,12 @@ public class Curso implements Serializable {
 
     @NotNull
     @Column(name = "CUR_CODIGO")
-    @Size(min = 3, max = 255)
+    @Size(min = 1, max = 50)
     private String codigo;
     
     @NotNull
     @Column(name = "CUR_NOME")
-    @Size(min = 3, max = 50)
+    @Size(min = 1, max = 50)
     private String nome;
 
     @NotNull

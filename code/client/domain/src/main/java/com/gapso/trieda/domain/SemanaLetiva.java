@@ -40,7 +40,7 @@ public class SemanaLetiva implements Serializable {
 
     @NotNull
     @Column(name = "SLE_CODIGO")
-    @Size(min = 3, max = 20)
+    @Size(min = 1, max = 20)
     private String codigo;
 
     @NotNull

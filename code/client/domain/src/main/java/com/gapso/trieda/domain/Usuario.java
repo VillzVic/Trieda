@@ -30,7 +30,7 @@ public class Usuario implements java.io.Serializable {
 
     @NotNull
     @Column(name = "USU_NOME")
-    @Size(min = 5, max = 50)
+    @Size(min = 1, max = 50)
     private String nome;
 
     @Column(name = "USU_EMAIL")

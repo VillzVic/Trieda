@@ -48,7 +48,7 @@ public class Curriculo implements Serializable {
 
     @NotNull
     @Column(name = "CRC_COD")
-    @Size(min = 3, max = 20)
+    @Size(min = 1, max = 20)
     private String codigo;
 
     @Column(name = "CRC_DESCRICAO")

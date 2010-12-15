@@ -49,12 +49,12 @@ public class Campus implements Serializable {
 
     @NotNull
     @Column(name = "CAM_CODIGO")
-    @Size(min = 3, max = 20)
+    @Size(min = 1, max = 20)
     private String codigo;
 
     @NotNull
     @Column(name = "CAM_NOME")
-    @Size(min = 5, max = 20)
+    @Size(min = 1, max = 50)
     private String nome;
     
     @Enumerated

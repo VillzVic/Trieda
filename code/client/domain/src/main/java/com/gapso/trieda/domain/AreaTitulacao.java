@@ -35,7 +35,7 @@ public class AreaTitulacao implements Serializable {
 
     @NotNull
     @Column(name = "ATI_CODIGO")
-    @Size(min = 3, max = 50)
+    @Size(min = 1, max = 50)
     private String codigo;
     
     @Column(name = "ATI_DESCRICAO")

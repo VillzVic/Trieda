@@ -31,7 +31,7 @@ public class TipoCurso implements java.io.Serializable {
 
     @NotNull
     @Column(name = "TCU_CODIGO")
-    @Size(min = 3, max = 50)
+    @Size(min = 1, max = 50)
     private String codigo;
     
     @Column(name = "TCU_DESCRICAO")

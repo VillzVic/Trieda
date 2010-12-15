@@ -58,12 +58,12 @@ public class Disciplina implements Serializable {
 
     @NotNull
     @Column(name = "DIS_CODIGO")
-    @Size(min = 3, max = 20)
+    @Size(min = 1, max = 20)
     private String codigo;
 
     @NotNull
     @Column(name = "DIS_NOME")
-    @Size(min = 5, max = 20)
+    @Size(min = 1, max = 50)
     private String nome;
 
     @NotNull

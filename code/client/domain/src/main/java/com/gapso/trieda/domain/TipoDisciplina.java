@@ -30,7 +30,7 @@ public class TipoDisciplina implements java.io.Serializable {
 
     @NotNull
     @Column(name = "TDI_NOME")
-    @Size(min = 3, max = 255)
+    @Size(min = 1, max = 50)
     private String nome;
 
 	public String toString() {

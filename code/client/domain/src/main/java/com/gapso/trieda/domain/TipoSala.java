@@ -30,7 +30,7 @@ public class TipoSala implements java.io.Serializable {
 
     @NotNull
     @Column(name = "TSA_NOME")
-    @Size(min = 3, max = 255)
+    @Size(min = 1, max = 255)
     private String nome;
 
     @Column(name = "TSA_DESCRICAO")

@@ -49,7 +49,7 @@ public class Unidade implements Serializable {
 
     @NotNull
     @Column(name = "UNI_NOME")
-    @Size(min = 5, max = 20)
+    @Size(min = 1, max = 50)
     private String nome;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "origem")

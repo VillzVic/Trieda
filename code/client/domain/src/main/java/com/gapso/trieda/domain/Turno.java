@@ -45,7 +45,7 @@ public class Turno implements Serializable {
 	
     @NotNull
     @Column(name = "TUR_NOME")
-    @Size(max = 50)
+    @Size(min = 1, max = 50)
     private String nome;
 
     @NotNull
