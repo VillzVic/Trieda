@@ -114,7 +114,6 @@ public class ToolBarView extends MyComposite implements ToolBarPresenter.Display
 
 		campiTabItem.add(campiToolBar);
 		
-		
 		unidadesTabItem.add(unidadesToolBar);
 		salasTabItem.add(salasToolBar);
 		cursosTabItem.add(cursosToolBar);
@@ -124,10 +123,11 @@ public class ToolBarView extends MyComposite implements ToolBarPresenter.Display
 		createGroups();
 		
 		TabPanel masterDataTab = new TabPanel();
+//		masterDataTab.setBodyBorder(false);
 		masterDataTab.addStyleName("tabPanelMasterData");
-		masterDataTab.setHeight(79);
-//		cenarioToolBar.setHeight(80);
-//		planejamentoToolBar.setHeight(80);
+		masterDataTab.setHeight(78);
+		cenarioToolBar.setHeight(52);
+		planejamentoToolBar.setHeight(52);
 
 		TabItem masterDataItem = new TabItem("Master Data");
 		masterDataItem.disable();
@@ -143,6 +143,8 @@ public class ToolBarView extends MyComposite implements ToolBarPresenter.Display
 		cenarioPanel.add(cenarioToolBar);
 		planejamentoPanel.add(planejamentoToolBar);
 		masterDataPanel.setTopComponent(masterDataTab);
+		
+		container.setHeight(78);
 		
 		initComponent(container);
 	}
@@ -252,7 +254,7 @@ public class ToolBarView extends MyComposite implements ToolBarPresenter.Display
 		// TODO Implementar o cadastro de disciplina pelo menu
 		disciplinasToolBar.add(createButton("Novo", "Adicionar um Curso", Resources.DEFAULTS.campi24()));
 
-		disciplinasListDisciplinasBt = createButton("Disciplinas", "Listar Disciplinas", Resources.DEFAULTS.campi24());
+		disciplinasListDisciplinasBt = createButton("Listar", "Listar Disciplinas", Resources.DEFAULTS.campi24());
 		disciplinasToolBar.add(disciplinasListDisciplinasBt);
 		
 		disciplinasToolBar.add(new SeparatorToolItem());

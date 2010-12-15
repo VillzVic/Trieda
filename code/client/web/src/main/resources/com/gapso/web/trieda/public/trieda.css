@@ -158,8 +158,8 @@ table.cw-FlexTable td.cw-FlexTable-content {
 	position: absolute;
 	background-color: #D2E1F0;
 	border: 1px solid #8DB2E3;
-	border-radius: 7px;
-	webkit-border-radius: 7px;
+	border-radius: 3px;
+	webkit-border-radius: 3px;
 	width: 86px;
 }
 .GradeHorariaGrid .x-grid3-row-table .horario.multi {
