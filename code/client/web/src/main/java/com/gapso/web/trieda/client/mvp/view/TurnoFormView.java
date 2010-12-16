@@ -45,6 +45,7 @@ public class TurnoFormView extends MyComposite implements TurnoFormPresenter.Dis
 		nomeTF.setValue(turnoDTO.getNome());
 		nomeTF.setFieldLabel("Nome");
 		nomeTF.setAllowBlank(false);
+		nomeTF.setMinLength(1);
 		nomeTF.setMaxLength(50);
 		formPanel.add(nomeTF, formData);
 		

@@ -60,8 +60,8 @@ public class CampusFormView extends MyComposite implements CampusFormPresenter.D
 		nomeTF.setValue(campusDTO.getNome());
 		nomeTF.setFieldLabel("Nome");
 		nomeTF.setAllowBlank(false);
-		nomeTF.setMinLength(5);
-		nomeTF.setMaxLength(20);
+		nomeTF.setMinLength(1);
+		nomeTF.setMaxLength(50);
 		geralFS.add(nomeTF, formData);
 		
 		codigoTF = new TextField<String>();
@@ -69,7 +69,7 @@ public class CampusFormView extends MyComposite implements CampusFormPresenter.D
 		codigoTF.setValue(campusDTO.getCodigo());
 		codigoTF.setFieldLabel("Código");
 		codigoTF.setAllowBlank(false);
-		codigoTF.setMinLength(3);
+		codigoTF.setMinLength(1);
 		codigoTF.setMaxLength(20);
 		geralFS.add(codigoTF, formData);
 		

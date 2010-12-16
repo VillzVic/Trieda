@@ -62,8 +62,8 @@ public class CenarioCloneFormView extends MyComposite implements CenarioCloneFor
 		nomeTF.setValue(cenarioDTO.getNome());
 		nomeTF.setFieldLabel("Nome");
 		nomeTF.setAllowBlank(false);
-		nomeTF.setMinLength(5);
-		nomeTF.setMaxLength(20);
+		nomeTF.setMinLength(1);
+		nomeTF.setMaxLength(50);
 		formPanel.add(nomeTF, formData);
 		
 		anoTF = new NumberField();

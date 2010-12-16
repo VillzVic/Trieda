@@ -43,12 +43,12 @@ public class GrupoSala implements Serializable {
 	
 	@NotNull
 	@Column(name = "GRS_CODIGO")
-	@Size(min = 3, max = 20)
+	@Size(min = 1, max = 20)
 	private String codigo;
 	
     @NotNull
     @Column(name = "GRS_NOME")
-    @Size(min = 1, max = 20)
+    @Size(min = 1, max = 50)
     private String nome;
 
     @ManyToMany(cascade = CascadeType.ALL)

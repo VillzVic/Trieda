@@ -138,7 +138,7 @@ public class GradeHorariaCursoGrid extends ContentPanel {
 			store.removeAll();
 		}	
 		if(turnoDTO != null) {
-			for(int i = 1; i <= turnoDTO.getMaxCreditos(); i++) {
+			for(int i = 1; i <= turnoDTO.getMaxCreditos() * 5; i++) {
 				store.add(new LinhaDeCredito(i));
 			}
 		}

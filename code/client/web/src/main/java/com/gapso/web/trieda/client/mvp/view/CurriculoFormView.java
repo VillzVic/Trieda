@@ -56,7 +56,7 @@ public class CurriculoFormView extends MyComposite implements CurriculoFormPrese
 		codigoTF.setValue(curriculoDTO.getCodigo());
 		codigoTF.setFieldLabel("Código");
 		codigoTF.setAllowBlank(false);
-		codigoTF.setMinLength(3);
+		codigoTF.setMinLength(1);
 		codigoTF.setMaxLength(20);
 		formPanel.add(codigoTF, formData);
 		

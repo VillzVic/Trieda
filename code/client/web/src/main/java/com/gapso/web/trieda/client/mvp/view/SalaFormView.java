@@ -71,7 +71,7 @@ public class SalaFormView extends MyComposite implements SalaFormPresenter.Displ
 		codigoTF.setValue(salaDTO.getCodigo());
 		codigoTF.setFieldLabel("Código");
 		codigoTF.setAllowBlank(false);
-		codigoTF.setMinLength(3);
+		codigoTF.setMinLength(1);
 		codigoTF.setMaxLength(20);
 		formPanel.add(codigoTF, formData);
 		

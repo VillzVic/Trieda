@@ -58,7 +58,7 @@ public class GrupoSalaFormView extends MyComposite implements GrupoSalaFormPrese
 		codigoTF.setValue(grupoSalaDTO.getCodigo());
 		codigoTF.setFieldLabel("Código");
 		codigoTF.setAllowBlank(false);
-		codigoTF.setMinLength(3);
+		codigoTF.setMinLength(1);
 		codigoTF.setMaxLength(20);
 		formPanel.add(codigoTF, formData);
 		
@@ -67,8 +67,8 @@ public class GrupoSalaFormView extends MyComposite implements GrupoSalaFormPrese
 		nomeTF.setValue(grupoSalaDTO.getNome());
 		nomeTF.setFieldLabel("Nome");
 		nomeTF.setAllowBlank(false);
-		nomeTF.setMinLength(3);
-		nomeTF.setMaxLength(20);
+		nomeTF.setMinLength(1);
+		nomeTF.setMaxLength(50);
 		formPanel.add(nomeTF, formData);
 		
 		salvarEAssociarBT = new Button("Salvar e Associar Salas", AbstractImagePrototype.create(Resources.DEFAULTS.save16()));

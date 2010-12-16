@@ -55,8 +55,8 @@ public class CursoFormView extends MyComposite implements CursoFormPresenter.Dis
 		nomeTF.setValue(cursoDTO.getNome());
 		nomeTF.setFieldLabel("Nome");
 		nomeTF.setAllowBlank(false);
-		nomeTF.setMinLength(5);
-		nomeTF.setMaxLength(20);
+		nomeTF.setMinLength(1);
+		nomeTF.setMaxLength(50);
 		formPanel.add(nomeTF, formData);
 		
 		codigoTF = new TextField<String>();
@@ -64,8 +64,8 @@ public class CursoFormView extends MyComposite implements CursoFormPresenter.Dis
 		codigoTF.setValue(cursoDTO.getCodigo());
 		codigoTF.setFieldLabel("Código");
 		codigoTF.setAllowBlank(false);
-		codigoTF.setMinLength(3);
-		codigoTF.setMaxLength(20);
+		codigoTF.setMinLength(1);
+		codigoTF.setMaxLength(50);
 		formPanel.add(codigoTF, formData);
 		
 		tipoCursoCB = new TipoCursoComboBox();
@@ -81,7 +81,7 @@ public class CursoFormView extends MyComposite implements CursoFormPresenter.Dis
 		numMinDoutoresTextField.setFieldLabel("% Min. PhD");
 		numMinDoutoresTextField.setAllowBlank(false);
 		numMinDoutoresTextField.setAllowDecimals(false);
-		numMinDoutoresTextField.setMaxValue(99);
+		numMinDoutoresTextField.setMaxValue(100);
 		formPanel.add(numMinDoutoresTextField, formData);
 		
 		numMinMestresTextField = new NumberField();
@@ -90,7 +90,7 @@ public class CursoFormView extends MyComposite implements CursoFormPresenter.Dis
 		numMinMestresTextField.setFieldLabel("% Min. MSc");
 		numMinMestresTextField.setAllowBlank(false);
 		numMinMestresTextField.setAllowDecimals(false);
-		numMinMestresTextField.setMaxValue(99);
+		numMinMestresTextField.setMaxValue(100);
 		formPanel.add(numMinMestresTextField, formData);
 		
 		maxDisciplinasPeloProfessorTextField = new NumberField();
