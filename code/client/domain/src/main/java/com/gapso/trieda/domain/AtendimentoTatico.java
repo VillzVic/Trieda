@@ -180,7 +180,7 @@ public class AtendimentoTatico implements Serializable {
 	
 	@SuppressWarnings("unchecked")
 	public static List<AtendimentoTatico> findByCurriculoAndPeriodoAndTurno(Curriculo curriculo, Integer periodo, Turno turno) {
-		Query q = entityManager().createQuery("SELECT o FROM AtendimentoTatico o WHERE o.oferta.curriculo = :curriculo AND o.oferta.turno = :turno AND o.disciplina IN (SELECT d FROM CurriculoDisciplina d WHERE d.curriculo = :curriculo AND d.periodo = :periodo)");
+		Query q = entityManager().createQuery("SELECT o FROM AtendimentoTatico o WHERE o.oferta.curriculo = :curriculo AND o.oferta.turno = :turno AND o.disciplina IN (SELECT d.disciplina FROM CurriculoDisciplina d WHERE d.curriculo = :curriculo AND d.periodo = :periodo)");
 		q.setParameter("curriculo", curriculo);
 		q.setParameter("periodo", periodo);
 		q.setParameter("turno", turno);

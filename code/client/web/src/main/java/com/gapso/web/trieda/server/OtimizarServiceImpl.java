@@ -38,6 +38,8 @@ import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 public class OtimizarServiceImpl extends RemoteServiceServlet implements OtimizarService {
 
 	private static final long serialVersionUID = 5716065588362358065L;
+//	private static final String linkSolver = "http://offspring:8080/SolverWS";
+	private static final String linkSolver = "http://localhost:3402/SolverWS";
 
 	@Override
 	@Transactional
@@ -66,13 +68,13 @@ public class OtimizarServiceImpl extends RemoteServiceServlet implements Otimiza
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		SolverClient solverClient = new SolverClient("http://localhost:3402/SolverWS", "trieda");
+		SolverClient solverClient = new SolverClient(linkSolver, "trieda");
 		return solverClient.requestOptimization(fileBytes);
 	}
 
 	@Override
 	public Boolean isOptimizing(Long round) {
-		SolverClient solverClient = new SolverClient("http://localhost:3402/SolverWS", "trieda");
+		SolverClient solverClient = new SolverClient(linkSolver, "trieda");
 		return !solverClient.isFinished(round);
 	}
 
@@ -85,7 +87,7 @@ public class OtimizarServiceImpl extends RemoteServiceServlet implements Otimiza
 		ret.put("error", new ArrayList<String>());
 		
 		try {
-			SolverClient solverClient = new SolverClient("http://localhost:3402/SolverWS", "trieda");
+			SolverClient solverClient = new SolverClient(linkSolver, "trieda");
 			byte[] xmlBytes = solverClient.getContent(round);
 			if(xmlBytes == null) {
 				ret.get("error").add("Erro no servidor");
