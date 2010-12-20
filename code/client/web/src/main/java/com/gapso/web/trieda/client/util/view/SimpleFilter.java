@@ -1,5 +1,8 @@
 package com.gapso.web.trieda.client.util.view;
 
+import com.extjs.gxt.ui.client.event.ComponentEvent;
+import com.extjs.gxt.ui.client.event.Events;
+import com.extjs.gxt.ui.client.util.KeyNav;
 import com.extjs.gxt.ui.client.util.Margins;
 import com.extjs.gxt.ui.client.util.Padding;
 import com.extjs.gxt.ui.client.widget.LayoutContainer;
@@ -49,6 +52,7 @@ public class SimpleFilter extends FormPanel {
 		HBoxLayoutData hbld = new HBoxLayoutData(new Margins(0, 5, 0, 0));
 		submitButton = new Button("Filtrar", AbstractImagePrototype.create(Resources.SIMPLE_CRUD.filter16()));
 		lc.add(submitButton, hbld);
+		setDefaultButton(getSubmitButton());
 		if(!hiddenResetButton) {
 			resetButton = new Button("Limpar",  AbstractImagePrototype.create(Resources.SIMPLE_CRUD.filterClean16()));
 			lc.add(resetButton, hbld);
@@ -56,6 +60,16 @@ public class SimpleFilter extends FormPanel {
 		add(lc);
 	}
 
+	public void setDefaultButton(final Button button) {
+		new KeyNav<ComponentEvent>(this) {
+			@Override
+			public void onEnter(ComponentEvent ce) {
+				super.onEnter(ce);
+				button.fireEvent(Events.Select);
+			}
+		};
+	}
+	
 	public Button getSubmitButton() {
 		return submitButton;
 	}
