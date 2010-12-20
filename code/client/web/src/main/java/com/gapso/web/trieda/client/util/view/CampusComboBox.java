@@ -34,9 +34,9 @@ public class CampusComboBox extends ComboBox<CampusDTO> {
 		setEditable(false);
 	}
 
-	private void populate(List<CampusDTO> campusList) {
+	private void populate(List<CampusDTO> list) {
 		getStore().removeAll();
-		getStore().add(campusList);
+		getStore().add(list);
 	}
 	
 	private native String getTemplateCB() /*-{
