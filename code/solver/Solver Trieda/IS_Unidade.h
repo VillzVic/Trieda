@@ -4,6 +4,8 @@
 
 #include "IS_Sala.h"
 
+#include "IS_CjtSala.h"
+
 class IS_Unidade : public OFBase
 {
 public:
@@ -16,4 +18,6 @@ public:
    Unidade const * unidade;
 
    GGroup<IS_Sala*> salas;
+
+   GGroup<IS_CjtSala*> cjt_Salas;
 };

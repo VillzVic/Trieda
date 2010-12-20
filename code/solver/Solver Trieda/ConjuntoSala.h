@@ -24,8 +24,8 @@ public:
    //void setCapacidade(int cap)
    //{ capacidade = cap; }
 
-   void setTipoSalas(int tpSalas)
-   { tipoSalas = tpSalas; }
+//   void setTipoSalas(int tpSalas)
+//   { tipoSalas = tpSalas; }
 
    // =========== METODOS GET
 
@@ -55,8 +55,8 @@ public:
    /* Para não precisar criar os métodos de acesso ao GGROUP.*/
    GGroup<Disciplina*> & getDiscsAssociadas() { return disciplinasAssociadas; }
 
-   int getTipoSalas() const
-   { return tipoSalas; }
+//   int getTipoSalas() const
+//   { return tipoSalas; }
 
    // =========== METODOS AUXILIARES
 
@@ -131,22 +131,22 @@ public:
    }
 
    // =========== OPERADORES
-   virtual bool operator == (ConjuntoSala const & right)
-   { 
-      return ( (this->getId() == right.getId()) && 
-         (this->getTipoSalas() < right.getTipoSalas()) ); 
-   }
+   //virtual bool operator == (ConjuntoSala const & right)
+   //{ 
+   //   return ( (this->getId() == right.getId()) && 
+   //      (this->getTipoSalas() < right.getTipoSalas()) ); 
+   //}
 
-   virtual bool operator < (ConjuntoSala const & right) 
-   { 
-      if(this->getId() < right.getId())
-      { return true; }
-      else if( (this->getId() == right.getId()) && 
-         (this->getTipoSalas() < right.getTipoSalas()) )
-      { return true; }
+   //virtual bool operator < (ConjuntoSala const & right) 
+   //{ 
+   //   if(this->getId() < right.getId())
+   //   { return true; }
+   //   else if( (this->getId() == right.getId()) && 
+   //      (this->getTipoSalas() < right.getTipoSalas()) )
+   //   { return true; }
 
-      return false;
-   }
+   //   return false;
+   //}
 
    /* Armazena os dias letivos em que, pelo menos, uma sala possui algum crédito disponível */
    GGroup<int> diasLetivos;

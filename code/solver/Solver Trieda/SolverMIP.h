@@ -75,16 +75,16 @@ public:
 
    int cria_variaveis(void);
 
-   int cria_variavel_creditos(void);
-   int cria_variavel_oferecimentos(void);
-   int cria_variavel_abertura(void);
-   int cria_variavel_alunos(void);
-   int cria_variavel_aloc_alunos(void);
-   int cria_variavel_consecutivos(void);
-   int cria_variavel_min_creds(void);
-   int cria_variavel_max_creds(void);
-   int cria_variavel_aloc_disciplina(void);
-   int cria_variavel_num_subblocos(void);
+   int cria_variavel_creditos(void);   // x_{i,d,u,tps,t}
+   int cria_variavel_oferecimentos(void); // o_{i,d,u,tps,t}
+   int cria_variavel_abertura(void);   // z_{i,d,cp}
+   int cria_variavel_alunos(void);  // a_{i,d,oft}
+   int cria_variavel_aloc_alunos(void);   // b_{i,d,c,cp}
+   int cria_variavel_consecutivos(void);  // c_{i,d,t}
+   int cria_variavel_min_creds(void);  // h_{bc,i}
+   int cria_variavel_max_creds(void);  // H_{bc,i}
+   int cria_variavel_aloc_disciplina(void);  // y_{i,d,tps,u}
+   int cria_variavel_num_subblocos(void); // w_{bc,t,cp}
    int cria_variavel_num_abertura_turma_bloco(void);
    int cria_variavel_de_folga_dist_cred_dia_superior(void);
    int cria_variavel_de_folga_dist_cred_dia_inferior(void);

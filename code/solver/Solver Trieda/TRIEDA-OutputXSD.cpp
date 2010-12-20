@@ -822,6 +822,250 @@ AtendimentoTatico (const AtendimentoTatico_sequence& s)
 }
 
 
+// WarningType
+// 
+
+const WarningType::Code_type& WarningType::
+Code () const
+{
+  return this->Code_.get ();
+}
+
+WarningType::Code_type& WarningType::
+Code ()
+{
+  return this->Code_.get ();
+}
+
+void WarningType::
+Code (const Code_type& x)
+{
+  this->Code_.set (x);
+}
+
+void WarningType::
+Code (::std::auto_ptr< Code_type > x)
+{
+  this->Code_.set (x);
+}
+
+const WarningType::Message_type& WarningType::
+Message () const
+{
+  return this->Message_.get ();
+}
+
+WarningType::Message_type& WarningType::
+Message ()
+{
+  return this->Message_.get ();
+}
+
+void WarningType::
+Message (const Message_type& x)
+{
+  this->Message_.set (x);
+}
+
+void WarningType::
+Message (::std::auto_ptr< Message_type > x)
+{
+  this->Message_.set (x);
+}
+
+const WarningType::Detail_type& WarningType::
+Detail () const
+{
+  return this->Detail_.get ();
+}
+
+WarningType::Detail_type& WarningType::
+Detail ()
+{
+  return this->Detail_.get ();
+}
+
+void WarningType::
+Detail (const Detail_type& x)
+{
+  this->Detail_.set (x);
+}
+
+void WarningType::
+Detail (::std::auto_ptr< Detail_type > x)
+{
+  this->Detail_.set (x);
+}
+
+const WarningType::Location_type& WarningType::
+Location () const
+{
+  return this->Location_.get ();
+}
+
+WarningType::Location_type& WarningType::
+Location ()
+{
+  return this->Location_.get ();
+}
+
+void WarningType::
+Location (const Location_type& x)
+{
+  this->Location_.set (x);
+}
+
+void WarningType::
+Location (::std::auto_ptr< Location_type > x)
+{
+  this->Location_.set (x);
+}
+
+
+// WarningsType
+// 
+
+const WarningsType::Warning_sequence& WarningsType::
+Warning () const
+{
+  return this->Warning_;
+}
+
+WarningsType::Warning_sequence& WarningsType::
+Warning ()
+{
+  return this->Warning_;
+}
+
+void WarningsType::
+Warning (const Warning_sequence& s)
+{
+  this->Warning_ = s;
+}
+
+
+// ErrorType
+// 
+
+const ErrorType::Code_type& ErrorType::
+Code () const
+{
+  return this->Code_.get ();
+}
+
+ErrorType::Code_type& ErrorType::
+Code ()
+{
+  return this->Code_.get ();
+}
+
+void ErrorType::
+Code (const Code_type& x)
+{
+  this->Code_.set (x);
+}
+
+void ErrorType::
+Code (::std::auto_ptr< Code_type > x)
+{
+  this->Code_.set (x);
+}
+
+const ErrorType::Message_type& ErrorType::
+Message () const
+{
+  return this->Message_.get ();
+}
+
+ErrorType::Message_type& ErrorType::
+Message ()
+{
+  return this->Message_.get ();
+}
+
+void ErrorType::
+Message (const Message_type& x)
+{
+  this->Message_.set (x);
+}
+
+void ErrorType::
+Message (::std::auto_ptr< Message_type > x)
+{
+  this->Message_.set (x);
+}
+
+const ErrorType::Detail_type& ErrorType::
+Detail () const
+{
+  return this->Detail_.get ();
+}
+
+ErrorType::Detail_type& ErrorType::
+Detail ()
+{
+  return this->Detail_.get ();
+}
+
+void ErrorType::
+Detail (const Detail_type& x)
+{
+  this->Detail_.set (x);
+}
+
+void ErrorType::
+Detail (::std::auto_ptr< Detail_type > x)
+{
+  this->Detail_.set (x);
+}
+
+const ErrorType::Location_type& ErrorType::
+Location () const
+{
+  return this->Location_.get ();
+}
+
+ErrorType::Location_type& ErrorType::
+Location ()
+{
+  return this->Location_.get ();
+}
+
+void ErrorType::
+Location (const Location_type& x)
+{
+  this->Location_.set (x);
+}
+
+void ErrorType::
+Location (::std::auto_ptr< Location_type > x)
+{
+  this->Location_.set (x);
+}
+
+
+// ErrorsType
+// 
+
+const ErrorsType::Error_sequence& ErrorsType::
+Error () const
+{
+  return this->Error_;
+}
+
+ErrorsType::Error_sequence& ErrorsType::
+Error ()
+{
+  return this->Error_;
+}
+
+void ErrorsType::
+Error (const Error_sequence& s)
+{
+  this->Error_ = s;
+}
+
+
 // TriedaOutput
 // 
 
@@ -847,6 +1091,54 @@ void TriedaOutput::
 atendimentos (::std::auto_ptr< atendimentos_type > x)
 {
   this->atendimentos_.set (x);
+}
+
+const TriedaOutput::Warnings_type& TriedaOutput::
+Warnings () const
+{
+  return this->Warnings_.get ();
+}
+
+TriedaOutput::Warnings_type& TriedaOutput::
+Warnings ()
+{
+  return this->Warnings_.get ();
+}
+
+void TriedaOutput::
+Warnings (const Warnings_type& x)
+{
+  this->Warnings_.set (x);
+}
+
+void TriedaOutput::
+Warnings (::std::auto_ptr< Warnings_type > x)
+{
+  this->Warnings_.set (x);
+}
+
+const TriedaOutput::Errors_type& TriedaOutput::
+Errors () const
+{
+  return this->Errors_.get ();
+}
+
+TriedaOutput::Errors_type& TriedaOutput::
+Errors ()
+{
+  return this->Errors_.get ();
+}
+
+void TriedaOutput::
+Errors (const Errors_type& x)
+{
+  this->Errors_.set (x);
+}
+
+void TriedaOutput::
+Errors (::std::auto_ptr< Errors_type > x)
+{
+  this->Errors_.set (x);
 }
 
 
@@ -2587,20 +2879,478 @@ GrupoAtendimentoTatico::
 {
 }
 
+// WarningType
+//
+
+WarningType::
+WarningType (const Code_type& Code,
+             const Message_type& Message,
+             const Detail_type& Detail,
+             const Location_type& Location)
+: ::xml_schema::type (),
+  Code_ (Code, ::xml_schema::flags (), this),
+  Message_ (Message, ::xml_schema::flags (), this),
+  Detail_ (Detail, ::xml_schema::flags (), this),
+  Location_ (Location, ::xml_schema::flags (), this)
+{
+}
+
+WarningType::
+WarningType (const WarningType& x,
+             ::xml_schema::flags f,
+             ::xml_schema::container* c)
+: ::xml_schema::type (x, f, c),
+  Code_ (x.Code_, f, this),
+  Message_ (x.Message_, f, this),
+  Detail_ (x.Detail_, f, this),
+  Location_ (x.Location_, f, this)
+{
+}
+
+WarningType::
+WarningType (const ::xercesc::DOMElement& e,
+             ::xml_schema::flags f,
+             ::xml_schema::container* c)
+: ::xml_schema::type (e, f | ::xml_schema::flags::base, c),
+  Code_ (f, this),
+  Message_ (f, this),
+  Detail_ (f, this),
+  Location_ (f, this)
+{
+  if ((f & ::xml_schema::flags::base) == 0)
+  {
+    ::xsd::cxx::xml::dom::parser< char > p (e, true, false);
+    this->parse (p, f);
+  }
+}
+
+void WarningType::
+parse (::xsd::cxx::xml::dom::parser< char >& p,
+       ::xml_schema::flags f)
+{
+  for (; p.more_elements (); p.next_element ())
+  {
+    const ::xercesc::DOMElement& i (p.cur_element ());
+    const ::xsd::cxx::xml::qualified_name< char > n (
+      ::xsd::cxx::xml::dom::name< char > (i));
+
+    // Code
+    //
+    if (n.name () == "Code" && n.namespace_ ().empty ())
+    {
+      ::std::auto_ptr< Code_type > r (
+        Code_traits::create (i, f, this));
+
+      if (!Code_.present ())
+      {
+        this->Code_.set (r);
+        continue;
+      }
+    }
+
+    // Message
+    //
+    if (n.name () == "Message" && n.namespace_ ().empty ())
+    {
+      ::std::auto_ptr< Message_type > r (
+        Message_traits::create (i, f, this));
+
+      if (!Message_.present ())
+      {
+        this->Message_.set (r);
+        continue;
+      }
+    }
+
+    // Detail
+    //
+    if (n.name () == "Detail" && n.namespace_ ().empty ())
+    {
+      ::std::auto_ptr< Detail_type > r (
+        Detail_traits::create (i, f, this));
+
+      if (!Detail_.present ())
+      {
+        this->Detail_.set (r);
+        continue;
+      }
+    }
+
+    // Location
+    //
+    if (n.name () == "Location" && n.namespace_ ().empty ())
+    {
+      ::std::auto_ptr< Location_type > r (
+        Location_traits::create (i, f, this));
+
+      if (!Location_.present ())
+      {
+        this->Location_.set (r);
+        continue;
+      }
+    }
+
+    break;
+  }
+
+  if (!Code_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "Code",
+      "");
+  }
+
+  if (!Message_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "Message",
+      "");
+  }
+
+  if (!Detail_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "Detail",
+      "");
+  }
+
+  if (!Location_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "Location",
+      "");
+  }
+}
+
+WarningType* WarningType::
+_clone (::xml_schema::flags f,
+        ::xml_schema::container* c) const
+{
+  return new class WarningType (*this, f, c);
+}
+
+WarningType::
+~WarningType ()
+{
+}
+
+// WarningsType
+//
+
+WarningsType::
+WarningsType ()
+: ::xml_schema::type (),
+  Warning_ (::xml_schema::flags (), this)
+{
+}
+
+WarningsType::
+WarningsType (const WarningsType& x,
+              ::xml_schema::flags f,
+              ::xml_schema::container* c)
+: ::xml_schema::type (x, f, c),
+  Warning_ (x.Warning_, f, this)
+{
+}
+
+WarningsType::
+WarningsType (const ::xercesc::DOMElement& e,
+              ::xml_schema::flags f,
+              ::xml_schema::container* c)
+: ::xml_schema::type (e, f | ::xml_schema::flags::base, c),
+  Warning_ (f, this)
+{
+  if ((f & ::xml_schema::flags::base) == 0)
+  {
+    ::xsd::cxx::xml::dom::parser< char > p (e, true, false);
+    this->parse (p, f);
+  }
+}
+
+void WarningsType::
+parse (::xsd::cxx::xml::dom::parser< char >& p,
+       ::xml_schema::flags f)
+{
+  for (; p.more_elements (); p.next_element ())
+  {
+    const ::xercesc::DOMElement& i (p.cur_element ());
+    const ::xsd::cxx::xml::qualified_name< char > n (
+      ::xsd::cxx::xml::dom::name< char > (i));
+
+    // Warning
+    //
+    if (n.name () == "Warning" && n.namespace_ ().empty ())
+    {
+      ::std::auto_ptr< Warning_type > r (
+        Warning_traits::create (i, f, this));
+
+      this->Warning_.push_back (r);
+      continue;
+    }
+
+    break;
+  }
+}
+
+WarningsType* WarningsType::
+_clone (::xml_schema::flags f,
+        ::xml_schema::container* c) const
+{
+  return new class WarningsType (*this, f, c);
+}
+
+WarningsType::
+~WarningsType ()
+{
+}
+
+// ErrorType
+//
+
+ErrorType::
+ErrorType (const Code_type& Code,
+           const Message_type& Message,
+           const Detail_type& Detail,
+           const Location_type& Location)
+: ::xml_schema::type (),
+  Code_ (Code, ::xml_schema::flags (), this),
+  Message_ (Message, ::xml_schema::flags (), this),
+  Detail_ (Detail, ::xml_schema::flags (), this),
+  Location_ (Location, ::xml_schema::flags (), this)
+{
+}
+
+ErrorType::
+ErrorType (const ErrorType& x,
+           ::xml_schema::flags f,
+           ::xml_schema::container* c)
+: ::xml_schema::type (x, f, c),
+  Code_ (x.Code_, f, this),
+  Message_ (x.Message_, f, this),
+  Detail_ (x.Detail_, f, this),
+  Location_ (x.Location_, f, this)
+{
+}
+
+ErrorType::
+ErrorType (const ::xercesc::DOMElement& e,
+           ::xml_schema::flags f,
+           ::xml_schema::container* c)
+: ::xml_schema::type (e, f | ::xml_schema::flags::base, c),
+  Code_ (f, this),
+  Message_ (f, this),
+  Detail_ (f, this),
+  Location_ (f, this)
+{
+  if ((f & ::xml_schema::flags::base) == 0)
+  {
+    ::xsd::cxx::xml::dom::parser< char > p (e, true, false);
+    this->parse (p, f);
+  }
+}
+
+void ErrorType::
+parse (::xsd::cxx::xml::dom::parser< char >& p,
+       ::xml_schema::flags f)
+{
+  for (; p.more_elements (); p.next_element ())
+  {
+    const ::xercesc::DOMElement& i (p.cur_element ());
+    const ::xsd::cxx::xml::qualified_name< char > n (
+      ::xsd::cxx::xml::dom::name< char > (i));
+
+    // Code
+    //
+    if (n.name () == "Code" && n.namespace_ ().empty ())
+    {
+      ::std::auto_ptr< Code_type > r (
+        Code_traits::create (i, f, this));
+
+      if (!Code_.present ())
+      {
+        this->Code_.set (r);
+        continue;
+      }
+    }
+
+    // Message
+    //
+    if (n.name () == "Message" && n.namespace_ ().empty ())
+    {
+      ::std::auto_ptr< Message_type > r (
+        Message_traits::create (i, f, this));
+
+      if (!Message_.present ())
+      {
+        this->Message_.set (r);
+        continue;
+      }
+    }
+
+    // Detail
+    //
+    if (n.name () == "Detail" && n.namespace_ ().empty ())
+    {
+      ::std::auto_ptr< Detail_type > r (
+        Detail_traits::create (i, f, this));
+
+      if (!Detail_.present ())
+      {
+        this->Detail_.set (r);
+        continue;
+      }
+    }
+
+    // Location
+    //
+    if (n.name () == "Location" && n.namespace_ ().empty ())
+    {
+      ::std::auto_ptr< Location_type > r (
+        Location_traits::create (i, f, this));
+
+      if (!Location_.present ())
+      {
+        this->Location_.set (r);
+        continue;
+      }
+    }
+
+    break;
+  }
+
+  if (!Code_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "Code",
+      "");
+  }
+
+  if (!Message_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "Message",
+      "");
+  }
+
+  if (!Detail_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "Detail",
+      "");
+  }
+
+  if (!Location_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "Location",
+      "");
+  }
+}
+
+ErrorType* ErrorType::
+_clone (::xml_schema::flags f,
+        ::xml_schema::container* c) const
+{
+  return new class ErrorType (*this, f, c);
+}
+
+ErrorType::
+~ErrorType ()
+{
+}
+
+// ErrorsType
+//
+
+ErrorsType::
+ErrorsType ()
+: ::xml_schema::type (),
+  Error_ (::xml_schema::flags (), this)
+{
+}
+
+ErrorsType::
+ErrorsType (const ErrorsType& x,
+            ::xml_schema::flags f,
+            ::xml_schema::container* c)
+: ::xml_schema::type (x, f, c),
+  Error_ (x.Error_, f, this)
+{
+}
+
+ErrorsType::
+ErrorsType (const ::xercesc::DOMElement& e,
+            ::xml_schema::flags f,
+            ::xml_schema::container* c)
+: ::xml_schema::type (e, f | ::xml_schema::flags::base, c),
+  Error_ (f, this)
+{
+  if ((f & ::xml_schema::flags::base) == 0)
+  {
+    ::xsd::cxx::xml::dom::parser< char > p (e, true, false);
+    this->parse (p, f);
+  }
+}
+
+void ErrorsType::
+parse (::xsd::cxx::xml::dom::parser< char >& p,
+       ::xml_schema::flags f)
+{
+  for (; p.more_elements (); p.next_element ())
+  {
+    const ::xercesc::DOMElement& i (p.cur_element ());
+    const ::xsd::cxx::xml::qualified_name< char > n (
+      ::xsd::cxx::xml::dom::name< char > (i));
+
+    // Error
+    //
+    if (n.name () == "Error" && n.namespace_ ().empty ())
+    {
+      ::std::auto_ptr< Error_type > r (
+        Error_traits::create (i, f, this));
+
+      this->Error_.push_back (r);
+      continue;
+    }
+
+    break;
+  }
+}
+
+ErrorsType* ErrorsType::
+_clone (::xml_schema::flags f,
+        ::xml_schema::container* c) const
+{
+  return new class ErrorsType (*this, f, c);
+}
+
+ErrorsType::
+~ErrorsType ()
+{
+}
+
 // TriedaOutput
 //
 
 TriedaOutput::
-TriedaOutput (const atendimentos_type& atendimentos)
+TriedaOutput (const atendimentos_type& atendimentos,
+              const Warnings_type& Warnings,
+              const Errors_type& Errors)
 : ::xml_schema::type (),
-  atendimentos_ (atendimentos, ::xml_schema::flags (), this)
+  atendimentos_ (atendimentos, ::xml_schema::flags (), this),
+  Warnings_ (Warnings, ::xml_schema::flags (), this),
+  Errors_ (Errors, ::xml_schema::flags (), this)
 {
 }
 
 TriedaOutput::
-TriedaOutput (::std::auto_ptr< atendimentos_type >& atendimentos)
+TriedaOutput (::std::auto_ptr< atendimentos_type >& atendimentos,
+              ::std::auto_ptr< Warnings_type >& Warnings,
+              ::std::auto_ptr< Errors_type >& Errors)
 : ::xml_schema::type (),
-  atendimentos_ (atendimentos, ::xml_schema::flags (), this)
+  atendimentos_ (atendimentos, ::xml_schema::flags (), this),
+  Warnings_ (Warnings, ::xml_schema::flags (), this),
+  Errors_ (Errors, ::xml_schema::flags (), this)
 {
 }
 
@@ -2609,7 +3359,9 @@ TriedaOutput (const TriedaOutput& x,
               ::xml_schema::flags f,
               ::xml_schema::container* c)
 : ::xml_schema::type (x, f, c),
-  atendimentos_ (x.atendimentos_, f, this)
+  atendimentos_ (x.atendimentos_, f, this),
+  Warnings_ (x.Warnings_, f, this),
+  Errors_ (x.Errors_, f, this)
 {
 }
 
@@ -2618,7 +3370,9 @@ TriedaOutput (const ::xercesc::DOMElement& e,
               ::xml_schema::flags f,
               ::xml_schema::container* c)
 : ::xml_schema::type (e, f | ::xml_schema::flags::base, c),
-  atendimentos_ (f, this)
+  atendimentos_ (f, this),
+  Warnings_ (f, this),
+  Errors_ (f, this)
 {
   if ((f & ::xml_schema::flags::base) == 0)
   {
@@ -2651,6 +3405,34 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
       }
     }
 
+    // Warnings
+    //
+    if (n.name () == "Warnings" && n.namespace_ ().empty ())
+    {
+      ::std::auto_ptr< Warnings_type > r (
+        Warnings_traits::create (i, f, this));
+
+      if (!Warnings_.present ())
+      {
+        this->Warnings_.set (r);
+        continue;
+      }
+    }
+
+    // Errors
+    //
+    if (n.name () == "Errors" && n.namespace_ ().empty ())
+    {
+      ::std::auto_ptr< Errors_type > r (
+        Errors_traits::create (i, f, this));
+
+      if (!Errors_.present ())
+      {
+        this->Errors_.set (r);
+        continue;
+      }
+    }
+
     break;
   }
 
@@ -2658,6 +3440,20 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
   {
     throw ::xsd::cxx::tree::expected_element< char > (
       "atendimentos",
+      "");
+  }
+
+  if (!Warnings_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "Warnings",
+      "");
+  }
+
+  if (!Errors_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "Errors",
       "");
   }
 }
@@ -2870,9 +3666,57 @@ operator<< (::std::ostream& o, const GrupoAtendimentoTatico& i)
 }
 
 ::std::ostream&
+operator<< (::std::ostream& o, const WarningType& i)
+{
+  o << ::std::endl << "Code: " << i.Code ();
+  o << ::std::endl << "Message: " << i.Message ();
+  o << ::std::endl << "Detail: " << i.Detail ();
+  o << ::std::endl << "Location: " << i.Location ();
+  return o;
+}
+
+::std::ostream&
+operator<< (::std::ostream& o, const WarningsType& i)
+{
+  for (WarningsType::Warning_const_iterator
+       b (i.Warning ().begin ()), e (i.Warning ().end ());
+       b != e; ++b)
+  {
+    o << ::std::endl << "Warning: " << *b;
+  }
+
+  return o;
+}
+
+::std::ostream&
+operator<< (::std::ostream& o, const ErrorType& i)
+{
+  o << ::std::endl << "Code: " << i.Code ();
+  o << ::std::endl << "Message: " << i.Message ();
+  o << ::std::endl << "Detail: " << i.Detail ();
+  o << ::std::endl << "Location: " << i.Location ();
+  return o;
+}
+
+::std::ostream&
+operator<< (::std::ostream& o, const ErrorsType& i)
+{
+  for (ErrorsType::Error_const_iterator
+       b (i.Error ().begin ()), e (i.Error ().end ());
+       b != e; ++b)
+  {
+    o << ::std::endl << "Error: " << *b;
+  }
+
+  return o;
+}
+
+::std::ostream&
 operator<< (::std::ostream& o, const TriedaOutput& i)
 {
   o << ::std::endl << "atendimentos: " << i.atendimentos ();
+  o << ::std::endl << "Warnings: " << i.Warnings ();
+  o << ::std::endl << "Errors: " << i.Errors ();
   return o;
 }
 
@@ -3826,6 +4670,146 @@ operator<< (::xercesc::DOMElement& e, const GrupoAtendimentoTatico& i)
 }
 
 void
+operator<< (::xercesc::DOMElement& e, const WarningType& i)
+{
+  e << static_cast< const ::xml_schema::type& > (i);
+
+  // Code
+  //
+  {
+    ::xercesc::DOMElement& s (
+      ::xsd::cxx::xml::dom::create_element (
+        "Code",
+        e));
+
+    s << i.Code ();
+  }
+
+  // Message
+  //
+  {
+    ::xercesc::DOMElement& s (
+      ::xsd::cxx::xml::dom::create_element (
+        "Message",
+        e));
+
+    s << i.Message ();
+  }
+
+  // Detail
+  //
+  {
+    ::xercesc::DOMElement& s (
+      ::xsd::cxx::xml::dom::create_element (
+        "Detail",
+        e));
+
+    s << i.Detail ();
+  }
+
+  // Location
+  //
+  {
+    ::xercesc::DOMElement& s (
+      ::xsd::cxx::xml::dom::create_element (
+        "Location",
+        e));
+
+    s << i.Location ();
+  }
+}
+
+void
+operator<< (::xercesc::DOMElement& e, const WarningsType& i)
+{
+  e << static_cast< const ::xml_schema::type& > (i);
+
+  // Warning
+  //
+  for (WarningsType::Warning_const_iterator
+       b (i.Warning ().begin ()), n (i.Warning ().end ());
+       b != n; ++b)
+  {
+    ::xercesc::DOMElement& s (
+      ::xsd::cxx::xml::dom::create_element (
+        "Warning",
+        e));
+
+    s << *b;
+  }
+}
+
+void
+operator<< (::xercesc::DOMElement& e, const ErrorType& i)
+{
+  e << static_cast< const ::xml_schema::type& > (i);
+
+  // Code
+  //
+  {
+    ::xercesc::DOMElement& s (
+      ::xsd::cxx::xml::dom::create_element (
+        "Code",
+        e));
+
+    s << i.Code ();
+  }
+
+  // Message
+  //
+  {
+    ::xercesc::DOMElement& s (
+      ::xsd::cxx::xml::dom::create_element (
+        "Message",
+        e));
+
+    s << i.Message ();
+  }
+
+  // Detail
+  //
+  {
+    ::xercesc::DOMElement& s (
+      ::xsd::cxx::xml::dom::create_element (
+        "Detail",
+        e));
+
+    s << i.Detail ();
+  }
+
+  // Location
+  //
+  {
+    ::xercesc::DOMElement& s (
+      ::xsd::cxx::xml::dom::create_element (
+        "Location",
+        e));
+
+    s << i.Location ();
+  }
+}
+
+void
+operator<< (::xercesc::DOMElement& e, const ErrorsType& i)
+{
+  e << static_cast< const ::xml_schema::type& > (i);
+
+  // Error
+  //
+  for (ErrorsType::Error_const_iterator
+       b (i.Error ().begin ()), n (i.Error ().end ());
+       b != n; ++b)
+  {
+    ::xercesc::DOMElement& s (
+      ::xsd::cxx::xml::dom::create_element (
+        "Error",
+        e));
+
+    s << *b;
+  }
+}
+
+void
 operator<< (::xercesc::DOMElement& e, const TriedaOutput& i)
 {
   e << static_cast< const ::xml_schema::type& > (i);
@@ -3839,6 +4823,28 @@ operator<< (::xercesc::DOMElement& e, const TriedaOutput& i)
         e));
 
     s << i.atendimentos ();
+  }
+
+  // Warnings
+  //
+  {
+    ::xercesc::DOMElement& s (
+      ::xsd::cxx::xml::dom::create_element (
+        "Warnings",
+        e));
+
+    s << i.Warnings ();
+  }
+
+  // Errors
+  //
+  {
+    ::xercesc::DOMElement& s (
+      ::xsd::cxx::xml::dom::create_element (
+        "Errors",
+        e));
+
+    s << i.Errors ();
   }
 }
 

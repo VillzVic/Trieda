@@ -19,14 +19,17 @@ void Sala::le_arvore(ItemSala& elem)
 	tipo_sala_id = elem.tipoSalaId();
 	capacidade = elem.capacidade();
 	if(tatico) {
+    
       ITERA_SEQ(it_cred,elem.creditosDispon_veis().get(),CreditoDisponivel) {
-			CreditoDisponivel* credito_disp = new CreditoDisponivel;
+			CreditoDisponivel* credito_disp = new CreditoDisponivel();
 			credito_disp->le_arvore(*it_cred);
 			creditos_disponiveis.add(credito_disp);
 		}
 	}
 	else {
 		// le horarios disponiveis 
+      std::cout << "OPERACIONAL" << std::endl;
+      getchar();
 	}
 	ITERA_NSEQ(it_disc,elem.disciplinasAssociadas(),id,Identificador) {
 		disciplinas_associadas.add(*it_disc);

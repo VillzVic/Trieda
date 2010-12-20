@@ -56,6 +56,7 @@ void ProblemDataLoader::load()
    cache();
 
    estabeleceDiasLetivosDisciplinasSalas();
+
    estabeleceDiasLetivosDiscCjtSala();
 
    calculaCredsLivresSalas();
@@ -92,11 +93,24 @@ void ProblemDataLoader::criaConjuntoSalas()
          {
             bool found = false;
 
+            // ---
+
+            int idCjtSala = (itSala->tipo_sala_id == 1 ? itSala->capacidade : -itSala->capacidade);
+
+            // ---
+
             ITERA_GGROUP(itCjtSala,itUnidade->conjutoSalas,ConjuntoSala)
             {
-               if( itSala->tipo_sala_id == itCjtSala->getTipoSalas() )
+               // ---
+               
+               //if( itSala->tipo_sala_id == itCjtSala->getTipoSalas() )
+
+               
                {
-                  if(itSala->capacidade == itCjtSala->getId())
+                  //if(itSala->capacidade == itCjtSala->getId())
+                  if(idCjtSala == itCjtSala->getId())
+
+                     // ---
                   {
                      itCjtSala->addSala(**itSala);
                      found = true;
@@ -123,8 +137,10 @@ void ProblemDataLoader::criaConjuntoSalas()
             {
                ConjuntoSala * cjtSala = new ConjuntoSala();
 
-               cjtSala->setId(itSala->capacidade);
-               cjtSala->setTipoSalas(itSala->tipo_sala_id);
+               //cjtSala->setId(itSala->capacidade);
+               cjtSala->setId(idCjtSala);
+
+               //cjtSala->setTipoSalas(itSala->tipo_sala_id);
 
                cjtSala->addSala(**itSala);
 
@@ -249,7 +265,7 @@ void ProblemDataLoader::calculaCredsLivresSalas()
       {
          ITERA_GGROUP(itSala,itUnidade->salas,Sala)
          {
-            for(int dia = 0; dia < 7; dia++)
+            for(int dia = 0; dia < 8; dia++)
             { itSala->credsLivres.push_back(0); }
 
             ITERA_GGROUP(itCredsDisp,itSala->creditos_disponiveis,CreditoDisponivel)

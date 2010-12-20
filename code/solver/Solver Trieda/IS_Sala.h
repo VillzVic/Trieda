@@ -20,7 +20,10 @@ public:
    //Sala const * sala;
    Sala * sala;
 
-   map<int/*dia*/,pair<int/*credsLivres*/,vector<pair
-      <Disciplina*,int/*Demanda atendidad -> Representa a var. a_{i,d,o}*/> > > > atendimento_Tatico;
-   //map<int/*dia*/,pair<int/*credsLivres*/,int> > atendimento_Tatico;
+   map<int/*dia*/,pair<int/*credsLivres*/,
+      vector<
+      pair<Disciplina*,
+      pair<int/*Id Turma*/,int/*Demanda Atendida*/> > > > >
+      
+      atendimento_Tatico;
 };
