@@ -37,6 +37,7 @@ public class AppPresenter implements Presenter {
 			public void onFailure(Throwable caught) {
 				caught.printStackTrace();
 			}
+			
 			@Override
 			public void onSuccess(CenarioDTO masterData) {
 				RootPanel rp = (RootPanel) widget;
