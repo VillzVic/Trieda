@@ -5,11 +5,9 @@ import java.util.List;
 
 import com.extjs.gxt.ui.client.Style.SortDir;
 import com.extjs.gxt.ui.client.data.BasePagingLoadResult;
-import com.extjs.gxt.ui.client.data.ModelData;
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.gapso.trieda.domain.AreaTitulacao;
-import com.gapso.web.trieda.client.mvc.model.AreaTitulacaoModel;
 import com.gapso.web.trieda.client.mvp.model.AreaTitulacaoDTO;
 import com.gapso.web.trieda.client.services.AreasTitulacaoService;
 import com.gapso.web.trieda.server.util.ConvertBeans;
@@ -22,15 +20,6 @@ public class AreasTitulacaoServiceImpl extends RemoteServiceServlet implements A
 
 	private static final long serialVersionUID = 5250776996542788849L;
 
-	@Override
-	public PagingLoadResult<ModelData> getList() {
-		List<ModelData> list = new ArrayList<ModelData>();
-		for(int i = 1; i <= 20; i++) {
-			list.add(new AreaTitulacaoModel("Área "+i, "Descrição "+i));
-		}
-		return new BasePagingLoadResult<ModelData>(list);
-	}
-	
 	@Override
 	public PagingLoadResult<AreaTitulacaoDTO> getBuscaList(String nome, String descricao, PagingLoadConfig config) {
 		List<AreaTitulacaoDTO> list = new ArrayList<AreaTitulacaoDTO>();

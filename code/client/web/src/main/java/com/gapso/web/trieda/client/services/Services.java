@@ -8,47 +8,20 @@ public class Services {
 	public static final String OTIMIZAR = "otimizar";
 	public static final String CENARIOS = "cenarios";
 	public static final String CAMPI = "campi";
-	public static final String CAMPIPROFESSORES = "campiProfessores";
 	public static final String TURNOS = "turnos";
 	public static final String UNIDADES = "unidades";
 	public static final String SALAS = "salas";
 	public static final String GRUPOSSALAS = "gruposalas";
 	public static final String CURSOS = "cursos";
 	public static final String DISCIPLINAS = "disciplinas";
-	public static final String EQUIVALENCIAS = "equivalencias";
 	public static final String OFERTAS = "ofertas";
 	public static final String CURRICULOS = "curriculos";
-	public static final String PROFESSORES = "professores";
-	public static final String PROFESSORESDISCIPLINAS = "professoresDisciplinas";
 	public static final String DEMANDAS = "demandas";
-	public static final String DIVISOESCREDITOS = "divisoescreditos";
 	public static final String HORARIOSAULA = "horariosaula";
 	public static final String AREASTITULACAO = "areasTitulacao";
 	public static final String SEMANASLETIVA = "semanasLetiva";
 	public static final String TIPOSCURSOS = "tiposCursos";
 	public static final String ATENDIMENTOS = "atendimentos";
-	
-	public static Object get(String id) {
-		if(id.equals(CAMPI)) return campi();
-		if(id.equals(CAMPIPROFESSORES)) return campiProfessores();
-		if(id.equals(TURNOS)) return turnos();
-		if(id.equals(UNIDADES)) return unidades();
-		if(id.equals(SALAS)) return salas();
-		if(id.equals(GRUPOSSALAS)) return gruposSalas();
-		if(id.equals(CURSOS)) return cursos();
-		if(id.equals(DISCIPLINAS)) return disciplinas();
-		if(id.equals(EQUIVALENCIAS)) return equivalencias();
-		if(id.equals(OFERTAS)) return ofertas();
-		if(id.equals(CURRICULOS)) return curriculos();
-		if(id.equals(PROFESSORES)) return professores();
-		if(id.equals(PROFESSORESDISCIPLINAS)) return professoresDisciplinas();
-		if(id.equals(DEMANDAS)) return demandas();
-		if(id.equals(DIVISOESCREDITOS)) return divisoesCreditos();
-		if(id.equals(HORARIOSAULA)) return horariosAula();
-		if(id.equals(AREASTITULACAO)) return areasTitulacao();
-		if(id.equals(SEMANASLETIVA)) return semanasLetiva();
-		return null;
-	}
 	
 	public static OtimizarServiceAsync otimizar() {
 		OtimizarServiceAsync service = (OtimizarServiceAsync) Registry.get(OTIMIZAR);
@@ -82,15 +55,6 @@ public class Services {
 		if(service == null) {
 			service = GWT.create(CampiService.class);
 			Registry.register(CAMPI, service);
-		}
-		return service;
-	}
-	
-	public static CampiProfessoresServiceAsync campiProfessores() {
-		CampiProfessoresServiceAsync service = (CampiProfessoresServiceAsync) Registry.get(CAMPIPROFESSORES);
-		if(service == null) {
-			service = GWT.create(CampiProfessoresService.class);
-			Registry.register(CAMPIPROFESSORES, service);
 		}
 		return service;
 	}
@@ -140,15 +104,6 @@ public class Services {
 		return service;
 	}
 	
-	public static EquivalenciasServiceAsync equivalencias() {
-		EquivalenciasServiceAsync service = (EquivalenciasServiceAsync) Registry.get(EQUIVALENCIAS);
-		if(service == null) {
-			service = GWT.create(EquivalenciasService.class);
-			Registry.register(EQUIVALENCIAS, service);
-		}
-		return service;
-	}
-	
 	public static OfertasServiceAsync ofertas() {
 		OfertasServiceAsync service = (OfertasServiceAsync) Registry.get(OFERTAS);
 		if(service == null) {
@@ -167,38 +122,11 @@ public class Services {
 		return service;
 	}
 
-	public static ProfessoresServiceAsync professores() {
-		ProfessoresServiceAsync service = (ProfessoresServiceAsync) Registry.get(PROFESSORES);
-		if(service == null) {
-			service = GWT.create(ProfessoresService.class);
-			Registry.register(PROFESSORES, service);
-		}
-		return service;
-	}
-	
-	public static ProfessoresDisciplinasServiceAsync professoresDisciplinas() {
-		ProfessoresDisciplinasServiceAsync service = (ProfessoresDisciplinasServiceAsync) Registry.get(PROFESSORESDISCIPLINAS);
-		if(service == null) {
-			service = GWT.create(ProfessoresDisciplinasService.class);
-			Registry.register(PROFESSORESDISCIPLINAS, service);
-		}
-		return service;
-	}
-	
 	public static DemandasServiceAsync demandas() {
 		DemandasServiceAsync service = (DemandasServiceAsync) Registry.get(DEMANDAS);
 		if(service == null) {
 			service = GWT.create(DemandasService.class);
 			Registry.register(DEMANDAS, service);
-		}
-		return service;
-	}
-	
-	public static DivisoesCreditosServiceAsync divisoesCreditos() {
-		DivisoesCreditosServiceAsync service = (DivisoesCreditosServiceAsync) Registry.get(DIVISOESCREDITOS);
-		if(service == null) {
-			service = GWT.create(DivisoesCreditosService.class);
-			Registry.register(DIVISOESCREDITOS, service);
 		}
 		return service;
 	}

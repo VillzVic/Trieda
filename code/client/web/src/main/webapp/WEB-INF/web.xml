@@ -39,10 +39,6 @@
 		<servlet-class>com.gapso.web.trieda.server.CampiServiceImpl</servlet-class>
 	</servlet>
 	<servlet>
-		<servlet-name>campiProfessoresServlet</servlet-name>
-		<servlet-class>com.gapso.web.trieda.server.CampiProfessoresServiceImpl</servlet-class>
-	</servlet>
-	<servlet>
 		<servlet-name>turnosServlet</servlet-name>
 		<servlet-class>com.gapso.web.trieda.server.TurnosServiceImpl</servlet-class>
 	</servlet>
@@ -71,10 +67,6 @@
 		<servlet-class>com.gapso.web.trieda.server.DisciplinasServiceImpl</servlet-class>
 	</servlet>
 	<servlet>
-		<servlet-name>equivalenciasServlet</servlet-name>
-		<servlet-class>com.gapso.web.trieda.server.EquivalenciasServiceImpl</servlet-class>
-	</servlet>
-	<servlet>
 		<servlet-name>curriculosServlet</servlet-name>
 		<servlet-class>com.gapso.web.trieda.server.CurriculosServiceImpl</servlet-class>
 	</servlet>
@@ -83,20 +75,8 @@
 		<servlet-class>com.gapso.web.trieda.server.OfertasServiceImpl</servlet-class>
 	</servlet>
 	<servlet>
-		<servlet-name>professoresServlet</servlet-name>
-		<servlet-class>com.gapso.web.trieda.server.ProfessoresServiceImpl</servlet-class>
-	</servlet>
-	<servlet>
-		<servlet-name>professoresDisciplinasServlet</servlet-name>
-		<servlet-class>com.gapso.web.trieda.server.ProfessoresDisciplinasServiceImpl</servlet-class>
-	</servlet>
-	<servlet>
 		<servlet-name>demandasServlet</servlet-name>
 		<servlet-class>com.gapso.web.trieda.server.DemandasServiceImpl</servlet-class>
-	</servlet>
-	<servlet>
-		<servlet-name>divisoesCreditosServlet</servlet-name>
-		<servlet-class>com.gapso.web.trieda.server.DivisoesCreditosServiceImpl</servlet-class>
 	</servlet>
 	<servlet>
 		<servlet-name>horariosAulaServlet</servlet-name>
@@ -128,10 +108,6 @@
 		<url-pattern>/trieda/campi</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
-		<servlet-name>campiProfessoresServlet</servlet-name>
-		<url-pattern>/trieda/campiProfessores</url-pattern>
-	</servlet-mapping>
-	<servlet-mapping>
 		<servlet-name>turnosServlet</servlet-name>
 		<url-pattern>/trieda/turnos</url-pattern>
 	</servlet-mapping>
@@ -160,10 +136,6 @@
 		<url-pattern>/trieda/disciplinas</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
-		<servlet-name>equivalenciasServlet</servlet-name>
-		<url-pattern>/trieda/equivalencias</url-pattern>
-	</servlet-mapping>
-	<servlet-mapping>
 		<servlet-name>curriculosServlet</servlet-name>
 		<url-pattern>/trieda/curriculos</url-pattern>
 	</servlet-mapping>
@@ -172,20 +144,8 @@
 		<url-pattern>/trieda/ofertas</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
-		<servlet-name>professoresServlet</servlet-name>
-		<url-pattern>/trieda/professores</url-pattern>
-	</servlet-mapping>
-	<servlet-mapping>
-		<servlet-name>professoresDisciplinasServlet</servlet-name>
-		<url-pattern>/trieda/professoresDisciplinas</url-pattern>
-	</servlet-mapping>
-	<servlet-mapping>
 		<servlet-name>demandasServlet</servlet-name>
 		<url-pattern>/trieda/demandas</url-pattern>
-	</servlet-mapping>
-	<servlet-mapping>
-		<servlet-name>divisoesCreditosServlet</servlet-name>
-		<url-pattern>/trieda/divisoesCreditos</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>horariosAulaServlet</servlet-name>

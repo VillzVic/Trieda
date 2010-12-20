@@ -43,6 +43,7 @@ public class AppPresenter implements Presenter {
 				Presenter presenter = new ToolBarPresenter(masterData, viewport.getCenarioPanel(), new ToolBarView());
 				presenter.go(viewport.asWidget());
 				rp.add(viewport.asWidget());
+				RootPanel.get("loading").setVisible(false);
 			}
 		});
 		
