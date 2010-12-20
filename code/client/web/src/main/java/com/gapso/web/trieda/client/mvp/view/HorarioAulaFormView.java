@@ -10,6 +10,7 @@ import com.gapso.web.trieda.client.mvp.presenter.HorarioAulaFormPresenter;
 import com.gapso.web.trieda.client.util.resources.Resources;
 import com.gapso.web.trieda.client.util.view.SemanaLetivaComboBox;
 import com.gapso.web.trieda.client.util.view.SimpleModal;
+import com.gapso.web.trieda.client.util.view.TextFieldMask;
 import com.gapso.web.trieda.client.util.view.TurnoComboBox;
 import com.google.gwt.i18n.client.DateTimeFormat;
 
@@ -42,7 +43,12 @@ public class HorarioAulaFormView extends MyComposite implements HorarioAulaFormP
 
 	private void createForm() {
 		FormData formData = new FormData("-20");
-		formPanel = new FormPanel();
+		formPanel = new FormPanel() {
+			@Override
+			public boolean isValid() {
+				return super.isValid() && (horarioInicioTF.getValue() != null) && !horarioInicioTF.getValue().isEmpty();
+			}
+		};
 		formPanel.setHeaderVisible(false);
 		
 		semanaLetivaCB = new SemanaLetivaComboBox();
@@ -59,7 +65,7 @@ public class HorarioAulaFormView extends MyComposite implements HorarioAulaFormP
 		turnoCB.setEmptyText("Selecione o turno");
 		formPanel.add(turnoCB, formData);
 		
-		horarioInicioTF = new TextField<String>();
+		horarioInicioTF = new TextFieldMask("99:99");
 		horarioInicioTF.setRegex("([0-1][0-9]|2[0-4]):([0-5][0-9])$");
 		horarioInicioTF.setName("horarioInicio");
 		horarioInicioTF.setEmptyText("Preencha o horário de início de aula");
@@ -67,7 +73,6 @@ public class HorarioAulaFormView extends MyComposite implements HorarioAulaFormP
 			horarioInicioTF.setValue(df.format(horarioAulaDTO.getInicio()));
 		}
 		horarioInicioTF.setFieldLabel("Horário Início");
-		horarioInicioTF.setAllowBlank(false);
 		formPanel.add(horarioInicioTF, formData);
 		
 		FormButtonBinding binding = new FormButtonBinding(formPanel);
