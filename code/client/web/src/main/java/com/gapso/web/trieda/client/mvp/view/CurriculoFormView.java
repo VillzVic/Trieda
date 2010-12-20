@@ -44,13 +44,6 @@ public class CurriculoFormView extends MyComposite implements CurriculoFormPrese
 		formPanel = new FormPanel();
 		formPanel.setHeaderVisible(false);
 		
-		cursoCB = new CursoComboBox();
-		cursoCB.setName("curso");
-		cursoCB.setFieldLabel("Curso");
-		cursoCB.setAllowBlank(false);
-		cursoCB.setValue(cursoDTO);
-		formPanel.add(cursoCB, formData);
-		
 		codigoTF = new TextField<String>();
 		codigoTF.setName("codigo");
 		codigoTF.setValue(curriculoDTO.getCodigo());
@@ -59,6 +52,13 @@ public class CurriculoFormView extends MyComposite implements CurriculoFormPrese
 		codigoTF.setMinLength(1);
 		codigoTF.setMaxLength(20);
 		formPanel.add(codigoTF, formData);
+		
+		cursoCB = new CursoComboBox();
+		cursoCB.setName("curso");
+		cursoCB.setFieldLabel("Curso");
+		cursoCB.setAllowBlank(false);
+		cursoCB.setValue(cursoDTO);
+		formPanel.add(cursoCB, formData);
 		
 		descricaoTF = new TextField<String>();
 		descricaoTF.setName("descricao");
@@ -71,6 +71,8 @@ public class CurriculoFormView extends MyComposite implements CurriculoFormPrese
 		
 		FormButtonBinding binding = new FormButtonBinding(formPanel);
 		binding.addButton(simpleModal.getSalvarBt());
+		
+		simpleModal.setFocusWidget(codigoTF);
 	}
 	
 	public boolean isValid() {

@@ -58,6 +58,8 @@ public class SemanaLetivaFormView extends MyComposite implements SemanaLetivaFor
 		
 		FormButtonBinding binding = new FormButtonBinding(formPanel);
 		binding.addButton(simpleModal.getSalvarBt());
+		
+		simpleModal.setFocusWidget(codigoTF);
 	}
 	
 	public boolean isValid() {

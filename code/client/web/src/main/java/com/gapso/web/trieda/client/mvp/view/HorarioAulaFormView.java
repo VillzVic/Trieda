@@ -69,6 +69,8 @@ public class HorarioAulaFormView extends MyComposite implements HorarioAulaFormP
 		
 		FormButtonBinding binding = new FormButtonBinding(formPanel);
 		binding.addButton(simpleModal.getSalvarBt());
+		
+		simpleModal.setFocusWidget(semanaLetivaCB);
 	}
 	
 	public boolean isValid() {

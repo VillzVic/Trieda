@@ -55,15 +55,6 @@ public class CampusFormView extends MyComposite implements CampusFormPresenter.D
 		geralFS.setLayout(formLayout);
 		geralFS.setHeading("Informações Gerais");
 		
-		nomeTF = new TextField<String>();
-		nomeTF.setName("nome");
-		nomeTF.setValue(campusDTO.getNome());
-		nomeTF.setFieldLabel("Nome");
-		nomeTF.setAllowBlank(false);
-		nomeTF.setMinLength(1);
-		nomeTF.setMaxLength(50);
-		geralFS.add(nomeTF, formData);
-		
 		codigoTF = new TextField<String>();
 		codigoTF.setName("codigo");
 		codigoTF.setValue(campusDTO.getCodigo());
@@ -72,6 +63,15 @@ public class CampusFormView extends MyComposite implements CampusFormPresenter.D
 		codigoTF.setMinLength(1);
 		codigoTF.setMaxLength(20);
 		geralFS.add(codigoTF, formData);
+		
+		nomeTF = new TextField<String>();
+		nomeTF.setName("nome");
+		nomeTF.setValue(campusDTO.getNome());
+		nomeTF.setFieldLabel("Nome");
+		nomeTF.setAllowBlank(false);
+		nomeTF.setMinLength(1);
+		nomeTF.setMaxLength(50);
+		geralFS.add(nomeTF, formData);
 		
 		formPanel.add(geralFS, formData);
 		
@@ -105,8 +105,10 @@ public class CampusFormView extends MyComposite implements CampusFormPresenter.D
 		
 		FormButtonBinding binding = new FormButtonBinding(formPanel);
 		binding.addButton(simpleModal.getSalvarBt());
+		
+		simpleModal.setFocusWidget(codigoTF);
 	}
-	
+
 	public boolean isValid() {
 		return formPanel.isValid();
 	}

@@ -71,6 +71,8 @@ public class UnidadeFormView extends MyComposite implements UnidadeFormPresenter
 		
 		FormButtonBinding binding = new FormButtonBinding(formPanel);
 		binding.addButton(simpleModal.getSalvarBt());
+		
+		simpleModal.setFocusWidget(campusCB);
 	}
 	
 	public boolean isValid() {

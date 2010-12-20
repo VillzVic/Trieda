@@ -62,6 +62,8 @@ public class TurnoFormView extends MyComposite implements TurnoFormPresenter.Dis
 		
 		FormButtonBinding binding = new FormButtonBinding(formPanel);
 		binding.addButton(simpleModal.getSalvarBt());
+		
+		simpleModal.setFocusWidget(nomeTF);
 	}
 	
 	public boolean isValid() {

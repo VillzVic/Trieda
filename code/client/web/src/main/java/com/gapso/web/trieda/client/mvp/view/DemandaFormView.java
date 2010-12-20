@@ -100,6 +100,8 @@ public class DemandaFormView extends MyComposite implements DemandaFormPresenter
 		
 		FormButtonBinding binding = new FormButtonBinding(formPanel);
 		binding.addButton(simpleModal.getSalvarBt());
+		
+		simpleModal.setFocusWidget(campusCB);
 	}
 	
 	public boolean isValid() {

@@ -53,15 +53,6 @@ public class DisciplinaFormView extends MyComposite implements DisciplinaFormPre
 		formPanel = new FormPanel();
 		formPanel.setHeaderVisible(false);
 		
-		nomeTF = new TextField<String>();
-		nomeTF.setName("nome");
-		nomeTF.setValue(disciplinaDTO.getNome());
-		nomeTF.setFieldLabel("Nome");
-		nomeTF.setAllowBlank(false);
-		nomeTF.setMinLength(1);
-		nomeTF.setMaxLength(50);
-		formPanel.add(nomeTF, formData);
-		
 		codigoTF = new TextField<String>();
 		codigoTF.setName("codigo");
 		codigoTF.setValue(disciplinaDTO.getCodigo());
@@ -70,6 +61,15 @@ public class DisciplinaFormView extends MyComposite implements DisciplinaFormPre
 		codigoTF.setMinLength(1);
 		codigoTF.setMaxLength(20);
 		formPanel.add(codigoTF, formData);
+		
+		nomeTF = new TextField<String>();
+		nomeTF.setName("nome");
+		nomeTF.setValue(disciplinaDTO.getNome());
+		nomeTF.setFieldLabel("Nome");
+		nomeTF.setAllowBlank(false);
+		nomeTF.setMinLength(1);
+		nomeTF.setMaxLength(50);
+		formPanel.add(nomeTF, formData);
 		
 		creditosTeoricoTF = new NumberField();
 		creditosTeoricoTF.setName("creditosTeorico");
@@ -129,6 +129,8 @@ public class DisciplinaFormView extends MyComposite implements DisciplinaFormPre
 		
 		FormButtonBinding binding = new FormButtonBinding(formPanel);
 		binding.addButton(simpleModal.getSalvarBt());
+		
+		simpleModal.setFocusWidget(codigoTF);
 	}
 	
 	public boolean isValid() {

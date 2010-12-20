@@ -46,13 +46,6 @@ public class GrupoSalaFormView extends MyComposite implements GrupoSalaFormPrese
 		formPanel = new FormPanel();
 		formPanel.setHeaderVisible(false);
 		
-		unidadeCB = new UnidadeComboBox();
-		unidadeCB.setName("unidade");
-		unidadeCB.setFieldLabel("Unidade");
-		unidadeCB.setAllowBlank(false);
-		unidadeCB.setValue(unidadeDTO);
-		formPanel.add(unidadeCB, formData);
-		
 		codigoTF = new TextField<String>();
 		codigoTF.setName("codigo");
 		codigoTF.setValue(grupoSalaDTO.getCodigo());
@@ -61,6 +54,13 @@ public class GrupoSalaFormView extends MyComposite implements GrupoSalaFormPrese
 		codigoTF.setMinLength(1);
 		codigoTF.setMaxLength(20);
 		formPanel.add(codigoTF, formData);
+		
+		unidadeCB = new UnidadeComboBox();
+		unidadeCB.setName("unidade");
+		unidadeCB.setFieldLabel("Unidade");
+		unidadeCB.setAllowBlank(false);
+		unidadeCB.setValue(unidadeDTO);
+		formPanel.add(unidadeCB, formData);
 		
 		nomeTF = new TextField<String>();
 		nomeTF.setName("nome");
@@ -76,6 +76,8 @@ public class GrupoSalaFormView extends MyComposite implements GrupoSalaFormPrese
 		
 		FormButtonBinding binding = new FormButtonBinding(formPanel);
 		binding.addButton(simpleModal.getSalvarBt());
+		
+		simpleModal.setFocusWidget(codigoTF);
 	}
 	
 	public boolean isValid() {

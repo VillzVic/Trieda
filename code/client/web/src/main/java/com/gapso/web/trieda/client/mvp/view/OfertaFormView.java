@@ -74,6 +74,8 @@ public class OfertaFormView extends MyComposite implements OfertaFormPresenter.D
 		
 		FormButtonBinding binding = new FormButtonBinding(formPanel);
 		binding.addButton(simpleModal.getSalvarBt());
+		
+		simpleModal.setFocusWidget(turnoCB);
 	}
 	
 	public boolean isValid() {

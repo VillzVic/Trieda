@@ -50,15 +50,6 @@ public class CursoFormView extends MyComposite implements CursoFormPresenter.Dis
 		formPanel = new FormPanel();
 		formPanel.setHeaderVisible(false);
 		
-		nomeTF = new TextField<String>();
-		nomeTF.setName("nome");
-		nomeTF.setValue(cursoDTO.getNome());
-		nomeTF.setFieldLabel("Nome");
-		nomeTF.setAllowBlank(false);
-		nomeTF.setMinLength(1);
-		nomeTF.setMaxLength(50);
-		formPanel.add(nomeTF, formData);
-		
 		codigoTF = new TextField<String>();
 		codigoTF.setName("codigo");
 		codigoTF.setValue(cursoDTO.getCodigo());
@@ -67,6 +58,15 @@ public class CursoFormView extends MyComposite implements CursoFormPresenter.Dis
 		codigoTF.setMinLength(1);
 		codigoTF.setMaxLength(50);
 		formPanel.add(codigoTF, formData);
+		
+		nomeTF = new TextField<String>();
+		nomeTF.setName("nome");
+		nomeTF.setValue(cursoDTO.getNome());
+		nomeTF.setFieldLabel("Nome");
+		nomeTF.setAllowBlank(false);
+		nomeTF.setMinLength(1);
+		nomeTF.setMaxLength(50);
+		formPanel.add(nomeTF, formData);
 		
 		tipoCursoCB = new TipoCursoComboBox();
 		tipoCursoCB.setName("tipoCurso");
@@ -110,6 +110,8 @@ public class CursoFormView extends MyComposite implements CursoFormPresenter.Dis
 		
 		FormButtonBinding binding = new FormButtonBinding(formPanel);
 		binding.addButton(simpleModal.getSalvarBt());
+		
+		simpleModal.setFocusWidget(codigoTF);
 	}
 	
 	public boolean isValid() {

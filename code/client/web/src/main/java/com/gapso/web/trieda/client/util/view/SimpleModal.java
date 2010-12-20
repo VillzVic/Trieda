@@ -1,7 +1,10 @@
 package com.gapso.web.trieda.client.util.view;
 
 import com.extjs.gxt.ui.client.event.ButtonEvent;
+import com.extjs.gxt.ui.client.event.ComponentEvent;
+import com.extjs.gxt.ui.client.event.Events;
 import com.extjs.gxt.ui.client.event.SelectionListener;
+import com.extjs.gxt.ui.client.util.KeyNav;
 import com.extjs.gxt.ui.client.widget.Window;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.layout.FitLayout;
@@ -47,6 +50,7 @@ public class SimpleModal extends Window {
 		if(textSalvar != null) {
 			salvarBt = new Button(textSalvar, AbstractImagePrototype.create(Resources.DEFAULTS.save16()));
 			addButton(salvarBt);
+			setDefaultButton(salvarBt);
 		}
 		
 		if(textCancelar != null) {
@@ -61,6 +65,16 @@ public class SimpleModal extends Window {
 		}
 	}
 
+	public void setDefaultButton(final Button button) {
+		new KeyNav<ComponentEvent>(this) {
+			@Override
+			public void onEnter(ComponentEvent ce) {
+				super.onEnter(ce);
+				button.fireEvent(Events.Select);
+			}
+		};
+	}
+	
 	public Button getSalvarBt() {
 		return salvarBt;
 	}

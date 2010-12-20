@@ -51,12 +51,6 @@ public class CenarioCloneFormView extends MyComposite implements CenarioCloneFor
 		formPanel.setHeaderVisible(false);
 		formPanel.setLayout(formLayout);
 		
-		oficialCB = new CheckBox();
-		oficialCB.setName("oficial");
-		oficialCB.setValue(cenarioDTO.getOficial());
-		oficialCB.setFieldLabel("Oficial");
-		formPanel.add(oficialCB, formData);
-		
 		nomeTF = new TextField<String>();
 		nomeTF.setName("nome");
 		nomeTF.setValue(cenarioDTO.getNome());
@@ -65,6 +59,12 @@ public class CenarioCloneFormView extends MyComposite implements CenarioCloneFor
 		nomeTF.setMinLength(1);
 		nomeTF.setMaxLength(50);
 		formPanel.add(nomeTF, formData);
+		
+		oficialCB = new CheckBox();
+		oficialCB.setName("oficial");
+		oficialCB.setValue(cenarioDTO.getOficial());
+		oficialCB.setFieldLabel("Oficial");
+		formPanel.add(oficialCB, formData);
 		
 		anoTF = new NumberField();
 		anoTF.setName("ano");
@@ -95,6 +95,8 @@ public class CenarioCloneFormView extends MyComposite implements CenarioCloneFor
 		
 		FormButtonBinding binding = new FormButtonBinding(formPanel);
 		binding.addButton(simpleModal.getSalvarBt());
+		
+		simpleModal.setFocusWidget(nomeTF);
 	}
 	
 	public boolean isValid() {

@@ -72,6 +72,8 @@ public class CurriculoDisciplinaFormView extends MyComposite implements Curricul
 		
 		FormButtonBinding binding = new FormButtonBinding(formPanel);
 		binding.addButton(simpleModal.getSalvarBt());
+		
+		simpleModal.setFocusWidget(curriculoTF);
 	}
 	
 	public boolean isValid() {
