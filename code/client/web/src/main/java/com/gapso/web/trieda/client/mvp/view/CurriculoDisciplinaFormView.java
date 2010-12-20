@@ -69,6 +69,7 @@ public class CurriculoDisciplinaFormView extends MyComposite implements Curricul
 		periodoTF.setFieldLabel("Período");
 		periodoTF.setAllowBlank(false);
 		periodoTF.setAllowDecimals(false);
+		periodoTF.setMaxValue(99);
 		periodoTF.setEmptyText("Preencha o período");
 		formPanel.add(periodoTF, formData);
 		
