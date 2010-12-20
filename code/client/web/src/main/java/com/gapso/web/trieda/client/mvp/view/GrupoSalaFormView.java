@@ -53,6 +53,7 @@ public class GrupoSalaFormView extends MyComposite implements GrupoSalaFormPrese
 		codigoTF.setAllowBlank(false);
 		codigoTF.setMinLength(1);
 		codigoTF.setMaxLength(20);
+		codigoTF.setEmptyText("Preencha o código");
 		formPanel.add(codigoTF, formData);
 		
 		unidadeCB = new UnidadeComboBox();
@@ -60,6 +61,7 @@ public class GrupoSalaFormView extends MyComposite implements GrupoSalaFormPrese
 		unidadeCB.setFieldLabel("Unidade");
 		unidadeCB.setAllowBlank(false);
 		unidadeCB.setValue(unidadeDTO);
+		unidadeCB.setEmptyText("Selecione a unidade");
 		formPanel.add(unidadeCB, formData);
 		
 		nomeTF = new TextField<String>();
@@ -69,6 +71,7 @@ public class GrupoSalaFormView extends MyComposite implements GrupoSalaFormPrese
 		nomeTF.setAllowBlank(false);
 		nomeTF.setMinLength(1);
 		nomeTF.setMaxLength(50);
+		nomeTF.setEmptyText("Preencha o nome");
 		formPanel.add(nomeTF, formData);
 		
 		salvarEAssociarBT = new Button("Salvar e Associar Salas", AbstractImagePrototype.create(Resources.DEFAULTS.save16()));

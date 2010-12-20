@@ -71,6 +71,7 @@ public class CenarioCriarFormView extends MyComposite implements CenarioCriarFor
 		nomeTF.setAllowBlank(false);
 		nomeTF.setMinLength(1);
 		nomeTF.setMaxLength(50);
+		nomeTF.setEmptyText("Preencha o nome");
 		formPanel.add(nomeTF, formData);
 		
 		oficialCB = new CheckBox();
@@ -87,6 +88,7 @@ public class CenarioCriarFormView extends MyComposite implements CenarioCriarFor
 		anoTF.setAllowBlank(false);
 		anoTF.setMinValue(1);
 		anoTF.setMaxValue(9999);
+		anoTF.setEmptyText("Preencha o ano letívo");
 		formPanel.add(anoTF, formData);
 		
 		semestreTF = new NumberField();
@@ -97,12 +99,14 @@ public class CenarioCriarFormView extends MyComposite implements CenarioCriarFor
 		semestreTF.setAllowBlank(false);
 		semestreTF.setMinValue(1);
 		semestreTF.setMaxValue(12);
+		semestreTF.setEmptyText("Preencha semestre letívo");
 		formPanel.add(semestreTF, formData);
 		
 		semanaLetivaCB = new SemanaLetivaComboBox();
 		semanaLetivaCB.setName("semanaLetiva");
 		semanaLetivaCB.setFieldLabel("Semana Letiva");
 		semanaLetivaCB.setAllowBlank(false);
+		semanaLetivaCB.setEmptyText("Seleciona a Semana Letiva do cenário");
 		formPanel.add(semanaLetivaCB, formData);
 		
 		comentarioTF = new TextField<String>();
@@ -110,6 +114,7 @@ public class CenarioCriarFormView extends MyComposite implements CenarioCriarFor
 		comentarioTF.setValue(cenarioDTO.getComentario());
 		comentarioTF.setFieldLabel("Comentário");
 		comentarioTF.setMaxLength(255);
+		comentarioTF.setEmptyText("Preencha um comentário");
 		formPanel.add(comentarioTF, formData);
 		
 		campiDualList = new DualListField<CampusDTO>();

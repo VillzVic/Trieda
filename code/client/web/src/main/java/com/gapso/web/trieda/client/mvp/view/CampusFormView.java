@@ -62,6 +62,7 @@ public class CampusFormView extends MyComposite implements CampusFormPresenter.D
 		codigoTF.setAllowBlank(false);
 		codigoTF.setMinLength(1);
 		codigoTF.setMaxLength(20);
+		codigoTF.setEmptyText("Preencha o código");
 		geralFS.add(codigoTF, formData);
 		
 		nomeTF = new TextField<String>();
@@ -71,6 +72,7 @@ public class CampusFormView extends MyComposite implements CampusFormPresenter.D
 		nomeTF.setAllowBlank(false);
 		nomeTF.setMinLength(1);
 		nomeTF.setMaxLength(50);
+		nomeTF.setEmptyText("Preencha o nome");
 		geralFS.add(nomeTF, formData);
 		
 		formPanel.add(geralFS, formData);
@@ -85,6 +87,7 @@ public class CampusFormView extends MyComposite implements CampusFormPresenter.D
 		estadoCB.setName("estado");
 		estadoCB.setValue(campusDTO.getEstado());
 		estadoCB.setFieldLabel("Estado");
+		estadoCB.setEmptyText("Selecione o estado");
 		enderecoFS.add(estadoCB, formData);
 		
 		municipioTF = new TextField<String>();
@@ -92,6 +95,7 @@ public class CampusFormView extends MyComposite implements CampusFormPresenter.D
 		municipioTF.setValue(campusDTO.getMunicipio());
 		municipioTF.setFieldLabel("Município");
 		municipioTF.setMaxLength(20);
+		municipioTF.setEmptyText("Preencha o município");
 		enderecoFS.add(municipioTF, formData);
 		
 		bairroTF = new TextField<String>();
@@ -99,6 +103,7 @@ public class CampusFormView extends MyComposite implements CampusFormPresenter.D
 		bairroTF.setValue(campusDTO.getBairro());
 		bairroTF.setFieldLabel("Bairro");
 		bairroTF.setMaxLength(20);
+		bairroTF.setEmptyText("Preencha o bairro");
 		enderecoFS.add(bairroTF, formData);
 		
 		formPanel.add(enderecoFS, formData);

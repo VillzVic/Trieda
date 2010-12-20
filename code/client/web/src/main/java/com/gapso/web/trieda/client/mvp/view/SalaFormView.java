@@ -59,6 +59,7 @@ public class SalaFormView extends MyComposite implements SalaFormPresenter.Displ
 		codigoTF.setAllowBlank(false);
 		codigoTF.setMinLength(1);
 		codigoTF.setMaxLength(20);
+		codigoTF.setEmptyText("Preencha o código");
 		formPanel.add(codigoTF, formData);
 		
 		unidadeCB = new UnidadeComboBox();
@@ -66,6 +67,7 @@ public class SalaFormView extends MyComposite implements SalaFormPresenter.Displ
 		unidadeCB.setFieldLabel("Unidade");
 		unidadeCB.setAllowBlank(false);
 		unidadeCB.setValue(unidadeDTO);
+		unidadeCB.setEmptyText("Selecione a unidade");
 		formPanel.add(unidadeCB, formData);
 		
 		tipoSalaCB = new TipoSalaComboBox();
@@ -73,6 +75,7 @@ public class SalaFormView extends MyComposite implements SalaFormPresenter.Displ
 		tipoSalaCB.setFieldLabel("Tipo");
 		tipoSalaCB.setAllowBlank(false);
 		tipoSalaCB.setValue(tipoSalaDTO);
+		tipoSalaCB.setEmptyText("Selecione o tipo de sala");
 		formPanel.add(tipoSalaCB, formData);
 		
 		numeroTF = new TextField<String>();
@@ -82,6 +85,7 @@ public class SalaFormView extends MyComposite implements SalaFormPresenter.Displ
 		numeroTF.setAllowBlank(false);
 		numeroTF.setMinLength(1);
 		numeroTF.setMaxLength(20);
+		numeroTF.setEmptyText("Preencha o número da sala");
 		formPanel.add(numeroTF, formData);
 		
 		andarTF = new TextField<String>();
@@ -91,6 +95,7 @@ public class SalaFormView extends MyComposite implements SalaFormPresenter.Displ
 		andarTF.setAllowBlank(false);
 		andarTF.setMinLength(1);
 		andarTF.setMaxLength(20);
+		andarTF.setEmptyText("Preencha o andar da sala");
 		formPanel.add(andarTF, formData);
 		
 		capacidadeNF = new NumberField();
@@ -100,6 +105,7 @@ public class SalaFormView extends MyComposite implements SalaFormPresenter.Displ
 		capacidadeNF.setAllowBlank(false);
 		capacidadeNF.setMinLength(1);
 		capacidadeNF.setMaxLength(20);
+		capacidadeNF.setEmptyText("Preencha a capacidade");
 		formPanel.add(capacidadeNF, formData);
 		
 		FormButtonBinding binding = new FormButtonBinding(formPanel);

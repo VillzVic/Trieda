@@ -56,6 +56,7 @@ public class OfertaFormView extends MyComposite implements OfertaFormPresenter.D
 		turnoCB.setFieldLabel("Turno");
 		turnoCB.setAllowBlank(false);
 		turnoCB.setValue(turnoDTO);
+		turnoCB.setEmptyText("Selecione o turno");
 		formPanel.add(turnoCB, formData);
 		
 		campusCB = new CampusComboBox();
@@ -63,13 +64,15 @@ public class OfertaFormView extends MyComposite implements OfertaFormPresenter.D
 		campusCB.setFieldLabel("Campus");
 		campusCB.setAllowBlank(false);
 		campusCB.setValue(campusDTO);
+		campusCB.setEmptyText("Selecione o campus");
 		formPanel.add(campusCB, formData);
 		
 		curriculoCB = new CurriculoComboBox();
 		curriculoCB.setName("curriculo");
-		curriculoCB.setFieldLabel("Curriculo");
+		curriculoCB.setFieldLabel("Matriz Curricular");
 		curriculoCB.setAllowBlank(false);
 		curriculoCB.setValue(curriculoDTO);
+		curriculoCB.setEmptyText("Selecione uma Matriz Curricular");
 		formPanel.add(curriculoCB, formData);
 		
 		FormButtonBinding binding = new FormButtonBinding(formPanel);

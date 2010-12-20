@@ -51,6 +51,7 @@ public class UnidadeFormView extends MyComposite implements UnidadeFormPresenter
 		codigoTF.setAllowBlank(false);
 		codigoTF.setMinLength(1);
 		codigoTF.setMaxLength(20);
+		codigoTF.setEmptyText("Preencha o código");
 		formPanel.add(codigoTF, formData);
 		
 		nomeTF = new TextField<String>();
@@ -60,6 +61,7 @@ public class UnidadeFormView extends MyComposite implements UnidadeFormPresenter
 		nomeTF.setAllowBlank(false);
 		nomeTF.setMinLength(1);
 		nomeTF.setMaxLength(50);
+		nomeTF.setEmptyText("Preencha o nome");
 		formPanel.add(nomeTF, formData);
 		
 		campusCB = new CampusComboBox();
@@ -67,6 +69,7 @@ public class UnidadeFormView extends MyComposite implements UnidadeFormPresenter
 		campusCB.setFieldLabel("Campus");
 		campusCB.setAllowBlank(false);
 		campusCB.setValue(campusDTO);
+		campusCB.setEmptyText("Selecione o campus");
 		formPanel.add(campusCB, formData);
 		
 		FormButtonBinding binding = new FormButtonBinding(formPanel);

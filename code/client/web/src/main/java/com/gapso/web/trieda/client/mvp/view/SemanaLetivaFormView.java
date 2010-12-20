@@ -46,6 +46,7 @@ public class SemanaLetivaFormView extends MyComposite implements SemanaLetivaFor
 		codigoTF.setAllowBlank(false);
 		codigoTF.setMinLength(1);
 		codigoTF.setMaxLength(20);
+		codigoTF.setEmptyText("Preencha o código");
 		formPanel.add(codigoTF, formData);
 		
 		descricaoTF = new TextField<String>();
@@ -54,6 +55,7 @@ public class SemanaLetivaFormView extends MyComposite implements SemanaLetivaFor
 		descricaoTF.setFieldLabel("Descrição");
 		descricaoTF.setAllowBlank(false);
 		descricaoTF.setMaxLength(50);
+		descricaoTF.setEmptyText("Preencha uma descrição");
 		formPanel.add(descricaoTF, formData);
 		
 		FormButtonBinding binding = new FormButtonBinding(formPanel);

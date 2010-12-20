@@ -51,6 +51,7 @@ public class CurriculoFormView extends MyComposite implements CurriculoFormPrese
 		codigoTF.setAllowBlank(false);
 		codigoTF.setMinLength(1);
 		codigoTF.setMaxLength(20);
+		codigoTF.setEmptyText("Preencha o código");
 		formPanel.add(codigoTF, formData);
 		
 		cursoCB = new CursoComboBox();
@@ -58,6 +59,7 @@ public class CurriculoFormView extends MyComposite implements CurriculoFormPrese
 		cursoCB.setFieldLabel("Curso");
 		cursoCB.setAllowBlank(false);
 		cursoCB.setValue(cursoDTO);
+		cursoCB.setEmptyText("Selecione o curso");
 		formPanel.add(cursoCB, formData);
 		
 		descricaoTF = new TextField<String>();
@@ -67,6 +69,7 @@ public class CurriculoFormView extends MyComposite implements CurriculoFormPrese
 		descricaoTF.setAllowBlank(false);
 		descricaoTF.setMinLength(5);
 		descricaoTF.setMaxLength(20);
+		descricaoTF.setEmptyText("Preencha um comentário");
 		formPanel.add(descricaoTF, formData);
 		
 		FormButtonBinding binding = new FormButtonBinding(formPanel);

@@ -60,6 +60,7 @@ public class CurriculoDisciplinaFormView extends MyComposite implements Curricul
 		disciplinaCB.setName("disciplina");
 		disciplinaCB.setFieldLabel("Disciplina");
 		disciplinaCB.setAllowBlank(false);
+		disciplinaCB.setEmptyText("Preencha a disciplina");
 		formPanel.add(disciplinaCB, formData);
 		
 		periodoTF = new NumberField();
@@ -68,6 +69,7 @@ public class CurriculoDisciplinaFormView extends MyComposite implements Curricul
 		periodoTF.setFieldLabel("Período");
 		periodoTF.setAllowBlank(false);
 		periodoTF.setAllowDecimals(false);
+		periodoTF.setEmptyText("Preencha o período");
 		formPanel.add(periodoTF, formData);
 		
 		FormButtonBinding binding = new FormButtonBinding(formPanel);

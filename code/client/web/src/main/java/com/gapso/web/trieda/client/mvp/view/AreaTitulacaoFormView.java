@@ -45,6 +45,7 @@ public class AreaTitulacaoFormView extends MyComposite implements AreaTitulacaoF
 		codigoTF.setFieldLabel("Código");
 		codigoTF.setAllowBlank(false);
 		codigoTF.setMaxLength(50);
+		codigoTF.setEmptyText("Preencha o código");
 		formPanel.add(codigoTF, formData);
 		
 		descricaoTF = new TextField<String>();
@@ -52,6 +53,7 @@ public class AreaTitulacaoFormView extends MyComposite implements AreaTitulacaoF
 		descricaoTF.setValue(areaTitulacaoDTO.getDescricao());
 		descricaoTF.setFieldLabel("Descrição");
 		descricaoTF.setMaxLength(255);
+		descricaoTF.setEmptyText("Preencha a descrição");
 		formPanel.add(descricaoTF, formData);
 		
 		FormButtonBinding binding = new FormButtonBinding(formPanel);

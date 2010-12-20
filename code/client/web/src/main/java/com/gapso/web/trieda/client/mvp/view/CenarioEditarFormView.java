@@ -59,6 +59,7 @@ public class CenarioEditarFormView extends MyComposite implements CenarioEditarF
 		nomeTF.setAllowBlank(false);
 		nomeTF.setMinLength(1);
 		nomeTF.setMaxLength(50);
+		nomeTF.setEmptyText("Preencha o nome");
 		formPanel.add(nomeTF, formData);
 		
 		oficialCB = new CheckBox();
@@ -75,6 +76,7 @@ public class CenarioEditarFormView extends MyComposite implements CenarioEditarF
 		anoTF.setAllowBlank(false);
 		anoTF.setMinValue(1);
 		anoTF.setMaxValue(9999);
+		anoTF.setEmptyText("Preencha o ano letívo");
 		formPanel.add(anoTF, formData);
 		
 		semestreTF = new NumberField();
@@ -85,6 +87,7 @@ public class CenarioEditarFormView extends MyComposite implements CenarioEditarF
 		semestreTF.setAllowBlank(false);
 		semestreTF.setMinValue(1);
 		semestreTF.setMaxValue(12);
+		semestreTF.setEmptyText("Preencha semestre letívo");
 		formPanel.add(semestreTF, formData);
 		
 		comentarioTF = new TextField<String>();
@@ -92,6 +95,7 @@ public class CenarioEditarFormView extends MyComposite implements CenarioEditarF
 		comentarioTF.setValue(cenarioDTO.getComentario());
 		comentarioTF.setFieldLabel("Comentário");
 		comentarioTF.setMaxLength(255);
+		comentarioTF.setEmptyText("Preencha um comentário");
 		formPanel.add(comentarioTF, formData);
 		formPanel.add(formPanel, formData);
 		

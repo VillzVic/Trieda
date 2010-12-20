@@ -49,17 +49,20 @@ public class HorarioAulaFormView extends MyComposite implements HorarioAulaFormP
 		semanaLetivaCB.setName("semanaLetiva");
 		semanaLetivaCB.setFieldLabel("Semana Letiva");
 		semanaLetivaCB.setAllowBlank(false);
+		semanaLetivaCB.setEmptyText("Selecione a Semana Letíva");
 		formPanel.add(semanaLetivaCB, formData);
 		
 		turnoCB = new TurnoComboBox();
 		turnoCB.setName("turno");
 		turnoCB.setFieldLabel("Turno");
 		turnoCB.setAllowBlank(false);
+		turnoCB.setEmptyText("Selecione o turno");
 		formPanel.add(turnoCB, formData);
 		
 		horarioInicioTF = new TextField<String>();
 		horarioInicioTF.setRegex("([0-1][0-9]|2[0-4]):([0-5][0-9])$");
 		horarioInicioTF.setName("horarioInicio");
+		horarioInicioTF.setEmptyText("Preencha o horário de início de aula");
 		if(horarioAulaDTO.getInicio() != null) {
 			horarioInicioTF.setValue(df.format(horarioAulaDTO.getInicio()));
 		}

@@ -47,6 +47,7 @@ public class TurnoFormView extends MyComposite implements TurnoFormPresenter.Dis
 		nomeTF.setAllowBlank(false);
 		nomeTF.setMinLength(1);
 		nomeTF.setMaxLength(50);
+		nomeTF.setEmptyText("Preencha o nome");
 		formPanel.add(nomeTF, formData);
 		
 		tempoTF = new NumberField();
@@ -58,6 +59,7 @@ public class TurnoFormView extends MyComposite implements TurnoFormPresenter.Dis
 		tempoTF.setAllowNegative(false);
 		tempoTF.setMinValue(1);
 		tempoTF.setMaxValue(1000);
+		tempoTF.setEmptyText("Preencha a duração de aula do turno");
 		formPanel.add(tempoTF, formData);
 		
 		FormButtonBinding binding = new FormButtonBinding(formPanel);

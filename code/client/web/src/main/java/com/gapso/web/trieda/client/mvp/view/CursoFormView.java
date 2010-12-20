@@ -21,10 +21,10 @@ public class CursoFormView extends MyComposite implements CursoFormPresenter.Dis
 	private TextField<String> nomeTF;
 	private TextField<String> codigoTF;
 	private TipoCursoComboBox tipoCursoCB;
-	private NumberField numMinDoutoresTextField;
-	private NumberField numMinMestresTextField;
-	private NumberField maxDisciplinasPeloProfessorTextField;
-	private CheckBox admMaisDeUmDisciplinaCheckBox;
+	private NumberField numMinDoutoresTF;
+	private NumberField numMinMestresTF;
+	private NumberField maxDisciplinasPeloProfessorTF;
+	private CheckBox admMaisDeUmDisciplinaCB;
 	private CursoDTO cursoDTO;
 	private TipoCursoDTO tipoCursoDTO;
 	
@@ -57,6 +57,7 @@ public class CursoFormView extends MyComposite implements CursoFormPresenter.Dis
 		codigoTF.setAllowBlank(false);
 		codigoTF.setMinLength(1);
 		codigoTF.setMaxLength(50);
+		codigoTF.setEmptyText("Preencha o código");
 		formPanel.add(codigoTF, formData);
 		
 		nomeTF = new TextField<String>();
@@ -66,6 +67,7 @@ public class CursoFormView extends MyComposite implements CursoFormPresenter.Dis
 		nomeTF.setAllowBlank(false);
 		nomeTF.setMinLength(1);
 		nomeTF.setMaxLength(50);
+		nomeTF.setEmptyText("Preencha o nome");
 		formPanel.add(nomeTF, formData);
 		
 		tipoCursoCB = new TipoCursoComboBox();
@@ -73,40 +75,44 @@ public class CursoFormView extends MyComposite implements CursoFormPresenter.Dis
 		tipoCursoCB.setFieldLabel("Tipo");
 		tipoCursoCB.setAllowBlank(false);
 		tipoCursoCB.setValue(tipoCursoDTO);
+		tipoCursoCB.setEmptyText("Selecione um tipo de curso");
 		formPanel.add(tipoCursoCB, formData);
 		
-		numMinDoutoresTextField = new NumberField();
-		numMinDoutoresTextField.setName("numMinDoutores");
-		numMinDoutoresTextField.setValue(cursoDTO.getNumMinDoutores());
-		numMinDoutoresTextField.setFieldLabel("% Min. PhD");
-		numMinDoutoresTextField.setAllowBlank(false);
-		numMinDoutoresTextField.setAllowDecimals(false);
-		numMinDoutoresTextField.setMaxValue(100);
-		formPanel.add(numMinDoutoresTextField, formData);
+		numMinMestresTF = new NumberField();
+		numMinMestresTF.setName("numMinMestres");
+		numMinMestresTF.setValue(cursoDTO.getNumMinMestres());
+		numMinMestresTF.setFieldLabel("% Min. MSc");
+		numMinMestresTF.setAllowBlank(false);
+		numMinMestresTF.setAllowDecimals(false);
+		numMinMestresTF.setMaxValue(100);
+		numMinMestresTF.setEmptyText("Preencha a porcentagem mínima de mestres");
+		formPanel.add(numMinMestresTF, formData);
 		
-		numMinMestresTextField = new NumberField();
-		numMinMestresTextField.setName("numMinMestres");
-		numMinMestresTextField.setValue(cursoDTO.getNumMinMestres());
-		numMinMestresTextField.setFieldLabel("% Min. MSc");
-		numMinMestresTextField.setAllowBlank(false);
-		numMinMestresTextField.setAllowDecimals(false);
-		numMinMestresTextField.setMaxValue(100);
-		formPanel.add(numMinMestresTextField, formData);
+		numMinDoutoresTF = new NumberField();
+		numMinDoutoresTF.setName("numMinDoutores");
+		numMinDoutoresTF.setValue(cursoDTO.getNumMinDoutores());
+		numMinDoutoresTF.setFieldLabel("% Min. PhD");
+		numMinDoutoresTF.setAllowBlank(false);
+		numMinDoutoresTF.setAllowDecimals(false);
+		numMinDoutoresTF.setMaxValue(100);
+		numMinDoutoresTF.setEmptyText("Preencha a porcentagem mínima de doutores");
+		formPanel.add(numMinDoutoresTF, formData);
 		
-		maxDisciplinasPeloProfessorTextField = new NumberField();
-		maxDisciplinasPeloProfessorTextField.setName("maxDisciplinasPeloProfessor");
-		maxDisciplinasPeloProfessorTextField.setValue(cursoDTO.getMaxDisciplinasPeloProfessor());
-		maxDisciplinasPeloProfessorTextField.setFieldLabel("Max. Disc. por Prof.");
-		maxDisciplinasPeloProfessorTextField.setAllowBlank(false);
-		maxDisciplinasPeloProfessorTextField.setAllowDecimals(false);
-		maxDisciplinasPeloProfessorTextField.setMaxValue(99);
-		formPanel.add(maxDisciplinasPeloProfessorTextField, formData);
+		maxDisciplinasPeloProfessorTF = new NumberField();
+		maxDisciplinasPeloProfessorTF.setName("maxDisciplinasPeloProfessor");
+		maxDisciplinasPeloProfessorTF.setValue(cursoDTO.getMaxDisciplinasPeloProfessor());
+		maxDisciplinasPeloProfessorTF.setFieldLabel("Max. Disc. por Prof.");
+		maxDisciplinasPeloProfessorTF.setAllowBlank(false);
+		maxDisciplinasPeloProfessorTF.setAllowDecimals(false);
+		maxDisciplinasPeloProfessorTF.setMaxValue(99);
+		maxDisciplinasPeloProfessorTF.setEmptyText("Número máximo de disciplina por professor");
+		formPanel.add(maxDisciplinasPeloProfessorTF, formData);
 		
-		admMaisDeUmDisciplinaCheckBox = new CheckBox();
-		admMaisDeUmDisciplinaCheckBox.setName("admMaisDeUmDisciplina");
-		admMaisDeUmDisciplinaCheckBox.setValue(cursoDTO.getAdmMaisDeUmDisciplina());
-		admMaisDeUmDisciplinaCheckBox.setFieldLabel("Permite mais de uma Disc. por Prof.?");
-		formPanel.add(admMaisDeUmDisciplinaCheckBox, formData);
+		admMaisDeUmDisciplinaCB = new CheckBox();
+		admMaisDeUmDisciplinaCB.setName("admMaisDeUmDisciplina");
+		admMaisDeUmDisciplinaCB.setValue(cursoDTO.getAdmMaisDeUmDisciplina());
+		admMaisDeUmDisciplinaCB.setFieldLabel("Permite mais de uma Disc. por Prof.?");
+		formPanel.add(admMaisDeUmDisciplinaCB, formData);
 		
 		FormButtonBinding binding = new FormButtonBinding(formPanel);
 		binding.addButton(simpleModal.getSalvarBt());
@@ -150,22 +156,22 @@ public class CursoFormView extends MyComposite implements CursoFormPresenter.Dis
 
 	@Override
 	public NumberField getNumMinDoutoresTextField() {
-		return numMinDoutoresTextField;
+		return numMinDoutoresTF;
 	}
 
 	@Override
 	public NumberField getNumMinMestresTextField() {
-		return numMinMestresTextField;
+		return numMinMestresTF;
 	}
 
 	@Override
 	public NumberField getMaxDisciplinasPeloProfessorTextField() {
-		return maxDisciplinasPeloProfessorTextField;
+		return maxDisciplinasPeloProfessorTF;
 	}
 
 	@Override
 	public CheckBox getAdmMaisDeUmDisciplinaCheckBox() {
-		return admMaisDeUmDisciplinaCheckBox;
+		return admMaisDeUmDisciplinaCB;
 	}
 	
 

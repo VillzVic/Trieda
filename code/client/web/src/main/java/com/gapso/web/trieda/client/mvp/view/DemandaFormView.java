@@ -68,26 +68,31 @@ public class DemandaFormView extends MyComposite implements DemandaFormPresenter
 		campusCB = new CampusComboBox();
 		campusCB.setAllowBlank(false);
 		campusCB.setValue(campusDTO);
+		campusCB.setEmptyText("Selecione o campus");
 		formPanel.add(campusCB, formData);
 		
 		cursoCB = new CursoComboBox();
 		cursoCB.setAllowBlank(false);
 		cursoCB.setValue(cursoDTO);
+		cursoCB.setEmptyText("Selecione o curso");
 		formPanel.add(cursoCB, formData);
 		
 		curriculoCB = new CurriculoComboBox();
 		curriculoCB.setAllowBlank(false);
 		curriculoCB.setValue(curriculoDTO);
+		curriculoCB.setEmptyText("Selecione o curriculo");
 		formPanel.add(curriculoCB, formData);
 		
 		turnoCB = new TurnoComboBox();
 		turnoCB.setAllowBlank(false);
 		turnoCB.setValue(turnoDTO);
+		turnoCB.setEmptyText("Selecione o turno");
 		formPanel.add(turnoCB, formData);
 		
 		disciplinaCB = new DisciplinaComboBox();
 		disciplinaCB.setAllowBlank(false);
 		disciplinaCB.setValue(disciplinaDTO);
+		disciplinaCB.setEmptyText("Selecione a disciplina");
 		formPanel.add(disciplinaCB, formData);
 
 		demandaTF = new NumberField();
@@ -96,6 +101,7 @@ public class DemandaFormView extends MyComposite implements DemandaFormPresenter
 		demandaTF.setAllowBlank(false);
 		demandaTF.setAllowNegative(false);
 		demandaTF.setAllowDecimals(false);
+		demandaTF.setEmptyText("Selecione a quantidade");
 		formPanel.add(demandaTF, formData);
 		
 		FormButtonBinding binding = new FormButtonBinding(formPanel);

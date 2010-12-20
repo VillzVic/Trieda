@@ -60,6 +60,7 @@ public class DisciplinaFormView extends MyComposite implements DisciplinaFormPre
 		codigoTF.setAllowBlank(false);
 		codigoTF.setMinLength(1);
 		codigoTF.setMaxLength(20);
+		codigoTF.setEmptyText("Preencha o código");
 		formPanel.add(codigoTF, formData);
 		
 		nomeTF = new TextField<String>();
@@ -69,6 +70,7 @@ public class DisciplinaFormView extends MyComposite implements DisciplinaFormPre
 		nomeTF.setAllowBlank(false);
 		nomeTF.setMinLength(1);
 		nomeTF.setMaxLength(50);
+		nomeTF.setEmptyText("Preencha o nome");
 		formPanel.add(nomeTF, formData);
 		
 		creditosTeoricoTF = new NumberField();
@@ -78,6 +80,7 @@ public class DisciplinaFormView extends MyComposite implements DisciplinaFormPre
 		creditosTeoricoTF.setAllowBlank(false);
 		creditosTeoricoTF.setAllowDecimals(false);
 		creditosTeoricoTF.setMaxValue(99);
+		creditosTeoricoTF.setEmptyText("Preencha a quantidade de créditos teóricos");
 		formPanel.add(creditosTeoricoTF, formData);
 		
 		creditosPraticoTF = new NumberField();
@@ -87,6 +90,7 @@ public class DisciplinaFormView extends MyComposite implements DisciplinaFormPre
 		creditosPraticoTF.setAllowBlank(false);
 		creditosPraticoTF.setAllowDecimals(false);
 		creditosPraticoTF.setMaxValue(99);
+		creditosPraticoTF.setEmptyText("Preencha a quantidade de créditos práticos");
 		formPanel.add(creditosPraticoTF, formData);
 		
 		laboratorioCB = new CheckBox();
@@ -100,6 +104,7 @@ public class DisciplinaFormView extends MyComposite implements DisciplinaFormPre
 		tipoDisciplinaCB.setFieldLabel("Tipo de Disciplina");
 		tipoDisciplinaCB.setAllowBlank(false);
 		tipoDisciplinaCB.setValue(tipoDisciplinaDTO);
+		tipoDisciplinaCB.setEmptyText("Selecione o tipo de disciplina");
 		formPanel.add(tipoDisciplinaCB, formData);
 		
 		dificuldadeCB = new DificuldadeComboBox();
@@ -107,6 +112,7 @@ public class DisciplinaFormView extends MyComposite implements DisciplinaFormPre
 		dificuldadeCB.setFieldLabel("Nível de Dificuldade");
 		dificuldadeCB.setAllowBlank(false);
 		dificuldadeCB.setValue(disciplinaDTO.getDificuldade());
+		dificuldadeCB.setEmptyText("Selecione o nível de dificuldade");
 		formPanel.add(dificuldadeCB, formData);
 		
 		maxAlunosTeoricoTF = new NumberField();
@@ -116,6 +122,7 @@ public class DisciplinaFormView extends MyComposite implements DisciplinaFormPre
 		maxAlunosTeoricoTF.setAllowBlank(false);
 		maxAlunosTeoricoTF.setAllowDecimals(false);
 		maxAlunosTeoricoTF.setMaxValue(999);
+		maxAlunosTeoricoTF.setEmptyText("Preencha o número máximo de alunos teóricos");
 		formPanel.add(maxAlunosTeoricoTF, formData);
 		
 		maxAlunosPraticoTF = new NumberField();
@@ -125,6 +132,7 @@ public class DisciplinaFormView extends MyComposite implements DisciplinaFormPre
 		maxAlunosPraticoTF.setAllowBlank(false);
 		maxAlunosPraticoTF.setAllowDecimals(false);
 		maxAlunosPraticoTF.setMaxValue(999);
+		maxAlunosPraticoTF.setEmptyText("Preencha o número máximo de alunos práticos");
 		formPanel.add(maxAlunosPraticoTF, formData);
 		
 		FormButtonBinding binding = new FormButtonBinding(formPanel);
