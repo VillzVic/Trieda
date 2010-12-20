@@ -8,11 +8,13 @@ import com.extjs.gxt.ui.client.Style.SortDir;
 import com.extjs.gxt.ui.client.data.BasePagingLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
-import com.gapso.trieda.domain.SemanaLetiva;
 import com.gapso.trieda.domain.HorarioAula;
+import com.gapso.trieda.domain.HorarioDisponivelCenario;
+import com.gapso.trieda.domain.SemanaLetiva;
 import com.gapso.trieda.domain.Turno;
-import com.gapso.web.trieda.client.mvp.model.SemanaLetivaDTO;
+import com.gapso.trieda.misc.Semanas;
 import com.gapso.web.trieda.client.mvp.model.HorarioAulaDTO;
+import com.gapso.web.trieda.client.mvp.model.SemanaLetivaDTO;
 import com.gapso.web.trieda.client.mvp.model.TurnoDTO;
 import com.gapso.web.trieda.client.services.HorariosAulaService;
 import com.gapso.web.trieda.server.util.ConvertBeans;
@@ -74,6 +76,13 @@ public class HorariosAulaServiceImpl extends RemoteServiceServlet implements Hor
 			horarioDeAula.merge();
 		} else {
 			horarioDeAula.persist();
+			for(Semanas semana : Semanas.values()) {
+				if(semana == Semanas.SAB || semana == Semanas.DOM) continue;
+				HorarioDisponivelCenario hdc = new HorarioDisponivelCenario();
+				hdc.setSemana(semana);
+				hdc.setHorarioAula(horarioDeAula);
+				hdc.persist();
+			}
 		}
 	}
 	
