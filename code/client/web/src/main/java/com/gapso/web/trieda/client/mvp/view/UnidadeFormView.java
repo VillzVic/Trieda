@@ -44,12 +44,14 @@ public class UnidadeFormView extends MyComposite implements UnidadeFormPresenter
 		formPanel = new FormPanel();
 		formPanel.setHeaderVisible(false);
 		
-		campusCB = new CampusComboBox();
-		campusCB.setName("campus");
-		campusCB.setFieldLabel("Campus");
-		campusCB.setAllowBlank(false);
-		campusCB.setValue(campusDTO);
-		formPanel.add(campusCB, formData);
+		codigoTF = new TextField<String>();
+		codigoTF.setName("codigo");
+		codigoTF.setValue(unidadeDTO.getCodigo());
+		codigoTF.setFieldLabel("Código");
+		codigoTF.setAllowBlank(false);
+		codigoTF.setMinLength(1);
+		codigoTF.setMaxLength(20);
+		formPanel.add(codigoTF, formData);
 		
 		nomeTF = new TextField<String>();
 		nomeTF.setName("nome");
@@ -60,19 +62,17 @@ public class UnidadeFormView extends MyComposite implements UnidadeFormPresenter
 		nomeTF.setMaxLength(50);
 		formPanel.add(nomeTF, formData);
 		
-		codigoTF = new TextField<String>();
-		codigoTF.setName("codigo");
-		codigoTF.setValue(unidadeDTO.getCodigo());
-		codigoTF.setFieldLabel("Código");
-		codigoTF.setAllowBlank(false);
-		codigoTF.setMinLength(1);
-		codigoTF.setMaxLength(20);
-		formPanel.add(codigoTF, formData);
+		campusCB = new CampusComboBox();
+		campusCB.setName("campus");
+		campusCB.setFieldLabel("Campus");
+		campusCB.setAllowBlank(false);
+		campusCB.setValue(campusDTO);
+		formPanel.add(campusCB, formData);
 		
 		FormButtonBinding binding = new FormButtonBinding(formPanel);
 		binding.addButton(simpleModal.getSalvarBt());
 		
-		simpleModal.setFocusWidget(campusCB);
+		simpleModal.setFocusWidget(codigoTF);
 	}
 	
 	public boolean isValid() {
