@@ -52,6 +52,15 @@ public class SalaFormView extends MyComposite implements SalaFormPresenter.Displ
 		formPanel = new FormPanel();
 		formPanel.setHeaderVisible(false);
 		
+		codigoTF = new TextField<String>();
+		codigoTF.setName("codigo");
+		codigoTF.setValue(salaDTO.getCodigo());
+		codigoTF.setFieldLabel("Código");
+		codigoTF.setAllowBlank(false);
+		codigoTF.setMinLength(1);
+		codigoTF.setMaxLength(20);
+		formPanel.add(codigoTF, formData);
+		
 		unidadeCB = new UnidadeComboBox();
 		unidadeCB.setName("unidade");
 		unidadeCB.setFieldLabel("Unidade");
@@ -65,15 +74,6 @@ public class SalaFormView extends MyComposite implements SalaFormPresenter.Displ
 		tipoSalaCB.setAllowBlank(false);
 		tipoSalaCB.setValue(tipoSalaDTO);
 		formPanel.add(tipoSalaCB, formData);
-		
-		codigoTF = new TextField<String>();
-		codigoTF.setName("codigo");
-		codigoTF.setValue(salaDTO.getCodigo());
-		codigoTF.setFieldLabel("Código");
-		codigoTF.setAllowBlank(false);
-		codigoTF.setMinLength(1);
-		codigoTF.setMaxLength(20);
-		formPanel.add(codigoTF, formData);
 		
 		numeroTF = new TextField<String>();
 		numeroTF.setName("numero");
@@ -104,6 +104,8 @@ public class SalaFormView extends MyComposite implements SalaFormPresenter.Displ
 		
 		FormButtonBinding binding = new FormButtonBinding(formPanel);
 		binding.addButton(simpleModal.getSalvarBt());
+		
+		simpleModal.setFocusWidget(codigoTF);
 	}
 	
 	public boolean isValid() {
