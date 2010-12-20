@@ -112,7 +112,7 @@ public class CurriculoDisciplinasView extends MyComposite implements CurriculoDi
 		cc1.setSummaryType(SummaryType.COUNT);
 		list.add(cc1);
 
-		cc1 = new SummaryColumnConfig<Integer>("disciplinaString", "Disciplina", 100);
+		cc1 = new SummaryColumnConfig<Integer>("disciplinaCodigoNomeString", "Disciplina", 100);
 		cc1.setSummaryType(SummaryType.COUNT);
 		cc1.setSummaryRenderer(new SummaryRenderer() {  
 			public String render(Number value, Map<String, Number> data) {  

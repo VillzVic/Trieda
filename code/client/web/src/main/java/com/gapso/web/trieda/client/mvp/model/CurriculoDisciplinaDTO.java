@@ -84,4 +84,11 @@ public class CurriculoDisciplinaDTO extends FileModel {
 		return get("curriculoId");
 	}
 	
+	public void setDisciplinaCodigoNomeString(String value) {
+		set("disciplinaCodigoNomeString", value);
+	}
+	public String getDisciplinaCodigoNomeString() {
+		return get("disciplinaCodigoNomeString");
+	}
+	
 }

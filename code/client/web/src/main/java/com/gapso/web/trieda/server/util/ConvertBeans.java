@@ -733,6 +733,7 @@ public class ConvertBeans {
 		dto.setCreditosPratico(crPratico);
 		dto.setCreditosTotal(crTeorico + crPratico);
 		dto.setCurriculoId(domain.getCurriculo().getId());
+		dto.setDisciplinaCodigoNomeString(disciplina.getCodigo()+" ("+disciplina.getNome()+")");
 		return dto;
 	}
 
