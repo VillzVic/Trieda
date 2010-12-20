@@ -85,14 +85,14 @@ public:
    int cria_variavel_max_creds(void);  // H_{bc,i}
    int cria_variavel_aloc_disciplina(void);  // y_{i,d,tps,u}
    int cria_variavel_num_subblocos(void); // w_{bc,t,cp}
-   int cria_variavel_num_abertura_turma_bloco(void);
-   int cria_variavel_de_folga_dist_cred_dia_superior(void);
-   int cria_variavel_de_folga_dist_cred_dia_inferior(void);
-   int cria_variavel_abertura_subbloco_de_blc_dia_campus(void);
+   int cria_variavel_num_abertura_turma_bloco(void);  // v_{bc,t}
+   int cria_variavel_de_folga_dist_cred_dia_superior(void); // fcp_{d,t}
+   int cria_variavel_de_folga_dist_cred_dia_inferior(void); // fcm_{d,t}
+   int cria_variavel_abertura_subbloco_de_blc_dia_campus(void);   // r_{bc,t,cp}
 
-   int cria_variavel_de_folga_aloc_alunos_curso_incompat(void);
+   int cria_variavel_de_folga_aloc_alunos_curso_incompat(void); // bs_{i,d,c,cp}
 
-   int cria_variavel_de_folga_demanda_disciplina();
+   int cria_variavel_de_folga_demanda_disciplina(); // f_{d,o}
 
    /********************************************************************
    **                    CONSTRAINT CREATION                          **

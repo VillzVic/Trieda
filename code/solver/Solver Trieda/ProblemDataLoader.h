@@ -26,10 +26,15 @@ public:
    // Load the XML file
    void load();
 
+   void carregaDiasLetivosCampus();
+
    void carregaDiasLetivosDiscs();
    void carregaDiasLetivosSala();
 
    void criaConjuntoSalas();
+
+   /* Establece os dias letivos comuns entre um bloco curricular e um campus. */
+   void estabeleceDiasLetivosBlocoCampus();
 
    /* Establece os dias letivos comuns entre as salas e suas disciplinas associadas. */
    void estabeleceDiasLetivosDisciplinasSalas();

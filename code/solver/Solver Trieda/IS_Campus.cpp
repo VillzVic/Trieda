@@ -8,6 +8,8 @@ IS_Campus::IS_Campus(Campus * _campus)
 
 IS_Campus::IS_Campus(IS_Campus const & is_campus)
 {
+   this->setId(is_campus.getId());
+
    campus = is_campus.campus;
 
    GGroup<IS_Unidade*>::iterator it_unidade = is_campus.unidades.begin();

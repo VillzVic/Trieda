@@ -822,244 +822,244 @@ AtendimentoTatico (const AtendimentoTatico_sequence& s)
 }
 
 
-// WarningType
+// ItemWarning
 // 
 
-const WarningType::Code_type& WarningType::
+const ItemWarning::Code_type& ItemWarning::
 Code () const
 {
   return this->Code_.get ();
 }
 
-WarningType::Code_type& WarningType::
+ItemWarning::Code_type& ItemWarning::
 Code ()
 {
   return this->Code_.get ();
 }
 
-void WarningType::
+void ItemWarning::
 Code (const Code_type& x)
 {
   this->Code_.set (x);
 }
 
-void WarningType::
+void ItemWarning::
 Code (::std::auto_ptr< Code_type > x)
 {
   this->Code_.set (x);
 }
 
-const WarningType::Message_type& WarningType::
+const ItemWarning::Message_type& ItemWarning::
 Message () const
 {
   return this->Message_.get ();
 }
 
-WarningType::Message_type& WarningType::
+ItemWarning::Message_type& ItemWarning::
 Message ()
 {
   return this->Message_.get ();
 }
 
-void WarningType::
+void ItemWarning::
 Message (const Message_type& x)
 {
   this->Message_.set (x);
 }
 
-void WarningType::
+void ItemWarning::
 Message (::std::auto_ptr< Message_type > x)
 {
   this->Message_.set (x);
 }
 
-const WarningType::Detail_type& WarningType::
+const ItemWarning::Detail_type& ItemWarning::
 Detail () const
 {
   return this->Detail_.get ();
 }
 
-WarningType::Detail_type& WarningType::
+ItemWarning::Detail_type& ItemWarning::
 Detail ()
 {
   return this->Detail_.get ();
 }
 
-void WarningType::
+void ItemWarning::
 Detail (const Detail_type& x)
 {
   this->Detail_.set (x);
 }
 
-void WarningType::
+void ItemWarning::
 Detail (::std::auto_ptr< Detail_type > x)
 {
   this->Detail_.set (x);
 }
 
-const WarningType::Location_type& WarningType::
+const ItemWarning::Location_type& ItemWarning::
 Location () const
 {
   return this->Location_.get ();
 }
 
-WarningType::Location_type& WarningType::
+ItemWarning::Location_type& ItemWarning::
 Location ()
 {
   return this->Location_.get ();
 }
 
-void WarningType::
+void ItemWarning::
 Location (const Location_type& x)
 {
   this->Location_.set (x);
 }
 
-void WarningType::
+void ItemWarning::
 Location (::std::auto_ptr< Location_type > x)
 {
   this->Location_.set (x);
 }
 
 
-// WarningsType
+// GrupoWarning
 // 
 
-const WarningsType::Warning_sequence& WarningsType::
+const GrupoWarning::Warning_sequence& GrupoWarning::
 Warning () const
 {
   return this->Warning_;
 }
 
-WarningsType::Warning_sequence& WarningsType::
+GrupoWarning::Warning_sequence& GrupoWarning::
 Warning ()
 {
   return this->Warning_;
 }
 
-void WarningsType::
+void GrupoWarning::
 Warning (const Warning_sequence& s)
 {
   this->Warning_ = s;
 }
 
 
-// ErrorType
+// ItemError
 // 
 
-const ErrorType::Code_type& ErrorType::
+const ItemError::Code_type& ItemError::
 Code () const
 {
   return this->Code_.get ();
 }
 
-ErrorType::Code_type& ErrorType::
+ItemError::Code_type& ItemError::
 Code ()
 {
   return this->Code_.get ();
 }
 
-void ErrorType::
+void ItemError::
 Code (const Code_type& x)
 {
   this->Code_.set (x);
 }
 
-void ErrorType::
+void ItemError::
 Code (::std::auto_ptr< Code_type > x)
 {
   this->Code_.set (x);
 }
 
-const ErrorType::Message_type& ErrorType::
+const ItemError::Message_type& ItemError::
 Message () const
 {
   return this->Message_.get ();
 }
 
-ErrorType::Message_type& ErrorType::
+ItemError::Message_type& ItemError::
 Message ()
 {
   return this->Message_.get ();
 }
 
-void ErrorType::
+void ItemError::
 Message (const Message_type& x)
 {
   this->Message_.set (x);
 }
 
-void ErrorType::
+void ItemError::
 Message (::std::auto_ptr< Message_type > x)
 {
   this->Message_.set (x);
 }
 
-const ErrorType::Detail_type& ErrorType::
+const ItemError::Detail_type& ItemError::
 Detail () const
 {
   return this->Detail_.get ();
 }
 
-ErrorType::Detail_type& ErrorType::
+ItemError::Detail_type& ItemError::
 Detail ()
 {
   return this->Detail_.get ();
 }
 
-void ErrorType::
+void ItemError::
 Detail (const Detail_type& x)
 {
   this->Detail_.set (x);
 }
 
-void ErrorType::
+void ItemError::
 Detail (::std::auto_ptr< Detail_type > x)
 {
   this->Detail_.set (x);
 }
 
-const ErrorType::Location_type& ErrorType::
+const ItemError::Location_type& ItemError::
 Location () const
 {
   return this->Location_.get ();
 }
 
-ErrorType::Location_type& ErrorType::
+ItemError::Location_type& ItemError::
 Location ()
 {
   return this->Location_.get ();
 }
 
-void ErrorType::
+void ItemError::
 Location (const Location_type& x)
 {
   this->Location_.set (x);
 }
 
-void ErrorType::
+void ItemError::
 Location (::std::auto_ptr< Location_type > x)
 {
   this->Location_.set (x);
 }
 
 
-// ErrorsType
+// GrupoError
 // 
 
-const ErrorsType::Error_sequence& ErrorsType::
+const GrupoError::Error_sequence& GrupoError::
 Error () const
 {
   return this->Error_;
 }
 
-ErrorsType::Error_sequence& ErrorsType::
+GrupoError::Error_sequence& GrupoError::
 Error ()
 {
   return this->Error_;
 }
 
-void ErrorsType::
+void GrupoError::
 Error (const Error_sequence& s)
 {
   this->Error_ = s;
@@ -2879,11 +2879,11 @@ GrupoAtendimentoTatico::
 {
 }
 
-// WarningType
+// ItemWarning
 //
 
-WarningType::
-WarningType (const Code_type& Code,
+ItemWarning::
+ItemWarning (const Code_type& Code,
              const Message_type& Message,
              const Detail_type& Detail,
              const Location_type& Location)
@@ -2895,8 +2895,8 @@ WarningType (const Code_type& Code,
 {
 }
 
-WarningType::
-WarningType (const WarningType& x,
+ItemWarning::
+ItemWarning (const ItemWarning& x,
              ::xml_schema::flags f,
              ::xml_schema::container* c)
 : ::xml_schema::type (x, f, c),
@@ -2907,8 +2907,8 @@ WarningType (const WarningType& x,
 {
 }
 
-WarningType::
-WarningType (const ::xercesc::DOMElement& e,
+ItemWarning::
+ItemWarning (const ::xercesc::DOMElement& e,
              ::xml_schema::flags f,
              ::xml_schema::container* c)
 : ::xml_schema::type (e, f | ::xml_schema::flags::base, c),
@@ -2924,7 +2924,7 @@ WarningType (const ::xercesc::DOMElement& e,
   }
 }
 
-void WarningType::
+void ItemWarning::
 parse (::xsd::cxx::xml::dom::parser< char >& p,
        ::xml_schema::flags f)
 {
@@ -3022,30 +3022,30 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
   }
 }
 
-WarningType* WarningType::
+ItemWarning* ItemWarning::
 _clone (::xml_schema::flags f,
         ::xml_schema::container* c) const
 {
-  return new class WarningType (*this, f, c);
+  return new class ItemWarning (*this, f, c);
 }
 
-WarningType::
-~WarningType ()
+ItemWarning::
+~ItemWarning ()
 {
 }
 
-// WarningsType
+// GrupoWarning
 //
 
-WarningsType::
-WarningsType ()
+GrupoWarning::
+GrupoWarning ()
 : ::xml_schema::type (),
   Warning_ (::xml_schema::flags (), this)
 {
 }
 
-WarningsType::
-WarningsType (const WarningsType& x,
+GrupoWarning::
+GrupoWarning (const GrupoWarning& x,
               ::xml_schema::flags f,
               ::xml_schema::container* c)
 : ::xml_schema::type (x, f, c),
@@ -3053,8 +3053,8 @@ WarningsType (const WarningsType& x,
 {
 }
 
-WarningsType::
-WarningsType (const ::xercesc::DOMElement& e,
+GrupoWarning::
+GrupoWarning (const ::xercesc::DOMElement& e,
               ::xml_schema::flags f,
               ::xml_schema::container* c)
 : ::xml_schema::type (e, f | ::xml_schema::flags::base, c),
@@ -3067,7 +3067,7 @@ WarningsType (const ::xercesc::DOMElement& e,
   }
 }
 
-void WarningsType::
+void GrupoWarning::
 parse (::xsd::cxx::xml::dom::parser< char >& p,
        ::xml_schema::flags f)
 {
@@ -3092,23 +3092,23 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
   }
 }
 
-WarningsType* WarningsType::
+GrupoWarning* GrupoWarning::
 _clone (::xml_schema::flags f,
         ::xml_schema::container* c) const
 {
-  return new class WarningsType (*this, f, c);
+  return new class GrupoWarning (*this, f, c);
 }
 
-WarningsType::
-~WarningsType ()
+GrupoWarning::
+~GrupoWarning ()
 {
 }
 
-// ErrorType
+// ItemError
 //
 
-ErrorType::
-ErrorType (const Code_type& Code,
+ItemError::
+ItemError (const Code_type& Code,
            const Message_type& Message,
            const Detail_type& Detail,
            const Location_type& Location)
@@ -3120,8 +3120,8 @@ ErrorType (const Code_type& Code,
 {
 }
 
-ErrorType::
-ErrorType (const ErrorType& x,
+ItemError::
+ItemError (const ItemError& x,
            ::xml_schema::flags f,
            ::xml_schema::container* c)
 : ::xml_schema::type (x, f, c),
@@ -3132,8 +3132,8 @@ ErrorType (const ErrorType& x,
 {
 }
 
-ErrorType::
-ErrorType (const ::xercesc::DOMElement& e,
+ItemError::
+ItemError (const ::xercesc::DOMElement& e,
            ::xml_schema::flags f,
            ::xml_schema::container* c)
 : ::xml_schema::type (e, f | ::xml_schema::flags::base, c),
@@ -3149,7 +3149,7 @@ ErrorType (const ::xercesc::DOMElement& e,
   }
 }
 
-void ErrorType::
+void ItemError::
 parse (::xsd::cxx::xml::dom::parser< char >& p,
        ::xml_schema::flags f)
 {
@@ -3247,30 +3247,30 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
   }
 }
 
-ErrorType* ErrorType::
+ItemError* ItemError::
 _clone (::xml_schema::flags f,
         ::xml_schema::container* c) const
 {
-  return new class ErrorType (*this, f, c);
+  return new class ItemError (*this, f, c);
 }
 
-ErrorType::
-~ErrorType ()
+ItemError::
+~ItemError ()
 {
 }
 
-// ErrorsType
+// GrupoError
 //
 
-ErrorsType::
-ErrorsType ()
+GrupoError::
+GrupoError ()
 : ::xml_schema::type (),
   Error_ (::xml_schema::flags (), this)
 {
 }
 
-ErrorsType::
-ErrorsType (const ErrorsType& x,
+GrupoError::
+GrupoError (const GrupoError& x,
             ::xml_schema::flags f,
             ::xml_schema::container* c)
 : ::xml_schema::type (x, f, c),
@@ -3278,8 +3278,8 @@ ErrorsType (const ErrorsType& x,
 {
 }
 
-ErrorsType::
-ErrorsType (const ::xercesc::DOMElement& e,
+GrupoError::
+GrupoError (const ::xercesc::DOMElement& e,
             ::xml_schema::flags f,
             ::xml_schema::container* c)
 : ::xml_schema::type (e, f | ::xml_schema::flags::base, c),
@@ -3292,7 +3292,7 @@ ErrorsType (const ::xercesc::DOMElement& e,
   }
 }
 
-void ErrorsType::
+void GrupoError::
 parse (::xsd::cxx::xml::dom::parser< char >& p,
        ::xml_schema::flags f)
 {
@@ -3317,15 +3317,15 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
   }
 }
 
-ErrorsType* ErrorsType::
+GrupoError* GrupoError::
 _clone (::xml_schema::flags f,
         ::xml_schema::container* c) const
 {
-  return new class ErrorsType (*this, f, c);
+  return new class GrupoError (*this, f, c);
 }
 
-ErrorsType::
-~ErrorsType ()
+GrupoError::
+~GrupoError ()
 {
 }
 
@@ -3666,7 +3666,7 @@ operator<< (::std::ostream& o, const GrupoAtendimentoTatico& i)
 }
 
 ::std::ostream&
-operator<< (::std::ostream& o, const WarningType& i)
+operator<< (::std::ostream& o, const ItemWarning& i)
 {
   o << ::std::endl << "Code: " << i.Code ();
   o << ::std::endl << "Message: " << i.Message ();
@@ -3676,9 +3676,9 @@ operator<< (::std::ostream& o, const WarningType& i)
 }
 
 ::std::ostream&
-operator<< (::std::ostream& o, const WarningsType& i)
+operator<< (::std::ostream& o, const GrupoWarning& i)
 {
-  for (WarningsType::Warning_const_iterator
+  for (GrupoWarning::Warning_const_iterator
        b (i.Warning ().begin ()), e (i.Warning ().end ());
        b != e; ++b)
   {
@@ -3689,7 +3689,7 @@ operator<< (::std::ostream& o, const WarningsType& i)
 }
 
 ::std::ostream&
-operator<< (::std::ostream& o, const ErrorType& i)
+operator<< (::std::ostream& o, const ItemError& i)
 {
   o << ::std::endl << "Code: " << i.Code ();
   o << ::std::endl << "Message: " << i.Message ();
@@ -3699,9 +3699,9 @@ operator<< (::std::ostream& o, const ErrorType& i)
 }
 
 ::std::ostream&
-operator<< (::std::ostream& o, const ErrorsType& i)
+operator<< (::std::ostream& o, const GrupoError& i)
 {
-  for (ErrorsType::Error_const_iterator
+  for (GrupoError::Error_const_iterator
        b (i.Error ().begin ()), e (i.Error ().end ());
        b != e; ++b)
   {
@@ -4670,7 +4670,7 @@ operator<< (::xercesc::DOMElement& e, const GrupoAtendimentoTatico& i)
 }
 
 void
-operator<< (::xercesc::DOMElement& e, const WarningType& i)
+operator<< (::xercesc::DOMElement& e, const ItemWarning& i)
 {
   e << static_cast< const ::xml_schema::type& > (i);
 
@@ -4720,13 +4720,13 @@ operator<< (::xercesc::DOMElement& e, const WarningType& i)
 }
 
 void
-operator<< (::xercesc::DOMElement& e, const WarningsType& i)
+operator<< (::xercesc::DOMElement& e, const GrupoWarning& i)
 {
   e << static_cast< const ::xml_schema::type& > (i);
 
   // Warning
   //
-  for (WarningsType::Warning_const_iterator
+  for (GrupoWarning::Warning_const_iterator
        b (i.Warning ().begin ()), n (i.Warning ().end ());
        b != n; ++b)
   {
@@ -4740,7 +4740,7 @@ operator<< (::xercesc::DOMElement& e, const WarningsType& i)
 }
 
 void
-operator<< (::xercesc::DOMElement& e, const ErrorType& i)
+operator<< (::xercesc::DOMElement& e, const ItemError& i)
 {
   e << static_cast< const ::xml_schema::type& > (i);
 
@@ -4790,13 +4790,13 @@ operator<< (::xercesc::DOMElement& e, const ErrorType& i)
 }
 
 void
-operator<< (::xercesc::DOMElement& e, const ErrorsType& i)
+operator<< (::xercesc::DOMElement& e, const GrupoError& i)
 {
   e << static_cast< const ::xml_schema::type& > (i);
 
   // Error
   //
-  for (ErrorsType::Error_const_iterator
+  for (GrupoError::Error_const_iterator
        b (i.Error ().begin ()), n (i.Error ().end ());
        b != n; ++b)
   {

@@ -66,8 +66,6 @@ problem_Data(&_problem_Data)
 
       solucao.add(is_campus);
    }
-
-   // Gerando os conjuntos de salas
 }
 
 InitialSolution::InitialSolution(InitialSolution const & init_sol) :
@@ -289,23 +287,11 @@ void InitialSolution::generate_Initial_Solution()
             {
                //(*it_vt_Demandas)->quantidade = 0;
                it_vt_Demandas->second = 0;
-               //num_Demandas_Atendidas++;
                num_Demandas_NAO_Atendidas++;
             }
          }
       }
    }
-
-   // Trocando os indices das salas pelas suas capacidades (que são os indices dos conjuntos de salas)
-   ITERA_GGROUP(it_IS_Campus,solucao,IS_Campus)
-   {
-      ITERA_GGROUP(it_IS_Unidades,it_IS_Campus->unidades,IS_Unidade)
-      {
-         ITERA_GGROUP(it_IS_Sala,it_IS_Unidades->salas,IS_Sala)
-         { it_IS_Sala->setId(it_IS_Sala->sala->capacidade); }
-      }
-   }
-
 }
 
 pair<int*,double*> InitialSolution::repSolIniParaVariaveis(VariableHash & v_Hash, int lp_Cols)
@@ -315,20 +301,165 @@ pair<int*,double*> InitialSolution::repSolIniParaVariaveis(VariableHash & v_Hash
 
    int cnt = 0;
 
-   VariableHash::iterator it_v_Hash = v_Hash.begin();
-
-   for(; it_v_Hash != v_Hash.end(); it_v_Hash++)
+   // p/ cada campus
+   ITERA_GGROUP(it_IS_Campus,solucao,IS_Campus)
    {
-      switch(it_v_Hash->first.getType())
+      // p/ cada unidade
+      ITERA_GGROUP(it_IS_Unidade,it_IS_Campus->unidades,IS_Unidade)
       {
-      case Variable::V_CREDITOS:
-         //cout << "CREDITOS !!!" << endl;
-         //getchar();
-         break;
-      default:
-         break;
+         // p/ cada sala
+         ITERA_GGROUP(it_IS_Sala,it_IS_Unidade->salas,IS_Sala)
+         {
+            map<int/*dia*/,pair<int/*credsLivres*/,
+               vector<
+               pair<Disciplina*,
+               pair<int/*Id Turma*/,int/*Demanda Atendida*/> > > > >::iterator
+
+               it_Dia = it_IS_Sala->atendimento_Tatico.begin();
+
+            // p/ cada dia do atendimento tatico em questao
+            for(; it_Dia != it_IS_Sala->atendimento_Tatico.end(); it_Dia++)
+            {
+               // Estrutura que armazena as informações das vars, para um dado dia.
+               //map<Variable,int/*Num creds alocados no dia p a turma da disc*/> vars_Dia;
+
+               map<vector<int/*indices de uma var do tipo CREDITOS*/>,
+                  pair<Variable,int/*valor var*/> > vars_Dia;
+
+               // p/ cada credito do dia 
+               for(unsigned cred = 0; cred < it_Dia->second.second.size(); cred++)
+               {
+                  // SOMENTE se o cred tiver sido alocado
+                  if(it_Dia->second.second.at(cred).first) // != NULL
+                  {
+                     // ===
+                     //map<vector<int/*indices de uma var do tipo CREDITOS*/>,
+                     //   pair<Variable,int/*valor var*/> > v;
+
+                     Variable var;
+
+                     vector<int> chave(5);
+
+                     var.reset();
+                     var.setType(Variable::V_CREDITOS);
+
+                     var.setTurma( it_Dia->second.second.at(cred).second.first );
+                     chave.at(0) = it_Dia->second.second.at(cred).second.first;
+
+                     var.setDisciplina( it_Dia->second.second.at(cred).first );
+                     chave.at(1) = it_Dia->second.second.at(cred).first->getId();
+
+                     var.setUnidade( it_IS_Unidade->unidade );
+                     chave.at(2) = it_IS_Unidade->unidade->getId();
+
+                     // ---
+
+                     // Procurando o Conjunto de Salas correto.
+
+                     int id = 
+                        (it_IS_Sala->sala->tipo_sala->getId() == 1 ? 
+                        it_IS_Sala->sala->capacidade : -it_IS_Sala->sala->capacidade);
+
+                     ConjuntoSala * cjt_Sala = NULL;
+
+                     bool found_CJT_Sala = false;
+
+                     ITERA_GGROUP(it_Cjt_Sala,it_IS_Unidade->unidade->conjutoSalas,ConjuntoSala)
+                     {
+                        if(it_Cjt_Sala->getId() == id)
+                        {
+                           cjt_Sala = *it_Cjt_Sala;
+
+                           found_CJT_Sala = true;
+
+                           break;
+                        }
+                     }
+
+                     if(!found_CJT_Sala)
+                     { cout << "CJT SALA NAO ENCONTRADO" << endl; exit(1); }
+
+                     chave.at(3) = id;
+
+                     // ---
+
+                     var.setSubCjtSala( cjt_Sala );
+
+                     var.setDia( it_Dia->first );
+                     chave.at(4) = it_Dia->first;
+
+                     // ===
+
+                     if(vars_Dia.find(chave) == vars_Dia.end())
+                     { vars_Dia[chave] = make_pair(var,1); }
+                     else
+                     { vars_Dia[chave].second += 1; }
+                  }
+               }
+
+               //map<Variable,int/*Num creds alocados no dia p/ a turma da disc*/>::iterator
+               //   it_Vars_Dia = vars_Dia.begin();
+
+               map<vector<int/*indices de uma var do tipo CREDITOS*/>,
+                  pair<Variable,int/*valor var*/> >::iterator 
+                  it_Vars_Dia = vars_Dia.begin();
+
+               for(; it_Vars_Dia != vars_Dia.end(); it_Vars_Dia++)
+               {
+                  //VariableHash::iterator it_v_Hash = v_Hash.find(it_Vars_Dia->first);
+                  VariableHash::iterator it_v_Hash = v_Hash.find(it_Vars_Dia->second.first);
+
+                  if(it_v_Hash != v_Hash.end())
+                  {
+                     //cout << "Found" << endl;
+                     indices[cnt] = it_v_Hash->second;
+                     //valores[cnt] = it_Vars_Dia->second;
+                     valores[cnt] = it_Vars_Dia->second.second;
+                     cnt++;
+                  }
+                  else
+                  {
+                     cout << "Not Found" << endl;
+                     exit(1);
+                  }
+               }
+            }
+         }
       }
    }
 
+   cout << "Convertido" << endl;
+
+
+cout << "CONVERTI AS VARS DO TIPO X, FALTA INDICAR COM O VALOR 0 TODAS AS VARIAVEIS X QUE NAO FORAM UTILIZADAS " <<
+"NA HEURISTICA. FALTA TB, CONVERTER AS OUTRAS VARIAVEIS (O,A,B)" << endl;
+
+   exit(1);
+
    return make_pair(indices,valores);
 }
+
+//pair<int*,double*> InitialSolution::repSolIniParaVariaveis(VariableHash & v_Hash, int lp_Cols)
+//{
+//   int * indices = new int (lp_Cols);
+//   double * valores = new double (lp_Cols);
+//
+//   int cnt = 0;
+//
+//   VariableHash::iterator it_v_Hash = v_Hash.begin();
+//
+//   for(; it_v_Hash != v_Hash.end(); it_v_Hash++)
+//   {
+//      switch(it_v_Hash->first.getType())
+//      {
+//      case Variable::V_CREDITOS:
+//         cout << "CREDITOS !!!" << endl;
+//         //getchar();
+//         break;
+//      default:
+//         break;
+//      }
+//   }
+//
+//   return make_pair(indices,valores);
+//}

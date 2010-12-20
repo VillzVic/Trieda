@@ -11,6 +11,7 @@ IS_Sala::IS_Sala(Sala * _sala)
 
 IS_Sala::IS_Sala(IS_Sala const & is_sala)
 {
+   this->setId(is_sala.getId());
    sala = is_sala.sala;
 }
 

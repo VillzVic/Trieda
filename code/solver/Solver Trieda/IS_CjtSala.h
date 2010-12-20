@@ -1,6 +1,6 @@
 #pragma once
 
-class IS_CjtSala
+class IS_CjtSala //: public OFBase
 {
 public:
    IS_CjtSala(void);

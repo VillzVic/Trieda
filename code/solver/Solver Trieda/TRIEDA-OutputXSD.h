@@ -626,10 +626,10 @@ class GrupoAtendimentoTurno;
 class GrupoAtendimentoHorarioAula;
 class GrupoAtendimentoOferta;
 class GrupoAtendimentoTatico;
-class WarningType;
-class WarningsType;
-class ErrorType;
-class ErrorsType;
+class ItemWarning;
+class GrupoWarning;
+class ItemError;
+class GrupoError;
 class TriedaOutput;
 
 #include <memory>    // std::auto_ptr
@@ -4213,11 +4213,11 @@ class GrupoAtendimentoTatico: public ::xml_schema::type
 };
 
 /**
- * @brief Class corresponding to the %WarningType schema type.
+ * @brief Class corresponding to the %ItemWarning schema type.
  *
  * @nosubgrouping
  */
-class WarningType: public ::xml_schema::type
+class ItemWarning: public ::xml_schema::type
 {
   public:
   /**
@@ -4461,7 +4461,7 @@ class WarningType: public ::xml_schema::type
    * @brief Create an instance from the ultimate base and
    * initializers for required elements and attributes.
    */
-  WarningType (const Code_type&,
+  ItemWarning (const Code_type&,
                const Message_type&,
                const Detail_type&,
                const Location_type&);
@@ -4474,7 +4474,7 @@ class WarningType: public ::xml_schema::type
    * @param c A pointer to the object that will contain the new
    * instance.
    */
-  WarningType (const ::xercesc::DOMElement& e,
+  ItemWarning (const ::xercesc::DOMElement& e,
                ::xml_schema::flags f = 0,
                ::xml_schema::container* c = 0);
 
@@ -4487,7 +4487,7 @@ class WarningType: public ::xml_schema::type
    *
    * For polymorphic object models use the @c _clone function instead.
    */
-  WarningType (const WarningType& x,
+  ItemWarning (const ItemWarning& x,
                ::xml_schema::flags f = 0,
                ::xml_schema::container* c = 0);
 
@@ -4502,7 +4502,7 @@ class WarningType: public ::xml_schema::type
    * used for copying and should be used for polymorphic object
    * models instead of the copy constructor.
    */
-  virtual WarningType*
+  virtual ItemWarning*
   _clone (::xml_schema::flags f = 0,
           ::xml_schema::container* c = 0) const;
 
@@ -4512,7 +4512,7 @@ class WarningType: public ::xml_schema::type
    * @brief Destructor.
    */
   virtual 
-  ~WarningType ();
+  ~ItemWarning ();
 
   // Implementation.
   //
@@ -4534,11 +4534,11 @@ class WarningType: public ::xml_schema::type
 };
 
 /**
- * @brief Class corresponding to the %WarningsType schema type.
+ * @brief Class corresponding to the %GrupoWarning schema type.
  *
  * @nosubgrouping
  */
-class WarningsType: public ::xml_schema::type
+class GrupoWarning: public ::xml_schema::type
 {
   public:
   /**
@@ -4552,7 +4552,7 @@ class WarningsType: public ::xml_schema::type
   /**
    * @brief Element type.
    */
-  typedef ::WarningType Warning_type;
+  typedef ::ItemWarning Warning_type;
 
   /**
    * @brief Element sequence container type.
@@ -4614,7 +4614,7 @@ class WarningsType: public ::xml_schema::type
    * @brief Create an instance from the ultimate base and
    * initializers for required elements and attributes.
    */
-  WarningsType ();
+  GrupoWarning ();
 
   /**
    * @brief Create an instance from a DOM element.
@@ -4624,7 +4624,7 @@ class WarningsType: public ::xml_schema::type
    * @param c A pointer to the object that will contain the new
    * instance.
    */
-  WarningsType (const ::xercesc::DOMElement& e,
+  GrupoWarning (const ::xercesc::DOMElement& e,
                 ::xml_schema::flags f = 0,
                 ::xml_schema::container* c = 0);
 
@@ -4637,7 +4637,7 @@ class WarningsType: public ::xml_schema::type
    *
    * For polymorphic object models use the @c _clone function instead.
    */
-  WarningsType (const WarningsType& x,
+  GrupoWarning (const GrupoWarning& x,
                 ::xml_schema::flags f = 0,
                 ::xml_schema::container* c = 0);
 
@@ -4652,7 +4652,7 @@ class WarningsType: public ::xml_schema::type
    * used for copying and should be used for polymorphic object
    * models instead of the copy constructor.
    */
-  virtual WarningsType*
+  virtual GrupoWarning*
   _clone (::xml_schema::flags f = 0,
           ::xml_schema::container* c = 0) const;
 
@@ -4662,7 +4662,7 @@ class WarningsType: public ::xml_schema::type
    * @brief Destructor.
    */
   virtual 
-  ~WarningsType ();
+  ~GrupoWarning ();
 
   // Implementation.
   //
@@ -4681,11 +4681,11 @@ class WarningsType: public ::xml_schema::type
 };
 
 /**
- * @brief Class corresponding to the %ErrorType schema type.
+ * @brief Class corresponding to the %ItemError schema type.
  *
  * @nosubgrouping
  */
-class ErrorType: public ::xml_schema::type
+class ItemError: public ::xml_schema::type
 {
   public:
   /**
@@ -4929,7 +4929,7 @@ class ErrorType: public ::xml_schema::type
    * @brief Create an instance from the ultimate base and
    * initializers for required elements and attributes.
    */
-  ErrorType (const Code_type&,
+  ItemError (const Code_type&,
              const Message_type&,
              const Detail_type&,
              const Location_type&);
@@ -4942,7 +4942,7 @@ class ErrorType: public ::xml_schema::type
    * @param c A pointer to the object that will contain the new
    * instance.
    */
-  ErrorType (const ::xercesc::DOMElement& e,
+  ItemError (const ::xercesc::DOMElement& e,
              ::xml_schema::flags f = 0,
              ::xml_schema::container* c = 0);
 
@@ -4955,7 +4955,7 @@ class ErrorType: public ::xml_schema::type
    *
    * For polymorphic object models use the @c _clone function instead.
    */
-  ErrorType (const ErrorType& x,
+  ItemError (const ItemError& x,
              ::xml_schema::flags f = 0,
              ::xml_schema::container* c = 0);
 
@@ -4970,7 +4970,7 @@ class ErrorType: public ::xml_schema::type
    * used for copying and should be used for polymorphic object
    * models instead of the copy constructor.
    */
-  virtual ErrorType*
+  virtual ItemError*
   _clone (::xml_schema::flags f = 0,
           ::xml_schema::container* c = 0) const;
 
@@ -4980,7 +4980,7 @@ class ErrorType: public ::xml_schema::type
    * @brief Destructor.
    */
   virtual 
-  ~ErrorType ();
+  ~ItemError ();
 
   // Implementation.
   //
@@ -5002,11 +5002,11 @@ class ErrorType: public ::xml_schema::type
 };
 
 /**
- * @brief Class corresponding to the %ErrorsType schema type.
+ * @brief Class corresponding to the %GrupoError schema type.
  *
  * @nosubgrouping
  */
-class ErrorsType: public ::xml_schema::type
+class GrupoError: public ::xml_schema::type
 {
   public:
   /**
@@ -5020,7 +5020,7 @@ class ErrorsType: public ::xml_schema::type
   /**
    * @brief Element type.
    */
-  typedef ::ErrorType Error_type;
+  typedef ::ItemError Error_type;
 
   /**
    * @brief Element sequence container type.
@@ -5082,7 +5082,7 @@ class ErrorsType: public ::xml_schema::type
    * @brief Create an instance from the ultimate base and
    * initializers for required elements and attributes.
    */
-  ErrorsType ();
+  GrupoError ();
 
   /**
    * @brief Create an instance from a DOM element.
@@ -5092,7 +5092,7 @@ class ErrorsType: public ::xml_schema::type
    * @param c A pointer to the object that will contain the new
    * instance.
    */
-  ErrorsType (const ::xercesc::DOMElement& e,
+  GrupoError (const ::xercesc::DOMElement& e,
               ::xml_schema::flags f = 0,
               ::xml_schema::container* c = 0);
 
@@ -5105,7 +5105,7 @@ class ErrorsType: public ::xml_schema::type
    *
    * For polymorphic object models use the @c _clone function instead.
    */
-  ErrorsType (const ErrorsType& x,
+  GrupoError (const GrupoError& x,
               ::xml_schema::flags f = 0,
               ::xml_schema::container* c = 0);
 
@@ -5120,7 +5120,7 @@ class ErrorsType: public ::xml_schema::type
    * used for copying and should be used for polymorphic object
    * models instead of the copy constructor.
    */
-  virtual ErrorsType*
+  virtual GrupoError*
   _clone (::xml_schema::flags f = 0,
           ::xml_schema::container* c = 0) const;
 
@@ -5130,7 +5130,7 @@ class ErrorsType: public ::xml_schema::type
    * @brief Destructor.
    */
   virtual 
-  ~ErrorsType ();
+  ~GrupoError ();
 
   // Implementation.
   //
@@ -5228,7 +5228,7 @@ class TriedaOutput: public ::xml_schema::type
   /**
    * @brief Element type.
    */
-  typedef ::WarningsType Warnings_type;
+  typedef ::GrupoWarning Warnings_type;
 
   /**
    * @brief Element traits type.
@@ -5286,7 +5286,7 @@ class TriedaOutput: public ::xml_schema::type
   /**
    * @brief Element type.
    */
-  typedef ::ErrorsType Errors_type;
+  typedef ::GrupoError Errors_type;
 
   /**
    * @brief Element traits type.
@@ -5478,16 +5478,16 @@ operator<< (::std::ostream&, const GrupoAtendimentoOferta&);
 operator<< (::std::ostream&, const GrupoAtendimentoTatico&);
 
 ::std::ostream&
-operator<< (::std::ostream&, const WarningType&);
+operator<< (::std::ostream&, const ItemWarning&);
 
 ::std::ostream&
-operator<< (::std::ostream&, const WarningsType&);
+operator<< (::std::ostream&, const GrupoWarning&);
 
 ::std::ostream&
-operator<< (::std::ostream&, const ErrorType&);
+operator<< (::std::ostream&, const ItemError&);
 
 ::std::ostream&
-operator<< (::std::ostream&, const ErrorsType&);
+operator<< (::std::ostream&, const GrupoError&);
 
 ::std::ostream&
 operator<< (::std::ostream&, const TriedaOutput&);
@@ -5970,16 +5970,16 @@ void
 operator<< (::xercesc::DOMElement&, const GrupoAtendimentoTatico&);
 
 void
-operator<< (::xercesc::DOMElement&, const WarningType&);
+operator<< (::xercesc::DOMElement&, const ItemWarning&);
 
 void
-operator<< (::xercesc::DOMElement&, const WarningsType&);
+operator<< (::xercesc::DOMElement&, const GrupoWarning&);
 
 void
-operator<< (::xercesc::DOMElement&, const ErrorType&);
+operator<< (::xercesc::DOMElement&, const ItemError&);
 
 void
-operator<< (::xercesc::DOMElement&, const ErrorsType&);
+operator<< (::xercesc::DOMElement&, const GrupoError&);
 
 void
 operator<< (::xercesc::DOMElement&, const TriedaOutput&);

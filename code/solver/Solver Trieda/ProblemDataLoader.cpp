@@ -25,6 +25,8 @@ void ProblemDataLoader::load()
    std::cout << "Some preprocessing..." << std::endl;
    /* processamento */
 
+   carregaDiasLetivosCampus();
+
    carregaDiasLetivosDiscs();
    carregaDiasLetivosSala();
 
@@ -55,8 +57,9 @@ void ProblemDataLoader::load()
 
    cache();
 
-   estabeleceDiasLetivosDisciplinasSalas();
+   estabeleceDiasLetivosBlocoCampus();
 
+   estabeleceDiasLetivosDisciplinasSalas();
    estabeleceDiasLetivosDiscCjtSala();
 
    calculaCredsLivresSalas();
@@ -64,6 +67,20 @@ void ProblemDataLoader::load()
    print_stats();
    //print_csv();
 
+}
+
+void ProblemDataLoader::carregaDiasLetivosCampus()
+{
+   ITERA_GGROUP(it_Campus,problemData->campi,Campus)
+   {
+      ITERA_GGROUP(it_Horario,it_Campus->horarios,Horario)
+      {
+         ITERA_GGROUP_N_PT(it_Dias_Letivos,it_Horario->dias_semana,int)
+         {
+            it_Campus->diasLetivos.add(*it_Dias_Letivos);
+         }         
+      }
+   }
 }
 
 void ProblemDataLoader::carregaDiasLetivosDiscs()
@@ -121,7 +138,7 @@ void ProblemDataLoader::criaConjuntoSalas()
                      for(; itDiasLetivosSala != itSala->diasLetivos.end(); itDiasLetivosSala++)
                      { 
                         /* Adicionando os dias letivos ao campus em questão */
-                        itCampus->diasLetivos.add(*itDiasLetivosSala);
+                        //itCampus->diasLetivos.add(*itDiasLetivosSala);
                         /* Adicionando os dias letivos à unidade em questão */
                         itUnidade->diasLetivos.add(*itDiasLetivosSala);
                         /* Adicionando os dias letivos ao conjunto de salas */
@@ -154,7 +171,7 @@ void ProblemDataLoader::criaConjuntoSalas()
                for(; itDiasLetivosSala != itSala->diasLetivos.end(); itDiasLetivosSala++)
                { 
                   /* Adicionando os dias letivos ao campus em questão */
-                  itCampus->diasLetivos.add(*itDiasLetivosSala);
+                  //itCampus->diasLetivos.add(*itDiasLetivosSala);
                   /* Adicionando os dias letivos à unidade em questão */
                   itUnidade->diasLetivos.add(*itDiasLetivosSala);
                   /* Adicionando os dias letivos ao conjunto de salas */
@@ -179,6 +196,23 @@ void ProblemDataLoader::carregaDiasLetivosSala()
                if(itCredsDisp->max_creditos > 0)
                { itSala->diasLetivos.add(itCredsDisp->dia_semana); }
             }
+         }
+      }
+   }
+}
+
+void ProblemDataLoader::estabeleceDiasLetivosBlocoCampus()
+{
+   ITERA_GGROUP(it_Bloco_Curric,problemData->blocos,BlocoCurricular)
+   {
+      ITERA_GGROUP_N_PT(it_Dia_Letivo,it_Bloco_Curric->diasLetivos,int)
+      {
+         if(it_Bloco_Curric->campus->diasLetivos.find
+            (*it_Dia_Letivo) != it_Bloco_Curric->campus->diasLetivos.end())
+         {
+            problemData->bloco_Campus_Dias
+               [std::make_pair(it_Bloco_Curric->getId(),it_Bloco_Curric->campus->getId())].add
+               (*it_Dia_Letivo);
          }
       }
    }

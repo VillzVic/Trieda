@@ -73,14 +73,14 @@ int SolverMIP::solve()
 	lp->writeProbLP("Solver Trieda");
 #endif
 
-   //InitialSolution init_sol(*problemData);
-   //init_sol.generate_Initial_Solution();
+   InitialSolution init_sol(*problemData);
+   init_sol.generate_Initial_Solution();
 
-   //std::cout << "Total Demandas: " << problemData->demandas.size() << std::endl;
-   //std::cout << "Demandas NAO atendidas: " << init_sol.getNumDemandas_NAO_Atendidas() << std::endl;
-   //std::cout << "Demandas atendidas: " << init_sol.getNumDemandasAtendidas() << std::endl;
+   std::cout << "Total Demandas: " << problemData->demandas.size() << std::endl;
+   std::cout << "Demandas NAO atendidas: " << init_sol.getNumDemandas_NAO_Atendidas() << std::endl;
+   std::cout << "Demandas atendidas: " << init_sol.getNumDemandasAtendidas() << std::endl;
 
-   //init_sol.repSolIniParaVariaveis(vHash,lp->getNumCols());
+   init_sol.repSolIniParaVariaveis(vHash,lp->getNumCols());
 
    problemData;
    exit(1);
@@ -1348,34 +1348,34 @@ int SolverMIP::cria_variavel_num_subblocos(void)
 {
 	int num_vars = 0;
 
-	ITERA_GGROUP(it_bloco,problemData->blocos,BlocoCurricular)
-	{
-		GGroup<int>::iterator itDia = 
-			it_bloco->campus->diasLetivos.begin();
+   ITERA_GGROUP(it_bloco,problemData->blocos,BlocoCurricular)
+   {
+      Campus * campus = it_bloco->campus;
 
-		for(; itDia != it_bloco->campus->diasLetivos.end(); itDia++)
-		{
-			Variable v;
-			v.reset();
+      ITERA_GGROUP_N_PT(it_Dias_Letivos,problemData->bloco_Campus_Dias
+         [std::make_pair(it_bloco->getId(),campus->getId())],int)
+      {
+         Variable v;
+         v.reset();
+         v.setType(Variable::V_N_SUBBLOCOS);
 
-			v.setType(Variable::V_N_SUBBLOCOS);
-			v.setBloco(*it_bloco);
-			v.setDia(*itDia);
-			v.setCampus(it_bloco->campus);
+         v.setBloco(*it_bloco);
+         v.setDia(*it_Dias_Letivos);
+         v.setCampus(campus);
 
-			if (vHash.find(v) == vHash.end())
-			{
-				vHash[v] = lp->getNumCols();
+         if (vHash.find(v) == vHash.end())
+         {
+            vHash[v] = lp->getNumCols();
 
-				OPT_COL col(OPT_COL::VAR_INTEGRAL,rho,0.0,4.0,
-					(char*)v.toString().c_str());
+            OPT_COL col(OPT_COL::VAR_INTEGRAL,rho,0.0,4.0,
+               (char*)v.toString().c_str());
 
-				lp->newCol(col);
+            lp->newCol(col);
 
-				num_vars += 1;
-			}
-		}
-	}
+            num_vars += 1;
+         }
+      }
+   }
 
 	return num_vars;
 }
@@ -1387,7 +1387,6 @@ int SolverMIP::cria_variavel_num_abertura_turma_bloco(void)
 
 	ITERA_GGROUP(it_bloco,problemData->blocos,BlocoCurricular)
 	{
-		//for(int dia=0;dia<7;dia++)
 		GGroup<int>::iterator itDiasLetBloco =
 			it_bloco->diasLetivos.begin();
 
@@ -1395,11 +1394,10 @@ int SolverMIP::cria_variavel_num_abertura_turma_bloco(void)
 		{
 			Variable v;
 			v.reset();
-
 			v.setType(Variable::V_N_ABERT_TURMA_BLOCO);
+
 			v.setBloco(*it_bloco);
 			v.setDia(*itDiasLetBloco);
-			//v.setDia(dia);
 
 			if (vHash.find(v) == vHash.end())
 			{
@@ -1424,7 +1422,6 @@ int SolverMIP::cria_variavel_de_folga_dist_cred_dia_superior(void)
 	int num_vars = 0;
 
 	ITERA_GGROUP(it_disc,problemData->disciplinas,Disciplina) {
-		//for(int dia=0;dia<7;dia++)
 		GGroup<int>::iterator itDiasLetDisc =
 			it_disc->diasLetivos.begin();
 
@@ -1432,10 +1429,9 @@ int SolverMIP::cria_variavel_de_folga_dist_cred_dia_superior(void)
 		{
 			Variable v;
 			v.reset();
-
 			v.setType(Variable::V_SLACK_DIST_CRED_DIA_SUPERIOR);
+
 			v.setDisciplina(*it_disc);
-			//v.setDia(dia);
 			v.setDia(*itDiasLetDisc);
 
 			int idDisc = it_disc->getId();
@@ -1448,7 +1444,6 @@ int SolverMIP::cria_variavel_de_folga_dist_cred_dia_superior(void)
 
 				if(it_disc->divisao_creditos)
 				{ cred_disc_dia = it_disc->divisao_creditos->dia[*itDiasLetDisc]; }
-				//{ cred_disc_dia = it_disc->divisao_creditos->dia[dia]; }
 
 				if(cred_disc_dia <= 0)
 				{ cred_disc_dia = it_disc->max_creds; }
@@ -1471,7 +1466,6 @@ int SolverMIP::cria_variavel_de_folga_dist_cred_dia_inferior(void)
 	int num_vars = 0;
 
 	ITERA_GGROUP(it_disc,problemData->disciplinas,Disciplina) {
-		//for(int dia=0;dia<7;dia++)
 		GGroup<int>::iterator itDiasLetDisc =
 			it_disc->diasLetivos.begin();
 
@@ -1479,11 +1473,10 @@ int SolverMIP::cria_variavel_de_folga_dist_cred_dia_inferior(void)
 		{
 			Variable v;
 			v.reset();
-
 			v.setType(Variable::V_SLACK_DIST_CRED_DIA_INFERIOR);
+
 			v.setDisciplina(*it_disc);
 			v.setDia(*itDiasLetDisc);
-			//v.setDia(dia);
 
 			if (vHash.find(v) == vHash.end())
 			{
@@ -1493,7 +1486,6 @@ int SolverMIP::cria_variavel_de_folga_dist_cred_dia_inferior(void)
 
 				if( it_disc->divisao_creditos)
 				{ cred_disc_dia = it_disc->divisao_creditos->dia[*itDiasLetDisc]; }
-				//{ cred_disc_dia = it_disc->divisao_creditos->dia[dia]; }
 
 				if(cred_disc_dia <= 0)
 				{ cred_disc_dia = it_disc->max_creds; }
@@ -1517,7 +1509,6 @@ int SolverMIP::cria_variavel_abertura_subbloco_de_blc_dia_campus()
 
 	ITERA_GGROUP(it_bloco,problemData->blocos,BlocoCurricular)
 	{
-		//for(int dia = 0; dia < 7; dia++)
 		GGroup<int>::iterator itDia =
 			it_bloco->campus->diasLetivos.begin();
 
@@ -1525,11 +1516,10 @@ int SolverMIP::cria_variavel_abertura_subbloco_de_blc_dia_campus()
 		{
 			Variable v;
 			v.reset();
-
 			v.setType(Variable::V_ABERTURA_SUBBLOCO_DE_BLC_DIA_CAMPUS);
+
 			v.setBloco(*it_bloco);
 			v.setDia(*itDia);
-			//v.setDia(dia);
 			v.setCampus(it_bloco->campus);
 
 			if (vHash.find(v) == vHash.end())

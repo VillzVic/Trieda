@@ -151,6 +151,9 @@ public:
    /* Listando os dias letivos de uma disciplina em relação a um conjunto de salas de mesmo tipo. */
    std::map<std::pair<int/*idDisc*/,int/*idSubCjtSala*/>, GGroup<int>/*Dias*/ > disc_Conjutno_Salas__Dias;
 
+   /* Listando os dias letivos de um bloco curricular em relação a um campus. */
+   std::map<std::pair<int/*idBloco*/,int/*idCampus*/>, GGroup<int>/*Dias*/ > bloco_Campus_Dias;
+
    // <<<
 
 public:
