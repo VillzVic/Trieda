@@ -43,7 +43,7 @@ public class GruposSalasServiceImpl extends RemoteServiceServlet implements Grup
 	
 	@Override
 	public void save(GrupoSalaDTO grupoSalaDTO) {
-		GrupoSala grupoSala = ConvertBeans.toGrupoSala(grupoSalaDTO);
+		GrupoSala grupoSala = GrupoSala.find(grupoSalaDTO.getId());
 		if(grupoSala.getId() != null && grupoSala.getId() > 0) {
 			grupoSala.merge();
 		} else {
