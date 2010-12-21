@@ -12,7 +12,6 @@ import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.SimpleComboBox;
 import com.gapso.web.trieda.client.mvp.model.CenarioDTO;
 import com.gapso.web.trieda.client.mvp.model.CurriculoDTO;
-import com.gapso.web.trieda.client.mvp.model.CursoDTO;
 import com.gapso.web.trieda.client.services.CurriculosServiceAsync;
 import com.gapso.web.trieda.client.services.Services;
 import com.gapso.web.trieda.client.util.view.CurriculoComboBox;
@@ -50,14 +49,6 @@ public class RelatorioVisaoCursoPresenter implements Presenter {
 				display.getGrid().setPeriodo(display.getPeriodoComboBox().getValue().getValue());
 				display.getGrid().setTurnoDTO(display.getTurnoComboBox().getValue());
 				display.getGrid().requestAtendimentos();
-			}
-		});
-		display.getCursoComboBox().addSelectionChangedListener(new SelectionChangedListener<CursoDTO>(){
-			@Override
-			public void selectionChanged(SelectionChangedEvent<CursoDTO> se) {
-				final CursoDTO cursoDTO = se.getSelectedItem();
-				display.getCurriculoComboBox().setEnabled(cursoDTO != null);
-				display.getCurriculoComboBox().setCursoDTO(cursoDTO);
 			}
 		});
 		display.getCurriculoComboBox().addSelectionChangedListener(new SelectionChangedListener<CurriculoDTO>(){

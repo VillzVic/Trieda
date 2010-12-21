@@ -36,6 +36,17 @@ public class CursosServiceImpl extends RemoteServiceServlet implements CursosSer
 	}
 	
 	@Override
+	public ListLoadResult<CursoDTO> getListAll() {
+		List<CursoDTO> list = new ArrayList<CursoDTO>();
+		List<Curso> cursos = Curso.findAll();
+		for(Curso curso : cursos) {
+			CursoDTO cursoDTO = ConvertBeans.toCursoDTO(curso);
+			list.add(cursoDTO);
+		}
+		return new BasePagingLoadResult<CursoDTO>(list);
+	}
+	
+	@Override
 	public ListLoadResult<CursoDTO> getList(BasePagingLoadConfig loadConfig) {
 		return getBuscaList(null, loadConfig.get("query").toString(), null, loadConfig);
 	}

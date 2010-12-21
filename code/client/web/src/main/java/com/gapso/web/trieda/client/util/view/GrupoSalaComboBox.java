@@ -2,50 +2,58 @@ package com.gapso.web.trieda.client.util.view;
 
 import com.extjs.gxt.ui.client.data.BaseListLoadResult;
 import com.extjs.gxt.ui.client.data.BaseListLoader;
-import com.extjs.gxt.ui.client.data.BasePagingLoadConfig;
 import com.extjs.gxt.ui.client.data.ListLoadResult;
-import com.extjs.gxt.ui.client.data.ListLoader;
-import com.extjs.gxt.ui.client.data.LoadEvent;
-import com.extjs.gxt.ui.client.data.Loader;
-import com.extjs.gxt.ui.client.data.ModelData;
 import com.extjs.gxt.ui.client.data.RpcProxy;
-import com.extjs.gxt.ui.client.event.Listener;
+import com.extjs.gxt.ui.client.event.SelectionChangedEvent;
+import com.extjs.gxt.ui.client.event.SelectionChangedListener;
 import com.extjs.gxt.ui.client.store.ListStore;
 import com.extjs.gxt.ui.client.widget.form.ComboBox;
 import com.gapso.web.trieda.client.mvp.model.GrupoSalaDTO;
-import com.gapso.web.trieda.client.services.GruposSalasServiceAsync;
+import com.gapso.web.trieda.client.mvp.model.UnidadeDTO;
 import com.gapso.web.trieda.client.services.Services;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class GrupoSalaComboBox extends ComboBox<GrupoSalaDTO> {
 
-	private ListStore<GrupoSalaDTO> store;
+	private UnidadeComboBox unidadeComboBox;
 	
-	public GrupoSalaComboBox() {
-		final GruposSalasServiceAsync service = Services.gruposSalas();
+	public GrupoSalaComboBox(UnidadeComboBox unidadeCB) {
+		this.unidadeComboBox = unidadeCB;
+		addListeners();
+		
 		RpcProxy<ListLoadResult<GrupoSalaDTO>> proxy = new RpcProxy<ListLoadResult<GrupoSalaDTO>>() {
 			@Override
 			public void load(Object loadConfig, AsyncCallback<ListLoadResult<GrupoSalaDTO>> callback) {
-				service.getList((BasePagingLoadConfig)loadConfig, callback);
+				Services.gruposSalas().getListByUnidade(unidadeComboBox.getValue(), callback);
 			}
 		};
-		ListLoader<BaseListLoadResult<GrupoSalaDTO>> load = new BaseListLoader<BaseListLoadResult<GrupoSalaDTO>>(proxy);
-		load.addListener(Loader.BeforeLoad, new Listener<LoadEvent>() {
-			public void handleEvent(LoadEvent be) {
-				
-				be.<ModelData> getConfig().set("offset", 0);
-				be.<ModelData> getConfig().set("limit", 10);
-			}
-		});
-		store = new ListStore<GrupoSalaDTO>(load);
+		
+		setStore(new ListStore<GrupoSalaDTO>(new BaseListLoader<BaseListLoadResult<GrupoSalaDTO>>(proxy)));
+		
 		setDisplayField("nome");
-		setStore(store);
-		setHideTrigger(true);  
-		setTriggerAction(TriggerAction.QUERY);
+		setFieldLabel("Grupo de Sala");
+		setEmptyText("Selecione o grupo de sala");
 		setTemplate(getTemplateCB());
-		setMinChars(1);
+		setEditable(false);
+		setEnabled(false);
+		setTriggerAction(TriggerAction.ALL);
 	}
 
+	private void addListeners() {
+		unidadeComboBox.addSelectionChangedListener(new SelectionChangedListener<UnidadeDTO>(){
+			@Override
+			public void selectionChanged(SelectionChangedEvent<UnidadeDTO> se) {
+				final UnidadeDTO unidadeDTO = se.getSelectedItem();
+				getStore().removeAll();
+				setValue(null);
+				setEnabled(unidadeDTO != null);
+				if(unidadeDTO != null) {
+					getStore().getLoader().load();
+				}
+			}
+		});
+	}
+	
 	private native String getTemplateCB() /*-{
 		return [
 			'<tpl for=".">',

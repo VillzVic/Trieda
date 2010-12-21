@@ -25,17 +25,9 @@ public class CampusComboBox extends ComboBox<CampusDTO> {
 		setDisplayField("codigo");
 		setFieldLabel("Campus");
 		setEmptyText("Selecione o campus");
-		setTemplate(getTemplateCB());
+		setSimpleTemplate("{nome} ({codigo})");
 		setEditable(false);
 		setTriggerAction(TriggerAction.ALL);
 	}
-
-	private native String getTemplateCB() /*-{
-		return  [
-			'<tpl for=".">',
-			'<div class="x-combo-list-item">{nome} ({codigo})</div>',
-			'</tpl>'
-		].join("");
-	}-*/;
 	
 }

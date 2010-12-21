@@ -65,7 +65,7 @@ public class DisciplinasAssociarSalaView extends MyComposite implements Discipli
 	private SalaComboBox salaCB;
 	
 	private UnidadeComboBox unidadeGrupoSalaCB;
-	private GrupoSalaComboBox grupoSalaCB = new GrupoSalaComboBox();
+	private GrupoSalaComboBox grupoSalaCB;
 	
 	private TreeStore<FileModel> storeDisciplina;
 	private TreeStore<FileModel> storeSala;
@@ -105,20 +105,11 @@ public class DisciplinasAssociarSalaView extends MyComposite implements Discipli
 		formPanel.setHeaderVisible(false);
 		formPanel.setAutoHeight(true);
 		
-		campusCB = new CampusComboBox() {
-			@Override
-			protected void onBlur(ComponentEvent ce) {
-				super.onBlur(ce);
-				if(campusCB.getValue() == null) {
-					turnoCB.setValue(null);
-					turnoCB.disable();
-				}
-			}
-		};
+		campusCB = new CampusComboBox();
 		campusCB.setFieldLabel("Campus");
 		formPanel.add(campusCB, formData);
 		
-		turnoCB = new TurnoComboBox() {
+		turnoCB = new TurnoComboBox(campusCB) {
 			@Override
 			protected void onBlur(ComponentEvent ce) {
 				super.onBlur(ce);
@@ -186,6 +177,8 @@ public class DisciplinasAssociarSalaView extends MyComposite implements Discipli
 		unidadeGrupoSalaCB = new UnidadeComboBox(campusCB);
 		unidadeGrupoSalaCB.setFieldLabel("Unidade");
 		grupoSalaTabItem.add(unidadeGrupoSalaCB, formData);
+		
+		grupoSalaCB = new GrupoSalaComboBox(unidadeGrupoSalaCB);
 		grupoSalaCB.setFieldLabel("Grupo de Sala");
 		grupoSalaTabItem.add(grupoSalaCB, formData);
 		

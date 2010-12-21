@@ -15,7 +15,6 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class UnidadeComboBox extends ComboBox<UnidadeDTO> {
 
-	private ListStore<UnidadeDTO> store;
 	private CampusComboBox campusComboBox;
 	
 	public UnidadeComboBox(CampusComboBox campusCB) {

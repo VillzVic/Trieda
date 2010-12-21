@@ -2,67 +2,66 @@ package com.gapso.web.trieda.client.util.view;
 
 import com.extjs.gxt.ui.client.data.BaseListLoadResult;
 import com.extjs.gxt.ui.client.data.BaseListLoader;
-import com.extjs.gxt.ui.client.data.BasePagingLoadConfig;
 import com.extjs.gxt.ui.client.data.ListLoadResult;
-import com.extjs.gxt.ui.client.data.ListLoader;
-import com.extjs.gxt.ui.client.data.LoadEvent;
-import com.extjs.gxt.ui.client.data.Loader;
-import com.extjs.gxt.ui.client.data.ModelData;
 import com.extjs.gxt.ui.client.data.RpcProxy;
-import com.extjs.gxt.ui.client.event.Listener;
+import com.extjs.gxt.ui.client.event.SelectionChangedEvent;
+import com.extjs.gxt.ui.client.event.SelectionChangedListener;
 import com.extjs.gxt.ui.client.store.ListStore;
 import com.extjs.gxt.ui.client.widget.form.ComboBox;
 import com.gapso.web.trieda.client.mvp.model.CurriculoDTO;
 import com.gapso.web.trieda.client.mvp.model.CursoDTO;
-import com.gapso.web.trieda.client.services.CurriculosServiceAsync;
 import com.gapso.web.trieda.client.services.Services;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class CurriculoComboBox extends ComboBox<CurriculoDTO> {
 
-	private ListStore<CurriculoDTO> store;
-	private CursoDTO cursoDTO;
+	private CursoComboBox cursoComboBox;
 	
 	public CurriculoComboBox() {
-		final CurriculosServiceAsync service = Services.curriculos();
+		this(null);
+	}
+	public CurriculoComboBox(CursoComboBox cursoCB) {
+		this.cursoComboBox = cursoCB;
+		
 		RpcProxy<ListLoadResult<CurriculoDTO>> proxy = new RpcProxy<ListLoadResult<CurriculoDTO>>() {
 			@Override
 			public void load(Object loadConfig, AsyncCallback<ListLoadResult<CurriculoDTO>> callback) {
-				BasePagingLoadConfig bplc = (BasePagingLoadConfig)loadConfig;
-				bplc.set("cursoDTO", getCursoDTO());
-				service.getList((BasePagingLoadConfig)loadConfig, callback);
+				if(cursoComboBox != null) {
+					Services.curriculos().getListByCurso(cursoComboBox.getValue(), callback);
+				} else {
+					Services.curriculos().getListAll(callback);
+				}
 			}
 		};
-		ListLoader<BaseListLoadResult<CurriculoDTO>> load = new BaseListLoader<BaseListLoadResult<CurriculoDTO>>(proxy);
-		load.addListener(Loader.BeforeLoad, new Listener<LoadEvent>() {
-			public void handleEvent(LoadEvent be) {
-				be.<ModelData> getConfig().set("offset", 0);
-				be.<ModelData> getConfig().set("limit", 10);
-			}
-		});
-		store = new ListStore<CurriculoDTO>(load);
-		setFieldLabel("Matriz Curricular");
+
+		setStore(new ListStore<CurriculoDTO>(new BaseListLoader<BaseListLoadResult<CurriculoDTO>>(proxy)));
+		
+		if(cursoComboBox != null) {
+			setEnabled(false);
+			addListeners();
+		}
+		
 		setDisplayField("codigo");
-		setStore(store);
-		setHideTrigger(true);  
-		setTriggerAction(TriggerAction.QUERY);
-		setTemplate(getTemplateCB());
-		setMinChars(1);
+		setFieldLabel("Matriz Curricular");
+		setEmptyText("Selecione a matriz curricular");
+		setSimpleTemplate("{codigo} ({cursoString})");
+		setEditable(false);
+		setTriggerAction(TriggerAction.ALL);
 	}
 
-	public CursoDTO getCursoDTO() {
-		return cursoDTO;
+	private void addListeners() {
+		cursoComboBox.addSelectionChangedListener(new SelectionChangedListener<CursoDTO>(){
+			@Override
+			public void selectionChanged(SelectionChangedEvent<CursoDTO> se) {
+				final CursoDTO cursoDTO = se.getSelectedItem();
+				getStore().removeAll();
+				setValue(null);
+				setEnabled(cursoDTO != null);
+				if(cursoDTO != null) {
+					getStore().getLoader().load();
+				}
+			}
+		});
 	}
-	public void setCursoDTO(CursoDTO cursoDTO) {
-		this.cursoDTO = cursoDTO;
-	}
-	
-	private native String getTemplateCB() /*-{
-		return  [
-			'<tpl for=".">',
-			'<div class="x-combo-list-item">{codigo} ({cursoString})</div>',
-			'</tpl>'
-		].join("");
-	}-*/;
 	
 }

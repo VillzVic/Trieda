@@ -1,84 +1,66 @@
 package com.gapso.web.trieda.client.util.view;
 
-import java.util.List;
-
+import com.extjs.gxt.ui.client.data.BaseListLoadResult;
+import com.extjs.gxt.ui.client.data.BaseListLoader;
 import com.extjs.gxt.ui.client.data.ListLoadResult;
+import com.extjs.gxt.ui.client.data.RpcProxy;
+import com.extjs.gxt.ui.client.event.SelectionChangedEvent;
+import com.extjs.gxt.ui.client.event.SelectionChangedListener;
 import com.extjs.gxt.ui.client.store.ListStore;
 import com.extjs.gxt.ui.client.widget.form.ComboBox;
 import com.gapso.web.trieda.client.mvp.model.CampusDTO;
 import com.gapso.web.trieda.client.mvp.model.TurnoDTO;
 import com.gapso.web.trieda.client.services.Services;
-import com.gapso.web.trieda.client.services.TurnosServiceAsync;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class TurnoComboBox extends ComboBox<TurnoDTO> {
 
-	final TurnosServiceAsync service;
-	private CampusDTO campusDTO;
+	private CampusComboBox campusComboBox;
 	
 	public TurnoComboBox() {
-		service = Services.turnos();
-		update();
-		setStore(new ListStore<TurnoDTO>());
+		this(null);
+	}
+	public TurnoComboBox(CampusComboBox campusCB) {
+		this.campusComboBox = campusCB;
 		
-		setFieldLabel("Turno");
-		setDisplayField("nome");
-		setTemplate(getTemplateCB());
-		setEditable(false);
-	}
-
-	private void update() {
-		if(getCampusDTO() == null) {
-			updateWithoutCampus();
-		} else {
-			updateWithCampus();
+		RpcProxy<ListLoadResult<TurnoDTO>> proxy = new RpcProxy<ListLoadResult<TurnoDTO>>() {
+			@Override
+			public void load(Object loadConfig, AsyncCallback<ListLoadResult<TurnoDTO>> callback) {
+				if(campusComboBox != null) {
+					Services.turnos().getListByCampus(campusComboBox.getValue(), callback);
+				} else {
+					Services.turnos().getList(callback);
+				}
+			}
+		};
+		
+		setStore(new ListStore<TurnoDTO>(new BaseListLoader<BaseListLoadResult<TurnoDTO>>(proxy)));
+		
+		if(campusComboBox != null) {
+			setEnabled(false);
+			addListeners();
 		}
-	}
-	
-	private void updateWithCampus() {
-		service.getListByCampus(getCampusDTO(), new AsyncCallback<ListLoadResult<TurnoDTO>>() {
-			@Override
-			public void onFailure(Throwable caught) {
-				caught.printStackTrace();
-			}
-			@Override
-			public void onSuccess(ListLoadResult<TurnoDTO> result) {
-				populate(result.getData());
-			}
-		});
-	}
-	
-	private void updateWithoutCampus() {
-		service.getList(new AsyncCallback<ListLoadResult<TurnoDTO>>() {
-			@Override
-			public void onFailure(Throwable caught) {
-				caught.printStackTrace();
-			}
-			@Override
-			public void onSuccess(ListLoadResult<TurnoDTO> result) {
-				populate(result.getData());
-			}
-		});
-	}
-	
-	private void populate(List<TurnoDTO> list) {
-		getStore().removeAll();
-		getStore().add(list);
-	}
-	
-	public CampusDTO getCampusDTO() {
-		return campusDTO;
-	}
-	public void setCampusDTO(CampusDTO campusDTO) {
-		this.campusDTO = campusDTO;
-		update();
+		
+		setDisplayField("nome");
+		setFieldLabel("Turno");
+		setEmptyText("Selecione o turno");
+		setSimpleTemplate("{nome} ({tempo}min)");
+		setEditable(false);
+		setTriggerAction(TriggerAction.ALL);
 	}
 
-	private native String getTemplateCB() /*-{
-		return  [
-			'<tpl for=".">',
-			'<div class="x-combo-list-item">{nome} ({tempo}min)</div>',
-			'</tpl>'
-		].join("");
-	}-*/;
+	private void addListeners() {
+		campusComboBox.addSelectionChangedListener(new SelectionChangedListener<CampusDTO>(){
+			@Override
+			public void selectionChanged(SelectionChangedEvent<CampusDTO> se) {
+				final CampusDTO campusDTO = se.getSelectedItem();
+				getStore().removeAll();
+				setValue(null);
+				setEnabled(campusDTO != null);
+				if(campusDTO != null) {
+					getStore().getLoader().load();
+				}
+			}
+		});
+	}
 }

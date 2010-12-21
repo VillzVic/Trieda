@@ -77,7 +77,7 @@ public class RelatorioVisaoCursoView extends MyComposite implements RelatorioVis
 		cursoCB = new CursoComboBox();
 		left.add(cursoCB, formData);
 		
-		curriculoCB = new CurriculoComboBox();
+		curriculoCB = new CurriculoComboBox(cursoCB);
 		curriculoCB.setUseQueryCache(false);
 		left.add(curriculoCB, formData);
 		

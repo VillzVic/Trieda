@@ -168,6 +168,13 @@ public class Unidade implements Serializable {
     }
     
     @SuppressWarnings("unchecked")
+    public static List<Unidade> findByCampus(Campus campus) {
+    	Query q = entityManager().createQuery("SELECT Unidade FROM Unidade AS unidade WHERE unidade.campus = :campus ORDER BY unidade.nome ASC");
+		q.setParameter("campus", campus);
+    	return q.getResultList();
+    }
+    
+    @SuppressWarnings("unchecked")
 	public static List<Unidade> findByCampusCodigoLikeAndNomeLikeAndCodigoLike(Campus campus, String nome, String codigo, int firstResult, int maxResults, String orderBy) {
 
         nome = (nome == null)? "" : nome;

@@ -20,5 +20,6 @@ public interface CursosServiceAsync {
 	void save(CursoDTO cursoDTO, AsyncCallback<Void> callback);
 	void remove(List<CursoDTO> cursoDTOList, AsyncCallback<Void> callback);
 	void getListByCampus(CampusDTO campusDTO, AsyncCallback<ListLoadResult<CursoDTO>> callback);
+	void getListAll(AsyncCallback<ListLoadResult<CursoDTO>> callback);
 	
 }

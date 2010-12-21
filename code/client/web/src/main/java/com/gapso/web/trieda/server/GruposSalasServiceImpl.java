@@ -30,6 +30,17 @@ import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 public class GruposSalasServiceImpl extends RemoteServiceServlet implements GruposSalasService {
 
 	private static final long serialVersionUID = 5250776996542788849L;
+	
+	@Override
+	public ListLoadResult<GrupoSalaDTO> getListByUnidade(UnidadeDTO unidadeDTO) {
+		Unidade unidade = Unidade.find(unidadeDTO.getId());
+		Set<GrupoSala> gruposSalas = unidade.getGruposSalas();
+		List<GrupoSalaDTO> gruposSalasDTO = new ArrayList<GrupoSalaDTO>(gruposSalas.size());
+		for(GrupoSala gs : gruposSalas) {
+			gruposSalasDTO.add(ConvertBeans.toGrupoSalaDTO(gs));
+		}
+		return new BaseListLoadResult<GrupoSalaDTO>(gruposSalasDTO);
+	}
 
 	@Override
 	public ListLoadResult<GrupoSalaDTO> getList(BasePagingLoadConfig loadConfig) {

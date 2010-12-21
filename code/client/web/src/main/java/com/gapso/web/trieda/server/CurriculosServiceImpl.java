@@ -35,6 +35,27 @@ public class CurriculosServiceImpl extends RemoteServiceServlet implements Curri
 	public CurriculoDTO getCurriculo(Long id) {
 		return ConvertBeans.toCurriculoDTO(Curriculo.find(id));
 	}
+	
+	@Override
+	public ListLoadResult<CurriculoDTO> getListAll() {
+		List<Curriculo> curriculos = Curriculo.findAll();
+		List<CurriculoDTO> curriculosDTO = new ArrayList<CurriculoDTO>(curriculos.size());
+		for(Curriculo curriculo : curriculos) {
+			curriculosDTO.add(ConvertBeans.toCurriculoDTO(curriculo));
+		}
+		return new BaseListLoadResult<CurriculoDTO>(curriculosDTO);
+	}
+	
+	@Override
+	public ListLoadResult<CurriculoDTO> getListByCurso(CursoDTO cursoDTO) {
+		Curso curso = Curso.find(cursoDTO.getId());
+		Set<Curriculo> curriculos = curso.getCurriculos();
+		List<CurriculoDTO> curriculosDTO = new ArrayList<CurriculoDTO>(curriculos.size());
+		for(Curriculo curriculo : curriculos) {
+			curriculosDTO.add(ConvertBeans.toCurriculoDTO(curriculo));
+		}
+		return new BaseListLoadResult<CurriculoDTO>(curriculosDTO);
+	}
 
 	@Override
 	public ListLoadResult<CurriculoDTO> getList(BasePagingLoadConfig config) {

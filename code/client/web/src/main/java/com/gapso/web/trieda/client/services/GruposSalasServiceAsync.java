@@ -20,5 +20,6 @@ public interface GruposSalasServiceAsync {
 	void getList(BasePagingLoadConfig loadConfig, AsyncCallback<ListLoadResult<GrupoSalaDTO>> callback);
 	void getSalas(GrupoSalaDTO grupoSalaDTO, AsyncCallback<ListLoadResult<SalaDTO>> callback);
 	void saveSalas(List<SalaDTO> salaDTOList, GrupoSalaDTO grupoSalaDTO, AsyncCallback<Void> callback);
+	void getListByUnidade(UnidadeDTO unidadeDTO, AsyncCallback<ListLoadResult<GrupoSalaDTO>> callback);
 	
 }

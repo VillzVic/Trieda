@@ -24,5 +24,6 @@ public interface CursosService extends RemoteService {
 	void save(CursoDTO cursoDTO);
 	void remove(List<CursoDTO> cursoDTOList);
 	ListLoadResult<CursoDTO> getListByCampus(CampusDTO campusDTO);
+	ListLoadResult<CursoDTO> getListAll();
 	
 }

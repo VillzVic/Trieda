@@ -25,5 +25,6 @@ public interface GruposSalasService extends RemoteService {
 	ListLoadResult<GrupoSalaDTO> getList(BasePagingLoadConfig loadConfig);
 	ListLoadResult<SalaDTO> getSalas(GrupoSalaDTO grupoSalaDTO);
 	void saveSalas(List<SalaDTO> salaDTOList, GrupoSalaDTO grupoSalaDTO);
+	ListLoadResult<GrupoSalaDTO> getListByUnidade(UnidadeDTO unidadeDTO);
 	
 }
