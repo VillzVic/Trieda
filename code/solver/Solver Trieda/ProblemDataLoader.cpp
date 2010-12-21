@@ -64,6 +64,8 @@ void ProblemDataLoader::load()
 
    calculaCredsLivresSalas();
 
+   combinacaoDivCreditos();
+
    print_stats();
    //print_csv();
 
@@ -307,6 +309,100 @@ void ProblemDataLoader::calculaCredsLivresSalas()
          }
       }
    }
+}
+
+void ProblemDataLoader::combinacaoDivCreditos(){
+
+	std::vector<std::vector<std::pair<int/*dia*/, int/*numCreditos*/>>> combinacao_divisao_creditos; 
+	std::vector<std::pair<int/*dia*/, int/*numCreditos*/> > vAux; 
+	std::vector<std::pair<int/*dia*/, int/*numCreditos*/> > vec; 
+	std::pair<int/*dia*/, int/*numCreditos*/> p;
+	bool atualiza = false;
+	
+	ITERA_GGROUP(itDisc,problemData->disciplinas,Disciplina)
+	{
+		if(itDisc->divisao_creditos != NULL)
+		{
+			std::vector<std::pair<int/*dia*/, int/*numCreditos*/> > vAux; 
+			for(int i = 1;i <= 7; i++)
+			{
+				p = make_pair(i,itDisc->divisao_creditos->dia[i]);
+				vAux.push_back(p);
+			}
+			
+			//verifica se a regra de divisão de créditos é válida
+			for(int a = 0;a < 7;a++)
+			{
+				if(vAux[a].second != 0)
+				{
+					GGroup<int>::iterator itDiasLetivosDiscs = itDisc->diasLetivos.begin();
+					for(; itDiasLetivosDiscs != itDisc->diasLetivos.end(); itDiasLetivosDiscs++)
+					{ 
+						if(vAux[a].first == *itDiasLetivosDiscs)
+						{
+							atualiza = true;
+							break;
+						}
+						else
+						{
+							atualiza = false;
+						}
+					}
+				}
+			}
+			if(atualiza)
+			{
+				combinacao_divisao_creditos.push_back(vAux);
+				atualiza = false;
+			}
+
+			//Para cada regra de divisão de creditos pode existir mais 6
+			for(int k = 0;k < 6;k++)
+			{
+				for(int j = 0;j < 7;j++)
+				{
+					if(j == 0)
+					{
+						p = make_pair(vAux[0].first, vAux[6].second);
+					}
+					else
+					{
+						p = make_pair(vAux[j].first, vAux[j-1].second);
+					}
+					vec.push_back(p);
+				}
+				vAux.clear();
+				vAux = vec;
+				vec.clear();
+				
+				//verifica se as regras de divisão de créditos criadas são válidas
+				for(int b = 0;b < 7;b++)
+				{
+					if(vAux[b].second != 0)
+					{
+						GGroup<int>::iterator itDiasLetivosDiscs = itDisc->diasLetivos.begin();
+						for(; itDiasLetivosDiscs != itDisc->diasLetivos.end(); itDiasLetivosDiscs++)
+						{ 
+							if(vAux[b].first == *itDiasLetivosDiscs)
+							{
+								atualiza = true;
+								break;
+							}
+							else
+							{
+							   atualiza = false;
+							}
+						}
+					}
+				}
+				if(atualiza)
+				{
+					combinacao_divisao_creditos.push_back(vAux);
+					atualiza = false;
+				}	
+			}
+		}
+	}
 }
 
 template<class T> 

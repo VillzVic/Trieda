@@ -30,6 +30,9 @@ public:
 	TipoDisciplina* tipo_disciplina;
 	NivelDificuldade* nivel_dificuldade;
 
+	//conjunto de combinações possíveis de divisão de créditos de uma uma disciplina d
+	std::vector<std::vector<std::pair<int/*dia*/, int/*numCreditos*/> > > combinacao_divisao_creditos;
+
 private:
    // Soma das demandas de uma disciplina.
    int demandaTotal;

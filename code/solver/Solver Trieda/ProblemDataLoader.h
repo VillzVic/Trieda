@@ -112,6 +112,9 @@ private:
    informar a quantidade de créditos livres em um dado dia letivo. */
    void calculaCredsLivresSalas();
 
+   /*conjunto de combinações possíveis de divisão de créditos de uma uma disciplina*/
+   void combinacaoDivCreditos();
+
    // <<<
 
 };
