@@ -15,7 +15,7 @@ public:
       V_CREDITOS = 1,							// x_{idust}
       V_OFERECIMENTO = 2,						// o_{idust}
       V_ABERTURA = 3,							// z_{i,d,cp}
-      V_ALUNOS = 4,							   // a_{iduc}
+      V_ALUNOS = 4,							   // a_{i,d,o}
       V_ALOC_ALUNO = 5,				         // b_{i,d,c,cp}
       V_N_SUBBLOCOS = 6,				        // w_{bjtu} -> w_{b,t,cp}
       V_DIAS_CONSECUTIVOS = 7,				// c_{idt}

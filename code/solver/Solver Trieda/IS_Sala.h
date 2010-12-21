@@ -5,6 +5,8 @@
 #include <vector>
 #include <map>
 
+#include "Demanda.h"
+
 using namespace std;
 
 class IS_Sala : public OFBase
@@ -20,10 +22,16 @@ public:
    //Sala const * sala;
    Sala * sala;
 
+   //map<int/*dia*/,pair<int/*credsLivres*/,
+   //   vector<
+   //   pair<Disciplina*,
+   //   pair<int/*Id Turma*/,int/*Demanda Atendida*/> > > > >
+
    map<int/*dia*/,pair<int/*credsLivres*/,
       vector<
-      pair<Disciplina*,
+      pair<Demanda*,
       pair<int/*Id Turma*/,int/*Demanda Atendida*/> > > > >
-      
+
       atendimento_Tatico;
+
 };

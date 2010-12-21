@@ -84,8 +84,6 @@ int SolverMIP::solve()
 
    //pair<vector<int>*,vector<double>*> sol = init_sol.repSolIniToVariaveis(vHash,lp->getNumCols());
 
-   //init_sol.repSolIniToVariaveis(vHash,lp->getNumCols());
-
    //int tam = ((int) sol.first->size());
 
    //int * indices;

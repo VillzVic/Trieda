@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <set>
+#include <vector>
 
 #include "IS_Campus.h"
 
@@ -31,7 +32,9 @@ public:
 
    void generate_Initial_Solution();
 
-   pair<int*,double*> repSolIniParaVariaveis(VariableHash & v_Hash, int lp_Cols);
+   pair<int*,double*> repSolIniToVariaveis(VariableHash & v_Hash, int lp_Cols);
+   //void repSolIniToVariaveis(VariableHash & v_Hash, int lp_Cols);
+   //pair<vector<int>*,vector<double>*> repSolIniToVariaveis(VariableHash & v_Hash, int lp_Cols);
 
 private:
 
