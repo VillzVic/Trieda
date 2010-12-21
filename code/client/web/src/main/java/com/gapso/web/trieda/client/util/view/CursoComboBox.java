@@ -25,17 +25,9 @@ public class CursoComboBox extends ComboBox<CursoDTO> {
 		setDisplayField("codigo");
 		setFieldLabel("Curso");
 		setEmptyText("Selecione o curso");
-		setTemplate(getTemplateCB());
+		setSimpleTemplate("{nome} ({codigo})");
 		setEditable(false);
 		setTriggerAction(TriggerAction.ALL);
 	}
 
-	private native String getTemplateCB() /*-{
-		return  [
-			'<tpl for=".">',
-			'<div class="x-combo-list-item">{nome} ({codigo})</div>',
-			'</tpl>'
-		].join("");
-	}-*/;
-	
 }

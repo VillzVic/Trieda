@@ -1,49 +1,32 @@
 package com.gapso.web.trieda.client.util.view;
 
-import java.util.List;
-
+import com.extjs.gxt.ui.client.data.BaseListLoadResult;
+import com.extjs.gxt.ui.client.data.BaseListLoader;
 import com.extjs.gxt.ui.client.data.ListLoadResult;
+import com.extjs.gxt.ui.client.data.RpcProxy;
 import com.extjs.gxt.ui.client.store.ListStore;
 import com.extjs.gxt.ui.client.widget.form.ComboBox;
 import com.gapso.web.trieda.client.mvp.model.SemanaLetivaDTO;
-import com.gapso.web.trieda.client.services.SemanasLetivaServiceAsync;
 import com.gapso.web.trieda.client.services.Services;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class SemanaLetivaComboBox extends ComboBox<SemanaLetivaDTO> {
 
 	public SemanaLetivaComboBox() {
-		final SemanasLetivaServiceAsync service = Services.semanasLetiva();
-		service.getList(new AsyncCallback<ListLoadResult<SemanaLetivaDTO>>() {
+		RpcProxy<ListLoadResult<SemanaLetivaDTO>> proxy = new RpcProxy<ListLoadResult<SemanaLetivaDTO>>() {
 			@Override
-			public void onFailure(Throwable caught) {
-				caught.printStackTrace();
+			public void load(Object loadConfig, AsyncCallback<ListLoadResult<SemanaLetivaDTO>> callback) {
+				Services.semanasLetiva().getList(callback);
 			}
-			@Override
-			public void onSuccess(ListLoadResult<SemanaLetivaDTO> result) {
-				populate(result.getData());
-			}
-		});
-
-		setStore(new ListStore<SemanaLetivaDTO>());
+		};
+		
+		setStore(new ListStore<SemanaLetivaDTO>(new BaseListLoader<BaseListLoadResult<SemanaLetivaDTO>>(proxy)));
 		
 		setFieldLabel("Semana Letíva");
+		setEmptyText("Selecione a semana letíva");
 		setDisplayField("codigo");
-		setTemplate(getTemplateCB());
 		setEditable(false);
+		setTriggerAction(TriggerAction.ALL);
 	}
 
-	private void populate(List<SemanaLetivaDTO> list) {
-		getStore().removeAll();
-		getStore().add(list);
-	}
-	
-	private native String getTemplateCB() /*-{
-	return  [
-		'<tpl for=".">',
-		'<div class="x-combo-list-item">{codigo}</div>',
-		'</tpl>'
-	].join("");
-}-*/;
-	
 }
