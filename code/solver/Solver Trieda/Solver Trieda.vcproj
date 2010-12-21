@@ -13,9 +13,6 @@
 		/>
 	</Platforms>
 	<ToolFiles>
-		<ToolFile
-			RelativePath="C:\Program Files\CodeSynthesis XSD 3.3\etc\vc-9.0\xsd-cxx-tree.rules"
-		/>
 	</ToolFiles>
 	<Configurations>
 		<Configuration
@@ -30,16 +27,6 @@
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="C++/Tree Mapping Rule"
-				HeaderSuffix=".h"
-				SourceSuffix=".cpp"
-				NamespaceMap=""
-				GenSerialization="true"
-				GenOstream="true"
-				GenDoxygen="true"
-				RootElement=""
 			/>
 			<Tool
 				Name="VCXMLDataGeneratorTool"
@@ -121,9 +108,6 @@
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="C++/Tree Mapping Rule"
 			/>
 			<Tool
 				Name="VCXMLDataGeneratorTool"
@@ -747,14 +731,6 @@
 				</Filter>
 			</Filter>
 		</Filter>
-		<File
-			RelativePath="..\..\..\doc\common\communication_protocol\TRIEDA-InputXSD.xsd"
-			>
-		</File>
-		<File
-			RelativePath="..\..\..\doc\common\communication_protocol\TRIEDA-OutputXSD.xsd"
-			>
-		</File>
 	</Files>
 	<Globals>
 	</Globals>

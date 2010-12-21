@@ -73,17 +73,34 @@ int SolverMIP::solve()
 	lp->writeProbLP("Solver Trieda");
 #endif
 
-   InitialSolution init_sol(*problemData);
-   init_sol.generate_Initial_Solution();
+   //InitialSolution init_sol(*problemData);
+   //init_sol.generate_Initial_Solution();
 
-   std::cout << "Total Demandas: " << problemData->demandas.size() << std::endl;
-   std::cout << "Demandas NAO atendidas: " << init_sol.getNumDemandas_NAO_Atendidas() << std::endl;
-   std::cout << "Demandas atendidas: " << init_sol.getNumDemandasAtendidas() << std::endl;
+   //std::cout << "Total Demandas: " << problemData->demandas.size() << std::endl;
+   //std::cout << "Demandas NAO atendidas: " << init_sol.getNumDemandas_NAO_Atendidas() << std::endl;
+   //std::cout << "Demandas atendidas: " << init_sol.getNumDemandasAtendidas() << std::endl;
+  
+   //pair<int*,double*> p = init_sol.repSolIniToVariaveis(vHash,lp->getNumCols());
 
-   init_sol.repSolIniParaVariaveis(vHash,lp->getNumCols());
+   //pair<vector<int>*,vector<double>*> sol = init_sol.repSolIniToVariaveis(vHash,lp->getNumCols());
 
-   problemData;
-   exit(1);
+   //init_sol.repSolIniToVariaveis(vHash,lp->getNumCols());
+
+   //int tam = ((int) sol.first->size());
+
+   //int * indices;
+   //indices = new int[tam];
+
+   //for(unsigned i=0; i<sol.first->size(); i++)
+   //{ indices[i] = sol.first->at(i); }
+
+	//double * valores = new double (sol.second->size());
+
+   //for(unsigned i=0; i<sol.second->size(); i++)
+   //{ valores[i] = sol.second->at(i); }
+
+   //problemData;
+//   exit(1);
 
 	/*
 	// >>>
