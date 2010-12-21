@@ -44,7 +44,7 @@ public class CurriculoComboBox extends ComboBox<CurriculoDTO> {
 		setDisplayField("codigo");
 		setFieldLabel("Matriz Curricular");
 		setEmptyText("Selecione a matriz curricular");
-		setSimpleTemplate("{codigo} ({cursoString})");
+		setSimpleTemplate("{codigo} ({descricao})");
 		setEditable(false);
 		setTriggerAction(TriggerAction.ALL);
 	}
