@@ -97,6 +97,17 @@ public class UnidadesServiceImpl extends RemoteServiceServlet implements Unidade
 	}
 	
 	@Override
+	public ListLoadResult<UnidadeDTO> getListByCampus(CampusDTO campusDTO) {
+		List<UnidadeDTO> list = new ArrayList<UnidadeDTO>();
+		Campus campus = Campus.find(campusDTO.getId());
+		List<Unidade> unidades = Unidade.findByCampus(campus);
+		for(Unidade unidade : unidades) {
+			list.add(ConvertBeans.toUnidadeDTO(unidade));
+		}
+		return new BaseListLoadResult<UnidadeDTO>(list);
+	}
+	
+	@Override
 	public ListLoadResult<UnidadeDTO> getList() {
 		List<UnidadeDTO> list = new ArrayList<UnidadeDTO>();
 		for(Unidade unidade : Unidade.findAll()) {

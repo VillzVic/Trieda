@@ -3,7 +3,6 @@ package com.gapso.web.trieda.client.util.view;
 import com.extjs.gxt.ui.client.data.BaseListLoadResult;
 import com.extjs.gxt.ui.client.data.BaseListLoader;
 import com.extjs.gxt.ui.client.data.ListLoadResult;
-import com.extjs.gxt.ui.client.data.ListLoader;
 import com.extjs.gxt.ui.client.data.RpcProxy;
 import com.extjs.gxt.ui.client.store.ListStore;
 import com.extjs.gxt.ui.client.widget.form.ComboBox;
@@ -14,8 +13,6 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class TipoSalaComboBox extends ComboBox<TipoSalaDTO> {
 
-	private ListStore<TipoSalaDTO> store;
-	
 	public TipoSalaComboBox() {
 		final SalasServiceAsync service = Services.salas();
 		RpcProxy<ListLoadResult<TipoSalaDTO>> proxy = new RpcProxy<ListLoadResult<TipoSalaDTO>>() {
@@ -24,10 +21,10 @@ public class TipoSalaComboBox extends ComboBox<TipoSalaDTO> {
 				service.getTipoSalaList(callback);
 			}
 		};
-		ListLoader<BaseListLoadResult<TipoSalaDTO>> load = new BaseListLoader<BaseListLoadResult<TipoSalaDTO>>(proxy);
-		store = new ListStore<TipoSalaDTO>(load);
+		setStore(new ListStore<TipoSalaDTO>(new BaseListLoader<BaseListLoadResult<TipoSalaDTO>>(proxy)));
+		setFieldLabel("Tipo de Sala");
 		setDisplayField("nome");
-		setStore(store);
+		setEditable(false);
 	}
 
 }

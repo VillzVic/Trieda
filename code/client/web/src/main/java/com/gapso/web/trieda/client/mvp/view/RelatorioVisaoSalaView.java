@@ -80,7 +80,7 @@ public class RelatorioVisaoSalaView extends MyComposite implements RelatorioVisa
 		campusCB = new CampusComboBox();
 		left.add(campusCB, formData);
 		
-		unidadeCB = new UnidadeComboBox();
+		unidadeCB = new UnidadeComboBox(campusCB);
 		left.add(unidadeCB, formData);
 		
 		salaCB = new SalaComboBox();

@@ -61,7 +61,7 @@ public class RelatorioVisaoSalaPresenter implements Presenter {
 				final CampusDTO campusDTO = se.getSelectedItem();
 				display.getUnidadeComboBox().setEnabled(campusDTO != null);
 				if(campusDTO != null) {
-					display.getUnidadeComboBox().setCampusId(campusDTO.getId());
+//					display.getUnidadeComboBox().setCampusId(campusDTO.getId());
 				}
 			}
 		});

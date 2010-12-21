@@ -17,5 +17,6 @@ public interface TiposCursosServiceAsync {
 	void remove(List<TipoCursoDTO> tipoCursoDTOList, AsyncCallback<Void> callback);
 	void getList(BasePagingLoadConfig loadConfig, AsyncCallback<ListLoadResult<TipoCursoDTO>> callback);
 	void getTipoCurso(Long id, AsyncCallback<TipoCursoDTO> callback);
+	void getList(AsyncCallback<ListLoadResult<TipoCursoDTO>> callback);
 
 }

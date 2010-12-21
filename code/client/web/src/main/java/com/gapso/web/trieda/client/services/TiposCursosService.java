@@ -21,5 +21,6 @@ public interface TiposCursosService extends RemoteService {
 	void remove(List<TipoCursoDTO> tipoCursoDTOList);
 	ListLoadResult<TipoCursoDTO> getList(BasePagingLoadConfig loadConfig);
 	TipoCursoDTO getTipoCurso(Long id);
+	ListLoadResult<TipoCursoDTO> getList();
 
 }

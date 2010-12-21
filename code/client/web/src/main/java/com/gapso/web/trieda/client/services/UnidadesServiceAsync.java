@@ -22,5 +22,6 @@ public interface UnidadesServiceAsync {
 	void getUnidade(Long id, AsyncCallback<UnidadeDTO> callback);
 	void getDeslocamento(CampusDTO campusDTO, AsyncCallback<List<DeslocamentoUnidadeDTO>> callback);
 	void saveDeslocamento(List<DeslocamentoUnidadeDTO> list, AsyncCallback<Void> callback);
+	void getListByCampus(CampusDTO campusDTO, AsyncCallback<ListLoadResult<UnidadeDTO>> callback);
 	
 }

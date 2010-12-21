@@ -27,4 +27,5 @@ public interface UnidadesService extends RemoteService {
 	UnidadeDTO getUnidade(Long id);
 	List<DeslocamentoUnidadeDTO> getDeslocamento(CampusDTO campusDTO);
 	void saveDeslocamento(List<DeslocamentoUnidadeDTO> list);
+	ListLoadResult<UnidadeDTO> getListByCampus(CampusDTO campusDTO);
 }

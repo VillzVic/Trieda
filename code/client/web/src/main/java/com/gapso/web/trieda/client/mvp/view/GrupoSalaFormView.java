@@ -9,6 +9,7 @@ import com.gapso.web.trieda.client.mvp.model.GrupoSalaDTO;
 import com.gapso.web.trieda.client.mvp.model.UnidadeDTO;
 import com.gapso.web.trieda.client.mvp.presenter.GrupoSalaFormPresenter;
 import com.gapso.web.trieda.client.util.resources.Resources;
+import com.gapso.web.trieda.client.util.view.CampusComboBox;
 import com.gapso.web.trieda.client.util.view.SimpleModal;
 import com.gapso.web.trieda.client.util.view.UnidadeComboBox;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
@@ -35,7 +36,7 @@ public class GrupoSalaFormView extends MyComposite implements GrupoSalaFormPrese
 	private void initUI() {
 		String title = (grupoSalaDTO.getId() == null)? "Inserção de Grupo de Sala" : "Edição de Grupo de Sala";
 		simpleModal = new SimpleModal(title, Resources.DEFAULTS.sala16());
-		simpleModal.setHeight(165);
+		simpleModal.setHeight(190);
 		simpleModal.setWidth(350);
 		createForm();
 		simpleModal.setContent(formPanel);
@@ -56,7 +57,10 @@ public class GrupoSalaFormView extends MyComposite implements GrupoSalaFormPrese
 		codigoTF.setEmptyText("Preencha o código");
 		formPanel.add(codigoTF, formData);
 		
-		unidadeCB = new UnidadeComboBox();
+		CampusComboBox campusCB = new CampusComboBox();
+		formPanel.add(campusCB, formData);
+		
+		unidadeCB = new UnidadeComboBox(campusCB);
 		unidadeCB.setName("unidade");
 		unidadeCB.setFieldLabel("Unidade");
 		unidadeCB.setAllowBlank(false);

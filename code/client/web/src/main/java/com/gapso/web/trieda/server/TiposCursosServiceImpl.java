@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.extjs.gxt.ui.client.Style.SortDir;
+import com.extjs.gxt.ui.client.data.BaseListLoadResult;
 import com.extjs.gxt.ui.client.data.BasePagingLoadConfig;
 import com.extjs.gxt.ui.client.data.BasePagingLoadResult;
 import com.extjs.gxt.ui.client.data.ListLoadResult;
@@ -28,6 +29,16 @@ public class TiposCursosServiceImpl extends RemoteServiceServlet implements Tipo
 	}
 	
 	@Override
+	public ListLoadResult<TipoCursoDTO> getList() {
+		List<TipoCursoDTO> list = new ArrayList<TipoCursoDTO>();
+		for(TipoCurso tipoCurso : TipoCurso.findAll()) {
+			list.add(ConvertBeans.toTipoCursoDTO(tipoCurso));
+		}
+		BaseListLoadResult<TipoCursoDTO> result = new BaseListLoadResult<TipoCursoDTO>(list);
+		return result;
+	}
+	
+	@Override
 	public PagingLoadResult<TipoCursoDTO> getBuscaList(String nome, String descricao, PagingLoadConfig config) {
 		List<TipoCursoDTO> list = new ArrayList<TipoCursoDTO>();
 		String orderBy = config.getSortField();
@@ -46,7 +57,7 @@ public class TiposCursosServiceImpl extends RemoteServiceServlet implements Tipo
 		result.setTotalLength(TipoCurso.count());
 		return result;
 	}
-
+	
 	@Override
 	public ListLoadResult<TipoCursoDTO> getList(BasePagingLoadConfig loadConfig) {
 		return getBuscaList(loadConfig.get("query").toString(), null, loadConfig);
