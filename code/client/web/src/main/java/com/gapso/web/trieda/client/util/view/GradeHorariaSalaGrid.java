@@ -1,7 +1,9 @@
 package com.gapso.web.trieda.client.util.view;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import com.extjs.gxt.ui.client.core.El;
 import com.extjs.gxt.ui.client.data.BaseModel;
@@ -39,6 +41,7 @@ public class GradeHorariaSalaGrid extends ContentPanel {
 	private SalaDTO salaDTO;
 	private TurnoDTO turnoDTO;
 	private QuickTip quickTip;
+	private List<Long> disciplinasCores = new ArrayList<Long>();
 	
 	public GradeHorariaSalaGrid() {
 		super(new FitLayout());
@@ -106,6 +109,7 @@ public class GradeHorariaSalaGrid extends ContentPanel {
 			@Override
 			public void onSuccess(List<AtendimentoTaticoDTO> result) {
 				atendimentos = result;
+				preencheCores();
 				grid.reconfigure(getListStore(), new ColumnModel(getColumnList()));
 			}
 		});
@@ -193,6 +197,7 @@ public class GradeHorariaSalaGrid extends ContentPanel {
 				html.addStyleName("c"+(rowIndex + 1));
 				html.addStyleName("tc"+atDTO.getTotalCreditos());
 				html.addStyleName("s"+atDTO.getSemana());
+				html.addStyleName(getCssDisciplina(atDTO.getDisciplinaId()));
 				
 				new DragSource(html) {
 					@Override
@@ -247,6 +252,23 @@ public class GradeHorariaSalaGrid extends ContentPanel {
 		this.turnoDTO = turnoDTO;
 	}
 
+	public String getCssDisciplina(long id) {
+		int index = disciplinasCores.indexOf(id);
+		if(index < 0 || index > 14) {
+			return "corDisciplina14";
+		}
+		return "corDisciplina"+index;
+	}
+
+	public void preencheCores() {
+		Set<Long> set = new HashSet<Long>();
+		for(AtendimentoTaticoDTO a : atendimentos) {
+			set.add(a.getDisciplinaId());
+		}
+		disciplinasCores.clear();
+		disciplinasCores.addAll(set);
+	}
+	
 	public class LinhaDeCredito extends BaseModel {
 
 		private static final long serialVersionUID = 3996652461744817138L;
