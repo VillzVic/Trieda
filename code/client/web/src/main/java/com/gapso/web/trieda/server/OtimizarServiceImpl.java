@@ -51,19 +51,12 @@ public class OtimizarServiceImpl extends RemoteServiceServlet implements Otimiza
 		byte[] fileBytes = null;
 		try {
 			final ByteArrayOutputStream temp = new ByteArrayOutputStream();
-			JAXBContext jc = JAXBContext
-					.newInstance("com.gapso.web.trieda.server.xml.input");
+			JAXBContext jc = JAXBContext.newInstance("com.gapso.web.trieda.server.xml.input");
 			Marshaller m = jc.createMarshaller();
 			m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
 			m.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
 			m.marshal(triedaInput, temp);
-			// OutputStream xml = new FileOutputStream(new File("entrada.xml"));
-			// xml.write(temp.toByteArray());
-
 			fileBytes = temp.toByteArray();
-			triedaInput.toString();
-			
-			new StreamSource();
 			
 		} catch (Exception e) {
 			e.printStackTrace();
