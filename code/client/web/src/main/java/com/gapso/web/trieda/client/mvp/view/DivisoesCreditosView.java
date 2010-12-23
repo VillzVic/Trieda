@@ -9,26 +9,20 @@ import com.extjs.gxt.ui.client.data.RpcProxy;
 import com.extjs.gxt.ui.client.util.Margins;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
 import com.extjs.gxt.ui.client.widget.button.Button;
-import com.extjs.gxt.ui.client.widget.form.NumberField;
-import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.extjs.gxt.ui.client.widget.grid.ColumnConfig;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayout;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
-import com.gapso.web.trieda.client.mvp.model.TurnoDTO;
+import com.gapso.web.trieda.client.mvp.model.DivisaoCreditoDTO;
 import com.gapso.web.trieda.client.mvp.presenter.DivisoesCreditosPresenter;
 import com.gapso.web.trieda.client.util.resources.Resources;
 import com.gapso.web.trieda.client.util.view.GTabItem;
-import com.gapso.web.trieda.client.util.view.SimpleFilter;
 import com.gapso.web.trieda.client.util.view.SimpleGrid;
 import com.gapso.web.trieda.client.util.view.SimpleToolBar;
 
 public class DivisoesCreditosView extends MyComposite implements DivisoesCreditosPresenter.Display {
 
 	private SimpleToolBar toolBar;
-	private SimpleGrid<TurnoDTO> gridPanel;
-	private SimpleFilter filter;
-	private TextField<String> nomeBuscaTextField;
-	private NumberField tempoBuscaTextField;
+	private SimpleGrid<DivisaoCreditoDTO> gridPanel;
 	private ContentPanel panel;
 	private GTabItem tabItem;
 	
@@ -38,16 +32,15 @@ public class DivisoesCreditosView extends MyComposite implements DivisoesCredito
 	
 	private void initUI() {
 		panel = new ContentPanel(new BorderLayout());
-		panel.setHeading("Master Data » Turnos");
+		panel.setHeading("Master Data » Divisões de Créditos");
 		createToolBar();
 		createGrid();
-		createFilter();
 		createTabItem();
 		initComponent(tabItem);
 	}
 
 	private void createTabItem() {
-		tabItem = new GTabItem("Turnos", Resources.DEFAULTS.turnos16());
+		tabItem = new GTabItem("Divisões de Créditos", Resources.DEFAULTS.divisaoDeCreditos16());
 		tabItem.setContent(panel);
 	}
 	
@@ -60,31 +53,21 @@ public class DivisoesCreditosView extends MyComposite implements DivisoesCredito
 		BorderLayoutData bld = new BorderLayoutData(LayoutRegion.CENTER);
 	    bld.setMargins(new Margins(5, 0, 5, 5));
 	    
-	    gridPanel = new SimpleGrid<TurnoDTO>(getColumnList());
+	    gridPanel = new SimpleGrid<DivisaoCreditoDTO>(getColumnList());
 	    panel.add(gridPanel, bld);
 	}
 
 	private List<ColumnConfig> getColumnList() {
 		List<ColumnConfig> list = new ArrayList<ColumnConfig>();
-		list.add(new ColumnConfig("nome", "Nome", 100));
-		list.add(new ColumnConfig("tempo", "Duração da Aula (min)", 100));
+		list.add(new ColumnConfig("totalCreditos", "Créditos", 50));
+		list.add(new ColumnConfig("dia1", "Dia 1", 50));
+		list.add(new ColumnConfig("dia2", "Dia 2", 50));
+		list.add(new ColumnConfig("dia3", "Dia 3", 50));
+		list.add(new ColumnConfig("dia4", "Dia 4", 50));
+		list.add(new ColumnConfig("dia5", "Dia 5", 50));
+		list.add(new ColumnConfig("dia6", "Dia 6", 50));
+		list.add(new ColumnConfig("dia7", "Dia 7", 50));
 		return list;
-	}
-
-	private void createFilter() {
-		BorderLayoutData bld = new BorderLayoutData(LayoutRegion.EAST);
-		bld.setMargins(new Margins(0, 0, 0, 5));
-		bld.setCollapsible(true);
-		
-		filter = new SimpleFilter();
-		nomeBuscaTextField = new TextField<String>();
-		nomeBuscaTextField.setFieldLabel("Nome");
-		tempoBuscaTextField = new NumberField();
-		tempoBuscaTextField.setFieldLabel("Duração da Aula (min)");
-		filter.addField(nomeBuscaTextField);
-		filter.addField(tempoBuscaTextField);
-		
-		panel.add(filter, bld);
 	}
 	
 	@Override
@@ -113,33 +96,13 @@ public class DivisoesCreditosView extends MyComposite implements DivisoesCredito
 	}
 	
 	@Override
-	public SimpleGrid<TurnoDTO> getGrid() {
+	public SimpleGrid<DivisaoCreditoDTO> getGrid() {
 		return gridPanel;
 	}
 	
 	@Override
-	public void setProxy(RpcProxy<PagingLoadResult<TurnoDTO>> proxy) {
+	public void setProxy(RpcProxy<PagingLoadResult<DivisaoCreditoDTO>> proxy) {
 		gridPanel.setProxy(proxy);
-	}
-
-	@Override
-	public TextField<String> getNomeBuscaTextField() {
-		return nomeBuscaTextField;
-	}
-
-	@Override
-	public NumberField getTempoBuscaTextField() {
-		return tempoBuscaTextField;
-	}
-
-	@Override
-	public Button getSubmitBuscaButton() {
-		return filter.getSubmitButton();
-	}
-
-	@Override
-	public Button getResetBuscaButton() {
-		return filter.getResetButton();
 	}
 
 }

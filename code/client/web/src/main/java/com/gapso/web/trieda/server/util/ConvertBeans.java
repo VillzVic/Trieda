@@ -18,6 +18,7 @@ import com.gapso.trieda.domain.Demanda;
 import com.gapso.trieda.domain.DeslocamentoCampus;
 import com.gapso.trieda.domain.DeslocamentoUnidade;
 import com.gapso.trieda.domain.Disciplina;
+import com.gapso.trieda.domain.DivisaoCredito;
 import com.gapso.trieda.domain.GrupoSala;
 import com.gapso.trieda.domain.HorarioAula;
 import com.gapso.trieda.domain.HorarioDisponivelCenario;
@@ -43,6 +44,7 @@ import com.gapso.web.trieda.client.mvp.model.DemandaDTO;
 import com.gapso.web.trieda.client.mvp.model.DeslocamentoCampusDTO;
 import com.gapso.web.trieda.client.mvp.model.DeslocamentoUnidadeDTO;
 import com.gapso.web.trieda.client.mvp.model.DisciplinaDTO;
+import com.gapso.web.trieda.client.mvp.model.DivisaoCreditoDTO;
 import com.gapso.web.trieda.client.mvp.model.GrupoSalaDTO;
 import com.gapso.web.trieda.client.mvp.model.HorarioAulaDTO;
 import com.gapso.web.trieda.client.mvp.model.HorarioDisponivelCenarioDTO;
@@ -858,6 +860,41 @@ public class ConvertBeans {
 		dto.setCurricularString(domain.getOferta().getCurriculo().getCodigo());
 		dto.setPeriodo(domain.getOferta().getCurriculo().getPeriodo(domain.getDisciplina()));
 		
+		return dto;
+	}
+	
+	// DIVISÃO DE CREDITO
+	public static DivisaoCredito toDivisaoCredito(DivisaoCreditoDTO dto) {
+		DivisaoCredito domain = new DivisaoCredito();
+		domain.setId(dto.getId());
+		domain.setVersion(dto.getVersion());
+		domain.getCenario().add(Cenario.find(dto.getCenarioId()));
+		domain.setCreditos(dto.getDia1() + dto.getDia2() + dto.getDia3() + dto.getDia4() + dto.getDia5() + dto.getDia6() + dto.getDia7());
+		domain.setDia1(dto.getDia1());
+		domain.setDia2(dto.getDia2());
+		domain.setDia3(dto.getDia3());
+		domain.setDia4(dto.getDia4());
+		domain.setDia5(dto.getDia5());
+		domain.setDia6(dto.getDia6());
+		domain.setDia7(dto.getDia7());
+		return domain;
+	}
+
+	public static DivisaoCreditoDTO toDivisaoCreditoDTO(DivisaoCredito domain) {
+		DivisaoCreditoDTO dto = new DivisaoCreditoDTO();
+		dto.setId(domain.getId());
+		dto.setVersion(domain.getVersion());
+		if(domain.getCenario().size() > 0) {
+			dto.setCenarioId((new ArrayList<Cenario>(domain.getCenario())).get(0).getId());
+		}
+		dto.setDia1(domain.getDia1());
+		dto.setDia2(domain.getDia2());
+		dto.setDia3(domain.getDia3());
+		dto.setDia4(domain.getDia4());
+		dto.setDia5(domain.getDia5());
+		dto.setDia6(domain.getDia6());
+		dto.setDia7(domain.getDia7());
+		dto.setTotalCreditos(dto.getDia1() + dto.getDia2() + dto.getDia3() + dto.getDia4() + dto.getDia5() + dto.getDia6() + dto.getDia7());
 		return dto;
 	}
 }

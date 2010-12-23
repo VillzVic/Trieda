@@ -413,13 +413,13 @@ public class SolverInput {
 			itemDisciplina.setCredTeoricos(disciplina.getCreditosTeorico());
 			itemDisciplina.setCredPraticos(disciplina.getCreditosPratico());
 			itemDisciplina.setLaboratorio(disciplina.getLaboratorio());
-			// TODO Ver com o mário pq está dando erro quando adiciona essas tag
-//			itemDisciplina.setMaxAlunosTeorico(disciplina.getMaxAlunosTeorico());
-//			itemDisciplina.setMaxAlunosPratico(disciplina.getMaxAlunosPratico());
+			itemDisciplina.setMaxAlunosTeorico(disciplina.getMaxAlunosTeorico());
+			itemDisciplina.setMaxAlunosPratico(disciplina.getMaxAlunosPratico());
 			itemDisciplina.setTipoDisciplinaId(disciplina.getTipoDisciplina().getId().intValue());
 			itemDisciplina.setNivelDificuldadeId(Dificuldades.toInt(disciplina.getDificuldade()));
 			
 			DivisaoCredito divisaoCredito = disciplina.getDivisaoCreditos();
+			divisaoCredito = (divisaoCredito != null)? divisaoCredito : DivisaoCredito.findByCredito(disciplina.getTotalCreditos());
 			if(divisaoCredito != null) {
 				ItemDivisaoCreditos itemDivisaoCreditos = of.createItemDivisaoCreditos();
 				itemDivisaoCreditos.setId(divisaoCredito.getId().intValue());
@@ -431,6 +431,7 @@ public class SolverInput {
 				itemDivisaoCreditos.setDia5(divisaoCredito.getDia5());
 				itemDivisaoCreditos.setDia6(divisaoCredito.getDia6());
 				itemDivisaoCreditos.setDia7(divisaoCredito.getDia7());
+				itemDisciplina.setDivisaoDeCreditos(itemDivisaoCreditos);
 			}
 			
 			GrupoIdentificador grupoIdentificadorEquivalencias = of.createGrupoIdentificador();

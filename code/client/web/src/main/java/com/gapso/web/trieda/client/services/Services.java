@@ -22,6 +22,7 @@ public class Services {
 	public static final String SEMANASLETIVA = "semanasLetiva";
 	public static final String TIPOSCURSOS = "tiposCursos";
 	public static final String ATENDIMENTOS = "atendimentos";
+	public static final String DIVISAOCREDITOS = "divisaoCreditos";
 	
 	public static OtimizarServiceAsync otimizar() {
 		OtimizarServiceAsync service = (OtimizarServiceAsync) Registry.get(OTIMIZAR);
@@ -172,6 +173,15 @@ public class Services {
 		if(service == null) {
 			service = GWT.create(AtendimentosService.class);
 			Registry.register(ATENDIMENTOS, service);
+		}
+		return service;
+	}
+	
+	public static DivisoesCreditosServiceAsync divisaoCreditos() {
+		DivisoesCreditosServiceAsync service = (DivisoesCreditosServiceAsync) Registry.get(DIVISAOCREDITOS);
+		if(service == null) {
+			service = GWT.create(DivisoesCreditosService.class);
+			Registry.register(DIVISAOCREDITOS, service);
 		}
 		return service;
 	}

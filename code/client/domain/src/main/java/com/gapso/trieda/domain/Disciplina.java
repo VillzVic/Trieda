@@ -293,6 +293,10 @@ public class Disciplina implements Serializable {
         return this.cenario;
     }
 
+	public Integer getTotalCreditos() {
+		return getCreditosPratico() + getCreditosTeorico();
+	}
+	
 	public void setCenario(Cenario cenario) {
         this.cenario = cenario;
     }

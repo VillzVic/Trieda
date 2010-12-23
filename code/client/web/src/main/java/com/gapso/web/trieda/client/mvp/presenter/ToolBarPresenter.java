@@ -17,6 +17,7 @@ import com.gapso.web.trieda.client.mvp.view.CursosView;
 import com.gapso.web.trieda.client.mvp.view.DemandasView;
 import com.gapso.web.trieda.client.mvp.view.DisciplinasAssociarSalaView;
 import com.gapso.web.trieda.client.mvp.view.DisciplinasView;
+import com.gapso.web.trieda.client.mvp.view.DivisoesCreditosView;
 import com.gapso.web.trieda.client.mvp.view.GruposSalasView;
 import com.gapso.web.trieda.client.mvp.view.HorariosAulaView;
 import com.gapso.web.trieda.client.mvp.view.OfertasView;
@@ -69,10 +70,12 @@ public class ToolBarPresenter implements Presenter {
 		Button getDemandasDisciplinasButton();
 		Button getAssociarDisciplinasSalasListDisciplinasButton();
 		Button getCurriculosListDisciplinasButton();
+		Button getSivisaoCreditosListDisciplinasButton();
 		
 		Button getParametrosButton();
 		Button getRelatorioVisaoSalaButton();
 		Button getRelatorioVisaoCursoButton();
+
 
 	}
 	
@@ -222,6 +225,13 @@ public class ToolBarPresenter implements Presenter {
 			@Override
 			public void componentSelected(ButtonEvent ce) {
 				Presenter presenter = new CurriculosPresenter(masterData, new CurriculosView());
+				presenter.go(gTab);
+			}
+		});
+		toolBar.getSivisaoCreditosListDisciplinasButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
+			@Override
+			public void componentSelected(ButtonEvent ce) {
+				Presenter presenter = new DivisoesCreditosPresenter(masterData, new DivisoesCreditosView());
 				presenter.go(gTab);
 			}
 		});

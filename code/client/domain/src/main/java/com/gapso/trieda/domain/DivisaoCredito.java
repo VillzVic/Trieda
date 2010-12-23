@@ -1,5 +1,7 @@
 package com.gapso.trieda.domain;
 
+import java.io.Serializable;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -12,6 +14,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import javax.persistence.Table;
 import javax.persistence.Version;
 import javax.validation.constraints.Max;
@@ -30,7 +33,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RooToString
 @RooEntity(identifierColumn = "DCR_ID")
 @Table(name = "DIVISOES_CREDITO")
-public class DivisaoCredito implements java.io.Serializable {
+public class DivisaoCredito implements Serializable {
 
     @NotNull
     @Column(name = "DRC_CREDITOS")
@@ -40,48 +43,48 @@ public class DivisaoCredito implements java.io.Serializable {
 
     @NotNull
     @Column(name = "DRC_DIA1")
-    @Min(1L)
+    @Min(0L)
     @Max(99L)
     private Integer dia1;
 
     @NotNull
     @Column(name = "DRC_DIA2")
-    @Min(1L)
+    @Min(0L)
     @Max(99L)
     private Integer dia2;
 
     @NotNull
     @Column(name = "DRC_DIA3")
-    @Min(1L)
+    @Min(0L)
     @Max(99L)
     private Integer dia3;
 
     @NotNull
     @Column(name = "DRC_DIA4")
-    @Min(1L)
+    @Min(0L)
     @Max(99L)
     private Integer dia4;
 
     @NotNull
     @Column(name = "DRC_DIA5")
-    @Min(1L)
+    @Min(0L)
     @Max(99L)
     private Integer dia5;
 
     @NotNull
     @Column(name = "DRC_DIA6")
-    @Min(1L)
+    @Min(0L)
     @Max(99L)
     private Integer dia6;
 
     @NotNull
     @Column(name = "DRC_DIA7")
-    @Min(1L)
+    @Min(0L)
     @Max(99L)
     private Integer dia7;
 
-    @ManyToMany(cascade = CascadeType.ALL)
-    private Set<com.gapso.trieda.domain.Cenario> cenario = new java.util.HashSet<com.gapso.trieda.domain.Cenario>();
+    @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.DETACH})
+    private Set<Cenario> cenario = new HashSet<Cenario>();
 
 	@PersistenceContext
     transient EntityManager entityManager;
@@ -154,23 +157,29 @@ public class DivisaoCredito implements java.io.Serializable {
         return em;
     }
 
-	public static long countDivisaoCreditoes() {
-        return ((Number) entityManager().createQuery("select count(o) from DivisaoCredito o").getSingleResult()).longValue();
+	public static int count() {
+        return ((Number) entityManager().createQuery("select count(o) from DivisaoCredito o").getSingleResult()).intValue();
     }
 
 	@SuppressWarnings("unchecked")
-    public static List<DivisaoCredito> findAllDivisaoCreditoes() {
-        return entityManager().createQuery("select o from DivisaoCredito o").getResultList();
+    public static List<DivisaoCredito> findAll() {
+        return entityManager().createQuery("SELECT o FROM DivisaoCredito o ORDER BY o.creditos ASC").getResultList();
     }
 
-	public static DivisaoCredito findDivisaoCredito(Long id) {
+	public static DivisaoCredito find(Long id) {
         if (id == null) return null;
         return entityManager().find(DivisaoCredito.class, id);
     }
+	
+	public static DivisaoCredito findByCredito(Integer credito) {
+		Query q = entityManager().createQuery("SELECT o FROM DivisaoCredito o WHERE o.creditos = :credito");
+		q.setParameter("credito", credito);
+		return (DivisaoCredito) q.getSingleResult();
+	}
 
 	@SuppressWarnings("unchecked")
-    public static List<DivisaoCredito> findDivisaoCreditoEntries(int firstResult, int maxResults) {
-        return entityManager().createQuery("select o from DivisaoCredito o").setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
+    public static List<DivisaoCredito> find(int firstResult, int maxResults) {
+        return entityManager().createQuery("SELECT o FROM DivisaoCredito o ORDER BY o.creditos ASC").setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
 
 	public String toString() {

@@ -11,13 +11,11 @@ import com.extjs.gxt.ui.client.widget.Component;
 import com.extjs.gxt.ui.client.widget.Info;
 import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.button.Button;
-import com.extjs.gxt.ui.client.widget.form.NumberField;
-import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.gapso.web.trieda.client.mvp.model.CenarioDTO;
-import com.gapso.web.trieda.client.mvp.model.TurnoDTO;
-import com.gapso.web.trieda.client.mvp.view.TurnoFormView;
+import com.gapso.web.trieda.client.mvp.model.DivisaoCreditoDTO;
+import com.gapso.web.trieda.client.mvp.view.DivisaoCreditosFormView;
+import com.gapso.web.trieda.client.services.DivisoesCreditosServiceAsync;
 import com.gapso.web.trieda.client.services.Services;
-import com.gapso.web.trieda.client.services.TurnosServiceAsync;
 import com.gapso.web.trieda.client.util.view.GTab;
 import com.gapso.web.trieda.client.util.view.GTabItem;
 import com.gapso.web.trieda.client.util.view.SimpleGrid;
@@ -32,13 +30,9 @@ public class DivisoesCreditosPresenter implements Presenter {
 		Button getRemoveButton();
 		Button getImportExcelButton();
 		Button getExportExcelButton();
-		TextField<String> getNomeBuscaTextField();
-		NumberField getTempoBuscaTextField();
-		Button getSubmitBuscaButton();
-		Button getResetBuscaButton();
-		SimpleGrid<TurnoDTO> getGrid();
+		SimpleGrid<DivisaoCreditoDTO> getGrid();
 		Component getComponent();
-		void setProxy(RpcProxy<PagingLoadResult<TurnoDTO>> proxy);
+		void setProxy(RpcProxy<PagingLoadResult<DivisaoCreditoDTO>> proxy);
 	}
 	private CenarioDTO cenario;
 	private Display display; 
@@ -51,14 +45,11 @@ public class DivisoesCreditosPresenter implements Presenter {
 	}
 
 	private void configureProxy() {
-		final TurnosServiceAsync service = Services.turnos();
-		RpcProxy<PagingLoadResult<TurnoDTO>> proxy = new RpcProxy<PagingLoadResult<TurnoDTO>>() {
+		final DivisoesCreditosServiceAsync service = Services.divisaoCreditos();
+		RpcProxy<PagingLoadResult<DivisaoCreditoDTO>> proxy = new RpcProxy<PagingLoadResult<DivisaoCreditoDTO>>() {
 			@Override
-			public void load(Object loadConfig, AsyncCallback<PagingLoadResult<TurnoDTO>> callback) {
-//				service.getList((PagingLoadConfig)loadConfig, callback);
-				String nome = display.getNomeBuscaTextField().getValue();
-				Number tempo = display.getTempoBuscaTextField().getValue();
-				service.getBuscaList(nome, (tempo==null)?null:tempo.intValue(), (PagingLoadConfig)loadConfig, callback);
+			public void load(Object loadConfig, AsyncCallback<PagingLoadResult<DivisaoCreditoDTO>> callback) {
+				service.getList((PagingLoadConfig)loadConfig, callback);
 			}
 		};
 		display.setProxy(proxy);
@@ -68,23 +59,23 @@ public class DivisoesCreditosPresenter implements Presenter {
 		display.getNewButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
 			@Override
 			public void componentSelected(ButtonEvent ce) {
-				Presenter presenter = new TurnoFormPresenter(cenario, new TurnoFormView(new TurnoDTO()), display.getGrid());
+				Presenter presenter = new DivisaoCreditosFormPresenter(cenario, new DivisaoCreditosFormView(new DivisaoCreditoDTO()), display.getGrid());
 				presenter.go(null);
 			}
 		});
 		display.getEditButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
 			@Override
 			public void componentSelected(ButtonEvent ce) {
-				TurnoDTO turnoDTO = display.getGrid().getGrid().getSelectionModel().getSelectedItem();
-				Presenter presenter = new TurnoFormPresenter(cenario, new TurnoFormView(turnoDTO), display.getGrid());
+				DivisaoCreditoDTO divisaoCreditoDTO = display.getGrid().getGrid().getSelectionModel().getSelectedItem();
+				Presenter presenter = new DivisaoCreditosFormPresenter(cenario, new DivisaoCreditosFormView(divisaoCreditoDTO), display.getGrid());
 				presenter.go(null);
 			}
 		});
 		display.getRemoveButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
 			@Override
 			public void componentSelected(ButtonEvent ce) {
-				List<TurnoDTO> list = display.getGrid().getGrid().getSelectionModel().getSelectedItems();
-				final TurnosServiceAsync service = Services.turnos();
+				List<DivisaoCreditoDTO> list = display.getGrid().getGrid().getSelectionModel().getSelectedItems();
+				final DivisoesCreditosServiceAsync service = Services.divisaoCreditos();
 				service.remove(list, new AsyncCallback<Void>() {
 					@Override
 					public void onFailure(Throwable caught) {
@@ -96,20 +87,6 @@ public class DivisoesCreditosPresenter implements Presenter {
 						Info.display("Removido", "Item removido com sucesso!");
 					}
 				});
-			}
-		});
-		display.getResetBuscaButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
-			@Override
-			public void componentSelected(ButtonEvent ce) {
-				display.getNomeBuscaTextField().setValue(null);
-				display.getTempoBuscaTextField().setValue(null);
-				display.getGrid().updateList();
-			}
-		});
-		display.getSubmitBuscaButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
-			@Override
-			public void componentSelected(ButtonEvent ce) {
-				display.getGrid().updateList();
 			}
 		});
 	}
