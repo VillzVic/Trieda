@@ -10,7 +10,11 @@
 
 #include "Variable.h"
 
+#include "opt_lp.h"
+
 using namespace std;
+
+//#define FIX_LB_AND_UB_TO_THE_SOL_INI_VALUE
 
 class InitialSolution
 {
@@ -30,11 +34,15 @@ public:
 
    int getNumDemandas_NAO_Atendidas() const;
 
+   void geraSolIniSemDividirDem();
+
+   //void geraSolIniDividindoDem();
+
    void generate_Initial_Solution();
 
-   pair<int*,double*> repSolIniToVariaveis(VariableHash & v_Hash, int lp_Cols);
+   //pair<int*,double*> repSolIniToVariaveis(VariableHash & v_Hash, int lp_Cols);
    //void repSolIniToVariaveis(VariableHash & v_Hash, int lp_Cols);
-   //pair<vector<int>*,vector<double>*> repSolIniToVariaveis(VariableHash & v_Hash, int lp_Cols);
+   pair<vector<int>*,vector<double>*> repSolIniToVariaveis(VariableHash & v_Hash, int lp_Cols, OPT_LP & lp);
 
 private:
 

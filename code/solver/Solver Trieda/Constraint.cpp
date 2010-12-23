@@ -145,7 +145,13 @@ std::string Constraint::toString()
      case C_CAP_ALOC_DEM_DISC:
         ss << "__(CAP_ALOC_DEM_DISC):"; break;
      case C_CAP_SALA_COMPATIVEL_TURMA:
-        ss << "__(CAP_SALA_COMPATIVEL_TURMA):"; break;
+        ss << "__(CAP_SALA_COMPATIVEL_TURMA):";
+        ss << "[";
+        ss << "_i:" << i;
+        ss << "_d:" << d->getId();
+        ss << "_cp:" << cp->getId();
+        ss << "]:";
+        break;
      case C_CAP_SALA_UNIDADE:
         ss << "__(CAP_TOTAL_SALA_UNIDADE):"; break;
      case C_TURMA_DISC_DIAS_CONSEC:
@@ -155,7 +161,14 @@ std::string Constraint::toString()
      case C_MAX_CREDS_TURM_BLOCO:
         ss << "__(MAX_CREDS_TURM_BLOCO):"; break;
      case C_ALUNO_CURSO_DISC:
-        ss << "__(ALUNO_CURSO_TURMA):"; break;
+        ss << "__(ALUNO_CURSO_TURMA):";
+        ss << "[";
+        ss << "_i:" << i;
+        ss << "_d:" << d->getId();
+        ss << "_c:" << c->getId();
+        ss << "_cp:" << cp->getId();
+        ss << "]:";
+        break;
      case C_ALUNOS_CURSOS_DIF:
         ss << "__(ALUNOS_CURSOS_DIF):"; break;
      case C_SLACK_DIST_CRED_DIA:

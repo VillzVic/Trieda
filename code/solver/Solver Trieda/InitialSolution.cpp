@@ -19,7 +19,7 @@ problem_Data(&_problem_Data)
 
    // Copiando as demandas para poder ordena-las
    ITERA_GGROUP(it_Demanda,problem_Data->demandas,Demanda)
-   //{ vt_Demandas.push_back(new Demanda(**it_Demanda)); }
+      //{ vt_Demandas.push_back(new Demanda(**it_Demanda)); }
    { vt_Demandas.push_back(make_pair(*it_Demanda,it_Demanda->quantidade)); }
 
    // Ordenando as demandas em ordem decrescente
@@ -118,7 +118,7 @@ bool InitialSolution::tentouAtenderTodasDemandas() const
    return false;
 }
 
-void InitialSolution::generate_Initial_Solution()
+void InitialSolution::geraSolIniSemDividirDem()
 {
    // Etrutura para armazenar referências entre as <Sala> e <IS_Sala>.
    map<Sala*,IS_Sala*> map_Sala__IS_Sala;
@@ -170,7 +170,6 @@ void InitialSolution::generate_Initial_Solution()
    // ---
 
    // Tentando alocar todas as demandas. Pode ser que parte de alguma (ou toda a) demanda não seja alocada
-   //while(!todasDemandasAtendidas())
    while(!tentouAtenderTodasDemandas())
    {
       vector<pair<Demanda*,int> >::iterator it_vt_Demandas =
@@ -190,11 +189,11 @@ void InitialSolution::generate_Initial_Solution()
             das salas compatíveis. Se, em uma iteração dessas a demanda não for atendida (em pelo menos,
             o tamanho da menor sala) significa que não há salas com horários vagos suficientes para podermos
             alocar a demanda. 
-                        
+
             -------
 
             Dá pra dividir a demanda e alocar separado por sala. Fica pra um TRIEDA FUTURO !!!
-            
+
             */
             bool alocou_Demanda = false;
 
@@ -214,23 +213,10 @@ void InitialSolution::generate_Initial_Solution()
                   de créditos da disciplina em questão. */
                   if(is_Sala->atendimento_Tatico[*it_Dia_Let_Disc_Sala].first >= total_Creditos
                      && (disc_Turmas[pt_Disc] < pt_Disc->num_turmas)
+                     && (is_Sala->sala->capacidade >= it_vt_Demandas->first->quantidade)
                      )
                   {
                      alocou_Demanda = true;
-
-                     // Adicionando o indice da turma
-                     //++disc_Turmas[pt_Disc];
-
-                     // === ===
-
-                     //int demanda_Atendida = 
-                     //   //(*it_vt_Demandas)->quantidade / is_Sala->sala->capacidade;
-                     //   it_vt_Demandas->second / is_Sala->sala->capacidade;
-
-                     //// Caso a demanda seja inferior à cap. da sala em questão
-                     //demanda_Atendida = 
-                     //   //(demanda_Atendida > 0 ? demanda_Atendida : (*it_vt_Demandas)->quantidade);
-                     //   (demanda_Atendida > 0 ? demanda_Atendida : it_vt_Demandas->second);
 
                      int demanda_Atendida =
                         (it_vt_Demandas->second <= is_Sala->sala->capacidade ? // Ou seja, cabe na sala?
@@ -249,33 +235,25 @@ void InitialSolution::generate_Initial_Solution()
                         int pos = is_Sala->atendimento_Tatico[*it_Dia_Let_Disc_Sala].second.size()
                            - is_Sala->atendimento_Tatico[*it_Dia_Let_Disc_Sala].first;
 
-                        // Sutraindo o credito alocado dos creditos livres.
+                        // Subtraindo o credito alocado dos creditos livres.
                         is_Sala->atendimento_Tatico[*it_Dia_Let_Disc_Sala].first--;
-
-                        // Referenciando a disciplina que está sendo alocada
-                        //is_Sala->atendimento_Tatico[*it_Dia_Let_Disc_Sala].second.at(pos).first =
-                           //pt_Disc;
 
                         // Referenciando a demanda que está sendo parcialmente, ou totalmente atendida.
                         is_Sala->atendimento_Tatico[*it_Dia_Let_Disc_Sala].second.at(pos).first = 
                            it_vt_Demandas->first;
 
                         // Armazenando a demanda (parcial ou total) atendida
-                        //is_Sala->atendimento_Tatico[*it_Dia_Let_Disc_Sala].second.at(pos).second = 
-                        //dem_a_ser_Atendida;
                         is_Sala->atendimento_Tatico[*it_Dia_Let_Disc_Sala].second.at(pos).second =
                            make_pair(disc_Turmas[pt_Disc],demanda_Atendida);
                      }              
 
                      /* Teste para o caso em que toda a demanda foi atendida */
-                     //if(demanda_Atendida <= is_Sala->sala->capacidade)
                      if( (it_vt_Demandas->second - demanda_Atendida) == 0 )
                      {
                         // Se está aqui, é pq toda a demanda foi atendida
                         num_Demandas_Atendidas++;
 
                         // Para não atender denovo
-                        //(*it_vt_Demandas)->quantidade = 0;
                         it_vt_Demandas->second = 0;
                      }
                      else
@@ -283,7 +261,6 @@ void InitialSolution::generate_Initial_Solution()
                         // Se está aqui, é pq NEM toda a demanda foi atendida
 
                         // Atualizando a demanda que ainda falta ser atendida
-                        //(*it_vt_Demandas)->quantidade -= demanda_Atendida;
                         it_vt_Demandas->second -= demanda_Atendida;
                      }
 
@@ -306,7 +283,6 @@ void InitialSolution::generate_Initial_Solution()
             vagos suficientes em uma dada sala. */
             if(!alocou_Demanda)
             {
-               //(*it_vt_Demandas)->quantidade = 0;
                it_vt_Demandas->second = 0;
                num_Demandas_NAO_Atendidas++;
             }
@@ -315,18 +291,18 @@ void InitialSolution::generate_Initial_Solution()
    }
 }
 
-pair<int*,double*> InitialSolution::repSolIniToVariaveis(VariableHash & v_Hash, int lp_Cols)
-//void InitialSolution::repSolIniToVariaveis(VariableHash & v_Hash, int lp_Cols)
-//pair<vector<int>*,vector<double>*> InitialSolution::repSolIniToVariaveis(VariableHash & v_Hash, int lp_Cols)
+void InitialSolution::generate_Initial_Solution()
 {
-   //int * indices = new int (lp_Cols);
-   int * indices = new int[lp_Cols];
+   geraSolIniSemDividirDem();
 
-   //vector<int> * indices = new vector<int>;
+   //geraSolIniDividindoDem();
+}
 
-   //double * valores = new double (lp_Cols);
-   double * valores = new double[lp_Cols];
-   //vector<double> * valores = new vector<double>;
+pair<vector<int>*,vector<double>*> InitialSolution::repSolIniToVariaveis(VariableHash & v_Hash, int lp_Cols, OPT_LP & lp)
+{
+   vector<int> * indices = new vector<int>;
+
+   vector<double> * valores = new vector<double>;
 
    /* Responsavel por armazenar os indices das vars do tipo V_CREDITOS que tiveram
    valor atribuido no processo de geração da solução inicial. */
@@ -349,9 +325,11 @@ pair<int*,double*> InitialSolution::repSolIniToVariaveis(VariableHash & v_Hash, 
    // p/ cada campus
    ITERA_GGROUP(it_IS_Campus,solucao,IS_Campus)
    {
+      // Armazena os indices e valores das variaveis do tipo V_ALUNOS
       map<vector<int/*indices de uma var do tipo V_ALUNOS*/>,
          pair<Variable,int/*valor var*/> > vars_Alunos;
 
+      // Armazena os indices e valores das variaveis do tipo V_ALOC_ALUNO
       map<vector<int/*indices de uma var do tipo V_ALOC_ALUNO*/>,
          pair<Variable,int/*valor var*/> > vars_Aloc_Alunos;
 
@@ -368,9 +346,15 @@ pair<int*,double*> InitialSolution::repSolIniToVariaveis(VariableHash & v_Hash, 
 
                it_Dia = it_IS_Sala->atendimento_Tatico.begin();
 
-            // p/ cada dia do atendimento tatico em questao
+            // p/ cada dia do atendimento tatico
             for(; it_Dia != it_IS_Sala->atendimento_Tatico.end(); it_Dia++)
             {
+               /* Armazena os indices e valores das variaveis do tipo V_CREDITOS 
+
+               Como existe uma variavel do tipo V_OFERECIMENTO para cada variavel
+               do tipo V_CREDITOS, usam-se os mesmos indices armazenados nessa estrutura
+               para inicializar as variaveis do tipo V_OFERECIMENTO
+               */
                map<vector<int/*indices de uma var do tipo V_CREDITOS ou V_OFERECIMENTO*/>,
                   pair<Variable,int/*valor var*/> > vars_Dia_Cred_OU_Oferc;
 
@@ -380,6 +364,8 @@ pair<int*,double*> InitialSolution::repSolIniToVariaveis(VariableHash & v_Hash, 
                   // SOMENTE se o cred tiver sido alocado
                   if(it_Dia->second.second.at(cred).first) // != NULL
                   {
+                     // Coletando os dados das variaveis
+
                      // ===
 
                      // Criando as variáveis e estruturas necessárias
@@ -426,22 +412,15 @@ pair<int*,double*> InitialSolution::repSolIniToVariaveis(VariableHash & v_Hash, 
                      var_Aloc_Alunos.setDisciplina( it_Dia->second.second.at(cred).first->disciplina );
                      chave_Aloc_Alunos.at(1) = it_Dia->second.second.at(cred).first->disciplina->getId();
 
+                     // Setando curso
+
+                     var_Aloc_Alunos.setCurso( it_Dia->second.second.at(cred).first->oferta->curso );
+                     chave_Aloc_Alunos.at(2) = it_Dia->second.second.at(cred).first->oferta->curso->getId();
+
                      // Setando campus
 
-                     //var_Aloc_Alunos.setCampus( it_Dia->second.second.at
-
-
-                     /*
-                        CONTINUAR DAQUI
-
-                        ASSIM QUE PEGA A OFERTA: it_Dia->second.second.at(cred).first->oferta
-
-                        DAI PEGO O CAMPUS E O CURSO
-
-                        PARA CONTINUAR, DESCOMENTAR AS LINHAS EM SOLVE() DO SOLVERMIP
-                     
-                     */
-                        
+                     var_Aloc_Alunos.setCampus( it_Dia->second.second.at(cred).first->oferta->campus );
+                     chave_Aloc_Alunos.at(3) = it_Dia->second.second.at(cred).first->oferta->campus->getId();
 
                      // Setando unidade
 
@@ -495,7 +474,11 @@ pair<int*,double*> InitialSolution::repSolIniToVariaveis(VariableHash & v_Hash, 
 
                      // ===
 
-                     // Logica para variaveis do tipo V_CREDITOS e V_OFERECIMENTO
+                     /* Tratamento das variaveis do tipo V_CREDITOS e V_OFERECIMENTO colhidas acima. 
+
+                     Checando se já existe uma variavel em <vars_Dia_Cred_OU_Oferc> 
+                     com os indices ou se é nova.
+                     */
                      if(vars_Dia_Cred_OU_Oferc.find(chave_Cred_OU_Oferc) == vars_Dia_Cred_OU_Oferc.end())
                      { vars_Dia_Cred_OU_Oferc[chave_Cred_OU_Oferc] = make_pair(var_Cred_OU_Oferc,1); }
                      else
@@ -504,11 +487,26 @@ pair<int*,double*> InitialSolution::repSolIniToVariaveis(VariableHash & v_Hash, 
                         { vars_Dia_Cred_OU_Oferc[chave_Cred_OU_Oferc].second += 1; }
                      }
 
-                     // Logica para variavel do tipo V_ALUNOS
+                     /* Tratamento da variavel do tipo V_ALUNOS colhida acima 
+
+                     Existe apenas uma variável do tipo V_ALUNOS com os indices <i>, <d> e <o>.
+                     Portanto, mesmo que ela apareça várias vezes na solução, isso não quer dizer
+                     que o valor tenha que ser somado. Ele apenas estará replicado.
+
+                     O mesmo acontece com a variávelo do tipo V_ALOC_ALUNOS. Houve a necessidade de
+                     criar uma estrutura própria para essa variavel devido a diferença entre os indices
+                     quando comparada com a variavel do tipo V_ALUNOS
+                     */
                      if(vars_Alunos.find(chave_Alunos) == vars_Alunos.end())
                      {
                         vars_Alunos[chave_Alunos] = make_pair
                            (var_Alunos,it_Dia->second.second.at(cred).second.second);
+                     }
+
+                     if(vars_Aloc_Alunos.find(chave_Aloc_Alunos) == vars_Aloc_Alunos.end())
+                     {
+                        vars_Aloc_Alunos[chave_Aloc_Alunos] = make_pair
+                           (var_Aloc_Alunos,1);
                      }
                   }
                }
@@ -530,14 +528,17 @@ pair<int*,double*> InitialSolution::repSolIniToVariaveis(VariableHash & v_Hash, 
                   {
                      //cout << "Found V_CREDITOS" << endl;
 
-                     indices[cnt] = it_v_Hash->second;
-                     //indices->push_back(it_v_Hash->second);
+                     indices->push_back(it_v_Hash->second);
 
-                     valores[cnt] = it_Vars_Dia_Cred_OU_Oferc->second.second;
-                     //valores->push_back(it_Vars_Dia->second.second);
+                     valores->push_back(it_Vars_Dia_Cred_OU_Oferc->second.second);
 
                      ++cnt;
-
+#ifdef FIX_LB_AND_UB_TO_THE_SOL_INI_VALUE
+                     // Alterando o lb e o ub da var em questão.
+                     double bound = it_Vars_Dia_Cred_OU_Oferc->second.second;
+                     lp.chgLB(it_v_Hash->second,bound);
+                     lp.chgUB(it_v_Hash->second,bound);
+#endif
                      indices_V_CREDITOS.insert(it_v_Hash->second);
                   }
                   else
@@ -553,7 +554,7 @@ pair<int*,double*> InitialSolution::repSolIniToVariaveis(VariableHash & v_Hash, 
 
                   // Alternando APENAS o tipo da variavel para OFERECIMENTO
                   it_Vars_Dia_Cred_OU_Oferc->second.first.setType(Variable::V_OFERECIMENTO);
-                  
+
                   // Procurando pela variavel no Hash de variaveis.
                   it_v_Hash = v_Hash.find(it_Vars_Dia_Cred_OU_Oferc->second.first);
 
@@ -561,11 +562,18 @@ pair<int*,double*> InitialSolution::repSolIniToVariaveis(VariableHash & v_Hash, 
                   {
                      //cout << "Found V_OFERECIMENTO" << endl;
 
-                     indices[cnt] = it_v_Hash->second;
-                     //indices->push_back(it_v_Hash->second);
+                     //indices[cnt] = it_v_Hash->second;
+                     indices->push_back(it_v_Hash->second);
 
-                     valores[cnt] = 1;
-                     //valores->push_back(1);
+                     //valores[cnt] = 1;
+                     valores->push_back(1);
+
+#ifdef FIX_LB_AND_UB_TO_THE_SOL_INI_VALUE
+                     // Alterando o lb e o ub da var em questão.
+                     double bound = 1;
+                     lp.chgLB(it_v_Hash->second,bound);
+                     lp.chgUB(it_v_Hash->second,bound);
+#endif
 
                      ++cnt;
 
@@ -582,81 +590,149 @@ pair<int*,double*> InitialSolution::repSolIniToVariaveis(VariableHash & v_Hash, 
                }
 
                // --- --- ---
-            
-               map<vector<int/*indices de uma var do tipo V_ALUNOS*/>,
-                  pair<Variable,int/*valor var*/> >::iterator 
-                  it_Vars_Alunos = vars_Alunos.begin();
 
-               /* P/ cada variavel registrada em <vars_Alunos>, procuro em <v_Hash> e
-               e se ela for encontrada, atribuo o valor indicado pela estrutura <vars_Alunos> */
-               for(; it_Vars_Alunos != vars_Alunos.end(); it_Vars_Alunos++)
-               {
-                  // Procurando pela variavel no Hash de variaveis.
-                  VariableHash::iterator it_v_Hash = v_Hash.find(it_Vars_Alunos->second.first);
-
-                  if(it_v_Hash != v_Hash.end())
-                  {
-                     //cout << "Found V_ALUNOS" << endl;
-
-                     indices[cnt] = it_v_Hash->second;
-                     //indices->push_back(it_v_Hash->second);
-
-                     valores[cnt] = it_Vars_Alunos->second.second;
-                     //valores->push_back(it_Vars_Dia->second.second);
-
-                     ++cnt;
-
-                     indices_V_ALUNOS.insert(it_v_Hash->second);
-                  }
-                  else
-                  {
-                     cout << "Not Found" << endl;
-                     exit(1);
-                  }
-               }
-
-               // --- --- ---
             }
          }
       }
+
+      // --- --- ---
+
+      map<vector<int/*indices de uma var do tipo V_ALUNOS*/>,
+         pair<Variable,int/*valor var*/> >::iterator 
+         it_Vars_Alunos = vars_Alunos.begin();
+
+      /* P/ cada variavel registrada em <vars_Alunos>, procuro em <v_Hash> e
+      e se ela for encontrada, atribuo o valor indicado pela estrutura <vars_Alunos> */
+      for(; it_Vars_Alunos != vars_Alunos.end(); it_Vars_Alunos++)
+      {
+         // Procurando pela variavel no Hash de variaveis.
+         VariableHash::iterator it_v_Hash = v_Hash.find(it_Vars_Alunos->second.first);
+
+         if(it_v_Hash != v_Hash.end())
+         {
+            //cout << "Found V_ALUNOS" << endl;
+
+            //indices[cnt] = it_v_Hash->second;
+            indices->push_back(it_v_Hash->second);
+
+            //valores[cnt] = it_Vars_Alunos->second.second;
+            valores->push_back(it_Vars_Alunos->second.second);
+
+#ifdef FIX_LB_AND_UB_TO_THE_SOL_INI_VALUE
+            // Alterando o lb e o ub da var em questão.
+            double bound = it_Vars_Alunos->second.second;
+            lp.chgLB(it_v_Hash->second,bound);
+            lp.chgUB(it_v_Hash->second,bound);
+#endif
+
+            ++cnt;
+
+            indices_V_ALUNOS.insert(it_v_Hash->second);
+         }
+         else
+         {
+            cout << "Not Found" << endl;
+            exit(1);
+         }
+      }
+
+      // --- --- ---
+
+      map<vector<int/*indices de uma var do tipo V_ALOC_ALUNOS*/>,
+         pair<Variable,int/*valor var*/> >::iterator 
+         it_Vars_Aloc_Alunos = vars_Aloc_Alunos.begin();
+
+      /* P/ cada variavel registrada em <vars_Aloc_Alunos>, procuro em <v_Hash> e
+      e se ela for encontrada, atribuo o valor indicado pela estrutura <vars_Aloc_Alunos> */
+      for(; it_Vars_Aloc_Alunos != vars_Aloc_Alunos.end(); it_Vars_Aloc_Alunos++)
+      {
+         // Procurando pela variavel no Hash de variaveis.
+         VariableHash::iterator it_v_Hash = v_Hash.find(it_Vars_Aloc_Alunos->second.first);
+
+         if(it_v_Hash != v_Hash.end())
+         {
+            //cout << "Found V_ALOC_ALUNO" << endl;
+
+            //indices[cnt] = it_v_Hash->second;
+            indices->push_back(it_v_Hash->second);
+
+            //valores[cnt] = 1;
+            valores->push_back(1);
+
+#ifdef FIX_LB_AND_UB_TO_THE_SOL_INI_VALUE
+            // Alterando o lb e o ub da var em questão.
+            double bound = 1;
+            lp.chgLB(it_v_Hash->second,bound);
+            lp.chgUB(it_v_Hash->second,bound);
+#endif
+
+            ++cnt;
+
+            indices_V_ALOC_ALUNO.insert(it_v_Hash->second);
+         }
+         else
+         {
+            cout << "Not Found" << endl;
+            exit(1);
+         }
+      }
+
+      // --- --- ---
+
    }
 
-   /* Para todas as outras variaveis do tipo V_CREDITOS e V_OFERECIMENTO que não tiverem valor associado,
-   deve-se inicializa-las com o valor 0. */
+   cout << "cnt (Apenas Vars. com valor): " << cnt << endl;
 
-   /**/
+   /* Para todas as outras variaveis do tipo V_CREDITOS, V_OFERECIMENTO, V_ALUNOS que não tiverem valor associado,
+   deve-se inicializa-las com o valor 0. */
 
    VariableHash::iterator it_v_Hash = v_Hash.begin();
 
    int cnt_V_CREDITOS_zeradas = 0;
    int cnt_V_OFERECIMENTO_zeradas = 0;
    int cnt_V_ALUNOS_zeradas = 0;
+   int cnt_V_ALOC_ALUNO_zeradas = 0;
 
    for(; it_v_Hash != v_Hash.end() ; it_v_Hash++)
    {
       switch(it_v_Hash->first.getType())
       {
-      case Variable::V_CREDITOS :
+      case Variable::V_CREDITOS:
          if(indices_V_CREDITOS.find(it_v_Hash->second) == indices_V_CREDITOS.end())
          {
-            indices[cnt] = it_v_Hash->second;
-            //indices->push_back(it_v_Hash->second);
-            
-            valores[cnt] = 0;
-            //valores->push_back(0);
+            //indices[cnt] = it_v_Hash->second;
+            indices->push_back(it_v_Hash->second);
+
+            //valores[cnt] = 0;
+            valores->push_back(0);
+
+#ifdef FIX_LB_AND_UB_TO_THE_SOL_INI_VALUE
+            // Alterando o lb e o ub da var em questão.
+            double bound = 0;
+            lp.chgLB(it_v_Hash->second,bound);
+            lp.chgUB(it_v_Hash->second,bound);
+#endif
 
             ++cnt;
             ++cnt_V_CREDITOS_zeradas;
          }
          break;
-      case Variable::V_OFERECIMENTO :
+      case Variable::V_OFERECIMENTO:
          if(indices_V_OFERECIMENTO.find(it_v_Hash->second) == indices_V_OFERECIMENTO.end())
          { 
-            indices[cnt] = it_v_Hash->second;
-            //indices->push_back(it_v_Hash->second);
+            //indices[cnt] = it_v_Hash->second;
+            indices->push_back(it_v_Hash->second);
 
-            valores[cnt] = 0;
-            //valores->push_back(0);
+            //valores[cnt] = 0;
+            valores->push_back(0);
+
+#ifdef FIX_LB_AND_UB_TO_THE_SOL_INI_VALUE
+            // Alterando o lb e o ub da var em questão.
+            double bound = 0;
+            lp.chgLB(it_v_Hash->second,bound);
+            lp.chgUB(it_v_Hash->second,bound);
+#endif
+
 
             ++cnt;
             ++cnt_V_OFERECIMENTO_zeradas;
@@ -665,39 +741,525 @@ pair<int*,double*> InitialSolution::repSolIniToVariaveis(VariableHash & v_Hash, 
       case Variable::V_ALUNOS:
          if(indices_V_ALUNOS.find(it_v_Hash->second) == indices_V_ALUNOS.end())
          {
-            indices[cnt] = it_v_Hash->second;
-            //indices->push_back(it_v_Hash->second);
+            //indices[cnt] = it_v_Hash->second;
+            indices->push_back(it_v_Hash->second);
 
-            valores[cnt] = 0;
-            //valores->push_back(0);
+            //valores[cnt] = 0;
+            valores->push_back(0);
+
+#ifdef FIX_LB_AND_UB_TO_THE_SOL_INI_VALUE
+            // Alterando o lb e o ub da var em questão.
+            double bound = 0;
+            lp.chgLB(it_v_Hash->second,bound);
+            lp.chgUB(it_v_Hash->second,bound);
+#endif
 
             ++cnt;
             ++cnt_V_ALUNOS_zeradas;
          }
+         break;
+      case Variable::V_ALOC_ALUNO:
+         if(indices_V_ALOC_ALUNO.find(it_v_Hash->second) == indices_V_ALOC_ALUNO.end())
+         { 
+            //indices[cnt] = it_v_Hash->second;
+            indices->push_back(it_v_Hash->second);
+
+            //valores[cnt] = 0;
+            valores->push_back(0);
+
+#ifdef FIX_LB_AND_UB_TO_THE_SOL_INI_VALUE
+            // Alterando o lb e o ub da var em questão.
+            double bound = 0;
+            lp.chgLB(it_v_Hash->second,bound);
+            lp.chgUB(it_v_Hash->second,bound);
+#endif
+
+            ++cnt;
+            ++cnt_V_ALOC_ALUNO_zeradas;
+         }
+         break;
       default:
          break;
       }
    }
-   
-   /**/
-
-   cout << "cnt: " << cnt << endl;
 
    cout << "cnt_V_CREDITOS_zeradas: " << cnt_V_CREDITOS_zeradas << endl;
    cout << "cnt_V_OFERECIMENTO_zeradas: " << cnt_V_OFERECIMENTO_zeradas << endl;
    cout << "cnt_V_ALUNOS_zeradas: " << cnt_V_ALUNOS_zeradas << endl;
-   
+   cout << "cnt_V_ALOC_ALUNO_zeradas: " << cnt_V_ALOC_ALUNO_zeradas << endl;
+
+   cout << "cnt final: " << cnt << endl;
+
    cout << "Convertido" << endl;
 
-/*
-cout << "CONVERTI AS VARS DO TIPO X, FALTA INDICAR COM O VALOR 0 TODAS AS VARIAVEIS X QUE NAO FORAM UTILIZADAS " <<
-"NA HEURISTICA. FALTA TB, CONVERTER AS OUTRAS VARIAVEIS (O,A,B)" << endl;
-*/
+   /*
+   cout << "CONVERTI AS VARS DO TIPO X, FALTA INDICAR COM O VALOR 0 TODAS AS VARIAVEIS X QUE NAO FORAM UTILIZADAS " <<
+   "NA HEURISTICA. FALTA TB, CONVERTER AS OUTRAS VARIAVEIS (O,A,B)" << endl;
+   */
 
    //exit(0);
 
    return make_pair(indices,valores);
 }
+
+//pair<int*,double*> InitialSolution::repSolIniToVariaveis(VariableHash & v_Hash, int lp_Cols)
+//void InitialSolution::repSolIniToVariaveis(VariableHash & v_Hash, int lp_Cols)
+//pair<vector<int>*,vector<double>*> InitialSolution::repSolIniToVariaveis(VariableHash & v_Hash, int lp_Cols)
+//{
+//   //int * indices = new int (lp_Cols);
+//   //int * indices = new int[lp_Cols];
+//
+//   vector<int> * indices = new vector<int>;
+//
+//   //double * valores = new double (lp_Cols);
+//   //double * valores = new double[lp_Cols];
+//   
+//   vector<double> * valores = new vector<double>;
+//
+//   /* Responsavel por armazenar os indices das vars do tipo V_CREDITOS que tiveram
+//   valor atribuido no processo de geração da solução inicial. */
+//   set<int> indices_V_CREDITOS;
+//
+//   /* Responsavel por armazenar os indices das vars do tipo V_OFERECIMENTO que tiveram
+//   valor atribuido no processo de geração da solução inicial. */
+//   set<int> indices_V_OFERECIMENTO;
+//
+//   /* Responsavel por armazenar os indices das vars do tipo V_ALUNOS que tiveram
+//   valor atribuido no processo de geração da solução inicial. */
+//   set<int> indices_V_ALUNOS;
+//
+//   /* Responsavel por armazenar os indices das vars do tipo V_ALOC_ALUNO que tiveram
+//   valor atribuido no processo de geração da solução inicial. */
+//   set<int> indices_V_ALOC_ALUNO;
+//
+//   int cnt = 0;
+//
+//   // p/ cada campus
+//   ITERA_GGROUP(it_IS_Campus,solucao,IS_Campus)
+//   {
+//      // Armazena os indices e valores das variaveis do tipo V_ALUNOS
+//      map<vector<int/*indices de uma var do tipo V_ALUNOS*/>,
+//         pair<Variable,int/*valor var*/> > vars_Alunos;
+//
+//      // Armazena os indices e valores das variaveis do tipo V_ALOC_ALUNO
+//      map<vector<int/*indices de uma var do tipo V_ALOC_ALUNO*/>,
+//         pair<Variable,int/*valor var*/> > vars_Aloc_Alunos;
+//
+//      // p/ cada unidade
+//      ITERA_GGROUP(it_IS_Unidade,it_IS_Campus->unidades,IS_Unidade)
+//      {
+//         // p/ cada sala
+//         ITERA_GGROUP(it_IS_Sala,it_IS_Unidade->salas,IS_Sala)
+//         {
+//            map<int/*dia*/,pair<int/*credsLivres*/,
+//               vector<
+//               pair<Demanda*,
+//               pair<int/*Id Turma*/,int/*Demanda Atendida*/> > > > >::iterator
+//
+//               it_Dia = it_IS_Sala->atendimento_Tatico.begin();
+//
+//            // p/ cada dia do atendimento tatico
+//            for(; it_Dia != it_IS_Sala->atendimento_Tatico.end(); it_Dia++)
+//            {
+//               /* Armazena os indices e valores das variaveis do tipo V_CREDITOS 
+//               
+//                  Como existe uma variavel do tipo V_OFERECIMENTO para cada variavel
+//                  do tipo V_CREDITOS, usam-se os mesmos indices armazenados nessa estrutura
+//                  para inicializar as variaveis do tipo V_OFERECIMENTO
+//               */
+//               map<vector<int/*indices de uma var do tipo V_CREDITOS ou V_OFERECIMENTO*/>,
+//                  pair<Variable,int/*valor var*/> > vars_Dia_Cred_OU_Oferc;
+//
+//               // p/ cada credito do dia 
+//               for(unsigned cred = 0; cred < it_Dia->second.second.size(); cred++)
+//               {
+//                  // SOMENTE se o cred tiver sido alocado
+//                  if(it_Dia->second.second.at(cred).first) // != NULL
+//                  {
+//                     // Coletando os dados das variaveis
+//
+//                     // ===
+//
+//                     // Criando as variáveis e estruturas necessárias
+//
+//                     Variable var_Cred_OU_Oferc;
+//                     vector<int> chave_Cred_OU_Oferc(5);
+//
+//                     Variable var_Alunos;
+//                     vector<int> chave_Alunos(3);
+//
+//                     Variable var_Aloc_Alunos;
+//                     vector<int> chave_Aloc_Alunos(4);
+//
+//                     // Inicializando
+//
+//                     var_Cred_OU_Oferc.reset();
+//                     var_Cred_OU_Oferc.setType(Variable::V_CREDITOS);
+//
+//                     var_Alunos.reset();
+//                     var_Alunos.setType(Variable::V_ALUNOS);
+//
+//                     var_Aloc_Alunos.reset();
+//                     var_Aloc_Alunos.setType(Variable::V_ALOC_ALUNO);
+//
+//                     // Setando turma
+//
+//                     var_Cred_OU_Oferc.setTurma( it_Dia->second.second.at(cred).second.first );
+//                     chave_Cred_OU_Oferc.at(0) = it_Dia->second.second.at(cred).second.first;
+//
+//                     var_Alunos.setTurma( it_Dia->second.second.at(cred).second.first );
+//                     chave_Alunos.at(0) = it_Dia->second.second.at(cred).second.first;
+//
+//                     var_Aloc_Alunos.setTurma( it_Dia->second.second.at(cred).second.first );
+//                     chave_Aloc_Alunos.at(0) = it_Dia->second.second.at(cred).second.first;
+//
+//                     // Setando disciplina
+//
+//                     var_Cred_OU_Oferc.setDisciplina( it_Dia->second.second.at(cred).first->disciplina );
+//                     chave_Cred_OU_Oferc.at(1) = it_Dia->second.second.at(cred).first->disciplina->getId();
+//
+//                     var_Alunos.setDisciplina( it_Dia->second.second.at(cred).first->disciplina );
+//                     chave_Alunos.at(1) = it_Dia->second.second.at(cred).first->disciplina->getId();
+//
+//                     var_Aloc_Alunos.setDisciplina( it_Dia->second.second.at(cred).first->disciplina );
+//                     chave_Aloc_Alunos.at(1) = it_Dia->second.second.at(cred).first->disciplina->getId();
+//
+//                     // Setando curso
+//
+//                     var_Aloc_Alunos.setCurso( it_Dia->second.second.at(cred).first->oferta->curso );
+//                     chave_Aloc_Alunos.at(2) = it_Dia->second.second.at(cred).first->oferta->curso->getId();
+//
+//                     // Setando campus
+//
+//                     var_Aloc_Alunos.setCampus( it_Dia->second.second.at(cred).first->oferta->campus );
+//                     chave_Aloc_Alunos.at(3) = it_Dia->second.second.at(cred).first->oferta->campus->getId();
+//
+//                     // Setando unidade
+//
+//                     var_Cred_OU_Oferc.setUnidade( it_IS_Unidade->unidade );
+//                     chave_Cred_OU_Oferc.at(2) = it_IS_Unidade->unidade->getId();
+//
+//                     // Setando conjunto de sala (tps)
+//
+//                     // ---
+//
+//                     // Procurando o Conjunto de Salas correto.
+//
+//                     int id = 
+//                        (it_IS_Sala->sala->tipo_sala->getId() == 1 ? 
+//                        it_IS_Sala->sala->capacidade : -it_IS_Sala->sala->capacidade);
+//
+//                     ConjuntoSala * cjt_Sala = NULL;
+//
+//                     bool found_CJT_Sala = false;
+//
+//                     ITERA_GGROUP(it_Cjt_Sala,it_IS_Unidade->unidade->conjutoSalas,ConjuntoSala)
+//                     {
+//                        if(it_Cjt_Sala->getId() == id)
+//                        {
+//                           cjt_Sala = *it_Cjt_Sala;
+//
+//                           found_CJT_Sala = true;
+//
+//                           break;
+//                        }
+//                     }
+//
+//                     if(!found_CJT_Sala)
+//                     { cout << "CJT SALA NAO ENCONTRADO" << endl; exit(1); }
+//
+//                     chave_Cred_OU_Oferc.at(3) = id;
+//
+//                     // ---
+//
+//                     var_Cred_OU_Oferc.setSubCjtSala( cjt_Sala );
+//
+//                     // Setando dia
+//
+//                     var_Cred_OU_Oferc.setDia( it_Dia->first );
+//                     chave_Cred_OU_Oferc.at(4) = it_Dia->first;
+//
+//                     // Setando oferta
+//                     var_Alunos.setOferta(problem_Data->refOfertas
+//                        [it_Dia->second.second.at(cred).first->oferta->getId()]);
+//                     chave_Alunos.at(2) = it_Dia->second.second.at(cred).first->oferta->getId();
+//
+//                     // ===
+//
+//                     /* Tratamento das variaveis do tipo V_CREDITOS e V_OFERECIMENTO colhidas acima. 
+//                        
+//                        Checando se já existe uma variavel em <vars_Dia_Cred_OU_Oferc> 
+//                     com os indices ou se é nova.
+//                     */
+//                     if(vars_Dia_Cred_OU_Oferc.find(chave_Cred_OU_Oferc) == vars_Dia_Cred_OU_Oferc.end())
+//                     { vars_Dia_Cred_OU_Oferc[chave_Cred_OU_Oferc] = make_pair(var_Cred_OU_Oferc,1); }
+//                     else
+//                     {
+//                        if(var_Cred_OU_Oferc.getType() == Variable::V_CREDITOS)
+//                        { vars_Dia_Cred_OU_Oferc[chave_Cred_OU_Oferc].second += 1; }
+//                     }
+//
+//                     /* Tratamento da variavel do tipo V_ALUNOS colhida acima 
+//                     
+//                        Existe apenas uma variável do tipo V_ALUNOS com os indices <i>, <d> e <o>.
+//                        Portanto, mesmo que ela apareça várias vezes na solução, isso não quer dizer
+//                        que o valor tenha que ser somado. Ele apenas estará replicado.
+//
+//                        O mesmo acontece com a variávelo do tipo V_ALOC_ALUNOS. Houve a necessidade de
+//                        criar uma estrutura própria para essa variavel devido a diferença entre os indices
+//                        quando comparada com a variavel do tipo V_ALUNOS
+//                     */
+//                     if(vars_Alunos.find(chave_Alunos) == vars_Alunos.end())
+//                     {
+//                        vars_Alunos[chave_Alunos] = make_pair
+//                           (var_Alunos,it_Dia->second.second.at(cred).second.second);
+//                     }
+//                     
+//                     if(vars_Aloc_Alunos.find(chave_Aloc_Alunos) == vars_Aloc_Alunos.end())
+//                     {
+//                        vars_Aloc_Alunos[chave_Aloc_Alunos] = make_pair
+//                           (var_Aloc_Alunos,1);
+//                     }
+//                  }
+//               }
+//
+//               // --- --- ---
+//
+//               map<vector<int/*indices de uma var do tipo CREDITOS*/>,
+//                  pair<Variable,int/*valor var*/> >::iterator 
+//                  it_Vars_Dia_Cred_OU_Oferc = vars_Dia_Cred_OU_Oferc.begin();
+//
+//               /* P/ cada variavel registrada em <vars_Dia_Cred_OU_Oferc>, procuro em <v_Hash> e
+//               e se ela for encontrada, atribuo o valor indicado pela estrutura <vars_Dia_Cred_OU_Oferc> */
+//               for(; it_Vars_Dia_Cred_OU_Oferc != vars_Dia_Cred_OU_Oferc.end(); it_Vars_Dia_Cred_OU_Oferc++)
+//               {
+//                  // Procurando pela variavel no Hash de variaveis.
+//                  VariableHash::iterator it_v_Hash = v_Hash.find(it_Vars_Dia_Cred_OU_Oferc->second.first);
+//
+//                  if(it_v_Hash != v_Hash.end())
+//                  {
+//                     //cout << "Found V_CREDITOS" << endl;
+//
+//                     //indices[cnt] = it_v_Hash->second;
+//                     indices->push_back(it_v_Hash->second);
+//
+//                     //valores[cnt] = it_Vars_Dia_Cred_OU_Oferc->second.second;
+//                     valores->push_back(it_Vars_Dia_Cred_OU_Oferc->second.second);
+//
+//                     ++cnt;
+//
+//                     indices_V_CREDITOS.insert(it_v_Hash->second);
+//                  }
+//                  else
+//                  {
+//                     cout << "Not Found" << endl;
+//                     exit(1);
+//                  }
+//
+//                  // ===
+//
+//                  /* Para cada variavel do tipo CREDITOS, tem que existir uma variavel do 
+//                  tipo OFERECIMENTO (Binaria) correspondente. */
+//
+//                  // Alternando APENAS o tipo da variavel para OFERECIMENTO
+//                  it_Vars_Dia_Cred_OU_Oferc->second.first.setType(Variable::V_OFERECIMENTO);
+//                  
+//                  // Procurando pela variavel no Hash de variaveis.
+//                  it_v_Hash = v_Hash.find(it_Vars_Dia_Cred_OU_Oferc->second.first);
+//
+//                  if(it_v_Hash != v_Hash.end())
+//                  {
+//                     //cout << "Found V_OFERECIMENTO" << endl;
+//
+//                     //indices[cnt] = it_v_Hash->second;
+//                     indices->push_back(it_v_Hash->second);
+//
+//                     //valores[cnt] = 1;
+//                     valores->push_back(1);
+//
+//                     ++cnt;
+//
+//                     indices_V_OFERECIMENTO.insert(it_v_Hash->second);
+//                  }
+//                  else
+//                  {
+//                     cout << "Not Found" << endl;
+//                     exit(1);
+//                  }
+//
+//                  // ===
+//
+//               }
+//
+//               // --- --- ---
+//            
+//            }
+//         }
+//      }
+//
+//      // --- --- ---
+//
+//      map<vector<int/*indices de uma var do tipo V_ALUNOS*/>,
+//         pair<Variable,int/*valor var*/> >::iterator 
+//         it_Vars_Alunos = vars_Alunos.begin();
+//
+//      /* P/ cada variavel registrada em <vars_Alunos>, procuro em <v_Hash> e
+//      e se ela for encontrada, atribuo o valor indicado pela estrutura <vars_Alunos> */
+//      for(; it_Vars_Alunos != vars_Alunos.end(); it_Vars_Alunos++)
+//      {
+//         // Procurando pela variavel no Hash de variaveis.
+//         VariableHash::iterator it_v_Hash = v_Hash.find(it_Vars_Alunos->second.first);
+//
+//         if(it_v_Hash != v_Hash.end())
+//         {
+//            //cout << "Found V_ALUNOS" << endl;
+//
+//            //indices[cnt] = it_v_Hash->second;
+//            indices->push_back(it_v_Hash->second);
+//
+//            //valores[cnt] = it_Vars_Alunos->second.second;
+//            valores->push_back(it_Vars_Alunos->second.second);
+//
+//            ++cnt;
+//
+//            indices_V_ALUNOS.insert(it_v_Hash->second);
+//         }
+//         else
+//         {
+//            cout << "Not Found" << endl;
+//            exit(1);
+//         }
+//      }
+//
+//      // --- --- ---
+//
+//      map<vector<int/*indices de uma var do tipo V_ALOC_ALUNOS*/>,
+//         pair<Variable,int/*valor var*/> >::iterator 
+//         it_Vars_Aloc_Alunos = vars_Aloc_Alunos.begin();
+//
+//      /* P/ cada variavel registrada em <vars_Aloc_Alunos>, procuro em <v_Hash> e
+//      e se ela for encontrada, atribuo o valor indicado pela estrutura <vars_Aloc_Alunos> */
+//      for(; it_Vars_Aloc_Alunos != vars_Aloc_Alunos.end(); it_Vars_Aloc_Alunos++)
+//      {
+//         // Procurando pela variavel no Hash de variaveis.
+//         VariableHash::iterator it_v_Hash = v_Hash.find(it_Vars_Aloc_Alunos->second.first);
+//
+//         if(it_v_Hash != v_Hash.end())
+//         {
+//            //cout << "Found V_ALOC_ALUNO" << endl;
+//
+//            //indices[cnt] = it_v_Hash->second;
+//            indices->push_back(it_v_Hash->second);
+//
+//            //valores[cnt] = 1;
+//            valores->push_back(1);
+//
+//            ++cnt;
+//
+//            indices_V_ALOC_ALUNO.insert(it_v_Hash->second);
+//         }
+//         else
+//         {
+//            cout << "Not Found" << endl;
+//            exit(1);
+//         }
+//      }
+//
+//      // --- --- ---
+//
+//   }
+//
+//   cout << "cnt (Apenas Vars. com valor): " << cnt << endl;
+//
+//   /* Para todas as outras variaveis do tipo V_CREDITOS, V_OFERECIMENTO, V_ALUNOS que não tiverem valor associado,
+//   deve-se inicializa-las com o valor 0. */
+//
+//   VariableHash::iterator it_v_Hash = v_Hash.begin();
+//
+//   int cnt_V_CREDITOS_zeradas = 0;
+//   int cnt_V_OFERECIMENTO_zeradas = 0;
+//   int cnt_V_ALUNOS_zeradas = 0;
+//   int cnt_V_ALOC_ALUNO_zeradas = 0;
+//
+//   for(; it_v_Hash != v_Hash.end() ; it_v_Hash++)
+//   {
+//      switch(it_v_Hash->first.getType())
+//      {
+//      case Variable::V_CREDITOS:
+//         if(indices_V_CREDITOS.find(it_v_Hash->second) == indices_V_CREDITOS.end())
+//         {
+//            //indices[cnt] = it_v_Hash->second;
+//            indices->push_back(it_v_Hash->second);
+//            
+//            //valores[cnt] = 0;
+//            valores->push_back(0);
+//
+//            ++cnt;
+//            ++cnt_V_CREDITOS_zeradas;
+//         }
+//         break;
+//      case Variable::V_OFERECIMENTO:
+//         if(indices_V_OFERECIMENTO.find(it_v_Hash->second) == indices_V_OFERECIMENTO.end())
+//         { 
+//            //indices[cnt] = it_v_Hash->second;
+//            indices->push_back(it_v_Hash->second);
+//
+//            //valores[cnt] = 0;
+//            valores->push_back(0);
+//
+//            ++cnt;
+//            ++cnt_V_OFERECIMENTO_zeradas;
+//         }
+//         break;
+//      case Variable::V_ALUNOS:
+//         if(indices_V_ALUNOS.find(it_v_Hash->second) == indices_V_ALUNOS.end())
+//         {
+//            //indices[cnt] = it_v_Hash->second;
+//            indices->push_back(it_v_Hash->second);
+//
+//            //valores[cnt] = 0;
+//            valores->push_back(0);
+//
+//            ++cnt;
+//            ++cnt_V_ALUNOS_zeradas;
+//         }
+//         break;
+//      case Variable::V_ALOC_ALUNO:
+//         if(indices_V_ALOC_ALUNO.find(it_v_Hash->second) == indices_V_ALOC_ALUNO.end())
+//         { 
+//            //indices[cnt] = it_v_Hash->second;
+//            indices->push_back(it_v_Hash->second);
+//
+//            //valores[cnt] = 0;
+//            valores->push_back(0);
+//
+//            ++cnt;
+//            ++cnt_V_ALOC_ALUNO_zeradas;
+//         }
+//         break;
+//      default:
+//         break;
+//      }
+//   }
+//   
+//   cout << "cnt_V_CREDITOS_zeradas: " << cnt_V_CREDITOS_zeradas << endl;
+//   cout << "cnt_V_OFERECIMENTO_zeradas: " << cnt_V_OFERECIMENTO_zeradas << endl;
+//   cout << "cnt_V_ALUNOS_zeradas: " << cnt_V_ALUNOS_zeradas << endl;
+//   cout << "cnt_V_ALOC_ALUNO_zeradas: " << cnt_V_ALOC_ALUNO_zeradas << endl;
+//
+//   cout << "cnt final: " << cnt << endl;
+//   
+//   cout << "Convertido" << endl;
+//
+///*
+//cout << "CONVERTI AS VARS DO TIPO X, FALTA INDICAR COM O VALOR 0 TODAS AS VARIAVEIS X QUE NAO FORAM UTILIZADAS " <<
+//"NA HEURISTICA. FALTA TB, CONVERTER AS OUTRAS VARIAVEIS (O,A,B)" << endl;
+//*/
+//
+//   //exit(0);
+//
+//   return make_pair(indices,valores);
+//}
 
 //pair<int*,double*> InitialSolution::repSolIniParaVariaveis(VariableHash & v_Hash, int lp_Cols)
 //{
