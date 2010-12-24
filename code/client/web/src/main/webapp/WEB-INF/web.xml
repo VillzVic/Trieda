@@ -98,6 +98,10 @@
 		<servlet-name>divisoesCreditosServlet</servlet-name>
 		<servlet-class>com.gapso.web.trieda.server.DivisoesCreditosServiceImpl</servlet-class>
 	</servlet>
+	<servlet>
+		<servlet-name>professoresServlet</servlet-name>
+		<servlet-class>com.gapso.web.trieda.server.ProfessoresServiceImpl</servlet-class>
+	</servlet>
 
 	<servlet-mapping>
 		<servlet-name>otimizarServlet</servlet-name>
@@ -170,6 +174,10 @@
 	<servlet-mapping>
 		<servlet-name>divisoesCreditosServlet</servlet-name>
 		<url-pattern>/trieda/divisoesCreditos</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>professoresServlet</servlet-name>
+		<url-pattern>/trieda/professores</url-pattern>
 	</servlet-mapping>
 
 	<welcome-file-list>

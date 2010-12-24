@@ -2,19 +2,18 @@ package com.gapso.web.trieda.client.mvp.model;
 
 import com.extjs.gxt.ui.client.data.BaseModel;
 
-public class AreaTitulacaoDTO extends BaseModel {
+public class TitulacaoDTO extends BaseModel {
 
 	private static final long serialVersionUID = -5134820110949139907L;
 
-	public AreaTitulacaoDTO() {
+	public TitulacaoDTO() {
 		super();
 	}
 
-	public AreaTitulacaoDTO(Long id, String codigo, String descricao, Integer version) {
+	public TitulacaoDTO(Long id, String nome, Integer version) {
 		setId(id);
 		setVersion(version);
-		setCodigo(codigo);
-		setDescricao(descricao);
+		setNome(nome);
 	}
 	
 	public void setId(Long value) {
@@ -31,18 +30,11 @@ public class AreaTitulacaoDTO extends BaseModel {
 		return get("version");
 	}
 	
-	public String getCodigo() {
-		return get("codigo");
+	public String getNome() {
+		return get("nome");
 	}
-	public void setCodigo(String value) {
-		set("codigo", value);
+	public void setNome(String value) {
+		set("nome", value);
 	}
 
-	public String getDescricao() {
-		return get("descricao");
-	}
-	public void setDescricao(String value) {
-		set("descricao", value);
-	}
-	
 }

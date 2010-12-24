@@ -23,11 +23,14 @@ import com.gapso.trieda.domain.GrupoSala;
 import com.gapso.trieda.domain.HorarioAula;
 import com.gapso.trieda.domain.HorarioDisponivelCenario;
 import com.gapso.trieda.domain.Oferta;
+import com.gapso.trieda.domain.Professor;
 import com.gapso.trieda.domain.Sala;
 import com.gapso.trieda.domain.SemanaLetiva;
+import com.gapso.trieda.domain.TipoContrato;
 import com.gapso.trieda.domain.TipoCurso;
 import com.gapso.trieda.domain.TipoDisciplina;
 import com.gapso.trieda.domain.TipoSala;
+import com.gapso.trieda.domain.Titulacao;
 import com.gapso.trieda.domain.Turno;
 import com.gapso.trieda.domain.Unidade;
 import com.gapso.trieda.misc.Dificuldades;
@@ -49,11 +52,14 @@ import com.gapso.web.trieda.client.mvp.model.GrupoSalaDTO;
 import com.gapso.web.trieda.client.mvp.model.HorarioAulaDTO;
 import com.gapso.web.trieda.client.mvp.model.HorarioDisponivelCenarioDTO;
 import com.gapso.web.trieda.client.mvp.model.OfertaDTO;
+import com.gapso.web.trieda.client.mvp.model.ProfessorDTO;
 import com.gapso.web.trieda.client.mvp.model.SalaDTO;
 import com.gapso.web.trieda.client.mvp.model.SemanaLetivaDTO;
+import com.gapso.web.trieda.client.mvp.model.TipoContratoDTO;
 import com.gapso.web.trieda.client.mvp.model.TipoCursoDTO;
 import com.gapso.web.trieda.client.mvp.model.TipoDisciplinaDTO;
 import com.gapso.web.trieda.client.mvp.model.TipoSalaDTO;
+import com.gapso.web.trieda.client.mvp.model.TitulacaoDTO;
 import com.gapso.web.trieda.client.mvp.model.TurnoDTO;
 import com.gapso.web.trieda.client.mvp.model.UnidadeDTO;
 
@@ -537,6 +543,40 @@ public class ConvertBeans {
 		return dto;
 	}
 	
+	// TITULAÇÃO
+	public static Titulacao toTitulacao(TitulacaoDTO dto) {
+		Titulacao domain = new Titulacao();
+		domain.setId(dto.getId());
+		domain.setVersion(dto.getVersion());
+		domain.setNome(dto.getNome());
+		return domain;
+	}
+	
+	public static TitulacaoDTO toTitulacaoDTO(Titulacao domain) {
+		TitulacaoDTO dto = new TitulacaoDTO();
+		dto.setId(domain.getId());
+		dto.setVersion(domain.getVersion());
+		dto.setNome(domain.getNome());
+		return dto;
+	}
+	
+	// TIPO DE CONTRATO
+	public static TipoContrato toTipoContrato(TipoContratoDTO dto) {
+		TipoContrato domain = new TipoContrato();
+		domain.setId(dto.getId());
+		domain.setVersion(dto.getVersion());
+		domain.setNome(dto.getNome());
+		return domain;
+	}
+	
+	public static TipoContratoDTO toTipoContratoDTO(TipoContrato domain) {
+		TipoContratoDTO dto = new TipoContratoDTO();
+		dto.setId(domain.getId());
+		dto.setVersion(domain.getVersion());
+		dto.setNome(domain.getNome());
+		return dto;
+	}
+	
 	// DESLOCAMENTO UNIDADES
 	public static Unidade toDeslocamentoUnidade(DeslocamentoUnidadeDTO deslocamentoUnidadeDTO) {
 		Unidade unidade = Unidade.find(deslocamentoUnidadeDTO.getOrigemId());
@@ -895,6 +935,44 @@ public class ConvertBeans {
 		dto.setDia6(domain.getDia6());
 		dto.setDia7(domain.getDia7());
 		dto.setTotalCreditos(dto.getDia1() + dto.getDia2() + dto.getDia3() + dto.getDia4() + dto.getDia5() + dto.getDia6() + dto.getDia7());
+		return dto;
+	}
+	
+	// PROFESSOR
+	public static Professor toProfessor(ProfessorDTO dto) {
+		Professor domain = new Professor();
+		domain.setId(dto.getId());
+		domain.setVersion(dto.getVersion());
+		domain.setCenario(Cenario.find(dto.getCenarioId()));
+		domain.setNome(dto.getNome());
+		domain.setCpf(dto.getCpf());
+		domain.setTipoContrato(TipoContrato.find(dto.getTipoContratoId()));
+		domain.setCargaHorariaMax(dto.getCargaHorariaMax());
+		domain.setCargaHorariaMin(dto.getCargaHorariaMin());
+		domain.setTitulacao(Titulacao.find(dto.getTitulacaoId()));
+		domain.setAreaTitulacao(AreaTitulacao.find(dto.getAreaTitulacaoId()));
+		domain.setCreditoAnterior(dto.getCreditoAnterior());
+		domain.setValorCredito(dto.getValorCredito());
+		return domain;
+	}
+	
+	public static ProfessorDTO toProfessorDTO(Professor domain) {
+		ProfessorDTO dto = new ProfessorDTO();
+		dto.setId(domain.getId());
+		dto.setVersion(domain.getVersion());
+		dto.setCenarioId(domain.getCenario().getId());
+		dto.setNome(domain.getNome());
+		dto.setCpf(domain.getCpf());
+		dto.setTipoContratoId(domain.getTipoContrato().getId());
+		dto.setTipoContratoString(domain.getTipoContrato().getNome());
+		dto.setCargaHorariaMax(domain.getCargaHorariaMax());
+		dto.setCargaHorariaMin(domain.getCargaHorariaMin());
+		dto.setTitulacaoId(domain.getTitulacao().getId());
+		dto.setTitulacaoString(domain.getTitulacao().getNome());
+		dto.setAreaTitulacaoId(domain.getAreaTitulacao().getId());
+		dto.setAreaTitulacaoString(domain.getAreaTitulacao().getCodigo());
+		dto.setCreditoAnterior(domain.getCreditoAnterior());
+		dto.setValorCredito(domain.getValorCredito());
 		return dto;
 	}
 }

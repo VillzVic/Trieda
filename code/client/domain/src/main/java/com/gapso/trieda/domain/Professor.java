@@ -17,11 +17,11 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import javax.persistence.Table;
 import javax.persistence.Version;
 import javax.validation.constraints.Digits;
 import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -85,11 +85,6 @@ public class Professor implements Serializable {
     @Digits(integer = 4, fraction = 2)
     private Double valorCredito;
 
-    @Column(name = "PRF_NOTA")
-    @Min(0L)
-    @Max(100L)
-    private Integer nota;
-
     @ManyToMany(cascade = CascadeType.ALL)
     private Set<Campus> campi = new HashSet<Campus>();
 
@@ -114,7 +109,6 @@ public class Professor implements Serializable {
         sb.append("CargaHorariaMax: ").append(getCargaHorariaMax()).append(", ");
         sb.append("CreditoAnterior: ").append(getCreditoAnterior()).append(", ");
         sb.append("ValorCredito: ").append(getValorCredito()).append(", ");
-        sb.append("Nota: ").append(getNota()).append(", ");
         sb.append("Campi: ").append(getCampi() == null ? "null" : getCampi().size()).append(", ");
         sb.append("Horarios: ").append(getHorarios() == null ? "null" : getHorarios().size()).append(", ");
         sb.append("Disciplinas: ").append(getDisciplinas() == null ? "null" : getDisciplinas().size());
@@ -199,14 +193,6 @@ public class Professor implements Serializable {
 
 	public void setValorCredito(Double valorCredito) {
         this.valorCredito = valorCredito;
-    }
-
-	public Integer getNota() {
-        return this.nota;
-    }
-
-	public void setNota(Integer nota) {
-        this.nota = nota;
     }
 
 	public Set<Campus> getCampi() {
@@ -304,23 +290,45 @@ public class Professor implements Serializable {
         return em;
     }
 
-	public static long countProfessors() {
-        return ((Number) entityManager().createQuery("select count(o) from Professor o").getSingleResult()).longValue();
+	public static int count() {
+        return ((Number) entityManager().createQuery("SELECT count(o) FROM Professor o").getSingleResult()).intValue();
     }
 
 	@SuppressWarnings("unchecked")
-    public static List<Professor> findAllProfessors() {
-        return entityManager().createQuery("select o from Professor o").getResultList();
+    public static List<Professor> findAll() {
+        return entityManager().createQuery("SELECT o FROM Professor o").getResultList();
     }
+	
+	@SuppressWarnings("unchecked")
+	public static List<Professor> findBy(String cpf, TipoContrato tipoContrato, Titulacao titulacao, AreaTitulacao areaTitulacao, int firstResult, int maxResults, String orderBy) {
+		String where = "";
+		
+		if(cpf != null)           where += " o.cpf = :cpf AND ";
+		if(tipoContrato != null)  where += " o.tipoContrato = :tipoContrato AND ";
+		if(titulacao != null)     where += " o.titulacao = :titulacao AND ";
+		if(areaTitulacao != null) where += " o.areaTitulacao = :areaTitulacao AND ";
+		if(where.length() > 1) where = " WHERE " + where.substring(0, where.length()-4);
+		
+		where += (orderBy != null) ? " ORDER BY o." + orderBy : "";
+		
+		Query q = entityManager().createQuery("SELECT o FROM Professor o " + where);
+		
+		if(cpf != null)           q.setParameter("cpf", cpf);
+		if(tipoContrato != null)  q.setParameter("tipoContrato", tipoContrato);
+		if(titulacao != null)     q.setParameter("titulacao", titulacao);
+		if(areaTitulacao != null) q.setParameter("areaTitulacao", areaTitulacao);
+		
+		return q.setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
+	}
 
-	public static Professor findProfessor(Long id) {
+	public static Professor find(Long id) {
         if (id == null) return null;
         return entityManager().find(Professor.class, id);
     }
 
 	@SuppressWarnings("unchecked")
-    public static List<Professor> findProfessorEntries(int firstResult, int maxResults) {
-        return entityManager().createQuery("select o from Professor o").setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
+    public static List<Professor> find(int firstResult, int maxResults) {
+        return entityManager().createQuery("SELECT o FROM Professor o").setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
 
 	private static final long serialVersionUID = 265242535107921721L;

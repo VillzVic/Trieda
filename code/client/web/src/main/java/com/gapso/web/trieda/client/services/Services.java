@@ -5,24 +5,25 @@ import com.google.gwt.core.client.GWT;
 
 public class Services {
 
-	public static final String OTIMIZAR = "otimizar";
-	public static final String CENARIOS = "cenarios";
-	public static final String CAMPI = "campi";
-	public static final String TURNOS = "turnos";
-	public static final String UNIDADES = "unidades";
-	public static final String SALAS = "salas";
-	public static final String GRUPOSSALAS = "gruposalas";
-	public static final String CURSOS = "cursos";
-	public static final String DISCIPLINAS = "disciplinas";
-	public static final String OFERTAS = "ofertas";
-	public static final String CURRICULOS = "curriculos";
-	public static final String DEMANDAS = "demandas";
-	public static final String HORARIOSAULA = "horariosaula";
-	public static final String AREASTITULACAO = "areasTitulacao";
-	public static final String SEMANASLETIVA = "semanasLetiva";
-	public static final String TIPOSCURSOS = "tiposCursos";
-	public static final String ATENDIMENTOS = "atendimentos";
-	public static final String DIVISAOCREDITOS = "divisaoCreditos";
+	private static final String OTIMIZAR = "otimizar";
+	private static final String CENARIOS = "cenarios";
+	private static final String CAMPI = "campi";
+	private static final String TURNOS = "turnos";
+	private static final String UNIDADES = "unidades";
+	private static final String SALAS = "salas";
+	private static final String GRUPOSSALAS = "gruposalas";
+	private static final String CURSOS = "cursos";
+	private static final String DISCIPLINAS = "disciplinas";
+	private static final String OFERTAS = "ofertas";
+	private static final String CURRICULOS = "curriculos";
+	private static final String DEMANDAS = "demandas";
+	private static final String HORARIOSAULA = "horariosaula";
+	private static final String AREASTITULACAO = "areasTitulacao";
+	private static final String SEMANASLETIVA = "semanasLetiva";
+	private static final String TIPOSCURSOS = "tiposCursos";
+	private static final String ATENDIMENTOS = "atendimentos";
+	private static final String DIVISAOCREDITOS = "divisaoCreditos";
+	private static final String PROFESSORES = "professores";
 	
 	public static OtimizarServiceAsync otimizar() {
 		OtimizarServiceAsync service = (OtimizarServiceAsync) Registry.get(OTIMIZAR);
@@ -182,6 +183,15 @@ public class Services {
 		if(service == null) {
 			service = GWT.create(DivisoesCreditosService.class);
 			Registry.register(DIVISAOCREDITOS, service);
+		}
+		return service;
+	}
+	
+	public static ProfessoresServiceAsync professores() {
+		ProfessoresServiceAsync service = (ProfessoresServiceAsync) Registry.get(PROFESSORES);
+		if(service == null) {
+			service = GWT.create(ProfessoresService.class);
+			Registry.register(PROFESSORES, service);
 		}
 		return service;
 	}

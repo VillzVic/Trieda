@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.extjs.gxt.ui.client.Style.SortDir;
+import com.extjs.gxt.ui.client.data.BaseListLoadResult;
 import com.extjs.gxt.ui.client.data.BasePagingLoadResult;
+import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.gapso.trieda.domain.AreaTitulacao;
@@ -20,6 +22,11 @@ public class AreasTitulacaoServiceImpl extends RemoteServiceServlet implements A
 
 	private static final long serialVersionUID = 5250776996542788849L;
 
+	@Override
+	public AreaTitulacaoDTO getAreaTitulacao(Long id) {
+		return ConvertBeans.toAreaTitulacaoDTO(AreaTitulacao.find(id));
+	}
+	
 	@Override
 	public PagingLoadResult<AreaTitulacaoDTO> getBuscaList(String nome, String descricao, PagingLoadConfig config) {
 		List<AreaTitulacaoDTO> list = new ArrayList<AreaTitulacaoDTO>();
@@ -40,6 +47,16 @@ public class AreasTitulacaoServiceImpl extends RemoteServiceServlet implements A
 		return result;
 	}
 
+	@Override
+	public ListLoadResult<AreaTitulacaoDTO> getListAll() {
+		List<AreaTitulacaoDTO> listDTO = new ArrayList<AreaTitulacaoDTO>();
+		List<AreaTitulacao> list = AreaTitulacao.findAll();
+		for(AreaTitulacao areaTitulacao : list) {
+			listDTO.add(ConvertBeans.toAreaTitulacaoDTO(areaTitulacao));
+		}
+		return new BaseListLoadResult<AreaTitulacaoDTO>(listDTO);
+	}
+	
 	@Override
 	public void save(AreaTitulacaoDTO areaTitulacaoDTO) {
 		AreaTitulacao areaTitulacao = ConvertBeans.toAreaTitulacao(areaTitulacaoDTO);
