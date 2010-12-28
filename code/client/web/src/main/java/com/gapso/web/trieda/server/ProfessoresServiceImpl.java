@@ -34,6 +34,15 @@ public class ProfessoresServiceImpl extends RemoteServiceServlet implements Prof
 	}
 
 	@Override
+	public ListLoadResult<ProfessorDTO> getList() {
+		List<ProfessorDTO> list = new ArrayList<ProfessorDTO>();
+		for(Professor professor : Professor.findAll()) {
+			list.add(ConvertBeans.toProfessorDTO(professor));
+		}
+		return new BaseListLoadResult<ProfessorDTO>(list);
+	}
+	
+	@Override
 	public PagingLoadResult<ProfessorDTO> getBuscaList(String cpf, TipoContratoDTO tipoContratoDTO, TitulacaoDTO titulacaoDTO, AreaTitulacaoDTO areaTitulacaoDTO, PagingLoadConfig config) {
 		TipoContrato tipoContrato	= (tipoContratoDTO == null)?	null : TipoContrato.find(tipoContratoDTO.getId());
 		Titulacao titulacao 		= (titulacaoDTO == null)? 		null : Titulacao.find(titulacaoDTO.getId());

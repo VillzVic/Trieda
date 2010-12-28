@@ -19,6 +19,7 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 public interface ProfessoresService extends RemoteService {
 
 	ProfessorDTO getProfessor(Long id);
+	ListLoadResult<ProfessorDTO> getList();
 	PagingLoadResult<ProfessorDTO> getBuscaList(String cpf, TipoContratoDTO tipoContratoDTO, TitulacaoDTO titulacaoDTO, AreaTitulacaoDTO areaTitulacaoDTO, PagingLoadConfig config);
 	TipoContratoDTO getTipoContrato(Long id);
 	ListLoadResult<TipoContratoDTO> getTiposContratoAll();

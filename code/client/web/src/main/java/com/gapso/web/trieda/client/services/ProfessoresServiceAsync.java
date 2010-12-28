@@ -15,6 +15,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 public interface ProfessoresServiceAsync {
 
 	void getProfessor(Long id, AsyncCallback<ProfessorDTO> callback);
+	void getList(AsyncCallback<ListLoadResult<ProfessorDTO>> callback);
 	void getBuscaList(String cpf, TipoContratoDTO tipoContratoDTO, TitulacaoDTO titulacaoDTO, AreaTitulacaoDTO areaTitulacaoDTO, PagingLoadConfig config, AsyncCallback<PagingLoadResult<ProfessorDTO>> callback);
 	void getTipoContrato(Long id, AsyncCallback<TipoContratoDTO> callback);
 	void getTiposContratoAll(AsyncCallback<ListLoadResult<TipoContratoDTO>> callback);

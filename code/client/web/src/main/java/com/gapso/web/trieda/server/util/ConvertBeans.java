@@ -24,6 +24,7 @@ import com.gapso.trieda.domain.HorarioAula;
 import com.gapso.trieda.domain.HorarioDisponivelCenario;
 import com.gapso.trieda.domain.Oferta;
 import com.gapso.trieda.domain.Professor;
+import com.gapso.trieda.domain.ProfessorDisciplina;
 import com.gapso.trieda.domain.Sala;
 import com.gapso.trieda.domain.SemanaLetiva;
 import com.gapso.trieda.domain.TipoContrato;
@@ -53,6 +54,7 @@ import com.gapso.web.trieda.client.mvp.model.HorarioAulaDTO;
 import com.gapso.web.trieda.client.mvp.model.HorarioDisponivelCenarioDTO;
 import com.gapso.web.trieda.client.mvp.model.OfertaDTO;
 import com.gapso.web.trieda.client.mvp.model.ProfessorDTO;
+import com.gapso.web.trieda.client.mvp.model.ProfessorDisciplinaDTO;
 import com.gapso.web.trieda.client.mvp.model.SalaDTO;
 import com.gapso.web.trieda.client.mvp.model.SemanaLetivaDTO;
 import com.gapso.web.trieda.client.mvp.model.TipoContratoDTO;
@@ -973,6 +975,32 @@ public class ConvertBeans {
 		dto.setAreaTitulacaoString(domain.getAreaTitulacao().getCodigo());
 		dto.setCreditoAnterior(domain.getCreditoAnterior());
 		dto.setValorCredito(domain.getValorCredito());
+		return dto;
+	}
+	
+	// PROFESSOR-DISCIPLINA
+	public static ProfessorDisciplina toProfessorDisciplina(ProfessorDisciplinaDTO dto) {
+		ProfessorDisciplina domain = new ProfessorDisciplina();
+		domain.setId(dto.getId());
+		domain.setVersion(dto.getVersion());
+		domain.setProfessor(Professor.find(dto.getProfessorId()));
+		domain.setDisciplina(Disciplina.find(dto.getDisciplinaId()));
+		domain.setPreferencia(dto.getPreferencia());
+		domain.setNota(dto.getNotaDesempenho());
+		return domain;
+	}
+	
+	public static ProfessorDisciplinaDTO toProfessorDisciplinaDTO(ProfessorDisciplina domain) {
+		ProfessorDisciplinaDTO dto = new ProfessorDisciplinaDTO();
+		dto.setId(domain.getId());
+		dto.setVersion(domain.getVersion());
+		dto.setProfessorId(domain.getProfessor().getId());
+		dto.setProfessorString(domain.getProfessor().getNome());
+		dto.setProfessorCpf(domain.getProfessor().getCpf());
+		dto.setDisciplinaId(domain.getDisciplina().getId());
+		dto.setDisciplinaString(domain.getDisciplina().getCodigo());
+		dto.setPreferencia(domain.getPreferencia());
+		dto.setNotaDesempenho(domain.getNota());
 		return dto;
 	}
 }

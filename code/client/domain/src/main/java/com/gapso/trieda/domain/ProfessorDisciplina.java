@@ -11,6 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import javax.persistence.Table;
 import javax.persistence.Version;
 import javax.validation.constraints.Max;
@@ -124,24 +125,41 @@ public class ProfessorDisciplina implements java.io.Serializable {
         return em;
     }
 
-	public static long countProfessorDisciplinas() {
-        return ((Number) entityManager().createQuery("select count(o) from ProfessorDisciplina o").getSingleResult()).longValue();
+	public static int count() {
+        return ((Number) entityManager().createQuery("SELECT COUNT(o) FROM ProfessorDisciplina o").getSingleResult()).intValue();
     }
 
 	@SuppressWarnings("unchecked")
-    public static List<ProfessorDisciplina> findAllProfessorDisciplinas() {
-        return entityManager().createQuery("select o from ProfessorDisciplina o").getResultList();
+    public static List<ProfessorDisciplina> findAll() {
+        return entityManager().createQuery("SELECT o FROM ProfessorDisciplina o").getResultList();
     }
 
-	public static ProfessorDisciplina findProfessorDisciplina(Long id) {
+	public static ProfessorDisciplina find(Long id) {
         if (id == null) return null;
         return entityManager().find(ProfessorDisciplina.class, id);
     }
 
 	@SuppressWarnings("unchecked")
-    public static List<ProfessorDisciplina> findProfessorDisciplinaEntries(int firstResult, int maxResults) {
-        return entityManager().createQuery("select o from ProfessorDisciplina o").setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
+    public static List<ProfessorDisciplina> find(int firstResult, int maxResults) {
+        return entityManager().createQuery("SELECT o FROM ProfessorDisciplina o").setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
+	
+	@SuppressWarnings("unchecked")
+	public static List<ProfessorDisciplina> findBy(Professor professor, Disciplina disciplina, int firstResult, int maxResults, String orderBy) {
+		String where = "";
+		if(professor != null)  where += " o.professor = :professor AND ";
+		if(disciplina != null) where += " o.disciplina = :disciplina AND ";
+		if(where.length() > 1) where = " WHERE " + where.substring(0, where.length()-4);
+		
+		where += (orderBy != null) ? " ORDER BY o." + orderBy : "";
+		
+		Query q = entityManager().createQuery("SELECT o FROM ProfessorDisciplina o "+where);
+		
+		if(professor != null)  q.setParameter("professor", professor);
+		if(disciplina != null) q.setParameter("disciplina", disciplina);
+		
+		return q.setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
+	}
 
 	public String toString() {
         StringBuilder sb = new StringBuilder();
