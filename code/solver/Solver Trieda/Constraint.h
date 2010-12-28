@@ -38,7 +38,9 @@ public:
       C_VAR_R = 22,			            // Restricao 1.2.24
 
       C_LIMITA_ABERTURA_TURMAS = 23,			            // Restricao NOVA
-      C_ABRE_TURMAS_EM_SEQUENCIA = 24			            // Restricao NOVA
+      C_ABRE_TURMAS_EM_SEQUENCIA = 24,			            // Restricao NOVA
+	  C_DIVISAO_CREDITO = 25,			//Restricao 1.2.27
+	  C_COMBINACAO_DIVISAO_CREDITO = 26	//Restricao 1.2.28
 
    };
 

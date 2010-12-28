@@ -18,6 +18,8 @@ SolverMIP::SolverMIP(ProblemData *aProblemData)
 	epsilon = 1.0;
 	M = 1.0;
 	rho = 5;
+	//verificar o valor
+	psi = 1.0;
 
 	try
 	{
@@ -193,7 +195,7 @@ int SolverMIP::solve()
 
    //   lp->setSymetry(3);
 
-	//lp->setTimeLimit(20);
+	lp->setTimeLimit(20);
    //lp->setPolishAfterTime(18000);
 
 	lp->setMIPStartAlg(METHOD_PRIMAL);
@@ -875,6 +877,20 @@ int SolverMIP::cria_variaveis()
 
 #ifdef PRINT_cria_variaveis
 	std::cout << "numVars \"fd\": " << (num_vars - numVarsAnterior) << std::endl;
+	numVarsAnterior = num_vars;
+#endif
+
+	num_vars += cria_variavel_combinacao_divisao_credito(); //m
+
+#ifdef PRINT_cria_variaveis
+	std::cout << "numVars \"m\": " << (num_vars - numVarsAnterior) << std::endl;
+	numVarsAnterior = num_vars;
+#endif
+
+	num_vars += cria_variavel_de_folga_combinacao_divisao_credito(); //fk
+
+#ifdef PRINT_cria_variaveis
+	std::cout << "numVars \"fk\": " << (num_vars - numVarsAnterior) << std::endl;
 	numVarsAnterior = num_vars;
 #endif
 
@@ -1686,6 +1702,80 @@ int SolverMIP::cria_variavel_de_folga_demanda_disciplina()
 	return num_vars;
 }
 
+int SolverMIP::cria_variavel_combinacao_divisao_credito(){
+	
+	int num_vars = 0;
+	
+
+	ITERA_GGROUP(itDisc,problemData->disciplinas,Disciplina)
+	{
+		for(int turma=0;turma<itDisc->num_turmas;turma++)
+		{
+			for(int k = 0; k < itDisc->combinacao_divisao_creditos.size();k++)
+			{ 
+				
+				Variable v;
+				v.reset();
+				v.setType(Variable::V_COMBINACAO_DIVISAO_CREDITO);
+				v.setTurma(turma);            // i
+				v.setDisciplina(*itDisc);     // d
+				v.setK(k);	  // k
+	
+				if (vHash.find(v) == vHash.end())
+				{
+					vHash[v] = lp->getNumCols();
+
+					OPT_COL col(OPT_COL::VAR_BINARY,0.0,0.0,1.0,
+								(char*)v.toString().c_str());
+
+					lp->newCol(col);
+
+					num_vars += 1;
+				}
+			}
+		}
+	}
+	return num_vars;
+}
+
+int SolverMIP::cria_variavel_de_folga_combinacao_divisao_credito(){
+
+	int num_vars = 0;
+
+	ITERA_GGROUP(itDisc,problemData->disciplinas,Disciplina)
+	{
+		for(int turma=0;turma<itDisc->num_turmas;turma++)
+		{
+			GGroup<int>::iterator itDiasLetDisc =
+					itDisc->diasLetivos.begin();
+
+			for(; itDiasLetDisc != itDisc->diasLetivos.end(); itDiasLetDisc++ )
+			{
+					Variable v;
+					v.reset();
+					v.setType(Variable::V_SLACK_COMBINACAO_DIVISAO_CREDITO);
+					v.setTurma(turma);            // i
+					v.setDisciplina(*itDisc);     // d
+					v.setDia(*itDiasLetDisc);	  // t
+
+					if (vHash.find(v) == vHash.end())
+					{
+						vHash[v] = lp->getNumCols();
+
+						OPT_COL col(OPT_COL::VAR_INTEGRAL,psi,0.0,10000.0,
+							(char*)v.toString().c_str());
+
+						lp->newCol(col);
+
+						num_vars += 1;
+					}
+			}
+		}
+	}
+	
+	return num_vars;
+}
+
 // ==============================================================
 //							CONSTRAINTS
 // ==============================================================
@@ -1867,6 +1957,20 @@ int SolverMIP::cria_restricoes(void)
 
 #ifdef PRINT_cria_restricoes
 	std::cout << "numRest \"1.2.26\": " << (restricoes - numRestAnterior) << std::endl;
+	numRestAnterior = restricoes;
+#endif
+
+	restricoes += cria_restricao_divisao_credito();
+
+#ifdef PRINT_cria_restricoes
+	std::cout << "numRest \"1.2.27\": " << (restricoes - numRestAnterior) << std::endl;
+	numRestAnterior = restricoes;
+#endif
+
+	restricoes += cria_restricao_combinacao_divisao_credito();
+
+#ifdef PRINT_cria_restricoes
+	std::cout << "numRest \"1.2.28\": " << (restricoes - numRestAnterior) << std::endl;
 	numRestAnterior = restricoes;
 #endif
 
@@ -5193,6 +5297,160 @@ int SolverMIP::cria_restricao_abre_turmas_em_sequencia(void)
 	//   }
 	//}
 
+	return restricoes;
+}
+
+int SolverMIP::cria_restricao_divisao_credito(){
+
+	int restricoes = 0;
+
+	char name[100];
+	int nnz;
+	Constraint c;
+	Variable v;
+	VariableHash::iterator it_v;
+
+	ITERA_GGROUP(itDisc,problemData->disciplinas,Disciplina)
+	{
+		if(itDisc->divisao_creditos != NULL)
+		{
+			for(int turma = 0; turma < itDisc->num_turmas; turma++)
+			{
+				GGroup<int>::iterator itDiasLetDisc =
+					itDisc->diasLetivos.begin();
+
+				for(; itDiasLetDisc != itDisc->diasLetivos.end(); itDiasLetDisc++ )
+				{
+					c.reset();
+					c.setType(Constraint::C_DIVISAO_CREDITO);
+					c.setDisciplina(*itDisc);
+					c.setTurma(turma);
+					c.setDia(*itDiasLetDisc);
+
+					sprintf( name, "%s", c.toString().c_str() ); 
+
+					if (cHash.find(c) != cHash.end()) continue;
+
+					nnz = problemData->totalSalas + (itDisc->combinacao_divisao_creditos.size() * 2);
+
+					OPT_ROW row( nnz, OPT_ROW::EQUAL , 0.0 , name );
+
+					ITERA_GGROUP(itCampus,problemData->campi,Campus)
+					{
+						ITERA_GGROUP(itUnidade,itCampus->unidades,Unidade)
+						{
+							ITERA_GGROUP(itCjtSala,itUnidade->conjutoSalas,ConjuntoSala)
+							{
+									v.reset();
+									v.setType(Variable::V_CREDITOS);
+									v.setTurma(turma);
+									v.setDisciplina(*itDisc);
+									v.setUnidade(*itUnidade);
+									v.setSubCjtSala(*itCjtSala);
+									v.setDia(*itDiasLetDisc);
+
+									it_v = vHash.find(v);
+									if( it_v != vHash.end() )
+									{ row.insert(it_v->second, 1.0); }				
+
+									for(int k = 0; k < itDisc->combinacao_divisao_creditos.size();k++)
+									{	
+										v.reset();
+										v.setType(Variable::V_COMBINACAO_DIVISAO_CREDITO);
+										v.setDisciplina(*itDisc);
+										v.setTurma(turma);
+										v.setK(k);
+
+										int d = *itDiasLetDisc;
+
+										//N{d,k,t}
+										int numCreditos = (itDisc->combinacao_divisao_creditos[k])[(*itDiasLetDisc)-1].second;
+
+										it_v = vHash.find(v);
+										if( it_v != vHash.end() )
+										{  row.insert(it_v->second, -numCreditos); }
+
+										v.reset();
+										v.setType(Variable::V_SLACK_COMBINACAO_DIVISAO_CREDITO);
+										v.setDisciplina(*itDisc);
+										v.setTurma(turma);
+										v.setDia(*itDiasLetDisc);	
+
+										it_v = vHash.find(v);
+										if( it_v != vHash.end() )
+										{ row.insert(it_v->second, -1.0); }
+										}
+
+							}
+						}
+					}
+
+					
+					if(row.getnnz() != 0)
+					{
+						cHash[ c ] = lp->getNumRows();
+
+						lp->addRow(row);
+						restricoes++;
+					}	
+
+				}
+			}
+		}
+	}
+
+	return restricoes;
+}
+
+int SolverMIP::cria_restricao_combinacao_divisao_credito(){
+
+	int restricoes = 0;
+	char name[100];
+	int nnz;
+	Constraint c;
+	Variable v;
+	VariableHash::iterator it_v;
+
+	ITERA_GGROUP(it_disc,problemData->disciplinas,Disciplina) {
+		for(int i=0;i<it_disc->num_turmas;++i) {
+			c.reset();
+			c.setType(Constraint::C_COMBINACAO_DIVISAO_CREDITO);
+			c.setDisciplina(*it_disc);
+			c.setTurma(i);
+
+			sprintf( name, "%s", c.toString().c_str() ); 
+
+			if (cHash.find(c) != cHash.end()) continue;
+			
+			nnz = it_disc->combinacao_divisao_creditos.size();
+			
+			OPT_ROW row( nnz, OPT_ROW::LESS , 1.0, name );
+
+			for(int k = 0; k < it_disc->combinacao_divisao_creditos.size();k++)
+			{
+				v.reset();
+				v.setType(Variable::V_COMBINACAO_DIVISAO_CREDITO);
+				v.setTurma(i);
+				v.setDisciplina(*it_disc);
+				v.setK(k);	 
+
+				it_v = vHash.find(v);
+				if( it_v != vHash.end() )
+				{
+					row.insert(it_v->second, 1.0);
+				}
+			}
+
+			if(row.getnnz() != 0)
+			{
+				cHash[ c ] = lp->getNumRows();
+
+				lp->addRow(row);
+				restricoes++;
+			}
+		}
+	}
+	
 	return restricoes;
 }
 

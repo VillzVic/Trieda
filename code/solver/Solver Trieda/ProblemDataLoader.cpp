@@ -352,7 +352,7 @@ void ProblemDataLoader::combinacaoDivCreditos(){
 			}
 			if(atualiza)
 			{
-				combinacao_divisao_creditos.push_back(vAux);
+				itDisc->combinacao_divisao_creditos.push_back(vAux);
 				atualiza = false;
 			}
 
@@ -397,7 +397,7 @@ void ProblemDataLoader::combinacaoDivCreditos(){
 				}
 				if(atualiza)
 				{
-					combinacao_divisao_creditos.push_back(vAux);
+					itDisc->combinacao_divisao_creditos.push_back(vAux);
 					atualiza = false;
 				}	
 			}

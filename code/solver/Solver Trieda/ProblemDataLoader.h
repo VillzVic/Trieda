@@ -114,7 +114,6 @@ private:
 
    /*conjunto de combinações possíveis de divisão de créditos de uma uma disciplina*/
    void combinacaoDivCreditos();
-
    // <<<
 
 };

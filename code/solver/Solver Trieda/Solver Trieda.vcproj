@@ -385,7 +385,7 @@
 					>
 				</File>
 				<File
-					RelativePath="$(CODELIB)\ErrorHandler.cpp"
+					RelativePath="..\..\..\..\..\..\..\Bibliotecas\codelib\ErrorHandler.cpp"
 					>
 				</File>
 				<File
@@ -428,6 +428,30 @@
 					RelativePath=".\Variable.cpp"
 					>
 				</File>
+				<Filter
+					Name="Initial Solution"
+					>
+					<File
+						RelativePath=".\InitialSolution.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\IS_Campus.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\IS_CjtSala.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\IS_Sala.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\IS_Unidade.cpp"
+						>
+					</File>
+				</Filter>
 			</Filter>
 		</Filter>
 		<Filter
@@ -634,7 +658,7 @@
 					>
 				</File>
 				<File
-					RelativePath="$(CODELIB)\ErrorHandler.h"
+					RelativePath="..\..\..\..\..\..\..\Bibliotecas\codelib\ErrorHandler.h"
 					>
 				</File>
 				<File
@@ -681,6 +705,30 @@
 					RelativePath=".\Variable.h"
 					>
 				</File>
+				<Filter
+					Name="Initial Solution"
+					>
+					<File
+						RelativePath=".\InitialSolution.h"
+						>
+					</File>
+					<File
+						RelativePath=".\IS_Campus.h"
+						>
+					</File>
+					<File
+						RelativePath=".\IS_CjtSala.h"
+						>
+					</File>
+					<File
+						RelativePath=".\IS_Sala.h"
+						>
+					</File>
+					<File
+						RelativePath=".\IS_Unidade.h"
+						>
+					</File>
+				</Filter>
 			</Filter>
 		</Filter>
 	</Files>

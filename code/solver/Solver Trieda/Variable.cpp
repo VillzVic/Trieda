@@ -42,6 +42,8 @@ void Variable::reset()
    t = -1;
 
    o = NULL;
+
+   k = -1;
 }
 
 Variable::~Variable()
@@ -74,6 +76,8 @@ Variable& Variable::operator=(const Variable& var)
 
    this->o = var.getOferta();
 
+   this->k = var.getK();
+
    return *this;
 }
 
@@ -105,6 +109,8 @@ bool Variable::operator <(const Variable& var) const
    if (this->getDia() < var.getDia()) return true;
 
    if (E_MENOR(this->getOferta(),var.getOferta())) return true;
+
+   if (this->getK() < var.getK()) return true;
 
    /*
    if( (int)this->getType() < (int) var.getType() )
@@ -179,7 +185,11 @@ std::string Variable::toString()
         str << "bs"; break;
      case V_SLACK_DEMANDA:
         str << "fd"; cond_disc = true; break;
-     default:
+	case V_COMBINACAO_DIVISAO_CREDITO:
+        str << "m"; break;
+	case V_SLACK_COMBINACAO_DIVISAO_CREDITO:
+        str << "fk"; break;	
+    default:
         str << "!";
    }
    str << "_";
@@ -211,6 +221,8 @@ std::string Variable::toString()
    if (cp) str << "," << cp->getId();
 
    if (o) str << "," << o->getId();
+
+   if (k >= 0) str << "," << k;
 
    str << "}";
    str >> output;
@@ -264,7 +276,10 @@ size_t VariableHasher::operator()(const Variable& v) const
    }	
    if(v.getOferta()) {
       sum *= HASH_PRIME; sum+= intHash(v.getOferta()->getId());
-   }	
+   }
+   if(v.getK() != -1) {
+      sum *= HASH_PRIME; sum+= intHash(v.getK());
+   }
 
    return sum;
 }

@@ -63,7 +63,7 @@ private:
    All methods of variable creation should be defined here
    */
 
-   double alpha, beta, gamma, delta, lambda, epsilon, rho, M;
+   double alpha, beta, gamma, delta, lambda, epsilon, rho, M, psi;
 
    struct Ordena
    {
@@ -93,6 +93,9 @@ public:
    int cria_variavel_de_folga_aloc_alunos_curso_incompat(void); // bs_{i,d,c,cp}
 
    int cria_variavel_de_folga_demanda_disciplina(); // f_{d,o}
+
+   int cria_variavel_combinacao_divisao_credito(void);//m_{i,d,k}
+   int cria_variavel_de_folga_combinacao_divisao_credito(void); // fk_{i,d,k}
 
    /********************************************************************
    **                    CONSTRAINT CREATION                          **
@@ -130,6 +133,9 @@ public:
 
    int cria_restricao_limita_abertura_turmas(void);      // Restricao 1.2.25
    int cria_restricao_abre_turmas_em_sequencia(void);      // Restricao 1.2.26
+   int cria_restricao_divisao_credito(void);			    //Restricao 1.2.27
+   int cria_restricao_combinacao_divisao_credito(void);		//Restricao 1.2.28
+
 
    /********************************************************************
    **                        OTHER METHODS                            **

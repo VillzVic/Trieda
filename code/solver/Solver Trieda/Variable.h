@@ -28,7 +28,9 @@ public:
       V_ABERTURA_SUBBLOCO_DE_BLC_DIA_CAMPUS = 14,		   // r_{b,t,cp}
 
       V_SLACK_ALOC_ALUNOS_CURSO_INCOMPAT = 15,   // bs_{i,d,c,cp}
-      V_SLACK_DEMANDA = 16 // fd_{d,o}
+      V_SLACK_DEMANDA = 16, // fd_{d,o}
+	  V_COMBINACAO_DIVISAO_CREDITO = 17, // m{i,d,k}
+	  V_SLACK_COMBINACAO_DIVISAO_CREDITO = 18 // fk{i,d,k}
 
    };
 
@@ -74,6 +76,8 @@ public:
 
    Oferta * getOferta() const { return o; }
 
+   int getK() const { return k; }
+
    //==================================================
    // SET METHODS 
    //==================================================
@@ -110,6 +114,8 @@ public:
    void setDia(int tt) {  t = tt; }
 
    void setOferta(Oferta * oferta) { o = oferta; }
+
+   void setK(int kk) { k = kk; }
 
    //==================================================
    // OPERATORS 
@@ -151,6 +157,8 @@ private:
    int t; // dia
 
    Oferta * o; // oferta
+
+   int k; // combinação de divisão de créditos
 
 };
 

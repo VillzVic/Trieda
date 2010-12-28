@@ -179,7 +179,10 @@ std::string Constraint::toString()
          ss << "__(LIMITA_ABERTURA_TURMAS):"; break;
      case C_ABRE_TURMAS_EM_SEQUENCIA:
          ss << "__(ABRE_TURMAS_EM_SEQUENCIA):"; break;
-
+	 case C_COMBINACAO_DIVISAO_CREDITO:
+        ss << "__(C_COMBINACAO_DIVISAO_CREDITO):"; break;
+	 case C_DIVISAO_CREDITO:
+        ss << "__(C_DIVISAO_CREDITO):"; break;
      default:
         ss << "!";
 	}
