@@ -385,7 +385,7 @@
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\..\..\..\..\Bibliotecas\codelib\ErrorHandler.cpp"
+					RelativePath="$(CODELIB)\ErrorHandler.cpp"
 					>
 				</File>
 				<File
@@ -658,7 +658,7 @@
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\..\..\..\..\Bibliotecas\codelib\ErrorHandler.h"
+					RelativePath="$(CODELIB)\ErrorHandler.h"
 					>
 				</File>
 				<File
