@@ -2,8 +2,11 @@ package com.gapso.web.trieda.client.mvp.presenter;
 
 import java.util.List;
 
+import com.extjs.gxt.ui.client.Style.SortDir;
+import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.event.ButtonEvent;
 import com.extjs.gxt.ui.client.event.SelectionListener;
+import com.extjs.gxt.ui.client.store.ListStore;
 import com.extjs.gxt.ui.client.widget.Info;
 import com.extjs.gxt.ui.client.widget.ListView;
 import com.extjs.gxt.ui.client.widget.MessageBox;
@@ -18,6 +21,8 @@ import com.gapso.web.trieda.client.util.view.SimpleGrid;
 import com.gapso.web.trieda.client.util.view.SimpleModal;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
+import com.googlecode.future.FutureResult;
+import com.googlecode.future.FutureSynchronizer;
 
 public class EquivalenciaFormPresenter implements Presenter {
 
@@ -28,6 +33,9 @@ public class EquivalenciaFormPresenter implements Presenter {
 		ListView<CursoDTO> getCursosList();
 		ListView<DisciplinaDTO> getDisciplinasNaoPertencesList();
 		ListView<DisciplinaDTO> getDisciplinasPertencesList();
+		Button getAtualizaDisciplinasDoCursoBT();
+		Button getAdicionaDisciplinasBT();
+		Button getRemoveDisciplinasBT();
 		EquivalenciaDTO getEquivalenciaDTO();
 		boolean isValid();
 		
@@ -40,8 +48,30 @@ public class EquivalenciaFormPresenter implements Presenter {
 		this.gridPanel = gridPanel;
 		this.display = display;
 		setListeners();
+		populaListas();
 	}
 
+	private void populaListas() {
+		final FutureResult<ListLoadResult<CursoDTO>> futureCursoDTOList = new FutureResult<ListLoadResult<CursoDTO>>();
+		Services.cursos().getListAll(futureCursoDTOList);
+		FutureSynchronizer synch = new FutureSynchronizer(futureCursoDTOList);
+		synch.addCallback(new AsyncCallback<Boolean>() {
+			@Override
+			public void onFailure(Throwable caught) {
+				caught.printStackTrace();
+			}
+			@Override
+			public void onSuccess(Boolean result) {
+				ListLoadResult<CursoDTO> cursoDTOList = futureCursoDTOList.result();
+				
+				ListStore<CursoDTO> storeCurso = display.getCursosList().getStore();  
+				storeCurso.add(cursoDTOList.getData());
+				display.getCursosList().setStore(storeCurso);
+				display.getCursosList().refresh();
+			}
+		});
+	}
+	
 	private void setListeners() {
 		display.getSalvarButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
 			@Override
@@ -62,6 +92,73 @@ public class EquivalenciaFormPresenter implements Presenter {
 				} else {
 					MessageBox.alert("ERRO!", "Verifique os campos digitados", null);
 				}
+			}
+		});
+		
+		display.getAtualizaDisciplinasDoCursoBT().addSelectionListener(new SelectionListener<ButtonEvent>(){
+			@Override
+			public void componentSelected(ButtonEvent ce) {
+				List<CursoDTO> cursoSelecionadoList = display.getCursosList().getSelectionModel().getSelectedItems();
+				
+				final FutureResult<ListLoadResult<DisciplinaDTO>> futureDisciplinaDTOList = new FutureResult<ListLoadResult<DisciplinaDTO>>();
+				Services.disciplinas().getListByCursos(cursoSelecionadoList, futureDisciplinaDTOList);
+				
+				FutureSynchronizer synch = new FutureSynchronizer(futureDisciplinaDTOList);
+				synch.addCallback(new AsyncCallback<Boolean>() {
+
+					@Override
+					public void onFailure(Throwable caught) {
+						caught.printStackTrace();
+					}
+
+					@Override
+					public void onSuccess(Boolean result) {
+						ListLoadResult<DisciplinaDTO> disciplinaDTOList = futureDisciplinaDTOList.result();
+						
+						display.getDisciplinasNaoPertencesList().getStore().removeAll();
+						display.getDisciplinasNaoPertencesList().getStore().add(disciplinaDTOList.getData());
+						display.getDisciplinasNaoPertencesList().refresh();
+						
+						Info.display("Atualizado", "Lista de disciplinas atualizada!");
+					}
+					
+				});
+			}
+		});
+		
+		display.getAdicionaDisciplinasBT().addSelectionListener(new SelectionListener<ButtonEvent>(){
+			@Override
+			public void componentSelected(ButtonEvent ce) {
+				List<DisciplinaDTO> disciplinaList = display.getDisciplinasNaoPertencesList().getSelectionModel().getSelectedItems();
+
+				display.getDisciplinasPertencesList().getStore().add(disciplinaList);
+				display.getDisciplinasPertencesList().getStore().sort("codigo", SortDir.ASC);
+				display.getDisciplinasPertencesList().refresh();
+				
+				for(DisciplinaDTO d : disciplinaList) {
+					display.getDisciplinasNaoPertencesList().getStore().remove(d);
+				}
+				display.getDisciplinasNaoPertencesList().refresh();
+				
+				Info.display("Atualizado", "Salas adicionadas a lista!");
+			}
+		});
+		
+		display.getRemoveDisciplinasBT().addSelectionListener(new SelectionListener<ButtonEvent>(){
+			@Override
+			public void componentSelected(ButtonEvent ce) {
+				List<DisciplinaDTO> disciplinaList = display.getDisciplinasPertencesList().getSelectionModel().getSelectedItems();
+
+				display.getDisciplinasNaoPertencesList().getStore().add(disciplinaList);
+				display.getDisciplinasNaoPertencesList().getStore().sort("codigo", SortDir.ASC);
+				display.getDisciplinasNaoPertencesList().refresh();
+				
+				for(DisciplinaDTO d : disciplinaList) {
+					display.getDisciplinasPertencesList().getStore().remove(d);
+				}
+				display.getDisciplinasPertencesList().refresh();
+				
+				Info.display("Atualizado", "Salas removidas a lista!");
 			}
 		});
 	}

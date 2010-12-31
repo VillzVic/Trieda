@@ -33,7 +33,7 @@ public class EquivalenciaFormView extends MyComposite implements EquivalenciaFor
 	private ListView<CursoDTO> cursosList;
 	private ListView<DisciplinaDTO> disciplinasNaoPertencesList;
 	private ListView<DisciplinaDTO> disciplinasPertencesList;
-	private Button atualizaCursosDoAndarBT;
+	private Button atualizaDisciplinasDoCursoBT;
 	private Button adicionaDisciplinaBT;
 	private Button removeDisciplinaBT;
 	private EquivalenciaDTO equivalenciaDTO;
@@ -117,13 +117,13 @@ public class EquivalenciaFormView extends MyComposite implements EquivalenciaFor
 		panel.setBodyStyle("display: table-cell; vertical-align: middle");
 		panel.setLayout(new RowLayout(Orientation.VERTICAL));
 		
-		atualizaCursosDoAndarBT = new Button();
-		atualizaCursosDoAndarBT.setSize(30, 50);
-		atualizaCursosDoAndarBT.setIcon(AbstractImagePrototype.create(Resources.DEFAULTS.toRight24()));
+		atualizaDisciplinasDoCursoBT = new Button();
+		atualizaDisciplinasDoCursoBT.setSize(30, 50);
+		atualizaDisciplinasDoCursoBT.setIcon(AbstractImagePrototype.create(Resources.DEFAULTS.toRight24()));
 				
 		RowData rowData = new RowData(-1, -1, new Margins(4, 0, 4, 0));
 		
-		panel.add(atualizaCursosDoAndarBT, rowData);
+		panel.add(atualizaDisciplinasDoCursoBT, rowData);
 		
 		return panel;
 	}
@@ -193,6 +193,21 @@ public class EquivalenciaFormView extends MyComposite implements EquivalenciaFor
 	@Override
 	public EquivalenciaDTO getEquivalenciaDTO() {
 		return equivalenciaDTO;
+	}
+ 
+	@Override
+	public Button getAtualizaDisciplinasDoCursoBT() {
+		return atualizaDisciplinasDoCursoBT;
+	}
+
+	@Override
+	public Button getAdicionaDisciplinasBT() {
+		return adicionaDisciplinaBT;
+	}
+
+	@Override
+	public Button getRemoveDisciplinasBT() {
+		return removeDisciplinaBT;
 	}
 
 	

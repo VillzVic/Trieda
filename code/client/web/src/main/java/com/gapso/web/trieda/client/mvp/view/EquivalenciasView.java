@@ -67,7 +67,7 @@ public class EquivalenciasView extends MyComposite implements EquivalenciasPrese
 	private List<ColumnConfig> getColumnList() {
 		List<ColumnConfig> list = new ArrayList<ColumnConfig>();
 		list.add(new ColumnConfig("cursouString", "Cursou", 100));
-		list.add(new ColumnConfig("eliminaString", "Elimina", 100));
+		list.add(new ColumnConfig("eliminaString", "Elimina", 500));
 		return list;
 	}
 

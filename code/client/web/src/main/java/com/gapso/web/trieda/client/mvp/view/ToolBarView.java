@@ -277,7 +277,7 @@ public class ToolBarView extends MyComposite implements ToolBarPresenter.Display
 		divisaoCreditosListDisciplinasBt = createButton("Divisão de Créditos", "Divisão de Créditos", Resources.DEFAULTS.campi24());
 		disciplinasToolBar.add(divisaoCreditosListDisciplinasBt);
 		
-		equivalenciasListDisciplinasBt = createButton("Equivalências", "Equivalências", Resources.DEFAULTS.outros16());
+		equivalenciasListDisciplinasBt = createButton("Equivalências", "Equivalências", Resources.DEFAULTS.campi24());
 		disciplinasToolBar.add(equivalenciasListDisciplinasBt);
 	}
 	
