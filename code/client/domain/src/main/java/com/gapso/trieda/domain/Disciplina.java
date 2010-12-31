@@ -108,9 +108,11 @@ public class Disciplina implements Serializable {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "disciplina1")
     private Set<Compatibilidade> compatibilidades = new HashSet<Compatibilidade>();
 
-    @NotNull
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "cursou")
     private Set<Equivalencia> equivalencias = new HashSet<Equivalencia>();
+    
+    @ManyToMany(cascade = CascadeType.ALL, mappedBy = "elimina")
+    private Set<Equivalencia> eliminadaPor = new HashSet<Equivalencia>();
 
     @NotNull
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "disciplina")
@@ -119,7 +121,7 @@ public class Disciplina implements Serializable {
     @NotNull
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "disciplina")
     private Set<Demanda> demandas = new HashSet<Demanda>();
-
+    
 	public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("Id: ").append(getId()).append(", ");
@@ -139,6 +141,7 @@ public class Disciplina implements Serializable {
         sb.append("Professores: ").append(getProfessores() == null ? "null" : getProfessores().size()).append(", ");
         sb.append("Compatibilidades: ").append(getCompatibilidades() == null ? "null" : getCompatibilidades().size()).append(", ");
         sb.append("Equivalencias: ").append(getEquivalencias() == null ? "null" : getEquivalencias().size()).append(", ");
+        sb.append("EliminadaPor: ").append(getEliminadaPor() == null ? "null" : getEliminadaPor().size()).append(", ");
         sb.append("Curriculos: ").append(getCurriculos() == null ? "null" : getCurriculos().size()).append(", ");
         sb.append("Demandas: ").append(getDemandas() == null ? "null" : getDemandas().size());
         return sb.toString();
@@ -412,6 +415,14 @@ public class Disciplina implements Serializable {
 	public void setEquivalencias(Set<Equivalencia> equivalencias) {
         this.equivalencias = equivalencias;
     }
+	
+	public Set<Equivalencia> getEliminadaPor() {
+		return this.eliminadaPor;
+	}
+	
+	public void setEliminadaPor(Set<Equivalencia> eliminadaPor) {
+		this.eliminadaPor = eliminadaPor;
+	}
 
 	public Set<CurriculoDisciplina> getCurriculos() {
         return this.curriculos;

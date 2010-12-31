@@ -1,0 +1,68 @@
+package com.gapso.web.trieda.server;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import com.extjs.gxt.ui.client.Style.SortDir;
+import com.extjs.gxt.ui.client.data.BasePagingLoadResult;
+import com.extjs.gxt.ui.client.data.PagingLoadConfig;
+import com.extjs.gxt.ui.client.data.PagingLoadResult;
+import com.gapso.trieda.domain.Disciplina;
+import com.gapso.trieda.domain.Equivalencia;
+import com.gapso.web.trieda.client.mvp.model.DisciplinaDTO;
+import com.gapso.web.trieda.client.mvp.model.EquivalenciaDTO;
+import com.gapso.web.trieda.client.services.EquivalenciasService;
+import com.gapso.web.trieda.server.util.ConvertBeans;
+import com.google.gwt.user.server.rpc.RemoteServiceServlet;
+
+/**
+ * The server side implementation of the RPC service.
+ */
+public class EquivalenciasServiceImpl extends RemoteServiceServlet implements EquivalenciasService {
+
+	private static final long serialVersionUID = 345113452407626806L;
+
+	@Override
+	public EquivalenciaDTO getEquivalencia(Long id) {
+		return ConvertBeans.toEquivalenciaDTO(Equivalencia.find(id));
+	}
+	
+	@Override
+	public PagingLoadResult<EquivalenciaDTO> getBuscaList(DisciplinaDTO disciplinaDTO, PagingLoadConfig config) {
+		String orderBy = config.getSortField();
+		if(orderBy != null) {
+			if(config.getSortDir() != null && config.getSortDir().equals(SortDir.DESC)) {
+				orderBy = orderBy + " asc";
+			} else {
+				orderBy = orderBy + " desc";
+			}
+		}
+		Disciplina disciplina = (disciplinaDTO == null) ? null : Disciplina.find(disciplinaDTO.getId());
+		List<Equivalencia> list = Equivalencia.findBy(disciplina, config.getOffset(), config.getLimit(), orderBy);
+		List<EquivalenciaDTO> listDTO = new ArrayList<EquivalenciaDTO>();
+		for(Equivalencia equivalencia : list) {
+			listDTO.add(ConvertBeans.toEquivalenciaDTO(equivalencia));
+		}
+		BasePagingLoadResult<EquivalenciaDTO> result = new BasePagingLoadResult<EquivalenciaDTO>(listDTO);
+		result.setOffset(config.getOffset());
+		result.setTotalLength(Equivalencia.count());
+		return result;
+	}
+	
+	@Override
+	public void save(EquivalenciaDTO equivalenciaDTO, List<DisciplinaDTO> eliminaList) {
+		Equivalencia equivalencia = ConvertBeans.toEquivalencia(equivalenciaDTO);
+		for(DisciplinaDTO d : eliminaList) {
+			equivalencia.getElimina().add(Disciplina.find(d.getId()));
+		}
+		equivalencia.persist();
+	}
+	
+	@Override
+	public void remove(List<EquivalenciaDTO> equivalenciaDTOList) {
+		for(EquivalenciaDTO turnoDTO : equivalenciaDTOList) {
+			Equivalencia.find(turnoDTO.getId()).remove();
+		}
+	}
+
+}

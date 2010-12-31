@@ -19,6 +19,7 @@ import com.gapso.trieda.domain.DeslocamentoCampus;
 import com.gapso.trieda.domain.DeslocamentoUnidade;
 import com.gapso.trieda.domain.Disciplina;
 import com.gapso.trieda.domain.DivisaoCredito;
+import com.gapso.trieda.domain.Equivalencia;
 import com.gapso.trieda.domain.GrupoSala;
 import com.gapso.trieda.domain.HorarioAula;
 import com.gapso.trieda.domain.HorarioDisponivelCenario;
@@ -49,6 +50,7 @@ import com.gapso.web.trieda.client.mvp.model.DeslocamentoCampusDTO;
 import com.gapso.web.trieda.client.mvp.model.DeslocamentoUnidadeDTO;
 import com.gapso.web.trieda.client.mvp.model.DisciplinaDTO;
 import com.gapso.web.trieda.client.mvp.model.DivisaoCreditoDTO;
+import com.gapso.web.trieda.client.mvp.model.EquivalenciaDTO;
 import com.gapso.web.trieda.client.mvp.model.GrupoSalaDTO;
 import com.gapso.web.trieda.client.mvp.model.HorarioAulaDTO;
 import com.gapso.web.trieda.client.mvp.model.HorarioDisponivelCenarioDTO;
@@ -1001,6 +1003,32 @@ public class ConvertBeans {
 		dto.setDisciplinaString(domain.getDisciplina().getCodigo());
 		dto.setPreferencia(domain.getPreferencia());
 		dto.setNotaDesempenho(domain.getNota());
+		return dto;
+	}
+	
+	// TURNO
+	public static Equivalencia toEquivalencia(EquivalenciaDTO dto) {
+		Equivalencia domain = new Equivalencia();
+		domain.setId(dto.getId());
+		domain.setVersion(dto.getVersion());
+		domain.setCursou(Disciplina.find(dto.getCursouId()));
+		// TODO Necessário pegar a lista de quem cursou?
+		return domain;
+	}
+
+	public static EquivalenciaDTO toEquivalenciaDTO(Equivalencia domain) {
+		EquivalenciaDTO dto = new EquivalenciaDTO();
+		dto.setId(domain.getId());
+		dto.setVersion(domain.getVersion());
+		dto.setCursouId(domain.getCursou().getId());
+		dto.setCursouString(domain.getCursou().getCodigo());
+		Set<Disciplina> eliminaList = domain.getElimina();
+		String eliminaString = "";
+		for(Disciplina d : eliminaList) {
+			eliminaString += d.getCodigo() + ", ";
+		}
+		if(eliminaString.length() > 0) eliminaString = eliminaString.substring(0, eliminaString.length()-2);
+		dto.setEliminaString(eliminaString);
 		return dto;
 	}
 }

@@ -1,6 +1,8 @@
 package com.gapso.trieda.domain;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -9,8 +11,10 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import javax.persistence.Table;
 import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
@@ -35,16 +39,16 @@ public class Equivalencia implements java.io.Serializable {
     private Disciplina cursou;
 
     @NotNull
-    @ManyToOne(targetEntity = Disciplina.class)
+    @ManyToMany(targetEntity = Disciplina.class)
     @JoinColumn(name = "DIS_ELIMINA_ID")
-    private Disciplina elimina;
+    private Set<Disciplina> elimina = new HashSet<Disciplina>();
 
 	public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("Id: ").append(getId()).append(", ");
         sb.append("Version: ").append(getVersion()).append(", ");
         sb.append("Cursou: ").append(getCursou()).append(", ");
-        sb.append("Elimina: ").append(getElimina());
+        sb.append("Elimina: ").append(getElimina() == null ? "null" : getElimina().size()).append(", ");
         return sb.toString();
     }
 
@@ -56,11 +60,11 @@ public class Equivalencia implements java.io.Serializable {
         this.cursou = cursou;
     }
 
-	public Disciplina getElimina() {
+	public Set<Disciplina> getElimina() {
         return this.elimina;
     }
 
-	public void setElimina(Disciplina elimina) {
+	public void setElimina(Set<Disciplina> elimina) {
         this.elimina = elimina;
     }
 
@@ -137,22 +141,35 @@ public class Equivalencia implements java.io.Serializable {
         return em;
     }
 
-	public static long countEquivalencias() {
-        return ((Number) entityManager().createQuery("select count(o) from Equivalencia o").getSingleResult()).longValue();
+	public static int count() {
+        return ((Number) entityManager().createQuery("SELECT COUNT(o) FROM Equivalencia o").getSingleResult()).intValue();
     }
 
 	@SuppressWarnings("unchecked")
-    public static List<Equivalencia> findAllEquivalencias() {
-        return entityManager().createQuery("select o from Equivalencia o").getResultList();
+    public static List<Equivalencia> findAll() {
+        return entityManager().createQuery("SELECT o FROM Equivalencia o").getResultList();
     }
 
-	public static Equivalencia findEquivalencia(Long id) {
+	public static Equivalencia find(Long id) {
         if (id == null) return null;
         return entityManager().find(Equivalencia.class, id);
     }
+	
+	@SuppressWarnings("unchecked")
+	public static List<Equivalencia> findBy(Disciplina disciplina, int firstResult, int maxResults, String orderBy) {
+		orderBy = (orderBy != null) ? " ORDER BY o." + orderBy : "";
+		String where = (disciplina == null)? "" : " WHERE disciplina = :disciplina ";
+		
+		Query q = entityManager().createQuery("SELECT o FROM Equivalencia o"+where+orderBy);
+		
+		if(disciplina != null) q.setParameter("disciplina", disciplina);
+		
+		return q.setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
+		
+	}
 
 	@SuppressWarnings("unchecked")
-    public static List<Equivalencia> findEquivalenciaEntries(int firstResult, int maxResults) {
-        return entityManager().createQuery("select o from Equivalencia o").setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
+    public static List<Equivalencia> find(int firstResult, int maxResults) {
+        return entityManager().createQuery("SELECT o FROM Equivalencia o").setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
 }

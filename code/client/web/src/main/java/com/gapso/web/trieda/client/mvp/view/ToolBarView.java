@@ -63,6 +63,7 @@ public class ToolBarView extends MyComposite implements ToolBarPresenter.Display
 	private Button curriculosListDisciplinasBt;
 	private Button associarDisciplinasSalasListDisciplinasBt;
 	private Button divisaoCreditosListDisciplinasBt;
+	private Button equivalenciasListDisciplinasBt;
 	
 	// Professores
 	private Button professoresListprofessoresBt;
@@ -275,6 +276,9 @@ public class ToolBarView extends MyComposite implements ToolBarPresenter.Display
 		
 		divisaoCreditosListDisciplinasBt = createButton("Divisão de Créditos", "Divisão de Créditos", Resources.DEFAULTS.campi24());
 		disciplinasToolBar.add(divisaoCreditosListDisciplinasBt);
+		
+		equivalenciasListDisciplinasBt = createButton("Equivalências", "Equivalências", Resources.DEFAULTS.outros16());
+		disciplinasToolBar.add(equivalenciasListDisciplinasBt);
 	}
 	
 	
@@ -383,6 +387,10 @@ public class ToolBarView extends MyComposite implements ToolBarPresenter.Display
 	@Override
 	public Button getDivisaoCreditosListDisciplinasButton() {
 		return divisaoCreditosListDisciplinasBt;
+	}
+	@Override
+	public Button getEquivalenciasListDisciplinasButton() {
+		return equivalenciasListDisciplinasBt;
 	}
 	@Override
 	public Button getProfessoresListProfessoresButton() {

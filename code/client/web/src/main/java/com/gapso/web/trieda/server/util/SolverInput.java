@@ -437,7 +437,8 @@ public class SolverInput {
 			GrupoIdentificador grupoIdentificadorEquivalencias = of.createGrupoIdentificador();
 			Set<Equivalencia> equivalencias = disciplina.getEquivalencias();
 			for(Equivalencia equivalencia : equivalencias) {
-				grupoIdentificadorEquivalencias.getId().add(equivalencia.getElimina().getId().intValue());
+				// TODO Arrumar para eliminar mais de 1 disciplina
+//				grupoIdentificadorEquivalencias.getId().add(equivalencia.getElimina().getId().intValue());
 			}
 			itemDisciplina.setDisciplinasEquivalentes(grupoIdentificadorEquivalencias);
 			

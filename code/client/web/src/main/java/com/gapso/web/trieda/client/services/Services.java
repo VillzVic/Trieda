@@ -25,6 +25,7 @@ public class Services {
 	private static final String DIVISAOCREDITOS = "divisaoCreditos";
 	private static final String PROFESSORES = "professores";
 	private static final String PROFESSORESDISCIPLINA = "professoresDisciplina";
+	private static final String EQUIVALENCIAS = "equivalencias";
 	
 	public static OtimizarServiceAsync otimizar() {
 		OtimizarServiceAsync service = (OtimizarServiceAsync) Registry.get(OTIMIZAR);
@@ -202,6 +203,15 @@ public class Services {
 		if(service == null) {
 			service = GWT.create(ProfessoresDisciplinaService.class);
 			Registry.register(PROFESSORESDISCIPLINA, service);
+		}
+		return service;
+	}
+	
+	public static EquivalenciasServiceAsync equivalencias() {
+		EquivalenciasServiceAsync service = (EquivalenciasServiceAsync) Registry.get(EQUIVALENCIAS);
+		if(service == null) {
+			service = GWT.create(EquivalenciasService.class);
+			Registry.register(EQUIVALENCIAS, service);
 		}
 		return service;
 	}
