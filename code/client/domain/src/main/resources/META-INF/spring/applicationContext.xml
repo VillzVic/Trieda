@@ -65,4 +65,5 @@
 	<bean class="com.gapso.trieda.domain.SemanaLetiva" id="semanaLetivaBean" />
 	<bean class="com.gapso.trieda.domain.AtendimentoTatico" id="atendimentoTaticoBean" />
 	<bean class="com.gapso.trieda.domain.AtendimentoOperacional" id="atendimentoOperacionalBean" />
+	<bean class="com.gapso.trieda.domain.Fixacao" id="fixacaoBean" />
 </beans>
