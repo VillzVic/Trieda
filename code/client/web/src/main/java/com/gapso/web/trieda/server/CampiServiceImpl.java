@@ -35,6 +35,7 @@ public class CampiServiceImpl extends RemoteServiceServlet implements CampiServi
 
 	@Override
 	public CampusDTO getCampus(Long id) {
+		if(id == null) return null;
 		return ConvertBeans.toCampusDTO(Campus.find(id));
 	}
 	

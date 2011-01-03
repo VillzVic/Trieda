@@ -47,6 +47,7 @@ public class DisciplinasServiceImpl extends RemoteServiceServlet implements Disc
 
 	@Override
 	public DisciplinaDTO getDisciplina(Long id) {
+		if(id == null) return null;
 		return ConvertBeans.toDisciplinaDTO(Disciplina.find(id));
 	}
 	

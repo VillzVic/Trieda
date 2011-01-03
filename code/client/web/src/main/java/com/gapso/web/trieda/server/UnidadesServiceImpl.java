@@ -34,6 +34,7 @@ public class UnidadesServiceImpl extends RemoteServiceServlet implements Unidade
 
 	@Override
 	public UnidadeDTO getUnidade(Long id) {
+		if(id == null) return null;
 		return ConvertBeans.toUnidadeDTO(Unidade.find(id));
 	}
 	

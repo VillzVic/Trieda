@@ -9,6 +9,7 @@ import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.gapso.web.trieda.client.mvp.model.GrupoSalaDTO;
 import com.gapso.web.trieda.client.mvp.model.SalaDTO;
 import com.gapso.web.trieda.client.mvp.model.TipoSalaDTO;
+import com.gapso.web.trieda.client.mvp.model.UnidadeDTO;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
@@ -30,5 +31,6 @@ public interface SalasService extends RemoteService {
 	ListLoadResult<SalaDTO> getSalasDoAndareList(List<String> andares);
 	Map<String, List<SalaDTO>> getSalasEAndareMap(Long unidadeId);
 	List<GrupoSalaDTO> getGruposDeSalas(Long unidadeId);
+	ListLoadResult<SalaDTO> getBuscaList(UnidadeDTO unidadeDTO);
 	
 }

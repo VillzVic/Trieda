@@ -20,6 +20,7 @@ import com.gapso.trieda.domain.DeslocamentoUnidade;
 import com.gapso.trieda.domain.Disciplina;
 import com.gapso.trieda.domain.DivisaoCredito;
 import com.gapso.trieda.domain.Equivalencia;
+import com.gapso.trieda.domain.Fixacao;
 import com.gapso.trieda.domain.GrupoSala;
 import com.gapso.trieda.domain.HorarioAula;
 import com.gapso.trieda.domain.HorarioDisponivelCenario;
@@ -51,6 +52,7 @@ import com.gapso.web.trieda.client.mvp.model.DeslocamentoUnidadeDTO;
 import com.gapso.web.trieda.client.mvp.model.DisciplinaDTO;
 import com.gapso.web.trieda.client.mvp.model.DivisaoCreditoDTO;
 import com.gapso.web.trieda.client.mvp.model.EquivalenciaDTO;
+import com.gapso.web.trieda.client.mvp.model.FixacaoDTO;
 import com.gapso.web.trieda.client.mvp.model.GrupoSalaDTO;
 import com.gapso.web.trieda.client.mvp.model.HorarioAulaDTO;
 import com.gapso.web.trieda.client.mvp.model.HorarioDisponivelCenarioDTO;
@@ -1029,6 +1031,49 @@ public class ConvertBeans {
 		}
 		if(eliminaString.length() > 0) eliminaString = eliminaString.substring(0, eliminaString.length()-2);
 		dto.setEliminaString(eliminaString);
+		return dto;
+	}
+	
+	// FIXACAO
+	public static Fixacao toFixacao(FixacaoDTO dto) {
+		Fixacao domain = new Fixacao();
+		domain.setId(dto.getId());
+		domain.setVersion(dto.getVersion());
+		domain.setCodigo(dto.getCodigo());
+		domain.setDescricao(dto.getDescricao());
+		domain.setDisciplina(Disciplina.find(dto.getDisciplinaId()));
+		domain.setCampus(Campus.find(dto.getCampusId()));
+		domain.setUnidade(Unidade.find(dto.getUnidadeId()));
+		domain.setSala(Sala.find(dto.getSalaId()));
+		return domain;
+	}
+
+	public static FixacaoDTO toFixacaoDTO(Fixacao domain) {
+		FixacaoDTO dto = new FixacaoDTO();
+		dto.setId(domain.getId());
+		dto.setVersion(domain.getVersion());
+		dto.setCodigo(domain.getCodigo());
+		dto.setDescricao(domain.getDescricao());
+		Disciplina disciplina = domain.getDisciplina();
+		if(disciplina != null) {
+			dto.setDisciplinaId(disciplina.getId());
+			dto.setDisciplinaString(disciplina.getCodigo());
+		}
+		Campus campus = domain.getCampus();
+		if(campus != null) {
+			dto.setCampusId(campus.getId());
+			dto.setCampusString(campus.getCodigo());
+		}
+		Unidade unidade = domain.getUnidade();
+		if(unidade != null) {
+			dto.setUnidadeId(unidade.getId());
+			dto.setUnidadeString(unidade.getCodigo());
+		}
+		Sala sala = domain.getSala();
+		if(sala != null) {
+			dto.setSalaId(sala.getId());
+			dto.setSalaString(sala.getCodigo());
+		}
 		return dto;
 	}
 }

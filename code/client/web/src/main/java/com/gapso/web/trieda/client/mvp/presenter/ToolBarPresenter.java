@@ -19,6 +19,7 @@ import com.gapso.web.trieda.client.mvp.view.DisciplinasAssociarSalaView;
 import com.gapso.web.trieda.client.mvp.view.DisciplinasView;
 import com.gapso.web.trieda.client.mvp.view.DivisoesCreditosView;
 import com.gapso.web.trieda.client.mvp.view.EquivalenciasView;
+import com.gapso.web.trieda.client.mvp.view.FixacoesView;
 import com.gapso.web.trieda.client.mvp.view.GruposSalasView;
 import com.gapso.web.trieda.client.mvp.view.HorariosAulaView;
 import com.gapso.web.trieda.client.mvp.view.OfertasView;
@@ -75,6 +76,7 @@ public class ToolBarPresenter implements Presenter {
 		Button getCurriculosListDisciplinasButton();
 		Button getDivisaoCreditosListDisciplinasButton();
 		Button getEquivalenciasListDisciplinasButton();
+		Button getFixacoesListDisciplinasButton();
 		
 		Button getProfessoresListProfessoresButton();
 		Button getProfessoresDisciplinaListProfessoresButton();
@@ -82,6 +84,7 @@ public class ToolBarPresenter implements Presenter {
 		Button getParametrosButton();
 		Button getRelatorioVisaoSalaButton();
 		Button getRelatorioVisaoCursoButton();
+
 
 
 
@@ -249,6 +252,13 @@ public class ToolBarPresenter implements Presenter {
 			@Override
 			public void componentSelected(ButtonEvent ce) {
 				Presenter presenter = new EquivalenciasPresenter(masterData, new EquivalenciasView());
+				presenter.go(gTab);
+			}
+		});
+		toolBar.getFixacoesListDisciplinasButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
+			@Override
+			public void componentSelected(ButtonEvent ce) {
+				Presenter presenter = new FixacoesPresenter(masterData, new FixacoesView());
 				presenter.go(gTab);
 			}
 		});

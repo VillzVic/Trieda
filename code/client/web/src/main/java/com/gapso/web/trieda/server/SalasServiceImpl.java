@@ -20,6 +20,7 @@ import com.gapso.trieda.domain.Unidade;
 import com.gapso.web.trieda.client.mvp.model.GrupoSalaDTO;
 import com.gapso.web.trieda.client.mvp.model.SalaDTO;
 import com.gapso.web.trieda.client.mvp.model.TipoSalaDTO;
+import com.gapso.web.trieda.client.mvp.model.UnidadeDTO;
 import com.gapso.web.trieda.client.services.SalasService;
 import com.gapso.web.trieda.server.util.ConvertBeans;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
@@ -34,12 +35,25 @@ public class SalasServiceImpl extends RemoteServiceServlet implements SalasServi
 
 	@Override
 	public SalaDTO getSala(Long id) {
+		if(id == null) return null;
 		return ConvertBeans.toSalaDTO(Sala.find(id));
 	}
 	
 	@Override
 	public TipoSalaDTO getTipoSala(Long id) {
 		return ConvertBeans.toTipoSalaDTO(TipoSala.find(id));
+	}
+	
+	@Override
+	public ListLoadResult<SalaDTO> getBuscaList(UnidadeDTO unidadeDTO) {
+		Unidade unidade = Unidade.find(unidadeDTO.getId());
+		List<SalaDTO> listDTO = new ArrayList<SalaDTO>();
+		List<Sala> list = Sala.findByUnidade(unidade);
+		for(Sala sala : list) {
+			listDTO.add(ConvertBeans.toSalaDTO(sala));
+		}
+		BaseListLoadResult<SalaDTO> result = new BaseListLoadResult<SalaDTO>(listDTO);
+		return result;
 	}
 	
 	@Override

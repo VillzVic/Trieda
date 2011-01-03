@@ -9,6 +9,7 @@ import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.gapso.web.trieda.client.mvp.model.GrupoSalaDTO;
 import com.gapso.web.trieda.client.mvp.model.SalaDTO;
 import com.gapso.web.trieda.client.mvp.model.TipoSalaDTO;
+import com.gapso.web.trieda.client.mvp.model.UnidadeDTO;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public interface SalasServiceAsync {
@@ -25,5 +26,6 @@ public interface SalasServiceAsync {
 	void getSalasDoAndareList(List<String> andares, AsyncCallback<ListLoadResult<SalaDTO>> callback);
 	void getSalasEAndareMap(Long unidadeId, AsyncCallback<Map<String, List<SalaDTO>>> callback);
 	void getGruposDeSalas(Long unidadeId, AsyncCallback<List<GrupoSalaDTO>> callback);
+	void getBuscaList(UnidadeDTO unidadeDTO, AsyncCallback<ListLoadResult<SalaDTO>> callback);
 	
 }

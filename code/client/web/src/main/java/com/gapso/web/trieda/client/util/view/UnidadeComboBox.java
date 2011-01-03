@@ -33,9 +33,9 @@ public class UnidadeComboBox extends ComboBox<UnidadeDTO> {
 		setDisplayField("nome");
 		setFieldLabel("Unidade");
 		setEmptyText("Selecione a unidade");
-		setTemplate(getTemplateCB());
+		setSimpleTemplate("{codigo} ({nome})");
 		setEditable(false);
-		setEnabled(false);
+		setEnabled(campusComboBox.getValue() != null);
 		setTriggerAction(TriggerAction.ALL);
 	}
 
@@ -53,13 +53,5 @@ public class UnidadeComboBox extends ComboBox<UnidadeDTO> {
 			}
 		});
 	}
-	
-	private native String getTemplateCB() /*-{
-		return [
-			'<tpl for=".">',
-			'<div class="x-combo-list-item">{codigo} ({nome})</div>',
-			'</tpl>'
-		].join("");
-	}-*/;
 	
 }
