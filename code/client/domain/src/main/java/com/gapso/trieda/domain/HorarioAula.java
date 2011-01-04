@@ -1,5 +1,6 @@
 package com.gapso.trieda.domain;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -9,7 +10,6 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -37,7 +37,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RooToString
 @RooEntity(identifierColumn = "HOR_ID")
 @Table(name = "HORARIOS_AULA")
-public class HorarioAula implements java.io.Serializable {
+public class HorarioAula implements Serializable {
 
     @NotNull
     @ManyToOne(targetEntity = SemanaLetiva.class)
@@ -55,14 +55,14 @@ public class HorarioAula implements java.io.Serializable {
     @DateTimeFormat(style = "--")
     private Date horario;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy="horarioAula", fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy="horarioAula", orphanRemoval=true)
     private Set<HorarioDisponivelCenario> horariosDisponiveisCenario =  new HashSet<HorarioDisponivelCenario>();
     
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("Id: ").append(getId()).append(", ");
         sb.append("Version: ").append(getVersion()).append(", ");
-        sb.append("Semana LEtiva: ").append(getSemanaLetiva()).append(", ");
+        sb.append("Semana Letiva: ").append(getSemanaLetiva()).append(", ");
         sb.append("Turno: ").append(getTurno()).append(", ");
         sb.append("HorariosDisponiveisCenario: ").append(getHorariosDisponiveisCenario() == null ? "null" : getHorariosDisponiveisCenario().size()).append(", ");
         sb.append("Horario: ").append(getHorario());

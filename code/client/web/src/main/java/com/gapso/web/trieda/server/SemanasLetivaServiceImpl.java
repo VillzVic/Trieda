@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -17,9 +18,14 @@ import com.extjs.gxt.ui.client.data.BasePagingLoadResult;
 import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
+import com.gapso.trieda.domain.Campus;
+import com.gapso.trieda.domain.Disciplina;
 import com.gapso.trieda.domain.HorarioAula;
 import com.gapso.trieda.domain.HorarioDisponivelCenario;
+import com.gapso.trieda.domain.Professor;
+import com.gapso.trieda.domain.Sala;
 import com.gapso.trieda.domain.SemanaLetiva;
+import com.gapso.trieda.domain.Unidade;
 import com.gapso.web.trieda.client.mvp.model.HorarioDisponivelCenarioDTO;
 import com.gapso.web.trieda.client.mvp.model.SemanaLetivaDTO;
 import com.gapso.web.trieda.client.services.SemanasLetivaService;
@@ -154,28 +160,42 @@ public class SemanasLetivaServiceImpl extends RemoteServiceServlet implements Se
 	}
 	
 	@Override
-	public void saveHorariosDisponiveisCenario(List<HorarioDisponivelCenarioDTO> listDTO) {
+	public void saveHorariosDisponiveisCenario(SemanaLetivaDTO semanaLetivaDTO, List<HorarioDisponivelCenarioDTO> listDTO) {
 		List<HorarioDisponivelCenario> list = ConvertBeans.toHorarioDisponivelCenario(listDTO);
-		HorarioAula horarioAula = HorarioAula.find(listDTO.get(0).getHorarioDeAulaId());
+		Set<HorarioDisponivelCenario> horariosDisponivelCenarioAll = new HashSet<HorarioDisponivelCenario>();
+		List<HorarioDisponivelCenario> removeList = new ArrayList<HorarioDisponivelCenario>(); 
 		
-		Set<HorarioDisponivelCenario> listOrig = horarioAula.getHorariosDisponiveisCenario();
-		for(HorarioDisponivelCenario o1 : list) {
-			if(!listOrig.contains(o1)) {
-				listOrig.add(o1);
+		SemanaLetiva semanaLetiva = SemanaLetiva.find(semanaLetivaDTO.getId());
+		for(HorarioAula horariosAula : semanaLetiva.getHorariosAula()) {
+			removeList.clear();
+			for(HorarioDisponivelCenario o : horariosAula.getHorariosDisponiveisCenario()) {
+				if(!list.contains(o)) {
+					removeList.add(o);
+				} else {
+					horariosDisponivelCenarioAll.add(o);
+				}
 			}
+			horariosAula.getHorariosDisponiveisCenario().removeAll(removeList);
+			horariosAula.merge();
 		}
 		
-//		List<HorarioDisponivelCenario> remover = new ArrayList<HorarioDisponivelCenario>();
-//		for(HorarioDisponivelCenario o : listOrig) {
-//			if(!list.contains(o)) {
-//				remover.add(o);
-//			}
-//		}
-//		for(HorarioDisponivelCenario o : remover) {
-//			o.remove();
-//		}
+	    List<Campus> campi = Campus.findAll();
+	    List<Unidade> unidades = Unidade.findAll();
+	    List<Sala> salas = Sala.findAll();
+	    List<Disciplina> disciplinas = Disciplina.findAll();
+	    List<Professor> professores = Professor.findAll();
 		
-		horarioAula.merge();
+	    horariosDisponivelCenarioAll.retainAll(list);
+		for(HorarioDisponivelCenario o1 : list) {
+			if(horariosDisponivelCenarioAll.add(o1)) {
+				o1.getCampi().addAll(campi);
+				o1.getUnidades().addAll(unidades);
+				o1.getSalas().addAll(salas);
+				o1.getDisciplinas().addAll(disciplinas);
+				o1.getProfessores().addAll(professores);
+				o1.merge();
+			}
+		}
 	}
 	
 }

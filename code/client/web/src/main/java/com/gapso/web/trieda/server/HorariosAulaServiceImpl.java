@@ -8,10 +8,15 @@ import com.extjs.gxt.ui.client.Style.SortDir;
 import com.extjs.gxt.ui.client.data.BasePagingLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
+import com.gapso.trieda.domain.Campus;
+import com.gapso.trieda.domain.Disciplina;
 import com.gapso.trieda.domain.HorarioAula;
 import com.gapso.trieda.domain.HorarioDisponivelCenario;
+import com.gapso.trieda.domain.Professor;
+import com.gapso.trieda.domain.Sala;
 import com.gapso.trieda.domain.SemanaLetiva;
 import com.gapso.trieda.domain.Turno;
+import com.gapso.trieda.domain.Unidade;
 import com.gapso.trieda.misc.Semanas;
 import com.gapso.web.trieda.client.mvp.model.HorarioAulaDTO;
 import com.gapso.web.trieda.client.mvp.model.SemanaLetivaDTO;
@@ -76,11 +81,25 @@ public class HorariosAulaServiceImpl extends RemoteServiceServlet implements Hor
 			horarioDeAula.merge();
 		} else {
 			horarioDeAula.persist();
+
+		    List<Campus> campi = Campus.findAll();
+		    List<Unidade> unidades = Unidade.findAll();
+		    List<Sala> salas = Sala.findAll();
+		    List<Disciplina> disciplinas = Disciplina.findAll();
+		    List<Professor> professores = Professor.findAll();
+			
 			for(Semanas semana : Semanas.values()) {
 				if(semana == Semanas.SAB || semana == Semanas.DOM) continue;
 				HorarioDisponivelCenario hdc = new HorarioDisponivelCenario();
 				hdc.setSemana(semana);
 				hdc.setHorarioAula(horarioDeAula);
+				
+				hdc.getCampi().addAll(campi);
+				hdc.getUnidades().addAll(unidades);
+				hdc.getSalas().addAll(salas);
+				hdc.getDisciplinas().addAll(disciplinas);
+				hdc.getProfessores().addAll(professores);
+				
 				hdc.persist();
 			}
 		}

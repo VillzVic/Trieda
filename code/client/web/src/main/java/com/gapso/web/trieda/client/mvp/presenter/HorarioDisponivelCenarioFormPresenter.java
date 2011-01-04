@@ -53,7 +53,7 @@ public class HorarioDisponivelCenarioFormPresenter implements Presenter {
 				List<HorarioDisponivelCenarioDTO> hdcDTOList = display.getStore().getModels();
 				
 				SemanasLetivaServiceAsync gruposSalasService = Services.semanasLetiva();
-				gruposSalasService.saveHorariosDisponiveisCenario(hdcDTOList, new AsyncCallback<Void>() {
+				gruposSalasService.saveHorariosDisponiveisCenario(getDTO(), hdcDTOList, new AsyncCallback<Void>() {
 					@Override
 					public void onFailure(Throwable caught) {
 						caught.printStackTrace();

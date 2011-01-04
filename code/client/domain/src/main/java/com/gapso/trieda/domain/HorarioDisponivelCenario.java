@@ -1,10 +1,10 @@
 package com.gapso.trieda.domain;
 
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
@@ -34,7 +34,7 @@ import com.gapso.trieda.misc.Semanas;
 @RooToString
 @RooEntity(identifierColumn = "HDC_ID")
 @Table(name = "HORARIO_DISPONIVEL_CENARIO")
-public class HorarioDisponivelCenario implements java.io.Serializable {
+public class HorarioDisponivelCenario implements Serializable {
 
     @NotNull
     @ManyToOne(targetEntity = HorarioAula.class)
@@ -44,19 +44,19 @@ public class HorarioDisponivelCenario implements java.io.Serializable {
     @Enumerated
     private Semanas semana;
 
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany
     private Set<Campus> campi = new HashSet<Campus>();
 
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany
     private Set<Unidade> unidades = new HashSet<Unidade>();
 
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany
     private Set<Sala> salas = new HashSet<Sala>();
 
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany
     private Set<Disciplina> disciplinas = new HashSet<Disciplina>();
 
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany
     private Set<Professor> professores = new HashSet<Professor>();
 
 	private static final long serialVersionUID = 9128639869205918403L;
