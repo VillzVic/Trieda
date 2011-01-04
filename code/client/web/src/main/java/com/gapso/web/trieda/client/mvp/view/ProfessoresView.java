@@ -13,6 +13,7 @@ import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.extjs.gxt.ui.client.widget.grid.ColumnConfig;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayout;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
+import com.extjs.gxt.ui.client.widget.toolbar.SeparatorToolItem;
 import com.gapso.web.trieda.client.mvp.model.ProfessorDTO;
 import com.gapso.web.trieda.client.mvp.presenter.ProfessoresPresenter;
 import com.gapso.web.trieda.client.util.resources.Resources;
@@ -33,6 +34,7 @@ public class ProfessoresView extends MyComposite implements ProfessoresPresenter
 	private TipoContratoComboBox tipoContratoBuscaCB;
 	private TitulacaoComboBox titulacaoBuscaCB;
 	private AreaTitulacaoComboBox areaTitulacaoBuscaCB;
+	private Button disponibilidadeBT;
 	private ContentPanel panel;
 	private GTabItem tabItem;
 	
@@ -57,6 +59,9 @@ public class ProfessoresView extends MyComposite implements ProfessoresPresenter
 	
 	private void createToolBar() {
 		toolBar = new SimpleToolBar();
+		toolBar.add(new SeparatorToolItem());
+		disponibilidadeBT = toolBar.createButton("Disponibilidade do Professor", Resources.DEFAULTS.horarioAula16());
+		toolBar.add(disponibilidadeBT);
 		panel.setTopComponent(toolBar);
 	}
 	
@@ -167,6 +172,11 @@ public class ProfessoresView extends MyComposite implements ProfessoresPresenter
 	@Override
 	public Button getResetBuscaButton() {
 		return filter.getResetButton();
+	}
+	
+	@Override
+	public Button getDisponibilidadeButton() {
+		return disponibilidadeBT;
 	}
 
 }

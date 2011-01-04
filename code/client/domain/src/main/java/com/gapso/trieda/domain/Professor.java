@@ -92,7 +92,7 @@ public class Professor implements Serializable {
     private Set<HorarioDisponivelCenario> horarios = new HashSet<HorarioDisponivelCenario>();
 
     @NotNull
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "disciplina")
+    @OneToMany(mappedBy = "disciplina")
     private Set<ProfessorDisciplina> disciplinas = new HashSet<ProfessorDisciplina>();
 
 	public String toString() {

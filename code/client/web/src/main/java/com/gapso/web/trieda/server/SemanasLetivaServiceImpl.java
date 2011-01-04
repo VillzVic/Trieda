@@ -26,6 +26,7 @@ import com.gapso.trieda.domain.Professor;
 import com.gapso.trieda.domain.Sala;
 import com.gapso.trieda.domain.SemanaLetiva;
 import com.gapso.trieda.domain.Unidade;
+import com.gapso.web.trieda.client.mvp.model.CenarioDTO;
 import com.gapso.web.trieda.client.mvp.model.HorarioDisponivelCenarioDTO;
 import com.gapso.web.trieda.client.mvp.model.SemanaLetivaDTO;
 import com.gapso.web.trieda.client.services.SemanasLetivaService;
@@ -39,6 +40,23 @@ public class SemanasLetivaServiceImpl extends RemoteServiceServlet implements Se
 
 	private static final long serialVersionUID = 5250776996542788849L;
 
+	@Override
+	public SemanaLetivaDTO getSemanaLetiva(CenarioDTO cenario) {
+		// TODO Pegar a semana letiva do cenário
+		return ConvertBeans.toSemanaLetivaDTO(SemanaLetiva.findAll().get(0));
+	}
+	
+	@Override
+	public List<HorarioDisponivelCenarioDTO> getHorariosDisponiveisByCenario(CenarioDTO cenario) {
+		// TODO Pegar a semana letiva do cenário
+		SemanaLetiva semanaLetiva = SemanaLetiva.findAll().get(0);
+		List<HorarioDisponivelCenarioDTO> list = new ArrayList<HorarioDisponivelCenarioDTO>();
+		for(HorarioAula o : semanaLetiva.getHorariosAula()) {
+			list.add(ConvertBeans.toHorarioDisponivelCenarioDTO(o));
+		}
+		return list;
+	}
+	
 	@Override
 	public PagingLoadResult<SemanaLetivaDTO> getList(PagingLoadConfig config) {
 		

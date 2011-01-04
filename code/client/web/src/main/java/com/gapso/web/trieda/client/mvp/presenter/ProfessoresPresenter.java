@@ -14,9 +14,11 @@ import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.gapso.web.trieda.client.mvp.model.AreaTitulacaoDTO;
 import com.gapso.web.trieda.client.mvp.model.CenarioDTO;
+import com.gapso.web.trieda.client.mvp.model.HorarioDisponivelCenarioDTO;
 import com.gapso.web.trieda.client.mvp.model.ProfessorDTO;
 import com.gapso.web.trieda.client.mvp.model.TipoContratoDTO;
 import com.gapso.web.trieda.client.mvp.model.TitulacaoDTO;
+import com.gapso.web.trieda.client.mvp.view.HorarioDisponivelProfessorFormView;
 import com.gapso.web.trieda.client.mvp.view.ProfessorFormView;
 import com.gapso.web.trieda.client.services.AreasTitulacaoServiceAsync;
 import com.gapso.web.trieda.client.services.ProfessoresServiceAsync;
@@ -46,6 +48,7 @@ public class ProfessoresPresenter implements Presenter {
 		AreaTitulacaoComboBox getAreaTitulacaoBuscaComboBox();
 		Button getSubmitBuscaButton();
 		Button getResetBuscaButton();
+		Button getDisponibilidadeButton();
 		SimpleGrid<ProfessorDTO> getGrid();
 		Component getComponent();
 		void setProxy(RpcProxy<PagingLoadResult<ProfessorDTO>> proxy);
@@ -119,6 +122,24 @@ public class ProfessoresPresenter implements Presenter {
 						presenter.go(null);
 					}
 				});
+			}
+		});
+		display.getDisponibilidadeButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
+			@Override
+			public void componentSelected(ButtonEvent ce) {
+				final ProfessorDTO professorDTO = display.getGrid().getGrid().getSelectionModel().getSelectedItem();
+				Services.semanasLetiva().getHorariosDisponiveisByCenario(cenario, new AsyncCallback<List<HorarioDisponivelCenarioDTO>>() {
+					@Override
+					public void onFailure(Throwable caught) {
+						MessageBox.alert("ERRO!", "Deu falha na conexão", null);
+					}
+					@Override
+					public void onSuccess(List<HorarioDisponivelCenarioDTO> result) {
+						Presenter presenter = new HorarioDisponivelProfessorFormPresenter(new HorarioDisponivelProfessorFormView(professorDTO, result));
+						presenter.go(null);
+					}
+				});
+				
 			}
 		});
 		display.getRemoveButton().addSelectionListener(new SelectionListener<ButtonEvent>(){

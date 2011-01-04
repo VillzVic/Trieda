@@ -26,15 +26,17 @@ import com.extjs.gxt.ui.client.widget.layout.FitLayout;
 import com.gapso.web.trieda.client.util.resources.Resources;
 import com.google.gwt.user.client.Element;
 
-public class SemanaLetivaGrid<M extends BaseModel> extends ContentPanel {
+public class SemanaLetivaDoCenarioGrid<M extends BaseModel> extends ContentPanel {
 
 	private Grid<M> grid;
 	private RpcProxy<PagingLoadResult<M>> proxy;
 	private PagingLoader<PagingLoadResult<ModelData>> loader;
 	private ListStore<M> store;
+	private List<M> horariosDisponiveisCenario;
 	
-	public SemanaLetivaGrid() {
+	public SemanaLetivaDoCenarioGrid(List<M> horariosDisponiveisCenario) {
 		super(new FitLayout());
+		this.horariosDisponiveisCenario = horariosDisponiveisCenario;
 		setHeaderVisible(false);
 	}
 
@@ -52,9 +54,7 @@ public class SemanaLetivaGrid<M extends BaseModel> extends ContentPanel {
 		grid.setTrackMouseOver(false);
 		grid.addStyleName("SemanaLetivaGrid");
 		
-		grid.getView().setEmptyText("Não existe horários de aula cadastrados no sistema");
-		
-//		grid.setView(new CustomGridView(new int[]{7, 1}, new int[][]{{0,2}}));
+		grid.getView().setEmptyText("Não existe horários na Semana Letiva");
 		
 		grid.addListener(Events.BeforeSelect, new Listener<GridEvent<M>>() {
 			@Override
@@ -89,8 +89,8 @@ public class SemanaLetivaGrid<M extends BaseModel> extends ContentPanel {
 				if(model.get(property).equals(lastTurno)) {
 					return "";
 				}
-				config.style += "border-top: 1px solid #EDEDED;";
 				lastTurno = model.get(property);
+				config.style += "border-top: 1px solid #EDEDED;";
 				return lastTurno;
 			}  
 		};
@@ -114,11 +114,13 @@ public class SemanaLetivaGrid<M extends BaseModel> extends ContentPanel {
 			public Object render(final M model, final String property, ColumnData config, int rowIndex, int colIndex, ListStore<M> store, Grid<M> grid) {
 				if(rowIndex == 0) {
 					config.style += "border-top: 1px solid #EDEDED;";
-				} else if((rowIndex + 1) == store.getModels().size()) {
+				}
+				if((rowIndex + 1) == store.getModels().size()) {
 					config.style += "border-bottom: 1px solid #EDEDED;";
 				}
 				config.style += "border-right: 1px solid #EDEDED;";
 				ToggleImageButton tb = new ToggleImageButton((Boolean) model.get(property), Resources.DEFAULTS.save16(), Resources.DEFAULTS.cancel16());
+				tb.setEnabled(podeHabilitar(model, rowIndex, property));
 				tb.addSelectionListener(new SelectionListener<ButtonEvent>() {
 					@Override
 					public void componentSelected(ButtonEvent ce) {
@@ -130,7 +132,7 @@ public class SemanaLetivaGrid<M extends BaseModel> extends ContentPanel {
 			}  
 		};
 		
-		List<ColumnConfig> list = new ArrayList<ColumnConfig>();
+		List<ColumnConfig> list = new ArrayList<ColumnConfig>(9);
 		
 		list.add(createColumnConfig("turnoString", "Turno", 120, mergeRenderer));
 		list.add(createColumnConfig("horarioString", "Horario", 110, horarioRenderer));
@@ -145,6 +147,15 @@ public class SemanaLetivaGrid<M extends BaseModel> extends ContentPanel {
 		return list;
 	}
 
+	private boolean podeHabilitar(M model, int rowIndex, String property) {
+		for(M o : horariosDisponiveisCenario) {
+			if(o.get("horarioDeAulaId").equals(model.get("horarioDeAulaId"))) {
+				return o.get(property);
+			}
+		}
+		return false;
+	}
+	
 	private ColumnConfig createColumnConfig(String id, String name, Integer width, GridCellRenderer<M> gcr) {
 		ColumnConfig c = new ColumnConfig(id, name, width);
 		c.setResizable(false);
@@ -169,5 +180,4 @@ public class SemanaLetivaGrid<M extends BaseModel> extends ContentPanel {
 	public ListStore<M> getStore() {
 		return store;
 	}
-	
 }

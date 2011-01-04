@@ -141,11 +141,8 @@ public class SolverInput {
 		itemCalendario.setCodigo(calendario.getCodigo());
 		
 		GrupoTurno grupoTurno = of.createGrupoTurno();
-		System.out.println("AAA1"); 
 		Set<Turno> turnos = cenario.getTurnos();
-		System.out.println("AAA2"); 
 		for(Turno turno : turnos) {
-			System.out.println("AAA3"); 
 			ItemTurno itemTurno = of.createItemTurno();
 			itemTurno.setId(turno.getId().intValue());
 			itemTurno.setNome(turno.getNome());

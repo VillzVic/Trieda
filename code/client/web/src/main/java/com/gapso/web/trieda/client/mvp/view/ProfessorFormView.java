@@ -67,6 +67,7 @@ public class ProfessorFormView extends MyComposite implements ProfessorFormPrese
 		cpfTF.setFieldLabel("CPF");
 		cpfTF.setAllowBlank(false);
 		cpfTF.setMaxLength(14);
+		cpfTF.setMinLength(14);
 		cpfTF.setEmptyText("Preencha o CPF");
 		formPanel.add(cpfTF, formData);
 		

@@ -285,17 +285,16 @@ public class ToolBarView extends MyComposite implements ToolBarPresenter.Display
 		disciplinasToolBar.add(fixacoesListDisciplinasBt);
 	}
 	
-	
 	private void createProfessores() {
 		professoresToolBar.add(createButton("Novo", "Adicionar novo Professor", Resources.DEFAULTS.campi24()));
 		
 		professoresListprofessoresBt = createButton("Listar", "Listar Professores", Resources.DEFAULTS.campi24());
 		professoresToolBar.add(professoresListprofessoresBt);
 		
+		professoresToolBar.add(new SeparatorToolItem());
+		
 		professoresDisciplinaListprofessoresBt = createButton("Habilitação dos Professores", "Habilitação dos Professores", Resources.DEFAULTS.campi24());
 		professoresToolBar.add(professoresDisciplinaListprofessoresBt);
-		
-		professoresToolBar.add(new SeparatorToolItem());
 	}
 	
 	private void createPlanejamento() {

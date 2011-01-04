@@ -75,7 +75,7 @@ public class Campus implements Serializable {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "origem")
     private Set<DeslocamentoCampus> deslocamentos = new HashSet<DeslocamentoCampus>();
 
-    @ManyToMany(cascade = CascadeType.ALL, mappedBy = "campi")
+    @ManyToMany(mappedBy = "campi")
     private Set<Professor> professores = new HashSet<Professor>();
 
     @ManyToMany(cascade = CascadeType.ALL, mappedBy = "campi")
