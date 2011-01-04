@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.extjs.gxt.ui.client.data.BaseModel;
 import com.extjs.gxt.ui.client.data.BasePagingLoader;
+import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.ModelData;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoader;
@@ -29,14 +30,14 @@ import com.google.gwt.user.client.Element;
 public class SemanaLetivaDoCenarioGrid<M extends BaseModel> extends ContentPanel {
 
 	private Grid<M> grid;
-	private RpcProxy<PagingLoadResult<M>> proxy;
+	private RpcProxy<ListLoadResult<M>> proxy;
 	private PagingLoader<PagingLoadResult<ModelData>> loader;
 	private ListStore<M> store;
-	private List<M> horariosDisponiveisCenario;
+	private List<M> horariosDisponiveisDisponivel;
 	
-	public SemanaLetivaDoCenarioGrid(List<M> horariosDisponiveisCenario) {
+	public SemanaLetivaDoCenarioGrid(List<M> horariosDisponiveisDisponivel) {
 		super(new FitLayout());
-		this.horariosDisponiveisCenario = horariosDisponiveisCenario;
+		this.horariosDisponiveisDisponivel = horariosDisponiveisDisponivel;
 		setHeaderVisible(false);
 	}
 
@@ -111,7 +112,7 @@ public class SemanaLetivaDoCenarioGrid<M extends BaseModel> extends ContentPanel
 		
 		GridCellRenderer<M> buttonRenderer = new GridCellRenderer<M>() {
 			@Override
-			public Object render(final M model, final String property, ColumnData config, int rowIndex, int colIndex, ListStore<M> store, Grid<M> grid) {
+			public Object render(final M modelCenario, final String property, ColumnData config, int rowIndex, int colIndex, ListStore<M> store, Grid<M> grid) {
 				if(rowIndex == 0) {
 					config.style += "border-top: 1px solid #EDEDED;";
 				}
@@ -119,13 +120,18 @@ public class SemanaLetivaDoCenarioGrid<M extends BaseModel> extends ContentPanel
 					config.style += "border-bottom: 1px solid #EDEDED;";
 				}
 				config.style += "border-right: 1px solid #EDEDED;";
-				ToggleImageButton tb = new ToggleImageButton((Boolean) model.get(property), Resources.DEFAULTS.save16(), Resources.DEFAULTS.cancel16());
-				tb.setEnabled(podeHabilitar(model, rowIndex, property));
+				final M model = getModel(modelCenario);
+				Boolean flag = false;
+				if(model != null) {
+					flag = (Boolean) model.get(property);
+				}
+				ToggleImageButton tb = new ToggleImageButton(flag, Resources.DEFAULTS.save16(), Resources.DEFAULTS.cancel16());
+				tb.setEnabled((Boolean)modelCenario.get(property));
 				tb.addSelectionListener(new SelectionListener<ButtonEvent>() {
 					@Override
 					public void componentSelected(ButtonEvent ce) {
 						ToggleImageButton tib = (ToggleImageButton) ce.getComponent();
-						model.set(property, tib.isPressed());
+						modelCenario.set(property, tib.isPressed());
 					}
 				});
 				return tb;
@@ -146,14 +152,17 @@ public class SemanaLetivaDoCenarioGrid<M extends BaseModel> extends ContentPanel
 
 		return list;
 	}
-
-	private boolean podeHabilitar(M model, int rowIndex, String property) {
-		for(M o : horariosDisponiveisCenario) {
-			if(o.get("horarioDeAulaId").equals(model.get("horarioDeAulaId"))) {
-				return o.get(property);
+	
+	private M getModel(M model) {
+		if(model != null) {
+			Long horarioDeAulaId = model.get("horarioDeAulaId");
+			for(M o : horariosDisponiveisDisponivel) {
+				if(o.get("horarioDeAulaId").equals(horarioDeAulaId)) {
+					return o;
+				}
 			}
 		}
-		return false;
+		return null;		
 	}
 	
 	private ColumnConfig createColumnConfig(String id, String name, Integer width, GridCellRenderer<M> gcr) {
@@ -169,11 +178,11 @@ public class SemanaLetivaDoCenarioGrid<M extends BaseModel> extends ContentPanel
 		return grid.getSelectionModel();
 	}
 	
-	public void setProxy(RpcProxy<PagingLoadResult<M>> proxy) {
+	public void setProxy(RpcProxy<ListLoadResult<M>> proxy) {
 		this.proxy = proxy;
 	}
 	
-	public RpcProxy<PagingLoadResult<M>> getProxy() {
+	public RpcProxy<ListLoadResult<M>> getProxy() {
 		return this.proxy;
 	}
 

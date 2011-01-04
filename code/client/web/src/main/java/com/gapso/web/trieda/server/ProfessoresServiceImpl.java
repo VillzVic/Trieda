@@ -39,11 +39,11 @@ public class ProfessoresServiceImpl extends RemoteServiceServlet implements Prof
 	}
 
 	@Override
-	public PagingLoadResult<HorarioDisponivelCenarioDTO> getHorariosDisponiveis(ProfessorDTO professorDTO) {
+	public List<HorarioDisponivelCenarioDTO> getHorariosDisponiveis(ProfessorDTO professorDTO) {
 		List<HorarioDisponivelCenario> list = new ArrayList<HorarioDisponivelCenario>(Professor.find(professorDTO.getId()).getHorarios());
 		List<HorarioDisponivelCenarioDTO> listDTO = ConvertBeans.toHorarioDisponivelCenarioDTO(list);
 		
-		return new BasePagingLoadResult<HorarioDisponivelCenarioDTO>(listDTO);
+		return listDTO;
 	}
 	
 	@Override

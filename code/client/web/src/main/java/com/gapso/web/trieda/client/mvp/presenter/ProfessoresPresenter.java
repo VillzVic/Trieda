@@ -128,14 +128,14 @@ public class ProfessoresPresenter implements Presenter {
 			@Override
 			public void componentSelected(ButtonEvent ce) {
 				final ProfessorDTO professorDTO = display.getGrid().getGrid().getSelectionModel().getSelectedItem();
-				Services.semanasLetiva().getHorariosDisponiveisByCenario(cenario, new AsyncCallback<List<HorarioDisponivelCenarioDTO>>() {
+				Services.professores().getHorariosDisponiveis(professorDTO, new AsyncCallback<List<HorarioDisponivelCenarioDTO>>() {
 					@Override
 					public void onFailure(Throwable caught) {
 						MessageBox.alert("ERRO!", "Deu falha na conexão", null);
 					}
 					@Override
 					public void onSuccess(List<HorarioDisponivelCenarioDTO> result) {
-						Presenter presenter = new HorarioDisponivelProfessorFormPresenter(new HorarioDisponivelProfessorFormView(professorDTO, result));
+						Presenter presenter = new HorarioDisponivelProfessorFormPresenter(cenario, new HorarioDisponivelProfessorFormView(professorDTO, result));
 						presenter.go(null);
 					}
 				});

@@ -28,7 +28,7 @@ public interface ProfessoresService extends RemoteService {
 	ListLoadResult<TitulacaoDTO> getTitulacoesAll();
 	void save(ProfessorDTO professorDTO);
 	void remove(List<ProfessorDTO> professorDTOList);
-	PagingLoadResult<HorarioDisponivelCenarioDTO> getHorariosDisponiveis(ProfessorDTO professorDTO);
+	List<HorarioDisponivelCenarioDTO> getHorariosDisponiveis(ProfessorDTO professorDTO);
 	void saveHorariosDisponiveis(ProfessorDTO professorDTO, List<HorarioDisponivelCenarioDTO> listDTO);
 	
 }

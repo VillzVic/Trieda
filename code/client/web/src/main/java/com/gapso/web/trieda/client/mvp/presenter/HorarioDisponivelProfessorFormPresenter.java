@@ -2,13 +2,14 @@ package com.gapso.web.trieda.client.mvp.presenter;
 
 import java.util.List;
 
-import com.extjs.gxt.ui.client.data.PagingLoadResult;
+import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.RpcProxy;
 import com.extjs.gxt.ui.client.event.ButtonEvent;
 import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.store.ListStore;
 import com.extjs.gxt.ui.client.widget.Info;
 import com.extjs.gxt.ui.client.widget.button.Button;
+import com.gapso.web.trieda.client.mvp.model.CenarioDTO;
 import com.gapso.web.trieda.client.mvp.model.HorarioDisponivelCenarioDTO;
 import com.gapso.web.trieda.client.mvp.model.ProfessorDTO;
 import com.gapso.web.trieda.client.services.Services;
@@ -22,22 +23,24 @@ public class HorarioDisponivelProfessorFormPresenter implements Presenter {
 		Button getSalvarButton();
 		SimpleModal getSimpleModal();
 		ProfessorDTO getProfessorDTO();
-		void setProxy(RpcProxy<PagingLoadResult<HorarioDisponivelCenarioDTO>> proxy);
+		void setProxy(RpcProxy<ListLoadResult<HorarioDisponivelCenarioDTO>> proxy);
 		ListStore<HorarioDisponivelCenarioDTO> getStore();
 	}
 	private Display display;
+	private CenarioDTO cenario;
 	
-	public HorarioDisponivelProfessorFormPresenter(Display display) {
+	public HorarioDisponivelProfessorFormPresenter(CenarioDTO cenario, Display display) {
+		this.cenario = cenario;
 		this.display = display;
 		configureProxy();
 		setListeners();
 	}
 
 	private void configureProxy() {
-		RpcProxy<PagingLoadResult<HorarioDisponivelCenarioDTO>> proxy = new RpcProxy<PagingLoadResult<HorarioDisponivelCenarioDTO>>() {
+		RpcProxy<ListLoadResult<HorarioDisponivelCenarioDTO>> proxy = new RpcProxy<ListLoadResult<HorarioDisponivelCenarioDTO>>() {
 			@Override
-			protected void load(Object loadConfig, AsyncCallback<PagingLoadResult<HorarioDisponivelCenarioDTO>> callback) {
-				Services.professores().getHorariosDisponiveis(getDTO(), callback);
+			protected void load(Object loadConfig, AsyncCallback<ListLoadResult<HorarioDisponivelCenarioDTO>> callback) {
+				Services.semanasLetiva().getHorariosDisponiveisByCenario(cenario, callback);
 			}
 		};
 		display.setProxy(proxy);

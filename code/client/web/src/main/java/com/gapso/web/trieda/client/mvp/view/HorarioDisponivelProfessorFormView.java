@@ -2,7 +2,7 @@ package com.gapso.web.trieda.client.mvp.view;
 
 import java.util.List;
 
-import com.extjs.gxt.ui.client.data.PagingLoadResult;
+import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.RpcProxy;
 import com.extjs.gxt.ui.client.store.ListStore;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
@@ -20,12 +20,12 @@ public class HorarioDisponivelProfessorFormView extends MyComposite implements H
 	private SimpleModal simpleModal;
 	private ContentPanel contentPanel;
 	private SemanaLetivaDoCenarioGrid<HorarioDisponivelCenarioDTO> gridPanel;
-	private List<HorarioDisponivelCenarioDTO> horariosDisponiveisCenario;
+	private List<HorarioDisponivelCenarioDTO> horariosDisponiveisProfessor;
 	private ProfessorDTO professorDTO;
 	
-	public HorarioDisponivelProfessorFormView(ProfessorDTO professorDTO, List<HorarioDisponivelCenarioDTO> horariosDisponiveisCenario) {
+	public HorarioDisponivelProfessorFormView(ProfessorDTO professorDTO, List<HorarioDisponivelCenarioDTO> horariosDisponiveisProfessor) {
 		this.professorDTO = professorDTO;
-		this.horariosDisponiveisCenario = horariosDisponiveisCenario;
+		this.horariosDisponiveisProfessor = horariosDisponiveisProfessor;
 		initUI();
 		createGrid();
 		// TODO
@@ -42,7 +42,7 @@ public class HorarioDisponivelProfessorFormView extends MyComposite implements H
 		contentPanel = new ContentPanel(new FitLayout());
 		contentPanel.setHeaderVisible(false);
 		contentPanel.setBodyBorder(false);
-	    gridPanel = new SemanaLetivaDoCenarioGrid<HorarioDisponivelCenarioDTO>(horariosDisponiveisCenario);
+	    gridPanel = new SemanaLetivaDoCenarioGrid<HorarioDisponivelCenarioDTO>(horariosDisponiveisProfessor);
 	    contentPanel.add(gridPanel);
 		simpleModal.setContent(contentPanel);
 	}
@@ -63,7 +63,7 @@ public class HorarioDisponivelProfessorFormView extends MyComposite implements H
 	}
 
 	@Override
-	public void setProxy(RpcProxy<PagingLoadResult<HorarioDisponivelCenarioDTO>> proxy) {
+	public void setProxy(RpcProxy<ListLoadResult<HorarioDisponivelCenarioDTO>> proxy) {
 		gridPanel.setProxy(proxy);
 	}
 

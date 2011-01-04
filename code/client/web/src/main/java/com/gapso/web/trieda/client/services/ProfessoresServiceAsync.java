@@ -24,7 +24,7 @@ public interface ProfessoresServiceAsync {
 	void getTitulacoesAll(AsyncCallback<ListLoadResult<TitulacaoDTO>> callback);
 	void save(ProfessorDTO professorDTO, AsyncCallback<Void> callback);
 	void remove(List<ProfessorDTO> professorDTOList, AsyncCallback<Void> callback);
-	void getHorariosDisponiveis(ProfessorDTO professorDTO, AsyncCallback<PagingLoadResult<HorarioDisponivelCenarioDTO>> callback);
+	void getHorariosDisponiveis(ProfessorDTO professorDTO, AsyncCallback<List<HorarioDisponivelCenarioDTO>> callback);
 	void saveHorariosDisponiveis(ProfessorDTO professorDTO, List<HorarioDisponivelCenarioDTO> listDTO, AsyncCallback<Void> callback);
 	
 }
