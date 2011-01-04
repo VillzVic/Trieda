@@ -4,7 +4,9 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import com.gapso.trieda.domain.AreaTitulacao;
@@ -472,6 +474,84 @@ public class ConvertBeans {
 		dto.setHorario(domain.getHorario());
 		
 		return dto;
+	}
+	
+	public static List<HorarioDisponivelCenarioDTO> toHorarioDisponivelCenarioDTO(List<HorarioDisponivelCenario> domains) {
+		Map<HorarioAula, List<HorarioDisponivelCenario>> horariosAula = new HashMap<HorarioAula, List<HorarioDisponivelCenario>>();
+		for(HorarioDisponivelCenario domain : domains) {
+			if(!horariosAula.containsKey(domain.getHorarioAula())) {
+				horariosAula.put(domain.getHorarioAula(), new ArrayList<HorarioDisponivelCenario>());
+			}
+			horariosAula.get(domain.getHorarioAula()).add(domain);
+		}
+		
+		List<HorarioDisponivelCenarioDTO> dtos = new ArrayList<HorarioDisponivelCenarioDTO>(horariosAula.keySet().size());
+		
+		for(HorarioAula horarioAula : horariosAula.keySet()) {
+			HorarioDisponivelCenarioDTO dto = new HorarioDisponivelCenarioDTO();
+			dto.setHorarioDeAulaId(horarioAula.getId());
+			dto.setHorarioDeAulaVersion(horarioAula.getVersion());
+			dto.setTurnoString(horarioAula.getTurno().getNome());
+			
+			dto.setSegunda(false);
+			dto.setTerca(false);
+			dto.setQuarta(false);
+			dto.setQuinta(false);
+			dto.setSexta(false);
+			dto.setSabado(false);
+			dto.setDomingo(false);
+			
+			for(HorarioDisponivelCenario o : horariosAula.get(horarioAula)) {
+				switch (o.getSemana()) {
+				case SEG:
+					dto.setSegunda(true);
+					dto.setSegundaId(o.getId());
+					break;
+				case TER:
+					dto.setTerca(true);
+					dto.setTercaId(o.getId());
+				break;
+				case QUA:
+					dto.setQuarta(true);
+					dto.setQuartaId(o.getId());
+				break;
+				case QUI:
+					dto.setQuinta(true);
+					dto.setQuintaId(o.getId());
+				break;
+				case SEX:
+					dto.setSexta(true);
+					dto.setSextaId(o.getId());
+				break;
+				case SAB:
+					dto.setSabado(true);
+					dto.setSabadoId(o.getId());
+				break;
+				case DOM:
+					dto.setDomingo(true);
+					dto.setDomingoId(o.getId());
+				break;
+				default:
+					break;
+				}
+			}
+			
+			DateFormat df = new SimpleDateFormat("HH:mm");
+			String inicio = df.format(horarioAula.getHorario());
+			
+			Calendar fimCal = Calendar.getInstance();
+			fimCal.setTime(horarioAula.getHorario());
+			fimCal.add(Calendar.MINUTE, horarioAula.getTurno().getTempo());
+			String fim = df.format(fimCal.getTime());
+			
+			dto.setHorarioString(inicio + " / " + fim);
+			
+			dto.setHorario(horarioAula.getHorario());
+			
+			dtos.add(dto);
+		}
+		
+		return dtos;
 	}
 	
 	// TIPO CURSO
