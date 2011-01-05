@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.lang.model.type.ErrorType;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
@@ -23,10 +24,10 @@ import com.gapso.web.trieda.client.services.OtimizarService;
 import com.gapso.web.trieda.server.util.SolverInput;
 import com.gapso.web.trieda.server.util.SolverOutput;
 import com.gapso.web.trieda.server.util.solverclient.SolverClient;
-import com.gapso.web.trieda.server.xml.input.ErrorType;
+import com.gapso.web.trieda.server.xml.input.ItemError;
+import com.gapso.web.trieda.server.xml.input.ItemWarning;
 import com.gapso.web.trieda.server.xml.input.TriedaInput;
 import com.gapso.web.trieda.server.xml.input.TriedaOutput;
-import com.gapso.web.trieda.server.xml.input.WarningType;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 /**
@@ -92,10 +93,10 @@ public class OtimizarServiceImpl extends RemoteServiceServlet implements Otimiza
 			StringBuffer xmlStr = new StringBuffer(new String(xmlBytes));
 			TriedaOutput triedaOutput = (TriedaOutput) u.unmarshal(new StreamSource(new StringReader(xmlStr.toString())));
 			
-			for(ErrorType erro : triedaOutput.getErrors().getError()) {
+			for(ItemError erro : triedaOutput.getErrors().getError()) {
 				ret.get("error").add(erro.getMessage());
 			}
-			for(WarningType warning : triedaOutput.getWarnings().getWarning()) {
+			for(ItemWarning warning : triedaOutput.getWarnings().getWarning()) {
 				ret.get("warning").add(warning.getMessage());
 			}
 			
