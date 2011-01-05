@@ -1,8 +1,11 @@
 package com.gapso.trieda.domain;
 
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
@@ -10,6 +13,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
@@ -31,6 +35,8 @@ import org.springframework.transaction.annotation.Transactional;
 @RooEntity(identifierColumn = "FIX_ID")
 @Table(name = "FIXACOES")
 public class Fixacao implements Serializable {
+
+	private static final long serialVersionUID = -7545908494415718467L;
 
 	@NotNull
     @Column(name = "FIX_CODIGO")
@@ -57,6 +63,9 @@ public class Fixacao implements Serializable {
     @ManyToOne(targetEntity = Sala.class)
     @JoinColumn(name = "SAL_ID")
     private Sala sala;
+    
+    @ManyToMany(cascade = CascadeType.ALL, mappedBy = "fixacoes")
+    private Set<HorarioDisponivelCenario> horarios = new HashSet<HorarioDisponivelCenario>();
     
     @PersistenceContext
     transient EntityManager entityManager;
@@ -154,6 +163,13 @@ public class Fixacao implements Serializable {
     }
     
     @SuppressWarnings("unchecked")
+    public static List<Fixacao> findAllBy(Disciplina disciplina) {
+        Query q = entityManager().createQuery("SELECT o FROM Fixacao o WHERE o.disciplina = :disciplina");
+        q.setParameter("disciplina", disciplina);
+        return q.getResultList();
+    }
+    
+    @SuppressWarnings("unchecked")
     public static List<Fixacao> findBy(String codigo, int firstResult, int maxResults, String orderBy) {
     	codigo = (codigo == null || codigo.length() == 0)? "" : codigo;
         codigo = codigo.replace('*', '%');
@@ -212,6 +228,14 @@ public class Fixacao implements Serializable {
 		this.sala = sala;
 	}
 
+	public Set<HorarioDisponivelCenario> getHorarios() {
+        return this.horarios;
+    }
+
+	public void setHorarios(Set<HorarioDisponivelCenario> horarios) {
+        this.horarios = horarios;
+    }
+	
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("Id: ").append(getId()).append(", ");
@@ -222,6 +246,7 @@ public class Fixacao implements Serializable {
         sb.append("Campus: ").append(getCampus()).append(", ");
         sb.append("Unidade: ").append(getUnidade()).append(", ");
         sb.append("Sala: ").append(getSala()).append(", ");
+        sb.append("Horarios: ").append(getHorarios() == null ? "null" : getHorarios().size()).append(", ");
         return sb.toString();
     }
 }

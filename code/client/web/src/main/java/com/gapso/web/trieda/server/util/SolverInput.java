@@ -17,6 +17,7 @@ import com.gapso.trieda.domain.DeslocamentoUnidade;
 import com.gapso.trieda.domain.Disciplina;
 import com.gapso.trieda.domain.DivisaoCredito;
 import com.gapso.trieda.domain.Equivalencia;
+import com.gapso.trieda.domain.Fixacao;
 import com.gapso.trieda.domain.HorarioAula;
 import com.gapso.trieda.domain.HorarioDisponivelCenario;
 import com.gapso.trieda.domain.Oferta;
@@ -72,6 +73,7 @@ import com.gapso.web.trieda.server.xml.input.ItemDeslocamento;
 import com.gapso.web.trieda.server.xml.input.ItemDisciplina;
 import com.gapso.web.trieda.server.xml.input.ItemDisciplinaPeriodo;
 import com.gapso.web.trieda.server.xml.input.ItemDivisaoCreditos;
+import com.gapso.web.trieda.server.xml.input.ItemFixacao;
 import com.gapso.web.trieda.server.xml.input.ItemHorario;
 import com.gapso.web.trieda.server.xml.input.ItemHorarioAula;
 import com.gapso.web.trieda.server.xml.input.ItemNivelDificuldade;
@@ -415,20 +417,22 @@ public class SolverInput {
 			itemDisciplina.setTipoDisciplinaId(disciplina.getTipoDisciplina().getId().intValue());
 			itemDisciplina.setNivelDificuldadeId(Dificuldades.toInt(disciplina.getDificuldade()));
 			
-			DivisaoCredito divisaoCredito = disciplina.getDivisaoCreditos();
-			divisaoCredito = (divisaoCredito != null)? divisaoCredito : DivisaoCredito.findByCredito(disciplina.getTotalCreditos());
-			if(divisaoCredito != null) {
-				ItemDivisaoCreditos itemDivisaoCreditos = of.createItemDivisaoCreditos();
-				itemDivisaoCreditos.setId(divisaoCredito.getId().intValue());
-				itemDivisaoCreditos.setCreditos(divisaoCredito.getCreditos());
-				itemDivisaoCreditos.setDia1(divisaoCredito.getDia1());
-				itemDivisaoCreditos.setDia2(divisaoCredito.getDia2());
-				itemDivisaoCreditos.setDia3(divisaoCredito.getDia3());
-				itemDivisaoCreditos.setDia4(divisaoCredito.getDia4());
-				itemDivisaoCreditos.setDia5(divisaoCredito.getDia5());
-				itemDivisaoCreditos.setDia6(divisaoCredito.getDia6());
-				itemDivisaoCreditos.setDia7(divisaoCredito.getDia7());
-				itemDisciplina.setDivisaoDeCreditos(itemDivisaoCreditos);
+			if(Fixacao.findAllBy(disciplina).size() == 0) {
+				DivisaoCredito divisaoCredito = disciplina.getDivisaoCreditos();
+				divisaoCredito = (divisaoCredito != null)? divisaoCredito : DivisaoCredito.findByCredito(disciplina.getTotalCreditos());
+				if(divisaoCredito != null) {
+					ItemDivisaoCreditos itemDivisaoCreditos = of.createItemDivisaoCreditos();
+					itemDivisaoCreditos.setId(divisaoCredito.getId().intValue());
+					itemDivisaoCreditos.setCreditos(divisaoCredito.getCreditos());
+					itemDivisaoCreditos.setDia1(divisaoCredito.getDia1());
+					itemDivisaoCreditos.setDia2(divisaoCredito.getDia2());
+					itemDivisaoCreditos.setDia3(divisaoCredito.getDia3());
+					itemDivisaoCreditos.setDia4(divisaoCredito.getDia4());
+					itemDivisaoCreditos.setDia5(divisaoCredito.getDia5());
+					itemDivisaoCreditos.setDia6(divisaoCredito.getDia6());
+					itemDivisaoCreditos.setDia7(divisaoCredito.getDia7());
+					itemDisciplina.setDivisaoDeCreditos(itemDivisaoCreditos);
+				}
 			}
 			
 			GrupoIdentificador grupoIdentificadorEquivalencias = of.createGrupoIdentificador();
@@ -577,8 +581,31 @@ public class SolverInput {
 	
 	private void generateFixacoes() {
 		GrupoFixacao grupoFixacao = of.createGrupoFixacao();
-		grupoFixacao.getFixacao();
-		triedaInput.setFixacoes(of.createGrupoFixacao());
+
+		List<Fixacao> fixacoes = Fixacao.findAll();
+		for(Fixacao fixacao : fixacoes) {
+			Set<HorarioDisponivelCenario> horarios = fixacao.getHorarios();
+			for(HorarioDisponivelCenario horario : horarios) {
+				ItemFixacao itemFixacao = of.createItemFixacao();
+				itemFixacao.setId(fixacao.getId().intValue());
+				itemFixacao.setDiaSemana(Semanas.toInt(horario.getSemana()));
+				itemFixacao.setTurnoId(horario.getHorarioAula().getTurno().getId().intValue());
+				itemFixacao.setHorarioAulaId(horario.getHorarioAula().getId().intValue());
+				itemFixacao.setDisciplinaId(fixacao.getDisciplina().getId().intValue());
+				if(fixacao.getCampus() != null) {
+					itemFixacao.setCampusId(fixacao.getCampus().getId().intValue());
+				}
+				if(fixacao.getCampus() != null) {
+					itemFixacao.setUnidadeId(fixacao.getUnidade().getId().intValue());
+				}
+				if(fixacao.getSala() != null) {
+					itemFixacao.setSalaId(fixacao.getSala().getId().intValue());
+				}
+				grupoFixacao.getFixacao().add(itemFixacao);
+			}
+		}
+		
+		triedaInput.setFixacoes(grupoFixacao);
 	}
 	
 	/* **************

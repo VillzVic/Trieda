@@ -58,6 +58,9 @@ public class HorarioDisponivelCenario implements Serializable {
 
     @ManyToMany
     private Set<Professor> professores = new HashSet<Professor>();
+    
+    @ManyToMany
+    private Set<Fixacao> fixacoes = new HashSet<Fixacao>();
 
 	private static final long serialVersionUID = 9128639869205918403L;
 
@@ -206,7 +209,15 @@ public class HorarioDisponivelCenario implements Serializable {
 	public void setProfessores(Set<Professor> professores) {
         this.professores = professores;
     }
-
+	
+	public Set<Fixacao> getFixacoes() {
+		return this.fixacoes;
+	}
+	
+	public void setFixacoes(Set<Fixacao> fixacoes) {
+		this.fixacoes = fixacoes;
+	}
+	
 	public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("Id: ").append(getId()).append(", ");
@@ -218,6 +229,7 @@ public class HorarioDisponivelCenario implements Serializable {
         sb.append("Salas: ").append(getSalas() == null ? "null" : getSalas().size()).append(", ");
         sb.append("Disciplinas: ").append(getDisciplinas() == null ? "null" : getDisciplinas().size()).append(", ");
         sb.append("Professores: ").append(getProfessores() == null ? "null" : getProfessores().size());
+        sb.append("Fixacoes: ").append(getFixacoes() == null ? "null" : getFixacoes().size());
         return sb.toString();
     }
 }
