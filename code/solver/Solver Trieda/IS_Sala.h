@@ -7,7 +7,13 @@
 
 #include "Demanda.h"
 
+#include "Disciplina.h"
+
 using namespace std;
+
+//#include "IS_Atendimento_Tatico.h"
+
+#include "IS_Dia_Semana.h"
 
 class IS_Sala : public OFBase
 {
@@ -19,19 +25,16 @@ public:
 
    virtual ~IS_Sala(void);
 
-   //Sala const * sala;
    Sala * sala;
 
-   //map<int/*dia*/,pair<int/*credsLivres*/,
-   //   vector<
-   //   pair<Disciplina*,
-   //   pair<int/*Id Turma*/,int/*Demanda Atendida*/> > > > >
+   GGroup<IS_Dia_Semana*> is_Dia_Semana;
 
-   map<int/*dia*/,pair<int/*credsLivres*/,
-      vector<
-      pair<Demanda*,
-      pair<int/*Id Turma*/,int/*Demanda Atendida*/> > > > >
-
-      atendimento_Tatico;
-
+   void aloca(
+      int turma,
+      //GGroup<Demanda*> & cjt_Dem,
+      pair<Disciplina*,int> & cjt_Dem,
+      vector<pair<Demanda*,int/*Demanda atendida*/> > & demandas_A_Alocar,
+      int demanda_Atendida,
+      vector<pair<int,int> > & regra_De_Credito);
+      //vector<vector<pair<int/*dia*/, int/*numCreditos*/> > >::iterator & _it_Regra_De_Credito);
 };

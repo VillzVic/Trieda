@@ -21,6 +21,7 @@ public:
    int horario_id;
 
    void le_arvore(ItemFixacao& elem);
+
    Professor* professor;
    Disciplina* disciplina;
    Sala* sala;

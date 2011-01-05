@@ -75,95 +75,29 @@ int SolverMIP::solve()
 	lp->writeProbLP("Solver Trieda");
 #endif
 
-   InitialSolution init_sol(*problemData);
-   init_sol.generate_Initial_Solution();
+   //InitialSolution init_sol(*problemData);
+   //init_sol.generate_Initial_Solution();
 
-   std::cout << "Total Demandas: " << problemData->demandas.size() << std::endl;
-   std::cout << "Demandas NAO atendidas: " << init_sol.getNumDemandas_NAO_Atendidas() << std::endl;
-   std::cout << "Demandas atendidas: " << init_sol.getNumDemandasAtendidas() << std::endl;
+   //std::cout << "Solucao Inicial gerada com sucesso.\n";
+
+   //std::cout << "Total Demandas: " << problemData->demandas.size() << std::endl;
+   //std::cout << "Demandas NAO atendidas: " << init_sol.getNumDemandas_NAO_Atendidas() << std::endl;
+   //std::cout << "Demandas atendidas: " << init_sol.getNumDemandasAtendidas() << std::endl;
   
-   pair<vector<int>*,vector<double>*> sol = init_sol.repSolIniToVariaveis(vHash,lp->getNumCols(),*lp);
+   //pair<vector<int>*,vector<double>*> sol = init_sol.repSolIniToVariaveis(vHash,lp->getNumCols(),*lp);
 
-   int * indices = new int [sol.first->size()];
-   double * valores = new double [sol.second->size()];
+   //int * indices = new int [sol.first->size()];
+   //double * valores = new double [sol.second->size()];
 
-   int cnt = sol.first->size(); // poderia ser <sol.second->size()> tb.
+   //int cnt = sol.first->size(); // poderia ser <sol.second->size()> tb.
 
-   for(int i=0;i<cnt;i++)
-   {
-      indices[i] = sol.first->at(i);
-      valores[i] = sol.second->at(i);
-   }
+   //for(int i=0;i<cnt;i++)
+   //{
+   //   indices[i] = sol.first->at(i);
+   //   valores[i] = sol.second->at(i);
+   //}
 
-   lp->copyMIPStartSol(cnt,indices,valores);
-
-   //lp->writeProbLP("Solver Trieda - SOL INI");
-
-
-   //int tam = ((int) sol.first->size());
-
-   //int * indices;
-   //indices = new int[tam];
-
-   //for(unsigned i=0; i<sol.first->size(); i++)
-   //{ indices[i] = sol.first->at(i); }
-
-	//double * valores = new double (sol.second->size());
-
-   //for(unsigned i=0; i<sol.second->size(); i++)
-   //{ valores[i] = sol.second->at(i); }
-
-   //problemData;
-//   exit(1);
-
-	/*
-	// >>>
-	////Criando uma solução inicial
-
-	int cnt = 0;
-
-	int * __indices = (int *) malloc(lp->getNumCols()*sizeof(int));
-	double * __valores = (double *) malloc(lp->getNumCols()*sizeof(double));
-
-	VariableHash::iterator itVHash = vHash.begin();
-
-   for(; itVHash != vHash.end(); itVHash++)
-   {
-   if((itVHash->first.getType() != Variable::V_SLACK_DEMANDA) &&
-   (itVHash->first.getType() != Variable::V_SLACK_DIST_CRED_DIA_SUPERIOR) &&
-   (itVHash->first.getType() != Variable::V_SLACK_DIST_CRED_DIA_INFERIOR))
-   {
-   if(itVHash->first.getType() == Variable::V_ALUNOS)
-   {
-   __indices[cnt] = itVHash->second;
-   __valores[cnt] = ((int) itVHash->first.getDisciplina()->getDemandaTotal() / 
-   itVHash->first.getDisciplina()->num_turmas);
-   }
-   else
-   {
-   __indices[cnt] = itVHash->second;
-   __valores[cnt] = 0;
-   }
-   cnt++;
-   }
-   }
-
-	int * indices = (int *) malloc(cnt*sizeof(int));
-	double * valores = (double *) malloc(cnt*sizeof(double));
-
-   for(int v = 0; v < cnt; v++)
-   {
-   indices[v] = __indices[v];
-   valores[v] = __valores[v];
-   }
-
-	free(__indices);
-	free(__valores);
-
-	lp->copyMIPStartSol(cnt,indices,valores);
-
-	// <<<
-	*/
+   //lp->copyMIPStartSol(cnt,indices,valores);
 
 	int status = 0;
 
@@ -1450,8 +1384,8 @@ int SolverMIP::cria_variavel_num_subblocos(void)
          {
             vHash[v] = lp->getNumCols();
 
-            OPT_COL col(OPT_COL::VAR_INTEGRAL,rho,0.0,4.0,
-               (char*)v.toString().c_str());
+            //OPT_COL col(OPT_COL::VAR_INTEGRAL,rho,0.0,4.0,(char*)v.toString().c_str());
+            OPT_COL col(OPT_COL::VAR_INTEGRAL,rho,0.0,OPT_INF,(char*)v.toString().c_str());
 
             lp->newCol(col);
 
@@ -1709,7 +1643,7 @@ int SolverMIP::cria_variavel_combinacao_divisao_credito(){
 	{
 		for(int turma=0;turma<itDisc->num_turmas;turma++)
 		{
-			for(int k = 0; k < itDisc->combinacao_divisao_creditos.size();k++)
+			for(unsigned k = 0; k < itDisc->combinacao_divisao_creditos.size();k++)
 			{ 
 				
 				Variable v;
@@ -5356,7 +5290,7 @@ int SolverMIP::cria_restricao_divisao_credito(){
 									if( it_v != vHash.end() )
 									{ row.insert(it_v->second, 1.0); }				
 
-									for(int k = 0; k < itDisc->combinacao_divisao_creditos.size();k++)
+									for(unsigned k = 0; k < itDisc->combinacao_divisao_creditos.size();k++)
 									{	
 										v.reset();
 										v.setType(Variable::V_COMBINACAO_DIVISAO_CREDITO);
@@ -5429,7 +5363,7 @@ int SolverMIP::cria_restricao_combinacao_divisao_credito(){
 			
 			OPT_ROW row( nnz, OPT_ROW::LESS , 1.0, name );
 
-			for(int k = 0; k < it_disc->combinacao_divisao_creditos.size();k++)
+			for(unsigned k = 0; k < it_disc->combinacao_divisao_creditos.size();k++)
 			{
 				v.reset();
 				v.setType(Variable::V_COMBINACAO_DIVISAO_CREDITO);

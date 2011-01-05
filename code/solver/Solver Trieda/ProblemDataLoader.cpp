@@ -1416,7 +1416,7 @@ void ProblemDataLoader::cache() {
    }
    */
 
-   // >>>
+   //// >>>
 
    //Definindo um map de compatibilidade e incompatibilidade entre 2 turmas.
 
@@ -1475,25 +1475,7 @@ void ProblemDataLoader::cache() {
          problemData->compat_cursos.find(normal)->second;
    }
 
-   /*
-   Impressao para validar.
-
-   ITERA_GGROUP(it_fix_curso,problemData->cursos,Curso) {
-   ITERA_GGROUP(it_alt_curso,problemData->cursos,Curso) {
-   std::pair<int,int> idCursos = 
-   std::make_pair(it_fix_curso->getId(),it_alt_curso->getId());
-
-   if(problemData->compat_cursos.find(idCursos) != problemData->compat_cursos.end()) {
-   std::cout << "it_fix_curso <(" << it_fix_curso->getId() 
-   << ") - it_alt_curso (" << it_alt_curso->getId() << ")> , " 
-   << problemData->compat_cursos[idCursos] << std::endl;
-   }
-   }
-   }
-   exit(1);
-   */
-
-   // <<<
+   //// <<<
 
    // >>>
    ///* Adicionando às salas todas as disciplinas compativeis. 
