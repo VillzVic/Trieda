@@ -5,6 +5,7 @@ import java.util.Date;
 
 import com.sun.org.apache.xerces.internal.jaxp.datatype.XMLGregorianCalendarImpl;
 
+@SuppressWarnings("restriction")
 public class XMLGregorianCalendarUtil extends XMLGregorianCalendarImpl {
 
 	private static final long serialVersionUID = -4867849278241181172L;
