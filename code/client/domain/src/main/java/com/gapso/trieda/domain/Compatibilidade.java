@@ -111,12 +111,12 @@ public class Compatibilidade implements java.io.Serializable {
     }
 
 	public static long countCompatibilidades() {
-        return ((Number) entityManager().createQuery("select count(o) from Compatibilidade o").getSingleResult()).longValue();
+        return ((Number) entityManager().createQuery("SELECT COUNT(o) FROM Compatibilidade o").getSingleResult()).longValue();
     }
 
 	@SuppressWarnings("unchecked")
     public static List<Compatibilidade> findAllCompatibilidades() {
-        return entityManager().createQuery("select o from Compatibilidade o").getResultList();
+        return entityManager().createQuery("SELECT o FROM Compatibilidade o").getResultList();
     }
 
 	public static Compatibilidade findCompatibilidade(Long id) {
@@ -126,7 +126,7 @@ public class Compatibilidade implements java.io.Serializable {
 
 	@SuppressWarnings("unchecked")
     public static List<Compatibilidade> findCompatibilidadeEntries(int firstResult, int maxResults) {
-        return entityManager().createQuery("select o from Compatibilidade o").setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
+        return entityManager().createQuery("SELECT o FROM Compatibilidade o").setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
 
 	public String toString() {
