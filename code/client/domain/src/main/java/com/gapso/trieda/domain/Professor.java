@@ -88,12 +88,15 @@ public class Professor implements Serializable {
     @ManyToMany(cascade = CascadeType.ALL)
     private Set<Campus> campi = new HashSet<Campus>();
 
-    @ManyToMany(cascade = CascadeType.ALL, mappedBy = "professores")
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH}, mappedBy = "professores")
     private Set<HorarioDisponivelCenario> horarios = new HashSet<HorarioDisponivelCenario>();
 
     @NotNull
-    @OneToMany(mappedBy = "disciplina")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "disciplina")
     private Set<ProfessorDisciplina> disciplinas = new HashSet<ProfessorDisciplina>();
+    
+    @OneToMany(cascade = CascadeType.ALL, mappedBy="professor")
+    private Set<AtendimentoOperacional> atendimentosOperacionais =  new HashSet<AtendimentoOperacional>();
 
 	public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -112,6 +115,7 @@ public class Professor implements Serializable {
         sb.append("Campi: ").append(getCampi() == null ? "null" : getCampi().size()).append(", ");
         sb.append("Horarios: ").append(getHorarios() == null ? "null" : getHorarios().size()).append(", ");
         sb.append("Disciplinas: ").append(getDisciplinas() == null ? "null" : getDisciplinas().size());
+        sb.append("Atendimentos Operacionais: ").append(getAtendimentosOperacionais() == null ? "null" : getAtendimentosOperacionais().size());
         return sb.toString();
     }
 
@@ -218,7 +222,15 @@ public class Professor implements Serializable {
 	public void setDisciplinas(Set<ProfessorDisciplina> disciplinas) {
         this.disciplinas = disciplinas;
     }
-
+	
+	public Set<AtendimentoOperacional> getAtendimentosOperacionais() {
+		return this.atendimentosOperacionais;
+	}
+	
+	public void setAtendimentosOperacionais(Set<AtendimentoOperacional> atendimentosOperacionais) {
+		this.atendimentosOperacionais = atendimentosOperacionais;
+	}
+	
 	@PersistenceContext
     transient EntityManager entityManager;
 

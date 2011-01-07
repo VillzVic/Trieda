@@ -127,6 +127,7 @@ public class SemanaLetivaDoCenarioGrid<M extends BaseModel> extends ContentPanel
 				}
 				ToggleImageButton tb = new ToggleImageButton(flag, Resources.DEFAULTS.save16(), Resources.DEFAULTS.cancel16());
 				tb.setEnabled((Boolean)modelCenario.get(property));
+				modelCenario.set(property, model.get(property));
 				tb.addSelectionListener(new SelectionListener<ButtonEvent>() {
 					@Override
 					public void componentSelected(ButtonEvent ce) {
