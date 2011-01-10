@@ -43,16 +43,16 @@ import com.gapso.trieda.misc.Dificuldades;
 public class Disciplina implements Serializable {
 
 	@NotNull
-    @ManyToOne(targetEntity = Cenario.class)
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH}, targetEntity = Cenario.class)
     @JoinColumn(name = "CEN_ID")
     private Cenario cenario;
 
     @NotNull
-    @ManyToOne(targetEntity = TipoDisciplina.class)
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH}, targetEntity = TipoDisciplina.class)
     @JoinColumn(name = "TDI_ID")
     private TipoDisciplina tipoDisciplina;
 
-    @ManyToOne(targetEntity = DivisaoCredito.class)
+    @ManyToOne(cascade = CascadeType.ALL, targetEntity = DivisaoCredito.class)
     @JoinColumn(name = "DCR_ID")
     private DivisaoCredito divisaoCreditos;
 
@@ -97,7 +97,7 @@ public class Disciplina implements Serializable {
     @Max(999L)
     private Integer maxAlunosPratico;
 
-    @ManyToMany(cascade = CascadeType.ALL, mappedBy = "disciplinas")
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH}, mappedBy = "disciplinas")
     private Set<HorarioDisponivelCenario> horarios = new HashSet<HorarioDisponivelCenario>();
 
     @NotNull
@@ -122,6 +122,15 @@ public class Disciplina implements Serializable {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "disciplina")
     private Set<Demanda> demandas = new HashSet<Demanda>();
     
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "disciplina")
+    private Set<Fixacao> fixacoes = new HashSet<Fixacao>();
+    
+    @OneToMany(cascade = CascadeType.ALL, mappedBy="disciplina")
+    private Set<AtendimentoOperacional> atendimentosOperacionais =  new HashSet<AtendimentoOperacional>();
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy="disciplina")
+    private Set<AtendimentoTatico> atendimentosTaticos =  new HashSet<AtendimentoTatico>();
+    
 	public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("Id: ").append(getId()).append(", ");
@@ -144,6 +153,9 @@ public class Disciplina implements Serializable {
         sb.append("EliminadaPor: ").append(getEliminadaPor() == null ? "null" : getEliminadaPor().size()).append(", ");
         sb.append("Curriculos: ").append(getCurriculos() == null ? "null" : getCurriculos().size()).append(", ");
         sb.append("Demandas: ").append(getDemandas() == null ? "null" : getDemandas().size());
+        sb.append("Fixacoes: ").append(getFixacoes() == null ? "null" : getFixacoes().size());
+        sb.append("Atendimentos Operacionais: ").append(getAtendimentosOperacionais() == null ? "null" : getAtendimentosOperacionais().size());
+        sb.append("Atendimentos Taticos: ").append(getAtendimentosTaticos() == null ? "null" : getAtendimentosTaticos().size());
         return sb.toString();
     }
 
@@ -439,4 +451,28 @@ public class Disciplina implements Serializable {
 	public void setDemandas(Set<Demanda> demandas) {
         this.demandas = demandas;
     }
+	
+	public Set<Fixacao> getFixacoes() {
+		return this.fixacoes;
+	}
+	
+	public void setFixacoes(Set<Fixacao> fixacoes) {
+		this.fixacoes = fixacoes;
+	}
+	
+	public Set<AtendimentoOperacional> getAtendimentosOperacionais() {
+		return this.atendimentosOperacionais;
+	}
+	
+	public void setAtendimentosOperacionais(Set<AtendimentoOperacional> atendimentosOperacionais) {
+		this.atendimentosOperacionais = atendimentosOperacionais;
+	}
+	
+	public Set<AtendimentoTatico> getAtendimentosTaticos() {
+		return this.atendimentosTaticos;
+	}
+	
+	public void setAtendimentosTaticos(Set<AtendimentoTatico> atendimentosTaticos) {
+		this.atendimentosTaticos = atendimentosTaticos;
+	}
 }

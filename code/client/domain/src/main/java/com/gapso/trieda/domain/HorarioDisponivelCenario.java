@@ -58,7 +58,7 @@ public class HorarioDisponivelCenario implements Serializable {
     @ManyToMany
     private Set<Disciplina> disciplinas = new HashSet<Disciplina>();
 
-    @ManyToMany
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private Set<Professor> professores = new HashSet<Professor>();
     
     @ManyToMany

@@ -88,7 +88,7 @@ public class Professor implements Serializable {
     @ManyToMany(cascade = CascadeType.ALL)
     private Set<Campus> campi = new HashSet<Campus>();
 
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH}, mappedBy = "professores")
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, mappedBy="professores")
     private Set<HorarioDisponivelCenario> horarios = new HashSet<HorarioDisponivelCenario>();
 
     @NotNull

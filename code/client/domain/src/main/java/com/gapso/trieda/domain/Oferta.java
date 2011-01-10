@@ -54,6 +54,12 @@ public class Oferta implements Serializable {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "oferta")
     private Set<Demanda> demandas = new HashSet<Demanda>();
 
+    @OneToMany(cascade = CascadeType.ALL, mappedBy="oferta")
+    private Set<AtendimentoOperacional> atendimentosOperacionais =  new HashSet<AtendimentoOperacional>();
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy="oferta")
+    private Set<AtendimentoTatico> atendimentosTaticos =  new HashSet<AtendimentoTatico>();
+    
 	@PersistenceContext
     transient EntityManager entityManager;
 
@@ -206,7 +212,23 @@ public class Oferta implements Serializable {
 	public void setDemandas(Set<Demanda> demandas) {
         this.demandas = demandas;
     }
-
+	
+	public Set<AtendimentoOperacional> getAtendimentosOperacionais() {
+		return this.atendimentosOperacionais;
+	}
+	
+	public void setAtendimentosOperacionais(Set<AtendimentoOperacional> atendimentosOperacionais) {
+		this.atendimentosOperacionais = atendimentosOperacionais;
+	}
+	
+	public Set<AtendimentoTatico> getAtendimentosTaticos() {
+		return this.atendimentosTaticos;
+	}
+	
+	public void setAtendimentosTaticos(Set<AtendimentoTatico> atendimentosTaticos) {
+		this.atendimentosTaticos = atendimentosTaticos;
+	}
+	
 	private static final long serialVersionUID = -976299446108675926L;
 
 	public String toString() {
@@ -217,6 +239,8 @@ public class Oferta implements Serializable {
         sb.append("Campus: ").append(getCampus()).append(", ");
         sb.append("Turno: ").append(getTurno()).append(", ");
         sb.append("Demandas: ").append(getDemandas() == null ? "null" : getDemandas().size());
+        sb.append("Atendimentos Operacionais: ").append(getAtendimentosOperacionais() == null ? "null" : getAtendimentosOperacionais().size());
+        sb.append("Atendimentos Taticos: ").append(getAtendimentosTaticos() == null ? "null" : getAtendimentosTaticos().size());
         return sb.toString();
     }
 }

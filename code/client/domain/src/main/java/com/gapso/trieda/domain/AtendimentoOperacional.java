@@ -3,6 +3,7 @@ package com.gapso.trieda.domain;
 import java.io.Serializable;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
@@ -35,7 +36,7 @@ public class AtendimentoOperacional implements Serializable {
 	private static final long serialVersionUID = -1061352455612316076L;
 
 	@NotNull
-    @ManyToOne(targetEntity = Cenario.class)
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH}, targetEntity = Cenario.class)
     @JoinColumn(name = "CEN_ID")
     private Cenario cenario;
 
@@ -43,27 +44,27 @@ public class AtendimentoOperacional implements Serializable {
     private String turma;
 	
     @NotNull
-    @ManyToOne(targetEntity = Sala.class)
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH}, targetEntity = Sala.class)
     @JoinColumn(name = "SAL_ID")
     private Sala sala;
     
     @NotNull
-    @ManyToOne(targetEntity = Oferta.class)
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH}, targetEntity = Oferta.class)
     @JoinColumn(name = "HDC_ID")
     private HorarioDisponivelCenario HorarioDisponivelCenario;
     
     @NotNull
-    @ManyToOne(targetEntity = Oferta.class)
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH}, targetEntity = Oferta.class)
     @JoinColumn(name = "OFE_ID")
     private Oferta oferta;
     
     @NotNull
-    @ManyToOne(targetEntity = Disciplina.class)
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH}, targetEntity = Disciplina.class)
     @JoinColumn(name = "DIS_ID")
     private Disciplina disciplina;
     
     @NotNull
-    @ManyToOne(targetEntity = Professor.class)
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH}, targetEntity = Professor.class)
     @JoinColumn(name = "PRF_ID")
     private Professor professor;
     

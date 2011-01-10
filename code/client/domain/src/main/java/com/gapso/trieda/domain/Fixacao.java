@@ -48,23 +48,23 @@ public class Fixacao implements Serializable {
     @Size(min = 1, max = 50)
     private String descricao;
 	
-    @ManyToOne(targetEntity = Disciplina.class)
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH}, targetEntity = Disciplina.class)
     @JoinColumn(name = "DIS_ID")
     private Disciplina disciplina;
     
-    @ManyToOne(targetEntity = Campus.class)
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH}, targetEntity = Campus.class)
     @JoinColumn(name = "CAM_ID")
     private Campus campus;
     
-    @ManyToOne(targetEntity = Unidade.class)
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH}, targetEntity = Unidade.class)
     @JoinColumn(name = "UNI_ID")
     private Unidade unidade;
     
-    @ManyToOne(targetEntity = Sala.class)
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH}, targetEntity = Sala.class)
     @JoinColumn(name = "SAL_ID")
     private Sala sala;
     
-    @ManyToMany(cascade = CascadeType.ALL, mappedBy = "fixacoes")
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH}, mappedBy = "fixacoes")
     private Set<HorarioDisponivelCenario> horarios = new HashSet<HorarioDisponivelCenario>();
     
     @PersistenceContext

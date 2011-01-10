@@ -16,6 +16,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.Table;
@@ -79,6 +80,12 @@ public class Sala implements Serializable {
     @ManyToMany(cascade = CascadeType.ALL, mappedBy = "salas")
     private Set<GrupoSala> gruposSala = new HashSet<GrupoSala>();
 
+    @OneToMany(cascade = CascadeType.ALL, mappedBy="sala")
+    private Set<AtendimentoOperacional> atendimentosOperacionais =  new HashSet<AtendimentoOperacional>();
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy="sala")
+    private Set<AtendimentoTatico> atendimentosTaticos =  new HashSet<AtendimentoTatico>();
+    
 	public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("Id: ").append(getId()).append(", ");
@@ -92,6 +99,8 @@ public class Sala implements Serializable {
         sb.append("Horarios: ").append(getHorarios() == null ? "null" : getHorarios().size()).append(", ");
         sb.append("CurriculoDisciplinas: ").append(getCurriculoDisciplinas() == null ? "null" : getCurriculoDisciplinas().size()).append(", ");
         sb.append("GruposSala: ").append(getGruposSala() == null ? "null" : getGruposSala().size());
+        sb.append("Atendimentos Operacionais: ").append(getAtendimentosOperacionais() == null ? "null" : getAtendimentosOperacionais().size());
+        sb.append("Atendimentos Taticos: ").append(getAtendimentosTaticos() == null ? "null" : getAtendimentosTaticos().size());
         return sb.toString();
     }
 
@@ -305,6 +314,22 @@ public class Sala implements Serializable {
 	public void setGruposSala(Set<GrupoSala> gruposSala) {
         this.gruposSala = gruposSala;
     }
-
+	
+	public Set<AtendimentoOperacional> getAtendimentosOperacionais() {
+		return this.atendimentosOperacionais;
+	}
+	
+	public void setAtendimentosOperacionais(Set<AtendimentoOperacional> atendimentosOperacionais) {
+		this.atendimentosOperacionais = atendimentosOperacionais;
+	}
+	
+	public Set<AtendimentoTatico> getAtendimentosTaticos() {
+		return this.atendimentosTaticos;
+	}
+	
+	public void setAtendimentosTaticos(Set<AtendimentoTatico> atendimentosTaticos) {
+		this.atendimentosTaticos = atendimentosTaticos;
+	}
+	
 	private static final long serialVersionUID = -2533999449644229682L;
 }

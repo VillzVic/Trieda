@@ -2,6 +2,7 @@ package com.gapso.trieda.domain;
 
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
@@ -33,12 +34,12 @@ import org.springframework.transaction.annotation.Transactional;
 public class ProfessorDisciplina implements java.io.Serializable {
 
     @NotNull
-    @ManyToOne(targetEntity = Professor.class)
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH}, targetEntity = Professor.class)
     @JoinColumn(name = "PRF_ID")
     private Professor professor;
 
     @NotNull
-    @ManyToOne(targetEntity = Disciplina.class)
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH}, targetEntity = Disciplina.class)
     @JoinColumn(name = "DIS_ID")
     private Disciplina disciplina;
 

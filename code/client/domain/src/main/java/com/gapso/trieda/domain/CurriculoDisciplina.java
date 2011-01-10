@@ -38,12 +38,12 @@ import org.springframework.transaction.annotation.Transactional;
 public class CurriculoDisciplina implements Serializable {
 
     @NotNull
-    @ManyToOne(targetEntity = Curriculo.class)
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH}, targetEntity = Curriculo.class)
     @JoinColumn(name = "CRC_ID")
     private Curriculo curriculo;
 
     @NotNull
-    @ManyToOne(targetEntity = Disciplina.class)
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH}, targetEntity = Disciplina.class)
     @JoinColumn(name = "DIS_ID")
     private Disciplina disciplina;
 

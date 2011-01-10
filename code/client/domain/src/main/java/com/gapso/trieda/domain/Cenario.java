@@ -117,6 +117,11 @@ public class Cenario implements Serializable {
     @OneToMany(mappedBy="cenario")
     private Set<Curriculo> curriculos = new HashSet<Curriculo>();
 
+    @OneToMany(cascade = CascadeType.ALL, mappedBy="cenario")
+    private Set<AtendimentoOperacional> atendimentosOperacionais =  new HashSet<AtendimentoOperacional>();
+    
+    @OneToMany(cascade = CascadeType.ALL, mappedBy="cenario")
+    private Set<AtendimentoTatico> atendimentosTaticos =  new HashSet<AtendimentoTatico>();
     
 	public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -140,6 +145,8 @@ public class Cenario implements Serializable {
         sb.append("Disciplinas: ").append(getDisciplinas() == null ? "null" : getDisciplinas().size());
         sb.append("Professores: ").append(getProfessores() == null ? "null" : getProfessores().size());
         sb.append("Curriculos: ").append(getCurriculos() == null ? "null" : getCurriculos().size());
+        sb.append("Atendimentos Operacionais: ").append(getAtendimentosOperacionais() == null ? "null" : getAtendimentosOperacionais().size());
+        sb.append("Atendimentos Taticos: ").append(getAtendimentosTaticos() == null ? "null" : getAtendimentosTaticos().size());
         return sb.toString();
     }
 
@@ -412,6 +419,22 @@ public class Cenario implements Serializable {
 	public void setCurriculos(Set<Curriculo> curriculos) {
 		this.curriculos = curriculos;
 	}
-
+	
+	public Set<AtendimentoOperacional> getAtendimentosOperacionais() {
+		return this.atendimentosOperacionais;
+	}
+	
+	public void setAtendimentosOperacionais(Set<AtendimentoOperacional> atendimentosOperacionais) {
+		this.atendimentosOperacionais = atendimentosOperacionais;
+	}
+	
+	public Set<AtendimentoTatico> getAtendimentosTaticos() {
+		return this.atendimentosTaticos;
+	}
+	
+	public void setAtendimentosTaticos(Set<AtendimentoTatico> atendimentosTaticos) {
+		this.atendimentosTaticos = atendimentosTaticos;
+	}
+	
 	private static final long serialVersionUID = -8610380359760552949L;
 }

@@ -83,7 +83,7 @@ public class DivisaoCredito implements Serializable {
     @Max(99L)
     private Integer dia7;
 
-    @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.DETACH})
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
     private Set<Cenario> cenario = new HashSet<Cenario>();
 
 	@PersistenceContext
