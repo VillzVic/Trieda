@@ -1,0 +1,92 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dataset>
+  <areas_titulacao ati_id="1" ati_codigo="TESTE" ati_descricao="TESTE" version="0"/>
+  <areas_titulacao_cursos/>
+  <atendimento_operacional/>
+  <atendimento_tatico/>
+  <cenarios cen_id="1" cen_ano="1" cen_comentario="MASTER DATA" cen_masterdata="true" cen_nome="MASTER DATA" cen_oficial="false" cen_semestre="1" version="0"/>
+  <campi cam_id="1" cam_codigo="fsdfsd" cam_estado="0" cam_nome="fsdfsd" version="0" cen_id="1"/>
+  <tipos_contrato tco_id="1" tco_nome="Horista" version="0"/>
+  <tipos_contrato tco_id="2" tco_nome="Integral" version="0"/>
+  <tipos_curso/>
+  <tipos_disciplina tdi_id="1" tdi_nome="Presencial" version="0"/>
+  <tipos_disciplina tdi_id="2" tdi_nome="Telepresencial" version="0"/>
+  <tipos_disciplina tdi_id="3" tdi_nome="Online" version="0"/>
+  <tipos_sala tsa_id="1" tsa_descricao="Sala de Aula" tsa_nome="Sala de Aula" version="0"/>
+  <tipos_sala tsa_id="2" tsa_descricao="Laborat&#243;rio" tsa_nome="Laborat&#243;rio" version="0"/>
+  <tipos_sala tsa_id="3" tsa_descricao="Audit&#243;rio" tsa_nome="Audit&#243;rio" version="0"/>
+  <titulacoes tit_id="1" tit_nome="Licenciado" version="0"/>
+  <titulacoes tit_id="2" tit_nome="Bacharel" version="0"/>
+  <titulacoes tit_id="3" tit_nome="Especialista" version="0"/>
+  <titulacoes tit_id="4" tit_nome="Mestre" version="0"/>
+  <titulacoes tit_id="5" tit_nome="Doutor" version="0"/>
+  <turnos tur_id="1" tur_nome="MANH&#195;" tur_tempo="50" version="0" cen_id="1"/>
+  <unidades uni_id="1" uni_codigo="fsfds" uni_nome="fsdfsd" version="0" cam_id="1"/>
+  <compatibilidades/>
+  <curriculos/>
+  <curriculos_disciplinas/>
+  <curriculos_disciplinas_salas/>
+  <cursos/>
+  <demandas/>
+  <deslocamentos_campi/>
+  <deslocamentos_unidades/>
+  <disciplinas dis_id="1" dis_codigo="Disciplina 1" dis_cred_pratico="2" dis_cred_teorico="5" dificuldade="0" dis_laboratorio="false" dis_max_alun_pratico="10" dis_max_alun_teorico="30" dis_nome="Disciplina 1" version="0" cen_id="1" tdi_id="1"/>
+  <divisoes_credito/>
+  <divisoes_credito_cenario/>
+  <equivalencias/>
+  <equivalencias_elimina/>
+  <fixacoes/>
+  <grupos_sala/>
+  <grupos_sala_curriculo_disciplinas/>
+  <grupos_sala_salas/>
+  <professores prf_id="4" prf_ch_max="11" prf_ch_min="11" prf_cpf="11111111111111" prf_cred_anterior="11" prf_nome="1122" prf_valor_credito="11.0" version="7" ati_id="1" cen_id="1" tco_id="1" tit_id="1"/>
+  <professores_campi/>
+  <professores_disciplinas/>
+  <salas sal_id="1" sal_andar="ter" sal_capacidade="35" sal_codigo="tertre" sal_numero="tr" version="0" tsa_id="1" uni_id="1"/>
+  <salas sal_id="2" sal_andar="534543" sal_capacidade="5345" sal_codigo="543543" sal_numero="534543" version="0" tsa_id="1" uni_id="1"/>
+  <semana_letiva sle_id="1" sle_codigo="CAL-1" sle_descricao="CAL-1" version="0"/>
+  <horarios_aula hor_id="7" hor_horario="2011-01-04 07:00:00.0" version="6" sle_id="1" tur_id="1"/>
+  <horarios_aula hor_id="8" hor_horario="2011-01-04 07:50:00.0" version="8" sle_id="1" tur_id="1"/>
+  <horarios_aula hor_id="9" hor_horario="2011-01-04 08:40:00.0" version="8" sle_id="1" tur_id="1"/>
+  <horario_disponivel_cenario hdc_id="114" semana="0" version="0" hor_id="7"/>
+  <horario_disponivel_cenario hdc_id="115" semana="1" version="2" hor_id="7"/>
+  <horario_disponivel_cenario hdc_id="116" semana="0" version="0" hor_id="8"/>
+  <horario_disponivel_cenario hdc_id="117" semana="1" version="0" hor_id="8"/>
+  <horario_disponivel_cenario hdc_id="118" semana="0" version="0" hor_id="9"/>
+  <horario_disponivel_cenario hdc_id="119" semana="1" version="0" hor_id="9"/><!--
+  <horario_disponivel_cenario_campi horarios="114" campi="1"/>
+  <horario_disponivel_cenario_campi horarios="115" campi="1"/>
+  <horario_disponivel_cenario_campi horarios="116" campi="1"/>
+  <horario_disponivel_cenario_campi horarios="117" campi="1"/>
+  <horario_disponivel_cenario_campi horarios="118" campi="1"/>
+  <horario_disponivel_cenario_campi horarios="119" campi="1"/>
+  <horario_disponivel_cenario_disciplinas/>
+  <horario_disponivel_cenario_fixacoes/>
+  <horario_disponivel_cenario_professores horarios="114" professores="4"/>
+  <horario_disponivel_cenario_professores horarios="115" professores="4"/>
+  <horario_disponivel_cenario_professores horarios="116" professores="4"/>
+  <horario_disponivel_cenario_professores horarios="117" professores="4"/>
+  <horario_disponivel_cenario_professores horarios="118" professores="4"/>
+  <horario_disponivel_cenario_professores horarios="119" professores="4"/>
+  <horario_disponivel_cenario_salas horarios="114" salas="1"/>
+  <horario_disponivel_cenario_salas horarios="114" salas="2"/>
+  <horario_disponivel_cenario_salas horarios="115" salas="1"/>
+  <horario_disponivel_cenario_salas horarios="115" salas="2"/>
+  <horario_disponivel_cenario_salas horarios="116" salas="1"/>
+  <horario_disponivel_cenario_salas horarios="116" salas="2"/>
+  <horario_disponivel_cenario_salas horarios="117" salas="1"/>
+  <horario_disponivel_cenario_salas horarios="117" salas="2"/>
+  <horario_disponivel_cenario_salas horarios="118" salas="1"/>
+  <horario_disponivel_cenario_salas horarios="118" salas="2"/>
+  <horario_disponivel_cenario_salas horarios="119" salas="1"/>
+  <horario_disponivel_cenario_salas horarios="119" salas="2"/>
+  <horario_disponivel_cenario_unidades horarios="114" unidades="1"/>
+  <horario_disponivel_cenario_unidades horarios="115" unidades="1"/>
+  <horario_disponivel_cenario_unidades horarios="116" unidades="1"/>
+  <horario_disponivel_cenario_unidades horarios="117" unidades="1"/>
+  <horario_disponivel_cenario_unidades horarios="118" unidades="1"/>
+  <horario_disponivel_cenario_unidades horarios="119" unidades="1"/>
+  --><ofertas/>
+  <sessoes/>
+  <usuarios/>
+</dataset>

@@ -1,58 +1,82 @@
 package com.gapso.trieda.domain;
 
-import static org.junit.Assert.assertTrue;
-
-import java.util.List;
+import java.sql.Connection;
 
 import javax.sql.DataSource;
 
-import org.dbunit.database.DatabaseDataSourceConnection;
-import org.dbunit.dataset.xml.XmlDataSet;
+import org.dbunit.database.DatabaseConnection;
+import org.dbunit.database.IDatabaseConnection;
+import org.dbunit.dataset.IDataSet;
+import org.dbunit.dataset.xml.FlatXmlDataSetBuilder;
 import org.dbunit.operation.DatabaseOperation;
-import org.hibernate.LazyInitializationException;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.datasource.DataSourceUtils;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import static org.junit.Assert.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "/META-INF/spring/test-applicationContext.xml" })
-public class GrupoSalaTest extends AbstractTransactionalJUnit4SpringContextTests {
+public class GrupoSalaTest extends AbstractTransactionalJUnit4SpringContextTests 
+{
 
 	@Autowired
 	private DataSource ds;
-	private final XmlDataSet dataSet;
 
 	public GrupoSalaTest() throws Exception {
-		dataSet = new XmlDataSet(getClass().getResourceAsStream("/db.xml"));
 	}
 
 	@Before
 	public void init() throws Exception {
-		DatabaseOperation.CLEAN_INSERT.execute(new DatabaseDataSourceConnection(ds), dataSet);
+		Connection con = DataSourceUtils.getConnection(ds);
+		IDatabaseConnection dbUnitCon = new DatabaseConnection(con);
+		FlatXmlDataSetBuilder builder = new FlatXmlDataSetBuilder();
+		IDataSet dataSet = builder.build(getClass().getResourceAsStream("/full.xml"));
+		try {
+			DatabaseOperation.REFRESH.execute(dbUnitCon, dataSet);
+		} finally {
+			DataSourceUtils.releaseConnection(con, ds);
+		}
+
+		Professor p = Professor.find((long) 4);
+		p.getHorarios().addAll(HorarioDisponivelCenario.findAllHorarioDisponivelCenarios());
+		p.merge();
+		p.detach();
+		System.out.println("****************");
+		
+//		HorarioDisponivelCenario hdc = HorarioDisponivelCenario.findHorarioDisponivelCenario((long) 114);
+//		hdc.getProfessores().add(p);
+//		hdc.merge();
+//		hdc.detach();
+//		System.out.println("****************");
 	}
 
 	@Test
-	public void testGetSalas() {
-		List<GrupoSala> findAll = GrupoSala.findAll();
-		assertTrue(findAll.size()>0);
-	}
+	public void testHorariosProfessor() {
+		Professor p = Professor.find((long) 4);
+		assertEquals(6, p.getHorarios().size());
+		System.out.println("****************");
 
-	@Test(expected = LazyInitializationException.class)
-	public void testLIE_1() {
-		List<GrupoSala> grupos = GrupoSala.findAll();
-		grupos.get(0).getCurriculoDisciplinas().add(new CurriculoDisciplina());
-		grupos.get(0).merge();
+//		HorarioDisponivelCenario hdc = HorarioDisponivelCenario.findHorarioDisponivelCenario((long) 114);
+//		assertEquals(1, hdc.getProfessores().size());
+//		System.out.println("****************");
 	}
+	
 
 	@Test
-	public void testLIE_2() {
-		List<GrupoSala> grupos = GrupoSala.findAll();
-		grupos.get(0).getSalas().add(Sala.find(4l));
-		grupos.get(0).merge();
+	public void testRemoverHorariosProfessor() {
+		Professor p = Professor.find((long) 4);
+		HorarioDisponivelCenario hdc = HorarioDisponivelCenario.findHorarioDisponivelCenario((long) 114);
+		p.getHorarios().remove(hdc);
+		p.merge();
+		p.detach();
+		p = Professor.find((long) 4);
+		assertEquals(5, p.getHorarios().size());
+		
 	}
-
 }
