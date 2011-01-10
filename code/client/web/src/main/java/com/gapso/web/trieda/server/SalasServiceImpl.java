@@ -152,7 +152,7 @@ public class SalasServiceImpl extends RemoteServiceServlet implements SalasServi
 	@Override
 	public void remove(List<SalaDTO> salaDTOList) {
 		for(SalaDTO salaDTO : salaDTOList) {
-			ConvertBeans.toSala(salaDTO).remove();
+			Sala.find(salaDTO.getId()).remove();
 		}
 	}
 

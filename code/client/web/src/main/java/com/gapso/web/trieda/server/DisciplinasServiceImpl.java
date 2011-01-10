@@ -122,7 +122,7 @@ public class DisciplinasServiceImpl extends RemoteServiceServlet implements Disc
 	@Override
 	public void remove(List<DisciplinaDTO> disciplinaDTOList) {
 		for(DisciplinaDTO disciplinaDTO : disciplinaDTOList) {
-			ConvertBeans.toDisciplina(disciplinaDTO).remove();
+			Disciplina.find(disciplinaDTO.getId()).remove();
 		}
 	}
 	

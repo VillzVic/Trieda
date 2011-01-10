@@ -150,7 +150,8 @@ public class ProfessoresServiceImpl extends RemoteServiceServlet implements Prof
 	@Override
 	public void remove(List<ProfessorDTO> professorDTOList) {
 		for(ProfessorDTO professorDTO : professorDTOList) {
-			ConvertBeans.toProfessor(professorDTO).remove();
+//			ConvertBeans.toProfessor(professorDTO).remove();
+			Professor.find(professorDTO.getId()).remove();
 		}
 	}
 
