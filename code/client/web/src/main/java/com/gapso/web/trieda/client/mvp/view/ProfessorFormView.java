@@ -76,7 +76,7 @@ public class ProfessorFormView extends MyComposite implements ProfessorFormPrese
 		nomeTF.setValue(professorDTO.getNome());
 		nomeTF.setFieldLabel("Nome");
 		nomeTF.setAllowBlank(false);
-		nomeTF.setMinLength(1);
+		nomeTF.setMinLength(3);
 		nomeTF.setMaxLength(50);
 		nomeTF.setEmptyText("Preencha o nome");
 		formPanel.add(nomeTF, formData);
