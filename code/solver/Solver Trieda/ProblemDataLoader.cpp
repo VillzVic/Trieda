@@ -891,13 +891,15 @@ void ProblemDataLoader::gera_refs() {
    ITERA_GGROUP(it_fix,problemData->fixacoes,Fixacao) {
       find_and_set(it_fix->disciplina_id, 
          problemData->disciplinas,it_fix->disciplina);
-      find_and_set(it_fix->turno_id, 
-         problemData->calendario->turnos,
-         it_fix->turno);
-      find_and_set(it_fix->horario_id,
-         it_fix->turno->horarios_aula,
-         it_fix->horario);
-
+	  	 
+	  find_and_set(it_fix->turno_id, 
+		 problemData->calendario->turnos,
+		 it_fix->turno);
+	  if(it_fix->turno != NULL){	
+		  find_and_set(it_fix->horario_id,
+			 it_fix->turno->horarios_aula,
+			 it_fix->horario);
+	  }
       ITERA_GGROUP(it_campi,problemData->campi,Campus) {
          find_and_set(it_fix->professor_id, 
             it_campi->professores, it_fix->professor);
