@@ -592,12 +592,6 @@ public class SolverInput {
 				itemFixacao.setTurnoId(horario.getHorarioAula().getTurno().getId().intValue());
 				itemFixacao.setHorarioAulaId(horario.getHorarioAula().getId().intValue());
 				itemFixacao.setDisciplinaId(fixacao.getDisciplina().getId().intValue());
-				if(fixacao.getCampus() != null) {
-					itemFixacao.setCampusId(fixacao.getCampus().getId().intValue());
-				}
-				if(fixacao.getCampus() != null) {
-					itemFixacao.setUnidadeId(fixacao.getUnidade().getId().intValue());
-				}
 				if(fixacao.getSala() != null) {
 					itemFixacao.setSalaId(fixacao.getSala().getId().intValue());
 				}
