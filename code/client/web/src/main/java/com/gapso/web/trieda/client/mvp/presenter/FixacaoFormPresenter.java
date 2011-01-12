@@ -1,6 +1,12 @@
 package com.gapso.web.trieda.client.mvp.presenter;
 
+import java.util.List;
+
+import com.extjs.gxt.ui.client.data.PagingLoadResult;
+import com.extjs.gxt.ui.client.data.RpcProxy;
 import com.extjs.gxt.ui.client.event.ButtonEvent;
+import com.extjs.gxt.ui.client.event.SelectionChangedEvent;
+import com.extjs.gxt.ui.client.event.SelectionChangedListener;
 import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.widget.Info;
 import com.extjs.gxt.ui.client.widget.MessageBox;
@@ -10,12 +16,14 @@ import com.gapso.web.trieda.client.mvp.model.CampusDTO;
 import com.gapso.web.trieda.client.mvp.model.CenarioDTO;
 import com.gapso.web.trieda.client.mvp.model.DisciplinaDTO;
 import com.gapso.web.trieda.client.mvp.model.FixacaoDTO;
+import com.gapso.web.trieda.client.mvp.model.HorarioDisponivelCenarioDTO;
 import com.gapso.web.trieda.client.mvp.model.SalaDTO;
 import com.gapso.web.trieda.client.mvp.model.UnidadeDTO;
 import com.gapso.web.trieda.client.services.Services;
 import com.gapso.web.trieda.client.util.view.CampusComboBox;
 import com.gapso.web.trieda.client.util.view.DisciplinaComboBox;
 import com.gapso.web.trieda.client.util.view.SalaComboBox;
+import com.gapso.web.trieda.client.util.view.SemanaLetivaDoCenarioGrid;
 import com.gapso.web.trieda.client.util.view.SimpleGrid;
 import com.gapso.web.trieda.client.util.view.SimpleModal;
 import com.gapso.web.trieda.client.util.view.UnidadeComboBox;
@@ -33,27 +41,40 @@ public class FixacaoFormPresenter implements Presenter {
 		UnidadeComboBox getUnidadeComboBox();
 		SalaComboBox getSalaComboBox();
 		FixacaoDTO getFixacaoDTO();
+		SemanaLetivaDoCenarioGrid<HorarioDisponivelCenarioDTO> getGrid();
 		boolean isValid();
 		
 		SimpleModal getSimpleModal();
 	}
-	private CenarioDTO cenario;
 	private SimpleGrid<FixacaoDTO> gridPanel;
 	private Display display;
 	
 	public FixacaoFormPresenter(CenarioDTO cenario, Display display, SimpleGrid<FixacaoDTO> gridPanel) {
-		this.cenario = cenario;
 		this.gridPanel = gridPanel;
 		this.display = display;
+		configureProxy();
 		setListeners();
 	}
 
+	private void configureProxy() {
+		RpcProxy<PagingLoadResult<HorarioDisponivelCenarioDTO>> proxy = new RpcProxy<PagingLoadResult<HorarioDisponivelCenarioDTO>>() {
+			@Override
+			protected void load(Object loadConfig, AsyncCallback<PagingLoadResult<HorarioDisponivelCenarioDTO>> callback) {
+				DisciplinaDTO disciplinaDTO = display.getDisciplinaComboBox().getValue();
+				SalaDTO salaDTO = display.getSalaComboBox().getValue();
+				Services.fixacoes().getHorariosDisponiveis(disciplinaDTO, salaDTO, callback);
+			}
+		};
+		display.getGrid().setProxy(proxy);
+	}
+	
 	private void setListeners() {
 		display.getSalvarButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
 			@Override
 			public void componentSelected(ButtonEvent ce) {
 				if(isValid()) {
-					Services.fixacoes().save(getDTO(), new AsyncCallback<Void>() {
+					List<HorarioDisponivelCenarioDTO> hdcDTOList = display.getGrid().getStore().getModels();
+					Services.fixacoes().save(getDTO(), hdcDTOList, new AsyncCallback<Void>() {
 						@Override
 						public void onFailure(Throwable caught) {
 							MessageBox.alert("ERRO!", "Deu falha na conexão", null);
@@ -70,8 +91,20 @@ public class FixacaoFormPresenter implements Presenter {
 				}
 			}
 		});
+		display.getDisciplinaComboBox().addSelectionChangedListener(new SelectionChangedListener<DisciplinaDTO>(){
+			@Override
+			public void selectionChanged(SelectionChangedEvent<DisciplinaDTO> se) {
+				display.getGrid().updateList();
+			}
+		});
+		display.getSalaComboBox().addSelectionChangedListener(new SelectionChangedListener<SalaDTO>(){
+			@Override
+			public void selectionChanged(SelectionChangedEvent<SalaDTO> se) {
+				display.getGrid().updateList();
+			}
+		});
 	}
-	
+
 	private boolean isValid() {
 		return display.isValid();
 	}

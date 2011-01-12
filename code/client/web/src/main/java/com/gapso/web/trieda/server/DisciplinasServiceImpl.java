@@ -19,8 +19,11 @@ import com.gapso.trieda.domain.CurriculoDisciplina;
 import com.gapso.trieda.domain.Curso;
 import com.gapso.trieda.domain.Disciplina;
 import com.gapso.trieda.domain.GrupoSala;
+import com.gapso.trieda.domain.HorarioAula;
+import com.gapso.trieda.domain.HorarioDisponivelCenario;
 import com.gapso.trieda.domain.Oferta;
 import com.gapso.trieda.domain.Sala;
+import com.gapso.trieda.domain.SemanaLetiva;
 import com.gapso.trieda.domain.TipoDisciplina;
 import com.gapso.trieda.domain.Turno;
 import com.gapso.web.trieda.client.mvp.model.CurriculoDTO;
@@ -116,6 +119,15 @@ public class DisciplinasServiceImpl extends RemoteServiceServlet implements Disc
 			disciplina.merge();
 		} else {
 			disciplina.persist();
+			// TODO Pegar a semana letiva do cenario do professor
+			Set<HorarioAula> horariosAula = SemanaLetiva.findAll().get(0).getHorariosAula();
+			for(HorarioAula horarioAula : horariosAula) {
+				Set<HorarioDisponivelCenario> horariosDisponiveis = horarioAula.getHorariosDisponiveisCenario();
+				for(HorarioDisponivelCenario horarioDisponivel : horariosDisponiveis) {
+					horarioDisponivel.getDisciplinas().add(disciplina);
+					horarioDisponivel.merge();
+				}
+			}
 		}
 	}
 	

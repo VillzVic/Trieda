@@ -4,7 +4,10 @@ import java.util.List;
 
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
+import com.gapso.web.trieda.client.mvp.model.DisciplinaDTO;
 import com.gapso.web.trieda.client.mvp.model.FixacaoDTO;
+import com.gapso.web.trieda.client.mvp.model.HorarioDisponivelCenarioDTO;
+import com.gapso.web.trieda.client.mvp.model.SalaDTO;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
@@ -16,7 +19,9 @@ public interface FixacoesService extends RemoteService {
 
 	FixacaoDTO getFixacao(Long id);
 	PagingLoadResult<FixacaoDTO> getBuscaList(String codigo, PagingLoadConfig config);
-	void save(FixacaoDTO fixacaoDTO);
 	void remove(List<FixacaoDTO> fixacaoDTOList);
+	PagingLoadResult<HorarioDisponivelCenarioDTO> getHorariosDisponiveis(DisciplinaDTO disciplinaDTO, SalaDTO salaDTO);
+	void save(FixacaoDTO fixacaoDTO, List<HorarioDisponivelCenarioDTO> hdcDTOList);
+	List<HorarioDisponivelCenarioDTO> getHorariosSelecionados( FixacaoDTO fixacaoDTO);
 	
 }

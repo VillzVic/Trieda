@@ -24,7 +24,7 @@ import com.google.gwt.user.client.Element;
 public class SimpleGrid<M extends BaseModel> extends ContentPanel {
 
 	private Grid<M> grid;
-	RpcProxy<PagingLoadResult<M>> proxy;
+	private RpcProxy<PagingLoadResult<M>> proxy;
 	private PagingLoader<PagingLoadResult<ModelData>> loader;
 	private List<ColumnConfig> columnList;
 	private List<ComponentPlugin> plugins = new ArrayList<ComponentPlugin>();

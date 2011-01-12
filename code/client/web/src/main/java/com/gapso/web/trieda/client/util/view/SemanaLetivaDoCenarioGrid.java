@@ -5,7 +5,6 @@ import java.util.List;
 
 import com.extjs.gxt.ui.client.data.BaseModel;
 import com.extjs.gxt.ui.client.data.BasePagingLoader;
-import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.ModelData;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoader;
@@ -30,15 +29,15 @@ import com.google.gwt.user.client.Element;
 public class SemanaLetivaDoCenarioGrid<M extends BaseModel> extends ContentPanel {
 
 	private Grid<M> grid;
-	private RpcProxy<ListLoadResult<M>> proxy;
+	private RpcProxy<PagingLoadResult<M>> proxy;
 	private PagingLoader<PagingLoadResult<ModelData>> loader;
-	private ListStore<M> store;
 	private List<M> horariosDisponiveisDisponivel;
 	
 	public SemanaLetivaDoCenarioGrid(List<M> horariosDisponiveisDisponivel) {
 		super(new FitLayout());
 		this.horariosDisponiveisDisponivel = horariosDisponiveisDisponivel;
 		setHeaderVisible(false);
+		setBodyBorder(false);
 	}
 
 	@Override
@@ -48,9 +47,10 @@ public class SemanaLetivaDoCenarioGrid<M extends BaseModel> extends ContentPanel
 		loader = new BasePagingLoader<PagingLoadResult<ModelData>>(proxy);
 		loader.setRemoteSort(true);
 		
-		store = new ListStore<M>(loader);
+		ListStore<M> store = new ListStore<M>(loader);
 		
 		grid = new Grid<M>(store, new ColumnModel(getColumnList()));
+		
 		grid.setBorders(true);
 		grid.setTrackMouseOver(false);
 		grid.addStyleName("SemanaLetivaGrid");
@@ -127,7 +127,7 @@ public class SemanaLetivaDoCenarioGrid<M extends BaseModel> extends ContentPanel
 				}
 				ToggleImageButton tb = new ToggleImageButton(flag, Resources.DEFAULTS.save16(), Resources.DEFAULTS.cancel16());
 				tb.setEnabled((Boolean)modelCenario.get(property));
-				modelCenario.set(property, model.get(property));
+				modelCenario.set(property, (model == null)? false : model.get(property));
 				tb.addSelectionListener(new SelectionListener<ButtonEvent>() {
 					@Override
 					public void componentSelected(ButtonEvent ce) {
@@ -135,6 +135,7 @@ public class SemanaLetivaDoCenarioGrid<M extends BaseModel> extends ContentPanel
 						modelCenario.set(property, tib.isPressed());
 					}
 				});
+				if(!tb.isEnabled()) return "";
 				return tb;
 			}  
 		};
@@ -179,15 +180,20 @@ public class SemanaLetivaDoCenarioGrid<M extends BaseModel> extends ContentPanel
 		return grid.getSelectionModel();
 	}
 	
-	public void setProxy(RpcProxy<ListLoadResult<M>> proxy) {
+	public void setProxy(RpcProxy<PagingLoadResult<M>> proxy) {
 		this.proxy = proxy;
 	}
 	
-	public RpcProxy<ListLoadResult<M>> getProxy() {
+	public RpcProxy<PagingLoadResult<M>> getProxy() {
 		return this.proxy;
 	}
 
 	public ListStore<M> getStore() {
-		return store;
+		return grid.getStore();
 	}
+	
+	public void updateList() {
+		loader.load();
+	}
+	
 }

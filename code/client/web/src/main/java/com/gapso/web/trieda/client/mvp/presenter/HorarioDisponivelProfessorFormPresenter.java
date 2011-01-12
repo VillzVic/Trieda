@@ -2,7 +2,7 @@ package com.gapso.web.trieda.client.mvp.presenter;
 
 import java.util.List;
 
-import com.extjs.gxt.ui.client.data.ListLoadResult;
+import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.extjs.gxt.ui.client.data.RpcProxy;
 import com.extjs.gxt.ui.client.event.ButtonEvent;
 import com.extjs.gxt.ui.client.event.SelectionListener;
@@ -23,7 +23,7 @@ public class HorarioDisponivelProfessorFormPresenter implements Presenter {
 		Button getSalvarButton();
 		SimpleModal getSimpleModal();
 		ProfessorDTO getProfessorDTO();
-		void setProxy(RpcProxy<ListLoadResult<HorarioDisponivelCenarioDTO>> proxy);
+		void setProxy(RpcProxy<PagingLoadResult<HorarioDisponivelCenarioDTO>> proxy);
 		ListStore<HorarioDisponivelCenarioDTO> getStore();
 	}
 	private Display display;
@@ -37,9 +37,9 @@ public class HorarioDisponivelProfessorFormPresenter implements Presenter {
 	}
 
 	private void configureProxy() {
-		RpcProxy<ListLoadResult<HorarioDisponivelCenarioDTO>> proxy = new RpcProxy<ListLoadResult<HorarioDisponivelCenarioDTO>>() {
+		RpcProxy<PagingLoadResult<HorarioDisponivelCenarioDTO>> proxy = new RpcProxy<PagingLoadResult<HorarioDisponivelCenarioDTO>>() {
 			@Override
-			protected void load(Object loadConfig, AsyncCallback<ListLoadResult<HorarioDisponivelCenarioDTO>> callback) {
+			protected void load(Object loadConfig, AsyncCallback<PagingLoadResult<HorarioDisponivelCenarioDTO>> callback) {
 				Services.semanasLetiva().getHorariosDisponiveisByCenario(cenario, callback);
 			}
 		};

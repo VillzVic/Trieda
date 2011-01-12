@@ -58,13 +58,13 @@ public class HorarioDisponivelCenario implements Serializable {
     @ManyToMany
     private Set<Disciplina> disciplinas = new HashSet<Disciplina>();
 
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @ManyToMany
     private Set<Professor> professores = new HashSet<Professor>();
     
     @ManyToMany
     private Set<Fixacao> fixacoes = new HashSet<Fixacao>();
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy="HorarioDisponivelCenario")
+    @OneToMany(mappedBy="HorarioDisponivelCenario")
     private Set<AtendimentoOperacional> atendimentosOperacionais =  new HashSet<AtendimentoOperacional>();
     
 	private static final long serialVersionUID = 9128639869205918403L;

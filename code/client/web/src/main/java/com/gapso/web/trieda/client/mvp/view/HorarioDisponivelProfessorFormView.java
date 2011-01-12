@@ -2,7 +2,7 @@ package com.gapso.web.trieda.client.mvp.view;
 
 import java.util.List;
 
-import com.extjs.gxt.ui.client.data.ListLoadResult;
+import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.extjs.gxt.ui.client.data.RpcProxy;
 import com.extjs.gxt.ui.client.store.ListStore;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
@@ -63,7 +63,7 @@ public class HorarioDisponivelProfessorFormView extends MyComposite implements H
 	}
 
 	@Override
-	public void setProxy(RpcProxy<ListLoadResult<HorarioDisponivelCenarioDTO>> proxy) {
+	public void setProxy(RpcProxy<PagingLoadResult<HorarioDisponivelCenarioDTO>> proxy) {
 		gridPanel.setProxy(proxy);
 	}
 

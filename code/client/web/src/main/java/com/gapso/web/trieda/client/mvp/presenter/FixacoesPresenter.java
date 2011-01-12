@@ -16,6 +16,7 @@ import com.gapso.web.trieda.client.mvp.model.CampusDTO;
 import com.gapso.web.trieda.client.mvp.model.CenarioDTO;
 import com.gapso.web.trieda.client.mvp.model.DisciplinaDTO;
 import com.gapso.web.trieda.client.mvp.model.FixacaoDTO;
+import com.gapso.web.trieda.client.mvp.model.HorarioDisponivelCenarioDTO;
 import com.gapso.web.trieda.client.mvp.model.SalaDTO;
 import com.gapso.web.trieda.client.mvp.model.UnidadeDTO;
 import com.gapso.web.trieda.client.mvp.view.FixacaoFormView;
@@ -68,7 +69,7 @@ public class FixacoesPresenter implements Presenter {
 		display.getNewButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
 			@Override
 			public void componentSelected(ButtonEvent ce) {
-				Presenter presenter = new FixacaoFormPresenter(cenario, new FixacaoFormView(new FixacaoDTO(), null, null, null, null), display.getGrid());
+				Presenter presenter = new FixacaoFormPresenter(cenario, new FixacaoFormView(new FixacaoDTO(), null, null, null, null, null), display.getGrid());
 				presenter.go(null);
 			}
 		});
@@ -81,13 +82,15 @@ public class FixacoesPresenter implements Presenter {
 				final FutureResult<CampusDTO> futureCampusDTO = new FutureResult<CampusDTO>();
 				final FutureResult<UnidadeDTO> futureUnidadeDTO = new FutureResult<UnidadeDTO>();
 				final FutureResult<SalaDTO> futureSalaDTO = new FutureResult<SalaDTO>();
+				final FutureResult<List<HorarioDisponivelCenarioDTO>> futureHorariosDTO = new FutureResult<List<HorarioDisponivelCenarioDTO>>();
 				
 				Services.disciplinas().getDisciplina(fixacaoDTO.getDisciplinaId(), futureDisciplinaDTO);
 				Services.campi().getCampus(fixacaoDTO.getCampusId(), futureCampusDTO);
 				Services.unidades().getUnidade(fixacaoDTO.getUnidadeId(), futureUnidadeDTO);
 				Services.salas().getSala(fixacaoDTO.getSalaId(), futureSalaDTO);
+				Services.fixacoes().getHorariosSelecionados(fixacaoDTO, futureHorariosDTO);
 				
-				FutureSynchronizer synch = new FutureSynchronizer(futureCampusDTO, futureDisciplinaDTO, futureCampusDTO, futureUnidadeDTO, futureSalaDTO);
+				FutureSynchronizer synch = new FutureSynchronizer(futureCampusDTO, futureDisciplinaDTO, futureCampusDTO, futureUnidadeDTO, futureSalaDTO, futureHorariosDTO);
 				
 				synch.addCallback(new AsyncCallback<Boolean>() {
 					@Override
@@ -100,8 +103,9 @@ public class FixacoesPresenter implements Presenter {
 						CampusDTO campusDTO = futureCampusDTO.result();
 						UnidadeDTO unidadeDTO = futureUnidadeDTO.result();
 						SalaDTO salaDTO = futureSalaDTO.result();
+						List<HorarioDisponivelCenarioDTO> horariosDTOList = futureHorariosDTO.result();
 						
-						Presenter presenter = new FixacaoFormPresenter(cenario, new FixacaoFormView(fixacaoDTO, disciplinaDTO, campusDTO, unidadeDTO, salaDTO), display.getGrid());
+						Presenter presenter = new FixacaoFormPresenter(cenario, new FixacaoFormView(fixacaoDTO, disciplinaDTO, campusDTO, unidadeDTO, salaDTO, horariosDTOList), display.getGrid());
 						presenter.go(null);
 					}
 				});
