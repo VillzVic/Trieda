@@ -1598,7 +1598,8 @@ void ProblemDataLoader::associaDisciplinasSalas() {
             int menorCapCompt = ((int) (ptDisc->getDemandaTotal() / ptDisc->num_turmas)) +
                (ptDisc->getDemandaTotal() % ptDisc->num_turmas);
 
-            ITERA_GGROUP(itUnidade,ptCampus->unidades,Unidade)
+         
+			ITERA_GGROUP(itUnidade,ptCampus->unidades,Unidade)
             {
                ITERA_GGROUP(itSala,itUnidade->salas,Sala)
                {
@@ -1611,7 +1612,7 @@ void ProblemDataLoader::associaDisciplinasSalas() {
                         {
                            if(itSala->capacidade >= menorCapCompt)
                            {
-                              itSala->disciplinasAssociadas.add(ptDisc);
+							   itSala->disciplinasAssociadas.add(ptDisc);
 
                               problemData->discSalas[ptDisc->getId()].add(*itSala);
                            }
@@ -1619,20 +1620,37 @@ void ProblemDataLoader::associaDisciplinasSalas() {
                         else
                            if( !ptDisc->eLab() && (itSala->getTipoSalaId() == 1 /*sala de aula, segundo instancia trivial*/) )
                            {
-                              if(itSala->capacidade >= menorCapCompt)
+							   if(itSala->capacidade >= menorCapCompt)
                               {
-                                 itSala->disciplinasAssociadas.add(ptDisc);
+								  itSala->disciplinasAssociadas.add(ptDisc);
 
                                  problemData->discSalas[ptDisc->getId()].add(*itSala);
                               }
                            }
-                     }
+					 }
                   }
                }
             }
          }
       }
    }
+
+   //Se uma disciplina está fixada a uma determinada sala associa essa disciplina 
+   //somente aquela sala (e não a um grupo de salas)
+   std::map<int/*Id Disc*/,GGroup<Sala*> >::iterator it_Disc_Salas =
+      problemData->discSalas.begin();
+
+	  for(; it_Disc_Salas != problemData->discSalas.end(); it_Disc_Salas++)
+	  {
+		  ITERA_GGROUP(it_fix,problemData->fixacoes,Fixacao)
+		  {
+			  if(it_Disc_Salas->first == it_fix->disciplina_id)
+			  {
+				  problemData->discSalas[it_fix->disciplina_id].clear();
+				  problemData->discSalas[it_fix->disciplina_id].add(it_fix->sala);
+			  }
+		  }
+	  }
 
    //// Para cada Campus
    //for(; itCpDiscs != problemData->cp_discs.end(); itCpDiscs++)

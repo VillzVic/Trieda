@@ -369,6 +369,14 @@
 					>
 				</File>
 				<File
+					RelativePath=".\RestricaoViolada.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\SolutionLoader.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\Tatico.cpp"
 					>
 				</File>
@@ -436,11 +444,19 @@
 						>
 					</File>
 					<File
+						RelativePath=".\IS_Atendimento_Tatico.cpp"
+						>
+					</File>
+					<File
 						RelativePath=".\IS_Campus.cpp"
 						>
 					</File>
 					<File
 						RelativePath=".\IS_CjtSala.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\IS_Dia_Semana.cpp"
 						>
 					</File>
 					<File
@@ -642,6 +658,14 @@
 					>
 				</File>
 				<File
+					RelativePath=".\RestricaoViolada.h"
+					>
+				</File>
+				<File
+					RelativePath=".\SolutionLoader.h"
+					>
+				</File>
+				<File
 					RelativePath=".\Tatico.h"
 					>
 				</File>
@@ -713,11 +737,19 @@
 						>
 					</File>
 					<File
+						RelativePath=".\IS_Atendimento_Tatico.h"
+						>
+					</File>
+					<File
 						RelativePath=".\IS_Campus.h"
 						>
 					</File>
 					<File
 						RelativePath=".\IS_CjtSala.h"
+						>
+					</File>
+					<File
+						RelativePath=".\IS_Dia_Semana.h"
 						>
 					</File>
 					<File

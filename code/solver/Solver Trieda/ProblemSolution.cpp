@@ -3,6 +3,16 @@
 
 ProblemSolution::ProblemSolution()
 {
+	folgas = new RestricaoVioladaGroup();
+}
+
+ProblemSolution::~ProblemSolution()
+{
+	if ( folgas != NULL )
+	{
+		folgas->deleteElements();
+		delete folgas;
+	}
 }
 
 std::ostream& operator << (std::ostream& out, ProblemSolution& solution )
@@ -28,6 +38,15 @@ std::ostream& operator << (std::ostream& out, ProblemSolution& solution )
 	}
 
 	out << "</atendimentos>" << endl;
+
+	// Folgas:
+	out << "<restricoesVioladas>\n";
+	for (RestricaoVioladaGroup::iterator it = solution.getFolgas()->begin();
+	it != solution.getFolgas()->end(); 
+	++it)
+	out << **it;
+	out << "</restricoesVioladas>\n";
+
 
 	// Erros e warnings:
 	out << *ErrorHandler::getInstance();

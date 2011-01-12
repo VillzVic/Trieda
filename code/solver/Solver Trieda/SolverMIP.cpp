@@ -2,6 +2,8 @@
 #include "ProblemData.h"
 #include "ProblemSolution.h"
 #include "SolverMIP.h"
+#include "SolutionLoader.h"
+#include "ErrorHandler.h"
 
 // >>>
 //#define PRINT_CSV
@@ -157,6 +159,8 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
 {
 	double *xSol = NULL;
 	VariableHash::iterator vit;
+
+	SolutionLoader sLoader(problemData, problemSolution);
 
 	xSol = new double[lp->getNumCols()];
 	lp->getX(xSol);
@@ -673,6 +677,18 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
 				}
 			}
 		}
+	}
+
+	for (vit = vHash.begin(); vit != vHash.end(); ++vit)
+	{
+		Variable* v = new Variable(vit->first);
+		int col = vit->second;
+		v->setValue(xSol[col]);
+		if ( v->getValue() > 0.00001 )
+		{
+			sLoader.setFolgas(v);
+		}
+		delete v;
 	}
 
 #ifdef DEBUG

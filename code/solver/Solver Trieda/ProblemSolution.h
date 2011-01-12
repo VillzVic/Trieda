@@ -7,6 +7,7 @@
 
 //#include "Oferecimento.h"
 #include "AtendimentoCampus.h"
+#include "RestricaoViolada.h"
 
 using namespace std;
 
@@ -20,7 +21,7 @@ public:
    ProblemSolution();
 
    //Destructor
-   ~ProblemSolution() {}
+   ~ProblemSolution(); 
 
    //==================================================
    // SET METHODS 
@@ -35,12 +36,16 @@ public:
    // GET METHODS 
    //==================================================
 
+   RestricaoVioladaGroup* getFolgas() const { return folgas; }
+
    /**
    ToDo:
    All get methods of the private attributes should be defined here
    */
 
-   //private:
+   private:
+	   RestricaoVioladaGroup* folgas;
+   public:
 
    /**
    ToDo:
