@@ -32,6 +32,7 @@ import com.gapso.web.trieda.client.mvp.model.CursoDTO;
 import com.gapso.web.trieda.client.mvp.model.DisciplinaDTO;
 import com.gapso.web.trieda.client.mvp.model.FileModel;
 import com.gapso.web.trieda.client.mvp.model.GrupoSalaDTO;
+import com.gapso.web.trieda.client.mvp.model.HorarioDisponivelCenarioDTO;
 import com.gapso.web.trieda.client.mvp.model.OfertaDTO;
 import com.gapso.web.trieda.client.mvp.model.SalaDTO;
 import com.gapso.web.trieda.client.mvp.model.TipoDisciplinaDTO;
@@ -52,6 +53,32 @@ public class DisciplinasServiceImpl extends RemoteServiceServlet implements Disc
 	public DisciplinaDTO getDisciplina(Long id) {
 		if(id == null) return null;
 		return ConvertBeans.toDisciplinaDTO(Disciplina.find(id));
+	}
+	
+	@Override
+	public List<HorarioDisponivelCenarioDTO> getHorariosDisponiveis(DisciplinaDTO disciplinaDTO) {
+		List<HorarioDisponivelCenario> list = new ArrayList<HorarioDisponivelCenario>(Disciplina.find(disciplinaDTO.getId()).getHorarios());
+		List<HorarioDisponivelCenarioDTO> listDTO = ConvertBeans.toHorarioDisponivelCenarioDTO(list);
+		
+		return listDTO;
+	}
+	
+	@Override
+	public void saveHorariosDisponiveis(DisciplinaDTO disciplinaDTO, List<HorarioDisponivelCenarioDTO> listDTO) {
+		List<HorarioDisponivelCenario> listSelecionados = ConvertBeans.toHorarioDisponivelCenario(listDTO);
+		Disciplina disciplina = Disciplina.find(disciplinaDTO.getId());
+		List<HorarioDisponivelCenario> adicionarList = new ArrayList<HorarioDisponivelCenario> (listSelecionados);
+		adicionarList.removeAll(disciplina.getHorarios());
+		List<HorarioDisponivelCenario> removerList = new ArrayList<HorarioDisponivelCenario> (disciplina.getHorarios());
+		removerList.removeAll(listSelecionados);
+		for(HorarioDisponivelCenario o : removerList) {
+			o.getDisciplinas().remove(disciplina);
+			o.merge();
+		}
+		for(HorarioDisponivelCenario o : adicionarList) {
+			o.getDisciplinas().add(disciplina);
+			o.merge();
+		}
 	}
 	
 	@Override
@@ -119,7 +146,7 @@ public class DisciplinasServiceImpl extends RemoteServiceServlet implements Disc
 			disciplina.merge();
 		} else {
 			disciplina.persist();
-			// TODO Pegar a semana letiva do cenario do professor
+			// TODO Pegar a semana letiva do cenario da disciplina
 			Set<HorarioAula> horariosAula = SemanaLetiva.findAll().get(0).getHorariosAula();
 			for(HorarioAula horarioAula : horariosAula) {
 				Set<HorarioDisponivelCenario> horariosDisponiveis = horarioAula.getHorariosDisponiveisCenario();

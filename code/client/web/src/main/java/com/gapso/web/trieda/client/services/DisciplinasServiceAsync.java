@@ -11,6 +11,7 @@ import com.gapso.web.trieda.client.mvp.model.CursoDTO;
 import com.gapso.web.trieda.client.mvp.model.DisciplinaDTO;
 import com.gapso.web.trieda.client.mvp.model.FileModel;
 import com.gapso.web.trieda.client.mvp.model.GrupoSalaDTO;
+import com.gapso.web.trieda.client.mvp.model.HorarioDisponivelCenarioDTO;
 import com.gapso.web.trieda.client.mvp.model.OfertaDTO;
 import com.gapso.web.trieda.client.mvp.model.SalaDTO;
 import com.gapso.web.trieda.client.mvp.model.TipoDisciplinaDTO;
@@ -32,5 +33,7 @@ public interface DisciplinasServiceAsync {
 	void saveDisciplinaToSala(OfertaDTO ofertaDTO, Integer periodo, CurriculoDisciplinaDTO cdDTO, GrupoSalaDTO grupoSalaDTO, AsyncCallback<Void> callback);
 	void removeDisciplinaToSala(SalaDTO salaDTO, CurriculoDisciplinaDTO cdDTO, AsyncCallback<Void> callback);
 	void removeDisciplinaToSala(GrupoSalaDTO grupoSalaDTO, CurriculoDisciplinaDTO cdDTO, AsyncCallback<Void> callback);
+	void saveHorariosDisponiveis(DisciplinaDTO disciplinaDTO, List<HorarioDisponivelCenarioDTO> listDTO, AsyncCallback<Void> callback);
+	void getHorariosDisponiveis(DisciplinaDTO disciplinaDTO, AsyncCallback<List<HorarioDisponivelCenarioDTO>> callback);
 	
 }

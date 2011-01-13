@@ -15,8 +15,10 @@ import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.gapso.web.trieda.client.mvp.model.CenarioDTO;
 import com.gapso.web.trieda.client.mvp.model.DisciplinaDTO;
+import com.gapso.web.trieda.client.mvp.model.HorarioDisponivelCenarioDTO;
 import com.gapso.web.trieda.client.mvp.model.TipoDisciplinaDTO;
 import com.gapso.web.trieda.client.mvp.view.DisciplinaFormView;
+import com.gapso.web.trieda.client.mvp.view.HorarioDisponivelDisciplinaFormView;
 import com.gapso.web.trieda.client.services.DisciplinasServiceAsync;
 import com.gapso.web.trieda.client.services.Services;
 import com.gapso.web.trieda.client.util.view.GTab;
@@ -34,6 +36,7 @@ public class DisciplinasPresenter implements Presenter {
 		Button getRemoveButton();
 		Button getImportExcelButton();
 		Button getExportExcelButton();
+		Button getDisponibilidadeButton();
 		
 		TextField<String> getNomeBuscaTextField();
 		TextField<String> getCodigoBuscaTextField();
@@ -113,6 +116,24 @@ public class DisciplinasPresenter implements Presenter {
 						Info.display("Removido", "Item removido com sucesso!");
 					}
 				});
+			}
+		});
+		display.getDisponibilidadeButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
+			@Override
+			public void componentSelected(ButtonEvent ce) {
+				final DisciplinaDTO disciplinaDTO = display.getGrid().getGrid().getSelectionModel().getSelectedItem();
+				Services.disciplinas().getHorariosDisponiveis(disciplinaDTO, new AsyncCallback<List<HorarioDisponivelCenarioDTO>>() {
+					@Override
+					public void onFailure(Throwable caught) {
+						MessageBox.alert("ERRO!", "Deu falha na conexão", null);
+					}
+					@Override
+					public void onSuccess(List<HorarioDisponivelCenarioDTO> result) {
+						Presenter presenter = new HorarioDisponivelDisciplinaFormPresenter(cenario, new HorarioDisponivelDisciplinaFormView(disciplinaDTO, result));
+						presenter.go(null);
+					}
+				});
+				
 			}
 		});
 		display.getResetBuscaButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
