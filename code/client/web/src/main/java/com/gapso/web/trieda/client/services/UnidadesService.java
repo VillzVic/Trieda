@@ -8,6 +8,7 @@ import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.gapso.web.trieda.client.mvp.model.CampusDTO;
 import com.gapso.web.trieda.client.mvp.model.DeslocamentoUnidadeDTO;
+import com.gapso.web.trieda.client.mvp.model.HorarioDisponivelCenarioDTO;
 import com.gapso.web.trieda.client.mvp.model.UnidadeDTO;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
@@ -28,4 +29,6 @@ public interface UnidadesService extends RemoteService {
 	List<DeslocamentoUnidadeDTO> getDeslocamento(CampusDTO campusDTO);
 	void saveDeslocamento(List<DeslocamentoUnidadeDTO> list);
 	ListLoadResult<UnidadeDTO> getListByCampus(CampusDTO campusDTO);
+	PagingLoadResult<HorarioDisponivelCenarioDTO> getHorariosDisponiveis(UnidadeDTO unidadeDTO);
+	void saveHorariosDisponiveis(UnidadeDTO unidadeDTO, List<HorarioDisponivelCenarioDTO> listDTO);
 }

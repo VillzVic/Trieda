@@ -35,6 +35,7 @@ public class UnidadesView extends MyComposite implements UnidadesPresenter.Displ
 	private GTabItem tabItem;
 	private Button deslocamentoUnidadesBT;
 	private Button salasBT;
+	private Button disponibilidadeBT;
 	
 	public UnidadesView() {
 		initUI();
@@ -57,6 +58,8 @@ public class UnidadesView extends MyComposite implements UnidadesPresenter.Displ
 		toolBar.add(deslocamentoUnidadesBT);
 		salasBT = toolBar.createButton("Salas", Resources.DEFAULTS.sala16());
 		toolBar.add(salasBT);
+		disponibilidadeBT = toolBar.createButton("Disponibilidade do Professor", Resources.DEFAULTS.horarioAula16());
+		toolBar.add(disponibilidadeBT);
 		tabItem.setContent(panel);
 	}
 	
@@ -172,4 +175,8 @@ public class UnidadesView extends MyComposite implements UnidadesPresenter.Displ
 		return salasBT;
 	}
 
+	@Override
+	public Button getDisponibilidadeButton() {
+		return disponibilidadeBT;
+	}
 }

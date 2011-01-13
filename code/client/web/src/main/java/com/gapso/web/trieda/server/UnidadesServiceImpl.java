@@ -16,9 +16,12 @@ import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.gapso.trieda.domain.Campus;
+import com.gapso.trieda.domain.HorarioDisponivelCenario;
+import com.gapso.trieda.domain.Sala;
 import com.gapso.trieda.domain.Unidade;
 import com.gapso.web.trieda.client.mvp.model.CampusDTO;
 import com.gapso.web.trieda.client.mvp.model.DeslocamentoUnidadeDTO;
+import com.gapso.web.trieda.client.mvp.model.HorarioDisponivelCenarioDTO;
 import com.gapso.web.trieda.client.mvp.model.UnidadeDTO;
 import com.gapso.web.trieda.client.services.UnidadesService;
 import com.gapso.web.trieda.server.util.ConvertBeans;
@@ -36,6 +39,37 @@ public class UnidadesServiceImpl extends RemoteServiceServlet implements Unidade
 	public UnidadeDTO getUnidade(Long id) {
 		if(id == null) return null;
 		return ConvertBeans.toUnidadeDTO(Unidade.find(id));
+	}
+	
+	@Override
+	public PagingLoadResult<HorarioDisponivelCenarioDTO> getHorariosDisponiveis(UnidadeDTO unidadeDTO) {
+		List<HorarioDisponivelCenario> list = new ArrayList<HorarioDisponivelCenario>(Unidade.find(unidadeDTO.getId()).getHorarios());
+		List<HorarioDisponivelCenarioDTO> listDTO = ConvertBeans.toHorarioDisponivelCenarioDTO(list);
+		
+		return new BasePagingLoadResult<HorarioDisponivelCenarioDTO>(listDTO);
+	}
+	
+	@Override
+	public void saveHorariosDisponiveis(UnidadeDTO unidadeDTO, List<HorarioDisponivelCenarioDTO> listDTO) {
+		List<HorarioDisponivelCenario> listSelecionados = ConvertBeans.toHorarioDisponivelCenario(listDTO);
+		Unidade unidade = Unidade.find(unidadeDTO.getId());
+		List<Sala> salas = Sala.findByUnidade(unidade);
+		
+		List<HorarioDisponivelCenario> removerList = new ArrayList<HorarioDisponivelCenario> (unidade.getHorarios());
+		removerList.removeAll(listSelecionados);
+		for(HorarioDisponivelCenario o : removerList) {
+			o.getUnidades().remove(unidade);
+			o.getSalas().removeAll(salas);
+			o.merge();
+		}
+		
+		List<HorarioDisponivelCenario> adicionarList = new ArrayList<HorarioDisponivelCenario> (listSelecionados);
+		adicionarList.removeAll(unidade.getHorarios());
+		for(HorarioDisponivelCenario o : adicionarList) {
+			o.getUnidades().add(unidade);
+			o.getSalas().addAll(salas);
+			o.merge();
+		}
 	}
 	
 	@Override

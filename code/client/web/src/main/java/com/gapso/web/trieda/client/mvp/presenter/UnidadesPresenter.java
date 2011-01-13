@@ -13,7 +13,10 @@ import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.gapso.web.trieda.client.mvp.model.CampusDTO;
+import com.gapso.web.trieda.client.mvp.model.CenarioDTO;
+import com.gapso.web.trieda.client.mvp.model.HorarioDisponivelCenarioDTO;
 import com.gapso.web.trieda.client.mvp.model.UnidadeDTO;
+import com.gapso.web.trieda.client.mvp.view.HorarioDisponivelUnidadeFormView;
 import com.gapso.web.trieda.client.mvp.view.SalasView;
 import com.gapso.web.trieda.client.mvp.view.UnidadeFormView;
 import com.gapso.web.trieda.client.services.CampiServiceAsync;
@@ -25,6 +28,8 @@ import com.gapso.web.trieda.client.util.view.GTabItem;
 import com.gapso.web.trieda.client.util.view.SimpleGrid;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
+import com.googlecode.future.FutureResult;
+import com.googlecode.future.FutureSynchronizer;
 
 public class UnidadesPresenter implements Presenter {
 
@@ -36,6 +41,7 @@ public class UnidadesPresenter implements Presenter {
 		Button getExportExcelButton();
 		Button getDeslocamentoUnidadesButton();
 		Button getSalasButton();
+		Button getDisponibilidadeButton();
 		TextField<String> getNomeBuscaTextField();
 		TextField<String> getCodigoBuscaTextField();
 		CampusComboBox getCampusBuscaComboBox();
@@ -48,7 +54,7 @@ public class UnidadesPresenter implements Presenter {
 	private Display display; 
 	private GTab gTab;
 	
-	public UnidadesPresenter(Display display) {
+	public UnidadesPresenter(CenarioDTO cenario, Display display) {
 		this.display = display;
 		configureProxy();
 		setListeners();
@@ -133,6 +139,29 @@ public class UnidadesPresenter implements Presenter {
 			public void componentSelected(ButtonEvent ce) {
 				Presenter presenter = new SalasPresenter(new SalasView());
 				presenter.go(gTab);
+			}
+		});
+		display.getDisponibilidadeButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
+			@Override
+			public void componentSelected(ButtonEvent ce) {
+				final UnidadeDTO unidadeDTO = display.getGrid().getGrid().getSelectionModel().getSelectedItem();
+				
+				final FutureResult<CampusDTO> futureCampusDTO = new FutureResult<CampusDTO>();
+				final FutureResult<PagingLoadResult<HorarioDisponivelCenarioDTO>> futureHorarioDisponivelCenarioDTOList = new FutureResult<PagingLoadResult<HorarioDisponivelCenarioDTO>>();
+				
+				Services.campi().getCampus(unidadeDTO.getCampusId(), futureCampusDTO);
+				Services.unidades().getHorariosDisponiveis(unidadeDTO, futureHorarioDisponivelCenarioDTOList);
+				
+				FutureSynchronizer synch = new FutureSynchronizer(futureCampusDTO, futureHorarioDisponivelCenarioDTOList);
+				synch.addCallback(new AsyncCallback<Boolean>() {
+					public void onFailure(Throwable caught) { MessageBox.alert("ERRO!", "Deu falha na conexão", null); }
+					public void onSuccess(Boolean result) {
+						CampusDTO campusDTO = futureCampusDTO.result();
+						List<HorarioDisponivelCenarioDTO> horarioDisponivelCenarioDTOList = futureHorarioDisponivelCenarioDTOList.result().getData();
+						Presenter presenter = new HorarioDisponivelUnidadeFormPresenter(campusDTO, new HorarioDisponivelUnidadeFormView(unidadeDTO, horarioDisponivelCenarioDTOList));
+						presenter.go(null);
+					}
+				});
 			}
 		});
 	}
