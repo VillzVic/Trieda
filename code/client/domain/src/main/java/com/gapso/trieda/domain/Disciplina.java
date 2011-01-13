@@ -122,7 +122,7 @@ public class Disciplina implements Serializable {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "disciplina")
     private Set<Demanda> demandas = new HashSet<Demanda>();
     
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "disciplina")
+    @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "disciplina")
     private Set<Fixacao> fixacoes = new HashSet<Fixacao>();
     
     @OneToMany(cascade = CascadeType.ALL, mappedBy="disciplina")

@@ -10,6 +10,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -39,7 +40,7 @@ import com.gapso.trieda.misc.Semanas;
 public class HorarioDisponivelCenario implements Serializable {
 
     @NotNull
-    @ManyToOne(targetEntity = HorarioAula.class)
+    @ManyToOne(targetEntity = HorarioAula.class, fetch=FetchType.LAZY)
     @JoinColumn(name = "HOR_ID")
     private HorarioAula horarioAula;
 
@@ -251,24 +252,7 @@ public class HorarioDisponivelCenario implements Serializable {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime
-				* result
-				+ ((atendimentosOperacionais == null) ? 0
-						: atendimentosOperacionais.hashCode());
-		result = prime * result + ((campi == null) ? 0 : campi.hashCode());
-		result = prime * result
-				+ ((disciplinas == null) ? 0 : disciplinas.hashCode());
-		result = prime * result
-				+ ((fixacoes == null) ? 0 : fixacoes.hashCode());
-		result = prime * result
-				+ ((horarioAula == null) ? 0 : horarioAula.hashCode());
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
-		result = prime * result
-				+ ((professores == null) ? 0 : professores.hashCode());
-		result = prime * result + ((salas == null) ? 0 : salas.hashCode());
-		result = prime * result + ((semana == null) ? 0 : semana.hashCode());
-		result = prime * result
-				+ ((unidades == null) ? 0 : unidades.hashCode());
 		result = prime * result + ((version == null) ? 0 : version.hashCode());
 		return result;
 	}
@@ -282,53 +266,10 @@ public class HorarioDisponivelCenario implements Serializable {
 		if (getClass() != obj.getClass())
 			return false;
 		HorarioDisponivelCenario other = (HorarioDisponivelCenario) obj;
-		if (atendimentosOperacionais == null) {
-			if (other.atendimentosOperacionais != null)
-				return false;
-		} else if (!atendimentosOperacionais
-				.equals(other.atendimentosOperacionais))
-			return false;
-		if (campi == null) {
-			if (other.campi != null)
-				return false;
-		} else if (!campi.equals(other.campi))
-			return false;
-		if (disciplinas == null) {
-			if (other.disciplinas != null)
-				return false;
-		} else if (!disciplinas.equals(other.disciplinas))
-			return false;
-		if (fixacoes == null) {
-			if (other.fixacoes != null)
-				return false;
-		} else if (!fixacoes.equals(other.fixacoes))
-			return false;
-		if (horarioAula == null) {
-			if (other.horarioAula != null)
-				return false;
-		} else if (!horarioAula.equals(other.horarioAula))
-			return false;
 		if (id == null) {
 			if (other.id != null)
 				return false;
 		} else if (!id.equals(other.id))
-			return false;
-		if (professores == null) {
-			if (other.professores != null)
-				return false;
-		} else if (!professores.equals(other.professores))
-			return false;
-		if (salas == null) {
-			if (other.salas != null)
-				return false;
-		} else if (!salas.equals(other.salas))
-			return false;
-		if (semana != other.semana)
-			return false;
-		if (unidades == null) {
-			if (other.unidades != null)
-				return false;
-		} else if (!unidades.equals(other.unidades))
 			return false;
 		if (version == null) {
 			if (other.version != null)
@@ -337,6 +278,5 @@ public class HorarioDisponivelCenario implements Serializable {
 			return false;
 		return true;
 	}
-	
 	
 }

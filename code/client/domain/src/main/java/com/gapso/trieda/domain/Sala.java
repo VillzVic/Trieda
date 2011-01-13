@@ -86,6 +86,9 @@ public class Sala implements Serializable {
     @OneToMany(cascade = CascadeType.ALL, mappedBy="sala")
     private Set<AtendimentoTatico> atendimentosTaticos =  new HashSet<AtendimentoTatico>();
     
+    @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "sala")
+    private Set<Fixacao> fixacoes = new HashSet<Fixacao>();
+    
 	public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("Id: ").append(getId()).append(", ");
@@ -101,6 +104,7 @@ public class Sala implements Serializable {
         sb.append("GruposSala: ").append(getGruposSala() == null ? "null" : getGruposSala().size());
         sb.append("Atendimentos Operacionais: ").append(getAtendimentosOperacionais() == null ? "null" : getAtendimentosOperacionais().size());
         sb.append("Atendimentos Taticos: ").append(getAtendimentosTaticos() == null ? "null" : getAtendimentosTaticos().size());
+        sb.append("Fixacoes: ").append(getFixacoes() == null ? "null" : getFixacoes().size());
         return sb.toString();
     }
 
@@ -329,6 +333,14 @@ public class Sala implements Serializable {
 	
 	public void setAtendimentosTaticos(Set<AtendimentoTatico> atendimentosTaticos) {
 		this.atendimentosTaticos = atendimentosTaticos;
+	}
+	
+	public Set<Fixacao> getFixacoes() {
+		return this.fixacoes;
+	}
+	
+	public void setFixacoes(Set<Fixacao> fixacoes) {
+		this.fixacoes = fixacoes;
 	}
 	
 	private static final long serialVersionUID = -2533999449644229682L;
