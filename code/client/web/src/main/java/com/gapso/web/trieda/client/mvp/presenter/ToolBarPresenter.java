@@ -155,7 +155,7 @@ public class ToolBarPresenter implements Presenter {
 		toolBar.getUnidadesListUnidadesButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
 			@Override
 			public void componentSelected(ButtonEvent ce) {
-				Presenter presenter = new UnidadesPresenter(new UnidadesView());
+				Presenter presenter = new UnidadesPresenter(masterData, new UnidadesView());
 				presenter.go(gTab);
 			}
 		});
