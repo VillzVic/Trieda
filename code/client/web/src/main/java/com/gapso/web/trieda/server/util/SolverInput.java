@@ -580,23 +580,35 @@ public class SolverInput {
 	}
 	
 	private void generateFixacoes() {
+		int id = 1;
 		GrupoFixacao grupoFixacao = of.createGrupoFixacao();
 
 		List<Fixacao> fixacoes = Fixacao.findAll();
 		for(Fixacao fixacao : fixacoes) {
 			Set<HorarioDisponivelCenario> horarios = fixacao.getHorarios();
-			for(HorarioDisponivelCenario horario : horarios) {
+			if(horarios.size() > 0) {
+				for(HorarioDisponivelCenario horario : horarios) {
+					ItemFixacao itemFixacao = of.createItemFixacao();
+					itemFixacao.setId(id++);
+					itemFixacao.setDiaSemana(Semanas.toInt(horario.getSemana()));
+					itemFixacao.setTurnoId(horario.getHorarioAula().getTurno().getId().intValue());
+					itemFixacao.setHorarioAulaId(horario.getHorarioAula().getId().intValue());
+					itemFixacao.setDisciplinaId(fixacao.getDisciplina().getId().intValue());
+					if(fixacao.getSala() != null) {
+						itemFixacao.setSalaId(fixacao.getSala().getId().intValue());
+					}
+					grupoFixacao.getFixacao().add(itemFixacao);
+				}
+			} else {
 				ItemFixacao itemFixacao = of.createItemFixacao();
-				itemFixacao.setId(fixacao.getId().intValue());
-				itemFixacao.setDiaSemana(Semanas.toInt(horario.getSemana()));
-				itemFixacao.setTurnoId(horario.getHorarioAula().getTurno().getId().intValue());
-				itemFixacao.setHorarioAulaId(horario.getHorarioAula().getId().intValue());
+				itemFixacao.setId(id++);
 				itemFixacao.setDisciplinaId(fixacao.getDisciplina().getId().intValue());
 				if(fixacao.getSala() != null) {
 					itemFixacao.setSalaId(fixacao.getSala().getId().intValue());
 				}
 				grupoFixacao.getFixacao().add(itemFixacao);
 			}
+			
 		}
 		
 		triedaInput.setFixacoes(grupoFixacao);
