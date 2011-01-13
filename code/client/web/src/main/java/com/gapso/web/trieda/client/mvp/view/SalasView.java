@@ -28,6 +28,7 @@ public class SalasView extends MyComposite implements SalasPresenter.Display {
 	private GTabItem tabItem;
 	private Button disciplinasAssociadasBT;
 	private Button gruposDeSalasBT;
+	private Button disponibilidadeBT;
 	
 	public SalasView() {
 		initUI();
@@ -54,6 +55,8 @@ public class SalasView extends MyComposite implements SalasPresenter.Display {
 		toolBar.add(disciplinasAssociadasBT);
 		gruposDeSalasBT = toolBar.createButton("Grupos de Salas", Resources.DEFAULTS.sala16());
 		toolBar.add(gruposDeSalasBT);
+		disponibilidadeBT = toolBar.createButton("Disponibilidade do Professor", Resources.DEFAULTS.horarioAula16());
+		toolBar.add(disponibilidadeBT);
 		panel.setTopComponent(toolBar);
 	}
 	
@@ -124,6 +127,11 @@ public class SalasView extends MyComposite implements SalasPresenter.Display {
 	@Override
 	public Button getGruposDeSalasButton() {
 		return gruposDeSalasBT;
+	}
+	
+	@Override
+	public Button getDisponibilidadeButton() {
+		return disponibilidadeBT;
 	}
 	
 }

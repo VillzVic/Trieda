@@ -11,9 +11,11 @@ import com.extjs.gxt.ui.client.widget.Component;
 import com.extjs.gxt.ui.client.widget.Info;
 import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.button.Button;
+import com.gapso.web.trieda.client.mvp.model.HorarioDisponivelCenarioDTO;
 import com.gapso.web.trieda.client.mvp.model.SalaDTO;
 import com.gapso.web.trieda.client.mvp.model.TipoSalaDTO;
 import com.gapso.web.trieda.client.mvp.model.UnidadeDTO;
+import com.gapso.web.trieda.client.mvp.view.HorarioDisponivelSalaFormView;
 import com.gapso.web.trieda.client.mvp.view.SalaFormView;
 import com.gapso.web.trieda.client.services.SalasServiceAsync;
 import com.gapso.web.trieda.client.services.Services;
@@ -38,6 +40,7 @@ public class SalasPresenter implements Presenter {
 		Button getGruposDeSalasButton();
 		SimpleGrid<SalaDTO> getGrid();
 		GTabItem getGTabItem();
+		Button getDisponibilidadeButton();
 		Component getComponent();
 		void setProxy(RpcProxy<PagingLoadResult<SalaDTO>> proxy);
 	}
@@ -83,7 +86,7 @@ public class SalasPresenter implements Presenter {
 				salasService.getTipoSala(salaDTO.getTipoId(), futureSalaDTO);
 
 				FutureSynchronizer synch = new FutureSynchronizer(futureUnidadeDTO, futureSalaDTO);
-				synch.addCallback(new com.google.gwt.user.client.rpc.AsyncCallback<Boolean>() {
+				synch.addCallback(new AsyncCallback<Boolean>() {
 					public void onFailure(Throwable caught) { MessageBox.alert("ERRO!", "Deu falha na conexão", null); }
 					public void onSuccess(Boolean result) {
 						UnidadeDTO unidadeDTO = futureUnidadeDTO.result();
@@ -110,6 +113,29 @@ public class SalasPresenter implements Presenter {
 					public void onSuccess(Void result) {
 						display.getGrid().updateList();
 						Info.display("Removido", "Item removido com sucesso!");
+					}
+				});
+			}
+		});
+		display.getDisponibilidadeButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
+			@Override
+			public void componentSelected(ButtonEvent ce) {
+				final SalaDTO salaDTO = display.getGrid().getGrid().getSelectionModel().getSelectedItem();
+				
+				final FutureResult<UnidadeDTO> futureUnidadeDTO = new FutureResult<UnidadeDTO>();
+				final FutureResult<List<HorarioDisponivelCenarioDTO>> futureHorarioDisponivelCenarioDTOList = new FutureResult<List<HorarioDisponivelCenarioDTO>>();
+				
+				Services.unidades().getUnidade(salaDTO.getUnidadeId(), futureUnidadeDTO);
+				Services.salas().getHorariosDisponiveis(salaDTO, futureHorarioDisponivelCenarioDTOList);
+				
+				FutureSynchronizer synch = new FutureSynchronizer(futureUnidadeDTO, futureHorarioDisponivelCenarioDTOList);
+				synch.addCallback(new AsyncCallback<Boolean>() {
+					public void onFailure(Throwable caught) { MessageBox.alert("ERRO!", "Deu falha na conexão", null); }
+					public void onSuccess(Boolean result) {
+						UnidadeDTO unidadeDTO = futureUnidadeDTO.result();
+						List<HorarioDisponivelCenarioDTO> horarioDisponivelCenarioDTOList = futureHorarioDisponivelCenarioDTOList.result();
+						Presenter presenter = new HorarioDisponivelSalaFormPresenter(unidadeDTO, new HorarioDisponivelSalaFormView(salaDTO, horarioDisponivelCenarioDTOList));
+						presenter.go(null);
 					}
 				});
 			}

@@ -14,10 +14,12 @@ import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.gapso.trieda.domain.GrupoSala;
+import com.gapso.trieda.domain.HorarioDisponivelCenario;
 import com.gapso.trieda.domain.Sala;
 import com.gapso.trieda.domain.TipoSala;
 import com.gapso.trieda.domain.Unidade;
 import com.gapso.web.trieda.client.mvp.model.GrupoSalaDTO;
+import com.gapso.web.trieda.client.mvp.model.HorarioDisponivelCenarioDTO;
 import com.gapso.web.trieda.client.mvp.model.SalaDTO;
 import com.gapso.web.trieda.client.mvp.model.TipoSalaDTO;
 import com.gapso.web.trieda.client.mvp.model.UnidadeDTO;
@@ -37,6 +39,32 @@ public class SalasServiceImpl extends RemoteServiceServlet implements SalasServi
 	public SalaDTO getSala(Long id) {
 		if(id == null) return null;
 		return ConvertBeans.toSalaDTO(Sala.find(id));
+	}
+	
+	@Override
+	public List<HorarioDisponivelCenarioDTO> getHorariosDisponiveis(SalaDTO salaDTO) {
+		List<HorarioDisponivelCenario> list = new ArrayList<HorarioDisponivelCenario>(Sala.find(salaDTO.getId()).getHorarios());
+		List<HorarioDisponivelCenarioDTO> listDTO = ConvertBeans.toHorarioDisponivelCenarioDTO(list);
+		
+		return listDTO;
+	}
+	
+	@Override
+	public void saveHorariosDisponiveis(SalaDTO salaDTO, List<HorarioDisponivelCenarioDTO> listDTO) {
+		List<HorarioDisponivelCenario> listSelecionados = ConvertBeans.toHorarioDisponivelCenario(listDTO);
+		Sala sala = Sala.find(salaDTO.getId());
+		List<HorarioDisponivelCenario> adicionarList = new ArrayList<HorarioDisponivelCenario> (listSelecionados);
+		adicionarList.removeAll(sala.getHorarios());
+		List<HorarioDisponivelCenario> removerList = new ArrayList<HorarioDisponivelCenario> (sala.getHorarios());
+		removerList.removeAll(listSelecionados);
+		for(HorarioDisponivelCenario o : removerList) {
+			o.getSalas().remove(sala);
+			o.merge();
+		}
+		for(HorarioDisponivelCenario o : adicionarList) {
+			o.getSalas().add(sala);
+			o.merge();
+		}
 	}
 	
 	@Override

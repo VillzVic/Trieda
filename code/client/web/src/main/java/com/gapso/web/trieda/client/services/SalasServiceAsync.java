@@ -7,6 +7,7 @@ import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.gapso.web.trieda.client.mvp.model.GrupoSalaDTO;
+import com.gapso.web.trieda.client.mvp.model.HorarioDisponivelCenarioDTO;
 import com.gapso.web.trieda.client.mvp.model.SalaDTO;
 import com.gapso.web.trieda.client.mvp.model.TipoSalaDTO;
 import com.gapso.web.trieda.client.mvp.model.UnidadeDTO;
@@ -27,5 +28,7 @@ public interface SalasServiceAsync {
 	void getSalasEAndareMap(Long unidadeId, AsyncCallback<Map<String, List<SalaDTO>>> callback);
 	void getGruposDeSalas(Long unidadeId, AsyncCallback<List<GrupoSalaDTO>> callback);
 	void getBuscaList(UnidadeDTO unidadeDTO, AsyncCallback<ListLoadResult<SalaDTO>> callback);
+	void getHorariosDisponiveis(SalaDTO salaDTO, AsyncCallback<List<HorarioDisponivelCenarioDTO>> callback);
+	void saveHorariosDisponiveis(SalaDTO salaDTO, List<HorarioDisponivelCenarioDTO> listDTO, AsyncCallback<Void> callback);
 	
 }

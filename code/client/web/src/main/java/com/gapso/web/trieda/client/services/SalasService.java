@@ -7,6 +7,7 @@ import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.gapso.web.trieda.client.mvp.model.GrupoSalaDTO;
+import com.gapso.web.trieda.client.mvp.model.HorarioDisponivelCenarioDTO;
 import com.gapso.web.trieda.client.mvp.model.SalaDTO;
 import com.gapso.web.trieda.client.mvp.model.TipoSalaDTO;
 import com.gapso.web.trieda.client.mvp.model.UnidadeDTO;
@@ -32,5 +33,7 @@ public interface SalasService extends RemoteService {
 	Map<String, List<SalaDTO>> getSalasEAndareMap(Long unidadeId);
 	List<GrupoSalaDTO> getGruposDeSalas(Long unidadeId);
 	ListLoadResult<SalaDTO> getBuscaList(UnidadeDTO unidadeDTO);
+	List<HorarioDisponivelCenarioDTO> getHorariosDisponiveis(SalaDTO salaDTO);
+	void saveHorariosDisponiveis(SalaDTO salaDTO, List<HorarioDisponivelCenarioDTO> listDTO);
 	
 }
