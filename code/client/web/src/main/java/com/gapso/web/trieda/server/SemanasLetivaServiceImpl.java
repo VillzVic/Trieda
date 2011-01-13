@@ -213,6 +213,7 @@ public class SemanasLetivaServiceImpl extends RemoteServiceServlet implements Se
 				o1.getProfessores().addAll(professores);
 				o1.merge();
 			}
+			o1.persist();
 		}
 	}
 	
