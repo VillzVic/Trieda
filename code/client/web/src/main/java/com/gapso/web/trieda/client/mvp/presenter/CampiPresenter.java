@@ -15,7 +15,9 @@ import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.gapso.web.trieda.client.mvp.model.CampusDTO;
 import com.gapso.web.trieda.client.mvp.model.CenarioDTO;
 import com.gapso.web.trieda.client.mvp.model.DeslocamentoUnidadeDTO;
+import com.gapso.web.trieda.client.mvp.model.HorarioDisponivelCenarioDTO;
 import com.gapso.web.trieda.client.mvp.view.CampusFormView;
+import com.gapso.web.trieda.client.mvp.view.HorarioDisponivelCampusFormView;
 import com.gapso.web.trieda.client.mvp.view.UnidadesDeslocamentoView;
 import com.gapso.web.trieda.client.services.CampiServiceAsync;
 import com.gapso.web.trieda.client.services.Services;
@@ -36,6 +38,7 @@ public class CampiPresenter implements Presenter {
 		Button getImportExcelButton();
 		Button getExportExcelButton();
 		Button getUnidadeDeslocamentosButton();
+		Button getDisponibilidadeButton();
 		TextField<String> getCodigoBuscaTextField();
 		TextField<String> getNomeBuscaTextField();
 		EstadoComboBox getEstadoBuscaComboBox();
@@ -131,6 +134,24 @@ public class CampiPresenter implements Presenter {
 				});
 				
 
+			}
+		});
+		display.getDisponibilidadeButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
+			@Override
+			public void componentSelected(ButtonEvent ce) {
+				final CampusDTO campusDTO = display.getGrid().getGrid().getSelectionModel().getSelectedItem();
+				Services.campi().getHorariosDisponiveis(campusDTO, new AsyncCallback<PagingLoadResult<HorarioDisponivelCenarioDTO>>() {
+					@Override
+					public void onFailure(Throwable caught) {
+						MessageBox.alert("ERRO!", "Deu falha na conexão", null);
+					}
+					@Override
+					public void onSuccess(PagingLoadResult<HorarioDisponivelCenarioDTO> result) {
+						Presenter presenter = new HorarioDisponivelCampusFormPresenter(cenario, new HorarioDisponivelCampusFormView(campusDTO, result.getData()));
+						presenter.go(null);
+					}
+				});
+				
 			}
 		});
 		display.getResetBuscaButton().addSelectionListener(new SelectionListener<ButtonEvent>(){

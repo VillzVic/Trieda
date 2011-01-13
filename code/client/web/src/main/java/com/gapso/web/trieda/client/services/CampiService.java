@@ -9,6 +9,7 @@ import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.gapso.web.trieda.client.mvp.model.CampusDTO;
 import com.gapso.web.trieda.client.mvp.model.CenarioDTO;
 import com.gapso.web.trieda.client.mvp.model.DeslocamentoCampusDTO;
+import com.gapso.web.trieda.client.mvp.model.HorarioDisponivelCenarioDTO;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
@@ -28,5 +29,7 @@ public interface CampiService extends RemoteService {
 	CampusDTO getCampus(Long id);
 	List<DeslocamentoCampusDTO> getDeslocamento(String nome, String codigo, String estadoString, String municipio, String bairro);
 	void saveDeslocamento(List<DeslocamentoCampusDTO> list);
+	PagingLoadResult<HorarioDisponivelCenarioDTO> getHorariosDisponiveis(CampusDTO campusDTO);
+	void saveHorariosDisponiveis(CampusDTO campusDTO, List<HorarioDisponivelCenarioDTO> listDTO);
 	
 }

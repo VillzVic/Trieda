@@ -16,11 +16,15 @@ import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.gapso.trieda.domain.Campus;
 import com.gapso.trieda.domain.Cenario;
+import com.gapso.trieda.domain.HorarioDisponivelCenario;
+import com.gapso.trieda.domain.Sala;
 import com.gapso.trieda.domain.Turno;
+import com.gapso.trieda.domain.Unidade;
 import com.gapso.trieda.misc.Estados;
 import com.gapso.web.trieda.client.mvp.model.CampusDTO;
 import com.gapso.web.trieda.client.mvp.model.CenarioDTO;
 import com.gapso.web.trieda.client.mvp.model.DeslocamentoCampusDTO;
+import com.gapso.web.trieda.client.mvp.model.HorarioDisponivelCenarioDTO;
 import com.gapso.web.trieda.client.services.CampiService;
 import com.gapso.web.trieda.server.util.ConvertBeans;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
@@ -37,6 +41,43 @@ public class CampiServiceImpl extends RemoteServiceServlet implements CampiServi
 	public CampusDTO getCampus(Long id) {
 		if(id == null) return null;
 		return ConvertBeans.toCampusDTO(Campus.find(id));
+	}
+	
+	@Override
+	public PagingLoadResult<HorarioDisponivelCenarioDTO> getHorariosDisponiveis(CampusDTO campusDTO) {
+		List<HorarioDisponivelCenario> list = new ArrayList<HorarioDisponivelCenario>(Campus.find(campusDTO.getId()).getHorarios());
+		List<HorarioDisponivelCenarioDTO> listDTO = ConvertBeans.toHorarioDisponivelCenarioDTO(list);
+		
+		return new BasePagingLoadResult<HorarioDisponivelCenarioDTO>(listDTO);
+	}
+	
+	@Override
+	public void saveHorariosDisponiveis(CampusDTO campusDTO, List<HorarioDisponivelCenarioDTO> listDTO) {
+		List<HorarioDisponivelCenario> listSelecionados = ConvertBeans.toHorarioDisponivelCenario(listDTO);
+		Campus campus = Campus.find(campusDTO.getId());
+		List<Unidade> unidades = Unidade.findByCampus(campus); 
+		List<Sala> salas = new ArrayList<Sala>();
+		for(Unidade unidade : unidades) {
+			salas.addAll(Sala.findByUnidade(unidade)); 
+		}
+		
+		List<HorarioDisponivelCenario> removerList = new ArrayList<HorarioDisponivelCenario> (campus.getHorarios());
+		removerList.removeAll(listSelecionados);
+		for(HorarioDisponivelCenario o : removerList) {
+			o.getCampi().remove(campus);
+			o.getUnidades().removeAll(unidades);
+			o.getSalas().removeAll(salas);
+			o.merge();
+		}
+		
+		List<HorarioDisponivelCenario> adicionarList = new ArrayList<HorarioDisponivelCenario> (listSelecionados);
+		adicionarList.removeAll(campus.getHorarios());
+		for(HorarioDisponivelCenario o : adicionarList) {
+			o.getCampi().add(campus);
+			o.getUnidades().addAll(unidades);
+			o.getSalas().addAll(salas);
+			o.merge();
+		}
 	}
 	
 	@Override

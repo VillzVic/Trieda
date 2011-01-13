@@ -34,6 +34,7 @@ public class CampiView extends MyComposite implements CampiPresenter.Display {
 	private TextField<String> municipioBuscaTextField;
 	private TextField<String> bairroBuscaTextField;
 	private Button unidadesDeslocamentoBT;
+	private Button disponibilidadeBT;
 	private ContentPanel panel;
 	private GTabItem tabItem;
 	
@@ -61,6 +62,8 @@ public class CampiView extends MyComposite implements CampiPresenter.Display {
 		toolBar.add(new SeparatorToolItem());
 		unidadesDeslocamentoBT = toolBar.createButton("Deslocamento entre Unidades", Resources.DEFAULTS.deslocamento16());
 		toolBar.add(unidadesDeslocamentoBT);
+		disponibilidadeBT = toolBar.createButton("Disponibilidade do Professor", Resources.DEFAULTS.horarioAula16());
+		toolBar.add(disponibilidadeBT);
 		panel.setTopComponent(toolBar);
 	}
 	
@@ -180,6 +183,11 @@ public class CampiView extends MyComposite implements CampiPresenter.Display {
 	@Override
 	public Button getUnidadeDeslocamentosButton() {
 		return unidadesDeslocamentoBT;
+	}
+	
+	@Override
+	public Button getDisponibilidadeButton() {
+		return disponibilidadeBT;
 	}
 	
 }

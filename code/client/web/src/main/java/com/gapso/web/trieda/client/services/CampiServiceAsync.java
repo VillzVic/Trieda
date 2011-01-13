@@ -9,6 +9,7 @@ import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.gapso.web.trieda.client.mvp.model.CampusDTO;
 import com.gapso.web.trieda.client.mvp.model.CenarioDTO;
 import com.gapso.web.trieda.client.mvp.model.DeslocamentoCampusDTO;
+import com.gapso.web.trieda.client.mvp.model.HorarioDisponivelCenarioDTO;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public interface CampiServiceAsync {
@@ -23,5 +24,7 @@ public interface CampiServiceAsync {
 	void getCampus(Long id, AsyncCallback<CampusDTO> callback);
 	void getDeslocamento(String nome, String codigo, String estadoString, String municipio, String bairro, AsyncCallback<List<DeslocamentoCampusDTO>> callback);
 	void saveDeslocamento(List<DeslocamentoCampusDTO> list, AsyncCallback<Void> callback);
+	void getHorariosDisponiveis(CampusDTO campusDTO, AsyncCallback<PagingLoadResult<HorarioDisponivelCenarioDTO>> callback);
+	void saveHorariosDisponiveis(CampusDTO campusDTO, List<HorarioDisponivelCenarioDTO> listDTO, AsyncCallback<Void> callback);
 	
 }
