@@ -54,28 +54,37 @@ public class FixacoesServiceImpl extends RemoteServiceServlet implements Fixacoe
 	
 	@Override
 	public void save(FixacaoDTO fixacaoDTO, List<HorarioDisponivelCenarioDTO> hdcDTOList) {
-		Fixacao fixacao = Fixacao.find(fixacaoDTO.getId());
+		Fixacao.entityManager().clear();
+		Fixacao fixacao = ConvertBeans.toFixacao(fixacaoDTO);
 		List<HorarioDisponivelCenario> listSelecionados = ConvertBeans.toHorarioDisponivelCenario(hdcDTOList);
+		List<HorarioDisponivelCenario> adicionarList = new ArrayList<HorarioDisponivelCenario>(listSelecionados);
 		
-		List<HorarioDisponivelCenario> adicionarList = new ArrayList<HorarioDisponivelCenario> (listSelecionados);
-		adicionarList.removeAll(fixacao.getHorarios());
 		if(fixacao.getId() != null && fixacao.getId() > 0) {
 			fixacao.merge();
-			List<HorarioDisponivelCenario> removerList = new ArrayList<HorarioDisponivelCenario> (fixacao.getHorarios());
-			removerList.removeAll(listSelecionados);
-			for(HorarioDisponivelCenario o : removerList) {
-				o.getFixacoes().remove(fixacao);
-				o.merge();
-			}
 		} else {
 			fixacao.persist();
 		}
+		Long id = fixacao.getId();
+		Fixacao.entityManager().clear();
+		
+		fixacao = Fixacao.find(id);
+		
+		adicionarList.removeAll(fixacao.getHorarios());
 		for(HorarioDisponivelCenario o : adicionarList) {
-			o.getFixacoes().add(fixacao);
+			System.out.print("teste");
+			HorarioDisponivelCenario hdc = HorarioDisponivelCenario.findHorarioDisponivelCenario(o.getId());
+			hdc.getFixacoes().add(fixacao);
+			hdc.merge();
+		}
+		
+		List<HorarioDisponivelCenario> removerList = new ArrayList<HorarioDisponivelCenario>(fixacao.getHorarios());
+		removerList.removeAll(listSelecionados);
+		for(HorarioDisponivelCenario o : removerList) {
+			o.getFixacoes().remove(fixacao);
 			o.merge();
 		}
 	}
-	
+
 	@Override
 	public void remove(List<FixacaoDTO> fixacaoDTOList) {
 		for(FixacaoDTO fixacaoDTO : fixacaoDTOList) {
