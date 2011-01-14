@@ -15,10 +15,12 @@ import com.gapso.web.trieda.client.mvp.model.CenarioDTO;
 import com.gapso.web.trieda.client.mvp.view.OtimizarMessagesView;
 import com.gapso.web.trieda.client.services.OtimizarServiceAsync;
 import com.gapso.web.trieda.client.services.Services;
+import com.gapso.web.trieda.client.util.resources.Resources;
 import com.gapso.web.trieda.client.util.view.GTab;
 import com.gapso.web.trieda.client.util.view.GTabItem;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.Widget;
 import com.googlecode.future.FutureResult;
 import com.googlecode.future.FutureSynchronizer;
@@ -42,6 +44,7 @@ public class ParametrosPresenter implements Presenter {
 		display.getSubmitButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
 			@Override
 			public void componentSelected(ButtonEvent ce) {
+				desabilitaBotao();
 				MessageBox.confirm("Otimizar?", "Deseja otimizar o cenário?", new Listener<MessageBoxEvent>() {
 					@Override
 					public void handleEvent(MessageBoxEvent be) {
@@ -51,6 +54,7 @@ public class ParametrosPresenter implements Presenter {
 								@Override
 								public void onFailure(Throwable caught) {
 									MessageBox.alert("ERRO!", "Deu falha na conexão", null);
+									habilitarBotao();
 								}
 								@Override
 								public void onSuccess(final Long round) {
@@ -58,6 +62,8 @@ public class ParametrosPresenter implements Presenter {
 									checkSolver(round);	
 								}
 							});
+						} else {
+							habilitarBotao();
 						}
 					}
 				});
@@ -77,6 +83,7 @@ public class ParametrosPresenter implements Presenter {
 					@Override
 					public void onFailure(Throwable caught) {
 						MessageBox.alert("ERRO!", "Impossível de verificar, servidor fora do ar", null);
+						habilitarBotao();
 					}
 					@Override
 					public void onSuccess(Boolean result) {
@@ -85,6 +92,7 @@ public class ParametrosPresenter implements Presenter {
 						} else {
 							Info.display("OTIMIZADO", "Otimização finalizada!");
 							atualizaSaida(round);
+							habilitarBotao();
 						}
 					}
 				});
@@ -114,6 +122,15 @@ public class ParametrosPresenter implements Presenter {
 				}
 			}
 		});
+	}
+	
+	private void desabilitaBotao(){
+		display.getSubmitButton().setIcon(AbstractImagePrototype.create(Resources.DEFAULTS.ajax16()));
+		display.getSubmitButton().disable();
+	}
+	private void habilitarBotao() {
+		display.getSubmitButton().enable();
+		display.getSubmitButton().setIcon(AbstractImagePrototype.create(Resources.DEFAULTS.gerarGrade16()));
 	}
 	
 	@Override

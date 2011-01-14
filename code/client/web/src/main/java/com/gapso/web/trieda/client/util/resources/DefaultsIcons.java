@@ -19,7 +19,8 @@ public interface DefaultsIcons extends ClientBundle  {
 	@Source("server_warning_16.png") ImageResource serverWarning16();
 	@Source("warning_16.png") ImageResource warning16();
 	@Source("error_16.png") ImageResource error16();
-	@Source("ajax-loader.gif") ImageResource ajax24();
+	@Source("ajax_loader_24.gif") ImageResource ajax24();
+	@Source("ajax_loader_16.gif") ImageResource ajax16();
 	
 	@Source("document_16.png") ImageResource document16();
 	
