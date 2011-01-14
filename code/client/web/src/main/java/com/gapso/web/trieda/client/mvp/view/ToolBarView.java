@@ -4,6 +4,7 @@ import com.extjs.gxt.ui.client.Style.ButtonArrowAlign;
 import com.extjs.gxt.ui.client.Style.ButtonScale;
 import com.extjs.gxt.ui.client.Style.IconAlign;
 import com.extjs.gxt.ui.client.util.Margins;
+import com.extjs.gxt.ui.client.util.Padding;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
 import com.extjs.gxt.ui.client.widget.LayoutContainer;
 import com.extjs.gxt.ui.client.widget.TabItem;
@@ -11,6 +12,7 @@ import com.extjs.gxt.ui.client.widget.TabPanel;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.layout.FitLayout;
 import com.extjs.gxt.ui.client.widget.layout.HBoxLayout;
+import com.extjs.gxt.ui.client.widget.layout.HBoxLayout.HBoxLayoutAlign;
 import com.extjs.gxt.ui.client.widget.layout.HBoxLayoutData;
 import com.extjs.gxt.ui.client.widget.toolbar.SeparatorToolItem;
 import com.extjs.gxt.ui.client.widget.toolbar.ToolBar;
@@ -83,9 +85,11 @@ public class ToolBarView extends MyComposite implements ToolBarPresenter.Display
 		
 		ContentPanel cenarioPanel = new ContentPanel();
 		cenarioPanel.setHeading("Cenário");
+		cenarioPanel.setWidth(128);
 		
 		ContentPanel planejamentoPanel = new ContentPanel();
 		planejamentoPanel.setHeading("Planejamento");
+		planejamentoPanel.setWidth(250);
 		
 		ContentPanel masterDataPanel = new ContentPanel();
 		masterDataPanel.setHeaderVisible(false);
@@ -95,10 +99,10 @@ public class ToolBarView extends MyComposite implements ToolBarPresenter.Display
 		masterDataPanel.setBodyBorder(false);
 		
 		
-		container.add(cenarioPanel, new HBoxLayoutData(new Margins(0)));
-		container.add(planejamentoPanel, new HBoxLayoutData(new Margins(0)));
 		HBoxLayoutData flex = new HBoxLayoutData(new Margins(0));
 		flex.setFlex(1);  
+		container.add(cenarioPanel, new HBoxLayoutData(new Margins(0)));
+		container.add(planejamentoPanel, new HBoxLayoutData(new Margins(0)));
 		container.add(masterDataPanel, flex);
 		
 		TabItem campiTabItem = new TabItem("Campi");
@@ -121,7 +125,6 @@ public class ToolBarView extends MyComposite implements ToolBarPresenter.Display
 		professoresToolBar = new ToolBar();
 
 		campiTabItem.add(campiToolBar);
-		
 		unidadesTabItem.add(unidadesToolBar);
 		salasTabItem.add(salasToolBar);
 		cursosTabItem.add(cursosToolBar);
@@ -137,7 +140,9 @@ public class ToolBarView extends MyComposite implements ToolBarPresenter.Display
 		masterDataTab.addStyleName("tabPanelMasterData");
 		masterDataTab.setHeight(height);
 		cenarioToolBar.setHeight(height - 26);
+//		cenarioToolBar.setWidth(200);
 		planejamentoToolBar.setHeight(height - 26);
+//		planejamentoToolBar.setWidth(200);
 
 		TabItem masterDataItem = new TabItem("Master Data");
 		masterDataItem.disable();
