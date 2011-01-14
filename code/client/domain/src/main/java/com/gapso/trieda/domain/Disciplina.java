@@ -97,7 +97,7 @@ public class Disciplina implements Serializable {
     @Max(999L)
     private Integer maxAlunosPratico;
 
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH}, mappedBy = "disciplinas")
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, mappedBy = "disciplinas")
     private Set<HorarioDisponivelCenario> horarios = new HashSet<HorarioDisponivelCenario>();
 
     @NotNull
@@ -111,7 +111,7 @@ public class Disciplina implements Serializable {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "cursou")
     private Set<Equivalencia> equivalencias = new HashSet<Equivalencia>();
     
-    @ManyToMany(cascade = CascadeType.ALL, mappedBy = "elimina")
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, mappedBy = "elimina")
     private Set<Equivalencia> eliminadaPor = new HashSet<Equivalencia>();
 
     @NotNull
@@ -203,13 +203,35 @@ public class Disciplina implements Serializable {
     public void remove() {
         if (this.entityManager == null) this.entityManager = entityManager();
         if (this.entityManager.contains(this)) {
+        	this.removeHorariosDisponivelCenario();
+        	this.removeEliminadasPor();
             this.entityManager.remove(this);
         } else {
             Disciplina attached = this.entityManager.find(this.getClass(), this.id);
+            attached.removeHorariosDisponivelCenario();
+            attached.removeEliminadasPor();
             this.entityManager.remove(attached);
         }
     }
 
+    @Transactional
+    public void removeHorariosDisponivelCenario() {
+    	Set<HorarioDisponivelCenario> horarios = this.getHorarios();
+    	for(HorarioDisponivelCenario horario : horarios) {
+    		horario.getDisciplinas().remove(this);
+    		horario.merge();
+    	}
+    }
+    
+    @Transactional
+    public void removeEliminadasPor() {
+    	Set<Equivalencia> eliminadasPor = this.getEliminadaPor();
+    	for(Equivalencia equivalencia : eliminadasPor) {
+    		equivalencia.getElimina().remove(this);
+    		equivalencia.merge();
+    	}
+    }
+	
 	@Transactional
     public void flush() {
         if (this.entityManager == null) this.entityManager = entityManager();

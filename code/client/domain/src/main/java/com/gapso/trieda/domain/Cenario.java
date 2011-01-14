@@ -194,13 +194,24 @@ public class Cenario implements Serializable {
     public void remove() {
         if (this.entityManager == null) this.entityManager = entityManager();
         if (this.entityManager.contains(this)) {
+        	removeDivisoesCredito();
             this.entityManager.remove(this);
         } else {
             Cenario attached = this.entityManager.find(this.getClass(), this.id);
+            attached.removeDivisoesCredito();
             this.entityManager.remove(attached);
         }
     }
 
+    @Transactional
+    public void removeDivisoesCredito() {
+    	Set<DivisaoCredito> divisoesCredito = this.getDivisoesCredito();
+    	for(DivisaoCredito divisaoCredito : divisoesCredito) {
+    		divisaoCredito.getCenario().remove(this);
+    		divisaoCredito.merge();
+    	}
+    }
+	
 	@Transactional
     public void flush() {
         if (this.entityManager == null) this.entityManager = entityManager();

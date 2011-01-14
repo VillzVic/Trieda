@@ -106,13 +106,24 @@ public class Fixacao implements Serializable {
     public void remove() {
         if (this.entityManager == null) this.entityManager = entityManager();
         if (this.entityManager.contains(this)) {
+        	this.removeHorariosDisponivelCenario();
             this.entityManager.remove(this);
         } else {
             Fixacao attached = this.entityManager.find(this.getClass(), this.id);
+            attached.removeHorariosDisponivelCenario();
             this.entityManager.remove(attached);
         }
     }
 
+    @Transactional
+    public void removeHorariosDisponivelCenario() {
+    	Set<HorarioDisponivelCenario> horarios = this.getHorarios();
+    	for(HorarioDisponivelCenario horario : horarios) {
+    		horario.getFixacoes().remove(this);
+    		horario.merge();
+    	}
+    }
+    
 	@Transactional
 	public void detach() {
 		if (this.entityManager == null) this.entityManager = entityManager();

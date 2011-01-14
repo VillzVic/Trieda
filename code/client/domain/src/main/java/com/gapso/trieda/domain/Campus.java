@@ -75,10 +75,10 @@ public class Campus implements Serializable {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "origem")
     private Set<DeslocamentoCampus> deslocamentos = new HashSet<DeslocamentoCampus>();
 
-    @ManyToMany(mappedBy = "campi")
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, mappedBy = "campi")
     private Set<Professor> professores = new HashSet<Professor>();
 
-    @ManyToMany(cascade = CascadeType.ALL, mappedBy = "campi")
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, mappedBy = "campi")
     private Set<HorarioDisponivelCenario> horarios = new HashSet<HorarioDisponivelCenario>();
 
     @NotNull
@@ -217,13 +217,35 @@ public class Campus implements Serializable {
     public void remove() {
         if (this.entityManager == null) this.entityManager = entityManager();
         if (this.entityManager.contains(this)) {
+        	removeProfessores();
+        	removeHorariosDisponivelCenario();
             this.entityManager.remove(this);
         } else {
             Campus attached = this.entityManager.find(this.getClass(), this.id);
+            attached.removeProfessores();
+            attached.removeHorariosDisponivelCenario();
             this.entityManager.remove(attached);
         }
     }
 
+	@Transactional
+    public void removeProfessores() {
+    	Set<Professor> professores = this.getProfessores();
+    	for(Professor professor : professores) {
+    		professor.getCampi().remove(this);
+    		professor.merge();
+    	}
+    }
+	
+	@Transactional
+    public void removeHorariosDisponivelCenario() {
+    	Set<HorarioDisponivelCenario> horarios = this.getHorarios();
+    	for(HorarioDisponivelCenario horario : horarios) {
+    		horario.getCampi().remove(this);
+    		horario.merge();
+    	}
+    }
+	
 	@Transactional
     public void flush() {
         if (this.entityManager == null) this.entityManager = entityManager();

@@ -5,7 +5,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
@@ -51,10 +50,10 @@ public class GrupoSala implements Serializable {
     @Size(min = 1, max = 50)
     private String nome;
 
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany
     private Set<Sala> salas = new HashSet<Sala>();
 
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany
     private Set<CurriculoDisciplina> curriculoDisciplinas = new HashSet<CurriculoDisciplina>();
 
 	private static final long serialVersionUID = -3068409934520158819L;

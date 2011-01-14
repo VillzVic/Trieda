@@ -71,13 +71,13 @@ public class Sala implements Serializable {
     @Max(9999L)
     private Integer capacidade;
 
-    @ManyToMany(cascade = CascadeType.ALL, mappedBy = "salas")
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, mappedBy = "salas")
     private Set<HorarioDisponivelCenario> horarios = new HashSet<HorarioDisponivelCenario>();
 
-    @ManyToMany(cascade = CascadeType.ALL, mappedBy = "salas")
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, mappedBy = "salas")
     private Set<CurriculoDisciplina> curriculoDisciplinas = new HashSet<CurriculoDisciplina>();
 
-    @ManyToMany(cascade = CascadeType.ALL, mappedBy = "salas")
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, mappedBy = "salas")
     private Set<GrupoSala> gruposSala = new HashSet<GrupoSala>();
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy="sala")
@@ -152,13 +152,46 @@ public class Sala implements Serializable {
     public void remove() {
         if (this.entityManager == null) this.entityManager = entityManager();
         if (this.entityManager.contains(this)) {
+        	this.removeHorariosDisponivelCenario();
+        	this.removeCurriculoDisciplinas();
+        	this.removeGruposSala();
             this.entityManager.remove(this);
         } else {
             Sala attached = this.entityManager.find(this.getClass(), this.id);
+            attached.removeHorariosDisponivelCenario();
+            attached.removeCurriculoDisciplinas();
+            attached.removeGruposSala();
             this.entityManager.remove(attached);
         }
     }
 
+    @Transactional
+    public void removeHorariosDisponivelCenario() {
+    	Set<HorarioDisponivelCenario> horarios = this.getHorarios();
+    	for(HorarioDisponivelCenario horario : horarios) {
+    		horario.getSalas().remove(this);
+    		horario.merge();
+    	}
+    }
+	
+    @Transactional
+    public void removeCurriculoDisciplinas() {
+    	Set<CurriculoDisciplina> curriculoDisciplinas = this.getCurriculoDisciplinas();
+    	for(CurriculoDisciplina curriculoDisciplina : curriculoDisciplinas) {
+    		curriculoDisciplina.getSalas().remove(this);
+    		curriculoDisciplina.merge();
+    	}
+    }
+    
+    @Transactional
+    public void removeGruposSala() {
+    	Set<GrupoSala> gruposSala = this.getGruposSala();
+    	for(GrupoSala grupoSala : gruposSala) {
+    		grupoSala.getSalas().remove(this);
+    		grupoSala.merge();
+    	}
+    }
+    
 	@Transactional
     public void flush() {
         if (this.entityManager == null) this.entityManager = entityManager();

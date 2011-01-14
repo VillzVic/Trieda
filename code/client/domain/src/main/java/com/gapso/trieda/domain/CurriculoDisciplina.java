@@ -157,13 +157,24 @@ public class CurriculoDisciplina implements Serializable {
     public void remove() {
         if (this.entityManager == null) this.entityManager = entityManager();
         if (this.entityManager.contains(this)) {
+        	this.removeGruposSala();
             this.entityManager.remove(this);
         } else {
             CurriculoDisciplina attached = this.entityManager.find(this.getClass(), this.id);
+            attached.removeGruposSala();
             this.entityManager.remove(attached);
         }
     }
 
+    @Transactional
+    public void removeGruposSala() {
+    	Set<GrupoSala> gruposSala = this.getGruposSala();
+    	for(GrupoSala grupoSala : gruposSala) {
+    		grupoSala.getCurriculoDisciplinas().remove(this);
+    		grupoSala.merge();
+    	}
+    }
+	
 	@Transactional
     public void flush() {
         if (this.entityManager == null) this.entityManager = entityManager();

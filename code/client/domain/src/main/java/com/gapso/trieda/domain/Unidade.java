@@ -55,7 +55,7 @@ public class Unidade implements Serializable {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "origem")
     private Set<DeslocamentoUnidade> deslocamentos = new HashSet<DeslocamentoUnidade>();
 
-    @ManyToMany(cascade = CascadeType.ALL, mappedBy = "unidades")
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, mappedBy = "unidades")
     private Set<HorarioDisponivelCenario> horarios = new HashSet<HorarioDisponivelCenario>();
 
     @OneToMany(mappedBy="unidade")
@@ -109,13 +109,24 @@ public class Unidade implements Serializable {
     public void remove() {
         if (this.entityManager == null) this.entityManager = entityManager();
         if (this.entityManager.contains(this)) {
+        	this.removeHorariosDisponivelCenario();
             this.entityManager.remove(this);
         } else {
             Unidade attached = this.entityManager.find(this.getClass(), this.id);
+            attached.removeHorariosDisponivelCenario();
             this.entityManager.remove(attached);
         }
     }
 
+    @Transactional
+    public void removeHorariosDisponivelCenario() {
+    	Set<HorarioDisponivelCenario> horarios = this.getHorarios();
+    	for(HorarioDisponivelCenario horario : horarios) {
+    		horario.getUnidades().remove(this);
+    		horario.merge();
+    	}
+    }
+    
     @Transactional
     public void flush() {
         if (this.entityManager == null) this.entityManager = entityManager();

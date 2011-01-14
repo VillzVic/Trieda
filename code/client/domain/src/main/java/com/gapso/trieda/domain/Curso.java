@@ -80,7 +80,7 @@ public class Curso implements Serializable {
     @Column(name = "CUR_ADM_MAIS_DE_UMA_DISC")
     private Boolean admMaisDeUmDisciplina;
 
-    @ManyToMany(cascade = CascadeType.ALL, mappedBy = "cursos")
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, mappedBy = "cursos")
     private Set<AreaTitulacao> areasTitulacao = new HashSet<AreaTitulacao>();
 
     @OneToMany(mappedBy="curso")
@@ -227,13 +227,24 @@ public class Curso implements Serializable {
     public void remove() {
         if (this.entityManager == null) this.entityManager = entityManager();
         if (this.entityManager.contains(this)) {
+        	this.removeAreasTitulacao();
             this.entityManager.remove(this);
         } else {
             Curso attached = this.entityManager.find(this.getClass(), this.id);
+            attached.removeAreasTitulacao();
             this.entityManager.remove(attached);
         }
     }
 
+    @Transactional
+    public void removeAreasTitulacao() {
+    	Set<AreaTitulacao> areas = this.getAreasTitulacao();
+    	for(AreaTitulacao area : areas) {
+    		area.getCursos().remove(this);
+    		area.merge();
+    	}
+    }
+	
 	@Transactional
     public void flush() {
         if (this.entityManager == null) this.entityManager = entityManager();

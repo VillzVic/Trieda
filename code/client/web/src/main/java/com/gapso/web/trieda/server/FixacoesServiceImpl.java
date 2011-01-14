@@ -88,7 +88,7 @@ public class FixacoesServiceImpl extends RemoteServiceServlet implements Fixacoe
 	@Override
 	public void remove(List<FixacaoDTO> fixacaoDTOList) {
 		for(FixacaoDTO fixacaoDTO : fixacaoDTOList) {
-			ConvertBeans.toFixacao(fixacaoDTO).remove();
+			Fixacao.find(fixacaoDTO.getId()).remove();
 		}
 	}
 	

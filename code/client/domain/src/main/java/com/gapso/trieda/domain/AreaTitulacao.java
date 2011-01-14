@@ -42,7 +42,7 @@ public class AreaTitulacao implements Serializable {
     @Size(min = 3, max = 255)
     private String descricao;
 
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany
     private Set<Curso> cursos = new java.util.HashSet<Curso>();
 
 	private static final long serialVersionUID = 8739246006672184100L;

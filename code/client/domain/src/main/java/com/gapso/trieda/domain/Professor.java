@@ -85,7 +85,7 @@ public class Professor implements Serializable {
     @Digits(integer = 4, fraction = 2)
     private Double valorCredito;
 
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany
     private Set<Campus> campi = new HashSet<Campus>();
 
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, mappedBy="professores")
@@ -275,13 +275,24 @@ public class Professor implements Serializable {
     public void remove() {
         if (this.entityManager == null) this.entityManager = entityManager();
         if (this.entityManager.contains(this)) {
+        	this.removeHorariosDisponivelCenario();
             this.entityManager.remove(this);
         } else {
             Professor attached = this.entityManager.find(this.getClass(), this.id);
+            attached.removeHorariosDisponivelCenario();
             this.entityManager.remove(attached);
         }
     }
 
+    @Transactional
+    public void removeHorariosDisponivelCenario() {
+    	Set<HorarioDisponivelCenario> horarios = this.getHorarios();
+    	for(HorarioDisponivelCenario horario : horarios) {
+    		horario.getProfessores().remove(this);
+    		horario.merge();
+    	}
+    }
+	
 	@Transactional
     public void flush() {
         if (this.entityManager == null) this.entityManager = entityManager();
