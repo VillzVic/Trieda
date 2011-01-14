@@ -29,7 +29,7 @@ public class TurnoFormView extends MyComposite implements TurnoFormPresenter.Dis
 	
 	private void initUI() {
 		String title = (turnoDTO.getId() == null)? "Inserção de Turno" : "Edição de Turno";
-		simpleModal = new SimpleModal(title, Resources.DEFAULTS.turnos16());
+		simpleModal = new SimpleModal(title, Resources.DEFAULTS.turno16());
 		simpleModal.setHeight(138);
 		createForm();
 		simpleModal.setContent(formPanel);

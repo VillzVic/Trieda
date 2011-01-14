@@ -45,7 +45,7 @@ public class GruposSalasView extends MyComposite implements GruposSalasPresenter
 	}
 	
 	private void createTabItem() {
-		tabItem = new GTabItem("Grupos de Salas", Resources.DEFAULTS.sala16());
+		tabItem = new GTabItem("Grupos de Salas", Resources.DEFAULTS.grupoSala16());
 		tabItem.setContent(panel);
 	}
 	

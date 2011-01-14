@@ -51,7 +51,7 @@ public class OfertasView extends MyComposite implements OfertasPresenter.Display
 	}
 	
 	private void createTabItem() {
-		tabItem = new GTabItem("Oferta de Cursos em Campi", Resources.DEFAULTS.unidades16());
+		tabItem = new GTabItem("Oferta de Cursos em Campi", Resources.DEFAULTS.ofertaCurso16());
 		tabItem.setContent(panel);
 	}
 	

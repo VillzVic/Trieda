@@ -48,7 +48,7 @@ public class EquivalenciaFormView extends MyComposite implements EquivalenciaFor
 	
 	private void initUI() {
 		String title = "Inserção de Turno";
-		simpleModal = new SimpleModal(title, Resources.DEFAULTS.turnos16());
+		simpleModal = new SimpleModal(title, Resources.DEFAULTS.equivalencia16());
 		simpleModal.setHeight(500);
 		simpleModal.setWidth(600);
 		createForm();

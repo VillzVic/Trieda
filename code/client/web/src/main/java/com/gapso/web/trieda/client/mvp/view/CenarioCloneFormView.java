@@ -35,7 +35,7 @@ public class CenarioCloneFormView extends MyComposite implements CenarioCloneFor
 	
 	private void initUI() {
 		String title = "Clonar Cenário";
-		simpleModal = new SimpleModal(title, Resources.DEFAULTS.clone16());
+		simpleModal = new SimpleModal(title, Resources.DEFAULTS.cenarioClonar16());
 		simpleModal.setHeight(220);
 		createForm();
 		simpleModal.setContent(formPanel);

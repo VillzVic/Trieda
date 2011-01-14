@@ -55,7 +55,7 @@ public class SalasView extends MyComposite implements SalasPresenter.Display {
 		toolBar.add(disciplinasAssociadasBT);
 		gruposDeSalasBT = toolBar.createButton("Grupos de Salas", Resources.DEFAULTS.sala16());
 		toolBar.add(gruposDeSalasBT);
-		disponibilidadeBT = toolBar.createButton("Disponibilidade do Professor", Resources.DEFAULTS.horarioAula16());
+		disponibilidadeBT = toolBar.createButton("Disponibilidade da Sala", Resources.DEFAULTS.disponibilidade16());
 		toolBar.add(disponibilidadeBT);
 		panel.setTopComponent(toolBar);
 	}

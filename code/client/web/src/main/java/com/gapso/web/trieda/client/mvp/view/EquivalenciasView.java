@@ -47,7 +47,7 @@ public class EquivalenciasView extends MyComposite implements EquivalenciasPrese
 	}
 
 	private void createTabItem() {
-		tabItem = new GTabItem("Equivalências", Resources.DEFAULTS.outros16());
+		tabItem = new GTabItem("Equivalências", Resources.DEFAULTS.equivalencia16());
 		tabItem.setContent(panel);
 	}
 	

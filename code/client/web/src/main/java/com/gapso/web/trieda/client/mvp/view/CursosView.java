@@ -49,7 +49,7 @@ public class CursosView extends MyComposite implements CursosPresenter.Display {
 	}
 	
 	private void createTabItem() {
-		tabItem = new GTabItem("Cursos", Resources.DEFAULTS.cursos16());
+		tabItem = new GTabItem("Cursos", Resources.DEFAULTS.curso16());
 		tabItem.setContent(panel);
 	}
 	

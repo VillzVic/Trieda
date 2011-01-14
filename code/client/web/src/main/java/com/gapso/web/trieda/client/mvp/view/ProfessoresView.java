@@ -53,14 +53,14 @@ public class ProfessoresView extends MyComposite implements ProfessoresPresenter
 	}
 	
 	private void createTabItem() {
-		tabItem = new GTabItem("Professores", Resources.DEFAULTS.professores16());
+		tabItem = new GTabItem("Professores", Resources.DEFAULTS.professor16());
 		tabItem.setContent(panel);
 	}
 	
 	private void createToolBar() {
 		toolBar = new SimpleToolBar();
 		toolBar.add(new SeparatorToolItem());
-		disponibilidadeBT = toolBar.createButton("Disponibilidade do Professor", Resources.DEFAULTS.horarioAula16());
+		disponibilidadeBT = toolBar.createButton("Disponibilidade do Professor", Resources.DEFAULTS.disponibilidade16());
 		toolBar.add(disponibilidadeBT);
 		panel.setTopComponent(toolBar);
 	}

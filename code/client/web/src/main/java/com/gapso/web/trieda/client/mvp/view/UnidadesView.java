@@ -52,13 +52,13 @@ public class UnidadesView extends MyComposite implements UnidadesPresenter.Displ
 	}
 	
 	private void createTabItem() {
-		tabItem = new GTabItem("Unidades", Resources.DEFAULTS.unidades16());
+		tabItem = new GTabItem("Unidades", Resources.DEFAULTS.unidade16());
 		toolBar.add(new SeparatorToolItem());
 		deslocamentoUnidadesBT = toolBar.createButton("Deslocamento entre Unidades", Resources.DEFAULTS.deslocamento16());
 		toolBar.add(deslocamentoUnidadesBT);
 		salasBT = toolBar.createButton("Salas", Resources.DEFAULTS.sala16());
 		toolBar.add(salasBT);
-		disponibilidadeBT = toolBar.createButton("Disponibilidade do Professor", Resources.DEFAULTS.horarioAula16());
+		disponibilidadeBT = toolBar.createButton("Disponibilidade da Unidade", Resources.DEFAULTS.disponibilidade16());
 		toolBar.add(disponibilidadeBT);
 		tabItem.setContent(panel);
 	}

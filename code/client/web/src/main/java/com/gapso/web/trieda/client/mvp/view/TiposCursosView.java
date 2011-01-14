@@ -46,7 +46,7 @@ public class TiposCursosView extends MyComposite implements TiposCursosPresenter
 	}
 
 	private void createTabItem() {
-		tabItem = new GTabItem("Tipos de Curso", Resources.DEFAULTS.curso16());
+		tabItem = new GTabItem("Tipos de Curso", Resources.DEFAULTS.tipoCurso16());
 		tabItem.setContent(panel);
 	}
 	

@@ -47,7 +47,7 @@ public class ProfessoresDisciplinaView extends MyComposite implements Professore
 	}
 	
 	private void createTabItem() {
-		tabItem = new GTabItem("Habilitação dos Professores", Resources.DEFAULTS.professor16());
+		tabItem = new GTabItem("Habilitação dos Professores", Resources.DEFAULTS.habilitacaoProfessor16());
 		tabItem.setContent(panel);
 	}
 	

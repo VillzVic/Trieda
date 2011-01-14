@@ -50,11 +50,11 @@ public class SimpleFilter extends FormPanel {
 		llc.setPack(BoxLayoutPack.CENTER);
 		lc.setLayout(llc);
 		HBoxLayoutData hbld = new HBoxLayoutData(new Margins(0, 5, 0, 0));
-		submitButton = new Button("Filtrar", AbstractImagePrototype.create(Resources.SIMPLE_CRUD.filter16()));
+		submitButton = new Button("Filtrar", AbstractImagePrototype.create(Resources.DEFAULTS.filter16()));
 		lc.add(submitButton, hbld);
 		setDefaultButton(getSubmitButton());
 		if(!hiddenResetButton) {
-			resetButton = new Button("Limpar",  AbstractImagePrototype.create(Resources.SIMPLE_CRUD.filterClean16()));
+			resetButton = new Button("Limpar",  AbstractImagePrototype.create(Resources.DEFAULTS.filterClean16()));
 			lc.add(resetButton, hbld);
 		}
 		add(lc);

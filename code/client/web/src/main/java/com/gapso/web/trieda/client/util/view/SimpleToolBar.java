@@ -37,17 +37,17 @@ public class SimpleToolBar extends ToolBar {
 
 	private void initUI() {
 		if(showNewButton) {
-			newButton = createButton("Adicionar", Resources.SIMPLE_CRUD.add16());
+			newButton = createButton("Adicionar", Resources.DEFAULTS.add16());
 			add(newButton);
 		}
 		
 		if(showEditButton) {
-			editButton = createButton("Editar", Resources.SIMPLE_CRUD.edit16());
+			editButton = createButton("Editar", Resources.DEFAULTS.edit16());
 			add(editButton);
 		}
 		
 		if(showRemoveButton) {
-			removeButton = createButton("Remover", Resources.SIMPLE_CRUD.del16());
+			removeButton = createButton("Remover", Resources.DEFAULTS.del16());
 			add(removeButton);
 		}
 		
@@ -56,12 +56,12 @@ public class SimpleToolBar extends ToolBar {
 		}
 		
 		if(showImportExcelButton) {
-			importExcelButton = createButton("Exportar para Excel", Resources.SIMPLE_CRUD.excelExport16());
+			importExcelButton = createButton("Exportar para Excel", Resources.DEFAULTS.exportar16());
 			add(importExcelButton);
 		}
 		
 		if(showExportExcelButton) {
-			exportExcelButton = createButton("Importar de Excel", Resources.SIMPLE_CRUD.excelImport16());
+			exportExcelButton = createButton("Importar de Excel", Resources.DEFAULTS.importar16());
 			add(exportExcelButton);
 		}
 

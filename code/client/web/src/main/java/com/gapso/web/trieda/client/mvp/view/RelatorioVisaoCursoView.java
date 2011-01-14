@@ -48,7 +48,7 @@ public class RelatorioVisaoCursoView extends MyComposite implements RelatorioVis
 	}
 
 	private void createTabItem() {
-		tabItem = new GTabItem("Grade Horária Visão Curso", Resources.DEFAULTS.outros16());
+		tabItem = new GTabItem("Grade Horária Visão Curso", Resources.DEFAULTS.saidaCurso16());
 		tabItem.setContent(panel);
 	}
 	
@@ -96,7 +96,7 @@ public class RelatorioVisaoCursoView extends MyComposite implements RelatorioVis
 		main.add(left, new ColumnData(.5));
 		main.add(right, new ColumnData(.5));
 		
-		submitBt = new Button("Filtrar", AbstractImagePrototype.create(Resources.SIMPLE_CRUD.filter16()));
+		submitBt = new Button("Filtrar", AbstractImagePrototype.create(Resources.DEFAULTS.filter16()));
 		panel.addButton(submitBt);
 		
 		panel.add(main, new FormData("100%"));

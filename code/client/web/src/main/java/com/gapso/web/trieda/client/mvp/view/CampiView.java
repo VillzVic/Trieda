@@ -53,7 +53,7 @@ public class CampiView extends MyComposite implements CampiPresenter.Display {
 	}
 	
 	private void createTabItem() {
-		tabItem = new GTabItem("Campi", Resources.DEFAULTS.campi16());
+		tabItem = new GTabItem("Campi", Resources.DEFAULTS.campus16());
 		tabItem.setContent(panel);
 	}
 	
@@ -62,7 +62,7 @@ public class CampiView extends MyComposite implements CampiPresenter.Display {
 		toolBar.add(new SeparatorToolItem());
 		unidadesDeslocamentoBT = toolBar.createButton("Deslocamento entre Unidades", Resources.DEFAULTS.deslocamento16());
 		toolBar.add(unidadesDeslocamentoBT);
-		disponibilidadeBT = toolBar.createButton("Disponibilidade do Professor", Resources.DEFAULTS.horarioAula16());
+		disponibilidadeBT = toolBar.createButton("Disponibilidade do Campus", Resources.DEFAULTS.disponibilidade16());
 		toolBar.add(disponibilidadeBT);
 		panel.setTopComponent(toolBar);
 	}

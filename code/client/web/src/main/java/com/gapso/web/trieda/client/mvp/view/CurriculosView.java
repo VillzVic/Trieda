@@ -50,7 +50,7 @@ public class CurriculosView extends MyComposite implements CurriculosPresenter.D
 	}
 	
 	private void createTabItem() {
-		tabItem = new GTabItem("Matrizes Curriculares", Resources.DEFAULTS.unidades16());
+		tabItem = new GTabItem("Matrizes Curriculares", Resources.DEFAULTS.matrizCurricular16());
 		tabItem.setContent(panel);
 	}
 	

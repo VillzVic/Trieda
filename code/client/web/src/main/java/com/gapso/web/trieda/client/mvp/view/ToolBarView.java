@@ -43,8 +43,6 @@ public class ToolBarView extends MyComposite implements ToolBarPresenter.Display
 	// Unidades
 	private Button unidadesListUnidadesBt;
 	private Button unidadeDeslocamentoListUnidadesBt;
-	private Button semanasLetivaListUnidadesBt;
-	private Button horariosAulaListUnidadesBt;
 	
 	// Salas
 	private Button salasListSalasBt;
@@ -132,12 +130,14 @@ public class ToolBarView extends MyComposite implements ToolBarPresenter.Display
 		
 		createGroups();
 		
+		int height = 92;
+		
 		TabPanel masterDataTab = new TabPanel();
 //		masterDataTab.setBodyBorder(false);
 		masterDataTab.addStyleName("tabPanelMasterData");
-		masterDataTab.setHeight(78);
-		cenarioToolBar.setHeight(52);
-		planejamentoToolBar.setHeight(52);
+		masterDataTab.setHeight(height);
+		cenarioToolBar.setHeight(height - 26);
+		planejamentoToolBar.setHeight(height - 26);
 
 		TabItem masterDataItem = new TabItem("Master Data");
 		masterDataItem.disable();
@@ -154,7 +154,7 @@ public class ToolBarView extends MyComposite implements ToolBarPresenter.Display
 		planejamentoPanel.add(planejamentoToolBar);
 		masterDataPanel.setTopComponent(masterDataTab);
 		
-		container.setHeight(78);
+		container.setHeight(height);
 		
 		initComponent(container);
 	}
@@ -178,143 +178,137 @@ public class ToolBarView extends MyComposite implements ToolBarPresenter.Display
 	
 	private void createCampi() {
 		// TODO Implementar o cadastro de campus pelo menu
-		campiToolBar.add(createButton("Novo", "Adicionar um campus", Resources.DEFAULTS.campi24()));
+		campiToolBar.add(createButton("Novo", "Adicionar um campus", Resources.DEFAULTS.campusNovo24()));
 		
-		campiListCampiBt = createButton("Listar", "Listar Campi", Resources.DEFAULTS.campi24());
+		campiListCampiBt = createButton("Listar", "Listar Campi", Resources.DEFAULTS.campusListar24());
 		campiToolBar.add(campiListCampiBt);
 		
 		campiToolBar.add(new SeparatorToolItem());
 		
-		campusDeslocamentoListCampiBt = createButton("Deslocamento", "Deslocamento entre Campi", Resources.DEFAULTS.campi24());
+		campusDeslocamentoListCampiBt = createButton("Deslocamento<br />entre Campi", "Deslocamento entre Campi", Resources.DEFAULTS.deslocamento24());
 		campiToolBar.add(campusDeslocamentoListCampiBt);
 		
-		semanasLetivaListCampiBt = createButton("Semanas Letivas", "Semanas Letivas", Resources.DEFAULTS.campi24());
+		semanasLetivaListCampiBt = createButton("Semanas<br />Letivas", "Semanas Letivas", Resources.DEFAULTS.semanaLetiva24());
 		campiToolBar.add(semanasLetivaListCampiBt);
 		
-		horariosAulaListCampiBt = createButton("Horários Aula", "Horários de Aula", Resources.DEFAULTS.campi24());
+		horariosAulaListCampiBt = createButton("Horários<br />de Aula", "Horários de Aula", Resources.DEFAULTS.horarioAula24());
 		campiToolBar.add(horariosAulaListCampiBt);
 		
-		turnosListCampiBt = createButton("Turnos", "Turnos", Resources.DEFAULTS.campi24());
+		turnosListCampiBt = createButton("Turnos", "Turnos", Resources.DEFAULTS.turno24());
 		campiToolBar.add(turnosListCampiBt);
 		
-		ofertasListCampiBt = createButton("Ofertas", "Oferta de Cursos em Campi", Resources.DEFAULTS.campi24());
+		ofertasListCampiBt = createButton("Oferta de Cursos<br />em Campi", "Oferta de Cursos em Campi", Resources.DEFAULTS.ofertaCurso24());
 		campiToolBar.add(ofertasListCampiBt);
 	}
 	
 	private void createUnidades() {
 		// TODO Implementar o cadastro de unidade pelo menu
-		unidadesToolBar.add(createButton("Nova", "Adicionar uma Unidade", Resources.DEFAULTS.campi24()));
+		unidadesToolBar.add(createButton("Nova", "Adicionar uma Unidade", Resources.DEFAULTS.unidadeNovo24()));
 		
-		unidadesListUnidadesBt = createButton("Listar", "Listar Unidades", Resources.DEFAULTS.campi24());
+		unidadesListUnidadesBt = createButton("Listar", "Listar Unidades", Resources.DEFAULTS.unidadeListar24());
 		unidadesToolBar.add(unidadesListUnidadesBt);
 		
 		unidadesToolBar.add(new SeparatorToolItem());
 		
-		unidadeDeslocamentoListUnidadesBt = createButton("Desloc.", "Deslocamento de Unidades", Resources.DEFAULTS.campi24());
+		unidadeDeslocamentoListUnidadesBt = createButton("Deslocamento<br />entre unidades", "Deslocamento de Unidades", Resources.DEFAULTS.deslocamento24());
 		unidadesToolBar.add(unidadeDeslocamentoListUnidadesBt);
-		
-		semanasLetivaListUnidadesBt = createButton("Sem. Let.", "Semanas Letivas", Resources.DEFAULTS.campi24());
-		unidadesToolBar.add(semanasLetivaListUnidadesBt);
-		
-		horariosAulaListUnidadesBt = createButton("Horários", "Horários de Aula", Resources.DEFAULTS.campi24());
-		unidadesToolBar.add(horariosAulaListUnidadesBt);
 	}
 	
 	private void createSalas() {
 		// TODO Implementar o cadastro de sala pelo menu
-		salasToolBar.add(createButton("Nova", "Adicionar uma Sala", Resources.DEFAULTS.campi24()));
+		salasToolBar.add(createButton("Nova", "Adicionar uma Sala", Resources.DEFAULTS.salaNovo24()));
 		
-		salasListSalasBt = createButton("Listar", "Listar Salas", Resources.DEFAULTS.campi24());
+		salasListSalasBt = createButton("Listar", "Listar Salas", Resources.DEFAULTS.salaListar24());
 		salasToolBar.add(salasListSalasBt);
 		
 		salasToolBar.add(new SeparatorToolItem());
 		
-		gruposSalasListSalasBt = createButton("Grupos", "Grupos de Salas", Resources.DEFAULTS.campi24());
+		gruposSalasListSalasBt = createButton("Grupos de<br />Salas", "Grupos de Salas", Resources.DEFAULTS.grupoSala24());
 		salasToolBar.add(gruposSalasListSalasBt);
 		
-		associarDisciplinasSalasListSalasBt = createButton("Assoc. Salas", "Associação de Disciplinas à Salas", Resources.DEFAULTS.campi24());
+		associarDisciplinasSalasListSalasBt = createButton("Associação de<br />Disciplinas à Salas", "Associação de Disciplinas à Salas", Resources.DEFAULTS.associacaoDisciplinaSala24());
 		salasToolBar.add(associarDisciplinasSalasListSalasBt);
 	}
 	
 	private void createCursos() {
 		// TODO Implementar o cadastro de curso pelo menu
-		cursosToolBar.add(createButton("Novo", "Adicionar um Curso", Resources.DEFAULTS.campi24()));
+		cursosToolBar.add(createButton("Novo", "Adicionar um Curso", Resources.DEFAULTS.cursoNovo24()));
 		
-		cursosListCursosBt = createButton("Listar", "Listar Cursos", Resources.DEFAULTS.campi24());
+		cursosListCursosBt = createButton("Listar", "Listar Cursos", Resources.DEFAULTS.cursoListar24());
 		cursosToolBar.add(cursosListCursosBt);
 		
 		cursosToolBar.add(new SeparatorToolItem());
 		
-		ofertasListCursosBt = createButton("Ofertas", "Oferta de Cursos em Campi", Resources.DEFAULTS.campi24());
+		ofertasListCursosBt = createButton("Oferta de Cursos<br />em Campi", "Oferta de Cursos em Campi", Resources.DEFAULTS.ofertaCurso24());
 		cursosToolBar.add(ofertasListCursosBt);
 		
-		areasTitulacaoListCursosBtI = createButton("Áreas", "Áreas de Titulação", Resources.DEFAULTS.campi24());
+		areasTitulacaoListCursosBtI = createButton("Áreas de<br />Titulação", "Áreas de Titulação", Resources.DEFAULTS.areaTitulacao());
 		cursosToolBar.add(areasTitulacaoListCursosBtI);
 		
-		cursosToolBar.add(createButton("Vinc. Áreas", "Vincular Áreas de Titulação", Resources.DEFAULTS.campi24()));
+		cursosToolBar.add(createButton("Vincular Áreas<br />de Titulação", "Vincular Áreas de Titulação", Resources.DEFAULTS.vincularAreaTitulacao24()));
 		
-		curriculosListCursosBt = createButton("Matr. Curr.", "Matrizes Curriculares", Resources.DEFAULTS.campi24());
+		curriculosListCursosBt = createButton("Matrizes<br />Curriculares", "Matrizes Curriculares", Resources.DEFAULTS.matrizCurricular24());
 		cursosToolBar.add(curriculosListCursosBt);
 		
-		tiposCursosListCursosBt = createButton("Tipos", "Tipos de Curso", Resources.DEFAULTS.campi24());
+		tiposCursosListCursosBt = createButton("Tipos de<br />Curso", "Tipos de Curso", Resources.DEFAULTS.tipoCurso24());
 		cursosToolBar.add(tiposCursosListCursosBt);
 	}
 	
 	private void createDisciplinas() {
 		// TODO Implementar o cadastro de disciplina pelo menu
-		disciplinasToolBar.add(createButton("Novo", "Adicionar um Curso", Resources.DEFAULTS.campi24()));
+		disciplinasToolBar.add(createButton("Novo", "Adicionar um Curso", Resources.DEFAULTS.disciplinaNovo24()));
 
-		disciplinasListDisciplinasBt = createButton("Listar", "Listar Disciplinas", Resources.DEFAULTS.campi24());
+		disciplinasListDisciplinasBt = createButton("Listar", "Listar Disciplinas", Resources.DEFAULTS.disciplinaListar24());
 		disciplinasToolBar.add(disciplinasListDisciplinasBt);
 		
 		disciplinasToolBar.add(new SeparatorToolItem());
 
-		associarDisciplinasSalasListDisciplinasBt = createButton("Assoc. Salas", "Associação de Disciplinas à Salas", Resources.DEFAULTS.campi24());
+		associarDisciplinasSalasListDisciplinasBt = createButton("Associação de<br />Disciplinas à Salas", "Associação de Disciplinas à Salas", Resources.DEFAULTS.associacaoDisciplinaSala24());
 		disciplinasToolBar.add(associarDisciplinasSalasListDisciplinasBt);
 		
-		curriculosListDisciplinasBt = createButton("Matr. Curr.", "Matrizes Curriculares", Resources.DEFAULTS.campi24());
+		curriculosListDisciplinasBt = createButton("Matrizes<br />Curriculares", "Matrizes Curriculares", Resources.DEFAULTS.matrizCurricular24());
 		disciplinasToolBar.add(curriculosListDisciplinasBt);
 		
-		demandasDisciplinasBt = createButton("Demanda", "Previsão de demanda", Resources.DEFAULTS.campi24());
+		demandasDisciplinasBt = createButton("Previsão de<br />demanda", "Previsão de demanda", Resources.DEFAULTS.demanda24());
 		disciplinasToolBar.add(demandasDisciplinasBt);
 		
-		divisaoCreditosListDisciplinasBt = createButton("Divisão de Créditos", "Divisão de Créditos", Resources.DEFAULTS.campi24());
+		divisaoCreditosListDisciplinasBt = createButton("Divisão de<br />Créditos", "Divisão de Créditos", Resources.DEFAULTS.divisaoCredito24());
 		disciplinasToolBar.add(divisaoCreditosListDisciplinasBt);
 		
-		equivalenciasListDisciplinasBt = createButton("Equivalências", "Equivalências", Resources.DEFAULTS.campi24());
+		equivalenciasListDisciplinasBt = createButton("Equivalências", "Equivalências", Resources.DEFAULTS.equivalencia24());
 		disciplinasToolBar.add(equivalenciasListDisciplinasBt);
 		
-		fixacoesListDisciplinasBt = createButton("Fixações", "Fixações", Resources.DEFAULTS.campi24());
+		fixacoesListDisciplinasBt = createButton("Fixações", "Fixações", Resources.DEFAULTS.fixacao24());
 		disciplinasToolBar.add(fixacoesListDisciplinasBt);
 	}
 	
 	private void createProfessores() {
-		professoresToolBar.add(createButton("Novo", "Adicionar novo Professor", Resources.DEFAULTS.campi24()));
+		professoresToolBar.add(createButton("Novo", "Adicionar novo Professor", Resources.DEFAULTS.professorNovo24()));
 		
-		professoresListprofessoresBt = createButton("Listar", "Listar Professores", Resources.DEFAULTS.campi24());
+		professoresListprofessoresBt = createButton("Listar", "Listar Professores", Resources.DEFAULTS.professorListar24());
 		professoresToolBar.add(professoresListprofessoresBt);
 		
 		professoresToolBar.add(new SeparatorToolItem());
 		
-		professoresDisciplinaListprofessoresBt = createButton("Habilitação dos Professores", "Habilitação dos Professores", Resources.DEFAULTS.campi24());
+		professoresDisciplinaListprofessoresBt = createButton("Habilitação<br />dos Professores", "Habilitação dos Professores", Resources.DEFAULTS.habilitacaoProfessor24());
 		professoresToolBar.add(professoresDisciplinaListprofessoresBt);
 	}
 	
 	private void createPlanejamento() {
-		parametrosBt = createButton("Gerar Grade", "Gerar Grade", Resources.DEFAULTS.otimizar24());
+		parametrosBt = createButton("Parâmetros de<br />Planejamento", "Parâmetros de Planejamento", Resources.DEFAULTS.parametroPlanejamento24());
 		planejamentoToolBar.add(parametrosBt);
 		
-		relatorioVisaoSalaBt = createButton("Saida: Sala", "Grade Horária Visão Sala", Resources.DEFAULTS.otimizar24());
+		relatorioVisaoSalaBt = createButton("Grade Horária<br />Visão Sala", "Grade Horária Visão Sala", Resources.DEFAULTS.saidaSala24());
 		planejamentoToolBar.add(relatorioVisaoSalaBt);
 		
-		relatorioVisaoCursoBt = createButton("Saida: Curso", "Grade Horária Visão Curso", Resources.DEFAULTS.otimizar24());
+		relatorioVisaoCursoBt = createButton("Grade Horária<br />Visão Curso", "Grade Horária Visão Curso", Resources.DEFAULTS.saidaCurso24());
 		planejamentoToolBar.add(relatorioVisaoCursoBt);
 	}
 	
 	private void createCenario() {
-		cenarioToolBar.add(createButton("Novo", "Adicionar novo Cenário", Resources.DEFAULTS.cenario24()));
-		cenarioToolBar.add(createButton("Clonar", "Clonar um cenário", Resources.DEFAULTS.cenario24()));
-		cenarioToolBar.add(createButton("Abrir", "Abrir um cenário", Resources.DEFAULTS.cenario24()));
+		cenarioToolBar.add(createButton("Novo", "Adicionar novo Cenário", Resources.DEFAULTS.cenarioAbrir24()));
+		cenarioToolBar.add(createButton("Clonar", "Clonar um cenário", Resources.DEFAULTS.cenarioClonar24()));
+		cenarioToolBar.add(createButton("Abrir", "Abrir um cenário", Resources.DEFAULTS.cenarioNovo24()));
 	}
 	
 	private Button createButton(String text, String toolTip, ImageResource icon) {
@@ -323,6 +317,7 @@ public class ToolBarView extends MyComposite implements ToolBarPresenter.Display
 		bt.setScale(ButtonScale.MEDIUM);
 		bt.setIconAlign(IconAlign.TOP);
 		bt.setArrowAlign(ButtonArrowAlign.BOTTOM);
+		bt.setHeight(60);
 		return bt;
 	}
 	
@@ -432,16 +427,6 @@ public class ToolBarView extends MyComposite implements ToolBarPresenter.Display
 	@Override
 	public Button getUnidadesListUnidadesButton() {
 		return unidadesListUnidadesBt;
-	}
-
-	@Override
-	public Button getSemanasLetivaListUnidadesButton() {
-		return semanasLetivaListUnidadesBt;
-	}
-
-	@Override
-	public Button getHorariosAulaListUnidadesButton() {
-		return horariosAulaListUnidadesBt;
 	}
 
 	@Override

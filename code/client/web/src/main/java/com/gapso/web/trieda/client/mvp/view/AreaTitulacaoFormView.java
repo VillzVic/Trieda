@@ -28,7 +28,7 @@ public class AreaTitulacaoFormView extends MyComposite implements AreaTitulacaoF
 	
 	private void initUI() {
 		String title = (areaTitulacaoDTO.getId() == null)? "Inserção de Área de Titulação" : "Edição de Área de Titulação";
-		simpleModal = new SimpleModal(title, Resources.DEFAULTS.areasDeTitulacao16());
+		simpleModal = new SimpleModal(title, Resources.DEFAULTS.areaTitulacao16());
 		simpleModal.setHeight(138);
 		createForm();
 		simpleModal.setContent(formPanel);

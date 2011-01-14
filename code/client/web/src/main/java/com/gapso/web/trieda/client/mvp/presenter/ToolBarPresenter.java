@@ -57,8 +57,6 @@ public class ToolBarPresenter implements Presenter {
 		
 		Button getUnidadesListUnidadesButton();
 		Button getUnidadeDeslocamentoListUnidadesButton();
-		Button getSemanasLetivaListUnidadesButton();
-		Button getHorariosAulaListUnidadesButton();
 		
 		Button getSalasListSalasButton();
 		Button getGruposSalasListSalasButton();
@@ -124,21 +122,7 @@ public class ToolBarPresenter implements Presenter {
 				presenter.go(gTab);
 			}
 		});
-		toolBar.getSemanasLetivaListUnidadesButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
-			@Override
-			public void componentSelected(ButtonEvent ce) {
-				Presenter presenter = new SemanasLetivaPresenter(new SemanasLetivaView());
-				presenter.go(gTab);
-			}
-		});
 		toolBar.getHorariosAulaListCampiButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
-			@Override
-			public void componentSelected(ButtonEvent ce) {
-				Presenter presenter = new HorariosAulaPresenter(new HorariosAulaView());
-				presenter.go(gTab);
-			}
-		});
-		toolBar.getHorariosAulaListUnidadesButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
 			@Override
 			public void componentSelected(ButtonEvent ce) {
 				Presenter presenter = new HorariosAulaPresenter(new HorariosAulaView());

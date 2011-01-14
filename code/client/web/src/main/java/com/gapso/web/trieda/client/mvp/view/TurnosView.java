@@ -47,7 +47,7 @@ public class TurnosView extends MyComposite implements TurnosPresenter.Display {
 	}
 
 	private void createTabItem() {
-		tabItem = new GTabItem("Turnos", Resources.DEFAULTS.turnos16());
+		tabItem = new GTabItem("Turnos", Resources.DEFAULTS.turno16());
 		tabItem.setContent(panel);
 	}
 	

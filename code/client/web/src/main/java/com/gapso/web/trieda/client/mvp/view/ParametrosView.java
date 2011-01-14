@@ -36,7 +36,7 @@ public class ParametrosView extends MyComposite implements ParametrosPresenter.D
 	}
 
 	private void createTabItem() {
-		tabItem = new GTabItem("Parâmetros de Planejamento", Resources.DEFAULTS.outros16());
+		tabItem = new GTabItem("Parâmetros de Planejamento", Resources.DEFAULTS.parametroPlanejamento16());
 		tabItem.setContent(panel);
 	}
 
@@ -98,7 +98,7 @@ public class ParametrosView extends MyComposite implements ParametrosPresenter.D
 		main.add(left, new ColumnData(.5));
 		main.add(right, new ColumnData(.5));
 		
-		submitBt = new Button("Gerar Grade", AbstractImagePrototype.create(Resources.SIMPLE_CRUD.filter16()));
+		submitBt = new Button("Gerar Grade", AbstractImagePrototype.create(Resources.DEFAULTS.gerarGrade16()));
 		panel.addButton(submitBt);
 		
 		panel.add(main, new FormData("100%"));

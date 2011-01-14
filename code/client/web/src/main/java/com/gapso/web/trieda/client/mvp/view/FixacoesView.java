@@ -45,7 +45,7 @@ public class FixacoesView extends MyComposite implements FixacoesPresenter.Displ
 	}
 
 	private void createTabItem() {
-		tabItem = new GTabItem("Fixações", Resources.DEFAULTS.outros16());
+		tabItem = new GTabItem("Fixações", Resources.DEFAULTS.fixacao16());
 		tabItem.setContent(panel);
 	}
 	

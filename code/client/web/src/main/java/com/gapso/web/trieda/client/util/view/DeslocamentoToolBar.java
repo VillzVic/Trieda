@@ -23,8 +23,8 @@ public class DeslocamentoToolBar extends ToolBar {
 		saveBT = createButton("Salvar", Resources.DEFAULTS.save16());
 		cancelBT = createButton("Cancelar", Resources.DEFAULTS.cancel16());
 		simetriaBT = createButton("Igualar Simetria", Resources.DEFAULTS.deslocamento16());
-		importExcelButton = createButton("Exportar para Excel", Resources.SIMPLE_CRUD.excelExport16());
-		exportExcelButton = createButton("Importar de Excel", Resources.SIMPLE_CRUD.excelImport16());
+		importExcelButton = createButton("Exportar para Excel", Resources.DEFAULTS.exportar16());
+		exportExcelButton = createButton("Importar de Excel", Resources.DEFAULTS.importar16());
 
 		add(saveBT);
 		add(cancelBT);

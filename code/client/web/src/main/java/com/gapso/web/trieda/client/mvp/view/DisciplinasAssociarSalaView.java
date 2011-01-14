@@ -92,7 +92,7 @@ public class DisciplinasAssociarSalaView extends MyComposite implements Discipli
 	}
 
 	private void createTabItem() {
-		tabItem = new GTabItem("Associação de Disciplinas à Salas", Resources.DEFAULTS.disciplina16());
+		tabItem = new GTabItem("Associação de Disciplinas à Salas", Resources.DEFAULTS.associacaoDisciplinaSala16());
 		tabItem.setContent(panel);
 	}
 	

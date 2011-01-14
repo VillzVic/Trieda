@@ -64,7 +64,7 @@ public class FixacaoFormView extends MyComposite implements FixacaoFormPresenter
 	
 	private void initUI() {
 		String title = (fixacaoDTO.getId() == null)? "Inserção de Fixação" : "Edição de Fixação";
-		simpleModal = new SimpleModal(title, Resources.DEFAULTS.outros16());
+		simpleModal = new SimpleModal(title, Resources.DEFAULTS.fixacao16());
 		simpleModal.setHeight(500);
 		simpleModal.setWidth(617);
 		createForm();

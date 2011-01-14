@@ -46,7 +46,7 @@ public class AreasTitulacaoView extends MyComposite implements AreasTitulacaoPre
 	}
 
 	private void createTabItem() {
-		tabItem = new GTabItem("Áreas de Titulação", Resources.DEFAULTS.areasDeTitulacao16());
+		tabItem = new GTabItem("Áreas de Titulação", Resources.DEFAULTS.areaTitulacao16());
 		tabItem.setContent(panel);
 	}
 	
