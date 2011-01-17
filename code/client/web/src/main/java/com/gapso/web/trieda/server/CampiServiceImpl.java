@@ -176,23 +176,12 @@ public class CampiServiceImpl extends RemoteServiceServlet implements CampiServi
 	}
 	
 	@Override
-	public List<DeslocamentoCampusDTO> getDeslocamento(String nome, String codigo, String estadoString, String municipio, String bairro) {
+	public List<DeslocamentoCampusDTO> getDeslocamentos() {
 		List<DeslocamentoCampusDTO> list = new ArrayList<DeslocamentoCampusDTO>();
-		Estados estadoDomain = null;
-		if(estadoString != null) {
-			for(Estados estado : Estados.values()) {
-				if(estado.name().equals(estadoString)) {
-					estadoDomain = estado;
-					break;
-				}
-			}
-		}
-		// TODO
-		List<Campus> listCampi = Campus.findByNomeLikeAndCodigoLikeAndEstadoAndMunicipioLikeAndBairroLike(null, nome, codigo, estadoDomain, municipio, bairro, 0, 999, null);
+		List<Campus> listCampi = Campus.findAll();
 		for(Campus unidade : listCampi) {
 			list.add(ConvertBeans.toDeslocamentoCampusDTO(unidade, listCampi));
 		}
-		
 		Collections.sort(list, new Comparator<DeslocamentoCampusDTO>() {
 			@Override
 			public int compare(DeslocamentoCampusDTO o1, DeslocamentoCampusDTO o2) {

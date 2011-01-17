@@ -27,7 +27,7 @@ public interface CampiService extends RemoteService {
 	void remove(List<CampusDTO> campusDTOList);
 	PagingLoadResult<CampusDTO> getBuscaList(CenarioDTO cenario, String nome, String codigo, String estadoString, String municipio, String bairro, PagingLoadConfig config);
 	CampusDTO getCampus(Long id);
-	List<DeslocamentoCampusDTO> getDeslocamento(String nome, String codigo, String estadoString, String municipio, String bairro);
+	List<DeslocamentoCampusDTO> getDeslocamentos();
 	void saveDeslocamento(List<DeslocamentoCampusDTO> list);
 	PagingLoadResult<HorarioDisponivelCenarioDTO> getHorariosDisponiveis(CampusDTO campusDTO);
 	void saveHorariosDisponiveis(CampusDTO campusDTO, List<HorarioDisponivelCenarioDTO> listDTO);

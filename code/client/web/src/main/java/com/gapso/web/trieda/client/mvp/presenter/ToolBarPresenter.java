@@ -184,7 +184,7 @@ public class ToolBarPresenter implements Presenter {
 				// TODO ESTE CODIGO CODIGO NÂO PERTENCE AQUI, DEVE FICAR NO CAMPI DESLOCAMENTO
 				// QUANDO EU COLOCO LA, ELE BUGA O HEADER DA TABELA
 				CampiServiceAsync service = Services.campi();
-				service.getDeslocamento(null, null, null, null, null, new AsyncCallback<List<DeslocamentoCampusDTO>>() {
+				service.getDeslocamentos(new AsyncCallback<List<DeslocamentoCampusDTO>>() {
 					@Override
 					public void onFailure(Throwable caught) {
 						MessageBox.alert("ERRO!", "Deu falha na conexão", null);
