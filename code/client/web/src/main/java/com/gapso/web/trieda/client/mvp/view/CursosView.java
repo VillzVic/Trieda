@@ -14,6 +14,7 @@ import com.extjs.gxt.ui.client.widget.grid.CheckColumnConfig;
 import com.extjs.gxt.ui.client.widget.grid.ColumnConfig;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayout;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
+import com.extjs.gxt.ui.client.widget.toolbar.SeparatorToolItem;
 import com.gapso.web.trieda.client.mvp.model.CursoDTO;
 import com.gapso.web.trieda.client.mvp.presenter.CursosPresenter;
 import com.gapso.web.trieda.client.util.resources.Resources;
@@ -31,6 +32,7 @@ public class CursosView extends MyComposite implements CursosPresenter.Display {
 	private TextField<String> nomeBuscaTextField;
 	private TextField<String> codigoBuscaTextField;
 	private TipoCursoComboBox tipoCursoBuscaComboBox;
+	private Button curriculosBT;
 	private ContentPanel panel;
 	private GTabItem tabItem;
 	
@@ -55,6 +57,9 @@ public class CursosView extends MyComposite implements CursosPresenter.Display {
 	
 	private void createToolBar() {
 		toolBar = new SimpleToolBar();
+		toolBar.add(new SeparatorToolItem());
+		curriculosBT = toolBar.createButton("Matrizes Curriculares", Resources.DEFAULTS.matrizCurricular16());
+		toolBar.add(curriculosBT);
 		panel.setTopComponent(toolBar);
 	}
 	
@@ -157,6 +162,11 @@ public class CursosView extends MyComposite implements CursosPresenter.Display {
 	@Override
 	public Button getResetBuscaButton() {
 		return filter.getResetButton();
+	}
+
+	@Override
+	public Button getCurriculosButton() {
+		return curriculosBT;
 	}
 
 }

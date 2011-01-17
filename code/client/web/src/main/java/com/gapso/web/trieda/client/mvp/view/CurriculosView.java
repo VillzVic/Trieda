@@ -15,6 +15,7 @@ import com.extjs.gxt.ui.client.widget.layout.BorderLayout;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
 import com.extjs.gxt.ui.client.widget.toolbar.SeparatorToolItem;
 import com.gapso.web.trieda.client.mvp.model.CurriculoDTO;
+import com.gapso.web.trieda.client.mvp.model.CursoDTO;
 import com.gapso.web.trieda.client.mvp.presenter.CurriculosPresenter;
 import com.gapso.web.trieda.client.util.resources.Resources;
 import com.gapso.web.trieda.client.util.view.CursoComboBox;
@@ -35,7 +36,13 @@ public class CurriculosView extends MyComposite implements CurriculosPresenter.D
 	private GTabItem tabItem;
 	private Button associarDisciplinasBT;
 	
+	private CursoDTO cursoDTO;
+	
 	public CurriculosView() {
+		this(null);
+	}
+	public CurriculosView(CursoDTO cursoDTO) {
+		this.cursoDTO = cursoDTO;
 		initUI();
 	}
 	
@@ -87,6 +94,7 @@ public class CurriculosView extends MyComposite implements CurriculosPresenter.D
 		filter = new SimpleFilter();
 		cursoBuscaComboBox = new CursoComboBox();
 		cursoBuscaComboBox.setFieldLabel("Curso");
+		cursoBuscaComboBox.setValue(cursoDTO);
 		codigoBuscaTextField = new TextField<String>();
 		codigoBuscaTextField.setFieldLabel("Código");
 		descricaoBuscaTextField = new TextField<String>();

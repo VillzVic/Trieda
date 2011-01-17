@@ -16,6 +16,7 @@ import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.gapso.web.trieda.client.mvp.model.CenarioDTO;
 import com.gapso.web.trieda.client.mvp.model.CursoDTO;
 import com.gapso.web.trieda.client.mvp.model.TipoCursoDTO;
+import com.gapso.web.trieda.client.mvp.view.CurriculosView;
 import com.gapso.web.trieda.client.mvp.view.CursoFormView;
 import com.gapso.web.trieda.client.services.CursosServiceAsync;
 import com.gapso.web.trieda.client.services.Services;
@@ -35,6 +36,7 @@ public class CursosPresenter implements Presenter {
 		Button getRemoveButton();
 		Button getImportExcelButton();
 		Button getExportExcelButton();
+		Button getCurriculosButton();
 		
 		TextField<String> getNomeBuscaTextField();
 		TextField<String> getCodigoBuscaTextField();
@@ -129,6 +131,14 @@ public class CursosPresenter implements Presenter {
 			@Override
 			public void componentSelected(ButtonEvent ce) {
 				display.getGrid().updateList();
+			}
+		});
+		display.getCurriculosButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
+			@Override
+			public void componentSelected(ButtonEvent ce) {
+				final CursoDTO cursoDTO = display.getGrid().getGrid().getSelectionModel().getSelectedItem();
+				Presenter presenter = new CurriculosPresenter(cenario, new CurriculosView(cursoDTO));
+				presenter.go(gTab);
 			}
 		});
 	}
