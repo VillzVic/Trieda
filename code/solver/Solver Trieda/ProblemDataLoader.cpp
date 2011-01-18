@@ -895,6 +895,7 @@ void ProblemDataLoader::gera_refs() {
 	  find_and_set(it_fix->turno_id, 
 		 problemData->calendario->turnos,
 		 it_fix->turno);
+
 	  if(it_fix->turno != NULL){	
 		  find_and_set(it_fix->horario_id,
 			 it_fix->turno->horarios_aula,
