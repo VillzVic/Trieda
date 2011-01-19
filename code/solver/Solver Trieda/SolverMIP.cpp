@@ -1,3 +1,178 @@
+/*==================================================================/
+%DocBegin TRIEDA_LOAD_MODEL
+%Title Módulo Tático
+
+%ProbSense MIN
+
+%Set CP 
+%Desc 
+	Conjunto de campus. Os elementos desse conjunto são denotados por $cp$.
+
+%Set U
+%Desc 
+	Conjunto de unidades. Os elementos desse conjunto são denotados por $u$.
+
+%Set S_{u}
+%Desc 
+	Conjunto de salas da unidade $u$. Os elementos desse conjunto são 
+	   denotados por $s$.
+
+%Set SCAP_{u}
+%Desc 
+	Conjunto de salas da unidade $u$ classificadas de acordo com as suas 
+	   capacidades. Os elementos desse conjunto são denotados por $tps$.
+
+%Set T 
+%Desc 
+	Conjunto de dias letivos da semana. Os elementos desse conjunto 
+	   são denotados por $t$.
+
+%Set C
+%Desc 
+	Conjunto de cursos. Os elementos desse conjunto são denotados por $c$.
+
+%Set CC
+%Desc 
+	Conjunto de cursos compatíveis.
+
+%Set D
+%Desc 
+	Conjunto de disciplinas. Os elementos desse conjunto são denotados por $d$.
+
+%Set B
+%Desc 
+	Conjunto de blocos curriculares. Os elementos desse conjunto são 
+	   denotados por $bc$.
+
+%Set D_{bc}
+%Desc 
+	Conjunto de disciplinas que pertencem ao bloco curricular $bc$. 
+	Os elementos desse conjunto são denotados por $d_{bc}$.
+
+%Set I_{bc}
+%Desc 
+	Conjunto de turmas de um bloco curricular $bc$. 
+	Os elementos desse conjunto são denotados por $i_{bc}$.
+
+%Set O
+%Desc 
+	Conjunto de ofertas de cursos. Os elementos desse conjunto são 
+	   denotados por $oft$.
+
+%Set D_{oft}
+%Desc 
+	Conjunto de disciplinas de uma oferta $oft$. 
+	Os elementos desse conjunto são denotados por $d_{oft}$.
+
+%Set O_{d}
+%Desc 
+	Conjunto de ofertas de uma uma disciplina $d$. 
+	Os elementos desse conjunto são denotados por $oft_{d}$.
+
+%Set K_{d}
+%Desc 
+	Conjunto de combinações possíveis de divisão de créditos de uma uma disciplina $d$. 
+	Os elementos desse conjunto são denotados por $k$.
+
+%DocEnd
+/===================================================================*/
+
+/*==================================================================/
+%DocBegin TRIEDA_LOAD_MODEL
+
+%Data A_{u,s}
+%Desc
+    capacidade da sala $s$ da unidade $u$.
+
+
+%Data C_{d}
+%Desc
+	Total de créditos da disciplina $d$.
+
+%Data \overline{H_{d}}
+%Desc 
+	máximo de créditos diários da disciplina $d$.
+
+%Data \underline{H_{d}}
+%Desc 
+	mínimo de créditos diários da disciplina $d$.
+
+%Data I_{d}
+%Desc 
+	máximo de turmas que podem ser abertas da disciplina $d$.
+
+%Data P_{d,c,cp}
+%Desc 
+	demanda da disciplina $d$ no campus $cp$ para o curso $c$.
+
+%Data P_{d,oft}
+%Desc
+	demanda da disciplina $d$ da oferta $oft$.
+
+%Data Pmax_{d}
+%Desc 
+	maior demanda da disciplina $d$.
+
+%Data H_{t}
+%Desc
+	máximo de créditos permitidos por dia $t$.
+
+%Data A_{u,s}
+%Desc 
+	capacidade da sala $s$ da unidade $u$.
+
+%Data HTPS_{t,tps}
+%Desc 
+	máximo de créditos permitidos por dia $t$ para o conjunto de salas do tipo (capacidade) $tps$.
+
+%Data A_{u,tps}
+%Desc 
+	capacidade total das salas de um conjunto de salas do tipo (capacidade) $tps$ da unidade $u$.
+
+%Data O_{cp}
+%Desc
+	conjunto de ofertas de um campus $cp$.
+
+%Data FC_{d,t}
+%Desc 
+	número de créditos fixados para a disciplina $d$ no dia $t$.
+
+%Data N_{d,k,t}
+%Desc 
+	número de créditos determinados para a disciplina $d$ no dia $t$ na combinação de divisão de crédito $k$.
+
+%Data M
+%Desc 
+	big $M$.
+
+%Data \alpha
+%Desc 
+	peso associado a função objetivo.
+%Data \beta
+%Desc 
+	peso associado a função objetivo.
+%Data \gamma
+%Desc 
+	peso associado a função objetivo.
+%Data \delta
+%Desc 
+	peso associado a função objetivo.
+%Data \lambda
+%Desc 
+	peso associado a função objetivo.
+%Data \rho
+%Desc 
+	peso associado a função objetivo.
+%Data \xi
+%Desc 
+	pesos associados a cada item da função objetivo.
+%Data \psi
+%Desc 
+	peso associado a função objetivo.
+	
+%DocEnd
+/===================================================================*/
+
 #include "opt_cplex.h"
 #include "ProblemData.h"
 #include "ProblemSolution.h"
@@ -846,6 +1021,16 @@ int SolverMIP::cria_variaveis()
 	return num_vars;
 }
 
+/*====================================================================/
+%DocBegin TRIEDA_LOAD_MODEL
+
+%Var x_{i,d,u,tps,t}
+%Desc 
+    número de créditos da turma $i$ da disciplina $d$ na unidade $u$ 
+	   em salas do tipo (capacidade) $tps$ no dia $t$. 
+%DocEnd
+/====================================================================*/
+
 int SolverMIP::cria_variavel_creditos(void)
 {
 	int num_vars = 0;
@@ -949,6 +1134,17 @@ int SolverMIP::cria_variavel_creditos(void)
 	return num_vars;
 }
 
+/*====================================================================/
+%DocBegin TRIEDA_LOAD_MODEL
+
+%Var o_{i,d,u,tps,t}  
+%Desc 
+    indica se a turma $i$ da disciplina $d$ foi alocada na unidade $u$ 
+	   para alguma sala do tipo (capacidade) $tps$ no dia $t$.
+
+%DocEnd
+/====================================================================*/
+
 int SolverMIP::cria_variavel_oferecimentos(void)
 {
 	int num_vars = 0;
@@ -1001,6 +1197,38 @@ int SolverMIP::cria_variavel_oferecimentos(void)
 
    return num_vars;
 }
+
+/*====================================================================/
+%DocBegin TRIEDA_LOAD_MODEL
+
+%Var z_{i,d,cp} 
+%Desc 
+    indica se houve abertura da $i$-ésima turma da disciplina $d$ no campus $cp$.
+
+%ObjCoef
+
+	\alpha \cdot \sum\limits_{d \in D} \sum\limits_{cp \in CP}\sum\limits_{i \in I_{d}}z_{i,d,cp}
+	+ \gamma \cdot \sum\limits_{d \in D} \sum\limits_{cp \in CP}\sum\limits_{i \in I_{d}}
+	\left(\frac{Pmax_{d} - \sum\limits_{c \in C}P_{d,c,cp}}{Pmax_{d}} \right) \cdot z_{i,d,cp}
+
+%Data Pmax_{d} 
+%Desc
+    maior demanda da disciplina $d$.
+
+%Data P_{d,c,cp} 
+%Desc
+    demanda da disciplina $d$ no campus $cp$ para o curso $c$.
+
+%Data \alpha
+%Desc
+    peso associado a função objetivo.
+
+%Data \gamma
+%Desc
+    peso associado a função objetivo.
+
+%DocEnd
+/====================================================================*/
 
 int SolverMIP::cria_variavel_abertura(void)
 {
@@ -1061,6 +1289,16 @@ int SolverMIP::cria_variavel_abertura(void)
 	return num_vars;
 }
 
+/*====================================================================/
+%DocBegin TRIEDA_LOAD_MODEL
+
+%Var a_{i,d,oft}
+%Desc 
+    número de alunos de uma oferta $oft$ alocados para a $i$-ésima turma da disciplina $d$.
+
+%DocEnd
+/====================================================================*/
+
 int SolverMIP::cria_variavel_alunos(void)
 {
 	int num_vars = 0;
@@ -1101,6 +1339,16 @@ int SolverMIP::cria_variavel_alunos(void)
 
    return num_vars;
 }
+
+/*====================================================================/
+%DocBegin TRIEDA_LOAD_MODEL
+
+%Var b_{i,d,c,cp} 
+%Desc 
+   indica se algum aluno do curso $c$ foi alocado para a $i$-ésima turma da disciplina $d$ no campus $cp$.
+
+%DocEnd
+/====================================================================*/
 
 int SolverMIP::cria_variavel_aloc_alunos(void)
 {
@@ -1182,6 +1430,24 @@ int SolverMIP::cria_variavel_aloc_alunos(void)
 	return num_vars;
 }
 
+/*====================================================================/
+%DocBegin TRIEDA_LOAD_MODEL
+
+%Var c_{i,d,t} 
+%Desc 
+    indica se houve abertura de turma $i$ da disciplina $d$ em dias consecutivos.
+
+%ObjCoef
+    \delta \cdot \sum\limits_{d \in D} 
+		\sum\limits_{i \in I_{d}} \sum\limits_{t \in T-{1}} c_{i,d,t}
+
+%Data \delta
+%Desc
+    peso associado a função objetivo.
+
+%DocEnd
+/====================================================================*/
+
 int SolverMIP::cria_variavel_consecutivos(void)
 {
    int num_vars = 0;
@@ -1220,6 +1486,28 @@ int SolverMIP::cria_variavel_consecutivos(void)
 
 	return num_vars;
 }
+
+/*====================================================================/
+%DocBegin TRIEDA_LOAD_MODEL
+
+%Var \underline{h}_{bc,i}  
+%Desc 
+    mínimo de créditos alocados na semana na $i$-ésima turma do bloco $bc$.
+%ObjCoef
+    \lambda \cdot \sum\limits_{bc \in B} 
+		\sum\limits_{i \in I_{d}, d \in D_{bc}} \left( \overline{h}_{bc,i} - \underline{h}_{bc,i} \right)
+
+%Data \underline{H_{d}} 
+%Desc
+    mínimo de créditos diários da disciplina $d$.
+
+%Data \lambda
+%Desc
+    peso associado a função objetivo.
+
+%DocEnd
+/====================================================================*/
+
 int SolverMIP::cria_variavel_min_creds(void)
 {
 	int num_vars = 0;
@@ -1253,6 +1541,20 @@ int SolverMIP::cria_variavel_min_creds(void)
 	return num_vars;
 }
 
+/*====================================================================/
+%DocBegin TRIEDA_LOAD_MODEL
+
+%Var \overline{h}_{bc,i} 
+%Desc 
+    máximo de créditos alocados na semana na $i$-ésima turma do bloco $bc$.
+
+%Data \overline{H_{d}} 
+%Desc
+    máximo de créditos diários da disciplina $d$.
+
+%DocEnd
+/====================================================================*/
+
 int SolverMIP::cria_variavel_max_creds(void)
 {
 	int num_vars = 0;
@@ -1285,6 +1587,16 @@ int SolverMIP::cria_variavel_max_creds(void)
 	}
 	return num_vars;
 }
+
+/*====================================================================/
+%DocBegin TRIEDA_LOAD_MODEL
+
+%Var y_{i,d,tps,u} 
+%Desc 
+    indica que a turma $i$ da disciplina $d$ foi alocada em alguma sala do tipo $tps$ da unidade $u$.
+
+%DocEnd
+/====================================================================*/
 
 int SolverMIP::cria_variavel_aloc_disciplina(void)
 {
@@ -1377,6 +1689,22 @@ int SolverMIP::cria_variavel_aloc_disciplina(void)
 	return num_vars;
 }
 
+/*====================================================================/
+%DocBegin TRIEDA_LOAD_MODEL
+
+%Var w_{bc,t,cp}  
+%Desc 
+    indica o número sub-blocos abertos do bloco curricular $bc$ no dia $t$ no campus $cp$.
+%ObjCoef
+    \rho \cdot \sum\limits_{bc \in B}\sum\limits_{t \in T} (\sum\limits_{cp \in CP} w_{bc,t,cp})
+
+%Data \rho
+%Desc
+    peso associado a função objetivo.
+
+%DocEnd
+/====================================================================*/
+
 int SolverMIP::cria_variavel_num_subblocos(void)
 {
 	int num_vars = 0;
@@ -1413,6 +1741,21 @@ int SolverMIP::cria_variavel_num_subblocos(void)
 	return num_vars;
 }
 
+/*====================================================================/
+%DocBegin TRIEDA_LOAD_MODEL
+
+%Var v_{bc,t}  
+%Desc 
+    contabiliza a abertura do mesmo bloco curricular $bc$, no mesmo dia $t$, em campus distintos.
+%ObjCoef
+   \beta \cdot \sum\limits_{bc \in B} \sum\limits_{t \in T} v_{b,t}
+
+%Data \beta
+%Desc
+    peso associado a função objetivo.
+
+%DocEnd
+/====================================================================*/
 
 int SolverMIP::cria_variavel_num_abertura_turma_bloco(void)
 {
@@ -1449,6 +1792,22 @@ int SolverMIP::cria_variavel_num_abertura_turma_bloco(void)
 
 	return num_vars;
 }
+
+/*====================================================================/
+%DocBegin TRIEDA_LOAD_MODEL
+
+%Var fcp_{d,t} 
+%Desc 
+    variável de folga superior para a restrição de fixação da distribuição de créditos por dia.
+%ObjCoef
+    \xi \cdot \sum\limits_{d \in D} \sum\limits_{t \in T} fcp_{d,t}
+
+%Data \xi
+%Desc
+    peso associado a função objetivo.
+
+%DocEnd
+/====================================================================*/
 
 int SolverMIP::cria_variavel_de_folga_dist_cred_dia_superior(void)
 {
@@ -1493,6 +1852,18 @@ int SolverMIP::cria_variavel_de_folga_dist_cred_dia_superior(void)
 	return num_vars;
 }
 
+/*====================================================================/
+%DocBegin TRIEDA_LOAD_MODEL
+
+%Var fcm_{d,t}  
+%Desc 
+    variável de folga inferior para a restrição de fixação da distribuição de créditos por dia.
+%ObjCoef
+    \xi \cdot \sum\limits_{d \in D} \sum\limits_{t \in T} fcm_{d,t}
+
+%DocEnd
+/====================================================================*/
+
 int SolverMIP::cria_variavel_de_folga_dist_cred_dia_inferior(void)
 {
 	int num_vars = 0;
@@ -1535,6 +1906,16 @@ int SolverMIP::cria_variavel_de_folga_dist_cred_dia_inferior(void)
 	return num_vars;
 }
 
+/*====================================================================/
+%DocBegin TRIEDA_LOAD_MODEL
+
+%Var r_{bc,t,cp}  
+%Desc 
+    indica se algum sub-bloco foi aberto do bloco curricular $bc$ no dia $t$ no campus $cp$.
+
+%DocEnd
+/====================================================================*/
+
 int SolverMIP::cria_variavel_abertura_subbloco_de_blc_dia_campus()
 {
 	int num_vars = 0;
@@ -1570,6 +1951,17 @@ int SolverMIP::cria_variavel_abertura_subbloco_de_blc_dia_campus()
 
 	return num_vars;
 }
+
+/*====================================================================/
+%DocBegin TRIEDA_LOAD_MODEL
+
+%Var bs_{i,d,c,c',cp}
+%Desc 
+    variável de folga para a restrição em que o compartilhamento de turmas 
+	   de alunos de cursos diferentes é proibido.
+
+%DocEnd
+/====================================================================*/
 
 int SolverMIP::cria_variavel_de_folga_aloc_alunos_curso_incompat()
 {
@@ -1612,7 +2004,16 @@ int SolverMIP::cria_variavel_de_folga_aloc_alunos_curso_incompat()
 	return num_vars;
 }
 
+/*====================================================================/
+%DocBegin TRIEDA_LOAD_MODEL
 
+%Var fd_{d,oft} 
+%Desc 
+    variável de folga para a restrição "Capacidade alocada tem que 
+	   permitir atender demanda da disciplina".
+
+%DocEnd
+/====================================================================*/
 
 int SolverMIP::cria_variavel_de_folga_demanda_disciplina()
 {
@@ -1650,6 +2051,17 @@ int SolverMIP::cria_variavel_de_folga_demanda_disciplina()
 	return num_vars;
 }
 
+/*====================================================================/
+%DocBegin TRIEDA_LOAD_MODEL
+
+%Var m_{d,i,k}  
+%Desc 
+    variável binária que indica se a combinação de divisão de créditos 
+	   $k$ foi escolhida para a turma $i$ da disciplina $d$.
+
+%DocEnd
+/====================================================================*/
+
 int SolverMIP::cria_variavel_combinacao_divisao_credito(){
 	
 	int num_vars = 0;
@@ -1685,6 +2097,23 @@ int SolverMIP::cria_variavel_combinacao_divisao_credito(){
 	}
 	return num_vars;
 }
+
+/*====================================================================/
+%DocBegin TRIEDA_LOAD_MODEL
+
+%Var fk_{d,i,t} 
+%Desc 
+    variável de folga para a restrição de combinação de divisão de créditos.
+%ObjCoef
+    \psi \cdot \sum\limits_{d \in D} 
+	   \sum\limits_{t \in T} \sum\limits_{i \in I_{d}} fk_{d,i,k}
+
+%Data \psi
+%Desc
+    peso associado a função objetivo.
+
+%DocEnd
+/====================================================================*/
 
 int SolverMIP::cria_variavel_de_folga_combinacao_divisao_credito(){
 
@@ -1925,6 +2354,32 @@ int SolverMIP::cria_restricoes(void)
 	return restricoes;
 }
 
+/*====================================================================/
+%DocBegin TRIEDA_LOAD_MODEL
+
+%Constraint 
+	Carga horária de todas as turmas de cada disciplina
+ 
+%MatExp 
+
+\begin{eqnarray}
+	\sum\limits_{u \in U}\sum\limits_{tps \in SCAP_{u}}\sum\limits_{t \in T} x_{i,d,u,tps,t}  =  C_{d} \cdot z_{i,d,cp} \nonumber \qquad 
+	\forall d \in D \quad
+	\forall i \in I_{d} \quad 
+	\forall cp \in CP 
+\end{eqnarray}
+
+%Data C_{d}
+%Desc
+    Total de créditos da disciplina $d$.
+
+%Data I_{d}
+%Desc
+    Máximo de turmas que podem ser abertas da disciplina $d$.
+
+%DocEnd
+/====================================================================*/
+
 int SolverMIP::cria_restricao_carga_horaria(void)
 {
 	int restricoes = 0;
@@ -2104,6 +2559,29 @@ int SolverMIP::cria_restricao_carga_horaria(void)
 	return restricoes;
 }
 
+/*====================================================================/
+%DocBegin TRIEDA_LOAD_MODEL
+
+%Constraint 
+	Máximo de créditos por sala e dia
+%Desc 
+
+%MatExp
+
+\begin{eqnarray}
+	\sum\limits_{d \in D}\sum\limits_{i \in I_{d}} x_{i,d,u,tps,t} \leq  HTPS_{t,tps} \nonumber \qquad 
+	\forall u \in U \quad
+	\forall tps \in SCAP_{u} \quad
+	\forall t \in T
+\end{eqnarray}
+
+%Data HTPS_{t,tps}
+%Desc
+    máximo de créditos permitidos por dia $t$ para o conjunto de salas do tipo (capacidade) $tps$.
+
+%DocEnd
+/====================================================================*/
+
 int SolverMIP::cria_restricao_max_cred_sd(void)
 {
 	int restricoes = 0;
@@ -2239,6 +2717,31 @@ int SolverMIP::cria_restricao_max_cred_sd(void)
 
 	return restricoes;
 }
+
+/*====================================================================/
+%DocBegin TRIEDA_LOAD_MODEL
+
+%Constraint 
+	Mínimo de créditos diários da disciplina (*)
+%Desc
+
+%MatExp
+
+\begin{eqnarray}
+	\underline{H_{d}} \cdot o_{i,d,u,tps,t}  \leq  x_{i,d,u,tps,t}  \nonumber \qquad 
+	\forall d \in D \quad
+	\forall i \in I_{d} \quad
+	\forall u \in U \quad
+	\forall tps \in SCAP_{u} \quad
+	\forall t \in T
+\end{eqnarray}
+
+%Data \underline{H_{d}} 
+%Desc
+    mínimo de créditos diários da disciplina $d$.
+
+%DocEnd
+/====================================================================*/
 
 // TRIEDA-405 Cont-Mínimo de créditos diários da disciplina(*)
 int SolverMIP::cria_restricao_min_cred_dd(void)
@@ -2416,6 +2919,31 @@ int SolverMIP::cria_restricao_min_cred_dd(void)
 	return restricoes;
 }
 
+/*====================================================================/
+%DocBegin TRIEDA_LOAD_MODEL
+
+%Constraint 
+	Ativação da variável $o$
+%Desc 
+
+%MatExp
+
+\begin{eqnarray}
+	C_{d} \cdot o_{i,d,u,tps,t}  \geq  x_{i,d,u,tps,t}  \nonumber \qquad 
+	\forall d \in D \quad
+	\forall i \in I_{d} \quad
+	\forall u \in U \quad
+	\forall tps \in SCAP_{u} \quad
+	\forall t \in T
+\end{eqnarray}
+
+%Data C_{d}
+%Desc
+    Total de créditos da disciplina $d$.
+
+%DocEnd
+/====================================================================*/
+
 int SolverMIP::cria_restricao_ativacao_var_o(void)
 {
 	int restricoes = 0;
@@ -2588,6 +3116,26 @@ int SolverMIP::cria_restricao_ativacao_var_o(void)
 	return restricoes;
 }
 
+/*====================================================================/
+%DocBegin TRIEDA_LOAD_MODEL
+
+%Constraint 
+	Evitar sobreposição de turmas da mesma disciplina
+%Desc 
+
+%MatExp
+
+\begin{eqnarray}
+	\sum\limits_{tps \in SCAP_{u}} o_{i,d,u,tps,t}  \leq  1  \nonumber \qquad 
+	\forall d \in D \quad
+	\forall i \in I_{d} \quad
+	\forall u \in U \quad
+	\forall t \in T
+\end{eqnarray}
+
+%DocEnd
+/====================================================================*/
+
 int SolverMIP::cria_restricao_evita_sobreposicao(void)
 {
 	int restricoes = 0;
@@ -2718,6 +3266,28 @@ int SolverMIP::cria_restricao_evita_sobreposicao(void)
 
 	return restricoes;
 }
+
+/*====================================================================/
+%DocBegin TRIEDA_LOAD_MODEL
+
+%Constraint 
+	Indicação de que uma turma de uma disciplina foi alocada 
+	   em um determinado tipo de sala (*)
+%Desc 
+
+%MatExp
+
+\begin{eqnarray}
+	\sum\limits_{t \in T} o_{i,d,u,tps,t}  \leq  7 \cdot y_{i,d,tps,u}  \nonumber \qquad 
+	\forall d \in D \quad
+	\forall i \in I_{d} \quad
+	\forall u \in U \quad
+	\forall s \in S_{u}
+	\forall tps \in SCAP_{u}
+\end{eqnarray}
+
+%DocEnd
+/====================================================================*/
 
 int SolverMIP::cria_restricao_disciplina_sala(void)
 {
@@ -2866,6 +3436,24 @@ int SolverMIP::cria_restricao_disciplina_sala(void)
 	return restricoes;
 }
 
+/*====================================================================/
+%DocBegin TRIEDA_LOAD_MODEL
+
+%Constraint 
+	Uma turma só pode ser alocada a um tipo de sala
+%Desc 
+
+%MatExp
+
+\begin{eqnarray}
+	\sum\limits_{u \in U} \sum\limits_{tps \in SCAP_{u}} y_{i,d,tps,u}  \leq  1 \nonumber \qquad 
+	\forall d \in D \quad
+	\forall i \in I_{d} \quad
+\end{eqnarray}
+
+%DocEnd
+/====================================================================*/
+
 // TRIEDA-413 - Garante que a mesma turma tenha que ser alocada no mesmo tipo de sala em dias diferentes
 int SolverMIP::cria_restricao_turma_sala(void)
 {
@@ -2969,6 +3557,24 @@ int SolverMIP::cria_restricao_turma_sala(void)
 	return restricoes;
 }
 
+/*====================================================================/
+%DocBegin TRIEDA_LOAD_MODEL
+
+%Constraint 
+	Evitar alocação de turmas da mesma disciplina em campus diferentes
+%Desc 
+
+%MatExp
+
+\begin{eqnarray}
+	\sum\limits_{cp \in CP} z_{i,d,cp}  \leq  1  \nonumber \qquad 
+	\forall d \in D \quad
+	\forall i \in I_{d}
+\end{eqnarray}
+
+%DocEnd
+/====================================================================*/
+
 int SolverMIP::cria_restricao_evita_turma_disc_camp_d(void)
 {
 	int restricoes = 0;
@@ -3022,6 +3628,29 @@ int SolverMIP::cria_restricao_evita_turma_disc_camp_d(void)
 	}
 	return restricoes;
 }
+
+/*====================================================================/
+%DocBegin TRIEDA_LOAD_MODEL
+
+%Constraint 
+	Abertura de turmas de um mesmo bloco curricular
+%Desc 
+
+%MatExp
+
+\begin{eqnarray}
+	\sum\limits_{d \in D_{b}} \sum\limits_{u \in U} \sum\limits_{tps \in SCAP_{u}} \sum\limits_{i \in I_{d}} o_{i,d,u,tps,t}  \leq M \cdot w_{bc,t,cp} \nonumber \qquad 
+	\forall bc \in B \quad
+	\forall cp \in CP \quad
+	\forall t \in T
+\end{eqnarray}
+
+%Data M 
+%Desc
+    big $M$.
+
+%DocEnd
+/====================================================================*/
 
 int SolverMIP::cria_restricao_turmas_bloco(void)
 {	
@@ -3171,6 +3800,28 @@ int SolverMIP::cria_restricao_turmas_bloco(void)
 	return restricoes;
 }
 
+/*====================================================================/
+%DocBegin TRIEDA_LOAD_MODEL
+
+%Constraint 
+	Disciplinas de mesmo bloco não devem exceder máximo de créditos por dia
+%Desc 
+
+%MatExp
+
+\begin{eqnarray}
+	\sum\limits_{d \in D_{bc}} \sum\limits_{u \in U} \sum\limits_{tps \in SCAP_{u}} \sum\limits_{i \in I_{d}} x_{i,d,u,tps,t}  \leq H_{t} \cdot w_{bc,t,cp}  \nonumber \qquad 
+	\forall bc \in B \quad
+	\forall cp \in CP
+	\forall t \in T \quad
+\end{eqnarray}
+
+%Data H_{t}
+%Desc
+    máximo de créditos permitidos por dia $t$.
+
+%DocEnd
+/====================================================================*/
 
 int SolverMIP::cria_restricao_max_cred_disc_bloco(void)
 {
@@ -3325,6 +3976,25 @@ int SolverMIP::cria_restricao_max_cred_disc_bloco(void)
 	return restricoes;
 }
 
+/*====================================================================/
+%DocBegin TRIEDA_LOAD_MODEL
+
+%Constraint 
+	Contabiliza se há turmas do mesmo bloco curricular abertas no mesmo 
+	   dia em unidades distintas
+%Desc 
+
+%MatExp
+
+\begin{eqnarray}
+	\sum\limits_{cp \in CP} r_{bc,t,cp} - 1  \leq v_{bc,t} \nonumber \qquad 
+	\forall bc \in B \quad
+	\forall t \in T
+\end{eqnarray}
+
+%DocEnd
+/====================================================================*/
+
 int SolverMIP::cria_restricao_num_tur_bloc_dia_difunid(void)
 {
 	int restricoes = 0;
@@ -3402,6 +4072,31 @@ int SolverMIP::cria_restricao_num_tur_bloc_dia_difunid(void)
 
 	return restricoes;
 }
+
+/*====================================================================/
+%DocBegin TRIEDA_LOAD_MODEL
+
+%Constraint 
+	Limite de créditos diários de disciplina (*)
+%Desc 
+
+%MatExp
+
+\begin{eqnarray}
+	x_{i,d,u,tps,t}  \leq \overline{H_{d}}  \nonumber \qquad 
+	\forall d \in D \quad
+	\forall u \in U \quad
+	\forall tps \in SCAP_{u} \quad
+	\forall t \in T \quad
+	\forall i \in I_{d}
+\end{eqnarray}
+
+%Data \overline{H_{d}}
+%Desc
+    máximo de créditos diários da disciplina $d$.
+
+%DocEnd
+/====================================================================*/
 
 // TRIEDA-406 Cont-Limite de créditos diários de disciplina
 int SolverMIP::cria_restricao_lim_cred_diar_disc(void)
@@ -3530,6 +4225,27 @@ int SolverMIP::cria_restricao_lim_cred_diar_disc(void)
 	return restricoes;
 }
 
+/*====================================================================/
+%DocBegin TRIEDA_LOAD_MODEL
+
+%Constraint 
+	Capacidade alocada tem que permitir atender demanda da disciplina
+%Desc 
+
+%MatExp
+
+\begin{eqnarray}
+	\sum\limits_{i \in I_{d}} a_{i,d,oft} + fd_{d,oft} =  P_{d,oft}  \nonumber \qquad 
+	\forall oft \in O
+	\forall d \in D_{oft} \quad
+\end{eqnarray}
+
+%Data P_{d,oft}
+%Desc
+   demanda da disciplina $d$ da oferta $oft$.
+
+%DocEnd
+/====================================================================*/
 
 int SolverMIP::cria_restricao_cap_aloc_dem_disc(void)
 {
@@ -3658,6 +4374,31 @@ int SolverMIP::cria_restricao_cap_aloc_dem_disc(void)
 
 	return restricoes;
 }
+
+/*====================================================================/
+%DocBegin TRIEDA_LOAD_MODEL
+
+%Constraint 
+	Se alocar um conjunto de salas para uma turma, tem que respeitar 
+	   capacidade total das salas pertencentes ao conjunto
+%Desc 
+
+%MatExp
+
+\begin{eqnarray}
+	\sum\limits_{c \in C} \sum\limits_{oft \in O_{d}} a_{i,d,oft}  \leq \sum\limits_{u \in U} \sum\limits_{tps \in SCAP_{u}} \sum\limits_{t \in T} A_{u,tps} \cdot o_{i,d,u,tps,t} 
+	\nonumber \qquad 
+	\forall d \in D \quad
+	\forall i \in I_{d} \quad
+	\forall cp \in CP
+\end{eqnarray}
+
+%Data A_{u,s}
+%Desc
+    capacidade da sala $s$ da unidade $u$.
+
+%DocEnd
+/====================================================================*/
 
 // TRIEDA-390
 int SolverMIP::cria_restricao_cap_sala_compativel_turma(void)
@@ -3906,6 +4647,35 @@ int SolverMIP::cria_restricao_cap_sala_compativel_turma(void)
 	return restricoes;
 }
 
+/*====================================================================/
+%DocBegin TRIEDA_LOAD_MODEL
+
+%Constraint 
+	Capacidade total de um conjunto de salas de uma unidade
+%Desc
+
+%MatExp
+
+\begin{eqnarray}
+	\sum\limits_{c \in C} \sum\limits_{oft \in O_{d}} a_{i,d,oft} \leq A_{u,tps} + M \cdot (1-o_{i,d,u,tps,t}) \nonumber \qquad
+	\forall d \in D \quad
+	\forall i \in I_{d} \quad
+	\forall u \in U \quad
+	\forall tps \in SCAP_{u} \quad
+	\forall cp \in CP \quad
+	\forall t \in T
+\end{eqnarray}
+
+%Data A_{u,s}
+%Desc
+    capacidade da sala $s$ da unidade $u$.
+
+%Data M
+%Desc
+   big $M$.
+
+%DocEnd
+/====================================================================*/
 
 // TRIEDA-391 - Capacidade da sala na unidade
 int SolverMIP::cria_restricao_cap_sala_unidade(void)
@@ -4091,6 +4861,24 @@ int SolverMIP::cria_restricao_cap_sala_unidade(void)
 	return restricoes;
 }
 
+/*====================================================================/
+%DocBegin TRIEDA_LOAD_MODEL
+
+%Constraint 
+	Contabiliza se há turmas da mesma disciplina em dias consecutivos (*)
+%Desc 
+
+%MatExp
+
+\begin{eqnarray}
+	c_{i,d,t}  \geq \sum\limits_{u \in U} \sum\limits_{tps \in SCAP_{u}}(o_{i,d,u,tps,t} - o_{i,d,u,tps,t-1}) - 1  \nonumber \qquad 
+	\forall d \in D \quad
+	\forall i \in I_{d} \quad
+	\forall (t \geq 2) \in T
+\end{eqnarray}
+
+%DocEnd
+/====================================================================*/
 
 // TRIEDA-392
 int SolverMIP::cria_restricao_turma_disc_dias_consec(void)
@@ -4244,6 +5032,24 @@ int SolverMIP::cria_restricao_turma_disc_dias_consec(void)
 	return restricoes;
 }
 
+/*====================================================================/
+%DocBegin TRIEDA_LOAD_MODEL
+
+%Constraint 
+	Mínimo de créditos alocados para turmas de um bloco (*)
+%Desc 
+
+%MatExp
+
+\begin{eqnarray}
+	\underline{h}_{bc,i} \leq \sum\limits_{d \in D_{bc}} \sum\limits_{u \in U} \sum\limits_{tps \in SCAP_{u}} x_{i,d,u,tps,t} \nonumber \qquad 
+	\forall bc \in B \quad
+	\forall i \in I_{oft} \quad
+	\forall t \in T
+\end{eqnarray}
+
+%DocEnd
+/====================================================================*/
 
 // TRIEDA-393
 int SolverMIP::cria_restricao_min_creds_turm_bloco(void)
@@ -4327,6 +5133,25 @@ int SolverMIP::cria_restricao_min_creds_turm_bloco(void)
 	return restricoes;
 }
 
+/*====================================================================/
+%DocBegin TRIEDA_LOAD_MODEL
+
+%Constraint 
+	Máximo de créditos alocados para turmas de um bloco (*)
+%Desc 
+
+%MatExp
+
+\begin{eqnarray}
+	\overline{h}_{bc,i} \geq \sum\limits_{d \in D_{bc}} \sum\limits_{u \in U} \sum\limits_{tps \in SCAP_{u}} x_{i,d,u,tps,t} \nonumber \qquad 
+	\forall bc \in B \quad
+	\forall i \in I_{oft} \quad
+	\forall t \in T
+\end{eqnarray}
+
+%DocEnd
+/====================================================================*/
+
 // TRIEDA-394
 int SolverMIP::cria_restricao_max_creds_turm_bloco(void)
 {
@@ -4409,6 +5234,30 @@ int SolverMIP::cria_restricao_max_creds_turm_bloco(void)
 	return restricoes;
 }
 
+/*====================================================================/
+%DocBegin TRIEDA_LOAD_MODEL
+
+%Constraint 
+	Contabiliza se houve aluno de determinado curso alocado em uma turma (*)
+%Desc 
+
+%MatExp
+
+\begin{eqnarray}
+	\sum\limits_{o \in O_{d}} a_{i,d,oft} \leq M \cdot b_{i,d,c,cp} \nonumber \qquad 
+	\forall cp \in CP
+	\forall c \in C \quad
+	\forall d \in D \quad
+	\forall i \in I_{d} \quad
+\end{eqnarray}
+
+%Data M
+%Desc
+    big $M$.
+
+%DocEnd
+/====================================================================*/
+
 int SolverMIP::cria_restricao_aluno_curso_disc(void)
 {
 	int restricoes = 0;
@@ -4489,6 +5338,26 @@ int SolverMIP::cria_restricao_aluno_curso_disc(void)
 
    return restricoes;
 }
+
+/*====================================================================/
+%DocBegin TRIEDA_LOAD_MODEL
+
+%Constraint 
+	Não permitir que alunos de cursos diferentes compartilhem turmas (*)
+%Desc 
+
+%MatExp
+
+\begin{eqnarray} 
+	b_{i,d,c,cp} + b_{i,d,c',cp} - bs_{i,d,c,c',cp} \leq 1 \nonumber \qquad 
+	\forall d \in D \quad
+	\forall i \in I_{d} \quad
+	\forall c,c' \notin CC \quad
+	\forall cp \in CP
+\end{eqnarray}
+
+%DocEnd
+/====================================================================*/
 
 int SolverMIP::cria_restricao_alunos_cursos_dif(void)
 {
@@ -4607,6 +5476,24 @@ int SolverMIP::cria_restricao_alunos_cursos_dif(void)
 
 	return restricoes;
 }
+
+/*====================================================================/
+%DocBegin TRIEDA_LOAD_MODEL
+
+%Constraint 
+	Fixação da distribuição de créditos por dia (*)
+%Desc 
+
+%MatExp
+
+\begin{eqnarray}
+	\sum\limits_{u \in U} \sum\limits_{tps \in SCAP_{u}} \sum\limits_{i \in I_{d}} x_{i,d,u,tps,t} + fcp_{d,t} - fcm_{d,t} = FC_{d,t}  \nonumber \qquad 
+	\forall d \in D \quad
+	\forall t \in T
+\end{eqnarray}
+
+%DocEnd
+/====================================================================*/
 
 // TRIEDA-395
 int SolverMIP::cria_restricao_de_folga_dist_cred_dia(void)
@@ -4790,6 +5677,28 @@ int SolverMIP::cria_restricao_de_folga_dist_cred_dia(void)
 	return restricoes;
 }
 
+/*====================================================================/
+%DocBegin TRIEDA_LOAD_MODEL
+
+%Constraint 
+	Ativação da variável r
+%Desc 
+
+%MatExp
+
+\begin{eqnarray}
+	w_{bc,t,cp} \leq M \cdot r_{bc,t,cp} \nonumber \qquad 
+	\forall bc \in B \quad
+	\forall cp \in CP \quad
+	\forall t \in T
+\end{eqnarray}
+
+%Data M
+%Desc
+    big $M$.
+
+%DocEnd
+/====================================================================*/
 
 int SolverMIP::cria_restricao_ativacao_var_r()
 {
@@ -4864,6 +5773,25 @@ int SolverMIP::cria_restricao_ativacao_var_r()
 
 	return restricoes;
 }
+
+/*====================================================================/
+%DocBegin TRIEDA_LOAD_MODEL
+
+%Constraint 
+	Limita a abertura de turmas
+%Desc 
+
+%MatExp
+
+\begin{eqnarray}
+	z_{i,d,cp} \leq \sum\limits_{oft \in O_{cp}} a_{i,d,oft}  \nonumber \qquad 
+	\forall cp \in CP \quad
+	\forall d \in D \quad
+	\forall i \in I_{d}
+\end{eqnarray}
+
+%DocEnd
+/====================================================================*/
 
 int SolverMIP::cria_restricao_limita_abertura_turmas()
 {
@@ -5081,6 +6009,24 @@ int SolverMIP::cria_restricao_limita_abertura_turmas()
 	return restricoes;
 }
 
+/*====================================================================/
+%DocBegin TRIEDA_LOAD_MODEL
+
+%Constraint 
+	Abertura sequencial de turmas
+%Desc 
+
+%MatExp
+
+\begin{eqnarray}
+	\sum\limits_{u \in U} \sum\limits_{tps \in SCAP_{u}} \sum\limits_{t \in T} o_{i,d,u,tps,t} \geq \sum\limits_{u \in U} \sum\limits_{tps \in SCAP_{u}} \sum\limits_{t \in T} o_{i',d,u,tps,t} \nonumber \qquad 
+	\forall d \in D \quad
+	\forall i,i' \in I_{d}
+\end{eqnarray}
+
+%DocEnd
+/====================================================================*/
+
 int SolverMIP::cria_restricao_abre_turmas_em_sequencia(void)
 {
 	int restricoes = 0;
@@ -5253,6 +6199,29 @@ int SolverMIP::cria_restricao_abre_turmas_em_sequencia(void)
 	return restricoes;
 }
 
+/*====================================================================/
+%DocBegin TRIEDA_LOAD_MODEL
+
+%Constraint 
+	Regra de divisão de créditos
+%Desc 
+
+%MatExp
+
+\begin{eqnarray}
+	\sum\limits_{u \in U} \sum\limits_{tps \in SCAP_{u}} x_{i,d,u,tps,t} = \sum\limits_{k \in K_{d}}N_{d,k,t} \cdot m_{d,i,k} + fk_{d,i,t} \nonumber \qquad 
+	\forall d \in D \quad
+	\forall i \in I_{d} \quad
+	\forall t \in T
+\end{eqnarray}
+
+%Data N_{d,k,t}
+%Desc
+    número de créditos determinados para a disciplina $d$ no dia $t$ na combinação de divisão de crédito $k$.
+
+%DocEnd
+/====================================================================*/
+
 int SolverMIP::cria_restricao_divisao_credito(){
 
 	int restricoes = 0;
@@ -5354,6 +6323,24 @@ int SolverMIP::cria_restricao_divisao_credito(){
 
 	return restricoes;
 }
+
+/*====================================================================/
+%DocBegin TRIEDA_LOAD_MODEL
+
+%Constraint 
+	Somente uma combinação de regra de divisão de créditos pode ser escolhida
+%Desc 
+
+%MatExp
+
+\begin{eqnarray}
+	\sum\limits_{k \in K_{d}} m_{d,i,k} \leq 1 \nonumber \qquad 
+	\forall d \in D \quad
+	\forall i \in I_{d}
+\end{eqnarray}
+
+%DocEnd
+/====================================================================*/
 
 int SolverMIP::cria_restricao_combinacao_divisao_credito(){
 
