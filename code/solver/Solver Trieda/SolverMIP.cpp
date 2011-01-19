@@ -180,6 +180,11 @@
 #include "SolutionLoader.h"
 #include "ErrorHandler.h"
 
+bool ordenaSolucoes(Solucao const * left, Solucao const * right)
+{
+   return (left->demanda_Nao_Atendida > right->demanda_Nao_Atendida);
+}
+
 // >>>
 //#define PRINT_CSV
 // <<<
@@ -245,34 +250,38 @@ int SolverMIP::solve()
 	constNum = cria_restricoes();
 
 #ifdef DEBUG
-	printf("Total of Constraints: %i\n",constNum);
+	printf("Total of Constraints: %i\n\n",constNum);
 #endif
 
 #ifdef DEBUG
 	lp->writeProbLP("Solver Trieda");
 #endif
 
-   //InitialSolution init_sol(*problemData);
-   //init_sol.generate_Initial_Solution();
+   // TRIEDA-560
 
-   //std::cout << "Solucao Inicial gerada com sucesso.\n";
+   //// Gerando Soluções
+   //vector<Solucao*> conjunto_de_Solucoes;
 
-   //std::cout << "Total Demandas: " << problemData->demandas.size() << std::endl;
-   //std::cout << "Demandas NAO atendidas: " << init_sol.getNumDemandas_NAO_Atendidas() << std::endl;
-   //std::cout << "Demandas atendidas: " << init_sol.getNumDemandasAtendidas() << std::endl;
-  
-   //pair<vector<int>*,vector<double>*> sol = init_sol.repSolIniToVariaveis(vHash,lp->getNumCols(),*lp);
-
-   //int * indices = new int [sol.first->size()];
-   //double * valores = new double [sol.second->size()];
-
-   //int cnt = sol.first->size(); // poderia ser <sol.second->size()> tb.
-
-   //for(int i=0;i<cnt;i++)
+   //for(int num_Sol = 0; num_Sol < 1; num_Sol++)
    //{
-   //   indices[i] = sol.first->at(i);
-   //   valores[i] = sol.second->at(i);
+   //   Solucao * sol = new Solucao(*problemData);
+
+   //   //sol->geraSolucao();
+   //   sol->geraSolucaoSubBlocos();
+   //   //sol->imprimeInfo();
+
+   //   cout << "FO: " << sol->demanda_Nao_Atendida << endl;
+
+   //   conjunto_de_Solucoes.push_back(sol);
    //}
+
+   //sort(conjunto_de_Solucoes.begin(),conjunto_de_Solucoes.end(),ordenaSolucoes);
+
+   //getchar();
+
+   // Gerando Soluções - FIM
+
+   
 
    //lp->copyMIPStartSol(cnt,indices,valores);
 

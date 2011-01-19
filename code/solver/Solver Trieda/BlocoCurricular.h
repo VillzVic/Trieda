@@ -3,7 +3,14 @@
 
 #include "Curso.h"
 #include "Disciplina.h"
+#include "Demanda.h"
 #include "Campus.h"
+
+#include "Curriculo.h"
+
+#include <map>
+
+using namespace std;
 
 class BlocoCurricular :
    public OFBase
@@ -23,5 +30,10 @@ public:
 
    GGroup<int> diasLetivos;
 
+   // Associa às disciplinas do bloco suas respectivas demandas - IGNORANDO TURNO
+   map<Disciplina*,Demanda*> disciplina_Demanda;
+
    int total_turmas;
+
+   Curriculo * curriculo;
 };

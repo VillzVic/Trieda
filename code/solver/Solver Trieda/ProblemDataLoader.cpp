@@ -947,6 +947,21 @@ void ProblemDataLoader::cria_blocos_curriculares()
       {
          ITERA_GGROUP(it_curr,it_curso->curriculos,Curriculo)
          {
+            // Descobrindo oferta em questão
+            Oferta * pt_Oferta = NULL;
+  
+            ITERA_GGROUP(it_Oferta,problemData->ofertas,Oferta)
+            {
+               if(it_Oferta->campus->getId() == it_campi->getId() &&
+                  it_Oferta->curriculo->getId() == it_curr->getId() &&
+                  it_Oferta->curso->getId() == it_curso->getId())
+               {
+                  pt_Oferta = *it_Oferta;
+                  break;
+               }
+            }
+            // ---
+
             GGroup<DisciplinaPeriodo>::iterator it_dp = 
                it_curr->disciplinas_periodo.begin();
 
@@ -958,6 +973,20 @@ void ProblemDataLoader::cria_blocos_curriculares()
                int disc_id = dp.second;
 
                Disciplina * disc = problemData->refDisciplinas[disc_id];
+
+               // Encontrando e armazenando a demanda específica da disciplina em questão
+               Demanda * pt_Demanda = NULL;
+
+               ITERA_GGROUP(it_Demanda,problemData->demandas,Demanda)
+               {
+                  if(it_Demanda->disciplina == disc &&
+                     it_Demanda->oferta == pt_Oferta)
+                  {
+                     pt_Demanda = *it_Demanda;
+                     break;
+                  }
+               }
+               //---
 
                GGroup<BlocoCurricular*>::iterator it_bc = 
                   problemData->blocos.begin();
@@ -972,6 +1001,9 @@ void ProblemDataLoader::cria_blocos_curriculares()
                   if(it_bc->getId() == id_blc)
                   {
                      it_bc->disciplinas.add(disc);
+
+                     it_bc->disciplina_Demanda[disc] = pt_Demanda;
+
                      found = true;
                      break;
                   }
@@ -986,7 +1018,11 @@ void ProblemDataLoader::cria_blocos_curriculares()
                   b->campus = *it_campi;
                   b->curso = *it_curso;
 
+                  b->curriculo = *it_curr;
+
                   b->disciplinas.add(disc);
+
+                  b->disciplina_Demanda[disc] = pt_Demanda;
 
                   problemData->blocos.add(b);
                }
@@ -1341,11 +1377,11 @@ void ProblemDataLoader::print_stats() {
    printf("<*> Cursos:       \t%4d\n",ncursos);
 
    printf("<*> Ofertas:      \t%4d\n",nofertas);
-   ITERA_GGROUP(itOferta,problemData->ofertas,Oferta)
-   { 
-      printf("\t - Oferta %d possui %d discs\n",itOferta->getId(),
-         itOferta->curriculo->disciplinas_periodo.size());
-   }
+   //ITERA_GGROUP(itOferta,problemData->ofertas,Oferta)
+   //{ 
+   //   printf("\t - Oferta %d possui %d discs\n",itOferta->getId(),
+   //      itOferta->curriculo->disciplinas_periodo.size());
+   //}
 
    //printf("<*> Demanda total:\t%4d vagas\n",tdemanda);
    printf("<*> Demanda total\n");

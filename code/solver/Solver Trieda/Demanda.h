@@ -22,4 +22,6 @@ public:
    Oferta* oferta;
    Disciplina* disciplina;
 
+   bool operator ==(Demanda const & demanda);
+
 };

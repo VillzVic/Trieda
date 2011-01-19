@@ -7,7 +7,7 @@
 #include "opt_lp.h"
 #include "input.h"
 
-#include "InitialSolution.h"
+#include "Solucao.h"
 
 #define PRINT_cria_variaveis
 #define PRINT_cria_restricoes

@@ -29,12 +29,19 @@ public:
    GGroup<IS_Atendimento_Tatico*> is_Atendimentos_Taticos;
 
    // Métodos
+   //void aloca(
+   //   int turma,
+   //   //pair<Disciplina*,int> & cjt_Dem,
+   //   vector<pair<Demanda*,int/*Demanda atendida*/> > & demandas_A_Alocar,
+   //   int demanda_Atendida,
+   //   int num_Creds);
+
    void aloca(
       int turma,
-      pair<Disciplina*,int> & cjt_Dem,
-      vector<pair<Demanda*,int/*Demanda atendida*/> > & demandas_A_Alocar,
-      int demanda_Atendida,
-      int num_Creds);
+      Demanda * ref_Demanda_Alocda, // Referência para a Demanda que está sendo atendida (parcialmente ou totalmente)
+      int demanda_Atendida, // Indica a quantidade da demanda que está sendo atendida
+      int num_Creds // total de créditos a serem alocados no dia em questão
+      );
 
    // Operadores
 

@@ -26,3 +26,11 @@ void Demanda::le_arvore(ItemDemanda& elem)
 	disciplina_id = elem.disciplinaId();
 	oferta_id = elem.ofertaCursoCampiId();
 }
+
+bool Demanda::operator== (Demanda const & right)
+{
+   return (
+      (quantidade == right.quantidade) && 
+      (disciplina == right.disciplina) && 
+      (oferta == right.oferta));
+}

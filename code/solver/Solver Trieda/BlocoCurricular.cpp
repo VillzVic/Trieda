@@ -6,6 +6,7 @@ BlocoCurricular::BlocoCurricular(void)
    curso = NULL;
    campus = NULL;
    total_turmas = -1;
+   curriculo = NULL;
 }
 
 BlocoCurricular::~BlocoCurricular(void)
