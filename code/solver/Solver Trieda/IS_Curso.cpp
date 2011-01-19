@@ -72,8 +72,6 @@ vector<vector<pair<int/*dia*/, int/*numCreditos*/> > >::iterator IS_Curso::verif
       // Adicionando e setando um dia
       creditos_Livres_Grade.push_back(make_pair(dia,0));
 
-      int sz = creditos_Livres_Grade.size();
-
       /*
       Contabilizando o número de créditos livres para o dia em questão
       */
@@ -88,7 +86,6 @@ vector<vector<pair<int/*dia*/, int/*numCreditos*/> > >::iterator IS_Curso::verif
             cred,
             it_Grade_Horaria_Periodo->second->getColIdByName(dia)
             ).empty() )
-         //{ ++creditos_Livres_Grade.back().second; }
          { teste_Horario_Livre = true; }
          else
          {
@@ -121,7 +118,6 @@ vector<vector<pair<int/*dia*/, int/*numCreditos*/> > >::iterator IS_Curso::verif
             }
 
             if(disciplinas_Iguais)
-               //{ ++creditos_Livres_Grade.back().second; }
             { teste_Mesma_Disc_Alocada = true; }
 
          }
@@ -140,9 +136,6 @@ vector<vector<pair<int/*dia*/, int/*numCreditos*/> > >::iterator IS_Curso::verif
    verificar a compatibilidade com alguma das variações da regra de crédito.
    */
 
-   //vector<vector<pair<int/*dia*/, int/*numCreditos*/> > >::iterator
-   //   it_Variacoes_Regra_Credito = variacoes_Regra_Credito.begin();
-
    // Para cada variação da regra de crédito.
    for(; it_Variacoes_Regra_Credito != variacoes_Regra_Credito.end(); ++it_Variacoes_Regra_Credito)
    {
@@ -151,26 +144,37 @@ vector<vector<pair<int/*dia*/, int/*numCreditos*/> > >::iterator IS_Curso::verif
       vector<pair<int/*dia*/, int/*numCreditos*/> >::iterator
          it_Dias_Regra = it_Variacoes_Regra_Credito->begin();
 
-      // Referência para o dia da grade considerado.
-      int dia_Grade = 0;
-
-      // Para cada dia considerado em uma variação da regra de crédito.
-      //for(;it_Dias_Regra != it_Variacoes_Regra_Credito->end(); ++it_Dias_Regra)
-      for(int dia = 2; dia < 7; dia++)
+      // Para cada dia da variação da regra de crédito
+      for(; it_Dias_Regra != it_Variacoes_Regra_Credito->end(); ++it_Dias_Regra)
       {
-         // Testando se estou comparando o dia certo.
-         if(it_Dias_Regra->first == creditos_Livres_Grade.at(dia_Grade).first)
+         // Referência para o dia da grade considerado.
+         //int dia_Grade = 0;
+
+         // Para cada dia considerado em uma variação da regra de crédito.
+         //for(;it_Dias_Regra != it_Variacoes_Regra_Credito->end(); ++it_Dias_Regra)
+         //for(int dia = 2; dia < 7; dia++)
+         for(int dia = 0; dia < creditos_Livres_Grade.size(); ++dia)
          {
-            // Testando se o dia da grade possui o mínimo de créditos livres demandados.
-            if(creditos_Livres_Grade.at(dia_Grade).second >= it_Dias_Regra->second)
-            { ++dia_Grade; }
-            else // Caso não possua, a regra é incompatível.
-            { encontrou_Alguma_Variacao_Compativel = false; break; }
+            // Testando se estou comparando o dia certo.
+            if(it_Dias_Regra->first == creditos_Livres_Grade.at(dia).first)
+            {
+               // Testando se o dia da grade possui o mínimo de créditos livres demandados.
+               //if(creditos_Livres_Grade.at(dia).second >= it_Dias_Regra->second)
+               //{ ++dia_Grade; }
+               //else // Caso não possua, a regra é incompatível.
+               if(!(creditos_Livres_Grade.at(dia).second >= it_Dias_Regra->second))
+               { encontrou_Alguma_Variacao_Compativel = false; }
+               break;
+            }
          }
+         
+         if(!encontrou_Alguma_Variacao_Compativel)
+         { break; }
+
       }
 
       if(encontrou_Alguma_Variacao_Compativel)
-      { 
+      {
          return it_Variacoes_Regra_Credito;
       }
    }
@@ -316,6 +320,8 @@ void IS_Curso::aloca(
 
                // Atualizando
                creditos_Disc_Iguais.pop_back();
+
+               --num_Creds_A_Alocar;
             }
 
             // Checando se ainda existem créditos a serem alocados.
@@ -330,6 +336,8 @@ void IS_Curso::aloca(
 
                // Atualizando
                creditos_Livres.pop_back();
+               
+               --num_Creds_A_Alocar;
             }
 
             if(num_Creds_A_Alocar > 0)
@@ -366,9 +374,7 @@ void IS_Curso::aloca(
    }
    // ------------------------
 
-   cout << "ok!" << endl;
-
-   cout << "Alocou" << endl;
+   cout << "Alocou\n\n";
 }
 
 bool IS_Curso::operator < (IS_Curso const & right)

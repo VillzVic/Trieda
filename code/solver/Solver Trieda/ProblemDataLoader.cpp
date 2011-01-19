@@ -1666,7 +1666,7 @@ void ProblemDataLoader::associaDisciplinasSalas() {
                                  problemData->discSalas[ptDisc->getId()].add(*itSala);
                               }
                            }
-					 }
+                     }
                   }
                }
             }
@@ -1679,17 +1679,17 @@ void ProblemDataLoader::associaDisciplinasSalas() {
    std::map<int/*Id Disc*/,GGroup<Sala*> >::iterator it_Disc_Salas =
       problemData->discSalas.begin();
 
-	  for(; it_Disc_Salas != problemData->discSalas.end(); it_Disc_Salas++)
-	  {
-		  ITERA_GGROUP(it_fix,problemData->fixacoes,Fixacao)
-		  {
-			  if(it_Disc_Salas->first == it_fix->disciplina_id)
-			  {
-				  problemData->discSalas[it_fix->disciplina_id].clear();
-				  problemData->discSalas[it_fix->disciplina_id].add(it_fix->sala);
-			  }
-		  }
-	  }
+   for(; it_Disc_Salas != problemData->discSalas.end(); it_Disc_Salas++)
+   {
+      ITERA_GGROUP(it_fix,problemData->fixacoes,Fixacao)
+      {
+         if(it_Disc_Salas->first == it_fix->disciplina_id)
+         {
+            problemData->discSalas[it_fix->disciplina_id].clear();
+            problemData->discSalas[it_fix->disciplina_id].add(it_fix->sala);
+         }
+      }
+   }
 
    //// Para cada Campus
    //for(; itCpDiscs != problemData->cp_discs.end(); itCpDiscs++)

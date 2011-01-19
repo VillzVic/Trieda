@@ -812,8 +812,6 @@ void Solucao::imprimeInfo()
 
    cout << "Demanda NAO atendida: " << demanda_NAO_Atendida << endl;
 
-
-
    getchar();
 }
 
@@ -956,6 +954,7 @@ int Solucao::getNumDemandas_NAO_Atendidas() const
 //}
 
 //TRIEDA-568
+//TRIEDA-558
 void Solucao::geraSolucaoSubBlocos()
 {
    cout << "Gerando uma solucao que admite a presenca de subblocos" << endl;
@@ -1001,6 +1000,9 @@ void Solucao::geraSolucaoSubBlocos()
 
       map<Disciplina*,int/*Demanda nao atendida*/>::iterator
          it_Disciplina_Dem_Nao_Atendida = (*it_IS_Bloco_Curricular)->disciplina_Dem_Nao_Atendida.begin();
+
+      //cout << " =========================================== " << endl;
+      //getchar();
 
       // Para cada disciplina de um bloco - POR ENQUANTO, SEQUENCIAL !!!
       for(;it_Disciplina_Dem_Nao_Atendida != (*it_IS_Bloco_Curricular)->disciplina_Dem_Nao_Atendida.end(); ++it_Disciplina_Dem_Nao_Atendida)
@@ -1112,6 +1114,8 @@ void Solucao::geraSolucaoSubBlocos()
 
             vector<vector<pair<int/*dia*/, int/*numCreditos*/> > >::iterator
                it_Variacoes_Regra_Credito = variacoes_Regra_Credito->begin();
+            
+            int id_Disc_1 = pt_Disc->getId();
 
             it_Variacoes_Regra_Credito =
                is_Curso->verificaDisponibilidadeSemSubBloco(
@@ -1203,7 +1207,7 @@ void Solucao::geraSolucaoSubBlocos()
 
                      is_Curso->verificaDisponibilidadeSemSubBloco(
                      *variacoes_Regra_Credito,
-                     it_Variacoes_Regra_Credito,
+                     (++it_Variacoes_Regra_Credito),
                      chave,
                      pt_Disc);
                }
@@ -1216,7 +1220,8 @@ void Solucao::geraSolucaoSubBlocos()
                e mesmo assim, ainda há demanda para ser alocada.
                */
 
-               cout << "Demanda ainda não atendida totalmente .. ." << endl;
+               cout << "Demanda da disciplina <" << it_Disciplina_Dem_Nao_Atendida->first->codigo 
+                  << "> ainda nao atendida totalmente .. ." << endl;
                // Por eqto, deixo pra lá.
                break;
             }

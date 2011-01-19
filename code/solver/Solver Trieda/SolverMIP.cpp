@@ -240,14 +240,14 @@ int SolverMIP::solve()
 #endif
 
 	/* Variable creation */
-	varNum = cria_variaveis();
+	//varNum = cria_variaveis();
 
 #ifdef DEBUG
 	printf("Total of Variables: %i\n\n",varNum);
 #endif
 
 	/* Constraint creation */
-	constNum = cria_restricoes();
+	//constNum = cria_restricoes();
 
 #ifdef DEBUG
 	printf("Total of Constraints: %i\n\n",constNum);
@@ -264,10 +264,10 @@ int SolverMIP::solve()
 
    //for(int num_Sol = 0; num_Sol < 1; num_Sol++)
    //{
-   //   Solucao * sol = new Solucao(*problemData);
+      Solucao * sol = new Solucao(*problemData);
 
    //   //sol->geraSolucao();
-   //   sol->geraSolucaoSubBlocos();
+      sol->geraSolucaoSubBlocos();
    //   //sol->imprimeInfo();
 
    //   cout << "FO: " << sol->demanda_Nao_Atendida << endl;
@@ -276,6 +276,7 @@ int SolverMIP::solve()
    //}
 
    //sort(conjunto_de_Solucoes.begin(),conjunto_de_Solucoes.end(),ordenaSolucoes);
+
 
    //getchar();
 
