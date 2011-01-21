@@ -6,6 +6,8 @@ import com.extjs.gxt.ui.client.widget.Info;
 import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.TextField;
+import com.gapso.web.trieda.client.i18n.TriedaI18nConstants;
+import com.gapso.web.trieda.client.i18n.TriedaI18nMessages;
 import com.gapso.web.trieda.client.mvp.model.UnidadeDTO;
 import com.gapso.web.trieda.client.services.Services;
 import com.gapso.web.trieda.client.services.UnidadesServiceAsync;
@@ -26,6 +28,9 @@ public class UnidadeFormPresenter implements Presenter {
 		boolean isValid();
 		
 		SimpleModal getSimpleModal();
+		
+		TriedaI18nConstants getI18nConstants();
+		TriedaI18nMessages getI18nMessages();
 	}
 	private SimpleGrid<UnidadeDTO> gridPanel;
 	private Display display;
@@ -42,7 +47,8 @@ public class UnidadeFormPresenter implements Presenter {
 			public void componentSelected(ButtonEvent ce) {
 				if(isValid()) {
 					final UnidadesServiceAsync service = Services.unidades();
-					service.save(getDTO(), new AsyncCallback<Void>() {
+					final UnidadeDTO dto = getDTO();
+					service.save(dto, new AsyncCallback<Void>() {
 						@Override
 						public void onFailure(Throwable caught) {
 							MessageBox.alert("ERRO!", "Deu falha na conexão", null);
@@ -51,7 +57,10 @@ public class UnidadeFormPresenter implements Presenter {
 						public void onSuccess(Void result) {
 							display.getSimpleModal().hide();
 							gridPanel.updateList();
-							Info.display("Salvo", "Item salvo com sucesso!");
+							Info.display(
+								display.getI18nConstants().informacao(),
+								display.getI18nMessages().sucessoSalvarNoBD(dto.getCodigo())
+							);
 						}
 					});
 				} else {

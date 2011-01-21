@@ -12,6 +12,8 @@ import com.extjs.gxt.ui.client.widget.Info;
 import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.TextField;
+import com.gapso.web.trieda.client.i18n.TriedaI18nConstants;
+import com.gapso.web.trieda.client.i18n.TriedaI18nMessages;
 import com.gapso.web.trieda.client.mvp.model.CampusDTO;
 import com.gapso.web.trieda.client.mvp.model.CenarioDTO;
 import com.gapso.web.trieda.client.mvp.model.HorarioDisponivelCenarioDTO;
@@ -50,6 +52,8 @@ public class UnidadesPresenter implements Presenter {
 		SimpleGrid<UnidadeDTO> getGrid();
 		Component getComponent();
 		void setProxy(RpcProxy<PagingLoadResult<UnidadeDTO>> proxy);
+		TriedaI18nConstants getI18nConstants();
+		TriedaI18nMessages getI18nMessages();
 	}
 	private Display display; 
 	private GTab gTab;

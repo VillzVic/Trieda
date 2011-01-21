@@ -111,6 +111,4 @@ public class UnidadeFormView extends MyComposite implements UnidadeFormPresenter
 	public UnidadeDTO getUnidadeDTO() {
 		return unidadeDTO;
 	}
-	
-
 }
