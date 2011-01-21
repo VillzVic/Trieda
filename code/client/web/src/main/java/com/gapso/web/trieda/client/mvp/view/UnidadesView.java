@@ -43,7 +43,7 @@ public class UnidadesView extends MyComposite implements UnidadesPresenter.Displ
 	
 	private void initUI() {
 		panel = new ContentPanel(new BorderLayout());
-		panel.setHeading("Master Data » Unidades");
+		panel.setHeading(getI18nConstants().unidadesHeadingPanel());
 		createToolBar();
 		createGrid();
 		createFilter();
@@ -52,13 +52,13 @@ public class UnidadesView extends MyComposite implements UnidadesPresenter.Displ
 	}
 	
 	private void createTabItem() {
-		tabItem = new GTabItem("Unidades", Resources.DEFAULTS.unidade16());
+		tabItem = new GTabItem(getI18nConstants().unidades(), Resources.DEFAULTS.unidade16());
 		toolBar.add(new SeparatorToolItem());
-		deslocamentoUnidadesBT = toolBar.createButton("Deslocamento entre Unidades", Resources.DEFAULTS.deslocamento16());
+		deslocamentoUnidadesBT = toolBar.createButton(getI18nConstants().deslocamentoUnidades(), Resources.DEFAULTS.deslocamento16());
 		toolBar.add(deslocamentoUnidadesBT);
-		salasBT = toolBar.createButton("Salas", Resources.DEFAULTS.sala16());
+		salasBT = toolBar.createButton(getI18nConstants().salas(), Resources.DEFAULTS.sala16());
 		toolBar.add(salasBT);
-		disponibilidadeBT = toolBar.createButton("Disponibilidade da Unidade", Resources.DEFAULTS.disponibilidade16());
+		disponibilidadeBT = toolBar.createButton(getI18nConstants().disponibilidadesSemanaLetiva(), Resources.DEFAULTS.disponibilidade16());
 		toolBar.add(disponibilidadeBT);
 		tabItem.setContent(panel);
 	}
@@ -78,11 +78,10 @@ public class UnidadesView extends MyComposite implements UnidadesPresenter.Displ
 
 	public List<ColumnConfig> getColumnList() {
 		List<ColumnConfig> list = new ArrayList<ColumnConfig>();
-		//list.add(new ColumnConfig("codigo", "Código", 100));
 		list.add(new ColumnConfig("codigo", getI18nConstants().codigo(), 100));
-		list.add(new ColumnConfig("nome", "Nome", 100));
-		list.add(new ColumnConfig("campusString", "Campus", 100));
-		list.add(new ColumnConfig("capSalas", "Capacidade Média das Salas de Aula", 200));
+		list.add(new ColumnConfig("nome", getI18nConstants().nome(), 100));
+		list.add(new ColumnConfig("campusString", getI18nConstants().campus(), 100));
+		list.add(new ColumnConfig("capSalas", getI18nConstants().capacidadeMediaSalas(), 200));
 		return list;
 	}
 
@@ -93,11 +92,11 @@ public class UnidadesView extends MyComposite implements UnidadesPresenter.Displ
 		
 		filter = new SimpleFilter();
 		campusBuscaComboBox = new CampusComboBox();
-		campusBuscaComboBox.setFieldLabel("Campus");
+		campusBuscaComboBox.setFieldLabel(getI18nConstants().campus());
 		nomeBuscaTextField = new TextField<String>();
-		nomeBuscaTextField.setFieldLabel("Nome");
+		nomeBuscaTextField.setFieldLabel(getI18nConstants().nome());
 		codigoBuscaTextField = new TextField<String>();
-		codigoBuscaTextField.setFieldLabel("Código");
+		codigoBuscaTextField.setFieldLabel(getI18nConstants().codigo());
 		
 		filter.addField(campusBuscaComboBox);
 		filter.addField(nomeBuscaTextField);

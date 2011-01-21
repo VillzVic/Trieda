@@ -32,7 +32,7 @@ public class UnidadeFormView extends MyComposite implements UnidadeFormPresenter
 	}
 	
 	private void initUI() {
-		String title = (unidadeDTO.getId() == null)? "Inserção de Unidade" : "Edição de Unidade";
+		String title = (unidadeDTO.getId() == null)? (getI18nConstants().insercaoDe()+getI18nConstants().unidade()) : (getI18nConstants().edicaoDe()+getI18nConstants().unidade());
 		simpleModal = new SimpleModal(title, Resources.DEFAULTS.unidade16());
 		simpleModal.setHeight(160);
 		createForm();
@@ -47,29 +47,29 @@ public class UnidadeFormView extends MyComposite implements UnidadeFormPresenter
 		codigoTF = new TextField<String>();
 		codigoTF.setName("codigo");
 		codigoTF.setValue(unidadeDTO.getCodigo());
-		codigoTF.setFieldLabel("Código");
+		codigoTF.setFieldLabel(getI18nConstants().codigo());
 		codigoTF.setAllowBlank(false);
 		codigoTF.setMinLength(1);
 		codigoTF.setMaxLength(20);
-		codigoTF.setEmptyText("Preencha o código");
+		codigoTF.setEmptyText(getI18nConstants().preenchaO()+getI18nConstants().codigo());
 		formPanel.add(codigoTF, formData);
 		
 		nomeTF = new TextField<String>();
 		nomeTF.setName("nome");
 		nomeTF.setValue(unidadeDTO.getNome());
-		nomeTF.setFieldLabel("Nome");
+		nomeTF.setFieldLabel(getI18nConstants().nome());
 		nomeTF.setAllowBlank(false);
 		nomeTF.setMinLength(1);
 		nomeTF.setMaxLength(50);
-		nomeTF.setEmptyText("Preencha o nome");
+		nomeTF.setEmptyText(getI18nConstants().preenchaO()+getI18nConstants().nome());
 		formPanel.add(nomeTF, formData);
 		
 		campusCB = new CampusComboBox();
 		campusCB.setName("campus");
-		campusCB.setFieldLabel("Campus");
+		campusCB.setFieldLabel(getI18nConstants().campus());
 		campusCB.setAllowBlank(false);
 		campusCB.setValue(campusDTO);
-		campusCB.setEmptyText("Selecione o campus");
+		campusCB.setEmptyText(getI18nConstants().selecioneO()+getI18nConstants().campus());
 		formPanel.add(campusCB, formData);
 		
 		FormButtonBinding binding = new FormButtonBinding(formPanel);
