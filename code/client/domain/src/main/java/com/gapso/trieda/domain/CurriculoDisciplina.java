@@ -200,6 +200,14 @@ public class CurriculoDisciplina implements Serializable {
     }
 	
 	@SuppressWarnings("unchecked")
+	public static List<CurriculoDisciplina> findAllPeriodosBy(Sala sala, Oferta oferta) {
+		Query q = entityManager().createQuery("SELECT o FROM CurriculoDisciplina o, IN (o.salas) sala, IN (o.curriculo.ofertas) oferta WHERE sala = :sala AND oferta = :oferta GROUP BY o.periodo");
+		q.setParameter("sala", sala);
+		q.setParameter("oferta", oferta);
+		return q.getResultList();		
+	}
+	
+	@SuppressWarnings("unchecked")
 	public static List<CurriculoDisciplina> findAllByCurriculoAndPeriodo(Curriculo curriculo, Integer periodo) {
 		Query q = entityManager().createQuery("SELECT o FROM CurriculoDisciplina o WHERE o.curriculo = :curriculo AND o.periodo = :periodo");
 		q.setParameter("curriculo", curriculo);

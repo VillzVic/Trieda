@@ -33,7 +33,6 @@ import com.gapso.web.trieda.client.util.view.CampusComboBox;
 import com.gapso.web.trieda.client.util.view.GTab;
 import com.gapso.web.trieda.client.util.view.GTabItem;
 import com.gapso.web.trieda.client.util.view.GrupoSalaComboBox;
-import com.gapso.web.trieda.client.util.view.SalaComboBox;
 import com.gapso.web.trieda.client.util.view.TurnoComboBox;
 import com.gapso.web.trieda.client.util.view.UnidadeComboBox;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -49,7 +48,7 @@ public class DisciplinasAssociarSalaPresenter implements Presenter {
 		UnidadeComboBox getUnidadeSalaComboBox();
 		UnidadeComboBox getUnidadeGrupoSalaComboBox();
 		SimpleComboBox<String> getAndarComboBox();
-		SalaComboBox getSalaComboBox();
+//		SalaComboBox getSalaComboBox();
 		TreePanel<FileModel> getDisciplinasList();
 		TreePanel<FileModel> getSalasList();
 		GrupoSalaComboBox getGrupoSalasComboBox();
@@ -128,14 +127,30 @@ public class DisciplinasAssociarSalaPresenter implements Presenter {
 		display.getAndarComboBox().addSelectionChangedListener(new SelectionChangedListener<SimpleComboValue<String>>(){
 			@Override
 			public void selectionChanged(SelectionChangedEvent<SimpleComboValue<String>> se) {
-				display.getSalaComboBox().setValue(null);
-				display.getSalaComboBox().setEnabled(se.getSelectedItem() != null);
+				display.getSalasList().setEnabled(se.getSelectedItem() != null);
 				if(se.getSelectedItem() != null) {
-					display.getSalaComboBox().getStore().removeAll();
-					display.getSalaComboBox().updateList(andaresSalasMap.get(se.getSelectedItem().getValue()));
+					display.getSalasList().getStore().removeAll();
+					List<SalaDTO> salaDTOList = andaresSalasMap.get(se.getSelectedItem().getValue());
+					List<FileModel> fileModelList = new ArrayList<FileModel>(salaDTOList.size());
+					for(SalaDTO salaDTO : salaDTOList) {
+						fileModelList.add(salaDTO);
+					}
+					display.getSalasList().getStore().add(fileModelList, true);
+					
 				}
 			}
 		});
+//		display.getSalaComboBox().addSelectionChangedListener(new SelectionChangedListener<SalaDTO>(){
+//			@Override
+//			public void selectionChanged(SelectionChangedEvent<SalaDTO> se) {
+//				if(se.getSelectedItem() != null) {
+//					SalaDTO salaDTO = se.getSelectedItem();
+//					display.getSalasList().enable();
+//					display.getSalasList().getStore().removeAll();
+//					display.getSalasList().getStore().add(salaDTO, true);
+//				}
+//			}
+//		});
 		display.getUnidadeGrupoSalaComboBox().addSelectionChangedListener(new SelectionChangedListener<UnidadeDTO>(){
 			@Override
 			public void selectionChanged(SelectionChangedEvent<UnidadeDTO> se) {
@@ -154,17 +169,6 @@ public class DisciplinasAssociarSalaPresenter implements Presenter {
 							display.getGrupoSalasComboBox().setEnabled(!result.isEmpty());
 						}
 					});
-				}
-			}
-		});
-		display.getSalaComboBox().addSelectionChangedListener(new SelectionChangedListener<SalaDTO>(){
-			@Override
-			public void selectionChanged(SelectionChangedEvent<SalaDTO> se) {
-				if(se.getSelectedItem() != null) {
-					SalaDTO salaDTO = se.getSelectedItem();
-					display.getSalasList().enable();
-					display.getSalasList().getStore().removeAll();
-					display.getSalasList().getStore().add(salaDTO, true);
 				}
 			}
 		});

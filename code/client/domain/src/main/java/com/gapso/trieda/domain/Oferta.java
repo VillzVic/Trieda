@@ -1,6 +1,7 @@
 package com.gapso.trieda.domain;
 
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -136,6 +137,17 @@ public class Oferta implements Serializable {
     }
 
 	@SuppressWarnings("unchecked")
+	public static List<Oferta> findAllBy(Sala sala) {
+		Query q = entityManager().createQuery("SELECT DISTINCT(o) FROM Oferta o, IN (o.curriculo.disciplinas) dis WHERE dis IN (:disciplinas)");
+		Set<CurriculoDisciplina> curriculoDisciplinas = sala.getCurriculoDisciplinas();
+		q.setParameter("disciplinas", sala.getCurriculoDisciplinas());
+		if(curriculoDisciplinas.isEmpty()) {
+			return Collections.<Oferta>emptyList();
+		}
+		return q.getResultList();
+	}
+	
+	@SuppressWarnings("unchecked")
 	public static List<Oferta> findByCampusAndTurno(Campus campus, Turno turno) {
 		Query q = entityManager().createQuery("SELECT o FROM Oferta o WHERE o.campus = :campus AND o.turno = :turno");
 		q.setParameter("campus", campus);
@@ -179,6 +191,15 @@ public class Oferta implements Serializable {
         if(curriculo != null) q.setParameter("curriculo", curriculo);
         
         return q.setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
+    }
+    
+    @SuppressWarnings("unchecked")
+    public List<Integer> getPeriodosBy(Sala sala, Oferta oferta) {
+//		Query q = entityManager().createQuery("SELECT o.disciplina FROM CurriculoDisciplina o WHERE o.periodo = :periodo AND o.curriculo = :curriculo AND :sala IN o.salas");
+//		q.setParameter("sala", sala);
+//		q.setParameter("oferta", oferta);
+//		return q.getResultList();
+    	return null;
     }
     
 	public Curriculo getCurriculo() {

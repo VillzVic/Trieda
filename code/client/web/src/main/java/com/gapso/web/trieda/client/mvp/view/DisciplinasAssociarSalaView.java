@@ -46,7 +46,6 @@ import com.gapso.web.trieda.client.util.resources.Resources;
 import com.gapso.web.trieda.client.util.view.CampusComboBox;
 import com.gapso.web.trieda.client.util.view.GTabItem;
 import com.gapso.web.trieda.client.util.view.GrupoSalaComboBox;
-import com.gapso.web.trieda.client.util.view.SalaComboBox;
 import com.gapso.web.trieda.client.util.view.TurnoComboBox;
 import com.gapso.web.trieda.client.util.view.UnidadeComboBox;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -62,7 +61,6 @@ public class DisciplinasAssociarSalaView extends MyComposite implements Discipli
 	
 	private UnidadeComboBox unidadeSalaCB;
 	private SimpleComboBox<String> andarCB;
-	private SalaComboBox salaCB;
 	
 	private UnidadeComboBox unidadeGrupoSalaCB;
 	private GrupoSalaComboBox grupoSalaCB;
@@ -144,32 +142,17 @@ public class DisciplinasAssociarSalaView extends MyComposite implements Discipli
 				if(unidadeSalaCB.getValue() == null) {
 					andarCB.setValue(null);
 					andarCB.disable();
-					salaCB.setValue(null);
-					salaCB.disable();
 				}
 			}
 		};
 		unidadeSalaCB.setFieldLabel("Unidade");
 		unidadeSalaCB.disable();
 		salaTabItem.add(unidadeSalaCB, formData);
-		andarCB = new SimpleComboBox<String>() {
-			@Override
-			protected void onBlur(ComponentEvent ce) {
-				super.onBlur(ce);
-				if(andarCB.getValue() == null) {
-					salaCB.setValue(null);
-					salaCB.disable();
-				}
-			}
-		};
+		andarCB = new SimpleComboBox<String>();
 		andarCB.setFieldLabel("Andar");
 		andarCB.disable();
 		salaTabItem.add(andarCB, formData);
-		salaCB = new SalaComboBox();
-		salaCB.setFieldLabel("Sala");
-		salaCB.disable();
-		salaTabItem.add(salaCB, formData);
-		
+
 		TabItem grupoSalaTabItem = new TabItem();  
 		grupoSalaTabItem.setText("Grupo de Sala");  
 		grupoSalaTabItem.setLayout(new FormLayout());
@@ -352,11 +335,6 @@ public class DisciplinasAssociarSalaView extends MyComposite implements Discipli
 	}
 
 	@Override
-	public SalaComboBox getSalaComboBox() {
-		return salaCB;
-	}
-
-	@Override
 	public GrupoSalaComboBox getGrupoSalasComboBox() {
 		return grupoSalaCB;
 	}
@@ -370,8 +348,6 @@ public class DisciplinasAssociarSalaView extends MyComposite implements Discipli
 			unidadeGrupoSalaCB.disable();
 			andarCB.setValue(null);
 			andarCB.disable();
-			salaCB.setValue(null);
-			salaCB.disable();
 			grupoSalaCB.setValue(null);
 			grupoSalaCB.disable();
 			tabs.setEnabled(flag);
@@ -380,7 +356,6 @@ public class DisciplinasAssociarSalaView extends MyComposite implements Discipli
 			unidadeSalaCB.enable();
 			unidadeGrupoSalaCB.enable();
 			andarCB.disable();
-			salaCB.disable();
 			grupoSalaCB.disable();
 		}
 	}
@@ -424,7 +399,34 @@ public class DisciplinasAssociarSalaView extends MyComposite implements Discipli
 			RpcProxy<List<FileModel>> proxy = new RpcProxy<List<FileModel>>() {
 				@Override
 				protected void load(Object loadConfig, AsyncCallback<List<FileModel>> callback) {
-					service.getFolderChildrenSala((FileModel) loadConfig, callback);
+					FileModel fileModel = (FileModel)loadConfig;
+					SalaDTO salaDTO = null;
+					OfertaDTO ofertaDTO = null;
+					CurriculoDisciplinaDTO curriculoDisciplinaDTO = null;
+					if(fileModel instanceof SalaDTO) {
+						salaDTO = (SalaDTO) fileModel;
+					} else if(fileModel instanceof OfertaDTO) {
+						salaDTO = (SalaDTO) salasList.getStore().getParent(fileModel);
+						ofertaDTO = (OfertaDTO) fileModel;
+					} else if (fileModel instanceof CurriculoDisciplinaDTO) {
+						ofertaDTO = (OfertaDTO) salasList.getStore().getParent(fileModel);
+						salaDTO = (SalaDTO) salasList.getStore().getParent(ofertaDTO);
+						curriculoDisciplinaDTO = (CurriculoDisciplinaDTO)fileModel;
+					}
+//					} else if(fileModel instanceof CurriculoDisciplinaDTO) {
+//						FileModel sourceFileModelParent = salasList.getStore().getParent(fileModel);
+//						if(sourceFileModelParent instanceof OfertaDTO) {
+//							ofertaDTO = (OfertaDTO)sourceFileModelParent;
+//							periodo = ((CurriculoDisciplinaDTO)fileModel).getPeriodo();
+//						} else {
+//							ofertaDTO = (OfertaDTO)salasList.getStore().getParent(sourceFileModelParent);
+//							periodo = ((CurriculoDisciplinaDTO)sourceFileModelParent).getPeriodo();
+//							cdDTO = (CurriculoDisciplinaDTO)fileModel;
+//						}
+//					}
+					if(salaDTO != null) {
+						service.getDisciplinasByTreeSalas(salaDTO, ofertaDTO, curriculoDisciplinaDTO, callback);
+					}
 				}
 			};
 			final TreeLoader<FileModel> loader = new BaseTreeLoader<FileModel>(proxy);

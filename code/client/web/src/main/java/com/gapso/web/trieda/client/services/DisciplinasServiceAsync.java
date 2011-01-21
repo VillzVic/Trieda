@@ -28,12 +28,14 @@ public interface DisciplinasServiceAsync {
 	void getTipoDisciplina(Long id, AsyncCallback<TipoDisciplinaDTO> callback);
 	void getListByCursos(List<CursoDTO> cursos, AsyncCallback<ListLoadResult<DisciplinaDTO>> callback);
 	void getFolderChildren(FileModel loadConfig, AsyncCallback<List<FileModel>> callback);
-	void getFolderChildrenSala(FileModel model, AsyncCallback<List<FileModel>> callback);
 	void saveDisciplinaToSala(OfertaDTO ofertaDTO, Integer periodo, CurriculoDisciplinaDTO cdDTO, SalaDTO salaDTO, AsyncCallback<Void> callback);
 	void saveDisciplinaToSala(OfertaDTO ofertaDTO, Integer periodo, CurriculoDisciplinaDTO cdDTO, GrupoSalaDTO grupoSalaDTO, AsyncCallback<Void> callback);
 	void removeDisciplinaToSala(SalaDTO salaDTO, CurriculoDisciplinaDTO cdDTO, AsyncCallback<Void> callback);
 	void removeDisciplinaToSala(GrupoSalaDTO grupoSalaDTO, CurriculoDisciplinaDTO cdDTO, AsyncCallback<Void> callback);
 	void saveHorariosDisponiveis(DisciplinaDTO disciplinaDTO, List<HorarioDisponivelCenarioDTO> listDTO, AsyncCallback<Void> callback);
 	void getHorariosDisponiveis(DisciplinaDTO disciplinaDTO, AsyncCallback<List<HorarioDisponivelCenarioDTO>> callback);
+	void getOfertasByTreeSalas(SalaDTO salaDTO, AsyncCallback<List<FileModel>> callback);
+	void getPeriodosByTreeSalas(SalaDTO salaDTO, OfertaDTO ofertaDTO, AsyncCallback<List<FileModel>> callback);
+	void getDisciplinasByTreeSalas(SalaDTO salaDTO, OfertaDTO ofertaDTO, CurriculoDisciplinaDTO curriculoDisciplinaDTO, AsyncCallback<List<FileModel>> callback);
 	
 }
