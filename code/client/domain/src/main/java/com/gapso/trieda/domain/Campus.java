@@ -74,6 +74,9 @@ public class Campus implements Serializable {
     
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "origem")
     private Set<DeslocamentoCampus> deslocamentos = new HashSet<DeslocamentoCampus>();
+    
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "destino")
+    private Set<DeslocamentoCampus> deslocamentosDestino = new HashSet<DeslocamentoCampus>();
 
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, mappedBy = "campi")
     private Set<Professor> professores = new HashSet<Professor>();
@@ -148,6 +151,14 @@ public class Campus implements Serializable {
 	public void setDeslocamentos(Set<DeslocamentoCampus> deslocamentos) {
         this.deslocamentos = deslocamentos;
     }
+	
+	public Set<DeslocamentoCampus> getDeslocamentosDestino() {
+		return this.deslocamentosDestino;
+	}
+	
+	public void setDeslocamentosDestino(Set<DeslocamentoCampus> deslocamentosDestino) {
+		this.deslocamentosDestino = deslocamentosDestino;
+	}
 
 	public Set<Professor> getProfessores() {
         return this.professores;
@@ -219,11 +230,13 @@ public class Campus implements Serializable {
         if (this.entityManager.contains(this)) {
         	removeProfessores();
         	removeHorariosDisponivelCenario();
+        	removeDeslocamentosDestino();
             this.entityManager.remove(this);
         } else {
             Campus attached = this.entityManager.find(this.getClass(), this.id);
             attached.removeProfessores();
             attached.removeHorariosDisponivelCenario();
+            attached.removeDeslocamentosDestino();
             this.entityManager.remove(attached);
         }
     }
@@ -245,6 +258,15 @@ public class Campus implements Serializable {
     		horario.merge();
     	}
     }
+	
+	@Transactional
+	public void removeDeslocamentosDestino() {
+		Set<DeslocamentoCampus> deslocamentosDestino = this.getDeslocamentosDestino();
+		for(DeslocamentoCampus deslocamentoDestino : deslocamentosDestino) {
+			deslocamentoDestino.getOrigem().getDeslocamentos().remove(deslocamentoDestino);
+			deslocamentoDestino.getOrigem().merge();
+		}
+	}
 	
 	@Transactional
     public void flush() {
@@ -341,6 +363,7 @@ public class Campus implements Serializable {
         sb.append("Bairro: ").append(getBairro()).append(", ");
         sb.append("Unidades: ").append(getUnidades() == null ? "null" : getUnidades().size()).append(", ");
         sb.append("Deslocamentos: ").append(getDeslocamentos() == null ? "null" : getDeslocamentos().size()).append(", ");
+        sb.append("DeslocamentosDestino: ").append(getDeslocamentosDestino() == null ? "null" : getDeslocamentosDestino().size()).append(", ");
         sb.append("Professores: ").append(getProfessores() == null ? "null" : getProfessores().size()).append(", ");
         sb.append("Horarios: ").append(getHorarios() == null ? "null" : getHorarios().size()).append(", ");
         sb.append("Ofertas: ").append(getOfertas() == null ? "null" : getOfertas().size());
