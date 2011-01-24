@@ -12,8 +12,7 @@ import com.extjs.gxt.ui.client.widget.Info;
 import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.TextField;
-import com.gapso.web.trieda.client.i18n.TriedaI18nConstants;
-import com.gapso.web.trieda.client.i18n.TriedaI18nMessages;
+import com.gapso.web.trieda.client.i18n.ITriedaI18nGateway;
 import com.gapso.web.trieda.client.mvp.model.CampusDTO;
 import com.gapso.web.trieda.client.mvp.model.CenarioDTO;
 import com.gapso.web.trieda.client.mvp.model.HorarioDisponivelCenarioDTO;
@@ -24,6 +23,7 @@ import com.gapso.web.trieda.client.mvp.view.UnidadeFormView;
 import com.gapso.web.trieda.client.services.CampiServiceAsync;
 import com.gapso.web.trieda.client.services.Services;
 import com.gapso.web.trieda.client.services.UnidadesServiceAsync;
+import com.gapso.web.trieda.client.util.view.AbstractAsyncCallbackWithDefaultOnFailure;
 import com.gapso.web.trieda.client.util.view.CampusComboBox;
 import com.gapso.web.trieda.client.util.view.GTab;
 import com.gapso.web.trieda.client.util.view.GTabItem;
@@ -35,7 +35,7 @@ import com.googlecode.future.FutureSynchronizer;
 
 public class UnidadesPresenter implements Presenter {
 
-	public interface Display {
+	public interface Display extends ITriedaI18nGateway {
 		Button getNewButton();
 		Button getEditButton();
 		Button getRemoveButton();
@@ -52,8 +52,6 @@ public class UnidadesPresenter implements Presenter {
 		SimpleGrid<UnidadeDTO> getGrid();
 		Component getComponent();
 		void setProxy(RpcProxy<PagingLoadResult<UnidadeDTO>> proxy);
-		TriedaI18nConstants getI18nConstants();
-		TriedaI18nMessages getI18nMessages();
 	}
 	private Display display; 
 	private GTab gTab;
@@ -108,17 +106,13 @@ public class UnidadesPresenter implements Presenter {
 		display.getRemoveButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
 			@Override
 			public void componentSelected(ButtonEvent ce) {
-				List<UnidadeDTO> list = display.getGrid().getGrid().getSelectionModel().getSelectedItems();
+				final List<UnidadeDTO> list = display.getGrid().getGrid().getSelectionModel().getSelectedItems();
 				final UnidadesServiceAsync service = Services.unidades();
-				service.remove(list, new AsyncCallback<Void>() {
-					@Override
-					public void onFailure(Throwable caught) {
-						MessageBox.alert("ERRO!", "Deu falha na conexão", null);
-					}
+				service.remove(list, new AbstractAsyncCallbackWithDefaultOnFailure<Void>(display) {
 					@Override
 					public void onSuccess(Void result) {
 						display.getGrid().updateList();
-						Info.display("Removido", "Item removido com sucesso!");
+						Info.display(display.getI18nConstants().informacao(), display.getI18nMessages().sucessoRemoverDoBD(list.toString()));
 					}
 				});
 			}

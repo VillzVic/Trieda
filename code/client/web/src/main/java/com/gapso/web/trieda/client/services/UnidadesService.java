@@ -10,6 +10,7 @@ import com.gapso.web.trieda.client.mvp.model.CampusDTO;
 import com.gapso.web.trieda.client.mvp.model.DeslocamentoUnidadeDTO;
 import com.gapso.web.trieda.client.mvp.model.HorarioDisponivelCenarioDTO;
 import com.gapso.web.trieda.client.mvp.model.UnidadeDTO;
+import com.gapso.web.trieda.client.util.view.TriedaException;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
@@ -22,7 +23,7 @@ public interface UnidadesService extends RemoteService {
 	PagingLoadResult<UnidadeDTO> getList(PagingLoadConfig config);
 	ListLoadResult<UnidadeDTO> getList();
 	void save(UnidadeDTO unidadeDTO);
-	void remove(List<UnidadeDTO> unidadeDTOList);
+	void remove(List<UnidadeDTO> unidadeDTOList) throws TriedaException;
 	PagingLoadResult<UnidadeDTO> getBuscaList(CampusDTO campusDTO, String nome, String codigo, PagingLoadConfig config);
 	ListLoadResult<UnidadeDTO> getList(BasePagingLoadConfig loadConfig);
 	UnidadeDTO getUnidade(Long id);

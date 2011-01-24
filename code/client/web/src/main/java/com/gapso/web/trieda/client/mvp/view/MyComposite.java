@@ -3,13 +3,14 @@ package com.gapso.web.trieda.client.mvp.view;
 import java.util.Iterator;
 
 import com.extjs.gxt.ui.client.widget.Composite;
+import com.gapso.web.trieda.client.i18n.ITriedaI18nGateway;
 import com.gapso.web.trieda.client.i18n.TriedaI18nConstants;
 import com.gapso.web.trieda.client.i18n.TriedaI18nMessages;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.Widget;
 
-public class MyComposite extends Composite implements HasWidgets {
+public class MyComposite extends Composite implements HasWidgets, ITriedaI18nGateway {
 	
 	private TriedaI18nConstants i18nConstants;
 	private TriedaI18nMessages i18nMessages;

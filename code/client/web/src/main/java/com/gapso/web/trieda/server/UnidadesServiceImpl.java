@@ -24,6 +24,7 @@ import com.gapso.web.trieda.client.mvp.model.DeslocamentoUnidadeDTO;
 import com.gapso.web.trieda.client.mvp.model.HorarioDisponivelCenarioDTO;
 import com.gapso.web.trieda.client.mvp.model.UnidadeDTO;
 import com.gapso.web.trieda.client.services.UnidadesService;
+import com.gapso.web.trieda.client.util.view.TriedaException;
 import com.gapso.web.trieda.server.util.ConvertBeans;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
@@ -162,9 +163,13 @@ public class UnidadesServiceImpl extends RemoteServiceServlet implements Unidade
 	}
 	
 	@Override
-	public void remove(List<UnidadeDTO> unidadeDTOList) {
-		for(UnidadeDTO unidadeDTO : unidadeDTOList) {
-			ConvertBeans.toUnidade(unidadeDTO).remove();
+	public void remove(List<UnidadeDTO> unidadeDTOList) throws TriedaException {
+		try {
+			for(UnidadeDTO unidadeDTO : unidadeDTOList) {
+				ConvertBeans.toUnidade(unidadeDTO).remove();
+			}
+		} catch (Exception e) {
+			throw new TriedaException(e);
 		}
 	}
 	

@@ -4,6 +4,8 @@ import com.google.gwt.i18n.client.Messages;
 
 public interface TriedaI18nMessages extends Messages {
 	
+	String falhaOperacaoBD(String falha);
+	String sucessoRemoverDoBD(String codigoItem);
 	String sucessoSalvarNoBD(String codigoItem);
 
   // Exemplo com data

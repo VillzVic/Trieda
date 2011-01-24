@@ -12,6 +12,7 @@ public interface TriedaI18nConstants extends Constants {
 	String edicaoDe();
 	String informacao();
 	String insercaoDe();
+	String mensagemErro();
 	String nome();
 	String preenchaO();
 	String salas();

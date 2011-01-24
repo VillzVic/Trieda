@@ -68,8 +68,9 @@ public class UnidadeDTO extends BaseModel {
 	public void setCapSalas(Integer value) {
 		set("capSalas", value);
 	}
-	
-	
-	
-	
+
+	@Override
+	public String toString() {
+		return getCodigo();
+	}
 }
