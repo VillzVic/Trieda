@@ -39,8 +39,7 @@ public interface DisciplinasService extends RemoteService {
 	void removeDisciplinaToSala(GrupoSalaDTO grupoSalaDTO, CurriculoDisciplinaDTO cdDTO);
 	void saveHorariosDisponiveis(DisciplinaDTO disciplinaDTO,List<HorarioDisponivelCenarioDTO> listDTO);
 	List<HorarioDisponivelCenarioDTO> getHorariosDisponiveis(DisciplinaDTO disciplinaDTO);
-	List<FileModel> getOfertasByTreeSalas(SalaDTO salaDTO);
-	List<FileModel> getPeriodosByTreeSalas(SalaDTO salaDTO, OfertaDTO ofertaDTO);
 	List<FileModel> getDisciplinasByTreeSalas(SalaDTO salaDTO, OfertaDTO ofertaDTO, CurriculoDisciplinaDTO curriculoDisciplinaDTO);
+	List<FileModel> getDisciplinasByTreeSalas(GrupoSalaDTO grupoSalaDTO, OfertaDTO ofertaDTO, CurriculoDisciplinaDTO curriculoDisciplinaDTO);
 	
 }

@@ -18,10 +18,10 @@ import com.extjs.gxt.ui.client.widget.form.SimpleComboBox;
 import com.extjs.gxt.ui.client.widget.form.SimpleComboValue;
 import com.extjs.gxt.ui.client.widget.treepanel.TreePanel;
 import com.gapso.web.trieda.client.mvp.model.CampusDTO;
-import com.gapso.web.trieda.client.mvp.model.CurriculoDTO;
 import com.gapso.web.trieda.client.mvp.model.CurriculoDisciplinaDTO;
 import com.gapso.web.trieda.client.mvp.model.FileModel;
 import com.gapso.web.trieda.client.mvp.model.GrupoSalaDTO;
+import com.gapso.web.trieda.client.mvp.model.OfertaDTO;
 import com.gapso.web.trieda.client.mvp.model.SalaDTO;
 import com.gapso.web.trieda.client.mvp.model.TurnoDTO;
 import com.gapso.web.trieda.client.mvp.model.UnidadeDTO;
@@ -32,7 +32,6 @@ import com.gapso.web.trieda.client.services.Services;
 import com.gapso.web.trieda.client.util.view.CampusComboBox;
 import com.gapso.web.trieda.client.util.view.GTab;
 import com.gapso.web.trieda.client.util.view.GTabItem;
-import com.gapso.web.trieda.client.util.view.GrupoSalaComboBox;
 import com.gapso.web.trieda.client.util.view.TurnoComboBox;
 import com.gapso.web.trieda.client.util.view.UnidadeComboBox;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -48,10 +47,8 @@ public class DisciplinasAssociarSalaPresenter implements Presenter {
 		UnidadeComboBox getUnidadeSalaComboBox();
 		UnidadeComboBox getUnidadeGrupoSalaComboBox();
 		SimpleComboBox<String> getAndarComboBox();
-//		SalaComboBox getSalaComboBox();
 		TreePanel<FileModel> getDisciplinasList();
 		TreePanel<FileModel> getSalasList();
-		GrupoSalaComboBox getGrupoSalasComboBox();
 		ToolButton getRemoveButton();
 		void setTabEnabled(boolean flag);
 		Component getComponent();
@@ -164,22 +161,13 @@ public class DisciplinasAssociarSalaPresenter implements Presenter {
 						}
 						@Override
 						public void onSuccess(List<GrupoSalaDTO> result) {
-							display.getGrupoSalasComboBox().getStore().removeAll();
-							display.getGrupoSalasComboBox().getStore().add(result);
-							display.getGrupoSalasComboBox().setEnabled(!result.isEmpty());
+							display.getSalasList().enable();
+							display.getSalasList().getStore().removeAll();
+							for(GrupoSalaDTO grupoSala : result) {
+								display.getSalasList().getStore().add(grupoSala, true);
+							}
 						}
 					});
-				}
-			}
-		});
-		display.getGrupoSalasComboBox().addSelectionChangedListener(new SelectionChangedListener<GrupoSalaDTO>(){
-			@Override
-			public void selectionChanged(SelectionChangedEvent<GrupoSalaDTO> se) {
-				if(se.getSelectedItem() != null) {
-					GrupoSalaDTO grupoSalaDTO = se.getSelectedItem();
-					display.getSalasList().enable();
-					display.getSalasList().getStore().removeAll();
-					display.getSalasList().getStore().add(grupoSalaDTO, true);
 				}
 			}
 		});
@@ -191,11 +179,11 @@ public class DisciplinasAssociarSalaPresenter implements Presenter {
 				SalaDTO salaDTO = null;
 				GrupoSalaDTO grupoSalaDTO = null;
 				
-				if(fileModel instanceof CurriculoDisciplinaDTO) {
+				if(fileModel.getFolha()) {
 					cdDTO = (CurriculoDisciplinaDTO)fileModel;
-					TurnoDTO turnoDTO = (TurnoDTO)display.getSalasList().getStore().getParent(cdDTO);
-					CurriculoDTO curriculoDTO = (CurriculoDTO)display.getSalasList().getStore().getParent(turnoDTO);
-					FileModel fileModelRoot = display.getSalasList().getStore().getParent(curriculoDTO);
+					CurriculoDisciplinaDTO curriculoDisciplinaDTO = (CurriculoDisciplinaDTO)display.getSalasList().getStore().getParent(cdDTO);
+					OfertaDTO ofertaDTO = (OfertaDTO)display.getSalasList().getStore().getParent(curriculoDisciplinaDTO);
+					FileModel fileModelRoot = display.getSalasList().getStore().getParent(ofertaDTO);
 					if(fileModelRoot instanceof SalaDTO) {
 						salaDTO = (SalaDTO)fileModelRoot;
 					} else {

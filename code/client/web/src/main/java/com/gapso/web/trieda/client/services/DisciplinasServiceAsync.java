@@ -34,8 +34,7 @@ public interface DisciplinasServiceAsync {
 	void removeDisciplinaToSala(GrupoSalaDTO grupoSalaDTO, CurriculoDisciplinaDTO cdDTO, AsyncCallback<Void> callback);
 	void saveHorariosDisponiveis(DisciplinaDTO disciplinaDTO, List<HorarioDisponivelCenarioDTO> listDTO, AsyncCallback<Void> callback);
 	void getHorariosDisponiveis(DisciplinaDTO disciplinaDTO, AsyncCallback<List<HorarioDisponivelCenarioDTO>> callback);
-	void getOfertasByTreeSalas(SalaDTO salaDTO, AsyncCallback<List<FileModel>> callback);
-	void getPeriodosByTreeSalas(SalaDTO salaDTO, OfertaDTO ofertaDTO, AsyncCallback<List<FileModel>> callback);
 	void getDisciplinasByTreeSalas(SalaDTO salaDTO, OfertaDTO ofertaDTO, CurriculoDisciplinaDTO curriculoDisciplinaDTO, AsyncCallback<List<FileModel>> callback);
+	void getDisciplinasByTreeSalas(GrupoSalaDTO grupoSalaDTO, OfertaDTO ofertaDTO, CurriculoDisciplinaDTO curriculoDisciplinaDTO, AsyncCallback<List<FileModel>> callback);
 	
 }

@@ -148,6 +148,17 @@ public class Oferta implements Serializable {
 	}
 	
 	@SuppressWarnings("unchecked")
+	public static List<Oferta> findAllBy(GrupoSala grupoSala) {
+		Query q = entityManager().createQuery("SELECT DISTINCT(o) FROM Oferta o, IN (o.curriculo.disciplinas) dis WHERE dis IN (:disciplinas)");
+		Set<CurriculoDisciplina> curriculoDisciplinas = grupoSala.getCurriculoDisciplinas();
+		q.setParameter("disciplinas", grupoSala.getCurriculoDisciplinas());
+		if(curriculoDisciplinas.isEmpty()) {
+			return Collections.<Oferta>emptyList();
+		}
+		return q.getResultList();
+	}
+	
+	@SuppressWarnings("unchecked")
 	public static List<Oferta> findByCampusAndTurno(Campus campus, Turno turno) {
 		Query q = entityManager().createQuery("SELECT o FROM Oferta o WHERE o.campus = :campus AND o.turno = :turno");
 		q.setParameter("campus", campus);

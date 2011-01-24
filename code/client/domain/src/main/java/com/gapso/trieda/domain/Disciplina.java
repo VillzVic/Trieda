@@ -277,15 +277,6 @@ public class Disciplina implements Serializable {
     }
 	
 	@SuppressWarnings("unchecked")
-	public static List<Disciplina> findBy(Sala sala, Oferta oferta, Integer periodo) {
-		Query q = entityManager().createQuery("SELECT o.disciplina FROM CurriculoDisciplina o, IN (o.salas) sala WHERE o.periodo = :periodo AND o.curriculo = :curriculo AND sala = :sala");
-		q.setParameter("periodo", periodo);
-		q.setParameter("curriculo", oferta.getCurriculo());
-		q.setParameter("sala", sala);
-		return q.getResultList();
-	}
-	
-	@SuppressWarnings("unchecked")
 	public static List<Disciplina> findBySalas(List<Sala> salas) {
 		Query q = entityManager().createQuery("SELECT DISTINCT(o.disciplina) FROM SalasDisciplinas o WHERE o.sala IN (:salas)")
 		.setParameter("salas", salas);
