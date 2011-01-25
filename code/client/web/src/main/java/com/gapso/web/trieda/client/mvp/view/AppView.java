@@ -1,6 +1,5 @@
 package com.gapso.web.trieda.client.mvp.view;
 
-import com.extjs.gxt.ui.client.Registry;
 import com.extjs.gxt.ui.client.Style.LayoutRegion;
 import com.extjs.gxt.ui.client.util.Margins;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
@@ -9,14 +8,12 @@ import com.extjs.gxt.ui.client.widget.layout.BorderLayout;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
 import com.extjs.gxt.ui.client.widget.layout.FitLayout;
 import com.gapso.web.trieda.client.mvp.presenter.AppPresenter;
-import com.gapso.web.trieda.client.util.view.GTab;
 import com.gapso.web.trieda.client.util.view.CenarioPanel;
+import com.gapso.web.trieda.client.util.view.GTab;
 import com.google.gwt.user.client.ui.Widget;
 
 public class AppView extends MyComposite implements AppPresenter.Display {
 
-	public static final String TAB = "tabPanel";
-	
 	private Viewport viewport;
 	private ContentPanel panel;
 	
@@ -37,7 +34,6 @@ public class AppView extends MyComposite implements AppPresenter.Display {
 		createWest();
 		createCenter();
 		
-		Registry.register(TAB, tab);
 		initComponent(viewport);
 	}
 		
