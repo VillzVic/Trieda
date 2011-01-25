@@ -3,6 +3,8 @@ package com.gapso.web.trieda.client.mvp.presenter;
 import java.util.List;
 
 import com.extjs.gxt.ui.client.Style.SortDir;
+import com.extjs.gxt.ui.client.data.BaseListLoader;
+import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.RpcProxy;
 import com.extjs.gxt.ui.client.event.ButtonEvent;
 import com.extjs.gxt.ui.client.event.SelectionChangedEvent;
@@ -10,12 +12,15 @@ import com.extjs.gxt.ui.client.event.SelectionChangedListener;
 import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.store.ListStore;
 import com.extjs.gxt.ui.client.widget.Component;
+import com.extjs.gxt.ui.client.widget.Info;
 import com.extjs.gxt.ui.client.widget.ListView;
 import com.extjs.gxt.ui.client.widget.button.Button;
+import com.gapso.web.trieda.client.i18n.ITriedaI18nGateway;
 import com.gapso.web.trieda.client.mvp.model.AreaTitulacaoDTO;
 import com.gapso.web.trieda.client.mvp.model.CursoDTO;
 import com.gapso.web.trieda.client.services.AreasTitulacaoServiceAsync;
 import com.gapso.web.trieda.client.services.Services;
+import com.gapso.web.trieda.client.util.view.AbstractAsyncCallbackWithDefaultOnFailure;
 import com.gapso.web.trieda.client.util.view.CursoComboBox;
 import com.gapso.web.trieda.client.util.view.GTab;
 import com.gapso.web.trieda.client.util.view.GTabItem;
@@ -24,14 +29,12 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class VincularAreasTitulacaoPresenter implements Presenter {
 
-	public interface Display {
+	public interface Display extends ITriedaI18nGateway {
 		CursoComboBox getCursoComboBox();
 		ListView<AreaTitulacaoDTO> getNaoVinculadaList();
 		ListView<AreaTitulacaoDTO> getVinculadaList();
 		Button getAdicionaBT();
 		Button getRemoveBT();
-		void setProxyNaoVinculada(RpcProxy<List<AreaTitulacaoDTO>> proxy);
-		void setProxyVinculada(RpcProxy<List<AreaTitulacaoDTO>> proxy);
 		Component getComponent();
 	}
 	private Display display;
@@ -51,7 +54,7 @@ public class VincularAreasTitulacaoPresenter implements Presenter {
 				service.getListNaoVinculadas(cursoDTO, callback);
 			}
 		};
-		display.setProxyNaoVinculada(proxyNaoVinculada);
+		display.getNaoVinculadaList().setStore(new ListStore<AreaTitulacaoDTO>(new BaseListLoader<ListLoadResult<AreaTitulacaoDTO>>(proxyNaoVinculada)));
 		RpcProxy<List<AreaTitulacaoDTO>> proxyVinculada = new RpcProxy<List<AreaTitulacaoDTO>>() {
 			@Override
 			public void load(Object loadConfig, AsyncCallback<List<AreaTitulacaoDTO>> callback) {
@@ -59,7 +62,7 @@ public class VincularAreasTitulacaoPresenter implements Presenter {
 				service.getListVinculadas(cursoDTO, callback);
 			}
 		};
-		display.setProxyVinculada(proxyVinculada);
+		display.getVinculadaList().setStore(new ListStore<AreaTitulacaoDTO>(new BaseListLoader<ListLoadResult<AreaTitulacaoDTO>>(proxyVinculada)));
 	}
 	
 	private void setListeners() {
@@ -69,6 +72,10 @@ public class VincularAreasTitulacaoPresenter implements Presenter {
 			public void selectionChanged(SelectionChangedEvent<CursoDTO> se) {
 				display.getNaoVinculadaList().getStore().getLoader().load();
 				display.getVinculadaList().getStore().getLoader().load();
+				display.getNaoVinculadaList().setEnabled(true);
+				display.getVinculadaList().setEnabled(true);
+				display.getAdicionaBT().setEnabled(true);
+				display.getRemoveBT().setEnabled(true);
 			}
 		});
 
@@ -77,14 +84,28 @@ public class VincularAreasTitulacaoPresenter implements Presenter {
 			public void componentSelected(ButtonEvent ce) {
 				List<AreaTitulacaoDTO> areaTitulacaoDTOList = display.getNaoVinculadaList().getSelectionModel().getSelectedItems();
 				transfere(display.getNaoVinculadaList(), display.getVinculadaList(), areaTitulacaoDTOList);
+				CursoDTO cursoDTO = display.getCursoComboBox().getValue();
+				Services.areasTitulacao().vincula(cursoDTO, areaTitulacaoDTOList, new AbstractAsyncCallbackWithDefaultOnFailure<Void>(display) {
+					@Override
+					public void onSuccess(Void result) {
+						Info.display("Cadastrado", "Área Titulação vinculada com sucesso");
+					}
+				});
 			}
 		});
 		
-		display.getAdicionaBT().addSelectionListener(new SelectionListener<ButtonEvent>(){
+		display.getRemoveBT().addSelectionListener(new SelectionListener<ButtonEvent>(){
 			@Override
 			public void componentSelected(ButtonEvent ce) {
 				List<AreaTitulacaoDTO> areaTitulacaoDTOList = display.getVinculadaList().getSelectionModel().getSelectedItems();
 				transfere(display.getVinculadaList(), display.getNaoVinculadaList(), areaTitulacaoDTOList);
+				CursoDTO cursoDTO = display.getCursoComboBox().getValue();
+				Services.areasTitulacao().desvincula(cursoDTO, areaTitulacaoDTOList, new AbstractAsyncCallbackWithDefaultOnFailure<Void>(display) {
+					@Override
+					public void onSuccess(Void result) {
+						Info.display("Removido", "Área Titulação removida com sucesso");
+					}
+				});
 			}
 		});
 		

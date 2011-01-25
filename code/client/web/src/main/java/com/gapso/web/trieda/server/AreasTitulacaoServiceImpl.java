@@ -90,6 +90,7 @@ public class AreasTitulacaoServiceImpl extends RemoteServiceServlet implements A
 		}
 		return areaTitulacaoDTOList;
 	}
+	
 	@Override
 	public List<AreaTitulacaoDTO> getListNaoVinculadas(CursoDTO cursoDTO) {
 		if(cursoDTO == null) return Collections.<AreaTitulacaoDTO>emptyList();
@@ -105,6 +106,26 @@ public class AreasTitulacaoServiceImpl extends RemoteServiceServlet implements A
 		}
 		
 		return areaTitulacaoDTOList;
+	}
+	
+	@Override
+	public void vincula(CursoDTO cursoDTO, List<AreaTitulacaoDTO> areasTitulacaoDTO) {
+		Curso curso = Curso.find(cursoDTO.getId());
+		for(AreaTitulacaoDTO areaTitulacaoDTO : areasTitulacaoDTO) {
+			AreaTitulacao area = AreaTitulacao.find(areaTitulacaoDTO.getId());
+			area.getCursos().add(curso);
+			area.merge();
+		}
+	}
+	
+	@Override
+	public void desvincula(CursoDTO cursoDTO, List<AreaTitulacaoDTO> areasTitulacaoDTO) {
+		Curso curso = Curso.find(cursoDTO.getId());
+		for(AreaTitulacaoDTO areaTitulacaoDTO : areasTitulacaoDTO) {
+			AreaTitulacao area = AreaTitulacao.find(areaTitulacaoDTO.getId());
+			area.getCursos().remove(curso);
+			area.merge();
+		}
 	}
 	
 }

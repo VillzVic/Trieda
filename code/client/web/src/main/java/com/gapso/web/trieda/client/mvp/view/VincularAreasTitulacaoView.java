@@ -1,14 +1,8 @@
 package com.gapso.web.trieda.client.mvp.view;
 
-import java.util.List;
-
 import com.extjs.gxt.ui.client.Style.LayoutRegion;
 import com.extjs.gxt.ui.client.Style.Orientation;
 import com.extjs.gxt.ui.client.Style.SelectionMode;
-import com.extjs.gxt.ui.client.data.BaseListLoader;
-import com.extjs.gxt.ui.client.data.ListLoadResult;
-import com.extjs.gxt.ui.client.data.RpcProxy;
-import com.extjs.gxt.ui.client.store.ListStore;
 import com.extjs.gxt.ui.client.util.Margins;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
 import com.extjs.gxt.ui.client.widget.LayoutContainer;
@@ -35,9 +29,6 @@ public class VincularAreasTitulacaoView extends MyComposite implements VincularA
 	private ContentPanel panelLists;
 	
 	private CursoComboBox cursoCB;
-	
-	private RpcProxy<List<AreaTitulacaoDTO>> proxyNaoVinculada;
-	private RpcProxy<List<AreaTitulacaoDTO>> proxyVinculada;
 	
 	private ListView<AreaTitulacaoDTO> naoVinculadaList;
 	private ListView<AreaTitulacaoDTO> vinculadaList;
@@ -84,7 +75,7 @@ public class VincularAreasTitulacaoView extends MyComposite implements VincularA
 		
 		ContentPanel naoVinculadaListPanel = new ContentPanel(new FitLayout());
 		naoVinculadaListPanel.setHeading("Área(s) de Titulação NÃO vinculada(s) ao Curso");
-		naoVinculadaList = new ListView<AreaTitulacaoDTO>(new ListStore<AreaTitulacaoDTO>(new BaseListLoader<ListLoadResult<AreaTitulacaoDTO>>(proxyNaoVinculada)));
+		naoVinculadaList = new ListView<AreaTitulacaoDTO>();
 		naoVinculadaList.disable();
 		naoVinculadaList.setDisplayProperty("codigo");
 		naoVinculadaList.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
@@ -92,7 +83,7 @@ public class VincularAreasTitulacaoView extends MyComposite implements VincularA
 		
 		ContentPanel vinculadaListPanel = new ContentPanel(new FitLayout());
 		vinculadaListPanel.setHeading("Área(s) de Titulação vinculada(s) ao Curso");
-		vinculadaList = new ListView<AreaTitulacaoDTO>(new ListStore<AreaTitulacaoDTO>(new BaseListLoader<ListLoadResult<AreaTitulacaoDTO>>(proxyVinculada)));
+		vinculadaList = new ListView<AreaTitulacaoDTO>();
 		vinculadaList.disable();
 		vinculadaList.setDisplayProperty("codigo");
 		vinculadaList.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
@@ -117,10 +108,12 @@ public class VincularAreasTitulacaoView extends MyComposite implements VincularA
 		panel.setLayout(new RowLayout(Orientation.VERTICAL));
 		
 		adicionaBT = new Button();
+		adicionaBT.setEnabled(false);
 		adicionaBT.setSize(30, 50);
 		adicionaBT.setIcon(AbstractImagePrototype.create(Resources.DEFAULTS.toRight24()));
 		
 		removeBT = new Button();
+		removeBT.setEnabled(false);
 		removeBT.setSize(30, 50);
 		removeBT.setIcon(AbstractImagePrototype.create(Resources.DEFAULTS.toLeft24()));
 		
@@ -145,16 +138,6 @@ public class VincularAreasTitulacaoView extends MyComposite implements VincularA
 	@Override
 	public ListView<AreaTitulacaoDTO> getVinculadaList() {
 		return vinculadaList;
-	}
-
-	@Override
-	public void setProxyNaoVinculada(RpcProxy<List<AreaTitulacaoDTO>> proxy) {
-		this.proxyNaoVinculada = proxy;
-	}
-
-	@Override
-	public void setProxyVinculada(RpcProxy<List<AreaTitulacaoDTO>> proxy) {
-		this.proxyVinculada = proxy;
 	}
 
 	@Override

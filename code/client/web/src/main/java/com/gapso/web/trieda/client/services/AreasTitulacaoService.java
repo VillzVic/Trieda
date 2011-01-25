@@ -23,5 +23,7 @@ public interface AreasTitulacaoService extends RemoteService {
 	void remove(List<AreaTitulacaoDTO> areaTitulacaoDTOList);
 	List<AreaTitulacaoDTO> getListVinculadas(CursoDTO cursoDTO);
 	List<AreaTitulacaoDTO> getListNaoVinculadas(CursoDTO cursoDTO);
+	void vincula(CursoDTO cursoDTO, List<AreaTitulacaoDTO> areasTitulacaoDTO);
+	void desvincula(CursoDTO cursoDTO, List<AreaTitulacaoDTO> areasTitulacaoDTO);
 	
 }

@@ -19,4 +19,6 @@ public interface AreasTitulacaoServiceAsync {
 	void getBuscaList(String nome, String descricao, PagingLoadConfig config, AsyncCallback<PagingLoadResult<AreaTitulacaoDTO>> callback);
 	void getListVinculadas(CursoDTO cursoDTO, AsyncCallback<List<AreaTitulacaoDTO>> callback);
 	void getListNaoVinculadas(CursoDTO cursoDTO, AsyncCallback<List<AreaTitulacaoDTO>> callback);
+	void vincula(CursoDTO cursoDTO, List<AreaTitulacaoDTO> areasTitulacaoDTO, AsyncCallback<Void> callback);
+	void desvincula(CursoDTO cursoDTO, List<AreaTitulacaoDTO> areasTitulacaoDTO, AsyncCallback<Void> callback);
 }
