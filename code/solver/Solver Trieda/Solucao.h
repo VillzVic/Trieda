@@ -153,6 +153,10 @@ private:
 
    // ===============================
 
+   map<Disciplina*,GGroup<Demanda*> > disciplinas_Comuns_Entre_Demandas_Cursos_Compat;
+
+   // ===============================
+
    // METODOS
    
    // ===============================
@@ -270,7 +274,9 @@ private:
    vector<pair<Demanda*,int/*Demanda atendida*/> > elaboraTurma(
       pair<Disciplina*,int> & cjt_Dem, int demanda_Atendida);
 
-      // ===============================
+   //vector<vector<pair<Demanda*,int/*Demanda atendida*/> > > elaboraTurma(Disciplina * disciplina);
+
+   // ===============================
 
    /*
       organiza as Variações de uma regra de crédito conforme desejado.
@@ -278,5 +284,10 @@ private:
 
    void organizaVariacoesRegraCredito(
       vector<vector<pair<int/*dia*/, int/*numCreditos*/> > > & variacoes_Regra_Credito);
+
+
+   // ===============================
+
+   void alocaDiscsComuns();
 
 };

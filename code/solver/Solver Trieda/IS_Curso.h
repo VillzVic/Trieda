@@ -66,6 +66,8 @@ public:
       Matrix<vector<pair<Disciplina*,int/*turma*/> > > * pt_Grade_Horaria_Curso
       );
 
+   void imprimeGradesHorarias();
+
    // Operadores
 
    bool operator < (IS_Curso const & right);

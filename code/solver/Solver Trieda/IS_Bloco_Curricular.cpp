@@ -16,7 +16,7 @@ IS_Bloco_Curricular::IS_Bloco_Curricular(BlocoCurricular * blc)
       demanda_Total += it_Disciplina_Demanda->second->quantidade;
    }
 
-   atendido = false;
+   //atendido = false;
 }
 
 IS_Bloco_Curricular::IS_Bloco_Curricular(IS_Bloco_Curricular const & is_Bloco_Curric)

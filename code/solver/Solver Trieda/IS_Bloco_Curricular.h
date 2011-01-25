@@ -27,7 +27,7 @@ public:
 
    /* FLAG que indica se o is_Bloco em questão já foi atendido. Mais especificamente,
    esse flag informa se o is_Bloco em questão já teve a sua chance de ser atendido. */
-   bool atendido;
+   //bool atendido;
 
    // Informa a demanda total de um dado IS_Bloco
    int demanda_Total;
