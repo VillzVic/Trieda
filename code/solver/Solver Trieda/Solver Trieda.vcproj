@@ -440,11 +440,11 @@
 					Name="Initial Solution"
 					>
 					<File
-						RelativePath=".\InitialSolution.cpp"
+						RelativePath=".\IS_Atendimento_Tatico.cpp"
 						>
 					</File>
 					<File
-						RelativePath=".\IS_Atendimento_Tatico.cpp"
+						RelativePath=".\IS_Bloco_Curricular.cpp"
 						>
 					</File>
 					<File
@@ -453,6 +453,10 @@
 					</File>
 					<File
 						RelativePath=".\IS_CjtSala.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\IS_Curso.cpp"
 						>
 					</File>
 					<File
@@ -465,6 +469,10 @@
 					</File>
 					<File
 						RelativePath=".\IS_Unidade.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\Solucao.cpp"
 						>
 					</File>
 				</Filter>
@@ -682,7 +690,7 @@
 					>
 				</File>
 				<File
-					RelativePath="$(CODELIB)\ErrorHandler.h"
+					RelativePath="..\..\..\..\..\..\..\Bibliotecas\codelib\ErrorHandler.h"
 					>
 				</File>
 				<File
@@ -733,11 +741,11 @@
 					Name="Initial Solution"
 					>
 					<File
-						RelativePath=".\InitialSolution.h"
+						RelativePath=".\IS_Atendimento_Tatico.h"
 						>
 					</File>
 					<File
-						RelativePath=".\IS_Atendimento_Tatico.h"
+						RelativePath=".\IS_Bloco_Curricular.h"
 						>
 					</File>
 					<File
@@ -746,6 +754,10 @@
 					</File>
 					<File
 						RelativePath=".\IS_CjtSala.h"
+						>
+					</File>
+					<File
+						RelativePath=".\IS_Curso.h"
 						>
 					</File>
 					<File
@@ -758,6 +770,10 @@
 					</File>
 					<File
 						RelativePath=".\IS_Unidade.h"
+						>
+					</File>
+					<File
+						RelativePath=".\Solucao.h"
 						>
 					</File>
 				</Filter>
