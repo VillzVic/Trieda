@@ -51,7 +51,8 @@ public class ToolBarView extends MyComposite implements ToolBarPresenter.Display
 	
 	// Cursos
 	private Button tiposCursosListCursosBt;
-	private Button areasTitulacaoListCursosBtI;
+	private Button areasTitulacaoListCursosBt;
+	private Button vincularAreasTitulacaoListCursosBt;
 	private Button cursosListCursosBt;
 	private Button curriculosListCursosBt;
 	private Button ofertasListCursosBt;
@@ -242,10 +243,11 @@ public class ToolBarView extends MyComposite implements ToolBarPresenter.Display
 		ofertasListCursosBt = createButton("Oferta de Cursos<br />em Campi", "Oferta de Cursos em Campi", Resources.DEFAULTS.ofertaCurso24());
 		cursosToolBar.add(ofertasListCursosBt);
 		
-		areasTitulacaoListCursosBtI = createButton("Áreas de<br />Titulação", "Áreas de Titulação", Resources.DEFAULTS.areaTitulacao());
-		cursosToolBar.add(areasTitulacaoListCursosBtI);
+		areasTitulacaoListCursosBt = createButton("Áreas de<br />Titulação", "Áreas de Titulação", Resources.DEFAULTS.areaTitulacao());
+		cursosToolBar.add(areasTitulacaoListCursosBt);
 		
-		cursosToolBar.add(createButton("Vincular Áreas<br />de Titulação", "Vincular Áreas de Titulação", Resources.DEFAULTS.vincularAreaTitulacao24()));
+		vincularAreasTitulacaoListCursosBt = createButton("Vincular Áreas<br />de Titulação", "Vincular Áreas de Titulação", Resources.DEFAULTS.vincularAreaTitulacao24());
+		cursosToolBar.add(vincularAreasTitulacaoListCursosBt);
 		
 		curriculosListCursosBt = createButton("Matrizes<br />Curriculares", "Matrizes Curriculares", Resources.DEFAULTS.matrizCurricular24());
 		cursosToolBar.add(curriculosListCursosBt);
@@ -351,7 +353,11 @@ public class ToolBarView extends MyComposite implements ToolBarPresenter.Display
 	}
 	@Override
 	public Button getAreasTitulacaoListCursosButton() {
-		return areasTitulacaoListCursosBtI;
+		return areasTitulacaoListCursosBt;
+	}
+	@Override
+	public Button getVincularAreasTitulacaoListCursosButton() {
+		return vincularAreasTitulacaoListCursosBt;
 	}
 	@Override
 	public Button getUnidadeDeslocamentoListUnidadesButton() {

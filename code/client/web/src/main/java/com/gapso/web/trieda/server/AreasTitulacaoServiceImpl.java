@@ -1,7 +1,9 @@
 package com.gapso.web.trieda.server;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 import com.extjs.gxt.ui.client.Style.SortDir;
 import com.extjs.gxt.ui.client.data.BaseListLoadResult;
@@ -10,7 +12,9 @@ import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.gapso.trieda.domain.AreaTitulacao;
+import com.gapso.trieda.domain.Curso;
 import com.gapso.web.trieda.client.mvp.model.AreaTitulacaoDTO;
+import com.gapso.web.trieda.client.mvp.model.CursoDTO;
 import com.gapso.web.trieda.client.services.AreasTitulacaoService;
 import com.gapso.web.trieda.server.util.ConvertBeans;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
@@ -74,4 +78,33 @@ public class AreasTitulacaoServiceImpl extends RemoteServiceServlet implements A
 		}
 	}
 
+	@Override
+	public List<AreaTitulacaoDTO> getListVinculadas(CursoDTO cursoDTO) {
+		if(cursoDTO == null) return Collections.<AreaTitulacaoDTO>emptyList();
+		
+		Curso curso = Curso.find(cursoDTO.getId());
+		Set<AreaTitulacao> areaTitulacaoList = curso.getAreasTitulacao();
+		List<AreaTitulacaoDTO> areaTitulacaoDTOList = new ArrayList<AreaTitulacaoDTO>(areaTitulacaoList.size());
+		for(AreaTitulacao areaTitulacao : areaTitulacaoList) {
+			areaTitulacaoDTOList.add(ConvertBeans.toAreaTitulacaoDTO(areaTitulacao));
+		}
+		return areaTitulacaoDTOList;
+	}
+	@Override
+	public List<AreaTitulacaoDTO> getListNaoVinculadas(CursoDTO cursoDTO) {
+		if(cursoDTO == null) return Collections.<AreaTitulacaoDTO>emptyList();
+		
+		Curso curso = Curso.find(cursoDTO.getId());
+		Set<AreaTitulacao> areaTitulacaoList = curso.getAreasTitulacao();
+		List<AreaTitulacao> naoAssociadasList = AreaTitulacao.findAll();
+		naoAssociadasList.removeAll(areaTitulacaoList);
+		
+		List<AreaTitulacaoDTO> areaTitulacaoDTOList = new ArrayList<AreaTitulacaoDTO>(naoAssociadasList.size());
+		for(AreaTitulacao areaTitulacao : naoAssociadasList) {
+			areaTitulacaoDTOList.add(ConvertBeans.toAreaTitulacaoDTO(areaTitulacao));
+		}
+		
+		return areaTitulacaoDTOList;
+	}
+	
 }

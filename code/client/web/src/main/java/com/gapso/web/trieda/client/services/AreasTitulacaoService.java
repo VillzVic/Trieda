@@ -6,6 +6,7 @@ import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.gapso.web.trieda.client.mvp.model.AreaTitulacaoDTO;
+import com.gapso.web.trieda.client.mvp.model.CursoDTO;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
@@ -20,5 +21,7 @@ public interface AreasTitulacaoService extends RemoteService {
 	ListLoadResult<AreaTitulacaoDTO> getListAll();
 	void save(AreaTitulacaoDTO areaTitulacaoDTO);
 	void remove(List<AreaTitulacaoDTO> areaTitulacaoDTOList);
+	List<AreaTitulacaoDTO> getListVinculadas(CursoDTO cursoDTO);
+	List<AreaTitulacaoDTO> getListNaoVinculadas(CursoDTO cursoDTO);
 	
 }
