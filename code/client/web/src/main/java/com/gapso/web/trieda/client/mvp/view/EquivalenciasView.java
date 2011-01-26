@@ -52,7 +52,7 @@ public class EquivalenciasView extends MyComposite implements EquivalenciasPrese
 	}
 	
 	private void createToolBar() {
-		toolBar = new SimpleToolBar(true, false, true, true, true);
+		toolBar = new SimpleToolBar(true, false, true, true, true, this);
 		panel.setTopComponent(toolBar);
 	}
 	

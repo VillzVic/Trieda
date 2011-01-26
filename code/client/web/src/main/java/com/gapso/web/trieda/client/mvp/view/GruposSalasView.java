@@ -50,7 +50,7 @@ public class GruposSalasView extends MyComposite implements GruposSalasPresenter
 	}
 	
 	private void createToolBar() {
-		toolBar = new SimpleToolBar();
+		toolBar = new SimpleToolBar(this);
 		toolBar.add(new SeparatorToolItem());
 		associarSalasBT = toolBar.createButton("Associar Salas", Resources.DEFAULTS.sala16());
 		toolBar.add(associarSalasBT);

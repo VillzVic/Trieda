@@ -62,7 +62,7 @@ public class CurriculosView extends MyComposite implements CurriculosPresenter.D
 	}
 	
 	private void createToolBar() {
-		toolBar = new SimpleToolBar();
+		toolBar = new SimpleToolBar(this);
 		toolBar.add(new SeparatorToolItem());
 		associarDisciplinasBT = toolBar.createButton("Associar Disciplinas", Resources.DEFAULTS.disciplina16());
 		toolBar.add(associarDisciplinasBT);

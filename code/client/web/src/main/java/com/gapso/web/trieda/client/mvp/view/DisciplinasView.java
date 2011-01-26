@@ -56,7 +56,7 @@ public class DisciplinasView extends MyComposite implements DisciplinasPresenter
 	}
 	
 	private void createToolBar() {
-		toolBar = new SimpleToolBar();
+		toolBar = new SimpleToolBar(this);
 		toolBar.add(new SeparatorToolItem());
 		disponibilidadeBT = toolBar.createButton("Disponibilidade da Disciplina", Resources.DEFAULTS.disponibilidade16());
 		toolBar.add(disponibilidadeBT);

@@ -51,7 +51,7 @@ public class TiposCursosView extends MyComposite implements TiposCursosPresenter
 	}
 	
 	private void createToolBar() {
-		toolBar = new SimpleToolBar();
+		toolBar = new SimpleToolBar(this);
 		panel.setTopComponent(toolBar);
 	}
 	

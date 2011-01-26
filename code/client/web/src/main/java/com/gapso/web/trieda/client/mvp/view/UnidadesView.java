@@ -64,7 +64,7 @@ public class UnidadesView extends MyComposite implements UnidadesPresenter.Displ
 	}
 	
 	private void createToolBar() {
-		toolBar = new SimpleToolBar();
+		toolBar = new SimpleToolBar(this);
 		panel.setTopComponent(toolBar);
 	}
 	

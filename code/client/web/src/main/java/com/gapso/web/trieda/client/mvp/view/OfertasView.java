@@ -56,7 +56,7 @@ public class OfertasView extends MyComposite implements OfertasPresenter.Display
 	}
 	
 	private void createToolBar() {
-		toolBar = new SimpleToolBar();
+		toolBar = new SimpleToolBar(this);
 		panel.setTopComponent(toolBar);
 	}
 	

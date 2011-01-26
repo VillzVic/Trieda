@@ -3,6 +3,7 @@ package com.gapso.web.trieda.client.util.view;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.toolbar.SeparatorToolItem;
 import com.extjs.gxt.ui.client.widget.toolbar.ToolBar;
+import com.gapso.web.trieda.client.i18n.ITriedaI18nGateway;
 import com.gapso.web.trieda.client.util.resources.Resources;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
@@ -20,34 +21,38 @@ public class SimpleToolBar extends ToolBar {
 	private Button exportExcelButton;
 	private boolean showExportExcelButton = true;
 	
-	public SimpleToolBar() {
+	private ITriedaI18nGateway i18nGateway;
+	
+	public SimpleToolBar(ITriedaI18nGateway i18nGateway) {
 		super();
+		this.i18nGateway = i18nGateway;
 		initUI();
 	}
 	
-	public SimpleToolBar(boolean showNewButton, boolean showEditButton, boolean showRemoveButton, boolean showImportExcelButton, boolean showExportExcelButton) {
+	public SimpleToolBar(boolean showNewButton, boolean showEditButton, boolean showRemoveButton, boolean showImportExcelButton, boolean showExportExcelButton, ITriedaI18nGateway i18nGateway) {
 		super();
 		this.showNewButton = showNewButton;
 		this.showEditButton = showEditButton;
 		this.showRemoveButton = showRemoveButton;
 		this.showImportExcelButton = showImportExcelButton;
 		this.showExportExcelButton = showExportExcelButton;
+		this.i18nGateway = i18nGateway;
 		initUI();
 	}
 
 	private void initUI() {
 		if(showNewButton) {
-			newButton = createButton("Adicionar", Resources.DEFAULTS.add16());
+			newButton = createButton(i18nGateway.getI18nConstants().adicionar(), Resources.DEFAULTS.add16());
 			add(newButton);
 		}
 		
 		if(showEditButton) {
-			editButton = createButton("Editar", Resources.DEFAULTS.edit16());
+			editButton = createButton(i18nGateway.getI18nConstants().editar(), Resources.DEFAULTS.edit16());
 			add(editButton);
 		}
 		
 		if(showRemoveButton) {
-			removeButton = createButton("Remover", Resources.DEFAULTS.del16());
+			removeButton = createButton(i18nGateway.getI18nConstants().remover(), Resources.DEFAULTS.del16());
 			add(removeButton);
 		}
 		
@@ -56,12 +61,12 @@ public class SimpleToolBar extends ToolBar {
 		}
 		
 		if(showImportExcelButton) {
-			importExcelButton = createButton("Exportar para Excel", Resources.DEFAULTS.exportar16());
+			importExcelButton = createButton(i18nGateway.getI18nConstants().importarExcel(), Resources.DEFAULTS.importar16());
 			add(importExcelButton);
 		}
 		
 		if(showExportExcelButton) {
-			exportExcelButton = createButton("Importar de Excel", Resources.DEFAULTS.importar16());
+			exportExcelButton = createButton(i18nGateway.getI18nConstants().exportarExcel(), Resources.DEFAULTS.exportar16());
 			add(exportExcelButton);
 		}
 

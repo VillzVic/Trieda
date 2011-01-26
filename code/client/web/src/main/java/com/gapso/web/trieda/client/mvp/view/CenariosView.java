@@ -55,7 +55,7 @@ public class CenariosView extends MyComposite implements CenariosPresenter.Displ
 	}
 	
 	private void createToolBar() {
-		toolBar = new SimpleToolBar();
+		toolBar = new SimpleToolBar(this);
 		toolBar.add(new SeparatorToolItem());
 		clonarCenarioBT = toolBar.createButton("Clonar cenário", Resources.DEFAULTS.cenarioClonar16());
 		toolBar.add(clonarCenarioBT);

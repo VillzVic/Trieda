@@ -58,7 +58,7 @@ public class CampiView extends MyComposite implements CampiPresenter.Display {
 	}
 	
 	private void createToolBar() {
-		toolBar = new SimpleToolBar();
+		toolBar = new SimpleToolBar(this);
 		toolBar.add(new SeparatorToolItem());
 		unidadesDeslocamentoBT = toolBar.createButton("Deslocamento entre Unidades", Resources.DEFAULTS.deslocamento16());
 		toolBar.add(unidadesDeslocamentoBT);

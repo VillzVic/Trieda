@@ -58,7 +58,7 @@ public class DemandasView extends MyComposite implements DemandasPresenter.Displ
 	}
 	
 	private void createToolBar() {
-		toolBar = new SimpleToolBar();
+		toolBar = new SimpleToolBar(this);
 		panel.setTopComponent(toolBar);
 	}
 	

@@ -50,7 +50,7 @@ public class FixacoesView extends MyComposite implements FixacoesPresenter.Displ
 	}
 	
 	private void createToolBar() {
-		toolBar = new SimpleToolBar();
+		toolBar = new SimpleToolBar(this);
 		panel.setTopComponent(toolBar);
 	}
 	

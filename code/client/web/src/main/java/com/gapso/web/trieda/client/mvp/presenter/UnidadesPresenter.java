@@ -28,7 +28,6 @@ import com.gapso.web.trieda.client.util.view.CampusComboBox;
 import com.gapso.web.trieda.client.util.view.GTab;
 import com.gapso.web.trieda.client.util.view.GTabItem;
 import com.gapso.web.trieda.client.util.view.SimpleGrid;
-import com.gapso.web.trieda.client.util.view.TriedaDetailMessageBox;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
 import com.googlecode.future.FutureResult;
@@ -116,6 +115,18 @@ public class UnidadesPresenter implements Presenter {
 						Info.display(display.getI18nConstants().informacao(), display.getI18nMessages().sucessoRemoverDoBD(list.toString()));
 					}
 				});
+			}
+		});
+		display.getImportExcelButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
+			@Override
+			public void componentSelected(ButtonEvent ce) {
+				MessageBox.info("Informação","FUNCIONALIDADE EM CONSTRUÇÃO!",null);// TODO: implementar funcionalidade
+			}
+		});
+		display.getExportExcelButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
+			@Override
+			public void componentSelected(ButtonEvent ce) {
+				MessageBox.info("Informação","FUNCIONALIDADE EM CONSTRUÇÃO!",null);// TODO: implementar funcionalidade
 			}
 		});
 		display.getResetBuscaButton().addSelectionListener(new SelectionListener<ButtonEvent>(){

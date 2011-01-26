@@ -58,7 +58,7 @@ public class ProfessoresView extends MyComposite implements ProfessoresPresenter
 	}
 	
 	private void createToolBar() {
-		toolBar = new SimpleToolBar();
+		toolBar = new SimpleToolBar(this);
 		toolBar.add(new SeparatorToolItem());
 		disponibilidadeBT = toolBar.createButton("Disponibilidade do Professor", Resources.DEFAULTS.disponibilidade16());
 		toolBar.add(disponibilidadeBT);

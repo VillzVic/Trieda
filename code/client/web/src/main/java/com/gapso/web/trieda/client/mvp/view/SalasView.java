@@ -49,7 +49,7 @@ public class SalasView extends MyComposite implements SalasPresenter.Display {
 	}
 	
 	private void createToolBar() {
-		toolBar = new SimpleToolBar();
+		toolBar = new SimpleToolBar(this);
 		toolBar.add(new SeparatorToolItem());
 		disciplinasAssociadasBT = toolBar.createButton("Disciplinas Associadas", Resources.DEFAULTS.disciplina16());
 		toolBar.add(disciplinasAssociadasBT);

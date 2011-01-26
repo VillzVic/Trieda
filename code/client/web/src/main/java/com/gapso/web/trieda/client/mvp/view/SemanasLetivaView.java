@@ -53,7 +53,7 @@ public class SemanasLetivaView extends MyComposite implements SemanasLetivaPrese
 	}
 	
 	private void createToolBar() {
-		toolBar = new SimpleToolBar();
+		toolBar = new SimpleToolBar(this);
 		toolBar.add(new SeparatorToolItem());
 		diasDeAulaButton = toolBar.createButton("Dias e Horários de Aula", Resources.DEFAULTS.diaHorarioAula16());
 		toolBar.add(diasDeAulaButton);

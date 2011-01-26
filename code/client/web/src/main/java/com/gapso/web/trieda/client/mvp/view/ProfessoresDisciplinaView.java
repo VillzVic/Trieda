@@ -52,7 +52,7 @@ public class ProfessoresDisciplinaView extends MyComposite implements Professore
 	}
 	
 	private void createToolBar() {
-		toolBar = new SimpleToolBar();
+		toolBar = new SimpleToolBar(this);
 		panel.setTopComponent(toolBar);
 	}
 	

@@ -57,7 +57,7 @@ public class HorariosAulaView extends MyComposite implements HorariosAulaPresent
 	}
 	
 	private void createToolBar() {
-		toolBar = new SimpleToolBar();
+		toolBar = new SimpleToolBar(this);
 		panel.setTopComponent(toolBar);
 	}
 	

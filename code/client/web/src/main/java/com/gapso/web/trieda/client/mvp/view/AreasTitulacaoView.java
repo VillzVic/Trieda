@@ -51,7 +51,7 @@ public class AreasTitulacaoView extends MyComposite implements AreasTitulacaoPre
 	}
 	
 	private void createToolBar() {
-		toolBar = new SimpleToolBar();
+		toolBar = new SimpleToolBar(this);
 		panel.setTopComponent(toolBar);
 	}
 	

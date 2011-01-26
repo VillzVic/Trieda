@@ -71,7 +71,7 @@ public class CurriculoDisciplinasView extends MyComposite implements CurriculoDi
 	}
 	
 	private void createToolBar() {
-		toolBar = new SimpleToolBar(true, false, true, false, false);
+		toolBar = new SimpleToolBar(true, false, true, false, false, this);
 		panel.setTopComponent(toolBar);
 	}
 	

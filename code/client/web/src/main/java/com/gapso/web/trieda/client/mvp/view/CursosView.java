@@ -56,7 +56,7 @@ public class CursosView extends MyComposite implements CursosPresenter.Display {
 	}
 	
 	private void createToolBar() {
-		toolBar = new SimpleToolBar();
+		toolBar = new SimpleToolBar(this);
 		toolBar.add(new SeparatorToolItem());
 		curriculosBT = toolBar.createButton("Matrizes Curriculares", Resources.DEFAULTS.matrizCurricular16());
 		toolBar.add(curriculosBT);
