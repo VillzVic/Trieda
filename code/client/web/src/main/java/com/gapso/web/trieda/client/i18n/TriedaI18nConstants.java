@@ -17,6 +17,7 @@ public interface TriedaI18nConstants extends Constants {
 	String preenchaO();
 	String salas();
 	String selecioneO();
+	String triedaDetailMessageHeadingText();
 	String unidade();
 	String unidades();
 	String unidadesHeadingPanel();
