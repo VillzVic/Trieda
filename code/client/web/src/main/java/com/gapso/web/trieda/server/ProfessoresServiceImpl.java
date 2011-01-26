@@ -18,7 +18,9 @@ import com.gapso.trieda.domain.SemanaLetiva;
 import com.gapso.trieda.domain.TipoContrato;
 import com.gapso.trieda.domain.Titulacao;
 import com.gapso.web.trieda.client.mvp.model.AreaTitulacaoDTO;
+import com.gapso.web.trieda.client.mvp.model.CampusDTO;
 import com.gapso.web.trieda.client.mvp.model.HorarioDisponivelCenarioDTO;
+import com.gapso.web.trieda.client.mvp.model.ProfessorCampusDTO;
 import com.gapso.web.trieda.client.mvp.model.ProfessorDTO;
 import com.gapso.web.trieda.client.mvp.model.TipoContratoDTO;
 import com.gapso.web.trieda.client.mvp.model.TitulacaoDTO;
@@ -155,4 +157,13 @@ public class ProfessoresServiceImpl extends RemoteServiceServlet implements Prof
 		}
 	}
 
+	@Override
+	public PagingLoadResult<ProfessorCampusDTO> getProfessorCampusList(CampusDTO campusDTO, ProfessorDTO professorDTO) {
+		return null;
+	}
+	
+	@Override
+	public void removeProfessorCampus(List<ProfessorCampusDTO> professorCampusDTOList) {
+	}
+	
 }

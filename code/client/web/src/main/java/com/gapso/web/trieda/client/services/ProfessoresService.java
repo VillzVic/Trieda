@@ -6,7 +6,9 @@ import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.gapso.web.trieda.client.mvp.model.AreaTitulacaoDTO;
+import com.gapso.web.trieda.client.mvp.model.CampusDTO;
 import com.gapso.web.trieda.client.mvp.model.HorarioDisponivelCenarioDTO;
+import com.gapso.web.trieda.client.mvp.model.ProfessorCampusDTO;
 import com.gapso.web.trieda.client.mvp.model.ProfessorDTO;
 import com.gapso.web.trieda.client.mvp.model.TipoContratoDTO;
 import com.gapso.web.trieda.client.mvp.model.TitulacaoDTO;
@@ -30,5 +32,7 @@ public interface ProfessoresService extends RemoteService {
 	void remove(List<ProfessorDTO> professorDTOList);
 	List<HorarioDisponivelCenarioDTO> getHorariosDisponiveis(ProfessorDTO professorDTO);
 	void saveHorariosDisponiveis(ProfessorDTO professorDTO, List<HorarioDisponivelCenarioDTO> listDTO);
+	PagingLoadResult<ProfessorCampusDTO> getProfessorCampusList(CampusDTO campusDTO, ProfessorDTO professorDTO);
+	void removeProfessorCampus(List<ProfessorCampusDTO> professorCampusDTOList);
 	
 }
