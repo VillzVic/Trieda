@@ -11,6 +11,7 @@ import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.gapso.trieda.domain.AreaTitulacao;
+import com.gapso.trieda.domain.Campus;
 import com.gapso.trieda.domain.HorarioAula;
 import com.gapso.trieda.domain.HorarioDisponivelCenario;
 import com.gapso.trieda.domain.Professor;
@@ -158,12 +159,90 @@ public class ProfessoresServiceImpl extends RemoteServiceServlet implements Prof
 	}
 
 	@Override
+	public List<ProfessorDTO> getProfessoresEmCampus(CampusDTO campusDTO) {
+		Campus campus = Campus.find(campusDTO.getId());
+		Set<Professor> list = campus.getProfessores();
+		List<ProfessorDTO> listDTO = new ArrayList<ProfessorDTO>(list.size());
+		for(Professor professor : list) {
+			listDTO.add(ConvertBeans.toProfessorDTO(professor));
+		}
+		return listDTO;
+	}
+	
+	@Override
+	public List<ProfessorDTO> getProfessoresNaoEmCampus(CampusDTO campusDTO) {
+		Campus campus = Campus.find(campusDTO.getId());
+		Set<Professor> listAssociados = campus.getProfessores();
+		List<Professor> list = Professor.findAll();
+		list.removeAll(listAssociados);
+		List<ProfessorDTO> listDTO = new ArrayList<ProfessorDTO>(list.size());
+		for(Professor professor : list) {
+			listDTO.add(ConvertBeans.toProfessorDTO(professor));
+		}
+		return listDTO;
+	}
+		
+	@Override
 	public PagingLoadResult<ProfessorCampusDTO> getProfessorCampusList(CampusDTO campusDTO, ProfessorDTO professorDTO) {
-		return null;
+		List<ProfessorCampusDTO> list = null;
+		if(campusDTO != null && professorDTO == null) list = ConvertBeans.toProfessorCampusDTO(Campus.find(campusDTO.getId()));
+		else if(campusDTO == null && professorDTO != null) list = ConvertBeans.toProfessorCampusDTO(Professor.find(professorDTO.getId()));
+		else if(campusDTO == null && professorDTO == null) {
+			list = new ArrayList<ProfessorCampusDTO>();
+			for(Campus campus : Campus.findAll()) {
+				list.addAll(ConvertBeans.toProfessorCampusDTO(campus));
+			}
+		}
+		else if(campusDTO != null && professorDTO != null) {
+			Campus campus = Campus.find(campusDTO.getId());
+			Professor professor = Professor.find(professorDTO.getId());
+			for(Campus c : professor.getCampi()) {
+				if(campus.equals(c)) {
+					list = new ArrayList<ProfessorCampusDTO>(1);
+					ProfessorCampusDTO dto = new ProfessorCampusDTO();
+					dto.setProfessorId(professor.getId());
+					dto.setProfessorString(professor.getNome());
+					dto.setProfessorCpf(professor.getCpf());
+					dto.setCampusId(campus.getId());
+					dto.setCampusString(campus.getCodigo());
+					list.add(dto);
+					break;
+				}
+			}
+		}
+		return new BasePagingLoadResult<ProfessorCampusDTO>(list);
+	}
+	
+	@Override
+	public void salvarProfessorCampus(CampusDTO campusDTO, List<ProfessorDTO> professorDTOList) {
+		Campus campus = Campus.find(campusDTO.getId());
+		List<Professor> professorList = new ArrayList<Professor>(professorDTOList.size());
+		for(ProfessorDTO professorDTO : professorDTOList) {
+			professorList.add(Professor.find(professorDTO.getId()));
+		}
+		// Remove os que não estão na lista
+		for(Professor professor : campus.getProfessores()) {
+			if(!professorList.contains(professor)) {
+				professor.getCampi().remove(campus);
+				professor.merge();
+			}
+		}
+		// Adiciona na lista os que não estão
+		for(Professor professor : professorList) {
+			if(!campus.getProfessores().contains(professor)) {
+				professor.getCampi().add(campus);
+				professor.merge();
+			}
+		}
 	}
 	
 	@Override
 	public void removeProfessorCampus(List<ProfessorCampusDTO> professorCampusDTOList) {
+		for(ProfessorCampusDTO pcDTO : professorCampusDTOList) {
+			Professor professor = Professor.find(pcDTO.getProfessorId());
+			professor.getCampi().remove(Campus.find(pcDTO.getCampusId()));
+			professor.merge();
+		}
 	}
 	
 }

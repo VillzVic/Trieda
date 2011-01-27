@@ -1,6 +1,5 @@
 package com.gapso.web.trieda.client.mvp.view;
 
-import com.extjs.gxt.ui.client.Style.LayoutRegion;
 import com.extjs.gxt.ui.client.Style.Orientation;
 import com.extjs.gxt.ui.client.Style.SelectionMode;
 import com.extjs.gxt.ui.client.util.Margins;
@@ -11,15 +10,14 @@ import com.extjs.gxt.ui.client.widget.ListView;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.FormButtonBinding;
 import com.extjs.gxt.ui.client.widget.form.FormPanel;
-import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
 import com.extjs.gxt.ui.client.widget.layout.FitLayout;
 import com.extjs.gxt.ui.client.widget.layout.FormData;
 import com.extjs.gxt.ui.client.widget.layout.RowData;
 import com.extjs.gxt.ui.client.widget.layout.RowLayout;
 import com.extjs.gxt.ui.client.widget.layout.VBoxLayout;
-import com.extjs.gxt.ui.client.widget.layout.VBoxLayoutData;
 import com.extjs.gxt.ui.client.widget.layout.VBoxLayout.VBoxLayoutAlign;
-import com.gapso.web.trieda.client.mvp.model.ProfessorCampusDTO;
+import com.extjs.gxt.ui.client.widget.layout.VBoxLayoutData;
+import com.gapso.web.trieda.client.mvp.model.CampusDTO;
 import com.gapso.web.trieda.client.mvp.model.ProfessorDTO;
 import com.gapso.web.trieda.client.mvp.presenter.CampusProfessorFormPresenter;
 import com.gapso.web.trieda.client.util.resources.Resources;
@@ -38,10 +36,10 @@ public class CampusProfessorFormView extends MyComposite implements CampusProfes
 	private ListView<ProfessorDTO> professorAssociadoList;
 	private Button adicionaBT;
 	private Button removeBT;
-	private ProfessorCampusDTO professorCampusDTO;
+	private CampusDTO campusDTO;
 	
-	public CampusProfessorFormView(ProfessorCampusDTO professorCampusDTO) {
-		this.professorCampusDTO = professorCampusDTO;
+	public CampusProfessorFormView(CampusDTO campusDTO) {
+		this.campusDTO = campusDTO;
 		initUI();
 		// TODO
 //		initComponent(simpleModal);
@@ -49,7 +47,7 @@ public class CampusProfessorFormView extends MyComposite implements CampusProfes
 	}
 	
 	private void initUI() {
-		String title = (professorCampusDTO.getId() == null)? "Cadastro de professores no campus" : "Edição de professores no campus";
+		String title = "Professores no campus";
 		simpleModal = new SimpleModal(title, Resources.DEFAULTS.professor16());
 		simpleModal.setHeight(400);
 		simpleModal.setWidth(600);
@@ -73,19 +71,19 @@ public class CampusProfessorFormView extends MyComposite implements CampusProfes
 		panelLists.setBodyBorder(false);
 		
 		ContentPanel naoVinculadaListPanel = new ContentPanel(new FitLayout());
-		naoVinculadaListPanel.setHeading("Área(s) de Titulação NÃO vinculada(s) ao Curso");
+		naoVinculadaListPanel.setHeading("Professor(es) NÃO associado(s) ao Campus");
 		professorNaoAssociadoList = new ListView<ProfessorDTO>();
 		professorNaoAssociadoList.disable();
-		professorNaoAssociadoList.setDisplayProperty("codigo");
-		professorNaoAssociadoList.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+		professorNaoAssociadoList.setDisplayProperty("nome");
+		professorNaoAssociadoList.getSelectionModel().setSelectionMode(SelectionMode.MULTI);
 		naoVinculadaListPanel.add(professorNaoAssociadoList);
 		
 		ContentPanel vinculadaListPanel = new ContentPanel(new FitLayout());
-		vinculadaListPanel.setHeading("Área(s) de Titulação vinculada(s) ao Curso");
+		vinculadaListPanel.setHeading("Professor(es) associado(s) ao Campus");
 		professorAssociadoList = new ListView<ProfessorDTO>();
 		professorAssociadoList.disable();
-		professorAssociadoList.setDisplayProperty("codigo");
-		professorAssociadoList.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+		professorAssociadoList.setDisplayProperty("nome");
+		professorAssociadoList.getSelectionModel().setSelectionMode(SelectionMode.MULTI);
 		vinculadaListPanel.add(professorAssociadoList);
 		
 		panelLists.add(naoVinculadaListPanel, new RowData(.5, 1, new Margins(0)));
@@ -98,6 +96,8 @@ public class CampusProfessorFormView extends MyComposite implements CampusProfes
 		container.add(panelLists, flex);
 		
 		campusCB = new CampusComboBox();
+		campusCB.setValue(campusDTO);
+		if(campusCB == null) campusCB.disable();
 		formPanel.add(campusCB, formData);
 		
 		FormButtonBinding binding = new FormButtonBinding(formPanel);
@@ -132,7 +132,7 @@ public class CampusProfessorFormView extends MyComposite implements CampusProfes
 	}
 	
 	public boolean isValid() {
-		return formPanel.isValid();
+		return campusCB.getValue() != null && professorAssociadoList.getStore().getModels().size() > 0;
 	}
 	
 	@Override
@@ -161,8 +161,13 @@ public class CampusProfessorFormView extends MyComposite implements CampusProfes
 	}
 
 	@Override
-	public ProfessorCampusDTO getProfessorCampusDTO() {
-		return professorCampusDTO;
+	public Button getAdicionaBT() {
+		return adicionaBT;
+	}
+
+	@Override
+	public Button getRemoveBT() {
+		return removeBT;
 	}
 
 

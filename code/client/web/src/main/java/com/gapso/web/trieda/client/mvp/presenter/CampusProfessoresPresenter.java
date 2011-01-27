@@ -14,7 +14,6 @@ import com.gapso.web.trieda.client.mvp.model.CampusDTO;
 import com.gapso.web.trieda.client.mvp.model.CenarioDTO;
 import com.gapso.web.trieda.client.mvp.model.ProfessorCampusDTO;
 import com.gapso.web.trieda.client.mvp.model.ProfessorDTO;
-import com.gapso.web.trieda.client.mvp.model.TurnoDTO;
 import com.gapso.web.trieda.client.mvp.view.CampusProfessorFormView;
 import com.gapso.web.trieda.client.services.Services;
 import com.gapso.web.trieda.client.util.view.AbstractAsyncCallbackWithDefaultOnFailure;
@@ -67,16 +66,19 @@ public class CampusProfessoresPresenter implements Presenter {
 		display.getNewButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
 			@Override
 			public void componentSelected(ButtonEvent ce) {
-				Presenter presenter = new CampusProfessorFormPresenter(cenario, new CampusProfessorFormView(new ProfessorCampusDTO()), display.getGrid());
+				Presenter presenter = new CampusProfessorFormPresenter(cenario, new CampusProfessorFormView(null), display.getGrid());
 				presenter.go(null);
 			}
 		});
 		display.getEditButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
 			@Override
 			public void componentSelected(ButtonEvent ce) {
-//				TurnoDTO turnoDTO = display.getGrid().getGrid().getSelectionModel().getSelectedItem();
-//				Presenter presenter = new TurnoFormPresenter(cenario, new TurnoFormView(turnoDTO), display.getGrid());
-//				presenter.go(null);
+				ProfessorCampusDTO pcDTO = display.getGrid().getGrid().getSelectionModel().getSelectedItem();
+				CampusDTO campusDTO = new CampusDTO();
+				campusDTO.setId(pcDTO.getCampusId());
+				campusDTO.setCodigo(pcDTO.getCampusString());
+				Presenter presenter = new CampusProfessorFormPresenter(cenario, new CampusProfessorFormView(campusDTO), display.getGrid());
+				presenter.go(null);
 			}
 		});
 		display.getRemoveButton().addSelectionListener(new SelectionListener<ButtonEvent>(){

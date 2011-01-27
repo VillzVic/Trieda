@@ -59,6 +59,7 @@ import com.gapso.web.trieda.client.mvp.model.GrupoSalaDTO;
 import com.gapso.web.trieda.client.mvp.model.HorarioAulaDTO;
 import com.gapso.web.trieda.client.mvp.model.HorarioDisponivelCenarioDTO;
 import com.gapso.web.trieda.client.mvp.model.OfertaDTO;
+import com.gapso.web.trieda.client.mvp.model.ProfessorCampusDTO;
 import com.gapso.web.trieda.client.mvp.model.ProfessorDTO;
 import com.gapso.web.trieda.client.mvp.model.ProfessorDisciplinaDTO;
 import com.gapso.web.trieda.client.mvp.model.SalaDTO;
@@ -168,6 +169,37 @@ public class ConvertBeans {
 		dto.setCampusId(campus.getId());
 		dto.setCampusString(campus.getCodigo());
 		return dto;
+	}
+	
+	// PROFESSOR CAMPUS
+	public static List<ProfessorCampusDTO> toProfessorCampusDTO(Campus campus) {
+		Set<Professor> professores = campus.getProfessores();
+		List<ProfessorCampusDTO> list = new ArrayList<ProfessorCampusDTO>(professores.size());
+		for(Professor professor : professores) {
+			ProfessorCampusDTO dto = new ProfessorCampusDTO();
+			dto.setProfessorId(professor.getId());
+			dto.setProfessorString(professor.getNome());
+			dto.setProfessorCpf(professor.getCpf());
+			dto.setCampusId(campus.getId());
+			dto.setCampusString(campus.getCodigo());
+			list.add(dto);
+		}
+		return list;
+	}
+	
+	public static List<ProfessorCampusDTO> toProfessorCampusDTO(Professor professor) {
+		Set<Campus> campi = professor.getCampi();
+		List<ProfessorCampusDTO> list = new ArrayList<ProfessorCampusDTO>(campi.size());
+		for(Campus campus : campi) {
+			ProfessorCampusDTO dto = new ProfessorCampusDTO();
+			dto.setProfessorId(professor.getId());
+			dto.setProfessorString(professor.getNome());
+			dto.setProfessorCpf(professor.getCpf());
+			dto.setCampusId(campus.getId());
+			dto.setCampusString(campus.getCodigo());
+			list.add(dto);
+		}
+		return list;
 	}
 	
 	// TIPO SALA

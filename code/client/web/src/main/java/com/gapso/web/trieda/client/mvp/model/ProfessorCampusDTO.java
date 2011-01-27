@@ -12,28 +12,12 @@ public class ProfessorCampusDTO extends BaseModel {
 	}
 
 	/* == PROPRIEDADES ==
-	 * Long   : id
-	 * Integer: version
 	 * Long   : professorId
 	 * String : professorString
 	 * String : professorCpf
 	 * Long   : campusId
 	 * String : campusString
 	 */
-	
-	public void setId(Long value) {
-		set("id", value);
-	}
-	public Long getId() {
-		return get("id");
-	}
-	
-	public void setVersion(Integer value) {
-		set("version", value);
-	}
-	public Integer getVersion() {
-		return get("version");
-	}
 	
 	public void setProfessorId(Long value) {
 		set("professorId", value);
