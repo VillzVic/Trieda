@@ -221,20 +221,9 @@ void Solucao::agrupaDemandas()
 
 void Solucao::criaIS_Blocos_Curriculares()
 {
-   //cout << "Solucao::criaIS_Blocos_Curriculares ::: Warnning: Pegando o bloco de disciplinas do primeiro período de ADM." << endl;
-   //cout << "Solucao::criaIS_Blocos_Curriculares ::: Warnning: Pegando o bloco de disciplinas do primeiro período de CON." << endl;
-   //getchar();
-
-   // Para voltar ao normal, basta removore o if abaixo.
-
    ITERA_GGROUP(it_Bloco,problem_Data->blocos,BlocoCurricular)
    {
-      //is_Blocos_Curriculares.add(new IS_Bloco_Curricular(*it_Bloco));
-
-      //if( ((it_Bloco->curso->getId() == 2) && (it_Bloco->periodo == 1)) 
-      //   ||
-      //   ((it_Bloco->curso->getId() == 1) && (it_Bloco->periodo == 1)) )
-      { is_Blocos_Curriculares.push_back(new IS_Bloco_Curricular(*it_Bloco)); }
+      is_Blocos_Curriculares.push_back(new IS_Bloco_Curricular(*it_Bloco));
    }
 
    // -------------------------
@@ -263,8 +252,12 @@ void Solucao::criaIS_Blocos_Curriculares()
          {
             for(int dem = 0; dem < total_Demandas; ++dem)
             {
-               disciplinas_Comuns_Entre_Demandas_Cursos_Compat[it_Disc_Cjts_Demandas->first].add(
-                  it_Disc_Cjts_Demandas->second.first.at(cjt).first.at(dem).first);
+               //disciplinas_Comuns_Entre_Demandas_Cursos_Compat[it_Disc_Cjts_Demandas->first].add(
+                  //it_Disc_Cjts_Demandas->second.first.at(cjt).first.at(dem).first);
+               //relacao_Alunos_Disciplinas[it_Disc_Cjts_Demandas->first].add(
+                  //it_Disc_Cjts_Demandas->second.first.at(cjt).first.at(dem).first);
+               relacao_Alunos_Disciplinas[it_Disc_Cjts_Demandas->first].push_back(
+                  it_Disc_Cjts_Demandas->second.first.at(cjt).first.at(dem));
             }
          }
       }
@@ -294,17 +287,23 @@ void Solucao::criaIS_Blocos_Curriculares()
          Disciplina * pt_Disc = it_Disciplina_Dem_Nao_Atendida->first;
 
          // Se a disciplina pertence ao conjunto de disciplinas comuns
-         if( disciplinas_Comuns_Entre_Demandas_Cursos_Compat.find(pt_Disc) !=
-            disciplinas_Comuns_Entre_Demandas_Cursos_Compat.end())
+         //if(disciplinas_Comuns_Entre_Demandas_Cursos_Compat.find(pt_Disc) !=
+            //disciplinas_Comuns_Entre_Demandas_Cursos_Compat.end())
+         if(relacao_Alunos_Disciplinas.find(pt_Disc) != relacao_Alunos_Disciplinas.end())
          {
             /* Testo agora se o Curso em quetão pertence a alguma das demandas da disciplina.
             Se pertencer tenho que remover a disciplina do map do bloco. */
 
             bool mantem = true;
 
-            ITERA_GGROUP(it_Demanda,disciplinas_Comuns_Entre_Demandas_Cursos_Compat[pt_Disc],Demanda)
+            vector<pair<Demanda*,int> >::iterator 
+               it_Demanda = relacao_Alunos_Disciplinas[pt_Disc].begin();
+
+            //ITERA_GGROUP(it_Demanda,disciplinas_Comuns_Entre_Demandas_Cursos_Compat[pt_Disc],Demanda)
+            //ITERA_GGROUP(it_Demanda,relacao_Alunos_Disciplinas[pt_Disc],Demanda)
+            for(;it_Demanda != relacao_Alunos_Disciplinas[pt_Disc].end();++it_Demanda)
             {
-               if(it_Demanda->oferta->curso == curso_IS_Blc)
+               if(it_Demanda->first->oferta->curso == curso_IS_Blc)
                {
                   //(*it_IS_Bloco)->demanda_Total -= it_Disciplina_Dem_Nao_Atendida->second;
 
@@ -332,6 +331,11 @@ void Solucao::criaIS_Blocos_Curriculares()
          }
       }
 
+      //cout << "------------------------"<<endl;
+      //cout << "Curso: " << (*it_IS_Bloco)->bloco->curso->codigo;
+      //cout << "\tPeriodo: " << (*it_IS_Bloco)->bloco->periodo << endl;
+      //cout << "Antes: " << (*it_IS_Bloco)->disciplina_Dem_Nao_Atendida.size() << endl;
+
       (*it_IS_Bloco)->disciplina_Dem_Nao_Atendida.clear();
       (*it_IS_Bloco)->demanda_Total = 0;
 
@@ -346,6 +350,9 @@ void Solucao::criaIS_Blocos_Curriculares()
 
          (*it_IS_Bloco)->demanda_Total += it_Disc_Dem_Nao_Atd->second;
       }
+
+      //cout << "Depois: " << (*it_IS_Bloco)->disciplina_Dem_Nao_Atendida.size() << endl;
+
    }
 }
 
@@ -837,76 +844,76 @@ void Solucao::organizaVariacoesRegraCredito(vector<vector<pair<int/*dia*/, int/*
 void Solucao::imprimeInfo()
 {
    int demanda_Atendida = 0;
-   int demanda_NAO_Atendida = 0;
+   //int demanda_Nao_Atendida = 0;
 
-   map<Disciplina*,
-      pair<vector<pair<vector<pair<Demanda*,int/*Demanda específica ainda não atendida*/> >,
-      int/*Somatório das demandas ainda não atendidas para um determinado conjunto*/> >,
-      int/*Somatório das demandas ainda não atendidas de todos os conjuntos para uma dada disciplina*/ > >
-      ::iterator
+   //map<Disciplina*,
+   //   pair<vector<pair<vector<pair<Demanda*,int/*Demanda específica ainda não atendida*/> >,
+   //   int/*Somatório das demandas ainda não atendidas para um determinado conjunto*/> >,
+   //   int/*Somatório das demandas ainda não atendidas de todos os conjuntos para uma dada disciplina*/ > >
+   //   ::iterator
 
-      it_Disc_Cjts_Demandas = disc_Cjts_Demandas.begin();
+   //   it_Disc_Cjts_Demandas = disc_Cjts_Demandas.begin();
 
-   for(; it_Disc_Cjts_Demandas != disc_Cjts_Demandas.end(); ++it_Disc_Cjts_Demandas)
-   {
-      cout << " ==================== " << endl;
-      cout << "Disciplina: " << it_Disc_Cjts_Demandas->first->codigo << endl;
+   //for(; it_Disc_Cjts_Demandas != disc_Cjts_Demandas.end(); ++it_Disc_Cjts_Demandas)
+   //{
+   //   cout << " ==================== " << endl;
+   //   cout << "Disciplina: " << it_Disc_Cjts_Demandas->first->codigo << endl;
 
-      vector<pair<vector<pair<Demanda*,int/*Demanda específica ainda não atendida*/> >,
-         int/*Somatório das demandas ainda não atendidas para um determinado conjunto*/> >
-         ::iterator
+   //   vector<pair<vector<pair<Demanda*,int/*Demanda específica ainda não atendida*/> >,
+   //      int/*Somatório das demandas ainda não atendidas para um determinado conjunto*/> >
+   //      ::iterator
 
-         it_Cjts_Demanda_Disciplina = it_Disc_Cjts_Demandas->second.first.begin();
+   //      it_Cjts_Demanda_Disciplina = it_Disc_Cjts_Demandas->second.first.begin();
 
-      int cnt_cjt_Dem = 0;
+   //   int cnt_cjt_Dem = 0;
 
-      int cjt_Dem_Nao_At = 0;
+   //   int cjt_Dem_Nao_At = 0;
 
-      for(; it_Cjts_Demanda_Disciplina != it_Disc_Cjts_Demandas->second.first.end(); ++it_Cjts_Demanda_Disciplina)
-      {
-         cout << "  Cjt Dem : " << cnt_cjt_Dem++ << " Dem. Nao Atendida: " << it_Cjts_Demanda_Disciplina->second << endl;
+   //   for(; it_Cjts_Demanda_Disciplina != it_Disc_Cjts_Demandas->second.first.end(); ++it_Cjts_Demanda_Disciplina)
+   //   {
+   //      cout << "  Cjt Dem : " << cnt_cjt_Dem++ << " Dem. Nao Atendida: " << it_Cjts_Demanda_Disciplina->second << endl;
 
-         if( it_Cjts_Demanda_Disciplina->second > 0)
-         { cjt_Dem_Nao_At += it_Cjts_Demanda_Disciplina->second; }
-      }
+   //      if( it_Cjts_Demanda_Disciplina->second > 0)
+   //      { cjt_Dem_Nao_At += it_Cjts_Demanda_Disciplina->second; }
+   //   }
 
-      // ---
+   //   // ---
 
-      ITERA_GGROUP(it_IS_Campus,solucao,IS_Campus)
-      {
-         ITERA_GGROUP(it_IS_Unidade,it_IS_Campus->unidades,IS_Unidade)
-         {
-            ITERA_GGROUP(it_IS_Sala,it_IS_Unidade->salas,IS_Sala)
-            {
-               if( problem_Data->discSalas[it_Disc_Cjts_Demandas->first->getId()].find
-                  (it_IS_Sala->sala) != problem_Data->discSalas[it_Disc_Cjts_Demandas->first->getId()].end())
-               {
-                  cout << " ==================== " << endl;
-                  cout << "Sala: " << it_IS_Sala->sala->codigo << endl;
-                  cout << "  cap: " << it_IS_Sala->sala->capacidade << endl;
+   //   ITERA_GGROUP(it_IS_Campus,solucao,IS_Campus)
+   //   {
+   //      ITERA_GGROUP(it_IS_Unidade,it_IS_Campus->unidades,IS_Unidade)
+   //      {
+   //         ITERA_GGROUP(it_IS_Sala,it_IS_Unidade->salas,IS_Sala)
+   //         {
+   //            if( problem_Data->discSalas[it_Disc_Cjts_Demandas->first->getId()].find
+   //               (it_IS_Sala->sala) != problem_Data->discSalas[it_Disc_Cjts_Demandas->first->getId()].end())
+   //            {
+   //               cout << " ==================== " << endl;
+   //               cout << "Sala: " << it_IS_Sala->sala->codigo << endl;
+   //               cout << "  cap: " << it_IS_Sala->sala->capacidade << endl;
 
-                  ITERA_GGROUP(it_IS_Dia,it_IS_Sala->is_Dia_Semana,IS_Dia_Semana)
-                  {
-                     cout << "  Dia: " << it_IS_Dia->creditos_Disponiveis->dia_semana << endl;
-                     cout << "  Cred Livres: " << it_IS_Dia->creditos_Livres << endl;
+   //               ITERA_GGROUP(it_IS_Dia,it_IS_Sala->is_Dia_Semana,IS_Dia_Semana)
+   //               {
+   //                  cout << "  Dia: " << it_IS_Dia->creditos_Disponiveis->dia_semana << endl;
+   //                  cout << "  Cred Livres: " << it_IS_Dia->creditos_Livres << endl;
 
-                     //ITERA_GGROUP(it_IS_At_Tat,it_IS_Dia->is_Atendimentos_Taticos,IS_Atendimento_Tatico)
-                     {
-                     }
-                  }
-               }
-            }
-         }
-      }
+   //                  //ITERA_GGROUP(it_IS_At_Tat,it_IS_Dia->is_Atendimentos_Taticos,IS_Atendimento_Tatico)
+   //                  {
+   //                  }
+   //               }
+   //            }
+   //         }
+   //      }
+   //   }
 
-      // ---
+   //   // ---
 
-      //cout << "\n\n";
+   //   //cout << "\n\n";
 
-      if(cjt_Dem_Nao_At > 0) getchar();
+   //   if(cjt_Dem_Nao_At > 0) getchar();
 
-      demanda_NAO_Atendida += it_Disc_Cjts_Demandas->second.second;
-   }
+   //   //demanda_NAO_Atendida += it_Disc_Cjts_Demandas->second.second;
+   //}
 
    //ITERA_GGROUP(it_IS_Campus,solucao,IS_Campus)
    //{
@@ -931,9 +938,9 @@ void Solucao::imprimeInfo()
    //   }
    //}
 
-   cout << "Demanda NAO atendida: " << demanda_NAO_Atendida << endl;
+   cout << "Demanda NAO atendida: " << demanda_Nao_Atendida << endl;
 
-   getchar();
+   //getchar();
 }
 
 ProblemData & Solucao::get_Problem_Data() const
@@ -1085,6 +1092,37 @@ void Solucao::geraSolucaoSubBlocos()
    // Agrupando as demandas
    agrupaDemandas();
 
+   //map<Disciplina*,
+   //   pair<vector<pair<vector<pair<Demanda*,int/*Demanda específica ainda não atendida*/> >,
+   //   int/*Somatório das demandas ainda não atendidas para um determinado conjunto*/> >,
+   //   int/*Somatório das demandas ainda não atendidas de todos os conjuntos para uma dada disciplina*/ > >
+   //   ::iterator
+
+   //   it_Disc_Cjts_Demandas = disc_Cjts_Demandas.begin();
+
+   //for(; it_Disc_Cjts_Demandas != disc_Cjts_Demandas.end(); ++it_Disc_Cjts_Demandas)
+   //{
+   //   if(it_Disc_Cjts_Demandas->second.first.size() > 1)
+   //   {
+   //      cout << "hello." << endl;
+   //      getchar();
+   //   }
+
+   //   vector<pair<vector<pair<Demanda*,int/*Demanda específica ainda não atendida*/> >,
+   //   int/*Somatório das demandas ainda não atendidas para um determinado conjunto*/> >
+   //   ::iterator
+
+   //   it_Demandas = it_Disc_Cjts_Demandas->second.first.begin();
+
+   //   for(;it_Demandas != it_Disc_Cjts_Demandas->second.first.end(); ++it_Demandas)
+   //   {
+   //      if(it_Demandas->first.size() > 2)
+   //      {
+   //         //getchar();
+   //      }
+   //   }
+   //}
+
    // ---------------------------------
 
    // OBS: Poderia ficar no construtor !!!
@@ -1096,7 +1134,7 @@ void Solucao::geraSolucaoSubBlocos()
 
    // Alocando primeiro as disciplinas comuns a cursos compatíveis
 
-   alocaDiscsComuns();
+   //alocaDiscsComuns();
 
    // ---------------------------------
 
@@ -1188,12 +1226,12 @@ void Solucao::geraSolucaoSubBlocos()
          //bool terminou_Alocacao_Disciplina = false;
 
          // Referenciando a demanda não atendida da disciplina em questão
-         int * demanda_Nao_Atendida = &it_Disciplina_Dem_Nao_Atendida->second;
+         int * dem_Nao_Atd = &it_Disciplina_Dem_Nao_Atendida->second;
 
          int id_Disc = it_Disciplina_Dem_Nao_Atendida->first->getId();
 
          //while(!terminou_Alocacao_Disciplina)
-         while((*demanda_Nao_Atendida) > 0)
+         while((*dem_Nao_Atd) > 0)
          {
             // Verificando a grade horaria para a disciplina do curso em questão.
 
@@ -1242,8 +1280,6 @@ void Solucao::geraSolucaoSubBlocos()
             vector<vector<pair<int/*dia*/, int/*numCreditos*/> > >::iterator
                it_Variacoes_Regra_Credito = variacoes_Regra_Credito->begin();
             
-            int id_Disc_1 = pt_Disc->getId();
-
             it_Variacoes_Regra_Credito =
                is_Curso->verificaDisponibilidadeSemSubBloco(
                *variacoes_Regra_Credito,
@@ -1270,9 +1306,9 @@ void Solucao::geraSolucaoSubBlocos()
 
                      // Calculando a demanda a ser atendida
                      int demanda_Atendida = (
-                        (*it_IS_Sala_Compat)->sala->capacidade >= (*demanda_Nao_Atendida)
+                        (*it_IS_Sala_Compat)->sala->capacidade >= (*dem_Nao_Atd)
                         ?
-                        (*demanda_Nao_Atendida)
+                        (*dem_Nao_Atd)
                         : (*it_IS_Sala_Compat)->sala->capacidade);
 
                      // ---------------------------------
@@ -1305,7 +1341,7 @@ void Solucao::geraSolucaoSubBlocos()
                         );
 
                      // Atualizando a demanda não atendida
-                     (*demanda_Nao_Atendida) -= demanda_Atendida;
+                     (*dem_Nao_Atd) -= demanda_Atendida;
 
                      // Atualizando o número total de turmas abertas
                      ++num_Turmas_Abertas;
@@ -1326,7 +1362,7 @@ void Solucao::geraSolucaoSubBlocos()
                de crédito válidas
                */
 
-               if((*demanda_Nao_Atendida) <= 0)
+               if((*dem_Nao_Atd) <= 0)
                { break; }
                else
                {
@@ -1340,15 +1376,17 @@ void Solucao::geraSolucaoSubBlocos()
                }
             }
 
-            if((*demanda_Nao_Atendida) > 0)
+            if((*dem_Nao_Atd) > 0)
             {
                /*
                Se está aqui, é pq todas as variações da regra de crédito já foram aplicadas (quando possível)
                e mesmo assim, ainda há demanda para ser alocada.
                */
 
-               cout << "Demanda da disciplina <" << it_Disciplina_Dem_Nao_Atendida->first->codigo 
-                  << "> ainda nao atendida totalmente .. ." << endl;
+               demanda_Nao_Atendida += *dem_Nao_Atd;
+
+               //cout << "Demanda da disciplina <" << it_Disciplina_Dem_Nao_Atendida->first->codigo 
+               //   << "> ainda nao atendida totalmente .. ." << endl;
                // Por eqto, deixo pra lá.
                break;
             }
@@ -1357,14 +1395,13 @@ void Solucao::geraSolucaoSubBlocos()
    }
 
    // ---------------------------------
-   ITERA_VECTOR(it_IS_Curso,is_Cursos,IS_Curso)
-   {
-      (*it_IS_Curso)->imprimeGradesHorarias();
-      cout << endl << endl;
-   }
+   //ITERA_VECTOR(it_IS_Curso,is_Cursos,IS_Curso)
+   //{
+      //(*it_IS_Curso)->imprimeGradesHorarias();
+      //cout << endl << endl;
+   //}
    // ---------------------------------
-   
-   getchar();
+
    cout << "Solucao gerada com sucesso.\n";
 }
 
@@ -2357,6 +2394,136 @@ pair<vector<int>*,vector<double>*> Solucao::repSolIniToVariaveis(VariableHash & 
 
 void Solucao::alocaDiscsComuns()
 {
+   // Estrutura que armazena ponteiros para cada chave existente na estrutura <realacao_Turmas>
+   //vector<pair<Disciplina*,int/*Turma*/>*> vt_Chaves_Relacao_Turmas;
+
+   map<Disciplina*,vector<pair<Demanda*,int/*Dem a ser atendida*/> > >::iterator
+      it_Relacao_Alunos_Disciplinas = relacao_Alunos_Disciplinas.begin();
+
+   // Para cada disciplina
+   for(; it_Relacao_Alunos_Disciplinas != relacao_Alunos_Disciplinas.end(); ++it_Relacao_Alunos_Disciplinas)
+   {
+      // ---------------------------------
+
+      // Contabilizando o número de turmas abertas para a disciplina em questão.
+
+      int num_Turmas_Abertas = 0;
+
+      // ---------------------------------
+
+      // Criando um vetor de IS_Salas compatíveis com o conjunto de demandas em questão.
+      vector<IS_Sala*> is_Salas_Comaptiveis;
+
+      Disciplina * pt_Disc = it_Relacao_Alunos_Disciplinas->first;
+
+      // Inicializando o vetor <is_Salas_Comaptiveis>
+      ITERA_GGROUP(it_Sala,problem_Data->discSalas.find(pt_Disc->getId())->second,Sala)
+      { is_Salas_Comaptiveis.push_back(map_Sala__IS_Sala.find(*it_Sala)->second); }
+
+      // ---------------------------------
+
+      // Organizando as salas segundo algum critério
+      organizaIS_Salas(is_Salas_Comaptiveis);
+
+      // ---------------------------------
+
+      /*
+      Se a disciplina em questão possui regra de crédito, tenta-se alocar 
+      com a regra de crédito informada. Caso a disciplina não possua regra de 
+      crédito, uma regra de crédito é sugerida.
+      */
+
+      vector<vector<pair<int/*dia*/, int/*numCreditos*/> > > * 
+         variacoes_Regra_Credito = 
+         getRegradeCreditoEVariacoes(pt_Disc);
+
+      // ---------------------------------
+
+      //Contabilizando a demanda que deve ser atendida
+
+      int demanda_Total = 0;
+
+      vector<pair<Demanda*,int/*Dem a ser atendida*/> >::iterator 
+         it_Demandas = it_Relacao_Alunos_Disciplinas->second.begin();
+
+      for(; it_Demandas != it_Relacao_Alunos_Disciplinas->second.end(); ++it_Demandas)
+      { demanda_Total += it_Demandas->second; }
+
+      // ---------------------------------
+
+      while(demanda_Total > 0)
+      {
+
+
+   // *****************
+
+
+            //// ---------------------------------
+
+            //IS_Curso * is_Curso = NULL;
+
+            //// Procurando pelo IS_Curso
+            //ITERA_VECTOR(it_IS_Curso,is_Cursos,IS_Curso)
+            //{
+            //   if((*it_IS_Curso)->curso == (*it_IS_Bloco_Curricular)->bloco->curso)
+            //   {
+            //      is_Curso = *it_IS_Curso;
+            //      break;
+            //   }
+            //}
+
+            //if(!is_Curso) {cout << "Solucao::geraSolucaoSubBlocos() -> Curso Invalido" << endl; exit(1);}
+
+            //// ---------------------------------
+
+            //// Obtendo a chave para acessar a grade horaria correta do curso em questão.
+            //pair<Curriculo*,int/*periodo*/> chave (
+            //   (*it_IS_Bloco_Curricular)->bloco->curriculo,(*it_IS_Bloco_Curricular)->bloco->periodo);
+
+            //if(is_Curso->grade_Horaria_Periodo.find(chave) == is_Curso->grade_Horaria_Periodo.end())
+            //{
+            //   cout << "Solucao::geraSolucaoSubBlocos() -> Chave Invalida." << endl;
+            //   exit(1);
+            //}
+
+            //// Referenciando a grade horária
+            //Matrix<vector<pair<Disciplina*,int/*turma*/> > > * pt_Grade_Horaria_Curso =
+            //   is_Curso->grade_Horaria_Periodo[chave];
+
+            //// ---------------------------------
+
+            //// Organizando as varições da regra de crédito em questão
+
+            //// OBS: Por eqto não faz nada. Deixa do jeito que foram geradas.
+
+            //organizaVariacoesRegraCredito(*variacoes_Regra_Credito);
+
+            //// ---------------------------------
+
+            //vector<vector<pair<int/*dia*/, int/*numCreditos*/> > >::iterator
+            //   it_Variacoes_Regra_Credito = variacoes_Regra_Credito->begin();
+            //
+            //it_Variacoes_Regra_Credito =
+            //   is_Curso->verificaDisponibilidadeSemSubBloco(
+            //   *variacoes_Regra_Credito,
+            //   it_Variacoes_Regra_Credito,
+            //   chave,
+            //   pt_Disc);
+
+
+
+         ///*****************************
+
+         // monto a turma
+
+         
+      }
+   }
+   
+   //cout << "TESTE: " << relacao_Alunos_Disciplinas.size() << endl;
+
+   //getchar();
+
    //map<Disciplina*,GGroup<Demanda*> >::iterator 
    //   it_Disciplinas_Comuns_Entre_Demandas_Cursos_Compat = 
    //   disciplinas_Comuns_Entre_Demandas_Cursos_Compat.begin();

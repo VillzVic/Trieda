@@ -21,7 +21,7 @@ IS_Curso::IS_Curso(Curso * crs, ProblemData * pD)
          if(grade_Horaria_Periodo.find(make_pair(*it_Curriculo,periodo)) == grade_Horaria_Periodo.end())
          {
             int creditos = 4; // FIX-ME
-            int dias = 6; // FIX-ME
+            int dias = 7; // FIX-ME
 
             grade_Horaria_Periodo[make_pair(*it_Curriculo,periodo)] = 
                new Matrix<vector<pair<Disciplina*,int/*turma*/> > > (creditos,dias);
@@ -67,7 +67,7 @@ vector<vector<pair<int/*dia*/, int/*numCreditos*/> > >::iterator IS_Curso::verif
    vector<pair<int/*dia*/, int/*numCreditos*/> > creditos_Livres_Grade;
 
    // Para cada dia da grade considerada
-   for(int dia = 2; dia < 7; dia++)
+   for(int dia = 2; dia < ((it_Grade_Horaria_Periodo->second->getCols())+2); dia++)
    {
       // Adicionando e setando um dia
       creditos_Livres_Grade.push_back(make_pair(dia,0));
@@ -75,7 +75,7 @@ vector<vector<pair<int/*dia*/, int/*numCreditos*/> > >::iterator IS_Curso::verif
       /*
       Contabilizando o número de créditos livres para o dia em questão
       */
-      for(int cred = 0; cred < 4 /* FIX-ME num creds*/; cred++)
+      for(int cred = 0; cred < it_Grade_Horaria_Periodo->second->getRows() /* FIX-ME num creds*/; cred++)
       {
          bool teste_Horario_Livre = false;
          //bool teste_Mesma_Disc_Alocada = false;
@@ -361,7 +361,7 @@ void IS_Curso::aloca(
 
          for(int cred = 0; cred < 4 /* FIX-ME num creds*/; cred++)
          {
-            if(num_Creds_A_Alocar > 0)
+            //if(num_Creds_A_Alocar > 0)
             {
                // ---------------------------------
 
@@ -722,12 +722,12 @@ void IS_Curso::imprimeGradesHorarias()
    {
       cout << "\tPERIODO: " << it_Grade_Horaria_Periodo->first.second << endl;
 
-      for(int c = 0; c < 5; ++c)         
+      for(int c = 0; c < it_Grade_Horaria_Periodo->second->getCols(); ++c)         
       {
          cout << "==========================" << endl;
          cout << "Dia: " << (c+2) << endl;
 
-         for(int r = 0; r < 4; ++r)
+         for(int r = 0; r < it_Grade_Horaria_Periodo->second->getRows(); ++r)
          {
             cout << "Credito: " << (r) << endl;
 

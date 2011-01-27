@@ -685,9 +685,12 @@ void ProblemDataLoader::divideDisciplinas() {
 
          // Adicionando os dados da nova disciplina em <Demanda>
          Demanda *nova_demanda = NULL;
-         ITERA_GGROUP(it_dem,problemData->demandas,Demanda) {
+         ITERA_GGROUP(it_dem,problemData->demandas,Demanda)
+         {
             int num_vezes_ecncontrado = 0;
-            if( it_dem->disciplina_id == it_disc->getId()) {
+
+            if( it_dem->disciplina_id == it_disc->getId())
+            {
                nova_demanda = new Demanda();
 
                //nova_demanda->setId(-it_dem->getId());
@@ -695,7 +698,10 @@ void ProblemDataLoader::divideDisciplinas() {
                nova_demanda->disciplina_id = nova_disc->getId();
                nova_demanda->quantidade = it_dem->quantidade;
 
-               if(num_vezes_ecncontrado > 0) {
+               problemData->demandas.add(nova_demanda);
+
+               if(num_vezes_ecncontrado > 0)
+               {
                   std::cout << "POSSIVEL ERRO EM <divideDisciplinas()> -> " << 
                      "Encontrei mais de uma demanda para uma dada disciplina de um " <<
                      "dado curso em um determinado campus." << std::endl;
@@ -705,9 +711,9 @@ void ProblemDataLoader::divideDisciplinas() {
             }
          }
 
-         if(nova_demanda) { // != NULL
-            problemData->demandas.add(nova_demanda);
-         }
+         //if(nova_demanda) { // != NULL
+         //   problemData->demandas.add(nova_demanda);
+         //}
 
          // >>> 14/10/2010
          //it_disc->foi_dividida = true;

@@ -153,7 +153,15 @@ private:
 
    // ===============================
 
-   map<Disciplina*,GGroup<Demanda*> > disciplinas_Comuns_Entre_Demandas_Cursos_Compat;
+   /*
+      Estrutura que armazena as demandas de uma dada disciplina.
+
+      Obs.: São armazenadas nessa estrutura, apenas disciplinas que possuam 2 ou mais demandas.
+   */
+
+   //map<Disciplina*,GGroup<Demanda*> > disciplinas_Comuns_Entre_Demandas_Cursos_Compat;
+   //map<Disciplina*,GGroup<Demanda*> > relacao_Alunos_Disciplinas;
+   map<Disciplina*,vector<pair<Demanda*,int/*Dem a ser atendida*/> > > relacao_Alunos_Disciplinas;
 
    // ===============================
 
