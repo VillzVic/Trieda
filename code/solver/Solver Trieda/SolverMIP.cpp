@@ -565,15 +565,19 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
 
 	sort(vXpp.begin(),vXpp.end(),ordenaPorCreditos);
 
-	// ------------------ CORRIGIR ESSE METODO !!!
 	// Alocando as turmas às salas.
 	for(X___i_d_u_s_t::iterator it_x = vXpp.begin(); it_x != vXpp.end(); it_x++)
 	{
 		int idDisc = it_x->at(2);
 		int dia = it_x->at(5);
-
+		
 		ITERA_GGROUP(itSala,problemData->discSalas[idDisc],Sala)
 		{
+			bool alocou = false;
+
+			if(it_x->at(4) < 0)
+				it_x->at(4) *= -1;
+			
 			/* Se a capacidade da sala é igual à capacidade especificada pelo solver */
 			if(itSala->capacidade == it_x->at(4))
 			{
@@ -586,7 +590,34 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
 
 					// Setando a sala
 					it_x->at(4) = itSala->getId();
+					alocou = true;
 					break; // Já aloquei, então posso parar
+				}
+			}
+			if(!alocou)
+			{
+				ITERA_GGROUP(itCampus,problemData->campi,Campus)
+				{
+					ITERA_GGROUP(itUnidade,itCampus->unidades,Unidade)
+					{
+						ITERA_GGROUP(it_Sala,itUnidade->salas,Sala)
+						{
+							if(it_Sala->capacidade == it_x->at(4))
+							{
+								/* Se a sala comporta (possui créditos livres) o valor demandado */
+								if( (it_Sala->credsLivres.at(dia) - 
+									it_x->at(0)) >= 0)
+								{
+									// Subtraindo os créditos
+									it_Sala->credsLivres.at(dia) -= it_x->at(0);
+
+									// Setando a sala
+									it_x->at(4) = it_Sala->getId();
+									break; // Já aloquei, então posso parar
+								}
+							}
+						}
+					}
 				}
 			}
 		}
@@ -736,10 +767,9 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
 			{ atendimento_por_oferta.add(std::make_pair<int,int>(it_a->second,it_a->first.at(2))); }
 		}
 
-		int id_disc = it_x->at(2);
-
-		if(it_x->at(2) > 0)
-		{
+		Disciplina * disc = problemData->refDisciplinas[it_x->at(2)];
+			
+		if((disc->cred_teoricos > 0) && (disc->cred_praticos == 0)){
 			if(solucao.find(chave) == solucao.end())
 			{
 				solucao[chave] =             
@@ -760,8 +790,7 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
 				}
 			}
 		}
-		else if(it_x->at(2) < 0)
-		{
+		else  if((disc->cred_teoricos == 0) && (disc->cred_praticos > 0)){
 			if(solucao.find(chave) == solucao.end())
 			{
 				solucao[chave] =
