@@ -19,9 +19,7 @@ public:
    BlocoCurricular(void);
    ~BlocoCurricular(void);
 
-   //int getId() { return curso->getId() * 100 + campus->getId() * 20000 + periodo; }
-   int getId() { return curso->getId() * 100 + periodo; }
-   //int getId() { return curso->getId() * 100 + campus->getId() * 200 + periodo; }
+   //int getId() { return curso->getId() * 100 + periodo; }
 
    int periodo;
    Curso* curso;

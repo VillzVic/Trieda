@@ -40,7 +40,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="$(CODELIB);$(OPT_LP)\include;$(CPLEX112)\include\ilcplex;$(XSD)\include"
+				AdditionalIncludeDirectories="$(CODELIB);$(OPT_LP)\include;$(GUROBI_HOME)\include;$(XSD)\include"
 				PreprocessorDefinitions="WIN32;_WINDOWS;PORTUGUES;VERSAOCPLEX10;_CRT_SECURE_NO_DEPRECATE;_DEBUG;DEBUG"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -63,9 +63,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="cplex112.lib xerces-c_3.lib"
+				AdditionalDependencies="gurobi40.lib xerces-c_3.lib"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="&quot;$(CPLEX112)\lib\x86_windows_vs2008\stat_mda&quot;;&quot;$(XSD)\lib\vc-8.0&quot;"
+				AdditionalLibraryDirectories="&quot;$(GUROBI_HOME)\lib&quot;;&quot;$(XSD)\lib\vc-8.0&quot;"
 				IgnoreDefaultLibraryNames="LIBCMT"
 				GenerateDebugInformation="true"
 				SubSystem="1"
@@ -124,7 +124,7 @@
 				EnableIntrinsicFunctions="true"
 				OmitFramePointers="true"
 				WholeProgramOptimization="true"
-				AdditionalIncludeDirectories="$(CODELIB);$(OPT_LP)\include;$(CPLEX112)\include\ilcplex;$(XSD)\include"
+				AdditionalIncludeDirectories="$(CODELIB);$(OPT_LP)\include;$(GUROBI_HOME)\include;$(XSD)\include"
 				PreprocessorDefinitions="WIN32;_WINDOWS;PORTUGUES;VERSAOCPLEX10;_CRT_SECURE_NO_DEPRECATE;_RELEASE;RELEASE"
 				MinimalRebuild="false"
 				BasicRuntimeChecks="0"
@@ -148,9 +148,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="cplex112.lib xerces-c_3.lib"
+				AdditionalDependencies="gurobi40.lib xerces-c_3.lib"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="&quot;$(CPLEX112)\lib\x86_windows_vs2008\stat_mda&quot;;&quot;$(XSD)\lib\vc-8.0&quot;"
+				AdditionalLibraryDirectories="&quot;$(GUROBI_HOME)\lib&quot;;&quot;$(XSD)\lib\vc-8.0&quot;"
 				GenerateDebugInformation="false"
 				SubSystem="1"
 				LargeAddressAware="2"
@@ -405,7 +405,7 @@
 					>
 				</File>
 				<File
-					RelativePath="$(OPT_LP)\source\opt_cplex.cpp"
+					RelativePath="$(OPT_LP)\source\opt_gurobi.cpp"
 					>
 				</File>
 				<File
@@ -706,7 +706,7 @@
 					>
 				</File>
 				<File
-					RelativePath="$(OPT_LP)\include\opt_cplex.h"
+					RelativePath="$(OPT_LP)\include\opt_gurobi.h"
 					>
 				</File>
 				<File

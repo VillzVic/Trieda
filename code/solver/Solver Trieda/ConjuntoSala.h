@@ -15,7 +15,10 @@ public:
    ConjuntoSala()
    {}
 
-   ~ConjuntoSala();
+   ConjuntoSala(ConjuntoSala const & cjt_Sala)
+   {}
+
+   virtual ~ConjuntoSala() {};
 
    // =========== METODOS SET
 

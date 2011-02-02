@@ -28,6 +28,11 @@ public:
    /* Armazena os dias letivos para um determinado campus */
    GGroup<int> diasLetivos;
 
+   // =========================
+   std::map<int/*ConjuntoSalaId*/,GGroup<std::pair<Unidade* /*Unidade*/, ConjuntoSala*> > > conjutoSalas;
+   //std::map<int/*DisciplinaId*/,>
+   // =========================
+
 public:
 
    // =========== METODOS SET

@@ -54,7 +54,7 @@ Constraint& Constraint::operator= (const Constraint& cons)
 
 bool Constraint::operator< (const Constraint& cons) const
 {
-   if( (int)this->getType(), (int) cons.getType() )
+   if( (int)this->getType() < (int) cons.getType() )
       return true;
    else if( (int)this->getType() > (int) cons.getType() )
       return false;

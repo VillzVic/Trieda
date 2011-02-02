@@ -30,7 +30,8 @@ void ProblemDataLoader::load()
    carregaDiasLetivosDiscs();
    carregaDiasLetivosSala();
 
-   criaConjuntoSalas();
+   criaConjuntoSalasUnidade();
+   //criaConjuntoSalasCampus();
 
    divideDisciplinas();
 
@@ -100,7 +101,7 @@ void ProblemDataLoader::carregaDiasLetivosDiscs()
    }
 }
 
-void ProblemDataLoader::criaConjuntoSalas()
+void ProblemDataLoader::criaConjuntoSalasUnidade()
 {
    problemData->totalConjuntosSalas = 0;
 
@@ -183,6 +184,66 @@ void ProblemDataLoader::criaConjuntoSalas()
          }
       }
    }
+}
+
+void ProblemDataLoader::criaConjuntoSalasCampus()
+{
+   ITERA_GGROUP(it_Campus,problemData->campi,Campus)
+   {
+      ITERA_GGROUP(it_Unidade,it_Campus->unidades,Unidade)
+      {
+         ITERA_GGROUP(it_Cjt_Salas,it_Unidade->conjutoSalas,ConjuntoSala)
+         {
+            int idCjtSala = it_Cjt_Salas->getId();
+
+            std::map<int/*ConjuntoSalaId*/,GGroup<std::pair<Unidade* /*Unidade*/, ConjuntoSala*> > >::iterator
+               it_Conjunto_Salas_CP = it_Campus->conjutoSalas.begin();
+
+            bool found = false;
+
+            for(; it_Conjunto_Salas_CP != it_Campus->conjutoSalas.end(); ++it_Conjunto_Salas_CP)
+            {
+               if(it_Conjunto_Salas_CP->first == idCjtSala)
+               {
+                  found = true;
+                  it_Conjunto_Salas_CP->second.add(std::make_pair(*it_Unidade,*it_Cjt_Salas));
+               }
+            }
+
+            if(!found)
+            { it_Campus->conjutoSalas[idCjtSala].add(std::make_pair(*it_Unidade,*it_Cjt_Salas)); }
+         }
+      }
+   }
+
+   // VERIFICANDO
+   //ITERA_GGROUP(it_Campus,problemData->campi,Campus)
+   //{
+   //   std::map<int/*ConjuntoSalaId*/,GGroup<std::pair<Unidade* /*Unidade*/, ConjuntoSala*> > >::iterator
+   //      it_Conjunto_Salas_CP = it_Campus->conjutoSalas.begin();
+
+   //   for(; it_Conjunto_Salas_CP != it_Campus->conjutoSalas.end(); ++it_Conjunto_Salas_CP)
+   //   {
+   //      if(it_Conjunto_Salas_CP->first == 50)
+   //      {
+   //         GGroup<std::pair<Unidade* /*Unidade*/, ConjuntoSala*> >::iterator
+   //            it_Cjt_Sala_UND = it_Conjunto_Salas_CP->second.begin();
+
+   //         for(;it_Cjt_Sala_UND != it_Conjunto_Salas_CP->second.end(); ++it_Cjt_Sala_UND )
+   //         {
+   //            std::cout << "Unidade: " << (*it_Cjt_Sala_UND).first->codigo << std::endl;
+
+   //            std::map<int,Sala*> & cjt_Salas = (*it_Cjt_Sala_UND).second->getTodasSalas();
+
+   //            std::map<int,Sala*>::iterator 
+   //               it_Cjt_Salas = (*it_Cjt_Sala_UND).second->getTodasSalas().begin();
+
+   //            for(; it_Cjt_Salas != (*it_Cjt_Sala_UND).second->getTodasSalas().end(); ++it_Cjt_Salas)
+   //            { std::cout << "\tSala: " << it_Cjt_Salas->second->codigo << std::endl; }
+   //         }
+   //      }
+   //   }
+   //}
 }
 
 void ProblemDataLoader::carregaDiasLetivosSala()
@@ -658,6 +719,11 @@ void ProblemDataLoader::divideDisciplinas() {
          ITERA_GGROUP(it_fix,problemData->fixacoes,Fixacao) {
          if(it_fix->disciplina_id == it_disc->getId() ) {
          }
+         */
+//         std::cout << "\n\n\n\n\n\n\n\n";
+         //std::cout << "WARNNING: PARA QUE AS FIXACOES FUNCIONEM CORRETAMENTE, IMPLEMENTAR A COPIA QDO DIVIDE UMA DISCIPLINA !!! metodo divideDisciplinas()" << std::endl;
+//         std::cout << "\n\n\n\n\n\n\n\n";
+         /*
          }
          */
 
@@ -945,8 +1011,11 @@ void ProblemDataLoader::gera_refs() {
 
 }
 
-void ProblemDataLoader::cria_blocos_curriculares() 
+void ProblemDataLoader::cria_blocos_curriculares()
 {
+   // Contador de blocos
+   int id_Bloco = 1;
+
    ITERA_GGROUP(it_campi,problemData->campi,Campus)
    {
       ITERA_GGROUP(it_curso,problemData->cursos,Curso)
@@ -997,14 +1066,12 @@ void ProblemDataLoader::cria_blocos_curriculares()
                GGroup<BlocoCurricular*>::iterator it_bc = 
                   problemData->blocos.begin();
 
-               int id_blc = it_curso->getId() * 100 + periodo;
-
                bool found = false;
 
                // Verificando a existência do bloco curricular para a disciplina em questão.
                for(;it_bc != problemData->blocos.end(); ++it_bc) 
                {
-                  if(it_bc->getId() == id_blc)
+                  if(it_bc->getId() == id_Bloco)
                   {
                      it_bc->disciplinas.add(disc);
 
@@ -1019,7 +1086,7 @@ void ProblemDataLoader::cria_blocos_curriculares()
                {
                   BlocoCurricular * b = new BlocoCurricular();
 
-                  b->setId(id_blc);
+                  b->setId(id_Bloco);
                   b->periodo = periodo;
                   b->campus = *it_campi;
                   b->curso = *it_curso;
@@ -1031,6 +1098,8 @@ void ProblemDataLoader::cria_blocos_curriculares()
                   b->disciplina_Demanda[disc] = pt_Demanda;
 
                   problemData->blocos.add(b);
+
+                  ++id_Bloco;
                }
             }
          }
@@ -1050,6 +1119,111 @@ void ProblemDataLoader::cria_blocos_curriculares()
       }
    }
 }
+
+//{
+//   ITERA_GGROUP(it_campi,problemData->campi,Campus)
+//   {
+//      ITERA_GGROUP(it_curso,problemData->cursos,Curso)
+//      {
+//         ITERA_GGROUP(it_curr,it_curso->curriculos,Curriculo)
+//         {
+//            // Descobrindo oferta em questão
+//            Oferta * pt_Oferta = NULL;
+//  
+//            ITERA_GGROUP(it_Oferta,problemData->ofertas,Oferta)
+//            {
+//               if(it_Oferta->campus->getId() == it_campi->getId() &&
+//                  it_Oferta->curriculo->getId() == it_curr->getId() &&
+//                  it_Oferta->curso->getId() == it_curso->getId())
+//               {
+//                  pt_Oferta = *it_Oferta;
+//                  break;
+//               }
+//            }
+//            // ---
+//
+//            GGroup<DisciplinaPeriodo>::iterator it_dp = 
+//               it_curr->disciplinas_periodo.begin();
+//
+//            // Percorrendo todas as disciplinas de um curso cadastradas para um currículo.
+//            for(;it_dp != it_curr->disciplinas_periodo.end(); ++it_dp)
+//            {
+//               DisciplinaPeriodo dp = *it_dp;
+//               int periodo = dp.first;
+//               int disc_id = dp.second;
+//
+//               Disciplina * disc = problemData->refDisciplinas[disc_id];
+//
+//               // Encontrando e armazenando a demanda específica da disciplina em questão
+//               Demanda * pt_Demanda = NULL;
+//
+//               ITERA_GGROUP(it_Demanda,problemData->demandas,Demanda)
+//               {
+//                  if(it_Demanda->disciplina == disc &&
+//                     it_Demanda->oferta == pt_Oferta)
+//                  {
+//                     pt_Demanda = *it_Demanda;
+//                     break;
+//                  }
+//               }
+//               //---
+//
+//               GGroup<BlocoCurricular*>::iterator it_bc = 
+//                  problemData->blocos.begin();
+//
+//               int id_blc = it_curso->getId() * 100 + periodo;
+//
+//               bool found = false;
+//
+//               // Verificando a existência do bloco curricular para a disciplina em questão.
+//               for(;it_bc != problemData->blocos.end(); ++it_bc) 
+//               {
+//                  if(it_bc->getId() == id_blc)
+//                  {
+//                     it_bc->disciplinas.add(disc);
+//
+//                     it_bc->disciplina_Demanda[disc] = pt_Demanda;
+//
+//                     found = true;
+//                     break;
+//                  }
+//               }
+//
+//               if(!found) 
+//               {
+//                  BlocoCurricular * b = new BlocoCurricular();
+//
+//                  b->setId(id_blc);
+//                  b->periodo = periodo;
+//                  b->campus = *it_campi;
+//                  b->curso = *it_curso;
+//
+//                  b->curriculo = *it_curr;
+//
+//                  b->disciplinas.add(disc);
+//
+//                  b->disciplina_Demanda[disc] = pt_Demanda;
+//
+//                  problemData->blocos.add(b);
+//               }
+//            }
+//         }
+//      }
+//   }
+//
+//   /* Setando os dias letivos de cada bloco. */
+//   ITERA_GGROUP(itBlocoCurric,problemData->blocos,BlocoCurricular)
+//   {
+//      ITERA_GGROUP(itDisc,itBlocoCurric->disciplinas,Disciplina)
+//      {
+//         GGroup<int>::iterator itDiasLet =
+//            itDisc->diasLetivos.begin();
+//
+//         for(; itDiasLet != itDisc->diasLetivos.end(); itDiasLet++)
+//         { itBlocoCurric->diasLetivos.add(*itDiasLet); }
+//      }
+//   }
+//}
 
 void ProblemDataLoader::relacionaCampusDiscs()
 {
@@ -1164,7 +1338,6 @@ void ProblemDataLoader::estima_turmas()
             {
                int numTurmas = (demDisc / problemData->refDisciplinas[*itDisc]->max_alunos_p);
                problemData->refDisciplinas[*itDisc]->num_turmas = (numTurmas > 0 ? numTurmas : 1);
-
             }
             else
             {
@@ -1785,12 +1958,22 @@ void ProblemDataLoader::associaDisciplinasConjuntoSalas()
 
                for(; itDiscs != itSala->second->disciplinasAssociadas.end(); itDiscs++)
                {
+                  //if(itDiscs->getId() == 3314089)
+                  //{
+                  //   std::cout << "dbg 3314089" << std::endl;
+                  //   getchar();
+                  //}
+
                   itCjtSala->getDiscsAssociadas().add(*itDiscs);
                }
             }
          }
       }
    }
+
+   //std::cout << "Finalizou o metodo." << std::endl;
+   //getchar();
+
 }
 
 void ProblemDataLoader::relacionaDiscOfertas()
@@ -1801,7 +1984,14 @@ void ProblemDataLoader::relacionaDiscOfertas()
          itOferta->curriculo->disciplinas_periodo.begin();
 
       for(; itPrdDisc != itOferta->curriculo->disciplinas_periodo.end(); itPrdDisc++)
-      { problemData->ofertasDisc[(*itPrdDisc).second].add(*itOferta); }
+      { 
+         int disc = (*itPrdDisc).second;
+
+         //if(problemData->ofertasDisc.find(disc) == problemData->ofertasDisc.end())
+         {
+            problemData->ofertasDisc[disc].add(*itOferta);
+         }
+      }
    }
 }
 

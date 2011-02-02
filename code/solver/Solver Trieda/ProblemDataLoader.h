@@ -31,7 +31,9 @@ public:
    void carregaDiasLetivosDiscs();
    void carregaDiasLetivosSala();
 
-   void criaConjuntoSalas();
+   void criaConjuntoSalasUnidade();
+
+   void criaConjuntoSalasCampus();
 
    /* Establece os dias letivos comuns entre um bloco curricular e um campus. */
    void estabeleceDiasLetivosBlocoCampus();
