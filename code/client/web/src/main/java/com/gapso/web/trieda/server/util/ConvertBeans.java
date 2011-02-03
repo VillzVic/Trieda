@@ -139,9 +139,9 @@ public class ConvertBeans {
 		dto.setNome(domain.getNome());
 		dto.setCenarioId(domain.getCenario().getId());
 		dto.setCodigo(domain.getCodigo());
-		dto.setEstado(domain.getEstado().name());
-		dto.setMunicipio(domain.getMunicipio());
-		dto.setBairro(domain.getBairro());
+		if(domain.getEstado() != null) dto.setEstado(domain.getEstado().name());
+		if(domain.getMunicipio() != null) dto.setMunicipio(domain.getMunicipio());
+		if(domain.getBairro() != null) dto.setBairro(domain.getBairro());
 		
 		return dto;
 	}
