@@ -308,9 +308,17 @@ public class Campus implements Serializable {
 	@SuppressWarnings("unchecked")
     public static List<Campus> find(int firstResult, int maxResults, String orderBy) {
 		orderBy = (orderBy != null)? "ORDER BY o."+orderBy : "";
-        return entityManager().createQuery("select o from Campus o "+orderBy).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
+        return entityManager().createQuery("SELECT o FROM Campus o "+orderBy).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
 
+    @SuppressWarnings("unchecked")
+    public static Campus getByCodigo(Cenario cenario, String codigo) {
+    	Query q = entityManager().createQuery("SELECT o FROM Campus o WHERE cenario = :cenario AND codigo = :codigo");
+    	q.setParameter("cenario", cenario);
+    	q.setParameter("codigo", codigo);
+    	return (Campus) q.getSingleResult();
+    }
+	
     @SuppressWarnings("unchecked")
     public static List<Campus> findByNomeLikeAndCodigoLikeAndEstadoAndMunicipioLikeAndBairroLike(Cenario cenario, String nome, String codigo, Estados estado, String municipio, String bairro, int firstResult, int maxResults, String orderBy) {
         nome = (nome == null)? "" : nome;

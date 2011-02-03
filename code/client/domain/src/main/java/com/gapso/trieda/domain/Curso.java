@@ -84,7 +84,7 @@ public class Curso implements Serializable {
     private Set<AreaTitulacao> areasTitulacao = new HashSet<AreaTitulacao>();
 
     @OneToMany(mappedBy="curso")
-    private Set<Curriculo> curriculos;
+    private Set<Curriculo> curriculos = new HashSet<Curriculo>();
 
     
 	public String toString() {

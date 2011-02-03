@@ -263,6 +263,13 @@ public class Sala implements Serializable {
         if (id == null) return null;
         return entityManager().find(Sala.class, id);
     }
+	
+	@SuppressWarnings("unchecked")
+	public static Sala findByCodigo(String codigo) {
+		Query q = entityManager().createQuery("SELECT o FROM Sala o WHERE codigo = :codigo");
+		q.setParameter("codigo", codigo);
+		return (Sala) q.getSingleResult();
+	}
 
 	@SuppressWarnings("unchecked")
 	public static List<Sala> findByUnidade(Unidade unidade) {

@@ -300,7 +300,11 @@ public class Disciplina implements Serializable {
 		return q.getResultList();
 	}
 	
-	
+	public static Disciplina findByCodigo(String codigo) {
+		Query q = entityManager().createQuery("SELECT o FROM Disciplina o WHERE o.codigo = :codigo");
+		q.setParameter("codigo", codigo);
+		return (Disciplina) q.getSingleResult();
+	}
 	
     @SuppressWarnings("unchecked")
 	public static List<Disciplina> findByCodigoLikeAndNomeLikeAndTipo(String codigo, String nome, TipoDisciplina tipoDisciplina, int firstResult, int maxResults, String orderBy) {
