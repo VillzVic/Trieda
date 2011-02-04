@@ -79,10 +79,10 @@ public class CurriculosView extends MyComposite implements CurriculosPresenter.D
 
 	public List<ColumnConfig> getColumnList() {
 		List<ColumnConfig> list = new ArrayList<ColumnConfig>();
-		list.add(new ColumnConfig("cursoString", "Curso", 100));
+		list.add(new ColumnConfig("cursoString", "Curso", 250));
 		list.add(new ColumnConfig("codigo", "Código", 100));
 		list.add(new ColumnConfig("descricao", "Descricao", 100));
-		list.add(new ColumnConfig("qtdPeriodos", "Número de períodos", 200));
+		list.add(new ColumnConfig("periodos", "Número de períodos", 110));
 		return list;
 	}
 

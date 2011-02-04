@@ -17,7 +17,7 @@ public class CurriculoDTO extends FileModel {
 	 * String : descricao
 	 * Long   : cursoId
 	 * String : cursoString
-	 * Integer: qtdPeriodos
+	 * String : periodos
 	 */
 	
 	public void setId(Long value) {
@@ -69,11 +69,11 @@ public class CurriculoDTO extends FileModel {
 		set("cursoString", value);
 	}
 	
-	public void setQtdPeriodos(Integer value) {
-		set("qtdPeriodos", value);
+	public void setPeriodos(String value) {
+		set("periodos", value);
 	}
-	public Integer getQtdPeriodos() {
-		return get("qtdPeriodos");
+	public String getPeriodos() {
+		return get("periodos");
 	}
 
 }
