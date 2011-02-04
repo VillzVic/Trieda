@@ -1,9 +1,13 @@
 package com.gapso.web.trieda.server;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
+import java.util.Map.Entry;
 
 import org.springframework.transaction.annotation.Transactional;
 
@@ -45,6 +49,39 @@ public class SalasServiceImpl extends RemoteServiceServlet implements SalasServi
 	public List<HorarioDisponivelCenarioDTO> getHorariosDisponiveis(SalaDTO salaDTO) {
 		List<HorarioDisponivelCenario> list = new ArrayList<HorarioDisponivelCenario>(Sala.find(salaDTO.getId()).getHorarios());
 		List<HorarioDisponivelCenarioDTO> listDTO = ConvertBeans.toHorarioDisponivelCenarioDTO(list);
+
+		Map<String, List<HorarioDisponivelCenarioDTO>> horariosTurnos = new HashMap<String, List<HorarioDisponivelCenarioDTO>>();
+		for(HorarioDisponivelCenarioDTO o : listDTO) {
+			List<HorarioDisponivelCenarioDTO> horarios = horariosTurnos.get(o.getTurnoString());
+			if(horarios == null) {
+				horarios = new ArrayList<HorarioDisponivelCenarioDTO>();
+				horariosTurnos.put(o.getTurnoString(), horarios);
+			}
+			horarios.add(o);
+		}
+		
+		for(Entry<String, List<HorarioDisponivelCenarioDTO>> entry : horariosTurnos.entrySet()) {
+			Collections.sort(entry.getValue());
+		}
+		
+		Map<Date, List<String>> horariosFinalTurnos = new TreeMap<Date, List<String>>();
+		for(Entry<String, List<HorarioDisponivelCenarioDTO>> entry : horariosTurnos.entrySet()) {
+			Date ultimoHorario = entry.getValue().get(entry.getValue().size()-1).getHorario();
+			List<String> turnos = horariosFinalTurnos.get(ultimoHorario);
+			if (turnos == null) {
+				turnos = new ArrayList<String>();
+				horariosFinalTurnos.put(ultimoHorario,turnos);
+			}
+			turnos.add(entry.getKey());
+		}
+		
+		listDTO.clear();
+		for(Entry<Date, List<String>> entry : horariosFinalTurnos.entrySet()) {
+			for (String turno : entry.getValue()) {
+				listDTO.addAll(horariosTurnos.get(turno));
+			}
+		}
+		
 		
 		return listDTO;
 	}
