@@ -4,11 +4,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 import java.util.TreeMap;
 
 import com.extjs.gxt.ui.client.Style.SortDir;
@@ -29,7 +27,6 @@ import com.gapso.trieda.domain.Unidade;
 import com.gapso.web.trieda.client.mvp.model.CenarioDTO;
 import com.gapso.web.trieda.client.mvp.model.HorarioDisponivelCenarioDTO;
 import com.gapso.web.trieda.client.mvp.model.SemanaLetivaDTO;
-import com.gapso.web.trieda.client.mvp.model.UnidadeDTO;
 import com.gapso.web.trieda.client.services.SemanasLetivaService;
 import com.gapso.web.trieda.server.util.ConvertBeans;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
@@ -187,27 +184,20 @@ public class SemanasLetivaServiceImpl extends RemoteServiceServlet implements Se
 		
 		List<HorarioDisponivelCenario> removerList = new ArrayList<HorarioDisponivelCenario>(todosQueJaTinhamList);
 		removerList.removeAll(listSelecionados);
+
+		for(HorarioAula horariosAula : semanaLetiva.getHorariosAula()) {
+			horariosAula.getHorariosDisponiveisCenario().removeAll(removerList);
+			horariosAula.merge();
+		}
+		
+		List<HorarioDisponivelCenario> adicionarList = new ArrayList<HorarioDisponivelCenario> (listSelecionados);
+		adicionarList.removeAll(todosQueJaTinhamList);
 		
 		List<Campus> campi = Campus.findAll();
 		List<Unidade> unidades = Unidade.findAll();
 		List<Sala> salas = Sala.findAll();
 		List<Disciplina> disciplinas = Disciplina.findAll();
 		List<Professor> professores = Professor.findAll();
-		
-		for(HorarioDisponivelCenario o : removerList) {
-			o.getCampi().removeAll(campi);
-			o.getUnidades().removeAll(unidades);
-			o.getSalas().removeAll(salas);
-			o.getDisciplinas().removeAll(disciplinas);
-			o.getProfessores().removeAll(professores);
-			o.merge();
-			o.remove();
-		}
-		
-		List<HorarioDisponivelCenario> adicionarList = new ArrayList<HorarioDisponivelCenario> (listSelecionados);
-		adicionarList.removeAll(todosQueJaTinhamList);
-		
-		
 		for(HorarioDisponivelCenario o : adicionarList) {
 			o.getCampi().addAll(campi);
 			o.getUnidades().addAll(unidades);
@@ -217,47 +207,5 @@ public class SemanasLetivaServiceImpl extends RemoteServiceServlet implements Se
 			o.merge();
 		}
 	}
-//	
-//	@Override
-//	public void saveHorariosDisponiveisCenario(SemanaLetivaDTO semanaLetivaDTO, List<HorarioDisponivelCenarioDTO> listDTO) {
-//		List<HorarioDisponivelCenario> list = ConvertBeans.toHorarioDisponivelCenario(listDTO);
-//		Set<HorarioDisponivelCenario> horariosDisponivelCenarioAll = new HashSet<HorarioDisponivelCenario>();
-//		List<HorarioDisponivelCenario> removeList = new ArrayList<HorarioDisponivelCenario>(); 
-//		
-//		SemanaLetiva semanaLetiva = SemanaLetiva.find(semanaLetivaDTO.getId());
-//		for(HorarioAula horariosAula : semanaLetiva.getHorariosAula()) {
-//			removeList.clear();
-//			for(HorarioDisponivelCenario o : horariosAula.getHorariosDisponiveisCenario()) {
-//				if(!list.contains(o)) {
-//					removeList.add(o);
-//				} else {
-//					horariosDisponivelCenarioAll.add(o);
-//				}
-//			}
-//			horariosAula.getHorariosDisponiveisCenario().removeAll(removeList);
-//			horariosAula.merge();
-//		}
-//		
-//		
-//		
-//	    List<Campus> campi = Campus.findAll();
-//	    List<Unidade> unidades = Unidade.findAll();
-//	    List<Sala> salas = Sala.findAll();
-//	    List<Disciplina> disciplinas = Disciplina.findAll();
-//	    List<Professor> professores = Professor.findAll();
-//		
-//	    horariosDisponivelCenarioAll.retainAll(list);
-//		for(HorarioDisponivelCenario o1 : list) {
-//			if(horariosDisponivelCenarioAll.add(o1)) {
-//				o1.getCampi().addAll(campi);
-//				o1.getUnidades().addAll(unidades);
-//				o1.getSalas().addAll(salas);
-//				o1.getDisciplinas().addAll(disciplinas);
-//				o1.getProfessores().addAll(professores);
-//				o1.merge();
-//			}
-//			o1.persist();
-//		}
-//	}
 	
 }
