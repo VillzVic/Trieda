@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -859,10 +860,15 @@ public class ConvertBeans {
 		dto.setCenarioId(domain.getId());
 		dto.setCodigo(domain.getCodigo());
 		dto.setDescricao(domain.getDescricao());
-		
+		String periodos = "";
+		Set<Integer> periodosSet = new HashSet<Integer>();
+		for(CurriculoDisciplina cd : domain.getDisciplinas()) {
+			if(periodosSet.add(cd.getPeriodo())) periodos += cd.getPeriodo() + ", ";
+		}
+		dto.setPeriodos(periodos.substring(0, periodos.length() - 2));
 		Curso curso = domain.getCurso();
 		dto.setCursoId(curso.getId());
-		dto.setCursoString(curso.getCodigo());
+		dto.setCursoString(curso.getCodigo() + " (" +curso.getNome()+ ")");
 		return dto;
 	}
 	
