@@ -22,6 +22,7 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.roo.addon.entity.RooEntity;
 import org.springframework.roo.addon.javabean.RooJavaBean;
 import org.springframework.roo.addon.tostring.RooToString;
@@ -174,7 +175,10 @@ public class DivisaoCredito implements Serializable {
 	public static DivisaoCredito findByCredito(Integer credito) {
 		Query q = entityManager().createQuery("SELECT o FROM DivisaoCredito o WHERE o.creditos = :credito");
 		q.setParameter("credito", credito);
-		return (DivisaoCredito) q.getSingleResult();
+		try {
+			return (DivisaoCredito) q.getSingleResult();
+		} catch (EmptyResultDataAccessException e) { }
+		return null;
 	}
 
 	@SuppressWarnings("unchecked")
