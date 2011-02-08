@@ -42,7 +42,9 @@ void writeOutput(ProblemSolution* solution, char* outputFile, char* tempOutput);
 
 int main(int argc, char** argv)
 {
-	_signals();
+   srand(time(NULL));
+
+   _signals();
 
 	char path[1024];
 	char inputFile[1024];

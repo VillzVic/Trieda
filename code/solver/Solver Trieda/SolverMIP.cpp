@@ -2402,6 +2402,13 @@ int SolverMIP::cria_restricoes(void)
 	numRestAnterior = restricoes;
 #endif
 
+   restricoes += cria_restricao_ativacao_var_y();
+
+#ifdef PRINT_cria_restricoes
+	std::cout << "numRest \"1.2.29\": " << (restricoes - numRestAnterior) << std::endl;
+	numRestAnterior = restricoes;
+#endif
+
 	return restricoes;
 }
 
@@ -6626,6 +6633,111 @@ int SolverMIP::cria_restricao_combinacao_divisao_credito(){
 	return restricoes;
 }
 
+/*====================================================================/
+%DocBegin TRIEDA_LOAD_MODEL
+
+%Constraint 
+	Ativação da variável y
+%Desc 
+
+%MatExp
+
+\begin{eqnarray}
+   \sum\limits_{t \in T} o_{i,d,u,tps,t}  \geq  y_{i,d,tps,u}  \nonumber \qquad 
+   \forall d \in D \quad
+   \forall i \in I_{d} \quad
+   \forall u \in U \quad
+   \forall s \in S_{u}
+   \forall tps \in SCAP_{u}
+\end{eqnarray}
+
+%DocEnd
+/====================================================================*/
+
+int SolverMIP::cria_restricao_ativacao_var_y()
+{
+   int restricoes = 0;
+   char name[100];
+   int nnz;
+   Constraint c;
+   Variable v;
+   VariableHash::iterator it_v;
+
+   ITERA_GGROUP(itCampus,problemData->campi,Campus)
+   {
+      ITERA_GGROUP(itUnidade,itCampus->unidades,Unidade)
+      {
+         ITERA_GGROUP(itCjtSala,itUnidade->conjutoSalas,ConjuntoSala)
+         {
+            ITERA_GGROUP(itDisc,problemData->disciplinas,Disciplina)
+            {
+               for(int turma = 0; turma < itDisc->num_turmas; turma++)
+               {
+                  c.reset();
+                  c.setType(Constraint::C_VAR_Y);
+
+                  c.setUnidade(*itUnidade);
+                  c.setSubCjtSala(*itCjtSala);
+                  c.setDisciplina(*itDisc);
+                  c.setTurma(turma);
+
+                  sprintf( name, "%s", c.toString().c_str() ); 
+
+                  if (cHash.find(c) != cHash.end()) continue;
+
+                  nnz = 8;
+                  OPT_ROW row( nnz, OPT_ROW::GREATER , 0.0, name );
+
+                  GGroup<int/*Dias*/>::iterator itDiscSala_Dias =
+                     problemData->disc_Conjutno_Salas__Dias[std::make_pair<int,int>
+                     (itDisc->getId(),itCjtSala->getId())].begin();
+
+                  for(; itDiscSala_Dias !=                     
+                     problemData->disc_Conjutno_Salas__Dias[std::make_pair<int,int>
+                     (itDisc->getId(),itCjtSala->getId())].end(); itDiscSala_Dias++)
+                  {
+
+                     v.reset();
+                     v.setType(Variable::V_OFERECIMENTO);
+
+                     v.setTurma(turma);
+                     v.setDisciplina(*itDisc);
+                     v.setUnidade(*itUnidade);
+                     v.setSubCjtSala(*itCjtSala);
+                     v.setDia(*itDiscSala_Dias);
+
+                     it_v = vHash.find(v);
+                     if( it_v != vHash.end() )
+                     { row.insert(it_v->second, 1.0); }
+                  }
+
+                  v.reset();
+                  v.setType(Variable::V_ALOC_DISCIPLINA);
+
+                  v.setTurma(turma);
+                  v.setDisciplina(*itDisc);
+                  v.setUnidade(*itUnidade);
+                  v.setSubCjtSala(*itCjtSala);
+
+                  it_v = vHash.find(v);
+                  if( it_v != vHash.end() )
+                  { row.insert(it_v->second, -1.0); }
+
+                  if(row.getnnz() != 0)
+                  {
+                     cHash[ c ] = lp->getNumRows();
+
+                     lp->addRow(row);
+                     restricoes++;
+                  }
+               }
+            }
+         }
+      }
+   }
+
+   return restricoes;
+}
 
 void SolverMIP::cria_solucao_inicial(int cnt, int *indices, double *valores)
 {

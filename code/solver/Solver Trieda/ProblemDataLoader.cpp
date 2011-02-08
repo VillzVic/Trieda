@@ -25,6 +25,8 @@ void ProblemDataLoader::load()
    std::cout << "Some preprocessing..." << std::endl;
    /* processamento */
 
+   relacionaCredsRegras();
+
    carregaDiasLetivosCampus();
 
    carregaDiasLetivosDiscs();
@@ -70,6 +72,12 @@ void ProblemDataLoader::load()
    print_stats();
    //print_csv();
 
+}
+
+void ProblemDataLoader::relacionaCredsRegras()
+{
+   ITERA_GGROUP(it_Regra,problemData->regras_div,DivisaoCreditos)
+   { problemData->creds_Regras[it_Regra->creditos].add(*it_Regra); }
 }
 
 void ProblemDataLoader::carregaDiasLetivosCampus()
@@ -533,16 +541,89 @@ void ProblemDataLoader::divideDisciplinas() {
          nova_disc->tipo_disciplina_id = it_disc->tipo_disciplina_id;
          nova_disc->nivel_dificuldade_id = it_disc->nivel_dificuldade_id;
 
-         //if(nova_disc->divisao_creditos != NULL){
-         if(it_disc->divisao_creditos){
-            nova_disc->divisao_creditos = new DivisaoCreditos();
-            nova_disc->divisao_creditos->setId(it_disc->divisao_creditos->getId());
-            nova_disc->divisao_creditos->creditos = it_disc->divisao_creditos->creditos;
+         // -----
 
-            for(int i=0;i<8;i++) {
-               nova_disc->divisao_creditos->dia[i] = it_disc->divisao_creditos->dia[i];
+         if(it_disc->divisao_creditos)
+         {
+            std::map<int/*Num. Creds*/,GGroup<DivisaoCreditos*> >::iterator it_Creds_Regras;
+
+            // Alterações relacionadas à disciplina antiga
+
+            delete it_disc->divisao_creditos;
+
+            it_Creds_Regras = problemData->creds_Regras.find(it_disc->cred_teoricos);
+
+            /* Checando se existe alguma regra de crédito cadastrada para o total
+            de créditos da nova disciplina. */
+            if(it_Creds_Regras != problemData->creds_Regras.end())
+            {
+               if(it_Creds_Regras->second.size() == 1)
+               {
+                  it_disc->divisao_creditos = new DivisaoCreditos(
+                     **it_Creds_Regras->second.begin());
+               }
+               else // Greather
+               {
+                  GGroup<DivisaoCreditos*>::iterator 
+                     it_Regra = it_Creds_Regras->second.begin();
+
+                  bool continuar = rand() % 2;
+
+                  while(continuar && (it_Regra != it_Creds_Regras->second.end()) )
+                  {
+                     ++it_Regra;
+                     continuar = rand() % 2;
+                  }
+
+                  it_disc->divisao_creditos = new DivisaoCreditos(
+                     **it_Regra);
+               }
+            }
+
+            // Alterações relacionadas à nova disciplina
+
+            it_Creds_Regras = problemData->creds_Regras.find(nova_disc->cred_praticos);
+
+            /* Checando se existe alguma regra de crédito cadastrada para o total
+            de créditos da nova disciplina. */
+            if(it_Creds_Regras != problemData->creds_Regras.end())
+            {
+               if(it_Creds_Regras->second.size() == 1)
+               {
+                  nova_disc->divisao_creditos = new DivisaoCreditos(
+                     **it_Creds_Regras->second.begin());
+               }
+               else // Greather
+               {
+                  GGroup<DivisaoCreditos*>::iterator 
+                     it_Regra = it_Creds_Regras->second.begin();
+
+                  bool continuar = rand() % 2;
+
+                  while(continuar && (it_Regra != it_Creds_Regras->second.end()) )
+                  {
+                     ++it_Regra;
+                     continuar = rand() % 2;
+                  }
+
+                  nova_disc->divisao_creditos = new DivisaoCreditos(
+                     **it_Regra);
+               }
             }
          }
+
+         //if(it_disc->divisao_creditos)
+         //{
+         //   nova_disc->divisao_creditos = new DivisaoCreditos();
+         //   nova_disc->divisao_creditos->setId(it_disc->divisao_creditos->getId());
+         //   nova_disc->divisao_creditos->creditos = it_disc->divisao_creditos->creditos;
+
+         //   for(int i=0;i<8;i++) {
+         //      nova_disc->divisao_creditos->dia[i] = it_disc->divisao_creditos->dia[i];
+         //   }
+         //}
+
+         // -----
 
          // NAO PRECISA DOS ITENS ABAIXO ?! CONFIRMAR COM O CHICO
 
@@ -562,12 +643,12 @@ void ProblemDataLoader::divideDisciplinas() {
          }
          */
 
-         //>>> Copying HORARIO
+         //>>> Copiando HORARIO
          ITERA_GGROUP(it_hr,it_disc->horarios,Horario) {
             Horario *h =  new Horario;
             h->setId(it_hr->getId());
 
-            //>>> >>> Copying DiaSemana
+            //>>> >>> Copiando DiaSemana
             GGroup<int>::iterator it_dia = it_hr->dias_semana.begin();
             for(unsigned dia =0;dia<it_hr->dias_semana.size();dia++) {
                h->dias_semana.add(*it_dia);
@@ -579,7 +660,7 @@ void ProblemDataLoader::divideDisciplinas() {
 
             h->turnoId = it_hr->turnoId;
 
-            // >>> >>> Copying TURNO
+            // >>> >>> Copiando TURNO
             Turno *tur;
             if(it_hr->turno != NULL) {
                tur = new Turno();
@@ -589,7 +670,7 @@ void ProblemDataLoader::divideDisciplinas() {
 
                tur->tempoAula = it_hr->turno->tempoAula;
 
-               // >>> >>> >>> Copying HorariosAula
+               // >>> >>> >>> Copiando HorariosAula
                HorarioAula *hr_aula;
                if(it_hr->turno->horarios_aula.size() > 0){
                   ITERA_GGROUP(it_hr_aula,tur->horarios_aula,HorarioAula) {

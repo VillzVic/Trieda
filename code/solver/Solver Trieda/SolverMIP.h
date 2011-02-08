@@ -136,6 +136,8 @@ public:
    int cria_restricao_divisao_credito(void);			    //Restricao 1.2.27
    int cria_restricao_combinacao_divisao_credito(void);		//Restricao 1.2.28
 
+   int cria_restricao_ativacao_var_y(void);		//Restricao 1.2.28
+
 
    /********************************************************************
    **                        OTHER METHODS                            **

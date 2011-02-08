@@ -119,74 +119,76 @@ std::string Constraint::toString()
 
    switch(type)
    {
-     case C_CARGA_HORARIA:
-        ss << "__(CARGA_HORARIA):"; break;
-     case C_MAX_CREDITOS_SD:
-        ss << "__(MAX_CREDITOS_CJTSALA_DIA):"; break;
-     case C_MIN_CREDITOS_DD:
-        ss << "__(MIN_CREDITOS_DISC_DIA):"; break;
-     case C_VAR_O:
-        ss << "__(ATIVACAO_VAR_O):"; break;
-     case C_EVITA_SOBREPOSICAO_TD:
-        ss << "__(EVITA_SOBREPOSICAO_TURMAS):"; break;
-     case C_TURMA_DISCIPLINA_SALA:
-        ss << "__(TURMA_DISCIPLINA_SALA):"; break;
-     case C_TURMA_SALA:
-        ss << "__(TURMA_SALA):"; break;
-     case C_EVITA_TURMA_DISC_CAMP_D:
-        ss << "__(EVITA_TURMA_DISC_CAMP_DIF):"; break;
-     case C_TURMAS_BLOCO:
-        ss << "__(ABERTURA_TURMAS_MSM_BLOCO):"; break;
-     case C_MAX_CRED_DISC_BLOCO:
-        ss << "__(MAX_CRED_DISC_BLOCO):"; break;
-     case C_NUM_TUR_BLOC_DIA_DIFUNID:
-        ss << "__(NUM_TUR_BLOC_DIA_DIF_UNID):"; break;
-     case C_LIM_CRED_DIAR_DISC:
-        ss << "__(LIM_CRED_DIAR_DISC):"; break;
-     case C_CAP_ALOC_DEM_DISC:
-        ss << "__(CAP_ALOC_DEM_DISC):"; break;
-     case C_CAP_SALA_COMPATIVEL_TURMA:
-        ss << "__(CAP_SALA_COMPATIVEL_TURMA):";
-        ss << "[";
-        ss << "_i:" << i;
-        ss << "_d:" << d->getId();
-        ss << "_cp:" << cp->getId();
-        ss << "]:";
-        break;
-     case C_CAP_SALA_UNIDADE:
-        ss << "__(CAP_TOTAL_SALA_UNIDADE):"; break;
-     case C_TURMA_DISC_DIAS_CONSEC:
-        ss << "__(TURMAS_DISC_DIAS_CONSEC):"; break;
-     case C_MIN_CREDS_TURM_BLOCO:
-        ss << "__(MIN_CREDS_ALOC_TURM_BLOCO):"; break;
-     case C_MAX_CREDS_TURM_BLOCO:
-        ss << "__(MAX_CREDS_TURM_BLOCO):"; break;
-     case C_ALUNO_CURSO_DISC:
-        ss << "__(ALUNO_CURSO_TURMA):";
-        ss << "[";
-        ss << "_i:" << i;
-        ss << "_d:" << d->getId();
-        ss << "_c:" << c->getId();
-        ss << "_cp:" << cp->getId();
-        ss << "]:";
-        break;
-     case C_ALUNOS_CURSOS_DIF:
-        ss << "__(ALUNOS_CURSOS_DIF):"; break;
-     case C_SLACK_DIST_CRED_DIA:
-        ss << "__(FIX_DIST_CRED_DIA):"; break;
-     case C_VAR_R:
-        ss << "__(ATIVACAO_VAR_R):"; break;
-     case C_LIMITA_ABERTURA_TURMAS:
-         ss << "__(LIMITA_ABERTURA_TURMAS):"; break;
-     case C_ABRE_TURMAS_EM_SEQUENCIA:
-         ss << "__(ABRE_TURMAS_EM_SEQUENCIA):"; break;
-	 case C_COMBINACAO_DIVISAO_CREDITO:
-        ss << "__(C_COMBINACAO_DIVISAO_CREDITO):"; break;
-	 case C_DIVISAO_CREDITO:
-        ss << "__(C_DIVISAO_CREDITO):"; break;
-     default:
-        ss << "!";
-	}
+   case C_CARGA_HORARIA:
+      ss << "__(CARGA_HORARIA):"; break;
+   case C_MAX_CREDITOS_SD:
+      ss << "__(MAX_CREDITOS_CJTSALA_DIA):"; break;
+   case C_MIN_CREDITOS_DD:
+      ss << "__(MIN_CREDITOS_DISC_DIA):"; break;
+   case C_VAR_O:
+      ss << "__(ATIVACAO_VAR_O):"; break;
+   case C_EVITA_SOBREPOSICAO_TD:
+      ss << "__(EVITA_SOBREPOSICAO_TURMAS):"; break;
+   case C_TURMA_DISCIPLINA_SALA:
+      ss << "__(TURMA_DISCIPLINA_SALA):"; break;
+   case C_TURMA_SALA:
+      ss << "__(TURMA_SALA):"; break;
+   case C_EVITA_TURMA_DISC_CAMP_D:
+      ss << "__(EVITA_TURMA_DISC_CAMP_DIF):"; break;
+   case C_TURMAS_BLOCO:
+      ss << "__(ABERTURA_TURMAS_MSM_BLOCO):"; break;
+   case C_MAX_CRED_DISC_BLOCO:
+      ss << "__(MAX_CRED_DISC_BLOCO):"; break;
+   case C_NUM_TUR_BLOC_DIA_DIFUNID:
+      ss << "__(NUM_TUR_BLOC_DIA_DIF_UNID):"; break;
+   case C_LIM_CRED_DIAR_DISC:
+      ss << "__(LIM_CRED_DIAR_DISC):"; break;
+   case C_CAP_ALOC_DEM_DISC:
+      ss << "__(CAP_ALOC_DEM_DISC):"; break;
+   case C_CAP_SALA_COMPATIVEL_TURMA:
+      ss << "__(CAP_SALA_COMPATIVEL_TURMA):";
+      ss << "[";
+      ss << "_i:" << i;
+      ss << "_d:" << d->getId();
+      ss << "_cp:" << cp->getId();
+      ss << "]:";
+      break;
+   case C_CAP_SALA_UNIDADE:
+      ss << "__(CAP_TOTAL_SALA_UNIDADE):"; break;
+   case C_TURMA_DISC_DIAS_CONSEC:
+      ss << "__(TURMAS_DISC_DIAS_CONSEC):"; break;
+   case C_MIN_CREDS_TURM_BLOCO:
+      ss << "__(MIN_CREDS_ALOC_TURM_BLOCO):"; break;
+   case C_MAX_CREDS_TURM_BLOCO:
+      ss << "__(MAX_CREDS_TURM_BLOCO):"; break;
+   case C_ALUNO_CURSO_DISC:
+      ss << "__(ALUNO_CURSO_TURMA):";
+      ss << "[";
+      ss << "_i:" << i;
+      ss << "_d:" << d->getId();
+      ss << "_c:" << c->getId();
+      ss << "_cp:" << cp->getId();
+      ss << "]:";
+      break;
+   case C_ALUNOS_CURSOS_DIF:
+      ss << "__(ALUNOS_CURSOS_DIF):"; break;
+   case C_SLACK_DIST_CRED_DIA:
+      ss << "__(FIX_DIST_CRED_DIA):"; break;
+   case C_VAR_R:
+      ss << "__(ATIVACAO_VAR_R):"; break;
+   case C_LIMITA_ABERTURA_TURMAS:
+      ss << "__(LIMITA_ABERTURA_TURMAS):"; break;
+   case C_ABRE_TURMAS_EM_SEQUENCIA:
+      ss << "__(ABRE_TURMAS_EM_SEQUENCIA):"; break;
+   case C_COMBINACAO_DIVISAO_CREDITO:
+      ss << "__(C_COMBINACAO_DIVISAO_CREDITO):"; break;
+   case C_DIVISAO_CREDITO:
+      ss << "__(C_DIVISAO_CREDITO):"; break;
+   case C_VAR_Y:
+      ss << "__(C_VAR_Y):"; break;
+   default:
+      ss << "!";
+   }
 
    std::string consName = "";
    ss >> consName;

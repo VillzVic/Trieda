@@ -153,6 +153,9 @@ public:
    /* Listando os dias letivos de um bloco curricular em relação a um campus. */
    std::map<std::pair<int/*idBloco*/,int/*idCampus*/>, GGroup<int>/*Dias*/ > bloco_Campus_Dias;
 
+   /* Listando as regras de créditos para cada possível valor de crédito. */
+   std::map<int/*Num. Creds*/,GGroup<DivisaoCreditos*> > creds_Regras;
+
    // <<<
 
 public:

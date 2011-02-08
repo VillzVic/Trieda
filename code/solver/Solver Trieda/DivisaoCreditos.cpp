@@ -4,6 +4,15 @@ DivisaoCreditos::DivisaoCreditos(void)
 {
 }
 
+DivisaoCreditos::DivisaoCreditos(DivisaoCreditos const & div_Creds)
+{
+   this->setId(div_Creds.getId());
+   this->creditos = div_Creds.creditos;
+   
+   for(unsigned d = 0; d < 8; ++d)
+   { this->dia[d] = div_Creds.dia[d]; }
+}
+
 DivisaoCreditos::~DivisaoCreditos(void)
 {
 }

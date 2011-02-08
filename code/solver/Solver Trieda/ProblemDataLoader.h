@@ -118,6 +118,9 @@ private:
    void combinacaoDivCreditos();
    // <<<
 
+   /* Relaciona cada possível valor de crédito com as regras de créditos existentes. */
+   void relacionaCredsRegras();
+
 };
 
 #endif
