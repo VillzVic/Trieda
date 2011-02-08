@@ -211,6 +211,15 @@ public class Curriculo implements Serializable {
 		return q.getResultList();
 	}
 	
+	
+	@SuppressWarnings("unchecked")
+	public List<CurriculoDisciplina> getCurriculoDisciplinasByPeriodo(Integer periodo) {
+		Query q = entityManager().createQuery("SELECT o FROM CurriculoDisciplina o WHERE o.curriculo = :curriculo AND o.periodo = :periodo");
+		q.setParameter("curriculo", this);
+		q.setParameter("periodo", periodo);
+		return q.getResultList();
+	}
+	
     @SuppressWarnings("unchecked")
 	public static List<Curriculo> findByCursoAndCodigoLikeAndDescricaoLike(Curso curso, String codigo, String descricao, int firstResult, int maxResults, String orderBy) {
 

@@ -25,9 +25,9 @@ import org.springframework.transaction.annotation.Transactional;
 @Entity
 @RooJavaBean
 @RooToString
-@RooEntity(identifierColumn = "COM_ID")
-@Table(name = "COMPATIBILIDADES")
-public class Compatibilidade implements java.io.Serializable {
+@RooEntity(identifierColumn = "INC_ID")
+@Table(name = "INCOMPATIBILIDADES")
+public class Incompatibilidade implements java.io.Serializable {
 
     @NotNull
     @ManyToOne(targetEntity = Disciplina.class)
@@ -44,7 +44,7 @@ public class Compatibilidade implements java.io.Serializable {
 
 	@Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "COM_ID")
+    @Column(name = "INC_ID")
     private Long id;
 
 	@Version
@@ -85,7 +85,7 @@ public class Compatibilidade implements java.io.Serializable {
         if (this.entityManager.contains(this)) {
             this.entityManager.remove(this);
         } else {
-            Compatibilidade attached = this.entityManager.find(this.getClass(), this.id);
+            Incompatibilidade attached = this.entityManager.find(this.getClass(), this.id);
             this.entityManager.remove(attached);
         }
     }
@@ -97,36 +97,36 @@ public class Compatibilidade implements java.io.Serializable {
     }
 
 	@Transactional
-    public Compatibilidade merge() {
+    public Incompatibilidade merge() {
         if (this.entityManager == null) this.entityManager = entityManager();
-        Compatibilidade merged = this.entityManager.merge(this);
+        Incompatibilidade merged = this.entityManager.merge(this);
         this.entityManager.flush();
         return merged;
     }
 
 	public static final EntityManager entityManager() {
-        EntityManager em = new Compatibilidade().entityManager;
+        EntityManager em = new Incompatibilidade().entityManager;
         if (em == null) throw new IllegalStateException("Entity manager has not been injected (is the Spring Aspects JAR configured as an AJC/AJDT aspects library?)");
         return em;
     }
 
-	public static long countCompatibilidades() {
-        return ((Number) entityManager().createQuery("SELECT COUNT(o) FROM Compatibilidade o").getSingleResult()).longValue();
+	public static int count() {
+        return ((Number) entityManager().createQuery("SELECT COUNT(o) FROM Incompatibilidade o").getSingleResult()).intValue();
     }
 
 	@SuppressWarnings("unchecked")
-    public static List<Compatibilidade> findAllCompatibilidades() {
-        return entityManager().createQuery("SELECT o FROM Compatibilidade o").getResultList();
+    public static List<Incompatibilidade> findAll() {
+        return entityManager().createQuery("SELECT o FROM Incompatibilidade o").getResultList();
     }
 
-	public static Compatibilidade findCompatibilidade(Long id) {
+	public static Incompatibilidade find(Long id) {
         if (id == null) return null;
-        return entityManager().find(Compatibilidade.class, id);
+        return entityManager().find(Incompatibilidade.class, id);
     }
 
 	@SuppressWarnings("unchecked")
-    public static List<Compatibilidade> findCompatibilidadeEntries(int firstResult, int maxResults) {
-        return entityManager().createQuery("SELECT o FROM Compatibilidade o").setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
+    public static List<Incompatibilidade> find(int firstResult, int maxResults) {
+        return entityManager().createQuery("SELECT o FROM Incompatibilidade o").setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
 
 	public String toString() {

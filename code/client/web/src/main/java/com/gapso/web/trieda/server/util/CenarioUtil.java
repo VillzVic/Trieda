@@ -7,7 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.gapso.trieda.domain.Campus;
 import com.gapso.trieda.domain.Cenario;
-import com.gapso.trieda.domain.Compatibilidade;
+import com.gapso.trieda.domain.Incompatibilidade;
 import com.gapso.trieda.domain.Curriculo;
 import com.gapso.trieda.domain.CurriculoDisciplina;
 import com.gapso.trieda.domain.Curso;
@@ -95,7 +95,7 @@ public class CenarioUtil {
 	private Set<Sala> salaList = new HashSet<Sala>();
 	private Set<GrupoSala> grupoSalaList = new HashSet<GrupoSala>();
 	private Set<Disciplina> disciplinaList = new HashSet<Disciplina>();
-	private Set<Compatibilidade> compatibilidadeList = new HashSet<Compatibilidade>();
+	private Set<Incompatibilidade> compatibilidadeList = new HashSet<Incompatibilidade>();
 	private Set<Equivalencia> equivalenciaList = new HashSet<Equivalencia>();
 	private Set<DivisaoCredito> divisaoCreditoList = new HashSet<DivisaoCredito>();
 	private Set<Professor> professorList = new HashSet<Professor>();
@@ -164,7 +164,7 @@ public class CenarioUtil {
 			divisaoCreditoList.addAll(cenario.getDivisoesCredito()); 
 			disciplinaList.addAll(cenario.getDisciplinas());
 			for(Disciplina d : disciplinaList) {
-				compatibilidadeList.addAll(d.getCompatibilidades());
+				compatibilidadeList.addAll(d.getIncompatibilidades());
 				equivalenciaList.addAll(d.getEquivalencias());
 				divisaoCreditoList.add(d.getDivisaoCreditos());
 				demandaList.addAll(d.getDemandas());
@@ -215,7 +215,7 @@ public class CenarioUtil {
 			divisaoCreditoList.addAll(cenario.getDivisoesCredito()); 
 			disciplinaList.addAll(cenario.getDisciplinas());
 			for(Disciplina d : disciplinaList) {
-				compatibilidadeList.addAll(d.getCompatibilidades());
+				compatibilidadeList.addAll(d.getIncompatibilidades());
 				equivalenciaList.addAll(d.getEquivalencias());
 				divisaoCreditoList.add(d.getDivisaoCreditos());
 				demandaList.addAll(d.getDemandas());
@@ -246,7 +246,7 @@ public class CenarioUtil {
 		for(Sala o : salaList) 											{ o.setId(null); o.detach(); }
 		for(GrupoSala o : grupoSalaList) 								{ o.setId(null); o.detach(); }
 		for(Disciplina o : disciplinaList) 								{ o.setId(null); o.detach(); }
-		for(Compatibilidade o : compatibilidadeList) 					{ o.setId(null); o.detach(); }
+		for(Incompatibilidade o : compatibilidadeList) 					{ o.setId(null); o.detach(); }
 		for(Equivalencia o : equivalenciaList) 							{ o.setId(null); o.detach(); }
 		for(DivisaoCredito o : divisaoCreditoList) 						{ o.setId(null); o.detach(); }
 		for(Professor o : professorList)								{ o.setId(null); o.detach(); }
@@ -272,7 +272,7 @@ public class CenarioUtil {
 		for(Sala o : salaList) 											{ o.persist(); }
 		for(GrupoSala o : grupoSalaList) 								{ o.persist(); }
 		for(Disciplina o : disciplinaList) 								{ o.persist(); }
-		for(Compatibilidade o : compatibilidadeList) 					{ o.persist(); }
+		for(Incompatibilidade o : compatibilidadeList) 					{ o.persist(); }
 		for(Equivalencia o : equivalenciaList) 							{ o.persist(); }
 		for(DivisaoCredito o : divisaoCreditoList) 						{ o.persist(); }
 		for(Professor o : professorList) 								{ o.persist(); }

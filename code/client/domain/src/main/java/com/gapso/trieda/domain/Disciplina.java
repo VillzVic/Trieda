@@ -106,7 +106,7 @@ public class Disciplina implements Serializable {
 
     @NotNull
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "disciplina1")
-    private Set<Compatibilidade> compatibilidades = new HashSet<Compatibilidade>();
+    private Set<Incompatibilidade> incompatibilidades = new HashSet<Incompatibilidade>();
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "cursou")
     private Set<Equivalencia> equivalencias = new HashSet<Equivalencia>();
@@ -148,7 +148,7 @@ public class Disciplina implements Serializable {
         sb.append("MaxAlunosPratico: ").append(getMaxAlunosPratico()).append(", ");
         sb.append("Horarios: ").append(getHorarios() == null ? "null" : getHorarios().size()).append(", ");
         sb.append("Professores: ").append(getProfessores() == null ? "null" : getProfessores().size()).append(", ");
-        sb.append("Compatibilidades: ").append(getCompatibilidades() == null ? "null" : getCompatibilidades().size()).append(", ");
+        sb.append("Incompatibilidades: ").append(getIncompatibilidades() == null ? "null" : getIncompatibilidades().size()).append(", ");
         sb.append("Equivalencias: ").append(getEquivalencias() == null ? "null" : getEquivalencias().size()).append(", ");
         sb.append("EliminadaPor: ").append(getEliminadaPor() == null ? "null" : getEliminadaPor().size()).append(", ");
         sb.append("Curriculos: ").append(getCurriculos() == null ? "null" : getCurriculos().size()).append(", ");
@@ -328,6 +328,13 @@ public class Disciplina implements Serializable {
         return q.setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
 	
+    public Boolean isIncompativelCom(Disciplina disciplina) {
+    	Query q = entityManager().createQuery("SELECT COUNT(o) FROM Incompatibilidade o WHERE o.disciplina1 = :disciplina1 AND o.disciplina2 = :disciplina2");
+    	q.setParameter("disciplina1", this);
+    	q.setParameter("disciplina2", disciplina);
+    	return ((Number) q.getSingleResult()).intValue() > 0;
+    }
+    
 	private static final long serialVersionUID = 7980821696468062987L;
 
 	public Cenario getCenario() {
@@ -438,12 +445,12 @@ public class Disciplina implements Serializable {
         this.professores = professores;
     }
 
-	public Set<Compatibilidade> getCompatibilidades() {
-        return this.compatibilidades;
+	public Set<Incompatibilidade> getIncompatibilidades() {
+        return this.incompatibilidades;
     }
 
-	public void setCompatibilidades(Set<Compatibilidade> compatibilidades) {
-        this.compatibilidades = compatibilidades;
+	public void setIncompatibilidades(Set<Incompatibilidade> incompatibilidades) {
+        this.incompatibilidades = incompatibilidades;
     }
 
 	public Set<Equivalencia> getEquivalencias() {

@@ -21,13 +21,16 @@ import com.gapso.trieda.domain.Disciplina;
 import com.gapso.trieda.domain.GrupoSala;
 import com.gapso.trieda.domain.HorarioAula;
 import com.gapso.trieda.domain.HorarioDisponivelCenario;
+import com.gapso.trieda.domain.Incompatibilidade;
 import com.gapso.trieda.domain.Oferta;
 import com.gapso.trieda.domain.Sala;
 import com.gapso.trieda.domain.SemanaLetiva;
 import com.gapso.trieda.domain.TipoDisciplina;
+import com.gapso.web.trieda.client.mvp.model.CurriculoDTO;
 import com.gapso.web.trieda.client.mvp.model.CurriculoDisciplinaDTO;
 import com.gapso.web.trieda.client.mvp.model.CursoDTO;
 import com.gapso.web.trieda.client.mvp.model.DisciplinaDTO;
+import com.gapso.web.trieda.client.mvp.model.DisciplinaIncompativelDTO;
 import com.gapso.web.trieda.client.mvp.model.FileModel;
 import com.gapso.web.trieda.client.mvp.model.GrupoSalaDTO;
 import com.gapso.web.trieda.client.mvp.model.HorarioDisponivelCenarioDTO;
@@ -383,5 +386,70 @@ public class DisciplinasServiceImpl extends RemoteServiceServlet implements Disc
 		
 		curriculoDisciplina.getSalas().remove(sala);
 		curriculoDisciplina.merge();
+	}
+	
+	@Override
+	public List<DisciplinaIncompativelDTO> getDisciplinasIncompativeis(CurriculoDTO curriculoDTO, Integer periodo) {
+		List<DisciplinaIncompativelDTO> list = new ArrayList<DisciplinaIncompativelDTO>();
+		
+		Curriculo curriculo = Curriculo.find(curriculoDTO.getId());
+		List<CurriculoDisciplina> curriculoDisciplinas = curriculo.getCurriculoDisciplinasByPeriodo(periodo);
+		
+		for(CurriculoDisciplina cd1 : curriculoDisciplinas) {
+			for(CurriculoDisciplina cd2 : curriculoDisciplinas) {
+				if(cd1.getId().equals(cd2.getId())) continue;
+				DisciplinaIncompativelDTO di = new DisciplinaIncompativelDTO();
+				if(containsDisciplinaIncompativelDTO(list, cd1.getDisciplina(), cd2.getDisciplina())) continue;
+				di.setDisciplina1Id(cd1.getDisciplina().getId());
+				di.setDisciplina1String(cd1.getDisciplina().getCodigo());
+				di.setDisciplina2Id(cd2.getDisciplina().getId());
+				di.setDisciplina2String(cd2.getDisciplina().getCodigo());
+				di.setIncompativel(cd1.getDisciplina().isIncompativelCom(cd2.getDisciplina()));
+				
+				list.add(di);
+			}
+		}
+
+		return list;
+	}
+	
+	@Override
+	public void saveDisciplinasIncompativeis(List<DisciplinaIncompativelDTO> list) {
+		Set<Disciplina> disciplinas = new HashSet<Disciplina>();
+		for(DisciplinaIncompativelDTO diDTO : list) {
+			disciplinas.add(Disciplina.find(diDTO.getDisciplina1Id()));
+			disciplinas.add(Disciplina.find(diDTO.getDisciplina2Id()));
+		}
+		
+		for(Disciplina d1 : disciplinas) {
+			for(Disciplina d2 : disciplinas) {
+				for(DisciplinaIncompativelDTO diDTO : list) {
+					if(diDTO.getDisciplina1Id().equals(d1.getId()) && diDTO.getDisciplina2Id().equals(d2.getId())) {
+						if(diDTO.getIncompativel()) {
+							Incompatibilidade incomp = new Incompatibilidade();
+							incomp.setDisciplina1(d1);
+							incomp.setDisciplina2(d2);
+							d1.getIncompatibilidades().add(incomp);
+						} else {
+							for(Incompatibilidade incomp : d1.getIncompatibilidades()) {
+								if(incomp.getDisciplina2().getId().equals(d2)) incomp.remove();
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	
+	private boolean containsDisciplinaIncompativelDTO(List<DisciplinaIncompativelDTO> list, Disciplina disciplina1, Disciplina disciplina2) {
+		for(DisciplinaIncompativelDTO disciplinaIncompativelDTO : list) {
+			if(disciplinaIncompativelDTO.getDisciplina1Id().equals(disciplina1.getId()) && disciplinaIncompativelDTO.getDisciplina2Id().equals(disciplina2.getId())) {
+				return true;
+			}
+			if(disciplinaIncompativelDTO.getDisciplina1Id().equals(disciplina2.getId()) && disciplinaIncompativelDTO.getDisciplina2Id().equals(disciplina1.getId())) {
+				return true;
+			}
+		}
+		return false;
 	}
 }

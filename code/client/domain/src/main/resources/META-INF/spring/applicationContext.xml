@@ -55,7 +55,7 @@
 	<bean class="com.gapso.trieda.domain.DeslocamentoUnidade" id="deslocamentoUnidadeBean" />
 	<bean class="com.gapso.trieda.domain.HorarioDisponivelCenario" id="horarioDisponivelCenarioBean" />
 	<bean class="com.gapso.trieda.domain.ProfessorDisciplina" id="professorDisciplinaBean" />
-	<bean class="com.gapso.trieda.domain.Compatibilidade" id="compatibilidadeBean" />
+	<bean class="com.gapso.trieda.domain.Incompatibilidade" id="incompatibilidadeBean" />
 	<bean class="com.gapso.trieda.domain.Equivalencia" id="equivalenciaBean" />
 	<bean class="com.gapso.trieda.domain.GrupoSala" id="grupoSalaBean" />
 	<bean class="com.gapso.trieda.domain.Curriculo" id="curriculoBean" />

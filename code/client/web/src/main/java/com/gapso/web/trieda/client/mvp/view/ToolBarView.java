@@ -65,6 +65,7 @@ public class ToolBarView extends MyComposite implements ToolBarPresenter.Display
 	private Button divisaoCreditosListDisciplinasBt;
 	private Button equivalenciasListDisciplinasBt;
 	private Button fixacoesListDisciplinasBt;
+	private Button incompatibilidadesListDisciplinasBt;
 	
 	// Professores
 	private Button professoresListprofessoresBt;
@@ -283,6 +284,9 @@ public class ToolBarView extends MyComposite implements ToolBarPresenter.Display
 		
 		fixacoesListDisciplinasBt = createButton("Fixações", "Fixações", Resources.DEFAULTS.fixacao24());
 		disciplinasToolBar.add(fixacoesListDisciplinasBt);
+		
+		incompatibilidadesListDisciplinasBt = createButton("Incompatibilidades", "Incompatibilidades", Resources.DEFAULTS.fixacao24());
+		disciplinasToolBar.add(incompatibilidadesListDisciplinasBt);
 	}
 	
 	private void createProfessores() {
@@ -406,6 +410,10 @@ public class ToolBarView extends MyComposite implements ToolBarPresenter.Display
 	@Override
 	public Button getFixacoesListDisciplinasButton() {
 		return fixacoesListDisciplinasBt;
+	}
+	@Override
+	public Button getIncompatibilidadesListDisciplinasButton() {
+		return incompatibilidadesListDisciplinasBt;
 	}
 	@Override
 	public Button getProfessoresListProfessoresButton() {

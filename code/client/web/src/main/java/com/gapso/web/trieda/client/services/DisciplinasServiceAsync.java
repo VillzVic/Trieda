@@ -6,9 +6,11 @@ import com.extjs.gxt.ui.client.data.BasePagingLoadConfig;
 import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
+import com.gapso.web.trieda.client.mvp.model.CurriculoDTO;
 import com.gapso.web.trieda.client.mvp.model.CurriculoDisciplinaDTO;
 import com.gapso.web.trieda.client.mvp.model.CursoDTO;
 import com.gapso.web.trieda.client.mvp.model.DisciplinaDTO;
+import com.gapso.web.trieda.client.mvp.model.DisciplinaIncompativelDTO;
 import com.gapso.web.trieda.client.mvp.model.FileModel;
 import com.gapso.web.trieda.client.mvp.model.GrupoSalaDTO;
 import com.gapso.web.trieda.client.mvp.model.HorarioDisponivelCenarioDTO;
@@ -36,5 +38,7 @@ public interface DisciplinasServiceAsync {
 	void getHorariosDisponiveis(DisciplinaDTO disciplinaDTO, AsyncCallback<List<HorarioDisponivelCenarioDTO>> callback);
 	void getDisciplinasByTreeSalas(SalaDTO salaDTO, OfertaDTO ofertaDTO, CurriculoDisciplinaDTO curriculoDisciplinaDTO, AsyncCallback<List<FileModel>> callback);
 	void getDisciplinasByTreeSalas(GrupoSalaDTO grupoSalaDTO, OfertaDTO ofertaDTO, CurriculoDisciplinaDTO curriculoDisciplinaDTO, AsyncCallback<List<FileModel>> callback);
+	void getDisciplinasIncompativeis(CurriculoDTO curriculoDTO, Integer periodo, AsyncCallback<List<DisciplinaIncompativelDTO>> callback);
+	void saveDisciplinasIncompativeis(List<DisciplinaIncompativelDTO> list, AsyncCallback<Void> callback);
 	
 }
