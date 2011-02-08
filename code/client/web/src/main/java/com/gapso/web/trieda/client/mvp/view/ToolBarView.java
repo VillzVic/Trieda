@@ -85,8 +85,8 @@ public class ToolBarView extends MyComposite implements ToolBarPresenter.Display
 		container = new LayoutContainer(new HBoxLayout());
 		
 		ContentPanel cenarioPanel = new ContentPanel();
-		cenarioPanel.setHeading("Cenário");
-		cenarioPanel.setWidth(128);
+		cenarioPanel.setHeading("Cenários");
+		cenarioPanel.setWidth(85);
 		
 		ContentPanel planejamentoPanel = new ContentPanel();
 		planejamentoPanel.setHeading("Planejamento");
@@ -317,8 +317,9 @@ public class ToolBarView extends MyComposite implements ToolBarPresenter.Display
 	
 	private void createCenario() {
 		cenarioToolBar.add(createButton("Novo", "Adicionar novo Cenário", Resources.DEFAULTS.cenarioAbrir24()));
-		cenarioToolBar.add(createButton("Clonar", "Clonar um cenário", Resources.DEFAULTS.cenarioClonar24()));
-		cenarioToolBar.add(createButton("Abrir", "Abrir um cenário", Resources.DEFAULTS.cenarioNovo24()));
+		cenarioToolBar.add(createButton("Listar", "Listar cenários", Resources.DEFAULTS.cenarioListar24()));
+//		cenarioToolBar.add(createButton("Clonar", "Clonar um cenário", Resources.DEFAULTS.cenarioClonar24()));
+//		cenarioToolBar.add(createButton("Abrir", "Abrir um cenário", Resources.DEFAULTS.cenarioNovo24()));
 	}
 	
 	private Button createButton(String text, String toolTip, ImageResource icon) {

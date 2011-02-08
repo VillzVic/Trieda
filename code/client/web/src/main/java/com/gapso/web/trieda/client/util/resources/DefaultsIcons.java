@@ -60,7 +60,7 @@ public interface DefaultsIcons extends ClientBundle  {
 	@Source("saida_curso_24.png") ImageResource saidaCurso24();
 	@Source("saida_sala_24.png") ImageResource saidaSala24();
 	@Source("cenario_abrir_24.png") ImageResource cenarioAbrir24();
-	@Source("cenario_clonar_24.png") ImageResource cenarioClonar24();
+	@Source("cenario_listar_24.png") ImageResource cenarioListar24();
 	@Source("cenario_novo_24.png") ImageResource cenarioNovo24();
 	
 	@Source("campus_16.png") ImageResource campus16();
@@ -71,7 +71,7 @@ public interface DefaultsIcons extends ClientBundle  {
 	@Source("deslocamento_16.png") ImageResource deslocamento16();
 	@Source("gerar_grade_16.png") ImageResource gerarGrade16();
 	@Source("cenario_16.png") ImageResource cenario16();
-	@Source("cenario_clonar_16.png") ImageResource cenarioClonar16();
+	@Source("cenario_listar_16.png") ImageResource cenarioClonar16();
 	@Source("cenario_abrir_16.png") ImageResource cenarioAbrir16();
 	@Source("parametro_planejamento_16.png") ImageResource parametroPlanejamento16();
 	@Source("unidade_16.png")  ImageResource unidade16();
