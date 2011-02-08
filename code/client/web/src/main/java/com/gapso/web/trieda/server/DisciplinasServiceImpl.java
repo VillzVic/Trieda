@@ -125,7 +125,7 @@ public class DisciplinasServiceImpl extends RemoteServiceServlet implements Disc
 		if(tipoDisciplinaDTO != null) {
 			tipoDisciplina = ConvertBeans.toTipoDisciplina(tipoDisciplinaDTO);
 		}
-		List<Disciplina> disciplinas = Disciplina.findByCodigoLikeAndNomeLikeAndTipo(nome, codigo, tipoDisciplina, config.getOffset(), config.getLimit(), orderBy);
+		List<Disciplina> disciplinas = Disciplina.findByCodigoLikeAndNomeLikeAndTipo(codigo, nome, tipoDisciplina, config.getOffset(), config.getLimit(), orderBy);
 		for(Disciplina disciplina : disciplinas) {
 			DisciplinaDTO disciplinaDTO = ConvertBeans.toDisciplinaDTO(disciplina);
 			list.add(disciplinaDTO);
