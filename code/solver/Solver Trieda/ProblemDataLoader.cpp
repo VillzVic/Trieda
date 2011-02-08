@@ -1869,7 +1869,7 @@ void ProblemDataLoader::associaDisciplinasSalas() {
          }
       }
    }
-
+  
    //// Para cada Campus
    //for(; itCpDiscs != problemData->cp_discs.end(); itCpDiscs++)
    //{

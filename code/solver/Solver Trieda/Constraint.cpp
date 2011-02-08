@@ -13,6 +13,7 @@ Constraint::Constraint()
    ToDo:
    Attributes should be initiated
    */
+
 }
 
 Constraint::Constraint(const Constraint &cons)
@@ -97,16 +98,16 @@ void Constraint::reset()
    tps = NULL;
 
    i = -1;
-   c = NULL;;
+   c = NULL;
 
    c_incompat = NULL;
 
-   b = NULL;;
-   d = NULL;;
+   b = NULL;
+   d = NULL;
 
    j = -1;
 
-   t = -1;;
+   t = -1;
 
    o = NULL;
 }
