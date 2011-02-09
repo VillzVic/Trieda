@@ -27,6 +27,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.roo.addon.entity.RooEntity;
 import org.springframework.roo.addon.javabean.RooJavaBean;
 import org.springframework.roo.addon.tostring.RooToString;
@@ -252,13 +253,26 @@ public class Disciplina implements Serializable {
         return em;
     }
 
+	public Incompatibilidade getIncompatibilidadeWith(Disciplina disciplina) {
+		Query q = entityManager().createQuery("SELECT o FROM Incompatibilidade o WHERE o.disciplina1 = :disciplina1 AND o.disciplina2 = :disciplina2");
+		q.setParameter("disciplina1", this);
+		q.setParameter("disciplina2", disciplina);
+		Incompatibilidade incomp = null;
+		try{
+			incomp = (Incompatibilidade) q.getSingleResult();
+		} catch (EmptyResultDataAccessException e) {
+			incomp = null;
+		}
+		return incomp;
+	}
+	
 	public static int count() {
-        return ((Number) entityManager().createQuery("select count(o) from Disciplina o").getSingleResult()).intValue();
+        return ((Number) entityManager().createQuery("SELECT COUNT(o) FROM Disciplina o").getSingleResult()).intValue();
     }
 
 	@SuppressWarnings("unchecked")
     public static List<Disciplina> findAll() {
-        return entityManager().createQuery("select o from Disciplina o").getResultList();
+        return entityManager().createQuery("SELECT o FROM Disciplina o").getResultList();
     }
 
 	public static Disciplina find(Long id) {
@@ -273,7 +287,7 @@ public class Disciplina implements Serializable {
 	@SuppressWarnings("unchecked")
     public static List<Disciplina> find(int firstResult, int maxResults, String orderBy) {
 		orderBy = (orderBy != null)? "ORDER BY o."+orderBy : "";
-        return entityManager().createQuery("select o from Disciplina o "+orderBy).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
+        return entityManager().createQuery("SELECT o FROM Disciplina o "+orderBy).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
 	
 	@SuppressWarnings("unchecked")

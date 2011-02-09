@@ -29,6 +29,7 @@ public class IncompatibilidadesView extends MyComposite implements Incompatibili
 	private CurriculoComboBox curriculoCB;
 	private SimpleComboBox<Integer> periodoCB;
 	private Button salvarBt;
+	private Button cancelarBt;
 	
 	private GTabItem tabItem;
 	
@@ -51,7 +52,14 @@ public class IncompatibilidadesView extends MyComposite implements Incompatibili
 		salvarBt = new Button();
 		salvarBt.setIcon(AbstractImagePrototype.create(Resources.DEFAULTS.save16()));
 		salvarBt.setToolTip("Salvar");
+		
+		cancelarBt = new Button();
+		cancelarBt.setIcon(AbstractImagePrototype.create(Resources.DEFAULTS.cancel16()));
+		cancelarBt.setToolTip("Cancelar");
+		
 		this.toolBar.add(salvarBt);
+		this.toolBar.add(cancelarBt);
+		
 		panel.setTopComponent(this.toolBar);
 	}
 	
@@ -91,6 +99,11 @@ public class IncompatibilidadesView extends MyComposite implements Incompatibili
 	@Override
 	public Button getSalvarButton() {
 		return salvarBt;
+	}
+	
+	@Override
+	public Button getCancelarButton() {
+		return cancelarBt;
 	}
 	
 	@Override

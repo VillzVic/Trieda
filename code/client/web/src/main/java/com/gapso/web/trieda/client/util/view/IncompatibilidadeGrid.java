@@ -122,7 +122,7 @@ public class IncompatibilidadeGrid extends ContentPanel {
 		}
 		return null;
 	}
-	
+
 	private boolean isInferior(int row, int col) {
 		return (row >= col-1);
 	}

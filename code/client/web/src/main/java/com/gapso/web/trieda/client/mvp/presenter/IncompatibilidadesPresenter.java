@@ -28,6 +28,7 @@ public class IncompatibilidadesPresenter implements Presenter {
 
 	public interface Display extends ITriedaI18nGateway {
 		Button getSalvarButton();
+		Button getCancelarButton();
 		CursoComboBox getCursoComboBox();
 		CurriculoComboBox getCurriculoComboBox();
 		SimpleComboBox<Integer> getPeriodoComboBox();
@@ -90,6 +91,19 @@ public class IncompatibilidadesPresenter implements Presenter {
 					@Override
 					public void onSuccess(Void result) {
 						Info.display("Salvo", "Incompatibilidade salvas com sucesso!");
+					}
+				});
+			}
+		});
+		display.getCancelarButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
+			@Override
+			public void componentSelected(ButtonEvent ce) {
+				Integer periodo = display.getPeriodoComboBox().getValue().getValue();
+				CurriculoDTO curriculoDTO = display.getCurriculoComboBox().getValue();
+				Services.disciplinas().getDisciplinasIncompativeis(curriculoDTO, periodo, new AbstractAsyncCallbackWithDefaultOnFailure<List<DisciplinaIncompativelDTO>>(display) {
+					@Override
+					public void onSuccess(List<DisciplinaIncompativelDTO> list) {
+						display.getGrid().updateList(list);
 					}
 				});
 			}
