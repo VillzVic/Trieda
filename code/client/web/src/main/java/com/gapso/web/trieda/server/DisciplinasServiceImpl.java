@@ -1,10 +1,8 @@
 package com.gapso.web.trieda.server;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.springframework.transaction.annotation.Transactional;
@@ -434,34 +432,6 @@ public class DisciplinasServiceImpl extends RemoteServiceServlet implements Disc
 				}
 			}
 		}
-		
-		
-		
-		
-//		Set<Disciplina> disciplinas = new HashSet<Disciplina>();
-//		for(DisciplinaIncompativelDTO diDTO : list) {
-//			disciplinas.add(Disciplina.find(diDTO.getDisciplina1Id()));
-//			disciplinas.add(Disciplina.find(diDTO.getDisciplina2Id()));
-//		}
-//		
-//		for(Disciplina d1 : disciplinas) {
-//			for(Disciplina d2 : disciplinas) {
-//				for(DisciplinaIncompativelDTO diDTO : list) {
-//					if(diDTO.getDisciplina1Id().equals(d1.getId()) && diDTO.getDisciplina2Id().equals(d2.getId())) {
-//						if(diDTO.getIncompativel()) {
-//							Incompatibilidade incomp = new Incompatibilidade();
-//							incomp.setDisciplina1(d1);
-//							incomp.setDisciplina2(d2);
-//							d1.getIncompatibilidades().add(incomp);
-//						} else {
-//							for(Incompatibilidade incomp : d1.getIncompatibilidades()) {
-//								if(incomp.getDisciplina2().getId().equals(d2)) incomp.remove();
-//							}
-//						}
-//					}
-//				}
-//			}
-//		}
 	}
 	
 	private boolean containsDisciplinaIncompativelDTO(List<DisciplinaIncompativelDTO> list, Disciplina disciplina1, Disciplina disciplina2) {

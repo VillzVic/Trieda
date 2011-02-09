@@ -50,6 +50,8 @@ public class SalasServiceImpl extends RemoteServiceServlet implements SalasServi
 		List<HorarioDisponivelCenario> list = new ArrayList<HorarioDisponivelCenario>(Sala.find(salaDTO.getId()).getHorarios());
 		List<HorarioDisponivelCenarioDTO> listDTO = ConvertBeans.toHorarioDisponivelCenarioDTO(list);
 
+		// ORDENANDO HORARIOS POR ORDEM DE TURNOS E HORARIOS
+		
 		Map<String, List<HorarioDisponivelCenarioDTO>> horariosTurnos = new HashMap<String, List<HorarioDisponivelCenarioDTO>>();
 		for(HorarioDisponivelCenarioDTO o : listDTO) {
 			List<HorarioDisponivelCenarioDTO> horarios = horariosTurnos.get(o.getTurnoString());
