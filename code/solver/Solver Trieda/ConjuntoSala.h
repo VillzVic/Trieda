@@ -122,6 +122,8 @@ public:
 
    int capTotalSalas()
    {
+      //return salas.begin()->second->capacidade;
+      
       int capSalas = 0;
 
       std::map<int/*Id Sala*/,Sala*>::iterator itSala =
