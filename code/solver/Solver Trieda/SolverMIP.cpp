@@ -289,7 +289,7 @@ int SolverMIP::solve()
 
    int status = 0;
 
-   //lp->setTimeLimit(60);
+   lp->setTimeLimit(30);
    //lp->setMIPStartAlg(METHOD_PRIMAL);
    //lp->setMIPEmphasis(4);
    lp->setMIPScreenLog(4);
@@ -598,6 +598,21 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
          it_x->at(4) << "\t" <<
          it_x->at(5) << std::endl;
    }
+
+   // ------------------
+   /* Imprimindo os cursos de acordo com cada oferta.
+   Gambiarra temporária para poder gerar o CSV pro Cesar.
+   */
+
+   std::cout << "\nId Oft. \t Id Curso \t Cod Curso" << std::endl;
+   ITERA_GGROUP(it_Oferta,problemData->ofertas,Oferta)
+   {
+      std::cout << it_Oferta->getId() << " \t " <<
+         it_Oferta->curso->getId() << " \t " <<
+         it_Oferta->curso->codigo << std::endl;
+   }
+
+   // ------------------
 
    // ==============================================================
    // ==============================================================
