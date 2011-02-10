@@ -11,6 +11,10 @@
 #include "SolverMIP.h"
 #include "ErrorHandler.h"
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
 // >>>
 GGroup<int/*ids de campus existentes*/> * AtendimentoCampus::campi_id = new GGroup<int>;
 

@@ -150,7 +150,11 @@ public:
    /* Listando os dias letivos de uma disciplina em relação a um conjunto de salas de mesmo tipo. */
    std::map<std::pair<int/*idDisc*/,int/*idSubCjtSala*/>, GGroup<int>/*Dias*/ > disc_Conjutno_Salas__Dias;
 
-   /* Listando os dias letivos de um bloco curricular em relação a um campus. */
+   /* Listando os dias letivos comuns entre um bloco curricular e um campus.
+
+      Quando tiver mais de um campus, pode acontecer que uma associação entre um bloco curricular 
+      que não pertence a um determinado campus seja criada. Arrumar isso depois.
+   */
    std::map<std::pair<int/*idBloco*/,int/*idCampus*/>, GGroup<int>/*Dias*/ > bloco_Campus_Dias;
 
    /* Listando as regras de créditos para cada possível valor de crédito. */

@@ -26,14 +26,16 @@ public:
    // Load the XML file
    void load();
 
-   void carregaDiasLetivosCampus();
+   /* Carrega os dias letivos dos Campus, Unidades e Salas. */
+   void carregaDiasLetivosCampusUnidadeSala();
 
+   /* Carrega os dias letivos de cada disciplina. */
    void carregaDiasLetivosDiscs();
-   void carregaDiasLetivosSala();
 
+   /* Cria os Conjuntos de Salas (classificadas de acordo com as respectivas capacidades) para cada Unidade. */
    void criaConjuntoSalasUnidade();
 
-   void criaConjuntoSalasCampus();
+   //void criaConjuntoSalasCampus();
 
    /* Establece os dias letivos comuns entre um bloco curricular e um campus. */
    void estabeleceDiasLetivosBlocoCampus();
@@ -44,17 +46,29 @@ public:
    /* Establece os dias letivos comuns entre os conjuntos de salas e suas disciplinas associadas. */
    void estabeleceDiasLetivosDiscCjtSala();
 
+   /* */
    void divideDisciplinas();
-   // >>> 14/10/2010
-   void armz_disc_curriculo();
-   // <<< 14/10/2010
-   void gera_refs();
+
+   /* */
    template<class T> 
    void find_and_set(int id, GGroup<T*>& haystack, T*& needle, bool print) ;
+
+   /* */
+   void gera_refs();
+
+   /* */
    void cria_blocos_curriculares();
+
+   /* */
    void estima_turmas();
+
+   /* */
    void print_stats();
+
+   /* */
    void cache();
+
+   /* */
    void print_csv();
 
 private:
@@ -83,7 +97,7 @@ private:
 
    void calculaTamanhoMedioSalasCampus();
 
-   // Armazena todas as disciplinas ofertadas em um campus.
+   /* Armazena todas as disciplinas ofertadas em um campus. */
    void relacionaCampusDiscs();
 
    /* Calcula a demanda máxima e demanda total da disciplina em questão. Esses valores

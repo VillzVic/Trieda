@@ -289,7 +289,7 @@ int SolverMIP::solve()
 
    int status = 0;
 
-   //lp->setTimeLimit(20);
+   //lp->setTimeLimit(60);
    //lp->setMIPStartAlg(METHOD_PRIMAL);
    //lp->setMIPEmphasis(4);
    lp->setMIPScreenLog(4);
