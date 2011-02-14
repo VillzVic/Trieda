@@ -176,7 +176,7 @@ public class DivisaoCredito implements Serializable {
 		Query q = entityManager().createQuery("SELECT o FROM DivisaoCredito o WHERE o.creditos = :credito");
 		q.setParameter("credito", credito);
 		try {
-			return (DivisaoCredito) q.getSingleResult();
+			return (DivisaoCredito) q.setMaxResults(1).getSingleResult();
 		} catch (EmptyResultDataAccessException e) { }
 		return null;
 	}

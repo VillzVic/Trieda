@@ -16,7 +16,7 @@ public class XMLGregorianCalendarUtil extends XMLGregorianCalendarImpl {
 		setYear(calendar.get(Calendar.YEAR));
 		setMonth(calendar.get(Calendar.MONTH) + 1);
 		setDay(calendar.get(Calendar.DAY_OF_MONTH));
-		setHour(calendar.get(Calendar.HOUR));
+		setHour(calendar.get(Calendar.HOUR_OF_DAY));
 		setMinute(calendar.get(Calendar.MINUTE));
 		setSecond(calendar.get(Calendar.SECOND));
 	}

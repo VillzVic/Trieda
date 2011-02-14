@@ -1,5 +1,8 @@
 package com.gapso.web.trieda.server.util;
 
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -133,10 +136,11 @@ public class SolverInput {
 		generateDemandas();
 		generateParametrosPlanejamento();
 		generateFixacoes();
+		ordenandoListas();
 	}
 	
 	@Transactional
-	public void generateCalendario() {
+	private void generateCalendario() {
 		ItemCalendario itemCalendario = of.createItemCalendario();
 		SemanaLetiva calendario = SemanaLetiva.findAll().get(0);
 		itemCalendario.setId(calendario.getId().intValue());
@@ -287,6 +291,8 @@ public class SolverInput {
 			itemCampus.setNome(campus.getNome());
 			itemCampus.setHorariosDisponiveis(createGrupoHorario(campus.getHorarios()));
 			
+			Set<String> salasJaAssociadasADisciplina = new HashSet<String>();
+			
 			// COLETANDO UNIDADES
 			GrupoUnidade grupoUnidade = of.createGrupoUnidade();
 			Set<Unidade> unidades = campus.getUnidades();
@@ -307,13 +313,15 @@ public class SolverInput {
 					itemSala.setNumero(sala.getNumero());
 					itemSala.setTipoSalaId(sala.getTipoSala().getId().intValue());
 					itemSala.setCapacidade(sala.getCapacidade());
-					itemSala.setHorariosDisponiveis(createGrupoHorario(sala.getHorarios()));
-					itemSala.setCreditosDisponiveis(createCreditosDisponiveis(itemSala.getHorariosDisponiveis()));
+//					itemSala.setHorariosDisponiveis(createGrupoHorario(sala.getHorarios()));
+					itemSala.setCreditosDisponiveis(createCreditosDisponiveis(createGrupoHorario(sala.getHorarios())));
 					
 					GrupoIdentificador grupoIdentificador = of.createGrupoIdentificador();
 					Set<CurriculoDisciplina> curriculoDisciplinas = sala.getCurriculoDisciplinas();
 					for(CurriculoDisciplina curriculoDisciplina : curriculoDisciplinas) {
-						grupoIdentificador.getId().add(curriculoDisciplina.getDisciplina().getId().intValue());
+						if(salasJaAssociadasADisciplina.add(curriculoDisciplina.getDisciplina().getId() + "-" +sala.getId())) {
+							grupoIdentificador.getId().add(curriculoDisciplina.getDisciplina().getId().intValue());
+						}
 					}
 					itemSala.setDisciplinasAssociadas(grupoIdentificador);
 					
@@ -437,10 +445,10 @@ public class SolverInput {
 			
 			GrupoIdentificador grupoIdentificadorEquivalencias = of.createGrupoIdentificador();
 			Set<Equivalencia> equivalencias = disciplina.getEquivalencias();
-			for(Equivalencia equivalencia : equivalencias) {
+//			for(Equivalencia equivalencia : equivalencias) {
 				// TODO Arrumar para eliminar mais de 1 disciplina
 //				grupoIdentificadorEquivalencias.getId().add(equivalencia.getElimina().getId().intValue());
-			}
+//			}
 			itemDisciplina.setDisciplinasEquivalentes(grupoIdentificadorEquivalencias);
 			
 			// TODO Criar o metodo de disciplinas Compatíveis
@@ -614,6 +622,67 @@ public class SolverInput {
 		triedaInput.setFixacoes(grupoFixacao);
 	}
 	
+	// ORDENANDO LISTAS
+	private void ordenandoListas() {
+		System.out.println("Inicio: Ordenando");
+		
+		// CAMPI
+		Collections.sort(triedaInput.getCampi().getCampus(), new Comparator<ItemCampus>() {
+			@Override
+			public int compare(ItemCampus o1, ItemCampus o2) {
+				return o1.getCodigo().compareToIgnoreCase(o2.getCodigo());
+			}
+		});
+		
+		for(ItemCampus itemCampus : triedaInput.getCampi().getCampus()) {
+			// Unidade
+			Collections.sort(itemCampus.getUnidades().getUnidade(), new Comparator<ItemUnidade>() {
+				@Override
+				public int compare(ItemUnidade o1, ItemUnidade o2) {
+					return o1.getCodigo().compareToIgnoreCase(o2.getCodigo());
+				}
+			});
+			
+			for(ItemUnidade itemUnidade : itemCampus.getUnidades().getUnidade()) {
+				// Sala
+				Collections.sort(itemUnidade.getSalas().getSala(), new Comparator<ItemSala>() {
+					@Override
+					public int compare(ItemSala o1, ItemSala o2) {
+						return o1.getCodigo().compareToIgnoreCase(o2.getCodigo());
+					}
+				});
+			}
+		}
+		
+		// DISCIPLINA
+		Collections.sort(triedaInput.getDisciplinas().getDisciplina(), new Comparator<ItemDisciplina>() {
+			@Override
+			public int compare(ItemDisciplina o1, ItemDisciplina o2) {
+				return o1.getCodigo().compareToIgnoreCase(o2.getCodigo());
+			}
+		});
+		
+		// DISCIPLINA
+		Collections.sort(triedaInput.getDemandas().getDemanda(), new Comparator<ItemDemanda>() {
+			@Override
+			public int compare(ItemDemanda o1, ItemDemanda o2) {
+				return o1.getQuantidade() - o2.getQuantidade();
+			}
+		});
+		
+		// HORARIO AULA
+		for(ItemTurno itemTurno : triedaInput.getCalendario().getTurnos().getTurno()) {
+			Collections.sort(itemTurno.getHorariosAula().getHorarioAula(), new Comparator<ItemHorarioAula>() {
+				@Override
+				public int compare(ItemHorarioAula o1, ItemHorarioAula o2) {
+					return o1.getInicio().compare(o2.getInicio());
+				}
+			});
+		}
+		
+		System.out.println("Fim: Ordenando");
+	}
+	
 	/* **************
 	 * MÉTODOS AUXILIARES
 	 */
@@ -621,29 +690,25 @@ public class SolverInput {
 	private GrupoHorario createGrupoHorario(Set<HorarioDisponivelCenario> horarios) {
 		
 		GrupoHorario grupoHorario = of.createGrupoHorario();
-		SemanaLetiva calendario = SemanaLetiva.findAll().get(0);
-		Set<HorarioAula> horariosAula = calendario.getHorariosAula();
-		for(HorarioAula horarioAula : horariosAula) {
-			Set<HorarioDisponivelCenario> horariosDisponiveisCenario = horarioAula.getHorariosDisponiveisCenario();
-			for(HorarioDisponivelCenario horarioDisponivelCenario : horariosDisponiveisCenario) {
-				Semanas semana = horarioDisponivelCenario.getSemana();
-				ItemHorario itemHorarioAux = null;
-				for(ItemHorario itemHorario : grupoHorario.getHorario()) {
-					if(itemHorario.getHorarioAulaId() == horarioAula.getId()) {
-						itemHorarioAux = itemHorario;
-						break;
-					}
+		for(HorarioDisponivelCenario horarioDisponivelCenario : horarios) {
+			HorarioAula horarioAula = horarioDisponivelCenario.getHorarioAula();
+			Semanas semana = horarioDisponivelCenario.getSemana();
+			ItemHorario itemHorarioAux = null;
+			for(ItemHorario itemHorario : grupoHorario.getHorario()) {
+				if(itemHorario.getHorarioAulaId() == horarioAula.getId()) {
+					itemHorarioAux = itemHorario;
+					break;
 				}
-				if(itemHorarioAux != null) {
-					itemHorarioAux.getDiasSemana().getDiaSemana().add(Semanas.toInt(semana));
-				} else {
-					itemHorarioAux = of.createItemHorario();
-					itemHorarioAux.setHorarioAulaId(horarioAula.getId().intValue());
-					itemHorarioAux.setTurnoId(horarioAula.getTurno().getId().intValue());
-					itemHorarioAux.setDiasSemana(of.createGrupoDiaSemana());
-					itemHorarioAux.getDiasSemana().getDiaSemana().add(Semanas.toInt(semana));
-					grupoHorario.getHorario().add(itemHorarioAux);
-				}
+			}
+			if(itemHorarioAux != null) {
+				itemHorarioAux.getDiasSemana().getDiaSemana().add(Semanas.toInt(semana));
+			} else {
+				itemHorarioAux = of.createItemHorario();
+				itemHorarioAux.setHorarioAulaId(horarioAula.getId().intValue());
+				itemHorarioAux.setTurnoId(horarioAula.getTurno().getId().intValue());
+				itemHorarioAux.setDiasSemana(of.createGrupoDiaSemana());
+				itemHorarioAux.getDiasSemana().getDiaSemana().add(Semanas.toInt(semana));
+				grupoHorario.getHorario().add(itemHorarioAux);
 			}
 		}
 		return grupoHorario;

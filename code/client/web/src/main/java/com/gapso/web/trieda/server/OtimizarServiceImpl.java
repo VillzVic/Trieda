@@ -38,8 +38,10 @@ import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 public class OtimizarServiceImpl extends RemoteServiceServlet implements OtimizarService {
 
 	private static final long serialVersionUID = 5716065588362358065L;
-//	private static final String linkSolver = "http://offspring:8080/SolverWS";
-	private static final String linkSolver = "http://localhost:3402/SolverWS";
+//	private static final String linkSolver = "http://offspring:8080/SolverWS";    // SERVIDOR // OFFSPRING
+//	private static final String linkSolver = "http://192.168.1.59:8080/SolverWS"; // MAQUINA DO MÁRIO // CREEDENCE
+	private static final String linkSolver = "http://192.168.1.32:8080/SolverWS"; // MAQUINA DO CLAUDIO // NIRVANA
+//	private static final String linkSolver = "http://localhost:3402/SolverWS";    // MAQUINA DESENVOLVIMENTO (CLAUDIO)
 
 	@Override
 	@Transactional
@@ -54,7 +56,7 @@ public class OtimizarServiceImpl extends RemoteServiceServlet implements Otimiza
 			JAXBContext jc = JAXBContext.newInstance("com.gapso.web.trieda.server.xml.input");
 			Marshaller m = jc.createMarshaller();
 			m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-			m.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
+			m.setProperty(Marshaller.JAXB_ENCODING, "ISO-8859-1");
 			m.marshal(triedaInput, temp);
 			fileBytes = temp.toByteArray();
 			
