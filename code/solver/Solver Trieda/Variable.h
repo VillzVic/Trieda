@@ -27,10 +27,10 @@ public:
       V_SLACK_DIST_CRED_DIA_INFERIOR = 13,		// fcm_{i,d,tps,t}
       V_ABERTURA_SUBBLOCO_DE_BLC_DIA_CAMPUS = 14,		   // r_{b,t,cp}
 
-      V_SLACK_ALOC_ALUNOS_CURSO_INCOMPAT = 15,   // bs_{i,d,c,cp}
+      V_SLACK_ALOC_ALUNOS_CURSO_INCOMPAT = 15,   // bs_{i,d,c,c',cp}
       V_SLACK_DEMANDA = 16, // fd_{d,o}
-	  V_COMBINACAO_DIVISAO_CREDITO = 17, // m{i,d,k}
-	  V_SLACK_COMBINACAO_DIVISAO_CREDITO = 18 // fk{i,d,k}
+      V_COMBINACAO_DIVISAO_CREDITO = 17, // m{i,d,k}
+      V_SLACK_COMBINACAO_DIVISAO_CREDITO = 18 // fk{i,d,k}
 
    };
 
@@ -62,7 +62,7 @@ public:
    ConjuntoSala* getSubCjtSala() const { return tps; }
 
    int getTurma() const { return i; }
-   
+
    Curso* getCurso() const { return c; }
 
    Curso* getCursoIncompat() const { return c_incompat; }

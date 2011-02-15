@@ -1523,6 +1523,12 @@ void ProblemDataLoader::estima_turmas()
          }
       }
    }
+
+
+   //ITERA_GGROUP(it_Disc,problemData->disciplinas,Disiciplina)
+   //{
+   //   std::cout << "Disc: " << it_Disc->
+   //}
 }
 
 //void ProblemDataLoader::estima_turmas() {

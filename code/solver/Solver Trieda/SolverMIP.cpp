@@ -289,7 +289,7 @@ int SolverMIP::solve()
 
    int status = 0;
 
-   lp->setTimeLimit(30);
+   lp->setTimeLimit(60);
    //lp->setMIPStartAlg(METHOD_PRIMAL);
    //lp->setMIPEmphasis(4);
    lp->setMIPScreenLog(4);
@@ -371,11 +371,12 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
 
           key = std::make_pair(v->getTurma(),id_disc);
 
-          cout << "Oferta de " << v->getValue() << 
-             " creditos da disciplina " << v->getDisciplina()->codigo
-             << " para a turma " << v->getTurma()
-             << " no dia " << v->getDia() << " para alguma de sala com capacidade " <<
-             v->getSubCjtSala()->getId() << std::endl;
+          //cout << "Oferta de " << v->getValue() << 
+          //   " creditos da disciplina " << v->getDisciplina()->codigo
+          //   << " para a turma " << v->getTurma()
+          //   << " no dia " << v->getDia() << " para alguma de sala com capacidade " <<
+          //   v->getSubCjtSala()->getId() << std::endl;
+
           if(x[key].size() == 0) 
           {
              x[key] = std::vector<std::pair<int,std::pair<int,int> > >
@@ -416,10 +417,10 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
        case Variable::V_ALUNOS:
           id_disc = v->getDisciplina()->getId();
 
-          cout << "Oferecimento de " << v->getValue() << 
-             " vagas da disciplina " << v->getDisciplina()->codigo
-             << " para a turma " << v->getTurma()
-             << " do curso " << v->getOferta()->curso->codigo << std::endl;
+          //cout << "Oferecimento de " << v->getValue() << 
+          //   " vagas da disciplina " << v->getDisciplina()->codigo
+          //   << " para a turma " << v->getTurma()
+          //   << " do curso " << v->getOferta()->curso->codigo << std::endl;
 
           key_alunos.push_back(v->getTurma());
           key_alunos.push_back(id_disc);
@@ -1007,10 +1008,11 @@ int SolverMIP::cria_variaveis()
    numVarsAnterior = num_vars;
 #endif
 
-   num_vars += cria_variavel_de_folga_aloc_alunos_curso_incompat(); // bs
+   //num_vars += cria_variavel_de_folga_aloc_alunos_curso_incompat(); // bs
 
 #ifdef PRINT_cria_variaveis
-   std::cout << "numVars \"bs\": " << (num_vars - numVarsAnterior) << std::endl;
+   //std::cout << "numVars \"bs\": " << (num_vars - numVarsAnterior) << std::endl;
+   std::cout << "numVars \"bs\": NAO ESTA SENDO CRIADA DEVIDO A ERROS DE IMPLEMENTACAO (A Inst. UNI-BH nao precisa dessa variavel implementada)." << std::endl;
    numVarsAnterior = num_vars;
 #endif
 
@@ -2365,10 +2367,11 @@ int SolverMIP::cria_restricoes(void)
    numRestAnterior = restricoes;
 #endif
 
-   restricoes += cria_restricao_alunos_cursos_dif();			// Restricao 1.2.22
+   //restricoes += cria_restricao_alunos_cursos_dif();			// Restricao 1.2.22
 
 #ifdef PRINT_cria_restricoes
-   std::cout << "numRest \"1.2.22\": " << (restricoes - numRestAnterior) << std::endl;
+   //std::cout << "numRest \"1.2.22\": " << (restricoes - numRestAnterior) << std::endl;
+   std::cout << "numVars \"1.2.22\": NAO ESTA SENDO CRIADA DEVIDO A ERROS DE IMPLEMENTACAO (A Inst. UNI-BH nao precisa dessa restricao implementada)." << std::endl;
    numRestAnterior = restricoes;
 #endif
 
