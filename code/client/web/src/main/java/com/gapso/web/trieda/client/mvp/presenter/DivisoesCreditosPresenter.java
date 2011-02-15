@@ -49,7 +49,7 @@ public class DivisoesCreditosPresenter implements Presenter {
 		RpcProxy<PagingLoadResult<DivisaoCreditoDTO>> proxy = new RpcProxy<PagingLoadResult<DivisaoCreditoDTO>>() {
 			@Override
 			public void load(Object loadConfig, AsyncCallback<PagingLoadResult<DivisaoCreditoDTO>> callback) {
-				service.getList((PagingLoadConfig)loadConfig, callback);
+				service.getList(cenario, (PagingLoadConfig)loadConfig, callback);
 			}
 		};
 		display.setProxy(proxy);

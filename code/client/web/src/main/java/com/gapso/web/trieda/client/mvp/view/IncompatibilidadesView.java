@@ -43,7 +43,7 @@ public class IncompatibilidadesView extends MyComposite implements Incompatibili
 
 	private void initUI() {
 		panel = new ContentPanel(new RowLayout(Orientation.VERTICAL));
-		panel.setHeading("Master Data » Vincular Áreas de Titulação");
+		panel.setHeading("Master Data » Incompatibilidades");
 		panel.setBodyStyle("background-color: transparent;");
 	}
 
@@ -64,7 +64,7 @@ public class IncompatibilidadesView extends MyComposite implements Incompatibili
 	}
 	
 	private void createTabItem() {
-		tabItem = new GTabItem("Vincular Áreas de Titulação", Resources.DEFAULTS.areaTitulacao16());
+		tabItem = new GTabItem("Incompatibilidades", Resources.DEFAULTS.areaTitulacao16());
 		tabItem.setContent(panel);
 	}
 	

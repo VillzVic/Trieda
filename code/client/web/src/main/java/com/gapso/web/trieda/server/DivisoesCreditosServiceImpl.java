@@ -2,11 +2,14 @@ package com.gapso.web.trieda.server;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import com.extjs.gxt.ui.client.data.BasePagingLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
+import com.gapso.trieda.domain.Cenario;
 import com.gapso.trieda.domain.DivisaoCredito;
+import com.gapso.web.trieda.client.mvp.model.CenarioDTO;
 import com.gapso.web.trieda.client.mvp.model.DivisaoCreditoDTO;
 import com.gapso.web.trieda.client.services.DivisoesCreditosService;
 import com.gapso.web.trieda.server.util.ConvertBeans;
@@ -25,9 +28,10 @@ public class DivisoesCreditosServiceImpl extends RemoteServiceServlet implements
 	}
 	
 	@Override
-	public PagingLoadResult<DivisaoCreditoDTO> getList(PagingLoadConfig config) {
+	public PagingLoadResult<DivisaoCreditoDTO> getList(CenarioDTO cenarioDTO, PagingLoadConfig config) {
+		Cenario cenario = Cenario.find(cenarioDTO.getId());
 		List<DivisaoCreditoDTO> list = new ArrayList<DivisaoCreditoDTO>();
-		List<DivisaoCredito> divisoesCreditos = DivisaoCredito.findAll();
+		Set<DivisaoCredito> divisoesCreditos = cenario.getDivisoesCredito();
 		
 		for(DivisaoCredito divisaoCredito : divisoesCreditos) {
 			list.add(ConvertBeans.toDivisaoCreditoDTO(divisaoCredito));

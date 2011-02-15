@@ -82,7 +82,7 @@ public class Professor implements Serializable {
     private Integer creditoAnterior;
 
     @Column(name = "PRF_VALOR_CREDITO")
-    @Digits(integer = 4, fraction = 2)
+    @Digits(integer = 6, fraction = 2)
     private Double valorCredito;
 
     @ManyToMany

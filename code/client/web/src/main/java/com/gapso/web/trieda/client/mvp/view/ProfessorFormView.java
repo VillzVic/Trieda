@@ -132,7 +132,7 @@ public class ProfessorFormView extends MyComposite implements ProfessorFormPrese
 		valorCreditoNF.setFieldLabel("Crédito (R$)");
 		valorCreditoNF.setAllowBlank(false);
 		valorCreditoNF.setAllowDecimals(true);
-		valorCreditoNF.setMaxValue(99);
+		valorCreditoNF.setMaxValue(999999);
 		valorCreditoNF.setEmptyText("Somente números");
 		formPanel.add(valorCreditoNF, formData);
 		

@@ -78,13 +78,13 @@ public class ToolBarPresenter implements Presenter {
 		Button getCurriculosListDisciplinasButton();
 		Button getDivisaoCreditosListDisciplinasButton();
 		Button getEquivalenciasListDisciplinasButton();
-		Button getFixacoesListDisciplinasButton();
 		Button getIncompatibilidadesListDisciplinasButton();
 		
 		Button getProfessoresListProfessoresButton();
 		Button getProfessoresDisciplinaListProfessoresButton();
 		Button getProfessoresCampusListprofessoresBt();
 		
+		Button getFixacoesListButton();
 		Button getParametrosButton();
 		Button getRelatorioVisaoSalaButton();
 		Button getRelatorioVisaoCursoButton();
@@ -247,7 +247,7 @@ public class ToolBarPresenter implements Presenter {
 				presenter.go(gTab);
 			}
 		});
-		toolBar.getFixacoesListDisciplinasButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
+		toolBar.getFixacoesListButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
 			@Override
 			public void componentSelected(ButtonEvent ce) {
 				Presenter presenter = new FixacoesPresenter(masterData, new FixacoesView());

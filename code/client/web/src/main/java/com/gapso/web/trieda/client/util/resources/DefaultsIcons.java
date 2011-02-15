@@ -16,6 +16,9 @@ public interface DefaultsIcons extends ClientBundle  {
 	@Source("save_16.png") ImageResource save16();
 	@Source("cancel_16.png") ImageResource cancel16();
 	
+	@Source("compativel.png") ImageResource compativel();
+	@Source("incompativel.png") ImageResource incompativel();
+	
 	@Source("server_warning_16.png") ImageResource serverWarning16();
 	@Source("warning_16.png") ImageResource warning16();
 	@Source("error_16.png") ImageResource error16();

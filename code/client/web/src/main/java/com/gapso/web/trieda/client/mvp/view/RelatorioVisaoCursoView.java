@@ -88,6 +88,7 @@ public class RelatorioVisaoCursoView extends MyComposite implements RelatorioVis
 		
 		periodoCB = new SimpleComboBox<Integer>();
 		periodoCB.setFieldLabel("Período");
+		periodoCB.setEditable(false);
 		right.add(periodoCB, formData);
 		
 		turnoCB = new TurnoComboBox();

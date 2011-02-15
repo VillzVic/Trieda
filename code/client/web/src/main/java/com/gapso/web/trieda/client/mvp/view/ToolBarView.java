@@ -64,7 +64,6 @@ public class ToolBarView extends MyComposite implements ToolBarPresenter.Display
 	private Button associarDisciplinasSalasListDisciplinasBt;
 	private Button divisaoCreditosListDisciplinasBt;
 	private Button equivalenciasListDisciplinasBt;
-	private Button fixacoesListDisciplinasBt;
 	private Button incompatibilidadesListDisciplinasBt;
 	
 	// Professores
@@ -73,6 +72,7 @@ public class ToolBarView extends MyComposite implements ToolBarPresenter.Display
 	private Button professoresCampusListprofessoresBt;
 	
 	// Cenário
+	private Button fixacoesListBt;
 	private Button parametrosBt;
 	private Button relatorioVisaoSalaBt;
 	private Button relatorioVisaoCursoBt;
@@ -90,7 +90,7 @@ public class ToolBarView extends MyComposite implements ToolBarPresenter.Display
 		
 		ContentPanel planejamentoPanel = new ContentPanel();
 		planejamentoPanel.setHeading("Planejamento");
-		planejamentoPanel.setWidth(250);
+		planejamentoPanel.setWidth(305);
 		
 		ContentPanel masterDataPanel = new ContentPanel();
 		masterDataPanel.setHeaderVisible(false);
@@ -282,9 +282,6 @@ public class ToolBarView extends MyComposite implements ToolBarPresenter.Display
 		equivalenciasListDisciplinasBt = createButton("Equivalências", "Equivalências", Resources.DEFAULTS.equivalencia24());
 		disciplinasToolBar.add(equivalenciasListDisciplinasBt);
 		
-		fixacoesListDisciplinasBt = createButton("Fixações", "Fixações", Resources.DEFAULTS.fixacao24());
-		disciplinasToolBar.add(fixacoesListDisciplinasBt);
-		
 		incompatibilidadesListDisciplinasBt = createButton("Incompatibilidades", "Incompatibilidades", Resources.DEFAULTS.fixacao24());
 		disciplinasToolBar.add(incompatibilidadesListDisciplinasBt);
 	}
@@ -305,6 +302,9 @@ public class ToolBarView extends MyComposite implements ToolBarPresenter.Display
 	}
 	
 	private void createPlanejamento() {
+		fixacoesListBt = createButton("Fixações", "Fixações", Resources.DEFAULTS.fixacao24());
+		planejamentoToolBar.add(fixacoesListBt);
+		
 		parametrosBt = createButton("Parâmetros de<br />Planejamento", "Parâmetros de Planejamento", Resources.DEFAULTS.parametroPlanejamento24());
 		planejamentoToolBar.add(parametrosBt);
 		
@@ -409,8 +409,8 @@ public class ToolBarView extends MyComposite implements ToolBarPresenter.Display
 		return equivalenciasListDisciplinasBt;
 	}
 	@Override
-	public Button getFixacoesListDisciplinasButton() {
-		return fixacoesListDisciplinasBt;
+	public Button getFixacoesListButton() {
+		return fixacoesListBt;
 	}
 	@Override
 	public Button getIncompatibilidadesListDisciplinasButton() {

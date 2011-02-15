@@ -17,6 +17,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.Table;
@@ -53,7 +54,7 @@ public class Disciplina implements Serializable {
     @JoinColumn(name = "TDI_ID")
     private TipoDisciplina tipoDisciplina;
 
-    @ManyToOne(cascade = CascadeType.ALL, targetEntity = DivisaoCredito.class)
+    @OneToOne(cascade = CascadeType.ALL, targetEntity = DivisaoCredito.class)
     @JoinColumn(name = "DCR_ID")
     private DivisaoCredito divisaoCreditos;
 

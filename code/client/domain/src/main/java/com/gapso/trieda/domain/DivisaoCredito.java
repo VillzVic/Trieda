@@ -13,6 +13,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.Table;
@@ -87,6 +88,9 @@ public class DivisaoCredito implements Serializable {
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
     private Set<Cenario> cenario = new HashSet<Cenario>();
 
+    @OneToOne(cascade = CascadeType.ALL, targetEntity = Disciplina.class, mappedBy = "divisaoCreditos")
+    private Disciplina disciplina;
+    
 	@PersistenceContext
     transient EntityManager entityManager;
 
@@ -162,11 +166,6 @@ public class DivisaoCredito implements Serializable {
         return ((Number) entityManager().createQuery("select count(o) from DivisaoCredito o").getSingleResult()).intValue();
     }
 
-	@SuppressWarnings("unchecked")
-    public static List<DivisaoCredito> findAll() {
-        return entityManager().createQuery("SELECT o FROM DivisaoCredito o ORDER BY o.creditos ASC").getResultList();
-    }
-
 	public static DivisaoCredito find(Long id) {
         if (id == null) return null;
         return entityManager().find(DivisaoCredito.class, id);
@@ -198,6 +197,7 @@ public class DivisaoCredito implements Serializable {
         sb.append("Dia5: ").append(getDia5()).append(", ");
         sb.append("Dia6: ").append(getDia6()).append(", ");
         sb.append("Dia7: ").append(getDia7()).append(", ");
+        sb.append("Disciplina: ").append(getDisciplina()).append(", ");
         sb.append("Cenario: ").append(getCenario() == null ? "null" : getCenario().size());
         return sb.toString();
     }
@@ -273,6 +273,14 @@ public class DivisaoCredito implements Serializable {
 	public void setCenario(Set<Cenario> cenario) {
         this.cenario = cenario;
     }
+
+	public Disciplina getDisciplina() {
+		return disciplina;
+	}
+
+	public void setDisciplina(Disciplina disciplina) {
+		this.disciplina = disciplina;
+	}
 
 	private static final long serialVersionUID = 4185000264330934580L;
 }

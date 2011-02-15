@@ -56,6 +56,7 @@ public class RelatorioVisaoCursoPresenter implements Presenter {
 			public void selectionChanged(SelectionChangedEvent<CurriculoDTO> se) {
 				final CurriculoDTO curriculoDTO = se.getSelectedItem();
 				display.getPeriodoComboBox().getStore().removeAll();
+				display.getPeriodoComboBox().setValue(null);
 				display.getPeriodoComboBox().setEnabled(curriculoDTO != null);
 				if(curriculoDTO != null) {
 					CurriculosServiceAsync service = Services.curriculos();

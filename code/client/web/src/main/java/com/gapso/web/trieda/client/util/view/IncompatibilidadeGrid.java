@@ -45,8 +45,12 @@ public class IncompatibilidadeGrid extends ContentPanel {
 			@Override
 			public Object render(BaseModel model, String property, ColumnData config, final int row, final int col, ListStore<BaseModel> store, Grid<BaseModel> grid) {
 				if(col == 0) return stringColumns.get(row);
-				if(isInferior(row, col)) return "";
-				ToggleImageButton tb = new ToggleImageButton(getModel(row, col).getIncompativel(), Resources.DEFAULTS.save16(), Resources.DEFAULTS.cancel16());;
+				if(isInferior(row, col)) {
+					config.style = "background-color: #EEEFFF; height: 28px;";
+					return "";
+				}
+				ToggleImageButton tb = new ToggleImageButton(getModel(row, col).getIncompativel(), Resources.DEFAULTS.compativel(), Resources.DEFAULTS.incompativel());;
+				tb.setWidth(69);
 				tb.addSelectionListener(new SelectionListener<ButtonEvent>() {
 					@Override
 					public void componentSelected(ButtonEvent ce) {

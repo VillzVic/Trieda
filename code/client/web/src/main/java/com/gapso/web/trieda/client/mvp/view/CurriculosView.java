@@ -82,7 +82,7 @@ public class CurriculosView extends MyComposite implements CurriculosPresenter.D
 		list.add(new ColumnConfig("cursoString", "Curso", 250));
 		list.add(new ColumnConfig("codigo", "Código", 100));
 		list.add(new ColumnConfig("descricao", "Descricao", 100));
-		list.add(new ColumnConfig("periodos", "Número de períodos", 110));
+		list.add(new ColumnConfig("periodos", "Períodos", 110));
 		return list;
 	}
 

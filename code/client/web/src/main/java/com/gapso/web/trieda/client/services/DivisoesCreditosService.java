@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
+import com.gapso.web.trieda.client.mvp.model.CenarioDTO;
 import com.gapso.web.trieda.client.mvp.model.DivisaoCreditoDTO;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
@@ -15,7 +16,7 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 public interface DivisoesCreditosService extends RemoteService {
 
 	DivisaoCreditoDTO getDivisaoCredito(Long id);
-	PagingLoadResult<DivisaoCreditoDTO> getList(PagingLoadConfig config);
+	PagingLoadResult<DivisaoCreditoDTO> getList(CenarioDTO cenarioDTO, PagingLoadConfig config);
 	void save(DivisaoCreditoDTO divisaoCreditoDTO);
 	void remove(List<DivisaoCreditoDTO> divisaoCreditoDTOList);
 
