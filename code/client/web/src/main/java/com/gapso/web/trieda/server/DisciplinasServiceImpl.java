@@ -270,7 +270,7 @@ public class DisciplinasServiceImpl extends RemoteServiceServlet implements Disc
 		List<CurriculoDisciplina> curriculoDisciplinas = CurriculoDisciplina.findBy(sala, oferta, curriculoDisciplinaDTO.getPeriodo());
 		for(CurriculoDisciplina curriculoDisciplina : curriculoDisciplinas) {
 			CurriculoDisciplinaDTO dto = ConvertBeans.toCurriculoDisciplinaDTO(curriculoDisciplina); 
-			dto.setName(dto.getDisciplinaString());
+			dto.setName(dto.getDisciplinaCodigoNomeString());
 			dto.setPath(curriculoDisciplinaDTO.getPath() + dto.getDisciplinaString() + "/");
 			dto.setFolha(true);
 			list.add(dto);
@@ -401,9 +401,9 @@ public class DisciplinasServiceImpl extends RemoteServiceServlet implements Disc
 				DisciplinaIncompativelDTO di = new DisciplinaIncompativelDTO();
 				if(containsDisciplinaIncompativelDTO(list, cd1.getDisciplina(), cd2.getDisciplina())) continue;
 				di.setDisciplina1Id(cd1.getDisciplina().getId());
-				di.setDisciplina1String(cd1.getDisciplina().getCodigo());
+				di.setDisciplina1String(cd1.getDisciplina().getCodigo() + " (" + cd1.getDisciplina().getNome() + ")");
 				di.setDisciplina2Id(cd2.getDisciplina().getId());
-				di.setDisciplina2String(cd2.getDisciplina().getCodigo());
+				di.setDisciplina2String(cd2.getDisciplina().getCodigo() + " (" + cd2.getDisciplina().getNome() + ")");
 				di.setIncompativel(cd1.getDisciplina().isIncompativelCom(cd2.getDisciplina()));
 				
 				list.add(di);

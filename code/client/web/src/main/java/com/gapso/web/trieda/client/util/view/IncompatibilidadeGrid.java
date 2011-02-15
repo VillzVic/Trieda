@@ -100,13 +100,12 @@ public class IncompatibilidadeGrid extends ContentPanel {
 	}
 
 	private CheckColumnConfig createColumnConfig(String title, boolean firstCol) {
-		CheckColumnConfig column = new CheckColumnConfig("", title, 100);
+		CheckColumnConfig column = new CheckColumnConfig("", title, 150);
 		column.setMenuDisabled(true);
 		column.setSortable(false);
 		column.setEditor(new CellEditor(new CheckBox()));
 		column.setRenderer(buttonRenderer);
 		if(firstCol) {
-			column.setResizable(false);
 			column.setStyle("background-color: #EBECEE;");
 		}
 		return column;
