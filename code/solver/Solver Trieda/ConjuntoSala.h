@@ -104,20 +104,23 @@ public:
       return totMaxCreds;
    }
 
-   int credsMaiorSala(int dia)
+   /*
+   Retorna o máximo de créditos para um dado dia.
+   */
+   int maxCredsDia(int dia)
    {
-      int cdtMSl = 0;
+      int max_Creds_Dia = 0;
 
-      std::map<int/*Id Sala*/,Sala*>::iterator itSala =
+      std::map<int/*Id Sala*/,Sala*>::iterator it_Sala =
          salas.begin();
 
-      for(; itSala != salas.end(); itSala++)
+      for(; it_Sala != salas.end(); it_Sala++)
       {
-         if(cdtMSl < itSala->second->max_creds(dia))
-         { cdtMSl = itSala->second->max_creds(dia); }
+         if(max_Creds_Dia < it_Sala->second->max_creds(dia))
+         { max_Creds_Dia = it_Sala->second->max_creds(dia); }
       }
 
-      return cdtMSl;
+      return max_Creds_Dia;
    }
 
    int capTotalSalas()

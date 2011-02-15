@@ -45,7 +45,9 @@ void ProblemDataLoader::load()
    divideDisciplinas();
 
 
-   referenciaCampus();
+   //referenciaCampus();
+   referenciaCampusUnidadesSalas();
+
    referenciaDisciplinas();
    referenciaOfertas();
 
@@ -87,7 +89,7 @@ void ProblemDataLoader::load()
 
    // ---------
    estabeleceDiasLetivosDisciplinasSalas();
-   
+
    // ---------
    estabeleceDiasLetivosDiscCjtSala();
 
@@ -310,10 +312,10 @@ void ProblemDataLoader::estabeleceDiasLetivosBlocoCampus()
          else
          {
             /*
-               PS: Quando tiver mais de um campus, pode acontecer que uma associação entre um bloco curricular 
-               que não pertence a um determinado campus seja criada. Arrumar isso depois.
-               Ou seja, essa checagem só serve para quando se tem 1 campus. Se tiver mais de um, quando cair aqui,
-               nada pode-se afirmar sobre a corretude da instância.
+            PS: Quando tiver mais de um campus, pode acontecer que uma associação entre um bloco curricular 
+            que não pertence a um determinado campus seja criada. Arrumar isso depois.
+            Ou seja, essa checagem só serve para quando se tem 1 campus. Se tiver mais de um, quando cair aqui,
+            nada pode-se afirmar sobre a corretude da instância.
             */
             std::cout << "Warnning: Bloco Curricular e Campus Incompativeis. (ProblemDataLoader::estabeleceDiasLetivosBlocoCampus())" << std::endl;
             exit(1);
@@ -932,12 +934,30 @@ void ProblemDataLoader::divideDisciplinas()
 
 }
 
-void ProblemDataLoader::referenciaCampus()
+void ProblemDataLoader::referenciaCampusUnidadesSalas()
 {
-   ITERA_GGROUP(it_cp,problemData->campi,Campus) {
+   ITERA_GGROUP(it_cp,problemData->campi,Campus)
+   {
       problemData->refCampus[it_cp->getId()] = *it_cp;
+
+      ITERA_GGROUP(it_Unidade,it_cp->unidades,Unidade)
+      {
+         problemData->refUnidade[it_Unidade->getId()] = *it_Unidade;
+
+         ITERA_GGROUP(it_Sala,it_Unidade->salas,Sala)
+         {
+            problemData->refSala[it_Sala->getId()] = *it_Sala;
+         }
+      }
    }
 }
+
+//void ProblemDataLoader::referenciaCampus()
+//{
+//   ITERA_GGROUP(it_cp,problemData->campi,Campus) {
+//      problemData->refCampus[it_cp->getId()] = *it_cp;
+//   }
+//}
 
 void ProblemDataLoader::referenciaDisciplinas()
 {
@@ -1234,7 +1254,11 @@ void ProblemDataLoader::cria_blocos_curriculares()
                // Verificando a existência do bloco curricular para a disciplina em questão.
                for(;it_bc != problemData->blocos.end(); ++it_bc) 
                {
-                  if(it_bc->getId() == id_Bloco)
+                  //if(it_bc->getId() == id_Bloco)
+                  if(it_bc->campus == *it_campi &&
+                     it_bc->curso == *it_curso &&
+                     it_bc->curriculo == *it_curr &&
+                     it_bc->periodo == periodo)
                   {
                      it_bc->disciplinas.add(disc);
 
@@ -1501,29 +1525,32 @@ void ProblemDataLoader::estima_turmas()
          {
             if(problemData->refDisciplinas[*itDisc]->max_alunos_p > 0)
             {
-               int numTurmas = (demDisc / problemData->refDisciplinas[*itDisc]->max_alunos_p);
-               problemData->refDisciplinas[*itDisc]->num_turmas = (numTurmas > 0 ? numTurmas : 1);
+               //int numTurmas = (demDisc / problemData->refDisciplinas[*itDisc]->max_alunos_p);
+               int numTurmas = (demDisc / 25);
+               problemData->refDisciplinas[*itDisc]->num_turmas = (numTurmas > 0 ? numTurmas + 2 : 2);
             }
             else
             {
-               problemData->refDisciplinas[*itDisc]->num_turmas = (demDisc / tamMedSalasCP) + 2;
+               //problemData->refDisciplinas[*itDisc]->num_turmas = (demDisc / tamMedSalasCP) + 2;
+               problemData->refDisciplinas[*itDisc]->num_turmas = (demDisc / 25) + 2;
             }
          }
          else
          {
             if(problemData->refDisciplinas[*itDisc]->max_alunos_p > 0)
             {
-               int numTurmas = (demDisc / problemData->refDisciplinas[*itDisc]->max_alunos_t);
-               problemData->refDisciplinas[*itDisc]->num_turmas = (numTurmas > 0 ? numTurmas : 1);                 
+               //int numTurmas = (demDisc / problemData->refDisciplinas[*itDisc]->max_alunos_t);
+               int numTurmas = (demDisc / 50);
+               problemData->refDisciplinas[*itDisc]->num_turmas = (numTurmas > 0 ? numTurmas + 1 : 1);                
             }
             else
             {
-               problemData->refDisciplinas[*itDisc]->num_turmas = (demDisc / tamMedSalasCP) + 2;
+               //problemData->refDisciplinas[*itDisc]->num_turmas = (demDisc / tamMedSalasCP) + 5;
+               problemData->refDisciplinas[*itDisc]->num_turmas = (demDisc / 50) + 1;
             }
          }
       }
    }
-
 
    //ITERA_GGROUP(it_Disc,problemData->disciplinas,Disiciplina)
    //{

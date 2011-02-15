@@ -91,7 +91,9 @@ private:
 
    // =========== METODOS AUXILIARES
 
-   void referenciaCampus();
+   //void referenciaCampus();
+   void referenciaCampusUnidadesSalas();
+
    void referenciaDisciplinas();
    void referenciaOfertas();
 

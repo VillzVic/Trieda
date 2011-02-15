@@ -289,16 +289,30 @@ int SolverMIP::solve()
 
    int status = 0;
 
-   lp->setTimeLimit(60);
+   lp->setTimeLimit(30);
+
+   //lp->setNumIntSols(5);
+   //lp->setMIPRelTol(100);
+
    //lp->setMIPStartAlg(METHOD_PRIMAL);
    //lp->setMIPEmphasis(4);
+
    lp->setMIPScreenLog(4);
 
    lp->setHeurFrequency(1.0);
 
    status = lp->optimize(METHOD_MIP);
 
+   //bool teste = lp->readSolution("Solver Trieda.sol");
+   
    lp->writeSolution("Solver Trieda.sol");
+
+   //if(teste)
+   //   std::cout << "LEU\n";
+   //else   
+   //   std::cout << "NAO LEU\n";
+   //
+   //getchar();
 
    return status;
 }
@@ -349,7 +363,7 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
 
       v->setValue( xSol[col] );
 
-      if ( v->getValue() > 0 )
+      if ( v->getValue() > 0.0000001 )
       {
 #ifdef DEBUG
          char auxName[100];
@@ -460,6 +474,7 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
    }
 
    std::cout << "\nx\t -\t i\t d\t u\t tps\t t" << std::endl;
+
    for(X___i_d_u_tps_t::iterator it_x = x.begin(); it_x != x.end(); it_x++)
    {
       for(int dia = 0; dia < 7; dia++) 
@@ -468,23 +483,36 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
          {
             std::cout << it_x->second[dia].first << "\t\t" <<
                it_x->first.first << "\t" <<
-               it_x->first.second << "\t" <<
-               it_x->second[dia].second.first << "\t" <<
+
+               //it_x->first.second << "\t" <<
+               (*problemData->refDisciplinas.find(it_x->first.second)).second->codigo << "\t" <<
+
+               //it_x->second[dia].second.first << "\t" <<
+               (*problemData->refUnidade.find(it_x->second[dia].second.first)).second->codigo << "\t" <<
+
                it_x->second[dia].second.second << "\t" <<
+
                dia << std::endl;
          }
       }
    }
 
-   std::cout << "\na\t -\t i\t d\t o" << std::endl;
+   //std::cout << "\na\t -\t i\t d\t o" << std::endl;
+   std::cout << "\na\t -\t i\t d\t o\t cod. curso" << std::endl;
    for(A___i_d_o::iterator it_a = a.begin(); it_a != a.end(); it_a++)
    {
       if(it_a->second > 0)
       {
          std::cout << it_a->second << "\t\t" <<
             it_a->first.at(0) << "\t" <<
-            it_a->first.at(1) << "\t" <<
-            it_a->first.at(2) << "\t" << std::endl;
+
+            //it_a->first.at(1) << "\t" <<
+            (*problemData->refDisciplinas.find(it_a->first.at(1))).second->codigo << "\t" <<
+
+            //it_a->first.at(2) << "\t" << std::endl;
+            (*problemData->refOfertas.find(it_a->first.at(2))).second->getId() << "\t" <<
+
+            (*problemData->refOfertas.find(it_a->first.at(2))).second->curso->codigo << std::endl;
       }
    }
 
@@ -594,23 +622,17 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
    {
       std::cout << it_x->at(0) << "\t\t" <<
          it_x->at(1) << "\t" <<
-         it_x->at(2) << "\t" <<
-         it_x->at(3) << "\t" <<
-         it_x->at(4) << "\t" <<
+         
+         //it_x->at(2) << "\t" <<
+         (*problemData->refDisciplinas.find(it_x->at(2))).second->codigo << "\t" <<
+
+         //it_x->at(3) << "\t" <<
+         (*problemData->refUnidade.find(it_x->at(3))).second->codigo << "\t" <<
+
+         //it_x->at(4) << "\t" <<
+         (*problemData->refSala.find(it_x->at(4))).second->codigo << "\t" <<
+
          it_x->at(5) << std::endl;
-   }
-
-   // ------------------
-   /* Imprimindo os cursos de acordo com cada oferta.
-   Gambiarra temporária para poder gerar o CSV pro Cesar.
-   */
-
-   std::cout << "\nId Oft. \t Id Curso \t Cod Curso" << std::endl;
-   ITERA_GGROUP(it_Oferta,problemData->ofertas,Oferta)
-   {
-      std::cout << it_Oferta->getId() << " \t " <<
-         it_Oferta->curso->getId() << " \t " <<
-         it_Oferta->curso->codigo << std::endl;
    }
 
    // ------------------
@@ -930,7 +952,7 @@ int SolverMIP::cria_variaveis()
    numVarsAnterior = num_vars;
 #endif
 
-   num_vars += cria_variavel_alunos(); // a 
+   num_vars += cria_variavel_alunos(); // a
 
 #ifdef PRINT_cria_variaveis
    std::cout << "numVars \"a\": " << (num_vars - numVarsAnterior) << std::endl;
@@ -1090,8 +1112,11 @@ int SolverMIP::cria_variavel_creditos(void)
                      {
                         vHash[v] = lp->getNumCols();
 
-                        OPT_COL col(OPT_COL::VAR_INTEGRAL,0.0,0.0,24.0,
+                        OPT_COL col(OPT_COL::VAR_INTEGRAL,0.0,0.0,itCjtSala->maxCredsDia(*itDiscSala_Dias),
                            (char*)v.toString().c_str());
+
+                        //OPT_COL col(OPT_COL::VAR_INTEGRAL,0.0,0.0,24.0,
+                        //   (char*)v.toString().c_str());
 
                         lp->newCol(col);
 
@@ -3877,8 +3902,13 @@ int SolverMIP::cria_restricao_max_cred_disc_bloco(void)
                {
                   ITERA_GGROUP(itCjtSala,itUnidade->conjutoSalas,ConjuntoSala)
                   {
+                     /*
                      maxCredsSalaDia = (maxCredsSalaDia < itCjtSala->credsMaiorSala(*itDiasLetCampus) ?
                         itCjtSala->credsMaiorSala(*itDiasLetCampus) : maxCredsSalaDia);
+                        */
+
+                     maxCredsSalaDia = (maxCredsSalaDia < itCjtSala->maxCredsDia(*itDiasLetCampus) ?
+                        itCjtSala->maxCredsDia(*itDiasLetCampus) : maxCredsSalaDia);
 
                      for(int turma = 0; turma < itDisc->num_turmas; turma++)
                      {
@@ -4154,7 +4184,7 @@ int SolverMIP::cria_restricao_lim_cred_diar_disc(void)
 
                      nnz = 1;
 
-                     OPT_ROW row( 1, OPT_ROW::LESS , itCjtSala->credsMaiorSala(*itDiscSala_Dias) , name );
+                     OPT_ROW row( 1, OPT_ROW::LESS , itCjtSala->maxCredsDia(*itDiscSala_Dias) , name );
 
                      v.reset();
                      v.setType(Variable::V_CREDITOS);

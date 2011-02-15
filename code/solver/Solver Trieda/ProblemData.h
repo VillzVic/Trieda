@@ -130,6 +130,16 @@ public:
    VER ISSO DEPOIS */
    std::map<int/*Id Campus*/,Campus*> refCampus;
 
+   /* Estrutura responsavel por referenciar as unidades.
+   Nao precisaria dessa estrutura se o FIND do GGroup estivesse funcionando normalmente.
+   VER ISSO DEPOIS */
+   std::map<int/*Id Unidade*/,Unidade*> refUnidade;
+
+   /* Estrutura responsavel por referenciar as salas.
+   Nao precisaria dessa estrutura se o FIND do GGroup estivesse funcionando normalmente.
+   VER ISSO DEPOIS */
+   std::map<int/*Id Sala*/,Sala*> refSala;
+
    /* Estrutura responsavel por referenciar as disciplinas.
    Nao precisaria dessa estrutura se o FIND do GGroup estivesse funcionando normalmente.
    VER ISSO DEPOIS */
