@@ -1,8 +1,5 @@
 package com.gapso.web.trieda.client.mvp.presenter;
 
-import java.util.List;
-import java.util.Map;
-
 import com.extjs.gxt.ui.client.event.ButtonEvent;
 import com.extjs.gxt.ui.client.event.SelectionChangedEvent;
 import com.extjs.gxt.ui.client.event.SelectionChangedListener;
@@ -10,12 +7,8 @@ import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.widget.Component;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.TextField;
-import com.gapso.web.trieda.client.mvp.model.CampusDTO;
 import com.gapso.web.trieda.client.mvp.model.CenarioDTO;
 import com.gapso.web.trieda.client.mvp.model.SalaDTO;
-import com.gapso.web.trieda.client.mvp.model.UnidadeDTO;
-import com.gapso.web.trieda.client.services.SalasServiceAsync;
-import com.gapso.web.trieda.client.services.Services;
 import com.gapso.web.trieda.client.util.view.CampusComboBox;
 import com.gapso.web.trieda.client.util.view.GTab;
 import com.gapso.web.trieda.client.util.view.GTabItem;
@@ -23,7 +16,6 @@ import com.gapso.web.trieda.client.util.view.GradeHorariaSalaGrid;
 import com.gapso.web.trieda.client.util.view.SalaComboBox;
 import com.gapso.web.trieda.client.util.view.TurnoComboBox;
 import com.gapso.web.trieda.client.util.view.UnidadeComboBox;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
 
 public class RelatorioVisaoSalaPresenter implements Presenter {
