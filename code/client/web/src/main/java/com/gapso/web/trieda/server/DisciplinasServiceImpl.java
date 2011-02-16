@@ -218,7 +218,7 @@ public class DisciplinasServiceImpl extends RemoteServiceServlet implements Disc
 				List<CurriculoDisciplina> list = new ArrayList<CurriculoDisciplina>(disciplinas);
 				for(CurriculoDisciplina cd : list) {
 					CurriculoDisciplinaDTO curriculoDisciplinaDTO = ConvertBeans.toCurriculoDisciplinaDTO(cd);
-					curriculoDisciplinaDTO.setName(curriculoDisciplinaDTO.getDisciplinaString());
+					curriculoDisciplinaDTO.setName(curriculoDisciplinaDTO.getDisciplinaCodigoNomeString());
 					curriculoDisciplinaDTO.setPath(model.getPath() + curriculoDisciplinaDTO.getDisciplinaString() + "/");
 					curriculoDisciplinaDTO.setFolha(true);
 					if(cd.getPeriodo().equals(periodo)) {
