@@ -289,30 +289,37 @@ int SolverMIP::solve()
 
    int status = 0;
 
-   lp->setTimeLimit(30);
-
-   //lp->setNumIntSols(5);
-   //lp->setMIPRelTol(100);
-
+   lp->setTimeLimit(7200);
    //lp->setMIPStartAlg(METHOD_PRIMAL);
-   //lp->setMIPEmphasis(4);
-
+   lp->setMIPEmphasis(0);
    lp->setMIPScreenLog(4);
+   //lp->setMIPRelTol(0.02);
+   //lp->setNoCuts();
+   lp->setNodeLimit(1);
 
    lp->setHeurFrequency(1.0);
 
+   //lp->readSolution("Solver Trieda.sol");
+
    status = lp->optimize(METHOD_MIP);
 
-   //bool teste = lp->readSolution("Solver Trieda.sol");
-   
-   lp->writeSolution("Solver Trieda.sol");
+   /*double *xSol = NULL;
+   xSol = new double[lp->getNumCols()];
+   lp->getX(xSol);
+   FILE *fout = fopen("solBin.bin","wb");
+   int nCols = lp->getNumCols();
 
-   //if(teste)
-   //   std::cout << "LEU\n";
-   //else   
-   //   std::cout << "NAO LEU\n";
-   //
-   //getchar();
+   fwrite(&nCols,sizeof(int),1,fout);
+   for (int i=0; i < lp->getNumCols(); i++)
+   {
+      fwrite(&(xSol[i]),sizeof(double),1,fout);
+   }
+
+   fclose(fout);
+
+   delete[] xSol;*/
+
+   //lp->writeSolution("Solver Trieda.sol");
 
    return status;
 }
@@ -325,7 +332,25 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
    SolutionLoader sLoader(problemData, problemSolution);
 
    xSol = new double[lp->getNumCols()];
-   lp->getX(xSol);
+   //lp->getX(xSol);
+
+   /*FILE* fin = fopen("solBin.bin","rb");
+
+   int nCols;
+
+   fread(&nCols,sizeof(int),1,fin);
+
+   if ( nCols == lp->getNumCols() )
+   {
+      for (int i =0; i < nCols; i++)
+      {
+         double auxDbl;
+         fread(&auxDbl,sizeof(double),1,fin);
+         xSol[i] = auxDbl;
+      }
+   }
+
+   fclose(fin);*/
 
    vit = vHash.begin();
 
@@ -634,6 +659,13 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
 
          it_x->at(5) << std::endl;
    }
+
+   std::cout << "\nDisc. \t Codigo " << std::endl;
+   ITERA_GGROUP(it_disc,problemData->disciplinas,Disciplina)
+   {
+      std::cout<<it_disc->id<<" \t"<<it_disc->codigo<<std::endl;
+   }
+
 
    // ------------------
 
@@ -1372,6 +1404,20 @@ int SolverMIP::cria_variavel_alunos(void)
       {
          Disciplina * ptDisc = problemData->refDisciplinas[(*itPrdDisc).second];
 
+         // Calculando P_{d,o}
+         int qtdDem = 0;
+         ITERA_GGROUP(itDem,problemData->demandas,Demanda)
+         {
+            if (itDem->disciplina->getId() == ptDisc->getId() &&
+               itDem->oferta_id == itOferta->getId())
+            {
+               qtdDem += itDem->quantidade;
+            }
+         }
+
+         if ( qtdDem <= 0 )
+            continue;
+
          for(int turma = 0; turma < ptDisc->num_turmas; turma++)
          {
             Variable v;
@@ -1386,7 +1432,7 @@ int SolverMIP::cria_variavel_alunos(void)
             {
                vHash[v] = lp->getNumCols();
 
-               OPT_COL col(OPT_COL::VAR_INTEGRAL,0.0,0.0,1000.0,
+               OPT_COL col(OPT_COL::VAR_INTEGRAL,0.0,0.0,qtdDem,
                   (char*)v.toString().c_str());
 
                lp->newCol(col);
@@ -2120,18 +2166,33 @@ int SolverMIP::cria_variavel_de_folga_demanda_disciplina()
 
       for(; itPrdDisc != itOferta->curriculo->disciplinas_periodo.end(); itPrdDisc++)
       {
+         // Calculando P_{d,o}
+         int qtdDem = 0;
+         Disciplina * ptDisc = problemData->refDisciplinas[(*itPrdDisc).second];
+         ITERA_GGROUP(itDem,problemData->demandas,Demanda)
+         {
+            if (itDem->disciplina->getId() == ptDisc->getId() &&
+               itDem->oferta_id == itOferta->getId())
+            {
+               qtdDem += itDem->quantidade;
+            }
+         }
+
+         if ( qtdDem <= 0 )
+            continue;
+
          Variable v;
          v.reset();
          v.setType(Variable::V_SLACK_DEMANDA);
 
-         v.setDisciplina(problemData->refDisciplinas[(*itPrdDisc).second]);    // d
+         v.setDisciplina(ptDisc);    // d
          v.setOferta(*itOferta); // o
 
          if (vHash.find(v) == vHash.end())
          {
             vHash[v] = lp->getNumCols();
 
-            OPT_COL col(OPT_COL::VAR_INTEGRAL,1000,0.0,10000.0,
+            OPT_COL col(OPT_COL::VAR_INTEGRAL,1000,0.0,qtdDem,
                (char*)v.toString().c_str());
 
             lp->newCol(col);
