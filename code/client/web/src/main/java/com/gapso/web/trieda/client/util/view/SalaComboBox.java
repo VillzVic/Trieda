@@ -18,35 +18,26 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 public class SalaComboBox extends ComboBox<SalaDTO> {
 
 	private UnidadeComboBox unidadeComboBox;
-	public SalaComboBox() {
-		this(null);
-	}
 	
 	public SalaComboBox(UnidadeComboBox unidadeCB) {
 		this.unidadeComboBox = unidadeCB;
-		if(unidadeComboBox != null) {
-			addListeners();
-			RpcProxy<ListLoadResult<SalaDTO>> proxy = new RpcProxy<ListLoadResult<SalaDTO>>() {
-				@Override
-				public void load(Object loadConfig, AsyncCallback<ListLoadResult<SalaDTO>> callback) {
-					Services.salas().getBuscaList(unidadeComboBox.getValue(), callback);
-				}
-			};
-			setStore(new ListStore<SalaDTO>(new BaseListLoader<BaseListLoadResult<SalaDTO>>(proxy)));
-		} else {
-			setStore(new ListStore<SalaDTO>());
-		}
+		addListeners();
+		RpcProxy<ListLoadResult<SalaDTO>> proxy = new RpcProxy<ListLoadResult<SalaDTO>>() {
+			@Override
+			public void load(Object loadConfig, AsyncCallback<ListLoadResult<SalaDTO>> callback) {
+				Services.salas().getBuscaList(unidadeComboBox.getValue(), callback);
+			}
+		};
+		setStore(new ListStore<SalaDTO>(new BaseListLoader<BaseListLoadResult<SalaDTO>>(proxy)));
 		
 		setDisplayField("codigo");
 		setFieldLabel("Sala");
 		setEmptyText("Selecione a sala");
 		setSimpleTemplate("{codigo}");
 		
-		if(unidadeComboBox != null) {
-			setEditable(false);
-			setEnabled(unidadeComboBox.getValue() != null);
-			setTriggerAction(TriggerAction.ALL);
-		}
+		setEditable(false);
+		setEnabled(unidadeComboBox.getValue() != null);
+		setTriggerAction(TriggerAction.ALL);
 	}
 	
 	private void addListeners() {

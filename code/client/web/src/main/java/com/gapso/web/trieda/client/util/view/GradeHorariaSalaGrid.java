@@ -43,6 +43,9 @@ public class GradeHorariaSalaGrid extends ContentPanel {
 	private QuickTip quickTip;
 	private List<Long> disciplinasCores = new ArrayList<Long>();
 	
+	private String emptyTextBeforeSearch = "Preencha o filtro acima";
+	private String emptyTextAfterSearch = "Não foi encontrado nenhuma Grade Horária para este filtro";
+	
 	public GradeHorariaSalaGrid() {
 		super(new FitLayout());
 		setHeaderVisible(false);
@@ -62,7 +65,7 @@ public class GradeHorariaSalaGrid extends ContentPanel {
 			}
 		});
 		
-		grid.getView().setEmptyText("Não houve nenhum resultado");
+		grid.getView().setEmptyText(emptyTextBeforeSearch);
 		quickTip = new QuickTip(grid);
 		quickTip.getToolTipConfig().setDismissDelay(0);
 		add(grid);
@@ -86,9 +89,6 @@ public class GradeHorariaSalaGrid extends ContentPanel {
 				int credito = linha + 1;
 				int semana = coluna + 1;
 				semana = (semana == 8)? 1 : semana; 
-				System.out.println("Linha:  "+ credito);
-				System.out.println("Coluna: "+ semana);
-				System.out.println("--------------");
 				e.setCancelled(false);
 				e.getStatus().setStatus(true);
 				return;
@@ -100,8 +100,8 @@ public class GradeHorariaSalaGrid extends ContentPanel {
 
 	public void requestAtendimentos() {
 		if(getSalaDTO() == null || getTurnoDTO() == null) return;
-		AtendimentosServiceAsync service = Services.atendimentos();
-		service.getBusca(getSalaDTO(), getTurnoDTO(), new AsyncCallback<List<AtendimentoTaticoDTO>>(){
+		grid.mask("Carregando os dados, aguarde alguns instantes", "loading");
+		Services.atendimentos().getBusca(getSalaDTO(), getTurnoDTO(), new AsyncCallback<List<AtendimentoTaticoDTO>>(){
 			@Override
 			public void onFailure(Throwable caught) {
 				MessageBox.alert("ERRO!", "Deu falha na conexão", null);
@@ -111,6 +111,8 @@ public class GradeHorariaSalaGrid extends ContentPanel {
 				atendimentos = result;
 				preencheCores();
 				grid.reconfigure(getListStore(), new ColumnModel(getColumnList()));
+				grid.getView().setEmptyText(emptyTextAfterSearch);
+				grid.unmask();
 			}
 		});
 	}

@@ -4,9 +4,11 @@ import com.extjs.gxt.ui.client.Style.HorizontalAlignment;
 import com.extjs.gxt.ui.client.Style.LayoutRegion;
 import com.extjs.gxt.ui.client.util.Margins;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
+import com.extjs.gxt.ui.client.widget.Label;
 import com.extjs.gxt.ui.client.widget.LayoutContainer;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.FormPanel;
+import com.extjs.gxt.ui.client.widget.form.FormPanel.LabelAlign;
 import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayout;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
@@ -69,13 +71,12 @@ public class RelatorioVisaoSalaView extends MyComposite implements RelatorioVisa
 		panel.setHeading("Filtro");
 		panel.setButtonAlign(HorizontalAlignment.RIGHT);
 		
-		LayoutContainer main = new LayoutContainer();
-		main.setLayout(new ColumnLayout());
+		LayoutContainer main = new LayoutContainer(new ColumnLayout());
 		
-		LayoutContainer left = new LayoutContainer();
-		left.setStyleAttribute("paddingRight", "10px");
-		FormLayout layout = new FormLayout();
-		left.setLayout(layout);
+		LayoutContainer left = new LayoutContainer(new FormLayout(LabelAlign.RIGHT));
+		LayoutContainer right = new LayoutContainer(new FormLayout(LabelAlign.RIGHT));
+		LayoutContainer center = new LayoutContainer(new FormLayout(LabelAlign.RIGHT));
+		LayoutContainer button = new LayoutContainer(new FormLayout());
 		
 		campusCB = new CampusComboBox();
 		left.add(campusCB, formData);
@@ -83,16 +84,11 @@ public class RelatorioVisaoSalaView extends MyComposite implements RelatorioVisa
 		unidadeCB = new UnidadeComboBox(campusCB);
 		left.add(unidadeCB, formData);
 		
-		salaCB = new SalaComboBox();
-		left.add(salaCB, formData);
-		
-		LayoutContainer right = new LayoutContainer();
-		right.setStyleAttribute("paddingLeft", "10px");
-		layout = new FormLayout();
-		right.setLayout(layout);
+		salaCB = new SalaComboBox(unidadeCB);
+		center.add(salaCB, formData);
 		
 		turnoCB = new TurnoComboBox();
-		right.add(turnoCB, formData);
+		center.add(turnoCB, formData);
 		
 		capacidadeTF = new TextField<String>();
 		capacidadeTF.setFieldLabel("Capacidade");
@@ -104,18 +100,22 @@ public class RelatorioVisaoSalaView extends MyComposite implements RelatorioVisa
 		tipoSalaTF.setReadOnly(true);
 		right.add(tipoSalaTF, formData);
 		
-		main.add(left, new ColumnData(.5));
-		main.add(right, new ColumnData(.5));
-		
 		submitBt = new Button("Filtrar", AbstractImagePrototype.create(Resources.DEFAULTS.filter16()));
-		panel.addButton(submitBt);
+		button.setStyleAttribute("paddingLeft", "10px");
+		button.setStyleAttribute("paddingTop", "27px");
+		button.add(submitBt, formData);
+		
+		main.add(left, new ColumnData(.3));
+		main.add(center, new ColumnData(.3));
+		main.add(right, new ColumnData(.3));
+		main.add(button, new ColumnData(.1));
 		
 		panel.add(main, new FormData("100%"));
 		
 		BorderLayoutData bld = new BorderLayoutData(LayoutRegion.NORTH);
 		bld.setMargins(new Margins(5, 5, 0, 5));
 		bld.setCollapsible(true);
-		bld.setSize(155);
+		bld.setSize(95);
 		
 		this.panel.add(panel, bld);
 	}

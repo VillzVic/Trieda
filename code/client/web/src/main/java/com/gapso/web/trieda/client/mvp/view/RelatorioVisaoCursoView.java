@@ -8,6 +8,7 @@ import com.extjs.gxt.ui.client.widget.LayoutContainer;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.FormPanel;
 import com.extjs.gxt.ui.client.widget.form.SimpleComboBox;
+import com.extjs.gxt.ui.client.widget.form.ComboBox.TriggerAction;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayout;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
 import com.extjs.gxt.ui.client.widget.layout.ColumnData;
@@ -89,6 +90,8 @@ public class RelatorioVisaoCursoView extends MyComposite implements RelatorioVis
 		periodoCB = new SimpleComboBox<Integer>();
 		periodoCB.setFieldLabel("Período");
 		periodoCB.setEditable(false);
+		periodoCB.setTriggerAction(TriggerAction.ALL);
+		
 		right.add(periodoCB, formData);
 		
 		turnoCB = new TurnoComboBox();

@@ -67,6 +67,13 @@ h1 {
   font: normal 10px arial, tahoma, sans-serif;
 }
 
+.ext-el-mask-msg.loading div {
+	padding-left: 30px;
+	background-image: url('images/ajax16.gif');
+	background-position: 5px 4px;
+	background-repeat: no-repeat;
+}
+
 .toggle-image-button .x-btn-text {
     cursor: pointer !important;
     cursor: hand !important;
@@ -78,7 +85,6 @@ h1 {
     padding: 0px !important;
     color: #4784C3 !important;
     text-decoration: none !important;
-
 }
 
  /* remove images */

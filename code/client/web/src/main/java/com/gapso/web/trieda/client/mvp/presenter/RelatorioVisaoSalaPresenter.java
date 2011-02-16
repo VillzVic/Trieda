@@ -55,42 +55,6 @@ public class RelatorioVisaoSalaPresenter implements Presenter {
 				display.getGrid().requestAtendimentos();
 			}
 		});
-		display.getCampusComboBox().addSelectionChangedListener(new SelectionChangedListener<CampusDTO>(){
-			@Override
-			public void selectionChanged(SelectionChangedEvent<CampusDTO> se) {
-				final CampusDTO campusDTO = se.getSelectedItem();
-				display.getUnidadeComboBox().setEnabled(campusDTO != null);
-				if(campusDTO != null) {
-//					display.getUnidadeComboBox().setCampusId(campusDTO.getId());
-				}
-			}
-		});
-		display.getUnidadeComboBox().addSelectionChangedListener(new SelectionChangedListener<UnidadeDTO>(){
-			@Override
-			public void selectionChanged(SelectionChangedEvent<UnidadeDTO> se) {
-				final UnidadeDTO unidadeDTO = se.getSelectedItem();
-				display.getSalaComboBox().setEnabled(unidadeDTO != null);
-				if(unidadeDTO != null) {
-					SalasServiceAsync salasService = Services.salas();
-					salasService.getSalasEAndareMap(unidadeDTO.getId(), new AsyncCallback<Map<String, List<SalaDTO>>>() {
-						@Override
-						public void onFailure(Throwable caught) {
-							caught.printStackTrace();
-						}
-						@Override
-						public void onSuccess(Map<String, List<SalaDTO>> result) {
-							Map<String, List<SalaDTO>> andaresSalasMap = result;
-							display.getSalaComboBox().getStore().removeAll();
-							for(List<SalaDTO> salas : andaresSalasMap.values()) {
-								display.getSalaComboBox().getStore().add(salas);
-							}
-							display.getSalaComboBox().setEnabled(!andaresSalasMap.isEmpty());
-						}
-					});
-
-				}
-			}
-		});
 		display.getSalaComboBox().addSelectionChangedListener(new SelectionChangedListener<SalaDTO>(){
 			@Override
 			public void selectionChanged(SelectionChangedEvent<SalaDTO> se) {
