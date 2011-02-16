@@ -251,7 +251,7 @@ int SolverMIP::solve()
 #endif
 
    /* Constraint creation */
-   constNum = cria_restricoes();
+   //constNum = cria_restricoes();
 
    lp->updateLP();
 
@@ -301,7 +301,7 @@ int SolverMIP::solve()
 
    //lp->readSolution("Solver Trieda.sol");
 
-   status = lp->optimize(METHOD_MIP);
+   //status = lp->optimize(METHOD_MIP);
 
    /*double *xSol = NULL;
    xSol = new double[lp->getNumCols()];
@@ -334,7 +334,8 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
    xSol = new double[lp->getNumCols()];
    //lp->getX(xSol);
 
-   /*FILE* fin = fopen("solBin.bin","rb");
+   /**/
+   FILE* fin = fopen("solBin.bin","rb");
 
    int nCols;
 
@@ -350,7 +351,8 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
       }
    }
 
-   fclose(fin);*/
+   fclose(fin);
+   /**/
 
    vit = vHash.begin();
 
@@ -419,7 +421,8 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
           if(x[key].size() == 0) 
           {
              x[key] = std::vector<std::pair<int,std::pair<int,int> > >
-                (7,std::make_pair(-1,std::make_pair(-1,-1)));
+                //(7,std::make_pair(-1,std::make_pair(-1,-1)));
+                (8,std::make_pair(-1,std::make_pair(-1,-1)));
           }
 
           if(x[key][v->getDia()].first > 0)
@@ -498,11 +501,15 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
       vit++;
    }
 
+   //std::cout << "Variaveis com valor maior que zero coletadas.\n";
+   //getchar();
+
    std::cout << "\nx\t -\t i\t d\t u\t tps\t t" << std::endl;
 
    for(X___i_d_u_tps_t::iterator it_x = x.begin(); it_x != x.end(); it_x++)
-   {
-      for(int dia = 0; dia < 7; dia++) 
+   {    
+      //for(int dia = 0; dia < 7; dia++) 
+      for(int dia = 1; dia < (*it_x).second.size(); dia++) 
       {
          if(it_x->second.at(dia).first > 0)
          {
@@ -522,6 +529,9 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
       }
    }
 
+   //std::cout << "Variaveis x_{i,d,u,tps,t} impressas.\n";
+   //getchar();
+
    //std::cout << "\na\t -\t i\t d\t o" << std::endl;
    std::cout << "\na\t -\t i\t d\t o\t cod. curso" << std::endl;
    for(A___i_d_o::iterator it_a = a.begin(); it_a != a.end(); it_a++)
@@ -540,6 +550,9 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
             (*problemData->refOfertas.find(it_a->first.at(2))).second->curso->codigo << std::endl;
       }
    }
+
+   //std::cout << "Variaveis a_{i,d,o} impressas.\n";
+   //getchar();
 
    // ==============================================================
    // ==============================================================
@@ -642,6 +655,9 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
    }
    // ------------------
 
+   //std::cout << "Pos Processamento concluido.\n";
+   //getchar();
+
    std::cout << "\nx\t -\t i\t d\t u\t s\t t" << std::endl;
    for(X___i_d_u_s_t::iterator it_x = vXpp.begin(); it_x != vXpp.end(); it_x++)
    {
@@ -660,11 +676,14 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
          it_x->at(5) << std::endl;
    }
 
-   std::cout << "\nDisc. \t Codigo " << std::endl;
-   ITERA_GGROUP(it_disc,problemData->disciplinas,Disciplina)
-   {
-      std::cout<<it_disc->id<<" \t"<<it_disc->codigo<<std::endl;
-   }
+   //std::cout << "Variaveis x_{i,d,u,s,t} impressas.\n";
+   //getchar();
+
+   //std::cout << "\nDisc. \t Codigo " << std::endl;
+   //ITERA_GGROUP(it_disc,problemData->disciplinas,Disciplina)
+   //{
+   //   std::cout<<it_disc->id<<" \t"<<it_disc->codigo<<std::endl;
+   //}
 
 
    // ------------------
@@ -693,6 +712,8 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
          }
       }
    }
+
+
 
    // Coletando todos os campus considerados para a saida.
    GGroup<int> ids_cp;
@@ -765,6 +786,9 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
          }
       }
    }
+
+   std::cout << "Solucao preenchida.\n";
+   getchar();
 
    // <<<
 
