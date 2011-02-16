@@ -33,7 +33,7 @@ public class HorarioDisponivelDisciplinaFormView extends MyComposite implements 
 	}
 	
 	private void initUI() {
-		simpleModal = new SimpleModal("Disponibilidade da Disciplina", Resources.DEFAULTS.sala16());
+		simpleModal = new SimpleModal("Disponibilidade da Disciplina (" + disciplinaDTO.getCodigo() + ")", Resources.DEFAULTS.disciplina16());
 		simpleModal.setHeight(500);
 		simpleModal.setWidth(600);
 	}

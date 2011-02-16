@@ -52,7 +52,7 @@ public class HorariosAulaView extends MyComposite implements HorariosAulaPresent
 	}
 	
 	private void createTabItem() {
-		tabItem = new GTabItem("Horário de Aula", Resources.DEFAULTS.semanaLetiva16());
+		tabItem = new GTabItem("Horário de Aula", Resources.DEFAULTS.horarioAula16());
 		tabItem.setContent(panel);
 	}
 	

@@ -77,8 +77,8 @@ public class CampiView extends MyComposite implements CampiPresenter.Display {
 
 	public List<ColumnConfig> getColumnList() {
 		List<ColumnConfig> list = new ArrayList<ColumnConfig>();
-		list.add(new ColumnConfig("nome", "Nome", 100));
 		list.add(new ColumnConfig("codigo", "Código", 100));
+		list.add(new ColumnConfig("nome", "Nome", 100));
 		list.add(new ColumnConfig("estado", "Estado", 100));
 		list.add(new ColumnConfig("municipio", "Município", 100));
 		list.add(new ColumnConfig("bairro", "Bairro", 100));

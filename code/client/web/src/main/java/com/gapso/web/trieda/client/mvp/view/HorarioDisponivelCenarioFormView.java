@@ -29,7 +29,7 @@ public class HorarioDisponivelCenarioFormView extends MyComposite implements Hor
 	}
 	
 	private void initUI() {
-		simpleModal = new SimpleModal("Dias e Horários de Aula", Resources.DEFAULTS.sala16());
+		simpleModal = new SimpleModal("Dias e Horários de Aula", Resources.DEFAULTS.semanaLetiva16());
 		simpleModal.setHeight(500);
 		simpleModal.setWidth(600);
 	}

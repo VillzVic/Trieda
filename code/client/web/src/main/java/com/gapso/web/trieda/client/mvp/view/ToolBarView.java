@@ -90,7 +90,7 @@ public class ToolBarView extends MyComposite implements ToolBarPresenter.Display
 		
 		ContentPanel planejamentoPanel = new ContentPanel();
 		planejamentoPanel.setHeading("Planejamento");
-		planejamentoPanel.setWidth(305);
+		planejamentoPanel.setWidth(310); // TODO: aumentar aqui para resolver icone escondido
 		
 		ContentPanel masterDataPanel = new ContentPanel();
 		masterDataPanel.setHeaderVisible(false);

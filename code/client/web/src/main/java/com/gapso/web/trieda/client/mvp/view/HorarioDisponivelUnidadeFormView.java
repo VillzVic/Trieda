@@ -33,7 +33,7 @@ public class HorarioDisponivelUnidadeFormView extends MyComposite implements Hor
 	}
 	
 	private void initUI() {
-		simpleModal = new SimpleModal("Disponibilidade da Unidade", Resources.DEFAULTS.sala16());
+		simpleModal = new SimpleModal("Disponibilidade da Unidade (" + unidadeDTO.getCodigo() + ")", Resources.DEFAULTS.unidade16());
 		simpleModal.setHeight(500);
 		simpleModal.setWidth(600);
 	}

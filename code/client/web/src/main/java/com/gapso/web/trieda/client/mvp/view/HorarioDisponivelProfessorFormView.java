@@ -33,7 +33,7 @@ public class HorarioDisponivelProfessorFormView extends MyComposite implements H
 	}
 	
 	private void initUI() {
-		simpleModal = new SimpleModal("Disponibilidade de Professor", Resources.DEFAULTS.sala16());
+		simpleModal = new SimpleModal("Disponibilidade de Professor (" + professorDTO.getCpf() + ")", Resources.DEFAULTS.professor16());
 		simpleModal.setHeight(500);
 		simpleModal.setWidth(600);
 	}

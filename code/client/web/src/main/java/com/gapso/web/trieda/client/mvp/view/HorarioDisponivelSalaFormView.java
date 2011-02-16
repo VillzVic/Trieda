@@ -33,7 +33,7 @@ public class HorarioDisponivelSalaFormView extends MyComposite implements Horari
 	}
 	
 	private void initUI() {
-		simpleModal = new SimpleModal("Disponibilidade da Sala", Resources.DEFAULTS.sala16());
+		simpleModal = new SimpleModal("Disponibilidade da Sala (" + salaDTO.getCodigo() + ")", Resources.DEFAULTS.sala16());
 		simpleModal.setHeight(500);
 		simpleModal.setWidth(600);
 	}

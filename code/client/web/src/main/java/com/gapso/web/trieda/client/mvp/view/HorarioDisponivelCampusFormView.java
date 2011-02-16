@@ -33,7 +33,7 @@ public class HorarioDisponivelCampusFormView extends MyComposite implements Hora
 	}
 	
 	private void initUI() {
-		simpleModal = new SimpleModal("Disponibilidade de Campus", Resources.DEFAULTS.campus16());
+		simpleModal = new SimpleModal("Disponibilidade de Campus (" + campusDTO.getCodigo() + ")", Resources.DEFAULTS.campus16());
 		simpleModal.setHeight(500);
 		simpleModal.setWidth(600);
 	}
