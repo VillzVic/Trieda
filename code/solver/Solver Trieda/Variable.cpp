@@ -188,7 +188,9 @@ std::string Variable::toString()
 	case V_COMBINACAO_DIVISAO_CREDITO:
         str << "m"; break;
 	case V_SLACK_COMBINACAO_DIVISAO_CREDITO:
-        str << "fk"; break;	
+        str << "fk"; break;
+   case V_CREDITOS_MODF:
+      str << "xm"; break;
     default:
         str << "!";
    }

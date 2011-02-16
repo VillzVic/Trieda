@@ -186,6 +186,10 @@ std::string Constraint::toString()
       ss << "__(C_DIVISAO_CREDITO):"; break;
    case C_VAR_Y:
       ss << "__(C_VAR_Y):"; break;
+   case C_MAX_CREDS_DISC_DIA:
+      ss << "__(C_MAX_CREDS_DISC_DIA):"; break;
+   case C_MAX_CREDS_BLOCO_DIA:
+      ss << "__(C_MAX_CREDS_BLOCO_DIA):"; break;
    default:
       ss << "!";
    }

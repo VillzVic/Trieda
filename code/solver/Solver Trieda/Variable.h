@@ -30,8 +30,9 @@ public:
       V_SLACK_ALOC_ALUNOS_CURSO_INCOMPAT = 15,   // bs_{i,d,c,c',cp}
       V_SLACK_DEMANDA = 16, // fd_{d,o}
       V_COMBINACAO_DIVISAO_CREDITO = 17, // m{i,d,k}
-      V_SLACK_COMBINACAO_DIVISAO_CREDITO = 18 // fk{i,d,k}
+      V_SLACK_COMBINACAO_DIVISAO_CREDITO = 18, // fk{i,d,k}
 
+      V_CREDITOS_MODF = 19 // xm_{d,t}
    };
 
    //Constructors

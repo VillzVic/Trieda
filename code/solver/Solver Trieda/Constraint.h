@@ -37,13 +37,15 @@ public:
       C_SLACK_DIST_CRED_DIA = 21,			// Restricao 1.2.23
       C_VAR_R = 22,			            // Restricao 1.2.24
 
-      C_LIMITA_ABERTURA_TURMAS = 23,			            // Restricao NOVA
-      C_ABRE_TURMAS_EM_SEQUENCIA = 24,			            // Restricao NOVA
+      C_LIMITA_ABERTURA_TURMAS = 23,			            // Restricao 1.2.25
+      C_ABRE_TURMAS_EM_SEQUENCIA = 24,			            // Restricao 1.2.26
       C_DIVISAO_CREDITO = 25,			//Restricao 1.2.27
       C_COMBINACAO_DIVISAO_CREDITO = 26,	//Restricao 1.2.28
       
-      C_VAR_Y = 27	//Restricao 1.2.29
+      C_VAR_Y = 27,	//Restricao 1.2.29
 
+      C_MAX_CREDS_DISC_DIA = 28, // Restricao NOVA
+      C_MAX_CREDS_BLOCO_DIA = 29 // Restricao NOVA
    };
 
    /** Default constructor. */

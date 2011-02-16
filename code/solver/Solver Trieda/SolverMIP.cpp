@@ -251,7 +251,7 @@ int SolverMIP::solve()
 #endif
 
    /* Constraint creation */
-   //constNum = cria_restricoes();
+   constNum = cria_restricoes();
 
    lp->updateLP();
 
@@ -532,6 +532,8 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
    //std::cout << "Variaveis x_{i,d,u,tps,t} impressas.\n";
    //getchar();
 
+   std::cout << "Total de variaveis do tipo x_{i,d,u,tps,t}: " << x.size();
+
    //std::cout << "\na\t -\t i\t d\t o" << std::endl;
    std::cout << "\na\t -\t i\t d\t o\t cod. curso" << std::endl;
    for(A___i_d_o::iterator it_a = a.begin(); it_a != a.end(); it_a++)
@@ -553,6 +555,10 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
 
    //std::cout << "Variaveis a_{i,d,o} impressas.\n";
    //getchar();
+
+   std::cout << "Total de variaveis do tipo a_{i,d,o}: " << a.size();
+
+   getchar();
 
    // ==============================================================
    // ==============================================================
@@ -1115,6 +1121,13 @@ int SolverMIP::cria_variaveis()
    numVarsAnterior = num_vars;
 #endif
 
+   num_vars += cria_variavel_creditos_modificada(); // xm
+
+#ifdef PRINT_cria_variaveis
+   std::cout << "numVars \"xm\": " << (num_vars - numVarsAnterior) << std::endl;
+   numVarsAnterior = num_vars;
+#endif
+
    return num_vars;
 }
 
@@ -1417,6 +1430,40 @@ número de alunos de uma oferta $oft$ alocados para a $i$-ésima turma da discipli
 
 int SolverMIP::cria_variavel_alunos(void)
 {
+   int total_Vars = 0;
+
+   //// <><><><><><><><>
+   //ITERA_GGROUP(itOferta,problemData->ofertas,Oferta)
+   //{
+   //   GGroup<DisciplinaPeriodo>::iterator itPrdDisc = 
+   //      itOferta->curriculo->disciplinas_periodo.begin();
+
+   //   for(; itPrdDisc != itOferta->curriculo->disciplinas_periodo.end(); itPrdDisc++)
+   //   {
+   //      Disciplina * ptDisc = problemData->refDisciplinas[(*itPrdDisc).second];
+
+   //      // Calculando P_{d,o}
+   //      int qtdDem = 0;
+   //      ITERA_GGROUP(itDem,problemData->demandas,Demanda)
+   //      {
+   //         if (itDem->disciplina->getId() == ptDisc->getId() &&
+   //            itDem->oferta_id == itOferta->getId())
+   //         {
+   //            qtdDem += itDem->quantidade;
+   //         }
+   //      }
+
+   //      if ( qtdDem <= 0 )
+   //         continue;
+
+   //      total_Vars += ptDisc->num_turmas;
+   //   }
+   //}
+
+   //std::cout << "Total Vars do tipo a_{i,d,o}: " << total_Vars << std::endl;
+   //getchar();
+   //// <><><><><><><><>
+
    int num_vars = 0;
 
    ITERA_GGROUP(itOferta,problemData->ofertas,Oferta)
@@ -2331,6 +2378,82 @@ int SolverMIP::cria_variavel_de_folga_combinacao_divisao_credito(){
    return num_vars;
 }
 
+/*====================================================================/
+%DocBegin TRIEDA_LOAD_MODEL
+
+%Var xm_{d,t}
+%Desc 
+%ObjCoef
+%Data
+%Desc
+
+%DocEnd
+/====================================================================*/
+int SolverMIP::cria_variavel_creditos_modificada(void)
+{
+   //// <><><><><><><><>
+   //int total_Vars = 0;
+
+   //ITERA_GGROUP(it_Disc,problemData->disciplinas,Disciplina)
+   //{
+   //   total_Vars += it_Disc->diasLetivos.size();
+   //}
+
+   //std::cout << "Total Vars do tipo x_{d,t}: " << total_Vars << std::endl;
+   //getchar();
+   //// <><><><><><><><>
+
+   int num_vars = 0;
+
+   ITERA_GGROUP(itCampus,problemData->campi,Campus)
+   {
+      ITERA_GGROUP(itUnidade,itCampus->unidades,Unidade)
+      {
+         ITERA_GGROUP(itCjtSala,itUnidade->conjutoSalas,ConjuntoSala)
+         {
+            ITERA_GGROUP(itDisc,itCjtSala->getDiscsAssociadas(),Disciplina)
+            {
+               for(int turma=0;turma<itDisc->num_turmas;turma++)
+               {
+                  GGroup<int/*Dias*/>::iterator itDiscSala_Dias =
+                     problemData->disc_Conjutno_Salas__Dias[std::make_pair<int,int>
+                     (itDisc->getId(),itCjtSala->getId())].begin();
+
+                  for(; itDiscSala_Dias != 
+                     problemData->disc_Conjutno_Salas__Dias[std::make_pair<int,int>
+                     (itDisc->getId(),itCjtSala->getId())].end(); itDiscSala_Dias++)
+                  {
+                     Variable v;
+                     v.reset();
+                     v.setType(Variable::V_CREDITOS_MODF);
+
+                     v.setDisciplina(*itDisc);     // d
+                     v.setDia(*itDiscSala_Dias);   // t
+
+                     if (vHash.find(v) == vHash.end())
+                     {
+                        vHash[v] = lp->getNumCols();
+
+                        OPT_COL col(OPT_COL::VAR_INTEGRAL,0.0,0.0,50/*FIX-ME*/,
+                           (char*)v.toString().c_str());
+
+                        /*OPT_COL col(OPT_COL::VAR_INTEGRAL,0.0,0.0,itCjtSala->maxCredsDia(*itDiscSala_Dias),
+                           (char*)v.toString().c_str());*/
+
+                        lp->newCol(col);
+
+                        num_vars += 1;
+                     }
+                  }
+               }
+            }
+         }
+      }
+   }
+
+   return num_vars;
+}
+
 // ==============================================================
 //							CONSTRAINTS
 // ==============================================================
@@ -2534,6 +2657,20 @@ int SolverMIP::cria_restricoes(void)
 
 #ifdef PRINT_cria_restricoes
    std::cout << "numRest \"1.2.29\": " << (restricoes - numRestAnterior) << std::endl;
+   numRestAnterior = restricoes;
+#endif
+
+   restricoes += cria_restricao_max_creds_disc_dia();
+
+#ifdef PRINT_cria_restricoes
+   std::cout << "numRest \"1.2.30\": " << (restricoes - numRestAnterior) << std::endl;
+   numRestAnterior = restricoes;
+#endif
+
+   restricoes += cria_restricao_max_creds_bloco_dia();
+
+#ifdef PRINT_cria_restricoes
+   std::cout << "numRest \"1.2.31\": " << (restricoes - numRestAnterior) << std::endl;
    numRestAnterior = restricoes;
 #endif
 
@@ -6878,6 +7015,177 @@ int SolverMIP::cria_restricao_ativacao_var_y()
 
    return restricoes;
 }
+
+/*====================================================================/
+%DocBegin TRIEDA_LOAD_MODEL
+
+%Constraint 
+%Desc 
+%MatExp
+
+%DocEnd
+/====================================================================*/
+
+int SolverMIP::cria_restricao_max_creds_disc_dia()
+{
+   int restricoes = 0;
+   char name[100];
+   int nnz;
+   Constraint c;
+   Variable v;
+   VariableHash::iterator it_v;
+
+   ITERA_GGROUP(it_Disc,problemData->disciplinas,Disciplina)
+   {
+      for(int turma = 0; turma < it_Disc->num_turmas; turma++)
+      {
+         ITERA_GGROUP_N_PT(it_Dias_Letivos,it_Disc->diasLetivos,int)
+         {
+            c.reset();
+            c.setType(Constraint::C_MAX_CREDS_DISC_DIA);
+
+            c.setDisciplina(*it_Disc);
+            c.setTurma(turma);
+            c.setDia(*it_Dias_Letivos);
+
+            sprintf( name, "%s", c.toString().c_str() ); 
+
+            if (cHash.find(c) != cHash.end()) continue;
+
+            nnz = 100;
+
+            OPT_ROW row( nnz, OPT_ROW::LESS, 0.0, name );
+
+            ITERA_GGROUP(it_Campus,problemData->campi,Campus)
+            {
+               ITERA_GGROUP(it_Unidade,it_Campus->unidades,Unidade)
+               {
+                  ITERA_GGROUP(it_Cjt_Sala,it_Unidade->conjutoSalas,ConjuntoSala)
+                  {
+                     std::map<std::pair<int/*idDisc*/,int/*idSubCjtSala*/>, GGroup<int>/*Dias*/ >::iterator
+
+                        it_Disc_Cjt_Salas__Dias = 
+
+                        problemData->disc_Conjutno_Salas__Dias.find(std::make_pair(
+                        it_Disc->getId(),it_Cjt_Sala->getId()));
+
+                     // Testando se a disciplina em questao esta associada ao cjt de salas em questao
+                     if(it_Disc_Cjt_Salas__Dias != problemData->disc_Conjutno_Salas__Dias.end())
+                     {
+                        /* Testando se a dia (referenciado por <*it_Dias_Letivos>) é um dia 
+                        letivo comum à disciplina e o conjunto de salas em questão. */
+                        if(it_Disc_Cjt_Salas__Dias->second.find(*it_Dias_Letivos) != 
+                           it_Disc_Cjt_Salas__Dias->second.end())
+                        {
+                           v.reset();
+                           v.setType(Variable::V_CREDITOS);
+
+                           v.setTurma(turma);
+                           v.setDisciplina(*it_Disc);
+                           v.setUnidade(*it_Unidade);
+                           v.setSubCjtSala(*it_Cjt_Sala);
+                           v.setDia(*it_Dias_Letivos);
+
+                           it_v = vHash.find(v);
+                           if( it_v != vHash.end() )
+                           { row.insert(it_v->second, 1.0); }
+                        }
+                     }
+                  }
+               }
+            }
+
+            if(row.getnnz() <= 0)
+               continue;
+
+            v.reset();
+            v.setType(Variable::V_CREDITOS_MODF);
+
+            v.setDisciplina(*it_Disc);
+            v.setDia(*it_Dias_Letivos);
+
+            it_v = vHash.find(v);
+            if( it_v != vHash.end() )
+            { row.insert(it_v->second, -1.0); }
+
+            if(row.getnnz() != 0)
+            {
+               cHash[ c ] = lp->getNumRows();
+
+               lp->addRow(row);
+               restricoes++;
+            }
+         }
+      }
+   }
+
+   return restricoes;
+}
+
+/*====================================================================/
+%DocBegin TRIEDA_LOAD_MODEL
+
+%Constraint 
+%Desc 
+%MatExp
+
+%DocEnd
+/====================================================================*/
+
+int SolverMIP::cria_restricao_max_creds_bloco_dia()
+{
+   int restricoes = 0;
+   char name[100];
+   int nnz;
+   Constraint c;
+   Variable v;
+   VariableHash::iterator it_v;
+
+   ITERA_GGROUP(it_Bloco,problemData->blocos,BlocoCurricular)
+   {
+      ITERA_GGROUP_N_PT(it_Dias_Letivos,it_Bloco->diasLetivos,int)
+      {
+         c.reset();
+         c.setType(Constraint::C_MAX_CREDS_BLOCO_DIA);
+
+         c.setBloco(*it_Bloco);
+         c.setDia(*it_Dias_Letivos);
+
+         sprintf( name, "%s", c.toString().c_str() ); 
+
+         if (cHash.find(c) != cHash.end()) continue;
+
+         nnz = 100;
+
+         OPT_ROW row( nnz, OPT_ROW::LESS, 4.0, name );
+
+         ITERA_GGROUP(it_Disc,it_Bloco->disciplinas,Disciplina)
+         {
+            v.reset();
+            v.setType(Variable::V_CREDITOS_MODF);
+
+            v.setDisciplina(*it_Disc);
+            v.setDia(*it_Dias_Letivos);
+
+            it_v = vHash.find(v);
+            if( it_v != vHash.end() )
+            { row.insert(it_v->second, 1.0); }
+         }
+
+         if(row.getnnz() != 0)
+         {
+            cHash[ c ] = lp->getNumRows();
+
+            lp->addRow(row);
+            restricoes++;
+         }
+
+      }
+   }
+
+   return restricoes;
+}
+
 
 void SolverMIP::cria_solucao_inicial(int cnt, int *indices, double *valores)
 {
