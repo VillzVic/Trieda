@@ -169,6 +169,13 @@ public class AtendimentoTaticoDTO extends BaseModel {
 		return get("periodo");
 	}
 	
+	public void setTotalCreditoDisciplina(Integer value) {
+		set("totalCreditoDisciplina", value);
+	}
+	public Integer getTotalCreditoDisciplina() {
+		return get("totalCreditoDisciplina");
+	}
+	
 	public boolean isTeorico() {
 		return getCreditosTeorico() > 0;
 	}

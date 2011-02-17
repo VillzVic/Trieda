@@ -47,6 +47,8 @@ public class GradeHorariaCursoGrid extends ContentPanel {
 	private QuickTip quickTip;
 	private List<Long> disciplinasCores = new ArrayList<Long>();
 	
+	private String emptyTextBeforeSearch = "Preencha o filtro acima";
+	private String emptyTextAfterSearch = "Não foi encontrado nenhuma Grade Horária para este filtro";
 	
 	public GradeHorariaCursoGrid() {
 		super(new FitLayout());
@@ -68,7 +70,7 @@ public class GradeHorariaCursoGrid extends ContentPanel {
 			}
 		});
 		
-		grid.getView().setEmptyText("Não houve nenhum resultado");
+		grid.getView().setEmptyText(emptyTextBeforeSearch);
 		quickTip = new QuickTip(grid);
 		quickTip.getToolTipConfig().setDismissDelay(0);
 		add(grid);
@@ -88,13 +90,9 @@ public class GradeHorariaCursoGrid extends ContentPanel {
 					e.getStatus().setStatus(false);
 					return;	
 				}
-//				int credito = linha + 1;
-//				int semana = coluna + 1;
-//				semana = (semana == 8)? 1 : semana; 
 				e.setCancelled(false);
 				e.getStatus().setStatus(true);
 				return;
-//				super.dragMove(e);
 			}
 		});
 		requestAtendimentos();
@@ -102,6 +100,7 @@ public class GradeHorariaCursoGrid extends ContentPanel {
 
 	public void requestAtendimentos() {
 		if(getCurriculoDTO() == null || getTurnoDTO() == null || getPeriodo() <= 0) return;
+		grid.mask("Carregando os dados, aguarde alguns instantes", "loading");
 		AtendimentosServiceAsync service = Services.atendimentos();
 		service.getBusca(getCurriculoDTO(), getPeriodo(), getTurnoDTO(), new AsyncCallback<List<AtendimentoTaticoDTO>>(){
 			@Override
@@ -114,6 +113,8 @@ public class GradeHorariaCursoGrid extends ContentPanel {
 				preencheCores();
 				coletaAtendimentosParalelos();
 				grid.reconfigure(getListStore(), new ColumnModel(getColumnList()));
+				grid.getView().setEmptyText(emptyTextAfterSearch);
+				grid.unmask();
 			}
 		});
 	}
@@ -197,7 +198,8 @@ public class GradeHorariaCursoGrid extends ContentPanel {
 					+ "<b>Turma:</b> "+ atDTO.getTurma() + "<br />"
 					+ "<b>Disciplina:</b> "+ atDTO.getDisciplinaString() +"<br />"
 					+ "<b>"+atDTO.getQuantidadeAlunos()+" alunos(s)</b><br />"
-					+ "<b>"+((atDTO.isTeorico())? "Teórico" : "Prático") +"</b><br />";
+					+ "<b>"+((atDTO.isTeorico())? "Teórico" : "Prático") +"</b><br />"
+					+ "<b>Creditos:</b> "+atDTO.getTotalCreditoDisciplina()+"/"+atDTO.getTotalCreditos()+"<br />";
 				for(AtendimentoTaticoDTO atParal : atendimentosParalelos.get(atDTO)) {
 					contentToolTipAux += "<hr /><b>Campus:</b> "+ atParal.getCampusString() +"<br />"
 					+ "<b>Unidade:</b> "+ atParal.getUnidadeString() +"<br />"
@@ -205,7 +207,8 @@ public class GradeHorariaCursoGrid extends ContentPanel {
 					+ "<b>Turma:</b> "+ atParal.getTurma() + "<br />"
 					+ "<b>Disciplina:</b> "+ atParal.getDisciplinaString() +"<br />"
 					+ "<b>"+atParal.getQuantidadeAlunos()+" alunos(s)</b><br />"
-					+ "<b>"+((atParal.isTeorico())? "Teórico" : "Prático") +"</b><br />";	
+					+ "<b>"+((atParal.isTeorico())? "Teórico" : "Prático") +"</b><br />"
+					+ "<b>Creditos:</b> "+atParal.getTotalCreditoDisciplina()+"/"+atParal.getTotalCreditos()+"<br />";
 				}
 				final String contentToolTip = contentToolTipAux;
 				

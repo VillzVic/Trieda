@@ -178,7 +178,8 @@ public class GradeHorariaSalaGrid extends ContentPanel {
 					+ "<b>Turma:</b> "+ atDTO.getTurma() + "<br />"
 					+ "<b>Quantidade:</b> "+ atDTO.getQuantidadeAlunos() +"<br />"
 					+ "<b>"+atDTO.getTotalCreditos()+" Crédito(s)</b><br />"
-					+ "<b>"+((atDTO.isTeorico())? "Teórico" : "Prático") +"</b><br />";
+					+ "<b>"+((atDTO.isTeorico())? "Teórico" : "Prático") +"</b><br />"
+					+ "<b>Creditos:</b> "+atDTO.getTotalCreditoDisciplina()+"/"+atDTO.getTotalCreditos()+"<br />";
 				
 				String content = atDTO.getDisciplinaString() + "<br />";
 				content += atDTO.getCursoString() + "<br />";

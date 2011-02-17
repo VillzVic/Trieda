@@ -1023,6 +1023,7 @@ public class ConvertBeans {
 		dto.setCursoString(domain.getOferta().getCurriculo().getCurso().getCodigo());
 		dto.setCurricularString(domain.getOferta().getCurriculo().getCodigo());
 		dto.setPeriodo(domain.getOferta().getCurriculo().getPeriodo(domain.getDisciplina()));
+		dto.setTotalCreditoDisciplina(domain.getDisciplina().getTotalCreditos());
 		
 		return dto;
 	}
