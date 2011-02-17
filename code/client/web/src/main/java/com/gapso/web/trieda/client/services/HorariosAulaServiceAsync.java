@@ -16,5 +16,6 @@ public interface HorariosAulaServiceAsync {
 	void save(HorarioAulaDTO horarioAulaDTO, AsyncCallback<Void> callback);
 	void remove(List<HorarioAulaDTO> horariosAulaDTOList, AsyncCallback<Void> callback);
 	void getBuscaList(SemanaLetivaDTO semanaLetivaDTO, TurnoDTO turnoDTO, Date horario, PagingLoadConfig loadConfig, AsyncCallback<PagingLoadResult<HorarioAulaDTO>> callback);
+	void removeWithHorario(HorarioAulaDTO horarioAulaDTO, AsyncCallback<Void> callback);
 	
 }

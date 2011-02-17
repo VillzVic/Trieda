@@ -18,10 +18,9 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 public interface HorariosAulaService extends RemoteService {
 	
 	PagingLoadResult<HorarioAulaDTO> getList(PagingLoadConfig config);
-	
 	void save(HorarioAulaDTO horarioAula);
 	void remove(List<HorarioAulaDTO> horariosAulaList);
-
 	PagingLoadResult<HorarioAulaDTO> getBuscaList(SemanaLetivaDTO semanaLetivaDTO, TurnoDTO turnoDTO, Date horario, PagingLoadConfig loadConfig);
+	void removeWithHorario(HorarioAulaDTO horarioAulaDTO);
 	
 }

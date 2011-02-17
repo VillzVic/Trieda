@@ -1,6 +1,7 @@
 package com.gapso.web.trieda.server;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -109,6 +110,22 @@ public class HorariosAulaServiceImpl extends RemoteServiceServlet implements Hor
 	public void remove(List<HorarioAulaDTO> horariosAulaDTOList) {
 		for(HorarioAulaDTO horarioAulaDTO : horariosAulaDTOList) {
 			ConvertBeans.toHorarioAula(horarioAulaDTO).remove();
+		}
+	}
+	
+	@Override
+	public void removeWithHorario(HorarioAulaDTO horarioAulaDTO) {
+		SemanaLetiva semanaLetiva = SemanaLetiva.find(horarioAulaDTO.getSemanaLetivaId());
+		Turno turno = Turno.find(horarioAulaDTO.getTurnoId());
+		Calendar cal1 = Calendar.getInstance();
+		cal1.setTime(horarioAulaDTO.getInicio());
+		
+		for(HorarioAula horarioAula : HorarioAula.findHorarioAulasBySemanaLetivaAndTurno(semanaLetiva, turno)) {
+			Calendar cal2 = Calendar.getInstance();
+			cal2.setTime(horarioAula.getHorario());
+			if(cal1.get(Calendar.HOUR) == cal2.get(Calendar.HOUR) && cal1.get(Calendar.MINUTE) == cal2.get(Calendar.MINUTE)) {
+				horarioAula.remove();
+			}
 		}
 	}
 

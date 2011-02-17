@@ -9,37 +9,47 @@ import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.store.ListStore;
 import com.extjs.gxt.ui.client.widget.Info;
 import com.extjs.gxt.ui.client.widget.button.Button;
+import com.extjs.gxt.ui.client.widget.form.TextField;
+import com.gapso.web.trieda.client.i18n.ITriedaI18nGateway;
+import com.gapso.web.trieda.client.mvp.model.HorarioAulaDTO;
 import com.gapso.web.trieda.client.mvp.model.HorarioDisponivelCenarioDTO;
 import com.gapso.web.trieda.client.mvp.model.SemanaLetivaDTO;
-import com.gapso.web.trieda.client.services.SemanasLetivaServiceAsync;
 import com.gapso.web.trieda.client.services.Services;
+import com.gapso.web.trieda.client.util.view.AbstractAsyncCallbackWithDefaultOnFailure;
 import com.gapso.web.trieda.client.util.view.SimpleModal;
+import com.gapso.web.trieda.client.util.view.TurnoComboBox;
+import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
 
 public class HorarioDisponivelCenarioFormPresenter implements Presenter {
 
-	public interface Display {
+	public interface Display extends ITriedaI18nGateway {
 		Button getSalvarButton();
 		SemanaLetivaDTO getSemanaLetivaDTO();
 		SimpleModal getSimpleModal();
 		void setProxy(RpcProxy<PagingLoadResult<HorarioDisponivelCenarioDTO>> proxy);
 		ListStore<HorarioDisponivelCenarioDTO> getStore();
+		Button getAdicionarHorarioBT();
+		Button getRemoverHorarioBT();
+		TurnoComboBox getTurnoCB();
+		TextField<String> getHorarioInicioTF();
 	}
 	private Display display;
+	private SemanaLetivaDTO semanaLetiva;
 	
-	public HorarioDisponivelCenarioFormPresenter(Display display) {
+	public HorarioDisponivelCenarioFormPresenter(SemanaLetivaDTO semanaLetiva, Display display) {
+		this.semanaLetiva = semanaLetiva;
 		this.display = display;
 		configureProxy();
 		setListeners();
 	}
 
 	private void configureProxy() {
-		final SemanasLetivaServiceAsync service = Services.semanasLetiva();
 		RpcProxy<PagingLoadResult<HorarioDisponivelCenarioDTO>> proxy = new RpcProxy<PagingLoadResult<HorarioDisponivelCenarioDTO>>() {
 			@Override
 			protected void load(Object loadConfig, AsyncCallback<PagingLoadResult<HorarioDisponivelCenarioDTO>> callback) {
-				service.getHorariosDisponiveisCenario(getDTO(), callback);
+				Services.semanasLetiva().getHorariosDisponiveisCenario(getDTO(), callback);
 			}
 		};
 		display.setProxy(proxy);
@@ -52,12 +62,7 @@ public class HorarioDisponivelCenarioFormPresenter implements Presenter {
 				display.getStore().commitChanges();
 				List<HorarioDisponivelCenarioDTO> hdcDTOList = display.getStore().getModels();
 				
-				SemanasLetivaServiceAsync gruposSalasService = Services.semanasLetiva();
-				gruposSalasService.saveHorariosDisponiveisCenario(getDTO(), hdcDTOList, new AsyncCallback<Void>() {
-					@Override
-					public void onFailure(Throwable caught) {
-						caught.printStackTrace();
-					}
+				Services.semanasLetiva().saveHorariosDisponiveisCenario(getDTO(), hdcDTOList, new AbstractAsyncCallbackWithDefaultOnFailure<Void>(display) {
 					@Override
 					public void onSuccess(Void result) {
 						Info.display("Atualizado", "Horários atualizados com sucesso!");
@@ -67,12 +72,43 @@ public class HorarioDisponivelCenarioFormPresenter implements Presenter {
 				});
 			}
 		});
-		
+		display.getAdicionarHorarioBT().addSelectionListener(new SelectionListener<ButtonEvent>(){
+			@Override
+			public void componentSelected(ButtonEvent ce) {
+				Services.horariosAula().save(getHorarioAulaDTO(), new AbstractAsyncCallbackWithDefaultOnFailure<Void>(display) {
+					@Override
+					public void onSuccess(Void result) {
+						display.getStore().getLoader().load();
+						Info.display("Adicionado", "Horário adicionado com sucesso!");
+					}
+				});
+			}
+		});
+		display.getRemoverHorarioBT().addSelectionListener(new SelectionListener<ButtonEvent>(){
+			@Override
+			public void componentSelected(ButtonEvent ce) {
+				Services.horariosAula().removeWithHorario(getHorarioAulaDTO(), new AbstractAsyncCallbackWithDefaultOnFailure<Void>(display) {
+					@Override
+					public void onSuccess(Void result) {
+						display.getStore().getLoader().load();
+						Info.display("Removido", "Horário removido com sucesso!");
+					}
+				});
+			}
+		});
 	}
-
 	
 	private SemanaLetivaDTO getDTO() {
 		return display.getSemanaLetivaDTO();
+	}
+	
+	private HorarioAulaDTO getHorarioAulaDTO() {
+		HorarioAulaDTO dto = new HorarioAulaDTO();
+		dto.setSemanaLetivaId(semanaLetiva.getId());
+		dto.setTurnoId(display.getTurnoCB().getSelection().get(0).getId());
+		DateTimeFormat df = DateTimeFormat.getFormat("HH:mm");
+		dto.setInicio(df.parse(display.getHorarioInicioTF().getValue()));
+		return dto;
 	}
 	
 	@Override

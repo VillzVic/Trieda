@@ -179,6 +179,14 @@ public class HorarioAula implements Serializable {
         return q.setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
     
+    @SuppressWarnings("unchecked")
+    public static List<HorarioAula> findHorarioAulasBySemanaLetivaAndTurno(SemanaLetiva semanaLetiva, Turno turno) {
+    	Query q = entityManager().createQuery("SELECT o FROM HorarioAula o WHERE o.semanaLetiva = :semanaLetiva AND o.turno = :turno");
+    	q.setParameter("semanaLetiva", semanaLetiva);
+    	q.setParameter("turno", turno);
+    	return q.getResultList();
+    }
+    
     public SemanaLetiva getSemanaLetiva() {
         return this.semanaLetiva;
     }

@@ -51,6 +51,7 @@ public class SemanaLetivaGrid<M extends BaseModel> extends ContentPanel {
 		grid.setBorders(true);
 		grid.setTrackMouseOver(false);
 		grid.addStyleName("SemanaLetivaGrid");
+		grid.setBorders(false);
 		
 		grid.getView().setEmptyText("Não existe horários de aula cadastrados no sistema");
 		

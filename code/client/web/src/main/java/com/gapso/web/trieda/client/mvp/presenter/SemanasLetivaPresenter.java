@@ -101,7 +101,7 @@ public class SemanasLetivaPresenter implements Presenter {
 			public void componentSelected(ButtonEvent ce) {
 //				Dispatcher.forwardEvent(AppEvents.SemanaLetivaView);
 				SemanaLetivaDTO dto = display.getGrid().getGrid().getSelectionModel().getSelectedItem();
-				Presenter presenter = new HorarioDisponivelCenarioFormPresenter(new HorarioDisponivelCenarioFormView(dto));
+				Presenter presenter = new HorarioDisponivelCenarioFormPresenter(dto, new HorarioDisponivelCenarioFormView(dto));
 				presenter.go(null);
 			}
 		});
