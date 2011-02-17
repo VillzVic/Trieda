@@ -85,7 +85,7 @@ public class GradeHorariaSalaGrid extends ContentPanel {
 					return;	
 				}
 				
-				int credito = linha + 1;
+//				int credito = linha + 1;
 				int semana = coluna + 1;
 				semana = (semana == 8)? 1 : semana; 
 				e.setCancelled(false);
@@ -177,9 +177,8 @@ public class GradeHorariaSalaGrid extends ContentPanel {
 					+ "<b>Período:</b> "+ atDTO.getPeriodo() +"<br />"
 					+ "<b>Turma:</b> "+ atDTO.getTurma() + "<br />"
 					+ "<b>Quantidade:</b> "+ atDTO.getQuantidadeAlunos() +"<br />"
-					+ "<b>"+atDTO.getTotalCreditos()+" Crédito(s)</b><br />"
 					+ "<b>"+((atDTO.isTeorico())? "Teórico" : "Prático") +"</b><br />"
-					+ "<b>Creditos:</b> "+atDTO.getTotalCreditoDisciplina()+"/"+atDTO.getTotalCreditos()+"<br />";
+					+ "<b>Creditos:</b> "+atDTO.getTotalCreditos()+"/"+atDTO.getTotalCreditoDisciplina()+"<br />";
 				
 				String content = atDTO.getDisciplinaString() + "<br />";
 				content += atDTO.getCursoString() + "<br />";

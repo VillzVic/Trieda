@@ -208,7 +208,7 @@ public class GradeHorariaCursoGrid extends ContentPanel {
 					+ "<b>Disciplina:</b> "+ atParal.getDisciplinaString() +"<br />"
 					+ "<b>"+atParal.getQuantidadeAlunos()+" alunos(s)</b><br />"
 					+ "<b>"+((atParal.isTeorico())? "Teórico" : "Prático") +"</b><br />"
-					+ "<b>Creditos:</b> "+atParal.getTotalCreditoDisciplina()+"/"+atParal.getTotalCreditos()+"<br />";
+					+ "<b>Creditos:</b> "+atParal.getTotalCreditos()+"/"+atParal.getTotalCreditoDisciplina()+"<br />";
 				}
 				final String contentToolTip = contentToolTipAux;
 				
