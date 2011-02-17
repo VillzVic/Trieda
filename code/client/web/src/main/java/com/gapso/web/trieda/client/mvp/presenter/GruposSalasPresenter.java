@@ -9,15 +9,15 @@ import com.extjs.gxt.ui.client.event.ButtonEvent;
 import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.widget.Component;
 import com.extjs.gxt.ui.client.widget.Info;
-import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.button.Button;
+import com.gapso.web.trieda.client.i18n.ITriedaI18nGateway;
 import com.gapso.web.trieda.client.mvp.model.GrupoSalaDTO;
 import com.gapso.web.trieda.client.mvp.model.UnidadeDTO;
 import com.gapso.web.trieda.client.mvp.view.GrupoSalaAssociarSalaView;
 import com.gapso.web.trieda.client.mvp.view.GrupoSalaFormView;
 import com.gapso.web.trieda.client.services.GruposSalasServiceAsync;
 import com.gapso.web.trieda.client.services.Services;
-import com.gapso.web.trieda.client.services.UnidadesServiceAsync;
+import com.gapso.web.trieda.client.util.view.AbstractAsyncCallbackWithDefaultOnFailure;
 import com.gapso.web.trieda.client.util.view.GTab;
 import com.gapso.web.trieda.client.util.view.GTabItem;
 import com.gapso.web.trieda.client.util.view.SimpleGrid;
@@ -26,7 +26,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class GruposSalasPresenter implements Presenter {
 
-	public interface Display {
+	public interface Display extends ITriedaI18nGateway {
 		Button getNewButton();
 		Button getEditButton();
 		Button getRemoveButton();
@@ -68,12 +68,7 @@ public class GruposSalasPresenter implements Presenter {
 			@Override
 			public void componentSelected(ButtonEvent ce) {
 				final GrupoSalaDTO grupoSalaDTO = display.getGrid().getGrid().getSelectionModel().getSelectedItem();
-				final UnidadesServiceAsync unidadesService = Services.unidades();				
-				unidadesService.getUnidade(grupoSalaDTO.getUnidadeId(), new AsyncCallback<UnidadeDTO>() {
-					@Override
-					public void onFailure(Throwable caught) {
-						caught.printStackTrace();
-					}
+				Services.unidades().getUnidade(grupoSalaDTO.getUnidadeId(), new AbstractAsyncCallbackWithDefaultOnFailure<UnidadeDTO>(display) {
 					@Override
 					public void onSuccess(UnidadeDTO unidadeDTO) {
 						Presenter presenter = new GrupoSalaFormPresenter(new GrupoSalaFormView(grupoSalaDTO, unidadeDTO), display.getGrid());
@@ -86,12 +81,7 @@ public class GruposSalasPresenter implements Presenter {
 			@Override
 			public void componentSelected(ButtonEvent ce) {
 				List<GrupoSalaDTO> list = display.getGrid().getGrid().getSelectionModel().getSelectedItems();
-				final GruposSalasServiceAsync service = Services.gruposSalas();
-				service.remove(list, new AsyncCallback<Void>() {
-					@Override
-					public void onFailure(Throwable caught) {
-						MessageBox.alert("ERRO!", "Deu falha na conexão", null);
-					}
+				Services.gruposSalas().remove(list, new AbstractAsyncCallbackWithDefaultOnFailure<Void>(display) {
 					@Override
 					public void onSuccess(Void result) {
 						display.getGrid().updateList();

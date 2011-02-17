@@ -6,18 +6,20 @@ import com.extjs.gxt.ui.client.widget.Info;
 import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.TextField;
+import com.gapso.web.trieda.client.i18n.ITriedaI18nGateway;
 import com.gapso.web.trieda.client.mvp.model.GrupoSalaDTO;
+import com.gapso.web.trieda.client.mvp.view.GrupoSalaAssociarSalaView;
 import com.gapso.web.trieda.client.services.GruposSalasServiceAsync;
 import com.gapso.web.trieda.client.services.Services;
+import com.gapso.web.trieda.client.util.view.AbstractAsyncCallbackWithDefaultOnFailure;
 import com.gapso.web.trieda.client.util.view.SimpleGrid;
 import com.gapso.web.trieda.client.util.view.SimpleModal;
 import com.gapso.web.trieda.client.util.view.UnidadeComboBox;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
 
 public class GrupoSalaFormPresenter implements Presenter {
 
-	public interface Display {
+	public interface Display extends ITriedaI18nGateway {
 		Button getSalvarButton();
 		Button getSalvarEAssociarButton();
 		TextField<String> getCodigoTextField();
@@ -43,13 +45,9 @@ public class GrupoSalaFormPresenter implements Presenter {
 			public void componentSelected(ButtonEvent ce) {
 				if(isValid()) {
 					final GruposSalasServiceAsync service = Services.gruposSalas();
-					service.save(getDTO(), new AsyncCallback<Void>() {
+					service.save(getDTO(), new AbstractAsyncCallbackWithDefaultOnFailure<GrupoSalaDTO>(display) {
 						@Override
-						public void onFailure(Throwable caught) {
-							MessageBox.alert("ERRO!", "Deu falha na conexão", null);
-						}
-						@Override
-						public void onSuccess(Void result) {
+						public void onSuccess(GrupoSalaDTO result) {
 							display.getSimpleModal().hide();
 							gridPanel.updateList();
 							Info.display("Salvo", "Item salvo com sucesso!");
@@ -65,18 +63,15 @@ public class GrupoSalaFormPresenter implements Presenter {
 			public void componentSelected(ButtonEvent ce) {
 				if(isValid()) {
 					final GruposSalasServiceAsync service = Services.gruposSalas();
-					service.save(getDTO(), new AsyncCallback<Void>() {
+					service.save(getDTO(), new AbstractAsyncCallbackWithDefaultOnFailure<GrupoSalaDTO>(display) {
 						@Override
-						public void onFailure(Throwable caught) {
-							MessageBox.alert("ERRO!", "Deu falha na conexão", null);
-						}
-						@Override
-						public void onSuccess(Void result) {
+						public void onSuccess(GrupoSalaDTO result) {
 							display.getSimpleModal().hide();
 							gridPanel.updateList();
 							Info.display("Salvo", "Item salvo com sucesso!");
-//							Presenter presenter = new GrupoSalaAssociarSalaPresenter(new GrupoSalaAssociarSalaView(getDTO()), gridPanel);
-//							presenter.go(null);
+							
+							Presenter presenter = new GrupoSalaAssociarSalaPresenter(new GrupoSalaAssociarSalaView(result), gridPanel);
+							presenter.go(null);
 						}
 					});
 				} else {

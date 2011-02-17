@@ -19,7 +19,7 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 public interface GruposSalasService extends RemoteService {
 	
 	GrupoSalaDTO getGrupoSala(Long id);
-	void save(GrupoSalaDTO grupoSalaDTO);
+	GrupoSalaDTO save(GrupoSalaDTO grupoSalaDTO);
 	void remove(List<GrupoSalaDTO> grupoSalaDTOList);
 	PagingLoadResult<GrupoSalaDTO> getBuscaList(String nome, String codigo, UnidadeDTO unidadeDTO, PagingLoadConfig config);
 	ListLoadResult<GrupoSalaDTO> getList(BasePagingLoadConfig loadConfig);
