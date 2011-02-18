@@ -26,7 +26,6 @@ import com.gapso.web.trieda.client.mvp.model.SalaDTO;
 import com.gapso.web.trieda.client.mvp.model.TurnoDTO;
 import com.gapso.web.trieda.client.mvp.model.UnidadeDTO;
 import com.gapso.web.trieda.client.services.DisciplinasServiceAsync;
-import com.gapso.web.trieda.client.services.OfertasServiceAsync;
 import com.gapso.web.trieda.client.services.SalasServiceAsync;
 import com.gapso.web.trieda.client.services.Services;
 import com.gapso.web.trieda.client.util.view.CampusComboBox;
@@ -71,9 +70,7 @@ public class DisciplinasAssociarSalaPresenter implements Presenter {
 				
 				final FutureResult<ListLoadResult<FileModel>> futureOfertaDTOList = new FutureResult<ListLoadResult<FileModel>>();
 				
-				OfertasServiceAsync ofertasService = Services.ofertas();
-				
-				ofertasService.getListByCampusAndTurno(campusDTO, turnoDTO, futureOfertaDTOList);
+				Services.ofertas().getListByCampusAndTurno(campusDTO, turnoDTO, futureOfertaDTOList);
 				
 				FutureSynchronizer synch = new FutureSynchronizer(futureOfertaDTOList);
 				synch.addCallback(new AsyncCallback<Boolean>() {

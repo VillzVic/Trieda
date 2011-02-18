@@ -73,7 +73,7 @@ public class OfertasServiceImpl extends RemoteServiceServlet implements OfertasS
 		
 		for(Oferta oferta : Oferta.findByCampusAndTurno(campus, turno)) {
 			OfertaDTO model = ConvertBeans.toOfertaDTO(oferta);
-			String name = model.getMatrizCurricularString() + " (" + model.getCursoString() + ")";
+			String name = model.getMatrizCurricularString() + " (" + oferta.getCurriculo().getCurso().getNome() + ")";
 			model.setName(name);
 			model.setPath(name+"/");
 			list.add(model);

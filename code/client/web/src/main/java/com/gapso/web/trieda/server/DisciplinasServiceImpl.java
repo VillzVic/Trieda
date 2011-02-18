@@ -67,9 +67,9 @@ public class DisciplinasServiceImpl extends RemoteServiceServlet implements Disc
 	public void saveHorariosDisponiveis(DisciplinaDTO disciplinaDTO, List<HorarioDisponivelCenarioDTO> listDTO) {
 		List<HorarioDisponivelCenario> listSelecionados = ConvertBeans.toHorarioDisponivelCenario(listDTO);
 		Disciplina disciplina = Disciplina.find(disciplinaDTO.getId());
-		List<HorarioDisponivelCenario> adicionarList = new ArrayList<HorarioDisponivelCenario> (listSelecionados);
+		List<HorarioDisponivelCenario> adicionarList = new ArrayList<HorarioDisponivelCenario>(listSelecionados);
 		adicionarList.removeAll(disciplina.getHorarios());
-		List<HorarioDisponivelCenario> removerList = new ArrayList<HorarioDisponivelCenario> (disciplina.getHorarios());
+		List<HorarioDisponivelCenario> removerList = new ArrayList<HorarioDisponivelCenario>(disciplina.getHorarios());
 		removerList.removeAll(listSelecionados);
 		for(HorarioDisponivelCenario o : removerList) {
 			o.getDisciplinas().remove(disciplina);
@@ -205,7 +205,7 @@ public class DisciplinasServiceImpl extends RemoteServiceServlet implements Disc
 				Set<Integer> periodos = new HashSet<Integer>();
 				for(CurriculoDisciplina cd : disciplinas) {
 					CurriculoDisciplinaDTO curriculoDisciplinaDTO = ConvertBeans.toCurriculoDisciplinaDTO(cd);
-					curriculoDisciplinaDTO.setName("Período "+curriculoDisciplinaDTO.getPeriodo().toString());
+					curriculoDisciplinaDTO.setName("Periodo "+curriculoDisciplinaDTO.getPeriodo().toString());
 					curriculoDisciplinaDTO.setPath(model.getPath() + curriculoDisciplinaDTO.getPeriodo().toString() + "/");
 					if(periodos.add(curriculoDisciplinaDTO.getPeriodo())) {
 						listDTO.add(curriculoDisciplinaDTO);
@@ -236,7 +236,7 @@ public class DisciplinasServiceImpl extends RemoteServiceServlet implements Disc
 		List<Oferta> ofertas = Oferta.findAllBy(sala);
 		for(Oferta oferta : ofertas) {
 			OfertaDTO dto = ConvertBeans.toOfertaDTO(oferta);
-			dto.setName(dto.getMatrizCurricularString() + " (" + dto.getCursoString() + ")");
+			dto.setName(dto.getMatrizCurricularString() + " (" + oferta.getCurriculo().getCurso().getNome() + ")");
 			dto.setPath(salaDTO.getPath() + dto.getMatrizCurricularString() + "/");
 			list.add(dto);
 		}
@@ -284,7 +284,7 @@ public class DisciplinasServiceImpl extends RemoteServiceServlet implements Disc
 		List<Oferta> ofertas = Oferta.findAllBy(grupoSala);
 		for(Oferta oferta : ofertas) {
 			OfertaDTO dto = ConvertBeans.toOfertaDTO(oferta);
-			dto.setName(dto.getMatrizCurricularString() + " (" + dto.getCursoString() + ")");
+			dto.setName(dto.getMatrizCurricularString() + " (" + oferta.getCurriculo().getCurso().getNome() + ")");
 			dto.setPath(grupoSalaDTO.getPath() + dto.getMatrizCurricularString() + "/");
 			list.add(dto);
 		}
