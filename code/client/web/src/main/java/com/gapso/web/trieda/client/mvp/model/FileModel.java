@@ -10,6 +10,12 @@ public class FileModel extends BaseModel {
 		set("folha", false);
 	}
 
+	public FileModel(String name) {
+		this(name, name, false);
+	}
+	public FileModel(String name, Boolean folha) {
+		this(name, name, folha);
+	}
 	public FileModel(String name, String path) {
 		this(name, path, false);
 	}

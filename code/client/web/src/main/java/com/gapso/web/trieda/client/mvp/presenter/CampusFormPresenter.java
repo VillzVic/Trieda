@@ -5,6 +5,7 @@ import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.widget.Info;
 import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.button.Button;
+import com.extjs.gxt.ui.client.widget.form.NumberField;
 import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.gapso.web.trieda.client.mvp.model.CampusDTO;
 import com.gapso.web.trieda.client.mvp.model.CenarioDTO;
@@ -22,6 +23,7 @@ public class CampusFormPresenter implements Presenter {
 		Button getSalvarButton();
 		TextField<String> getNomeTextField();
 		TextField<String> getCodigoTextField();
+		NumberField getValorCreditoNumberField();
 		EstadoComboBox getEstadoComboBox();
 		TextField<String> getMunicipioTextField();
 		TextField<String> getBairroTextField();
@@ -75,6 +77,7 @@ public class CampusFormPresenter implements Presenter {
 		campusDTO.setCenarioId(cenario.getId());
 		campusDTO.setNome(display.getNomeTextField().getValue());
 		campusDTO.setCodigo(display.getCodigoTextField().getValue());
+		campusDTO.setValorCredito(display.getValorCreditoNumberField().getValue().doubleValue());
 		campusDTO.setEstado(display.getEstadoComboBox().getValue().getValue().name());
 		campusDTO.setMunicipio(display.getMunicipioTextField().getValue());
 		campusDTO.setBairro(display.getBairroTextField().getValue());

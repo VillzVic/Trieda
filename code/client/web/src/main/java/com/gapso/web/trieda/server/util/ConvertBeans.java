@@ -130,6 +130,7 @@ public class ConvertBeans {
 		}
 		domain.setMunicipio(dto.getMunicipio());
 		domain.setBairro(dto.getBairro());
+		domain.setValorCredito(dto.getValorCredito());
 		return domain;
 	}
 	
@@ -140,6 +141,7 @@ public class ConvertBeans {
 		dto.setNome(domain.getNome());
 		dto.setCenarioId(domain.getCenario().getId());
 		dto.setCodigo(domain.getCodigo());
+		dto.setValorCredito(domain.getValorCredito());
 		if(domain.getEstado() != null) dto.setEstado(domain.getEstado().name());
 		if(domain.getMunicipio() != null) dto.setMunicipio(domain.getMunicipio());
 		if(domain.getBairro() != null) dto.setBairro(domain.getBairro());

@@ -1,8 +1,7 @@
 package com.gapso.web.trieda.client.mvp.model;
 
-import com.extjs.gxt.ui.client.data.BaseModel;
 
-public class CampusDTO extends BaseModel {
+public class CampusDTO extends FileModel {
 
 	private static final long serialVersionUID = -5134820110949139907L;
 
@@ -18,6 +17,7 @@ public class CampusDTO extends BaseModel {
 	 * String : estado
 	 * String : municipio
 	 * String : Bairro
+	 * Double : valorCredito
 	 */
 	
 	
@@ -77,4 +77,10 @@ public class CampusDTO extends BaseModel {
 		set("bairro", value);
 	}
 	
+	public void setValorCredito(Double value) {
+		set("valorCredito", value);
+	}
+	public Double getValorCredito() {
+		return get("valorCredito");
+	}
 }

@@ -213,8 +213,38 @@ public class Sala implements Serializable {
     }
 
 	public static int count() {
-        return ((Number) entityManager().createQuery("select count(o) from Sala o").getSingleResult()).intValue();
+        return ((Number) entityManager().createQuery("SELECT COUNT(o) FROM Sala o").getSingleResult()).intValue();
     }
+	
+	public static int count(Cenario cenario) {
+		Query q = entityManager().createQuery("SELECT COUNT(o) FROM Sala o WHERE o.unidade.campus.cenario = :cenario");
+		q.setParameter("cenario", cenario);
+		return ((Number) q.getSingleResult()).intValue();
+	}
+	
+	public static int countLaboratorio(Cenario cenario) {
+		Query q = entityManager().createQuery("SELECT COUNT(o) FROM Sala o WHERE o.tipoSala.id = 2 AND o.unidade.campus.cenario = :cenario");
+		q.setParameter("cenario", cenario);
+		return ((Number) q.getSingleResult()).intValue();
+	}
+	
+	public static int countLaboratorio(Campus campus) {
+		Query q = entityManager().createQuery("SELECT COUNT(o) FROM Sala o WHERE o.tipoSala.id = 2 AND o.unidade.campus = :campus");
+		q.setParameter("campus", campus);
+		return ((Number) q.getSingleResult()).intValue();
+	}
+	
+	public static int countSalaDeAula(Cenario cenario) {
+		Query q = entityManager().createQuery("SELECT COUNT(o) FROM Sala o WHERE o.tipoSala.id = 1 AND o.unidade.campus.cenario = :cenario");
+		q.setParameter("cenario", cenario);
+		return ((Number) q.getSingleResult()).intValue();
+	}
+	
+	public static int countSalaDeAula(Campus campus) {
+		Query q = entityManager().createQuery("SELECT COUNT(o) FROM Sala o WHERE o.tipoSala.id = 1 AND o.unidade.campus = :campus");
+		q.setParameter("campus", campus);
+		return ((Number) q.getSingleResult()).intValue();
+	}
 	
 	@SuppressWarnings("unchecked")
 	public List<Curriculo> getCurriculos() {

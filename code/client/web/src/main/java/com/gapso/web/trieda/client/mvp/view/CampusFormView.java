@@ -4,6 +4,7 @@ import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.FieldSet;
 import com.extjs.gxt.ui.client.widget.form.FormButtonBinding;
 import com.extjs.gxt.ui.client.widget.form.FormPanel;
+import com.extjs.gxt.ui.client.widget.form.NumberField;
 import com.extjs.gxt.ui.client.widget.form.FormPanel.LabelAlign;
 import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.extjs.gxt.ui.client.widget.layout.FlowLayout;
@@ -24,6 +25,7 @@ public class CampusFormView extends MyComposite implements CampusFormPresenter.D
 	private EstadoComboBox estadoCB;
 	private TextField<String> municipioTF;
 	private TextField<String> bairroTF;
+	private NumberField valorCreditoNF;
 	private CampusDTO campusDTO;
 	
 	public CampusFormView(CampusDTO campusDTO) {
@@ -37,7 +39,8 @@ public class CampusFormView extends MyComposite implements CampusFormPresenter.D
 	private void initUI() {
 		String title = (campusDTO.getId() == null)? "Inserção de Campus" : "Edição de Campus";
 		simpleModal = new SimpleModal(title, Resources.DEFAULTS.campus16());
-		simpleModal.setHeight(295);
+		simpleModal.setHeight(320);
+		simpleModal.setWidth(320);
 		createForm();
 		simpleModal.setContent(formPanel);
 	}
@@ -74,6 +77,17 @@ public class CampusFormView extends MyComposite implements CampusFormPresenter.D
 		nomeTF.setMaxLength(50);
 		nomeTF.setEmptyText("Preencha o nome");
 		geralFS.add(nomeTF, formData);
+		
+		valorCreditoNF = new NumberField();
+		valorCreditoNF.setName("valorCredito");
+		valorCreditoNF.setValue(campusDTO.getValorCredito());
+		valorCreditoNF.setFieldLabel("Custo (R$)");
+		valorCreditoNF.setAllowBlank(false);
+		valorCreditoNF.setAllowDecimals(true);
+		valorCreditoNF.setMaxValue(999999);
+		valorCreditoNF.setEmptyText("Custo médio do crédito (R$)");
+		geralFS.add(valorCreditoNF, formData);
+		
 		
 		formPanel.add(geralFS, formData);
 		
@@ -136,6 +150,11 @@ public class CampusFormView extends MyComposite implements CampusFormPresenter.D
 	@Override
 	public TextField<String> getCodigoTextField() {
 		return codigoTF;
+	}
+
+	@Override
+	public NumberField getValorCreditoNumberField() {
+		return valorCreditoNF;
 	}
 
 	@Override

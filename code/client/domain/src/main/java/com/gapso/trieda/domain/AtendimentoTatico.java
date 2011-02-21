@@ -198,6 +198,89 @@ public class AtendimentoTatico implements Serializable {
         return entityManager().find(AtendimentoTatico.class, id);
     }
 
+	public static int countTurma(Cenario cenario) {
+		Query q = entityManager().createQuery("SELECT count(*) FROM AtendimentoTatico o WHERE o.cenario = :cenario GROUP BY o.disciplina, o.turma");
+		q.setParameter("cenario", cenario);
+		return q.getResultList().size();
+	}
+	
+	public static int countTurma(Campus campus) {
+		Query q = entityManager().createQuery("SELECT count(*) FROM AtendimentoTatico o WHERE o.oferta.campus = :campus GROUP BY o.disciplina, o.turma");
+		q.setParameter("campus", campus);
+		return q.getResultList().size();
+	}
+	
+	public static int countCreditos(Cenario cenario) {
+		Query qT = entityManager().createQuery("SELECT sum(o.creditosTeorico) FROM AtendimentoTatico o WHERE o.cenario = :cenario");
+		Query qP = entityManager().createQuery("SELECT sum(o.creditosPratico) FROM AtendimentoTatico o WHERE o.cenario = :cenario");
+		qT.setParameter("cenario", cenario);
+		qP.setParameter("cenario", cenario);
+		
+		Object srT = qT.getSingleResult();
+		Object srP = qP.getSingleResult();
+		int iT = srT == null ? 0 : ((Number) qT.getSingleResult()).intValue();
+		int iP = srP == null ? 0 : ((Number) qP.getSingleResult()).intValue();
+		return iT + iP;
+	}
+	
+	public static int countCreditos(Campus campus) {
+		Query qT = entityManager().createQuery("SELECT sum(o.creditosTeorico) FROM AtendimentoTatico o WHERE o.oferta.campus = :campus");
+		Query qP = entityManager().createQuery("SELECT sum(o.creditosPratico) FROM AtendimentoTatico o WHERE o.oferta.campus = :campus");
+		qT.setParameter("campus", campus);
+		qP.setParameter("campus", campus);
+		
+		Object srT = qT.getSingleResult();
+		Object srP = qP.getSingleResult();
+		int iT = srT == null ? 0 : ((Number) qT.getSingleResult()).intValue();
+		int iP = srP == null ? 0 : ((Number) qP.getSingleResult()).intValue();
+		return iT + iP;
+	}
+	
+	public static int countSalasDeAula(Cenario cenario) {
+		Query q = entityManager().createQuery("SELECT count(*) FROM AtendimentoTatico o WHERE o.sala.tipoSala.id = 1 AND o.cenario = :cenario GROUP BY o.sala");
+		q.setParameter("cenario", cenario);
+		return q.getResultList().size();
+	}
+	
+	public static int countSalasDeAula(Campus campus) {
+		Query q = entityManager().createQuery("SELECT count(*) FROM AtendimentoTatico o WHERE o.sala.tipoSala.id = 1 AND o.oferta.campus = :campus GROUP BY o.sala");
+		q.setParameter("campus", campus);
+		return q.getResultList().size();
+	}
+	
+	public static int countLaboratorios(Cenario cenario) {
+		Query q = entityManager().createQuery("SELECT count(*) FROM AtendimentoTatico o WHERE o.sala.tipoSala.id = 2 AND o.cenario = :cenario GROUP BY o.sala");
+		q.setParameter("cenario", cenario);
+		return q.getResultList().size();
+	}
+	
+	public static int countLaboratorios(Campus campus) {
+		Query q = entityManager().createQuery("SELECT count(*) FROM AtendimentoTatico o WHERE o.sala.tipoSala.id = 2 AND o.oferta.campus = :campus GROUP BY o.sala");
+		q.setParameter("campus", campus);
+		return q.getResultList().size();
+	}
+	
+	public static int countDemandas(Cenario cenario) {
+		Query q = entityManager().createQuery("SELECT sum(o.quantidadeAlunos) FROM AtendimentoTatico o WHERE o.cenario = :cenario");
+		q.setParameter("cenario", cenario);
+		Object sr = q.getSingleResult();
+		return sr == null ? 0 :((Number) q.getSingleResult()).intValue();
+	}
+	
+	public static int countDemandas(Campus campus) {
+		Query q = entityManager().createQuery("SELECT sum(o.quantidadeAlunos) FROM AtendimentoTatico o WHERE o.oferta.campus = :campus");
+		q.setParameter("campus", campus);
+		Object sr = q.getSingleResult();
+		return sr == null ? 0 :((Number) q.getSingleResult()).intValue();
+	}
+
+	@SuppressWarnings("unchecked")
+	public static List<AtendimentoTatico> findAllByDemanda(Demanda demanda) {
+		Query q = entityManager().createQuery("SELECT o FROM AtendimentoTatico o WHERE o.oferta = :oferta AND o.disciplina = :disciplina");
+		q.setParameter("oferta", demanda.getOferta());
+		q.setParameter("disciplina", demanda.getDisciplina());
+		return q.getResultList();
+	}
 	
 	public Cenario getCenario() {
 		return cenario;

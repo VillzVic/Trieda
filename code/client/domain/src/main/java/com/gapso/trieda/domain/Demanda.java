@@ -149,10 +149,35 @@ public class Demanda implements Serializable {
         return ((Number) entityManager().createQuery("SELECT COUNT(o) FROM Demanda o").getSingleResult()).intValue();
     }
 
+	public static int count(Cenario cenario) {
+		Query q = entityManager().createQuery("SELECT COUNT(o) FROM Demanda o WHERE o.disciplina.cenario = :cenario");
+		q.setParameter("cenario", cenario);
+		return ((Number) q.getSingleResult()).intValue();
+	}
+	
+	public static int count(Campus campus) {
+		Query q = entityManager().createQuery("SELECT COUNT(o) FROM Demanda o WHERE o.oferta.campus = :campus");
+		q.setParameter("campus", campus);
+		return ((Number) q.getSingleResult()).intValue();
+	}
+	
+	public static int sumDemanda(Cenario cenario) {
+		Query q = entityManager().createQuery("SELECT SUM(o.quantidade) FROM Demanda o WHERE o.disciplina.cenario = :cenario");
+		q.setParameter("cenario", cenario);
+		return ((Number) q.getSingleResult()).intValue();
+	}
+	
 	@SuppressWarnings("unchecked")
     public static List<Demanda> findAll() {
         return entityManager().createQuery("SELECT o FROM Demanda o").getResultList();
     }
+	
+	@SuppressWarnings("unchecked")
+	public static List<Demanda> findAllByCampus(Campus campus) {
+		Query q = entityManager().createQuery("SELECT o FROM Demanda o WHERE o.oferta.campus = :campus");
+		q.setParameter("campus", campus);
+		return q.getResultList();
+	}
 
     @SuppressWarnings("unchecked")
 	public static List<Demanda> findByCampusAndCursoAndCurriculoAndTurnoAndDisciplina(Campus campus, Curso curso, Curriculo curriculo, Turno turno, Disciplina disciplina, int firstResult, int maxResults, String orderBy) {

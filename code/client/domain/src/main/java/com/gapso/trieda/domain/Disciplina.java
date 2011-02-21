@@ -271,6 +271,12 @@ public class Disciplina implements Serializable {
         return ((Number) entityManager().createQuery("SELECT COUNT(o) FROM Disciplina o").getSingleResult()).intValue();
     }
 
+	public static int count(Cenario cenario) {
+		Query q = entityManager().createQuery("SELECT COUNT(o) FROM Disciplina o WHERE o.cenario = :cenario");
+		q.setParameter("cenario", cenario);
+		return ((Number) q.getSingleResult()).intValue();
+	}
+	
 	@SuppressWarnings("unchecked")
     public static List<Disciplina> findAll() {
         return entityManager().createQuery("SELECT o FROM Disciplina o").getResultList();

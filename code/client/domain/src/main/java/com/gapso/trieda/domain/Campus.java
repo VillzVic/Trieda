@@ -21,6 +21,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.Table;
 import javax.persistence.Version;
+import javax.validation.constraints.Digits;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -56,6 +57,10 @@ public class Campus implements Serializable {
     @Column(name = "CAM_NOME")
     @Size(min = 1, max = 50)
     private String nome;
+
+    @Column(name = "CAM_VALOR_CREDITO")
+    @Digits(integer = 6, fraction = 2)
+    private Double valorCredito;
     
     @Enumerated
     @Column(name = "CAM_ESTADO")
@@ -112,6 +117,14 @@ public class Campus implements Serializable {
         this.nome = nome;
     }
 
+	public Double getValorCredito() {
+        return this.valorCredito;
+    }
+
+	public void setValorCredito(Double valorCredito) {
+        this.valorCredito = valorCredito;
+    }
+	
 	public Estados getEstado() {
 		return estado;
 	}
@@ -289,12 +302,18 @@ public class Campus implements Serializable {
     }
 
 	public static int count() {
-        return ((Number) entityManager().createQuery("select count(o) from Campus o").getSingleResult()).intValue();
+        return ((Number) entityManager().createQuery("SELECT COUNT(o) FROM Campus o").getSingleResult()).intValue();
     }
+	
+	public static int count(Cenario cenario) {
+		Query q = entityManager().createQuery("SELECT COUNT(o) FROM Campus o WHERE o.cenario = :cenario");
+		q.setParameter("cenario", cenario);
+		return ((Number) q.getSingleResult()).intValue();
+	}
 
 	@SuppressWarnings("unchecked")
     public static List<Campus> findAll() {
-        return entityManager().createQuery("select o from Campus o").getResultList();
+        return entityManager().createQuery("SELECT o FROM Campus o").getResultList();
     }
 
 	public static Campus find(Long id) {
@@ -311,7 +330,6 @@ public class Campus implements Serializable {
         return entityManager().createQuery("SELECT o FROM Campus o "+orderBy).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
 
-    @SuppressWarnings("unchecked")
     public static Campus getByCodigo(Cenario cenario, String codigo) {
     	Query q = entityManager().createQuery("SELECT o FROM Campus o WHERE cenario = :cenario AND codigo = :codigo");
     	q.setParameter("cenario", cenario);
@@ -366,6 +384,7 @@ public class Campus implements Serializable {
         sb.append("Cenario: ").append(getCenario()).append(", ");
         sb.append("Codigo: ").append(getCodigo()).append(", ");
         sb.append("Nome: ").append(getNome()).append(", ");
+        sb.append("ValorCredito: ").append(getValorCredito()).append(", ");
         sb.append("Estado: ").append(getEstado().name()).append(", ");
         sb.append("Municipio: ").append(getMunicipio()).append(", ");
         sb.append("Bairro: ").append(getBairro()).append(", ");

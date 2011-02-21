@@ -5,10 +5,12 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 import java.util.Map.Entry;
+import java.util.Set;
+import java.util.TreeMap;
 
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,8 +21,10 @@ import com.extjs.gxt.ui.client.data.BasePagingLoadResult;
 import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
+import com.gapso.trieda.domain.AtendimentoTatico;
 import com.gapso.trieda.domain.Campus;
 import com.gapso.trieda.domain.Cenario;
+import com.gapso.trieda.domain.Demanda;
 import com.gapso.trieda.domain.HorarioDisponivelCenario;
 import com.gapso.trieda.domain.Sala;
 import com.gapso.trieda.domain.Turno;
@@ -29,6 +33,7 @@ import com.gapso.trieda.misc.Estados;
 import com.gapso.web.trieda.client.mvp.model.CampusDTO;
 import com.gapso.web.trieda.client.mvp.model.CenarioDTO;
 import com.gapso.web.trieda.client.mvp.model.DeslocamentoCampusDTO;
+import com.gapso.web.trieda.client.mvp.model.FileModel;
 import com.gapso.web.trieda.client.mvp.model.HorarioDisponivelCenarioDTO;
 import com.gapso.web.trieda.client.services.CampiService;
 import com.gapso.web.trieda.server.util.ConvertBeans;
@@ -92,7 +97,7 @@ public class CampiServiceImpl extends RemoteServiceServlet implements CampiServi
 	public void saveHorariosDisponiveis(CampusDTO campusDTO, List<HorarioDisponivelCenarioDTO> listDTO) {
 		List<HorarioDisponivelCenario> listSelecionados = ConvertBeans.toHorarioDisponivelCenario(listDTO);
 		Campus campus = Campus.find(campusDTO.getId());
-		List<Unidade> unidades = Unidade.findByCampus(campus); 
+		List<Unidade> unidades = Unidade.findByCampus(campus);
 		List<Sala> salas = new ArrayList<Sala>();
 		for(Unidade unidade : unidades) {
 			salas.addAll(Sala.findByUnidade(unidade)); 
@@ -234,6 +239,65 @@ public class CampiServiceImpl extends RemoteServiceServlet implements CampiServi
 			Campus campus = ConvertBeans.toDeslocamentoCampus(deslocamentoCampusDTO);
 			campus.merge();
 		}
+	}
+	
+	@Override
+	public List<FileModel> getResumos(CenarioDTO cenarioDTO, FileModel fileModel) {
+		List<FileModel> list = new ArrayList<FileModel>();
+		if(!(fileModel instanceof CampusDTO)) {
+			Cenario cenario = Cenario.find(cenarioDTO.getId());
+			for(Campus campus : cenario.getCampi()) {
+				CampusDTO campusDTO = ConvertBeans.toCampusDTO(campus);
+				campusDTO.setName(campus.getCodigo() + " (" + campus.getNome() + ")");
+				campusDTO.setPath(campus.getCodigo());
+				campusDTO.setFolha(true);
+				list.add(campusDTO);
+			}
+		} else {
+			Campus campus = Campus.find(((CampusDTO)fileModel).getId());
+			Double custoCredito = campus.getValorCredito();
+			if(custoCredito == null) custoCredito = 0.0;
+			Integer qtdTurma = AtendimentoTatico.countTurma(campus);
+			Integer qtdCreditos = AtendimentoTatico.countCreditos(campus);
+			Double mediaCreditoTurma = (qtdTurma == 0)? 0.0 : qtdCreditos/qtdTurma;
+			Double custoDocenteSemestral = qtdCreditos * custoCredito * 4.5 * 6.0;
+			Integer qSalasCenario = Sala.countSalaDeAula(campus);
+			Integer qLaboratoriosCenario = Sala.countLaboratorio(campus);
+			Integer qSalas = AtendimentoTatico.countSalasDeAula(campus);
+			Integer qLaboratorios = AtendimentoTatico.countLaboratorios(campus);
+			Double mediaSalaDeAula = qSalas == 0 ? 0 : (qSalasCenario/qSalas) * 100.0;
+			Double mediaLaboratorio = qLaboratorios == 0 ? 0 : (qLaboratoriosCenario/qLaboratorios) * 100.0;
+			
+			List<Demanda> demandas = Demanda.findAllByCampus(campus);
+			Integer qtdAlunosAtendidos = 0;
+			Integer qtdAlunosNaoAtendidos = 0;
+			for(Demanda demanda : demandas) {
+				Set<String> turmas = new HashSet<String>();
+				List<AtendimentoTatico> atendimentos = AtendimentoTatico.findAllByDemanda(demanda);
+				for(AtendimentoTatico atendimento : atendimentos) {
+					if(turmas.add(atendimento.getTurma())) {
+						qtdAlunosAtendidos += atendimento.getQuantidadeAlunos();
+						if(demanda.getQuantidade() >= atendimento.getQuantidadeAlunos()) {
+							qtdAlunosNaoAtendidos += (demanda.getQuantidade() - atendimento.getQuantidadeAlunos());
+						}
+					}
+				}
+			}
+			
+			list.add(new FileModel("Turmas abertas: <b>"+qtdTurma+"</b>"));
+			list.add(new FileModel("Total de Cr&eacute;ditos semanais: <b>"+qtdCreditos+"</b>"));
+			list.add(new FileModel("M&eacute;dia de cr&eacute;ditos por turma: <b>"+mediaCreditoTurma+"</b>"));
+			list.add(new FileModel("Custo m&eacute;dio do cr&eacute;dito: <b>R$ "+custoCredito+"</b>"));
+			list.add(new FileModel("Custo docente semestral estimado: <b>R$ "+custoDocenteSemestral+"</b>"));
+			list.add(new FileModel("Utiliza&ccedil;&atilde;o m&eacute;dia das salas de aula: <b>"+mediaSalaDeAula+"%</b>"));
+			list.add(new FileModel("Utiliza&ccedil;&atilde;o m&eacute;dia dos laborat&oacute;rios: <b>"+mediaLaboratorio+"%</b>"));
+			list.add(new FileModel("Custo docente por curso"));
+			list.add(new FileModel("Custo docente por disciplina"));
+			list.add(new FileModel("Total de alunos atendidos: <b>"+qtdAlunosAtendidos+"</b>"));
+			list.add(new FileModel("Total de alunos n&atilde;o atendidos: <b>"+qtdAlunosNaoAtendidos+"</b>"));
+			list.add(new FileModel("Exportar resultados para excel"));
+		}
+		return list;
 	}
 	
 }

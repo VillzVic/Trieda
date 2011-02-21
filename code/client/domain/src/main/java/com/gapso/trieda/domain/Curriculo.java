@@ -181,8 +181,14 @@ public class Curriculo implements Serializable {
     }
 
 	public static int count() {
-        return ((Number) entityManager().createQuery("select count(o) from Curriculo o").getSingleResult()).intValue();
+        return ((Number) entityManager().createQuery("SELECT COUNT(o) FROM Curriculo o").getSingleResult()).intValue();
     }
+	
+	public static int count(Cenario cenario) {
+		Query q = entityManager().createQuery("SELECT COUNT(o) FROM Curriculo o WHERE o.cenario = :cenario");
+		q.setParameter("cenario", cenario);
+		return ((Number) q.getSingleResult()).intValue();
+	}
 	
 	@SuppressWarnings("unchecked")
     public static List<Curriculo> findAll() {
