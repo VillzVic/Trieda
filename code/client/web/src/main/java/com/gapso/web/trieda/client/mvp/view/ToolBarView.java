@@ -34,6 +34,7 @@ public class ToolBarView extends MyComposite implements ToolBarPresenter.Display
 	private ToolBar planejamentoToolBar;
 		
 	// Campi
+	private Button campiNovoCampiBt;
 	private Button campiListCampiBt;
 	private Button campusDeslocamentoListCampiBt;
 	private Button semanasLetivaListCampiBt;
@@ -42,32 +43,37 @@ public class ToolBarView extends MyComposite implements ToolBarPresenter.Display
 	private Button ofertasListCampiBt;
 	
 	// Unidades
+	private Button unidadesNovoUnidadesBt;
 	private Button unidadesListUnidadesBt;
 	private Button unidadeDeslocamentoListUnidadesBt;
 	
 	// Salas
+	private Button salasNovoSalasBt;
 	private Button salasListSalasBt;
 	private Button gruposSalasListSalasBt;
 	private Button associarDisciplinasSalasListSalasBt;
 	
 	// Cursos
+	private Button cursosNovoCursosBt;
+	private Button cursosListCursosBt;
 	private Button tiposCursosListCursosBt;
 	private Button areasTitulacaoListCursosBt;
 	private Button vincularAreasTitulacaoListCursosBt;
-	private Button cursosListCursosBt;
 	private Button curriculosListCursosBt;
 	private Button ofertasListCursosBt;
 	
 	// Disciplinas
+	private Button disciplinasNovoDisciplinasBt;
 	private Button disciplinasListDisciplinasBt;
 	private Button demandasDisciplinasBt;
 	private Button curriculosListDisciplinasBt;
 	private Button associarDisciplinasSalasListDisciplinasBt;
 	private Button divisaoCreditosListDisciplinasBt;
 	private Button equivalenciasListDisciplinasBt;
-	private Button incompatibilidadesListDisciplinasBt;
+	private Button compatibilidadesListDisciplinasBt;
 	
 	// Professores
+	private Button professoresNovoProfessoresBt;
 	private Button professoresListprofessoresBt;
 	private Button professoresDisciplinaListprofessoresBt;
 	private Button professoresCampusListprofessoresBt;
@@ -190,7 +196,8 @@ public class ToolBarView extends MyComposite implements ToolBarPresenter.Display
 	
 	private void createCampi() {
 		// TODO Implementar o cadastro de campus pelo menu
-		campiToolBar.add(createButton("Novo", "Adicionar um campus", Resources.DEFAULTS.campusNovo24()));
+		campiNovoCampiBt = createButton("Novo", "Adicionar um campus", Resources.DEFAULTS.campusNovo24());
+		campiToolBar.add(campiNovoCampiBt);
 		
 		campiListCampiBt = createButton("Listar", "Listar Campi", Resources.DEFAULTS.campusListar24());
 		campiToolBar.add(campiListCampiBt);
@@ -215,7 +222,8 @@ public class ToolBarView extends MyComposite implements ToolBarPresenter.Display
 	
 	private void createUnidades() {
 		// TODO Implementar o cadastro de unidade pelo menu
-		unidadesToolBar.add(createButton("Nova", "Adicionar uma Unidade", Resources.DEFAULTS.unidadeNovo24()));
+		unidadesNovoUnidadesBt = createButton("Nova", "Adicionar uma Unidade", Resources.DEFAULTS.unidadeNovo24()); 
+		unidadesToolBar.add(unidadesNovoUnidadesBt);
 		
 		unidadesListUnidadesBt = createButton("Listar", "Listar Unidades", Resources.DEFAULTS.unidadeListar24());
 		unidadesToolBar.add(unidadesListUnidadesBt);
@@ -227,8 +235,8 @@ public class ToolBarView extends MyComposite implements ToolBarPresenter.Display
 	}
 	
 	private void createSalas() {
-		// TODO Implementar o cadastro de sala pelo menu
-		salasToolBar.add(createButton("Nova", "Adicionar uma Sala", Resources.DEFAULTS.salaNovo24()));
+		salasNovoSalasBt = createButton("Nova", "Adicionar uma Sala", Resources.DEFAULTS.salaNovo24());
+		salasToolBar.add(salasNovoSalasBt);
 		
 		salasListSalasBt = createButton("Listar", "Listar Salas", Resources.DEFAULTS.salaListar24());
 		salasToolBar.add(salasListSalasBt);
@@ -243,8 +251,8 @@ public class ToolBarView extends MyComposite implements ToolBarPresenter.Display
 	}
 	
 	private void createCursos() {
-		// TODO Implementar o cadastro de curso pelo menu
-		cursosToolBar.add(createButton("Novo", "Adicionar um Curso", Resources.DEFAULTS.cursoNovo24()));
+		cursosNovoCursosBt = createButton("Novo", "Adicionar um Curso", Resources.DEFAULTS.cursoNovo24());
+		cursosToolBar.add(cursosNovoCursosBt);
 		
 		cursosListCursosBt = createButton("Listar", "Listar Cursos", Resources.DEFAULTS.cursoListar24());
 		cursosToolBar.add(cursosListCursosBt);
@@ -268,8 +276,8 @@ public class ToolBarView extends MyComposite implements ToolBarPresenter.Display
 	}
 	
 	private void createDisciplinas() {
-		// TODO Implementar o cadastro de disciplina pelo menu
-		disciplinasToolBar.add(createButton("Novo", "Adicionar um Curso", Resources.DEFAULTS.disciplinaNovo24()));
+		disciplinasNovoDisciplinasBt = createButton("Novo", "Adicionar um Curso", Resources.DEFAULTS.disciplinaNovo24());
+		disciplinasToolBar.add(disciplinasNovoDisciplinasBt);
 
 		disciplinasListDisciplinasBt = createButton("Listar", "Listar Disciplinas", Resources.DEFAULTS.disciplinaListar24());
 		disciplinasToolBar.add(disciplinasListDisciplinasBt);
@@ -291,12 +299,13 @@ public class ToolBarView extends MyComposite implements ToolBarPresenter.Display
 		equivalenciasListDisciplinasBt = createButton("Equivalências", "Equivalências", Resources.DEFAULTS.equivalencia24());
 		disciplinasToolBar.add(equivalenciasListDisciplinasBt);
 		
-		incompatibilidadesListDisciplinasBt = createButton("Incompatibilidades", "Incompatibilidades", Resources.DEFAULTS.fixacao24());
-		disciplinasToolBar.add(incompatibilidadesListDisciplinasBt);
+		compatibilidadesListDisciplinasBt = createButton("Compatibilidade<br />entre disciplinas", "Compatibilidade entre disciplinas", Resources.DEFAULTS.fixacao24());
+		disciplinasToolBar.add(compatibilidadesListDisciplinasBt);
 	}
 	
 	private void createProfessores() {
-		professoresToolBar.add(createButton("Novo", "Adicionar novo Professor", Resources.DEFAULTS.professorNovo24()));
+		professoresNovoProfessoresBt = createButton("Novo", "Adicionar novo Professor", Resources.DEFAULTS.professorNovo24());
+		professoresToolBar.add(professoresNovoProfessoresBt);
 		
 		professoresListprofessoresBt = createButton("Listar", "Listar Professores", Resources.DEFAULTS.professorListar24());
 		professoresToolBar.add(professoresListprofessoresBt);
@@ -366,6 +375,10 @@ public class ToolBarView extends MyComposite implements ToolBarPresenter.Display
 		return horariosAulaListCampiBt;
 	}
 	@Override
+	public Button getSalasNovoSalasButton() {
+		return salasNovoSalasBt;
+	}
+	@Override
 	public Button getSalasListSalasButton() {
 		return salasListSalasBt;
 	}
@@ -394,8 +407,16 @@ public class ToolBarView extends MyComposite implements ToolBarPresenter.Display
 		return campusDeslocamentoListCampiBt;
 	}
 	@Override
+	public Button getCursosNovoCursosButton() {
+		return cursosNovoCursosBt;
+	}
+	@Override
 	public Button getCursosListCursosButton() {
 		return cursosListCursosBt;
+	}
+	@Override
+	public Button getDisciplinasNovoDisciplinasButton() {
+		return disciplinasNovoDisciplinasBt;
 	}
 	@Override
 	public Button getDisciplinasListDisciplinasButton() {
@@ -430,8 +451,12 @@ public class ToolBarView extends MyComposite implements ToolBarPresenter.Display
 		return fixacoesListBt;
 	}
 	@Override
-	public Button getIncompatibilidadesListDisciplinasButton() {
-		return incompatibilidadesListDisciplinasBt;
+	public Button getCompatibilidadesListDisciplinasButton() {
+		return compatibilidadesListDisciplinasBt;
+	}
+	@Override
+	public Button getProfessoresNovoProfessoresButton() {
+		return professoresNovoProfessoresBt;
 	}
 	@Override
 	public Button getProfessoresListProfessoresButton() {
@@ -466,10 +491,20 @@ public class ToolBarView extends MyComposite implements ToolBarPresenter.Display
 	public Button getTurnosListCampiButton() {
 		return turnosListCampiBt;
 	}
+	
+	@Override
+	public Button getCampiNovoCampiButton() {
+		return campiNovoCampiBt;
+	}
 
 	@Override
 	public Button getCampiListCampiButton() {
 		return campiListCampiBt;
+	}
+	
+	@Override
+	public Button getUnidadesNovoUnidadesButton() {
+		return unidadesNovoUnidadesBt;
 	}
 
 	@Override

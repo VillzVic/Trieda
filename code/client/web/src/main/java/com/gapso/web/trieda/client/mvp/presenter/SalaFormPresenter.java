@@ -35,6 +35,9 @@ public class SalaFormPresenter implements Presenter {
 	private SimpleGrid<SalaDTO> gridPanel;
 	private Display display;
 	
+	public SalaFormPresenter(Display display) {
+		this(display, null);
+	}
 	public SalaFormPresenter(Display display, SimpleGrid<SalaDTO> gridPanel) {
 		this.gridPanel = gridPanel;
 		this.display = display;
@@ -55,7 +58,9 @@ public class SalaFormPresenter implements Presenter {
 						@Override
 						public void onSuccess(Void result) {
 							display.getSimpleModal().hide();
-							gridPanel.updateList();
+							if(gridPanel != null) {
+								gridPanel.updateList();
+							}
 							Info.display("Salvo", "Item salvo com sucesso!");
 						}
 					});

@@ -35,6 +35,9 @@ public class UnidadeFormPresenter implements Presenter {
 	private SimpleGrid<UnidadeDTO> gridPanel;
 	private Display display;
 	
+	public UnidadeFormPresenter(Display display) {
+		this(display, null);
+	}
 	public UnidadeFormPresenter(Display display, SimpleGrid<UnidadeDTO> gridPanel) {
 		this.gridPanel = gridPanel;
 		this.display = display;
@@ -56,7 +59,9 @@ public class UnidadeFormPresenter implements Presenter {
 						@Override
 						public void onSuccess(Void result) {
 							display.getSimpleModal().hide();
-							gridPanel.updateList();
+							if(gridPanel != null) {
+								gridPanel.updateList();
+							}
 							Info.display(
 								display.getI18nConstants().informacao(),
 								display.getI18nMessages().sucessoSalvarNoBD(dto.getCodigo())

@@ -11,6 +11,7 @@ import com.extjs.gxt.ui.client.widget.Component;
 import com.extjs.gxt.ui.client.widget.Info;
 import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.button.Button;
+import com.gapso.web.trieda.client.mvp.model.CampusDTO;
 import com.gapso.web.trieda.client.mvp.model.HorarioDisponivelCenarioDTO;
 import com.gapso.web.trieda.client.mvp.model.SalaDTO;
 import com.gapso.web.trieda.client.mvp.model.TipoSalaDTO;
@@ -19,7 +20,6 @@ import com.gapso.web.trieda.client.mvp.view.HorarioDisponivelSalaFormView;
 import com.gapso.web.trieda.client.mvp.view.SalaFormView;
 import com.gapso.web.trieda.client.services.SalasServiceAsync;
 import com.gapso.web.trieda.client.services.Services;
-import com.gapso.web.trieda.client.services.UnidadesServiceAsync;
 import com.gapso.web.trieda.client.util.view.GTab;
 import com.gapso.web.trieda.client.util.view.GTabItem;
 import com.gapso.web.trieda.client.util.view.SimpleGrid;
@@ -68,7 +68,7 @@ public class SalasPresenter implements Presenter {
 		display.getNewButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
 			@Override
 			public void componentSelected(ButtonEvent ce) {
-				Presenter presenter = new SalaFormPresenter(new SalaFormView(new SalaDTO(), null, null), display.getGrid());
+				Presenter presenter = new SalaFormPresenter(new SalaFormView(new SalaDTO(), null, null, null), display.getGrid());
 				presenter.go(null);
 			}
 		});
@@ -77,21 +77,21 @@ public class SalasPresenter implements Presenter {
 			public void componentSelected(ButtonEvent ce) {
 				final SalaDTO salaDTO = display.getGrid().getGrid().getSelectionModel().getSelectedItem();
 
-				UnidadesServiceAsync unidadesService = Services.unidades();
-				SalasServiceAsync salasService = Services.salas();
-
+				final FutureResult<CampusDTO> futureCampusDTO = new FutureResult<CampusDTO>();
 				final FutureResult<UnidadeDTO> futureUnidadeDTO = new FutureResult<UnidadeDTO>();
 				final FutureResult<TipoSalaDTO> futureSalaDTO = new FutureResult<TipoSalaDTO>();
-				unidadesService.getUnidade(salaDTO.getUnidadeId(), futureUnidadeDTO);
-				salasService.getTipoSala(salaDTO.getTipoId(), futureSalaDTO);
+				Services.campi().getCampus(salaDTO.getCampusId(), futureCampusDTO);
+				Services.unidades().getUnidade(salaDTO.getUnidadeId(), futureUnidadeDTO);
+				Services.salas().getTipoSala(salaDTO.getTipoId(), futureSalaDTO);
 
-				FutureSynchronizer synch = new FutureSynchronizer(futureUnidadeDTO, futureSalaDTO);
+				FutureSynchronizer synch = new FutureSynchronizer(futureCampusDTO, futureUnidadeDTO, futureSalaDTO);
 				synch.addCallback(new AsyncCallback<Boolean>() {
 					public void onFailure(Throwable caught) { MessageBox.alert("ERRO!", "Deu falha na conexão", null); }
 					public void onSuccess(Boolean result) {
+						CampusDTO campusDTO = futureCampusDTO.result();
 						UnidadeDTO unidadeDTO = futureUnidadeDTO.result();
 						TipoSalaDTO tipoSalaDTO = futureSalaDTO.result();
-						Presenter presenter = new SalaFormPresenter(new SalaFormView(salaDTO, unidadeDTO, tipoSalaDTO), display.getGrid());
+						Presenter presenter = new SalaFormPresenter(new SalaFormView(salaDTO, campusDTO, unidadeDTO, tipoSalaDTO), display.getGrid());
 						presenter.go(null);
 					}
 				});

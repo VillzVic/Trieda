@@ -24,7 +24,7 @@ import com.gapso.web.trieda.client.util.view.GTabItem;
 import com.gapso.web.trieda.client.util.view.IncompatibilidadeGrid;
 import com.google.gwt.user.client.ui.Widget;
 
-public class IncompatibilidadesPresenter implements Presenter {
+public class CompatibilidadesPresenter implements Presenter {
 
 	public interface Display extends ITriedaI18nGateway {
 		Button getSalvarButton();
@@ -38,7 +38,7 @@ public class IncompatibilidadesPresenter implements Presenter {
 	private Display display;
 //	private CenarioDTO cenario;
 	
-	public IncompatibilidadesPresenter(CenarioDTO cenario, Display display) {
+	public CompatibilidadesPresenter(CenarioDTO cenario, Display display) {
 		this.display = display;
 //		this.cenario = cenario;
 		configureProxy();

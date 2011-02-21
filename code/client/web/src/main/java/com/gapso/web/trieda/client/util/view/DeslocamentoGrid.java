@@ -76,6 +76,7 @@ public class DeslocamentoGrid<M extends BaseModel> extends ContentPanel {
 		store.removeAll();
 		store.add(models);
 		grid.reconfigure(store, getColumnModel());
+		
 	}
 	
 	public ColumnModel getColumnModel() {
@@ -92,10 +93,7 @@ public class DeslocamentoGrid<M extends BaseModel> extends ContentPanel {
 			column.setEditor(new CellEditor(field));
 			column.setRenderer(new GridCellRenderer<M>() {
 				@Override
-				public Object render(M model,
-						String property, ColumnData config, int rowIndex,
-						int colIndex, ListStore<M> store,
-						Grid<M> grid) {
+				public Object render(M model, String property, ColumnData config, int rowIndex, int colIndex, ListStore<M> store, Grid<M> grid) {
 					config.css = "x-grid3-header";
 					if(rowIndex == (colIndex - 1)) return "";
 					return model.get(property);
@@ -107,7 +105,7 @@ public class DeslocamentoGrid<M extends BaseModel> extends ContentPanel {
 				@Override
 				public Object render(M model, String property, ColumnData config, int rowIndex, int colIndex, ListStore<M> store, Grid<M> grid) {
 					if(isMeio(rowIndex, colIndex)) {
-						config.style = "background-color: #EBECEE;";
+						config.style = "background-color: #b3b4c3;";
 						return "";
 					} else {
 						config.style = "background-color: #FFFFFF;";
@@ -129,11 +127,11 @@ public class DeslocamentoGrid<M extends BaseModel> extends ContentPanel {
 			}
 			columnModel = new ColumnModel(list);
 			for(int i = 0; i < models.size(); i++) {
-				String stringColumn = models.get(i).get("origemString");
+				String stringColumn = truncate((String) models.get(i).get("origemString"));
 				if(containsCusto) {
 					columnModel.addHeaderGroup(0, (i+1)*2-1, new HeaderGroupConfig(stringColumn, 1, 2));
 				} else {
-					columnModel.addHeaderGroup(0, i+1, new HeaderGroupConfig(stringColumn, 1, 1));
+					columnModel.addHeaderGroup(0, i+1, new HeaderGroupConfig(stringColumn));
 				}
 			}
 			
@@ -174,7 +172,7 @@ public class DeslocamentoGrid<M extends BaseModel> extends ContentPanel {
 	}
 	
 	private ColumnConfig createColumnConfig(String id, String columnString, Boolean allowDecimals, GridCellRenderer<M> renderer) {
-		ColumnConfig column = new ColumnConfig(id, columnString, 50);
+		ColumnConfig column = new ColumnConfig(id, columnString, containsCusto? 70 : 140);
 		column.setResizable(false);
 		column.setMenuDisabled(true);
 		column.setSortable(false);
@@ -185,4 +183,14 @@ public class DeslocamentoGrid<M extends BaseModel> extends ContentPanel {
 		return column;
 	}
 	
+	private String truncate(String label) {
+		int max = 15;
+		String ret = label;
+		if(ret.length() > max) {
+			ret = ret.substring(0, max);
+			ret += "...";
+		}
+		return ret;
+	}
+
 }

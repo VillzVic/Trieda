@@ -36,6 +36,9 @@ public class CampusFormPresenter implements Presenter {
 	private SimpleGrid<CampusDTO> gridPanel;
 	private Display display;
 	
+	public CampusFormPresenter(CenarioDTO cenario, Display display) {
+		this(cenario, display, null);
+	}
 	public CampusFormPresenter(CenarioDTO cenario, Display display, SimpleGrid<CampusDTO> gridPanel) {
 		this.cenario = cenario;
 		this.gridPanel = gridPanel;
@@ -57,7 +60,9 @@ public class CampusFormPresenter implements Presenter {
 						@Override
 						public void onSuccess(Void result) {
 							display.getSimpleModal().hide();
-							gridPanel.updateList();
+							if(gridPanel != null) {
+								gridPanel.updateList();
+							}
 							Info.display("Salvo", "Item salvo com sucesso!");
 						}
 					});

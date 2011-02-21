@@ -31,7 +31,7 @@ public class CampiDeslocamentoView extends MyComposite implements CampiDeslocame
 	
 	private void initUI() {
 		panel = new ContentPanel(new BorderLayout());
-		panel.setHeading("Master Data » Deslocamentos de Campi");
+		panel.setHeading("Master Data » Deslocamentos entre Campi");
 		createToolBar();
 		createGrid();
 		createTabItem();
@@ -39,7 +39,7 @@ public class CampiDeslocamentoView extends MyComposite implements CampiDeslocame
 	}
 	
 	private void createTabItem() {
-		tabItem = new GTabItem("Deslocamentos de Campi", Resources.DEFAULTS.deslocamento16());
+		tabItem = new GTabItem("Deslocamentos entre Campi", Resources.DEFAULTS.deslocamento16());
 		tabItem.setContent(panel);
 	}
 	

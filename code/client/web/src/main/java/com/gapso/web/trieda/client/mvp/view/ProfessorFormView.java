@@ -37,6 +37,9 @@ public class ProfessorFormView extends MyComposite implements ProfessorFormPrese
 	private TitulacaoDTO titulacaoDTO;
 	private AreaTitulacaoDTO areaTitulacaoDTO;
 	
+	public ProfessorFormView() {
+		this(new ProfessorDTO(), null, null, null);
+	}
 	public ProfessorFormView(ProfessorDTO professorDTO, TipoContratoDTO tipoContratoDTO, TitulacaoDTO titulacaoDTO, AreaTitulacaoDTO areaTitulacaoDTO) {
 		this.professorDTO = professorDTO;
 		this.tipoContratoDTO = tipoContratoDTO;

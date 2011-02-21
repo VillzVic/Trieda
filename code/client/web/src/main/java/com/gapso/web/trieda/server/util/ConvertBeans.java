@@ -253,6 +253,7 @@ public class ConvertBeans {
 		dto.setCapacidade(domain.getCapacidade());
 		dto.setTipoId(domain.getTipoSala().getId());
 		dto.setTipoString(domain.getTipoSala().getNome());
+		dto.setCampusId(domain.getUnidade().getCampus().getId());
 		dto.setUnidadeId(domain.getUnidade().getId());
 		dto.setUnidadeString(domain.getUnidade().getCodigo());
 		return dto;
@@ -280,6 +281,7 @@ public class ConvertBeans {
 		dto.setNome(domain.getNome());
 		dto.setUnidadeId(domain.getUnidade().getId());
 		dto.setUnidadeString(domain.getUnidade().getCodigo());
+		dto.setCampusId(domain.getUnidade().getCampus().getId());
 		return dto;
 	}
 	
@@ -871,6 +873,7 @@ public class ConvertBeans {
 		Curso curso = domain.getCurso();
 		dto.setCursoId(curso.getId());
 		dto.setCursoString(curso.getCodigo() + " (" +curso.getNome()+ ")");
+		dto.setDisplay(domain.getCodigo() + " ("+ curso.getNome() +")");
 		return dto;
 	}
 	
@@ -922,7 +925,8 @@ public class ConvertBeans {
 		dto.setVersion(domain.getVersion());
 		dto.setCampusString(domain.getCampus().getCodigo());
 		dto.setCampusId(domain.getCampus().getId());
-		dto.setCursoString(domain.getCurriculo().getCurso().getCodigo());
+		Curso curso = domain.getCurriculo().getCurso();
+		dto.setCursoString(curso.getCodigo() +" ("+ curso.getNome() +")");
 		dto.setMatrizCurricularString(domain.getCurriculo().getCodigo());
 		dto.setMatrizCurricularId(domain.getCurriculo().getId());
 		dto.setTurnoString(domain.getTurno().getNome());
@@ -968,7 +972,7 @@ public class ConvertBeans {
 		dto.setCurriculoId(curriculo.getId());
 		
 		Curso curso = curriculo.getCurso();
-		dto.setCursoString(curso.getCodigo());
+		dto.setCursoString(curso.getCodigo() +" (" +curso.getNome()+ ")");
 		dto.setCursoId(curso.getId());
 		
 		Turno turno = oferta.getTurno();

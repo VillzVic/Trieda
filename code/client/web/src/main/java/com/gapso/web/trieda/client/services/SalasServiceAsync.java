@@ -24,11 +24,11 @@ public interface SalasServiceAsync {
 	void getTipoSala(Long id, AsyncCallback<TipoSalaDTO> callback);
 	void getAndaresList(AsyncCallback<ListLoadResult<SalaDTO>> callback);
 	void getAndaresList(Long unidadeId, AsyncCallback<ListLoadResult<SalaDTO>> callback);
-	void getSalasDoAndareList(List<String> andares, AsyncCallback<ListLoadResult<SalaDTO>> callback);
 	void getSalasEAndareMap(Long unidadeId, AsyncCallback<Map<String, List<SalaDTO>>> callback);
 	void getGruposDeSalas(Long unidadeId, AsyncCallback<List<GrupoSalaDTO>> callback);
 	void getBuscaList(UnidadeDTO unidadeDTO, AsyncCallback<ListLoadResult<SalaDTO>> callback);
 	void getHorariosDisponiveis(SalaDTO salaDTO, AsyncCallback<List<HorarioDisponivelCenarioDTO>> callback);
 	void saveHorariosDisponiveis(SalaDTO salaDTO, List<HorarioDisponivelCenarioDTO> listDTO, AsyncCallback<Void> callback);
+	void getSalasDoAndareList(UnidadeDTO unidade, List<String> andares, AsyncCallback<ListLoadResult<SalaDTO>> callback);
 	
 }

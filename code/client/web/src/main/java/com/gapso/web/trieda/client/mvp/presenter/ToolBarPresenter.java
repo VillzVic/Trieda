@@ -12,10 +12,14 @@ import com.gapso.web.trieda.client.mvp.model.DeslocamentoCampusDTO;
 import com.gapso.web.trieda.client.mvp.view.AreasTitulacaoView;
 import com.gapso.web.trieda.client.mvp.view.CampiDeslocamentoView;
 import com.gapso.web.trieda.client.mvp.view.CampiView;
+import com.gapso.web.trieda.client.mvp.view.CampusFormView;
 import com.gapso.web.trieda.client.mvp.view.CampusProfessoresView;
+import com.gapso.web.trieda.client.mvp.view.CompatibilidadesView;
 import com.gapso.web.trieda.client.mvp.view.CurriculosView;
+import com.gapso.web.trieda.client.mvp.view.CursoFormView;
 import com.gapso.web.trieda.client.mvp.view.CursosView;
 import com.gapso.web.trieda.client.mvp.view.DemandasView;
+import com.gapso.web.trieda.client.mvp.view.DisciplinaFormView;
 import com.gapso.web.trieda.client.mvp.view.DisciplinasAssociarSalaView;
 import com.gapso.web.trieda.client.mvp.view.DisciplinasView;
 import com.gapso.web.trieda.client.mvp.view.DivisoesCreditosView;
@@ -23,19 +27,21 @@ import com.gapso.web.trieda.client.mvp.view.EquivalenciasView;
 import com.gapso.web.trieda.client.mvp.view.FixacoesView;
 import com.gapso.web.trieda.client.mvp.view.GruposSalasView;
 import com.gapso.web.trieda.client.mvp.view.HorariosAulaView;
-import com.gapso.web.trieda.client.mvp.view.IncompatibilidadesView;
 import com.gapso.web.trieda.client.mvp.view.OfertasView;
 import com.gapso.web.trieda.client.mvp.view.ParametrosView;
+import com.gapso.web.trieda.client.mvp.view.ProfessorFormView;
 import com.gapso.web.trieda.client.mvp.view.ProfessoresDisciplinaView;
 import com.gapso.web.trieda.client.mvp.view.ProfessoresView;
 import com.gapso.web.trieda.client.mvp.view.RelatorioVisaoCursoView;
 import com.gapso.web.trieda.client.mvp.view.RelatorioVisaoSalaView;
 import com.gapso.web.trieda.client.mvp.view.ResumoCampiView;
 import com.gapso.web.trieda.client.mvp.view.ResumoCenarioView;
+import com.gapso.web.trieda.client.mvp.view.SalaFormView;
 import com.gapso.web.trieda.client.mvp.view.SalasView;
 import com.gapso.web.trieda.client.mvp.view.SemanasLetivaView;
 import com.gapso.web.trieda.client.mvp.view.TiposCursosView;
 import com.gapso.web.trieda.client.mvp.view.TurnosView;
+import com.gapso.web.trieda.client.mvp.view.UnidadeFormView;
 import com.gapso.web.trieda.client.mvp.view.UnidadesDeslocamentoView;
 import com.gapso.web.trieda.client.mvp.view.UnidadesView;
 import com.gapso.web.trieda.client.mvp.view.VincularAreasTitulacaoView;
@@ -53,6 +59,7 @@ public class ToolBarPresenter implements Presenter {
 		
 //		MenuItem getCenariosListMenuItem();
 		
+		Button getCampiNovoCampiButton();
 		Button getCampiListCampiButton();
 		Button getCampusDeslocamentoListCampiButton();
 		Button getSemanasLetivaListCampiButton();
@@ -60,13 +67,16 @@ public class ToolBarPresenter implements Presenter {
 		Button getTurnosListCampiButton();
 		Button getOfertasListCampiButton();
 		
+		Button getUnidadesNovoUnidadesButton();
 		Button getUnidadesListUnidadesButton();
 		Button getUnidadeDeslocamentoListUnidadesButton();
 		
+		Button getSalasNovoSalasButton();
 		Button getSalasListSalasButton();
 		Button getGruposSalasListSalasButton();
 		Button getAssociarDisciplinasSalasListSalasButton();
 		
+		Button getCursosNovoCursosButton();
 		Button getCurriculosListCursosButton();
 		Button getCursosListCursosButton();
 		Button getAreasTitulacaoListCursosButton();
@@ -74,14 +84,16 @@ public class ToolBarPresenter implements Presenter {
 		Button getTiposCursosListCursosButton();
 		Button getOfertasListCursosButton();
 		
+		Button getDisciplinasNovoDisciplinasButton();
 		Button getDisciplinasListDisciplinasButton();
 		Button getDemandasDisciplinasButton();
 		Button getAssociarDisciplinasSalasListDisciplinasButton();
 		Button getCurriculosListDisciplinasButton();
 		Button getDivisaoCreditosListDisciplinasButton();
 		Button getEquivalenciasListDisciplinasButton();
-		Button getIncompatibilidadesListDisciplinasButton();
+		Button getCompatibilidadesListDisciplinasButton();
 		
+		Button getProfessoresNovoProfessoresButton();
 		Button getProfessoresListProfessoresButton();
 		Button getProfessoresDisciplinaListProfessoresButton();
 		Button getProfessoresCampusListprofessoresBt();
@@ -93,6 +105,8 @@ public class ToolBarPresenter implements Presenter {
 		
 		Button getFixacoesListButton();
 		Button getParametrosButton();
+
+
 
 
 
@@ -137,6 +151,13 @@ public class ToolBarPresenter implements Presenter {
 				presenter.go(gTab);
 			}
 		});
+		toolBar.getCampiNovoCampiButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
+			@Override
+			public void componentSelected(ButtonEvent ce) {
+				Presenter presenter = new CampusFormPresenter(masterData, new CampusFormView());
+				presenter.go(null);
+			}
+		});
 		toolBar.getCampiListCampiButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
 			@Override
 			public void componentSelected(ButtonEvent ce) {
@@ -144,11 +165,25 @@ public class ToolBarPresenter implements Presenter {
 				presenter.go(gTab);
 			}
 		});
+		toolBar.getUnidadesNovoUnidadesButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
+			@Override
+			public void componentSelected(ButtonEvent ce) {
+				Presenter presenter = new UnidadeFormPresenter(new UnidadeFormView());
+				presenter.go(null);
+			}
+		});
 		toolBar.getUnidadesListUnidadesButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
 			@Override
 			public void componentSelected(ButtonEvent ce) {
 				Presenter presenter = new UnidadesPresenter(masterData, new UnidadesView());
 				presenter.go(gTab);
+			}
+		});
+		toolBar.getSalasNovoSalasButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
+			@Override
+			public void componentSelected(ButtonEvent ce) {
+				Presenter presenter = new SalaFormPresenter(new SalaFormView());
+				presenter.go(null);
 			}
 		});
 		toolBar.getSalasListSalasButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
@@ -212,11 +247,25 @@ public class ToolBarPresenter implements Presenter {
 				});
 			}
 		});
+		toolBar.getCursosNovoCursosButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
+			@Override
+			public void componentSelected(ButtonEvent ce) {
+				Presenter presenter = new CursoFormPresenter(masterData, new CursoFormView());
+				presenter.go(null);
+			}
+		});
 		toolBar.getCursosListCursosButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
 			@Override
 			public void componentSelected(ButtonEvent ce) {
 				Presenter presenter = new CursosPresenter(masterData, new CursosView());
 				presenter.go(gTab);
+			}
+		});
+		toolBar.getDisciplinasNovoDisciplinasButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
+			@Override
+			public void componentSelected(ButtonEvent ce) {
+				Presenter presenter = new DisciplinaFormPresenter(masterData, new DisciplinaFormView());
+				presenter.go(null);
 			}
 		});
 		toolBar.getDisciplinasListDisciplinasButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
@@ -261,11 +310,18 @@ public class ToolBarPresenter implements Presenter {
 				presenter.go(gTab);
 			}
 		});
-		toolBar.getIncompatibilidadesListDisciplinasButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
+		toolBar.getCompatibilidadesListDisciplinasButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
 			@Override
 			public void componentSelected(ButtonEvent ce) {
-				Presenter presenter = new IncompatibilidadesPresenter(masterData, new IncompatibilidadesView());
+				Presenter presenter = new CompatibilidadesPresenter(masterData, new CompatibilidadesView());
 				presenter.go(gTab);
+			}
+		});
+		toolBar.getProfessoresNovoProfessoresButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
+			@Override
+			public void componentSelected(ButtonEvent ce) {
+				Presenter presenter = new ProfessorFormPresenter(masterData, new ProfessorFormView());
+				presenter.go(null);
 			}
 		});
 		toolBar.getProfessoresListProfessoresButton().addSelectionListener(new SelectionListener<ButtonEvent>() {

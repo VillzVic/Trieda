@@ -38,7 +38,7 @@ public class UnidadesDeslocamentoView extends MyComposite implements UnidadesDes
 	
 	private void initUI() {
 		panel = new ContentPanel(new BorderLayout());
-		panel.setHeading("Master Data » Deslocamentos de Unidades");
+		panel.setHeading("Master Data » Deslocamentos entre Unidades");
 		createFilter();
 		createToolBar();
 		createGrid();
@@ -47,7 +47,7 @@ public class UnidadesDeslocamentoView extends MyComposite implements UnidadesDes
 	}
 	
 	private void createTabItem() {
-		tabItem = new GTabItem("Deslocamentos de Unidades", Resources.DEFAULTS.deslocamento16());
+		tabItem = new GTabItem("Deslocamentos entre Unidades", Resources.DEFAULTS.deslocamento16());
 		tabItem.setContent(panel);
 	}
 	
@@ -65,13 +65,13 @@ public class UnidadesDeslocamentoView extends MyComposite implements UnidadesDes
 	}
 
 	private void createFilter() {
-		BorderLayoutData bld = new BorderLayoutData(LayoutRegion.EAST);
-		bld.setMargins(new Margins(0, 0, 0, 5));
+		BorderLayoutData bld = new BorderLayoutData(LayoutRegion.NORTH);
+		bld.setMargins(new Margins(5, 5, 0, 5));
 		bld.setCollapsible(true);
+		bld.setSize(65);
 		
 		FormPanel filter = new FormPanel();
 		filter.setHeading("Campus");
-		filter.setWidth(350);
 		FormData formData = new FormData("-5");
 		
 		campusBuscaComboBox = new CampusComboBox();

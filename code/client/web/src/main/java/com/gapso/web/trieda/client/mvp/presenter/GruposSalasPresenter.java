@@ -11,6 +11,7 @@ import com.extjs.gxt.ui.client.widget.Component;
 import com.extjs.gxt.ui.client.widget.Info;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.gapso.web.trieda.client.i18n.ITriedaI18nGateway;
+import com.gapso.web.trieda.client.mvp.model.CampusDTO;
 import com.gapso.web.trieda.client.mvp.model.GrupoSalaDTO;
 import com.gapso.web.trieda.client.mvp.model.UnidadeDTO;
 import com.gapso.web.trieda.client.mvp.view.GrupoSalaAssociarSalaView;
@@ -23,6 +24,8 @@ import com.gapso.web.trieda.client.util.view.GTabItem;
 import com.gapso.web.trieda.client.util.view.SimpleGrid;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
+import com.googlecode.future.FutureResult;
+import com.googlecode.future.FutureSynchronizer;
 
 public class GruposSalasPresenter implements Presenter {
 
@@ -60,7 +63,7 @@ public class GruposSalasPresenter implements Presenter {
 		display.getNewButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
 			@Override
 			public void componentSelected(ButtonEvent ce) {
-				Presenter presenter = new GrupoSalaFormPresenter(new GrupoSalaFormView(new GrupoSalaDTO(), null), display.getGrid());
+				Presenter presenter = new GrupoSalaFormPresenter(new GrupoSalaFormView(new GrupoSalaDTO(), null, null), display.getGrid());
 				presenter.go(null);
 			}
 		});
@@ -68,13 +71,25 @@ public class GruposSalasPresenter implements Presenter {
 			@Override
 			public void componentSelected(ButtonEvent ce) {
 				final GrupoSalaDTO grupoSalaDTO = display.getGrid().getGrid().getSelectionModel().getSelectedItem();
-				Services.unidades().getUnidade(grupoSalaDTO.getUnidadeId(), new AbstractAsyncCallbackWithDefaultOnFailure<UnidadeDTO>(display) {
+				
+				final FutureResult<CampusDTO> futureCampusDTO = new FutureResult<CampusDTO>();
+				final FutureResult<UnidadeDTO> futureUnidadeDTO = new FutureResult<UnidadeDTO>();
+				
+				Services.campi().getCampus(grupoSalaDTO.getCampusId(), futureCampusDTO);
+				Services.unidades().getUnidade(grupoSalaDTO.getUnidadeId(), futureUnidadeDTO);
+				
+				FutureSynchronizer synch = new FutureSynchronizer(futureCampusDTO, futureUnidadeDTO);
+				
+				synch.addCallback(new AbstractAsyncCallbackWithDefaultOnFailure<Boolean>(display) {
 					@Override
-					public void onSuccess(UnidadeDTO unidadeDTO) {
-						Presenter presenter = new GrupoSalaFormPresenter(new GrupoSalaFormView(grupoSalaDTO, unidadeDTO), display.getGrid());
+					public void onSuccess(Boolean result) {
+						CampusDTO campusDTO = futureCampusDTO.result();
+						UnidadeDTO unidadeDTO = futureUnidadeDTO.result();
+						Presenter presenter = new GrupoSalaFormPresenter(new GrupoSalaFormView(grupoSalaDTO, campusDTO, unidadeDTO), display.getGrid());
 						presenter.go(null);
 					}
 				});
+				
 			}
 		});
 		display.getRemoveButton().addSelectionListener(new SelectionListener<ButtonEvent>(){

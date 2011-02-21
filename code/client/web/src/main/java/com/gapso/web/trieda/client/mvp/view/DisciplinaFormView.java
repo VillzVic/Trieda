@@ -31,6 +31,9 @@ public class DisciplinaFormView extends MyComposite implements DisciplinaFormPre
 	private DisciplinaDTO disciplinaDTO;
 	private TipoDisciplinaDTO tipoDisciplinaDTO;
 
+	public DisciplinaFormView() {
+		this(new DisciplinaDTO(), null);
+	}
 	public DisciplinaFormView(DisciplinaDTO disciplinaDTO, TipoDisciplinaDTO tipoDisciplinaDTO) {
 		this.disciplinaDTO = disciplinaDTO;
 		this.tipoDisciplinaDTO = tipoDisciplinaDTO;

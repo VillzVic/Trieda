@@ -67,6 +67,13 @@ public class GrupoSalaDTO extends FileModel {
 		set("campusString", value);
 	}
 	
+	public Long getCampusId() {
+		return get("campusId");
+	}
+	public void setCampusId(Long value) {
+		set("campusId", value);
+	}
+	
 	public String getSalasString() {
 		return get("salasString");
 	}

@@ -41,7 +41,7 @@ public class OfertaFormView extends MyComposite implements OfertaFormPresenter.D
 	private void initUI() {
 		String title = (ofertaDTO.getId() == null)? "Inserção de Oferta de Curso em Campus" : "Edição de de Oferta de Curso em Campus";
 		simpleModal = new SimpleModal(title, Resources.DEFAULTS.matrizCurricular16());
-		simpleModal.setHeight(160);
+		simpleModal.setHeight(165);
 		createForm();
 		simpleModal.setContent(formPanel);
 	}

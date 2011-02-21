@@ -13,6 +13,7 @@ import com.extjs.gxt.ui.client.widget.ListView;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.gapso.web.trieda.client.mvp.model.GrupoSalaDTO;
 import com.gapso.web.trieda.client.mvp.model.SalaDTO;
+import com.gapso.web.trieda.client.mvp.model.UnidadeDTO;
 import com.gapso.web.trieda.client.services.GruposSalasServiceAsync;
 import com.gapso.web.trieda.client.services.SalasServiceAsync;
 import com.gapso.web.trieda.client.services.Services;
@@ -69,11 +70,13 @@ public class GrupoSalaAssociarSalaPresenter implements Presenter {
 				
 				ListStore<SalaDTO> storeAndares = display.getAndaresList().getStore();  
 				storeAndares.add(salaDTOList.getData());
+				storeAndares.sort("codigo", SortDir.ASC);
 				display.getAndaresList().setStore(storeAndares);
 				display.getAndaresList().refresh();
 				
 				ListStore<SalaDTO> storePertences = display.getSalasPertencesList().getStore();
 				storePertences.add(salaDTOPertencesList.getData());
+				storePertences.sort("codigo", SortDir.ASC);
 				display.getSalasPertencesList().setStore(storePertences);
 				display.getSalasPertencesList().refresh();
 			}
@@ -98,7 +101,6 @@ public class GrupoSalaAssociarSalaPresenter implements Presenter {
 						display.getSimpleModal().hide();
 						simpleGrid.updateList();
 					}
-					
 				});
 			}
 		});
@@ -114,8 +116,9 @@ public class GrupoSalaAssociarSalaPresenter implements Presenter {
 				}
 				
 				final FutureResult<ListLoadResult<SalaDTO>> futureSalaDTOList = new FutureResult<ListLoadResult<SalaDTO>>();
-				SalasServiceAsync salasService = Services.salas();
-				salasService.getSalasDoAndareList(salasStringList, futureSalaDTOList);
+				UnidadeDTO unidadeDTO = new UnidadeDTO();
+				unidadeDTO.setId(display.getGrupoSalaDTO().getUnidadeId());
+				Services.salas().getSalasDoAndareList(unidadeDTO, salasStringList, futureSalaDTOList);
 				
 				FutureSynchronizer synch = new FutureSynchronizer(futureSalaDTOList);
 				synch.addCallback(new AsyncCallback<Boolean>() {

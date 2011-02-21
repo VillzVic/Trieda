@@ -59,15 +59,22 @@ public class DivisoesCreditosView extends MyComposite implements DivisoesCredito
 
 	private List<ColumnConfig> getColumnList() {
 		List<ColumnConfig> list = new ArrayList<ColumnConfig>();
-		list.add(new ColumnConfig("totalCreditos", "Créditos", 50));
-		list.add(new ColumnConfig("dia1", "Dia 1", 50));
-		list.add(new ColumnConfig("dia2", "Dia 2", 50));
-		list.add(new ColumnConfig("dia3", "Dia 3", 50));
-		list.add(new ColumnConfig("dia4", "Dia 4", 50));
-		list.add(new ColumnConfig("dia5", "Dia 5", 50));
-		list.add(new ColumnConfig("dia6", "Dia 6", 50));
-		list.add(new ColumnConfig("dia7", "Dia 7", 50));
+		list.add(createColumnConfig("totalCreditos", "Créditos", 50));
+		list.add(createColumnConfig("dia1", "Dia 1", 50));
+		list.add(createColumnConfig("dia2", "Dia 2", 50));
+		list.add(createColumnConfig("dia3", "Dia 3", 50));
+		list.add(createColumnConfig("dia4", "Dia 4", 50));
+		list.add(createColumnConfig("dia5", "Dia 5", 50));
+		list.add(createColumnConfig("dia6", "Dia 6", 50));
+		list.add(createColumnConfig("dia7", "Dia 7", 50));
 		return list;
+	}
+	
+	private ColumnConfig createColumnConfig(String id, String text, int width) {
+		ColumnConfig cc = new ColumnConfig(id, text, width);
+		cc.setSortable(false);
+		cc.setMenuDisabled(true);
+		return cc;
 	}
 	
 	@Override

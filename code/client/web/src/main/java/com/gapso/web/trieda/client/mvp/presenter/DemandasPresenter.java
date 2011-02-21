@@ -9,8 +9,8 @@ import com.extjs.gxt.ui.client.event.ButtonEvent;
 import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.widget.Component;
 import com.extjs.gxt.ui.client.widget.Info;
-import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.button.Button;
+import com.gapso.web.trieda.client.i18n.ITriedaI18nGateway;
 import com.gapso.web.trieda.client.mvp.model.CampusDTO;
 import com.gapso.web.trieda.client.mvp.model.CenarioDTO;
 import com.gapso.web.trieda.client.mvp.model.CurriculoDTO;
@@ -26,6 +26,7 @@ import com.gapso.web.trieda.client.services.DemandasServiceAsync;
 import com.gapso.web.trieda.client.services.DisciplinasServiceAsync;
 import com.gapso.web.trieda.client.services.Services;
 import com.gapso.web.trieda.client.services.TurnosServiceAsync;
+import com.gapso.web.trieda.client.util.view.AbstractAsyncCallbackWithDefaultOnFailure;
 import com.gapso.web.trieda.client.util.view.CampusComboBox;
 import com.gapso.web.trieda.client.util.view.CurriculoComboBox;
 import com.gapso.web.trieda.client.util.view.CursoComboBox;
@@ -41,7 +42,7 @@ import com.googlecode.future.FutureSynchronizer;
 
 public class DemandasPresenter implements Presenter {
 
-	public interface Display {
+	public interface Display extends ITriedaI18nGateway {
 		Button getNewButton();
 		Button getEditButton();
 		Button getRemoveButton();
@@ -117,11 +118,7 @@ public class DemandasPresenter implements Presenter {
 				
 				FutureSynchronizer synch = new FutureSynchronizer(futureCampusDTO, futureCursoDTO, futureCurriculoDTO, futureTurnoDTO, futureDisciplinaDTO);
 				
-				synch.addCallback(new AsyncCallback<Boolean>() {
-					@Override
-					public void onFailure(Throwable caught) {
-						MessageBox.alert("ERRO!", "Deu falha na conexão", null);
-					}
+				synch.addCallback(new AbstractAsyncCallbackWithDefaultOnFailure<Boolean>(display) {
 					@Override
 					public void onSuccess(Boolean result) {
 						CampusDTO campusDTO = futureCampusDTO.result();
@@ -141,11 +138,7 @@ public class DemandasPresenter implements Presenter {
 			public void componentSelected(ButtonEvent ce) {
 				List<DemandaDTO> list = display.getGrid().getGrid().getSelectionModel().getSelectedItems();
 				final DemandasServiceAsync service = Services.demandas();
-				service.remove(list, new AsyncCallback<Void>() {
-					@Override
-					public void onFailure(Throwable caught) {
-						MessageBox.alert("ERRO!", "Deu falha na conexão", null);
-					}
+				service.remove(list, new AbstractAsyncCallbackWithDefaultOnFailure<Void>(display) {
 					@Override
 					public void onSuccess(Void result) {
 						display.getGrid().updateList();

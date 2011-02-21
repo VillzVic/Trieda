@@ -1,6 +1,8 @@
 package com.gapso.web.trieda.server;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 
@@ -36,6 +38,13 @@ public class DivisoesCreditosServiceImpl extends RemoteServiceServlet implements
 		for(DivisaoCredito divisaoCredito : divisoesCreditos) {
 			list.add(ConvertBeans.toDivisaoCreditoDTO(divisaoCredito));
 		}
+		Collections.sort(list, new Comparator<DivisaoCreditoDTO>() {
+			@Override
+			public int compare(DivisaoCreditoDTO d1, DivisaoCreditoDTO d2) {
+				return d1.getTotalCreditos().compareTo(d2.getTotalCreditos());
+			}
+		});
+		
 		BasePagingLoadResult<DivisaoCreditoDTO> result = new BasePagingLoadResult<DivisaoCreditoDTO>(list);
 		result.setOffset(config.getOffset());
 		result.setTotalLength(DivisaoCredito.count());

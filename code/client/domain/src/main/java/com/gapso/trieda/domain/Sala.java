@@ -270,17 +270,18 @@ public class Sala implements Serializable {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public static List<Sala> findSalasDoAndarAll(List<String> andares) {
+	public static List<Sala> findSalasDoAndarAll(Unidade unidade, List<String> andares) {
 		if(andares.size() == 0) return new ArrayList<Sala>();
-		String whereQuery = "SELECT o FROM Sala o WHERE ";
+		String whereQuery = "SELECT o FROM Sala o WHERE ( ";
 		for(int i = 1; i < andares.size(); i++) {
 			whereQuery += " o.andar = :andares"+i+" OR ";
 		}
-		whereQuery += " o.andar = :andares0 ";
+		whereQuery += " o.andar = :andares0 ) AND o.unidade = :unidade ";
 		Query query = entityManager().createQuery(whereQuery);
 		for(int i = 0; i < andares.size(); i++) {
 			query.setParameter("andares"+i, andares.get(i));
 		}
+		query.setParameter("unidade", unidade);
 		return query.getResultList();
 	}
 

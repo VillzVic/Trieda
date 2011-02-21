@@ -6,6 +6,7 @@ import com.extjs.gxt.ui.client.widget.form.FormPanel;
 import com.extjs.gxt.ui.client.widget.form.NumberField;
 import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.extjs.gxt.ui.client.widget.layout.FormData;
+import com.gapso.web.trieda.client.mvp.model.CampusDTO;
 import com.gapso.web.trieda.client.mvp.model.SalaDTO;
 import com.gapso.web.trieda.client.mvp.model.TipoSalaDTO;
 import com.gapso.web.trieda.client.mvp.model.UnidadeDTO;
@@ -27,11 +28,16 @@ public class SalaFormView extends MyComposite implements SalaFormPresenter.Displ
 	private UnidadeComboBox unidadeCB;
 	private TipoSalaComboBox tipoSalaCB;
 	private SalaDTO salaDTO;
+	private CampusDTO campusDTO;
 	private UnidadeDTO unidadeDTO;
 	private TipoSalaDTO tipoSalaDTO;
 	
-	public SalaFormView(SalaDTO salaDTO, UnidadeDTO unidadeDTO, TipoSalaDTO tipoSalaDTO) {
+	public SalaFormView() {
+		this(new SalaDTO(), null, null, null);
+	}
+	public SalaFormView(SalaDTO salaDTO, CampusDTO campusDTO, UnidadeDTO unidadeDTO, TipoSalaDTO tipoSalaDTO) {
 		this.salaDTO = salaDTO;
+		this.campusDTO = campusDTO;
 		this.unidadeDTO = unidadeDTO;
 		this.tipoSalaDTO = tipoSalaDTO;
 		initUI();
@@ -64,6 +70,7 @@ public class SalaFormView extends MyComposite implements SalaFormPresenter.Displ
 		formPanel.add(codigoTF, formData);
 		
 		CampusComboBox campusCB = new CampusComboBox();
+		campusCB.setValue(campusDTO);
 		formPanel.add(campusCB, formData);
 		
 		unidadeCB = new UnidadeComboBox(campusCB);

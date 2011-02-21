@@ -158,9 +158,10 @@ public class SalasServiceImpl extends RemoteServiceServlet implements SalasServi
 	}
 	
 	@Override
-	public ListLoadResult<SalaDTO> getSalasDoAndareList(List<String> andares) {
+	public ListLoadResult<SalaDTO> getSalasDoAndareList(UnidadeDTO unidadeDTO, List<String> andares) {
+		Unidade unidade = Unidade.find(unidadeDTO.getId());
 		List<SalaDTO> list = new ArrayList<SalaDTO>();
-		for(Sala sala : Sala.findSalasDoAndarAll(andares)) {
+		for(Sala sala : Sala.findSalasDoAndarAll(unidade, andares)) {
 			list.add(ConvertBeans.toSalaDTO(sala));
 		}
 		return new BaseListLoadResult<SalaDTO>(list);

@@ -28,6 +28,9 @@ public class CursoFormView extends MyComposite implements CursoFormPresenter.Dis
 	private CursoDTO cursoDTO;
 	private TipoCursoDTO tipoCursoDTO;
 	
+	public CursoFormView() {
+		this(new CursoDTO(), null);
+	}
 	public CursoFormView(CursoDTO cursoDTO, TipoCursoDTO tipoCursoDTO) {
 		this.cursoDTO = cursoDTO;
 		this.tipoCursoDTO = tipoCursoDTO;

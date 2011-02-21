@@ -5,6 +5,7 @@ import com.extjs.gxt.ui.client.widget.form.FormButtonBinding;
 import com.extjs.gxt.ui.client.widget.form.FormPanel;
 import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.extjs.gxt.ui.client.widget.layout.FormData;
+import com.gapso.web.trieda.client.mvp.model.CampusDTO;
 import com.gapso.web.trieda.client.mvp.model.GrupoSalaDTO;
 import com.gapso.web.trieda.client.mvp.model.UnidadeDTO;
 import com.gapso.web.trieda.client.mvp.presenter.GrupoSalaFormPresenter;
@@ -23,18 +24,20 @@ public class GrupoSalaFormView extends MyComposite implements GrupoSalaFormPrese
 	private UnidadeComboBox unidadeCB;
 	private GrupoSalaDTO grupoSalaDTO;
 	private UnidadeDTO unidadeDTO;
+	private CampusDTO campusDTO;
 	private Button salvarEAssociarBT;
 	
-	public GrupoSalaFormView(GrupoSalaDTO grupoSalaDTO, UnidadeDTO unidadeDTO) {
+	public GrupoSalaFormView(GrupoSalaDTO grupoSalaDTO, CampusDTO campusDTO, UnidadeDTO unidadeDTO) {
 		this.grupoSalaDTO = grupoSalaDTO;
 		this.unidadeDTO = unidadeDTO;
+		this.campusDTO = campusDTO;
 		initUI();
 		// TODO
 //		initComponent(simpleModal);
 	}
 	
 	private void initUI() {
-		String title = (grupoSalaDTO.getId() == null)? "Inserção de Grupo de Sala" : "Edição de Grupo de Sala";
+		String title = !isEdited()? "Inserção de Grupo de Sala" : "Edição de Grupo de Sala";
 		simpleModal = new SimpleModal(title, Resources.DEFAULTS.sala16());
 		simpleModal.setHeight(190);
 		simpleModal.setWidth(350);
@@ -42,6 +45,10 @@ public class GrupoSalaFormView extends MyComposite implements GrupoSalaFormPrese
 		simpleModal.setContent(formPanel);
 	}
 
+	private boolean isEdited() {
+		return grupoSalaDTO.getId() != null;
+	}
+	
 	private void createForm() {
 		FormData formData = new FormData("-20");
 		formPanel = new FormPanel();
@@ -57,17 +64,6 @@ public class GrupoSalaFormView extends MyComposite implements GrupoSalaFormPrese
 		codigoTF.setEmptyText("Preencha o código");
 		formPanel.add(codigoTF, formData);
 		
-		CampusComboBox campusCB = new CampusComboBox();
-		formPanel.add(campusCB, formData);
-		
-		unidadeCB = new UnidadeComboBox(campusCB);
-		unidadeCB.setName("unidade");
-		unidadeCB.setFieldLabel("Unidade");
-		unidadeCB.setAllowBlank(false);
-		unidadeCB.setValue(unidadeDTO);
-		unidadeCB.setEmptyText("Selecione a unidade");
-		formPanel.add(unidadeCB, formData);
-		
 		nomeTF = new TextField<String>();
 		nomeTF.setName("nome");
 		nomeTF.setValue(grupoSalaDTO.getNome());
@@ -77,6 +73,20 @@ public class GrupoSalaFormView extends MyComposite implements GrupoSalaFormPrese
 		nomeTF.setMaxLength(50);
 		nomeTF.setEmptyText("Preencha o nome");
 		formPanel.add(nomeTF, formData);
+		
+		CampusComboBox campusCB = new CampusComboBox();
+		campusCB.setEnabled(!isEdited());
+		campusCB.setValue(campusDTO);
+		formPanel.add(campusCB, formData);
+		
+		unidadeCB = new UnidadeComboBox(campusCB);
+		unidadeCB.setName("unidade");
+		unidadeCB.setFieldLabel("Unidade");
+		unidadeCB.setAllowBlank(false);
+		unidadeCB.setValue(unidadeDTO);
+		unidadeCB.setEmptyText("Selecione a unidade");
+		unidadeCB.setEnabled(!isEdited());
+		formPanel.add(unidadeCB, formData);
 		
 		salvarEAssociarBT = new Button("Salvar e Associar Salas", AbstractImagePrototype.create(Resources.DEFAULTS.save16()));
 		simpleModal.addButton(salvarEAssociarBT);

@@ -13,6 +13,7 @@ public class SalaDTO extends FileModel {
 	 * Long   : id
 	 * Integer: version
 	 * String : codigo
+	 * Long   : campusId
 	 * Long   : unidadeId
 	 * String : unidadeString
 	 * String : numero
@@ -41,6 +42,13 @@ public class SalaDTO extends FileModel {
 	}
 	public void setCodigo(String value) {
 		set("codigo", value);
+	}
+	
+	public Long getCampusId() {
+		return get("campusId");
+	}
+	public void setCampusId(Long value) {
+		set("campusId", value);
 	}
 	
 	public Long getUnidadeId() {

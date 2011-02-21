@@ -22,6 +22,9 @@ public class UnidadeFormView extends MyComposite implements UnidadeFormPresenter
 	private UnidadeDTO unidadeDTO;
 	private CampusDTO campusDTO;
 	
+	public UnidadeFormView() {
+		this(new UnidadeDTO(), null);
+	}
 	public UnidadeFormView(UnidadeDTO unidadeDTO, CampusDTO campusDTO) {
 		this.unidadeDTO = unidadeDTO;
 		this.campusDTO = campusDTO;

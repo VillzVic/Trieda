@@ -11,7 +11,7 @@ import com.extjs.gxt.ui.client.widget.layout.FormData;
 import com.extjs.gxt.ui.client.widget.layout.RowData;
 import com.extjs.gxt.ui.client.widget.layout.RowLayout;
 import com.extjs.gxt.ui.client.widget.toolbar.ToolBar;
-import com.gapso.web.trieda.client.mvp.presenter.IncompatibilidadesPresenter;
+import com.gapso.web.trieda.client.mvp.presenter.CompatibilidadesPresenter;
 import com.gapso.web.trieda.client.util.resources.Resources;
 import com.gapso.web.trieda.client.util.view.CurriculoComboBox;
 import com.gapso.web.trieda.client.util.view.CursoComboBox;
@@ -19,7 +19,7 @@ import com.gapso.web.trieda.client.util.view.GTabItem;
 import com.gapso.web.trieda.client.util.view.IncompatibilidadeGrid;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
-public class IncompatibilidadesView extends MyComposite implements IncompatibilidadesPresenter.Display {
+public class CompatibilidadesView extends MyComposite implements CompatibilidadesPresenter.Display {
 
 	private ContentPanel panel;
 	private IncompatibilidadeGrid grid;
@@ -33,7 +33,7 @@ public class IncompatibilidadesView extends MyComposite implements Incompatibili
 	
 	private GTabItem tabItem;
 	
-	public IncompatibilidadesView() {
+	public CompatibilidadesView() {
 		initUI();
 		createTabItem();
 		createToolBar();
@@ -43,7 +43,7 @@ public class IncompatibilidadesView extends MyComposite implements Incompatibili
 
 	private void initUI() {
 		panel = new ContentPanel(new RowLayout(Orientation.VERTICAL));
-		panel.setHeading("Master Data » Incompatibilidades");
+		panel.setHeading("Master Data » Compatibilidade entre disciplinas");
 		panel.setBodyStyle("background-color: transparent;");
 	}
 
@@ -64,7 +64,7 @@ public class IncompatibilidadesView extends MyComposite implements Incompatibili
 	}
 	
 	private void createTabItem() {
-		tabItem = new GTabItem("Incompatibilidades", Resources.DEFAULTS.areaTitulacao16());
+		tabItem = new GTabItem("Compatibilidade entre disciplinas", Resources.DEFAULTS.areaTitulacao16());
 		tabItem.setContent(panel);
 	}
 	

@@ -49,7 +49,7 @@ public class IncompatibilidadeGrid extends ContentPanel {
 					config.style = "background-color: #EEEFFF; height: 28px;";
 					return "";
 				}
-				ToggleImageButton tb = new ToggleImageButton(getModel(row, col).getIncompativel(), Resources.DEFAULTS.compativel(), Resources.DEFAULTS.incompativel());;
+				ToggleImageButton tb = new ToggleImageButton(getModel(row, col).getIncompativel(), Resources.DEFAULTS.incompativel(), Resources.DEFAULTS.compativel());;
 				tb.setWidth(69);
 				tb.addSelectionListener(new SelectionListener<ButtonEvent>() {
 					@Override

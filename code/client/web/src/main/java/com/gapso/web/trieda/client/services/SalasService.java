@@ -29,11 +29,11 @@ public interface SalasService extends RemoteService {
 	TipoSalaDTO getTipoSala(Long id);
 	ListLoadResult<SalaDTO> getAndaresList();
 	ListLoadResult<SalaDTO> getAndaresList(Long unidadeId);
-	ListLoadResult<SalaDTO> getSalasDoAndareList(List<String> andares);
 	Map<String, List<SalaDTO>> getSalasEAndareMap(Long unidadeId);
 	List<GrupoSalaDTO> getGruposDeSalas(Long unidadeId);
 	ListLoadResult<SalaDTO> getBuscaList(UnidadeDTO unidadeDTO);
 	List<HorarioDisponivelCenarioDTO> getHorariosDisponiveis(SalaDTO salaDTO);
 	void saveHorariosDisponiveis(SalaDTO salaDTO, List<HorarioDisponivelCenarioDTO> listDTO);
+	ListLoadResult<SalaDTO> getSalasDoAndareList(UnidadeDTO unidade, List<String> andares);
 	
 }

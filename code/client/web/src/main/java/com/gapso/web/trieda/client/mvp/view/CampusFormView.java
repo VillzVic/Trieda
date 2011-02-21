@@ -28,6 +28,9 @@ public class CampusFormView extends MyComposite implements CampusFormPresenter.D
 	private NumberField valorCreditoNF;
 	private CampusDTO campusDTO;
 	
+	public CampusFormView() {
+		this(new CampusDTO());
+	}
 	public CampusFormView(CampusDTO campusDTO) {
 		this.campusDTO = campusDTO;
 		initUI();

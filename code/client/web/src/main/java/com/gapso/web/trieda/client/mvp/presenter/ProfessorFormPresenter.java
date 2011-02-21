@@ -8,6 +8,7 @@ import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.NumberField;
 import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.gapso.web.trieda.client.mvp.model.AreaTitulacaoDTO;
+import com.gapso.web.trieda.client.mvp.model.CenarioDTO;
 import com.gapso.web.trieda.client.mvp.model.ProfessorDTO;
 import com.gapso.web.trieda.client.mvp.model.TipoContratoDTO;
 import com.gapso.web.trieda.client.mvp.model.TitulacaoDTO;
@@ -41,10 +42,15 @@ public class ProfessorFormPresenter implements Presenter {
 	}
 	private SimpleGrid<ProfessorDTO> gridPanel;
 	private Display display;
+	private CenarioDTO cenario;
 	
-	public ProfessorFormPresenter(Display display, SimpleGrid<ProfessorDTO> gridPanel) {
+	public ProfessorFormPresenter(CenarioDTO cenario, Display display) {
+		this(cenario, display, null);
+	}
+	public ProfessorFormPresenter(CenarioDTO cenario, Display display, SimpleGrid<ProfessorDTO> gridPanel) {
 		this.gridPanel = gridPanel;
 		this.display = display;
+		this.cenario = cenario;
 		setListeners();
 	}
 
@@ -62,7 +68,9 @@ public class ProfessorFormPresenter implements Presenter {
 						@Override
 						public void onSuccess(Void result) {
 							display.getSimpleModal().hide();
-							gridPanel.updateList();
+							if(gridPanel != null) {
+								gridPanel.updateList();
+							}
 							Info.display("Salvo", "Item salvo com sucesso!");
 						}
 					});
@@ -94,6 +102,7 @@ public class ProfessorFormPresenter implements Presenter {
 		professorDTO.setAreaTitulacaoString(areaTitulacaoDTO.getCodigo());
 		professorDTO.setCreditoAnterior(display.getCreditoAnteriorNumberField().getValue().intValue());
 		professorDTO.setValorCredito(display.getValorCreditoNumberField().getValue().doubleValue());
+		professorDTO.setCenarioId(cenario.getId());
 		return professorDTO;
 	}
 	
