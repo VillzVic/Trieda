@@ -64,7 +64,7 @@
         </xs:element>
         <xs:element name="ofertasCampi" type="GrupoOfertaCampus">
           <xs:annotation>
-            <xs:documentation>Lista das ofertas de cursos em campi, com as respectivas demandas por disciplina, serão armazenadas no MasterData do TRIEDA.</xs:documentation>
+            <xs:documentation>Lista das ofertas de cursos em campi, com as respectivas demandas por disciplina, que serão armazenadas no MasterData do TRIEDA.</xs:documentation>
           </xs:annotation>
         </xs:element>
       </xs:sequence>
@@ -972,7 +972,7 @@
     <xs:sequence minOccurs="0" maxOccurs="unbounded">
       <xs:element name="periodo" type="ItemPeriodoCurriculo">
         <xs:annotation>
-          <xs:documentation>Representa o relacionamento entre um período de um curso e as disciplinas do mesmo, isto é, que disciplinas do curso serão oferecidas no período em questão de acordo definindo dessa forma parte da matriz curricular.</xs:documentation>
+          <xs:documentation>Representa o relacionamento entre um período de um curso e as disciplinas do mesmo, isto é, que disciplinas do curso serão oferecidas no período em questão, definindo dessa forma parte da matriz curricular.</xs:documentation>
         </xs:annotation>
       </xs:element>
     </xs:sequence>

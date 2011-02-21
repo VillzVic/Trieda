@@ -3,7 +3,7 @@
 <xs:schema elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
   <xs:element name="TriedaParaTotvs">
     <xs:annotation>
-      <xs:documentation>Este documento representa o protocolo de comunicação de troca de dados do TRIEDA para o TOTVS Educacional cujo intuito é informar ao TOTVS Educacional o resultado de um planejamento para um ou mais campus (existe um outro documento que representa o protocolo de troca de dados do TOTVS Educacional para o TRIEDA).</xs:documentation>
+      <xs:documentation>Este documento representa o protocolo de comunicação de troca de dados do TRIEDA para o TOTVS Educacional cujo intuito é informar ao TOTVS Educacional o resultado de um planejamento para um ou mais campi (existe um outro documento que representa o protocolo de troca de dados do TOTVS Educacional para o TRIEDA).</xs:documentation>
     </xs:annotation>
     <xs:complexType>
       <xs:sequence>
@@ -121,6 +121,11 @@
       <xs:element name="periodo" type="xs:int">
         <xs:annotation>
           <xs:documentation>Inteiro que identifica um período letivo de uma matriz curricular de um curso.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="blocoAlunosId" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>Identificador de um bloco de alunos dentro de um período de uma matriz curricular. Para maiores detalhes consulte a seção "Turmas simultâneas no mesmo instante de tempo dentro do mesmo período de um curso" do documento de Regras de Decisão.</xs:documentation>
         </xs:annotation>
       </xs:element>
       <xs:choice>
