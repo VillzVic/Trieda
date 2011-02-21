@@ -113,9 +113,12 @@ public:
    // Armazena todas as disciplinas ofertadas em um campus.
    std::map<int/*Id Campus*/,GGroup<int>/*Id Discs*/> cp_discs;
 
+   //------------------
    // Essa estrutura ficaria melhor dentro das disciplinas !!!!
-   // Armazena todas as salas (sala de aula ou lab) em que uma disciplina pode ser oferecida.
+   /* Armazena todas as salas (sala de aula ou lab) em que uma 
+   disciplina, preferencialmente, deve serpode ser oferecida. */
    std::map<int/*Id Disc*/,GGroup<Sala*> > discSalas;
+   //------------------
 
    /* Relaciona as turmas com alguma disciplina. Armazena tb o tamanho das turmas da
    disc em questão. A princípio, todas as turmas vão ter o msm tamanho.

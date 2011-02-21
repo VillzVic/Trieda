@@ -6,17 +6,19 @@
 #include "CreditoDisponivel.h"
 
 class ConjuntoSala: public OFBase
-   /* O <id> de um <ConjuntoSala> será igual à 
-   <capacidade> das salas que o map de salas <salas> contem.
-   Portanto, todas as salas de um <ConjuntoSala> deverão possuir
-   a mesma capacidade */
 {
 public:
    ConjuntoSala()
-   {}
+   {
+      cap_Representada = 0;
+      tipo_Salas_Representada = 0;
+   }
 
    ConjuntoSala(ConjuntoSala const & cjt_Sala)
-   {}
+   {
+      std::cout << "Construto de copia de ConuntoSala nao esta implementado. SAINDO.";
+      exit(1);
+   }
 
    virtual ~ConjuntoSala() {};
 
@@ -24,18 +26,22 @@ public:
 
    //void setIdUnidade(int idUnidade) { this->idUnidade = idUnidade; }
 
-   //void setCapacidade(int cap)
-   //{ capacidade = cap; }
+   // Seta a capacidade da(s) sala(s) que o conjunto representa
+   void setCapacidadeRepr(int cap)
+   { cap_Representada = cap; }
 
-//   void setTipoSalas(int tpSalas)
-//   { tipoSalas = tpSalas; }
+   void setTipoSalasRepr(int tpSalas)
+   { tipo_Salas_Representada = tpSalas; }
 
    // =========== METODOS GET
 
    //int getIdUnidade() const { return idUnidade; }
 
-   //int getCapacidade()
-   //{ return capacidade; }
+   int getCapacidadeRepr()
+   { return cap_Representada; }
+
+   int getTipoSalasRepr()
+   { return tipo_Salas_Representada; }
 
    Sala * getSala(int idSala) const
    {
@@ -74,6 +80,17 @@ public:
       salas[sala.getId()] = &sala;
 
       return true; // Sala adicionada ao map de salas.
+   }
+
+   bool associaDisciplina(Disciplina & disc)
+   {
+      if(disciplinasAssociadas.find(&disc) != disciplinasAssociadas.end())
+      {
+         return false;
+      }
+
+      disciplinasAssociadas.add(&disc);
+      return true;
    }
 
    Sala * remSala(Sala &sala)
@@ -163,9 +180,9 @@ private:
 
    std::map<int/*Id Sala*/,Sala*> salas;
 
-   //int capacidade;
+   int cap_Representada;
 
-   int tipoSalas;
+   int tipo_Salas_Representada;
 
    // =========== PRÉ-PROCESSAMENTO
 

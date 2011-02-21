@@ -32,9 +32,8 @@ public:
    /* Carrega os dias letivos de cada disciplina. */
    void carregaDiasLetivosDiscs();
 
-   /* Cria os Conjuntos de Salas (classificadas de acordo com as respectivas capacidades) para cada Unidade. */
+   /* Cria os Conjuntos de Salas para cada Unidade. */
    void criaConjuntoSalasUnidade();
-
    //void criaConjuntoSalasCampus();
 
    /* Establece os dias letivos comuns entre um bloco curricular e um campus. */

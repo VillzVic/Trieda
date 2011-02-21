@@ -23,12 +23,16 @@ public:
 	GGroup<CreditoDisponivel*> creditos_disponiveis;
 	GGroup<int> disciplinas_associadas; //alterar para ref, depois
 
-   // >>> Dados para pré processamento.
+   /* Conjunto de disciplinas que foram associadas a sala em questão pelo usuario. */
+   GGroup<Disciplina*> disciplinas_Associadas_Usuario;
+   
+   /* Conjunto de disciplinas que foram associadas a sala em questão
+   por um pré processamento realizado. Aqui, as associãções são criadas
+   independentemente da unidade em que uma sala se encontra. */
+   GGroup<Disciplina*> disciplinas_Associadas_AUTOMATICA;
 
-   /* Esta estrutura vai, futuramente, substituir a 
-   estrutura <GGroup<int> disciplinas_associadas> */
+   /* UNIAO dos conjuntos acima. */
    GGroup<Disciplina*> disciplinasAssociadas;
-   // <<<
 
 public:
 	virtual void le_arvore(ItemSala& elem);
@@ -57,7 +61,7 @@ public:
    /* Estrutura utilizada no pós-processamento de dados para auxiliar a alocação dos créditos indicados pelas 
    variáveis x às salas. */
    //std::map<int/*dia*/,int/*credsLivres*/> credsLivres;
-   std::vector<int/*credsLivres*/> credsLivres;
+   //std::vector<int/*credsLivres*/> credsLivres;
 
    /* Armazena os dias letivos para uma determinada sala */
    GGroup<int> diasLetivos;
