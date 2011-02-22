@@ -14,6 +14,7 @@ import com.extjs.gxt.ui.client.widget.layout.ColumnData;
 import com.extjs.gxt.ui.client.widget.layout.ColumnLayout;
 import com.extjs.gxt.ui.client.widget.layout.FormData;
 import com.extjs.gxt.ui.client.widget.layout.FormLayout;
+import com.extjs.gxt.ui.client.widget.layout.RowLayout;
 import com.gapso.web.trieda.client.mvp.presenter.ParametrosPresenter;
 import com.gapso.web.trieda.client.util.resources.Resources;
 import com.gapso.web.trieda.client.util.view.GTabItem;
@@ -49,17 +50,30 @@ public class ParametrosView extends MyComposite implements ParametrosPresenter.D
 //		form.setBodyBorder(false);
 		form.setButtonAlign(HorizontalAlignment.RIGHT);
 		
+		FormLayout formLayout = null;
+		RowLayout rowLayout = null;
+		Label label = null;
+		
 		FieldSet alunoFS = new FieldSet();
 		alunoFS.setHeading("Preferências do Aluno");
 		alunoFS.setCollapsible(true);
 		alunoFS.setLayout(new ColumnLayout());
-		LayoutContainer alunoLeft = new LayoutContainer(new FormLayout());
-		LayoutContainer alunoRight = new LayoutContainer();
+		formLayout = new FormLayout();
+		formLayout.setExtraStyle("borderBottom");
+		LayoutContainer alunoLeft = new LayoutContainer(formLayout);
+		rowLayout = new RowLayout();
+		rowLayout.setExtraStyle("x-form-item borderBottom");
+		LayoutContainer alunoRight = new LayoutContainer(rowLayout);
 		alunoLeft.add(createCheckBox("Distribuição da carga horária semanal do aluno"), formData);
 		alunoLeft.add(createCheckBox("Manter alunos do mesmo curso-período na mesma sala"), formData);
 		alunoLeft.add(createCheckBox("Permitir que o aluno estude em mais de um Campus"), formData);
 		alunoLeft.add(createCheckBox("Minimizar Deslocamento de Alunos entre Campi"), formData);
 		alunoRight.add(createComboBox());
+		for(int i = 0; i<3; i++) {
+			label = new Label();
+			label.setHeight(22);
+			alunoRight.add(label);
+		}
 		alunoFS.add(alunoLeft, new ColumnData(.5));
 		alunoFS.add(alunoRight, new ColumnData(.4));
 		
@@ -67,21 +81,34 @@ public class ParametrosView extends MyComposite implements ParametrosPresenter.D
 		professorFS.setHeading("Preferências do Professor");
 		professorFS.setCollapsible(true);
 		professorFS.setLayout(new ColumnLayout());
-		LayoutContainer professorLeft = new LayoutContainer(new FormLayout());
-		LayoutContainer professorRight = new LayoutContainer();
+		formLayout = new FormLayout();
+		formLayout.setExtraStyle("borderBottom");
+		LayoutContainer professorLeft = new LayoutContainer(formLayout);
+		rowLayout = new RowLayout();
+		rowLayout.setExtraStyle("x-form-item borderBottom");
+		LayoutContainer professorRight = new LayoutContainer(rowLayout);
 		professorLeft.add(createCheckBox("Distribuição da carga horária semanal do professor"), formData);
 		professorLeft.add(createCheckBox("Permitir que o professor ministre aulas em mais de um Campus"), formData);
 		professorLeft.add(createCheckBox("Minimizar Deslocamentos de Professores entre Campi"), formData);
 		professorLeft.add(createCheckBox("Minimizar Gaps nos Horários dos Professores"), formData);
 		professorLeft.add(createCheckBox("Evitar Redução de Carga Horária de Professor"), formData);
-		professorLeft.add(createCheckBox("Evitar alocação de professores no último horário do dia e primeiro horário do dia seguinte"), formData);
+		professorLeft.add(createCheckBox("Evitar alocação de professores no último horário do dia e primeiro do dia seguinte"), formData);
 		professorLeft.add(createCheckBox("Considerar preferência de professores por disciplinas"), formData);
 		professorLeft.add(createCheckBox("Considerar avaliação de desempenho de professores"), formData);
 		professorRight.add(createComboBox());
-		professorRight.add(new Label());
+		label = new Label();
+		label.setHeight(22);
+		professorRight.add(label);
 		professorRight.add(createButton("Configurar Máx de deslocamento"));
-		professorRight.add(new Label());
-		professorRight.add(createButton("Configurar X de tolerância"));
+		label = new Label();
+		label.setHeight(22);
+		professorRight.add(label);
+		professorRight.add(createButton("Configurar % de tolerância"));
+		for(int i = 0; i<3; i++) {
+			label = new Label();
+			label.setHeight(22);
+			professorRight.add(label);
+		}
 		professorFS.add(professorLeft, new ColumnData(.5));
 		professorFS.add(professorRight, new ColumnData(.4));
 		
@@ -89,8 +116,12 @@ public class ParametrosView extends MyComposite implements ParametrosPresenter.D
 		instituicaoFS.setHeading("Preferências da Instituição");
 		instituicaoFS.setCollapsible(true);
 		instituicaoFS.setLayout(new ColumnLayout());
-		LayoutContainer instituicaoLeft = new LayoutContainer(new FormLayout());
-		LayoutContainer instituicaoRight = new LayoutContainer();
+		formLayout = new FormLayout();
+		formLayout.setExtraStyle("borderBottom");
+		LayoutContainer instituicaoLeft = new LayoutContainer(formLayout);
+		rowLayout = new RowLayout();
+		rowLayout.setExtraStyle("x-form-item borderBottom");
+		LayoutContainer instituicaoRight = new LayoutContainer(rowLayout);
 		instituicaoLeft.add(createCheckBox("Considerar nível de dificuldade de disciplinas"), formData);
 		instituicaoLeft.add(createCheckBox("Considerar compatibilidade de disciplinas no mesmo dia"), formData);
 		instituicaoLeft.add(createCheckBox("Considerar regras genéricas de divisão de créditos"), formData);
@@ -105,10 +136,17 @@ public class ParametrosView extends MyComposite implements ParametrosPresenter.D
 		instituicaoRight.add(createButton("Configurar níveis de dificuldade"));
 		instituicaoRight.add(createButton("Configurar compatibilidades"));
 		instituicaoRight.add(createButton("Configurar regras genéricas"));
-		instituicaoRight.add(new Label());
+		label = new Label();
+		label.setHeight(22);
+		instituicaoRight.add(label);
 		instituicaoRight.add(createButton("Configurar cursos"));
 		instituicaoRight.add(createButton("Configurar cursos"));
 		instituicaoRight.add(createButton("Configurar cursos"));
+		for(int i = 0; i<4; i++) {
+			label = new Label();
+			label.setHeight(22);
+			instituicaoRight.add(label);
+		}
 		instituicaoFS.add(instituicaoLeft, new ColumnData(.5));
 		instituicaoFS.add(instituicaoRight, new ColumnData(.4));
 		
@@ -120,7 +158,6 @@ public class ParametrosView extends MyComposite implements ParametrosPresenter.D
 		form.addButton(submitBt);
 		
 	}
-	
 	
 //	private void createForm() {
 //		FormData formData = new FormData("100%");
