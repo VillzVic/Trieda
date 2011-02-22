@@ -2,19 +2,20 @@ package com.gapso.web.trieda.client.mvp.presenter;
 
 import com.extjs.gxt.ui.client.widget.Component;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
+import com.gapso.web.trieda.client.i18n.ITriedaI18nGateway;
 import com.gapso.web.trieda.client.mvp.model.CenarioDTO;
 import com.gapso.web.trieda.client.mvp.view.ToolBarView;
 import com.gapso.web.trieda.client.services.CenariosServiceAsync;
 import com.gapso.web.trieda.client.services.Services;
+import com.gapso.web.trieda.client.util.view.AbstractAsyncCallbackWithDefaultOnFailure;
 import com.gapso.web.trieda.client.util.view.CenarioPanel;
 import com.gapso.web.trieda.client.util.view.GTab;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class AppPresenter implements Presenter {
 
-	public interface Display {
+	public interface Display extends ITriedaI18nGateway {
 		ContentPanel getPanel();
 		GTab getGTab();
 		Widget asWidget();
@@ -32,12 +33,7 @@ public class AppPresenter implements Presenter {
 	public void go(final Widget widget) {
 		
 		final CenariosServiceAsync cenariosServer = Services.cenarios();
-		cenariosServer.getMasterData(new AsyncCallback<CenarioDTO>() {
-			@Override
-			public void onFailure(Throwable caught) {
-				caught.printStackTrace();
-			}
-			
+		cenariosServer.getMasterData(new AbstractAsyncCallbackWithDefaultOnFailure<CenarioDTO>(viewport) {
 			@Override
 			public void onSuccess(CenarioDTO masterData) {
 				RootPanel rp = (RootPanel) widget;

@@ -6,17 +6,18 @@ import com.extjs.gxt.ui.client.widget.Info;
 import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.TextField;
+import com.gapso.web.trieda.client.i18n.ITriedaI18nGateway;
 import com.gapso.web.trieda.client.mvp.model.AreaTitulacaoDTO;
 import com.gapso.web.trieda.client.services.AreasTitulacaoServiceAsync;
 import com.gapso.web.trieda.client.services.Services;
+import com.gapso.web.trieda.client.util.view.AbstractAsyncCallbackWithDefaultOnFailure;
 import com.gapso.web.trieda.client.util.view.SimpleGrid;
 import com.gapso.web.trieda.client.util.view.SimpleModal;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
 
 public class AreaTitulacaoFormPresenter implements Presenter {
 
-	public interface Display {
+	public interface Display extends ITriedaI18nGateway {
 		Button getSalvarButton();
 		TextField<String> getCodigoTextField();
 		TextField<String> getDescricaoTextField();
@@ -40,11 +41,7 @@ public class AreaTitulacaoFormPresenter implements Presenter {
 			public void componentSelected(ButtonEvent ce) {
 				if(isValid()) {
 					final AreasTitulacaoServiceAsync service = Services.areasTitulacao();
-					service.save(getDTO(), new AsyncCallback<Void>() {
-						@Override
-						public void onFailure(Throwable caught) {
-							MessageBox.alert("ERRO!", "Deu falha na conexão", null);
-						}
+					service.save(getDTO(), new AbstractAsyncCallbackWithDefaultOnFailure<Void>(display) {
 						@Override
 						public void onSuccess(Void result) {
 							display.getSimpleModal().hide();
