@@ -51,7 +51,7 @@ public class ResumoCenarioView extends MyComposite implements ResumoCenarioPrese
 	}
 
 	private void createTabItem() {
-		tabItem = new GTabItem("Resumo do Cenário", Resources.DEFAULTS.cenario16());
+		tabItem = new GTabItem("Resumo do Cenário", Resources.DEFAULTS.resumoCenario16());
 		tabItem.setContent(panel);
 	}
 	

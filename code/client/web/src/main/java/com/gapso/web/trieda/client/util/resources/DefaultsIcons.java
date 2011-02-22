@@ -66,7 +66,11 @@ public interface DefaultsIcons extends ClientBundle  {
 	@Source("cenario_abrir_24.png") ImageResource cenarioAbrir24();
 	@Source("cenario_listar_24.png") ImageResource cenarioListar24();
 	@Source("cenario_novo_24.png") ImageResource cenarioNovo24();
+	@Source("resumo_cenario_24.png") ImageResource resumoCenario24();
+	@Source("resumo_campi_24.png") ImageResource resumoCampi24();
 	
+	@Source("resumo_cenario_16.png") ImageResource resumoCenario16();
+	@Source("resumo_campi_16.png") ImageResource resumoCampi16();
 	@Source("campus_16.png") ImageResource campus16();
 	@Source("curso_16.png") ImageResource curso16();
 	@Source("sala_16.png") ImageResource sala16();
