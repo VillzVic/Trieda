@@ -1584,13 +1584,13 @@ void ProblemDataLoader::estima_turmas()
             if(problemData->refDisciplinas[*itDisc]->max_alunos_p > 0)
             {
                //int numTurmas = (demDisc / problemData->refDisciplinas[*itDisc]->max_alunos_p);
-               int numTurmas = 5; //(demDisc / 25);
+               int numTurmas = (demDisc / 25);
                problemData->refDisciplinas[*itDisc]->num_turmas = (numTurmas > 0 ? numTurmas + 2 : 2);
             }
             else
             {
                //problemData->refDisciplinas[*itDisc]->num_turmas = (demDisc / tamMedSalasCP) + 2;
-               problemData->refDisciplinas[*itDisc]->num_turmas = 5; //(demDisc / 25) + 2;
+               problemData->refDisciplinas[*itDisc]->num_turmas = (demDisc / 25) + 2;
             }
          }
          else
@@ -1598,13 +1598,13 @@ void ProblemDataLoader::estima_turmas()
             if(problemData->refDisciplinas[*itDisc]->max_alunos_p > 0)
             {
                //int numTurmas = (demDisc / problemData->refDisciplinas[*itDisc]->max_alunos_t);
-               int numTurmas = 5;//(demDisc / 50);
+               int numTurmas = (demDisc / 50);
                problemData->refDisciplinas[*itDisc]->num_turmas = (numTurmas > 0 ? numTurmas + 1 : 1);                
             }
             else
             {
                //problemData->refDisciplinas[*itDisc]->num_turmas = (demDisc / tamMedSalasCP) + 5;
-               problemData->refDisciplinas[*itDisc]->num_turmas = 5; //(demDisc / 50) + 1;
+               problemData->refDisciplinas[*itDisc]->num_turmas = (demDisc / 50) + 1;
             }
          }
       }
