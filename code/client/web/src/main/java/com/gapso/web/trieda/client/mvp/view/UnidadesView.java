@@ -54,7 +54,7 @@ public class UnidadesView extends MyComposite implements UnidadesPresenter.Displ
 	private void createTabItem() {
 		tabItem = new GTabItem(getI18nConstants().unidades(), Resources.DEFAULTS.unidade16());
 		toolBar.add(new SeparatorToolItem());
-		deslocamentoUnidadesBT = toolBar.createButton(getI18nConstants().deslocamentoUnidades(), Resources.DEFAULTS.deslocamento16());
+		deslocamentoUnidadesBT = toolBar.createButton(getI18nConstants().deslocamentoUnidades(), Resources.DEFAULTS.deslocamentoUnidade16());
 		toolBar.add(deslocamentoUnidadesBT);
 		salasBT = toolBar.createButton(getI18nConstants().salas(), Resources.DEFAULTS.sala16());
 		toolBar.add(salasBT);

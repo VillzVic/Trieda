@@ -45,7 +45,7 @@ public class CampusProfessoresView extends MyComposite implements CampusProfesso
 	}
 
 	private void createTabItem() {
-		tabItem = new GTabItem("Campi de Trabalho", Resources.DEFAULTS.campus16());
+		tabItem = new GTabItem("Campi de Trabalho", Resources.DEFAULTS.campiTrabalho16());
 		tabItem.setContent(panel);
 	}
 	

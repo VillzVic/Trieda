@@ -39,7 +39,7 @@ public class CampiDeslocamentoView extends MyComposite implements CampiDeslocame
 	}
 	
 	private void createTabItem() {
-		tabItem = new GTabItem("Deslocamentos entre Campi", Resources.DEFAULTS.deslocamento16());
+		tabItem = new GTabItem("Deslocamentos entre Campi", Resources.DEFAULTS.deslocamentoCampi16());
 		tabItem.setContent(panel);
 	}
 	

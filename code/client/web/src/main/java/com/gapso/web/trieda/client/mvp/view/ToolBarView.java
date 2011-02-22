@@ -204,7 +204,7 @@ public class ToolBarView extends MyComposite implements ToolBarPresenter.Display
 		
 		campiToolBar.add(new SeparatorToolItem());
 		
-		campusDeslocamentoListCampiBt = createButton("Deslocamento<br />entre Campi", "Deslocamento entre Campi", Resources.DEFAULTS.deslocamento24());
+		campusDeslocamentoListCampiBt = createButton("Deslocamento<br />entre Campi", "Deslocamento entre Campi", Resources.DEFAULTS.deslocamentoCampi24());
 		campiToolBar.add(campusDeslocamentoListCampiBt);
 		
 		semanasLetivaListCampiBt = createButton("Semanas<br />Letivas", "Semanas Letivas", Resources.DEFAULTS.semanaLetiva24());
@@ -230,7 +230,7 @@ public class ToolBarView extends MyComposite implements ToolBarPresenter.Display
 		
 		unidadesToolBar.add(new SeparatorToolItem());
 		
-		unidadeDeslocamentoListUnidadesBt = createButton("Deslocamento<br />entre unidades", "Deslocamento de Unidades", Resources.DEFAULTS.deslocamento24());
+		unidadeDeslocamentoListUnidadesBt = createButton("Deslocamento<br />entre unidades", "Deslocamento de Unidades", Resources.DEFAULTS.deslocamentoUnidade24());
 		unidadesToolBar.add(unidadeDeslocamentoListUnidadesBt);
 	}
 	
@@ -315,7 +315,7 @@ public class ToolBarView extends MyComposite implements ToolBarPresenter.Display
 		professoresDisciplinaListprofessoresBt = createButton("Habilitação<br />dos Professores", "Habilitação dos Professores", Resources.DEFAULTS.habilitacaoProfessor24());
 		professoresToolBar.add(professoresDisciplinaListprofessoresBt);
 		
-		professoresCampusListprofessoresBt = createButton("Campi de<br />Trabalho", "Campi de Trabalho", Resources.DEFAULTS.professorListar24());
+		professoresCampusListprofessoresBt = createButton("Campi de<br />Trabalho", "Campi de Trabalho", Resources.DEFAULTS.campiTrabalho24());
 		professoresToolBar.add(professoresCampusListprofessoresBt);
 	}
 	

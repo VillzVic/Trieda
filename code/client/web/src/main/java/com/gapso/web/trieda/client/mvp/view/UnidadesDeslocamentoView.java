@@ -47,7 +47,7 @@ public class UnidadesDeslocamentoView extends MyComposite implements UnidadesDes
 	}
 	
 	private void createTabItem() {
-		tabItem = new GTabItem("Deslocamentos entre Unidades", Resources.DEFAULTS.deslocamento16());
+		tabItem = new GTabItem("Deslocamentos entre Unidades", Resources.DEFAULTS.deslocamentoUnidade16());
 		tabItem.setContent(panel);
 	}
 	

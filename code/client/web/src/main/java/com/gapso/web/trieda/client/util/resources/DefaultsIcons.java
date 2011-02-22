@@ -44,7 +44,8 @@ public interface DefaultsIcons extends ClientBundle  {
 	@Source("disciplina_listar_24.png") ImageResource disciplinaListar24();
 	
 	@Source("habilitacao_professor_24.png") ImageResource habilitacaoProfessor24();
-	@Source("deslocamento_24.png") ImageResource deslocamento24();
+	@Source("deslocamento_campi_24.png") ImageResource deslocamentoCampi24();
+	@Source("deslocamento_unidade_24.png") ImageResource deslocamentoUnidade24();
 	@Source("semana_letiva_24.png") ImageResource semanaLetiva24();
 	@Source("horario_aula_24.png") ImageResource horarioAula24();
 	@Source("oferta_curso_24.png") ImageResource ofertaCurso24();
@@ -68,7 +69,9 @@ public interface DefaultsIcons extends ClientBundle  {
 	@Source("cenario_novo_24.png") ImageResource cenarioNovo24();
 	@Source("resumo_cenario_24.png") ImageResource resumoCenario24();
 	@Source("resumo_campi_24.png") ImageResource resumoCampi24();
+	@Source("campi_trabalho_24.png") ImageResource campiTrabalho24();
 	
+	@Source("campi_trabalho_16.png") ImageResource campiTrabalho16();
 	@Source("resumo_cenario_16.png") ImageResource resumoCenario16();
 	@Source("resumo_campi_16.png") ImageResource resumoCampi16();
 	@Source("campus_16.png") ImageResource campus16();
@@ -76,7 +79,8 @@ public interface DefaultsIcons extends ClientBundle  {
 	@Source("sala_16.png") ImageResource sala16();
 	@Source("dia_horario_aula_16.png") ImageResource diaHorarioAula16();
 	@Source("disponibilidade_16.png") ImageResource disponibilidade16();
-	@Source("deslocamento_16.png") ImageResource deslocamento16();
+	@Source("deslocamento_campi_16.png") ImageResource deslocamentoCampi16();
+	@Source("deslocamento_unidade_16.png") ImageResource deslocamentoUnidade16();
 	@Source("gerar_grade_16.png") ImageResource gerarGrade16();
 	@Source("cenario_16.png") ImageResource cenario16();
 	@Source("cenario_listar_16.png") ImageResource cenarioClonar16();
