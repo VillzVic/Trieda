@@ -20,6 +20,7 @@ import com.gapso.web.trieda.client.mvp.model.UnidadeDTO;
 import com.gapso.web.trieda.client.mvp.view.HorarioDisponivelUnidadeFormView;
 import com.gapso.web.trieda.client.mvp.view.SalasView;
 import com.gapso.web.trieda.client.mvp.view.UnidadeFormView;
+import com.gapso.web.trieda.client.mvp.view.UnidadesDeslocamentoView;
 import com.gapso.web.trieda.client.services.CampiServiceAsync;
 import com.gapso.web.trieda.client.services.Services;
 import com.gapso.web.trieda.client.services.UnidadesServiceAsync;
@@ -172,6 +173,13 @@ public class UnidadesPresenter implements Presenter {
 						presenter.go(null);
 					}
 				});
+			}
+		});
+		display.getDeslocamentoUnidadesButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
+			@Override
+			public void componentSelected(ButtonEvent ce) {
+				Presenter presenter = new UnidadesDeslocamentoPresenter(new UnidadesDeslocamentoView(null, null));
+				presenter.go(gTab);
 			}
 		});
 	}
