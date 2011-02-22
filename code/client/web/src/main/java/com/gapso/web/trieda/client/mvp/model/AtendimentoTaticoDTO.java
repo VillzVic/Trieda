@@ -206,6 +206,7 @@ public class AtendimentoTaticoDTO extends BaseModel {
 		setCurricularString(getCurriculoString() + "/" + other.getCurriculoString());
 		setPeriodoString(getPeriodoString() + "/" + other.getPeriodoString());
 		setQuantidadeAlunosString(getQuantidadeAlunosString() + "/" + other.getQuantidadeAlunosString());
+		setQuantidadeAlunos(getQuantidadeAlunos() + other.getQuantidadeAlunos());
 	}
 	
 	public void concatenateVisaoCurso(AtendimentoTaticoDTO other) {

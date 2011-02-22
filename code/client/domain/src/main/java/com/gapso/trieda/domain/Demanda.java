@@ -167,6 +167,13 @@ public class Demanda implements Serializable {
 		return ((Number) q.getSingleResult()).intValue();
 	}
 	
+	public static int sumDemanda(Campus campus) {
+		Query q = entityManager().createQuery("SELECT SUM(o.quantidade) FROM Demanda o WHERE o.oferta.campus = :campus");
+		q.setParameter("campus", campus);
+		Object rs = q.getSingleResult();
+		return rs == null ? 0 : ((Number) rs).intValue();
+	}
+	
 	@SuppressWarnings("unchecked")
     public static List<Demanda> findAll() {
         return entityManager().createQuery("SELECT o FROM Demanda o").getResultList();

@@ -39,7 +39,7 @@ import com.gapso.trieda.misc.Estados;
 @RooToString
 @RooEntity(identifierColumn = "CAM_ID")
 @Table(name = "CAMPI")
-public class Campus implements Serializable {
+public class Campus implements Serializable, Comparable<Campus> {
 
 	private static final long serialVersionUID = 6690100103369325015L;
 	
@@ -356,8 +356,7 @@ public class Campus implements Serializable {
         	bairro = "%" + bairro.replace('*', '%') + "%";
         }
         
-        
-        EntityManager em = Turno.entityManager();
+        EntityManager em = Campus.entityManager();
         orderBy = (orderBy != null) ? "ORDER BY o." + orderBy : "";
         String estadoQuery = (estado==null)? "" : "o.estado = :estado AND ";
         Query q = em.createQuery("SELECT o FROM Campus o WHERE " +
@@ -376,7 +375,7 @@ public class Campus implements Serializable {
         if(bairro != null) q.setParameter("bairro", bairro);
         return q.setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
-	
+    
 	public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("Id: ").append(getId()).append(", ");
@@ -396,4 +395,9 @@ public class Campus implements Serializable {
         sb.append("Ofertas: ").append(getOfertas() == null ? "null" : getOfertas().size());
         return sb.toString();
     }
+
+	@Override
+	public int compareTo(Campus c) {
+		return this.getCodigo().compareTo(c.getCodigo());
+	}
 }

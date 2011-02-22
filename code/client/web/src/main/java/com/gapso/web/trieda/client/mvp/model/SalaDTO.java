@@ -99,5 +99,10 @@ public class SalaDTO extends FileModel {
 	public void setCapacidade(Integer value) {
 		set("capacidade", value);
 	}
+	
+	public boolean isLaboratorio() {
+		// TODO MUDAR PARA CONSTANTE DO TIPO DE SALA
+		return getTipoId() == 2;
+	}
 
 }

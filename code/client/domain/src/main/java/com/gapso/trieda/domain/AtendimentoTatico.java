@@ -282,6 +282,20 @@ public class AtendimentoTatico implements Serializable {
 		return q.getResultList();
 	}
 	
+	@SuppressWarnings("unchecked")
+	public static List<AtendimentoTatico> findAllByCampus(Campus campus) {
+		Query q = entityManager().createQuery("SELECT o FROM AtendimentoTatico o WHERE o.oferta.campus = :campus");
+		q.setParameter("campus", campus);
+		return q.getResultList();
+	}
+
+//	@SuppressWarnings("unchecked")
+//	public static List<Sala> findAllSalasUtilizadasByCampus(Campus campus) {
+//		Query q = entityManager().createQuery("SELECT DISTINCT(o.sala) FROM AtendimentoTatico o WHERE o.sala.unidade.campus = :campus");
+//		q.setParameter("campus", campus);
+//		return q.getResultList();
+//	}
+	
 	public Cenario getCenario() {
 		return cenario;
 	}
@@ -352,6 +366,10 @@ public class AtendimentoTatico implements Serializable {
 
 	public void setCreditosPratico(Integer creditosPratico) {
 		this.creditosPratico = creditosPratico;
+	}
+	
+	public Integer getTotalCreditos() {
+		return getCreditosPratico() + getCreditosTeorico();
 	}
 	
 }

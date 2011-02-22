@@ -4,6 +4,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -225,6 +226,13 @@ public class ConvertBeans {
 	}
 	
 	// SALA
+	public static Collection<SalaDTO> toSalaDTO(Collection<Sala> domains) {
+		Collection<SalaDTO> list = new ArrayList<SalaDTO>(domains.size());
+		for(Sala domain : domains) {
+			list.add(toSalaDTO(domain));
+		}
+		return list;
+	}
 	public static Sala toSala(SalaDTO dto) {
 		Sala domain = new Sala();
 		domain.setId(dto.getId());
@@ -242,7 +250,6 @@ public class ConvertBeans {
 		
 		return domain;
 	}
-	
 	public static SalaDTO toSalaDTO(Sala domain) {
 		SalaDTO dto = new SalaDTO();
 		dto.setId(domain.getId());
@@ -286,6 +293,13 @@ public class ConvertBeans {
 	}
 	
 	// TURNO
+	public static Collection<TurnoDTO> toTurnoDTO(Collection<Turno> domains) {
+		Collection<TurnoDTO> list = new ArrayList<TurnoDTO>(domains.size());
+		for(Turno domain : domains) {
+			list.add(toTurnoDTO(domain));
+		}
+		return list;
+	}
 	public static Turno toTurno(TurnoDTO dto) {
 		Turno domain = new Turno();
 		domain.setId(dto.getId());
@@ -296,7 +310,6 @@ public class ConvertBeans {
 		domain.setTempo(dto.getTempo());
 		return domain;
 	}
-
 	public static TurnoDTO toTurnoDTO(Turno domain) {
 		TurnoDTO dto = new TurnoDTO();
 		dto.setId(domain.getId());

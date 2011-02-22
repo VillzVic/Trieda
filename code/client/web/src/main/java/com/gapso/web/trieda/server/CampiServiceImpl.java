@@ -1,6 +1,7 @@
 package com.gapso.web.trieda.server;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -30,13 +31,17 @@ import com.gapso.trieda.domain.Sala;
 import com.gapso.trieda.domain.Turno;
 import com.gapso.trieda.domain.Unidade;
 import com.gapso.trieda.misc.Estados;
+import com.gapso.web.trieda.client.mvp.model.AtendimentoTaticoDTO;
 import com.gapso.web.trieda.client.mvp.model.CampusDTO;
 import com.gapso.web.trieda.client.mvp.model.CenarioDTO;
 import com.gapso.web.trieda.client.mvp.model.DeslocamentoCampusDTO;
 import com.gapso.web.trieda.client.mvp.model.FileModel;
 import com.gapso.web.trieda.client.mvp.model.HorarioDisponivelCenarioDTO;
+import com.gapso.web.trieda.client.mvp.model.SalaDTO;
+import com.gapso.web.trieda.client.mvp.model.TurnoDTO;
 import com.gapso.web.trieda.client.services.CampiService;
 import com.gapso.web.trieda.server.util.ConvertBeans;
+import com.gapso.web.trieda.server.util.TriedaUtil;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 /**
@@ -246,7 +251,9 @@ public class CampiServiceImpl extends RemoteServiceServlet implements CampiServi
 		List<FileModel> list = new ArrayList<FileModel>();
 		if(!(fileModel instanceof CampusDTO)) {
 			Cenario cenario = Cenario.find(cenarioDTO.getId());
-			for(Campus campus : cenario.getCampi()) {
+			List<Campus> campi = new ArrayList<Campus>(cenario.getCampi());
+			Collections.sort(campi);
+			for(Campus campus : campi) {
 				CampusDTO campusDTO = ConvertBeans.toCampusDTO(campus);
 				campusDTO.setName(campus.getCodigo() + " (" + campus.getNome() + ")");
 				campusDTO.setPath(campus.getCodigo());
@@ -261,12 +268,6 @@ public class CampiServiceImpl extends RemoteServiceServlet implements CampiServi
 			Integer qtdCreditos = AtendimentoTatico.countCreditos(campus);
 			Double mediaCreditoTurma = (qtdTurma == 0)? 0.0 : qtdCreditos/qtdTurma;
 			Double custoDocenteSemestral = qtdCreditos * custoCredito * 4.5 * 6.0;
-			Integer qSalasCenario = Sala.countSalaDeAula(campus);
-			Integer qLaboratoriosCenario = Sala.countLaboratorio(campus);
-			Integer qSalas = AtendimentoTatico.countSalasDeAula(campus);
-			Integer qLaboratorios = AtendimentoTatico.countLaboratorios(campus);
-			Double mediaSalaDeAula = qSalas == 0 ? 0 : (qSalasCenario/qSalas) * 100.0;
-			Double mediaLaboratorio = qLaboratorios == 0 ? 0 : (qLaboratoriosCenario/qLaboratorios) * 100.0;
 			
 			List<Demanda> demandas = Demanda.findAllByCampus(campus);
 			Integer qtdAlunosAtendidos = 0;
@@ -274,15 +275,60 @@ public class CampiServiceImpl extends RemoteServiceServlet implements CampiServi
 			for(Demanda demanda : demandas) {
 				Set<String> turmas = new HashSet<String>();
 				List<AtendimentoTatico> atendimentos = AtendimentoTatico.findAllByDemanda(demanda);
+				int qtdAtendimento = 0;
+				double qtdCreditosAtendimento = 0.0;
 				for(AtendimentoTatico atendimento : atendimentos) {
+					qtdCreditosAtendimento += atendimento.getTotalCreditos(); 
 					if(turmas.add(atendimento.getTurma())) {
-						qtdAlunosAtendidos += atendimento.getQuantidadeAlunos();
-						if(demanda.getQuantidade() >= atendimento.getQuantidadeAlunos()) {
-							qtdAlunosNaoAtendidos += (demanda.getQuantidade() - atendimento.getQuantidadeAlunos());
+						qtdAtendimento += atendimento.getQuantidadeAlunos(); 
+					}
+				}
+				if(demanda.getDisciplina().getTotalCreditos() < qtdCreditosAtendimento) {
+					double fatorAjuste = qtdCreditosAtendimento / demanda.getDisciplina().getTotalCreditos();
+					if(demanda.getQuantidade() < qtdAtendimento) {
+						qtdAtendimento = qtdAtendimento - (int)(fatorAjuste - 1) * demanda.getQuantidade();
+					} else if(demanda.getQuantidade() > qtdAtendimento) {
+						qtdAtendimento = (int)((double)qtdAtendimento / fatorAjuste);
+					}
+				}
+				if(demanda.getQuantidade() >= qtdAtendimento) {
+					qtdAlunosNaoAtendidos += (demanda.getQuantidade() - qtdAtendimento);
+				}
+			}
+			qtdAlunosAtendidos = Demanda.sumDemanda(campus) - qtdAlunosNaoAtendidos;
+			
+			List<AtendimentoTatico> atendimentoTaticoList = AtendimentoTatico.findAllByCampus(campus);
+			Set<Sala> salas = new HashSet<Sala>();
+			Set<Turno> turnos = new HashSet<Turno>();
+			for(AtendimentoTatico atendimentoTatico : atendimentoTaticoList) {
+				salas.add(atendimentoTatico.getSala());
+				turnos.add(atendimentoTatico.getOferta().getTurno());
+			}
+			Collection<SalaDTO> salasDTO = ConvertBeans.toSalaDTO(salas);
+			Collection<TurnoDTO> turnosDTO = ConvertBeans.toTurnoDTO(turnos);
+			
+			AtendimentosServiceImpl atService = new AtendimentosServiceImpl();
+			double numeradorSala = 0.0;
+			double denominadorSala = 0.0;
+			double numeradorLab = 0.0;
+			double denominadorLab = 0.0;
+			for(TurnoDTO turnoDTO : turnosDTO) {
+				for(SalaDTO salaDTO : salasDTO) {
+					List<AtendimentoTaticoDTO> atendimentosDTO = atService.getBusca(salaDTO, turnoDTO);
+					for(AtendimentoTaticoDTO atendimentoDTO : atendimentosDTO) {
+						if(!salaDTO.isLaboratorio()) {
+							numeradorSala += atendimentoDTO.getQuantidadeAlunos();
+							denominadorSala += salaDTO.getCapacidade();
+						} else { 
+							numeradorLab += atendimentoDTO.getQuantidadeAlunos();
+							denominadorLab += salaDTO.getCapacidade();
 						}
 					}
 				}
 			}
+			double mediaSalaDeAula = TriedaUtil.round(numeradorSala / denominadorSala * 100.0, 2);
+			double mediaLaboratorio = TriedaUtil.round(numeradorLab / denominadorLab * 100.0, 2);
+			
 			
 			list.add(new FileModel("Turmas abertas: <b>"+qtdTurma+"</b>"));
 			list.add(new FileModel("Total de Cr&eacute;ditos semanais: <b>"+qtdCreditos+"</b>"));
@@ -291,11 +337,11 @@ public class CampiServiceImpl extends RemoteServiceServlet implements CampiServi
 			list.add(new FileModel("Custo docente semestral estimado: <b>R$ "+custoDocenteSemestral+"</b>"));
 			list.add(new FileModel("Utiliza&ccedil;&atilde;o m&eacute;dia das salas de aula: <b>"+mediaSalaDeAula+"%</b>"));
 			list.add(new FileModel("Utiliza&ccedil;&atilde;o m&eacute;dia dos laborat&oacute;rios: <b>"+mediaLaboratorio+"%</b>"));
-			list.add(new FileModel("Custo docente por curso"));
-			list.add(new FileModel("Custo docente por disciplina"));
+//			list.add(new FileModel("Custo docente por curso"));
+//			list.add(new FileModel("Custo docente por disciplina"));
 			list.add(new FileModel("Total de alunos atendidos: <b>"+qtdAlunosAtendidos+"</b>"));
 			list.add(new FileModel("Total de alunos n&atilde;o atendidos: <b>"+qtdAlunosNaoAtendidos+"</b>"));
-			list.add(new FileModel("Exportar resultados para excel"));
+//			list.add(new FileModel("Exportar resultados para excel"));
 		}
 		return list;
 	}
