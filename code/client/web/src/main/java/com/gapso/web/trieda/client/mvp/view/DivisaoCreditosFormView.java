@@ -73,7 +73,7 @@ public class DivisaoCreditosFormView extends MyComposite implements DivisaoCredi
 		nf.setFieldLabel(label);
 		nf.setAllowDecimals(false);
 		nf.setAllowNegative(false);
-		nf.setMinValue(1);
+		nf.setMinValue(0);
 		nf.setMaxValue(99);
 		nf.setMaxLength(99);
 		nf.setEmptyText("Somente números inteiros");

@@ -182,7 +182,6 @@ public class DisciplinasServiceImpl extends RemoteServiceServlet implements Disc
 		Disciplina disciplina = Disciplina.find(disciplinaDTO.getId());
 		DivisaoCredito divisaoCredito = disciplina.getDivisaoCreditos();
 		if(divisaoCredito != null) {
-			divisaoCredito.setDisciplina(disciplina);
 			int d1 = divisaoCreditoDTO.getDia1();
 			int d2 = divisaoCreditoDTO.getDia2();
 			int d3 = divisaoCreditoDTO.getDia3();
@@ -203,7 +202,8 @@ public class DisciplinasServiceImpl extends RemoteServiceServlet implements Disc
 			divisaoCredito.merge();
 		} else {
 			divisaoCredito = ConvertBeans.toDivisaoCredito(divisaoCreditoDTO);
-			divisaoCredito.persist();
+			disciplina.setDivisaoCreditos(divisaoCredito);
+			disciplina.merge();
 		}
 		
 	}

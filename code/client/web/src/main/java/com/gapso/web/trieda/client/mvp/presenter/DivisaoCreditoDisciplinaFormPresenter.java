@@ -2,16 +2,22 @@ package com.gapso.web.trieda.client.mvp.presenter;
 
 import com.extjs.gxt.ui.client.event.ButtonEvent;
 import com.extjs.gxt.ui.client.event.SelectionListener;
+import com.extjs.gxt.ui.client.widget.Info;
+import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.NumberField;
+import com.gapso.web.trieda.client.i18n.ITriedaI18nGateway;
 import com.gapso.web.trieda.client.mvp.model.CenarioDTO;
+import com.gapso.web.trieda.client.mvp.model.DisciplinaDTO;
 import com.gapso.web.trieda.client.mvp.model.DivisaoCreditoDTO;
+import com.gapso.web.trieda.client.services.Services;
+import com.gapso.web.trieda.client.util.view.AbstractAsyncCallbackWithDefaultOnFailure;
 import com.gapso.web.trieda.client.util.view.SimpleModal;
 import com.google.gwt.user.client.ui.Widget;
 
 public class DivisaoCreditoDisciplinaFormPresenter implements Presenter {
 
-	public interface Display {
+	public interface Display extends ITriedaI18nGateway {
 		Button getSalvarButton();
 		NumberField getDia1NumberField();
 		NumberField getDia2NumberField();
@@ -21,6 +27,7 @@ public class DivisaoCreditoDisciplinaFormPresenter implements Presenter {
 		NumberField getDia6NumberField();
 		NumberField getDia7NumberField();
 		DivisaoCreditoDTO getDivisaoCreditoDTO();
+		DisciplinaDTO getDisciplinaDTO();
 		boolean isValid();
 		
 		SimpleModal getSimpleModal();
@@ -38,24 +45,18 @@ public class DivisaoCreditoDisciplinaFormPresenter implements Presenter {
 		display.getSalvarButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
 			@Override
 			public void componentSelected(ButtonEvent ce) {
-				display.getSimpleModal().hide();
-				// TODO
-//				if(isValid()) {
-//					final DivisoesCreditosServiceAsync service = Services.divisaoCreditos();
-//					service.save(getDTO(), new AsyncCallback<Void>() {
-//						@Override
-//						public void onFailure(Throwable caught) {
-//							MessageBox.alert("ERRO!", "Deu falha na conexão", null);
-//						}
-//						@Override
-//						public void onSuccess(Void result) {
-//							display.getSimpleModal().hide();
-//							Info.display("Salvo", "Item salvo com sucesso!");
-//						}
-//					});
-//				} else {
-//					MessageBox.alert("ERRO!", "Verifique os campos digitados", null);
-//				}
+				if(isValid()) {
+					Services.disciplinas().salvarDivisaoCredito(display.getDisciplinaDTO(), getDTO(), new AbstractAsyncCallbackWithDefaultOnFailure<Void>(display) {
+						@Override
+						public void onSuccess(Void result) {
+							display.getSimpleModal().hide();
+							Info.display("Salvo", "Item salvo com sucesso!");
+						}
+					});
+				} else {
+					MessageBox.alert("ERRO!", "Verifique os campos digitados<br />" +
+							"A soma dos créditos devem ser igual a "+display.getDisciplinaDTO().getTotalCreditos(), null);
+				}
 			}
 		});
 	}

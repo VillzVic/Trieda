@@ -115,5 +115,9 @@ public class DisciplinaDTO extends FileModel {
 	public void setMaxAlunosPratico(Integer value) {
 		set("maxAlunosPratico", value);
 	}
+	
+	public int getTotalCreditos() {
+		return getCreditosTeorico() + getCreditosPratico();
+	}
 
 }

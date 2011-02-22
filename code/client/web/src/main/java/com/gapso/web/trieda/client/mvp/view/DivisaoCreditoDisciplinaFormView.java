@@ -77,7 +77,7 @@ public class DivisaoCreditoDisciplinaFormView extends MyComposite implements Div
 		nf.setFieldLabel(label);
 		nf.setAllowDecimals(false);
 		nf.setAllowNegative(false);
-		nf.setMinValue(1);
+		nf.setMinValue(0);
 		nf.setMaxValue(99);
 		nf.setMaxLength(99);
 		nf.setEmptyText("Somente números inteiros");
@@ -85,7 +85,15 @@ public class DivisaoCreditoDisciplinaFormView extends MyComposite implements Div
 	}
 	
 	public boolean isValid() {
-		return formPanel.isValid();
+		int totalCreditos = 0;
+		totalCreditos += dia1NF.getValue() == null? 0 : dia1NF.getValue().intValue();
+		totalCreditos += dia2NF.getValue() == null? 0 : dia2NF.getValue().intValue();
+		totalCreditos += dia3NF.getValue() == null? 0 : dia3NF.getValue().intValue();
+		totalCreditos += dia4NF.getValue() == null? 0 : dia4NF.getValue().intValue();
+		totalCreditos += dia5NF.getValue() == null? 0 : dia5NF.getValue().intValue();
+		totalCreditos += dia6NF.getValue() == null? 0 : dia6NF.getValue().intValue();
+		totalCreditos += dia7NF.getValue() == null? 0 : dia7NF.getValue().intValue();
+		return formPanel.isValid() && totalCreditos == disciplinaDTO.getTotalCreditos();
 	}
 	
 	@Override
@@ -109,6 +117,11 @@ public class DivisaoCreditoDisciplinaFormView extends MyComposite implements Div
 	@Override
 	public DivisaoCreditoDTO getDivisaoCreditoDTO() {
 		return divisaoCreditoDTO;
+	}
+
+	@Override
+	public DisciplinaDTO getDisciplinaDTO() {
+		return disciplinaDTO;
 	}
 
 }
