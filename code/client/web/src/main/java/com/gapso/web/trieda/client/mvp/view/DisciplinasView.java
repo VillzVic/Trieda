@@ -75,7 +75,6 @@ public class DisciplinasView extends MyComposite implements DisciplinasPresenter
 		List<ColumnConfig> list = new ArrayList<ColumnConfig>();
 		list.add(new ColumnConfig("nome", "Nome", 100));
 		list.add(new ColumnConfig("codigo", "Código", 100));
-		list.add(new ColumnConfig("nome", "Nome", 100));
 		list.add(new ColumnConfig("creditosTeorico", "Créditos Teóricos", 100));
 		list.add(new ColumnConfig("creditosPratico", "Créditos Práticos", 100));
 		list.add(new CheckColumnConfig("laboratorio", "Usa Laboratório?", 100));

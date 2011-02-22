@@ -75,7 +75,6 @@ public class CursosView extends MyComposite implements CursosPresenter.Display {
 		List<ColumnConfig> list = new ArrayList<ColumnConfig>();
 		list.add(new ColumnConfig("nome", "Nome", 100));
 		list.add(new ColumnConfig("codigo", "Código", 100));
-		list.add(new ColumnConfig("nome", "Nome", 100));
 		list.add(new ColumnConfig("tipoString", "Tipo", 100));
 		list.add(new ColumnConfig("numMinDoutores", "% Min. PhD", 100));
 		list.add(new ColumnConfig("numMinMestres", "% Min. MSc", 100));
