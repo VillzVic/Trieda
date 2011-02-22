@@ -1,7 +1,7 @@
 #pragma once
 #include "ofbase.h"
 #include "TipoSala.h"
-#include "horario.h"
+#include "Horario.h"
 #include "CreditoDisponivel.h"
 
 #include "Disciplina.h"

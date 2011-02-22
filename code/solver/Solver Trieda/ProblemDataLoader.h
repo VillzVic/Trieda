@@ -45,6 +45,9 @@ public:
    /* Establece os dias letivos comuns entre os conjuntos de salas e suas disciplinas associadas. */
    void estabeleceDiasLetivosDiscCjtSala();
 
+   /* Establece os dias letivos comuns entre os professores e suas disciplinas. */
+   void estabeleceDiasLetivosProfessorDisciplina();
+
    /* */
    void divideDisciplinas();
 

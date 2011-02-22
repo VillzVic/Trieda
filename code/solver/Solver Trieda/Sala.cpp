@@ -27,9 +27,14 @@ void Sala::le_arvore(ItemSala& elem)
 		}
 	}
 	else {
-		// le horarios disponiveis 
-      std::cout << "OPERACIONAL" << std::endl;
-      getchar();
+		// le horarios disponiveis
+		ITERA_SEQ(it_hora,elem.horariosDisponiveis().get(),Horario) {
+			Horario* horario = new Horario();
+			horario->le_arvore(*it_hora);
+			horarios_disponiveis.add(horario);
+		}
+		std::cout << "OPERACIONAL" << std::endl;
+		getchar();
 	}
 	ITERA_NSEQ(it_disc,elem.disciplinasAssociadas(),id,Identificador) {
 		disciplinas_associadas.add(*it_disc);

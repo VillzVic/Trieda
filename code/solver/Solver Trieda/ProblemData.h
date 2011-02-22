@@ -173,6 +173,9 @@ public:
    /* Listando as regras de créditos para cada possível valor de crédito. */
    std::map<int/*Num. Creds*/,GGroup<DivisaoCreditos*> > creds_Regras;
 
+    /* Dias letivos comuns de um professor e uma disciplina. */
+   std::map<std::pair<int/*idProf*/,int/*idDisc*/>, GGroup<int>/*Dias*/ > prof_Disc_Dias;
+
    // <<<
 
 public:

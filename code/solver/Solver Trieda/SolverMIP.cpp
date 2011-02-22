@@ -169,7 +169,9 @@ pesos associados a cada item da função objetivo.
 %Data \psi
 %Desc 
 peso associado a função objetivo.
-
+%Data \theta
+%Desc 
+peso associado a função objetivo.
 %DocEnd
 /===================================================================*/
 
@@ -389,6 +391,7 @@ int SolverMIP::solve()
    //lp->chgObj(lp->getNumCols(),idxNova,objOrig);
 
    //lp->copyMIPStartSol(lp->getNumCols(),idxNova,xSolInic);
+  
 
    //lp->setNodeLimit(1);
    //lp->setTimeLimit(3600);
@@ -922,9 +925,16 @@ int SolverMIP::cria_variaveis()
 %DocBegin TRIEDA_LOAD_MODEL
 
 %Var x_{i,d,u,tps,t}
+
 %Desc 
 número de créditos da turma $i$ da disciplina $d$ na unidade $u$ 
 em salas do tipo (capacidade) $tps$ no dia $t$. 
+
+%ObjCoef
+\theta \cdot \sum\limits_{u \in U}\sum\limits_{tps \in SCAP_{u}} 
+   \sum\limits_{d \in D}\sum\limits_{t \in T}
+   \sum\limits_{i \in I_{d}} x_{i,d,u,tps,t} 
+
 %DocEnd
 /====================================================================*/
 
@@ -964,20 +974,37 @@ int SolverMIP::cria_variavel_creditos(void)
                      v.setDia(*itDiscSala_Dias);   // t
                      //v.setDia(dia);
 
-                     if (vHash.find(v) == vHash.end())
-                     {
-                        vHash[v] = lp->getNumCols();
 
-                        OPT_COL col(OPT_COL::VAR_INTEGRAL,0.0,0.0,itCjtSala->maxCredsDia(*itDiscSala_Dias),
-                           (char*)v.toString().c_str());
+					 int coef = 0.0;
+					 ITERA_GGROUP(it_prof,itCampus->professores,Professor) 
+					 {
+						 std::pair<int/*idProf*/,int/*idDisc*/> prof_Disc 
+							 (it_prof->getId(),itDisc->getId());
 
-                        //OPT_COL col(OPT_COL::VAR_INTEGRAL,0.0,0.0,24.0,
-                        //   (char*)v.toString().c_str());
+						 if(problemData->prof_Disc_Dias.find(prof_Disc) != problemData->prof_Disc_Dias.end())
+						 {
+							 coef = 0.0;
+						 }
+						 else
+						 {
+							 coef = 10.0;
+						 }
 
-                        lp->newCol(col);
+						 if (vHash.find(v) == vHash.end())
+						 {
+							vHash[v] = lp->getNumCols();
 
-                        num_vars += 1;
-                     }
+							OPT_COL col(OPT_COL::VAR_INTEGRAL,coef,0.0,itCjtSala->maxCredsDia(*itDiscSala_Dias),
+							   (char*)v.toString().c_str());
+
+							//OPT_COL col(OPT_COL::VAR_INTEGRAL,0.0,0.0,24.0,
+							//   (char*)v.toString().c_str());
+
+							lp->newCol(col);
+
+							num_vars += 1;
+						 }
+					 }
                   }
                }
             }
@@ -3854,33 +3881,49 @@ int SolverMIP::cria_restricao_max_cred_disc_bloco(void)
             dentre todas as salas para um dado dia. */
             int maxCredsSalaDia = 0;
 
+			int maxCredsProfDia = 0;
+
             ITERA_GGROUP(itDisc,itBloco->disciplinas,Disciplina)
             {
                ITERA_GGROUP(itUnidade,itCampus->unidades,Unidade)
                {
                   ITERA_GGROUP(itCjtSala,itUnidade->conjutoSalas,ConjuntoSala)
                   {
-                     /*
-                     maxCredsSalaDia = (maxCredsSalaDia < itCjtSala->credsMaiorSala(*itDiasLetCampus) ?
-                        itCjtSala->credsMaiorSala(*itDiasLetCampus) : maxCredsSalaDia);
-                        */
+					  for(int turma = 0; turma < itDisc->num_turmas; turma++)
+                      {
+						  v.reset();
+						  v.setType(Variable::V_CREDITOS);
+						  v.setTurma(turma);
+						  v.setDisciplina(*itDisc);
+						  v.setUnidade(*itUnidade);
+						  v.setSubCjtSala(*itCjtSala);
+						  v.setDia(*itDiasLetCampus);
 
-                     maxCredsSalaDia = (maxCredsSalaDia < itCjtSala->maxCredsDia(*itDiasLetCampus) ?
-                        itCjtSala->maxCredsDia(*itDiasLetCampus) : maxCredsSalaDia);
+						  it_v = vHash.find(v);
+                          if( it_v != vHash.end() )
+                          { row.insert(it_v->second, 1.0); }
 
-                     for(int turma = 0; turma < itDisc->num_turmas; turma++)
-                     {
-                        v.reset();
-                        v.setType(Variable::V_CREDITOS);
-                        v.setTurma(turma);
-                        v.setDisciplina(*itDisc);
-                        v.setUnidade(*itUnidade);
-                        v.setSubCjtSala(*itCjtSala);
-                        v.setDia(*itDiasLetCampus);
+						  ITERA_GGROUP(it_prof,itCampus->professores,Professor) 
+					      {
+							  GGroup<int>::iterator itDiasLetCjtSala =
+								  itCjtSala->diasLetivos.begin();
 
-                        it_v = vHash.find(v);
-                        if( it_v != vHash.end() )
-                        { row.insert(it_v->second, 1.0); }
+							  for(; itDiasLetCjtSala != itCjtSala->diasLetivos.end(); itDiasLetCjtSala++ )
+							  {
+								  std::pair<int/*idProf*/,int/*idDisc*/> prof_Disc 
+										(it_prof->getId(),itDisc->getId());
+
+								  if(problemData->prof_Disc_Dias.find(prof_Disc) !=
+									 problemData->prof_Disc_Dias.end())
+								  {
+									  maxCredsSalaDia = (maxCredsSalaDia < itCjtSala->maxCredsDia(*itDiasLetCjtSala) ?
+													itCjtSala->maxCredsDia(*itDiasLetCjtSala) : maxCredsSalaDia);
+									  maxCredsProfDia = (maxCredsProfDia < itDisc->max_creds ?
+														itDisc->max_creds : maxCredsProfDia);
+								  }
+							  }
+						  }
+					                   
                      }
                   }
                }
@@ -3892,11 +3935,11 @@ int SolverMIP::cria_restricao_max_cred_disc_bloco(void)
             v.setDia(*itDiasLetCampus);
             v.setCampus(*itCampus);
 
+			int H_t = (maxCredsProfDia < maxCredsSalaDia ? maxCredsProfDia : maxCredsSalaDia);  
             it_v = vHash.find(v);
             if( it_v != vHash.end() )
                //{ row.insert(it_v->second, -24.0); /* #Warning: FIXME */ }
-            { row.insert(it_v->second, -maxCredsSalaDia); }
-            /* Descobrir valor de H_t */
+            { row.insert(it_v->second, -H_t); }
 
             if(row.getnnz() != 0)
             {
