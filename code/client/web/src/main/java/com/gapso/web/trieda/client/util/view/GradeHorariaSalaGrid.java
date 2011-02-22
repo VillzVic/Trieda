@@ -154,6 +154,10 @@ public class GradeHorariaSalaGrid extends ContentPanel {
 		
 		GridCellRenderer<LinhaDeCredito> change = new GridCellRenderer<LinhaDeCredito>() {
 			public Html render(LinhaDeCredito model, String property, ColumnData config, int rowIndex, int colIndex, ListStore<LinhaDeCredito> store, Grid<LinhaDeCredito> grid) {
+				return versaoChico(rowIndex, colIndex);
+			}
+
+			private Html versaoClaudio(int rowIndex, int colIndex) {
 				if(colIndex == 0) return new Html(String.valueOf(rowIndex + 1));
 				if(atendimentos == null || atendimentos.size() == 0) new Html("");
 				
@@ -186,6 +190,53 @@ public class GradeHorariaSalaGrid extends ContentPanel {
 				content += atDTO.getQuantidadeAlunos() +" aluno(s)";
 				
 				final Html html = new Html(content) {
+					@Override
+					protected void onRender(Element target, int index) {
+						super.onRender(target, index);
+						target.setAttribute("qtip", contentToolTip);
+						target.setAttribute("qtitle", title);
+						target.setAttribute("qwidth", "200px");
+					}
+				};
+				html.addStyleName("horario");
+				html.addStyleName("c"+(rowIndex + 1));
+				html.addStyleName("tc"+atDTO.getTotalCreditos());
+				html.addStyleName("s"+atDTO.getSemana());
+				html.addStyleName(getCssDisciplina(atDTO.getDisciplinaId()));
+				
+				new DragSource(html) {
+					@Override
+					protected void onDragStart(DNDEvent event) {
+						event.setData(html);
+						event.getStatus().update(El.fly(html.getElement()).cloneNode(true));
+						quickTip.hide();
+					}
+				};
+				
+				return html;
+			}
+			
+			private Html versaoChico(int rowIndex, int colIndex) {
+				if(colIndex == 0) return new Html(String.valueOf(rowIndex + 1));
+				if(atendimentos == null || atendimentos.size() == 0) new Html("");
+				
+				int semana = -1;
+				if(colIndex == 1) semana = 2;
+				else if(colIndex == 2) semana = 3;
+				else if(colIndex == 3) semana = 4;
+				else if(colIndex == 4) semana = 5;
+				else if(colIndex == 5) semana = 6;
+				else if(colIndex == 6) semana = 7;
+				else if(colIndex == 7) semana = 1;
+				
+				AtendimentoTaticoDTO atDTO = getAtendimento(rowIndex + 1, semana);
+				
+				if(atDTO == null) return new Html("");
+				
+				final String title = atDTO.getDisciplinaString();
+				final String contentToolTip = atDTO.getContentToolTipVisaoSala();
+				
+				final Html html = new Html(atDTO.getContentVisaoSala()) {
 					@Override
 					protected void onRender(Element target, int index) {
 						super.onRender(target, index);

@@ -1024,11 +1024,13 @@ public class ConvertBeans {
 		dto.setDisciplinaId(domain.getDisciplina().getId());
 		dto.setDisciplinaString(domain.getDisciplina().getCodigo());
 		dto.setQuantidadeAlunos(domain.getQuantidadeAlunos());
+		dto.setQuantidadeAlunosString(domain.getQuantidadeAlunos().toString());
 		dto.setCreditosTeorico(domain.getCreditosTeorico());
 		dto.setCreditosPratico(domain.getCreditosPratico());
 		dto.setCursoString(domain.getOferta().getCurriculo().getCurso().getCodigo());
 		dto.setCurricularString(domain.getOferta().getCurriculo().getCodigo());
 		dto.setPeriodo(domain.getOferta().getCurriculo().getPeriodo(domain.getDisciplina()));
+		dto.setPeriodoString(String.valueOf(domain.getOferta().getCurriculo().getPeriodo(domain.getDisciplina())));
 		dto.setTotalCreditoDisciplina(domain.getDisciplina().getTotalCreditos());
 		
 		return dto;

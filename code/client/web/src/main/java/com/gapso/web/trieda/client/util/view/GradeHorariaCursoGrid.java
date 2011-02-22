@@ -111,7 +111,7 @@ public class GradeHorariaCursoGrid extends ContentPanel {
 			public void onSuccess(List<AtendimentoTaticoDTO> result) {
 				atendimentos = result;
 				preencheCores();
-				coletaAtendimentosParalelos();
+				//coletaAtendimentosParalelos();
 				grid.reconfigure(getListStore(), new ColumnModel(getColumnList()));
 				grid.getView().setEmptyText(emptyTextAfterSearch);
 				grid.unmask();
@@ -174,6 +174,10 @@ public class GradeHorariaCursoGrid extends ContentPanel {
 		
 		GridCellRenderer<LinhaDeCredito> change = new GridCellRenderer<LinhaDeCredito>() {
 			public Html render(LinhaDeCredito model, String property, ColumnData config, int rowIndex, int colIndex, ListStore<LinhaDeCredito> store, Grid<LinhaDeCredito> grid) {
+				return versaoChico(rowIndex, colIndex);
+			}
+
+			private Html versaoClaudio(int rowIndex, int colIndex) {
 				if(colIndex == 0) return new Html(String.valueOf(rowIndex + 1));
 				if(atendimentos == null || atendimentos.size() == 0) new Html("");
 				
@@ -250,9 +254,80 @@ public class GradeHorariaCursoGrid extends ContentPanel {
 				};
 				html.addStyleName("horario");
 				if(!atendimentosParalelos.get(atDTO).isEmpty())html.addStyleName("multi");
-				html.addStyleName("c"+(rowIndex + 1));
-				html.addStyleName("tc"+atDTO.getTotalCreditos());
-				html.addStyleName("s"+atDTO.getSemana());
+				html.addStyleName("c"+(rowIndex + 1)); // posiciona na linha (credito)
+				html.addStyleName("tc"+atDTO.getTotalCreditos()); // altura
+				html.addStyleName("s"+atDTO.getSemana()); // posiciona na columa (dia semana)
+				html.addStyleName(getCssDisciplina(atDTO.getDisciplinaId()));
+				
+				new DragSource(html) {
+					@Override
+					protected void onDragStart(DNDEvent event) {
+						event.setData(html);
+						event.getStatus().update(El.fly(html.getElement()).cloneNode(true));
+						quickTip.hide();
+					}
+				};
+				
+				return html;
+			}
+			
+			private Html versaoChico(int rowIndex, int colIndex) {
+				if(colIndex == 0) return new Html(String.valueOf(rowIndex + 1));
+				if(atendimentos == null || atendimentos.size() == 0) new Html("");
+				
+				int semana = -1;
+				if(colIndex == 1) semana = 2;
+				else if(colIndex == 2) semana = 3;
+				else if(colIndex == 3) semana = 4;
+				else if(colIndex == 4) semana = 5;
+				else if(colIndex == 5) semana = 6;
+				else if(colIndex == 6) semana = 7;
+				else if(colIndex == 7) semana = 1;
+				
+				AtendimentoTaticoDTO atDTO = getAtendimento(rowIndex + 1, semana);
+				
+				if(atDTO == null) return new Html("");
+				
+				final String title = atDTO.getDisciplinaString();
+				
+				String contentToolTipAux = "<b>Campus:</b> "+ atDTO.getCampusString() +"<br />"
+					+ "<b>Unidade:</b> "+ atDTO.getUnidadeString() +"<br />"
+					+ "<b>Sala:</b> "+ atDTO.getSalaString() +"<br />"
+					+ "<b>Turma:</b> "+ atDTO.getTurma() + "<br />"
+					+ "<b>Disciplina:</b> "+ atDTO.getDisciplinaString() +"<br />"
+					+ "<b>"+atDTO.getQuantidadeAlunos()+" alunos(s)</b><br />"
+					+ "<b>"+((atDTO.isTeorico())? "Teórico" : "Prático") +"</b><br />"
+					+ "<b>Creditos:</b> "+atDTO.getTotalCreditoDisciplina()+"/"+atDTO.getTotalCreditos()+"<br />";
+				final String contentToolTip = contentToolTipAux;
+				
+				
+				String content = atDTO.getDisciplinaString() + "<br />";
+				
+				content += atDTO.getCampusString();
+				content += "<br />";
+				
+				content += atDTO.getUnidadeString();
+				content += "<br />";
+				
+				content += atDTO.getSalaString();
+				content += "<br />";
+				
+				content += atDTO.getTurma();
+				content += "<br />";
+				
+				final Html html = new Html(content) {
+					@Override
+					protected void onRender(Element target, int index) {
+						super.onRender(target, index);
+						target.setAttribute("qtip", contentToolTip);
+						target.setAttribute("qtitle", title);
+						target.setAttribute("qwidth", "200px");
+					}
+				};
+				html.addStyleName("horario");
+				html.addStyleName("c"+(rowIndex + 1)); // posiciona na linha (credito)
+				html.addStyleName("tc"+atDTO.getTotalCreditos()); // altura
+				html.addStyleName("s"+atDTO.getSemana()); // posiciona na columa (dia semana)
 				html.addStyleName(getCssDisciplina(atDTO.getDisciplinaId()));
 				
 				new DragSource(html) {
@@ -280,7 +355,7 @@ public class GradeHorariaCursoGrid extends ContentPanel {
 		int ocupado = 0;
 		if(atendimentos != null) {
 			for(AtendimentoTaticoDTO at : atendimentos) {
-				if(!atendimentosParalelos.containsKey(at)) continue;
+				//if(!atendimentosParalelos.containsKey(at)) continue;
 				if(at.getSemana() == semana) {
 					if(credito - 1 == ocupado) {
 						return at;

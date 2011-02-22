@@ -1,5 +1,7 @@
 package com.gapso.web.trieda.client.mvp.model;
 
+import java.util.List;
+
 import com.extjs.gxt.ui.client.data.BaseModel;
 
 public class AtendimentoTaticoDTO extends BaseModel {
@@ -25,6 +27,7 @@ public class AtendimentoTaticoDTO extends BaseModel {
 	 * Long   : disciplinaId
 	 * String : disciplinaString
 	 * Integer: quantidadeAlunos
+	 * String: quantidadeAlunosString
 	 * Integer: creditosTeorico
 	 * Integer: creditosPratico
 	 */
@@ -134,6 +137,13 @@ public class AtendimentoTaticoDTO extends BaseModel {
 		return get("quantidadeAlunos");
 	}
 	
+	public void setQuantidadeAlunosString(String value) {
+		set("quantidadeAlunosString", value);
+	}
+	public String getQuantidadeAlunosString() {
+		return get("quantidadeAlunosString");
+	}
+	
 	public void setCreditosTeorico(Integer value) {
 		set("creditosTeorico", value);
 	}
@@ -169,6 +179,13 @@ public class AtendimentoTaticoDTO extends BaseModel {
 		return get("periodo");
 	}
 	
+	public void setPeriodoString(String value) {
+		set("periodoString", value);
+	}
+	public String getPeriodoString() {
+		return get("periodoString");
+	}
+	
 	public void setTotalCreditoDisciplina(Integer value) {
 		set("totalCreditoDisciplina", value);
 	}
@@ -184,4 +201,72 @@ public class AtendimentoTaticoDTO extends BaseModel {
 		return getCreditosTeorico() + getCreditosPratico();
 	}
 	
+	public void concatenateVisaoSala(AtendimentoTaticoDTO other) {
+		setCursoString(getCursoString() + "/" + other.getCursoString());
+		setCurricularString(getCurriculoString() + "/" + other.getCurriculoString());
+		setPeriodoString(getPeriodoString() + "/" + other.getPeriodoString());
+		setQuantidadeAlunosString(getQuantidadeAlunosString() + "/" + other.getQuantidadeAlunosString());
+	}
+	
+	public void concatenateVisaoCurso(AtendimentoTaticoDTO other) {
+		setDisciplinaString(getDisciplinaString() + "/" + other.getDisciplinaString());
+		setTurma(getTurma() + "/" + other.getTurma());
+		setCampusString(getCampusString() + "/" + other.getCampusString());
+		setUnidadeString(getUnidadeString() + "/" + other.getUnidadeString());
+		setSalaString(getSalaString() + "/" + other.getSalaString());
+		setQuantidadeAlunosString(getQuantidadeAlunosString() + "/" + other.getQuantidadeAlunosString());
+	}
+	
+	public String getContentVisaoSala() {
+		return getDisciplinaString() + "<br />"
+		+ getTurma() + "<br />"
+		+ getCursoString() + "<br />"
+		+ getQuantidadeAlunosString() + " aluno(s)";
+	}
+	
+	public String getContentToolTipVisaoSala() {
+		return "<b>Turma:</b> "+ getTurma() + "<br />"
+		+ "<b>Crédito(s) " + ((isTeorico())? "Teórico(s)" : "Prático(s)") + ":</b> " + getTotalCreditos()+" de "+getTotalCreditoDisciplina() + "<br />"
+		+ "<b>Curso:</b> " + getCursoString() +"<br />"
+		+ "<b>Matriz Curricular:</b> " + getCurriculoString() + "<br />"
+		+ "<b>Período:</b> "+ getPeriodoString() +"<br />" 
+		+ "<b>Quantidade:</b> "+ getQuantidadeAlunosString() +"<br />";
+	}
+	
+	@Override
+	public String toString() {
+		return getDisciplinaString()+"@"+getTurma()+"@"+getSalaString()+"@"+getSemana();
+	}
+
+	static public boolean compatibleByApproach1(AtendimentoTaticoDTO dto1, AtendimentoTaticoDTO dto2) {
+		return dto1.getDisciplinaId().equals(dto2.getDisciplinaId()) && 
+			   !dto1.getSalaId().equals(dto2.getSalaId()) &&
+			   !dto1.getTurma().equals(dto2.getTurma()) &&
+			   dto1.getTotalCreditos().equals(dto2.getTotalCreditos()) &&
+			   dto1.getSemana().equals(dto2.getSemana());
+	}
+	
+	static public boolean compatibleByApproach2(AtendimentoTaticoDTO dto1, AtendimentoTaticoDTO dto2) {
+		return !dto1.getDisciplinaId().equals(dto2.getDisciplinaId()) && 
+			   !dto1.getSalaId().equals(dto2.getSalaId()) &&
+			   !dto1.getTurma().equals(dto2.getTurma()) &&
+			   dto1.getTotalCreditos().equals(dto2.getTotalCreditos()) &&
+			   dto1.getSemana().equals(dto2.getSemana());
+	}
+	
+	static public int countListDTOsCreditos(List<AtendimentoTaticoDTO> listDTOs) {
+		int count = 0;
+		for (AtendimentoTaticoDTO dto : listDTOs) {
+			count += dto.getTotalCreditos();
+		}
+		return count;
+	}
+	
+	static public int countListListDTOsCreditos(List<List<AtendimentoTaticoDTO>> listListDTOs) {
+		int count = 0;
+		for (List<AtendimentoTaticoDTO> listDTOs : listListDTOs) {
+			count += listDTOs.get(0).getTotalCreditos();
+		}
+		return count;
+	}
 }
