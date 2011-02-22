@@ -299,7 +299,7 @@ public class ToolBarView extends MyComposite implements ToolBarPresenter.Display
 		equivalenciasListDisciplinasBt = createButton("Equivalências", "Equivalências", Resources.DEFAULTS.equivalencia24());
 		disciplinasToolBar.add(equivalenciasListDisciplinasBt);
 		
-		compatibilidadesListDisciplinasBt = createButton("Compatibilidade<br />entre disciplinas", "Compatibilidade entre disciplinas", Resources.DEFAULTS.fixacao24());
+		compatibilidadesListDisciplinasBt = createButton("Compatibilidade<br />entre disciplinas", "Compatibilidade entre disciplinas", Resources.DEFAULTS.compatibilidade24());
 		disciplinasToolBar.add(compatibilidadesListDisciplinasBt);
 	}
 	

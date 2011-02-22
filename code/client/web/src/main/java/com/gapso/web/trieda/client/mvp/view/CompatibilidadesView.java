@@ -64,7 +64,7 @@ public class CompatibilidadesView extends MyComposite implements Compatibilidade
 	}
 	
 	private void createTabItem() {
-		tabItem = new GTabItem("Compatibilidade entre disciplinas", Resources.DEFAULTS.areaTitulacao16());
+		tabItem = new GTabItem("Compatibilidade entre disciplinas", Resources.DEFAULTS.compatibilidade16());
 		tabItem.setContent(panel);
 	}
 	

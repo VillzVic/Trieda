@@ -54,6 +54,7 @@ public interface DefaultsIcons extends ClientBundle  {
 	@Source("area_titulacao_24.png") ImageResource areaTitulacao();
 	@Source("matriz_curricular_24.png") ImageResource matrizCurricular24();
 	@Source("tipo_curso_24.png") ImageResource tipoCurso24();
+	@Source("compatibilidade_24.png") ImageResource compatibilidade24();
 	@Source("vincular_area_titulacao_24.png") ImageResource vincularAreaTitulacao24();
 	@Source("demanda_24.png") ImageResource demanda24();
 	@Source("divisao_credito_24.png") ImageResource divisaoCredito24();
@@ -94,6 +95,8 @@ public interface DefaultsIcons extends ClientBundle  {
 	@Source("oferta_curso_16.png") ImageResource ofertaCurso16();
 	@Source("grupo_sala_16.png") ImageResource grupoSala16();
 	@Source("tipo_curso_16.png") ImageResource tipoCurso16();
+	@Source("compatibilidade_16.png") ImageResource compatibilidade16();
+	@Source("matriz_simetrica_16.png") ImageResource matrizSimetrica16();
 	@Source("associacao_disciplina_salas_16.png") ImageResource associacaoDisciplinaSala16();
 	@Source("habilitacao_professor_16.png") ImageResource habilitacaoProfessor16();
 

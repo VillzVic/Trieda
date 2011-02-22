@@ -22,7 +22,7 @@ public class DeslocamentoToolBar extends ToolBar {
 	private void initUI() {
 		saveBT = createButton("Salvar", Resources.DEFAULTS.save16());
 		cancelBT = createButton("Cancelar", Resources.DEFAULTS.cancel16());
-		simetriaBT = createButton("Matriz simétrica", Resources.DEFAULTS.deslocamento16());
+		simetriaBT = createButton("Matriz simétrica", Resources.DEFAULTS.matrizSimetrica16());
 		importExcelButton = createButton("Exportar para Excel", Resources.DEFAULTS.exportar16());
 		exportExcelButton = createButton("Importar de Excel", Resources.DEFAULTS.importar16());
 
