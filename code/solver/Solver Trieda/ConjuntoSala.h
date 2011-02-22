@@ -61,7 +61,7 @@ public:
    */
    std::map<int/*Id Sala*/,Sala*> & getTodasSalas() { return salas; }
 
-   /* Para não precisar criar os métodos de acesso ao GGROUP.*/
+   /* Para não precisar criar os métodos de acesso ao GGROUP. */
    GGroup<Disciplina*> & getDiscsAssociadas() { return disciplinasAssociadas; }
 
 //   int getTipoSalas() const

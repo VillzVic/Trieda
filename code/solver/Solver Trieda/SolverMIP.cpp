@@ -289,7 +289,7 @@ int SolverMIP::solve()
 
    int status = 0;
 
-   lp->setTimeLimit(10);
+   //lp->setTimeLimit(10);
    //lp->setMIPStartAlg(METHOD_PRIMAL);
    lp->setMIPEmphasis(0);
    lp->setMIPScreenLog(4);
@@ -4317,7 +4317,8 @@ int SolverMIP::cria_restricao_cap_sala_compativel_turma(void)
                      it_v = vHash.find(v);
                      if( it_v != vHash.end() )
                      { 
-                        int tmp = (itCjtSala->getId() > 0 ? itCjtSala->getId() : (-itCjtSala->getId()));
+                        //int tmp = (itCjtSala->getId() > 0 ? itCjtSala->getId() : (-itCjtSala->getId()));
+                        int tmp = (itCjtSala->getCapacidadeRepr() > 0 ? itCjtSala->getCapacidadeRepr() : (-itCjtSala->getCapacidadeRepr()));
                         row.insert(it_v->second, -tmp);
                      }
                      //-itCjtSala->capTotalSalas()); }
@@ -4566,7 +4567,8 @@ int SolverMIP::cria_restricao_cap_sala_unidade(void)
 
                      //int rhs = itCjtSala->capTotalSalas() + 1000;//itUnidade->maiorSala;
 
-                     int tmp = (itCjtSala->getId() > 0 ? itCjtSala->getId() : (-itCjtSala->getId()));
+                     //int tmp = (itCjtSala->getId() > 0 ? itCjtSala->getId() : (-itCjtSala->getId()));
+                     int tmp = (itCjtSala->getCapacidadeRepr() > 0 ? itCjtSala->getCapacidadeRepr() : (-itCjtSala->getCapacidadeRepr()));
                      int rhs = tmp + 1000;//itUnidade->maiorSala;
 
                      OPT_ROW row( nnz, OPT_ROW::LESS , rhs , name );
