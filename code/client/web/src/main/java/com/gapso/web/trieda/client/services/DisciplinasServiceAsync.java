@@ -11,6 +11,7 @@ import com.gapso.web.trieda.client.mvp.model.CurriculoDisciplinaDTO;
 import com.gapso.web.trieda.client.mvp.model.CursoDTO;
 import com.gapso.web.trieda.client.mvp.model.DisciplinaDTO;
 import com.gapso.web.trieda.client.mvp.model.DisciplinaIncompativelDTO;
+import com.gapso.web.trieda.client.mvp.model.DivisaoCreditoDTO;
 import com.gapso.web.trieda.client.mvp.model.FileModel;
 import com.gapso.web.trieda.client.mvp.model.GrupoSalaDTO;
 import com.gapso.web.trieda.client.mvp.model.HorarioDisponivelCenarioDTO;
@@ -40,5 +41,7 @@ public interface DisciplinasServiceAsync {
 	void getDisciplinasByTreeSalas(GrupoSalaDTO grupoSalaDTO, OfertaDTO ofertaDTO, CurriculoDisciplinaDTO curriculoDisciplinaDTO, AsyncCallback<List<FileModel>> callback);
 	void getDisciplinasIncompativeis(CurriculoDTO curriculoDTO, Integer periodo, AsyncCallback<List<DisciplinaIncompativelDTO>> callback);
 	void saveDisciplinasIncompativeis(List<DisciplinaIncompativelDTO> list, AsyncCallback<Void> callback);
+	void salvarDivisaoCredito(DisciplinaDTO disciplinaDTO, DivisaoCreditoDTO divisaoCreditoDTO, AsyncCallback<Void> callback);
+	void getDivisaoCredito(DisciplinaDTO disciplinaDTO, AsyncCallback<DivisaoCreditoDTO> callback);
 	
 }

@@ -11,6 +11,7 @@ import com.gapso.web.trieda.client.mvp.model.CurriculoDisciplinaDTO;
 import com.gapso.web.trieda.client.mvp.model.CursoDTO;
 import com.gapso.web.trieda.client.mvp.model.DisciplinaDTO;
 import com.gapso.web.trieda.client.mvp.model.DisciplinaIncompativelDTO;
+import com.gapso.web.trieda.client.mvp.model.DivisaoCreditoDTO;
 import com.gapso.web.trieda.client.mvp.model.FileModel;
 import com.gapso.web.trieda.client.mvp.model.GrupoSalaDTO;
 import com.gapso.web.trieda.client.mvp.model.HorarioDisponivelCenarioDTO;
@@ -45,5 +46,7 @@ public interface DisciplinasService extends RemoteService {
 	List<FileModel> getDisciplinasByTreeSalas(GrupoSalaDTO grupoSalaDTO, OfertaDTO ofertaDTO, CurriculoDisciplinaDTO curriculoDisciplinaDTO);
 	List<DisciplinaIncompativelDTO> getDisciplinasIncompativeis(CurriculoDTO curriculoDTO, Integer periodo);
 	void saveDisciplinasIncompativeis(List<DisciplinaIncompativelDTO> list);
+	void salvarDivisaoCredito(DisciplinaDTO disciplinaDTO, DivisaoCreditoDTO divisaoCreditoDTO);
+	DivisaoCreditoDTO getDivisaoCredito(DisciplinaDTO disciplinaDTO);
 	
 }

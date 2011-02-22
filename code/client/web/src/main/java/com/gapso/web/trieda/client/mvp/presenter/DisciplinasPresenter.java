@@ -13,14 +13,18 @@ import com.extjs.gxt.ui.client.widget.Info;
 import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.TextField;
+import com.gapso.web.trieda.client.i18n.ITriedaI18nGateway;
 import com.gapso.web.trieda.client.mvp.model.CenarioDTO;
 import com.gapso.web.trieda.client.mvp.model.DisciplinaDTO;
+import com.gapso.web.trieda.client.mvp.model.DivisaoCreditoDTO;
 import com.gapso.web.trieda.client.mvp.model.HorarioDisponivelCenarioDTO;
 import com.gapso.web.trieda.client.mvp.model.TipoDisciplinaDTO;
 import com.gapso.web.trieda.client.mvp.view.DisciplinaFormView;
+import com.gapso.web.trieda.client.mvp.view.DivisaoCreditoDisciplinaFormView;
 import com.gapso.web.trieda.client.mvp.view.HorarioDisponivelDisciplinaFormView;
 import com.gapso.web.trieda.client.services.DisciplinasServiceAsync;
 import com.gapso.web.trieda.client.services.Services;
+import com.gapso.web.trieda.client.util.view.AbstractAsyncCallbackWithDefaultOnFailure;
 import com.gapso.web.trieda.client.util.view.GTab;
 import com.gapso.web.trieda.client.util.view.GTabItem;
 import com.gapso.web.trieda.client.util.view.SimpleGrid;
@@ -30,12 +34,13 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class DisciplinasPresenter implements Presenter {
 
-	public interface Display {
+	public interface Display extends ITriedaI18nGateway {
 		Button getNewButton();
 		Button getEditButton();
 		Button getRemoveButton();
 		Button getImportExcelButton();
 		Button getExportExcelButton();
+		Button getDivisaoCreditoButton();
 		Button getDisponibilidadeButton();
 		
 		TextField<String> getNomeBuscaTextField();
@@ -133,7 +138,19 @@ public class DisciplinasPresenter implements Presenter {
 						presenter.go(null);
 					}
 				});
-				
+			}
+		});
+		display.getDivisaoCreditoButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
+			@Override
+			public void componentSelected(ButtonEvent ce) {
+				final DisciplinaDTO disciplinaDTO = display.getGrid().getGrid().getSelectionModel().getSelectedItem();
+				Services.disciplinas().getDivisaoCredito(disciplinaDTO, new AbstractAsyncCallbackWithDefaultOnFailure<DivisaoCreditoDTO>(display) {
+					@Override
+					public void onSuccess(DivisaoCreditoDTO result) {
+						Presenter presenter = new DivisaoCreditoDisciplinaFormPresenter(cenario, new DivisaoCreditoDisciplinaFormView(result, disciplinaDTO));
+						presenter.go(null);
+					}
+				});
 			}
 		});
 		display.getResetBuscaButton().addSelectionListener(new SelectionListener<ButtonEvent>(){

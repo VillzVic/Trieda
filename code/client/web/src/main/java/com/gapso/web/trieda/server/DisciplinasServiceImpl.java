@@ -18,6 +18,7 @@ import com.gapso.trieda.domain.Curriculo;
 import com.gapso.trieda.domain.CurriculoDisciplina;
 import com.gapso.trieda.domain.Curso;
 import com.gapso.trieda.domain.Disciplina;
+import com.gapso.trieda.domain.DivisaoCredito;
 import com.gapso.trieda.domain.GrupoSala;
 import com.gapso.trieda.domain.HorarioAula;
 import com.gapso.trieda.domain.HorarioDisponivelCenario;
@@ -31,6 +32,7 @@ import com.gapso.web.trieda.client.mvp.model.CurriculoDisciplinaDTO;
 import com.gapso.web.trieda.client.mvp.model.CursoDTO;
 import com.gapso.web.trieda.client.mvp.model.DisciplinaDTO;
 import com.gapso.web.trieda.client.mvp.model.DisciplinaIncompativelDTO;
+import com.gapso.web.trieda.client.mvp.model.DivisaoCreditoDTO;
 import com.gapso.web.trieda.client.mvp.model.FileModel;
 import com.gapso.web.trieda.client.mvp.model.GrupoSalaDTO;
 import com.gapso.web.trieda.client.mvp.model.HorarioDisponivelCenarioDTO;
@@ -163,6 +165,47 @@ public class DisciplinasServiceImpl extends RemoteServiceServlet implements Disc
 		for(DisciplinaDTO disciplinaDTO : disciplinaDTOList) {
 			Disciplina.find(disciplinaDTO.getId()).remove();
 		}
+	}
+	
+	@Override
+	public DivisaoCreditoDTO getDivisaoCredito(DisciplinaDTO disciplinaDTO) {
+		Disciplina disciplina = Disciplina.find(disciplinaDTO.getId());
+		DivisaoCredito dc = disciplina.getDivisaoCreditos();
+		if(dc == null) {
+			return new DivisaoCreditoDTO();
+		}
+		return ConvertBeans.toDivisaoCreditoDTO(dc);
+	}
+	
+	@Override
+	public void salvarDivisaoCredito(DisciplinaDTO disciplinaDTO, DivisaoCreditoDTO divisaoCreditoDTO) {
+		Disciplina disciplina = Disciplina.find(disciplinaDTO.getId());
+		DivisaoCredito divisaoCredito = disciplina.getDivisaoCreditos();
+		if(divisaoCredito != null) {
+			divisaoCredito.setDisciplina(disciplina);
+			int d1 = divisaoCreditoDTO.getDia1();
+			int d2 = divisaoCreditoDTO.getDia2();
+			int d3 = divisaoCreditoDTO.getDia3();
+			int d4 = divisaoCreditoDTO.getDia4();
+			int d5 = divisaoCreditoDTO.getDia5();
+			int d6 = divisaoCreditoDTO.getDia6();
+			int d7 = divisaoCreditoDTO.getDia7();
+			
+			divisaoCredito.setDia1(d1);
+			divisaoCredito.setDia2(d2);
+			divisaoCredito.setDia3(d3);
+			divisaoCredito.setDia4(d4);
+			divisaoCredito.setDia5(d5);
+			divisaoCredito.setDia6(d6);
+			divisaoCredito.setDia7(d7);
+			
+			divisaoCredito.setCreditos(d1+d2+d3+d4+d5+d6+d7);
+			divisaoCredito.merge();
+		} else {
+			divisaoCredito = ConvertBeans.toDivisaoCredito(divisaoCreditoDTO);
+			divisaoCredito.persist();
+		}
+		
 	}
 	
 	@Override

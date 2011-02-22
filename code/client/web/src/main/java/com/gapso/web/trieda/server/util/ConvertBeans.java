@@ -1073,6 +1073,11 @@ public class ConvertBeans {
 		if(domain.getCenario().size() > 0) {
 			dto.setCenarioId((new ArrayList<Cenario>(domain.getCenario())).get(0).getId());
 		}
+		Disciplina disciplina = domain.getDisciplina();
+		if(disciplina != null) {
+			dto.setDisciplinaId(disciplina.getId());
+			dto.setDisciplinaString(disciplina.getCodigo() + " (" +disciplina.getNome()+ ")");
+		}
 		dto.setDia1(domain.getDia1());
 		dto.setDia2(domain.getDia2());
 		dto.setDia3(domain.getDia3());

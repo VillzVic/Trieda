@@ -33,6 +33,7 @@ public class DisciplinasView extends MyComposite implements DisciplinasPresenter
 	private TextField<String> codigoBuscaTextField;
 	private TipoDisciplinaComboBox tipoDisciplinaBuscaComboBox;
 	private Button disponibilidadeBT;
+	private Button divisaoCreditoBT;
 	private ContentPanel panel;
 	private GTabItem tabItem;
 	
@@ -58,6 +59,8 @@ public class DisciplinasView extends MyComposite implements DisciplinasPresenter
 	private void createToolBar() {
 		toolBar = new SimpleToolBar(this);
 		toolBar.add(new SeparatorToolItem());
+		divisaoCreditoBT = toolBar.createButton("Divisão de Créditos da disciplina", Resources.DEFAULTS.divisaoDeCreditos16());
+		toolBar.add(divisaoCreditoBT);
 		disponibilidadeBT = toolBar.createButton("Disponibilidade da Disciplina", Resources.DEFAULTS.disponibilidade16());
 		toolBar.add(disponibilidadeBT);
 		panel.setTopComponent(toolBar);
@@ -168,6 +171,11 @@ public class DisciplinasView extends MyComposite implements DisciplinasPresenter
 	@Override
 	public Button getDisponibilidadeButton() {
 		return disponibilidadeBT;
+	}
+	
+	@Override
+	public Button getDivisaoCreditoButton() {
+		return divisaoCreditoBT;
 	}
 
 }

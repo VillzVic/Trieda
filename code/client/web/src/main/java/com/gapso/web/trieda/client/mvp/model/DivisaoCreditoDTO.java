@@ -15,6 +15,8 @@ public class DivisaoCreditoDTO extends BaseModel {
 	 * Long   : id
 	 * Integer: version
 	 * Long   : cenarioId
+	 * Long   : disciplinaId
+	 * String : disciplinaString
 	 * Integer: totalCreditos
 	 * Integer: dia1
 	 * Integer: dia2
@@ -44,6 +46,20 @@ public class DivisaoCreditoDTO extends BaseModel {
 	}
 	public Long getCenarioId() {
 		return get("cenarioId");
+	}
+	
+	public void setDisciplinaId(Long value) {
+		set("disciplinaId", value);
+	}
+	public Long getDisciplinaId() {
+		return get("disciplinaId");
+	}
+	
+	public void setDisciplinaString(String value) {
+		set("disciplinaString", value);
+	}
+	public String getDisciplinaString() {
+		return get("disciplinaString");
 	}
 
 	public void setTotalCreditos(Integer value){ set("totalCreditos", value); }
