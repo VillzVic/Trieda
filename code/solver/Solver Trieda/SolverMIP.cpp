@@ -289,21 +289,113 @@ int SolverMIP::solve()
 
    int status = 0;
 
-   //lp->setTimeLimit(10);
+   lp->setTimeLimit(1200);
    //lp->setMIPStartAlg(METHOD_PRIMAL);
    lp->setMIPEmphasis(0);
    lp->setMIPScreenLog(4);
    //lp->setMIPRelTol(0.02);
    //lp->setNoCuts();
-   //lp->setNodeLimit(1);
+   lp->setNodeLimit(1);
+
+   // Muda FO para considerar somente atendimento
+   double *objOrig = new double[lp->getNumCols()];
+   lp->getObj(0,lp->getNumCols()-1,objOrig);
+   double *objNova = new double[lp->getNumCols()];
+   int *idxNova = new int[lp->getNumCols()];
+
+   for (int i=0; i < lp->getNumCols(); i++)
+   {
+      objNova[i] = 0;
+      idxNova[i] = i;
+   }
+
+   VariableHash::iterator vit = vHash.begin();
+
+   while (vit != vHash.end())
+   {
+      if ( vit->first.getType() == Variable::V_SLACK_DEMANDA )
+      {
+         objNova[vit->second] = 1.0;
+      }
+      vit++;
+   }
+
+   lp->chgObj(lp->getNumCols(),idxNova,objNova);
 
    lp->setHeurFrequency(1.0);
+   lp->setPreSolve(OPT_TRUE);
 
-   //lp->readSolution("Solver Trieda.sol");
-
+   // Resolve problema olhando somente atendimento
    status = lp->optimize(METHOD_MIP);
 
-   /*
+   // Passa solucao inicial obtida e fixa atendimento
+   double *xSolInic = new double[lp->getNumCols()];
+   lp->getX(xSolInic);
+
+   double lbAtend = lp->getBestObj();
+   double ubAtend = lp->getObjVal();
+
+   OPT_ROW rowLB( 100, OPT_ROW::GREATER , lbAtend , "LBATEND" );
+   OPT_ROW rowUB( 100, OPT_ROW::LESS , ubAtend , "UBATEND" );
+
+   vit = vHash.begin();
+
+   while (vit != vHash.end())
+   {
+      if ( vit->first.getType() == Variable::V_SLACK_DEMANDA )
+      {
+         rowLB.insert(vit->second,1.0);
+         rowUB.insert(vit->second,1.0);
+      }
+
+      if ( vit->first.getType() == Variable::V_N_SUBBLOCOS )
+      {
+         xSolInic[vit->second] = GRB_UNDEFINED;
+      }
+
+      vit++;
+   }
+
+   lp->addRow(rowLB);
+   lp->addRow(rowUB);
+
+   lp->updateLP();
+
+   lp->chgObj(lp->getNumCols(),idxNova,objOrig);
+
+   lp->copyMIPStartSol(lp->getNumCols(),idxNova,xSolInic);
+
+   delete[] objNova;
+   delete[] objOrig;
+   delete[] idxNova;
+
+   status = localBranching(xSolInic,1200.0);
+
+   delete[] xSolInic;
+
+   //lp->setNodeLimit(100000);
+   //lp->setMIPEmphasis(1);
+   //lp->setHeurFrequency(1.0);
+   //lp->setTimeLimit(1800);
+   //lp->setNoCuts();
+   //lp->updateLP();
+
+   //lp->writeProbLP("TriedaLP");
+
+   //status = lp->optimize(METHOD_MIP);
+
+   //lp->getX(xSolInic);
+
+   //lp->chgObj(lp->getNumCols(),idxNova,objOrig);
+
+   //lp->copyMIPStartSol(lp->getNumCols(),idxNova,xSolInic);
+
+   //lp->setNodeLimit(1);
+   //lp->setTimeLimit(3600);
+   //lp->setMIPEmphasis(1);
+
+   //status = lp->optimize(METHOD_MIP);
+
    double *xSol = NULL;
    xSol = new double[lp->getNumCols()];
    lp->getX(xSol);
@@ -319,9 +411,83 @@ int SolverMIP::solve()
    fclose(fout);
 
    delete[] xSol;
-   */
 
-   lp->writeSolution("Solver Trieda.sol");
+   //lp->writeSolution("Solver Trieda.sol");
+
+   return status;
+}
+
+int SolverMIP::localBranching(double *xSol, double maxTime)
+{
+   // Adiciona restrição de local branching
+   int status = 0;
+   int nIter = 0;
+   int *idxSol = new int[lp->getNumCols()];
+
+   for (int i=0; i < lp->getNumCols(); i++)
+   {
+      idxSol[i] = i;
+   }
+
+   while (nIter < 2)
+   {
+      //if ( maxTime - actTime < 100 )
+      //   break;
+
+      VariableHash::iterator vit = vHash.begin();
+
+      OPT_ROW nR(100,OPT_ROW::GREATER,0.0,"LOCBRANCH");
+      double rhsLB = -5.0 - nIter * 5;
+
+      while (vit != vHash.end())
+      {
+         if ( vit->first.getType() == Variable::V_OFERECIMENTO )
+         {
+            if ( xSol[vit->second] > 0.1 )
+            {
+               rhsLB += 1.0;
+               nR.insert(vit->second,1.0);
+            }
+            else
+            {
+               nR.insert(vit->second,-1.0);
+            }
+         }
+
+         vit++;
+      }
+
+      nR.setRhs(rhsLB);
+      lp->addRow(nR);
+
+      lp->updateLP();
+
+      lp->setNodeLimit(1);
+      lp->setMIPEmphasis(1);
+      lp->setHeurFrequency(1.0);
+      
+      //lp->setTimeLimit((int)(maxTime - actTime));
+      lp->setNoCuts();
+
+      lp->copyMIPStartSol(lp->getNumCols(),idxSol,xSol);
+
+      status = lp->optimize(METHOD_MIP);
+
+      if ( nIter == 1 )
+         break;
+
+      lp->getX(xSol);
+
+      int *idxs = new int[1];
+      idxs[0] = lp->getNumRows() - 1;
+      lp->delSetRows(1,idxs);
+      lp->updateLP();
+      delete[] idxs;
+      nIter++;
+      //break;
+   }
+
+   delete[] idxSol;
 
    return status;
 }
@@ -336,8 +502,7 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
    xSol = new double[lp->getNumCols()];
    lp->getX(xSol);
 
-   /*
-   FILE* fin = fopen("solBin.bin","rb");
+   /*FILE* fin = fopen("solBin.bin","rb");
 
    int nCols;
 
@@ -353,8 +518,7 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
       }
    }
 
-   fclose(fin);
-   */
+   fclose(fin);*/
 
    vit = vHash.begin();
 
@@ -571,9 +735,11 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
          //}
       }
    }
+   printf("AQUI8\n");
 
 
 
+   printf("AQUI9\n");
 
    for (vit = vHash.begin(); vit != vHash.end(); ++vit)
    {
@@ -599,6 +765,8 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
    if(f_V_ALUNOS)
       fclose(f_V_ALUNOS);
 #endif
+
+   printf("AQUI10\n");
 
    if ( xSol )
       delete[] xSol;
@@ -1476,7 +1644,7 @@ int SolverMIP::cria_variavel_num_subblocos(void)
             vHash[v] = lp->getNumCols();
 
             //OPT_COL col(OPT_COL::VAR_INTEGRAL,rho,0.0,4.0,(char*)v.toString().c_str());
-            OPT_COL col(OPT_COL::VAR_INTEGRAL,rho,0.0,OPT_INF,(char*)v.toString().c_str());
+            OPT_COL col(OPT_COL::VAR_INTEGRAL,rho,0.0,10,(char*)v.toString().c_str());
 
             lp->newCol(col);
 

@@ -149,6 +149,8 @@ public:
    *********************************************************************/
 
    void cria_solucao_inicial(int cnt, int *indices, double *valores);
+   
+   int localBranching(double *xSol, double maxTime);
 
 
 };
