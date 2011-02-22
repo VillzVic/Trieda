@@ -738,6 +738,7 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
          //}
       }
    }
+  
    printf("AQUI8\n");
 
 
@@ -3903,24 +3904,25 @@ int SolverMIP::cria_restricao_max_cred_disc_bloco(void)
                           if( it_v != vHash.end() )
                           { row.insert(it_v->second, 1.0); }
 
-						  ITERA_GGROUP(it_prof,itCampus->professores,Professor) 
-					      {
-							  GGroup<int>::iterator itDiasLetCjtSala =
+						  GGroup<int>::iterator itDiasLetCjtSala =
 								  itCjtSala->diasLetivos.begin();
 
-							  for(; itDiasLetCjtSala != itCjtSala->diasLetivos.end(); itDiasLetCjtSala++ )
-							  {
-								  std::pair<int/*idProf*/,int/*idDisc*/> prof_Disc 
-										(it_prof->getId(),itDisc->getId());
+						  for(; itDiasLetCjtSala != itCjtSala->diasLetivos.end(); itDiasLetCjtSala++ )
+						  {
+							  maxCredsSalaDia = (maxCredsSalaDia < itCjtSala->maxCredsDia(*itDiasLetCjtSala) ?
+											itCjtSala->maxCredsDia(*itDiasLetCjtSala) : maxCredsSalaDia);
+						  }
 
-								  if(problemData->prof_Disc_Dias.find(prof_Disc) !=
-									 problemData->prof_Disc_Dias.end())
-								  {
-									  maxCredsSalaDia = (maxCredsSalaDia < itCjtSala->maxCredsDia(*itDiasLetCjtSala) ?
-													itCjtSala->maxCredsDia(*itDiasLetCjtSala) : maxCredsSalaDia);
-									  maxCredsProfDia = (maxCredsProfDia < itDisc->max_creds ?
-														itDisc->max_creds : maxCredsProfDia);
-								  }
+						  ITERA_GGROUP(it_prof,itCampus->professores,Professor) 
+					      {
+							  std::pair<int/*idProf*/,int/*idDisc*/> prof_Disc 
+									(it_prof->getId(),itDisc->getId());
+
+							  if(problemData->prof_Disc_Dias.find(prof_Disc) !=
+								 problemData->prof_Disc_Dias.end())
+							  {
+								  maxCredsProfDia = (maxCredsProfDia < itDisc->max_creds ?
+													itDisc->max_creds : maxCredsProfDia);
 							  }
 						  }
 					                   
