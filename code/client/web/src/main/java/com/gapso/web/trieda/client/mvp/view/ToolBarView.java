@@ -320,17 +320,19 @@ public class ToolBarView extends MyComposite implements ToolBarPresenter.Display
 	}
 	
 	private void createRelatorios() {
-		relatorioVisaoSalaBt = createButton("Grade Horária<br />Visão Sala", "Grade Horária Visão Sala", Resources.DEFAULTS.saidaSala24());
-		relatoriosToolBar.add(relatorioVisaoSalaBt);
-		
-		relatorioVisaoCursoBt = createButton("Grade Horária<br />Visão Curso", "Grade Horária Visão Curso", Resources.DEFAULTS.saidaCurso24());
-		relatoriosToolBar.add(relatorioVisaoCursoBt);		
-		
 		resumoCenarioBt = createButton("Resumo do<br />Cenário", "Resumo do Cenário", Resources.DEFAULTS.resumoCenario24());
 		relatoriosToolBar.add(resumoCenarioBt);
 		
 		resumoCampiBt = createButton("Resumo por<br />Campus", "Resumo por Campus", Resources.DEFAULTS.resumoCampi24());
 		relatoriosToolBar.add(resumoCampiBt);
+		
+		relatoriosToolBar.add(new SeparatorToolItem());
+		
+		relatorioVisaoSalaBt = createButton("Grade Horária<br />Visão Sala", "Grade Horária Visão Sala", Resources.DEFAULTS.saidaSala24());
+		relatoriosToolBar.add(relatorioVisaoSalaBt);
+		
+		relatorioVisaoCursoBt = createButton("Grade Horária<br />Visão Curso", "Grade Horária Visão Curso", Resources.DEFAULTS.saidaCurso24());
+		relatoriosToolBar.add(relatorioVisaoCursoBt);		
 	}
 	
 	private void createPlanejamento() {
