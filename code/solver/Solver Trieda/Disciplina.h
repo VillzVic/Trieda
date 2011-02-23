@@ -54,6 +54,7 @@ public:
    // <<< 14/10/2010
 
 public:
+
    // >>> Métodos para realizar o pré processamento dos dados.
 
    // =========== METODOS SET

@@ -7,7 +7,10 @@
 #include "opt_lp.h"
 #include "input.h"
 
-#include "Solucao.h"
+//#include "Solucao.h"
+
+#include <iostream>
+#include <algorithm>
 
 #define PRINT_cria_variaveis
 #define PRINT_cria_restricoes

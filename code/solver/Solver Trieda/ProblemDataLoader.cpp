@@ -2088,7 +2088,11 @@ void ProblemDataLoader::associaDisciplinasSalas()
 
                /* Adicionando um ponteiro para qdo tiver uma dada disciplina for fácil
                descobrir a lista de salas associadas. */
-               problemData->discSalas[it_Disc_Assoc_Sala->getId()].add(*it_sala);
+               //problemData->discSalas[it_Disc_Assoc_Sala->getId()].add(*it_sala);
+               problemData->discSalas[it_Disc_Assoc_Sala->getId()].push_back(*it_sala);
+
+               /* Adicionando uma preferência de sala para uma dada disciplina. */
+               problemData->disc_Salas_Pref[it_Disc_Assoc_Sala->getId()].add(*it_sala);
             }
          }
 
@@ -2142,7 +2146,8 @@ void ProblemDataLoader::associaDisciplinasSalas()
 
                                  /* Adicionando um ponteiro para qdo tiver uma dada disciplina, for fácil
                                  descobrir a lista de salas associadas. */
-                                 problemData->discSalas[pt_Disc->getId()].add(*it_Sala);
+                                 //problemData->discSalas[pt_Disc->getId()].add(*it_Sala);
+                                 problemData->discSalas[pt_Disc->getId()].push_back(*it_Sala);
                               }
                            }
                         }
@@ -2180,6 +2185,25 @@ void ProblemDataLoader::associaDisciplinasSalas()
    std::cout << "\n\n\nARRUMAR: ProblemDataLoader::associaDisciplinasSalas() -> METODO DA MICHELE ABAIXO !!\n\n\n";
 
    // CODIGO DA MIHCELE !!! -> ADAPTAR !!!!!!!!!!!!!!!!!!!!
+
+   /*
+
+   ARRUMAR NO CODIGO ACIMA PARA ATENDER O SEGUINTE CASO:
+
+   QUANDO FOR FIXAR UMA DISC TEO EM UMA SA, DEVE-SE CRIAR UM TIPO DE SA ESPECIFICO PARA A SALA EM QUESTAO.
+   POIS A DISC SO PODE SER MINISTRADA NESSA SALA. DO JEITO QUE ESTA, MSM QUE EU REMOVA TODAS AS ASSOCIACOES
+   AOS DEMAIS CONJUNTOS, PODE ACONTECER DE O CONJUNTO QUE CONTEM A SALA FIXADA, CONTENHA MAIS SALAS. SE ISSO
+   ACONTECER, EU NAO POSSO SIMPLESMENTE REMOVER AS DEMAIS SALAS (SE FIZESSE ISSO, IRIA DEIXAR DE UTILIZAR ALGUMAS
+   SALAS). PORTANTO, POSSO VERIFICAR ISSO NA HORA DE ASSOCIAR AS DISCS AOS TPS. OU DEPOIS DE TUDO FEITO, EU PROCURO
+   POR ACONTECIMENTOS COMO ESSE, E DIVIDO O TPS EM DOIS (UMA PARA A SALA FIXADA E OUTRO PARA AS DEMAIS SALAS, SE EXISTIREM).
+   ALEM DISSO, TENHO QUE REFAZER TODAS AS ASSOCIACOES DAS OUTRAS DISCIPLINAS (QUE PODEM, OU NAO, EXISTIR) COM OS DOIS 
+   TPS.
+
+   Como na inst da uni-bh nao tem fix. deixei isso pra depois.
+
+   MARIO - 23/02/2011
+
+   */
 
    //Se uma disciplina está fixada a uma determinada sala associa essa disciplina 
    //somente aquela sala (e não a um grupo de salas)
