@@ -488,7 +488,8 @@ int SolverMIP::localBranching(double *xSol, double maxTime)
 
       lp->updateLP();
 
-      //lp->setNodeLimit(1);
+      lp->setNodeLimit(100000000);
+      lp->setTimeLimit(1200);
       lp->setMIPEmphasis(0);
       lp->setHeurFrequency(1.0);
       
@@ -786,6 +787,9 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
 
       Disciplina * disciplina = it_Ref_Disciplinas->second;
 
+      //int id_Disc = disciplina->getId();
+      //std::cout << "TESTE" << std::endl;
+
       /* Estrutura responsável por armazenar as variaveis "x" para a disciplina em questão. */
       vector<Variable*> vars_x_Disc;
 
@@ -1078,6 +1082,8 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
             for(; it_Vars_x_Disc_Und_TPS_Turma_DIA != vars_x_Disc_Und_TPS_Turma_DIA.end(); 
                ++it_Vars_x_Disc_Und_TPS_Turma_DIA)
             {
+               bool continuaBusca = false;
+
                // Iterando sobre as salas ordenadas para a disciplina em questão.
                ITERA_VECTOR(it_Salas_Ordenadas,salas_Ordenadas,Sala)
                {
@@ -1096,7 +1102,7 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
                      }
 
                      // Indica se o dia demandado pela var x em questão é compatível com o dia disponível da sala.
-                     bool dia_Sala_Compativel = true;
+                     //bool dia_Sala_Compativel = true;
 
                      { // METODO
 
@@ -1113,7 +1119,7 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
                            */
                            if(it_Dia->first == it_Vars_x_Disc_Und_TPS_Turma_DIA->second->getDia())
                            {
-                              if(it_Dia->second >= it_Vars_x_Disc_Und_TPS_Turma_DIA->second->getValue())
+                              if(it_Dia->second >= ((int) it_Vars_x_Disc_Und_TPS_Turma_DIA->second->getValue()))
                               {
                                  /*
                                  Já posso alocar. Pois trata-se de apenas um dia.
@@ -1125,15 +1131,24 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
                                  // Atualizo a estrutura que armazena os créditos livres.
                                  it_Dia->second -= (int) it_Vars_x_Disc_Und_TPS_Turma_DIA->second->getValue();
 
+                                 it_Salas_Ordenadas = salas_Ordenadas.begin();
+
                                  alocou = true;
 
                                  break; // Apenas dou um break por eficiência
                               }
                               else
                               {
+                                 continuaBusca = true;
                                  break; // Já que o dia é inviável, não faz sentido buscar os outros dias.
                               }
                            }
+                        }
+
+                        if(alocou)
+                        {
+                           alocou = false;
+                           break;
                         }
 
                         // ======================
@@ -1141,9 +1156,11 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
                         Teste para saber se deixou de alocar a disciplina após ter varrido todas as
                         salas.
                         */
-                        if(!alocou)
+                        if(!continuaBusca)
                         {
                            std::cout << "Ainda nao alocou. Agora eu nao sei pq. REFLITA !! (getSolution())" << std::endl;
+
+                           std::cout << "DISC ID: " << disciplina->getId() << std::endl;
                            exit(1);
                         }
                         alocou = false;
