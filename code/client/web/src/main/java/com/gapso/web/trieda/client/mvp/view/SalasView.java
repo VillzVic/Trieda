@@ -16,19 +16,25 @@ import com.extjs.gxt.ui.client.widget.toolbar.SeparatorToolItem;
 import com.gapso.web.trieda.client.mvp.model.SalaDTO;
 import com.gapso.web.trieda.client.mvp.presenter.SalasPresenter;
 import com.gapso.web.trieda.client.util.resources.Resources;
+import com.gapso.web.trieda.client.util.view.CampusComboBox;
 import com.gapso.web.trieda.client.util.view.GTabItem;
+import com.gapso.web.trieda.client.util.view.SimpleFilter;
 import com.gapso.web.trieda.client.util.view.SimpleGrid;
 import com.gapso.web.trieda.client.util.view.SimpleToolBar;
+import com.gapso.web.trieda.client.util.view.UnidadeComboBox;
 
 public class SalasView extends MyComposite implements SalasPresenter.Display {
 
 	private SimpleToolBar toolBar;
 	private SimpleGrid<SalaDTO> gridPanel;
+	private SimpleFilter filter;
 	private ContentPanel panel;
 	private GTabItem tabItem;
 	private Button disciplinasAssociadasBT;
 	private Button gruposDeSalasBT;
 	private Button disponibilidadeBT;
+	private UnidadeComboBox unidadeCB;
+	private CampusComboBox campusCB;
 	
 	public SalasView() {
 		initUI();
@@ -39,6 +45,7 @@ public class SalasView extends MyComposite implements SalasPresenter.Display {
 		panel.setHeading("Master Data » Salas");
 		createToolBar();
 		createGrid();
+		createFilter();
 		createTabItem();
 		initComponent(tabItem);
 	}
@@ -79,6 +86,22 @@ public class SalasView extends MyComposite implements SalasPresenter.Display {
 		return list;
 	}
 
+	private void createFilter() {
+		BorderLayoutData bld = new BorderLayoutData(LayoutRegion.EAST);
+		bld.setMargins(new Margins(0, 0, 0, 5));
+		bld.setCollapsible(true);
+		
+		filter = new SimpleFilter();
+		
+		campusCB = new CampusComboBox();
+		unidadeCB = new UnidadeComboBox(campusCB);
+		
+		filter.addField(campusCB);
+		filter.addField(unidadeCB);
+		
+		panel.add(filter, bld);
+	}
+	
 	@Override
 	public Button getNewButton() {
 		return toolBar.getNewButton();
@@ -132,6 +155,26 @@ public class SalasView extends MyComposite implements SalasPresenter.Display {
 	@Override
 	public Button getDisponibilidadeButton() {
 		return disponibilidadeBT;
+	}
+	
+	@Override
+	public UnidadeComboBox getUnidadeCB() {
+		return unidadeCB;
+	}
+
+	@Override
+	public CampusComboBox getCampusCB() {
+		return campusCB;
+	}
+
+	@Override
+	public Button getSubmitBuscaButton() {
+		return filter.getSubmitButton();
+	}
+	
+	@Override
+	public Button getResetBuscaButton() {
+		return filter.getResetButton();
 	}
 	
 }

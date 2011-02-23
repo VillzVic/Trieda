@@ -6,8 +6,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 import java.util.Map.Entry;
+import java.util.TreeMap;
 
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,11 +17,13 @@ import com.extjs.gxt.ui.client.data.BasePagingLoadResult;
 import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
+import com.gapso.trieda.domain.Campus;
 import com.gapso.trieda.domain.GrupoSala;
 import com.gapso.trieda.domain.HorarioDisponivelCenario;
 import com.gapso.trieda.domain.Sala;
 import com.gapso.trieda.domain.TipoSala;
 import com.gapso.trieda.domain.Unidade;
+import com.gapso.web.trieda.client.mvp.model.CampusDTO;
 import com.gapso.web.trieda.client.mvp.model.GrupoSalaDTO;
 import com.gapso.web.trieda.client.mvp.model.HorarioDisponivelCenarioDTO;
 import com.gapso.web.trieda.client.mvp.model.SalaDTO;
@@ -124,7 +126,7 @@ public class SalasServiceImpl extends RemoteServiceServlet implements SalasServi
 	}
 	
 	@Override
-	public PagingLoadResult<SalaDTO> getList(PagingLoadConfig config) {
+	public PagingLoadResult<SalaDTO> getList(CampusDTO campusDTO, UnidadeDTO unidadeDTO, PagingLoadConfig config) {
 		List<SalaDTO> list = new ArrayList<SalaDTO>();
 		String orderBy = config.getSortField();
 		if(orderBy != null) {
@@ -134,7 +136,9 @@ public class SalasServiceImpl extends RemoteServiceServlet implements SalasServi
 				orderBy = orderBy + " desc";
 			}
 		}
-		for(Sala sala : Sala.find(config.getOffset(), config.getLimit(), orderBy)) {
+		Campus campus = campusDTO == null ? null : Campus.find(campusDTO.getId());
+		Unidade unidade = unidadeDTO == null ? null : Unidade.find(unidadeDTO.getId());
+		for(Sala sala : Sala.find(campus, unidade, config.getOffset(), config.getLimit(), orderBy)) {
 			list.add(ConvertBeans.toSalaDTO(sala));
 		}
 		BasePagingLoadResult<SalaDTO> result = new BasePagingLoadResult<SalaDTO>(list);

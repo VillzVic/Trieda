@@ -309,13 +309,22 @@ public class Sala implements Serializable {
 		.getResultList();
 	}
 	
-	public static List<Sala> find(int firstResult, int maxResults) {
-		return find(firstResult, maxResults, null);
-	}
 	@SuppressWarnings("unchecked")
-    public static List<Sala> find(int firstResult, int maxResults, String orderBy) {
+    public static List<Sala> find(Campus campus, Unidade unidade, int firstResult, int maxResults, String orderBy) {
 		orderBy = (orderBy != null)? "ORDER BY o."+orderBy : "";
-        return entityManager().createQuery("SELECT o FROM Sala o "+orderBy).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
+		
+		String whereString = "";
+		if(campus != null || unidade != null) whereString += " WHERE ";
+		if(campus != null)                    whereString += " o.unidade.campus = :campus ";
+		if(campus != null && unidade != null) whereString += " AND ";
+		if(unidade != null)                   whereString += " o.unidade = :unidade ";
+		
+		Query q = entityManager().createQuery("SELECT o FROM Sala o "+orderBy+whereString);
+
+		if(campus != null) q.setParameter("campus", campus);
+		if(unidade != null) q.setParameter("unidade", unidade);
+		
+        return q.setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
 
 	public TipoSala getTipoSala() {

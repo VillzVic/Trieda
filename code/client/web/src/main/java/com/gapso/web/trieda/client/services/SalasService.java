@@ -6,6 +6,7 @@ import java.util.Map;
 import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
+import com.gapso.web.trieda.client.mvp.model.CampusDTO;
 import com.gapso.web.trieda.client.mvp.model.GrupoSalaDTO;
 import com.gapso.web.trieda.client.mvp.model.HorarioDisponivelCenarioDTO;
 import com.gapso.web.trieda.client.mvp.model.SalaDTO;
@@ -20,7 +21,7 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 @RemoteServiceRelativePath("salas")
 public interface SalasService extends RemoteService {
 	
-	PagingLoadResult<SalaDTO> getList(PagingLoadConfig config);
+	PagingLoadResult<SalaDTO> getList(CampusDTO campusDTO, UnidadeDTO unidadeDTO, PagingLoadConfig config);
 	ListLoadResult<SalaDTO> getList();
 	void save(SalaDTO salaDTO);
 	void remove(List<SalaDTO> salaDTOList);

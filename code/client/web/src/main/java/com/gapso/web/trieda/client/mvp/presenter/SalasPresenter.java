@@ -20,9 +20,11 @@ import com.gapso.web.trieda.client.mvp.view.HorarioDisponivelSalaFormView;
 import com.gapso.web.trieda.client.mvp.view.SalaFormView;
 import com.gapso.web.trieda.client.services.SalasServiceAsync;
 import com.gapso.web.trieda.client.services.Services;
+import com.gapso.web.trieda.client.util.view.CampusComboBox;
 import com.gapso.web.trieda.client.util.view.GTab;
 import com.gapso.web.trieda.client.util.view.GTabItem;
 import com.gapso.web.trieda.client.util.view.SimpleGrid;
+import com.gapso.web.trieda.client.util.view.UnidadeComboBox;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
 import com.googlecode.future.FutureResult;
@@ -38,6 +40,10 @@ public class SalasPresenter implements Presenter {
 		Button getExportExcelButton();
 		Button getDisciplinasAssociadasButton();
 		Button getGruposDeSalasButton();
+		UnidadeComboBox getUnidadeCB();
+		CampusComboBox getCampusCB();
+		Button getSubmitBuscaButton();
+		Button getResetBuscaButton();
 		SimpleGrid<SalaDTO> getGrid();
 		GTabItem getGTabItem();
 		Button getDisponibilidadeButton();
@@ -58,7 +64,9 @@ public class SalasPresenter implements Presenter {
 		RpcProxy<PagingLoadResult<SalaDTO>> proxy = new RpcProxy<PagingLoadResult<SalaDTO>>() {
 			@Override
 			public void load(Object loadConfig, AsyncCallback<PagingLoadResult<SalaDTO>> callback) {
-				service.getList((PagingLoadConfig) loadConfig, callback);
+				CampusDTO campusDTO = display.getCampusCB().getValue();
+				UnidadeDTO unidadeDTO = display.getUnidadeCB().getValue();
+				service.getList(campusDTO, unidadeDTO, (PagingLoadConfig) loadConfig, callback);
 			}
 		};
 		display.setProxy(proxy);
@@ -138,6 +146,20 @@ public class SalasPresenter implements Presenter {
 						presenter.go(null);
 					}
 				});
+			}
+		});
+		display.getResetBuscaButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
+			@Override
+			public void componentSelected(ButtonEvent ce) {
+				display.getUnidadeCB().setValue(null);
+				display.getCampusCB().setValue(null);
+				display.getGrid().updateList();
+			}
+		});
+		display.getSubmitBuscaButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
+			@Override
+			public void componentSelected(ButtonEvent ce) {
+				display.getGrid().updateList();
 			}
 		});
 	}
