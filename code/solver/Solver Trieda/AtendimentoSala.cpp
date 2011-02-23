@@ -24,9 +24,9 @@ std::ostream& operator << (std::ostream& out, AtendimentoSala& sala)
 
 	for(; it_diasSem != sala.atendimentos_dias_semana.end(); it_diasSem++)
 	{
-		if(it_diasSem->getIdSala() == sala.getId()) {
-			out << **it_diasSem;
-		}
+	//	if(it_diasSem->getIdSala() == sala.getId()) {
+      out << **it_diasSem;
+	//	}
 	}
 
 	out << "</atendimentosDiasSemana>" << endl;

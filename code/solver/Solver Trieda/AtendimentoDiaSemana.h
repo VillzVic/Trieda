@@ -20,13 +20,13 @@ public:
 
    //virtual void escreve_arvore(ItemAtendimentoUnidade& elem);
 
-   std::pair<int/*id_sala*/,int/*dia*/> key;
+   //std::pair<int/*id_sala*/,int/*dia*/> key;
 
-   std::pair<int,int> getPairId_SalaDia() {return key;}
-   int getIdSala() { return key.first; }
-   int getIdDia() { return key.second; }
+   //std::pair<int,int> getPairId_SalaDia() {return key;}
+   //int getIdSala() { return key.first; }
+   //int getIdDia() { return key.second; }
 
-   static std::vector<GGroup<int/*ids das salas que possuem o dia (dado pela posicao do vector)*/> > *__ids_cadastrados;
+   //static std::vector<GGroup<int/*ids das salas que possuem o dia (dado pela posicao do vector)*/> > *__ids_cadastrados;
 
 };
 

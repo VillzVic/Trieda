@@ -2,7 +2,7 @@
 
 AtendimentoDiaSemana::AtendimentoDiaSemana(void)
 {
-	key = std::make_pair<int,int>(-1,-1);
+	//key = std::make_pair<int,int>(-1,-1);
 }
 
 AtendimentoDiaSemana::~AtendimentoDiaSemana(void)
@@ -13,7 +13,7 @@ std::ostream& operator << (std::ostream& out, AtendimentoDiaSemana& diaSem)
 {
    out << "<AtendimentoDiaSemana>" << endl;
 
-	out << "<diaSemana>" << diaSem.getIdDia() << "</diaSemana>" << endl;
+	out << "<diaSemana>" << diaSem.dia_semana << "</diaSemana>" << endl;
 
 	if(diaSem.atendimentos_tatico.size() > 0)
 	{

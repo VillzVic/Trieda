@@ -13,13 +13,13 @@ public:
 	AtendimentoTatico(void);
 	~AtendimentoTatico(void);
 
-	AtendimentoOferta *atendimento_oferta;
+	AtendimentoOferta * atendimento_oferta;
 	int qtde_creditos_teoricos;
 	int qtde_creditos_praticos;
 
 	//virtual void escreve_arvore(ItemAtendimentoUnidade& elem);
 
-	std::pair<int/*id_sala*/,int/*dia*/> key;
+	//std::pair<int/*id_sala*/,int/*dia*/> key;
 
 
 };
