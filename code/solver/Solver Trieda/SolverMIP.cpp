@@ -1245,7 +1245,7 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
             itoa(id_Disc,buffer,10);
 
             at_Oferta->oferta_curso_campi_id = buffer;
-            at_Oferta->disciplina_id = (*it_Vars_a)->getDisciplina()->codigo;
+            at_Oferta->disciplina_id = (*it_Vars_a)->getDisciplina()->id;
             at_Oferta->quantidade = (*it_Vars_a)->getValue();
             at_Oferta->turma = (*it_Vars_a)->getTurma();
 
@@ -1347,7 +1347,7 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
                                                 itoa(id_Disc,buffer,10);
 
                                                 at_Oferta->oferta_curso_campi_id = buffer;
-                                                at_Oferta->disciplina_id = (*it_Vars_a)->getDisciplina()->codigo;
+                                                at_Oferta->disciplina_id = (*it_Vars_a)->getDisciplina()->id;
                                                 at_Oferta->quantidade = (*it_Vars_a)->getValue();
                                                 at_Oferta->turma = (*it_Vars_a)->getTurma();
 
@@ -1391,7 +1391,7 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
                                           itoa(id_Disc,buffer,10);
 
                                           at_Oferta->oferta_curso_campi_id = buffer;
-                                          at_Oferta->disciplina_id = (*it_Vars_a)->getDisciplina()->codigo;
+                                          at_Oferta->disciplina_id = (*it_Vars_a)->getDisciplina()->id;
                                           at_Oferta->quantidade = (*it_Vars_a)->getValue();
                                           at_Oferta->turma = (*it_Vars_a)->getTurma();
 
@@ -1442,7 +1442,7 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
                                  itoa(id_Disc,buffer,10);
 
                                  at_Oferta->oferta_curso_campi_id = buffer;
-                                 at_Oferta->disciplina_id = (*it_Vars_a)->getDisciplina()->codigo;
+                                 at_Oferta->disciplina_id = (*it_Vars_a)->getDisciplina()->id;
                                  at_Oferta->quantidade = (*it_Vars_a)->getValue();
                                  at_Oferta->turma = (*it_Vars_a)->getTurma();
 
@@ -1499,7 +1499,7 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
                         itoa(id_Disc,buffer,10);
 
                         at_Oferta->oferta_curso_campi_id = buffer;
-                        at_Oferta->disciplina_id = (*it_Vars_a)->getDisciplina()->codigo;
+                        at_Oferta->disciplina_id = (*it_Vars_a)->getDisciplina()->id;
                         at_Oferta->quantidade = (*it_Vars_a)->getValue();
                         at_Oferta->turma = (*it_Vars_a)->getTurma();
 
@@ -1561,7 +1561,7 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
                itoa(id_Disc,buffer,10);
 
                at_Oferta->oferta_curso_campi_id = buffer;
-               at_Oferta->disciplina_id = (*it_Vars_a)->getDisciplina()->codigo;
+               at_Oferta->disciplina_id = (*it_Vars_a)->getDisciplina()->id;
                at_Oferta->quantidade = (*it_Vars_a)->getValue();
                at_Oferta->turma = (*it_Vars_a)->getTurma();
 

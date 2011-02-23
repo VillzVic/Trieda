@@ -12,7 +12,7 @@ public:
    ~AtendimentoOferta(void);
 
    std::string oferta_curso_campi_id;
-   std::string disciplina_id;
+   int disciplina_id;
    int quantidade;
    int turma;
    

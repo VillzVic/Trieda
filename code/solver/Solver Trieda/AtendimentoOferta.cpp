@@ -3,7 +3,7 @@
 AtendimentoOferta::AtendimentoOferta(void)
 {
    oferta_curso_campi_id = "";
-   disciplina_id = "";
+   disciplina_id = -1;
    quantidade = 0;
    turma = 99999999;
 }
