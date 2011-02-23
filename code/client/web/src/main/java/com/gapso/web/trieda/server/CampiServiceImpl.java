@@ -26,6 +26,7 @@ import com.gapso.trieda.domain.AtendimentoTatico;
 import com.gapso.trieda.domain.Campus;
 import com.gapso.trieda.domain.Cenario;
 import com.gapso.trieda.domain.Demanda;
+import com.gapso.trieda.domain.DeslocamentoCampus;
 import com.gapso.trieda.domain.HorarioDisponivelCenario;
 import com.gapso.trieda.domain.Sala;
 import com.gapso.trieda.domain.Turno;
@@ -239,10 +240,16 @@ public class CampiServiceImpl extends RemoteServiceServlet implements CampiServi
 	}
 	
 	@Override
-	public void saveDeslocamento(List<DeslocamentoCampusDTO> list) {
+	public void saveDeslocamento(CenarioDTO cenarioDTO, List<DeslocamentoCampusDTO> list) {
+		List<DeslocamentoCampus> deslocamentos = DeslocamentoCampus.findAllByCampus(Cenario.find(cenarioDTO.getId()));
+		for(DeslocamentoCampus deslocamento : deslocamentos) {
+			deslocamento.remove();
+		}
 		for(DeslocamentoCampusDTO deslocamentoCampusDTO : list) {
-			Campus campus = ConvertBeans.toDeslocamentoCampus(deslocamentoCampusDTO);
-			campus.merge();
+			List<DeslocamentoCampus> deslCamList = ConvertBeans.toDeslocamentoCampus(deslocamentoCampusDTO);
+			for(DeslocamentoCampus desl : deslCamList) {
+				desl.persist();
+			}
 		}
 	}
 	

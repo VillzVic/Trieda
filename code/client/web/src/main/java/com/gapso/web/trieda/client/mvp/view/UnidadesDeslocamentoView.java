@@ -122,7 +122,7 @@ public class UnidadesDeslocamentoView extends MyComposite implements UnidadesDes
 
 	@Override
 	public CampusDTO getCampusDTO() {
-		return campusDTO;
+		return campusBuscaComboBox.getValue();
 	}
 
 }

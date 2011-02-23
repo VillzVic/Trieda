@@ -12,6 +12,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import javax.persistence.Table;
 import javax.persistence.Version;
 import javax.validation.constraints.Digits;
@@ -153,6 +154,13 @@ public class DeslocamentoCampus implements java.io.Serializable {
         return entityManager().createQuery("SELECT o FROM DeslocamentoCampus o").setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
 
+	@SuppressWarnings("unchecked")
+    public static List<DeslocamentoCampus> findAllByCampus(Cenario cenario) {
+		Query q = entityManager().createQuery("SELECT o FROM DeslocamentoCampus o WHERE o.origem.cenario = :cenario");
+		q.setParameter("cenario", cenario);
+        return q.getResultList();
+    }
+	
 	public Campus getOrigem() {
         return this.origem;
     }

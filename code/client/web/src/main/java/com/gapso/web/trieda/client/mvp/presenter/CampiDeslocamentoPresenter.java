@@ -8,6 +8,7 @@ import com.extjs.gxt.ui.client.widget.Component;
 import com.extjs.gxt.ui.client.widget.Info;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.gapso.web.trieda.client.i18n.ITriedaI18nGateway;
+import com.gapso.web.trieda.client.mvp.model.CenarioDTO;
 import com.gapso.web.trieda.client.mvp.model.DeslocamentoCampusDTO;
 import com.gapso.web.trieda.client.services.CampiServiceAsync;
 import com.gapso.web.trieda.client.services.Services;
@@ -30,9 +31,11 @@ public class CampiDeslocamentoPresenter implements Presenter {
 	}
 	private Display display; 
 	private GTab gTab;
+	private CenarioDTO cenario;
 	
-	public CampiDeslocamentoPresenter(Display display) {
+	public CampiDeslocamentoPresenter(CenarioDTO cenario, Display display) {
 		this.display = display;
+		this.cenario = cenario;
 //		configureProxy();
 		setListeners();
 	}
@@ -61,7 +64,7 @@ public class CampiDeslocamentoPresenter implements Presenter {
 			public void componentSelected(ButtonEvent ce) {
 				List<DeslocamentoCampusDTO> list = display.getGrid().getStore().getModels();
 				CampiServiceAsync service = Services.campi();
-				service.saveDeslocamento(list, new AbstractAsyncCallbackWithDefaultOnFailure<Void>(display) {
+				service.saveDeslocamento(cenario, list, new AbstractAsyncCallbackWithDefaultOnFailure<Void>(display) {
 					@Override
 					public void onSuccess(Void result) {
 						display.getGrid().getStore().commitChanges();

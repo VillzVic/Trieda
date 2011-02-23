@@ -69,7 +69,7 @@ public class UnidadesDeslocamentoPresenter implements Presenter {
 			public void componentSelected(ButtonEvent ce) {
 				List<DeslocamentoUnidadeDTO> list = display.getGrid().getStore().getModels();
 				UnidadesServiceAsync service = Services.unidades();
-				service.saveDeslocamento(list, new AsyncCallback<Void>() {
+				service.saveDeslocamento(display.getCampusDTO(), list, new AsyncCallback<Void>() {
 					@Override
 					public void onFailure(Throwable caught) {
 						MessageBox.alert("ERRO!", "Deu falha na conexão", null);

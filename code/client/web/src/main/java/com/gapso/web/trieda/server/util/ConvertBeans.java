@@ -714,11 +714,7 @@ public class ConvertBeans {
 	}
 	
 	// DESLOCAMENTO UNIDADES
-	public static Unidade toDeslocamentoUnidade(DeslocamentoUnidadeDTO deslocamentoUnidadeDTO) {
-		Unidade unidade = Unidade.find(deslocamentoUnidadeDTO.getOrigemId());
-		// TODO O correto é remover somente os inexistentes e editar os alterados, atualmente está removendo todo mundo e adicionando tudo
-		unidade.getDeslocamentos().removeAll(unidade.getDeslocamentos());
-		
+	public static List<DeslocamentoUnidade> toDeslocamentoUnidade(DeslocamentoUnidadeDTO deslocamentoUnidadeDTO) {
 		List<Long> listIds = new ArrayList<Long>();
 		for(String keyString : deslocamentoUnidadeDTO.getPropertyNames()) {
 			if(keyString.startsWith("destinoTempo")) {
@@ -730,6 +726,8 @@ public class ConvertBeans {
 				if(!listIds.contains(id)) listIds.add(id);
 			}
 		}
+		List<DeslocamentoUnidade> list = new ArrayList<DeslocamentoUnidade>();
+		Unidade unidade = Unidade.find(deslocamentoUnidadeDTO.getOrigemId());
 		for(Long idUnidade : listIds) {
 			Integer tempo = deslocamentoUnidadeDTO.getDestinoTempo(idUnidade);
 			Double custo = deslocamentoUnidadeDTO.getDestinoCusto(idUnidade);
@@ -739,9 +737,9 @@ public class ConvertBeans {
 			du.setOrigem(unidade);
 			du.setTempo(tempo);
 			du.setCusto(custo);
-			unidade.getDeslocamentos().add(du);
+			list.add(du);
 		}
-		return unidade;
+		return list;
 	}
 	
 	public static DeslocamentoUnidadeDTO toDeslocamentoUnidadeDTO(Unidade unidade, Set<Unidade> unidadesDestinos) {
@@ -759,11 +757,7 @@ public class ConvertBeans {
 	}
 	
 	// DESLOCAMENTO CAMPUS
-	public static Campus toDeslocamentoCampus(DeslocamentoCampusDTO deslocamentoCampusDTO) {
-		Campus campus = Campus.find(deslocamentoCampusDTO.getOrigemId());
-		// TODO O correto é remover somente os inexistentes e editar os alterados, atualmente está removendo todo mundo e adicionando tudo
-		campus.getDeslocamentos().removeAll(campus.getDeslocamentos());
-		
+	public static List<DeslocamentoCampus> toDeslocamentoCampus(DeslocamentoCampusDTO deslocamentoCampusDTO) {
 		List<Long> listIds = new ArrayList<Long>();
 		for(String keyString : deslocamentoCampusDTO.getPropertyNames()) {
 			if(keyString.startsWith("destinoTempo")) {
@@ -774,6 +768,8 @@ public class ConvertBeans {
 				if(!listIds.contains(id)) listIds.add(id);
 			}
 		}
+		List<DeslocamentoCampus> list = new ArrayList<DeslocamentoCampus>();
+		Campus campus = Campus.find(deslocamentoCampusDTO.getOrigemId());
 		for(Long idCampus : listIds) {
 			Integer tempo = deslocamentoCampusDTO.getDestinoTempo(idCampus);
 			Double custo = deslocamentoCampusDTO.getDestinoCusto(idCampus);
@@ -783,9 +779,9 @@ public class ConvertBeans {
 			du.setOrigem(campus);
 			du.setTempo(tempo);
 			du.setCusto(custo);
-			campus.getDeslocamentos().add(du);
+			list.add(du);
 		}
-		return campus;
+		return list;
 	}
 	
 	public static DeslocamentoCampusDTO toDeslocamentoCampusDTO(Campus campus, List<Campus> campusDestinos) {

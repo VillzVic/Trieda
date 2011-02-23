@@ -28,8 +28,8 @@ public interface UnidadesService extends RemoteService {
 	ListLoadResult<UnidadeDTO> getList(BasePagingLoadConfig loadConfig);
 	UnidadeDTO getUnidade(Long id);
 	List<DeslocamentoUnidadeDTO> getDeslocamento(CampusDTO campusDTO);
-	void saveDeslocamento(List<DeslocamentoUnidadeDTO> list);
 	ListLoadResult<UnidadeDTO> getListByCampus(CampusDTO campusDTO);
 	PagingLoadResult<HorarioDisponivelCenarioDTO> getHorariosDisponiveis(UnidadeDTO unidadeDTO);
 	void saveHorariosDisponiveis(UnidadeDTO unidadeDTO, List<HorarioDisponivelCenarioDTO> listDTO);
+	void saveDeslocamento(CampusDTO campus, List<DeslocamentoUnidadeDTO> list);
 }

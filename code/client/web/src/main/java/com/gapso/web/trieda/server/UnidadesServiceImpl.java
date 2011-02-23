@@ -21,6 +21,7 @@ import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.gapso.trieda.domain.Campus;
+import com.gapso.trieda.domain.DeslocamentoUnidade;
 import com.gapso.trieda.domain.HorarioDisponivelCenario;
 import com.gapso.trieda.domain.Sala;
 import com.gapso.trieda.domain.Unidade;
@@ -230,10 +231,16 @@ public class UnidadesServiceImpl extends RemoteServiceServlet implements Unidade
 	}
 	
 	@Override
-	public void saveDeslocamento(List<DeslocamentoUnidadeDTO> list) {
+	public void saveDeslocamento(CampusDTO campusDTO, List<DeslocamentoUnidadeDTO> list) {
+		List<DeslocamentoUnidade> deslocamentos = DeslocamentoUnidade.findAllByCampus(Campus.find(campusDTO.getId()));
+		for(DeslocamentoUnidade deslocamento : deslocamentos) {
+			deslocamento.remove();
+		}
 		for(DeslocamentoUnidadeDTO deslocamentoUnidadeDTO : list) {
-			Unidade unidade = ConvertBeans.toDeslocamentoUnidade(deslocamentoUnidadeDTO);
-			unidade.merge();
+			List<DeslocamentoUnidade> deslUniList = ConvertBeans.toDeslocamentoUnidade(deslocamentoUnidadeDTO);
+			for(DeslocamentoUnidade desl : deslUniList) {
+				desl.persist();
+			}
 		}
 	}
 }

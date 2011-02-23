@@ -22,9 +22,9 @@ public interface UnidadesServiceAsync {
 	void getList(BasePagingLoadConfig loadConfig, AsyncCallback<ListLoadResult<UnidadeDTO>> callback);
 	void getUnidade(Long id, AsyncCallback<UnidadeDTO> callback);
 	void getDeslocamento(CampusDTO campusDTO, AsyncCallback<List<DeslocamentoUnidadeDTO>> callback);
-	void saveDeslocamento(List<DeslocamentoUnidadeDTO> list, AsyncCallback<Void> callback);
 	void getListByCampus(CampusDTO campusDTO, AsyncCallback<ListLoadResult<UnidadeDTO>> callback);
 	void getHorariosDisponiveis(UnidadeDTO unidadeDTO, AsyncCallback<PagingLoadResult<HorarioDisponivelCenarioDTO>> callback);
 	void saveHorariosDisponiveis(UnidadeDTO unidadeDTO, List<HorarioDisponivelCenarioDTO> listDTO, AsyncCallback<Void> callback);
+	void saveDeslocamento(CampusDTO campus, List<DeslocamentoUnidadeDTO> list, AsyncCallback<Void> callback);
 	
 }

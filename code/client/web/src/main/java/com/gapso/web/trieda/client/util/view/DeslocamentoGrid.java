@@ -10,7 +10,6 @@ import com.extjs.gxt.ui.client.event.Listener;
 import com.extjs.gxt.ui.client.store.ListStore;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
 import com.extjs.gxt.ui.client.widget.form.NumberField;
-import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.extjs.gxt.ui.client.widget.grid.CellEditor;
 import com.extjs.gxt.ui.client.widget.grid.ColumnConfig;
 import com.extjs.gxt.ui.client.widget.grid.ColumnData;
@@ -29,6 +28,9 @@ public class DeslocamentoGrid<M extends BaseModel> extends ContentPanel {
 	private List<M> models;
 	private boolean containsCusto;
 	
+	private String emptyTextDeCampus = "Não foi encontrado nenhum campus por um dos seguintes motivos:<br />&bull; O Filtro ao lado não corresponde a nenhum campus;<br />&bull; Não existem nenhum campus cadastrado no sistema.";
+	private String emptyTextDeUnidade = "Não foi encontrado nenhuma unidade por um dos seguintes motivos:<br />&bull; Nenhum campus foi selecionado ao lado;<br />&bull; Não existem nenhuma unidade cadastrada para este campus.";
+	
 	public DeslocamentoGrid(List<M> models) {
 		super(new FitLayout());
 		this.models = models;
@@ -43,19 +45,11 @@ public class DeslocamentoGrid<M extends BaseModel> extends ContentPanel {
 		grid.setBorders(true);
 		
 		// TERIA Q TER UMA FLAG FALANDO SE È DE UNIDADES OU DE CAMPUS
-		if(containsCusto) {
-			grid.getView().setEmptyText("Não foi encontrado nenhum campus por um dos seguintes motivos:<br />&bull; O Filtro ao lado não corresponde a nenhum campus;<br />&bull; Não existem nenhum campus cadastrado no sistema.");
-		} else {
-			grid.getView().setEmptyText("Não foi encontrado nenhuma unidade por um dos seguintes motivos:<br />&bull; Nenhum campus foi selecionado ao lado;<br />&bull; Não existem nenhuma unidade cadastrada para este campus.");
-		}
+		grid.getView().setEmptyText(containsCusto ? emptyTextDeCampus : emptyTextDeUnidade);
 		
 		grid.addListener(Events.BeforeEdit, new Listener<GridEvent<M>>() {
 			public void handleEvent(GridEvent<M> be) {
-				int rowIndex = be.getRowIndex();
-				int colIndex = be.getColIndex();
-				if(isMeio(rowIndex, colIndex)) {
-					be.setCancelled(true);
-				}
+				be.setCancelled(isDiagonal(be.getRowIndex(), be.getColIndex()));
 			}
 		});
 		add(grid);
@@ -89,8 +83,6 @@ public class DeslocamentoGrid<M extends BaseModel> extends ContentPanel {
 			column.setResizable(false);
 			column.setMenuDisabled(true);
 			column.setSortable(false);
-			TextField<String> field = new TextField<String>();
-			column.setEditor(new CellEditor(field));
 			column.setRenderer(new GridCellRenderer<M>() {
 				@Override
 				public Object render(M model, String property, ColumnData config, int rowIndex, int colIndex, ListStore<M> store, Grid<M> grid) {
@@ -104,7 +96,7 @@ public class DeslocamentoGrid<M extends BaseModel> extends ContentPanel {
 			GridCellRenderer<M> renderer = new GridCellRenderer<M>() {
 				@Override
 				public Object render(M model, String property, ColumnData config, int rowIndex, int colIndex, ListStore<M> store, Grid<M> grid) {
-					if(isMeio(rowIndex, colIndex)) {
+					if(isDiagonal(rowIndex, colIndex)) {
 						config.style = "background-color: #b3b4c3;";
 						return "";
 					} else {
@@ -167,7 +159,7 @@ public class DeslocamentoGrid<M extends BaseModel> extends ContentPanel {
 		this.containsCusto = containsCusto;
 	}
 
-	private boolean isMeio(int rowIndex, int colIndex) {
+	private boolean isDiagonal(int rowIndex, int colIndex) {
 		return ((containsCusto && rowIndex == ((colIndex-1)/2)) || (!containsCusto && rowIndex == (colIndex-1)));
 	}
 	

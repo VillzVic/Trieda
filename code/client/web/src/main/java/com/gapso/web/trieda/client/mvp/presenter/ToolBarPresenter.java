@@ -241,7 +241,7 @@ public class ToolBarPresenter implements Presenter {
 					}
 					@Override
 					public void onSuccess(List<DeslocamentoCampusDTO> result) {
-						Presenter presenter = new CampiDeslocamentoPresenter(new CampiDeslocamentoView(result));
+						Presenter presenter = new CampiDeslocamentoPresenter(masterData, new CampiDeslocamentoView(result));
 						presenter.go(gTab);	
 					}
 				});

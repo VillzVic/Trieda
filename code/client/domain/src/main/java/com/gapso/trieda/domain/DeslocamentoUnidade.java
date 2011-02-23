@@ -12,6 +12,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import javax.persistence.Table;
 import javax.persistence.Version;
 import javax.validation.constraints.Digits;
@@ -174,6 +175,13 @@ public class DeslocamentoUnidade implements java.io.Serializable {
         return entityManager().createQuery("SELECT o FROM DeslocamentoUnidade o").setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
 
+	@SuppressWarnings("unchecked")
+    public static List<DeslocamentoUnidade> findAllByCampus(Campus campus) {
+		Query q = entityManager().createQuery("SELECT o FROM DeslocamentoUnidade o WHERE o.origem.campus = :campus");
+		q.setParameter("campus", campus);
+        return q.getResultList();
+    }
+	
 	private static final long serialVersionUID = -8847212098556601964L;
 
 	public String toString() {
