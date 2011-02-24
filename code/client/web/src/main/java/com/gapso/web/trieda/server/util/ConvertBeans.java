@@ -880,11 +880,12 @@ public class ConvertBeans {
 		for(CurriculoDisciplina cd : domain.getDisciplinas()) {
 			if(periodosSet.add(cd.getPeriodo())) periodos += cd.getPeriodo() + ", ";
 		}
-		dto.setPeriodos(periodos.substring(0, periodos.length() - 2));
+		periodos = periodos.substring(0, periodos.length() - 2);
+		dto.setPeriodos(periodos);
 		Curso curso = domain.getCurso();
 		dto.setCursoId(curso.getId());
 		dto.setCursoString(curso.getCodigo() + " (" +curso.getNome()+ ")");
-		dto.setDisplay(domain.getCodigo() + " ("+ curso.getNome() +")");
+		dto.setDisplay(domain.getCodigo() + " ("+ curso.getNome() +") Periodos: " +periodos);
 		return dto;
 	}
 	
