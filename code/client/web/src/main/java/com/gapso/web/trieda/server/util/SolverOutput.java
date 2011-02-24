@@ -55,9 +55,11 @@ public class SolverOutput {
 							int qtdeCreditosPraticos = itemAtendimentoTatico.getQtdeCreditosPraticos();
 							ItemAtendimentoOferta itemAtendimentoOferta = itemAtendimentoTatico.getAtendimentoOferta();
 							Oferta oferta = Oferta.find(Long.valueOf(itemAtendimentoOferta.getOfertaCursoCampiId()));
-							Disciplina disciplina = Disciplina.find(Long.valueOf(itemAtendimentoOferta.getDisciplinaId()));
+							// TODO CORRIGIR NO SOLVER IDs NEGATIVOS
+							int disciplinaId = Math.abs(itemAtendimentoOferta.getDisciplinaId());
+							Disciplina disciplina = Disciplina.find(Long.valueOf(disciplinaId));
 							int quantidade = itemAtendimentoOferta.getQuantidade();
-							String turma = itemAtendimentoOferta.getTurma();
+							String turma = "TURMA" + itemAtendimentoOferta.getTurma();
 							
 							AtendimentoTatico atendimentoTatico = new AtendimentoTatico();
 							atendimentoTatico.setCenario(cenario);

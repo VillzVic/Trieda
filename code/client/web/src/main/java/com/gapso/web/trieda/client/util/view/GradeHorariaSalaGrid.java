@@ -146,7 +146,6 @@ public class GradeHorariaSalaGrid extends ContentPanel {
 		addColumn(list, "sexta", "Sexta");
 		addColumn(list, "sabado", "Sábado");
 		addColumn(list, "domingo", "Domingo");
-
 		return list;
 	}
 	

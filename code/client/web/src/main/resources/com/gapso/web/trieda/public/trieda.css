@@ -209,13 +209,32 @@ table.cw-FlexTable td.cw-FlexTable-content {
 .GradeHorariaGrid .x-grid3-row-table .horario.tc5  { height: 386px; _height: 355px; }
 .GradeHorariaGrid .x-grid3-row-table .horario.tc6  { height: 466px; _height: 430px; }
 
-.GradeHorariaGrid .x-grid3-row-table .horario.s1 { left: 707px; }
-.GradeHorariaGrid .x-grid3-row-table .horario.s2 { left: 107px; }
-.GradeHorariaGrid .x-grid3-row-table .horario.s3 { left: 207px; }
-.GradeHorariaGrid .x-grid3-row-table .horario.s4 { left: 307px; }
-.GradeHorariaGrid .x-grid3-row-table .horario.s5 { left: 407px; }
-.GradeHorariaGrid .x-grid3-row-table .horario.s6 { left: 507px; }
-.GradeHorariaGrid .x-grid3-row-table .horario.s7 { left: 607px; }
+.GradeHorariaGrid .x-grid3-row-table .horario.s1 { left:     7px; }
+.GradeHorariaGrid .x-grid3-row-table .horario.s2 { left:   107px; }
+.GradeHorariaGrid .x-grid3-row-table .horario.s3 { left:   207px; }
+.GradeHorariaGrid .x-grid3-row-table .horario.s4 { left:   307px; }
+.GradeHorariaGrid .x-grid3-row-table .horario.s5 { left:   407px; }
+.GradeHorariaGrid .x-grid3-row-table .horario.s6 { left:   507px; }
+.GradeHorariaGrid .x-grid3-row-table .horario.s7 { left:   607px; }
+.GradeHorariaGrid .x-grid3-row-table .horario.s8 { left:   707px; }
+.GradeHorariaGrid .x-grid3-row-table .horario.s9 { left:   807px; }
+.GradeHorariaGrid .x-grid3-row-table .horario.s10 { left:  907px; }
+.GradeHorariaGrid .x-grid3-row-table .horario.s11 { left: 1007px; }
+.GradeHorariaGrid .x-grid3-row-table .horario.s12 { left: 1107px; }
+.GradeHorariaGrid .x-grid3-row-table .horario.s13 { left: 1207px; }
+.GradeHorariaGrid .x-grid3-row-table .horario.s14 { left: 1307px; }
+.GradeHorariaGrid .x-grid3-row-table .horario.s15 { left: 1407px; }
+.GradeHorariaGrid .x-grid3-row-table .horario.s16 { left: 1507px; }
+.GradeHorariaGrid .x-grid3-row-table .horario.s17 { left: 1607px; }
+.GradeHorariaGrid .x-grid3-row-table .horario.s18 { left: 1707px; }
+.GradeHorariaGrid .x-grid3-row-table .horario.s19 { left: 1807px; }
+.GradeHorariaGrid .x-grid3-row-table .horario.s20 { left: 1907px; }
+.GradeHorariaGrid .x-grid3-row-table .horario.s21 { left: 2007px; }
+.GradeHorariaGrid .x-grid3-row-table .horario.s22 { left: 2107px; }
+.GradeHorariaGrid .x-grid3-row-table .horario.s23 { left: 2207px; }
+.GradeHorariaGrid .x-grid3-row-table .horario.s24 { left: 2307px; }
+.GradeHorariaGrid .x-grid3-row-table .horario.s25 { left: 2407px; }
+.GradeHorariaGrid .x-grid3-row-table .horario.s26 { left: 2507px; }
 
 .tabPanelMasterData .x-item-disabled {
 	opacity: 1;

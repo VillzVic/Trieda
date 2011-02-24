@@ -42,7 +42,7 @@ public class ResumoCampiView extends MyComposite implements ResumoCampiPresenter
 	
 	private void initUI() {
 		panel = new ContentPanel(new BorderLayout());
-		panel.setHeading("Master Data » Resultados por campus");
+		panel.setHeading("Master Data » Resultados por Campus");
 	}
 
 	@Override
@@ -51,7 +51,7 @@ public class ResumoCampiView extends MyComposite implements ResumoCampiPresenter
 	}
 
 	private void createTabItem() {
-		tabItem = new GTabItem("Resumo do Cenário", Resources.DEFAULTS.resumoCampi16());
+		tabItem = new GTabItem("Resumo por Campus", Resources.DEFAULTS.resumoCampi16());
 		tabItem.setContent(panel);
 	}
 	

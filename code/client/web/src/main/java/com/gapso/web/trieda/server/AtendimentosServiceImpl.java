@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.TreeMap;
 
 import com.extjs.gxt.ui.client.data.BasePagingLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
@@ -16,6 +17,7 @@ import com.gapso.trieda.domain.Sala;
 import com.gapso.trieda.domain.Turno;
 import com.gapso.web.trieda.client.mvp.model.AtendimentoTaticoDTO;
 import com.gapso.web.trieda.client.mvp.model.CurriculoDTO;
+import com.gapso.web.trieda.client.mvp.model.ParDTO;
 import com.gapso.web.trieda.client.mvp.model.SalaDTO;
 import com.gapso.web.trieda.client.mvp.model.TurnoDTO;
 import com.gapso.web.trieda.client.services.AtendimentosService;
@@ -87,7 +89,7 @@ public class AtendimentosServiceImpl extends RemoteServiceServlet implements Ate
 	}
 	
 	@Override
-	public List<AtendimentoTaticoDTO> getBusca(CurriculoDTO curriculoDTO, Integer periodo, TurnoDTO turnoDTO) {
+	public ParDTO<List<AtendimentoTaticoDTO>, List<Integer>> getBusca(CurriculoDTO curriculoDTO, Integer periodo, TurnoDTO turnoDTO) {
 		Curriculo curriculo = Curriculo.find(curriculoDTO.getId());
 		Turno turno = Turno.find(turnoDTO.getId());
 		List<AtendimentoTaticoDTO> list = new ArrayList<AtendimentoTaticoDTO>();
@@ -99,9 +101,9 @@ public class AtendimentosServiceImpl extends RemoteServiceServlet implements Ate
 		return montaListaParaVisaoCurso(turnoDTO,list);
 	}
 
-	private List<AtendimentoTaticoDTO> montaListaParaVisaoCurso(TurnoDTO turnoDTO, List<AtendimentoTaticoDTO> list) {
+	private ParDTO<List<AtendimentoTaticoDTO>, List<Integer>> montaListaParaVisaoCurso(TurnoDTO turnoDTO, List<AtendimentoTaticoDTO> list) {
 		// Agrupa os DTOS pelo dia da semana 
-		Map<Integer,List<AtendimentoTaticoDTO>> diaSemanaToAtendimentoTaticoDTOMap = new HashMap<Integer, List<AtendimentoTaticoDTO>>();
+		Map<Integer,List<AtendimentoTaticoDTO>> diaSemanaToAtendimentoTaticoDTOMap = new TreeMap<Integer, List<AtendimentoTaticoDTO>>();
 		for (AtendimentoTaticoDTO dto : list) {
 			List<AtendimentoTaticoDTO> dtoList = diaSemanaToAtendimentoTaticoDTOMap.get(dto.getSemana());
 			if (dtoList == null) {
@@ -111,11 +113,19 @@ public class AtendimentosServiceImpl extends RemoteServiceServlet implements Ate
 			dtoList.add(dto);
 		}
 		
-//		List<Integer> diaSemanaTamanhoList = new ArrayList<Integer>(8); // TODO: continuar código para mostrar + de 1 retangulo por dia
-//		Collections.addAll(diaSemanaTamanhoList, 1, 1, 1, 1, 1, 1, 1, 1, 1); // TODO: continuar código para mostrar + de 1 retangulo por dia
+		for(int i=2; i<8; i++) {
+			if(diaSemanaToAtendimentoTaticoDTOMap.get(i) == null) {
+				diaSemanaToAtendimentoTaticoDTOMap.put(i, Collections.EMPTY_LIST);
+			}
+		}
+		
+		
+		List<Integer> diaSemanaTamanhoList = new ArrayList<Integer>(8);
+		Collections.addAll(diaSemanaTamanhoList, 1, 1, 1, 1, 1, 1, 1, 1, 1);
 		List<AtendimentoTaticoDTO> finalProcessedList = new ArrayList<AtendimentoTaticoDTO>();
 		
 		// para cada dia da semana ...
+		int countSemanaSize = 2;
 		for (Entry<Integer,List<AtendimentoTaticoDTO>> entry : diaSemanaToAtendimentoTaticoDTOMap.entrySet()) {
 			List<List<AtendimentoTaticoDTO>> listListDTO = new ArrayList<List<AtendimentoTaticoDTO>>();
 			// verifica se o dia da semana extrapola a quantidade máxima de créditos
@@ -131,28 +141,43 @@ public class AtendimentosServiceImpl extends RemoteServiceServlet implements Ate
 				
 				// Quando há mais de um DTO nas listas internas, concatena as informações
 				// de todos em um único DTO.
-				for (List<AtendimentoTaticoDTO> listDTOs : listListDTO) {
-					AtendimentoTaticoDTO dtoMain = listDTOs.get(0);
-					for (int i = 1; i < listDTOs.size(); i++) {
-						AtendimentoTaticoDTO dtoCurrent = listDTOs.get(i);
-						dtoMain.concatenateVisaoCurso(dtoCurrent);
-					}
-					finalProcessedList.add(dtoMain);
-				}
+//				for (List<AtendimentoTaticoDTO> listDTOs : listListDTO) {
+//					AtendimentoTaticoDTO dtoMain = listDTOs.get(0);
+//					for (int i = 1; i < listDTOs.size(); i++) {
+//						AtendimentoTaticoDTO dtoCurrent = listDTOs.get(i);
+//						dtoMain.concatenateVisaoCurso(dtoCurrent);
+//					}
+//					finalProcessedList.add(dtoMain);
+//				}
 			} else {
+				for (AtendimentoTaticoDTO dto : entry.getValue()) {
+					dto.setSemana(countSemanaSize);
+				}
 				finalProcessedList.addAll(entry.getValue());
 			}
 			
-//			int size = 1;  // TODO: continuar código para mostrar + de 1 retangulo por dia
-//			for (List<AtendimentoTaticoDTO> listDTO : listListDTO) {
-//				if (listDTO.size() > size) {
-//					size = listDTO.size();
-//				}
-//			}			
-//			diaSemanaTamanhoList.add(entry.getKey(),size); // TODO: continuar código para mostrar + de 1 retangulo por dia
+			int size = 1;
+			for (List<AtendimentoTaticoDTO> listDTOs : listListDTO) {
+				
+				if (listDTOs.size() > size) {
+					size = listDTOs.size();
+				}
+				
+				AtendimentoTaticoDTO dtoMain = listDTOs.get(0);
+				dtoMain.setSemana(countSemanaSize);
+				for(int i = 1; i < listDTOs.size(); i++) {
+					AtendimentoTaticoDTO dtoCurrent = listDTOs.get(i);
+					dtoCurrent.setSemana(dtoMain.getSemana() + i);
+				}
+				finalProcessedList.addAll(listDTOs);
+			}			
+			diaSemanaTamanhoList.add(entry.getKey(),size);
+			countSemanaSize += size;
 		}
+
+		ParDTO<List<AtendimentoTaticoDTO>, List<Integer>> entry = new ParDTO<List<AtendimentoTaticoDTO>, List<Integer>>(finalProcessedList, diaSemanaTamanhoList);
 		
-		return finalProcessedList;
+		return entry;
 	}
 
 	private List<List<AtendimentoTaticoDTO>> agrupaAtendimentosAbordagem2(Entry<Integer, List<AtendimentoTaticoDTO>> entry) {

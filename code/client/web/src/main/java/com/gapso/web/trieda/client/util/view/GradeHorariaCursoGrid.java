@@ -29,6 +29,7 @@ import com.extjs.gxt.ui.client.widget.layout.FitLayout;
 import com.extjs.gxt.ui.client.widget.tips.QuickTip;
 import com.gapso.web.trieda.client.mvp.model.AtendimentoTaticoDTO;
 import com.gapso.web.trieda.client.mvp.model.CurriculoDTO;
+import com.gapso.web.trieda.client.mvp.model.ParDTO;
 import com.gapso.web.trieda.client.mvp.model.TurnoDTO;
 import com.gapso.web.trieda.client.services.AtendimentosServiceAsync;
 import com.gapso.web.trieda.client.services.Services;
@@ -40,6 +41,7 @@ public class GradeHorariaCursoGrid extends ContentPanel {
 	private Grid<LinhaDeCredito> grid;
 	private ListStore<LinhaDeCredito> store;
 	private List<AtendimentoTaticoDTO> atendimentos;
+	private List<Integer> diaSemanaTamanhoList;
 	private Map<AtendimentoTaticoDTO, List<AtendimentoTaticoDTO>> atendimentosParalelos;
 	private CurriculoDTO curriculoDTO;
 	private int periodo;
@@ -102,14 +104,16 @@ public class GradeHorariaCursoGrid extends ContentPanel {
 		if(getCurriculoDTO() == null || getTurnoDTO() == null || getPeriodo() <= 0) return;
 		grid.mask("Carregando os dados, aguarde alguns instantes", "loading");
 		AtendimentosServiceAsync service = Services.atendimentos();
-		service.getBusca(getCurriculoDTO(), getPeriodo(), getTurnoDTO(), new AsyncCallback<List<AtendimentoTaticoDTO>>(){
+		service.getBusca(getCurriculoDTO(), getPeriodo(), getTurnoDTO(), new AsyncCallback<ParDTO<List<AtendimentoTaticoDTO>, List<Integer>>>(){
 			@Override
 			public void onFailure(Throwable caught) {
 				MessageBox.alert("ERRO!", "Deu falha na conexão", null);
 			}
 			@Override
-			public void onSuccess(List<AtendimentoTaticoDTO> result) {
-				atendimentos = result;
+			public void onSuccess(ParDTO<List<AtendimentoTaticoDTO>, List<Integer>> result) {
+				atendimentos = result.getPrimeiro();
+				diaSemanaTamanhoList = result.getSegundo();
+				
 				preencheCores();
 				//coletaAtendimentosParalelos();
 				grid.reconfigure(getListStore(), new ColumnModel(getColumnList()));
@@ -166,7 +170,11 @@ public class GradeHorariaCursoGrid extends ContentPanel {
 		addColumn(list, "sexta", "Sexta");
 		addColumn(list, "sabado", "Sábado");
 		addColumn(list, "domingo", "Domingo");
-
+		addColumn(list, "extra1", "");
+		addColumn(list, "extra2", "");
+		addColumn(list, "extra3", "");
+		addColumn(list, "extra4", "");
+		
 		return list;
 	}
 	
@@ -275,14 +283,7 @@ public class GradeHorariaCursoGrid extends ContentPanel {
 				if(colIndex == 0) return new Html(String.valueOf(rowIndex + 1));
 				if(atendimentos == null || atendimentos.size() == 0) new Html("");
 				
-				int semana = -1;
-				if(colIndex == 1) semana = 2;
-				else if(colIndex == 2) semana = 3;
-				else if(colIndex == 3) semana = 4;
-				else if(colIndex == 4) semana = 5;
-				else if(colIndex == 5) semana = 6;
-				else if(colIndex == 6) semana = 7;
-				else if(colIndex == 7) semana = 1;
+				int semana = colIndex;
 				
 				AtendimentoTaticoDTO atDTO = getAtendimento(rowIndex + 1, semana);
 				
@@ -343,7 +344,7 @@ public class GradeHorariaCursoGrid extends ContentPanel {
 			}
 		};
 		
-		ColumnConfig column = new ColumnConfig(id, name, 100);
+		ColumnConfig column = new ColumnConfig(id, name, getWidth(id));
 		column.setRenderer(change);
 		column.setResizable(false);
 		column.setMenuDisabled(true);
@@ -366,6 +367,20 @@ public class GradeHorariaCursoGrid extends ContentPanel {
 		}
 		return null;
 	}
+	
+	private int getWidth(String semana) {
+		if(diaSemanaTamanhoList == null) return 100; 
+		int i = 0;
+		if(semana.equals("segunda")) { i = 2; }
+		if(semana.equals("terca"))   { i = 3; }
+		if(semana.equals("quarta"))  { i = 4; }
+		if(semana.equals("quinta"))  { i = 5; }
+		if(semana.equals("sexta"))   { i = 6; }
+		if(semana.equals("sabado"))  { i = 7; }
+		if(semana.equals("domingo")) { i = 1; }
+		return diaSemanaTamanhoList.get(i) * 100;
+	}
+	
 	
 	public CurriculoDTO getCurriculoDTO() {
 		return curriculoDTO;
