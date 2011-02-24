@@ -223,19 +223,6 @@ public class AtendimentoTatico implements Serializable {
 		return iT + iP;
 	}
 	
-	public static int countCreditos(Campus campus) {
-		Query qT = entityManager().createQuery("SELECT sum(o.creditosTeorico) FROM AtendimentoTatico o WHERE o.oferta.campus = :campus");
-		Query qP = entityManager().createQuery("SELECT sum(o.creditosPratico) FROM AtendimentoTatico o WHERE o.oferta.campus = :campus");
-		qT.setParameter("campus", campus);
-		qP.setParameter("campus", campus);
-		
-		Object srT = qT.getSingleResult();
-		Object srP = qP.getSingleResult();
-		int iT = srT == null ? 0 : ((Number) qT.getSingleResult()).intValue();
-		int iP = srP == null ? 0 : ((Number) qP.getSingleResult()).intValue();
-		return iT + iP;
-	}
-	
 	public static int countSalasDeAula(Cenario cenario) {
 		Query q = entityManager().createQuery("SELECT count(*) FROM AtendimentoTatico o WHERE o.sala.tipoSala.id = 1 AND o.cenario = :cenario GROUP BY o.sala");
 		q.setParameter("cenario", cenario);
