@@ -5,6 +5,14 @@ import com.google.gwt.resources.client.ImageResource;
 
 public interface DefaultsIcons extends ClientBundle  {
 
+	@Source("header.png") ImageResource logo();
+	
+	@Source("trieda_16.png") ImageResource trieda16();
+	@Source("trieda_24.png") ImageResource trieda24();
+	@Source("trieda_32.png") ImageResource trieda32();
+	@Source("trieda_48.png") ImageResource trieda48();
+	@Source("trieda_64.png") ImageResource trieda64();
+	
 	@Source("add_16.png") ImageResource add16();
 	@Source("edit_16.png") ImageResource edit16();
 	@Source("del_16.png") ImageResource del16();

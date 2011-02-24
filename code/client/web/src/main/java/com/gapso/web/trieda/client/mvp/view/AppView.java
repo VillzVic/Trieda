@@ -8,8 +8,10 @@ import com.extjs.gxt.ui.client.widget.layout.BorderLayout;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
 import com.extjs.gxt.ui.client.widget.layout.FitLayout;
 import com.gapso.web.trieda.client.mvp.presenter.AppPresenter;
+import com.gapso.web.trieda.client.util.resources.Resources;
 import com.gapso.web.trieda.client.util.view.CenarioPanel;
 import com.gapso.web.trieda.client.util.view.GTab;
+import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.Widget;
 
 public class AppView extends MyComposite implements AppPresenter.Display {
@@ -28,7 +30,7 @@ public class AppView extends MyComposite implements AppPresenter.Display {
 		viewport = new Viewport();
 		viewport.setLayout(new FitLayout());
 		panel = new ContentPanel(new BorderLayout());
-		panel.setHeading("Trieda");
+		panel.setIcon(AbstractImagePrototype.create(Resources.DEFAULTS.logo()));
 		viewport.add(panel);
 		
 		createWest();
