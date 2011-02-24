@@ -39,7 +39,6 @@ import com.gapso.web.trieda.client.mvp.model.DeslocamentoCampusDTO;
 import com.gapso.web.trieda.client.mvp.model.FileModel;
 import com.gapso.web.trieda.client.mvp.model.HorarioDisponivelCenarioDTO;
 import com.gapso.web.trieda.client.mvp.model.SalaDTO;
-import com.gapso.web.trieda.client.mvp.model.TurnoDTO;
 import com.gapso.web.trieda.client.services.CampiService;
 import com.gapso.web.trieda.server.util.ConvertBeans;
 import com.gapso.web.trieda.server.util.TriedaUtil;
@@ -307,21 +306,33 @@ public class CampiServiceImpl extends RemoteServiceServlet implements CampiServi
 			List<AtendimentoTatico> atendimentoTaticoList = AtendimentoTatico.findAllByCampus(campus);
 			Set<Sala> salas = new HashSet<Sala>();
 			Set<Turno> turnos = new HashSet<Turno>();
+			// MAP SALAID -> AtendimentoTaticoDTO
+			Map<Long, List<AtendimentoTaticoDTO>> salaDtoAtendimentoDto = new HashMap<Long, List<AtendimentoTaticoDTO>>();
 			for(AtendimentoTatico atendimentoTatico : atendimentoTaticoList) {
 				salas.add(atendimentoTatico.getSala());
 				turnos.add(atendimentoTatico.getOferta().getTurno());
+				
+				AtendimentoTaticoDTO atendimentoTaticoDTO = ConvertBeans.toAtendimentoTaticoDTO(atendimentoTatico);
+				if(salaDtoAtendimentoDto.containsKey(atendimentoTatico.getSala().getId())) {
+					salaDtoAtendimentoDto.get(atendimentoTatico.getSala().getId()).add(atendimentoTaticoDTO);
+				} else {
+					List<AtendimentoTaticoDTO> listAux = new ArrayList<AtendimentoTaticoDTO>();
+					listAux.add(atendimentoTaticoDTO);
+					salaDtoAtendimentoDto.put(atendimentoTatico.getSala().getId(), listAux);
+				}
 			}
 			Collection<SalaDTO> salasDTO = ConvertBeans.toSalaDTO(salas);
-			Collection<TurnoDTO> turnosDTO = ConvertBeans.toTurnoDTO(turnos);
+//			Collection<TurnoDTO> turnosDTO = ConvertBeans.toTurnoDTO(turnos);
 			
-			AtendimentosServiceImpl atService = new AtendimentosServiceImpl();
+//			AtendimentosServiceImpl atService = new AtendimentosServiceImpl();
 			double numeradorSala = 0.0;
 			double denominadorSala = 0.0;
 			double numeradorLab = 0.0;
 			double denominadorLab = 0.0;
-			for(TurnoDTO turnoDTO : turnosDTO) {
+			
+//			for(TurnoDTO turnoDTO : turnosDTO) {
 				for(SalaDTO salaDTO : salasDTO) {
-					List<AtendimentoTaticoDTO> atendimentosDTO = atService.getBusca(salaDTO, turnoDTO);
+					List<AtendimentoTaticoDTO> atendimentosDTO = salaDtoAtendimentoDto.get(salaDTO.getId());
 					for(AtendimentoTaticoDTO atendimentoDTO : atendimentosDTO) {
 						if(!salaDTO.isLaboratorio()) {
 							numeradorSala += atendimentoDTO.getQuantidadeAlunos();
@@ -332,7 +343,7 @@ public class CampiServiceImpl extends RemoteServiceServlet implements CampiServi
 						}
 					}
 				}
-			}
+//			}
 			double mediaSalaDeAula = TriedaUtil.round(numeradorSala / denominadorSala * 100.0, 2);
 			double mediaLaboratorio = TriedaUtil.round(numeradorLab / denominadorLab * 100.0, 2);
 			

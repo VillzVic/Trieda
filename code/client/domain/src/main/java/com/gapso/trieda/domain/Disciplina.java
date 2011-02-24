@@ -10,6 +10,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -45,16 +46,16 @@ import com.gapso.trieda.misc.Dificuldades;
 public class Disciplina implements Serializable {
 
 	@NotNull
-    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH}, targetEntity = Cenario.class)
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH}, targetEntity = Cenario.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "CEN_ID")
     private Cenario cenario;
 
     @NotNull
-    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH}, targetEntity = TipoDisciplina.class)
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH}, targetEntity = TipoDisciplina.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "TDI_ID")
     private TipoDisciplina tipoDisciplina;
 
-    @OneToOne(cascade = CascadeType.ALL, targetEntity = DivisaoCredito.class)
+    @OneToOne(cascade = CascadeType.ALL, targetEntity = DivisaoCredito.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "DCR_ID")
     private DivisaoCredito divisaoCreditos;
 
