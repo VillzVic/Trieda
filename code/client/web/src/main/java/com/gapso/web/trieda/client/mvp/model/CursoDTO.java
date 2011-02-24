@@ -99,5 +99,12 @@ public class CursoDTO extends FileModel {
 	public void setAdmMaisDeUmDisciplina(Boolean value) {
 		set("admMaisDeUmDisciplina", value);
 	}
-
+	
+	public String getDisplay() {
+		return get("display");
+	}
+	public void setDisplay(String value) {
+		set("display", value);
+	}	
+	
 }

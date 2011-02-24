@@ -22,7 +22,7 @@ public class CursoComboBox extends ComboBox<CursoDTO> {
 		
 		setStore(new ListStore<CursoDTO>(new BaseListLoader<BaseListLoadResult<CursoDTO>>(proxy)));
 		
-		setDisplayField("codigo");
+		setDisplayField("display");
 		setFieldLabel("Curso");
 		setEmptyText("Selecione o curso");
 		setSimpleTemplate("{nome} ({codigo})");

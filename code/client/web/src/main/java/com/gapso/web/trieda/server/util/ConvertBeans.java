@@ -172,6 +172,7 @@ public class ConvertBeans {
 		Campus campus = domain.getCampus();
 		dto.setCampusId(campus.getId());
 		dto.setCampusString(campus.getCodigo());
+		dto.setDisplay(domain.getNome() + " (" + domain.getCodigo() +")");
 		return dto;
 	}
 	
@@ -657,6 +658,7 @@ public class ConvertBeans {
 		dto.setTipoId(domain.getTipoCurso().getId());
 		dto.setTipoString(domain.getTipoCurso().getCodigo());
 		dto.setName(domain.getCodigo());
+		dto.setDisplay(domain.getNome() + " (" + domain.getCodigo() +")");
 		return dto;
 	}
 	
