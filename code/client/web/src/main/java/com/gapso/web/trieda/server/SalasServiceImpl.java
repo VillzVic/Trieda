@@ -143,7 +143,7 @@ public class SalasServiceImpl extends RemoteServiceServlet implements SalasServi
 		}
 		BasePagingLoadResult<SalaDTO> result = new BasePagingLoadResult<SalaDTO>(list);
 		result.setOffset(config.getOffset());
-		result.setTotalLength(Sala.count());
+		result.setTotalLength(Sala.count(campus, unidade));
 		return result;
 	}
 	

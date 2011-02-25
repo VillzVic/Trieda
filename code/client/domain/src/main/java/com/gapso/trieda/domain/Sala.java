@@ -211,10 +211,6 @@ public class Sala implements Serializable {
         if (em == null) throw new IllegalStateException("Entity manager has not been injected (is the Spring Aspects JAR configured as an AJC/AJDT aspects library?)");
         return em;
     }
-
-	public static int count() {
-        return ((Number) entityManager().createQuery("SELECT COUNT(o) FROM Sala o").getSingleResult()).intValue();
-    }
 	
 	public static int count(Cenario cenario) {
 		Query q = entityManager().createQuery("SELECT COUNT(o) FROM Sala o WHERE o.unidade.campus.cenario = :cenario");
@@ -295,7 +291,6 @@ public class Sala implements Serializable {
         return entityManager().find(Sala.class, id);
     }
 	
-	@SuppressWarnings("unchecked")
 	public static Sala findByCodigo(String codigo) {
 		Query q = entityManager().createQuery("SELECT o FROM Sala o WHERE codigo = :codigo");
 		q.setParameter("codigo", codigo);
@@ -309,6 +304,20 @@ public class Sala implements Serializable {
 		.getResultList();
 	}
 	
+	public static Integer count(Campus campus, Unidade unidade) {
+		String whereString = "";
+		if(campus != null || unidade != null) whereString += " WHERE ";
+		if(campus != null)                    whereString += " o.unidade.campus = :campus ";
+		if(campus != null && unidade != null) whereString += " AND ";
+		if(unidade != null)                   whereString += " o.unidade = :unidade ";
+		
+		Query q = entityManager().createQuery("SELECT COUNT(o) FROM Sala o "+whereString);
+
+		if(campus != null) q.setParameter("campus", campus);
+		if(unidade != null) q.setParameter("unidade", unidade);
+		
+		return ((Number) q.getSingleResult()).intValue();
+	}
 	@SuppressWarnings("unchecked")
     public static List<Sala> find(Campus campus, Unidade unidade, int firstResult, int maxResults, String orderBy) {
 		orderBy = (orderBy != null)? "ORDER BY o."+orderBy : "";
