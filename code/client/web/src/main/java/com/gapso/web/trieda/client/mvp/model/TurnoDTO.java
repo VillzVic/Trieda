@@ -1,12 +1,18 @@
 package com.gapso.web.trieda.client.mvp.model;
 
+import java.util.HashMap;
+import java.util.Map;
+
 
 
 public class TurnoDTO extends FileModel {
 
 	private static final long serialVersionUID = 5815525344760896272L;
 	
+	private Map<Integer,Integer> countHorariosAula;
+	
 	public TurnoDTO() {
+		countHorariosAula = new HashMap<Integer, Integer>();
 	}
 
 	/* == PROPRIEDADES ==
@@ -58,6 +64,19 @@ public class TurnoDTO extends FileModel {
 	}
 	public Integer getMaxCreditos() {
 		return get("maxCreditos");
+	}
+
+	public Map<Integer, Integer> getCountHorariosAula() {
+		return countHorariosAula;
+	}
+
+	public void setCountHorariosAula(Map<Integer, Integer> countHorariosAula) {
+		this.countHorariosAula = countHorariosAula;
+	}
+	
+	public int getMaxCreditos(int diaSemana) {
+		Integer value = countHorariosAula.get(diaSemana);
+		return (value != null) ? value : 0;
 	}
 
 	@Override

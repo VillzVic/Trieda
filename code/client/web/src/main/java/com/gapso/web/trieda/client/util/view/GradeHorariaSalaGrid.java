@@ -232,7 +232,7 @@ public class GradeHorariaSalaGrid extends ContentPanel {
 				
 				if(atDTO == null) return new Html("");
 				
-				final String title = atDTO.getDisciplinaString();
+				final String title = atDTO.getDisciplinaNome();
 				final String contentToolTip = atDTO.getContentToolTipVisaoSala();
 				
 				final Html html = new Html(atDTO.getContentVisaoSala()) {
@@ -241,7 +241,7 @@ public class GradeHorariaSalaGrid extends ContentPanel {
 						super.onRender(target, index);
 						target.setAttribute("qtip", contentToolTip);
 						target.setAttribute("qtitle", title);
-						target.setAttribute("qwidth", "200px");
+						target.setAttribute("qwidth", "400px");
 					}
 				};
 				html.addStyleName("horario");

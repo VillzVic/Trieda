@@ -33,6 +33,7 @@ import com.gapso.web.trieda.client.mvp.model.ParDTO;
 import com.gapso.web.trieda.client.mvp.model.TurnoDTO;
 import com.gapso.web.trieda.client.services.AtendimentosServiceAsync;
 import com.gapso.web.trieda.client.services.Services;
+import com.gapso.web.trieda.shared.util.TriedaUtil;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -291,20 +292,18 @@ public class GradeHorariaCursoGrid extends ContentPanel {
 				
 				final String title = atDTO.getDisciplinaString();
 				
-				String contentToolTipAux = "<b>Campus:</b> "+ atDTO.getCampusString() +"<br />"
-					+ "<b>Unidade:</b> "+ atDTO.getUnidadeString() +"<br />"
+				String contentToolTipAux = "<b>Nome:</b> "+ atDTO.getDisciplinaNome() +"<br />"
 					+ "<b>Sala:</b> "+ atDTO.getSalaString() +"<br />"
 					+ "<b>Turma:</b> "+ atDTO.getTurma() + "<br />"
-					+ "<b>Disciplina:</b> "+ atDTO.getDisciplinaString() +"<br />"
 					+ "<b>"+atDTO.getQuantidadeAlunos()+" alunos(s)</b><br />"
-					+ "<b>"+((atDTO.isTeorico())? "Teórico" : "Prático") +"</b><br />"
-					+ "<b>Creditos:</b> "+atDTO.getTotalCreditoDisciplina()+"/"+atDTO.getTotalCreditos()+"<br />";
+					+ "<b>Tipo Crédito:</b> "+((atDTO.isTeorico())? "Teórico" : "Prático") +"<br />"
+					+ "<b>Créditos:</b> "+atDTO.getTotalCreditos()+" de "+atDTO.getTotalCreditoDisciplina()+"<br />";
 				final String contentToolTip = contentToolTipAux;
 				
 				
 				String content = atDTO.getDisciplinaString() + "<br />";
 				
-				content += atDTO.getCampusString();
+				content += TriedaUtil.truncate(atDTO.getDisciplinaNome(),12);
 				content += "<br />";
 				
 				content += atDTO.getUnidadeString();
@@ -313,7 +312,7 @@ public class GradeHorariaCursoGrid extends ContentPanel {
 				content += atDTO.getSalaString();
 				content += "<br />";
 				
-				content += atDTO.getTurma();
+				content += "Turma " + atDTO.getTurma();
 				content += "<br />";
 				
 				final Html html = new Html(content) {
@@ -322,7 +321,7 @@ public class GradeHorariaCursoGrid extends ContentPanel {
 						super.onRender(target, index);
 						target.setAttribute("qtip", contentToolTip);
 						target.setAttribute("qtitle", title);
-						target.setAttribute("qwidth", "200px");
+						target.setAttribute("qwidth", "400px");
 					}
 				};
 				html.addStyleName("horario");

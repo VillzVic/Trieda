@@ -91,4 +91,8 @@ public class CurriculoDisciplinaDTO extends FileModel {
 		return get("disciplinaCodigoNomeString");
 	}
 	
+	@Override
+	public String getName() {
+		return getId().toString();
+	}
 }

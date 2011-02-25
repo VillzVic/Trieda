@@ -20,6 +20,7 @@ import com.extjs.gxt.ui.client.widget.grid.GridCellRenderer;
 import com.extjs.gxt.ui.client.widget.grid.GridSelectionModel;
 import com.extjs.gxt.ui.client.widget.grid.HeaderGroupConfig;
 import com.extjs.gxt.ui.client.widget.layout.FitLayout;
+import com.gapso.web.trieda.shared.util.TriedaUtil;
 
 public class DeslocamentoGrid<M extends BaseModel> extends ContentPanel {
 
@@ -119,7 +120,7 @@ public class DeslocamentoGrid<M extends BaseModel> extends ContentPanel {
 			}
 			columnModel = new ColumnModel(list);
 			for(int i = 0; i < models.size(); i++) {
-				String stringColumn = truncate((String) models.get(i).get("origemString"));
+				String stringColumn = TriedaUtil.truncate((String) models.get(i).get("origemString"),15);
 				if(containsCusto) {
 					columnModel.addHeaderGroup(0, (i+1)*2-1, new HeaderGroupConfig(stringColumn, 1, 2));
 				} else {
@@ -174,15 +175,4 @@ public class DeslocamentoGrid<M extends BaseModel> extends ContentPanel {
 		column.setRenderer(renderer);
 		return column;
 	}
-	
-	private String truncate(String label) {
-		int max = 15;
-		String ret = label;
-		if(ret.length() > max) {
-			ret = ret.substring(0, max);
-			ret += "...";
-		}
-		return ret;
-	}
-
 }

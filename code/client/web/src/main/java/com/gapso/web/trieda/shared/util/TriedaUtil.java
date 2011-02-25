@@ -1,4 +1,4 @@
-package com.gapso.web.trieda.server.util;
+package com.gapso.web.trieda.shared.util;
 
 public class TriedaUtil {
 
@@ -11,4 +11,12 @@ public class TriedaUtil {
 		return value;
 	}
 
+	static public String truncate(String text, int max) {
+		String ret = text;
+		if(ret.length() > max) {
+			ret = ret.substring(0, max);
+			ret += "...";
+		}
+		return ret;
+	}
 }

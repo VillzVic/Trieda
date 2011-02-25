@@ -264,6 +264,7 @@ public class ConvertBeans {
 		dto.setCampusId(domain.getUnidade().getCampus().getId());
 		dto.setUnidadeId(domain.getUnidade().getId());
 		dto.setUnidadeString(domain.getUnidade().getCodigo());
+		dto.setDisplay(domain.getCodigo() + " (" + domain.getNumero() + ")");
 		return dto;
 	}
 
@@ -319,6 +320,18 @@ public class ConvertBeans {
 		dto.setNome(domain.getNome());
 		dto.setTempo(domain.getTempo());
 		dto.setMaxCreditos(domain.getHorariosAula().size());
+		
+		Map<Integer,Integer> countHorariosAula = new HashMap<Integer, Integer>();
+		for (HorarioAula ha : domain.getHorariosAula()) {
+			for (HorarioDisponivelCenario hdc : ha.getHorariosDisponiveisCenario()) {
+				int semanaInt = Semanas.toInt(hdc.getSemana());
+				Integer value = countHorariosAula.get(semanaInt);
+				value = (value == null) ? 0 : value;
+				countHorariosAula.put(semanaInt,value+1);
+			}
+		}
+		dto.setCountHorariosAula(countHorariosAula);
+		
 		return dto;
 	}
 
@@ -1030,16 +1043,18 @@ public class ConvertBeans {
 		dto.setUnidadeId(domain.getSala().getUnidade().getId());
 		dto.setUnidadeString(domain.getSala().getUnidade().getCodigo());
 		dto.setSalaId(domain.getSala().getId());
-		dto.setSalaString(domain.getSala().getCodigo());
+		dto.setSalaString(domain.getSala().getNumero());
 		dto.setSemana(Semanas.toInt(domain.getSemana()));
 		dto.setOfertaId(domain.getOferta().getId());
 		dto.setDisciplinaId(domain.getDisciplina().getId());
 		dto.setDisciplinaString(domain.getDisciplina().getCodigo());
+		dto.setDisciplinaNome(domain.getDisciplina().getNome());
 		dto.setQuantidadeAlunos(domain.getQuantidadeAlunos());
 		dto.setQuantidadeAlunosString(domain.getQuantidadeAlunos().toString());
 		dto.setCreditosTeorico(domain.getCreditosTeorico());
 		dto.setCreditosPratico(domain.getCreditosPratico());
 		dto.setCursoString(domain.getOferta().getCurriculo().getCurso().getCodigo());
+		dto.setCursoNome(domain.getOferta().getCurriculo().getCurso().getNome());
 		dto.setCurricularString(domain.getOferta().getCurriculo().getCodigo());
 		dto.setPeriodo(domain.getOferta().getCurriculo().getPeriodo(domain.getDisciplina()));
 		dto.setPeriodoString(String.valueOf(domain.getOferta().getCurriculo().getPeriodo(domain.getDisciplina())));

@@ -46,17 +46,34 @@ public class FileModel extends BaseModel {
 		return get("folha");
 	}
 	
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((getName() == null) ? 0 : getName().hashCode());
+		result = prime * result + ((getPath() == null) ? 0 : getPath().hashCode());
+		return result;
+	}
 	
 	@Override
 	public boolean equals(Object obj) {
-		if (obj != null && obj instanceof FileModel) {
-			FileModel mobj = (FileModel) obj;
-			if (mobj.getName() != null && getName() != null) {
-				return getName().equals(mobj.getName())
-						&& getPath().equals(mobj.getPath());
-			}
-		}
-		return super.equals(obj);
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		FileModel other = (FileModel) obj;
+		if (getName() == null) {
+			if (other.getName() != null)
+				return false;
+		} else if (!getName().equals(other.getName()))
+			return false;
+		if (getPath() == null) {
+			if (other.getPath() != null)
+				return false;
+		} else if (!getPath().equals(other.getPath()))
+			return false;
+		return true;
 	}
-
 }

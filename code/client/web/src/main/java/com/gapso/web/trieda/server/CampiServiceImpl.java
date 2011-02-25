@@ -42,7 +42,7 @@ import com.gapso.web.trieda.client.mvp.model.SalaDTO;
 import com.gapso.web.trieda.client.mvp.model.TurnoDTO;
 import com.gapso.web.trieda.client.services.CampiService;
 import com.gapso.web.trieda.server.util.ConvertBeans;
-import com.gapso.web.trieda.server.util.TriedaUtil;
+import com.gapso.web.trieda.shared.util.TriedaUtil;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 /**
@@ -277,27 +277,46 @@ public class CampiServiceImpl extends RemoteServiceServlet implements CampiServi
 			Integer qtdAlunosAtendidos = 0;
 			Integer qtdAlunosNaoAtendidos = 0;
 			for(Demanda demanda : demandas) {
-				Set<String> turmas = new HashSet<String>();
+//				System.out.println("DEMANDA: "+demanda.getOferta().getCampus().getNome()+"-"+demanda.getOferta().getCurriculo().getCurso().getNome()+"-"+demanda.getOferta().getCurriculo().getDescricao());// TODO: retirar
+//				System.out.println("  discp: "+demanda.getDisciplina().getNome()+" ("+demanda.getQuantidade()+")");// TODO: retirar
 				List<AtendimentoTatico> atendimentos = AtendimentoTatico.findAllByDemanda(demanda);
-				int qtdAtendimento = 0;
-				double qtdCreditosAtendimento = 0.0;
+				int demandaAlunosCreditosT = demanda.getDisciplina().getCreditosTeorico()*demanda.getQuantidade();
+				int demandaAlunosCreditosP = demanda.getDisciplina().getCreditosPratico()*demanda.getQuantidade();
+				int demandaAlunosCreditosNeutros = demandaAlunosCreditosT + demandaAlunosCreditosP; 
 				for(AtendimentoTatico atendimento : atendimentos) {
-					qtdCreditosAtendimento += atendimento.getTotalCreditos(); 
-					if(turmas.add(atendimento.getTurma())) {
-						qtdAtendimento += atendimento.getQuantidadeAlunos(); 
+//					System.out.println("  +at: Turma:"+atendimento.getTurma()+" CP:"+atendimento.getCreditosPratico()+" CT:"+atendimento.getCreditosTeorico()+" qtd:"+atendimento.getQuantidadeAlunos());// TODO: retirar
+					demandaAlunosCreditosT -= atendimento.getCreditosTeorico()*atendimento.getQuantidadeAlunos();
+					demandaAlunosCreditosP -= atendimento.getCreditosPratico()*atendimento.getQuantidadeAlunos();
+					demandaAlunosCreditosNeutros -= atendimento.getTotalCreditos()*atendimento.getQuantidadeAlunos();
+				}
+//				System.out.println("  discp creds: "+demanda.getDisciplina().getTotalCreditos());// TODO: retirar
+				if (atendimentos.isEmpty()) {
+					qtdAlunosNaoAtendidos += demanda.getQuantidade();
+//					System.out.println("  nao atendidos: "+demanda.getQuantidade());// TODO: retirar
+				} else {
+					if ((demandaAlunosCreditosP > 0) && !demanda.getDisciplina().getLaboratorio()) {
+						if(demandaAlunosCreditosNeutros > 0) {
+							qtdAlunosNaoAtendidos += demandaAlunosCreditosNeutros/demanda.getDisciplina().getTotalCreditos();
+//							System.out.println("  nao atendidosN: "+(demandaAlunosCreditosNeutros/demanda.getDisciplina().getTotalCreditos()));// TODO: retirar
+						} else if (demandaAlunosCreditosNeutros < 0) {
+//							System.out.println("  sobra: "+demandaAlunosCreditosNeutros);// TODO: retirar
+						}
+					} else {
+						if(demandaAlunosCreditosT > 0) {
+							qtdAlunosNaoAtendidos += demandaAlunosCreditosT/demanda.getDisciplina().getCreditosTeorico();
+//							System.out.println("  nao atendidosT: "+(demandaAlunosCreditosT/demanda.getDisciplina().getCreditosTeorico()));// TODO: retirar
+						} else if (demandaAlunosCreditosT < 0) {
+//							System.out.println("  sobra: "+demandaAlunosCreditosT);// TODO: retirar
+						}
+						if(demandaAlunosCreditosP > 0) {
+							qtdAlunosNaoAtendidos += demandaAlunosCreditosP/demanda.getDisciplina().getCreditosPratico();
+//							System.out.println("  nao atendidosP: "+(demandaAlunosCreditosP/demanda.getDisciplina().getCreditosPratico()));// TODO: retirar
+						} else if (demandaAlunosCreditosT < 0) {
+//							System.out.println("  sobra: "+demandaAlunosCreditosP);// TODO: retirar
+						}
 					}
 				}
-				if(demanda.getDisciplina().getTotalCreditos() < qtdCreditosAtendimento) {
-					double fatorAjuste = qtdCreditosAtendimento / demanda.getDisciplina().getTotalCreditos();
-					if(demanda.getQuantidade() < qtdAtendimento) {
-						qtdAtendimento = qtdAtendimento - (int)(fatorAjuste - 1) * demanda.getQuantidade();
-					} else if(demanda.getQuantidade() > qtdAtendimento) {
-						qtdAtendimento = (int)((double)qtdAtendimento / fatorAjuste);
-					}
-				}
-				if(demanda.getQuantidade() >= qtdAtendimento) {
-					qtdAlunosNaoAtendidos += (demanda.getQuantidade() - qtdAtendimento);
-				}
+//				System.out.println("  total nao atendidos: "+qtdAlunosNaoAtendidos);// TODO: retirar
 			}
 			qtdAlunosAtendidos = Demanda.sumDemanda(campus) - qtdAlunosNaoAtendidos;
 			

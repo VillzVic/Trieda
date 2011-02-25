@@ -3,6 +3,7 @@ package com.gapso.web.trieda.client.mvp.model;
 import java.util.List;
 
 import com.extjs.gxt.ui.client.data.BaseModel;
+import com.gapso.web.trieda.shared.util.TriedaUtil;
 
 public class AtendimentoTaticoDTO extends BaseModel {
 
@@ -130,6 +131,13 @@ public class AtendimentoTaticoDTO extends BaseModel {
 		set("disciplinaString", value);
 	}
 	
+	public String getDisciplinaNome() {
+		return get("disciplinaNome");
+	}
+	public void setDisciplinaNome(String value) {
+		set("disciplinaNome", value);
+	}
+	
 	public void setQuantidadeAlunos(Integer value) {
 		set("quantidadeAlunos", value);
 	}
@@ -163,6 +171,13 @@ public class AtendimentoTaticoDTO extends BaseModel {
 	}
 	public String getCursoString() {
 		return get("cursoString");
+	}
+	
+	public void setCursoNome(String value) {
+		set("cursoNome", value);
+	}
+	public String getCursoNome() {
+		return get("cursoNome");
 	}
 	
 	public void setCurricularString(String value) {
@@ -202,10 +217,10 @@ public class AtendimentoTaticoDTO extends BaseModel {
 	}
 	
 	public void concatenateVisaoSala(AtendimentoTaticoDTO other) {
-		setCursoString(getCursoString() + "/" + other.getCursoString());
-		setCurricularString(getCurriculoString() + "/" + other.getCurriculoString());
-		setPeriodoString(getPeriodoString() + "/" + other.getPeriodoString());
-		setQuantidadeAlunosString(getQuantidadeAlunosString() + "/" + other.getQuantidadeAlunosString());
+		setCursoNome(getCursoNome() + " / " + other.getCursoNome());
+		setCurricularString(getCurriculoString() + " / " + other.getCurriculoString());
+		setPeriodoString(getPeriodoString() + " / " + other.getPeriodoString());
+		setQuantidadeAlunosString(getQuantidadeAlunosString() + " / " + other.getQuantidadeAlunosString());
 		setQuantidadeAlunos(getQuantidadeAlunos() + other.getQuantidadeAlunos());
 	}
 	
@@ -220,15 +235,16 @@ public class AtendimentoTaticoDTO extends BaseModel {
 	
 	public String getContentVisaoSala() {
 		return getDisciplinaString() + "<br />"
-		+ getTurma() + "<br />"
-		+ getCursoString() + "<br />"
+		+ TriedaUtil.truncate(getDisciplinaNome(),12) + "<br />"
+		+ "Turma " + getTurma() + "<br />"
+		//+ TriedaUtil.truncate(getCursoNome(),12) + "<br />"
 		+ getQuantidadeAlunosString() + " aluno(s)";
 	}
 	
 	public String getContentToolTipVisaoSala() {
 		return "<b>Turma:</b> "+ getTurma() + "<br />"
 		+ "<b>Crédito(s) " + ((isTeorico())? "Teórico(s)" : "Prático(s)") + ":</b> " + getTotalCreditos()+" de "+getTotalCreditoDisciplina() + "<br />"
-		+ "<b>Curso:</b> " + getCursoString() +"<br />"
+		+ "<b>Curso:</b> " + getCursoNome() +"<br />"
 		+ "<b>Matriz Curricular:</b> " + getCurriculoString() + "<br />"
 		+ "<b>Período:</b> "+ getPeriodoString() +"<br />" 
 		+ "<b>Quantidade:</b> "+ getQuantidadeAlunosString() +"<br />";

@@ -129,11 +129,11 @@ public class AtendimentosServiceImpl extends RemoteServiceServlet implements Ate
 		for (Entry<Integer,List<AtendimentoTaticoDTO>> entry : diaSemanaToAtendimentoTaticoDTOMap.entrySet()) {
 			List<List<AtendimentoTaticoDTO>> listListDTO = new ArrayList<List<AtendimentoTaticoDTO>>();
 			// verifica se o dia da semana extrapola a quantidade máxima de créditos
-			if (AtendimentoTaticoDTO.countListDTOsCreditos(entry.getValue()) > turnoDTO.getMaxCreditos()) {
+			if (AtendimentoTaticoDTO.countListDTOsCreditos(entry.getValue()) > turnoDTO.getMaxCreditos(entry.getKey())) {
 				// executa abordagem 1
 				listListDTO = agrupaAtendimentosAbordagem1(entry);
 				// verifica se o dia da semana continua extrapolando a quantidade máxima de créditos após a execução da abordagem 1
-				if (AtendimentoTaticoDTO.countListListDTOsCreditos(listListDTO) > turnoDTO.getMaxCreditos()) {
+				if (AtendimentoTaticoDTO.countListListDTOsCreditos(listListDTO) > turnoDTO.getMaxCreditos(entry.getKey())) {
 					// executa abordagem 2
 					listListDTO.clear();
 					listListDTO = agrupaAtendimentosAbordagem2(entry);

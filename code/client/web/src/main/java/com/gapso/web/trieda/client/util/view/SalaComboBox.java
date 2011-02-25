@@ -30,10 +30,10 @@ public class SalaComboBox extends ComboBox<SalaDTO> {
 		};
 		setStore(new ListStore<SalaDTO>(new BaseListLoader<BaseListLoadResult<SalaDTO>>(proxy)));
 		
-		setDisplayField("numero");
+		setDisplayField("display");
 		setFieldLabel("Sala");
 		setEmptyText("Selecione a sala");
-		setSimpleTemplate("{numero}");
+		setSimpleTemplate("{codigo}-{numero}");
 		
 		setEditable(false);
 		setEnabled(unidadeComboBox.getValue() != null);

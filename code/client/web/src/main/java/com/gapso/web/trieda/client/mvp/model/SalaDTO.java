@@ -104,5 +104,16 @@ public class SalaDTO extends FileModel {
 		// TODO MUDAR PARA CONSTANTE DO TIPO DE SALA
 		return getTipoId() == 2;
 	}
+	
+	public String getDisplay() {
+		return get("display");
+	}
+	public void setDisplay(String value) {
+		set("display", value);
+	}
 
+	@Override
+	public String getName() {
+		return getId().toString();
+	}
 }

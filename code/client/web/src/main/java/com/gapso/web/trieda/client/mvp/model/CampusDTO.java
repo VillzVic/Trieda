@@ -83,4 +83,9 @@ public class CampusDTO extends FileModel {
 	public Double getValorCredito() {
 		return get("valorCredito");
 	}
+
+	@Override
+	public String getName() {
+		return getId().toString();
+	}
 }
