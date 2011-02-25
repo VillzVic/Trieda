@@ -188,8 +188,26 @@ public class GrupoSala implements Serializable {
 		.getResultList();
 	}
 	
+	public static int count(String nome, String codigo, Unidade unidade) {
+		nome = (nome == null)? "" : nome;
+		nome = "%" + nome.replace('*', '%') + "%";
+		codigo = (codigo == null)? "" : codigo;
+		codigo = "%" + codigo.replace('*', '%') + "%";
+		
+		String unidadeQuery = (unidade==null)? "" : "o.unidade = :unidade AND ";
+		Query q = entityManager().createQuery("SELECT COUNT(o) FROM GrupoSala o WHERE " +
+				"LOWER(o.nome) LIKE LOWER(:nome) AND " +
+				"LOWER(o.codigo) LIKE LOWER(:codigo) AND " +
+				unidadeQuery +
+				" 1=1 ");
+		q.setParameter("nome", nome);
+		q.setParameter("codigo", codigo);
+		if(unidade != null) q.setParameter("unidade", unidade);
+		return ((Number)q.getSingleResult()).intValue();
+	}
+	
     @SuppressWarnings("unchecked")
-    public static List<GrupoSala> findByNomeLikeAndCodigoLikeAndUnidade(String nome, String codigo, Unidade unidade, int firstResult, int maxResults, String orderBy) {
+    public static List<GrupoSala> findBy(String nome, String codigo, Unidade unidade, int firstResult, int maxResults, String orderBy) {
         nome = (nome == null)? "" : nome;
         nome = "%" + nome.replace('*', '%') + "%";
         codigo = (codigo == null)? "" : codigo;
@@ -209,10 +227,6 @@ public class GrupoSala implements Serializable {
         return q.setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
 	
-	public static int count() {
-        return ((Number) entityManager().createQuery("select count(o) from GrupoSala o").getSingleResult()).intValue();
-    }
-
 	@SuppressWarnings("unchecked")
 	public List<Curriculo> getCurriculos() {
 		Query q = entityManager().createQuery("SELECT DISTINCT(cd.curriculo) FROM CurriculoDisciplina cd WHERE :gruposSala IN ELEMENTS(cd.gruposSala)");

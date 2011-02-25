@@ -187,13 +187,13 @@ public class CampiServiceImpl extends RemoteServiceServlet implements CampiServi
 				}
 			}
 		}
-		List<Campus> campi = Campus.findByNomeLikeAndCodigoLikeAndEstadoAndMunicipioLikeAndBairroLike(cenario, nome, codigo, estadoDomain, municipio, bairro, config.getOffset(), config.getLimit(), orderBy);
+		List<Campus> campi = Campus.findBy(cenario, nome, codigo, estadoDomain, municipio, bairro, config.getOffset(), config.getLimit(), orderBy);
 		for(Campus campus : campi) {
 			list.add(ConvertBeans.toCampusDTO(campus));
 		}
 		BasePagingLoadResult<CampusDTO> result = new BasePagingLoadResult<CampusDTO>(list);
 		result.setOffset(config.getOffset());
-		result.setTotalLength(Turno.count());
+		result.setTotalLength(Campus.count(cenario, nome, codigo, estadoDomain, municipio, bairro));
 		return result;
 	}
 	

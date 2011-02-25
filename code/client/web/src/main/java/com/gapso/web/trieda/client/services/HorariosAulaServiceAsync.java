@@ -12,7 +12,6 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public interface HorariosAulaServiceAsync {
 	
-	void getList(PagingLoadConfig config, AsyncCallback<PagingLoadResult<HorarioAulaDTO>> callback);
 	void save(HorarioAulaDTO horarioAulaDTO, AsyncCallback<Void> callback);
 	void remove(List<HorarioAulaDTO> horariosAulaDTOList, AsyncCallback<Void> callback);
 	void getBuscaList(SemanaLetivaDTO semanaLetivaDTO, TurnoDTO turnoDTO, Date horario, PagingLoadConfig loadConfig, AsyncCallback<PagingLoadResult<HorarioAulaDTO>> callback);

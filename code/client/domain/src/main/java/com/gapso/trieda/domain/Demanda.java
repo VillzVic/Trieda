@@ -146,10 +146,6 @@ public class Demanda implements Serializable {
         return em;
     }
 
-	public static int count() {
-        return ((Number) entityManager().createQuery("SELECT COUNT(o) FROM Demanda o").getSingleResult()).intValue();
-    }
-
 	public static int count(Cenario cenario) {
 		Query q = entityManager().createQuery("SELECT COUNT(o) FROM Demanda o WHERE o.disciplina.cenario = :cenario");
 		q.setParameter("cenario", cenario);
@@ -186,9 +182,29 @@ public class Demanda implements Serializable {
 		q.setParameter("campus", campus);
 		return q.getResultList();
 	}
+	
+	public static int count(Campus campus, Curso curso, Curriculo curriculo, Turno turno, Disciplina disciplina) {
+		String queryCampus 		= (campus == null)? "" : " o.oferta.campus = :campus AND ";
+		String queryCurso 		= (curso == null)? "" : " o.oferta.curriculo.curso = :curso AND ";
+		String queryCurriculo	= (curriculo == null)? "" : " o.oferta.curriculo = :curriculo AND ";
+		String queryTurno 		= (turno == null)? "" : " o.oferta.turno = :turno AND ";
+		String queryDisciplina	= (disciplina == null)? "" : " o.disciplina = :disciplina AND ";
+		
+		String queryString = queryCampus + queryCurso + queryCurriculo + queryTurno + queryDisciplina;
+		
+		Query q = entityManager().createQuery("SELECT COUNT(o) FROM Demanda o WHERE "+queryString+" 1=1");
+		
+		if(campus != null)		q.setParameter("campus", campus);
+		if(curso != null)		q.setParameter("curso", curso);
+		if(curriculo != null)	q.setParameter("curriculo", curriculo);
+		if(turno != null)		q.setParameter("turno", turno);
+		if(disciplina != null)	q.setParameter("disciplina", disciplina);
+		
+		return ((Number)q.getSingleResult()).intValue();
+	}
 
     @SuppressWarnings("unchecked")
-	public static List<Demanda> findByCampusAndCursoAndCurriculoAndTurnoAndDisciplina(Campus campus, Curso curso, Curriculo curriculo, Turno turno, Disciplina disciplina, int firstResult, int maxResults, String orderBy) {
+	public static List<Demanda> findBy(Campus campus, Curso curso, Curriculo curriculo, Turno turno, Disciplina disciplina, int firstResult, int maxResults, String orderBy) {
         orderBy = (orderBy != null) ? "ORDER BY o." + orderBy : "";
         
         String queryCampus 		= (campus == null)? "" : " o.oferta.campus = :campus AND ";

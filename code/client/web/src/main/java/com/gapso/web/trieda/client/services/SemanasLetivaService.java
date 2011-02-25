@@ -18,7 +18,6 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 @RemoteServiceRelativePath("semanasLetiva")
 public interface SemanasLetivaService extends RemoteService {
 	
-	PagingLoadResult<SemanaLetivaDTO> getList(PagingLoadConfig config);
 	ListLoadResult<SemanaLetivaDTO> getList();
 	ListLoadResult<SemanaLetivaDTO> getList(BasePagingLoadConfig loadConfig);
 	PagingLoadResult<SemanaLetivaDTO> getBuscaList(String codigo, String descricao, PagingLoadConfig config);

@@ -112,28 +112,6 @@ public class UnidadesServiceImpl extends RemoteServiceServlet implements Unidade
 	}
 	
 	@Override
-	public PagingLoadResult<UnidadeDTO> getList(PagingLoadConfig config) {
-		List<UnidadeDTO> list = new ArrayList<UnidadeDTO>();
-		String orderBy = config.getSortField();
-		if(orderBy != null) {
-			if(config.getSortDir() != null && config.getSortDir().equals(SortDir.DESC)) {
-				orderBy = orderBy + " asc";
-			} else {
-				orderBy = orderBy + " desc";
-			}
-		}
-		for(Unidade unidade : Unidade.find(config.getOffset(), config.getLimit(), orderBy)) {
-			UnidadeDTO unidadeDTO = ConvertBeans.toUnidadeDTO(unidade);
-			unidadeDTO.setCapSalas(Unidade.getCapacidadeMedia(unidade));
-			list.add(unidadeDTO);
-		}
-		BasePagingLoadResult<UnidadeDTO> result = new BasePagingLoadResult<UnidadeDTO>(list);
-		result.setOffset(config.getOffset());
-		result.setTotalLength(Unidade.count());
-		return result;
-	}
-
-	@Override
 	public ListLoadResult<UnidadeDTO> getList(BasePagingLoadConfig loadConfig) {
 		Long campusID = loadConfig.get("campusId");
 		System.out.println("Buscando: "+ campusID);
@@ -159,14 +137,14 @@ public class UnidadesServiceImpl extends RemoteServiceServlet implements Unidade
 		if(campusDTO != null) {
 			campus = ConvertBeans.toCampus(campusDTO);
 		}
-		for(Unidade unidade : Unidade.findByCampusCodigoLikeAndNomeLikeAndCodigoLike(campus, nome, codigo, config.getOffset(), config.getLimit(), orderBy)) {
+		for(Unidade unidade : Unidade.findBy(campus, nome, codigo, config.getOffset(), config.getLimit(), orderBy)) {
 			UnidadeDTO unidadeDTO = ConvertBeans.toUnidadeDTO(unidade);
 			unidadeDTO.setCapSalas(Unidade.getCapacidadeMedia(unidade));
 			list.add(unidadeDTO);
 		}
 		BasePagingLoadResult<UnidadeDTO> result = new BasePagingLoadResult<UnidadeDTO>(list);
 		result.setOffset(config.getOffset());
-		result.setTotalLength(Unidade.count());
+		result.setTotalLength(Unidade.count(campus, nome, codigo));
 		return result;
 	}
 	

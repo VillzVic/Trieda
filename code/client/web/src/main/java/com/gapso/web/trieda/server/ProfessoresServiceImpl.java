@@ -97,7 +97,7 @@ public class ProfessoresServiceImpl extends RemoteServiceServlet implements Prof
 		}
 		BasePagingLoadResult<ProfessorDTO> result = new BasePagingLoadResult<ProfessorDTO>(list);
 		result.setOffset(config.getOffset());
-		result.setTotalLength(Professor.count());
+		result.setTotalLength(Professor.count(cpf, tipoContrato, titulacao, areaTitulacao));
 		return result;
 	}
 	

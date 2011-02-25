@@ -140,10 +140,6 @@ public class HorarioAula implements Serializable {
         return em;
     }
 
-    public static int count() {
-        return ((Number) entityManager().createQuery("select count(o) from HorarioAula o").getSingleResult()).intValue();
-    }
-
     @SuppressWarnings("unchecked")
     public static List<HorarioAula> findAll() {
         return entityManager().createQuery("select o from HorarioAula o").getResultList();
@@ -163,9 +159,21 @@ public class HorarioAula implements Serializable {
         orderBy = (orderBy != null) ? "ORDER BY o." + orderBy : "";
         return entityManager().createQuery("select o from HorarioAula o " + orderBy).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
+    
+    public static int count(SemanaLetiva semanaLetiva, Turno turno, Date horario) {
+    	String horarioQuery = (horario == null)? "" : "o.horario = :horario AND";
+    	String semanaLetivaQuery = (semanaLetiva == null)? "" : "o.semanaLetiva = :semanaLetiva AND";
+    	String turnoQuery = (turno == null)? "" : "o.turno = :turno AND";
+    	
+    	Query q = entityManager().createQuery("SELECT COUNT(o) FROM HorarioAula o WHERE "+horarioQuery+" "+semanaLetivaQuery+" "+turnoQuery+" 1=1 ");
+    	if(horario != null) q.setParameter("horario", horario);
+    	if(semanaLetiva != null) q.setParameter("semanaLetiva", semanaLetiva);
+    	if(turno != null) q.setParameter("turno", turno);
+    	return ((Number)q.getSingleResult()).intValue();
+    }
 
     @SuppressWarnings("unchecked")
-    public static List<HorarioAula> findHorarioAulasByHorarioAndSemanaLetivaAndTurno(SemanaLetiva semanaLetiva, Turno turno, Date horario, int firstResult, int maxResults, String orderBy) {
+    public static List<HorarioAula> findBy(SemanaLetiva semanaLetiva, Turno turno, Date horario, int firstResult, int maxResults, String orderBy) {
     	orderBy = (orderBy != null) ? "ORDER BY o." + orderBy : "";
 
         String horarioQuery = (horario == null)? "" : "o.horario = :horario AND";

@@ -132,7 +132,7 @@ public class GruposSalasServiceImpl extends RemoteServiceServlet implements Grup
 		if(unidadeDTO != null) {
 			unidade = ConvertBeans.toUnidade(unidadeDTO);
 		}
-		List<GrupoSala> listGruposSalas = GrupoSala.findByNomeLikeAndCodigoLikeAndUnidade(nome, codigo, unidade, config.getOffset(), config.getLimit(), orderBy);
+		List<GrupoSala> listGruposSalas = GrupoSala.findBy(nome, codigo, unidade, config.getOffset(), config.getLimit(), orderBy);
 		for(GrupoSala grupoSala : listGruposSalas) {
 			String salasString = "";
 			Set<Sala> salas = grupoSala.getSalas();
@@ -148,7 +148,7 @@ public class GruposSalasServiceImpl extends RemoteServiceServlet implements Grup
 		}
 		BasePagingLoadResult<GrupoSalaDTO> result = new BasePagingLoadResult<GrupoSalaDTO>(list);
 		result.setOffset(config.getOffset());
-		result.setTotalLength(GrupoSala.count());
+		result.setTotalLength(GrupoSala.count(nome, codigo, unidade));
 		return result;
 	}
 

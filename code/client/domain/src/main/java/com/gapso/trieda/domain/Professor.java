@@ -313,14 +313,29 @@ public class Professor implements Serializable {
         return em;
     }
 
-	public static int count() {
-        return ((Number) entityManager().createQuery("SELECT count(o) FROM Professor o").getSingleResult()).intValue();
-    }
-
 	@SuppressWarnings("unchecked")
     public static List<Professor> findAll() {
         return entityManager().createQuery("SELECT o FROM Professor o").getResultList();
     }
+	
+	public static int count(String cpf, TipoContrato tipoContrato, Titulacao titulacao, AreaTitulacao areaTitulacao) {
+		String where = "";
+		
+		if(cpf != null)           where += " o.cpf = :cpf AND ";
+		if(tipoContrato != null)  where += " o.tipoContrato = :tipoContrato AND ";
+		if(titulacao != null)     where += " o.titulacao = :titulacao AND ";
+		if(areaTitulacao != null) where += " o.areaTitulacao = :areaTitulacao AND ";
+		if(where.length() > 1) where = " WHERE " + where.substring(0, where.length()-4);
+		
+		Query q = entityManager().createQuery("SELECT COUNT(o) FROM Professor o " + where);
+		
+		if(cpf != null)           q.setParameter("cpf", cpf);
+		if(tipoContrato != null)  q.setParameter("tipoContrato", tipoContrato);
+		if(titulacao != null)     q.setParameter("titulacao", titulacao);
+		if(areaTitulacao != null) q.setParameter("areaTitulacao", areaTitulacao);
+		
+		return ((Number)q.getSingleResult()).intValue();
+	}
 	
 	@SuppressWarnings("unchecked")
 	public static List<Professor> findBy(String cpf, TipoContrato tipoContrato, Titulacao titulacao, AreaTitulacao areaTitulacao, int firstResult, int maxResults, String orderBy) {

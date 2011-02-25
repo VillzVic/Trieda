@@ -53,29 +53,6 @@ public class SemanasLetivaServiceImpl extends RemoteServiceServlet implements Se
 	}
 	
 	@Override
-	public PagingLoadResult<SemanaLetivaDTO> getList(PagingLoadConfig config) {
-		
-		List<SemanaLetivaDTO> list = new ArrayList<SemanaLetivaDTO>();
-		String orderBy = config.getSortField();
-		if(orderBy != null) {
-			if(config.getSortDir() != null && config.getSortDir().equals(SortDir.DESC)) {
-				orderBy = orderBy + " asc";
-			} else {
-				orderBy = orderBy + " desc";
-			}
-		}
-		
-		for(SemanaLetiva semanaLetiva : SemanaLetiva.find(config.getOffset(), config.getLimit(), orderBy)) {
-			list.add(ConvertBeans.toSemanaLetivaDTO(semanaLetiva));
-		}
-		
-		BasePagingLoadResult<SemanaLetivaDTO> result = new BasePagingLoadResult<SemanaLetivaDTO>(list);
-		result.setOffset(config.getOffset());
-		result.setTotalLength(SemanaLetiva.count());
-		return result;
-	}
-	
-	@Override
 	public ListLoadResult<SemanaLetivaDTO> getList(BasePagingLoadConfig loadConfig) {
 		return getBuscaList(loadConfig.get("query").toString(), null, loadConfig);
 	}
@@ -91,12 +68,12 @@ public class SemanasLetivaServiceImpl extends RemoteServiceServlet implements Se
 				orderBy = orderBy + " desc";
 			}
 		}
-		for(SemanaLetiva semanaLetiva : SemanaLetiva.findByCodigoLikeAndDescricaoLike(codigo, descricao, config.getOffset(), config.getLimit(), orderBy)) {
+		for(SemanaLetiva semanaLetiva : SemanaLetiva.findBy(codigo, descricao, config.getOffset(), config.getLimit(), orderBy)) {
 			list.add(ConvertBeans.toSemanaLetivaDTO(semanaLetiva));
 		}
 		BasePagingLoadResult<SemanaLetivaDTO> result = new BasePagingLoadResult<SemanaLetivaDTO>(list);
 		result.setOffset(config.getOffset());
-		result.setTotalLength(SemanaLetiva.count());
+		result.setTotalLength(SemanaLetiva.count(codigo, descricao));
 		return result;
 	}
 	

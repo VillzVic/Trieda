@@ -162,8 +162,10 @@ public class DivisaoCredito implements Serializable {
         return em;
     }
 
-	public static int count() {
-        return ((Number) entityManager().createQuery("select count(o) from DivisaoCredito o").getSingleResult()).intValue();
+	public static int count(Cenario cenario) {
+		Query q = entityManager().createQuery("SELECT COUNT(o) FROM DivisaoCredito o, IN(o.cenario) c WHERE c = :cenario");
+		q.setParameter("cenario", cenario);
+        return ((Number) q.getSingleResult()).intValue();
     }
 
 	public static DivisaoCredito find(Long id) {

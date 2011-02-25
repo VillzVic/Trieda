@@ -131,13 +131,9 @@ public class Turno implements Serializable {
         if (em == null) throw new IllegalStateException("Entity manager has not been injected (is the Spring Aspects JAR configured as an AJC/AJDT aspects library?)");
         return em;
     }
-
-    public static int count() {
-        return ((Number) entityManager().createQuery("select count(o) from Turno o").getSingleResult()).intValue();
-    }
     
     @SuppressWarnings("unchecked")
-    public static List<Turno> findAllByCampus(Campus campus) {
+    public static List<Turno> findBy(Campus campus) {
     	Query q = entityManager().createQuery("SELECT distinct(o.turno) FROM Oferta o WHERE o.campus = :campus");
     	q.setParameter("campus", campus);
     	return q.getResultList();
@@ -162,9 +158,26 @@ public class Turno implements Serializable {
         orderBy = (orderBy != null) ? "ORDER BY o." + orderBy : "";
         return entityManager().createQuery("SELECT o FROM Turno o " + orderBy).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
+    
+    public static int count(String nome, Integer tempo) {
+    	nome = (nome == null || nome.length() == 0)? "" : nome;
+    	nome = nome.replace('*', '%');
+    	if (nome == "" || nome.charAt(0) != '%') {
+    		nome = "%" + nome;
+    	}
+    	if (nome.charAt(nome.length() -1) != '%') {
+    		nome = nome + "%";
+    	}
+    	
+    	String queryTempo = (tempo != null)? "AND o.tempo = :tempo" : "";
+    	Query q = entityManager().createQuery("SELECT COUNT(o) FROM Turno o WHERE LOWER(o.nome) LIKE LOWER(:nome) "+queryTempo);
+    	q.setParameter("nome", nome);
+    	if(tempo != null) q.setParameter("tempo", tempo);
+    	return ((Number)q.getSingleResult()).intValue();
+    }
 
     @SuppressWarnings("unchecked")
-    public static List<Turno> findByNomeLikeAndTempo(String nome, Integer tempo, int firstResult, int maxResults, String orderBy) {
+    public static List<Turno> findBy(String nome, Integer tempo, int firstResult, int maxResults, String orderBy) {
     	nome = (nome == null || nome.length() == 0)? "" : nome;
         nome = nome.replace('*', '%');
         if (nome == "" || nome.charAt(0) != '%') {

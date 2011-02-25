@@ -78,12 +78,12 @@ public class CurriculosServiceImpl extends RemoteServiceServlet implements Curri
 		if(cursoDTO != null) {
 			curso = ConvertBeans.toCurso(cursoDTO);
 		}
-		for(Curriculo curriculo : Curriculo.findByCursoAndCodigoLikeAndDescricaoLike(curso, codigo, descricao, config.getOffset(), config.getLimit(), orderBy)) {
+		for(Curriculo curriculo : Curriculo.findBy(curso, codigo, descricao, config.getOffset(), config.getLimit(), orderBy)) {
 			list.add(ConvertBeans.toCurriculoDTO(curriculo));
 		}
 		BasePagingLoadResult<CurriculoDTO> result = new BasePagingLoadResult<CurriculoDTO>(list);
 		result.setOffset(config.getOffset());
-		result.setTotalLength(Curriculo.count());
+		result.setTotalLength(Curriculo.count(curso, codigo, descricao));
 		return result;
 	}
 

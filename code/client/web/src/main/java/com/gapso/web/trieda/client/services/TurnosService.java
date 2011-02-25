@@ -18,7 +18,6 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 public interface TurnosService extends RemoteService {
 	
 	TurnoDTO getTurno(Long id);
-	PagingLoadResult<TurnoDTO> getList(PagingLoadConfig config);
 	ListLoadResult<TurnoDTO> getList();
 	ListLoadResult<TurnoDTO> getList(BasePagingLoadConfig loadConfig);
 	void save(TurnoDTO turnoDTO);

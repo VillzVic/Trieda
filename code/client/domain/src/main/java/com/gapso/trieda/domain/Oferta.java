@@ -132,10 +132,6 @@ public class Oferta implements Serializable {
         return em;
     }
 
-	public static int count() {
-        return ((Number) entityManager().createQuery("select count(o) from Oferta o").getSingleResult()).intValue();
-    }
-
 	@SuppressWarnings("unchecked")
 	public static List<Oferta> findAllBy(Sala sala) {
 		Query q = entityManager().createQuery("SELECT DISTINCT(o) FROM Oferta o, IN (o.curriculo.disciplinas) dis WHERE dis IN (:disciplinas)");
@@ -184,9 +180,26 @@ public class Oferta implements Serializable {
 		orderBy = (orderBy != null) ? "ORDER BY o." + orderBy : "";
         return entityManager().createQuery("select o from Oferta o "+orderBy).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
+	
+	public static int count(Turno turno, Campus campus, Curso curso, Curriculo curriculo) {
+		
+		
+		String queryTurno = (turno != null) ? " o.turno = :turno AND " : "";
+		String queryCampus = (campus != null) ? " o.campus = :campus AND " : "";
+		String queryCurso = (curso != null) ? " o.curriculo.curso = :curso AND " : "";
+		String queryCurriculo = (curriculo != null) ? " o.curriculo = :curriculo AND " : "";
+		
+		Query q = entityManager().createQuery("SELECT COUNT(o) FROM Oferta o WHERE "+queryTurno+queryCampus+queryCurso+queryCurriculo+" 1=1 ");
+		if(turno != null) q.setParameter("turno", turno);
+		if(campus != null) q.setParameter("campus", campus);
+		if(curso != null) q.setParameter("curso", curso);
+		if(curriculo != null) q.setParameter("curriculo", curriculo);
+		
+		return ((Number)q.getSingleResult()).intValue();
+	}
 
     @SuppressWarnings("unchecked")
-	public static List<Oferta> findByTurnoAndCampusAndCursoAndCurriculo(Turno turno, Campus campus, Curso curso, Curriculo curriculo, int firstResult, int maxResults, String orderBy) {
+	public static List<Oferta> findBy(Turno turno, Campus campus, Curso curso, Curriculo curriculo, int firstResult, int maxResults, String orderBy) {
         
         orderBy = (orderBy != null) ? "ORDER BY o." + orderBy : "";
         

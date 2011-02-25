@@ -973,7 +973,7 @@ public class ConvertBeans {
 			Curso curso = Curso.find(dto.getCursoId());
 			Curriculo curriculo = Curriculo.find(dto.getCurriculoId());
 			Turno turno = Turno.find(dto.getTurnoId());
-			List<Oferta> ofertas = Oferta.findByTurnoAndCampusAndCursoAndCurriculo(turno, campus, curso, curriculo, 0, 1, null);
+			List<Oferta> ofertas = Oferta.findBy(turno, campus, curso, curriculo, 0, 1, null);
 			domain.setOferta(ofertas.get(0));
 		}
 		domain.setDisciplina(Disciplina.find(dto.getDisciplinaId()));

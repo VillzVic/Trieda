@@ -126,10 +126,6 @@ public class ProfessorDisciplina implements java.io.Serializable {
         return em;
     }
 
-	public static int count() {
-        return ((Number) entityManager().createQuery("SELECT COUNT(o) FROM ProfessorDisciplina o").getSingleResult()).intValue();
-    }
-
 	@SuppressWarnings("unchecked")
     public static List<ProfessorDisciplina> findAll() {
         return entityManager().createQuery("SELECT o FROM ProfessorDisciplina o").getResultList();
@@ -144,6 +140,20 @@ public class ProfessorDisciplina implements java.io.Serializable {
     public static List<ProfessorDisciplina> find(int firstResult, int maxResults) {
         return entityManager().createQuery("SELECT o FROM ProfessorDisciplina o").setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
+	
+	public static int count(Professor professor, Disciplina disciplina) {
+		String where = "";
+		if(professor != null)  where += " o.professor = :professor AND ";
+		if(disciplina != null) where += " o.disciplina = :disciplina AND ";
+		if(where.length() > 1) where = " WHERE " + where.substring(0, where.length()-4);
+		
+		Query q = entityManager().createQuery("SELECT COUNT(o) FROM ProfessorDisciplina o "+where);
+		
+		if(professor != null)  q.setParameter("professor", professor);
+		if(disciplina != null) q.setParameter("disciplina", disciplina);
+		
+		return ((Number)q.getSingleResult()).intValue();
+	}
 	
 	@SuppressWarnings("unchecked")
 	public static List<ProfessorDisciplina> findBy(Professor professor, Disciplina disciplina, int firstResult, int maxResults, String orderBy) {

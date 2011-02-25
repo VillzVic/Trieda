@@ -47,7 +47,7 @@ public class DivisoesCreditosServiceImpl extends RemoteServiceServlet implements
 		
 		BasePagingLoadResult<DivisaoCreditoDTO> result = new BasePagingLoadResult<DivisaoCreditoDTO>(list);
 		result.setOffset(config.getOffset());
-		result.setTotalLength(DivisaoCredito.count());
+		result.setTotalLength(DivisaoCredito.count(cenario));
 		return result;
 	}
 	

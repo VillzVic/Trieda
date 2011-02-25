@@ -49,12 +49,12 @@ public class TiposCursosServiceImpl extends RemoteServiceServlet implements Tipo
 				orderBy = orderBy + " desc";
 			}
 		}
-		for(TipoCurso tipoCurso : TipoCurso.findByCodigoLikeAndDescricaoLike(nome, descricao, config.getOffset(), config.getLimit(), orderBy)) {
+		for(TipoCurso tipoCurso : TipoCurso.findBy(nome, descricao, config.getOffset(), config.getLimit(), orderBy)) {
 			list.add(ConvertBeans.toTipoCursoDTO(tipoCurso));
 		}
 		BasePagingLoadResult<TipoCursoDTO> result = new BasePagingLoadResult<TipoCursoDTO>(list);
 		result.setOffset(config.getOffset());
-		result.setTotalLength(TipoCurso.count());
+		result.setTotalLength(TipoCurso.count(nome, descricao));
 		return result;
 	}
 	

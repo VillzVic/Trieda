@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Set;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
@@ -112,10 +111,6 @@ public class AreaTitulacao implements Serializable {
         return em;
     }
 
-	public static int count() {
-        return ((Number) entityManager().createQuery("select count(o) from AreaTitulacao o").getSingleResult()).intValue();
-    }
-
 	@SuppressWarnings("unchecked")
     public static List<AreaTitulacao> findAll() {
         return entityManager().createQuery("select o from AreaTitulacao o").getResultList();
@@ -134,9 +129,23 @@ public class AreaTitulacao implements Serializable {
 		orderBy = (orderBy != null) ? "ORDER BY o." + orderBy : "";
         return entityManager().createQuery("select o from AreaTitulacao o").setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
+	
+	public static int count(String codigo, String descricao) {
+		codigo = (codigo == null)? "" : codigo;
+		codigo = "%" + codigo.replace('*', '%') + "%";
+		if(descricao != null) {
+			descricao = "%" + descricao.replace('*', '%') + "%";
+		}
+		
+		String descricaoQuery = (descricao == null)? "" : "AND LOWER(o.descricao) LIKE LOWER(:descricao)";
+		Query q = entityManager().createQuery("SELECT COUNT(o) FROM AreaTitulacao o WHERE LOWER(o.codigo) LIKE LOWER(:codigo) "+descricaoQuery);
+		q.setParameter("codigo", codigo);
+		if(descricao != null) q.setParameter("descricao", descricao);
+		return ((Number)q.getSingleResult()).intValue();
+	}
 
     @SuppressWarnings("unchecked")
-    public static List<AreaTitulacao> findByCodigoLikeAndDescricaoLike(String codigo, String descricao, int firstResult, int maxResults, String orderBy) {
+    public static List<AreaTitulacao> findBy(String codigo, String descricao, int firstResult, int maxResults, String orderBy) {
     	codigo = (codigo == null)? "" : codigo;
         codigo = "%" + codigo.replace('*', '%') + "%";
         if(descricao != null) {

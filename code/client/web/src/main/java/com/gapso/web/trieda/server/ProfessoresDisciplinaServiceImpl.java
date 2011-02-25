@@ -49,7 +49,7 @@ public class ProfessoresDisciplinaServiceImpl extends RemoteServiceServlet imple
 		}
 		BasePagingLoadResult<ProfessorDisciplinaDTO> result = new BasePagingLoadResult<ProfessorDisciplinaDTO>(list);
 		result.setOffset(config.getOffset());
-		result.setTotalLength(ProfessorDisciplina.count());
+		result.setTotalLength(ProfessorDisciplina.count(professor, disciplina));
 		return result;
 	}
 

@@ -13,7 +13,6 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 public interface TurnosServiceAsync {
 	
 	void getTurno(Long id, AsyncCallback<TurnoDTO> callback);
-	void getList(PagingLoadConfig config, AsyncCallback<PagingLoadResult<TurnoDTO>> callback);
 	void getList(AsyncCallback<ListLoadResult<TurnoDTO>> callback);
 	void getList(BasePagingLoadConfig loadConfig, AsyncCallback<ListLoadResult<TurnoDTO>> callback);
 	void save(TurnoDTO turnoDTO, AsyncCallback<Void> callback);

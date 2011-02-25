@@ -179,10 +179,6 @@ public class Curriculo implements Serializable {
         if (em == null) throw new IllegalStateException("Entity manager has not been injected (is the Spring Aspects JAR configured as an AJC/AJDT aspects library?)");
         return em;
     }
-
-	public static int count() {
-        return ((Number) entityManager().createQuery("SELECT COUNT(o) FROM Curriculo o").getSingleResult()).intValue();
-    }
 	
 	public static int count(Cenario cenario) {
 		Query q = entityManager().createQuery("SELECT COUNT(o) FROM Curriculo o WHERE o.cenario = :cenario");
@@ -226,8 +222,27 @@ public class Curriculo implements Serializable {
 		return q.getResultList();
 	}
 	
+	public static int count(Curso curso, String codigo, String descricao) {
+		codigo = (codigo == null)? "" : codigo;
+		codigo = "%" + codigo.replace('*', '%') + "%";
+		descricao = (descricao == null)? "" : descricao;
+		descricao = "%" + descricao.replace('*', '%') + "%";
+		
+		String queryCurso = "";
+		if(curso != null) {
+			queryCurso = "o.curso = :curso AND";
+		}
+		Query q = entityManager().createQuery("SELECT COUNT(o) FROM Curriculo o WHERE "+queryCurso+" LOWER(o.descricao) LIKE LOWER(:descricao) AND LOWER(o.codigo) LIKE LOWER(:codigo)");
+		if(curso != null) {
+			q.setParameter("curso", curso);
+		}
+		q.setParameter("codigo", codigo);
+		q.setParameter("descricao", descricao);
+		return ((Number)q.getSingleResult()).intValue();
+	}
+	
     @SuppressWarnings("unchecked")
-	public static List<Curriculo> findByCursoAndCodigoLikeAndDescricaoLike(Curso curso, String codigo, String descricao, int firstResult, int maxResults, String orderBy) {
+	public static List<Curriculo> findBy(Curso curso, String codigo, String descricao, int firstResult, int maxResults, String orderBy) {
 
         codigo = (codigo == null)? "" : codigo;
         codigo = "%" + codigo.replace('*', '%') + "%";

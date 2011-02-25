@@ -47,12 +47,12 @@ public class DemandasServiceImpl extends RemoteServiceServlet implements Demanda
 		Turno turno 			= (turnoDTO == null)? null 		: ConvertBeans.toTurno(turnoDTO);
 		Disciplina disciplina	= (disciplinaDTO == null)? null : ConvertBeans.toDisciplina(disciplinaDTO);
 		
-		for(Demanda demanda : Demanda.findByCampusAndCursoAndCurriculoAndTurnoAndDisciplina(campus, curso, curriculo, turno, disciplina, config.getOffset(), config.getLimit(), orderBy)) {
+		for(Demanda demanda : Demanda.findBy(campus, curso, curriculo, turno, disciplina, config.getOffset(), config.getLimit(), orderBy)) {
 			list.add(ConvertBeans.toDemandaDTO(demanda));
 		}
 		BasePagingLoadResult<DemandaDTO> result = new BasePagingLoadResult<DemandaDTO>(list);
 		result.setOffset(config.getOffset());
-		result.setTotalLength(Demanda.count());
+		result.setTotalLength(Demanda.count(campus, curso, curriculo, turno, disciplina));
 		return result;
 	}
 
@@ -62,7 +62,7 @@ public class DemandasServiceImpl extends RemoteServiceServlet implements Demanda
 		if(d.getId() != null && d.getId() > 0) {
 			d.merge();
 		} else {
-			List<Demanda> demandas = Demanda.findByCampusAndCursoAndCurriculoAndTurnoAndDisciplina(d.getOferta().getCampus(), d.getOferta().getCurriculo().getCurso(), d.getOferta().getCurriculo(), d.getOferta().getTurno(), d.getDisciplina(), 0, 1, null);
+			List<Demanda> demandas = Demanda.findBy(d.getOferta().getCampus(), d.getOferta().getCurriculo().getCurso(), d.getOferta().getCurriculo(), d.getOferta().getTurno(), d.getDisciplina(), 0, 1, null);
 			if(!demandas.isEmpty()) {
 				Integer qtd = d.getQuantidade();
 				d = demandas.get(0);

@@ -264,10 +264,6 @@ public class Curso implements Serializable {
         if (em == null) throw new IllegalStateException("Entity manager has not been injected (is the Spring Aspects JAR configured as an AJC/AJDT aspects library?)");
         return em;
     }
-
-	public static int count() {
-        return ((Number) entityManager().createQuery("SELECT COUNT(o) FROM Curso o").getSingleResult()).intValue();
-    }
 	
 	public static int count(Cenario cenario) {
 		Query q = entityManager().createQuery("SELECT COUNT(o) FROM Curso o WHERE o.cenario = :cenario");
@@ -303,7 +299,7 @@ public class Curso implements Serializable {
 	}
 	
     @SuppressWarnings("unchecked")
-	public static List<Curso> findByCodigoLikeAndNomeLikeAndTipo(String codigo, String nome, TipoCurso tipoCurso, int firstResult, int maxResults, String orderBy) {
+	public static List<Curso> findBy(String codigo, String nome, TipoCurso tipoCurso, int firstResult, int maxResults, String orderBy) {
 
         nome = (nome == null)? "" : nome;
         nome = "%" + nome.replace('*', '%') + "%";
@@ -322,6 +318,25 @@ public class Curso implements Serializable {
         q.setParameter("nome", nome);
         q.setParameter("codigo", codigo);
         return q.setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
+    }
+    
+    public static int count(String codigo, String nome, TipoCurso tipoCurso) {
+    	nome = (nome == null)? "" : nome;
+    	nome = "%" + nome.replace('*', '%') + "%";
+    	codigo = (codigo == null)? "" : codigo;
+    	codigo = "%" + codigo.replace('*', '%') + "%";
+    	
+    	String queryCampus = "";
+    	if(tipoCurso != null) {
+    		queryCampus = " o.tipoCurso = :tipoCurso AND ";
+    	}
+    	Query q = entityManager().createQuery("SELECT COUNT(o) FROM Curso o WHERE "+queryCampus+" LOWER(o.nome) LIKE LOWER(:nome) AND LOWER(o.codigo) LIKE LOWER(:codigo)");
+    	if(tipoCurso != null) {
+    		q.setParameter("tipoCurso", tipoCurso);
+    	}
+    	q.setParameter("nome", nome);
+    	q.setParameter("codigo", codigo);
+    	return ((Number)q.getSingleResult()).intValue();
     }
 	
 	private static final long serialVersionUID = 2645879541329424105L;

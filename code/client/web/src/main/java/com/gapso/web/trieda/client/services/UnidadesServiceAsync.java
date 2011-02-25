@@ -14,7 +14,6 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public interface UnidadesServiceAsync {
 
-	void getList(PagingLoadConfig config, AsyncCallback<PagingLoadResult<UnidadeDTO>> callback);
 	void getList(AsyncCallback<ListLoadResult<UnidadeDTO>> callback);
 	void save(UnidadeDTO unidadeDTO, AsyncCallback<Void> callback);
 	void remove(List<UnidadeDTO> unidadeDTOList, AsyncCallback<Void> callback);

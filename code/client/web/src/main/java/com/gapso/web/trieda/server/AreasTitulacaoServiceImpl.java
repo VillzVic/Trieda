@@ -42,12 +42,12 @@ public class AreasTitulacaoServiceImpl extends RemoteServiceServlet implements A
 				orderBy = orderBy + " desc";
 			}
 		}
-		for(AreaTitulacao areaTitulacao : AreaTitulacao.findByCodigoLikeAndDescricaoLike(nome, descricao, config.getOffset(), config.getLimit(), orderBy)) {
+		for(AreaTitulacao areaTitulacao : AreaTitulacao.findBy(nome, descricao, config.getOffset(), config.getLimit(), orderBy)) {
 			list.add(ConvertBeans.toAreaTitulacaoDTO(areaTitulacao));
 		}
 		BasePagingLoadResult<AreaTitulacaoDTO> result = new BasePagingLoadResult<AreaTitulacaoDTO>(list);
 		result.setOffset(config.getOffset());
-		result.setTotalLength(AreaTitulacao.count());
+		result.setTotalLength(AreaTitulacao.count(nome, descricao));
 		return result;
 	}
 

@@ -147,10 +147,6 @@ public class Unidade implements Serializable {
         return em;
     }
 
-    public static int count() {
-        return ((Number) entityManager().createQuery("select count(o) from Unidade o").getSingleResult()).intValue();
-    }
-
     @SuppressWarnings("unchecked")
     public static List<Unidade> findAll() {
         return entityManager().createQuery("select o from Unidade o").getResultList();
@@ -185,8 +181,27 @@ public class Unidade implements Serializable {
     	return q.getResultList();
     }
     
+    public static int count(Campus campus, String nome, String codigo) {
+
+        nome = (nome == null)? "" : nome;
+        nome = "%" + nome.replace('*', '%') + "%";
+        codigo = (codigo == null)? "" : codigo;
+        codigo = "%" + codigo.replace('*', '%') + "%";
+        
+        String queryCampus = "";
+        if(campus != null) {
+        	queryCampus = "unidade.campus = :campus AND";
+        }
+        Query q = entityManager().createQuery("SELECT COUNT(Unidade) FROM Unidade AS unidade WHERE "+queryCampus+" LOWER(unidade.nome) LIKE LOWER(:nome)  AND LOWER(unidade.codigo) LIKE LOWER(:codigo)");
+        if(campus != null) {
+        	q.setParameter("campus", campus);
+        }
+        q.setParameter("nome", nome);
+        q.setParameter("codigo", codigo);
+        return ((Number)q.getSingleResult()).intValue();
+    }
     @SuppressWarnings("unchecked")
-	public static List<Unidade> findByCampusCodigoLikeAndNomeLikeAndCodigoLike(Campus campus, String nome, String codigo, int firstResult, int maxResults, String orderBy) {
+	public static List<Unidade> findBy(Campus campus, String nome, String codigo, int firstResult, int maxResults, String orderBy) {
 
         nome = (nome == null)? "" : nome;
         nome = "%" + nome.replace('*', '%') + "%";

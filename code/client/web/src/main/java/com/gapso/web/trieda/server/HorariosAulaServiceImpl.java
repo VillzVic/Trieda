@@ -34,26 +34,6 @@ public class HorariosAulaServiceImpl extends RemoteServiceServlet implements Hor
 	private static final long serialVersionUID = 5250776996542788849L;
 
 	@Override
-	public PagingLoadResult<HorarioAulaDTO> getList(PagingLoadConfig config) {
-		List<HorarioAulaDTO> list = new ArrayList<HorarioAulaDTO>();
-		String orderBy = config.getSortField();
-		if(orderBy != null) {
-			if(config.getSortDir() != null && config.getSortDir().equals(SortDir.DESC)) {
-				orderBy = orderBy + " asc";
-			} else {
-				orderBy = orderBy + " desc";
-			}
-		}
-		for(HorarioAula horarioAula : HorarioAula.find(config.getOffset(), config.getLimit(), orderBy)) {
-			list.add(ConvertBeans.toHorarioAulaDTO(horarioAula));
-		}
-		BasePagingLoadResult<HorarioAulaDTO> result = new BasePagingLoadResult<HorarioAulaDTO>(list);
-		result.setOffset(config.getOffset());
-		result.setTotalLength(HorarioAula.count());
-		return result;
-	}
-	
-	@Override
 	public PagingLoadResult<HorarioAulaDTO> getBuscaList(SemanaLetivaDTO semanaLetivaDTO, TurnoDTO turnoDTO, Date horario, PagingLoadConfig config) {
 		List<HorarioAulaDTO> list = new ArrayList<HorarioAulaDTO>();
 		String orderBy = config.getSortField();
@@ -66,12 +46,12 @@ public class HorariosAulaServiceImpl extends RemoteServiceServlet implements Hor
 		}
 		SemanaLetiva semanaLetiva = (semanaLetivaDTO == null)? null : ConvertBeans.toSemanaLetiva(semanaLetivaDTO);
 		Turno turno = (turnoDTO == null)? null : ConvertBeans.toTurno(turnoDTO);
-		for(HorarioAula horarioAula : HorarioAula.findHorarioAulasByHorarioAndSemanaLetivaAndTurno(semanaLetiva, turno, horario, config.getOffset(), config.getLimit(), orderBy)) {
+		for(HorarioAula horarioAula : HorarioAula.findBy(semanaLetiva, turno, horario, config.getOffset(), config.getLimit(), orderBy)) {
 			list.add(ConvertBeans.toHorarioAulaDTO(horarioAula));
 		}
 		BasePagingLoadResult<HorarioAulaDTO> result = new BasePagingLoadResult<HorarioAulaDTO>(list);
 		result.setOffset(config.getOffset());
-		result.setTotalLength(HorarioAula.count());
+		result.setTotalLength(HorarioAula.count(semanaLetiva, turno, horario));
 		return result;
 	}
 

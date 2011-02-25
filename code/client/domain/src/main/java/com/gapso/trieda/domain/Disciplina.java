@@ -267,10 +267,6 @@ public class Disciplina implements Serializable {
 		}
 		return incomp;
 	}
-	
-	public static int count() {
-        return ((Number) entityManager().createQuery("SELECT COUNT(o) FROM Disciplina o").getSingleResult()).intValue();
-    }
 
 	public static int count(Cenario cenario) {
 		Query q = entityManager().createQuery("SELECT COUNT(o) FROM Disciplina o WHERE o.cenario = :cenario");
@@ -328,8 +324,28 @@ public class Disciplina implements Serializable {
 		return (Disciplina) q.getSingleResult();
 	}
 	
+	public static int count(String codigo, String nome, TipoDisciplina tipoDisciplina) {
+		
+		nome = (nome == null)? "" : nome;
+		nome = "%" + nome.replace('*', '%') + "%";
+		codigo = (codigo == null)? "" : codigo;
+		codigo = "%" + codigo.replace('*', '%') + "%";
+		
+		String queryCampus = "";
+		if(tipoDisciplina != null) {
+			queryCampus = " o.tipoDisciplina = :tipoDisciplina AND ";
+		}
+		Query q = entityManager().createQuery("SELECT COUNT(o) FROM Disciplina o WHERE "+queryCampus+" LOWER(o.nome) LIKE LOWER(:nome) AND LOWER(o.codigo) LIKE LOWER(:codigo)");
+		if(tipoDisciplina != null) {
+			q.setParameter("tipoDisciplina", tipoDisciplina);
+		}
+		q.setParameter("nome", nome);
+		q.setParameter("codigo", codigo);
+		return ((Number)q.getSingleResult()).intValue();
+	}
+	
     @SuppressWarnings("unchecked")
-	public static List<Disciplina> findByCodigoLikeAndNomeLikeAndTipo(String codigo, String nome, TipoDisciplina tipoDisciplina, int firstResult, int maxResults, String orderBy) {
+	public static List<Disciplina> findBy(String codigo, String nome, TipoDisciplina tipoDisciplina, int firstResult, int maxResults, String orderBy) {
 
         nome = (nome == null)? "" : nome;
         nome = "%" + nome.replace('*', '%') + "%";

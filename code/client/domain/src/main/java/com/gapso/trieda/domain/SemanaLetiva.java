@@ -156,10 +156,6 @@ public class SemanaLetiva implements Serializable {
         return em;
     }
 
-	public static int count() {
-        return ((Number) entityManager().createQuery("select count(o) from SemanaLetiva o").getSingleResult()).intValue();
-    }
-
 	@SuppressWarnings("unchecked")
     public static List<SemanaLetiva> findAll() {
         return entityManager().createQuery("select o from SemanaLetiva o").getResultList();
@@ -180,9 +176,22 @@ public class SemanaLetiva implements Serializable {
 		orderBy = (orderBy != null)? "ORDER BY o."+orderBy : "";
         return entityManager().createQuery("select o from SemanaLetiva o "+orderBy).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
+	
+	public static int count(String codigo, String descricao) {
+		codigo = (codigo == null)? "" : codigo;
+		codigo = "%" + codigo.replace('*', '%') + "%";
+		descricao = (descricao == null)? "" : descricao;
+		descricao = "%" + descricao.replace('*', '%') + "%";
+		
+		EntityManager em = Turno.entityManager();
+		Query q = em.createQuery("SELECT COUNT(o) FROM SemanaLetiva o WHERE LOWER(o.codigo) LIKE LOWER(:codigo) AND LOWER(o.descricao) LIKE LOWER(:descricao) ");
+		q.setParameter("codigo", codigo);
+		q.setParameter("descricao", descricao);
+		return ((Number)q.getSingleResult()).intValue();
+	}
 
     @SuppressWarnings("unchecked")
-    public static List<SemanaLetiva> findByCodigoLikeAndDescricaoLike(String codigo, String descricao, int firstResult, int maxResults, String orderBy) {
+    public static List<SemanaLetiva> findBy(String codigo, String descricao, int firstResult, int maxResults, String orderBy) {
         codigo = (codigo == null)? "" : codigo;
         codigo = "%" + codigo.replace('*', '%') + "%";
         descricao = (descricao == null)? "" : descricao;

@@ -13,7 +13,6 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public interface SemanasLetivaServiceAsync {
 	
-	void getList(PagingLoadConfig config, AsyncCallback<PagingLoadResult<SemanaLetivaDTO>> callback);
 	void getList(AsyncCallback<ListLoadResult<SemanaLetivaDTO>> callback);
 	void getList(BasePagingLoadConfig loadConfig, AsyncCallback<ListLoadResult<SemanaLetivaDTO>> callback);
 	void getBuscaList(String codigo, String descricao, PagingLoadConfig config, AsyncCallback<PagingLoadResult<SemanaLetivaDTO>> callback);

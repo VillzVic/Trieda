@@ -66,13 +66,13 @@ public class CursosServiceImpl extends RemoteServiceServlet implements CursosSer
 		if(tipoCursoDTO != null) {
 			tipoCurso = ConvertBeans.toTipoCurso(tipoCursoDTO);
 		}
-		for(Curso curso : Curso.findByCodigoLikeAndNomeLikeAndTipo(codigo, nome, tipoCurso, config.getOffset(), config.getLimit(), orderBy)) {
+		for(Curso curso : Curso.findBy(codigo, nome, tipoCurso, config.getOffset(), config.getLimit(), orderBy)) {
 			CursoDTO cursoDTO = ConvertBeans.toCursoDTO(curso);
 			list.add(cursoDTO);
 		}
 		BasePagingLoadResult<CursoDTO> result = new BasePagingLoadResult<CursoDTO>(list);
 		result.setOffset(config.getOffset());
-		result.setTotalLength(Curso.count());
+		result.setTotalLength(Curso.count(codigo, nome, tipoCurso));
 		return result;
 	}
 	

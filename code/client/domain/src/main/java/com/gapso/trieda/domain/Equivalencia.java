@@ -141,10 +141,6 @@ public class Equivalencia implements java.io.Serializable {
         return em;
     }
 
-	public static int count() {
-        return ((Number) entityManager().createQuery("SELECT COUNT(o) FROM Equivalencia o").getSingleResult()).intValue();
-    }
-
 	@SuppressWarnings("unchecked")
     public static List<Equivalencia> findAll() {
         return entityManager().createQuery("SELECT o FROM Equivalencia o").getResultList();
@@ -154,6 +150,16 @@ public class Equivalencia implements java.io.Serializable {
         if (id == null) return null;
         return entityManager().find(Equivalencia.class, id);
     }
+	
+	public static int count(Disciplina disciplina) {
+		String where = (disciplina == null)? "" : " WHERE disciplina = :disciplina ";
+		
+		Query q = entityManager().createQuery("SELECT COUNT(o) FROM Equivalencia o"+where);
+		
+		if(disciplina != null) q.setParameter("disciplina", disciplina);
+		
+		return ((Number)q.getSingleResult()).intValue();
+	}
 	
 	@SuppressWarnings("unchecked")
 	public static List<Equivalencia> findBy(Disciplina disciplina, int firstResult, int maxResults, String orderBy) {
@@ -165,7 +171,6 @@ public class Equivalencia implements java.io.Serializable {
 		if(disciplina != null) q.setParameter("disciplina", disciplina);
 		
 		return q.setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
-		
 	}
 
 	@SuppressWarnings("unchecked")

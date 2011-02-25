@@ -55,12 +55,12 @@ public class OfertasServiceImpl extends RemoteServiceServlet implements OfertasS
 		Curso curso = (cursoDTO != null)? ConvertBeans.toCurso(cursoDTO) : null;
 		Curriculo curriculo = (curriculoDTO != null)? ConvertBeans.toCurriculo(curriculoDTO) : null;
 
-		for(Oferta oferta : Oferta.findByTurnoAndCampusAndCursoAndCurriculo(turno, campus, curso, curriculo, config.getOffset(), config.getLimit(), orderBy)) {
+		for(Oferta oferta : Oferta.findBy(turno, campus, curso, curriculo, config.getOffset(), config.getLimit(), orderBy)) {
 			list.add(ConvertBeans.toOfertaDTO(oferta));
 		}
 		BasePagingLoadResult<OfertaDTO> result = new BasePagingLoadResult<OfertaDTO>(list);
 		result.setOffset(config.getOffset());
-		result.setTotalLength(Oferta.count());
+		result.setTotalLength(Oferta.count(turno, campus, curso, curriculo));
 		return result;
 	}
 

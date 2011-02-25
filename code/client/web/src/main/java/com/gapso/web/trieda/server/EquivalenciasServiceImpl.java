@@ -45,7 +45,7 @@ public class EquivalenciasServiceImpl extends RemoteServiceServlet implements Eq
 		}
 		BasePagingLoadResult<EquivalenciaDTO> result = new BasePagingLoadResult<EquivalenciaDTO>(listDTO);
 		result.setOffset(config.getOffset());
-		result.setTotalLength(Equivalencia.count());
+		result.setTotalLength(Equivalencia.count(disciplina));
 		return result;
 	}
 	
