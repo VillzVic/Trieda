@@ -111,6 +111,7 @@ public class ConvertBeans {
 			dto.setSemanaLetivaId(domain.getSemanaLetiva().getId());
 			dto.setSemanaLetivaString(domain.getSemanaLetiva().getCodigo());
 		}
+		dto.setDisplayText(domain.getNome());
 		return dto;
 	}
 	
@@ -383,6 +384,9 @@ public class ConvertBeans {
 		fimCal.setTime(domain.getHorario());
 		fimCal.add(Calendar.MINUTE, turno.getTempo());
 		dto.setFim(fimCal.getTime());
+		
+		dto.setDisplayText(domain.getHorario().toString());
+		
 		return dto;
 	}
 
@@ -686,11 +690,12 @@ public class ConvertBeans {
 	}
 	
 	public static AreaTitulacaoDTO toAreaTitulacaoDTO(AreaTitulacao domain) {
-		AreaTitulacaoDTO dto = new AreaTitulacaoDTO();
-		dto.setId(domain.getId());
-		dto.setVersion(domain.getVersion());
-		dto.setCodigo(domain.getCodigo());
-		dto.setDescricao(domain.getDescricao());
+		AreaTitulacaoDTO dto = new AreaTitulacaoDTO(
+			domain.getId(),
+			domain.getCodigo(),
+			domain.getDescricao(),
+			domain.getVersion()
+		);
 		return dto;
 	}
 	
@@ -775,11 +780,11 @@ public class ConvertBeans {
 	public static List<DeslocamentoCampus> toDeslocamentoCampus(DeslocamentoCampusDTO deslocamentoCampusDTO) {
 		List<Long> listIds = new ArrayList<Long>();
 		for(String keyString : deslocamentoCampusDTO.getPropertyNames()) {
-			if(keyString.startsWith("destinoTempo")) {
-				Long id = Long.valueOf(keyString.replace("destinoTempo", ""));
+			if(keyString.startsWith(DeslocamentoCampusDTO.PROPERTY_DESTINO_TEMPO)) {
+				Long id = Long.valueOf(keyString.replace(DeslocamentoCampusDTO.PROPERTY_DESTINO_TEMPO, ""));
 				if(!listIds.contains(id)) listIds.add(id);
-			} else if(keyString.startsWith("destinoCusto")) {
-				Long id = Long.valueOf(keyString.replace("destinoCusto", ""));
+			} else if(keyString.startsWith(DeslocamentoCampusDTO.PROPERTY_DESTINO_CUSTO)) {
+				Long id = Long.valueOf(keyString.replace(DeslocamentoCampusDTO.PROPERTY_DESTINO_CUSTO, ""));
 				if(!listIds.contains(id)) listIds.add(id);
 			}
 		}
@@ -810,6 +815,7 @@ public class ConvertBeans {
 		for(DeslocamentoCampus du : set) {
 			deslocamentoCampusDTO.addDestino(du.getDestino().getId(), du.getDestino().getCodigo(), du.getTempo(), du.getCusto());
 		}
+		deslocamentoCampusDTO.setDisplayText(campus.getCodigo());
 		return deslocamentoCampusDTO;
 	}
 	
@@ -1237,6 +1243,7 @@ public class ConvertBeans {
 			dto.setSalaId(sala.getId());
 			dto.setSalaString(sala.getCodigo());
 		}
+		dto.setDisplayText(domain.getCodigo());
 		return dto;
 	}
 }

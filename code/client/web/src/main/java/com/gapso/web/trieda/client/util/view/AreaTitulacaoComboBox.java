@@ -8,6 +8,7 @@ import com.extjs.gxt.ui.client.store.ListStore;
 import com.extjs.gxt.ui.client.widget.form.ComboBox;
 import com.gapso.web.trieda.client.mvp.model.AreaTitulacaoDTO;
 import com.gapso.web.trieda.client.services.Services;
+import com.gapso.web.trieda.shared.dtos.AbstractDTO;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class AreaTitulacaoComboBox extends ComboBox<AreaTitulacaoDTO> {
@@ -22,7 +23,7 @@ public class AreaTitulacaoComboBox extends ComboBox<AreaTitulacaoDTO> {
 		
 		setStore(new ListStore<AreaTitulacaoDTO>(new BaseListLoader<BaseListLoadResult<AreaTitulacaoDTO>>(proxy)));
 		setFieldLabel("Área de Titulação");
-		setDisplayField("codigo");
+		setDisplayField(AbstractDTO.PROPERTY_DISPLAY_TEXT);
 		setEditable(false);
 		setTriggerAction(TriggerAction.ALL);
 	}

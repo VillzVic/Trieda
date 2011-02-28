@@ -1,10 +1,16 @@
 package com.gapso.web.trieda.client.mvp.model;
 
-import com.extjs.gxt.ui.client.data.BaseModel;
+import com.gapso.web.trieda.shared.dtos.AbstractDTO;
 
-public class AreaTitulacaoDTO extends BaseModel {
+public class AreaTitulacaoDTO extends AbstractDTO<String> implements Comparable<AreaTitulacaoDTO> {
 
 	private static final long serialVersionUID = -5134820110949139907L;
+	
+	// Propriedades
+	public static final String PROPERTY_ID = "id";
+	public static final String PROPERTY_VERSION = "version";
+	public static final String PROPERTY_CODIGO = "codigo";
+	public static final String PROPERTY_DESCRICAO = "descricao";
 
 	public AreaTitulacaoDTO() {
 		super();
@@ -12,37 +18,48 @@ public class AreaTitulacaoDTO extends BaseModel {
 
 	public AreaTitulacaoDTO(Long id, String codigo, String descricao, Integer version) {
 		setId(id);
-		setVersion(version);
 		setCodigo(codigo);
 		setDescricao(descricao);
+		setVersion(version);
+		
+		setDisplayText(codigo);
 	}
 	
 	public void setId(Long value) {
-		set("id", value);
+		set(PROPERTY_ID, value);
 	}
 	public Long getId() {
-		return get("id");
+		return get(PROPERTY_ID);
 	}
 	
 	public void setVersion(Integer value) {
-		set("version", value);
+		set(PROPERTY_VERSION, value);
 	}
 	public Integer getVersion() {
-		return get("version");
+		return get(PROPERTY_VERSION);
 	}
 	
 	public String getCodigo() {
-		return get("codigo");
+		return get(PROPERTY_CODIGO);
 	}
 	public void setCodigo(String value) {
-		set("codigo", value);
+		set(PROPERTY_CODIGO, value);
 	}
 
 	public String getDescricao() {
-		return get("descricao");
+		return get(PROPERTY_DESCRICAO);
 	}
 	public void setDescricao(String value) {
-		set("descricao", value);
+		set(PROPERTY_DESCRICAO, value);
 	}
 	
+	@Override
+	public String getNaturalKey() {
+		return getCodigo();
+	}
+	
+	@Override
+	public int compareTo(AreaTitulacaoDTO o) {
+		return getCodigo().compareTo(o.getCodigo());
+	}
 }

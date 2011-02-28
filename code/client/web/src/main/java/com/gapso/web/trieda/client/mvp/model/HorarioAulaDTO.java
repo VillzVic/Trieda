@@ -2,13 +2,22 @@ package com.gapso.web.trieda.client.mvp.model;
 
 import java.util.Date;
 
-import com.extjs.gxt.ui.client.data.BaseModel;
+import com.gapso.web.trieda.shared.dtos.AbstractDTO;
 
-
-public class HorarioAulaDTO extends BaseModel {
+public class HorarioAulaDTO extends AbstractDTO<String> implements Comparable<HorarioAulaDTO> {
 
 	private static final long serialVersionUID = -4670030478798237916L;
 	
+	// Propriedades
+	public static final String PROPERTY_ID = "id";
+	public static final String PROPERTY_VERSION = "version";
+	public static final String PROPERTY_SEMANA_LETIVA_ID = "semanaLetivaId";
+	public static final String PROPERTY_SEMANA_LETIVA_STRING = "semanaLetivaString";
+	public static final String PROPERTY_TURNO_ID = "turnoId";
+	public static final String PROPERTY_TURNO_STRING = "turnoString";
+	public static final String PROPERTY_INICIO = "inicio";
+	public static final String PROPERTY_FIM = "fim";
+		
 	public HorarioAulaDTO() {
 	}
 
@@ -24,59 +33,76 @@ public class HorarioAulaDTO extends BaseModel {
 	}
 	
 	public void setId(Long value) {
-		set("id", value);
+		set(PROPERTY_ID, value);
 	}
 	public Long getId() {
-		return get("id");
+		return get(PROPERTY_ID);
 	}
 	
 	public void setVersion(Integer value) {
-		set("version", value);
+		set(PROPERTY_VERSION, value);
 	}
 	public Integer getVersion() {
-		return get("version");
+		return get(PROPERTY_VERSION);
 	}
 
 	public void setSemanaLetivaId(Long value) {
-		set("semanaLetivaId", value);
+		set(PROPERTY_SEMANA_LETIVA_ID, value);
 	}
 	public Long getSemanaLetivaId() {
-		return get("semanaLetivaId");
+		return get(PROPERTY_SEMANA_LETIVA_ID);
 	}
 	
 	public void setSemanaLetivaString(String value) {
-		set("semanaLetivaString", value);
+		set(PROPERTY_SEMANA_LETIVA_STRING, value);
 	}
 	public String getSemanaLetivaString() {
-		return get("semanaLetivaString");
+		return get(PROPERTY_SEMANA_LETIVA_STRING);
 	}
 
 	public void setTurnoId(Long value) {
-		set("turnoId", value);
+		set(PROPERTY_TURNO_ID, value);
 	}
 	public Long getTurnoId() {
-		return get("turnoId");
+		return get(PROPERTY_TURNO_ID);
 	}
 	
 	public void setTurnoString(String value) {
-		set("turnoString", value);
+		set(PROPERTY_TURNO_STRING, value);
 	}
 	public String getTurnoString() {
-		return get("turnoString");
+		return get(PROPERTY_TURNO_STRING);
 	}
 	
 	public void setInicio(Date value) {
-		set("inicio", value);
+		set(PROPERTY_INICIO, value);
 	}
 	public Date getInicio() {
-		return get("inicio");
+		return get(PROPERTY_INICIO);
 	}
 	
 	public void setFim(Date value) {
-		set("fim", value);
+		set(PROPERTY_FIM, value);
 	}
 	public Date getFim() {
-		return get("fim");
+		return get(PROPERTY_FIM);
 	}
 	
+	@Override
+	public String getNaturalKey() {
+		return getSemanaLetivaString() + "-" + getTurnoString() + "-" + getInicio() + "-" + getFim();
+	}
+
+	@Override
+	public int compareTo(HorarioAulaDTO o) {
+		int compareSemanaLetiva = getSemanaLetivaString().compareTo(o.getSemanaLetivaString());
+		if (compareSemanaLetiva == 0) {
+			int compareTurno = getTurnoString().compareTo(o.getTurnoString());
+			if (compareTurno == 0) {
+				return getInicio().compareTo(o.getInicio());
+			}
+			return compareTurno;
+		}
+		return compareSemanaLetiva;
+	}
 }
