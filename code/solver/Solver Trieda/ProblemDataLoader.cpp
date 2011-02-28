@@ -1627,11 +1627,25 @@ void ProblemDataLoader::estima_turmas()
                //int numTurmas = (demDisc / problemData->refDisciplinas[*itDisc]->max_alunos_p);
                int numTurmas = (demDisc / 25);
                problemData->refDisciplinas[*itDisc]->num_turmas = (numTurmas > 0 ? numTurmas + 2 : 2);
+
+               if ( abs(problemData->refDisciplinas[*itDisc]->getId()) == 101 || 
+                  abs(problemData->refDisciplinas[*itDisc]->getId()) == 178 ||
+                  abs(problemData->refDisciplinas[*itDisc]->getId()) == 349 )
+                  problemData->refDisciplinas[*itDisc]->num_turmas += 1;
+               else if ( problemData->refDisciplinas[*itDisc]->max_creds >= 6)
+                  problemData->refDisciplinas[*itDisc]->num_turmas += 1;
             }
             else
             {
                //problemData->refDisciplinas[*itDisc]->num_turmas = (demDisc / tamMedSalasCP) + 2;
                problemData->refDisciplinas[*itDisc]->num_turmas = (demDisc / 25) + 2;
+
+               if ( abs(problemData->refDisciplinas[*itDisc]->getId()) == 101 || 
+                  abs(problemData->refDisciplinas[*itDisc]->getId()) == 178 ||
+                  abs(problemData->refDisciplinas[*itDisc]->getId()) == 349 )
+                  problemData->refDisciplinas[*itDisc]->num_turmas += 1;
+               else if ( problemData->refDisciplinas[*itDisc]->max_creds >= 6)
+                  problemData->refDisciplinas[*itDisc]->num_turmas += 1;
             }
          }
          else
@@ -1640,12 +1654,26 @@ void ProblemDataLoader::estima_turmas()
             {
                //int numTurmas = (demDisc / problemData->refDisciplinas[*itDisc]->max_alunos_t);
                int numTurmas = (demDisc / 50);
-               problemData->refDisciplinas[*itDisc]->num_turmas = (numTurmas > 0 ? numTurmas + 1 : 1);                
+               problemData->refDisciplinas[*itDisc]->num_turmas = (numTurmas > 0 ? numTurmas + 1 : 1);     
+
+               if ( abs(problemData->refDisciplinas[*itDisc]->getId()) == 101 || 
+                  abs(problemData->refDisciplinas[*itDisc]->getId()) == 178 ||
+                  abs(problemData->refDisciplinas[*itDisc]->getId()) == 349 )
+                  problemData->refDisciplinas[*itDisc]->num_turmas += 1;
+               else if ( problemData->refDisciplinas[*itDisc]->max_creds >= 6)
+                  problemData->refDisciplinas[*itDisc]->num_turmas += 1;
             }
             else
             {
                //problemData->refDisciplinas[*itDisc]->num_turmas = (demDisc / tamMedSalasCP) + 5;
                problemData->refDisciplinas[*itDisc]->num_turmas = (demDisc / 50) + 1;
+
+               if ( abs(problemData->refDisciplinas[*itDisc]->getId()) == 101 || 
+                  abs(problemData->refDisciplinas[*itDisc]->getId()) == 178 ||
+                  abs(problemData->refDisciplinas[*itDisc]->getId()) == 349 )
+                  problemData->refDisciplinas[*itDisc]->num_turmas += 1;
+               else if ( problemData->refDisciplinas[*itDisc]->max_creds >= 6)
+                  problemData->refDisciplinas[*itDisc]->num_turmas += 1;
             }
          }
       }
@@ -1923,6 +1951,9 @@ void ProblemDataLoader::cache()
          it_disc->min_creds = 1;
          it_disc->max_creds = it_disc->cred_praticos + it_disc->cred_teoricos;
       }
+
+      if ( it_disc->min_creds > 2 )
+         it_disc->min_creds = 1;
    }
 
    /*

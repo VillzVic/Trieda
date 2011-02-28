@@ -313,15 +313,6 @@ int SolverMIP::solve()
 
    int status = 0;
 
-   /**/
-   lp->setTimeLimit(2400);
-   //lp->setMIPStartAlg(METHOD_PRIMAL);
-   lp->setMIPEmphasis(0);
-   lp->setMIPScreenLog(4);
-   //lp->setMIPRelTol(0.02);
-   //lp->setNoCuts();
-   lp->setNodeLimit(1);
-
    // Muda FO para considerar somente atendimento
    double *objOrig = new double[lp->getNumCols()];
    lp->getObj(0,lp->getNumCols()-1,objOrig);
@@ -347,7 +338,14 @@ int SolverMIP::solve()
 
    lp->chgObj(lp->getNumCols(),idxNova,objNova);
 
-   lp->setHeurFrequency(1.0);
+   //lp->setHeurFrequency(1.0);
+   lp->setTimeLimit(2400);
+   //lp->setMIPStartAlg(METHOD_PRIMAL);
+   lp->setMIPEmphasis(0);
+   lp->setMIPScreenLog(4);
+   //lp->setMIPRelTol(0.02);
+   //lp->setNoCuts();
+   //lp->setNodeLimit(1);
    lp->setPreSolve(OPT_TRUE);
 
    // Resolve problema olhando somente atendimento
@@ -386,40 +384,25 @@ int SolverMIP::solve()
 
    lp->updateLP();
 
+   lp->setHeurFrequency(1.0);
+   lp->setTimeLimit(1200);
+   //lp->setMIPStartAlg(METHOD_PRIMAL);
+   lp->setMIPEmphasis(1);
+   lp->setMIPScreenLog(4);
+   //lp->setMIPRelTol(0.02);
+   //lp->setNoCuts();
+   //lp->setNodeLimit(1);
+   lp->setPreSolve(OPT_TRUE);
+   lp->copyMIPStartSol(lp->getNumCols(),idxNova,xSolInic);
+
    lp->chgObj(lp->getNumCols(),idxNova,objOrig);
 
-   lp->copyMIPStartSol(lp->getNumCols(),idxNova,xSolInic);
+   status = localBranching(xSolInic,1200.0);
 
    delete[] objNova;
    delete[] objOrig;
    delete[] idxNova;
-
-   status = localBranching(xSolInic,2400.0);
-
    delete[] xSolInic;
-
-   //lp->setNodeLimit(100000);
-   //lp->setMIPEmphasis(1);
-   //lp->setHeurFrequency(1.0);
-   //lp->setTimeLimit(1800);
-   //lp->setNoCuts();
-   //lp->updateLP();
-
-   //lp->writeProbLP("TriedaLP");
-
-   //status = lp->optimize(METHOD_MIP);
-
-   //lp->getX(xSolInic);
-
-   //lp->chgObj(lp->getNumCols(),idxNova,objOrig);
-
-   //lp->copyMIPStartSol(lp->getNumCols(),idxNova,xSolInic);
-
-   //lp->setNodeLimit(1);
-   //lp->setTimeLimit(3600);
-   //lp->setMIPEmphasis(1);
-
-   //status = lp->optimize(METHOD_MIP);
 
    double *xSol = NULL;
    xSol = new double[lp->getNumCols()];
@@ -437,9 +420,6 @@ int SolverMIP::solve()
 
    delete[] xSol;
 
-   //lp->writeSolution("Solver Trieda.sol");
-   /**/
-
    return status;
 }
 
@@ -455,7 +435,7 @@ int SolverMIP::localBranching(double *xSol, double maxTime)
       idxSol[i] = i;
    }
 
-   while (nIter < 1)
+   while (nIter < 3)
    {
       //if ( maxTime - actTime < 100 )
       //   break;
@@ -463,7 +443,7 @@ int SolverMIP::localBranching(double *xSol, double maxTime)
       VariableHash::iterator vit = vHash.begin();
 
       OPT_ROW nR(100,OPT_ROW::GREATER,0.0,"LOCBRANCH");
-      double rhsLB = -5000.0 - nIter * 5;
+      double rhsLB = -5 ;//+ nIter * 2;
 
       while (vit != vHash.end())
       {
@@ -490,7 +470,8 @@ int SolverMIP::localBranching(double *xSol, double maxTime)
 
       lp->setNodeLimit(100000000);
       lp->setTimeLimit(1200);
-      lp->setMIPEmphasis(0);
+      lp->setNodeLimit(1);
+      lp->setMIPEmphasis(1);
       lp->setHeurFrequency(1.0);
       
       //lp->setTimeLimit((int)(maxTime - actTime));
@@ -500,7 +481,7 @@ int SolverMIP::localBranching(double *xSol, double maxTime)
 
       status = lp->optimize(METHOD_MIP);
 
-      if ( nIter == 0 )
+      if ( nIter == 2 )
          break;
 
       lp->getX(xSol);
@@ -529,8 +510,8 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
    xSol = new double[lp->getNumCols()];
    lp->getX(xSol);
 
-   /*
-   FILE* fin = fopen("solBin.bin","rb");
+   
+   /*FILE* fin = fopen("solBin.bin","rb");
 
    int nCols;
 
@@ -546,8 +527,8 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
       }
    }
 
-   fclose(fin);
-   */
+   fclose(fin);*/
+   
 
    vit = vHash.begin();
 
@@ -1231,7 +1212,7 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
             AtendimentoTatico * at_Tatico = new AtendimentoTatico();
 
             // Verificando se a disicplina é de carater prático ou teórico.
-            if((*it_Vars_x)->getDisciplina()->getId() > 0)
+            if((*it_Vars_x)->getDisciplina()->getId() > 0 && (*it_Vars_x)->getDisciplina()->cred_teoricos > 0)
             { at_Tatico->qtde_creditos_teoricos = (*it_Vars_x)->getValue(); }
             else
             { at_Tatico->qtde_creditos_praticos = (*it_Vars_x)->getValue(); }
@@ -1333,7 +1314,7 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
                                                 AtendimentoTatico * at_Tatico = new AtendimentoTatico();
 
                                                 // Verificando se a disicplina é de carater prático ou teórico.
-                                                if((*it_Vars_x)->getDisciplina()->getId() > 0)
+                                                if((*it_Vars_x)->getDisciplina()->getId() > 0 && (*it_Vars_x)->getDisciplina()->cred_teoricos > 0)
                                                 { at_Tatico->qtde_creditos_teoricos = (*it_Vars_x)->getValue(); }
                                                 else
                                                 { at_Tatico->qtde_creditos_praticos = (*it_Vars_x)->getValue(); }
@@ -1377,7 +1358,7 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
                                           AtendimentoTatico * at_Tatico = new AtendimentoTatico();
 
                                           // Verificando se a disicplina é de carater prático ou teórico.
-                                          if((*it_Vars_x)->getDisciplina()->getId() > 0)
+                                          if((*it_Vars_x)->getDisciplina()->getId() > 0 && (*it_Vars_x)->getDisciplina()->cred_teoricos > 0)
                                           { at_Tatico->qtde_creditos_teoricos = (*it_Vars_x)->getValue(); }
                                           else
                                           { at_Tatico->qtde_creditos_praticos = (*it_Vars_x)->getValue(); }
@@ -1428,7 +1409,7 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
                                  AtendimentoTatico * at_Tatico = new AtendimentoTatico();
 
                                  // Verificando se a disicplina é de carater prático ou teórico.
-                                 if((*it_Vars_x)->getDisciplina()->getId() > 0)
+                                 if((*it_Vars_x)->getDisciplina()->getId() > 0 && (*it_Vars_x)->getDisciplina()->cred_teoricos > 0)
                                  { at_Tatico->qtde_creditos_teoricos = (*it_Vars_x)->getValue(); }
                                  else
                                  { at_Tatico->qtde_creditos_praticos = (*it_Vars_x)->getValue(); }
@@ -1485,7 +1466,7 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
                         AtendimentoTatico * at_Tatico = new AtendimentoTatico();
 
                         // Verificando se a disicplina é de carater prático ou teórico.
-                        if((*it_Vars_x)->getDisciplina()->getId() > 0)
+                        if((*it_Vars_x)->getDisciplina()->getId() > 0 && (*it_Vars_x)->getDisciplina()->cred_teoricos > 0)
                         { at_Tatico->qtde_creditos_teoricos = (*it_Vars_x)->getValue(); }
                         else
                         { at_Tatico->qtde_creditos_praticos = (*it_Vars_x)->getValue(); }
@@ -1547,7 +1528,7 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
                AtendimentoTatico * at_Tatico = new AtendimentoTatico();
 
                // Verificando se a disicplina é de carater prático ou teórico.
-               if((*it_Vars_x)->getDisciplina()->getId() > 0)
+               if((*it_Vars_x)->getDisciplina()->getId() > 0 && (*it_Vars_x)->getDisciplina()->cred_teoricos > 0)
                { at_Tatico->qtde_creditos_teoricos = (*it_Vars_x)->getValue(); }
                else
                { at_Tatico->qtde_creditos_praticos = (*it_Vars_x)->getValue(); }
@@ -6922,7 +6903,7 @@ int SolverMIP::cria_restricao_limita_abertura_turmas()
 
             it_v = vHash.find(v);
             if(it_v != vHash.end())
-            { row.insert(it_v->second, 1.0); }
+            { row.insert(it_v->second, 8.0); }
 
             // ---
 
@@ -7729,8 +7710,12 @@ int SolverMIP::cria_restricao_max_creds_bloco_dia()
          if (cHash.find(c) != cHash.end()) continue;
 
          nnz = 100;
+         double rhs = 4.0;
 
-         OPT_ROW row( nnz, OPT_ROW::LESS, 4.0, name );
+         if ( *it_Dias_Letivos == 7 )
+            rhs = 12.0;
+
+         OPT_ROW row( nnz, OPT_ROW::LESS, rhs, name );
 
          ITERA_GGROUP(it_Disc,it_Bloco->disciplinas,Disciplina)
          {
@@ -7744,7 +7729,7 @@ int SolverMIP::cria_restricao_max_creds_bloco_dia()
             if( it_v != vHash.end() )
             { row.insert(it_v->second, 1.0); }
          }
-
+         
          if(row.getnnz() != 0)
          {
             cHash[ c ] = lp->getNumRows();
