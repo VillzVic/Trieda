@@ -1,5 +1,6 @@
 package com.gapso.web.trieda.client.util.view;
 
+import com.extjs.gxt.ui.client.Style.IconAlign;
 import com.extjs.gxt.ui.client.event.ButtonEvent;
 import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.widget.button.ToggleButton;
@@ -21,6 +22,7 @@ public class ToggleImageButton extends ToggleButton {
 	private void configuration() {
 		addStyleName("toggle-image-button");
 		updateIcon();
+		setIconAlign(IconAlign.LEFT);
 		addSelectionListener(new SelectionListener<ButtonEvent>() {
 			@Override
 			public void componentSelected(ButtonEvent ce) {

@@ -13,6 +13,9 @@ public interface DefaultsIcons extends ClientBundle  {
 	@Source("trieda_48.png") ImageResource trieda48();
 	@Source("trieda_64.png") ImageResource trieda64();
 	
+	@Source("checkbox_true.gif") ImageResource checkBoxChecked();
+	@Source("checkbox_false.gif") ImageResource checkBoxNotChecked();
+	
 	@Source("add_16.png") ImageResource add16();
 	@Source("edit_16.png") ImageResource edit16();
 	@Source("del_16.png") ImageResource del16();

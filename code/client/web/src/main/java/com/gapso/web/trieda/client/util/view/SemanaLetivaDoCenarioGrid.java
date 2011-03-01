@@ -1,8 +1,11 @@
 package com.gapso.web.trieda.client.util.view;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import com.extjs.gxt.ui.client.Style.HorizontalAlignment;
 import com.extjs.gxt.ui.client.data.BaseModel;
 import com.extjs.gxt.ui.client.data.BasePagingLoader;
 import com.extjs.gxt.ui.client.data.ModelData;
@@ -33,11 +36,22 @@ public class SemanaLetivaDoCenarioGrid<M extends BaseModel> extends ContentPanel
 	private PagingLoader<PagingLoadResult<ModelData>> loader;
 	private List<M> horariosDisponiveisDisponivel;
 	
+	private Map<String, List<ToggleImageButton>> comboboxWeek;
+	
+	private ToggleImageButton segCB;
+	private ToggleImageButton terCB;
+	private ToggleImageButton quaCB;
+	private ToggleImageButton quiCB;
+	private ToggleImageButton sexCB;
+	private ToggleImageButton sabCB;
+	private ToggleImageButton domCB;
+	
 	public SemanaLetivaDoCenarioGrid(List<M> horariosDisponiveisDisponivel) {
 		super(new FitLayout());
 		this.horariosDisponiveisDisponivel = horariosDisponiveisDisponivel;
 		setHeaderVisible(false);
 		setBodyBorder(false);
+		createCheckboxs();
 	}
 
 	@Override
@@ -77,6 +91,8 @@ public class SemanaLetivaDoCenarioGrid<M extends BaseModel> extends ContentPanel
 	}
 	
 	public List<ColumnConfig> getColumnList() {
+		
+		createComboboxWeek();
 		
 		GridCellRenderer<M> mergeRenderer = new GridCellRenderer<M>() {
 			private String lastTurno = "";
@@ -135,24 +151,39 @@ public class SemanaLetivaDoCenarioGrid<M extends BaseModel> extends ContentPanel
 						modelCenario.set(property, tib.isPressed());
 					}
 				});
-				if(!tb.isEnabled()) return "";
+				if(!tb.isEnabled()) {
+					return "";
+				}
+				comboboxWeek.get(property).add(tb);
 				return tb;
 			}  
 		};
 		
 		List<ColumnConfig> list = new ArrayList<ColumnConfig>(9);
 		
-		list.add(createColumnConfig("turnoString", "Turno", 120, mergeRenderer));
-		list.add(createColumnConfig("horarioString", "Horario", 110, horarioRenderer));
-		list.add(createColumnConfig("segunda", "Seg", 50, buttonRenderer));
-		list.add(createColumnConfig("terca", "Ter", 50, buttonRenderer));
-		list.add(createColumnConfig("quarta", "Qua", 50, buttonRenderer));
-		list.add(createColumnConfig("quinta", "Qui", 50, buttonRenderer));
-		list.add(createColumnConfig("sexta", "Sex", 50, buttonRenderer));
-		list.add(createColumnConfig("sabado", "Sab", 50, buttonRenderer));
-		list.add(createColumnConfig("domingo", "Dom", 50, buttonRenderer));
+		list.add(createColumnConfig("turnoString", "Turno", 100, mergeRenderer, null));
+		list.add(createColumnConfig("horarioString", "Horario", 90, horarioRenderer, null));
+		list.add(createColumnConfig("segunda", "Seg", 55, buttonRenderer, segCB));
+		list.add(createColumnConfig("terca",   "Ter", 55, buttonRenderer, terCB));
+		list.add(createColumnConfig("quarta",  "Qua", 55, buttonRenderer, quaCB));
+		list.add(createColumnConfig("quinta",  "Qui", 55, buttonRenderer, quiCB));
+		list.add(createColumnConfig("sexta",   "Sex", 55, buttonRenderer, sexCB));
+		list.add(createColumnConfig("sabado",  "Sab", 55, buttonRenderer, sabCB));
+		list.add(createColumnConfig("domingo", "Dom", 55, buttonRenderer, domCB));
 
 		return list;
+	}
+	
+	
+	private void createComboboxWeek() {
+		comboboxWeek = new HashMap<String, List<ToggleImageButton>>();
+		comboboxWeek.put("segunda", new ArrayList<ToggleImageButton>());
+		comboboxWeek.put("terca", new ArrayList<ToggleImageButton>());
+		comboboxWeek.put("quarta", new ArrayList<ToggleImageButton>());
+		comboboxWeek.put("quinta", new ArrayList<ToggleImageButton>());
+		comboboxWeek.put("sexta", new ArrayList<ToggleImageButton>());
+		comboboxWeek.put("sabado", new ArrayList<ToggleImageButton>());
+		comboboxWeek.put("domingo", new ArrayList<ToggleImageButton>());
 	}
 	
 	private M getModel(M model) {
@@ -167,15 +198,58 @@ public class SemanaLetivaDoCenarioGrid<M extends BaseModel> extends ContentPanel
 		return null;		
 	}
 	
-	private ColumnConfig createColumnConfig(String id, String name, Integer width, GridCellRenderer<M> gcr) {
+	private ColumnConfig createColumnConfig(String id, String name, Integer width, GridCellRenderer<M> gcr, ToggleImageButton checkbox) {
 		ColumnConfig c = new ColumnConfig(id, name, width);
 		c.setResizable(false);
 		c.setMenuDisabled(true);
 		c.setSortable(false);
 		c.setRenderer(gcr);
+		if(checkbox != null) {
+			c.setAlignment(HorizontalAlignment.LEFT);
+			c.setWidget(checkbox, name);
+		}
 		return c;
 	}
 	
+	private void createCheckboxs() {
+		segCB = createCheckboxs("Seg");
+		terCB = createCheckboxs("Ter");
+		quaCB = createCheckboxs("Qua");
+		quiCB = createCheckboxs("Qui");
+		sexCB = createCheckboxs("Sex");
+		sabCB = createCheckboxs("Sab");
+		domCB = createCheckboxs("Dom");
+	}
+
+	private ToggleImageButton createCheckboxs(String text) {
+		ToggleImageButton cb = new ToggleImageButton(false, Resources.DEFAULTS.checkBoxChecked(), Resources.DEFAULTS.checkBoxNotChecked());
+		cb.setText("<span style='padding-left: 15px;'>"+text+"</span>");
+		cb.addSelectionListener(getSelectionListener());
+		return cb;
+	}
+	
+	private SelectionListener<ButtonEvent> getSelectionListener() {
+		return new SelectionListener<ButtonEvent>() {
+			@Override
+			public void componentSelected(ButtonEvent ce) {
+				ToggleImageButton cb = (ToggleImageButton) ce.getSource();
+				if(cb.equals(segCB)) selectWeek("segunda", cb.isPressed());
+				else if(cb.equals(terCB)) selectWeek("terca", cb.isPressed());
+				else if(cb.equals(quaCB)) selectWeek("quarta", cb.isPressed());
+				else if(cb.equals(quiCB)) selectWeek("quinta", cb.isPressed());
+				else if(cb.equals(sexCB)) selectWeek("sexta", cb.isPressed());
+				else if(cb.equals(sabCB)) selectWeek("sabado", cb.isPressed());
+				else if(cb.equals(domCB)) selectWeek("domingo", cb.isPressed());
+			}
+		};
+	}
+	
+	public void selectWeek(String week, boolean flag) {
+		for(ToggleImageButton tb : comboboxWeek.get(week)) {
+			tb.toggle(flag);
+			tb.fireEvent(Events.Select);
+		}
+	}
 	public GridSelectionModel<M> getSelectionModel() {
 		return grid.getSelectionModel();
 	}
