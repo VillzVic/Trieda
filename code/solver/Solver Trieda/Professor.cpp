@@ -6,8 +6,6 @@ Professor::Professor(void)
 
 Professor::~Professor(void)
 {
-	delete m;
-	delete h;
 }
 
 void Professor::le_arvore(ItemProfessor& elem)
@@ -26,12 +24,12 @@ void Professor::le_arvore(ItemProfessor& elem)
    valor_credito = elem.valorCred();
    
    ITERA_SEQ(it_mag,elem.disciplinas(),ProfessorDisciplina) {
-      m = new Magisterio();
+      Magisterio* m = new Magisterio();
       m->le_arvore(*it_mag);
       magisterio.add(m);
    }
    ITERA_SEQ(it_h,elem.horariosDisponiveis(),Horario) {
-      h = new Horario();
+      Horario* h = new Horario();
       h->le_arvore(*it_h);
       horarios.add(h);
    }

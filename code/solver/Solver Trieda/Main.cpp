@@ -17,11 +17,11 @@
 
 // >>>
 //GGroup<int/*ids de campus existentes*/> * AtendimentoCampus::campi_id = new GGroup<int>;
-//
+
 //GGroup<int/*ids de unidades existentes*/> * AtendimentoUnidade::__ids_cadastrados = new GGroup<int>;
-//
+
 //GGroup<int/*ids de salas existentes*/> * AtendimentoSala::__ids_cadastrados = new GGroup<int>;
-//
+
 //std::vector<GGroup<int/*ids das salas que possuem o dia (dado pela posicao do vector)*/> > * AtendimentoDiaSemana::__ids_cadastrados = new std::vector<GGroup<int> >(7);
 // <<<
 
@@ -190,10 +190,6 @@ int main(int argc, char** argv)
 		error = true;
 	}
 */
-
-	delete data;
-	delete solution;
-
 	if( error )
 		return 0;
 	return 1;

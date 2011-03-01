@@ -77,9 +77,6 @@ public:
    GGroup<Oferta*> ofertas;
    ParametrosPlanejamento* parametros;
    GGroup<Fixacao*> fixacoes;
-   Campus* c;
-   TipoSala* t;
-   Oferta* o;
 
    GGroup<BlocoCurricular*> blocos;
 

@@ -56,7 +56,7 @@ void ProblemDataLoader::load()
    calculaTamanhoMedioSalasCampus();
 
    // ---------
-   relacionaCampusDiscs();
+   relacionaCampusDiscs(); // PAREI AQUI !!! VER ESSE METODO DIREITO..
 
    // ---------
    calculaDemandas();
@@ -1317,6 +1317,10 @@ void ProblemDataLoader::cria_blocos_curriculares()
                   break;
                }
             }
+
+            /* Checando se foi encontrada alguma oferta válida. */
+            if(pt_Oferta == NULL)
+            { continue; }
             // ---
 
             GGroup<DisciplinaPeriodo>::iterator it_dp = 
@@ -1343,15 +1347,19 @@ void ProblemDataLoader::cria_blocos_curriculares()
                      break;
                   }
                }
+
+               if(pt_Demanda == NULL)
+               {
+                  std::cout << "ERRO: DEMANDA NAO ENCONTRADA EM ProblemDataLoadaer::cria_blocos_curriculares()" << std::endl;
+                  exit(1);
+               }
                //---
 
-               GGroup<BlocoCurricular*>::iterator it_bc = 
-                  problemData->blocos.begin();
-
+               
                bool found = false;
 
                // Verificando a existência do bloco curricular para a disciplina em questão.
-               for(;it_bc != problemData->blocos.end(); ++it_bc) 
+               ITERA_GGROUP(it_bc,problemData->blocos,BlocoCurricular)
                {
                   //if(it_bc->getId() == id_Bloco)
                   if(it_bc->campus == *it_campi &&
@@ -1393,13 +1401,13 @@ void ProblemDataLoader::cria_blocos_curriculares()
    }
 
    /* Setando os dias letivos de cada bloco. */
-   ITERA_GGROUP(it_Bloco_Curric,problemData->blocos,BlocoCurricular)
+   ITERA_GGROUP(it_bc,problemData->blocos,BlocoCurricular)
    {
-      ITERA_GGROUP(it_Disc,it_Bloco_Curric->disciplinas,Disciplina)
+      ITERA_GGROUP(it_Disc,it_bc->disciplinas,Disciplina)
       {
          ITERA_GGROUP_N_PT(it_Dias_Letivos,it_Disc->diasLetivos,int)
          { 
-            it_Bloco_Curric->diasLetivos.add(*it_Dias_Letivos);
+            it_bc->diasLetivos.add(*it_Dias_Letivos);
          }
       }
    }
@@ -1536,7 +1544,7 @@ void ProblemDataLoader::relacionaCampusDiscs()
                }
             }
 
-            break;
+            break; // Por eficiência
          }
       }
    }
@@ -1545,11 +1553,11 @@ void ProblemDataLoader::relacionaCampusDiscs()
 /**/
 void ProblemDataLoader::calculaTamanhoMedioSalasCampus()
 {
-   unsigned somaCapSalas = 0;
-   unsigned total_Salas = 0;
-
    ITERA_GGROUP(it_cp,problemData->campi,Campus)
    {
+      unsigned somaCapSalas = 0;
+      unsigned total_Salas = 0;
+
       ITERA_GGROUP(it_und,it_cp->unidades,Unidade)
       {
          ITERA_GGROUP(it_sala,it_und->salas,Sala)
@@ -1564,7 +1572,8 @@ void ProblemDataLoader::calculaTamanhoMedioSalasCampus()
          it_cp->maiorSala = std::max(((int)it_cp->maiorSala),((int)it_und->maiorSala));
       }
 
-      problemData->cp_medSalas[it_cp->getId()] = somaCapSalas / total_Salas;
+      //problemData->cp_medSalas[it_cp->getId()] = somaCapSalas / total_Salas;
+      problemData->cp_medSalas[it_cp->getId()] = (total_Salas > 0) ? (somaCapSalas / total_Salas) : 0;
    }
 }
 

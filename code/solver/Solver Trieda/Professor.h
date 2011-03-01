@@ -29,6 +29,4 @@ public:
    TipoContrato* tipo_contrato;
    TipoTitulacao* titulacao; 
    AreaTitulacao* area;
-   Magisterio* m;
-   Horario* h;
 };

@@ -314,6 +314,9 @@ int SolverMIP::solve()
 
    // Gerando Soluções - FIM
 
+   //TRIEDA-660
+   //TRIEDA-654
+
    int status = 0;
 
    // Muda FO para considerar somente atendimento

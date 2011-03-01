@@ -47,25 +47,19 @@ problem_Data(&_problem_Data), total_Cjt_Demandas(0)
 
                   // Adicionando o IS_Atendimento_Tatico criado acima ao IS_Dia_Semana
                   dia_Sem->is_Atendimentos_Taticos.add(is_At_Tat);
-				  delete is_At_Tat;
                }
 
                is_sala->is_Dia_Semana.add(dia_Sem);
-			   delete dia_Sem;
             }
 
             is_unidade->salas.add(is_sala);
-			delete is_sala;
          }
 
          is_campus->unidades.add(is_unidade);
-		 delete is_unidade;
       }
 
       solucao.add(is_campus);
-	  delete is_campus;
    }
-   
 
    // ---------------------------------
 

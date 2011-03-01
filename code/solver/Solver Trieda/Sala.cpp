@@ -6,8 +6,6 @@ Sala::Sala(void)
 
 Sala::~Sala(void)
 {
-	delete credito_disp;
-	delete horario; 
 }
 
 void Sala::le_arvore(ItemSala& elem)
@@ -23,7 +21,7 @@ void Sala::le_arvore(ItemSala& elem)
 	if(tatico) {
     
       ITERA_SEQ(it_cred,elem.creditosDispon_veis().get(),CreditoDisponivel) {
-			credito_disp = new CreditoDisponivel();
+			CreditoDisponivel* credito_disp = new CreditoDisponivel();
 			credito_disp->le_arvore(*it_cred);
 			creditos_disponiveis.add(credito_disp);
 		}
@@ -31,7 +29,7 @@ void Sala::le_arvore(ItemSala& elem)
 	else {
 		// le horarios disponiveis
 		ITERA_SEQ(it_hora,elem.horariosDisponiveis().get(),Horario) {
-			horario = new Horario();
+			Horario* horario = new Horario();
 			horario->le_arvore(*it_hora);
 			horarios_disponiveis.add(horario);
 		}

@@ -25,9 +25,6 @@ public:
 
 	int id_campus;
 
-	Sala* sala;
-	Horario* horario;
-
    /* Armazena os dias letivos em que, pelo menos, uma sala possui algum crédito disponível */
    GGroup<int> diasLetivos;
 
