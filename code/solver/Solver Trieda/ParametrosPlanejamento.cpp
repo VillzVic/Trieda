@@ -5,7 +5,7 @@ ParametrosPlanejamento::ParametrosPlanejamento(void)
 }
 
 ParametrosPlanejamento::~ParametrosPlanejamento(void)
-{
+{	
 }
 
 void ParametrosPlanejamento::le_arvore(ItemParametrosPlanejamento& elem)

@@ -25,6 +25,7 @@ Disciplina::Disciplina(void)
 
 Disciplina::~Disciplina(void)
 {
+	delete divisao_creditos;
 }
 
 void Disciplina::le_arvore(ItemDisciplina& elem)

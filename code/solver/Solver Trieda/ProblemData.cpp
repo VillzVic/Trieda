@@ -24,6 +24,11 @@ ProblemData::~ProblemData()
    /*
    ToDo:
    */
+	delete calendario;
+	delete parametros;
+	delete c;
+	delete t;
+	delete o;
 }
 
 void ProblemData::le_arvore(TriedaInput& raiz)
@@ -31,12 +36,12 @@ void ProblemData::le_arvore(TriedaInput& raiz)
    calendario = new Calendario();
    calendario->le_arvore(raiz.calendario());
    ITERA_SEQ(it_campi,raiz.campi(),Campus) {
-      Campus* c = new Campus;
+      c = new Campus;
       c->le_arvore(*it_campi);
       campi.add(c);
    }
    ITERA_SEQ(it_tsalas,raiz.tiposSala(),TipoSala) {
-      TipoSala* t = new TipoSala;
+      t = new TipoSala;
       t->le_arvore(*it_tsalas);
       tipos_sala.add(t);
    }
@@ -54,7 +59,7 @@ void ProblemData::le_arvore(TriedaInput& raiz)
    LE_SEQ(cursos,raiz.cursos(),Curso);
    LE_SEQ(demandas,raiz.demandas(),Demanda);
    ITERA_SEQ(it_of,raiz.ofertaCursosCampi(),OfertaCurso) {
-      Oferta* o = new Oferta;
+      o = new Oferta;
       o->le_arvore(*it_of);
       ofertas.add(o);
    }

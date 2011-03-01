@@ -169,6 +169,9 @@ pesos associados a cada item da função objetivo.
 %Data \psi
 %Desc 
 peso associado a função objetivo.
+%Data \theta
+%Desc 
+peso associado a função objetivo.
 
 %DocEnd
 /===================================================================*/
@@ -1738,15 +1741,22 @@ int SolverMIP::cria_variaveis()
 %DocBegin TRIEDA_LOAD_MODEL
 
 %Var x_{i,d,u,tps,t}
+
 %Desc 
 número de créditos da turma $i$ da disciplina $d$ na unidade $u$ 
 em salas do tipo (capacidade) $tps$ no dia $t$. 
+
+%ObjCoef
+\theta \cdot \sum\limits_{u \in U}\sum\limits_{tps \in SCAP_{u}} 
+   \sum\limits_{d \in D}\sum\limits_{t \in T}
+   \sum\limits_{i \in I_{d}} x_{i,d,u,tps,t}
+
 %DocEnd
 /====================================================================*/
 
 int SolverMIP::cria_variavel_creditos(void)
 {
-   int num_vars = 0;
+	int num_vars = 0;
 
    ITERA_GGROUP(itCampus,problemData->campi,Campus)
    {
@@ -1780,20 +1790,37 @@ int SolverMIP::cria_variavel_creditos(void)
                      v.setDia(*itDiscSala_Dias);   // t
                      //v.setDia(dia);
 
-                     if (vHash.find(v) == vHash.end())
-                     {
-                        vHash[v] = lp->getNumCols();
 
-                        OPT_COL col(OPT_COL::VAR_INTEGRAL,0.0,0.0,itCjtSala->maxCredsDia(*itDiscSala_Dias),
-                           (char*)v.toString().c_str());
+					 int coef = 0.0;
+					 ITERA_GGROUP(it_prof,itCampus->professores,Professor) 
+					 {
+						 std::pair<int/*idProf*/,int/*idDisc*/> prof_Disc 
+							 (it_prof->getId(),itDisc->getId());
 
-                        //OPT_COL col(OPT_COL::VAR_INTEGRAL,0.0,0.0,24.0,
-                        //   (char*)v.toString().c_str());
+						 if(problemData->prof_Disc_Dias.find(prof_Disc) != problemData->prof_Disc_Dias.end())
+						 {
+							 coef = 0.0;
+						 }
+						 else
+						 {
+							 coef = 10.0;
+						 }
 
-                        lp->newCol(col);
+						 if (vHash.find(v) == vHash.end())
+						 {
+							vHash[v] = lp->getNumCols();
 
-                        num_vars += 1;
-                     }
+							OPT_COL col(OPT_COL::VAR_INTEGRAL,coef,0.0,itCjtSala->maxCredsDia(*itDiscSala_Dias),
+							   (char*)v.toString().c_str());
+
+							//OPT_COL col(OPT_COL::VAR_INTEGRAL,0.0,0.0,24.0,
+							//   (char*)v.toString().c_str());
+
+							lp->newCol(col);
+
+							num_vars += 1;
+						 }
+					 }
                   }
                }
             }
@@ -1802,12 +1829,70 @@ int SolverMIP::cria_variavel_creditos(void)
    }
 
    return num_vars;
+
+   //int num_vars = 0;
+
+   //ITERA_GGROUP(itCampus,problemData->campi,Campus)
+   //{
+   //   ITERA_GGROUP(itUnidade,itCampus->unidades,Unidade)
+   //   {
+   //      ITERA_GGROUP(itCjtSala,itUnidade->conjutoSalas,ConjuntoSala)
+   //      {
+   //         ITERA_GGROUP(itDisc,itCjtSala->getDiscsAssociadas(),Disciplina)
+   //         {
+   //            for(int turma=0;turma<itDisc->num_turmas;turma++)
+   //            {
+   //               GGroup<int/*Dias*/>::iterator itDiscSala_Dias =
+   //                  //problemData->discSala_Dias[std::make_pair<int,int>
+   //                  problemData->disc_Conjutno_Salas__Dias[std::make_pair<int,int>
+   //                  (itDisc->getId(),itCjtSala->getId())].begin();
+
+   //               for(; itDiscSala_Dias != 
+   //                  problemData->disc_Conjutno_Salas__Dias[std::make_pair<int,int>
+   //                  //problemData->discSala_Dias[std::make_pair<int,int>
+   //                  (itDisc->getId(),itCjtSala->getId())].end(); itDiscSala_Dias++)
+   //                  //for(int dia = 0; dia < 7; dia++)
+   //               {
+   //                  Variable v;
+   //                  v.reset();
+   //                  v.setType(Variable::V_CREDITOS);
+
+   //                  v.setTurma(turma);            // i
+   //                  v.setDisciplina(*itDisc);     // d
+   //                  v.setUnidade(*itUnidade);     // u
+   //                  v.setSubCjtSala(*itCjtSala);  // tps  
+   //                  v.setDia(*itDiscSala_Dias);   // t
+   //                  //v.setDia(dia);
+
+   //                  if (vHash.find(v) == vHash.end())
+   //                  {
+   //                     vHash[v] = lp->getNumCols();
+
+   //                     OPT_COL col(OPT_COL::VAR_INTEGRAL,0.0,0.0,itCjtSala->maxCredsDia(*itDiscSala_Dias),
+   //                        (char*)v.toString().c_str());
+
+   //                     //OPT_COL col(OPT_COL::VAR_INTEGRAL,0.0,0.0,24.0,
+   //                     //   (char*)v.toString().c_str());
+
+   //                     lp->newCol(col);
+
+   //                     num_vars += 1;
+   //                  }
+   //               }
+   //            }
+   //         }
+   //      }
+   //   }
+   //}
+
+   //return num_vars;
 }
 
 /*====================================================================/
 %DocBegin TRIEDA_LOAD_MODEL
 
-%Var o_{i,d,u,tps,t}  
+%Var o_{i,d,u,tps,t} 
+
 %Desc 
 indica se a turma $i$ da disciplina $d$ foi alocada na unidade $u$ 
 para alguma sala do tipo (capacidade) $tps$ no dia $t$.
@@ -1872,6 +1957,7 @@ int SolverMIP::cria_variavel_oferecimentos(void)
 %DocBegin TRIEDA_LOAD_MODEL
 
 %Var z_{i,d,cp} 
+
 %Desc 
 indica se houve abertura da $i$-ésima turma da disciplina $d$ no campus $cp$.
 
@@ -1976,6 +2062,7 @@ int SolverMIP::cria_variavel_abertura(void)
 %DocBegin TRIEDA_LOAD_MODEL
 
 %Var a_{i,d,oft}
+
 %Desc 
 número de alunos de uma oferta $oft$ alocados para a $i$-ésima turma da disciplina $d$.
 
@@ -2075,6 +2162,7 @@ int SolverMIP::cria_variavel_alunos(void)
 %DocBegin TRIEDA_LOAD_MODEL
 
 %Var b_{i,d,c,cp} 
+
 %Desc 
 indica se algum aluno do curso $c$ foi alocado para a $i$-ésima turma da disciplina $d$ no campus $cp$.
 
@@ -2165,6 +2253,7 @@ int SolverMIP::cria_variavel_aloc_alunos(void)
 %DocBegin TRIEDA_LOAD_MODEL
 
 %Var c_{i,d,t} 
+
 %Desc 
 indica se houve abertura de turma $i$ da disciplina $d$ em dias consecutivos.
 
@@ -2221,7 +2310,8 @@ int SolverMIP::cria_variavel_consecutivos(void)
 /*====================================================================/
 %DocBegin TRIEDA_LOAD_MODEL
 
-%Var \underline{h}_{bc,i}  
+%Var \underline{h}_{bc,i} 
+
 %Desc 
 mínimo de créditos alocados na semana na $i$-ésima turma do bloco $bc$.
 %ObjCoef
@@ -2276,6 +2366,7 @@ int SolverMIP::cria_variavel_min_creds(void)
 %DocBegin TRIEDA_LOAD_MODEL
 
 %Var \overline{h}_{bc,i} 
+
 %Desc 
 máximo de créditos alocados na semana na $i$-ésima turma do bloco $bc$.
 
@@ -2323,6 +2414,7 @@ int SolverMIP::cria_variavel_max_creds(void)
 %DocBegin TRIEDA_LOAD_MODEL
 
 %Var y_{i,d,tps,u} 
+
 %Desc 
 indica que a turma $i$ da disciplina $d$ foi alocada em alguma sala do tipo $tps$ da unidade $u$.
 
@@ -2424,6 +2516,7 @@ int SolverMIP::cria_variavel_aloc_disciplina(void)
 %DocBegin TRIEDA_LOAD_MODEL
 
 %Var w_{bc,t,cp}  
+
 %Desc 
 indica o número sub-blocos abertos do bloco curricular $bc$ no dia $t$ no campus $cp$.
 %ObjCoef
@@ -2475,7 +2568,8 @@ int SolverMIP::cria_variavel_num_subblocos(void)
 /*====================================================================/
 %DocBegin TRIEDA_LOAD_MODEL
 
-%Var v_{bc,t}  
+%Var v_{bc,t} 
+
 %Desc 
 contabiliza a abertura do mesmo bloco curricular $bc$, no mesmo dia $t$, em campus distintos.
 %ObjCoef
@@ -2527,7 +2621,8 @@ int SolverMIP::cria_variavel_num_abertura_turma_bloco(void)
 /*====================================================================/
 %DocBegin TRIEDA_LOAD_MODEL
 
-%Var fcp_{d,t} 
+%Var fcp_{d,t}
+
 %Desc 
 variável de folga superior para a restrição de fixação da distribuição de créditos por dia.
 %ObjCoef
@@ -2604,8 +2699,10 @@ int SolverMIP::cria_variavel_de_folga_dist_cred_dia_superior(void)
 %DocBegin TRIEDA_LOAD_MODEL
 
 %Var fcm_{d,t}  
+
 %Desc 
 variável de folga inferior para a restrição de fixação da distribuição de créditos por dia.
+
 %ObjCoef
 \xi \cdot \sum\limits_{d \in D} \sum\limits_{t \in T} fcm_{d,t}
 
@@ -2674,6 +2771,7 @@ int SolverMIP::cria_variavel_de_folga_dist_cred_dia_inferior(void)
 %DocBegin TRIEDA_LOAD_MODEL
 
 %Var r_{bc,t,cp}  
+
 %Desc 
 indica se algum sub-bloco foi aberto do bloco curricular $bc$ no dia $t$ no campus $cp$.
 
@@ -2720,6 +2818,7 @@ int SolverMIP::cria_variavel_abertura_subbloco_de_blc_dia_campus()
 %DocBegin TRIEDA_LOAD_MODEL
 
 %Var bs_{i,d,c,c',cp}
+
 %Desc 
 variável de folga para a restrição em que o compartilhamento de turmas 
 de alunos de cursos diferentes é proibido.
@@ -2772,6 +2871,7 @@ int SolverMIP::cria_variavel_de_folga_aloc_alunos_curso_incompat()
 %DocBegin TRIEDA_LOAD_MODEL
 
 %Var fd_{d,oft} 
+
 %Desc 
 variável de folga para a restrição "Capacidade alocada tem que 
 permitir atender demanda da disciplina".
@@ -2833,7 +2933,8 @@ int SolverMIP::cria_variavel_de_folga_demanda_disciplina()
 /*====================================================================/
 %DocBegin TRIEDA_LOAD_MODEL
 
-%Var m_{d,i,k}  
+%Var m_{d,i,k} 
+
 %Desc 
 variável binária que indica se a combinação de divisão de créditos 
 $k$ foi escolhida para a turma $i$ da disciplina $d$.
@@ -2881,8 +2982,10 @@ int SolverMIP::cria_variavel_combinacao_divisao_credito(){
 %DocBegin TRIEDA_LOAD_MODEL
 
 %Var fk_{d,i,t} 
+
 %Desc 
 variável de folga para a restrição de combinação de divisão de créditos.
+
 %ObjCoef
 \psi \cdot \sum\limits_{d \in D} 
 \sum\limits_{t \in T} \sum\limits_{i \in I_{d}} fk_{d,i,k}
@@ -2936,13 +3039,13 @@ int SolverMIP::cria_variavel_de_folga_combinacao_divisao_credito(){
 %DocBegin TRIEDA_LOAD_MODEL
 
 %Var xm_{d,t}
-%Desc 
-%ObjCoef
-%Data
+
 %Desc
+máximo de créditos alocados para qualquer turma da disciplina $d$ no dia $t$.
 
 %DocEnd
 /====================================================================*/
+
 int SolverMIP::cria_variavel_creditos_modificada(void)
 {
    //// <><><><><><><><>
@@ -4670,33 +4773,50 @@ int SolverMIP::cria_restricao_max_cred_disc_bloco(void)
             dentre todas as salas para um dado dia. */
             int maxCredsSalaDia = 0;
 
+			int maxCredsProfDia = 0;
+
             ITERA_GGROUP(itDisc,itBloco->disciplinas,Disciplina)
             {
                ITERA_GGROUP(itUnidade,itCampus->unidades,Unidade)
                {
                   ITERA_GGROUP(itCjtSala,itUnidade->conjutoSalas,ConjuntoSala)
                   {
-                     /*
-                     maxCredsSalaDia = (maxCredsSalaDia < itCjtSala->credsMaiorSala(*itDiasLetCampus) ?
-                        itCjtSala->credsMaiorSala(*itDiasLetCampus) : maxCredsSalaDia);
-                        */
+					  for(int turma = 0; turma < itDisc->num_turmas; turma++)
+                      {
+						  v.reset();
+						  v.setType(Variable::V_CREDITOS);
+						  v.setTurma(turma);
+						  v.setDisciplina(*itDisc);
+						  v.setUnidade(*itUnidade);
+						  v.setSubCjtSala(*itCjtSala);
+						  v.setDia(*itDiasLetCampus);
 
-                     maxCredsSalaDia = (maxCredsSalaDia < itCjtSala->maxCredsDia(*itDiasLetCampus) ?
-                        itCjtSala->maxCredsDia(*itDiasLetCampus) : maxCredsSalaDia);
+						  it_v = vHash.find(v);
+                          if( it_v != vHash.end() )
+                          { row.insert(it_v->second, 1.0); }
 
-                     for(int turma = 0; turma < itDisc->num_turmas; turma++)
-                     {
-                        v.reset();
-                        v.setType(Variable::V_CREDITOS);
-                        v.setTurma(turma);
-                        v.setDisciplina(*itDisc);
-                        v.setUnidade(*itUnidade);
-                        v.setSubCjtSala(*itCjtSala);
-                        v.setDia(*itDiasLetCampus);
+						  GGroup<int>::iterator itDiasLetCjtSala =
+								  itCjtSala->diasLetivos.begin();
 
-                        it_v = vHash.find(v);
-                        if( it_v != vHash.end() )
-                        { row.insert(it_v->second, 1.0); }
+						  for(; itDiasLetCjtSala != itCjtSala->diasLetivos.end(); itDiasLetCjtSala++ )
+						  {
+							  maxCredsSalaDia = (maxCredsSalaDia < itCjtSala->maxCredsDia(*itDiasLetCjtSala) ?
+											itCjtSala->maxCredsDia(*itDiasLetCjtSala) : maxCredsSalaDia);
+						  }
+
+						  ITERA_GGROUP(it_prof,itCampus->professores,Professor) 
+					      {
+							  std::pair<int/*idProf*/,int/*idDisc*/> prof_Disc 
+									(it_prof->getId(),itDisc->getId());
+
+							  if(problemData->prof_Disc_Dias.find(prof_Disc) !=
+								 problemData->prof_Disc_Dias.end())
+							  {
+								  maxCredsProfDia = (maxCredsProfDia < itDisc->max_creds ?
+													itDisc->max_creds : maxCredsProfDia);
+							  }
+						  }
+					                   
                      }
                   }
                }
@@ -4708,11 +4828,11 @@ int SolverMIP::cria_restricao_max_cred_disc_bloco(void)
             v.setDia(*itDiasLetCampus);
             v.setCampus(*itCampus);
 
+			int H_t = (maxCredsProfDia < maxCredsSalaDia ? maxCredsProfDia : maxCredsSalaDia);  
             it_v = vHash.find(v);
             if( it_v != vHash.end() )
                //{ row.insert(it_v->second, -24.0); /* #Warning: FIXME */ }
-            { row.insert(it_v->second, -maxCredsSalaDia); }
-            /* Descobrir valor de H_t */
+            { row.insert(it_v->second, -H_t); }
 
             if(row.getnnz() != 0)
             {
@@ -4727,6 +4847,7 @@ int SolverMIP::cria_restricao_max_cred_disc_bloco(void)
          }
       }
    }
+
 
    //ITERA_GGROUP(it_campus,problemData->campi,Campus) {
    //   for(int t=0;t<7;t++) {
@@ -7573,9 +7694,18 @@ int SolverMIP::cria_restricao_ativacao_var_y()
 /*====================================================================/
 %DocBegin TRIEDA_LOAD_MODEL
 
-%Constraint 
+%Constraint
+Máximo de créditos diários da disciplina
 %Desc 
+
 %MatExp
+
+\begin{eqnarray}
+\sum\limits_{u \in U} \sum\limits_{tps \in SCAP_{u}} x_{i,d,u,tps,t} - xm_{d, t} \leq 0 \nonumber \qquad 
+\forall d \in D \quad
+\forall i \in I_{d} \quad
+\forall t \in T
+\end{eqnarray}
 
 %DocEnd
 /====================================================================*/
@@ -7680,8 +7810,15 @@ int SolverMIP::cria_restricao_max_creds_disc_dia()
 %DocBegin TRIEDA_LOAD_MODEL
 
 %Constraint 
-%Desc 
+Máximo de créditos diários do bloco
+%Desc
+
 %MatExp
+\begin{eqnarray}
+\sum\limits_{d \in D_{bc}} xm_{d, t} \leq 4 \nonumber \qquad 
+\forall bc \in B \quad
+\forall t \in T
+\end{eqnarray}
 
 %DocEnd
 /====================================================================*/

@@ -14,4 +14,5 @@ public:
    std::string codigo;
    std::string descricao;
    int tempo_aula;
+   Turno* turno;
 };

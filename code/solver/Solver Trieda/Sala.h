@@ -22,6 +22,8 @@ public:
 	GGroup<Horario*> horarios_disponiveis;
 	GGroup<CreditoDisponivel*> creditos_disponiveis;
 	GGroup<int> disciplinas_associadas; //alterar para ref, depois
+	CreditoDisponivel* credito_disp;
+	Horario* horario;
 
    /* Conjunto de disciplinas que foram associadas a sala em questão pelo usuario. */
    GGroup<Disciplina*> disciplinas_Associadas_Usuario;
