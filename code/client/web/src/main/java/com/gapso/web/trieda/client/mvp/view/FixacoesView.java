@@ -56,7 +56,7 @@ public class FixacoesView extends MyComposite implements FixacoesPresenter.Displ
 	
 	private void createGrid() {
 		BorderLayoutData bld = new BorderLayoutData(LayoutRegion.CENTER);
-	    bld.setMargins(new Margins(5, 0, 5, 5));
+	    bld.setMargins(new Margins(5, 5, 5, 5));
 	    
 	    gridPanel = new SimpleGrid<FixacaoDTO>(getColumnList());
 	    panel.add(gridPanel, bld);
@@ -71,7 +71,7 @@ public class FixacoesView extends MyComposite implements FixacoesPresenter.Displ
 
 	private void createFilter() {
 		BorderLayoutData bld = new BorderLayoutData(LayoutRegion.EAST);
-		bld.setMargins(new Margins(0, 0, 0, 5));
+		bld.setMargins(new Margins(5, 5, 5, 0));
 		bld.setCollapsible(true);
 		
 		filter = new SimpleFilter();

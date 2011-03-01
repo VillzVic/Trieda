@@ -121,10 +121,6 @@ public class DisciplinasAssociarSalaView extends MyComposite implements Discipli
 		turnoCB.setDisplayField("nome");
 		formPanel.add(turnoCB, formData);
 		
-		BorderLayoutData bld = new BorderLayoutData(LayoutRegion.NORTH);
-		bld.setMargins(new Margins(0, 0, 0, 5));
-		bld.setCollapsible(true);
-		
 		tabs = new TabPanel();
 		tabs.disable();
 		
@@ -286,7 +282,7 @@ public class DisciplinasAssociarSalaView extends MyComposite implements Discipli
 		panelLists.add(blankListPanel, new RowData(10, 1, new Margins(0, 0, 0, 0)));
 		panelLists.add(salasListPanel, new RowData(.5, 1, new Margins(0, 10, 10, 0)));
 		
-		bld = new BorderLayoutData(LayoutRegion.CENTER);
+		BorderLayoutData bld = new BorderLayoutData(LayoutRegion.CENTER);
 		bld.setMargins(new Margins(0, 0, 0, 0));
 		panel.setBodyBorder(false);
 		panelLists.setBodyStyle("background-color: #DFE8F6;");

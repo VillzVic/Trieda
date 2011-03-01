@@ -64,7 +64,7 @@ public class DemandasView extends MyComposite implements DemandasPresenter.Displ
 	
 	private void createGrid() {
 		BorderLayoutData bld = new BorderLayoutData(LayoutRegion.CENTER);
-	    bld.setMargins(new Margins(5, 0, 5, 5));
+	    bld.setMargins(new Margins(5, 5, 5, 5));
 	    
 	    gridPanel = new SimpleGrid<DemandaDTO>(getColumnList());
 	    panel.add(gridPanel, bld);
@@ -83,7 +83,7 @@ public class DemandasView extends MyComposite implements DemandasPresenter.Displ
 
 	private void createFilter() {
 		BorderLayoutData bld = new BorderLayoutData(LayoutRegion.EAST);
-		bld.setMargins(new Margins(5, 5, 5, 5));
+		bld.setMargins(new Margins(5, 5, 5, 0));
 		bld.setCollapsible(true);
 		
 		filter = new SimpleFilter();

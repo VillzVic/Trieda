@@ -90,7 +90,7 @@ public class ProfessoresView extends MyComposite implements ProfessoresPresenter
 
 	private void createFilter() {
 		BorderLayoutData bld = new BorderLayoutData(LayoutRegion.EAST);
-		bld.setMargins(new Margins(0, 0, 0, 5));
+		bld.setMargins(new Margins(5, 5, 5, 0));
 		bld.setCollapsible(true);
 		
 		filter = new SimpleFilter();
