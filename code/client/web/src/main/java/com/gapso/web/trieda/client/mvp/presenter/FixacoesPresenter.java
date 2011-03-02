@@ -69,7 +69,7 @@ public class FixacoesPresenter implements Presenter {
 		display.getNewButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
 			@Override
 			public void componentSelected(ButtonEvent ce) {
-				Presenter presenter = new FixacaoFormPresenter(cenario, new FixacaoFormView(new FixacaoDTO(), null, null, null, null, null), display.getGrid());
+				Presenter presenter = new FixacaoFormPresenter(cenario, new FixacaoFormView(new FixacaoDTO(), null, null, null, null, null, true), display.getGrid());
 				presenter.go(null);
 			}
 		});
@@ -105,7 +105,7 @@ public class FixacoesPresenter implements Presenter {
 						SalaDTO salaDTO = futureSalaDTO.result();
 						List<HorarioDisponivelCenarioDTO> horariosDTOList = futureHorariosDTO.result();
 						
-						Presenter presenter = new FixacaoFormPresenter(cenario, new FixacaoFormView(fixacaoDTO, disciplinaDTO, campusDTO, unidadeDTO, salaDTO, horariosDTOList), display.getGrid());
+						Presenter presenter = new FixacaoFormPresenter(cenario, new FixacaoFormView(fixacaoDTO, disciplinaDTO, campusDTO, unidadeDTO, salaDTO, horariosDTOList, false), display.getGrid());
 						presenter.go(null);
 					}
 				});

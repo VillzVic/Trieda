@@ -24,7 +24,6 @@ import com.extjs.gxt.ui.client.widget.grid.ColumnData;
 import com.extjs.gxt.ui.client.widget.grid.ColumnModel;
 import com.extjs.gxt.ui.client.widget.grid.Grid;
 import com.extjs.gxt.ui.client.widget.grid.GridCellRenderer;
-import com.extjs.gxt.ui.client.widget.grid.GridSelectionModel;
 import com.extjs.gxt.ui.client.widget.layout.FitLayout;
 import com.gapso.web.trieda.client.util.resources.Resources;
 import com.google.gwt.user.client.Element;
@@ -45,6 +44,8 @@ public class SemanaLetivaDoCenarioGrid<M extends BaseModel> extends ContentPanel
 	private ToggleImageButton sexCB;
 	private ToggleImageButton sabCB;
 	private ToggleImageButton domCB;
+	
+	private boolean selectDefault = false;
 	
 	public SemanaLetivaDoCenarioGrid(List<M> horariosDisponiveisDisponivel) {
 		super(new FitLayout());
@@ -136,14 +137,18 @@ public class SemanaLetivaDoCenarioGrid<M extends BaseModel> extends ContentPanel
 					config.style += "border-bottom: 1px solid #EDEDED;";
 				}
 				config.style += "border-right: 1px solid #EDEDED;";
-				final M model = getModel(modelCenario);
-				Boolean flag = false;
-				if(model != null) {
-					flag = (Boolean) model.get(property);
-				}
-				ToggleImageButton tb = new ToggleImageButton(flag, Resources.DEFAULTS.save16(), Resources.DEFAULTS.cancel16());
-				tb.setEnabled((Boolean)modelCenario.get(property));
+				if(!(Boolean)modelCenario.get(property)) { return ""; }
+				
+				M model = getModel(modelCenario);
+				Boolean flag = (model == null) ? false : (Boolean) model.get(property);
 				modelCenario.set(property, (model == null)? false : model.get(property));
+				
+				if(isSelectDefault()) {
+					modelCenario.set(property, true);
+					flag = true;
+				}
+				
+				ToggleImageButton tb = new ToggleImageButton(flag, Resources.DEFAULTS.save16(), Resources.DEFAULTS.cancel16());
 				tb.addSelectionListener(new SelectionListener<ButtonEvent>() {
 					@Override
 					public void componentSelected(ButtonEvent ce) {
@@ -151,9 +156,6 @@ public class SemanaLetivaDoCenarioGrid<M extends BaseModel> extends ContentPanel
 						modelCenario.set(property, tib.isPressed());
 					}
 				});
-				if(!tb.isEnabled()) {
-					return "";
-				}
 				comboboxWeek.get(property).add(tb);
 				return tb;
 			}  
@@ -222,7 +224,7 @@ public class SemanaLetivaDoCenarioGrid<M extends BaseModel> extends ContentPanel
 	}
 
 	private ToggleImageButton createCheckboxs(String text) {
-		ToggleImageButton cb = new ToggleImageButton(false, Resources.DEFAULTS.checkBoxChecked(), Resources.DEFAULTS.checkBoxNotChecked());
+		ToggleImageButton cb = new ToggleImageButton(true, Resources.DEFAULTS.checkBoxChecked(), Resources.DEFAULTS.checkBoxNotChecked());
 		cb.setText("<span style='padding-left: 15px;'>"+text+"</span>");
 		cb.addSelectionListener(getSelectionListener());
 		return cb;
@@ -250,9 +252,6 @@ public class SemanaLetivaDoCenarioGrid<M extends BaseModel> extends ContentPanel
 			tb.fireEvent(Events.Select);
 		}
 	}
-	public GridSelectionModel<M> getSelectionModel() {
-		return grid.getSelectionModel();
-	}
 	
 	public void setProxy(RpcProxy<PagingLoadResult<M>> proxy) {
 		this.proxy = proxy;
@@ -268,6 +267,13 @@ public class SemanaLetivaDoCenarioGrid<M extends BaseModel> extends ContentPanel
 	
 	public void updateList() {
 		loader.load();
+	}
+
+	public boolean isSelectDefault() {
+		return selectDefault;
+	}
+	public void setSelectDefault(boolean selectDefault) {
+		this.selectDefault = selectDefault;
 	}
 	
 }

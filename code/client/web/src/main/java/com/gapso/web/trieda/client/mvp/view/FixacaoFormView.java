@@ -41,6 +41,7 @@ public class FixacaoFormView extends MyComposite implements FixacaoFormPresenter
 	private UnidadeComboBox unidadeCB;
 	private SalaComboBox salaCB;
 	private SemanaLetivaDoCenarioGrid<HorarioDisponivelCenarioDTO> grid;
+	private boolean selectDefault;
 	
 	private FixacaoDTO fixacaoDTO;
 	private DisciplinaDTO disciplinaDTO;
@@ -49,13 +50,14 @@ public class FixacaoFormView extends MyComposite implements FixacaoFormPresenter
 	private SalaDTO salaDTO;
 	private List<HorarioDisponivelCenarioDTO> listHorarios;
 	
-	public FixacaoFormView(FixacaoDTO fixacaoDTO, DisciplinaDTO disciplinaDTO, CampusDTO campusDTO, UnidadeDTO unidadeDTO, SalaDTO salaDTO, List<HorarioDisponivelCenarioDTO> listHorarios) {
+	public FixacaoFormView(FixacaoDTO fixacaoDTO, DisciplinaDTO disciplinaDTO, CampusDTO campusDTO, UnidadeDTO unidadeDTO, SalaDTO salaDTO, List<HorarioDisponivelCenarioDTO> listHorarios, Boolean selectDefault) {
 		this.fixacaoDTO = fixacaoDTO;
 		this.disciplinaDTO = disciplinaDTO;
 		this.campusDTO = campusDTO;
 		this.unidadeDTO = unidadeDTO;
 		this.salaDTO = salaDTO;
 		this.listHorarios = (listHorarios == null)? new ArrayList<HorarioDisponivelCenarioDTO>() : listHorarios;
+		this.selectDefault = selectDefault;
 		initUI();
 		// TODO
 //		initComponent(simpleModal);
@@ -119,6 +121,7 @@ public class FixacaoFormView extends MyComposite implements FixacaoFormPresenter
 		formPanel.add(salaCB, formData);
 		
 		grid = new SemanaLetivaDoCenarioGrid<HorarioDisponivelCenarioDTO>(listHorarios);
+		grid.setSelectDefault(selectDefault);
 		
 		container.add(formPanel, new VBoxLayoutData(new Margins(0, 0, 5, 0)));
 		VBoxLayoutData flex = new VBoxLayoutData(new Margins(0));  
