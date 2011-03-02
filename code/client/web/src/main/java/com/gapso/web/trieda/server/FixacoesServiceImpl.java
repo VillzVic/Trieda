@@ -77,7 +77,6 @@ public class FixacoesServiceImpl extends RemoteServiceServlet implements Fixacoe
 		
 		adicionarList.removeAll(fixacao.getHorarios());
 		for(HorarioDisponivelCenario o : adicionarList) {
-			System.out.print("teste");
 			HorarioDisponivelCenario hdc = HorarioDisponivelCenario.findHorarioDisponivelCenario(o.getId());
 			hdc.getFixacoes().add(fixacao);
 			hdc.merge();
