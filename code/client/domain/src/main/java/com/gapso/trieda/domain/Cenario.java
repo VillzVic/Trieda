@@ -45,6 +45,9 @@ import org.springframework.transaction.annotation.Transactional;
 @Table(name = "CENARIOS")
 public class Cenario implements Serializable {
 
+    @OneToOne(mappedBy="cenario")
+    private Parametro parametro;
+	
 //    TODO @NotNull
     @ManyToOne(targetEntity = Usuario.class)
     @JoinColumn(name = "USU_CRIACAO_ID")
@@ -147,6 +150,7 @@ public class Cenario implements Serializable {
         sb.append("Curriculos: ").append(getCurriculos() == null ? "null" : getCurriculos().size());
         sb.append("Atendimentos Operacionais: ").append(getAtendimentosOperacionais() == null ? "null" : getAtendimentosOperacionais().size());
         sb.append("Atendimentos Taticos: ").append(getAtendimentosTaticos() == null ? "null" : getAtendimentosTaticos().size());
+        sb.append("Parametro: ").append(getParametro()).append(", ");
         return sb.toString();
     }
 
@@ -447,5 +451,13 @@ public class Cenario implements Serializable {
 		this.atendimentosTaticos = atendimentosTaticos;
 	}
 	
+	public Parametro getParametro() {
+		return parametro;
+	}
+
+	public void setParametro(Parametro parametro) {
+		this.parametro = parametro;
+	}
+
 	private static final long serialVersionUID = -8610380359760552949L;
 }
