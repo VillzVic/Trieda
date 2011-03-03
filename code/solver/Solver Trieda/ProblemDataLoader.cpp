@@ -1224,6 +1224,7 @@ void ProblemDataLoader::gera_refs()
       find_and_set(it_dem->disciplina_id,
          problemData->disciplinas, it_dem->disciplina);
    }
+
    /* Falta: parametros (?) e fixacoes */
    ITERA_GGROUP(it_ndh,
       problemData->parametros->niveis_dificuldade_horario,

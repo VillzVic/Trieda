@@ -404,6 +404,7 @@ int SolverMIP::solve()
    lp->chgObj(lp->getNumCols(),idxNova,objOrig);
 
    status = localBranching(xSolInic,1200.0);
+   //lp->optimize(METHOD_MIP);
 
    delete[] objNova;
    delete[] objOrig;
@@ -449,7 +450,7 @@ int SolverMIP::localBranching(double *xSol, double maxTime)
       VariableHash::iterator vit = vHash.begin();
 
       OPT_ROW nR(100,OPT_ROW::GREATER,0.0,"LOCBRANCH");
-      double rhsLB = -5 ;//+ nIter * 2;
+      double rhsLB = -5000 ;//+ nIter * 2;
 
       while (vit != vHash.end())
       {
@@ -1060,9 +1061,11 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
                }
 
                vars_x_Disc_Und_TPS_Turma_DIA[chave] = *it_Dias_Demandados_Vars_x;
+               //vars_x_Disc_Und_TPS_Turma_DIA[chave].push_back(*it_Dias_Demandados_Vars_x);
             }
 
             std::map<std::vector<int/*Unidade,TPS,Turma,Dia*/>, Variable*>::iterator
+            //std::map<std::vector<int/*Unidade,TPS,Turma,Dia*/>, std::vector<Variable*> >::iterator
                it_Vars_x_Disc_Und_TPS_Turma_DIA = vars_x_Disc_Und_TPS_Turma_DIA.begin();
 
             // Iterando em cada variavel da estrutura <vars_x_Disc_Und_TPS_Turma_DIA>
@@ -1075,6 +1078,11 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
                ITERA_VECTOR(it_Salas_Ordenadas,salas_Ordenadas,Sala)
                {
                   // Checando se a sala em questão pertence ao TPS especificado pelo solver
+                  /*
+                  if((*it_Vars_x_Disc_Und_TPS_Turma_DIA->second.begin())->getSubCjtSala()->getTodasSalas().find(
+                     (*it_Salas_Ordenadas)->getId()) != 
+                     (*it_Vars_x_Disc_Und_TPS_Turma_DIA->second.begin())->getSubCjtSala()->getTodasSalas().end())
+                     */
                   if(it_Vars_x_Disc_Und_TPS_Turma_DIA->second->getSubCjtSala()->getTodasSalas().find(
                      (*it_Salas_Ordenadas)->getId()) != 
                      it_Vars_x_Disc_Und_TPS_Turma_DIA->second->getSubCjtSala()->getTodasSalas().end())
@@ -1104,8 +1112,10 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
                            nao possua a qtd de creditos livres necessaria, posso parar de tentar
                            alocar nessa sala.
                            */
+                           //if(it_Dia->first == (*it_Vars_x_Disc_Und_TPS_Turma_DIA->second.begin())->getDia())
                            if(it_Dia->first == it_Vars_x_Disc_Und_TPS_Turma_DIA->second->getDia())
                            {
+                              //if(it_Dia->second >= ((int) (*it_Vars_x_Disc_Und_TPS_Turma_DIA->second.begin())->getValue()))
                               if(it_Dia->second >= ((int) it_Vars_x_Disc_Und_TPS_Turma_DIA->second->getValue()))
                               {
                                  /*
@@ -1113,9 +1123,11 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
                                  */
 
                                  // Setando a sala na variavel
+                                 //(*it_Vars_x_Disc_Und_TPS_Turma_DIA->second.begin())->setSala(*it_Salas_Ordenadas);
                                  it_Vars_x_Disc_Und_TPS_Turma_DIA->second->setSala(*it_Salas_Ordenadas);
 
                                  // Atualizo a estrutura que armazena os créditos livres.
+                                 //it_Dia->second -= (int) (*it_Vars_x_Disc_Und_TPS_Turma_DIA->second.begin())->getValue();
                                  it_Dia->second -= (int) it_Vars_x_Disc_Und_TPS_Turma_DIA->second->getValue();
 
                                  it_Salas_Ordenadas = salas_Ordenadas.begin();
@@ -1126,8 +1138,8 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
                               }
                               else
                               {
-                                 continuaBusca = true;
-                                 break; // Já que o dia é inviável, não faz sentido buscar os outros dias.
+                                 continuaBusca = true; // Continuo a busca em outras salas.
+                                 break; // Dia é inviável.
                               }
                            }
                         }
@@ -1137,28 +1149,162 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
                            alocou = false;
                            break;
                         }
-
-                        // ======================
-                        /*
-                        Teste para saber se deixou de alocar a disciplina após ter varrido todas as
-                        salas.
-                        */
-                        if(!continuaBusca)
-                        {
-                           std::cout << "Ainda nao alocou. Agora eu nao sei pq. REFLITA !! (getSolution())" << std::endl;
-
-                           std::cout << "DISC ID: " << disciplina->getId() << std::endl;
-                           exit(1);
-                        }
-                        alocou = false;
-                        // ======================
-
                      }
-
                   }
                   else
                   { /* Nao faço nada. Deixo continuar tentando alocar nas outras salas associadas.  */ }
                }
+
+               // ======================
+               /*
+               Ainda assim, a variável x em questão pode não ter sido convertida.
+
+               Pode acontecer o caso em que a variável x tem valor maior que 1 e todas as salas
+               do TPS especificado pela variável em questão possuem apenas 1 cred livre. Desse modo,
+               deve-se dividir os créditos da disciplina, alocando-os separadamente por sala.
+               */
+               if(continuaBusca && !alocou)
+               {
+                  //std::cout << "Ainda nao alocou pq nenhuma sala possui a quantidade de creditos livres necessarios." << std::endl;
+                  //exit(1);
+
+                  // Referenciando a variável em questão.
+                  Variable * pt_Var_x = it_Vars_x_Disc_Und_TPS_Turma_DIA->second;
+
+                  /*
+                  A ideia aqui é pegar a variável em questão e sair tentando alocar os créditos
+                  separadamente. Eles serão separados de acordo com a disponibilidade de cada
+                  sala.
+
+                  Quando a variável for totalmente alocada, aponta-se para NULL e finaliza a alocação da mesma.
+
+                  IMPORTANTE: Como estou dividindo os créditos, tenho que criar novas variáveis. Lembrar de adiciona-las
+                  à estrutura <vars_x> que armazena todas as variáveis do tipo x.
+                  */
+                  while(pt_Var_x)
+                  {
+                     // Iterando sobre as salas ordenadas para a disciplina em questão.
+                     ITERA_VECTOR(it_Salas_Ordenadas,salas_Ordenadas,Sala)
+                     {
+                        // Checando se a sala em questão pertence ao TPS especificado pelo solver
+                        if(pt_Var_x->getSubCjtSala()->getTodasSalas().find(
+                           (*it_Salas_Ordenadas)->getId()) != 
+                           pt_Var_x->getSubCjtSala()->getTodasSalas().end())
+                        {
+                           std::map<Sala*,std::vector<std::pair<int/*dia*/,int/*creds. Livres*/> > >::iterator
+                              it_Creditos_Livres_Sala = creditos_Livres_Sala.find(*it_Salas_Ordenadas);
+
+                           if(it_Creditos_Livres_Sala == creditos_Livres_Sala.end())
+                           {
+                              std::cout << "Opa. Sala nao encontrada na estrutura <creditos_Livres_Sala> (SolverMIP::getSolution()) !!! \n\nSaindo.\n";
+                              exit(1);
+                           }
+
+                           { // METODO
+
+                              // Iterando nos dias disponiveis da sala
+                              std::vector<std::pair<int/*dia*/,int/*creds. Livres*/> >::iterator
+                                 it_Dia = it_Creditos_Livres_Sala->second.begin();
+
+                              for(; it_Dia != it_Creditos_Livres_Sala->second.end(); ++it_Dia)
+                              {
+                                 /*
+                                 Se encontrei o dia, testo se tem a qtd de creds livres necessaria. Caso
+                                 nao possua a qtd de creditos livres necessaria, posso parar de tentar
+                                 alocar nessa sala.
+                                 */
+                                 if(it_Dia->first == pt_Var_x->getDia())
+                                 {
+                                    if(it_Dia->second > 0)
+                                    {
+                                       /*
+                                       Já posso alocar. Pois trata-se de apenas um dia.
+                                       */
+
+                                       // Cálculo do total de créditos que serão alocados.
+                                       int creds_Alocar = (pt_Var_x->getValue() - it_Dia->second);
+
+                                       // Criando uma nova variável para uma divisão da variável em questão.
+                                       Variable * var_x_NAO_ALOCADA = NULL;
+
+                                       /* Se o total de créditos a serem alocados for maior do que a 
+                                       o total de crédtios livres da sala (creds_Alocar > 0), devo criar uma cópia da variável
+                                       x em questão e atualizar o seu valor com a diferença entre
+                                       o total de créditos da var subtraido do total de cred. livre da sala.
+
+                                       Já no caso em que o total de créditos alocados é menor ou igual ao total
+                                       de créditos livres da sala em questão (creds_Alocar <= 0), devo apenas alocar.
+                                       */
+                                       if(creds_Alocar > 0)
+                                       {
+                                          // Criando uma nova variável para a divisão da variável em questão.
+                                          var_x_NAO_ALOCADA = new Variable(*pt_Var_x);
+
+                                          // Atualizando a quantidade de créditos não alocada.
+                                          var_x_NAO_ALOCADA->setValue(pt_Var_x->getValue() - creds_Alocar);
+
+                                          // Adicionando a nova variável à estrutura <vars_x>
+                                          vars_x.push_back(var_x_NAO_ALOCADA);
+
+                                          // Atualizando o valor da variável a ser atendida.
+                                          pt_Var_x->setValue(creds_Alocar);
+                                       }
+
+                                       // Setando a sala na variavel
+                                       pt_Var_x->setSala(*it_Salas_Ordenadas);
+
+                                       // Atualizo a estrutura que armazena os créditos livres.
+                                       it_Dia->second -= (int) pt_Var_x->getValue();
+
+                                       //it_Salas_Ordenadas = salas_Ordenadas.begin();
+
+                                       /* Checando se ainda existe algum crédito para alocar. */
+                                       if(var_x_NAO_ALOCADA)
+                                       { pt_Var_x = var_x_NAO_ALOCADA; }
+                                       else
+                                       { pt_Var_x = NULL; /* Condição para sair do loop. */ }
+
+                                       alocou = true;
+
+                                       break; // Apenas dou um break por eficiência
+                                    }
+                                    else
+                                    {
+                                       break; // Dia é inviável.
+                                    }
+                                 }
+                              }
+
+                              if(alocou)
+                              {
+                                 alocou = false;
+                                 break;
+                              }
+                           }
+
+                        }
+                        else
+                        { /* Nao faço nada. Deixo continuar tentando alocar nas outras salas associadas.  */ }
+                     }
+                  }
+               }
+               // ======================
+
+               // ======================
+               /*
+               Teste para saber se deixou de alocar a disciplina após ter varrido todas as
+               salas.
+               */
+               //if(!continuaBusca)
+               //{
+               //   std::cout << "Ainda nao alocou. Agora eu nao sei pq. REFLITA !! (getSolution())" << std::endl;
+
+               //   std::cout << "DISC ID: " << disciplina->getId() << std::endl;
+               //   exit(1);
+               //}
+               //alocou = false;
+               // ======================
+
             }
          }
       }
@@ -1173,6 +1319,18 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
 
    ITERA_VECTOR(it_Vars_x,vars_x,Variable)
    {
+      if ( (*it_Vars_x)->getSala() == NULL )
+      {
+         printf("OPA. Variavel x (x_i(%d)_d(%d)_u(%d)_tps(%d)_t(%d))nao convertida.\n",
+            (*it_Vars_x)->getTurma(),
+            (*it_Vars_x)->getDisciplina()->getId(),
+            (*it_Vars_x)->getUnidade()->getId(),
+            (*it_Vars_x)->getSubCjtSala()->getId(),
+            (*it_Vars_x)->getDia());
+
+         exit(1);
+      }
+
       std::cout << (*it_Vars_x)->getValue() << "\t\t"
          << (*it_Vars_x)->getTurma() << "\t"
          << (*it_Vars_x)->getDisciplina()->codigo << "\t"
