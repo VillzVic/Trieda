@@ -5,18 +5,33 @@ class Aula
 {
 public:
    Aula(void);
-   ~Aula(void);
+   virtual ~Aula(void);
 
-   void setTurma(int*);
+   void setTurma(int);
    void setDisciplina(Disciplina*);
    void setSala(Sala*);
 
-   int* getTurma() const;
+   int getTurma() const;
    Disciplina* getDisciplina() const;
    Sala* getSala() const;
 
+   virtual bool operator < (Aula const & right) 
+   { 
+      return 
+         ((turma < right.getTurma()) &&
+         (disciplina < right.getDisciplina()) &&
+         (sala < right.getSala()));
+   }
+
+   virtual bool operator == (Aula const & right) { 
+      return 
+         ((turma == right.getTurma()) &&
+         (disciplina == right.getDisciplina()) &&
+         (sala == right.getSala()));
+   }
+
 private:
-   int* turma;
+   int turma;
    Disciplina* disciplina;
    Sala* sala;
 };

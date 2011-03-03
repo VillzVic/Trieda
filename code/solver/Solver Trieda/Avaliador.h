@@ -4,7 +4,7 @@ class Avaliador
 {
 public:
    Avaliador(void);
-   ~Avaliador(void);
+   virtual ~Avaliador(void);
 
    double avaliaSolucao(SolucaoOperacional &);
 };

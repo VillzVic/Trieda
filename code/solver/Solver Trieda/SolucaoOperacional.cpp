@@ -1,11 +1,8 @@
-#include <vector>
-#include <string>
-
-#include "Horario.h"
 #include "SolucaoOperacional.h"
 
-SolucaoOperacional::SolucaoOperacional()
+SolucaoOperacional::SolucaoOperacional(ProblemData * prbDt)
 {
+   this->problemData = prbDt;
 }
 
 SolucaoOperacional::~SolucaoOperacional()

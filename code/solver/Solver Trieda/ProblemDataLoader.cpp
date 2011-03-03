@@ -95,6 +95,9 @@ void ProblemDataLoader::load()
    // --------- 
    estabeleceDiasLetivosProfessorDisciplina();
 
+   // --------- 
+   relacionaProfessoresDisciplinasFixadas();
+
    // ---------
    print_stats();
    //print_csv();
@@ -467,40 +470,46 @@ void ProblemDataLoader::calculaCredsLivresSalas()
 
 void ProblemDataLoader::estabeleceDiasLetivosProfessorDisciplina()
 {
-	ITERA_GGROUP(itCampus,problemData->campi,Campus)
-    {
-		ITERA_GGROUP(itBloco,problemData->blocos,BlocoCurricular)
+   ITERA_GGROUP(itCampus,problemData->campi,Campus)
+   {
+      ITERA_GGROUP(itBloco,problemData->blocos,BlocoCurricular)
+      {
+         ITERA_GGROUP(itDisc,itBloco->disciplinas,Disciplina)
          {
-			 ITERA_GGROUP(itDisc,itBloco->disciplinas,Disciplina)
-            {
-				ITERA_GGROUP(it_prof,itCampus->professores,Professor) 
-				{							  
-					ITERA_GGROUP(it_mag,it_prof->magisterio,Magisterio) 
-					{
-						ITERA_GGROUP(it_hor,it_prof->horarios,Horario) 
-						{
-							GGroup<int>::iterator itDiasLetDisc =
-								itDisc->diasLetivos.begin();
+            ITERA_GGROUP(it_prof,itCampus->professores,Professor) 
+            {							  
+               ITERA_GGROUP(it_mag,it_prof->magisterio,Magisterio) 
+               {
+                  ITERA_GGROUP(it_hor,it_prof->horarios,Horario) 
+                  {
+                     GGroup<int>::iterator itDiasLetDisc =
+                        itDisc->diasLetivos.begin();
 
-							for(; itDiasLetDisc != itDisc->diasLetivos.end(); itDiasLetDisc++ )
-							{			
-								if(it_mag->disciplina_id == itDisc->getId()) 
-								{
-									if(it_hor->dias_semana.find(*itDiasLetDisc) != it_hor->dias_semana.end())
-									{
-										std::pair<int,int> ids_Prof_Disc 
-											(it_prof->getId(),itDisc->getId());
+                     for(; itDiasLetDisc != itDisc->diasLetivos.end(); itDiasLetDisc++ )
+                     {			
+                        if(it_mag->disciplina_id == itDisc->getId()) 
+                        {
+                           if(it_hor->dias_semana.find(*itDiasLetDisc) != it_hor->dias_semana.end())
+                           {
+                              std::pair<int,int> ids_Prof_Disc 
+                                 (it_prof->getId(),itDisc->getId());
 
-										problemData->prof_Disc_Dias[ids_Prof_Disc].add(*itDiasLetDisc);
-									}
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-	}
+                              problemData->prof_Disc_Dias[ids_Prof_Disc].add(*itDiasLetDisc);
+                           }
+                        }
+                     }
+                  }
+               }
+            }
+         }
+      }
+   }
+}
+
+void ProblemDataLoader::relacionaProfessoresDisciplinasFixadas()
+{
+   ITERA_GGROUP(it_Fixacao,problemData->fixacoes,Fixacao)
+   { problemData->prof_Fix_Disc[it_Fixacao->professor].add(it_Fixacao->disciplina); }
 }
 
 void ProblemDataLoader::combinacaoDivCreditos(){

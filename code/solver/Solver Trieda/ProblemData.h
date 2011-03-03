@@ -184,6 +184,10 @@ public:
     /* Dias letivos comuns de um professor e uma disciplina. */
    std::map<std::pair<int/*idProf*/,int/*idDisc*/>, GGroup<int>/*Dias*/ > prof_Disc_Dias;
 
+   /* Lista, para cada professor, todas as disciplinas as quais ele é fixado. */
+   std::map<Professor*,GGroup<Disciplina*> > prof_Fix_Disc;
+
+
    // <<<
 
 public:

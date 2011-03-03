@@ -9,12 +9,12 @@ Aula::Aula(void)
 
 Aula::~Aula(void)
 {
-	delete this->turma;
+	//delete this->turma;
 	delete this->disciplina;
 	delete this->sala;
 }
 
-void Aula::setTurma(int* t)
+void Aula::setTurma(int t)
 {
 	this->turma = t;
 }
@@ -29,7 +29,7 @@ void Aula::setSala(Sala* s)
 	this->sala = s;
 }
 
-int* Aula::getTurma() const
+int Aula::getTurma() const
 {
 	return this->turma;
 }
