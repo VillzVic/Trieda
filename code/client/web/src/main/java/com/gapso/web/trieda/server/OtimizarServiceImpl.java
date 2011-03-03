@@ -48,7 +48,7 @@ public class OtimizarServiceImpl extends RemoteServiceServlet implements Otimiza
 	public Long input(CenarioDTO cenarioDTO) {
 		Cenario cenario = Cenario.find(cenarioDTO.getId());
 		SolverInput solverInput = new SolverInput(cenario);
-		TriedaInput triedaInput = solverInput.generateTriedaInput();
+		TriedaInput triedaInput = solverInput.generateOperacionalTriedaInput();
 
 		byte[] fileBytes = null;
 		try {

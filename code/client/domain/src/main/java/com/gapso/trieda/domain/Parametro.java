@@ -109,6 +109,12 @@ public class Parametro implements Serializable {
     //////////////////////////////////////////////
 	// PREFERENCIAS DA INSTITUIÇÃO
     //////////////////////////////////////////////
+    
+    //Número mínimo de alunos para abrir uma turma
+    @Column(name = "PAR_MINALUNTURMA")
+    private Boolean minAlunosParaAbrirTurma;
+    @Column(name = "PAR_MINALUNTURMAVALUE")
+    private Integer minAlunosParaAbrirTurmaValue;
 
     //Considerar nível de dificuldade de disciplinas
     @Column(name = "PAR_NIVELDIFDISCI")
@@ -334,6 +340,20 @@ public class Parametro implements Serializable {
 	public void setAvaliacaoDesempenhoProfessor(Boolean avaliacaoDesempenhoProfessor) {
 		this.avaliacaoDesempenhoProfessor = avaliacaoDesempenhoProfessor;
 	}
+	
+	public Boolean getMinAlunosParaAbrirTurma() {
+		return minAlunosParaAbrirTurma;
+	}
+	public void setMinAlunosParaAbrirTurma(Boolean minAlunosParaAbrirTurma) {
+		this.minAlunosParaAbrirTurma = minAlunosParaAbrirTurma;
+	}
+
+	public Integer getMinAlunosParaAbrirTurmaValue() {
+		return minAlunosParaAbrirTurmaValue;
+	}
+	public void setMinAlunosParaAbrirTurmaValue(Integer minAlunosParaAbrirTurmaValue) {
+		this.minAlunosParaAbrirTurmaValue = minAlunosParaAbrirTurmaValue;
+	}
 
 	public Boolean getNivelDificuldadeDisciplina() {
 		return nivelDificuldadeDisciplina;
@@ -498,6 +518,8 @@ public class Parametro implements Serializable {
         sb.append("MaximizarNotaAvaliacaoCorpoDocente: ").append(getMaximizarNotaAvaliacaoCorpoDocente()).append(", ");
         sb.append("CursosMaxNotaAval: ").append(getCursosMaxNotaAval() == null ? "null" : getCursosMaxNotaAval().size());
         sb.append("MinimizarCustoDocenteCursos: ").append(getMinimizarCustoDocenteCursos()).append(", ");
+        sb.append("MinAlunosParaAbrirTurma: ").append(getMinAlunosParaAbrirTurma()).append(", ");
+        sb.append("MinAlunosParaAbrirTurmaValue: ").append(getMinAlunosParaAbrirTurmaValue()).append(", ");
         sb.append("CursosMinCust: ").append(getCursosMinCust() == null ? "null" : getCursosMinCust().size());
         sb.append("CompartilharDisciplinasCampi: ").append(getCompartilharDisciplinasCampi()).append(", ");
         sb.append("CursosCompartDiscCampi: ").append(getCursosCompartDiscCampi() == null ? "null" : getCursosCompartDiscCampi().size());

@@ -1,5 +1,6 @@
 package com.gapso.web.trieda.server.util;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -23,6 +24,7 @@ import com.gapso.trieda.domain.Equivalencia;
 import com.gapso.trieda.domain.Fixacao;
 import com.gapso.trieda.domain.HorarioAula;
 import com.gapso.trieda.domain.HorarioDisponivelCenario;
+import com.gapso.trieda.domain.Incompatibilidade;
 import com.gapso.trieda.domain.Oferta;
 import com.gapso.trieda.domain.Professor;
 import com.gapso.trieda.domain.ProfessorDisciplina;
@@ -111,13 +113,19 @@ public class SolverInput {
 	}
 
 	@Transactional
-	public TriedaInput generateTriedaInput() {
-		generate();
+	public TriedaInput generateTaticoTriedaInput() {
+		generateTatico();
 		return triedaInput;
 	}
 	
 	@Transactional
-	private void generate() {
+	public TriedaInput generateOperacionalTriedaInput() {
+		generateOperacional();
+		return triedaInput;
+	}
+	
+	@Transactional
+	private void generateTatico() {
 		generateCalendario();
 		generateTiposSala();
 		generateTiposContrato();
@@ -127,7 +135,7 @@ public class SolverInput {
 		generateNiveisDificuldade();
 		generateTiposCurso();
 		generateDivisoesDeCredito();
-		generateCampi();
+		generateCampi(true);
 		generateDeslocamentoCampi();
 		generateDeslocamentoUnidades();
 		generateDisciplinas();
@@ -139,6 +147,29 @@ public class SolverInput {
 		ordenandoListas();
 	}
 	
+	@Transactional
+	private void generateOperacional() {
+		generateCalendario();
+		generateTiposSala();
+		generateTiposContrato();
+		generateTiposTitulacao();
+		generateAreasTitulacao();
+		generateTiposDisciplina();
+		generateNiveisDificuldade();
+		generateTiposCurso();
+		generateDivisoesDeCredito();
+		generateCampi(false);
+		generateDeslocamentoCampi();
+		generateDeslocamentoUnidades();
+		generateDisciplinas();
+		generateCurso();
+		generateOfertaCursoCampi();
+		generateDemandas();
+		generateParametrosPlanejamento();
+		generateFixacoes();
+		ordenandoListas();
+	}
+
 	@Transactional
 	private void generateCalendario() {
 		ItemCalendario itemCalendario = of.createItemCalendario();
@@ -281,7 +312,7 @@ public class SolverInput {
 		triedaInput.setRegrasDivisaoCredito(grupoDivisaoCreditos);
 	}
 	
-	private void generateCampi() {
+	private void generateCampi(boolean tatico) {
 		GrupoCampus grupoCampus = of.createGrupoCampus();
 		Set<Campus> campi = cenario.getCampi();
 		for(Campus campus : campi) {
@@ -313,8 +344,11 @@ public class SolverInput {
 					itemSala.setNumero(sala.getNumero());
 					itemSala.setTipoSalaId(sala.getTipoSala().getId().intValue());
 					itemSala.setCapacidade(sala.getCapacidade());
-//					itemSala.setHorariosDisponiveis(createGrupoHorario(sala.getHorarios()));
-					itemSala.setCreditosDisponiveis(createCreditosDisponiveis(createGrupoHorario(sala.getHorarios())));
+					if(tatico) { // Tático
+						itemSala.setCreditosDisponiveis(createCreditosDisponiveis(createGrupoHorario(sala.getHorarios())));
+					} else { // Operacional
+						itemSala.setHorariosDisponiveis(createGrupoHorario(sala.getHorarios()));
+					}
 					
 					GrupoIdentificador grupoIdentificador = of.createGrupoIdentificador();
 					Set<CurriculoDisciplina> curriculoDisciplinas = sala.getCurriculoDisciplinas();
@@ -445,17 +479,21 @@ public class SolverInput {
 			
 			GrupoIdentificador grupoIdentificadorEquivalencias = of.createGrupoIdentificador();
 			Set<Equivalencia> equivalencias = disciplina.getEquivalencias();
-//			for(Equivalencia equivalencia : equivalencias) {
-				// TODO Arrumar para eliminar mais de 1 disciplina
-//				grupoIdentificadorEquivalencias.getId().add(equivalencia.getElimina().getId().intValue());
-//			}
+			for(Equivalencia equivalencia : equivalencias) {
+//				 TODO Arrumar para eliminar mais de 1 disciplina
+				Set<Disciplina> eliminas = equivalencia.getElimina();
+				if(eliminas != null && eliminas.size() > 0) {
+					List<Disciplina> disciplinasAux = new ArrayList<Disciplina>(eliminas);
+					grupoIdentificadorEquivalencias.getId().add(disciplinasAux.get(0).getId().intValue());
+				}
+			}
 			itemDisciplina.setDisciplinasEquivalentes(grupoIdentificadorEquivalencias);
 			
-			// TODO Criar o metodo de disciplinas Compatíveis
-			GrupoIdentificador grupoIdentificadorCompativeis = of.createGrupoIdentificador();
-			itemDisciplina.setDisciplinasEquivalentes(grupoIdentificadorCompativeis);
-			// TODO Criar o metodo de disciplinas incompatíveis
 			GrupoIdentificador grupoIdentificadorIncompativeis = of.createGrupoIdentificador();
+			Set<Incompatibilidade> incompatibilidades = disciplina.getIncompatibilidades();
+			for(Incompatibilidade incompatibilidade : incompatibilidades) {
+				grupoIdentificadorIncompativeis.getId().add(incompatibilidade.getDisciplina2().getId().intValue());
+			}
 			itemDisciplina.setDisciplinasIncompativeis(grupoIdentificadorIncompativeis);
 			
 			itemDisciplina.setHorariosDisponiveis(createGrupoHorario(disciplina.getHorarios()));
