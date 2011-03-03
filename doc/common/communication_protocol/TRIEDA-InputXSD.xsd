@@ -875,6 +875,11 @@ Maximizar/gerenciar a nota da avaliação institucional média coletiva do corpo
           <xs:documentation>evitar alocação simultânea do professor no último horário do dia e no primeiro horário do dia seguinte. Ver requisito RF-PP-10.</xs:documentation>
         </xs:annotation>
       </xs:element>
+      <xs:element name="minAlunosAberturaTurmas" type="xs:int">
+        <xs:annotation>
+          <xs:documentation>Mínimo de alunos para abertura de turmas</xs:documentation>
+        </xs:annotation>
+      </xs:element>
     </xs:sequence>
   </xs:complexType>
   <xs:complexType name="ItemNivelDificuldadeHorario">

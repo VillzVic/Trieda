@@ -14,38 +14,40 @@ public:
    enum ConstraintType
    {
       C_ERROR = 0,
-      C_CARGA_HORARIA = 1,				// Restricao 1.2.3
-      C_MAX_CREDITOS_SD = 2,				// Restricao 1.2.4
-      C_MIN_CREDITOS_DD = 3,				// Restricao 1.2.5
-      C_VAR_O = 4,						// Restricao 1.2.6
-      C_EVITA_SOBREPOSICAO_TD = 5,		// Restricao 1.2.7
-      C_TURMA_DISCIPLINA_SALA = 6,		// Restricao 1.2.8
-      C_TURMA_SALA = 7,					// Restricao 1.2.9
-      C_EVITA_TURMA_DISC_CAMP_D = 8,		// Restricao 1.2.10
-      C_TURMAS_BLOCO = 9,					// Restricao 1.2.11
-      C_MAX_CRED_DISC_BLOCO = 10,			// Restricao 1.2.12
-      C_NUM_TUR_BLOC_DIA_DIFUNID = 11,	// Restricao 1.2.13
-      C_LIM_CRED_DIAR_DISC = 12,			// Restricao 1.2.14
-      C_CAP_ALOC_DEM_DISC = 13,			// Restricao 1.2.15
-      C_CAP_SALA_COMPATIVEL_TURMA = 14,	// Restricao 1.2.16
-      C_CAP_SALA_UNIDADE = 15,			// Restricao 1.2.17
-      C_TURMA_DISC_DIAS_CONSEC = 16,		// Restricao 1.2.18
-      C_MIN_CREDS_TURM_BLOCO = 17,		// Restricao 1.2.19
-      C_MAX_CREDS_TURM_BLOCO = 18,		// Restricao 1.2.20
-      C_ALUNO_CURSO_DISC = 19,			// Restricao 1.2.21
-      C_ALUNOS_CURSOS_DIF = 20,			// Restricao 1.2.22
-      C_SLACK_DIST_CRED_DIA = 21,			// Restricao 1.2.23
-      C_VAR_R = 22,			            // Restricao 1.2.24
+      C_CARGA_HORARIA = 1,				// Restricao 1.2.2
+      C_MAX_CREDITOS_SD = 2,				// Restricao 1.2.3
+      C_MIN_CREDITOS_DD = 3,				// Restricao 1.2.4
+      C_VAR_O = 4,						// Restricao 1.2.5
+      C_EVITA_SOBREPOSICAO_TD = 5,		// Restricao 1.2.6
+      C_TURMA_DISCIPLINA_SALA = 6,		// Restricao 1.2.7
+      C_TURMA_SALA = 7,					// Restricao 1.2.8
+      C_EVITA_TURMA_DISC_CAMP_D = 8,		// Restricao 1.2.9
+      C_TURMAS_BLOCO = 9,					// Restricao 1.2.10
+      C_MAX_CRED_DISC_BLOCO = 10,			// Restricao 1.2.11
+      C_NUM_TUR_BLOC_DIA_DIFUNID = 11,	// Restricao 1.2.12
+      C_LIM_CRED_DIAR_DISC = 12,			// Restricao 1.2.13
+      C_CAP_ALOC_DEM_DISC = 13,			// Restricao 1.2.14
+      C_CAP_SALA_COMPATIVEL_TURMA = 14,	// Restricao 1.2.15
+      C_CAP_SALA_UNIDADE = 15,			// Restricao 1.2.16
+      C_TURMA_DISC_DIAS_CONSEC = 16,		// Restricao 1.2.17
+      C_MIN_CREDS_TURM_BLOCO = 17,		// Restricao 1.2.18
+      C_MAX_CREDS_TURM_BLOCO = 18,		// Restricao 1.2.19
+      C_ALUNO_CURSO_DISC = 19,			// Restricao 1.2.20
+      C_ALUNOS_CURSOS_DIF = 20,			// Restricao 1.2.21
+      C_SLACK_DIST_CRED_DIA = 21,			// Restricao 1.2.22
+      C_VAR_R = 22,			            // Restricao 1.2.23
 
-      C_LIMITA_ABERTURA_TURMAS = 23,			            // Restricao 1.2.25
-      C_ABRE_TURMAS_EM_SEQUENCIA = 24,			            // Restricao 1.2.26
-      C_DIVISAO_CREDITO = 25,			//Restricao 1.2.27
-      C_COMBINACAO_DIVISAO_CREDITO = 26,	//Restricao 1.2.28
+      C_LIMITA_ABERTURA_TURMAS = 23,			            // Restricao 1.2.24
+      C_ABRE_TURMAS_EM_SEQUENCIA = 24,			            // Restricao 1.2.25
+      C_DIVISAO_CREDITO = 25,			//Restricao 1.2.26
+      C_COMBINACAO_DIVISAO_CREDITO = 26,	//Restricao 1.2.27
       
-      C_VAR_Y = 27,	//Restricao 1.2.29
+      C_VAR_Y = 27,	//Restricao 1.2.28
 
-      C_MAX_CREDS_DISC_DIA = 28, // Restricao NOVA
-      C_MAX_CREDS_BLOCO_DIA = 29 // Restricao NOVA
+      C_MAX_CREDS_DISC_DIA = 28, // Restricao 1.2.29
+      C_MAX_CREDS_BLOCO_DIA = 29, // Restricao 1.2.30
+	  C_VAR_ZC = 30, // Restricao 1.2.31
+	  C_DISC_INCOMPATIVEIS = 31 // Restricao 1.2.32
    };
 
    /** Default constructor. */

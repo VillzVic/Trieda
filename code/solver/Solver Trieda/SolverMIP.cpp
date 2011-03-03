@@ -1737,6 +1737,13 @@ int SolverMIP::cria_variaveis()
    numVarsAnterior = num_vars;
 #endif
 
+   num_vars += cria_variavel_abertura_compativel(); // zc
+
+#ifdef PRINT_cria_variaveis
+   std::cout << "numVars \"zc\": " << (num_vars - numVarsAnterior) << std::endl;
+   numVarsAnterior = num_vars;
+#endif
+
    return num_vars;
 }
 
@@ -3114,6 +3121,52 @@ int SolverMIP::cria_variavel_creditos_modificada(void)
    return num_vars;
 }
 
+/*====================================================================/
+%DocBegin TRIEDA_LOAD_MODEL
+
+%Var zc_{d,t} 
+
+%Desc 
+indica se houve abertura da disciplina $d$ no dia $t$.
+
+%DocEnd
+/====================================================================*/
+
+int SolverMIP::cria_variavel_abertura_compativel(void)
+{
+   int num_vars = 0;
+
+   ITERA_GGROUP(it_disc,problemData->disciplinas,Disciplina)
+   {
+	   GGroup<int>::iterator itDiasLetDisc =
+                     it_disc->diasLetivos.begin();
+
+	   for(; itDiasLetDisc != it_disc->diasLetivos.end(); itDiasLetDisc++ )
+	   {
+            Variable v;
+            v.reset();
+            v.setType(Variable::V_ABERTURA_COMPATIVEL);
+
+            v.setDisciplina(*it_disc);    // d
+            v.setDia(*itDiasLetDisc);     // t
+
+            if (vHash.find(v) == vHash.end())
+            {
+               vHash[v] = lp->getNumCols();
+
+               OPT_COL col(OPT_COL::VAR_BINARY,0.0,0.0,1.0,
+                  (char*)v.toString().c_str());
+
+               lp->newCol(col);
+
+               num_vars += 1;
+            }
+	   }
+   }
+
+   return num_vars;
+}
+
 // ==============================================================
 //							CONSTRAINTS
 // ==============================================================
@@ -3126,209 +3179,223 @@ int SolverMIP::cria_restricoes(void)
    int numRestAnterior = 0;
 #endif
 
-   restricoes += cria_restricao_carga_horaria();				// Restricao 1.2.3
+   restricoes += cria_restricao_carga_horaria();				// Restricao 1.2.2
+
+#ifdef PRINT_cria_restricoes
+   std::cout << "numRest \"1.2.2\": " << (restricoes - numRestAnterior) << std::endl;
+   numRestAnterior = restricoes;
+#endif
+
+   restricoes += cria_restricao_max_cred_sd();					// Restricao 1.2.3
 
 #ifdef PRINT_cria_restricoes
    std::cout << "numRest \"1.2.3\": " << (restricoes - numRestAnterior) << std::endl;
    numRestAnterior = restricoes;
 #endif
 
-   restricoes += cria_restricao_max_cred_sd();					// Restricao 1.2.4
+   restricoes += cria_restricao_min_cred_dd();					// Restricao 1.2.4
 
 #ifdef PRINT_cria_restricoes
    std::cout << "numRest \"1.2.4\": " << (restricoes - numRestAnterior) << std::endl;
    numRestAnterior = restricoes;
 #endif
 
-   restricoes += cria_restricao_min_cred_dd();					// Restricao 1.2.5
+   restricoes += cria_restricao_ativacao_var_o();					// Restricao 1.2.5
 
 #ifdef PRINT_cria_restricoes
    std::cout << "numRest \"1.2.5\": " << (restricoes - numRestAnterior) << std::endl;
    numRestAnterior = restricoes;
 #endif
 
-   restricoes += cria_restricao_ativacao_var_o();					// Restricao 1.2.6
+   restricoes += cria_restricao_evita_sobreposicao();			// Restricao 1.2.6
 
 #ifdef PRINT_cria_restricoes
    std::cout << "numRest \"1.2.6\": " << (restricoes - numRestAnterior) << std::endl;
    numRestAnterior = restricoes;
 #endif
 
-   restricoes += cria_restricao_evita_sobreposicao();			// Restricao 1.2.7
+   restricoes += cria_restricao_disciplina_sala();				// Restricao 1.2.7
 
 #ifdef PRINT_cria_restricoes
    std::cout << "numRest \"1.2.7\": " << (restricoes - numRestAnterior) << std::endl;
    numRestAnterior = restricoes;
 #endif
 
-   restricoes += cria_restricao_disciplina_sala();				// Restricao 1.2.8
+   restricoes += cria_restricao_turma_sala();					// Restricao 1.2.8
 
 #ifdef PRINT_cria_restricoes
    std::cout << "numRest \"1.2.8\": " << (restricoes - numRestAnterior) << std::endl;
    numRestAnterior = restricoes;
 #endif
 
-   restricoes += cria_restricao_turma_sala();					// Restricao 1.2.9
+   restricoes += cria_restricao_evita_turma_disc_camp_d();		// Restricao 1.2.9
 
 #ifdef PRINT_cria_restricoes
    std::cout << "numRest \"1.2.9\": " << (restricoes - numRestAnterior) << std::endl;
    numRestAnterior = restricoes;
 #endif
 
-   restricoes += cria_restricao_evita_turma_disc_camp_d();		// Restricao 1.2.10
+   restricoes += cria_restricao_turmas_bloco();				// Restricao 1.2.10
 
 #ifdef PRINT_cria_restricoes
    std::cout << "numRest \"1.2.10\": " << (restricoes - numRestAnterior) << std::endl;
    numRestAnterior = restricoes;
 #endif
 
-   restricoes += cria_restricao_turmas_bloco();				// Restricao 1.2.11
+   restricoes += cria_restricao_max_cred_disc_bloco();			// Restricao 1.2.11
 
 #ifdef PRINT_cria_restricoes
    std::cout << "numRest \"1.2.11\": " << (restricoes - numRestAnterior) << std::endl;
    numRestAnterior = restricoes;
 #endif
 
-   restricoes += cria_restricao_max_cred_disc_bloco();			// Restricao 1.2.12
+   restricoes += cria_restricao_num_tur_bloc_dia_difunid();	// Restricao 1.2.12
 
 #ifdef PRINT_cria_restricoes
    std::cout << "numRest \"1.2.12\": " << (restricoes - numRestAnterior) << std::endl;
    numRestAnterior = restricoes;
 #endif
 
-   restricoes += cria_restricao_num_tur_bloc_dia_difunid();	// Restricao 1.2.13
+   restricoes += cria_restricao_lim_cred_diar_disc();			// Restricao 1.2.13
 
 #ifdef PRINT_cria_restricoes
    std::cout << "numRest \"1.2.13\": " << (restricoes - numRestAnterior) << std::endl;
    numRestAnterior = restricoes;
 #endif
 
-   restricoes += cria_restricao_lim_cred_diar_disc();			// Restricao 1.2.14
+   restricoes += cria_restricao_cap_aloc_dem_disc();			// Restricao 1.2.14
 
 #ifdef PRINT_cria_restricoes
    std::cout << "numRest \"1.2.14\": " << (restricoes - numRestAnterior) << std::endl;
    numRestAnterior = restricoes;
 #endif
 
-   restricoes += cria_restricao_cap_aloc_dem_disc();			// Restricao 1.2.15
+   restricoes += cria_restricao_cap_sala_compativel_turma();	// Restricao 1.2.15
 
 #ifdef PRINT_cria_restricoes
    std::cout << "numRest \"1.2.15\": " << (restricoes - numRestAnterior) << std::endl;
    numRestAnterior = restricoes;
 #endif
 
-   restricoes += cria_restricao_cap_sala_compativel_turma();	// Restricao 1.2.16
+   restricoes += cria_restricao_cap_sala_unidade();			// Restricao 1.2.16
 
 #ifdef PRINT_cria_restricoes
    std::cout << "numRest \"1.2.16\": " << (restricoes - numRestAnterior) << std::endl;
    numRestAnterior = restricoes;
 #endif
 
-   restricoes += cria_restricao_cap_sala_unidade();			// Restricao 1.2.17
+   //restricoes += cria_restricao_turma_disc_dias_consec();		// Restricao 1.2.17
 
 #ifdef PRINT_cria_restricoes
-   std::cout << "numRest \"1.2.17\": " << (restricoes - numRestAnterior) << std::endl;
+   //std::cout << "numRest \"1.2.17\": " << (restricoes - numRestAnterior) << std::endl;
+   std::cout << "numRest \"1.2.17\": NAO ESTA SENDO CRIADA DEVIDO A ERROS DE IMPLEMENTACAO - VER ToDo 12 (MARIO)" << std::endl;
    numRestAnterior = restricoes;
 #endif
 
-   //restricoes += cria_restricao_turma_disc_dias_consec();		// Restricao 1.2.18
+   restricoes += cria_restricao_min_creds_turm_bloco();		// Restricao 1.2.18
 
 #ifdef PRINT_cria_restricoes
-   //std::cout << "numRest \"1.2.18\": " << (restricoes - numRestAnterior) << std::endl;
-   std::cout << "numRest \"1.2.18\": NAO ESTA SENDO CRIADA DEVIDO A ERROS DE IMPLEMENTACAO - VER ToDo 12 (MARIO)" << std::endl;
+   std::cout << "numRest \"1.2.18\": " << (restricoes - numRestAnterior) << std::endl;
    numRestAnterior = restricoes;
 #endif
 
-   restricoes += cria_restricao_min_creds_turm_bloco();		// Restricao 1.2.19
+   restricoes += cria_restricao_max_creds_turm_bloco();		// Restricao 1.2.19
 
 #ifdef PRINT_cria_restricoes
    std::cout << "numRest \"1.2.19\": " << (restricoes - numRestAnterior) << std::endl;
    numRestAnterior = restricoes;
 #endif
 
-   restricoes += cria_restricao_max_creds_turm_bloco();		// Restricao 1.2.20
+   restricoes += cria_restricao_aluno_curso_disc();			// Restricao 1.2.20
 
 #ifdef PRINT_cria_restricoes
    std::cout << "numRest \"1.2.20\": " << (restricoes - numRestAnterior) << std::endl;
    numRestAnterior = restricoes;
 #endif
 
-   restricoes += cria_restricao_aluno_curso_disc();			// Restricao 1.2.21
+   //restricoes += cria_restricao_alunos_cursos_dif();			// Restricao 1.2.21
 
 #ifdef PRINT_cria_restricoes
-   std::cout << "numRest \"1.2.21\": " << (restricoes - numRestAnterior) << std::endl;
+   //std::cout << "numRest \"1.2.21\": " << (restricoes - numRestAnterior) << std::endl;
+   std::cout << "numVars \"1.2.21\": NAO ESTA SENDO CRIADA DEVIDO A ERROS DE IMPLEMENTACAO (A Inst. UNI-BH nao precisa dessa restricao implementada)." << std::endl;
    numRestAnterior = restricoes;
 #endif
 
-   //restricoes += cria_restricao_alunos_cursos_dif();			// Restricao 1.2.22
+   restricoes += cria_restricao_de_folga_dist_cred_dia();		// Restricao 1.2.22
 
 #ifdef PRINT_cria_restricoes
-   //std::cout << "numRest \"1.2.22\": " << (restricoes - numRestAnterior) << std::endl;
-   std::cout << "numVars \"1.2.22\": NAO ESTA SENDO CRIADA DEVIDO A ERROS DE IMPLEMENTACAO (A Inst. UNI-BH nao precisa dessa restricao implementada)." << std::endl;
+   std::cout << "numRest \"1.2.22\": " << (restricoes - numRestAnterior) << std::endl;
+   //std::cout << "numRest \"1.2.22\": NAO ESTA SENDO CRIADA DEVIDO A NOVA MODELAGEM QUE O MARCELO FEZ." << std::endl;
    numRestAnterior = restricoes;
 #endif
 
-   restricoes += cria_restricao_de_folga_dist_cred_dia();		// Restricao 1.2.23
+   restricoes += cria_restricao_ativacao_var_r();						// Restricao 1.2.23
 
 #ifdef PRINT_cria_restricoes
    std::cout << "numRest \"1.2.23\": " << (restricoes - numRestAnterior) << std::endl;
-   //std::cout << "numRest \"1.2.23\": NAO ESTA SENDO CRIADA DEVIDO A NOVA MODELAGEM QUE O MARCELO FEZ." << std::endl;
    numRestAnterior = restricoes;
 #endif
 
-   restricoes += cria_restricao_ativacao_var_r();						// Restricao 1.2.24
+   restricoes += cria_restricao_limita_abertura_turmas();						// Restricao 1.2.24
 
 #ifdef PRINT_cria_restricoes
    std::cout << "numRest \"1.2.24\": " << (restricoes - numRestAnterior) << std::endl;
    numRestAnterior = restricoes;
 #endif
-
-   restricoes += cria_restricao_limita_abertura_turmas();						// Restricao NOVA
+   
+   restricoes += cria_restricao_abre_turmas_em_sequencia();						// Restricao 1.2.25
 
 #ifdef PRINT_cria_restricoes
    std::cout << "numRest \"1.2.25\": " << (restricoes - numRestAnterior) << std::endl;
-   numRestAnterior = restricoes;
-#endif
-   
-   restricoes += cria_restricao_abre_turmas_em_sequencia();						// Restricao NOVA
-
-#ifdef PRINT_cria_restricoes
-   std::cout << "numRest \"1.2.26\": " << (restricoes - numRestAnterior) << std::endl;
    numRestAnterior = restricoes;
 #endif
 
    restricoes += cria_restricao_divisao_credito();
 
 #ifdef PRINT_cria_restricoes
-   std::cout << "numRest \"1.2.27\": " << (restricoes - numRestAnterior) << std::endl;
+   std::cout << "numRest \"1.2.26\": " << (restricoes - numRestAnterior) << std::endl;
    numRestAnterior = restricoes;
 #endif
 
    restricoes += cria_restricao_combinacao_divisao_credito();
 
 #ifdef PRINT_cria_restricoes
-   std::cout << "numRest \"1.2.28\": " << (restricoes - numRestAnterior) << std::endl;
+   std::cout << "numRest \"1.2.27\": " << (restricoes - numRestAnterior) << std::endl;
    numRestAnterior = restricoes;
 #endif
 
    restricoes += cria_restricao_ativacao_var_y();
 
 #ifdef PRINT_cria_restricoes
-   std::cout << "numRest \"1.2.29\": " << (restricoes - numRestAnterior) << std::endl;
+   std::cout << "numRest \"1.2.28\": " << (restricoes - numRestAnterior) << std::endl;
    numRestAnterior = restricoes;
 #endif
 
    restricoes += cria_restricao_max_creds_disc_dia();
 
 #ifdef PRINT_cria_restricoes
-   std::cout << "numRest \"1.2.30\": " << (restricoes - numRestAnterior) << std::endl;
+   std::cout << "numRest \"1.2.29\": " << (restricoes - numRestAnterior) << std::endl;
    numRestAnterior = restricoes;
 #endif
 
    restricoes += cria_restricao_max_creds_bloco_dia();
 
 #ifdef PRINT_cria_restricoes
+   std::cout << "numRest \"1.2.30\": " << (restricoes - numRestAnterior) << std::endl;
+   numRestAnterior = restricoes;
+#endif
+
+   restricoes += cria_restricao_ativacao_var_zc();
+
+#ifdef PRINT_cria_restricoes
    std::cout << "numRest \"1.2.31\": " << (restricoes - numRestAnterior) << std::endl;
+   numRestAnterior = restricoes;
+#endif
+
+   restricoes +=  cria_restricao_disciplinas_incompativeis();
+
+#ifdef PRINT_cria_restricoes
+   std::cout << "numRest \"1.2.32\": " << (restricoes - numRestAnterior) << std::endl;
    numRestAnterior = restricoes;
 #endif
 
@@ -7027,12 +7094,13 @@ int SolverMIP::cria_restricao_limita_abertura_turmas()
 
             it_v = vHash.find(v);
             if(it_v != vHash.end())
-            { row.insert(it_v->second, 8.0); }
+            { row.insert(it_v->second, problemData->parametros->min_alunos_abertura_turmas); }
 
             // ---
 
             GGroup<Oferta*>::iterator itOft =
                problemData->ofertasDisc[itDisc->getId()].begin();
+
 
             for(; itOft != problemData->ofertasDisc[itDisc->getId()].end(); itOft++)
             {
@@ -7880,6 +7948,182 @@ int SolverMIP::cria_restricao_max_creds_bloco_dia()
 
       }
    }
+
+   return restricoes;
+}
+
+/*====================================================================/
+%DocBegin TRIEDA_LOAD_MODEL
+
+%Constraint 
+Ativação da variável zc
+%Desc
+
+%MatExp
+\begin{eqnarray}
+\sum\limits_{i \in I} \sum\limits_{u \in U} \sum\limits_{tps \in SCAP_{u}} o_{i,d,u,tps,t} \leq zc_{d,t} \cdot N \nonumber \qquad 
+\forall d \in D \quad
+\forall t \in T
+\end{eqnarray}
+
+
+%DocEnd
+/====================================================================*/
+
+int SolverMIP::cria_restricao_ativacao_var_zc()
+{
+   int restricoes = 0;
+   char name[100];
+   int nnz;
+   Constraint c;
+   Variable v;
+   VariableHash::iterator it_v;
+
+   ITERA_GGROUP(it_disc,problemData->disciplinas,Disciplina)
+   {
+	   GGroup<int>::iterator itDiasLetDisc =
+                     it_disc->diasLetivos.begin();
+
+	   for(; itDiasLetDisc != it_disc->diasLetivos.end(); itDiasLetDisc++ )
+	   {
+         c.reset();
+         c.setType(Constraint::C_VAR_ZC);
+
+         c.setDisciplina(*it_disc);
+         c.setDia(*itDiasLetDisc);
+
+         sprintf( name, "%s", c.toString().c_str() ); 
+
+         if (cHash.find(c) != cHash.end()) continue;
+
+         nnz = 100;
+
+         OPT_ROW row( nnz, OPT_ROW::LESS, 0.0, name );
+
+		 ITERA_GGROUP(itCampus,problemData->campi,Campus)
+		 {
+			 ITERA_GGROUP(itUnidade,itCampus->unidades,Unidade)
+			 {
+				 ITERA_GGROUP(itCjtSala,itUnidade->conjutoSalas,ConjuntoSala)
+				 {
+					 for(int turma = 0; turma < it_disc->num_turmas; turma++)
+					 {
+						 v.reset();
+                         v.setType(Variable::V_OFERECIMENTO);
+                         v.setTurma(turma);
+                         v.setDisciplina(*it_disc);
+                         v.setUnidade(*itUnidade);
+                         v.setSubCjtSala(*itCjtSala);
+                         v.setDia(*itDiasLetDisc);
+
+                         it_v = vHash.find(v);
+                         if( it_v != vHash.end() )
+                         { row.insert(it_v->second, 1.0); }
+					 }
+				 }
+			 }
+		 }
+
+		 v.reset();
+         v.setType(Variable::V_ABERTURA_COMPATIVEL);
+		 v.setDisciplina(*it_disc);    
+         v.setDia(*itDiasLetDisc);    
+
+         it_v = vHash.find(v);
+         if( it_v != vHash.end() )
+         { row.insert(it_v->second, -100.0); }
+          
+		 if(row.getnnz() != 0)
+		 {
+			 cHash[ c ] = lp->getNumRows();
+
+			 lp->addRow(row);
+			 restricoes++;
+		 }
+      }
+   }
+
+   return restricoes;
+}
+
+/*====================================================================/
+%DocBegin TRIEDA_LOAD_MODEL
+
+%Constraint 
+Disciplinas incompatíveis
+%Desc
+
+%MatExp
+\begin{eqnarray}
+zc_{d_1,t} + zc_{d_2,t} \leq 1 \nonumber \qquad 
+(d_1, d_2),
+\forall t \in T
+\end{eqnarray}
+
+%DocEnd
+/====================================================================*/
+
+int SolverMIP::cria_restricao_disciplinas_incompativeis()
+{
+   int restricoes = 0;
+   char name[100];
+   int nnz;
+   Constraint c;
+   Variable v;
+   VariableHash::iterator it_v;
+	   
+	ITERA_GGROUP(itDisc,problemData->disciplinas,Disciplina)
+	{
+		GGroup<int>::iterator itDiasLetDisc =
+                     itDisc->diasLetivos.begin();
+
+		for(; itDiasLetDisc != itDisc->diasLetivos.end(); itDiasLetDisc++ )
+	    {
+			GGroup<int>::iterator it_inc = 
+						 itDisc->incompativeis.begin();
+			for(; it_inc != itDisc->incompativeis.end(); it_inc++ )
+			{
+			   Disciplina *nova_disc = new Disciplina();
+			   nova_disc->setId(*it_inc);
+
+			   c.reset();
+			   c.setType(Constraint::C_DISC_INCOMPATIVEIS);
+			   c.setDisciplina(nova_disc);
+			   c.setDia(*itDiasLetDisc);
+
+			   sprintf( name, "%s", c.toString().c_str() ); 
+
+				if (cHash.find(c) != cHash.end()) continue;
+
+				nnz = 100;
+
+				OPT_ROW row( nnz, OPT_ROW::LESS, 1.0, name );
+
+			    v.reset();
+			    v.setType(Variable::V_ABERTURA_COMPATIVEL);
+				v.setDisciplina(*itDisc);
+			    v.setDia(*itDiasLetDisc);
+
+			    it_v = vHash.find(v);
+			    if( it_v != vHash.end() )
+			    { row.insert(it_v->second, 1.0); }
+
+				v.setDisciplina(nova_disc);
+
+			    it_v = vHash.find(v);
+			    if( it_v != vHash.end() )
+			    { row.insert(it_v->second, 1.0); }
+
+				if(row.getnnz() != 0)
+				{
+					cHash[ c ] = lp->getNumRows();
+
+					lp->addRow(row);
+					restricoes++;
+				}
+			}
+		}
+	}
 
    return restricoes;
 }

@@ -28,6 +28,7 @@ public:
    bool custo_prof_disponibilidade;
    bool evitar_reducao_carga_horaria_prof;
    bool evitar_prof_ultimo_primeiro_hr;
+   int min_alunos_abertura_turmas;
 
    virtual void le_arvore(ItemParametrosPlanejamento& elem);
 };

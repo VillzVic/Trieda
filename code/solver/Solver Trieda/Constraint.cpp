@@ -190,6 +190,10 @@ std::string Constraint::toString()
       ss << "__(C_MAX_CREDS_DISC_DIA):"; break;
    case C_MAX_CREDS_BLOCO_DIA:
       ss << "__(C_MAX_CREDS_BLOCO_DIA):"; break;
+   case C_VAR_ZC:
+      ss << "__(C_VAR_ZC):"; break;
+  case C_DISC_INCOMPATIVEIS:
+      ss << "__(C_DISC_INCOMPATIVEIS):"; break;
    default:
       ss << "!";
    }
