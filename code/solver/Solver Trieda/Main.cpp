@@ -46,7 +46,7 @@ void writeOutput(ProblemSolution* solution, char* outputFile, char* tempOutput);
 
 int main(int argc, char** argv)
 {
-   srand(time(NULL));
+   srand((unsigned int)time(NULL));
 
    _signals();
 

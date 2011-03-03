@@ -17,7 +17,10 @@
 
 #define PRINT_cria_variaveis
 #define PRINT_cria_restricoes
+
+#ifndef DEGUG
 #define DEBUG
+#endif
 
 /**
 * Implements a MIP Solver.

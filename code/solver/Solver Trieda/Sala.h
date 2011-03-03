@@ -15,24 +15,24 @@ public:
 	//private:
 	std::string codigo;
 	std::string andar;
-   std::string numero;   
-   //int numero;   
+    std::string numero;   
+    //int numero;   
 	int tipo_sala_id; //alterar para ref, depois
 	int capacidade;
 	GGroup<Horario*> horarios_disponiveis;
 	GGroup<CreditoDisponivel*> creditos_disponiveis;
 	GGroup<int> disciplinas_associadas; //alterar para ref, depois
 
-   /* Conjunto de disciplinas que foram associadas a sala em questão pelo usuario. */
-   GGroup<Disciplina*> disciplinas_Associadas_Usuario;
-   
-   /* Conjunto de disciplinas que foram associadas a sala em questão
-   por um pré processamento realizado. Aqui, as associãções são criadas
-   independentemente da unidade em que uma sala se encontra. */
-   GGroup<Disciplina*> disciplinas_Associadas_AUTOMATICA;
+    /* Conjunto de disciplinas que foram associadas a sala em questão pelo usuario. */
+    GGroup<Disciplina*> disciplinas_Associadas_Usuario;
 
-   /* UNIAO dos conjuntos acima. */
-   GGroup<Disciplina*> disciplinasAssociadas;
+    /* Conjunto de disciplinas que foram associadas a sala em questão
+    por um pré processamento realizado. Aqui, as associãções são criadas
+    independentemente da unidade em que uma sala se encontra. */
+    GGroup<Disciplina*> disciplinas_Associadas_AUTOMATICA;
+
+    /* UNIAO dos conjuntos acima. */
+    GGroup<Disciplina*> disciplinasAssociadas;
 
 public:
 	virtual void le_arvore(ItemSala& elem);
