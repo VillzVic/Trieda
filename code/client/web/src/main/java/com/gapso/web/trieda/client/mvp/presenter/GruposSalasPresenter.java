@@ -13,7 +13,6 @@ import com.extjs.gxt.ui.client.widget.button.Button;
 import com.gapso.web.trieda.client.i18n.ITriedaI18nGateway;
 import com.gapso.web.trieda.client.mvp.model.CampusDTO;
 import com.gapso.web.trieda.client.mvp.model.GrupoSalaDTO;
-import com.gapso.web.trieda.client.mvp.model.UnidadeDTO;
 import com.gapso.web.trieda.client.mvp.view.GrupoSalaAssociarSalaView;
 import com.gapso.web.trieda.client.mvp.view.GrupoSalaFormView;
 import com.gapso.web.trieda.client.services.GruposSalasServiceAsync;
@@ -22,6 +21,7 @@ import com.gapso.web.trieda.client.util.view.AbstractAsyncCallbackWithDefaultOnF
 import com.gapso.web.trieda.client.util.view.GTab;
 import com.gapso.web.trieda.client.util.view.GTabItem;
 import com.gapso.web.trieda.client.util.view.SimpleGrid;
+import com.gapso.web.trieda.shared.dtos.UnidadeDTO;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
 import com.googlecode.future.FutureResult;

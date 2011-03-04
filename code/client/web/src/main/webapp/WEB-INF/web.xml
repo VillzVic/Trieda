@@ -114,6 +114,10 @@
 		<servlet-name>fixacoesServlet</servlet-name>
 		<servlet-class>com.gapso.web.trieda.server.FixacoesServiceImpl</servlet-class>
 	</servlet>
+	<servlet>
+		<servlet-name>exportExcelServlet</servlet-name>
+		<servlet-class>com.gapso.web.trieda.server.excel.ExportExcelServlet</servlet-class>
+	</servlet>
 
 	<servlet-mapping>
 		<servlet-name>otimizarServlet</servlet-name>
@@ -202,6 +206,10 @@
 	<servlet-mapping>
 		<servlet-name>fixacoesServlet</servlet-name>
 		<url-pattern>/trieda/fixacoes</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+  		<servlet-name>exportExcelServlet</servlet-name>
+  		<url-pattern>/trieda/exportExcelServlet</url-pattern>
 	</servlet-mapping>
 
 	<welcome-file-list>

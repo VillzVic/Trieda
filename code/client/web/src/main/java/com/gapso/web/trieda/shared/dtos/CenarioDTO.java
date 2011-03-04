@@ -1,8 +1,7 @@
-package com.gapso.web.trieda.client.mvp.model;
+package com.gapso.web.trieda.shared.dtos;
 
 import java.util.Date;
 
-import com.gapso.web.trieda.shared.dtos.AbstractDTO;
 
 public class CenarioDTO extends AbstractDTO<String> implements Comparable<CenarioDTO> {
 

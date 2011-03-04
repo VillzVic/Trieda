@@ -1,23 +1,23 @@
-package com.gapso.web.trieda.client.mvp.model;
+package com.gapso.web.trieda.shared.dtos;
 
-import com.gapso.web.trieda.shared.dtos.AbstractDTO;
 
-public class TipoDisciplinaDTO extends AbstractDTO<String> implements Comparable<TipoDisciplinaDTO> {
 
-	private static final long serialVersionUID = -5134820110949139907L;
+public class TipoSalaDTO extends AbstractDTO<String> implements Comparable<TipoSalaDTO> {
+
+	private static final long serialVersionUID = 5815525344760896272L;
 	
-	// Propriedades
 	public static final String PROPERTY_ID = "id";
 	public static final String PROPERTY_VERSION = "version";
 	public static final String PROPERTY_NOME = "nome";
-
-	public TipoDisciplinaDTO() {
-		super();
+	public static final String PROPERTY_DESCRICAO = "descricao";
+	
+	public TipoSalaDTO() {
 	}
 
-	public TipoDisciplinaDTO(Long id, String nome, Integer version) {
+	public TipoSalaDTO(Long id, String nome, String descricao, Integer version) {
 		setId(id);
 		setNome(nome);
+		setDescricao(descricao);
 		setVersion(version);
 	}
 	
@@ -34,12 +34,19 @@ public class TipoDisciplinaDTO extends AbstractDTO<String> implements Comparable
 	public Integer getVersion() {
 		return get(PROPERTY_VERSION);
 	}
-	
+
+	public void setNome(String value) {
+		set(PROPERTY_NOME, value);
+	}
 	public String getNome() {
 		return get(PROPERTY_NOME);
 	}
-	public void setNome(String value) {
-		set(PROPERTY_NOME, value);
+
+	public void setDescricao(String value) {
+		set(PROPERTY_DESCRICAO, value);
+	}
+	public String getDescricao() {
+		return get(PROPERTY_DESCRICAO);
 	}
 	
 	@Override
@@ -48,7 +55,7 @@ public class TipoDisciplinaDTO extends AbstractDTO<String> implements Comparable
 	}
 
 	@Override
-	public int compareTo(TipoDisciplinaDTO o) {
+	public int compareTo(TipoSalaDTO o) {
 		return getNome().compareTo(o.getNome());
-	}
+	}	
 }

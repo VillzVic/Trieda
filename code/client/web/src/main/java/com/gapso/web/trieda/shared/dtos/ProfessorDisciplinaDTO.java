@@ -1,6 +1,5 @@
-package com.gapso.web.trieda.client.mvp.model;
+package com.gapso.web.trieda.shared.dtos;
 
-import com.gapso.web.trieda.shared.dtos.AbstractDTO;
 
 
 

@@ -6,7 +6,7 @@ import com.extjs.gxt.ui.client.data.BasePagingLoadConfig;
 import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
-import com.gapso.web.trieda.client.mvp.model.TipoCursoDTO;
+import com.gapso.web.trieda.shared.dtos.TipoCursoDTO;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 

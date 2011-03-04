@@ -3,10 +3,10 @@ package com.gapso.web.trieda.client.mvp.presenter;
 import com.extjs.gxt.ui.client.store.TreeStore;
 import com.extjs.gxt.ui.client.widget.Component;
 import com.extjs.gxt.ui.client.widget.treepanel.TreePanel;
-import com.gapso.web.trieda.client.mvp.model.CenarioDTO;
 import com.gapso.web.trieda.client.mvp.model.FileModel;
 import com.gapso.web.trieda.client.util.view.GTab;
 import com.gapso.web.trieda.client.util.view.GTabItem;
+import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.google.gwt.user.client.ui.Widget;
 
 public class ResumoCenarioPresenter implements Presenter {

@@ -6,13 +6,13 @@ import com.extjs.gxt.ui.client.widget.Info;
 import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.NumberField;
-import com.gapso.web.trieda.client.mvp.model.ProfessorDisciplinaDTO;
 import com.gapso.web.trieda.client.services.ProfessoresDisciplinaServiceAsync;
 import com.gapso.web.trieda.client.services.Services;
 import com.gapso.web.trieda.client.util.view.DisciplinaComboBox;
 import com.gapso.web.trieda.client.util.view.ProfessorComboBox;
 import com.gapso.web.trieda.client.util.view.SimpleGrid;
 import com.gapso.web.trieda.client.util.view.SimpleModal;
+import com.gapso.web.trieda.shared.dtos.ProfessorDisciplinaDTO;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
 

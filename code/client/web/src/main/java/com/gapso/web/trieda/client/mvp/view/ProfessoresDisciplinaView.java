@@ -12,7 +12,6 @@ import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.grid.ColumnConfig;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayout;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
-import com.gapso.web.trieda.client.mvp.model.ProfessorDisciplinaDTO;
 import com.gapso.web.trieda.client.mvp.presenter.ProfessoresDisciplinaPresenter;
 import com.gapso.web.trieda.client.util.resources.Resources;
 import com.gapso.web.trieda.client.util.view.DisciplinaComboBox;
@@ -21,6 +20,7 @@ import com.gapso.web.trieda.client.util.view.ProfessorComboBox;
 import com.gapso.web.trieda.client.util.view.SimpleFilter;
 import com.gapso.web.trieda.client.util.view.SimpleGrid;
 import com.gapso.web.trieda.client.util.view.SimpleToolBar;
+import com.gapso.web.trieda.shared.dtos.ProfessorDisciplinaDTO;
 
 public class ProfessoresDisciplinaView extends MyComposite implements ProfessoresDisciplinaPresenter.Display {
 

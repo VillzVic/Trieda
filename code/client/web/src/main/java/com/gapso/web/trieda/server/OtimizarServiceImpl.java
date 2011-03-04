@@ -19,8 +19,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.gapso.trieda.domain.Cenario;
 import com.gapso.trieda.domain.Parametro;
-import com.gapso.web.trieda.client.mvp.model.CenarioDTO;
-import com.gapso.web.trieda.client.mvp.model.ParametroDTO;
 import com.gapso.web.trieda.client.services.OtimizarService;
 import com.gapso.web.trieda.server.util.ConvertBeans;
 import com.gapso.web.trieda.server.util.SolverInput;
@@ -30,6 +28,8 @@ import com.gapso.web.trieda.server.xml.input.ItemError;
 import com.gapso.web.trieda.server.xml.input.ItemWarning;
 import com.gapso.web.trieda.server.xml.input.TriedaInput;
 import com.gapso.web.trieda.server.xml.input.TriedaOutput;
+import com.gapso.web.trieda.shared.dtos.CenarioDTO;
+import com.gapso.web.trieda.shared.dtos.ParametroDTO;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 /**
@@ -45,7 +45,7 @@ public class OtimizarServiceImpl extends RemoteServiceServlet implements Otimiza
 //	private static final String linkSolver = "http://offspring:8080/SolverWS";    // SERVIDOR // OFFSPRING
 //	private static final String linkSolver = "http://toquinho:8080/SolverWS";     // MAQUINA DO MÁRIO // TOQUINHO
 //	private static final String linkSolver = "http://localhost:8080/SolverWS"; // MAQUINA DO CLAUDIO // NIRVANA
-	private static final String linkSolver = "http://localhost:3402/SolverWS";    // MAQUINA DESENVOLVIMENTO (CLAUDIO)
+	private static final String linkSolver = "http://localhost:8080/SolverWS";    // MAQUINA DESENVOLVIMENTO (CLAUDIO)
 
 	@Override
 	@Transactional

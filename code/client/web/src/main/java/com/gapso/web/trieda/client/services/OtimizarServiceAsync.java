@@ -3,8 +3,8 @@ package com.gapso.web.trieda.client.services;
 import java.util.List;
 import java.util.Map;
 
-import com.gapso.web.trieda.client.mvp.model.CenarioDTO;
-import com.gapso.web.trieda.client.mvp.model.ParametroDTO;
+import com.gapso.web.trieda.shared.dtos.CenarioDTO;
+import com.gapso.web.trieda.shared.dtos.ParametroDTO;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 

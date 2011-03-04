@@ -18,15 +18,15 @@ import com.gapso.trieda.domain.Professor;
 import com.gapso.trieda.domain.SemanaLetiva;
 import com.gapso.trieda.domain.TipoContrato;
 import com.gapso.trieda.domain.Titulacao;
-import com.gapso.web.trieda.client.mvp.model.AreaTitulacaoDTO;
 import com.gapso.web.trieda.client.mvp.model.CampusDTO;
-import com.gapso.web.trieda.client.mvp.model.HorarioDisponivelCenarioDTO;
-import com.gapso.web.trieda.client.mvp.model.ProfessorCampusDTO;
 import com.gapso.web.trieda.client.mvp.model.ProfessorDTO;
-import com.gapso.web.trieda.client.mvp.model.TipoContratoDTO;
-import com.gapso.web.trieda.client.mvp.model.TitulacaoDTO;
 import com.gapso.web.trieda.client.services.ProfessoresService;
 import com.gapso.web.trieda.server.util.ConvertBeans;
+import com.gapso.web.trieda.shared.dtos.AreaTitulacaoDTO;
+import com.gapso.web.trieda.shared.dtos.HorarioDisponivelCenarioDTO;
+import com.gapso.web.trieda.shared.dtos.ProfessorCampusDTO;
+import com.gapso.web.trieda.shared.dtos.TipoContratoDTO;
+import com.gapso.web.trieda.shared.dtos.TitulacaoDTO;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 /**

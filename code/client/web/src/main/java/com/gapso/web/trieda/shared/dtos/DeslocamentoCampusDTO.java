@@ -1,14 +1,13 @@
-package com.gapso.web.trieda.client.mvp.model;
+package com.gapso.web.trieda.shared.dtos;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import com.gapso.web.trieda.shared.dtos.AbstractDTO;
 
-public class DeslocamentoUnidadeDTO extends AbstractDTO<String> implements Comparable<DeslocamentoUnidadeDTO> {
+public class DeslocamentoCampusDTO extends AbstractDTO<String> implements Comparable<DeslocamentoCampusDTO> {
 
 	private static final long serialVersionUID = -5134820110949139907L;
-
+	
 	// Propriedades
 	public static final String PROPERTY_ORIGEM_ID = "origemId";
 	public static final String PROPERTY_ORIGEM_STRING = "origemString";
@@ -17,8 +16,8 @@ public class DeslocamentoUnidadeDTO extends AbstractDTO<String> implements Compa
 	public static final String PROPERTY_DESTINO_STRING = "destinoString";
 	public static final String PROPERTY_DESTINO_TEMPO = "destinoTempo";
 	public static final String PROPERTY_DESTINO_CUSTO = "destinoCusto";
-	
-	public DeslocamentoUnidadeDTO() {
+
+	public DeslocamentoCampusDTO() {
 		super();
 		set(PROPERTY_DESTINO_IDS_LIST, new ArrayList<Long>());
 	}
@@ -74,7 +73,7 @@ public class DeslocamentoUnidadeDTO extends AbstractDTO<String> implements Compa
 	}
 	
 	@Override
-	public int compareTo(DeslocamentoUnidadeDTO o) {
+	public int compareTo(DeslocamentoCampusDTO o) {
 		return getOrigemString().compareTo(o.getOrigemString());
-	}
+	}	
 }

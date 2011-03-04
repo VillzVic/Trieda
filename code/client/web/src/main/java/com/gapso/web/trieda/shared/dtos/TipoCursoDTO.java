@@ -1,8 +1,7 @@
-package com.gapso.web.trieda.client.mvp.model;
+package com.gapso.web.trieda.shared.dtos;
 
-import com.gapso.web.trieda.shared.dtos.AbstractDTO;
 
-public class AreaTitulacaoDTO extends AbstractDTO<String> implements Comparable<AreaTitulacaoDTO> {
+public class TipoCursoDTO extends AbstractDTO<String> implements Comparable<TipoCursoDTO> {
 
 	private static final long serialVersionUID = -5134820110949139907L;
 	
@@ -12,17 +11,15 @@ public class AreaTitulacaoDTO extends AbstractDTO<String> implements Comparable<
 	public static final String PROPERTY_CODIGO = "codigo";
 	public static final String PROPERTY_DESCRICAO = "descricao";
 
-	public AreaTitulacaoDTO() {
+	public TipoCursoDTO() {
 		super();
 	}
 
-	public AreaTitulacaoDTO(Long id, String codigo, String descricao, Integer version) {
+	public TipoCursoDTO(Long id, String codigo, String descricao, Integer version) {
 		setId(id);
 		setCodigo(codigo);
 		setDescricao(descricao);
 		setVersion(version);
-		
-		setDisplayText(codigo + " (" + descricao + ")");
 	}
 	
 	public void setId(Long value) {
@@ -57,9 +54,9 @@ public class AreaTitulacaoDTO extends AbstractDTO<String> implements Comparable<
 	public String getNaturalKey() {
 		return getCodigo();
 	}
-	
+
 	@Override
-	public int compareTo(AreaTitulacaoDTO o) {
+	public int compareTo(TipoCursoDTO o) {
 		return getCodigo().compareTo(o.getCodigo());
 	}
 }

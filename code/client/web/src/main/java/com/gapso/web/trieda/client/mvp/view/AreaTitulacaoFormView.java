@@ -5,10 +5,10 @@ import com.extjs.gxt.ui.client.widget.form.FormButtonBinding;
 import com.extjs.gxt.ui.client.widget.form.FormPanel;
 import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.extjs.gxt.ui.client.widget.layout.FormData;
-import com.gapso.web.trieda.client.mvp.model.AreaTitulacaoDTO;
 import com.gapso.web.trieda.client.mvp.presenter.AreaTitulacaoFormPresenter;
 import com.gapso.web.trieda.client.util.resources.Resources;
 import com.gapso.web.trieda.client.util.view.SimpleModal;
+import com.gapso.web.trieda.shared.dtos.AreaTitulacaoDTO;
 
 public class AreaTitulacaoFormView extends MyComposite implements AreaTitulacaoFormPresenter.Display {
 

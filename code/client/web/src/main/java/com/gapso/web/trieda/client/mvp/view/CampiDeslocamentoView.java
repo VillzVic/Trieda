@@ -8,12 +8,12 @@ import com.extjs.gxt.ui.client.widget.ContentPanel;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayout;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
-import com.gapso.web.trieda.client.mvp.model.DeslocamentoCampusDTO;
 import com.gapso.web.trieda.client.mvp.presenter.CampiDeslocamentoPresenter;
 import com.gapso.web.trieda.client.util.resources.Resources;
 import com.gapso.web.trieda.client.util.view.DeslocamentoGrid;
 import com.gapso.web.trieda.client.util.view.DeslocamentoToolBar;
 import com.gapso.web.trieda.client.util.view.GTabItem;
+import com.gapso.web.trieda.shared.dtos.DeslocamentoCampusDTO;
 
 public class CampiDeslocamentoView extends MyComposite implements CampiDeslocamentoPresenter.Display {
 

@@ -13,10 +13,10 @@ import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.gapso.trieda.domain.AreaTitulacao;
 import com.gapso.trieda.domain.Curso;
-import com.gapso.web.trieda.client.mvp.model.AreaTitulacaoDTO;
 import com.gapso.web.trieda.client.mvp.model.CursoDTO;
 import com.gapso.web.trieda.client.services.AreasTitulacaoService;
 import com.gapso.web.trieda.server.util.ConvertBeans;
+import com.gapso.web.trieda.shared.dtos.AreaTitulacaoDTO;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 /**

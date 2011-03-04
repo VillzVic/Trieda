@@ -17,10 +17,10 @@ import com.extjs.gxt.ui.client.widget.layout.ColumnLayout;
 import com.extjs.gxt.ui.client.widget.layout.FormData;
 import com.extjs.gxt.ui.client.widget.layout.FormLayout;
 import com.extjs.gxt.ui.client.widget.layout.RowLayout;
-import com.gapso.web.trieda.client.mvp.model.ParametroDTO;
 import com.gapso.web.trieda.client.mvp.presenter.ParametrosPresenter;
 import com.gapso.web.trieda.client.util.resources.Resources;
 import com.gapso.web.trieda.client.util.view.GTabItem;
+import com.gapso.web.trieda.shared.dtos.ParametroDTO;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
 public class ParametrosView extends MyComposite implements ParametrosPresenter.Display {

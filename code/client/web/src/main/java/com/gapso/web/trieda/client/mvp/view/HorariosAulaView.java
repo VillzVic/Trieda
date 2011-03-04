@@ -13,7 +13,6 @@ import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.extjs.gxt.ui.client.widget.grid.ColumnConfig;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayout;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
-import com.gapso.web.trieda.client.mvp.model.HorarioAulaDTO;
 import com.gapso.web.trieda.client.mvp.presenter.HorariosAulaPresenter;
 import com.gapso.web.trieda.client.util.resources.Resources;
 import com.gapso.web.trieda.client.util.view.SemanaLetivaComboBox;
@@ -22,6 +21,7 @@ import com.gapso.web.trieda.client.util.view.SimpleFilter;
 import com.gapso.web.trieda.client.util.view.SimpleGrid;
 import com.gapso.web.trieda.client.util.view.SimpleToolBar;
 import com.gapso.web.trieda.client.util.view.TurnoComboBox;
+import com.gapso.web.trieda.shared.dtos.HorarioAulaDTO;
 import com.google.gwt.i18n.client.DateTimeFormat;
 
 public class HorariosAulaView extends MyComposite implements HorariosAulaPresenter.Display {

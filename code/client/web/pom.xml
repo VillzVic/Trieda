@@ -63,6 +63,11 @@
 			<artifactId>jersey-multipart</artifactId>
 			<version>1.0.1</version>
 		</dependency>
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi</artifactId>
+			<version>3.2-FINAL</version>
+		</dependency>
 	</dependencies>
 	<profiles>
 		<profile>

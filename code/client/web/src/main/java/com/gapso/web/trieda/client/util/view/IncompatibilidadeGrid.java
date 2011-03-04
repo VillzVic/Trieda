@@ -18,8 +18,8 @@ import com.extjs.gxt.ui.client.widget.grid.EditorGrid;
 import com.extjs.gxt.ui.client.widget.grid.Grid;
 import com.extjs.gxt.ui.client.widget.grid.GridCellRenderer;
 import com.extjs.gxt.ui.client.widget.layout.FitLayout;
-import com.gapso.web.trieda.client.mvp.model.DisciplinaIncompativelDTO;
 import com.gapso.web.trieda.client.util.resources.Resources;
+import com.gapso.web.trieda.shared.dtos.DisciplinaIncompativelDTO;
 
 public class IncompatibilidadeGrid extends ContentPanel {
 

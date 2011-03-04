@@ -7,8 +7,8 @@ import com.extjs.gxt.ui.client.widget.ContentPanel;
 import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.layout.FitLayout;
 import com.extjs.gxt.ui.client.widget.treepanel.TreePanel;
-import com.gapso.web.trieda.client.mvp.model.CenarioDTO;
 import com.gapso.web.trieda.client.util.resources.Resources;
+import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
 public class CenarioPanel extends ContentPanel {

@@ -17,9 +17,9 @@ import com.gapso.trieda.domain.Curso;
 import com.gapso.trieda.domain.TipoCurso;
 import com.gapso.web.trieda.client.mvp.model.CampusDTO;
 import com.gapso.web.trieda.client.mvp.model.CursoDTO;
-import com.gapso.web.trieda.client.mvp.model.TipoCursoDTO;
 import com.gapso.web.trieda.client.services.CursosService;
 import com.gapso.web.trieda.server.util.ConvertBeans;
+import com.gapso.web.trieda.shared.dtos.TipoCursoDTO;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 /**

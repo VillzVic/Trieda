@@ -11,13 +11,13 @@ import com.extjs.gxt.ui.client.widget.layout.BorderLayout;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
 import com.extjs.gxt.ui.client.widget.layout.FormData;
 import com.gapso.web.trieda.client.mvp.model.CampusDTO;
-import com.gapso.web.trieda.client.mvp.model.DeslocamentoUnidadeDTO;
 import com.gapso.web.trieda.client.mvp.presenter.UnidadesDeslocamentoPresenter;
 import com.gapso.web.trieda.client.util.resources.Resources;
 import com.gapso.web.trieda.client.util.view.CampusComboBox;
 import com.gapso.web.trieda.client.util.view.DeslocamentoGrid;
 import com.gapso.web.trieda.client.util.view.DeslocamentoToolBar;
 import com.gapso.web.trieda.client.util.view.GTabItem;
+import com.gapso.web.trieda.shared.dtos.DeslocamentoUnidadeDTO;
 
 public class UnidadesDeslocamentoView extends MyComposite implements UnidadesDeslocamentoPresenter.Display {
 

@@ -17,11 +17,11 @@ import com.gapso.trieda.domain.Sala;
 import com.gapso.trieda.domain.Turno;
 import com.gapso.web.trieda.client.mvp.model.AtendimentoTaticoDTO;
 import com.gapso.web.trieda.client.mvp.model.CurriculoDTO;
-import com.gapso.web.trieda.client.mvp.model.ParDTO;
 import com.gapso.web.trieda.client.mvp.model.SalaDTO;
 import com.gapso.web.trieda.client.mvp.model.TurnoDTO;
 import com.gapso.web.trieda.client.services.AtendimentosService;
 import com.gapso.web.trieda.server.util.ConvertBeans;
+import com.gapso.web.trieda.shared.dtos.ParDTO;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 /**

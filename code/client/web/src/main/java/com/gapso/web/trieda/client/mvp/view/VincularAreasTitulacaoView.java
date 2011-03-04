@@ -16,11 +16,11 @@ import com.extjs.gxt.ui.client.widget.layout.FitLayout;
 import com.extjs.gxt.ui.client.widget.layout.FormData;
 import com.extjs.gxt.ui.client.widget.layout.RowData;
 import com.extjs.gxt.ui.client.widget.layout.RowLayout;
-import com.gapso.web.trieda.client.mvp.model.AreaTitulacaoDTO;
 import com.gapso.web.trieda.client.mvp.presenter.VincularAreasTitulacaoPresenter;
 import com.gapso.web.trieda.client.util.resources.Resources;
 import com.gapso.web.trieda.client.util.view.CursoComboBox;
 import com.gapso.web.trieda.client.util.view.GTabItem;
+import com.gapso.web.trieda.shared.dtos.AreaTitulacaoDTO;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
 public class VincularAreasTitulacaoView extends MyComposite implements VincularAreasTitulacaoPresenter.Display {

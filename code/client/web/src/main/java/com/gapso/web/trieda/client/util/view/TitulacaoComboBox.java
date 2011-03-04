@@ -6,8 +6,8 @@ import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.RpcProxy;
 import com.extjs.gxt.ui.client.store.ListStore;
 import com.extjs.gxt.ui.client.widget.form.ComboBox;
-import com.gapso.web.trieda.client.mvp.model.TitulacaoDTO;
 import com.gapso.web.trieda.client.services.Services;
+import com.gapso.web.trieda.shared.dtos.TitulacaoDTO;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class TitulacaoComboBox extends ComboBox<TitulacaoDTO> {
