@@ -42,7 +42,7 @@ public class HorarioDisponivelDisciplinaFormView extends MyComposite implements 
 		contentPanel = new ContentPanel(new FitLayout());
 		contentPanel.setHeaderVisible(false);
 		contentPanel.setBodyBorder(false);
-	    gridPanel = new SemanaLetivaDoCenarioGrid<HorarioDisponivelCenarioDTO>(horariosDisponiveis);
+	    gridPanel = new SemanaLetivaDoCenarioGrid<HorarioDisponivelCenarioDTO>(horariosDisponiveis,HorarioDisponivelCenarioDTO.PROPERTY_ID);
 	    contentPanel.add(gridPanel);
 		simpleModal.setContent(contentPanel);
 	}

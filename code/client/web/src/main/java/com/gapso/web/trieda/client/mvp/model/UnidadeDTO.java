@@ -1,10 +1,19 @@
 package com.gapso.web.trieda.client.mvp.model;
 
-import com.extjs.gxt.ui.client.data.BaseModel;
+import com.gapso.web.trieda.shared.dtos.AbstractDTO;
 
-public class UnidadeDTO extends BaseModel {
+public class UnidadeDTO extends AbstractDTO<String> implements Comparable<UnidadeDTO> {
 
 	private static final long serialVersionUID = -5134820110949139907L;
+	
+	// Propriedades
+	public static final String PROPERTY_ID = "id";
+	public static final String PROPERTY_VERSION = "version";
+	public static final String PROPERTY_CODIGO = "codigo";
+	public static final String PROPERTY_NOME = "nome";
+	public static final String PROPERTY_CAMPUS_ID = "campusId";
+	public static final String PROPERTY_CAMPUS_STRING = "campusString";
+	public static final String PROPERTY_CAPACIDADE_SALAS = "capSalas";
 
 	public UnidadeDTO() {
 		super();
@@ -21,63 +30,61 @@ public class UnidadeDTO extends BaseModel {
 	}
 	
 	public void setId(Long value) {
-		set("id", value);
+		set(PROPERTY_ID, value);
 	}
 	public Long getId() {
-		return get("id");
+		return get(PROPERTY_ID);
 	}
 	
 	public void setVersion(Integer value) {
-		set("version", value);
+		set(PROPERTY_VERSION, value);
 	}
 	public Integer getVersion() {
-		return get("version");
+		return get(PROPERTY_VERSION);
 	}
 	
 	public String getCodigo() {
-		return get("codigo");
+		return get(PROPERTY_CODIGO);
 	}
 	public void setCodigo(String value) {
-		set("codigo", value);
+		set(PROPERTY_CODIGO, value);
 	}
 
 	public String getNome() {
-		return get("nome");
+		return get(PROPERTY_NOME);
 	}
 	public void setNome(String value) {
-		set("nome", value);
+		set(PROPERTY_NOME, value);
 	}
 	
 	public Long getCampusId() {
-		return get("campusId");
+		return get(PROPERTY_CAMPUS_ID);
 	}
 	public void setCampusId(Long value) {
-		set("campusId", value);
+		set(PROPERTY_CAMPUS_ID, value);
 	}
 	
 	public String getCampusString() {
-		return get("campusString");
+		return get(PROPERTY_CAMPUS_STRING);
 	}
 	public void setCampusString(String value) {
-		set("campusString", value);
+		set(PROPERTY_CAMPUS_STRING, value);
 	}
 	
 	public Integer getCapSalas() {
-		return get("capSalas");
+		return get(PROPERTY_CAPACIDADE_SALAS);
 	}
 	public void setCapSalas(Integer value) {
-		set("capSalas", value);
-	}
-	
-	public String getDisplay() {
-		return get("display");
-	}
-	public void setDisplay(String value) {
-		set("display", value);
+		set(PROPERTY_CAPACIDADE_SALAS, value);
 	}
 	
 	@Override
-	public String toString() {
+	public String getNaturalKey() {
 		return getCodigo();
+	}
+		
+	@Override
+	public int compareTo(UnidadeDTO o) {
+		return getNome().compareTo(o.getNome());
 	}
 }

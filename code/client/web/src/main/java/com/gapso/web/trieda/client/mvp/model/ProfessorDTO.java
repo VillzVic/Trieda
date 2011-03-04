@@ -140,4 +140,8 @@ public class ProfessorDTO extends FileModel {
 		return get("valorCredito");
 	}
 
+	@Override
+	public String getName() {
+		return getId().toString();
+	}
 }

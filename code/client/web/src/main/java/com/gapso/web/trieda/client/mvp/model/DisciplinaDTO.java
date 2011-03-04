@@ -120,4 +120,8 @@ public class DisciplinaDTO extends FileModel {
 		return getCreditosTeorico() + getCreditosPratico();
 	}
 
+	@Override
+	public String getName() {
+		return getId().toString();
+	}
 }

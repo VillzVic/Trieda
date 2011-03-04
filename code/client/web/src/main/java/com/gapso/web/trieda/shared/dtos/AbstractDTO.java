@@ -43,4 +43,9 @@ public abstract class AbstractDTO<NKType> extends BaseModel {
 			return false;
 		return true;
 	}
+	
+	@Override
+	public String toString() {
+		return getDisplayText();
+	}
 }

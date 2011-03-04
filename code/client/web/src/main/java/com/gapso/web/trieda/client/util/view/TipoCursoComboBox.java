@@ -22,7 +22,7 @@ public class TipoCursoComboBox extends ComboBox<TipoCursoDTO> {
 		
 		setStore(new ListStore<TipoCursoDTO>(new BaseListLoader<BaseListLoadResult<TipoCursoDTO>>(proxy)));
 		setFieldLabel("Tipo de Curso");
-		setDisplayField("codigo");
+		setDisplayField(TipoCursoDTO.PROPERTY_CODIGO);
 		setEditable(false);
 		setTriggerAction(TriggerAction.ALL);
 	}

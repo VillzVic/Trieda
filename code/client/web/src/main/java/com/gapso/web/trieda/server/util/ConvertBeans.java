@@ -173,7 +173,7 @@ public class ConvertBeans {
 		Campus campus = domain.getCampus();
 		dto.setCampusId(campus.getId());
 		dto.setCampusString(campus.getCodigo());
-		dto.setDisplay(domain.getNome() + " (" + domain.getCodigo() +")");
+		dto.setDisplayText(domain.getNome() + " (" + domain.getCodigo() +")");
 		return dto;
 	}
 	
@@ -188,6 +188,7 @@ public class ConvertBeans {
 			dto.setProfessorCpf(professor.getCpf());
 			dto.setCampusId(campus.getId());
 			dto.setCampusString(campus.getCodigo());
+			dto.setDisplayText(campus.getCodigo() + "-" + professor.getNome());
 			list.add(dto);
 		}
 		return list;
@@ -203,6 +204,7 @@ public class ConvertBeans {
 			dto.setProfessorCpf(professor.getCpf());
 			dto.setCampusId(campus.getId());
 			dto.setCampusString(campus.getCodigo());
+			dto.setDisplayText(campus.getCodigo() + "-" + professor.getNome());
 			list.add(dto);
 		}
 		return list;
@@ -224,6 +226,7 @@ public class ConvertBeans {
 		dto.setVersion(domain.getVersion());
 		dto.setNome(domain.getNome());
 		dto.setDescricao(domain.getDescricao());
+		dto.setDisplayText(domain.getNome() + " (" + domain.getDescricao() + ")");
 		return dto;
 	}
 	
@@ -352,6 +355,7 @@ public class ConvertBeans {
 		dto.setVersion(domain.getVersion());
 		dto.setCodigo(domain.getCodigo());
 		dto.setDescricao(domain.getDescricao());
+		dto.setDisplayText(domain.getCodigo() + " (" + domain.getDescricao() + ")");
 		return dto;
 	}
 
@@ -541,6 +545,8 @@ public class ConvertBeans {
 		
 		dto.setHorario(domain.getHorario());
 		
+		dto.setDisplayText(dto.getHorarioString());
+		
 		return dto;
 	}
 	
@@ -616,6 +622,8 @@ public class ConvertBeans {
 			
 			dto.setHorario(horarioAula.getHorario());
 			
+			dto.setDisplayText(dto.getHorarioString());
+			
 			dtos.add(dto);
 		}
 		
@@ -638,6 +646,7 @@ public class ConvertBeans {
 		dto.setVersion(domain.getVersion());
 		dto.setCodigo(domain.getCodigo());
 		dto.setDescricao(domain.getDescricao());
+		dto.setDisplayText(domain.getCodigo() + " (" + domain.getDescricao() + ")");
 		return dto;
 	}
 	
@@ -713,6 +722,7 @@ public class ConvertBeans {
 		dto.setId(domain.getId());
 		dto.setVersion(domain.getVersion());
 		dto.setNome(domain.getNome());
+		dto.setDisplayText(domain.getNome());
 		return dto;
 	}
 	
@@ -730,6 +740,7 @@ public class ConvertBeans {
 		dto.setId(domain.getId());
 		dto.setVersion(domain.getVersion());
 		dto.setNome(domain.getNome());
+		dto.setDisplayText(domain.getNome());
 		return dto;
 	}
 	
@@ -833,6 +844,7 @@ public class ConvertBeans {
 		dto.setId(domain.getId());
 		dto.setVersion(domain.getVersion());
 		dto.setNome(domain.getNome());
+		dto.setDisplayText(domain.getNome());
 		return dto;
 	}
 	
@@ -1174,6 +1186,7 @@ public class ConvertBeans {
 		dto.setDisciplinaString(domain.getDisciplina().getCodigo());
 		dto.setPreferencia(domain.getPreferencia());
 		dto.setNotaDesempenho(domain.getNota());
+		dto.setDisplayText(domain.getDisciplina().getCodigo() + "-" + domain.getProfessor().getNome());
 		return dto;
 	}
 	

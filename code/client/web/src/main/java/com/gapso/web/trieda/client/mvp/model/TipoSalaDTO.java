@@ -1,11 +1,16 @@
 package com.gapso.web.trieda.client.mvp.model;
 
-import com.extjs.gxt.ui.client.data.BaseModel;
+import com.gapso.web.trieda.shared.dtos.AbstractDTO;
 
 
-public class TipoSalaDTO extends BaseModel {
+public class TipoSalaDTO extends AbstractDTO<String> implements Comparable<TipoSalaDTO> {
 
 	private static final long serialVersionUID = 5815525344760896272L;
+	
+	public static final String PROPERTY_ID = "id";
+	public static final String PROPERTY_VERSION = "version";
+	public static final String PROPERTY_NOME = "nome";
+	public static final String PROPERTY_DESCRICAO = "descricao";
 	
 	public TipoSalaDTO() {
 	}
@@ -18,32 +23,40 @@ public class TipoSalaDTO extends BaseModel {
 	}
 	
 	public void setId(Long value) {
-		set("id", value);
+		set(PROPERTY_ID, value);
 	}
 	public Long getId() {
-		return get("id");
+		return get(PROPERTY_ID);
 	}
 	
 	public void setVersion(Integer value) {
-		set("version", value);
+		set(PROPERTY_VERSION, value);
 	}
 	public Integer getVersion() {
-		return get("version");
+		return get(PROPERTY_VERSION);
 	}
 
 	public void setNome(String value) {
-		set("nome", value);
+		set(PROPERTY_NOME, value);
 	}
 	public String getNome() {
-		return get("nome");
+		return get(PROPERTY_NOME);
 	}
 
 	public void setDescricao(String value) {
-		set("descricao", value);
+		set(PROPERTY_DESCRICAO, value);
 	}
 	public String getDescricao() {
-		return get("descricao");
+		return get(PROPERTY_DESCRICAO);
 	}
 	
-	
+	@Override
+	public String getNaturalKey() {
+		return getNome();
+	}
+
+	@Override
+	public int compareTo(TipoSalaDTO o) {
+		return getNome().compareTo(o.getNome());
+	}	
 }

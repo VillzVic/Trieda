@@ -23,7 +23,7 @@ public class TipoSalaComboBox extends ComboBox<TipoSalaDTO> {
 		};
 		setStore(new ListStore<TipoSalaDTO>(new BaseListLoader<BaseListLoadResult<TipoSalaDTO>>(proxy)));
 		setFieldLabel("Tipo de Sala");
-		setDisplayField("nome");
+		setDisplayField(TipoSalaDTO.PROPERTY_NOME);
 		setEditable(false);
 	}
 

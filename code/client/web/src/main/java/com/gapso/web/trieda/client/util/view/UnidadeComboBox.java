@@ -30,10 +30,10 @@ public class UnidadeComboBox extends ComboBox<UnidadeDTO> {
 		
 		setStore(new ListStore<UnidadeDTO>(new BaseListLoader<BaseListLoadResult<UnidadeDTO>>(proxy)));
 		
-		setDisplayField("display");
+		setDisplayField(UnidadeDTO.PROPERTY_DISPLAY_TEXT);
 		setFieldLabel("Unidade");
 		setEmptyText("Selecione a unidade");
-		setSimpleTemplate("{nome} ({codigo})");
+		setSimpleTemplate("{"+UnidadeDTO.PROPERTY_NOME+"} ({"+UnidadeDTO.PROPERTY_CODIGO+"})");
 		setEditable(false);
 		setEnabled(campusComboBox.getValue() != null);
 		setTriggerAction(TriggerAction.ALL);

@@ -22,9 +22,9 @@ public class SemanaLetivaComboBox extends ComboBox<SemanaLetivaDTO> {
 		
 		setStore(new ListStore<SemanaLetivaDTO>(new BaseListLoader<BaseListLoadResult<SemanaLetivaDTO>>(proxy)));
 		
-		setFieldLabel("Semana Letíva");
-		setEmptyText("Selecione a semana letíva");
-		setDisplayField("codigo");
+		setFieldLabel("Semana Letiva");
+		setEmptyText("Selecione a semana letiva");
+		setDisplayField(SemanaLetivaDTO.PROPERTY_CODIGO);
 		setEditable(false);
 		setTriggerAction(TriggerAction.ALL);
 	}

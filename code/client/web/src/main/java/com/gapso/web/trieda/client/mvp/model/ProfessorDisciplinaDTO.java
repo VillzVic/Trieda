@@ -1,89 +1,101 @@
 package com.gapso.web.trieda.client.mvp.model;
 
-import com.extjs.gxt.ui.client.data.BaseModel;
+import com.gapso.web.trieda.shared.dtos.AbstractDTO;
 
 
 
-public class ProfessorDisciplinaDTO extends BaseModel {
+public class ProfessorDisciplinaDTO extends AbstractDTO<String> implements Comparable<ProfessorDisciplinaDTO> {
 
 	private static final long serialVersionUID = 5815525344760896272L;
 	
 	public ProfessorDisciplinaDTO() {
 	}
 
-	/* == PROPRIEDADES ==
-	 * Long   : id
-	 * Integer: version
-	 * Long   : professorId
-	 * String : professorString
-	 * String : professorCpf
-	 * Long   : disciplinaId
-	 * String : disciplinaString
-	 * Integer: preferencia
-	 * Integer: notaDesempenho
-	 */
+	// Propriedades
+	public static final String PROPERTY_ID = "id";
+	public static final String PROPERTY_VERSION = "version";
+	public static final String PROPERTY_PROFESSOR_ID = "professorId";
+	public static final String PROPERTY_PROFESSOR_STRING = "professorString";
+	public static final String PROPERTY_PROFESSOR_CPF = "professorCpf";
+	public static final String PROPERTY_DISCIPLINA_ID = "disciplinaId";
+	public static final String PROPERTY_DISCIPLINA_STRING = "disciplinaString";
+	public static final String PROPERTY_PREFERENCIA = "preferencia";
+	public static final String PROPERTY_NOTA_DESEMPENHO = "notaDesempenho";
 	
 	public void setId(Long value) {
-		set("id", value);
+		set(PROPERTY_ID, value);
 	}
 	public Long getId() {
-		return get("id");
+		return get(PROPERTY_ID);
 	}
 	
 	public void setVersion(Integer value) {
-		set("version", value);
+		set(PROPERTY_VERSION, value);
 	}
 	public Integer getVersion() {
-		return get("version");
+		return get(PROPERTY_VERSION);
 	}
 	
 	public void setProfessorId(Long value) {
-		set("professorId", value);
+		set(PROPERTY_PROFESSOR_ID, value);
 	}
 	public Long getProfessorId() {
-		return get("professorId");
+		return get(PROPERTY_PROFESSOR_ID);
 	}
 
 	public void setProfessorString(String value) {
-		set("professorString", value);
+		set(PROPERTY_PROFESSOR_STRING, value);
 	}
 	public String getProfessorString() {
-		return get("professorString");
+		return get(PROPERTY_PROFESSOR_STRING);
 	}
 	
 	public void setProfessorCpf(String value) {
-		set("professorCpf", value);
+		set(PROPERTY_PROFESSOR_CPF, value);
 	}
 	public String getProfessorCpf() {
-		return get("professorCpf");
+		return get(PROPERTY_PROFESSOR_CPF);
 	}
 	
 	public void setDisciplinaId(Long value) {
-		set("disciplinaId", value);
+		set(PROPERTY_DISCIPLINA_ID, value);
 	}
 	public Long getDisciplinaId() {
-		return get("disciplinaId");
+		return get(PROPERTY_DISCIPLINA_ID);
 	}
 	
 	public void setDisciplinaString(String value) {
-		set("disciplinaString", value);
+		set(PROPERTY_DISCIPLINA_STRING, value);
 	}
 	public String getDisciplinaString() {
-		return get("disciplinaString");
+		return get(PROPERTY_DISCIPLINA_STRING);
 	}
 
 	public void setPreferencia(Integer value) {
-		set("preferencia", value);
+		set(PROPERTY_PREFERENCIA, value);
 	}
 	public Integer getPreferencia() {
-		return get("preferencia");
+		return get(PROPERTY_PREFERENCIA);
 	}
 	
 	public void setNotaDesempenho(Integer value) {
-		set("notaDesempenho", value);
+		set(PROPERTY_NOTA_DESEMPENHO, value);
 	}
 	public Integer getNotaDesempenho() {
-		return get("notaDesempenho");
+		return get(PROPERTY_NOTA_DESEMPENHO);
+	}
+
+	@Override
+	public String getNaturalKey() {
+		return getDisciplinaString() + "-" + getProfessorCpf();
 	}
 	
+	@Override
+	public int compareTo(ProfessorDisciplinaDTO o) {
+		int result = getDisciplinaString().compareTo(o.getDisciplinaString());
+		if (result == 0) {
+			result = getProfessorString().compareTo(o.getProfessorString());
+		}
+		return result;
+	}
 }

@@ -22,7 +22,7 @@ public class TitulacaoComboBox extends ComboBox<TitulacaoDTO> {
 		
 		setStore(new ListStore<TitulacaoDTO>(new BaseListLoader<BaseListLoadResult<TitulacaoDTO>>(proxy)));
 		setFieldLabel("Titulação");
-		setDisplayField("nome");
+		setDisplayField(TitulacaoDTO.PROPERTY_NOME);
 		setEditable(false);
 		setTriggerAction(TriggerAction.ALL);
 	}

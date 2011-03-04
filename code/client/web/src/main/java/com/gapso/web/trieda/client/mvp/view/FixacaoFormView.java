@@ -120,7 +120,7 @@ public class FixacaoFormView extends MyComposite implements FixacaoFormPresenter
 		salaCB.setValue(salaDTO);
 		formPanel.add(salaCB, formData);
 		
-		grid = new SemanaLetivaDoCenarioGrid<HorarioDisponivelCenarioDTO>(listHorarios);
+		grid = new SemanaLetivaDoCenarioGrid<HorarioDisponivelCenarioDTO>(listHorarios,HorarioDisponivelCenarioDTO.PROPERTY_ID);
 		grid.setSelectDefault(selectDefault);
 		
 		container.add(formPanel, new VBoxLayoutData(new Margins(0, 0, 5, 0)));

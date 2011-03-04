@@ -24,7 +24,7 @@ public class TipoDisciplinaComboBox extends ComboBox<TipoDisciplinaDTO> {
 		
 		setFieldLabel("Tipo de Disciplina");
 		setEmptyText("Selecione o tipo de disciplina");
-		setDisplayField("nome");
+		setDisplayField(TipoDisciplinaDTO.PROPERTY_NOME);
 		setEditable(false);
 		setTriggerAction(TriggerAction.ALL);
 	}

@@ -22,7 +22,7 @@ public class TipoContratoComboBox extends ComboBox<TipoContratoDTO> {
 		
 		setStore(new ListStore<TipoContratoDTO>(new BaseListLoader<BaseListLoadResult<TipoContratoDTO>>(proxy)));
 		setFieldLabel("Tipo de Contrato");
-		setDisplayField("nome");
+		setDisplayField(TipoContratoDTO.PROPERTY_NOME);
 		setEmptyText("Selecione tipo de contrato");
 		setEditable(false);
 		setTriggerAction(TriggerAction.ALL);

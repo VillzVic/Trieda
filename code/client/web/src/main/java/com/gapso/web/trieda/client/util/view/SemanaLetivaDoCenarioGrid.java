@@ -47,9 +47,12 @@ public class SemanaLetivaDoCenarioGrid<M extends BaseModel> extends ContentPanel
 	
 	private boolean selectDefault = false;
 	
-	public SemanaLetivaDoCenarioGrid(List<M> horariosDisponiveisDisponivel) {
+	private String horarioAulaIdPropertyName;
+	
+	public SemanaLetivaDoCenarioGrid(List<M> horariosDisponiveisDisponivel, String horarioAulaIdPropertyName) {
 		super(new FitLayout());
 		this.horariosDisponiveisDisponivel = horariosDisponiveisDisponivel;
+		this.horarioAulaIdPropertyName = horarioAulaIdPropertyName;
 		setHeaderVisible(false);
 		setBodyBorder(false);
 		createCheckboxs();
@@ -190,9 +193,9 @@ public class SemanaLetivaDoCenarioGrid<M extends BaseModel> extends ContentPanel
 	
 	private M getModel(M model) {
 		if(model != null) {
-			Long horarioDeAulaId = model.get("horarioDeAulaId");
+			Long horarioDeAulaId = model.get(horarioAulaIdPropertyName);
 			for(M o : horariosDisponiveisDisponivel) {
-				if(o.get("horarioDeAulaId").equals(horarioDeAulaId)) {
+				if(o.get(horarioAulaIdPropertyName).equals(horarioDeAulaId)) {
 					return o;
 				}
 			}
