@@ -18,8 +18,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.gapso.trieda.domain.Cenario;
+import com.gapso.trieda.domain.Parametro;
 import com.gapso.web.trieda.client.mvp.model.CenarioDTO;
+import com.gapso.web.trieda.client.mvp.model.ParametroDTO;
 import com.gapso.web.trieda.client.services.OtimizarService;
+import com.gapso.web.trieda.server.util.ConvertBeans;
 import com.gapso.web.trieda.server.util.SolverInput;
 import com.gapso.web.trieda.server.util.SolverOutput;
 import com.gapso.web.trieda.server.util.solverclient.SolverClient;
@@ -38,6 +41,7 @@ import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 public class OtimizarServiceImpl extends RemoteServiceServlet implements OtimizarService {
 
 	private static final long serialVersionUID = 5716065588362358065L;
+	
 //	private static final String linkSolver = "http://offspring:8080/SolverWS";    // SERVIDOR // OFFSPRING
 //	private static final String linkSolver = "http://toquinho:8080/SolverWS";     // MAQUINA DO MÁRIO // TOQUINHO
 //	private static final String linkSolver = "http://localhost:8080/SolverWS"; // MAQUINA DO CLAUDIO // NIRVANA
@@ -45,8 +49,21 @@ public class OtimizarServiceImpl extends RemoteServiceServlet implements Otimiza
 
 	@Override
 	@Transactional
-	public Long input(CenarioDTO cenarioDTO) {
+	public ParametroDTO getParametro(CenarioDTO cenarioDTO) {
 		Cenario cenario = Cenario.find(cenarioDTO.getId());
+		Parametro parametro = cenario.getParametro();
+		if(parametro == null){
+			parametro = new Parametro();
+			parametro.setCenario(cenario);
+		}
+		ParametroDTO parametroDTO = ConvertBeans.toParametroDTO(parametro);
+		return parametroDTO;
+	}
+	
+	@Override
+	@Transactional
+	public Long input(ParametroDTO parametroDTO) {
+		Cenario cenario = Cenario.find(parametroDTO.getCenarioId());
 		SolverInput solverInput = new SolverInput(cenario);
 		TriedaInput triedaInput = solverInput.generateOperacionalTriedaInput();
 

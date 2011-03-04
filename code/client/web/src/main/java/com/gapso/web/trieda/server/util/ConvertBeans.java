@@ -29,6 +29,7 @@ import com.gapso.trieda.domain.GrupoSala;
 import com.gapso.trieda.domain.HorarioAula;
 import com.gapso.trieda.domain.HorarioDisponivelCenario;
 import com.gapso.trieda.domain.Oferta;
+import com.gapso.trieda.domain.Parametro;
 import com.gapso.trieda.domain.Professor;
 import com.gapso.trieda.domain.ProfessorDisciplina;
 import com.gapso.trieda.domain.Sala;
@@ -61,6 +62,7 @@ import com.gapso.web.trieda.client.mvp.model.GrupoSalaDTO;
 import com.gapso.web.trieda.client.mvp.model.HorarioAulaDTO;
 import com.gapso.web.trieda.client.mvp.model.HorarioDisponivelCenarioDTO;
 import com.gapso.web.trieda.client.mvp.model.OfertaDTO;
+import com.gapso.web.trieda.client.mvp.model.ParametroDTO;
 import com.gapso.web.trieda.client.mvp.model.ProfessorCampusDTO;
 import com.gapso.web.trieda.client.mvp.model.ProfessorDTO;
 import com.gapso.web.trieda.client.mvp.model.ProfessorDisciplinaDTO;
@@ -1257,6 +1259,81 @@ public class ConvertBeans {
 			dto.setSalaString(sala.getCodigo());
 		}
 		dto.setDisplayText(domain.getCodigo());
+		return dto;
+	}
+	
+	// PARÂMETROS
+	public static Parametro toParametro(ParametroDTO dto) {
+		Parametro domain = new Parametro();
+		domain.setId(dto.getId());
+		domain.setVersion(dto.getVersion());
+		domain.setCenario(Cenario.find(dto.getCenarioId()));
+		domain.setCargaHorariaAluno(dto.getCargaHorariaAluno());
+		domain.setAlunoDePeriodoMesmaSala(dto.getAlunoDePeriodoMesmaSala());
+		domain.setAlunoEmMuitosCampi(dto.getAlunoEmMuitosCampi());
+		domain.setMinimizarDeslocamentoAluno(dto.getMinimizarDeslocamentoAluno());
+		domain.setCargaHorariaProfessor(dto.getCargaHorariaProfessor());
+		domain.setProfessorEmMuitosCampi(dto.getProfessorEmMuitosCampi());
+		domain.setMinimizarDeslocamentoProfessor(dto.getMinimizarDeslocamentoProfessor());
+		domain.setMinimizarGapProfessor(dto.getMinimizarGapProfessor());
+		domain.setEvitarReducaoCargaHorariaProfessor(dto.getEvitarReducaoCargaHorariaProfessor());
+		domain.setEditarUltimoEPrimeiroHorarioProfessor(dto.getEditarUltimoEPrimeiroHorarioProfessor());
+		domain.setPreferenciaDeProfessores(dto.getPreferenciaDeProfessores());
+		domain.setAvaliacaoDesempenhoProfessor(dto.getAvaliacaoDesempenhoProfessor());
+		domain.setMinAlunosParaAbrirTurma(dto.getMinAlunosParaAbrirTurma());
+		domain.setMinAlunosParaAbrirTurmaValue(dto.getMinAlunosParaAbrirTurmaValue());
+		domain.setNivelDificuldadeDisciplina(dto.getNivelDificuldadeDisciplina());
+		domain.setCompatibilidadeDisciplinasMesmoDia(dto.getCompatibilidadeDisciplinasMesmoDia());
+		domain.setRegrasGenericasDivisaoCredito(dto.getRegrasGenericasDivisaoCredito());
+		domain.setRegrasEspecificasDivisaoCredito(dto.getRegrasEspecificasDivisaoCredito());
+		domain.setMaximizarNotaAvaliacaoCorpoDocente(dto.getMaximizarNotaAvaliacaoCorpoDocente());
+		domain.setMinimizarCustoDocenteCursos(dto.getMinimizarCustoDocenteCursos());
+		domain.setCompartilharDisciplinasCampi(dto.getCompartilharDisciplinasCampi());
+		domain.setPercentuaisMinimosMestres(dto.getPercentuaisMinimosMestres());
+		domain.setPercentuaisMinimosDoutores(dto.getPercentuaisMinimosDoutores());
+		domain.setAreaTitulacaoProfessoresECursos(dto.getAreaTitulacaoProfessoresECursos());
+		domain.setLimitarMaximoDisciplinaProfessor(dto.getLimitarMaximoDisciplinaProfessor());
+		domain.setCargaHorariaAlunoSel(dto.getCargaHorariaAlunoSel());
+		domain.setCargaHorariaProfessorSel(dto.getCargaHorariaProfessorSel());
+		domain.setMinimizarDeslocamentoProfessorValue(dto.getMinimizarDeslocamentoProfessorValue());
+		domain.setEvitarReducaoCargaHorariaProfessorValue(dto.getEvitarReducaoCargaHorariaProfessorValue());
+		return domain;
+	}
+	
+	public static ParametroDTO toParametroDTO(Parametro domain) {
+		ParametroDTO dto = new ParametroDTO();
+		dto.setId(domain.getId());
+		dto.setVersion(domain.getVersion());
+		dto.setCenarioId(domain.getCenario().getId());
+		dto.setCargaHorariaAluno(domain.getCargaHorariaAluno());
+		dto.setAlunoDePeriodoMesmaSala(domain.getAlunoDePeriodoMesmaSala());
+		dto.setAlunoEmMuitosCampi(domain.getAlunoEmMuitosCampi());
+		dto.setMinimizarDeslocamentoAluno(domain.getMinimizarDeslocamentoAluno());
+		dto.setCargaHorariaProfessor(domain.getCargaHorariaProfessor());
+		dto.setProfessorEmMuitosCampi(domain.getProfessorEmMuitosCampi());
+		dto.setMinimizarDeslocamentoProfessor(domain.getMinimizarDeslocamentoProfessor());
+		dto.setMinimizarGapProfessor(domain.getMinimizarGapProfessor());
+		dto.setEvitarReducaoCargaHorariaProfessor(domain.getEvitarReducaoCargaHorariaProfessor());
+		dto.setEditarUltimoEPrimeiroHorarioProfessor(domain.getEditarUltimoEPrimeiroHorarioProfessor());
+		dto.setPreferenciaDeProfessores(domain.getPreferenciaDeProfessores());
+		dto.setAvaliacaoDesempenhoProfessor(domain.getAvaliacaoDesempenhoProfessor());
+		dto.setMinAlunosParaAbrirTurma(domain.getMinAlunosParaAbrirTurma());
+		dto.setMinAlunosParaAbrirTurmaValue(domain.getMinAlunosParaAbrirTurmaValue());
+		dto.setNivelDificuldadeDisciplina(domain.getNivelDificuldadeDisciplina());
+		dto.setCompatibilidadeDisciplinasMesmoDia(domain.getCompatibilidadeDisciplinasMesmoDia());
+		dto.setRegrasGenericasDivisaoCredito(domain.getRegrasGenericasDivisaoCredito());
+		dto.setRegrasEspecificasDivisaoCredito(domain.getRegrasEspecificasDivisaoCredito());
+		dto.setMaximizarNotaAvaliacaoCorpoDocente(domain.getMaximizarNotaAvaliacaoCorpoDocente());
+		dto.setMinimizarCustoDocenteCursos(domain.getMinimizarCustoDocenteCursos());
+		dto.setCompartilharDisciplinasCampi(domain.getCompartilharDisciplinasCampi());
+		dto.setPercentuaisMinimosMestres(domain.getPercentuaisMinimosMestres());
+		dto.setPercentuaisMinimosDoutores(domain.getPercentuaisMinimosDoutores());
+		dto.setAreaTitulacaoProfessoresECursos(domain.getAreaTitulacaoProfessoresECursos());
+		dto.setLimitarMaximoDisciplinaProfessor(domain.getLimitarMaximoDisciplinaProfessor());
+		dto.setCargaHorariaAlunoSel(domain.getCargaHorariaAlunoSel());
+		dto.setCargaHorariaProfessorSel(domain.getCargaHorariaProfessorSel());
+		dto.setMinimizarDeslocamentoProfessorValue(domain.getMinimizarDeslocamentoProfessorValue());
+		dto.setEvitarReducaoCargaHorariaProfessorValue(domain.getEvitarReducaoCargaHorariaProfessorValue());
 		return dto;
 	}
 }

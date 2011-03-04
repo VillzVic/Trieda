@@ -35,6 +35,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Table(name = "PARAMETROS")
 public class Parametro implements Serializable {
 
+	private static final long serialVersionUID = -1310877837088078190L;
+
 	@NotNull
     @OneToOne(targetEntity = Cenario.class)
     @JoinColumn(name = "CEN_ID")
@@ -46,22 +48,22 @@ public class Parametro implements Serializable {
 	
 	//Distribuição da carga horária semanal do aluno
     @Column(name = "PAR_CARGAHORARIAALUNO")
-    private Boolean cargaHorariaAluno;
+    private Boolean cargaHorariaAluno = false;
     @Size(min = 1, max = 20)
     @Column(name = "PAR_CARGAHORARIAALUNOSEL")
     private String cargaHorariaAlunoSel;
     
     //Manter alunos do mesmo curso-período na mesma sala
     @Column(name = "PAR_ALUNOPERIODOSALA")
-    private Boolean alunoDePeriodoMesmaSala;
+    private Boolean alunoDePeriodoMesmaSala = false;
     
     //Permitir que o aluno estude em mais de um Campus
     @Column(name = "PAR_ALUNOMUITOSCAMPI")
-    private Boolean alunoEmMuitosCampi;
+    private Boolean alunoEmMuitosCampi = false;
     
     //Minimizar Deslocamento de Alunos entre Campi
     @Column(name = "PAR_MINDESLALUNO")
-    private Boolean minimizarDeslocamentoAluno;
+    private Boolean minimizarDeslocamentoAluno = false;
 
     //////////////////////////////////////////////
 	// PREFERENCIAS DO PROFESSOR
@@ -69,42 +71,42 @@ public class Parametro implements Serializable {
     
     //Distribuição da carga horária semanal do professor
     @Column(name = "PAR_CARGAHORARIAPROF")
-    private Boolean cargaHorariaProfessor;
+    private Boolean cargaHorariaProfessor = false;
     @Size(min = 1, max = 20)
     @Column(name = "PAR_CARGAHORARIAPROFSEL")
     private String cargaHorariaProfessorSel;
     
     //Permitir que o professor ministre aulas em mais de um Campus
     @Column(name = "PAR_PROFMUITOSCAMPI")
-    private Boolean professorEmMuitosCampi;
+    private Boolean professorEmMuitosCampi = false;
     
     //Minimizar Deslocamentos de Professores entre Campi
     @Column(name = "PAR_MINDESLPROF")
-    private Boolean minimizarDeslocamentoProfessor;
+    private Boolean minimizarDeslocamentoProfessor = false;
     @Column(name = "PAR_MINDESLPROFVALUE")
     private Integer minimizarDeslocamentoProfessorValue;
     
     //Minimizar Gaps nos Horários dos Professores
     @Column(name = "PAR_MINGAPPROF")
-    private Boolean minimizarGapProfessor;
+    private Boolean minimizarGapProfessor = false;
     
     //Evitar Redução de Carga Horária de Professor
     @Column(name = "PAR_EVITARREDCARGAHORPROF")
-    private Boolean evitarReducaoCargaHorariaProfessor;
+    private Boolean evitarReducaoCargaHorariaProfessor = false;
     @Column(name = "PAR_EVITARREDCARGAHORPROFVALUE")
     private Integer evitarReducaoCargaHorariaProfessorValue;
     
     //Evitar alocação de professores no último horário do dia e primeiro do dia seguinte
     @Column(name = "PAR_EDITARULTIMOPRIHORPROF")
-    private Boolean editarUltimoEPrimeiroHorarioProfessor;
+    private Boolean editarUltimoEPrimeiroHorarioProfessor = false;
     
     //Considerar preferência de professores por disciplinas
     @Column(name = "PAR_PREFPROF")
-    private Boolean preferenciaDeProfessores;
+    private Boolean preferenciaDeProfessores = false;
     
     //Considerar avaliação de desempenho de professores
     @Column(name = "PAR_AVALIACAODESEMPROF")
-    private Boolean avaliacaoDesempenhoProfessor;
+    private Boolean avaliacaoDesempenhoProfessor = false;
 
     //////////////////////////////////////////////
 	// PREFERENCIAS DA INSTITUIÇÃO
@@ -112,59 +114,59 @@ public class Parametro implements Serializable {
     
     //Número mínimo de alunos para abrir uma turma
     @Column(name = "PAR_MINALUNTURMA")
-    private Boolean minAlunosParaAbrirTurma;
+    private Boolean minAlunosParaAbrirTurma = false;
     @Column(name = "PAR_MINALUNTURMAVALUE")
     private Integer minAlunosParaAbrirTurmaValue;
 
     //Considerar nível de dificuldade de disciplinas
     @Column(name = "PAR_NIVELDIFDISCI")
-    private Boolean nivelDificuldadeDisciplina;
+    private Boolean nivelDificuldadeDisciplina = false;
 
     //Considerar compatibilidade de disciplinas no mesmo dia
     @Column(name = "PAR_COMPATDISCDIA")
-    private Boolean compatibilidadeDisciplinasMesmoDia;
+    private Boolean compatibilidadeDisciplinasMesmoDia = false;
 
     //Considerar regras genéricas de divisão de créditos
     @Column(name = "PAR_REGRASGENDIVCRE")
-    private Boolean regrasGenericasDivisaoCredito;
+    private Boolean regrasGenericasDivisaoCredito = false;
 
     //Considerar regras específicas de divisão de créditos
     @Column(name = "PAR_REGRASESPDIVCRED")
-    private Boolean regrasEspecificasDivisaoCredito;
+    private Boolean regrasEspecificasDivisaoCredito = false;
 
     //Maximizar nota da avaliação do corpo docente de cursos específicos
     @Column(name = "PAR_MAXNOTAAVALCORDOC")
-    private Boolean maximizarNotaAvaliacaoCorpoDocente;
+    private Boolean maximizarNotaAvaliacaoCorpoDocente = false;
     @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
     private Set<Curso> cursosMaxNotaAval = new HashSet<Curso>();
 
     //Minimizar custo docente de cursos específicos
     @Column(name = "PAR_MINCUSTDOCCUR")
-    private Boolean minimizarCustoDocenteCursos;
+    private Boolean minimizarCustoDocenteCursos = false;
     @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
     private Set<Curso> cursosMinCust = new HashSet<Curso>();
 
     //Permitir compartilhamento de disciplinas entre cursos
     @Column(name = "PAR_COMPDISCCAMPI")
-    private Boolean compartilharDisciplinasCampi;
+    private Boolean compartilharDisciplinasCampi = false;
     @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
     private Set<Curso> cursosCompartDiscCampi = new HashSet<Curso>();
 
     //Considerar percentuais mínimos de mestres
     @Column(name = "PAR_PERCMINMEST")
-    private Boolean percentuaisMinimosMestres;
+    private Boolean percentuaisMinimosMestres = false;
 
     //Considerar percentuais mínimos de doutores
     @Column(name = "PAR_PERCMINDOUT")
-    private Boolean percentuaisMinimosDoutores;
+    private Boolean percentuaisMinimosDoutores = false;
 
     //Considerar áreas de titulação dos professores e cursos
     @Column(name = "PAR_AREATITPROFCUR")
-    private Boolean areaTitulacaoProfessoresECursos;
+    private Boolean areaTitulacaoProfessoresECursos = false;
 
     //Limitar máximo de disciplinas que um professor pode ministrar por curso
     @Column(name = "PAR_LIMMAXDISCPRO")
-    private Boolean limitarMaximoDisciplinaProfessor;
+    private Boolean limitarMaximoDisciplinaProfessor = false;
 
     @PersistenceContext
     transient EntityManager entityManager;
@@ -299,8 +301,7 @@ public class Parametro implements Serializable {
 	public Boolean getMinimizarDeslocamentoProfessor() {
 		return minimizarDeslocamentoProfessor;
 	}
-	public void setMinimizarDeslocamentoProfessor(
-			Boolean minimizarDeslocamentoProfessor) {
+	public void setMinimizarDeslocamentoProfessor(Boolean minimizarDeslocamentoProfessor) {
 		this.minimizarDeslocamentoProfessor = minimizarDeslocamentoProfessor;
 	}
 
@@ -314,16 +315,14 @@ public class Parametro implements Serializable {
 	public Boolean getEvitarReducaoCargaHorariaProfessor() {
 		return evitarReducaoCargaHorariaProfessor;
 	}
-	public void setEvitarReducaoCargaHorariaProfessor(
-			Boolean evitarReducaoCargaHorariaProfessor) {
+	public void setEvitarReducaoCargaHorariaProfessor(Boolean evitarReducaoCargaHorariaProfessor) {
 		this.evitarReducaoCargaHorariaProfessor = evitarReducaoCargaHorariaProfessor;
 	}
 
 	public Boolean getEditarUltimoEPrimeiroHorarioProfessor() {
 		return editarUltimoEPrimeiroHorarioProfessor;
 	}
-	public void setEditarUltimoEPrimeiroHorarioProfessor(
-			Boolean editarUltimoEPrimeiroHorarioProfessor) {
+	public void setEditarUltimoEPrimeiroHorarioProfessor(Boolean editarUltimoEPrimeiroHorarioProfessor) {
 		this.editarUltimoEPrimeiroHorarioProfessor = editarUltimoEPrimeiroHorarioProfessor;
 	}
 
@@ -365,32 +364,28 @@ public class Parametro implements Serializable {
 	public Boolean getCompatibilidadeDisciplinasMesmoDia() {
 		return compatibilidadeDisciplinasMesmoDia;
 	}
-	public void setCompatibilidadeDisciplinasMesmoDia(
-			Boolean compatibilidadeDisciplinasMesmoDia) {
+	public void setCompatibilidadeDisciplinasMesmoDia(Boolean compatibilidadeDisciplinasMesmoDia) {
 		this.compatibilidadeDisciplinasMesmoDia = compatibilidadeDisciplinasMesmoDia;
 	}
 
 	public Boolean getRegrasGenericasDivisaoCredito() {
 		return regrasGenericasDivisaoCredito;
 	}
-	public void setRegrasGenericasDivisaoCredito(
-			Boolean regrasGenericasDivisaoCredito) {
+	public void setRegrasGenericasDivisaoCredito(Boolean regrasGenericasDivisaoCredito) {
 		this.regrasGenericasDivisaoCredito = regrasGenericasDivisaoCredito;
 	}
 
 	public Boolean getRegrasEspecificasDivisaoCredito() {
 		return regrasEspecificasDivisaoCredito;
 	}
-	public void setRegrasEspecificasDivisaoCredito(
-			Boolean regrasEspecificasDivisaoCredito) {
+	public void setRegrasEspecificasDivisaoCredito(Boolean regrasEspecificasDivisaoCredito) {
 		this.regrasEspecificasDivisaoCredito = regrasEspecificasDivisaoCredito;
 	}
 
 	public Boolean getMaximizarNotaAvaliacaoCorpoDocente() {
 		return maximizarNotaAvaliacaoCorpoDocente;
 	}
-	public void setMaximizarNotaAvaliacaoCorpoDocente(
-			Boolean maximizarNotaAvaliacaoCorpoDocente) {
+	public void setMaximizarNotaAvaliacaoCorpoDocente(Boolean maximizarNotaAvaliacaoCorpoDocente) {
 		this.maximizarNotaAvaliacaoCorpoDocente = maximizarNotaAvaliacaoCorpoDocente;
 	}
 
@@ -425,16 +420,14 @@ public class Parametro implements Serializable {
 	public Boolean getAreaTitulacaoProfessoresECursos() {
 		return areaTitulacaoProfessoresECursos;
 	}
-	public void setAreaTitulacaoProfessoresECursos(
-			Boolean areaTitulacaoProfessoresECursos) {
+	public void setAreaTitulacaoProfessoresECursos(Boolean areaTitulacaoProfessoresECursos) {
 		this.areaTitulacaoProfessoresECursos = areaTitulacaoProfessoresECursos;
 	}
 
 	public Boolean getLimitarMaximoDisciplinaProfessor() {
 		return limitarMaximoDisciplinaProfessor;
 	}
-	public void setLimitarMaximoDisciplinaProfessor(
-			Boolean limitarMaximoDisciplinaProfessor) {
+	public void setLimitarMaximoDisciplinaProfessor(Boolean limitarMaximoDisciplinaProfessor) {
 		this.limitarMaximoDisciplinaProfessor = limitarMaximoDisciplinaProfessor;
 	}
 
@@ -456,16 +449,14 @@ public class Parametro implements Serializable {
 	public Integer getMinimizarDeslocamentoProfessorValue() {
 		return minimizarDeslocamentoProfessorValue;
 	}
-	public void setMinimizarDeslocamentoProfessorValue(
-			Integer minimizarDeslocamentoProfessorValue) {
+	public void setMinimizarDeslocamentoProfessorValue(Integer minimizarDeslocamentoProfessorValue) {
 		this.minimizarDeslocamentoProfessorValue = minimizarDeslocamentoProfessorValue;
 	}
 
 	public Integer getEvitarReducaoCargaHorariaProfessorValue() {
 		return evitarReducaoCargaHorariaProfessorValue;
 	}
-	public void setEvitarReducaoCargaHorariaProfessorValue(
-			Integer evitarReducaoCargaHorariaProfessorValue) {
+	public void setEvitarReducaoCargaHorariaProfessorValue(Integer evitarReducaoCargaHorariaProfessorValue) {
 		this.evitarReducaoCargaHorariaProfessorValue = evitarReducaoCargaHorariaProfessorValue;
 	}
 

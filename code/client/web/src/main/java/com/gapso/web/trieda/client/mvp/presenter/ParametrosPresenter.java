@@ -12,6 +12,7 @@ import com.extjs.gxt.ui.client.widget.Info;
 import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.gapso.web.trieda.client.mvp.model.CenarioDTO;
+import com.gapso.web.trieda.client.mvp.model.ParametroDTO;
 import com.gapso.web.trieda.client.mvp.view.OtimizarMessagesView;
 import com.gapso.web.trieda.client.services.OtimizarServiceAsync;
 import com.gapso.web.trieda.client.services.Services;
@@ -28,6 +29,7 @@ import com.googlecode.future.FutureSynchronizer;
 public class ParametrosPresenter implements Presenter {
 
 	public interface Display {
+		ParametroDTO getParametroDTO();
 		Button getSubmitButton();
 		Component getComponent();
 	}
@@ -50,7 +52,7 @@ public class ParametrosPresenter implements Presenter {
 					public void handleEvent(MessageBoxEvent be) {
 						if(be.getButtonClicked().getText().equalsIgnoreCase("yes")) {
 							OtimizarServiceAsync service = Services.otimizar();
-							service.input(cenario, new AsyncCallback<Long>() {
+							service.input(display.getParametroDTO(), new AsyncCallback<Long>() {
 								@Override
 								public void onFailure(Throwable caught) {
 									MessageBox.alert("ERRO!", "Deu falha na conexão", null);

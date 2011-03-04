@@ -9,6 +9,7 @@ import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.gapso.web.trieda.client.mvp.model.CenarioDTO;
 import com.gapso.web.trieda.client.mvp.model.DeslocamentoCampusDTO;
+import com.gapso.web.trieda.client.mvp.model.ParametroDTO;
 import com.gapso.web.trieda.client.mvp.view.AreasTitulacaoView;
 import com.gapso.web.trieda.client.mvp.view.CampiDeslocamentoView;
 import com.gapso.web.trieda.client.mvp.view.CampiView;
@@ -390,8 +391,18 @@ public class ToolBarPresenter implements Presenter {
 		toolBar.getParametrosButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
 			@Override
 			public void componentSelected(ButtonEvent ce) {
-				Presenter presenter = new ParametrosPresenter(masterData, new ParametrosView());
-				presenter.go(gTab);
+				// TODO ESTE CODIGO NÂO PERTENCE AQUI, DEVE FICAR NO PRESENTATION DE PARAMETROS
+				Services.otimizar().getParametro(masterData, new AsyncCallback<ParametroDTO>() {
+					@Override
+					public void onFailure(Throwable caught) {
+						MessageBox.alert("ERRO!", "Deu falha na conexão", null);
+					}
+					@Override
+					public void onSuccess(ParametroDTO parametroDTO) {
+						Presenter presenter = new ParametrosPresenter(masterData, new ParametrosView(parametroDTO));
+						presenter.go(gTab);
+					}
+				});
 			}
 		});
 		toolBar.getRelatorioVisaoCursoButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
