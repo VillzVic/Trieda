@@ -1,6 +1,7 @@
 package com.gapso.web.trieda.client.util.view;
 
 import com.extjs.gxt.ui.client.Style.LayoutRegion;
+import com.extjs.gxt.ui.client.util.Margins;
 import com.extjs.gxt.ui.client.widget.Component;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
 import com.extjs.gxt.ui.client.widget.TabItem;
@@ -45,6 +46,12 @@ public class GTabItem extends TabItem {
 	
 	public void setContent(Component widget) {
 		BorderLayoutData bld = new BorderLayoutData(LayoutRegion.CENTER);
+		panel.add(widget, bld);
+	}
+	
+	public void setContent(Component widget, Margins margins) {
+		BorderLayoutData bld = new BorderLayoutData(LayoutRegion.CENTER);
+		bld.setMargins(margins);
 		panel.add(widget, bld);
 	}
 

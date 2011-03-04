@@ -1269,14 +1269,18 @@ public class ConvertBeans {
 		domain.setVersion(dto.getVersion());
 		domain.setCenario(Cenario.find(dto.getCenarioId()));
 		domain.setCargaHorariaAluno(dto.getCargaHorariaAluno());
+		domain.setCargaHorariaAlunoSel(dto.getCargaHorariaAlunoSel());
 		domain.setAlunoDePeriodoMesmaSala(dto.getAlunoDePeriodoMesmaSala());
 		domain.setAlunoEmMuitosCampi(dto.getAlunoEmMuitosCampi());
 		domain.setMinimizarDeslocamentoAluno(dto.getMinimizarDeslocamentoAluno());
 		domain.setCargaHorariaProfessor(dto.getCargaHorariaProfessor());
+		domain.setCargaHorariaProfessorSel(dto.getCargaHorariaProfessorSel());
 		domain.setProfessorEmMuitosCampi(dto.getProfessorEmMuitosCampi());
 		domain.setMinimizarDeslocamentoProfessor(dto.getMinimizarDeslocamentoProfessor());
+		domain.setMinimizarDeslocamentoProfessorValue(dto.getMinimizarDeslocamentoProfessorValue());
 		domain.setMinimizarGapProfessor(dto.getMinimizarGapProfessor());
 		domain.setEvitarReducaoCargaHorariaProfessor(dto.getEvitarReducaoCargaHorariaProfessor());
+		domain.setEvitarReducaoCargaHorariaProfessorValue(dto.getEvitarReducaoCargaHorariaProfessorValue());
 		domain.setEditarUltimoEPrimeiroHorarioProfessor(dto.getEditarUltimoEPrimeiroHorarioProfessor());
 		domain.setPreferenciaDeProfessores(dto.getPreferenciaDeProfessores());
 		domain.setAvaliacaoDesempenhoProfessor(dto.getAvaliacaoDesempenhoProfessor());
@@ -1295,8 +1299,6 @@ public class ConvertBeans {
 		domain.setLimitarMaximoDisciplinaProfessor(dto.getLimitarMaximoDisciplinaProfessor());
 		domain.setCargaHorariaAlunoSel(dto.getCargaHorariaAlunoSel());
 		domain.setCargaHorariaProfessorSel(dto.getCargaHorariaProfessorSel());
-		domain.setMinimizarDeslocamentoProfessorValue(dto.getMinimizarDeslocamentoProfessorValue());
-		domain.setEvitarReducaoCargaHorariaProfessorValue(dto.getEvitarReducaoCargaHorariaProfessorValue());
 		return domain;
 	}
 	

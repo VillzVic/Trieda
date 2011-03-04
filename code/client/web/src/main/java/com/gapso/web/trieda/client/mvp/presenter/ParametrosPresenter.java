@@ -11,10 +11,13 @@ import com.extjs.gxt.ui.client.widget.Component;
 import com.extjs.gxt.ui.client.widget.Info;
 import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.button.Button;
+import com.extjs.gxt.ui.client.widget.form.CheckBox;
+import com.extjs.gxt.ui.client.widget.form.NumberField;
 import com.gapso.web.trieda.client.mvp.view.OtimizarMessagesView;
 import com.gapso.web.trieda.client.services.OtimizarServiceAsync;
 import com.gapso.web.trieda.client.services.Services;
 import com.gapso.web.trieda.client.util.resources.Resources;
+import com.gapso.web.trieda.client.util.view.CargaHorariaComboBox;
 import com.gapso.web.trieda.client.util.view.GTab;
 import com.gapso.web.trieda.client.util.view.GTabItem;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
@@ -30,6 +33,35 @@ public class ParametrosPresenter implements Presenter {
 
 	public interface Display {
 		ParametroDTO getParametroDTO();
+		CheckBox getCargaHorariaAlunoCheckBox();
+		CargaHorariaComboBox getCargaHorariaAlunoComboBox();
+		CheckBox getAlunoDePeriodoMesmaSalaCheckBox();
+		CheckBox getAlunoEmMuitosCampiCheckBox();
+		CheckBox getMinimizarDeslocamentoAlunoCheckBox();
+		CheckBox getCargaHorariaProfessorCheckBox();
+		CargaHorariaComboBox getCargaHorariaProfessorComboBox();
+		CheckBox getProfessorEmMuitosCampiCheckBox();
+		CheckBox getMinimizarDeslocamentoProfessorCheckBox();
+		NumberField getMinimizarDeslocamentoProfessorNumberField();
+		CheckBox getMinimizarGapProfessorCheckBox();
+		CheckBox getEvitarReducaoCargaHorariaProfessorCheckBox();
+		NumberField getEvitarReducaoCargaHorariaProfessorNumberField();
+		CheckBox getEditarUltimoEPrimeiroHorarioProfessorCheckBox();
+		CheckBox getPreferenciaDeProfessoresCheckBox();
+		CheckBox getAvaliacaoDesempenhoProfessorCheckBox();
+		CheckBox getNivelDificuldadeDisciplinaCheckBox();
+		CheckBox getCompatibilidadeDisciplinasMesmoDiaCheckBox();
+		CheckBox getRegrasGenericasDivisaoCreditoCheckBox();
+		CheckBox getRegrasEspecificasDivisaoCreditoCheckBox();
+		CheckBox getMaximizarNotaAvaliacaoCorpoDocenteCheckBox();
+		CheckBox getMinimizarCustoDocenteCursosCheckBox();
+		NumberField getMinAlunosParaAbrirTurmaValueNumberField();
+		CheckBox getMinAlunosParaAbrirTurmaCheckBox();
+		CheckBox getCompartilharDisciplinasCampiCheckBox();
+		CheckBox getPercentuaisMinimosMestresCheckBox();
+		CheckBox getPercentuaisMinimosDoutoresCheckBox();
+		CheckBox getAreaTitulacaoProfessoresECursosCheckBox();
+		CheckBox getLimitarMaximoDisciplinaProfessorCheckBox();
 		Button getSubmitButton();
 		Component getComponent();
 	}
@@ -52,7 +84,7 @@ public class ParametrosPresenter implements Presenter {
 					public void handleEvent(MessageBoxEvent be) {
 						if(be.getButtonClicked().getText().equalsIgnoreCase("yes")) {
 							OtimizarServiceAsync service = Services.otimizar();
-							service.input(display.getParametroDTO(), new AsyncCallback<Long>() {
+							service.input(getDTO(), new AsyncCallback<Long>() {
 								@Override
 								public void onFailure(Throwable caught) {
 									MessageBox.alert("ERRO!", "Deu falha na conexão", null);
@@ -124,6 +156,50 @@ public class ParametrosPresenter implements Presenter {
 				}
 			}
 		});
+	}
+	
+	private ParametroDTO getDTO() {
+		ParametroDTO dto = display.getParametroDTO();
+		
+		dto.setCargaHorariaAluno(display.getCargaHorariaAlunoCheckBox().getValue());
+		dto.setCargaHorariaAlunoSel(display.getCargaHorariaAlunoComboBox().getValueString());
+		dto.setAlunoDePeriodoMesmaSala(display.getAlunoDePeriodoMesmaSalaCheckBox().getValue());
+		dto.setAlunoEmMuitosCampi(display.getAlunoEmMuitosCampiCheckBox().getValue());
+		dto.setMinimizarDeslocamentoAluno(display.getMinimizarDeslocamentoAlunoCheckBox().getValue());
+
+		dto.setCargaHorariaProfessor(display.getCargaHorariaProfessorCheckBox().getValue());
+		dto.setCargaHorariaProfessorSel(display.getCargaHorariaProfessorComboBox().getValueString());
+		dto.setProfessorEmMuitosCampi(display.getProfessorEmMuitosCampiCheckBox().getValue());
+		dto.setMinimizarDeslocamentoProfessor(display.getMinimizarDeslocamentoProfessorCheckBox().getValue());
+		Number minimizarDeslocamentoProfessorValue = display.getMinimizarDeslocamentoProfessorNumberField().getValue();
+		if(minimizarDeslocamentoProfessorValue == null) minimizarDeslocamentoProfessorValue = 0;
+		dto.setMinimizarDeslocamentoProfessorValue(minimizarDeslocamentoProfessorValue.intValue());
+		dto.setMinimizarGapProfessor(display.getMinimizarGapProfessorCheckBox().getValue());
+		dto.setEvitarReducaoCargaHorariaProfessor(display.getEvitarReducaoCargaHorariaProfessorCheckBox().getValue());
+		Number evitarReducaoCargaHorariaProfessorValue = display.getEvitarReducaoCargaHorariaProfessorNumberField().getValue();
+		if(evitarReducaoCargaHorariaProfessorValue == null) evitarReducaoCargaHorariaProfessorValue = 0;
+		dto.setEvitarReducaoCargaHorariaProfessorValue(evitarReducaoCargaHorariaProfessorValue.intValue());
+		dto.setEditarUltimoEPrimeiroHorarioProfessor(display.getEditarUltimoEPrimeiroHorarioProfessorCheckBox().getValue());
+		dto.setPreferenciaDeProfessores(display.getPreferenciaDeProfessoresCheckBox().getValue());
+		dto.setAvaliacaoDesempenhoProfessor(display.getAvaliacaoDesempenhoProfessorCheckBox().getValue());
+
+		dto.setNivelDificuldadeDisciplina(display.getNivelDificuldadeDisciplinaCheckBox().getValue());
+		dto.setCompatibilidadeDisciplinasMesmoDia(display.getCompatibilidadeDisciplinasMesmoDiaCheckBox().getValue());
+		dto.setRegrasGenericasDivisaoCredito(display.getRegrasGenericasDivisaoCreditoCheckBox().getValue());
+		dto.setRegrasEspecificasDivisaoCredito(display.getRegrasEspecificasDivisaoCreditoCheckBox().getValue());
+		dto.setMaximizarNotaAvaliacaoCorpoDocente(display.getMaximizarNotaAvaliacaoCorpoDocenteCheckBox().getValue());
+		dto.setMinimizarCustoDocenteCursos(display.getMinimizarCustoDocenteCursosCheckBox().getValue());
+		dto.setMinAlunosParaAbrirTurma(display.getMinAlunosParaAbrirTurmaCheckBox().getValue());
+		Number minAlunosParaAbrirTurmaValue = display.getMinAlunosParaAbrirTurmaValueNumberField().getValue();
+		if(minAlunosParaAbrirTurmaValue == null) minAlunosParaAbrirTurmaValue = 0;
+		dto.setMinAlunosParaAbrirTurmaValue(minAlunosParaAbrirTurmaValue.intValue());
+		dto.setCompartilharDisciplinasCampi(display.getCompartilharDisciplinasCampiCheckBox().getValue());
+		dto.setPercentuaisMinimosMestres(display.getPercentuaisMinimosMestresCheckBox().getValue());
+		dto.setPercentuaisMinimosDoutores(display.getPercentuaisMinimosDoutoresCheckBox().getValue());
+		dto.setAreaTitulacaoProfessoresECursos(display.getAreaTitulacaoProfessoresECursosCheckBox().getValue());
+		dto.setLimitarMaximoDisciplinaProfessor(display.getLimitarMaximoDisciplinaProfessorCheckBox().getValue());
+		
+		return dto;
 	}
 	
 	private void desabilitaBotao(){

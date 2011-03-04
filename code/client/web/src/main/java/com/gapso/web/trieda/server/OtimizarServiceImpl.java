@@ -63,7 +63,9 @@ public class OtimizarServiceImpl extends RemoteServiceServlet implements Otimiza
 	@Override
 	@Transactional
 	public Long input(ParametroDTO parametroDTO) {
-		Cenario cenario = Cenario.find(parametroDTO.getCenarioId());
+		Parametro parametro = ConvertBeans.toParametro(parametroDTO);
+		parametro.save();
+		Cenario cenario = parametro.getCenario();
 		SolverInput solverInput = new SolverInput(cenario);
 		TriedaInput triedaInput = solverInput.generateOperacionalTriedaInput();
 

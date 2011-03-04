@@ -2,16 +2,15 @@ package com.gapso.web.trieda.client.mvp.view;
 
 import com.extjs.gxt.ui.client.Style.HorizontalAlignment;
 import com.extjs.gxt.ui.client.Style.Scroll;
+import com.extjs.gxt.ui.client.util.Margins;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
 import com.extjs.gxt.ui.client.widget.Label;
 import com.extjs.gxt.ui.client.widget.LayoutContainer;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.CheckBox;
-import com.extjs.gxt.ui.client.widget.form.ComboBox;
 import com.extjs.gxt.ui.client.widget.form.FieldSet;
 import com.extjs.gxt.ui.client.widget.form.FormPanel;
 import com.extjs.gxt.ui.client.widget.form.NumberField;
-import com.extjs.gxt.ui.client.widget.form.SimpleComboBox;
 import com.extjs.gxt.ui.client.widget.layout.ColumnData;
 import com.extjs.gxt.ui.client.widget.layout.ColumnLayout;
 import com.extjs.gxt.ui.client.widget.layout.FormData;
@@ -19,6 +18,7 @@ import com.extjs.gxt.ui.client.widget.layout.FormLayout;
 import com.extjs.gxt.ui.client.widget.layout.RowLayout;
 import com.gapso.web.trieda.client.mvp.presenter.ParametrosPresenter;
 import com.gapso.web.trieda.client.util.resources.Resources;
+import com.gapso.web.trieda.client.util.view.CargaHorariaComboBox;
 import com.gapso.web.trieda.client.util.view.GTabItem;
 import com.gapso.web.trieda.shared.dtos.ParametroDTO;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
@@ -31,13 +31,13 @@ public class ParametrosView extends MyComposite implements ParametrosPresenter.D
 	private ParametroDTO parametroDTO;
 	
 	private CheckBox cargaHorariaAlunoCheckBox;
-	private ComboBox cargaHorariaAlunoComboBox;
+	private CargaHorariaComboBox cargaHorariaAlunoComboBox;
 	private CheckBox alunoDePeriodoMesmaSalaCheckBox;
 	private CheckBox alunoEmMuitosCampiCheckBox;
 	private CheckBox minimizarDeslocamentoAlunoCheckBox;
 
 	private CheckBox cargaHorariaProfessorCheckBox;
-	private ComboBox cargaHorariaProfessorComboBox;
+	private CargaHorariaComboBox cargaHorariaProfessorComboBox;
 	private CheckBox professorEmMuitosCampiCheckBox;
 	private CheckBox minimizarDeslocamentoProfessorCheckBox;
 	private NumberField minimizarDeslocamentoProfessorNumberField;
@@ -77,7 +77,7 @@ public class ParametrosView extends MyComposite implements ParametrosPresenter.D
 
 	private void createTabItem() {
 		tabItem = new GTabItem("Parâmetros de Planejamento", Resources.DEFAULTS.parametroPlanejamento16());
-		tabItem.setContent(form);
+		tabItem.setContent(form, new Margins(5, 5, 0, 5));
 	}
 
 	private void createForm() {
@@ -102,17 +102,18 @@ public class ParametrosView extends MyComposite implements ParametrosPresenter.D
 		rowLayout.setExtraStyle("x-form-item borderBottom");
 		LayoutContainer alunoRight = new LayoutContainer(rowLayout);
 		
-		cargaHorariaAlunoCheckBox = createCheckBox("Distribuição da carga horária semanal do aluno");
-		alunoDePeriodoMesmaSalaCheckBox = createCheckBox("Manter alunos do mesmo curso-período na mesma sala");
-		alunoEmMuitosCampiCheckBox = createCheckBox("Permitir que o aluno estude em mais de um Campus");
-		minimizarDeslocamentoAlunoCheckBox = createCheckBox("Minimizar Deslocamento de Alunos entre Campi");
+		cargaHorariaAlunoCheckBox = createCheckBox("Distribuição da carga horária semanal do aluno", parametroDTO.getCargaHorariaAluno());
+		alunoDePeriodoMesmaSalaCheckBox = createCheckBox("Manter alunos do mesmo curso-período na mesma sala", parametroDTO.getAlunoDePeriodoMesmaSala());
+		alunoEmMuitosCampiCheckBox = createCheckBox("Permitir que o aluno estude em mais de um Campus", parametroDTO.getAlunoEmMuitosCampi());
+		minimizarDeslocamentoAlunoCheckBox = createCheckBox("Minimizar Deslocamento de Alunos entre Campi", parametroDTO.getMinimizarDeslocamentoAluno());
 		
 		alunoLeft.add(cargaHorariaAlunoCheckBox, formData);
 		alunoLeft.add(alunoDePeriodoMesmaSalaCheckBox, formData);
 		alunoLeft.add(alunoEmMuitosCampiCheckBox, formData);
 		alunoLeft.add(minimizarDeslocamentoAlunoCheckBox, formData);
 		
-		alunoRight.add(createComboBox());
+		cargaHorariaAlunoComboBox = createComboBox(parametroDTO.getCargaHorariaAlunoSel());
+		alunoRight.add(cargaHorariaAlunoComboBox);
 		
 		for(int i = 0; i<3; i++) {
 			label = new Label();
@@ -133,14 +134,14 @@ public class ParametrosView extends MyComposite implements ParametrosPresenter.D
 		rowLayout.setExtraStyle("x-form-item borderBottom");
 		LayoutContainer professorRight = new LayoutContainer(rowLayout);
 		
-		cargaHorariaProfessorCheckBox = createCheckBox("Distribuição da carga horária semanal do professor");
-		professorEmMuitosCampiCheckBox = createCheckBox("Permitir que o professor ministre aulas em mais de um Campus");
-		minimizarDeslocamentoProfessorCheckBox = createCheckBox("Minimizar Deslocamentos de Professores entre Campi");
-		minimizarGapProfessorCheckBox = createCheckBox("Minimizar Gaps nos Horários dos Professores");
-		evitarReducaoCargaHorariaProfessorCheckBox = createCheckBox("Evitar Redução de Carga Horária de Professor");
-		editarUltimoEPrimeiroHorarioProfessorCheckBox = createCheckBox("Evitar alocação de professores no último horário do dia e primeiro do dia seguinte");
-		preferenciaDeProfessoresCheckBox = createCheckBox("Considerar preferência de professores por disciplinas");
-		avaliacaoDesempenhoProfessorCheckBox = createCheckBox("Considerar avaliação de desempenho de professores");
+		cargaHorariaProfessorCheckBox = createCheckBox("Distribuição da carga horária semanal do professor", parametroDTO.getCargaHorariaProfessor());
+		professorEmMuitosCampiCheckBox = createCheckBox("Permitir que o professor ministre aulas em mais de um Campus", parametroDTO.getProfessorEmMuitosCampi());
+		minimizarDeslocamentoProfessorCheckBox = createCheckBox("Minimizar Deslocamentos de Professores entre Campi", parametroDTO.getMinimizarDeslocamentoProfessor());
+		minimizarGapProfessorCheckBox = createCheckBox("Minimizar Gaps nos Horários dos Professores", parametroDTO.getMinimizarGapProfessor());
+		evitarReducaoCargaHorariaProfessorCheckBox = createCheckBox("Evitar Redução de Carga Horária de Professor", parametroDTO.getEvitarReducaoCargaHorariaProfessor());
+		editarUltimoEPrimeiroHorarioProfessorCheckBox = createCheckBox("Evitar alocação de professores no último horário do dia e primeiro do dia seguinte", parametroDTO.getEditarUltimoEPrimeiroHorarioProfessor());
+		preferenciaDeProfessoresCheckBox = createCheckBox("Considerar preferência de professores por disciplinas", parametroDTO.getPreferenciaDeProfessores());
+		avaliacaoDesempenhoProfessorCheckBox = createCheckBox("Considerar avaliação de desempenho de professores", parametroDTO.getAvaliacaoDesempenhoProfessor());
 		
 		professorLeft.add(cargaHorariaProfessorCheckBox, formData);
 		professorLeft.add(professorEmMuitosCampiCheckBox, formData);
@@ -151,15 +152,22 @@ public class ParametrosView extends MyComposite implements ParametrosPresenter.D
 		professorLeft.add(preferenciaDeProfessoresCheckBox, formData);
 		professorLeft.add(avaliacaoDesempenhoProfessorCheckBox, formData);
 		
-		professorRight.add(createComboBox());
+		cargaHorariaProfessorComboBox = createComboBox(parametroDTO.getCargaHorariaProfessorSel());
+		professorRight.add(cargaHorariaProfessorComboBox);
 		label = new Label();
 		label.setHeight(22);
 		professorRight.add(label);
-		professorRight.add(createButton("Configurar Máx de deslocamento"));
+		minimizarDeslocamentoProfessorNumberField = new NumberField();
+		minimizarDeslocamentoProfessorNumberField.setEmptyText("Configurar Máx de deslocamento");
+		minimizarDeslocamentoProfessorNumberField.setValue(parametroDTO.getMinimizarDeslocamentoProfessorValue());
+		professorRight.add(minimizarDeslocamentoProfessorNumberField);
 		label = new Label();
 		label.setHeight(22);
 		professorRight.add(label);
-		professorRight.add(createButton("Configurar % de tolerância"));
+		evitarReducaoCargaHorariaProfessorNumberField = new NumberField();
+		evitarReducaoCargaHorariaProfessorNumberField.setEmptyText("Configurar % de tolerância");
+		evitarReducaoCargaHorariaProfessorNumberField.setValue(parametroDTO.getEvitarReducaoCargaHorariaProfessorValue());
+		professorRight.add(evitarReducaoCargaHorariaProfessorNumberField);
 		
 		for(int i = 0; i<3; i++) {
 			label = new Label();
@@ -180,18 +188,18 @@ public class ParametrosView extends MyComposite implements ParametrosPresenter.D
 		rowLayout.setExtraStyle("x-form-item borderBottom");
 		LayoutContainer instituicaoRight = new LayoutContainer(rowLayout);
 		
-		minAlunosParaAbrirTurmaCheckBox = createCheckBox("Número mínimo de alunos para abertura de turma");
-		nivelDificuldadeDisciplinaCheckBox = createCheckBox("Considerar nível de dificuldade de disciplinas");
-		compatibilidadeDisciplinasMesmoDiaCheckBox = createCheckBox("Considerar compatibilidade de disciplinas no mesmo dia");
-		regrasGenericasDivisaoCreditoCheckBox = createCheckBox("Considerar regras genéricas de divisão de créditos");
-		regrasEspecificasDivisaoCreditoCheckBox = createCheckBox("Considerar regras específicas de divisão de créditos");
-		maximizarNotaAvaliacaoCorpoDocenteCheckBox = createCheckBox("Maximizar nota da avaliação do corpo docente de cursos específicos");
-		minimizarCustoDocenteCursosCheckBox = createCheckBox("Minimizar custo docente de cursos específicos");
-		compartilharDisciplinasCampiCheckBox = createCheckBox("Permitir compartilhamento de disciplinas entre cursos");
-		percentuaisMinimosMestresCheckBox = createCheckBox("Considerar percentuais mínimos de mestres");
-		percentuaisMinimosDoutoresCheckBox = createCheckBox("Considerar percentuais mínimos de doutores");
-		areaTitulacaoProfessoresECursosCheckBox = createCheckBox("Considerar áreas de titulação dos professores e cursos");
-		limitarMaximoDisciplinaProfessorCheckBox = createCheckBox("Limitar máximo de disciplinas que um professor pode ministrar por curso");
+		minAlunosParaAbrirTurmaCheckBox = createCheckBox("Número mínimo de alunos para abertura de turma", parametroDTO.getMinAlunosParaAbrirTurma());
+		nivelDificuldadeDisciplinaCheckBox = createCheckBox("Considerar nível de dificuldade de disciplinas", parametroDTO.getNivelDificuldadeDisciplina());
+		compatibilidadeDisciplinasMesmoDiaCheckBox = createCheckBox("Considerar compatibilidade de disciplinas no mesmo dia", parametroDTO.getCompatibilidadeDisciplinasMesmoDia());
+		regrasGenericasDivisaoCreditoCheckBox = createCheckBox("Considerar regras genéricas de divisão de créditos", parametroDTO.getRegrasGenericasDivisaoCredito());
+		regrasEspecificasDivisaoCreditoCheckBox = createCheckBox("Considerar regras específicas de divisão de créditos", parametroDTO.getRegrasEspecificasDivisaoCredito());
+		maximizarNotaAvaliacaoCorpoDocenteCheckBox = createCheckBox("Maximizar nota da avaliação do corpo docente de cursos específicos", parametroDTO.getMaximizarNotaAvaliacaoCorpoDocente());
+		minimizarCustoDocenteCursosCheckBox = createCheckBox("Minimizar custo docente de cursos específicos", parametroDTO.getMinimizarCustoDocenteCursos());
+		compartilharDisciplinasCampiCheckBox = createCheckBox("Permitir compartilhamento de disciplinas entre cursos", parametroDTO.getCompartilharDisciplinasCampi());
+		percentuaisMinimosMestresCheckBox = createCheckBox("Considerar percentuais mínimos de mestres", parametroDTO.getPercentuaisMinimosMestres());
+		percentuaisMinimosDoutoresCheckBox = createCheckBox("Considerar percentuais mínimos de doutores", parametroDTO.getPercentuaisMinimosDoutores());
+		areaTitulacaoProfessoresECursosCheckBox = createCheckBox("Considerar áreas de titulação dos professores e cursos", parametroDTO.getAreaTitulacaoProfessoresECursos());
+		limitarMaximoDisciplinaProfessorCheckBox = createCheckBox("Limitar máximo de disciplinas que um professor pode ministrar por curso", parametroDTO.getLimitarMaximoDisciplinaProfessor());
 		
 		instituicaoLeft.add(minAlunosParaAbrirTurmaCheckBox, formData);
 		instituicaoLeft.add(nivelDificuldadeDisciplinaCheckBox, formData);
@@ -206,7 +214,10 @@ public class ParametrosView extends MyComposite implements ParametrosPresenter.D
 		instituicaoLeft.add(areaTitulacaoProfessoresECursosCheckBox, formData);
 		instituicaoLeft.add(limitarMaximoDisciplinaProfessorCheckBox, formData);
 		
-		instituicaoRight.add(createButton("Configurar níveis de dificuldade"));
+		minAlunosParaAbrirTurmaValueNumberField = new NumberField();
+		minAlunosParaAbrirTurmaValueNumberField.setEmptyText("Quantidade mínimo");
+		minAlunosParaAbrirTurmaValueNumberField.setValue(parametroDTO.getMinAlunosParaAbrirTurmaValue());
+		instituicaoRight.add(minAlunosParaAbrirTurmaValueNumberField);
 		instituicaoRight.add(createButton("Configurar níveis de dificuldade"));
 		instituicaoRight.add(createButton("Configurar compatibilidades"));
 		instituicaoRight.add(createButton("Configurar regras genéricas"));
@@ -234,18 +245,17 @@ public class ParametrosView extends MyComposite implements ParametrosPresenter.D
 		
 	}
 	
-	private CheckBox createCheckBox(String label) {
+	private CheckBox createCheckBox(String label, boolean value) {
 		CheckBox cb = new CheckBox();
 		cb.setHideLabel(true);
 		cb.setBoxLabel(label);
+		cb.setValue(value);
 		return cb;
 	}
 	
-	private SimpleComboBox<String> createComboBox() {
-		SimpleComboBox<String> cb = new SimpleComboBox<String>();
-		cb.add("Concentrar em poucos dias");
-		cb.add("Distribuir em todos os dias");
-		cb.add("Indiferente");
+	private CargaHorariaComboBox createComboBox(String value) {
+		CargaHorariaComboBox cb = new CargaHorariaComboBox();
+		cb.setValue(value);
 		cb.setWidth(200);
 		return cb;
 	}
@@ -258,6 +268,151 @@ public class ParametrosView extends MyComposite implements ParametrosPresenter.D
 	@Override
 	public ParametroDTO getParametroDTO() {
 		return parametroDTO;
+	}
+	
+	@Override
+	public CheckBox getCargaHorariaAlunoCheckBox() {
+		return cargaHorariaAlunoCheckBox;
+	}
+
+	@Override
+	public CargaHorariaComboBox getCargaHorariaAlunoComboBox() {
+		return cargaHorariaAlunoComboBox;
+	}
+
+	@Override
+	public CheckBox getAlunoDePeriodoMesmaSalaCheckBox() {
+		return alunoDePeriodoMesmaSalaCheckBox;
+	}
+
+	@Override
+	public CheckBox getAlunoEmMuitosCampiCheckBox() {
+		return alunoEmMuitosCampiCheckBox;
+	}
+
+	@Override
+	public CheckBox getMinimizarDeslocamentoAlunoCheckBox() {
+		return minimizarDeslocamentoAlunoCheckBox;
+	}
+
+	@Override
+	public CheckBox getCargaHorariaProfessorCheckBox() {
+		return cargaHorariaProfessorCheckBox;
+	}
+
+	@Override
+	public CargaHorariaComboBox getCargaHorariaProfessorComboBox() {
+		return cargaHorariaProfessorComboBox;
+	}
+
+	@Override
+	public CheckBox getProfessorEmMuitosCampiCheckBox() {
+		return professorEmMuitosCampiCheckBox;
+	}
+
+	@Override
+	public CheckBox getMinimizarDeslocamentoProfessorCheckBox() {
+		return minimizarDeslocamentoProfessorCheckBox;
+	}
+
+	@Override
+	public NumberField getMinimizarDeslocamentoProfessorNumberField() {
+		return minimizarDeslocamentoProfessorNumberField;
+	}
+
+	@Override
+	public CheckBox getMinimizarGapProfessorCheckBox() {
+		return minimizarGapProfessorCheckBox;
+	}
+
+	@Override
+	public CheckBox getEvitarReducaoCargaHorariaProfessorCheckBox() {
+		return evitarReducaoCargaHorariaProfessorCheckBox;
+	}
+
+	@Override
+	public NumberField getEvitarReducaoCargaHorariaProfessorNumberField() {
+		return evitarReducaoCargaHorariaProfessorNumberField;
+	}
+
+	@Override
+	public CheckBox getEditarUltimoEPrimeiroHorarioProfessorCheckBox() {
+		return editarUltimoEPrimeiroHorarioProfessorCheckBox;
+	}
+
+	@Override
+	public CheckBox getPreferenciaDeProfessoresCheckBox() {
+		return preferenciaDeProfessoresCheckBox;
+	}
+
+	@Override
+	public CheckBox getAvaliacaoDesempenhoProfessorCheckBox() {
+		return avaliacaoDesempenhoProfessorCheckBox;
+	}
+
+	@Override
+	public CheckBox getNivelDificuldadeDisciplinaCheckBox() {
+		return nivelDificuldadeDisciplinaCheckBox;
+	}
+
+	@Override
+	public CheckBox getCompatibilidadeDisciplinasMesmoDiaCheckBox() {
+		return compatibilidadeDisciplinasMesmoDiaCheckBox;
+	}
+
+	@Override
+	public CheckBox getRegrasGenericasDivisaoCreditoCheckBox() {
+		return regrasGenericasDivisaoCreditoCheckBox;
+	}
+
+	@Override
+	public CheckBox getRegrasEspecificasDivisaoCreditoCheckBox() {
+		return regrasEspecificasDivisaoCreditoCheckBox;
+	}
+
+	@Override
+	public CheckBox getMaximizarNotaAvaliacaoCorpoDocenteCheckBox() {
+		return maximizarNotaAvaliacaoCorpoDocenteCheckBox;
+	}
+
+	@Override
+	public CheckBox getMinimizarCustoDocenteCursosCheckBox() {
+		return minimizarCustoDocenteCursosCheckBox;
+	}
+
+	@Override
+	public CheckBox getMinAlunosParaAbrirTurmaCheckBox() {
+		return minAlunosParaAbrirTurmaCheckBox;
+	}
+
+	@Override
+	public NumberField getMinAlunosParaAbrirTurmaValueNumberField() {
+		return minAlunosParaAbrirTurmaValueNumberField;
+	}
+
+	@Override
+	public CheckBox getCompartilharDisciplinasCampiCheckBox() {
+		return compartilharDisciplinasCampiCheckBox;
+	}
+
+	@Override
+	public CheckBox getPercentuaisMinimosMestresCheckBox() {
+		return percentuaisMinimosMestresCheckBox;
+	}
+
+	@Override
+	public CheckBox getPercentuaisMinimosDoutoresCheckBox() {
+		return percentuaisMinimosDoutoresCheckBox;
+	}
+
+	@Override
+	public CheckBox getAreaTitulacaoProfessoresECursosCheckBox() {
+		return areaTitulacaoProfessoresECursosCheckBox;
+	}
+
+	@Override
+	public CheckBox getLimitarMaximoDisciplinaProfessorCheckBox() {
+		return limitarMaximoDisciplinaProfessorCheckBox;
 	}
 
 	@Override

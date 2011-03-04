@@ -196,6 +196,19 @@ public class Parametro implements Serializable {
         this.version = version;
     }
 
+    public boolean isPersist() {
+    	return (this.getId() != null && this.getId() > 0);
+    }
+    
+    @Transactional
+    public void save() {
+    	if(isPersist()) {
+    		merge();
+    	} else {
+    		persist();
+    	}
+    }
+    
     @Transactional
     public void persist() {
         if (this.entityManager == null) this.entityManager = entityManager();
