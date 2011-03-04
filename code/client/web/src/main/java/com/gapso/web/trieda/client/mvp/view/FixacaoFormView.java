@@ -85,7 +85,7 @@ public class FixacaoFormView extends MyComposite implements FixacaoFormPresenter
 		formPanel.setHeaderVisible(false);
 		
 		codigoTF = new TextField<String>();
-		codigoTF.setName("codigo");
+		codigoTF.setName(FixacaoDTO.PROPERTY_CODIGO);
 		codigoTF.setValue(fixacaoDTO.getCodigo());
 		codigoTF.setFieldLabel("Código");
 		codigoTF.setAllowBlank(false);
@@ -95,7 +95,7 @@ public class FixacaoFormView extends MyComposite implements FixacaoFormPresenter
 		formPanel.add(codigoTF, formData);
 		
 		descricaoTF = new TextField<String>();
-		descricaoTF.setName("descricao");
+		descricaoTF.setName(FixacaoDTO.PROPERTY_DESCRICAO);
 		descricaoTF.setValue(fixacaoDTO.getDescricao());
 		descricaoTF.setFieldLabel("Descrição");
 		descricaoTF.setAllowBlank(false);

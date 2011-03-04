@@ -48,13 +48,13 @@ public class DivisaoCreditoDisciplinaFormView extends MyComposite implements Div
 		formPanel = new FormPanel();
 		formPanel.setHeaderVisible(false);
 		
-		dia1NF = createNumberField("dia1", "Dia 1", divisaoCreditoDTO.getDia1());
-		dia2NF = createNumberField("dia2", "Dia 2", divisaoCreditoDTO.getDia2());
-		dia3NF = createNumberField("dia3", "Dia 3", divisaoCreditoDTO.getDia3());
-		dia4NF = createNumberField("dia4", "Dia 4", divisaoCreditoDTO.getDia4());
-		dia5NF = createNumberField("dia5", "Dia 5", divisaoCreditoDTO.getDia5());
-		dia6NF = createNumberField("dia6", "Dia 6", divisaoCreditoDTO.getDia6());
-		dia7NF = createNumberField("dia7", "Dia 7", divisaoCreditoDTO.getDia7());
+		dia1NF = createNumberField(DivisaoCreditoDTO.PROPERTY_DIA1, "Dia 1", divisaoCreditoDTO.getDia1());
+		dia2NF = createNumberField(DivisaoCreditoDTO.PROPERTY_DIA2, "Dia 2", divisaoCreditoDTO.getDia2());
+		dia3NF = createNumberField(DivisaoCreditoDTO.PROPERTY_DIA3, "Dia 3", divisaoCreditoDTO.getDia3());
+		dia4NF = createNumberField(DivisaoCreditoDTO.PROPERTY_DIA4, "Dia 4", divisaoCreditoDTO.getDia4());
+		dia5NF = createNumberField(DivisaoCreditoDTO.PROPERTY_DIA5, "Dia 5", divisaoCreditoDTO.getDia5());
+		dia6NF = createNumberField(DivisaoCreditoDTO.PROPERTY_DIA6, "Dia 6", divisaoCreditoDTO.getDia6());
+		dia7NF = createNumberField(DivisaoCreditoDTO.PROPERTY_DIA7, "Dia 7", divisaoCreditoDTO.getDia7());
 		
 		formPanel.add(dia1NF, formData);
 		formPanel.add(dia2NF, formData);

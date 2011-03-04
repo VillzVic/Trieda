@@ -65,8 +65,8 @@ public class AreasTitulacaoView extends MyComposite implements AreasTitulacaoPre
 
 	private List<ColumnConfig> getColumnList() {
 		List<ColumnConfig> list = new ArrayList<ColumnConfig>();
-		list.add(new ColumnConfig("codigo", "Código", 100));
-		list.add(new ColumnConfig("descricao", "Descrição", 300));
+		list.add(new ColumnConfig(AreaTitulacaoDTO.PROPERTY_CODIGO, "Código", 100));
+		list.add(new ColumnConfig(AreaTitulacaoDTO.PROPERTY_DESCRICAO, "Descrição", 300));
 		return list;
 	}
 

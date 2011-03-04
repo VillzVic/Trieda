@@ -71,12 +71,12 @@ public class HorariosAulaView extends MyComposite implements HorariosAulaPresent
 
 	public List<ColumnConfig> getColumnList() {
 		List<ColumnConfig> list = new ArrayList<ColumnConfig>();
-		list.add(new ColumnConfig("semanaLetivaString", "Semana Letiva", 100));
-		list.add(new ColumnConfig("turnoString", "Turno", 100));
-		ColumnConfig inicioColumn = new ColumnConfig("inicio", "Horário Início", 100);
+		list.add(new ColumnConfig(HorarioAulaDTO.PROPERTY_SEMANA_LETIVA_STRING, "Semana Letiva", 100));
+		list.add(new ColumnConfig(HorarioAulaDTO.PROPERTY_TURNO_STRING, "Turno", 100));
+		ColumnConfig inicioColumn = new ColumnConfig(HorarioAulaDTO.PROPERTY_INICIO, "Horário Início", 100);
 		inicioColumn.setDateTimeFormat(dateTimeFormat);
 		list.add(inicioColumn);
-		ColumnConfig fimColumn = new ColumnConfig("fim", "Horário Fim", 100);
+		ColumnConfig fimColumn = new ColumnConfig(HorarioAulaDTO.PROPERTY_FIM, "Horário Fim", 100);
 		fimColumn.setDateTimeFormat(dateTimeFormat);
 		list.add(fimColumn);
 		return list;

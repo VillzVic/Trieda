@@ -40,7 +40,7 @@ public class TipoCursoFormView extends MyComposite implements TipoCursoFormPrese
 		formPanel.setHeaderVisible(false);
 		
 		codigoTF = new TextField<String>();
-		codigoTF.setName("codigo");
+		codigoTF.setName(TipoCursoDTO.PROPERTY_CODIGO);
 		codigoTF.setValue(tipoCursoDTO.getCodigo());
 		codigoTF.setFieldLabel("Código");
 		codigoTF.setAllowBlank(false);
@@ -49,7 +49,7 @@ public class TipoCursoFormView extends MyComposite implements TipoCursoFormPrese
 		formPanel.add(codigoTF, formData);
 		
 		descricaoTF = new TextField<String>();
-		descricaoTF.setName("descricao");
+		descricaoTF.setName(TipoCursoDTO.PROPERTY_DESCRICAO);
 		descricaoTF.setValue(tipoCursoDTO.getDescricao());
 		descricaoTF.setFieldLabel("Descrição");
 		descricaoTF.setMaxLength(255);

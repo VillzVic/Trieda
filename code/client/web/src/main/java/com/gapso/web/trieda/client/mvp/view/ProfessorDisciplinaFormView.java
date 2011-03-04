@@ -62,7 +62,7 @@ public class ProfessorDisciplinaFormView extends MyComposite implements Professo
 		formPanel.add(disciplinaCB, formData);
 		
 		preferenciaNF = new NumberField();
-		preferenciaNF.setName("preferencia");
+		preferenciaNF.setName(ProfessorDisciplinaDTO.PROPERTY_PREFERENCIA);
 		preferenciaNF.setValue(professorDisciplinaDTO.getPreferencia());
 		preferenciaNF.setFieldLabel("Preferência");
 		preferenciaNF.setAllowBlank(false);
@@ -73,7 +73,7 @@ public class ProfessorDisciplinaFormView extends MyComposite implements Professo
 		formPanel.add(preferenciaNF, formData);
 		
 		notaDesempenhoNF = new NumberField();
-		notaDesempenhoNF.setName("notaDesempenho");
+		notaDesempenhoNF.setName(ProfessorDisciplinaDTO.PROPERTY_NOTA_DESEMPENHO);
 		notaDesempenhoNF.setValue(professorDisciplinaDTO.getNotaDesempenho());
 		notaDesempenhoNF.setFieldLabel("Nota de Desempenho");
 		notaDesempenhoNF.setAllowBlank(false);

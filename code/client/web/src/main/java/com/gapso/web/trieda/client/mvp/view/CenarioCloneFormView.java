@@ -52,7 +52,7 @@ public class CenarioCloneFormView extends MyComposite implements CenarioCloneFor
 		formPanel.setLayout(formLayout);
 		
 		nomeTF = new TextField<String>();
-		nomeTF.setName("nome");
+		nomeTF.setName(CenarioDTO.PROPERTY_NOME);
 		nomeTF.setValue(cenarioDTO.getNome());
 		nomeTF.setFieldLabel("Nome");
 		nomeTF.setAllowBlank(false);
@@ -62,13 +62,13 @@ public class CenarioCloneFormView extends MyComposite implements CenarioCloneFor
 		formPanel.add(nomeTF, formData);
 		
 		oficialCB = new CheckBox();
-		oficialCB.setName("oficial");
+		oficialCB.setName(CenarioDTO.PROPERTY_OFICIAL);
 		oficialCB.setValue(cenarioDTO.getOficial());
 		oficialCB.setFieldLabel("Oficial");
 		formPanel.add(oficialCB, formData);
 		
 		anoTF = new NumberField();
-		anoTF.setName("ano");
+		anoTF.setName(CenarioDTO.PROPERTY_ANO);
 		anoTF.setValue(cenarioDTO.getAno());
 		anoTF.setFieldLabel("Ano");
 		anoTF.setAllowDecimals(false);
@@ -79,7 +79,7 @@ public class CenarioCloneFormView extends MyComposite implements CenarioCloneFor
 		formPanel.add(anoTF, formData);
 		
 		semestreTF = new NumberField();
-		semestreTF.setName("semestre");
+		semestreTF.setName(CenarioDTO.PROPERTY_SEMESTRE);
 		semestreTF.setValue(cenarioDTO.getSemestre());
 		semestreTF.setFieldLabel("Semestre");
 		semestreTF.setAllowDecimals(false);
@@ -90,7 +90,7 @@ public class CenarioCloneFormView extends MyComposite implements CenarioCloneFor
 		formPanel.add(semestreTF, formData);
 
 		comentarioTF = new TextField<String>();
-		comentarioTF.setName("comentario");
+		comentarioTF.setName(CenarioDTO.PROPERTY_COMENTARIO);
 		comentarioTF.setValue(cenarioDTO.getComentario());
 		comentarioTF.setFieldLabel("Comentário");
 		comentarioTF.setMaxLength(255);

@@ -77,7 +77,7 @@ public class VincularAreasTitulacaoView extends MyComposite implements VincularA
 		naoVinculadaListPanel.setHeading("Área(s) de Titulação NÃO vinculada(s) ao Curso");
 		naoVinculadaList = new ListView<AreaTitulacaoDTO>();
 		naoVinculadaList.disable();
-		naoVinculadaList.setDisplayProperty("codigo");
+		naoVinculadaList.setDisplayProperty(AreaTitulacaoDTO.PROPERTY_DISPLAY_TEXT);
 		naoVinculadaList.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
 		naoVinculadaListPanel.add(naoVinculadaList);
 		
@@ -85,7 +85,7 @@ public class VincularAreasTitulacaoView extends MyComposite implements VincularA
 		vinculadaListPanel.setHeading("Área(s) de Titulação vinculada(s) ao Curso");
 		vinculadaList = new ListView<AreaTitulacaoDTO>();
 		vinculadaList.disable();
-		vinculadaList.setDisplayProperty("codigo");
+		vinculadaList.setDisplayProperty(AreaTitulacaoDTO.PROPERTY_DISPLAY_TEXT);
 		vinculadaList.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
 		vinculadaListPanel.add(vinculadaList);
 		
@@ -149,8 +149,4 @@ public class VincularAreasTitulacaoView extends MyComposite implements VincularA
 	public Button getRemoveBT() {
 		return removeBT;
 	}
-
-	
-	
-	
 }

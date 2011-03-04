@@ -70,8 +70,8 @@ public class SemanasLetivaView extends MyComposite implements SemanasLetivaPrese
 
 	public List<ColumnConfig> getColumnList() {
 		List<ColumnConfig> list = new ArrayList<ColumnConfig>();
-		list.add(new ColumnConfig("codigo", "Codigo", 100));
-		list.add(new ColumnConfig("descricao", "Descrição", 100));
+		list.add(new ColumnConfig(SemanaLetivaDTO.PROPERTY_CODIGO, "Codigo", 100));
+		list.add(new ColumnConfig(SemanaLetivaDTO.PROPERTY_DESCRICAO, "Descrição", 100));
 		return list;
 	}
 

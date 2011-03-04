@@ -64,9 +64,9 @@ public class CampusProfessoresView extends MyComposite implements CampusProfesso
 
 	private List<ColumnConfig> getColumnList() {
 		List<ColumnConfig> list = new ArrayList<ColumnConfig>();
-		list.add(new ColumnConfig("campusString", "Campus", 150));
-		list.add(new ColumnConfig("professorCpf", "CPF Professor", 110));
-		list.add(new ColumnConfig("professorString", "Professor", 250));
+		list.add(new ColumnConfig(ProfessorCampusDTO.PROPERTY_CAMPUS_STRING, "Campus", 150));
+		list.add(new ColumnConfig(ProfessorCampusDTO.PROPERTY_PROFESSOR_CPF, "CPF Professor", 110));
+		list.add(new ColumnConfig(ProfessorCampusDTO.PROPERTY_PROFESSOR_STRING, "Professor", 250));
 		return list;
 	}
 

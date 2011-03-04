@@ -78,10 +78,10 @@ public class UnidadesView extends MyComposite implements UnidadesPresenter.Displ
 
 	public List<ColumnConfig> getColumnList() {
 		List<ColumnConfig> list = new ArrayList<ColumnConfig>();
-		list.add(new ColumnConfig("codigo", getI18nConstants().codigo(), 100));
-		list.add(new ColumnConfig("nome", getI18nConstants().nome(), 100));
-		list.add(new ColumnConfig("campusString", getI18nConstants().campus(), 100));
-		list.add(new ColumnConfig("capSalas", getI18nConstants().capacidadeMediaSalas(), 200));
+		list.add(new ColumnConfig(UnidadeDTO.PROPERTY_CODIGO, getI18nConstants().codigo(), 100));
+		list.add(new ColumnConfig(UnidadeDTO.PROPERTY_NOME, getI18nConstants().nome(), 100));
+		list.add(new ColumnConfig(UnidadeDTO.PROPERTY_CAMPUS_STRING, getI18nConstants().campus(), 100));
+		list.add(new ColumnConfig(UnidadeDTO.PROPERTY_CAPACIDADE_SALAS, getI18nConstants().capacidadeMediaSalas(), 200));
 		return list;
 	}
 

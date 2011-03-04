@@ -65,7 +65,7 @@ public class CenarioCriarFormView extends MyComposite implements CenarioCriarFor
 		formPanel.setLayout(formLayout);
 		
 		nomeTF = new TextField<String>();
-		nomeTF.setName("nome");
+		nomeTF.setName(CenarioDTO.PROPERTY_NOME);
 		nomeTF.setValue(cenarioDTO.getNome());
 		nomeTF.setFieldLabel("Nome");
 		nomeTF.setAllowBlank(false);
@@ -75,31 +75,31 @@ public class CenarioCriarFormView extends MyComposite implements CenarioCriarFor
 		formPanel.add(nomeTF, formData);
 		
 		oficialCB = new CheckBox();
-		oficialCB.setName("oficial");
+		oficialCB.setName(CenarioDTO.PROPERTY_OFICIAL);
 		oficialCB.setValue(cenarioDTO.getOficial());
 		oficialCB.setFieldLabel("Oficial");
 		formPanel.add(oficialCB, formData);
 		
 		anoTF = new NumberField();
-		anoTF.setName("ano");
+		anoTF.setName(CenarioDTO.PROPERTY_ANO);
 		anoTF.setValue(cenarioDTO.getAno());
 		anoTF.setFieldLabel("Ano");
 		anoTF.setAllowDecimals(false);
 		anoTF.setAllowBlank(false);
 		anoTF.setMinValue(1);
 		anoTF.setMaxValue(9999);
-		anoTF.setEmptyText("Preencha o ano letívo");
+		anoTF.setEmptyText("Preencha o ano letivo");
 		formPanel.add(anoTF, formData);
 		
 		semestreTF = new NumberField();
-		semestreTF.setName("semestre");
+		semestreTF.setName(CenarioDTO.PROPERTY_SEMESTRE);
 		semestreTF.setValue(cenarioDTO.getSemestre());
 		semestreTF.setFieldLabel("Semestre");
 		semestreTF.setAllowDecimals(false);
 		semestreTF.setAllowBlank(false);
 		semestreTF.setMinValue(1);
 		semestreTF.setMaxValue(12);
-		semestreTF.setEmptyText("Preencha semestre letívo");
+		semestreTF.setEmptyText("Preencha semestre letivo");
 		formPanel.add(semestreTF, formData);
 		
 		semanaLetivaCB = new SemanaLetivaComboBox();
@@ -110,7 +110,7 @@ public class CenarioCriarFormView extends MyComposite implements CenarioCriarFor
 		formPanel.add(semanaLetivaCB, formData);
 		
 		comentarioTF = new TextField<String>();
-		comentarioTF.setName("comentario");
+		comentarioTF.setName(CenarioDTO.PROPERTY_COMENTARIO);
 		comentarioTF.setValue(cenarioDTO.getComentario());
 		comentarioTF.setFieldLabel("Comentário");
 		comentarioTF.setMaxLength(255);

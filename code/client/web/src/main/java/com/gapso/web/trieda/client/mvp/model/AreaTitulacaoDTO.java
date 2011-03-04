@@ -22,7 +22,7 @@ public class AreaTitulacaoDTO extends AbstractDTO<String> implements Comparable<
 		setDescricao(descricao);
 		setVersion(version);
 		
-		setDisplayText(codigo);
+		setDisplayText(codigo + " (" + descricao + ")");
 	}
 	
 	public void setId(Long value) {

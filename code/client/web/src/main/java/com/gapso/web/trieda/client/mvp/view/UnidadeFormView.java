@@ -48,7 +48,7 @@ public class UnidadeFormView extends MyComposite implements UnidadeFormPresenter
 		formPanel.setHeaderVisible(false);
 		
 		codigoTF = new TextField<String>();
-		codigoTF.setName("codigo");
+		codigoTF.setName(UnidadeDTO.PROPERTY_CODIGO);
 		codigoTF.setValue(unidadeDTO.getCodigo());
 		codigoTF.setFieldLabel(getI18nConstants().codigo());
 		codigoTF.setAllowBlank(false);
@@ -58,7 +58,7 @@ public class UnidadeFormView extends MyComposite implements UnidadeFormPresenter
 		formPanel.add(codigoTF, formData);
 		
 		nomeTF = new TextField<String>();
-		nomeTF.setName("nome");
+		nomeTF.setName(UnidadeDTO.PROPERTY_NOME);
 		nomeTF.setValue(unidadeDTO.getNome());
 		nomeTF.setFieldLabel(getI18nConstants().nome());
 		nomeTF.setAllowBlank(false);

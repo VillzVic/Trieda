@@ -74,11 +74,11 @@ public class CenariosView extends MyComposite implements CenariosPresenter.Displ
 
 	public List<ColumnConfig> getColumnList() {
 		List<ColumnConfig> list = new ArrayList<ColumnConfig>();
-		list.add(new CheckColumnConfig("oficial", "Oficial", 40));
-		list.add(new ColumnConfig("nome", "Nome", 100));
-		list.add(new ColumnConfig("ano", "Ano", 100));
-		list.add(new ColumnConfig("semestre", "Semestre", 100));
-		list.add(new ColumnConfig("semanaLetivaString", "Semana Letiva", 100));
+		list.add(new CheckColumnConfig(CenarioDTO.PROPERTY_OFICIAL, "Oficial", 40));
+		list.add(new ColumnConfig(CenarioDTO.PROPERTY_NOME, "Nome", 100));
+		list.add(new ColumnConfig(CenarioDTO.PROPERTY_ANO, "Ano", 100));
+		list.add(new ColumnConfig(CenarioDTO.PROPERTY_SEMESTRE, "Semestre", 100));
+		list.add(new ColumnConfig(CenarioDTO.PROPERTY_SEMANA_LETIVA_STRING, "Semana Letiva", 100));
 		return list;
 	}
 

@@ -60,13 +60,13 @@ public class DivisoesCreditosView extends MyComposite implements DivisoesCredito
 	private List<ColumnConfig> getColumnList() {
 		List<ColumnConfig> list = new ArrayList<ColumnConfig>();
 		list.add(createColumnConfig("totalCreditos", "Créditos", 50));
-		list.add(createColumnConfig("dia1", "Dia 1", 50));
-		list.add(createColumnConfig("dia2", "Dia 2", 50));
-		list.add(createColumnConfig("dia3", "Dia 3", 50));
-		list.add(createColumnConfig("dia4", "Dia 4", 50));
-		list.add(createColumnConfig("dia5", "Dia 5", 50));
-		list.add(createColumnConfig("dia6", "Dia 6", 50));
-		list.add(createColumnConfig("dia7", "Dia 7", 50));
+		list.add(createColumnConfig(DivisaoCreditoDTO.PROPERTY_DIA1, "Dia 1", 50));
+		list.add(createColumnConfig(DivisaoCreditoDTO.PROPERTY_DIA2, "Dia 2", 50));
+		list.add(createColumnConfig(DivisaoCreditoDTO.PROPERTY_DIA3, "Dia 3", 50));
+		list.add(createColumnConfig(DivisaoCreditoDTO.PROPERTY_DIA4, "Dia 4", 50));
+		list.add(createColumnConfig(DivisaoCreditoDTO.PROPERTY_DIA5, "Dia 5", 50));
+		list.add(createColumnConfig(DivisaoCreditoDTO.PROPERTY_DIA6, "Dia 6", 50));
+		list.add(createColumnConfig(DivisaoCreditoDTO.PROPERTY_DIA7, "Dia 7", 50));
 		return list;
 	}
 	

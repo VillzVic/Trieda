@@ -40,7 +40,7 @@ public class AreaTitulacaoFormView extends MyComposite implements AreaTitulacaoF
 		formPanel.setHeaderVisible(false);
 		
 		codigoTF = new TextField<String>();
-		codigoTF.setName("codigo");
+		codigoTF.setName(AreaTitulacaoDTO.PROPERTY_CODIGO);
 		codigoTF.setValue(areaTitulacaoDTO.getCodigo());
 		codigoTF.setFieldLabel("Código");
 		codigoTF.setAllowBlank(false);
@@ -49,7 +49,7 @@ public class AreaTitulacaoFormView extends MyComposite implements AreaTitulacaoF
 		formPanel.add(codigoTF, formData);
 		
 		descricaoTF = new TextField<String>();
-		descricaoTF.setName("descricao");
+		descricaoTF.setName(AreaTitulacaoDTO.PROPERTY_DESCRICAO);
 		descricaoTF.setValue(areaTitulacaoDTO.getDescricao());
 		descricaoTF.setFieldLabel("Descrição");
 		descricaoTF.setMaxLength(255);

@@ -66,11 +66,11 @@ public class ProfessoresDisciplinaView extends MyComposite implements Professore
 
 	public List<ColumnConfig> getColumnList() {
 		List<ColumnConfig> list = new ArrayList<ColumnConfig>();
-		list.add(new ColumnConfig("professorCpf", "CPF", 100));
-		list.add(new ColumnConfig("professorString", "Nome", 100));
-		list.add(new ColumnConfig("disciplinaString", "Disciplina", 100));
-		list.add(new ColumnConfig("preferencia", "Preferência", 100));
-		list.add(new ColumnConfig("notaDesempenho", "Nota Desempenho", 100));
+		list.add(new ColumnConfig(ProfessorDisciplinaDTO.PROPERTY_PROFESSOR_CPF, "CPF", 100));
+		list.add(new ColumnConfig(ProfessorDisciplinaDTO.PROPERTY_PROFESSOR_STRING, "Nome", 100));
+		list.add(new ColumnConfig(ProfessorDisciplinaDTO.PROPERTY_DISCIPLINA_STRING, "Disciplina", 100));
+		list.add(new ColumnConfig(ProfessorDisciplinaDTO.PROPERTY_PREFERENCIA, "Preferência", 100));
+		list.add(new ColumnConfig(ProfessorDisciplinaDTO.PROPERTY_NOTA_DESEMPENHO, "Nota Desempenho", 100));
 		return list;
 	}
 

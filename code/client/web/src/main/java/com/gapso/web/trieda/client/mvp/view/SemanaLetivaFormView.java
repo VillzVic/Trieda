@@ -40,7 +40,7 @@ public class SemanaLetivaFormView extends MyComposite implements SemanaLetivaFor
 		formPanel.setHeaderVisible(false);
 		
 		codigoTF = new TextField<String>();
-		codigoTF.setName("codigo");
+		codigoTF.setName(SemanaLetivaDTO.PROPERTY_CODIGO);
 		codigoTF.setValue(semanaLetivaDTO.getCodigo());
 		codigoTF.setFieldLabel("Codigo");
 		codigoTF.setAllowBlank(false);
@@ -50,7 +50,7 @@ public class SemanaLetivaFormView extends MyComposite implements SemanaLetivaFor
 		formPanel.add(codigoTF, formData);
 		
 		descricaoTF = new TextField<String>();
-		descricaoTF.setName("descricao");
+		descricaoTF.setName(SemanaLetivaDTO.PROPERTY_DESCRICAO);
 		descricaoTF.setValue(semanaLetivaDTO.getDescricao());
 		descricaoTF.setFieldLabel("Descrição");
 		descricaoTF.setAllowBlank(false);

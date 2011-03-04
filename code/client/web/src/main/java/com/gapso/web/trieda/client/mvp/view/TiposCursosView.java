@@ -65,8 +65,8 @@ public class TiposCursosView extends MyComposite implements TiposCursosPresenter
 
 	private List<ColumnConfig> getColumnList() {
 		List<ColumnConfig> list = new ArrayList<ColumnConfig>();
-		list.add(new ColumnConfig("codigo", "Código", 100));
-		list.add(new ColumnConfig("descricao", "Descrição", 300));
+		list.add(new ColumnConfig(TipoCursoDTO.PROPERTY_CODIGO, "Código", 100));
+		list.add(new ColumnConfig(TipoCursoDTO.PROPERTY_DESCRICAO, "Descrição", 300));
 		return list;
 	}
 
