@@ -21,6 +21,8 @@
 #include "Fixacao.h"
 #include "BlocoCurricular.h"
 
+#include "Aula.h"
+
 //#include "ConjuntoSala.h"
 
 #include <iostream>
@@ -187,8 +189,10 @@ public:
    /* Lista, para cada professor, todas as disciplinas as quais ele é fixado. */
    std::map<Professor*,GGroup<Disciplina*> > prof_Fix_Disc;
 
-
    // <<<
+
+
+   GGroup<Aula*> aulas;
 
 public:
    // =========== METODOS SET

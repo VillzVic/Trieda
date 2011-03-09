@@ -53,7 +53,7 @@ void ParametrosPlanejamento::le_arvore(ItemParametrosPlanejamento& elem)
    }
 
    minimizar_horarios_vazios_professor = elem.minimizarHorariosVaziosProfessor();
-   minimizar_dias_semana_professor = elem.minimizarDiasSemanaProfessor();
+   //minimizar_dias_semana_professor = elem.minimizarDiasSemanaProfessor();
    desempenho_prof_disponibilidade = elem.desempenhoProfDisponibilidade();
    custo_prof_disponibilidade = elem.custoProfDisponibilidade();
    evitar_reducao_carga_horaria_prof = elem.evitarReducaoCargaHorariaProf();

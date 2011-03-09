@@ -18,8 +18,8 @@ void Sala::le_arvore(ItemSala& elem)
 	numero = elem.numero();
 	tipo_sala_id = elem.tipoSalaId();
 	capacidade = elem.capacidade();
-	if(tatico) {
-    
+
+   if(tatico) {
       ITERA_SEQ(it_cred,elem.creditosDispon_veis().get(),CreditoDisponivel) {
 			CreditoDisponivel* credito_disp = new CreditoDisponivel();
 			credito_disp->le_arvore(*it_cred);

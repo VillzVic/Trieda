@@ -76,6 +76,9 @@ public:
    /* */
    void print_csv();
 
+   /* */
+   void criaAulas();
+
 private:
    // Input data object of the problem
    ProblemData *problemData;

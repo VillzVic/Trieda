@@ -1,3 +1,6 @@
+#ifndef AULA_H
+#define AULA_H
+
 #include "disciplina.h"
 #include "sala.h"
 
@@ -35,3 +38,5 @@ private:
    Disciplina* disciplina;
    Sala* sala;
 };
+
+#endif /* AULA_H */

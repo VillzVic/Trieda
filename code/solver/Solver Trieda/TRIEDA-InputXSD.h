@@ -279,8 +279,20 @@ class GrupoFixacao;
 class GrupoNivelDificuldadeHorario;
 class GrupoIdentificador;
 class GrupoGrupo;
+class ItemAtendimentoCampusSolucao;
+class ItemAtendimentoUnidadeSolucao;
+class ItemAtendimentoSalaSolucao;
+class ItemAtendimentoDiaSemanaSolucao;
+class ItemAtendimentoOfertaSolucao;
+class ItemAtendimentoTaticoSolucao;
+class GrupoAtendimentoCampusSolucao;
+class GrupoAtendimentoUnidadeSolucao;
+class GrupoAtendimentoSalaSolucao;
+class GrupoAtendimentoDiaSemanaSolucao;
+class GrupoAtendimentoTaticoSolucao;
 class TriedaInput;
 class cargaHorariaSemanalAluno;
+class cargaHorariaSemanalProfessor;
 
 #include <memory>    // std::auto_ptr
 #include <limits>    // std::numeric_limits
@@ -3353,6 +3365,113 @@ class ItemFixacao: public ::xml_schema::type
 class ItemParametrosPlanejamento: public ::xml_schema::type
 {
   public:
+  // modoOtimizacao
+  // 
+  typedef ::xml_schema::string modoOtimizacao_type;
+  typedef ::xsd::cxx::tree::traits< modoOtimizacao_type, char > modoOtimizacao_traits;
+
+  const modoOtimizacao_type&
+  modoOtimizacao () const;
+
+  modoOtimizacao_type&
+  modoOtimizacao ();
+
+  void
+  modoOtimizacao (const modoOtimizacao_type& x);
+
+  void
+  modoOtimizacao (::std::auto_ptr< modoOtimizacao_type > p);
+
+  // cargaHorariaSemanalAluno
+  // 
+  typedef ::cargaHorariaSemanalAluno cargaHorariaSemanalAluno_type;
+  typedef ::xsd::cxx::tree::traits< cargaHorariaSemanalAluno_type, char > cargaHorariaSemanalAluno_traits;
+
+  const cargaHorariaSemanalAluno_type&
+  cargaHorariaSemanalAluno () const;
+
+  cargaHorariaSemanalAluno_type&
+  cargaHorariaSemanalAluno ();
+
+  void
+  cargaHorariaSemanalAluno (const cargaHorariaSemanalAluno_type& x);
+
+  void
+  cargaHorariaSemanalAluno (::std::auto_ptr< cargaHorariaSemanalAluno_type > p);
+
+  // minimizarDeslocAluno
+  // 
+  typedef ::xml_schema::boolean minimizarDeslocAluno_type;
+  typedef ::xsd::cxx::tree::traits< minimizarDeslocAluno_type, char > minimizarDeslocAluno_traits;
+
+  const minimizarDeslocAluno_type&
+  minimizarDeslocAluno () const;
+
+  minimizarDeslocAluno_type&
+  minimizarDeslocAluno ();
+
+  void
+  minimizarDeslocAluno (const minimizarDeslocAluno_type& x);
+
+  // cargaHorariaSemanalProfessor
+  // 
+  typedef ::cargaHorariaSemanalProfessor cargaHorariaSemanalProfessor_type;
+  typedef ::xsd::cxx::tree::traits< cargaHorariaSemanalProfessor_type, char > cargaHorariaSemanalProfessor_traits;
+
+  const cargaHorariaSemanalProfessor_type&
+  cargaHorariaSemanalProfessor () const;
+
+  cargaHorariaSemanalProfessor_type&
+  cargaHorariaSemanalProfessor ();
+
+  void
+  cargaHorariaSemanalProfessor (const cargaHorariaSemanalProfessor_type& x);
+
+  void
+  cargaHorariaSemanalProfessor (::std::auto_ptr< cargaHorariaSemanalProfessor_type > p);
+
+  // minimizarDeslocProfessor
+  // 
+  typedef ::xml_schema::boolean minimizarDeslocProfessor_type;
+  typedef ::xsd::cxx::tree::traits< minimizarDeslocProfessor_type, char > minimizarDeslocProfessor_traits;
+
+  const minimizarDeslocProfessor_type&
+  minimizarDeslocProfessor () const;
+
+  minimizarDeslocProfessor_type&
+  minimizarDeslocProfessor ();
+
+  void
+  minimizarDeslocProfessor (const minimizarDeslocProfessor_type& x);
+
+  // minimizarHorariosVaziosProfessor
+  // 
+  typedef ::xml_schema::boolean minimizarHorariosVaziosProfessor_type;
+  typedef ::xsd::cxx::tree::traits< minimizarHorariosVaziosProfessor_type, char > minimizarHorariosVaziosProfessor_traits;
+
+  const minimizarHorariosVaziosProfessor_type&
+  minimizarHorariosVaziosProfessor () const;
+
+  minimizarHorariosVaziosProfessor_type&
+  minimizarHorariosVaziosProfessor ();
+
+  void
+  minimizarHorariosVaziosProfessor (const minimizarHorariosVaziosProfessor_type& x);
+
+  // evitarReducaoCargaHorariaProf
+  // 
+  typedef ::xml_schema::boolean evitarReducaoCargaHorariaProf_type;
+  typedef ::xsd::cxx::tree::traits< evitarReducaoCargaHorariaProf_type, char > evitarReducaoCargaHorariaProf_traits;
+
+  const evitarReducaoCargaHorariaProf_type&
+  evitarReducaoCargaHorariaProf () const;
+
+  evitarReducaoCargaHorariaProf_type&
+  evitarReducaoCargaHorariaProf ();
+
+  void
+  evitarReducaoCargaHorariaProf (const evitarReducaoCargaHorariaProf_type& x);
+
   // niveisDificuldadeHorario
   // 
   typedef ::GrupoNivelDificuldadeHorario niveisDificuldadeHorario_type;
@@ -3383,48 +3502,6 @@ class ItemParametrosPlanejamento: public ::xml_schema::type
 
   void
   equilibrarDiversidadeDiscDia (const equilibrarDiversidadeDiscDia_type& x);
-
-  // minimizarDeslocProfessor
-  // 
-  typedef ::xml_schema::boolean minimizarDeslocProfessor_type;
-  typedef ::xsd::cxx::tree::traits< minimizarDeslocProfessor_type, char > minimizarDeslocProfessor_traits;
-
-  const minimizarDeslocProfessor_type&
-  minimizarDeslocProfessor () const;
-
-  minimizarDeslocProfessor_type&
-  minimizarDeslocProfessor ();
-
-  void
-  minimizarDeslocProfessor (const minimizarDeslocProfessor_type& x);
-
-  // minimizarDeslocAluno
-  // 
-  typedef ::xml_schema::boolean minimizarDeslocAluno_type;
-  typedef ::xsd::cxx::tree::traits< minimizarDeslocAluno_type, char > minimizarDeslocAluno_traits;
-
-  const minimizarDeslocAluno_type&
-  minimizarDeslocAluno () const;
-
-  minimizarDeslocAluno_type&
-  minimizarDeslocAluno ();
-
-  void
-  minimizarDeslocAluno (const minimizarDeslocAluno_type& x);
-
-  // maxDeslocProfessor
-  // 
-  typedef ::xml_schema::int_ maxDeslocProfessor_type;
-  typedef ::xsd::cxx::tree::traits< maxDeslocProfessor_type, char > maxDeslocProfessor_traits;
-
-  const maxDeslocProfessor_type&
-  maxDeslocProfessor () const;
-
-  maxDeslocProfessor_type&
-  maxDeslocProfessor ();
-
-  void
-  maxDeslocProfessor (const maxDeslocProfessor_type& x);
 
   // maximizarAvaliacaoCursos
   // 
@@ -3477,51 +3554,6 @@ class ItemParametrosPlanejamento: public ::xml_schema::type
   void
   permiteCompartilhamentoTurma (::std::auto_ptr< permiteCompartilhamentoTurma_type > p);
 
-  // cargaHorariaSemanalAluno
-  // 
-  typedef ::cargaHorariaSemanalAluno cargaHorariaSemanalAluno_type;
-  typedef ::xsd::cxx::tree::traits< cargaHorariaSemanalAluno_type, char > cargaHorariaSemanalAluno_traits;
-
-  const cargaHorariaSemanalAluno_type&
-  cargaHorariaSemanalAluno () const;
-
-  cargaHorariaSemanalAluno_type&
-  cargaHorariaSemanalAluno ();
-
-  void
-  cargaHorariaSemanalAluno (const cargaHorariaSemanalAluno_type& x);
-
-  void
-  cargaHorariaSemanalAluno (::std::auto_ptr< cargaHorariaSemanalAluno_type > p);
-
-  // minimizarHorariosVaziosProfessor
-  // 
-  typedef ::xml_schema::boolean minimizarHorariosVaziosProfessor_type;
-  typedef ::xsd::cxx::tree::traits< minimizarHorariosVaziosProfessor_type, char > minimizarHorariosVaziosProfessor_traits;
-
-  const minimizarHorariosVaziosProfessor_type&
-  minimizarHorariosVaziosProfessor () const;
-
-  minimizarHorariosVaziosProfessor_type&
-  minimizarHorariosVaziosProfessor ();
-
-  void
-  minimizarHorariosVaziosProfessor (const minimizarHorariosVaziosProfessor_type& x);
-
-  // minimizarDiasSemanaProfessor
-  // 
-  typedef ::xml_schema::boolean minimizarDiasSemanaProfessor_type;
-  typedef ::xsd::cxx::tree::traits< minimizarDiasSemanaProfessor_type, char > minimizarDiasSemanaProfessor_traits;
-
-  const minimizarDiasSemanaProfessor_type&
-  minimizarDiasSemanaProfessor () const;
-
-  minimizarDiasSemanaProfessor_type&
-  minimizarDiasSemanaProfessor ();
-
-  void
-  minimizarDiasSemanaProfessor (const minimizarDiasSemanaProfessor_type& x);
-
   // desempenhoProfDisponibilidade
   // 
   typedef ::xml_schema::boolean desempenhoProfDisponibilidade_type;
@@ -3550,20 +3582,6 @@ class ItemParametrosPlanejamento: public ::xml_schema::type
   void
   custoProfDisponibilidade (const custoProfDisponibilidade_type& x);
 
-  // evitarReducaoCargaHorariaProf
-  // 
-  typedef ::xml_schema::boolean evitarReducaoCargaHorariaProf_type;
-  typedef ::xsd::cxx::tree::traits< evitarReducaoCargaHorariaProf_type, char > evitarReducaoCargaHorariaProf_traits;
-
-  const evitarReducaoCargaHorariaProf_type&
-  evitarReducaoCargaHorariaProf () const;
-
-  evitarReducaoCargaHorariaProf_type&
-  evitarReducaoCargaHorariaProf ();
-
-  void
-  evitarReducaoCargaHorariaProf (const evitarReducaoCargaHorariaProf_type& x);
-
   // evitarProfUltimoPrimeiroHor
   // 
   typedef ::xml_schema::boolean evitarProfUltimoPrimeiroHor_type;
@@ -3578,9 +3596,79 @@ class ItemParametrosPlanejamento: public ::xml_schema::type
   void
   evitarProfUltimoPrimeiroHor (const evitarProfUltimoPrimeiroHor_type& x);
 
+  // maxDeslocProfessor
+  // 
+  typedef ::xml_schema::int_ maxDeslocProfessor_type;
+  typedef ::xsd::cxx::tree::traits< maxDeslocProfessor_type, char > maxDeslocProfessor_traits;
+
+  const maxDeslocProfessor_type&
+  maxDeslocProfessor () const;
+
+  maxDeslocProfessor_type&
+  maxDeslocProfessor ();
+
+  void
+  maxDeslocProfessor (const maxDeslocProfessor_type& x);
+
+  // alunosMesmoPeriodoNaMesmaSala
+  // 
+  typedef ::xml_schema::boolean alunosMesmoPeriodoNaMesmaSala_type;
+  typedef ::xsd::cxx::tree::traits< alunosMesmoPeriodoNaMesmaSala_type, char > alunosMesmoPeriodoNaMesmaSala_traits;
+
+  const alunosMesmoPeriodoNaMesmaSala_type&
+  alunosMesmoPeriodoNaMesmaSala () const;
+
+  alunosMesmoPeriodoNaMesmaSala_type&
+  alunosMesmoPeriodoNaMesmaSala ();
+
+  void
+  alunosMesmoPeriodoNaMesmaSala (const alunosMesmoPeriodoNaMesmaSala_type& x);
+
+  // permitirAlunosEmVariosCampi
+  // 
+  typedef ::xml_schema::boolean permitirAlunosEmVariosCampi_type;
+  typedef ::xsd::cxx::tree::traits< permitirAlunosEmVariosCampi_type, char > permitirAlunosEmVariosCampi_traits;
+
+  const permitirAlunosEmVariosCampi_type&
+  permitirAlunosEmVariosCampi () const;
+
+  permitirAlunosEmVariosCampi_type&
+  permitirAlunosEmVariosCampi ();
+
+  void
+  permitirAlunosEmVariosCampi (const permitirAlunosEmVariosCampi_type& x);
+
+  // permitirProfessorEmVariosCampi
+  // 
+  typedef ::xml_schema::boolean permitirProfessorEmVariosCampi_type;
+  typedef ::xsd::cxx::tree::traits< permitirProfessorEmVariosCampi_type, char > permitirProfessorEmVariosCampi_traits;
+
+  const permitirProfessorEmVariosCampi_type&
+  permitirProfessorEmVariosCampi () const;
+
+  permitirProfessorEmVariosCampi_type&
+  permitirProfessorEmVariosCampi ();
+
+  void
+  permitirProfessorEmVariosCampi (const permitirProfessorEmVariosCampi_type& x);
+
+  // preferenciaProfessorDisciplina
+  // 
+  typedef ::xml_schema::boolean preferenciaProfessorDisciplina_type;
+  typedef ::xsd::cxx::tree::traits< preferenciaProfessorDisciplina_type, char > preferenciaProfessorDisciplina_traits;
+
+  const preferenciaProfessorDisciplina_type&
+  preferenciaProfessorDisciplina () const;
+
+  preferenciaProfessorDisciplina_type&
+  preferenciaProfessorDisciplina ();
+
+  void
+  preferenciaProfessorDisciplina (const preferenciaProfessorDisciplina_type& x);
+
   // minAlunosAberturaTurmas
   // 
-  typedef ::xml_schema::int_ minAlunosAberturaTurmas_type;
+  typedef ::xml_schema::boolean minAlunosAberturaTurmas_type;
   typedef ::xsd::cxx::tree::traits< minAlunosAberturaTurmas_type, char > minAlunosAberturaTurmas_traits;
 
   const minAlunosAberturaTurmas_type&
@@ -3592,41 +3680,163 @@ class ItemParametrosPlanejamento: public ::xml_schema::type
   void
   minAlunosAberturaTurmas (const minAlunosAberturaTurmas_type& x);
 
+  // minAlunosAberturaTurmasValor
+  // 
+  typedef ::xml_schema::int_ minAlunosAberturaTurmasValor_type;
+  typedef ::xsd::cxx::tree::traits< minAlunosAberturaTurmasValor_type, char > minAlunosAberturaTurmasValor_traits;
+
+  const minAlunosAberturaTurmasValor_type&
+  minAlunosAberturaTurmasValor () const;
+
+  minAlunosAberturaTurmasValor_type&
+  minAlunosAberturaTurmasValor ();
+
+  void
+  minAlunosAberturaTurmasValor (const minAlunosAberturaTurmasValor_type& x);
+
+  // regrasGenericasDivisaoCredito
+  // 
+  typedef ::xml_schema::boolean regrasGenericasDivisaoCredito_type;
+  typedef ::xsd::cxx::tree::traits< regrasGenericasDivisaoCredito_type, char > regrasGenericasDivisaoCredito_traits;
+
+  const regrasGenericasDivisaoCredito_type&
+  regrasGenericasDivisaoCredito () const;
+
+  regrasGenericasDivisaoCredito_type&
+  regrasGenericasDivisaoCredito ();
+
+  void
+  regrasGenericasDivisaoCredito (const regrasGenericasDivisaoCredito_type& x);
+
+  // regrasEspecificasDivisaoCredito
+  // 
+  typedef ::xml_schema::boolean regrasEspecificasDivisaoCredito_type;
+  typedef ::xsd::cxx::tree::traits< regrasEspecificasDivisaoCredito_type, char > regrasEspecificasDivisaoCredito_traits;
+
+  const regrasEspecificasDivisaoCredito_type&
+  regrasEspecificasDivisaoCredito () const;
+
+  regrasEspecificasDivisaoCredito_type&
+  regrasEspecificasDivisaoCredito ();
+
+  void
+  regrasEspecificasDivisaoCredito (const regrasEspecificasDivisaoCredito_type& x);
+
+  // percentuaisMinimoMestres
+  // 
+  typedef ::xml_schema::boolean percentuaisMinimoMestres_type;
+  typedef ::xsd::cxx::tree::traits< percentuaisMinimoMestres_type, char > percentuaisMinimoMestres_traits;
+
+  const percentuaisMinimoMestres_type&
+  percentuaisMinimoMestres () const;
+
+  percentuaisMinimoMestres_type&
+  percentuaisMinimoMestres ();
+
+  void
+  percentuaisMinimoMestres (const percentuaisMinimoMestres_type& x);
+
+  // percentuaisMinimoDoutores
+  // 
+  typedef ::xml_schema::boolean percentuaisMinimoDoutores_type;
+  typedef ::xsd::cxx::tree::traits< percentuaisMinimoDoutores_type, char > percentuaisMinimoDoutores_traits;
+
+  const percentuaisMinimoDoutores_type&
+  percentuaisMinimoDoutores () const;
+
+  percentuaisMinimoDoutores_type&
+  percentuaisMinimoDoutores ();
+
+  void
+  percentuaisMinimoDoutores (const percentuaisMinimoDoutores_type& x);
+
+  // areaTitulacaoProfessorCurso
+  // 
+  typedef ::xml_schema::boolean areaTitulacaoProfessorCurso_type;
+  typedef ::xsd::cxx::tree::traits< areaTitulacaoProfessorCurso_type, char > areaTitulacaoProfessorCurso_traits;
+
+  const areaTitulacaoProfessorCurso_type&
+  areaTitulacaoProfessorCurso () const;
+
+  areaTitulacaoProfessorCurso_type&
+  areaTitulacaoProfessorCurso ();
+
+  void
+  areaTitulacaoProfessorCurso (const areaTitulacaoProfessorCurso_type& x);
+
+  // maximoDisciplinasDeUmProfessorPorCurso
+  // 
+  typedef ::xml_schema::boolean maximoDisciplinasDeUmProfessorPorCurso_type;
+  typedef ::xsd::cxx::tree::traits< maximoDisciplinasDeUmProfessorPorCurso_type, char > maximoDisciplinasDeUmProfessorPorCurso_traits;
+
+  const maximoDisciplinasDeUmProfessorPorCurso_type&
+  maximoDisciplinasDeUmProfessorPorCurso () const;
+
+  maximoDisciplinasDeUmProfessorPorCurso_type&
+  maximoDisciplinasDeUmProfessorPorCurso ();
+
+  void
+  maximoDisciplinasDeUmProfessorPorCurso (const maximoDisciplinasDeUmProfessorPorCurso_type& x);
+
   // Constructors.
   //
-  ItemParametrosPlanejamento (const niveisDificuldadeHorario_type&,
-                              const equilibrarDiversidadeDiscDia_type&,
-                              const minimizarDeslocProfessor_type&,
+  ItemParametrosPlanejamento (const modoOtimizacao_type&,
+                              const cargaHorariaSemanalAluno_type&,
                               const minimizarDeslocAluno_type&,
-                              const maxDeslocProfessor_type&,
+                              const cargaHorariaSemanalProfessor_type&,
+                              const minimizarDeslocProfessor_type&,
+                              const minimizarHorariosVaziosProfessor_type&,
+                              const evitarReducaoCargaHorariaProf_type&,
+                              const niveisDificuldadeHorario_type&,
+                              const equilibrarDiversidadeDiscDia_type&,
                               const maximizarAvaliacaoCursos_type&,
                               const minimizarCustoDocenteCursos_type&,
                               const permiteCompartilhamentoTurma_type&,
-                              const cargaHorariaSemanalAluno_type&,
-                              const minimizarHorariosVaziosProfessor_type&,
-                              const minimizarDiasSemanaProfessor_type&,
                               const desempenhoProfDisponibilidade_type&,
                               const custoProfDisponibilidade_type&,
-                              const evitarReducaoCargaHorariaProf_type&,
                               const evitarProfUltimoPrimeiroHor_type&,
-                              const minAlunosAberturaTurmas_type&);
-
-  ItemParametrosPlanejamento (::std::auto_ptr< niveisDificuldadeHorario_type >&,
-                              const equilibrarDiversidadeDiscDia_type&,
-                              const minimizarDeslocProfessor_type&,
-                              const minimizarDeslocAluno_type&,
                               const maxDeslocProfessor_type&,
+                              const alunosMesmoPeriodoNaMesmaSala_type&,
+                              const permitirAlunosEmVariosCampi_type&,
+                              const permitirProfessorEmVariosCampi_type&,
+                              const preferenciaProfessorDisciplina_type&,
+                              const minAlunosAberturaTurmas_type&,
+                              const minAlunosAberturaTurmasValor_type&,
+                              const regrasGenericasDivisaoCredito_type&,
+                              const regrasEspecificasDivisaoCredito_type&,
+                              const percentuaisMinimoMestres_type&,
+                              const percentuaisMinimoDoutores_type&,
+                              const areaTitulacaoProfessorCurso_type&,
+                              const maximoDisciplinasDeUmProfessorPorCurso_type&);
+
+  ItemParametrosPlanejamento (const modoOtimizacao_type&,
+                              ::std::auto_ptr< cargaHorariaSemanalAluno_type >&,
+                              const minimizarDeslocAluno_type&,
+                              ::std::auto_ptr< cargaHorariaSemanalProfessor_type >&,
+                              const minimizarDeslocProfessor_type&,
+                              const minimizarHorariosVaziosProfessor_type&,
+                              const evitarReducaoCargaHorariaProf_type&,
+                              ::std::auto_ptr< niveisDificuldadeHorario_type >&,
+                              const equilibrarDiversidadeDiscDia_type&,
                               ::std::auto_ptr< maximizarAvaliacaoCursos_type >&,
                               ::std::auto_ptr< minimizarCustoDocenteCursos_type >&,
                               ::std::auto_ptr< permiteCompartilhamentoTurma_type >&,
-                              ::std::auto_ptr< cargaHorariaSemanalAluno_type >&,
-                              const minimizarHorariosVaziosProfessor_type&,
-                              const minimizarDiasSemanaProfessor_type&,
                               const desempenhoProfDisponibilidade_type&,
                               const custoProfDisponibilidade_type&,
-                              const evitarReducaoCargaHorariaProf_type&,
                               const evitarProfUltimoPrimeiroHor_type&,
-                              const minAlunosAberturaTurmas_type&);
+                              const maxDeslocProfessor_type&,
+                              const alunosMesmoPeriodoNaMesmaSala_type&,
+                              const permitirAlunosEmVariosCampi_type&,
+                              const permitirProfessorEmVariosCampi_type&,
+                              const preferenciaProfessorDisciplina_type&,
+                              const minAlunosAberturaTurmas_type&,
+                              const minAlunosAberturaTurmasValor_type&,
+                              const regrasGenericasDivisaoCredito_type&,
+                              const regrasEspecificasDivisaoCredito_type&,
+                              const percentuaisMinimoMestres_type&,
+                              const percentuaisMinimoDoutores_type&,
+                              const areaTitulacaoProfessorCurso_type&,
+                              const maximoDisciplinasDeUmProfessorPorCurso_type&);
 
   ItemParametrosPlanejamento (const ::xercesc::DOMElement& e,
                               ::xml_schema::flags f = 0,
@@ -3651,22 +3861,34 @@ class ItemParametrosPlanejamento: public ::xml_schema::type
          ::xml_schema::flags);
 
   protected:
+  ::xsd::cxx::tree::one< modoOtimizacao_type > modoOtimizacao_;
+  ::xsd::cxx::tree::one< cargaHorariaSemanalAluno_type > cargaHorariaSemanalAluno_;
+  ::xsd::cxx::tree::one< minimizarDeslocAluno_type > minimizarDeslocAluno_;
+  ::xsd::cxx::tree::one< cargaHorariaSemanalProfessor_type > cargaHorariaSemanalProfessor_;
+  ::xsd::cxx::tree::one< minimizarDeslocProfessor_type > minimizarDeslocProfessor_;
+  ::xsd::cxx::tree::one< minimizarHorariosVaziosProfessor_type > minimizarHorariosVaziosProfessor_;
+  ::xsd::cxx::tree::one< evitarReducaoCargaHorariaProf_type > evitarReducaoCargaHorariaProf_;
   ::xsd::cxx::tree::one< niveisDificuldadeHorario_type > niveisDificuldadeHorario_;
   ::xsd::cxx::tree::one< equilibrarDiversidadeDiscDia_type > equilibrarDiversidadeDiscDia_;
-  ::xsd::cxx::tree::one< minimizarDeslocProfessor_type > minimizarDeslocProfessor_;
-  ::xsd::cxx::tree::one< minimizarDeslocAluno_type > minimizarDeslocAluno_;
-  ::xsd::cxx::tree::one< maxDeslocProfessor_type > maxDeslocProfessor_;
   ::xsd::cxx::tree::one< maximizarAvaliacaoCursos_type > maximizarAvaliacaoCursos_;
   ::xsd::cxx::tree::one< minimizarCustoDocenteCursos_type > minimizarCustoDocenteCursos_;
   ::xsd::cxx::tree::one< permiteCompartilhamentoTurma_type > permiteCompartilhamentoTurma_;
-  ::xsd::cxx::tree::one< cargaHorariaSemanalAluno_type > cargaHorariaSemanalAluno_;
-  ::xsd::cxx::tree::one< minimizarHorariosVaziosProfessor_type > minimizarHorariosVaziosProfessor_;
-  ::xsd::cxx::tree::one< minimizarDiasSemanaProfessor_type > minimizarDiasSemanaProfessor_;
   ::xsd::cxx::tree::one< desempenhoProfDisponibilidade_type > desempenhoProfDisponibilidade_;
   ::xsd::cxx::tree::one< custoProfDisponibilidade_type > custoProfDisponibilidade_;
-  ::xsd::cxx::tree::one< evitarReducaoCargaHorariaProf_type > evitarReducaoCargaHorariaProf_;
   ::xsd::cxx::tree::one< evitarProfUltimoPrimeiroHor_type > evitarProfUltimoPrimeiroHor_;
+  ::xsd::cxx::tree::one< maxDeslocProfessor_type > maxDeslocProfessor_;
+  ::xsd::cxx::tree::one< alunosMesmoPeriodoNaMesmaSala_type > alunosMesmoPeriodoNaMesmaSala_;
+  ::xsd::cxx::tree::one< permitirAlunosEmVariosCampi_type > permitirAlunosEmVariosCampi_;
+  ::xsd::cxx::tree::one< permitirProfessorEmVariosCampi_type > permitirProfessorEmVariosCampi_;
+  ::xsd::cxx::tree::one< preferenciaProfessorDisciplina_type > preferenciaProfessorDisciplina_;
   ::xsd::cxx::tree::one< minAlunosAberturaTurmas_type > minAlunosAberturaTurmas_;
+  ::xsd::cxx::tree::one< minAlunosAberturaTurmasValor_type > minAlunosAberturaTurmasValor_;
+  ::xsd::cxx::tree::one< regrasGenericasDivisaoCredito_type > regrasGenericasDivisaoCredito_;
+  ::xsd::cxx::tree::one< regrasEspecificasDivisaoCredito_type > regrasEspecificasDivisaoCredito_;
+  ::xsd::cxx::tree::one< percentuaisMinimoMestres_type > percentuaisMinimoMestres_;
+  ::xsd::cxx::tree::one< percentuaisMinimoDoutores_type > percentuaisMinimoDoutores_;
+  ::xsd::cxx::tree::one< areaTitulacaoProfessorCurso_type > areaTitulacaoProfessorCurso_;
+  ::xsd::cxx::tree::one< maximoDisciplinasDeUmProfessorPorCurso_type > maximoDisciplinasDeUmProfessorPorCurso_;
 };
 
 class ItemNivelDificuldadeHorario: public ::xml_schema::type
@@ -5188,6 +5410,776 @@ class GrupoGrupo: public ::xml_schema::type
   GrupoIdentificador_sequence GrupoIdentificador_;
 };
 
+class ItemAtendimentoCampusSolucao: public ::xml_schema::type
+{
+  public:
+  // campusId
+  // 
+  typedef ::xml_schema::int_ campusId_type;
+  typedef ::xsd::cxx::tree::traits< campusId_type, char > campusId_traits;
+
+  const campusId_type&
+  campusId () const;
+
+  campusId_type&
+  campusId ();
+
+  void
+  campusId (const campusId_type& x);
+
+  // campusCodigo
+  // 
+  typedef ::xml_schema::string campusCodigo_type;
+  typedef ::xsd::cxx::tree::traits< campusCodigo_type, char > campusCodigo_traits;
+
+  const campusCodigo_type&
+  campusCodigo () const;
+
+  campusCodigo_type&
+  campusCodigo ();
+
+  void
+  campusCodigo (const campusCodigo_type& x);
+
+  void
+  campusCodigo (::std::auto_ptr< campusCodigo_type > p);
+
+  // atendimentosUnidades
+  // 
+  typedef ::GrupoAtendimentoUnidadeSolucao atendimentosUnidades_type;
+  typedef ::xsd::cxx::tree::traits< atendimentosUnidades_type, char > atendimentosUnidades_traits;
+
+  const atendimentosUnidades_type&
+  atendimentosUnidades () const;
+
+  atendimentosUnidades_type&
+  atendimentosUnidades ();
+
+  void
+  atendimentosUnidades (const atendimentosUnidades_type& x);
+
+  void
+  atendimentosUnidades (::std::auto_ptr< atendimentosUnidades_type > p);
+
+  // Constructors.
+  //
+  ItemAtendimentoCampusSolucao (const campusId_type&,
+                                const campusCodigo_type&,
+                                const atendimentosUnidades_type&);
+
+  ItemAtendimentoCampusSolucao (const campusId_type&,
+                                const campusCodigo_type&,
+                                ::std::auto_ptr< atendimentosUnidades_type >&);
+
+  ItemAtendimentoCampusSolucao (const ::xercesc::DOMElement& e,
+                                ::xml_schema::flags f = 0,
+                                ::xml_schema::container* c = 0);
+
+  ItemAtendimentoCampusSolucao (const ItemAtendimentoCampusSolucao& x,
+                                ::xml_schema::flags f = 0,
+                                ::xml_schema::container* c = 0);
+
+  virtual ItemAtendimentoCampusSolucao*
+  _clone (::xml_schema::flags f = 0,
+          ::xml_schema::container* c = 0) const;
+
+  virtual 
+  ~ItemAtendimentoCampusSolucao ();
+
+  // Implementation.
+  //
+  protected:
+  void
+  parse (::xsd::cxx::xml::dom::parser< char >&,
+         ::xml_schema::flags);
+
+  protected:
+  ::xsd::cxx::tree::one< campusId_type > campusId_;
+  ::xsd::cxx::tree::one< campusCodigo_type > campusCodigo_;
+  ::xsd::cxx::tree::one< atendimentosUnidades_type > atendimentosUnidades_;
+};
+
+class ItemAtendimentoUnidadeSolucao: public ::xml_schema::type
+{
+  public:
+  // unidadeId
+  // 
+  typedef ::xml_schema::int_ unidadeId_type;
+  typedef ::xsd::cxx::tree::traits< unidadeId_type, char > unidadeId_traits;
+
+  const unidadeId_type&
+  unidadeId () const;
+
+  unidadeId_type&
+  unidadeId ();
+
+  void
+  unidadeId (const unidadeId_type& x);
+
+  // unidadeCodigo
+  // 
+  typedef ::xml_schema::string unidadeCodigo_type;
+  typedef ::xsd::cxx::tree::traits< unidadeCodigo_type, char > unidadeCodigo_traits;
+
+  const unidadeCodigo_type&
+  unidadeCodigo () const;
+
+  unidadeCodigo_type&
+  unidadeCodigo ();
+
+  void
+  unidadeCodigo (const unidadeCodigo_type& x);
+
+  void
+  unidadeCodigo (::std::auto_ptr< unidadeCodigo_type > p);
+
+  // atendimentosSalas
+  // 
+  typedef ::GrupoAtendimentoSalaSolucao atendimentosSalas_type;
+  typedef ::xsd::cxx::tree::traits< atendimentosSalas_type, char > atendimentosSalas_traits;
+
+  const atendimentosSalas_type&
+  atendimentosSalas () const;
+
+  atendimentosSalas_type&
+  atendimentosSalas ();
+
+  void
+  atendimentosSalas (const atendimentosSalas_type& x);
+
+  void
+  atendimentosSalas (::std::auto_ptr< atendimentosSalas_type > p);
+
+  // Constructors.
+  //
+  ItemAtendimentoUnidadeSolucao (const unidadeId_type&,
+                                 const unidadeCodigo_type&,
+                                 const atendimentosSalas_type&);
+
+  ItemAtendimentoUnidadeSolucao (const unidadeId_type&,
+                                 const unidadeCodigo_type&,
+                                 ::std::auto_ptr< atendimentosSalas_type >&);
+
+  ItemAtendimentoUnidadeSolucao (const ::xercesc::DOMElement& e,
+                                 ::xml_schema::flags f = 0,
+                                 ::xml_schema::container* c = 0);
+
+  ItemAtendimentoUnidadeSolucao (const ItemAtendimentoUnidadeSolucao& x,
+                                 ::xml_schema::flags f = 0,
+                                 ::xml_schema::container* c = 0);
+
+  virtual ItemAtendimentoUnidadeSolucao*
+  _clone (::xml_schema::flags f = 0,
+          ::xml_schema::container* c = 0) const;
+
+  virtual 
+  ~ItemAtendimentoUnidadeSolucao ();
+
+  // Implementation.
+  //
+  protected:
+  void
+  parse (::xsd::cxx::xml::dom::parser< char >&,
+         ::xml_schema::flags);
+
+  protected:
+  ::xsd::cxx::tree::one< unidadeId_type > unidadeId_;
+  ::xsd::cxx::tree::one< unidadeCodigo_type > unidadeCodigo_;
+  ::xsd::cxx::tree::one< atendimentosSalas_type > atendimentosSalas_;
+};
+
+class ItemAtendimentoSalaSolucao: public ::xml_schema::type
+{
+  public:
+  // salaId
+  // 
+  typedef ::xml_schema::int_ salaId_type;
+  typedef ::xsd::cxx::tree::traits< salaId_type, char > salaId_traits;
+
+  const salaId_type&
+  salaId () const;
+
+  salaId_type&
+  salaId ();
+
+  void
+  salaId (const salaId_type& x);
+
+  // salaNome
+  // 
+  typedef ::xml_schema::string salaNome_type;
+  typedef ::xsd::cxx::tree::traits< salaNome_type, char > salaNome_traits;
+
+  const salaNome_type&
+  salaNome () const;
+
+  salaNome_type&
+  salaNome ();
+
+  void
+  salaNome (const salaNome_type& x);
+
+  void
+  salaNome (::std::auto_ptr< salaNome_type > p);
+
+  // atendimentosDiasSemana
+  // 
+  typedef ::GrupoAtendimentoDiaSemanaSolucao atendimentosDiasSemana_type;
+  typedef ::xsd::cxx::tree::traits< atendimentosDiasSemana_type, char > atendimentosDiasSemana_traits;
+
+  const atendimentosDiasSemana_type&
+  atendimentosDiasSemana () const;
+
+  atendimentosDiasSemana_type&
+  atendimentosDiasSemana ();
+
+  void
+  atendimentosDiasSemana (const atendimentosDiasSemana_type& x);
+
+  void
+  atendimentosDiasSemana (::std::auto_ptr< atendimentosDiasSemana_type > p);
+
+  // Constructors.
+  //
+  ItemAtendimentoSalaSolucao (const salaId_type&,
+                              const salaNome_type&,
+                              const atendimentosDiasSemana_type&);
+
+  ItemAtendimentoSalaSolucao (const salaId_type&,
+                              const salaNome_type&,
+                              ::std::auto_ptr< atendimentosDiasSemana_type >&);
+
+  ItemAtendimentoSalaSolucao (const ::xercesc::DOMElement& e,
+                              ::xml_schema::flags f = 0,
+                              ::xml_schema::container* c = 0);
+
+  ItemAtendimentoSalaSolucao (const ItemAtendimentoSalaSolucao& x,
+                              ::xml_schema::flags f = 0,
+                              ::xml_schema::container* c = 0);
+
+  virtual ItemAtendimentoSalaSolucao*
+  _clone (::xml_schema::flags f = 0,
+          ::xml_schema::container* c = 0) const;
+
+  virtual 
+  ~ItemAtendimentoSalaSolucao ();
+
+  // Implementation.
+  //
+  protected:
+  void
+  parse (::xsd::cxx::xml::dom::parser< char >&,
+         ::xml_schema::flags);
+
+  protected:
+  ::xsd::cxx::tree::one< salaId_type > salaId_;
+  ::xsd::cxx::tree::one< salaNome_type > salaNome_;
+  ::xsd::cxx::tree::one< atendimentosDiasSemana_type > atendimentosDiasSemana_;
+};
+
+class ItemAtendimentoDiaSemanaSolucao: public ::xml_schema::type
+{
+  public:
+  // diaSemana
+  // 
+  typedef ::xml_schema::int_ diaSemana_type;
+  typedef ::xsd::cxx::tree::traits< diaSemana_type, char > diaSemana_traits;
+
+  const diaSemana_type&
+  diaSemana () const;
+
+  diaSemana_type&
+  diaSemana ();
+
+  void
+  diaSemana (const diaSemana_type& x);
+
+  // atendimentosTatico
+  // 
+  typedef ::GrupoAtendimentoTaticoSolucao atendimentosTatico_type;
+  typedef ::xsd::cxx::tree::traits< atendimentosTatico_type, char > atendimentosTatico_traits;
+
+  const atendimentosTatico_type&
+  atendimentosTatico () const;
+
+  atendimentosTatico_type&
+  atendimentosTatico ();
+
+  void
+  atendimentosTatico (const atendimentosTatico_type& x);
+
+  void
+  atendimentosTatico (::std::auto_ptr< atendimentosTatico_type > p);
+
+  // Constructors.
+  //
+  ItemAtendimentoDiaSemanaSolucao (const diaSemana_type&,
+                                   const atendimentosTatico_type&);
+
+  ItemAtendimentoDiaSemanaSolucao (const diaSemana_type&,
+                                   ::std::auto_ptr< atendimentosTatico_type >&);
+
+  ItemAtendimentoDiaSemanaSolucao (const ::xercesc::DOMElement& e,
+                                   ::xml_schema::flags f = 0,
+                                   ::xml_schema::container* c = 0);
+
+  ItemAtendimentoDiaSemanaSolucao (const ItemAtendimentoDiaSemanaSolucao& x,
+                                   ::xml_schema::flags f = 0,
+                                   ::xml_schema::container* c = 0);
+
+  virtual ItemAtendimentoDiaSemanaSolucao*
+  _clone (::xml_schema::flags f = 0,
+          ::xml_schema::container* c = 0) const;
+
+  virtual 
+  ~ItemAtendimentoDiaSemanaSolucao ();
+
+  // Implementation.
+  //
+  protected:
+  void
+  parse (::xsd::cxx::xml::dom::parser< char >&,
+         ::xml_schema::flags);
+
+  protected:
+  ::xsd::cxx::tree::one< diaSemana_type > diaSemana_;
+  ::xsd::cxx::tree::one< atendimentosTatico_type > atendimentosTatico_;
+};
+
+class ItemAtendimentoOfertaSolucao: public ::xml_schema::type
+{
+  public:
+  // ofertaCursoCampiId
+  // 
+  typedef ::xml_schema::int_ ofertaCursoCampiId_type;
+  typedef ::xsd::cxx::tree::traits< ofertaCursoCampiId_type, char > ofertaCursoCampiId_traits;
+
+  const ofertaCursoCampiId_type&
+  ofertaCursoCampiId () const;
+
+  ofertaCursoCampiId_type&
+  ofertaCursoCampiId ();
+
+  void
+  ofertaCursoCampiId (const ofertaCursoCampiId_type& x);
+
+  // disciplinaId
+  // 
+  typedef ::xml_schema::int_ disciplinaId_type;
+  typedef ::xsd::cxx::tree::traits< disciplinaId_type, char > disciplinaId_traits;
+
+  const disciplinaId_type&
+  disciplinaId () const;
+
+  disciplinaId_type&
+  disciplinaId ();
+
+  void
+  disciplinaId (const disciplinaId_type& x);
+
+  // quantidade
+  // 
+  typedef ::xml_schema::int_ quantidade_type;
+  typedef ::xsd::cxx::tree::traits< quantidade_type, char > quantidade_traits;
+
+  const quantidade_type&
+  quantidade () const;
+
+  quantidade_type&
+  quantidade ();
+
+  void
+  quantidade (const quantidade_type& x);
+
+  // turma
+  // 
+  typedef ::xml_schema::string turma_type;
+  typedef ::xsd::cxx::tree::traits< turma_type, char > turma_traits;
+
+  const turma_type&
+  turma () const;
+
+  turma_type&
+  turma ();
+
+  void
+  turma (const turma_type& x);
+
+  void
+  turma (::std::auto_ptr< turma_type > p);
+
+  // Constructors.
+  //
+  ItemAtendimentoOfertaSolucao (const ofertaCursoCampiId_type&,
+                                const disciplinaId_type&,
+                                const quantidade_type&,
+                                const turma_type&);
+
+  ItemAtendimentoOfertaSolucao (const ::xercesc::DOMElement& e,
+                                ::xml_schema::flags f = 0,
+                                ::xml_schema::container* c = 0);
+
+  ItemAtendimentoOfertaSolucao (const ItemAtendimentoOfertaSolucao& x,
+                                ::xml_schema::flags f = 0,
+                                ::xml_schema::container* c = 0);
+
+  virtual ItemAtendimentoOfertaSolucao*
+  _clone (::xml_schema::flags f = 0,
+          ::xml_schema::container* c = 0) const;
+
+  virtual 
+  ~ItemAtendimentoOfertaSolucao ();
+
+  // Implementation.
+  //
+  protected:
+  void
+  parse (::xsd::cxx::xml::dom::parser< char >&,
+         ::xml_schema::flags);
+
+  protected:
+  ::xsd::cxx::tree::one< ofertaCursoCampiId_type > ofertaCursoCampiId_;
+  ::xsd::cxx::tree::one< disciplinaId_type > disciplinaId_;
+  ::xsd::cxx::tree::one< quantidade_type > quantidade_;
+  ::xsd::cxx::tree::one< turma_type > turma_;
+};
+
+class ItemAtendimentoTaticoSolucao: public ::xml_schema::type
+{
+  public:
+  // atendimentoOferta
+  // 
+  typedef ::ItemAtendimentoOfertaSolucao atendimentoOferta_type;
+  typedef ::xsd::cxx::tree::traits< atendimentoOferta_type, char > atendimentoOferta_traits;
+
+  const atendimentoOferta_type&
+  atendimentoOferta () const;
+
+  atendimentoOferta_type&
+  atendimentoOferta ();
+
+  void
+  atendimentoOferta (const atendimentoOferta_type& x);
+
+  void
+  atendimentoOferta (::std::auto_ptr< atendimentoOferta_type > p);
+
+  // qtdeCreditosTeoricos
+  // 
+  typedef ::xml_schema::int_ qtdeCreditosTeoricos_type;
+  typedef ::xsd::cxx::tree::traits< qtdeCreditosTeoricos_type, char > qtdeCreditosTeoricos_traits;
+
+  const qtdeCreditosTeoricos_type&
+  qtdeCreditosTeoricos () const;
+
+  qtdeCreditosTeoricos_type&
+  qtdeCreditosTeoricos ();
+
+  void
+  qtdeCreditosTeoricos (const qtdeCreditosTeoricos_type& x);
+
+  // qtdeCreditosPraticos
+  // 
+  typedef ::xml_schema::int_ qtdeCreditosPraticos_type;
+  typedef ::xsd::cxx::tree::traits< qtdeCreditosPraticos_type, char > qtdeCreditosPraticos_traits;
+
+  const qtdeCreditosPraticos_type&
+  qtdeCreditosPraticos () const;
+
+  qtdeCreditosPraticos_type&
+  qtdeCreditosPraticos ();
+
+  void
+  qtdeCreditosPraticos (const qtdeCreditosPraticos_type& x);
+
+  // Constructors.
+  //
+  ItemAtendimentoTaticoSolucao (const atendimentoOferta_type&,
+                                const qtdeCreditosTeoricos_type&,
+                                const qtdeCreditosPraticos_type&);
+
+  ItemAtendimentoTaticoSolucao (::std::auto_ptr< atendimentoOferta_type >&,
+                                const qtdeCreditosTeoricos_type&,
+                                const qtdeCreditosPraticos_type&);
+
+  ItemAtendimentoTaticoSolucao (const ::xercesc::DOMElement& e,
+                                ::xml_schema::flags f = 0,
+                                ::xml_schema::container* c = 0);
+
+  ItemAtendimentoTaticoSolucao (const ItemAtendimentoTaticoSolucao& x,
+                                ::xml_schema::flags f = 0,
+                                ::xml_schema::container* c = 0);
+
+  virtual ItemAtendimentoTaticoSolucao*
+  _clone (::xml_schema::flags f = 0,
+          ::xml_schema::container* c = 0) const;
+
+  virtual 
+  ~ItemAtendimentoTaticoSolucao ();
+
+  // Implementation.
+  //
+  protected:
+  void
+  parse (::xsd::cxx::xml::dom::parser< char >&,
+         ::xml_schema::flags);
+
+  protected:
+  ::xsd::cxx::tree::one< atendimentoOferta_type > atendimentoOferta_;
+  ::xsd::cxx::tree::one< qtdeCreditosTeoricos_type > qtdeCreditosTeoricos_;
+  ::xsd::cxx::tree::one< qtdeCreditosPraticos_type > qtdeCreditosPraticos_;
+};
+
+class GrupoAtendimentoCampusSolucao: public ::xml_schema::type
+{
+  public:
+  // AtendimentoCampus
+  // 
+  typedef ::ItemAtendimentoCampusSolucao AtendimentoCampus_type;
+  typedef ::xsd::cxx::tree::sequence< AtendimentoCampus_type > AtendimentoCampus_sequence;
+  typedef AtendimentoCampus_sequence::iterator AtendimentoCampus_iterator;
+  typedef AtendimentoCampus_sequence::const_iterator AtendimentoCampus_const_iterator;
+  typedef ::xsd::cxx::tree::traits< AtendimentoCampus_type, char > AtendimentoCampus_traits;
+
+  const AtendimentoCampus_sequence&
+  AtendimentoCampus () const;
+
+  AtendimentoCampus_sequence&
+  AtendimentoCampus ();
+
+  void
+  AtendimentoCampus (const AtendimentoCampus_sequence& s);
+
+  // Constructors.
+  //
+  GrupoAtendimentoCampusSolucao ();
+
+  GrupoAtendimentoCampusSolucao (const ::xercesc::DOMElement& e,
+                                 ::xml_schema::flags f = 0,
+                                 ::xml_schema::container* c = 0);
+
+  GrupoAtendimentoCampusSolucao (const GrupoAtendimentoCampusSolucao& x,
+                                 ::xml_schema::flags f = 0,
+                                 ::xml_schema::container* c = 0);
+
+  virtual GrupoAtendimentoCampusSolucao*
+  _clone (::xml_schema::flags f = 0,
+          ::xml_schema::container* c = 0) const;
+
+  virtual 
+  ~GrupoAtendimentoCampusSolucao ();
+
+  // Implementation.
+  //
+  protected:
+  void
+  parse (::xsd::cxx::xml::dom::parser< char >&,
+         ::xml_schema::flags);
+
+  protected:
+  AtendimentoCampus_sequence AtendimentoCampus_;
+};
+
+class GrupoAtendimentoUnidadeSolucao: public ::xml_schema::type
+{
+  public:
+  // AtendimentoUnidade
+  // 
+  typedef ::ItemAtendimentoUnidadeSolucao AtendimentoUnidade_type;
+  typedef ::xsd::cxx::tree::sequence< AtendimentoUnidade_type > AtendimentoUnidade_sequence;
+  typedef AtendimentoUnidade_sequence::iterator AtendimentoUnidade_iterator;
+  typedef AtendimentoUnidade_sequence::const_iterator AtendimentoUnidade_const_iterator;
+  typedef ::xsd::cxx::tree::traits< AtendimentoUnidade_type, char > AtendimentoUnidade_traits;
+
+  const AtendimentoUnidade_sequence&
+  AtendimentoUnidade () const;
+
+  AtendimentoUnidade_sequence&
+  AtendimentoUnidade ();
+
+  void
+  AtendimentoUnidade (const AtendimentoUnidade_sequence& s);
+
+  // Constructors.
+  //
+  GrupoAtendimentoUnidadeSolucao ();
+
+  GrupoAtendimentoUnidadeSolucao (const ::xercesc::DOMElement& e,
+                                  ::xml_schema::flags f = 0,
+                                  ::xml_schema::container* c = 0);
+
+  GrupoAtendimentoUnidadeSolucao (const GrupoAtendimentoUnidadeSolucao& x,
+                                  ::xml_schema::flags f = 0,
+                                  ::xml_schema::container* c = 0);
+
+  virtual GrupoAtendimentoUnidadeSolucao*
+  _clone (::xml_schema::flags f = 0,
+          ::xml_schema::container* c = 0) const;
+
+  virtual 
+  ~GrupoAtendimentoUnidadeSolucao ();
+
+  // Implementation.
+  //
+  protected:
+  void
+  parse (::xsd::cxx::xml::dom::parser< char >&,
+         ::xml_schema::flags);
+
+  protected:
+  AtendimentoUnidade_sequence AtendimentoUnidade_;
+};
+
+class GrupoAtendimentoSalaSolucao: public ::xml_schema::type
+{
+  public:
+  // AtendimentoSala
+  // 
+  typedef ::ItemAtendimentoSalaSolucao AtendimentoSala_type;
+  typedef ::xsd::cxx::tree::sequence< AtendimentoSala_type > AtendimentoSala_sequence;
+  typedef AtendimentoSala_sequence::iterator AtendimentoSala_iterator;
+  typedef AtendimentoSala_sequence::const_iterator AtendimentoSala_const_iterator;
+  typedef ::xsd::cxx::tree::traits< AtendimentoSala_type, char > AtendimentoSala_traits;
+
+  const AtendimentoSala_sequence&
+  AtendimentoSala () const;
+
+  AtendimentoSala_sequence&
+  AtendimentoSala ();
+
+  void
+  AtendimentoSala (const AtendimentoSala_sequence& s);
+
+  // Constructors.
+  //
+  GrupoAtendimentoSalaSolucao ();
+
+  GrupoAtendimentoSalaSolucao (const ::xercesc::DOMElement& e,
+                               ::xml_schema::flags f = 0,
+                               ::xml_schema::container* c = 0);
+
+  GrupoAtendimentoSalaSolucao (const GrupoAtendimentoSalaSolucao& x,
+                               ::xml_schema::flags f = 0,
+                               ::xml_schema::container* c = 0);
+
+  virtual GrupoAtendimentoSalaSolucao*
+  _clone (::xml_schema::flags f = 0,
+          ::xml_schema::container* c = 0) const;
+
+  virtual 
+  ~GrupoAtendimentoSalaSolucao ();
+
+  // Implementation.
+  //
+  protected:
+  void
+  parse (::xsd::cxx::xml::dom::parser< char >&,
+         ::xml_schema::flags);
+
+  protected:
+  AtendimentoSala_sequence AtendimentoSala_;
+};
+
+class GrupoAtendimentoDiaSemanaSolucao: public ::xml_schema::type
+{
+  public:
+  // AtendimentoDiaSemana
+  // 
+  typedef ::ItemAtendimentoDiaSemanaSolucao AtendimentoDiaSemana_type;
+  typedef ::xsd::cxx::tree::sequence< AtendimentoDiaSemana_type > AtendimentoDiaSemana_sequence;
+  typedef AtendimentoDiaSemana_sequence::iterator AtendimentoDiaSemana_iterator;
+  typedef AtendimentoDiaSemana_sequence::const_iterator AtendimentoDiaSemana_const_iterator;
+  typedef ::xsd::cxx::tree::traits< AtendimentoDiaSemana_type, char > AtendimentoDiaSemana_traits;
+
+  const AtendimentoDiaSemana_sequence&
+  AtendimentoDiaSemana () const;
+
+  AtendimentoDiaSemana_sequence&
+  AtendimentoDiaSemana ();
+
+  void
+  AtendimentoDiaSemana (const AtendimentoDiaSemana_sequence& s);
+
+  // Constructors.
+  //
+  GrupoAtendimentoDiaSemanaSolucao ();
+
+  GrupoAtendimentoDiaSemanaSolucao (const ::xercesc::DOMElement& e,
+                                    ::xml_schema::flags f = 0,
+                                    ::xml_schema::container* c = 0);
+
+  GrupoAtendimentoDiaSemanaSolucao (const GrupoAtendimentoDiaSemanaSolucao& x,
+                                    ::xml_schema::flags f = 0,
+                                    ::xml_schema::container* c = 0);
+
+  virtual GrupoAtendimentoDiaSemanaSolucao*
+  _clone (::xml_schema::flags f = 0,
+          ::xml_schema::container* c = 0) const;
+
+  virtual 
+  ~GrupoAtendimentoDiaSemanaSolucao ();
+
+  // Implementation.
+  //
+  protected:
+  void
+  parse (::xsd::cxx::xml::dom::parser< char >&,
+         ::xml_schema::flags);
+
+  protected:
+  AtendimentoDiaSemana_sequence AtendimentoDiaSemana_;
+};
+
+class GrupoAtendimentoTaticoSolucao: public ::xml_schema::type
+{
+  public:
+  // AtendimentoTatico
+  // 
+  typedef ::ItemAtendimentoTaticoSolucao AtendimentoTatico_type;
+  typedef ::xsd::cxx::tree::sequence< AtendimentoTatico_type > AtendimentoTatico_sequence;
+  typedef AtendimentoTatico_sequence::iterator AtendimentoTatico_iterator;
+  typedef AtendimentoTatico_sequence::const_iterator AtendimentoTatico_const_iterator;
+  typedef ::xsd::cxx::tree::traits< AtendimentoTatico_type, char > AtendimentoTatico_traits;
+
+  const AtendimentoTatico_sequence&
+  AtendimentoTatico () const;
+
+  AtendimentoTatico_sequence&
+  AtendimentoTatico ();
+
+  void
+  AtendimentoTatico (const AtendimentoTatico_sequence& s);
+
+  // Constructors.
+  //
+  GrupoAtendimentoTaticoSolucao ();
+
+  GrupoAtendimentoTaticoSolucao (const ::xercesc::DOMElement& e,
+                                 ::xml_schema::flags f = 0,
+                                 ::xml_schema::container* c = 0);
+
+  GrupoAtendimentoTaticoSolucao (const GrupoAtendimentoTaticoSolucao& x,
+                                 ::xml_schema::flags f = 0,
+                                 ::xml_schema::container* c = 0);
+
+  virtual GrupoAtendimentoTaticoSolucao*
+  _clone (::xml_schema::flags f = 0,
+          ::xml_schema::container* c = 0) const;
+
+  virtual 
+  ~GrupoAtendimentoTaticoSolucao ();
+
+  // Implementation.
+  //
+  protected:
+  void
+  parse (::xsd::cxx::xml::dom::parser< char >&,
+         ::xml_schema::flags);
+
+  protected:
+  AtendimentoTatico_sequence AtendimentoTatico_;
+};
+
 class TriedaInput: public ::xml_schema::type
 {
   public:
@@ -5497,6 +6489,27 @@ class TriedaInput: public ::xml_schema::type
   void
   fixacoes (::std::auto_ptr< fixacoes_type > p);
 
+  // atendimentosTatico
+  // 
+  typedef ::GrupoAtendimentoCampusSolucao atendimentosTatico_type;
+  typedef ::xsd::cxx::tree::optional< atendimentosTatico_type > atendimentosTatico_optional;
+  typedef ::xsd::cxx::tree::traits< atendimentosTatico_type, char > atendimentosTatico_traits;
+
+  const atendimentosTatico_optional&
+  atendimentosTatico () const;
+
+  atendimentosTatico_optional&
+  atendimentosTatico ();
+
+  void
+  atendimentosTatico (const atendimentosTatico_type& x);
+
+  void
+  atendimentosTatico (const atendimentosTatico_optional& x);
+
+  void
+  atendimentosTatico (::std::auto_ptr< atendimentosTatico_type > p);
+
   // Constructors.
   //
   TriedaInput (const calendario_type&,
@@ -5578,6 +6591,7 @@ class TriedaInput: public ::xml_schema::type
   ::xsd::cxx::tree::one< demandas_type > demandas_;
   ::xsd::cxx::tree::one< parametrosPlanejamento_type > parametrosPlanejamento_;
   ::xsd::cxx::tree::one< fixacoes_type > fixacoes_;
+  atendimentosTatico_optional atendimentosTatico_;
 };
 
 class cargaHorariaSemanalAluno: public ::xml_schema::type
@@ -5676,6 +6690,104 @@ class cargaHorariaSemanalAluno: public ::xml_schema::type
   equilibrar_optional equilibrar_;
   minimizarDias_optional minimizarDias_;
   indiferente_optional indiferente_;
+};
+
+class cargaHorariaSemanalProfessor: public ::xml_schema::type
+{
+  public:
+  // equilibrar
+  // 
+  typedef ::xml_schema::simple_type equilibrar_type;
+  typedef ::xsd::cxx::tree::optional< equilibrar_type > equilibrar_optional;
+  typedef ::xsd::cxx::tree::traits< equilibrar_type, char > equilibrar_traits;
+
+  const equilibrar_optional&
+  equilibrar () const;
+
+  equilibrar_optional&
+  equilibrar ();
+
+  void
+  equilibrar (const equilibrar_type& x);
+
+  void
+  equilibrar (const equilibrar_optional& x);
+
+  void
+  equilibrar (::std::auto_ptr< equilibrar_type > p);
+
+  // minimizarDias
+  // 
+  typedef ::xml_schema::simple_type minimizarDias_type;
+  typedef ::xsd::cxx::tree::optional< minimizarDias_type > minimizarDias_optional;
+  typedef ::xsd::cxx::tree::traits< minimizarDias_type, char > minimizarDias_traits;
+
+  const minimizarDias_optional&
+  minimizarDias () const;
+
+  minimizarDias_optional&
+  minimizarDias ();
+
+  void
+  minimizarDias (const minimizarDias_type& x);
+
+  void
+  minimizarDias (const minimizarDias_optional& x);
+
+  void
+  minimizarDias (::std::auto_ptr< minimizarDias_type > p);
+
+  // indiferentes
+  // 
+  typedef ::xml_schema::simple_type indiferentes_type;
+  typedef ::xsd::cxx::tree::optional< indiferentes_type > indiferentes_optional;
+  typedef ::xsd::cxx::tree::traits< indiferentes_type, char > indiferentes_traits;
+
+  const indiferentes_optional&
+  indiferentes () const;
+
+  indiferentes_optional&
+  indiferentes ();
+
+  void
+  indiferentes (const indiferentes_type& x);
+
+  void
+  indiferentes (const indiferentes_optional& x);
+
+  void
+  indiferentes (::std::auto_ptr< indiferentes_type > p);
+
+  // Constructors.
+  //
+  cargaHorariaSemanalProfessor ();
+
+  cargaHorariaSemanalProfessor (const ::xercesc::DOMElement& e,
+                                ::xml_schema::flags f = 0,
+                                ::xml_schema::container* c = 0);
+
+  cargaHorariaSemanalProfessor (const cargaHorariaSemanalProfessor& x,
+                                ::xml_schema::flags f = 0,
+                                ::xml_schema::container* c = 0);
+
+  virtual cargaHorariaSemanalProfessor*
+  _clone (::xml_schema::flags f = 0,
+          ::xml_schema::container* c = 0) const;
+
+  virtual 
+  ~cargaHorariaSemanalProfessor ();
+
+  // Implementation.
+  //
+  protected:
+  void
+  parse (::xsd::cxx::xml::dom::parser< char >&,
+         ::xml_schema::flags);
+
+  protected:
+  equilibrar_optional equilibrar_;
+  minimizarDias_optional minimizarDias_;
+  indiferentes_optional indiferentes_;
 };
 
 #include <iosfwd>

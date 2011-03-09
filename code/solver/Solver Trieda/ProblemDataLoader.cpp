@@ -2325,6 +2325,14 @@ void ProblemDataLoader::relacionaDiscOfertas()
 //   }
 //}
 
+void ProblemDataLoader::criaAulas()
+{
+   /* Deve-se preencher o GGroup<Aula*> com as informações do GrupoAtendimentoCampusSolucao lido */
+
+   std::cout << "ToDo: Implementar metodo ProblemDataLoader::criaAulas().\n\tSaindo.\n";
+   exit(1);
+}
+
 void ProblemDataLoader::print_csv(void)
 {
    int ncampi,nunidades,ndiscs,nprofs,ncursos,nofertas,tdemanda;
