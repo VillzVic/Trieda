@@ -33,15 +33,16 @@ import com.gapso.trieda.domain.Turno;
 import com.gapso.trieda.domain.Unidade;
 import com.gapso.trieda.misc.Estados;
 import com.gapso.web.trieda.client.mvp.model.AtendimentoTaticoDTO;
-import com.gapso.web.trieda.client.mvp.model.CampusDTO;
-import com.gapso.web.trieda.client.mvp.model.FileModel;
 import com.gapso.web.trieda.client.mvp.model.TurnoDTO;
 import com.gapso.web.trieda.client.services.CampiService;
 import com.gapso.web.trieda.server.util.ConvertBeans;
+import com.gapso.web.trieda.shared.dtos.AbstractDTO;
+import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.DeslocamentoCampusDTO;
 import com.gapso.web.trieda.shared.dtos.HorarioDisponivelCenarioDTO;
 import com.gapso.web.trieda.shared.dtos.SalaDTO;
+import com.gapso.web.trieda.shared.dtos.TreeNodeDTO;
 import com.gapso.web.trieda.shared.util.TriedaUtil;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
@@ -254,23 +255,23 @@ public class CampiServiceImpl extends RemoteServiceServlet implements CampiServi
 	}
 	
 	@Override
-	public List<FileModel> getResumos(CenarioDTO cenarioDTO, FileModel fileModel) {
-		List<FileModel> list = new ArrayList<FileModel>();
-		if(!(fileModel instanceof CampusDTO)) {
+	public List<TreeNodeDTO> getResumos(CenarioDTO cenarioDTO, TreeNodeDTO currentNode) {
+		List<TreeNodeDTO> list = new ArrayList<TreeNodeDTO>();
+		
+		if (currentNode == null) {
 			Cenario cenario = Cenario.find(cenarioDTO.getId());
 			List<Campus> campi = new ArrayList<Campus>(cenario.getCampi());
 			Collections.sort(campi);
-			for(Campus campus : campi) {
+			for (Campus campus : campi) {
 				CampusDTO campusDTO = ConvertBeans.toCampusDTO(campus);
-				campusDTO.setName(campus.getCodigo() + " (" + campus.getNome() + ")");
-				campusDTO.setPath(campus.getCodigo());
-				campusDTO.setFolha(true);
-				list.add(campusDTO);
+				TreeNodeDTO nodeDTO = new TreeNodeDTO(campusDTO);
+				nodeDTO.setLeaf(true);
+				list.add(nodeDTO);
 			}
 		} else {
-			Campus campus = Campus.find(((CampusDTO)fileModel).getId());
-			Double custoCredito = campus.getValorCredito();
-			if(custoCredito == null) custoCredito = 0.0;
+			AbstractDTO<?> contentCurrentNode = currentNode.getContent();
+			Campus campus = Campus.find(((CampusDTO)contentCurrentNode).getId());
+			Double custoCredito = (campus.getValorCredito() != null) ? campus.getValorCredito() : 0.0;
 			Integer qtdTurma = AtendimentoTatico.countTurma(campus);
 			
 			List<Demanda> demandas = Demanda.findAllByCampus(campus);
@@ -358,21 +359,19 @@ public class CampiServiceImpl extends RemoteServiceServlet implements CampiServi
 			Double mediaCreditoTurma = (qtdTurma == 0)? 0.0 : qtdCreditos/qtdTurma;
 			Double custoDocenteSemestral = qtdCreditos * custoCredito * 4.5 * 6.0;
 			
-			
-			list.add(new FileModel("Turmas abertas: <b>"+qtdTurma+"</b>"));
-			list.add(new FileModel("Total de Cr&eacute;ditos semanais: <b>"+qtdCreditos+"</b>"));
-			list.add(new FileModel("M&eacute;dia de cr&eacute;ditos por turma: <b>"+mediaCreditoTurma+"</b>"));
-			list.add(new FileModel("Custo m&eacute;dio do cr&eacute;dito: <b>R$ "+custoCredito+"</b>"));
-			list.add(new FileModel("Custo docente semestral estimado: <b>R$ "+custoDocenteSemestral+"</b>"));
-			list.add(new FileModel("Utiliza&ccedil;&atilde;o m&eacute;dia das salas de aula: <b>"+mediaSalaDeAula+"%</b>"));
-			list.add(new FileModel("Utiliza&ccedil;&atilde;o m&eacute;dia dos laborat&oacute;rios: <b>"+mediaLaboratorio+"%</b>"));
-//			list.add(new FileModel("Custo docente por curso"));
-//			list.add(new FileModel("Custo docente por disciplina"));
-			list.add(new FileModel("Total de alunos atendidos: <b>"+qtdAlunosAtendidos+"</b>"));
-			list.add(new FileModel("Total de alunos n&atilde;o atendidos: <b>"+qtdAlunosNaoAtendidos+"</b>"));
-//			list.add(new FileModel("Exportar resultados para excel"));
+			list.add(new TreeNodeDTO("Turmas abertas: <b>"+qtdTurma+"</b>"));
+			list.add(new TreeNodeDTO("Total de Cr&eacute;ditos semanais: <b>"+qtdCreditos+"</b>"));
+			list.add(new TreeNodeDTO("M&eacute;dia de cr&eacute;ditos por turma: <b>"+mediaCreditoTurma+"</b>"));
+			list.add(new TreeNodeDTO("Custo m&eacute;dio do cr&eacute;dito: <b>R$ "+custoCredito+"</b>"));
+			list.add(new TreeNodeDTO("Custo docente semestral estimado: <b>R$ "+custoDocenteSemestral+"</b>"));
+			list.add(new TreeNodeDTO("Utiliza&ccedil;&atilde;o m&eacute;dia das salas de aula: <b>"+mediaSalaDeAula+"%</b>"));
+			list.add(new TreeNodeDTO("Utiliza&ccedil;&atilde;o m&eacute;dia dos laborat&oacute;rios: <b>"+mediaLaboratorio+"%</b>"));
+//			list.add(new TreeNodeDTO("Custo docente por curso"));
+//			list.add(new TreeNodeDTO("Custo docente por disciplina"));
+			list.add(new TreeNodeDTO("Total de alunos atendidos: <b>"+qtdAlunosAtendidos+"</b>"));
+			list.add(new TreeNodeDTO("Total de alunos n&atilde;o atendidos: <b>"+qtdAlunosNaoAtendidos+"</b>"));
+//			list.add(new TreeNodeDTO("Exportar resultados para excel"));
 		}
 		return list;
 	}
-	
 }

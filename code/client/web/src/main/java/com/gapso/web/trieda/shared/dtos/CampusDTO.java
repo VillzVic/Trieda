@@ -1,0 +1,95 @@
+package com.gapso.web.trieda.shared.dtos;
+
+
+
+public class CampusDTO extends AbstractDTO<String> implements Comparable<CampusDTO> {
+
+	private static final long serialVersionUID = -5134820110949139907L;
+	
+	// Propriedades
+	public static final String PROPERTY_ID = "id";
+	public static final String PROPERTY_VERSION = "version";
+	public static final String PROPERTY_CENARIO_ID = "cenarioId";
+	public static final String PROPERTY_CODIGO = "codigo";
+	public static final String PROPERTY_NOME = "nome";
+	public static final String PROPERTY_ESTADO = "estado";
+	public static final String PROPERTY_MUNICIPIO = "municipio";
+	public static final String PROPERTY_BAIRRO = "bairro";
+	public static final String PROPERTY_VALOR_CREDITO = "valorCredito";
+
+	public CampusDTO() {
+	}
+
+	public void setId(Long value) {
+		set(PROPERTY_ID, value);
+	}
+	public Long getId() {
+		return get(PROPERTY_ID);
+	}
+	
+	public void setVersion(Integer value) {
+		set(PROPERTY_VERSION, value);
+	}
+	public Integer getVersion() {
+		return get(PROPERTY_VERSION);
+	}
+	
+	public void setCenarioId(Long value) {
+		set(PROPERTY_CENARIO_ID, value);
+	}
+	public Long getCenarioId() {
+		return get(PROPERTY_CENARIO_ID);
+	}
+	
+	public String getCodigo() {
+		return get(PROPERTY_CODIGO);
+	}
+	public void setCodigo(String value) {
+		set(PROPERTY_CODIGO, value);
+	}
+
+	public String getNome() {
+		return get(PROPERTY_NOME);
+	}
+	public void setNome(String value) {
+		set(PROPERTY_NOME, value);
+	}
+	
+	public String getEstado() {
+		return get(PROPERTY_ESTADO);
+	}
+	public void setEstado(String value) {
+		set(PROPERTY_ESTADO, value);
+	}
+	
+	public String getMunicipio() {
+		return get(PROPERTY_MUNICIPIO);
+	}
+	public void setMunicipio(String value) {
+		set(PROPERTY_MUNICIPIO, value);
+	}
+	
+	public String getBairro() {
+		return get(PROPERTY_BAIRRO);
+	}
+	public void setBairro(String value) {
+		set(PROPERTY_BAIRRO, value);
+	}
+	
+	public void setValorCredito(Double value) {
+		set(PROPERTY_VALOR_CREDITO, value);
+	}
+	public Double getValorCredito() {
+		return get(PROPERTY_VALOR_CREDITO);
+	}
+	
+	@Override
+	public String getNaturalKey() {
+		return getCodigo();
+	}
+
+	@Override
+	public int compareTo(CampusDTO o) {
+		return getCodigo().compareTo(o.getCodigo());
+	}
+}

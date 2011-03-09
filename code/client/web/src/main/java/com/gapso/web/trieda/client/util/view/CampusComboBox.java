@@ -6,8 +6,8 @@ import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.RpcProxy;
 import com.extjs.gxt.ui.client.store.ListStore;
 import com.extjs.gxt.ui.client.widget.form.ComboBox;
-import com.gapso.web.trieda.client.mvp.model.CampusDTO;
 import com.gapso.web.trieda.client.services.Services;
+import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class CampusComboBox extends ComboBox<CampusDTO> {
@@ -22,10 +22,10 @@ public class CampusComboBox extends ComboBox<CampusDTO> {
 		
 		setStore(new ListStore<CampusDTO>(new BaseListLoader<BaseListLoadResult<CampusDTO>>(proxy)));
 		
-		setDisplayField("codigo");
+		setDisplayField(CampusDTO.PROPERTY_CODIGO);
 		setFieldLabel("Campus");
 		setEmptyText("Selecione o campus");
-		setSimpleTemplate("{nome} ({codigo})");
+		setSimpleTemplate("{"+CampusDTO.PROPERTY_NOME+"} ({"+CampusDTO.PROPERTY_CODIGO+"})");
 		setEditable(false);
 		setTriggerAction(TriggerAction.ALL);
 	}

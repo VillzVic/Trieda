@@ -13,18 +13,18 @@ import com.extjs.gxt.ui.client.widget.layout.BorderLayout;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
 import com.extjs.gxt.ui.client.widget.layout.FitLayout;
 import com.extjs.gxt.ui.client.widget.treepanel.TreePanel;
-import com.gapso.web.trieda.client.mvp.model.FileModel;
 import com.gapso.web.trieda.client.mvp.presenter.ResumoCenarioPresenter;
 import com.gapso.web.trieda.client.services.Services;
 import com.gapso.web.trieda.client.util.resources.Resources;
 import com.gapso.web.trieda.client.util.view.GTabItem;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
+import com.gapso.web.trieda.shared.dtos.TreeNodeDTO;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class ResumoCenarioView extends MyComposite implements ResumoCenarioPresenter.Display {
 
-	private TreeStore<FileModel> store;
-	private TreePanel<FileModel> tree;
+	private TreeStore<TreeNodeDTO> store;
+	private TreePanel<TreeNodeDTO> tree;
 
 	private ContentPanel panel;
 	private GTabItem tabItem;
@@ -56,8 +56,8 @@ public class ResumoCenarioView extends MyComposite implements ResumoCenarioPrese
 	}
 	
 	private void createGrid() {
-		tree = new TreePanel<FileModel>(getStore());
-		tree.setDisplayProperty("name");
+		tree = new TreePanel<TreeNodeDTO>(getStore());
+		tree.setDisplayProperty(TreeNodeDTO.PROPERTY_TEXT);
 	    
 	    ContentPanel contentPanel = new ContentPanel(new FitLayout());
 	    contentPanel.setHeaderVisible(false);
@@ -69,36 +69,36 @@ public class ResumoCenarioView extends MyComposite implements ResumoCenarioPrese
 	}
 
 	@Override
-	public void setStore(TreeStore<FileModel> store) {
+	public void setStore(TreeStore<TreeNodeDTO> store) {
 		this.store = store;
 	}
 
-	public TreeStore<FileModel> getStore() {
+	public TreeStore<TreeNodeDTO> getStore() {
 		return store;
 	}
 	
 	@Override
-	public TreePanel<FileModel> getTree() {
+	public TreePanel<TreeNodeDTO> getTree() {
 		return tree;
 	}
 
 	
 	
 	private void configureProxy() {
-		RpcProxy<List<FileModel>> proxy = new RpcProxy<List<FileModel>>() {
+		RpcProxy<List<TreeNodeDTO>> proxy = new RpcProxy<List<TreeNodeDTO>>() {
 			@Override
-			protected void load(Object loadConfig, AsyncCallback<List<FileModel>> callback) {
+			protected void load(Object loadConfig, AsyncCallback<List<TreeNodeDTO>> callback) {
 				Services.cenarios().getResumos(cenario, callback);
 			}
 		};
 		
-		TreeLoader<FileModel> loader = new BaseTreeLoader<FileModel>(proxy) {
+		TreeLoader<TreeNodeDTO> loader = new BaseTreeLoader<TreeNodeDTO>(proxy) {
 			@Override
-			public boolean hasChildren(FileModel parent) {
-				return parent.getFolha();
+			public boolean hasChildren(TreeNodeDTO parent) {
+				return parent.getLeaf();
 			}
 		};
 		
-		store = new TreeStore<FileModel>(loader);
+		store = new TreeStore<TreeNodeDTO>(loader);
 	}
 }

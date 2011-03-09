@@ -40,6 +40,10 @@ public class TreeNodeDTO extends BaseModel implements Comparable<TreeNodeDTO> {
 		}
 	}
 	
+	public TreeNodeDTO(String text) {
+		this(null,text,"",false,true,null);
+	}
+	
 	public AbstractDTO<?> getContent() {
 		return content;
 	}

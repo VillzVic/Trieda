@@ -14,7 +14,6 @@ import com.extjs.gxt.ui.client.widget.grid.ColumnConfig;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayout;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
 import com.extjs.gxt.ui.client.widget.toolbar.SeparatorToolItem;
-import com.gapso.web.trieda.client.mvp.model.CampusDTO;
 import com.gapso.web.trieda.client.mvp.presenter.CampiPresenter;
 import com.gapso.web.trieda.client.util.resources.Resources;
 import com.gapso.web.trieda.client.util.view.EstadoComboBox;
@@ -22,6 +21,7 @@ import com.gapso.web.trieda.client.util.view.GTabItem;
 import com.gapso.web.trieda.client.util.view.SimpleFilter;
 import com.gapso.web.trieda.client.util.view.SimpleGrid;
 import com.gapso.web.trieda.client.util.view.SimpleToolBar;
+import com.gapso.web.trieda.shared.dtos.CampusDTO;
 
 public class CampiView extends MyComposite implements CampiPresenter.Display {
 
@@ -77,12 +77,12 @@ public class CampiView extends MyComposite implements CampiPresenter.Display {
 
 	public List<ColumnConfig> getColumnList() {
 		List<ColumnConfig> list = new ArrayList<ColumnConfig>();
-		list.add(new ColumnConfig("codigo", "Código", 100));
-		list.add(new ColumnConfig("nome", "Nome", 100));
-		list.add(new ColumnConfig("valorCredito", "Custo médio do crédito (R$)", 170));
-		list.add(new ColumnConfig("estado", "Estado", 100));
-		list.add(new ColumnConfig("municipio", "Município", 100));
-		list.add(new ColumnConfig("bairro", "Bairro", 100));
+		list.add(new ColumnConfig(CampusDTO.PROPERTY_CODIGO, "Código", 100));
+		list.add(new ColumnConfig(CampusDTO.PROPERTY_NOME, "Nome", 100));
+		list.add(new ColumnConfig(CampusDTO.PROPERTY_VALOR_CREDITO, "Custo médio do crédito (R$)", 170));
+		list.add(new ColumnConfig(CampusDTO.PROPERTY_ESTADO, "Estado", 100));
+		list.add(new ColumnConfig(CampusDTO.PROPERTY_MUNICIPIO, "Município", 100));
+		list.add(new ColumnConfig(CampusDTO.PROPERTY_BAIRRO, "Bairro", 100));
 		return list;
 	}
 

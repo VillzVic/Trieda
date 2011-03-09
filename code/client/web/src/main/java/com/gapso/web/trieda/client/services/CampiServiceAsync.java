@@ -6,11 +6,11 @@ import com.extjs.gxt.ui.client.data.BasePagingLoadConfig;
 import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
-import com.gapso.web.trieda.client.mvp.model.CampusDTO;
-import com.gapso.web.trieda.client.mvp.model.FileModel;
+import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.DeslocamentoCampusDTO;
 import com.gapso.web.trieda.shared.dtos.HorarioDisponivelCenarioDTO;
+import com.gapso.web.trieda.shared.dtos.TreeNodeDTO;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public interface CampiServiceAsync {
@@ -26,7 +26,7 @@ public interface CampiServiceAsync {
 	void getDeslocamentos(AsyncCallback<List<DeslocamentoCampusDTO>> callback);
 	void getHorariosDisponiveis(CampusDTO campusDTO, AsyncCallback<PagingLoadResult<HorarioDisponivelCenarioDTO>> callback);
 	void saveHorariosDisponiveis(CampusDTO campusDTO, List<HorarioDisponivelCenarioDTO> listDTO, AsyncCallback<Void> callback);
-	void getResumos(CenarioDTO cenarioDTO, FileModel fileModel, AsyncCallback<List<FileModel>> callback);
+	void getResumos(CenarioDTO cenarioDTO, TreeNodeDTO treeNodeDTO, AsyncCallback<List<TreeNodeDTO>> callback);
 	void saveDeslocamento(CenarioDTO cenario, List<DeslocamentoCampusDTO> list, AsyncCallback<Void> callback);
 	
 }

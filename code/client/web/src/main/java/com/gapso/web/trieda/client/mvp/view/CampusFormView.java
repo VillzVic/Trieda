@@ -10,11 +10,11 @@ import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.extjs.gxt.ui.client.widget.layout.FlowLayout;
 import com.extjs.gxt.ui.client.widget.layout.FormData;
 import com.extjs.gxt.ui.client.widget.layout.FormLayout;
-import com.gapso.web.trieda.client.mvp.model.CampusDTO;
 import com.gapso.web.trieda.client.mvp.presenter.CampusFormPresenter;
 import com.gapso.web.trieda.client.util.resources.Resources;
 import com.gapso.web.trieda.client.util.view.EstadoComboBox;
 import com.gapso.web.trieda.client.util.view.SimpleModal;
+import com.gapso.web.trieda.shared.dtos.CampusDTO;
 
 public class CampusFormView extends MyComposite implements CampusFormPresenter.Display {
 
@@ -62,7 +62,7 @@ public class CampusFormView extends MyComposite implements CampusFormPresenter.D
 		geralFS.setHeading("Informações Gerais");
 		
 		codigoTF = new TextField<String>();
-		codigoTF.setName("codigo");
+		codigoTF.setName(CampusDTO.PROPERTY_CODIGO);
 		codigoTF.setValue(campusDTO.getCodigo());
 		codigoTF.setFieldLabel("Código");
 		codigoTF.setAllowBlank(false);
@@ -72,7 +72,7 @@ public class CampusFormView extends MyComposite implements CampusFormPresenter.D
 		geralFS.add(codigoTF, formData);
 		
 		nomeTF = new TextField<String>();
-		nomeTF.setName("nome");
+		nomeTF.setName(CampusDTO.PROPERTY_NOME);
 		nomeTF.setValue(campusDTO.getNome());
 		nomeTF.setFieldLabel("Nome");
 		nomeTF.setAllowBlank(false);
@@ -82,7 +82,7 @@ public class CampusFormView extends MyComposite implements CampusFormPresenter.D
 		geralFS.add(nomeTF, formData);
 		
 		valorCreditoNF = new NumberField();
-		valorCreditoNF.setName("valorCredito");
+		valorCreditoNF.setName(CampusDTO.PROPERTY_VALOR_CREDITO);
 		valorCreditoNF.setValue(campusDTO.getValorCredito());
 		valorCreditoNF.setFieldLabel("Custo (R$)");
 		valorCreditoNF.setAllowBlank(false);
@@ -101,14 +101,14 @@ public class CampusFormView extends MyComposite implements CampusFormPresenter.D
 		enderecoFS.setHeading("Endereço");
 		
 		estadoCB = new EstadoComboBox();
-		estadoCB.setName("estado");
+		estadoCB.setName(CampusDTO.PROPERTY_ESTADO);
 		estadoCB.setValue(campusDTO.getEstado());
 		estadoCB.setFieldLabel("Estado");
 		estadoCB.setEmptyText("Selecione o estado");
 		enderecoFS.add(estadoCB, formData);
 		
 		municipioTF = new TextField<String>();
-		municipioTF.setName("municipio");
+		municipioTF.setName(CampusDTO.PROPERTY_MUNICIPIO);
 		municipioTF.setValue(campusDTO.getMunicipio());
 		municipioTF.setFieldLabel("Município");
 		municipioTF.setMaxLength(20);
@@ -116,7 +116,7 @@ public class CampusFormView extends MyComposite implements CampusFormPresenter.D
 		enderecoFS.add(municipioTF, formData);
 		
 		bairroTF = new TextField<String>();
-		bairroTF.setName("bairro");
+		bairroTF.setName(CampusDTO.PROPERTY_BAIRRO);
 		bairroTF.setValue(campusDTO.getBairro());
 		bairroTF.setFieldLabel("Bairro");
 		bairroTF.setMaxLength(20);
