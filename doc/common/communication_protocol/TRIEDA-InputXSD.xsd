@@ -1200,20 +1200,6 @@ Maximizar/gerenciar a nota da avaliação institucional média coletiva do corpo
       <xs:element name="GrupoIdentificador" type="GrupoIdentificador" />
     </xs:sequence>
   </xs:complexType>
-  <xs:complexType name="ItemOperacional">
-    <xs:sequence>
-      <xs:element name="horarioAulaId" type="xs:int">
-        <xs:annotation>
-          <xs:documentation>identificador (ItemHorarioAula) do horário em que a turma será atendida</xs:documentation>
-        </xs:annotation>
-      </xs:element>
-      <xs:element name="professorId" type="xs:int">
-        <xs:annotation>
-          <xs:documentation>identificador (ItemProfessor) do professor que irá ministrar a aula para a turma</xs:documentation>
-        </xs:annotation>
-      </xs:element>
-    </xs:sequence>
-  </xs:complexType>
   <xs:complexType name="ItemAtendimentoCampusSolucao">
     <xs:sequence>
       <xs:element name="campusId" type="xs:int">
@@ -1344,15 +1330,6 @@ Maximizar/gerenciar a nota da avaliação institucional média coletiva do corpo
       <xs:element name="AtendimentoDiaSemana" type="ItemAtendimentoDiaSemanaSolucao">
         <xs:annotation>
           <xs:documentation>contém os atendimentos realizados num determinado dia da semana em uma determinada sala de uma determinada unidade de um determinado campus que foi considerado no planejamento</xs:documentation>
-        </xs:annotation>
-      </xs:element>
-    </xs:sequence>
-  </xs:complexType>
-  <xs:complexType name="GrupoAtendimentoOferta">
-    <xs:sequence minOccurs="0" maxOccurs="unbounded">
-      <xs:element name="AtendimentoOferta" type="ItemAtendimentoOfertaSolucao">
-        <xs:annotation>
-          <xs:documentation>representa uma oferta atendida</xs:documentation>
         </xs:annotation>
       </xs:element>
     </xs:sequence>
