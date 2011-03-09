@@ -16,7 +16,6 @@ import com.extjs.gxt.ui.client.widget.layout.VBoxLayout.VBoxLayoutAlign;
 import com.extjs.gxt.ui.client.widget.layout.VBoxLayoutData;
 import com.gapso.web.trieda.client.mvp.model.CampusDTO;
 import com.gapso.web.trieda.client.mvp.model.DisciplinaDTO;
-import com.gapso.web.trieda.client.mvp.model.SalaDTO;
 import com.gapso.web.trieda.client.mvp.presenter.FixacaoFormPresenter;
 import com.gapso.web.trieda.client.util.resources.Resources;
 import com.gapso.web.trieda.client.util.view.CampusComboBox;
@@ -27,6 +26,7 @@ import com.gapso.web.trieda.client.util.view.SimpleModal;
 import com.gapso.web.trieda.client.util.view.UnidadeComboBox;
 import com.gapso.web.trieda.shared.dtos.FixacaoDTO;
 import com.gapso.web.trieda.shared.dtos.HorarioDisponivelCenarioDTO;
+import com.gapso.web.trieda.shared.dtos.SalaDTO;
 import com.gapso.web.trieda.shared.dtos.UnidadeDTO;
 
 public class FixacaoFormView extends MyComposite implements FixacaoFormPresenter.Display {

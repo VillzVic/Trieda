@@ -5,7 +5,6 @@ import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.widget.Info;
 import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.button.Button;
-import com.gapso.web.trieda.client.mvp.model.OfertaDTO;
 import com.gapso.web.trieda.client.services.OfertasServiceAsync;
 import com.gapso.web.trieda.client.services.Services;
 import com.gapso.web.trieda.client.util.view.CampusComboBox;
@@ -13,6 +12,7 @@ import com.gapso.web.trieda.client.util.view.CurriculoComboBox;
 import com.gapso.web.trieda.client.util.view.SimpleGrid;
 import com.gapso.web.trieda.client.util.view.SimpleModal;
 import com.gapso.web.trieda.client.util.view.TurnoComboBox;
+import com.gapso.web.trieda.shared.dtos.OfertaDTO;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
 

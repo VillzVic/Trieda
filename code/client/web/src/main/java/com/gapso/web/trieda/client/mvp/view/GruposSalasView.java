@@ -15,12 +15,12 @@ import com.extjs.gxt.ui.client.widget.grid.RowExpander;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayout;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
 import com.extjs.gxt.ui.client.widget.toolbar.SeparatorToolItem;
-import com.gapso.web.trieda.client.mvp.model.GrupoSalaDTO;
 import com.gapso.web.trieda.client.mvp.presenter.GruposSalasPresenter;
 import com.gapso.web.trieda.client.util.resources.Resources;
 import com.gapso.web.trieda.client.util.view.GTabItem;
 import com.gapso.web.trieda.client.util.view.SimpleGrid;
 import com.gapso.web.trieda.client.util.view.SimpleToolBar;
+import com.gapso.web.trieda.shared.dtos.GrupoSalaDTO;
 
 public class GruposSalasView extends MyComposite implements GruposSalasPresenter.Display {
 
@@ -71,9 +71,9 @@ public class GruposSalasView extends MyComposite implements GruposSalasPresenter
 	    expander = new RowExpander();  
 	    expander.setTemplate(tpl);
 	    list.add(expander);
-		list.add(new ColumnConfig("codigo", "Código", 100));
-		list.add(new ColumnConfig("nome", "Nome", 100));
-		list.add(new ColumnConfig("unidadeString", "Unidade", 100));
+		list.add(new ColumnConfig(GrupoSalaDTO.PROPERTY_CODIGO, "Código", 100));
+		list.add(new ColumnConfig(GrupoSalaDTO.PROPERTY_NOME, "Nome", 100));
+		list.add(new ColumnConfig(GrupoSalaDTO.PROPERTY_UNIDADE_STRING, "Unidade", 100));
 		return list;
 	}
 

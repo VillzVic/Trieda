@@ -35,13 +35,13 @@ import com.gapso.trieda.misc.Estados;
 import com.gapso.web.trieda.client.mvp.model.AtendimentoTaticoDTO;
 import com.gapso.web.trieda.client.mvp.model.CampusDTO;
 import com.gapso.web.trieda.client.mvp.model.FileModel;
-import com.gapso.web.trieda.client.mvp.model.SalaDTO;
 import com.gapso.web.trieda.client.mvp.model.TurnoDTO;
 import com.gapso.web.trieda.client.services.CampiService;
 import com.gapso.web.trieda.server.util.ConvertBeans;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.DeslocamentoCampusDTO;
 import com.gapso.web.trieda.shared.dtos.HorarioDisponivelCenarioDTO;
+import com.gapso.web.trieda.shared.dtos.SalaDTO;
 import com.gapso.web.trieda.shared.util.TriedaUtil;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 

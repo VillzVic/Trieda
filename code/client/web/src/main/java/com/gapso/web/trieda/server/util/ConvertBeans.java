@@ -47,27 +47,27 @@ import com.gapso.trieda.misc.Semanas;
 import com.gapso.web.trieda.client.mvp.model.AtendimentoTaticoDTO;
 import com.gapso.web.trieda.client.mvp.model.CampusDTO;
 import com.gapso.web.trieda.client.mvp.model.CurriculoDTO;
-import com.gapso.web.trieda.client.mvp.model.CurriculoDisciplinaDTO;
 import com.gapso.web.trieda.client.mvp.model.CursoDTO;
 import com.gapso.web.trieda.client.mvp.model.DemandaDTO;
 import com.gapso.web.trieda.client.mvp.model.DisciplinaDTO;
 import com.gapso.web.trieda.client.mvp.model.EquivalenciaDTO;
-import com.gapso.web.trieda.client.mvp.model.GrupoSalaDTO;
-import com.gapso.web.trieda.client.mvp.model.OfertaDTO;
 import com.gapso.web.trieda.client.mvp.model.ProfessorDTO;
-import com.gapso.web.trieda.client.mvp.model.SalaDTO;
 import com.gapso.web.trieda.client.mvp.model.TurnoDTO;
 import com.gapso.web.trieda.shared.dtos.AreaTitulacaoDTO;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
+import com.gapso.web.trieda.shared.dtos.CurriculoDisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.DeslocamentoCampusDTO;
 import com.gapso.web.trieda.shared.dtos.DeslocamentoUnidadeDTO;
 import com.gapso.web.trieda.shared.dtos.DivisaoCreditoDTO;
 import com.gapso.web.trieda.shared.dtos.FixacaoDTO;
+import com.gapso.web.trieda.shared.dtos.GrupoSalaDTO;
 import com.gapso.web.trieda.shared.dtos.HorarioAulaDTO;
 import com.gapso.web.trieda.shared.dtos.HorarioDisponivelCenarioDTO;
+import com.gapso.web.trieda.shared.dtos.OfertaDTO;
 import com.gapso.web.trieda.shared.dtos.ParametroDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorCampusDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorDisciplinaDTO;
+import com.gapso.web.trieda.shared.dtos.SalaDTO;
 import com.gapso.web.trieda.shared.dtos.SemanaLetivaDTO;
 import com.gapso.web.trieda.shared.dtos.TipoContratoDTO;
 import com.gapso.web.trieda.shared.dtos.TipoCursoDTO;
@@ -270,7 +270,7 @@ public class ConvertBeans {
 		dto.setCampusId(domain.getUnidade().getCampus().getId());
 		dto.setUnidadeId(domain.getUnidade().getId());
 		dto.setUnidadeString(domain.getUnidade().getCodigo());
-		dto.setDisplay(domain.getCodigo() + " (" + domain.getNumero() + ")");
+		dto.setDisplayText(domain.getCodigo() + " (" + domain.getNumero() + ")");
 		return dto;
 	}
 
@@ -297,6 +297,7 @@ public class ConvertBeans {
 		dto.setUnidadeId(domain.getUnidade().getId());
 		dto.setUnidadeString(domain.getUnidade().getCodigo());
 		dto.setCampusId(domain.getUnidade().getCampus().getId());
+		dto.setDisplayText(domain.getNome());
 		return dto;
 	}
 	
@@ -949,7 +950,7 @@ public class ConvertBeans {
 		dto.setCreditosPratico(crPratico);
 		dto.setCreditosTotal(crTeorico + crPratico);
 		dto.setCurriculoId(domain.getCurriculo().getId());
-		dto.setDisciplinaCodigoNomeString(disciplina.getCodigo()+" ("+disciplina.getNome()+")");
+		dto.setDisplayText(disciplina.getCodigo()+" ("+disciplina.getNome()+")");
 		return dto;
 	}
 
@@ -976,7 +977,7 @@ public class ConvertBeans {
 		dto.setMatrizCurricularId(domain.getCurriculo().getId());
 		dto.setTurnoString(domain.getTurno().getNome());
 		dto.setTurnoId(domain.getTurno().getId());
-		
+		dto.setDisplayText(dto.getMatrizCurricularString() + " (" + curso.getNome() + ")");
 		return dto;
 	}
 	

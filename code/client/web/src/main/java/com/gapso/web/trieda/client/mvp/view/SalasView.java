@@ -13,7 +13,6 @@ import com.extjs.gxt.ui.client.widget.grid.ColumnConfig;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayout;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
 import com.extjs.gxt.ui.client.widget.toolbar.SeparatorToolItem;
-import com.gapso.web.trieda.client.mvp.model.SalaDTO;
 import com.gapso.web.trieda.client.mvp.presenter.SalasPresenter;
 import com.gapso.web.trieda.client.util.resources.Resources;
 import com.gapso.web.trieda.client.util.view.CampusComboBox;
@@ -22,6 +21,7 @@ import com.gapso.web.trieda.client.util.view.SimpleFilter;
 import com.gapso.web.trieda.client.util.view.SimpleGrid;
 import com.gapso.web.trieda.client.util.view.SimpleToolBar;
 import com.gapso.web.trieda.client.util.view.UnidadeComboBox;
+import com.gapso.web.trieda.shared.dtos.SalaDTO;
 
 public class SalasView extends MyComposite implements SalasPresenter.Display {
 
@@ -77,12 +77,12 @@ public class SalasView extends MyComposite implements SalasPresenter.Display {
 
 	public List<ColumnConfig> getColumnList() {
 		List<ColumnConfig> list = new ArrayList<ColumnConfig>();
-		list.add(new ColumnConfig("codigo", "Código", 100));
-		list.add(new ColumnConfig("tipoString", "Tipo", 100));
-		list.add(new ColumnConfig("unidadeString", "Unidade", 100));
-		list.add(new ColumnConfig("numero", "Número", 100));
-		list.add(new ColumnConfig("andar", "Andar", 100));
-		list.add(new ColumnConfig("capacidade", "Capacidade", 100));
+		list.add(new ColumnConfig(SalaDTO.PROPERTY_CODIGO, "Código", 100));
+		list.add(new ColumnConfig(SalaDTO.PROPERTY_TIPO_STRING, "Tipo", 100));
+		list.add(new ColumnConfig(SalaDTO.PROPERTY_UNIDADE_STRING, "Unidade", 100));
+		list.add(new ColumnConfig(SalaDTO.PROPERTY_NUMERO, "Número", 100));
+		list.add(new ColumnConfig(SalaDTO.PROPERTY_ANDAR, "Andar", 100));
+		list.add(new ColumnConfig(SalaDTO.PROPERTY_CAPACIDADE, "Capacidade", 100));
 		return list;
 	}
 

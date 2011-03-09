@@ -2,7 +2,7 @@ package com.gapso.web.trieda.shared.dtos;
 
 import com.extjs.gxt.ui.client.data.BaseModel;
 
-public class TreeNodeDTO<DTOType extends AbstractDTO<?>> extends BaseModel {
+public class TreeNodeDTO extends BaseModel implements Comparable<TreeNodeDTO> {
 
 	private static final long serialVersionUID = -8890847882508721586L;
 	
@@ -12,22 +12,38 @@ public class TreeNodeDTO<DTOType extends AbstractDTO<?>> extends BaseModel {
 	public static final String PROPERTY_LEAF = "leaf";
 	public static final String PROPERTY_EMPTY = "empty";
 	
-	private DTOType content;
+	private AbstractDTO<?> content;
+	private TreeNodeDTO parent;
 	
 	public TreeNodeDTO() {
 	}
 	
-	public TreeNodeDTO(DTOType content) {
+	public TreeNodeDTO(AbstractDTO<?> content, String text, String path, Boolean leaf, Boolean empty, TreeNodeDTO parent) {
 		this.content = content;
-		setText(content.getDisplayText());
-		setPath(content.getDisplayText());
-		setLeaf(false);
+		setText(text);
+		setPath(path);
+		setLeaf(leaf);
+		setEmpty(empty);
+		setParent(parent);
+	}
+
+	public TreeNodeDTO(AbstractDTO<?> content) {
+		this(content,content.getDisplayText(),(content.getDisplayText()+"/"),false,true,null);
 	}
 	
-	public DTOType getContent() {
+	public TreeNodeDTO(AbstractDTO<?> content, TreeNodeDTO parent) {
+		this(content,content.getDisplayText(),"",false,true,parent);
+		if (parent != null) {
+			setPath(parent.getPath()+content.getDisplayText()+"/");
+			parent.setEmpty(false);
+			parent.setLeaf(false);
+		}
+	}
+	
+	public AbstractDTO<?> getContent() {
 		return content;
 	}
-	public void setContent(DTOType content) {
+	public void setContent(AbstractDTO<?> content) {
 		this.content = content;
 	}
 
@@ -59,6 +75,13 @@ public class TreeNodeDTO<DTOType extends AbstractDTO<?>> extends BaseModel {
 		return get(PROPERTY_EMPTY);
 	}
 	
+	public TreeNodeDTO getParent() {
+		return parent;
+	}
+	public void setParent(TreeNodeDTO parent) {
+		this.parent = parent;
+	}
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -76,8 +99,7 @@ public class TreeNodeDTO<DTOType extends AbstractDTO<?>> extends BaseModel {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		@SuppressWarnings("unchecked")
-		TreeNodeDTO<DTOType> other = (TreeNodeDTO<DTOType>) obj;
+		TreeNodeDTO other = (TreeNodeDTO) obj;
 		if (getText() == null) {
 			if (other.getText() != null)
 				return false;
@@ -89,5 +111,10 @@ public class TreeNodeDTO<DTOType extends AbstractDTO<?>> extends BaseModel {
 		} else if (!getPath().equals(other.getPath()))
 			return false;
 		return true;
+	}
+
+	@Override
+	public int compareTo(TreeNodeDTO o) {
+		return getText().compareTo(o.getText());
 	}
 }

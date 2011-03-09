@@ -12,7 +12,6 @@ import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.grid.ColumnConfig;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayout;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
-import com.gapso.web.trieda.client.mvp.model.OfertaDTO;
 import com.gapso.web.trieda.client.mvp.presenter.OfertasPresenter;
 import com.gapso.web.trieda.client.util.resources.Resources;
 import com.gapso.web.trieda.client.util.view.CampusComboBox;
@@ -23,6 +22,7 @@ import com.gapso.web.trieda.client.util.view.SimpleFilter;
 import com.gapso.web.trieda.client.util.view.SimpleGrid;
 import com.gapso.web.trieda.client.util.view.SimpleToolBar;
 import com.gapso.web.trieda.client.util.view.TurnoComboBox;
+import com.gapso.web.trieda.shared.dtos.OfertaDTO;
 
 public class OfertasView extends MyComposite implements OfertasPresenter.Display {
 
@@ -70,10 +70,10 @@ public class OfertasView extends MyComposite implements OfertasPresenter.Display
 
 	public List<ColumnConfig> getColumnList() {
 		List<ColumnConfig> list = new ArrayList<ColumnConfig>();
-		list.add(new ColumnConfig("campusString", "Campus", 100));
-		list.add(new ColumnConfig("cursoString", "Curso", 100));
-		list.add(new ColumnConfig("matrizCurricularString", "Matriz Curricular", 100));
-		list.add(new ColumnConfig("turnoString", "Turno", 200));
+		list.add(new ColumnConfig(OfertaDTO.PROPERTY_CAMPUS_STRING, "Campus", 100));
+		list.add(new ColumnConfig(OfertaDTO.PROPERTY_CURSO_STRING, "Curso", 100));
+		list.add(new ColumnConfig(OfertaDTO.PROPERTY_MATRIZ_CURRICULAR_STRING, "Matriz Curricular", 100));
+		list.add(new ColumnConfig(OfertaDTO.PROPERTY_TURNO_STRING, "Turno", 200));
 		return list;
 	}
 

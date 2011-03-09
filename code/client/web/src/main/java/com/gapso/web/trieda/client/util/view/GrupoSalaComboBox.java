@@ -8,8 +8,8 @@ import com.extjs.gxt.ui.client.event.SelectionChangedEvent;
 import com.extjs.gxt.ui.client.event.SelectionChangedListener;
 import com.extjs.gxt.ui.client.store.ListStore;
 import com.extjs.gxt.ui.client.widget.form.ComboBox;
-import com.gapso.web.trieda.client.mvp.model.GrupoSalaDTO;
 import com.gapso.web.trieda.client.services.Services;
+import com.gapso.web.trieda.shared.dtos.GrupoSalaDTO;
 import com.gapso.web.trieda.shared.dtos.UnidadeDTO;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -30,7 +30,7 @@ public class GrupoSalaComboBox extends ComboBox<GrupoSalaDTO> {
 		
 		setStore(new ListStore<GrupoSalaDTO>(new BaseListLoader<BaseListLoadResult<GrupoSalaDTO>>(proxy)));
 		
-		setDisplayField("nome");
+		setDisplayField(GrupoSalaDTO.PROPERTY_NOME);
 		setFieldLabel("Grupo de Sala");
 		setEmptyText("Selecione o grupo de sala");
 		setTemplate(getTemplateCB());

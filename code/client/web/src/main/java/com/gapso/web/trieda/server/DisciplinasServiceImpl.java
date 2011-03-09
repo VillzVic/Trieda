@@ -1,6 +1,7 @@
 package com.gapso.web.trieda.server;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -28,19 +29,20 @@ import com.gapso.trieda.domain.Sala;
 import com.gapso.trieda.domain.SemanaLetiva;
 import com.gapso.trieda.domain.TipoDisciplina;
 import com.gapso.web.trieda.client.mvp.model.CurriculoDTO;
-import com.gapso.web.trieda.client.mvp.model.CurriculoDisciplinaDTO;
 import com.gapso.web.trieda.client.mvp.model.CursoDTO;
 import com.gapso.web.trieda.client.mvp.model.DisciplinaDTO;
-import com.gapso.web.trieda.client.mvp.model.FileModel;
-import com.gapso.web.trieda.client.mvp.model.GrupoSalaDTO;
-import com.gapso.web.trieda.client.mvp.model.OfertaDTO;
-import com.gapso.web.trieda.client.mvp.model.SalaDTO;
 import com.gapso.web.trieda.client.services.DisciplinasService;
 import com.gapso.web.trieda.server.util.ConvertBeans;
+import com.gapso.web.trieda.shared.dtos.AbstractDTO;
+import com.gapso.web.trieda.shared.dtos.CurriculoDisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.DisciplinaIncompativelDTO;
 import com.gapso.web.trieda.shared.dtos.DivisaoCreditoDTO;
+import com.gapso.web.trieda.shared.dtos.GrupoSalaDTO;
 import com.gapso.web.trieda.shared.dtos.HorarioDisponivelCenarioDTO;
+import com.gapso.web.trieda.shared.dtos.OfertaDTO;
+import com.gapso.web.trieda.shared.dtos.SalaDTO;
 import com.gapso.web.trieda.shared.dtos.TipoDisciplinaDTO;
+import com.gapso.web.trieda.shared.dtos.TreeNodeDTO;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 /**
@@ -239,134 +241,173 @@ public class DisciplinasServiceImpl extends RemoteServiceServlet implements Disc
 
 	@Override
 	@Transactional
-	public List<FileModel> getFolderChildren(FileModel model) {
-		List<FileModel> listDTO = new ArrayList<FileModel>();
-		if(model != null) {
-			if(model instanceof OfertaDTO) {
-				Curriculo curriculo = Curriculo.find(((OfertaDTO) model).getMatrizCurricularId());
-				Set<CurriculoDisciplina> disciplinas = curriculo.getDisciplinas();
-				Set<Integer> periodos = new HashSet<Integer>();
-				for(CurriculoDisciplina cd : disciplinas) {
-					CurriculoDisciplinaDTO curriculoDisciplinaDTO = ConvertBeans.toCurriculoDisciplinaDTO(cd);
-					curriculoDisciplinaDTO.setName("Periodo "+curriculoDisciplinaDTO.getPeriodo().toString());
-					curriculoDisciplinaDTO.setPath(model.getPath() + curriculoDisciplinaDTO.getPeriodo().toString() + "/");
-					if(periodos.add(curriculoDisciplinaDTO.getPeriodo())) {
-						listDTO.add(curriculoDisciplinaDTO);
+	public List<TreeNodeDTO> getFolderChildren(TreeNodeDTO currentNode) {
+		List<TreeNodeDTO> currentNodeChildren = new ArrayList<TreeNodeDTO>();
+		if (currentNode != null) {
+			AbstractDTO<?> contentNode = currentNode.getContent();
+			if (contentNode != null) {
+				if (contentNode instanceof OfertaDTO) {
+					OfertaDTO ofertaDTOContentNode = (OfertaDTO)contentNode;
+					Curriculo curriculo = Curriculo.find(ofertaDTOContentNode.getMatrizCurricularId());
+					
+					Set<Integer> periodos = new HashSet<Integer>();
+					for (CurriculoDisciplina cd : curriculo.getDisciplinas()) {
+						if (periodos.add(cd.getPeriodo())) {
+							CurriculoDisciplinaDTO curriculoDisciplinaDTO = ConvertBeans.toCurriculoDisciplinaDTO(cd);
+							TreeNodeDTO newChildNode = new TreeNodeDTO(curriculoDisciplinaDTO,currentNode);
+							newChildNode.setText("Periodo "+curriculoDisciplinaDTO.getPeriodo().toString());
+							currentNodeChildren.add(newChildNode);
+						}
 					}
-				}
-			} else if(model instanceof CurriculoDisciplinaDTO) {
-				Integer periodo = ((CurriculoDisciplinaDTO) model).getPeriodo();
-				Curriculo curriculo = Curriculo.find(((CurriculoDisciplinaDTO) model).getCurriculoId());
-				Set<CurriculoDisciplina> disciplinas = curriculo.getDisciplinas();
-				List<CurriculoDisciplina> list = new ArrayList<CurriculoDisciplina>(disciplinas);
-				for(CurriculoDisciplina cd : list) {
-					CurriculoDisciplinaDTO curriculoDisciplinaDTO = ConvertBeans.toCurriculoDisciplinaDTO(cd);
-					curriculoDisciplinaDTO.setName(curriculoDisciplinaDTO.getDisciplinaCodigoNomeString());
-					curriculoDisciplinaDTO.setPath(model.getPath() + curriculoDisciplinaDTO.getDisciplinaString() + "/");
-					curriculoDisciplinaDTO.setFolha(true);
-					if(cd.getPeriodo().equals(periodo)) {
-						listDTO.add(curriculoDisciplinaDTO);
+				} else if (contentNode instanceof CurriculoDisciplinaDTO) {
+					CurriculoDisciplinaDTO curricDiscDTOContentNode = (CurriculoDisciplinaDTO)contentNode;
+					Curriculo curriculo = Curriculo.find(curricDiscDTOContentNode.getCurriculoId());
+					
+					for (CurriculoDisciplina cd : curriculo.getDisciplinas()) {
+						if (cd.getPeriodo().equals(curricDiscDTOContentNode.getPeriodo())) {
+							CurriculoDisciplinaDTO curriculoDisciplinaDTO = ConvertBeans.toCurriculoDisciplinaDTO(cd);
+							TreeNodeDTO newChildNode = new TreeNodeDTO(curriculoDisciplinaDTO,currentNode);
+							newChildNode.setLeaf(true);
+							currentNodeChildren.add(newChildNode);
+						}
 					}
 				}
 			}
 		}
-		return listDTO;
+		
+		Collections.sort(currentNodeChildren);
+		
+		return currentNodeChildren;
 	}
 	
-	public List<FileModel> getOfertasByTreeSalas(SalaDTO salaDTO) {
-		List<FileModel> list = new ArrayList<FileModel>();
+	public List<TreeNodeDTO> getOfertasByTreeSalas(TreeNodeDTO salaTreeNodeDTO) {
+		List<TreeNodeDTO> nodeChildrenList = new ArrayList<TreeNodeDTO>();
+		
+		SalaDTO salaDTO = (SalaDTO)salaTreeNodeDTO.getContent();
 		Sala sala = Sala.find(salaDTO.getId());
 		List<Oferta> ofertas = Oferta.findAllBy(sala);
-		for(Oferta oferta : ofertas) {
-			OfertaDTO dto = ConvertBeans.toOfertaDTO(oferta);
-			dto.setName(dto.getMatrizCurricularString() + " (" + oferta.getCurriculo().getCurso().getNome() + ")");
-			dto.setPath(salaDTO.getPath() + dto.getMatrizCurricularString() + "/");
-			list.add(dto);
+		
+		for (Oferta oferta : ofertas) {
+			OfertaDTO ofertaDTO = ConvertBeans.toOfertaDTO(oferta);
+			TreeNodeDTO nodeDTO = new TreeNodeDTO(ofertaDTO,salaTreeNodeDTO);
+			nodeChildrenList.add(nodeDTO);
 		}
-		return list;
+		
+		Collections.sort(nodeChildrenList);
+		
+		return nodeChildrenList;
 	}
 
-	public List<FileModel> getPeriodosByTreeSalas(SalaDTO salaDTO, OfertaDTO ofertaDTO) {
-		List<FileModel> list = new ArrayList<FileModel>();
+	public List<TreeNodeDTO> getPeriodosByTreeSalas(TreeNodeDTO salaTreeNodeDTO, TreeNodeDTO ofertaTreeNodeDTO) {
+		List<TreeNodeDTO> nodeChildrenList = new ArrayList<TreeNodeDTO>();
 		
+		SalaDTO salaDTO = (SalaDTO)salaTreeNodeDTO.getContent();
 		Sala sala = Sala.find(salaDTO.getId());
-		Oferta oferta = Oferta.find(ofertaDTO.getId());
+		OfertaDTO ofertaDTO = (OfertaDTO)ofertaTreeNodeDTO.getContent();
+		Oferta oferta = Oferta.find(ofertaDTO.getId());		
 		List<CurriculoDisciplina> curriculoDisciplinas = CurriculoDisciplina.findAllPeriodosBy(sala, oferta);
-		for(CurriculoDisciplina CurriculoDisciplina : curriculoDisciplinas) {
-			CurriculoDisciplinaDTO dto = ConvertBeans.toCurriculoDisciplinaDTO(CurriculoDisciplina); 
-			dto.setName("Periodo " + dto.getPeriodo());
-			dto.setPath(ofertaDTO.getPath() + dto.getPeriodo() + "/");
-			list.add(dto);
+		
+		for (CurriculoDisciplina cd : curriculoDisciplinas) {
+			CurriculoDisciplinaDTO cdDTO = ConvertBeans.toCurriculoDisciplinaDTO(cd);
+			TreeNodeDTO nodeDTO = new TreeNodeDTO(cdDTO,ofertaTreeNodeDTO);
+			nodeDTO.setText("Periodo " + cdDTO.getPeriodo());
+			nodeChildrenList.add(nodeDTO);
 		}
-		return list;
+		
+		Collections.sort(nodeChildrenList);
+		
+		return nodeChildrenList;
 	}
 	
 	@Override
-	public List<FileModel> getDisciplinasByTreeSalas(SalaDTO salaDTO, OfertaDTO ofertaDTO, CurriculoDisciplinaDTO curriculoDisciplinaDTO) {
-		if(ofertaDTO == null)				return getOfertasByTreeSalas(salaDTO);
-		if(curriculoDisciplinaDTO == null) 	return getPeriodosByTreeSalas(salaDTO, ofertaDTO);
+	public List<TreeNodeDTO> getDisciplinasByTreeSalas(TreeNodeDTO salaTreeNodeDTO, TreeNodeDTO ofertaTreeNodeDTO, TreeNodeDTO curriculoDisciplinaTreeNodeDTO) {
+		if (ofertaTreeNodeDTO == null)					return getOfertasByTreeSalas(salaTreeNodeDTO);
+		if (curriculoDisciplinaTreeNodeDTO == null) 	return getPeriodosByTreeSalas(salaTreeNodeDTO,ofertaTreeNodeDTO);
 		
-		List<FileModel> list = new ArrayList<FileModel>();
+		List<TreeNodeDTO> nodeChildrenList = new ArrayList<TreeNodeDTO>();
 		
+		SalaDTO salaDTO = (SalaDTO)salaTreeNodeDTO.getContent();
 		Sala sala = Sala.find(salaDTO.getId());
+		OfertaDTO ofertaDTO = (OfertaDTO)ofertaTreeNodeDTO.getContent();
 		Oferta oferta = Oferta.find(ofertaDTO.getId());
-		List<CurriculoDisciplina> curriculoDisciplinas = CurriculoDisciplina.findBy(sala, oferta, curriculoDisciplinaDTO.getPeriodo());
-		for(CurriculoDisciplina curriculoDisciplina : curriculoDisciplinas) {
-			CurriculoDisciplinaDTO dto = ConvertBeans.toCurriculoDisciplinaDTO(curriculoDisciplina); 
-			dto.setName(dto.getDisciplinaCodigoNomeString());
-			dto.setPath(curriculoDisciplinaDTO.getPath() + dto.getDisciplinaString() + "/");
-			dto.setFolha(true);
-			list.add(dto);
+		CurriculoDisciplinaDTO curriculoDisciplinaDTO = (CurriculoDisciplinaDTO)curriculoDisciplinaTreeNodeDTO.getContent();
+		List<CurriculoDisciplina> curriculoDisciplinas = CurriculoDisciplina.findBy(sala,oferta,curriculoDisciplinaDTO.getPeriodo());
+		
+		for (CurriculoDisciplina cd : curriculoDisciplinas) {
+			CurriculoDisciplinaDTO cdDTO = ConvertBeans.toCurriculoDisciplinaDTO(cd);
+			TreeNodeDTO nodeDTO = new TreeNodeDTO(cdDTO,curriculoDisciplinaTreeNodeDTO);
+			nodeDTO.setLeaf(true);
+			nodeChildrenList.add(nodeDTO);
 		}
-		return list;
+		
+		Collections.sort(nodeChildrenList);
+		
+		return nodeChildrenList;
 	}
 	
-	public List<FileModel> getOfertasByTreeSalas(GrupoSalaDTO grupoSalaDTO) {
-		List<FileModel> list = new ArrayList<FileModel>();
+	public List<TreeNodeDTO> getOfertasByTreeGrupoSalas(TreeNodeDTO grupoSalaTreeNodeDTO) {
+		List<TreeNodeDTO> nodeChildrenList = new ArrayList<TreeNodeDTO>();
+		
+		GrupoSalaDTO grupoSalaDTO = (GrupoSalaDTO)grupoSalaTreeNodeDTO.getContent();
 		GrupoSala grupoSala = GrupoSala.find(grupoSalaDTO.getId());
 		List<Oferta> ofertas = Oferta.findAllBy(grupoSala);
-		for(Oferta oferta : ofertas) {
-			OfertaDTO dto = ConvertBeans.toOfertaDTO(oferta);
-			dto.setName(dto.getMatrizCurricularString() + " (" + oferta.getCurriculo().getCurso().getNome() + ")");
-			dto.setPath(grupoSalaDTO.getPath() + dto.getMatrizCurricularString() + "/");
-			list.add(dto);
+		
+		for (Oferta oferta : ofertas) {
+			OfertaDTO ofertaDTO = ConvertBeans.toOfertaDTO(oferta);
+			TreeNodeDTO nodeDTO = new TreeNodeDTO(ofertaDTO,grupoSalaTreeNodeDTO);
+			nodeChildrenList.add(nodeDTO);
 		}
-		return list;
+		
+		Collections.sort(nodeChildrenList);
+		
+		return nodeChildrenList;
 	}
 	
-	public List<FileModel> getPeriodosByTreeSalas(GrupoSalaDTO grupoSalaDTO, OfertaDTO ofertaDTO) {
-		List<FileModel> list = new ArrayList<FileModel>();
+	public List<TreeNodeDTO> getPeriodosByTreeGrupoSalas(TreeNodeDTO grupoSalaTreeNodeDTO, TreeNodeDTO ofertaTreeNodeDTO) {
+		List<TreeNodeDTO> nodeChildrenList = new ArrayList<TreeNodeDTO>();
 		
+		GrupoSalaDTO grupoSalaDTO = (GrupoSalaDTO)grupoSalaTreeNodeDTO.getContent();
 		GrupoSala grupoSala = GrupoSala.find(grupoSalaDTO.getId());
+		OfertaDTO ofertaDTO = (OfertaDTO)ofertaTreeNodeDTO.getContent();
 		Oferta oferta = Oferta.find(ofertaDTO.getId());
-		List<CurriculoDisciplina> curriculoDisciplinas = CurriculoDisciplina.findAllPeriodosBy(grupoSala, oferta);
-		for(CurriculoDisciplina CurriculoDisciplina : curriculoDisciplinas) {
-			CurriculoDisciplinaDTO dto = ConvertBeans.toCurriculoDisciplinaDTO(CurriculoDisciplina); 
-			dto.setName("Periodo " + dto.getPeriodo());
-			dto.setPath(ofertaDTO.getPath() + dto.getPeriodo() + "/");
-			list.add(dto);
+		List<CurriculoDisciplina> curriculoDisciplinas = CurriculoDisciplina.findAllPeriodosBy(grupoSala,oferta);
+		
+		for (CurriculoDisciplina cd : curriculoDisciplinas) {
+			CurriculoDisciplinaDTO cdDTO = ConvertBeans.toCurriculoDisciplinaDTO(cd);
+			TreeNodeDTO nodeDTO = new TreeNodeDTO(cdDTO,ofertaTreeNodeDTO);
+			nodeDTO.setText("Periodo " + cdDTO.getPeriodo());
+			nodeChildrenList.add(nodeDTO);
 		}
-		return list;
+		
+		Collections.sort(nodeChildrenList);
+		
+		return nodeChildrenList;
 	}
 	
 	@Override
-	public List<FileModel> getDisciplinasByTreeSalas(GrupoSalaDTO grupoSalaDTO, OfertaDTO ofertaDTO, CurriculoDisciplinaDTO curriculoDisciplinaDTO) {
-		if(ofertaDTO == null)				return getOfertasByTreeSalas(grupoSalaDTO);
-		if(curriculoDisciplinaDTO == null) 	return getPeriodosByTreeSalas(grupoSalaDTO, ofertaDTO);
+	public List<TreeNodeDTO> getDisciplinasByTreeGrupoSalas(TreeNodeDTO grupoSalaTreeNodeDTO, TreeNodeDTO ofertaTreeNodeDTO, TreeNodeDTO curriculoDisciplinaTreeNodeDTO) {
+		if(ofertaTreeNodeDTO == null)				return getOfertasByTreeGrupoSalas(grupoSalaTreeNodeDTO);
+		if(curriculoDisciplinaTreeNodeDTO == null) 	return getPeriodosByTreeGrupoSalas(grupoSalaTreeNodeDTO,ofertaTreeNodeDTO);
 		
-		List<FileModel> list = new ArrayList<FileModel>();
+		List<TreeNodeDTO> nodeChildrenList = new ArrayList<TreeNodeDTO>();
 		
+		GrupoSalaDTO grupoSalaDTO = (GrupoSalaDTO)grupoSalaTreeNodeDTO.getContent();
 		GrupoSala grupoSala = GrupoSala.find(grupoSalaDTO.getId());
+		OfertaDTO ofertaDTO = (OfertaDTO)ofertaTreeNodeDTO.getContent();
 		Oferta oferta = Oferta.find(ofertaDTO.getId());
-		List<CurriculoDisciplina> curriculoDisciplinas = CurriculoDisciplina.findBy(grupoSala, oferta, curriculoDisciplinaDTO.getPeriodo());
-		for(CurriculoDisciplina curriculoDisciplina : curriculoDisciplinas) {
-			CurriculoDisciplinaDTO dto = ConvertBeans.toCurriculoDisciplinaDTO(curriculoDisciplina); 
-			dto.setName(dto.getDisciplinaString());
-			dto.setPath(curriculoDisciplinaDTO.getPath() + dto.getDisciplinaString() + "/");
-			dto.setFolha(true);
-			list.add(dto);
+		CurriculoDisciplinaDTO curriculoDisciplinaDTO = (CurriculoDisciplinaDTO)curriculoDisciplinaTreeNodeDTO.getContent();
+		List<CurriculoDisciplina> curriculoDisciplinas = CurriculoDisciplina.findBy(grupoSala,oferta,curriculoDisciplinaDTO.getPeriodo());
+		
+		for (CurriculoDisciplina cd : curriculoDisciplinas) {
+			CurriculoDisciplinaDTO cdDTO = ConvertBeans.toCurriculoDisciplinaDTO(cd);
+			TreeNodeDTO nodeDTO = new TreeNodeDTO(cdDTO,curriculoDisciplinaTreeNodeDTO);
+			nodeDTO.setLeaf(true);
+			nodeChildrenList.add(nodeDTO);
 		}
-		return list;
+		
+		Collections.sort(nodeChildrenList);
+		
+		return nodeChildrenList;
 	}
 	
 	

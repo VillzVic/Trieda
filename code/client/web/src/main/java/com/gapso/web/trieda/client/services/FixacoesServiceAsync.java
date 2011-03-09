@@ -5,9 +5,9 @@ import java.util.List;
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.gapso.web.trieda.client.mvp.model.DisciplinaDTO;
-import com.gapso.web.trieda.client.mvp.model.SalaDTO;
 import com.gapso.web.trieda.shared.dtos.FixacaoDTO;
 import com.gapso.web.trieda.shared.dtos.HorarioDisponivelCenarioDTO;
+import com.gapso.web.trieda.shared.dtos.SalaDTO;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 

@@ -26,9 +26,9 @@ import com.extjs.gxt.ui.client.widget.grid.GridCellRenderer;
 import com.extjs.gxt.ui.client.widget.layout.FitLayout;
 import com.extjs.gxt.ui.client.widget.tips.QuickTip;
 import com.gapso.web.trieda.client.mvp.model.AtendimentoTaticoDTO;
-import com.gapso.web.trieda.client.mvp.model.SalaDTO;
 import com.gapso.web.trieda.client.mvp.model.TurnoDTO;
 import com.gapso.web.trieda.client.services.Services;
+import com.gapso.web.trieda.shared.dtos.SalaDTO;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 

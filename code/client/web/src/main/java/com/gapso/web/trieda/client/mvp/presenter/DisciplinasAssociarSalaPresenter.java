@@ -1,6 +1,7 @@
 package com.gapso.web.trieda.client.mvp.presenter;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -18,11 +19,6 @@ import com.extjs.gxt.ui.client.widget.form.SimpleComboBox;
 import com.extjs.gxt.ui.client.widget.form.SimpleComboValue;
 import com.extjs.gxt.ui.client.widget.treepanel.TreePanel;
 import com.gapso.web.trieda.client.mvp.model.CampusDTO;
-import com.gapso.web.trieda.client.mvp.model.CurriculoDisciplinaDTO;
-import com.gapso.web.trieda.client.mvp.model.FileModel;
-import com.gapso.web.trieda.client.mvp.model.GrupoSalaDTO;
-import com.gapso.web.trieda.client.mvp.model.OfertaDTO;
-import com.gapso.web.trieda.client.mvp.model.SalaDTO;
 import com.gapso.web.trieda.client.mvp.model.TurnoDTO;
 import com.gapso.web.trieda.client.services.DisciplinasServiceAsync;
 import com.gapso.web.trieda.client.services.SalasServiceAsync;
@@ -32,6 +28,11 @@ import com.gapso.web.trieda.client.util.view.GTab;
 import com.gapso.web.trieda.client.util.view.GTabItem;
 import com.gapso.web.trieda.client.util.view.TurnoComboBox;
 import com.gapso.web.trieda.client.util.view.UnidadeComboBox;
+import com.gapso.web.trieda.shared.dtos.AbstractDTO;
+import com.gapso.web.trieda.shared.dtos.CurriculoDisciplinaDTO;
+import com.gapso.web.trieda.shared.dtos.GrupoSalaDTO;
+import com.gapso.web.trieda.shared.dtos.SalaDTO;
+import com.gapso.web.trieda.shared.dtos.TreeNodeDTO;
 import com.gapso.web.trieda.shared.dtos.UnidadeDTO;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
@@ -46,8 +47,8 @@ public class DisciplinasAssociarSalaPresenter implements Presenter {
 		UnidadeComboBox getUnidadeSalaComboBox();
 		UnidadeComboBox getUnidadeGrupoSalaComboBox();
 		SimpleComboBox<String> getAndarComboBox();
-		TreePanel<FileModel> getDisciplinasList();
-		TreePanel<FileModel> getSalasList();
+		TreePanel<TreeNodeDTO> getDisciplinasList();
+		TreePanel<TreeNodeDTO> getSalasList();
 		ToolButton getRemoveButton();
 		void setTabEnabled(boolean flag);
 		Component getComponent();
@@ -68,7 +69,7 @@ public class DisciplinasAssociarSalaPresenter implements Presenter {
 				CampusDTO campusDTO = display.getCampusComboBox().getValue();
 				TurnoDTO turnoDTO = se.getSelectedItem();
 				
-				final FutureResult<ListLoadResult<FileModel>> futureOfertaDTOList = new FutureResult<ListLoadResult<FileModel>>();
+				final FutureResult<ListLoadResult<TreeNodeDTO>> futureOfertaDTOList = new FutureResult<ListLoadResult<TreeNodeDTO>>();
 				
 				Services.ofertas().getListByCampusAndTurno(campusDTO, turnoDTO, futureOfertaDTOList);
 				
@@ -82,14 +83,14 @@ public class DisciplinasAssociarSalaPresenter implements Presenter {
 
 					@Override
 					public void onSuccess(Boolean result) {
-						ListLoadResult<FileModel> ofertaDTOList = futureOfertaDTOList.result();
-						TreeStore<FileModel> store = display.getDisciplinasList().getStore();
-						store.removeAll();
-						store.add(ofertaDTOList.getData(), true);
-						display.setTabEnabled(!ofertaDTOList.getData().isEmpty());
-						display.getDisciplinasList().setEnabled(!ofertaDTOList.getData().isEmpty());
+						ListLoadResult<TreeNodeDTO> ofertaDTOList = futureOfertaDTOList.result();
+						TreeStore<TreeNodeDTO> treeStore = display.getDisciplinasList().getStore();
+						treeStore.removeAll();
+						treeStore.add(ofertaDTOList.getData(), true);
+						boolean existeOferta = !ofertaDTOList.getData().isEmpty();
+						display.setTabEnabled(existeOferta);
+						display.getDisciplinasList().setEnabled(existeOferta);
 					}
-					
 				});
 			}
 
@@ -125,12 +126,15 @@ public class DisciplinasAssociarSalaPresenter implements Presenter {
 				if(se.getSelectedItem() != null) {
 					display.getSalasList().getStore().removeAll();
 					List<SalaDTO> salaDTOList = andaresSalasMap.get(se.getSelectedItem().getValue());
-					List<FileModel> fileModelList = new ArrayList<FileModel>(salaDTOList.size());
+					List<TreeNodeDTO> treeNodesList = new ArrayList<TreeNodeDTO>(salaDTOList.size());
 					for(SalaDTO salaDTO : salaDTOList) {
-						fileModelList.add(salaDTO);
+						TreeNodeDTO nodeDTO = new TreeNodeDTO(salaDTO);
+						treeNodesList.add(nodeDTO);
 					}
-					display.getSalasList().getStore().add(fileModelList, true);
 					
+					Collections.sort(treeNodesList);
+					
+					display.getSalasList().getStore().add(treeNodesList, true);
 				}
 			}
 		});
@@ -160,8 +164,9 @@ public class DisciplinasAssociarSalaPresenter implements Presenter {
 						public void onSuccess(List<GrupoSalaDTO> result) {
 							display.getSalasList().enable();
 							display.getSalasList().getStore().removeAll();
-							for(GrupoSalaDTO grupoSala : result) {
-								display.getSalasList().getStore().add(grupoSala, true);
+							for(GrupoSalaDTO grupoSalaDTO : result) {
+								TreeNodeDTO nodeDTO = new TreeNodeDTO(grupoSalaDTO);
+								display.getSalasList().getStore().add(nodeDTO, true);
 							}
 						}
 					});
@@ -171,28 +176,29 @@ public class DisciplinasAssociarSalaPresenter implements Presenter {
 		display.getRemoveButton().addListener(Events.Select, new SelectionListener<IconButtonEvent>(){
 			@Override
 			public void componentSelected(IconButtonEvent ce) {
-				FileModel fileModel = display.getSalasList().getSelectionModel().getSelectedItem();
+				TreeNodeDTO selectedNodeDTO = display.getSalasList().getSelectionModel().getSelectedItem();
+				
+				TreeNodeDTO cdTreeNodeDTO = null;
 				CurriculoDisciplinaDTO cdDTO = null;
 				SalaDTO salaDTO = null;
 				GrupoSalaDTO grupoSalaDTO = null;
 				
-				if(fileModel.getFolha()) {
-					cdDTO = (CurriculoDisciplinaDTO)fileModel;
-					CurriculoDisciplinaDTO curriculoDisciplinaDTO = (CurriculoDisciplinaDTO)display.getSalasList().getStore().getParent(cdDTO);
-					OfertaDTO ofertaDTO = (OfertaDTO)display.getSalasList().getStore().getParent(curriculoDisciplinaDTO);
-					FileModel fileModelRoot = display.getSalasList().getStore().getParent(ofertaDTO);
-					if(fileModelRoot instanceof SalaDTO) {
-						salaDTO = (SalaDTO)fileModelRoot;
+				if (selectedNodeDTO.getLeaf()) {
+					cdTreeNodeDTO = selectedNodeDTO;
+					cdDTO = (CurriculoDisciplinaDTO)selectedNodeDTO.getContent();
+					AbstractDTO<?> nodeContent = selectedNodeDTO.getParent().getParent().getParent().getContent();
+					if (nodeContent instanceof SalaDTO) {
+						salaDTO = (SalaDTO)nodeContent;
 					} else {
-						grupoSalaDTO = (GrupoSalaDTO)fileModelRoot;
+						grupoSalaDTO = (GrupoSalaDTO)nodeContent;
 					}
 				} else {
 					Info.display("Erro", "Selecione uma disciplina!");
 				}
 				
-				final CurriculoDisciplinaDTO cdDTORemove = cdDTO;
+				final TreeNodeDTO cdTreeNodeDTORemove = cdTreeNodeDTO;
 				
-				if(cdDTO != null) {
+				if (cdDTO != null) {
 					DisciplinasServiceAsync salasService = Services.disciplinas();
 					if(salaDTO != null) {
 						salasService.removeDisciplinaToSala(salaDTO, cdDTO, new AsyncCallback<Void>() {
@@ -202,7 +208,7 @@ public class DisciplinasAssociarSalaPresenter implements Presenter {
 							}
 							@Override
 							public void onSuccess(Void result) {
-								display.getSalasList().getStore().remove(cdDTORemove);
+								display.getSalasList().getStore().remove(cdTreeNodeDTORemove);
 								Info.display("Removido", "Disciplinas removidas com sucesso!");
 							}
 						});
@@ -214,7 +220,7 @@ public class DisciplinasAssociarSalaPresenter implements Presenter {
 							}
 							@Override
 							public void onSuccess(Void result) {
-								display.getSalasList().getStore().remove(cdDTORemove);
+								display.getSalasList().getStore().remove(cdTreeNodeDTORemove);
 								Info.display("Removido", "Disciplinas removidas com sucesso!");
 							}
 						});

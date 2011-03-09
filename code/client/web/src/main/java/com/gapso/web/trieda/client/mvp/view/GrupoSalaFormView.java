@@ -6,12 +6,12 @@ import com.extjs.gxt.ui.client.widget.form.FormPanel;
 import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.extjs.gxt.ui.client.widget.layout.FormData;
 import com.gapso.web.trieda.client.mvp.model.CampusDTO;
-import com.gapso.web.trieda.client.mvp.model.GrupoSalaDTO;
 import com.gapso.web.trieda.client.mvp.presenter.GrupoSalaFormPresenter;
 import com.gapso.web.trieda.client.util.resources.Resources;
 import com.gapso.web.trieda.client.util.view.CampusComboBox;
 import com.gapso.web.trieda.client.util.view.SimpleModal;
 import com.gapso.web.trieda.client.util.view.UnidadeComboBox;
+import com.gapso.web.trieda.shared.dtos.GrupoSalaDTO;
 import com.gapso.web.trieda.shared.dtos.UnidadeDTO;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
@@ -55,7 +55,7 @@ public class GrupoSalaFormView extends MyComposite implements GrupoSalaFormPrese
 		formPanel.setHeaderVisible(false);
 		
 		codigoTF = new TextField<String>();
-		codigoTF.setName("codigo");
+		codigoTF.setName(GrupoSalaDTO.PROPERTY_CODIGO);
 		codigoTF.setValue(grupoSalaDTO.getCodigo());
 		codigoTF.setFieldLabel("Código");
 		codigoTF.setAllowBlank(false);
@@ -65,7 +65,7 @@ public class GrupoSalaFormView extends MyComposite implements GrupoSalaFormPrese
 		formPanel.add(codigoTF, formData);
 		
 		nomeTF = new TextField<String>();
-		nomeTF.setName("nome");
+		nomeTF.setName(GrupoSalaDTO.PROPERTY_NOME);
 		nomeTF.setValue(grupoSalaDTO.getNome());
 		nomeTF.setFieldLabel("Nome");
 		nomeTF.setAllowBlank(false);

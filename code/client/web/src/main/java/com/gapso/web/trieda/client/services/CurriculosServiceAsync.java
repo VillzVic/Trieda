@@ -7,8 +7,8 @@ import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.gapso.web.trieda.client.mvp.model.CurriculoDTO;
-import com.gapso.web.trieda.client.mvp.model.CurriculoDisciplinaDTO;
 import com.gapso.web.trieda.client.mvp.model.CursoDTO;
+import com.gapso.web.trieda.shared.dtos.CurriculoDisciplinaDTO;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public interface CurriculosServiceAsync {

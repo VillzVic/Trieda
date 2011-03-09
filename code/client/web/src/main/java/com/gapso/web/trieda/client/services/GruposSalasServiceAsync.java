@@ -6,8 +6,8 @@ import com.extjs.gxt.ui.client.data.BasePagingLoadConfig;
 import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
-import com.gapso.web.trieda.client.mvp.model.GrupoSalaDTO;
-import com.gapso.web.trieda.client.mvp.model.SalaDTO;
+import com.gapso.web.trieda.shared.dtos.GrupoSalaDTO;
+import com.gapso.web.trieda.shared.dtos.SalaDTO;
 import com.gapso.web.trieda.shared.dtos.UnidadeDTO;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 

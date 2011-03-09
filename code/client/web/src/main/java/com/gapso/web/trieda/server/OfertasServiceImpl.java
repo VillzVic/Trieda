@@ -1,6 +1,7 @@
 package com.gapso.web.trieda.server;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.springframework.transaction.annotation.Transactional;
@@ -12,18 +13,18 @@ import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.gapso.trieda.domain.Campus;
-import com.gapso.trieda.domain.Oferta;
 import com.gapso.trieda.domain.Curriculo;
 import com.gapso.trieda.domain.Curso;
+import com.gapso.trieda.domain.Oferta;
 import com.gapso.trieda.domain.Turno;
-import com.gapso.web.trieda.client.mvp.model.FileModel;
-import com.gapso.web.trieda.client.mvp.model.OfertaDTO;
 import com.gapso.web.trieda.client.mvp.model.CampusDTO;
 import com.gapso.web.trieda.client.mvp.model.CurriculoDTO;
 import com.gapso.web.trieda.client.mvp.model.CursoDTO;
 import com.gapso.web.trieda.client.mvp.model.TurnoDTO;
 import com.gapso.web.trieda.client.services.OfertasService;
 import com.gapso.web.trieda.server.util.ConvertBeans;
+import com.gapso.web.trieda.shared.dtos.OfertaDTO;
+import com.gapso.web.trieda.shared.dtos.TreeNodeDTO;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 /**
@@ -65,20 +66,20 @@ public class OfertasServiceImpl extends RemoteServiceServlet implements OfertasS
 	}
 
 	@Override
-	public ListLoadResult<FileModel> getListByCampusAndTurno(CampusDTO campusDTO, TurnoDTO turnoDTO) {
-		List<FileModel> list = new ArrayList<FileModel>();
+	public ListLoadResult<TreeNodeDTO> getListByCampusAndTurno(CampusDTO campusDTO, TurnoDTO turnoDTO) {
+		List<TreeNodeDTO> treeNodesList = new ArrayList<TreeNodeDTO>();
 		
 		Campus campus = (campusDTO == null)? null : ConvertBeans.toCampus(campusDTO);
 		Turno turno = (turnoDTO == null)? null : ConvertBeans.toTurno(turnoDTO);
 		
 		for(Oferta oferta : Oferta.findByCampusAndTurno(campus, turno)) {
-			OfertaDTO model = ConvertBeans.toOfertaDTO(oferta);
-			String name = model.getMatrizCurricularString() + " (" + oferta.getCurriculo().getCurso().getNome() + ")";
-			model.setName(name);
-			model.setPath(name+"/");
-			list.add(model);
+			OfertaDTO ofertaDTO = ConvertBeans.toOfertaDTO(oferta);
+			treeNodesList.add(new TreeNodeDTO(ofertaDTO));
 		}
-		ListLoadResult<FileModel> result = new BaseListLoadResult<FileModel>(list);
+		
+		Collections.sort(treeNodesList);
+		
+		ListLoadResult<TreeNodeDTO> result = new BaseListLoadResult<TreeNodeDTO>(treeNodesList);
 		return result;
 	}
 	

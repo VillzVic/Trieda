@@ -19,11 +19,11 @@ import com.gapso.trieda.domain.Fixacao;
 import com.gapso.trieda.domain.HorarioDisponivelCenario;
 import com.gapso.trieda.domain.Sala;
 import com.gapso.web.trieda.client.mvp.model.DisciplinaDTO;
-import com.gapso.web.trieda.client.mvp.model.SalaDTO;
 import com.gapso.web.trieda.client.services.FixacoesService;
 import com.gapso.web.trieda.server.util.ConvertBeans;
 import com.gapso.web.trieda.shared.dtos.FixacaoDTO;
 import com.gapso.web.trieda.shared.dtos.HorarioDisponivelCenarioDTO;
+import com.gapso.web.trieda.shared.dtos.SalaDTO;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 /**

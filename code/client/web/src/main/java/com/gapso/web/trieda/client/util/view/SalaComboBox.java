@@ -10,8 +10,8 @@ import com.extjs.gxt.ui.client.event.SelectionChangedEvent;
 import com.extjs.gxt.ui.client.event.SelectionChangedListener;
 import com.extjs.gxt.ui.client.store.ListStore;
 import com.extjs.gxt.ui.client.widget.form.ComboBox;
-import com.gapso.web.trieda.client.mvp.model.SalaDTO;
 import com.gapso.web.trieda.client.services.Services;
+import com.gapso.web.trieda.shared.dtos.SalaDTO;
 import com.gapso.web.trieda.shared.dtos.UnidadeDTO;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -30,10 +30,10 @@ public class SalaComboBox extends ComboBox<SalaDTO> {
 		};
 		setStore(new ListStore<SalaDTO>(new BaseListLoader<BaseListLoadResult<SalaDTO>>(proxy)));
 		
-		setDisplayField("display");
+		setDisplayField(SalaDTO.PROPERTY_DISPLAY_TEXT);
 		setFieldLabel("Sala");
 		setEmptyText("Selecione a sala");
-		setSimpleTemplate("{codigo}-{numero}");
+		setSimpleTemplate("{"+SalaDTO.PROPERTY_CODIGO+"}-{"+SalaDTO.PROPERTY_NUMERO+"}");
 		
 		setEditable(false);
 		setEnabled(unidadeComboBox.getValue() != null);

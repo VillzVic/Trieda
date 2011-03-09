@@ -34,11 +34,6 @@ import com.extjs.gxt.ui.client.widget.layout.RowData;
 import com.extjs.gxt.ui.client.widget.layout.RowLayout;
 import com.extjs.gxt.ui.client.widget.treepanel.TreePanel;
 import com.extjs.gxt.ui.client.widget.treepanel.TreePanel.TreeNode;
-import com.gapso.web.trieda.client.mvp.model.CurriculoDisciplinaDTO;
-import com.gapso.web.trieda.client.mvp.model.FileModel;
-import com.gapso.web.trieda.client.mvp.model.GrupoSalaDTO;
-import com.gapso.web.trieda.client.mvp.model.OfertaDTO;
-import com.gapso.web.trieda.client.mvp.model.SalaDTO;
 import com.gapso.web.trieda.client.mvp.presenter.DisciplinasAssociarSalaPresenter;
 import com.gapso.web.trieda.client.services.DisciplinasServiceAsync;
 import com.gapso.web.trieda.client.services.Services;
@@ -47,6 +42,12 @@ import com.gapso.web.trieda.client.util.view.CampusComboBox;
 import com.gapso.web.trieda.client.util.view.GTabItem;
 import com.gapso.web.trieda.client.util.view.TurnoComboBox;
 import com.gapso.web.trieda.client.util.view.UnidadeComboBox;
+import com.gapso.web.trieda.shared.dtos.AbstractDTO;
+import com.gapso.web.trieda.shared.dtos.CurriculoDisciplinaDTO;
+import com.gapso.web.trieda.shared.dtos.GrupoSalaDTO;
+import com.gapso.web.trieda.shared.dtos.OfertaDTO;
+import com.gapso.web.trieda.shared.dtos.SalaDTO;
+import com.gapso.web.trieda.shared.dtos.TreeNodeDTO;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
@@ -63,11 +64,11 @@ public class DisciplinasAssociarSalaView extends MyComposite implements Discipli
 	
 	private UnidadeComboBox unidadeGrupoSalaCB;
 	
-	private TreeStore<FileModel> storeDisciplina;
-	private TreeStore<FileModel> storeSala;
+	private TreeStore<TreeNodeDTO> storeDisciplina;
+	private TreeStore<TreeNodeDTO> storeSala;
 	
-	private TreePanel<FileModel> disciplinasList;
-	private TreePanel<FileModel> salasList;
+	private TreePanel<TreeNodeDTO> disciplinasList;
+	private TreePanel<TreeNodeDTO> salasList;
 	
 	private ToolButton removeButton;
 	
@@ -167,17 +168,17 @@ public class DisciplinasAssociarSalaView extends MyComposite implements Discipli
 		panelLists.setBodyBorder(false);
 		
 		ContentPanel disciplinasListPanel = new ContentPanel(new FitLayout());
-		disciplinasListPanel.setHeading("Disciplina(s)");
-		disciplinasList = new TreePanel<FileModel>(getStoreDisciplina()) {
+		disciplinasListPanel.setHeading("Matriz(es) Curricular(es)");
+		disciplinasList = new TreePanel<TreeNodeDTO>(getStoreDisciplina()) {
 			@Override
-			protected boolean hasChildren(FileModel model) {
-				return !model.getFolha();
+			protected boolean hasChildren(TreeNodeDTO model) {
+				return !model.getLeaf();
 			}
 		};
 		TreePanelDragSource source = new TreePanelDragSource(disciplinasList);
 		disciplinasList.getStyle().setLeafIcon(AbstractImagePrototype.create(Resources.DEFAULTS.disciplina16()));
 		disciplinasList.disable();
-		disciplinasList.setDisplayProperty("name");
+		disciplinasList.setDisplayProperty(TreeNodeDTO.PROPERTY_TEXT);
 		disciplinasList.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
 		disciplinasListPanel.add(disciplinasList);
 		
@@ -186,10 +187,10 @@ public class DisciplinasAssociarSalaView extends MyComposite implements Discipli
 		ContentPanel salasListPanel = new ContentPanel(new FitLayout());
 		salasListPanel.getHeader().addTool(getRemoveButton());
 		salasListPanel.setHeading("Sala(s)");
-		salasList = new TreePanel<FileModel>(getStoreSala()) {
+		salasList = new TreePanel<TreeNodeDTO>(getStoreSala()) {
 			@Override
-			protected boolean hasChildren(FileModel model) {
-				return !model.getFolha();
+			protected boolean hasChildren(TreeNodeDTO model) {
+				return !model.getLeaf();
 			}
 		};
 		TreePanelDropTarget target = new TreePanelDropTarget(salasList) {
@@ -198,7 +199,7 @@ public class DisciplinasAssociarSalaView extends MyComposite implements Discipli
 		};
 		salasList.getStyle().setLeafIcon(AbstractImagePrototype.create(Resources.DEFAULTS.disciplina16()));
 		salasList.disable();
-		salasList.setDisplayProperty("name");
+		salasList.setDisplayProperty(TreeNodeDTO.PROPERTY_TEXT);
 		salasList.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
 		salasList.setCaching(false);
 		
@@ -209,10 +210,11 @@ public class DisciplinasAssociarSalaView extends MyComposite implements Discipli
 			@SuppressWarnings("rawtypes")
 			@Override
 			public void dragMove(DNDEvent e) {
-				TreeNode overItem = salasList.findNode(e.getTarget());
-				if (overItem != null && overItem.getModel() instanceof FileModel) {
-					FileModel fileModel = (FileModel) overItem.getModel();
-					if(!(fileModel instanceof SalaDTO) && !(fileModel instanceof GrupoSalaDTO)) {
+				TreeNode nodeTarget = salasList.findNode(e.getTarget());
+				if (nodeTarget != null && (nodeTarget.getModel() instanceof TreeNodeDTO)) {
+					TreeNodeDTO nodeTargetDTO = (TreeNodeDTO)nodeTarget.getModel();
+					AbstractDTO<?> contentNodeTargetDTO = nodeTargetDTO.getContent();
+					if(!(contentNodeTargetDTO instanceof SalaDTO) && !(contentNodeTargetDTO instanceof GrupoSalaDTO)) {
 						e.setCancelled(true);
 						e.getStatus().setStatus(false);
 						return;
@@ -223,29 +225,34 @@ public class DisciplinasAssociarSalaView extends MyComposite implements Discipli
 			@SuppressWarnings({ "unchecked", "rawtypes" })
 			@Override
 			public void dragDrop(DNDEvent e) {
-				TreePanel<FileModel> treePanel = (TreePanel) e.getComponent();
-				FileModel sourceFileModel = treePanel.getSelectionModel().getSelectedItem();
+				TreePanel<TreeNodeDTO> treePanel = (TreePanel) e.getComponent();
+				TreeNodeDTO selectedNode = treePanel.getSelectionModel().getSelectedItem();
+				AbstractDTO<?> contentSelectedNode = selectedNode.getContent(); 
+				
 				OfertaDTO ofertaDTO = null;
 				Integer periodo = null;
 				CurriculoDisciplinaDTO cdDTO = null;
-				if(sourceFileModel instanceof OfertaDTO) {
-					ofertaDTO = (OfertaDTO)sourceFileModel;
-				} else if(sourceFileModel instanceof CurriculoDisciplinaDTO) {
-					FileModel sourceFileModelParent = treePanel.getStore().getParent(sourceFileModel);
-					if(sourceFileModelParent instanceof OfertaDTO) {
-						ofertaDTO = (OfertaDTO)sourceFileModelParent;
-						periodo = ((CurriculoDisciplinaDTO)sourceFileModel).getPeriodo();
+				
+				if(contentSelectedNode instanceof OfertaDTO) {
+					ofertaDTO = (OfertaDTO)contentSelectedNode;
+				} else if(contentSelectedNode instanceof CurriculoDisciplinaDTO) {
+					TreeNodeDTO parentNode = selectedNode.getParent();
+					AbstractDTO<?> contentParentNode = parentNode.getContent();
+					if(contentParentNode instanceof OfertaDTO) {
+						ofertaDTO = (OfertaDTO)contentParentNode;
+						periodo = ((CurriculoDisciplinaDTO)contentSelectedNode).getPeriodo();
 					} else {
-						ofertaDTO = (OfertaDTO)treePanel.getStore().getParent(sourceFileModelParent);
-						periodo = ((CurriculoDisciplinaDTO)sourceFileModelParent).getPeriodo();
-						cdDTO = (CurriculoDisciplinaDTO)sourceFileModel;
+						ofertaDTO = (OfertaDTO)parentNode.getParent().getContent();
+						cdDTO = (CurriculoDisciplinaDTO)contentSelectedNode;
+						periodo = cdDTO.getPeriodo();
 					}
 				}
 				
-				FileModel fileModelTarget = salasList.findNode(e.getTarget()).getModel();
+				TreeNodeDTO targetNode = salasList.findNode(e.getTarget()).getModel();
+				AbstractDTO<?> contentTargetNode = targetNode.getContent();
 				
-				if(fileModelTarget instanceof SalaDTO) {
-					SalaDTO salaDTO = (SalaDTO)fileModelTarget;
+				if (contentTargetNode instanceof SalaDTO) {
+					SalaDTO salaDTO = (SalaDTO)contentTargetNode;
 					DisciplinasServiceAsync disciplinasService = Services.disciplinas();
 					disciplinasService.saveDisciplinaToSala(ofertaDTO, periodo, cdDTO, salaDTO, new AsyncCallback<Void>() {
 						@Override
@@ -258,7 +265,7 @@ public class DisciplinasAssociarSalaView extends MyComposite implements Discipli
 						}
 					});
 				} else {
-					GrupoSalaDTO grupoSalaDTO = (GrupoSalaDTO)fileModelTarget;
+					GrupoSalaDTO grupoSalaDTO = (GrupoSalaDTO)contentTargetNode;
 					DisciplinasServiceAsync disciplinasService = Services.disciplinas();
 					disciplinasService.saveDisciplinaToSala(ofertaDTO, periodo, cdDTO, grupoSalaDTO, new AsyncCallback<Void>() {
 						@Override
@@ -305,12 +312,12 @@ public class DisciplinasAssociarSalaView extends MyComposite implements Discipli
 	}
 
 	@Override
-	public TreePanel<FileModel> getDisciplinasList() {
+	public TreePanel<TreeNodeDTO> getDisciplinasList() {
 		return disciplinasList;
 	}
 
 	@Override
-	public TreePanel<FileModel> getSalasList() {
+	public TreePanel<TreeNodeDTO> getSalasList() {
 		return salasList;
 	}
 	
@@ -349,72 +356,83 @@ public class DisciplinasAssociarSalaView extends MyComposite implements Discipli
 		return removeButton;
 	}
 	
-	public void setStoreDisciplina(TreeStore<FileModel> storeDisciplina) {
+	public void setStoreDisciplina(TreeStore<TreeNodeDTO> storeDisciplina) {
 		this.storeDisciplina = storeDisciplina;
 	}
 	
 	// TODO passar para presenter
-	public TreeStore<FileModel> getStoreDisciplina() {
+	public TreeStore<TreeNodeDTO> getStoreDisciplina() {
 		if(this.storeDisciplina == null) {
 			final DisciplinasServiceAsync service = Services.disciplinas();
-			RpcProxy<List<FileModel>> proxy = new RpcProxy<List<FileModel>>() {
+			RpcProxy<List<TreeNodeDTO>> proxy = new RpcProxy<List<TreeNodeDTO>>() {
 				@Override
-				protected void load(Object loadConfig, AsyncCallback<List<FileModel>> callback) {
-					service.getFolderChildren((FileModel) loadConfig, callback);
+				protected void load(Object loadConfig, AsyncCallback<List<TreeNodeDTO>> callback) {
+					service.getFolderChildren((TreeNodeDTO)loadConfig, callback);
 				}
 			};
-			final TreeLoader<FileModel> loader = new BaseTreeLoader<FileModel>(proxy);
-			TreeStore<FileModel> store = new TreeStore<FileModel>(loader);
+			final TreeLoader<TreeNodeDTO> loader = new BaseTreeLoader<TreeNodeDTO>(proxy);
+			TreeStore<TreeNodeDTO> store = new TreeStore<TreeNodeDTO>(loader);
 			setStoreDisciplina(store);
 		}
 		return this.storeDisciplina;
 	}
 
-	public void setStoreSala(TreeStore<FileModel> storeSala) {
+	public void setStoreSala(TreeStore<TreeNodeDTO> storeSala) {
 		this.storeSala = storeSala;
 	}
 	
 	// TODO passar para presenter
-	public TreeStore<FileModel> getStoreSala() {
+	public TreeStore<TreeNodeDTO> getStoreSala() {
 		if(this.storeSala == null) {
 			final DisciplinasServiceAsync service = Services.disciplinas();
-			RpcProxy<List<FileModel>> proxy = new RpcProxy<List<FileModel>>() {
+			RpcProxy<List<TreeNodeDTO>> proxy = new RpcProxy<List<TreeNodeDTO>>() {
 				@Override
-				protected void load(Object loadConfig, AsyncCallback<List<FileModel>> callback) {
-					FileModel fileModel = (FileModel)loadConfig;
-					SalaDTO salaDTO = null;
-					GrupoSalaDTO grupoSalaDTO = null;
-					OfertaDTO ofertaDTO = null;
-					CurriculoDisciplinaDTO curriculoDisciplinaDTO = null;
-					if(fileModel instanceof SalaDTO) {
-						salaDTO = (SalaDTO) fileModel;
-					} else if(fileModel instanceof GrupoSalaDTO) {
-						grupoSalaDTO = (GrupoSalaDTO) fileModel;
-					} else if(fileModel instanceof OfertaDTO) {
-						if(salasList.getStore().getParent(fileModel) instanceof SalaDTO) {
-							salaDTO = (SalaDTO) salasList.getStore().getParent(fileModel);
-						} else {
-							grupoSalaDTO = (GrupoSalaDTO) salasList.getStore().getParent(fileModel);
+				protected void load(Object loadConfig, AsyncCallback<List<TreeNodeDTO>> callback) {
+					if (loadConfig != null) {
+						TreeNodeDTO currentNode = (TreeNodeDTO)loadConfig;
+						AbstractDTO<?> contentCurrentNode = currentNode.getContent(); 
+						
+						TreeNodeDTO salaTreeNodeDTO = null;
+						TreeNodeDTO grupoSalaTreeNodeDTO = null;
+						TreeNodeDTO ofertaTreeNodeDTO = null;
+						TreeNodeDTO curriculoDisciplinaTreeNodeDTO = null;
+						
+						if (contentCurrentNode instanceof SalaDTO) {
+							salaTreeNodeDTO = currentNode;//salaDTO = (SalaDTO)contentCurrentNode;
+						} else if (contentCurrentNode instanceof GrupoSalaDTO) {
+							grupoSalaTreeNodeDTO = currentNode;//grupoSalaDTO = (GrupoSalaDTO)contentCurrentNode;
+						} else if (contentCurrentNode instanceof OfertaDTO) {
+							TreeNodeDTO parentNode = currentNode.getParent();
+							AbstractDTO<?> contentParentNode = parentNode.getContent();
+							if (contentParentNode instanceof SalaDTO) {
+								salaTreeNodeDTO = parentNode;//salaDTO = (SalaDTO)contentParentNode;
+							} else {
+								grupoSalaTreeNodeDTO = parentNode;//grupoSalaDTO = (GrupoSalaDTO)contentParentNode;
+							}					
+							ofertaTreeNodeDTO = currentNode;//ofertaDTO = (OfertaDTO)contentCurrentNode;
+						} else if (contentCurrentNode instanceof CurriculoDisciplinaDTO) {
+							TreeNodeDTO parentNode = currentNode.getParent();
+							ofertaTreeNodeDTO = parentNode;//ofertaDTO = (OfertaDTO)parentNode.getContent();
+							TreeNodeDTO parentParentNode = parentNode.getParent();
+							AbstractDTO<?> contentparentParentNode = parentParentNode.getContent();
+							if (contentparentParentNode instanceof SalaDTO) {
+								//salaDTO = (SalaDTO)contentparentParentNode;
+								salaTreeNodeDTO = parentParentNode;
+							} else {
+								grupoSalaTreeNodeDTO = parentParentNode;//grupoSalaDTO = (GrupoSalaDTO)contentparentParentNode;
+							}
+							curriculoDisciplinaTreeNodeDTO = currentNode;//curriculoDisciplinaDTO = (CurriculoDisciplinaDTO)contentCurrentNode;
 						}
-						ofertaDTO = (OfertaDTO) fileModel;
-					} else if (fileModel instanceof CurriculoDisciplinaDTO) {
-						ofertaDTO = (OfertaDTO) salasList.getStore().getParent(fileModel);
-						if(salasList.getStore().getParent(ofertaDTO) instanceof SalaDTO) {
-							salaDTO = (SalaDTO) salasList.getStore().getParent(ofertaDTO);
-						} else {
-							grupoSalaDTO = (GrupoSalaDTO) salasList.getStore().getParent(ofertaDTO);
+						if(salaTreeNodeDTO != null) {
+							service.getDisciplinasByTreeSalas(salaTreeNodeDTO,ofertaTreeNodeDTO,curriculoDisciplinaTreeNodeDTO,callback);
+						} else if(grupoSalaTreeNodeDTO != null) {
+							service.getDisciplinasByTreeGrupoSalas(grupoSalaTreeNodeDTO,ofertaTreeNodeDTO,curriculoDisciplinaTreeNodeDTO,callback);
 						}
-						curriculoDisciplinaDTO = (CurriculoDisciplinaDTO)fileModel;
-					}
-					if(salaDTO != null) {
-						service.getDisciplinasByTreeSalas(salaDTO, ofertaDTO, curriculoDisciplinaDTO, callback);
-					} else if(grupoSalaDTO != null) {
-						service.getDisciplinasByTreeSalas(grupoSalaDTO, ofertaDTO, curriculoDisciplinaDTO, callback);
 					}
 				}
 			};
-			final TreeLoader<FileModel> loader = new BaseTreeLoader<FileModel>(proxy);
-			TreeStore<FileModel> store = new TreeStore<FileModel>(loader);
+			final TreeLoader<TreeNodeDTO> loader = new BaseTreeLoader<TreeNodeDTO>(proxy);
+			TreeStore<TreeNodeDTO> store = new TreeStore<TreeNodeDTO>(loader);
 			setStoreSala(store);
 		}
 		return this.storeSala;

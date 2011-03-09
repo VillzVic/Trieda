@@ -7,13 +7,13 @@ import com.extjs.gxt.ui.client.widget.form.NumberField;
 import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.extjs.gxt.ui.client.widget.layout.FormData;
 import com.gapso.web.trieda.client.mvp.model.CampusDTO;
-import com.gapso.web.trieda.client.mvp.model.SalaDTO;
 import com.gapso.web.trieda.client.mvp.presenter.SalaFormPresenter;
 import com.gapso.web.trieda.client.util.resources.Resources;
 import com.gapso.web.trieda.client.util.view.CampusComboBox;
 import com.gapso.web.trieda.client.util.view.SimpleModal;
 import com.gapso.web.trieda.client.util.view.TipoSalaComboBox;
 import com.gapso.web.trieda.client.util.view.UnidadeComboBox;
+import com.gapso.web.trieda.shared.dtos.SalaDTO;
 import com.gapso.web.trieda.shared.dtos.TipoSalaDTO;
 import com.gapso.web.trieda.shared.dtos.UnidadeDTO;
 
@@ -60,7 +60,7 @@ public class SalaFormView extends MyComposite implements SalaFormPresenter.Displ
 		formPanel.setHeaderVisible(false);
 		
 		codigoTF = new TextField<String>();
-		codigoTF.setName("codigo");
+		codigoTF.setName(SalaDTO.PROPERTY_CODIGO);
 		codigoTF.setValue(salaDTO.getCodigo());
 		codigoTF.setFieldLabel("Código");
 		codigoTF.setAllowBlank(false);
@@ -90,7 +90,7 @@ public class SalaFormView extends MyComposite implements SalaFormPresenter.Displ
 		formPanel.add(tipoSalaCB, formData);
 		
 		numeroTF = new TextField<String>();
-		numeroTF.setName("numero");
+		numeroTF.setName(SalaDTO.PROPERTY_NUMERO);
 		numeroTF.setValue(salaDTO.getNumero());
 		numeroTF.setFieldLabel("Número");
 		numeroTF.setAllowBlank(false);
@@ -100,7 +100,7 @@ public class SalaFormView extends MyComposite implements SalaFormPresenter.Displ
 		formPanel.add(numeroTF, formData);
 		
 		andarTF = new TextField<String>();
-		andarTF.setName("andar");
+		andarTF.setName(SalaDTO.PROPERTY_ANDAR);
 		andarTF.setValue(salaDTO.getAndar());
 		andarTF.setFieldLabel("Andar");
 		andarTF.setAllowBlank(false);
@@ -110,7 +110,7 @@ public class SalaFormView extends MyComposite implements SalaFormPresenter.Displ
 		formPanel.add(andarTF, formData);
 		
 		capacidadeNF = new NumberField();
-		capacidadeNF.setName("capacidade");
+		capacidadeNF.setName(SalaDTO.PROPERTY_CAPACIDADE);
 		capacidadeNF.setValue(salaDTO.getCapacidade());
 		capacidadeNF.setFieldLabel("Capacidade");
 		capacidadeNF.setAllowBlank(false);

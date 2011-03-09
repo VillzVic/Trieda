@@ -16,10 +16,10 @@ import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.gapso.trieda.domain.GrupoSala;
 import com.gapso.trieda.domain.Sala;
 import com.gapso.trieda.domain.Unidade;
-import com.gapso.web.trieda.client.mvp.model.GrupoSalaDTO;
-import com.gapso.web.trieda.client.mvp.model.SalaDTO;
 import com.gapso.web.trieda.client.services.GruposSalasService;
 import com.gapso.web.trieda.server.util.ConvertBeans;
+import com.gapso.web.trieda.shared.dtos.GrupoSalaDTO;
+import com.gapso.web.trieda.shared.dtos.SalaDTO;
 import com.gapso.web.trieda.shared.dtos.UnidadeDTO;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
@@ -142,8 +142,8 @@ public class GruposSalasServiceImpl extends RemoteServiceServlet implements Grup
 			GrupoSalaDTO gsDTO = ConvertBeans.toGrupoSalaDTO(grupoSala);
 			gsDTO.setSalasString(salasString);
 			gsDTO.setCampusString(grupoSala.getUnidade().getCampus().getCodigo());
-			gsDTO.setName(gsDTO.getCodigo());
-			gsDTO.setPath(gsDTO.getCodigo() + "/");
+//			gsDTO.setName(gsDTO.getCodigo()); TODO: ***********
+//			gsDTO.setPath(gsDTO.getCodigo() + "/"); TODO: ***********
 			list.add(gsDTO);
 		}
 		BasePagingLoadResult<GrupoSalaDTO> result = new BasePagingLoadResult<GrupoSalaDTO>(list);

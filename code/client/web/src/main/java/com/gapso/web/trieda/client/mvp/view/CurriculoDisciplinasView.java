@@ -26,11 +26,11 @@ import com.extjs.gxt.ui.client.widget.grid.SummaryType;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayout;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
 import com.gapso.web.trieda.client.mvp.model.CurriculoDTO;
-import com.gapso.web.trieda.client.mvp.model.CurriculoDisciplinaDTO;
 import com.gapso.web.trieda.client.mvp.presenter.CurriculoDisciplinasPresenter;
 import com.gapso.web.trieda.client.util.resources.Resources;
 import com.gapso.web.trieda.client.util.view.GTabItem;
 import com.gapso.web.trieda.client.util.view.SimpleToolBar;
+import com.gapso.web.trieda.shared.dtos.CurriculoDisciplinaDTO;
 
 public class CurriculoDisciplinasView extends MyComposite implements CurriculoDisciplinasPresenter.Display {
 
@@ -83,7 +83,7 @@ public class CurriculoDisciplinasView extends MyComposite implements CurriculoDi
 		loader.setRemoteSort(true);
 		
 		GroupingStore<CurriculoDisciplinaDTO> store = new GroupingStore<CurriculoDisciplinaDTO>(loader);
-		store.groupBy("periodo");
+		store.groupBy(CurriculoDisciplinaDTO.PROPERTY_PERIODO);
 	    
 		final ColumnModel columnModel = new ColumnModel(getColumnList());
 		grid = new Grid<CurriculoDisciplinaDTO>(store, columnModel);
@@ -108,11 +108,11 @@ public class CurriculoDisciplinasView extends MyComposite implements CurriculoDi
 	public List<ColumnConfig> getColumnList() {
 		List<ColumnConfig> list = new ArrayList<ColumnConfig>();
 		
-		SummaryColumnConfig<Integer> cc1 = new SummaryColumnConfig<Integer>("periodo", "Período", 100);
+		SummaryColumnConfig<Integer> cc1 = new SummaryColumnConfig<Integer>(CurriculoDisciplinaDTO.PROPERTY_PERIODO, "Período", 100);
 		cc1.setSummaryType(SummaryType.COUNT);
 		list.add(cc1);
 
-		cc1 = new SummaryColumnConfig<Integer>("disciplinaCodigoNomeString", "Disciplina", 100);
+		cc1 = new SummaryColumnConfig<Integer>(CurriculoDisciplinaDTO.PROPERTY_DISPLAY_TEXT, "Disciplina", 100);
 		cc1.setSummaryType(SummaryType.COUNT);
 		cc1.setSummaryRenderer(new SummaryRenderer() {  
 			public String render(Number value, Map<String, Number> data) {  
@@ -127,17 +127,17 @@ public class CurriculoDisciplinasView extends MyComposite implements CurriculoDi
 			}  
 		};
 		
-		SummaryColumnConfig<Double> cc2 = new SummaryColumnConfig<Double>("creditosTeorico", "Créditos Teóricos", 100);
+		SummaryColumnConfig<Double> cc2 = new SummaryColumnConfig<Double>(CurriculoDisciplinaDTO.PROPERTY_CREDITOS_TEORICO, "Créditos Teóricos", 100);
 		cc2.setSummaryType(SummaryType.SUM);
 		cc2.setSummaryRenderer(creditosRenderer);
 		list.add(cc2);
 		
-		cc2 = new SummaryColumnConfig<Double>("creditosPratico", "Créditos Práticos", 100);
+		cc2 = new SummaryColumnConfig<Double>(CurriculoDisciplinaDTO.PROPERTY_CREDITOS_PRATICO, "Créditos Práticos", 100);
 		cc2.setSummaryType(SummaryType.SUM);
 		cc2.setSummaryRenderer(creditosRenderer);
 		list.add(cc2);
 		
-		cc2 = new SummaryColumnConfig<Double>("creditosTotal", "Total de Créditos", 100);
+		cc2 = new SummaryColumnConfig<Double>(CurriculoDisciplinaDTO.PROPERTY_CREDITOS_TOTAL, "Total de Créditos", 100);
 		cc2.setSummaryType(SummaryType.SUM);
 		cc2.setSummaryRenderer(creditosRenderer);
 		list.add(cc2);

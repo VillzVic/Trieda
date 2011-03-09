@@ -16,11 +16,11 @@ import com.extjs.gxt.ui.client.widget.layout.FitLayout;
 import com.extjs.gxt.ui.client.widget.layout.FormData;
 import com.extjs.gxt.ui.client.widget.layout.RowData;
 import com.extjs.gxt.ui.client.widget.layout.RowLayout;
-import com.gapso.web.trieda.client.mvp.model.GrupoSalaDTO;
-import com.gapso.web.trieda.client.mvp.model.SalaDTO;
 import com.gapso.web.trieda.client.mvp.presenter.GrupoSalaAssociarSalaPresenter;
 import com.gapso.web.trieda.client.util.resources.Resources;
 import com.gapso.web.trieda.client.util.view.SimpleModal;
+import com.gapso.web.trieda.shared.dtos.GrupoSalaDTO;
+import com.gapso.web.trieda.shared.dtos.SalaDTO;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
 public class GrupoSalaAssociarSalaView extends MyComposite implements GrupoSalaAssociarSalaPresenter.Display {
@@ -96,25 +96,25 @@ public class GrupoSalaAssociarSalaView extends MyComposite implements GrupoSalaA
 		ContentPanel andaresListPanel = new ContentPanel(new FitLayout());
 		andaresListPanel.setHeading("Andares");
 		ListStore<SalaDTO> store = new ListStore<SalaDTO>();
-		store.setDefaultSort("andar", SortDir.ASC);
+		store.setDefaultSort(SalaDTO.PROPERTY_ANDAR, SortDir.ASC);
 		andaresList = new ListView<SalaDTO>(store);
-		andaresList.setDisplayProperty("andar");
+		andaresList.setDisplayProperty(SalaDTO.PROPERTY_ANDAR);
 		andaresListPanel.add(andaresList);
 		
 		ContentPanel naoAssociadasListPanel = new ContentPanel(new FitLayout());
 		naoAssociadasListPanel.setHeading("Sala(s) não associadas ao Grupo");
 		store = new ListStore<SalaDTO>();
-		store.setDefaultSort("codigo", SortDir.ASC);
+		store.setDefaultSort(SalaDTO.PROPERTY_CODIGO, SortDir.ASC);
 		salasNaoPertencesList = new ListView<SalaDTO>(store);
-		salasNaoPertencesList.setDisplayProperty("codigo");
+		salasNaoPertencesList.setDisplayProperty(SalaDTO.PROPERTY_CODIGO);
 		naoAssociadasListPanel.add(salasNaoPertencesList);
 		
 		ContentPanel associadasListPanel = new ContentPanel(new FitLayout());
 		associadasListPanel.setHeading("Sala(s) associadas ao Grupo");
 		store = new ListStore<SalaDTO>();
-		store.setDefaultSort("codigo", SortDir.ASC);
+		store.setDefaultSort(SalaDTO.PROPERTY_CODIGO, SortDir.ASC);
 		salasPertencesList = new ListView<SalaDTO>(store);
-		salasPertencesList.setDisplayProperty("codigo");
+		salasPertencesList.setDisplayProperty(SalaDTO.PROPERTY_CODIGO);
 		associadasListPanel.add(salasPertencesList);
 		
 		panelLists.add(andaresListPanel, new RowData(.2, 1, new Margins(0, 0, 0, 0)));

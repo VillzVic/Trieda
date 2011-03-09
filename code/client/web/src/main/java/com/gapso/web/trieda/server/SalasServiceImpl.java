@@ -24,11 +24,11 @@ import com.gapso.trieda.domain.Sala;
 import com.gapso.trieda.domain.TipoSala;
 import com.gapso.trieda.domain.Unidade;
 import com.gapso.web.trieda.client.mvp.model.CampusDTO;
-import com.gapso.web.trieda.client.mvp.model.GrupoSalaDTO;
-import com.gapso.web.trieda.client.mvp.model.SalaDTO;
 import com.gapso.web.trieda.client.services.SalasService;
 import com.gapso.web.trieda.server.util.ConvertBeans;
+import com.gapso.web.trieda.shared.dtos.GrupoSalaDTO;
 import com.gapso.web.trieda.shared.dtos.HorarioDisponivelCenarioDTO;
+import com.gapso.web.trieda.shared.dtos.SalaDTO;
 import com.gapso.web.trieda.shared.dtos.TipoSalaDTO;
 import com.gapso.web.trieda.shared.dtos.UnidadeDTO;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
@@ -181,7 +181,7 @@ public class SalasServiceImpl extends RemoteServiceServlet implements SalasServi
 				map.put(sala.getAndar(), new ArrayList<SalaDTO>());
 			}
 			SalaDTO salaDTO = ConvertBeans.toSalaDTO(sala);
-			salaDTO.setName(salaDTO.getCodigo());
+			//salaDTO.setName(salaDTO.getCodigo()); TODO: ***********
 			map.get(sala.getAndar()).add(salaDTO);
 		}
 		return map;
@@ -204,8 +204,8 @@ public class SalasServiceImpl extends RemoteServiceServlet implements SalasServi
 		List<GrupoSalaDTO> grupoSalasDTO = new ArrayList<GrupoSalaDTO>();
 		for(GrupoSala gs : grupoSalas) {
 			GrupoSalaDTO gsDTO = ConvertBeans.toGrupoSalaDTO(gs);
-			gsDTO.setName(gsDTO.getCodigo());
-			gsDTO.setPath(gsDTO.getCodigo() + "/");
+			//gsDTO.setName(gsDTO.getCodigo()); TODO: ***********
+			//gsDTO.setPath(gsDTO.getCodigo() + "/"); TODO: ***********
 			grupoSalasDTO.add(gsDTO);
 		}
 		return grupoSalasDTO;

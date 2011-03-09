@@ -7,7 +7,6 @@ import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.widget.Component;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.TextField;
-import com.gapso.web.trieda.client.mvp.model.SalaDTO;
 import com.gapso.web.trieda.client.util.view.CampusComboBox;
 import com.gapso.web.trieda.client.util.view.GTab;
 import com.gapso.web.trieda.client.util.view.GTabItem;
@@ -16,6 +15,7 @@ import com.gapso.web.trieda.client.util.view.SalaComboBox;
 import com.gapso.web.trieda.client.util.view.TurnoComboBox;
 import com.gapso.web.trieda.client.util.view.UnidadeComboBox;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
+import com.gapso.web.trieda.shared.dtos.SalaDTO;
 import com.google.gwt.user.client.ui.Widget;
 
 public class RelatorioVisaoSalaPresenter implements Presenter {

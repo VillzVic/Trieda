@@ -5,12 +5,12 @@ import java.util.List;
 import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
-import com.gapso.web.trieda.client.mvp.model.FileModel;
-import com.gapso.web.trieda.client.mvp.model.OfertaDTO;
 import com.gapso.web.trieda.client.mvp.model.CampusDTO;
 import com.gapso.web.trieda.client.mvp.model.CurriculoDTO;
 import com.gapso.web.trieda.client.mvp.model.CursoDTO;
 import com.gapso.web.trieda.client.mvp.model.TurnoDTO;
+import com.gapso.web.trieda.shared.dtos.OfertaDTO;
+import com.gapso.web.trieda.shared.dtos.TreeNodeDTO;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public interface OfertasServiceAsync {
@@ -19,6 +19,6 @@ public interface OfertasServiceAsync {
 	void getBuscaList(TurnoDTO turnoDTO, CampusDTO campusDTO, CursoDTO cursoDTO, CurriculoDTO curriculoDTO, PagingLoadConfig config, AsyncCallback<PagingLoadResult<OfertaDTO>> callback);
 	void save(OfertaDTO ofertaDTO, AsyncCallback<Void> callback);
 	void remove(List<OfertaDTO> ofertaDTOList, AsyncCallback<Void> callback);
-	void getListByCampusAndTurno(CampusDTO campusDTO, TurnoDTO turnoDTO, AsyncCallback<ListLoadResult<FileModel>> callback);
+	void getListByCampusAndTurno(CampusDTO campusDTO, TurnoDTO turnoDTO, AsyncCallback<ListLoadResult<TreeNodeDTO>> callback);
 	
 }
