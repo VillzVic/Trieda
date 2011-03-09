@@ -94,7 +94,7 @@
             <xs:documentation>lista de fixações, isto é, regras informadas pelo usuário que o resolvedor matemático é obrigado a respeitar</xs:documentation>
           </xs:annotation>
         </xs:element>
-        <xs:element minOccurs="0" maxOccurs="1" name="atendimentosTatico" type="GrupoAtendimentoCampus">
+        <xs:element minOccurs="0" maxOccurs="1" name="atendimentosTatico" type="GrupoAtendimentoCampusSolucao">
           <xs:annotation>
             <xs:documentation>lista de todos os atendimentos, para o modelo tático, realizados em cada campus que foi considerado no planejamento; e que serão utilizados como entrada para o modelo operacional</xs:documentation>
           </xs:annotation>
@@ -798,6 +798,53 @@
           <xs:documentation>Indica o modo de otimização que foi selecionado. Atualmente, os possíveis valores para esta campo são: "TATICO", "OPERACIONAL".</xs:documentation>
         </xs:annotation>
       </xs:element>
+      <xs:element name="cargaHorariaSemanalAluno">
+        <xs:annotation>
+          <xs:documentation>Parâmetro de planejamento que determina ser a carga horária semanal do aluno deverá ser (ver requisito RF-PA-1):
+   - Equilibrada durante a semana (aulas em todos os dias, com duração equalizada);
+   - Alocada na menor quantidade de dias (Minimiza quantidade de dias);
+   - Indiferente</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+          <xs:choice>
+            <xs:element name="equilibrar" type="xs:anySimpleType" />
+            <xs:element name="minimizarDias" type="xs:anySimpleType" />
+            <xs:element name="indiferente" type="xs:anySimpleType" />
+          </xs:choice>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="minimizarDeslocAluno" type="xs:boolean">
+        <xs:annotation>
+          <xs:documentation>flag que determina se o resolvedor matemático tentará ou não minimizar o deslocamento de alunos (entre campi, unidades, andares e salas) com base nos campos temposDeslocamentosCampi e temposDeslocamentosUnidades (ver requisitos RF-O-5, RF-O-8, RF-PA-2, RF-PA-3, RF-PA-4).</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="cargaHorariaSemanalProfessor">
+        <xs:annotation>
+          <xs:documentation>Distribuição da carga horária semanal do aluno </xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+          <xs:choice>
+            <xs:element name="equilibrar" type="xs:anySimpleType" />
+            <xs:element name="minimizarDias" type="xs:anySimpleType" />
+            <xs:element name="indiferentes" type="xs:anySimpleType" />
+          </xs:choice>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="minimizarDeslocProfessor" type="xs:boolean">
+        <xs:annotation>
+          <xs:documentation>flag que determina se o resolvedor matemático tentará ou não minimizar o deslocamento de professores (entre campi, unidades, andares e salas) com base nos campos temposDeslocamentosCampi e temposDeslocamentosUnidades (ver requisitos RF-O-5, RF-O-8, RF-PA-2, RF-PA-3, RF-PA-4).</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="minimizarHorariosVaziosProfessor" type="xs:boolean">
+        <xs:annotation>
+          <xs:documentation>parâmetro de planejamento que indica se o resolvedor matemático deverá ou não minimizar gaps (buracos) nos horários dos professores num mesmo dia. Ver requisito RF-PP-1.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="evitarReducaoCargaHorariaProf" type="xs:boolean">
+        <xs:annotation>
+          <xs:documentation>evitar redução grande de carga horária do docente em relação ao período anterior (para evitar problemas com sindicatos). Ver requisito RF-PP-9.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
       <xs:element name="niveisDificuldadeHorario" type="GrupoNivelDificuldadeHorario">
         <xs:annotation>
           <xs:documentation>Parâmetro de planejamento onde é possível configurar as discipinas por nível de dificuldade que deverão ser evitadas em determinados horários de aula. Ver RF-DP-1.</xs:documentation>
@@ -806,21 +853,6 @@
       <xs:element name="equilibrarDiversidadeDiscDia" type="xs:boolean">
         <xs:annotation>
           <xs:documentation>flag que determina se o resolvedor matemático tentará ou não equilibrar a diversidade de disciplinas oferecidas em um mesmo dia com base na compatibilidade entre disciplinas(ver campo disciplinasIncompativeis do ItemDisciplinas e ver requisito RF-DP-3).</xs:documentation>
-        </xs:annotation>
-      </xs:element>
-      <xs:element name="minimizarDeslocProfessor" type="xs:boolean">
-        <xs:annotation>
-          <xs:documentation>flag que determina se o resolvedor matemático tentará ou não minimizar o deslocamento de professores (entre campi, unidades, andares e salas) com base nos campos temposDeslocamentosCampi e temposDeslocamentosUnidades (ver requisitos RF-O-5, RF-O-8, RF-PA-2, RF-PA-3, RF-PA-4).</xs:documentation>
-        </xs:annotation>
-      </xs:element>
-      <xs:element name="minimizarDeslocAluno" type="xs:boolean">
-        <xs:annotation>
-          <xs:documentation>flag que determina se o resolvedor matemático tentará ou não minimizar o deslocamento de alunos (entre campi, unidades, andares e salas) com base nos campos temposDeslocamentosCampi e temposDeslocamentosUnidades (ver requisitos RF-O-5, RF-O-8, RF-PA-2, RF-PA-3, RF-PA-4).</xs:documentation>
-        </xs:annotation>
-      </xs:element>
-      <xs:element name="maxDeslocProfessor" type="xs:int">
-        <xs:annotation>
-          <xs:documentation>informa o limite superior de deslocamentos de um professor entre campi dentro do mesmo dia. Ver requisito RF-PP-11.</xs:documentation>
         </xs:annotation>
       </xs:element>
       <xs:element name="maximizarAvaliacaoCursos" type="GrupoIdentificador">
@@ -840,31 +872,6 @@ Maximizar/gerenciar a nota da avaliação institucional média coletiva do corpo
           <xs:documentation>lista de listas de identificadores (ItemCurso) de cursos. Os cursos que pertencem a uma mesma lista permitem compartilhamento de turmas. Ver requisito RF-O-17.</xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element name="cargaHorariaSemanalAluno">
-        <xs:annotation>
-          <xs:documentation>Parâmetro de planejamento que determina ser a carga horária semanal do aluno deverá ser (ver requisito RF-PA-1):
-   - Equilibrada durante a semana (aulas em todos os dias, com duração equalizada);
-   - Alocada na menor quantidade de dias (Minimiza quantidade de dias);
-   - Indiferente</xs:documentation>
-        </xs:annotation>
-        <xs:complexType>
-          <xs:choice>
-            <xs:element name="equilibrar" type="xs:anySimpleType" />
-            <xs:element name="minimizarDias" type="xs:anySimpleType" />
-            <xs:element name="indiferente" type="xs:anySimpleType" />
-          </xs:choice>
-        </xs:complexType>
-      </xs:element>
-      <xs:element name="minimizarHorariosVaziosProfessor" type="xs:boolean">
-        <xs:annotation>
-          <xs:documentation>parâmetro de planejamento que indica se o resolvedor matemático deverá ou não minimizar gaps (buracos) nos horários dos professores num mesmo dia. Ver requisito RF-PP-1.</xs:documentation>
-        </xs:annotation>
-      </xs:element>
-      <xs:element name="minimizarDiasSemanaProfessor" type="xs:boolean">
-        <xs:annotation>
-          <xs:documentation>parâmetro de planejamento que indica se o resolvedor matemático deverá ou não minimizar o número de dias em que o professor ministra aulas. Ver requisito RF-PP-2.</xs:documentation>
-        </xs:annotation>
-      </xs:element>
       <xs:element name="desempenhoProfDisponibilidade" type="xs:boolean">
         <xs:annotation>
           <xs:documentation>considerar a avaliação de desempenho do professor para desempate de disponibilidade. Ver requisito RF-PP-6.</xs:documentation>
@@ -875,19 +882,74 @@ Maximizar/gerenciar a nota da avaliação institucional média coletiva do corpo
           <xs:documentation>considerar a custo docente do professor para desempate de disponibilidade. Ver requisito RF-PP-7.</xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element name="evitarReducaoCargaHorariaProf" type="xs:boolean">
-        <xs:annotation>
-          <xs:documentation>evitar redução grande de carga horária do docente em relação ao período anterior (para evitar problemas com sindicatos). Ver requisito RF-PP-9.</xs:documentation>
-        </xs:annotation>
-      </xs:element>
       <xs:element name="evitarProfUltimoPrimeiroHor" type="xs:boolean">
         <xs:annotation>
           <xs:documentation>evitar alocação simultânea do professor no último horário do dia e no primeiro horário do dia seguinte. Ver requisito RF-PP-10.</xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element name="minAlunosAberturaTurmas" type="xs:int">
+      <xs:element name="maxDeslocProfessor" type="xs:int">
         <xs:annotation>
-          <xs:documentation>Mínimo de alunos para abertura de turmas</xs:documentation>
+          <xs:documentation>informa o limite superior de deslocamentos de um professor entre campi dentro do mesmo dia. Ver requisito RF-PP-11.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="alunosMesmoPeriodoNaMesmaSala" type="xs:boolean">
+        <xs:annotation>
+          <xs:documentation>Manter alunos do mesmo curso-período na mesma sala</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="permitirAlunosEmVariosCampi" type="xs:boolean">
+        <xs:annotation>
+          <xs:documentation>Permitir que o aluno estude em mais de um Campus</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="permitirProfessorEmVariosCampi" type="xs:boolean">
+        <xs:annotation>
+          <xs:documentation>Permitir que o professor ministre aulas em mais de um Campus</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="preferenciaProfessorDisciplina" type="xs:boolean">
+        <xs:annotation>
+          <xs:documentation>Considerar preferência de professores por disciplinas</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="minAlunosAberturaTurmas" type="xs:boolean">
+        <xs:annotation>
+          <xs:documentation>Número mínimo de alunos para abertura de turma</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="minAlunosAberturaTurmasValor" type="xs:int">
+        <xs:annotation>
+          <xs:documentation>Número mínimo de alunos para abertura de turma (Valor)</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="regrasGenericasDivisaoCredito" type="xs:boolean">
+        <xs:annotation>
+          <xs:documentation>Considerar regras genéricas de divisão de créditos</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="regrasEspecificasDivisaoCredito" type="xs:boolean">
+        <xs:annotation>
+          <xs:documentation>Considerar regras específicas de divisão de créditos</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="percentuaisMinimoMestres" type="xs:boolean">
+        <xs:annotation>
+          <xs:documentation>Considerar percentuais mínimos de mestres</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="percentuaisMinimoDoutores" type="xs:boolean">
+        <xs:annotation>
+          <xs:documentation>Considerar percentuais mínimos de doutores</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="areaTitulacaoProfessorCurso" type="xs:boolean">
+        <xs:annotation>
+          <xs:documentation>Considerar áreas de titulação dos professores e cursos</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="maximoDisciplinasDeUmProfessorPorCurso" type="xs:boolean">
+        <xs:annotation>
+          <xs:documentation>Limitar máximo de disciplinas que um professor pode ministrar por curso</xs:documentation>
         </xs:annotation>
       </xs:element>
     </xs:sequence>
@@ -1152,7 +1214,7 @@ Maximizar/gerenciar a nota da avaliação institucional média coletiva do corpo
       </xs:element>
     </xs:sequence>
   </xs:complexType>
-  <xs:complexType name="ItemAtendimentoCampus">
+  <xs:complexType name="ItemAtendimentoCampusSolucao">
     <xs:sequence>
       <xs:element name="campusId" type="xs:int">
         <xs:annotation>
@@ -1160,14 +1222,14 @@ Maximizar/gerenciar a nota da avaliação institucional média coletiva do corpo
         </xs:annotation>
       </xs:element>
       <xs:element name="campusCodigo" type="xs:string" />
-      <xs:element name="atendimentosUnidades" type="GrupoAtendimentoUnidade">
+      <xs:element name="atendimentosUnidades" type="GrupoAtendimentoUnidadeSolucao">
         <xs:annotation>
           <xs:documentation>lista de todos os atendimentos realizados em cada unidade de um determinado campus que foi considerado no planejamento</xs:documentation>
         </xs:annotation>
       </xs:element>
     </xs:sequence>
   </xs:complexType>
-  <xs:complexType name="ItemAtendimentoUnidade">
+  <xs:complexType name="ItemAtendimentoUnidadeSolucao">
     <xs:sequence>
       <xs:element name="unidadeId" type="xs:int">
         <xs:annotation>
@@ -1175,14 +1237,14 @@ Maximizar/gerenciar a nota da avaliação institucional média coletiva do corpo
         </xs:annotation>
       </xs:element>
       <xs:element name="unidadeCodigo" type="xs:string" />
-      <xs:element name="atendimentosSalas" type="GrupoAtendimentoSala">
+      <xs:element name="atendimentosSalas" type="GrupoAtendimentoSalaSolucao">
         <xs:annotation>
           <xs:documentation>lista de todos os atendimentos realizados em cada sala de uma determinada unidade de um determinado campus que foi considerado no planejamento</xs:documentation>
         </xs:annotation>
       </xs:element>
     </xs:sequence>
   </xs:complexType>
-  <xs:complexType name="ItemAtendimentoSala">
+  <xs:complexType name="ItemAtendimentoSalaSolucao">
     <xs:sequence>
       <xs:element name="salaId" type="xs:int">
         <xs:annotation>
@@ -1190,21 +1252,21 @@ Maximizar/gerenciar a nota da avaliação institucional média coletiva do corpo
         </xs:annotation>
       </xs:element>
       <xs:element name="salaNome" type="xs:string" />
-      <xs:element name="atendimentosDiasSemana" type="GrupoAtendimentoDiaSemana">
+      <xs:element name="atendimentosDiasSemana" type="GrupoAtendimentoDiaSemanaSolucao">
         <xs:annotation>
           <xs:documentation>lista de todos os atendimentos realizados em cada dia da semana numa determinada sala de uma determinada unidade de um determinado campus que foi considerado no planejamento</xs:documentation>
         </xs:annotation>
       </xs:element>
     </xs:sequence>
   </xs:complexType>
-  <xs:complexType name="ItemAtendimentoDiaSemana">
+  <xs:complexType name="ItemAtendimentoDiaSemanaSolucao">
     <xs:sequence>
       <xs:element name="diaSemana" type="xs:int">
         <xs:annotation>
           <xs:documentation>identificador do dia da semana que contém os atendimentos em uma determinada sala de uma determinada unidade de um determinado campus</xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element name="atendimentosTatico" type="GrupoAtendimentoTatico">
+      <xs:element name="atendimentosTatico" type="GrupoAtendimentoTaticoSolucao">
         <xs:annotation>
           <xs:documentation>lista de todas as ofertas atendidas no dia da semana em questão numa determinada sala de uma determinada unidade de um determinado campus</xs:documentation>
         </xs:annotation>
@@ -1249,7 +1311,7 @@ Maximizar/gerenciar a nota da avaliação institucional média coletiva do corpo
       </xs:element>
     </xs:sequence>
   </xs:complexType>
-  <xs:complexType name="ItemAtendimentoOferta">
+  <xs:complexType name="ItemAtendimentoOfertaSolucao">
     <xs:sequence>
       <xs:element name="ofertaCursoCampiId" type="xs:int">
         <xs:annotation>
@@ -1269,9 +1331,9 @@ Maximizar/gerenciar a nota da avaliação institucional média coletiva do corpo
       <xs:element name="turma" type="xs:string" />
     </xs:sequence>
   </xs:complexType>
-  <xs:complexType name="ItemAtendimentoTatico">
+  <xs:complexType name="ItemAtendimentoTaticoSolucao">
     <xs:sequence>
-      <xs:element name="atendimentoOferta" type="ItemAtendimentoOferta">
+      <xs:element name="atendimentoOferta" type="ItemAtendimentoOfertaSolucao">
         <xs:annotation>
           <xs:documentation>representa uma oferta atendida</xs:documentation>
         </xs:annotation>
@@ -1288,36 +1350,36 @@ Maximizar/gerenciar a nota da avaliação institucional média coletiva do corpo
       </xs:element>
     </xs:sequence>
   </xs:complexType>
-  <xs:complexType name="GrupoAtendimentoCampus">
+  <xs:complexType name="GrupoAtendimentoCampusSolucao">
     <xs:sequence minOccurs="0" maxOccurs="unbounded">
-      <xs:element name="AtendimentoCampus" type="ItemAtendimentoCampus">
+      <xs:element name="AtendimentoCampus" type="ItemAtendimentoCampusSolucao">
         <xs:annotation>
           <xs:documentation>contém os atendimentos realizados em um determinado campus que foi considerado no planejamento</xs:documentation>
         </xs:annotation>
       </xs:element>
     </xs:sequence>
   </xs:complexType>
-  <xs:complexType name="GrupoAtendimentoUnidade">
+  <xs:complexType name="GrupoAtendimentoUnidadeSolucao">
     <xs:sequence minOccurs="0" maxOccurs="unbounded">
-      <xs:element name="AtendimentoUnidade" type="ItemAtendimentoUnidade">
+      <xs:element name="AtendimentoUnidade" type="ItemAtendimentoUnidadeSolucao">
         <xs:annotation>
           <xs:documentation>contém os atendimentos realizados em uma determinada unidade de um determinado campus que foi considerado no planejamento</xs:documentation>
         </xs:annotation>
       </xs:element>
     </xs:sequence>
   </xs:complexType>
-  <xs:complexType name="GrupoAtendimentoSala">
+  <xs:complexType name="GrupoAtendimentoSalaSolucao">
     <xs:sequence minOccurs="0" maxOccurs="unbounded">
-      <xs:element name="AtendimentoSala" type="ItemAtendimentoSala">
+      <xs:element name="AtendimentoSala" type="ItemAtendimentoSalaSolucao">
         <xs:annotation>
           <xs:documentation>contém os atendimentos realizados em uma determinada sala de uma determinada unidade de um determinado campus que foi considerado no planejamento</xs:documentation>
         </xs:annotation>
       </xs:element>
     </xs:sequence>
   </xs:complexType>
-  <xs:complexType name="GrupoAtendimentoDiaSemana">
+  <xs:complexType name="GrupoAtendimentoDiaSemanaSolucao">
     <xs:sequence minOccurs="0" maxOccurs="unbounded">
-      <xs:element name="AtendimentoDiaSemana" type="ItemAtendimentoDiaSemana">
+      <xs:element name="AtendimentoDiaSemana" type="ItemAtendimentoDiaSemanaSolucao">
         <xs:annotation>
           <xs:documentation>contém os atendimentos realizados num determinado dia da semana em uma determinada sala de uma determinada unidade de um determinado campus que foi considerado no planejamento</xs:documentation>
         </xs:annotation>
@@ -1344,16 +1406,16 @@ Maximizar/gerenciar a nota da avaliação institucional média coletiva do corpo
   </xs:complexType>
   <xs:complexType name="GrupoAtendimentoOferta">
     <xs:sequence minOccurs="0" maxOccurs="unbounded">
-      <xs:element name="AtendimentoOferta" type="ItemAtendimentoOferta">
+      <xs:element name="AtendimentoOferta" type="ItemAtendimentoOfertaSolucao">
         <xs:annotation>
           <xs:documentation>representa uma oferta atendida</xs:documentation>
         </xs:annotation>
       </xs:element>
     </xs:sequence>
   </xs:complexType>
-  <xs:complexType name="GrupoAtendimentoTatico">
+  <xs:complexType name="GrupoAtendimentoTaticoSolucao">
     <xs:sequence minOccurs="0" maxOccurs="unbounded">
-      <xs:element name="AtendimentoTatico" type="ItemAtendimentoTatico">
+      <xs:element name="AtendimentoTatico" type="ItemAtendimentoTaticoSolucao">
         <xs:annotation>
           <xs:documentation>representa uma oferta atendida</xs:documentation>
         </xs:annotation>
