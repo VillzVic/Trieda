@@ -1298,7 +1298,7 @@ public class ConvertBeans {
 		domain.setMinimizarGapProfessor(dto.getMinimizarGapProfessor());
 		domain.setEvitarReducaoCargaHorariaProfessor(dto.getEvitarReducaoCargaHorariaProfessor());
 		domain.setEvitarReducaoCargaHorariaProfessorValue(dto.getEvitarReducaoCargaHorariaProfessorValue());
-		domain.setEvitarUltimoEPrimeiroHorarioProfessor(dto.getEditarUltimoEPrimeiroHorarioProfessor());
+		domain.setEvitarUltimoEPrimeiroHorarioProfessor(dto.getEvitarUltimoEPrimeiroHorarioProfessor());
 		domain.setPreferenciaDeProfessores(dto.getPreferenciaDeProfessores());
 		domain.setAvaliacaoDesempenhoProfessor(dto.getAvaliacaoDesempenhoProfessor());
 		domain.setMinAlunosParaAbrirTurma(dto.getMinAlunosParaAbrirTurma());
@@ -1333,7 +1333,7 @@ public class ConvertBeans {
 		dto.setMinimizarDeslocamentoProfessor(domain.getMinimizarDeslocamentoProfessor());
 		dto.setMinimizarGapProfessor(domain.getMinimizarGapProfessor());
 		dto.setEvitarReducaoCargaHorariaProfessor(domain.getEvitarReducaoCargaHorariaProfessor());
-		dto.setEditarUltimoEPrimeiroHorarioProfessor(domain.getEvitarUltimoEPrimeiroHorarioProfessor());
+		dto.setEvitarUltimoEPrimeiroHorarioProfessor(domain.getEvitarUltimoEPrimeiroHorarioProfessor());
 		dto.setPreferenciaDeProfessores(domain.getPreferenciaDeProfessores());
 		dto.setAvaliacaoDesempenhoProfessor(domain.getAvaliacaoDesempenhoProfessor());
 		dto.setMinAlunosParaAbrirTurma(domain.getMinAlunosParaAbrirTurma());

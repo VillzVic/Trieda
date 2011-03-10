@@ -44,7 +44,7 @@ public class ParametrosView extends MyComposite implements ParametrosPresenter.D
 	private CheckBox minimizarGapProfessorCheckBox;
 	private CheckBox evitarReducaoCargaHorariaProfessorCheckBox;
 	private NumberField evitarReducaoCargaHorariaProfessorNumberField;
-	private CheckBox editarUltimoEPrimeiroHorarioProfessorCheckBox;
+	private CheckBox evitarUltimoEPrimeiroHorarioProfessorCheckBox;
 	private CheckBox preferenciaDeProfessoresCheckBox;
 	private CheckBox avaliacaoDesempenhoProfessorCheckBox;
 
@@ -139,7 +139,7 @@ public class ParametrosView extends MyComposite implements ParametrosPresenter.D
 		minimizarDeslocamentoProfessorCheckBox = createCheckBox("Minimizar Deslocamentos de Professores entre Campi", parametroDTO.getMinimizarDeslocamentoProfessor());
 		minimizarGapProfessorCheckBox = createCheckBox("Minimizar Gaps nos Horários dos Professores", parametroDTO.getMinimizarGapProfessor());
 		evitarReducaoCargaHorariaProfessorCheckBox = createCheckBox("Evitar Redução de Carga Horária de Professor", parametroDTO.getEvitarReducaoCargaHorariaProfessor());
-		editarUltimoEPrimeiroHorarioProfessorCheckBox = createCheckBox("Evitar alocação de professores no último horário do dia e primeiro do dia seguinte", parametroDTO.getEditarUltimoEPrimeiroHorarioProfessor());
+		evitarUltimoEPrimeiroHorarioProfessorCheckBox = createCheckBox("Evitar alocação de professores no último horário do dia e primeiro do dia seguinte", parametroDTO.getEvitarUltimoEPrimeiroHorarioProfessor());
 		preferenciaDeProfessoresCheckBox = createCheckBox("Considerar preferência de professores por disciplinas", parametroDTO.getPreferenciaDeProfessores());
 		avaliacaoDesempenhoProfessorCheckBox = createCheckBox("Considerar avaliação de desempenho de professores", parametroDTO.getAvaliacaoDesempenhoProfessor());
 		
@@ -148,7 +148,7 @@ public class ParametrosView extends MyComposite implements ParametrosPresenter.D
 		professorLeft.add(minimizarDeslocamentoProfessorCheckBox, formData);
 		professorLeft.add(minimizarGapProfessorCheckBox, formData);
 		professorLeft.add(evitarReducaoCargaHorariaProfessorCheckBox, formData);
-		professorLeft.add(editarUltimoEPrimeiroHorarioProfessorCheckBox, formData);
+		professorLeft.add(evitarUltimoEPrimeiroHorarioProfessorCheckBox, formData);
 		professorLeft.add(preferenciaDeProfessoresCheckBox, formData);
 		professorLeft.add(avaliacaoDesempenhoProfessorCheckBox, formData);
 		
@@ -336,8 +336,8 @@ public class ParametrosView extends MyComposite implements ParametrosPresenter.D
 	}
 
 	@Override
-	public CheckBox getEditarUltimoEPrimeiroHorarioProfessorCheckBox() {
-		return editarUltimoEPrimeiroHorarioProfessorCheckBox;
+	public CheckBox getEvitarUltimoEPrimeiroHorarioProfessorCheckBox() {
+		return evitarUltimoEPrimeiroHorarioProfessorCheckBox;
 	}
 
 	@Override

@@ -22,7 +22,7 @@ public class ParametroDTO extends AbstractDTO<Long> implements Comparable<Parame
 	public static final String PROPERTY_MINIMIZARGAPPROFESSOR = "minimizargapprofessor";
 	public static final String PROPERTY_EVITARREDUCAOCARGAHORARIAPROFESSOR = "evitarreducaocargahorariaprofessor";
 	public static final String PROPERTY_EVITARREDUCAOCARGAHORARIAPROFESSORVALUE = "evitarreducaocargahorariaprofessorvalue";
-	public static final String PROPERTY_EDITARULTIMOEPRIMEIROHORARIOPROFESSOR = "editarultimoeprimeirohorarioprofessor";
+	public static final String PROPERTY_EVITARULTIMOEPRIMEIROHORARIOPROFESSOR = "evitarultimoeprimeirohorarioprofessor";
 	public static final String PROPERTY_PREFERENCIADEPROFESSORES = "preferenciadeprofessores";
 	public static final String PROPERTY_AVALIACAODESEMPENHOPROFESSOR = "avaliacaodesempenhoprofessor";
 	public static final String PROPERTY_NIVELDIFICULDADEDISCIPLINA = "niveldificuldadedisciplina";
@@ -127,11 +127,11 @@ public class ParametroDTO extends AbstractDTO<Long> implements Comparable<Parame
 		set(PROPERTY_EVITARREDUCAOCARGAHORARIAPROFESSOR, value);
 	}
 
-	public Boolean getEditarUltimoEPrimeiroHorarioProfessor() {
-		return get(PROPERTY_EDITARULTIMOEPRIMEIROHORARIOPROFESSOR);
+	public Boolean getEvitarUltimoEPrimeiroHorarioProfessor() {
+		return get(PROPERTY_EVITARULTIMOEPRIMEIROHORARIOPROFESSOR);
 	}
-	public void setEditarUltimoEPrimeiroHorarioProfessor(Boolean value) {
-		set(PROPERTY_EDITARULTIMOEPRIMEIROHORARIOPROFESSOR, value);
+	public void setEvitarUltimoEPrimeiroHorarioProfessor(Boolean value) {
+		set(PROPERTY_EVITARULTIMOEPRIMEIROHORARIOPROFESSOR, value);
 	}
 
 	public Boolean getPreferenciaDeProfessores() {

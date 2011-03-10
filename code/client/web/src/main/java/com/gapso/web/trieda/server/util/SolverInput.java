@@ -1,8 +1,6 @@
 package com.gapso.web.trieda.server.util;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -10,6 +8,7 @@ import java.util.Set;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.gapso.trieda.domain.AreaTitulacao;
+import com.gapso.trieda.domain.AtendimentoTatico;
 import com.gapso.trieda.domain.Campus;
 import com.gapso.trieda.domain.Cenario;
 import com.gapso.trieda.domain.Curriculo;
@@ -69,6 +68,12 @@ import com.gapso.web.trieda.server.xml.input.GrupoTipoTitulacao;
 import com.gapso.web.trieda.server.xml.input.GrupoTurno;
 import com.gapso.web.trieda.server.xml.input.GrupoUnidade;
 import com.gapso.web.trieda.server.xml.input.ItemAreaTitulacao;
+import com.gapso.web.trieda.server.xml.input.ItemAtendimentoCampusSolucao;
+import com.gapso.web.trieda.server.xml.input.ItemAtendimentoDiaSemanaSolucao;
+import com.gapso.web.trieda.server.xml.input.ItemAtendimentoOfertaSolucao;
+import com.gapso.web.trieda.server.xml.input.ItemAtendimentoSalaSolucao;
+import com.gapso.web.trieda.server.xml.input.ItemAtendimentoTaticoSolucao;
+import com.gapso.web.trieda.server.xml.input.ItemAtendimentoUnidadeSolucao;
 import com.gapso.web.trieda.server.xml.input.ItemCalendario;
 import com.gapso.web.trieda.server.xml.input.ItemCampus;
 import com.gapso.web.trieda.server.xml.input.ItemCreditoDisponivel;
@@ -116,18 +121,18 @@ public class SolverInput {
 
 	@Transactional
 	public TriedaInput generateTaticoTriedaInput() {
-		generateTatico();
+		generate(true);
 		return triedaInput;
 	}
 	
 	@Transactional
 	public TriedaInput generateOperacionalTriedaInput() {
-		generateOperacional();
+		generate(false);
 		return triedaInput;
 	}
 	
 	@Transactional
-	private void generateTatico() {
+	private void generate(boolean tatico) {
 		generateCalendario();
 		generateTiposSala();
 		generateTiposContrato();
@@ -137,39 +142,18 @@ public class SolverInput {
 		generateNiveisDificuldade();
 		generateTiposCurso();
 		generateDivisoesDeCredito();
-		generateCampi(true);
+		generateCampi(tatico);
 		generateDeslocamentoCampi();
 		generateDeslocamentoUnidades();
 		generateDisciplinas();
 		generateCurso();
 		generateOfertaCursoCampi();
 		generateDemandas();
-		generateParametrosPlanejamento();
+		generateParametrosPlanejamento(tatico);
 		generateFixacoes();
-		ordenandoListas();
-	}
-	
-	@Transactional
-	private void generateOperacional() {
-		generateCalendario();
-		generateTiposSala();
-		generateTiposContrato();
-		generateTiposTitulacao();
-		generateAreasTitulacao();
-		generateTiposDisciplina();
-		generateNiveisDificuldade();
-		generateTiposCurso();
-		generateDivisoesDeCredito();
-		generateCampi(false);
-		generateDeslocamentoCampi();
-		generateDeslocamentoUnidades();
-		generateDisciplinas();
-		generateCurso();
-		generateOfertaCursoCampi();
-		generateDemandas();
-		generateParametrosPlanejamento();
-		generateFixacoes();
-		ordenandoListas();
+		if(!tatico) {
+			generateTaticoInput();
+		}
 	}
 
 	@Transactional
@@ -597,14 +581,13 @@ public class SolverInput {
 		triedaInput.setDemandas(grupoDemanda);
 	}
 	
-	private void generateParametrosPlanejamento() {
+	private void generateParametrosPlanejamento(boolean tatico) {
 		
 		Parametro parametro = cenario.getParametro();
 		
 		ItemParametrosPlanejamento itemParametrosPlanejamento = of.createItemParametrosPlanejamento();
 		
-		// TODO
-		itemParametrosPlanejamento.setModoOtimizacao("OPERACIONAL");
+		itemParametrosPlanejamento.setModoOtimizacao(tatico ? "TATICO" : "OPERACIONAL");
 		
 		CargaHorariaSemanalAluno cargaHorariaSemanalAluno = of.createItemParametrosPlanejamentoCargaHorariaSemanalAluno();
 		cargaHorariaSemanalAluno.setIndiferente("");
@@ -664,98 +647,13 @@ public class SolverInput {
 		itemParametrosPlanejamento.setCustoProfDisponibilidade(false);
 
 		triedaInput.setParametrosPlanejamento(itemParametrosPlanejamento);
-		
-//		Parametro parametro = cenario.getParametro();
-//		
-//		ItemParametrosPlanejamento itemParametrosPlanejamento = of.createItemParametrosPlanejamento();
-//		
-//		CargaHorariaSemanalAluno cargaHorariaSemanalAluno = of.createItemParametrosPlanejamentoCargaHorariaSemanalAluno();
-//		if(parametro.getCargaHorariaAlunoSel().equals(CargaHoraria.CONCENTRAR)) {
-//			cargaHorariaSemanalAluno.setMinimizarDias("");
-//		} else if(parametro.getCargaHorariaAlunoSel().equals(CargaHoraria.DISTRIBUIR)) {
-//			cargaHorariaSemanalAluno.setEquilibrar("");
-//		} else if(parametro.getCargaHorariaAlunoSel().equals(CargaHoraria.INDIFERENTE)) {
-//			cargaHorariaSemanalAluno.setIndiferente("");
-//		}
-//		itemParametrosPlanejamento.setCargaHorariaSemanalAluno(cargaHorariaSemanalAluno);
-		
-//		itemParametrosPlanejamento.set
-		
-		
-		
-		
-//		dto.setAlunoDePeriodoMesmaSala(display.getAlunoDePeriodoMesmaSalaCheckBox().getValue());
-//		itemParametrosPlanejamento.set
-		
-//		dto.setAlunoEmMuitosCampi(display.getAlunoEmMuitosCampiCheckBox().getValue());
-//		dto.setMinimizarDeslocamentoAluno(display.getMinimizarDeslocamentoAlunoCheckBox().getValue());
-//
-//		dto.setCargaHorariaProfessor(display.getCargaHorariaProfessorCheckBox().getValue());
-//		dto.setCargaHorariaProfessorSel(display.getCargaHorariaProfessorComboBox().getValueString());
-//		dto.setProfessorEmMuitosCampi(display.getProfessorEmMuitosCampiCheckBox().getValue());
-//		dto.setMinimizarDeslocamentoProfessor(display.getMinimizarDeslocamentoProfessorCheckBox().getValue());
-//		Number minimizarDeslocamentoProfessorValue = display.getMinimizarDeslocamentoProfessorNumberField().getValue();
-//		if(minimizarDeslocamentoProfessorValue == null) minimizarDeslocamentoProfessorValue = 0;
-//		dto.setMinimizarDeslocamentoProfessorValue(minimizarDeslocamentoProfessorValue.intValue());
-//		dto.setMinimizarGapProfessor(display.getMinimizarGapProfessorCheckBox().getValue());
-//		dto.setEvitarReducaoCargaHorariaProfessor(display.getEvitarReducaoCargaHorariaProfessorCheckBox().getValue());
-//		Number evitarReducaoCargaHorariaProfessorValue = display.getEvitarReducaoCargaHorariaProfessorNumberField().getValue();
-//		if(evitarReducaoCargaHorariaProfessorValue == null) evitarReducaoCargaHorariaProfessorValue = 0;
-//		dto.setEvitarReducaoCargaHorariaProfessorValue(evitarReducaoCargaHorariaProfessorValue.intValue());
-//		dto.setEditarUltimoEPrimeiroHorarioProfessor(display.getEditarUltimoEPrimeiroHorarioProfessorCheckBox().getValue());
-//		dto.setPreferenciaDeProfessores(display.getPreferenciaDeProfessoresCheckBox().getValue());
-//		dto.setAvaliacaoDesempenhoProfessor(display.getAvaliacaoDesempenhoProfessorCheckBox().getValue());
-//
-//		dto.setNivelDificuldadeDisciplina(display.getNivelDificuldadeDisciplinaCheckBox().getValue());
-//		dto.setCompatibilidadeDisciplinasMesmoDia(display.getCompatibilidadeDisciplinasMesmoDiaCheckBox().getValue());
-//		dto.setRegrasGenericasDivisaoCredito(display.getRegrasGenericasDivisaoCreditoCheckBox().getValue());
-//		dto.setRegrasEspecificasDivisaoCredito(display.getRegrasEspecificasDivisaoCreditoCheckBox().getValue());
-//		dto.setMaximizarNotaAvaliacaoCorpoDocente(display.getMaximizarNotaAvaliacaoCorpoDocenteCheckBox().getValue());
-//		dto.setMinimizarCustoDocenteCursos(display.getMinimizarCustoDocenteCursosCheckBox().getValue());
-//		dto.setMinAlunosParaAbrirTurma(display.getMinAlunosParaAbrirTurmaCheckBox().getValue());
-//		Number minAlunosParaAbrirTurmaValue = display.getMinAlunosParaAbrirTurmaValueNumberField().getValue();
-//		if(minAlunosParaAbrirTurmaValue == null) minAlunosParaAbrirTurmaValue = 0;
-//		dto.setMinAlunosParaAbrirTurmaValue(minAlunosParaAbrirTurmaValue.intValue());
-//		dto.setCompartilharDisciplinasCampi(display.getCompartilharDisciplinasCampiCheckBox().getValue());
-//		dto.setPercentuaisMinimosMestres(display.getPercentuaisMinimosMestresCheckBox().getValue());
-//		dto.setPercentuaisMinimosDoutores(display.getPercentuaisMinimosDoutoresCheckBox().getValue());
-//		dto.setAreaTitulacaoProfessoresECursos(display.getAreaTitulacaoProfessoresECursosCheckBox().getValue());
-//		dto.setLimitarMaximoDisciplinaProfessor(display.getLimitarMaximoDisciplinaProfessorCheckBox().getValue());
-		
-		
-//		itemParametrosPlanejamento.setEquilibrarDiversidadeDiscDia(false);
-//		itemParametrosPlanejamento.setMinimizarDeslocProfessor(false);
-//		itemParametrosPlanejamento.setMinimizarDeslocAluno(false);
-//		itemParametrosPlanejamento.setMaxDeslocProfessor(100);
-//		GrupoIdentificador grupoIdentificador = of.createGrupoIdentificador();
-//		Set<Curso> cursos = cenario.getCursos();
-//		for(Curso curso : cursos) {
-//			grupoIdentificador.getId().add(curso.getId().intValue());
-//		}
-//		itemParametrosPlanejamento.setMinimizarCustoDocenteCursos(grupoIdentificador);
-//		GrupoGrupo grupoGrupo = of.createGrupoGrupo();
-//		grupoGrupo.getGrupoIdentificador().add(grupoIdentificador);
-//		itemParametrosPlanejamento.setPermiteCompartilhamentoTurma(grupoGrupo);
-//		itemParametrosPlanejamento.setMinimizarHorariosVaziosProfessor(true);
-//		itemParametrosPlanejamento.setMinimizarDiasSemanaProfessor(true);
-//		itemParametrosPlanejamento.setDesempenhoProfDisponibilidade(false);
-//		itemParametrosPlanejamento.setCustoProfDisponibilidade(false);
-//		itemParametrosPlanejamento.setEvitarReducaoCargaHorariaProf(false);
-//		itemParametrosPlanejamento.setEvitarProfUltimoPrimeiroHor(false);
-//		itemParametrosPlanejamento.setMaximizarAvaliacaoCursos(of.createGrupoIdentificador());
-//		itemParametrosPlanejamento.setNiveisDificuldadeHorario(of.createGrupoNivelDificuldadeHorario());
-//		
-//		itemParametrosPlanejamento.setCargaHorariaSemanalAluno(new CargaHorariaSemanalAluno());
-//		itemParametrosPlanejamento.getCargaHorariaSemanalAluno().setIndiferente("");
-		
-//		triedaInput.setParametrosPlanejamento(itemParametrosPlanejamento);
 	}
 	
 	private void generateFixacoes() {
 		int id = 1;
 		GrupoFixacao grupoFixacao = of.createGrupoFixacao();
 
-		List<Fixacao> fixacoes = Fixacao.findAll();
+		List<Fixacao> fixacoes = Fixacao.findAll(); // Pegar fixações do cenário
 		for(Fixacao fixacao : fixacoes) {
 			Set<HorarioDisponivelCenario> horarios = fixacao.getHorarios();
 			if(horarios.size() > 0) {
@@ -786,65 +684,124 @@ public class SolverInput {
 		triedaInput.setFixacoes(grupoFixacao);
 	}
 	
-	// ORDENANDO LISTAS
-	private void ordenandoListas() {
-		System.out.println("Inicio: Ordenando");
-		
-		// CAMPI
-		Collections.sort(triedaInput.getCampi().getCampus(), new Comparator<ItemCampus>() {
-			@Override
-			public int compare(ItemCampus o1, ItemCampus o2) {
-				return o1.getCodigo().compareToIgnoreCase(o2.getCodigo());
+	private void generateTaticoInput() {
+		Set<AtendimentoTatico> ats = cenario.getAtendimentosTaticos();
+		for(AtendimentoTatico at : ats) {
+			createItemAtendimentoTaticoSolucao(at.getSala(), at.getSemana(), at.getOferta(), at.getDisciplina(), at.getQuantidadeAlunos(), at.getTurma(), at.getCreditosTeorico(), at.getCreditosPratico());
+		}
+	}
+	private ItemAtendimentoCampusSolucao getItemAtendimentoCampusSolucao(Campus campus) {
+		if(triedaInput.getAtendimentosTatico() == null) {
+			triedaInput.setAtendimentosTatico(of.createGrupoAtendimentoCampusSolucao());
+		}
+		for(ItemAtendimentoCampusSolucao atSolucao : triedaInput.getAtendimentosTatico().getAtendimentoCampus()) {
+			if(atSolucao.getCampusId() == campus.getId().intValue()) {
+				return atSolucao;
 			}
-		});
-		
-		for(ItemCampus itemCampus : triedaInput.getCampi().getCampus()) {
-			// Unidade
-			Collections.sort(itemCampus.getUnidades().getUnidade(), new Comparator<ItemUnidade>() {
-				@Override
-				public int compare(ItemUnidade o1, ItemUnidade o2) {
-					return o1.getCodigo().compareToIgnoreCase(o2.getCodigo());
+		}
+		ItemAtendimentoCampusSolucao atSolucao = of.createItemAtendimentoCampusSolucao();
+		atSolucao.setCampusId(campus.getId().intValue());
+		atSolucao.setCampusCodigo(campus.getCodigo());
+		triedaInput.getAtendimentosTatico().getAtendimentoCampus().add(atSolucao);
+		return atSolucao;
+	}
+	private ItemAtendimentoUnidadeSolucao getItemAtendimentoUnidadeSolucao(Unidade unidade) {
+		for(ItemAtendimentoCampusSolucao atCampusSolucao : triedaInput.getAtendimentosTatico().getAtendimentoCampus()) {
+			if(atCampusSolucao.getAtendimentosUnidades() == null) {
+				atCampusSolucao.setAtendimentosUnidades(of.createGrupoAtendimentoUnidadeSolucao());
+			}
+			for(ItemAtendimentoUnidadeSolucao atUnidadeSolucao : atCampusSolucao.getAtendimentosUnidades().getAtendimentoUnidade()) {
+				if(atUnidadeSolucao.getUnidadeId() == unidade.getId().intValue()) {
+					return atUnidadeSolucao;
 				}
-			});
+			}
 			
-			for(ItemUnidade itemUnidade : itemCampus.getUnidades().getUnidade()) {
-				// Sala
-				Collections.sort(itemUnidade.getSalas().getSala(), new Comparator<ItemSala>() {
-					@Override
-					public int compare(ItemSala o1, ItemSala o2) {
-						return o1.getCodigo().compareToIgnoreCase(o2.getCodigo());
-					}
-				});
-			}
 		}
-		
-		// DISCIPLINA
-		Collections.sort(triedaInput.getDisciplinas().getDisciplina(), new Comparator<ItemDisciplina>() {
-			@Override
-			public int compare(ItemDisciplina o1, ItemDisciplina o2) {
-				return o1.getCodigo().compareToIgnoreCase(o2.getCodigo());
+		ItemAtendimentoUnidadeSolucao atUnidadeSolucao = of.createItemAtendimentoUnidadeSolucao();
+		atUnidadeSolucao.setUnidadeId(unidade.getId().intValue());
+		atUnidadeSolucao.setUnidadeCodigo(unidade.getCodigo());
+		ItemAtendimentoCampusSolucao atCampusSolucao = getItemAtendimentoCampusSolucao(unidade.getCampus());
+		if(atCampusSolucao.getAtendimentosUnidades() == null) atCampusSolucao.setAtendimentosUnidades(of.createGrupoAtendimentoUnidadeSolucao());
+		atCampusSolucao.getAtendimentosUnidades().getAtendimentoUnidade().add(atUnidadeSolucao);
+		return atUnidadeSolucao;
+	}
+	private ItemAtendimentoSalaSolucao getItemAtendimentoSalaSolucao(Sala sala) {
+		if(triedaInput.getAtendimentosTatico() == null) {
+			triedaInput.setAtendimentosTatico(of.createGrupoAtendimentoCampusSolucao());
+		}
+		for(ItemAtendimentoCampusSolucao atCampusSolucao : triedaInput.getAtendimentosTatico().getAtendimentoCampus()) {
+			if(atCampusSolucao.getAtendimentosUnidades() == null) {
+				atCampusSolucao.setAtendimentosUnidades(of.createGrupoAtendimentoUnidadeSolucao());
 			}
-		});
-		
-		// DISCIPLINA
-		Collections.sort(triedaInput.getDemandas().getDemanda(), new Comparator<ItemDemanda>() {
-			@Override
-			public int compare(ItemDemanda o1, ItemDemanda o2) {
-				return o1.getQuantidade() - o2.getQuantidade();
-			}
-		});
-		
-		// HORARIO AULA
-		for(ItemTurno itemTurno : triedaInput.getCalendario().getTurnos().getTurno()) {
-			Collections.sort(itemTurno.getHorariosAula().getHorarioAula(), new Comparator<ItemHorarioAula>() {
-				@Override
-				public int compare(ItemHorarioAula o1, ItemHorarioAula o2) {
-					return o1.getInicio().compare(o2.getInicio());
+			for(ItemAtendimentoUnidadeSolucao atUnidadeSolucao : atCampusSolucao.getAtendimentosUnidades().getAtendimentoUnidade()) {
+				if(atUnidadeSolucao.getAtendimentosSalas() == null) {
+					atUnidadeSolucao.setAtendimentosSalas(of.createGrupoAtendimentoSalaSolucao());
 				}
-			});
+				for(ItemAtendimentoSalaSolucao atSalaSolucao : atUnidadeSolucao.getAtendimentosSalas().getAtendimentoSala()) {
+					if(atSalaSolucao.getSalaId() == sala.getId().intValue()) {
+						return atSalaSolucao;
+					}
+				}
+			}
 		}
+		ItemAtendimentoSalaSolucao atSalaSolucao = of.createItemAtendimentoSalaSolucao();
+		atSalaSolucao.setSalaId(sala.getId().intValue());
+		atSalaSolucao.setSalaNome(sala.getCodigo());
+		ItemAtendimentoUnidadeSolucao atUnidadeSolucao = getItemAtendimentoUnidadeSolucao(sala.getUnidade());
+		if(atUnidadeSolucao.getAtendimentosSalas() == null) atUnidadeSolucao.setAtendimentosSalas(of.createGrupoAtendimentoSalaSolucao());
+		atUnidadeSolucao.getAtendimentosSalas().getAtendimentoSala().add(atSalaSolucao);
+		return atSalaSolucao;
+	}
+	private ItemAtendimentoDiaSemanaSolucao getItemAtendimentoDiaSemanaSolucao(Sala sala, Semanas semana) {
+		if(triedaInput.getAtendimentosTatico() == null) {
+			triedaInput.setAtendimentosTatico(of.createGrupoAtendimentoCampusSolucao());
+		}
+		for(ItemAtendimentoCampusSolucao atCampusSolucao : triedaInput.getAtendimentosTatico().getAtendimentoCampus()) {
+			if(atCampusSolucao.getAtendimentosUnidades() == null) {
+				atCampusSolucao.setAtendimentosUnidades(of.createGrupoAtendimentoUnidadeSolucao());
+			}
+			for(ItemAtendimentoUnidadeSolucao atUnidadeSolucao : atCampusSolucao.getAtendimentosUnidades().getAtendimentoUnidade()) {
+				if(atUnidadeSolucao.getAtendimentosSalas() == null) {
+					atUnidadeSolucao.setAtendimentosSalas(of.createGrupoAtendimentoSalaSolucao());
+				}
+				for(ItemAtendimentoSalaSolucao atSalaSolucao : atUnidadeSolucao.getAtendimentosSalas().getAtendimentoSala()) {
+					if(atSalaSolucao.getSalaId() != sala.getId().intValue()) continue;
+					if(atSalaSolucao.getAtendimentosDiasSemana() == null) {
+						atSalaSolucao.setAtendimentosDiasSemana(of.createGrupoAtendimentoDiaSemanaSolucao());
+					}
+					for(ItemAtendimentoDiaSemanaSolucao atDiaSemanaSolucao : atSalaSolucao.getAtendimentosDiasSemana().getAtendimentoDiaSemana()) {
+						if(Semanas.get(atDiaSemanaSolucao.getDiaSemana()).equals(semana)) {
+							return atDiaSemanaSolucao;
+						}
+					}
+				}
+			}
+		}
+		ItemAtendimentoDiaSemanaSolucao atDiaSemanaSolucao = of.createItemAtendimentoDiaSemanaSolucao();
+		atDiaSemanaSolucao.setDiaSemana(Semanas.toInt(semana));
+		ItemAtendimentoSalaSolucao atSalaSolucao = getItemAtendimentoSalaSolucao(sala);
+		if(atSalaSolucao.getAtendimentosDiasSemana() == null) atSalaSolucao.setAtendimentosDiasSemana(of.createGrupoAtendimentoDiaSemanaSolucao());
+		atSalaSolucao.getAtendimentosDiasSemana().getAtendimentoDiaSemana().add(atDiaSemanaSolucao);
+		return atDiaSemanaSolucao;
+	}
+	private ItemAtendimentoTaticoSolucao createItemAtendimentoTaticoSolucao(Sala sala, Semanas semana, Oferta oferta, Disciplina disciplina, int quantidade, String turma, int qtdCreditosTeoricos, int qtdCreditosPraticos) {
+		ItemAtendimentoDiaSemanaSolucao atDiaSemanaSolucao = getItemAtendimentoDiaSemanaSolucao(sala, semana);
 		
-		System.out.println("Fim: Ordenando");
+		ItemAtendimentoOfertaSolucao atOfertaSolucao = of.createItemAtendimentoOfertaSolucao();
+		atOfertaSolucao.setOfertaCursoCampiId(oferta.getId().intValue());
+		atOfertaSolucao.setDisciplinaId(disciplina.getId().intValue());
+		atOfertaSolucao.setQuantidade(quantidade);
+		atOfertaSolucao.setTurma(turma);
+		
+		ItemAtendimentoTaticoSolucao atTaticoSolucao = of.createItemAtendimentoTaticoSolucao();
+		atTaticoSolucao.setAtendimentoOferta(atOfertaSolucao);
+		atTaticoSolucao.setQtdeCreditosPraticos(qtdCreditosPraticos);
+		atTaticoSolucao.setQtdeCreditosTeoricos(qtdCreditosTeoricos);
+		
+		if(atDiaSemanaSolucao.getAtendimentosTatico() == null) atDiaSemanaSolucao.setAtendimentosTatico(of.createGrupoAtendimentoTaticoSolucao());
+		atDiaSemanaSolucao.getAtendimentosTatico().getAtendimentoTatico().add(atTaticoSolucao);
+		
+		return atTaticoSolucao;
 	}
 	
 	/* **************

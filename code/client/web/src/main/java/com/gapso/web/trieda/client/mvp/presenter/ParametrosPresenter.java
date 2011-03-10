@@ -46,7 +46,7 @@ public class ParametrosPresenter implements Presenter {
 		CheckBox getMinimizarGapProfessorCheckBox();
 		CheckBox getEvitarReducaoCargaHorariaProfessorCheckBox();
 		NumberField getEvitarReducaoCargaHorariaProfessorNumberField();
-		CheckBox getEditarUltimoEPrimeiroHorarioProfessorCheckBox();
+		CheckBox getEvitarUltimoEPrimeiroHorarioProfessorCheckBox();
 		CheckBox getPreferenciaDeProfessoresCheckBox();
 		CheckBox getAvaliacaoDesempenhoProfessorCheckBox();
 		CheckBox getNivelDificuldadeDisciplinaCheckBox();
@@ -179,7 +179,7 @@ public class ParametrosPresenter implements Presenter {
 		Number evitarReducaoCargaHorariaProfessorValue = display.getEvitarReducaoCargaHorariaProfessorNumberField().getValue();
 		if(evitarReducaoCargaHorariaProfessorValue == null) evitarReducaoCargaHorariaProfessorValue = 0;
 		dto.setEvitarReducaoCargaHorariaProfessorValue(evitarReducaoCargaHorariaProfessorValue.intValue());
-		dto.setEditarUltimoEPrimeiroHorarioProfessor(display.getEditarUltimoEPrimeiroHorarioProfessorCheckBox().getValue());
+		dto.setEvitarUltimoEPrimeiroHorarioProfessor(display.getEvitarUltimoEPrimeiroHorarioProfessorCheckBox().getValue());
 		dto.setPreferenciaDeProfessores(display.getPreferenciaDeProfessoresCheckBox().getValue());
 		dto.setAvaliacaoDesempenhoProfessor(display.getAvaliacaoDesempenhoProfessorCheckBox().getValue());
 
