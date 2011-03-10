@@ -46,5 +46,4 @@ public class MyComposite extends Composite implements HasWidgets, ITriedaI18nGat
 		// TODO Auto-generated method stub
 		return false;
 	}
-
 }

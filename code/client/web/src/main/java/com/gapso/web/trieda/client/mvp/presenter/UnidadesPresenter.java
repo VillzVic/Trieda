@@ -11,9 +11,6 @@ import com.extjs.gxt.ui.client.widget.Component;
 import com.extjs.gxt.ui.client.widget.Info;
 import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.button.Button;
-import com.extjs.gxt.ui.client.widget.form.FormPanel;
-import com.extjs.gxt.ui.client.widget.form.FormPanel.Method;
-import com.extjs.gxt.ui.client.widget.form.HiddenField;
 import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.gapso.web.trieda.client.i18n.ITriedaI18nGateway;
 import com.gapso.web.trieda.client.mvp.view.HorarioDisponivelUnidadeFormView;
@@ -25,6 +22,7 @@ import com.gapso.web.trieda.client.services.Services;
 import com.gapso.web.trieda.client.services.UnidadesServiceAsync;
 import com.gapso.web.trieda.client.util.view.AbstractAsyncCallbackWithDefaultOnFailure;
 import com.gapso.web.trieda.client.util.view.CampusComboBox;
+import com.gapso.web.trieda.client.util.view.ExportExcelFormSubmit;
 import com.gapso.web.trieda.client.util.view.GTab;
 import com.gapso.web.trieda.client.util.view.GTabItem;
 import com.gapso.web.trieda.client.util.view.SimpleGrid;
@@ -32,9 +30,8 @@ import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.HorarioDisponivelCenarioDTO;
 import com.gapso.web.trieda.shared.dtos.UnidadeDTO;
-import com.google.gwt.core.client.GWT;
+import com.gapso.web.trieda.shared.excel.ExportedInformationType;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.googlecode.future.FutureResult;
 import com.googlecode.future.FutureSynchronizer;
@@ -132,20 +129,8 @@ public class UnidadesPresenter implements Presenter {
 		display.getExportExcelButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
 			@Override
 			public void componentSelected(ButtonEvent ce) {
-				//MessageBox.info("Informação","FUNCIONALIDADE EM CONSTRUÇÃO!",null);// TODO: implementar funcionalidade
-                
-				FormPanel formPanel = new FormPanel();
-				HiddenField<String> hiddenVal = new HiddenField<String>();
-				hiddenVal.setName("exportedInformationType");//hiddenVal.setName(ExportedInformationType.getParameterName());
-				hiddenVal.setValue("UNIDADES");//hiddenVal.setValue(ExportedInformationType.UNIDADES.toString());
-
-                String url = GWT.getModuleBaseURL() + "exportExcelServlet";
-
-                formPanel.add(hiddenVal);
-                formPanel.setMethod(Method.GET);
-                formPanel.setAction(url);
-                RootPanel.get().add(formPanel);
-                formPanel.submit();
+				ExportExcelFormSubmit e = new ExportExcelFormSubmit(ExportedInformationType.UNIDADES);
+				e.submit();
 			}
 		});
 		display.getResetBuscaButton().addSelectionListener(new SelectionListener<ButtonEvent>(){

@@ -1,7 +1,6 @@
 package com.gapso.web.trieda.server.excel;
 
 import java.io.IOException;
-import java.io.InputStream;
 
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
@@ -11,16 +10,10 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
+import com.gapso.web.trieda.shared.excel.ExportedInformationType;
+
 public class ExportExcelServlet extends HttpServlet {
 	
-	public static enum ExportedInformationType {
-		UNIDADES;
-		
-		public static String getParameterName() {
-			return "exportedInformationType";
-		}
-	}
-
 	private static final long serialVersionUID = -7987228694777660184L;
 
 	@Override
@@ -28,18 +21,17 @@ public class ExportExcelServlet extends HttpServlet {
 		boolean success = false;
 		
 		// Obtém os parâmetros
-		String exportedInformationType = request.getParameter(ExportedInformationType.getParameterName());
-		
-		if (!exportedInformationType.isEmpty()) {
+		String informationToBeExported = request.getParameter(ExportedInformationType.getParameterName());
+		if (!informationToBeExported.isEmpty()) {
 			// Get Excel Data
-			HSSFWorkbook excel = generateExcel();// = new ExportService().generateExcelReport();
-
-			// Write data on response output stream
-			writeExcelToHttpResponse("arq_teste",excel,response);
+			IExportExcel exporter = ExportExcelFactory.createExporter(informationToBeExported);			
+			HSSFWorkbook workbook = exporter.export();
 			
-			success = true;
-		} else {
-			success = false;
+			if (exporter.getErrors().isEmpty()) {
+				// Write data on response output stream
+				writeExcelToHttpResponse(exporter.getFileName(),workbook,response);
+				success = true;
+			}			
 		}
 		
 		if (!success) {
@@ -63,24 +55,5 @@ public class ExportExcelServlet extends HttpServlet {
 		        out.close();
 			}
 		}
-	}
-	
-	private HSSFWorkbook generateExcel() throws IOException {
-		return getExcelTemplate("/templateTagHorimetro.xls");
-	}
-	
-	private HSSFWorkbook getExcelTemplate(String caminhoExcelTemplate) throws IOException {
-		final InputStream inTemplate = ExportExcelServlet.class.getResourceAsStream(caminhoExcelTemplate);
-		HSSFWorkbook workBook = null;
-		try {
-			workBook = new HSSFWorkbook(inTemplate);
-		} catch (IOException e) {
-			throw e;
-		} finally {
-			if (inTemplate != null) {
-				inTemplate.close();
-			}
-		}
-		return workBook;
 	}
 }
