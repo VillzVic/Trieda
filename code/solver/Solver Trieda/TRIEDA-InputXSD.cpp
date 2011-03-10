@@ -2761,6 +2761,42 @@ cargaHorariaSemanalAluno (::std::auto_ptr< cargaHorariaSemanalAluno_type > x)
   this->cargaHorariaSemanalAluno_.set (x);
 }
 
+const ItemParametrosPlanejamento::alunosMesmoPeriodoNaMesmaSala_type& ItemParametrosPlanejamento::
+alunosMesmoPeriodoNaMesmaSala () const
+{
+  return this->alunosMesmoPeriodoNaMesmaSala_.get ();
+}
+
+ItemParametrosPlanejamento::alunosMesmoPeriodoNaMesmaSala_type& ItemParametrosPlanejamento::
+alunosMesmoPeriodoNaMesmaSala ()
+{
+  return this->alunosMesmoPeriodoNaMesmaSala_.get ();
+}
+
+void ItemParametrosPlanejamento::
+alunosMesmoPeriodoNaMesmaSala (const alunosMesmoPeriodoNaMesmaSala_type& x)
+{
+  this->alunosMesmoPeriodoNaMesmaSala_.set (x);
+}
+
+const ItemParametrosPlanejamento::permitirAlunosEmVariosCampi_type& ItemParametrosPlanejamento::
+permitirAlunosEmVariosCampi () const
+{
+  return this->permitirAlunosEmVariosCampi_.get ();
+}
+
+ItemParametrosPlanejamento::permitirAlunosEmVariosCampi_type& ItemParametrosPlanejamento::
+permitirAlunosEmVariosCampi ()
+{
+  return this->permitirAlunosEmVariosCampi_.get ();
+}
+
+void ItemParametrosPlanejamento::
+permitirAlunosEmVariosCampi (const permitirAlunosEmVariosCampi_type& x)
+{
+  this->permitirAlunosEmVariosCampi_.set (x);
+}
+
 const ItemParametrosPlanejamento::minimizarDeslocAluno_type& ItemParametrosPlanejamento::
 minimizarDeslocAluno () const
 {
@@ -2803,6 +2839,24 @@ cargaHorariaSemanalProfessor (::std::auto_ptr< cargaHorariaSemanalProfessor_type
   this->cargaHorariaSemanalProfessor_.set (x);
 }
 
+const ItemParametrosPlanejamento::permitirProfessorEmVariosCampi_type& ItemParametrosPlanejamento::
+permitirProfessorEmVariosCampi () const
+{
+  return this->permitirProfessorEmVariosCampi_.get ();
+}
+
+ItemParametrosPlanejamento::permitirProfessorEmVariosCampi_type& ItemParametrosPlanejamento::
+permitirProfessorEmVariosCampi ()
+{
+  return this->permitirProfessorEmVariosCampi_.get ();
+}
+
+void ItemParametrosPlanejamento::
+permitirProfessorEmVariosCampi (const permitirProfessorEmVariosCampi_type& x)
+{
+  this->permitirProfessorEmVariosCampi_.set (x);
+}
+
 const ItemParametrosPlanejamento::minimizarDeslocProfessor_type& ItemParametrosPlanejamento::
 minimizarDeslocProfessor () const
 {
@@ -2819,6 +2873,30 @@ void ItemParametrosPlanejamento::
 minimizarDeslocProfessor (const minimizarDeslocProfessor_type& x)
 {
   this->minimizarDeslocProfessor_.set (x);
+}
+
+const ItemParametrosPlanejamento::maxDeslocProfessor_optional& ItemParametrosPlanejamento::
+maxDeslocProfessor () const
+{
+  return this->maxDeslocProfessor_;
+}
+
+ItemParametrosPlanejamento::maxDeslocProfessor_optional& ItemParametrosPlanejamento::
+maxDeslocProfessor ()
+{
+  return this->maxDeslocProfessor_;
+}
+
+void ItemParametrosPlanejamento::
+maxDeslocProfessor (const maxDeslocProfessor_type& x)
+{
+  this->maxDeslocProfessor_.set (x);
+}
+
+void ItemParametrosPlanejamento::
+maxDeslocProfessor (const maxDeslocProfessor_optional& x)
+{
+  this->maxDeslocProfessor_ = x;
 }
 
 const ItemParametrosPlanejamento::minimizarHorariosVaziosProfessor_type& ItemParametrosPlanejamento::
@@ -2855,6 +2933,126 @@ void ItemParametrosPlanejamento::
 evitarReducaoCargaHorariaProf (const evitarReducaoCargaHorariaProf_type& x)
 {
   this->evitarReducaoCargaHorariaProf_.set (x);
+}
+
+const ItemParametrosPlanejamento::evitarReducaoCargaHorariaProfValor_optional& ItemParametrosPlanejamento::
+evitarReducaoCargaHorariaProfValor () const
+{
+  return this->evitarReducaoCargaHorariaProfValor_;
+}
+
+ItemParametrosPlanejamento::evitarReducaoCargaHorariaProfValor_optional& ItemParametrosPlanejamento::
+evitarReducaoCargaHorariaProfValor ()
+{
+  return this->evitarReducaoCargaHorariaProfValor_;
+}
+
+void ItemParametrosPlanejamento::
+evitarReducaoCargaHorariaProfValor (const evitarReducaoCargaHorariaProfValor_type& x)
+{
+  this->evitarReducaoCargaHorariaProfValor_.set (x);
+}
+
+void ItemParametrosPlanejamento::
+evitarReducaoCargaHorariaProfValor (const evitarReducaoCargaHorariaProfValor_optional& x)
+{
+  this->evitarReducaoCargaHorariaProfValor_ = x;
+}
+
+const ItemParametrosPlanejamento::evitarProfUltimoPrimeiroHor_type& ItemParametrosPlanejamento::
+evitarProfUltimoPrimeiroHor () const
+{
+  return this->evitarProfUltimoPrimeiroHor_.get ();
+}
+
+ItemParametrosPlanejamento::evitarProfUltimoPrimeiroHor_type& ItemParametrosPlanejamento::
+evitarProfUltimoPrimeiroHor ()
+{
+  return this->evitarProfUltimoPrimeiroHor_.get ();
+}
+
+void ItemParametrosPlanejamento::
+evitarProfUltimoPrimeiroHor (const evitarProfUltimoPrimeiroHor_type& x)
+{
+  this->evitarProfUltimoPrimeiroHor_.set (x);
+}
+
+const ItemParametrosPlanejamento::preferenciaProfessorDisciplina_type& ItemParametrosPlanejamento::
+preferenciaProfessorDisciplina () const
+{
+  return this->preferenciaProfessorDisciplina_.get ();
+}
+
+ItemParametrosPlanejamento::preferenciaProfessorDisciplina_type& ItemParametrosPlanejamento::
+preferenciaProfessorDisciplina ()
+{
+  return this->preferenciaProfessorDisciplina_.get ();
+}
+
+void ItemParametrosPlanejamento::
+preferenciaProfessorDisciplina (const preferenciaProfessorDisciplina_type& x)
+{
+  this->preferenciaProfessorDisciplina_.set (x);
+}
+
+const ItemParametrosPlanejamento::desempenhoProfDisponibilidade_type& ItemParametrosPlanejamento::
+desempenhoProfDisponibilidade () const
+{
+  return this->desempenhoProfDisponibilidade_.get ();
+}
+
+ItemParametrosPlanejamento::desempenhoProfDisponibilidade_type& ItemParametrosPlanejamento::
+desempenhoProfDisponibilidade ()
+{
+  return this->desempenhoProfDisponibilidade_.get ();
+}
+
+void ItemParametrosPlanejamento::
+desempenhoProfDisponibilidade (const desempenhoProfDisponibilidade_type& x)
+{
+  this->desempenhoProfDisponibilidade_.set (x);
+}
+
+const ItemParametrosPlanejamento::minAlunosAberturaTurmas_type& ItemParametrosPlanejamento::
+minAlunosAberturaTurmas () const
+{
+  return this->minAlunosAberturaTurmas_.get ();
+}
+
+ItemParametrosPlanejamento::minAlunosAberturaTurmas_type& ItemParametrosPlanejamento::
+minAlunosAberturaTurmas ()
+{
+  return this->minAlunosAberturaTurmas_.get ();
+}
+
+void ItemParametrosPlanejamento::
+minAlunosAberturaTurmas (const minAlunosAberturaTurmas_type& x)
+{
+  this->minAlunosAberturaTurmas_.set (x);
+}
+
+const ItemParametrosPlanejamento::minAlunosAberturaTurmasValor_optional& ItemParametrosPlanejamento::
+minAlunosAberturaTurmasValor () const
+{
+  return this->minAlunosAberturaTurmasValor_;
+}
+
+ItemParametrosPlanejamento::minAlunosAberturaTurmasValor_optional& ItemParametrosPlanejamento::
+minAlunosAberturaTurmasValor ()
+{
+  return this->minAlunosAberturaTurmasValor_;
+}
+
+void ItemParametrosPlanejamento::
+minAlunosAberturaTurmasValor (const minAlunosAberturaTurmasValor_type& x)
+{
+  this->minAlunosAberturaTurmasValor_.set (x);
+}
+
+void ItemParametrosPlanejamento::
+minAlunosAberturaTurmasValor (const minAlunosAberturaTurmasValor_optional& x)
+{
+  this->minAlunosAberturaTurmasValor_ = x;
 }
 
 const ItemParametrosPlanejamento::niveisDificuldadeHorario_type& ItemParametrosPlanejamento::
@@ -2899,258 +3097,6 @@ equilibrarDiversidadeDiscDia (const equilibrarDiversidadeDiscDia_type& x)
   this->equilibrarDiversidadeDiscDia_.set (x);
 }
 
-const ItemParametrosPlanejamento::maximizarAvaliacaoCursos_type& ItemParametrosPlanejamento::
-maximizarAvaliacaoCursos () const
-{
-  return this->maximizarAvaliacaoCursos_.get ();
-}
-
-ItemParametrosPlanejamento::maximizarAvaliacaoCursos_type& ItemParametrosPlanejamento::
-maximizarAvaliacaoCursos ()
-{
-  return this->maximizarAvaliacaoCursos_.get ();
-}
-
-void ItemParametrosPlanejamento::
-maximizarAvaliacaoCursos (const maximizarAvaliacaoCursos_type& x)
-{
-  this->maximizarAvaliacaoCursos_.set (x);
-}
-
-void ItemParametrosPlanejamento::
-maximizarAvaliacaoCursos (::std::auto_ptr< maximizarAvaliacaoCursos_type > x)
-{
-  this->maximizarAvaliacaoCursos_.set (x);
-}
-
-const ItemParametrosPlanejamento::minimizarCustoDocenteCursos_type& ItemParametrosPlanejamento::
-minimizarCustoDocenteCursos () const
-{
-  return this->minimizarCustoDocenteCursos_.get ();
-}
-
-ItemParametrosPlanejamento::minimizarCustoDocenteCursos_type& ItemParametrosPlanejamento::
-minimizarCustoDocenteCursos ()
-{
-  return this->minimizarCustoDocenteCursos_.get ();
-}
-
-void ItemParametrosPlanejamento::
-minimizarCustoDocenteCursos (const minimizarCustoDocenteCursos_type& x)
-{
-  this->minimizarCustoDocenteCursos_.set (x);
-}
-
-void ItemParametrosPlanejamento::
-minimizarCustoDocenteCursos (::std::auto_ptr< minimizarCustoDocenteCursos_type > x)
-{
-  this->minimizarCustoDocenteCursos_.set (x);
-}
-
-const ItemParametrosPlanejamento::permiteCompartilhamentoTurma_type& ItemParametrosPlanejamento::
-permiteCompartilhamentoTurma () const
-{
-  return this->permiteCompartilhamentoTurma_.get ();
-}
-
-ItemParametrosPlanejamento::permiteCompartilhamentoTurma_type& ItemParametrosPlanejamento::
-permiteCompartilhamentoTurma ()
-{
-  return this->permiteCompartilhamentoTurma_.get ();
-}
-
-void ItemParametrosPlanejamento::
-permiteCompartilhamentoTurma (const permiteCompartilhamentoTurma_type& x)
-{
-  this->permiteCompartilhamentoTurma_.set (x);
-}
-
-void ItemParametrosPlanejamento::
-permiteCompartilhamentoTurma (::std::auto_ptr< permiteCompartilhamentoTurma_type > x)
-{
-  this->permiteCompartilhamentoTurma_.set (x);
-}
-
-const ItemParametrosPlanejamento::desempenhoProfDisponibilidade_type& ItemParametrosPlanejamento::
-desempenhoProfDisponibilidade () const
-{
-  return this->desempenhoProfDisponibilidade_.get ();
-}
-
-ItemParametrosPlanejamento::desempenhoProfDisponibilidade_type& ItemParametrosPlanejamento::
-desempenhoProfDisponibilidade ()
-{
-  return this->desempenhoProfDisponibilidade_.get ();
-}
-
-void ItemParametrosPlanejamento::
-desempenhoProfDisponibilidade (const desempenhoProfDisponibilidade_type& x)
-{
-  this->desempenhoProfDisponibilidade_.set (x);
-}
-
-const ItemParametrosPlanejamento::custoProfDisponibilidade_type& ItemParametrosPlanejamento::
-custoProfDisponibilidade () const
-{
-  return this->custoProfDisponibilidade_.get ();
-}
-
-ItemParametrosPlanejamento::custoProfDisponibilidade_type& ItemParametrosPlanejamento::
-custoProfDisponibilidade ()
-{
-  return this->custoProfDisponibilidade_.get ();
-}
-
-void ItemParametrosPlanejamento::
-custoProfDisponibilidade (const custoProfDisponibilidade_type& x)
-{
-  this->custoProfDisponibilidade_.set (x);
-}
-
-const ItemParametrosPlanejamento::evitarProfUltimoPrimeiroHor_type& ItemParametrosPlanejamento::
-evitarProfUltimoPrimeiroHor () const
-{
-  return this->evitarProfUltimoPrimeiroHor_.get ();
-}
-
-ItemParametrosPlanejamento::evitarProfUltimoPrimeiroHor_type& ItemParametrosPlanejamento::
-evitarProfUltimoPrimeiroHor ()
-{
-  return this->evitarProfUltimoPrimeiroHor_.get ();
-}
-
-void ItemParametrosPlanejamento::
-evitarProfUltimoPrimeiroHor (const evitarProfUltimoPrimeiroHor_type& x)
-{
-  this->evitarProfUltimoPrimeiroHor_.set (x);
-}
-
-const ItemParametrosPlanejamento::maxDeslocProfessor_type& ItemParametrosPlanejamento::
-maxDeslocProfessor () const
-{
-  return this->maxDeslocProfessor_.get ();
-}
-
-ItemParametrosPlanejamento::maxDeslocProfessor_type& ItemParametrosPlanejamento::
-maxDeslocProfessor ()
-{
-  return this->maxDeslocProfessor_.get ();
-}
-
-void ItemParametrosPlanejamento::
-maxDeslocProfessor (const maxDeslocProfessor_type& x)
-{
-  this->maxDeslocProfessor_.set (x);
-}
-
-const ItemParametrosPlanejamento::alunosMesmoPeriodoNaMesmaSala_type& ItemParametrosPlanejamento::
-alunosMesmoPeriodoNaMesmaSala () const
-{
-  return this->alunosMesmoPeriodoNaMesmaSala_.get ();
-}
-
-ItemParametrosPlanejamento::alunosMesmoPeriodoNaMesmaSala_type& ItemParametrosPlanejamento::
-alunosMesmoPeriodoNaMesmaSala ()
-{
-  return this->alunosMesmoPeriodoNaMesmaSala_.get ();
-}
-
-void ItemParametrosPlanejamento::
-alunosMesmoPeriodoNaMesmaSala (const alunosMesmoPeriodoNaMesmaSala_type& x)
-{
-  this->alunosMesmoPeriodoNaMesmaSala_.set (x);
-}
-
-const ItemParametrosPlanejamento::permitirAlunosEmVariosCampi_type& ItemParametrosPlanejamento::
-permitirAlunosEmVariosCampi () const
-{
-  return this->permitirAlunosEmVariosCampi_.get ();
-}
-
-ItemParametrosPlanejamento::permitirAlunosEmVariosCampi_type& ItemParametrosPlanejamento::
-permitirAlunosEmVariosCampi ()
-{
-  return this->permitirAlunosEmVariosCampi_.get ();
-}
-
-void ItemParametrosPlanejamento::
-permitirAlunosEmVariosCampi (const permitirAlunosEmVariosCampi_type& x)
-{
-  this->permitirAlunosEmVariosCampi_.set (x);
-}
-
-const ItemParametrosPlanejamento::permitirProfessorEmVariosCampi_type& ItemParametrosPlanejamento::
-permitirProfessorEmVariosCampi () const
-{
-  return this->permitirProfessorEmVariosCampi_.get ();
-}
-
-ItemParametrosPlanejamento::permitirProfessorEmVariosCampi_type& ItemParametrosPlanejamento::
-permitirProfessorEmVariosCampi ()
-{
-  return this->permitirProfessorEmVariosCampi_.get ();
-}
-
-void ItemParametrosPlanejamento::
-permitirProfessorEmVariosCampi (const permitirProfessorEmVariosCampi_type& x)
-{
-  this->permitirProfessorEmVariosCampi_.set (x);
-}
-
-const ItemParametrosPlanejamento::preferenciaProfessorDisciplina_type& ItemParametrosPlanejamento::
-preferenciaProfessorDisciplina () const
-{
-  return this->preferenciaProfessorDisciplina_.get ();
-}
-
-ItemParametrosPlanejamento::preferenciaProfessorDisciplina_type& ItemParametrosPlanejamento::
-preferenciaProfessorDisciplina ()
-{
-  return this->preferenciaProfessorDisciplina_.get ();
-}
-
-void ItemParametrosPlanejamento::
-preferenciaProfessorDisciplina (const preferenciaProfessorDisciplina_type& x)
-{
-  this->preferenciaProfessorDisciplina_.set (x);
-}
-
-const ItemParametrosPlanejamento::minAlunosAberturaTurmas_type& ItemParametrosPlanejamento::
-minAlunosAberturaTurmas () const
-{
-  return this->minAlunosAberturaTurmas_.get ();
-}
-
-ItemParametrosPlanejamento::minAlunosAberturaTurmas_type& ItemParametrosPlanejamento::
-minAlunosAberturaTurmas ()
-{
-  return this->minAlunosAberturaTurmas_.get ();
-}
-
-void ItemParametrosPlanejamento::
-minAlunosAberturaTurmas (const minAlunosAberturaTurmas_type& x)
-{
-  this->minAlunosAberturaTurmas_.set (x);
-}
-
-const ItemParametrosPlanejamento::minAlunosAberturaTurmasValor_type& ItemParametrosPlanejamento::
-minAlunosAberturaTurmasValor () const
-{
-  return this->minAlunosAberturaTurmasValor_.get ();
-}
-
-ItemParametrosPlanejamento::minAlunosAberturaTurmasValor_type& ItemParametrosPlanejamento::
-minAlunosAberturaTurmasValor ()
-{
-  return this->minAlunosAberturaTurmasValor_.get ();
-}
-
-void ItemParametrosPlanejamento::
-minAlunosAberturaTurmasValor (const minAlunosAberturaTurmasValor_type& x)
-{
-  this->minAlunosAberturaTurmasValor_.set (x);
-}
-
 const ItemParametrosPlanejamento::regrasGenericasDivisaoCredito_type& ItemParametrosPlanejamento::
 regrasGenericasDivisaoCredito () const
 {
@@ -3185,6 +3131,150 @@ void ItemParametrosPlanejamento::
 regrasEspecificasDivisaoCredito (const regrasEspecificasDivisaoCredito_type& x)
 {
   this->regrasEspecificasDivisaoCredito_.set (x);
+}
+
+const ItemParametrosPlanejamento::maximizarAvaliacaoCursosSel_type& ItemParametrosPlanejamento::
+maximizarAvaliacaoCursosSel () const
+{
+  return this->maximizarAvaliacaoCursosSel_.get ();
+}
+
+ItemParametrosPlanejamento::maximizarAvaliacaoCursosSel_type& ItemParametrosPlanejamento::
+maximizarAvaliacaoCursosSel ()
+{
+  return this->maximizarAvaliacaoCursosSel_.get ();
+}
+
+void ItemParametrosPlanejamento::
+maximizarAvaliacaoCursosSel (const maximizarAvaliacaoCursosSel_type& x)
+{
+  this->maximizarAvaliacaoCursosSel_.set (x);
+}
+
+const ItemParametrosPlanejamento::maximizarAvaliacaoCursos_optional& ItemParametrosPlanejamento::
+maximizarAvaliacaoCursos () const
+{
+  return this->maximizarAvaliacaoCursos_;
+}
+
+ItemParametrosPlanejamento::maximizarAvaliacaoCursos_optional& ItemParametrosPlanejamento::
+maximizarAvaliacaoCursos ()
+{
+  return this->maximizarAvaliacaoCursos_;
+}
+
+void ItemParametrosPlanejamento::
+maximizarAvaliacaoCursos (const maximizarAvaliacaoCursos_type& x)
+{
+  this->maximizarAvaliacaoCursos_.set (x);
+}
+
+void ItemParametrosPlanejamento::
+maximizarAvaliacaoCursos (const maximizarAvaliacaoCursos_optional& x)
+{
+  this->maximizarAvaliacaoCursos_ = x;
+}
+
+void ItemParametrosPlanejamento::
+maximizarAvaliacaoCursos (::std::auto_ptr< maximizarAvaliacaoCursos_type > x)
+{
+  this->maximizarAvaliacaoCursos_.set (x);
+}
+
+const ItemParametrosPlanejamento::minimizarCustoDocenteCursosSel_type& ItemParametrosPlanejamento::
+minimizarCustoDocenteCursosSel () const
+{
+  return this->minimizarCustoDocenteCursosSel_.get ();
+}
+
+ItemParametrosPlanejamento::minimizarCustoDocenteCursosSel_type& ItemParametrosPlanejamento::
+minimizarCustoDocenteCursosSel ()
+{
+  return this->minimizarCustoDocenteCursosSel_.get ();
+}
+
+void ItemParametrosPlanejamento::
+minimizarCustoDocenteCursosSel (const minimizarCustoDocenteCursosSel_type& x)
+{
+  this->minimizarCustoDocenteCursosSel_.set (x);
+}
+
+const ItemParametrosPlanejamento::minimizarCustoDocenteCursos_optional& ItemParametrosPlanejamento::
+minimizarCustoDocenteCursos () const
+{
+  return this->minimizarCustoDocenteCursos_;
+}
+
+ItemParametrosPlanejamento::minimizarCustoDocenteCursos_optional& ItemParametrosPlanejamento::
+minimizarCustoDocenteCursos ()
+{
+  return this->minimizarCustoDocenteCursos_;
+}
+
+void ItemParametrosPlanejamento::
+minimizarCustoDocenteCursos (const minimizarCustoDocenteCursos_type& x)
+{
+  this->minimizarCustoDocenteCursos_.set (x);
+}
+
+void ItemParametrosPlanejamento::
+minimizarCustoDocenteCursos (const minimizarCustoDocenteCursos_optional& x)
+{
+  this->minimizarCustoDocenteCursos_ = x;
+}
+
+void ItemParametrosPlanejamento::
+minimizarCustoDocenteCursos (::std::auto_ptr< minimizarCustoDocenteCursos_type > x)
+{
+  this->minimizarCustoDocenteCursos_.set (x);
+}
+
+const ItemParametrosPlanejamento::permiteCompartilhamentoTurmaSel_type& ItemParametrosPlanejamento::
+permiteCompartilhamentoTurmaSel () const
+{
+  return this->permiteCompartilhamentoTurmaSel_.get ();
+}
+
+ItemParametrosPlanejamento::permiteCompartilhamentoTurmaSel_type& ItemParametrosPlanejamento::
+permiteCompartilhamentoTurmaSel ()
+{
+  return this->permiteCompartilhamentoTurmaSel_.get ();
+}
+
+void ItemParametrosPlanejamento::
+permiteCompartilhamentoTurmaSel (const permiteCompartilhamentoTurmaSel_type& x)
+{
+  this->permiteCompartilhamentoTurmaSel_.set (x);
+}
+
+const ItemParametrosPlanejamento::permiteCompartilhamentoTurma_optional& ItemParametrosPlanejamento::
+permiteCompartilhamentoTurma () const
+{
+  return this->permiteCompartilhamentoTurma_;
+}
+
+ItemParametrosPlanejamento::permiteCompartilhamentoTurma_optional& ItemParametrosPlanejamento::
+permiteCompartilhamentoTurma ()
+{
+  return this->permiteCompartilhamentoTurma_;
+}
+
+void ItemParametrosPlanejamento::
+permiteCompartilhamentoTurma (const permiteCompartilhamentoTurma_type& x)
+{
+  this->permiteCompartilhamentoTurma_.set (x);
+}
+
+void ItemParametrosPlanejamento::
+permiteCompartilhamentoTurma (const permiteCompartilhamentoTurma_optional& x)
+{
+  this->permiteCompartilhamentoTurma_ = x;
+}
+
+void ItemParametrosPlanejamento::
+permiteCompartilhamentoTurma (::std::auto_ptr< permiteCompartilhamentoTurma_type > x)
+{
+  this->permiteCompartilhamentoTurma_.set (x);
 }
 
 const ItemParametrosPlanejamento::percentuaisMinimoMestres_type& ItemParametrosPlanejamento::
@@ -3257,6 +3347,24 @@ void ItemParametrosPlanejamento::
 maximoDisciplinasDeUmProfessorPorCurso (const maximoDisciplinasDeUmProfessorPorCurso_type& x)
 {
   this->maximoDisciplinasDeUmProfessorPorCurso_.set (x);
+}
+
+const ItemParametrosPlanejamento::custoProfDisponibilidade_type& ItemParametrosPlanejamento::
+custoProfDisponibilidade () const
+{
+  return this->custoProfDisponibilidade_.get ();
+}
+
+ItemParametrosPlanejamento::custoProfDisponibilidade_type& ItemParametrosPlanejamento::
+custoProfDisponibilidade ()
+{
+  return this->custoProfDisponibilidade_.get ();
+}
+
+void ItemParametrosPlanejamento::
+custoProfDisponibilidade (const custoProfDisponibilidade_type& x)
+{
+  this->custoProfDisponibilidade_.set (x);
 }
 
 
@@ -5079,34 +5187,34 @@ minimizarDias (::std::auto_ptr< minimizarDias_type > x)
   this->minimizarDias_.set (x);
 }
 
-const cargaHorariaSemanalProfessor::indiferentes_optional& cargaHorariaSemanalProfessor::
-indiferentes () const
+const cargaHorariaSemanalProfessor::indiferente_optional& cargaHorariaSemanalProfessor::
+indiferente () const
 {
-  return this->indiferentes_;
+  return this->indiferente_;
 }
 
-cargaHorariaSemanalProfessor::indiferentes_optional& cargaHorariaSemanalProfessor::
-indiferentes ()
+cargaHorariaSemanalProfessor::indiferente_optional& cargaHorariaSemanalProfessor::
+indiferente ()
 {
-  return this->indiferentes_;
-}
-
-void cargaHorariaSemanalProfessor::
-indiferentes (const indiferentes_type& x)
-{
-  this->indiferentes_.set (x);
+  return this->indiferente_;
 }
 
 void cargaHorariaSemanalProfessor::
-indiferentes (const indiferentes_optional& x)
+indiferente (const indiferente_type& x)
 {
-  this->indiferentes_ = x;
+  this->indiferente_.set (x);
 }
 
 void cargaHorariaSemanalProfessor::
-indiferentes (::std::auto_ptr< indiferentes_type > x)
+indiferente (const indiferente_optional& x)
 {
-  this->indiferentes_.set (x);
+  this->indiferente_ = x;
+}
+
+void cargaHorariaSemanalProfessor::
+indiferente (::std::auto_ptr< indiferente_type > x)
+{
+  this->indiferente_.set (x);
 }
 
 
@@ -9542,122 +9650,126 @@ ItemFixacao::
 ItemParametrosPlanejamento::
 ItemParametrosPlanejamento (const modoOtimizacao_type& modoOtimizacao,
                             const cargaHorariaSemanalAluno_type& cargaHorariaSemanalAluno,
+                            const alunosMesmoPeriodoNaMesmaSala_type& alunosMesmoPeriodoNaMesmaSala,
+                            const permitirAlunosEmVariosCampi_type& permitirAlunosEmVariosCampi,
                             const minimizarDeslocAluno_type& minimizarDeslocAluno,
                             const cargaHorariaSemanalProfessor_type& cargaHorariaSemanalProfessor,
+                            const permitirProfessorEmVariosCampi_type& permitirProfessorEmVariosCampi,
                             const minimizarDeslocProfessor_type& minimizarDeslocProfessor,
                             const minimizarHorariosVaziosProfessor_type& minimizarHorariosVaziosProfessor,
                             const evitarReducaoCargaHorariaProf_type& evitarReducaoCargaHorariaProf,
+                            const evitarProfUltimoPrimeiroHor_type& evitarProfUltimoPrimeiroHor,
+                            const preferenciaProfessorDisciplina_type& preferenciaProfessorDisciplina,
+                            const desempenhoProfDisponibilidade_type& desempenhoProfDisponibilidade,
+                            const minAlunosAberturaTurmas_type& minAlunosAberturaTurmas,
                             const niveisDificuldadeHorario_type& niveisDificuldadeHorario,
                             const equilibrarDiversidadeDiscDia_type& equilibrarDiversidadeDiscDia,
-                            const maximizarAvaliacaoCursos_type& maximizarAvaliacaoCursos,
-                            const minimizarCustoDocenteCursos_type& minimizarCustoDocenteCursos,
-                            const permiteCompartilhamentoTurma_type& permiteCompartilhamentoTurma,
-                            const desempenhoProfDisponibilidade_type& desempenhoProfDisponibilidade,
-                            const custoProfDisponibilidade_type& custoProfDisponibilidade,
-                            const evitarProfUltimoPrimeiroHor_type& evitarProfUltimoPrimeiroHor,
-                            const maxDeslocProfessor_type& maxDeslocProfessor,
-                            const alunosMesmoPeriodoNaMesmaSala_type& alunosMesmoPeriodoNaMesmaSala,
-                            const permitirAlunosEmVariosCampi_type& permitirAlunosEmVariosCampi,
-                            const permitirProfessorEmVariosCampi_type& permitirProfessorEmVariosCampi,
-                            const preferenciaProfessorDisciplina_type& preferenciaProfessorDisciplina,
-                            const minAlunosAberturaTurmas_type& minAlunosAberturaTurmas,
-                            const minAlunosAberturaTurmasValor_type& minAlunosAberturaTurmasValor,
                             const regrasGenericasDivisaoCredito_type& regrasGenericasDivisaoCredito,
                             const regrasEspecificasDivisaoCredito_type& regrasEspecificasDivisaoCredito,
+                            const maximizarAvaliacaoCursosSel_type& maximizarAvaliacaoCursosSel,
+                            const minimizarCustoDocenteCursosSel_type& minimizarCustoDocenteCursosSel,
+                            const permiteCompartilhamentoTurmaSel_type& permiteCompartilhamentoTurmaSel,
                             const percentuaisMinimoMestres_type& percentuaisMinimoMestres,
                             const percentuaisMinimoDoutores_type& percentuaisMinimoDoutores,
                             const areaTitulacaoProfessorCurso_type& areaTitulacaoProfessorCurso,
-                            const maximoDisciplinasDeUmProfessorPorCurso_type& maximoDisciplinasDeUmProfessorPorCurso)
+                            const maximoDisciplinasDeUmProfessorPorCurso_type& maximoDisciplinasDeUmProfessorPorCurso,
+                            const custoProfDisponibilidade_type& custoProfDisponibilidade)
 : ::xml_schema::type (),
   modoOtimizacao_ (modoOtimizacao, ::xml_schema::flags (), this),
   cargaHorariaSemanalAluno_ (cargaHorariaSemanalAluno, ::xml_schema::flags (), this),
-  minimizarDeslocAluno_ (minimizarDeslocAluno, ::xml_schema::flags (), this),
-  cargaHorariaSemanalProfessor_ (cargaHorariaSemanalProfessor, ::xml_schema::flags (), this),
-  minimizarDeslocProfessor_ (minimizarDeslocProfessor, ::xml_schema::flags (), this),
-  minimizarHorariosVaziosProfessor_ (minimizarHorariosVaziosProfessor, ::xml_schema::flags (), this),
-  evitarReducaoCargaHorariaProf_ (evitarReducaoCargaHorariaProf, ::xml_schema::flags (), this),
-  niveisDificuldadeHorario_ (niveisDificuldadeHorario, ::xml_schema::flags (), this),
-  equilibrarDiversidadeDiscDia_ (equilibrarDiversidadeDiscDia, ::xml_schema::flags (), this),
-  maximizarAvaliacaoCursos_ (maximizarAvaliacaoCursos, ::xml_schema::flags (), this),
-  minimizarCustoDocenteCursos_ (minimizarCustoDocenteCursos, ::xml_schema::flags (), this),
-  permiteCompartilhamentoTurma_ (permiteCompartilhamentoTurma, ::xml_schema::flags (), this),
-  desempenhoProfDisponibilidade_ (desempenhoProfDisponibilidade, ::xml_schema::flags (), this),
-  custoProfDisponibilidade_ (custoProfDisponibilidade, ::xml_schema::flags (), this),
-  evitarProfUltimoPrimeiroHor_ (evitarProfUltimoPrimeiroHor, ::xml_schema::flags (), this),
-  maxDeslocProfessor_ (maxDeslocProfessor, ::xml_schema::flags (), this),
   alunosMesmoPeriodoNaMesmaSala_ (alunosMesmoPeriodoNaMesmaSala, ::xml_schema::flags (), this),
   permitirAlunosEmVariosCampi_ (permitirAlunosEmVariosCampi, ::xml_schema::flags (), this),
+  minimizarDeslocAluno_ (minimizarDeslocAluno, ::xml_schema::flags (), this),
+  cargaHorariaSemanalProfessor_ (cargaHorariaSemanalProfessor, ::xml_schema::flags (), this),
   permitirProfessorEmVariosCampi_ (permitirProfessorEmVariosCampi, ::xml_schema::flags (), this),
+  minimizarDeslocProfessor_ (minimizarDeslocProfessor, ::xml_schema::flags (), this),
+  maxDeslocProfessor_ (::xml_schema::flags (), this),
+  minimizarHorariosVaziosProfessor_ (minimizarHorariosVaziosProfessor, ::xml_schema::flags (), this),
+  evitarReducaoCargaHorariaProf_ (evitarReducaoCargaHorariaProf, ::xml_schema::flags (), this),
+  evitarReducaoCargaHorariaProfValor_ (::xml_schema::flags (), this),
+  evitarProfUltimoPrimeiroHor_ (evitarProfUltimoPrimeiroHor, ::xml_schema::flags (), this),
   preferenciaProfessorDisciplina_ (preferenciaProfessorDisciplina, ::xml_schema::flags (), this),
+  desempenhoProfDisponibilidade_ (desempenhoProfDisponibilidade, ::xml_schema::flags (), this),
   minAlunosAberturaTurmas_ (minAlunosAberturaTurmas, ::xml_schema::flags (), this),
-  minAlunosAberturaTurmasValor_ (minAlunosAberturaTurmasValor, ::xml_schema::flags (), this),
+  minAlunosAberturaTurmasValor_ (::xml_schema::flags (), this),
+  niveisDificuldadeHorario_ (niveisDificuldadeHorario, ::xml_schema::flags (), this),
+  equilibrarDiversidadeDiscDia_ (equilibrarDiversidadeDiscDia, ::xml_schema::flags (), this),
   regrasGenericasDivisaoCredito_ (regrasGenericasDivisaoCredito, ::xml_schema::flags (), this),
   regrasEspecificasDivisaoCredito_ (regrasEspecificasDivisaoCredito, ::xml_schema::flags (), this),
+  maximizarAvaliacaoCursosSel_ (maximizarAvaliacaoCursosSel, ::xml_schema::flags (), this),
+  maximizarAvaliacaoCursos_ (::xml_schema::flags (), this),
+  minimizarCustoDocenteCursosSel_ (minimizarCustoDocenteCursosSel, ::xml_schema::flags (), this),
+  minimizarCustoDocenteCursos_ (::xml_schema::flags (), this),
+  permiteCompartilhamentoTurmaSel_ (permiteCompartilhamentoTurmaSel, ::xml_schema::flags (), this),
+  permiteCompartilhamentoTurma_ (::xml_schema::flags (), this),
   percentuaisMinimoMestres_ (percentuaisMinimoMestres, ::xml_schema::flags (), this),
   percentuaisMinimoDoutores_ (percentuaisMinimoDoutores, ::xml_schema::flags (), this),
   areaTitulacaoProfessorCurso_ (areaTitulacaoProfessorCurso, ::xml_schema::flags (), this),
-  maximoDisciplinasDeUmProfessorPorCurso_ (maximoDisciplinasDeUmProfessorPorCurso, ::xml_schema::flags (), this)
+  maximoDisciplinasDeUmProfessorPorCurso_ (maximoDisciplinasDeUmProfessorPorCurso, ::xml_schema::flags (), this),
+  custoProfDisponibilidade_ (custoProfDisponibilidade, ::xml_schema::flags (), this)
 {
 }
 
 ItemParametrosPlanejamento::
 ItemParametrosPlanejamento (const modoOtimizacao_type& modoOtimizacao,
                             ::std::auto_ptr< cargaHorariaSemanalAluno_type >& cargaHorariaSemanalAluno,
+                            const alunosMesmoPeriodoNaMesmaSala_type& alunosMesmoPeriodoNaMesmaSala,
+                            const permitirAlunosEmVariosCampi_type& permitirAlunosEmVariosCampi,
                             const minimizarDeslocAluno_type& minimizarDeslocAluno,
                             ::std::auto_ptr< cargaHorariaSemanalProfessor_type >& cargaHorariaSemanalProfessor,
+                            const permitirProfessorEmVariosCampi_type& permitirProfessorEmVariosCampi,
                             const minimizarDeslocProfessor_type& minimizarDeslocProfessor,
                             const minimizarHorariosVaziosProfessor_type& minimizarHorariosVaziosProfessor,
                             const evitarReducaoCargaHorariaProf_type& evitarReducaoCargaHorariaProf,
+                            const evitarProfUltimoPrimeiroHor_type& evitarProfUltimoPrimeiroHor,
+                            const preferenciaProfessorDisciplina_type& preferenciaProfessorDisciplina,
+                            const desempenhoProfDisponibilidade_type& desempenhoProfDisponibilidade,
+                            const minAlunosAberturaTurmas_type& minAlunosAberturaTurmas,
                             ::std::auto_ptr< niveisDificuldadeHorario_type >& niveisDificuldadeHorario,
                             const equilibrarDiversidadeDiscDia_type& equilibrarDiversidadeDiscDia,
-                            ::std::auto_ptr< maximizarAvaliacaoCursos_type >& maximizarAvaliacaoCursos,
-                            ::std::auto_ptr< minimizarCustoDocenteCursos_type >& minimizarCustoDocenteCursos,
-                            ::std::auto_ptr< permiteCompartilhamentoTurma_type >& permiteCompartilhamentoTurma,
-                            const desempenhoProfDisponibilidade_type& desempenhoProfDisponibilidade,
-                            const custoProfDisponibilidade_type& custoProfDisponibilidade,
-                            const evitarProfUltimoPrimeiroHor_type& evitarProfUltimoPrimeiroHor,
-                            const maxDeslocProfessor_type& maxDeslocProfessor,
-                            const alunosMesmoPeriodoNaMesmaSala_type& alunosMesmoPeriodoNaMesmaSala,
-                            const permitirAlunosEmVariosCampi_type& permitirAlunosEmVariosCampi,
-                            const permitirProfessorEmVariosCampi_type& permitirProfessorEmVariosCampi,
-                            const preferenciaProfessorDisciplina_type& preferenciaProfessorDisciplina,
-                            const minAlunosAberturaTurmas_type& minAlunosAberturaTurmas,
-                            const minAlunosAberturaTurmasValor_type& minAlunosAberturaTurmasValor,
                             const regrasGenericasDivisaoCredito_type& regrasGenericasDivisaoCredito,
                             const regrasEspecificasDivisaoCredito_type& regrasEspecificasDivisaoCredito,
+                            const maximizarAvaliacaoCursosSel_type& maximizarAvaliacaoCursosSel,
+                            const minimizarCustoDocenteCursosSel_type& minimizarCustoDocenteCursosSel,
+                            const permiteCompartilhamentoTurmaSel_type& permiteCompartilhamentoTurmaSel,
                             const percentuaisMinimoMestres_type& percentuaisMinimoMestres,
                             const percentuaisMinimoDoutores_type& percentuaisMinimoDoutores,
                             const areaTitulacaoProfessorCurso_type& areaTitulacaoProfessorCurso,
-                            const maximoDisciplinasDeUmProfessorPorCurso_type& maximoDisciplinasDeUmProfessorPorCurso)
+                            const maximoDisciplinasDeUmProfessorPorCurso_type& maximoDisciplinasDeUmProfessorPorCurso,
+                            const custoProfDisponibilidade_type& custoProfDisponibilidade)
 : ::xml_schema::type (),
   modoOtimizacao_ (modoOtimizacao, ::xml_schema::flags (), this),
   cargaHorariaSemanalAluno_ (cargaHorariaSemanalAluno, ::xml_schema::flags (), this),
-  minimizarDeslocAluno_ (minimizarDeslocAluno, ::xml_schema::flags (), this),
-  cargaHorariaSemanalProfessor_ (cargaHorariaSemanalProfessor, ::xml_schema::flags (), this),
-  minimizarDeslocProfessor_ (minimizarDeslocProfessor, ::xml_schema::flags (), this),
-  minimizarHorariosVaziosProfessor_ (minimizarHorariosVaziosProfessor, ::xml_schema::flags (), this),
-  evitarReducaoCargaHorariaProf_ (evitarReducaoCargaHorariaProf, ::xml_schema::flags (), this),
-  niveisDificuldadeHorario_ (niveisDificuldadeHorario, ::xml_schema::flags (), this),
-  equilibrarDiversidadeDiscDia_ (equilibrarDiversidadeDiscDia, ::xml_schema::flags (), this),
-  maximizarAvaliacaoCursos_ (maximizarAvaliacaoCursos, ::xml_schema::flags (), this),
-  minimizarCustoDocenteCursos_ (minimizarCustoDocenteCursos, ::xml_schema::flags (), this),
-  permiteCompartilhamentoTurma_ (permiteCompartilhamentoTurma, ::xml_schema::flags (), this),
-  desempenhoProfDisponibilidade_ (desempenhoProfDisponibilidade, ::xml_schema::flags (), this),
-  custoProfDisponibilidade_ (custoProfDisponibilidade, ::xml_schema::flags (), this),
-  evitarProfUltimoPrimeiroHor_ (evitarProfUltimoPrimeiroHor, ::xml_schema::flags (), this),
-  maxDeslocProfessor_ (maxDeslocProfessor, ::xml_schema::flags (), this),
   alunosMesmoPeriodoNaMesmaSala_ (alunosMesmoPeriodoNaMesmaSala, ::xml_schema::flags (), this),
   permitirAlunosEmVariosCampi_ (permitirAlunosEmVariosCampi, ::xml_schema::flags (), this),
+  minimizarDeslocAluno_ (minimizarDeslocAluno, ::xml_schema::flags (), this),
+  cargaHorariaSemanalProfessor_ (cargaHorariaSemanalProfessor, ::xml_schema::flags (), this),
   permitirProfessorEmVariosCampi_ (permitirProfessorEmVariosCampi, ::xml_schema::flags (), this),
+  minimizarDeslocProfessor_ (minimizarDeslocProfessor, ::xml_schema::flags (), this),
+  maxDeslocProfessor_ (::xml_schema::flags (), this),
+  minimizarHorariosVaziosProfessor_ (minimizarHorariosVaziosProfessor, ::xml_schema::flags (), this),
+  evitarReducaoCargaHorariaProf_ (evitarReducaoCargaHorariaProf, ::xml_schema::flags (), this),
+  evitarReducaoCargaHorariaProfValor_ (::xml_schema::flags (), this),
+  evitarProfUltimoPrimeiroHor_ (evitarProfUltimoPrimeiroHor, ::xml_schema::flags (), this),
   preferenciaProfessorDisciplina_ (preferenciaProfessorDisciplina, ::xml_schema::flags (), this),
+  desempenhoProfDisponibilidade_ (desempenhoProfDisponibilidade, ::xml_schema::flags (), this),
   minAlunosAberturaTurmas_ (minAlunosAberturaTurmas, ::xml_schema::flags (), this),
-  minAlunosAberturaTurmasValor_ (minAlunosAberturaTurmasValor, ::xml_schema::flags (), this),
+  minAlunosAberturaTurmasValor_ (::xml_schema::flags (), this),
+  niveisDificuldadeHorario_ (niveisDificuldadeHorario, ::xml_schema::flags (), this),
+  equilibrarDiversidadeDiscDia_ (equilibrarDiversidadeDiscDia, ::xml_schema::flags (), this),
   regrasGenericasDivisaoCredito_ (regrasGenericasDivisaoCredito, ::xml_schema::flags (), this),
   regrasEspecificasDivisaoCredito_ (regrasEspecificasDivisaoCredito, ::xml_schema::flags (), this),
+  maximizarAvaliacaoCursosSel_ (maximizarAvaliacaoCursosSel, ::xml_schema::flags (), this),
+  maximizarAvaliacaoCursos_ (::xml_schema::flags (), this),
+  minimizarCustoDocenteCursosSel_ (minimizarCustoDocenteCursosSel, ::xml_schema::flags (), this),
+  minimizarCustoDocenteCursos_ (::xml_schema::flags (), this),
+  permiteCompartilhamentoTurmaSel_ (permiteCompartilhamentoTurmaSel, ::xml_schema::flags (), this),
+  permiteCompartilhamentoTurma_ (::xml_schema::flags (), this),
   percentuaisMinimoMestres_ (percentuaisMinimoMestres, ::xml_schema::flags (), this),
   percentuaisMinimoDoutores_ (percentuaisMinimoDoutores, ::xml_schema::flags (), this),
   areaTitulacaoProfessorCurso_ (areaTitulacaoProfessorCurso, ::xml_schema::flags (), this),
-  maximoDisciplinasDeUmProfessorPorCurso_ (maximoDisciplinasDeUmProfessorPorCurso, ::xml_schema::flags (), this)
+  maximoDisciplinasDeUmProfessorPorCurso_ (maximoDisciplinasDeUmProfessorPorCurso, ::xml_schema::flags (), this),
+  custoProfDisponibilidade_ (custoProfDisponibilidade, ::xml_schema::flags (), this)
 {
 }
 
@@ -9668,32 +9780,36 @@ ItemParametrosPlanejamento (const ItemParametrosPlanejamento& x,
 : ::xml_schema::type (x, f, c),
   modoOtimizacao_ (x.modoOtimizacao_, f, this),
   cargaHorariaSemanalAluno_ (x.cargaHorariaSemanalAluno_, f, this),
-  minimizarDeslocAluno_ (x.minimizarDeslocAluno_, f, this),
-  cargaHorariaSemanalProfessor_ (x.cargaHorariaSemanalProfessor_, f, this),
-  minimizarDeslocProfessor_ (x.minimizarDeslocProfessor_, f, this),
-  minimizarHorariosVaziosProfessor_ (x.minimizarHorariosVaziosProfessor_, f, this),
-  evitarReducaoCargaHorariaProf_ (x.evitarReducaoCargaHorariaProf_, f, this),
-  niveisDificuldadeHorario_ (x.niveisDificuldadeHorario_, f, this),
-  equilibrarDiversidadeDiscDia_ (x.equilibrarDiversidadeDiscDia_, f, this),
-  maximizarAvaliacaoCursos_ (x.maximizarAvaliacaoCursos_, f, this),
-  minimizarCustoDocenteCursos_ (x.minimizarCustoDocenteCursos_, f, this),
-  permiteCompartilhamentoTurma_ (x.permiteCompartilhamentoTurma_, f, this),
-  desempenhoProfDisponibilidade_ (x.desempenhoProfDisponibilidade_, f, this),
-  custoProfDisponibilidade_ (x.custoProfDisponibilidade_, f, this),
-  evitarProfUltimoPrimeiroHor_ (x.evitarProfUltimoPrimeiroHor_, f, this),
-  maxDeslocProfessor_ (x.maxDeslocProfessor_, f, this),
   alunosMesmoPeriodoNaMesmaSala_ (x.alunosMesmoPeriodoNaMesmaSala_, f, this),
   permitirAlunosEmVariosCampi_ (x.permitirAlunosEmVariosCampi_, f, this),
+  minimizarDeslocAluno_ (x.minimizarDeslocAluno_, f, this),
+  cargaHorariaSemanalProfessor_ (x.cargaHorariaSemanalProfessor_, f, this),
   permitirProfessorEmVariosCampi_ (x.permitirProfessorEmVariosCampi_, f, this),
+  minimizarDeslocProfessor_ (x.minimizarDeslocProfessor_, f, this),
+  maxDeslocProfessor_ (x.maxDeslocProfessor_, f, this),
+  minimizarHorariosVaziosProfessor_ (x.minimizarHorariosVaziosProfessor_, f, this),
+  evitarReducaoCargaHorariaProf_ (x.evitarReducaoCargaHorariaProf_, f, this),
+  evitarReducaoCargaHorariaProfValor_ (x.evitarReducaoCargaHorariaProfValor_, f, this),
+  evitarProfUltimoPrimeiroHor_ (x.evitarProfUltimoPrimeiroHor_, f, this),
   preferenciaProfessorDisciplina_ (x.preferenciaProfessorDisciplina_, f, this),
+  desempenhoProfDisponibilidade_ (x.desempenhoProfDisponibilidade_, f, this),
   minAlunosAberturaTurmas_ (x.minAlunosAberturaTurmas_, f, this),
   minAlunosAberturaTurmasValor_ (x.minAlunosAberturaTurmasValor_, f, this),
+  niveisDificuldadeHorario_ (x.niveisDificuldadeHorario_, f, this),
+  equilibrarDiversidadeDiscDia_ (x.equilibrarDiversidadeDiscDia_, f, this),
   regrasGenericasDivisaoCredito_ (x.regrasGenericasDivisaoCredito_, f, this),
   regrasEspecificasDivisaoCredito_ (x.regrasEspecificasDivisaoCredito_, f, this),
+  maximizarAvaliacaoCursosSel_ (x.maximizarAvaliacaoCursosSel_, f, this),
+  maximizarAvaliacaoCursos_ (x.maximizarAvaliacaoCursos_, f, this),
+  minimizarCustoDocenteCursosSel_ (x.minimizarCustoDocenteCursosSel_, f, this),
+  minimizarCustoDocenteCursos_ (x.minimizarCustoDocenteCursos_, f, this),
+  permiteCompartilhamentoTurmaSel_ (x.permiteCompartilhamentoTurmaSel_, f, this),
+  permiteCompartilhamentoTurma_ (x.permiteCompartilhamentoTurma_, f, this),
   percentuaisMinimoMestres_ (x.percentuaisMinimoMestres_, f, this),
   percentuaisMinimoDoutores_ (x.percentuaisMinimoDoutores_, f, this),
   areaTitulacaoProfessorCurso_ (x.areaTitulacaoProfessorCurso_, f, this),
-  maximoDisciplinasDeUmProfessorPorCurso_ (x.maximoDisciplinasDeUmProfessorPorCurso_, f, this)
+  maximoDisciplinasDeUmProfessorPorCurso_ (x.maximoDisciplinasDeUmProfessorPorCurso_, f, this),
+  custoProfDisponibilidade_ (x.custoProfDisponibilidade_, f, this)
 {
 }
 
@@ -9704,32 +9820,36 @@ ItemParametrosPlanejamento (const ::xercesc::DOMElement& e,
 : ::xml_schema::type (e, f | ::xml_schema::flags::base, c),
   modoOtimizacao_ (f, this),
   cargaHorariaSemanalAluno_ (f, this),
-  minimizarDeslocAluno_ (f, this),
-  cargaHorariaSemanalProfessor_ (f, this),
-  minimizarDeslocProfessor_ (f, this),
-  minimizarHorariosVaziosProfessor_ (f, this),
-  evitarReducaoCargaHorariaProf_ (f, this),
-  niveisDificuldadeHorario_ (f, this),
-  equilibrarDiversidadeDiscDia_ (f, this),
-  maximizarAvaliacaoCursos_ (f, this),
-  minimizarCustoDocenteCursos_ (f, this),
-  permiteCompartilhamentoTurma_ (f, this),
-  desempenhoProfDisponibilidade_ (f, this),
-  custoProfDisponibilidade_ (f, this),
-  evitarProfUltimoPrimeiroHor_ (f, this),
-  maxDeslocProfessor_ (f, this),
   alunosMesmoPeriodoNaMesmaSala_ (f, this),
   permitirAlunosEmVariosCampi_ (f, this),
+  minimizarDeslocAluno_ (f, this),
+  cargaHorariaSemanalProfessor_ (f, this),
   permitirProfessorEmVariosCampi_ (f, this),
+  minimizarDeslocProfessor_ (f, this),
+  maxDeslocProfessor_ (f, this),
+  minimizarHorariosVaziosProfessor_ (f, this),
+  evitarReducaoCargaHorariaProf_ (f, this),
+  evitarReducaoCargaHorariaProfValor_ (f, this),
+  evitarProfUltimoPrimeiroHor_ (f, this),
   preferenciaProfessorDisciplina_ (f, this),
+  desempenhoProfDisponibilidade_ (f, this),
   minAlunosAberturaTurmas_ (f, this),
   minAlunosAberturaTurmasValor_ (f, this),
+  niveisDificuldadeHorario_ (f, this),
+  equilibrarDiversidadeDiscDia_ (f, this),
   regrasGenericasDivisaoCredito_ (f, this),
   regrasEspecificasDivisaoCredito_ (f, this),
+  maximizarAvaliacaoCursosSel_ (f, this),
+  maximizarAvaliacaoCursos_ (f, this),
+  minimizarCustoDocenteCursosSel_ (f, this),
+  minimizarCustoDocenteCursos_ (f, this),
+  permiteCompartilhamentoTurmaSel_ (f, this),
+  permiteCompartilhamentoTurma_ (f, this),
   percentuaisMinimoMestres_ (f, this),
   percentuaisMinimoDoutores_ (f, this),
   areaTitulacaoProfessorCurso_ (f, this),
-  maximoDisciplinasDeUmProfessorPorCurso_ (f, this)
+  maximoDisciplinasDeUmProfessorPorCurso_ (f, this),
+  custoProfDisponibilidade_ (f, this)
 {
   if ((f & ::xml_schema::flags::base) == 0)
   {
@@ -9776,6 +9896,28 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
       }
     }
 
+    // alunosMesmoPeriodoNaMesmaSala
+    //
+    if (n.name () == "alunosMesmoPeriodoNaMesmaSala" && n.namespace_ ().empty ())
+    {
+      if (!alunosMesmoPeriodoNaMesmaSala_.present ())
+      {
+        this->alunosMesmoPeriodoNaMesmaSala_.set (alunosMesmoPeriodoNaMesmaSala_traits::create (i, f, this));
+        continue;
+      }
+    }
+
+    // permitirAlunosEmVariosCampi
+    //
+    if (n.name () == "permitirAlunosEmVariosCampi" && n.namespace_ ().empty ())
+    {
+      if (!permitirAlunosEmVariosCampi_.present ())
+      {
+        this->permitirAlunosEmVariosCampi_.set (permitirAlunosEmVariosCampi_traits::create (i, f, this));
+        continue;
+      }
+    }
+
     // minimizarDeslocAluno
     //
     if (n.name () == "minimizarDeslocAluno" && n.namespace_ ().empty ())
@@ -9801,6 +9943,17 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
       }
     }
 
+    // permitirProfessorEmVariosCampi
+    //
+    if (n.name () == "permitirProfessorEmVariosCampi" && n.namespace_ ().empty ())
+    {
+      if (!permitirProfessorEmVariosCampi_.present ())
+      {
+        this->permitirProfessorEmVariosCampi_.set (permitirProfessorEmVariosCampi_traits::create (i, f, this));
+        continue;
+      }
+    }
+
     // minimizarDeslocProfessor
     //
     if (n.name () == "minimizarDeslocProfessor" && n.namespace_ ().empty ())
@@ -9808,6 +9961,17 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
       if (!minimizarDeslocProfessor_.present ())
       {
         this->minimizarDeslocProfessor_.set (minimizarDeslocProfessor_traits::create (i, f, this));
+        continue;
+      }
+    }
+
+    // maxDeslocProfessor
+    //
+    if (n.name () == "maxDeslocProfessor" && n.namespace_ ().empty ())
+    {
+      if (!this->maxDeslocProfessor_)
+      {
+        this->maxDeslocProfessor_.set (maxDeslocProfessor_traits::create (i, f, this));
         continue;
       }
     }
@@ -9830,6 +9994,72 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
       if (!evitarReducaoCargaHorariaProf_.present ())
       {
         this->evitarReducaoCargaHorariaProf_.set (evitarReducaoCargaHorariaProf_traits::create (i, f, this));
+        continue;
+      }
+    }
+
+    // evitarReducaoCargaHorariaProfValor
+    //
+    if (n.name () == "evitarReducaoCargaHorariaProfValor" && n.namespace_ ().empty ())
+    {
+      if (!this->evitarReducaoCargaHorariaProfValor_)
+      {
+        this->evitarReducaoCargaHorariaProfValor_.set (evitarReducaoCargaHorariaProfValor_traits::create (i, f, this));
+        continue;
+      }
+    }
+
+    // evitarProfUltimoPrimeiroHor
+    //
+    if (n.name () == "evitarProfUltimoPrimeiroHor" && n.namespace_ ().empty ())
+    {
+      if (!evitarProfUltimoPrimeiroHor_.present ())
+      {
+        this->evitarProfUltimoPrimeiroHor_.set (evitarProfUltimoPrimeiroHor_traits::create (i, f, this));
+        continue;
+      }
+    }
+
+    // preferenciaProfessorDisciplina
+    //
+    if (n.name () == "preferenciaProfessorDisciplina" && n.namespace_ ().empty ())
+    {
+      if (!preferenciaProfessorDisciplina_.present ())
+      {
+        this->preferenciaProfessorDisciplina_.set (preferenciaProfessorDisciplina_traits::create (i, f, this));
+        continue;
+      }
+    }
+
+    // desempenhoProfDisponibilidade
+    //
+    if (n.name () == "desempenhoProfDisponibilidade" && n.namespace_ ().empty ())
+    {
+      if (!desempenhoProfDisponibilidade_.present ())
+      {
+        this->desempenhoProfDisponibilidade_.set (desempenhoProfDisponibilidade_traits::create (i, f, this));
+        continue;
+      }
+    }
+
+    // minAlunosAberturaTurmas
+    //
+    if (n.name () == "minAlunosAberturaTurmas" && n.namespace_ ().empty ())
+    {
+      if (!minAlunosAberturaTurmas_.present ())
+      {
+        this->minAlunosAberturaTurmas_.set (minAlunosAberturaTurmas_traits::create (i, f, this));
+        continue;
+      }
+    }
+
+    // minAlunosAberturaTurmasValor
+    //
+    if (n.name () == "minAlunosAberturaTurmasValor" && n.namespace_ ().empty ())
+    {
+      if (!this->minAlunosAberturaTurmasValor_)
+      {
+        this->minAlunosAberturaTurmasValor_.set (minAlunosAberturaTurmasValor_traits::create (i, f, this));
         continue;
       }
     }
@@ -9859,158 +10089,6 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
       }
     }
 
-    // maximizarAvaliacaoCursos
-    //
-    if (n.name () == "maximizarAvaliacaoCursos" && n.namespace_ ().empty ())
-    {
-      ::std::auto_ptr< maximizarAvaliacaoCursos_type > r (
-        maximizarAvaliacaoCursos_traits::create (i, f, this));
-
-      if (!maximizarAvaliacaoCursos_.present ())
-      {
-        this->maximizarAvaliacaoCursos_.set (r);
-        continue;
-      }
-    }
-
-    // minimizarCustoDocenteCursos
-    //
-    if (n.name () == "minimizarCustoDocenteCursos" && n.namespace_ ().empty ())
-    {
-      ::std::auto_ptr< minimizarCustoDocenteCursos_type > r (
-        minimizarCustoDocenteCursos_traits::create (i, f, this));
-
-      if (!minimizarCustoDocenteCursos_.present ())
-      {
-        this->minimizarCustoDocenteCursos_.set (r);
-        continue;
-      }
-    }
-
-    // permiteCompartilhamentoTurma
-    //
-    if (n.name () == "permiteCompartilhamentoTurma" && n.namespace_ ().empty ())
-    {
-      ::std::auto_ptr< permiteCompartilhamentoTurma_type > r (
-        permiteCompartilhamentoTurma_traits::create (i, f, this));
-
-      if (!permiteCompartilhamentoTurma_.present ())
-      {
-        this->permiteCompartilhamentoTurma_.set (r);
-        continue;
-      }
-    }
-
-    // desempenhoProfDisponibilidade
-    //
-    if (n.name () == "desempenhoProfDisponibilidade" && n.namespace_ ().empty ())
-    {
-      if (!desempenhoProfDisponibilidade_.present ())
-      {
-        this->desempenhoProfDisponibilidade_.set (desempenhoProfDisponibilidade_traits::create (i, f, this));
-        continue;
-      }
-    }
-
-    // custoProfDisponibilidade
-    //
-    if (n.name () == "custoProfDisponibilidade" && n.namespace_ ().empty ())
-    {
-      if (!custoProfDisponibilidade_.present ())
-      {
-        this->custoProfDisponibilidade_.set (custoProfDisponibilidade_traits::create (i, f, this));
-        continue;
-      }
-    }
-
-    // evitarProfUltimoPrimeiroHor
-    //
-    if (n.name () == "evitarProfUltimoPrimeiroHor" && n.namespace_ ().empty ())
-    {
-      if (!evitarProfUltimoPrimeiroHor_.present ())
-      {
-        this->evitarProfUltimoPrimeiroHor_.set (evitarProfUltimoPrimeiroHor_traits::create (i, f, this));
-        continue;
-      }
-    }
-
-    // maxDeslocProfessor
-    //
-    if (n.name () == "maxDeslocProfessor" && n.namespace_ ().empty ())
-    {
-      if (!maxDeslocProfessor_.present ())
-      {
-        this->maxDeslocProfessor_.set (maxDeslocProfessor_traits::create (i, f, this));
-        continue;
-      }
-    }
-
-    // alunosMesmoPeriodoNaMesmaSala
-    //
-    if (n.name () == "alunosMesmoPeriodoNaMesmaSala" && n.namespace_ ().empty ())
-    {
-      if (!alunosMesmoPeriodoNaMesmaSala_.present ())
-      {
-        this->alunosMesmoPeriodoNaMesmaSala_.set (alunosMesmoPeriodoNaMesmaSala_traits::create (i, f, this));
-        continue;
-      }
-    }
-
-    // permitirAlunosEmVariosCampi
-    //
-    if (n.name () == "permitirAlunosEmVariosCampi" && n.namespace_ ().empty ())
-    {
-      if (!permitirAlunosEmVariosCampi_.present ())
-      {
-        this->permitirAlunosEmVariosCampi_.set (permitirAlunosEmVariosCampi_traits::create (i, f, this));
-        continue;
-      }
-    }
-
-    // permitirProfessorEmVariosCampi
-    //
-    if (n.name () == "permitirProfessorEmVariosCampi" && n.namespace_ ().empty ())
-    {
-      if (!permitirProfessorEmVariosCampi_.present ())
-      {
-        this->permitirProfessorEmVariosCampi_.set (permitirProfessorEmVariosCampi_traits::create (i, f, this));
-        continue;
-      }
-    }
-
-    // preferenciaProfessorDisciplina
-    //
-    if (n.name () == "preferenciaProfessorDisciplina" && n.namespace_ ().empty ())
-    {
-      if (!preferenciaProfessorDisciplina_.present ())
-      {
-        this->preferenciaProfessorDisciplina_.set (preferenciaProfessorDisciplina_traits::create (i, f, this));
-        continue;
-      }
-    }
-
-    // minAlunosAberturaTurmas
-    //
-    if (n.name () == "minAlunosAberturaTurmas" && n.namespace_ ().empty ())
-    {
-      if (!minAlunosAberturaTurmas_.present ())
-      {
-        this->minAlunosAberturaTurmas_.set (minAlunosAberturaTurmas_traits::create (i, f, this));
-        continue;
-      }
-    }
-
-    // minAlunosAberturaTurmasValor
-    //
-    if (n.name () == "minAlunosAberturaTurmasValor" && n.namespace_ ().empty ())
-    {
-      if (!minAlunosAberturaTurmasValor_.present ())
-      {
-        this->minAlunosAberturaTurmasValor_.set (minAlunosAberturaTurmasValor_traits::create (i, f, this));
-        continue;
-      }
-    }
-
     // regrasGenericasDivisaoCredito
     //
     if (n.name () == "regrasGenericasDivisaoCredito" && n.namespace_ ().empty ())
@@ -10029,6 +10107,81 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
       if (!regrasEspecificasDivisaoCredito_.present ())
       {
         this->regrasEspecificasDivisaoCredito_.set (regrasEspecificasDivisaoCredito_traits::create (i, f, this));
+        continue;
+      }
+    }
+
+    // maximizarAvaliacaoCursosSel
+    //
+    if (n.name () == "maximizarAvaliacaoCursosSel" && n.namespace_ ().empty ())
+    {
+      if (!maximizarAvaliacaoCursosSel_.present ())
+      {
+        this->maximizarAvaliacaoCursosSel_.set (maximizarAvaliacaoCursosSel_traits::create (i, f, this));
+        continue;
+      }
+    }
+
+    // maximizarAvaliacaoCursos
+    //
+    if (n.name () == "maximizarAvaliacaoCursos" && n.namespace_ ().empty ())
+    {
+      ::std::auto_ptr< maximizarAvaliacaoCursos_type > r (
+        maximizarAvaliacaoCursos_traits::create (i, f, this));
+
+      if (!this->maximizarAvaliacaoCursos_)
+      {
+        this->maximizarAvaliacaoCursos_.set (r);
+        continue;
+      }
+    }
+
+    // minimizarCustoDocenteCursosSel
+    //
+    if (n.name () == "minimizarCustoDocenteCursosSel" && n.namespace_ ().empty ())
+    {
+      if (!minimizarCustoDocenteCursosSel_.present ())
+      {
+        this->minimizarCustoDocenteCursosSel_.set (minimizarCustoDocenteCursosSel_traits::create (i, f, this));
+        continue;
+      }
+    }
+
+    // minimizarCustoDocenteCursos
+    //
+    if (n.name () == "minimizarCustoDocenteCursos" && n.namespace_ ().empty ())
+    {
+      ::std::auto_ptr< minimizarCustoDocenteCursos_type > r (
+        minimizarCustoDocenteCursos_traits::create (i, f, this));
+
+      if (!this->minimizarCustoDocenteCursos_)
+      {
+        this->minimizarCustoDocenteCursos_.set (r);
+        continue;
+      }
+    }
+
+    // permiteCompartilhamentoTurmaSel
+    //
+    if (n.name () == "permiteCompartilhamentoTurmaSel" && n.namespace_ ().empty ())
+    {
+      if (!permiteCompartilhamentoTurmaSel_.present ())
+      {
+        this->permiteCompartilhamentoTurmaSel_.set (permiteCompartilhamentoTurmaSel_traits::create (i, f, this));
+        continue;
+      }
+    }
+
+    // permiteCompartilhamentoTurma
+    //
+    if (n.name () == "permiteCompartilhamentoTurma" && n.namespace_ ().empty ())
+    {
+      ::std::auto_ptr< permiteCompartilhamentoTurma_type > r (
+        permiteCompartilhamentoTurma_traits::create (i, f, this));
+
+      if (!this->permiteCompartilhamentoTurma_)
+      {
+        this->permiteCompartilhamentoTurma_.set (r);
         continue;
       }
     }
@@ -10077,6 +10230,17 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
       }
     }
 
+    // custoProfDisponibilidade
+    //
+    if (n.name () == "custoProfDisponibilidade" && n.namespace_ ().empty ())
+    {
+      if (!custoProfDisponibilidade_.present ())
+      {
+        this->custoProfDisponibilidade_.set (custoProfDisponibilidade_traits::create (i, f, this));
+        continue;
+      }
+    }
+
     break;
   }
 
@@ -10094,6 +10258,20 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
       "");
   }
 
+  if (!alunosMesmoPeriodoNaMesmaSala_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "alunosMesmoPeriodoNaMesmaSala",
+      "");
+  }
+
+  if (!permitirAlunosEmVariosCampi_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "permitirAlunosEmVariosCampi",
+      "");
+  }
+
   if (!minimizarDeslocAluno_.present ())
   {
     throw ::xsd::cxx::tree::expected_element< char > (
@@ -10105,6 +10283,13 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
   {
     throw ::xsd::cxx::tree::expected_element< char > (
       "cargaHorariaSemanalProfessor",
+      "");
+  }
+
+  if (!permitirProfessorEmVariosCampi_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "permitirProfessorEmVariosCampi",
       "");
   }
 
@@ -10129,6 +10314,34 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
       "");
   }
 
+  if (!evitarProfUltimoPrimeiroHor_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "evitarProfUltimoPrimeiroHor",
+      "");
+  }
+
+  if (!preferenciaProfessorDisciplina_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "preferenciaProfessorDisciplina",
+      "");
+  }
+
+  if (!desempenhoProfDisponibilidade_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "desempenhoProfDisponibilidade",
+      "");
+  }
+
+  if (!minAlunosAberturaTurmas_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "minAlunosAberturaTurmas",
+      "");
+  }
+
   if (!niveisDificuldadeHorario_.present ())
   {
     throw ::xsd::cxx::tree::expected_element< char > (
@@ -10143,97 +10356,6 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
       "");
   }
 
-  if (!maximizarAvaliacaoCursos_.present ())
-  {
-    throw ::xsd::cxx::tree::expected_element< char > (
-      "maximizarAvaliacaoCursos",
-      "");
-  }
-
-  if (!minimizarCustoDocenteCursos_.present ())
-  {
-    throw ::xsd::cxx::tree::expected_element< char > (
-      "minimizarCustoDocenteCursos",
-      "");
-  }
-
-  if (!permiteCompartilhamentoTurma_.present ())
-  {
-    throw ::xsd::cxx::tree::expected_element< char > (
-      "permiteCompartilhamentoTurma",
-      "");
-  }
-
-  if (!desempenhoProfDisponibilidade_.present ())
-  {
-    throw ::xsd::cxx::tree::expected_element< char > (
-      "desempenhoProfDisponibilidade",
-      "");
-  }
-
-  if (!custoProfDisponibilidade_.present ())
-  {
-    throw ::xsd::cxx::tree::expected_element< char > (
-      "custoProfDisponibilidade",
-      "");
-  }
-
-  if (!evitarProfUltimoPrimeiroHor_.present ())
-  {
-    throw ::xsd::cxx::tree::expected_element< char > (
-      "evitarProfUltimoPrimeiroHor",
-      "");
-  }
-
-  if (!maxDeslocProfessor_.present ())
-  {
-    throw ::xsd::cxx::tree::expected_element< char > (
-      "maxDeslocProfessor",
-      "");
-  }
-
-  if (!alunosMesmoPeriodoNaMesmaSala_.present ())
-  {
-    throw ::xsd::cxx::tree::expected_element< char > (
-      "alunosMesmoPeriodoNaMesmaSala",
-      "");
-  }
-
-  if (!permitirAlunosEmVariosCampi_.present ())
-  {
-    throw ::xsd::cxx::tree::expected_element< char > (
-      "permitirAlunosEmVariosCampi",
-      "");
-  }
-
-  if (!permitirProfessorEmVariosCampi_.present ())
-  {
-    throw ::xsd::cxx::tree::expected_element< char > (
-      "permitirProfessorEmVariosCampi",
-      "");
-  }
-
-  if (!preferenciaProfessorDisciplina_.present ())
-  {
-    throw ::xsd::cxx::tree::expected_element< char > (
-      "preferenciaProfessorDisciplina",
-      "");
-  }
-
-  if (!minAlunosAberturaTurmas_.present ())
-  {
-    throw ::xsd::cxx::tree::expected_element< char > (
-      "minAlunosAberturaTurmas",
-      "");
-  }
-
-  if (!minAlunosAberturaTurmasValor_.present ())
-  {
-    throw ::xsd::cxx::tree::expected_element< char > (
-      "minAlunosAberturaTurmasValor",
-      "");
-  }
-
   if (!regrasGenericasDivisaoCredito_.present ())
   {
     throw ::xsd::cxx::tree::expected_element< char > (
@@ -10245,6 +10367,27 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
   {
     throw ::xsd::cxx::tree::expected_element< char > (
       "regrasEspecificasDivisaoCredito",
+      "");
+  }
+
+  if (!maximizarAvaliacaoCursosSel_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "maximizarAvaliacaoCursosSel",
+      "");
+  }
+
+  if (!minimizarCustoDocenteCursosSel_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "minimizarCustoDocenteCursosSel",
+      "");
+  }
+
+  if (!permiteCompartilhamentoTurmaSel_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "permiteCompartilhamentoTurmaSel",
       "");
   }
 
@@ -10273,6 +10416,13 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
   {
     throw ::xsd::cxx::tree::expected_element< char > (
       "maximoDisciplinasDeUmProfessorPorCurso",
+      "");
+  }
+
+  if (!custoProfDisponibilidade_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "custoProfDisponibilidade",
       "");
   }
 }
@@ -14259,7 +14409,7 @@ cargaHorariaSemanalProfessor ()
 : ::xml_schema::type (),
   equilibrar_ (::xml_schema::flags (), this),
   minimizarDias_ (::xml_schema::flags (), this),
-  indiferentes_ (::xml_schema::flags (), this)
+  indiferente_ (::xml_schema::flags (), this)
 {
 }
 
@@ -14270,7 +14420,7 @@ cargaHorariaSemanalProfessor (const cargaHorariaSemanalProfessor& x,
 : ::xml_schema::type (x, f, c),
   equilibrar_ (x.equilibrar_, f, this),
   minimizarDias_ (x.minimizarDias_, f, this),
-  indiferentes_ (x.indiferentes_, f, this)
+  indiferente_ (x.indiferente_, f, this)
 {
 }
 
@@ -14281,7 +14431,7 @@ cargaHorariaSemanalProfessor (const ::xercesc::DOMElement& e,
 : ::xml_schema::type (e, f | ::xml_schema::flags::base, c),
   equilibrar_ (f, this),
   minimizarDias_ (f, this),
-  indiferentes_ (f, this)
+  indiferente_ (f, this)
 {
   if ((f & ::xml_schema::flags::base) == 0)
   {
@@ -14328,16 +14478,16 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
       }
     }
 
-    // indiferentes
+    // indiferente
     //
-    if (n.name () == "indiferentes" && n.namespace_ ().empty ())
+    if (n.name () == "indiferente" && n.namespace_ ().empty ())
     {
-      ::std::auto_ptr< indiferentes_type > r (
-        indiferentes_traits::create (i, f, this));
+      ::std::auto_ptr< indiferente_type > r (
+        indiferente_traits::create (i, f, this));
 
-      if (!this->indiferentes_)
+      if (!this->indiferente_)
       {
-        this->indiferentes_.set (r);
+        this->indiferente_.set (r);
         continue;
       }
     }

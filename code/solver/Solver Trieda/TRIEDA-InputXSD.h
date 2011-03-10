@@ -3399,6 +3399,34 @@ class ItemParametrosPlanejamento: public ::xml_schema::type
   void
   cargaHorariaSemanalAluno (::std::auto_ptr< cargaHorariaSemanalAluno_type > p);
 
+  // alunosMesmoPeriodoNaMesmaSala
+  // 
+  typedef ::xml_schema::boolean alunosMesmoPeriodoNaMesmaSala_type;
+  typedef ::xsd::cxx::tree::traits< alunosMesmoPeriodoNaMesmaSala_type, char > alunosMesmoPeriodoNaMesmaSala_traits;
+
+  const alunosMesmoPeriodoNaMesmaSala_type&
+  alunosMesmoPeriodoNaMesmaSala () const;
+
+  alunosMesmoPeriodoNaMesmaSala_type&
+  alunosMesmoPeriodoNaMesmaSala ();
+
+  void
+  alunosMesmoPeriodoNaMesmaSala (const alunosMesmoPeriodoNaMesmaSala_type& x);
+
+  // permitirAlunosEmVariosCampi
+  // 
+  typedef ::xml_schema::boolean permitirAlunosEmVariosCampi_type;
+  typedef ::xsd::cxx::tree::traits< permitirAlunosEmVariosCampi_type, char > permitirAlunosEmVariosCampi_traits;
+
+  const permitirAlunosEmVariosCampi_type&
+  permitirAlunosEmVariosCampi () const;
+
+  permitirAlunosEmVariosCampi_type&
+  permitirAlunosEmVariosCampi ();
+
+  void
+  permitirAlunosEmVariosCampi (const permitirAlunosEmVariosCampi_type& x);
+
   // minimizarDeslocAluno
   // 
   typedef ::xml_schema::boolean minimizarDeslocAluno_type;
@@ -3430,6 +3458,20 @@ class ItemParametrosPlanejamento: public ::xml_schema::type
   void
   cargaHorariaSemanalProfessor (::std::auto_ptr< cargaHorariaSemanalProfessor_type > p);
 
+  // permitirProfessorEmVariosCampi
+  // 
+  typedef ::xml_schema::boolean permitirProfessorEmVariosCampi_type;
+  typedef ::xsd::cxx::tree::traits< permitirProfessorEmVariosCampi_type, char > permitirProfessorEmVariosCampi_traits;
+
+  const permitirProfessorEmVariosCampi_type&
+  permitirProfessorEmVariosCampi () const;
+
+  permitirProfessorEmVariosCampi_type&
+  permitirProfessorEmVariosCampi ();
+
+  void
+  permitirProfessorEmVariosCampi (const permitirProfessorEmVariosCampi_type& x);
+
   // minimizarDeslocProfessor
   // 
   typedef ::xml_schema::boolean minimizarDeslocProfessor_type;
@@ -3443,6 +3485,24 @@ class ItemParametrosPlanejamento: public ::xml_schema::type
 
   void
   minimizarDeslocProfessor (const minimizarDeslocProfessor_type& x);
+
+  // maxDeslocProfessor
+  // 
+  typedef ::xml_schema::int_ maxDeslocProfessor_type;
+  typedef ::xsd::cxx::tree::optional< maxDeslocProfessor_type > maxDeslocProfessor_optional;
+  typedef ::xsd::cxx::tree::traits< maxDeslocProfessor_type, char > maxDeslocProfessor_traits;
+
+  const maxDeslocProfessor_optional&
+  maxDeslocProfessor () const;
+
+  maxDeslocProfessor_optional&
+  maxDeslocProfessor ();
+
+  void
+  maxDeslocProfessor (const maxDeslocProfessor_type& x);
+
+  void
+  maxDeslocProfessor (const maxDeslocProfessor_optional& x);
 
   // minimizarHorariosVaziosProfessor
   // 
@@ -3471,6 +3531,98 @@ class ItemParametrosPlanejamento: public ::xml_schema::type
 
   void
   evitarReducaoCargaHorariaProf (const evitarReducaoCargaHorariaProf_type& x);
+
+  // evitarReducaoCargaHorariaProfValor
+  // 
+  typedef ::xml_schema::int_ evitarReducaoCargaHorariaProfValor_type;
+  typedef ::xsd::cxx::tree::optional< evitarReducaoCargaHorariaProfValor_type > evitarReducaoCargaHorariaProfValor_optional;
+  typedef ::xsd::cxx::tree::traits< evitarReducaoCargaHorariaProfValor_type, char > evitarReducaoCargaHorariaProfValor_traits;
+
+  const evitarReducaoCargaHorariaProfValor_optional&
+  evitarReducaoCargaHorariaProfValor () const;
+
+  evitarReducaoCargaHorariaProfValor_optional&
+  evitarReducaoCargaHorariaProfValor ();
+
+  void
+  evitarReducaoCargaHorariaProfValor (const evitarReducaoCargaHorariaProfValor_type& x);
+
+  void
+  evitarReducaoCargaHorariaProfValor (const evitarReducaoCargaHorariaProfValor_optional& x);
+
+  // evitarProfUltimoPrimeiroHor
+  // 
+  typedef ::xml_schema::boolean evitarProfUltimoPrimeiroHor_type;
+  typedef ::xsd::cxx::tree::traits< evitarProfUltimoPrimeiroHor_type, char > evitarProfUltimoPrimeiroHor_traits;
+
+  const evitarProfUltimoPrimeiroHor_type&
+  evitarProfUltimoPrimeiroHor () const;
+
+  evitarProfUltimoPrimeiroHor_type&
+  evitarProfUltimoPrimeiroHor ();
+
+  void
+  evitarProfUltimoPrimeiroHor (const evitarProfUltimoPrimeiroHor_type& x);
+
+  // preferenciaProfessorDisciplina
+  // 
+  typedef ::xml_schema::boolean preferenciaProfessorDisciplina_type;
+  typedef ::xsd::cxx::tree::traits< preferenciaProfessorDisciplina_type, char > preferenciaProfessorDisciplina_traits;
+
+  const preferenciaProfessorDisciplina_type&
+  preferenciaProfessorDisciplina () const;
+
+  preferenciaProfessorDisciplina_type&
+  preferenciaProfessorDisciplina ();
+
+  void
+  preferenciaProfessorDisciplina (const preferenciaProfessorDisciplina_type& x);
+
+  // desempenhoProfDisponibilidade
+  // 
+  typedef ::xml_schema::boolean desempenhoProfDisponibilidade_type;
+  typedef ::xsd::cxx::tree::traits< desempenhoProfDisponibilidade_type, char > desempenhoProfDisponibilidade_traits;
+
+  const desempenhoProfDisponibilidade_type&
+  desempenhoProfDisponibilidade () const;
+
+  desempenhoProfDisponibilidade_type&
+  desempenhoProfDisponibilidade ();
+
+  void
+  desempenhoProfDisponibilidade (const desempenhoProfDisponibilidade_type& x);
+
+  // minAlunosAberturaTurmas
+  // 
+  typedef ::xml_schema::boolean minAlunosAberturaTurmas_type;
+  typedef ::xsd::cxx::tree::traits< minAlunosAberturaTurmas_type, char > minAlunosAberturaTurmas_traits;
+
+  const minAlunosAberturaTurmas_type&
+  minAlunosAberturaTurmas () const;
+
+  minAlunosAberturaTurmas_type&
+  minAlunosAberturaTurmas ();
+
+  void
+  minAlunosAberturaTurmas (const minAlunosAberturaTurmas_type& x);
+
+  // minAlunosAberturaTurmasValor
+  // 
+  typedef ::xml_schema::int_ minAlunosAberturaTurmasValor_type;
+  typedef ::xsd::cxx::tree::optional< minAlunosAberturaTurmasValor_type > minAlunosAberturaTurmasValor_optional;
+  typedef ::xsd::cxx::tree::traits< minAlunosAberturaTurmasValor_type, char > minAlunosAberturaTurmasValor_traits;
+
+  const minAlunosAberturaTurmasValor_optional&
+  minAlunosAberturaTurmasValor () const;
+
+  minAlunosAberturaTurmasValor_optional&
+  minAlunosAberturaTurmasValor ();
+
+  void
+  minAlunosAberturaTurmasValor (const minAlunosAberturaTurmasValor_type& x);
+
+  void
+  minAlunosAberturaTurmasValor (const minAlunosAberturaTurmasValor_optional& x);
 
   // niveisDificuldadeHorario
   // 
@@ -3503,197 +3655,6 @@ class ItemParametrosPlanejamento: public ::xml_schema::type
   void
   equilibrarDiversidadeDiscDia (const equilibrarDiversidadeDiscDia_type& x);
 
-  // maximizarAvaliacaoCursos
-  // 
-  typedef ::GrupoIdentificador maximizarAvaliacaoCursos_type;
-  typedef ::xsd::cxx::tree::traits< maximizarAvaliacaoCursos_type, char > maximizarAvaliacaoCursos_traits;
-
-  const maximizarAvaliacaoCursos_type&
-  maximizarAvaliacaoCursos () const;
-
-  maximizarAvaliacaoCursos_type&
-  maximizarAvaliacaoCursos ();
-
-  void
-  maximizarAvaliacaoCursos (const maximizarAvaliacaoCursos_type& x);
-
-  void
-  maximizarAvaliacaoCursos (::std::auto_ptr< maximizarAvaliacaoCursos_type > p);
-
-  // minimizarCustoDocenteCursos
-  // 
-  typedef ::GrupoIdentificador minimizarCustoDocenteCursos_type;
-  typedef ::xsd::cxx::tree::traits< minimizarCustoDocenteCursos_type, char > minimizarCustoDocenteCursos_traits;
-
-  const minimizarCustoDocenteCursos_type&
-  minimizarCustoDocenteCursos () const;
-
-  minimizarCustoDocenteCursos_type&
-  minimizarCustoDocenteCursos ();
-
-  void
-  minimizarCustoDocenteCursos (const minimizarCustoDocenteCursos_type& x);
-
-  void
-  minimizarCustoDocenteCursos (::std::auto_ptr< minimizarCustoDocenteCursos_type > p);
-
-  // permiteCompartilhamentoTurma
-  // 
-  typedef ::GrupoGrupo permiteCompartilhamentoTurma_type;
-  typedef ::xsd::cxx::tree::traits< permiteCompartilhamentoTurma_type, char > permiteCompartilhamentoTurma_traits;
-
-  const permiteCompartilhamentoTurma_type&
-  permiteCompartilhamentoTurma () const;
-
-  permiteCompartilhamentoTurma_type&
-  permiteCompartilhamentoTurma ();
-
-  void
-  permiteCompartilhamentoTurma (const permiteCompartilhamentoTurma_type& x);
-
-  void
-  permiteCompartilhamentoTurma (::std::auto_ptr< permiteCompartilhamentoTurma_type > p);
-
-  // desempenhoProfDisponibilidade
-  // 
-  typedef ::xml_schema::boolean desempenhoProfDisponibilidade_type;
-  typedef ::xsd::cxx::tree::traits< desempenhoProfDisponibilidade_type, char > desempenhoProfDisponibilidade_traits;
-
-  const desempenhoProfDisponibilidade_type&
-  desempenhoProfDisponibilidade () const;
-
-  desempenhoProfDisponibilidade_type&
-  desempenhoProfDisponibilidade ();
-
-  void
-  desempenhoProfDisponibilidade (const desempenhoProfDisponibilidade_type& x);
-
-  // custoProfDisponibilidade
-  // 
-  typedef ::xml_schema::boolean custoProfDisponibilidade_type;
-  typedef ::xsd::cxx::tree::traits< custoProfDisponibilidade_type, char > custoProfDisponibilidade_traits;
-
-  const custoProfDisponibilidade_type&
-  custoProfDisponibilidade () const;
-
-  custoProfDisponibilidade_type&
-  custoProfDisponibilidade ();
-
-  void
-  custoProfDisponibilidade (const custoProfDisponibilidade_type& x);
-
-  // evitarProfUltimoPrimeiroHor
-  // 
-  typedef ::xml_schema::boolean evitarProfUltimoPrimeiroHor_type;
-  typedef ::xsd::cxx::tree::traits< evitarProfUltimoPrimeiroHor_type, char > evitarProfUltimoPrimeiroHor_traits;
-
-  const evitarProfUltimoPrimeiroHor_type&
-  evitarProfUltimoPrimeiroHor () const;
-
-  evitarProfUltimoPrimeiroHor_type&
-  evitarProfUltimoPrimeiroHor ();
-
-  void
-  evitarProfUltimoPrimeiroHor (const evitarProfUltimoPrimeiroHor_type& x);
-
-  // maxDeslocProfessor
-  // 
-  typedef ::xml_schema::int_ maxDeslocProfessor_type;
-  typedef ::xsd::cxx::tree::traits< maxDeslocProfessor_type, char > maxDeslocProfessor_traits;
-
-  const maxDeslocProfessor_type&
-  maxDeslocProfessor () const;
-
-  maxDeslocProfessor_type&
-  maxDeslocProfessor ();
-
-  void
-  maxDeslocProfessor (const maxDeslocProfessor_type& x);
-
-  // alunosMesmoPeriodoNaMesmaSala
-  // 
-  typedef ::xml_schema::boolean alunosMesmoPeriodoNaMesmaSala_type;
-  typedef ::xsd::cxx::tree::traits< alunosMesmoPeriodoNaMesmaSala_type, char > alunosMesmoPeriodoNaMesmaSala_traits;
-
-  const alunosMesmoPeriodoNaMesmaSala_type&
-  alunosMesmoPeriodoNaMesmaSala () const;
-
-  alunosMesmoPeriodoNaMesmaSala_type&
-  alunosMesmoPeriodoNaMesmaSala ();
-
-  void
-  alunosMesmoPeriodoNaMesmaSala (const alunosMesmoPeriodoNaMesmaSala_type& x);
-
-  // permitirAlunosEmVariosCampi
-  // 
-  typedef ::xml_schema::boolean permitirAlunosEmVariosCampi_type;
-  typedef ::xsd::cxx::tree::traits< permitirAlunosEmVariosCampi_type, char > permitirAlunosEmVariosCampi_traits;
-
-  const permitirAlunosEmVariosCampi_type&
-  permitirAlunosEmVariosCampi () const;
-
-  permitirAlunosEmVariosCampi_type&
-  permitirAlunosEmVariosCampi ();
-
-  void
-  permitirAlunosEmVariosCampi (const permitirAlunosEmVariosCampi_type& x);
-
-  // permitirProfessorEmVariosCampi
-  // 
-  typedef ::xml_schema::boolean permitirProfessorEmVariosCampi_type;
-  typedef ::xsd::cxx::tree::traits< permitirProfessorEmVariosCampi_type, char > permitirProfessorEmVariosCampi_traits;
-
-  const permitirProfessorEmVariosCampi_type&
-  permitirProfessorEmVariosCampi () const;
-
-  permitirProfessorEmVariosCampi_type&
-  permitirProfessorEmVariosCampi ();
-
-  void
-  permitirProfessorEmVariosCampi (const permitirProfessorEmVariosCampi_type& x);
-
-  // preferenciaProfessorDisciplina
-  // 
-  typedef ::xml_schema::boolean preferenciaProfessorDisciplina_type;
-  typedef ::xsd::cxx::tree::traits< preferenciaProfessorDisciplina_type, char > preferenciaProfessorDisciplina_traits;
-
-  const preferenciaProfessorDisciplina_type&
-  preferenciaProfessorDisciplina () const;
-
-  preferenciaProfessorDisciplina_type&
-  preferenciaProfessorDisciplina ();
-
-  void
-  preferenciaProfessorDisciplina (const preferenciaProfessorDisciplina_type& x);
-
-  // minAlunosAberturaTurmas
-  // 
-  typedef ::xml_schema::boolean minAlunosAberturaTurmas_type;
-  typedef ::xsd::cxx::tree::traits< minAlunosAberturaTurmas_type, char > minAlunosAberturaTurmas_traits;
-
-  const minAlunosAberturaTurmas_type&
-  minAlunosAberturaTurmas () const;
-
-  minAlunosAberturaTurmas_type&
-  minAlunosAberturaTurmas ();
-
-  void
-  minAlunosAberturaTurmas (const minAlunosAberturaTurmas_type& x);
-
-  // minAlunosAberturaTurmasValor
-  // 
-  typedef ::xml_schema::int_ minAlunosAberturaTurmasValor_type;
-  typedef ::xsd::cxx::tree::traits< minAlunosAberturaTurmasValor_type, char > minAlunosAberturaTurmasValor_traits;
-
-  const minAlunosAberturaTurmasValor_type&
-  minAlunosAberturaTurmasValor () const;
-
-  minAlunosAberturaTurmasValor_type&
-  minAlunosAberturaTurmasValor ();
-
-  void
-  minAlunosAberturaTurmasValor (const minAlunosAberturaTurmasValor_type& x);
-
   // regrasGenericasDivisaoCredito
   // 
   typedef ::xml_schema::boolean regrasGenericasDivisaoCredito_type;
@@ -3721,6 +3682,111 @@ class ItemParametrosPlanejamento: public ::xml_schema::type
 
   void
   regrasEspecificasDivisaoCredito (const regrasEspecificasDivisaoCredito_type& x);
+
+  // maximizarAvaliacaoCursosSel
+  // 
+  typedef ::xml_schema::boolean maximizarAvaliacaoCursosSel_type;
+  typedef ::xsd::cxx::tree::traits< maximizarAvaliacaoCursosSel_type, char > maximizarAvaliacaoCursosSel_traits;
+
+  const maximizarAvaliacaoCursosSel_type&
+  maximizarAvaliacaoCursosSel () const;
+
+  maximizarAvaliacaoCursosSel_type&
+  maximizarAvaliacaoCursosSel ();
+
+  void
+  maximizarAvaliacaoCursosSel (const maximizarAvaliacaoCursosSel_type& x);
+
+  // maximizarAvaliacaoCursos
+  // 
+  typedef ::GrupoIdentificador maximizarAvaliacaoCursos_type;
+  typedef ::xsd::cxx::tree::optional< maximizarAvaliacaoCursos_type > maximizarAvaliacaoCursos_optional;
+  typedef ::xsd::cxx::tree::traits< maximizarAvaliacaoCursos_type, char > maximizarAvaliacaoCursos_traits;
+
+  const maximizarAvaliacaoCursos_optional&
+  maximizarAvaliacaoCursos () const;
+
+  maximizarAvaliacaoCursos_optional&
+  maximizarAvaliacaoCursos ();
+
+  void
+  maximizarAvaliacaoCursos (const maximizarAvaliacaoCursos_type& x);
+
+  void
+  maximizarAvaliacaoCursos (const maximizarAvaliacaoCursos_optional& x);
+
+  void
+  maximizarAvaliacaoCursos (::std::auto_ptr< maximizarAvaliacaoCursos_type > p);
+
+  // minimizarCustoDocenteCursosSel
+  // 
+  typedef ::xml_schema::boolean minimizarCustoDocenteCursosSel_type;
+  typedef ::xsd::cxx::tree::traits< minimizarCustoDocenteCursosSel_type, char > minimizarCustoDocenteCursosSel_traits;
+
+  const minimizarCustoDocenteCursosSel_type&
+  minimizarCustoDocenteCursosSel () const;
+
+  minimizarCustoDocenteCursosSel_type&
+  minimizarCustoDocenteCursosSel ();
+
+  void
+  minimizarCustoDocenteCursosSel (const minimizarCustoDocenteCursosSel_type& x);
+
+  // minimizarCustoDocenteCursos
+  // 
+  typedef ::GrupoIdentificador minimizarCustoDocenteCursos_type;
+  typedef ::xsd::cxx::tree::optional< minimizarCustoDocenteCursos_type > minimizarCustoDocenteCursos_optional;
+  typedef ::xsd::cxx::tree::traits< minimizarCustoDocenteCursos_type, char > minimizarCustoDocenteCursos_traits;
+
+  const minimizarCustoDocenteCursos_optional&
+  minimizarCustoDocenteCursos () const;
+
+  minimizarCustoDocenteCursos_optional&
+  minimizarCustoDocenteCursos ();
+
+  void
+  minimizarCustoDocenteCursos (const minimizarCustoDocenteCursos_type& x);
+
+  void
+  minimizarCustoDocenteCursos (const minimizarCustoDocenteCursos_optional& x);
+
+  void
+  minimizarCustoDocenteCursos (::std::auto_ptr< minimizarCustoDocenteCursos_type > p);
+
+  // permiteCompartilhamentoTurmaSel
+  // 
+  typedef ::xml_schema::boolean permiteCompartilhamentoTurmaSel_type;
+  typedef ::xsd::cxx::tree::traits< permiteCompartilhamentoTurmaSel_type, char > permiteCompartilhamentoTurmaSel_traits;
+
+  const permiteCompartilhamentoTurmaSel_type&
+  permiteCompartilhamentoTurmaSel () const;
+
+  permiteCompartilhamentoTurmaSel_type&
+  permiteCompartilhamentoTurmaSel ();
+
+  void
+  permiteCompartilhamentoTurmaSel (const permiteCompartilhamentoTurmaSel_type& x);
+
+  // permiteCompartilhamentoTurma
+  // 
+  typedef ::GrupoGrupo permiteCompartilhamentoTurma_type;
+  typedef ::xsd::cxx::tree::optional< permiteCompartilhamentoTurma_type > permiteCompartilhamentoTurma_optional;
+  typedef ::xsd::cxx::tree::traits< permiteCompartilhamentoTurma_type, char > permiteCompartilhamentoTurma_traits;
+
+  const permiteCompartilhamentoTurma_optional&
+  permiteCompartilhamentoTurma () const;
+
+  permiteCompartilhamentoTurma_optional&
+  permiteCompartilhamentoTurma ();
+
+  void
+  permiteCompartilhamentoTurma (const permiteCompartilhamentoTurma_type& x);
+
+  void
+  permiteCompartilhamentoTurma (const permiteCompartilhamentoTurma_optional& x);
+
+  void
+  permiteCompartilhamentoTurma (::std::auto_ptr< permiteCompartilhamentoTurma_type > p);
 
   // percentuaisMinimoMestres
   // 
@@ -3778,65 +3844,75 @@ class ItemParametrosPlanejamento: public ::xml_schema::type
   void
   maximoDisciplinasDeUmProfessorPorCurso (const maximoDisciplinasDeUmProfessorPorCurso_type& x);
 
+  // custoProfDisponibilidade
+  // 
+  typedef ::xml_schema::boolean custoProfDisponibilidade_type;
+  typedef ::xsd::cxx::tree::traits< custoProfDisponibilidade_type, char > custoProfDisponibilidade_traits;
+
+  const custoProfDisponibilidade_type&
+  custoProfDisponibilidade () const;
+
+  custoProfDisponibilidade_type&
+  custoProfDisponibilidade ();
+
+  void
+  custoProfDisponibilidade (const custoProfDisponibilidade_type& x);
+
   // Constructors.
   //
   ItemParametrosPlanejamento (const modoOtimizacao_type&,
                               const cargaHorariaSemanalAluno_type&,
+                              const alunosMesmoPeriodoNaMesmaSala_type&,
+                              const permitirAlunosEmVariosCampi_type&,
                               const minimizarDeslocAluno_type&,
                               const cargaHorariaSemanalProfessor_type&,
+                              const permitirProfessorEmVariosCampi_type&,
                               const minimizarDeslocProfessor_type&,
                               const minimizarHorariosVaziosProfessor_type&,
                               const evitarReducaoCargaHorariaProf_type&,
+                              const evitarProfUltimoPrimeiroHor_type&,
+                              const preferenciaProfessorDisciplina_type&,
+                              const desempenhoProfDisponibilidade_type&,
+                              const minAlunosAberturaTurmas_type&,
                               const niveisDificuldadeHorario_type&,
                               const equilibrarDiversidadeDiscDia_type&,
-                              const maximizarAvaliacaoCursos_type&,
-                              const minimizarCustoDocenteCursos_type&,
-                              const permiteCompartilhamentoTurma_type&,
-                              const desempenhoProfDisponibilidade_type&,
-                              const custoProfDisponibilidade_type&,
-                              const evitarProfUltimoPrimeiroHor_type&,
-                              const maxDeslocProfessor_type&,
-                              const alunosMesmoPeriodoNaMesmaSala_type&,
-                              const permitirAlunosEmVariosCampi_type&,
-                              const permitirProfessorEmVariosCampi_type&,
-                              const preferenciaProfessorDisciplina_type&,
-                              const minAlunosAberturaTurmas_type&,
-                              const minAlunosAberturaTurmasValor_type&,
                               const regrasGenericasDivisaoCredito_type&,
                               const regrasEspecificasDivisaoCredito_type&,
+                              const maximizarAvaliacaoCursosSel_type&,
+                              const minimizarCustoDocenteCursosSel_type&,
+                              const permiteCompartilhamentoTurmaSel_type&,
                               const percentuaisMinimoMestres_type&,
                               const percentuaisMinimoDoutores_type&,
                               const areaTitulacaoProfessorCurso_type&,
-                              const maximoDisciplinasDeUmProfessorPorCurso_type&);
+                              const maximoDisciplinasDeUmProfessorPorCurso_type&,
+                              const custoProfDisponibilidade_type&);
 
   ItemParametrosPlanejamento (const modoOtimizacao_type&,
                               ::std::auto_ptr< cargaHorariaSemanalAluno_type >&,
+                              const alunosMesmoPeriodoNaMesmaSala_type&,
+                              const permitirAlunosEmVariosCampi_type&,
                               const minimizarDeslocAluno_type&,
                               ::std::auto_ptr< cargaHorariaSemanalProfessor_type >&,
+                              const permitirProfessorEmVariosCampi_type&,
                               const minimizarDeslocProfessor_type&,
                               const minimizarHorariosVaziosProfessor_type&,
                               const evitarReducaoCargaHorariaProf_type&,
+                              const evitarProfUltimoPrimeiroHor_type&,
+                              const preferenciaProfessorDisciplina_type&,
+                              const desempenhoProfDisponibilidade_type&,
+                              const minAlunosAberturaTurmas_type&,
                               ::std::auto_ptr< niveisDificuldadeHorario_type >&,
                               const equilibrarDiversidadeDiscDia_type&,
-                              ::std::auto_ptr< maximizarAvaliacaoCursos_type >&,
-                              ::std::auto_ptr< minimizarCustoDocenteCursos_type >&,
-                              ::std::auto_ptr< permiteCompartilhamentoTurma_type >&,
-                              const desempenhoProfDisponibilidade_type&,
-                              const custoProfDisponibilidade_type&,
-                              const evitarProfUltimoPrimeiroHor_type&,
-                              const maxDeslocProfessor_type&,
-                              const alunosMesmoPeriodoNaMesmaSala_type&,
-                              const permitirAlunosEmVariosCampi_type&,
-                              const permitirProfessorEmVariosCampi_type&,
-                              const preferenciaProfessorDisciplina_type&,
-                              const minAlunosAberturaTurmas_type&,
-                              const minAlunosAberturaTurmasValor_type&,
                               const regrasGenericasDivisaoCredito_type&,
                               const regrasEspecificasDivisaoCredito_type&,
+                              const maximizarAvaliacaoCursosSel_type&,
+                              const minimizarCustoDocenteCursosSel_type&,
+                              const permiteCompartilhamentoTurmaSel_type&,
                               const percentuaisMinimoMestres_type&,
                               const percentuaisMinimoDoutores_type&,
                               const areaTitulacaoProfessorCurso_type&,
-                              const maximoDisciplinasDeUmProfessorPorCurso_type&);
+                              const maximoDisciplinasDeUmProfessorPorCurso_type&,
+                              const custoProfDisponibilidade_type&);
 
   ItemParametrosPlanejamento (const ::xercesc::DOMElement& e,
                               ::xml_schema::flags f = 0,
@@ -3863,32 +3939,36 @@ class ItemParametrosPlanejamento: public ::xml_schema::type
   protected:
   ::xsd::cxx::tree::one< modoOtimizacao_type > modoOtimizacao_;
   ::xsd::cxx::tree::one< cargaHorariaSemanalAluno_type > cargaHorariaSemanalAluno_;
-  ::xsd::cxx::tree::one< minimizarDeslocAluno_type > minimizarDeslocAluno_;
-  ::xsd::cxx::tree::one< cargaHorariaSemanalProfessor_type > cargaHorariaSemanalProfessor_;
-  ::xsd::cxx::tree::one< minimizarDeslocProfessor_type > minimizarDeslocProfessor_;
-  ::xsd::cxx::tree::one< minimizarHorariosVaziosProfessor_type > minimizarHorariosVaziosProfessor_;
-  ::xsd::cxx::tree::one< evitarReducaoCargaHorariaProf_type > evitarReducaoCargaHorariaProf_;
-  ::xsd::cxx::tree::one< niveisDificuldadeHorario_type > niveisDificuldadeHorario_;
-  ::xsd::cxx::tree::one< equilibrarDiversidadeDiscDia_type > equilibrarDiversidadeDiscDia_;
-  ::xsd::cxx::tree::one< maximizarAvaliacaoCursos_type > maximizarAvaliacaoCursos_;
-  ::xsd::cxx::tree::one< minimizarCustoDocenteCursos_type > minimizarCustoDocenteCursos_;
-  ::xsd::cxx::tree::one< permiteCompartilhamentoTurma_type > permiteCompartilhamentoTurma_;
-  ::xsd::cxx::tree::one< desempenhoProfDisponibilidade_type > desempenhoProfDisponibilidade_;
-  ::xsd::cxx::tree::one< custoProfDisponibilidade_type > custoProfDisponibilidade_;
-  ::xsd::cxx::tree::one< evitarProfUltimoPrimeiroHor_type > evitarProfUltimoPrimeiroHor_;
-  ::xsd::cxx::tree::one< maxDeslocProfessor_type > maxDeslocProfessor_;
   ::xsd::cxx::tree::one< alunosMesmoPeriodoNaMesmaSala_type > alunosMesmoPeriodoNaMesmaSala_;
   ::xsd::cxx::tree::one< permitirAlunosEmVariosCampi_type > permitirAlunosEmVariosCampi_;
+  ::xsd::cxx::tree::one< minimizarDeslocAluno_type > minimizarDeslocAluno_;
+  ::xsd::cxx::tree::one< cargaHorariaSemanalProfessor_type > cargaHorariaSemanalProfessor_;
   ::xsd::cxx::tree::one< permitirProfessorEmVariosCampi_type > permitirProfessorEmVariosCampi_;
+  ::xsd::cxx::tree::one< minimizarDeslocProfessor_type > minimizarDeslocProfessor_;
+  maxDeslocProfessor_optional maxDeslocProfessor_;
+  ::xsd::cxx::tree::one< minimizarHorariosVaziosProfessor_type > minimizarHorariosVaziosProfessor_;
+  ::xsd::cxx::tree::one< evitarReducaoCargaHorariaProf_type > evitarReducaoCargaHorariaProf_;
+  evitarReducaoCargaHorariaProfValor_optional evitarReducaoCargaHorariaProfValor_;
+  ::xsd::cxx::tree::one< evitarProfUltimoPrimeiroHor_type > evitarProfUltimoPrimeiroHor_;
   ::xsd::cxx::tree::one< preferenciaProfessorDisciplina_type > preferenciaProfessorDisciplina_;
+  ::xsd::cxx::tree::one< desempenhoProfDisponibilidade_type > desempenhoProfDisponibilidade_;
   ::xsd::cxx::tree::one< minAlunosAberturaTurmas_type > minAlunosAberturaTurmas_;
-  ::xsd::cxx::tree::one< minAlunosAberturaTurmasValor_type > minAlunosAberturaTurmasValor_;
+  minAlunosAberturaTurmasValor_optional minAlunosAberturaTurmasValor_;
+  ::xsd::cxx::tree::one< niveisDificuldadeHorario_type > niveisDificuldadeHorario_;
+  ::xsd::cxx::tree::one< equilibrarDiversidadeDiscDia_type > equilibrarDiversidadeDiscDia_;
   ::xsd::cxx::tree::one< regrasGenericasDivisaoCredito_type > regrasGenericasDivisaoCredito_;
   ::xsd::cxx::tree::one< regrasEspecificasDivisaoCredito_type > regrasEspecificasDivisaoCredito_;
+  ::xsd::cxx::tree::one< maximizarAvaliacaoCursosSel_type > maximizarAvaliacaoCursosSel_;
+  maximizarAvaliacaoCursos_optional maximizarAvaliacaoCursos_;
+  ::xsd::cxx::tree::one< minimizarCustoDocenteCursosSel_type > minimizarCustoDocenteCursosSel_;
+  minimizarCustoDocenteCursos_optional minimizarCustoDocenteCursos_;
+  ::xsd::cxx::tree::one< permiteCompartilhamentoTurmaSel_type > permiteCompartilhamentoTurmaSel_;
+  permiteCompartilhamentoTurma_optional permiteCompartilhamentoTurma_;
   ::xsd::cxx::tree::one< percentuaisMinimoMestres_type > percentuaisMinimoMestres_;
   ::xsd::cxx::tree::one< percentuaisMinimoDoutores_type > percentuaisMinimoDoutores_;
   ::xsd::cxx::tree::one< areaTitulacaoProfessorCurso_type > areaTitulacaoProfessorCurso_;
   ::xsd::cxx::tree::one< maximoDisciplinasDeUmProfessorPorCurso_type > maximoDisciplinasDeUmProfessorPorCurso_;
+  ::xsd::cxx::tree::one< custoProfDisponibilidade_type > custoProfDisponibilidade_;
 };
 
 class ItemNivelDificuldadeHorario: public ::xml_schema::type
@@ -6737,26 +6817,26 @@ class cargaHorariaSemanalProfessor: public ::xml_schema::type
   void
   minimizarDias (::std::auto_ptr< minimizarDias_type > p);
 
-  // indiferentes
+  // indiferente
   // 
-  typedef ::xml_schema::simple_type indiferentes_type;
-  typedef ::xsd::cxx::tree::optional< indiferentes_type > indiferentes_optional;
-  typedef ::xsd::cxx::tree::traits< indiferentes_type, char > indiferentes_traits;
+  typedef ::xml_schema::simple_type indiferente_type;
+  typedef ::xsd::cxx::tree::optional< indiferente_type > indiferente_optional;
+  typedef ::xsd::cxx::tree::traits< indiferente_type, char > indiferente_traits;
 
-  const indiferentes_optional&
-  indiferentes () const;
+  const indiferente_optional&
+  indiferente () const;
 
-  indiferentes_optional&
-  indiferentes ();
-
-  void
-  indiferentes (const indiferentes_type& x);
+  indiferente_optional&
+  indiferente ();
 
   void
-  indiferentes (const indiferentes_optional& x);
+  indiferente (const indiferente_type& x);
 
   void
-  indiferentes (::std::auto_ptr< indiferentes_type > p);
+  indiferente (const indiferente_optional& x);
+
+  void
+  indiferente (::std::auto_ptr< indiferente_type > p);
 
   // Constructors.
   //
@@ -6787,7 +6867,7 @@ class cargaHorariaSemanalProfessor: public ::xml_schema::type
   protected:
   equilibrar_optional equilibrar_;
   minimizarDias_optional minimizarDias_;
-  indiferentes_optional indiferentes_;
+  indiferente_optional indiferente_;
 };
 
 #include <iosfwd>

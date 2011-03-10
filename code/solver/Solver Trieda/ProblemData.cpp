@@ -58,9 +58,17 @@ void ProblemData::le_arvore(TriedaInput& raiz)
       o->le_arvore(*it_of);
       ofertas.add(o);
    }
+
    parametros = new ParametrosPlanejamento;
    parametros->le_arvore(raiz.parametrosPlanejamento());
-   LE_SEQ(fixacoes,raiz.fixacoes(),Fixacao);
+
+   // Se a tag existir (mesmo que esteja em branco) no xml de entrada
+   if (raiz.atendimentosTatico().present())
+   {
+		atendimentosTatico = &(optionalValue.get());
+   }
+
+   LE_SEQ(fixacoes, raiz.fixacoes(), Fixacao);
 }
 
 /*

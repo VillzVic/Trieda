@@ -80,6 +80,8 @@ public:
    ParametrosPlanejamento* parametros;
    GGroup<Fixacao*> fixacoes;
 
+   GrupoAtendimentoCampusSolucao* atendimentosTatico;
+
    GGroup<BlocoCurricular*> blocos;
 
    //GGroup<ConjuntoSala*> conjutoSalas;
@@ -190,7 +192,6 @@ public:
    std::map<Professor*,GGroup<Disciplina*> > prof_Fix_Disc;
 
    // <<<
-
 
    GGroup<Aula*> aulas;
 
