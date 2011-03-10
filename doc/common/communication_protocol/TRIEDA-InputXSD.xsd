@@ -813,6 +813,16 @@
           </xs:choice>
         </xs:complexType>
       </xs:element>
+      <xs:element name="alunosMesmoPeriodoNaMesmaSala" type="xs:boolean">
+        <xs:annotation>
+          <xs:documentation>Manter alunos do mesmo curso-período na mesma sala</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="permitirAlunosEmVariosCampi" type="xs:boolean">
+        <xs:annotation>
+          <xs:documentation>Permitir que o aluno estude em mais de um Campus</xs:documentation>
+        </xs:annotation>
+      </xs:element>
       <xs:element name="minimizarDeslocAluno" type="xs:boolean">
         <xs:annotation>
           <xs:documentation>flag que determina se o resolvedor matemático tentará ou não minimizar o deslocamento de alunos (entre campi, unidades, andares e salas) com base nos campos temposDeslocamentosCampi e temposDeslocamentosUnidades (ver requisitos RF-O-5, RF-O-8, RF-PA-2, RF-PA-3, RF-PA-4).</xs:documentation>
@@ -826,13 +836,23 @@
           <xs:choice>
             <xs:element name="equilibrar" type="xs:anySimpleType" />
             <xs:element name="minimizarDias" type="xs:anySimpleType" />
-            <xs:element name="indiferentes" type="xs:anySimpleType" />
+            <xs:element name="indiferente" type="xs:anySimpleType" />
           </xs:choice>
         </xs:complexType>
+      </xs:element>
+      <xs:element name="permitirProfessorEmVariosCampi" type="xs:boolean">
+        <xs:annotation>
+          <xs:documentation>Permitir que o professor ministre aulas em mais de um Campus</xs:documentation>
+        </xs:annotation>
       </xs:element>
       <xs:element name="minimizarDeslocProfessor" type="xs:boolean">
         <xs:annotation>
           <xs:documentation>flag que determina se o resolvedor matemático tentará ou não minimizar o deslocamento de professores (entre campi, unidades, andares e salas) com base nos campos temposDeslocamentosCampi e temposDeslocamentosUnidades (ver requisitos RF-O-5, RF-O-8, RF-PA-2, RF-PA-3, RF-PA-4).</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="maxDeslocProfessor" type="xs:int">
+        <xs:annotation>
+          <xs:documentation>informa o limite superior de deslocamentos de um professor entre campi dentro do mesmo dia. Ver requisito RF-PP-11.</xs:documentation>
         </xs:annotation>
       </xs:element>
       <xs:element name="minimizarHorariosVaziosProfessor" type="xs:boolean">
@@ -845,6 +865,32 @@
           <xs:documentation>evitar redução grande de carga horária do docente em relação ao período anterior (para evitar problemas com sindicatos). Ver requisito RF-PP-9.</xs:documentation>
         </xs:annotation>
       </xs:element>
+      <xs:element minOccurs="0" name="evitarReducaoCargaHorariaProfValor" type="xs:int" />
+      <xs:element name="evitarProfUltimoPrimeiroHor" type="xs:boolean">
+        <xs:annotation>
+          <xs:documentation>evitar alocação simultânea do professor no último horário do dia e no primeiro horário do dia seguinte. Ver requisito RF-PP-10.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="preferenciaProfessorDisciplina" type="xs:boolean">
+        <xs:annotation>
+          <xs:documentation>Considerar preferência de professores por disciplinas</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="desempenhoProfDisponibilidade" type="xs:boolean">
+        <xs:annotation>
+          <xs:documentation>considerar a avaliação de desempenho do professor para desempate de disponibilidade. Ver requisito RF-PP-6.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="minAlunosAberturaTurmas" type="xs:boolean">
+        <xs:annotation>
+          <xs:documentation>Número mínimo de alunos para abertura de turma</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="minAlunosAberturaTurmasValor" type="xs:int">
+        <xs:annotation>
+          <xs:documentation>Número mínimo de alunos para abertura de turma (Valor)</xs:documentation>
+        </xs:annotation>
+      </xs:element>
       <xs:element name="niveisDificuldadeHorario" type="GrupoNivelDificuldadeHorario">
         <xs:annotation>
           <xs:documentation>Parâmetro de planejamento onde é possível configurar as discipinas por nível de dificuldade que deverão ser evitadas em determinados horários de aula. Ver RF-DP-1.</xs:documentation>
@@ -855,73 +901,6 @@
           <xs:documentation>flag que determina se o resolvedor matemático tentará ou não equilibrar a diversidade de disciplinas oferecidas em um mesmo dia com base na compatibilidade entre disciplinas(ver campo disciplinasIncompativeis do ItemDisciplinas e ver requisito RF-DP-3).</xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element name="maximizarAvaliacaoCursos" type="GrupoIdentificador">
-        <xs:annotation>
-          <xs:documentation>lista os identificadores (ItemCurso) dos cursos cujo somatório das notas de desempenho (dos professores que ministram aulas no curso em questão) deverá ser maximizado. Ver requisito RF-O-12.
-
-Maximizar/gerenciar a nota da avaliação institucional média coletiva do corpo docente por curso (MAXIMIZAR A MÉDIA DAS AVALIAÇÕES DOS DOCENTES DE UM MESMO CURSO, OU SEJA, PRIORIZAR QUALIDADE DOCENTE DE UM CURSO ESPECÍFICO)</xs:documentation>
-        </xs:annotation>
-      </xs:element>
-      <xs:element name="minimizarCustoDocenteCursos" type="GrupoIdentificador">
-        <xs:annotation>
-          <xs:documentation>lista os identificadores (ItemCurso) dos cursos cujo somatório do custo docente (dos professores que ministram aulas no curso em questão) deverá ser minimizado. Ver requisito RF-O-13.</xs:documentation>
-        </xs:annotation>
-      </xs:element>
-      <xs:element name="permiteCompartilhamentoTurma" type="GrupoGrupo">
-        <xs:annotation>
-          <xs:documentation>lista de listas de identificadores (ItemCurso) de cursos. Os cursos que pertencem a uma mesma lista permitem compartilhamento de turmas. Ver requisito RF-O-17.</xs:documentation>
-        </xs:annotation>
-      </xs:element>
-      <xs:element name="desempenhoProfDisponibilidade" type="xs:boolean">
-        <xs:annotation>
-          <xs:documentation>considerar a avaliação de desempenho do professor para desempate de disponibilidade. Ver requisito RF-PP-6.</xs:documentation>
-        </xs:annotation>
-      </xs:element>
-      <xs:element name="custoProfDisponibilidade" type="xs:boolean">
-        <xs:annotation>
-          <xs:documentation>considerar a custo docente do professor para desempate de disponibilidade. Ver requisito RF-PP-7.</xs:documentation>
-        </xs:annotation>
-      </xs:element>
-      <xs:element name="evitarProfUltimoPrimeiroHor" type="xs:boolean">
-        <xs:annotation>
-          <xs:documentation>evitar alocação simultânea do professor no último horário do dia e no primeiro horário do dia seguinte. Ver requisito RF-PP-10.</xs:documentation>
-        </xs:annotation>
-      </xs:element>
-      <xs:element name="maxDeslocProfessor" type="xs:int">
-        <xs:annotation>
-          <xs:documentation>informa o limite superior de deslocamentos de um professor entre campi dentro do mesmo dia. Ver requisito RF-PP-11.</xs:documentation>
-        </xs:annotation>
-      </xs:element>
-      <xs:element name="alunosMesmoPeriodoNaMesmaSala" type="xs:boolean">
-        <xs:annotation>
-          <xs:documentation>Manter alunos do mesmo curso-período na mesma sala</xs:documentation>
-        </xs:annotation>
-      </xs:element>
-      <xs:element name="permitirAlunosEmVariosCampi" type="xs:boolean">
-        <xs:annotation>
-          <xs:documentation>Permitir que o aluno estude em mais de um Campus</xs:documentation>
-        </xs:annotation>
-      </xs:element>
-      <xs:element name="permitirProfessorEmVariosCampi" type="xs:boolean">
-        <xs:annotation>
-          <xs:documentation>Permitir que o professor ministre aulas em mais de um Campus</xs:documentation>
-        </xs:annotation>
-      </xs:element>
-      <xs:element name="preferenciaProfessorDisciplina" type="xs:boolean">
-        <xs:annotation>
-          <xs:documentation>Considerar preferência de professores por disciplinas</xs:documentation>
-        </xs:annotation>
-      </xs:element>
-      <xs:element name="minAlunosAberturaTurmas" type="xs:boolean">
-        <xs:annotation>
-          <xs:documentation>Número mínimo de alunos para abertura de turma</xs:documentation>
-        </xs:annotation>
-      </xs:element>
-      <xs:element name="minAlunosAberturaTurmasValor" type="xs:int">
-        <xs:annotation>
-          <xs:documentation>Número mínimo de alunos para abertura de turma (Valor)</xs:documentation>
-        </xs:annotation>
-      </xs:element>
       <xs:element name="regrasGenericasDivisaoCredito" type="xs:boolean">
         <xs:annotation>
           <xs:documentation>Considerar regras genéricas de divisão de créditos</xs:documentation>
@@ -930,6 +909,26 @@ Maximizar/gerenciar a nota da avaliação institucional média coletiva do corpo
       <xs:element name="regrasEspecificasDivisaoCredito" type="xs:boolean">
         <xs:annotation>
           <xs:documentation>Considerar regras específicas de divisão de créditos</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="maximizarAvaliacaoCursosSel" type="xs:boolean" />
+      <xs:element minOccurs="0" name="maximizarAvaliacaoCursos" type="GrupoIdentificador">
+        <xs:annotation>
+          <xs:documentation>lista os identificadores (ItemCurso) dos cursos cujo somatório das notas de desempenho (dos professores que ministram aulas no curso em questão) deverá ser maximizado. Ver requisito RF-O-12.
+
+Maximizar/gerenciar a nota da avaliação institucional média coletiva do corpo docente por curso (MAXIMIZAR A MÉDIA DAS AVALIAÇÕES DOS DOCENTES DE UM MESMO CURSO, OU SEJA, PRIORIZAR QUALIDADE DOCENTE DE UM CURSO ESPECÍFICO)</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="minimizarCustoDocenteCursosSel" type="xs:boolean" />
+      <xs:element minOccurs="0" name="minimizarCustoDocenteCursos" type="GrupoIdentificador">
+        <xs:annotation>
+          <xs:documentation>lista os identificadores (ItemCurso) dos cursos cujo somatório do custo docente (dos professores que ministram aulas no curso em questão) deverá ser minimizado. Ver requisito RF-O-13.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="permiteCompartilhamentoTurmaSel" type="xs:boolean" />
+      <xs:element minOccurs="0" name="permiteCompartilhamentoTurma" type="GrupoGrupo">
+        <xs:annotation>
+          <xs:documentation>lista de listas de identificadores (ItemCurso) de cursos. Os cursos que pertencem a uma mesma lista permitem compartilhamento de turmas. Ver requisito RF-O-17.</xs:documentation>
         </xs:annotation>
       </xs:element>
       <xs:element name="percentuaisMinimoMestres" type="xs:boolean">
@@ -950,6 +949,11 @@ Maximizar/gerenciar a nota da avaliação institucional média coletiva do corpo
       <xs:element name="maximoDisciplinasDeUmProfessorPorCurso" type="xs:boolean">
         <xs:annotation>
           <xs:documentation>Limitar máximo de disciplinas que um professor pode ministrar por curso</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="custoProfDisponibilidade" type="xs:boolean">
+        <xs:annotation>
+          <xs:documentation>considerar a custo docente do professor para desempate de disponibilidade. Ver requisito RF-PP-7.</xs:documentation>
         </xs:annotation>
       </xs:element>
     </xs:sequence>
