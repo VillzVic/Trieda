@@ -73,6 +73,14 @@ public abstract class AbstractExportExcel implements IExportExcel {
 	public List<String> getWarnings() {
 		return warnings;
 	}
+	
+	protected void removeUnusedSheets(String usedSheetName, HSSFWorkbook workbook) {
+		while (workbook.getNumberOfSheets() > 1) {
+			int sheetIx = 0;
+			while (workbook.getSheetName(sheetIx).equals(usedSheetName)) sheetIx++;
+			workbook.removeSheetAt(sheetIx);
+		}
+	}
 
 	protected void mergeCells(int rowI, int rowF, int colI, int colF, HSSFSheet sheet) {
 		sheet.addMergedRegion(new CellRangeAddress(rowI-1,rowF-1,colI-1,colF-1));

@@ -235,7 +235,7 @@ public class ItemSala {
      *     {@link GrupoCreditoDisponivel }
      *     
      */
-    public void setCreditosDisponíveis(GrupoCreditoDisponivel value) {
+    public void setCreditosDisponiveis(GrupoCreditoDisponivel value) {
         this.creditosDisponíveis = value;
     }
 

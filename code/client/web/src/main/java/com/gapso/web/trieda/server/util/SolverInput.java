@@ -331,7 +331,7 @@ public class SolverInput {
 					itemSala.setTipoSalaId(sala.getTipoSala().getId().intValue());
 					itemSala.setCapacidade(sala.getCapacidade());
 					if(tatico) { // Tático
-						itemSala.setCreditosDisponíveis(createCreditosDisponiveis(createGrupoHorario(sala.getHorarios())));
+						itemSala.setCreditosDisponiveis(createCreditosDisponiveis(createGrupoHorario(sala.getHorarios())));
 					} else { // Operacional
 						itemSala.setHorariosDisponiveis(createGrupoHorario(sala.getHorarios()));
 					}

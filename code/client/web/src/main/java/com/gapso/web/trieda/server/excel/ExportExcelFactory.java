@@ -9,7 +9,10 @@ public class ExportExcelFactory {
 		
 		ExportedInformationType informationToBeExported = ExportedInformationType.valueOf(infoToBeExported);
 		switch (informationToBeExported) {
+			case TUDO: exporter = new TRIEDAExportExcel(); break;
+			case CAMPI: exporter = new CampiExportExcel(); break;
 			case UNIDADES: exporter = new UnidadesExportExcel(); break;
+			case SALAS: exporter = new SalasExportExcel(); break;
 		}
 		
 		return exporter;
