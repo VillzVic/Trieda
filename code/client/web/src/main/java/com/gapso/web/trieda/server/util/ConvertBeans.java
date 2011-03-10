@@ -1285,6 +1285,7 @@ public class ConvertBeans {
 		domain.setId(dto.getId());
 		domain.setVersion(dto.getVersion());
 		domain.setCenario(Cenario.find(dto.getCenarioId()));
+		domain.setModoOtimizacao(dto.getModoOtimizacao());
 		domain.setCargaHorariaAluno(dto.getCargaHorariaAluno());
 		domain.setCargaHorariaAlunoSel(dto.getCargaHorariaAlunoSel());
 		domain.setAlunoDePeriodoMesmaSala(dto.getAlunoDePeriodoMesmaSala());
@@ -1324,6 +1325,7 @@ public class ConvertBeans {
 		dto.setId(domain.getId());
 		dto.setVersion(domain.getVersion());
 		dto.setCenarioId(domain.getCenario().getId());
+		dto.setModoOtimizacao(domain.getModoOtimizacao());
 		dto.setCargaHorariaAluno(domain.getCargaHorariaAluno());
 		dto.setAlunoDePeriodoMesmaSala(domain.getAlunoDePeriodoMesmaSala());
 		dto.setAlunoEmMuitosCampi(domain.getAlunoEmMuitosCampi());

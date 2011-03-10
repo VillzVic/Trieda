@@ -67,7 +67,13 @@ public class OtimizarServiceImpl extends RemoteServiceServlet implements Otimiza
 		parametro.save();
 		Cenario cenario = parametro.getCenario();
 		SolverInput solverInput = new SolverInput(cenario);
-		TriedaInput triedaInput = solverInput.generateOperacionalTriedaInput();
+		
+		TriedaInput triedaInput = null;
+		if(parametro.isTatico()) {
+			triedaInput = solverInput.generateTaticoTriedaInput();
+		} else {
+			triedaInput = solverInput.generateOperacionalTriedaInput();
+		}
 
 		byte[] fileBytes = null;
 		try {

@@ -36,11 +36,18 @@ import org.springframework.transaction.annotation.Transactional;
 public class Parametro implements Serializable {
 
 	private static final long serialVersionUID = -1310877837088078190L;
+	
+	public static final String TATICO = "TATICO";
+	public static final String OPERACIONAL = "OPERACIONAL";
 
 	@NotNull
     @OneToOne(targetEntity = Cenario.class)
     @JoinColumn(name = "CEN_ID")
     private Cenario cenario;
+	
+	@Size(min = 1, max = 20)
+	@Column(name = "PAR_MODOOTIMIZACAO")
+	private String modoOtimizacao;
 	
 	//////////////////////////////////////////////
 	// PREFERENCIAS DO ALUNO
@@ -260,6 +267,13 @@ public class Parametro implements Serializable {
     public static Parametro find(Long id) {
         if (id == null) return null;
         return entityManager().find(Parametro.class, id);
+    }
+    
+    public boolean isTatico() {
+    	return getModoOtimizacao().equals(Parametro.TATICO);
+    }
+    public boolean isOperacional() {
+    	return getModoOtimizacao().equals(Parametro.OPERACIONAL);
     }
     
 	public Cenario getCenario() {
@@ -494,11 +508,19 @@ public class Parametro implements Serializable {
 		this.cursosCompartDiscCampi = cursosCompartDiscCampi;
 	}
 
-    public String toString() {
+    public String getModoOtimizacao() {
+		return modoOtimizacao;
+	}
+	public void setModoOtimizacao(String modoOtimizacao) {
+		this.modoOtimizacao = modoOtimizacao;
+	}
+
+	public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("Id: ").append(getId()).append(", ");
         sb.append("Version: ").append(getVersion()).append(", ");
         sb.append("Cenario: ").append(getCenario()).append(", ");
+        sb.append("ModoOtimizacao: ").append(getModoOtimizacao()).append(", ");
         sb.append("CargaHorariaAluno: ").append(getCargaHorariaAluno()).append(", ");
         sb.append("CargaHorariaAlunoSel: ").append(getCargaHorariaAlunoSel()).append(", ");
         sb.append("AlunoDePeriodoMesmaSala: ").append(getAlunoDePeriodoMesmaSala()).append(", ");

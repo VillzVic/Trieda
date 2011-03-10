@@ -5,10 +5,14 @@ public class ParametroDTO extends AbstractDTO<Long> implements Comparable<Parame
 
 	private static final long serialVersionUID = -5134820110949139907L;
 	
+	public static final String TATICO = "TATICO";
+	public static final String OPERACIONAL = "OPERACIONAL";
+	
 	// Propriedades
 	public static final String PROPERTY_ID = "id";
 	public static final String PROPERTY_VERSION = "version";
 	public static final String PROPERTY_CENARIOID = "cenarioid";
+	public static final String PROPERTY_MODOOTIMIZACAO = "modootimizacao";
 	public static final String PROPERTY_CARGAHORARIAALUNO = "cargahorariaaluno";
 	public static final String PROPERTY_CARGAHORARIAALUNOSEL = "cargahorariaalunosel";
 	public static final String PROPERTY_ALUNODEPERIODOMESMASALA = "alunodeperiodomesmasala";
@@ -43,6 +47,19 @@ public class ParametroDTO extends AbstractDTO<Long> implements Comparable<Parame
 		super();
 	}
 	
+	public boolean isOperacional() {
+		if(getModoOtimizacao() == null) {
+			return false;
+		}
+		return getModoOtimizacao().equals(OPERACIONAL);
+	}
+	public boolean isTatico() {
+		if(getModoOtimizacao() == null) {
+			return false;
+		}
+		return getModoOtimizacao().equals(TATICO);
+	}
+	
 	public void setId(Long value) {
 		set(PROPERTY_ID, value);
 	}
@@ -63,6 +80,13 @@ public class ParametroDTO extends AbstractDTO<Long> implements Comparable<Parame
 	public void setCenarioId(Long value) {
 		set(PROPERTY_CENARIOID, value);
     }
+	
+	public String getModoOtimizacao() {
+		return get(PROPERTY_MODOOTIMIZACAO);
+	}
+	public void setModoOtimizacao(String value) {
+		set(PROPERTY_MODOOTIMIZACAO, value);
+	}
 
 	public Boolean getCargaHorariaAluno() {
 		return get(PROPERTY_CARGAHORARIAALUNO);

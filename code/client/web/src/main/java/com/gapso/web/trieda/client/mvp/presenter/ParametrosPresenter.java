@@ -13,6 +13,7 @@ import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.CheckBox;
 import com.extjs.gxt.ui.client.widget.form.NumberField;
+import com.extjs.gxt.ui.client.widget.form.Radio;
 import com.gapso.web.trieda.client.mvp.view.OtimizarMessagesView;
 import com.gapso.web.trieda.client.services.OtimizarServiceAsync;
 import com.gapso.web.trieda.client.services.Services;
@@ -33,6 +34,8 @@ public class ParametrosPresenter implements Presenter {
 
 	public interface Display {
 		ParametroDTO getParametroDTO();
+		Radio getTaticoRadio();
+		Radio getOperacionalRadio();
 		CheckBox getCargaHorariaAlunoCheckBox();
 		CargaHorariaComboBox getCargaHorariaAlunoComboBox();
 		CheckBox getAlunoDePeriodoMesmaSalaCheckBox();
@@ -160,6 +163,8 @@ public class ParametrosPresenter implements Presenter {
 	
 	private ParametroDTO getDTO() {
 		ParametroDTO dto = display.getParametroDTO();
+		
+		dto.setModoOtimizacao(display.getTaticoRadio().getValue() ? ParametroDTO.TATICO : ParametroDTO.OPERACIONAL);
 		
 		dto.setCargaHorariaAluno(display.getCargaHorariaAlunoCheckBox().getValue());
 		dto.setCargaHorariaAlunoSel(display.getCargaHorariaAlunoComboBox().getValueString());

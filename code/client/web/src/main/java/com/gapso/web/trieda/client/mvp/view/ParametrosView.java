@@ -11,6 +11,8 @@ import com.extjs.gxt.ui.client.widget.form.CheckBox;
 import com.extjs.gxt.ui.client.widget.form.FieldSet;
 import com.extjs.gxt.ui.client.widget.form.FormPanel;
 import com.extjs.gxt.ui.client.widget.form.NumberField;
+import com.extjs.gxt.ui.client.widget.form.Radio;
+import com.extjs.gxt.ui.client.widget.form.RadioGroup;
 import com.extjs.gxt.ui.client.widget.layout.ColumnData;
 import com.extjs.gxt.ui.client.widget.layout.ColumnLayout;
 import com.extjs.gxt.ui.client.widget.layout.FormData;
@@ -29,6 +31,9 @@ public class ParametrosView extends MyComposite implements ParametrosPresenter.D
 	private ContentPanel form;
 	private GTabItem tabItem;
 	private ParametroDTO parametroDTO;
+	
+	private Radio taticoRadio;
+	private Radio operacionalRadio;
 	
 	private CheckBox cargaHorariaAlunoCheckBox;
 	private CargaHorariaComboBox cargaHorariaAlunoComboBox;
@@ -90,6 +95,22 @@ public class ParametrosView extends MyComposite implements ParametrosPresenter.D
 		FormLayout formLayout = null;
 		RowLayout rowLayout = null;
 		Label label = null;
+		
+		formLayout = new FormLayout();
+		formLayout.setLabelWidth(120);
+		form.setLayout(formLayout);
+		
+		RadioGroup group = new RadioGroup();  
+		group.setFieldLabel("Modo de Otimização");
+		taticoRadio = new Radio();  
+		taticoRadio.setBoxLabel("Tático");
+		taticoRadio.setValue(parametroDTO.isTatico() || !parametroDTO.isOperacional());
+		group.add(taticoRadio);  
+		operacionalRadio = new Radio();  
+		operacionalRadio.setBoxLabel("Operacional");
+		operacionalRadio.setValue(parametroDTO.isOperacional());
+		group.add(operacionalRadio);  
+		form.add(group);  
 		
 		FieldSet alunoFS = new FieldSet();
 		alunoFS.setHeading("Preferências do Aluno");
@@ -418,6 +439,16 @@ public class ParametrosView extends MyComposite implements ParametrosPresenter.D
 	@Override
 	public Button getSubmitButton() {
 		return submitBt;
+	}
+
+	@Override
+	public Radio getTaticoRadio() {
+		return taticoRadio;
+	}
+
+	@Override
+	public Radio getOperacionalRadio() {
+		return operacionalRadio;
 	}
 	
 
