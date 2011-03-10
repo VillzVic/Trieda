@@ -26,6 +26,7 @@ import com.gapso.trieda.domain.HorarioAula;
 import com.gapso.trieda.domain.HorarioDisponivelCenario;
 import com.gapso.trieda.domain.Incompatibilidade;
 import com.gapso.trieda.domain.Oferta;
+import com.gapso.trieda.domain.Parametro;
 import com.gapso.trieda.domain.Professor;
 import com.gapso.trieda.domain.ProfessorDisciplina;
 import com.gapso.trieda.domain.Sala;
@@ -39,6 +40,7 @@ import com.gapso.trieda.domain.Turno;
 import com.gapso.trieda.domain.Unidade;
 import com.gapso.trieda.misc.Dificuldades;
 import com.gapso.trieda.misc.Semanas;
+import com.gapso.web.trieda.client.util.view.CargaHorariaComboBox.CargaHoraria;
 import com.gapso.web.trieda.server.xml.input.GrupoAreaTitulacao;
 import com.gapso.web.trieda.server.xml.input.GrupoCampus;
 import com.gapso.web.trieda.server.xml.input.GrupoCreditoDisponivel;
@@ -51,7 +53,6 @@ import com.gapso.web.trieda.server.xml.input.GrupoDisciplina;
 import com.gapso.web.trieda.server.xml.input.GrupoDisciplinaPeriodo;
 import com.gapso.web.trieda.server.xml.input.GrupoDivisaoCreditos;
 import com.gapso.web.trieda.server.xml.input.GrupoFixacao;
-import com.gapso.web.trieda.server.xml.input.GrupoGrupo;
 import com.gapso.web.trieda.server.xml.input.GrupoHorario;
 import com.gapso.web.trieda.server.xml.input.GrupoHorarioAula;
 import com.gapso.web.trieda.server.xml.input.GrupoIdentificador;
@@ -85,6 +86,7 @@ import com.gapso.web.trieda.server.xml.input.ItemNivelDificuldade;
 import com.gapso.web.trieda.server.xml.input.ItemOfertaCurso;
 import com.gapso.web.trieda.server.xml.input.ItemParametrosPlanejamento;
 import com.gapso.web.trieda.server.xml.input.ItemParametrosPlanejamento.CargaHorariaSemanalAluno;
+import com.gapso.web.trieda.server.xml.input.ItemParametrosPlanejamento.CargaHorariaSemanalProfessor;
 import com.gapso.web.trieda.server.xml.input.ItemPercentualMinimo;
 import com.gapso.web.trieda.server.xml.input.ItemProfessor;
 import com.gapso.web.trieda.server.xml.input.ItemProfessorDisciplina;
@@ -345,7 +347,7 @@ public class SolverInput {
 					itemSala.setTipoSalaId(sala.getTipoSala().getId().intValue());
 					itemSala.setCapacidade(sala.getCapacidade());
 					if(tatico) { // Tático
-						itemSala.setCreditosDisponiveis(createCreditosDisponiveis(createGrupoHorario(sala.getHorarios())));
+						itemSala.setCreditosDisponíveis(createCreditosDisponiveis(createGrupoHorario(sala.getHorarios())));
 					} else { // Operacional
 						itemSala.setHorariosDisponiveis(createGrupoHorario(sala.getHorarios()));
 					}
@@ -596,33 +598,157 @@ public class SolverInput {
 	}
 	
 	private void generateParametrosPlanejamento() {
+		
+		Parametro parametro = cenario.getParametro();
+		
 		ItemParametrosPlanejamento itemParametrosPlanejamento = of.createItemParametrosPlanejamento();
-		itemParametrosPlanejamento.setEquilibrarDiversidadeDiscDia(false);
-		itemParametrosPlanejamento.setMinimizarDeslocProfessor(false);
-		itemParametrosPlanejamento.setMinimizarDeslocAluno(false);
-		itemParametrosPlanejamento.setMaxDeslocProfessor(100);
-		GrupoIdentificador grupoIdentificador = of.createGrupoIdentificador();
-		Set<Curso> cursos = cenario.getCursos();
-		for(Curso curso : cursos) {
-			grupoIdentificador.getId().add(curso.getId().intValue());
+		
+		// TODO
+		itemParametrosPlanejamento.setModoOtimizacao("OPERACIONAL");
+		
+		CargaHorariaSemanalAluno cargaHorariaSemanalAluno = of.createItemParametrosPlanejamentoCargaHorariaSemanalAluno();
+		cargaHorariaSemanalAluno.setIndiferente("");
+		if(parametro.getCargaHorariaAluno()) {
+			if(parametro.getCargaHorariaAlunoSel().equals(CargaHoraria.CONCENTRAR.name())) {
+				cargaHorariaSemanalAluno.setMinimizarDias("");
+			} else if(parametro.getCargaHorariaAlunoSel().equals(CargaHoraria.DISTRIBUIR.name())) {
+				cargaHorariaSemanalAluno.setEquilibrar("");
+			}
 		}
-		itemParametrosPlanejamento.setMinimizarCustoDocenteCursos(grupoIdentificador);
-		GrupoGrupo grupoGrupo = of.createGrupoGrupo();
-		grupoGrupo.getGrupoIdentificador().add(grupoIdentificador);
-		itemParametrosPlanejamento.setPermiteCompartilhamentoTurma(grupoGrupo);
-		itemParametrosPlanejamento.setMinimizarHorariosVaziosProfessor(true);
-		itemParametrosPlanejamento.setMinimizarDiasSemanaProfessor(true);
-		itemParametrosPlanejamento.setDesempenhoProfDisponibilidade(false);
-		itemParametrosPlanejamento.setCustoProfDisponibilidade(false);
-		itemParametrosPlanejamento.setEvitarReducaoCargaHorariaProf(false);
-		itemParametrosPlanejamento.setEvitarProfUltimoPrimeiroHor(false);
-		itemParametrosPlanejamento.setMaximizarAvaliacaoCursos(of.createGrupoIdentificador());
+		itemParametrosPlanejamento.setCargaHorariaSemanalAluno(cargaHorariaSemanalAluno);
+		itemParametrosPlanejamento.setPermitirAlunosEmVariosCampi(parametro.getAlunoEmMuitosCampi());
+		itemParametrosPlanejamento.setMinimizarDeslocAluno(parametro.getMinimizarDeslocamentoAluno());
+		
+		
+		CargaHorariaSemanalProfessor cargaHorariaSemanaProfessor = of.createItemParametrosPlanejamentoCargaHorariaSemanalProfessor();
+		cargaHorariaSemanaProfessor.setIndiferente("");
+		if(parametro.getCargaHorariaProfessor()) {
+			if(parametro.getCargaHorariaProfessorSel().equals(CargaHoraria.CONCENTRAR.name())) {
+				cargaHorariaSemanaProfessor.setMinimizarDias("");
+			} else if(parametro.getCargaHorariaAlunoSel().equals(CargaHoraria.DISTRIBUIR.name())) {
+				cargaHorariaSemanaProfessor.setEquilibrar("");
+			}
+		}
+		itemParametrosPlanejamento.setCargaHorariaSemanalProfessor(cargaHorariaSemanaProfessor);
+		itemParametrosPlanejamento.setPermitirProfessorEmVariosCampi(parametro.getProfessorEmMuitosCampi());
+		itemParametrosPlanejamento.setMinimizarDeslocProfessor(parametro.getMinimizarDeslocamentoProfessor());
+		itemParametrosPlanejamento.setMaxDeslocProfessor(parametro.getMinimizarDeslocamentoProfessorValue());
+		itemParametrosPlanejamento.setMinimizarHorariosVaziosProfessor(parametro.getMinimizarGapProfessor());
+		itemParametrosPlanejamento.setEvitarReducaoCargaHorariaProfValor(parametro.getEvitarReducaoCargaHorariaProfessorValue());
+		itemParametrosPlanejamento.setEvitarReducaoCargaHorariaProf(parametro.getEvitarReducaoCargaHorariaProfessor());
+		itemParametrosPlanejamento.setEvitarProfUltimoPrimeiroHor(parametro.getEvitarUltimoEPrimeiroHorarioProfessor());
+		itemParametrosPlanejamento.setPreferenciaProfessorDisciplina(parametro.getPreferenciaDeProfessores());
+		itemParametrosPlanejamento.setDesempenhoProfDisponibilidade(parametro.getAvaliacaoDesempenhoProfessor());
+		
+		itemParametrosPlanejamento.setMinAlunosAberturaTurmas(parametro.getMinAlunosParaAbrirTurma());
+		itemParametrosPlanejamento.setMinAlunosAberturaTurmasValor(parametro.getMinAlunosParaAbrirTurmaValue());
+		// TODO
 		itemParametrosPlanejamento.setNiveisDificuldadeHorario(of.createGrupoNivelDificuldadeHorario());
+		itemParametrosPlanejamento.setEquilibrarDiversidadeDiscDia(parametro.getCompatibilidadeDisciplinasMesmoDia());
+		itemParametrosPlanejamento.setRegrasGenericasDivisaoCredito(parametro.getRegrasGenericasDivisaoCredito());
+		itemParametrosPlanejamento.setRegrasEspecificasDivisaoCredito(parametro.getRegrasEspecificasDivisaoCredito());
+		itemParametrosPlanejamento.setMaximizarAvaliacaoCursosSel(parametro.getMaximizarNotaAvaliacaoCorpoDocente());
+		// TODO
+		itemParametrosPlanejamento.setMaximizarAvaliacaoCursos(of.createGrupoIdentificador());
+		itemParametrosPlanejamento.setMinimizarCustoDocenteCursosSel(parametro.getMinimizarCustoDocenteCursos());
+		// TODO
+		itemParametrosPlanejamento.setMinimizarCustoDocenteCursos(of.createGrupoIdentificador());
+		itemParametrosPlanejamento.setPermiteCompartilhamentoTurmaSel(parametro.getCompartilharDisciplinasCampi());
+		// TODO
+		itemParametrosPlanejamento.setPermiteCompartilhamentoTurma(of.createGrupoGrupo());
+		itemParametrosPlanejamento.setPercentuaisMinimoMestres(parametro.getPercentuaisMinimosMestres());
+		itemParametrosPlanejamento.setPercentuaisMinimoDoutores(parametro.getPercentuaisMinimosDoutores());
+		itemParametrosPlanejamento.setAreaTitulacaoProfessorCurso(parametro.getAreaTitulacaoProfessoresECursos());
+		itemParametrosPlanejamento.setMaximoDisciplinasDeUmProfessorPorCurso(parametro.getLimitarMaximoDisciplinaProfessor());
 		
-		itemParametrosPlanejamento.setCargaHorariaSemanalAluno(new CargaHorariaSemanalAluno());
-		itemParametrosPlanejamento.getCargaHorariaSemanalAluno().setIndiferente("");
-		
+		itemParametrosPlanejamento.setCustoProfDisponibilidade(false);
+
 		triedaInput.setParametrosPlanejamento(itemParametrosPlanejamento);
+		
+//		Parametro parametro = cenario.getParametro();
+//		
+//		ItemParametrosPlanejamento itemParametrosPlanejamento = of.createItemParametrosPlanejamento();
+//		
+//		CargaHorariaSemanalAluno cargaHorariaSemanalAluno = of.createItemParametrosPlanejamentoCargaHorariaSemanalAluno();
+//		if(parametro.getCargaHorariaAlunoSel().equals(CargaHoraria.CONCENTRAR)) {
+//			cargaHorariaSemanalAluno.setMinimizarDias("");
+//		} else if(parametro.getCargaHorariaAlunoSel().equals(CargaHoraria.DISTRIBUIR)) {
+//			cargaHorariaSemanalAluno.setEquilibrar("");
+//		} else if(parametro.getCargaHorariaAlunoSel().equals(CargaHoraria.INDIFERENTE)) {
+//			cargaHorariaSemanalAluno.setIndiferente("");
+//		}
+//		itemParametrosPlanejamento.setCargaHorariaSemanalAluno(cargaHorariaSemanalAluno);
+		
+//		itemParametrosPlanejamento.set
+		
+		
+		
+		
+//		dto.setAlunoDePeriodoMesmaSala(display.getAlunoDePeriodoMesmaSalaCheckBox().getValue());
+//		itemParametrosPlanejamento.set
+		
+//		dto.setAlunoEmMuitosCampi(display.getAlunoEmMuitosCampiCheckBox().getValue());
+//		dto.setMinimizarDeslocamentoAluno(display.getMinimizarDeslocamentoAlunoCheckBox().getValue());
+//
+//		dto.setCargaHorariaProfessor(display.getCargaHorariaProfessorCheckBox().getValue());
+//		dto.setCargaHorariaProfessorSel(display.getCargaHorariaProfessorComboBox().getValueString());
+//		dto.setProfessorEmMuitosCampi(display.getProfessorEmMuitosCampiCheckBox().getValue());
+//		dto.setMinimizarDeslocamentoProfessor(display.getMinimizarDeslocamentoProfessorCheckBox().getValue());
+//		Number minimizarDeslocamentoProfessorValue = display.getMinimizarDeslocamentoProfessorNumberField().getValue();
+//		if(minimizarDeslocamentoProfessorValue == null) minimizarDeslocamentoProfessorValue = 0;
+//		dto.setMinimizarDeslocamentoProfessorValue(minimizarDeslocamentoProfessorValue.intValue());
+//		dto.setMinimizarGapProfessor(display.getMinimizarGapProfessorCheckBox().getValue());
+//		dto.setEvitarReducaoCargaHorariaProfessor(display.getEvitarReducaoCargaHorariaProfessorCheckBox().getValue());
+//		Number evitarReducaoCargaHorariaProfessorValue = display.getEvitarReducaoCargaHorariaProfessorNumberField().getValue();
+//		if(evitarReducaoCargaHorariaProfessorValue == null) evitarReducaoCargaHorariaProfessorValue = 0;
+//		dto.setEvitarReducaoCargaHorariaProfessorValue(evitarReducaoCargaHorariaProfessorValue.intValue());
+//		dto.setEditarUltimoEPrimeiroHorarioProfessor(display.getEditarUltimoEPrimeiroHorarioProfessorCheckBox().getValue());
+//		dto.setPreferenciaDeProfessores(display.getPreferenciaDeProfessoresCheckBox().getValue());
+//		dto.setAvaliacaoDesempenhoProfessor(display.getAvaliacaoDesempenhoProfessorCheckBox().getValue());
+//
+//		dto.setNivelDificuldadeDisciplina(display.getNivelDificuldadeDisciplinaCheckBox().getValue());
+//		dto.setCompatibilidadeDisciplinasMesmoDia(display.getCompatibilidadeDisciplinasMesmoDiaCheckBox().getValue());
+//		dto.setRegrasGenericasDivisaoCredito(display.getRegrasGenericasDivisaoCreditoCheckBox().getValue());
+//		dto.setRegrasEspecificasDivisaoCredito(display.getRegrasEspecificasDivisaoCreditoCheckBox().getValue());
+//		dto.setMaximizarNotaAvaliacaoCorpoDocente(display.getMaximizarNotaAvaliacaoCorpoDocenteCheckBox().getValue());
+//		dto.setMinimizarCustoDocenteCursos(display.getMinimizarCustoDocenteCursosCheckBox().getValue());
+//		dto.setMinAlunosParaAbrirTurma(display.getMinAlunosParaAbrirTurmaCheckBox().getValue());
+//		Number minAlunosParaAbrirTurmaValue = display.getMinAlunosParaAbrirTurmaValueNumberField().getValue();
+//		if(minAlunosParaAbrirTurmaValue == null) minAlunosParaAbrirTurmaValue = 0;
+//		dto.setMinAlunosParaAbrirTurmaValue(minAlunosParaAbrirTurmaValue.intValue());
+//		dto.setCompartilharDisciplinasCampi(display.getCompartilharDisciplinasCampiCheckBox().getValue());
+//		dto.setPercentuaisMinimosMestres(display.getPercentuaisMinimosMestresCheckBox().getValue());
+//		dto.setPercentuaisMinimosDoutores(display.getPercentuaisMinimosDoutoresCheckBox().getValue());
+//		dto.setAreaTitulacaoProfessoresECursos(display.getAreaTitulacaoProfessoresECursosCheckBox().getValue());
+//		dto.setLimitarMaximoDisciplinaProfessor(display.getLimitarMaximoDisciplinaProfessorCheckBox().getValue());
+		
+		
+//		itemParametrosPlanejamento.setEquilibrarDiversidadeDiscDia(false);
+//		itemParametrosPlanejamento.setMinimizarDeslocProfessor(false);
+//		itemParametrosPlanejamento.setMinimizarDeslocAluno(false);
+//		itemParametrosPlanejamento.setMaxDeslocProfessor(100);
+//		GrupoIdentificador grupoIdentificador = of.createGrupoIdentificador();
+//		Set<Curso> cursos = cenario.getCursos();
+//		for(Curso curso : cursos) {
+//			grupoIdentificador.getId().add(curso.getId().intValue());
+//		}
+//		itemParametrosPlanejamento.setMinimizarCustoDocenteCursos(grupoIdentificador);
+//		GrupoGrupo grupoGrupo = of.createGrupoGrupo();
+//		grupoGrupo.getGrupoIdentificador().add(grupoIdentificador);
+//		itemParametrosPlanejamento.setPermiteCompartilhamentoTurma(grupoGrupo);
+//		itemParametrosPlanejamento.setMinimizarHorariosVaziosProfessor(true);
+//		itemParametrosPlanejamento.setMinimizarDiasSemanaProfessor(true);
+//		itemParametrosPlanejamento.setDesempenhoProfDisponibilidade(false);
+//		itemParametrosPlanejamento.setCustoProfDisponibilidade(false);
+//		itemParametrosPlanejamento.setEvitarReducaoCargaHorariaProf(false);
+//		itemParametrosPlanejamento.setEvitarProfUltimoPrimeiroHor(false);
+//		itemParametrosPlanejamento.setMaximizarAvaliacaoCursos(of.createGrupoIdentificador());
+//		itemParametrosPlanejamento.setNiveisDificuldadeHorario(of.createGrupoNivelDificuldadeHorario());
+//		
+//		itemParametrosPlanejamento.setCargaHorariaSemanalAluno(new CargaHorariaSemanalAluno());
+//		itemParametrosPlanejamento.getCargaHorariaSemanalAluno().setIndiferente("");
+		
+//		triedaInput.setParametrosPlanejamento(itemParametrosPlanejamento);
 	}
 	
 	private void generateFixacoes() {

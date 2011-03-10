@@ -15,17 +15,17 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for ItemTipoCurso complex type.
+ * <p>Java class for ItemAtendimentoDiaSemanaSolucao complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="ItemTipoCurso">
+ * &lt;complexType name="ItemAtendimentoDiaSemanaSolucao">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="id" type="{http://www.w3.org/2001/XMLSchema}int"/>
- *         &lt;element name="nome" type="{http://www.w3.org/2001/XMLSchema}string"/>
+ *         &lt;element name="diaSemana" type="{http://www.w3.org/2001/XMLSchema}int"/>
+ *         &lt;element name="atendimentosTatico" type="{}GrupoAtendimentoTaticoSolucao"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -35,54 +35,54 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "ItemTipoCurso", propOrder = {
-    "id",
-    "nome"
+@XmlType(name = "ItemAtendimentoDiaSemanaSolucao", propOrder = {
+    "diaSemana",
+    "atendimentosTatico"
 })
-public class ItemTipoCurso {
+public class ItemAtendimentoDiaSemanaSolucao {
 
-    protected int id;
+    protected int diaSemana;
     @XmlElement(required = true)
-    protected String nome;
+    protected GrupoAtendimentoTaticoSolucao atendimentosTatico;
 
     /**
-     * Gets the value of the id property.
+     * Gets the value of the diaSemana property.
      * 
      */
-    public int getId() {
-        return id;
+    public int getDiaSemana() {
+        return diaSemana;
     }
 
     /**
-     * Sets the value of the id property.
+     * Sets the value of the diaSemana property.
      * 
      */
-    public void setId(int value) {
-        this.id = value;
+    public void setDiaSemana(int value) {
+        this.diaSemana = value;
     }
 
     /**
-     * Gets the value of the nome property.
+     * Gets the value of the atendimentosTatico property.
      * 
      * @return
      *     possible object is
-     *     {@link String }
+     *     {@link GrupoAtendimentoTaticoSolucao }
      *     
      */
-    public String getNome() {
-        return nome;
+    public GrupoAtendimentoTaticoSolucao getAtendimentosTatico() {
+        return atendimentosTatico;
     }
 
     /**
-     * Sets the value of the nome property.
+     * Sets the value of the atendimentosTatico property.
      * 
      * @param value
      *     allowed object is
-     *     {@link String }
+     *     {@link GrupoAtendimentoTaticoSolucao }
      *     
      */
-    public void setNome(String value) {
-        this.nome = value;
+    public void setAtendimentosTatico(GrupoAtendimentoTaticoSolucao value) {
+        this.atendimentosTatico = value;
     }
 
 }

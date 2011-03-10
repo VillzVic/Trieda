@@ -11,13 +11,13 @@ import com.gapso.trieda.domain.Disciplina;
 import com.gapso.trieda.domain.Oferta;
 import com.gapso.trieda.domain.Sala;
 import com.gapso.trieda.misc.Semanas;
-import com.gapso.web.trieda.server.xml.input.ItemAtendimentoCampus;
-import com.gapso.web.trieda.server.xml.input.ItemAtendimentoDiaSemana;
-import com.gapso.web.trieda.server.xml.input.ItemAtendimentoOferta;
-import com.gapso.web.trieda.server.xml.input.ItemAtendimentoSala;
-import com.gapso.web.trieda.server.xml.input.ItemAtendimentoTatico;
-import com.gapso.web.trieda.server.xml.input.ItemAtendimentoUnidade;
-import com.gapso.web.trieda.server.xml.input.TriedaOutput;
+import com.gapso.web.trieda.server.xml.output.ItemAtendimentoCampus;
+import com.gapso.web.trieda.server.xml.output.ItemAtendimentoDiaSemana;
+import com.gapso.web.trieda.server.xml.output.ItemAtendimentoOferta;
+import com.gapso.web.trieda.server.xml.output.ItemAtendimentoSala;
+import com.gapso.web.trieda.server.xml.output.ItemAtendimentoTatico;
+import com.gapso.web.trieda.server.xml.output.ItemAtendimentoUnidade;
+import com.gapso.web.trieda.server.xml.output.TriedaOutput;
 
 @Transactional
 public class SolverOutput {

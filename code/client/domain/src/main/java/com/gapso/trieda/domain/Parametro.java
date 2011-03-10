@@ -97,8 +97,8 @@ public class Parametro implements Serializable {
     private Integer evitarReducaoCargaHorariaProfessorValue;
     
     //Evitar alocação de professores no último horário do dia e primeiro do dia seguinte
-    @Column(name = "PAR_EDITARULTIMOPRIHORPROF")
-    private Boolean editarUltimoEPrimeiroHorarioProfessor = false;
+    @Column(name = "PAR_EVITARULTIMOPRIHORPROF")
+    private Boolean evitarUltimoEPrimeiroHorarioProfessor = false;
     
     //Considerar preferência de professores por disciplinas
     @Column(name = "PAR_PREFPROF")
@@ -332,11 +332,11 @@ public class Parametro implements Serializable {
 		this.evitarReducaoCargaHorariaProfessor = evitarReducaoCargaHorariaProfessor;
 	}
 
-	public Boolean getEditarUltimoEPrimeiroHorarioProfessor() {
-		return editarUltimoEPrimeiroHorarioProfessor;
+	public Boolean getEvitarUltimoEPrimeiroHorarioProfessor() {
+		return evitarUltimoEPrimeiroHorarioProfessor;
 	}
-	public void setEditarUltimoEPrimeiroHorarioProfessor(Boolean editarUltimoEPrimeiroHorarioProfessor) {
-		this.editarUltimoEPrimeiroHorarioProfessor = editarUltimoEPrimeiroHorarioProfessor;
+	public void setEvitarUltimoEPrimeiroHorarioProfessor(Boolean editarUltimoEPrimeiroHorarioProfessor) {
+		this.evitarUltimoEPrimeiroHorarioProfessor = editarUltimoEPrimeiroHorarioProfessor;
 	}
 
 	public Boolean getPreferenciaDeProfessores() {
@@ -512,7 +512,7 @@ public class Parametro implements Serializable {
         sb.append("MinimizarGapProfessor: ").append(getMinimizarGapProfessor()).append(", ");
         sb.append("EvitarReducaoCargaHorariaProfessor: ").append(getEvitarReducaoCargaHorariaProfessor()).append(", ");
         sb.append("EvitarReducaoCargaHorariaProfessorValue: ").append(getEvitarReducaoCargaHorariaProfessorValue()).append(", ");
-        sb.append("EditarUltimoEPrimeiroHorarioProfessor: ").append(getEditarUltimoEPrimeiroHorarioProfessor()).append(", ");
+        sb.append("EditarUltimoEPrimeiroHorarioProfessor: ").append(getEvitarUltimoEPrimeiroHorarioProfessor()).append(", ");
         sb.append("PreferenciaDeProfessores: ").append(getPreferenciaDeProfessores()).append(", ");
         sb.append("AvaliacaoDesempenhoProfessor: ").append(getAvaliacaoDesempenhoProfessor()).append(", ");
         sb.append("NivelDificuldadeDisciplina: ").append(getNivelDificuldadeDisciplina()).append(", ");

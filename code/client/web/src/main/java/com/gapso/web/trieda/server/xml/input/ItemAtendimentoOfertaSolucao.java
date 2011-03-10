@@ -10,22 +10,24 @@ package com.gapso.web.trieda.server.xml.input;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for ItemDemanda complex type.
+ * <p>Java class for ItemAtendimentoOfertaSolucao complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="ItemDemanda">
+ * &lt;complexType name="ItemAtendimentoOfertaSolucao">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
  *         &lt;element name="ofertaCursoCampiId" type="{http://www.w3.org/2001/XMLSchema}int"/>
  *         &lt;element name="disciplinaId" type="{http://www.w3.org/2001/XMLSchema}int"/>
  *         &lt;element name="quantidade" type="{http://www.w3.org/2001/XMLSchema}int"/>
+ *         &lt;element name="turma" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -35,16 +37,19 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "ItemDemanda", propOrder = {
+@XmlType(name = "ItemAtendimentoOfertaSolucao", propOrder = {
     "ofertaCursoCampiId",
     "disciplinaId",
-    "quantidade"
+    "quantidade",
+    "turma"
 })
-public class ItemDemanda {
+public class ItemAtendimentoOfertaSolucao {
 
     protected int ofertaCursoCampiId;
     protected int disciplinaId;
     protected int quantidade;
+    @XmlElement(required = true)
+    protected String turma;
 
     /**
      * Gets the value of the ofertaCursoCampiId property.
@@ -92,6 +97,30 @@ public class ItemDemanda {
      */
     public void setQuantidade(int value) {
         this.quantidade = value;
+    }
+
+    /**
+     * Gets the value of the turma property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getTurma() {
+        return turma;
+    }
+
+    /**
+     * Sets the value of the turma property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setTurma(String value) {
+        this.turma = value;
     }
 
 }

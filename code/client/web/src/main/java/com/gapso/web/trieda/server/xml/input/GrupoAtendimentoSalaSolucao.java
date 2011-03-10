@@ -17,16 +17,16 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for GrupoOfertaCurso complex type.
+ * <p>Java class for GrupoAtendimentoSalaSolucao complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="GrupoOfertaCurso">
+ * &lt;complexType name="GrupoAtendimentoSalaSolucao">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence maxOccurs="unbounded" minOccurs="0">
- *         &lt;element name="OfertaCurso" type="{}ItemOfertaCurso"/>
+ *         &lt;element name="AtendimentoSala" type="{}ItemAtendimentoSalaSolucao"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -36,41 +36,41 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "GrupoOfertaCurso", propOrder = {
-    "ofertaCurso"
+@XmlType(name = "GrupoAtendimentoSalaSolucao", propOrder = {
+    "atendimentoSala"
 })
-public class GrupoOfertaCurso {
+public class GrupoAtendimentoSalaSolucao {
 
-    @XmlElement(name = "OfertaCurso")
-    protected List<ItemOfertaCurso> ofertaCurso;
+    @XmlElement(name = "AtendimentoSala")
+    protected List<ItemAtendimentoSalaSolucao> atendimentoSala;
 
     /**
-     * Gets the value of the ofertaCurso property.
+     * Gets the value of the atendimentoSala property.
      * 
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the ofertaCurso property.
+     * This is why there is not a <CODE>set</CODE> method for the atendimentoSala property.
      * 
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
-     *    getOfertaCurso().add(newItem);
+     *    getAtendimentoSala().add(newItem);
      * </pre>
      * 
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link ItemOfertaCurso }
+     * {@link ItemAtendimentoSalaSolucao }
      * 
      * 
      */
-    public List<ItemOfertaCurso> getOfertaCurso() {
-        if (ofertaCurso == null) {
-            ofertaCurso = new ArrayList<ItemOfertaCurso>();
+    public List<ItemAtendimentoSalaSolucao> getAtendimentoSala() {
+        if (atendimentoSala == null) {
+            atendimentoSala = new ArrayList<ItemAtendimentoSalaSolucao>();
         }
-        return this.ofertaCurso;
+        return this.atendimentoSala;
     }
 
 }
