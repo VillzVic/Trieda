@@ -10,6 +10,7 @@ public:
    ParametrosPlanejamento(void);
    ~ParametrosPlanejamento(void);
 
+   std::string modoOtimizacao;
    GGroup<NivelDificuldadeHorario*> niveis_dificuldade_horario;
    bool equilibrar_diversidade_disc_dia;
    bool minimizar_desloc_prof;
@@ -23,12 +24,11 @@ public:
    CHSA carga_horaria_semanal_aluno;
 
    bool minimizar_horarios_vazios_professor;
-   bool minimizar_dias_semana_professor;
    bool desempenho_prof_disponibilidade;
    bool custo_prof_disponibilidade;
    bool evitar_reducao_carga_horaria_prof;
    bool evitar_prof_ultimo_primeiro_hr;
-   int min_alunos_abertura_turmas;
+   bool min_alunos_abertura_turmas;
 
    virtual void le_arvore(ItemParametrosPlanejamento& elem);
 };

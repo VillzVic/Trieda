@@ -10,8 +10,6 @@ Sala::~Sala(void)
 
 void Sala::le_arvore(ItemSala& elem)
 {
-	bool tatico = true; //fixme!!!
-
 	id = elem.id();
 	codigo = elem.codigo();
 	andar = elem.andar();
@@ -19,14 +17,16 @@ void Sala::le_arvore(ItemSala& elem)
 	tipo_sala_id = elem.tipoSalaId();
 	capacidade = elem.capacidade();
 
-   if(tatico) {
+	if(elem.creditosDispon_veis() != NULL && elem.horariosDisponiveis() == NULL) {
+		// le creditos disponiveis
       ITERA_SEQ(it_cred,elem.creditosDispon_veis().get(),CreditoDisponivel) {
 			CreditoDisponivel* credito_disp = new CreditoDisponivel();
 			credito_disp->le_arvore(*it_cred);
 			creditos_disponiveis.add(credito_disp);
 		}
+	  std::cout << "TATICO" << std::endl;
 	}
-	else {
+	else if(elem.creditosDispon_veis() == NULL && elem.horariosDisponiveis() != NULL) {
 		// le horarios disponiveis
 		ITERA_SEQ(it_hora,elem.horariosDisponiveis().get(),Horario) {
 			Horario* horario = new Horario();
@@ -34,6 +34,13 @@ void Sala::le_arvore(ItemSala& elem)
 			horarios_disponiveis.add(horario);
 		}
 		std::cout << "OPERACIONAL" << std::endl;
+	}
+	else
+	// ERRO no XML de entrada
+	{
+		std::cout << "WARNING!!! input inválido para os campos:\n"
+				  << "'horariosDisponiveis' e/ou 'creditosDisponiveis'"
+				  << std::endl;
 		getchar();
 	}
 	ITERA_NSEQ(it_disc,elem.disciplinasAssociadas(),id,Identificador) {

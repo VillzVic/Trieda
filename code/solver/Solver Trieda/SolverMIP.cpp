@@ -1222,7 +1222,7 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
                                        */
 
                                        // Cálculo do total de créditos que serão alocados.
-                                       int creds_Alocar = (pt_Var_x->getValue() - it_Dia->second);
+                                       int creds_Alocar = (int)(pt_Var_x->getValue() - it_Dia->second);
 
                                        // Criando uma nova variável para uma divisão da variável em questão.
                                        Variable * var_x_NAO_ALOCADA = NULL;
@@ -1377,9 +1377,13 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
 
             // Verificando se a disicplina é de carater prático ou teórico.
             if((*it_Vars_x)->getDisciplina()->getId() > 0 && (*it_Vars_x)->getDisciplina()->cred_teoricos > 0)
-            { at_Tatico->qtde_creditos_teoricos = (*it_Vars_x)->getValue(); }
+            {
+				at_Tatico->qtde_creditos_teoricos = (int)(*it_Vars_x)->getValue();
+			}
             else
-            { at_Tatico->qtde_creditos_praticos = (*it_Vars_x)->getValue(); }
+            {
+				at_Tatico->qtde_creditos_praticos = (int)(*it_Vars_x)->getValue();
+			}
 
             AtendimentoOferta * at_Oferta = new AtendimentoOferta();
 
@@ -1391,7 +1395,7 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
 
             at_Oferta->oferta_curso_campi_id = buffer;
             at_Oferta->disciplina_id = (*it_Vars_a)->getDisciplina()->id;
-            at_Oferta->quantidade = (*it_Vars_a)->getValue();
+            at_Oferta->quantidade = (int)((*it_Vars_a)->getValue());
             at_Oferta->turma = (*it_Vars_a)->getTurma();
 
             at_Tatico->atendimento_oferta = at_Oferta;
@@ -1479,9 +1483,13 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
 
                                                 // Verificando se a disicplina é de carater prático ou teórico.
                                                 if((*it_Vars_x)->getDisciplina()->getId() > 0 && (*it_Vars_x)->getDisciplina()->cred_teoricos > 0)
-                                                { at_Tatico->qtde_creditos_teoricos = (*it_Vars_x)->getValue(); }
+                                                {
+													at_Tatico->qtde_creditos_teoricos = (int)((*it_Vars_x)->getValue());
+												}
                                                 else
-                                                { at_Tatico->qtde_creditos_praticos = (*it_Vars_x)->getValue(); }
+                                                {
+													at_Tatico->qtde_creditos_praticos = (int)((*it_Vars_x)->getValue());
+												}
 
                                                 AtendimentoOferta * at_Oferta = new AtendimentoOferta();
 
@@ -1493,7 +1501,7 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
 
                                                 at_Oferta->oferta_curso_campi_id = buffer;
                                                 at_Oferta->disciplina_id = (*it_Vars_a)->getDisciplina()->id;
-                                                at_Oferta->quantidade = (*it_Vars_a)->getValue();
+                                                at_Oferta->quantidade = (int)((*it_Vars_a)->getValue());
                                                 at_Oferta->turma = (*it_Vars_a)->getTurma();
 
                                                 at_Tatico->atendimento_oferta = at_Oferta;
@@ -1523,9 +1531,13 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
 
                                           // Verificando se a disicplina é de carater prático ou teórico.
                                           if((*it_Vars_x)->getDisciplina()->getId() > 0 && (*it_Vars_x)->getDisciplina()->cred_teoricos > 0)
-                                          { at_Tatico->qtde_creditos_teoricos = (*it_Vars_x)->getValue(); }
+                                          {
+											  at_Tatico->qtde_creditos_teoricos = (int)((*it_Vars_x)->getValue());
+										  }
                                           else
-                                          { at_Tatico->qtde_creditos_praticos = (*it_Vars_x)->getValue(); }
+                                          {
+											  at_Tatico->qtde_creditos_praticos = (int)((*it_Vars_x)->getValue());
+										  }
 
                                           AtendimentoOferta * at_Oferta = new AtendimentoOferta();
 
@@ -1537,7 +1549,7 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
 
                                           at_Oferta->oferta_curso_campi_id = buffer;
                                           at_Oferta->disciplina_id = (*it_Vars_a)->getDisciplina()->id;
-                                          at_Oferta->quantidade = (*it_Vars_a)->getValue();
+                                          at_Oferta->quantidade = (int)((*it_Vars_a)->getValue());
                                           at_Oferta->turma = (*it_Vars_a)->getTurma();
 
                                           at_Tatico->atendimento_oferta = at_Oferta;
@@ -1574,9 +1586,13 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
 
                                  // Verificando se a disicplina é de carater prático ou teórico.
                                  if((*it_Vars_x)->getDisciplina()->getId() > 0 && (*it_Vars_x)->getDisciplina()->cred_teoricos > 0)
-                                 { at_Tatico->qtde_creditos_teoricos = (*it_Vars_x)->getValue(); }
+                                 {
+									 at_Tatico->qtde_creditos_teoricos = (int)((*it_Vars_x)->getValue());
+								 }
                                  else
-                                 { at_Tatico->qtde_creditos_praticos = (*it_Vars_x)->getValue(); }
+                                 {
+									 at_Tatico->qtde_creditos_praticos = (int)((*it_Vars_x)->getValue());
+								 }
 
                                  AtendimentoOferta * at_Oferta = new AtendimentoOferta();
 
@@ -1588,7 +1604,7 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
 
                                  at_Oferta->oferta_curso_campi_id = buffer;
                                  at_Oferta->disciplina_id = (*it_Vars_a)->getDisciplina()->id;
-                                 at_Oferta->quantidade = (*it_Vars_a)->getValue();
+                                 at_Oferta->quantidade = (int)((*it_Vars_a)->getValue());
                                  at_Oferta->turma = (*it_Vars_a)->getTurma();
 
                                  at_Tatico->atendimento_oferta = at_Oferta;
@@ -1631,9 +1647,13 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
 
                         // Verificando se a disicplina é de carater prático ou teórico.
                         if((*it_Vars_x)->getDisciplina()->getId() > 0 && (*it_Vars_x)->getDisciplina()->cred_teoricos > 0)
-                        { at_Tatico->qtde_creditos_teoricos = (*it_Vars_x)->getValue(); }
+                        {
+							at_Tatico->qtde_creditos_teoricos = (int)((*it_Vars_x)->getValue());
+						}
                         else
-                        { at_Tatico->qtde_creditos_praticos = (*it_Vars_x)->getValue(); }
+                        {
+							at_Tatico->qtde_creditos_praticos = (int)((*it_Vars_x)->getValue());
+						}
 
                         AtendimentoOferta * at_Oferta = new AtendimentoOferta();
 
@@ -1645,7 +1665,7 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
 
                         at_Oferta->oferta_curso_campi_id = buffer;
                         at_Oferta->disciplina_id = (*it_Vars_a)->getDisciplina()->id;
-                        at_Oferta->quantidade = (*it_Vars_a)->getValue();
+                        at_Oferta->quantidade = (int)((*it_Vars_a)->getValue());
                         at_Oferta->turma = (*it_Vars_a)->getTurma();
 
                         at_Tatico->atendimento_oferta = at_Oferta;
@@ -1693,9 +1713,13 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
 
                // Verificando se a disicplina é de carater prático ou teórico.
                if((*it_Vars_x)->getDisciplina()->getId() > 0 && (*it_Vars_x)->getDisciplina()->cred_teoricos > 0)
-               { at_Tatico->qtde_creditos_teoricos = (*it_Vars_x)->getValue(); }
+               {
+				   at_Tatico->qtde_creditos_teoricos = (int)((*it_Vars_x)->getValue());
+			   }
                else
-               { at_Tatico->qtde_creditos_praticos = (*it_Vars_x)->getValue(); }
+               {
+				   at_Tatico->qtde_creditos_praticos = (int)((*it_Vars_x)->getValue());
+			   }
 
                AtendimentoOferta * at_Oferta = new AtendimentoOferta();
 
@@ -1707,7 +1731,7 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
 
                at_Oferta->oferta_curso_campi_id = buffer;
                at_Oferta->disciplina_id = (*it_Vars_a)->getDisciplina()->id;
-               at_Oferta->quantidade = (*it_Vars_a)->getValue();
+               at_Oferta->quantidade = (int)((*it_Vars_a)->getValue());
                at_Oferta->turma = (*it_Vars_a)->getTurma();
 
                at_Tatico->atendimento_oferta = at_Oferta;
@@ -1958,20 +1982,19 @@ int SolverMIP::cria_variavel_creditos(void)
                      v.setDia(*itDiscSala_Dias);   // t
                      //v.setDia(dia);
 
-
-					 int coef = 0.0;
+					 int coef = 0;
 					 ITERA_GGROUP(it_prof,itCampus->professores,Professor) 
 					 {
 						 std::pair<int/*idProf*/,int/*idDisc*/> prof_Disc 
-							 (it_prof->getId(),itDisc->getId());
+							 (it_prof->getId(), itDisc->getId());
 
 						 if(problemData->prof_Disc_Dias.find(prof_Disc) != problemData->prof_Disc_Dias.end())
 						 {
-							 coef = 0.0;
+							 coef = 0;
 						 }
 						 else
 						 {
-							 coef = 10.0;
+							 coef = 10;
 						 }
 
 						 if (vHash.find(v) == vHash.end())

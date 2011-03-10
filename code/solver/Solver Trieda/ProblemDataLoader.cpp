@@ -714,15 +714,13 @@ void ProblemDataLoader::divideDisciplinas()
                      it_Regra = it_Creds_Regras->second.begin();
 
                   bool continuar = rand() % 2;
-
-                  while(continuar && (it_Regra != it_Creds_Regras->second.end()) )
+                  while(continuar && (it_Regra != it_Creds_Regras->second.end()))
                   {
                      ++it_Regra;
                      continuar = rand() % 2;
                   }
 
-                  it_disc->divisao_creditos = new DivisaoCreditos(
-                     **it_Regra);
+                  it_disc->divisao_creditos = new DivisaoCreditos(**it_Regra);
                }
             }
 
@@ -745,15 +743,13 @@ void ProblemDataLoader::divideDisciplinas()
                      it_Regra = it_Creds_Regras->second.begin();
 
                   bool continuar = rand() % 2;
-
-                  while(continuar && (it_Regra != it_Creds_Regras->second.end()) )
+                  while(continuar && (it_Regra != it_Creds_Regras->second.end()))
                   {
                      ++it_Regra;
                      continuar = rand() % 2;
                   }
 
-                  nova_disc->divisao_creditos = new DivisaoCreditos(
-                     **it_Regra);
+                  nova_disc->divisao_creditos = new DivisaoCreditos(**it_Regra);
                }
             }
          }

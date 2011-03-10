@@ -10,6 +10,8 @@ ParametrosPlanejamento::~ParametrosPlanejamento(void)
 
 void ParametrosPlanejamento::le_arvore(ItemParametrosPlanejamento& elem)
 {
+   modoOtimizacao = elem.modoOtimizacao();
+
    ITERA_SEQ(it_niveis_dificuldade_horario,elem.niveisDificuldadeHorario(),NivelDificuldadeHorario) {
       NivelDificuldadeHorario* nivel_dif_hor = new NivelDificuldadeHorario();
       nivel_dif_hor->le_arvore(*it_niveis_dificuldade_horario);
@@ -53,11 +55,9 @@ void ParametrosPlanejamento::le_arvore(ItemParametrosPlanejamento& elem)
    }
 
    minimizar_horarios_vazios_professor = elem.minimizarHorariosVaziosProfessor();
-   //minimizar_dias_semana_professor = elem.minimizarDiasSemanaProfessor();
    desempenho_prof_disponibilidade = elem.desempenhoProfDisponibilidade();
    custo_prof_disponibilidade = elem.custoProfDisponibilidade();
    evitar_reducao_carga_horaria_prof = elem.evitarReducaoCargaHorariaProf();
    evitar_prof_ultimo_primeiro_hr = elem.evitarProfUltimoPrimeiroHor();
    min_alunos_abertura_turmas = elem.minAlunosAberturaTurmas();
-
 }
