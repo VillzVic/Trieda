@@ -65,7 +65,7 @@ void ProblemData::le_arvore(TriedaInput& raiz)
    // Se a tag existir (mesmo que esteja em branco) no xml de entrada
    if (raiz.atendimentosTatico().present())
    {
-		atendimentosTatico = &(optionalValue.get());
+		atendimentosTatico = &(raiz.atendimentosTatico().get());
    }
 
    LE_SEQ(fixacoes, raiz.fixacoes(), Fixacao);
