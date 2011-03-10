@@ -7,12 +7,12 @@ import com.extjs.gxt.ui.client.widget.form.FormPanel;
 import com.extjs.gxt.ui.client.widget.form.NumberField;
 import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.extjs.gxt.ui.client.widget.layout.FormData;
-import com.gapso.web.trieda.client.mvp.model.DisciplinaDTO;
 import com.gapso.web.trieda.client.mvp.presenter.DisciplinaFormPresenter;
 import com.gapso.web.trieda.client.util.resources.Resources;
 import com.gapso.web.trieda.client.util.view.DificuldadeComboBox;
 import com.gapso.web.trieda.client.util.view.SimpleModal;
 import com.gapso.web.trieda.client.util.view.TipoDisciplinaComboBox;
+import com.gapso.web.trieda.shared.dtos.DisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.TipoDisciplinaDTO;
 
 public class DisciplinaFormView extends MyComposite implements DisciplinaFormPresenter.Display {
@@ -57,7 +57,7 @@ public class DisciplinaFormView extends MyComposite implements DisciplinaFormPre
 		formPanel.setHeaderVisible(false);
 		
 		codigoTF = new TextField<String>();
-		codigoTF.setName("codigo");
+		codigoTF.setName(DisciplinaDTO.PROPERTY_CODIGO);
 		codigoTF.setValue(disciplinaDTO.getCodigo());
 		codigoTF.setFieldLabel("Código");
 		codigoTF.setAllowBlank(false);
@@ -67,7 +67,7 @@ public class DisciplinaFormView extends MyComposite implements DisciplinaFormPre
 		formPanel.add(codigoTF, formData);
 		
 		nomeTF = new TextField<String>();
-		nomeTF.setName("nome");
+		nomeTF.setName(DisciplinaDTO.PROPERTY_NOME);
 		nomeTF.setValue(disciplinaDTO.getNome());
 		nomeTF.setFieldLabel("Nome");
 		nomeTF.setAllowBlank(false);
@@ -77,7 +77,7 @@ public class DisciplinaFormView extends MyComposite implements DisciplinaFormPre
 		formPanel.add(nomeTF, formData);
 		
 		creditosTeoricoTF = new NumberField();
-		creditosTeoricoTF.setName("creditosTeorico");
+		creditosTeoricoTF.setName(DisciplinaDTO.PROPERTY_CREDITOS_TEORICO);
 		creditosTeoricoTF.setValue(disciplinaDTO.getCreditosTeorico());
 		creditosTeoricoTF.setFieldLabel("Créditos Teóricos");
 		creditosTeoricoTF.setAllowBlank(false);
@@ -87,7 +87,7 @@ public class DisciplinaFormView extends MyComposite implements DisciplinaFormPre
 		formPanel.add(creditosTeoricoTF, formData);
 		
 		creditosPraticoTF = new NumberField();
-		creditosPraticoTF.setName("creditosPratico");
+		creditosPraticoTF.setName(DisciplinaDTO.PROPERTY_CREDITOS_PRATICO);
 		creditosPraticoTF.setValue(disciplinaDTO.getCreditosPratico());
 		creditosPraticoTF.setFieldLabel("Créditos Práticos");
 		creditosPraticoTF.setAllowBlank(false);
@@ -97,7 +97,7 @@ public class DisciplinaFormView extends MyComposite implements DisciplinaFormPre
 		formPanel.add(creditosPraticoTF, formData);
 		
 		laboratorioCB = new CheckBox();
-		laboratorioCB.setName("laboratorio");
+		laboratorioCB.setName(DisciplinaDTO.PROPERTY_LABORATORIO);
 		laboratorioCB.setValue(disciplinaDTO.getLaboratorio());
 		laboratorioCB.setFieldLabel("Usa Laboratório");
 		formPanel.add(laboratorioCB, formData);
@@ -119,7 +119,7 @@ public class DisciplinaFormView extends MyComposite implements DisciplinaFormPre
 		formPanel.add(dificuldadeCB, formData);
 		
 		maxAlunosTeoricoTF = new NumberField();
-		maxAlunosTeoricoTF.setName("maxAlunosTeorico");
+		maxAlunosTeoricoTF.setName(DisciplinaDTO.PROPERTY_MAX_ALUNOS_TEORICO);
 		maxAlunosTeoricoTF.setValue(disciplinaDTO.getMaxAlunosTeorico());
 		maxAlunosTeoricoTF.setFieldLabel("Max. Alunos - Teórico");
 		maxAlunosTeoricoTF.setAllowBlank(false);
@@ -129,7 +129,7 @@ public class DisciplinaFormView extends MyComposite implements DisciplinaFormPre
 		formPanel.add(maxAlunosTeoricoTF, formData);
 		
 		maxAlunosPraticoTF = new NumberField();
-		maxAlunosPraticoTF.setName("maxAlunosPratico");
+		maxAlunosPraticoTF.setName(DisciplinaDTO.PROPERTY_MAX_ALUNOS_PRATICO);
 		maxAlunosPraticoTF.setValue(disciplinaDTO.getMaxAlunosPratico());
 		maxAlunosPraticoTF.setFieldLabel("Max. Alunos - Prático");
 		maxAlunosPraticoTF.setAllowBlank(false);

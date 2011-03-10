@@ -17,12 +17,12 @@ import com.extjs.gxt.ui.client.widget.layout.RowLayout;
 import com.extjs.gxt.ui.client.widget.layout.VBoxLayout;
 import com.extjs.gxt.ui.client.widget.layout.VBoxLayout.VBoxLayoutAlign;
 import com.extjs.gxt.ui.client.widget.layout.VBoxLayoutData;
-import com.gapso.web.trieda.client.mvp.model.ProfessorDTO;
 import com.gapso.web.trieda.client.mvp.presenter.CampusProfessorFormPresenter;
 import com.gapso.web.trieda.client.util.resources.Resources;
 import com.gapso.web.trieda.client.util.view.CampusComboBox;
 import com.gapso.web.trieda.client.util.view.SimpleModal;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
+import com.gapso.web.trieda.shared.dtos.ProfessorDTO;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
 public class CampusProfessorFormView extends MyComposite implements CampusProfessorFormPresenter.Display {
@@ -74,7 +74,7 @@ public class CampusProfessorFormView extends MyComposite implements CampusProfes
 		naoVinculadaListPanel.setHeading("Professor(es) NÃO associado(s) ao Campus");
 		professorNaoAssociadoList = new ListView<ProfessorDTO>();
 		professorNaoAssociadoList.disable();
-		professorNaoAssociadoList.setDisplayProperty("nome");
+		professorNaoAssociadoList.setDisplayProperty(ProfessorDTO.PROPERTY_NOME);
 		professorNaoAssociadoList.getSelectionModel().setSelectionMode(SelectionMode.MULTI);
 		naoVinculadaListPanel.add(professorNaoAssociadoList);
 		
@@ -82,7 +82,7 @@ public class CampusProfessorFormView extends MyComposite implements CampusProfes
 		vinculadaListPanel.setHeading("Professor(es) associado(s) ao Campus");
 		professorAssociadoList = new ListView<ProfessorDTO>();
 		professorAssociadoList.disable();
-		professorAssociadoList.setDisplayProperty("nome");
+		professorAssociadoList.setDisplayProperty(ProfessorDTO.PROPERTY_NOME);
 		professorAssociadoList.getSelectionModel().setSelectionMode(SelectionMode.MULTI);
 		vinculadaListPanel.add(professorAssociadoList);
 		

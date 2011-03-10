@@ -13,14 +13,14 @@ import com.gapso.trieda.domain.Curso;
 import com.gapso.trieda.domain.Demanda;
 import com.gapso.trieda.domain.Disciplina;
 import com.gapso.trieda.domain.Turno;
-import com.gapso.web.trieda.client.mvp.model.CurriculoDTO;
-import com.gapso.web.trieda.client.mvp.model.CursoDTO;
-import com.gapso.web.trieda.client.mvp.model.DemandaDTO;
-import com.gapso.web.trieda.client.mvp.model.DisciplinaDTO;
-import com.gapso.web.trieda.client.mvp.model.TurnoDTO;
 import com.gapso.web.trieda.client.services.DemandasService;
 import com.gapso.web.trieda.server.util.ConvertBeans;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
+import com.gapso.web.trieda.shared.dtos.CurriculoDTO;
+import com.gapso.web.trieda.shared.dtos.CursoDTO;
+import com.gapso.web.trieda.shared.dtos.DemandaDTO;
+import com.gapso.web.trieda.shared.dtos.DisciplinaDTO;
+import com.gapso.web.trieda.shared.dtos.TurnoDTO;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 /**

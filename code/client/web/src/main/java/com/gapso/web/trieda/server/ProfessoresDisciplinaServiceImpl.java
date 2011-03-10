@@ -10,10 +10,10 @@ import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.gapso.trieda.domain.Disciplina;
 import com.gapso.trieda.domain.Professor;
 import com.gapso.trieda.domain.ProfessorDisciplina;
-import com.gapso.web.trieda.client.mvp.model.DisciplinaDTO;
-import com.gapso.web.trieda.client.mvp.model.ProfessorDTO;
 import com.gapso.web.trieda.client.services.ProfessoresDisciplinaService;
 import com.gapso.web.trieda.server.util.ConvertBeans;
+import com.gapso.web.trieda.shared.dtos.DisciplinaDTO;
+import com.gapso.web.trieda.shared.dtos.ProfessorDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorDisciplinaDTO;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 

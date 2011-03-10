@@ -14,7 +14,6 @@ import com.extjs.gxt.ui.client.widget.grid.ColumnConfig;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayout;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
 import com.extjs.gxt.ui.client.widget.toolbar.SeparatorToolItem;
-import com.gapso.web.trieda.client.mvp.model.ProfessorDTO;
 import com.gapso.web.trieda.client.mvp.presenter.ProfessoresPresenter;
 import com.gapso.web.trieda.client.util.resources.Resources;
 import com.gapso.web.trieda.client.util.view.AreaTitulacaoComboBox;
@@ -24,6 +23,7 @@ import com.gapso.web.trieda.client.util.view.SimpleGrid;
 import com.gapso.web.trieda.client.util.view.SimpleToolBar;
 import com.gapso.web.trieda.client.util.view.TipoContratoComboBox;
 import com.gapso.web.trieda.client.util.view.TitulacaoComboBox;
+import com.gapso.web.trieda.shared.dtos.ProfessorDTO;
 
 public class ProfessoresView extends MyComposite implements ProfessoresPresenter.Display {
 
@@ -75,16 +75,16 @@ public class ProfessoresView extends MyComposite implements ProfessoresPresenter
 
 	public List<ColumnConfig> getColumnList() {
 		List<ColumnConfig> list = new ArrayList<ColumnConfig>();
-		list.add(new ColumnConfig("cpf", "CPF", 100));
-		list.add(new ColumnConfig("nome", "Nome", 100));
-		list.add(new ColumnConfig("tipoContratoString", "Tipo", 100));
-		list.add(new ColumnConfig("cargaHorariaMin", "Carga Horária Min.", 100));
-		list.add(new ColumnConfig("cargaHorariaMax", "Carga Horária Max.", 100));
-		list.add(new ColumnConfig("titulacaoString", "Titulação", 100));
-		list.add(new ColumnConfig("areaTitulacaoString", "Área de Titulação", 100));
-		list.add(new ColumnConfig("notaDesempenho", "Nota Desempenho", 100));
-		list.add(new ColumnConfig("creditoAnterior", "Carga Horária Anterior", 100));
-		list.add(new ColumnConfig("valorCredito", "Crédito (R$)", 100));
+		list.add(new ColumnConfig(ProfessorDTO.PROPERTY_CPF, "CPF", 100));
+		list.add(new ColumnConfig(ProfessorDTO.PROPERTY_NOME, "Nome", 100));
+		list.add(new ColumnConfig(ProfessorDTO.PROPERTY_TIPO_CONTRATO_STRING, "Tipo", 100));
+		list.add(new ColumnConfig(ProfessorDTO.PROPERTY_CARGA_HORARIA_MIN, "Carga Horária Min.", 100));
+		list.add(new ColumnConfig(ProfessorDTO.PROPERTY_CARGA_HORARIA_MAX, "Carga Horária Max.", 100));
+		list.add(new ColumnConfig(ProfessorDTO.PROPERTY_TITULACAO_STRING, "Titulação", 100));
+		list.add(new ColumnConfig(ProfessorDTO.PROPERTY_AREA_TITULACAO_STRING, "Área de Titulação", 100));
+		list.add(new ColumnConfig(ProfessorDTO.PROPERTY_NOTA_DESEMPENHO, "Nota Desempenho", 100));
+		list.add(new ColumnConfig(ProfessorDTO.PROPERTY_CREDITO_ANTERIOR, "Carga Horária Anterior", 100));
+		list.add(new ColumnConfig(ProfessorDTO.PROPERTY_VALOR_CREDITO, "Crédito (R$)", 100));
 		return list;
 	}
 

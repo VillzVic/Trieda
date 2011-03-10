@@ -6,7 +6,6 @@ import com.extjs.gxt.ui.client.widget.form.FormPanel;
 import com.extjs.gxt.ui.client.widget.form.NumberField;
 import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.extjs.gxt.ui.client.widget.layout.FormData;
-import com.gapso.web.trieda.client.mvp.model.ProfessorDTO;
 import com.gapso.web.trieda.client.mvp.presenter.ProfessorFormPresenter;
 import com.gapso.web.trieda.client.util.resources.Resources;
 import com.gapso.web.trieda.client.util.view.AreaTitulacaoComboBox;
@@ -14,6 +13,7 @@ import com.gapso.web.trieda.client.util.view.SimpleModal;
 import com.gapso.web.trieda.client.util.view.TipoContratoComboBox;
 import com.gapso.web.trieda.client.util.view.TitulacaoComboBox;
 import com.gapso.web.trieda.shared.dtos.AreaTitulacaoDTO;
+import com.gapso.web.trieda.shared.dtos.ProfessorDTO;
 import com.gapso.web.trieda.shared.dtos.TipoContratoDTO;
 import com.gapso.web.trieda.shared.dtos.TitulacaoDTO;
 
@@ -65,7 +65,7 @@ public class ProfessorFormView extends MyComposite implements ProfessorFormPrese
 		formPanel.setHeaderVisible(false);
 		
 		cpfTF = new TextField<String>();
-		cpfTF.setName("cpf");
+		cpfTF.setName(ProfessorDTO.PROPERTY_CPF);
 		cpfTF.setValue(professorDTO.getCpf());
 		cpfTF.setFieldLabel("CPF");
 		cpfTF.setAllowBlank(false);
@@ -75,7 +75,7 @@ public class ProfessorFormView extends MyComposite implements ProfessorFormPrese
 		formPanel.add(cpfTF, formData);
 		
 		nomeTF = new TextField<String>();
-		nomeTF.setName("nome");
+		nomeTF.setName(ProfessorDTO.PROPERTY_NOME);
 		nomeTF.setValue(professorDTO.getNome());
 		nomeTF.setFieldLabel("Nome");
 		nomeTF.setAllowBlank(false);
@@ -90,7 +90,7 @@ public class ProfessorFormView extends MyComposite implements ProfessorFormPrese
 		formPanel.add(tipoContratoCB, formData);
 
 		cargaHorariaMaxNF = new NumberField();
-		cargaHorariaMaxNF.setName("cargaHorariaMax");
+		cargaHorariaMaxNF.setName(ProfessorDTO.PROPERTY_CARGA_HORARIA_MAX);
 		cargaHorariaMaxNF.setValue(professorDTO.getCargaHorariaMax());
 		cargaHorariaMaxNF.setFieldLabel("Carga Horária Máx.");
 		cargaHorariaMaxNF.setAllowBlank(false);
@@ -100,7 +100,7 @@ public class ProfessorFormView extends MyComposite implements ProfessorFormPrese
 		formPanel.add(cargaHorariaMaxNF, formData);
 		
 		cargaHorariaMinNF = new NumberField();
-		cargaHorariaMinNF.setName("cargaHorariaMin");
+		cargaHorariaMinNF.setName(ProfessorDTO.PROPERTY_CARGA_HORARIA_MIN);
 		cargaHorariaMinNF.setValue(professorDTO.getCargaHorariaMin());
 		cargaHorariaMinNF.setFieldLabel("Carga Horária Min.");
 		cargaHorariaMinNF.setAllowBlank(false);
@@ -120,7 +120,7 @@ public class ProfessorFormView extends MyComposite implements ProfessorFormPrese
 		formPanel.add(areaTitulacaoCB, formData);
 		
 		creditoAnteriorNF = new NumberField();
-		creditoAnteriorNF.setName("creditoAnterior");
+		creditoAnteriorNF.setName(ProfessorDTO.PROPERTY_CREDITO_ANTERIOR);
 		creditoAnteriorNF.setValue(professorDTO.getCreditoAnterior());
 		creditoAnteriorNF.setFieldLabel("Carga Horária Anterior");
 		creditoAnteriorNF.setAllowBlank(false);
@@ -130,7 +130,7 @@ public class ProfessorFormView extends MyComposite implements ProfessorFormPrese
 		formPanel.add(creditoAnteriorNF, formData);
 		
 		valorCreditoNF = new NumberField();
-		valorCreditoNF.setName("valorCredito");
+		valorCreditoNF.setName(ProfessorDTO.PROPERTY_VALOR_CREDITO);
 		valorCreditoNF.setValue(professorDTO.getValorCredito());
 		valorCreditoNF.setFieldLabel("Crédito (R$)");
 		valorCreditoNF.setAllowBlank(false);

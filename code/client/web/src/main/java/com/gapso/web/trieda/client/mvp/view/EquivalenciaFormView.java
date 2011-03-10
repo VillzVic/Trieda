@@ -14,14 +14,14 @@ import com.extjs.gxt.ui.client.widget.layout.FitLayout;
 import com.extjs.gxt.ui.client.widget.layout.FormData;
 import com.extjs.gxt.ui.client.widget.layout.RowData;
 import com.extjs.gxt.ui.client.widget.layout.RowLayout;
-import com.gapso.web.trieda.client.mvp.model.CursoDTO;
-import com.gapso.web.trieda.client.mvp.model.DisciplinaDTO;
-import com.gapso.web.trieda.client.mvp.model.EquivalenciaDTO;
 import com.gapso.web.trieda.client.mvp.presenter.EquivalenciaFormPresenter;
 import com.gapso.web.trieda.client.util.resources.Resources;
 import com.gapso.web.trieda.client.util.view.CursoComboBox;
 import com.gapso.web.trieda.client.util.view.DisciplinaComboBox;
 import com.gapso.web.trieda.client.util.view.SimpleModal;
+import com.gapso.web.trieda.shared.dtos.CursoDTO;
+import com.gapso.web.trieda.shared.dtos.DisciplinaDTO;
+import com.gapso.web.trieda.shared.dtos.EquivalenciaDTO;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
 public class EquivalenciaFormView extends MyComposite implements EquivalenciaFormPresenter.Display {
@@ -75,25 +75,25 @@ public class EquivalenciaFormView extends MyComposite implements EquivalenciaFor
 		ContentPanel cursoListPanel = new ContentPanel(new FitLayout());
 		cursoListPanel.setHeading("Curso(s)");
 		ListStore<CursoDTO> store1 = new ListStore<CursoDTO>();
-		store1.setDefaultSort("codigo", SortDir.ASC);
+		store1.setDefaultSort(CursoDTO.PROPERTY_CODIGO, SortDir.ASC);
 		cursosList = new ListView<CursoDTO>(store1);
-		cursosList.setDisplayProperty("codigo");
+		cursosList.setDisplayProperty(CursoDTO.PROPERTY_CODIGO);
 		cursoListPanel.add(cursosList);
 		
 		ContentPanel naoAssociadasListPanel = new ContentPanel(new FitLayout());
 		naoAssociadasListPanel.setHeading("Disciplina(s) não associadas a Equivalência");
 		ListStore<DisciplinaDTO> store2 = new ListStore<DisciplinaDTO>();
-		store2.setDefaultSort("codigo", SortDir.ASC);
+		store2.setDefaultSort(DisciplinaDTO.PROPERTY_CODIGO, SortDir.ASC);
 		disciplinasNaoPertencesList = new ListView<DisciplinaDTO>(store2);
-		disciplinasNaoPertencesList.setDisplayProperty("codigo");
+		disciplinasNaoPertencesList.setDisplayProperty(DisciplinaDTO.PROPERTY_CODIGO);
 		naoAssociadasListPanel.add(disciplinasNaoPertencesList);
 		
 		ContentPanel associadasListPanel = new ContentPanel(new FitLayout());
 		associadasListPanel.setHeading("Disciplina(s) associadas a Equivalência");
 		ListStore<DisciplinaDTO> store3 = new ListStore<DisciplinaDTO>();
-		store3.setDefaultSort("codigo", SortDir.ASC);
+		store3.setDefaultSort(DisciplinaDTO.PROPERTY_CODIGO, SortDir.ASC);
 		disciplinasPertencesList = new ListView<DisciplinaDTO>(store3);
-		disciplinasPertencesList.setDisplayProperty("codigo");
+		disciplinasPertencesList.setDisplayProperty(DisciplinaDTO.PROPERTY_CODIGO);
 		associadasListPanel.add(disciplinasPertencesList);
 		
 		panelLists.add(cursoListPanel, new RowData(.2, 1, new Margins(0, 0, 0, 0)));

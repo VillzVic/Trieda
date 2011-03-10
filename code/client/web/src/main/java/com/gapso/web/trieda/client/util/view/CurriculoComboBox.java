@@ -8,9 +8,9 @@ import com.extjs.gxt.ui.client.event.SelectionChangedEvent;
 import com.extjs.gxt.ui.client.event.SelectionChangedListener;
 import com.extjs.gxt.ui.client.store.ListStore;
 import com.extjs.gxt.ui.client.widget.form.ComboBox;
-import com.gapso.web.trieda.client.mvp.model.CurriculoDTO;
-import com.gapso.web.trieda.client.mvp.model.CursoDTO;
 import com.gapso.web.trieda.client.services.Services;
+import com.gapso.web.trieda.shared.dtos.CurriculoDTO;
+import com.gapso.web.trieda.shared.dtos.CursoDTO;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class CurriculoComboBox extends ComboBox<CurriculoDTO> {
@@ -41,10 +41,10 @@ public class CurriculoComboBox extends ComboBox<CurriculoDTO> {
 			addListeners();
 		}
 		
-		setDisplayField("display");
+		setDisplayField(CurriculoDTO.PROPERTY_DISPLAY_TEXT);
 		setFieldLabel("Matriz Curricular");
 		setEmptyText("Selecione a matriz curricular");
-		setSimpleTemplate("{display}");
+		setSimpleTemplate("{"+CurriculoDTO.PROPERTY_DISPLAY_TEXT+"}");
 		setEditable(false);
 		setTriggerAction(TriggerAction.ALL);
 	}

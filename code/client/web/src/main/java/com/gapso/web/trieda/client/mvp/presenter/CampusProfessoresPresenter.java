@@ -10,7 +10,6 @@ import com.extjs.gxt.ui.client.widget.Component;
 import com.extjs.gxt.ui.client.widget.Info;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.gapso.web.trieda.client.i18n.ITriedaI18nGateway;
-import com.gapso.web.trieda.client.mvp.model.ProfessorDTO;
 import com.gapso.web.trieda.client.mvp.view.CampusProfessorFormView;
 import com.gapso.web.trieda.client.services.Services;
 import com.gapso.web.trieda.client.util.view.AbstractAsyncCallbackWithDefaultOnFailure;
@@ -22,6 +21,7 @@ import com.gapso.web.trieda.client.util.view.SimpleGrid;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorCampusDTO;
+import com.gapso.web.trieda.shared.dtos.ProfessorDTO;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
 

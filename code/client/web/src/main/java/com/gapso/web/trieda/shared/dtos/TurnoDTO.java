@@ -1,13 +1,22 @@
-package com.gapso.web.trieda.client.mvp.model;
+package com.gapso.web.trieda.shared.dtos;
 
 import java.util.HashMap;
 import java.util.Map;
 
 
 
-public class TurnoDTO extends FileModel {
+
+public class TurnoDTO extends AbstractDTO<String> implements Comparable<TurnoDTO> {
 
 	private static final long serialVersionUID = 5815525344760896272L;
+	
+	// Propriedades
+	public static final String PROPERTY_ID = "id";
+	public static final String PROPERTY_VERSION = "version";
+	public static final String PROPERTY_CENARIO_ID = "cenarioId";
+	public static final String PROPERTY_NOME = "nome";
+	public static final String PROPERTY_TEMPO = "tempo";
+	public static final String PROPERTY_MAX_CREDITOS = "maxCreditos";
 	
 	private Map<Integer,Integer> countHorariosAula;
 	
@@ -15,55 +24,46 @@ public class TurnoDTO extends FileModel {
 		countHorariosAula = new HashMap<Integer, Integer>();
 	}
 
-	/* == PROPRIEDADES ==
-	 * Long   : id
-	 * Integer: version
-	 * Long   : cenarioId
-	 * String : nome
-	 * Integer: tempo
-	 * Integer: maxCreditos
-	 */
-	
 	public void setId(Long value) {
-		set("id", value);
+		set(PROPERTY_ID, value);
 	}
 	public Long getId() {
-		return get("id");
+		return get(PROPERTY_ID);
 	}
 	
 	public void setVersion(Integer value) {
-		set("version", value);
+		set(PROPERTY_VERSION, value);
 	}
 	public Integer getVersion() {
-		return get("version");
+		return get(PROPERTY_VERSION);
 	}
 	
 	public void setCenarioId(Long value) {
-		set("cenarioId", value);
+		set(PROPERTY_CENARIO_ID, value);
 	}
 	public Long getCenarioId() {
-		return get("cenarioId");
+		return get(PROPERTY_CENARIO_ID);
 	}
 
 	public void setNome(String value) {
-		set("nome", value);
+		set(PROPERTY_NOME, value);
 	}
 	public String getNome() {
-		return get("nome");
+		return get(PROPERTY_NOME);
 	}
 
 	public void setTempo(Integer value) {
-		set("tempo", value);
+		set(PROPERTY_TEMPO, value);
 	}
 	public Integer getTempo() {
-		return get("tempo");
+		return get(PROPERTY_TEMPO);
 	}
 	
 	public void setMaxCreditos(Integer value) {
-		set("maxCreditos", value);
+		set(PROPERTY_MAX_CREDITOS, value);
 	}
 	public Integer getMaxCreditos() {
-		return get("maxCreditos");
+		return get(PROPERTY_MAX_CREDITOS);
 	}
 
 	public Map<Integer, Integer> getCountHorariosAula() {
@@ -78,10 +78,14 @@ public class TurnoDTO extends FileModel {
 		Integer value = countHorariosAula.get(diaSemana);
 		return (value != null) ? value : 0;
 	}
+	
+	@Override
+	public String getNaturalKey() {
+		return getNome();
+	}	
 
 	@Override
-	public String toString() {
-		return getNome() + " (" + getTempo() +"min)";
+	public int compareTo(TurnoDTO o) {
+		return getNome().compareTo(o.getNome());
 	}
-	
 }

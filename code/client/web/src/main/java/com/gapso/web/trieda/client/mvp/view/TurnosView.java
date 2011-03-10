@@ -14,13 +14,13 @@ import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.extjs.gxt.ui.client.widget.grid.ColumnConfig;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayout;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
-import com.gapso.web.trieda.client.mvp.model.TurnoDTO;
 import com.gapso.web.trieda.client.mvp.presenter.TurnosPresenter;
 import com.gapso.web.trieda.client.util.resources.Resources;
 import com.gapso.web.trieda.client.util.view.GTabItem;
 import com.gapso.web.trieda.client.util.view.SimpleFilter;
 import com.gapso.web.trieda.client.util.view.SimpleGrid;
 import com.gapso.web.trieda.client.util.view.SimpleToolBar;
+import com.gapso.web.trieda.shared.dtos.TurnoDTO;
 
 public class TurnosView extends MyComposite implements TurnosPresenter.Display {
 
@@ -66,8 +66,8 @@ public class TurnosView extends MyComposite implements TurnosPresenter.Display {
 
 	private List<ColumnConfig> getColumnList() {
 		List<ColumnConfig> list = new ArrayList<ColumnConfig>();
-		list.add(new ColumnConfig("nome", "Nome", 100));
-		list.add(new ColumnConfig("tempo", "Duração da Aula (min)", 100));
+		list.add(new ColumnConfig(TurnoDTO.PROPERTY_NOME, "Nome", 100));
+		list.add(new ColumnConfig(TurnoDTO.PROPERTY_TEMPO, "Duração da Aula (min)", 100));
 		return list;
 	}
 

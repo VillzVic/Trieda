@@ -3,11 +3,11 @@ package com.gapso.web.trieda.client.services;
 import java.util.List;
 
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
-import com.gapso.web.trieda.client.mvp.model.AtendimentoTaticoDTO;
-import com.gapso.web.trieda.client.mvp.model.CurriculoDTO;
-import com.gapso.web.trieda.client.mvp.model.TurnoDTO;
+import com.gapso.web.trieda.shared.dtos.AtendimentoTaticoDTO;
+import com.gapso.web.trieda.shared.dtos.CurriculoDTO;
 import com.gapso.web.trieda.shared.dtos.ParDTO;
 import com.gapso.web.trieda.shared.dtos.SalaDTO;
+import com.gapso.web.trieda.shared.dtos.TurnoDTO;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 

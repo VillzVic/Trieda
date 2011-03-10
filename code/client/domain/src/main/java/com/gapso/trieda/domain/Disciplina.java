@@ -43,7 +43,7 @@ import com.gapso.trieda.misc.Dificuldades;
 @RooToString
 @RooEntity(identifierColumn = "DIS_ID")
 @Table(name = "DISCIPLINAS")
-public class Disciplina implements Serializable {
+public class Disciplina implements Serializable, Comparable<Disciplina> {
 
 	@NotNull
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH}, targetEntity = Cenario.class, fetch = FetchType.LAZY)
@@ -545,5 +545,10 @@ public class Disciplina implements Serializable {
 	
 	public void setAtendimentosTaticos(Set<AtendimentoTatico> atendimentosTaticos) {
 		this.atendimentosTaticos = atendimentosTaticos;
+	}
+
+	@Override
+	public int compareTo(Disciplina o) {
+		return getCodigo().compareTo(o.getCodigo());
 	}
 }

@@ -15,7 +15,6 @@ import com.extjs.gxt.ui.client.widget.grid.ColumnConfig;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayout;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
 import com.extjs.gxt.ui.client.widget.toolbar.SeparatorToolItem;
-import com.gapso.web.trieda.client.mvp.model.DisciplinaDTO;
 import com.gapso.web.trieda.client.mvp.presenter.DisciplinasPresenter;
 import com.gapso.web.trieda.client.util.resources.Resources;
 import com.gapso.web.trieda.client.util.view.GTabItem;
@@ -23,6 +22,7 @@ import com.gapso.web.trieda.client.util.view.SimpleFilter;
 import com.gapso.web.trieda.client.util.view.SimpleGrid;
 import com.gapso.web.trieda.client.util.view.SimpleToolBar;
 import com.gapso.web.trieda.client.util.view.TipoDisciplinaComboBox;
+import com.gapso.web.trieda.shared.dtos.DisciplinaDTO;
 
 public class DisciplinasView extends MyComposite implements DisciplinasPresenter.Display {
 
@@ -76,15 +76,15 @@ public class DisciplinasView extends MyComposite implements DisciplinasPresenter
 
 	public List<ColumnConfig> getColumnList() {
 		List<ColumnConfig> list = new ArrayList<ColumnConfig>();
-		list.add(new ColumnConfig("nome", "Nome", 100));
-		list.add(new ColumnConfig("codigo", "Código", 100));
-		list.add(new ColumnConfig("creditosTeorico", "Créditos Teóricos", 100));
-		list.add(new ColumnConfig("creditosPratico", "Créditos Práticos", 100));
-		list.add(new CheckColumnConfig("laboratorio", "Usa Laboratório?", 100));
-		list.add(new ColumnConfig("tipoString", "Tipo de disciplina", 100));
-		list.add(new ColumnConfig("dificuldade", "Nível de Dificuldade", 100));
-		list.add(new ColumnConfig("maxAlunosTeorico", "Max. Alunos - Teórico", 100));
-		list.add(new ColumnConfig("maxAlunosPratico", "Max. Alunos - Prático", 100));
+		list.add(new ColumnConfig(DisciplinaDTO.PROPERTY_NOME, "Nome", 100));
+		list.add(new ColumnConfig(DisciplinaDTO.PROPERTY_CODIGO, "Código", 100));
+		list.add(new ColumnConfig(DisciplinaDTO.PROPERTY_CREDITOS_TEORICO, "Créditos Teóricos", 100));
+		list.add(new ColumnConfig(DisciplinaDTO.PROPERTY_CREDITOS_PRATICO, "Créditos Práticos", 100));
+		list.add(new CheckColumnConfig(DisciplinaDTO.PROPERTY_LABORATORIO, "Usa Laboratório?", 100));
+		list.add(new ColumnConfig(DisciplinaDTO.PROPERTY_TIPO_STRING, "Tipo de disciplina", 100));
+		list.add(new ColumnConfig(DisciplinaDTO.PROPERTY_DIFICULDADE, "Nível de Dificuldade", 100));
+		list.add(new ColumnConfig(DisciplinaDTO.PROPERTY_MAX_ALUNOS_TEORICO, "Max. Alunos - Teórico", 100));
+		list.add(new ColumnConfig(DisciplinaDTO.PROPERTY_MAX_ALUNOS_PRATICO, "Max. Alunos - Prático", 100));
 		return list;
 	}
 

@@ -15,7 +15,6 @@ import com.extjs.gxt.ui.client.widget.grid.ColumnConfig;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayout;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
 import com.extjs.gxt.ui.client.widget.toolbar.SeparatorToolItem;
-import com.gapso.web.trieda.client.mvp.model.CursoDTO;
 import com.gapso.web.trieda.client.mvp.presenter.CursosPresenter;
 import com.gapso.web.trieda.client.util.resources.Resources;
 import com.gapso.web.trieda.client.util.view.GTabItem;
@@ -23,6 +22,7 @@ import com.gapso.web.trieda.client.util.view.SimpleFilter;
 import com.gapso.web.trieda.client.util.view.SimpleGrid;
 import com.gapso.web.trieda.client.util.view.SimpleToolBar;
 import com.gapso.web.trieda.client.util.view.TipoCursoComboBox;
+import com.gapso.web.trieda.shared.dtos.CursoDTO;
 
 public class CursosView extends MyComposite implements CursosPresenter.Display {
 
@@ -73,13 +73,13 @@ public class CursosView extends MyComposite implements CursosPresenter.Display {
 
 	public List<ColumnConfig> getColumnList() {
 		List<ColumnConfig> list = new ArrayList<ColumnConfig>();
-		list.add(new ColumnConfig("nome", "Nome", 100));
-		list.add(new ColumnConfig("codigo", "Código", 100));
-		list.add(new ColumnConfig("tipoString", "Tipo", 100));
-		list.add(new ColumnConfig("numMinDoutores", "% Min. PhD", 100));
-		list.add(new ColumnConfig("numMinMestres", "% Min. MSc", 100));
-		list.add(new ColumnConfig("maxDisciplinasPeloProfessor", "Max. Disc. por Prof.", 110));
-		list.add(new CheckColumnConfig("admMaisDeUmDisciplina", "Permite mais de uma Disc. por Prof.?", 200));
+		list.add(new ColumnConfig(CursoDTO.PROPERTY_NOME, "Nome", 100));
+		list.add(new ColumnConfig(CursoDTO.PROPERTY_CODIGO, "Código", 100));
+		list.add(new ColumnConfig(CursoDTO.PROPERTY_TIPO_STRING, "Tipo", 100));
+		list.add(new ColumnConfig(CursoDTO.PROPERTY_NUM_MIN_DOUTORES, "% Min. PhD", 100));
+		list.add(new ColumnConfig(CursoDTO.PROPERTY_NUM_MIN_MESTRES, "% Min. MSc", 100));
+		list.add(new ColumnConfig(CursoDTO.PROPERTY_MAX_DISCIPLINAS_PELO_PROFESSOR, "Max. Disc. por Prof.", 110));
+		list.add(new CheckColumnConfig(CursoDTO.PROPERTY_ADM_MAIS_DE_UMA_DISCIPLINA, "Permite mais de uma Disc. por Prof.?", 200));
 		return list;
 	}
 

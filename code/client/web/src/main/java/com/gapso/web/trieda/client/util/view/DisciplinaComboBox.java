@@ -12,9 +12,9 @@ import com.extjs.gxt.ui.client.data.RpcProxy;
 import com.extjs.gxt.ui.client.event.Listener;
 import com.extjs.gxt.ui.client.store.ListStore;
 import com.extjs.gxt.ui.client.widget.form.ComboBox;
-import com.gapso.web.trieda.client.mvp.model.DisciplinaDTO;
 import com.gapso.web.trieda.client.services.DisciplinasServiceAsync;
 import com.gapso.web.trieda.client.services.Services;
+import com.gapso.web.trieda.shared.dtos.DisciplinaDTO;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class DisciplinaComboBox extends ComboBox<DisciplinaDTO> {
@@ -38,7 +38,7 @@ public class DisciplinaComboBox extends ComboBox<DisciplinaDTO> {
 		});
 		store = new ListStore<DisciplinaDTO>(load);
 		setFieldLabel("Disciplina");
-		setDisplayField("codigo");
+		setDisplayField(DisciplinaDTO.PROPERTY_CODIGO);
 		setStore(store);
 		setHideTrigger(true);  
 		setTriggerAction(TriggerAction.QUERY);

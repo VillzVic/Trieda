@@ -12,7 +12,6 @@ import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.grid.ColumnConfig;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayout;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
-import com.gapso.web.trieda.client.mvp.model.EquivalenciaDTO;
 import com.gapso.web.trieda.client.mvp.presenter.EquivalenciasPresenter;
 import com.gapso.web.trieda.client.util.resources.Resources;
 import com.gapso.web.trieda.client.util.view.CampusComboBox;
@@ -21,6 +20,7 @@ import com.gapso.web.trieda.client.util.view.GTabItem;
 import com.gapso.web.trieda.client.util.view.SimpleFilter;
 import com.gapso.web.trieda.client.util.view.SimpleGrid;
 import com.gapso.web.trieda.client.util.view.SimpleToolBar;
+import com.gapso.web.trieda.shared.dtos.EquivalenciaDTO;
 
 public class EquivalenciasView extends MyComposite implements EquivalenciasPresenter.Display {
 
@@ -66,8 +66,8 @@ public class EquivalenciasView extends MyComposite implements EquivalenciasPrese
 
 	private List<ColumnConfig> getColumnList() {
 		List<ColumnConfig> list = new ArrayList<ColumnConfig>();
-		list.add(new ColumnConfig("cursouString", "Cursou", 100));
-		list.add(new ColumnConfig("eliminaString", "Elimina", 500));
+		list.add(new ColumnConfig(EquivalenciaDTO.PROPERTY_CURSOU_STRING, "Cursou", 100));
+		list.add(new ColumnConfig(EquivalenciaDTO.PROPERTY_ELIMINA_STRING, "Elimina", 500));
 		return list;
 	}
 

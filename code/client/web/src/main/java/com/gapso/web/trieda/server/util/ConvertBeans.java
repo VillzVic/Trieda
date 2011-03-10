@@ -6,10 +6,10 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 
 import com.gapso.trieda.domain.AreaTitulacao;
 import com.gapso.trieda.domain.AtendimentoTatico;
@@ -44,21 +44,19 @@ import com.gapso.trieda.domain.Unidade;
 import com.gapso.trieda.misc.Dificuldades;
 import com.gapso.trieda.misc.Estados;
 import com.gapso.trieda.misc.Semanas;
-import com.gapso.web.trieda.client.mvp.model.AtendimentoTaticoDTO;
-import com.gapso.web.trieda.client.mvp.model.CurriculoDTO;
-import com.gapso.web.trieda.client.mvp.model.CursoDTO;
-import com.gapso.web.trieda.client.mvp.model.DemandaDTO;
-import com.gapso.web.trieda.client.mvp.model.DisciplinaDTO;
-import com.gapso.web.trieda.client.mvp.model.EquivalenciaDTO;
-import com.gapso.web.trieda.client.mvp.model.ProfessorDTO;
-import com.gapso.web.trieda.client.mvp.model.TurnoDTO;
 import com.gapso.web.trieda.shared.dtos.AreaTitulacaoDTO;
+import com.gapso.web.trieda.shared.dtos.AtendimentoTaticoDTO;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
+import com.gapso.web.trieda.shared.dtos.CurriculoDTO;
 import com.gapso.web.trieda.shared.dtos.CurriculoDisciplinaDTO;
+import com.gapso.web.trieda.shared.dtos.CursoDTO;
+import com.gapso.web.trieda.shared.dtos.DemandaDTO;
 import com.gapso.web.trieda.shared.dtos.DeslocamentoCampusDTO;
 import com.gapso.web.trieda.shared.dtos.DeslocamentoUnidadeDTO;
+import com.gapso.web.trieda.shared.dtos.DisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.DivisaoCreditoDTO;
+import com.gapso.web.trieda.shared.dtos.EquivalenciaDTO;
 import com.gapso.web.trieda.shared.dtos.FixacaoDTO;
 import com.gapso.web.trieda.shared.dtos.GrupoSalaDTO;
 import com.gapso.web.trieda.shared.dtos.HorarioAulaDTO;
@@ -66,6 +64,7 @@ import com.gapso.web.trieda.shared.dtos.HorarioDisponivelCenarioDTO;
 import com.gapso.web.trieda.shared.dtos.OfertaDTO;
 import com.gapso.web.trieda.shared.dtos.ParametroDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorCampusDTO;
+import com.gapso.web.trieda.shared.dtos.ProfessorDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorDisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.SalaDTO;
 import com.gapso.web.trieda.shared.dtos.SemanaLetivaDTO;
@@ -74,6 +73,7 @@ import com.gapso.web.trieda.shared.dtos.TipoCursoDTO;
 import com.gapso.web.trieda.shared.dtos.TipoDisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.TipoSalaDTO;
 import com.gapso.web.trieda.shared.dtos.TitulacaoDTO;
+import com.gapso.web.trieda.shared.dtos.TurnoDTO;
 import com.gapso.web.trieda.shared.dtos.UnidadeDTO;
 
 public class ConvertBeans {
@@ -339,6 +339,8 @@ public class ConvertBeans {
 			}
 		}
 		dto.setCountHorariosAula(countHorariosAula);
+		
+		dto.setDisplayText(domain.getNome() + " (" + domain.getTempo() +"min)");
 		
 		return dto;
 	}
@@ -687,8 +689,7 @@ public class ConvertBeans {
 		dto.setAdmMaisDeUmDisciplina(domain.getAdmMaisDeUmDisciplina());
 		dto.setTipoId(domain.getTipoCurso().getId());
 		dto.setTipoString(domain.getTipoCurso().getCodigo());
-		dto.setName(domain.getCodigo());
-		dto.setDisplay(domain.getNome() + " (" + domain.getCodigo() +")");
+		dto.setDisplayText(domain.getNome() + " (" + domain.getCodigo() +")");
 		return dto;
 	}
 	
@@ -886,6 +887,7 @@ public class ConvertBeans {
 		dto.setDificuldade(domain.getDificuldade().name());
 		dto.setTipoId(domain.getTipoDisciplina().getId());
 		dto.setTipoString(domain.getTipoDisciplina().getNome());
+		dto.setDisplayText(domain.getCodigo() + " (" + domain.getNome() + ")");
 		return dto;
 	}
 	
@@ -905,22 +907,30 @@ public class ConvertBeans {
 	
 	public static CurriculoDTO toCurriculoDTO(Curriculo domain) {
 		CurriculoDTO dto = new CurriculoDTO();
+		
 		dto.setId(domain.getId());
 		dto.setVersion(domain.getVersion());
 		dto.setCenarioId(domain.getId());
 		dto.setCodigo(domain.getCodigo());
 		dto.setDescricao(domain.getDescricao());
+		
+		Set<Integer> periodosSet = new TreeSet<Integer>();
+		for (CurriculoDisciplina cd : domain.getDisciplinas()) {
+			periodosSet.add(cd.getPeriodo());
+		}
+		
 		String periodos = "";
-		Set<Integer> periodosSet = new HashSet<Integer>();
-		for(CurriculoDisciplina cd : domain.getDisciplinas()) {
-			if(periodosSet.add(cd.getPeriodo())) periodos += cd.getPeriodo() + ", ";
+		for (Integer periodo : periodosSet) {
+			periodos += periodo + ", ";			
 		}
 		periodos = periodos.substring(0, periodos.length() - 2);
 		dto.setPeriodos(periodos);
+		
 		Curso curso = domain.getCurso();
 		dto.setCursoId(curso.getId());
 		dto.setCursoString(curso.getCodigo() + " (" +curso.getNome()+ ")");
-		dto.setDisplay(domain.getCodigo() + " ("+ curso.getNome() +") Periodos: " +periodos);
+		dto.setDisplayText(domain.getCodigo() + " ("+ curso.getNome() +") Periodos: " + periodos);
+		
 		return dto;
 	}
 	
@@ -1034,6 +1044,8 @@ public class ConvertBeans {
 		
 		dto.setDemanda(domain.getQuantidade());
 		
+		dto.setDisplayText(dto.getNaturalKey());
+		
 		return dto;
 	}
 	
@@ -1081,6 +1093,7 @@ public class ConvertBeans {
 		dto.setPeriodo(domain.getOferta().getCurriculo().getPeriodo(domain.getDisciplina()));
 		dto.setPeriodoString(String.valueOf(domain.getOferta().getCurriculo().getPeriodo(domain.getDisciplina())));
 		dto.setTotalCreditoDisciplina(domain.getDisciplina().getTotalCreditos());
+		dto.setDisplayText(dto.getNaturalKey());
 		
 		return dto;
 	}
@@ -1164,6 +1177,7 @@ public class ConvertBeans {
 		dto.setAreaTitulacaoString(domain.getAreaTitulacao().getCodigo());
 		dto.setCreditoAnterior(domain.getCreditoAnterior());
 		dto.setValorCredito(domain.getValorCredito());
+		dto.setDisplayText(domain.getNome() + " (" + domain.getCpf() + ")");
 		return dto;
 	}
 	
@@ -1210,13 +1224,14 @@ public class ConvertBeans {
 		dto.setVersion(domain.getVersion());
 		dto.setCursouId(domain.getCursou().getId());
 		dto.setCursouString(domain.getCursou().getCodigo());
-		Set<Disciplina> eliminaList = domain.getElimina();
+		Set<Disciplina> eliminaList = new TreeSet<Disciplina>(domain.getElimina());
 		String eliminaString = "";
-		for(Disciplina d : eliminaList) {
+		for (Disciplina d : eliminaList) {
 			eliminaString += d.getCodigo() + ", ";
 		}
 		if(eliminaString.length() > 0) eliminaString = eliminaString.substring(0, eliminaString.length()-2);
 		dto.setEliminaString(eliminaString);
+		dto.setDisplayText(dto.getNaturalKey());
 		return dto;
 	}
 	

@@ -14,8 +14,6 @@ import com.extjs.gxt.ui.client.widget.grid.ColumnConfig;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayout;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
 import com.extjs.gxt.ui.client.widget.toolbar.SeparatorToolItem;
-import com.gapso.web.trieda.client.mvp.model.CurriculoDTO;
-import com.gapso.web.trieda.client.mvp.model.CursoDTO;
 import com.gapso.web.trieda.client.mvp.presenter.CurriculosPresenter;
 import com.gapso.web.trieda.client.util.resources.Resources;
 import com.gapso.web.trieda.client.util.view.CursoComboBox;
@@ -23,6 +21,8 @@ import com.gapso.web.trieda.client.util.view.GTabItem;
 import com.gapso.web.trieda.client.util.view.SimpleFilter;
 import com.gapso.web.trieda.client.util.view.SimpleGrid;
 import com.gapso.web.trieda.client.util.view.SimpleToolBar;
+import com.gapso.web.trieda.shared.dtos.CurriculoDTO;
+import com.gapso.web.trieda.shared.dtos.CursoDTO;
 
 public class CurriculosView extends MyComposite implements CurriculosPresenter.Display {
 
@@ -79,10 +79,10 @@ public class CurriculosView extends MyComposite implements CurriculosPresenter.D
 
 	public List<ColumnConfig> getColumnList() {
 		List<ColumnConfig> list = new ArrayList<ColumnConfig>();
-		list.add(new ColumnConfig("cursoString", "Curso", 250));
-		list.add(new ColumnConfig("codigo", "Código", 100));
-		list.add(new ColumnConfig("descricao", "Descricao", 100));
-		list.add(new ColumnConfig("periodos", "Períodos", 110));
+		list.add(new ColumnConfig(CurriculoDTO.PROPERTY_CURSO_STRING, "Curso", 250));
+		list.add(new ColumnConfig(CurriculoDTO.PROPERTY_CODIGO, "Código", 100));
+		list.add(new ColumnConfig(CurriculoDTO.PROPERTY_DESCRICAO, "Descricao", 100));
+		list.add(new ColumnConfig(CurriculoDTO.PROPERTY_PERIODOS, "Períodos", 110));
 		return list;
 	}
 
