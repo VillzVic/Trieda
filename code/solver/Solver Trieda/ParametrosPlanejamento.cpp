@@ -10,7 +10,7 @@ ParametrosPlanejamento::~ParametrosPlanejamento(void)
 
 void ParametrosPlanejamento::le_arvore(ItemParametrosPlanejamento& elem)
 {
-   modoOtimizacao = elem.modoOtimizacao();
+   modo_otimizacao = elem.modoOtimizacao();
 
    ITERA_SEQ(it_niveis_dificuldade_horario,elem.niveisDificuldadeHorario(),NivelDificuldadeHorario) {
       NivelDificuldadeHorario* nivel_dif_hor = new NivelDificuldadeHorario();

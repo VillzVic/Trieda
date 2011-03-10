@@ -10,7 +10,7 @@ public:
    ParametrosPlanejamento(void);
    ~ParametrosPlanejamento(void);
 
-   std::string modoOtimizacao;
+   std::string modo_otimizacao;
    GGroup<NivelDificuldadeHorario*> niveis_dificuldade_horario;
    bool equilibrar_diversidade_disc_dia;
    bool minimizar_desloc_prof;
