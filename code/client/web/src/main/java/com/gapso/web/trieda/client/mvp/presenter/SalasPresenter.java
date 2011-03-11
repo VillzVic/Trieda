@@ -26,7 +26,7 @@ import com.gapso.web.trieda.shared.dtos.HorarioDisponivelCenarioDTO;
 import com.gapso.web.trieda.shared.dtos.SalaDTO;
 import com.gapso.web.trieda.shared.dtos.TipoSalaDTO;
 import com.gapso.web.trieda.shared.dtos.UnidadeDTO;
-import com.gapso.web.trieda.shared.excel.ExportedInformationType;
+import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
 import com.googlecode.future.FutureResult;
@@ -136,7 +136,7 @@ public class SalasPresenter implements Presenter {
 		display.getExportExcelButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
 			@Override
 			public void componentSelected(ButtonEvent ce) {
-				ExportExcelFormSubmit e = new ExportExcelFormSubmit(ExportedInformationType.SALAS);
+				ExportExcelFormSubmit e = new ExportExcelFormSubmit(ExcelInformationType.SALAS);
 				e.submit();
 			}
 		});

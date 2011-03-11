@@ -1,4 +1,4 @@
-package com.gapso.web.trieda.server.excel;
+package com.gapso.web.trieda.server.excel.exp;
 
 import java.util.List;
 
@@ -6,13 +6,14 @@ import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
-import com.gapso.trieda.domain.Sala;
+import com.gapso.trieda.domain.Campus;
+import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 
-public class SalasExportExcel extends AbstractExportExcel {
+public class CampiExportExcel extends AbstractExportExcel {
 	
 	enum ExcelCellStyleReference {
 		TEXT(6,2),
-		NUMBER(6,7);
+		CURRENCY(6,7);
 		private int row;
 		private int col;
 		private ExcelCellStyleReference(int row, int col) {
@@ -32,23 +33,23 @@ public class SalasExportExcel extends AbstractExportExcel {
 	private String sheetName;
 	private int initialRow;
 	
-	public SalasExportExcel() {
+	public CampiExportExcel() {
 		this.cellStyles = new HSSFCellStyle[ExcelCellStyleReference.values().length];
 		this.removeUnusedSheets = true;
-		this.sheetName = "Salas";
+		this.sheetName = ExcelInformationType.CAMPI.getSheetName();
 		this.initialRow = 6;
 	}
 	
-	public SalasExportExcel(boolean removeUnusedSheets) {
+	public CampiExportExcel(boolean removeUnusedSheets) {
 		this.cellStyles = new HSSFCellStyle[ExcelCellStyleReference.values().length];
 		this.removeUnusedSheets = removeUnusedSheets;
-		this.sheetName = "Salas";
+		this.sheetName = ExcelInformationType.CAMPI.getSheetName();
 		this.initialRow = 6;
 	}
 	
 	@Override
 	public String getFileName() {
-		return "Salas";
+		return "Campi";
 	}
 	
 	@Override
@@ -58,22 +59,22 @@ public class SalasExportExcel extends AbstractExportExcel {
 
 	@Override
 	protected String getReportName() {
-		return "Salas";
+		return "Campi";
 	}
 
 	@Override
 	protected boolean fillInExcel(HSSFWorkbook workbook) {
-		List<Sala> salas = Sala.findAll();
+		List<Campus> campi = Campus.findAll();
 		
-		if (!salas.isEmpty()) {
+		if (!campi.isEmpty()) {
 			if (this.removeUnusedSheets) {
 				removeUnusedSheets(this.sheetName,workbook);
 			}
 			HSSFSheet sheet = workbook.getSheet(this.sheetName);
 			fillInCellStyles(sheet);
 			int nextRow = this.initialRow;
-			for (Sala s : salas) {
-				nextRow = writeData(s,nextRow,sheet);
+			for (Campus c : campi) {
+				nextRow = writeData(c,nextRow,sheet);
 			}
 			
 			return true;
@@ -82,19 +83,19 @@ public class SalasExportExcel extends AbstractExportExcel {
 		return false;
 	}
 	
-	private int writeData(Sala sala, int row, HSSFSheet sheet) {
+	private int writeData(Campus campus, int row, HSSFSheet sheet) {
 		// Codigo
-		setCell(row,2,sheet,cellStyles[ExcelCellStyleReference.TEXT.ordinal()],sala.getCodigo());
-		// Tipo
-		setCell(row,3,sheet,cellStyles[ExcelCellStyleReference.TEXT.ordinal()],sala.getTipoSala().getNome());
-		// Unidade
-		setCell(row,4,sheet,cellStyles[ExcelCellStyleReference.TEXT.ordinal()],sala.getUnidade().getCodigo());
-		// Numero
-		setCell(row,5,sheet,cellStyles[ExcelCellStyleReference.TEXT.ordinal()],sala.getNumero());
-		// Andar
-		setCell(row,6,sheet,cellStyles[ExcelCellStyleReference.TEXT.ordinal()],sala.getAndar());
-		// Capacidade
-		setCell(row,7,sheet,cellStyles[ExcelCellStyleReference.NUMBER.ordinal()],sala.getCapacidade());
+		setCell(row,2,sheet,cellStyles[ExcelCellStyleReference.TEXT.ordinal()],campus.getCodigo());
+		// Nome
+		setCell(row,3,sheet,cellStyles[ExcelCellStyleReference.TEXT.ordinal()],campus.getNome());
+		// Estado
+		setCell(row,4,sheet,cellStyles[ExcelCellStyleReference.TEXT.ordinal()],campus.getEstado().toString());
+		// Municipio
+		setCell(row,5,sheet,cellStyles[ExcelCellStyleReference.TEXT.ordinal()],campus.getMunicipio());
+		// Bairro
+		setCell(row,6,sheet,cellStyles[ExcelCellStyleReference.TEXT.ordinal()],campus.getBairro());
+		// Custo Medio do Credito
+		setCell(row,7,sheet,cellStyles[ExcelCellStyleReference.CURRENCY.ordinal()],campus.getValorCredito());
 		
 		row++;
 		return row;
@@ -106,4 +107,3 @@ public class SalasExportExcel extends AbstractExportExcel {
 		}
 	}
 }
-

@@ -116,7 +116,11 @@
 	</servlet>
 	<servlet>
 		<servlet-name>exportExcelServlet</servlet-name>
-		<servlet-class>com.gapso.web.trieda.server.excel.ExportExcelServlet</servlet-class>
+		<servlet-class>com.gapso.web.trieda.server.excel.exp.ExportExcelServlet</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>importExcelServlet</servlet-name>
+		<servlet-class>com.gapso.web.trieda.server.excel.imp.ImportExcelServlet</servlet-class>
 	</servlet>
 
 	<servlet-mapping>
@@ -210,6 +214,10 @@
 	<servlet-mapping>
   		<servlet-name>exportExcelServlet</servlet-name>
   		<url-pattern>/trieda/exportExcelServlet</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+  		<servlet-name>importExcelServlet</servlet-name>
+  		<url-pattern>/trieda/importExcelServlet</url-pattern>
 	</servlet-mapping>
 
 	<welcome-file-list>

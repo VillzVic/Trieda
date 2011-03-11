@@ -1,4 +1,4 @@
-package com.gapso.web.trieda.server.excel;
+package com.gapso.web.trieda.server.excel.exp;
 
 import java.util.List;
 
@@ -6,13 +6,13 @@ import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
-import com.gapso.trieda.domain.Campus;
+import com.gapso.trieda.domain.Unidade;
+import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 
-public class CampiExportExcel extends AbstractExportExcel {
+public class UnidadesExportExcel extends AbstractExportExcel {
 	
 	enum ExcelCellStyleReference {
-		TEXT(6,2),
-		CURRENCY(6,7);
+		TEXT(6,2);
 		private int row;
 		private int col;
 		private ExcelCellStyleReference(int row, int col) {
@@ -32,48 +32,48 @@ public class CampiExportExcel extends AbstractExportExcel {
 	private String sheetName;
 	private int initialRow;
 	
-	public CampiExportExcel() {
+	public UnidadesExportExcel() {
 		this.cellStyles = new HSSFCellStyle[ExcelCellStyleReference.values().length];
 		this.removeUnusedSheets = true;
-		this.sheetName = "Campi";
+		this.sheetName = ExcelInformationType.UNIDADES.getSheetName();
 		this.initialRow = 6;
 	}
 	
-	public CampiExportExcel(boolean removeUnusedSheets) {
+	public UnidadesExportExcel(boolean removeUnusedSheets) {
 		this.cellStyles = new HSSFCellStyle[ExcelCellStyleReference.values().length];
 		this.removeUnusedSheets = removeUnusedSheets;
-		this.sheetName = "Campi";
+		this.sheetName = ExcelInformationType.UNIDADES.getSheetName();
 		this.initialRow = 6;
 	}
 	
 	@Override
 	public String getFileName() {
-		return "Campi";
+		return "Unidades";
 	}
 	
 	@Override
 	protected String getPathExcelTemplate() {
-		return "/templateCampi.xls";
+		return "/templateExport.xls";
 	}
 
 	@Override
 	protected String getReportName() {
-		return "Campi";
+		return "Unidades";
 	}
 
 	@Override
 	protected boolean fillInExcel(HSSFWorkbook workbook) {
-		List<Campus> campi = Campus.findAll();
+		List<Unidade> unidades = Unidade.findAll();
 		
-		if (!campi.isEmpty()) {
+		if (!unidades.isEmpty()) {
 			if (this.removeUnusedSheets) {
 				removeUnusedSheets(this.sheetName,workbook);
 			}
 			HSSFSheet sheet = workbook.getSheet(this.sheetName);
 			fillInCellStyles(sheet);
 			int nextRow = this.initialRow;
-			for (Campus c : campi) {
-				nextRow = writeData(c,nextRow,sheet);
+			for (Unidade u : unidades) {
+				nextRow = writeData(u,nextRow,sheet);
 			}
 			
 			return true;
@@ -82,19 +82,13 @@ public class CampiExportExcel extends AbstractExportExcel {
 		return false;
 	}
 	
-	private int writeData(Campus campus, int row, HSSFSheet sheet) {
+	private int writeData(Unidade unidade, int row, HSSFSheet sheet) {
 		// Codigo
-		setCell(row,2,sheet,cellStyles[ExcelCellStyleReference.TEXT.ordinal()],campus.getCodigo());
+		setCell(row,2,sheet,cellStyles[ExcelCellStyleReference.TEXT.ordinal()],unidade.getCodigo());
 		// Nome
-		setCell(row,3,sheet,cellStyles[ExcelCellStyleReference.TEXT.ordinal()],campus.getNome());
-		// Estado
-		setCell(row,4,sheet,cellStyles[ExcelCellStyleReference.TEXT.ordinal()],campus.getEstado().toString());
-		// Municipio
-		setCell(row,5,sheet,cellStyles[ExcelCellStyleReference.TEXT.ordinal()],campus.getMunicipio());
-		// Bairro
-		setCell(row,6,sheet,cellStyles[ExcelCellStyleReference.TEXT.ordinal()],campus.getBairro());
-		// Custo Medio do Credito
-		setCell(row,7,sheet,cellStyles[ExcelCellStyleReference.CURRENCY.ordinal()],campus.getValorCredito());
+		setCell(row,3,sheet,cellStyles[ExcelCellStyleReference.TEXT.ordinal()],unidade.getNome());
+		// Campus
+		setCell(row,4,sheet,cellStyles[ExcelCellStyleReference.TEXT.ordinal()],unidade.getCampus().getCodigo());
 		
 		row++;
 		return row;

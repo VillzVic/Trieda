@@ -1,4 +1,4 @@
-package com.gapso.web.trieda.server.excel;
+package com.gapso.web.trieda.server.excel.exp;
 
 import java.util.List;
 
@@ -6,12 +6,14 @@ import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
-import com.gapso.trieda.domain.Unidade;
+import com.gapso.trieda.domain.Sala;
+import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 
-public class UnidadesExportExcel extends AbstractExportExcel {
+public class SalasExportExcel extends AbstractExportExcel {
 	
 	enum ExcelCellStyleReference {
-		TEXT(6,2);
+		TEXT(6,2),
+		NUMBER(6,7);
 		private int row;
 		private int col;
 		private ExcelCellStyleReference(int row, int col) {
@@ -31,48 +33,48 @@ public class UnidadesExportExcel extends AbstractExportExcel {
 	private String sheetName;
 	private int initialRow;
 	
-	public UnidadesExportExcel() {
+	public SalasExportExcel() {
 		this.cellStyles = new HSSFCellStyle[ExcelCellStyleReference.values().length];
 		this.removeUnusedSheets = true;
-		this.sheetName = "Unidades";
+		this.sheetName = ExcelInformationType.SALAS.getSheetName();
 		this.initialRow = 6;
 	}
 	
-	public UnidadesExportExcel(boolean removeUnusedSheets) {
+	public SalasExportExcel(boolean removeUnusedSheets) {
 		this.cellStyles = new HSSFCellStyle[ExcelCellStyleReference.values().length];
 		this.removeUnusedSheets = removeUnusedSheets;
-		this.sheetName = "Unidades";
+		this.sheetName = ExcelInformationType.SALAS.getSheetName();
 		this.initialRow = 6;
 	}
 	
 	@Override
 	public String getFileName() {
-		return "Unidades";
+		return "Salas";
 	}
 	
 	@Override
 	protected String getPathExcelTemplate() {
-		return "/templateExport.xls";
+		return "/templateCampi.xls";
 	}
 
 	@Override
 	protected String getReportName() {
-		return "Unidades";
+		return "Salas";
 	}
 
 	@Override
 	protected boolean fillInExcel(HSSFWorkbook workbook) {
-		List<Unidade> unidades = Unidade.findAll();
+		List<Sala> salas = Sala.findAll();
 		
-		if (!unidades.isEmpty()) {
+		if (!salas.isEmpty()) {
 			if (this.removeUnusedSheets) {
 				removeUnusedSheets(this.sheetName,workbook);
 			}
 			HSSFSheet sheet = workbook.getSheet(this.sheetName);
 			fillInCellStyles(sheet);
 			int nextRow = this.initialRow;
-			for (Unidade u : unidades) {
-				nextRow = writeData(u,nextRow,sheet);
+			for (Sala s : salas) {
+				nextRow = writeData(s,nextRow,sheet);
 			}
 			
 			return true;
@@ -81,13 +83,19 @@ public class UnidadesExportExcel extends AbstractExportExcel {
 		return false;
 	}
 	
-	private int writeData(Unidade unidade, int row, HSSFSheet sheet) {
+	private int writeData(Sala sala, int row, HSSFSheet sheet) {
 		// Codigo
-		setCell(row,2,sheet,cellStyles[ExcelCellStyleReference.TEXT.ordinal()],unidade.getCodigo());
-		// Nome
-		setCell(row,3,sheet,cellStyles[ExcelCellStyleReference.TEXT.ordinal()],unidade.getNome());
-		// Campus
-		setCell(row,4,sheet,cellStyles[ExcelCellStyleReference.TEXT.ordinal()],unidade.getCampus().getCodigo());
+		setCell(row,2,sheet,cellStyles[ExcelCellStyleReference.TEXT.ordinal()],sala.getCodigo());
+		// Tipo
+		setCell(row,3,sheet,cellStyles[ExcelCellStyleReference.TEXT.ordinal()],sala.getTipoSala().getNome());
+		// Unidade
+		setCell(row,4,sheet,cellStyles[ExcelCellStyleReference.TEXT.ordinal()],sala.getUnidade().getCodigo());
+		// Numero
+		setCell(row,5,sheet,cellStyles[ExcelCellStyleReference.TEXT.ordinal()],sala.getNumero());
+		// Andar
+		setCell(row,6,sheet,cellStyles[ExcelCellStyleReference.TEXT.ordinal()],sala.getAndar());
+		// Capacidade
+		setCell(row,7,sheet,cellStyles[ExcelCellStyleReference.NUMBER.ordinal()],sala.getCapacidade());
 		
 		row++;
 		return row;
@@ -99,3 +107,4 @@ public class UnidadesExportExcel extends AbstractExportExcel {
 		}
 	}
 }
+

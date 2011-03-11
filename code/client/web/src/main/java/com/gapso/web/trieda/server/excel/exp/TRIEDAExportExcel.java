@@ -1,4 +1,4 @@
-package com.gapso.web.trieda.server.excel;
+package com.gapso.web.trieda.server.excel.exp;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
@@ -23,13 +23,13 @@ public class TRIEDAExportExcel extends AbstractExportExcel {
 
 	@Override
 	protected boolean fillInExcel(HSSFWorkbook workbook) {
-		CampiExportExcel campiExporter = new CampiExportExcel(false);
-		UnidadesExportExcel unidadesExporter = new UnidadesExportExcel(false);
-		SalasExportExcel salasExporter = new SalasExportExcel(false);
+		IExportExcel campiExporter = new CampiExportExcel(false);
+		IExportExcel unidadesExporter = new UnidadesExportExcel(false);
+		IExportExcel salasExporter = new SalasExportExcel(false);
 		
-		campiExporter.fillInExcel(workbook);
-		unidadesExporter.fillInExcel(workbook);
-		salasExporter.fillInExcel(workbook);
+		campiExporter.export(workbook);
+		unidadesExporter.export(workbook);
+		salasExporter.export(workbook);
 		
 		return true;
 	}

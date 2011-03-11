@@ -1,4 +1,4 @@
-package com.gapso.web.trieda.server.excel;
+package com.gapso.web.trieda.server.excel.exp;
 
 import java.io.IOException;
 
@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
-import com.gapso.web.trieda.shared.excel.ExportedInformationType;
+import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 
 public class ExportExcelServlet extends HttpServlet {
 	
@@ -21,7 +21,7 @@ public class ExportExcelServlet extends HttpServlet {
 		boolean success = false;
 		
 		// Obtém os parâmetros
-		String informationToBeExported = request.getParameter(ExportedInformationType.getParameterName());
+		String informationToBeExported = request.getParameter(ExcelInformationType.getInformationParameterName());
 		if (!informationToBeExported.isEmpty()) {
 			// Get Excel Data
 			IExportExcel exporter = ExportExcelFactory.createExporter(informationToBeExported);			
