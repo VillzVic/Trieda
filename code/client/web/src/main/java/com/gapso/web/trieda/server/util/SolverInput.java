@@ -52,6 +52,7 @@ import com.gapso.web.trieda.server.xml.input.GrupoDisciplina;
 import com.gapso.web.trieda.server.xml.input.GrupoDisciplinaPeriodo;
 import com.gapso.web.trieda.server.xml.input.GrupoDivisaoCreditos;
 import com.gapso.web.trieda.server.xml.input.GrupoFixacao;
+import com.gapso.web.trieda.server.xml.input.GrupoGrupo;
 import com.gapso.web.trieda.server.xml.input.GrupoHorario;
 import com.gapso.web.trieda.server.xml.input.GrupoHorarioAula;
 import com.gapso.web.trieda.server.xml.input.GrupoIdentificador;
@@ -599,6 +600,7 @@ public class SolverInput {
 			}
 		}
 		itemParametrosPlanejamento.setCargaHorariaSemanalAluno(cargaHorariaSemanalAluno);
+		itemParametrosPlanejamento.setAlunosMesmoPeriodoNaMesmaSala(parametro.getAlunoDePeriodoMesmaSala());
 		itemParametrosPlanejamento.setPermitirAlunosEmVariosCampi(parametro.getAlunoEmMuitosCampi());
 		itemParametrosPlanejamento.setMinimizarDeslocAluno(parametro.getMinimizarDeslocamentoAluno());
 		
@@ -631,14 +633,38 @@ public class SolverInput {
 		itemParametrosPlanejamento.setRegrasGenericasDivisaoCredito(parametro.getRegrasGenericasDivisaoCredito());
 		itemParametrosPlanejamento.setRegrasEspecificasDivisaoCredito(parametro.getRegrasEspecificasDivisaoCredito());
 		itemParametrosPlanejamento.setMaximizarAvaliacaoCursosSel(parametro.getMaximizarNotaAvaliacaoCorpoDocente());
-		// TODO
-		itemParametrosPlanejamento.setMaximizarAvaliacaoCursos(of.createGrupoIdentificador());
+		if(parametro.getMaximizarNotaAvaliacaoCorpoDocente()) {
+			//  TODO
+			Set<Curso> cursos = cenario.getCursos();
+			GrupoIdentificador cursosAvaliacaoGrupo = of.createGrupoIdentificador();
+			for(Curso curso : cursos) {
+				cursosAvaliacaoGrupo.getId().add(curso.getId().intValue());
+			}
+			itemParametrosPlanejamento.setMaximizarAvaliacaoCursos(cursosAvaliacaoGrupo);
+		}
+		
 		itemParametrosPlanejamento.setMinimizarCustoDocenteCursosSel(parametro.getMinimizarCustoDocenteCursos());
-		// TODO
-		itemParametrosPlanejamento.setMinimizarCustoDocenteCursos(of.createGrupoIdentificador());
+		if(parametro.getMinimizarCustoDocenteCursos()) {
+			// TODO
+			Set<Curso> cursos = cenario.getCursos();
+			GrupoIdentificador cursosCustoGrupo = of.createGrupoIdentificador();
+			for(Curso curso : cursos) {
+				cursosCustoGrupo.getId().add(curso.getId().intValue());
+			}
+			itemParametrosPlanejamento.setMinimizarCustoDocenteCursos(cursosCustoGrupo);
+		}
 		itemParametrosPlanejamento.setPermiteCompartilhamentoTurmaSel(parametro.getCompartilharDisciplinasCampi());
-		// TODO
-		itemParametrosPlanejamento.setPermiteCompartilhamentoTurma(of.createGrupoGrupo());
+		if(parametro.getCompartilharDisciplinasCampi()) {
+			// TODO
+			Set<Curso> cursos = cenario.getCursos();
+			GrupoIdentificador cursosCompartilharTurmas = of.createGrupoIdentificador();
+			for(Curso curso : cursos) {
+				cursosCompartilharTurmas.getId().add(curso.getId().intValue());
+			}
+			GrupoGrupo cursosCompartilharTurmaGrupo = of.createGrupoGrupo();
+			cursosCompartilharTurmaGrupo.getGrupoIdentificador().add(cursosCompartilharTurmas);
+			itemParametrosPlanejamento.setPermiteCompartilhamentoTurma(cursosCompartilharTurmaGrupo);
+		}
 		itemParametrosPlanejamento.setPercentuaisMinimoMestres(parametro.getPercentuaisMinimosMestres());
 		itemParametrosPlanejamento.setPercentuaisMinimoDoutores(parametro.getPercentuaisMinimosDoutores());
 		itemParametrosPlanejamento.setAreaTitulacaoProfessorCurso(parametro.getAreaTitulacaoProfessoresECursos());

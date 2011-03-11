@@ -67,6 +67,10 @@ public class ParametrosView extends MyComposite implements ParametrosPresenter.D
 	private CheckBox areaTitulacaoProfessoresECursosCheckBox;
 	private CheckBox limitarMaximoDisciplinaProfessorCheckBox;
 	
+	private Button maximizarNotaAvaliacaoCorpoDocenteButton; 
+	private Button minimizarCustoDocenteCursosButton; 
+	private Button compartilharDisciplinasCampiButton; 
+	
 	public ParametrosView(ParametroDTO parametroDTO) {
 		this.parametroDTO = parametroDTO;
 		initUI();
@@ -245,9 +249,12 @@ public class ParametrosView extends MyComposite implements ParametrosPresenter.D
 		label = new Label();
 		label.setHeight(22);
 		instituicaoRight.add(label);
-		instituicaoRight.add(createButton("Configurar cursos"));
-		instituicaoRight.add(createButton("Configurar cursos"));
-		instituicaoRight.add(createButton("Configurar cursos"));
+		maximizarNotaAvaliacaoCorpoDocenteButton = createButton("Configurar cursos");
+		minimizarCustoDocenteCursosButton = createButton("Configurar cursos");
+		compartilharDisciplinasCampiButton = createButton("Configurar cursos");
+		instituicaoRight.add(maximizarNotaAvaliacaoCorpoDocenteButton);
+		instituicaoRight.add(minimizarCustoDocenteCursosButton);
+		instituicaoRight.add(compartilharDisciplinasCampiButton);
 		
 		for(int i = 0; i<4; i++) {
 			label = new Label();
@@ -450,6 +457,20 @@ public class ParametrosView extends MyComposite implements ParametrosPresenter.D
 	public Radio getOperacionalRadio() {
 		return operacionalRadio;
 	}
-	
 
+	@Override
+	public Button getMaximizarNotaAvaliacaoCorpoDocenteButton() {
+		return maximizarNotaAvaliacaoCorpoDocenteButton;
+	}
+
+	@Override
+	public Button getMinimizarCustoDocenteCursosButton() {
+		return minimizarCustoDocenteCursosButton;
+	}
+
+	@Override
+	public Button getCompartilharDisciplinasCampiButton() {
+		return compartilharDisciplinasCampiButton;
+	}
+	
 }

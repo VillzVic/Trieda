@@ -1,5 +1,7 @@
 package com.gapso.web.trieda.shared.dtos;
 
+import java.util.List;
+
 
 public class ParametroDTO extends AbstractDTO<Long> implements Comparable<ParametroDTO> {
 
@@ -42,6 +44,10 @@ public class ParametroDTO extends AbstractDTO<Long> implements Comparable<Parame
 	public static final String PROPERTY_PERCENTUAISMINIMOSDOUTORES = "percentuaisminimosdoutores";
 	public static final String PROPERTY_AREATITULACAOPROFESSORESECURSOS = "areatitulacaoprofessoresecursos";
 	public static final String PROPERTY_LIMITARMAXIMODISCIPLINAPROFESSOR = "limitarmaximodisciplinaprofessor";
+	
+	public static final String PROPERTY_MAXIMIZARNOTAAVALIACAOCORPODOCENTE_LIST = "limitarmaximodisciplinaprofessor_list";
+	public static final String PROPERTY_MINIMIZARCUSTODOCENTECURSOS_LIST = "limitarmaximodisciplinaprofessor_list";
+	public static final String PROPERTY_COMPARTILHARDISCIPLINASCAMPI_LIST = "limitarmaximodisciplinaprofessor_list";
 
 	public ParametroDTO() {
 		super();
@@ -290,6 +296,27 @@ public class ParametroDTO extends AbstractDTO<Long> implements Comparable<Parame
 	}
 	public void setEvitarReducaoCargaHorariaProfessorValue(Integer value) {
 		set(PROPERTY_EVITARREDUCAOCARGAHORARIAPROFESSORVALUE, value);
+	}
+	
+	public List<CursoDTO> getMaximizarNotaAvaliacaoCorpoDocenteList() {
+		return get(PROPERTY_MAXIMIZARNOTAAVALIACAOCORPODOCENTE_LIST);
+	}
+	public void setMaximizarNotaAvaliacaoCorpoDocenteList(List<CursoDTO> value) {
+		set(PROPERTY_MAXIMIZARNOTAAVALIACAOCORPODOCENTE_LIST, value);
+	}
+	
+	public List<CursoDTO> getMinimizarCustoDocenteCursosList() {
+		return get(PROPERTY_MINIMIZARCUSTODOCENTECURSOS_LIST);
+	}
+	public void setMinimizarCustoDocenteCursosList(List<CursoDTO> value) {
+		set(PROPERTY_MINIMIZARCUSTODOCENTECURSOS_LIST, value);
+	}
+	
+	public List<CursoDTO> getCompartilharDisciplinasCampiList() {
+		return get(PROPERTY_COMPARTILHARDISCIPLINASCAMPI_LIST);
+	}
+	public void setCompartilharDisciplinasCampiList(List<CursoDTO> value) {
+		set(PROPERTY_COMPARTILHARDISCIPLINASCAMPI_LIST, value);
 	}
 	
 	@Override

@@ -15,6 +15,7 @@ import com.extjs.gxt.ui.client.widget.form.CheckBox;
 import com.extjs.gxt.ui.client.widget.form.NumberField;
 import com.extjs.gxt.ui.client.widget.form.Radio;
 import com.gapso.web.trieda.client.mvp.view.OtimizarMessagesView;
+import com.gapso.web.trieda.client.mvp.view.SelecionarCursosView;
 import com.gapso.web.trieda.client.services.OtimizarServiceAsync;
 import com.gapso.web.trieda.client.services.Services;
 import com.gapso.web.trieda.client.util.resources.Resources;
@@ -22,6 +23,7 @@ import com.gapso.web.trieda.client.util.view.CargaHorariaComboBox;
 import com.gapso.web.trieda.client.util.view.GTab;
 import com.gapso.web.trieda.client.util.view.GTabItem;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
+import com.gapso.web.trieda.shared.dtos.CursoDTO;
 import com.gapso.web.trieda.shared.dtos.ParametroDTO;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -65,6 +67,9 @@ public class ParametrosPresenter implements Presenter {
 		CheckBox getPercentuaisMinimosDoutoresCheckBox();
 		CheckBox getAreaTitulacaoProfessoresECursosCheckBox();
 		CheckBox getLimitarMaximoDisciplinaProfessorCheckBox();
+		Button getMaximizarNotaAvaliacaoCorpoDocenteButton();
+		Button getMinimizarCustoDocenteCursosButton();
+		Button getCompartilharDisciplinasCampiButton();
 		Button getSubmitButton();
 		Component getComponent();
 	}
@@ -104,6 +109,22 @@ public class ParametrosPresenter implements Presenter {
 						}
 					}
 				});
+			}
+		});
+		display.getMaximizarNotaAvaliacaoCorpoDocenteButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
+			@Override
+			public void componentSelected(ButtonEvent ce) {
+				List<CursoDTO> cursos = display.getParametroDTO().getMaximizarNotaAvaliacaoCorpoDocenteList();
+				Presenter presenter = new SelecionarCursosPresenter(cursos, new SelecionarCursosView());
+				presenter.go(null);
+			}
+		});
+		display.getMinimizarCustoDocenteCursosButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
+			@Override
+			public void componentSelected(ButtonEvent ce) {
+				List<CursoDTO> cursos = display.getParametroDTO().getMinimizarCustoDocenteCursosList();
+				Presenter presenter = new SelecionarCursosPresenter(cursos, new SelecionarCursosView());
+				presenter.go(null);
 			}
 		});
 	}
