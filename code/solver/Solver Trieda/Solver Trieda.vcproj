@@ -557,6 +557,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\ConverteHorariosCreditos.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\CreditoDisponivel.cpp"
 					>
 				</File>
@@ -827,6 +831,10 @@
 				</File>
 				<File
 					RelativePath=".\ConjuntoSala.h"
+					>
+				</File>
+				<File
+					RelativePath=".\ConverteHorariosCreditos.h"
 					>
 				</File>
 				<File
