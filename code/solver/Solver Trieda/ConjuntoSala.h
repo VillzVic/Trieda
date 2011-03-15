@@ -150,9 +150,8 @@ public:
          salas.begin();
 
       for(; itSala != salas.end(); itSala++)
-	  {
-		  capSalas += itSala->second->getCapacidade();
-	  }
+      //{ capSalas += itSala->second->capacidade; }
+      { capSalas += itSala->second->getCapacidade(); }
 
       return capSalas;
    }

@@ -1156,6 +1156,9 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
                }
 
                // ======================
+
+               // TRIEDA-715
+
                /*
                Ainda assim, a variável x em questão pode não ter sido convertida.
 

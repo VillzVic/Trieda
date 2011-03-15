@@ -111,6 +111,8 @@ void Sala::construirCreditosHorarios(ItemSala& elem, std::string modo_operacao, 
 
 GGroup<CreditoDisponivel*> Sala::converteHorariosParaCreditos()
 {
+   //using 
+
 	// Objeto de retorno, contendo os créditos criados
 	// a partir dos horários contidos no XML de entrada
 	GGroup<CreditoDisponivel*> creditosDisponiveis;
@@ -121,10 +123,13 @@ GGroup<CreditoDisponivel*> Sala::converteHorariosParaCreditos()
 		GGroup<int>::iterator it_dia_semana = it_horario->dias_semana.begin();
 		for (; it_dia_semana != it_horario->dias_semana.end(); it_dia_semana++)
 		{
+         int diaaaa = *it_dia_semana;
+
 			ConverteHorariosCreditos* item = new ConverteHorariosCreditos();
 			item->setTurno( it_horario->turnoId );
 			item->setDiaSemana( *it_dia_semana );
 
+         /*
 			GGroup<ConverteHorariosCreditos*>::iterator it = groupHorariosCreditos.find(item);
 			if (it != groupHorariosCreditos.end())
 			{
@@ -137,6 +142,28 @@ GGroup<CreditoDisponivel*> Sala::converteHorariosParaCreditos()
 				groupHorariosCreditos.add(item);
 				item->horarios.add( it_horario->horarioAulaId );
 			}
+         */
+
+         bool found = false;
+         ITERA_GGROUP(it,groupHorariosCreditos,ConverteHorariosCreditos)
+         {
+            //if((it->getDiaSemana() == *it_dia_semana) && (it->getTurno() == it_horario->turno->getId()))
+            if((it->getDiaSemana() == *it_dia_semana) && (it->getTurno() == it_horario->turnoId))
+            {
+               // Inserir mais um horário em 'groupHorariosCreditos'
+               it->horarios.add( it_horario->horarioAulaId );
+
+               found = true;
+               break;
+            }
+         }
+
+         if(!found)
+         {
+            // Adicionar novo item na lista 'groupHorariosCreditos' e inserir o horário				
+            groupHorariosCreditos.add(item);
+            item->horarios.add( it_horario->horarioAulaId );
+         }
 		}
 	}
 
