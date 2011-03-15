@@ -89,17 +89,10 @@ private:
 
    // >>> Variáveis e/ou estruturas de dados para realizar o pré processamento dos dados.
 
-   // <<<
-
    // >>> Métodos para realizar o pré processamento dos dados.
-
-   // =========== METODOS SET
-
-   // =========== METODOS GET
 
    // =========== METODOS AUXILIARES
 
-   //void referenciaCampus();
    void referenciaCampusUnidadesSalas();
 
    void referenciaDisciplinas();
@@ -144,7 +137,6 @@ private:
 
    /* Relaciona cada possível valor de crédito com as regras de créditos existentes. */
    void relacionaCredsRegras();
-
 };
 
 #endif

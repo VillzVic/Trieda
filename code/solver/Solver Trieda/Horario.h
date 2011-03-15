@@ -9,10 +9,8 @@ class Horario :
 public:
    Horario(void);
    ~Horario(void);
-   
-   virtual void le_arvore(ItemHorario& raiz);
 
-   //virtual int getId();
+   virtual void le_arvore(ItemHorario& raiz);
 
    GGroup<int> dias_semana;
    int horarioAulaId;

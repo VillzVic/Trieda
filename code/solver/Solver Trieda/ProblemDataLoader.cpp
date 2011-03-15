@@ -241,7 +241,7 @@ void ProblemDataLoader::criaConjuntoSalasUnidade()
             o tipo da sala em questão. Além disso, a diferença das disciplinas associadas de ambos 
             tem que ser nula (ou seja, todas as disciplinas que forem associadas a sala em questão,
             tem de estar associadas ao conjunto de salas encontrado, e vice versa). */
-            ITERA_GGROUP(it_Cjt_Salas_Disc,(*gg_Cjt_Salas_Esc),ConjuntoSala)
+            ITERA_GGROUP(it_Cjt_Salas_Disc, (*gg_Cjt_Salas_Esc), ConjuntoSala)
             {
                /* Se o conjunto de salas em questão representa a capacidade da sala em questão.
 
@@ -249,9 +249,9 @@ void ProblemDataLoader::criaConjuntoSalasUnidade()
                Acredito que não seja necessário no caso em que estejamos lidando APENAS com laboratórios.
                Como não sei qual GGroup está sendo referenciado, testo os 2 casos pra lá.
                */
-               if(it_Cjt_Salas_Disc->getCapacidadeRepr() == it_Sala->capacidade
-                  && it_Cjt_Salas_Disc->getTipoSalasRepr() == it_Sala->tipo_sala->getId() )
-               {
+				if(it_Cjt_Salas_Disc->getCapacidadeRepr() == it_Sala->getCapacidade()
+					&& it_Cjt_Salas_Disc->getTipoSalasRepr() == it_Sala->tipo_sala->getId() )
+				{
                   bool mesmas_Disciplinas_Associadas = true;
 
                   // Checando se tem o mesmo tamanho.
@@ -295,7 +295,7 @@ void ProblemDataLoader::criaConjuntoSalasUnidade()
                ConjuntoSala * cjt_Sala = new ConjuntoSala();
 
                cjt_Sala->setId(idCjtSala);
-               cjt_Sala->setCapacidadeRepr(it_Sala->capacidade);
+               cjt_Sala->setCapacidadeRepr(it_Sala->getCapacidade());
                cjt_Sala->setTipoSalasRepr(it_Sala->getTipoSalaId());
 
                cjt_Sala->addSala(**it_Sala);
@@ -310,23 +310,31 @@ void ProblemDataLoader::criaConjuntoSalasUnidade()
                }
 
                /* Associando as disciplinas ao conjunto. */
-               ITERA_GGROUP(it_Disc_Assoc_Sala,it_Sala->disciplinasAssociadas,Disciplina)
-               { cjt_Sala->associaDisciplina(**it_Disc_Assoc_Sala); }
+               ITERA_GGROUP(it_Disc_Assoc_Sala,
+							it_Sala->disciplinasAssociadas,
+							Disciplina)
+               {
+				   cjt_Sala->associaDisciplina(**it_Disc_Assoc_Sala);
+			   }
 
                // Adicionando ao respectivo conjunto.
                gg_Cjt_Salas_Esc->add(cjt_Sala);
             }
          }
 
-         /* AGORA QUE TENHO TODOS OS CONJUNTOS DE SALAS CRIADOS, TENHO QUE ARMAZENA-LOS NA
-         ESTRUTURA <conjuntoSala> da Unidade em questão. */
+         // AGORA QUE TENHO TODOS OS CONJUNTOS DE SALAS CRIADOS, TENHO QUE ARMAZENA-LOS NA
+         // ESTRUTURA <conjuntoSala> da Unidade em questão.
 
-         ITERA_GGROUP(it_Cjt_Salas_Disc_Elab,conjunto_Salas_Disc_eLab,ConjuntoSala)
+         ITERA_GGROUP(it_Cjt_Salas_Disc_Elab,
+					  conjunto_Salas_Disc_eLab,
+					  ConjuntoSala)
          {
             it_Unidade->conjutoSalas.add(*it_Cjt_Salas_Disc_Elab);
          }
 
-         ITERA_GGROUP(it_Cjt_Salas_Disc_GERAL,conjunto_Salas_Disc_GERAL,ConjuntoSala)
+         ITERA_GGROUP(it_Cjt_Salas_Disc_GERAL,
+					  conjunto_Salas_Disc_GERAL,
+					  ConjuntoSala)
          {
             it_Unidade->conjutoSalas.add(*it_Cjt_Salas_Disc_GERAL);
          }
@@ -334,7 +342,9 @@ void ProblemDataLoader::criaConjuntoSalasUnidade()
          // ----------------------------
          std::cout << "Cod. Und.: " << it_Unidade->codigo << std::endl;
 
-         ITERA_GGROUP(it_Cjt_Salas_Und,it_Unidade->conjutoSalas,ConjuntoSala)
+         ITERA_GGROUP(it_Cjt_Salas_Und,
+					  it_Unidade->conjutoSalas,
+					  ConjuntoSala)
          {
             std::cout << "\tCod. Cjt. Sala: " << it_Cjt_Salas_Und->getId() << std::endl;
 
@@ -342,7 +352,11 @@ void ProblemDataLoader::criaConjuntoSalasUnidade()
                it_Salas_Cjt = it_Cjt_Salas_Und->getTodasSalas().begin();
 
             for(; it_Salas_Cjt != it_Cjt_Salas_Und->getTodasSalas().end(); ++it_Salas_Cjt)
-            { std::cout << "\t\tCod. Sala: " << it_Salas_Cjt->second->codigo << std::endl; }
+            {
+				std::cout << "\t\tCod. Sala: "
+					  	  << it_Salas_Cjt->second->getCodigo()
+						  << std::endl;
+			}
          }
          // ----------------------------
       }
@@ -889,8 +903,9 @@ void ProblemDataLoader::divideDisciplinas()
                   */
 
                   if( (it_sala->disciplinas_associadas.find(it_disc->getId()) != 
-                     it_sala->disciplinas_associadas.end() ) &&
-                     (it_sala->tipo_sala_id != 1)){
+                       it_sala->disciplinas_associadas.end() ) &&
+					  (it_sala->getTipoSalaId() != 1))
+				  {
                         /*
                         Removendo a associacao da disciplina teorica em questao com as salas 
                         incompativeis, no caso qualquer uma que nao seja uma sala de aula (de acordo
@@ -1084,9 +1099,9 @@ void ProblemDataLoader::gera_refs()
 
          ITERA_GGROUP(it_salas, it_unidades->salas, Sala)
          {
-            find_and_set(it_salas->tipo_sala_id,
+			 find_and_set(it_salas->getTipoSalaId(),
                problemData->tipos_sala,
-               it_salas->tipo_sala);
+			   it_salas->tipo_sala);
 
             ITERA_GGROUP(it_horario, it_salas->horarios_disponiveis, Horario)
             {
@@ -1301,7 +1316,7 @@ void ProblemDataLoader::gera_refs()
          it_unidades->id_campus = it_campi->getId();
          ITERA_GGROUP(it_salas, it_unidades->salas, Sala) 
          {
-            it_salas->id_unidade = it_unidades->getId();
+            it_salas->setIdUnidade(it_unidades->getId());
          }
       }
    }
@@ -1576,17 +1591,17 @@ void ProblemDataLoader::calculaTamanhoMedioSalasCampus()
       {
          ITERA_GGROUP(it_sala,it_und->salas,Sala)
          {
-            somaCapSalas += it_sala->capacidade;
+			 somaCapSalas += it_sala->getCapacidade();
 
-            it_und->maiorSala = std::max(((int)it_und->maiorSala),((int)it_sala->capacidade));
+             it_und->maiorSala = std::max(((int)it_und->maiorSala), ((int)it_sala->getCapacidade()));
          }
 
          total_Salas += it_und->getNumSalas();
 
-         it_cp->maiorSala = std::max(((int)it_cp->maiorSala),((int)it_und->maiorSala));
+         it_cp->maiorSala = std::max(((int)it_cp->maiorSala), ((int)it_und->maiorSala));
       }
 
-      //problemData->cp_medSalas[it_cp->getId()] = somaCapSalas / total_Salas;
+      // problemData->cp_medSalas[it_cp->getId()] = somaCapSalas / total_Salas;
       problemData->cp_medSalas[it_cp->getId()] = (total_Salas > 0) ? (somaCapSalas / total_Salas) : 0;
    }
 }
@@ -2332,6 +2347,13 @@ void ProblemDataLoader::relacionaDiscOfertas()
 void ProblemDataLoader::criaAulas()
 {
    /* Deve-se preencher o GGroup<Aula*> com as informações do GrupoAtendimentoCampusSolucao lido */
+
+   // O XML de entrada não possui a saída do TÁTICO,
+   // e o modo de otimização é OPERACIOANAL
+   if (problemData->atendimentosTatico == NULL)
+   {
+	   return;
+   }
 
    ItemAtendimentoCampusSolucao * AtendimentoCampus;
 

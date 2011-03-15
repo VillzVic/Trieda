@@ -1362,7 +1362,7 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
          // Cadastrando a Sala
          AtendimentoSala * at_Sala = new AtendimentoSala();
          at_Sala->setId((*it_Vars_x)->getSala()->getId());
-         at_Sala->sala_id = (*it_Vars_x)->getSala()->codigo;
+         at_Sala->sala_id = (*it_Vars_x)->getSala()->getCodigo();
 
          // Cadastrando o dia da semana
          AtendimentoDiaSemana * at_Dia_Semana = new AtendimentoDiaSemana();
@@ -1571,7 +1571,7 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
                               // Cadastrando a Sala
                               AtendimentoSala * at_Sala = new AtendimentoSala();
                               at_Sala->setId((*it_Vars_x)->getSala()->getId());
-                              at_Sala->sala_id = (*it_Vars_x)->getSala()->codigo;
+                              at_Sala->sala_id = (*it_Vars_x)->getSala()->getCodigo();
 
                               // Cadastrando o dia da semana
                               AtendimentoDiaSemana * at_Dia_Semana = new AtendimentoDiaSemana();
@@ -1632,7 +1632,7 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
                      // Cadastrando a Sala
                      AtendimentoSala * at_Sala = new AtendimentoSala();
                      at_Sala->setId((*it_Vars_x)->getSala()->getId());
-                     at_Sala->sala_id = (*it_Vars_x)->getSala()->codigo;
+                     at_Sala->sala_id = (*it_Vars_x)->getSala()->getCodigo();
 
                      // Cadastrando o dia da semana
                      AtendimentoDiaSemana * at_Dia_Semana = new AtendimentoDiaSemana();
@@ -1698,7 +1698,7 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
             // Cadastrando a Sala
             AtendimentoSala * at_Sala = new AtendimentoSala();
             at_Sala->setId((*it_Vars_x)->getSala()->getId());
-            at_Sala->sala_id = (*it_Vars_x)->getSala()->codigo;
+            at_Sala->sala_id = (*it_Vars_x)->getSala()->getCodigo();
 
             // Cadastrando o dia da semana
             AtendimentoDiaSemana * at_Dia_Semana = new AtendimentoDiaSemana();
@@ -6846,13 +6846,13 @@ int SolverMIP::cria_restricao_de_folga_dist_cred_dia(void)
 
                            OPT_ROW row( nnz, OPT_ROW::EQUAL , 0.0 , name );
 
-                           if(itCjtSala->capTotalSalas() == it_fix->sala->capacidade)
+						   if(itCjtSala->capTotalSalas() == it_fix->sala->getCapacidade())
                            {
-                              ITERA_GGROUP(itCampus1,problemData->campi,Campus)
+                              ITERA_GGROUP(itCampus1, problemData->campi, Campus)
                               {
                                  if(itCampus->getId() == itCampus1->getId())
                                  {
-                                    ITERA_GGROUP(itUnidade1,itCampus->unidades,Unidade)
+                                    ITERA_GGROUP(itUnidade1, itCampus->unidades, Unidade)
                                     {
                                        v.reset();
                                        v.setType(Variable::V_CREDITOS);

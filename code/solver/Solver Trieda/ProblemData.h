@@ -31,36 +31,12 @@
 class ProblemData : public OFBase
 {
 public:
-   //Constructor for initial state
+   // Constructor for initial state
    ProblemData();
 
-   //Destructor
+   // Destructor
    ~ProblemData();
 
-   //==================================================
-   // SET METHODS 
-   //==================================================
-
-   /**
-   ToDo:
-   All set methods of the private attributes should be defined here
-   */
-
-   //==================================================
-   // GET METHODS 
-   //==================================================
-   
-   /**
-   ToDo:
-   All get methods of the private attributes should be defined here
-   */
-
-//private:
-
-   /**
-   ToDo:
-   All objects that define the problem input should be declared here
-   **/
    Calendario* calendario;
    GGroup<TipoSala*> tipos_sala;
    GGroup<TipoContrato*> tipos_contrato;
@@ -109,9 +85,8 @@ public:
 
    // <<< 15/10/2010
 
-//private:
    // >>> Variáveis e/ou estruturas de dados para realizar o pré processamento dos dados.
-   
+
    std::map<int/*Id Campus*/,unsigned/*Tamanho médio das salas*/> cp_medSalas;
 
    // Armazena todas as disciplinas ofertadas em um campus.
@@ -191,20 +166,8 @@ public:
    /* Lista, para cada professor, todas as disciplinas as quais ele é fixado. */
    std::map<Professor*,GGroup<Disciplina*> > prof_Fix_Disc;
 
-   // <<<
-
    GGroup<Aula*> aulas;
 
-public:
-   // =========== METODOS SET
-
-   // =========== METODOS GET
-
-   // ToDo : implementar os métodos básicos para todos os membros da classe.
-
-   // <<<
-
-public:
    virtual void le_arvore(TriedaInput& raiz);
 };
 
