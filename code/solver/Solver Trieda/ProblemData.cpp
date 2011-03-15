@@ -65,11 +65,15 @@ void ProblemData::le_arvore(TriedaInput& raiz)
    // Se a tag existir (mesmo que esteja em branco) no xml de entrada
    if (raiz.atendimentosTatico().present())
    {
-		atendimentosTatico = &(raiz.atendimentosTatico().get());
-   }
-   else
-   {
-		atendimentosTatico = NULL;	
+	   for (int i=0;i<raiz.atendimentosTatico().get().AtendimentoCampus().size(); i++)
+	   {
+		   ItemAtendimentoCampusSolucao* it_atendimento
+			   = &(raiz.atendimentosTatico().get().AtendimentoCampus().at(i));
+
+		   AtendimentoCampusSolucao* item = new AtendimentoCampusSolucao();
+		   item->le_arvore(*it_atendimento);
+		   atendimentosTatico.add(item);
+	   }
    }
 
    LE_SEQ(fixacoes, raiz.fixacoes(), Fixacao);

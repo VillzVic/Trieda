@@ -7,4 +7,7 @@ public:
    virtual ~Avaliador(void);
 
    double avaliaSolucao(SolucaoOperacional &);
+
+private:
+	double violacaoRestricaoFixacao(SolucaoOperacional &, GGroup<Fixacao*>);
 };

@@ -20,6 +20,8 @@
 #include "ParametrosPlanejamento.h"
 #include "Fixacao.h"
 #include "BlocoCurricular.h"
+#include "AtendimentoCampusSolucao.h"
+#include "AtendimentoUnidadeSolucao.h"
 
 #include "Aula.h"
 
@@ -56,15 +58,13 @@ public:
    ParametrosPlanejamento* parametros;
    GGroup<Fixacao*> fixacoes;
 
-   GrupoAtendimentoCampusSolucao* atendimentosTatico;
+   GGroup<AtendimentoCampusSolucao*> atendimentosTatico;
 
    GGroup<BlocoCurricular*> blocos;
 
-   //GGroup<ConjuntoSala*> conjutoSalas;
-
    // Armazena para cada campus a demanda de cada disciplina.
    std::map<std::pair<int/*disc_id*/,int/*campus_id*/>,int> demandas_campus;
-   
+
    int totalSalas;
    int totalTurmas;
    int totalConjuntosSalas;

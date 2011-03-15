@@ -317,8 +317,11 @@ int SolverMIP::solve()
    //TRIEDA-660
    //TRIEDA-654
 
-   int status = 0;
+   lp->setTimeLimit(600);
+   lp->setMIPScreenLog(4);
+   int status = lp->optimize(METHOD_MIP);
 
+   /*
    // Muda FO para considerar somente atendimento
    double *objOrig = new double[lp->getNumCols()];
    lp->getObj(0,lp->getNumCols()-1,objOrig);
@@ -410,6 +413,7 @@ int SolverMIP::solve()
    delete[] objOrig;
    delete[] idxNova;
    delete[] xSolInic;
+   */
 
    double *xSol = NULL;
    xSol = new double[lp->getNumCols()];
@@ -1511,7 +1515,6 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
 
                                                 it_At_Dia->atendimentos_tatico.add(at_Tatico);
                                              }
-
                                           }
 
                                           novo_Dia = false;

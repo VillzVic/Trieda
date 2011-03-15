@@ -2350,59 +2350,33 @@ void ProblemDataLoader::criaAulas()
 
    // O XML de entrada não possui a saída do TÁTICO,
    // e o modo de otimização é OPERACIOANAL
-   if (problemData->atendimentosTatico == NULL)
+	if (problemData->atendimentosTatico.size() == 0)
    {
 	   return;
    }
 
-   ItemAtendimentoCampusSolucao * AtendimentoCampus;
+   AtendimentoOfertaSolucao * atendOferta;
 
-   GrupoAtendimentoUnidadeSolucao * atendimentosUnidades;
-   ItemAtendimentoUnidadeSolucao * AtendimentoUnidade;
-
-   GrupoAtendimentoSalaSolucao * atendimentosSalas;
-   ItemAtendimentoSalaSolucao * AtendimentoSala;
-
-   GrupoAtendimentoDiaSemanaSolucao * atendimentosDiasSemana;
-   ItemAtendimentoDiaSemanaSolucao * AtendimentoDiaSemana;
-
-   GrupoAtendimentoTaticoSolucao * atendimentosTatico;
-   ItemAtendimentoTaticoSolucao * AtendimentoTatico;
-   ItemAtendimentoOfertaSolucao * atendimentoOferta;
-
-   for(unsigned int i=0; i<problemData->atendimentosTatico->AtendimentoCampus().size(); i++)
+   ITERA_GGROUP(it_atend_campus, problemData->atendimentosTatico, AtendimentoCampusSolucao)
    {
-	   AtendimentoCampus = &(problemData->atendimentosTatico->AtendimentoCampus().at(i));
-	   atendimentosUnidades = &(AtendimentoCampus->atendimentosUnidades());
-
-	   for(unsigned int j=0; j<atendimentosUnidades->AtendimentoUnidade().size(); j++)
+	   ITERA_GGROUP(it_atend_unidade, it_atend_campus->atendimentosUnidades, AtendimentoUnidadeSolucao)
 	   {
-		   AtendimentoUnidade = &(atendimentosUnidades->AtendimentoUnidade().at(j));
-		   atendimentosSalas = &(AtendimentoUnidade->atendimentosSalas());
-
-		   for(unsigned int k=0; k<atendimentosSalas->AtendimentoSala().size(); k++)
+		   ITERA_GGROUP(it_atend_sala, it_atend_unidade->atendimentosSalas, AtendimentoSalaSolucao)
 		   {
-			   AtendimentoSala = &(atendimentosSalas->AtendimentoSala().at(k));
-			   atendimentosDiasSemana = &(AtendimentoSala->atendimentosDiasSemana());
-
-			   for(unsigned int m=0; m<atendimentosDiasSemana->AtendimentoDiaSemana().size(); m++)
+			   ITERA_GGROUP(it_atend_dia_semana, it_atend_sala->atendimentosDiasSemana, AtendimentoDiaSemanaSolucao)
 			   {
-				   AtendimentoDiaSemana = &(atendimentosDiasSemana->AtendimentoDiaSemana().at(m));
-				   atendimentosTatico = &(AtendimentoDiaSemana->atendimentosTatico());
-
-				   for(unsigned int p=0; p<atendimentosTatico->AtendimentoTatico().size(); p++)
+				   ITERA_GGROUP(it_atend_tatico, it_atend_dia_semana->atendimentosTatico, AtendimentoTaticoSolucao)
 				   {
-					   AtendimentoTatico = &(atendimentosTatico->AtendimentoTatico().at(p));
-					   atendimentoOferta = &(AtendimentoTatico->atendimentoOferta());
+					   atendOferta = it_atend_tatico->atendimento_oferta;
 
 					   // Informa a 'turma' da aula
-					   int turma = atoi(atendimentoOferta->turma().c_str());
+					   int turma = atoi(atendOferta->getTurma().c_str());
 
 					   // Procura pelo objeto 'Disciplina' da aula
 					   Disciplina* disciplina = NULL;
 					   ITERA_GGROUP(it_Disciplina, problemData->disciplinas, Disciplina)
 					   {
-						   if (it_Disciplina->getId() == atendimentoOferta->disciplinaId())
+						   if (it_Disciplina->getId() == atendOferta->getDisciplinaId())
 						   {
 							   disciplina = *(it_Disciplina);
 							   break;
@@ -2418,7 +2392,7 @@ void ProblemDataLoader::criaAulas()
 					       {
 							   ITERA_GGROUP(it_Sala, it_Unidade->salas, Sala)
 							   {
-								   if (it_Sala->getId() == AtendimentoSala->salaId())
+								   if (it_Sala->getId() == it_atend_sala->getSalaId())
 								   {
 									   sala = *(it_Sala);
 									   encontrou = true;
@@ -2439,13 +2413,13 @@ void ProblemDataLoader::criaAulas()
 					   }
 
 					   // Informa o dia da semana da aula
-					   int diaSemana = AtendimentoDiaSemana->diaSemana();
+					   int diaSemana = it_atend_dia_semana->getDiaSemana();
 
 					   // Informa os créditos teóricos da aula
-					   int creditos_teoricos = AtendimentoTatico->qtdeCreditosTeoricos();
+					   int creditos_teoricos = it_atend_tatico->getQtdeCreditosTeoricos();
 
 					   // Informa os créditos práticos da aula
-					   int creditos_praticos = AtendimentoTatico->qtdeCreditosPraticos();
+					   int creditos_praticos = it_atend_tatico->getQtdeCreditosPraticos();
 
 					   // Monta o objeto 'aula'
 					   Aula *aula = new Aula();
