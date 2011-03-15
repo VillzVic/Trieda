@@ -1,3 +1,4 @@
+#include "ProblemData.h"
 #include "SolucaoOperacional.h"
 
 class Avaliador
@@ -9,5 +10,5 @@ public:
    double avaliaSolucao(SolucaoOperacional &);
 
 private:
-	double violacaoRestricaoFixacao(SolucaoOperacional &, GGroup<Fixacao*>);
+	double violacaoRestricaoFixacao(SolucaoOperacional &);
 };

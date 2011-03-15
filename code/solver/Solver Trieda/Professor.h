@@ -12,9 +12,37 @@ public:
    Professor(void);
    ~Professor(void);
 
-
    virtual void le_arvore(ItemProfessor& elem);
 
+   GGroup<Horario*> horarios;
+   GGroup<Magisterio*> magisterio; // Esse eh o disciplinas do XSD de input
+   TipoContrato* tipo_contrato;
+   TipoTitulacao* titulacao; 
+   AreaTitulacao* area;
+
+   void setCpf(std::string s) { cpf = s; }
+   void setNome(std::string s) { nome = s; }
+   void setTipoContratoId(int s) { tipo_contrato_id = s; }
+   void setChMin(int s) { ch_min = s; }
+   void setChMax(int s) { ch_max = s; }
+   void setChAnterior(int s) { ch_anterior = s; }
+   void setTitulacaoId(int s) { titulacao_id = s; }
+   void setAreaId(int s) { area_id = s; }
+   void setValorCredito(int s) { valor_credito = s; }
+   void setIdOperacional(int s) { id_operacional = s; }
+
+   std::string getCpf() { return cpf; }
+   std::string getNome() { return nome; }
+   int getTipoContratoId() { return tipo_contrato_id; }
+   int getChMin() { return ch_min; }
+   int getChMax() { return ch_max; }
+   int getChAnterior() { return ch_anterior; }
+   int getTitulacaoId() { return titulacao_id; }
+   int getAreaId() { return area_id; }
+   double getValorCredito() { return valor_credito; }
+   int getIdOperacional() { return id_operacional; }
+
+private:
    std::string cpf;
    std::string nome;
    int tipo_contrato_id;
@@ -24,9 +52,5 @@ public:
    int titulacao_id;
    int area_id;
    double valor_credito;
-   GGroup<Horario*> horarios;
-   GGroup<Magisterio*> magisterio; // esse eh o disciplinas do XSD de input
-   TipoContrato* tipo_contrato;
-   TipoTitulacao* titulacao; 
-   AreaTitulacao* area;
+   int id_operacional;
 };

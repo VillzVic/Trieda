@@ -13,13 +13,6 @@ public:
    Fixacao(void);
    ~Fixacao(void);
 
-   int professor_id;
-   int disciplina_id;
-   int sala_id;
-   int dia_semana;
-   int turno_id;
-   int horario_id;
-
    void le_arvore(ItemFixacao& elem);
 
    Professor* professor;
@@ -27,5 +20,27 @@ public:
    Sala* sala;
    Turno* turno;
    HorarioAula* horario;
+
+   void setProfessorId(int v) { professor_id = v; }
+   void setDisciplinaId(int v) { disciplina_id = v; }
+   void setSalaId(int v) { sala_id = v; }
+   void setDiaSemana(int v) { dia_semana = v; }
+   void setTurnoId(int v) { turno_id = v; }
+   void setHorarioId(int v) { horario_id = v; }
+
+   int getProfessorId() { return professor_id; }
+   int getDisciplinaId() { return disciplina_id; }
+   int getSalaId() { return sala_id; }
+   int getDiaSemana() { return dia_semana; }
+   int getTurnoId() { return turno_id; }
+   int getHorarioId() { return horario_id; }
+
+private:
+   int professor_id;
+   int disciplina_id;
+   int sala_id;
+   int dia_semana;
+   int turno_id;
+   int horario_id;
 };
 

@@ -1,33 +1,37 @@
+#ifndef _SOLUCAO_OPERACIONAL_H_
+#define _SOLUCAO_OPERACIONAL_H_
+
+#include <map>
 #include <vector>
 #include <string>
 
 #include "Aula.h"
 #include "Horario.h"
-
 #include "ProblemData.h"
 
-typedef std::vector<std::vector<Aula*>* > MatrizSolucao;
+typedef std::vector< std::vector< Aula* > * > MatrizSolucao;
 
 class SolucaoOperacional
 {
 public:
-   //SolucaoOperacional(void);
-   SolucaoOperacional(ProblemData * problemData);
-
+   SolucaoOperacional(ProblemData *);
    virtual ~SolucaoOperacional(void);
 
    void carregaSolucaoInicial();
 
-   void setMatrizAulas(MatrizSolucao *);
+   int getIndiceMatriz(int, Horario *);
+   ProblemData* getProblemData() const;
 
+   void setMatrizAulas(MatrizSolucao *);
    MatrizSolucao* getMatrizAulas() const;
 
    std::string toString() const;
 
-   int getIndiceMatriz(int, Horario *);
+   map<int, Professor*> mapProfessores;
 
 private:
    MatrizSolucao* matrizAulas;
-
-   ProblemData * problemData;
+   ProblemData* problemData;
 };
+
+#endif

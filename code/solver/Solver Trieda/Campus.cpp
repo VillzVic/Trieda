@@ -17,22 +17,31 @@ void Campus::le_arvore(ItemCampus& elem)
    codigo = elem.codigo();
    nome = elem.nome();
 
-   ITERA_SEQ(it_unidades, elem.unidades(), Unidade) {
+   ITERA_SEQ(it_unidades, elem.unidades(), Unidade)
+   {
       Unidade* unidade = new Unidade();
       unidade->le_arvore(*it_unidades);
       unidades.add(unidade);
    }
 
-   ITERA_SEQ(it_professores, elem.professores(), Professor) {
+   // O campo 'id_operacional_professor' é utilizado na classe
+   // que representa a 'SolucaoOperacional', para acessar a matriz
+   // da solução. O id_operacional deve ser preenchido de forma
+   // sequancial, começando a partir de zero.
+   int id_operacional_professor = 0;
+   ITERA_SEQ(it_professores, elem.professores(), Professor)
+   {
       Professor* professor = new Professor();
       professor->le_arvore(*it_professores);
+	  professor->setIdOperacional(id_operacional_professor);
+	  id_operacional_professor++;
       professores.add(professor);
    }
 
-   ITERA_SEQ(it_horarios, elem.horariosDisponiveis(), Horario) {
+   ITERA_SEQ(it_horarios, elem.horariosDisponiveis(), Horario)
+   {
       Horario* horario = new Horario();
       horario->le_arvore(*it_horarios);
       horarios.add(horario);
    }
-
 }

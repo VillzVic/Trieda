@@ -2853,9 +2853,8 @@ int SolverMIP::cria_variavel_de_folga_dist_cred_dia_superior(void)
                   {
                      ITERA_GGROUP(it_fix,problemData->fixacoes,Fixacao)
                      {
-                        if(it_fix->disciplina_id == it_disc->getId() 
-                           && it_fix->dia_semana == *itDiasLetDisc
-                           /*&& itCjtSala->getId() == it_fix->sala->capacidade*/) 
+                        if(it_fix->getDisciplinaId() == it_disc->getId() 
+							&& it_fix->getDiaSemana() == *itDiasLetDisc) 
                         {
                            Variable v;
                            v.reset();
@@ -2927,9 +2926,8 @@ int SolverMIP::cria_variavel_de_folga_dist_cred_dia_inferior(void)
                   {
                      ITERA_GGROUP(it_fix,problemData->fixacoes,Fixacao)
                      {
-                        if(it_fix->disciplina_id == it_disc->getId() 
-                           && it_fix->dia_semana == *itDiasLetDisc
-                           /*&& itCjtSala->getId() == it_fix->sala->capacidade*/) 
+                        if(it_fix->getDisciplinaId() == it_disc->getId() 
+                           && it_fix->getDiaSemana() == *itDiasLetDisc) 
                         {
                            Variable v;
                            v.reset();
@@ -6833,8 +6831,8 @@ int SolverMIP::cria_restricao_de_folga_dist_cred_dia(void)
                   {
                      ITERA_GGROUP(it_fix,problemData->fixacoes,Fixacao)
                      {
-
-                        if(it_fix->disciplina_id == itDisc->getId() && it_fix->dia_semana == *itDiasLetDisc) 
+                        if(it_fix->getDisciplinaId() == itDisc->getId()
+								&& it_fix->getDiaSemana() == *itDiasLetDisc) 
                         {					
                            c.reset();
                            c.setType(Constraint::C_SLACK_DIST_CRED_DIA);
@@ -6846,10 +6844,12 @@ int SolverMIP::cria_restricao_de_folga_dist_cred_dia(void)
 
                            sprintf( name, "%s", c.toString().c_str() ); 
 
-                           if (cHash.find(c) != cHash.end()) continue;
+                           if (cHash.find(c) != cHash.end())
+						   {
+							   continue;
+						   }
 
                            nnz = problemData->totalConjuntosSalas * itDisc->num_turmas + 1;
-
                            OPT_ROW row( nnz, OPT_ROW::EQUAL , 0.0 , name );
 
 						   if(itCjtSala->capTotalSalas() == it_fix->sala->getCapacidade())

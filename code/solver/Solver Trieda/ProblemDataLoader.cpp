@@ -1139,7 +1139,7 @@ void ProblemDataLoader::gera_refs()
 
       ITERA_GGROUP(it_prof, it_campi->professores, Professor)
       {
-         find_and_set(it_prof->tipo_contrato_id, 
+         find_and_set(it_prof->getTipoContratoId(), 
             problemData->tipos_contrato, 
             it_prof->tipo_contrato);
 
@@ -1279,32 +1279,27 @@ void ProblemDataLoader::gera_refs()
 
    ITERA_GGROUP(it_fix, problemData->fixacoes, Fixacao)
    {
-      find_and_set(it_fix->disciplina_id, 
-         problemData->disciplinas,
-		 it_fix->disciplina);
+      find_and_set(it_fix->getDisciplinaId(), 
+         problemData->disciplinas, it_fix->disciplina);
 
-      find_and_set(it_fix->turno_id, 
-         problemData->calendario->turnos,
-         it_fix->turno);
+      find_and_set(it_fix->getTurnoId(), 
+         problemData->calendario->turnos, it_fix->turno);
 
       if(it_fix->turno != NULL)
       {	
-         find_and_set(it_fix->horario_id,
-            it_fix->turno->horarios_aula,
-            it_fix->horario);
+         find_and_set(it_fix->getHorarioId(),
+            it_fix->turno->horarios_aula, it_fix->horario);
       }
 
       ITERA_GGROUP(it_campi, problemData->campi, Campus)
       {
-         find_and_set(it_fix->professor_id, 
-            it_campi->professores,
-			it_fix->professor);
+         find_and_set(it_fix->getProfessorId(), 
+            it_campi->professores, it_fix->professor);
 
          ITERA_GGROUP(it_unidades, it_campi->unidades, Unidade)
          {
-            find_and_set(it_fix->sala_id,
-               it_unidades->salas,
-			   it_fix->sala);
+            find_and_set(it_fix->getSalaId(),
+               it_unidades->salas, it_fix->sala);
          }
       }
    }

@@ -65,7 +65,7 @@ void ProblemData::le_arvore(TriedaInput& raiz)
    // Se a tag existir (mesmo que esteja em branco) no xml de entrada
    if (raiz.atendimentosTatico().present())
    {
-	   for (int i=0;i<raiz.atendimentosTatico().get().AtendimentoCampus().size(); i++)
+	   for (unsigned int i=0;i<raiz.atendimentosTatico().get().AtendimentoCampus().size(); i++)
 	   {
 		   ItemAtendimentoCampusSolucao* it_atendimento
 			   = &(raiz.atendimentosTatico().get().AtendimentoCampus().at(i));

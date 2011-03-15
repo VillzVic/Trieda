@@ -1,8 +1,24 @@
+#include "ofbase.h"
+#include "GGroup.h"
 #include "SolucaoOperacional.h"
 
-SolucaoOperacional::SolucaoOperacional(ProblemData * prbDt)
+SolucaoOperacional::SolucaoOperacional(ProblemData* prbDt)
 {
    this->problemData = prbDt;
+
+   // Montando um map: dado o índice da matriz (o 'idOperacional'
+   // do professor) o map retorna o ponteiro para o professor correspondente
+   GGroup<Campus*>::iterator it_campi
+	   = prbDt->campi.begin();
+   for (; it_campi != prbDt->campi.end(); it_campi++)
+   {
+		GGroup<Professor*>::iterator it_prof
+			= it_campi->professores.begin();
+		for (; it_prof != it_campi->professores.end(); it_prof++)
+		{
+			mapProfessores[it_prof->getIdOperacional()] = (*it_prof);
+		}
+   }
 }
 
 SolucaoOperacional::~SolucaoOperacional()
@@ -50,4 +66,9 @@ int SolucaoOperacional::getIndiceMatriz(int dia, Horario* horario)
 {
 	// TODO -- Retorna índice na matriz referente a um par 'dia / horário de aula'
 	return ((dia-1)*10 + horario->horarioAulaId*100);
+}
+
+ProblemData* SolucaoOperacional::getProblemData() const
+{
+	return problemData;
 }
