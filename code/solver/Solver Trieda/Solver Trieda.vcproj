@@ -729,66 +729,6 @@
 					>
 				</Filter>
 				<Filter
-					Name="Output"
-					>
-					<File
-						RelativePath=".\AtendimentoCampus.cpp"
-						>
-					</File>
-					<File
-						RelativePath=".\AtendimentoDiaSemana.cpp"
-						>
-					</File>
-					<File
-						RelativePath=".\AtendimentoHorarioAula.cpp"
-						>
-					</File>
-					<File
-						RelativePath=".\AtendimentoOferta.cpp"
-						>
-					</File>
-					<File
-						RelativePath=".\AtendimentoSala.cpp"
-						>
-					</File>
-					<File
-						RelativePath=".\AtendimentoTatico.cpp"
-						>
-					</File>
-					<File
-						RelativePath=".\AtendimentoTurno.cpp"
-						>
-					</File>
-					<File
-						RelativePath=".\AtendimentoUnidade.cpp"
-						>
-					</File>
-					<File
-						RelativePath=".\Operacional.cpp"
-						>
-					</File>
-					<File
-						RelativePath=".\ProblemSolution.cpp"
-						>
-					</File>
-					<File
-						RelativePath=".\RestricaoViolada.cpp"
-						>
-					</File>
-					<File
-						RelativePath=".\SolutionLoader.cpp"
-						>
-					</File>
-					<File
-						RelativePath=".\Tatico.cpp"
-						>
-					</File>
-					<File
-						RelativePath=".\TRIEDA-OutputXSD.cpp"
-						>
-					</File>
-				</Filter>
-				<Filter
 					Name="Operational"
 					>
 					<File
@@ -804,6 +744,66 @@
 						>
 					</File>
 				</Filter>
+			</Filter>
+			<Filter
+				Name="Output"
+				>
+				<File
+					RelativePath=".\AtendimentoCampus.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\AtendimentoDiaSemana.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\AtendimentoHorarioAula.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\AtendimentoOferta.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\AtendimentoSala.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\AtendimentoTatico.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\AtendimentoTurno.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\AtendimentoUnidade.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\Operacional.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\ProblemSolution.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\RestricaoViolada.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\SolutionLoader.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\Tatico.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\TRIEDA-OutputXSD.cpp"
+					>
+				</File>
 			</Filter>
 		</Filter>
 		<Filter
