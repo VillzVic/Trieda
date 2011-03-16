@@ -11,7 +11,7 @@ Sala::~Sala(void)
 
 void Sala::le_arvore(ItemSala& elem)
 {
-	id = elem.id();
+	this->setId( elem.id() );
 	codigo = elem.codigo();
 	andar = elem.andar();
 	numero = elem.numero();

@@ -19,6 +19,14 @@ SolucaoOperacional::SolucaoOperacional(ProblemData* prbDt)
 			mapProfessores[it_prof->getIdOperacional()] = (*it_prof);
 		}
    }
+
+   // Map de unidades: dado o id da unidade,
+   // retorna o ponteiro para a respectiva unidade
+   mapUnidades = &( prbDt->refUnidade );	
+
+   // Map de campus: dado o id do campus,
+   // retorna o ponteiro para o respectivo campus
+   mapCampus = &( prbDt->refCampus );	
 }
 
 SolucaoOperacional::~SolucaoOperacional()

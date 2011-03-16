@@ -13,9 +13,11 @@ Horario::~Horario(void)
 
 void Horario::le_arvore(ItemHorario& elem) 
 {
-   ITERA_NSEQ(it_dia,elem.diasSemana(),diaSemana,DiaSemana) {
+   ITERA_NSEQ(it_dia, elem.diasSemana(), diaSemana, DiaSemana)
+   {
       dias_semana.add(*it_dia);
    }
+
    horarioAulaId = elem.horarioAulaId();
    turnoId = elem.turnoId();
 }

@@ -4,7 +4,7 @@
 Campus::Campus(void)
 {
    totalSalas = 0;
-   maiorSala =0;
+   maiorSala  = 0;
 }
 
 Campus::~Campus(void)
@@ -13,7 +13,7 @@ Campus::~Campus(void)
 
 void Campus::le_arvore(ItemCampus& elem) 
 {
-   id = elem.id();
+   this->setId( elem.id() );
    codigo = elem.codigo();
    nome = elem.nome();
 

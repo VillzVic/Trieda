@@ -10,6 +10,6 @@ TipoSala::~TipoSala(void)
 
 void TipoSala::le_arvore(ItemTipoSala& elem)
 {
-   id = elem.id();
+   this->setId( elem.id() );
    nome = elem.nome();
 }

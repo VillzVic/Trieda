@@ -9,6 +9,6 @@ AreaTitulacao::~AreaTitulacao(void)
 }
 void AreaTitulacao::le_arvore(ItemAreaTitulacao& elem)
 {
-   id = elem.id();
+   this->setId( elem.id() );
    nome = elem.nome();
 }

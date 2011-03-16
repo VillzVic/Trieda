@@ -10,6 +10,6 @@ TipoTitulacao::~TipoTitulacao(void)
 
 void TipoTitulacao::le_arvore(ItemTipoTitulacao& elem)
 {
-   id = elem.id();
+   this->setId( elem.id() );
    nome = elem.nome();
 }

@@ -27,7 +27,9 @@ public:
 
    std::string toString() const;
 
-   map<int, Professor*> mapProfessores;
+   std::map<int, Professor*> mapProfessores;
+   std::map<int, Unidade*> * mapUnidades;
+   std::map<int, Campus*> * mapCampus;
 
 private:
    MatrizSolucao* matrizAulas;

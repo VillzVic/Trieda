@@ -626,7 +626,7 @@ void ProblemDataLoader::find_and_set(int id,
                                      T*& needle,bool print = false)
 {
    T* finder = new T;
-   finder->id = id;
+   finder->setId( id );
 
    GGroup<T*>::iterator it_g = haystack.begin();
 

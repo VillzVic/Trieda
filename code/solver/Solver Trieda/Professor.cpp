@@ -10,7 +10,8 @@ Professor::~Professor(void)
 
 void Professor::le_arvore(ItemProfessor& elem)
 {
-   id = elem.id();
+   this->setId( elem.id() );
+
    if(elem.areaTitulacaoId().present())
    {
       area_id = elem.areaTitulacaoId().get();

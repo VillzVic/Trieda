@@ -11,9 +11,11 @@ Calendario::~Calendario(void)
 
 void Calendario::le_arvore(ItemCalendario& elem) 
 {
-   id = elem.id();
+   this->setId( elem.id() );
    codigo = elem.codigo();
-   ITERA_SEQ(it_turno,elem.turnos(),Turno) {
+
+   ITERA_SEQ(it_turno,elem.turnos(),Turno)
+   {
       Turno* turno = new Turno();
       turno->le_arvore(*it_turno);
       turnos.add(turno);

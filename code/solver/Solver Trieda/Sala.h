@@ -1,4 +1,6 @@
-#pragma once
+#ifndef _SALA_H_
+#define _SALA_H_
+
 #include "ofbase.h"
 #include "TipoSala.h"
 #include "Horario.h"
@@ -57,12 +59,12 @@ public:
 
     virtual bool operator < (Sala& right) 
     { 
-       return (id < right.getId());
+       return (getId() < right.getId());
     }
 
     virtual bool operator == (Sala& right)
     { 
-		return (id == right.getId());
+		return (getId() == right.getId());
     }
 
 private:
@@ -84,3 +86,5 @@ private:
     //std::map<int/*dia*/,int/*credsLivres*/> credsLivres;
     //std::vector<int/*credsLivres*/> credsLivres;
 };
+
+#endif

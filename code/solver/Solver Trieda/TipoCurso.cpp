@@ -10,6 +10,6 @@ TipoCurso::~TipoCurso(void)
 
 void TipoCurso::le_arvore(ItemTipoCurso& elem)
 {
-   id = elem.id();
+   this->setId( elem.id() );
    nome = elem.nome();
 }

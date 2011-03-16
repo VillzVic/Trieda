@@ -11,16 +11,16 @@ Disciplina::Disciplina(void)
 
    divisao_creditos = NULL;
 
-	tipo_disciplina = NULL;
-	nivel_dificuldade = NULL;
+   tipo_disciplina = NULL;
+   nivel_dificuldade = NULL;
 
-	//demanda_total = -1;
-	max_demanda = -1;
-	num_turmas = -1;
-	min_creds = -1;
-	max_creds = -1;
+   //demanda_total = -1;
+   max_demanda = -1;
+   num_turmas = -1;
+   min_creds = -1;
+   max_creds = -1;
 
-	//foi_dividida = false;
+   //foi_dividida = false;
 }
 
 Disciplina::~Disciplina(void)
@@ -29,7 +29,7 @@ Disciplina::~Disciplina(void)
 
 void Disciplina::le_arvore(ItemDisciplina& elem)
 {
-   id = elem.id();
+   this->setId( elem.id() );
    codigo = elem.codigo();
    nome = elem.nome();
    cred_teoricos = elem.credTeoricos();
@@ -38,27 +38,37 @@ void Disciplina::le_arvore(ItemDisciplina& elem)
    e_lab = elem.laboratorio();
 
    if(elem.maxAlunosTeorico().present())
+   {
       max_alunos_t = elem.maxAlunosTeorico().get();
+   }
+
    if(elem.maxAlunosPratico().present())
+   {
       max_alunos_p = elem.maxAlunosPratico().get();
+   }
+
    tipo_disciplina_id = elem.tipoDisciplinaId();
    nivel_dificuldade_id = elem.nivelDificuldadeId();
    
    divisao_creditos = NULL;
-   if (elem.divisaoDeCreditos().present()) {
+   if (elem.divisaoDeCreditos().present())
+   {
       divisao_creditos = new DivisaoCreditos();
       divisao_creditos->le_arvore(elem.divisaoDeCreditos().get());
-	}
+   }
 
-   ITERA_NSEQ(it_contem,elem.disciplinasEquivalentes(),id,Identificador) {
+   ITERA_NSEQ(it_contem, elem.disciplinasEquivalentes(), id, Identificador)
+   {
       equivalentes.add(*it_contem);
    }
 
-   ITERA_NSEQ(it_inc,elem.disciplinasIncompativeis(),id,Identificador) {
+   ITERA_NSEQ(it_inc, elem.disciplinasIncompativeis(), id, Identificador)
+   {
       incompativeis.add(*it_inc);
    }
 
-   ITERA_SEQ(it_hora,elem.horariosDisponiveis(),Horario) {
+   ITERA_SEQ(it_hora, elem.horariosDisponiveis(), Horario)
+   {
       Horario* horario = new Horario();
       horario->le_arvore(*it_hora);
       horarios.add(horario);

@@ -6,11 +6,13 @@ DivisaoCreditos::DivisaoCreditos(void)
 
 DivisaoCreditos::DivisaoCreditos(DivisaoCreditos const & div_Creds)
 {
-   this->setId(div_Creds.getId());
+   this->setId( div_Creds.getId() );
    this->creditos = div_Creds.creditos;
-   
+
    for(unsigned d = 0; d < 8; ++d)
-   { this->dia[d] = div_Creds.dia[d]; }
+   {
+	   this->dia[d] = div_Creds.dia[d];
+   }
 }
 
 DivisaoCreditos::~DivisaoCreditos(void)
@@ -19,7 +21,7 @@ DivisaoCreditos::~DivisaoCreditos(void)
 
 void DivisaoCreditos::le_arvore(ItemDivisaoCreditos& elem)
 {
-   id = elem.id();
+   this->setId( elem.id() );
    creditos = elem.creditos();
    dia[0] = elem.dia7();
    dia[1] = elem.dia1();

@@ -10,10 +10,12 @@ HorarioAula::~HorarioAula(void)
 
 void HorarioAula::le_arvore(ItemHorarioAula& elem)
 {
-   id = elem.id();
+   this->setId( elem.id() );
    inicio.setHour(elem.inicio().hours());
    inicio.setMinute(elem.inicio().minutes());
-   ITERA_NSEQ(it_dia,elem.diasSemana(),diaSemana,DiaSemana) {
+
+   ITERA_NSEQ(it_dia, elem.diasSemana(), diaSemana, DiaSemana)
+   {
       diasSemana.add(*it_dia);
    }
 }
