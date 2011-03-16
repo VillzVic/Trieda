@@ -13,10 +13,10 @@ class AtendimentoSala:
 {
 public:
    AtendimentoSala(void);
-   ~AtendimentoSala(void);
+   virtual ~AtendimentoSala(void);
 
    std::string sala_id;
-   GGroup<AtendimentoDiaSemana*> atendimentos_dias_semana;
+   GGroup<AtendimentoDiaSemana*> * atendimentos_dias_semana;
 
    //virtual void escreve_arvore(ItemAtendimentoUnidade& elem);
 

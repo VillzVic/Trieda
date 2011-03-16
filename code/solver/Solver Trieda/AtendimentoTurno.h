@@ -11,10 +11,10 @@ class AtendimentoTurno:
 {
 public:
    AtendimentoTurno(void);
-   ~AtendimentoTurno(void);
+   virtual ~AtendimentoTurno(void);
 
    int turno_id;
-   GGroup<AtendimentoHorarioAula*> atendimentos_horarios_aula;
+   GGroup<AtendimentoHorarioAula*> * atendimentos_horarios_aula;
 
    //virtual void escreve_arvore(ItemAtendimentoUnidade& elem);
 };

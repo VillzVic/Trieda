@@ -12,11 +12,11 @@ class AtendimentoDiaSemana:
 {
 public:
    AtendimentoDiaSemana(void);
-   ~AtendimentoDiaSemana(void);
+   virtual ~AtendimentoDiaSemana(void);
 
    int dia_semana;
-   GGroup<AtendimentoTatico*> atendimentos_tatico;
-   GGroup<AtendimentoTurno*> atendimentos_turno;
+   GGroup<AtendimentoTatico*> * atendimentos_tatico;
+   GGroup<AtendimentoTurno*> * atendimentos_turno;
 
    //virtual void escreve_arvore(ItemAtendimentoUnidade& elem);
 

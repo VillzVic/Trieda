@@ -9,7 +9,7 @@ class AtendimentoOferta:
 {
 public:
    AtendimentoOferta(void);
-   ~AtendimentoOferta(void);
+   virtual ~AtendimentoOferta(void);
 
    std::string oferta_curso_campi_id;
    int disciplina_id;

@@ -58,7 +58,8 @@ public:
    ParametrosPlanejamento* parametros;
    GGroup<Fixacao*> fixacoes;
 
-   GGroup<AtendimentoCampusSolucao*> atendimentosTatico;
+   GGroup<AtendimentoCampusSolucao*> * atendimentosTatico;
+   //--------------------
 
    GGroup<BlocoCurricular*> blocos;
 

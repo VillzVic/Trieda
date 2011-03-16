@@ -4,6 +4,10 @@
 ProblemSolution::ProblemSolution()
 {
    folgas = new RestricaoVioladaGroup();
+   atendimento_campus = new GGroup<AtendimentoCampus*>();
+
+   //folgas = NULL;
+   //atendimento_campus = NULL;
 }
 
 ProblemSolution::~ProblemSolution()
@@ -12,6 +16,12 @@ ProblemSolution::~ProblemSolution()
    {
       folgas->deleteElements();
       delete folgas;
+   }
+
+   if( atendimento_campus != NULL )
+   {
+      atendimento_campus->deleteElements();
+      delete atendimento_campus;
    }
 }
 
@@ -22,36 +32,41 @@ std::ostream& operator << (std::ostream& out, ProblemSolution& solution )
    The XML that describes the output should be written here
    **/
 
-   //out << "<?xml version=\"1.0\" encoding=\"utf-8\"?>" << endl;
-   out << "<?xml version=\"1.0\" encoding=\"ISO-8859-1\" standalone=\"yes\"?>" << endl;
-
-   //out << "<TriedaOutput xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">" << endl;
-   out << "<TriedaOutput>" << endl;
-
-   out << "<atendimentos>" << endl;
-
-   GGroup<AtendimentoCampus*>::GGroupIterator it_campus = solution.atendimento_campus.begin();
-
-   for(; it_campus != solution.atendimento_campus.end(); it_campus++)
+   if(solution.atendimento_campus != NULL)
    {
-      out << **it_campus;
+
+      //out << "<?xml version=\"1.0\" encoding=\"utf-8\"?>" << endl;
+      out << "<?xml version=\"1.0\" encoding=\"ISO-8859-1\" standalone=\"yes\"?>" << endl;
+
+      //out << "<TriedaOutput xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">" << endl;
+      out << "<TriedaOutput>" << endl;
+
+      out << "<atendimentos>" << endl;
+
+      GGroup<AtendimentoCampus*>::GGroupIterator it_campus = solution.atendimento_campus->begin();
+
+      for(; it_campus != solution.atendimento_campus->end(); it_campus++)
+      {
+         out << **it_campus;
+      }
+
+      out << "</atendimentos>" << endl;
+
+      // Folgas:
+      out << "<restricoesVioladas>\n";
+      for (RestricaoVioladaGroup::iterator it = solution.getFolgas()->begin();
+         it != solution.getFolgas()->end(); 
+         ++it)
+         out << **it;
+      out << "</restricoesVioladas>\n";
+
+
+      // Erros e warnings:
+      out << *ErrorHandler::getInstance();
+
+      out << "</TriedaOutput>" << endl;
+
    }
-
-   out << "</atendimentos>" << endl;
-
-   // Folgas:
-   out << "<restricoesVioladas>\n";
-   for (RestricaoVioladaGroup::iterator it = solution.getFolgas()->begin();
-      it != solution.getFolgas()->end(); 
-      ++it)
-      out << **it;
-   out << "</restricoesVioladas>\n";
-
-
-   // Erros e warnings:
-   out << *ErrorHandler::getInstance();
-
-   out << "</TriedaOutput>" << endl;
 
    return out;
 }

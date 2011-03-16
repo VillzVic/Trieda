@@ -2,10 +2,18 @@
 
 AtendimentoHorarioAula::AtendimentoHorarioAula(void)
 {
+   atendimentos_ofertas = new GGroup<AtendimentoOferta*>();
+
+   //atendimentos_ofertas = NULL;
 }
 
 AtendimentoHorarioAula::~AtendimentoHorarioAula(void)
 {
+   if( atendimentos_ofertas != NULL )
+   {
+      atendimentos_ofertas->deleteElements();
+      delete atendimentos_ofertas;
+   }
 }
 
 std::ostream& operator << (std::ostream& out, AtendimentoHorarioAula& horario_aula)
@@ -20,9 +28,11 @@ std::ostream& operator << (std::ostream& out, AtendimentoHorarioAula& horario_au
 
    out << "<atendimentosOfertas>" << endl;
 
-   GGroup<AtendimentoOferta*>::GGroupIterator it_oferta = horario_aula.atendimentos_ofertas.begin();
+   //GGroup<AtendimentoOferta*>::GGroupIterator it_oferta = horario_aula.atendimentos_ofertas.begin();
+   GGroup<AtendimentoOferta*>::GGroupIterator it_oferta = horario_aula.atendimentos_ofertas->begin();
 
-   for(; it_oferta != horario_aula.atendimentos_ofertas.end(); it_oferta++)
+   //for(; it_oferta != horario_aula.atendimentos_ofertas.end(); it_oferta++)
+   for(; it_oferta != horario_aula.atendimentos_ofertas->end(); it_oferta++)
    {
       out << **it_oferta;
    }

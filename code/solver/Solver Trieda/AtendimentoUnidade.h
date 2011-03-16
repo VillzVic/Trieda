@@ -13,10 +13,10 @@ class AtendimentoUnidade:
 {
 public:
    AtendimentoUnidade(void);
-   ~AtendimentoUnidade(void);
+   virtual ~AtendimentoUnidade(void);
 
    std::string unidade_id;
-   GGroup<AtendimentoSala*> atendimentos_salas;
+   GGroup<AtendimentoSala*> * atendimentos_salas;
 
    //virtual void escreve_arvore(ItemAtendimentoUnidade& elem);
 

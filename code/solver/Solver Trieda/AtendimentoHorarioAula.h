@@ -11,12 +11,12 @@ class AtendimentoHorarioAula:
 {
 public:
    AtendimentoHorarioAula(void);
-   ~AtendimentoHorarioAula(void);
+   virtual ~AtendimentoHorarioAula(void);
 
    int horario_aula_id;
    int professor_id;
    bool credito_teorico;
-   GGroup<AtendimentoOferta*> atendimentos_ofertas;
+   GGroup<AtendimentoOferta*> * atendimentos_ofertas;
 
    //virtual void escreve_arvore(ItemAtendimentoUnidade& elem);
 };

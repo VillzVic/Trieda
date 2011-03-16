@@ -32,7 +32,7 @@ public:
    * Default Constructor.
    * @param aProblemData The problem's input data.
    */
-   SolverMIP(ProblemData *aProblemData);
+   SolverMIP(ProblemData *aProblemData, ProblemSolution * _problemSolution);
 
    /** Destructor. */
    ~SolverMIP();
@@ -50,6 +50,21 @@ public:
    void getSolution(ProblemSolution *ps);
 
 private:
+
+   /* Vetor responsável por armazenar ponteiros para todas as variáveis do 
+   tipo V_CREDITOS com credito(s) alocado(s). */
+   typedef vector<Variable*> vars__X___i_d_u_tps_t;
+
+   /* Estrutura responsável por armazenar referências para todas variáveis
+   do tipo V_ALUNOS que possuirem algum valor de atendimento maior que 0. */
+   typedef std::map<std::pair<int/*turma*/,Disciplina*>, vector<Variable*> > vars__A___i_d_o;
+
+   vars__X___i_d_u_tps_t vars_x;
+
+   vars__A___i_d_o vars_a;
+
+   ProblemSolution * problemSolution;
+
    /** The linear problem. */
    OPT_LP *lp;
 
@@ -166,6 +181,25 @@ public:
    
    int localBranching(double *xSol, double maxTime);
 
+   void carregaVariaveisSolucaoTatico();
+
+   /**
+   * Solves the problem.
+   * @return The solution status.
+   */
+   int solveTatico();
+
+   void converteCjtSalaEmSala();
+
+   void getSolutionTatico();
+
+   /**
+   * Solves the problem.
+   * @return The solution status.
+   */
+   int solveOperacional();
+
+   void getSolutionOperacional();
 
 };
 

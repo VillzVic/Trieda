@@ -13,6 +13,8 @@
 
 ProblemData::ProblemData()
 {
+   //atendimentosTatico = new GGroup<AtendimentoCampusSolucao*>(); 
+   atendimentosTatico = NULL;
 }
 
 ProblemData::~ProblemData()
@@ -65,6 +67,8 @@ void ProblemData::le_arvore(TriedaInput& raiz)
    // Se a tag existir (mesmo que esteja em branco) no xml de entrada
    if (raiz.atendimentosTatico().present())
    {
+      atendimentosTatico = new GGroup<AtendimentoCampusSolucao*> ();
+
 	   for (unsigned int i=0;i<raiz.atendimentosTatico().get().AtendimentoCampus().size(); i++)
 	   {
 		   ItemAtendimentoCampusSolucao* it_atendimento
@@ -72,7 +76,7 @@ void ProblemData::le_arvore(TriedaInput& raiz)
 
 		   AtendimentoCampusSolucao* item = new AtendimentoCampusSolucao();
 		   item->le_arvore(*it_atendimento);
-		   atendimentosTatico.add(item);
+		   atendimentosTatico->add(item);
 	   }
    }
 

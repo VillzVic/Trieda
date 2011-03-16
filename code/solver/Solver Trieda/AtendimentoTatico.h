@@ -11,7 +11,7 @@ class AtendimentoTatico:
 {
 public:
 	AtendimentoTatico(void);
-	~AtendimentoTatico(void);
+	virtual ~AtendimentoTatico(void);
 
 	AtendimentoOferta * atendimento_oferta;
 	int qtde_creditos_teoricos;

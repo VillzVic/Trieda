@@ -21,7 +21,7 @@ public:
    ProblemSolution();
 
    //Destructor
-   ~ProblemSolution(); 
+   virtual ~ProblemSolution(); 
 
    //==================================================
    // SET METHODS 
@@ -54,7 +54,7 @@ public:
 
    //GGroup<Oferecimento*> oferecimentos;
 
-   GGroup<AtendimentoCampus*> atendimento_campus;
+   GGroup<AtendimentoCampus*> * atendimento_campus;
 
    // >>>
    //   void addCampus(int id, std::string campusId)

@@ -126,7 +126,8 @@ int main(int argc, char** argv)
 		try
         {
 			// solve the problem
-			solver = new SolverMIP(data);
+			//solver = new SolverMIP(data);
+         solver = new SolverMIP(data,solution);
 			solver->solve();
 			solver->getSolution(solution);
 			delete solver;
@@ -141,7 +142,7 @@ int main(int argc, char** argv)
 
 		 try
          {
-			 writeOutput(solution, outputFile, tempOutput);
+            writeOutput(solution, outputFile, tempOutput);
          }
          catch (int& status)
          {

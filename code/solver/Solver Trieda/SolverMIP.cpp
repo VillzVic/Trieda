@@ -217,9 +217,11 @@ bool ordenaVarsX(Variable * left, Variable * right)
 //#define PRINT_CSV
 // <<<
 
-SolverMIP::SolverMIP(ProblemData *aProblemData)
+SolverMIP::SolverMIP(ProblemData *aProblemData, ProblemSolution * _ProblemSolution)
 :Solver(aProblemData)
 {
+   problemSolution = _ProblemSolution;
+
    alpha = 5.0;
    beta = 10.0;
    gamma = 0;
@@ -257,7 +259,197 @@ SolverMIP::~SolverMIP()
    solVars.clear();
 }
 
-int SolverMIP::solve()
+void SolverMIP::carregaVariaveisSolucaoTatico()
+{
+   double *xSol = NULL;
+   VariableHash::iterator vit;
+
+   SolutionLoader sLoader(problemData, problemSolution);
+
+   xSol = new double[lp->getNumCols()];
+   lp->getX(xSol);
+
+   
+   /*FILE* fin = fopen("solBin.bin","rb");
+
+   int nCols;
+
+   fread(&nCols,sizeof(int),1,fin);
+
+   if ( nCols == lp->getNumCols() )
+   {
+      for (int i =0; i < nCols; i++)
+      {
+         double auxDbl;
+         fread(&auxDbl,sizeof(double),1,fin);
+         xSol[i] = auxDbl;
+      }
+   }
+
+   fclose(fin);*/
+
+   vit = vHash.begin();
+
+#ifdef DEBUG
+   FILE *fout = fopen("solucao.txt","wt");
+#endif
+
+#ifdef PRINT_CSV
+   FILE *f_V_CREDITOS = fopen("./CSV/V_CREDITOS.csv","wt");
+   bool printLegend_V_CREDITOS = true;
+
+   bool printLegend_V_ALUNOS = true;
+   FILE *f_V_ALUNOS = fopen("./CSV/V_ALUNOS.csv","wt");
+#endif
+
+   while (vit != vHash.end())
+   {
+      Variable *v = new Variable(vit->first);
+
+      int col = vit->second;
+
+      v->setValue( xSol[col] );
+
+      if ( v->getValue() > 0.00001 )
+      {
+#ifdef DEBUG
+         char auxName[100];
+         lp->getColName(auxName,col,100);
+         fprintf(fout,"%s = %f\n",auxName,v->getValue());
+#endif
+         switch(v->getType())
+         {
+         case Variable::V_ERROR:
+            std::cout << "Variável inválida " << std::endl;
+            break;
+         case Variable::V_CREDITOS:
+            //cout << "Oferta de " << v->getValue() << 
+            //   " creditos da disciplina " << v->getDisciplina()->codigo
+            //   << " para a turma " << v->getTurma()
+            //   << " no dia " << v->getDia() << " para alguma de sala com capacidade " <<
+            //   v->getSubCjtSala()->getId() << std::endl;
+
+            vars_x.push_back(v);
+
+#ifdef PRINT_CSV
+            if(printLegend_V_CREDITOS){
+               fprintf(f_V_CREDITOS,"Var. x,\t\ti,\td,\tu,\ts,\t\tt,\n");
+               printLegend_V_CREDITOS = false;
+            }
+            // >>> 07/10/2010
+            /*
+            fprintf(f_V_CREDITOS,"%f,\t%d,\t%d,\t%d,\t%d,\t%d,\n",v->getValue(),v->getTurma(),v->getDisciplina()->getId(),
+            v->getUnidade()->getId(),v->getSala()->getId(),v->getDia());
+            */
+            fprintf(f_V_CREDITOS,"%f,\t%d,\t%d,\t%d,\t%d,\t%d,\n",v->getValue(),v->getTurma(),id_disc,
+               v->getUnidade()->getId(),v->getSala()->getId(),v->getDia());
+            // <<< 07/10/2010
+#endif
+            break;
+         case Variable::V_OFERECIMENTO: break;
+         case Variable::V_ABERTURA: break;
+         case Variable::V_ALUNOS:
+            //cout << "Oferecimento de " << v->getValue() << 
+            //   " vagas da disciplina " << v->getDisciplina()->codigo
+            //   << " para a turma " << v->getTurma()
+            //   << " do curso " << v->getOferta()->curso->codigo << std::endl;
+
+            vars_a[std::make_pair(v->getTurma(),v->getDisciplina())].push_back(v);
+
+#ifdef PRINT_CSV
+            if(printLegend_V_ALUNOS){
+               fprintf(f_V_ALUNOS,"Var. a,\t\ti,\td,\tc,\tcp,\n");
+               printLegend_V_ALUNOS = false;
+            }
+
+            // >>> 07/10/2010
+            /*
+            fprintf(f_V_ALUNOS,"%f,\t%d,\t%d,\t%d,\t%d,\n",v->getValue(),v->getTurma(),
+            v->getDisciplina()->getId(),v->getCurso()->getId(),v->getCampus()->getId());
+            */
+            fprintf(f_V_ALUNOS,"%f,\t%d,\t%d,\t%d,\t%d,\n",v->getValue(),v->getTurma(),
+               id_disc,v->getCurso()->getId(),v->getCampus()->getId());
+            // <<< 07/10/2010
+#endif
+            break;
+         case Variable::V_ALOC_ALUNO: break;
+         case Variable::V_N_SUBBLOCOS: break;
+         case Variable::V_DIAS_CONSECUTIVOS: break;
+         case Variable::V_MIN_CRED_SEMANA: break;
+         case Variable::V_MAX_CRED_SEMANA: break;
+         case Variable::V_ALOC_DISCIPLINA: break;
+         case Variable::V_N_ABERT_TURMA_BLOCO: break;
+         case Variable::V_SLACK_DIST_CRED_DIA_SUPERIOR: break;
+         case Variable::V_SLACK_DIST_CRED_DIA_INFERIOR: break;
+         }
+      }
+      vit++;
+   }
+
+   for (vit = vHash.begin(); vit != vHash.end(); ++vit)
+   {
+      Variable* v = new Variable(vit->first);
+      int col = vit->second;
+      v->setValue(xSol[col]);
+      if ( v->getValue() > 0.00001 )
+      {
+         sLoader.setFolgas(v);
+      }
+      delete v;
+   }
+
+#ifdef DEBUG
+   if ( fout )
+      fclose(fout);
+#endif
+
+#ifdef PRINT_CSV
+   if (f_V_CREDITOS)
+      fclose(f_V_CREDITOS);
+
+   if(f_V_ALUNOS)
+      fclose(f_V_ALUNOS);
+#endif
+
+   if ( xSol )
+      delete[] xSol;
+
+   // ---------------------------------------
+   // Imprimindo as variáveis x_{i,d,u,tps,t} coletadas.
+
+   std::cout << "x\t\ti\td\tu\ttps\tt\n";
+
+   ITERA_VECTOR(it_Vars_x,vars_x,Variable)
+   {
+      std::cout << (*it_Vars_x)->getValue() << "\t\t"
+         << (*it_Vars_x)->getTurma() << "\t"
+         << (*it_Vars_x)->getDisciplina()->codigo << "\t"
+         << (*it_Vars_x)->getUnidade()->codigo << "\t"
+         << (*it_Vars_x)->getSubCjtSala()->getId() << "\t"
+         << (*it_Vars_x)->getDia() << "\n";
+   }
+
+   std::cout << "\n\n\n";
+
+   // Imprimindo as variáveis a_{i,d,o} coletadas.
+   std::cout << "a\t\ti\td\to\tCod.Curso\n";
+
+   vars__A___i_d_o::iterator it_Vars_a = vars_a.begin();
+
+   for(; it_Vars_a != vars_a.end(); ++it_Vars_a)
+   {
+      ITERA_VECTOR(it_Vars_a_TEMP,it_Vars_a->second,Variable)
+      {
+         std::cout << (*it_Vars_a_TEMP)->getValue() << "\t\t"
+            << (*it_Vars_a_TEMP)->getTurma() << "\t"
+            << (*it_Vars_a_TEMP)->getDisciplina()->codigo << "\t"
+            << (*it_Vars_a_TEMP)->getOferta()->getId() << "\t"
+            << (*it_Vars_a_TEMP)->getOferta()->curso->codigo << "\n";
+      }
+   }
+}
+
+int SolverMIP::solveTatico()
 {
    int varNum = 0;
    int constNum = 0;
@@ -296,32 +488,23 @@ int SolverMIP::solve()
    //vector<Solucao*> conjunto_de_Solucoes;
 
    //for(int num_Sol = 0; num_Sol < 5; num_Sol++)
-   {
-      //Solucao * sol = new Solucao(*problemData);
-      //Solucao sol (*problemData);
-      //   //sol->geraSolucao();
-      //sol.geraSolucaoSubBlocos();
-      //sol.imprimeInfo();
-      //   cout << "FO: " << sol->demanda_Nao_Atendida << endl;
+   //{
+   //Solucao * sol = new Solucao(*problemData);
+   //Solucao sol (*problemData);
+   //   //sol->geraSolucao();
+   //sol.geraSolucaoSubBlocos();
+   //sol.imprimeInfo();
+   //   cout << "FO: " << sol->demanda_Nao_Atendida << endl;
 
-      //   conjunto_de_Solucoes.push_back(sol);
-   }
+   //   conjunto_de_Solucoes.push_back(sol);
+   //}
 
    //sort(conjunto_de_Solucoes.begin(),conjunto_de_Solucoes.end(),ordenaSolucoes);
 
-
-   //getchar();
-
    // Gerando Soluções - FIM
 
-   //TRIEDA-660
-   //TRIEDA-654
+   int status = 0;
 
-   lp->setTimeLimit(600);
-   lp->setMIPScreenLog(4);
-   int status = lp->optimize(METHOD_MIP);
-
-   /*
    // Muda FO para considerar somente atendimento
    double *objOrig = new double[lp->getNumCols()];
    lp->getObj(0,lp->getNumCols()-1,objOrig);
@@ -413,7 +596,6 @@ int SolverMIP::solve()
    delete[] objOrig;
    delete[] idxNova;
    delete[] xSolInic;
-   */
 
    double *xSol = NULL;
    xSol = new double[lp->getNumCols()];
@@ -426,266 +608,18 @@ int SolverMIP::solve()
    {
       fwrite(&(xSol[i]),sizeof(double),1,fout);
    }
-   
+
    fclose(fout);
 
    delete[] xSol;
 
-   return status;
-}
 
-int SolverMIP::localBranching(double *xSol, double maxTime)
-{
-   // Adiciona restrição de local branching
-   int status = 0;
-   int nIter = 0;
-   int *idxSol = new int[lp->getNumCols()];
-
-   for (int i=0; i < lp->getNumCols(); i++)
-   {
-      idxSol[i] = i;
-   }
-
-   while (nIter < 3)
-   {
-      //if ( maxTime - actTime < 100 )
-      //   break;
-
-      VariableHash::iterator vit = vHash.begin();
-
-      OPT_ROW nR(100,OPT_ROW::GREATER,0.0,"LOCBRANCH");
-      double rhsLB = -5000 ;//+ nIter * 2;
-
-      while (vit != vHash.end())
-      {
-         if ( vit->first.getType() == Variable::V_OFERECIMENTO )
-         {
-            if ( xSol[vit->second] > 0.1 )
-            {
-               rhsLB += 1.0;
-               nR.insert(vit->second,1.0);
-            }
-            else
-            {
-               nR.insert(vit->second,-1.0);
-            }
-         }
-
-         vit++;
-      }
-
-      nR.setRhs(rhsLB);
-      lp->addRow(nR);
-
-      lp->updateLP();
-
-      lp->setNodeLimit(100000000);
-      lp->setTimeLimit(1200);
-      lp->setNodeLimit(1);
-      lp->setMIPEmphasis(1);
-      lp->setHeurFrequency(1.0);
-      
-      //lp->setTimeLimit((int)(maxTime - actTime));
-      //lp->setNoCuts();
-
-      lp->copyMIPStartSol(lp->getNumCols(),idxSol,xSol);
-
-      status = lp->optimize(METHOD_MIP);
-
-      if ( nIter == 2 )
-         break;
-
-      lp->getX(xSol);
-
-      int *idxs = new int[1];
-      idxs[0] = lp->getNumRows() - 1;
-      lp->delSetRows(1,idxs);
-      lp->updateLP();
-      delete[] idxs;
-      nIter++;
-      //break;
-   }
-
-   delete[] idxSol;
 
    return status;
 }
 
-void SolverMIP::getSolution(ProblemSolution *problemSolution)
+void SolverMIP::converteCjtSalaEmSala()
 {
-   double *xSol = NULL;
-   VariableHash::iterator vit;
-
-   SolutionLoader sLoader(problemData, problemSolution);
-
-   xSol = new double[lp->getNumCols()];
-   lp->getX(xSol);
-
-   
-   /*FILE* fin = fopen("solBin.bin","rb");
-
-   int nCols;
-
-   fread(&nCols,sizeof(int),1,fin);
-
-   if ( nCols == lp->getNumCols() )
-   {
-      for (int i =0; i < nCols; i++)
-      {
-         double auxDbl;
-         fread(&auxDbl,sizeof(double),1,fin);
-         xSol[i] = auxDbl;
-      }
-   }
-
-   fclose(fin);*/
-   
-
-   vit = vHash.begin();
-
-#ifdef DEBUG
-   FILE *fout = fopen("solucao.txt","wt");
-#endif
-
-#ifdef PRINT_CSV
-   FILE *f_V_CREDITOS = fopen("./CSV/V_CREDITOS.csv","wt");
-   bool printLegend_V_CREDITOS = true;
-
-   bool printLegend_V_ALUNOS = true;
-   FILE *f_V_ALUNOS = fopen("./CSV/V_ALUNOS.csv","wt");
-#endif
-
-
-   /* Vetor responsável por armazenar ponteiros para todas as variáveis do 
-   tipo V_CREDITOS com credito(s) alocado(s). */
-   typedef vector<Variable*> vars__X___i_d_u_tps_t;
-
-   vars__X___i_d_u_tps_t vars_x;
-
-   /* Estrutura responsável por armazenar referências para todas variáveis
-   do tipo V_ALUNOS que possuirem algum valor de atendimento maior que 0. */
-   typedef std::map<std::pair<int/*turma*/,Disciplina*>, vector<Variable*> > vars__A___i_d_o;
-
-   vars__A___i_d_o vars_a;
-
-   while (vit != vHash.end())
-   {
-      Variable *v = new Variable(vit->first);
-
-      int col = vit->second;
-
-      v->setValue( xSol[col] );
-
-      if ( v->getValue() > 0.00001 )
-      {
-#ifdef DEBUG
-         char auxName[100];
-         lp->getColName(auxName,col,100);
-         fprintf(fout,"%s = %f\n",auxName,v->getValue());
-#endif
-         switch(v->getType())
-         {
-         case Variable::V_ERROR:
-            std::cout << "Variável inválida " << std::endl;
-            break;
-         case Variable::V_CREDITOS:
-            //cout << "Oferta de " << v->getValue() << 
-            //   " creditos da disciplina " << v->getDisciplina()->codigo
-            //   << " para a turma " << v->getTurma()
-            //   << " no dia " << v->getDia() << " para alguma de sala com capacidade " <<
-            //   v->getSubCjtSala()->getId() << std::endl;
-
-            vars_x.push_back(v);
-
-#ifdef PRINT_CSV
-            if(printLegend_V_CREDITOS){
-               fprintf(f_V_CREDITOS,"Var. x,\t\ti,\td,\tu,\ts,\t\tt,\n");
-               printLegend_V_CREDITOS = false;
-            }
-            // >>> 07/10/2010
-            /*
-            fprintf(f_V_CREDITOS,"%f,\t%d,\t%d,\t%d,\t%d,\t%d,\n",v->getValue(),v->getTurma(),v->getDisciplina()->getId(),
-            v->getUnidade()->getId(),v->getSala()->getId(),v->getDia());
-            */
-            fprintf(f_V_CREDITOS,"%f,\t%d,\t%d,\t%d,\t%d,\t%d,\n",v->getValue(),v->getTurma(),id_disc,
-               v->getUnidade()->getId(),v->getSala()->getId(),v->getDia());
-            // <<< 07/10/2010
-#endif
-            break;
-         case Variable::V_OFERECIMENTO: break;
-         case Variable::V_ABERTURA: break;
-         case Variable::V_ALUNOS:
-            //cout << "Oferecimento de " << v->getValue() << 
-            //   " vagas da disciplina " << v->getDisciplina()->codigo
-            //   << " para a turma " << v->getTurma()
-            //   << " do curso " << v->getOferta()->curso->codigo << std::endl;
-
-            vars_a[std::make_pair(v->getTurma(),v->getDisciplina())].push_back(v);
-
-#ifdef PRINT_CSV
-            if(printLegend_V_ALUNOS){
-               fprintf(f_V_ALUNOS,"Var. a,\t\ti,\td,\tc,\tcp,\n");
-               printLegend_V_ALUNOS = false;
-            }
-
-            // >>> 07/10/2010
-            /*
-            fprintf(f_V_ALUNOS,"%f,\t%d,\t%d,\t%d,\t%d,\n",v->getValue(),v->getTurma(),
-            v->getDisciplina()->getId(),v->getCurso()->getId(),v->getCampus()->getId());
-            */
-            fprintf(f_V_ALUNOS,"%f,\t%d,\t%d,\t%d,\t%d,\n",v->getValue(),v->getTurma(),
-               id_disc,v->getCurso()->getId(),v->getCampus()->getId());
-            // <<< 07/10/2010
-#endif
-            break;
-         case Variable::V_ALOC_ALUNO: break;
-         case Variable::V_N_SUBBLOCOS: break;
-         case Variable::V_DIAS_CONSECUTIVOS: break;
-         case Variable::V_MIN_CRED_SEMANA: break;
-         case Variable::V_MAX_CRED_SEMANA: break;
-         case Variable::V_ALOC_DISCIPLINA: break;
-         case Variable::V_N_ABERT_TURMA_BLOCO: break;
-         case Variable::V_SLACK_DIST_CRED_DIA_SUPERIOR: break;
-         case Variable::V_SLACK_DIST_CRED_DIA_INFERIOR: break;
-         }
-      }
-      vit++;
-   }
-
-   // ---------------------------------------
-   // Imprimindo as variáveis x_{i,d,u,tps,t} coletadas.
-
-   std::cout << "x\t\ti\td\tu\ttps\tt\n";
-
-   ITERA_VECTOR(it_Vars_x,vars_x,Variable)
-   {
-      std::cout << (*it_Vars_x)->getValue() << "\t\t"
-         << (*it_Vars_x)->getTurma() << "\t"
-         << (*it_Vars_x)->getDisciplina()->codigo << "\t"
-         << (*it_Vars_x)->getUnidade()->codigo << "\t"
-         << (*it_Vars_x)->getSubCjtSala()->getId() << "\t"
-         << (*it_Vars_x)->getDia() << "\n";
-   }
-
-   std::cout << "\n\n\n";
-
-   // Imprimindo as variáveis a_{i,d,o} coletadas.
-   std::cout << "a\t\ti\td\to\tCod.Curso\n";
-
-   vars__A___i_d_o::iterator it_Vars_a = vars_a.begin();
-
-   for(; it_Vars_a != vars_a.end(); ++it_Vars_a)
-   {
-      ITERA_VECTOR(it_Vars_a_TEMP,it_Vars_a->second,Variable)
-      {
-         std::cout << (*it_Vars_a_TEMP)->getValue() << "\t\t"
-            << (*it_Vars_a_TEMP)->getTurma() << "\t"
-            << (*it_Vars_a_TEMP)->getDisciplina()->codigo << "\t"
-            << (*it_Vars_a_TEMP)->getOferta()->getId() << "\t"
-            << (*it_Vars_a_TEMP)->getOferta()->curso->codigo << "\n";
-      }
-   }
-
    // ---------------------------------------
 
    // POS PROCESSAMENTO
@@ -813,7 +747,7 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
          ITERA_VECTOR(it_Vars_x_Disc,vars_x_Disc,Variable)
          {
             std::vector<int/*Unidade,TPS,Turma*/> chave;
-            
+
             chave.push_back((*it_Vars_x_Disc)->getUnidade()->getId());
             chave.push_back((*it_Vars_x_Disc)->getSubCjtSala()->getId());
             chave.push_back((*it_Vars_x_Disc)->getTurma());
@@ -1069,7 +1003,7 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
             }
 
             std::map<std::vector<int/*Unidade,TPS,Turma,Dia*/>, Variable*>::iterator
-            //std::map<std::vector<int/*Unidade,TPS,Turma,Dia*/>, std::vector<Variable*> >::iterator
+               //std::map<std::vector<int/*Unidade,TPS,Turma,Dia*/>, std::vector<Variable*> >::iterator
                it_Vars_x_Disc_Und_TPS_Turma_DIA = vars_x_Disc_Und_TPS_Turma_DIA.begin();
 
             // Iterando em cada variavel da estrutura <vars_x_Disc_Und_TPS_Turma_DIA>
@@ -1084,9 +1018,9 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
                   // Checando se a sala em questão pertence ao TPS especificado pelo solver
                   /*
                   if((*it_Vars_x_Disc_Und_TPS_Turma_DIA->second.begin())->getSubCjtSala()->getTodasSalas().find(
-                     (*it_Salas_Ordenadas)->getId()) != 
-                     (*it_Vars_x_Disc_Und_TPS_Turma_DIA->second.begin())->getSubCjtSala()->getTodasSalas().end())
-                     */
+                  (*it_Salas_Ordenadas)->getId()) != 
+                  (*it_Vars_x_Disc_Und_TPS_Turma_DIA->second.begin())->getSubCjtSala()->getTodasSalas().end())
+                  */
                   if(it_Vars_x_Disc_Und_TPS_Turma_DIA->second->getSubCjtSala()->getTodasSalas().find(
                      (*it_Salas_Ordenadas)->getId()) != 
                      it_Vars_x_Disc_Und_TPS_Turma_DIA->second->getSubCjtSala()->getTodasSalas().end())
@@ -1345,7 +1279,10 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
          << (*it_Vars_x)->getSala()->getId() << "\t"
          << (*it_Vars_x)->getDia() << "\n";
    }
+}
 
+void SolverMIP::getSolutionTatico()
+{
    // POVOANDO AS CLASSES DE SAIDA
 
    // Iterando sobre as variáveis do tipo x.
@@ -1355,7 +1292,8 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
       Campus * campus = problemData->refCampus[(*it_Vars_x)->getUnidade()->id_campus];
 
       // Caso básico: Ainda não cadastrei nenhum Campus.
-      if(problemSolution->atendimento_campus.size() == 0)
+      //if(problemSolution->atendimento_campus.size() == 0)
+      if(problemSolution->atendimento_campus != NULL)
       {
          AtendimentoCampus * at_Campus = new AtendimentoCampus();
          at_Campus->setId(campus->getId());
@@ -1385,45 +1323,56 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
             // Verificando se a disicplina é de carater prático ou teórico.
             if((*it_Vars_x)->getDisciplina()->getId() > 0 && (*it_Vars_x)->getDisciplina()->cred_teoricos > 0)
             {
-				at_Tatico->qtde_creditos_teoricos = (int)(*it_Vars_x)->getValue();
-			}
+               at_Tatico->qtde_creditos_teoricos = (int)(*it_Vars_x)->getValue();
+            }
             else
             {
-				at_Tatico->qtde_creditos_praticos = (int)(*it_Vars_x)->getValue();
-			}
+               at_Tatico->qtde_creditos_praticos = (int)(*it_Vars_x)->getValue();
+            }
 
             AtendimentoOferta * at_Oferta = new AtendimentoOferta();
 
-            int id_Disc = ((*it_Vars_a)->getOferta()->getId() > 0) ?
-               (*it_Vars_a)->getOferta()->getId() : -((*it_Vars_a)->getOferta()->getId());
+            stringstream str;
+            str << (*it_Vars_a)->getOferta()->getId();
+            at_Oferta->oferta_curso_campi_id = str.str();
 
-            char buffer [10000];
-            itoa(id_Disc,buffer,10);
+            at_Oferta->disciplina_id = 
+               ((*it_Vars_a)->getDisciplina()->getId() > 0 ? 
+               (*it_Vars_a)->getDisciplina()->getId() :
+            (-(*it_Vars_a)->getDisciplina()->getId()));
 
-            at_Oferta->oferta_curso_campi_id = buffer;
-            at_Oferta->disciplina_id = (*it_Vars_a)->getDisciplina()->id;
             at_Oferta->quantidade = (int)((*it_Vars_a)->getValue());
             at_Oferta->turma = (*it_Vars_a)->getTurma();
 
             at_Tatico->atendimento_oferta = at_Oferta;
 
-            at_Dia_Semana->atendimentos_tatico.add(at_Tatico);
+            //at_Dia_Semana->atendimentos_tatico.add(at_Tatico);
+            at_Dia_Semana->atendimentos_tatico->add(at_Tatico);
          }
 
-         at_Sala->atendimentos_dias_semana.add(at_Dia_Semana);
-         at_Unidade->atendimentos_salas.add(at_Sala);
-         at_Campus->atendimentos_unidades.add(at_Unidade);
-         problemSolution->atendimento_campus.add(at_Campus);
+         //at_Sala->atendimentos_dias_semana.add(at_Dia_Semana);
+         //at_Unidade->atendimentos_salas.add(at_Sala);
+         //at_Campus->atendimentos_unidades.add(at_Unidade);
+
+         at_Sala->atendimentos_dias_semana->add(at_Dia_Semana);
+         at_Unidade->atendimentos_salas->add(at_Sala);
+         at_Campus->atendimentos_unidades->add(at_Unidade);
+
+         
+         //problemSolution->atendimento_campus.add(at_Campus);
+         problemSolution->atendimento_campus->add(at_Campus);
       }
       else
       {
          bool novo_Campus = true;
 
-         ITERA_GGROUP(it_At_Campus,problemSolution->atendimento_campus,AtendimentoCampus)
+         //ITERA_GGROUP(it_At_Campus,problemSolution->atendimento_campus,AtendimentoCampus)
+         ITERA_GGROUP(it_At_Campus,*problemSolution->atendimento_campus,AtendimentoCampus)
          {
             if(it_At_Campus->getId() == campus->getId())
             {
-               if(it_At_Campus->atendimentos_unidades.size() == 0)
+               //if(it_At_Campus->atendimentos_unidades.size() == 0)
+               if(it_At_Campus->atendimentos_unidades->size() == 0)
                {
                   std::cout << "Achei que nao era pra cair aqui <dbg1>" << std::endl;
                   exit(1);
@@ -1435,11 +1384,13 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
 
                   bool nova_Unidade = true;
 
-                  ITERA_GGROUP(it_At_Unidade,it_At_Campus->atendimentos_unidades,AtendimentoUnidade)
+                  //ITERA_GGROUP(it_At_Unidade,it_At_Campus->atendimentos_unidades,AtendimentoUnidade)
+                  ITERA_GGROUP(it_At_Unidade,*it_At_Campus->atendimentos_unidades,AtendimentoUnidade)
                   {
                      if(it_At_Unidade->getId() == unidade->getId())
                      {
-                        if(it_At_Unidade->atendimentos_salas.size() == 0)
+                        //if(it_At_Unidade->atendimentos_salas.size() == 0)
+                        if(it_At_Unidade->atendimentos_salas->size() == 0)
                         {
                            std::cout << "Achei que nao era pra cair aqui <dbg2>" << std::endl;
                            exit(1);
@@ -1451,11 +1402,13 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
 
                            bool nova_Sala = true;
 
-                           ITERA_GGROUP(it_At_Sala,it_At_Unidade->atendimentos_salas,AtendimentoSala)
+                           //ITERA_GGROUP(it_At_Sala,it_At_Unidade->atendimentos_salas,AtendimentoSala)
+                           ITERA_GGROUP(it_At_Sala,*it_At_Unidade->atendimentos_salas,AtendimentoSala)
                            {
                               if(it_At_Sala->getId() == sala->getId())
                               {
-                                 if(it_At_Sala->atendimentos_dias_semana.size() == 0)
+                                 //if(it_At_Sala->atendimentos_dias_semana.size() == 0)
+                                 if(it_At_Sala->atendimentos_dias_semana->size() == 0)
                                  {
                                     std::cout << "Achei que nao era pra cair aqui <dbg3>" << std::endl;
                                     exit(1);
@@ -1467,11 +1420,13 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
 
                                     bool novo_Dia = true;
 
-                                    ITERA_GGROUP(it_At_Dia,it_At_Sala->atendimentos_dias_semana,AtendimentoDiaSemana)
+                                    //ITERA_GGROUP(it_At_Dia,it_At_Sala->atendimentos_dias_semana,AtendimentoDiaSemana)
+                                    ITERA_GGROUP(it_At_Dia,*it_At_Sala->atendimentos_dias_semana,AtendimentoDiaSemana)
                                     {
                                        if(it_At_Dia->dia_semana == dia)
                                        {
-                                          if(it_At_Dia->atendimentos_tatico.size() == 0)
+                                          //if(it_At_Dia->atendimentos_tatico.size() == 0)
+                                          if(it_At_Dia->atendimentos_tatico->size() == 0)
                                           {
                                              std::cout << "Achei que nao era pra cair aqui <dbg4>" << std::endl;
                                              exit(1);
@@ -1491,29 +1446,31 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
                                                 // Verificando se a disicplina é de carater prático ou teórico.
                                                 if((*it_Vars_x)->getDisciplina()->getId() > 0 && (*it_Vars_x)->getDisciplina()->cred_teoricos > 0)
                                                 {
-													at_Tatico->qtde_creditos_teoricos = (int)((*it_Vars_x)->getValue());
-												}
+                                                   at_Tatico->qtde_creditos_teoricos = (int)((*it_Vars_x)->getValue());
+                                                }
                                                 else
                                                 {
-													at_Tatico->qtde_creditos_praticos = (int)((*it_Vars_x)->getValue());
-												}
+                                                   at_Tatico->qtde_creditos_praticos = (int)((*it_Vars_x)->getValue());
+                                                }
 
-                                                AtendimentoOferta * at_Oferta = new AtendimentoOferta();
+            AtendimentoOferta * at_Oferta = new AtendimentoOferta();
 
-                                                int id_Disc = ((*it_Vars_a)->getOferta()->getId() > 0) ?
-                                                   (*it_Vars_a)->getOferta()->getId() : -((*it_Vars_a)->getOferta()->getId());
+            stringstream str;
+            str << (*it_Vars_a)->getOferta()->getId();
+            at_Oferta->oferta_curso_campi_id = str.str();
 
-                                                char buffer [10000];
-                                                itoa(id_Disc,buffer,10);
+            at_Oferta->disciplina_id = 
+               ((*it_Vars_a)->getDisciplina()->getId() > 0 ? 
+               (*it_Vars_a)->getDisciplina()->getId() :
+            (-(*it_Vars_a)->getDisciplina()->getId()));
 
-                                                at_Oferta->oferta_curso_campi_id = buffer;
-                                                at_Oferta->disciplina_id = (*it_Vars_a)->getDisciplina()->id;
                                                 at_Oferta->quantidade = (int)((*it_Vars_a)->getValue());
                                                 at_Oferta->turma = (*it_Vars_a)->getTurma();
 
                                                 at_Tatico->atendimento_oferta = at_Oferta;
 
-                                                it_At_Dia->atendimentos_tatico.add(at_Tatico);
+                                                //it_At_Dia->atendimentos_tatico.add(at_Tatico);
+                                                it_At_Dia->atendimentos_tatico->add(at_Tatico);
                                              }
                                           }
 
@@ -1538,32 +1495,35 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
                                           // Verificando se a disicplina é de carater prático ou teórico.
                                           if((*it_Vars_x)->getDisciplina()->getId() > 0 && (*it_Vars_x)->getDisciplina()->cred_teoricos > 0)
                                           {
-											  at_Tatico->qtde_creditos_teoricos = (int)((*it_Vars_x)->getValue());
-										  }
+                                             at_Tatico->qtde_creditos_teoricos = (int)((*it_Vars_x)->getValue());
+                                          }
                                           else
                                           {
-											  at_Tatico->qtde_creditos_praticos = (int)((*it_Vars_x)->getValue());
-										  }
+                                             at_Tatico->qtde_creditos_praticos = (int)((*it_Vars_x)->getValue());
+                                          }
 
-                                          AtendimentoOferta * at_Oferta = new AtendimentoOferta();
+            AtendimentoOferta * at_Oferta = new AtendimentoOferta();
 
-                                          int id_Disc = ((*it_Vars_a)->getOferta()->getId() > 0) ?
-                                             (*it_Vars_a)->getOferta()->getId() : -((*it_Vars_a)->getOferta()->getId());
+            stringstream str;
+            str << (*it_Vars_a)->getOferta()->getId();
+            at_Oferta->oferta_curso_campi_id = str.str();
 
-                                          char buffer [10000];
-                                          itoa(id_Disc,buffer,10);
+            at_Oferta->disciplina_id = 
+               ((*it_Vars_a)->getDisciplina()->getId() > 0 ? 
+               (*it_Vars_a)->getDisciplina()->getId() :
+            (-(*it_Vars_a)->getDisciplina()->getId()));
 
-                                          at_Oferta->oferta_curso_campi_id = buffer;
-                                          at_Oferta->disciplina_id = (*it_Vars_a)->getDisciplina()->id;
                                           at_Oferta->quantidade = (int)((*it_Vars_a)->getValue());
                                           at_Oferta->turma = (*it_Vars_a)->getTurma();
 
                                           at_Tatico->atendimento_oferta = at_Oferta;
 
-                                          at_Dia_Semana->atendimentos_tatico.add(at_Tatico);
+                                          //at_Dia_Semana->atendimentos_tatico.add(at_Tatico);
+                                          at_Dia_Semana->atendimentos_tatico->add(at_Tatico);
                                        }
 
-                                       it_At_Sala->atendimentos_dias_semana.add(at_Dia_Semana);
+                                       //it_At_Sala->atendimentos_dias_semana.add(at_Dia_Semana);
+                                       it_At_Sala->atendimentos_dias_semana->add(at_Dia_Semana);
                                     }
                                  }
 
@@ -1593,33 +1553,37 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
                                  // Verificando se a disicplina é de carater prático ou teórico.
                                  if((*it_Vars_x)->getDisciplina()->getId() > 0 && (*it_Vars_x)->getDisciplina()->cred_teoricos > 0)
                                  {
-									 at_Tatico->qtde_creditos_teoricos = (int)((*it_Vars_x)->getValue());
-								 }
+                                    at_Tatico->qtde_creditos_teoricos = (int)((*it_Vars_x)->getValue());
+                                 }
                                  else
                                  {
-									 at_Tatico->qtde_creditos_praticos = (int)((*it_Vars_x)->getValue());
-								 }
+                                    at_Tatico->qtde_creditos_praticos = (int)((*it_Vars_x)->getValue());
+                                 }
 
-                                 AtendimentoOferta * at_Oferta = new AtendimentoOferta();
+            AtendimentoOferta * at_Oferta = new AtendimentoOferta();
 
-                                 int id_Disc = ((*it_Vars_a)->getOferta()->getId() > 0) ?
-                                    (*it_Vars_a)->getOferta()->getId() : -((*it_Vars_a)->getOferta()->getId());
+            stringstream str;
+            str << (*it_Vars_a)->getOferta()->getId();
+            at_Oferta->oferta_curso_campi_id = str.str();
 
-                                 char buffer [10000];
-                                 itoa(id_Disc,buffer,10);
+            at_Oferta->disciplina_id = 
+               ((*it_Vars_a)->getDisciplina()->getId() > 0 ? 
+               (*it_Vars_a)->getDisciplina()->getId() :
+            (-(*it_Vars_a)->getDisciplina()->getId()));
 
-                                 at_Oferta->oferta_curso_campi_id = buffer;
-                                 at_Oferta->disciplina_id = (*it_Vars_a)->getDisciplina()->id;
                                  at_Oferta->quantidade = (int)((*it_Vars_a)->getValue());
                                  at_Oferta->turma = (*it_Vars_a)->getTurma();
 
                                  at_Tatico->atendimento_oferta = at_Oferta;
 
-                                 at_Dia_Semana->atendimentos_tatico.add(at_Tatico);
+                                 //at_Dia_Semana->atendimentos_tatico.add(at_Tatico);
+                                 at_Dia_Semana->atendimentos_tatico->add(at_Tatico);
                               }
 
-                              at_Sala->atendimentos_dias_semana.add(at_Dia_Semana);
-                              it_At_Unidade->atendimentos_salas.add(at_Sala);
+                              //at_Sala->atendimentos_dias_semana.add(at_Dia_Semana);
+                              at_Sala->atendimentos_dias_semana->add(at_Dia_Semana);
+                              //it_At_Unidade->atendimentos_salas.add(at_Sala);
+                              it_At_Unidade->atendimentos_salas->add(at_Sala);
                            }
                         }
 
@@ -1654,37 +1618,43 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
                         // Verificando se a disicplina é de carater prático ou teórico.
                         if((*it_Vars_x)->getDisciplina()->getId() > 0 && (*it_Vars_x)->getDisciplina()->cred_teoricos > 0)
                         {
-							at_Tatico->qtde_creditos_teoricos = (int)((*it_Vars_x)->getValue());
-						}
+                           at_Tatico->qtde_creditos_teoricos = (int)((*it_Vars_x)->getValue());
+                        }
                         else
                         {
-							at_Tatico->qtde_creditos_praticos = (int)((*it_Vars_x)->getValue());
-						}
+                           at_Tatico->qtde_creditos_praticos = (int)((*it_Vars_x)->getValue());
+                        }
 
-                        AtendimentoOferta * at_Oferta = new AtendimentoOferta();
+            AtendimentoOferta * at_Oferta = new AtendimentoOferta();
 
-                        int id_Disc = ((*it_Vars_a)->getOferta()->getId() > 0) ?
-                           (*it_Vars_a)->getOferta()->getId() : -((*it_Vars_a)->getOferta()->getId());
+            stringstream str;
+            str << (*it_Vars_a)->getOferta()->getId();
+            at_Oferta->oferta_curso_campi_id = str.str();
 
-                        char buffer [10000];
-                        itoa(id_Disc,buffer,10);
+            at_Oferta->disciplina_id = 
+               ((*it_Vars_a)->getDisciplina()->getId() > 0 ? 
+               (*it_Vars_a)->getDisciplina()->getId() :
+            (-(*it_Vars_a)->getDisciplina()->getId()));
 
-                        at_Oferta->oferta_curso_campi_id = buffer;
-                        at_Oferta->disciplina_id = (*it_Vars_a)->getDisciplina()->id;
                         at_Oferta->quantidade = (int)((*it_Vars_a)->getValue());
                         at_Oferta->turma = (*it_Vars_a)->getTurma();
 
                         at_Tatico->atendimento_oferta = at_Oferta;
 
-                        at_Dia_Semana->atendimentos_tatico.add(at_Tatico);
+                        //at_Dia_Semana->atendimentos_tatico.add(at_Tatico);
+                        at_Dia_Semana->atendimentos_tatico->add(at_Tatico);
                      }
 
-                     at_Sala->atendimentos_dias_semana.add(at_Dia_Semana);
-                     at_Unidade->atendimentos_salas.add(at_Sala);
-                     it_At_Campus->atendimentos_unidades.add(at_Unidade);
+                     //at_Sala->atendimentos_dias_semana.add(at_Dia_Semana);
+                     //at_Unidade->atendimentos_salas.add(at_Sala);
+                     //it_At_Campus->atendimentos_unidades.add(at_Unidade);
+
+                     at_Sala->atendimentos_dias_semana->add(at_Dia_Semana);
+                     at_Unidade->atendimentos_salas->add(at_Sala);
+                     it_At_Campus->atendimentos_unidades->add(at_Unidade);
                   }
                }
-               
+
                novo_Campus = false;
                break;
             }
@@ -1720,66 +1690,203 @@ void SolverMIP::getSolution(ProblemSolution *problemSolution)
                // Verificando se a disicplina é de carater prático ou teórico.
                if((*it_Vars_x)->getDisciplina()->getId() > 0 && (*it_Vars_x)->getDisciplina()->cred_teoricos > 0)
                {
-				   at_Tatico->qtde_creditos_teoricos = (int)((*it_Vars_x)->getValue());
-			   }
+                  at_Tatico->qtde_creditos_teoricos = (int)((*it_Vars_x)->getValue());
+               }
                else
                {
-				   at_Tatico->qtde_creditos_praticos = (int)((*it_Vars_x)->getValue());
-			   }
+                  at_Tatico->qtde_creditos_praticos = (int)((*it_Vars_x)->getValue());
+               }
 
-               AtendimentoOferta * at_Oferta = new AtendimentoOferta();
+            AtendimentoOferta * at_Oferta = new AtendimentoOferta();
 
-               int id_Disc = ((*it_Vars_a)->getOferta()->getId() > 0) ?
-                  (*it_Vars_a)->getOferta()->getId() : -((*it_Vars_a)->getOferta()->getId());
+            stringstream str;
+            str << (*it_Vars_a)->getOferta()->getId();
+            at_Oferta->oferta_curso_campi_id = str.str();
 
-               char buffer [10000];
-               itoa(id_Disc,buffer,10);
+            at_Oferta->disciplina_id = 
+               ((*it_Vars_a)->getDisciplina()->getId() > 0 ? 
+               (*it_Vars_a)->getDisciplina()->getId() :
+            (-(*it_Vars_a)->getDisciplina()->getId()));
 
-               at_Oferta->oferta_curso_campi_id = buffer;
-               at_Oferta->disciplina_id = (*it_Vars_a)->getDisciplina()->id;
                at_Oferta->quantidade = (int)((*it_Vars_a)->getValue());
                at_Oferta->turma = (*it_Vars_a)->getTurma();
 
                at_Tatico->atendimento_oferta = at_Oferta;
 
-               at_Dia_Semana->atendimentos_tatico.add(at_Tatico);
+               //at_Dia_Semana->atendimentos_tatico.add(at_Tatico);
+               at_Dia_Semana->atendimentos_tatico->add(at_Tatico);
             }
 
-            at_Sala->atendimentos_dias_semana.add(at_Dia_Semana);
-            at_Unidade->atendimentos_salas.add(at_Sala);
-            at_Campus->atendimentos_unidades.add(at_Unidade);
-            problemSolution->atendimento_campus.add(at_Campus);
+            //at_Sala->atendimentos_dias_semana.add(at_Dia_Semana);
+            //at_Unidade->atendimentos_salas.add(at_Sala);
+            //at_Campus->atendimentos_unidades.add(at_Unidade);
+
+            at_Sala->atendimentos_dias_semana->add(at_Dia_Semana);
+            at_Unidade->atendimentos_salas->add(at_Sala);
+            at_Campus->atendimentos_unidades->add(at_Unidade);
+            
+            //problemSolution->atendimento_campus.add(at_Campus);
+            problemSolution->atendimento_campus->add(at_Campus);
          }
       }
    }
+}
 
-   for (vit = vHash.begin(); vit != vHash.end(); ++vit)
+int SolverMIP::solveOperacional()
+{
+   std::cout << "Implementar <SolverMIP::solveOperacional()>" << std::endl;
+   exit(1);
+   return -1;
+}
+
+void SolverMIP::getSolutionOperacional()
+{
+   std::cout << "Implementar <SolverMIP::getSolutionOperacional()>" << std::endl;
+   exit(1);
+}
+
+int SolverMIP::solve()
+{
+   int status = 0;
+
+   if(problemData->parametros->modo_otimizacao == "TATICO" && problemData->atendimentosTatico == NULL)
    {
-      Variable* v = new Variable(vit->first);
-      int col = vit->second;
-      v->setValue(xSol[col]);
-      if ( v->getValue() > 0.00001 )
+      status = solveTatico();
+      carregaVariaveisSolucaoTatico();
+      converteCjtSalaEmSala();
+   }
+   else if(problemData->parametros->modo_otimizacao == "OPERACIONAL")
+   {
+      if(problemData->atendimentosTatico)
       {
-         sLoader.setFolgas(v);
       }
-      delete v;
+      else
+      {
+         /* Neste caso, primeiro deve-se gerar uma saída para o modelo tático. Em seguida,
+         deve-se resolver o modelo operacional com base na saída do modelo tático gerada. */
+
+         // Gerando uma saída para o modelo tático.
+         status = solveTatico();
+         carregaVariaveisSolucaoTatico();
+         converteCjtSalaEmSala();
+
+         // Preenchendo a estrutura "atendimentosTatico" com a saída.
+         //preencheEstruturaAtendimentosTatico();
+
+         // Resolvendo o modelo operacional
+      }
    }
 
-#ifdef DEBUG
-   if ( fout )
-      fclose(fout);
-#endif
+   return status;
+}
 
-#ifdef PRINT_CSV
-   if (f_V_CREDITOS)
-      fclose(f_V_CREDITOS);
+int SolverMIP::localBranching(double *xSol, double maxTime)
+{
+   // Adiciona restrição de local branching
+   int status = 0;
+   int nIter = 0;
+   int *idxSol = new int[lp->getNumCols()];
 
-   if(f_V_ALUNOS)
-      fclose(f_V_ALUNOS);
-#endif
+   for (int i=0; i < lp->getNumCols(); i++)
+   {
+      idxSol[i] = i;
+   }
 
-   if ( xSol )
-      delete[] xSol;
+   while (nIter < 3)
+   {
+      //if ( maxTime - actTime < 100 )
+      //   break;
+
+      VariableHash::iterator vit = vHash.begin();
+
+      OPT_ROW nR(100,OPT_ROW::GREATER,0.0,"LOCBRANCH");
+      double rhsLB = -5000 ;//+ nIter * 2;
+
+      while (vit != vHash.end())
+      {
+         if ( vit->first.getType() == Variable::V_OFERECIMENTO )
+         {
+            if ( xSol[vit->second] > 0.1 )
+            {
+               rhsLB += 1.0;
+               nR.insert(vit->second,1.0);
+            }
+            else
+            {
+               nR.insert(vit->second,-1.0);
+            }
+         }
+
+         vit++;
+      }
+
+      nR.setRhs(rhsLB);
+      lp->addRow(nR);
+
+      lp->updateLP();
+
+      lp->setNodeLimit(100000000);
+      lp->setTimeLimit(1200);
+      lp->setNodeLimit(1);
+      lp->setMIPEmphasis(1);
+      lp->setHeurFrequency(1.0);
+      
+      //lp->setTimeLimit((int)(maxTime - actTime));
+      //lp->setNoCuts();
+
+      lp->copyMIPStartSol(lp->getNumCols(),idxSol,xSol);
+
+      status = lp->optimize(METHOD_MIP);
+
+      if ( nIter == 2 )
+         break;
+
+      lp->getX(xSol);
+
+      int *idxs = new int[1];
+      idxs[0] = lp->getNumRows() - 1;
+      lp->delSetRows(1,idxs);
+      lp->updateLP();
+      delete[] idxs;
+      nIter++;
+      //break;
+   }
+
+   delete[] idxSol;
+
+   return status;
+}
+
+void SolverMIP::getSolution(ProblemSolution *problemSolution)
+{
+   /* Vai dar um erro no segundo termo da comparação qdo o cleiton tiver corrigido a leitura 
+   do atendimentosTatico. Dai, ao inves de comparar se é igual a NULL, vou ter que testar
+   se o SIZE. */
+   if(problemData->parametros->modo_otimizacao == "TATICO" && problemData->atendimentosTatico == NULL)
+   {
+      getSolutionTatico();
+   }
+   else if(problemData->parametros->modo_otimizacao == "OPERACIONAL")
+   {
+      //getSolutionTatico();
+      //delete problemSolution;
+
+      //problemSolution->atendimento_campus->deleteElements();
+      //delete problemSolution->atendimento_campus;
+      //problemSolution->atendimento_campus = NULL;
+
+      //getSolutionOperacional();
+
+      //if(problemData->atendimentosTatico)
+      //{
+      //   //getSolutionOperacional();
+      //}
+      //else
+      //{
+      //   //getSolutionTatico();
+      //   //getSolutionOperacional();
+      //}
+   }
 }
 
 int SolverMIP::cria_variaveis()
