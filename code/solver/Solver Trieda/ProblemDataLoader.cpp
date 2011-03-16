@@ -1177,15 +1177,12 @@ void ProblemDataLoader::gera_refs()
 
    ITERA_GGROUP(it_desl, problemData->tempo_campi, Deslocamento)
    {
-      find_and_set(it_desl->origem_id,
-         problemData->campi,
-         (Campus*&) it_desl->origem);
+      find_and_set(it_desl->getOrigemId(),
+         problemData->campi, (Campus*&) it_desl->origem);
 
-      find_and_set(it_desl->destino_id,
-         problemData->campi,
-         (Campus*&) it_desl->destino);
+      find_and_set(it_desl->getDestinoId(),
+         problemData->campi, (Campus*&) it_desl->destino);
    } // deslocamento campi
-
 
    ITERA_GGROUP(it_desl, problemData->tempo_unidades, Deslocamento)
    {
@@ -1196,13 +1193,11 @@ void ProblemDataLoader::gera_refs()
          só seta se encontrar. Posso continuar fazendo mesmo depois de 
          encontrar pelo mesmo motivo */
 
-         find_and_set(it_desl->origem_id,
-            it_campi->unidades,
-            (Unidade*&) it_desl->origem);
+         find_and_set(it_desl->getOrigemId(),
+            it_campi->unidades, (Unidade*&) it_desl->origem);
 
-         find_and_set(it_desl->destino_id,
-            it_campi->unidades,
-            (Unidade*&) it_desl->destino);
+         find_and_set(it_desl->getDestinoId(),
+            it_campi->unidades, (Unidade*&) it_desl->destino);
       }
    } // deslocamento unidades 
 

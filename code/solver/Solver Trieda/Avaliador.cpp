@@ -11,6 +11,7 @@ Avaliador::~Avaliador()
 {
 }
 
+// Retorna o valor de uma solução operacional
 double Avaliador::avaliaSolucao(SolucaoOperacional & solucao)
 {
 	double funcaoObjetivo = 0.0;
@@ -21,8 +22,8 @@ double Avaliador::avaliaSolucao(SolucaoOperacional & solucao)
 	return funcaoObjetivo;
 }
 
-// Método que verifica quantas fixação de professores
-// não foram atendidas pela solução do modelo operacional
+// Método que verifica quantas fixações
+// não foram atendidas na soluçao operacional
 double Avaliador::violacaoRestricaoFixacao(SolucaoOperacional & solucao)
 {
 	double numViolacoes = 0.0;
@@ -57,9 +58,8 @@ double Avaliador::violacaoRestricaoFixacao(SolucaoOperacional & solucao)
 	return numViolacoes;
 }
 
-// Método que conta 'QUANTAS VEZES' foi atribuída
-// algum professor duas aulas no mesmo dia que violassem
-// o tempo de deslocamento entre campus e/ou unidades
+// Método que verifca quantas violações de tempo de
+// deslocamento entre campus e/ou unidades ocorreram na solução
 double Avaliador::violacaoTempoDescolamentoViavel(SolucaoOperacional & solucao)
 {
 	double numViolacoes = 0.0;
@@ -87,6 +87,7 @@ double Avaliador::violacaoTempoDescolamentoViavel(SolucaoOperacional & solucao)
 		{
 			int id_linha_professor = it_professor->getIdOperacional();
 
+			// Para cada professor, devo percorrer a linha correspondente às suas aulas
 			for (unsigned int i=0; i < solucao.getMatrizAulas()->at(id_linha_professor)->size(); i++)
 			{
 				aula_atual = solucao.getMatrizAulas()->at(id_linha_professor)->at(i);
@@ -97,9 +98,10 @@ double Avaliador::violacaoTempoDescolamentoViavel(SolucaoOperacional & solucao)
 					continue;
 				}
 
+				// O índice 'i' corresponde à coluna da matriz
 				indice_horario_atual = i;
 
-				// Procura pelas unidades
+				// Procura pelas unidades (anterior e atual)
 				id_unidade_atual = aula_atual->getSala()->getIdUnidade();
 				if (unidade_anterior != NULL)
 				{
@@ -121,7 +123,7 @@ double Avaliador::violacaoTempoDescolamentoViavel(SolucaoOperacional & solucao)
 				}
 				/////
 
-				// Procura pelos campus
+				// Procura pelos campus (anterior e atual)
 				id_campus_atual = unidade_atual->id_campus;
 				if (campus_anterior != NULL)
 				{
@@ -149,7 +151,7 @@ double Avaliador::violacaoTempoDescolamentoViavel(SolucaoOperacional & solucao)
 					if (aula_anterior->getDiaSemana() == aula_atual->getDiaSemana())
 					{
 						// Tempo de deslocamento entre uma aula e outra
-						tempo_minimo = calculaTempoEntreCampusUnidades(
+						tempo_minimo = calculaTempoEntreCampusUnidades(solucao,
 							campus_atual, campus_anterior, unidade_atual, unidade_anterior);
 
 						// Tempo existente entre as aulas 'aula_anterior' e 'aula_atual'
@@ -176,19 +178,40 @@ double Avaliador::violacaoTempoDescolamentoViavel(SolucaoOperacional & solucao)
 	return numViolacoes;
 }
 
-double Avaliador::calculaTempoEntreCampusUnidades(
+// Calcula o tempo NECESSÁRIO para se deslocar entre uma aula e outra
+double Avaliador::calculaTempoEntreCampusUnidades(SolucaoOperacional& solucao,
 		Campus* campus_atual, Campus* campus_anterior,
 		Unidade* unidade_atual, Unidade* unidade_anterior)
 {
 	double distancia = 0.0;
 
+	// As aulas são realizadas em campus diferentes
 	if (campus_atual->getId() != campus_anterior->getId())
 	{
-		// TODO
+		GGroup<Deslocamento*>::iterator it_tempo_campi
+			= solucao.getProblemData()->tempo_campi.begin();
+		for (; it_tempo_campi != solucao.getProblemData()->tempo_campi.end(); it_tempo_campi++)
+		{
+			if (it_tempo_campi->getOrigemId() == campus_anterior->getId()
+				&& it_tempo_campi->getDestinoId() == campus_atual->getId())
+			{
+				distancia = it_tempo_campi->getTempo();
+			}
+		}
 	}
+	// As aulas são realizadas em unidades diferentes
 	else if (unidade_atual->getId() != unidade_anterior->getId())
 	{
-		// TODO
+		GGroup<Deslocamento*>::iterator it_tempo_unidade
+			= solucao.getProblemData()->tempo_unidades.begin();
+		for (; it_tempo_unidade != solucao.getProblemData()->tempo_unidades.end(); it_tempo_unidade++)
+		{
+			if (it_tempo_unidade->getOrigemId() == unidade_anterior->getId()
+				&& it_tempo_unidade->getDestinoId() == unidade_atual->getId())
+			{
+				distancia = it_tempo_unidade->getTempo();
+			}
+		}
 	}
 
 	return distancia;
