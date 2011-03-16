@@ -1,3 +1,5 @@
+#include <math>
+
 #include "Avaliador.h"
 #include "ofbase.h"
 #include "Fixacao.h"
@@ -5,26 +7,33 @@
 Avaliador::Avaliador()
 {
 	MINUTOS_POR_HORARIO = 60;
+
+	totalViolacaoRestricaoFixacao = 0.0;
+	totalViolacoesDescolamento = 0.0;
+	totalTempoViolacoesDescolamento = 0.0;
 }
 
 Avaliador::~Avaliador()
 {
 }
 
-// Retorna o valor de uma solução operacional
 double Avaliador::avaliaSolucao(SolucaoOperacional & solucao)
 {
+	// Chamada dos métodos que fazem a avaliação da solução
+	calculaViolacaoRestricaoFixacao(solucao);
+	calculaViolacoesDescolamento(solucao);
+
 	double funcaoObjetivo = 0.0;
 
-	funcaoObjetivo += violacaoRestricaoFixacao(solucao);
-	funcaoObjetivo += violacaoTempoDescolamentoViavel(solucao);
+	// Contabilização do valor da solução
+	funcaoObjetivo += totalViolacaoRestricaoFixacao;
+	funcaoObjetivo += totalViolacoesDescolamento;
+	funcaoObjetivo += totalTempoViolacoesDescolamento;
 
 	return funcaoObjetivo;
 }
 
-// Método que verifica quantas fixações
-// não foram atendidas na soluçao operacional
-double Avaliador::violacaoRestricaoFixacao(SolucaoOperacional & solucao)
+void Avaliador::calculaViolacaoRestricaoFixacao(SolucaoOperacional & solucao)
 {
 	double numViolacoes = 0.0;
 	bool encontrou_fixacao = false;
@@ -55,14 +64,13 @@ double Avaliador::violacaoRestricaoFixacao(SolucaoOperacional & solucao)
 		}
 	}
 
-	return numViolacoes;
+	totalViolacaoRestricaoFixacao = numViolacoes;
 }
 
-// Método que verifca quantas violações de tempo de
-// deslocamento entre campus e/ou unidades ocorreram na solução
-double Avaliador::violacaoTempoDescolamentoViavel(SolucaoOperacional & solucao)
+void Avaliador::calculaViolacoesDescolamento(SolucaoOperacional & solucao)
 {
 	double numViolacoes = 0.0;
+	double tempoViolacoes = 0.0;
 
 	Unidade* unidade_atual = NULL;
 	Unidade* unidade_anterior = NULL;
@@ -162,6 +170,7 @@ double Avaliador::violacaoTempoDescolamentoViavel(SolucaoOperacional & solucao)
 						if (tempo_disponivel < tempo_minimo)
 						{
 							numViolacoes++;
+							tempoViolacoes += abs( (tempo_minimo - tempo_disponivel) * (MINUTOS_POR_HORARIO) );
 						}
 					}
 				}
@@ -175,10 +184,10 @@ double Avaliador::violacaoTempoDescolamentoViavel(SolucaoOperacional & solucao)
 		}
 	}
 
-	return numViolacoes;
+	totalViolacoesDescolamento = numViolacoes;
+	totalTempoViolacoesDescolamento = tempoViolacoes;
 }
 
-// Calcula o tempo NECESSÁRIO para se deslocar entre uma aula e outra
 double Avaliador::calculaTempoEntreCampusUnidades(SolucaoOperacional& solucao,
 		Campus* campus_atual, Campus* campus_anterior,
 		Unidade* unidade_atual, Unidade* unidade_anterior)
