@@ -70,7 +70,10 @@ public:
    int totalTurmas;
    int totalConjuntosSalas;
 
-   // std::map<std::pair<int/*cursoA_id*/,int/*cursoB_id*/>,bool/*sao_compat?*/> compat_cursos;
+   // Informa o maior valor de horários
+   // disponíveis entre os professores
+   int max_horarios_professor;
+
    std::map<std::pair<Curso*,Curso*>,bool> compat_cursos;
 
    // >>> 14/10/2010

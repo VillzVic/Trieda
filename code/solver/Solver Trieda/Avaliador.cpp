@@ -1,4 +1,4 @@
-#include <math>
+#include <cmath>
 
 #include "Avaliador.h"
 #include "ofbase.h"
@@ -11,6 +11,7 @@ Avaliador::Avaliador()
 	totalViolacaoRestricaoFixacao = 0.0;
 	totalViolacoesDescolamento = 0.0;
 	totalTempoViolacoesDescolamento = 0.0;
+	totalGapsHorariosProfessores = 0.0;
 }
 
 Avaliador::~Avaliador()
@@ -22,6 +23,7 @@ double Avaliador::avaliaSolucao(SolucaoOperacional & solucao)
 	// Chamada dos métodos que fazem a avaliação da solução
 	calculaViolacaoRestricaoFixacao(solucao);
 	calculaViolacoesDescolamento(solucao);
+	calculaGapsHorariosProfessores(solucao);
 
 	double funcaoObjetivo = 0.0;
 
@@ -29,6 +31,7 @@ double Avaliador::avaliaSolucao(SolucaoOperacional & solucao)
 	funcaoObjetivo += totalViolacaoRestricaoFixacao;
 	funcaoObjetivo += totalViolacoesDescolamento;
 	funcaoObjetivo += totalTempoViolacoesDescolamento;
+	funcaoObjetivo += totalGapsHorariosProfessores;
 
 	return funcaoObjetivo;
 }
@@ -224,4 +227,83 @@ double Avaliador::calculaTempoEntreCampusUnidades(SolucaoOperacional& solucao,
 	}
 
 	return distancia;
+}
+
+void Avaliador::calculaGapsHorariosProfessores(SolucaoOperacional & solucao)
+{
+	double numGaps = 0.0;
+
+	Aula* aula_atual = NULL;
+	Aula* aula_anterior = NULL;
+
+	int indice_aula_atual = -1;
+	int indice_aula_anterior = -1;
+
+	Professor* professor = NULL;
+	Horario* h1 = NULL;
+	Horario* h2 = NULL;
+
+	int dia_semana = 0;
+
+	for (unsigned int i = 0; i < solucao.getMatrizAulas()->size(); i++)
+	{
+		for (unsigned int j = 0; j < solucao.getMatrizAulas()->at(i)->size(); j++)
+		{
+			indice_aula_atual = j;
+			aula_atual = solucao.getMatrizAulas()->at(i)->at(j);
+
+			// O professor não tem aula atribuída nesse horário
+			if (aula_atual == NULL)
+			{
+				continue;
+			}
+
+			if ( aula_anterior != NULL
+				&& aula_anterior->getDiaSemana() == aula_atual->getDiaSemana() )
+			{
+				// Avalia se ocorreu um gap no horário
+				int gap = (indice_aula_atual - indice_aula_anterior);
+				if (gap > 1)
+				{
+					professor = solucao.getProfessorMatriz(i);
+					dia_semana = aula_atual->getDiaSemana();
+					h1 = solucao.getHorario(i, indice_aula_anterior);
+					h2 = solucao.getHorario(i, indice_aula_atual);
+
+					if (horariosDisponiveisIntervalo(professor, dia_semana, h1, h2) > 0)
+					{
+						totalGapsHorariosProfessores++;
+						gapsProfessores.at(i).push_back(gap);
+					}
+				}
+			}
+
+			// Atualiza os ponteiros para a próxima iteração
+			indice_aula_anterior = indice_aula_atual;
+			aula_anterior = aula_atual;
+		}
+	}
+
+	totalGapsHorariosProfessores = numGaps;
+}
+
+int Avaliador::horariosDisponiveisIntervalo(Professor* professor, int dia_semana, Horario* h1, Horario* h2)
+{
+	int horariosDisponiveis = 0;
+
+	GGroup<Horario*>::iterator it_horario
+		= professor->horarios.begin();
+	for (; it_horario != professor->horarios.end(); it_horario++)
+	{
+		// Se o horário disponível estiver dentro do intervalo de gap,
+		// então encontrei mais um gap indesejado de horário para esse professor
+		if ( ( it_horario->dias_semana.find(dia_semana) != it_horario->dias_semana.end() ) &&
+			 ( h1->horario_aula->getInicio() < it_horario->horario_aula->getInicio() ) &&
+			 ( h2->horario_aula->getInicio() > it_horario->horario_aula->getInicio() ) )
+		{
+			horariosDisponiveis++;
+		}
+	}
+
+	return horariosDisponiveis;
 }

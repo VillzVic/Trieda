@@ -72,8 +72,31 @@ std::string SolucaoOperacional::toString() const
 
 int SolucaoOperacional::getIndiceMatriz(int dia, Horario* horario)
 {
-	// TODO -- Retorna índice na matriz referente a um par 'dia / horário de aula'
-	return ((dia-1)*10 + horario->horarioAulaId*100);
+	int indice_matriz = 0;
+
+	int dia_semana = ((dia-2) * problemData->max_horarios_professor);
+	int horario_dia = (horario->getHorarioAulaId()-1);
+	indice_matriz = (dia_semana + horario_dia);
+
+	return indice_matriz;
+}
+
+Horario* SolucaoOperacional::getHorario(int i, int j)
+{
+	Horario* horario = NULL;
+
+	// TODO
+
+	return horario;
+}
+
+Professor* SolucaoOperacional::getProfessorMatriz(int linha)
+{
+	Professor* professor = NULL;
+
+	// TODO
+
+	return professor;
 }
 
 ProblemData* SolucaoOperacional::getProblemData() const

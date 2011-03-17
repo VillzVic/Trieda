@@ -123,47 +123,31 @@ GGroup<CreditoDisponivel*> Sala::converteHorariosParaCreditos()
 		GGroup<int>::iterator it_dia_semana = it_horario->dias_semana.begin();
 		for (; it_dia_semana != it_horario->dias_semana.end(); it_dia_semana++)
 		{
-         int diaaaa = *it_dia_semana;
+            int diaaaa = *it_dia_semana;
 
 			ConverteHorariosCreditos* item = new ConverteHorariosCreditos();
-			item->setTurno( it_horario->turnoId );
+			item->setTurno( it_horario->getTurnoId() );
 			item->setDiaSemana( *it_dia_semana );
 
-         /*
-			GGroup<ConverteHorariosCreditos*>::iterator it = groupHorariosCreditos.find(item);
-			if (it != groupHorariosCreditos.end())
+			bool found = false;
+			ITERA_GGROUP(it,groupHorariosCreditos,ConverteHorariosCreditos)
 			{
-				// Inserir mais um horário em 'groupHorariosCreditos'
-				it->horarios.add( it_horario->horarioAulaId );
+			   if((it->getDiaSemana() == *it_dia_semana) && (it->getTurno() == it_horario->getTurnoId()))
+			   {
+			      // Inserir mais um horário em 'groupHorariosCreditos'
+			      it->horarios.add( it_horario->getHorarioAulaId() );
+
+			      found = true;
+			      break;
+			   }
 			}
-			else
+
+			if(!found)
 			{
-				// Adicionar novo item na lista 'groupHorariosCreditos' e inserir o horário				
-				groupHorariosCreditos.add(item);
-				item->horarios.add( it_horario->horarioAulaId );
+			   // Adicionar novo item na lista 'groupHorariosCreditos' e inserir o horário				
+			   groupHorariosCreditos.add(item);
+			   item->horarios.add( it_horario->getHorarioAulaId() );
 			}
-         */
-
-         bool found = false;
-         ITERA_GGROUP(it,groupHorariosCreditos,ConverteHorariosCreditos)
-         {
-            //if((it->getDiaSemana() == *it_dia_semana) && (it->getTurno() == it_horario->turno->getId()))
-            if((it->getDiaSemana() == *it_dia_semana) && (it->getTurno() == it_horario->turnoId))
-            {
-               // Inserir mais um horário em 'groupHorariosCreditos'
-               it->horarios.add( it_horario->horarioAulaId );
-
-               found = true;
-               break;
-            }
-         }
-
-         if(!found)
-         {
-            // Adicionar novo item na lista 'groupHorariosCreditos' e inserir o horário				
-            groupHorariosCreditos.add(item);
-            item->horarios.add( it_horario->horarioAulaId );
-         }
 		}
 	}
 

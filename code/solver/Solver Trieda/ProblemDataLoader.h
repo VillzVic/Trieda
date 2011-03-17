@@ -79,6 +79,9 @@ public:
    /* */
    void criaAulas();
 
+   /* */
+   void calculaMaxHorariosProfessor();
+
 private:
    // Input data object of the problem
    ProblemData *problemData;

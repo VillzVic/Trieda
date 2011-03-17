@@ -1,5 +1,5 @@
-#ifndef _AULA_H
-#define _AULA_H
+#ifndef _AULA_H_
+#define _AULA_H_
 
 #include "disciplina.h"
 #include "sala.h"

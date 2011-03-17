@@ -19,7 +19,19 @@ public:
 
    void carregaSolucaoInicial();
 
+   // Dado um par 'dia da semana' e 'horário', retornar a coluna
+	// correspondente a esse par na matriz (a linha é o professor atual)
    int getIndiceMatriz(int, Horario *);
+
+   // Dado uma célula da matriz de solução (que
+   // corresponde a um objeto 'Aula'), retornar
+   // o horário dessa aula
+   Horario* getHorario(int, int);
+
+   // Dado um índice que corresponde a uma linha da
+   // matriz de solução, retorna o professor correspondente
+   Professor* getProfessorMatriz(int);
+
    ProblemData* getProblemData() const;
 
    void setMatrizAulas(MatrizSolucao *);
