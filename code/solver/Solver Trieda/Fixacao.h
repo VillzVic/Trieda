@@ -15,7 +15,7 @@ public:
 
    void le_arvore(ItemFixacao& elem);
 
-   Professor* professor;
+   Professor * professor;
    Disciplina* disciplina;
    Sala* sala;
    Turno* turno;

@@ -27,14 +27,18 @@ void Campus::le_arvore(ItemCampus& elem)
    // O campo 'id_operacional_professor' é utilizado na classe
    // que representa a 'SolucaoOperacional', para acessar a matriz
    // da solução. O id_operacional deve ser preenchido de forma
-   // sequancial, começando a partir de zero.
+   // sequencial, começando a partir de zero.
    int id_operacional_professor = 0;
    ITERA_SEQ(it_professores, elem.professores(), Professor)
    {
       Professor* professor = new Professor();
+
       professor->le_arvore(*it_professores);
-	  professor->setIdOperacional(id_operacional_professor);
-	  id_operacional_professor++;
+
+      professor->setIdOperacional(id_operacional_professor);
+
+      id_operacional_professor++;
+
       professores.add(professor);
    }
 

@@ -508,6 +508,7 @@ void ProblemDataLoader::estabeleceDiasLetivosProfessorDisciplina()
 {
    ITERA_GGROUP(itCampus,problemData->campi,Campus)
    {
+      /*TODO: Tem que ser para os blocos do campus em questao !!!!*/
       ITERA_GGROUP(itBloco,problemData->blocos,BlocoCurricular)
       {
          ITERA_GGROUP(itDisc,itBloco->disciplinas,Disciplina)
@@ -545,7 +546,9 @@ void ProblemDataLoader::estabeleceDiasLetivosProfessorDisciplina()
 void ProblemDataLoader::relacionaProfessoresDisciplinasFixadas()
 {
    ITERA_GGROUP(it_Fixacao,problemData->fixacoes,Fixacao)
-   { problemData->prof_Fix_Disc[it_Fixacao->professor].add(it_Fixacao->disciplina); }
+   { 
+      problemData->prof_Fix_Disc[it_Fixacao->professor].add(it_Fixacao->disciplina);
+   }
 }
 
 void ProblemDataLoader::combinacaoDivCreditos(){
@@ -2220,7 +2223,7 @@ void ProblemDataLoader::associaDisciplinasSalas()
 
    ARRUMAR NO CODIGO ACIMA PARA ATENDER O SEGUINTE CASO:
 
-   QUANDO FOR FIXAR UMA DISC TEO EM UMA SA, DEVE-SE CRIAR UM TIPO DE SA ESPECIFICO PARA A SALA EM QUESTAO.
+   QUANDO FOR FIXAR UMA DISC TEO EM UMA SALA, DEVE-SE CRIAR UM TIPO DE SA ESPECIFICO PARA A SALA EM QUESTAO.
    POIS A DISC SO PODE SER MINISTRADA NESSA SALA. DO JEITO QUE ESTA, MSM QUE EU REMOVA TODAS AS ASSOCIACOES
    AOS DEMAIS CONJUNTOS, PODE ACONTECER DE O CONJUNTO QUE CONTEM A SALA FIXADA, CONTENHA MAIS SALAS. SE ISSO
    ACONTECER, EU NAO POSSO SIMPLESMENTE REMOVER AS DEMAIS SALAS (SE FIZESSE ISSO, IRIA DEIXAR DE UTILIZAR ALGUMAS
@@ -2335,48 +2338,51 @@ void ProblemDataLoader::criaAulas()
                      int turma = atoi(atendOferta->getTurma().c_str());
 
                      // Procura pelo objeto 'Disciplina' da aula
-                     Disciplina* disciplina = NULL;
-                     ITERA_GGROUP(it_Disciplina, problemData->disciplinas, Disciplina)
-                     {
-                        //int idDisc = (it_Disciplina->getId() > 0) ? 
-                           //it_Disciplina->getId() : -it_Disciplina->getId();
+                     //Disciplina* disciplina = NULL;
+                     //ITERA_GGROUP(it_Disciplina, problemData->disciplinas, Disciplina)
+                     //{
+                     //   //int idDisc = (it_Disciplina->getId() > 0) ? 
+                     //      //it_Disciplina->getId() : -it_Disciplina->getId();
 
-                        //if (idDisc == atendOferta->getDisciplinaId())
-                        if (it_Disciplina->getId() == atendOferta->getDisciplinaId())
-                        {
-                           disciplina = *(it_Disciplina);
-                           break;
-                        }
-                     }
+                     //   //if (idDisc == atendOferta->getDisciplinaId())
+                     //   if (it_Disciplina->getId() == atendOferta->getDisciplinaId())
+                     //   {
+                     //      disciplina = *(it_Disciplina);
+                     //      break;
+                     //   }
+                     //}
+                     Disciplina* disciplina = problemData->refDisciplinas.find(atendOferta->getDisciplinaId())->second;
+
 
                      // Procura pelo objeto 'Sala' da aula
-                     bool encontrou = false;
-                     Sala* sala = NULL;
-                     ITERA_GGROUP(it_Campus, problemData->campi, Campus)
-                     {
-                        ITERA_GGROUP(it_Unidade, it_Campus->unidades, Unidade)
-                        {
-                           ITERA_GGROUP(it_Sala, it_Unidade->salas, Sala)
-                           {
-                              if (it_Sala->getId() == it_atend_sala->getSalaId())
-                              {
-                                 sala = *(it_Sala);
-                                 encontrou = true;
-                                 break;
-                              }
-                           }
+                     //bool encontrou = false;
+                     //Sala* sala = NULL;
+                     //ITERA_GGROUP(it_Campus, problemData->campi, Campus)
+                     //{
+                     //   ITERA_GGROUP(it_Unidade, it_Campus->unidades, Unidade)
+                     //   {
+                     //      ITERA_GGROUP(it_Sala, it_Unidade->salas, Sala)
+                     //      {
+                     //         if (it_Sala->getId() == it_atend_sala->getSalaId())
+                     //         {
+                     //            sala = *(it_Sala);
+                     //            encontrou = true;
+                     //            break;
+                     //         }
+                     //      }
 
-                           if (encontrou)
-                           {
-                              break;
-                           }
-                        }
+                     //      if (encontrou)
+                     //      {
+                     //         break;
+                     //      }
+                     //   }
 
-                        if (encontrou)
-                        {
-                           break;
-                        }
-                     }
+                     //   if (encontrou)
+                     //   {
+                     //      break;
+                     //   }
+                     //}
+                     Sala* sala = problemData->refSala.find(it_atend_sala->getSalaId())->second;
 
                      // Informa o dia da semana da aula
                      int diaSemana = it_atend_dia_semana->getDiaSemana();

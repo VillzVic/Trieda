@@ -103,3 +103,14 @@ ProblemData* SolucaoOperacional::getProblemData() const
 {
 	return problemData;
 }
+
+bool SolucaoOperacional::alocaAula(Professor & professor, int dia, Horario & horario, Aula & aula)
+{
+   
+   // TODO
+
+   std::cout << "Implementar o metodo bool SolucaoOperacional::alocaAula(Professor & professor, int dia, Horario & horario, Aula & aula)" << std::endl;
+   exit(1);
+   
+   return false;
+}

@@ -30,9 +30,9 @@ public:
          ((turma < right.getTurma()) &&
          (disciplina < right.getDisciplina()) &&
          (sala < right.getSala()) &&
-		 (diaSemana < right.getDiaSemana()) &&
-		 (creditos_teoricos < right.getCreditosTeoricos()) &&
-		 (creditos_praticos < right.getCreditosPraticos()));
+         (diaSemana < right.getDiaSemana()) &&
+         (creditos_teoricos < right.getCreditosTeoricos()) &&
+         (creditos_praticos < right.getCreditosPraticos()));
    }
 
    virtual bool operator == (Aula const & right)
@@ -41,9 +41,9 @@ public:
          ((turma == right.getTurma()) &&
          (disciplina == right.getDisciplina()) &&
          (sala == right.getSala()) &&
-		 (diaSemana == right.getDiaSemana()) &&
-		 (creditos_teoricos == right.getCreditosTeoricos()) &&
-		 (creditos_praticos == right.getCreditosPraticos()));
+         (diaSemana == right.getDiaSemana()) &&
+         (creditos_teoricos == right.getCreditosTeoricos()) &&
+         (creditos_praticos == right.getCreditosPraticos()));
    }
 
 private:
