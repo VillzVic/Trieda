@@ -3,12 +3,16 @@
 #include "ofbase.h"
 #include "GGroup.h"
 #include "AtendimentoOfertaSolucao.h"
+#include "AtendimentoTatico.h"
 
 class AtendimentoTaticoSolucao :
    public OFBase
 {
 public:
    AtendimentoTaticoSolucao(void);
+
+   AtendimentoTaticoSolucao(AtendimentoTatico & at_Tatico);
+
    ~AtendimentoTaticoSolucao(void);
    virtual void le_arvore(ItemAtendimentoTaticoSolucao& elem);
 

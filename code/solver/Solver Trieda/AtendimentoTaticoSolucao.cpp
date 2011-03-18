@@ -7,12 +7,24 @@ AtendimentoTaticoSolucao::AtendimentoTaticoSolucao(void)
 {
 }
 
+AtendimentoTaticoSolucao::AtendimentoTaticoSolucao(AtendimentoTatico & at_Tatico)
+{
+   this->setId(at_Tatico.atendimento_oferta->oferta->getId());
+
+   qtdeCreditosTeoricos = at_Tatico.qtde_creditos_teoricos;
+   qtdeCreditosPraticos = at_Tatico.qtde_creditos_praticos;
+
+   atendimento_oferta = new AtendimentoOfertaSolucao(*at_Tatico.atendimento_oferta);
+}
+
 AtendimentoTaticoSolucao::~AtendimentoTaticoSolucao(void)
 {
 }
 
 void AtendimentoTaticoSolucao::le_arvore(ItemAtendimentoTaticoSolucao& elem)
 {
+   this->setId(elem.atendimentoOferta().ofertaCursoCampiId());
+
    qtdeCreditosTeoricos = elem.qtdeCreditosTeoricos();
    qtdeCreditosPraticos = elem.qtdeCreditosPraticos();
 

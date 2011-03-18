@@ -15,6 +15,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "ProblemDataLoader.h"
+
 #define PRINT_cria_variaveis
 #define PRINT_cria_restricoes
 
@@ -32,7 +34,7 @@ public:
    * Default Constructor.
    * @param aProblemData The problem's input data.
    */
-   SolverMIP(ProblemData *aProblemData, ProblemSolution * _problemSolution);
+   SolverMIP(ProblemData *aProblemData, ProblemSolution * _problemSolution, ProblemDataLoader * _problemDataLoader);
 
    /** Destructor. */
    ~SolverMIP();
@@ -64,6 +66,8 @@ private:
    vars__A___i_d_o vars_a;
 
    ProblemSolution * problemSolution;
+
+   ProblemDataLoader * problemDataLoader;
 
    /** The linear problem. */
    OPT_LP *lp;

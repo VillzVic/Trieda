@@ -2,12 +2,16 @@
 #include "ofbase.h"
 
 #include <iostream>
+#include "AtendimentoOferta.h"
 
 class AtendimentoOfertaSolucao :
    public OFBase
 {
 public:
    AtendimentoOfertaSolucao(void);
+
+   AtendimentoOfertaSolucao(AtendimentoOferta & at_Oft);
+
    ~AtendimentoOfertaSolucao(void);
    virtual void le_arvore(ItemAtendimentoOfertaSolucao& elem);
 

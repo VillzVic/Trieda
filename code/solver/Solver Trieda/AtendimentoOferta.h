@@ -2,6 +2,8 @@
 #include "ofbase.h"
 #include "TRIEDA-OutputXSD.h"
 
+#include "Oferta.h"
+
 using namespace std;
 
 class AtendimentoOferta:
@@ -15,6 +17,8 @@ public:
    int disciplina_id;
    int quantidade;
    int turma;
+
+   Oferta * oferta;
    
    //virtual void escreve_arvore(ItemAtendimentoUnidade& elem);
 };

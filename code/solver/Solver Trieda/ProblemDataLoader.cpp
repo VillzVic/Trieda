@@ -2307,6 +2307,11 @@ void ProblemDataLoader::relacionaDiscOfertas()
 
 void ProblemDataLoader::criaAulas()
 {
+//PAREI AQUI .. 
+//ACHO QUE ESTA DANDO TOTAL DE TURMAS DIFERENTES POR CAUSA DO ID NEGATIVO.
+//CORRIGIR ISSO. PODE SER QUE MSM DEPOIS QUE EU TENHA CORRIGIDO ISSO AINDA DE ERRADO.
+   //SE DER ERRADO, GERAR OS INPUTS COM O CHICO DENOVO. OS INPUTS QUE TENHAM PODEM TER DADOS DIFERENTES, ALEM DA SOLUCAO.
+
    /* Deve-se preencher o GGroup<Aula*> com as informações do GrupoAtendimentoCampusSolucao lido */
 
    // O XML de entrada não possui a saída do TÁTICO,
@@ -2333,6 +2338,10 @@ void ProblemDataLoader::criaAulas()
                      Disciplina* disciplina = NULL;
                      ITERA_GGROUP(it_Disciplina, problemData->disciplinas, Disciplina)
                      {
+                        //int idDisc = (it_Disciplina->getId() > 0) ? 
+                           //it_Disciplina->getId() : -it_Disciplina->getId();
+
+                        //if (idDisc == atendOferta->getDisciplinaId())
                         if (it_Disciplina->getId() == atendOferta->getDisciplinaId())
                         {
                            disciplina = *(it_Disciplina);
@@ -2394,6 +2403,9 @@ void ProblemDataLoader::criaAulas()
          }
       }
    }
+
+   std::cout << "Total de aulas criadas: " << problemData->aulas.size() << std::endl;
+   //getchar();
 }
 
 void ProblemDataLoader::print_csv(void)

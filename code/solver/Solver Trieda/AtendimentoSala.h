@@ -4,6 +4,8 @@
 
 #include "AtendimentoDiaSemana.h"
 
+#include "Sala.h"
+
 using namespace std;
 
 //#define DBG_DIA_SEM
@@ -17,6 +19,8 @@ public:
 
    std::string sala_id;
    GGroup<AtendimentoDiaSemana*> * atendimentos_dias_semana;
+
+   Sala * sala;
 
    //virtual void escreve_arvore(ItemAtendimentoUnidade& elem);
 

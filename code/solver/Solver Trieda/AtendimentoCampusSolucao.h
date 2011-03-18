@@ -1,12 +1,17 @@
 #pragma once
 #include "ofbase.h"
+
 #include "AtendimentoUnidadeSolucao.h"
+#include "AtendimentoCampus.h"
 
 class AtendimentoCampusSolucao :
    public OFBase
 {
 public:
    AtendimentoCampusSolucao(void);
+
+   AtendimentoCampusSolucao(AtendimentoCampus & at_Campus);
+
    ~AtendimentoCampusSolucao(void);
    virtual void le_arvore(ItemAtendimentoCampusSolucao& elem);
 

@@ -4,6 +4,8 @@
 
 #include "AtendimentoSala.h"
 
+#include "Unidade.h"
+
 using namespace std;
 
 //#define DBG_SALA
@@ -17,6 +19,8 @@ public:
 
    std::string unidade_id;
    GGroup<AtendimentoSala*> * atendimentos_salas;
+
+   Unidade * unidade;
 
    //virtual void escreve_arvore(ItemAtendimentoUnidade& elem);
 

@@ -7,12 +7,25 @@ AtendimentoUnidadeSolucao::AtendimentoUnidadeSolucao(void)
 {
 }
 
+AtendimentoUnidadeSolucao::AtendimentoUnidadeSolucao(AtendimentoUnidade & at_Und)
+{
+   this->setId(at_Und.unidade->getId());
+   unidadeId = at_Und.unidade->getId();
+   unidadeCodigo = at_Und.unidade->codigo;
+
+   ITERA_GGROUP(it_At_Sala,*at_Und.atendimentos_salas,AtendimentoSala)
+   {
+      atendimentosSalas.add(new AtendimentoSalaSolucao(**it_At_Sala));
+   }
+}
+
 AtendimentoUnidadeSolucao::~AtendimentoUnidadeSolucao(void)
 {
 }
 
 void AtendimentoUnidadeSolucao::le_arvore(ItemAtendimentoUnidadeSolucao& elem)
 {
+   this->setId(elem.unidadeId());
    unidadeId = elem.unidadeId();
    unidadeCodigo = elem.unidadeCodigo();
 

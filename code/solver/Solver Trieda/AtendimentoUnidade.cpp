@@ -4,6 +4,8 @@ AtendimentoUnidade::AtendimentoUnidade(void)
 {
    //atendimentos_salas = NULL;
    atendimentos_salas = new GGroup<AtendimentoSala*>();
+
+   unidade = NULL;
 }
 
 AtendimentoUnidade::~AtendimentoUnidade(void)

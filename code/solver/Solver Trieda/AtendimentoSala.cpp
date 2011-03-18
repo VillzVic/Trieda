@@ -4,6 +4,8 @@ AtendimentoSala::AtendimentoSala(void)
 {
    atendimentos_dias_semana = new GGroup<AtendimentoDiaSemana*>();
    //atendimentos_dias_semana = NULL;
+
+   sala = NULL;
 }
 
 AtendimentoSala::~AtendimentoSala(void)

@@ -8,12 +8,25 @@ AtendimentoCampusSolucao::AtendimentoCampusSolucao(void)
 {
 }
 
+AtendimentoCampusSolucao::AtendimentoCampusSolucao(AtendimentoCampus & at_Campus)
+{
+   this->setId(at_Campus.campus->getId());
+   campusId = at_Campus.campus->getId();
+   campusCodigo = at_Campus.campus->codigo;
+
+   ITERA_GGROUP(it_At_Und,*at_Campus.atendimentos_unidades,AtendimentoUnidade)
+   {
+      atendimentosUnidades.add(new AtendimentoUnidadeSolucao(**it_At_Und));
+   }
+}
+
 AtendimentoCampusSolucao::~AtendimentoCampusSolucao(void)
 {
 }
 
 void AtendimentoCampusSolucao::le_arvore(ItemAtendimentoCampusSolucao& elem)
 {
+   this->setId(elem.campusId());
    campusId = elem.campusId();
    campusCodigo = elem.campusCodigo();
 

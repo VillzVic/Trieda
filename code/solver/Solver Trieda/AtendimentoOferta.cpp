@@ -6,6 +6,8 @@ AtendimentoOferta::AtendimentoOferta(void)
    disciplina_id = -1;
    quantidade = 0;
    turma = 99999999;
+
+   oferta = NULL;
 }
 
 AtendimentoOferta::~AtendimentoOferta(void)

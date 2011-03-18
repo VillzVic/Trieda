@@ -4,6 +4,8 @@
 
 #include "AtendimentoUnidade.h"
 
+#include "Campus.h"
+
 //#define DBG_UND
 
 class AtendimentoCampus:
@@ -15,6 +17,8 @@ public:
 
    std::string campus_id;
    GGroup<AtendimentoUnidade*> * atendimentos_unidades;
+
+   Campus * campus;
 
    //virtual void escreve_arvore(ItemAtendimentoCampus& elem);
 

@@ -3,12 +3,16 @@
 #include "ofbase.h"
 #include "GGroup.h"
 #include "AtendimentoTaticoSolucao.h"
+#include "AtendimentoDiaSemana.h"
 
 class AtendimentoDiaSemanaSolucao :
    public OFBase
 {
 public:
    AtendimentoDiaSemanaSolucao(void);
+
+   AtendimentoDiaSemanaSolucao(AtendimentoDiaSemana & at_Dia_Sem);
+
    ~AtendimentoDiaSemanaSolucao(void);
    virtual void le_arvore(ItemAtendimentoDiaSemanaSolucao& elem);
 

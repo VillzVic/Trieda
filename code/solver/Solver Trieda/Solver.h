@@ -3,6 +3,7 @@
 
 class ProblemData;
 class ProblemSolution;
+//class ProblemDataLoader;
 
 /**
 * Defines a generic solver.

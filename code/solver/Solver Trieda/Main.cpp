@@ -120,17 +120,18 @@ int main(int argc, char** argv)
 		//Load data
 		dataLoader = new ProblemDataLoader(inputFile, data);   
 		dataLoader->load();
-		delete dataLoader;
+		//delete dataLoader;
 
 		
 		try
         {
 			// solve the problem
 			//solver = new SolverMIP(data);
-         solver = new SolverMIP(data,solution);
+         solver = new SolverMIP(data,solution,dataLoader);
 			solver->solve();
 			solver->getSolution(solution);
 			delete solver;
+         delete dataLoader;
 		}
 		catch(int& status)
 		{

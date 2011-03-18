@@ -7,6 +7,18 @@ AtendimentoOfertaSolucao::AtendimentoOfertaSolucao(void)
 {
 }
 
+AtendimentoOfertaSolucao::AtendimentoOfertaSolucao(AtendimentoOferta & at_Oft)
+{
+   ofertaCursoCampiId = at_Oft.oferta->curso_id;
+   disciplinaId= at_Oft.disciplina_id;
+   quantidade= at_Oft.quantidade;
+   
+   stringstream str;
+   str << at_Oft.turma;
+   
+   turma = str.str();
+}
+
 AtendimentoOfertaSolucao::~AtendimentoOfertaSolucao(void)
 {
 }
