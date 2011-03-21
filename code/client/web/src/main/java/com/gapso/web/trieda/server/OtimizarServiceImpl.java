@@ -45,7 +45,7 @@ public class OtimizarServiceImpl extends RemoteServiceServlet implements Otimiza
 //	private static final String linkSolver = "http://offspring:8080/SolverWS";    // SERVIDOR // OFFSPRING
 //	private static final String linkSolver = "http://toquinho:8080/SolverWS";     // MAQUINA DO MÁRIO // TOQUINHO
 //	private static final String linkSolver = "http://localhost:8080/SolverWS"; // MAQUINA DO CLAUDIO // NIRVANA
-	private static final String linkSolver = "http://localhost:3402/SolverWS";    // MAQUINA DESENVOLVIMENTO (CLAUDIO)
+	private static final String linkSolver = "http://localhost:8080/SolverWS";    // MAQUINA DESENVOLVIMENTO (CLAUDIO)
 
 	@Override
 	@Transactional
@@ -114,7 +114,7 @@ public class OtimizarServiceImpl extends RemoteServiceServlet implements Otimiza
 				return ret;
 			}
 			
-			JAXBContext jc = JAXBContext.newInstance("com.gapso.web.trieda.server.xml.input");
+			JAXBContext jc = JAXBContext.newInstance("com.gapso.web.trieda.server.xml.output");
 			Unmarshaller u = jc.createUnmarshaller();
 			StringBuffer xmlStr = new StringBuffer(new String(xmlBytes));
 			TriedaOutput triedaOutput = (TriedaOutput) u.unmarshal(new StreamSource(new StringReader(xmlStr.toString())));

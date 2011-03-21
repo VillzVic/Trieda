@@ -1,6 +1,9 @@
 package com.gapso.web.trieda.server.excel.imp;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
@@ -11,42 +14,23 @@ import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 
 public class CampiImportExcel extends AbstractImportExcel<CampiImportExcelBean> {
 	
-	static public enum CampiExcelHeader {
-		CODIGO("Código"),
-		NOME("Nome"),
-		ESTADO("Estado"),
-		MUNICIPIO("Município"),
-		BAIRRO("Bairro"),
-		CUSTO_MEDIO_CREDITO("Custo Médio do Crédito (R$)");
-		
-		private final String columnName;
-
-	    private CampiExcelHeader(String columnName) {
-	        this.columnName = columnName;
-	    }
-	    
-		public String getColumnName() {
-			return columnName;
-		}
-
-		public boolean isColumnValid(String name) {
-			return name.equals(columnName);
-		}
-
-		@Override
-		public String toString() {
-			return columnName;
-		}
-		
-		static public String print() {
-			StringBuffer headerToStr = new StringBuffer();
-			CampiExcelHeader[] header = CampiExcelHeader.values();
-			for (int i = 0; i < header.length-1; i++) {
-				headerToStr.append(header[i].toString()+",");
-			}
-			headerToStr.append(header[header.length-1].toString());
-			return headerToStr.toString();
-		}
+	static public final String CODIGO_COLUMN_NAME = "Código";
+	static public final String NOME_COLUMN_NAME = "Nome";
+	static public final String ESTADO_COLUMN_NAME = "Estado";
+	static public final String MUNICIPIO_COLUMN_NAME = "Município";
+	static public final String BAIRRO_COLUMN_NAME = "Bairro";
+	static public final String CUSTO_CREDITO_COLUMN_NAME = "Custo Médio do Crédito (R$)";
+	
+	private List<String> headerColumnsNames;
+	
+	public CampiImportExcel() {
+		this.headerColumnsNames = new ArrayList<String>();
+		this.headerColumnsNames.add(CODIGO_COLUMN_NAME);
+		this.headerColumnsNames.add(NOME_COLUMN_NAME);
+		this.headerColumnsNames.add(ESTADO_COLUMN_NAME);
+		this.headerColumnsNames.add(MUNICIPIO_COLUMN_NAME);
+		this.headerColumnsNames.add(BAIRRO_COLUMN_NAME);
+		this.headerColumnsNames.add(CUSTO_CREDITO_COLUMN_NAME);
 	}
 
 	@Override
@@ -54,55 +38,88 @@ public class CampiImportExcel extends AbstractImportExcel<CampiImportExcelBean> 
 		String sheetName = workbook.getSheetName(sheetIndex);
 		return ExcelInformationType.CAMPI.getSheetName().equals(sheetName);
 	}
-
+	
 	@Override
-	protected boolean isHeaderValid(HSSFRow header, int sheetIndex, HSSFSheet sheet, HSSFWorkbook workbook) {
-		if (header != null) {
-    		boolean[] columnStatus = new boolean[CampiExcelHeader.values().length];
-    		
-    		// para cada coluna do header a ser verificado
-            for (int cellIndex = header.getFirstCellNum(); cellIndex <= header.getLastCellNum(); cellIndex++) {
-            	HSSFCell cell = header.getCell(cellIndex);
-            	if (cell != null && cell.getCellType() == HSSFCell.CELL_TYPE_STRING) {
-	            	String columnName = cell.getRichStringCellValue().getString();
-	                if (CampiExcelHeader.BAIRRO.isColumnValid(columnName)) {
-	                	columnStatus[CampiExcelHeader.BAIRRO.ordinal()] = true;
-	                } else if (CampiExcelHeader.CODIGO.isColumnValid(columnName)) {
-	                	columnStatus[CampiExcelHeader.CODIGO.ordinal()] = true;
-	                } else if (CampiExcelHeader.CUSTO_MEDIO_CREDITO.isColumnValid(columnName)) {
-	                	columnStatus[CampiExcelHeader.CUSTO_MEDIO_CREDITO.ordinal()] = true;
-	                } else if (CampiExcelHeader.ESTADO.isColumnValid(columnName)) {
-	                	columnStatus[CampiExcelHeader.ESTADO.ordinal()] = true;
-	                } else if (CampiExcelHeader.MUNICIPIO.isColumnValid(columnName)) {
-	                	columnStatus[CampiExcelHeader.MUNICIPIO.ordinal()] = true;
-	                } else if (CampiExcelHeader.NOME.isColumnValid(columnName)) {
-	                	columnStatus[CampiExcelHeader.NOME.ordinal()] = true;
-	                }
-            	}
-            }
-            
-            // verifica se todas as colunas necessárias foram encontradas no header
-            boolean test = true;
-            for (int i = 0; i < columnStatus.length; i++) {
-            	test = test && columnStatus[i];
-            }
-            return test;
-    	}
-    	return false;
+	protected List<String> getHeaderColumnsNames(int sheetIndex, HSSFSheet sheet, HSSFWorkbook workbook) {
+		return this.headerColumnsNames;
 	}
 
 	@Override
 	protected CampiImportExcelBean createExcelBean(HSSFRow header, HSSFRow row, int sheetIndex, HSSFSheet sheet, HSSFWorkbook workbook) {
-		return null;
+		CampiImportExcelBean bean = new CampiImportExcelBean(row.getRowNum()+1);
+        for (int cellIndex = row.getFirstCellNum(); cellIndex <= row.getLastCellNum(); cellIndex++) {
+            HSSFCell cell = row.getCell(cellIndex);        	
+        	if (cell != null) {
+        		HSSFCell headerCell = header.getCell(cell.getColumnIndex());
+        		if(headerCell != null){
+        			String columnName = headerCell.getRichStringCellValue().getString();
+					String cellValue = getCellValue(cell);
+					if (CODIGO_COLUMN_NAME.equals(columnName)) {
+						bean.setCodigoStr(cellValue);
+					} else if (NOME_COLUMN_NAME.endsWith(columnName)) {
+						bean.setNomeStr(cellValue);
+					} else if (ESTADO_COLUMN_NAME.equals(columnName)) {
+						bean.setEstadoStr(cellValue);
+					} else if (MUNICIPIO_COLUMN_NAME.equals(columnName)) {
+						bean.setMunicipioStr(cellValue);
+					} else if (BAIRRO_COLUMN_NAME.equals(columnName)) {
+						bean.setBairroStr(cellValue);
+					} else if (CUSTO_CREDITO_COLUMN_NAME.equals(columnName)) {
+						bean.setCustoMedioCreditoStr(cellValue);
+					}
+        		}
+        	}
+        }
+		return bean;
 	}
 
 	@Override
 	protected String getHeaderToString() {
-		return CampiExcelHeader.print();
+		return this.headerColumnsNames.toString();
 	}
 
 	@Override
 	protected void processSheetContent(String sheetName, List<CampiImportExcelBean> sheetContent) {
+		if (doSyntacticValidation(sheetName,sheetContent)) {
+			if (doLogicValidation(sheetName,sheetContent)) {
+				updateDataBase(sheetName,sheetContent);
+			}
+		}
+	}
+
+	private boolean doSyntacticValidation(String sheetName, List<CampiImportExcelBean> sheetContent) {
+		// map utilizado para associar um erro às linhas do arquivo onde o mesmo ocorre
+		// [ImportExcelError -> Lista de linhas onde o erro ocorre]
+		Map<ImportExcelError,List<Integer>> syntacticErrorsMap = new HashMap<ImportExcelError,List<Integer>>();
+
+		for (CampiImportExcelBean bean : sheetContent) {
+			List<ImportExcelError> errorsBean = bean.checkSyntacticErrors();
+			for (ImportExcelError error : errorsBean) {
+				List<Integer> rowsWithErrors = syntacticErrorsMap.get(error);
+				if (rowsWithErrors == null) {
+					rowsWithErrors = new ArrayList<Integer>();
+					syntacticErrorsMap.put(error,rowsWithErrors);
+				}
+				rowsWithErrors.add(bean.getRow());
+			}
+		}
 		
+		// coleta os erros e adiciona os mesmos na lista de mensagens
+		for (ImportExcelError erro : syntacticErrorsMap.keySet()) {
+			List<Integer> linhasComErro = syntacticErrorsMap.get(erro);
+			//Object params[] = new Object[] {linhasComErro.toString(),erro.getColumnName()};//TODO:
+			//getMensagens().add(MessageBundleUtils.getMenssage(erro.getErrorMsgKey(),params));//TODO:
+		}
+		
+		return syntacticErrorsMap.isEmpty();
+	}
+
+	private boolean doLogicValidation(String sheetName, List<CampiImportExcelBean> sheetContent) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	private void updateDataBase(String sheetName, List<CampiImportExcelBean> sheetContent) {
+		// TODO Auto-generated method stub
 	}
 }

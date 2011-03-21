@@ -25,7 +25,7 @@ public abstract class AbstractImportExcel<ExcelBeanType> implements IImportExcel
 	}
 	
 	protected abstract boolean sheetMustBeProcessed(int sheetIndex, HSSFSheet sheet, HSSFWorkbook workbook);
-	protected abstract boolean isHeaderValid(HSSFRow header, int sheetIndex, HSSFSheet sheet, HSSFWorkbook workbook);
+	protected abstract List<String> getHeaderColumnsNames(int sheetIndex, HSSFSheet sheet, HSSFWorkbook workbook);
 	protected abstract ExcelBeanType createExcelBean(HSSFRow header, HSSFRow row, int sheetIndex, HSSFSheet sheet, HSSFWorkbook workbook);
 	protected abstract String getHeaderToString();
 	protected abstract void processSheetContent(String sheetName, List<ExcelBeanType> sheetContent);
@@ -71,8 +71,9 @@ public abstract class AbstractImportExcel<ExcelBeanType> implements IImportExcel
 					
 					// procura cabeçalho
 					int rowIndex = sheet.getFirstRowNum();
-	                HSSFRow header = null; 
-	                while ((rowIndex < sheet.getLastRowNum()) && !isHeaderValid((header = sheet.getRow(rowIndex++)),sheetIndex,sheet,workbook));
+	                HSSFRow header = null;
+	                List<String> headerColumnsNames = getHeaderColumnsNames(sheetIndex,sheet,workbook);
+	                while ((rowIndex < sheet.getLastRowNum()) && !isHeaderValid((header = sheet.getRow(rowIndex++)),sheetIndex,sheet,workbook,headerColumnsNames));
 	                
 	                if (header != null) {
 	                	List<Integer> nullRows = new ArrayList<Integer>();
@@ -100,14 +101,14 @@ public abstract class AbstractImportExcel<ExcelBeanType> implements IImportExcel
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
-			Object params[] = new Object[] {fileName,extraiMensagem(e)};
+			Object params[] = new Object[] {fileName,extractMessage(e)};
 			//errors.add(MessageBundleUtils.getMenssage("excel.msg.err.arquivo.invalido",params));//TODO: msg de erro
 		} finally {
 			if (inputStream != null) {
 				try {
 					inputStream.close();
 				} catch (IOException e) {
-					errors.add(extraiMensagem(e));
+					errors.add(extractMessage(e));
 					e.printStackTrace();
 				}
 			}
@@ -116,7 +117,35 @@ public abstract class AbstractImportExcel<ExcelBeanType> implements IImportExcel
 		return excelBeansMap;
 	}
 	
-	private String extraiMensagem(Exception e) {
+	private boolean isHeaderValid(HSSFRow candidateHeader, int sheetIndex, HSSFSheet sheet, HSSFWorkbook workbook, List<String> headerColumnsNames) {
+		if (candidateHeader != null) {
+    		boolean[] columnStatus = new boolean[headerColumnsNames.size()];
+    		
+    		// para cada coluna da linha a ser verificada
+            for (int cellIndex = candidateHeader.getFirstCellNum(); cellIndex <= candidateHeader.getLastCellNum(); cellIndex++) {
+            	HSSFCell cell = candidateHeader.getCell(cellIndex);
+            	if (cell != null && cell.getCellType() == HSSFCell.CELL_TYPE_STRING) {
+	            	String columnName = cell.getRichStringCellValue().getString();
+	                // para cada coluna no header
+	            	for (int headerColumnIndex = 0; headerColumnIndex < headerColumnsNames.size(); headerColumnIndex++) {
+	            		if (headerColumnsNames.get(headerColumnIndex).equals(columnName)) {
+	            			columnStatus[headerColumnIndex] = true;
+	            		}
+	            	}
+            	}
+            }
+            
+            // verifica se todas as colunas necessárias foram encontradas no header
+            boolean test = true;
+            for (int i = 0; i < columnStatus.length; i++) {
+            	test = test && columnStatus[i];
+            }
+            return test;
+    	}
+    	return false;
+	}
+	
+	private String extractMessage(Exception e) {
 		StringBuffer msg = new StringBuffer();
 		msg.append(e.getMessage());
 		if (e.getCause() != null) {
