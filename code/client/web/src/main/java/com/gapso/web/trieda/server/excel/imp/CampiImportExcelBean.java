@@ -21,7 +21,7 @@ public class CampiImportExcelBean implements Comparable<CampiImportExcelBean> {
 	public List<ImportExcelError> checkSyntacticErrors() {
 		List<ImportExcelError> erros = new ArrayList<ImportExcelError>();
 		if (!tudoVazio()) {
-			verificaAno(erros);
+//			verificaAno(erros);
 		} else {
 			erros.add(ImportExcelError.TUDO_VAZIO);
 		}
