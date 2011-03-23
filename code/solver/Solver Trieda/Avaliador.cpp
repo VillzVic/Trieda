@@ -22,6 +22,7 @@ Avaliador::Avaliador()
 	totalViolacoesUltimaPrimeiraAula = 0;
 	totalViolacoesMestres = 0;
 	totalViolacoesDoutores = 0;
+	totalViolacoesDiscProfCurso = 0;
 }
 
 Avaliador::~Avaliador()
@@ -39,6 +40,7 @@ double Avaliador::avaliaSolucao(SolucaoOperacional & solucao)
 	avaliaDiasProfessorMinistraAula(solucao);
 	violacaoUltimaPrimeiraAula(solucao);
 	avaliaNumeroMestresDoutores(solucao);
+	avaliaMaximoDisciplinasProfessorPorCurso(solucao);
 
 	double funcaoObjetivo = 0.0;
 
@@ -57,6 +59,7 @@ double Avaliador::avaliaSolucao(SolucaoOperacional & solucao)
 	funcaoObjetivo += totalViolacoesUltimaPrimeiraAula;
 	funcaoObjetivo += totalViolacoesMestres;
 	funcaoObjetivo += totalViolacoesDoutores;
+	funcaoObjetivo += totalViolacoesDiscProfCurso;
 
 	return funcaoObjetivo;
 }
@@ -431,19 +434,34 @@ void Avaliador::avaliaDiasProfessorMinistraAula(SolucaoOperacional & solucao)
 	Aula* aula = NULL;
 	int linha_professor = 0;
 
+	// Inicializa o vetor de dias da semana dos professores
+	for (unsigned int i = 0; i < solucao.mapProfessores.size(); i++)
+	{
+		professorMinistraAula.push_back(0);
+	}
+
+	// Para cada professor da solução operacional, procura-se
+	// o total de dias da semana que ele tem aulas para ministrar
 	std::map<int, Professor*>::iterator it_professor
 		= solucao.mapProfessores.begin();
 	for (; it_professor != solucao.mapProfessores.end(); it_professor++)
 	{
+		// ID da linha correspondente a esse professor, na matriz de solução
 		linha_professor = it_professor->second->getIdOperacional();
 
+		// Para cada aula que o professor ministrar, devo inserir
+		// o dia da semana dessa aula na lista de dias, ignorando repetições
 		GGroup<int> dias_semana;
 		for (unsigned i = 0; i < solucao.getMatrizAulas()->at(linha_professor)->size(); i++)
 		{
 			aula = solucao.getMatrizAulas()->at(linha_professor)->at(i);
-			dias_semana.add(aula->getDiaSemana());
+			if (aula != NULL)
+			{
+				dias_semana.add(aula->getDiaSemana());
+			}
 		}
 
+		// Armazena o total de dias 
 		professorMinistraAula[linha_professor] = dias_semana.size();
 		numDias += dias_semana.size();
 	}
@@ -671,4 +689,128 @@ void Avaliador::avaliaNumeroMestresDoutores(SolucaoOperacional & solucao)
 
 	totalViolacoesMestres = violacoesMestres;
 	totalViolacoesDoutores = violacoesDoutores;
+}
+
+void Avaliador::avaliaMaximoDisciplinasProfessorPorCurso(SolucaoOperacional & solucao)
+{
+	int violacoes = 0;
+
+	int id_curso = 0;
+	int id_disciplina = 0;
+	int id_professor = 0;
+
+	// Map que relaciona cada professor com as
+	// disciplinas às quais ele está alocado na solução
+	std::map< int/*Professor*/, std::map<int/*Curso*/, GGroup<int>/*Lista de disciplinas*/ > > mapProfessorCursoDisciplinas;
+
+	// Para cada propfessor, devo procurar pelas disciplinas
+	// distintas que esse professor tem alocadas a ele na solução
+	Aula* aula = NULL;
+	Curso* curso = NULL;
+	Professor* professor = NULL;
+	for (unsigned int i = 0; i < solucao.getMatrizAulas()->size(); i++)
+	{
+		// Recupera o objeto 'professor' atual
+		professor = solucao.getProfessorMatriz(i);
+
+		// Lista de disciplinas desse professor
+		GGroup<int> ids_disciplinas;
+		for (unsigned int j = 0; j < solucao.getMatrizAulas()->at(i)->size(); j++)
+		{
+			aula = solucao.getMatrizAulas()->at(i)->at(j);
+			if (aula != NULL)
+			{
+				// Id do professor atual
+				id_professor = professor->getId();
+
+				// Procura pelo curso atual na lista de cursos do 'problemaData'
+				curso = procuraCurso(id_curso, solucao.getProblemData()->cursos);
+				id_curso = curso->getId();
+
+				// Id da disciplina atual
+				id_disciplina = aula->getDisciplina()->getId();
+
+				// Recupera a lista de cursos do professor atual
+				std::map<int, GGroup<int> > map_cursos = mapProfessorCursoDisciplinas[id_professor];
+
+				// Recupera a lista de disciplinas do professor no curso
+				GGroup<int> ids_disciplinas = map_cursos[id_curso];
+
+				// Adiciona a disciplina atual na lista
+				ids_disciplinas.add( id_disciplina );
+			}
+		}
+	}
+
+	int linha_professor = 0;
+	int disc_professor = 0;
+	int max_disc_professor = 0;
+	int diferenca_disciplinas = 0;
+	int violacoes_professor = 0;
+
+	// Inicializa as violações de cada professor como zero
+	for (unsigned int i = 0; i < solucao.mapProfessores.size(); i++)
+	{
+		violacoesDisciplinasProfessor.push_back(0);
+	}
+
+	// Verifica o limite de disciplinas de cada professor
+	std::map< int, std::map<int, GGroup<int> > >::iterator it_prof_cursco_disc
+		= mapProfessorCursoDisciplinas.begin();
+	for (; it_prof_cursco_disc != mapProfessorCursoDisciplinas.end(); it_prof_cursco_disc++)
+	{
+		// Código do professor
+		id_professor = it_prof_cursco_disc->first;
+
+		// Linha correspondente ao professor na matriz de solução
+		linha_professor = solucao.getProfessorMatriz(id_professor)->getIdOperacional();
+
+		// Cursos aos quais o professor atual tem pelo
+		// menos uma aula alocada na solução operacional
+		std::map<int, GGroup<int> >::iterator it_cursos
+			= it_prof_cursco_disc->second.begin();
+		for (; it_cursos != it_prof_cursco_disc->second.end(); it_cursos++)
+		{
+			// ID do curso
+			id_curso = it_cursos->first;
+			curso = procuraCurso(id_curso, solucao.getProblemData()->cursos);
+
+			// Disciplinas às quais o professor está alocado nesse curso
+			disc_professor = it_cursos->second.size();
+
+			// Máximo de disciplinas que o professor pode ministrar nesse curso
+			max_disc_professor = curso->getQtdMaxProfDisc();
+
+			// Verifica se houve violação do número de disciplinas
+			diferenca_disciplinas = (disc_professor - max_disc_professor);
+			if (diferenca_disciplinas > 0)
+			{
+				// Incrementa o total de violações encontrado
+				violacoes++;
+
+				// Incrementa o número de violações do professor atual
+				violacoes_professor += diferenca_disciplinas;
+			}
+		}
+
+		// Armazena o número de disciplinas excedidas para esse professor
+		violacoesDisciplinasProfessor[ linha_professor ] = violacoes_professor;
+	}
+
+	totalViolacoesDiscProfCurso = violacoes;
+}
+
+Curso* Avaliador::procuraCurso(int id_curso, GGroup<Curso*> cursos)
+{
+	// Procura pelo curso desejado na lista de cursos
+	Curso* curso = NULL;
+	ITERA_GGROUP(it_curso, cursos, Curso)
+	{
+		if (it_curso->getId() == id_curso)
+		{
+			curso = *(it_curso);
+			break;
+		}
+	}
+	return curso;
 }

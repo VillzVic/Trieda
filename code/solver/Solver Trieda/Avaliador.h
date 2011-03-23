@@ -96,6 +96,13 @@ private:
 	void avaliaNumeroMestresDoutores(SolucaoOperacional &);
 	int totalViolacoesMestres;
 	int totalViolacoesDoutores;
+
+	// -----------------------------------------------------------
+	// Avaliação do máximo de disciplinas ppor professor por curso
+	// -----------------------------------------------------------
+	void avaliaMaximoDisciplinasProfessorPorCurso(SolucaoOperacional &);
+	int totalViolacoesDiscProfCurso;
+	vector<int> violacoesDisciplinasProfessor;
 	//--------------------------------------------------------------------//
 
 	//--------------------------- UTILITÁRIOS ----------------------------//
@@ -125,6 +132,11 @@ private:
 	// matriz de solução operacional informada
 	// -----------------------------------------------------------
 	int calculaTamanhoBlocoAula(SolucaoOperacional &);
+
+	// -----------------------------------------------------------
+	// Retorna o curso com o id informado
+	// -----------------------------------------------------------
+	Curso* procuraCurso(int, GGroup<Curso*>);
 	//--------------------------------------------------------------------//
 };
 
