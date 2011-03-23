@@ -19,14 +19,6 @@ SolucaoOperacional::SolucaoOperacional(ProblemData* prbDt)
 			mapProfessores[it_prof->getIdOperacional()] = (*it_prof);
 		}
    }
-
-   // Map de unidades: dado o id da unidade,
-   // retorna o ponteiro para a respectiva unidade
-   mapUnidades = &( prbDt->refUnidade );	
-
-   // Map de campus: dado o id do campus,
-   // retorna o ponteiro para o respectivo campus
-   mapCampus = &( prbDt->refCampus );	
 }
 
 SolucaoOperacional::~SolucaoOperacional()
@@ -94,7 +86,16 @@ Professor* SolucaoOperacional::getProfessorMatriz(int linha)
 {
 	Professor* professor = NULL;
 
-	// TODO
+	std::map<int, Professor*>::iterator it_professor
+		= mapProfessores.begin();
+	for (; it_professor != mapProfessores.end(); it_professor)
+	{
+		if (it_professor->second->getIdOperacional() == linha)
+		{
+			professor = it_professor->second;
+			break;
+		}
+	}
 
 	return professor;
 }
@@ -106,11 +107,10 @@ ProblemData* SolucaoOperacional::getProblemData() const
 
 bool SolucaoOperacional::alocaAula(Professor & professor, int dia, Horario & horario, Aula & aula)
 {
-   
    // TODO
-
-   std::cout << "Implementar o metodo bool SolucaoOperacional::alocaAula(Professor & professor, int dia, Horario & horario, Aula & aula)" << std::endl;
+   std::cout << "Implementar o metodo bool SolucaoOperacional::alocaAula("
+			 << "Professor & professor, int dia, Horario & horario, Aula & aula)" << std::endl;
    exit(1);
-   
+
    return false;
 }

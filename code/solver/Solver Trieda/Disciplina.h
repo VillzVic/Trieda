@@ -11,7 +11,69 @@ class Disciplina :
 public:
    Disciplina(void);
    ~Disciplina(void);
-   //private:
+
+   DivisaoCreditos* divisao_creditos;
+   GGroup<int> equivalentes;
+   GGroup<int> incompativeis;
+   GGroup<Horario*> horarios;
+
+   TipoDisciplina* tipo_disciplina;
+   NivelDificuldade* nivel_dificuldade;
+
+   // Conjunto de combinações possíveis de divisão de créditos de uma uma disciplina d
+   std::vector<std::vector<std::pair<int/*dia*/, int/*numCreditos*/> > > combinacao_divisao_creditos;
+
+   // >>> Métodos para realizar o pré processamento dos dados.
+
+   // =========== METODOS AUXILIARES
+   virtual void le_arvore(ItemDisciplina& elem);
+
+   bool eLab() const { return e_lab; }
+
+   int adicionaDemandaTotal(int demanda_total) { return (demandaTotal += demanda_total); }
+
+   // Armazena os dias letivos em que a disciplina pode ser ministrada.
+   GGroup<int> diasLetivos;
+
+   // =========== METODOS SET
+   void setDemandaTotal(int demanda_total) { demandaTotal = demanda_total; }
+   void setMaxDemanda(int _max_demanda) { max_demanda = _max_demanda; }
+   void setCodigo(std::string s) { codigo = s; }
+   void setNome(std::string s) { nome = s; }
+   void setCredTeoricos(int v) { cred_teoricos = v; }
+   void setCredPraticos(int v) { cred_praticos = v; }
+   void setELab(bool v) { e_lab = v; }
+   void setMaxAlunosT(int v) { max_alunos_t = v; }
+   void setMaxAlunosP(int v) { max_alunos_p = v; }
+   void setTipoDisciplinaId(int v) { tipo_disciplina_id = v; }
+   void setNivelDificuldadeId(int v) { nivel_dificuldade_id = v; }
+   void setNumTurmas(int v) { num_turmas = v; }
+   void setMinCreds(int v) { min_creds = v; }
+   void setMaxCreds(int v) { max_creds = v; }
+
+   // =========== METODOS GET
+   int getDemandaTotal() const { return demandaTotal; }
+   int getMaxDemanda() const { return max_demanda; }
+   std::string getCodigo() { return codigo; }
+   std::string getNome() { return nome; }
+   int getCredTeoricos() { return cred_teoricos; }
+   int getCredPraticos() { return cred_praticos; }
+   bool getELab() { return e_lab; }
+   int getMaxAlunosT() { return max_alunos_t; }
+   int getMaxAlunosP() { return max_alunos_p; }
+   int getTipoDisciplinaId() { return tipo_disciplina_id; }
+   int getNivelDificuldadeId() { return nivel_dificuldade_id; }
+   int getNumTurmas() { return num_turmas; }
+   int getMinCreds() { return min_creds; }
+   int getMaxCreds() { return max_creds; }
+
+private:
+   // Soma das demandas de uma disciplina.
+   int demandaTotal;
+
+   // Maior demanda dentre a(s) demanda(s) de uma dada disciplina.
+   int max_demanda;
+
    std::string codigo;
    std::string nome;
    int cred_teoricos;
@@ -22,28 +84,8 @@ public:
    int tipo_disciplina_id;
    int nivel_dificuldade_id;
 
-   DivisaoCreditos* divisao_creditos;
-   GGroup<int> equivalentes;
-   GGroup<int> incompativeis;
-   GGroup<Horario*> horarios;
-
-   TipoDisciplina* tipo_disciplina;
-   NivelDificuldade* nivel_dificuldade;
-
-   //conjunto de combinações possíveis de divisão de créditos de uma uma disciplina d
-   std::vector<std::vector<std::pair<int/*dia*/, int/*numCreditos*/> > > combinacao_divisao_creditos;
-
-private:
-   // Soma das demandas de uma disciplina.
-   int demandaTotal;
-
-   // Maior demanda dentre a(s) demanda(s) de uma dada disciplina.
-   int max_demanda;
-
-public:
-
    // Estrutura responsável por armazenar os id's das turmas da disciplina em questão.
-   //GGroup<int/*Id Turma*/> turmas;
+   // GGroup<int/*Id Turma*/> turmas;
 
    int num_turmas;
    int min_creds;
@@ -52,50 +94,6 @@ public:
    // >>> 14/10/2010
    //bool foi_dividida;
    // <<< 14/10/2010
-
-public:
-
-   // >>> Métodos para realizar o pré processamento dos dados.
-
-   // =========== METODOS SET
-   void setMaxCreds(int _max_creds) {
-      max_creds = _max_creds;
-   }
-
-   void setCredsPraticos(int _creds_praticos) {
-      cred_praticos = _creds_praticos;
-   }
-
-   void setDemandaTotal(int demanda_total) { demandaTotal = demanda_total; }
-
-   void setMaxDemanda(int _max_demanda) { max_demanda = _max_demanda; }
-
-   void setMaxAlunosTeo(int _max_alunos_t) { max_alunos_t = _max_alunos_t; }
-
-   void setMaxAlunosPrat(int _max_alunos_p) { max_alunos_p = _max_alunos_p; }
-
-   // =========== METODOS GET
-   int getDemandaTotal() const { return demandaTotal; }
-
-   int getMaxDemanda() const { return max_demanda; }
-
-   int getMaxAlunosTeo() const { return max_alunos_t; }
-
-   int getMaxAlunosPrat() const { return max_alunos_p; }
-
-   // =========== METODOS AUXILIARES
-   virtual void le_arvore(ItemDisciplina& elem);
-
-   bool eLab() const { return e_lab; }
-
-   int adicionaDemandaTotal(int demanda_total) { return (demandaTotal += demanda_total); }
-
-   // <<<
-
-   // Armazena os dias letivos em que a disciplina pode ser ministrada.
-   GGroup<int> diasLetivos;
-
-   //Disciplina& operator= (const Disciplina& d);
 };
 
 /*

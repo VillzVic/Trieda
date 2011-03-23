@@ -524,7 +524,7 @@ void ProblemDataLoader::estabeleceDiasLetivosProfessorDisciplina()
 
                      for(; itDiasLetDisc != itDisc->diasLetivos.end(); itDiasLetDisc++ )
                      {			
-                        if(it_mag->disciplina_id == itDisc->getId()) 
+                        if(it_mag->getDisciplinaId() == itDisc->getId()) 
                         {
                            if(it_hor->dias_semana.find(*itDiasLetDisc) != it_hor->dias_semana.end())
                            {
@@ -687,7 +687,9 @@ void ProblemDataLoader::divideDisciplinas()
 
    ITERA_GGROUP(it_disc,problemData->disciplinas,Disciplina) 
    {
-      if(it_disc->cred_teoricos > 0 && it_disc->cred_praticos > 0 && it_disc->e_lab)
+	   if(it_disc->getCredTeoricos() > 0
+			&& it_disc->getCredPraticos() > 0
+			&& it_disc->getELab())
       {
          Disciplina *nova_disc = new Disciplina();
 
@@ -696,35 +698,24 @@ void ProblemDataLoader::divideDisciplinas()
          // <<<
 
          nova_disc->setId(-it_disc->getId()); // alterado
-         //nova_disc->setId(it_disc->getId()*1000); // alterado
+         nova_disc->setCodigo(it_disc->getCodigo() + "-P");
+         nova_disc->setNome(it_disc->getNome() + "PRATICA");
+         nova_disc->setCredTeoricos(0); // alterado
+         nova_disc->setCredPraticos(it_disc->getCredPraticos()); // alterado
+         it_disc->setCredPraticos(0);
 
-         nova_disc->codigo = it_disc->codigo + "-P";
-         //nova_disc->codigo = it_disc->codigo;
-         nova_disc->nome = it_disc->nome + "PRATICA";
+         nova_disc->setMaxCreds(nova_disc->getCredPraticos());
+         it_disc->setMaxCreds(it_disc->getCredTeoricos());
 
-         //nova_disc->cred_teoricos = it_disc->cred_teoricos;
-         nova_disc->cred_teoricos = 0; // alterado
+         nova_disc->setELab(it_disc->getELab()); // alterado
+         it_disc->setELab(false); // alterado
 
-         nova_disc->cred_praticos = it_disc->cred_praticos; // alterado
-         //it_disc->cred_praticos = 0; // alterado
-         it_disc->setCredsPraticos(0);
+         nova_disc->setMaxAlunosT(-1); // alterado
+         nova_disc->setMaxAlunosP(it_disc->getMaxAlunosP()); // alterado
+         it_disc->setMaxAlunosP(-1); // alterado
 
-         //nova_disc->max_creds = it_disc->max_creds;
-         nova_disc->max_creds = nova_disc->cred_praticos;
-         //it_disc->max_creds = it_disc->cred_teoricos;
-         it_disc->setMaxCreds(it_disc->cred_teoricos);
-
-         nova_disc->e_lab = it_disc->e_lab; // alterado
-         it_disc->e_lab = false; // alterado
-
-         //nova_disc->max_alunos_t = it_disc->max_alunos_t; // alterado
-         nova_disc->max_alunos_t = -1; // alterado
-
-         nova_disc->max_alunos_p = it_disc->max_alunos_p; // alterado
-         it_disc->max_alunos_p = -1; // alterado
-
-         nova_disc->tipo_disciplina_id = it_disc->tipo_disciplina_id;
-         nova_disc->nivel_dificuldade_id = it_disc->nivel_dificuldade_id;
+         nova_disc->setTipoDisciplinaId(it_disc->getTipoDisciplinaId());
+         nova_disc->setNivelDificuldadeId(it_disc->getNivelDificuldadeId());
 
          // -----
 
@@ -736,7 +727,7 @@ void ProblemDataLoader::divideDisciplinas()
 
             delete it_disc->divisao_creditos;
 
-            it_Creds_Regras = problemData->creds_Regras.find(it_disc->cred_teoricos);
+            it_Creds_Regras = problemData->creds_Regras.find(it_disc->getCredTeoricos());
 
             /* Checando se existe alguma regra de crédito cadastrada para o total
             de créditos da nova disciplina. */
@@ -765,7 +756,7 @@ void ProblemDataLoader::divideDisciplinas()
 
             // Alterações relacionadas à nova disciplina
 
-            it_Creds_Regras = problemData->creds_Regras.find(nova_disc->cred_praticos);
+            it_Creds_Regras = problemData->creds_Regras.find(nova_disc->getCredPraticos());
 
             /* Checando se existe alguma regra de crédito cadastrada para o total
             de créditos da nova disciplina. */
@@ -933,18 +924,18 @@ void ProblemDataLoader::divideDisciplinas()
 			{
                ITERA_GGROUP(it_mag,it_prof->magisterio,Magisterio)
 			   {
-                  if( it_mag->disciplina_id == it_disc->getId())
+                  if( it_mag->getDisciplinaId() == it_disc->getId())
 				  {
                      // Magisterio *novo_mag = new Magisterio();
                      novo_mag = new Magisterio();
 
                      novo_mag->setId(-1); // Nem precisava.
-                     novo_mag->nota = it_mag->nota;
-                     novo_mag->preferencia = it_mag->preferencia;
-                     novo_mag->disciplina_id = nova_disc->getId();
+                     novo_mag->setNota(it_mag->getNota());
+                     novo_mag->setPreferencia(it_mag->getPreferencia());
+                     novo_mag->setDisciplinaId(nova_disc->getId());
                      it_prof->magisterio.add(novo_mag);
 
-					 // Garantido que um mesmo professor nao possui
+					 // Garantindo que um mesmo professor nao possui
 					 // preferencias diferentes em relacao a uma mesma disciplina.
                      break;
                   }
@@ -1149,7 +1140,7 @@ void ProblemDataLoader::gera_refs()
 
          ITERA_GGROUP(it_mag, it_prof->magisterio, Magisterio)
          {
-            find_and_set(it_mag->disciplina_id,
+            find_and_set(it_mag->getDisciplinaId(),
                problemData->disciplinas,
                it_mag->disciplina);
          }
@@ -1197,11 +1188,11 @@ void ProblemDataLoader::gera_refs()
 
    ITERA_GGROUP(it_disc, problemData->disciplinas, Disciplina)
    {
-      find_and_set(it_disc->tipo_disciplina_id,
+      find_and_set(it_disc->getTipoDisciplinaId(),
          problemData->tipos_disciplina,
          it_disc->tipo_disciplina);
 
-      find_and_set(it_disc->nivel_dificuldade_id,
+      find_and_set(it_disc->getNivelDificuldadeId(),
          problemData->niveis_dificuldade,
          it_disc->nivel_dificuldade);
 
@@ -1622,6 +1613,7 @@ void ProblemDataLoader::estima_turmas()
 
    */
 
+   int anterior = 0;
    std::map<int/*Id Campus*/,GGroup<int>/*Id Discs*/>::iterator itCPDiscs =
       problemData->cp_discs.begin();
 
@@ -1634,71 +1626,79 @@ void ProblemDataLoader::estima_turmas()
          int demDisc = problemData->refDisciplinas[*itDisc]->getDemandaTotal();
          if(problemData->refDisciplinas[*itDisc]->eLab())
          {
-            if(problemData->refDisciplinas[*itDisc]->max_alunos_p > 0)
+            if(problemData->refDisciplinas[*itDisc]->getMaxAlunosP() > 0)
             {
                int numTurmas = (demDisc / 25);
-               problemData->refDisciplinas[*itDisc]->num_turmas
-				   = (numTurmas > 0 ? numTurmas + 2 : 2);
+               problemData->refDisciplinas[*itDisc]->setNumTurmas(
+				   (numTurmas > 0 ? numTurmas + 2 : 2) );
 
                if ( abs(problemData->refDisciplinas[*itDisc]->getId()) == 101 || 
                   abs(problemData->refDisciplinas[*itDisc]->getId()) == 178 ||
                   abs(problemData->refDisciplinas[*itDisc]->getId()) == 349 )
 			   {
-                  problemData->refDisciplinas[*itDisc]->num_turmas += 1;
+				   anterior = problemData->refDisciplinas[*itDisc]->getNumTurmas();
+                   problemData->refDisciplinas[*itDisc]->setNumTurmas(anterior+1);
 			   }
-               else if ( problemData->refDisciplinas[*itDisc]->max_creds >= 6)
+               else if ( problemData->refDisciplinas[*itDisc]->getMaxCreds() >= 6)
 			   {
-                  problemData->refDisciplinas[*itDisc]->num_turmas += 1;
+				   anterior = problemData->refDisciplinas[*itDisc]->getNumTurmas();
+                   problemData->refDisciplinas[*itDisc]->setNumTurmas(anterior+1);
 			   }
             }
             else
             {
-               problemData->refDisciplinas[*itDisc]->num_turmas = (demDisc / 25) + 2;
+               problemData->refDisciplinas[*itDisc]->setNumTurmas( (demDisc / 25) + 2 );
 
                if ( abs(problemData->refDisciplinas[*itDisc]->getId()) == 101 || 
                   abs(problemData->refDisciplinas[*itDisc]->getId()) == 178 ||
                   abs(problemData->refDisciplinas[*itDisc]->getId()) == 349 )
 			   {
-                  problemData->refDisciplinas[*itDisc]->num_turmas += 1;
+				   anterior = problemData->refDisciplinas[*itDisc]->getNumTurmas();
+                   problemData->refDisciplinas[*itDisc]->setNumTurmas(anterior+1);
 			   }
-               else if ( problemData->refDisciplinas[*itDisc]->max_creds >= 6)
+               else if ( problemData->refDisciplinas[*itDisc]->getMaxCreds() >= 6)
 			   {
-                  problemData->refDisciplinas[*itDisc]->num_turmas += 1;
+				   anterior = problemData->refDisciplinas[*itDisc]->getNumTurmas();
+                   problemData->refDisciplinas[*itDisc]->setNumTurmas(anterior+1);
 			   }
             }
          }
          else
          {
-            if(problemData->refDisciplinas[*itDisc]->max_alunos_p > 0)
+            if(problemData->refDisciplinas[*itDisc]->getMaxAlunosP() > 0)
             {
                int numTurmas = (demDisc / 50);
-               problemData->refDisciplinas[*itDisc]->num_turmas
-				   = (numTurmas > 0 ? numTurmas + 1 : 1);     
+               problemData->refDisciplinas[*itDisc]->setNumTurmas(
+				   (numTurmas > 0 ? numTurmas + 1 : 1) );
 
                if ( abs(problemData->refDisciplinas[*itDisc]->getId()) == 101 || 
                   abs(problemData->refDisciplinas[*itDisc]->getId()) == 178 ||
                   abs(problemData->refDisciplinas[*itDisc]->getId()) == 349 )
 			   {
-                  problemData->refDisciplinas[*itDisc]->num_turmas += 1;
+				   anterior = problemData->refDisciplinas[*itDisc]->getNumTurmas();
+                   problemData->refDisciplinas[*itDisc]->setNumTurmas(anterior+1);
 			   }
-               else if ( problemData->refDisciplinas[*itDisc]->max_creds >= 6)
+               else if ( problemData->refDisciplinas[*itDisc]->getMaxCreds() >= 6)
 			   {
-                  problemData->refDisciplinas[*itDisc]->num_turmas += 1;
+				   anterior = problemData->refDisciplinas[*itDisc]->getNumTurmas();
+                   problemData->refDisciplinas[*itDisc]->setNumTurmas(anterior+1);
 			   }
             }
             else
             {
-               problemData->refDisciplinas[*itDisc]->num_turmas = (demDisc / 50) + 1;
+                problemData->refDisciplinas[*itDisc]->setNumTurmas( (demDisc / 50) + 1 );
 
                if ( abs(problemData->refDisciplinas[*itDisc]->getId()) == 101 || 
                   abs(problemData->refDisciplinas[*itDisc]->getId()) == 178 ||
                   abs(problemData->refDisciplinas[*itDisc]->getId()) == 349 )
 			   {
-                  problemData->refDisciplinas[*itDisc]->num_turmas += 1;
+				   anterior = problemData->refDisciplinas[*itDisc]->getNumTurmas();
+                   problemData->refDisciplinas[*itDisc]->setNumTurmas(anterior+1);
 			   }
-               else if ( problemData->refDisciplinas[*itDisc]->max_creds >= 6)
+               else if ( problemData->refDisciplinas[*itDisc]->getMaxCreds() >= 6)
 			   {
-                  problemData->refDisciplinas[*itDisc]->num_turmas += 1;
+				   anterior = problemData->refDisciplinas[*itDisc]->getNumTurmas();
+                   problemData->refDisciplinas[*itDisc]->setNumTurmas(anterior+1);
 			   }
             }
          }
@@ -1857,11 +1857,11 @@ void ProblemDataLoader::print_stats()
           Disciplina * disc = problemData->refDisciplinas[(*itPrdDisc).second];
           if(disc->getId() > 0)
 		  {
-             nturmas += disc->num_turmas;
+             nturmas += disc->getNumTurmas();
 		  }
           else
 		  {
-             nturmasDiscDiv += disc->num_turmas;
+             nturmasDiscDiv += disc->getNumTurmas();
 		  }
       }
    }
@@ -1929,17 +1929,17 @@ void ProblemDataLoader::cache()
    }
 
    problemData->totalTurmas = 0;
-   ITERA_GGROUP(it_disciplinas,problemData->disciplinas,Disciplina)
+   ITERA_GGROUP(it_disciplinas, problemData->disciplinas, Disciplina)
    {
-      problemData->totalTurmas += it_disciplinas->num_turmas;
+      problemData->totalTurmas += it_disciplinas->getNumTurmas();
    }
 
-   ITERA_GGROUP(it_bloco,problemData->blocos,BlocoCurricular)
+   ITERA_GGROUP(it_bloco, problemData->blocos, BlocoCurricular)
    {
       it_bloco->total_turmas = 0;
-      ITERA_GGROUP(it_disciplinas,it_bloco->disciplinas,Disciplina)
+      ITERA_GGROUP(it_disciplinas, it_bloco->disciplinas, Disciplina)
       {
-         it_bloco->total_turmas += it_disciplinas->num_turmas;
+         it_bloco->total_turmas += it_disciplinas->getNumTurmas();
       }
    }
 
@@ -1947,39 +1947,39 @@ void ProblemDataLoader::cache()
    {
       if (it_disc->divisao_creditos != NULL)
       {
-         it_disc->min_creds = 24;
-         it_disc->max_creds = 0;
+         it_disc->setMinCreds(24);
+         it_disc->setMaxCreds(0);
 
-         for(int t=0;t<8;t++)
+         for(int t = 0; t < 8; t++)
 		 {
             if(it_disc->divisao_creditos->dia[t] > 0)
             {
-               it_disc->min_creds = 
-                  std::min(it_disc->min_creds,
-                  it_disc->divisao_creditos->dia[t]);
+               it_disc->setMinCreds( 
+                  std::min(it_disc->getMinCreds(),
+                  it_disc->divisao_creditos->dia[t]) );
 
-               it_disc->max_creds = 
-                  std::max(it_disc->max_creds,
-                  it_disc->divisao_creditos->dia[t]);
+               it_disc->setMaxCreds( 
+                  std::max(it_disc->getMaxCreds(),
+                  it_disc->divisao_creditos->dia[t]) );
             }
          }
       }
       else
       {
-         it_disc->min_creds = 1;
-         it_disc->max_creds = it_disc->cred_praticos + it_disc->cred_teoricos;
+         it_disc->setMinCreds(1);
+         it_disc->setMaxCreds( it_disc->getCredPraticos() + it_disc->getCredTeoricos() );
       }
 
-      if ( it_disc->min_creds > 2 )
+      if ( it_disc->getMinCreds() > 2 )
 	  {
-         it_disc->min_creds = 1;
+         it_disc->setMinCreds(1);
 	  }
    }
 
    // Definindo um map de compatibilidade e incompatibilidade entre 2 turmas.
-   ITERA_GGROUP(it_fix_curso,problemData->cursos,Curso)
+   ITERA_GGROUP(it_fix_curso, problemData->cursos, Curso)
    {
-      ITERA_GGROUP(it_alt_curso,problemData->cursos,Curso)
+      ITERA_GGROUP(it_alt_curso, problemData->cursos, Curso)
       {
          std::pair<Curso*,Curso*> idCursos = 
             std::make_pair(*it_fix_curso,*it_alt_curso);

@@ -1,4 +1,5 @@
 #include <cmath>
+#include <map>
 
 #include "Avaliador.h"
 #include "ofbase.h"
@@ -12,6 +13,15 @@ Avaliador::Avaliador()
 	totalViolacoesDescolamento = 0.0;
 	totalTempoViolacoesDescolamento = 0.0;
 	totalGapsHorariosProfessores = 0.0;
+	totalAvaliacaoCorpoDocente = 0.0;
+	totalCustoCorpoDocente = 0.0;
+	totalViolacoesCHMinimaSemestreAterior = 0;
+	totalViolacoesCHMinimaProfessor = 0;
+	totalViolacoesCHMaximaProfessor = 0;
+	totalDiasProfessorMinistraAula = 0;
+	totalViolacoesUltimaPrimeiraAula = 0;
+	totalViolacoesMestres = 0;
+	totalViolacoesDoutores = 0;
 }
 
 Avaliador::~Avaliador()
@@ -24,14 +34,29 @@ double Avaliador::avaliaSolucao(SolucaoOperacional & solucao)
 	calculaViolacaoRestricaoFixacao(solucao);
 	calculaViolacoesDescolamento(solucao);
 	calculaGapsHorariosProfessores(solucao);
+	avaliacaoCustoCorpoDocente(solucao);
+	violacoesCargasHorarias(solucao);
+	avaliaDiasProfessorMinistraAula(solucao);
+	violacaoUltimaPrimeiraAula(solucao);
+	avaliaNumeroMestresDoutores(solucao);
 
 	double funcaoObjetivo = 0.0;
 
 	// Contabilização do valor da solução
+	// Obs.: atribuir PESOS aos valores
 	funcaoObjetivo += totalViolacaoRestricaoFixacao;
 	funcaoObjetivo += totalViolacoesDescolamento;
 	funcaoObjetivo += totalTempoViolacoesDescolamento;
 	funcaoObjetivo += totalGapsHorariosProfessores;
+	funcaoObjetivo += totalAvaliacaoCorpoDocente;
+	funcaoObjetivo += totalCustoCorpoDocente;
+	funcaoObjetivo += totalViolacoesCHMinimaSemestreAterior;
+	funcaoObjetivo += totalViolacoesCHMinimaProfessor;
+	funcaoObjetivo += totalViolacoesCHMaximaProfessor;
+	funcaoObjetivo += totalDiasProfessorMinistraAula;
+	funcaoObjetivo += totalViolacoesUltimaPrimeiraAula;
+	funcaoObjetivo += totalViolacoesMestres;
+	funcaoObjetivo += totalViolacoesDoutores;
 
 	return funcaoObjetivo;
 }
@@ -120,8 +145,8 @@ void Avaliador::calculaViolacoesDescolamento(SolucaoOperacional & solucao)
 				}
 
 				std::map<int, Unidade*>::iterator it_unidade
-					= solucao.mapUnidades->begin();
-				for (; it_unidade != solucao.mapUnidades->end(); it_unidade++)
+					= solucao.getProblemData()->refUnidade.begin();
+				for (; it_unidade != solucao.getProblemData()->refUnidade.end(); it_unidade++)
 				{
 					if (it_unidade->first == id_unidade_atual)
 					{
@@ -142,8 +167,8 @@ void Avaliador::calculaViolacoesDescolamento(SolucaoOperacional & solucao)
 				}
 
 				std::map<int, Campus*>::iterator it_campus
-					= solucao.mapCampus->begin();
-				for (; it_campus != solucao.mapCampus->end(); it_campus++)
+					= solucao.getProblemData()->refCampus.begin();
+				for (; it_campus != solucao.getProblemData()->refCampus.end(); it_campus++)
 				{
 					if (it_campus->first == id_campus_atual)
 					{
@@ -245,6 +270,7 @@ void Avaliador::calculaGapsHorariosProfessores(SolucaoOperacional & solucao)
 
 	int dia_semana = 0;
 
+	// Percorre as aulas alocadas a cada professor
 	for (unsigned int i = 0; i < solucao.getMatrizAulas()->size(); i++)
 	{
 		for (unsigned int j = 0; j < solucao.getMatrizAulas()->at(i)->size(); j++)
@@ -270,6 +296,10 @@ void Avaliador::calculaGapsHorariosProfessores(SolucaoOperacional & solucao)
 					h1 = solucao.getHorario(i, indice_aula_anterior);
 					h2 = solucao.getHorario(i, indice_aula_atual);
 
+					// Dado que ocorreu um gap entre duas aulas, devo
+					// verificar se o professor possui horários disponíveis
+					// no período entre a aula anterior e a aula atual, o que
+					// caracterizaria um fato 'indesejado' na solução operacional
 					if (horariosDisponiveisIntervalo(professor, dia_semana, h1, h2) > 0)
 					{
 						totalGapsHorariosProfessores++;
@@ -306,4 +336,221 @@ int Avaliador::horariosDisponiveisIntervalo(Professor* professor, int dia_semana
 	}
 
 	return horariosDisponiveis;
+}
+
+
+void Avaliador::avaliacaoCustoCorpoDocente(SolucaoOperacional & solucao)
+{
+	int avaliacaoCorpoDocente = 0;
+	double custoCorpoDocente = 0.0;
+
+	std::map<int, Professor*>::iterator it_professor
+		= solucao.mapProfessores.begin();
+	for (; it_professor != solucao.mapProfessores.end(); it_professor++)
+	{
+		ITERA_GGROUP(it_mag, it_professor->second->magisterio, Magisterio)
+		{
+			avaliacaoCorpoDocente += it_mag->getNota();
+		}
+
+		custoCorpoDocente += it_professor->second->getValorCredito();
+	}
+
+	totalAvaliacaoCorpoDocente = avaliacaoCorpoDocente;
+	totalCustoCorpoDocente = custoCorpoDocente;
+}
+
+void Avaliador::violacoesCargasHorarias(SolucaoOperacional & solucao)
+{
+	// Armazena o total de violações de cada tipo
+	int violacoesSemestreAnterior = 0;
+	int violacoesCHMinima = 0;
+	int violacoesCHMaxima = 0;
+
+	int tempSemestreAnterior = 0;
+	int tempCHMinima = 0;
+	int tempCHMaxima = 0;
+
+	Aula* aula = NULL;
+	int contCreditos, linha_professor;
+
+	std::map<int, Professor*>::iterator it_professor
+		= solucao.mapProfessores.begin();
+	for (; it_professor != solucao.mapProfessores.end(); it_professor++)
+	{
+		contCreditos = 0;
+		linha_professor = it_professor->second->getIdOperacional();
+
+		// Verifica quantos créditos o professor ministrará na semana
+		for (unsigned i = 0; i < solucao.getMatrizAulas()->at(linha_professor)->size(); i++)
+		{
+			aula = solucao.getMatrizAulas()->at(linha_professor)->at(i);
+			if (aula != NULL)
+			{
+				contCreditos++;
+			}
+		}
+
+		// Verifica carga horária do semestre anterior
+		tempSemestreAnterior = ( contCreditos - it_professor->second->getChAnterior() );
+		if (tempSemestreAnterior < 0)
+		{
+			violacoesSemestreAnterior++;
+		}
+
+		// Verifica carga horária mínima do professor
+		tempCHMinima = ( contCreditos - it_professor->second->getChMin() );
+		if (tempCHMinima < 0)
+		{
+			violacoesCHMinima++;
+		}
+
+		// Verifica carga horária máxima do professor
+		tempCHMaxima = ( contCreditos - it_professor->second->getChMax() );
+		if (tempCHMaxima > 0)
+		{
+			violacoesCHMaxima++;
+		}
+
+		// Informa quantas violações de cada tipo ocorreram com o professor
+		violacoesCHMinimaSemestreAterior[linha_professor] = abs(tempSemestreAnterior);
+		violacoesCHMinimaProfessor[linha_professor] = abs(tempCHMaxima);
+		violacoesCHMaximaProfessor[linha_professor] = abs(tempCHMaxima);
+	}
+
+	// Informa o total de violações de cada tipo foram verificadas
+	totalViolacoesCHMinimaSemestreAterior = violacoesSemestreAnterior;
+	totalViolacoesCHMinimaProfessor = violacoesCHMinima;
+	totalViolacoesCHMaximaProfessor = violacoesCHMaxima;
+}
+
+void Avaliador::avaliaDiasProfessorMinistraAula(SolucaoOperacional & solucao)
+{
+	int numDias = 0;
+
+	Aula* aula = NULL;
+	int linha_professor = 0;
+
+	std::map<int, Professor*>::iterator it_professor
+		= solucao.mapProfessores.begin();
+	for (; it_professor != solucao.mapProfessores.end(); it_professor++)
+	{
+		linha_professor = it_professor->second->getIdOperacional();
+
+		GGroup<int> dias_semana;
+		for (unsigned i = 0; i < solucao.getMatrizAulas()->at(linha_professor)->size(); i++)
+		{
+			aula = solucao.getMatrizAulas()->at(linha_professor)->at(i);
+			dias_semana.add(aula->getDiaSemana());
+		}
+
+		professorMinistraAula[linha_professor] = dias_semana.size();
+		numDias += dias_semana.size();
+	}
+
+	totalDiasProfessorMinistraAula = numDias;
+}
+
+void Avaliador::violacaoUltimaPrimeiraAula(SolucaoOperacional & solucao)
+{
+	int numViolacoes = 0;
+	int violacoesProfessor = 0;
+
+	int linha_professor = 0;
+
+	// Informa o número de aulas que
+	// cada dia da semana poderá possuir
+	int bloco_aula = calculaTamanhoBlocoAula(solucao);
+
+	// Última aula do dia D
+	Aula* aula1 = NULL;
+
+	// Primeira aula do dia D+1
+	Aula* aula2 = NULL;
+
+	std::map<int, Professor*>::iterator it_professor
+		= solucao.mapProfessores.begin();
+	for (; it_professor != solucao.mapProfessores.end(); it_professor++)
+	{
+		violacoesProfessor = 0;
+		linha_professor = it_professor->second->getIdOperacional();
+
+		// Verifica as aulas do professor, procurando popr violações
+		// do tipo "última aula do dia D e primeira aula do dia D+1"
+		for (unsigned i = bloco_aula-1;
+			 i < solucao.getMatrizAulas()->at(linha_professor)->size();
+			 i += bloco_aula)
+		{
+			aula1 = solucao.getMatrizAulas()->at(linha_professor)->at(i);
+			aula2 = solucao.getMatrizAulas()->at(linha_professor)->at(i+1);
+
+			// Verifica se os dois horários foram alocados
+			if (aula1 != NULL && aula2 != NULL)
+			{
+				violacoesProfessor++;
+			}
+		}
+
+		// Armazena as violações do professor individualmente e
+		// incrementa o total de violações encontrados na solução
+		violacoesUltimaPrimeiraAulaProfessor[linha_professor] = violacoesProfessor;
+		numViolacoes += violacoesProfessor;
+	}
+
+	totalViolacoesUltimaPrimeiraAula = numViolacoes;
+}
+
+int Avaliador::calculaTamanhoBlocoAula(SolucaoOperacional & solucao)
+{
+	int bloco_aula = 0;
+
+	unsigned i = 0;
+	vector<int> cont_horarios;
+
+	// Esse vetor contém uma posição para
+	// cada dia da semana, iniciando o contador
+	// de horários de cada dia em zero horários
+	cont_horarios.clear();
+	for (i = 0; i < 8; i++)
+	{
+		cont_horarios.push_back(0);
+	}
+
+	// Para cada um dos horários disponíveis, essa iteração
+	// incrementa o número de horários disponíveis em cada dia da
+	// semana, a cada ocorrência de horário/dia da semana encontrada
+	ITERA_GGROUP(it_campi, solucao.getProblemData()->campi, Campus)
+	{
+		ITERA_GGROUP(it_horario, it_campi->horarios, Horario)
+		{
+			GGroup<int>::iterator it_dia_semana
+				= it_horario->dias_semana.begin();
+			for (; it_dia_semana != it_horario->dias_semana.end(); it_dia_semana++)
+			{
+				cont_horarios[*it_dia_semana]++;
+			}
+		}
+	}
+
+	// Procura pelo dia da semana com mais horários
+	for (i = 0; i < cont_horarios.size(); i++)
+	{
+		if (cont_horarios[i] > bloco_aula)
+		{
+			bloco_aula = cont_horarios[i];
+		}
+	}
+
+	return bloco_aula;
+}
+
+void Avaliador::avaliaNumeroMestresDoutores(SolucaoOperacional &)
+{
+	int violacoesMestres = 0,
+		violacoesDoutores = 0;
+
+	// TODO
+
+	totalViolacoesMestres = violacoesMestres;
+	totalViolacoesDoutores = violacoesDoutores;
 }

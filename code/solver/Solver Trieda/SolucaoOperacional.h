@@ -39,14 +39,7 @@ public:
 
    std::string toString() const;
 
-   /*Já existem esses maps no problemData. Chama refCampus ... 
-   onde vc passa o id do campus e ele retorna o ponteiro para o objeto instanciado.
-
-   falar isso com o Cleiton.
-   */
    std::map<int, Professor*> mapProfessores;
-   std::map<int, Unidade*> * mapUnidades;
-   std::map<int, Campus*> * mapCampus;
 
    /*
    TODO: Implementar o método abaixo.

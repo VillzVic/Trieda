@@ -29,7 +29,7 @@
 
 #include <iostream>
 
-//Stores input data
+// Stores input data
 class ProblemData : public OFBase
 {
 public:
