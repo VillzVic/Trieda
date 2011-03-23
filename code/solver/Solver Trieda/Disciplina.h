@@ -28,8 +28,6 @@ public:
    // =========== METODOS AUXILIARES
    virtual void le_arvore(ItemDisciplina& elem);
 
-   bool eLab() const { return e_lab; }
-
    int adicionaDemandaTotal(int demanda_total) { return (demandaTotal += demanda_total); }
 
    // Armazena os dias letivos em que a disciplina pode ser ministrada.
@@ -54,18 +52,18 @@ public:
    // =========== METODOS GET
    int getDemandaTotal() const { return demandaTotal; }
    int getMaxDemanda() const { return max_demanda; }
-   std::string getCodigo() { return codigo; }
-   std::string getNome() { return nome; }
-   int getCredTeoricos() { return cred_teoricos; }
-   int getCredPraticos() { return cred_praticos; }
-   bool getELab() { return e_lab; }
-   int getMaxAlunosT() { return max_alunos_t; }
-   int getMaxAlunosP() { return max_alunos_p; }
-   int getTipoDisciplinaId() { return tipo_disciplina_id; }
-   int getNivelDificuldadeId() { return nivel_dificuldade_id; }
-   int getNumTurmas() { return num_turmas; }
-   int getMinCreds() { return min_creds; }
-   int getMaxCreds() { return max_creds; }
+   std::string getCodigo() const { return codigo; }
+   std::string getNome() const { return nome; }
+   int getCredTeoricos() const { return cred_teoricos; }
+   int getCredPraticos() const { return cred_praticos; }
+   bool eLab() const { return e_lab; }
+   int getMaxAlunosT() const { return max_alunos_t; }
+   int getMaxAlunosP() const { return max_alunos_p; }
+   int getTipoDisciplinaId() const { return tipo_disciplina_id; }
+   int getNivelDificuldadeId() const { return nivel_dificuldade_id; }
+   int getNumTurmas() const { return num_turmas; }
+   int getMinCreds() const { return min_creds; }
+   int getMaxCreds() const { return max_creds; }
 
 private:
    // Soma das demandas de uma disciplina.

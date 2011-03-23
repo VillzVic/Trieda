@@ -689,7 +689,7 @@ void ProblemDataLoader::divideDisciplinas()
    {
 	   if(it_disc->getCredTeoricos() > 0
 			&& it_disc->getCredPraticos() > 0
-			&& it_disc->getELab())
+			&& it_disc->eLab())
       {
          Disciplina *nova_disc = new Disciplina();
 
@@ -707,7 +707,7 @@ void ProblemDataLoader::divideDisciplinas()
          nova_disc->setMaxCreds(nova_disc->getCredPraticos());
          it_disc->setMaxCreds(it_disc->getCredTeoricos());
 
-         nova_disc->setELab(it_disc->getELab()); // alterado
+         nova_disc->setELab(it_disc->eLab()); // alterado
          it_disc->setELab(false); // alterado
 
          nova_disc->setMaxAlunosT(-1); // alterado
