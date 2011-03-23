@@ -28,7 +28,10 @@ public:
    // =========== METODOS AUXILIARES
    virtual void le_arvore(ItemDisciplina& elem);
 
-   int adicionaDemandaTotal(int demanda_total) { return (demandaTotal += demanda_total); }
+   int adicionaDemandaTotal(int demanda_total)
+   {
+	   return (demandaTotal += demanda_total);
+   }
 
    // Armazena os dias letivos em que a disciplina pode ser ministrada.
    GGroup<int> diasLetivos;

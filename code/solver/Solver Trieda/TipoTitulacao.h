@@ -8,6 +8,11 @@ public:
    TipoTitulacao(void);
    ~TipoTitulacao(void);
    virtual void le_arvore(ItemTipoTitulacao& elem);
-//private:
+
+   void setNome(std::string s) { nome = s; }
+
+   std::string getNome() { return nome; }
+
+private:
    std::string nome;
 };

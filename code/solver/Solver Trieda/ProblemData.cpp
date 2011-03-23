@@ -69,7 +69,7 @@ void ProblemData::le_arvore(TriedaInput& raiz)
    {
       atendimentosTatico = new GGroup<AtendimentoCampusSolucao*> ();
 
-	   for (unsigned int i=0;i<raiz.atendimentosTatico().get().AtendimentoCampus().size(); i++)
+	   for (unsigned int i = 0; i < raiz.atendimentosTatico().get().AtendimentoCampus().size(); i++)
 	   {
 		   ItemAtendimentoCampusSolucao* it_atendimento
 			   = &(raiz.atendimentosTatico().get().AtendimentoCampus().at(i));

@@ -463,7 +463,7 @@ void SolverMIP::carregaVariaveisSolucaoTatico()
             << (*it_Vars_a_TEMP)->getTurma() << "\t"
             << (*it_Vars_a_TEMP)->getDisciplina()->getCodigo() << "\t"
             << (*it_Vars_a_TEMP)->getOferta()->getId() << "\t"
-            << (*it_Vars_a_TEMP)->getOferta()->curso->codigo << "\n";
+            << (*it_Vars_a_TEMP)->getOferta()->curso->getCodigo() << "\n";
       }
    }
 }

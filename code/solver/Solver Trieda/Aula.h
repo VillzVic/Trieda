@@ -16,6 +16,7 @@ public:
    void setDiaSemana(int);
    void setCreditosTeoricos(int);
    void setCreditosPraticos(int);
+   void setOfertaCursoCampusId(int);
 
    int getTurma() const;
    Disciplina* getDisciplina() const;
@@ -23,6 +24,7 @@ public:
    int getDiaSemana() const;
    int getCreditosTeoricos() const;
    int getCreditosPraticos() const;
+   int getOfertacursoCampusId() const;
 
    virtual bool operator < (Aula const & right) 
    { 
@@ -47,6 +49,7 @@ public:
    }
 
 private:
+   int oferta_curso_campus_id;
    int turma;
    Disciplina* disciplina;
    Sala* sala;

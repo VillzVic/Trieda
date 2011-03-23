@@ -27,10 +27,10 @@ AtendimentoCampusSolucao::~AtendimentoCampusSolucao(void)
 void AtendimentoCampusSolucao::le_arvore(ItemAtendimentoCampusSolucao& elem)
 {
    this->setId(elem.campusId());
-   campusId = elem.campusId();
-   campusCodigo = elem.campusCodigo();
+   this->campusId = elem.campusId();
+   this->campusCodigo = elem.campusCodigo();
 
-   for (unsigned int i=0; i<elem.atendimentosUnidades().AtendimentoUnidade().size(); i++)   	
+   for (unsigned int i = 0; i < elem.atendimentosUnidades().AtendimentoUnidade().size(); i++)   	
    {
 	   ItemAtendimentoUnidadeSolucao item = elem.atendimentosUnidades().AtendimentoUnidade().at(i);
 

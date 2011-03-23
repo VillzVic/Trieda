@@ -544,12 +544,130 @@ int Avaliador::calculaTamanhoBlocoAula(SolucaoOperacional & solucao)
 	return bloco_aula;
 }
 
-void Avaliador::avaliaNumeroMestresDoutores(SolucaoOperacional &)
+void Avaliador::avaliaNumeroMestresDoutores(SolucaoOperacional & solucao)
 {
 	int violacoesMestres = 0,
 		violacoesDoutores = 0;
 
-	// TODO
+	// TODO -- preencher índices corretamente
+	int id_titulacao_mestre = 4;
+	int id_titulacao_doutor = 5;
+
+	int id_curso = 0;
+	int id_titulacao = 0;
+
+	Aula* aula = NULL;
+	Professor* professor = NULL;
+
+	// Relaciona um curso com o conjunto de professores
+	// que leciona pelo menos uma disciplina desse curso
+	std::map<int/*curso*/, GGroup<Professor*>/*Professores relacionados ao curso*/ > mapCursosProfessores;
+
+	// Associa as turmas de cada disciplina à seu professor correspondente
+	for (unsigned int i = 0; i < solucao.getMatrizAulas()->size(); i++)
+	{
+		// Professor da iteração atual
+		professor = solucao.getProfessorMatriz(i);
+
+		for (unsigned int j = 0; j < solucao.getMatrizAulas()->at(i)->size(); j++)
+		{
+			aula = solucao.getMatrizAulas()->at(i)->at(j);
+			if (aula == NULL)
+			{
+				continue;
+			}
+
+			// Adiciona o professor na lista de professores
+			// do curso ao qual a aula atual atende
+			ITERA_GGROUP(it_oferta, solucao.getProblemData()->ofertas, Oferta)
+			{
+				// Procura pela oferta da aula atual
+				if (it_oferta->getId() == aula->getOfertacursoCampusId())
+				{
+					id_curso = it_oferta->getCursoId();
+					mapCursosProfessores[ id_curso ].add(professor);
+
+					break;
+				}
+			}
+			//////////////
+		}
+		//////////////
+	}
+	//////////////
+
+	int num_professores_curso = 0;
+	int cont_mestres = 0;
+	int cont_doutores = 0;
+	double percentual_mestres = 0.0;
+	double percentual_doutores = 0.0;
+
+	// Para cada curso, devo verificar a titulação de
+	// seus professores, verificando se a solução atende
+	// ao percentual mínimo exigido de mestres e doutores
+	std::map<int, GGroup<Professor*> >::iterator it_cursos_professores
+		= mapCursosProfessores.begin();
+	for (; it_cursos_professores != mapCursosProfessores.end(); it_cursos_professores++)
+	{
+		// Id do curso atual
+		id_curso = it_cursos_professores->first;
+
+		// Inicia o número de mestres e doutores com zero
+		cont_mestres = 0;
+		cont_doutores = 0;
+
+		// Percorre a lista de professores que
+		// ministram pelo menos uma aula do curso atual
+		GGroup<Professor*> professores = it_cursos_professores->second;
+
+		// Total de professores que ministram aulas desse curso
+		num_professores_curso = professores.size();
+
+		ITERA_GGROUP(it_professor, professores, Professor)
+		{
+			// Se for doutor, incrementa-se o contador de mestres
+			// e também o contador de doutores associados ao curso
+			if (it_professor->titulacao->getId() == id_titulacao_doutor)
+			{
+				cont_mestres++;
+				cont_doutores++;
+			}
+			// Se for mestre, incrementa-se apenas
+			// o contador de mestres associados ao curso atual
+			else if (it_professor->titulacao->getId() == id_titulacao_mestre)
+			{
+				cont_mestres++;
+			}
+		}
+
+		// Procura pelo curso atual na lista de cursos do 'problemaData'
+		Curso* curso = NULL;
+		ITERA_GGROUP(it_curso, solucao.getProblemData()->cursos, Curso)
+		{
+			if (it_curso->getId() == id_curso)
+			{
+				curso = *(it_curso);
+				break;
+			}
+		}
+
+		// Recupera os dados de porcentagem mínima exigida
+		// 'first'  -> código do tipo da titulação
+		// 'second' -> percentual mínimo de professores com essa titulação
+		percentual_mestres = curso->regra_min_mestres.second;
+		percentual_doutores = curso->regra_min_doutores.second;
+
+		// Verifica se o número de mestres e doutores
+		// da solução atende ao número mínimo exigido
+		if (cont_mestres / (double)num_professores_curso < percentual_mestres)
+		{
+			violacoesMestres++;
+		}
+		if (cont_doutores / (double)num_professores_curso < percentual_doutores)
+		{
+			violacoesDoutores++;
+		}
+	}
 
 	totalViolacoesMestres = violacoesMestres;
 	totalViolacoesDoutores = violacoesDoutores;

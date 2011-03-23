@@ -1208,28 +1208,24 @@ void ProblemDataLoader::gera_refs()
 
    ITERA_GGROUP(it_curso, problemData->cursos, Curso) 
    {
-      find_and_set(it_curso->tipo_id,
+      find_and_set(it_curso->getTipoId(),
          problemData->tipos_curso,
          it_curso->tipo_curso);
    }
 
    ITERA_GGROUP(it_oferta, problemData->ofertas, Oferta) 
    {
-      find_and_set(it_oferta->curso_id,
-         problemData->cursos,
-         it_oferta->curso);
+	   find_and_set(it_oferta->getCursoId(),
+         problemData->cursos, it_oferta->curso);
 
-      find_and_set(it_oferta->curriculo_id,
-         it_oferta->curso->curriculos,
-         it_oferta->curriculo);
+      find_and_set(it_oferta->getCurriculoId(),
+         it_oferta->curso->curriculos, it_oferta->curriculo);
 
-      find_and_set(it_oferta->turno_id,
-         problemData->calendario->turnos,
-         it_oferta->turno);
+      find_and_set(it_oferta->getTurnoId(),
+         problemData->calendario->turnos, it_oferta->turno);
 
-      find_and_set(it_oferta->campus_id,
-         problemData->campi,
-         it_oferta->campus);
+      find_and_set(it_oferta->getCampusId(),
+         problemData->campi, it_oferta->campus);
    }
 
    ITERA_GGROUP(it_dem, problemData->demandas, Demanda) 
@@ -1519,20 +1515,20 @@ void ProblemDataLoader::relacionaCampusDiscs()
    {
       GGroup<int> ids_discs;
 
-      ITERA_GGROUP(it_curso,problemData->cursos,Curso)
+      ITERA_GGROUP(it_curso, problemData->cursos, Curso)
       {
-         if(it_curso->getId() == it_oferta->curso_id)
+         if(it_curso->getId() == it_oferta->getCursoId())
          {
-            ITERA_GGROUP(it_curric,it_curso->curriculos,Curriculo)
+            ITERA_GGROUP(it_curric, it_curso->curriculos, Curriculo)
             {
-               if(it_curric->getId() == it_oferta->curriculo_id)
+               if(it_curric->getId() == it_oferta->getCurriculoId())
                {
                   GGroup<DisciplinaPeriodo>::iterator it_disc_prd =
                      it_curric->disciplinas_periodo.begin();
 
                   for(; it_disc_prd != it_curric->disciplinas_periodo.end(); it_disc_prd++)
                   {
-                     problemData->cp_discs[it_oferta->campus_id].add((*it_disc_prd).second);
+                     problemData->cp_discs[it_oferta->getCampusId()].add((*it_disc_prd).second);
                   }
 
                   break;
@@ -2310,10 +2306,10 @@ void ProblemDataLoader::relacionaDiscOfertas()
 
 void ProblemDataLoader::criaAulas()
 {
-//PAREI AQUI .. 
-//ACHO QUE ESTA DANDO TOTAL DE TURMAS DIFERENTES POR CAUSA DO ID NEGATIVO.
-//CORRIGIR ISSO. PODE SER QUE MSM DEPOIS QUE EU TENHA CORRIGIDO ISSO AINDA DE ERRADO.
-   //SE DER ERRADO, GERAR OS INPUTS COM O CHICO DENOVO. OS INPUTS QUE TENHAM PODEM TER DADOS DIFERENTES, ALEM DA SOLUCAO.
+   // PAREI AQUI .. 
+   // ACHO QUE ESTA DANDO TOTAL DE TURMAS DIFERENTES POR CAUSA DO ID NEGATIVO.
+   // CORRIGIR ISSO. PODE SER QUE MSM DEPOIS QUE EU TENHA CORRIGIDO ISSO AINDA DÊ ERRADO.
+   // SE DER ERRADO, GERAR OS INPUTS COM O CHICO DENOVO. OS INPUTS QUE TENHAM PODEM TER DADOS DIFERENTES, ALEM DA SOLUCAO.
 
    /* Deve-se preencher o GGroup<Aula*> com as informações do GrupoAtendimentoCampusSolucao lido */
 
@@ -2395,6 +2391,7 @@ void ProblemDataLoader::criaAulas()
 
                      // Monta o objeto 'aula'
                      Aula *aula = new Aula();
+					 aula->setOfertaCursoCampusId(atendOferta->getOfertaCursoCampiId());
                      aula->setTurma( turma );
                      aula->setDisciplina( disciplina );
                      aula->setSala( sala );

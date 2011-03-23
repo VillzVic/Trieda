@@ -13,8 +13,6 @@ Aula::Aula(void)
 
 Aula::~Aula(void)
 {
-   //delete this->disciplina;
-   //delete this->sala;
 }
 
 void Aula::setTurma(int t)
@@ -47,6 +45,12 @@ void Aula::setCreditosPraticos(int cp)
    this->creditos_praticos = cp;
 }
 
+void Aula::setOfertaCursoCampusId(int v)
+{
+	this->oferta_curso_campus_id = v;
+}
+
+
 int Aula::getTurma() const
 {
    return this->turma;
@@ -75,4 +79,9 @@ int Aula::getCreditosTeoricos() const
 int Aula::getCreditosPraticos() const
 {
    return this->creditos_praticos;
+}
+
+int Aula::getOfertacursoCampusId() const
+{
+	return this->oferta_curso_campus_id;
 }
