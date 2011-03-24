@@ -103,6 +103,13 @@ private:
 	void avaliaMaximoDisciplinasProfessorPorCurso(SolucaoOperacional &);
 	int totalViolacoesDiscProfCurso;
 	vector<int> violacoesDisciplinasProfessor;
+
+	// -----------------------------------------------------------
+	// Avaliação das violações de preferências dos professores
+	// -----------------------------------------------------------
+	void avaliaViolacoesPreferenciasProfessor(SolucaoOperacional &);
+	int totalViolacoesPreferencias;
+	vector<int> violacoesPreferenciasProfessor;
 	//--------------------------------------------------------------------//
 
 	//--------------------------- UTILITÁRIOS ----------------------------//

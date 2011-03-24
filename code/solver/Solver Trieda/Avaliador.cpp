@@ -23,6 +23,7 @@ Avaliador::Avaliador()
 	totalViolacoesMestres = 0;
 	totalViolacoesDoutores = 0;
 	totalViolacoesDiscProfCurso = 0;
+	totalViolacoesPreferencias = 0;
 }
 
 Avaliador::~Avaliador()
@@ -41,6 +42,7 @@ double Avaliador::avaliaSolucao(SolucaoOperacional & solucao)
 	violacaoUltimaPrimeiraAula(solucao);
 	avaliaNumeroMestresDoutores(solucao);
 	avaliaMaximoDisciplinasProfessorPorCurso(solucao);
+	avaliaViolacoesPreferenciasProfessor(solucao);
 
 	double funcaoObjetivo = 0.0;
 
@@ -60,6 +62,7 @@ double Avaliador::avaliaSolucao(SolucaoOperacional & solucao)
 	funcaoObjetivo += totalViolacoesMestres;
 	funcaoObjetivo += totalViolacoesDoutores;
 	funcaoObjetivo += totalViolacoesDiscProfCurso;
+	funcaoObjetivo += totalViolacoesPreferencias;
 
 	return funcaoObjetivo;
 }
@@ -844,3 +847,96 @@ Curso* Avaliador::procuraCurso(int id_curso, GGroup<Curso*> cursos)
 	}
 	return curso;
 }
+
+void Avaliador::avaliaViolacoesPreferenciasProfessor(SolucaoOperacional & solucao)
+{
+	int nota_acumulada = 0;
+
+	Aula* aula = NULL;
+	Professor* professor = NULL;
+
+	int id_professor = 0;
+	int id_disciplina = 0;
+	int preferencia_disciplina = 0;
+
+	std::map<int/*Professr*/, std::map<int/*Disciplina*/, int/*Preferencia*/> > mapProfDiscPreferencia;
+
+	// Para cada professor, criamos um 'map' que
+	// relaciona cada uma de suas disciplinas com
+	// a preferência do professor em lecionar essa disciplina
+	ITERA_GGROUP(it_campi, solucao.getProblemData()->campi, Campus)
+	{
+		ITERA_GGROUP(it_professor, it_campi->professores, Professor)
+		{
+			// Recupera o 'objeto' professor 
+			id_professor = it_professor->getId();
+
+			// Recupera o map de disciplinas desse professor
+			std::map<int, int> mapDiscPreferencia = mapProfDiscPreferencia[ id_professor ];
+			mapDiscPreferencia.clear();
+
+			// Percorre as disciplinas desse professor,
+			// formando os pares 'disciplina'/'preferência'
+			ITERA_GGROUP(it_disciplina, it_professor->magisterio, Magisterio)
+			{
+				// Id da disciplina
+				id_disciplina = it_disciplina->getDisciplinaId();
+
+				// Preferência em lecionar essa disciplina
+				preferencia_disciplina = it_disciplina->getNota();
+
+				// Relaciona o par disciplina/preferência ao professor
+				mapDiscPreferencia[ id_disciplina ] = preferencia_disciplina;
+			}
+		}
+	}
+
+	// Variável que armazena o quanto a preferência do professor para
+	// lecionar uma disciplina a ele alocada está longe da preferência máxima
+	int nota_avaliacao = 0;
+
+	// Com as preferências de cada disciplinas relacionadas, devo agora
+	// calcular a avaliação da solução no critério 'preferência por discipina'
+	for (unsigned int i = 0; i < solucao.getMatrizAulas()->size(); i++)
+	{
+		// Recupera o 'objeto' professor
+		professor = solucao.getProfessorMatriz(i);
+		id_professor = professor->getId();
+
+		// Recupera o map de disciplinas do professor
+		std::map<int, int> mapDiscPreferencia = mapProfDiscPreferencia[ id_professor ];
+
+		// Percorre as aulas do professor na matriz de solução
+		for (unsigned int j = 0; j < solucao.getMatrizAulas()->at(i)->size(); j++)
+		{
+			// Recupera o objeto 'aula' atual
+			aula = solucao.getMatrizAulas()->at(i)->at(j);
+			if (aula == NULL)
+			{
+				// Não tem aula alocada nesse horário
+				continue;
+			}
+
+			// Recupera o id da disciplina correspondente a essa aula
+			id_disciplina = aula->getDisciplina()->getId();
+
+			// Recupera a preferência do professor nesse disciplina
+			preferencia_disciplina = mapProfDiscPreferencia[ id_professor ][ id_disciplina ];
+
+			// A nota acumulada no critério de avaliação segue o critério de
+			// 'quanto maior o valor, pior a solução'. Como a 'pior' preferência
+			// tem nota 1 e a 'maior' preferência tem nota 10, um valor mais próximo
+			// de 1 deve contribuir mais para o valor da avaliação no critério atual
+			nota_avaliacao = (11 - preferencia_disciplina);
+
+			// Adiciona a avaliação no somatório total
+			nota_acumulada += nota_avaliacao;
+
+			// Adiciona a avaliação no somatório do professor
+			violacoesPreferenciasProfessor[i] += nota_avaliacao;
+		}
+	}
+
+	totalViolacoesPreferencias = nota_acumulada;
+}
+
