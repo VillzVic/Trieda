@@ -11,8 +11,10 @@ Avaliador::Avaliador()
 
 	// Inicializa o total de violações
 	totalViolacaoRestricaoFixacao = 0.0;
-	totalViolacoesDescolamento = 0.0;
+	totalViolacoesDescolamento = 0;
 	totalTempoViolacoesDescolamento = 0.0;
+	totalViolacoesDeslocamentoProfessor = 0;
+	totalViolacoesTempoDeslocamentoProfessor = 0.0;
 	totalGapsHorariosProfessores = 0.0;
 	totalAvaliacaoCorpoDocente = 0.0;
 	totalCustoCorpoDocente = 0.0;
@@ -27,12 +29,16 @@ Avaliador::Avaliador()
 	totalViolacoesPreferencias = 0;
 	totalProfessoresVirtuais = 0;
 	totalCreditosProfessoresVirtuais = 0;
+	totalViolacoesDeslocamentoProfessor = 0;
+	totalViolacoesTempoDeslocamentoProfessor = 0;
 
 	// Atribui o peso de cada critério
 	// na nota de avaliação da solução
 	PESO_FIXACAO = 1;
-	PESO_NUMERO_DESLOCAMENTO = 1;
+	PESO_DESLOCAMENTO = 1;
 	PESO_TEMPO_DESLOCAMENTO = 1;
+    PESO_DESLOCAMENTO_PROFESSOR = 1;
+    PESO_TEMPO_DESLOCAMENTO_PROFESSOR = 1;
 	PESO_GAPS_HORARIO = 1;
 	PESO_NOTA_CORPO_DOCENTE = 1;
 	PESO_CUSTO_CORPO_DOCENTE = 1;
@@ -73,8 +79,10 @@ double Avaliador::avaliaSolucao(SolucaoOperacional & solucao)
 	// Contabilização do valor da solução
 	// Obs.: atribuir PESOS aos valores
 	funcao_objetivo += (PESO_FIXACAO * totalViolacaoRestricaoFixacao);
-	funcao_objetivo += (PESO_NUMERO_DESLOCAMENTO * totalViolacoesDescolamento);
+	funcao_objetivo += (PESO_DESLOCAMENTO * totalViolacoesDescolamento);
 	funcao_objetivo += (PESO_TEMPO_DESLOCAMENTO * totalTempoViolacoesDescolamento);
+	funcao_objetivo += (PESO_DESLOCAMENTO_PROFESSOR * totalViolacoesDeslocamentoProfessor);
+	funcao_objetivo += (PESO_TEMPO_DESLOCAMENTO_PROFESSOR * totalViolacoesTempoDeslocamentoProfessor);
 	funcao_objetivo += (PESO_GAPS_HORARIO * totalGapsHorariosProfessores);
 	funcao_objetivo += (PESO_NOTA_CORPO_DOCENTE * totalAvaliacaoCorpoDocente);
 	funcao_objetivo += (PESO_CUSTO_CORPO_DOCENTE * totalCustoCorpoDocente);
@@ -89,6 +97,8 @@ double Avaliador::avaliaSolucao(SolucaoOperacional & solucao)
 	funcao_objetivo += (PESO_PREFERENCIA_DISCIPLINA * totalViolacoesPreferencias);
 	funcao_objetivo += (PESO_NUMERO_PROFESSORES_VIRTUAIS * totalProfessoresVirtuais);
 	funcao_objetivo += (PESO_CREDITOS_PROFESSORES_VIRTUAIS * totalCreditosProfessoresVirtuais);
+	funcao_objetivo += (PESO_DESLOCAMENTO_PROFESSOR * totalViolacoesDeslocamentoProfessor);
+	funcao_objetivo += (PESO_TEMPO_DESLOCAMENTO_PROFESSOR * totalViolacoesTempoDeslocamentoProfessor);
 
 	return funcao_objetivo;
 }
@@ -135,8 +145,8 @@ void Avaliador::calculaViolacaoRestricaoFixacao(SolucaoOperacional & solucao)
 
 void Avaliador::calculaViolacoesDescolamento(SolucaoOperacional & solucao)
 {
-	double numViolacoes = 0.0;
-	double tempoViolacoes = 0.0;
+	int num_deslocamentos = 0;
+	double tempo_deslocamentos = 0.0;
 
 	Unidade* unidade_atual = NULL;
 	Unidade* unidade_anterior = NULL;
@@ -155,6 +165,9 @@ void Avaliador::calculaViolacoesDescolamento(SolucaoOperacional & solucao)
 	int indice_horario_atual = -1;
 	int indice_horario_anterior = -1;
 
+	int número_deslocamentos_professor = 0;
+	double tempo_deslocamentos_professor = 0.0;
+
 	// Para cada par de aulas consecutivas de um determinado
 	// professor, no mesmo dia da semana, verifica-se se houve
 	// um deslocamento acima do desejado entre uma sala e outra
@@ -164,6 +177,9 @@ void Avaliador::calculaViolacoesDescolamento(SolucaoOperacional & solucao)
 	// avaliar o deslocamento entre as respectivas salas de aula
 	for (unsigned int i = 0; i < solucao.getMatrizAulas()->size(); i++)
 	{
+		número_deslocamentos_professor = 0;
+		tempo_deslocamentos_professor = 0.0;
+
 		for (unsigned int j = 0; j < solucao.getMatrizAulas()->at(i)->size(); j++)
 		{
 			aula_atual = solucao.getMatrizAulas()->at(i)->at(j);
@@ -244,12 +260,26 @@ void Avaliador::calculaViolacoesDescolamento(SolucaoOperacional & solucao)
 					{
 						// Critério de avaliação n° 1:
 						// Número de violações ocorridas
-						numViolacoes++;
+						num_deslocamentos++;
 
 						// Critério de avaliação n° 2:
 						// Tempo excedido entre o mínimo de tempo necessário
 						// e o tempo disponível entre uma aula e outra
-						tempoViolacoes += abs( (tempo_minimo - tempo_disponivel) * (MINUTOS_POR_HORARIO) );
+						tempo_deslocamentos += abs( tempo_minimo - tempo_disponivel );
+
+						// Critério de avaliação n° 4:
+						// Tempo de deslocamento do professor
+						// Armazena o tempo excedido pelo professor atual
+						tempo_deslocamentos_professor += abs( tempo_minimo - tempo_disponivel );
+					}
+
+					// Critério de avaliação n° 3:
+					// Número de deslocamentos do professor
+					// O professor teve que se deslocar entre CAMPUS diferentes
+					// Obs.: Não está sendo considerado o deslocamento entre UNIDADES
+					if (id_campus_atual != id_campus_anterior)
+					{
+						número_deslocamentos_professor++;
 					}
 				}
 			}
@@ -262,8 +292,10 @@ void Avaliador::calculaViolacoesDescolamento(SolucaoOperacional & solucao)
 		}
 	}
 
-	totalViolacoesDescolamento = numViolacoes;
-	totalTempoViolacoesDescolamento = tempoViolacoes;
+	totalViolacoesDeslocamentoProfessor = número_deslocamentos_professor;
+	totalViolacoesTempoDeslocamentoProfessor = tempo_deslocamentos_professor;
+	totalViolacoesDescolamento = num_deslocamentos;
+	totalTempoViolacoesDescolamento = tempo_deslocamentos;
 }
 
 double Avaliador::calculaTempoEntreCampusUnidades(SolucaoOperacional& solucao,

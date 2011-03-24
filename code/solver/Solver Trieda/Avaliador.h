@@ -15,8 +15,10 @@ public:
    double avaliaSolucao(SolucaoOperacional &);
 
    double PESO_FIXACAO;
-   double PESO_NUMERO_DESLOCAMENTO;
+   double PESO_DESLOCAMENTO;
    double PESO_TEMPO_DESLOCAMENTO;
+   double PESO_DESLOCAMENTO_PROFESSOR;
+   double PESO_TEMPO_DESLOCAMENTO_PROFESSOR;
    double PESO_GAPS_HORARIO;
    double PESO_NOTA_CORPO_DOCENTE;
    double PESO_CUSTO_CORPO_DOCENTE;
@@ -45,9 +47,18 @@ private:
 	// entre campus e/ou unidades ocorreram na solução,
 	// armazenando o total de tempo ocorrido nessas violações
 	// -----------------------------------------------------------
+	// Avaliação do deslocamento do professor (entre
+	// unidades e/ou campus) na solução operacional dada
+	// -----------------------------------------------------------
+	// Os comentário ao lado da variáveis referem-se ao número
+	// do item do critério de avaliação no Product Backlog,
+	// para evitar mal entendimento do significado das variáveis
+	// -----------------------------------------------------------
 	void calculaViolacoesDescolamento(SolucaoOperacional &);
-	double totalViolacoesDescolamento;
-	double totalTempoViolacoesDescolamento;
+	int totalViolacoesDescolamento; // s72.3.3
+	double totalTempoViolacoesDescolamento; // s72.3.4
+	int totalViolacoesDeslocamentoProfessor; // s72.3.5
+	double totalViolacoesTempoDeslocamentoProfessor; // s72.3.6
 
 	// -----------------------------------------------------------
 	// Avaliação de gap's nos horários dos professores
