@@ -362,7 +362,7 @@ void ProblemDataLoader::criaConjuntoSalasUnidade()
          }
 
          // ----------------------------
-         std::cout << "Cod. Und.: " << it_Unidade->codigo << std::endl;
+		 std::cout << "Cod. Und.: " << it_Unidade->getCodigo() << std::endl;
 
          ITERA_GGROUP(it_Cjt_Salas_Und,
             it_Unidade->conjutoSalas,
@@ -1281,7 +1281,7 @@ void ProblemDataLoader::gera_refs()
    {
       ITERA_GGROUP(it_unidades, it_campi->unidades, Unidade) 
       {
-         it_unidades->id_campus = it_campi->getId();
+         it_unidades->setIdCampus( it_campi->getId() );
          ITERA_GGROUP(it_salas, it_unidades->salas, Sala) 
          {
             it_salas->setIdUnidade(it_unidades->getId());
@@ -1556,13 +1556,13 @@ void ProblemDataLoader::calculaTamanhoMedioSalasCampus()
          {
             somaCapSalas += it_sala->getCapacidade();
 
-            it_und->maiorSala = std::max(((int)it_und->maiorSala),
-										 ((int)it_sala->getCapacidade()));
+			it_und->setMaiorSala( std::max( ((int)it_und->getMaiorSala()),
+										    ((int)it_sala->getCapacidade())) );
          }
 
          total_Salas += it_und->getNumSalas();
-         it_cp->maiorSala = std::max(((int)it_cp->maiorSala),
-									 ((int)it_und->maiorSala));
+         it_cp->maiorSala = std::max( ((int)it_cp->maiorSala),
+									  ((int)it_und->getMaiorSala()) );
       }
 
       problemData->cp_medSalas[it_cp->getId()] =

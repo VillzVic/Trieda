@@ -443,7 +443,7 @@ void SolverMIP::carregaVariaveisSolucaoTatico()
       std::cout << (*it_Vars_x)->getValue() << "\t\t"
          << (*it_Vars_x)->getTurma() << "\t"
          << (*it_Vars_x)->getDisciplina()->getCodigo() << "\t"
-         << (*it_Vars_x)->getUnidade()->codigo << "\t"
+         << (*it_Vars_x)->getUnidade()->getCodigo() << "\t"
          << (*it_Vars_x)->getSubCjtSala()->getId() << "\t"
          << (*it_Vars_x)->getDia() << "\n";
    }
@@ -1294,7 +1294,7 @@ void SolverMIP::converteCjtSalaEmSala()
       std::cout << (*it_Vars_x)->getValue() << "\t\t"
          << (*it_Vars_x)->getTurma() << "\t"
          << (*it_Vars_x)->getDisciplina()->getCodigo() << "\t"
-         << (*it_Vars_x)->getUnidade()->codigo << "\t"
+		 << (*it_Vars_x)->getUnidade()->getCodigo() << "\t"
          << (*it_Vars_x)->getSala()->getId() << "\t"
          << (*it_Vars_x)->getDia() << "\n";
    }
@@ -1310,7 +1310,7 @@ void SolverMIP::getSolutionTatico()
    ITERA_VECTOR(it_Vars_x,vars_x,Variable)
    {
       // Descobrindo qual Campus a variável x em questão pertence.
-      Campus * campus = problemData->refCampus[(*it_Vars_x)->getUnidade()->id_campus];
+      Campus * campus = problemData->refCampus[(*it_Vars_x)->getUnidade()->getIdCampus()];
 
       // Caso básico: Ainda não cadastrei nenhum Campus.
       //if(problemSolution->atendimento_campus.size() == 0)
@@ -1644,7 +1644,7 @@ void SolverMIP::getSolutionTatico()
                      // Cadastrando a Unidade
                      AtendimentoUnidade * at_Unidade = new AtendimentoUnidade();
                      at_Unidade->setId((*it_Vars_x)->getUnidade()->getId());
-                     at_Unidade->unidade_id = (*it_Vars_x)->getUnidade()->codigo;
+                     at_Unidade->unidade_id = (*it_Vars_x)->getUnidade()->getCodigo();
 
                      at_Unidade->unidade = (*it_Vars_x)->getUnidade();
 
@@ -1727,7 +1727,7 @@ void SolverMIP::getSolutionTatico()
             // Cadastrando a Unidade
             AtendimentoUnidade * at_Unidade = new AtendimentoUnidade();
             at_Unidade->setId((*it_Vars_x)->getUnidade()->getId());
-            at_Unidade->unidade_id = (*it_Vars_x)->getUnidade()->codigo;
+            at_Unidade->unidade_id = (*it_Vars_x)->getUnidade()->getCodigo();
 
             at_Unidade->unidade = (*it_Vars_x)->getUnidade();
 

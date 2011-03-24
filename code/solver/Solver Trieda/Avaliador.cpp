@@ -158,110 +158,107 @@ void Avaliador::calculaViolacoesDescolamento(SolucaoOperacional & solucao)
 	// Para cada par de aulas consecutivas de um determinado
 	// professor, no mesmo dia da semana, verifica-se se houve
 	// um deslocamento acima do desejado entre uma sala e outra
-	ITERA_GGROUP(it_campi, solucao.getProblemData()->campi, Campus)
+			
+	// Percorrer a matriz da solução, verificando cada par
+	// de aulas consecutivo, em um mesmo dia da semana, para
+	// avaliar o deslocamento entre as respectivas salas de aula
+	for (unsigned int i = 0; i < solucao.getMatrizAulas()->size(); i++)
 	{
-		ITERA_GGROUP(it_professor, it_campi->professores, Professor)
+		for (unsigned int j = 0; j < solucao.getMatrizAulas()->at(i)->size(); j++)
 		{
-			// Recupera a linha do professor na matriz de solução
-			int id_linha_professor = it_professor->getIdOperacional();
+			aula_atual = solucao.getMatrizAulas()->at(i)->at(j);
 
-			// Percorrer a linha correspondente às aulas do professor
-			for (unsigned int i=0; i < solucao.getMatrizAulas()->at(id_linha_professor)->size(); i++)
+			// O professor não teve aula atribuída nesse horário
+			if (aula_atual == NULL)
 			{
-				aula_atual = solucao.getMatrizAulas()->at(id_linha_professor)->at(i);
-
-				// O professor não teve aula atribuída nesse horário
-				if (aula_atual == NULL)
-				{
-					continue;
-				}
-
-				// O índice 'i' corresponde à coluna da matriz
-				indice_horario_atual = i;
-
-				// Procura pelas unidades que correspondem
-				// à sala de aula anterior e à sala de aula atual
-				id_unidade_atual = aula_atual->getSala()->getIdUnidade();
-				if (unidade_anterior != NULL)
-				{
-					id_unidade_anterior = unidade_anterior->getId();
-				}
-
-				std::map<int, Unidade*>::iterator it_unidade
-					= solucao.getProblemData()->refUnidade.begin();
-				for (; it_unidade != solucao.getProblemData()->refUnidade.end(); it_unidade++)
-				{
-					// Unidade da sala atual
-					if (it_unidade->first == id_unidade_atual)
-					{
-						unidade_atual = it_unidade->second;
-					}
-					// Unidade da sala anterior
-					else if (it_unidade->first == id_unidade_anterior)
-					{
-						unidade_anterior = it_unidade->second;
-					}
-				}
-				/////
-
-				// Procura pelos campus que correspondem
-				// à sala de aula anterior e à sala de aula atual
-				id_campus_atual = unidade_atual->id_campus;
-				if (campus_anterior != NULL)
-				{
-					id_campus_anterior = campus_anterior->getId();
-				}
-
-				std::map<int, Campus*>::iterator it_campus
-					= solucao.getProblemData()->refCampus.begin();
-				for (; it_campus != solucao.getProblemData()->refCampus.end(); it_campus++)
-				{
-					if (it_campus->first == id_campus_atual)
-					{
-						campus_atual = it_campus->second;
-					}
-					else if (it_campus->first == id_campus_anterior)
-					{
-						campus_anterior = it_campus->second;
-					}
-				}
-				/////
-
-				// Verifica se houve violação no deslocamento viável
-				if (aula_anterior != NULL)
-				{
-					// Verifica se as aulas são em um mesmo dia da semana
-					if (aula_anterior->getDiaSemana() == aula_atual->getDiaSemana())
-					{
-						// Tempo de deslocamento entre uma aula e outra
-						tempo_minimo = calculaTempoEntreCampusUnidades(solucao,
-							campus_atual, campus_anterior, unidade_atual, unidade_anterior);
-
-						// Tempo existente entre as aulas 'aula_anterior' e 'aula_atual'
-						tempo_disponivel = (indice_horario_atual - indice_horario_anterior) * (MINUTOS_POR_HORARIO);
-
-						// Verifica se ocorreu a violação de tempo mínimo
-						// necessário para se deslocar entre campus/unidades
-						if (tempo_disponivel < tempo_minimo)
-						{
-							// Critério de avaliação n° 1:
-							// Número de violações ocorridas
-							numViolacoes++;
-
-							// Critério de avaliação n° 2:
-							// Tempo excedido entre o mínimo de tempo necessário
-							// e o tempo disponível entre uma aula e outra
-							tempoViolacoes += abs( (tempo_minimo - tempo_disponivel) * (MINUTOS_POR_HORARIO) );
-						}
-					}
-				}
-
-				// Atualiza os ponteiros para a próxima iteração
-				campus_anterior = campus_atual;
-				unidade_anterior = unidade_atual;
-				aula_anterior = aula_atual;
-				indice_horario_anterior = indice_horario_atual;
+				continue;
 			}
+
+			// O índice 'j' corresponde à coluna da matriz
+			indice_horario_atual = j;
+
+			// Procura pelas unidades que correspondem
+			// à sala de aula anterior e à sala de aula atual
+			id_unidade_atual = aula_atual->getSala()->getIdUnidade();
+			if (unidade_anterior != NULL)
+			{
+				id_unidade_anterior = unidade_anterior->getId();
+			}
+
+			std::map<int, Unidade*>::iterator it_unidade
+				= solucao.getProblemData()->refUnidade.begin();
+			for (; it_unidade != solucao.getProblemData()->refUnidade.end(); it_unidade++)
+			{
+				// Unidade da sala atual
+				if (it_unidade->first == id_unidade_atual)
+				{
+					unidade_atual = it_unidade->second;
+				}
+				// Unidade da sala anterior
+				else if (it_unidade->first == id_unidade_anterior)
+				{
+					unidade_anterior = it_unidade->second;
+				}
+			}
+			/////
+
+			// Procura pelos campus que correspondem
+			// à sala de aula anterior e à sala de aula atual
+			id_campus_atual = unidade_atual->getIdCampus();
+			if (campus_anterior != NULL)
+			{
+				id_campus_anterior = campus_anterior->getId();
+			}
+
+			std::map<int, Campus*>::iterator it_campus
+				= solucao.getProblemData()->refCampus.begin();
+			for (; it_campus != solucao.getProblemData()->refCampus.end(); it_campus++)
+			{
+				if (it_campus->first == id_campus_atual)
+				{
+					campus_atual = it_campus->second;
+				}
+				else if (it_campus->first == id_campus_anterior)
+				{
+					campus_anterior = it_campus->second;
+				}
+			}
+			/////
+
+			// Verifica se houve violação no deslocamento viável
+			if (aula_anterior != NULL)
+			{
+				// Verifica se as aulas são em um mesmo dia da semana
+				if (aula_anterior->getDiaSemana() == aula_atual->getDiaSemana())
+				{
+					// Tempo de deslocamento entre uma aula e outra
+					tempo_minimo = calculaTempoEntreCampusUnidades(solucao,
+						campus_atual, campus_anterior, unidade_atual, unidade_anterior);
+
+					// Tempo existente entre as aulas 'aula_anterior' e 'aula_atual'
+					tempo_disponivel = (indice_horario_atual - indice_horario_anterior) * (MINUTOS_POR_HORARIO);
+
+					// Verifica se ocorreu a violação de tempo mínimo
+					// necessário para se deslocar entre campus/unidades
+					if (tempo_disponivel < tempo_minimo)
+					{
+						// Critério de avaliação n° 1:
+						// Número de violações ocorridas
+						numViolacoes++;
+
+						// Critério de avaliação n° 2:
+						// Tempo excedido entre o mínimo de tempo necessário
+						// e o tempo disponível entre uma aula e outra
+						tempoViolacoes += abs( (tempo_minimo - tempo_disponivel) * (MINUTOS_POR_HORARIO) );
+					}
+				}
+			}
+
+			// Atualiza os ponteiros para a próxima iteração
+			campus_anterior = campus_atual;
+			unidade_anterior = unidade_atual;
+			aula_anterior = aula_atual;
+			indice_horario_anterior = indice_horario_atual;
 		}
 	}
 

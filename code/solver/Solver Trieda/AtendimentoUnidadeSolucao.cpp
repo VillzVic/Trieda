@@ -11,7 +11,7 @@ AtendimentoUnidadeSolucao::AtendimentoUnidadeSolucao(AtendimentoUnidade & at_Und
 {
    this->setId(at_Und.unidade->getId());
    unidadeId = at_Und.unidade->getId();
-   unidadeCodigo = at_Und.unidade->codigo;
+   unidadeCodigo = at_Und.unidade->getCodigo();
 
    ITERA_GGROUP(it_At_Sala,*at_Und.atendimentos_salas,AtendimentoSala)
    {
