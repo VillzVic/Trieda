@@ -17,8 +17,8 @@ public:
    double PESO_FIXACAO;
    double PESO_DESLOCAMENTO;
    double PESO_TEMPO_DESLOCAMENTO;
+   double PESO_VIOLACAO_DESLOCAMENTO_PROFESSOR;
    double PESO_DESLOCAMENTO_PROFESSOR;
-   double PESO_TEMPO_DESLOCAMENTO_PROFESSOR;
    double PESO_GAPS_HORARIO;
    double PESO_NOTA_CORPO_DOCENTE;
    double PESO_CUSTO_CORPO_DOCENTE;
@@ -55,10 +55,10 @@ private:
 	// para evitar mal entendimento do significado das variáveis
 	// -----------------------------------------------------------
 	void calculaViolacoesDescolamento(SolucaoOperacional &);
-	int totalViolacoesDescolamento; // s72.3.3
-	double totalTempoViolacoesDescolamento; // s72.3.4
-	int totalViolacoesDeslocamentoProfessor; // s72.3.5
-	double totalViolacoesTempoDeslocamentoProfessor; // s72.3.6
+	int totalViolacoesDescolamento; // TRIEDA-739
+	double totalTempoViolacoesDescolamento; // TRIEDA-740
+	int totalViolacoesDeslocamentoProfessor; // TRIEDA-776
+	int totalDeslocamentosProfessor; // TRIEDA-777
 
 	// -----------------------------------------------------------
 	// Avaliação de gap's nos horários dos professores
