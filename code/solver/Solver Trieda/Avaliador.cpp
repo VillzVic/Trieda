@@ -14,7 +14,7 @@ Avaliador::Avaliador()
 	totalViolacoesDescolamento = 0;
 	totalTempoViolacoesDescolamento = 0.0;
 	totalViolacoesDeslocamentoProfessor = 0;
-	totalViolacoesTempoDeslocamentoProfessor = 0.0;
+	totalDeslocamentosProfessor = 0;
 	totalGapsHorariosProfessores = 0.0;
 	totalAvaliacaoCorpoDocente = 0.0;
 	totalCustoCorpoDocente = 0.0;
@@ -29,16 +29,14 @@ Avaliador::Avaliador()
 	totalViolacoesPreferencias = 0;
 	totalProfessoresVirtuais = 0;
 	totalCreditosProfessoresVirtuais = 0;
-	totalViolacoesDeslocamentoProfessor = 0;
-	totalViolacoesTempoDeslocamentoProfessor = 0;
 
 	// Atribui o peso de cada critério
 	// na nota de avaliação da solução
 	PESO_FIXACAO = 1;
 	PESO_DESLOCAMENTO = 1;
 	PESO_TEMPO_DESLOCAMENTO = 1;
+    PESO_VIOLACAO_DESLOCAMENTO_PROFESSOR = 1;
     PESO_DESLOCAMENTO_PROFESSOR = 1;
-    PESO_TEMPO_DESLOCAMENTO_PROFESSOR = 1;
 	PESO_GAPS_HORARIO = 1;
 	PESO_NOTA_CORPO_DOCENTE = 1;
 	PESO_CUSTO_CORPO_DOCENTE = 1;
@@ -81,8 +79,8 @@ double Avaliador::avaliaSolucao(SolucaoOperacional & solucao)
 	funcao_objetivo += (PESO_FIXACAO * totalViolacaoRestricaoFixacao);
 	funcao_objetivo += (PESO_DESLOCAMENTO * totalViolacoesDescolamento);
 	funcao_objetivo += (PESO_TEMPO_DESLOCAMENTO * totalTempoViolacoesDescolamento);
-	funcao_objetivo += (PESO_DESLOCAMENTO_PROFESSOR * totalViolacoesDeslocamentoProfessor);
-	funcao_objetivo += (PESO_TEMPO_DESLOCAMENTO_PROFESSOR * totalViolacoesTempoDeslocamentoProfessor);
+	funcao_objetivo += (PESO_VIOLACAO_DESLOCAMENTO_PROFESSOR * totalViolacoesDeslocamentoProfessor);
+	funcao_objetivo += (PESO_DESLOCAMENTO_PROFESSOR * totalDeslocamentosProfessor);
 	funcao_objetivo += (PESO_GAPS_HORARIO * totalGapsHorariosProfessores);
 	funcao_objetivo += (PESO_NOTA_CORPO_DOCENTE * totalAvaliacaoCorpoDocente);
 	funcao_objetivo += (PESO_CUSTO_CORPO_DOCENTE * totalCustoCorpoDocente);
@@ -97,8 +95,6 @@ double Avaliador::avaliaSolucao(SolucaoOperacional & solucao)
 	funcao_objetivo += (PESO_PREFERENCIA_DISCIPLINA * totalViolacoesPreferencias);
 	funcao_objetivo += (PESO_NUMERO_PROFESSORES_VIRTUAIS * totalProfessoresVirtuais);
 	funcao_objetivo += (PESO_CREDITOS_PROFESSORES_VIRTUAIS * totalCreditosProfessoresVirtuais);
-	funcao_objetivo += (PESO_DESLOCAMENTO_PROFESSOR * totalViolacoesDeslocamentoProfessor);
-	funcao_objetivo += (PESO_TEMPO_DESLOCAMENTO_PROFESSOR * totalViolacoesTempoDeslocamentoProfessor);
 
 	return funcao_objetivo;
 }
@@ -145,8 +141,10 @@ void Avaliador::calculaViolacaoRestricaoFixacao(SolucaoOperacional & solucao)
 
 void Avaliador::calculaViolacoesDescolamento(SolucaoOperacional & solucao)
 {
-	int num_deslocamentos = 0;
-	double tempo_deslocamentos = 0.0;
+	int num_deslocamentos = 0; // TRIEDA-739
+	double tempo_deslocamentos = 0.0; // TRIEDA-740
+	int violacoes_deslocamento_professor = 0; // TRIEDA-776
+	int num_deslocamentos_professor = 0; // TRIEDA-777
 
 	Unidade* unidade_atual = NULL;
 	Unidade* unidade_anterior = NULL;
@@ -165,23 +163,28 @@ void Avaliador::calculaViolacoesDescolamento(SolucaoOperacional & solucao)
 	int indice_horario_atual = -1;
 	int indice_horario_anterior = -1;
 
-	int número_deslocamentos_professor = 0;
-	double tempo_deslocamentos_professor = 0.0;
+	// Armazena o limite de deslocamentos entre campus para os professores
+	int limite_deslocamentos_professor = solucao.getProblemData()->parametros->maxDeslocProf;
 
-	// Para cada par de aulas consecutivas de um determinado
-	// professor, no mesmo dia da semana, verifica-se se houve
-	// um deslocamento acima do desejado entre uma sala e outra
-			
+	// Armazena o número de deslocamentos entre campus distintos
+	// feito por um dado professor, para verificar se excedeu o liimte
+	int num_desloc_professor_temp = 0;
+
 	// Percorrer a matriz da solução, verificando cada par
 	// de aulas consecutivo, em um mesmo dia da semana, para
 	// avaliar o deslocamento entre as respectivas salas de aula
 	for (unsigned int i = 0; i < solucao.getMatrizAulas()->size(); i++)
 	{
-		número_deslocamentos_professor = 0;
-		tempo_deslocamentos_professor = 0.0;
+		// Inicializa o número de deslocamentos entre
+		// campus diferentes para o professor atual
+		num_desloc_professor_temp = 0;
 
+		// Para cada par de aulas consecutivas de um determinado
+		// professor, no mesmo dia da semana, verifica-se se houve
+		// um deslocamento acima do desejado entre uma sala e outra
 		for (unsigned int j = 0; j < solucao.getMatrizAulas()->at(i)->size(); j++)
 		{
+			// Recupera o objeto 'aula' atual
 			aula_atual = solucao.getMatrizAulas()->at(i)->at(j);
 
 			// O professor não teve aula atribuída nesse horário
@@ -266,20 +269,21 @@ void Avaliador::calculaViolacoesDescolamento(SolucaoOperacional & solucao)
 						// Tempo excedido entre o mínimo de tempo necessário
 						// e o tempo disponível entre uma aula e outra
 						tempo_deslocamentos += abs( tempo_minimo - tempo_disponivel );
-
-						// Critério de avaliação n° 4:
-						// Tempo de deslocamento do professor
-						// Armazena o tempo excedido pelo professor atual
-						tempo_deslocamentos_professor += abs( tempo_minimo - tempo_disponivel );
 					}
 
-					// Critério de avaliação n° 3:
-					// Número de deslocamentos do professor
 					// O professor teve que se deslocar entre CAMPUS diferentes
 					// Obs.: Não está sendo considerado o deslocamento entre UNIDADES
 					if (id_campus_atual != id_campus_anterior)
 					{
-						número_deslocamentos_professor++;
+						// Essa variável guarda apenas os
+						// deslocamentos de um único professor,
+						// para verificar se excedeu o limite permitido
+						num_desloc_professor_temp++;
+
+						// Critério de avaliação n° 4:
+						// Número de deslocamentos do professor
+						// Obs.: Armazena TODOS os deslocamentos ocorridos
+						num_deslocamentos_professor++;
 					}
 				}
 			}
@@ -290,11 +294,28 @@ void Avaliador::calculaViolacoesDescolamento(SolucaoOperacional & solucao)
 			aula_anterior = aula_atual;
 			indice_horario_anterior = indice_horario_atual;
 		}
+
+		// Critério de avaliação n° 3:
+		// Verifica se o número de deslocamentos entre campus
+		// diferentes excedeu o limite fornecido como parâmetro de entrada
+		if (num_desloc_professor_temp > limite_deslocamentos_professor)
+		{
+			violacoes_deslocamento_professor++;
+		}
 	}
 
-	totalViolacoesDeslocamentoProfessor = número_deslocamentos_professor;
-	totalViolacoesTempoDeslocamentoProfessor = tempo_deslocamentos_professor;
+	// Total de violações de deslocamento entre campus diferentes pelos professores
+	totalViolacoesDeslocamentoProfessor = violacoes_deslocamento_professor;
+
+	// Total de deslocamentos entre campus diferentes pelos professores
+	totalDeslocamentosProfessor = num_deslocamentos_professor;
+
+	// Total de deslocamentos entre campus e/ou
+	// unidades que excederam o tempo mínimo necessário
 	totalViolacoesDescolamento = num_deslocamentos;
+
+	// Tempo total de deslocamentos entre campus e/ou
+	// unidades que excederam o tempo mínimo necessário
 	totalTempoViolacoesDescolamento = tempo_deslocamentos;
 }
 
