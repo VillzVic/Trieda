@@ -1,8 +1,11 @@
 #ifndef _AULA_H_
 #define _AULA_H_
 
+#include <vector>
+
 #include "disciplina.h"
 #include "sala.h"
+#include "AlocacaoAula.h"
 
 class Aula
 {
@@ -25,6 +28,8 @@ public:
    int getCreditosTeoricos() const;
    int getCreditosPraticos() const;
    int getOfertacursoCampusId() const;
+
+   std::vector<AlocacaoAula> alocacao_aula;
 
    virtual bool operator < (Aula const & right) 
    { 

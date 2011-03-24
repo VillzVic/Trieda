@@ -2,6 +2,8 @@
 #include "GGroup.h"
 #include "SolucaoOperacional.h"
 
+#include "Aula.h"
+
 SolucaoOperacional::SolucaoOperacional(ProblemData* prbDt)
 {
    this->problemData = prbDt;
@@ -40,28 +42,34 @@ void SolucaoOperacional::setMatrizAulas(MatrizSolucao* m)
 	this->matrizAulas = m;
 }
 
+// Imprime as aulas da matriz de solução,
+// percorrendo as linhas de cada professor
 std::string SolucaoOperacional::toString() const
 {
-	for (int i=0; i < (int)this->getMatrizAulas()->size(); i++)
+	for (unsigned int i = 0; i < this->getMatrizAulas()->size(); i++)
 	{
 		std::vector<Aula*>* aulas = this->getMatrizAulas()->at(i);
-		for (int j=0; j < (int)aulas->size(); j++)
+		for (unsigned int j = 0; j < aulas->size(); j++)
 		{
-			Aula* aula = aulas->at(i);
+			Aula* aula = aulas->at(j);
 			if (aula != NULL)
 			{
-				std::cout << "Turma : " << aula->getTurma() << std::endl;
-				std::cout << "Disciplina : " << aula->getDisciplina() << std::endl;
+				std::cout << "Turma : " << aula->getTurma() << " -- ";
+				std::cout << "Disciplina : " << aula->getDisciplina() << " -- ";
 				std::cout << "Sala : " << aula->getSala() << std::endl << std::endl;
 			}
 		}
 
-		std::cout << "-------" << std::endl;
+		std::cout << std::endl << "-------" << std::endl;
 	}
 
 	return "";
 }
 
+// Dado um dia da semana e um horário de aula, devo informar
+// a coluna da matriz de solução correspondente a esse par de
+// dia da semana/horário. A linha da matriz já é dada pelo índice
+// do professor que faz a busca com esse dia e horário
 int SolucaoOperacional::getIndiceMatriz(int dia, Horario* horario)
 {
 	int indice_matriz = 0;
@@ -75,9 +83,38 @@ int SolucaoOperacional::getIndiceMatriz(int dia, Horario* horario)
 
 Horario* SolucaoOperacional::getHorario(int i, int j)
 {
+	Aula* aula = NULL;
 	Horario* horario = NULL;
 
-	// TODO
+	// Procura pelo primeiro horário
+	// do bloc de aula correspondente
+	int k = (j - 1);
+	while( k >= 0 )
+	{
+		// Recupera a aula atual
+		aula = this->getMatrizAulas()->at(i)->at(k);
+		if ( aula == NULL )
+		{
+			break;
+		}
+
+		k--;
+	}
+
+	// Garante que o índice 'k' estará apontando
+	// para a primeira aula do bloc de aula atual
+	if (aula == NULL)
+	{
+		k++;
+	}
+
+	// Pega a posição do horário desejado
+	// dentro do bloco de aulas atual
+	int posicao_aula = (j-k);
+
+	// Recupera o horário desejado
+	aula = this->getMatrizAulas()->at(i)->at(k);
+	horario = aula->alocacao_aula[k].getHorario();
 
 	return horario;
 }
@@ -86,6 +123,9 @@ Professor* SolucaoOperacional::getProfessorMatriz(int linha)
 {
 	Professor* professor = NULL;
 
+	// Procura pelo professor que possua o 'id_operacioanal'
+	// igual ao índice 'linha' informado, que corresponde à
+	// linha do professor na matriz de solução operacional
 	std::map<int, Professor*>::iterator it_professor
 		= mapProfessores.begin();
 	for (; it_professor != mapProfessores.end(); it_professor)

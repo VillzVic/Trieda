@@ -7,7 +7,7 @@
 
 Avaliador::Avaliador()
 {
-	MINUTOS_POR_HORARIO = 60;
+	MINUTOS_POR_HORARIO = 50;
 
 	totalViolacaoRestricaoFixacao = 0.0;
 	totalViolacoesDescolamento = 0.0;
@@ -69,12 +69,16 @@ void Avaliador::calculaViolacaoRestricaoFixacao(SolucaoOperacional & solucao)
 	double numViolacoes = 0.0;
 	bool encontrou_fixacao = false;
 
+	// Para cada fixação de aula a um professor, verifica se há
+	// uma aula atribuída ao professor que corresponda a essa fixação
 	ITERA_GGROUP(it_fixacao, solucao.getProblemData()->fixacoes, Fixacao)
 	{
+		// Recupera o professor correspondente à fixação
 	 	int id_professor = it_fixacao->getProfessorId();
 		Professor* professor = solucao.mapProfessores[id_professor];
 		int id_linha_professor = professor->getIdOperacional();
 
+		// Percorre a linha correspondente ao professor na matriz de solução
 		for (unsigned int i=0; i < solucao.getMatrizAulas()->at(id_linha_professor)->size(); i++)
 		{
 			Aula* aula = solucao.getMatrizAulas()->at(id_linha_professor)->at(i);
@@ -89,6 +93,8 @@ void Avaliador::calculaViolacaoRestricaoFixacao(SolucaoOperacional & solucao)
 			}
 		}
 
+		// Caso não tenha encontrado a
+		// fixação, anota-se a violação
 		if (!encontrou_fixacao)
 		{
 			numViolacoes++;
@@ -120,13 +126,17 @@ void Avaliador::calculaViolacoesDescolamento(SolucaoOperacional & solucao)
 	int indice_horario_atual = -1;
 	int indice_horario_anterior = -1;
 
+	// Para cada par de aulas consecutivas de um determinado
+	// professor, no mesmo dia da semana, verifica-se se houve
+	// um deslocamento acima do desejado entre uma sala e outra
 	ITERA_GGROUP(it_campi, solucao.getProblemData()->campi, Campus)
 	{
 		ITERA_GGROUP(it_professor, it_campi->professores, Professor)
 		{
+			// Recupera a linha do professor na matriz de solução
 			int id_linha_professor = it_professor->getIdOperacional();
 
-			// Para cada professor, devo percorrer a linha correspondente às suas aulas
+			// Percorrer a linha correspondente às aulas do professor
 			for (unsigned int i=0; i < solucao.getMatrizAulas()->at(id_linha_professor)->size(); i++)
 			{
 				aula_atual = solucao.getMatrizAulas()->at(id_linha_professor)->at(i);
@@ -140,7 +150,8 @@ void Avaliador::calculaViolacoesDescolamento(SolucaoOperacional & solucao)
 				// O índice 'i' corresponde à coluna da matriz
 				indice_horario_atual = i;
 
-				// Procura pelas unidades (anterior e atual)
+				// Procura pelas unidades que correspondem
+				// à sala de aula anterior e à sala de aula atual
 				id_unidade_atual = aula_atual->getSala()->getIdUnidade();
 				if (unidade_anterior != NULL)
 				{
@@ -151,10 +162,12 @@ void Avaliador::calculaViolacoesDescolamento(SolucaoOperacional & solucao)
 					= solucao.getProblemData()->refUnidade.begin();
 				for (; it_unidade != solucao.getProblemData()->refUnidade.end(); it_unidade++)
 				{
+					// Unidade da sala atual
 					if (it_unidade->first == id_unidade_atual)
 					{
 						unidade_atual = it_unidade->second;
 					}
+					// Unidade da sala anterior
 					else if (it_unidade->first == id_unidade_anterior)
 					{
 						unidade_anterior = it_unidade->second;
@@ -162,7 +175,8 @@ void Avaliador::calculaViolacoesDescolamento(SolucaoOperacional & solucao)
 				}
 				/////
 
-				// Procura pelos campus (anterior e atual)
+				// Procura pelos campus que correspondem
+				// à sala de aula anterior e à sala de aula atual
 				id_campus_atual = unidade_atual->id_campus;
 				if (campus_anterior != NULL)
 				{
@@ -187,6 +201,7 @@ void Avaliador::calculaViolacoesDescolamento(SolucaoOperacional & solucao)
 				// Verifica se houve violação no deslocamento viável
 				if (aula_anterior != NULL)
 				{
+					// Verifica se as aulas são em um mesmo dia da semana
 					if (aula_anterior->getDiaSemana() == aula_atual->getDiaSemana())
 					{
 						// Tempo de deslocamento entre uma aula e outra
@@ -200,7 +215,13 @@ void Avaliador::calculaViolacoesDescolamento(SolucaoOperacional & solucao)
 						// necessário para se deslocar entre campus/unidades
 						if (tempo_disponivel < tempo_minimo)
 						{
+							// Critério de avaliação n° 1:
+							// Número de violações ocorridas
 							numViolacoes++;
+
+							// Critério de avaliação n° 2:
+							// Tempo excedido entre o mínimo de tempo necessário
+							// e o tempo disponível entre uma aula e outra
 							tempoViolacoes += abs( (tempo_minimo - tempo_disponivel) * (MINUTOS_POR_HORARIO) );
 						}
 					}
@@ -320,6 +341,9 @@ void Avaliador::calculaGapsHorariosProfessores(SolucaoOperacional & solucao)
 	totalGapsHorariosProfessores = numGaps;
 }
 
+// Dados dois horários de um professor, em um mesmo dia da semana,
+// devo informar se existem horários disponíveis ENTRE esses dois
+// horários, NÃO CONSIDERANDO os extremos do intervalo de horários
 int Avaliador::horariosDisponiveisIntervalo(Professor* professor, int dia_semana, Horario* h1, Horario* h2)
 {
 	int horariosDisponiveis = 0;
@@ -347,15 +371,21 @@ void Avaliador::avaliacaoCustoCorpoDocente(SolucaoOperacional & solucao)
 	int avaliacaoCorpoDocente = 0;
 	double custoCorpoDocente = 0.0;
 
+	// Para cada professor na solução, devo avaliar o custo da
+	// inclusão desse professor e também o somatório das notas
+	// de avaliação desse professor nas disciplinas que ele leciona
 	std::map<int, Professor*>::iterator it_professor
 		= solucao.mapProfessores.begin();
 	for (; it_professor != solucao.mapProfessores.end(); it_professor++)
 	{
+		// Somando as notas de avaliação do professor nas suas disciplinas
 		ITERA_GGROUP(it_mag, it_professor->second->magisterio, Magisterio)
 		{
 			avaliacaoCorpoDocente += it_mag->getNota();
 		}
 
+		// Adiciona o custo desse professor
+		// no custo total do corpo docente da solução
 		custoCorpoDocente += it_professor->second->getValorCredito();
 	}
 
