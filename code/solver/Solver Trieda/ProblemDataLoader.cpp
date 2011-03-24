@@ -2304,6 +2304,8 @@ void ProblemDataLoader::relacionaDiscOfertas()
 //   }
 //}
 
+// Método de pré-processamento
+// relacionado com a issue TRIEDA-700
 void ProblemDataLoader::criaAulas()
 {
    // PAREI AQUI .. 
@@ -2348,7 +2350,6 @@ void ProblemDataLoader::criaAulas()
                      //   }
                      //}
                      Disciplina* disciplina = problemData->refDisciplinas.find(atendOferta->getDisciplinaId())->second;
-
 
                      // Procura pelo objeto 'Sala' da aula
                      //bool encontrou = false;
@@ -2407,8 +2408,8 @@ void ProblemDataLoader::criaAulas()
       }
    }
 
-   std::cout << "Total de aulas criadas: " << problemData->aulas.size() << std::endl;
-   //getchar();
+   std::cout << "Total de aulas criadas: "
+			 << problemData->aulas.size() << std::endl;
 }
 
 void ProblemDataLoader::print_csv(void)
