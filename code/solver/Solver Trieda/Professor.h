@@ -30,6 +30,7 @@ public:
    void setAreaId(int s) { area_id = s; }
    void setValorCredito(int s) { valor_credito = s; }
    void setIdOperacional(int s) { id_operacional = s; }
+   void setIsVirtual(bool value) { is_virtual = value; }
 
    std::string getCpf() { return cpf; }
    std::string getNome() { return nome; }
@@ -41,6 +42,7 @@ public:
    int getAreaId() { return area_id; }
    double getValorCredito() { return valor_credito; }
    int getIdOperacional() { return id_operacional; }
+   bool getIsVirtual() { return is_virtual; }
 
 private:
    std::string cpf;
@@ -53,4 +55,5 @@ private:
    int area_id;
    double valor_credito;
    int id_operacional;
+   bool is_virtual;
 };

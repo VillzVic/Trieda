@@ -2,6 +2,7 @@
 
 Professor::Professor(void)
 {
+	is_virtual = false;
 }
 
 Professor::~Professor(void)

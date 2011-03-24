@@ -14,6 +14,24 @@ public:
    // Retorna o valor de uma solução operacional
    double avaliaSolucao(SolucaoOperacional &);
 
+   double PESO_FIXACAO;
+   double PESO_NUMERO_DESLOCAMENTO;
+   double PESO_TEMPO_DESLOCAMENTO;
+   double PESO_GAPS_HORARIO;
+   double PESO_NOTA_CORPO_DOCENTE;
+   double PESO_CUSTO_CORPO_DOCENTE;
+   double PESO_CH_MINIMA_ANTERIOR;
+   double PESO_CH_MINIMA_PROFESSOR;
+   double PESO_CH_MAXIMA_PROFESSOR;
+   double PESO_TOTAL_DIAS_SEMANA;
+   double PESO_ULTIMA_E_PRIMEIRA_AULA;
+   double PESO_PERCENTUAL_MESTRES;
+   double PESO_PERCENTUAL_DOUTORES;
+   double PESO_DISCIPLINAS_PROFESSOR_CURSO;
+   double PESO_PREFERENCIA_DISCIPLINA;
+   double PESO_NUMERO_PROFESSORES_VIRTUAIS;
+   double PESO_CREDITOS_PROFESSORES_VIRTUAIS;
+
 private:
 	//------------------ MÉTODOS DE AVALIAÇÃO DA SOLUÇÃO -----------------//
 	// -----------------------------------------------------------
@@ -110,6 +128,14 @@ private:
 	void avaliaViolacoesPreferenciasProfessor(SolucaoOperacional &);
 	int totalViolacoesPreferencias;
 	vector<int> violacoesPreferenciasProfessor;
+
+	// -----------------------------------------------------------
+	// Avaliação do custo de se utilizar um ou
+	// mais professores virtuais na solução operacional
+	// -----------------------------------------------------------
+	void avaliaCustoProfessorVirtual(SolucaoOperacional &);
+	int totalProfessoresVirtuais;
+	int totalCreditosProfessoresVirtuais;
 	//--------------------------------------------------------------------//
 
 	//--------------------------- UTILITÁRIOS ----------------------------//

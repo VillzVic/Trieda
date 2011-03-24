@@ -9,6 +9,7 @@ Avaliador::Avaliador()
 {
 	MINUTOS_POR_HORARIO = 50;
 
+	// Inicializa o total de violações
 	totalViolacaoRestricaoFixacao = 0.0;
 	totalViolacoesDescolamento = 0.0;
 	totalTempoViolacoesDescolamento = 0.0;
@@ -24,6 +25,28 @@ Avaliador::Avaliador()
 	totalViolacoesDoutores = 0;
 	totalViolacoesDiscProfCurso = 0;
 	totalViolacoesPreferencias = 0;
+	totalProfessoresVirtuais = 0;
+	totalCreditosProfessoresVirtuais = 0;
+
+	// Atribui o peso de cada critério
+	// na nota de avaliação da solução
+	PESO_FIXACAO = 1;
+	PESO_NUMERO_DESLOCAMENTO = 1;
+	PESO_TEMPO_DESLOCAMENTO = 1;
+	PESO_GAPS_HORARIO = 1;
+	PESO_NOTA_CORPO_DOCENTE = 1;
+	PESO_CUSTO_CORPO_DOCENTE = 1;
+	PESO_CH_MINIMA_ANTERIOR = 1;
+	PESO_CH_MINIMA_PROFESSOR = 1;
+	PESO_CH_MAXIMA_PROFESSOR = 1;
+	PESO_TOTAL_DIAS_SEMANA = 1;
+	PESO_ULTIMA_E_PRIMEIRA_AULA = 1;
+	PESO_PERCENTUAL_MESTRES = 1;
+	PESO_PERCENTUAL_DOUTORES = 1;
+	PESO_DISCIPLINAS_PROFESSOR_CURSO = 1;
+	PESO_PREFERENCIA_DISCIPLINA = 1;
+	PESO_NUMERO_PROFESSORES_VIRTUAIS = 1;
+	PESO_CREDITOS_PROFESSORES_VIRTUAIS = 1;
 }
 
 Avaliador::~Avaliador()
@@ -43,28 +66,31 @@ double Avaliador::avaliaSolucao(SolucaoOperacional & solucao)
 	avaliaNumeroMestresDoutores(solucao);
 	avaliaMaximoDisciplinasProfessorPorCurso(solucao);
 	avaliaViolacoesPreferenciasProfessor(solucao);
+	avaliaCustoProfessorVirtual(solucao);
 
-	double funcaoObjetivo = 0.0;
+	double funcao_objetivo = 0.0;
 
 	// Contabilização do valor da solução
 	// Obs.: atribuir PESOS aos valores
-	funcaoObjetivo += totalViolacaoRestricaoFixacao;
-	funcaoObjetivo += totalViolacoesDescolamento;
-	funcaoObjetivo += totalTempoViolacoesDescolamento;
-	funcaoObjetivo += totalGapsHorariosProfessores;
-	funcaoObjetivo += totalAvaliacaoCorpoDocente;
-	funcaoObjetivo += totalCustoCorpoDocente;
-	funcaoObjetivo += totalViolacoesCHMinimaSemestreAterior;
-	funcaoObjetivo += totalViolacoesCHMinimaProfessor;
-	funcaoObjetivo += totalViolacoesCHMaximaProfessor;
-	funcaoObjetivo += totalDiasProfessorMinistraAula;
-	funcaoObjetivo += totalViolacoesUltimaPrimeiraAula;
-	funcaoObjetivo += totalViolacoesMestres;
-	funcaoObjetivo += totalViolacoesDoutores;
-	funcaoObjetivo += totalViolacoesDiscProfCurso;
-	funcaoObjetivo += totalViolacoesPreferencias;
+	funcao_objetivo += (PESO_FIXACAO * totalViolacaoRestricaoFixacao);
+	funcao_objetivo += (PESO_NUMERO_DESLOCAMENTO * totalViolacoesDescolamento);
+	funcao_objetivo += (PESO_TEMPO_DESLOCAMENTO * totalTempoViolacoesDescolamento);
+	funcao_objetivo += (PESO_GAPS_HORARIO * totalGapsHorariosProfessores);
+	funcao_objetivo += (PESO_NOTA_CORPO_DOCENTE * totalAvaliacaoCorpoDocente);
+	funcao_objetivo += (PESO_CUSTO_CORPO_DOCENTE * totalCustoCorpoDocente);
+	funcao_objetivo += (PESO_CH_MINIMA_ANTERIOR * totalViolacoesCHMinimaSemestreAterior);
+	funcao_objetivo += (PESO_CH_MINIMA_PROFESSOR * totalViolacoesCHMinimaProfessor);
+	funcao_objetivo += (PESO_CH_MAXIMA_PROFESSOR * totalViolacoesCHMaximaProfessor);
+	funcao_objetivo += (PESO_TOTAL_DIAS_SEMANA * totalDiasProfessorMinistraAula);
+	funcao_objetivo += (PESO_ULTIMA_E_PRIMEIRA_AULA * totalViolacoesUltimaPrimeiraAula);
+	funcao_objetivo += (PESO_PERCENTUAL_MESTRES * totalViolacoesMestres);
+	funcao_objetivo += (PESO_PERCENTUAL_DOUTORES * totalViolacoesDoutores);
+	funcao_objetivo += (PESO_DISCIPLINAS_PROFESSOR_CURSO * totalViolacoesDiscProfCurso);
+	funcao_objetivo += (PESO_PREFERENCIA_DISCIPLINA * totalViolacoesPreferencias);
+	funcao_objetivo += (PESO_NUMERO_PROFESSORES_VIRTUAIS * totalProfessoresVirtuais);
+	funcao_objetivo += (PESO_CREDITOS_PROFESSORES_VIRTUAIS * totalCreditosProfessoresVirtuais);
 
-	return funcaoObjetivo;
+	return funcao_objetivo;
 }
 
 void Avaliador::calculaViolacaoRestricaoFixacao(SolucaoOperacional & solucao)
@@ -295,6 +321,15 @@ void Avaliador::calculaGapsHorariosProfessores(SolucaoOperacional & solucao)
 	Horario* h1 = NULL;
 	Horario* h2 = NULL;
 
+	// Inicializa o vetor de gaps de cada professor
+	gapsProfessores.clear();
+	for (unsigned int i = 0; i < solucao.mapProfessores.size(); i++)
+	{
+		std::vector<int> gaps;
+		gaps.clear();
+		gapsProfessores.push_back(gaps);
+	}
+
 	int dia_semana = 0;
 
 	// Percorre as aulas alocadas a cada professor
@@ -407,6 +442,17 @@ void Avaliador::violacoesCargasHorarias(SolucaoOperacional & solucao)
 	int tempCHMinima = 0;
 	int tempCHMaxima = 0;
 
+	// Inicializa o vetor de violações de cada professor
+	violacoesCHMinimaSemestreAterior.clear();
+	violacoesCHMinimaProfessor.clear();
+	violacoesCHMaximaProfessor.clear();
+	for (unsigned int i = 0; i < solucao.mapProfessores.size(); i++)
+	{
+		violacoesCHMinimaSemestreAterior.push_back(0);
+		violacoesCHMinimaProfessor.push_back(0);
+		violacoesCHMaximaProfessor.push_back(0);
+	}
+
 	Aula* aula = NULL;
 	int contCreditos, linha_professor;
 
@@ -468,6 +514,7 @@ void Avaliador::avaliaDiasProfessorMinistraAula(SolucaoOperacional & solucao)
 	int linha_professor = 0;
 
 	// Inicializa o vetor de dias da semana dos professores
+	professorMinistraAula.clear();
 	for (unsigned int i = 0; i < solucao.mapProfessores.size(); i++)
 	{
 		professorMinistraAula.push_back(0);
@@ -519,6 +566,13 @@ void Avaliador::violacaoUltimaPrimeiraAula(SolucaoOperacional & solucao)
 	// Primeira aula do dia D+1
 	Aula* aula2 = NULL;
 
+	// Inicializa o número de violações de cada professor
+	violacoesUltimaPrimeiraAulaProfessor.clear();
+	for (unsigned i = 0; i < solucao.mapProfessores.size(); i++)
+	{
+		violacoesUltimaPrimeiraAulaProfessor.push_back(0);
+	}
+
 	std::map<int, Professor*>::iterator it_professor
 		= solucao.mapProfessores.begin();
 	for (; it_professor != solucao.mapProfessores.end(); it_professor++)
@@ -564,6 +618,8 @@ int Avaliador::calculaTamanhoBlocoAula(SolucaoOperacional & solucao)
 	cont_horarios.clear();
 	for (i = 0; i < 8; i++)
 	{
+		// Insere um número de dias da semana no vetor
+		// quantos forem os dias da semana considerados na solução
 		cont_horarios.push_back(0);
 	}
 
@@ -782,6 +838,7 @@ void Avaliador::avaliaMaximoDisciplinasProfessorPorCurso(SolucaoOperacional & so
 	int violacoes_professor = 0;
 
 	// Inicializa as violações de cada professor como zero
+	violacoesDisciplinasProfessor.clear();
 	for (unsigned int i = 0; i < solucao.mapProfessores.size(); i++)
 	{
 		violacoesDisciplinasProfessor.push_back(0);
@@ -858,6 +915,13 @@ void Avaliador::avaliaViolacoesPreferenciasProfessor(SolucaoOperacional & soluca
 	int id_professor = 0;
 	int id_disciplina = 0;
 	int preferencia_disciplina = 0;
+
+	// Inicializa o vetor de violações de acda professor
+	violacoesPreferenciasProfessor.clear();
+	for (unsigned int i = 0; i < solucao.mapProfessores.size(); i++)
+	{
+		violacoesPreferenciasProfessor.push_back(0);
+	}
 
 	std::map<int/*Professr*/, std::map<int/*Disciplina*/, int/*Preferencia*/> > mapProfDiscPreferencia;
 
@@ -940,3 +1004,52 @@ void Avaliador::avaliaViolacoesPreferenciasProfessor(SolucaoOperacional & soluca
 	totalViolacoesPreferencias = nota_acumulada;
 }
 
+void Avaliador::avaliaCustoProfessorVirtual(SolucaoOperacional & solucao)
+{
+	// Total de crétidos atribuídos a professores virtuais
+	int creditos_virtuais = 0;
+
+	// Total de professores virtuais
+	int professores_virtuais = 0;
+
+	int id_professor = 0;
+	int linha_professor = 0;
+	Professor* professor = NULL;
+	Aula* aula = NULL;
+
+	// Percorre o conjunto de professores da solução
+	std::map<int, Professor*>::iterator it_professor
+		= solucao.mapProfessores.begin();
+	for (; it_professor != solucao.mapProfessores.end(); it_professor++)
+	{
+		// Recupera o objeto 'professor'
+		id_professor = it_professor->first;
+		professor = it_professor->second;
+		linha_professor = it_professor->second->getIdOperacional();
+
+		// Caso o professor seja um 'professor virtual'
+		if (professor->getIsVirtual())
+		{
+			// Incrementa-se o número de professores
+			// virtuais utilizados na solução operacional
+			professores_virtuais++;
+
+			// Para o professor atual, contabilizamos o
+			// número de créditos atribuídos a ele na solução
+			for (unsigned int i = 0; i < solucao.getMatrizAulas()->at(linha_professor)->size(); i++)
+			{
+				// Recupera a aula atual
+				aula = solucao.getMatrizAulas()->at(linha_professor)->at(i);
+				if (aula != NULL)
+				{
+					// Incrementa o total de créditos
+					// atribuídos a professor virtual na solução
+					creditos_virtuais++;
+				}
+			}
+		}
+	}
+
+	totalCreditosProfessoresVirtuais = creditos_virtuais;
+	totalProfessoresVirtuais = professores_virtuais;
+}
