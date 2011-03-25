@@ -129,7 +129,7 @@ public class UnidadesPresenter implements Presenter {
 		display.getExportExcelButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
 			@Override
 			public void componentSelected(ButtonEvent ce) {
-				ExportExcelFormSubmit e = new ExportExcelFormSubmit(ExcelInformationType.UNIDADES);
+				ExportExcelFormSubmit e = new ExportExcelFormSubmit(ExcelInformationType.UNIDADES,display.getI18nConstants(),display.getI18nMessages());
 				e.submit();
 			}
 		});

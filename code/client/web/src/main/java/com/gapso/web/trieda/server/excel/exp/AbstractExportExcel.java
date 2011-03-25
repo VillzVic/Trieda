@@ -15,17 +15,20 @@ import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.CellRangeAddress;
 
+import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nMessages;
 
 public abstract class AbstractExportExcel implements IExportExcel {
 	
 	protected List<String> errors;
 	protected List<String> warnings;
+	private TriedaI18nConstants i18nConstants;
 	private TriedaI18nMessages i18nMessages;
 	
-	protected AbstractExportExcel(TriedaI18nMessages i18nMessages) {
+	protected AbstractExportExcel(TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages) {
 		this.errors = new ArrayList<String>();
 		this.warnings = new ArrayList<String>();
+		this.i18nConstants = i18nConstants;
 		this.i18nMessages = i18nMessages;
 	}
 	
@@ -71,6 +74,10 @@ public abstract class AbstractExportExcel implements IExportExcel {
 	@Override
 	public List<String> getWarnings() {
 		return warnings;
+	}
+	
+	protected TriedaI18nConstants getI18nConstants() {
+		return i18nConstants;
 	}
 	
 	protected TriedaI18nMessages getI18nMessages() {

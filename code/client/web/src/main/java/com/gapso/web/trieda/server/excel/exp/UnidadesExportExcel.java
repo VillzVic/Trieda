@@ -8,6 +8,7 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
 import com.gapso.trieda.domain.Unidade;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
+import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nMessages;
 
 public class UnidadesExportExcel extends AbstractExportExcel {
@@ -33,16 +34,16 @@ public class UnidadesExportExcel extends AbstractExportExcel {
 	private String sheetName;
 	private int initialRow;
 	
-	public UnidadesExportExcel(TriedaI18nMessages i18nMessages) {
-		super(i18nMessages);
+	public UnidadesExportExcel(TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages) {
+		super(i18nConstants,i18nMessages);
 		this.cellStyles = new HSSFCellStyle[ExcelCellStyleReference.values().length];
 		this.removeUnusedSheets = true;
 		this.sheetName = ExcelInformationType.UNIDADES.getSheetName();
 		this.initialRow = 6;
 	}
 	
-	public UnidadesExportExcel(boolean removeUnusedSheets, TriedaI18nMessages i18nMessages) {
-		super(i18nMessages);
+	public UnidadesExportExcel(boolean removeUnusedSheets, TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages) {
+		super(i18nConstants,i18nMessages);
 		this.cellStyles = new HSSFCellStyle[ExcelCellStyleReference.values().length];
 		this.removeUnusedSheets = removeUnusedSheets;
 		this.sheetName = ExcelInformationType.UNIDADES.getSheetName();
@@ -51,7 +52,7 @@ public class UnidadesExportExcel extends AbstractExportExcel {
 	
 	@Override
 	public String getFileName() {
-		return "Unidades";
+		return getI18nConstants().unidades();
 	}
 	
 	@Override
@@ -61,7 +62,7 @@ public class UnidadesExportExcel extends AbstractExportExcel {
 
 	@Override
 	protected String getReportName() {
-		return "Unidades";
+		return getI18nConstants().unidades();
 	}
 
 	@Override

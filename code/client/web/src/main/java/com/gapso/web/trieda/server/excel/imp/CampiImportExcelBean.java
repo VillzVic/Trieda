@@ -106,6 +106,6 @@ public class CampiImportExcelBean extends AbstractImportExcelBean implements Com
 
 	@Override
 	public int compareTo(CampiImportExcelBean o) {
-		return 0;
+		return getCodigoStr().compareTo(o.getCodigoStr());
 	}
 }

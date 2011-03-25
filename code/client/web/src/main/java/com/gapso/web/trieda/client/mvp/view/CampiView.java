@@ -44,7 +44,7 @@ public class CampiView extends MyComposite implements CampiPresenter.Display {
 	
 	private void initUI() {
 		panel = new ContentPanel(new BorderLayout());
-		panel.setHeading("Master Data » Campi");
+		panel.setHeading(getI18nConstants().campiHeadingPanel());
 		createToolBar();
 		createGrid();
 		createFilter();
@@ -53,16 +53,16 @@ public class CampiView extends MyComposite implements CampiPresenter.Display {
 	}
 	
 	private void createTabItem() {
-		tabItem = new GTabItem("Campi", Resources.DEFAULTS.campus16());
+		tabItem = new GTabItem(getI18nConstants().campi(), Resources.DEFAULTS.campus16());
 		tabItem.setContent(panel);
 	}
 	
 	private void createToolBar() {
 		toolBar = new SimpleToolBar(this);
 		toolBar.add(new SeparatorToolItem());
-		unidadesDeslocamentoBT = toolBar.createButton("Deslocamento entre Unidades do mesmo Campus", Resources.DEFAULTS.deslocamentoUnidade16());
+		unidadesDeslocamentoBT = toolBar.createButton(getI18nConstants().deslocamentoUnidadesCampus(), Resources.DEFAULTS.deslocamentoUnidade16());
 		toolBar.add(unidadesDeslocamentoBT);
-		disponibilidadeBT = toolBar.createButton("Disponibilidade do Campus", Resources.DEFAULTS.disponibilidade16());
+		disponibilidadeBT = toolBar.createButton(getI18nConstants().disponibilidadesSemanaLetiva(), Resources.DEFAULTS.disponibilidade16());
 		toolBar.add(disponibilidadeBT);
 		panel.setTopComponent(toolBar);
 	}
@@ -77,12 +77,12 @@ public class CampiView extends MyComposite implements CampiPresenter.Display {
 
 	public List<ColumnConfig> getColumnList() {
 		List<ColumnConfig> list = new ArrayList<ColumnConfig>();
-		list.add(new ColumnConfig(CampusDTO.PROPERTY_CODIGO, "Código", 100));
-		list.add(new ColumnConfig(CampusDTO.PROPERTY_NOME, "Nome", 100));
-		list.add(new ColumnConfig(CampusDTO.PROPERTY_VALOR_CREDITO, "Custo médio do crédito (R$)", 170));
-		list.add(new ColumnConfig(CampusDTO.PROPERTY_ESTADO, "Estado", 100));
-		list.add(new ColumnConfig(CampusDTO.PROPERTY_MUNICIPIO, "Município", 100));
-		list.add(new ColumnConfig(CampusDTO.PROPERTY_BAIRRO, "Bairro", 100));
+		list.add(new ColumnConfig(CampusDTO.PROPERTY_CODIGO, getI18nConstants().codigo(), 100));
+		list.add(new ColumnConfig(CampusDTO.PROPERTY_NOME, getI18nConstants().nome(), 100));
+		list.add(new ColumnConfig(CampusDTO.PROPERTY_VALOR_CREDITO, getI18nConstants().custoMedioCredito(), 170));
+		list.add(new ColumnConfig(CampusDTO.PROPERTY_ESTADO, getI18nConstants().estado(), 100));
+		list.add(new ColumnConfig(CampusDTO.PROPERTY_MUNICIPIO, getI18nConstants().municipio(), 100));
+		list.add(new ColumnConfig(CampusDTO.PROPERTY_BAIRRO, getI18nConstants().bairro(), 100));
 		return list;
 	}
 
@@ -93,15 +93,15 @@ public class CampiView extends MyComposite implements CampiPresenter.Display {
 		
 		filter = new SimpleFilter();
 		nomeBuscaTextField = new TextField<String>();
-		nomeBuscaTextField.setFieldLabel("Nome");
+		nomeBuscaTextField.setFieldLabel(getI18nConstants().nome());
 		codigoBuscaTextField = new TextField<String>();
-		codigoBuscaTextField.setFieldLabel("Código");
+		codigoBuscaTextField.setFieldLabel(getI18nConstants().codigo());
 		estadoBuscaComboBox = new EstadoComboBox();
-		estadoBuscaComboBox.setFieldLabel("Estado");
+		estadoBuscaComboBox.setFieldLabel(getI18nConstants().estado());
 		municipioBuscaTextField = new TextField<String>();
-		municipioBuscaTextField.setFieldLabel("Município");
+		municipioBuscaTextField.setFieldLabel(getI18nConstants().municipio());
 		bairroBuscaTextField = new TextField<String>();
-		bairroBuscaTextField.setFieldLabel("Bairro");
+		bairroBuscaTextField.setFieldLabel(getI18nConstants().bairro());
 		filter.addField(nomeBuscaTextField);
 		filter.addField(codigoBuscaTextField); 
 //		TODO filter.addField(estadoBuscaComboBox); 

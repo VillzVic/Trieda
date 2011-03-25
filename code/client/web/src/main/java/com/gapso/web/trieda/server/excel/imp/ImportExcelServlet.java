@@ -18,15 +18,18 @@ import org.scb.gwt.web.server.i18n.GWTI18N;
 
 import com.gapso.trieda.domain.Cenario;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
+import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nMessages;
 
 public class ImportExcelServlet extends HttpServlet {
 
 	private static final long serialVersionUID = 1889121953846517684L;
+	private static TriedaI18nConstants i18nConstants = null;
 	private static TriedaI18nMessages i18nMessages = null;
 	private static Cenario cenario = null;
 	{
 		try {
+			i18nConstants = GWTI18N.create(TriedaI18nConstants.class);
 			i18nMessages = GWTI18N.create(TriedaI18nMessages.class);
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -57,14 +60,14 @@ public class ImportExcelServlet extends HttpServlet {
 			}
 			
 			if (inputStream != null && informationToBeImported != null) {
-				IImportExcel importer = ImportExcelFactory.createImporter(informationToBeImported,cenario,i18nMessages);
+				IImportExcel importer = ImportExcelFactory.createImporter(informationToBeImported,cenario,i18nConstants,i18nMessages);
 				if (!importer.load(fileName,inputStream)) {
 					response.setContentType("text/html");
 					for (String msg : importer.getWarnings()) {
-						response.getWriter().println("@w@"+msg);
+						response.getWriter().println(ExcelInformationType.prefixWarning()+msg);
 					}
 					for (String msg : importer.getErrors()) {
-						response.getWriter().println("@e@"+msg);
+						response.getWriter().println(ExcelInformationType.prefixError()+msg);
 					}
 					response.getWriter().flush();
 				}

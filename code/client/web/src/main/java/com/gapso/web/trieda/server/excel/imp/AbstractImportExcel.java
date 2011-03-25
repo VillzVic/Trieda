@@ -15,20 +15,23 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
 import com.gapso.trieda.domain.Cenario;
+import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nMessages;
 
 public abstract class AbstractImportExcel<ExcelBeanType> implements IImportExcel {
 	
 	protected List<String> errors;
 	protected List<String> warnings;
-	private TriedaI18nMessages i18nMessages;
 	private Cenario cenario;
+	private TriedaI18nConstants i18nConstants;
+	private TriedaI18nMessages i18nMessages;
 	
-	protected AbstractImportExcel(Cenario cenario, TriedaI18nMessages i18nMessages) {
+	protected AbstractImportExcel(Cenario cenario, TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages) {
 		this.errors = new ArrayList<String>();
 		this.warnings = new ArrayList<String>();
 		
 		this.cenario = cenario;
+		this.i18nConstants = i18nConstants;
 		this.i18nMessages = i18nMessages;
 	}
 	
@@ -82,7 +85,6 @@ public abstract class AbstractImportExcel<ExcelBeanType> implements IImportExcel
 					int rowIndex = sheet.getFirstRowNum();
 	                HSSFRow header = sheet.getRow(rowIndex);
 	                boolean validHeader = isHeaderValid(header,sheetIndex,sheet,workbook,headerColumnsNames);
-	                //while ((rowIndex < sheet.getLastRowNum()) && !isHeaderValid((header = sheet.getRow(rowIndex++)),sheetIndex,sheet,workbook,headerColumnsNames));
 	                while ((rowIndex < sheet.getLastRowNum()) && !validHeader) {
 	                	header = sheet.getRow(rowIndex++);
 	                	validHeader = isHeaderValid(header,sheetIndex,sheet,workbook,headerColumnsNames);
@@ -174,12 +176,16 @@ public abstract class AbstractImportExcel<ExcelBeanType> implements IImportExcel
     	}
 		return null;
 	}
+
+	protected Cenario getCenario() {
+		return cenario;
+	}
+	
+	protected TriedaI18nConstants getI18nConstants() {
+		return i18nConstants;
+	}
 	
 	protected TriedaI18nMessages getI18nMessages() {
 		return i18nMessages;
-	}
-	
-	protected Cenario getCenario() {
-		return cenario;
 	}
 }

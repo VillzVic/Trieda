@@ -8,6 +8,7 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
 import com.gapso.trieda.domain.Campus;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
+import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nMessages;
 
 public class CampiExportExcel extends AbstractExportExcel {
@@ -34,16 +35,16 @@ public class CampiExportExcel extends AbstractExportExcel {
 	private String sheetName;
 	private int initialRow;
 	
-	public CampiExportExcel(TriedaI18nMessages i18nMessages) {
-		super(i18nMessages);
+	public CampiExportExcel(TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages) {
+		super(i18nConstants,i18nMessages);
 		this.cellStyles = new HSSFCellStyle[ExcelCellStyleReference.values().length];
 		this.removeUnusedSheets = true;
 		this.sheetName = ExcelInformationType.CAMPI.getSheetName();
 		this.initialRow = 6;
 	}
 	
-	public CampiExportExcel(boolean removeUnusedSheets, TriedaI18nMessages i18nMessages) {
-		super(i18nMessages);
+	public CampiExportExcel(boolean removeUnusedSheets, TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages) {
+		super(i18nConstants,i18nMessages);
 		this.cellStyles = new HSSFCellStyle[ExcelCellStyleReference.values().length];
 		this.removeUnusedSheets = removeUnusedSheets;
 		this.sheetName = ExcelInformationType.CAMPI.getSheetName();
@@ -52,7 +53,7 @@ public class CampiExportExcel extends AbstractExportExcel {
 	
 	@Override
 	public String getFileName() {
-		return "Campi";
+		return getI18nConstants().campi();
 	}
 	
 	@Override
@@ -62,7 +63,7 @@ public class CampiExportExcel extends AbstractExportExcel {
 
 	@Override
 	protected String getReportName() {
-		return "Campi";
+		return getI18nConstants().campi();
 	}
 
 	@Override

@@ -15,21 +15,23 @@ import org.springframework.transaction.annotation.Transactional;
 import com.gapso.trieda.domain.Campus;
 import com.gapso.trieda.domain.Cenario;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
+import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nMessages;
 
 public class CampiImportExcel extends AbstractImportExcel<CampiImportExcelBean> {
 	
-	static public final String CODIGO_COLUMN_NAME = "Código";
-	static public final String NOME_COLUMN_NAME = "Nome";
-	static public final String ESTADO_COLUMN_NAME = "Estado";
-	static public final String MUNICIPIO_COLUMN_NAME = "Município";
-	static public final String BAIRRO_COLUMN_NAME = "Bairro";
-	static public final String CUSTO_CREDITO_COLUMN_NAME = "Custo Médio do Crédito";
+	static public String CODIGO_COLUMN_NAME;
+	static public String NOME_COLUMN_NAME;
+	static public String ESTADO_COLUMN_NAME;
+	static public String MUNICIPIO_COLUMN_NAME;
+	static public String BAIRRO_COLUMN_NAME;
+	static public String CUSTO_CREDITO_COLUMN_NAME;
 	
 	private List<String> headerColumnsNames;
 	
-	public CampiImportExcel(Cenario cenario, TriedaI18nMessages i18nMessages) {
-		super(cenario,i18nMessages);
+	public CampiImportExcel(Cenario cenario, TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages) {
+		super(cenario,i18nConstants,i18nMessages);
+		resolveHeaderColumnNames();
 		this.headerColumnsNames = new ArrayList<String>();
 		this.headerColumnsNames.add(CODIGO_COLUMN_NAME);
 		this.headerColumnsNames.add(NOME_COLUMN_NAME);
@@ -177,6 +179,17 @@ public class CampiImportExcel extends AbstractImportExcel<CampiImportExcelBean> 
 				
 				newCampus.persist();
 			}
+		}
+	}
+	
+	private void resolveHeaderColumnNames() {
+		if (CODIGO_COLUMN_NAME == null) {
+			CODIGO_COLUMN_NAME = getI18nConstants().codigo();
+			NOME_COLUMN_NAME = getI18nConstants().nome();
+			ESTADO_COLUMN_NAME = getI18nConstants().estado();
+			MUNICIPIO_COLUMN_NAME = getI18nConstants().municipio();
+			BAIRRO_COLUMN_NAME = getI18nConstants().bairro();
+			CUSTO_CREDITO_COLUMN_NAME = getI18nConstants().custoMedioCreditoExcel();
 		}
 	}
 }

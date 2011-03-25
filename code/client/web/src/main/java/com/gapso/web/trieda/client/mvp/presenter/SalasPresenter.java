@@ -27,6 +27,7 @@ import com.gapso.web.trieda.shared.dtos.SalaDTO;
 import com.gapso.web.trieda.shared.dtos.TipoSalaDTO;
 import com.gapso.web.trieda.shared.dtos.UnidadeDTO;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
+import com.gapso.web.trieda.shared.i18n.ITriedaI18nGateway;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
 import com.googlecode.future.FutureResult;
@@ -34,7 +35,7 @@ import com.googlecode.future.FutureSynchronizer;
 
 public class SalasPresenter implements Presenter {
 
-	public interface Display {
+	public interface Display extends ITriedaI18nGateway {
 		Button getNewButton();
 		Button getEditButton();
 		Button getRemoveButton();
@@ -136,7 +137,7 @@ public class SalasPresenter implements Presenter {
 		display.getExportExcelButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
 			@Override
 			public void componentSelected(ButtonEvent ce) {
-				ExportExcelFormSubmit e = new ExportExcelFormSubmit(ExcelInformationType.SALAS);
+				ExportExcelFormSubmit e = new ExportExcelFormSubmit(ExcelInformationType.SALAS,display.getI18nConstants(),display.getI18nMessages());
 				e.submit();
 			}
 		});

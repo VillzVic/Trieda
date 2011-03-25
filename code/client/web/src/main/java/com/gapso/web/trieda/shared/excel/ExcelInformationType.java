@@ -23,4 +23,12 @@ public enum ExcelInformationType {
 	public static String getFileParameterName() {
 		return "uploadedFile";
 	}
+	
+	public static String prefixError() {
+		return "@e@";
+	}
+	
+	public static String prefixWarning() {
+		return "@w@";
+	}
 }
