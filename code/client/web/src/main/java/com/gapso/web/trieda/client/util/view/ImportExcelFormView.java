@@ -12,6 +12,7 @@ import com.extjs.gxt.ui.client.widget.form.FormPanel.Method;
 import com.extjs.gxt.ui.client.widget.form.HiddenField;
 import com.gapso.web.trieda.client.mvp.view.MyComposite;
 import com.gapso.web.trieda.client.util.resources.Resources;
+import com.gapso.web.trieda.shared.dtos.AbstractDTO;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 import com.google.gwt.core.client.GWT;
 
@@ -24,18 +25,18 @@ public class ImportExcelFormView extends MyComposite {
 	private Button importBtn;
 	private Button cancelBtn;
 
-	public ImportExcelFormView(ExcelInformationType infoToBeImported) {
-		initUI(infoToBeImported);
+	public ImportExcelFormView(ExcelInformationType infoToBeImported, SimpleGrid<? extends AbstractDTO<?>> gridToBeUpdated) {
+		initUI(infoToBeImported,gridToBeUpdated);
 		initActions();
 	}
 
-	private void initUI(ExcelInformationType infoToBeImported) {
+	private void initUI(ExcelInformationType infoToBeImported, SimpleGrid<? extends AbstractDTO<?>> gridToBeUpdated) {
 		this.simpleModal = new SimpleModal("Importação de Excel",Resources.DEFAULTS.importar16());
-		createForm(infoToBeImported);
+		createForm(infoToBeImported,gridToBeUpdated);
 		this.simpleModal.setContent(formPanel);
 	}
 
-	private void createForm(ExcelInformationType infoToBeImported) {
+	private void createForm(ExcelInformationType infoToBeImported, SimpleGrid<? extends AbstractDTO<?>> gridToBeUpdated) {
 		this.hiddenField = new HiddenField<String>();
 		this.hiddenField.setName(ExcelInformationType.getInformationParameterName());
 		this.hiddenField.setValue(infoToBeImported.toString());
@@ -60,7 +61,7 @@ public class ImportExcelFormView extends MyComposite {
         this.formPanel.addButton(this.cancelBtn);  
         this.formPanel.addButton(this.importBtn);
         
-        this.formPanel.addListener(Events.Submit,new ExcelFormListener(simpleModal,getI18nConstants(),getI18nMessages()));
+        this.formPanel.addListener(Events.Submit,new ExcelFormListener(simpleModal,gridToBeUpdated,getI18nConstants(),getI18nMessages()));
 		
 		this.simpleModal.setFocusWidget(this.fileUploadField);
 	}

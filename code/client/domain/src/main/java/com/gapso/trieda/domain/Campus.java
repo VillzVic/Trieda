@@ -1,8 +1,10 @@
 package com.gapso.trieda.domain;
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -315,6 +317,21 @@ public class Campus implements Serializable, Comparable<Campus> {
     public static List<Campus> findAll() {
         return entityManager().createQuery("SELECT o FROM Campus o").getResultList();
     }
+	
+	@SuppressWarnings("unchecked")
+	public static List<Campus> findByCenario(Cenario cenario) {
+		Query q = entityManager().createQuery("SELECT o FROM Campus o WHERE cenario = :cenario");
+    	q.setParameter("cenario", cenario);
+    	return q.getResultList();
+    }
+	
+	public static Map<String,Campus> buildCampusCodigoToCampusMap(List<Campus> campi) {
+		Map<String,Campus> campusMap = new HashMap<String,Campus>();
+		for (Campus campus : campi) {
+			campusMap.put(campus.getCodigo(),campus);
+		}
+		return campusMap;
+	}
 
 	public static Campus find(Long id) {
         if (id == null) return null;

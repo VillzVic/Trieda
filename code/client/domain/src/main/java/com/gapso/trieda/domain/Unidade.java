@@ -151,6 +151,13 @@ public class Unidade implements Serializable {
     public static List<Unidade> findAll() {
         return entityManager().createQuery("select o from Unidade o").getResultList();
     }
+    
+    @SuppressWarnings("unchecked")
+    public static List<Unidade> findByCenario(Cenario cenario) {
+    	Query q = entityManager().createQuery("SELECT o FROM Unidade o WHERE o.campus.cenario = :cenario");
+    	q.setParameter("cenario", cenario);
+    	return q.getResultList();
+    }
 
     public static Unidade find(Long id) {
         if (id == null) return null;

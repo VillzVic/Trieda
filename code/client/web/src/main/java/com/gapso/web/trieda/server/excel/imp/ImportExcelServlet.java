@@ -61,15 +61,20 @@ public class ImportExcelServlet extends HttpServlet {
 			
 			if (inputStream != null && informationToBeImported != null) {
 				IImportExcel importer = ImportExcelFactory.createImporter(informationToBeImported,cenario,i18nConstants,i18nMessages);
-				if (!importer.load(fileName,inputStream)) {
+				if (importer != null) {
+					if (!importer.load(fileName,inputStream)) {
+						response.setContentType("text/html");
+						for (String msg : importer.getWarnings()) {
+							response.getWriter().println(ExcelInformationType.prefixWarning()+msg);
+						}
+						for (String msg : importer.getErrors()) {
+							response.getWriter().println(ExcelInformationType.prefixError()+msg);
+						}
+						response.getWriter().flush();
+					}
+				} else {
 					response.setContentType("text/html");
-					for (String msg : importer.getWarnings()) {
-						response.getWriter().println(ExcelInformationType.prefixWarning()+msg);
-					}
-					for (String msg : importer.getErrors()) {
-						response.getWriter().println(ExcelInformationType.prefixError()+msg);
-					}
-					response.getWriter().flush();
+					response.getWriter().println(ExcelInformationType.prefixError()+i18nMessages.excelErroImportadorNulo(informationToBeImported));
 				}
 			}
 		} catch (FileUploadException e) {

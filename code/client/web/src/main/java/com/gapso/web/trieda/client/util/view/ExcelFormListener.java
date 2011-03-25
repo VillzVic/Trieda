@@ -9,6 +9,7 @@ import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.gapso.web.trieda.client.mvp.presenter.OtimizarMessagesPresenter;
 import com.gapso.web.trieda.client.mvp.presenter.Presenter;
 import com.gapso.web.trieda.client.mvp.view.OtimizarMessagesView;
+import com.gapso.web.trieda.shared.dtos.AbstractDTO;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nMessages;
@@ -16,17 +17,19 @@ import com.gapso.web.trieda.shared.i18n.TriedaI18nMessages;
 public class ExcelFormListener implements Listener<FormEvent> {
 	
 	private SimpleModal modalToBeHidden;
+	private SimpleGrid<? extends AbstractDTO<?>> gridToBeUpdated;
 	private TriedaI18nConstants i18nConstants;
 	private TriedaI18nMessages i18nMessages;
 	
-	public ExcelFormListener(SimpleModal modalToBeHidden, TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages) {
+	public ExcelFormListener(SimpleModal modalToBeHidden, SimpleGrid<? extends AbstractDTO<?>> gridToBeUpdated, TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages) {
 		this.modalToBeHidden = modalToBeHidden;
+		this.gridToBeUpdated = gridToBeUpdated;
 		this.i18nConstants = i18nConstants;
 		this.i18nMessages = i18nMessages;
 	}
 	
 	public ExcelFormListener(TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages) {
-		this(null,i18nConstants,i18nMessages);
+		this(null,null,i18nConstants,i18nMessages);
 	}
 
 	@Override
@@ -50,6 +53,9 @@ public class ExcelFormListener implements Listener<FormEvent> {
 			Presenter presenter = new OtimizarMessagesPresenter(warnings,errors,new OtimizarMessagesView());
 			presenter.go(null);
 		} else {
+			if (gridToBeUpdated != null) {
+				gridToBeUpdated.updateList();
+			}
 			MessageBox.info(i18nConstants.informacao(),i18nMessages.sucessoImportacaoExcel(),null);
 		}
 	}

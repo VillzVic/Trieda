@@ -47,8 +47,10 @@ public abstract class AbstractImportExcel<ExcelBeanType> implements IImportExcel
 		warnings.clear();
 		
 		Map<String,List<ExcelBeanType>> excelBeansMap = readInputStream(fileName,inputStream);
-		for (Entry<String,List<ExcelBeanType>> entry : excelBeansMap.entrySet()) {
-			processSheetContent(entry.getKey(),entry.getValue());
+		if (errors.isEmpty()) {
+			for (Entry<String,List<ExcelBeanType>> entry : excelBeansMap.entrySet()) {
+				processSheetContent(entry.getKey(),entry.getValue());
+			}
 		}
 		
 		return errors.isEmpty();

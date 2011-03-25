@@ -117,7 +117,7 @@ public class CampiPresenter implements Presenter {
 		display.getImportExcelButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
 			@Override
 			public void componentSelected(ButtonEvent ce) {
-				ImportExcelFormView importExcelFormView = new ImportExcelFormView(ExcelInformationType.CAMPI);
+				ImportExcelFormView importExcelFormView = new ImportExcelFormView(ExcelInformationType.CAMPI,display.getGrid());
 				importExcelFormView.show();
 			}
 		});
