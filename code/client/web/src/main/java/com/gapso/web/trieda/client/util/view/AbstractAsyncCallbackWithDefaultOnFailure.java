@@ -1,7 +1,7 @@
 package com.gapso.web.trieda.client.util.view;
 
 import com.extjs.gxt.ui.client.widget.MessageBox;
-import com.gapso.web.trieda.client.i18n.ITriedaI18nGateway;
+import com.gapso.web.trieda.shared.i18n.ITriedaI18nGateway;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public abstract class AbstractAsyncCallbackWithDefaultOnFailure<T> implements AsyncCallback<T> {

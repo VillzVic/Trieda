@@ -45,6 +45,7 @@ public class OtimizarMessagesView extends MyComposite implements OtimizarMessage
 		panel.setAutoHeight(true);
 		
 		simpleModal.setContent(panel);
+		simpleModal.setWidth(500);
 	}
 
 	@Override

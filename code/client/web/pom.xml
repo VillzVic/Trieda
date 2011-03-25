@@ -73,6 +73,11 @@
 			<artifactId>commons-fileupload</artifactId>
 			<version>1.2.2</version>
 		</dependency>
+		<dependency>
+			<groupId>org.scb.gwt</groupId>
+			<artifactId>gwt_i18n_server</artifactId>
+			<version>1.0</version>
+		</dependency>
 	</dependencies>
 	<profiles>
 		<profile>

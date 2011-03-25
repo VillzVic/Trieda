@@ -14,14 +14,22 @@ import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
+import com.gapso.trieda.domain.Cenario;
+import com.gapso.web.trieda.shared.i18n.TriedaI18nMessages;
+
 public abstract class AbstractImportExcel<ExcelBeanType> implements IImportExcel {
 	
 	protected List<String> errors;
 	protected List<String> warnings;
+	private TriedaI18nMessages i18nMessages;
+	private Cenario cenario;
 	
-	protected AbstractImportExcel() {
-		errors = new ArrayList<String>();
-		warnings = new ArrayList<String>();
+	protected AbstractImportExcel(Cenario cenario, TriedaI18nMessages i18nMessages) {
+		this.errors = new ArrayList<String>();
+		this.warnings = new ArrayList<String>();
+		
+		this.cenario = cenario;
+		this.i18nMessages = i18nMessages;
 	}
 	
 	protected abstract boolean sheetMustBeProcessed(int sheetIndex, HSSFSheet sheet, HSSFWorkbook workbook);
@@ -70,12 +78,17 @@ public abstract class AbstractImportExcel<ExcelBeanType> implements IImportExcel
 					excelBeansMap.put(workbook.getSheetName(sheetIndex),excelBeansList);
 					
 					// procura cabeçalho
+					List<String> headerColumnsNames = getHeaderColumnsNames(sheetIndex,sheet,workbook);
 					int rowIndex = sheet.getFirstRowNum();
-	                HSSFRow header = null;
-	                List<String> headerColumnsNames = getHeaderColumnsNames(sheetIndex,sheet,workbook);
-	                while ((rowIndex < sheet.getLastRowNum()) && !isHeaderValid((header = sheet.getRow(rowIndex++)),sheetIndex,sheet,workbook,headerColumnsNames));
+	                HSSFRow header = sheet.getRow(rowIndex);
+	                boolean validHeader = isHeaderValid(header,sheetIndex,sheet,workbook,headerColumnsNames);
+	                //while ((rowIndex < sheet.getLastRowNum()) && !isHeaderValid((header = sheet.getRow(rowIndex++)),sheetIndex,sheet,workbook,headerColumnsNames));
+	                while ((rowIndex < sheet.getLastRowNum()) && !validHeader) {
+	                	header = sheet.getRow(rowIndex++);
+	                	validHeader = isHeaderValid(header,sheetIndex,sheet,workbook,headerColumnsNames);
+	                }
 	                
-	                if (header != null) {
+	                if (validHeader) {
 	                	List<Integer> nullRows = new ArrayList<Integer>();
 	                	
 	                	// efetua a leitura dos dados do arquivo
@@ -90,19 +103,16 @@ public abstract class AbstractImportExcel<ExcelBeanType> implements IImportExcel
 	                    
 	                    // verifica se existem linhas nulas
 	                    if (!nullRows.isEmpty()) {
-	                    	Object params[] = new Object[] {nullRows.toString(),fileName};
-	        				//errors.add(MessageBundleUtils.getMenssage("excel.msg.err.linhas.invalidas",params));//TODO: msg de erro
+	                    	errors.add(getI18nMessages().excelErroSintaticoLinhasInvalidas(nullRows.toString(),fileName));
 	                    }
 	                } else {
-	                	Object params[] = new Object[] {getHeaderToString(),fileName};
-	                	//errors.add(MessageBundleUtils.getMenssage("excel.msg.err.planilha.sem.cabecalho",params));//TODO: msg de erro
+	                	errors.add(getI18nMessages().excelErroSintaticoCabecalhoAusente(getHeaderToString(),fileName));
 	                }
 				}
 			}
-		} catch (IOException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
-			Object params[] = new Object[] {fileName,extractMessage(e)};
-			//errors.add(MessageBundleUtils.getMenssage("excel.msg.err.arquivo.invalido",params));//TODO: msg de erro
+			errors.add(getI18nMessages().excelErroArquivoInvalido(fileName,extractMessage(e)));
 		} finally {
 			if (inputStream != null) {
 				try {
@@ -163,5 +173,13 @@ public abstract class AbstractImportExcel<ExcelBeanType> implements IImportExcel
     			return Double.toString(cell.getNumericCellValue());
     	}
 		return null;
+	}
+	
+	protected TriedaI18nMessages getI18nMessages() {
+		return i18nMessages;
+	}
+	
+	protected Cenario getCenario() {
+		return cenario;
 	}
 }

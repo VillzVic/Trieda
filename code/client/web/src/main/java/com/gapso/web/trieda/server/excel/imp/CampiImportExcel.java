@@ -4,13 +4,18 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.springframework.transaction.annotation.Transactional;
 
+import com.gapso.trieda.domain.Campus;
+import com.gapso.trieda.domain.Cenario;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
+import com.gapso.web.trieda.shared.i18n.TriedaI18nMessages;
 
 public class CampiImportExcel extends AbstractImportExcel<CampiImportExcelBean> {
 	
@@ -19,11 +24,12 @@ public class CampiImportExcel extends AbstractImportExcel<CampiImportExcelBean> 
 	static public final String ESTADO_COLUMN_NAME = "Estado";
 	static public final String MUNICIPIO_COLUMN_NAME = "Município";
 	static public final String BAIRRO_COLUMN_NAME = "Bairro";
-	static public final String CUSTO_CREDITO_COLUMN_NAME = "Custo Médio do Crédito (R$)";
+	static public final String CUSTO_CREDITO_COLUMN_NAME = "Custo Médio do Crédito";
 	
 	private List<String> headerColumnsNames;
 	
-	public CampiImportExcel() {
+	public CampiImportExcel(Cenario cenario, TriedaI18nMessages i18nMessages) {
+		super(cenario,i18nMessages);
 		this.headerColumnsNames = new ArrayList<String>();
 		this.headerColumnsNames.add(CODIGO_COLUMN_NAME);
 		this.headerColumnsNames.add(NOME_COLUMN_NAME);
@@ -105,21 +111,72 @@ public class CampiImportExcel extends AbstractImportExcel<CampiImportExcelBean> 
 		}
 		
 		// coleta os erros e adiciona os mesmos na lista de mensagens
-		for (ImportExcelError erro : syntacticErrorsMap.keySet()) {
-			List<Integer> linhasComErro = syntacticErrorsMap.get(erro);
-			//Object params[] = new Object[] {linhasComErro.toString(),erro.getColumnName()};//TODO:
-			//getMensagens().add(MessageBundleUtils.getMenssage(erro.getErrorMsgKey(),params));//TODO:
+		for (ImportExcelError error : syntacticErrorsMap.keySet()) {
+			List<Integer> linhasComErro = syntacticErrorsMap.get(error);
+			getErrors().add(error.getMessage(linhasComErro.toString(),getI18nMessages()));
 		}
 		
 		return syntacticErrorsMap.isEmpty();
 	}
 
 	private boolean doLogicValidation(String sheetName, List<CampiImportExcelBean> sheetContent) {
-		// TODO Auto-generated method stub
-		return false;
+		// map com os códigos dos campi e as linhas em que o mesmo aparece no arquivo de entrada
+		// [CódigoCampus -> Lista de Linhas do Arquivo de Entrada]
+		Map<String,List<Integer>> campusCodigoToRowsMap = new HashMap<String,List<Integer>>();
+		
+		// 
+		for (CampiImportExcelBean bean : sheetContent) {
+			List<Integer> rows = campusCodigoToRowsMap.get(bean.getCodigoStr());
+			if (rows == null) {
+				rows = new ArrayList<Integer>();
+				campusCodigoToRowsMap.put(bean.getCodigoStr(),rows);
+			}
+			rows.add(bean.getRow());
+		}
+		
+		// verifica se algum campus apareceu mais de uma vez no arquivo de entrada
+		for (Entry<String,List<Integer>> entry : campusCodigoToRowsMap.entrySet()) {
+			if (entry.getValue().size() > 1) {
+				getErrors().add(getI18nMessages().excelErroLogicoUnicidadeViolada(entry.getKey(),entry.getValue().toString()));
+			}
+		}
+		
+		return getErrors().isEmpty();
 	}
 
+	@Transactional
 	private void updateDataBase(String sheetName, List<CampiImportExcelBean> sheetContent) {
-		// TODO Auto-generated method stub
+		List<Campus> campiBDList = Campus.findAll();
+		
+		Map<String,Campus> campiBDMap = new HashMap<String,Campus>();
+		for (Campus campus : campiBDList) {
+			campiBDMap.put(campus.getCodigo(),campus);
+		}
+		
+		for (CampiImportExcelBean campusExcel : sheetContent) {
+			Campus campusBD = campiBDMap.get(campusExcel.getCodigoStr());
+			if (campusBD != null) {
+				// update
+				campusBD.setNome(campusExcel.getNomeStr());
+				campusBD.setEstado(campusExcel.getEstado());
+				campusBD.setMunicipio(campusExcel.getMunicipioStr());
+				campusBD.setBairro(campusExcel.getBairroStr());
+				campusBD.setValorCredito(campusExcel.getCustoMedioCredito());
+				
+				campusBD.merge();
+			} else {
+				// insert
+				Campus newCampus = new Campus();
+				newCampus.setCenario(getCenario());
+				newCampus.setCodigo(campusExcel.getCodigoStr());
+				newCampus.setNome(campusExcel.getNomeStr());
+				newCampus.setEstado(campusExcel.getEstado());
+				newCampus.setMunicipio(campusExcel.getMunicipioStr());
+				newCampus.setBairro(campusExcel.getBairroStr());
+				newCampus.setValorCredito(campusExcel.getCustoMedioCredito());
+				
+				newCampus.persist();
+			}
+		}
 	}
 }

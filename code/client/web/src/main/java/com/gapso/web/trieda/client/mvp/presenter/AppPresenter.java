@@ -2,7 +2,6 @@ package com.gapso.web.trieda.client.mvp.presenter;
 
 import com.extjs.gxt.ui.client.widget.Component;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
-import com.gapso.web.trieda.client.i18n.ITriedaI18nGateway;
 import com.gapso.web.trieda.client.mvp.view.ToolBarView;
 import com.gapso.web.trieda.client.services.CenariosServiceAsync;
 import com.gapso.web.trieda.client.services.Services;
@@ -10,6 +9,7 @@ import com.gapso.web.trieda.client.util.view.AbstractAsyncCallbackWithDefaultOnF
 import com.gapso.web.trieda.client.util.view.CenarioPanel;
 import com.gapso.web.trieda.client.util.view.GTab;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
+import com.gapso.web.trieda.shared.i18n.ITriedaI18nGateway;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
 

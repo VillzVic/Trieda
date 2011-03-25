@@ -9,12 +9,23 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.scb.gwt.web.server.i18n.GWTI18N;
 
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
+import com.gapso.web.trieda.shared.i18n.TriedaI18nMessages;
 
 public class ExportExcelServlet extends HttpServlet {
 	
 	private static final long serialVersionUID = -7987228694777660184L;
+	
+	private static TriedaI18nMessages i18nMessages = null;
+	{
+		try {
+			i18nMessages = GWTI18N.create(TriedaI18nMessages.class);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -24,7 +35,7 @@ public class ExportExcelServlet extends HttpServlet {
 		String informationToBeExported = request.getParameter(ExcelInformationType.getInformationParameterName());
 		if (!informationToBeExported.isEmpty()) {
 			// Get Excel Data
-			IExportExcel exporter = ExportExcelFactory.createExporter(informationToBeExported);			
+			IExportExcel exporter = ExportExcelFactory.createExporter(informationToBeExported,i18nMessages);			
 			HSSFWorkbook workbook = exporter.export();
 			
 			if (exporter.getErrors().isEmpty()) {

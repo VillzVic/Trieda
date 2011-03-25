@@ -5,7 +5,7 @@ import java.util.Date;
 
 public class CenarioDTO extends AbstractDTO<String> implements Comparable<CenarioDTO> {
 
-	private static final long serialVersionUID = -5134820110949139907L;
+	private static final long serialVersionUID = 4046119822523079085L;
 	
 	// Propriedades
 	public static final String PROPERTY_ID = "id";

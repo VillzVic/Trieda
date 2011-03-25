@@ -8,6 +8,7 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
 import com.gapso.trieda.domain.Sala;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
+import com.gapso.web.trieda.shared.i18n.TriedaI18nMessages;
 
 public class SalasExportExcel extends AbstractExportExcel {
 	
@@ -33,14 +34,16 @@ public class SalasExportExcel extends AbstractExportExcel {
 	private String sheetName;
 	private int initialRow;
 	
-	public SalasExportExcel() {
+	public SalasExportExcel(TriedaI18nMessages i18nMessages) {
+		super(i18nMessages);
 		this.cellStyles = new HSSFCellStyle[ExcelCellStyleReference.values().length];
 		this.removeUnusedSheets = true;
 		this.sheetName = ExcelInformationType.SALAS.getSheetName();
 		this.initialRow = 6;
 	}
 	
-	public SalasExportExcel(boolean removeUnusedSheets) {
+	public SalasExportExcel(boolean removeUnusedSheets, TriedaI18nMessages i18nMessages) {
+		super(i18nMessages);
 		this.cellStyles = new HSSFCellStyle[ExcelCellStyleReference.values().length];
 		this.removeUnusedSheets = removeUnusedSheets;
 		this.sheetName = ExcelInformationType.SALAS.getSheetName();

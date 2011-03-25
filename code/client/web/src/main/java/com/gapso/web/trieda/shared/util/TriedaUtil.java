@@ -19,4 +19,16 @@ public class TriedaUtil {
 		}
 		return ret;
 	}
+	
+	static public String financialFormatToDoubleFormat(String value) {
+		boolean contemVirgula = value.contains(",");
+		boolean contemPonto = value.contains(".");
+		if (contemVirgula && contemPonto) {
+			value = value.replace(".","");
+		}
+		if (contemVirgula) {
+			value = value.replace(",",".");
+		}
+		return value;
+	} 
 }

@@ -15,14 +15,18 @@ import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.CellRangeAddress;
 
+import com.gapso.web.trieda.shared.i18n.TriedaI18nMessages;
+
 public abstract class AbstractExportExcel implements IExportExcel {
 	
 	protected List<String> errors;
 	protected List<String> warnings;
+	private TriedaI18nMessages i18nMessages;
 	
-	protected AbstractExportExcel() {
-		errors = new ArrayList<String>();
-		warnings = new ArrayList<String>();
+	protected AbstractExportExcel(TriedaI18nMessages i18nMessages) {
+		this.errors = new ArrayList<String>();
+		this.warnings = new ArrayList<String>();
+		this.i18nMessages = i18nMessages;
 	}
 	
 	protected abstract String getPathExcelTemplate();
@@ -37,11 +41,10 @@ public abstract class AbstractExportExcel implements IExportExcel {
 		HSSFWorkbook workbook = null;
 		try {
 			workbook = getExcelTemplate(getPathExcelTemplate());
-		} catch (IOException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 			String msg = e.getMessage() + (e.getCause() != null ? e.getCause().getMessage() : ""); 
-			Object params[] = new Object[] {getPathExcelTemplate(),getReportName(),msg};
-			//errors.add(MessageBundleUtils.getMenssage("excel.msg.err.obterExcelTemplate",params));//TODO: msg de erro
+			errors.add(getI18nMessages().excelErroObterExcelTemplate(getPathExcelTemplate(),getReportName(),msg));
 		}
 		
 		export(workbook);
@@ -56,11 +59,7 @@ public abstract class AbstractExportExcel implements IExportExcel {
 			warnings.clear();
 								
 			return fillInExcel(workbook);
-		} else {
-			Object params[] = new Object[] {getReportName()};
-			//errors.add(MessageBundleUtils.getMenssage("excel.msg.err.invalidWorkbook",params));//TODO: msg de erro
 		}
-		
 		return false;
 	}
 
@@ -72,6 +71,10 @@ public abstract class AbstractExportExcel implements IExportExcel {
 	@Override
 	public List<String> getWarnings() {
 		return warnings;
+	}
+	
+	protected TriedaI18nMessages getI18nMessages() {
+		return i18nMessages;
 	}
 	
 	protected void removeUnusedSheets(String usedSheetName, HSSFWorkbook workbook) {

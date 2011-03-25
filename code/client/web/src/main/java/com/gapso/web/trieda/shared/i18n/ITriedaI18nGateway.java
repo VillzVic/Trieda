@@ -1,4 +1,4 @@
-package com.gapso.web.trieda.client.i18n;
+package com.gapso.web.trieda.shared.i18n;
 
 public interface ITriedaI18nGateway {
 	

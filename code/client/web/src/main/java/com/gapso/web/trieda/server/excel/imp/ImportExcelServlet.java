@@ -14,12 +14,26 @@ import org.apache.commons.fileupload.FileItemFactory;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.scb.gwt.web.server.i18n.GWTI18N;
 
+import com.gapso.trieda.domain.Cenario;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
+import com.gapso.web.trieda.shared.i18n.TriedaI18nMessages;
 
 public class ImportExcelServlet extends HttpServlet {
 
 	private static final long serialVersionUID = 1889121953846517684L;
+	private static TriedaI18nMessages i18nMessages = null;
+	private static Cenario cenario = null;
+	{
+		try {
+			i18nMessages = GWTI18N.create(TriedaI18nMessages.class);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		cenario = Cenario.findMasterData();
+	}
 
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -43,10 +57,16 @@ public class ImportExcelServlet extends HttpServlet {
 			}
 			
 			if (inputStream != null && informationToBeImported != null) {
-				IImportExcel importer = ImportExcelFactory.createImporter(informationToBeImported);
+				IImportExcel importer = ImportExcelFactory.createImporter(informationToBeImported,cenario,i18nMessages);
 				if (!importer.load(fileName,inputStream)) {
-					response.setContentType("text/plain");
-					response.getWriter().print("An error has occured");// TODO: incluir mensagem de erro
+					response.setContentType("text/html");
+					for (String msg : importer.getWarnings()) {
+						response.getWriter().println("@w@"+msg);
+					}
+					for (String msg : importer.getErrors()) {
+						response.getWriter().println("@e@"+msg);
+					}
+					response.getWriter().flush();
 				}
 			}
 		} catch (FileUploadException e) {

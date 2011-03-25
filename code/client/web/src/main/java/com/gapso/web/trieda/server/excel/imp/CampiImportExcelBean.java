@@ -3,9 +3,9 @@ package com.gapso.web.trieda.server.excel.imp;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CampiImportExcelBean implements Comparable<CampiImportExcelBean> {
-	
-	private int row;
+import com.gapso.trieda.misc.Estados;
+
+public class CampiImportExcelBean extends AbstractImportExcelBean implements Comparable<CampiImportExcelBean> {
 	
 	private String codigoStr;
 	private String nomeStr;
@@ -14,14 +14,22 @@ public class CampiImportExcelBean implements Comparable<CampiImportExcelBean> {
 	private String bairroStr;
 	private String custoMedioCreditoStr;
 	
+	private Double custoMedioCredito;
+	private Estados estado;
+	
 	public CampiImportExcelBean(int row) {
-		this.row = row;
+		super(row);
+		this.custoMedioCredito = null;
 	}
 	
 	public List<ImportExcelError> checkSyntacticErrors() {
 		List<ImportExcelError> erros = new ArrayList<ImportExcelError>();
 		if (!tudoVazio()) {
-//			verificaAno(erros);
+			checkMandatoryField(codigoStr,ImportExcelError.CAMPUS_CODIGO_VAZIO,erros);
+			checkMandatoryField(nomeStr,ImportExcelError.CAMPUS_NOME_VAZIO,erros);
+			checkMandatoryField(custoMedioCreditoStr,ImportExcelError.CAMPUS_CUSTO_MEDIO_CREDITO_VAZIO,erros);
+			custoMedioCredito = checkNonNegativeDoubleField(custoMedioCreditoStr,ImportExcelError.CAMPUS_CUSTO_MEDIO_CREDITO_FORMATO_INVALIDO,ImportExcelError.CAMPUS_CUSTO_MEDIO_CREDITO_VALOR_NEGATIVO,erros);
+			verificaEstado(erros);
 		} else {
 			erros.add(ImportExcelError.TUDO_VAZIO);
 		}
@@ -29,11 +37,15 @@ public class CampiImportExcelBean implements Comparable<CampiImportExcelBean> {
 	}
 	
 	private boolean tudoVazio() {
-		return vazio(codigoStr) && vazio(nomeStr) && vazio(estadoStr) && vazio(municipioStr) && vazio(bairroStr) && vazio(custoMedioCreditoStr);
+		return isEmptyField(codigoStr) && isEmptyField(nomeStr) && isEmptyField(estadoStr) && isEmptyField(municipioStr) && isEmptyField(bairroStr) && isEmptyField(custoMedioCreditoStr);
 	}
 	
-	private boolean vazio(String value) {
-		return value == null || value.equals("");
+	private void verificaEstado(List<ImportExcelError> erros) {
+		try {
+			estado = Estados.valueOf(estadoStr);
+		} catch (Exception e) {
+			erros.add(ImportExcelError.CAMPUS_ESTADO_VALOR_INVALIDO);
+		}
 	}
 	
 	public String getCodigoStr() {
@@ -84,8 +96,12 @@ public class CampiImportExcelBean implements Comparable<CampiImportExcelBean> {
 		this.custoMedioCreditoStr = custoMedioCreditoStr;
 	}
 
-	public int getRow() {
-		return row;
+	public Double getCustoMedioCredito() {
+		return custoMedioCredito;
+	}
+
+	public Estados getEstado() {
+		return estado;
 	}
 
 	@Override
