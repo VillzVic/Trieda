@@ -1,8 +1,10 @@
 package com.gapso.trieda.domain;
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -158,6 +160,14 @@ public class Unidade implements Serializable {
     	q.setParameter("cenario", cenario);
     	return q.getResultList();
     }
+    
+    public static Map<String,Unidade> buildUnidadeCodigoToUnidadeMap(List<Unidade> unidades) {
+		Map<String,Unidade> unidadesMap = new HashMap<String,Unidade>();
+		for (Unidade unidade : unidades) {
+			unidadesMap.put(unidade.getCodigo(),unidade);
+		}
+		return unidadesMap;
+	}
 
     public static Unidade find(Long id) {
         if (id == null) return null;

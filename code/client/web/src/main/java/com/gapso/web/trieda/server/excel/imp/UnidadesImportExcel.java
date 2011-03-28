@@ -164,12 +164,7 @@ public class UnidadesImportExcel extends AbstractImportExcel<UnidadesImportExcel
 
 	@Transactional
 	private void updateDataBase(String sheetName, List<UnidadesImportExcelBean> sheetContent) {
-		List<Unidade> unidadesBDList = Unidade.findByCenario(getCenario());
-		
-		Map<String,Unidade> unidadesBDMap = new HashMap<String,Unidade>();
-		for (Unidade unidade : unidadesBDList) {
-			unidadesBDMap.put(unidade.getCodigo(),unidade);
-		}
+		Map<String,Unidade> unidadesBDMap = Unidade.buildUnidadeCodigoToUnidadeMap(Unidade.findByCenario(getCenario()));
 		
 		for (UnidadesImportExcelBean unidadeExcel : sheetContent) {
 			Unidade unidadeBD = unidadesBDMap.get(unidadeExcel.getCodigoStr());

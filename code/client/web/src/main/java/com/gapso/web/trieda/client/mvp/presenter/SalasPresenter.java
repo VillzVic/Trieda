@@ -15,10 +15,12 @@ import com.gapso.web.trieda.client.mvp.view.HorarioDisponivelSalaFormView;
 import com.gapso.web.trieda.client.mvp.view.SalaFormView;
 import com.gapso.web.trieda.client.services.SalasServiceAsync;
 import com.gapso.web.trieda.client.services.Services;
+import com.gapso.web.trieda.client.util.view.AbstractAsyncCallbackWithDefaultOnFailure;
 import com.gapso.web.trieda.client.util.view.CampusComboBox;
 import com.gapso.web.trieda.client.util.view.ExportExcelFormSubmit;
 import com.gapso.web.trieda.client.util.view.GTab;
 import com.gapso.web.trieda.client.util.view.GTabItem;
+import com.gapso.web.trieda.client.util.view.ImportExcelFormView;
 import com.gapso.web.trieda.client.util.view.SimpleGrid;
 import com.gapso.web.trieda.client.util.view.UnidadeComboBox;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
@@ -112,18 +114,13 @@ public class SalasPresenter implements Presenter {
 		display.getRemoveButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
 			@Override
 			public void componentSelected(ButtonEvent ce) {
-				List<SalaDTO> list = display.getGrid().getGrid().getSelectionModel().getSelectedItems();
+				final List<SalaDTO> list = display.getGrid().getGrid().getSelectionModel().getSelectedItems();
 				final SalasServiceAsync service = Services.salas();
-				service.remove(list, new AsyncCallback<Void>() {
-					@Override
-					public void onFailure(Throwable caught) {
-						MessageBox.alert("ERRO!", "Deu falha na conexão", null);
-					}
-
+				service.remove(list, new AbstractAsyncCallbackWithDefaultOnFailure<Void>(display) {
 					@Override
 					public void onSuccess(Void result) {
 						display.getGrid().updateList();
-						Info.display("Removido", "Item removido com sucesso!");
+						Info.display(display.getI18nConstants().informacao(), display.getI18nMessages().sucessoRemoverDoBD(list.toString()));
 					}
 				});
 			}
@@ -131,7 +128,8 @@ public class SalasPresenter implements Presenter {
 		display.getImportExcelButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
 			@Override
 			public void componentSelected(ButtonEvent ce) {
-				MessageBox.info("Informação","FUNCIONALIDADE EM CONSTRUÇÃO!",null);// TODO: implementar funcionalidade
+				ImportExcelFormView importExcelFormView = new ImportExcelFormView(ExcelInformationType.SALAS,display.getGrid());
+				importExcelFormView.show();
 			}
 		});
 		display.getExportExcelButton().addSelectionListener(new SelectionListener<ButtonEvent>(){

@@ -42,5 +42,42 @@ public abstract class AbstractImportExcelBean {
 		}
 		
 		return doubleValue;
-	} 
+	}
+	
+	protected Integer checkNonNegativeIntegerField(String value, ImportExcelError integerErrorType, ImportExcelError nonNegativeErrorType, List<ImportExcelError> errorsList) {
+		Integer integerValue = null;
+		
+		if (!isEmptyField(value)) {
+			try {
+				value = TriedaUtil.financialFormatToDoubleFormat(value);
+				integerValue = Double.valueOf(value).intValue();
+				if (integerValue < 0) {
+					errorsList.add(nonNegativeErrorType);
+				}
+			} catch (NumberFormatException e) {
+				errorsList.add(integerErrorType);
+			}
+		}
+		
+		return integerValue;
+	}
+	
+	protected <EnumType> EnumType checkEnumField(String value, Class<EnumType> enumClass, ImportExcelError enumErrorTupe, List<ImportExcelError> errorsList) {
+		EnumType enumValue = null;
+		
+		if (enumClass.isEnum()) {
+			for (EnumType enumConstant : enumClass.getEnumConstants()) {
+				if (enumConstant.toString().equalsIgnoreCase(value)) {
+					enumValue = enumConstant;
+					break;
+				}
+			}
+			
+			if (enumValue == null) {
+				errorsList.add(enumErrorTupe);
+			}
+		}
+		
+		return enumValue;
+	}
 }

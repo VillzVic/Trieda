@@ -15,7 +15,7 @@ public class ImportExcelFactory {
 			//case TUDO: importer = new TRIEDAImportExcel(); break;
 			case CAMPI: importer = new CampiImportExcel(cenario,i18nConstants,i18nMessages); break;
 			case UNIDADES: importer = new UnidadesImportExcel(cenario,i18nConstants,i18nMessages); break;
-			//case SALAS: importer = new SalasImportExcel(); break;
+			case SALAS: importer = new SalasImportExcel(cenario,i18nConstants,i18nMessages); break;
 		}
 		
 		return importer;

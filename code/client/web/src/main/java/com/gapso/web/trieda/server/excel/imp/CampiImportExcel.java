@@ -154,12 +154,7 @@ public class CampiImportExcel extends AbstractImportExcel<CampiImportExcelBean> 
 
 	@Transactional
 	private void updateDataBase(String sheetName, List<CampiImportExcelBean> sheetContent) {
-		List<Campus> campiBDList = Campus.findByCenario(getCenario());
-		
-		Map<String,Campus> campiBDMap = new HashMap<String,Campus>();
-		for (Campus campus : campiBDList) {
-			campiBDMap.put(campus.getCodigo(),campus);
-		}
+		Map<String,Campus> campiBDMap = Campus.buildCampusCodigoToCampusMap(Campus.findByCenario(getCenario()));
 		
 		for (CampiImportExcelBean campusExcel : sheetContent) {
 			Campus campusBD = campiBDMap.get(campusExcel.getCodigoStr());

@@ -47,7 +47,7 @@ public class SalaFormView extends MyComposite implements SalaFormPresenter.Displ
 	}
 	
 	private void initUI() {
-		String title = (salaDTO.getId() == null)? "Inserção de Sala" : "Edição de Sala";
+		String title = (salaDTO.getId() == null)? (getI18nConstants().insercaoDe()+getI18nConstants().sala()) : (getI18nConstants().edicaoDe()+getI18nConstants().sala());
 		simpleModal = new SimpleModal(title, Resources.DEFAULTS.sala16());
 		simpleModal.setHeight(265);
 		createForm();
@@ -62,11 +62,11 @@ public class SalaFormView extends MyComposite implements SalaFormPresenter.Displ
 		codigoTF = new TextField<String>();
 		codigoTF.setName(SalaDTO.PROPERTY_CODIGO);
 		codigoTF.setValue(salaDTO.getCodigo());
-		codigoTF.setFieldLabel("Código");
+		codigoTF.setFieldLabel(getI18nConstants().codigo());
 		codigoTF.setAllowBlank(false);
 		codigoTF.setMinLength(1);
 		codigoTF.setMaxLength(20);
-		codigoTF.setEmptyText("Preencha o código");
+		codigoTF.setEmptyText(getI18nConstants().preenchaO()+getI18nConstants().codigo());
 		formPanel.add(codigoTF, formData);
 		
 		CampusComboBox campusCB = new CampusComboBox();
@@ -75,48 +75,48 @@ public class SalaFormView extends MyComposite implements SalaFormPresenter.Displ
 		
 		unidadeCB = new UnidadeComboBox(campusCB);
 		unidadeCB.setName("unidade");
-		unidadeCB.setFieldLabel("Unidade");
+		unidadeCB.setFieldLabel(getI18nConstants().unidade());
 		unidadeCB.setAllowBlank(false);
 		unidadeCB.setValue(unidadeDTO);
-		unidadeCB.setEmptyText("Selecione a unidade");
+		unidadeCB.setEmptyText(getI18nConstants().selecioneA()+getI18nConstants().unidade());
 		formPanel.add(unidadeCB, formData);
 		
 		tipoSalaCB = new TipoSalaComboBox();
 		tipoSalaCB.setName("tipoSala");
-		tipoSalaCB.setFieldLabel("Tipo");
+		tipoSalaCB.setFieldLabel(getI18nConstants().tipo());
 		tipoSalaCB.setAllowBlank(false);
 		tipoSalaCB.setValue(tipoSalaDTO);
-		tipoSalaCB.setEmptyText("Selecione o tipo de sala");
+		tipoSalaCB.setEmptyText(getI18nConstants().selecioneO()+getI18nConstants().tipo());
 		formPanel.add(tipoSalaCB, formData);
 		
 		numeroTF = new TextField<String>();
 		numeroTF.setName(SalaDTO.PROPERTY_NUMERO);
 		numeroTF.setValue(salaDTO.getNumero());
-		numeroTF.setFieldLabel("Número");
+		numeroTF.setFieldLabel(getI18nConstants().numero());
 		numeroTF.setAllowBlank(false);
 		numeroTF.setMinLength(1);
 		numeroTF.setMaxLength(20);
-		numeroTF.setEmptyText("Preencha o número da sala");
+		numeroTF.setEmptyText(getI18nConstants().preenchaO()+getI18nConstants().numero());
 		formPanel.add(numeroTF, formData);
 		
 		andarTF = new TextField<String>();
 		andarTF.setName(SalaDTO.PROPERTY_ANDAR);
 		andarTF.setValue(salaDTO.getAndar());
-		andarTF.setFieldLabel("Andar");
+		andarTF.setFieldLabel(getI18nConstants().andar());
 		andarTF.setAllowBlank(false);
 		andarTF.setMinLength(1);
 		andarTF.setMaxLength(20);
-		andarTF.setEmptyText("Preencha o andar da sala");
+		andarTF.setEmptyText(getI18nConstants().preenchaO()+getI18nConstants().andar());
 		formPanel.add(andarTF, formData);
 		
 		capacidadeNF = new NumberField();
 		capacidadeNF.setName(SalaDTO.PROPERTY_CAPACIDADE);
 		capacidadeNF.setValue(salaDTO.getCapacidade());
-		capacidadeNF.setFieldLabel("Capacidade");
+		capacidadeNF.setFieldLabel(getI18nConstants().capacidade());
 		capacidadeNF.setAllowBlank(false);
 		capacidadeNF.setMinLength(1);
 		capacidadeNF.setMaxLength(20);
-		capacidadeNF.setEmptyText("Preencha a capacidade");
+		capacidadeNF.setEmptyText(getI18nConstants().preenchaA()+getI18nConstants().capacidade());
 		formPanel.add(capacidadeNF, formData);
 		
 		FormButtonBinding binding = new FormButtonBinding(formPanel);

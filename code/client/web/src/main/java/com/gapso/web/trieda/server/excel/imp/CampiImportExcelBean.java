@@ -29,7 +29,7 @@ public class CampiImportExcelBean extends AbstractImportExcelBean implements Com
 			checkMandatoryField(nomeStr,ImportExcelError.CAMPUS_NOME_VAZIO,erros);
 			checkMandatoryField(custoMedioCreditoStr,ImportExcelError.CAMPUS_CUSTO_MEDIO_CREDITO_VAZIO,erros);
 			custoMedioCredito = checkNonNegativeDoubleField(custoMedioCreditoStr,ImportExcelError.CAMPUS_CUSTO_MEDIO_CREDITO_FORMATO_INVALIDO,ImportExcelError.CAMPUS_CUSTO_MEDIO_CREDITO_VALOR_NEGATIVO,erros);
-			verificaEstado(erros);
+			estado = checkEnumField(estadoStr,Estados.class,ImportExcelError.CAMPUS_ESTADO_VALOR_INVALIDO,erros);
 		} else {
 			erros.add(ImportExcelError.TUDO_VAZIO);
 		}
@@ -38,14 +38,6 @@ public class CampiImportExcelBean extends AbstractImportExcelBean implements Com
 	
 	private boolean tudoVazio() {
 		return isEmptyField(codigoStr) && isEmptyField(nomeStr) && isEmptyField(estadoStr) && isEmptyField(municipioStr) && isEmptyField(bairroStr) && isEmptyField(custoMedioCreditoStr);
-	}
-	
-	private void verificaEstado(List<ImportExcelError> erros) {
-		try {
-			estado = Estados.valueOf(estadoStr);
-		} catch (Exception e) {
-			erros.add(ImportExcelError.CAMPUS_ESTADO_VALOR_INVALIDO);
-		}
 	}
 	
 	public String getCodigoStr() {

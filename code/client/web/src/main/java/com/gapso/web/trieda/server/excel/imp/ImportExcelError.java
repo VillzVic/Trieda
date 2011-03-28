@@ -12,6 +12,15 @@ public enum ImportExcelError {
 	CAMPUS_ESTADO_VALOR_INVALIDO,
 	CAMPUS_NOME_VAZIO,
 	
+	SALA_ANDAR_VAZIO,
+	SALA_CAPACIDADE_FORMATO_INVALIDO,
+	SALA_CAPACIDADE_VALOR_NEGATIVO,
+	SALA_CAPACIDADE_VAZIO,
+	SALA_CODIGO_VAZIO,
+	SALA_NUMERO_VAZIO,
+	SALA_TIPO_VAZIO,
+	SALA_UNIDADE_VAZIO,
+	
 	TUDO_VAZIO,
 	
 	UNIDADE_CAMPUS_VAZIO,
@@ -28,6 +37,15 @@ public enum ImportExcelError {
 			case CAMPUS_ESTADO_VALOR_INVALIDO: return i18nMessages.excelErroSintaticoValorInvalido(param1,CampiImportExcel.ESTADO_COLUMN_NAME);
 			case CAMPUS_NOME_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia(param1,CampiImportExcel.NOME_COLUMN_NAME);
 
+			case SALA_ANDAR_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia(param1,SalasImportExcel.ANDAR_COLUMN_NAME);
+			case SALA_CAPACIDADE_FORMATO_INVALIDO: return i18nMessages.excelErroSintaticoFormatoInvalido(param1,SalasImportExcel.CAPACIDADE_COLUMN_NAME);
+			case SALA_CAPACIDADE_VALOR_NEGATIVO: return i18nMessages.excelErroSintaticoValorNegativo(param1,SalasImportExcel.CAPACIDADE_COLUMN_NAME);
+			case SALA_CAPACIDADE_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia(param1,SalasImportExcel.CAPACIDADE_COLUMN_NAME);
+			case SALA_CODIGO_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia(param1,SalasImportExcel.CODIGO_COLUMN_NAME);
+			case SALA_NUMERO_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia(param1,SalasImportExcel.NUMERO_COLUMN_NAME);
+			case SALA_TIPO_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia(param1,SalasImportExcel.TIPO_COLUMN_NAME);
+			case SALA_UNIDADE_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia(param1,SalasImportExcel.UNIDADE_COLUMN_NAME);
+			
 			case TUDO_VAZIO: return i18nMessages.excelErroSintaticoLinhaVazia(param1);
 			
 			case UNIDADE_CAMPUS_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia(param1,UnidadesImportExcel.CAMPUS_COLUMN_NAME);

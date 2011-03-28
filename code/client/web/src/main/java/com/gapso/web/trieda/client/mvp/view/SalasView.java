@@ -42,7 +42,7 @@ public class SalasView extends MyComposite implements SalasPresenter.Display {
 	
 	private void initUI() {
 		panel = new ContentPanel(new BorderLayout());
-		panel.setHeading("Master Data » Salas");
+		panel.setHeading(getI18nConstants().salasHeadingPanel());
 		createToolBar();
 		createGrid();
 		createFilter();
@@ -51,18 +51,18 @@ public class SalasView extends MyComposite implements SalasPresenter.Display {
 	}
 	
 	private void createTabItem() {
-		tabItem = new GTabItem("Salas", Resources.DEFAULTS.sala16());
+		tabItem = new GTabItem(getI18nConstants().salas(), Resources.DEFAULTS.sala16());
 		tabItem.setContent(panel);
 	}
 	
 	private void createToolBar() {
 		toolBar = new SimpleToolBar(this);
 		toolBar.add(new SeparatorToolItem());
-		disciplinasAssociadasBT = toolBar.createButton("Disciplinas Associadas", Resources.DEFAULTS.disciplina16());
+		disciplinasAssociadasBT = toolBar.createButton(getI18nConstants().disciplinasAssociadas(), Resources.DEFAULTS.disciplina16());
 		toolBar.add(disciplinasAssociadasBT);
-		gruposDeSalasBT = toolBar.createButton("Grupos de Salas", Resources.DEFAULTS.sala16());
+		gruposDeSalasBT = toolBar.createButton(getI18nConstants().gruposSalas(), Resources.DEFAULTS.sala16());
 		toolBar.add(gruposDeSalasBT);
-		disponibilidadeBT = toolBar.createButton("Disponibilidade da Sala", Resources.DEFAULTS.disponibilidade16());
+		disponibilidadeBT = toolBar.createButton(getI18nConstants().disponibilidadesSemanaLetiva(), Resources.DEFAULTS.disponibilidade16());
 		toolBar.add(disponibilidadeBT);
 		panel.setTopComponent(toolBar);
 	}
@@ -77,12 +77,12 @@ public class SalasView extends MyComposite implements SalasPresenter.Display {
 
 	public List<ColumnConfig> getColumnList() {
 		List<ColumnConfig> list = new ArrayList<ColumnConfig>();
-		list.add(new ColumnConfig(SalaDTO.PROPERTY_CODIGO, "Código", 100));
-		list.add(new ColumnConfig(SalaDTO.PROPERTY_TIPO_STRING, "Tipo", 100));
-		list.add(new ColumnConfig(SalaDTO.PROPERTY_UNIDADE_STRING, "Unidade", 100));
-		list.add(new ColumnConfig(SalaDTO.PROPERTY_NUMERO, "Número", 100));
-		list.add(new ColumnConfig(SalaDTO.PROPERTY_ANDAR, "Andar", 100));
-		list.add(new ColumnConfig(SalaDTO.PROPERTY_CAPACIDADE, "Capacidade", 100));
+		list.add(new ColumnConfig(SalaDTO.PROPERTY_CODIGO, getI18nConstants().codigo(), 100));
+		list.add(new ColumnConfig(SalaDTO.PROPERTY_TIPO_STRING, getI18nConstants().tipo(), 100));
+		list.add(new ColumnConfig(SalaDTO.PROPERTY_UNIDADE_STRING, getI18nConstants().unidade(), 100));
+		list.add(new ColumnConfig(SalaDTO.PROPERTY_NUMERO, getI18nConstants().numero(), 100));
+		list.add(new ColumnConfig(SalaDTO.PROPERTY_ANDAR, getI18nConstants().andar(), 100));
+		list.add(new ColumnConfig(SalaDTO.PROPERTY_CAPACIDADE, getI18nConstants().capacidade(), 100));
 		return list;
 	}
 
