@@ -112,6 +112,15 @@ public class UnidadesImportExcel extends AbstractImportExcel<UnidadesImportExcel
 	}
 
 	private boolean doLogicValidation(String sheetName, List<UnidadesImportExcelBean> sheetContent) {
+		// verifica se alguma unidade apareceu mais de uma vez no arquivo de entrada
+		checkUniqueness(sheetContent);
+		// verifica se há referência a algum campus não cadastrado
+		checkNonRegisteredCampus(sheetContent);
+		
+		return getErrors().isEmpty();
+	}
+
+	private void checkUniqueness(List<UnidadesImportExcelBean> sheetContent) {
 		// map com os códigos das unidades e as linhas em que a mesmo aparece no arquivo de entrada
 		// [CódigoUnidade -> Lista de Linhas do Arquivo de Entrada]
 		Map<String,List<Integer>> unidadeCodigoToRowsMap = new HashMap<String,List<Integer>>();
@@ -132,7 +141,9 @@ public class UnidadesImportExcel extends AbstractImportExcel<UnidadesImportExcel
 				getErrors().add(getI18nMessages().excelErroLogicoUnicidadeViolada(entry.getKey(),entry.getValue().toString()));
 			}
 		}
-		
+	}
+	
+	private void checkNonRegisteredCampus(List<UnidadesImportExcelBean> sheetContent) {
 		// [CódigoCampus -> Campus]
 		Map<String,Campus> campiBDMap = Campus.buildCampusCodigoToCampusMap(Campus.findByCenario(getCenario()));
 		
@@ -149,8 +160,6 @@ public class UnidadesImportExcel extends AbstractImportExcel<UnidadesImportExcel
 		if (!rowsWithErrors.isEmpty()) {
 			getErrors().add(getI18nMessages().excelErroLogicoEntidadesNaoCadastradas(CAMPUS_COLUMN_NAME,rowsWithErrors.toString()));
 		}
-		
-		return getErrors().isEmpty();
 	}
 
 	@Transactional
