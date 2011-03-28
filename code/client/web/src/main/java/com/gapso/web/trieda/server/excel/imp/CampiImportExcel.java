@@ -123,6 +123,13 @@ public class CampiImportExcel extends AbstractImportExcel<CampiImportExcelBean> 
 	}
 
 	private boolean doLogicValidation(String sheetName, List<CampiImportExcelBean> sheetContent) {
+		// verifica se algum campus apareceu mais de uma vez no arquivo de entrada
+		checkUniqueness(sheetContent);
+		
+		return getErrors().isEmpty();
+	}
+
+	private void checkUniqueness(List<CampiImportExcelBean> sheetContent) {
 		// map com os códigos dos campi e as linhas em que o mesmo aparece no arquivo de entrada
 		// [CódigoCampus -> Lista de Linhas do Arquivo de Entrada]
 		Map<String,List<Integer>> campusCodigoToRowsMap = new HashMap<String,List<Integer>>();
@@ -143,8 +150,6 @@ public class CampiImportExcel extends AbstractImportExcel<CampiImportExcelBean> 
 				getErrors().add(getI18nMessages().excelErroLogicoUnicidadeViolada(entry.getKey(),entry.getValue().toString()));
 			}
 		}
-		
-		return getErrors().isEmpty();
 	}
 
 	@Transactional
