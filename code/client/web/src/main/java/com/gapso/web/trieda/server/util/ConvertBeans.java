@@ -1355,6 +1355,28 @@ public class ConvertBeans {
 		dto.setCargaHorariaProfessorSel(domain.getCargaHorariaProfessorSel());
 		dto.setMinimizarDeslocamentoProfessorValue(domain.getMinimizarDeslocamentoProfessorValue());
 		dto.setEvitarReducaoCargaHorariaProfessorValue(domain.getEvitarReducaoCargaHorariaProfessorValue());
+		
+		Set<Curso> cursosMaxNotaAvalList = domain.getCursosMaxNotaAval();
+		List<CursoDTO> cursosMaxNotaAvalDTOList = new ArrayList<CursoDTO>(cursosMaxNotaAvalList.size());
+		for(Curso curso : cursosMaxNotaAvalList) {
+			cursosMaxNotaAvalDTOList.add(ConvertBeans.toCursoDTO(curso));
+		}
+		dto.setMaximizarNotaAvaliacaoCorpoDocenteList(cursosMaxNotaAvalDTOList);
+		
+		Set<Curso> cursosMinCustList = domain.getCursosMinCust();
+		List<CursoDTO> cursosMinCustDTOList = new ArrayList<CursoDTO>(cursosMinCustList.size());
+		for(Curso curso : cursosMinCustList) {
+			cursosMinCustDTOList.add(ConvertBeans.toCursoDTO(curso));
+		}
+		dto.setMinimizarCustoDocenteCursosList(cursosMinCustDTOList);
+		
+		Set<Curso> cursosCompartDiscCampiList = domain.getCursosCompartDiscCampi();
+		List<CursoDTO> cursosCompartDiscCampiDTOList = new ArrayList<CursoDTO>(cursosCompartDiscCampiList.size());
+		for(Curso curso : cursosCompartDiscCampiList) {
+			cursosCompartDiscCampiDTOList.add(ConvertBeans.toCursoDTO(curso));
+		}
+		dto.setCompartilharDisciplinasCampiList(cursosCompartDiscCampiDTOList);
+		
 		return dto;
 	}
 }

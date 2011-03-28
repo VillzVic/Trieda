@@ -77,7 +77,7 @@ public class CursosServiceImpl extends RemoteServiceServlet implements CursosSer
 	}
 	
 	@Override
-	public ListLoadResult<CursoDTO> getListByCampus(CampusDTO campusDTO) {
+	public ListLoadResult<CursoDTO> getListByCampus(CampusDTO campusDTO, List<CursoDTO> retirarCursosDTO) {
 		List<CursoDTO> list = new ArrayList<CursoDTO>();
 		
 		Campus campus = (campusDTO == null)? null : ConvertBeans.toCampus(campusDTO);
@@ -85,6 +85,8 @@ public class CursosServiceImpl extends RemoteServiceServlet implements CursosSer
 		for(Curso curso : Curso.findByCampus(campus)) {
 			list.add(ConvertBeans.toCursoDTO(curso));
 		}
+		
+		list.removeAll(retirarCursosDTO);
 		
 		ListLoadResult<CursoDTO> result = new BaseListLoadResult<CursoDTO>(list);
 		return result;

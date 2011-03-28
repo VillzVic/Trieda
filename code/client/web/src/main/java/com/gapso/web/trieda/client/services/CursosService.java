@@ -23,7 +23,7 @@ public interface CursosService extends RemoteService {
 	PagingLoadResult<CursoDTO> getBuscaList(String nome, String codigo, TipoCursoDTO tipoCurso, PagingLoadConfig config);
 	void save(CursoDTO cursoDTO);
 	void remove(List<CursoDTO> cursoDTOList);
-	ListLoadResult<CursoDTO> getListByCampus(CampusDTO campusDTO);
 	ListLoadResult<CursoDTO> getListAll();
+	ListLoadResult<CursoDTO> getListByCampus(CampusDTO campusDTO, List<CursoDTO> retirarCursosDTO);
 	
 }

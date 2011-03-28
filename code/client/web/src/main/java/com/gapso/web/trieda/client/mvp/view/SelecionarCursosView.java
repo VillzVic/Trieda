@@ -46,7 +46,7 @@ public class SelecionarCursosView extends MyComposite implements SelecionarCurso
 	}
 
 	private void initUI() {
-		simpleModal = new SimpleModal("Selecionar cursos", Resources.DEFAULTS.curso16());
+		simpleModal = new SimpleModal("Fechar", null, "Selecionar cursos", Resources.DEFAULTS.curso16());
 		simpleModal.setWidth(600);
 		simpleModal.setHeight(400);
 		createForm();
@@ -153,5 +153,10 @@ public class SelecionarCursosView extends MyComposite implements SelecionarCurso
 	@Override
 	public SimpleModal getSimpleModal() {
 		return simpleModal;
+	}
+
+	@Override
+	public Button getFecharBT() {
+		return simpleModal.getSalvarBt();
 	}
 }

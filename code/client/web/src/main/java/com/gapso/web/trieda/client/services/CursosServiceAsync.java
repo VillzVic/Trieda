@@ -19,7 +19,7 @@ public interface CursosServiceAsync {
 	void getBuscaList(String nome, String codigo, TipoCursoDTO tipoCurso, PagingLoadConfig config, AsyncCallback<PagingLoadResult<CursoDTO>> callback);
 	void save(CursoDTO cursoDTO, AsyncCallback<Void> callback);
 	void remove(List<CursoDTO> cursoDTOList, AsyncCallback<Void> callback);
-	void getListByCampus(CampusDTO campusDTO, AsyncCallback<ListLoadResult<CursoDTO>> callback);
 	void getListAll(AsyncCallback<ListLoadResult<CursoDTO>> callback);
+	void getListByCampus(CampusDTO campusDTO, List<CursoDTO> retirarCursosDTO, AsyncCallback<ListLoadResult<CursoDTO>> callback);
 	
 }

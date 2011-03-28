@@ -32,6 +32,7 @@ public class SelecionarCursosPresenter implements Presenter {
 		ListView<CursoDTO> getSelecionadoList();
 		Button getAdicionaBT();
 		Button getRemoveBT();
+		Button getFecharBT();
 		Component getComponent();
 		
 		SimpleModal getSimpleModal();
@@ -51,8 +52,9 @@ public class SelecionarCursosPresenter implements Presenter {
 		RpcProxy<ListLoadResult<CursoDTO>> proxyNaoSelecionado = new RpcProxy<ListLoadResult<CursoDTO>>() {
 			@Override
 			public void load(Object loadConfig, AsyncCallback<ListLoadResult<CursoDTO>> callback) {
+				List<CursoDTO> cursosSelecionados = display.getSelecionadoList().getStore().getModels();
 				CampusDTO campusDTO = display.getCampusComboBox().getValue();
-				service.getListByCampus(campusDTO, callback);
+				service.getListByCampus(campusDTO, cursosSelecionados, callback);
 			}
 		};
 		display.getNaoSelecionadoList().setStore(new ListStore<CursoDTO>(new BaseListLoader<ListLoadResult<CursoDTO>>(proxyNaoSelecionado)));
@@ -80,6 +82,7 @@ public class SelecionarCursosPresenter implements Presenter {
 			public void componentSelected(ButtonEvent ce) {
 				List<CursoDTO> cursosDTOList = display.getNaoSelecionadoList().getSelectionModel().getSelectedItems();
 				transfere(display.getNaoSelecionadoList(), display.getSelecionadoList(), cursosDTOList);
+				cursos.addAll(cursosDTOList);
 			}
 		});
 		
@@ -88,6 +91,14 @@ public class SelecionarCursosPresenter implements Presenter {
 			public void componentSelected(ButtonEvent ce) {
 				List<CursoDTO> cursosDTOList = display.getSelecionadoList().getSelectionModel().getSelectedItems();
 				transfere(display.getSelecionadoList(), display.getNaoSelecionadoList(), cursosDTOList);
+				cursos.removeAll(cursosDTOList);
+			}
+		});
+		
+		display.getFecharBT().addSelectionListener(new SelectionListener<ButtonEvent>(){
+			@Override
+			public void componentSelected(ButtonEvent ce) {
+				display.getSimpleModal().hide();
 			}
 		});
 		
