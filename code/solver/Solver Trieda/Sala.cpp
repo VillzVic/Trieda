@@ -64,7 +64,6 @@ void Sala::construirCreditosHorarios(ItemSala& elem, std::string modo_operacao, 
 				Horario* horario = new Horario();
 				horario->le_arvore(*it_hora);
 				horarios_disponiveis.add(horario);
-				delete horario;
 			}
 		}
 
@@ -80,7 +79,6 @@ void Sala::construirCreditosHorarios(ItemSala& elem, std::string modo_operacao, 
 				Horario* horario = new Horario();
 				horario->le_arvore(*it_hora);
 				horarios_disponiveis.add(horario);
-				delete horario;
 			}
 
 			// A partir dos 'horários disponíveis' (input operacional),
@@ -97,7 +95,6 @@ void Sala::construirCreditosHorarios(ItemSala& elem, std::string modo_operacao, 
 				credito_disp->max_creditos = it_cred->max_creditos;
 
 				creditos_disponiveis.add(credito_disp);
-				delete credito_disp;
 			}
 		}
 

@@ -29,12 +29,11 @@ void AtendimentoDiaSemanaSolucao::le_arvore(ItemAtendimentoDiaSemanaSolucao& ele
 
    for (unsigned int i=0; i<elem.atendimentosTatico().AtendimentoTatico().size(); i++)   	
    {
-	   ItemAtendimentoTaticoSolucao item = elem.atendimentosTatico().AtendimentoTatico().at(i);
+      ItemAtendimentoTaticoSolucao item = elem.atendimentosTatico().AtendimentoTatico().at(i);
 
-       AtendimentoTaticoSolucao* tatico = new AtendimentoTaticoSolucao();
-       tatico->le_arvore(item);
-	   atendimentosTatico.add(tatico);
-	   delete tatico;
+      AtendimentoTaticoSolucao* tatico = new AtendimentoTaticoSolucao();
+      tatico->le_arvore(item);
+      atendimentosTatico.add(tatico);
    }
 }
 

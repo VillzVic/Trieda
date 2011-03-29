@@ -7,9 +7,9 @@
    for (Grupo##type##::##type##_iterator __##type##_it = \
    (addr).type##().begin(); __##type##_it != (addr).type##().end(); \
    ++ __##type##_it) { \
-     type *__obj_##type## = new type; \
-     __obj_##type##->le_arvore(*__##type##_it); \
-     ggroup.add(__obj_##type); } 
+   type *__obj_##type## = new type; \
+   __obj_##type##->le_arvore(*__##type##_it); \
+   ggroup.add(__obj_##type); } 
 
 ProblemData::ProblemData()
 {
@@ -38,7 +38,6 @@ void ProblemData::le_arvore(TriedaInput& raiz)
       TipoSala* t = new TipoSala;
       t->le_arvore(*it_tsalas);
       tipos_sala.add(t);
-	  delete t;
    }
 
    LE_SEQ(tipos_sala, raiz.tiposSala(), TipoSala);
@@ -70,15 +69,15 @@ void ProblemData::le_arvore(TriedaInput& raiz)
    {
       atendimentosTatico = new GGroup<AtendimentoCampusSolucao*> ();
 
-	   for (unsigned int i = 0; i < raiz.atendimentosTatico().get().AtendimentoCampus().size(); i++)
-	   {
-		   ItemAtendimentoCampusSolucao* it_atendimento
-			   = &(raiz.atendimentosTatico().get().AtendimentoCampus().at(i));
+      for (unsigned int i = 0; i < raiz.atendimentosTatico().get().AtendimentoCampus().size(); i++)
+      {
+         ItemAtendimentoCampusSolucao* it_atendimento
+            = &(raiz.atendimentosTatico().get().AtendimentoCampus().at(i));
 
-		   AtendimentoCampusSolucao* item = new AtendimentoCampusSolucao();
-		   item->le_arvore(*it_atendimento);
-		   atendimentosTatico->add(item);
-	   }
+         AtendimentoCampusSolucao* item = new AtendimentoCampusSolucao();
+         item->le_arvore(*it_atendimento);
+         atendimentosTatico->add(item);
+      }
    }
 
    LE_SEQ(fixacoes, raiz.fixacoes(), Fixacao);
@@ -88,36 +87,36 @@ void ProblemData::le_arvore(TriedaInput& raiz)
    map<int, ItemSala*> mapItemSala;
    ITERA_SEQ(it_campi, raiz.campi(), Campus)
    {
-	   ITERA_SEQ(it_unidade, it_campi->unidades(), Unidade)
-	   {
-		   ITERA_SEQ(it_sala, it_unidade->salas(), Sala)
-		   {
-			   mapItemSala[ it_sala->id() ] = &(*(it_sala));
-		   }
-	   }
+      ITERA_SEQ(it_unidade, it_campi->unidades(), Unidade)
+      {
+         ITERA_SEQ(it_sala, it_unidade->salas(), Sala)
+         {
+            mapItemSala[ it_sala->id() ] = &(*(it_sala));
+         }
+      }
    }
 
    // Prencher os horários e/ou créditos das salas
    ITERA_GGROUP(it_campi, campi, Campus)
    {
-	   ITERA_GGROUP(it_unidade, it_campi->unidades, Unidade)
-	   {
-		   ITERA_GGROUP(it_sala, it_unidade->salas, Sala)
-		   {
-			   map<int, ItemSala*>::iterator it
-				   = mapItemSala.find(it_sala->getId());
+      ITERA_GGROUP(it_unidade, it_campi->unidades, Unidade)
+      {
+         ITERA_GGROUP(it_sala, it_unidade->salas, Sala)
+         {
+            map<int, ItemSala*>::iterator it
+               = mapItemSala.find(it_sala->getId());
 
-			   if (it != mapItemSala.end())
-			   {
-				   // Objeto de entrada do XML
-				   ItemSala* elem = it->second;
+            if (it != mapItemSala.end())
+            {
+               // Objeto de entrada do XML
+               ItemSala* elem = it->second;
 
-				   it_sala->construirCreditosHorarios(
-					   *elem, parametros->modo_otimizacao,
-					   raiz.atendimentosTatico().present());
-			   }
-		   }
-	   }
+               it_sala->construirCreditosHorarios(
+                  *elem, parametros->modo_otimizacao,
+                  raiz.atendimentosTatico().present());
+            }
+         }
+      }
    }
    ///
 }
@@ -125,17 +124,17 @@ void ProblemData::le_arvore(TriedaInput& raiz)
 /*
 Disciplina * ProblemData::discPresenteOferta(Disciplina & disc, Oferta & oferta)
 {
-   GGroup<DisciplinaPeriodo>::iterator itPrdDisc = 
-      oferta.curriculo->disciplinas_periodo.begin();
+GGroup<DisciplinaPeriodo>::iterator itPrdDisc = 
+oferta.curriculo->disciplinas_periodo.begin();
 
-   for(; itPrdDisc != oferta.curriculo->disciplinas_periodo.end(); itPrdDisc++)
-   { 
-      Disciplina * ptDisc = refDisciplinas[(*itPrdDisc).second];
+for(; itPrdDisc != oferta.curriculo->disciplinas_periodo.end(); itPrdDisc++)
+{ 
+Disciplina * ptDisc = refDisciplinas[(*itPrdDisc).second];
 
-      if(ptDisc->getId() == disc.getId())
-      { return ptDisc; }
-   }
+if(ptDisc->getId() == disc.getId())
+{ return ptDisc; }
+}
 
-   return NULL; // caso a oferta não possua a disc.
+return NULL; // caso a oferta não possua a disc.
 }
 */
