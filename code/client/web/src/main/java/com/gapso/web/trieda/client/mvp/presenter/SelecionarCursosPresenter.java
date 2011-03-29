@@ -37,6 +37,7 @@ public class SelecionarCursosPresenter implements Presenter {
 		
 		SimpleModal getSimpleModal();
 	}
+	
 	private Display display;
 	private List<CursoDTO> cursos;
 	
