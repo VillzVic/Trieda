@@ -1804,6 +1804,11 @@ void SolverMIP::getSolutionTatico()
 
 int SolverMIP::solveOperacional()
 {
+   /* Criando uma solução inicial */
+   SolucaoInicialOperacional solIni(*problemData);
+
+   solIni.geraSolucaoInicial();
+
    std::cout << "Implementar <SolverMIP::solveOperacional()>" << std::endl;
    exit(1);
    return -1;

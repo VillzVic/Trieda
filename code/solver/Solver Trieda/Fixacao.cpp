@@ -7,6 +7,7 @@ Fixacao::Fixacao(void)
 	sala = NULL;
 	turno = NULL;
 	horario = NULL;
+   dia_semana = -1;
 }
 
 Fixacao::~Fixacao(void)

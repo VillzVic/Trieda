@@ -9,7 +9,9 @@
 #include "Horario.h"
 #include "ProblemData.h"
 
-typedef std::vector< std::vector< Aula* > * > MatrizSolucao;
+using namespace std;
+
+typedef vector<vector<Aula*>*> MatrizSolucao;
 
 class SolucaoOperacional
 {
@@ -37,9 +39,31 @@ public:
    void setMatrizAulas(MatrizSolucao *);
    MatrizSolucao* getMatrizAulas() const;
 
-   std::string toString() const;
+   void toString() const;
 
    std::map<int, Professor*> mapProfessores;
+   std::map<int, Unidade*> * mapUnidades;
+   std::map<int, Campus*> * mapCampus;
+
+   /* Retorna um iterator para o primeiro horario de um dado dia de um professor.
+   
+   Dias considerados: 
+   1: domingo
+   2: segunda
+   3: terça
+   4: quarta
+   5: quinta
+   6: sexta
+   7: sábado
+
+   */
+   //vector<Aula*>::iterator getHorariosDia(vector<Aula*> & horariosProfessor, int dia);
+   vector<Aula*>::iterator getHorariosDia(Professor & professor, int dia);
+
+   /* Retorna um vetor com todos os horários de um dado professor. */
+   //vector<Aula*> & getHorarios(Professor & professor);
+
+   int getTotalHorarios() const;
 
    /*
    TODO: Implementar o método abaixo.
@@ -47,7 +71,13 @@ public:
    bool alocaAula(Professor & professor, int dia, Horario & horario, Aula & aula);
 
 private:
-   MatrizSolucao* matrizAulas;
+
+   int totalDias;
+   int totalHorarios;
+   int totalDeProfessores;
+
+   MatrizSolucao * matrizAulas;
+
    ProblemData* problemData;
 };
 

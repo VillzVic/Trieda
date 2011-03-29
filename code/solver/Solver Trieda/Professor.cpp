@@ -2,6 +2,7 @@
 
 Professor::Professor(void)
 {
+   custoDispProf = 0;
 	is_virtual = false;
 }
 

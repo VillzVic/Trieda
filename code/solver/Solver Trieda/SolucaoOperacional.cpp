@@ -6,6 +6,11 @@
 
 SolucaoOperacional::SolucaoOperacional(ProblemData* prbDt)
 {
+   /* FIXAR OS VALORES: 6 (dias) 4 (horarios) */
+   totalDias = 6;
+   totalHorarios = 4;
+   totalDeProfessores = 0;
+
    this->problemData = prbDt;
 
    // Montando um map: dado o índice da matriz (o 'idOperacional'
@@ -19,12 +24,37 @@ SolucaoOperacional::SolucaoOperacional(ProblemData* prbDt)
 		for (; it_prof != it_campi->professores.end(); it_prof++)
 		{
 			mapProfessores[it_prof->getIdOperacional()] = (*it_prof);
+
+         ++totalDeProfessores;
 		}
    }
+
+   /* Inicializando a estrutura <matrizAulas> */
+
+   matrizAulas = new MatrizSolucao (totalDeProfessores);
+
+   MatrizSolucao::iterator 
+      itMatrizAulas= matrizAulas->begin();
+
+   for(; itMatrizAulas != matrizAulas->end(); ++itMatrizAulas)
+   {
+      *itMatrizAulas = new vector<Aula*> ((totalDias*totalHorarios),NULL);
+   }
+
+   /* Deixando livres, apenas os horarios em que o professor pode ministrar aulas.
+   Para os demais, associa-as à uma aula virtual. */
+
+   Aula * aulaVirtual = new Aula(true);
+
+   /* TODO (Cleiton) : PREENCHER COM AULAS VIRTUAIS, OS HORARIOS EM QUE UM DADO PROFESSOR, NAO 
+   ESTA DISPONIVEL. USAR SEMPRE O MESMO OBJETO DE AULA VIRTUAL. */
+
 }
 
 SolucaoOperacional::~SolucaoOperacional()
 {
+   // TODO : DESTRUIR A SOLUÇÃO !!!!!! MUITO IMPORTANTE.
+
 }
 
 void SolucaoOperacional::carregaSolucaoInicial()
@@ -44,26 +74,26 @@ void SolucaoOperacional::setMatrizAulas(MatrizSolucao* m)
 
 // Imprime as aulas da matriz de solução,
 // percorrendo as linhas de cada professor
-std::string SolucaoOperacional::toString() const
+void SolucaoOperacional::toString() const
 {
-	for (unsigned int i = 0; i < this->getMatrizAulas()->size(); i++)
-	{
-		std::vector<Aula*>* aulas = this->getMatrizAulas()->at(i);
-		for (unsigned int j = 0; j < aulas->size(); j++)
-		{
-			Aula* aula = aulas->at(j);
-			if (aula != NULL)
-			{
-				std::cout << "Turma : " << aula->getTurma() << " -- ";
-				std::cout << "Disciplina : " << aula->getDisciplina() << " -- ";
-				std::cout << "Sala : " << aula->getSala() << std::endl << std::endl;
-			}
-		}
+   for (unsigned int i = 0; i < this->getMatrizAulas()->size(); i++)
+   {
+      std::vector<Aula*>* aulas = this->getMatrizAulas()->at(i);
+      for (unsigned int j = 0; j < aulas->size(); j++)
+      {
+         Aula* aula = aulas->at(j);
+         if (aula != NULL)
+         {
+            std::cout << "Turma : " << aula->getTurma() << " -- ";
+            std::cout << "Disciplina : " << aula->getDisciplina() << " -- ";
+            std::cout << "Sala : " << aula->getSala() << std::endl << std::endl;
+         }
+         else
+            cout << "NULL" << endl;
+      }
 
-		std::cout << std::endl << "-------" << std::endl;
-	}
-
-	return "";
+      std::cout << std::endl << "-------" << std::endl;
+   }
 }
 
 // Dado um dia da semana e um horário de aula, devo informar
@@ -143,6 +173,36 @@ Professor* SolucaoOperacional::getProfessorMatriz(int linha)
 ProblemData* SolucaoOperacional::getProblemData() const
 {
 	return problemData;
+}
+
+vector<Aula*>::iterator SolucaoOperacional::getHorariosDia(Professor & professor, int dia)
+{
+   vector<Aula*>::iterator itHorarios = matrizAulas->at(professor.getIdOperacional())->begin();
+
+   // Ajustando para o primeiro horário do dia em questão.
+   itHorarios += ((dia - 1) * totalHorarios) + 1;
+   
+   return itHorarios;
+}
+
+//vector<Aula*>::iterator SolucaoOperacional::getHorariosDia(vector<Aula*> & horariosProfessor, int dia)
+//{
+//   vector<Aula*>::iterator itHorarios = horariosProfessor.begin();
+//
+//   // Ajustando para o primeiro horário do dia em questão.
+//   itHorarios += ((dia - 1) * totalHorarios) + 1;
+//   
+//   return itHorarios;
+//}
+
+//vector<Aula*> & SolucaoOperacional::getHorarios(Professor & professor)
+//{
+//   return *matrizAulas->at(professor.getIdOperacional());
+//}
+
+int SolucaoOperacional::getTotalHorarios() const
+{
+   return totalHorarios;
 }
 
 bool SolucaoOperacional::alocaAula(Professor & professor, int dia, Horario & horario, Aula & aula)

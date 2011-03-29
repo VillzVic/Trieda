@@ -168,9 +168,13 @@ public:
    std::map<std::pair<int/*idProf*/,int/*idDisc*/>, GGroup<int>/*Dias*/ > prof_Disc_Dias;
 
    /* Lista, para cada professor, todas as disciplinas as quais ele é fixado. */
-   std::map<Professor*,GGroup<Disciplina*> > prof_Fix_Disc;
+   //std::map<Professor*,GGroup<Disciplina*> > prof_Fix_Disc;
 
+   /* */
    GGroup<Aula*> aulas;
+
+   /* Lista para cada par <professor,disciplina> todas as fixacoes existentes. */
+   std::map<std::pair<Professor*,Disciplina*>,GGroup<Fixacao*> > fixacoesProfDisc;
 
    virtual void le_arvore(TriedaInput& raiz);
 };

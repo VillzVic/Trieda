@@ -17,6 +17,9 @@
 
 #include "ProblemDataLoader.h"
 
+#include "SolucaoOperacional.h"
+#include "SolucaoInicialOperacional.h"
+
 #define PRINT_cria_variaveis
 #define PRINT_cria_restricoes
 
@@ -24,9 +27,9 @@
 #define DEBUG
 #endif
 
-/**
-* Implements a MIP Solver.
-*/
+/*
+ * Implements a MIP Solver.
+ */
 class SolverMIP : public Solver
 {
 public:

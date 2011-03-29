@@ -545,9 +545,19 @@ void ProblemDataLoader::estabeleceDiasLetivosProfessorDisciplina()
 
 void ProblemDataLoader::relacionaProfessoresDisciplinasFixadas()
 {
-   ITERA_GGROUP(it_Fixacao,problemData->fixacoes,Fixacao)
-   { 
-      problemData->prof_Fix_Disc[it_Fixacao->professor].add(it_Fixacao->disciplina);
+   //ITERA_GGROUP(it_Fixacao,problemData->fixacoes,Fixacao)
+   //{ 
+   //   if(it_Fixacao->professor && it_Fixacao->disciplina)
+   //      problemData->prof_Fix_Disc[it_Fixacao->professor].add(it_Fixacao->disciplina);
+   //}
+
+   ITERA_GGROUP(itFixacao,problemData->fixacoes,Fixacao)
+   {
+      if(itFixacao->professor && itFixacao->disciplina)
+      {
+         pair<Professor*,Disciplina*> chave (itFixacao->professor,itFixacao->disciplina);
+         problemData->fixacoesProfDisc[chave].add(*itFixacao);
+      }
    }
 }
 
@@ -2308,14 +2318,7 @@ void ProblemDataLoader::relacionaDiscOfertas()
 // relacionado com a issue TRIEDA-700
 void ProblemDataLoader::criaAulas()
 {
-   // PAREI AQUI .. 
-   // ACHO QUE ESTA DANDO TOTAL DE TURMAS DIFERENTES POR CAUSA DO ID NEGATIVO.
-   // CORRIGIR ISSO. PODE SER QUE MSM DEPOIS QUE EU TENHA CORRIGIDO ISSO AINDA DÊ ERRADO.
-   // SE DER ERRADO, GERAR OS INPUTS COM O CHICO DENOVO. OS INPUTS QUE TENHAM PODEM TER DADOS DIFERENTES, ALEM DA SOLUCAO.
-
-   /* Deve-se preencher o GGroup<Aula*> com as informações do GrupoAtendimentoCampusSolucao lido */
-
-   // O XML de entrada não possui a saída do TÁTICO,
+   // Checando se o XML de entrada possui a saída do TÁTICO,
    if (problemData->atendimentosTatico)
    {
       AtendimentoOfertaSolucao * atendOferta;
@@ -2392,7 +2395,7 @@ void ProblemDataLoader::criaAulas()
 
                      // Monta o objeto 'aula'
                      Aula *aula = new Aula();
-					 aula->setOfertaCursoCampusId(atendOferta->getOfertaCursoCampiId());
+                     aula->setOfertaCursoCampusId(atendOferta->getOfertaCursoCampiId());
                      aula->setTurma( turma );
                      aula->setDisciplina( disciplina );
                      aula->setSala( sala );

@@ -10,7 +10,7 @@
 class Aula
 {
 public:
-   Aula(void);
+   Aula(bool _aulaVirtual = false);
    virtual ~Aula(void);
 
    void setTurma(int);
@@ -28,6 +28,8 @@ public:
    int getCreditosTeoricos() const;
    int getCreditosPraticos() const;
    int getOfertacursoCampusId() const;
+
+   bool eVirtual() const;
 
    std::vector<AlocacaoAula> alocacao_aula;
 
@@ -62,6 +64,10 @@ private:
    int quantidade;
    int creditos_teoricos;
    int creditos_praticos;
+
+
+   /* Indica se uma aula é virtual ou não. */
+   bool aulaVirtual;
 };
 
 #endif /* AULA_H */

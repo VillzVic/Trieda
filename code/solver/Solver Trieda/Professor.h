@@ -30,6 +30,7 @@ public:
    void setAreaId(int s) { area_id = s; }
    void setValorCredito(int s) { valor_credito = s; }
    void setIdOperacional(int s) { id_operacional = s; }
+   void setCustoDispProf(int c) { custoDispProf = c; }
    void setIsVirtual(bool value) { is_virtual = value; }
 
    std::string getCpf() { return cpf; }
@@ -42,6 +43,7 @@ public:
    int getAreaId() { return area_id; }
    double getValorCredito() { return valor_credito; }
    int getIdOperacional() { return id_operacional; }
+   int getCustoDispProf() { return custoDispProf; }
    bool getIsVirtual() { return is_virtual; }
 
 private:
@@ -54,6 +56,10 @@ private:
    int titulacao_id;
    int area_id;
    double valor_credito;
+   
    int id_operacional;
+   
+   /* Utilizado na função de prioridade para o modelo operacional. */
+   int custoDispProf;
    bool is_virtual;
 };
