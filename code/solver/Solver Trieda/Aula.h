@@ -20,6 +20,7 @@ public:
    void setCreditosTeoricos(int);
    void setCreditosPraticos(int);
    void setOfertaCursoCampusId(int);
+   void setAulaVirtual(bool value);
 
    int getTurma() const;
    Disciplina* getDisciplina() const;
@@ -28,7 +29,6 @@ public:
    int getCreditosTeoricos() const;
    int getCreditosPraticos() const;
    int getOfertacursoCampusId() const;
-
    bool eVirtual() const;
 
    std::vector<AlocacaoAula> alocacao_aula;
@@ -65,9 +65,8 @@ private:
    int creditos_teoricos;
    int creditos_praticos;
 
-
-   /* Indica se uma aula é virtual ou não. */
-   bool aulaVirtual;
+   // Indica se uma aula é virtual ou não.
+   bool aula_virtual;
 };
 
-#endif /* AULA_H */
+#endif // _AULA_H_

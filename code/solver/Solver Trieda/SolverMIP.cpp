@@ -6595,7 +6595,7 @@ int SolverMIP::cria_restricao_min_creds_turm_bloco(void)
 
    ITERA_GGROUP(itBloco,problemData->blocos,BlocoCurricular)
    {
-      for(int turma = 0; turma < itBloco->total_turmas; turma++)
+      for(int turma = 0; turma < itBloco->getTotalTurmas(); turma++)
       {
          GGroup<int>::iterator itDiasLetivosBlocoCurric = 
             itBloco->diasLetivos.begin();
@@ -6696,7 +6696,7 @@ int SolverMIP::cria_restricao_max_creds_turm_bloco(void)
 
    ITERA_GGROUP(itBloco,problemData->blocos,BlocoCurricular)
    {
-      for(int turma = 0; turma < itBloco->total_turmas; turma++)
+      for(int turma = 0; turma < itBloco->getTotalTurmas(); turma++)
       {
          GGroup<int>::iterator itDiasLetivosBlocoCurric = 
             itBloco->diasLetivos.begin();

@@ -5,12 +5,9 @@
 #include "Disciplina.h"
 #include "Demanda.h"
 #include "Campus.h"
-
 #include "Curriculo.h"
 
 #include <map>
-
-using namespace std;
 
 class BlocoCurricular :
    public OFBase
@@ -19,19 +16,23 @@ public:
    BlocoCurricular(void);
    ~BlocoCurricular(void);
 
-   //int getId() { return curso->getId() * 100 + periodo; }
-
-   int periodo;
    Curso* curso;
    Campus* campus;
-   GGroup<Disciplina*> disciplinas;
+   Curriculo * curriculo;
 
+   GGroup<Disciplina*> disciplinas;
    GGroup<int> diasLetivos;
 
    // Associa às disciplinas do bloco suas respectivas demandas - IGNORANDO TURNO
-   map<Disciplina*,Demanda*> disciplina_Demanda;
+   std::map<Disciplina*, Demanda*> disciplina_Demanda;
 
+   void setPeriodo(int value) { this->periodo = value; }
+   void setTotalTurmas(int value) { this->total_turmas = value; }
+
+   int getPeriodo() const { return this->periodo; }
+   int getTotalTurmas() const { return this->total_turmas; }
+
+private:
+   int periodo;
    int total_turmas;
-
-   Curriculo * curriculo;
 };

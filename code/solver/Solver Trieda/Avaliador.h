@@ -56,7 +56,7 @@ private:
 	// -----------------------------------------------------------
 	void calculaViolacoesDescolamento(SolucaoOperacional &);
 	int totalViolacoesDescolamento; // TRIEDA-739
-	double totalTempoViolacoesDescolamento; // TRIEDA-740
+	double totalTempoDescolamento; // TRIEDA-740
 	int totalViolacoesDeslocamentoProfessor; // TRIEDA-776
 	int totalDeslocamentosProfessor; // TRIEDA-777
 

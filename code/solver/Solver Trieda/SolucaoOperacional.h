@@ -60,7 +60,6 @@ public:
    bool alocaAula(Professor & professor, int dia, Horario & horario, Aula & aula);
 
 private:
-
    int totalDias;
    int totalHorarios;
    int totalDeProfessores;

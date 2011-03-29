@@ -1368,10 +1368,10 @@ void ProblemDataLoader::cria_blocos_curriculares()
                // Verificando a existência do bloco curricular para a disciplina em questão.
                ITERA_GGROUP(it_bc,problemData->blocos,BlocoCurricular)
                {
-                  if(it_bc->campus == *it_campi &&
-                     it_bc->curso == *it_curso &&
-                     it_bc->curriculo == *it_curr &&
-                     it_bc->periodo == periodo)
+                  if( it_bc->campus == *it_campi &&
+                      it_bc->curso == *it_curso &&
+                      it_bc->curriculo == *it_curr &&
+                      it_bc->getPeriodo() == periodo )
                   {
                      it_bc->disciplinas.add(disc);
                      it_bc->disciplina_Demanda[disc] = pt_Demanda;
@@ -1385,7 +1385,7 @@ void ProblemDataLoader::cria_blocos_curriculares()
                   BlocoCurricular * b = new BlocoCurricular();
 
                   b->setId(id_Bloco);
-                  b->periodo = periodo;
+                  b->setPeriodo(periodo);
                   b->campus = *it_campi;
                   b->curso = *it_curso;
                   b->curriculo = *it_curr;
@@ -1942,11 +1942,12 @@ void ProblemDataLoader::cache()
 
    ITERA_GGROUP(it_bloco, problemData->blocos, BlocoCurricular)
    {
-      it_bloco->total_turmas = 0;
+	  int totalTurmas = 0;
       ITERA_GGROUP(it_disciplinas, it_bloco->disciplinas, Disciplina)
       {
-         it_bloco->total_turmas += it_disciplinas->getNumTurmas();
+		 totalTurmas += it_disciplinas->getNumTurmas();
       }
+	  it_bloco->setTotalTurmas(totalTurmas);
    }
 
    ITERA_GGROUP(it_disc,problemData->disciplinas,Disciplina)

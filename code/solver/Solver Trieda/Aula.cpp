@@ -1,6 +1,6 @@
 #include "Aula.h"
 
-Aula::Aula(bool _aulaVirtual) : aulaVirtual(_aulaVirtual)
+Aula::Aula(bool _aulaVirtual) : aula_virtual(_aulaVirtual)
 {
    turma = 0;
    disciplina = NULL;
@@ -52,6 +52,10 @@ void Aula::setOfertaCursoCampusId(int v)
 	this->oferta_curso_campus_id = v;
 }
 
+void Aula::setAulaVirtual(bool value)
+{
+	aula_virtual = value;
+}
 
 int Aula::getTurma() const
 {
@@ -90,5 +94,5 @@ int Aula::getOfertacursoCampusId() const
 
 bool Aula::eVirtual() const
 {
-   return aulaVirtual;
+   return aula_virtual;
 }
