@@ -34,6 +34,7 @@ void AtendimentoDiaSemanaSolucao::le_arvore(ItemAtendimentoDiaSemanaSolucao& ele
        AtendimentoTaticoSolucao* tatico = new AtendimentoTaticoSolucao();
        tatico->le_arvore(item);
 	   atendimentosTatico.add(tatico);
+	   delete tatico;
    }
 }
 

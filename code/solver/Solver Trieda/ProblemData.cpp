@@ -38,6 +38,7 @@ void ProblemData::le_arvore(TriedaInput& raiz)
       TipoSala* t = new TipoSala;
       t->le_arvore(*it_tsalas);
       tipos_sala.add(t);
+	  delete t;
    }
 
    LE_SEQ(tipos_sala, raiz.tiposSala(), TipoSala);
