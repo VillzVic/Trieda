@@ -17,12 +17,10 @@
 
 // >>>
 //GGroup<int/*ids de campus existentes*/> * AtendimentoCampus::campi_id = new GGroup<int>;
-
 //GGroup<int/*ids de unidades existentes*/> * AtendimentoUnidade::__ids_cadastrados = new GGroup<int>;
-
 //GGroup<int/*ids de salas existentes*/> * AtendimentoSala::__ids_cadastrados = new GGroup<int>;
-
-//std::vector<GGroup<int/*ids das salas que possuem o dia (dado pela posicao do vector)*/> > * AtendimentoDiaSemana::__ids_cadastrados = new std::vector<GGroup<int> >(7);
+//std::vector<GGroup<int/*ids das salas que possuem o dia (dado pela posicao do vector)*/> > *
+//	AtendimentoDiaSemana::__ids_cadastrados = new std::vector<GGroup<int> >(7);
 // <<<
 
 #ifndef PATH_SEPARATOR
@@ -46,9 +44,9 @@ void writeOutput(ProblemSolution* solution, char* outputFile, char* tempOutput);
 
 int main(int argc, char** argv)
 {
-   srand((unsigned int)time(NULL));
+    srand((unsigned int)time(NULL));
 
-   _signals();
+    _signals();
 
 	char path[1024];
 	char inputFile[1024];
@@ -61,14 +59,14 @@ int main(int argc, char** argv)
 	ProblemSolution* solution = new ProblemSolution();
 	Solver* solver;
 
-	//Initializations
+	// Initializations
 	path[0] = '\0';
 	inputFile[0] = '\0';
 	tempOutput[0] = '\0';
 	outputFile[0] = '\0';
 	error = false;
 
-	//Check command line
+	// Check command line
 	if( argc <= 2 )
 	{
 		if ( argc == 2 && strcmp(argv[1],"-version") == 0 )
@@ -84,21 +82,21 @@ int main(int argc, char** argv)
 		}
 	}
 
-	//Read path
+	// Read path
 	strcat(path,argv[2]);
 	strcat(path,PATH_SEPARATOR);
 
-	//Input file name
+	// Input file name
 	strcat(inputFile,path);
 	strcat(inputFile,"input");
 	strcat(inputFile,argv[1]);
 
-	//Temporary output file name
+	// Temporary output file name
 	strcat(tempOutput,path);
 	strcat(tempOutput,"partialSolution.xml");
 	std::string tempOutputFile = tempOutput;
 
-	//Output file name
+	// Output file name
 	strcat(outputFile,path);
 	strcat(outputFile,"output");
 	strcat(outputFile,argv[1]);
@@ -110,57 +108,46 @@ int main(int argc, char** argv)
 
 	if( argc > 3 )
 	{
-		//Read other parameters
+		// Read other parameters
 	}
 
 #ifndef DEBUG
 	try
 	{
 #endif
-		//Load data
+		// Load data
 		dataLoader = new ProblemDataLoader(inputFile, data);   
 		dataLoader->load();
-		//delete dataLoader;
 
-		
 		try
         {
-			// solve the problem
-			//solver = new SolverMIP(data);
-         solver = new SolverMIP(data,solution,dataLoader);
+			// Solve the Problem
+			solver = new SolverMIP(data, solution, dataLoader);
 			solver->solve();
 			solver->getSolution(solution);
 			delete solver;
-         delete dataLoader;
+			delete dataLoader;
 		}
 		catch(int& status)
 		{
 			char mensagem[200];
 			sprintf(mensagem, "Não foi possível processar o modelo matemático (erro %d)", status);
-            ErrorHandler::addErrorMessage(UNEXPECTED_ERROR, ";;;;;;"+std::string(mensagem), "Solver::main()", false);
+            ErrorHandler::addErrorMessage(UNEXPECTED_ERROR,
+				";;;;;;"+std::string(mensagem), "Solver::main()", false);
             error = true;
-       }
+        }
 
-		 try
-         {
-            writeOutput(solution, outputFile, tempOutput);
-         }
-         catch (int& status)
-         {
-            char mensagem[200];
-            sprintf(mensagem, "Não foi possível escrever a solução. Error code: %d.", status);
-            ErrorHandler::addErrorMessage(UNEXPECTED_ERROR, std::string(mensagem), "Solver::main()", false);
-            error = true;
-         }
-		
-		
-		/*
-		// solve the problem
-		solver = new SolverMIP(data);
-		solver->solve();
-		solver->getSolution(solution);
-		delete solver;
-		*/
+		try
+        {
+           writeOutput(solution, outputFile, tempOutput);
+        }
+        catch (int& status)
+        {
+           char mensagem[200];
+           sprintf(mensagem, "Não foi possível escrever a solução. Error code: %d.", status);
+           ErrorHandler::addErrorMessage(UNEXPECTED_ERROR, std::string(mensagem), "Solver::main()", false);
+           error = true;
+        }
 
 #ifndef DEBUG
 	}
@@ -172,7 +159,7 @@ int main(int argc, char** argv)
 		error = true;
 	}
 #endif
-/*
+	/*
 	//Write output
 	try
 	{
@@ -191,15 +178,18 @@ int main(int argc, char** argv)
 		printf("ERROR: %s\n",e.what()); 
 		error = true;
 	}
-*/
+	*/
 	if( error )
+	{
 		return 0;
+	}
+
 	return 1;
 }
 
 void writeOutput(ProblemSolution* solution, char* outputFile, char* tempOutput)
 {
-	//Write output
+	// Write output
 	remove(tempOutput);
 	std::ofstream file;
 	file.open(tempOutput);
@@ -225,8 +215,9 @@ void _signals()
 void _tprocesshandler(int _code)
 {
    printf("O programa foi finalizado com o código (%d).\n", _code);
-   string mensagem = "O programa foi finalizado com o código";
-   ErrorHandler::addErrorMessage(UNEXPECTED_ERROR, ";;;;;;"+mensagem, "Solver::main()", false);
+   string mensagem = ("O programa foi finalizado com o código");
+   ErrorHandler::addErrorMessage(UNEXPECTED_ERROR,
+	   ";;;;;;" + mensagem, "Solver::main()", false);
    writeOutput(dtOutput.solution, dtOutput.outputFile, dtOutput.tempOutput);
    exit(_code);
 }

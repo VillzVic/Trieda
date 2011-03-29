@@ -6,12 +6,12 @@
 
 SolucaoOperacional::SolucaoOperacional(ProblemData* prbDt)
 {
-   /* FIXAR OS VALORES: 6 (dias) 4 (horarios) */
+   // FIXAR OS VALORES: 6 (dias) 4 (horarios)
    totalDias = 6;
    totalHorarios = 4;
    totalDeProfessores = 0;
 
-   this->problemData = prbDt;
+   this->problemData = (prbDt);
 
    // Montando um map: dado o índice da matriz (o 'idOperacional'
    // do professor) o map retorna o ponteiro para o professor correspondente
@@ -24,37 +24,42 @@ SolucaoOperacional::SolucaoOperacional(ProblemData* prbDt)
 		for (; it_prof != it_campi->professores.end(); it_prof++)
 		{
 			mapProfessores[it_prof->getIdOperacional()] = (*it_prof);
-
-         ++totalDeProfessores;
+			++totalDeProfessores;
 		}
    }
 
-   /* Inicializando a estrutura <matrizAulas> */
-
+   // Inicializando a estrutura <matrizAulas>
    matrizAulas = new MatrizSolucao (totalDeProfessores);
-
-   MatrizSolucao::iterator 
-      itMatrizAulas= matrizAulas->begin();
-
+   MatrizSolucao::iterator itMatrizAulas = matrizAulas->begin();
    for(; itMatrizAulas != matrizAulas->end(); ++itMatrizAulas)
    {
-      *itMatrizAulas = new vector<Aula*> ((totalDias*totalHorarios),NULL);
+      *itMatrizAulas = new vector<Aula*> ((totalDias*totalHorarios), NULL);
    }
 
-   /* Deixando livres, apenas os horarios em que o professor pode ministrar aulas.
-   Para os demais, associa-as à uma aula virtual. */
+   // Deixando livres, apenas os horarios em que o professor pode
+   // ministrar aulas. Para os demais, associa-as à uma aula virtual.
 
    Aula * aulaVirtual = new Aula(true);
 
    /* TODO (Cleiton) : PREENCHER COM AULAS VIRTUAIS, OS HORARIOS EM QUE UM DADO PROFESSOR, NAO 
    ESTA DISPONIVEL. USAR SEMPRE O MESMO OBJETO DE AULA VIRTUAL. */
-
 }
 
 SolucaoOperacional::~SolucaoOperacional()
 {
-   // TODO : DESTRUIR A SOLUÇÃO !!!!!! MUITO IMPORTANTE.
+   // Limpa as referências do map de professores
+   this->mapProfessores.clear();
 
+   // Limpa a referência do objeto 'problemData'
+   this->problemData = NULL;
+
+   // Limpa as referências da matriz de solução operacional
+   MatrizSolucao::iterator itMatrizAulas = matrizAulas->begin();
+   for(; itMatrizAulas != matrizAulas->end(); ++itMatrizAulas)
+   {
+	  delete *itMatrizAulas;
+   }
+   matrizAulas = NULL;
 }
 
 void SolucaoOperacional::carregaSolucaoInicial()
@@ -64,12 +69,12 @@ void SolucaoOperacional::carregaSolucaoInicial()
 
 MatrizSolucao* SolucaoOperacional::getMatrizAulas() const
 {
-	return this->matrizAulas;
+	return (this->matrizAulas);
 }
 
-void SolucaoOperacional::setMatrizAulas(MatrizSolucao* m)
+void SolucaoOperacional::setMatrizAulas(MatrizSolucao* matriz)
 {
-	this->matrizAulas = m;
+	this->matrizAulas = (matriz);
 }
 
 // Imprime as aulas da matriz de solução,
@@ -89,7 +94,9 @@ void SolucaoOperacional::toString() const
             std::cout << "Sala : " << aula->getSala() << std::endl << std::endl;
          }
          else
+		 {
             cout << "NULL" << endl;
+		 }
       }
 
       std::cout << std::endl << "-------" << std::endl;
