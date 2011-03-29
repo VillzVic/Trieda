@@ -58,7 +58,7 @@ public class CampiExportExcel extends AbstractExportExcel {
 	
 	@Override
 	protected String getPathExcelTemplate() {
-		return "/templateCampi.xls";
+		return "/templateExport.xls";
 	}
 
 	@Override
