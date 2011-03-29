@@ -768,6 +768,10 @@
 						>
 					</File>
 					<File
+						RelativePath=".\CustoAlocacao.cpp"
+						>
+					</File>
+					<File
 						RelativePath=".\SolucaoInicialOperacional.cpp"
 						>
 					</File>
@@ -1142,6 +1146,10 @@
 					</File>
 					<File
 						RelativePath=".\Avaliador.h"
+						>
+					</File>
+					<File
+						RelativePath=".\CustoAlocacao.h"
 						>
 					</File>
 					<File
