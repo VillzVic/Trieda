@@ -1,8 +1,10 @@
 package com.gapso.trieda.domain;
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -278,6 +280,14 @@ public class Disciplina implements Serializable, Comparable<Disciplina> {
     public static List<Disciplina> findAll() {
         return entityManager().createQuery("SELECT o FROM Disciplina o").getResultList();
     }
+	
+	public static Map<String,Disciplina> buildDisciplinaCodigoToDisciplinaMap(List<Disciplina> disciplinas) {
+		Map<String,Disciplina> disciplinasMap = new HashMap<String,Disciplina>();
+		for (Disciplina disciplina : disciplinas) {
+			disciplinasMap.put(disciplina.getCodigo(),disciplina);
+		}
+		return disciplinasMap;
+	}
 
 	public static Disciplina find(Long id) {
         if (id == null) return null;
@@ -292,6 +302,13 @@ public class Disciplina implements Serializable, Comparable<Disciplina> {
     public static List<Disciplina> find(int firstResult, int maxResults, String orderBy) {
 		orderBy = (orderBy != null)? "ORDER BY o."+orderBy : "";
         return entityManager().createQuery("SELECT o FROM Disciplina o "+orderBy).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
+    }
+	
+	@SuppressWarnings("unchecked")
+	public static List<Disciplina> findByCenario(Cenario cenario) {
+    	Query q = entityManager().createQuery("SELECT o FROM Disciplina o WHERE o.cenario = :cenario");
+    	q.setParameter("cenario", cenario);
+    	return q.getResultList();
     }
 	
 	@SuppressWarnings("unchecked")

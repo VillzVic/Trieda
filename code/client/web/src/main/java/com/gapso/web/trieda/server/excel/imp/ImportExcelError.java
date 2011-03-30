@@ -27,6 +27,26 @@ public enum ImportExcelError {
 	CURSO_MAIS_DE_UMA_DISC_PROF_FORMATO_INVALIDO,
 	CURSO_MAIS_DE_UMA_DISC_PROF_VAZIO,
 	
+	DISCIPLINA_CODIGO_VAZIO,
+	DISCIPLINA_CREDITOS_TEORICOS_FORMATO_INVALIDO,
+	DISCIPLINA_CREDITOS_TEORICOS_VALOR_NEGATIVO,
+	DISCIPLINA_CREDITOS_TEORICOS_VAZIO,
+	DISCIPLINA_CREDITOS_PRATICOS_FORMATO_INVALIDO,
+	DISCIPLINA_CREDITOS_PRATICOS_VALOR_NEGATIVO,
+	DISCIPLINA_CREDITOS_PRATICOS_VAZIO,
+	DISCIPLINA_MAX_ALUNOS_PRATICOS_FORMATO_INVALIDO,
+	DISCIPLINA_MAX_ALUNOS_PRATICOS_VALOR_NEGATIVO,
+	DISCIPLINA_MAX_ALUNOS_PRATICOS_VAZIO,
+	DISCIPLINA_MAX_ALUNOS_TEORICOS_FORMATO_INVALIDO,
+	DISCIPLINA_MAX_ALUNOS_TEORICOS_VALOR_NEGATIVO,
+	DISCIPLINA_MAX_ALUNOS_TEORICOS_VAZIO,
+	DISCIPLINA_NIVEL_DIFICULDADE_VALOR_INVALIDO,
+	DISCIPLINA_NIVEL_DIFICULDADE_VAZIO,
+	DISCIPLINA_NOME_VAZIO,
+	DISCIPLINA_USA_LABORATORIO_FORMATO_INVALIDO,
+	DISCIPLINA_USA_LABORATORIO_VAZIO,
+	DISCIPLINA_TIPO_VAZIO,
+	
 	SALA_ANDAR_VAZIO,
 	SALA_CAPACIDADE_FORMATO_INVALIDO,
 	SALA_CAPACIDADE_VALOR_NEGATIVO,
@@ -66,6 +86,26 @@ public enum ImportExcelError {
 			case CURSO_MAX_DISC_PROF_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia(param1,CursosImportExcel.MAX_DISC_PROF_COLUMN_NAME);
 			case CURSO_MAIS_DE_UMA_DISC_PROF_FORMATO_INVALIDO: return i18nMessages.excelErroSintaticoFormatoInvalido(param1,CursosImportExcel.MAIS_DE_UMA_DISC_PROF_COLUMN_NAME);
 			case CURSO_MAIS_DE_UMA_DISC_PROF_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia(param1,CursosImportExcel.MAIS_DE_UMA_DISC_PROF_COLUMN_NAME);
+			
+			case DISCIPLINA_CODIGO_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia(param1,DisciplinasImportExcel.CODIGO_COLUMN_NAME);
+			case DISCIPLINA_CREDITOS_TEORICOS_FORMATO_INVALIDO: return i18nMessages.excelErroSintaticoFormatoInvalido(param1,DisciplinasImportExcel.CRED_TEORICOS_COLUMN_NAME);
+			case DISCIPLINA_CREDITOS_TEORICOS_VALOR_NEGATIVO: return i18nMessages.excelErroSintaticoValorNegativo(param1,DisciplinasImportExcel.CRED_TEORICOS_COLUMN_NAME);
+			case DISCIPLINA_CREDITOS_TEORICOS_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia(param1,DisciplinasImportExcel.CRED_TEORICOS_COLUMN_NAME);
+			case DISCIPLINA_CREDITOS_PRATICOS_FORMATO_INVALIDO: return i18nMessages.excelErroSintaticoFormatoInvalido(param1,DisciplinasImportExcel.CRED_PRATICOS_COLUMN_NAME);
+			case DISCIPLINA_CREDITOS_PRATICOS_VALOR_NEGATIVO: return i18nMessages.excelErroSintaticoValorNegativo(param1,DisciplinasImportExcel.CRED_PRATICOS_COLUMN_NAME);
+			case DISCIPLINA_CREDITOS_PRATICOS_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia(param1,DisciplinasImportExcel.CRED_PRATICOS_COLUMN_NAME);
+			case DISCIPLINA_MAX_ALUNOS_PRATICOS_FORMATO_INVALIDO: return i18nMessages.excelErroSintaticoFormatoInvalido(param1,DisciplinasImportExcel.MAX_ALUNOS_PRATICOS_COLUMN_NAME);
+			case DISCIPLINA_MAX_ALUNOS_PRATICOS_VALOR_NEGATIVO: return i18nMessages.excelErroSintaticoValorNegativo(param1,DisciplinasImportExcel.MAX_ALUNOS_PRATICOS_COLUMN_NAME);
+			case DISCIPLINA_MAX_ALUNOS_PRATICOS_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia(param1,DisciplinasImportExcel.MAX_ALUNOS_PRATICOS_COLUMN_NAME);
+			case DISCIPLINA_MAX_ALUNOS_TEORICOS_FORMATO_INVALIDO: return i18nMessages.excelErroSintaticoFormatoInvalido(param1,DisciplinasImportExcel.MAX_ALUNOS_TEORICOS_COLUMN_NAME);
+			case DISCIPLINA_MAX_ALUNOS_TEORICOS_VALOR_NEGATIVO: return i18nMessages.excelErroSintaticoValorNegativo(param1,DisciplinasImportExcel.MAX_ALUNOS_TEORICOS_COLUMN_NAME);
+			case DISCIPLINA_MAX_ALUNOS_TEORICOS_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia(param1,DisciplinasImportExcel.MAX_ALUNOS_TEORICOS_COLUMN_NAME);
+			case DISCIPLINA_NIVEL_DIFICULDADE_VALOR_INVALIDO: return i18nMessages.excelErroSintaticoValorInvalido(param1,DisciplinasImportExcel.NIVEL_DIFICULDADE_COLUMN_NAME);
+			case DISCIPLINA_NIVEL_DIFICULDADE_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia(param1,DisciplinasImportExcel.NIVEL_DIFICULDADE_COLUMN_NAME);
+			case DISCIPLINA_NOME_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia(param1,DisciplinasImportExcel.NOME_COLUMN_NAME);
+			case DISCIPLINA_USA_LABORATORIO_FORMATO_INVALIDO: return i18nMessages.excelErroSintaticoFormatoInvalido(param1,DisciplinasImportExcel.USA_LABORATORIO_COLUMN_NAME);
+			case DISCIPLINA_USA_LABORATORIO_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia(param1,DisciplinasImportExcel.USA_LABORATORIO_COLUMN_NAME);
+			case DISCIPLINA_TIPO_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia(param1,DisciplinasImportExcel.TIPO_COLUMN_NAME);
 			
 			case SALA_ANDAR_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia(param1,SalasImportExcel.ANDAR_COLUMN_NAME);
 			case SALA_CAPACIDADE_FORMATO_INVALIDO: return i18nMessages.excelErroSintaticoFormatoInvalido(param1,SalasImportExcel.CAPACIDADE_COLUMN_NAME);

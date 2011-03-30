@@ -4,6 +4,7 @@ public enum ExcelInformationType {
 	TUDO(""),
 	CAMPI("Campi"),
 	CURSOS("Cursos"),
+	DISCIPLINAS("Disciplinas"),
 	UNIDADES("Unidades"),
 	SALAS("Salas");
 	

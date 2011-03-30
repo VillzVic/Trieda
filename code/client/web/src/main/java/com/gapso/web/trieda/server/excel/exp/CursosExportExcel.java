@@ -5,6 +5,7 @@ import java.util.List;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.springframework.web.util.HtmlUtils;
 
 import com.gapso.trieda.domain.Cenario;
 import com.gapso.trieda.domain.Curso;
@@ -105,7 +106,7 @@ public class CursosExportExcel extends AbstractExportExcel {
 		// Max Disciplinas Professor
 		setCell(row,7,sheet,cellStyles[ExcelCellStyleReference.NUMBER_INT.ordinal()],curso.getMaxDisciplinasPeloProfessor());
 		// Permite mais de uma Disciplina por Professor
-		setCell(row,8,sheet,cellStyles[ExcelCellStyleReference.TEXT.ordinal()],(curso.getAdmMaisDeUmDisciplina() ? getI18nConstants().sim() : getI18nConstants().nao()));
+		setCell(row,8,sheet,cellStyles[ExcelCellStyleReference.TEXT.ordinal()],(curso.getAdmMaisDeUmDisciplina() ? getI18nConstants().sim() : HtmlUtils.htmlUnescape(getI18nConstants().nao())));
 		
 		row++;
 		return row;

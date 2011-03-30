@@ -13,11 +13,14 @@ public interface TriedaI18nConstants extends Constants {
 	String capacidade();
 	String capacidadeMediaSalas();
 	String codigo();
+	String creditosPraticos();
+	String creditosTeoricos();
 	String cursos();
 	String custoMedioCredito();
 	String custoMedioCreditoExcel();
 	String deslocamentoUnidades();
 	String deslocamentoUnidadesCampus();
+	String disciplinas();
 	String disciplinasAssociadas();
 	String disponibilidadesSemanaLetiva();
 	String edicaoDe();
@@ -29,12 +32,15 @@ public interface TriedaI18nConstants extends Constants {
 	String informacao();
 	String insercaoDe();
 	String maisDeUmaDisciplinaProfessor();
+	String maxAlunosPratico();
+	String maxAlunosTeorico();
 	String maxDisciplinasProfessor();
 	String mensagemErro();
 	String minPercentualDoutor();
 	String minPercentualMestre();
 	String municipio();
 	String nao();
+	String nivelDificuldade();
 	String nome();
 	String numero();
 	String preenchaA();
@@ -52,4 +58,5 @@ public interface TriedaI18nConstants extends Constants {
 	String unidade();
 	String unidades();
 	String unidadesHeadingPanel();
+	String usaLaboratorio();
 }

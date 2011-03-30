@@ -15,6 +15,7 @@ public class ExportExcelFactory {
 			case TUDO: exporter = new TRIEDAExportExcel(cenario,i18nConstants,i18nMessages); break;
 			case CAMPI: exporter = new CampiExportExcel(cenario,i18nConstants,i18nMessages); break;
 			case CURSOS: exporter = new CursosExportExcel(cenario,i18nConstants,i18nMessages); break;
+			case DISCIPLINAS: exporter = new DisciplinasExportExcel(cenario,i18nConstants,i18nMessages); break;
 			case UNIDADES: exporter = new UnidadesExportExcel(cenario,i18nConstants,i18nMessages); break;
 			case SALAS: exporter = new SalasExportExcel(cenario,i18nConstants,i18nMessages); break;
 		}

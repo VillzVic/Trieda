@@ -33,11 +33,13 @@ public class TRIEDAExportExcel extends AbstractExportExcel {
 		IExportExcel unidadesExporter = new UnidadesExportExcel(false,getCenario(),getI18nConstants(),getI18nMessages());
 		IExportExcel salasExporter = new SalasExportExcel(false,getCenario(),getI18nConstants(),getI18nMessages());
 		IExportExcel cursosExporter = new CursosExportExcel(false,getCenario(),getI18nConstants(),getI18nMessages());
+		IExportExcel disciplinasExporter = new DisciplinasExportExcel(false,getCenario(),getI18nConstants(),getI18nMessages());
 		
 		campiExporter.export(workbook);
 		unidadesExporter.export(workbook);
 		salasExporter.export(workbook);
 		cursosExporter.export(workbook);
+		disciplinasExporter.export(workbook);
 		
 		return true;
 	}
