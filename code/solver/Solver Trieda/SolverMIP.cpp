@@ -1807,7 +1807,7 @@ int SolverMIP::solveOperacional()
    /* Criando uma solução inicial */
    SolucaoInicialOperacional solIni(*problemData);
 
-   //solIni.geraSolucaoInicial();
+   solIni.geraSolucaoInicial();
 
    std::cout << "Implementar <SolverMIP::solveOperacional()>" << std::endl;
    exit(1);

@@ -2319,6 +2319,17 @@ void ProblemDataLoader::relacionaDiscOfertas()
 // relacionado com a issue TRIEDA-700
 void ProblemDataLoader::criaAulas()
 {
+   /* 
+   ToDo (Cleiton) : Adaptar o código abaixo e, se necessário, a estrutura <Aula> para armazenar
+   informações de mais de um atendimento.
+
+   O problema a ser resolvido consiste no caso em que num dado dia, mais de um atendimento tático
+   faça referência à mesma Aula.
+
+   Na instância trivial, a disciplina <codigo = "D03-INF-1"> está contida em 2 ofertas diferentes. O solver
+   tático resolveu alocar juntas essas ofertas. Então, o mesmo deve ser feito ao criar a aula.
+   */
+
    // Checando se o XML de entrada possui a saída do TÁTICO,
    if (problemData->atendimentosTatico)
    {
@@ -2339,50 +2350,8 @@ void ProblemDataLoader::criaAulas()
                      // Informa a 'turma' da aula
                      int turma = atoi(atendOferta->getTurma().c_str());
 
-                     // Procura pelo objeto 'Disciplina' da aula
-                     //Disciplina* disciplina = NULL;
-                     //ITERA_GGROUP(it_Disciplina, problemData->disciplinas, Disciplina)
-                     //{
-                     //   //int idDisc = (it_Disciplina->getId() > 0) ? 
-                     //      //it_Disciplina->getId() : -it_Disciplina->getId();
-
-                     //   //if (idDisc == atendOferta->getDisciplinaId())
-                     //   if (it_Disciplina->getId() == atendOferta->getDisciplinaId())
-                     //   {
-                     //      disciplina = *(it_Disciplina);
-                     //      break;
-                     //   }
-                     //}
                      Disciplina* disciplina = problemData->refDisciplinas.find(atendOferta->getDisciplinaId())->second;
 
-                     // Procura pelo objeto 'Sala' da aula
-                     //bool encontrou = false;
-                     //Sala* sala = NULL;
-                     //ITERA_GGROUP(it_Campus, problemData->campi, Campus)
-                     //{
-                     //   ITERA_GGROUP(it_Unidade, it_Campus->unidades, Unidade)
-                     //   {
-                     //      ITERA_GGROUP(it_Sala, it_Unidade->salas, Sala)
-                     //      {
-                     //         if (it_Sala->getId() == it_atend_sala->getSalaId())
-                     //         {
-                     //            sala = *(it_Sala);
-                     //            encontrou = true;
-                     //            break;
-                     //         }
-                     //      }
-
-                     //      if (encontrou)
-                     //      {
-                     //         break;
-                     //      }
-                     //   }
-
-                     //   if (encontrou)
-                     //   {
-                     //      break;
-                     //   }
-                     //}
                      Sala* sala = problemData->refSala.find(it_atend_sala->getSalaId())->second;
 
                      // Informa o dia da semana da aula

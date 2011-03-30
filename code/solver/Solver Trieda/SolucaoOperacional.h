@@ -57,7 +57,8 @@ public:
    int getTotalHorarios() const;
 
    // TODO: Implementar o método abaixo.
-   bool alocaAula(Professor & professor, int dia, Horario & horario, Aula & aula);
+   //bool alocaAula(Professor & professor, int dia, Horario & horario, Aula & aula);
+   //bool alocaAula(Professor & professor, Aula & aula, vector<Aula*> & horarios);
 
 private:
    int totalDias;

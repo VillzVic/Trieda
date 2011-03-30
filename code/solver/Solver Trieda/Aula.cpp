@@ -92,6 +92,11 @@ int Aula::getOfertacursoCampusId() const
 	return this->oferta_curso_campus_id;
 }
 
+int Aula::getTotalCreditos() const
+{
+   return (creditos_praticos+creditos_teoricos);
+}
+
 bool Aula::eVirtual() const
 {
    return aula_virtual;

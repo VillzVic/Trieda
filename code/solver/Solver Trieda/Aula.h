@@ -29,6 +29,8 @@ public:
    int getCreditosTeoricos() const;
    int getCreditosPraticos() const;
    int getOfertacursoCampusId() const;
+   int getTotalCreditos() const;
+
    bool eVirtual() const;
 
    std::vector<AlocacaoAula> alocacao_aula;

@@ -187,8 +187,9 @@ vector<Aula*>::iterator SolucaoOperacional::getHorariosDia(Professor & professor
    vector<Aula*>::iterator itHorarios = matrizAulas->at(professor.getIdOperacional())->begin();
 
    // Ajustando para o primeiro horário do dia em questão.
-   itHorarios += ((dia - 1) * totalHorarios) + 1;
-   
+   //itHorarios += ((dia - 1) * totalHorarios) + 1;
+   itHorarios += ((dia - 2) * totalHorarios) + 1;
+
    return itHorarios;
 }
 
@@ -212,12 +213,19 @@ int SolucaoOperacional::getTotalHorarios() const
    return totalHorarios;
 }
 
-bool SolucaoOperacional::alocaAula(Professor & professor, int dia, Horario & horario, Aula & aula)
-{
-   // TODO
-   std::cout << "Implementar o metodo bool SolucaoOperacional::alocaAula("
-			 << "Professor & professor, int dia, Horario & horario, Aula & aula)" << std::endl;
-   exit(1);
-
-   return false;
-}
+//bool SolucaoOperacional::alocaAula(Professor & professor, int dia, Horario & horario, Aula & aula)
+//bool SolucaoOperacional::alocaAula(Professor & professor, Aula & aula, vector<Aula*> & horarios)
+//{
+//   // TODO
+//
+//   vector<Aula*>::iterator itHorarios = horarios.begin();
+//
+//   for(; itHorarios != horarios.end(); ++itHorarios)
+//      *itHorarios = &aula;
+//
+//   std::cout << "Implementar o metodo bool SolucaoOperacional::alocaAula("
+//			 << "Professor & professor, ... )" << std::endl;
+//   exit(1);
+//
+//   return true;
+//}
