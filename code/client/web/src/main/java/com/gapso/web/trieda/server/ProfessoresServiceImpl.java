@@ -38,6 +38,7 @@ public class ProfessoresServiceImpl extends RemoteServiceServlet implements Prof
 
 	@Override
 	public ProfessorDTO getProfessor(Long id) {
+		if(id == null) return null;
 		return ConvertBeans.toProfessorDTO(Professor.find(id));
 	}
 

@@ -48,6 +48,10 @@ public class Fixacao implements Serializable {
     @Column(name = "FIX_DESCRICAO")
     @Size(min = 1, max = 50)
     private String descricao;
+    
+    @ManyToOne(targetEntity = Professor.class, fetch=FetchType.LAZY)
+    @JoinColumn(name = "PRF_ID")
+    private Professor professor;
 	
     @ManyToOne(targetEntity = Disciplina.class, fetch=FetchType.LAZY)
     @JoinColumn(name = "DIS_ID")
@@ -211,6 +215,13 @@ public class Fixacao implements Serializable {
     public void setDescricao(String descricao) {
     	this.descricao = descricao;
     }
+    
+    public Professor getProfessor() {
+    	return this.professor;
+    }
+    public void setProfessor(Professor professor) {
+    	this.professor = professor;
+    }
 
 	public Disciplina getDisciplina() {
         return this.disciplina;
@@ -253,6 +264,7 @@ public class Fixacao implements Serializable {
         sb.append("Id: ").append(getId()).append(", ");
         sb.append("Version: ").append(getVersion()).append(", ");
         sb.append("Codigo: ").append(getCodigo()).append(", ");
+        sb.append("Professor: ").append(getProfessor()).append(", ");
         sb.append("Descricao: ").append(getDescricao()).append(", ");
         sb.append("Disciplina: ").append(getDisciplina()).append(", ");
         sb.append("Campus: ").append(getCampus()).append(", ");

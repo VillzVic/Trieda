@@ -6,9 +6,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
-import java.util.Map.Entry;
 
 import com.extjs.gxt.ui.client.Style.SortDir;
 import com.extjs.gxt.ui.client.data.BasePagingLoadResult;
@@ -17,12 +17,14 @@ import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.gapso.trieda.domain.Disciplina;
 import com.gapso.trieda.domain.Fixacao;
 import com.gapso.trieda.domain.HorarioDisponivelCenario;
+import com.gapso.trieda.domain.Professor;
 import com.gapso.trieda.domain.Sala;
 import com.gapso.web.trieda.client.services.FixacoesService;
 import com.gapso.web.trieda.server.util.ConvertBeans;
 import com.gapso.web.trieda.shared.dtos.DisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.FixacaoDTO;
 import com.gapso.web.trieda.shared.dtos.HorarioDisponivelCenarioDTO;
+import com.gapso.web.trieda.shared.dtos.ProfessorDTO;
 import com.gapso.web.trieda.shared.dtos.SalaDTO;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
@@ -104,15 +106,30 @@ public class FixacoesServiceImpl extends RemoteServiceServlet implements Fixacoe
 	}
 
 	@Override
-	public PagingLoadResult<HorarioDisponivelCenarioDTO> getHorariosDisponiveis(DisciplinaDTO disciplinaDTO, SalaDTO salaDTO) {
-		if(disciplinaDTO == null || salaDTO == null) {
+	public PagingLoadResult<HorarioDisponivelCenarioDTO> getHorariosDisponiveis(ProfessorDTO professorDTO, DisciplinaDTO disciplinaDTO, SalaDTO salaDTO) {
+		if(disciplinaDTO == null && salaDTO == null && professorDTO == null) {
 			return new BasePagingLoadResult<HorarioDisponivelCenarioDTO>(new ArrayList<HorarioDisponivelCenarioDTO>());
 		}
-		Disciplina disciplina = Disciplina.find(disciplinaDTO.getId());
-		Sala sala = Sala.find(salaDTO.getId());
-		Set<HorarioDisponivelCenario> disciplinaHorarios = disciplina.getHorarios();
-		Set<HorarioDisponivelCenario> salaHorarios = sala.getHorarios();
-		List<HorarioDisponivelCenario> list = intercessaoHorarios(disciplinaHorarios, salaHorarios);
+		Set<HorarioDisponivelCenario> professorHorarios = null;
+		Set<HorarioDisponivelCenario> disciplinaHorarios = null;
+		Set<HorarioDisponivelCenario> salaHorarios = null;
+		
+		if(professorDTO != null) {
+			Professor professor = Professor.find(professorDTO.getId());
+			professorHorarios = professor.getHorarios();
+		}
+		
+		if(disciplinaDTO != null) {
+			Disciplina disciplina = Disciplina.find(disciplinaDTO.getId());
+			disciplinaHorarios = disciplina.getHorarios();
+		}
+		
+		if(salaDTO != null) {
+			Sala sala = Sala.find(salaDTO.getId());
+			salaHorarios = sala.getHorarios();
+		}
+		
+		List<HorarioDisponivelCenario> list = intercessaoHorarios(professorHorarios, disciplinaHorarios, salaHorarios);
 		List<HorarioDisponivelCenarioDTO> listDTO = ConvertBeans.toHorarioDisponivelCenarioDTO(list);
 
 		Map<String, List<HorarioDisponivelCenarioDTO>> horariosTurnos = new HashMap<String, List<HorarioDisponivelCenarioDTO>>();
@@ -150,9 +167,16 @@ public class FixacoesServiceImpl extends RemoteServiceServlet implements Fixacoe
 		return new BasePagingLoadResult<HorarioDisponivelCenarioDTO>(listDTO);
 	}
 
-	private List<HorarioDisponivelCenario> intercessaoHorarios(Set<HorarioDisponivelCenario> horario1, Set<HorarioDisponivelCenario> horario2) {
-		List<HorarioDisponivelCenario> horarios = new ArrayList<HorarioDisponivelCenario>(horario1);
-		horarios.retainAll(horario2);
+	private List<HorarioDisponivelCenario> intercessaoHorarios(Set<HorarioDisponivelCenario> horario1, Set<HorarioDisponivelCenario> horario2, Set<HorarioDisponivelCenario> horario3) {
+		List<HorarioDisponivelCenario> horarios = new ArrayList<HorarioDisponivelCenario>();
+		
+		if(horarios.size() == 0 && horario1 != null) horarios.addAll(horario1);
+		if(horarios.size() == 0 && horario2 != null) horarios.addAll(horario2);
+		if(horarios.size() == 0 && horario3 != null) horarios.addAll(horario3);
+		
+		if(horario1 != null) horarios.retainAll(horario1);
+		if(horario2 != null) horarios.retainAll(horario2);
+		if(horario3 != null) horarios.retainAll(horario3);
 		return horarios;
 	}
 	

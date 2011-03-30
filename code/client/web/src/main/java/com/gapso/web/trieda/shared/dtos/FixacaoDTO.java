@@ -10,6 +10,8 @@ public class FixacaoDTO extends AbstractDTO<String> implements Comparable<Fixaca
 	public static final String PROPERTY_VERSION = "version";
 	public static final String PROPERTY_CODIGO = "codigo";
 	public static final String PROPERTY_DESCRICAO = "descricao";
+	public static final String PROPERTY_PROFESSOR_ID = "professorId";
+	public static final String PROPERTY_PROFESSOR_STRING = "professorString";
 	public static final String PROPERTY_DISCIPLINA_ID = "disciplinaId";
 	public static final String PROPERTY_DISCIPLINA_STRING = "disciplinaString";
 	public static final String PROPERTY_CAMPUS_ID = "campusId";
@@ -45,6 +47,20 @@ public class FixacaoDTO extends AbstractDTO<String> implements Comparable<Fixaca
 	}
 	public String getDescricao() {
 		return get(PROPERTY_DESCRICAO);
+	}
+	
+	public void setProfessorId(Long value) {
+		set(PROPERTY_PROFESSOR_ID, value);
+	}
+	public Long getProfessorId() {
+		return get(PROPERTY_PROFESSOR_ID);
+	}
+	
+	public void setProfessorString(String value) {
+		set(PROPERTY_PROFESSOR_STRING, value);
+	}
+	public String getProfessorString() {
+		return get(PROPERTY_PROFESSOR_STRING);
 	}
 	
 	public void setDisciplinaId(Long value) {

@@ -15,6 +15,7 @@ import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.gapso.web.trieda.client.services.Services;
 import com.gapso.web.trieda.client.util.view.CampusComboBox;
 import com.gapso.web.trieda.client.util.view.DisciplinaComboBox;
+import com.gapso.web.trieda.client.util.view.ProfessorComboBox;
 import com.gapso.web.trieda.client.util.view.SalaComboBox;
 import com.gapso.web.trieda.client.util.view.SemanaLetivaDoCenarioGrid;
 import com.gapso.web.trieda.client.util.view.SimpleGrid;
@@ -25,6 +26,7 @@ import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.DisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.FixacaoDTO;
 import com.gapso.web.trieda.shared.dtos.HorarioDisponivelCenarioDTO;
+import com.gapso.web.trieda.shared.dtos.ProfessorDTO;
 import com.gapso.web.trieda.shared.dtos.SalaDTO;
 import com.gapso.web.trieda.shared.dtos.UnidadeDTO;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -45,6 +47,7 @@ public class FixacaoFormPresenter implements Presenter {
 		boolean isValid();
 		
 		SimpleModal getSimpleModal();
+		ProfessorComboBox getProfessorComboBox();
 	}
 	private SimpleGrid<FixacaoDTO> gridPanel;
 	private Display display;
@@ -62,7 +65,8 @@ public class FixacaoFormPresenter implements Presenter {
 			protected void load(Object loadConfig, AsyncCallback<PagingLoadResult<HorarioDisponivelCenarioDTO>> callback) {
 				DisciplinaDTO disciplinaDTO = display.getDisciplinaComboBox().getValue();
 				SalaDTO salaDTO = display.getSalaComboBox().getValue();
-				Services.fixacoes().getHorariosDisponiveis(disciplinaDTO, salaDTO, callback);
+				ProfessorDTO professorDTO = display.getProfessorComboBox().getValue();
+				Services.fixacoes().getHorariosDisponiveis(professorDTO, disciplinaDTO, salaDTO, callback);
 			}
 		};
 		display.getGrid().setProxy(proxy);
@@ -91,6 +95,12 @@ public class FixacaoFormPresenter implements Presenter {
 				}
 			}
 		});
+		display.getProfessorComboBox().addSelectionChangedListener(new SelectionChangedListener<ProfessorDTO>(){
+			@Override
+			public void selectionChanged(SelectionChangedEvent<ProfessorDTO> se) {
+				display.getGrid().updateList();
+			}
+		});
 		display.getDisciplinaComboBox().addSelectionChangedListener(new SelectionChangedListener<DisciplinaDTO>(){
 			@Override
 			public void selectionChanged(SelectionChangedEvent<DisciplinaDTO> se) {
@@ -113,6 +123,11 @@ public class FixacaoFormPresenter implements Presenter {
 		FixacaoDTO fixacaoDTO = display.getFixacaoDTO();
 		fixacaoDTO.setCodigo(display.getCodigoTextField().getValue());
 		fixacaoDTO.setDescricao(display.getDescricaoTextField().getValue());
+		ProfessorDTO professor = display.getProfessorComboBox().getValue();
+		if(professor != null) {
+			fixacaoDTO.setProfessorId(professor.getId());
+			fixacaoDTO.setProfessorString(professor.getNome());
+		}
 		DisciplinaDTO disciplina = display.getDisciplinaComboBox().getValue();
 		if(disciplina != null) {
 			fixacaoDTO.setDisciplinaId(disciplina.getId());

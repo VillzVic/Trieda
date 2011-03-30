@@ -271,6 +271,7 @@ public class ConvertBeans {
 		dto.setCampusId(domain.getUnidade().getCampus().getId());
 		dto.setUnidadeId(domain.getUnidade().getId());
 		dto.setUnidadeString(domain.getUnidade().getCodigo());
+//		dto.setContainsCurriculoDisciplina(domain.getContainsCurriculoDisciplina());
 		dto.setDisplayText(domain.getCodigo() + " (" + domain.getNumero() + ")");
 		return dto;
 	}
@@ -1242,10 +1243,11 @@ public class ConvertBeans {
 		domain.setVersion(dto.getVersion());
 		domain.setCodigo(dto.getCodigo());
 		domain.setDescricao(dto.getDescricao());
-		domain.setDisciplina(Disciplina.find(dto.getDisciplinaId()));
-		domain.setCampus(Campus.find(dto.getCampusId()));
-		domain.setUnidade(Unidade.find(dto.getUnidadeId()));
-		domain.setSala(Sala.find(dto.getSalaId()));
+		if(dto.getProfessorId() != null) domain.setProfessor(Professor.find(dto.getProfessorId()));
+		if(dto.getDisciplinaId() != null) domain.setDisciplina(Disciplina.find(dto.getDisciplinaId()));
+		if(dto.getCampusId() != null) domain.setCampus(Campus.find(dto.getCampusId()));
+		if(dto.getUnidadeId() != null) domain.setUnidade(Unidade.find(dto.getUnidadeId()));
+		if(dto.getSalaId() != null) domain.setSala(Sala.find(dto.getSalaId()));
 		return domain;
 	}
 
@@ -1255,6 +1257,11 @@ public class ConvertBeans {
 		dto.setVersion(domain.getVersion());
 		dto.setCodigo(domain.getCodigo());
 		dto.setDescricao(domain.getDescricao());
+		Professor professor = domain.getProfessor();
+		if(professor != null) {
+			dto.setProfessorId(professor.getId());
+			dto.setProfessorString(professor.getNome());
+		}
 		Disciplina disciplina = domain.getDisciplina();
 		if(disciplina != null) {
 			dto.setDisciplinaId(disciplina.getId());

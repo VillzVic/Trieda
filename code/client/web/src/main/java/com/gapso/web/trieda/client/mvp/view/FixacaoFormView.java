@@ -18,6 +18,7 @@ import com.gapso.web.trieda.client.mvp.presenter.FixacaoFormPresenter;
 import com.gapso.web.trieda.client.util.resources.Resources;
 import com.gapso.web.trieda.client.util.view.CampusComboBox;
 import com.gapso.web.trieda.client.util.view.DisciplinaComboBox;
+import com.gapso.web.trieda.client.util.view.ProfessorComboBox;
 import com.gapso.web.trieda.client.util.view.SalaComboBox;
 import com.gapso.web.trieda.client.util.view.SemanaLetivaDoCenarioGrid;
 import com.gapso.web.trieda.client.util.view.SimpleModal;
@@ -26,6 +27,7 @@ import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.DisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.FixacaoDTO;
 import com.gapso.web.trieda.shared.dtos.HorarioDisponivelCenarioDTO;
+import com.gapso.web.trieda.shared.dtos.ProfessorDTO;
 import com.gapso.web.trieda.shared.dtos.SalaDTO;
 import com.gapso.web.trieda.shared.dtos.UnidadeDTO;
 
@@ -36,6 +38,7 @@ public class FixacaoFormView extends MyComposite implements FixacaoFormPresenter
 	private FormPanel formPanel;
 	private TextField<String> codigoTF;
 	private TextField<String> descricaoTF;
+	private ProfessorComboBox professorCB;
 	private DisciplinaComboBox disciplinaCB;
 	private CampusComboBox campusCB;
 	private UnidadeComboBox unidadeCB;
@@ -44,14 +47,16 @@ public class FixacaoFormView extends MyComposite implements FixacaoFormPresenter
 	private boolean selectDefault;
 	
 	private FixacaoDTO fixacaoDTO;
+	private ProfessorDTO professorDTO;
 	private DisciplinaDTO disciplinaDTO;
 	private CampusDTO campusDTO;
 	private UnidadeDTO unidadeDTO;
 	private SalaDTO salaDTO;
 	private List<HorarioDisponivelCenarioDTO> listHorarios;
 	
-	public FixacaoFormView(FixacaoDTO fixacaoDTO, DisciplinaDTO disciplinaDTO, CampusDTO campusDTO, UnidadeDTO unidadeDTO, SalaDTO salaDTO, List<HorarioDisponivelCenarioDTO> listHorarios, Boolean selectDefault) {
+	public FixacaoFormView(FixacaoDTO fixacaoDTO, ProfessorDTO professorDTO, DisciplinaDTO disciplinaDTO, CampusDTO campusDTO, UnidadeDTO unidadeDTO, SalaDTO salaDTO, List<HorarioDisponivelCenarioDTO> listHorarios, Boolean selectDefault) {
 		this.fixacaoDTO = fixacaoDTO;
+		this.professorDTO = professorDTO;
 		this.disciplinaDTO = disciplinaDTO;
 		this.campusDTO = campusDTO;
 		this.unidadeDTO = unidadeDTO;
@@ -103,6 +108,10 @@ public class FixacaoFormView extends MyComposite implements FixacaoFormPresenter
 		descricaoTF.setMaxLength(50);
 		descricaoTF.setEmptyText("Preencha a descrição");
 		formPanel.add(descricaoTF, formData);
+		
+		professorCB = new ProfessorComboBox();
+		professorCB.setValue(professorDTO);
+		formPanel.add(professorCB, formData);
 		
 		disciplinaCB = new DisciplinaComboBox();
 		disciplinaCB.setValue(disciplinaDTO);
@@ -161,6 +170,11 @@ public class FixacaoFormView extends MyComposite implements FixacaoFormPresenter
 	@Override
 	public TextField<String> getDescricaoTextField() {
 		return descricaoTF;
+	}
+	
+	@Override
+	public ProfessorComboBox getProfessorComboBox() {
+		return professorCB;
 	}
 	
 	@Override

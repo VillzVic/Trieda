@@ -22,6 +22,7 @@ import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.DisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.FixacaoDTO;
 import com.gapso.web.trieda.shared.dtos.HorarioDisponivelCenarioDTO;
+import com.gapso.web.trieda.shared.dtos.ProfessorDTO;
 import com.gapso.web.trieda.shared.dtos.SalaDTO;
 import com.gapso.web.trieda.shared.dtos.UnidadeDTO;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -69,7 +70,7 @@ public class FixacoesPresenter implements Presenter {
 		display.getNewButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
 			@Override
 			public void componentSelected(ButtonEvent ce) {
-				Presenter presenter = new FixacaoFormPresenter(cenario, new FixacaoFormView(new FixacaoDTO(), null, null, null, null, null, true), display.getGrid());
+				Presenter presenter = new FixacaoFormPresenter(cenario, new FixacaoFormView(new FixacaoDTO(), null, null, null, null, null, null, true), display.getGrid());
 				presenter.go(null);
 			}
 		});
@@ -78,34 +79,38 @@ public class FixacoesPresenter implements Presenter {
 			public void componentSelected(ButtonEvent ce) {
 				final FixacaoDTO fixacaoDTO = display.getGrid().getGrid().getSelectionModel().getSelectedItem();
 				
+				final FutureResult<ProfessorDTO> futureProfessorDTO = new FutureResult<ProfessorDTO>();
 				final FutureResult<DisciplinaDTO> futureDisciplinaDTO = new FutureResult<DisciplinaDTO>();
 				final FutureResult<CampusDTO> futureCampusDTO = new FutureResult<CampusDTO>();
 				final FutureResult<UnidadeDTO> futureUnidadeDTO = new FutureResult<UnidadeDTO>();
 				final FutureResult<SalaDTO> futureSalaDTO = new FutureResult<SalaDTO>();
 				final FutureResult<List<HorarioDisponivelCenarioDTO>> futureHorariosDTO = new FutureResult<List<HorarioDisponivelCenarioDTO>>();
 				
+				Services.professores().getProfessor(fixacaoDTO.getProfessorId(), futureProfessorDTO);
 				Services.disciplinas().getDisciplina(fixacaoDTO.getDisciplinaId(), futureDisciplinaDTO);
 				Services.campi().getCampus(fixacaoDTO.getCampusId(), futureCampusDTO);
 				Services.unidades().getUnidade(fixacaoDTO.getUnidadeId(), futureUnidadeDTO);
 				Services.salas().getSala(fixacaoDTO.getSalaId(), futureSalaDTO);
 				Services.fixacoes().getHorariosSelecionados(fixacaoDTO, futureHorariosDTO);
 				
-				FutureSynchronizer synch = new FutureSynchronizer(futureCampusDTO, futureDisciplinaDTO, futureCampusDTO, futureUnidadeDTO, futureSalaDTO, futureHorariosDTO);
+				FutureSynchronizer synch = new FutureSynchronizer(futureProfessorDTO, futureDisciplinaDTO, futureCampusDTO, futureUnidadeDTO, futureSalaDTO, futureHorariosDTO);
 				
 				synch.addCallback(new AsyncCallback<Boolean>() {
 					@Override
 					public void onFailure(Throwable caught) {
+						caught.printStackTrace();
 						MessageBox.alert("ERRO!", "Deu falha na conexão", null);
 					}
 					@Override
 					public void onSuccess(Boolean result) {
+						ProfessorDTO professorDTO = futureProfessorDTO.result();
 						DisciplinaDTO disciplinaDTO = futureDisciplinaDTO.result();
 						CampusDTO campusDTO = futureCampusDTO.result();
 						UnidadeDTO unidadeDTO = futureUnidadeDTO.result();
 						SalaDTO salaDTO = futureSalaDTO.result();
 						List<HorarioDisponivelCenarioDTO> horariosDTOList = futureHorariosDTO.result();
 						
-						Presenter presenter = new FixacaoFormPresenter(cenario, new FixacaoFormView(fixacaoDTO, disciplinaDTO, campusDTO, unidadeDTO, salaDTO, horariosDTOList, false), display.getGrid());
+						Presenter presenter = new FixacaoFormPresenter(cenario, new FixacaoFormView(fixacaoDTO, professorDTO, disciplinaDTO, campusDTO, unidadeDTO, salaDTO, horariosDTOList, false), display.getGrid());
 						presenter.go(null);
 					}
 				});
