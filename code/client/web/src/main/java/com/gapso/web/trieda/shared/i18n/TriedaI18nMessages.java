@@ -5,6 +5,7 @@ import com.google.gwt.i18n.client.Messages;
 public interface TriedaI18nMessages extends Messages {
 	
 	String excelErroArquivoInvalido(String nomeArquivo, String motivo);
+	String excelErroBD(String nomeArquivo, String motivo);
 	String excelErroImportadorNulo(String infoASerImportada);
 	String excelErroLogicoEntidadesNaoCadastradas(String nomeColuna, String linhasComErro);
 	String excelErroLogicoUnicidadeViolada(String valorRepetido, String linhasComErro);

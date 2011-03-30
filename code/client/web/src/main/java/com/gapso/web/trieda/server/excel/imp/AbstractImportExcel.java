@@ -48,8 +48,13 @@ public abstract class AbstractImportExcel<ExcelBeanType> implements IImportExcel
 		
 		Map<String,List<ExcelBeanType>> excelBeansMap = readInputStream(fileName,inputStream);
 		if (errors.isEmpty()) {
-			for (Entry<String,List<ExcelBeanType>> entry : excelBeansMap.entrySet()) {
-				processSheetContent(entry.getKey(),entry.getValue());
+			try {
+				for (Entry<String,List<ExcelBeanType>> entry : excelBeansMap.entrySet()) {
+					processSheetContent(entry.getKey(),entry.getValue());
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+				errors.add(getI18nMessages().excelErroBD(fileName,extractMessage(e)));
 			}
 		}
 		
