@@ -1,4 +1,6 @@
-#pragma once
+#ifndef _NIVEL_DIFICULDADE_H_
+#define _NIVEL_DIFICULDADE_H_
+
 #include "ofbase.h"
 
 class NivelDificuldade :
@@ -10,6 +12,11 @@ public:
    
    virtual void le_arvore(ItemNivelDificuldade& raiz);
 
-   //private:
+   void setNome(std::string s) { nome = s; }
+   std::string getNome() { return nome; }
+
+private:
    std::string nome;
 };
+
+#endif

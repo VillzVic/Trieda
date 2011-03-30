@@ -3,24 +3,19 @@
 Disciplina::Disciplina(void)
 {
    max_demanda = 0;
-   demandaTotal = 0;
+   demanda_total = 0;
    max_alunos_t = -1;
    max_alunos_p = -1;
-
    min_creds = 0;
 
    divisao_creditos = NULL;
-
    tipo_disciplina = NULL;
    nivel_dificuldade = NULL;
 
-   //demanda_total = -1;
    max_demanda = -1;
    num_turmas = -1;
    min_creds = -1;
    max_creds = -1;
-
-   //foi_dividida = false;
 }
 
 Disciplina::~Disciplina(void)

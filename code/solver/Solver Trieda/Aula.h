@@ -2,9 +2,11 @@
 #define _AULA_H_
 
 #include <vector>
+#include "GGroup.h"
 
-#include "disciplina.h"
-#include "sala.h"
+#include "Disciplina.h"
+#include "Sala.h"
+#include "Oferta.h"
 #include "AlocacaoAula.h"
 
 class Aula
@@ -41,7 +43,7 @@ public:
          ((turma < right.getTurma()) &&
          (disciplina < right.getDisciplina()) &&
          (sala < right.getSala()) &&
-         (diaSemana < right.getDiaSemana()) &&
+         (dia_semana < right.getDiaSemana()) &&
          (creditos_teoricos < right.getCreditosTeoricos()) &&
          (creditos_praticos < right.getCreditosPraticos()));
    }
@@ -52,17 +54,19 @@ public:
          ((turma == right.getTurma()) &&
          (disciplina == right.getDisciplina()) &&
          (sala == right.getSala()) &&
-         (diaSemana == right.getDiaSemana()) &&
+         (dia_semana == right.getDiaSemana()) &&
          (creditos_teoricos == right.getCreditosTeoricos()) &&
          (creditos_praticos == right.getCreditosPraticos()));
    }
+
+   GGroup< Oferta * > ofertas;
 
 private:
    int oferta_curso_campus_id;
    int turma;
    Disciplina* disciplina;
    Sala* sala;
-   int diaSemana;
+   int dia_semana;
    int quantidade;
    int creditos_teoricos;
    int creditos_praticos;

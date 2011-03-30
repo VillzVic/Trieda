@@ -7,7 +7,12 @@ class TipoCurso :
 public:
    TipoCurso(void);
    ~TipoCurso(void);
+
    virtual void le_arvore(ItemTipoCurso& elem);
-//private:
+
+   void setNome(std::string s) { nome  = s; }
+   std::string getNome() const { return nome; }
+
+private:
    std::string nome;
 };

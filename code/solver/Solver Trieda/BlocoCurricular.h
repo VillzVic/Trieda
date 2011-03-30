@@ -1,5 +1,8 @@
-#pragma once
+#ifndef _BLOCO_CURRICULAR_H_
+#define _BLOCO_CURRICULAR_H_
+
 #include "ofbase.h"
+#include "GGroup.h"
 
 #include "Curso.h"
 #include "Disciplina.h"
@@ -16,8 +19,8 @@ public:
    BlocoCurricular(void);
    ~BlocoCurricular(void);
 
-   Curso* curso;
-   Campus* campus;
+   Curso * curso;
+   Campus * campus;
    Curriculo * curriculo;
 
    GGroup<Disciplina*> disciplinas;
@@ -36,3 +39,5 @@ private:
    int periodo;
    int total_turmas;
 };
+
+#endif

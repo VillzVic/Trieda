@@ -43,10 +43,6 @@ private:
 	double totalViolacaoRestricaoFixacao;
 
 	// -----------------------------------------------------------
-	// Avaliação de violações de tempo de deslocamento
-	// entre campus e/ou unidades ocorreram na solução,
-	// armazenando o total de tempo ocorrido nessas violações
-	// -----------------------------------------------------------
 	// Avaliação do deslocamento do professor (entre
 	// unidades e/ou campus) na solução operacional dada
 	// -----------------------------------------------------------
@@ -54,11 +50,22 @@ private:
 	// do item do critério de avaliação no Product Backlog,
 	// para evitar mal entendimento do significado das variáveis
 	// -----------------------------------------------------------
-	void calculaViolacoesDescolamento(SolucaoOperacional &);
-	int totalViolacoesDescolamento; // TRIEDA-739
-	double totalTempoDescolamento; // TRIEDA-740
+	void calculaDescolamentoProfessor(SolucaoOperacional &);
 	int totalViolacoesDeslocamentoProfessor; // TRIEDA-776
-	int totalDeslocamentosProfessor; // TRIEDA-777
+	int totalDeslocamentosProfessor;         // TRIEDA-777
+
+	// -----------------------------------------------------------
+	// Avaliação de violações de tempo de deslocamento
+	// entre campus e/ou unidades ocorreram na solução,
+	// em relação a cada bloco/sub-bloco curricular
+	// -----------------------------------------------------------
+	// Os comentário ao lado da variáveis referem-se ao número
+	// do item do critério de avaliação no Product Backlog,
+	// para evitar mal entendimento do significado das variáveis
+	// -----------------------------------------------------------
+	void calculaDescolamentoBlocoCurricular(SolucaoOperacional &);
+	int totalViolacoesDescolamento; // TRIEDA-739
+	double totalTempoDescolamento;  // TRIEDA-740
 
 	// -----------------------------------------------------------
 	// Avaliação de gap's nos horários dos professores
@@ -181,6 +188,11 @@ private:
 	// Retorna o curso com o id informado
 	// -----------------------------------------------------------
 	Curso* procuraCurso(int, GGroup<Curso*>);
+
+	// -----------------------------------------------------------
+	// Ordena um GGroup de aulas
+	// -----------------------------------------------------------
+	vector<Aula*> retornaVectorAulasOrdenado(GGroup< Aula * >);
 	//--------------------------------------------------------------------//
 };
 

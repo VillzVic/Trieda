@@ -1,4 +1,5 @@
 #include <cmath>
+#include <vector>
 #include <map>
 
 #include "Avaliador.h"
@@ -61,7 +62,8 @@ double Avaliador::avaliaSolucao(SolucaoOperacional & solucao)
 {
 	// Chamada dos métodos que fazem a avaliação da solução
 	calculaViolacaoRestricaoFixacao(solucao);
-	calculaViolacoesDescolamento(solucao);
+	calculaDescolamentoProfessor(solucao);
+	calculaDescolamentoBlocoCurricular(solucao);
 	calculaGapsHorariosProfessores(solucao);
 	avaliacaoCustoCorpoDocente(solucao);
 	violacoesCargasHorarias(solucao);
@@ -143,10 +145,8 @@ void Avaliador::calculaViolacaoRestricaoFixacao(SolucaoOperacional & solucao)
 	totalViolacaoRestricaoFixacao = numViolacoes;
 }
 
-void Avaliador::calculaViolacoesDescolamento(SolucaoOperacional & solucao)
+void Avaliador::calculaDescolamentoProfessor(SolucaoOperacional & solucao)
 {
-	int violacoes_deslocamento = 0; // TRIEDA-739
-	double tempo_deslocamento = 0.0; // TRIEDA-740
 	int violacoes_deslocamento_professor = 0; // TRIEDA-776
 	int num_deslocamentos_professor = 0; // TRIEDA-777
 
@@ -183,13 +183,19 @@ void Avaliador::calculaViolacoesDescolamento(SolucaoOperacional & solucao)
 		// campus diferentes para o professor atual
 		num_desloc_professor_temp = 0;
 
+		// Inicializa o índice do horário anterior
+		indice_horario_anterior = 0;
+
 		// Para cada par de aulas consecutivas de um determinado
 		// professor, no mesmo dia da semana, verifica-se se houve
 		// um deslocamento acima do desejado entre uma sala e outra
 		for (unsigned int j = 0; j < solucao.getMatrizAulas()->at(i)->size(); j++)
 		{
+			// O índice 'j' corresponde à coluna da matriz
+			indice_horario_atual = j;
+
 			// Recupera o objeto 'aula' atual
-			aula_atual = solucao.getMatrizAulas()->at(i)->at(j);
+			aula_atual = solucao.getMatrizAulas()->at(i)->at(indice_horario_atual);
 
 			// O professor não teve aula atribuída nesse horário
 			if (aula_atual == NULL || aula_atual->eVirtual() == true)
@@ -197,73 +203,39 @@ void Avaliador::calculaViolacoesDescolamento(SolucaoOperacional & solucao)
 				continue;
 			}
 
-			// O índice 'j' corresponde à coluna da matriz
-			indice_horario_atual = j;
+			// Recupera o objeto 'aula' anterior
+			aula_anterior = solucao.getMatrizAulas()->at(i)->at(indice_horario_anterior);
+			if (aula_anterior == NULL || aula_anterior->eVirtual() == true)
+			{
+				continue;
+			}
 
 			// Unidade da sala atual
 			id_unidade_atual = aula_atual->getSala()->getIdUnidade();
 			unidade_atual = solucao.getProblemData()->refUnidade[id_unidade_atual];
 
-			// Unidade da sala anterior
-			if (unidade_anterior != NULL)
-			{
-				id_unidade_anterior = unidade_anterior->getId();
-				unidade_anterior = solucao.getProblemData()->refUnidade[id_unidade_anterior];
-			}
-
 			// Campus da sala atual
 			id_campus_atual = unidade_atual->getIdCampus();
 			campus_atual = solucao.getProblemData()->refCampus[id_campus_atual];
 
-			// Campus da sala anterior
-			if (campus_anterior != NULL)
-			{
-				id_campus_anterior = campus_anterior->getId();
-				campus_anterior = solucao.getProblemData()->refCampus[id_campus_anterior];
-			}
-
 			// Verifica se houve violação no deslocamento viável
-			if (aula_anterior != NULL)
+			// Verifica se as aulas são em um mesmo dia da semana
+			if (aula_anterior->getDiaSemana() == aula_atual->getDiaSemana())
 			{
-				// Verifica se as aulas são em um mesmo dia da semana
-				if (aula_anterior->getDiaSemana() == aula_atual->getDiaSemana())
+				// O professor teve que se deslocar entre CAMPUS diferentes
+				// Obs.: Não está sendo considerado o deslocamento entre UNIDADES
+				if (id_campus_atual != id_campus_anterior)
 				{
-					// Tempo de deslocamento entre uma aula e outra
-					tempo_minimo = calculaTempoEntreCampusUnidades(solucao,
-						campus_atual, campus_anterior, unidade_atual, unidade_anterior);
+					// Essa variável guarda apenas os
+					// deslocamentos de um único professor,
+					// para verificar se excedeu o limite permitido
+					// (Será utilizado no critério n° 3)
+					num_desloc_professor_temp++;
 
-					// Tempo existente entre as aulas 'aula_anterior' e 'aula_atual'
-					tempo_disponivel = (indice_horario_atual - indice_horario_anterior) * (MINUTOS_POR_HORARIO);
-
-					// Verifica se ocorreu a violação de tempo mínimo
-					// necessário para se deslocar entre campus/unidades
-					if (tempo_disponivel < tempo_minimo)
-					{
-						// Critério de avaliação n° 1:
-						// Número de violações ocorridas
-						violacoes_deslocamento++;
-					}
-
-					// O professor teve que se deslocar entre CAMPUS diferentes
-					// Obs.: Não está sendo considerado o deslocamento entre UNIDADES
-					if (id_campus_atual != id_campus_anterior)
-					{
-						// Essa variável guarda apenas os
-						// deslocamentos de um único professor,
-						// para verificar se excedeu o limite permitido
-						// (Será utilizado no critério n° 3)
-						num_desloc_professor_temp++;
-
-						// Critério de avaliação n° 2:
-						// Tempo excedido entre o mínimo de tempo necessário
-						// e o tempo disponível entre uma aula e outra
-						tempo_deslocamento += abs( tempo_minimo - tempo_disponivel );
-
-						// Critério de avaliação n° 4:
-						// Número de deslocamentos do professor
-						// Obs.: Armazena TODOS os deslocamentos ocorridos
-						num_deslocamentos_professor++;
-					}
+					// Critério de avaliação n° 4:
+					// Número de deslocamentos do professor
+					// Obs.: Armazena TODOS os deslocamentos ocorridos
+					num_deslocamentos_professor++;
 				}
 			}
 
@@ -288,6 +260,160 @@ void Avaliador::calculaViolacoesDescolamento(SolucaoOperacional & solucao)
 
 	// Total de deslocamentos entre campus diferentes pelos professores
 	totalDeslocamentosProfessor = num_deslocamentos_professor;
+}
+
+void Avaliador::calculaDescolamentoBlocoCurricular(SolucaoOperacional& solucao)
+{
+	int violacoes_deslocamento = 0;  // TRIEDA-739
+	double tempo_deslocamento = 0.0; // TRIEDA-740
+
+	unsigned int i, j;
+
+	Aula * aula = NULL;
+	Curso * curso = NULL;
+	Disciplina * disciplina = NULL;
+	Oferta * oferta = NULL;
+	BlocoCurricular * bloco = NULL;
+
+	int id_unidade_atual = -1;
+	int id_unidade_anterior = -1;
+	int id_campus_atual = -1;
+	int id_campus_anterior = -1;
+
+	Unidade* unidade_atual = NULL;
+	Unidade* unidade_anterior = NULL;
+	Campus* campus_atual = NULL;
+	Campus* campus_anterior = NULL;
+	Aula* aula_atual = NULL;
+	Aula* aula_anterior = NULL;
+
+	// Dado um bloco curricular, recupera-se as aulas desse bloco
+	std::map< BlocoCurricular * /*bloco curricular*/, GGroup<Aula*>/*aulas*/ > mapBlocoAulas;
+	for (i = 0; i < solucao.getMatrizAulas()->size(); i++)
+	{
+		for (j = 0; j < solucao.getMatrizAulas()->at(i)->size(); j++)
+		{
+			// Aula atual
+			aula = solucao.getMatrizAulas()->at(i)->at(j);
+			if (aula == NULL || aula->eVirtual() == true)
+			{
+				continue;
+			}
+
+			// Disciplina correspondente à aula atual
+			disciplina = aula->getDisciplina();
+
+			ITERA_GGROUP(it_oferta, aula->ofertas, Oferta)
+			{
+				// Oferta atendida pela aula
+				oferta = *(it_oferta);
+
+				// Curso correspondente a essa oferta
+				curso = oferta->curso;
+
+				// Bloco curricular que corresponde a esse par curso/disciplina
+				bloco = solucao.getProblemData()->
+					mapCursoDisciplina_BlocoCurricular[ std::make_pair(curso, disciplina) ];
+
+				// Adicona essa aula no conjunto de aulas que
+				// estão relacionadas ao bloco curricular atual
+				GGroup< Aula * > aulas = mapBlocoAulas[ bloco ];
+				aulas.add( aula );
+			}
+		}
+	}
+
+	// Ordena as aulas de cada bloco curricular
+	std::map< BlocoCurricular * , vector<Aula*> > mapBlocoAulas_Ordenado;
+	std::map< BlocoCurricular * , GGroup<Aula*> > ::iterator it_map
+		= mapBlocoAulas.begin();
+	for (; it_map != mapBlocoAulas.end(); it_map++)
+	{
+		bloco = it_map->first;
+		GGroup< Aula * > aulas = it_map->second;
+
+		mapBlocoAulas_Ordenado[ bloco ] = retornaVectorAulasOrdenado( aulas );
+	}
+
+	double tempo_minimo = 0.0;
+	double tempo_disponivel = 0.0;
+	int indice_horario_anterior = 0;
+	int indice_horario_atual = 0;
+
+	// Verificar violações de deslocamento
+	// entre as aulas de um memso bloco curricular
+	std::map< BlocoCurricular * , vector< Aula * > >::iterator it_bloco_aulas
+		= mapBlocoAulas_Ordenado.begin();
+	for (; it_bloco_aulas != mapBlocoAulas_Ordenado.end(); it_bloco_aulas++)
+	{
+		// Recupera o bloco curricular
+		bloco = it_bloco_aulas->first;
+
+		// Recupera as aulas desse bloco
+		vector< Aula * > aulas = it_bloco_aulas->second;
+
+		// Inicializa o índice do horário anterior
+		indice_horario_anterior = 0;
+
+		for (i = 1; i < aulas.size(); i++)
+		{
+			// Índice da aula atual no vector
+			indice_horario_atual = i;
+
+			// Recupera a aula atual
+			aula_atual = aulas.at(indice_horario_atual);
+			if (aula_atual == NULL || aula_atual->eVirtual() == true)
+			{
+				continue;
+			}
+
+			// Recupera a aula anterior
+			aula_anterior = aulas.at(indice_horario_anterior);
+			if (aula_anterior == NULL || aula_anterior->eVirtual() == true)
+			{
+				continue;
+			}
+
+			// Unidade da sala atual
+			id_unidade_atual = aula_atual->getSala()->getIdUnidade();
+			unidade_atual = solucao.getProblemData()->refUnidade[id_unidade_atual];
+
+			// Campus da sala atual
+			id_campus_atual = unidade_atual->getIdCampus();
+			campus_atual = solucao.getProblemData()->refCampus[id_campus_atual];
+
+			// Verifica se houve violação no deslocamento viável
+			// Verifica se as aulas são em um mesmo dia da semana
+			if (aula_anterior->getDiaSemana() == aula_atual->getDiaSemana())
+			{
+				// Tempo de deslocamento entre uma aula e outra
+				tempo_minimo = calculaTempoEntreCampusUnidades(solucao,
+					campus_atual, campus_anterior, unidade_atual, unidade_anterior);
+
+				// Tempo existente entre as aulas 'aula_anterior' e 'aula_atual'
+				tempo_disponivel = (indice_horario_atual - indice_horario_anterior) * (MINUTOS_POR_HORARIO);
+
+				// Verifica se ocorreu a violação de tempo mínimo
+				// necessário para se deslocar entre campus/unidades
+				if (tempo_disponivel < tempo_minimo)
+				{
+					// Critério de avaliação n° 1:
+					// Número de violações ocorridas de tempo viável
+					violacoes_deslocamento++;
+				}
+
+				// Critério de avaliação n° 2:
+				// Tempo de deslocamento entre uma aula e outra
+				tempo_deslocamento += abs( tempo_minimo - tempo_disponivel );
+			}
+
+			// Atualiza os ponteiros para a próxima iteração
+			campus_anterior = campus_atual;
+			unidade_anterior = unidade_atual;
+			aula_anterior = aula_atual;
+			indice_horario_anterior = indice_horario_atual;
+		}
+	}
 
 	// Total de deslocamentos entre campus e/ou
 	// unidades que excederam o tempo mínimo necessário
@@ -296,6 +422,54 @@ void Avaliador::calculaViolacoesDescolamento(SolucaoOperacional & solucao)
 	// Tempo total de deslocamentos entre campus e/ou
 	// unidades que excederam o tempo mínimo necessário
 	totalTempoDescolamento = tempo_deslocamento;
+}
+
+// Método que compara duas aulas, de acordo
+// com o dia da semana e o horário da aula
+bool ordenaAulas(Aula * aula1, Aula * aula2)
+{
+	if (aula1 == NULL && aula2 != NULL)
+	{
+		return true;
+	}
+
+	if (aula1 != NULL && aula2 == NULL)
+	{
+		return false;
+	}
+
+	if (aula1 == NULL && aula2 == NULL)
+	{
+		return false;
+	}
+
+	// Primeiro critério: dia da semana
+	if (aula1->getDiaSemana() < aula2->getDiaSemana())
+	{
+		return true;
+	}
+	else if (aula1->getDiaSemana() > aula2->getDiaSemana())
+	{
+		return false;
+	}
+
+	// TODO -- Segundo critério: horário da aula
+
+	return false;
+}
+
+
+vector< Aula * > Avaliador::retornaVectorAulasOrdenado(GGroup<Aula*> aulas)
+{
+	std::vector< Aula * > aulas_ordenado;
+	ITERA_GGROUP(it_aula, aulas, Aula)
+	{
+		aulas_ordenado.push_back(*it_aula);
+	}
+
+	std::sort(aulas_ordenado.begin(), aulas_ordenado.end(), ordenaAulas);
+
+	return aulas_ordenado;
 }
 
 double Avaliador::calculaTempoEntreCampusUnidades(SolucaoOperacional& solucao,

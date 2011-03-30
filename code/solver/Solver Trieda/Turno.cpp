@@ -12,7 +12,7 @@ void Turno::le_arvore(ItemTurno& elem)
 {
 	this->setId( elem.id() );
 	nome = elem.nome();
-	tempoAula = elem.tempoAula();
+	tempo_aula = elem.tempoAula();
 
 	ITERA_SEQ(it_horarios,elem.HorariosAula(),HorarioAula)
 	{

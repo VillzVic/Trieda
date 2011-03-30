@@ -1,9 +1,9 @@
 #include "ProblemDataLoader.h"
 #include "ProblemSolution.h"
 #include "TRIEDA-InputXSD.h"
-#include <iostream>
+#include "GGroup.h"
 
-using namespace std;
+#include <iostream>
 
 ProblemDataLoader::ProblemDataLoader( char *inputFile, ProblemData* data )
 {
@@ -130,7 +130,7 @@ void ProblemDataLoader::relacionaCredsRegras()
 {
    ITERA_GGROUP(it_Regra,problemData->regras_div,DivisaoCreditos)
    { 
-      problemData->creds_Regras[it_Regra->creditos].add(*it_Regra);
+	   problemData->creds_Regras[it_Regra->getCreditos()].add(*it_Regra);
    }
 }
 
@@ -174,9 +174,9 @@ void ProblemDataLoader::carregaDiasLetivosCampusUnidadeSala()
             {
                ITERA_GGROUP(it_Creds_Disp,it_Sala->creditos_disponiveis,CreditoDisponivel)
                {
-                  if(it_Creds_Disp->max_creditos > 0)
+                  if(it_Creds_Disp->getMaxCreditos() > 0)
                   { 
-                     it_Sala->diasLetivos.add(it_Creds_Disp->dia_semana);
+                     it_Sala->diasLetivos.add(it_Creds_Disp->getDiaSemana());
                   }
                }
             }
@@ -387,16 +387,16 @@ void ProblemDataLoader::criaConjuntoSalasUnidade()
 
 void ProblemDataLoader::estabeleceDiasLetivosBlocoCampus()
 {
-   ITERA_GGROUP(it_Bloco_Curric,problemData->blocos,BlocoCurricular)
+   ITERA_GGROUP(it_Bloco_Curric, problemData->blocos, BlocoCurricular)
    {
-      ITERA_GGROUP_N_PT(it_Dia_Letivo,it_Bloco_Curric->diasLetivos,int)
+      ITERA_GGROUP_N_PT(it_Dia_Letivo, it_Bloco_Curric->diasLetivos, int)
       {
          if(it_Bloco_Curric->campus->diasLetivos.find
             (*it_Dia_Letivo) != it_Bloco_Curric->campus->diasLetivos.end())
          {
             problemData->bloco_Campus_Dias
-               [std::make_pair(it_Bloco_Curric->getId(),it_Bloco_Curric->campus->getId())].add
-               (*it_Dia_Letivo);
+               [std::make_pair(it_Bloco_Curric->getId(),
+							   it_Bloco_Curric->campus->getId())].add(*it_Dia_Letivo);
          }
          else
          {
@@ -406,7 +406,9 @@ void ProblemDataLoader::estabeleceDiasLetivosBlocoCampus()
             Ou seja, essa checagem só serve para quando se tem 1 campus. Se tiver mais de um, quando cair aqui,
             nada pode-se afirmar sobre a corretude da instância.
             */
-            std::cout << "Warnning: Bloco Curricular e Campus Incompativeis. (ProblemDataLoader::estabeleceDiasLetivosBlocoCampus())" << std::endl;
+            std::cout << "Warnning: Bloco Curricular e Campus Incompativeis. "
+				<< "(ProblemDataLoader::estabeleceDiasLetivosBlocoCampus())" << std::endl;
+
             exit(1);
          }
       }
@@ -848,8 +850,8 @@ void ProblemDataLoader::divideDisciplinas()
                tur = new Turno();
 
                tur->setId(it_hr->turno->getId());
-               tur->nome = it_hr->turno->nome;
-               tur->tempoAula = it_hr->turno->tempoAula;
+               tur->setNome( it_hr->turno->getNome() );
+			   tur->setTempoAula( it_hr->turno->getTempoAula() );
 
                // >>> >>> >>> Copiando HorariosAula
                HorarioAula *hr_aula;
@@ -1004,20 +1006,20 @@ void ProblemDataLoader::divideDisciplinas()
          ITERA_GGROUP(it_dem,problemData->demandas,Demanda)
          {
             int num_vezes_ecncontrado = 0;
-            if( it_dem->disciplina_id == it_disc->getId())
+            if( it_dem->getDisciplinaId() == it_disc->getId())
             {
                nova_demanda = new Demanda();
 
-               nova_demanda->oferta_id = it_dem->oferta_id;
-               nova_demanda->disciplina_id = nova_disc->getId();
-               nova_demanda->quantidade = it_dem->quantidade;
+			   nova_demanda->setOfertaId( it_dem->getOfertaId() );
+               nova_demanda->setDisciplinaId( nova_disc->getId() );
+			   nova_demanda->setQuantidade( it_dem->getQuantidade() );
 
                problemData->demandas.add(nova_demanda);
                if(num_vezes_ecncontrado > 0)
                {
-                  std::cout << "POSSIVEL ERRO EM <divideDisciplinas()> -> " << 
-                     "Encontrei mais de uma demanda para uma dada disciplina de um " <<
-                     "dado curso em um determinado campus." << std::endl;
+                  std::cout << "POSSIVEL ERRO EM <divideDisciplinas()> -> "
+							<< "Encontrei mais de uma demanda para uma dada disciplina de um "
+							<< "dado curso em um determinado campus." << std::endl;
 
                   getchar();
                }
@@ -1026,8 +1028,7 @@ void ProblemDataLoader::divideDisciplinas()
             }
          }
 
-         GGroup<int>::iterator itDiasLetivosDiscs =
-            it_disc->diasLetivos.begin();
+         GGroup<int>::iterator itDiasLetivosDiscs = it_disc->diasLetivos.begin();
          for(; itDiasLetivosDiscs != it_disc->diasLetivos.end(); itDiasLetivosDiscs++)
          {
 			 nova_disc->diasLetivos.add(*itDiasLetivosDiscs);
@@ -1112,7 +1113,7 @@ void ProblemDataLoader::gera_refs()
             ITERA_GGROUP(it_credito,it_salas->creditos_disponiveis,
                CreditoDisponivel) 
             {
-               find_and_set(it_credito->turno_id,
+               find_and_set(it_credito->getTurnoId(),
                   problemData->calendario->turnos,
                   it_credito->turno);
             }
@@ -1240,11 +1241,11 @@ void ProblemDataLoader::gera_refs()
 
    ITERA_GGROUP(it_dem, problemData->demandas, Demanda) 
    {
-      find_and_set(it_dem->oferta_id,
+      find_and_set(it_dem->getOfertaId(),
          problemData->ofertas,
          it_dem->oferta);
 
-      find_and_set(it_dem->disciplina_id,
+      find_and_set(it_dem->getDisciplinaId(),
          problemData->disciplinas,
          it_dem->disciplina);
    }
@@ -1401,12 +1402,25 @@ void ProblemDataLoader::cria_blocos_curriculares()
       }
    }
 
-   /* Setando os dias letivos de cada bloco. */
-   ITERA_GGROUP(it_bc,problemData->blocos,BlocoCurricular)
+   Curso * curso = NULL;
+   BlocoCurricular * bloco = NULL;
+   Disciplina * disciplina = NULL;
+
+   // Setando os dias letivos de cada bloco.
+   ITERA_GGROUP(it_bc, problemData->blocos, BlocoCurricular)
    {
-      ITERA_GGROUP(it_Disc,it_bc->disciplinas,Disciplina)
+	  bloco = *(it_bc);
+	  curso = it_bc->curso;
+
+      ITERA_GGROUP(it_Disc, it_bc->disciplinas, Disciplina)
       {
-         ITERA_GGROUP_N_PT(it_Dias_Letivos,it_Disc->diasLetivos,int)
+		 disciplina = *(it_Disc);
+
+		 // Associa o curso correspondente ao bloco atual
+		 // e a disciplina 'it_disc' ao bloco curricular corrente
+		 problemData->mapCursoDisciplina_BlocoCurricular[ std::make_pair(curso, disciplina) ] = bloco;
+
+         ITERA_GGROUP_N_PT(it_Dias_Letivos, it_Disc->diasLetivos, int)
          { 
             it_bc->diasLetivos.add(*it_Dias_Letivos);
          }
@@ -1584,7 +1598,7 @@ void ProblemDataLoader::calculaDemandas()
 {
    ITERA_GGROUP(it_dem,problemData->demandas,Demanda)
    {
-      int dem = it_dem->quantidade;
+      int dem = it_dem->getQuantidade();
 
       it_dem->disciplina->setMaxDemanda(
          std::max(it_dem->disciplina->getMaxDemanda(),dem));
@@ -1596,7 +1610,7 @@ void ProblemDataLoader::calculaDemandas()
          it_dem->disciplina->getId(),
          it_dem->oferta->campus->getId());
 
-      // inicializa com zero caso ainda não exista;
+      // Inicializa com zero caso ainda não exista;
       if(problemData->demandas_campus.find(dc) !=
          problemData->demandas_campus.end())
          problemData->demandas_campus[dc] = 0;
@@ -1608,16 +1622,14 @@ void ProblemDataLoader::calculaDemandas()
 // TRIEDA-416
 void ProblemDataLoader::estima_turmas()
 {
-   /* Estimando o número máximo de turmas de cada disciplina de acordo com o seguinte cálculo:
+   // Estimando o número máximo de turmas de cada
+   // disciplina de acordo com o seguinte cálculo:
 
-   numTurmasDisc = demDisc / tamMedSalasCP
+   // numTurmasDisc = demDisc / tamMedSalasCP
 
-   onde:
-
-   demDisc -> representa a demanda total de uma dada disciplina.
-   tamMedSalasCP -> representa o tamanho médio das salas de um campus.
-
-   */
+   // Onde:
+   // demDisc -> representa a demanda total de uma dada disciplina.
+   // tamMedSalasCP -> representa o tamanho médio das salas de um campus.
 
    int anterior = 0;
    std::map<int/*Id Campus*/,GGroup<int>/*Id Discs*/>::iterator itCPDiscs =

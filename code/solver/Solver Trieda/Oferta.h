@@ -1,5 +1,8 @@
-#pragma once
+#ifndef _OFERTA_H_
+#define _OFERTA_H_
+
 #include "ofbase.h"
+
 #include "Curriculo.h"
 #include "Curso.h"
 #include "Turno.h"
@@ -11,12 +14,6 @@ class Oferta :
 public:
    Oferta(void);
    ~Oferta(void);
-
-   // Dados pré-processados
-   Curriculo* curriculo;
-   Curso* curso;
-   Turno* turno;
-   Campus* campus;
 
    void le_arvore(ItemOfertaCurso& elem);
 
@@ -30,9 +27,17 @@ public:
    int getTurnoId() { return turno_id; }
    int getCampusId() { return campus_id; }
 
+   // Dados pré-processados
+   Curriculo * curriculo;
+   Curso * curso;
+   Turno * turno;
+   Campus * campus;
+
 private:
    int curriculo_id;
    int curso_id;
    int turno_id;
    int campus_id;
 };
+
+#endif

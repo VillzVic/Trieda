@@ -90,9 +90,9 @@ void Sala::construirCreditosHorarios(ItemSala& elem, std::string modo_operacao, 
 			{
 				CreditoDisponivel* credito_disp = new CreditoDisponivel();
 
-				credito_disp->turno_id = it_cred->turno_id;
-				credito_disp->dia_semana = it_cred->dia_semana;
-				credito_disp->max_creditos = it_cred->max_creditos;
+				credito_disp->setTurnoId( it_cred->getTurnoId() );
+				credito_disp->setDiaSemana( it_cred->getDiaSemana() );
+				credito_disp->setMaxCreditos( it_cred->getMaxCreditos() );
 
 				creditos_disponiveis.add(credito_disp);
 			}
@@ -157,9 +157,9 @@ GGroup<CreditoDisponivel*> Sala::converteHorariosParaCreditos()
 	{
 		CreditoDisponivel* credito = new CreditoDisponivel();
 
-		credito->turno_id = it_converte->getTurno();
-		credito->dia_semana = it_converte->getDiaSemana();
-		credito->max_creditos = it_converte->horarios.size();
+		credito->setTurnoId( it_converte->getTurno() );
+		credito->setDiaSemana( it_converte->getDiaSemana() );
+		credito->setMaxCreditos( it_converte->horarios.size() );
 
 		creditosDisponiveis.add( credito );
 	}
@@ -172,9 +172,9 @@ int Sala::max_creds(int dia)
    int creds = 0;
    ITERA_GGROUP(it_creds, creditos_disponiveis, CreditoDisponivel)
    {
-      if (it_creds->dia_semana == dia)
+      if (it_creds->getDiaSemana() == dia)
 	  {
-         creds += it_creds->max_creditos;
+         creds += it_creds->getMaxCreditos();
       }
    }
 

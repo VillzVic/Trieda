@@ -1,5 +1,9 @@
-#pragma once
+#ifndef _CURSO_H_
+#define _CURSO_H_
+
 #include "ofbase.h"
+#include "GGroup.h"
+
 #include "TipoCurso.h"
 #include "Curriculo.h"
 
@@ -9,14 +13,16 @@ class Curso :
 public:
    Curso(void);
    ~Curso(void);
+
    virtual void le_arvore(ItemCurso& elem);
 
-   GGroup<int> area_ids;
-   GGroup<Curriculo*> curriculos;
-   TipoCurso* tipo_curso;
+   GGroup< int > area_ids;
+   GGroup< Curriculo * > curriculos;
 
-   std::pair<int,double> regra_min_mestres;
-   std::pair<int,double> regra_min_doutores;
+   TipoCurso * tipo_curso;
+
+   std::pair<int, double> regra_min_mestres;
+   std::pair<int, double> regra_min_doutores;
 
    void setCodigo(std::string s) { codigo = s; }
    void setTipoId(int v) { tipo_id = v; }
@@ -37,3 +43,5 @@ private:
    int qtd_max_prof_disc;
    bool mais_de_uma;
 };
+
+#endif

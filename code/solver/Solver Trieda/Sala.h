@@ -2,6 +2,8 @@
 #define _SALA_H_
 
 #include "ofbase.h"
+#include "GGroup.h"
+
 #include "TipoSala.h"
 #include "Horario.h"
 #include "CreditoDisponivel.h"
@@ -80,11 +82,6 @@ private:
 
 	// Dado um conjunto de horários, retorna o conjunto de créditos correspondentes
 	GGroup<CreditoDisponivel*> converteHorariosParaCreditos();
-
-    // Estrutura utilizada no pós-processamento de dados para auxiliar
-	// a alocação dos créditos indicados pelas  variáveis x às salas.
-    //std::map<int/*dia*/,int/*credsLivres*/> credsLivres;
-    //std::vector<int/*credsLivres*/> credsLivres;
 };
 
 #endif

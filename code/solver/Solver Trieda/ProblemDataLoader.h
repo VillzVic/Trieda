@@ -1,5 +1,5 @@
-#ifndef PROBLEMDATALOADER_H
-#define PROBLEMDATALOADER_H
+#ifndef _PROBLEM_DATA_LOADER_H_
+#define _PROBLEM_DATA_LOADER_H_
 
 /* O XSD Code Synthesis gera uma estrutura de dados para listas de
 objetos que é um pouco estranha e contra-intuitiva. A macro abaixo
@@ -34,7 +34,6 @@ public:
 
    /* Cria os Conjuntos de Salas para cada Unidade. */
    void criaConjuntoSalasUnidade();
-   //void criaConjuntoSalasCampus();
 
    /* Establece os dias letivos comuns entre um bloco curricular e um campus. */
    void estabeleceDiasLetivosBlocoCampus();
@@ -142,4 +141,4 @@ private:
    void relacionaCredsRegras();
 };
 
-#endif
+#endif // _PROBLEM_DATA_LOADER_H_

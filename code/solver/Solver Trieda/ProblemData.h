@@ -1,5 +1,5 @@
-#ifndef PROBLEMDATA_H
-#define PROBLEMDATA_H
+#ifndef _PROBLEM_DATA_H_
+#define _PROBLEM_DATA_H_
 
 #include "GGroup.h"
 #include "Calendario.h"
@@ -22,10 +22,7 @@
 #include "BlocoCurricular.h"
 #include "AtendimentoCampusSolucao.h"
 #include "AtendimentoUnidadeSolucao.h"
-
 #include "Aula.h"
-
-//#include "ConjuntoSala.h"
 
 #include <iostream>
 
@@ -75,6 +72,9 @@ public:
    int max_horarios_professor;
 
    std::map<std::pair<Curso*,Curso*>,bool> compat_cursos;
+
+   // Dado um curso e uma disciplina, retorna o bloco curricular correspondente
+   std::map< pair<Curso*, Disciplina*> , BlocoCurricular * > mapCursoDisciplina_BlocoCurricular;
 
    // >>> 14/10/2010
    //GGroup<std::map<int/*novo_id_Disc*/,std::pair<int/*id_Disc*/,int/*id_Curriculo*/> > > relacao_disc_curriculo;
@@ -179,4 +179,4 @@ public:
    virtual void le_arvore(TriedaInput& raiz);
 };
 
-#endif
+#endif // _PROBLEM_DATA_H_

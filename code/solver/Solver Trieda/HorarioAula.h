@@ -1,8 +1,8 @@
 #ifndef _HORARIO_AULA_H_
 #define _HORARIO_AULA_H_
 
-#include "GGroup.h"
 #include "ofbase.h"
+#include "GGroup.h"
 #include "DateTime.h"
 
 class HorarioAula :
@@ -16,7 +16,7 @@ public:
 
    GGroup<int> diasSemana;
 
-   DateTime getInicio() { return inicio; }
+   DateTime getInicio() const { return inicio; }
    void setInicio(DateTime dt) { inicio = dt; }
 
 private:

@@ -676,7 +676,8 @@ void SolverMIP::converteCjtSalaEmSala()
                ITERA_GGROUP(it_Creds_Disp,it_Sala->creditos_disponiveis,CreditoDisponivel)
                { 
                   creditos_Livres_Sala[*it_Sala].push_back(
-                     std::make_pair(it_Creds_Disp->dia_semana,it_Creds_Disp->max_creditos));
+                     std::make_pair( it_Creds_Disp->getDiaSemana(),
+									 it_Creds_Disp->getMaxCreditos()) );
                }
             }
          }
@@ -2590,9 +2591,9 @@ int SolverMIP::cria_variavel_alunos(void)
          ITERA_GGROUP(itDem,problemData->demandas,Demanda)
          {
             if (itDem->disciplina->getId() == ptDisc->getId() &&
-               itDem->oferta_id == itOferta->getId())
+               itDem->getOfertaId() == itOferta->getId())
             {
-               qtdDem += itDem->quantidade;
+               qtdDem += itDem->getQuantidade();
             }
          }
 
@@ -3456,9 +3457,9 @@ int SolverMIP::cria_variavel_de_folga_demanda_disciplina()
          ITERA_GGROUP(itDem,problemData->demandas,Demanda)
          {
             if (itDem->disciplina->getId() == ptDisc->getId() &&
-               itDem->oferta_id == itOferta->getId())
+               itDem->getOfertaId() == itOferta->getId())
             {
-               qtdDem += itDem->quantidade;
+               qtdDem += itDem->getQuantidade();
             }
          }
 
@@ -6000,9 +6001,9 @@ int SolverMIP::cria_restricao_cap_aloc_dem_disc(void)
          ITERA_GGROUP(itDem,problemData->demandas,Demanda)
          {
             if (itDem->disciplina->getId() == ptDisc->getId() &&
-               itDem->oferta_id == itOferta->getId())
+               itDem->getOfertaId() == itOferta->getId())
             {
-               rhs += itDem->quantidade;
+				rhs += itDem->getQuantidade();
             }
          }
 
