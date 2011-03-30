@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
@@ -15,19 +16,23 @@ import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.CellRangeAddress;
 
+import com.gapso.trieda.domain.Cenario;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nMessages;
+import com.google.gwt.dev.util.collect.HashSet;
 
 public abstract class AbstractExportExcel implements IExportExcel {
 	
 	protected List<String> errors;
 	protected List<String> warnings;
+	private Cenario cenario;
 	private TriedaI18nConstants i18nConstants;
 	private TriedaI18nMessages i18nMessages;
 	
-	protected AbstractExportExcel(TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages) {
+	protected AbstractExportExcel(Cenario cenario, TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages) {
 		this.errors = new ArrayList<String>();
 		this.warnings = new ArrayList<String>();
+		this.cenario = cenario;
 		this.i18nConstants = i18nConstants;
 		this.i18nMessages = i18nMessages;
 	}
@@ -76,6 +81,10 @@ public abstract class AbstractExportExcel implements IExportExcel {
 		return warnings;
 	}
 	
+	protected Cenario getCenario() {
+		return cenario;
+	}
+	
 	protected TriedaI18nConstants getI18nConstants() {
 		return i18nConstants;
 	}
@@ -84,11 +93,36 @@ public abstract class AbstractExportExcel implements IExportExcel {
 		return i18nMessages;
 	}
 	
+	protected void autoSizeColumns(short firstColumn, short lastColumn, HSSFSheet sheet) {
+		for (short col = firstColumn; col <= lastColumn; col++) {
+			sheet.autoSizeColumn(col);
+		}
+	}
+	
 	protected void removeUnusedSheets(String usedSheetName, HSSFWorkbook workbook) {
 		while (workbook.getNumberOfSheets() > 1) {
 			int sheetIx = 0;
 			while (workbook.getSheetName(sheetIx).equals(usedSheetName)) sheetIx++;
 			workbook.removeSheetAt(sheetIx);
+		}
+	}
+	
+	protected void removeUnusedSheets(List<String> usedSheetsName, HSSFWorkbook workbook) {
+		Set<HSSFSheet> usedSheets = new HashSet<HSSFSheet>();
+		for (String usedSheetName : usedSheetsName) {
+			HSSFSheet sheet = workbook.getSheet(usedSheetName);
+			if (sheet != null) {
+				usedSheets.add(sheet);
+			}
+		}
+		
+		int sheetIx = 0;
+		while (workbook.getNumberOfSheets() > usedSheets.size()) {
+			HSSFSheet sheet = workbook.getSheetAt(sheetIx++);
+			if (!usedSheets.contains(sheet)) {
+				workbook.removeSheetAt(sheetIx);
+				sheetIx = 0;
+			}
 		}
 	}
 

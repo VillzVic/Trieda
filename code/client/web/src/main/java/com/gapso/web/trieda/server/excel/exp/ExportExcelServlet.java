@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.scb.gwt.web.server.i18n.GWTI18N;
 
+import com.gapso.trieda.domain.Cenario;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nMessages;
@@ -21,6 +22,7 @@ public class ExportExcelServlet extends HttpServlet {
 	
 	private static TriedaI18nMessages i18nMessages = null;
 	private static TriedaI18nConstants i18nConstants = null;
+	private static Cenario cenario = null;
 	{
 		try {
 			i18nMessages = GWTI18N.create(TriedaI18nMessages.class);
@@ -28,6 +30,8 @@ public class ExportExcelServlet extends HttpServlet {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		
+		cenario = Cenario.findMasterData();
 	}
 
 	@Override
@@ -36,7 +40,7 @@ public class ExportExcelServlet extends HttpServlet {
 		String informationToBeExported = request.getParameter(ExcelInformationType.getInformationParameterName());
 		if (!informationToBeExported.isEmpty()) {
 			// Get Excel Data
-			IExportExcel exporter = ExportExcelFactory.createExporter(informationToBeExported,i18nConstants,i18nMessages);			
+			IExportExcel exporter = ExportExcelFactory.createExporter(informationToBeExported,cenario,i18nConstants,i18nMessages);			
 			HSSFWorkbook workbook = exporter.export();
 			
 			if (exporter.getErrors().isEmpty()) {

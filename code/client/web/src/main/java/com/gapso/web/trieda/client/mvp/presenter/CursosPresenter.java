@@ -18,19 +18,23 @@ import com.gapso.web.trieda.client.mvp.view.CursoFormView;
 import com.gapso.web.trieda.client.services.CursosServiceAsync;
 import com.gapso.web.trieda.client.services.Services;
 import com.gapso.web.trieda.client.services.TiposCursosServiceAsync;
+import com.gapso.web.trieda.client.util.view.ExportExcelFormSubmit;
 import com.gapso.web.trieda.client.util.view.GTab;
 import com.gapso.web.trieda.client.util.view.GTabItem;
+import com.gapso.web.trieda.client.util.view.ImportExcelFormView;
 import com.gapso.web.trieda.client.util.view.SimpleGrid;
 import com.gapso.web.trieda.client.util.view.TipoCursoComboBox;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.CursoDTO;
 import com.gapso.web.trieda.shared.dtos.TipoCursoDTO;
+import com.gapso.web.trieda.shared.excel.ExcelInformationType;
+import com.gapso.web.trieda.shared.i18n.ITriedaI18nGateway;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
 
 public class CursosPresenter implements Presenter {
 
-	public interface Display {
+	public interface Display extends ITriedaI18nGateway {
 		Button getNewButton();
 		Button getEditButton();
 		Button getRemoveButton();
@@ -116,6 +120,20 @@ public class CursosPresenter implements Presenter {
 						Info.display("Removido", "Item removido com sucesso!");
 					}
 				});
+			}
+		});
+		display.getImportExcelButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
+			@Override
+			public void componentSelected(ButtonEvent ce) {
+				ImportExcelFormView importExcelFormView = new ImportExcelFormView(ExcelInformationType.CURSOS,display.getGrid());
+				importExcelFormView.show();
+			}
+		});
+		display.getExportExcelButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
+			@Override
+			public void componentSelected(ButtonEvent ce) {
+				ExportExcelFormSubmit e = new ExportExcelFormSubmit(ExcelInformationType.CURSOS,display.getI18nConstants(),display.getI18nMessages());
+				e.submit();
 			}
 		});
 		display.getResetBuscaButton().addSelectionListener(new SelectionListener<ButtonEvent>(){

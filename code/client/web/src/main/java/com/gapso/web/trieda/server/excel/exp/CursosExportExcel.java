@@ -7,16 +7,17 @@ import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
 import com.gapso.trieda.domain.Cenario;
-import com.gapso.trieda.domain.Sala;
+import com.gapso.trieda.domain.Curso;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nMessages;
 
-public class SalasExportExcel extends AbstractExportExcel {
+public class CursosExportExcel extends AbstractExportExcel {
 	
 	enum ExcelCellStyleReference {
 		TEXT(6,2),
-		NUMBER(6,7);
+		NUMBER_DOUBLE(6,5),
+		NUMBER_INT(6,7);
 		private int row;
 		private int col;
 		private ExcelCellStyleReference(int row, int col) {
@@ -36,25 +37,25 @@ public class SalasExportExcel extends AbstractExportExcel {
 	private String sheetName;
 	private int initialRow;
 	
-	public SalasExportExcel(Cenario cenario, TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages) {
+	public CursosExportExcel(Cenario cenario, TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages) {
 		super(cenario,i18nConstants,i18nMessages);
 		this.cellStyles = new HSSFCellStyle[ExcelCellStyleReference.values().length];
 		this.removeUnusedSheets = true;
-		this.sheetName = ExcelInformationType.SALAS.getSheetName();
+		this.sheetName = ExcelInformationType.CURSOS.getSheetName();
 		this.initialRow = 6;
 	}
 	
-	public SalasExportExcel(boolean removeUnusedSheets, Cenario cenario, TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages) {
+	public CursosExportExcel(boolean removeUnusedSheets, Cenario cenario, TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages) {
 		super(cenario,i18nConstants,i18nMessages);
 		this.cellStyles = new HSSFCellStyle[ExcelCellStyleReference.values().length];
 		this.removeUnusedSheets = removeUnusedSheets;
-		this.sheetName = ExcelInformationType.SALAS.getSheetName();
+		this.sheetName = ExcelInformationType.CURSOS.getSheetName();
 		this.initialRow = 6;
 	}
 	
 	@Override
 	public String getFileName() {
-		return getI18nConstants().salas();
+		return getI18nConstants().cursos();
 	}
 	
 	@Override
@@ -64,25 +65,25 @@ public class SalasExportExcel extends AbstractExportExcel {
 
 	@Override
 	protected String getReportName() {
-		return getI18nConstants().salas();
+		return getI18nConstants().cursos();
 	}
 
 	@Override
 	protected boolean fillInExcel(HSSFWorkbook workbook) {
-		List<Sala> salas = Sala.findByCenario(getCenario());
+		List<Curso> cursos = Curso.findByCenario(getCenario());
 		
-		if (!salas.isEmpty()) {
+		if (!cursos.isEmpty()) {
 			if (this.removeUnusedSheets) {
 				removeUnusedSheets(this.sheetName,workbook);
 			}
 			HSSFSheet sheet = workbook.getSheet(this.sheetName);
 			fillInCellStyles(sheet);
 			int nextRow = this.initialRow;
-			for (Sala s : salas) {
-				nextRow = writeData(s,nextRow,sheet);
+			for (Curso curso : cursos) {
+				nextRow = writeData(curso,nextRow,sheet);
 			}
 			
-			//autoSizeColumns((short)1,(short)6,sheet); TODO: rever autoSize pois atualmente o algoritmo do poi interfere na largura do logo
+			//autoSizeColumns((short)1,(short)7,sheet); TODO: rever autoSize pois atualmente o algoritmo do poi interfere na largura do logo
 			
 			return true;
 		}
@@ -90,19 +91,21 @@ public class SalasExportExcel extends AbstractExportExcel {
 		return false;
 	}
 	
-	private int writeData(Sala sala, int row, HSSFSheet sheet) {
+	private int writeData(Curso curso, int row, HSSFSheet sheet) {
 		// Codigo
-		setCell(row,2,sheet,cellStyles[ExcelCellStyleReference.TEXT.ordinal()],sala.getCodigo());
+		setCell(row,2,sheet,cellStyles[ExcelCellStyleReference.TEXT.ordinal()],curso.getCodigo());
+		// Nome
+		setCell(row,3,sheet,cellStyles[ExcelCellStyleReference.TEXT.ordinal()],curso.getNome());
 		// Tipo
-		setCell(row,3,sheet,cellStyles[ExcelCellStyleReference.TEXT.ordinal()],sala.getTipoSala().getNome());
-		// Unidade
-		setCell(row,4,sheet,cellStyles[ExcelCellStyleReference.TEXT.ordinal()],sala.getUnidade().getCodigo());
-		// Numero
-		setCell(row,5,sheet,cellStyles[ExcelCellStyleReference.TEXT.ordinal()],sala.getNumero());
-		// Andar
-		setCell(row,6,sheet,cellStyles[ExcelCellStyleReference.TEXT.ordinal()],sala.getAndar());
-		// Capacidade
-		setCell(row,7,sheet,cellStyles[ExcelCellStyleReference.NUMBER.ordinal()],sala.getCapacidade());
+		setCell(row,4,sheet,cellStyles[ExcelCellStyleReference.TEXT.ordinal()],curso.getTipoCurso().getCodigo());
+		// % Min PhD
+		setCell(row,5,sheet,cellStyles[ExcelCellStyleReference.NUMBER_DOUBLE.ordinal()],curso.getNumMinDoutores());
+		// % Min MSc
+		setCell(row,6,sheet,cellStyles[ExcelCellStyleReference.NUMBER_DOUBLE.ordinal()],curso.getNumMinMestres());
+		// Max Disciplinas Professor
+		setCell(row,7,sheet,cellStyles[ExcelCellStyleReference.NUMBER_INT.ordinal()],curso.getMaxDisciplinasPeloProfessor());
+		// Permite mais de uma Disciplina por Professor
+		setCell(row,8,sheet,cellStyles[ExcelCellStyleReference.TEXT.ordinal()],(curso.getAdmMaisDeUmDisciplina() ? getI18nConstants().sim() : getI18nConstants().nao()));
 		
 		row++;
 		return row;
@@ -114,4 +117,5 @@ public class SalasExportExcel extends AbstractExportExcel {
 		}
 	}
 }
+
 

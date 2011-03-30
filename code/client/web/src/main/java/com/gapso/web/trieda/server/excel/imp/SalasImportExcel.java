@@ -198,12 +198,7 @@ public class SalasImportExcel extends AbstractImportExcel<SalasImportExcelBean> 
 
 	@Transactional
 	private void updateDataBase(String sheetName, List<SalasImportExcelBean> sheetContent) {
-		List<Sala> salasBDList = Sala.findByCenario(getCenario());
-		
-		Map<String,Sala> salasBDMap = new HashMap<String,Sala>();
-		for (Sala sala : salasBDList) {
-			salasBDMap.put(sala.getCodigo(),sala);
-		}
+		Map<String,Sala> salasBDMap = Sala.buildSalaCodigoToSalaMap(Sala.findByCenario(getCenario()));
 		
 		for (SalasImportExcelBean salaExcel : sheetContent) {
 			Sala salaBD = salasBDMap.get(salaExcel.getCodigoStr());

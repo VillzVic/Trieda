@@ -6,6 +6,7 @@ import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
+import com.gapso.trieda.domain.Cenario;
 import com.gapso.trieda.domain.Unidade;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
@@ -34,16 +35,16 @@ public class UnidadesExportExcel extends AbstractExportExcel {
 	private String sheetName;
 	private int initialRow;
 	
-	public UnidadesExportExcel(TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages) {
-		super(i18nConstants,i18nMessages);
+	public UnidadesExportExcel(Cenario cenario, TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages) {
+		super(cenario,i18nConstants,i18nMessages);
 		this.cellStyles = new HSSFCellStyle[ExcelCellStyleReference.values().length];
 		this.removeUnusedSheets = true;
 		this.sheetName = ExcelInformationType.UNIDADES.getSheetName();
 		this.initialRow = 6;
 	}
 	
-	public UnidadesExportExcel(boolean removeUnusedSheets, TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages) {
-		super(i18nConstants,i18nMessages);
+	public UnidadesExportExcel(boolean removeUnusedSheets, Cenario cenario, TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages) {
+		super(cenario,i18nConstants,i18nMessages);
 		this.cellStyles = new HSSFCellStyle[ExcelCellStyleReference.values().length];
 		this.removeUnusedSheets = removeUnusedSheets;
 		this.sheetName = ExcelInformationType.UNIDADES.getSheetName();
@@ -67,7 +68,7 @@ public class UnidadesExportExcel extends AbstractExportExcel {
 
 	@Override
 	protected boolean fillInExcel(HSSFWorkbook workbook) {
-		List<Unidade> unidades = Unidade.findAll();
+		List<Unidade> unidades = Unidade.findByCenario(getCenario());
 		
 		if (!unidades.isEmpty()) {
 			if (this.removeUnusedSheets) {
@@ -79,6 +80,8 @@ public class UnidadesExportExcel extends AbstractExportExcel {
 			for (Unidade u : unidades) {
 				nextRow = writeData(u,nextRow,sheet);
 			}
+			
+			//autoSizeColumns((short)1,(short)3,sheet); TODO: rever autoSize pois atualmente o algoritmo do poi interfere na largura do logo
 			
 			return true;
 		}

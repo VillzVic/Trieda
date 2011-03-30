@@ -62,6 +62,24 @@ public abstract class AbstractImportExcelBean {
 		return integerValue;
 	}
 	
+	protected Boolean checkBooleanField(String value, ImportExcelError errorType, List<ImportExcelError> errorsList) {
+		Boolean booleanValue = null;
+		
+		if (!isEmptyField(value)) {
+			if ("Sim".equalsIgnoreCase(value)) {
+				booleanValue = true;
+			} else if ("Não".equalsIgnoreCase(value)) {
+				booleanValue = false;
+			}
+		}
+		
+		if (booleanValue == null) {
+			errorsList.add(errorType);
+		}
+		
+		return booleanValue;
+	}
+	
 	protected <EnumType> EnumType checkEnumField(String value, Class<EnumType> enumClass, ImportExcelError enumErrorTupe, List<ImportExcelError> errorsList) {
 		EnumType enumValue = null;
 		

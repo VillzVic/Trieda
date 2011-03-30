@@ -1,6 +1,8 @@
 package com.gapso.trieda.domain;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -132,6 +134,14 @@ public class TipoCurso implements java.io.Serializable {
     public static List<TipoCurso> findAll() {
         return entityManager().createQuery("select o from TipoCurso o").getResultList();
     }
+	
+	public static Map<String,TipoCurso> buildTipoCursoCodigoToTipoCursoMap(List<TipoCurso> tiposCurso) {
+		Map<String,TipoCurso> tiposCursoMap = new HashMap<String,TipoCurso>();
+		for (TipoCurso tipoCurso : tiposCurso) {
+			tiposCursoMap.put(tipoCurso.getCodigo(),tipoCurso);
+		}
+		return tiposCursoMap;
+	}
 
 	public static TipoCurso find(Long id) {
         if (id == null) return null;

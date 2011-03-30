@@ -12,6 +12,21 @@ public enum ImportExcelError {
 	CAMPUS_ESTADO_VALOR_INVALIDO,
 	CAMPUS_NOME_VAZIO,
 	
+	CURSO_CODIGO_VAZIO,
+	CURSO_NOME_VAZIO,
+	CURSO_TIPO_VAZIO,
+	CURSO_MIN_DOUTOR_FORMATO_INVALIDO,
+	CURSO_MIN_DOUTOR_VALOR_NEGATIVO,
+	CURSO_MIN_DOUTOR_VAZIO,
+	CURSO_MIN_MESTRE_FORMATO_INVALIDO,
+	CURSO_MIN_MESTRE_VALOR_NEGATIVO,
+	CURSO_MIN_MESTRE_VAZIO,
+	CURSO_MAX_DISC_PROF_FORMATO_INVALIDO,
+	CURSO_MAX_DISC_PROF_VALOR_NEGATIVO,
+	CURSO_MAX_DISC_PROF_VAZIO,
+	CURSO_MAIS_DE_UMA_DISC_PROF_FORMATO_INVALIDO,
+	CURSO_MAIS_DE_UMA_DISC_PROF_VAZIO,
+	
 	SALA_ANDAR_VAZIO,
 	SALA_CAPACIDADE_FORMATO_INVALIDO,
 	SALA_CAPACIDADE_VALOR_NEGATIVO,
@@ -37,6 +52,21 @@ public enum ImportExcelError {
 			case CAMPUS_ESTADO_VALOR_INVALIDO: return i18nMessages.excelErroSintaticoValorInvalido(param1,CampiImportExcel.ESTADO_COLUMN_NAME);
 			case CAMPUS_NOME_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia(param1,CampiImportExcel.NOME_COLUMN_NAME);
 
+			case CURSO_CODIGO_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia(param1,CursosImportExcel.CODIGO_COLUMN_NAME);
+			case CURSO_NOME_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia(param1,CursosImportExcel.NOME_COLUMN_NAME);
+			case CURSO_TIPO_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia(param1,CursosImportExcel.TIPO_COLUMN_NAME);
+			case CURSO_MIN_DOUTOR_FORMATO_INVALIDO: return i18nMessages.excelErroSintaticoFormatoInvalido(param1,CursosImportExcel.MIN_DOUTOR_COLUMN_NAME);
+			case CURSO_MIN_DOUTOR_VALOR_NEGATIVO: return i18nMessages.excelErroSintaticoValorNegativo(param1,CursosImportExcel.MIN_DOUTOR_COLUMN_NAME);
+			case CURSO_MIN_DOUTOR_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia(param1,CursosImportExcel.MIN_DOUTOR_COLUMN_NAME);
+			case CURSO_MIN_MESTRE_FORMATO_INVALIDO: return i18nMessages.excelErroSintaticoFormatoInvalido(param1,CursosImportExcel.MIN_MESTRE_COLUMN_NAME);
+			case CURSO_MIN_MESTRE_VALOR_NEGATIVO: return i18nMessages.excelErroSintaticoValorNegativo(param1,CursosImportExcel.MIN_MESTRE_COLUMN_NAME);
+			case CURSO_MIN_MESTRE_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia(param1,CursosImportExcel.MIN_MESTRE_COLUMN_NAME);
+			case CURSO_MAX_DISC_PROF_FORMATO_INVALIDO: return i18nMessages.excelErroSintaticoFormatoInvalido(param1,CursosImportExcel.MAX_DISC_PROF_COLUMN_NAME);
+			case CURSO_MAX_DISC_PROF_VALOR_NEGATIVO: return i18nMessages.excelErroSintaticoValorNegativo(param1,CursosImportExcel.MAX_DISC_PROF_COLUMN_NAME);
+			case CURSO_MAX_DISC_PROF_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia(param1,CursosImportExcel.MAX_DISC_PROF_COLUMN_NAME);
+			case CURSO_MAIS_DE_UMA_DISC_PROF_FORMATO_INVALIDO: return i18nMessages.excelErroSintaticoFormatoInvalido(param1,CursosImportExcel.MAIS_DE_UMA_DISC_PROF_COLUMN_NAME);
+			case CURSO_MAIS_DE_UMA_DISC_PROF_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia(param1,CursosImportExcel.MAIS_DE_UMA_DISC_PROF_COLUMN_NAME);
+			
 			case SALA_ANDAR_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia(param1,SalasImportExcel.ANDAR_COLUMN_NAME);
 			case SALA_CAPACIDADE_FORMATO_INVALIDO: return i18nMessages.excelErroSintaticoFormatoInvalido(param1,SalasImportExcel.CAPACIDADE_COLUMN_NAME);
 			case SALA_CAPACIDADE_VALOR_NEGATIVO: return i18nMessages.excelErroSintaticoValorNegativo(param1,SalasImportExcel.CAPACIDADE_COLUMN_NAME);

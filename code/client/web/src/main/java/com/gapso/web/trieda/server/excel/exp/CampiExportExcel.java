@@ -7,6 +7,7 @@ import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
 import com.gapso.trieda.domain.Campus;
+import com.gapso.trieda.domain.Cenario;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nMessages;
@@ -35,16 +36,16 @@ public class CampiExportExcel extends AbstractExportExcel {
 	private String sheetName;
 	private int initialRow;
 	
-	public CampiExportExcel(TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages) {
-		super(i18nConstants,i18nMessages);
+	public CampiExportExcel(Cenario cenario, TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages) {
+		super(cenario,i18nConstants,i18nMessages);
 		this.cellStyles = new HSSFCellStyle[ExcelCellStyleReference.values().length];
 		this.removeUnusedSheets = true;
 		this.sheetName = ExcelInformationType.CAMPI.getSheetName();
 		this.initialRow = 6;
 	}
 	
-	public CampiExportExcel(boolean removeUnusedSheets, TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages) {
-		super(i18nConstants,i18nMessages);
+	public CampiExportExcel(boolean removeUnusedSheets, Cenario cenario, TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages) {
+		super(cenario,i18nConstants,i18nMessages);
 		this.cellStyles = new HSSFCellStyle[ExcelCellStyleReference.values().length];
 		this.removeUnusedSheets = removeUnusedSheets;
 		this.sheetName = ExcelInformationType.CAMPI.getSheetName();
@@ -68,18 +69,22 @@ public class CampiExportExcel extends AbstractExportExcel {
 
 	@Override
 	protected boolean fillInExcel(HSSFWorkbook workbook) {
-		List<Campus> campi = Campus.findAll();
+		List<Campus> campi = Campus.findByCenario(getCenario());
 		
 		if (!campi.isEmpty()) {
 			if (this.removeUnusedSheets) {
 				removeUnusedSheets(this.sheetName,workbook);
 			}
+			
 			HSSFSheet sheet = workbook.getSheet(this.sheetName);
 			fillInCellStyles(sheet);
+			
 			int nextRow = this.initialRow;
 			for (Campus c : campi) {
 				nextRow = writeData(c,nextRow,sheet);
 			}
+			
+			//autoSizeColumns((short)1,(short)6,sheet); TODO: rever autoSize pois atualmente o algoritmo do poi interfere na largura do logo
 			
 			return true;
 		}

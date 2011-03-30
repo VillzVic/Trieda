@@ -2,8 +2,10 @@ package com.gapso.trieda.domain;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -247,6 +249,14 @@ public class Sala implements Serializable {
 		Query q = entityManager().createQuery("SELECT DISTINCT(cd.curriculo) FROM CurriculoDisciplina cd WHERE :sala IN ELEMENTS(cd.salas)");
 		q.setParameter("sala", this);
 		return q.getResultList();
+	}
+	
+	public static Map<String,Sala> buildSalaCodigoToSalaMap(List<Sala> salas) {
+		Map<String,Sala> salasMap = new HashMap<String,Sala>();
+		for (Sala sala : salas) {
+			salasMap.put(sala.getCodigo(),sala);
+		}
+		return salasMap;
 	}
 	
 	public static List<Sala> findAndaresAll() {
