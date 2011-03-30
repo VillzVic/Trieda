@@ -94,7 +94,7 @@ private:
    All methods of variable creation should be defined here
    */
 
-   double alpha, beta, gamma, delta, lambda, epsilon, rho, M, psi;
+   double alpha, beta, gamma, delta, lambda, epsilon, rho, M, psi, tau;
 
    struct Ordena
    {
@@ -131,6 +131,10 @@ public:
    int cria_variavel_creditos_modificada(void); // xm_{d,t}
 
    int cria_variavel_abertura_compativel(void); // zc_{d,t}
+
+   int cria_variavel_abertura_bloco_mesmoTPS(void); // n_{bc,tps}
+
+   int cria_variavel_de_folga_abertura_bloco_mesmoTPS(void); //fn_{bc,tps}
 
    /********************************************************************
    **                    CONSTRAINT CREATION                          **
@@ -178,6 +182,8 @@ public:
 
    int cria_restricao_ativacao_var_zc(void); // Restricao 1.2.31
    int cria_restricao_disciplinas_incompativeis(void); // Restricao 1.2.32
+   int cria_restricao_abertura_bloco_mesmoTPS(void); // Restricao 1.2.33
+   int cria_restricao_folga_abertura_bloco_mesmoTPS(void); // Restricao 1.2.34
 
 
    /********************************************************************

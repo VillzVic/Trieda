@@ -33,7 +33,9 @@ public:
       V_SLACK_COMBINACAO_DIVISAO_CREDITO = 18, // fk{i,d,k}
 
       V_CREDITOS_MODF = 19, // xm_{d,t}
-	  V_ABERTURA_COMPATIVEL = 20 //zc_{d,t}
+	  V_ABERTURA_COMPATIVEL = 20, //zc_{d,t}
+	  V_ABERTURA_BLOCO_MESMO_TPS = 21, //n_{bc,tps}
+	  V_SLACK_ABERTURA_BLOCO_MESMO_TPS = 22 //fn_{bc,tps}
    };
 
    //Constructors

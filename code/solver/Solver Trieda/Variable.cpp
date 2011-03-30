@@ -193,6 +193,10 @@ std::string Variable::toString()
       str << "xm"; break;
     case V_ABERTURA_COMPATIVEL:
       str << "zc"; break;
+	case V_ABERTURA_BLOCO_MESMO_TPS:
+		str <<"n"; break;
+	case V_SLACK_ABERTURA_BLOCO_MESMO_TPS:
+		str <<"fn"; break;
     default:
         str << "!";
    }

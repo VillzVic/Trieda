@@ -194,6 +194,10 @@ std::string Constraint::toString()
       ss << "__(C_VAR_ZC):"; break;
   case C_DISC_INCOMPATIVEIS:
       ss << "__(C_DISC_INCOMPATIVEIS):"; break;
+  case C_EVITA_BLOCO_TPS_D:
+      ss << "__(C_EVITA_BLOCO_TPS_D):"; break;
+  case C_SLACK_EVITA_BLOCO_TPS_D:
+      ss << "__(C_SLACK_EVITA_BLOCO_TPS_D):"; break;
    default:
       ss << "!";
    }

@@ -175,6 +175,9 @@ peso associado a função objetivo.
 %Data \omega
 %Desc 
 peso associado a função objetivo.
+%Data \tau
+%Desc 
+peso associado a função objetivo.
 
 %DocEnd
 /===================================================================*/
@@ -242,6 +245,8 @@ SolverMIP::SolverMIP(ProblemData *aProblemData, ProblemSolution * _ProblemSoluti
    rho = 5;
    //verificar o valor
    psi = 1.0;
+   tau = 1.0;
+
 
    try
    {
@@ -2148,6 +2153,20 @@ int SolverMIP::cria_variaveis()
    numVarsAnterior = num_vars;
 #endif
 
+      num_vars += cria_variavel_abertura_bloco_mesmoTPS(); // n
+
+#ifdef PRINT_cria_variaveis
+   std::cout << "numVars \"n\": " << (num_vars - numVarsAnterior) << std::endl;
+   numVarsAnterior = num_vars;
+#endif
+
+   num_vars += cria_variavel_de_folga_abertura_bloco_mesmoTPS(); // fn
+
+#ifdef PRINT_cria_variaveis
+   std::cout << "numVars \"fn\": " << (num_vars - numVarsAnterior) << std::endl;
+   numVarsAnterior = num_vars;
+#endif
+
    return num_vars;
 }
 
@@ -3718,6 +3737,123 @@ int SolverMIP::cria_variavel_abertura_compativel(void)
    return num_vars;
 }
 
+/*====================================================================/
+%DocBegin TRIEDA_LOAD_MODEL
+
+%Var n_{bc,tps} 
+
+%Desc 
+variável binária que indica se o bloco $bc$ foi alocado na sala $tps$. 
+
+%DocEnd
+/====================================================================*/
+
+int SolverMIP::cria_variavel_abertura_bloco_mesmoTPS(void)
+{
+   int num_vars = 0;
+
+   ITERA_GGROUP(itBloco, problemData->blocos, BlocoCurricular)
+   {
+	   ITERA_GGROUP(itCampus,problemData->campi,Campus)
+	   {
+		   ITERA_GGROUP(itUnidade,itCampus->unidades,Unidade)
+		   {
+			   ITERA_GGROUP(itCjtSala,itUnidade->conjutoSalas,ConjuntoSala)
+			   {
+				   Variable v;
+				   v.reset();
+				   v.setType(Variable::V_ABERTURA_BLOCO_MESMO_TPS);
+
+				   v.setSubCjtSala(*itCjtSala);
+				   v.setBloco(*itBloco);
+				   
+				   if (vHash.find(v) == vHash.end())
+				   {
+					   vHash[v] = lp->getNumCols();
+					   
+					   OPT_COL col(OPT_COL::VAR_BINARY,0.0,0.0,1.0,
+						   (char*)v.toString().c_str());
+
+					   lp->newCol(col);
+
+					   num_vars += 1;
+				   }
+			   }
+		   }
+	   }
+   }
+
+   return num_vars;
+}
+
+/*====================================================================/
+%DocBegin TRIEDA_LOAD_MODEL
+
+%Var fn_{bc,tps} 
+
+%Desc 
+variável de folga para a restrição "Evitar alocação do mesmo 
+bloco curricular em tipos de salas diferentes".
+
+%ObjCoef
+\tau \cdot \sum\limits_{bc \in B} \sum\limits_{tps \in SCAP_{u}} fn_{bc,tps}
+
+%Data \tau
+%Desc
+peso associado a função objetivo.
+
+%DocEnd
+/====================================================================*/
+
+int SolverMIP::cria_variavel_de_folga_abertura_bloco_mesmoTPS(){
+
+   int num_vars = 0;
+
+   ITERA_GGROUP(itBloco, problemData->blocos, BlocoCurricular)
+   {
+	   ITERA_GGROUP(itCampus,problemData->campi,Campus)
+	   {
+		   ITERA_GGROUP(itUnidade,itCampus->unidades,Unidade)
+		   {
+			   ITERA_GGROUP(itCjtSala,itUnidade->conjutoSalas,ConjuntoSala)
+			   {
+				   Variable v;
+				   v.reset();
+				   v.setType(Variable::V_SLACK_ABERTURA_BLOCO_MESMO_TPS);
+
+				   v.setSubCjtSala(*itCjtSala);
+				   v.setBloco(*itBloco);
+				   
+				   if (vHash.find(v) == vHash.end())
+				   {
+					   vHash[v] = lp->getNumCols();
+					   
+					   if(problemData->parametros->funcao_objetivo == 0)
+					   {
+						   OPT_COL col(OPT_COL::VAR_BINARY,tau,0.0,1.0,
+							   (char*)v.toString().c_str());
+
+						   lp->newCol(col);
+					   }
+					   else if(problemData->parametros->funcao_objetivo == 1
+						       || problemData->parametros->funcao_objetivo ==2)
+					   {
+						   OPT_COL col(OPT_COL::VAR_BINARY,0.0,0.0,1.0,
+							   (char*)v.toString().c_str());
+
+						   lp->newCol(col);
+					   }
+
+					   num_vars += 1;
+				   }
+			   }
+		   }
+	   }
+   }
+
+   return num_vars;
+}
+
 // ==============================================================
 //							CONSTRAINTS
 // ==============================================================
@@ -3947,6 +4083,20 @@ int SolverMIP::cria_restricoes(void)
 
 #ifdef PRINT_cria_restricoes
    std::cout << "numRest \"1.2.32\": " << (restricoes - numRestAnterior) << std::endl;
+   numRestAnterior = restricoes;
+#endif
+
+   restricoes +=  cria_restricao_abertura_bloco_mesmoTPS();
+
+#ifdef PRINT_cria_restricoes
+   std::cout << "numRest \"1.2.33\": " << (restricoes - numRestAnterior) << std::endl;
+   numRestAnterior = restricoes;
+#endif
+
+   restricoes +=  cria_restricao_folga_abertura_bloco_mesmoTPS();
+
+#ifdef PRINT_cria_restricoes
+   std::cout << "numRest \"1.2.34\": " << (restricoes - numRestAnterior) << std::endl;
    numRestAnterior = restricoes;
 #endif
 
@@ -8730,6 +8880,187 @@ int SolverMIP::cria_restricao_disciplinas_incompativeis()
    return restricoes;
 }
 
+/*====================================================================/
+%DocBegin TRIEDA_LOAD_MODEL
+
+%Constraint 
+Ativação da variável n
+%Desc
+
+%MatExp
+\begin{eqnarray}
+ \sum\limits_{u \in U} \sum\limits_{i \in I} \sum\limits_{d \in D_{bc}} 
+ o_{i,d,u,tps,t} \leq n_{bc,tps} \nonumber \qquad 
+ \forall tps \in SCAP_{u}
+ \forall bc \in B
+ \forall t \in T
+\end{eqnarray}
+
+%DocEnd
+/====================================================================*/
+int SolverMIP::cria_restricao_abertura_bloco_mesmoTPS()
+{
+   int restricoes = 0;
+   char name[100];
+   int nnz;
+   Constraint c;
+   Variable v;
+   VariableHash::iterator it_v;
+
+   ITERA_GGROUP(itBloco, problemData->blocos, BlocoCurricular)
+   {
+	   ITERA_GGROUP(itCampus,problemData->campi,Campus)
+	   {
+		   ITERA_GGROUP(itUnidade,itCampus->unidades,Unidade)
+		   {
+			   ITERA_GGROUP(itCjtSala,itUnidade->conjutoSalas,ConjuntoSala)
+			   {
+				   GGroup<int>::iterator itDiasLetCjtSala =
+					   itCjtSala->diasLetivos.begin();
+
+				   for(; itDiasLetCjtSala != itCjtSala->diasLetivos.end(); itDiasLetCjtSala++ )
+				   {
+					   c.reset();
+					   c.setType(Constraint::C_MAX_CREDITOS_SD);
+
+					   c.setSubCjtSala(*itCjtSala);
+					   c.setBloco(*itBloco);
+					   c.setDia(*itDiasLetCjtSala);
+
+					   sprintf( name, "%s", c.toString().c_str() ); 
+						
+					   if (cHash.find(c) != cHash.end()) continue;
+
+					   nnz = 100;
+
+					   OPT_ROW row( nnz, OPT_ROW::LESS, 0.0, name );
+
+						ITERA_GGROUP(it_campus,problemData->campi,Campus)
+						{
+							ITERA_GGROUP(it_unidade,it_campus->unidades,Unidade)
+							{
+								ITERA_GGROUP(it_disc,itBloco->disciplinas,Disciplina)
+								{
+									for(int turma = 0; turma < it_disc->getNumTurmas(); turma++)
+									{
+										v.reset();
+										v.setType(Variable::V_OFERECIMENTO);
+										v.setTurma(turma);
+										v.setDisciplina(*it_disc);
+										v.setUnidade(*it_unidade);
+										v.setSubCjtSala(*itCjtSala);
+										v.setDia(*itDiasLetCjtSala);
+
+										it_v = vHash.find(v);
+										if( it_v != vHash.end() )
+										{ row.insert(it_v->second, 1.0); }
+
+										v.reset();
+										v.setType(Variable::V_ABERTURA_BLOCO_MESMO_TPS);
+										v.setBloco(*itBloco);
+										v.setSubCjtSala(*itCjtSala);
+
+										it_v = vHash.find(v);
+										if( it_v != vHash.end() )
+										{ row.insert(it_v->second, -1.0); }
+									}
+								}
+							}
+						}
+						if(row.getnnz() != 0)
+						{
+							cHash[ c ] = lp->getNumRows();
+							
+							lp->addRow(row);
+							restricoes++;
+						}
+				   }
+				   
+			   }
+		   }
+	   }
+   }
+
+   return restricoes;
+}
+
+/*====================================================================/
+%DocBegin TRIEDA_LOAD_MODEL
+
+%Constraint 
+Evitar alocação do mesmo bloco curricular em tipos de salas diferentes
+%Desc
+
+%MatExp
+\begin{eqnarray}
+ \sum\limits_{tps \in SCAP_{u}} n_{bc,tps} + fn_{bc,tps} 
+ \leq 1 \nonumber \qquad 
+ \forall bc \in B
+\end{eqnarray}
+
+%DocEnd
+/====================================================================*/
+int SolverMIP::cria_restricao_folga_abertura_bloco_mesmoTPS()
+{
+   int restricoes = 0;
+   char name[100];
+   int nnz;
+   Constraint c;
+   Variable v;
+   VariableHash::iterator it_v;
+
+   ITERA_GGROUP(itBloco, problemData->blocos, BlocoCurricular)
+   {
+	   c.reset();
+	   c.setType(Constraint::C_SLACK_EVITA_BLOCO_TPS_D);
+	   c.setBloco(*itBloco);
+
+	   sprintf( name, "%s", c.toString().c_str() ); 
+						
+	   if (cHash.find(c) != cHash.end()) continue;
+
+	   nnz = 100;
+
+	   OPT_ROW row( nnz, OPT_ROW::LESS, 1.0, name );
+
+	   ITERA_GGROUP(itCampus,problemData->campi,Campus)
+	   {
+		   ITERA_GGROUP(itUnidade,itCampus->unidades,Unidade)
+		   {
+			   ITERA_GGROUP(itCjtSala,itUnidade->conjutoSalas,ConjuntoSala)
+			   {		
+				   v.reset();
+				   v.setType(Variable::V_ABERTURA_BLOCO_MESMO_TPS);
+				   v.setBloco(*itBloco);
+				   v.setSubCjtSala(*itCjtSala);
+				   
+				   it_v = vHash.find(v);
+				   if( it_v != vHash.end() )
+				   { row.insert(it_v->second, 1.0); }
+
+				   v.reset();
+				   v.setType(Variable::V_SLACK_ABERTURA_BLOCO_MESMO_TPS);
+				   v.setBloco(*itBloco);
+				   v.setSubCjtSala(*itCjtSala);
+				   
+				   it_v = vHash.find(v);
+				   if( it_v != vHash.end() )
+				   { row.insert(it_v->second, 1.0); }
+
+				   if(row.getnnz() != 0)
+				   {
+					   cHash[ c ] = lp->getNumRows();
+					   
+					   lp->addRow(row);
+					   restricoes++;
+				   }
+			   }
+		   }
+	   }
+   }
+
+   return restricoes;
+}
 
 void SolverMIP::cria_solucao_inicial(int cnt, int *indices, double *valores)
 {

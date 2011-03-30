@@ -47,7 +47,9 @@ public:
       C_MAX_CREDS_DISC_DIA = 28, // Restricao 1.2.29
       C_MAX_CREDS_BLOCO_DIA = 29, // Restricao 1.2.30
 	  C_VAR_ZC = 30, // Restricao 1.2.31
-	  C_DISC_INCOMPATIVEIS = 31 // Restricao 1.2.32
+	  C_DISC_INCOMPATIVEIS = 31, // Restricao 1.2.32
+	  C_EVITA_BLOCO_TPS_D = 32, // Restricao 1.2.33
+	  C_SLACK_EVITA_BLOCO_TPS_D = 33 // Restricao 1.2.34
    };
 
    /** Default constructor. */
