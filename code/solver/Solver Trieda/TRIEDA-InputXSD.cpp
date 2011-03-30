@@ -3367,6 +3367,24 @@ custoProfDisponibilidade (const custoProfDisponibilidade_type& x)
   this->custoProfDisponibilidade_.set (x);
 }
 
+const ItemParametrosPlanejamento::funcaoObjetivo_type& ItemParametrosPlanejamento::
+funcaoObjetivo () const
+{
+  return this->funcaoObjetivo_.get ();
+}
+
+ItemParametrosPlanejamento::funcaoObjetivo_type& ItemParametrosPlanejamento::
+funcaoObjetivo ()
+{
+  return this->funcaoObjetivo_.get ();
+}
+
+void ItemParametrosPlanejamento::
+funcaoObjetivo (const funcaoObjetivo_type& x)
+{
+  this->funcaoObjetivo_.set (x);
+}
+
 
 // ItemNivelDificuldadeHorario
 // 
@@ -9673,7 +9691,8 @@ ItemParametrosPlanejamento (const modoOtimizacao_type& modoOtimizacao,
                             const percentuaisMinimoDoutores_type& percentuaisMinimoDoutores,
                             const areaTitulacaoProfessorCurso_type& areaTitulacaoProfessorCurso,
                             const maximoDisciplinasDeUmProfessorPorCurso_type& maximoDisciplinasDeUmProfessorPorCurso,
-                            const custoProfDisponibilidade_type& custoProfDisponibilidade)
+                            const custoProfDisponibilidade_type& custoProfDisponibilidade,
+                            const funcaoObjetivo_type& funcaoObjetivo)
 : ::xml_schema::type (),
   modoOtimizacao_ (modoOtimizacao, ::xml_schema::flags (), this),
   cargaHorariaSemanalAluno_ (cargaHorariaSemanalAluno, ::xml_schema::flags (), this),
@@ -9706,7 +9725,8 @@ ItemParametrosPlanejamento (const modoOtimizacao_type& modoOtimizacao,
   percentuaisMinimoDoutores_ (percentuaisMinimoDoutores, ::xml_schema::flags (), this),
   areaTitulacaoProfessorCurso_ (areaTitulacaoProfessorCurso, ::xml_schema::flags (), this),
   maximoDisciplinasDeUmProfessorPorCurso_ (maximoDisciplinasDeUmProfessorPorCurso, ::xml_schema::flags (), this),
-  custoProfDisponibilidade_ (custoProfDisponibilidade, ::xml_schema::flags (), this)
+  custoProfDisponibilidade_ (custoProfDisponibilidade, ::xml_schema::flags (), this),
+  funcaoObjetivo_ (funcaoObjetivo, ::xml_schema::flags (), this)
 {
 }
 
@@ -9736,7 +9756,8 @@ ItemParametrosPlanejamento (const modoOtimizacao_type& modoOtimizacao,
                             const percentuaisMinimoDoutores_type& percentuaisMinimoDoutores,
                             const areaTitulacaoProfessorCurso_type& areaTitulacaoProfessorCurso,
                             const maximoDisciplinasDeUmProfessorPorCurso_type& maximoDisciplinasDeUmProfessorPorCurso,
-                            const custoProfDisponibilidade_type& custoProfDisponibilidade)
+                            const custoProfDisponibilidade_type& custoProfDisponibilidade,
+                            const funcaoObjetivo_type& funcaoObjetivo)
 : ::xml_schema::type (),
   modoOtimizacao_ (modoOtimizacao, ::xml_schema::flags (), this),
   cargaHorariaSemanalAluno_ (cargaHorariaSemanalAluno, ::xml_schema::flags (), this),
@@ -9769,7 +9790,8 @@ ItemParametrosPlanejamento (const modoOtimizacao_type& modoOtimizacao,
   percentuaisMinimoDoutores_ (percentuaisMinimoDoutores, ::xml_schema::flags (), this),
   areaTitulacaoProfessorCurso_ (areaTitulacaoProfessorCurso, ::xml_schema::flags (), this),
   maximoDisciplinasDeUmProfessorPorCurso_ (maximoDisciplinasDeUmProfessorPorCurso, ::xml_schema::flags (), this),
-  custoProfDisponibilidade_ (custoProfDisponibilidade, ::xml_schema::flags (), this)
+  custoProfDisponibilidade_ (custoProfDisponibilidade, ::xml_schema::flags (), this),
+  funcaoObjetivo_ (funcaoObjetivo, ::xml_schema::flags (), this)
 {
 }
 
@@ -9809,7 +9831,8 @@ ItemParametrosPlanejamento (const ItemParametrosPlanejamento& x,
   percentuaisMinimoDoutores_ (x.percentuaisMinimoDoutores_, f, this),
   areaTitulacaoProfessorCurso_ (x.areaTitulacaoProfessorCurso_, f, this),
   maximoDisciplinasDeUmProfessorPorCurso_ (x.maximoDisciplinasDeUmProfessorPorCurso_, f, this),
-  custoProfDisponibilidade_ (x.custoProfDisponibilidade_, f, this)
+  custoProfDisponibilidade_ (x.custoProfDisponibilidade_, f, this),
+  funcaoObjetivo_ (x.funcaoObjetivo_, f, this)
 {
 }
 
@@ -9849,7 +9872,8 @@ ItemParametrosPlanejamento (const ::xercesc::DOMElement& e,
   percentuaisMinimoDoutores_ (f, this),
   areaTitulacaoProfessorCurso_ (f, this),
   maximoDisciplinasDeUmProfessorPorCurso_ (f, this),
-  custoProfDisponibilidade_ (f, this)
+  custoProfDisponibilidade_ (f, this),
+  funcaoObjetivo_ (f, this)
 {
   if ((f & ::xml_schema::flags::base) == 0)
   {
@@ -10241,6 +10265,17 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
       }
     }
 
+    // funcaoObjetivo
+    //
+    if (n.name () == "funcaoObjetivo" && n.namespace_ ().empty ())
+    {
+      if (!funcaoObjetivo_.present ())
+      {
+        this->funcaoObjetivo_.set (funcaoObjetivo_traits::create (i, f, this));
+        continue;
+      }
+    }
+
     break;
   }
 
@@ -10423,6 +10458,13 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
   {
     throw ::xsd::cxx::tree::expected_element< char > (
       "custoProfDisponibilidade",
+      "");
+  }
+
+  if (!funcaoObjetivo_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "funcaoObjetivo",
       "");
   }
 }

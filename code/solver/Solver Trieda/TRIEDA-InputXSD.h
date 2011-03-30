@@ -3858,6 +3858,20 @@ class ItemParametrosPlanejamento: public ::xml_schema::type
   void
   custoProfDisponibilidade (const custoProfDisponibilidade_type& x);
 
+  // funcaoObjetivo
+  // 
+  typedef ::xml_schema::int_ funcaoObjetivo_type;
+  typedef ::xsd::cxx::tree::traits< funcaoObjetivo_type, char > funcaoObjetivo_traits;
+
+  const funcaoObjetivo_type&
+  funcaoObjetivo () const;
+
+  funcaoObjetivo_type&
+  funcaoObjetivo ();
+
+  void
+  funcaoObjetivo (const funcaoObjetivo_type& x);
+
   // Constructors.
   //
   ItemParametrosPlanejamento (const modoOtimizacao_type&,
@@ -3885,7 +3899,8 @@ class ItemParametrosPlanejamento: public ::xml_schema::type
                               const percentuaisMinimoDoutores_type&,
                               const areaTitulacaoProfessorCurso_type&,
                               const maximoDisciplinasDeUmProfessorPorCurso_type&,
-                              const custoProfDisponibilidade_type&);
+                              const custoProfDisponibilidade_type&,
+                              const funcaoObjetivo_type&);
 
   ItemParametrosPlanejamento (const modoOtimizacao_type&,
                               ::std::auto_ptr< cargaHorariaSemanalAluno_type >&,
@@ -3912,7 +3927,8 @@ class ItemParametrosPlanejamento: public ::xml_schema::type
                               const percentuaisMinimoDoutores_type&,
                               const areaTitulacaoProfessorCurso_type&,
                               const maximoDisciplinasDeUmProfessorPorCurso_type&,
-                              const custoProfDisponibilidade_type&);
+                              const custoProfDisponibilidade_type&,
+                              const funcaoObjetivo_type&);
 
   ItemParametrosPlanejamento (const ::xercesc::DOMElement& e,
                               ::xml_schema::flags f = 0,
@@ -3969,6 +3985,7 @@ class ItemParametrosPlanejamento: public ::xml_schema::type
   ::xsd::cxx::tree::one< areaTitulacaoProfessorCurso_type > areaTitulacaoProfessorCurso_;
   ::xsd::cxx::tree::one< maximoDisciplinasDeUmProfessorPorCurso_type > maximoDisciplinasDeUmProfessorPorCurso_;
   ::xsd::cxx::tree::one< custoProfDisponibilidade_type > custoProfDisponibilidade_;
+  ::xsd::cxx::tree::one< funcaoObjetivo_type > funcaoObjetivo_;
 };
 
 class ItemNivelDificuldadeHorario: public ::xml_schema::type

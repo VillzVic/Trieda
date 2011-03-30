@@ -90,4 +90,5 @@ void ParametrosPlanejamento::le_arvore(ItemParametrosPlanejamento& elem)
    evitar_reducao_carga_horaria_prof = elem.evitarReducaoCargaHorariaProf();
    evitar_prof_ultimo_primeiro_hr = elem.evitarProfUltimoPrimeiroHor();
    min_alunos_abertura_turmas = elem.minAlunosAberturaTurmas();
+   funcao_objetivo = elem.funcaoObjetivo();
 }
