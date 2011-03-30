@@ -78,7 +78,7 @@ public class VincularAreasTitulacaoView extends MyComposite implements VincularA
 		naoVinculadaList = new ListView<AreaTitulacaoDTO>();
 		naoVinculadaList.disable();
 		naoVinculadaList.setDisplayProperty(AreaTitulacaoDTO.PROPERTY_DISPLAY_TEXT);
-		naoVinculadaList.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+		naoVinculadaList.getSelectionModel().setSelectionMode(SelectionMode.MULTI);
 		naoVinculadaListPanel.add(naoVinculadaList);
 		
 		ContentPanel vinculadaListPanel = new ContentPanel(new FitLayout());
@@ -86,7 +86,7 @@ public class VincularAreasTitulacaoView extends MyComposite implements VincularA
 		vinculadaList = new ListView<AreaTitulacaoDTO>();
 		vinculadaList.disable();
 		vinculadaList.setDisplayProperty(AreaTitulacaoDTO.PROPERTY_DISPLAY_TEXT);
-		vinculadaList.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+		vinculadaList.getSelectionModel().setSelectionMode(SelectionMode.MULTI);
 		vinculadaListPanel.add(vinculadaList);
 		
 		panelLists.add(naoVinculadaListPanel, new RowData(.5, 1, new Margins(0, 0, 10, 10)));
