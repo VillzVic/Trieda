@@ -153,8 +153,19 @@ public class UnidadesPresenter implements Presenter {
 		display.getSalasButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
 			@Override
 			public void componentSelected(ButtonEvent ce) {
-				Presenter presenter = new SalasPresenter(new SalasView());
-				presenter.go(gTab);
+				final UnidadeDTO unidadeDTO = display.getGrid().getGrid().getSelectionModel().getSelectedItem();
+				final CampiServiceAsync campus = Services.campi();
+				campus.getCampus(unidadeDTO.getCampusId(), new AsyncCallback<CampusDTO>() {
+					@Override
+					public void onFailure(Throwable caught) {
+						caught.printStackTrace();
+					}
+					@Override
+					public void onSuccess(CampusDTO campusDTO) {
+						Presenter presenter = new SalasPresenter(new SalasView(campusDTO, unidadeDTO));
+						presenter.go(gTab);
+					}
+				});
 			}
 		});
 		display.getDisponibilidadeButton().addSelectionListener(new SelectionListener<ButtonEvent>() {

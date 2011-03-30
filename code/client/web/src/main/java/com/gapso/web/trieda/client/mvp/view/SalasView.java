@@ -21,7 +21,9 @@ import com.gapso.web.trieda.client.util.view.SimpleFilter;
 import com.gapso.web.trieda.client.util.view.SimpleGrid;
 import com.gapso.web.trieda.client.util.view.SimpleToolBar;
 import com.gapso.web.trieda.client.util.view.UnidadeComboBox;
+import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.SalaDTO;
+import com.gapso.web.trieda.shared.dtos.UnidadeDTO;
 
 public class SalasView extends MyComposite implements SalasPresenter.Display {
 
@@ -36,7 +38,16 @@ public class SalasView extends MyComposite implements SalasPresenter.Display {
 	private UnidadeComboBox unidadeCB;
 	private CampusComboBox campusCB;
 	
+	private CampusDTO campusDTO;
+	private UnidadeDTO unidadeDTO;
+	
 	public SalasView() {
+		this(null, null);
+	}
+	
+	public SalasView(CampusDTO campusDTO, UnidadeDTO unidadeDTO) {
+		this.campusDTO = campusDTO;
+		this.unidadeDTO = unidadeDTO;
 		initUI();
 	}
 	
@@ -94,7 +105,9 @@ public class SalasView extends MyComposite implements SalasPresenter.Display {
 		filter = new SimpleFilter();
 		
 		campusCB = new CampusComboBox();
+		campusCB.setValue(campusDTO);
 		unidadeCB = new UnidadeComboBox(campusCB);
+		unidadeCB.setValue(unidadeDTO);
 		
 		filter.addField(campusCB);
 		filter.addField(unidadeCB);
