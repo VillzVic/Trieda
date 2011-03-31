@@ -689,7 +689,12 @@ public class SolverInput {
 					itemFixacao.setDiaSemana(Semanas.toInt(horario.getSemana()));
 					itemFixacao.setTurnoId(horario.getHorarioAula().getTurno().getId().intValue());
 					itemFixacao.setHorarioAulaId(horario.getHorarioAula().getId().intValue());
-					itemFixacao.setDisciplinaId(fixacao.getDisciplina().getId().intValue());
+					if(fixacao.getProfessor() != null) {
+						itemFixacao.setProfessorId(fixacao.getProfessor().getId().intValue());
+					}
+					if(fixacao.getDisciplina() != null) {
+						itemFixacao.setDisciplinaId(fixacao.getDisciplina().getId().intValue());
+					}
 					if(fixacao.getSala() != null) {
 						itemFixacao.setSalaId(fixacao.getSala().getId().intValue());
 					}
@@ -698,7 +703,9 @@ public class SolverInput {
 			} else {
 				ItemFixacao itemFixacao = of.createItemFixacao();
 				itemFixacao.setId(id++);
-				itemFixacao.setDisciplinaId(fixacao.getDisciplina().getId().intValue());
+				if(fixacao.getDisciplina() != null) {
+					itemFixacao.setDisciplinaId(fixacao.getDisciplina().getId().intValue());
+				}
 				if(fixacao.getSala() != null) {
 					itemFixacao.setSalaId(fixacao.getSala().getId().intValue());
 				}
