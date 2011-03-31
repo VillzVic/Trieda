@@ -20,9 +20,9 @@ public:
 
    SolucaoOperacional & geraSolucaoInicial();
 
-   bool alocaAula(SolucaoOperacional & solucaoOperacional, Professor & professor, Aula & aula);
-
 private:
+
+   bool alocaAula(SolucaoOperacional & solucaoOperacional, Professor & professor, Aula & aula);
 
    ProblemData & problemData;
 

@@ -41,8 +41,9 @@ SolucaoOperacional::SolucaoOperacional(ProblemData* prbDt)
 
    Aula * aulaVirtual = new Aula(true);
 
-   /* TODO (Cleiton) : PREENCHER COM AULAS VIRTUAIS, OS HORARIOS EM QUE UM DADO PROFESSOR, NAO 
-   ESTA DISPONIVEL. USAR SEMPRE O MESMO OBJETO DE AULA VIRTUAL. */
+   // TODO (Cleiton) : PREENCHER COM AULAS VIRTUAIS,
+   // OS HORARIOS EM QUE UM DADO PROFESSOR, NAO ESTÁ
+   // DISPONIVEL. USAR SEMPRE O MESMO OBJETO DE AULA VIRTUAL.
 }
 
 SolucaoOperacional::~SolucaoOperacional()
@@ -79,27 +80,38 @@ void SolucaoOperacional::setMatrizAulas(MatrizSolucao* matriz)
 
 // Imprime as aulas da matriz de solução,
 // percorrendo as linhas de cada professor
-void SolucaoOperacional::toString() const
+void SolucaoOperacional::toString()
 {
+   Professor * professor = NULL;
    for (unsigned int i = 0; i < this->getMatrizAulas()->size(); i++)
    {
-      std::vector<Aula*>* aulas = this->getMatrizAulas()->at(i);
+	  professor = this->getProfessorMatriz(i);
+	  if (professor != NULL)
+	  {
+		 std::cout << std::endl << "Nome do professor : " << std::endl
+				   << professor->getNome() << std::endl << std::endl;
+	  }
+
+	  // Imprima as aulas deste professor
+      std::vector< Aula * > * aulas = ( this->getMatrizAulas()->at(i) );
       for (unsigned int j = 0; j < aulas->size(); j++)
       {
          Aula* aula = aulas->at(j);
-         if (aula != NULL)
+		 if (aula != NULL && aula->eVirtual() == false)
          {
-            std::cout << "Turma : " << aula->getTurma() << " -- ";
-            std::cout << "Disciplina : " << aula->getDisciplina() << " -- ";
-            std::cout << "Sala : " << aula->getSala() << std::endl << std::endl;
+			 aula->toSring();
          }
+		 else if (aula != NULL && aula->eVirtual() == true)
+		 {
+			 std::cout << "Aula virtual" << std::endl;
+		 }
          else
 		 {
-            cout << "NULL" << endl;
+             std::cout << "Aula nao alocada" << std::endl;
 		 }
       }
 
-      std::cout << std::endl << "-------" << std::endl;
+      std::cout << std::endl << "-----------------------" << std::endl;
    }
 }
 
@@ -165,7 +177,7 @@ Professor* SolucaoOperacional::getProfessorMatriz(int linha)
 	// linha do professor na matriz de solução operacional
 	std::map<int, Professor*>::iterator it_professor
 		= mapProfessores.begin();
-	for (; it_professor != mapProfessores.end(); it_professor)
+	for (; it_professor != mapProfessores.end(); it_professor++)
 	{
 		if (it_professor->second->getIdOperacional() == linha)
 		{

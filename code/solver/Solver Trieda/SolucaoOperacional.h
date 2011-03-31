@@ -37,7 +37,7 @@ public:
    void setMatrizAulas(MatrizSolucao *);
    MatrizSolucao* getMatrizAulas() const;
 
-   void toString() const;
+   void toString();
 
    std::map<int, Professor*> mapProfessores;
 

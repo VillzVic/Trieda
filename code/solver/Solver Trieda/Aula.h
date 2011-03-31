@@ -62,7 +62,6 @@ public:
    void toSring();
 
 private:
-   //GGroup<Oferta*> ofertas;
    int turma;
    Disciplina* disciplina;
    Sala* sala;
