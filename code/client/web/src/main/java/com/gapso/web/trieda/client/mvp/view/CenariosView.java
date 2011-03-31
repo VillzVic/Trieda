@@ -68,7 +68,7 @@ public class CenariosView extends MyComposite implements CenariosPresenter.Displ
 		BorderLayoutData bld = new BorderLayoutData(LayoutRegion.CENTER);
 	    bld.setMargins(new Margins(5, 5, 5, 5));
 	    
-	    gridPanel = new SimpleGrid<CenarioDTO>(getColumnList());
+	    gridPanel = new SimpleGrid<CenarioDTO>(getColumnList(), this);
 	    panel.add(gridPanel, bld);
 	}
 

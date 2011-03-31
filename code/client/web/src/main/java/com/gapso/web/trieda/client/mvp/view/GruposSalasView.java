@@ -60,7 +60,7 @@ public class GruposSalasView extends MyComposite implements GruposSalasPresenter
 	private void createGrid() {
 		BorderLayoutData bld = new BorderLayoutData(LayoutRegion.CENTER);
 	    bld.setMargins(new Margins(5, 5, 5, 5));
-	    gridPanel = new SimpleGrid<GrupoSalaDTO>(getColumnList());
+	    gridPanel = new SimpleGrid<GrupoSalaDTO>(getColumnList(), this);
 	    panel.add(gridPanel, bld);
 	    gridPanel.addPlugin(expander);
 	}

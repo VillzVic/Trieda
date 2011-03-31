@@ -64,7 +64,7 @@ public class SemanasLetivaView extends MyComposite implements SemanasLetivaPrese
 		BorderLayoutData bld = new BorderLayoutData(LayoutRegion.CENTER);
 	    bld.setMargins(new Margins(5, 5, 5, 5));
 	    
-	    gridPanel = new SimpleGrid<SemanaLetivaDTO>(getColumnList());
+	    gridPanel = new SimpleGrid<SemanaLetivaDTO>(getColumnList(), this);
 	    panel.add(gridPanel, bld);
 	}
 

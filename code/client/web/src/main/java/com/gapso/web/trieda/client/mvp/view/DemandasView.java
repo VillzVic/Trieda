@@ -66,7 +66,7 @@ public class DemandasView extends MyComposite implements DemandasPresenter.Displ
 		BorderLayoutData bld = new BorderLayoutData(LayoutRegion.CENTER);
 	    bld.setMargins(new Margins(5, 5, 5, 5));
 	    
-	    gridPanel = new SimpleGrid<DemandaDTO>(getColumnList());
+	    gridPanel = new SimpleGrid<DemandaDTO>(getColumnList(), this);
 	    panel.add(gridPanel, bld);
 	}
 

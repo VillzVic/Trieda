@@ -6,10 +6,12 @@ import java.util.List;
 import com.extjs.gxt.ui.client.Style.SelectionMode;
 import com.extjs.gxt.ui.client.data.BaseModel;
 import com.extjs.gxt.ui.client.data.BasePagingLoader;
+import com.extjs.gxt.ui.client.data.LoadEvent;
 import com.extjs.gxt.ui.client.data.ModelData;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoader;
 import com.extjs.gxt.ui.client.data.RpcProxy;
+import com.extjs.gxt.ui.client.event.LoadListener;
 import com.extjs.gxt.ui.client.store.ListStore;
 import com.extjs.gxt.ui.client.widget.ComponentPlugin;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
@@ -19,6 +21,7 @@ import com.extjs.gxt.ui.client.widget.grid.Grid;
 import com.extjs.gxt.ui.client.widget.grid.GridSelectionModel;
 import com.extjs.gxt.ui.client.widget.layout.FitLayout;
 import com.extjs.gxt.ui.client.widget.toolbar.PagingToolBar;
+import com.gapso.web.trieda.shared.i18n.ITriedaI18nGateway;
 import com.google.gwt.user.client.Element;
 
 public class SimpleGrid<M extends BaseModel> extends ContentPanel {
@@ -29,9 +32,12 @@ public class SimpleGrid<M extends BaseModel> extends ContentPanel {
 	private List<ColumnConfig> columnList;
 	private List<ComponentPlugin> plugins = new ArrayList<ComponentPlugin>();
 	
-	public SimpleGrid(List<ColumnConfig> columnList) {
+	private ITriedaI18nGateway i18nGateway;
+	
+	public SimpleGrid(List<ColumnConfig> columnList, ITriedaI18nGateway i18nGateway) {
 		super(new FitLayout());
 		this.columnList = columnList;
+		this.i18nGateway = i18nGateway;
 		setHeaderVisible(false);
 	}
 
@@ -53,9 +59,23 @@ public class SimpleGrid<M extends BaseModel> extends ContentPanel {
 		}
 		grid.setBorders(false);
 		pagingPanel();
+		addLoadingListener();
 		add(grid);
 	}
 
+	private void addLoadingListener() {
+		loader.addLoadListener(new LoadListener() {
+			@Override
+			public void loaderBeforeLoad(LoadEvent le) {
+				grid.mask(i18nGateway.getI18nMessages().loading(), "loading");
+			}
+			@Override
+			public void loaderLoad(LoadEvent le) {
+				grid.unmask();
+			}
+		});
+	}
+	
 	@Override
 	protected void onRender(Element parent, int pos) {
 		super.onRender(parent, pos);

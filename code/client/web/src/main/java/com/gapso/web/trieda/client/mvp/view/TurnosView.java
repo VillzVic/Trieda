@@ -60,7 +60,7 @@ public class TurnosView extends MyComposite implements TurnosPresenter.Display {
 		BorderLayoutData bld = new BorderLayoutData(LayoutRegion.CENTER);
 	    bld.setMargins(new Margins(5, 5, 5, 5));
 	    
-	    gridPanel = new SimpleGrid<TurnoDTO>(getColumnList());
+	    gridPanel = new SimpleGrid<TurnoDTO>(getColumnList(), this);
 	    panel.add(gridPanel, bld);
 	}
 

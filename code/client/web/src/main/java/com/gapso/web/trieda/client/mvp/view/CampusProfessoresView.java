@@ -58,7 +58,7 @@ public class CampusProfessoresView extends MyComposite implements CampusProfesso
 		BorderLayoutData bld = new BorderLayoutData(LayoutRegion.CENTER);
 	    bld.setMargins(new Margins(5, 5, 5, 5));
 	    
-	    gridPanel = new SimpleGrid<ProfessorCampusDTO>(getColumnList());
+	    gridPanel = new SimpleGrid<ProfessorCampusDTO>(getColumnList(), this);
 	    panel.add(gridPanel, bld);
 	}
 

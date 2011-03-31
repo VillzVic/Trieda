@@ -59,7 +59,7 @@ public class TiposCursosView extends MyComposite implements TiposCursosPresenter
 		BorderLayoutData bld = new BorderLayoutData(LayoutRegion.CENTER);
 	    bld.setMargins(new Margins(5, 5, 5, 5));
 	    
-	    gridPanel = new SimpleGrid<TipoCursoDTO>(getColumnList());
+	    gridPanel = new SimpleGrid<TipoCursoDTO>(getColumnList(), this);
 	    panel.add(gridPanel, bld);
 	}
 

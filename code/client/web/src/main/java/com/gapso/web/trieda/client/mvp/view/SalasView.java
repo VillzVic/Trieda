@@ -82,7 +82,7 @@ public class SalasView extends MyComposite implements SalasPresenter.Display {
 		BorderLayoutData bld = new BorderLayoutData(LayoutRegion.CENTER);
 	    bld.setMargins(new Margins(5, 5, 5, 5));
 	    
-	    gridPanel = new SimpleGrid<SalaDTO>(getColumnList());
+	    gridPanel = new SimpleGrid<SalaDTO>(getColumnList(), this);
 	    panel.add(gridPanel, bld);
 	}
 

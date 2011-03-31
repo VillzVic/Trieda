@@ -53,7 +53,7 @@ public class DivisoesCreditosView extends MyComposite implements DivisoesCredito
 		BorderLayoutData bld = new BorderLayoutData(LayoutRegion.CENTER);
 	    bld.setMargins(new Margins(5, 5, 5, 5));
 	    
-	    gridPanel = new SimpleGrid<DivisaoCreditoDTO>(getColumnList());
+	    gridPanel = new SimpleGrid<DivisaoCreditoDTO>(getColumnList(), this);
 	    panel.add(gridPanel, bld);
 	}
 

@@ -64,7 +64,7 @@ public class OfertasView extends MyComposite implements OfertasPresenter.Display
 		BorderLayoutData bld = new BorderLayoutData(LayoutRegion.CENTER);
 	    bld.setMargins(new Margins(5, 5, 5, 5));
 	    
-	    gridPanel = new SimpleGrid<OfertaDTO>(getColumnList());
+	    gridPanel = new SimpleGrid<OfertaDTO>(getColumnList(), this);
 	    panel.add(gridPanel, bld);
 	}
 

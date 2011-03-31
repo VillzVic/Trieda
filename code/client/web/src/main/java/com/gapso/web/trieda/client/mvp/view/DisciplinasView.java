@@ -70,7 +70,7 @@ public class DisciplinasView extends MyComposite implements DisciplinasPresenter
 		BorderLayoutData bld = new BorderLayoutData(LayoutRegion.CENTER);
 	    bld.setMargins(new Margins(5, 5, 5, 5));
 	    
-	    gridPanel = new SimpleGrid<DisciplinaDTO>(getColumnList());
+	    gridPanel = new SimpleGrid<DisciplinaDTO>(getColumnList(), this);
 	    panel.add(gridPanel, bld);
 	}
 

@@ -71,7 +71,7 @@ public class CampiView extends MyComposite implements CampiPresenter.Display {
 		BorderLayoutData bld = new BorderLayoutData(LayoutRegion.CENTER);
 	    bld.setMargins(new Margins(5, 5, 5, 5));
 	    
-	    gridPanel = new SimpleGrid<CampusDTO>(getColumnList());
+	    gridPanel = new SimpleGrid<CampusDTO>(getColumnList(), this);
 	    panel.add(gridPanel, bld);
 	}
 

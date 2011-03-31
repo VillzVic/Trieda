@@ -59,7 +59,7 @@ public class AreasTitulacaoView extends MyComposite implements AreasTitulacaoPre
 		BorderLayoutData bld = new BorderLayoutData(LayoutRegion.CENTER);
 	    bld.setMargins(new Margins(5, 5, 5, 5));
 	    
-	    gridPanel = new SimpleGrid<AreaTitulacaoDTO>(getColumnList());
+	    gridPanel = new SimpleGrid<AreaTitulacaoDTO>(getColumnList(), this);
 	    panel.add(gridPanel, bld);
 	}
 

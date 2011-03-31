@@ -67,7 +67,7 @@ public class CursosView extends MyComposite implements CursosPresenter.Display {
 		BorderLayoutData bld = new BorderLayoutData(LayoutRegion.CENTER);
 	    bld.setMargins(new Margins(5, 5, 5, 5));
 	    
-	    gridPanel = new SimpleGrid<CursoDTO>(getColumnList());
+	    gridPanel = new SimpleGrid<CursoDTO>(getColumnList(), this);
 	    panel.add(gridPanel, bld);
 	}
 

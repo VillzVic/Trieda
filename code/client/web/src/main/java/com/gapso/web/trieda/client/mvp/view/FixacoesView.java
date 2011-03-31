@@ -58,7 +58,7 @@ public class FixacoesView extends MyComposite implements FixacoesPresenter.Displ
 		BorderLayoutData bld = new BorderLayoutData(LayoutRegion.CENTER);
 	    bld.setMargins(new Margins(5, 5, 5, 5));
 	    
-	    gridPanel = new SimpleGrid<FixacaoDTO>(getColumnList());
+	    gridPanel = new SimpleGrid<FixacaoDTO>(getColumnList(), this);
 	    panel.add(gridPanel, bld);
 	}
 
