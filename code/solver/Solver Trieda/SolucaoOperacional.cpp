@@ -188,7 +188,7 @@ vector<Aula*>::iterator SolucaoOperacional::getHorariosDia(Professor & professor
 
    // Ajustando para o primeiro horário do dia em questão.
    //itHorarios += ((dia - 1) * totalHorarios) + 1;
-   itHorarios += ((dia - 2) * totalHorarios) + 1;
+   itHorarios += ((dia - 2) * totalHorarios);
 
    return itHorarios;
 }

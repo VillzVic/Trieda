@@ -47,7 +47,8 @@ private:
    */
 
    // Armazena, em ordem decrescente, os Custos de Alocação para cada Aula.
-   std::vector<std::pair<Aula*,std::vector<CustoAlocacao*> > > custosAlocacaoAulaOrdenado;
+   //std::vector<std::pair<Aula*,std::vector<CustoAlocacao*> > > custosAlocacaoAulaOrdenado;
+   std::vector<std::pair<Aula*,std::vector<CustoAlocacao*> * > > custosAlocacaoAulaOrdenado;
 
    // Estrutura que armazena todas as aulas que não foram associadas a nenhum professor.
    // Baseando-se nessa estrutura, pode-se dizer se será necessário criar professores virtuais,

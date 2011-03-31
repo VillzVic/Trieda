@@ -4,9 +4,9 @@
 #include <vector>
 #include "GGroup.h"
 
-#include "Disciplina.h"
-#include "Sala.h"
+#include "disciplina.h"
 #include "Oferta.h"
+#include "sala.h"
 #include "AlocacaoAula.h"
 
 class Aula
@@ -15,13 +15,14 @@ public:
    Aula(bool _aulaVirtual = false);
    virtual ~Aula(void);
 
+   GGroup<Oferta*> ofertas;
+
    void setTurma(int);
    void setDisciplina(Disciplina*);
    void setSala(Sala*);
    void setDiaSemana(int);
    void setCreditosTeoricos(int);
    void setCreditosPraticos(int);
-   void setOfertaCursoCampusId(int);
    void setAulaVirtual(bool value);
 
    int getTurma() const;
@@ -30,7 +31,6 @@ public:
    int getDiaSemana() const;
    int getCreditosTeoricos() const;
    int getCreditosPraticos() const;
-   int getOfertacursoCampusId() const;
    int getTotalCreditos() const;
 
    bool eVirtual() const;
@@ -43,7 +43,7 @@ public:
          ((turma < right.getTurma()) &&
          (disciplina < right.getDisciplina()) &&
          (sala < right.getSala()) &&
-         (dia_semana < right.getDiaSemana()) &&
+         (diaSemana < right.getDiaSemana()) &&
          (creditos_teoricos < right.getCreditosTeoricos()) &&
          (creditos_praticos < right.getCreditosPraticos()));
    }
@@ -54,19 +54,19 @@ public:
          ((turma == right.getTurma()) &&
          (disciplina == right.getDisciplina()) &&
          (sala == right.getSala()) &&
-         (dia_semana == right.getDiaSemana()) &&
+         (diaSemana == right.getDiaSemana()) &&
          (creditos_teoricos == right.getCreditosTeoricos()) &&
          (creditos_praticos == right.getCreditosPraticos()));
    }
 
-   GGroup< Oferta * > ofertas;
+   void toSring();
 
 private:
-   int oferta_curso_campus_id;
+   //GGroup<Oferta*> ofertas;
    int turma;
    Disciplina* disciplina;
    Sala* sala;
-   int dia_semana;
+   int diaSemana;
    int quantidade;
    int creditos_teoricos;
    int creditos_praticos;

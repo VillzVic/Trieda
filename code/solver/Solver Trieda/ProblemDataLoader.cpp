@@ -2331,17 +2331,6 @@ void ProblemDataLoader::relacionaDiscOfertas()
 // relacionado com a issue TRIEDA-700
 void ProblemDataLoader::criaAulas()
 {
-   /* 
-   ToDo (Cleiton) : Adaptar o código abaixo e, se necessário, a estrutura <Aula> para armazenar
-   informações de mais de um atendimento.
-
-   O problema a ser resolvido consiste no caso em que num dado dia, mais de um atendimento tático
-   faça referência à mesma Aula.
-
-   Na instância trivial, a disciplina <codigo = "D03-INF-1"> está contida em 2 ofertas diferentes. O solver
-   tático resolveu alocar juntas essas ofertas. Então, o mesmo deve ser feito ao criar a aula.
-   */
-
    // Checando se o XML de entrada possui a saída do TÁTICO,
    if (problemData->atendimentosTatico)
    {
@@ -2364,6 +2353,8 @@ void ProblemDataLoader::criaAulas()
 
                      Disciplina* disciplina = problemData->refDisciplinas.find(atendOferta->getDisciplinaId())->second;
 
+                     int idDisc = disciplina->getId();
+
                      Sala* sala = problemData->refSala.find(it_atend_sala->getSalaId())->second;
 
                      // Informa o dia da semana da aula
@@ -2375,17 +2366,35 @@ void ProblemDataLoader::criaAulas()
                      // Informa os créditos práticos da aula
                      int creditos_praticos = it_atend_tatico->getQtdeCreditosPraticos();
 
-                     // Monta o objeto 'aula'
-                     Aula *aula = new Aula();
-                     aula->setOfertaCursoCampusId(atendOferta->getOfertaCursoCampiId());
-                     aula->setTurma( turma );
-                     aula->setDisciplina( disciplina );
-                     aula->setSala( sala );
-                     aula->setDiaSemana( diaSemana );
-                     aula->setCreditosTeoricos( creditos_teoricos );
-                     aula->setCreditosPraticos( creditos_praticos );
+                     /* Procurando nas aulas cadastradas, se existe alguma aula que possui os mesmos ídices de 
+                     dia da semana, sala e turma. Caso encontre, devo apenas add a oferta à aula existente.
+                     */
+                     bool novaAula = true;
 
-                     problemData->aulas.add(aula);
+                     ITERA_GGROUP(itAula,problemData->aulas,Aula)
+                     {
+                        if( (itAula->getTurma() == turma) && (itAula->getDisciplina() == disciplina) && (itAula->getDiaSemana() == diaSemana) && (itAula->getSala() == sala))
+                        {
+                           itAula->ofertas.add(problemData->refOfertas[atendOferta->getOfertaCursoCampiId()]);
+                           novaAula = false;
+                           break;
+                        }
+                     }
+
+                     if(novaAula)
+                     {
+                        // Monta o objeto 'aula'
+                        Aula * aula = new Aula();
+                        aula->ofertas.add(problemData->refOfertas[atendOferta->getOfertaCursoCampiId()]);
+                        aula->setTurma( turma );
+                        aula->setDisciplina( disciplina );
+                        aula->setSala( sala );
+                        aula->setDiaSemana( diaSemana );
+                        aula->setCreditosTeoricos( creditos_teoricos );
+                        aula->setCreditosPraticos( creditos_praticos );
+
+                        problemData->aulas.add(aula);
+                     }
                   }
                }
             }
@@ -2393,8 +2402,11 @@ void ProblemDataLoader::criaAulas()
       }
    }
 
-   std::cout << "Total de aulas criadas: "
-			 << problemData->aulas.size() << std::endl;
+   ITERA_GGROUP(itAula,problemData->aulas,Aula)
+      itAula->toSring();
+
+   //std::cout << "Total de aulas criadas: "
+			// << problemData->aulas.size() << std::endl;
 }
 
 void ProblemDataLoader::print_csv(void)

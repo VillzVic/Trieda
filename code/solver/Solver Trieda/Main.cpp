@@ -44,160 +44,163 @@ void writeOutput(ProblemSolution* solution, char* outputFile, char* tempOutput);
 
 int main(int argc, char** argv)
 {
-    srand((unsigned int)time(NULL));
+   srand((unsigned int)time(NULL));
 
-    _signals();
+   vector<int> myvector;
+   for (int i=1; i<=5; i++) myvector.push_back(i);
 
-	char path[1024];
-	char inputFile[1024];
-	char tempOutput[1024];
-	char outputFile[1024];
-	bool error;
+   _signals();
 
-	ProblemDataLoader* dataLoader;
-	ProblemData *data = new ProblemData();
-	ProblemSolution* solution = new ProblemSolution();
-	Solver* solver;
+   char path[1024];
+   char inputFile[1024];
+   char tempOutput[1024];
+   char outputFile[1024];
+   bool error;
 
-	// Initializations
-	path[0] = '\0';
-	inputFile[0] = '\0';
-	tempOutput[0] = '\0';
-	outputFile[0] = '\0';
-	error = false;
+   ProblemDataLoader* dataLoader;
+   ProblemData *data = new ProblemData();
+   ProblemSolution* solution = new ProblemSolution();
+   Solver* solver;
 
-	// Check command line
-	if( argc <= 2 )
-	{
-		if ( argc == 2 && strcmp(argv[1],"-version") == 0 )
-		{
-			printf("%s_%s\n",__DATE__,__TIME__);
-			return 0; 
-		}
-		else
-		{
-			printf("Invalid parameters in command line.\n");
-			printf("Usage: solver <instanceID> <path>\n");
-			return 0;
-		}
-	}
+   // Initializations
+   path[0] = '\0';
+   inputFile[0] = '\0';
+   tempOutput[0] = '\0';
+   outputFile[0] = '\0';
+   error = false;
 
-	// Read path
-	strcat(path,argv[2]);
-	strcat(path,PATH_SEPARATOR);
+   // Check command line
+   if( argc <= 2 )
+   {
+      if ( argc == 2 && strcmp(argv[1],"-version") == 0 )
+      {
+         printf("%s_%s\n",__DATE__,__TIME__);
+         return 0; 
+      }
+      else
+      {
+         printf("Invalid parameters in command line.\n");
+         printf("Usage: solver <instanceID> <path>\n");
+         return 0;
+      }
+   }
 
-	// Input file name
-	strcat(inputFile,path);
-	strcat(inputFile,"input");
-	strcat(inputFile,argv[1]);
+   // Read path
+   strcat(path,argv[2]);
+   strcat(path,PATH_SEPARATOR);
 
-	// Temporary output file name
-	strcat(tempOutput,path);
-	strcat(tempOutput,"partialSolution.xml");
-	std::string tempOutputFile = tempOutput;
+   // Input file name
+   strcat(inputFile,path);
+   strcat(inputFile,"input");
+   strcat(inputFile,argv[1]);
 
-	// Output file name
-	strcat(outputFile,path);
-	strcat(outputFile,"output");
-	strcat(outputFile,argv[1]);
-	strcat(outputFile,"F");
+   // Temporary output file name
+   strcat(tempOutput,path);
+   strcat(tempOutput,"partialSolution.xml");
+   std::string tempOutputFile = tempOutput;
 
-	dtOutput.solution = solution;
-    strcpy(dtOutput.outputFile, outputFile);
-    strcpy(dtOutput.tempOutput, tempOutput);
+   // Output file name
+   strcat(outputFile,path);
+   strcat(outputFile,"output");
+   strcat(outputFile,argv[1]);
+   strcat(outputFile,"F");
 
-	if( argc > 3 )
-	{
-		// Read other parameters
-	}
+   dtOutput.solution = solution;
+   strcpy(dtOutput.outputFile, outputFile);
+   strcpy(dtOutput.tempOutput, tempOutput);
 
-#ifndef DEBUG
-	try
-	{
-#endif
-		// Load data
-		dataLoader = new ProblemDataLoader(inputFile, data);   
-		dataLoader->load();
-
-		try
-        {
-			// Solve the Problem
-			solver = new SolverMIP(data, solution, dataLoader);
-			solver->solve();
-			solver->getSolution(solution);
-			delete solver;
-			delete dataLoader;
-		}
-		catch(int& status)
-		{
-			char mensagem[200];
-			sprintf(mensagem, "Não foi possível processar o modelo matemático (erro %d)", status);
-            ErrorHandler::addErrorMessage(UNEXPECTED_ERROR,
-				";;;;;;"+std::string(mensagem), "Solver::main()", false);
-            error = true;
-        }
-
-		try
-        {
-           writeOutput(solution, outputFile, tempOutput);
-        }
-        catch (int& status)
-        {
-           char mensagem[200];
-           sprintf(mensagem, "Não foi possível escrever a solução. Error code: %d.", status);
-           ErrorHandler::addErrorMessage(UNEXPECTED_ERROR, std::string(mensagem), "Solver::main()", false);
-           error = true;
-        }
+   if( argc > 3 )
+   {
+      // Read other parameters
+   }
 
 #ifndef DEBUG
-	}
-	catch( std::exception& e )
-	{
-		if( ErrorHandler::getErrorMessages().size() == 0 )
-			ErrorHandler::addErrorMessage( UNEXPECTED_ERROR, "Ocorreu um erro interno no resolvedor.", "main.cpp", true );
-		printf("\n\nERROR: %s\n",e.what());
-		error = true;
-	}
+   try
+   {
 #endif
-	/*
-	//Write output
-	try
-	{
-		remove(tempOutput);
+      // Load data
+      dataLoader = new ProblemDataLoader(inputFile, data);   
+      dataLoader->load();
 
-		file.open(tempOutput);
-		file << *solution;
-		file.close();
+      try
+      {
+         // Solve the Problem
+         solver = new SolverMIP(data, solution, dataLoader);
+         solver->solve();
+         solver->getSolution(solution);
+         delete solver;
+         delete dataLoader;
+      }
+      catch(int& status)
+      {
+         char mensagem[200];
+         sprintf(mensagem, "Não foi possível processar o modelo matemático (erro %d)", status);
+         ErrorHandler::addErrorMessage(UNEXPECTED_ERROR,
+            ";;;;;;"+std::string(mensagem), "Solver::main()", false);
+         error = true;
+      }
 
-		remove(outputFile);
-		rename(tempOutput,outputFile);
-	}
-	catch( std::exception& e )
-	{
-		printf("\n\nAn error occurred during creation of output file.\n",e.what());
-		printf("ERROR: %s\n",e.what()); 
-		error = true;
-	}
-	*/
-	if( error )
-	{
-		return 0;
-	}
+      try
+      {
+         writeOutput(solution, outputFile, tempOutput);
+      }
+      catch (int& status)
+      {
+         char mensagem[200];
+         sprintf(mensagem, "Não foi possível escrever a solução. Error code: %d.", status);
+         ErrorHandler::addErrorMessage(UNEXPECTED_ERROR, std::string(mensagem), "Solver::main()", false);
+         error = true;
+      }
 
-	return 1;
+#ifndef DEBUG
+   }
+   catch( std::exception& e )
+   {
+      if( ErrorHandler::getErrorMessages().size() == 0 )
+         ErrorHandler::addErrorMessage( UNEXPECTED_ERROR, "Ocorreu um erro interno no resolvedor.", "main.cpp", true );
+      printf("\n\nERROR: %s\n",e.what());
+      error = true;
+   }
+#endif
+   /*
+   //Write output
+   try
+   {
+   remove(tempOutput);
+
+   file.open(tempOutput);
+   file << *solution;
+   file.close();
+
+   remove(outputFile);
+   rename(tempOutput,outputFile);
+   }
+   catch( std::exception& e )
+   {
+   printf("\n\nAn error occurred during creation of output file.\n",e.what());
+   printf("ERROR: %s\n",e.what()); 
+   error = true;
+   }
+   */
+   if( error )
+   {
+      return 0;
+   }
+
+   return 1;
 }
 
 void writeOutput(ProblemSolution* solution, char* outputFile, char* tempOutput)
 {
-	// Write output
-	remove(tempOutput);
-	std::ofstream file;
-	file.open(tempOutput);
-	file << *solution;
-	file.close();
+   // Write output
+   remove(tempOutput);
+   std::ofstream file;
+   file.open(tempOutput);
+   file << *solution;
+   file.close();
 
-	remove(outputFile);
-	rename(tempOutput,outputFile);
+   remove(outputFile);
+   rename(tempOutput,outputFile);
 }
 
 void _signals()
@@ -217,7 +220,7 @@ void _tprocesshandler(int _code)
    printf("O programa foi finalizado com o código (%d).\n", _code);
    string mensagem = ("O programa foi finalizado com o código");
    ErrorHandler::addErrorMessage(UNEXPECTED_ERROR,
-	   ";;;;;;" + mensagem, "Solver::main()", false);
+      ";;;;;;" + mensagem, "Solver::main()", false);
    writeOutput(dtOutput.solution, dtOutput.outputFile, dtOutput.tempOutput);
    exit(_code);
 }
