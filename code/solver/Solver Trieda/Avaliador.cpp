@@ -400,9 +400,11 @@ void Avaliador::calculaDescolamentoBlocoCurricular(SolucaoOperacional& solucao)
 				// Tempo de deslocamento entre uma aula e outra
 				tempo_minimo = calculaTempoEntreCampusUnidades(solucao,
 					campus_atual, campus_anterior, unidade_atual, unidade_anterior);
+				tempo_minimo = abs(tempo_minimo);
 
 				// Tempo existente entre as aulas 'aula_anterior' e 'aula_atual'
 				tempo_disponivel = (indice_horario_atual - indice_horario_anterior) * (MINUTOS_POR_HORARIO);
+				tempo_disponivel = abs(tempo_disponivel);
 
 				// Verifica se ocorreu a violação de tempo mínimo
 				// necessário para se deslocar entre campus/unidades
@@ -415,7 +417,7 @@ void Avaliador::calculaDescolamentoBlocoCurricular(SolucaoOperacional& solucao)
 
 				// Critério de avaliação n° 2:
 				// Tempo de deslocamento entre uma aula e outra
-				tempo_deslocamento += abs( tempo_minimo - tempo_disponivel );
+				tempo_deslocamento += (tempo_minimo);
 			}
 
 			// Atualiza os ponteiros para a próxima iteração
