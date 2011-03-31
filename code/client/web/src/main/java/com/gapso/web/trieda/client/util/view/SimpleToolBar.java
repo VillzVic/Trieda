@@ -52,7 +52,9 @@ public class SimpleToolBar extends ToolBar {
 		}
 		
 		if(showRemoveButton) {
-			removeButton = createButton(i18nGateway.getI18nConstants().remover(), Resources.DEFAULTS.del16());
+			removeButton = new ConfirmationButton(i18nGateway);
+			removeButton.setIcon(AbstractImagePrototype.create(Resources.DEFAULTS.del16()));
+			removeButton.setToolTip(i18nGateway.getI18nConstants().remover());
 			add(removeButton);
 		}
 		

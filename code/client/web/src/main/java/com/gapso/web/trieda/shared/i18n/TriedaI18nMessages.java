@@ -21,6 +21,7 @@ public interface TriedaI18nMessages extends Messages {
 	String sucessoImportacaoExcel();
 	String sucessoRemoverDoBD(String codigoItem);
 	String sucessoSalvarNoBD(String codigoItem);
+	String confirmacaoButton();
 
   // Exemplo com data
   //@DefaultMessage("Last update: {0,date,medium} {0,time,medium}")

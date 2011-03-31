@@ -58,5 +58,6 @@ public interface TriedaI18nConstants extends Constants {
 	String unidade();
 	String unidades();
 	String unidadesHeadingPanel();
+	String confirmacao();
 	String usaLaboratorio();
 }
