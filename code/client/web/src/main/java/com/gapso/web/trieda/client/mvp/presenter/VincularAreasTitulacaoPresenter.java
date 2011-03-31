@@ -5,8 +5,10 @@ import java.util.List;
 import com.extjs.gxt.ui.client.Style.SortDir;
 import com.extjs.gxt.ui.client.data.BaseListLoader;
 import com.extjs.gxt.ui.client.data.ListLoadResult;
+import com.extjs.gxt.ui.client.data.LoadEvent;
 import com.extjs.gxt.ui.client.data.RpcProxy;
 import com.extjs.gxt.ui.client.event.ButtonEvent;
+import com.extjs.gxt.ui.client.event.LoadListener;
 import com.extjs.gxt.ui.client.event.SelectionChangedEvent;
 import com.extjs.gxt.ui.client.event.SelectionChangedListener;
 import com.extjs.gxt.ui.client.event.SelectionListener;
@@ -63,6 +65,22 @@ public class VincularAreasTitulacaoPresenter implements Presenter {
 			}
 		};
 		display.getVinculadaList().setStore(new ListStore<AreaTitulacaoDTO>(new BaseListLoader<ListLoadResult<AreaTitulacaoDTO>>(proxyVinculada)));
+		addLoadingListener();
+	}
+	
+	private void addLoadingListener() {
+		display.getNaoVinculadaList().getStore().getLoader().addLoadListener(new LoadListener() {
+			@Override
+			public void loaderBeforeLoad(LoadEvent le) {
+				display.getNaoVinculadaList().mask(display.getI18nMessages().loading(), "loading");
+				display.getVinculadaList().mask(display.getI18nMessages().loading(), "loading");
+			}
+			@Override
+			public void loaderLoad(LoadEvent le) {
+				display.getNaoVinculadaList().unmask();
+				display.getVinculadaList().unmask();
+			}
+		});
 	}
 	
 	private void setListeners() {
