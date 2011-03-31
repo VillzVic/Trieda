@@ -3,6 +3,7 @@ package com.gapso.web.trieda.shared.excel;
 public enum ExcelInformationType {
 	TUDO(""),
 	CAMPI("Campi"),
+	CURRICULOS("Currículos"),
 	CURSOS("Cursos"),
 	DISCIPLINAS("Disciplinas"),
 	UNIDADES("Unidades"),

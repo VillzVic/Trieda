@@ -1,8 +1,10 @@
 package com.gapso.trieda.domain;
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -111,6 +113,10 @@ public class CurriculoDisciplina implements Serializable {
         this.gruposSala = gruposSala;
     }
 	
+	public String getNaturalKeyString() {
+		return getCurriculo().getCurso().getCodigo() + "-" + getCurriculo().getCodigo() + "-" + getPeriodo().toString() + "-" + getDisciplina().getCodigo();
+	}
+	
 	private static final long serialVersionUID = -5429743673577487971L;
 
 	@PersistenceContext
@@ -197,6 +203,21 @@ public class CurriculoDisciplina implements Serializable {
 
 	public static int count() {
         return ((Number) entityManager().createQuery("SELECT COUNT(o) FROM CurriculoDisciplina o").getSingleResult()).intValue();
+    }
+	
+	public static Map<String,CurriculoDisciplina> buildNaturalKeyToCurriculoDisciplinaMap(List<CurriculoDisciplina> curriculosDisciplina) {
+		Map<String,CurriculoDisciplina> curriculosDisciplinaMap = new HashMap<String,CurriculoDisciplina>();
+		for (CurriculoDisciplina curriculoDisciplina : curriculosDisciplina) {
+			curriculosDisciplinaMap.put(curriculoDisciplina.getNaturalKeyString(),curriculoDisciplina);
+		}
+		return curriculosDisciplinaMap;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static List<CurriculoDisciplina> findByCenario(Cenario cenario) {
+		Query q = entityManager().createQuery("SELECT o FROM CurriculoDisciplina o WHERE o.curriculo.cenario = :cenario");
+    	q.setParameter("cenario", cenario);
+    	return q.getResultList();
     }
 	
 	@SuppressWarnings("unchecked")

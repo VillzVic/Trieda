@@ -14,6 +14,7 @@ public class ImportExcelFactory {
 		switch (informationToBeImported) {
 			//case TUDO: importer = new TRIEDAImportExcel(); break;
 			case CAMPI: importer = new CampiImportExcel(cenario,i18nConstants,i18nMessages); break;
+			case CURRICULOS: importer = new CurriculosImportExcel(cenario,i18nConstants,i18nMessages); break;
 			case CURSOS: importer = new CursosImportExcel(cenario,i18nConstants,i18nMessages); break;
 			case DISCIPLINAS: importer = new DisciplinasImportExcel(cenario,i18nConstants,i18nMessages); break;
 			case UNIDADES: importer = new UnidadesImportExcel(cenario,i18nConstants,i18nMessages); break;

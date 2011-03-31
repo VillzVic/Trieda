@@ -12,6 +12,14 @@ public enum ImportExcelError {
 	CAMPUS_ESTADO_VALOR_INVALIDO,
 	CAMPUS_NOME_VAZIO,
 	
+	CURRICULO_CODIGO_VAZIO,
+	CURRICULO_CURSO_VAZIO,
+	CURRICULO_DESCRICAO_VAZIO,
+	CURRICULO_DISCIPLINA_VAZIO,
+	CURRICULO_PERIODO_FORMATO_INVALIDO,
+	CURRICULO_PERIODO_VALOR_NEGATIVO,
+	CURRICULO_PERIODO_VAZIO,
+	
 	CURSO_CODIGO_VAZIO,
 	CURSO_NOME_VAZIO,
 	CURSO_TIPO_VAZIO,
@@ -72,6 +80,14 @@ public enum ImportExcelError {
 			case CAMPUS_ESTADO_VALOR_INVALIDO: return i18nMessages.excelErroSintaticoValorInvalido(param1,CampiImportExcel.ESTADO_COLUMN_NAME);
 			case CAMPUS_NOME_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia(param1,CampiImportExcel.NOME_COLUMN_NAME);
 
+			case CURRICULO_CODIGO_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia(param1,CurriculosImportExcel.CODIGO_COLUMN_NAME);
+			case CURRICULO_CURSO_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia(param1,CurriculosImportExcel.CURSO_COLUMN_NAME);
+			case CURRICULO_DESCRICAO_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia(param1,CurriculosImportExcel.DESCRICAO_COLUMN_NAME);
+			case CURRICULO_DISCIPLINA_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia(param1,CurriculosImportExcel.DISCIPLINA_COLUMN_NAME);
+			case CURRICULO_PERIODO_FORMATO_INVALIDO: return i18nMessages.excelErroSintaticoFormatoInvalido(param1,CurriculosImportExcel.PERIODO_COLUMN_NAME);
+			case CURRICULO_PERIODO_VALOR_NEGATIVO: return i18nMessages.excelErroSintaticoValorNegativo(param1,CurriculosImportExcel.PERIODO_COLUMN_NAME);
+			case CURRICULO_PERIODO_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia(param1,CurriculosImportExcel.PERIODO_COLUMN_NAME);
+			
 			case CURSO_CODIGO_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia(param1,CursosImportExcel.CODIGO_COLUMN_NAME);
 			case CURSO_NOME_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia(param1,CursosImportExcel.NOME_COLUMN_NAME);
 			case CURSO_TIPO_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia(param1,CursosImportExcel.TIPO_COLUMN_NAME);

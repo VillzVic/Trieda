@@ -1,8 +1,10 @@
 package com.gapso.trieda.domain;
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -189,6 +191,21 @@ public class Curriculo implements Serializable {
 	@SuppressWarnings("unchecked")
     public static List<Curriculo> findAll() {
         return entityManager().createQuery("select o from Curriculo o").getResultList();
+    }
+	
+	public static Map<String,Curriculo> buildCurriculoCodigoToCurriculoMap(List<Curriculo> curriculos) {
+		Map<String,Curriculo> curriculosMap = new HashMap<String,Curriculo>();
+		for (Curriculo curriculo : curriculos) {
+			curriculosMap.put(curriculo.getCodigo(),curriculo);
+		}
+		return curriculosMap;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static List<Curriculo> findByCenario(Cenario cenario) {
+		Query q = entityManager().createQuery("SELECT o FROM Curriculo o WHERE cenario = :cenario");
+    	q.setParameter("cenario", cenario);
+    	return q.getResultList();
     }
 
 	public static Curriculo find(Long id) {
