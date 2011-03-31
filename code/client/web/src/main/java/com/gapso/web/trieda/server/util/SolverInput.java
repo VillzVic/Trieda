@@ -703,6 +703,9 @@ public class SolverInput {
 			} else {
 				ItemFixacao itemFixacao = of.createItemFixacao();
 				itemFixacao.setId(id++);
+				if(fixacao.getProfessor() != null) {
+					itemFixacao.setProfessorId(fixacao.getProfessor().getId().intValue());
+				}
 				if(fixacao.getDisciplina() != null) {
 					itemFixacao.setDisciplinaId(fixacao.getDisciplina().getId().intValue());
 				}
