@@ -4,8 +4,10 @@ import java.util.List;
 
 import com.extjs.gxt.ui.client.Style.LayoutRegion;
 import com.extjs.gxt.ui.client.data.BaseTreeLoader;
+import com.extjs.gxt.ui.client.data.LoadEvent;
 import com.extjs.gxt.ui.client.data.RpcProxy;
 import com.extjs.gxt.ui.client.data.TreeLoader;
+import com.extjs.gxt.ui.client.event.LoadListener;
 import com.extjs.gxt.ui.client.store.TreeStore;
 import com.extjs.gxt.ui.client.util.Margins;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
@@ -98,5 +100,19 @@ public class ResumoCampiView extends MyComposite implements ResumoCampiPresenter
 		};
 		
 		store = new TreeStore<TreeNodeDTO>(loader);
+		addLoadingListener();
+	}
+	
+	private void addLoadingListener() {
+		store.getLoader().addLoadListener(new LoadListener() {
+			@Override
+			public void loaderBeforeLoad(LoadEvent le) {
+				tree.mask(getI18nMessages().loading(), "loading");
+			}
+			@Override
+			public void loaderLoad(LoadEvent le) {
+				tree.unmask();
+			}
+		});
 	}
 }
