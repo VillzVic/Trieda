@@ -70,6 +70,7 @@ public class CompatibilidadesPresenter implements Presenter {
 		display.getPeriodoComboBox().addSelectionChangedListener(new SelectionChangedListener<SimpleComboValue<Integer>>(){
 			@Override
 			public void selectionChanged(SelectionChangedEvent<SimpleComboValue<Integer>> se) {
+				display.getGrid().mask(display.getI18nMessages().loading(), "loading");
 				if(se.getSelectedItem() == null) return;
 				Integer periodo = se.getSelectedItem().getValue();
 				if(periodo == null) return;
@@ -78,6 +79,7 @@ public class CompatibilidadesPresenter implements Presenter {
 					@Override
 					public void onSuccess(List<DisciplinaIncompativelDTO> list) {
 						display.getGrid().updateList(list);
+						display.getGrid().unmask();
 					}
 				});
 			}
@@ -86,11 +88,13 @@ public class CompatibilidadesPresenter implements Presenter {
 		display.getSalvarButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
 			@Override
 			public void componentSelected(ButtonEvent ce) {
+				display.getGrid().mask(display.getI18nMessages().loading(), "loading");
 				List<DisciplinaIncompativelDTO> list = display.getGrid().getModels();
 				Services.disciplinas().saveDisciplinasIncompativeis(list, new AbstractAsyncCallbackWithDefaultOnFailure<Void>(display) {
 					@Override
 					public void onSuccess(Void result) {
 						Info.display("Salvo", "Incompatibilidade salvas com sucesso!");
+						display.getGrid().unmask();
 					}
 				});
 			}
@@ -98,12 +102,14 @@ public class CompatibilidadesPresenter implements Presenter {
 		display.getCancelarButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
 			@Override
 			public void componentSelected(ButtonEvent ce) {
+				display.getGrid().mask(display.getI18nMessages().loading(), "loading");
 				Integer periodo = display.getPeriodoComboBox().getValue().getValue();
 				CurriculoDTO curriculoDTO = display.getCurriculoComboBox().getValue();
 				Services.disciplinas().getDisciplinasIncompativeis(curriculoDTO, periodo, new AbstractAsyncCallbackWithDefaultOnFailure<List<DisciplinaIncompativelDTO>>(display) {
 					@Override
 					public void onSuccess(List<DisciplinaIncompativelDTO> list) {
 						display.getGrid().updateList(list);
+						display.getGrid().unmask();
 					}
 				});
 			}
