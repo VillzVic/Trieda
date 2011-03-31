@@ -5,6 +5,7 @@
 #include "Avaliador.h"
 #include "ofbase.h"
 #include "Fixacao.h"
+#include "DateTime.h"
 
 Avaliador::Avaliador()
 {
@@ -287,8 +288,11 @@ void Avaliador::calculaDescolamentoBlocoCurricular(SolucaoOperacional& solucao)
 	Aula* aula_atual = NULL;
 	Aula* aula_anterior = NULL;
 
+	Horario * horario = NULL;
+
 	// Dado um bloco curricular, recupera-se as aulas desse bloco
-	std::map< BlocoCurricular * /*bloco curricular*/, GGroup<Aula*>/*aulas*/ > mapBlocoAulas;
+	std::map< BlocoCurricular * /*bloco curricular*/,
+		GGroup< pair<Aula*, Horario*> >/*pares 'aula - horário'*/ > mapBlocoAulaHorario;
 	for (i = 0; i < solucao.getMatrizAulas()->size(); i++)
 	{
 		for (j = 0; j < solucao.getMatrizAulas()->at(i)->size(); j++)
@@ -299,6 +303,9 @@ void Avaliador::calculaDescolamentoBlocoCurricular(SolucaoOperacional& solucao)
 			{
 				continue;
 			}
+
+			// Recupera o horário referente à aula atual
+			horario = solucao.getHorario(i, j);
 
 			// Disciplina correspondente à aula atual
 			disciplina = aula->getDisciplina();
@@ -315,24 +322,28 @@ void Avaliador::calculaDescolamentoBlocoCurricular(SolucaoOperacional& solucao)
 				bloco = solucao.getProblemData()->
 					mapCursoDisciplina_BlocoCurricular[ std::make_pair(curso, disciplina) ];
 
-				// Adicona essa aula no conjunto de aulas que
+				// Adicona o par 'aula/horário' no conjunto de aulas que
 				// estão relacionadas ao bloco curricular atual
-				GGroup< Aula * > aulas = mapBlocoAulas[ bloco ];
-				aulas.add( aula );
+				GGroup< pair< Aula *, Horario * > > aulas_horarios = mapBlocoAulaHorario[ bloco ];
+				aulas_horarios.add( std::make_pair(aula, horario) );
 			}
 		}
 	}
 
 	// Ordena as aulas de cada bloco curricular
 	std::map< BlocoCurricular * , vector<Aula*> > mapBlocoAulas_Ordenado;
-	std::map< BlocoCurricular * , GGroup<Aula*> > ::iterator it_map
-		= mapBlocoAulas.begin();
-	for (; it_map != mapBlocoAulas.end(); it_map++)
+	std::map< BlocoCurricular * , GGroup< pair<Aula*, Horario*> > > ::iterator it_map
+		= mapBlocoAulaHorario.begin();
+	for (; it_map != mapBlocoAulaHorario.end(); it_map++)
 	{
+		// Bloco curricular
 		bloco = it_map->first;
-		GGroup< Aula * > aulas = it_map->second;
 
-		mapBlocoAulas_Ordenado[ bloco ] = retornaVectorAulasOrdenado( aulas );
+		// Conjunto de aulas (e respectivos horários) desse bloco curricular
+		GGroup< pair<Aula*, Horario*> > aulas_horarios = it_map->second;
+
+		// Associa o bloco curricular ao conjunto de aulas
+		mapBlocoAulas_Ordenado[ bloco ] = retornaVectorAulasOrdenado( aulas_horarios );
 	}
 
 	double tempo_minimo = 0.0;
@@ -426,48 +437,76 @@ void Avaliador::calculaDescolamentoBlocoCurricular(SolucaoOperacional& solucao)
 
 // Método que compara duas aulas, de acordo
 // com o dia da semana e o horário da aula
-bool ordenaAulas(Aula * aula1, Aula * aula2)
+bool ordenaAulas( pair<Aula*, Horario*> aula_horario1,
+				  pair<Aula*, Horario*> aula_horario2 )
 {
-	if (aula1 == NULL && aula2 != NULL)
-	{
-		return true;
-	}
-
-	if (aula1 != NULL && aula2 == NULL)
+	// Verifica a consistência dos objetos 'aula'
+	if ( aula_horario1.first == NULL
+			&& aula_horario1.first == NULL )
 	{
 		return false;
 	}
-
-	if (aula1 == NULL && aula2 == NULL)
+	else if ( aula_horario1.first == NULL
+			&& aula_horario2.first != NULL )
+	{
+		return true;
+	}
+	else if ( aula_horario1.first != NULL
+			&& aula_horario2.first == NULL )
 	{
 		return false;
 	}
 
 	// Primeiro critério: dia da semana
-	if (aula1->getDiaSemana() < aula2->getDiaSemana())
+	int dia_semana1 = ( aula_horario1.first->getDiaSemana() );
+	int dia_semana2 = ( aula_horario2.first->getDiaSemana() );
+	if ( dia_semana1 < dia_semana2 )
 	{
 		return true;
 	}
-	else if (aula1->getDiaSemana() > aula2->getDiaSemana())
+	else if ( dia_semana1 > dia_semana2 )
 	{
 		return false;
 	}
 
-	// TODO -- Segundo critério: horário da aula
+	// Segundo critério: horário da aula
+	DateTime horario1 = ( aula_horario1.second->horario_aula->getInicio() );
+	DateTime horario2 = ( aula_horario2.second->horario_aula->getInicio() );
+	if ( horario1 < horario2 )
+	{
+		return true;
+	}
+	else if ( horario1 > horario2 )
+	{
+		return false;
+	}
 
 	return false;
 }
 
-
-vector< Aula * > Avaliador::retornaVectorAulasOrdenado(GGroup<Aula*> aulas)
+// Ordena as aulas por 'dia da semana'
+// e 'horário', nessa ordem de prioridade
+vector< Aula * > Avaliador::retornaVectorAulasOrdenado(GGroup< pair<Aula*, Horario*> > aulas_horarios)
 {
-	std::vector< Aula * > aulas_ordenado;
-	ITERA_GGROUP(it_aula, aulas, Aula)
+	// Passa da representaçao de 'GGroup'
+	// para 'vector', para ordenar as aulas
+	std::vector< pair<Aula*, Horario*> > pares_aulas_horarios;
+	GGroup< pair<Aula*, Horario*> >::iterator it_pair
+		= aulas_horarios.begin();
+	for (; it_pair != aulas_horarios.end(); it_pair++)
 	{
-		aulas_ordenado.push_back(*it_aula);
+		pares_aulas_horarios.push_back(*it_pair);
 	}
 
-	std::sort(aulas_ordenado.begin(), aulas_ordenado.end(), ordenaAulas);
+	// Ordena o vetor com os critérios de dia da semana e horários de aula
+	std::sort(pares_aulas_horarios.begin(), pares_aulas_horarios.end(), ordenaAulas);
+
+	// Recupera as aulas do vertor ordenado
+	std::vector< Aula* > aulas_ordenado;
+	for (unsigned int i = 0; i < pares_aulas_horarios.size(); i++)
+	{
+		aulas_ordenado.push_back(pares_aulas_horarios.at(i).first);
+	}
 
 	return aulas_ordenado;
 }
