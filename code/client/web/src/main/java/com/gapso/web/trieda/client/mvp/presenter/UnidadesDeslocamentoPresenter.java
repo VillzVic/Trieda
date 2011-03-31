@@ -18,12 +18,13 @@ import com.gapso.web.trieda.client.util.view.GTab;
 import com.gapso.web.trieda.client.util.view.GTabItem;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.DeslocamentoUnidadeDTO;
+import com.gapso.web.trieda.shared.i18n.ITriedaI18nGateway;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
 
 public class UnidadesDeslocamentoPresenter implements Presenter {
 
-	public interface Display {
+	public interface Display extends ITriedaI18nGateway {
 		Button getSaveButton();
 		Button getCancelButton();
 		Button getSimetricaButton();
@@ -98,17 +99,20 @@ public class UnidadesDeslocamentoPresenter implements Presenter {
 		display.getCampusComboBox().addSelectionChangedListener(new SelectionChangedListener<CampusDTO>() {
 			@Override
 			public void selectionChanged(SelectionChangedEvent<CampusDTO> se) {
+				display.getGrid().mask(display.getI18nMessages().loading(), "loading");
 				CampusDTO campusDTO = se.getSelectedItem();
 				UnidadesServiceAsync service = Services.unidades();
 				service.getDeslocamento(campusDTO, new AsyncCallback<List<DeslocamentoUnidadeDTO>>() {
 					@Override
 					public void onFailure(Throwable caught) {
 						MessageBox.alert("ERRO!", "Deu falha na conexão", null);
+						display.getGrid().unmask();
 					}
 
 					@Override
 					public void onSuccess(List<DeslocamentoUnidadeDTO> result) {
 						display.getGrid().updateList(result);
+						display.getGrid().unmask();
 					}
 				});
 			}
