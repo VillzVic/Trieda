@@ -245,6 +245,8 @@ public class CurriculosImportExcel extends AbstractImportExcel<CurriculosImportE
 	}
 	
 	private void checkUniquenessDisciplina(List<CurriculosImportExcelBean> sheetContent) {
+		// Codigo referente á issue http://jira.gapso.com.br/browse/TRIEDA-791
+			
 		// map com o trio (CodCurriculo,Periodo,CodDisciplina) e os beans em que tal trio aparece no arquivo de entrada
 		// [CodCurriculo-Periodo-CodDisciplina -> Lista de Beans]
 		Map<String,List<CurriculosImportExcelBean>> trioToBeansMap = new HashMap<String,List<CurriculosImportExcelBean>>();
@@ -293,6 +295,8 @@ public class CurriculosImportExcel extends AbstractImportExcel<CurriculosImportE
 	}
 	
 	private void checkNonRegisteredDisciplina(List<CurriculosImportExcelBean> sheetContent) {
+		// Codigo referente á issue http://jira.gapso.com.br/browse/TRIEDA-791
+		
 		// [CodigoDisciplina -> Disciplina]
 		Map<String,Disciplina> disciplinasBDMap = Disciplina.buildDisciplinaCodigoToDisciplinaMap(Disciplina.findByCenario(getCenario()));
 		
@@ -344,6 +348,7 @@ public class CurriculosImportExcel extends AbstractImportExcel<CurriculosImportE
 		}
 		
 		// ATUALIZA CURRICULOS-DISCIPLINAS ------------------------------------------
+		// Codigo referente á issue http://jira.gapso.com.br/browse/TRIEDA-791
 		
 		// [CodCurso-CodCurriculo-Periodo-CodDisciplina -> CurriculoDisciplina]
 		Map<String,CurriculoDisciplina> curriculosDisciplinasBDMap = CurriculoDisciplina.buildNaturalKeyToCurriculoDisciplinaMap(CurriculoDisciplina.findByCenario(getCenario()));
