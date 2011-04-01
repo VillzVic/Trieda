@@ -49,6 +49,8 @@ public class SemanaLetivaDoCenarioGrid<M extends BaseModel> extends ContentPanel
 	
 	private String horarioAulaIdPropertyName;
 	
+	private String lastTurno = "";
+	
 	public SemanaLetivaDoCenarioGrid(List<M> horariosDisponiveisDisponivel, String horarioAulaIdPropertyName) {
 		super(new FitLayout());
 		this.horariosDisponiveisDisponivel = horariosDisponiveisDisponivel;
@@ -99,7 +101,6 @@ public class SemanaLetivaDoCenarioGrid<M extends BaseModel> extends ContentPanel
 		createComboboxWeek();
 		
 		GridCellRenderer<M> mergeRenderer = new GridCellRenderer<M>() {
-			private String lastTurno = "";
 			@Override
 			public Object render(M model, String property, ColumnData config, int rowIndex, int colIndex, ListStore<M> store, Grid<M> grid) {
 				config.style += "border-right: 1px solid #EDEDED;";
@@ -269,6 +270,7 @@ public class SemanaLetivaDoCenarioGrid<M extends BaseModel> extends ContentPanel
 	}
 	
 	public void updateList() {
+		lastTurno = "";
 		loader.load();
 	}
 
