@@ -11,7 +11,7 @@ public:
 
    virtual void le_arvore(ItemProfessorDisciplina& elem);
 
-   Disciplina* disciplina;
+   Disciplina * disciplina;
 
    void setNota(int v) { nota = v; }
    void setPreferencia(int v) { preferencia = v; }

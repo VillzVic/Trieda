@@ -57,8 +57,8 @@ public:
    int getTotalHorarios() const;
 
    // TODO: Implementar o método abaixo.
-   //bool alocaAula(Professor & professor, int dia, Horario & horario, Aula & aula);
-   //bool alocaAula(Professor & professor, Aula & aula, vector<Aula*> & horarios);
+   // bool alocaAula(Professor & professor, int dia, Horario & horario, Aula & aula);
+   // bool alocaAula(Professor & professor, Aula & aula, vector<Aula*> & horarios);
 
 private:
    int totalDias;
@@ -67,6 +67,8 @@ private:
 
    MatrizSolucao * matrizAulas;
    ProblemData* problemData;
+
+   bool horarioDisponivelProfessor(Professor*, int/*dia da semana*/, int/*horario_aula_id*/);
 };
 
 #endif

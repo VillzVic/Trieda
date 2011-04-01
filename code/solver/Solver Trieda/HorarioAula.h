@@ -14,7 +14,7 @@ public:
 
    virtual void le_arvore(ItemHorarioAula& elem);
 
-   GGroup<int> diasSemana;
+   GGroup<int> dias_semana;
 
    DateTime getInicio() const { return inicio; }
    void setInicio(DateTime dt) { inicio = dt; }

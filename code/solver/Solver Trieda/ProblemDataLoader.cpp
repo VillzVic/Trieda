@@ -103,7 +103,56 @@ void ProblemDataLoader::load()
    // ---------
    print_stats();
 
+   // ---------
    calculaMaxHorariosProfessor();
+
+   // ---------
+   criaListaHorariosOrdenados();
+}
+
+bool ordena_horarios_aula(HorarioAula* h1, HorarioAula* h2)
+{
+	if (h1 == NULL && h2 == NULL)
+	{
+		return false;
+	}
+	else if (h1 != NULL && h2 == NULL)
+	{
+		return false;
+	}
+	else if (h1 == NULL && h2 != NULL)
+	{
+		return true;
+	}
+
+	return ( h1->getInicio() < h2->getInicio() );
+}
+
+void ProblemDataLoader::criaListaHorariosOrdenados()
+{
+	GGroup<HorarioAula*> horarios_aula;
+
+	// Adiciona os horários de aula, sem repetição
+	ITERA_GGROUP(it_campi, problemData->campi, Campus)
+	{
+		ITERA_GGROUP(it_professor, it_campi->professores, Professor)
+		{
+			ITERA_GGROUP(it_horario, it_professor->horarios, Horario)
+			{
+				horarios_aula.add(it_horario->horario_aula);
+			}
+		}
+	}
+
+	// Insere os horarios de aula (distintos) no vector
+	ITERA_GGROUP(it_h, horarios_aula, HorarioAula)
+	{
+		problemData->horarios_aula_ordenados.push_back(*it_h);
+	}
+
+	// Ordena os horarios de aula pelo inicio de cada um
+	sort( problemData->horarios_aula_ordenados.begin(),
+		  problemData->horarios_aula_ordenados.end(), ordena_horarios_aula );
 }
 
 void ProblemDataLoader::calculaMaxHorariosProfessor()
@@ -864,20 +913,19 @@ void ProblemDataLoader::divideDisciplinas()
 					 hr_aula->setInicio( it_hr_aula->getInicio() );
 
                      GGroup<int>::iterator it_dia_sem
-						 = it_hr_aula->diasSemana.begin();
+						 = it_hr_aula->dias_semana.begin();
                      for(unsigned dia = 0;
-						 dia < it_hr_aula->diasSemana.size(); dia++)
+						 dia < it_hr_aula->dias_semana.size(); dia++)
 					 {
-                        hr_aula->diasSemana.add(*it_dia_sem);
+                        hr_aula->dias_semana.add(*it_dia_sem);
                         it_dia_sem++;
                      }
                   }
 
                   tur->horarios_aula.add(hr_aula);
                }
-               // <<< <<< <<<
+
                h->turno = tur;
-               // <<< <<<
             }
 
             HorarioAula *hr_aula;
@@ -888,11 +936,11 @@ void ProblemDataLoader::divideDisciplinas()
                hr_aula->setInicio( it_hr->horario_aula->getInicio() );
 
                GGroup<int>::iterator it_dia_sem
-				   = it_hr->horario_aula->diasSemana.begin();
+				   = it_hr->horario_aula->dias_semana.begin();
                for(unsigned dia = 0;
-				   dia < it_hr->horario_aula->diasSemana.size(); dia++)
+				   dia < it_hr->horario_aula->dias_semana.size(); dia++)
 			   {
-                  hr_aula->diasSemana.add(*it_dia_sem);
+                  hr_aula->dias_semana.add(*it_dia_sem);
                   it_dia_sem++;
                }
             }

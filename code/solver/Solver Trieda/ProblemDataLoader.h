@@ -81,6 +81,10 @@ public:
    /* */
    void calculaMaxHorariosProfessor();
 
+   // Cria um vetor ordenado dos horários de
+   // aula (todos os horários de todos os professores)
+   void criaListaHorariosOrdenados();
+
 private:
    // Input data object of the problem
    ProblemData *problemData;

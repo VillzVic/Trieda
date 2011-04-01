@@ -16,6 +16,6 @@ void HorarioAula::le_arvore(ItemHorarioAula& elem)
 
    ITERA_NSEQ(it_dia, elem.diasSemana(), diaSemana, DiaSemana)
    {
-      diasSemana.add(*it_dia);
+      dias_semana.add(*it_dia);
    }
 }

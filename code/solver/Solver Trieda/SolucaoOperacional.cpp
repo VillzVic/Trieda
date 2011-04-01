@@ -36,14 +36,42 @@ SolucaoOperacional::SolucaoOperacional(ProblemData* prbDt)
       *itMatrizAulas = new vector<Aula*> ((totalDias*totalHorarios), NULL);
    }
 
+   unsigned int i = 0;
+   unsigned int j = 0;
+   int dia_semana = 0;
+   int horario_aula_id = 0;
+
+   Aula * aula_virtual = new Aula(true);
+   Professor* professor = NULL;
+
    // Deixando livres, apenas os horarios em que o professor pode
    // ministrar aulas. Para os demais, associa-as à uma aula virtual.
+   itMatrizAulas = matrizAulas->begin();
+   for(i = 0; itMatrizAulas != matrizAulas->end(); ++itMatrizAulas, i++)
+   {
+	   // Professor da linha atual da matriz
+	   professor = getProfessorMatriz(i);
 
-   Aula * aulaVirtual = new Aula(true);
+	   // Vetor de aulas do professor atual
+	   vector<Aula*> * linha = *itMatrizAulas;
+	   vector<Aula*>::iterator it_aula = linha->begin();
+	   for(j = 0; j < linha->size(); j++, it_aula++)
+	   {
+		   // Dia da semana
+		   dia_semana = ( j / totalHorarios );
 
-   // TODO (Cleiton) : PREENCHER COM AULAS VIRTUAIS,
-   // OS HORARIOS EM QUE UM DADO PROFESSOR, NAO ESTÁ
-   // DISPONIVEL. USAR SEMPRE O MESMO OBJETO DE AULA VIRTUAL.
+		   // Índice do horário da aula
+		   horario_aula_id = ( j % totalHorarios );
+
+		   if (!horarioDisponivelProfessor(professor,
+					dia_semana, horario_aula_id))
+		   {
+			   // A aula NAO pode ser alocada
+			   std::cout << "Aula virtual adicionada" << std::endl;
+			   *it_aula = aula_virtual;
+		   }
+	   }
+   }
 }
 
 SolucaoOperacional::~SolucaoOperacional()
@@ -58,9 +86,53 @@ SolucaoOperacional::~SolucaoOperacional()
    MatrizSolucao::iterator itMatrizAulas = matrizAulas->begin();
    for(; itMatrizAulas != matrizAulas->end(); ++itMatrizAulas)
    {
-      delete *itMatrizAulas;
+	  delete *itMatrizAulas;
    }
    matrizAulas = NULL;
+}
+
+bool SolucaoOperacional::horarioDisponivelProfessor(
+	Professor* professor, int dia_semana, int horario_aula_id)
+{
+	// Recupera o horário de aula que
+	// corresponde ao 'horario_aula_id' informado
+	HorarioAula* horario_aula = NULL;
+	int tam_vector = problemData->horarios_aula_ordenados.size();
+	if (horario_aula_id < tam_vector)
+	{
+		horario_aula = problemData->horarios_aula_ordenados.at(horario_aula_id);
+	}
+	else
+	{
+		std::cerr << "Acessando indice invalido do vector." << std::endl;
+		std::cerr << "SolucaoOperacional::horarioDisponivelProfessor()" << std::endl;
+		exit(1);
+	}
+
+	// Para cada horário disponível do professor informado,
+	// procura pela disponibilidade 'dia de semana' / 'horário'
+	ITERA_GGROUP(it_horario, professor->horarios, Horario)
+	{
+		// Esse horário corresponde ao mesmo horário de aula procurado
+		if ( it_horario->horario_aula->getId() == horario_aula->getId() )
+		{
+			// Verifica-se se o professor pode atender
+			// a esse horário de aula no dia da semana procurado
+			GGroup<int>::iterator it_dia_semana
+				= it_horario->dias_semana.begin();
+			for (; it_dia_semana != it_horario->dias_semana.end(); it_dia_semana++)
+			{
+				// Dia da semana disponível
+				if (*it_dia_semana == dia_semana)
+				{
+					return true;
+				}
+			}
+		}
+	}
+
+	// O horário não está disponível
+	return false;
 }
 
 void SolucaoOperacional::carregaSolucaoInicial()
@@ -89,7 +161,7 @@ void SolucaoOperacional::toString()
       if (professor != NULL)
       {
          std::cout << std::endl << "Nome do professor : " << std::endl
-            << professor->getNome() << std::endl << std::endl;
+                   << professor->getNome() << std::endl << std::endl;
       }
 
       // Imprima as aulas deste professor
@@ -130,6 +202,7 @@ int SolucaoOperacional::getIndiceMatriz(int dia, Horario* horario)
    return indice_matriz;
 }
 
+// TODO -- verificar se esse metodo esta correto!!! (Cleiton)
 Horario* SolucaoOperacional::getHorario(int i, int j)
 {
    Aula* aula = NULL;
@@ -199,7 +272,6 @@ vector<Aula*>::iterator SolucaoOperacional::getHorariosDia(Professor & professor
    vector<Aula*>::iterator itHorarios = matrizAulas->at(professor.getIdOperacional())->begin();
 
    // Ajustando para o primeiro horário do dia em questão.
-   //itHorarios += ((dia - 1) * totalHorarios) + 1;
    itHorarios += ((dia - 2) * totalHorarios);
 
    return itHorarios;

@@ -1821,11 +1821,10 @@ void SolverMIP::getSolutionTatico()
 
 int SolverMIP::solveOperacional()
 {
-   /* Criando uma solução inicial */
+   // Criando uma solução inicial
    SolucaoInicialOperacional solIni(*problemData);
 
    SolucaoOperacional & sol = solIni.geraSolucaoInicial();
-
    sol.toString();
 
    std::cout << "Implementar <SolverMIP::solveOperacional()>" << std::endl;
@@ -1976,9 +1975,9 @@ int SolverMIP::localBranching(double *xSol, double maxTime)
 
 void SolverMIP::getSolution(ProblemSolution *problemSolution)
 {
-   /* Vai dar um erro no segundo termo da comparação qdo o cleiton tiver corrigido a leitura 
-   do atendimentosTatico. Dai, ao inves de comparar se é igual a NULL, vou ter que testar
-   se o SIZE. */
+   // Vai dar um erro no segundo termo da comparação qdo o
+   // cleiton tiver corrigido a leitura  do atendimentosTatico.
+   // Dai, ao inves de comparar se é igual a NULL, vou ter que testar se o SIZE.
    if(problemData->parametros->modo_otimizacao == "TATICO" && problemData->atendimentosTatico == NULL)
    {
       getSolutionTatico();

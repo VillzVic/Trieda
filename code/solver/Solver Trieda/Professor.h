@@ -33,18 +33,18 @@ public:
    void setCustoDispProf(int c) { custoDispProf = c; }
    void setIsVirtual(bool value) { is_virtual = value; }
 
-   std::string getCpf() { return cpf; }
-   std::string getNome() { return nome; }
-   int getTipoContratoId() { return tipo_contrato_id; }
-   int getChMin() { return ch_min; }
-   int getChMax() { return ch_max; }
-   int getChAnterior() { return ch_anterior; }
-   int getTitulacaoId() { return titulacao_id; }
-   int getAreaId() { return area_id; }
-   double getValorCredito() { return valor_credito; }
-   int getIdOperacional() { return id_operacional; }
-   int getCustoDispProf() { return custoDispProf; }
-   bool getIsVirtual() { return is_virtual; }
+   std::string getCpf() const { return cpf; }
+   std::string getNome() const { return nome; }
+   int getTipoContratoId() const { return tipo_contrato_id; }
+   int getChMin() const { return ch_min; }
+   int getChMax() const { return ch_max; }
+   int getChAnterior() const { return ch_anterior; }
+   int getTitulacaoId() const { return titulacao_id; }
+   int getAreaId() const { return area_id; }
+   double getValorCredito() const { return valor_credito; }
+   int getIdOperacional() const { return id_operacional; }
+   int getCustoDispProf() const { return custoDispProf; }
+   bool getIsVirtual() const { return is_virtual; }
 
 private:
    std::string cpf;
@@ -56,10 +56,10 @@ private:
    int titulacao_id;
    int area_id;
    double valor_credito;
-   
+
    int id_operacional;
-   
-   /* Utilizado na função de prioridade para o modelo operacional. */
+
+   // Utilizado na função de prioridade para o modelo operacional.
    int custoDispProf;
    bool is_virtual;
 };

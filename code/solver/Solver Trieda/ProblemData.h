@@ -25,6 +25,7 @@
 #include "Aula.h"
 
 #include <iostream>
+#include <vector>
 
 // Stores input data
 class ProblemData : public OFBase
@@ -54,6 +55,8 @@ public:
    GGroup<Oferta*> ofertas;
    ParametrosPlanejamento* parametros;
    GGroup<Fixacao*> fixacoes;
+
+   vector<HorarioAula*> horarios_aula_ordenados;
 
    GGroup<AtendimentoCampusSolucao*> * atendimentosTatico;
    //--------------------
