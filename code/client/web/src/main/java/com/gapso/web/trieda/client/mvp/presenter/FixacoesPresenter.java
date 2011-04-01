@@ -70,7 +70,7 @@ public class FixacoesPresenter implements Presenter {
 		display.getNewButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
 			@Override
 			public void componentSelected(ButtonEvent ce) {
-				Presenter presenter = new FixacaoFormPresenter(cenario, new FixacaoFormView(new FixacaoDTO(), null, null, null, null, null, null, true), display.getGrid());
+				Presenter presenter = new FixacaoFormPresenter(cenario, new FixacaoFormView(new FixacaoDTO(), null, null, null, null, null, null, false), display.getGrid());
 				presenter.go(null);
 			}
 		});
