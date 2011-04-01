@@ -1104,7 +1104,7 @@ public class ConvertBeans {
 		DivisaoCredito domain = new DivisaoCredito();
 		domain.setId(dto.getId());
 		domain.setVersion(dto.getVersion());
-		if(dto.getDisciplinaId() != null) {
+		if(dto.getDisciplinaId() == null) {
 			domain.getCenario().add(Cenario.find(dto.getCenarioId()));
 		} else {
 			domain.setDisciplina(Disciplina.find(dto.getDisciplinaId()));

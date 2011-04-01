@@ -84,7 +84,7 @@ public class DivisaoCreditoDTO extends AbstractDTO<String> implements Comparable
 
 	@Override
 	public String getNaturalKey() {
-		return getCenarioId() + "-" + getDisciplinaString() + "-" + getTotalCreditos();
+		return getId() + "-" + getCenarioId() + "-" + getDisciplinaString() + "-" + getTotalCreditos();
 	}
 	
 	@Override
