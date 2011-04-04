@@ -6,6 +6,7 @@ import com.extjs.gxt.ui.client.Style.LayoutRegion;
 import com.extjs.gxt.ui.client.Style.Orientation;
 import com.extjs.gxt.ui.client.Style.SelectionMode;
 import com.extjs.gxt.ui.client.data.BaseTreeLoader;
+import com.extjs.gxt.ui.client.data.ModelIconProvider;
 import com.extjs.gxt.ui.client.data.RpcProxy;
 import com.extjs.gxt.ui.client.data.TreeLoader;
 import com.extjs.gxt.ui.client.dnd.DND.Operation;
@@ -193,6 +194,15 @@ public class DisciplinasAssociarSalaView extends MyComposite implements Discipli
 				return !model.getLeaf();
 			}
 		};
+		salasList.setIconProvider(new ModelIconProvider<TreeNodeDTO>() {
+			@Override
+			public AbstractImagePrototype getIcon(TreeNodeDTO model) {
+				if(model.getEmpty() && !model.getLeaf()) {
+					return AbstractImagePrototype.create(Resources.DEFAULTS.folderEmpty16());
+				}
+				return null;
+			}
+		});
 		TreePanelDropTarget target = new TreePanelDropTarget(salasList) {
 			@Override
 			protected void onDragDrop(DNDEvent event) { }
@@ -248,7 +258,7 @@ public class DisciplinasAssociarSalaView extends MyComposite implements Discipli
 					}
 				}
 				
-				TreeNodeDTO targetNode = salasList.findNode(e.getTarget()).getModel();
+				final TreeNodeDTO targetNode = salasList.findNode(e.getTarget()).getModel();
 				AbstractDTO<?> contentTargetNode = targetNode.getContent();
 				
 				if (contentTargetNode instanceof SalaDTO) {
@@ -262,6 +272,7 @@ public class DisciplinasAssociarSalaView extends MyComposite implements Discipli
 						@Override
 						public void onSuccess(Void result) {
 							Info.display("Salvo", "Disciplinas associadas com sucesso!");
+							addItemInFolderEmpty(targetNode, salasList);
 						}
 					});
 				} else {
@@ -275,6 +286,7 @@ public class DisciplinasAssociarSalaView extends MyComposite implements Discipli
 						@Override
 						public void onSuccess(Void result) {
 							Info.display("Salvo", "Disciplinas associadas com sucesso!");
+							addItemInFolderEmpty(targetNode, salasList);
 						}
 					});
 				}
@@ -294,6 +306,14 @@ public class DisciplinasAssociarSalaView extends MyComposite implements Discipli
 		panel.setBodyBorder(false);
 		panelLists.setBodyStyle("background-color: #DFE8F6;");
 		panel.add(panelLists, bld);
+	}
+	
+	public void addItemInFolderEmpty(TreeNodeDTO targetNode, TreePanel<TreeNodeDTO> list) {
+		if(targetNode.getEmpty()) {
+			salasList.setExpanded(targetNode, false);
+			targetNode.setEmpty(false);
+		}
+		salasList.setExpanded(targetNode, true);
 	}
 	
 	@Override

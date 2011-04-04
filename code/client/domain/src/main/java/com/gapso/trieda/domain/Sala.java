@@ -251,6 +251,12 @@ public class Sala implements Serializable {
 		return q.getResultList();
 	}
 	
+	public Boolean getContainsCurriculoDisciplina() {
+		Query q = entityManager().createQuery("SELECT COUNT(cd) FROM CurriculoDisciplina cd WHERE :sala IN ELEMENTS(cd.salas)");
+		q.setParameter("sala", this);
+		return ((Number) q.getSingleResult()).intValue() > 0;
+	}
+	
 	public static Map<String,Sala> buildSalaCodigoToSalaMap(List<Sala> salas) {
 		Map<String,Sala> salasMap = new HashMap<String,Sala>();
 		for (Sala sala : salas) {

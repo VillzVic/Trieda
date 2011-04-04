@@ -290,6 +290,7 @@ public class DisciplinasServiceImpl extends RemoteServiceServlet implements Disc
 		for (Oferta oferta : ofertas) {
 			OfertaDTO ofertaDTO = ConvertBeans.toOfertaDTO(oferta);
 			TreeNodeDTO nodeDTO = new TreeNodeDTO(ofertaDTO,salaTreeNodeDTO);
+			nodeDTO.setEmpty(false);
 			nodeChildrenList.add(nodeDTO);
 		}
 		
@@ -311,6 +312,7 @@ public class DisciplinasServiceImpl extends RemoteServiceServlet implements Disc
 			CurriculoDisciplinaDTO cdDTO = ConvertBeans.toCurriculoDisciplinaDTO(cd);
 			TreeNodeDTO nodeDTO = new TreeNodeDTO(cdDTO,ofertaTreeNodeDTO);
 			nodeDTO.setText("Periodo " + cdDTO.getPeriodo());
+			nodeDTO.setEmpty(false);
 			nodeChildrenList.add(nodeDTO);
 		}
 		

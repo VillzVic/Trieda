@@ -271,7 +271,7 @@ public class ConvertBeans {
 		dto.setCampusId(domain.getUnidade().getCampus().getId());
 		dto.setUnidadeId(domain.getUnidade().getId());
 		dto.setUnidadeString(domain.getUnidade().getCodigo());
-//		dto.setContainsCurriculoDisciplina(domain.getContainsCurriculoDisciplina());
+		dto.setContainsCurriculoDisciplina(domain.getContainsCurriculoDisciplina());
 		dto.setDisplayText(domain.getCodigo() + " (" + domain.getNumero() + ")");
 		return dto;
 	}

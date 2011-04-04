@@ -41,6 +41,8 @@ public interface DefaultsIcons extends ClientBundle  {
 	@Source("to_left_24.png") ImageResource toLeft24();
 	@Source("to_right_24.png") ImageResource toRight24();
 	
+	@Source("folder_empty_16.gif") ImageResource folderEmpty16();
+	
 	@Source("unidade_novo_24.png") ImageResource unidadeNovo24();
 	@Source("unidade_listar_24.png") ImageResource unidadeListar24();
 	@Source("campus_novo_24.png") ImageResource campusNovo24();

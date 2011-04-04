@@ -135,6 +135,7 @@ public class DisciplinasAssociarSalaPresenter implements Presenter {
 					List<TreeNodeDTO> treeNodesList = new ArrayList<TreeNodeDTO>(salaDTOList.size());
 					for(SalaDTO salaDTO : salaDTOList) {
 						TreeNodeDTO nodeDTO = new TreeNodeDTO(salaDTO);
+						nodeDTO.setEmpty(!salaDTO.getContainsCurriculoDisciplina());
 						treeNodesList.add(nodeDTO);
 					}
 					

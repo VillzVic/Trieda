@@ -181,7 +181,6 @@ public class SalasServiceImpl extends RemoteServiceServlet implements SalasServi
 				map.put(sala.getAndar(), new ArrayList<SalaDTO>());
 			}
 			SalaDTO salaDTO = ConvertBeans.toSalaDTO(sala);
-			//salaDTO.setName(salaDTO.getCodigo()); TODO: ***********
 			map.get(sala.getAndar()).add(salaDTO);
 		}
 		return map;

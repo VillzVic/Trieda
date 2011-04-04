@@ -18,6 +18,7 @@ public class SalaDTO extends AbstractDTO<String> implements Comparable<SalaDTO> 
 	public static final String PROPERTY_TIPO_ID = "tipoId";
 	public static final String PROPERTY_TIPO_STRING = "tipoString";
 	public static final String PROPERTY_CAPACIDADE = "capacidade";
+	public static final String PROPERTY_CONTAINS_CURRICULO_DISCIPLINA = "containsCurriculoDisciplina";
 
 	public SalaDTO() {
 		super();
@@ -98,6 +99,13 @@ public class SalaDTO extends AbstractDTO<String> implements Comparable<SalaDTO> 
 	}
 	public void setCapacidade(Integer value) {
 		set(PROPERTY_CAPACIDADE, value);
+	}
+	
+	public Boolean getContainsCurriculoDisciplina() {
+		return get(PROPERTY_CONTAINS_CURRICULO_DISCIPLINA);
+	}
+	public void setContainsCurriculoDisciplina(Boolean value) {
+		set(PROPERTY_CONTAINS_CURRICULO_DISCIPLINA, value);
 	}
 	
 	public boolean isLaboratorio() {
