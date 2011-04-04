@@ -34,6 +34,7 @@ import com.gapso.web.trieda.shared.dtos.SalaDTO;
 import com.gapso.web.trieda.shared.dtos.TreeNodeDTO;
 import com.gapso.web.trieda.shared.dtos.TurnoDTO;
 import com.gapso.web.trieda.shared.dtos.UnidadeDTO;
+import com.gapso.web.trieda.shared.i18n.ITriedaI18nGateway;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
 import com.googlecode.future.FutureResult;
@@ -41,7 +42,7 @@ import com.googlecode.future.FutureSynchronizer;
 
 public class DisciplinasAssociarSalaPresenter implements Presenter {
 
-	public interface Display {
+	public interface Display extends ITriedaI18nGateway {
 		CampusComboBox getCampusComboBox();
 		TurnoComboBox getTurnoComboBox();
 		UnidadeComboBox getUnidadeSalaComboBox();
@@ -66,6 +67,8 @@ public class DisciplinasAssociarSalaPresenter implements Presenter {
 		display.getTurnoComboBox().addSelectionChangedListener(new SelectionChangedListener<TurnoDTO>(){
 			@Override
 			public void selectionChanged(SelectionChangedEvent<TurnoDTO> se) {
+				display.getDisciplinasList().mask(display.getI18nMessages().loading(), "loading");
+				
 				CampusDTO campusDTO = display.getCampusComboBox().getValue();
 				TurnoDTO turnoDTO = se.getSelectedItem();
 				
@@ -79,6 +82,7 @@ public class DisciplinasAssociarSalaPresenter implements Presenter {
 					public void onFailure(Throwable caught) {
 						display.getTurnoComboBox().disable();
 						caught.printStackTrace();
+						display.getDisciplinasList().unmask();
 					}
 
 					@Override
@@ -90,6 +94,7 @@ public class DisciplinasAssociarSalaPresenter implements Presenter {
 						boolean existeOferta = !ofertaDTOList.getData().isEmpty();
 						display.setTabEnabled(existeOferta);
 						display.getDisciplinasList().setEnabled(existeOferta);
+						display.getDisciplinasList().unmask();
 					}
 				});
 			}
@@ -122,6 +127,7 @@ public class DisciplinasAssociarSalaPresenter implements Presenter {
 		display.getAndarComboBox().addSelectionChangedListener(new SelectionChangedListener<SimpleComboValue<String>>(){
 			@Override
 			public void selectionChanged(SelectionChangedEvent<SimpleComboValue<String>> se) {
+				display.getSalasList().mask(display.getI18nMessages().loading(), "loading");
 				display.getSalasList().setEnabled(se.getSelectedItem() != null);
 				if(se.getSelectedItem() != null) {
 					display.getSalasList().getStore().removeAll();
@@ -135,23 +141,14 @@ public class DisciplinasAssociarSalaPresenter implements Presenter {
 					Collections.sort(treeNodesList);
 					
 					display.getSalasList().getStore().add(treeNodesList, true);
+					display.getSalasList().unmask();
 				}
 			}
 		});
-//		display.getSalaComboBox().addSelectionChangedListener(new SelectionChangedListener<SalaDTO>(){
-//			@Override
-//			public void selectionChanged(SelectionChangedEvent<SalaDTO> se) {
-//				if(se.getSelectedItem() != null) {
-//					SalaDTO salaDTO = se.getSelectedItem();
-//					display.getSalasList().enable();
-//					display.getSalasList().getStore().removeAll();
-//					display.getSalasList().getStore().add(salaDTO, true);
-//				}
-//			}
-//		});
 		display.getUnidadeGrupoSalaComboBox().addSelectionChangedListener(new SelectionChangedListener<UnidadeDTO>(){
 			@Override
 			public void selectionChanged(SelectionChangedEvent<UnidadeDTO> se) {
+				display.getSalasList().mask(display.getI18nMessages().loading(), "loading");
 				UnidadeDTO unidadeDTO = se.getSelectedItem();
 				if(unidadeDTO != null) {
 					SalasServiceAsync salasService = Services.salas();
@@ -159,6 +156,7 @@ public class DisciplinasAssociarSalaPresenter implements Presenter {
 						@Override
 						public void onFailure(Throwable caught) {
 							caught.printStackTrace();
+							display.getSalasList().unmask();
 						}
 						@Override
 						public void onSuccess(List<GrupoSalaDTO> result) {
@@ -167,6 +165,7 @@ public class DisciplinasAssociarSalaPresenter implements Presenter {
 							for(GrupoSalaDTO grupoSalaDTO : result) {
 								TreeNodeDTO nodeDTO = new TreeNodeDTO(grupoSalaDTO);
 								display.getSalasList().getStore().add(nodeDTO, true);
+								display.getSalasList().unmask();
 							}
 						}
 					});
