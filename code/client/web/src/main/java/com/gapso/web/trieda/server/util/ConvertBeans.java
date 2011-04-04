@@ -1324,6 +1324,7 @@ public class ConvertBeans {
 		domain.setLimitarMaximoDisciplinaProfessor(dto.getLimitarMaximoDisciplinaProfessor());
 		domain.setCargaHorariaAlunoSel(dto.getCargaHorariaAlunoSel());
 		domain.setCargaHorariaProfessorSel(dto.getCargaHorariaProfessorSel());
+		domain.setFuncaoObjetivo(dto.getFuncaoObjetivo());
 		return domain;
 	}
 	
@@ -1362,6 +1363,7 @@ public class ConvertBeans {
 		dto.setCargaHorariaProfessorSel(domain.getCargaHorariaProfessorSel());
 		dto.setMinimizarDeslocamentoProfessorValue(domain.getMinimizarDeslocamentoProfessorValue());
 		dto.setEvitarReducaoCargaHorariaProfessorValue(domain.getEvitarReducaoCargaHorariaProfessorValue());
+		dto.setFuncaoObjetivo(domain.getFuncaoObjetivo());
 		
 		Set<Curso> cursosMaxNotaAvalList = domain.getCursosMaxNotaAval();
 		List<CursoDTO> cursosMaxNotaAvalDTOList = new ArrayList<CursoDTO>(cursosMaxNotaAvalList.size());

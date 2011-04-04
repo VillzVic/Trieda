@@ -20,6 +20,7 @@ import com.gapso.web.trieda.client.services.OtimizarServiceAsync;
 import com.gapso.web.trieda.client.services.Services;
 import com.gapso.web.trieda.client.util.resources.Resources;
 import com.gapso.web.trieda.client.util.view.CargaHorariaComboBox;
+import com.gapso.web.trieda.client.util.view.FuncaoObjetivoComboBox;
 import com.gapso.web.trieda.client.util.view.GTab;
 import com.gapso.web.trieda.client.util.view.GTabItem;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
@@ -67,6 +68,7 @@ public class ParametrosPresenter implements Presenter {
 		CheckBox getPercentuaisMinimosDoutoresCheckBox();
 		CheckBox getAreaTitulacaoProfessoresECursosCheckBox();
 		CheckBox getLimitarMaximoDisciplinaProfessorCheckBox();
+		FuncaoObjetivoComboBox getFuncaoObjetivoComboBox();
 		Button getMaximizarNotaAvaliacaoCorpoDocenteButton();
 		Button getMinimizarCustoDocenteCursosButton();
 		Button getCompartilharDisciplinasCampiButton();
@@ -209,6 +211,7 @@ public class ParametrosPresenter implements Presenter {
 		dto.setPreferenciaDeProfessores(display.getPreferenciaDeProfessoresCheckBox().getValue());
 		dto.setAvaliacaoDesempenhoProfessor(display.getAvaliacaoDesempenhoProfessorCheckBox().getValue());
 
+		dto.setFuncaoObjetivo(display.getFuncaoObjetivoComboBox().getValue().getValue().ordinal());
 		dto.setNivelDificuldadeDisciplina(display.getNivelDificuldadeDisciplinaCheckBox().getValue());
 		dto.setCompatibilidadeDisciplinasMesmoDia(display.getCompatibilidadeDisciplinasMesmoDiaCheckBox().getValue());
 		dto.setRegrasGenericasDivisaoCredito(display.getRegrasGenericasDivisaoCreditoCheckBox().getValue());

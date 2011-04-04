@@ -590,6 +590,8 @@ public class SolverInput {
 		
 		itemParametrosPlanejamento.setModoOtimizacao(tatico ? "TATICO" : "OPERACIONAL");
 		
+		itemParametrosPlanejamento.setFuncaoObjetivo(parametro.getFuncaoObjetivo());
+		
 		CargaHorariaSemanalAluno cargaHorariaSemanalAluno = of.createItemParametrosPlanejamentoCargaHorariaSemanalAluno();
 		cargaHorariaSemanalAluno.setIndiferente("");
 		if(parametro.getCargaHorariaAluno()) {

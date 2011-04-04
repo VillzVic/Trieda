@@ -119,6 +119,10 @@ public class Parametro implements Serializable {
 	// PREFERENCIAS DA INSTITUIÇÃO
     //////////////////////////////////////////////
     
+    // Funcção objetivo
+    @Column(name = "PAR_FUNCAOOBJETIVO")
+    private Integer funcaoObjetivo = 0;
+    
     //Número mínimo de alunos para abrir uma turma
     @Column(name = "PAR_MINALUNTURMA")
     private Boolean minAlunosParaAbrirTurma = false;
@@ -367,6 +371,13 @@ public class Parametro implements Serializable {
 		this.avaliacaoDesempenhoProfessor = avaliacaoDesempenhoProfessor;
 	}
 	
+	public Integer getFuncaoObjetivo() {
+		return funcaoObjetivo;
+	}
+	public void setFuncaoObjetivo(Integer funcaoObjetivo) {
+		this.funcaoObjetivo = funcaoObjetivo;
+	}
+
 	public Boolean getMinAlunosParaAbrirTurma() {
 		return minAlunosParaAbrirTurma;
 	}
@@ -544,7 +555,8 @@ public class Parametro implements Serializable {
         sb.append("MaximizarNotaAvaliacaoCorpoDocente: ").append(getMaximizarNotaAvaliacaoCorpoDocente()).append(", ");
         sb.append("CursosMaxNotaAval: ").append(getCursosMaxNotaAval() == null ? "null" : getCursosMaxNotaAval().size());
         sb.append("MinimizarCustoDocenteCursos: ").append(getMinimizarCustoDocenteCursos()).append(", ");
-        sb.append("MinAlunosParaAbrirTurma: ").append(getMinAlunosParaAbrirTurma()).append(", ");
+        sb.append("FuncaoObjetivo: ").append(getFuncaoObjetivo()).append(", "); 
+        sb.append("MinAlunosParaAbrirTurma: ").append(getMinAlunosParaAbrirTurma()).append(", "); 
         sb.append("MinAlunosParaAbrirTurmaValue: ").append(getMinAlunosParaAbrirTurmaValue()).append(", ");
         sb.append("CursosMinCust: ").append(getCursosMinCust() == null ? "null" : getCursosMinCust().size());
         sb.append("CompartilharDisciplinasCampi: ").append(getCompartilharDisciplinasCampi()).append(", ");

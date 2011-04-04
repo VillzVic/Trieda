@@ -6,6 +6,7 @@ import com.extjs.gxt.ui.client.util.Margins;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
 import com.extjs.gxt.ui.client.widget.Label;
 import com.extjs.gxt.ui.client.widget.LayoutContainer;
+import com.extjs.gxt.ui.client.widget.Text;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.CheckBox;
 import com.extjs.gxt.ui.client.widget.form.FieldSet;
@@ -21,6 +22,7 @@ import com.extjs.gxt.ui.client.widget.layout.RowLayout;
 import com.gapso.web.trieda.client.mvp.presenter.ParametrosPresenter;
 import com.gapso.web.trieda.client.util.resources.Resources;
 import com.gapso.web.trieda.client.util.view.CargaHorariaComboBox;
+import com.gapso.web.trieda.client.util.view.FuncaoObjetivoComboBox;
 import com.gapso.web.trieda.client.util.view.GTabItem;
 import com.gapso.web.trieda.shared.dtos.ParametroDTO;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
@@ -53,6 +55,7 @@ public class ParametrosView extends MyComposite implements ParametrosPresenter.D
 	private CheckBox preferenciaDeProfessoresCheckBox;
 	private CheckBox avaliacaoDesempenhoProfessorCheckBox;
 
+	private FuncaoObjetivoComboBox funcaoObjetivoCheckBox;
 	private CheckBox nivelDificuldadeDisciplinaCheckBox;
 	private CheckBox compatibilidadeDisciplinasMesmoDiaCheckBox;
 	private CheckBox regrasGenericasDivisaoCreditoCheckBox;
@@ -226,6 +229,9 @@ public class ParametrosView extends MyComposite implements ParametrosPresenter.D
 		areaTitulacaoProfessoresECursosCheckBox = createCheckBox("Considerar áreas de titulação dos professores e cursos", parametroDTO.getAreaTitulacaoProfessoresECursos());
 		limitarMaximoDisciplinaProfessorCheckBox = createCheckBox("Limitar máximo de disciplinas que um professor pode ministrar por curso", parametroDTO.getLimitarMaximoDisciplinaProfessor());
 		
+		Text funcaoObjetivoLabel = new Text("Função Objetivo");
+		funcaoObjetivoLabel.setHeight(22);
+		instituicaoLeft.add(funcaoObjetivoLabel, formData);
 		instituicaoLeft.add(minAlunosParaAbrirTurmaCheckBox, formData);
 		instituicaoLeft.add(nivelDificuldadeDisciplinaCheckBox, formData);
 		instituicaoLeft.add(compatibilidadeDisciplinasMesmoDiaCheckBox, formData);
@@ -239,6 +245,10 @@ public class ParametrosView extends MyComposite implements ParametrosPresenter.D
 		instituicaoLeft.add(areaTitulacaoProfessoresECursosCheckBox, formData);
 		instituicaoLeft.add(limitarMaximoDisciplinaProfessorCheckBox, formData);
 		
+		funcaoObjetivoCheckBox = new FuncaoObjetivoComboBox();
+		funcaoObjetivoCheckBox.setValue(parametroDTO.getFuncaoObjetivo());
+		funcaoObjetivoCheckBox.setWidth(200);
+		instituicaoRight.add(funcaoObjetivoCheckBox, formData);
 		minAlunosParaAbrirTurmaValueNumberField = new NumberField();
 		minAlunosParaAbrirTurmaValueNumberField.setEmptyText("Quantidade mínimo");
 		minAlunosParaAbrirTurmaValueNumberField.setValue(parametroDTO.getMinAlunosParaAbrirTurmaValue());
@@ -471,6 +481,11 @@ public class ParametrosView extends MyComposite implements ParametrosPresenter.D
 	@Override
 	public Button getCompartilharDisciplinasCampiButton() {
 		return compartilharDisciplinasCampiButton;
+	}
+
+	@Override
+	public FuncaoObjetivoComboBox getFuncaoObjetivoComboBox() {
+		return funcaoObjetivoCheckBox;
 	}
 	
 }

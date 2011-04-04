@@ -45,7 +45,7 @@ public class OtimizarServiceImpl extends RemoteServiceServlet implements Otimiza
 //	private static final String linkSolver = "http://offspring:8080/SolverWS";    // SERVIDOR // OFFSPRING
 //	private static final String linkSolver = "http://toquinho:8080/SolverWS";     // MAQUINA DO MÁRIO // TOQUINHO
 //	private static final String linkSolver = "http://localhost:8080/SolverWS"; // MAQUINA DO CLAUDIO // NIRVANA
-	private static final String linkSolver = "http://localhost:8080/SolverWS";    // MAQUINA DESENVOLVIMENTO (CLAUDIO)
+	private static final String linkSolver = "http://localhost:3402/SolverWS";    // MAQUINA DESENVOLVIMENTO (CLAUDIO)
 
 	@Override
 	@Transactional

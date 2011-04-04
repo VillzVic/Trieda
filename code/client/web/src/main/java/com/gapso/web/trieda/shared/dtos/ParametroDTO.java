@@ -44,6 +44,7 @@ public class ParametroDTO extends AbstractDTO<Long> implements Comparable<Parame
 	public static final String PROPERTY_PERCENTUAISMINIMOSDOUTORES = "percentuaisminimosdoutores";
 	public static final String PROPERTY_AREATITULACAOPROFESSORESECURSOS = "areatitulacaoprofessoresecursos";
 	public static final String PROPERTY_LIMITARMAXIMODISCIPLINAPROFESSOR = "limitarmaximodisciplinaprofessor";
+	public static final String PROPERTY_FUNCAOOBJETIVO = "funcaoObjetivo";
 	
 	public static final String PROPERTY_MAXIMIZARNOTAAVALIACAOCORPODOCENTE_LIST = "limitarmaximodisciplinaprofessor_list";
 	public static final String PROPERTY_MINIMIZARCUSTODOCENTECURSOS_LIST = "limitarmaximodisciplinaprofessor_list";
@@ -296,6 +297,13 @@ public class ParametroDTO extends AbstractDTO<Long> implements Comparable<Parame
 	}
 	public void setEvitarReducaoCargaHorariaProfessorValue(Integer value) {
 		set(PROPERTY_EVITARREDUCAOCARGAHORARIAPROFESSORVALUE, value);
+	}
+	
+	public Integer getFuncaoObjetivo() {
+		return get(PROPERTY_FUNCAOOBJETIVO);
+	}
+	public void setFuncaoObjetivo(Integer value) {
+		set(PROPERTY_FUNCAOOBJETIVO, value);
 	}
 	
 	public List<CursoDTO> getMaximizarNotaAvaliacaoCorpoDocenteList() {
