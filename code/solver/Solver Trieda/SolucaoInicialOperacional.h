@@ -23,30 +23,19 @@ public:
 private:
 
    bool alocaAula(SolucaoOperacional & solucaoOperacional, Professor & professor, Aula & aula);
+   
+   bool alocaAula_2(vector<Aula*> & horarios, int indicePrimeiroHorarioDia, int totalHorarios,  Professor & professor, Aula & aula);
 
    ProblemData & problemData;
 
    // Estrutura que armazena o custo de alocar um professor a uma dada aula.
    map<pair<Professor*,Aula*>,CustoAlocacao*> custoProfTurma;
 
-   /* 
-   PREENCHER A ESTRUTURA ABAIXO E, EM SEGUIDA, ORDENA-LA DE ACORDO
-   COM O MAIOR CUSTO ASSOCIADO A CADA AULA.
-
-   EM SEGUIDA, FAZER A ALOCACAO UTILIZANDO O ALGORITMO QUE PENSEI.
-
-   QDO O ALGORITMO TERMINAR PODE SER QUE EXISTAM AULAS QUE NÃO FORAM ALOCADAS.
-   HÁ, ENTÃO, A NECESSIDADE DE CRIAR UM PROFESSOR VIRTUAL.
-
-   DEPOIS DE TUDO ISSO, AINDA TENHO QUE TESTAR SE EXISTE AULA QUE NAO TEM PROF ASSOCIADO,
-   OU SEJA, NAO TEM CUSTO. SE ISSO ACONTECER, CRIA-SE UM PROFESSOR VIRTUAL E VAI ALOCANDO
-   AULA PRA ELE ATÉ NÃO DER MAIS. SE PRECISAR, CRIA-SE OUTRO PROFESSOR E POR AI VAI.
-
-   JA TEM A ESTRUTURA <aulasNaoRelacionadasProf> QUE EU CHECO ELA NO METODO <geraSolucaoInicial>
-   */
-
    // Armazena, em ordem decrescente, os Custos de Alocação para cada Aula.
-   std::vector<std::pair<Aula*,std::vector<CustoAlocacao*> > > custosAlocacaoAulaOrdenado;
+   //std::vector<std::pair<Aula*,std::vector<CustoAlocacao*> > > custosAlocacaoAulaOrdenado;
+
+   // Armazena, em ordem decrescente, os Custos de Alocação.
+   std::vector<CustoAlocacao*> custosAlocacaoAulaOrdenado;
 
    /*
    Estrutura que armazena todas as aulas que não foram associadas a nenhum professor.

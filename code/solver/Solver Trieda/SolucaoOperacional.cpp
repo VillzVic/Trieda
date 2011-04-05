@@ -36,42 +36,55 @@ SolucaoOperacional::SolucaoOperacional(ProblemData* prbDt)
       *itMatrizAulas = new vector<Aula*> ((totalDias*totalHorarios), NULL);
    }
 
-   unsigned int i = 0;
-   unsigned int j = 0;
-   int dia_semana = 0;
-   int horario_aula_id = 0;
+   /*
 
-   Aula * aula_virtual = new Aula(true);
-   Professor* professor = NULL;
+   DEBUGAR ESSE TRECHO DO CODIGO COM O CLEITON DEPOIS.
 
-   // Deixando livres, apenas os horarios em que o professor pode
-   // ministrar aulas. Para os demais, associa-as à uma aula virtual.
-   itMatrizAulas = matrizAulas->begin();
-   for(i = 0; itMatrizAulas != matrizAulas->end(); ++itMatrizAulas, i++)
-   {
-	   // Professor da linha atual da matriz
-	   professor = getProfessorMatriz(i);
+   Acho que está dando alguma coisa errada.
 
-	   // Vetor de aulas do professor atual
-	   vector<Aula*> * linha = *itMatrizAulas;
-	   vector<Aula*>::iterator it_aula = linha->begin();
-	   for(j = 0; j < linha->size(); j++, it_aula++)
-	   {
-		   // Dia da semana
-		   dia_semana = ( j / totalHorarios );
+   Esse trecho de cod. diz respeito à alocação prévia de aulas virtuais.
 
-		   // Índice do horário da aula
-		   horario_aula_id = ( j % totalHorarios );
+   */
 
-		   if (!horarioDisponivelProfessor(professor,
-					dia_semana, horario_aula_id))
-		   {
-			   // A aula NAO pode ser alocada
-			   std::cout << "Aula virtual adicionada" << std::endl;
-			   *it_aula = aula_virtual;
-		   }
-	   }
-   }
+
+   //unsigned int i = 0;
+   //unsigned int j = 0;
+   //int dia_semana = 0;
+   //int horario_aula_id = 0;
+
+   //Aula * aula_virtual = new Aula(true);
+   //Professor* professor = NULL;
+
+   //// Deixando livres, apenas os horarios em que o professor pode
+   //// ministrar aulas. Para os demais, associa-as à uma aula virtual.
+   //itMatrizAulas = matrizAulas->begin();
+   //for(i = 0; itMatrizAulas != matrizAulas->end(); ++itMatrizAulas, i++)
+   //{
+	  // // Professor da linha atual da matriz
+	  // professor = getProfessorMatriz(i);
+
+   //   int idProf = professor->getIdOperacional();
+
+	  // // Vetor de aulas do professor atual
+	  // vector<Aula*> * linha = *itMatrizAulas;
+	  // vector<Aula*>::iterator it_aula = linha->begin();
+	  // for(j = 0; j < linha->size(); j++, it_aula++)
+	  // {
+		 //  // Dia da semana
+		 //  dia_semana = ( j / totalHorarios );
+
+		 //  // Índice do horário da aula
+		 //  horario_aula_id = ( j % totalHorarios );
+
+		 //  if (!horarioDisponivelProfessor(professor,
+			//		dia_semana, horario_aula_id))
+		 //  {
+			//   // A aula NAO pode ser alocada
+			//   std::cout << "Aula virtual adicionada" << std::endl;
+			//   *it_aula = aula_virtual;
+		 //  }
+	  // }
+   //}
 }
 
 SolucaoOperacional::~SolucaoOperacional()
@@ -86,7 +99,7 @@ SolucaoOperacional::~SolucaoOperacional()
    MatrizSolucao::iterator itMatrizAulas = matrizAulas->begin();
    for(; itMatrizAulas != matrizAulas->end(); ++itMatrizAulas)
    {
-	  delete *itMatrizAulas;
+      delete *itMatrizAulas;
    }
    matrizAulas = NULL;
 }
@@ -161,7 +174,7 @@ void SolucaoOperacional::toString()
       if (professor != NULL)
       {
          std::cout << std::endl << "Nome do professor : " << std::endl
-                   << professor->getNome() << std::endl << std::endl;
+            << professor->getNome() << std::endl << std::endl;
       }
 
       // Imprima as aulas deste professor
@@ -277,6 +290,11 @@ vector<Aula*>::iterator SolucaoOperacional::getHorariosDia(Professor & professor
    return itHorarios;
 }
 
+int SolucaoOperacional::getHorariosProfDia(Professor & professor, int dia)
+{
+   return ((dia - 2) * totalHorarios);
+}
+
 //vector<Aula*>::iterator SolucaoOperacional::getHorariosDia(vector<Aula*> & horariosProfessor, int dia)
 //{
 //   vector<Aula*>::iterator itHorarios = horariosProfessor.begin();
@@ -313,3 +331,13 @@ int SolucaoOperacional::getTotalHorarios() const
 //
 //   return true;
 //}
+
+int SolucaoOperacional::getTotalDeProfessores() const
+{
+	return totalDeProfessores;
+}
+
+int SolucaoOperacional::getTotalDias() const
+{
+	return totalDias;
+}

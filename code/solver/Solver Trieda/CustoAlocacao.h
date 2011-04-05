@@ -42,6 +42,7 @@ public:
    virtual bool operator < (CustoAlocacao const & right);
    virtual bool operator == (CustoAlocacao const & right);
    virtual bool operator > (CustoAlocacao const & right);
+   virtual bool operator >= (CustoAlocacao const & right);
    virtual CustoAlocacao & operator = (CustoAlocacao const & right);
 
 private:

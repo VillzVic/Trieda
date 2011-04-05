@@ -163,6 +163,11 @@ bool CustoAlocacao::operator > (CustoAlocacao const & right)
    return (custo_total > right.custo_total);
 }
 
+bool CustoAlocacao::operator >= (CustoAlocacao const & right)
+{
+   return (custo_total >= right.custo_total);
+}
+
 CustoAlocacao & CustoAlocacao::operator = (CustoAlocacao const & right)
 {
    // Auto Ref. Check

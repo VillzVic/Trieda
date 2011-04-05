@@ -52,6 +52,8 @@ public:
    // 7: sábado
    vector<Aula*>::iterator getHorariosDia(Professor & professor, int dia);
 
+   int getHorariosProfDia(Professor & professor, int dia);
+
    // Retorna um vetor com todos os horários de um dado professor.
    // vector<Aula*> & getHorarios(Professor & professor);
    int getTotalHorarios() const;
@@ -59,6 +61,10 @@ public:
    // TODO: Implementar o método abaixo.
    // bool alocaAula(Professor & professor, int dia, Horario & horario, Aula & aula);
    // bool alocaAula(Professor & professor, Aula & aula, vector<Aula*> & horarios);
+
+   int getTotalDeProfessores() const;
+
+   int getTotalDias() const;
 
 private:
    int totalDias;
