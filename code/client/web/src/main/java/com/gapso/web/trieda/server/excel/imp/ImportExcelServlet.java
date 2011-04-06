@@ -26,7 +26,7 @@ public class ImportExcelServlet extends HttpServlet {
 	private static final long serialVersionUID = 1889121953846517684L;
 	private static TriedaI18nConstants i18nConstants = null;
 	private static TriedaI18nMessages i18nMessages = null;
-	private static Cenario cenario = null;
+	private Cenario cenario = null;
 	{
 		try {
 			i18nConstants = GWTI18N.create(TriedaI18nConstants.class);
@@ -35,12 +35,12 @@ public class ImportExcelServlet extends HttpServlet {
 			e.printStackTrace();
 		}
 		
-		cenario = Cenario.findMasterData();
 	}
 
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
+		cenario = Cenario.findMasterData();
 		FileItemFactory factory = new DiskFileItemFactory();
         ServletFileUpload upload = new ServletFileUpload(factory);
         try {
