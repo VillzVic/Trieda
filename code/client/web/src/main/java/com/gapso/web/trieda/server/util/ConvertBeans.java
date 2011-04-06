@@ -75,6 +75,7 @@ import com.gapso.web.trieda.shared.dtos.TipoSalaDTO;
 import com.gapso.web.trieda.shared.dtos.TitulacaoDTO;
 import com.gapso.web.trieda.shared.dtos.TurnoDTO;
 import com.gapso.web.trieda.shared.dtos.UnidadeDTO;
+import com.gapso.web.trieda.shared.util.TriedaUtil;
 
 public class ConvertBeans {
 	
@@ -924,7 +925,7 @@ public class ConvertBeans {
 		for (Integer periodo : periodosSet) {
 			periodos += periodo + ", ";			
 		}
-		periodos = periodos.substring(0, periodos.length() - 2);
+		periodos = TriedaUtil.truncate(periodos, periodos.length() - 2, false);
 		dto.setPeriodos(periodos);
 		
 		Curso curso = domain.getCurso();

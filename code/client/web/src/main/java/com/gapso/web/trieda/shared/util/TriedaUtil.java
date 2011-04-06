@@ -12,10 +12,14 @@ public class TriedaUtil {
 	}
 
 	static public String truncate(String text, int max) {
+		return truncate(text, max, true);
+	}
+	static public String truncate(String text, int max, boolean etc) {
+		if(max <= 0) return text;
 		String ret = text;
 		if(ret.length() > max) {
 			ret = ret.substring(0, max);
-			ret += "...";
+			if(etc) ret += "...";
 		}
 		return ret;
 	}
