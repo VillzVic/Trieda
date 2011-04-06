@@ -10,6 +10,7 @@
 	<properties>
 		<gwt.version>2.0.4</gwt.version>
 		<project.build.sourceEncoding>utf-8</project.build.sourceEncoding>
+		<spring-security.version>3.0.3.RELEASE</spring-security.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -83,6 +84,38 @@
 			<artifactId>gwt_i18n_server</artifactId>
 			<version>1.0</version>
 		</dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-core</artifactId>
+            <version>${spring-security.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>commons-logging</groupId>
+                    <artifactId>commons-logging</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-config</artifactId>
+            <version>${spring-security.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>commons-logging</groupId>
+                    <artifactId>commons-logging</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-web</artifactId>
+            <version>${spring-security.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-taglibs</artifactId>
+            <version>${spring-security.version}</version>
+        </dependency>
 	</dependencies>
 	<profiles>
 		<profile>
