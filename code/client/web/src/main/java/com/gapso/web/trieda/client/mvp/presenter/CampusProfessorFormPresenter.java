@@ -62,9 +62,9 @@ public class CampusProfessorFormPresenter implements Presenter {
 			}
 		};
 		display.getProfessorNaoAssociadoList().setStore(new ListStore<ProfessorDTO>(new BaseListLoader<ListLoadResult<ProfessorDTO>>(proxyNaoVinculada)));
-		RpcProxy<List<ProfessorDTO>> proxyVinculada = new RpcProxy<List<ProfessorDTO>>() {
+		RpcProxy<ListLoadResult<ProfessorDTO>> proxyVinculada = new RpcProxy<ListLoadResult<ProfessorDTO>>() {
 			@Override
-			public void load(Object loadConfig, AsyncCallback<List<ProfessorDTO>> callback) {
+			public void load(Object loadConfig, AsyncCallback<ListLoadResult<ProfessorDTO>> callback) {
 				CampusDTO campusDTO = display.getCampusComboBox().getValue();
 				Services.professores().getProfessoresEmCampus(campusDTO, callback);
 			}

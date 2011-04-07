@@ -12,11 +12,22 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class ProfessorComboBox extends ComboBox<ProfessorDTO> {
 
+	private CampusComboBox campusComboBox;
+	
 	public ProfessorComboBox() {
+		this(null);
+	}
+	public ProfessorComboBox(CampusComboBox campusCB) {
+		this.campusComboBox = campusCB;
+		
 		RpcProxy<ListLoadResult<ProfessorDTO>> proxy = new RpcProxy<ListLoadResult<ProfessorDTO>>() {
 			@Override
 			public void load(Object loadConfig, AsyncCallback<ListLoadResult<ProfessorDTO>> callback) {
-				Services.professores().getList(callback);
+				if(campusComboBox != null && campusComboBox.getValue() != null) {
+					Services.professores().getProfessoresEmCampus(campusComboBox.getValue(), callback);
+				} else {
+					Services.professores().getList(callback);
+				}
 			}
 		};
 		
@@ -28,5 +39,6 @@ public class ProfessorComboBox extends ComboBox<ProfessorDTO> {
 		setSimpleTemplate("{"+ProfessorDTO.PROPERTY_NOME+"} ({"+ProfessorDTO.PROPERTY_CPF+"})");
 		setEditable(false);
 		setTriggerAction(TriggerAction.ALL);
+		setUseQueryCache(false);
 	}
 }

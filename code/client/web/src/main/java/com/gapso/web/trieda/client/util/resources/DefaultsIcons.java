@@ -77,6 +77,7 @@ public interface DefaultsIcons extends ClientBundle  {
 	@Source("parametro_planejamento_24.png") ImageResource parametroPlanejamento24();
 	@Source("saida_curso_24.png") ImageResource saidaCurso24();
 	@Source("saida_sala_24.png") ImageResource saidaSala24();
+	@Source("saida_professor_24.png") ImageResource saidaProfessor24();
 	@Source("cenario_abrir_24.png") ImageResource cenarioAbrir24();
 	@Source("cenario_listar_24.png") ImageResource cenarioListar24();
 	@Source("cenario_novo_24.png") ImageResource cenarioNovo24();
@@ -113,6 +114,7 @@ public interface DefaultsIcons extends ClientBundle  {
 	@Source("equivalencia_16.png") ImageResource equivalencia16();
 	@Source("saida_curso_16.png") ImageResource saidaCurso16();
 	@Source("saida_sala_16.png") ImageResource saidaSala16();
+	@Source("saida_professor_16.png") ImageResource saidaProfessor16();
 	@Source("oferta_curso_16.png") ImageResource ofertaCurso16();
 	@Source("grupo_sala_16.png") ImageResource grupoSala16();
 	@Source("tipo_curso_16.png") ImageResource tipoCurso16();

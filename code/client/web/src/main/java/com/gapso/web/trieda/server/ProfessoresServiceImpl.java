@@ -160,14 +160,14 @@ public class ProfessoresServiceImpl extends RemoteServiceServlet implements Prof
 	}
 
 	@Override
-	public List<ProfessorDTO> getProfessoresEmCampus(CampusDTO campusDTO) {
+	public ListLoadResult<ProfessorDTO> getProfessoresEmCampus(CampusDTO campusDTO) {
 		Campus campus = Campus.find(campusDTO.getId());
 		Set<Professor> list = campus.getProfessores();
 		List<ProfessorDTO> listDTO = new ArrayList<ProfessorDTO>(list.size());
 		for(Professor professor : list) {
 			listDTO.add(ConvertBeans.toProfessorDTO(professor));
 		}
-		return listDTO;
+		return new BaseListLoadResult<ProfessorDTO>(listDTO);
 	}
 	
 	@Override

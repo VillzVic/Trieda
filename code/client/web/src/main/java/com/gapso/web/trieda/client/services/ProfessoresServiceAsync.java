@@ -30,7 +30,7 @@ public interface ProfessoresServiceAsync {
 	void saveHorariosDisponiveis(ProfessorDTO professorDTO, List<HorarioDisponivelCenarioDTO> listDTO, AsyncCallback<Void> callback);
 	void getProfessorCampusList(CampusDTO campusDTO, ProfessorDTO professorDTO, AsyncCallback<PagingLoadResult<ProfessorCampusDTO>> callback);
 	void removeProfessorCampus(List<ProfessorCampusDTO> professorCampusDTOList, AsyncCallback<Void> callback);
-	void getProfessoresEmCampus(CampusDTO campusDTO, AsyncCallback<List<ProfessorDTO>> callback);
+	void getProfessoresEmCampus(CampusDTO campusDTO, AsyncCallback<ListLoadResult<ProfessorDTO>> callback);
 	void getProfessoresNaoEmCampus(CampusDTO campusDTO, AsyncCallback<List<ProfessorDTO>> callback);
 	void salvarProfessorCampus(CampusDTO campusDTO, List<ProfessorDTO> professorDTOList, AsyncCallback<Void> callback);
 	

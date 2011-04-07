@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,6 +13,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import com.gapso.trieda.domain.AreaTitulacao;
+import com.gapso.trieda.domain.AtendimentoOperacional;
 import com.gapso.trieda.domain.AtendimentoTatico;
 import com.gapso.trieda.domain.Campus;
 import com.gapso.trieda.domain.Cenario;
@@ -45,6 +47,7 @@ import com.gapso.trieda.misc.Dificuldades;
 import com.gapso.trieda.misc.Estados;
 import com.gapso.trieda.misc.Semanas;
 import com.gapso.web.trieda.shared.dtos.AreaTitulacaoDTO;
+import com.gapso.web.trieda.shared.dtos.AtendimentoOperacionalDTO;
 import com.gapso.web.trieda.shared.dtos.AtendimentoTaticoDTO;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
@@ -331,8 +334,10 @@ public class ConvertBeans {
 		dto.setTempo(domain.getTempo());
 		dto.setMaxCreditos(domain.getHorariosAula().size());
 		
+		Set<HorarioAula> horarios = domain.getHorariosAula();
+		
 		Map<Integer,Integer> countHorariosAula = new HashMap<Integer, Integer>();
-		for (HorarioAula ha : domain.getHorariosAula()) {
+		for (HorarioAula ha : horarios) {
 			for (HorarioDisponivelCenario hdc : ha.getHorariosDisponiveisCenario()) {
 				int semanaInt = Semanas.toInt(hdc.getSemana());
 				Integer value = countHorariosAula.get(semanaInt);
@@ -341,6 +346,12 @@ public class ConvertBeans {
 			}
 		}
 		dto.setCountHorariosAula(countHorariosAula);
+		
+		Map<Long, String> horariosStringMap = new HashMap<Long, String>();
+		for (HorarioAula ha : horarios) {
+			horariosStringMap.put(ha.getId(), dateToString(ha.getHorario(), ha.getTurno().getTempo()));
+		}
+		dto.setHorariosStringMap(horariosStringMap);
 		
 		dto.setDisplayText(domain.getNome() + " (" + domain.getTempo() +"min)");
 		
@@ -416,7 +427,7 @@ public class ConvertBeans {
 					domain.setSemana(Semanas.SEG);
 					domain.setHorarioAula(horarioAula);
 				} else {
-					domain = HorarioDisponivelCenario.findHorarioDisponivelCenario(dto.getSegundaId());
+					domain = HorarioDisponivelCenario.find(dto.getSegundaId());
 				}
 				if(domain != null) { listDomain.add(domain); }
 			}
@@ -427,7 +438,7 @@ public class ConvertBeans {
 					domain.setSemana(Semanas.TER);
 					domain.setHorarioAula(horarioAula);
 				} else {
-					domain = HorarioDisponivelCenario.findHorarioDisponivelCenario(dto.getTercaId());
+					domain = HorarioDisponivelCenario.find(dto.getTercaId());
 				}
 				if(domain != null) { listDomain.add(domain); }
 			}
@@ -438,7 +449,7 @@ public class ConvertBeans {
 					domain.setSemana(Semanas.QUA);
 					domain.setHorarioAula(horarioAula);
 				} else {
-					domain = HorarioDisponivelCenario.findHorarioDisponivelCenario(dto.getQuartaId());
+					domain = HorarioDisponivelCenario.find(dto.getQuartaId());
 				}
 				if(domain != null) { listDomain.add(domain); }
 			}
@@ -449,7 +460,7 @@ public class ConvertBeans {
 					domain.setSemana(Semanas.QUI);
 					domain.setHorarioAula(horarioAula);
 				} else {
-					domain = HorarioDisponivelCenario.findHorarioDisponivelCenario(dto.getQuintaId());
+					domain = HorarioDisponivelCenario.find(dto.getQuintaId());
 				}
 				if(domain != null) { listDomain.add(domain); }
 			} 
@@ -460,7 +471,7 @@ public class ConvertBeans {
 					domain.setSemana(Semanas.SEX);
 					domain.setHorarioAula(horarioAula);
 				} else {
-					domain = HorarioDisponivelCenario.findHorarioDisponivelCenario(dto.getSextaId());
+					domain = HorarioDisponivelCenario.find(dto.getSextaId());
 				}
 				if(domain != null) { listDomain.add(domain); }
 			}
@@ -471,7 +482,7 @@ public class ConvertBeans {
 					domain.setSemana(Semanas.SAB);
 					domain.setHorarioAula(horarioAula);
 				} else {
-					domain = HorarioDisponivelCenario.findHorarioDisponivelCenario(dto.getSabadoId());
+					domain = HorarioDisponivelCenario.find(dto.getSabadoId());
 				}
 				if(domain != null) { listDomain.add(domain); }
 			}
@@ -482,7 +493,7 @@ public class ConvertBeans {
 					domain.setSemana(Semanas.DOM);
 					domain.setHorarioAula(horarioAula);
 				} else {
-					domain = HorarioDisponivelCenario.findHorarioDisponivelCenario(dto.getDomingoId());
+					domain = HorarioDisponivelCenario.find(dto.getDomingoId());
 				}
 				if(domain != null) { listDomain.add(domain); }
  			}
@@ -541,15 +552,7 @@ public class ConvertBeans {
 			}
 		}
 
-		DateFormat df = new SimpleDateFormat("HH:mm");
-		String inicio = df.format(domain.getHorario());
-		
-		Calendar fimCal = Calendar.getInstance();
-		fimCal.setTime(domain.getHorario());
-		fimCal.add(Calendar.MINUTE, domain.getTurno().getTempo());
-		String fim = df.format(fimCal.getTime());
-		
-		dto.setHorarioString(inicio + " / " + fim);
+		dto.setHorarioString(dateToString(domain.getHorario(), domain.getTurno().getTempo()));
 		
 		dto.setHorario(domain.getHorario());
 		
@@ -1100,6 +1103,67 @@ public class ConvertBeans {
 		return dto;
 	}
 	
+	// ATENDIMENTO OPERACIONAL
+	public static AtendimentoOperacional toAtendimentoOperacional(AtendimentoOperacionalDTO dto) {
+		AtendimentoOperacional domain = new AtendimentoOperacional();
+		domain.setId(dto.getId());
+		domain.setVersion(dto.getVersion());
+		domain.setCenario(Cenario.find(dto.getCenarioId()));
+		domain.setSala(Sala.find(dto.getSalaId()));
+		domain.setHorarioDisponivelCenario(HorarioDisponivelCenario.find(dto.getHorarioId()));
+		domain.setProfessor(Professor.find(dto.getProfessorId()));
+		domain.setCreditoTeorico(dto.getCreditoTeoricoBoolean());
+		domain.setOferta(Oferta.find(dto.getOfertaId()));
+		domain.setDisciplina(Disciplina.find(dto.getDisciplinaId()));
+		domain.setQuantidadeAlunos(dto.getQuantidadeAlunos());
+		domain.setTurma(dto.getTurma());
+		return domain;
+	}
+	
+	public static AtendimentoOperacionalDTO toAtendimentoOperacionalDTO(AtendimentoOperacional domain) {
+		AtendimentoOperacionalDTO dto = new AtendimentoOperacionalDTO();
+		dto.setId(domain.getId());
+		dto.setVersion(domain.getVersion());
+		dto.setCenarioId(domain.getCenario().getId());
+		
+		dto.setCampusId(domain.getSala().getUnidade().getCampus().getId());
+		dto.setCampusString(domain.getSala().getUnidade().getCampus().getCodigo());
+		dto.setUnidadeId(domain.getSala().getUnidade().getId());
+		dto.setUnidadeString(domain.getSala().getUnidade().getCodigo());
+		dto.setSalaId(domain.getSala().getId());
+		dto.setSalaString(domain.getSala().getNumero());
+		
+		HorarioDisponivelCenario hdc = domain.getHorarioDisponivelCenario();
+		dto.setSemana(Semanas.toInt(hdc.getSemana()));
+		HorarioAula ha = hdc.getHorarioAula();
+		dto.setHorarioId(ha.getId());
+		dto.setHorarioString("Horário");
+		dto.setTurnoId(ha.getTurno().getId());
+		dto.setTurnoString(ha.getTurno().getNome());
+		
+		dto.setProfessorId(domain.getProfessor().getId());
+		dto.setProfessorString(domain.getProfessor().getNome());
+		dto.setCreditoTeoricoBoolean(domain.getCreditoTeorico());
+		
+		dto.setOfertaId(domain.getOferta().getId());
+		dto.setDisciplinaId(domain.getDisciplina().getId());
+		dto.setDisciplinaString(domain.getDisciplina().getCodigo());
+		dto.setDisciplinaNome(domain.getDisciplina().getNome());
+		dto.setQuantidadeAlunos(domain.getQuantidadeAlunos());
+		dto.setQuantidadeAlunosString(domain.getQuantidadeAlunos().toString());
+		dto.setTurma(domain.getTurma());
+		
+		dto.setCursoString(domain.getOferta().getCurriculo().getCurso().getCodigo());
+		dto.setCursoNome(domain.getOferta().getCurriculo().getCurso().getNome());
+		dto.setCurricularString(domain.getOferta().getCurriculo().getCodigo());
+		dto.setPeriodo(domain.getOferta().getCurriculo().getPeriodo(domain.getDisciplina()));
+		dto.setPeriodoString(String.valueOf(domain.getOferta().getCurriculo().getPeriodo(domain.getDisciplina())));
+		dto.setTotalCreditoDisciplina(domain.getDisciplina().getTotalCreditos());
+		dto.setDisplayText(dto.getNaturalKey());
+		
+		return dto;
+	}
+	
 	// DIVISÃO DE CREDITO
 	public static DivisaoCredito toDivisaoCredito(DivisaoCreditoDTO dto) {
 		DivisaoCredito domain = new DivisaoCredito();
@@ -1388,5 +1452,18 @@ public class ConvertBeans {
 		dto.setCompartilharDisciplinasCampiList(cursosCompartDiscCampiDTOList);
 		
 		return dto;
+	}
+	
+	
+	static public String dateToString(Date date, int interval) {
+		DateFormat df = new SimpleDateFormat("HH:mm");
+		String inicio = df.format(date);
+		
+		Calendar fimCal = Calendar.getInstance();
+		fimCal.setTime(date);
+		fimCal.add(Calendar.MINUTE, interval);
+		String fim = df.format(fimCal.getTime());
+		
+		return inicio + " / " + fim;
 	}
 }

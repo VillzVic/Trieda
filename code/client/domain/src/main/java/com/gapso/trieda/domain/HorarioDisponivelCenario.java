@@ -141,22 +141,17 @@ public class HorarioDisponivelCenario implements Serializable {
     }
 
 	public static long countHorarioDisponivelCenarios() {
-        return ((Number) entityManager().createQuery("select count(o) from HorarioDisponivelCenario o").getSingleResult()).longValue();
+        return ((Number) entityManager().createQuery("SELECT COUNT(o) FROM HorarioDisponivelCenario o").getSingleResult()).longValue();
     }
 
 	@SuppressWarnings("unchecked")
-    public static List<HorarioDisponivelCenario> findAllHorarioDisponivelCenarios() {
-        return entityManager().createQuery("select o from HorarioDisponivelCenario o").getResultList();
+    public static List<HorarioDisponivelCenario> findAll() {
+        return entityManager().createQuery("SELECT o FROM HorarioDisponivelCenario o").getResultList();
     }
 
-	public static HorarioDisponivelCenario findHorarioDisponivelCenario(Long id) {
+	public static HorarioDisponivelCenario find(Long id) {
         if (id == null) return null;
         return entityManager().find(HorarioDisponivelCenario.class, id);
-    }
-
-	@SuppressWarnings("unchecked")
-    public static List<HorarioDisponivelCenario> findHorarioDisponivelCenarioEntries(int firstResult, int maxResults) {
-        return entityManager().createQuery("select o from HorarioDisponivelCenario o").setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
 
 	public HorarioAula getHorarioAula() {

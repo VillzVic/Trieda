@@ -11,15 +11,19 @@ import java.util.TreeMap;
 
 import com.extjs.gxt.ui.client.data.BasePagingLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
+import com.gapso.trieda.domain.AtendimentoOperacional;
 import com.gapso.trieda.domain.AtendimentoTatico;
 import com.gapso.trieda.domain.Curriculo;
+import com.gapso.trieda.domain.Professor;
 import com.gapso.trieda.domain.Sala;
 import com.gapso.trieda.domain.Turno;
 import com.gapso.web.trieda.client.services.AtendimentosService;
 import com.gapso.web.trieda.server.util.ConvertBeans;
+import com.gapso.web.trieda.shared.dtos.AtendimentoOperacionalDTO;
 import com.gapso.web.trieda.shared.dtos.AtendimentoTaticoDTO;
 import com.gapso.web.trieda.shared.dtos.CurriculoDTO;
 import com.gapso.web.trieda.shared.dtos.ParDTO;
+import com.gapso.web.trieda.shared.dtos.ProfessorDTO;
 import com.gapso.web.trieda.shared.dtos.SalaDTO;
 import com.gapso.web.trieda.shared.dtos.TurnoDTO;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
@@ -115,7 +119,7 @@ public class AtendimentosServiceImpl extends RemoteServiceServlet implements Ate
 		
 		for(int i=2; i<8; i++) {
 			if(diaSemanaToAtendimentoTaticoDTOMap.get(i) == null) {
-				diaSemanaToAtendimentoTaticoDTOMap.put(i, Collections.EMPTY_LIST);
+				diaSemanaToAtendimentoTaticoDTOMap.put(i, Collections.<AtendimentoTaticoDTO>emptyList());
 			}
 		}
 		
@@ -247,4 +251,80 @@ public class AtendimentosServiceImpl extends RemoteServiceServlet implements Ate
 		return listListDTO;
 	}
 	
+	@Override
+	public List<AtendimentoOperacionalDTO> getAtendimentosOperacional(ProfessorDTO professorDTO, TurnoDTO turnoDTO) {
+		Professor professor = Professor.find(professorDTO.getId());
+		Turno turno = Turno.find(turnoDTO.getId());
+		List<AtendimentoOperacional> atendimentosOperacional = AtendimentoOperacional.findAllBy(professor, turno);
+		List<AtendimentoOperacionalDTO> listDTO = new ArrayList<AtendimentoOperacionalDTO>(atendimentosOperacional.size());
+		for(AtendimentoOperacional atendimentoOperacional : atendimentosOperacional) {
+			listDTO.add(ConvertBeans.toAtendimentoOperacionalDTO(atendimentoOperacional));
+		}
+		
+		return montaListaParaVisaoProfessor(montaListaParaVisaoProfessor1(listDTO));
+	}
+	
+	private List<AtendimentoOperacionalDTO> montaListaParaVisaoProfessor1(List<AtendimentoOperacionalDTO> list) {
+		// Agrupa os DTOS pela chave [Curso-Disciplina-Turma-DiaSemana] 
+		Map<String, List<AtendimentoOperacionalDTO>> atendimentoOperacionalDTOMap = new HashMap<String, List<AtendimentoOperacionalDTO>>();
+		for (AtendimentoOperacionalDTO dto : list) {
+			String key = dto.getCursoString() + "-" + dto.getDisciplinaString() + "-" + dto.getTurma() + "-" + dto.getSemana();
+			List<AtendimentoOperacionalDTO> dtoList = atendimentoOperacionalDTOMap.get(key);
+			if (dtoList == null) {
+				dtoList = new ArrayList<AtendimentoOperacionalDTO>();
+				atendimentoOperacionalDTOMap.put(key,dtoList);
+			}
+			dtoList.add(dto);
+		}
+		
+		// Quando há mais de um DTO por chave [Curso-Disciplina-Turma-DiaSemana], concatena as informações
+		// de todos em um único DTO.
+		List<AtendimentoOperacionalDTO> processedList = new ArrayList<AtendimentoOperacionalDTO>();
+		for (Entry<String,List<AtendimentoOperacionalDTO>> entry : atendimentoOperacionalDTOMap.entrySet()) {
+			if (entry.getValue().size() == 1) {
+				processedList.addAll(entry.getValue());
+			} else {
+				AtendimentoOperacionalDTO dtoMain = entry.getValue().get(0);
+				for (int i = 1; i < entry.getValue().size(); i++) {
+					dtoMain.setTotalLinhas(dtoMain.getTotalLinhas() + 1);
+				}
+				processedList.add(dtoMain);
+			}
+		}
+		
+		return processedList;
+	}
+	
+	private List<AtendimentoOperacionalDTO> montaListaParaVisaoProfessor(List<AtendimentoOperacionalDTO> list) {
+		// Agrupa os DTOS pela chave [Disciplina-Turma-DiaSemana] 
+		Map<String, List<AtendimentoOperacionalDTO>> atendimentoOperacionalDTOMap = new HashMap<String, List<AtendimentoOperacionalDTO>>();
+		for (AtendimentoOperacionalDTO dto : list) {
+			String key = dto.getDisciplinaString() + "-" + dto.getTurma() + "-" + dto.getSemana();
+			List<AtendimentoOperacionalDTO> dtoList = atendimentoOperacionalDTOMap.get(key);
+			if (dtoList == null) {
+				dtoList = new ArrayList<AtendimentoOperacionalDTO>();
+				atendimentoOperacionalDTOMap.put(key,dtoList);
+			}
+			dtoList.add(dto);
+		}
+		
+		// Quando há mais de um DTO por chave [Disciplina-Turma-DiaSemana], concatena as informações
+		// de todos em um único DTO.
+		List<AtendimentoOperacionalDTO> processedList = new ArrayList<AtendimentoOperacionalDTO>();
+		for (Entry<String,List<AtendimentoOperacionalDTO>> entry : atendimentoOperacionalDTOMap.entrySet()) {
+			if (entry.getValue().size() == 1) {
+				processedList.addAll(entry.getValue());
+			} else {
+				AtendimentoOperacionalDTO dtoMain = entry.getValue().get(0);
+				for (int i = 1; i < entry.getValue().size(); i++) {
+					AtendimentoOperacionalDTO dtoCurrent = entry.getValue().get(i);
+					dtoMain.concatenateVisaoSala(dtoCurrent);
+//					dtoMain.setTotalLinhas(dtoMain.getTotalLinhas() + 1);
+				}
+				processedList.add(dtoMain);
+			}
+		}
+		
+		return processedList;
+	}
 }

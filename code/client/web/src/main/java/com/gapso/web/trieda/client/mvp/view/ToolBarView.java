@@ -81,6 +81,7 @@ public class ToolBarView extends MyComposite implements ToolBarPresenter.Display
 	// Relatórios
 	private Button relatorioVisaoSalaBt;
 	private Button relatorioVisaoCursoBt;
+	private Button relatorioVisaoProfessorBt;
 	private Button resumoCenarioBt;
 	private Button resumoCampiBt;
 	
@@ -333,6 +334,9 @@ public class ToolBarView extends MyComposite implements ToolBarPresenter.Display
 		
 		relatorioVisaoCursoBt = createButton("Grade Horária<br />Visão Curso", "Grade Horária Visão Curso", Resources.DEFAULTS.saidaCurso24());
 		relatoriosToolBar.add(relatorioVisaoCursoBt);		
+		
+		relatorioVisaoProfessorBt = createButton("Grade Horária<br />Visão Professor", "Grade Horária Visão Professor", Resources.DEFAULTS.saidaProfessor24());
+		relatoriosToolBar.add(relatorioVisaoProfessorBt);		
 	}
 	
 	private void createPlanejamento() {
@@ -479,6 +483,10 @@ public class ToolBarView extends MyComposite implements ToolBarPresenter.Display
 	@Override
 	public Button getRelatorioVisaoCursoButton() {
 		return relatorioVisaoCursoBt;
+	}
+	@Override
+	public Button getRelatorioVisaoProfessorButton() {
+		return relatorioVisaoProfessorBt;
 	}
 	@Override
 	public Button getResumoCenarioButton() {

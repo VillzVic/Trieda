@@ -13,6 +13,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import javax.persistence.Table;
 import javax.persistence.Version;
 import javax.validation.constraints.Max;
@@ -49,7 +50,7 @@ public class AtendimentoOperacional implements Serializable {
     private Sala sala;
     
     @NotNull
-    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH}, targetEntity = Oferta.class)
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH}, targetEntity = HorarioDisponivelCenario.class)
     @JoinColumn(name = "HDC_ID")
     private HorarioDisponivelCenario HorarioDisponivelCenario;
     
@@ -68,24 +69,15 @@ public class AtendimentoOperacional implements Serializable {
     @JoinColumn(name = "PRF_ID")
     private Professor professor;
     
+    @Column(name = "ATP_CREDITOTEOTICO")
+    private Boolean creditoTeorico;
+    
     @NotNull
     @Column(name = "ATP_QUANTIDADE")
     @Min(0L)
     @Max(999L)
     private Integer quantidadeAlunos;
 
-    @NotNull
-    @Column(name = "ATP_CRED_TEORICO")
-    @Min(0L)
-    @Max(99L)
-    private Integer creditosTeorico;
-    
-    @NotNull
-    @Column(name = "ATP_CRED_PRATICO")
-    @Min(0L)
-    @Max(99L)
-    private Integer creditosPratico;
-    
 	public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("Id: ").append(getId()).append(", ");
@@ -95,11 +87,10 @@ public class AtendimentoOperacional implements Serializable {
         sb.append("Sala: ").append(getSala()).append(", ");
         sb.append("HorarioDisponivelCenario: ").append(getHorarioDisponivelCenario()).append(", ");
         sb.append("Professor: ").append(getProfessor()).append(", ");
+        sb.append("CreditoTeorico: ").append(getCreditoTeorico()).append(", ");
         sb.append("Oferta: ").append(getOferta()).append(", ");
         sb.append("Disciplina: ").append(getDisciplina()).append(", ");
         sb.append("QuantidadeAlunos: ").append(getQuantidadeAlunos()).append(", ");
-        sb.append("CreditosTeorico: ").append(getCreditosTeorico()).append(", ");
-        sb.append("CreditosPratico: ").append(getCreditosPratico()).append(", ");
         return sb.toString();
     }
 
@@ -173,11 +164,14 @@ public class AtendimentoOperacional implements Serializable {
         if (em == null) throw new IllegalStateException("Entity manager has not been injected (is the Spring Aspects JAR configured as an AJC/AJDT aspects library?)");
         return em;
     }
-
+	
 	@SuppressWarnings("unchecked")
-    public static List<AtendimentoOperacional> findAll() {
-        return entityManager().createQuery("SELECT o FROM AtendimentoTatico o").getResultList();
-    }
+	public static List<AtendimentoOperacional> findAllBy(Professor professor, Turno turno) {
+		Query q = entityManager().createQuery("SELECT o FROM AtendimentoOperacional o WHERE o.oferta.turno = :turno AND o.professor = :professor");
+		q.setParameter("turno", turno);
+		q.setParameter("professor", professor);
+		return q.getResultList();
+	}
 
 	public static AtendimentoOperacional find(Long id) {
         if (id == null) return null;
@@ -188,7 +182,6 @@ public class AtendimentoOperacional implements Serializable {
 	public Cenario getCenario() {
 		return cenario;
 	}
-
 	public void setCenario(Cenario cenario) {
 		this.cenario = cenario;
 	}
@@ -196,7 +189,6 @@ public class AtendimentoOperacional implements Serializable {
 	public String getTurma() {
 		return turma;
 	}
-
 	public void setTurma(String turma) {
 		this.turma = turma;
 	}
@@ -204,32 +196,34 @@ public class AtendimentoOperacional implements Serializable {
 	public Sala getSala() {
 		return sala;
 	}
-
 	public void setSala(Sala sala) {
 		this.sala = sala;
 	}
-
+	
 	public HorarioDisponivelCenario getHorarioDisponivelCenario() {
 		return HorarioDisponivelCenario;
 	}
-
-	public void setHorarioDisponivelCenario(
-			HorarioDisponivelCenario horarioDisponivelCenario) {
+	public void setHorarioDisponivelCenario(HorarioDisponivelCenario horarioDisponivelCenario) {
 		HorarioDisponivelCenario = horarioDisponivelCenario;
 	}
 
 	public Professor getProfessor() {
 		return professor;
 	}
-
 	public void setProfessor(Professor professor) {
 		this.professor = professor;
 	}
 
+	public Boolean getCreditoTeorico() {
+        return this.creditoTeorico;
+    }
+	public void setCreditoTeorico(Boolean creditoTeorico) {
+        this.creditoTeorico = creditoTeorico;
+    }
+	
 	public Oferta getOferta() {
 		return oferta;
 	}
-
 	public void setOferta(Oferta oferta) {
 		this.oferta = oferta;
 	}
@@ -237,7 +231,6 @@ public class AtendimentoOperacional implements Serializable {
 	public Disciplina getDisciplina() {
 		return disciplina;
 	}
-
 	public void setDisciplina(Disciplina disciplina) {
 		this.disciplina = disciplina;
 	}
@@ -245,25 +238,8 @@ public class AtendimentoOperacional implements Serializable {
 	public Integer getQuantidadeAlunos() {
 		return quantidadeAlunos;
 	}
-
 	public void setQuantidadeAlunos(Integer quantidadeAlunos) {
 		this.quantidadeAlunos = quantidadeAlunos;
-	}
-
-	public Integer getCreditosTeorico() {
-		return creditosTeorico;
-	}
-
-	public void setCreditosTeorico(Integer creditosTeorico) {
-		this.creditosTeorico = creditosTeorico;
-	}
-
-	public Integer getCreditosPratico() {
-		return creditosPratico;
-	}
-
-	public void setCreditosPratico(Integer creditosPratico) {
-		this.creditosPratico = creditosPratico;
 	}
 	
 }

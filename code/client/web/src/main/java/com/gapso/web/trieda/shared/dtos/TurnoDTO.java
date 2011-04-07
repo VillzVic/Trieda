@@ -18,7 +18,8 @@ public class TurnoDTO extends AbstractDTO<String> implements Comparable<TurnoDTO
 	public static final String PROPERTY_TEMPO = "tempo";
 	public static final String PROPERTY_MAX_CREDITOS = "maxCreditos";
 	
-	private Map<Integer,Integer> countHorariosAula;
+	private Map<Integer, Integer> countHorariosAula;
+	private Map<Long, String> horariosStringMap;
 	
 	public TurnoDTO() {
 		countHorariosAula = new HashMap<Integer, Integer>();
@@ -72,6 +73,13 @@ public class TurnoDTO extends AbstractDTO<String> implements Comparable<TurnoDTO
 
 	public void setCountHorariosAula(Map<Integer, Integer> countHorariosAula) {
 		this.countHorariosAula = countHorariosAula;
+	}
+	
+	public void setHorariosStringMap(Map<Long, String> horariosStringMap) {
+		this.horariosStringMap = horariosStringMap;
+	}
+	public Map<Long, String> getHorariosStringMap() {
+		return horariosStringMap;
 	}
 	
 	public int getMaxCreditos(int diaSemana) {

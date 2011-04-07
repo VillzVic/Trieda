@@ -44,7 +44,7 @@ public class GrupoSalaTest extends AbstractTransactionalJUnit4SpringContextTests
 		}
 
 		Professor p = Professor.find((long) 4);
-		p.getHorarios().addAll(HorarioDisponivelCenario.findAllHorarioDisponivelCenarios());
+		p.getHorarios().addAll(HorarioDisponivelCenario.findAll());
 		p.merge();
 		p.detach();
 		System.out.println("****************");
@@ -71,7 +71,7 @@ public class GrupoSalaTest extends AbstractTransactionalJUnit4SpringContextTests
 	@Test
 	public void testRemoverHorariosProfessor() {
 		Professor p = Professor.find((long) 4);
-		HorarioDisponivelCenario hdc = HorarioDisponivelCenario.findHorarioDisponivelCenario((long) 114);
+		HorarioDisponivelCenario hdc = HorarioDisponivelCenario.find((long) 114);
 		p.getHorarios().remove(hdc);
 		p.merge();
 		p.detach();

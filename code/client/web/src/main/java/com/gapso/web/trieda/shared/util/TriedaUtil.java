@@ -1,5 +1,6 @@
 package com.gapso.web.trieda.shared.util;
 
+
 public class TriedaUtil {
 
 	static public double round(double value, int precision) {
@@ -34,5 +35,6 @@ public class TriedaUtil {
 			value = value.replace(",",".");
 		}
 		return value;
-	} 
+	}
+	
 }
