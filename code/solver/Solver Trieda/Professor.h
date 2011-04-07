@@ -45,7 +45,7 @@ public:
    double getValorCredito() const { return valor_credito; }
    int getIdOperacional() const { return id_operacional; }
    int getCustoDispProf() const { return custoDispProf; }
-   bool getIsVirtual() const { return is_virtual; }
+   bool eVirtual() const { return is_virtual; }
 
 private:
    std::string cpf;

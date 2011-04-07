@@ -5,7 +5,7 @@ Aula::Aula(bool _aulaVirtual) : aula_virtual(_aulaVirtual)
    turma = 0;
    disciplina = NULL;
    sala = NULL;
-   diaSemana = 0;
+   dia_semana = 0;
    quantidade = 0;
    creditos_teoricos = 0;
    creditos_praticos = 0;
@@ -34,7 +34,7 @@ void Aula::setSala(Sala* s)
 
 void Aula::setDiaSemana(int d)
 {
-   this->diaSemana = d;
+   this->dia_semana = d;
 }
 
 void Aula::setCreditosTeoricos(int ct)
@@ -69,7 +69,7 @@ Sala* Aula::getSala() const
 
 int Aula::getDiaSemana() const
 {
-   return this->diaSemana;
+   return this->dia_semana;
 }
 
 int Aula::getCreditosTeoricos() const
@@ -100,12 +100,13 @@ void Aula::toSring()
    
    std::cout << "Ofertas (ids): ";
    ITERA_GGROUP(itOferta,ofertas,Oferta)
+   {
       std::cout << itOferta->getId() << " ";
+   }
+
    std::cout << std::endl;
-   
    std::cout << "Sala: " << sala->getCodigo() << std::endl;
-   std::cout << "Dia: " << diaSemana << std::endl;
-   //int quantidade;
+   std::cout << "Dia: " << dia_semana << std::endl;
    std::cout << "Cred. Prat.: " << creditos_praticos << std::endl;
    std::cout << "Cred. Teo: " << creditos_teoricos << std::endl;
 }

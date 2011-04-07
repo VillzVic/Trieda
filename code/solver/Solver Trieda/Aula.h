@@ -15,7 +15,8 @@ public:
    Aula(bool _aulaVirtual = false);
    virtual ~Aula(void);
 
-   GGroup<Oferta*> ofertas;
+   // Ofertas que são atendidas por essa aula
+   GGroup< Oferta * > ofertas;
 
    void setTurma(int);
    void setDisciplina(Disciplina*);
@@ -32,10 +33,9 @@ public:
    int getCreditosTeoricos() const;
    int getCreditosPraticos() const;
    int getTotalCreditos() const;
-
    bool eVirtual() const;
 
-   std::vector<AlocacaoAula> alocacao_aula;
+   std::vector< AlocacaoAula > alocacao_aula;
 
    virtual bool operator < (Aula const & right) 
    { 
@@ -43,7 +43,7 @@ public:
          ((turma < right.getTurma()) &&
          (disciplina < right.getDisciplina()) &&
          (sala < right.getSala()) &&
-         (diaSemana < right.getDiaSemana()) &&
+         (dia_semana < right.getDiaSemana()) &&
          (creditos_teoricos < right.getCreditosTeoricos()) &&
          (creditos_praticos < right.getCreditosPraticos()));
    }
@@ -54,7 +54,7 @@ public:
          ((turma == right.getTurma()) &&
          (disciplina == right.getDisciplina()) &&
          (sala == right.getSala()) &&
-         (diaSemana == right.getDiaSemana()) &&
+         (dia_semana == right.getDiaSemana()) &&
          (creditos_teoricos == right.getCreditosTeoricos()) &&
          (creditos_praticos == right.getCreditosPraticos()));
    }
@@ -65,7 +65,7 @@ private:
    int turma;
    Disciplina* disciplina;
    Sala* sala;
-   int diaSemana;
+   int dia_semana;
    int quantidade;
    int creditos_teoricos;
    int creditos_praticos;

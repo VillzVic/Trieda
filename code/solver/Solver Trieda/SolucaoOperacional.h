@@ -39,7 +39,7 @@ public:
 
    void toString();
 
-   std::map<int, Professor*> mapProfessores;
+   std::map< int, Professor * > mapProfessores;
 
    // Retorna um iterator para o primeiro horario de um dado dia de um professor.
    // Dias considerados: 
@@ -58,23 +58,22 @@ public:
    // vector<Aula*> & getHorarios(Professor & professor);
    int getTotalHorarios() const;
 
-   // TODO: Implementar o método abaixo.
-   // bool alocaAula(Professor & professor, int dia, Horario & horario, Aula & aula);
-   // bool alocaAula(Professor & professor, Aula & aula, vector<Aula*> & horarios);
+   // bool alocaAula(Professor *, Aula *, int, Horario *);
 
    int getTotalDeProfessores() const;
-
    int getTotalDias() const;
 
 private:
-   int totalDias;
-   int totalHorarios;
-   int totalDeProfessores;
+   int total_dias;
+   int total_horarios;
+   int total_professores;
 
-   MatrizSolucao * matrizAulas;
-   ProblemData* problemData;
+   MatrizSolucao * matriz_aulas;
+   ProblemData* problem_data;
 
-   bool horarioDisponivelProfessor(Professor*, int/*dia da semana*/, int/*horario_aula_id*/);
+   // Verifica se o professor tem disponível
+   // um determinado horário em um dia da semana
+   bool horarioDisponivelProfessor(Professor*, int, int);
 };
 
 #endif

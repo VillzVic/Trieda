@@ -72,7 +72,7 @@ private:
 	// --> Cada Professor possui um conjunto de gap's
 	// -----------------------------------------------------------
 	void calculaGapsHorariosProfessores(SolucaoOperacional &);
-	vector<vector<int>> gapsProfessores;
+	vector< vector< int > > gapsProfessores;
 	double totalGapsHorariosProfessores;
 
 	// -----------------------------------------------------------
@@ -99,9 +99,9 @@ private:
 	int totalViolacoesCHMinimaSemestreAterior;
 	int totalViolacoesCHMinimaProfessor;
 	int totalViolacoesCHMaximaProfessor;
-	vector<int> violacoesCHMinimaSemestreAterior;
-	vector<int> violacoesCHMinimaProfessor;
-	vector<int> violacoesCHMaximaProfessor;
+	vector< int > violacoesCHMinimaSemestreAterior;
+	vector< int > violacoesCHMinimaProfessor;
+	vector< int > violacoesCHMaximaProfessor;
 
 	// -----------------------------------------------------------
 	// Avaliação do número de dias que cada
@@ -115,7 +115,7 @@ private:
 	// -----------------------------------------------------------
 	void avaliaDiasProfessorMinistraAula(SolucaoOperacional &);
 	int totalDiasProfessorMinistraAula;
-	vector<int> professorMinistraAula;
+	vector< int > professorMinistraAula;
 
 	// -----------------------------------------------------------
 	// Avaliação da alocação do professor na última
@@ -123,7 +123,7 @@ private:
 	// -----------------------------------------------------------
 	void violacaoUltimaPrimeiraAula(SolucaoOperacional &);
 	int totalViolacoesUltimaPrimeiraAula;
-	vector<int> violacoesUltimaPrimeiraAulaProfessor;
+	vector< int > violacoesUltimaPrimeiraAulaProfessor;
 
 	// -----------------------------------------------------------
 	// Avaliação se percentual mínimo de mestres e doutores
@@ -138,14 +138,14 @@ private:
 	// -----------------------------------------------------------
 	void avaliaMaximoDisciplinasProfessorPorCurso(SolucaoOperacional &);
 	int totalViolacoesDiscProfCurso;
-	vector<int> violacoesDisciplinasProfessor;
+	vector< int > violacoesDisciplinasProfessor;
 
 	// -----------------------------------------------------------
 	// Avaliação das violações de preferências dos professores
 	// -----------------------------------------------------------
-	void avaliaViolacoesPreferenciasProfessor(SolucaoOperacional &);
-	int totalViolacoesPreferencias;
-	vector<int> violacoesPreferenciasProfessor;
+	void avaliaPreferenciasProfessorDisciplina(SolucaoOperacional &);
+	int totalPreferenciasProfessorDisciplina;
+	vector< int > preferenciasProfessor;
 
 	// -----------------------------------------------------------
 	// Avaliação do custo de se utilizar um ou

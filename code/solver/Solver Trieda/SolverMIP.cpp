@@ -189,6 +189,7 @@ peso associado a função objetivo.
 #include "SolverMIP.h"
 #include "SolutionLoader.h"
 #include "ErrorHandler.h"
+#include "Avaliador.h"
 
 //bool ordenaSolucoes(Solucao const * left, Solucao const * right)
 //{
@@ -1824,8 +1825,14 @@ int SolverMIP::solveOperacional()
    // Criando uma solução inicial
    SolucaoInicialOperacional solIni(*problemData);
 
+   std::cout << "Carregando a solucao inicial do módulo operacional" << std::endl;
    SolucaoOperacional & sol = solIni.geraSolucaoInicial();
    sol.toString();
+
+   std::cout << "Avaliando a solucao inicial..." << std::endl;
+   Avaliador * avaliador = new Avaliador();
+   double valor_solucao = avaliador->avaliaSolucao(sol);
+   std::cout << "Valor da solucao : "  << valor_solucao << std::endl;
 
    std::cout << "Implementar <SolverMIP::solveOperacional()>" << std::endl;
    exit(1);
@@ -1850,9 +1857,10 @@ int SolverMIP::solve()
    }
    else if(problemData->parametros->modo_otimizacao == "OPERACIONAL")
    {
-      if(problemData->atendimentosTatico)
+	   if(problemData->atendimentosTatico != NULL
+		   && problemData->atendimentosTatico->size() > 0)
       {
-         ITERA_GGROUP(it_At_Campus,*problemSolution->atendimento_campus,AtendimentoCampus)
+         ITERA_GGROUP(it_At_Campus, *problemSolution->atendimento_campus, AtendimentoCampus)
          {
             problemData->atendimentosTatico = new GGroup<AtendimentoCampusSolucao*>();
             problemData->atendimentosTatico->add(new AtendimentoCampusSolucao(**it_At_Campus));
@@ -1866,8 +1874,8 @@ int SolverMIP::solve()
       }
       else
       {
-         /* Neste caso, primeiro deve-se gerar uma saída para o modelo tático. Em seguida,
-         deve-se resolver o modelo operacional com base na saída do modelo tático gerada. */
+         // Neste caso, primeiro deve-se gerar uma saída para o modelo tático. Em seguida,
+         // deve-se resolver o modelo operacional com base na saída do modelo tático gerada.
 
          // Gerando uma saída para o modelo tático.
          status = solveTatico();
@@ -1877,22 +1885,22 @@ int SolverMIP::solve()
          // Preenchendo a estrutura "atendimentosTatico" com a saída.
          getSolutionTatico();
 
-         ITERA_GGROUP(it_At_Campus,*problemSolution->atendimento_campus,AtendimentoCampus)
+         ITERA_GGROUP(it_At_Campus, *problemSolution->atendimento_campus, AtendimentoCampus)
          {
             problemData->atendimentosTatico = new GGroup<AtendimentoCampusSolucao*>();
             problemData->atendimentosTatico->add(new AtendimentoCampusSolucao(**it_At_Campus));
          }
 
-         // -------------
+         // -----------------------------------------------------
          // Deletando o output do Tatico.
          problemSolution->atendimento_campus->deleteElements();
          delete problemSolution->atendimento_campus;
          problemSolution->atendimento_campus = NULL;
-         // -------------
+         // -----------------------------------------------------
 
          // Criando as aulas que serão utilizadas para resolver o modelo operacional
          problemDataLoader->criaAulas();
-    
+
          // Resolvendo o modelo operacional
          solveOperacional();
       }

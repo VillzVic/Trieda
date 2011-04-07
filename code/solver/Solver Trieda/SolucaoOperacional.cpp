@@ -3,15 +3,16 @@
 #include "SolucaoOperacional.h"
 
 #include "Aula.h"
+#include "AlocacaoAula.h"
 
 SolucaoOperacional::SolucaoOperacional(ProblemData* prbDt)
 {
    // FIXAR OS VALORES: 6 (dias) 4 (horarios)
-   totalDias = 6;
-   totalHorarios = 4;
-   totalDeProfessores = 0;
+   total_dias = 6;
+   total_horarios = 4;
+   total_professores = 0;
 
-   this->problemData = (prbDt);
+   this->problem_data = (prbDt);
 
    // Montando um map: dado o índice da matriz (o 'idOperacional'
    // do professor) o map retorna o ponteiro para o professor correspondente
@@ -24,67 +25,60 @@ SolucaoOperacional::SolucaoOperacional(ProblemData* prbDt)
       for (; it_prof != it_campi->professores.end(); it_prof++)
       {
          mapProfessores[it_prof->getIdOperacional()] = (*it_prof);
-         ++totalDeProfessores;
+         ++total_professores;
       }
    }
 
    // Inicializando a estrutura <matrizAulas>
-   matrizAulas = new MatrizSolucao (totalDeProfessores);
-   MatrizSolucao::iterator itMatrizAulas = matrizAulas->begin();
-   for(; itMatrizAulas != matrizAulas->end(); ++itMatrizAulas)
+   matriz_aulas = new MatrizSolucao (total_professores);
+   MatrizSolucao::iterator itMatrizAulas = matriz_aulas->begin();
+   for(; itMatrizAulas != matriz_aulas->end(); ++itMatrizAulas)
    {
-      *itMatrizAulas = new vector<Aula*> ((totalDias*totalHorarios), NULL);
+      *itMatrizAulas = new vector<Aula*> ((total_dias*total_horarios), NULL);
    }
 
    /*
-
    DEBUGAR ESSE TRECHO DO CODIGO COM O CLEITON DEPOIS.
-
    Acho que está dando alguma coisa errada.
-
    Esse trecho de cod. diz respeito à alocação prévia de aulas virtuais.
-
    */
 
+   unsigned int i = 0;
+   unsigned int j = 0;
+   int dia_semana = 0;
+   int horario_aula_id = 0;
 
-   //unsigned int i = 0;
-   //unsigned int j = 0;
-   //int dia_semana = 0;
-   //int horario_aula_id = 0;
+   Aula * aula_virtual = new Aula(true);
+   Professor* professor = NULL;
 
-   //Aula * aula_virtual = new Aula(true);
-   //Professor* professor = NULL;
+   // Deixando livres, apenas os horarios em que o professor pode
+   // ministrar aulas. Para os demais, associa-as à uma aula virtual.
+   itMatrizAulas = getMatrizAulas()->begin();
+   for(i = 0; itMatrizAulas != this->getMatrizAulas()->end(); ++itMatrizAulas, i++)
+   {
+	   // Professor da linha atual da matriz
+	   professor = getProfessorMatriz(i);
+       int idProf = professor->getIdOperacional();
 
-   //// Deixando livres, apenas os horarios em que o professor pode
-   //// ministrar aulas. Para os demais, associa-as à uma aula virtual.
-   //itMatrizAulas = matrizAulas->begin();
-   //for(i = 0; itMatrizAulas != matrizAulas->end(); ++itMatrizAulas, i++)
-   //{
-	  // // Professor da linha atual da matriz
-	  // professor = getProfessorMatriz(i);
+	   // Vetor de aulas do professor atual
+	   vector<Aula*> * linha = *itMatrizAulas;
+	   vector<Aula*>::iterator it_aula = linha->begin();
+	   for(j = 0; j < linha->size(); j++, it_aula++)
+	   {
+		   // Dia da semana
+		   dia_semana = ( j / total_horarios );
 
-   //   int idProf = professor->getIdOperacional();
+		   // Índice do horário da aula
+		   horario_aula_id = ( j % total_horarios );
 
-	  // // Vetor de aulas do professor atual
-	  // vector<Aula*> * linha = *itMatrizAulas;
-	  // vector<Aula*>::iterator it_aula = linha->begin();
-	  // for(j = 0; j < linha->size(); j++, it_aula++)
-	  // {
-		 //  // Dia da semana
-		 //  dia_semana = ( j / totalHorarios );
-
-		 //  // Índice do horário da aula
-		 //  horario_aula_id = ( j % totalHorarios );
-
-		 //  if (!horarioDisponivelProfessor(professor,
-			//		dia_semana, horario_aula_id))
-		 //  {
-			//   // A aula NAO pode ser alocada
-			//   std::cout << "Aula virtual adicionada" << std::endl;
-			//   *it_aula = aula_virtual;
-		 //  }
-	  // }
-   //}
+		   if (!horarioDisponivelProfessor(professor,
+					dia_semana, horario_aula_id))
+		   {
+			   // A aula NAO pode ser alocada
+			   *it_aula = aula_virtual;
+		   }
+	   }
+   }
 }
 
 SolucaoOperacional::~SolucaoOperacional()
@@ -93,15 +87,15 @@ SolucaoOperacional::~SolucaoOperacional()
    this->mapProfessores.clear();
 
    // Limpa a referência do objeto 'problemData'
-   this->problemData = NULL;
+   this->problem_data = NULL;
 
    // Limpa as referências da matriz de solução operacional
-   MatrizSolucao::iterator itMatrizAulas = matrizAulas->begin();
-   for(; itMatrizAulas != matrizAulas->end(); ++itMatrizAulas)
+   MatrizSolucao::iterator itMatrizAulas = this->getMatrizAulas()->begin();
+   for(; itMatrizAulas != this->getMatrizAulas()->end(); ++itMatrizAulas)
    {
       delete *itMatrizAulas;
    }
-   matrizAulas = NULL;
+   matriz_aulas = NULL;
 }
 
 bool SolucaoOperacional::horarioDisponivelProfessor(
@@ -110,10 +104,10 @@ bool SolucaoOperacional::horarioDisponivelProfessor(
 	// Recupera o horário de aula que
 	// corresponde ao 'horario_aula_id' informado
 	HorarioAula* horario_aula = NULL;
-	int tam_vector = problemData->horarios_aula_ordenados.size();
+	int tam_vector = this->getProblemData()->horarios_aula_ordenados.size();
 	if (horario_aula_id < tam_vector)
 	{
-		horario_aula = problemData->horarios_aula_ordenados.at(horario_aula_id);
+		horario_aula = this->getProblemData()->horarios_aula_ordenados.at(horario_aula_id);
 	}
 	else
 	{
@@ -155,12 +149,12 @@ void SolucaoOperacional::carregaSolucaoInicial()
 
 MatrizSolucao* SolucaoOperacional::getMatrizAulas() const
 {
-   return (this->matrizAulas);
+   return (this->matriz_aulas);
 }
 
 void SolucaoOperacional::setMatrizAulas(MatrizSolucao* matriz)
 {
-   this->matrizAulas = (matriz);
+   this->matriz_aulas = (matriz);
 }
 
 // Imprime as aulas da matriz de solução,
@@ -188,11 +182,11 @@ void SolucaoOperacional::toString()
          }
          else if (aula != NULL && aula->eVirtual())
          {
-            std::cout << "Aula virtual" << std::endl;
+            // std::cout << "Aula virtual" << std::endl;
          }
          else
          {
-            std::cout << "Aula nao alocada" << std::endl;
+            // std::cout << "Aula nao alocada" << std::endl;
          }
       }
 
@@ -206,29 +200,27 @@ void SolucaoOperacional::toString()
 // do professor que faz a busca com esse dia e horário
 int SolucaoOperacional::getIndiceMatriz(int dia, Horario* horario)
 {
-   int indice_matriz = 0;
+   int dia_semana  = ((dia-2) * (this->getProblemData()->max_horarios_professor));
+   int horario_dia = (horario->getHorarioAulaId() - 1);
 
-   int dia_semana = ((dia-2) * problemData->max_horarios_professor);
-   int horario_dia = (horario->getHorarioAulaId()-1);
-   indice_matriz = (dia_semana + horario_dia);
-
-   return indice_matriz;
+   return (dia_semana + horario_dia);
 }
 
-// TODO -- verificar se esse metodo esta correto!!! (Cleiton)
-Horario* SolucaoOperacional::getHorario(int i, int j)
+Horario * SolucaoOperacional::getHorario(int i, int j)
 {
-   Aula* aula = NULL;
-   Horario* horario = NULL;
+   Aula * aula = NULL;
+   Aula * aula_referencia = ( this->getMatrizAulas()->at(i)->at(j) );
+   Horario * horario = NULL;
 
    // Procura pelo primeiro horário
-   // do bloc de aula correspondente
+   // do bloco de aula correspondente
    int k = (j - 1);
    while( k >= 0 )
    {
       // Recupera a aula atual
       aula = this->getMatrizAulas()->at(i)->at(k);
-      if ( aula == NULL )
+	  if ( aula == NULL || aula != aula_referencia
+			|| aula->eVirtual() == false)
       {
          break;
       }
@@ -236,12 +228,12 @@ Horario* SolucaoOperacional::getHorario(int i, int j)
       k--;
    }
 
-   // Garante que o índice 'k' estará apontando
-   // para a primeira aula do bloc de aula atual
-   if (aula == NULL)
-   {
-      k++;
-   }
+   // Se k = -1, então a aula do índice 'zero' é a aula que
+   // procuramos, ou seja, a primeira aula do bloco de aulas
+   // atual. Caso contrário, a aula procurada é a primeira à
+   // direita da aula de índice 'k'. Nos dois casos, devemos
+   // incrementar o índice 'k' em uma unidade.
+   k++;
 
    // Pega a posição do horário desejado
    // dentro do bloco de aulas atual
@@ -249,7 +241,7 @@ Horario* SolucaoOperacional::getHorario(int i, int j)
 
    // Recupera o horário desejado
    aula = this->getMatrizAulas()->at(i)->at(k);
-   horario = aula->alocacao_aula[k].getHorario();
+   horario = aula->alocacao_aula[posicao_aula].getHorario();
 
    return horario;
 }
@@ -277,22 +269,23 @@ Professor* SolucaoOperacional::getProfessorMatriz(int linha)
 
 ProblemData* SolucaoOperacional::getProblemData() const
 {
-   return problemData;
+   return problem_data;
 }
 
 vector<Aula*>::iterator SolucaoOperacional::getHorariosDia(Professor & professor, int dia)
 {
-   vector<Aula*>::iterator itHorarios = matrizAulas->at(professor.getIdOperacional())->begin();
+   vector<Aula*>::iterator itHorarios
+	   = this->getMatrizAulas()->at(professor.getIdOperacional())->begin();
 
    // Ajustando para o primeiro horário do dia em questão.
-   itHorarios += ((dia - 2) * totalHorarios);
+   itHorarios += ((dia - 2) * total_horarios);
 
    return itHorarios;
 }
 
 int SolucaoOperacional::getHorariosProfDia(Professor & professor, int dia)
 {
-   return ((dia - 2) * totalHorarios);
+   return ((dia - 2) * total_horarios);
 }
 
 //vector<Aula*>::iterator SolucaoOperacional::getHorariosDia(vector<Aula*> & horariosProfessor, int dia)
@@ -312,32 +305,44 @@ int SolucaoOperacional::getHorariosProfDia(Professor & professor, int dia)
 
 int SolucaoOperacional::getTotalHorarios() const
 {
-   return totalHorarios;
+   return total_horarios;
 }
 
-//bool SolucaoOperacional::alocaAula(Professor & professor, int dia, Horario & horario, Aula & aula)
-//bool SolucaoOperacional::alocaAula(Professor & professor, Aula & aula, vector<Aula*> & horarios)
+//bool SolucaoOperacional::alocaAula(Professor * professor,
+//	  							     Aula * aula, int dia, Horario * horario)
 //{
-//   // TODO
+//   int linha_matriz  = ( professor->getIdOperacional() );
+//   int coluna_matriz = ( this->getIndiceMatriz(dia, horario) );
 //
-//   vector<Aula*>::iterator itHorarios = horarios.begin();
+//   int creditos_teoricos = aula->getCreditosTeoricos();
+//   int creditos_praticos = aula->getCreditosPraticos();
+//   int total_creditos = ( creditos_teoricos + creditos_praticos );
 //
-//   for(; itHorarios != horarios.end(); ++itHorarios)
-//      *itHorarios = &aula;
+//   AlocacaoAula * alocacao_aula = new AlocacaoAula();
+//   alocacao_aula->setDiaSemana(dia);
+//   alocacao_aula->setHorario(horario);
+//   alocacao_aula->setProfessor(professor);
+//   aula->alocacao_aula.push_back(*alocacao_aula);
 //
-//   std::cout << "Implementar o metodo bool SolucaoOperacional::alocaAula("
-//			 << "Professor & professor, ... )" << std::endl;
-//   exit(1);
+//   vector< Aula * >::iterator it_aula
+//	   = this->getMatrizAulas()->at(linha_matriz)->begin();
+//
+//   it_aula += coluna_matriz;
+//   for (int i = 0; i < total_creditos; i++)
+//   {
+//	   it_aula += i;
+//	   *it_aula = aula;
+//   }
 //
 //   return true;
 //}
 
 int SolucaoOperacional::getTotalDeProfessores() const
 {
-	return totalDeProfessores;
+	return total_professores;
 }
 
 int SolucaoOperacional::getTotalDias() const
 {
-	return totalDias;
+	return total_dias;
 }
