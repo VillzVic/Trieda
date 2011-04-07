@@ -108,26 +108,26 @@ SolucaoOperacional & SolucaoInicialOperacional::geraSolucaoInicial()
 
             if(alocouProfAula)
             {
-				Horario * h = NULL;
-				unsigned int i = 0;
-				for (i = coluna_matriz; i < (total_horarios + coluna_matriz); i++)
-				{
-					ITERA_GGROUP(it_h, professor.horarios, Horario)
-					{
-						h = *(it_h);
+				//Horario * h = NULL;
+				//unsigned int i = 0;
+				//for (i = coluna_matriz; i < (total_horarios + coluna_matriz); i++)
+				//{
+				//	ITERA_GGROUP(it_h, professor.horarios, Horario)
+				//	{
+				//		h = *(it_h);
 
-						int horario_aula_id = (coluna_matriz)%(total_horarios);
-						HorarioAula horario_aula1 = problemData.horarios_aula_ordenados[horario_aula_id];
+				//		int horario_aula_id = (coluna_matriz)%(total_horarios);
+				//		HorarioAula horario_aula1 = problemData.horarios_aula_ordenados[horario_aula_id];
 
-						HorarioAula horario_aula2 = h->horario_aula;
+				//		HorarioAula horario_aula2 = h->horario_aula;
 
-						if ( h->dias_semana.find( aula.getDiaSemana() ) != h->dias_semana.end()
-							&& horario_aula1->getId() == horario_aula2->getId() )
-						{
+				//		if ( h->dias_semana.find( aula.getDiaSemana() ) != h->dias_semana.end()
+				//			&& horario_aula1->getId() == horario_aula2->getId() )
+				//		{
 
-						}
-					}
-				}
+				//		}
+				//	}
+				//}
 
 				std::cout << "\nForam alocados " << aula.getTotalCreditos()
 						  << " horarios CONSECUTIVOS para a aula da turma "
