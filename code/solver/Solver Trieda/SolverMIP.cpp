@@ -1831,8 +1831,9 @@ int SolverMIP::solveOperacional()
 
    std::cout << "Avaliando a solucao inicial..." << std::endl;
    Avaliador * avaliador = new Avaliador();
-   double valor_solucao = avaliador->avaliaSolucao(sol);
-   std::cout << "Valor da solucao : "  << valor_solucao << std::endl;
+   double valor_solucao = avaliador->avaliaSolucao(sol, true);
+   std::cout << "Valor da solucao : "  << valor_solucao
+			 << std::endl << std::endl;
 
    std::cout << "Implementar <SolverMIP::solveOperacional()>" << std::endl;
    exit(1);

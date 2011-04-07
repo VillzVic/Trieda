@@ -12,8 +12,12 @@ public:
    virtual ~Avaliador(void);
 
    // Retorna o valor de uma solução operacional
-   double avaliaSolucao(SolucaoOperacional &);
+   // Obs.: o parâmetro 'bool' informa se o
+   // avaliador deve ou não imprimir os resultados
+   // detalhados da avaliação da solução operacional
+   double avaliaSolucao(SolucaoOperacional &, bool);
 
+   // Pesos atribuídos a cada avaliação da solução
    double PESO_FIXACAO;
    double PESO_DESLOCAMENTO;
    double PESO_TEMPO_DESLOCAMENTO;
@@ -167,13 +171,13 @@ private:
 	// se deslocar entre uma aula e outra
 	// -----------------------------------------------------------
 	double calculaTempoEntreCampusUnidades(
-		SolucaoOperacional& ,Campus*, Campus*, Unidade*, Unidade*);
+		SolucaoOperacional& ,Campus *, Campus *, Unidade *, Unidade *);
 
 	// -----------------------------------------------------------
 	// Informa quantos horários um determinado
 	// professor tem disponíveis em um intervalo de aulas
 	// -----------------------------------------------------------
-	int horariosDisponiveisIntervalo(Professor*, int, Horario*, Horario*);
+	int horariosDisponiveisIntervalo(Professor *, int, Horario *, Horario *);
 
 	// -----------------------------------------------------------
 	// Método que calcula quantos horários por dia são
@@ -187,12 +191,18 @@ private:
 	// -----------------------------------------------------------
 	// Retorna o curso com o id informado
 	// -----------------------------------------------------------
-	Curso* procuraCurso(int, GGroup<Curso*>);
+	Curso* procuraCurso(int, GGroup< Curso * >);
 
 	// -----------------------------------------------------------
 	// Ordena um GGroup de aulas
 	// -----------------------------------------------------------
-	vector<Aula*> retornaVectorAulasOrdenado(GGroup< pair<Aula*, Horario*> >);
+	vector< Aula * > retornaVectorAulasOrdenado(GGroup< pair<Aula *, Horario * > >);
+
+	// -----------------------------------------------------------
+	// Exibe os resultados da avaliação, APÓS todo o
+	// processamento de avaliação da soluçao operacioanal
+	// -----------------------------------------------------------
+	void imprimeResultados();
 	//--------------------------------------------------------------------//
 };
 

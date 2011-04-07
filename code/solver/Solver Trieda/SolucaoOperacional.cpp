@@ -161,6 +161,9 @@ void SolucaoOperacional::setMatrizAulas(MatrizSolucao* matriz)
 // percorrendo as linhas de cada professor
 void SolucaoOperacional::toString()
 {
+   std::cout << std::endl << "Alocacao das aulas : "
+			 << std::endl << std::endl;
+
    Professor * professor = NULL;
    for (unsigned int i = 0; i < this->getMatrizAulas()->size(); i++)
    {

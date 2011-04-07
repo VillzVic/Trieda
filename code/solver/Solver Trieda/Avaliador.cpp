@@ -60,7 +60,64 @@ Avaliador::~Avaliador()
 
 }
 
-double Avaliador::avaliaSolucao(SolucaoOperacional & solucao)
+void Avaliador::imprimeResultados()
+{
+	std::cout << std::endl << "Violacoes de restricao de fixacao : "
+			  << totalViolacaoRestricaoFixacao << std::endl;
+
+	std::cout << std::endl << "Violacoes de deslocamento de professor : "
+			  << totalViolacoesDeslocamentoProfessor << std::endl;
+
+	std::cout << std::endl << "Tempo de deslocamento de professor : "
+			  << totalDeslocamentosProfessor << std::endl;
+
+	std::cout << std::endl << "Violacoes de deslocamento de alunos : "
+			  << totalViolacoesDescolamento << std::endl;
+
+	std::cout << std::endl << "Tempo de deslocamento de alunos : "
+			  << totalTempoDescolamento << std::endl;
+
+	std::cout << std::endl << "Total de gaps nos horarios dos professores : "
+			  << totalGapsHorariosProfessores << std::endl;
+
+	std::cout << std::endl << "Avaliacao do corpo docente : "
+			  << totalAvaliacaoCorpoDocente << std::endl;
+
+	std::cout << std::endl << "Custo do corpo docente : "
+			  << totalCustoCorpoDocente << std::endl;
+
+	std::cout << std::endl << "Violacoes de carga horaria minima do semestre anterior (sindicato) : "
+			  << totalViolacoesCHMinimaSemestreAterior << std::endl;
+
+	std::cout << std::endl << "Violacoes de carga horaria minima dos professores : "
+			  << totalViolacoesCHMinimaProfessor << std::endl;
+
+	std::cout << std::endl << "Violacoes de carga horaria maxima dos professores : "
+			  << totalViolacoesCHMaximaProfessor << std::endl;
+
+	std::cout << std::endl << "Dias em que os professores ministram aulas : "
+			  << totalDiasProfessorMinistraAula << std::endl;
+
+	std::cout << std::endl << "Violacoes do tipo ultima aula dia D / primeira aula dia D+1 : "
+			  << totalViolacoesUltimaPrimeiraAula << std::endl;
+
+	std::cout << std::endl << "Violacoes de percentual minimo de mestres : "
+			  << totalViolacoesMestres << std::endl;
+
+	std::cout << std::endl << "Violacoes de percentual minimo de doutores : "
+			  << totalViolacoesDoutores << std::endl;
+
+	std::cout << std::endl << "Violacoes de numero de disciplinas por professor por curso : "
+			  << totalViolacoesDiscProfCurso << std::endl;
+
+	std::cout << std::endl << "Avaliacao de preferencia de professor pelas disciplinas : "
+			  << totalPreferenciasProfessorDisciplina << std::endl;
+
+	std::cout << std::endl << "Total de professores virtuais : "
+			  << totalProfessoresVirtuais << std::endl << std::endl;
+}
+
+double Avaliador::avaliaSolucao(SolucaoOperacional & solucao, bool imprime_resultados)
 {
 	// Chamada dos métodos que fazem a avaliação da solução
 	// calculaViolacaoRestricaoFixacao(solucao); // pendente
@@ -100,6 +157,12 @@ double Avaliador::avaliaSolucao(SolucaoOperacional & solucao)
 	funcao_objetivo += (PESO_NUMERO_PROFESSORES_VIRTUAIS * totalProfessoresVirtuais);
 	funcao_objetivo += (PESO_CREDITOS_PROFESSORES_VIRTUAIS * totalCreditosProfessoresVirtuais);
 
+	// Exibe os resultados detalhados da avaliação
+	if (imprime_resultados)
+	{
+		this->imprimeResultados();
+	}
+
 	return funcao_objetivo;
 }
 
@@ -118,7 +181,7 @@ void Avaliador::calculaViolacaoRestricaoFixacao(SolucaoOperacional & solucao)
 		int linha_professor = professor->getIdOperacional();
 
 		// Percorre a linha correspondente ao professor na matriz de solução
-		for (unsigned int i=0; i < solucao.getMatrizAulas()->at(linha_professor)->size(); i++)
+		for (unsigned int i = 0; i < solucao.getMatrizAulas()->at(linha_professor)->size(); i++)
 		{
 			Aula* aula = solucao.getMatrizAulas()->at(linha_professor)->at(i);
 			if (aula == NULL || aula->eVirtual() == true)
