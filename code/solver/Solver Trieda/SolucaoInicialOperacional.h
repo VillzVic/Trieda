@@ -22,9 +22,7 @@ public:
 
 private:
 
-   bool alocaAula(SolucaoOperacional & solucaoOperacional, Professor & professor, Aula & aula);
-   
-   bool alocaAula_2(vector<Aula*> & horarios, int indicePrimeiroHorarioDia, int totalHorarios,  Professor & professor, Aula & aula);
+   bool alocaAula(vector<Aula*>::iterator itHorariosProf, int totalHorariosConsiderados, Professor & professor, Aula & aula);
 
    ProblemData & problemData;
 

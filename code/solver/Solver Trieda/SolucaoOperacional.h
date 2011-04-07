@@ -50,15 +50,19 @@ public:
    // 5: quinta
    // 6: sexta
    // 7: sábado
-   vector<Aula*>::iterator getHorariosDia(Professor & professor, int dia);
+   vector<Aula*>::iterator getItHorariosProf(Professor & professor, int dia = 2, int horario = 0);
 
-   int getHorariosProfDia(Professor & professor, int dia);
-
-   // Retorna um vetor com todos os horários de um dado professor.
-   // vector<Aula*> & getHorarios(Professor & professor);
    int getTotalHorarios() const;
 
-   // bool alocaAula(Professor *, Aula *, int, Horario *);
+   /* Adiciona um novo professor à solução. O inteiro retornado é referente à posição (linha) que o novo 
+   professor ocupa na solução. */
+   int addProfessor(Professor & professor, vector<Aula*> & horariosProf);
+   
+   // FUTURAMENTE, VAI SER NECESSARIO CRIAR UM METODO PARA REMOVER UM PROFESSOR.
+
+   // TODO: Implementar o método abaixo.
+   // bool alocaAula(Professor & professor, int dia, Horario & horario, Aula & aula);
+   // bool alocaAula(Professor & professor, Aula & aula, vector<Aula*> & horarios);
 
    int getTotalDeProfessores() const;
    int getTotalDias() const;

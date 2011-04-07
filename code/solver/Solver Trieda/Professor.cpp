@@ -7,6 +7,10 @@ Professor::Professor(bool eVirtual)
 	tipo_contrato_id = ch_min = ch_max = ch_anterior = titulacao_id = area_id = 0;
 	valor_credito = 0;
 
+   tipo_contrato = NULL;
+   titulacao = NULL;
+   area = NULL;
+
 	id_operacional = -1;
 
 	/* Parametro utilizado na função de prioridade para o modelo operacional. */
@@ -16,18 +20,13 @@ Professor::Professor(bool eVirtual)
 
 	if(is_virtual)
 	{
-		nome = "PROFESSOR VIRTUAL";
+      nome = "PROFESSOR VIRTUAL";
+      tipo_contrato_id = 1;
+      ch_min = 0;
+      ch_max = 28; /* 7 dias na semana, 4 creditos por dia */
+      valor_credito = 50000;
 
-		std::cout << "ToDo: <Professor> Definir com a equipe, o que sera necessario instanciar para o professor virtual." << std::endl;
-
-		/*
-		Um possivel erro. Se o Cleiton utiliza os dias disponiveis do professor para calcular alguma coisa, qdo se tratar de um novo prof, nao teremos esses dados.
-
-		Solucao 1: Qdo criar um prof assim (por ex. os virtuais), criar todos os objetos que um prof tem que ter. dai, preenche-se, por ex., os dias letivos como se fossem todos.
-		Solucao 2: Qdo o Cleiton for tratar de um professor novo (virtual), ele nao checa os dias, apenas admite que eh sempre compativel com tudo.
-		*/
-
-		exit(1);
+      exit(1);
 	}
 }
 

@@ -8,7 +8,7 @@
 SolucaoOperacional::SolucaoOperacional(ProblemData* prbDt)
 {
    // FIXAR OS VALORES: 6 (dias) 4 (horarios)
-   total_dias = 6;
+   total_dias = 7;
    total_horarios = 4;
    total_professores = 0;
 
@@ -203,9 +203,9 @@ void SolucaoOperacional::toString()
 // do professor que faz a busca com esse dia e horário
 int SolucaoOperacional::getIndiceMatriz(int dia, Horario* horario)
 {
-   int dia_semana  = ((dia-2) * (this->getProblemData()->max_horarios_professor));
-   int horario_dia = (horario->getHorarioAulaId() - 1);
-
+   int dia_semana = ((dia-1) * problem_data->max_horarios_professor);
+   int horario_dia = (horario->getHorarioAulaId()-1);
+   
    return (dia_semana + horario_dia);
 }
 
@@ -275,70 +275,43 @@ ProblemData* SolucaoOperacional::getProblemData() const
    return problem_data;
 }
 
-vector<Aula*>::iterator SolucaoOperacional::getHorariosDia(Professor & professor, int dia)
+vector<Aula*>::iterator SolucaoOperacional::getItHorariosProf(Professor & professor, int dia, int horario)
 {
-   vector<Aula*>::iterator itHorarios
-	   = this->getMatrizAulas()->at(professor.getIdOperacional())->begin();
+   if(dia < 1 || dia > 7 )
+      throw (out_of_range("Dias validos [1,7] -> dom. a sab."));
+
+   vector<Aula*>::iterator itHorarios = matriz_aulas->at(professor.getIdOperacional())->begin();
 
    // Ajustando para o primeiro horário do dia em questão.
-   itHorarios += ((dia - 2) * total_horarios);
+   itHorarios += (((dia - 1) * total_horarios) + horario);
 
    return itHorarios;
 }
 
-int SolucaoOperacional::getHorariosProfDia(Professor & professor, int dia)
+int SolucaoOperacional::addProfessor(Professor & professor, vector<Aula*> & horariosProf)
 {
-   return ((dia - 2) * total_horarios);
+   matriz_aulas->push_back(&horariosProf);
+
+   int idOperacional = (matriz_aulas->size()-1);
+
+   professor.setId(-idOperacional);
+   professor.setIdOperacional(idOperacional);
+
+   if(mapProfessores.find(professor.getIdOperacional()) != mapProfessores.end())
+   {
+      cerr << "ID OPERACIONAL FORNECIDO JÁ EXISTIA" << endl;
+      exit(1);
+   }
+
+   mapProfessores[idOperacional] = &professor;
+
+   return idOperacional;
 }
-
-//vector<Aula*>::iterator SolucaoOperacional::getHorariosDia(vector<Aula*> & horariosProfessor, int dia)
-//{
-//   vector<Aula*>::iterator itHorarios = horariosProfessor.begin();
-//
-//   // Ajustando para o primeiro horário do dia em questão.
-//   itHorarios += ((dia - 1) * totalHorarios) + 1;
-//   
-//   return itHorarios;
-//}
-
-//vector<Aula*> & SolucaoOperacional::getHorarios(Professor & professor)
-//{
-//   return *matrizAulas->at(professor.getIdOperacional());
-//}
 
 int SolucaoOperacional::getTotalHorarios() const
 {
    return total_horarios;
 }
-
-//bool SolucaoOperacional::alocaAula(Professor * professor,
-//	  							     Aula * aula, int dia, Horario * horario)
-//{
-//   int linha_matriz  = ( professor->getIdOperacional() );
-//   int coluna_matriz = ( this->getIndiceMatriz(dia, horario) );
-//
-//   int creditos_teoricos = aula->getCreditosTeoricos();
-//   int creditos_praticos = aula->getCreditosPraticos();
-//   int total_creditos = ( creditos_teoricos + creditos_praticos );
-//
-//   AlocacaoAula * alocacao_aula = new AlocacaoAula();
-//   alocacao_aula->setDiaSemana(dia);
-//   alocacao_aula->setHorario(horario);
-//   alocacao_aula->setProfessor(professor);
-//   aula->alocacao_aula.push_back(*alocacao_aula);
-//
-//   vector< Aula * >::iterator it_aula
-//	   = this->getMatrizAulas()->at(linha_matriz)->begin();
-//
-//   it_aula += coluna_matriz;
-//   for (int i = 0; i < total_creditos; i++)
-//   {
-//	   it_aula += i;
-//	   *it_aula = aula;
-//   }
-//
-//   return true;
-//}
 
 int SolucaoOperacional::getTotalDeProfessores() const
 {

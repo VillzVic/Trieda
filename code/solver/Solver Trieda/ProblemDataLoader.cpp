@@ -2450,6 +2450,8 @@ void ProblemDataLoader::criaAulas()
       }
    }
 
+   cout << "\t >>> AULAS CRIADAS <<<\n";
+
    ITERA_GGROUP(itAula,problemData->aulas,Aula)
       itAula->toSring();
 
