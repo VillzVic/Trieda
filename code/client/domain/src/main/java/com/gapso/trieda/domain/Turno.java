@@ -1,8 +1,11 @@
 package com.gapso.trieda.domain;
 
 import java.io.Serializable;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -29,6 +32,8 @@ import org.springframework.roo.addon.entity.RooEntity;
 import org.springframework.roo.addon.javabean.RooJavaBean;
 import org.springframework.roo.addon.tostring.RooToString;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.gapso.trieda.misc.Semanas;
 
 @Configurable
 @Entity
@@ -72,6 +77,20 @@ public class Turno implements Serializable {
     @Version
     @Column(name = "version")
     private Integer version;
+    
+    public int calculaMaxCreditos () {
+    	Map<Integer,Integer> countHorariosAula = new HashMap<Integer, Integer>();
+		for (HorarioAula ha : getHorariosAula()) {
+			for (HorarioDisponivelCenario hdc : ha.getHorariosDisponiveisCenario()) {
+				int semanaInt = Semanas.toInt(hdc.getSemana());
+				Integer value = countHorariosAula.get(semanaInt);
+				value = (value == null) ? 0 : value;
+				countHorariosAula.put(semanaInt,value+1);
+			}
+		}
+		
+		return Collections.max(countHorariosAula.values());
+    }
 
     public Long getId() {
         return this.id;

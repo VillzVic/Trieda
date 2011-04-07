@@ -1,19 +1,22 @@
 package com.gapso.web.trieda.server.excel.exp;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
 import com.gapso.trieda.domain.Cenario;
-import com.gapso.trieda.domain.Curriculo;
 import com.gapso.trieda.domain.CurriculoDisciplina;
+import com.gapso.trieda.domain.Sala;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nMessages;
 
-public class CurriculosExportExcel extends AbstractExportExcel {
+public class DisciplinasSalasExportExcel extends AbstractExportExcel {
 	
 	enum ExcelCellStyleReference {
 		TEXT(6,2),
@@ -37,25 +40,25 @@ public class CurriculosExportExcel extends AbstractExportExcel {
 	private String sheetName;
 	private int initialRow;
 	
-	public CurriculosExportExcel(Cenario cenario, TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages) {
+	public DisciplinasSalasExportExcel(Cenario cenario, TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages) {
 		super(cenario,i18nConstants,i18nMessages);
 		this.cellStyles = new HSSFCellStyle[ExcelCellStyleReference.values().length];
 		this.removeUnusedSheets = true;
-		this.sheetName = ExcelInformationType.CURRICULOS.getSheetName();
+		this.sheetName = ExcelInformationType.DISCIPLINAS_SALAS.getSheetName();
 		this.initialRow = 6;
 	}
 	
-	public CurriculosExportExcel(boolean removeUnusedSheets, Cenario cenario, TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages) {
+	public DisciplinasSalasExportExcel(boolean removeUnusedSheets, Cenario cenario, TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages) {
 		super(cenario,i18nConstants,i18nMessages);
 		this.cellStyles = new HSSFCellStyle[ExcelCellStyleReference.values().length];
 		this.removeUnusedSheets = removeUnusedSheets;
-		this.sheetName = ExcelInformationType.CURRICULOS.getSheetName();
+		this.sheetName = ExcelInformationType.DISCIPLINAS_SALAS.getSheetName();
 		this.initialRow = 6;
 	}
 	
 	@Override
 	public String getFileName() {
-		return getI18nConstants().curriculos();
+		return getI18nConstants().disciplinasSalas();
 	}
 	
 	@Override
@@ -65,14 +68,14 @@ public class CurriculosExportExcel extends AbstractExportExcel {
 
 	@Override
 	protected String getReportName() {
-		return getI18nConstants().curriculos();
+		return getI18nConstants().disciplinasSalas();
 	}
 
 	@Override
 	protected boolean fillInExcel(HSSFWorkbook workbook) {
-		List<Curriculo> curriculos = Curriculo.findByCenario(getCenario());
+		List<Sala> salas = Sala.findByCenario(getCenario());
 		
-		if (!curriculos.isEmpty()) {
+		if (!salas.isEmpty()) {
 			if (this.removeUnusedSheets) {
 				removeUnusedSheets(this.sheetName,workbook);
 			}
@@ -81,8 +84,8 @@ public class CurriculosExportExcel extends AbstractExportExcel {
 			fillInCellStyles(sheet);
 			
 			int nextRow = this.initialRow;
-			for (Curriculo c : curriculos) {
-				nextRow = writeData(c,nextRow,sheet);
+			for (Sala sala : salas) {
+				nextRow = writeData(sala,nextRow,sheet);
 			}
 			
 			//autoSizeColumns((short)1,(short)6,sheet); TODO: rever autoSize pois atualmente o algoritmo do poi interfere na largura do logo
@@ -93,16 +96,26 @@ public class CurriculosExportExcel extends AbstractExportExcel {
 		return false;
 	}
 	
-	private int writeData(Curriculo curriculo, int row, HSSFSheet sheet) {
-		for (Integer periodo : curriculo.getPeriodos()) {
-			List<CurriculoDisciplina> disciplinasDeUmPeriodo = curriculo.getCurriculoDisciplinasByPeriodo(periodo);
-			for (CurriculoDisciplina disciplinaDeUmPeriodo : disciplinasDeUmPeriodo) {
+	private int writeData(Sala sala, int row, HSSFSheet sheet) {
+		// Agrupa as informações por período
+		Map<Integer,List<CurriculoDisciplina>> periodoToCurriculosDisciplinasMap = new TreeMap<Integer,List<CurriculoDisciplina>>();
+		for (CurriculoDisciplina disciplinaDeUmPeriodo : sala.getCurriculoDisciplinas()) {
+			List<CurriculoDisciplina> list = periodoToCurriculosDisciplinasMap.get(disciplinaDeUmPeriodo.getPeriodo());
+			if (list == null) {
+				list = new ArrayList<CurriculoDisciplina>();
+				periodoToCurriculosDisciplinasMap.put(disciplinaDeUmPeriodo.getPeriodo(),list);
+			}
+			list.add(disciplinaDeUmPeriodo);
+		}
+		
+		for (Integer periodo : periodoToCurriculosDisciplinasMap.keySet()) {
+			for (CurriculoDisciplina disciplinaDeUmPeriodo : periodoToCurriculosDisciplinasMap.get(periodo)) {
+				// Sala
+				setCell(row,2,sheet,cellStyles[ExcelCellStyleReference.TEXT.ordinal()],sala.getCodigo());
 				// Curso
-				setCell(row,2,sheet,cellStyles[ExcelCellStyleReference.TEXT.ordinal()],curriculo.getCurso().getCodigo());
-				// Código
-				setCell(row,3,sheet,cellStyles[ExcelCellStyleReference.TEXT.ordinal()],curriculo.getCodigo());
-				// Descrição
-				setCell(row,4,sheet,cellStyles[ExcelCellStyleReference.TEXT.ordinal()],curriculo.getDescricao());
+				setCell(row,3,sheet,cellStyles[ExcelCellStyleReference.TEXT.ordinal()],disciplinaDeUmPeriodo.getCurriculo().getCurso().getCodigo());
+				// Matriz Curricular
+				setCell(row,4,sheet,cellStyles[ExcelCellStyleReference.TEXT.ordinal()],disciplinaDeUmPeriodo.getCurriculo().getCodigo());
 				// Período
 				setCell(row,5,sheet,cellStyles[ExcelCellStyleReference.NUMBER.ordinal()],periodo);
 				// Disciplina

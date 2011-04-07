@@ -40,7 +40,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RooToString
 @RooEntity(identifierColumn = "SAL_ID")
 @Table(name = "SALAS")
-public class Sala implements Serializable {
+public class Sala implements Serializable, Comparable<Sala> {
 
     @NotNull
     @ManyToOne(targetEntity = TipoSala.class)
@@ -456,4 +456,9 @@ public class Sala implements Serializable {
 	}
 	
 	private static final long serialVersionUID = -2533999449644229682L;
+
+	@Override
+	public int compareTo(Sala o) {
+		return getCodigo().compareTo(o.getCodigo());
+	}
 }

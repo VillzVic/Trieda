@@ -1,5 +1,8 @@
 package com.gapso.web.trieda.server.excel.exp;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
 import com.gapso.trieda.domain.Cenario;
@@ -29,17 +32,21 @@ public class TRIEDAExportExcel extends AbstractExportExcel {
 
 	@Override
 	protected boolean fillInExcel(HSSFWorkbook workbook) {
-		IExportExcel campiExporter = new CampiExportExcel(false,getCenario(),getI18nConstants(),getI18nMessages());
-		IExportExcel unidadesExporter = new UnidadesExportExcel(false,getCenario(),getI18nConstants(),getI18nMessages());
-		IExportExcel salasExporter = new SalasExportExcel(false,getCenario(),getI18nConstants(),getI18nMessages());
-		IExportExcel cursosExporter = new CursosExportExcel(false,getCenario(),getI18nConstants(),getI18nMessages());
-		IExportExcel disciplinasExporter = new DisciplinasExportExcel(false,getCenario(),getI18nConstants(),getI18nMessages());
+		List<IExportExcel> exporters = new ArrayList<IExportExcel>();
 		
-		campiExporter.export(workbook);
-		unidadesExporter.export(workbook);
-		salasExporter.export(workbook);
-		cursosExporter.export(workbook);
-		disciplinasExporter.export(workbook);
+		exporters.add(new CampiExportExcel(false,getCenario(),getI18nConstants(),getI18nMessages()));
+		exporters.add(new UnidadesExportExcel(false,getCenario(),getI18nConstants(),getI18nMessages()));
+		exporters.add(new SalasExportExcel(false,getCenario(),getI18nConstants(),getI18nMessages()));
+		exporters.add(new CursosExportExcel(false,getCenario(),getI18nConstants(),getI18nMessages()));
+		exporters.add(new DisciplinasExportExcel(false,getCenario(),getI18nConstants(),getI18nMessages()));
+		exporters.add(new DisciplinasSalasExportExcel(false,getCenario(),getI18nConstants(),getI18nMessages()));
+		exporters.add(new CurriculosExportExcel(false,getCenario(),getI18nConstants(),getI18nMessages()));
+		exporters.add(new DemandasExportExcel(false,getCenario(),getI18nConstants(),getI18nMessages()));
+		exporters.add(new RelatorioVisaoSalaExportExcel(false,getCenario(),getI18nConstants(),getI18nMessages()));
+		
+		for (IExportExcel exporter : exporters) {
+			exporter.export(workbook);
+		}
 		
 		return true;
 	}

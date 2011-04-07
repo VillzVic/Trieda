@@ -189,6 +189,13 @@ public class AtendimentoTatico implements Serializable {
 	}
 	
 	@SuppressWarnings("unchecked")
+	public static List<AtendimentoTatico> findByCenario(Cenario cenario) {
+		Query q = entityManager().createQuery("SELECT o FROM AtendimentoTatico o WHERE cenario = :cenario");
+    	q.setParameter("cenario", cenario);
+    	return q.getResultList();
+    }
+	
+	@SuppressWarnings("unchecked")
 	public static List<AtendimentoTatico> findAll() {
 		return entityManager().createQuery("SELECT o FROM AtendimentoTatico o").getResultList();
 	}

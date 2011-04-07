@@ -27,6 +27,7 @@ public interface TriedaI18nConstants extends Constants {
 	String disciplina();
 	String disciplinas();
 	String disciplinasAssociadas();
+	String disciplinasSalas();
 	String disponibilidadesSemanaLetiva();
 	String edicaoDe();
 	String editar();
@@ -48,9 +49,11 @@ public interface TriedaI18nConstants extends Constants {
 	String nivelDificuldade();
 	String nome();
 	String numero();
+	String ofertasEDemandas();
 	String periodo();
 	String preenchaA();
 	String preenchaO();
+	String relatorioVisaoSala();
 	String remover();
 	String sala();
 	String salas();

@@ -255,6 +255,20 @@ public class AtendimentoTaticoDTO extends AbstractDTO<String> implements Compara
 		+ "<b>Quantidade:</b> "+ getQuantidadeAlunosString() +"<br />";
 	}
 	
+	public String getExcelContentVisaoSala() {
+		return getDisciplinaString() + " / " + getTurma();
+	}
+	
+	public String getExcelCommentVisaoSala() {
+		return getDisciplinaNome() + "\n"
+		+ "Turma: "+ getTurma() + "\n"
+		+ "Crédito(s) " + ((isTeorico())? "Teórico(s)" : "Prático(s)") + ": " + getTotalCreditos()+" de "+getTotalCreditoDisciplina() + "\n"
+		+ "Curso: " + getCursoNome() + "\n"
+		+ "Matriz Curricular: " + getCurriculoString() + "\n"
+		+ "Período: "+ getPeriodoString() + "\n" 
+		+ "Quantidade: "+ getQuantidadeAlunosString();
+	}
+	
 	@Override
 	public String getNaturalKey() {
 		return getCampusString() + "-" + getUnidadeString() + "-" + getSalaString() + "-" +

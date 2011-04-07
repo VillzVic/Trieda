@@ -5,16 +5,20 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
+import org.apache.poi.hssf.usermodel.HSSFClientAnchor;
+import org.apache.poi.hssf.usermodel.HSSFComment;
+import org.apache.poi.hssf.usermodel.HSSFPatriarch;
 import org.apache.poi.hssf.usermodel.HSSFRichTextString;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.hssf.util.CellRangeAddress;
+import org.apache.poi.ss.util.CellRangeAddress;
 
 import com.gapso.trieda.domain.Cenario;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
@@ -99,6 +103,10 @@ public abstract class AbstractExportExcel implements IExportExcel {
 		}
 	}
 	
+	protected void removeUnusedSheet(String unusedSheetName, HSSFWorkbook workbook) {
+		workbook.removeSheetAt(workbook.getSheetIndex(unusedSheetName));
+	}
+	
 	protected void removeUnusedSheets(String usedSheetName, HSSFWorkbook workbook) {
 		while (workbook.getNumberOfSheets() > 1) {
 			int sheetIx = 0;
@@ -173,6 +181,34 @@ public abstract class AbstractExportExcel implements IExportExcel {
 	protected void setCell(int row, int col, HSSFSheet sheet, HSSFCellStyle style, String value) {
 		HSSFCell cell = getCell(row,col,sheet);
 		cell.setCellValue(new HSSFRichTextString(value));//cell.setCellValue(value);
+		cell.setCellStyle(style);
+	}
+	
+	protected void setCell(int row, int col, HSSFSheet sheet, HSSFCellStyle style, HSSFPatriarch patriarch, String value, String comment) {
+		HSSFCell cell = getCell(row,col,sheet);
+		cell.setCellValue(new HSSFRichTextString(value));//cell.setCellValue(value);
+		HSSFComment cellComment = cell.getCellComment();
+		if (cellComment == null) {
+			cellComment = patriarch.createComment(new HSSFClientAnchor(0,0,0,0,(short)col,row,(short)(col+3),(row+9)));
+			cell.setCellComment(cellComment);
+		}
+		cellComment.setString(new HSSFRichTextString(comment));
+		cell.setCellStyle(style);
+	}
+	
+	protected void setCell(int row, int col, HSSFSheet sheet, HSSFCellStyle style, Iterator<HSSFComment> itExcelCommentsPool, String value, String comment) {
+		HSSFCell cell = getCell(row,col,sheet);
+		cell.setCellValue(new HSSFRichTextString(value));//cell.setCellValue(value);
+		HSSFComment cellComment = cell.getCellComment();
+		if (cellComment == null) {
+			if (itExcelCommentsPool.hasNext()) {
+				cellComment = itExcelCommentsPool.next();
+				cell.setCellComment(cellComment);
+				cellComment.setString(new HSSFRichTextString(comment));
+			}
+		} else {
+			cellComment.setString(new HSSFRichTextString(comment));
+		}
 		cell.setCellStyle(style);
 	}
 	

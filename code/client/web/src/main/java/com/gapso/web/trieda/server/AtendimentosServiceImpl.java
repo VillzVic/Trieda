@@ -57,7 +57,7 @@ public class AtendimentosServiceImpl extends RemoteServiceServlet implements Ate
 		return montaListaParaVisaoSala(list);
 	}
 
-	private List<AtendimentoTaticoDTO> montaListaParaVisaoSala(List<AtendimentoTaticoDTO> list) {
+	public List<AtendimentoTaticoDTO> montaListaParaVisaoSala(List<AtendimentoTaticoDTO> list) {
 		// Agrupa os DTOS pela chave [Disciplina-Turma-DiaSemana] 
 		Map<String, List<AtendimentoTaticoDTO>> atendimentoTaticoDTOMap = new HashMap<String, List<AtendimentoTaticoDTO>>();
 		for (AtendimentoTaticoDTO dto : list) {

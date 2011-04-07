@@ -5,9 +5,13 @@ public enum ExcelInformationType {
 	CAMPI("Campi"),
 	CURRICULOS("Currículos"),
 	CURSOS("Cursos"),
+	DEMANDAS("Ofertas e Demandas"),
 	DISCIPLINAS("Disciplinas"),
-	UNIDADES("Unidades"),
-	SALAS("Salas");
+	DISCIPLINAS_SALAS("Disciplinas-Salas"),
+	PALETA_CORES("PaletaCores"),
+	RELATORIO_VISAO_SALA("Relatório Visão Sala"),
+	SALAS("Salas"),
+	UNIDADES("Unidades");
 	
 	private String sheetName;
 	

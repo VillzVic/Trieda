@@ -163,6 +163,13 @@ public class Oferta implements Serializable {
 	}
 	
 	@SuppressWarnings("unchecked")
+	public static List<Oferta> findByCenario(Cenario cenario) {
+		Query q = entityManager().createQuery("SELECT o FROM Oferta o WHERE o.campus.cenario = :cenario");
+    	q.setParameter("cenario", cenario);
+    	return q.getResultList();
+    }
+	
+	@SuppressWarnings("unchecked")
     public static List<Oferta> findAll() {
         return entityManager().createQuery("select o from Oferta o").getResultList();
     }
