@@ -756,10 +756,6 @@
 					Name="Operational"
 					>
 					<File
-						RelativePath=".\AlocacaoAula.cpp"
-						>
-					</File>
-					<File
 						RelativePath=".\Aula.cpp"
 						>
 					</File>
@@ -1136,10 +1132,6 @@
 				<Filter
 					Name="Operational"
 					>
-					<File
-						RelativePath=".\AlocacaoAula.h"
-						>
-					</File>
 					<File
 						RelativePath=".\Aula.h"
 						>

@@ -22,18 +22,19 @@ public:
 
 private:
 
-   bool alocaAula(vector<Aula*>::iterator itHorariosProf, int totalHorariosConsiderados, Professor & professor, Aula & aula);
+   bool alocaAula(vector<Aula*>::iterator itHorariosProf,
+				  int totalHorariosConsiderados, Professor & professor, Aula & aula);
 
    ProblemData & problemData;
 
    // Estrutura que armazena o custo de alocar um professor a uma dada aula.
-   map<pair<Professor*,Aula*>,CustoAlocacao*> custoProfTurma;
+   map< pair< Professor *, Aula * >, CustoAlocacao * > custoProfTurma;
 
    // Armazena, em ordem decrescente, os Custos de Alocação para cada Aula.
    //std::vector<std::pair<Aula*,std::vector<CustoAlocacao*> > > custosAlocacaoAulaOrdenado;
 
    // Armazena, em ordem decrescente, os Custos de Alocação.
-   std::vector<CustoAlocacao*> custosAlocacaoAulaOrdenado;
+   std::vector< CustoAlocacao * > custosAlocacaoAulaOrdenado;
 
    /*
    Estrutura que armazena todas as aulas que não foram associadas a nenhum professor.
@@ -43,7 +44,7 @@ private:
    Est. VAZIA -> a princípio, não precisa de prof. virtual.
    Est. com um, ou mais elementos -> com crtz é necessário criar um, ou mais, professores virtuais.
    */
-   GGroup<Aula*> aulasNaoRelacionadasProf;
+   GGroup< Aula * > aulasNaoRelacionadasProf;
 
    void executaFuncaoPrioridade();
 

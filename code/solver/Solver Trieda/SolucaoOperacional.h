@@ -50,7 +50,7 @@ public:
    // 5: quinta
    // 6: sexta
    // 7: sábado
-   vector<Aula*>::iterator getItHorariosProf(Professor & professor, int dia = 2, int horario = 0);
+   int getItHorariosProf(Professor & professor, int dia = 2, int horario = 0);
 
    int getTotalHorarios() const;
 

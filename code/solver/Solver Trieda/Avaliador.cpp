@@ -119,19 +119,19 @@ void Avaliador::imprimeResultados()
 
 double Avaliador::avaliaSolucao(SolucaoOperacional & solucao, bool imprime_resultados)
 {
-	// Chamada dos métodos que fazem a avaliação da solução
-	// calculaViolacaoRestricaoFixacao(solucao); // pendente
-	// calculaDescolamentoProfessor(solucao); // pendente
-	// calculaDescolamentoBlocoCurricular(solucao); // pendente
-	// calculaGapsHorariosProfessores(solucao); // pendente
-	avaliacaoCustoCorpoDocente(solucao);
-	violacoesCargasHorarias(solucao);
-	avaliaDiasProfessorMinistraAula(solucao);
-	violacaoUltimaPrimeiraAula(solucao);
-	avaliaNumeroMestresDoutores(solucao);
-	avaliaMaximoDisciplinasProfessorPorCurso(solucao);
-	avaliaPreferenciasProfessorDisciplina(solucao);
-	avaliaCustoProfessorVirtual(solucao);
+    // Chamada dos métodos que fazem a avaliação da solução
+	//calculaViolacaoRestricaoFixacao(solucao); // pendente
+	//calculaDescolamentoProfessor(solucao); // pendente
+	//calculaDescolamentoBlocoCurricular(solucao); // pendente
+	//calculaGapsHorariosProfessores(solucao); // pendente
+	//avaliacaoCustoCorpoDocente(solucao);
+	//violacoesCargasHorarias(solucao);
+	//avaliaDiasProfessorMinistraAula(solucao);
+	//violacaoUltimaPrimeiraAula(solucao);
+	//avaliaNumeroMestresDoutores(solucao);
+	//avaliaMaximoDisciplinasProfessorPorCurso(solucao);
+	//avaliaPreferenciasProfessorDisciplina(solucao);
+	//avaliaCustoProfessorVirtual(solucao);
 
 	double funcao_objetivo = 0.0;
 
@@ -651,7 +651,7 @@ void Avaliador::calculaGapsHorariosProfessores(SolucaoOperacional & solucao)
 	gapsProfessores.clear();
 	for (unsigned int i = 0; i < solucao.mapProfessores.size(); i++)
 	{
-		std::vector<int> gaps;
+		std::vector< int > gaps;
 		gaps.clear();
 		gapsProfessores.push_back(gaps);
 	}

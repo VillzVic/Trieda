@@ -7,7 +7,6 @@
 #include "disciplina.h"
 #include "Oferta.h"
 #include "sala.h"
-#include "AlocacaoAula.h"
 
 class Aula
 {
@@ -35,7 +34,7 @@ public:
    int getTotalCreditos() const;
    bool eVirtual() const;
 
-   std::vector< AlocacaoAula > alocacao_aula;
+   std::vector< std::pair< Professor *, Horario * > > alocacao_aula;
 
    virtual bool operator < (Aula const & right) 
    { 

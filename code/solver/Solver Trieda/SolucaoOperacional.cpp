@@ -1,11 +1,9 @@
 #include "ofbase.h"
 #include "GGroup.h"
 #include "SolucaoOperacional.h"
-
 #include "Aula.h"
-#include "AlocacaoAula.h"
 
-SolucaoOperacional::SolucaoOperacional(ProblemData* prbDt)
+SolucaoOperacional::SolucaoOperacional(ProblemData * prbDt)
 {
    // FIXAR OS VALORES: 6 (dias) 4 (horarios)
    total_dias = 7;
@@ -37,11 +35,9 @@ SolucaoOperacional::SolucaoOperacional(ProblemData* prbDt)
       *itMatrizAulas = new vector<Aula*> ((total_dias*total_horarios), NULL);
    }
 
-   /*
-   DEBUGAR ESSE TRECHO DO CODIGO COM O CLEITON DEPOIS.
-   Acho que está dando alguma coisa errada.
-   Esse trecho de cod. diz respeito à alocação prévia de aulas virtuais.
-   */
+   // DEBUGAR ESSE TRECHO DO CODIGO COM O CLEITON DEPOIS.
+   // Acho que está dando alguma coisa errada. Esse trecho
+   // de cod. diz respeito à alocação prévia de aulas virtuais.
 
    unsigned int i = 0;
    unsigned int j = 0;
@@ -65,8 +61,13 @@ SolucaoOperacional::SolucaoOperacional(ProblemData* prbDt)
 	   vector<Aula*>::iterator it_aula = linha->begin();
 	   for(j = 0; j < linha->size(); j++, it_aula++)
 	   {
-		   // Dia da semana
-		   dia_semana = ( j / total_horarios );
+		   // DIA DA SEMANA
+		   // 1 --> domingo,
+		   // 2 --> segunda-feira
+		   // (...)
+		   // 6 --> sexta-feira
+		   // 7 --> sábado
+		   dia_semana = ( j / total_horarios ) + 1;
 
 		   // Índice do horário da aula
 		   horario_aula_id = ( j % total_horarios );
@@ -171,7 +172,7 @@ void SolucaoOperacional::toString()
       if (professor != NULL)
       {
          std::cout << std::endl << "Nome do professor : " << std::endl
-            << professor->getNome() << std::endl << std::endl;
+				   << professor->getNome() << std::endl << std::endl;
       }
 
       // Imprima as aulas deste professor
@@ -244,7 +245,7 @@ Horario * SolucaoOperacional::getHorario(int i, int j)
 
    // Recupera o horário desejado
    aula = this->getMatrizAulas()->at(i)->at(k);
-   horario = aula->alocacao_aula[posicao_aula].getHorario();
+   horario = aula->alocacao_aula[posicao_aula].second;
 
    return horario;
 }
@@ -275,17 +276,14 @@ ProblemData* SolucaoOperacional::getProblemData() const
    return problem_data;
 }
 
-vector<Aula*>::iterator SolucaoOperacional::getItHorariosProf(Professor & professor, int dia, int horario)
+int SolucaoOperacional::getItHorariosProf(Professor & professor, int dia, int horario)
 {
    if(dia < 1 || dia > 7 )
+   {
       throw (out_of_range("Dias validos [1,7] -> dom. a sab."));
+   }
 
-   vector<Aula*>::iterator itHorarios = matriz_aulas->at(professor.getIdOperacional())->begin();
-
-   // Ajustando para o primeiro horário do dia em questão.
-   itHorarios += (((dia - 1) * total_horarios) + horario);
-
-   return itHorarios;
+   return ( ((dia - 1) * total_horarios) + horario );
 }
 
 int SolucaoOperacional::addProfessor(Professor & professor, vector<Aula*> & horariosProf)
