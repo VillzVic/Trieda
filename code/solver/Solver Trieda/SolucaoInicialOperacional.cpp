@@ -180,7 +180,22 @@ SolucaoOperacional & SolucaoInicialOperacional::geraSolucaoInicial()
       std::cout << "\nATENCAO: Existem aulas que nao foram alocadas a nenhum professor.\n";
       // exit(1);
 
-      MatrizSolucao::iterator itPrimeiroProfVirtualAdd;
+      /*Estrutura responsável por referenciar os professores virtuais criados */
+      std::vector<Professor*> professoresVirtuais;
+
+      /* PAREI AQUI
+
+      USAR ESSA ESTRUTURA INTERNA <professoresVirtuais> PARA TENTAR ALOCAR AS AULAS.
+      ELA SO GUARDA UMA REFERENCIA DOS PROFESSORES VIRTUAIS CRIADOS.
+
+      PARA EU DESCOBRIR A LINHA CORRESPONDENTE NA MATRIZ, BASTA USAR O GETIDOPERACIONAL.
+
+      POR EQTO SO TEM 1 PROFESSOR VIRTUAL SENDO CRIADO. DEVE-SE TENTAR ALOCAR AS AULAS PARA ELE
+      E, SOMENTE SE FOR NECESSARIO, CRIAR OUTRO PROFESSOR VIRTUAL.
+
+      */
+
+      //MatrizSolucao::iterator itPrimeiroProfVirtualAdd;
 
       // Criando o primeiro professor virtual.
       {
@@ -194,7 +209,19 @@ SolucaoOperacional & SolucaoInicialOperacional::geraSolucaoInicial()
          /* Setando alguns dados para o novo professor */
          novoProfessor->tipo_contrato = *problemData.tipos_contrato.begin();
 
-         // TODO : SETAR OS GGROUPS MAGISTERIO e HORARIOS!!!
+         ITERA_GGROUP(itDisciplina,problemData.disciplinas,Disciplina)
+         {
+            Magisterio * mag = new Magisterio();
+            mag->disciplina = *itDisciplina;
+            mag->setDisciplinaId(itDisciplina->getId());
+            mag->setNota(10);
+            mag->setPreferencia(1);
+            novoProfessor->magisterio.add(mag);
+         }
+
+         ITERA_GGROUP(itCampus,problemData.campi,Campus)
+            ITERA_GGROUP(itHorario,itCampus->horarios,Horario)
+               novoProfessor->horarios.add(*itHorario);
 
          // Adicionando os horários do novo professor à solução.
          solucaoInicial->addProfessor(*novoProfessor,*horariosNovoProfessor);
@@ -205,15 +232,16 @@ SolucaoOperacional & SolucaoInicialOperacional::geraSolucaoInicial()
             itCampus->professores.add(novoProfessor);
 		 }
 
-         itPrimeiroProfVirtualAdd = solucaoInicial->getMatrizAulas()->end();
-         // --itPrimeiroProfVirtualAdd;
+         //itPrimeiroProfVirtualAdd = solucaoInicial->getMatrizAulas()->end();
+         ////--itPrimeiroProfVirtualAdd;
       }
 
       // Enquanto todas as aulas não forem alocadas
       while(aulasNaoAlocadas.size() > 0)
       {
          // Obtendo um iterador para o primeiro professor virtual.
-         MatrizSolucao::iterator itProfessoresVirtuais = itPrimeiroProfVirtualAdd;
+         //MatrizSolucao::iterator itProfessoresVirtuais = itPrimeiroProfVirtualAdd;
+         std::vector<Professor*>::iterator itProfessoresVirtuais = professoresVirtuais.begin();
 
          //* Para todos os professores virtuais existentes,
 		 // tentar alocar as aulas que não puderam ser alocadas
@@ -223,8 +251,8 @@ SolucaoOperacional & SolucaoInicialOperacional::geraSolucaoInicial()
 		 // os professores virtuais estão sendo criados.
 
          // Para cada professor virtual
-         for(; itProfessoresVirtuais != solucaoInicial->getMatrizAulas()->end();
-			 ++itProfessoresVirtuais)
+         //for(; itProfessoresVirtuais != solucaoInicial->getMatrizAulas()->end(); ++itProfessoresVirtuais)
+         for(; itProfessoresVirtuais != professoresVirtuais.end(); ++itProfessoresVirtuais)
          {
             //(*itProfessoresVirtuais)->
             //std::vector<Aula*>::iterator itHorariosProfVirtual = 
@@ -235,22 +263,12 @@ SolucaoOperacional & SolucaoInicialOperacional::geraSolucaoInicial()
          }
       }
 
-      // Tentar alocar em algum professor virtual ja existente. Se nao der, crio um novo.
-      // Atencao: Para definir o idOperacional do proximo prof a ser criado, basta somar
-      // o total de professores da estrutura <solucaoInicial> com o size da estrutura <professoresVirtuais>
-      // ALOCAR !!!!!!!!!!!!!!!
 
-      
-      // ToDo:
-      // Depois que tiver alocado todos as aulas restantes, devo adicionar
-      // cada professor virual a solucao que esta sendo criada.
 
-      // FACIL. A estrutura que armazena os dados dos professores virtuais eh
-      // igual a estrutura que representa a solucao. Dai, como ela ja foi instanciada,
-      // basta adicionar cada professor virtual ao final da solucao. TEM QUE SER ASSIM,
-      // POR CAUSA DOS IDS.
 
-      // exit(1);
+
+
+      exit(1);
    }
 
    // Aulas, que nem sequer foram associadas a algum professor.
@@ -377,7 +395,7 @@ void SolucaoInicialOperacional::executaFuncaoPrioridade()
          TODO : ADAPTAR TODO O COD PARA CONTEMPLAR MULTICAMPUS.
          */
          //int horariosProfessor = (itProfessor->horarios.size());
-         //int horariosCampus = (itCampus->horarios.size());
+         //int horariosCampus = (itCampus->horarios.size())+1;
          //int dispProf = -(horariosProfessor - horariosCampus);
          //itProfessor->setCustoDispProf(dispProf);
          itProfessor->setCustoDispProf(itCampus->horarios.size());
@@ -433,8 +451,7 @@ void SolucaoInicialOperacional::executaFuncaoPrioridade()
    }
 }
 
-void SolucaoInicialOperacional::calculaCustoFixProf(Professor& prof , Aula& aula,
-                                                    unsigned idCusto, int custo, int maxHorariosCP)
+void SolucaoInicialOperacional::calculaCustoFixProf(Professor& prof , Aula& aula, unsigned idCusto, int custo, int maxHorariosCP)
 {
    pair<Professor*,Aula*> chave (&prof,&aula);
 

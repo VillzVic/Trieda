@@ -9,12 +9,10 @@ Aula::Aula(bool _aulaVirtual) : aula_virtual(_aulaVirtual)
    quantidade = 0;
    creditos_teoricos = 0;
    creditos_praticos = 0;
-   alocacao_aula.clear();
 }
 
 Aula::~Aula(void)
 {
-   alocacao_aula.clear();
 }
 
 void Aula::setTurma(int t)

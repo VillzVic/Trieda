@@ -35,10 +35,6 @@ SolucaoOperacional::SolucaoOperacional(ProblemData * prbDt)
       *itMatrizAulas = new vector<Aula*> ((total_dias*total_horarios), NULL);
    }
 
-   // DEBUGAR ESSE TRECHO DO CODIGO COM O CLEITON DEPOIS.
-   // Acho que está dando alguma coisa errada. Esse trecho
-   // de cod. diz respeito à alocação prévia de aulas virtuais.
-
    unsigned int i = 0;
    unsigned int j = 0;
    int dia_semana = 0;
