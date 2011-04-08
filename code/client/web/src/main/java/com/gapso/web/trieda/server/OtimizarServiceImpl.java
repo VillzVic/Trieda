@@ -66,6 +66,7 @@ public class OtimizarServiceImpl extends RemoteServiceServlet implements Otimiza
 		Parametro parametro = ConvertBeans.toParametro(parametroDTO);
 		parametro.save();
 		Cenario cenario = parametro.getCenario();
+		cenario.setParametro(parametro);
 		SolverInput solverInput = new SolverInput(cenario);
 		
 		TriedaInput triedaInput = null;

@@ -446,22 +446,26 @@ public class SolverInput {
 			itemDisciplina.setTipoDisciplinaId(disciplina.getTipoDisciplina().getId().intValue());
 			itemDisciplina.setNivelDificuldadeId(Dificuldades.toInt(disciplina.getDificuldade()));
 			
-			if(Fixacao.findAllBy(disciplina).size() == 0) {
-				DivisaoCredito divisaoCredito = disciplina.getDivisaoCreditos();
-				divisaoCredito = (divisaoCredito != null)? divisaoCredito : DivisaoCredito.findByCredito(disciplina.getTotalCreditos());
-				if(divisaoCredito != null) {
-					ItemDivisaoCreditos itemDivisaoCreditos = of.createItemDivisaoCreditos();
-					itemDivisaoCreditos.setId(divisaoCredito.getId().intValue());
-					itemDivisaoCreditos.setCreditos(divisaoCredito.getCreditos());
-					itemDivisaoCreditos.setDia1(divisaoCredito.getDia1());
-					itemDivisaoCreditos.setDia2(divisaoCredito.getDia2());
-					itemDivisaoCreditos.setDia3(divisaoCredito.getDia3());
-					itemDivisaoCreditos.setDia4(divisaoCredito.getDia4());
-					itemDivisaoCreditos.setDia5(divisaoCredito.getDia5());
-					itemDivisaoCreditos.setDia6(divisaoCredito.getDia6());
-					itemDivisaoCreditos.setDia7(divisaoCredito.getDia7());
-					itemDisciplina.setDivisaoDeCreditos(itemDivisaoCreditos);
-				}
+			DivisaoCredito divisaoCredito = null;
+			
+			if(cenario.getParametro().getRegrasEspecificasDivisaoCredito()) {
+				divisaoCredito = disciplina.getDivisaoCreditos();
+			}
+			if(divisaoCredito == null && cenario.getParametro().getRegrasGenericasDivisaoCredito()) {
+				divisaoCredito = DivisaoCredito.findByCredito(disciplina.getTotalCreditos());
+			}
+			if(divisaoCredito != null) {
+				ItemDivisaoCreditos itemDivisaoCreditos = of.createItemDivisaoCreditos();
+				itemDivisaoCreditos.setId(divisaoCredito.getId().intValue());
+				itemDivisaoCreditos.setCreditos(divisaoCredito.getCreditos());
+				itemDivisaoCreditos.setDia1(divisaoCredito.getDia1());
+				itemDivisaoCreditos.setDia2(divisaoCredito.getDia2());
+				itemDivisaoCreditos.setDia3(divisaoCredito.getDia3());
+				itemDivisaoCreditos.setDia4(divisaoCredito.getDia4());
+				itemDivisaoCreditos.setDia5(divisaoCredito.getDia5());
+				itemDivisaoCreditos.setDia6(divisaoCredito.getDia6());
+				itemDivisaoCreditos.setDia7(divisaoCredito.getDia7());
+				itemDisciplina.setDivisaoDeCreditos(itemDivisaoCreditos);
 			}
 			
 			GrupoIdentificador grupoIdentificadorEquivalencias = of.createGrupoIdentificador();
@@ -590,7 +594,7 @@ public class SolverInput {
 		
 		itemParametrosPlanejamento.setModoOtimizacao(tatico ? "TATICO" : "OPERACIONAL");
 		
-		itemParametrosPlanejamento.setFuncaoObjetivo(parametro.getFuncaoObjetivo());
+		itemParametrosPlanejamento.setFuncaoObjetivo(itemParametrosPlanejamento.getFuncaoObjetivo());
 		
 		CargaHorariaSemanalAluno cargaHorariaSemanalAluno = of.createItemParametrosPlanejamentoCargaHorariaSemanalAluno();
 		cargaHorariaSemanalAluno.setIndiferente("");
@@ -673,7 +677,7 @@ public class SolverInput {
 		itemParametrosPlanejamento.setMaximoDisciplinasDeUmProfessorPorCurso(parametro.getLimitarMaximoDisciplinaProfessor());
 		
 		itemParametrosPlanejamento.setCustoProfDisponibilidade(false);
-
+	
 		triedaInput.setParametrosPlanejamento(itemParametrosPlanejamento);
 	}
 	
