@@ -113,9 +113,11 @@ public class SolverInput {
 	private Cenario cenario;
 	private ObjectFactory of;
 	private TriedaInput triedaInput;
+	private List<Campus> campi;
 
-	public SolverInput(Cenario cenario) {
+	public SolverInput(Cenario cenario, List<Campus> campi) {
 		this.cenario = cenario;
+		this.campi = campi;
 		of = new ObjectFactory();
 		triedaInput = of.createTriedaInput();
 	}
@@ -301,7 +303,7 @@ public class SolverInput {
 	
 	private void generateCampi(boolean tatico) {
 		GrupoCampus grupoCampus = of.createGrupoCampus();
-		Set<Campus> campi = cenario.getCampi();
+//		Set<Campus> campi = cenario.getCampi();
 		for(Campus campus : campi) {
 			ItemCampus itemCampus = of.createItemCampus();
 			itemCampus.setId(campus.getId().intValue());
@@ -395,7 +397,7 @@ public class SolverInput {
 
 	private void generateDeslocamentoCampi() {
 		GrupoDeslocamento grupoDeslocamento = of.createGrupoDeslocamento();
-		Set<Campus> campi = cenario.getCampi();
+//		Set<Campus> campi = cenario.getCampi();
 		for(Campus campus : campi) {
 			Set<DeslocamentoCampus> deslocamentos = campus.getDeslocamentos();
 			for(DeslocamentoCampus deslocamento : deslocamentos) {
@@ -412,7 +414,7 @@ public class SolverInput {
 	
 	private void generateDeslocamentoUnidades() {
 		GrupoDeslocamento grupoDeslocamento = of.createGrupoDeslocamento();
-		Set<Campus> campi = cenario.getCampi();
+//		Set<Campus> campi = cenario.getCampi();
 		for(Campus campus : campi) {
 			Set<Unidade> unidades = campus.getUnidades();
 			for(Unidade unidade : unidades) {
@@ -550,7 +552,7 @@ public class SolverInput {
 	
 	private void generateOfertaCursoCampi() {
 		GrupoOfertaCurso grupoOfertaCurso = of.createGrupoOfertaCurso();
-		Set<Campus> campi = cenario.getCampi();
+//		Set<Campus> campi = cenario.getCampi();
 		for(Campus campus : campi) {
 			Set<Oferta> ofertas = campus.getOfertas();
 			for(Oferta oferta : ofertas) {
@@ -569,7 +571,7 @@ public class SolverInput {
 	
 	private void generateDemandas() {
 		GrupoDemanda grupoDemanda = of.createGrupoDemanda();
-		Set<Campus> campi = cenario.getCampi();
+//		Set<Campus> campi = cenario.getCampi();
 		for(Campus campus : campi) {
 			Set<Oferta> ofertas = campus.getOfertas();
 			for(Oferta oferta : ofertas) {

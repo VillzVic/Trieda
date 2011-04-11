@@ -24,6 +24,7 @@ import com.gapso.web.trieda.client.util.view.CargaHorariaComboBox;
 import com.gapso.web.trieda.client.util.view.FuncaoObjetivoComboBox;
 import com.gapso.web.trieda.client.util.view.GTab;
 import com.gapso.web.trieda.client.util.view.GTabItem;
+import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.CursoDTO;
 import com.gapso.web.trieda.shared.dtos.CursoDescompartilhaDTO;
@@ -79,10 +80,12 @@ public class ParametrosPresenter implements Presenter {
 	}
 	private Display display; 
 	private CenarioDTO cenario;
+	private List<CampusDTO> campi;
 	
-	public ParametrosPresenter(CenarioDTO cenario, Display display) {
+	public ParametrosPresenter(CenarioDTO cenario, List<CampusDTO> campi, Display display) {
 		this.cenario = cenario;
 		this.display = display;
+		this.campi = campi;
 		setListeners();
 	}
 
@@ -96,7 +99,7 @@ public class ParametrosPresenter implements Presenter {
 					public void handleEvent(MessageBoxEvent be) {
 						if(be.getButtonClicked().getText().equalsIgnoreCase("yes")) {
 							OtimizarServiceAsync service = Services.otimizar();
-							service.input(getDTO(), new AsyncCallback<Long>() {
+							service.input(getDTO(), campi, new AsyncCallback<Long>() {
 								@Override
 								public void onFailure(Throwable caught) {
 									MessageBox.alert("ERRO!", "Deu falha na conexão", null);

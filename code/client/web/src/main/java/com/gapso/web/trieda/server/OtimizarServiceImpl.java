@@ -17,6 +17,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.gapso.trieda.domain.Campus;
 import com.gapso.trieda.domain.Cenario;
 import com.gapso.trieda.domain.Parametro;
 import com.gapso.web.trieda.client.services.OtimizarService;
@@ -28,6 +29,7 @@ import com.gapso.web.trieda.server.xml.input.TriedaInput;
 import com.gapso.web.trieda.server.xml.output.ItemError;
 import com.gapso.web.trieda.server.xml.output.ItemWarning;
 import com.gapso.web.trieda.server.xml.output.TriedaOutput;
+import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.ParametroDTO;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
@@ -62,12 +64,16 @@ public class OtimizarServiceImpl extends RemoteServiceServlet implements Otimiza
 	
 	@Override
 	@Transactional
-	public Long input(ParametroDTO parametroDTO) {
+	public Long input(ParametroDTO parametroDTO, List<CampusDTO> campiDTO) {
+		List<Campus> campi = new ArrayList<Campus>(campiDTO.size());
+		for(CampusDTO campusDTO : campiDTO) {
+			campi.add(Campus.find(campusDTO.getId()));
+		}
 		Parametro parametro = ConvertBeans.toParametro(parametroDTO);
 		parametro.save();
 		Cenario cenario = parametro.getCenario();
 		cenario.setParametro(parametro);
-		SolverInput solverInput = new SolverInput(cenario);
+		SolverInput solverInput = new SolverInput(cenario, campi);
 		
 		TriedaInput triedaInput = null;
 		if(parametro.isTatico()) {

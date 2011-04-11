@@ -26,7 +26,6 @@ import com.gapso.web.trieda.client.mvp.view.FixacoesView;
 import com.gapso.web.trieda.client.mvp.view.GruposSalasView;
 import com.gapso.web.trieda.client.mvp.view.HorariosAulaView;
 import com.gapso.web.trieda.client.mvp.view.OfertasView;
-import com.gapso.web.trieda.client.mvp.view.ParametrosView;
 import com.gapso.web.trieda.client.mvp.view.ProfessorFormView;
 import com.gapso.web.trieda.client.mvp.view.ProfessoresDisciplinaView;
 import com.gapso.web.trieda.client.mvp.view.ProfessoresView;
@@ -37,6 +36,7 @@ import com.gapso.web.trieda.client.mvp.view.ResumoCampiView;
 import com.gapso.web.trieda.client.mvp.view.ResumoCenarioView;
 import com.gapso.web.trieda.client.mvp.view.SalaFormView;
 import com.gapso.web.trieda.client.mvp.view.SalasView;
+import com.gapso.web.trieda.client.mvp.view.SelecionarCampiView;
 import com.gapso.web.trieda.client.mvp.view.SemanasLetivaView;
 import com.gapso.web.trieda.client.mvp.view.TiposCursosView;
 import com.gapso.web.trieda.client.mvp.view.TurnosView;
@@ -50,7 +50,6 @@ import com.gapso.web.trieda.client.util.view.CenarioPanel;
 import com.gapso.web.trieda.client.util.view.GTab;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.DeslocamentoCampusDTO;
-import com.gapso.web.trieda.shared.dtos.ParametroDTO;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -108,11 +107,6 @@ public class ToolBarPresenter implements Presenter {
 		
 		Button getFixacoesListButton();
 		Button getParametrosButton();
-
-
-
-
-
 
 	}
 	
@@ -394,18 +388,22 @@ public class ToolBarPresenter implements Presenter {
 		toolBar.getParametrosButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
 			@Override
 			public void componentSelected(ButtonEvent ce) {
-				// TODO ESTE CODIGO NÂO PERTENCE AQUI, DEVE FICAR NO PRESENTATION DE PARAMETROS
-				Services.otimizar().getParametro(masterData, new AsyncCallback<ParametroDTO>() {
-					@Override
-					public void onFailure(Throwable caught) {
-						MessageBox.alert("ERRO!", "Deu falha na conexão", null);
-					}
-					@Override
-					public void onSuccess(ParametroDTO parametroDTO) {
-						Presenter presenter = new ParametrosPresenter(masterData, new ParametrosView(parametroDTO));
-						presenter.go(gTab);
-					}
-				});
+				// TODO Temporariamente vai aparecer o modal de selecionar os campi
+				Presenter presenter = new SelecionarCampiPresenter(masterData, new SelecionarCampiView());
+				presenter.go(gTab);
+//				
+//				// TODO ESTE CODIGO NÂO PERTENCE AQUI, DEVE FICAR NO PRESENTATION DE PARAMETROS
+//				Services.otimizar().getParametro(masterData, new AsyncCallback<ParametroDTO>() {
+//					@Override
+//					public void onFailure(Throwable caught) {
+//						MessageBox.alert("ERRO!", "Deu falha na conexão", null);
+//					}
+//					@Override
+//					public void onSuccess(ParametroDTO parametroDTO) {
+//						Presenter presenter = new ParametrosPresenter(masterData, new ParametrosView(parametroDTO));
+//						presenter.go(gTab);
+//					}
+//				});
 			}
 		});
 		toolBar.getRelatorioVisaoCursoButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
