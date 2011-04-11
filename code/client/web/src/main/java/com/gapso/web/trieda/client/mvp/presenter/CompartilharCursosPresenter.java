@@ -1,5 +1,7 @@
 package com.gapso.web.trieda.client.mvp.presenter;
 
+import java.util.List;
+
 import com.extjs.gxt.ui.client.event.ButtonEvent;
 import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.widget.Component;
@@ -22,6 +24,7 @@ public class CompartilharCursosPresenter implements Presenter {
 		ParametroDTO getParametro();
 		Button getFecharBT();
 		Button getAdicionarBT();
+		List<CursoDescompartilhaDTO> getCursos();
 		Component getComponent();
 		
 		SimpleModal getSimpleModal();
@@ -46,6 +49,7 @@ public class CompartilharCursosPresenter implements Presenter {
 				cd.setCurso2Id(curso2.getId());
 				cd.setCurso2Display(curso2.getDisplayText());
 				display.getGrid().getStore().add(cd);
+				display.getCursos().add(cd);
 			}
 		});
 		display.getFecharBT().addSelectionListener(new SelectionListener<ButtonEvent>(){

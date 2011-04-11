@@ -144,4 +144,9 @@ public class CompartilharCursosView extends MyComposite implements CompartilharC
 	public ParametroDTO getParametro() {
 		return parametro;
 	}
+
+	@Override
+	public List<CursoDescompartilhaDTO> getCursos() {
+		return cursos;
+	}
 }

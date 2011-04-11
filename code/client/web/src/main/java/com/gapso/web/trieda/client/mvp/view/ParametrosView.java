@@ -6,7 +6,6 @@ import com.extjs.gxt.ui.client.util.Margins;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
 import com.extjs.gxt.ui.client.widget.Label;
 import com.extjs.gxt.ui.client.widget.LayoutContainer;
-import com.extjs.gxt.ui.client.widget.Text;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.CheckBox;
 import com.extjs.gxt.ui.client.widget.form.FieldSet;
@@ -117,7 +116,12 @@ public class ParametrosView extends MyComposite implements ParametrosPresenter.D
 		operacionalRadio.setBoxLabel("Operacional");
 		operacionalRadio.setValue(parametroDTO.isOperacional());
 		group.add(operacionalRadio);  
-		form.add(group);  
+		form.add(group);
+		
+		funcaoObjetivoCheckBox = new FuncaoObjetivoComboBox();
+		funcaoObjetivoCheckBox.setValue(parametroDTO.getFuncaoObjetivo());
+		funcaoObjetivoCheckBox.setFieldLabel("Função Objetivo");
+		form.add(funcaoObjetivoCheckBox);
 		
 		FieldSet alunoFS = new FieldSet();
 		alunoFS.setHeading("Preferências do Aluno");
@@ -229,9 +233,6 @@ public class ParametrosView extends MyComposite implements ParametrosPresenter.D
 		areaTitulacaoProfessoresECursosCheckBox = createCheckBox("Considerar áreas de titulação dos professores e cursos", parametroDTO.getAreaTitulacaoProfessoresECursos());
 		limitarMaximoDisciplinaProfessorCheckBox = createCheckBox("Limitar máximo de disciplinas que um professor pode ministrar por curso", parametroDTO.getLimitarMaximoDisciplinaProfessor());
 		
-		Text funcaoObjetivoLabel = new Text("Função Objetivo");
-		funcaoObjetivoLabel.setHeight(22);
-		instituicaoLeft.add(funcaoObjetivoLabel, formData);
 		instituicaoLeft.add(minAlunosParaAbrirTurmaCheckBox, formData);
 		instituicaoLeft.add(nivelDificuldadeDisciplinaCheckBox, formData);
 		instituicaoLeft.add(compatibilidadeDisciplinasMesmoDiaCheckBox, formData);
@@ -245,10 +246,6 @@ public class ParametrosView extends MyComposite implements ParametrosPresenter.D
 		instituicaoLeft.add(areaTitulacaoProfessoresECursosCheckBox, formData);
 		instituicaoLeft.add(limitarMaximoDisciplinaProfessorCheckBox, formData);
 		
-		funcaoObjetivoCheckBox = new FuncaoObjetivoComboBox();
-		funcaoObjetivoCheckBox.setValue(parametroDTO.getFuncaoObjetivo());
-		funcaoObjetivoCheckBox.setWidth(200);
-		instituicaoRight.add(funcaoObjetivoCheckBox, formData);
 		minAlunosParaAbrirTurmaValueNumberField = new NumberField();
 		minAlunosParaAbrirTurmaValueNumberField.setEmptyText("Quantidade mínimo");
 		minAlunosParaAbrirTurmaValueNumberField.setValue(parametroDTO.getMinAlunosParaAbrirTurmaValue());
