@@ -24,6 +24,7 @@ public class CompartilharCursosPresenter implements Presenter {
 		ParametroDTO getParametro();
 		Button getFecharBT();
 		Button getAdicionarBT();
+		Button getRemoverBT();
 		List<CursoDescompartilhaDTO> getCursos();
 		Component getComponent();
 		
@@ -50,6 +51,16 @@ public class CompartilharCursosPresenter implements Presenter {
 				cd.setCurso2Display(curso2.getDisplayText());
 				display.getGrid().getStore().add(cd);
 				display.getCursos().add(cd);
+			}
+		});
+		display.getRemoverBT().addSelectionListener(new SelectionListener<ButtonEvent>(){
+			@Override
+			public void componentSelected(ButtonEvent ce) {
+				List<CursoDescompartilhaDTO> cds = display.getGrid().getSelectionModel().getSelectedItems();
+				for(CursoDescompartilhaDTO cd : cds) {
+					display.getGrid().getStore().remove(cd);
+					display.getCursos().remove(cd);
+				}
 			}
 		});
 		display.getFecharBT().addSelectionListener(new SelectionListener<ButtonEvent>(){

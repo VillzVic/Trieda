@@ -1,7 +1,7 @@
 package com.gapso.web.trieda.shared.dtos;
 
 
-public class CursoDescompartilhaDTO extends AbstractDTO<Long> implements Comparable<CursoDescompartilhaDTO> {
+public class CursoDescompartilhaDTO extends AbstractDTO<String> implements Comparable<CursoDescompartilhaDTO> {
 
 	private static final long serialVersionUID = 5815525344760896272L;
 	
@@ -65,10 +65,10 @@ public class CursoDescompartilhaDTO extends AbstractDTO<Long> implements Compara
 	}
 	
 	@Override
-	public Long getNaturalKey() {
-		return getId();
-	}	
-
+	public String getNaturalKey() {
+		return getCurso1Id() + "-" + getCurso2Id();
+	}
+	
 	@Override
 	public int compareTo(CursoDescompartilhaDTO o) {
 		return getCurso1Display().compareTo(o.getCurso1Display());
