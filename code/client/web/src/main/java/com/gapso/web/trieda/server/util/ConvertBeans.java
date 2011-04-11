@@ -20,6 +20,7 @@ import com.gapso.trieda.domain.Cenario;
 import com.gapso.trieda.domain.Curriculo;
 import com.gapso.trieda.domain.CurriculoDisciplina;
 import com.gapso.trieda.domain.Curso;
+import com.gapso.trieda.domain.CursoDescompartilha;
 import com.gapso.trieda.domain.Demanda;
 import com.gapso.trieda.domain.DeslocamentoCampus;
 import com.gapso.trieda.domain.DeslocamentoUnidade;
@@ -54,6 +55,7 @@ import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.CurriculoDTO;
 import com.gapso.web.trieda.shared.dtos.CurriculoDisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.CursoDTO;
+import com.gapso.web.trieda.shared.dtos.CursoDescompartilhaDTO;
 import com.gapso.web.trieda.shared.dtos.DemandaDTO;
 import com.gapso.web.trieda.shared.dtos.DeslocamentoCampusDTO;
 import com.gapso.web.trieda.shared.dtos.DeslocamentoUnidadeDTO;
@@ -1444,16 +1446,36 @@ public class ConvertBeans {
 		}
 		dto.setMinimizarCustoDocenteCursosList(cursosMinCustDTOList);
 		
-		Set<Curso> cursosCompartDiscCampiList = domain.getCursosCompartDiscCampi();
-		List<CursoDTO> cursosCompartDiscCampiDTOList = new ArrayList<CursoDTO>(cursosCompartDiscCampiList.size());
-		for(Curso curso : cursosCompartDiscCampiList) {
-			cursosCompartDiscCampiDTOList.add(ConvertBeans.toCursoDTO(curso));
+		Set<CursoDescompartilha> cursosCompartDiscCampiList = domain.getCursosDescompartDiscCampi();
+		List<CursoDescompartilhaDTO> cursosCompartDiscCampiDTOList = new ArrayList<CursoDescompartilhaDTO>(cursosCompartDiscCampiList.size());
+		for(CursoDescompartilha cursoDescompartilha : cursosCompartDiscCampiList) {
+			cursosCompartDiscCampiDTOList.add(ConvertBeans.toCursoDescompartilhaDTO(cursoDescompartilha));
 		}
-		dto.setCompartilharDisciplinasCampiList(cursosCompartDiscCampiDTOList);
+		dto.setDescompartilharDisciplinasCampiList(cursosCompartDiscCampiDTOList);
 		
 		return dto;
 	}
 	
+	public static CursoDescompartilhaDTO toCursoDescompartilhaDTO(CursoDescompartilha domain) {
+		CursoDescompartilhaDTO dto = new CursoDescompartilhaDTO();
+		dto.setId(domain.getId());
+		dto.setVersion(domain.getVersion());
+		dto.setCurso1Id(domain.getCurso1().getId());
+		dto.setCurso1Display(domain.getCurso1().getNome());
+		dto.setCurso2Id(domain.getCurso2().getId());
+		dto.setCurso2Display(domain.getCurso2().getNome());
+		dto.setParametroId(domain.getParametro().getId());
+		return dto;
+	}
+	public static CursoDescompartilha toCursoDescompartilha(Parametro parametro, CursoDescompartilhaDTO dto) {
+		CursoDescompartilha domain = new CursoDescompartilha();
+		domain.setId(dto.getId());
+		domain.setVersion(dto.getVersion());
+		domain.setCurso1(Curso.find(dto.getCurso1Id()));
+		domain.setCurso2(Curso.find(dto.getCurso2Id()));
+		domain.setParametro(parametro);
+		return domain;
+	}
 	
 	static public String dateToString(Date date, int interval) {
 		DateFormat df = new SimpleDateFormat("HH:mm");

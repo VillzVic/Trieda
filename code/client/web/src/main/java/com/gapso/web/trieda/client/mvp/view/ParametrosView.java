@@ -261,7 +261,7 @@ public class ParametrosView extends MyComposite implements ParametrosPresenter.D
 		instituicaoRight.add(label);
 		maximizarNotaAvaliacaoCorpoDocenteButton = createButton("Configurar cursos");
 		minimizarCustoDocenteCursosButton = createButton("Configurar cursos");
-		compartilharDisciplinasCampiButton = createButton("Configurar cursos");
+		compartilharDisciplinasCampiButton = createButton("Cursos que não compartilham");
 		instituicaoRight.add(maximizarNotaAvaliacaoCorpoDocenteButton);
 		instituicaoRight.add(minimizarCustoDocenteCursosButton);
 		instituicaoRight.add(compartilharDisciplinasCampiButton);

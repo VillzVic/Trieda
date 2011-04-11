@@ -14,6 +14,7 @@ import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.CheckBox;
 import com.extjs.gxt.ui.client.widget.form.NumberField;
 import com.extjs.gxt.ui.client.widget.form.Radio;
+import com.gapso.web.trieda.client.mvp.view.CompartilharCursosView;
 import com.gapso.web.trieda.client.mvp.view.OtimizarMessagesView;
 import com.gapso.web.trieda.client.mvp.view.SelecionarCursosView;
 import com.gapso.web.trieda.client.services.OtimizarServiceAsync;
@@ -25,6 +26,7 @@ import com.gapso.web.trieda.client.util.view.GTab;
 import com.gapso.web.trieda.client.util.view.GTabItem;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.CursoDTO;
+import com.gapso.web.trieda.shared.dtos.CursoDescompartilhaDTO;
 import com.gapso.web.trieda.shared.dtos.ParametroDTO;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -126,6 +128,14 @@ public class ParametrosPresenter implements Presenter {
 			public void componentSelected(ButtonEvent ce) {
 				List<CursoDTO> cursos = display.getParametroDTO().getMinimizarCustoDocenteCursosList();
 				Presenter presenter = new SelecionarCursosPresenter(cursos, new SelecionarCursosView());
+				presenter.go(null);
+			}
+		});
+		display.getCompartilharDisciplinasCampiButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
+			@Override
+			public void componentSelected(ButtonEvent ce) {
+				List<CursoDescompartilhaDTO> cursos = display.getParametroDTO().getDescompartilharDisciplinasList();
+				Presenter presenter = new CompartilharCursosPresenter(new CompartilharCursosView( display.getParametroDTO(), cursos));
 				presenter.go(null);
 			}
 		});

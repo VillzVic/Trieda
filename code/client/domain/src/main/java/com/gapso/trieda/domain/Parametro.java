@@ -161,7 +161,7 @@ public class Parametro implements Serializable {
     @Column(name = "PAR_COMPDISCCAMPI")
     private Boolean compartilharDisciplinasCampi = false;
     @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
-    private Set<Curso> cursosCompartDiscCampi = new HashSet<Curso>();
+    private Set<CursoDescompartilha> cursosDescompartDiscCampi = new HashSet<CursoDescompartilha>();
 
     //Considerar percentuais mínimos de mestres
     @Column(name = "PAR_PERCMINMEST")
@@ -512,11 +512,11 @@ public class Parametro implements Serializable {
 		this.cursosMinCust = cursosMinCust;
 	}
 
-	public Set<Curso> getCursosCompartDiscCampi() {
-		return cursosCompartDiscCampi;
+	public Set<CursoDescompartilha> getCursosDescompartDiscCampi() {
+		return cursosDescompartDiscCampi;
 	}
-	public void setCursosCompartDiscCampi(Set<Curso> cursosCompartDiscCampi) {
-		this.cursosCompartDiscCampi = cursosCompartDiscCampi;
+	public void setCursosIncompartDiscCampi(Set<CursoDescompartilha> cursosDescompartDiscCampi) {
+		this.cursosDescompartDiscCampi = cursosDescompartDiscCampi;
 	}
 
     public String getModoOtimizacao() {
@@ -560,7 +560,7 @@ public class Parametro implements Serializable {
         sb.append("MinAlunosParaAbrirTurmaValue: ").append(getMinAlunosParaAbrirTurmaValue()).append(", ");
         sb.append("CursosMinCust: ").append(getCursosMinCust() == null ? "null" : getCursosMinCust().size());
         sb.append("CompartilharDisciplinasCampi: ").append(getCompartilharDisciplinasCampi()).append(", ");
-        sb.append("CursosCompartDiscCampi: ").append(getCursosCompartDiscCampi() == null ? "null" : getCursosCompartDiscCampi().size());
+        sb.append("CursosDescompartDiscCampi: ").append(getCursosDescompartDiscCampi() == null ? "null" : getCursosDescompartDiscCampi().size());
         sb.append("PercentuaisMinimosMestres: ").append(getPercentuaisMinimosMestres()).append(", ");
         sb.append("PercentuaisMinimosDoutores: ").append(getPercentuaisMinimosDoutores()).append(", ");
         sb.append("AreaTitulacaoProfessoresECursos: ").append(getAreaTitulacaoProfessoresECursos()).append(", ");
