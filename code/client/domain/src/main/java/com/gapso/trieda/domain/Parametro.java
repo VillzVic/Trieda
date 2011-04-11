@@ -160,7 +160,7 @@ public class Parametro implements Serializable {
     //Permitir compartilhamento de disciplinas entre cursos
     @Column(name = "PAR_COMPDISCCAMPI")
     private Boolean compartilharDisciplinasCampi = false;
-    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH}, mappedBy="parametro")
     private Set<CursoDescompartilha> cursosDescompartDiscCampi = new HashSet<CursoDescompartilha>();
 
     //Considerar percentuais mínimos de mestres
