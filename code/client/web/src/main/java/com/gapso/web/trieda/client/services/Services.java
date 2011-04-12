@@ -9,6 +9,7 @@ public class Services {
 	private static final String CENARIOS = "cenarios";
 	private static final String CAMPI = "campi";
 	private static final String TURNOS = "turnos";
+	private static final String USUARIOS = "usuarios";
 	private static final String UNIDADES = "unidades";
 	private static final String SALAS = "salas";
 	private static final String GRUPOSSALAS = "gruposalas";
@@ -51,6 +52,15 @@ public class Services {
 		if(service == null) {
 			service = GWT.create(TurnosService.class);
 			Registry.register(TURNOS, service);
+		}
+		return service;
+	}
+	
+	public static UsuariosServiceAsync usuarios() {
+		UsuariosServiceAsync service = (UsuariosServiceAsync) Registry.get(USUARIOS);
+		if(service == null) {
+			service = GWT.create(UsuariosService.class);
+			Registry.register(USUARIOS, service);
 		}
 		return service;
 	}

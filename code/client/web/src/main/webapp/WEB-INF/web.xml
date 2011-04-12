@@ -131,6 +131,10 @@
 		<servlet-name>importExcelServlet</servlet-name>
 		<servlet-class>com.gapso.web.trieda.server.excel.imp.ImportExcelServlet</servlet-class>
 	</servlet>
+	<servlet>
+		<servlet-name>usuariosServlet</servlet-name>
+		<servlet-class>com.gapso.web.trieda.server.UsuariosServiceImpl</servlet-class>
+	</servlet>
 
 	<servlet-mapping>
 		<servlet-name>otimizarServlet</servlet-name>
@@ -228,6 +232,11 @@
   		<servlet-name>importExcelServlet</servlet-name>
   		<url-pattern>/trieda/importExcelServlet</url-pattern>
 	</servlet-mapping>
+	<servlet-mapping>
+  		<servlet-name>usuariosServlet</servlet-name>
+  		<url-pattern>/trieda/usuarios</url-pattern>
+	</servlet-mapping>
+	
 
 	<welcome-file-list>
 		<welcome-file>trieda.html</welcome-file>

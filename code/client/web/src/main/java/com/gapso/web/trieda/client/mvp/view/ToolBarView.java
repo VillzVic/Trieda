@@ -41,6 +41,7 @@ public class ToolBarView extends MyComposite implements ToolBarPresenter.Display
 	private Button horariosAulaListCampiBt;
 	private Button turnosListCampiBt;
 	private Button ofertasListCampiBt;
+	private Button usuariosListBt;
 	
 	// Unidades
 	private Button unidadesNovoUnidadesBt;
@@ -219,6 +220,9 @@ public class ToolBarView extends MyComposite implements ToolBarPresenter.Display
 		
 		ofertasListCampiBt = createButton("Oferta de Cursos<br />em Campi", "Oferta de Cursos em Campi", Resources.DEFAULTS.ofertaCurso24());
 		campiToolBar.add(ofertasListCampiBt);
+		
+		usuariosListBt = createButton("Usuários", "Usuários", Resources.DEFAULTS.turno24()); // TODO Ajustar o icone de usuários
+		campiToolBar.add(usuariosListBt);
 	}
 	
 	private void createUnidades() {
@@ -435,6 +439,10 @@ public class ToolBarView extends MyComposite implements ToolBarPresenter.Display
 	@Override
 	public Button getOfertasListCampiButton() {
 		return ofertasListCampiBt;
+	}
+	@Override
+	public Button getUsuariosListButton() {
+		return usuariosListBt;
 	}
 	@Override
 	public Button getAssociarDisciplinasSalasListSalasButton() {

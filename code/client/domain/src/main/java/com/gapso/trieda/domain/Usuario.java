@@ -1,5 +1,6 @@
 package com.gapso.trieda.domain;
 
+import java.io.Serializable;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -9,6 +10,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import javax.persistence.Table;
 import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
@@ -25,9 +27,11 @@ import org.springframework.transaction.annotation.Transactional;
 @RooJavaBean
 @RooToString
 @RooEntity(identifierColumn = "USU_ID")
-@Table(name = "USUARIOS")
-public class Usuario implements java.io.Serializable {
+@Table(name = "users")
+public class Usuario implements Serializable {
 
+	private static final long serialVersionUID = 2505879126546359228L;
+	
     @NotNull
     @Column(name = "USU_NOME")
     @Size(min = 1, max = 50)
@@ -38,19 +42,21 @@ public class Usuario implements java.io.Serializable {
     private String email;
 
     @NotNull
-    @Column(name = "USU_LOGIN")
+    @Column(name = "USERNAME")
     @Size(min = 5, max = 20)
-    private String login;
+    private String username;
 
     @NotNull
-    @Column(name = "USU_SENHA")
+    @Column(name = "PASSWORD")
     @Size(min = 5, max = 255)
-    private String senha;
+    private String password;
+    
+    @Column(name = "ENABLED")
+    private Boolean enabled;
 
 	public String getNome() {
         return this.nome;
     }
-
 	public void setNome(String nome) {
         this.nome = nome;
     }
@@ -58,35 +64,40 @@ public class Usuario implements java.io.Serializable {
 	public String getEmail() {
         return this.email;
     }
-
 	public void setEmail(String email) {
         this.email = email;
     }
 
-	public String getLogin() {
-        return this.login;
+	public String getUsername() {
+        return this.username;
+    }
+	public void setUsername(String username) {
+        this.username = username;
     }
 
-	public void setLogin(String login) {
-        this.login = login;
+	public String getPassword() {
+        return this.password;
+    }
+	public void setPassword(String password) {
+        this.password = password;
     }
 
-	public String getSenha() {
-        return this.senha;
+	public Boolean getEnabled() {
+        return this.enabled;
     }
-
-	public void setSenha(String senha) {
-        this.senha = senha;
+	public void setEnabled(Boolean enabled) {
+        this.enabled = enabled;
     }
-
+	
 	public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("Id: ").append(getId()).append(", ");
         sb.append("Version: ").append(getVersion()).append(", ");
         sb.append("Nome: ").append(getNome()).append(", ");
         sb.append("Email: ").append(getEmail()).append(", ");
-        sb.append("Login: ").append(getLogin()).append(", ");
-        sb.append("Senha: ").append(getSenha());
+        sb.append("Username: ").append(getUsername()).append(", ");
+        sb.append("Password: ").append(getPassword());
+        sb.append("Enabled: ").append(getEnabled());
         return sb.toString();
     }
 
@@ -155,24 +166,45 @@ public class Usuario implements java.io.Serializable {
         return em;
     }
 
-	public static long countUsuarios() {
-        return ((Number) entityManager().createQuery("select count(o) from Usuario o").getSingleResult()).longValue();
+	public static int count(String nome, String username, String email) {
+		Query q = entityManager().createQuery("SELECT COUNT(o) FROM Usuario o WHERE" +
+				" LOWER(o.nome) LIKE LOWER(:nome) AND " +
+				" LOWER(o.username) LIKE LOWER(:username) AND " +
+				" LOWER(o.email) LIKE LOWER(:email) ");
+		
+		nome = "%" + nome.replace('*', '%') + "%";
+		username = "%" + username.replace('*', '%') + "%";
+		email = "%" + email.replace('*', '%') + "%";
+		
+		q.setParameter("nome", nome);
+		q.setParameter("username", username);
+		q.setParameter("email", email);
+        return ((Number) q.getSingleResult()).intValue();
     }
 
 	@SuppressWarnings("unchecked")
-    public static List<Usuario> findAllUsuarios() {
-        return entityManager().createQuery("select o from Usuario o").getResultList();
+    public static List<Usuario> findAllBy(String nome, String username, String email, int firstResult, int maxResults, String orderBy) {
+		
+		orderBy = (orderBy != null) ? "ORDER BY o." + orderBy : "";
+		
+		Query q = entityManager().createQuery("SELECT o FROM Usuario o WHERE" +
+				" LOWER(o.nome) LIKE LOWER(:nome) AND " +
+				" LOWER(o.username) LIKE LOWER(:username) AND " +
+				" LOWER(o.email) LIKE LOWER(:email) " + orderBy);
+
+		nome = "%" + nome.replace('*', '%') + "%";
+		username = "%" + username.replace('*', '%') + "%";
+		email = "%" + email.replace('*', '%') + "%";
+		
+		q.setParameter("nome", nome);
+		q.setParameter("username", username);
+		q.setParameter("email", email);
+        return q.setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
 
-	public static Usuario findUsuario(Long id) {
+	public static Usuario find(Long id) {
         if (id == null) return null;
         return entityManager().find(Usuario.class, id);
     }
-
-	@SuppressWarnings("unchecked")
-    public static List<Usuario> findUsuarioEntries(int firstResult, int maxResults) {
-        return entityManager().createQuery("select o from Usuario o").setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
-    }
-
-	private static final long serialVersionUID = 2505879126546359228L;
+	
 }

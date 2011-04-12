@@ -43,6 +43,7 @@ import com.gapso.web.trieda.client.mvp.view.TurnosView;
 import com.gapso.web.trieda.client.mvp.view.UnidadeFormView;
 import com.gapso.web.trieda.client.mvp.view.UnidadesDeslocamentoView;
 import com.gapso.web.trieda.client.mvp.view.UnidadesView;
+import com.gapso.web.trieda.client.mvp.view.UsuariosView;
 import com.gapso.web.trieda.client.mvp.view.VincularAreasTitulacaoView;
 import com.gapso.web.trieda.client.services.CampiServiceAsync;
 import com.gapso.web.trieda.client.services.Services;
@@ -67,6 +68,7 @@ public class ToolBarPresenter implements Presenter {
 		Button getHorariosAulaListCampiButton();
 		Button getTurnosListCampiButton();
 		Button getOfertasListCampiButton();
+		Button getUsuariosListButton();
 		
 		Button getUnidadesNovoUnidadesButton();
 		Button getUnidadesListUnidadesButton();
@@ -107,6 +109,7 @@ public class ToolBarPresenter implements Presenter {
 		
 		Button getFixacoesListButton();
 		Button getParametrosButton();
+
 
 	}
 	
@@ -347,6 +350,13 @@ public class ToolBarPresenter implements Presenter {
 			@Override
 			public void componentSelected(ButtonEvent ce) {
 				Presenter presenter = new OfertasPresenter(new OfertasView());
+				presenter.go(gTab);
+			}
+		});
+		toolBar.getUsuariosListButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
+			@Override
+			public void componentSelected(ButtonEvent ce) {
+				Presenter presenter = new UsuariosPresenter(masterData, new UsuariosView());
 				presenter.go(gTab);
 			}
 		});

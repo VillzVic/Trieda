@@ -44,6 +44,7 @@ import com.gapso.trieda.domain.TipoSala;
 import com.gapso.trieda.domain.Titulacao;
 import com.gapso.trieda.domain.Turno;
 import com.gapso.trieda.domain.Unidade;
+import com.gapso.trieda.domain.Usuario;
 import com.gapso.trieda.misc.Dificuldades;
 import com.gapso.trieda.misc.Estados;
 import com.gapso.trieda.misc.Semanas;
@@ -80,10 +81,35 @@ import com.gapso.web.trieda.shared.dtos.TipoSalaDTO;
 import com.gapso.web.trieda.shared.dtos.TitulacaoDTO;
 import com.gapso.web.trieda.shared.dtos.TurnoDTO;
 import com.gapso.web.trieda.shared.dtos.UnidadeDTO;
+import com.gapso.web.trieda.shared.dtos.UsuarioDTO;
 import com.gapso.web.trieda.shared.util.TriedaUtil;
 
 public class ConvertBeans {
 	
+	
+	// USUÁRIO
+	public static Usuario toUsuario(UsuarioDTO dto) {
+		Usuario domain = new Usuario();
+		domain.setId(dto.getId());
+		domain.setVersion(dto.getVersion());
+		domain.setNome(dto.getNome());
+		domain.setEmail(dto.getEmail());
+		domain.setUsername(dto.getUsername());
+		domain.setEnabled(dto.getEnabled());
+		return domain;
+	}
+	
+	public static UsuarioDTO toUsuarioDTO(Usuario domain) {
+		UsuarioDTO dto = new UsuarioDTO();
+		dto.setId(domain.getId());
+		dto.setVersion(domain.getVersion());
+		dto.setNome(domain.getNome());
+		dto.setEmail(domain.getEmail());
+		dto.setUsername(domain.getUsername());
+		dto.setEnabled(domain.getEnabled());
+		dto.setDisplayText(domain.getNome());
+		return dto;
+	}
 	
 	// CENÁRIO
 	public static Cenario toCenario(CenarioDTO dto) {

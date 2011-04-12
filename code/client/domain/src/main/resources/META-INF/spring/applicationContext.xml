@@ -35,7 +35,6 @@
 
 	<bean class="com.gapso.trieda.domain.Parametro" id="parametroBean" />
 	<bean class="com.gapso.trieda.domain.Usuario" id="usuarioBean" />
-	<bean class="com.gapso.trieda.domain.Sessao" id="sessaoBean" />
 	<bean class="com.gapso.trieda.domain.Turno" id="turnoBean" />
 	<bean class="com.gapso.trieda.domain.Cenario" id="cenarioBean" />
 	<bean class="com.gapso.trieda.domain.Campus" id="campusBean" />

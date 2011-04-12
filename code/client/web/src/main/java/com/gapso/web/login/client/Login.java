@@ -1,7 +1,11 @@
 package com.gapso.web.login.client;
 
 import com.extjs.gxt.ui.client.event.ButtonEvent;
+import com.extjs.gxt.ui.client.event.ComponentEvent;
+import com.extjs.gxt.ui.client.event.Events;
 import com.extjs.gxt.ui.client.event.SelectionListener;
+import com.extjs.gxt.ui.client.util.KeyNav;
+import com.extjs.gxt.ui.client.widget.Component;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
 import com.extjs.gxt.ui.client.widget.Viewport;
 import com.extjs.gxt.ui.client.widget.button.Button;
@@ -58,23 +62,35 @@ public class Login implements EntryPoint {
 		
 		TextField<String> passwordTF = new TextField<String>();  
 		passwordTF.setName("j_password");
-		passwordTF.setFieldLabel("Senha");  
+		passwordTF.setFieldLabel("Senha");
+		passwordTF.setPassword(true);
 		form.add(passwordTF, formData);
 		
-		Button enviarBt = new Button("Enviar");
+		Button enviarBt = new Button("Acessar");
 		enviarBt.addSelectionListener(new SelectionListener<ButtonEvent>() {
 			@Override
 			public void componentSelected(ButtonEvent ce) {
 				form.submit();
 			}
 		});
-		
+		setDefaultButton(form, enviarBt);
 		form.addButton(enviarBt);
+		
 		
 		panel.add(form);
 		
 		viewport.add(panel);
 		RootPanel.get().add(viewport);
 		RootPanel.get("loading").setVisible(false);
+	}
+	
+	public void setDefaultButton(Component comp, final Button button) {
+		new KeyNav<ComponentEvent>(comp) {
+			@Override
+			public void onEnter(ComponentEvent ce) {
+				super.onEnter(ce);
+				button.fireEvent(Events.Select);
+			}
+		};
 	}
 }
