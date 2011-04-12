@@ -14,15 +14,15 @@ SolucaoOperacional::SolucaoOperacional(ProblemData * prbDt)
 
    // Montando um map: dado o índice da matriz (o 'idOperacional'
    // do professor) o map retorna o ponteiro para o professor correspondente
-   GGroup<Campus*>::iterator it_campi
+   GGroup< Campus * >::iterator it_campi
       = prbDt->campi.begin();
    for (; it_campi != prbDt->campi.end(); it_campi++)
    {
-      GGroup<Professor*>::iterator it_prof
+      GGroup< Professor * >::iterator it_prof
          = it_campi->professores.begin();
       for (; it_prof != it_campi->professores.end(); it_prof++)
       {
-         mapProfessores[it_prof->getIdOperacional()] = (*it_prof);
+         mapProfessores[ it_prof->getId() ] = (*it_prof);
          ++total_professores;
       }
    }
@@ -285,37 +285,39 @@ ProblemData* SolucaoOperacional::getProblemData() const
    return problem_data;
 }
 
-//int SolucaoOperacional::getItHorariosProf(Professor & professor, int dia, int horario)
-std::vector<Aula*>::iterator SolucaoOperacional::getItHorariosProf(Professor & professor, int dia, int horario)
+std::vector< Aula * >::iterator SolucaoOperacional::getItHorariosProf(
+	Professor & professor, int dia, int horario)
 {
    if(dia < 1 || dia > 7 )
    {
       throw (out_of_range("Dias validos [1,7] -> dom. a sab."));
    }
 
-   return ((matriz_aulas->at(professor.getIdOperacional())->begin()) + ( ((dia - 1) * total_horarios) + horario ) );
-
-   //return ( ((dia - 1) * total_horarios) + horario );
+   return ((matriz_aulas->at(professor.getIdOperacional())->begin()) +
+		   ( ((dia - 1) * total_horarios) + horario ) );
 }
 
-int SolucaoOperacional::addProfessor(Professor & professor, vector< Aula * > & horariosProf)
+int SolucaoOperacional::addProfessor(
+	Professor & professor, vector< Aula * > & horariosProf)
 {
-   matriz_aulas->push_back(&horariosProf);
+   matriz_aulas->push_back( &(horariosProf) );
 
-   int idOperacional = (matriz_aulas->size() - 1);
+   int id_operacional = (matriz_aulas->size() - 1);
 
-   professor.setId(-idOperacional);
-   professor.setIdOperacional(idOperacional);
+   professor.setId(-id_operacional);
+   professor.setIdOperacional(id_operacional);
 
-   if(mapProfessores.find(professor.getIdOperacional()) != mapProfessores.end())
+   if(mapProfessores.find(professor.getId()) != mapProfessores.end())
    {
-      cerr << "ID OPERACIONAL FORNECIDO JÁ EXISTIA" << endl;
+	  std::cerr << "SolucaoOperacional::addProfessor" << std::endl;
+      std::cerr << "Erro ao adicionar um professor virtual"
+				<< std::endl << std::endl;
       exit(1);
    }
 
-   mapProfessores[idOperacional] = &professor;
+   mapProfessores[ professor.getId() ] = &(professor);
 
-   return idOperacional;
+   return id_operacional;
 }
 
 int SolucaoOperacional::getTotalHorarios() const

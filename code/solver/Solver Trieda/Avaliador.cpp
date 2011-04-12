@@ -862,7 +862,7 @@ void Avaliador::avaliaDiasProfessorMinistraAula(SolucaoOperacional & solucao)
 
 	// Para cada professor da solução operacional, procura-se
 	// o total de dias da semana que ele tem aulas para ministrar
-	std::map<int, Professor*>::iterator it_professor
+	std::map< int, Professor * >::iterator it_professor
 		= solucao.mapProfessores.begin();
 	for (; it_professor != solucao.mapProfessores.end(); it_professor++)
 	{
@@ -871,7 +871,7 @@ void Avaliador::avaliaDiasProfessorMinistraAula(SolucaoOperacional & solucao)
 
 		// Para cada aula que o professor ministrar, devo inserir
 		// o dia da semana dessa aula na lista de dias, ignorando repetições
-		GGroup<int> dias_semana;
+		GGroup< int > dias_semana;
 		for (unsigned i = 0; i < solucao.getMatrizAulas()->at(linha_professor)->size(); i++)
 		{
 			aula = solucao.getMatrizAulas()->at(linha_professor)->at(i);
@@ -1136,16 +1136,16 @@ void Avaliador::avaliaMaximoDisciplinasProfessorPorCurso(SolucaoOperacional & so
 	//-------------------------------------------------------------------------------------
 	// Para cada propfessor, devo procurar pelas disciplinas
 	// distintas que esse professor tem alocadas a ele na solução
-	Aula* aula = NULL;
-	Curso* curso = NULL;
-	Professor* professor = NULL;
+	Aula * aula = NULL;
+	Curso * curso = NULL;
+	Professor * professor = NULL;
 	for (unsigned int i = 0; i < solucao.getMatrizAulas()->size(); i++)
 	{
 		// Recupera o objeto 'professor' atual
 		professor = solucao.getProfessorMatriz(i);
 
 		// Lista de disciplinas desse professor
-		GGroup<int> ids_disciplinas;
+		GGroup< int > ids_disciplinas;
 		for (unsigned int j = 0; j < solucao.getMatrizAulas()->at(i)->size(); j++)
 		{
 			aula = solucao.getMatrizAulas()->at(i)->at(j);
@@ -1164,7 +1164,7 @@ void Avaliador::avaliaMaximoDisciplinasProfessorPorCurso(SolucaoOperacional & so
 				// Como uma aula pode atender a mais de uma
 				// oferta, então devo relacionar a aula atual
 				// com cada curso correspondente a cada oferta
-				GGroup<Oferta *>::iterator it_oferta
+				GGroup< Oferta * >::iterator it_oferta
 					= aula->ofertas.begin();
 				for (; it_oferta != aula->ofertas.end(); it_oferta++)
 				{
@@ -1203,10 +1203,11 @@ void Avaliador::avaliaMaximoDisciplinasProfessorPorCurso(SolucaoOperacional & so
 		   it_prof_cursco_disc++)
 	{
 		// Código do professor
-		id_professor = abs( it_prof_cursco_disc->first );
+		id_professor = it_prof_cursco_disc->first;
 
 		// Linha correspondente ao professor na matriz de solução
-		linha_professor = solucao.getProfessorMatriz(id_professor)->getIdOperacional();
+		professor = solucao.mapProfessores[ id_professor ];
+		linha_professor = professor->getIdOperacional();
 
 		// Verifica cada curso ao qual o professor atual
 		// tem pelo menos uma aula alocada na solução operacional

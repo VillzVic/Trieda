@@ -30,18 +30,21 @@ public:
 
    // Dado um índice que corresponde a uma linha da
    // matriz de solução, retorna o professor correspondente
-   Professor* getProfessorMatriz(int);
+   Professor * getProfessorMatriz(int);
 
-   ProblemData* getProblemData() const;
+   ProblemData * getProblemData() const;
 
    void setMatrizAulas(MatrizSolucao *);
-   MatrizSolucao* getMatrizAulas() const;
+   MatrizSolucao * getMatrizAulas() const;
 
    void toString();
 
+   // Dado o ID do professor, retorna um
+   // ponteiro para o objeto 'Professor'
    std::map< int, Professor * > mapProfessores;
 
-   // Retorna um iterator para o horario desejado de um dado dia de um professor.
+   // Retorna um iterator para o horario
+   // desejado de um dado dia de um professor.
    // Dias considerados: 
    // 1: domingo
    // 2: segunda
@@ -51,11 +54,11 @@ public:
    // 6: sexta
    // 7: sábado
    //int getItHorariosProf(Professor & professor, int dia = 2, int horario = 0);
-   std::vector<Aula*>::iterator getItHorariosProf(Professor & professor, int dia = 2, int horario = 0);
+   std::vector<Aula*>::iterator getItHorariosProf(Professor &, int = 2, int = 0);
 
    // Adiciona um novo professor à solução. O inteiro retornado
    // é referente à posição (linha) que o novo  professor ocupa na solução.
-   int addProfessor(Professor & professor, vector< Aula * > &);
+   int addProfessor(Professor &, vector< Aula * > &);
 
    // FUTURAMENTE, VAI SER NECESSARIO CRIAR UM METODO PARA REMOVER UM PROFESSOR.
 
