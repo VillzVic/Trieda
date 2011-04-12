@@ -34,7 +34,10 @@ public:
    int getTotalCreditos() const;
    bool eVirtual() const;
 
-   std::vector< std::pair< Professor *, Horario * > > alocacao_aula;
+   /* Para cada crédito alocado da aula em questão armazena-se uma referência para o horário do professor
+   em que tal alocação foi realizada. */
+   //std::vector< std::pair< Professor *, Horario * > > alocacao_aula;
+   std::vector< std::pair< Professor *, Horario * > > horarios_profs_alocados;
 
    virtual bool operator < (Aula const & right) 
    { 

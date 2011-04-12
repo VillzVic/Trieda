@@ -2256,26 +2256,26 @@ int SolverMIP::cria_variavel_creditos(void)
                            vHash[v] = lp->getNumCols();
 
                            if(problemData->parametros->funcao_objetivo == 0)
-							{
-								OPT_COL col(OPT_COL::VAR_INTEGRAL,coef,0.0,itCjtSala->maxCredsDia(*itDiscSala_Dias),
-									(char*)v.toString().c_str());
+                           {
+                              OPT_COL col(OPT_COL::VAR_INTEGRAL,coef,0.0,itCjtSala->maxCredsDia(*itDiscSala_Dias),
+                                 (char*)v.toString().c_str());
 
-								//OPT_COL col(OPT_COL::VAR_INTEGRAL,0.0,0.0,24.0,
-								//   (char*)v.toString().c_str());
+                              //OPT_COL col(OPT_COL::VAR_INTEGRAL,0.0,0.0,24.0,
+                              //   (char*)v.toString().c_str());
 
-								lp->newCol(col);
-							}
-							else if(problemData->parametros->funcao_objetivo == 1 ||
-									problemData->parametros->funcao_objetivo == 2)
-							{
-								OPT_COL col(OPT_COL::VAR_INTEGRAL,0.0,0.0,itCjtSala->maxCredsDia(*itDiscSala_Dias),
-									(char*)v.toString().c_str());
+                              lp->newCol(col);
+                           }
+                           else if(problemData->parametros->funcao_objetivo == 1 ||
+                              problemData->parametros->funcao_objetivo == 2)
+                           {
+                              OPT_COL col(OPT_COL::VAR_INTEGRAL,0.0,0.0,itCjtSala->maxCredsDia(*itDiscSala_Dias),
+                                 (char*)v.toString().c_str());
 
-								//OPT_COL col(OPT_COL::VAR_INTEGRAL,0.0,0.0,24.0,
-								//   (char*)v.toString().c_str());
+                              //OPT_COL col(OPT_COL::VAR_INTEGRAL,0.0,0.0,24.0,
+                              //   (char*)v.toString().c_str());
 
-								lp->newCol(col);
-							}
+                              lp->newCol(col);
+                           }
 
                            num_vars += 1;
                         }
