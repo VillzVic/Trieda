@@ -249,6 +249,13 @@ SolucaoOperacional & SolucaoInicialOperacional::geraSolucaoInicial()
             
             if(alocouAula)
             {
+               std::cout << "\nForam alocados " << aula.getTotalCreditos()
+                  << " horarios CONSECUTIVOS para a aula da turma "
+                  << aula.getTurma() << " da disciplina "
+                  << aula.getDisciplina()->getCodigo()
+                  << " no dia " << aula.getDiaSemana()
+                  << " ao professor " << novoProfessor->getCpf() << std::endl;
+
                aulasNaoAlocadas.remove(aulasNaoAlocadas.begin());
                break;
             }
@@ -306,7 +313,16 @@ SolucaoOperacional & SolucaoInicialOperacional::geraSolucaoInicial()
                exit(1);
             }
             else
-            { aulasNaoAlocadas.remove(aulasNaoAlocadas.begin()); }
+            { 
+               std::cout << "\nForam alocados " << aula.getTotalCreditos()
+                  << " horarios CONSECUTIVOS para a aula da turma "
+                  << aula.getTurma() << " da disciplina "
+                  << aula.getDisciplina()->getCodigo()
+                  << " no dia " << aula.getDiaSemana()
+                  << " ao professor " << novoProfessor->getCpf() << std::endl;
+
+               aulasNaoAlocadas.remove(aulasNaoAlocadas.begin());
+            }
          }
       }
    }

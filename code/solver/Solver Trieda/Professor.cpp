@@ -25,6 +25,7 @@ Professor::Professor(bool eVirtual)
 	is_virtual = eVirtual;
 	if(is_virtual)
 	{
+       cpf = "000.000.000-00";
        nome = "PROFESSOR VIRTUAL";
        tipo_contrato_id = 1;
        ch_min = 0;
