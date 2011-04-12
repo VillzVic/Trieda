@@ -13,13 +13,13 @@ public:
    Fixacao(void);
    ~Fixacao(void);
 
-   void le_arvore(ItemFixacao& elem);
+   void le_arvore(ItemFixacao &);
 
    Professor * professor;
-   Disciplina* disciplina;
-   Sala* sala;
-   Turno* turno;
-   HorarioAula* horario;
+   Disciplina * disciplina;
+   Sala * sala;
+   Turno * turno;
+   HorarioAula * horario;
 
    void setProfessorId(int v) { professor_id = v; }
    void setDisciplinaId(int v) { disciplina_id = v; }

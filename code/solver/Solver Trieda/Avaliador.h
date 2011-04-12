@@ -191,12 +191,12 @@ private:
 	// -----------------------------------------------------------
 	// Retorna o curso com o id informado
 	// -----------------------------------------------------------
-	Curso* procuraCurso(int, GGroup< Curso * >);
+	Curso * procuraCurso(int, GGroup< Curso * >);
 
 	// -----------------------------------------------------------
 	// Ordena um GGroup de aulas
 	// -----------------------------------------------------------
-	vector< Aula * > retornaVectorAulasOrdenado(GGroup< pair<Aula *, Horario * > >);
+	vector< Aula * > retornaVectorAulasOrdenado(GGroup< std::pair<Aula *, Horario * > >);
 
 	// -----------------------------------------------------------
 	// Exibe os resultados da avaliação, APÓS todo o

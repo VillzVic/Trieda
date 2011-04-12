@@ -18,7 +18,7 @@ class ProblemDataLoader
 {
 public:
    // Constructor
-   ProblemDataLoader( char *inputFile, ProblemData* data );
+   ProblemDataLoader( char *, ProblemData *);
 
    // Destructor
    ~ProblemDataLoader();

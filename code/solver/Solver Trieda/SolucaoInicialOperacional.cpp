@@ -59,7 +59,7 @@ SolucaoInicialOperacional::~SolucaoInicialOperacional()
 SolucaoOperacional & SolucaoInicialOperacional::geraSolucaoInicial()
 {
    GGroup< Aula * > aulasNaoAlocadas;
-   SolucaoOperacional * solucaoInicial = new SolucaoOperacional(&problemData);
+   SolucaoOperacional * solucaoInicial = new SolucaoOperacional( &problemData );
    int total_horarios = solucaoInicial->getTotalHorarios();
 
    // -----------------------------------------------------------
@@ -155,7 +155,7 @@ SolucaoOperacional & SolucaoInicialOperacional::geraSolucaoInicial()
       }
 
       // Removendo os custos das aulas que foram alocadas na rodada atual.
-      for(int p = (custosAlocacaoAulaOrdenado.size()-1); p >= 0; --p)
+      for(int p = (custosAlocacaoAulaOrdenado.size() - 1); p >= 0; --p)
       {
          if(custosAlocacaoAulaOrdenado.at(p) == NULL)
          {
@@ -268,7 +268,7 @@ SolucaoOperacional & SolucaoInicialOperacional::geraSolucaoInicial()
                //Professor * novoProfessor = new Professor(true);
                novoProfessor = new Professor(true);
 
-               /* Setando alguns dados para o novo professor */
+               // Setando alguns dados para o novo professor
                novoProfessor->tipo_contrato = *problemData.tipos_contrato.begin();
 
                ITERA_GGROUP(itDisciplina,problemData.disciplinas,Disciplina)
@@ -386,7 +386,7 @@ bool SolucaoInicialOperacional::alocaAulaSeq(SolucaoOperacional * solucao, vecto
 		 {
 			std::cout << "SolucaoInicialOperacional::alocaAulaSeq()" <<std::endl;
 			std::cout << "Erro ao preencher os vector 'horarios_profs_alocados'" << std::endl;
-			//exit(1);
+			exit(1);
 		 }
 
 	     GGroup< Horario * >::iterator it_horario
@@ -398,8 +398,8 @@ bool SolucaoInicialOperacional::alocaAulaSeq(SolucaoOperacional * solucao, vecto
 			 if (horario->dias_semana.find(dia_semana) != horario->dias_semana.end()
 					&& horario->horario_aula->getId() == horario_aula->getId())
 			 {
-				 //aula.horarios_profs_alocados.push_back(
-				 //std::make_pair( &(professor), horario ) );
+				 aula.horarios_profs_alocados.push_back(
+				 std::make_pair( &(professor), horario ) );
 			 }
 		 }
 
@@ -453,7 +453,7 @@ bool SolucaoInicialOperacional::alocaAulaSeq(SolucaoOperacional * solucao, vecto
 		   {
 			   std::cout << "SolucaoInicialOperacional::alocaAulaSeq()" <<std::endl;
 			   std::cout << "Erro ao preencher os vector 'horarios_profs_alocados'" << std::endl;
-			   //exit(1);
+			   exit(1);
 		   }
 
          for (; it_horario != professor.horarios.end() && !encontrou;
@@ -465,8 +465,8 @@ bool SolucaoInicialOperacional::alocaAulaSeq(SolucaoOperacional * solucao, vecto
             {
                encontrou = true;
 
-               //aula.horarios_profs_alocados.push_back(
-               //   std::make_pair( &(professor), horario ) );
+               aula.horarios_profs_alocados.push_back(
+                  std::make_pair( &(professor), horario ) );
             }
          }
       }

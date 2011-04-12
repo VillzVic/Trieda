@@ -37,7 +37,7 @@ public:
    * Default Constructor.
    * @param aProblemData The problem's input data.
    */
-   SolverMIP(ProblemData *aProblemData, ProblemSolution * _problemSolution, ProblemDataLoader * _problemDataLoader);
+   SolverMIP(ProblemData *, ProblemSolution *, ProblemDataLoader *);
 
    /** Destructor. */
    ~SolverMIP();

@@ -10,16 +10,19 @@ class Professor :
 {
 public:
    //Professor(void);
-	Professor(bool eVirtual = false);
+	Professor(bool = false);
    ~Professor(void);
 
-   virtual void le_arvore(ItemProfessor& elem);
+   virtual void le_arvore(ItemProfessor &);
 
-   GGroup<Horario*> horarios;
-   GGroup<Magisterio*> magisterio; // Esse eh o disciplinas do XSD de input
-   TipoContrato* tipo_contrato;
-   TipoTitulacao* titulacao; 
-   AreaTitulacao* area;
+   GGroup< Horario * > horarios;
+
+   // Esse eh o disciplinas do XSD de input
+   GGroup< Magisterio * > magisterio;
+
+   TipoContrato * tipo_contrato;
+   TipoTitulacao * titulacao; 
+   AreaTitulacao * area;
 
    void setCpf(std::string s) { cpf = s; }
    void setNome(std::string s) { nome = s; }
@@ -57,10 +60,9 @@ private:
    int titulacao_id;
    int area_id;
    double valor_credito;
-   
    int id_operacional;
-   
-   /* Utilizado na função de prioridade para o modelo operacional. */
+
+   // Utilizado na função de prioridade para o modelo operacional.
    int custoDispProf;
    bool is_virtual;
 };

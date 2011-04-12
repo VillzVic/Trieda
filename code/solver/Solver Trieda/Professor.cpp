@@ -4,7 +4,12 @@
 Professor::Professor(bool eVirtual)
 {
 	cpf = nome = "";
-	tipo_contrato_id = ch_min = ch_max = ch_anterior = titulacao_id = area_id = 0;
+	tipo_contrato_id = 0;
+	ch_min = 0;
+	ch_max = 0;
+	ch_anterior = 0;
+	titulacao_id = 0;
+	area_id = 0;
 	valor_credito = 0;
 
     tipo_contrato = NULL;
@@ -13,7 +18,8 @@ Professor::Professor(bool eVirtual)
 
 	id_operacional = -1;
 
-	// Parametro utilizado na função de prioridade para o modelo operacional.
+	// Parametro utilizado na função de
+	// prioridade para o modelo operacional.
 	custoDispProf = 0;
 
 	is_virtual = eVirtual;
@@ -31,9 +37,10 @@ Professor::Professor(bool eVirtual)
 
 Professor::~Professor(void)
 {
+
 }
 
-void Professor::le_arvore(ItemProfessor& elem)
+void Professor::le_arvore(ItemProfessor & elem)
 {
 	this->setId( elem.id() );
 
@@ -52,17 +59,17 @@ void Professor::le_arvore(ItemProfessor& elem)
 	ch_anterior = elem.credAnterior();
 	valor_credito = elem.valorCred();
 
-	ITERA_SEQ(it_mag,elem.disciplinas(),ProfessorDisciplina)
+	ITERA_SEQ(it_mag, elem.disciplinas(), ProfessorDisciplina)
 	{
-		Magisterio* m = new Magisterio();
-		m->le_arvore(*it_mag);
-		magisterio.add(m);
+		Magisterio * m = new Magisterio();
+		m->le_arvore( *it_mag );
+		magisterio.add( m );
 	}
 
-	ITERA_SEQ(it_h,elem.horariosDisponiveis(),Horario)
+	ITERA_SEQ(it_h, elem.horariosDisponiveis(), Horario)
 	{
-		Horario* h = new Horario();
-		h->le_arvore(*it_h);
-		horarios.add(h);
+		Horario * h = new Horario();
+		h->le_arvore( *it_h );
+		horarios.add( h );
 	}
 }

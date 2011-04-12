@@ -18,12 +18,12 @@ ProblemDataLoader::~ProblemDataLoader()
 void ProblemDataLoader::load()
 {
    std::cout << "Loading file..." << std::endl;
-   root = std::auto_ptr<TriedaInput>(TriedaInput_(inputFile, xml_schema::flags::dont_validate));
+   root = std::auto_ptr< TriedaInput >( TriedaInput_( inputFile, xml_schema::flags::dont_validate ) );
    std::cout << "Extracting data..." << std::endl;
-   problemData->le_arvore(*root);
+   problemData->le_arvore( *root );
 
+   // processamento...
    std::cout << "Some preprocessing..." << std::endl;
-   /* processamento */
 
    // ---------
    relacionaCredsRegras();

@@ -12,9 +12,9 @@ public:
    Turno(void);
    ~Turno(void);
 
-   virtual void le_arvore(ItemTurno& elem);
+   virtual void le_arvore(ItemTurno &);
 
-   GGroup<HorarioAula*> horarios_aula;
+   GGroup< HorarioAula * > horarios_aula;
 
    void setNome(std::string s) { nome = s; }   
    void setTempoAula(int value) { tempo_aula = value; }
