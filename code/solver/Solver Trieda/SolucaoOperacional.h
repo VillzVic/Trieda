@@ -41,8 +41,7 @@ public:
 
    std::map< int, Professor * > mapProfessores;
 
-   // Retorna um iterator para o primeiro
-   // horario de um dado dia de um professor.
+   // Retorna um iterator para o horario desejado de um dado dia de um professor.
    // Dias considerados: 
    // 1: domingo
    // 2: segunda
@@ -51,7 +50,8 @@ public:
    // 5: quinta
    // 6: sexta
    // 7: sábado
-   int getItHorariosProf(Professor &, int = 2, int = 0);
+   //int getItHorariosProf(Professor & professor, int dia = 2, int horario = 0);
+   std::vector<Aula*>::iterator getItHorariosProf(Professor & professor, int dia = 2, int horario = 0);
 
    // Adiciona um novo professor à solução. O inteiro retornado
    // é referente à posição (linha) que o novo  professor ocupa na solução.

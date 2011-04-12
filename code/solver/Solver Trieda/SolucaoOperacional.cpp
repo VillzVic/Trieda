@@ -285,14 +285,17 @@ ProblemData* SolucaoOperacional::getProblemData() const
    return problem_data;
 }
 
-int SolucaoOperacional::getItHorariosProf(Professor & professor, int dia, int horario)
+//int SolucaoOperacional::getItHorariosProf(Professor & professor, int dia, int horario)
+std::vector<Aula*>::iterator SolucaoOperacional::getItHorariosProf(Professor & professor, int dia, int horario)
 {
    if(dia < 1 || dia > 7 )
    {
       throw (out_of_range("Dias validos [1,7] -> dom. a sab."));
    }
 
-   return ( ((dia - 1) * total_horarios) + horario );
+   return ((matriz_aulas->at(professor.getIdOperacional())->begin()) + ( ((dia - 1) * total_horarios) + horario ) );
+
+   //return ( ((dia - 1) * total_horarios) + horario );
 }
 
 int SolucaoOperacional::addProfessor(Professor & professor, vector< Aula * > & horariosProf)
