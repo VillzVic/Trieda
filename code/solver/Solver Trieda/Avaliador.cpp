@@ -120,18 +120,18 @@ void Avaliador::imprimeResultados()
 double Avaliador::avaliaSolucao(SolucaoOperacional & solucao, bool imprime_resultados)
 {
     // Chamada dos métodos que fazem a avaliação da solução
-	//calculaViolacaoRestricaoFixacao(solucao); // pendente
-	//calculaDescolamentoProfessor(solucao); // pendente
+	calculaViolacaoRestricaoFixacao(solucao); // pendente
+	calculaDescolamentoProfessor(solucao); // pendente
 	calculaDescolamentoBlocoCurricular(solucao); // pendente
-	//calculaGapsHorariosProfessores(solucao); // pendente
-	//avaliacaoCustoCorpoDocente(solucao);
-	//violacoesCargasHorarias(solucao);
-	//avaliaDiasProfessorMinistraAula(solucao);
-	//violacaoUltimaPrimeiraAula(solucao);
-	//avaliaNumeroMestresDoutores(solucao);
-	//avaliaMaximoDisciplinasProfessorPorCurso(solucao);
-	//avaliaPreferenciasProfessorDisciplina(solucao);
-	//avaliaCustoProfessorVirtual(solucao);
+	calculaGapsHorariosProfessores(solucao); // pendente
+	avaliacaoCustoCorpoDocente(solucao);
+	violacoesCargasHorarias(solucao);
+	avaliaDiasProfessorMinistraAula(solucao);
+	violacaoUltimaPrimeiraAula(solucao);
+	avaliaNumeroMestresDoutores(solucao);
+	avaliaMaximoDisciplinasProfessorPorCurso(solucao);
+	avaliaPreferenciasProfessorDisciplina(solucao);
+	avaliaCustoProfessorVirtual(solucao);
 
 	double funcao_objetivo = 0.0;
 
@@ -1197,19 +1197,20 @@ void Avaliador::avaliaMaximoDisciplinasProfessorPorCurso(SolucaoOperacional & so
 
 	//-------------------------------------------------------------------------------------
 	// Verifica o limite de disciplinas de cada professor
-	std::map< int, std::map<int, GGroup<int> > >::iterator it_prof_cursco_disc
+	std::map< int, std::map< int, GGroup< int > > >::iterator it_prof_cursco_disc
 		= mapProfessorCursoDisciplinas.begin();
-	for (; it_prof_cursco_disc != mapProfessorCursoDisciplinas.end(); it_prof_cursco_disc++)
+	for (; it_prof_cursco_disc != mapProfessorCursoDisciplinas.end();
+		   it_prof_cursco_disc++)
 	{
 		// Código do professor
-		id_professor = it_prof_cursco_disc->first;
+		id_professor = abs( it_prof_cursco_disc->first );
 
 		// Linha correspondente ao professor na matriz de solução
 		linha_professor = solucao.getProfessorMatriz(id_professor)->getIdOperacional();
 
 		// Verifica cada curso ao qual o professor atual
 		// tem pelo menos uma aula alocada na solução operacional
-		std::map<int, GGroup<int> >::iterator it_cursos
+		std::map< int, GGroup< int > >::iterator it_cursos
 			= it_prof_cursco_disc->second.begin();
 		for (; it_cursos != it_prof_cursco_disc->second.end(); it_cursos++)
 		{

@@ -22,10 +22,10 @@ Professor::Professor(bool eVirtual)
        nome = "PROFESSOR VIRTUAL";
        tipo_contrato_id = 1;
        ch_min = 0;
-       ch_max = 28; // 7 dias na semana, 4 creditos por dia
        valor_credito = 50000;
 
-       // exit(1);
+	   // 7 dias na semana, 4 creditos por dia
+       ch_max = 28; 
 	}
 }
 

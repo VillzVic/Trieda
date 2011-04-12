@@ -64,7 +64,7 @@ public:
    GGroup< BlocoCurricular * > blocos;
 
    // Armazena para cada campus a demanda de cada disciplina.
-   std::map<std::pair<int/*disc_id*/,int/*campus_id*/>,int> demandas_campus;
+   std::map< std::pair< int /*disc_id*/, int /*campus_id*/ >, int > demandas_campus;
 
    int totalSalas;
    int totalTurmas;
@@ -74,10 +74,10 @@ public:
    // disponíveis entre os professores
    int max_horarios_professor;
 
-   std::map<std::pair<Curso*,Curso*>,bool> compat_cursos;
+   std::map< std::pair< Curso *, Curso * >, bool > compat_cursos;
 
    // Dado um curso e uma disciplina, retorna o bloco curricular correspondente
-   std::map< pair<Curso*, Disciplina*> , BlocoCurricular * > mapCursoDisciplina_BlocoCurricular;
+   std::map< std::pair< Curso *, Disciplina * > , BlocoCurricular * > mapCursoDisciplina_BlocoCurricular;
 
    // >>> 14/10/2010
    //GGroup<std::map<int/*novo_id_Disc*/,std::pair<int/*id_Disc*/,int/*id_Curriculo*/> > > relacao_disc_curriculo;

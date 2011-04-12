@@ -16,7 +16,7 @@ SolucaoInicialOperacional::SolucaoInicialOperacional(ProblemData & _problemData)
    // aulas que não foram relacionadas (associadas) a nenhum professor.
    ITERA_GGROUP(itAula, problemData.aulas, Aula)
    { 
-      map<pair<Professor*, Aula*>, CustoAlocacao*>::iterator
+	  std::map< pair< Professor *, Aula * >, CustoAlocacao * >::iterator
          itCustoProfTurma = custoProfTurma.begin();
 
       for(; itCustoProfTurma != custoProfTurma.end(); ++itCustoProfTurma)
@@ -37,7 +37,7 @@ SolucaoInicialOperacional::SolucaoInicialOperacional(ProblemData & _problemData)
    // ----------------------------------------------------------------------
    // Inicializando a estrutura <custosAlocacaoAulaOrdenado>
    // para poder auxiliar na alocação de aulas a professores.
-   map<pair<Professor*,Aula*>,CustoAlocacao*>::iterator 
+   std::map< pair< Professor *, Aula * >, CustoAlocacao * >::iterator 
       itCustoProfTurma = custoProfTurma.begin();
 
    for(; itCustoProfTurma != custoProfTurma.end(); ++itCustoProfTurma)
@@ -49,7 +49,7 @@ SolucaoInicialOperacional::SolucaoInicialOperacional(ProblemData & _problemData)
    // ----------------------------------------------------------------------
    // Ordenando custosAlocacaoAulaOrdenado.
    std::sort(custosAlocacaoAulaOrdenado.begin(),
-      custosAlocacaoAulaOrdenado.end(), ordenaCustosAlocacao);
+			 custosAlocacaoAulaOrdenado.end(), ordenaCustosAlocacao);
    // ----------------------------------------------------------------------
 }
 
@@ -60,7 +60,7 @@ SolucaoInicialOperacional::~SolucaoInicialOperacional()
 
 SolucaoOperacional & SolucaoInicialOperacional::geraSolucaoInicial()
 {
-   GGroup<Aula*> aulasNaoAlocadas;
+   GGroup< Aula * > aulasNaoAlocadas;
    SolucaoOperacional * solucaoInicial = new SolucaoOperacional(&problemData);
    int total_horarios = solucaoInicial->getTotalHorarios();
 
@@ -69,12 +69,12 @@ SolucaoOperacional & SolucaoInicialOperacional::geraSolucaoInicial()
    // menos, um professor associado) serao consideradas
    // como não alocadas. Portanto, todas as aulas devem
    // ser adicionadas a estrutura <aulasNaoAlocadas>
-   map<pair<Professor*, Aula*>, CustoAlocacao*>::iterator
+   std::map< std::pair< Professor *, Aula * >, CustoAlocacao * >::iterator
       itCustoProfTurma = custoProfTurma.begin();
 
    for(; itCustoProfTurma != custoProfTurma.end(); ++itCustoProfTurma)
    {
-      aulasNaoAlocadas.add(itCustoProfTurma->first.second);
+      aulasNaoAlocadas.add( itCustoProfTurma->first.second );
    }
 
    // -----------------------------------------------------------
@@ -89,52 +89,27 @@ SolucaoOperacional & SolucaoInicialOperacional::geraSolucaoInicial()
          ++itCustosAlocacaoAulaOrdenado)
       {
          Aula & aula = (*itCustosAlocacaoAulaOrdenado)->getAula();
-         GGroup<Aula*>::iterator itAulasNaoAlocadas = aulasNaoAlocadas.find( &(aula) );
+         GGroup< Aula * >::iterator itAulasNaoAlocadas = aulasNaoAlocadas.find( &(aula) );
 
          // Checando se a aula do custo em questao ja foi alocada.
          if(itAulasNaoAlocadas != aulasNaoAlocadas.end())
          {
             Professor & professor = (*itCustosAlocacaoAulaOrdenado)->getProfessor();
 
-            //int linha_prof = professor.getIdOperacional();
-            //int coluna_matriz = solucaoInicial->getItHorariosProf(professor, aula.getDiaSemana());
+            vector< Aula * >::iterator it_horarios_prof
+               = solucaoInicial->getItHorariosProf( professor,aula.getDiaSemana() );
 
-            //vector<Aula*>::iterator it_horarios_prof
-            //   = solucaoInicial->getMatrizAulas()->at(professor.getIdOperacional())->begin();
-            vector<Aula*>::iterator it_horarios_prof
-               = solucaoInicial->getItHorariosProf(professor,aula.getDiaSemana());
-
-            bool alocouProfAula = alocaAulaSeq(solucaoInicial, it_horarios_prof, total_horarios, professor, aula);
+            bool alocouProfAula = alocaAulaSeq(solucaoInicial, it_horarios_prof,
+											   total_horarios, professor, aula);
 
             if(alocouProfAula)
             {
-               //Horario * h = NULL;
-               //unsigned int i = 0;
-               //for (i = coluna_matriz; i < (total_horarios + coluna_matriz); i++)
-               //{
-               //	ITERA_GGROUP(it_h, professor.horarios, Horario)
-               //	{
-               //		h = *(it_h);
-
-               //		int horario_aula_id = (coluna_matriz)%(total_horarios);
-               //		HorarioAula horario_aula1 = problemData.horarios_aula_ordenados[horario_aula_id];
-
-               //		HorarioAula horario_aula2 = h->horario_aula;
-
-               //		if ( h->dias_semana.find( aula.getDiaSemana() ) != h->dias_semana.end()
-               //			&& horario_aula1->getId() == horario_aula2->getId() )
-               //		{
-
-               //		}
-               //	}
-               //}
-
                std::cout << "\nForam alocados " << aula.getTotalCreditos()
-                  << " horarios CONSECUTIVOS para a aula da turma "
-                  << aula.getTurma() << " da disciplina "
-                  << aula.getDisciplina()->getCodigo()
-                  << " no dia " << aula.getDiaSemana()
-                  << " ao professor " << professor.getCpf() << std::endl;
+					     << " horarios CONSECUTIVOS para a aula da turma "
+					     << aula.getTurma() << " da disciplina "
+					     << aula.getDisciplina()->getCodigo()
+					     << " no dia " << aula.getDiaSemana()
+					     << " ao professor " << professor.getCpf() << std::endl;
 
                // Para não tentar alocar esse custo novamente.
                (*itCustosAlocacaoAulaOrdenado) = NULL;
@@ -145,11 +120,11 @@ SolucaoOperacional & SolucaoInicialOperacional::geraSolucaoInicial()
             else
             {
                std::cout << "\nTENTATIVA de alocacao de " << aula.getTotalCreditos()
-                  << " horarios CONSECUTIVOS para a aula da turma " << aula.getTurma()
-                  << " da disciplina " << aula.getDisciplina()->getCodigo()
-                  << " no dia " << aula.getDiaSemana()
-                  << " ao professor " << professor.getCpf()
-                  << " FRACASSOU." << std::endl;
+						 << " horarios CONSECUTIVOS para a aula da turma " << aula.getTurma()
+						 << " da disciplina " << aula.getDisciplina()->getCodigo()
+						 << " no dia " << aula.getDiaSemana()
+						 << " ao professor " << professor.getCpf()
+						 << " FRACASSOU." << std::endl;
 
                // Para não tentar alocar esse custo novamente.
                (*itCustosAlocacaoAulaOrdenado) = NULL;		
@@ -177,80 +152,71 @@ SolucaoOperacional & SolucaoInicialOperacional::geraSolucaoInicial()
    if(aulasNaoAlocadas.size() > 0)
    {
       // Aulas que não puderam ser alocadas a nenhum professor.
-      std::cout << "\nATENCAO: Existem aulas que nao foram alocadas a nenhum professor.\n";
-      // exit(1);
+      std::cout << "\nATENCAO: Alocando as aulas pendentes a professores virtuais."
+				<< std::endl << std::endl;
 
-      /*Estrutura responsável por referenciar os professores virtuais criados */
-      std::vector<Professor*> professoresVirtuais;
+      // Estrutura responsável por referenciar os professores virtuais criados
+      std::vector< Professor * > professoresVirtuais;
 
-      /* PAREI AQUI
-
-      USAR ESSA ESTRUTURA INTERNA <professoresVirtuais> PARA TENTAR ALOCAR AS AULAS.
-      ELA SO GUARDA UMA REFERENCIA DOS PROFESSORES VIRTUAIS CRIADOS.
-
-      PARA EU DESCOBRIR A LINHA CORRESPONDENTE NA MATRIZ, BASTA USAR O GETIDOPERACIONAL.
-
-      POR EQTO SO TEM 1 PROFESSOR VIRTUAL SENDO CRIADO. DEVE-SE TENTAR ALOCAR AS AULAS PARA ELE
-      E, SOMENTE SE FOR NECESSARIO, CRIAR OUTRO PROFESSOR VIRTUAL.
-
-      */
-
-      //MatrizSolucao::iterator itPrimeiroProfVirtualAdd;
+      // PAREI AQUI:
+      // USAR ESSA ESTRUTURA INTERNA <professoresVirtuais> PARA TENTAR ALOCAR AS AULAS.
+      // ELA SO GUARDA UMA REFERENCIA DOS PROFESSORES VIRTUAIS CRIADOS.
+      // PARA EU DESCOBRIR A LINHA CORRESPONDENTE NA MATRIZ, BASTA USAR O GETIDOPERACIONAL.
+      // POR EQTO SO TEM 1 PROFESSOR VIRTUAL SENDO CRIADO. DEVE-SE TENTAR ALOCAR AS AULAS PARA ELE
+      // E, SOMENTE SE FOR NECESSARIO, CRIAR OUTRO PROFESSOR VIRTUAL.
 
       // Criando o primeiro professor virtual.
+      // Criando a "agenda semanal" do novo professor
+      std::vector< Aula * > * horariosNovoProfessor = new std::vector< Aula * >
+         ((solucaoInicial->getTotalDias() * solucaoInicial->getTotalHorarios()), NULL);
+
+      // Criando um professor virtual.
+      Professor * novoProfessor = new Professor(true);
+
+      // Setando alguns dados para o novo professor
+      novoProfessor->tipo_contrato = *( problemData.tipos_contrato.begin() );
+
+      ITERA_GGROUP(itDisciplina, problemData.disciplinas, Disciplina)
       {
-         // Criando a "agenda semanal" do novo professor
-         std::vector<Aula*> * horariosNovoProfessor = new std::vector<Aula*>
-            ((solucaoInicial->getTotalDias()*solucaoInicial->getTotalHorarios()), NULL);
-
-         // Criando um professor virtual.
-         Professor * novoProfessor = new Professor(true);
-
-         /* Setando alguns dados para o novo professor */
-         novoProfessor->tipo_contrato = *problemData.tipos_contrato.begin();
-
-         ITERA_GGROUP(itDisciplina,problemData.disciplinas,Disciplina)
-         {
-            Magisterio * mag = new Magisterio();
-            mag->disciplina = *itDisciplina;
-            mag->setDisciplinaId(itDisciplina->getId());
-            mag->setNota(10);
-            mag->setPreferencia(1);
-            novoProfessor->magisterio.add(mag);
-         }
-
-         ITERA_GGROUP(itCampus,problemData.campi,Campus)
-            ITERA_GGROUP(itHorario,itCampus->horarios,Horario)
-            novoProfessor->horarios.add(*itHorario);
-
-         // Adicionando os horários do novo professor à solução.
-         solucaoInicial->addProfessor(*novoProfessor,*horariosNovoProfessor);
-
-         // Adicionando o novo professor a todos os campus
-         ITERA_GGROUP(itCampus,problemData.campi,Campus)
-         {
-            itCampus->professores.add(novoProfessor);
-         }
-
-         professoresVirtuais.push_back(novoProfessor);
-
-         //itPrimeiroProfVirtualAdd = solucaoInicial->getMatrizAulas()->end();
-         ////--itPrimeiroProfVirtualAdd;
+         Magisterio * mag = new Magisterio();
+         mag->disciplina = *itDisciplina;
+         mag->setDisciplinaId(itDisciplina->getId());
+         mag->setNota(10);
+         mag->setPreferencia(1);
+         novoProfessor->magisterio.add(mag);
       }
+
+      ITERA_GGROUP(itCampus, problemData.campi, Campus)
+	  {
+         ITERA_GGROUP(itHorario, itCampus->horarios, Horario)
+		 {
+            novoProfessor->horarios.add(*itHorario);
+	     }
+	  }
+
+      // Adicionando os horários do novo professor à solução.
+      solucaoInicial->addProfessor(*novoProfessor, *horariosNovoProfessor);
+
+      // Adicionando o novo professor a todos os campus
+      ITERA_GGROUP(itCampus, problemData.campi, Campus)
+      {
+         itCampus->professores.add(novoProfessor);
+      }
+
+      professoresVirtuais.push_back(novoProfessor);
 
       // Enquanto todas as aulas não forem alocadas
       while(aulasNaoAlocadas.size() > 0)
       {
          // Para cada aula não alocada
          //ITERA_GGROUP(itAulasNaoAlocadas,aulasNaoAlocadas,Aula)
-         {  
-            //Aula & aula = **itAulasNaoAlocadas;
+         { 
             Aula & aula = **aulasNaoAlocadas.begin();
             bool alocouAula = false;
 
             // Obtendo um iterador para o primeiro professor virtual.
-            //MatrizSolucao::iterator itProfessoresVirtuais = itPrimeiroProfVirtualAdd;
-            std::vector<Professor*>::iterator itProfessoresVirtuais = professoresVirtuais.begin();
+            std::vector< Professor * >::iterator itProfessoresVirtuais
+				= professoresVirtuais.begin();
 
             // Para todos os professores virtuais existentes,
             // tentar alocar as aulas que não puderam ser alocadas
@@ -260,44 +226,45 @@ SolucaoOperacional & SolucaoInicialOperacional::geraSolucaoInicial()
             // os professores virtuais estão sendo criados.
 
             // Para cada professor virtual
-            //for(; itProfessoresVirtuais != solucaoInicial->getMatrizAulas()->end(); ++itProfessoresVirtuais)
-            for(; itProfessoresVirtuais != professoresVirtuais.end(); ++itProfessoresVirtuais)
+            for(; itProfessoresVirtuais != professoresVirtuais.end();
+				++itProfessoresVirtuais)
             {
-               //(*itProfessoresVirtuais)->
-               //std::vector<Aula*>::iterator itHorariosProfVirtual = 
-               //   solucaoInicial->getItHorariosProf(,itAula->getDiaSemana());
-
-               // bool alocouAula = alocaAula(itHorariosProfVirtual, solucaoInicial->getTotalHorarios(),
-               //							*itProfessoresVirtuais, *itAula);
-
                Professor & professor = **itProfessoresVirtuais;
 
-               vector<Aula*>::iterator it_horarios_prof
-                  = solucaoInicial->getItHorariosProf(professor,aula.getDiaSemana());
+               vector< Aula * >::iterator it_horarios_prof
+                  = solucaoInicial->getItHorariosProf(professor, aula.getDiaSemana());
 
-               alocouAula = alocaAulaSeq(solucaoInicial, it_horarios_prof, total_horarios, professor, aula);
+               alocouAula = alocaAulaSeq(solucaoInicial, it_horarios_prof,
+										 total_horarios, professor, aula);
+
+			   if (alocouAula)
+			   {
+				   aulasNaoAlocadas.remove( aulasNaoAlocadas.begin() );
+				   break;
+			   }
             }
 
             if(!alocouAula)
             {
-               // deve-se criar um novo professor virtual e em seguida, alocar a aula.
-               exit(1);
+               // Deve-se criar um novo professor virtual e em seguida, alocar a aula.
+			   std::cout << "Deve-se criar um novo professor "
+			   		     << "virtual e em seguida, alocar a aula" << std::endl;
+               // exit(1);
             }
          }
       }
-
-      exit(1);
    }
 
    // Aulas, que nem sequer foram associadas a algum professor.
    if(aulasNaoRelacionadasProf.size() > 0)
    {
       std::cout << "ATENCAO: Existem aulas sem professor associado, "
-         << "ou seja, nao foi calculado um custo para ela pq o "
-         << "usuario nao associou a disciplina da aula "
-         << "em questao a nenhum professor." << std::endl;
+				<< "ou seja, nao foi calculado um custo para ela pq o "
+				<< "usuario nao associou a disciplina da aula "
+				<< "em questao a nenhum professor." << std::endl;
 
       // CRIAR PROFESSOR VIRTUAL.
+	  std::cout << "CRIAR PROFESSOR VIRTUAL" << std::endl;
       // exit(1);
    }
 
@@ -305,12 +272,13 @@ SolucaoOperacional & SolucaoInicialOperacional::geraSolucaoInicial()
 }
 
 bool SolucaoInicialOperacional::alocaAulaSeq(SolucaoOperacional * solucao, vector< Aula * >::iterator itHorariosProf,
-										  int totalHorariosConsiderados, Professor & professor, Aula & aula)
+										     int totalHorariosConsiderados, Professor & professor, Aula & aula)
 {
    bool alocou = false;
 
-   int diaSemana = aula.getDiaSemana();
+   int dia_semana = aula.getDiaSemana();
    int idOperacionalProf = professor.getIdOperacional();
+   int total_horarios_aula = problemData.horarios_aula_ordenados.size();
 
    // A ideia aqui é iterar sobre os horários letivos do professor, para o dia em questão até
    // que o primeiro horário livre seja encontrado (pode ser que o professor não possua nenhum horário 
@@ -321,9 +289,15 @@ bool SolucaoInicialOperacional::alocaAulaSeq(SolucaoOperacional * solucao, vecto
    vector< Aula * >::iterator itInicioHorariosAlocar = itHorariosProf;
    int totalCredsAlocar = aula.getTotalCreditos();
 
-   int horario = 0;
-   for(; horario < totalHorariosConsiderados;
-      ++horario, ++itHorariosProf)
+   // Marca a posição do vector de aulas do
+   // professor onde serão alocadas as aulas
+   int coluna_matriz = 0;
+   int id_horario_aula = 0;
+   HorarioAula * horario_aula = NULL;
+   Horario * horario = NULL;
+
+   for(int h = 0; h < totalHorariosConsiderados;
+	   ++h, ++itHorariosProf)
    {
       // Se a aula não for 'NULL'
       if(*itHorariosProf)
@@ -337,14 +311,44 @@ bool SolucaoInicialOperacional::alocaAulaSeq(SolucaoOperacional * solucao, vecto
       if(totalCredsAlocar == aula.getTotalCreditos())
       {
          itInicioHorariosAlocar = itHorariosProf;
-		 
 	  }
 
       // Se a disciplina possuir apenas um crédito
       // para o dia em questão, basta alocá-la.
       if(aula.getTotalCreditos() == 1)
       {
-         *itHorariosProf = &aula;
+		 aula.horarios_profs_alocados.clear();
+
+		 coluna_matriz = std::distance(
+			solucao->getMatrizAulas()->at(idOperacionalProf)->begin(), itHorariosProf );
+		 id_horario_aula = ( coluna_matriz % solucao->getTotalHorarios() );
+
+		 if (id_horario_aula-1 >= 0 && id_horario_aula-1 < total_horarios_aula)
+		 {
+   		    horario_aula = problemData.horarios_aula_ordenados[ id_horario_aula-1 ];
+		 }
+		 else
+		 {
+			std::cout << "SolucaoInicialOperacional::alocaAulaSeq()" <<std::endl;
+			std::cout << "Erro ao preencher os vector 'horarios_profs_alocados'" << std::endl;
+			exit(1);
+		 }
+
+	     GGroup< Horario * >::iterator it_horario
+			 = professor.horarios.begin();
+		 for (; it_horario != professor.horarios.end();
+				it_horario++)
+		 {
+			 horario = *(it_horario);
+			 if (horario->dias_semana.find(dia_semana) != horario->dias_semana.end()
+					&& horario->horario_aula->getId() == horario_aula->getId())
+			 {
+				 aula.horarios_profs_alocados.push_back(
+				 std::make_pair( &(professor), horario ) );
+			 }
+		 }
+
+         *itHorariosProf = &(aula);
          alocou = true;
          break;
       }
@@ -367,28 +371,35 @@ bool SolucaoInicialOperacional::alocaAulaSeq(SolucaoOperacional * solucao, vecto
       }
    }
 
-   // Marca a posição do vector de aulas do
-   // professor onde serão alocadas as aulas
-   int coluna_matriz = std::distance(
-	   solucao->getMatrizAulas()->at(idOperacionalProf)->begin(), itHorariosProf );
-
-   int dia_semana = ( (coluna_matriz / solucao->getTotalHorarios() ) + 1 );
-   int id_horario_aula = ( coluna_matriz % solucao->getTotalHorarios() );
-   HorarioAula * horario_aula = problemData.horarios_aula_ordenados[ id_horario_aula ];
-
    // Se encontrei uma sequência de horários livres, aloco.
    if(sequenciaDeHorariosLivres)
    {
+	   // Marca a posição do vector de aulas do
+	   // professor onde serão alocadas as aulas
+	   coluna_matriz = std::distance(
+		   solucao->getMatrizAulas()->at(idOperacionalProf)->begin(), itHorariosProf );
+
+	   id_horario_aula = ( coluna_matriz % solucao->getTotalHorarios() );
+
+	   aula.horarios_profs_alocados.clear();
 	   bool encontrou = false;
-	   Horario * horario = NULL;
 
 	   GGroup< Horario * >::iterator it_horario
 		   = professor.horarios.begin();
-	   for (int i = 0; i < totalCredsAlocar; i++)
+	   for (int i = 0; i < aula.getTotalCreditos(); i++)
 	   {
 		   encontrou = false;
 		   id_horario_aula += i;
-		   horario_aula = problemData.horarios_aula_ordenados[ id_horario_aula ];
+		   if (id_horario_aula-1 >= 0 && id_horario_aula-1 < total_horarios_aula)
+		   {
+   				horario_aula = problemData.horarios_aula_ordenados[ id_horario_aula-1 ];
+		   }
+		   else
+		   {
+			   std::cout << "SolucaoInicialOperacional::alocaAulaSeq()" <<std::endl;
+			   std::cout << "Erro ao preencher os vector 'horarios_profs_alocados'" << std::endl;
+			   exit(1);
+		   }
 
 		   for (; it_horario != professor.horarios.end() && !encontrou;
 				 it_horario++)
@@ -424,43 +435,33 @@ void SolucaoInicialOperacional::executaFuncaoPrioridade()
    {
       ITERA_GGROUP(itProfessor, itCampus->professores, Professor)
       {
-         /* Contabilizando os horários disponíveis de um professor. 
+         //Contabilizando os horários disponíveis de um professor. 
+         //Assim, toda vez que um CustoAlocacao for instanciado, o custo
+         //referente à "disponibilidade do professor p" será atualizado.
+         //Há necessidade de converter o valor para que seja somado corretamente.
 
-         Assim, toda vez que um CustoAlocacao for instanciado, o custo
-         referente à "disponibilidade do professor p" será atualizado.
+         //Ex. 
+         //custoDispProf_A = 10 -> 10 horarios disponiveis
+         //custoDispProf_B = 5 -> 5 horarios disponiveis
+         //custoDispProf_B tem prioridade MAIOR que custoDispProf_A.
+         //prioridade = -(custoDispProf_A - (TOTALHORARIOSCAMPUS+1))
 
-         Há necessidade de converter o valor para que seja somado corretamente.
+         //Dado que TOTALHORARIOSCAMPUS = 10, então:
+         //prioridade(custoDispProf_A) = 1
+         //prioridade(custoDispProf_A) = 6
+         //Estamos adimitindo aqui que a inst. possui apenas um CAMPUS.
+         //Não funcionará para multicampus.
 
-         Ex. 
-         custoDispProf_A = 10 -> 10 horarios disponiveis
-         custoDispProf_B = 5 -> 5 horarios disponiveis
+         //TODO : ADAPTAR TODO O COD PARA CONTEMPLAR MULTICAMPUS.
 
-         custoDispProf_B tem prioridade MAIOR que custoDispProf_A.
-
-         prioridade = -(custoDispProf_A - (TOTALHORARIOSCAMPUS+1))
-
-         Dado que TOTALHORARIOSCAMPUS = 10, então:
-
-         prioridade(custoDispProf_A) = 1
-         prioridade(custoDispProf_A) = 6
-
-         Estamos adimitindo aqui que a inst. possui apenas um CAMPUS.
-         Não funcionará para multicampus.
-
-         TODO : ADAPTAR TODO O COD PARA CONTEMPLAR MULTICAMPUS.
-         */
-         //int horariosProfessor = (itProfessor->horarios.size());
-         //int horariosCampus = (itCampus->horarios.size())+1;
-         //int dispProf = -(horariosProfessor - horariosCampus);
-         //itProfessor->setCustoDispProf(dispProf);
          itProfessor->setCustoDispProf(itCampus->horarios.size());
 
-         ITERA_GGROUP(itMagisterio,itProfessor->magisterio,Magisterio)
+         ITERA_GGROUP(itMagisterio, itProfessor->magisterio, Magisterio)
          {
             Disciplina * discMinistradaProf = itMagisterio->disciplina;
 
             // TODO : Teria que ser para toda aula do campus em questão.
-            ITERA_GGROUP(itAula,problemData.aulas,Aula)
+            ITERA_GGROUP(itAula, problemData.aulas, Aula)
             {
                Disciplina * discAula = itAula->getDisciplina();
 
@@ -469,17 +470,17 @@ void SolucaoInicialOperacional::executaFuncaoPrioridade()
                   // Para o primeiro custo da função de prioridade, tenho que testar agora se
                   // existe fixação desse professor para a disciplina da aula em questão.
 
-                  std::pair<Professor*,Disciplina*> chave (*itProfessor,discMinistradaProf);
+                  std::pair< Professor *, Disciplina * > chave (*itProfessor, discMinistradaProf);
 
-                  std::map<std::pair<Professor*,Disciplina*>,GGroup<Fixacao*> >::iterator
+                  std::map< std::pair< Professor *, Disciplina * >, GGroup< Fixacao * > >::iterator
                      itFixacoesProfDisc = problemData.fixacoesProfDisc.find(chave);
 
                   // Somente se existir, pelo menos, uma fixação de um professor a uma disciplina.
                   if(itFixacoesProfDisc != problemData.fixacoesProfDisc.end())
                   {
-                     ITERA_GGROUP(itFixacao,itFixacoesProfDisc->second,Fixacao)
+                     ITERA_GGROUP(itFixacao, itFixacoesProfDisc->second, Fixacao)
                      {
-                        calculaCustoFixProf(**itProfessor,**itAula,0);
+                        calculaCustoFixProf(**itProfessor, **itAula,0);
                      }
                   }
 
@@ -489,15 +490,15 @@ void SolucaoInicialOperacional::executaFuncaoPrioridade()
                   // Dado que a maior preferência recebe nota 1 e a menor recebe nota 10, basta subtrair a
                   // nota (preferência) por 11 e, em seguida, multiplicar o resultado por -1. Assim, somaremos
                   // um valor correto ao custo, já que o melhor custo total possuirá o maior valor atribuido.
-                  calculaCustoFixProf(**itProfessor,**itAula,1,itMagisterio->getPreferencia());
+                  calculaCustoFixProf(**itProfessor, **itAula, 1, itMagisterio->getPreferencia());
 
-                  pair<int,int> chaveGamb (itProfessor->getId(),discMinistradaProf->getId());
+                  pair<int, int> chaveGamb (itProfessor->getId(), discMinistradaProf->getId());
 
                   // Se o professor e a disciplina da aula em questão se relacionarem:
                   if(problemData.prof_Disc_Dias.find(chaveGamb) != problemData.prof_Disc_Dias.end())
                   {
                      int custo = problemData.prof_Disc_Dias[chaveGamb].size();
-                     calculaCustoFixProf(**itProfessor,**itAula,3,custo,itCampus->horarios.size());
+                     calculaCustoFixProf(**itProfessor, **itAula, 3, custo, itCampus->horarios.size());
                   }
                }
             }
@@ -506,20 +507,21 @@ void SolucaoInicialOperacional::executaFuncaoPrioridade()
    }
 }
 
-void SolucaoInicialOperacional::calculaCustoFixProf(Professor& prof , Aula& aula, unsigned idCusto, int custo, int maxHorariosCP)
+void SolucaoInicialOperacional::calculaCustoFixProf(Professor& prof , Aula& aula,
+													unsigned idCusto, int custo, int maxHorariosCP)
 {
-   pair<Professor*,Aula*> chave (&prof,&aula);
+   pair< Professor *, Aula * > chave (&prof, &aula);
 
-   map<pair<Professor*,Aula*>,CustoAlocacao*>::iterator 
+   std::map< pair< Professor *, Aula * >, CustoAlocacao * >::iterator 
       itCustoProfTurma = custoProfTurma.find(chave);
 
    // Criando, se necessário, um novo CustoAlocacao dada a chave em questão.
    if(itCustoProfTurma == custoProfTurma.end())
    {
-      custoProfTurma[chave] = new CustoAlocacao(prof,aula);
+      custoProfTurma[chave] = new CustoAlocacao(prof, aula);
    }
-
-   if(idCusto == 0 /*custoFixProfTurma*/)
+ 
+   if(idCusto == 0) // custoFixProfTurma
    {
       custoProfTurma[chave]->addCustoFixProfTurma(1);
    }

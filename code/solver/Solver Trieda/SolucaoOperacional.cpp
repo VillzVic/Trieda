@@ -261,7 +261,7 @@ Horario * SolucaoOperacional::getHorario(int i, int j)
 
 Professor * SolucaoOperacional::getProfessorMatriz(int linha)
 {
-   Professor* professor = NULL;
+   Professor * professor = NULL;
 
    // Procura pelo professor que possua o 'id_operacioanal'
    // igual ao índice 'linha' informado, que corresponde à
