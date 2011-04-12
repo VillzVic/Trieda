@@ -22,8 +22,8 @@ public:
 
 private:
 
-   bool alocaAula(vector<Aula*>::iterator itHorariosProf,
-				  int totalHorariosConsiderados, Professor & professor, Aula & aula);
+   bool alocaAulaSeq(SolucaoOperacional *, vector< Aula * >::iterator,
+				  int, Professor &, Aula &);
 
    ProblemData & problemData;
 

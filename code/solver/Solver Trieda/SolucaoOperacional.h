@@ -9,7 +9,7 @@
 #include "Professor.h"
 #include "ProblemData.h"
 
-typedef vector< vector<Aula*> * > MatrizSolucao;
+typedef vector< vector< Aula * > * > MatrizSolucao;
 
 class SolucaoOperacional
 {
@@ -41,7 +41,8 @@ public:
 
    std::map< int, Professor * > mapProfessores;
 
-   // Retorna um iterator para o primeiro horario de um dado dia de um professor.
+   // Retorna um iterator para o primeiro
+   // horario de um dado dia de um professor.
    // Dias considerados: 
    // 1: domingo
    // 2: segunda
@@ -50,22 +51,21 @@ public:
    // 5: quinta
    // 6: sexta
    // 7: sábado
-   int getItHorariosProf(Professor & professor, int dia = 2, int horario = 0);
+   int getItHorariosProf(Professor &, int = 2, int = 0);
 
-   int getTotalHorarios() const;
+   // Adiciona um novo professor à solução. O inteiro retornado
+   // é referente à posição (linha) que o novo  professor ocupa na solução.
+   int addProfessor(Professor & professor, vector< Aula * > &);
 
-   /* Adiciona um novo professor à solução. O inteiro retornado é referente à posição (linha) que o novo 
-   professor ocupa na solução. */
-   int addProfessor(Professor & professor, vector<Aula*> & horariosProf);
-   
    // FUTURAMENTE, VAI SER NECESSARIO CRIAR UM METODO PARA REMOVER UM PROFESSOR.
 
    // TODO: Implementar o método abaixo.
    // bool alocaAula(Professor & professor, int dia, Horario & horario, Aula & aula);
    // bool alocaAula(Professor & professor, Aula & aula, vector<Aula*> & horarios);
 
-   int getTotalDeProfessores() const;
    int getTotalDias() const;
+   int getTotalHorarios() const;
+   int getTotalDeProfessores() const;
 
 private:
    int total_dias;
@@ -77,7 +77,7 @@ private:
 
    // Verifica se o professor tem disponível
    // um determinado horário em um dia da semana
-   bool horarioDisponivelProfessor(Professor*, int, int);
+   bool horarioDisponivelProfessor(Professor *, int, int);
 };
 
 #endif

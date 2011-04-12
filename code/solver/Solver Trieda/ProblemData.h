@@ -37,31 +37,31 @@ public:
    // Destructor
    ~ProblemData();
 
-   Calendario* calendario;
-   GGroup<TipoSala*> tipos_sala;
-   GGroup<TipoContrato*> tipos_contrato;
-   GGroup<TipoTitulacao*> tipos_titulacao;
-   GGroup<AreaTitulacao*> areas_titulacao;
-   GGroup<TipoDisciplina*> tipos_disciplina;
-   GGroup<NivelDificuldade*> niveis_dificuldade;
-   GGroup<TipoCurso*> tipos_curso;
-   GGroup<DivisaoCreditos*> regras_div;
-   GGroup<Campus*> campi;
-   GGroup<Deslocamento*> tempo_campi;
-   GGroup<Deslocamento*> tempo_unidades;
-   GGroup<Disciplina*> disciplinas;
-   GGroup<Curso*> cursos;
-   GGroup<Demanda*> demandas;
-   GGroup<Oferta*> ofertas;
-   ParametrosPlanejamento* parametros;
-   GGroup<Fixacao*> fixacoes;
+   Calendario * calendario;
+   GGroup< TipoSala * > tipos_sala;
+   GGroup< TipoContrato * > tipos_contrato;
+   GGroup< TipoTitulacao * > tipos_titulacao;
+   GGroup< AreaTitulacao * > areas_titulacao;
+   GGroup< TipoDisciplina * > tipos_disciplina;
+   GGroup< NivelDificuldade * > niveis_dificuldade;
+   GGroup< TipoCurso * > tipos_curso;
+   GGroup< DivisaoCreditos * > regras_div;
+   GGroup< Campus * > campi;
+   GGroup< Deslocamento * > tempo_campi;
+   GGroup< Deslocamento * > tempo_unidades;
+   GGroup< Disciplina * > disciplinas;
+   GGroup< Curso * > cursos;
+   GGroup< Demanda * > demandas;
+   GGroup< Oferta * > ofertas;
+   ParametrosPlanejamento * parametros;
+   GGroup< Fixacao * > fixacoes;
 
-   vector<HorarioAula*> horarios_aula_ordenados;
+   vector< HorarioAula * > horarios_aula_ordenados;
 
-   GGroup<AtendimentoCampusSolucao*> * atendimentosTatico;
+   GGroup< AtendimentoCampusSolucao * > * atendimentosTatico;
    //--------------------
 
-   GGroup<BlocoCurricular*> blocos;
+   GGroup< BlocoCurricular * > blocos;
 
    // Armazena para cada campus a demanda de cada disciplina.
    std::map<std::pair<int/*disc_id*/,int/*campus_id*/>,int> demandas_campus;

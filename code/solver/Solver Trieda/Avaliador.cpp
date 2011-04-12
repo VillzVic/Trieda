@@ -122,7 +122,7 @@ double Avaliador::avaliaSolucao(SolucaoOperacional & solucao, bool imprime_resul
     // Chamada dos métodos que fazem a avaliação da solução
 	//calculaViolacaoRestricaoFixacao(solucao); // pendente
 	//calculaDescolamentoProfessor(solucao); // pendente
-	//calculaDescolamentoBlocoCurricular(solucao); // pendente
+	calculaDescolamentoBlocoCurricular(solucao); // pendente
 	//calculaGapsHorariosProfessores(solucao); // pendente
 	//avaliacaoCustoCorpoDocente(solucao);
 	//violacoesCargasHorarias(solucao);
@@ -373,7 +373,7 @@ void Avaliador::calculaDescolamentoBlocoCurricular(SolucaoOperacional& solucao)
 	// Dado um bloco curricular qualquer (BlocoCurricular *), o map
 	// retorna a lista de horários desse bloco curricular, onde cada
 	// horário é representado por um par `Aula*, Horario*`
-	std::map< BlocoCurricular *, GGroup< pair<Aula*, Horario*> > > mapBlocoAulaHorario;
+	std::map< BlocoCurricular *, GGroup< pair<Aula *, Horario * > > > mapBlocoAulaHorario;
 	for (i = 0; i < solucao.getMatrizAulas()->size(); i++)
 	{
 		for (j = 0; j < solucao.getMatrizAulas()->at(i)->size(); j++)

@@ -7,26 +7,25 @@ Professor::Professor(bool eVirtual)
 	tipo_contrato_id = ch_min = ch_max = ch_anterior = titulacao_id = area_id = 0;
 	valor_credito = 0;
 
-   tipo_contrato = NULL;
-   titulacao = NULL;
-   area = NULL;
+    tipo_contrato = NULL;
+    titulacao = NULL;
+    area = NULL;
 
 	id_operacional = -1;
 
-	/* Parametro utilizado na função de prioridade para o modelo operacional. */
+	// Parametro utilizado na função de prioridade para o modelo operacional.
 	custoDispProf = 0;
 
 	is_virtual = eVirtual;
-
 	if(is_virtual)
 	{
-      nome = "PROFESSOR VIRTUAL";
-      tipo_contrato_id = 1;
-      ch_min = 0;
-      ch_max = 28; /* 7 dias na semana, 4 creditos por dia */
-      valor_credito = 50000;
+       nome = "PROFESSOR VIRTUAL";
+       tipo_contrato_id = 1;
+       ch_min = 0;
+       ch_max = 28; // 7 dias na semana, 4 creditos por dia
+       valor_credito = 50000;
 
-      exit(1);
+       // exit(1);
 	}
 }
 
