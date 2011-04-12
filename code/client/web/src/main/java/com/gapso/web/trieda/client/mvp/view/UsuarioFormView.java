@@ -74,7 +74,7 @@ public class UsuarioFormView extends MyComposite implements UsuarioFormPresenter
 		passwordTF.setMinLength(5);
 		passwordTF.setMaxLength(20);
 		passwordTF.setEmptyText("Preencha o password");
-		passwordTF.setEmptyText("Preencha o password");
+		passwordTF.setPassword(true);
 		formPanel.add(passwordTF, formData);
 		
 		FormButtonBinding binding = new FormButtonBinding(formPanel);
