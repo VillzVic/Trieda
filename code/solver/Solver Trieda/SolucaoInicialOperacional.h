@@ -46,6 +46,22 @@ private:
    */
    GGroup< Aula * > aulasNaoRelacionadasProf;
 
+   /*
+   Cada professor deve, preferencialmente, ministrar apenas uma
+   disciplina de um bloco curricular. A estrutura abaixo associa
+   cada bloco com os professores selecionados. Ou seja, para uma dada
+   aula, identifica-se o bloco ao qual a aula em questão pertence e em
+   seguida adiciona-se o professor ao grupo de professores do bloco em
+   questão.
+   */
+   std::map<BlocoCurricular *, GGroup<Professor*,LessPtr<Professor> > > blocosProfs;
+
+   /*
+   Função que utiliza a estrutura acima para dizer se um dado professor está sendo 
+   alocado mais de uma vez para um bloco curricular.
+   */
+   bool professorRepetido(Professor & professor, Aula & aula);
+
    void executaFuncaoPrioridade();
 
    // Funções auxilares à função de prioridade;
