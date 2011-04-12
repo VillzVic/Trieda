@@ -70,7 +70,7 @@ public class UsuarioFormView extends MyComposite implements UsuarioFormPresenter
 		passwordTF = new TextField<String>();
 		passwordTF.setValue(usuarioDTO.getUsername());
 		passwordTF.setFieldLabel("Password");
-		passwordTF.setAllowBlank(false);
+		passwordTF.setAllowBlank(usuarioDTO.getId() == null);
 		passwordTF.setMinLength(5);
 		passwordTF.setMaxLength(20);
 		passwordTF.setEmptyText("Preencha o password");
