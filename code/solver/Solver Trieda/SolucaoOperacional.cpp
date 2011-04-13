@@ -245,9 +245,9 @@ Horario * SolucaoOperacional::getHorario(int i, int j)
 
    // Recupera o horário desejado
    aula = this->getMatrizAulas()->at(i)->at(k);
-   if (posicao_aula < (int)aula->horarios_profs_alocados.size())
+   if (posicao_aula < (int)aula->bloco_aula.size())
    {
-       horario = aula->horarios_profs_alocados[posicao_aula].second;
+       horario = aula->bloco_aula[ posicao_aula ].second;
    }
    else
    {

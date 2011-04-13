@@ -36,7 +36,7 @@ public:
 
    // Para cada crédito alocado da aula em questão armazena-se uma
    // referência para o horário do professor em que tal alocação foi realizada.
-   std::vector< std::pair< Professor *, Horario * > > horarios_profs_alocados;
+   std::vector< std::pair< Professor *, Horario * > > bloco_aula;
 
    virtual bool operator < (Aula const & right) 
    { 

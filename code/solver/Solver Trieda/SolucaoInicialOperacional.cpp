@@ -348,7 +348,7 @@ bool SolucaoInicialOperacional::alocaAulaSeq(SolucaoOperacional * solucao, vecto
 
    int dia_semana = aula.getDiaSemana();
    int idOperacionalProf = professor.getIdOperacional();
-   int total_horarios_aula = problemData.horarios_aula_ordenados.size();
+   const int total_horarios = solucao->getTotalHorarios();
 
    // A ideia aqui é iterar sobre os horários letivos do professor, para o dia em questão até
    // que o primeiro horário livre seja encontrado (pode ser que o professor não possua nenhum horário 
@@ -388,22 +388,14 @@ bool SolucaoInicialOperacional::alocaAulaSeq(SolucaoOperacional * solucao, vecto
       // para o dia em questão, basta alocá-la.
       if(aula.getTotalCreditos() == 1)
       {
-		 aula.horarios_profs_alocados.clear();
+		 aula.bloco_aula.clear();
 
 		 coluna_matriz = std::distance(
 			solucao->getMatrizAulas()->at(idOperacionalProf)->begin(), itHorariosProf );
-		 id_horario_aula = ( coluna_matriz % solucao->getTotalHorarios() );
 
-		 if (id_horario_aula-1 >= 0 && id_horario_aula-1 < total_horarios_aula)
-		 {
-   		    horario_aula = problemData.horarios_aula_ordenados[ id_horario_aula-1 ];
-		 }
-		 else
-		 {
-			std::cout << "SolucaoInicialOperacional::alocaAulaSeq()" <<std::endl;
-			std::cout << "Erro ao preencher os vector 'horarios_profs_alocados'" << std::endl;
-			exit(1);
-		 }
+		 // Recupera o objeto 'HorarioAula' do horário atual
+		 id_horario_aula = ( coluna_matriz % total_horarios );
+		 horario_aula = problemData.horarios_aula_ordenados[ id_horario_aula ];
 
 	     GGroup< Horario * >::iterator it_horario
 			 = professor.horarios.begin();
@@ -414,7 +406,7 @@ bool SolucaoInicialOperacional::alocaAulaSeq(SolucaoOperacional * solucao, vecto
 			 if (horario->dias_semana.find(dia_semana) != horario->dias_semana.end()
 					&& horario->horario_aula->getId() == horario_aula->getId())
 			 {
-				 aula.horarios_profs_alocados.push_back(
+				 aula.bloco_aula.push_back(
 				 std::make_pair( &(professor), horario ) );
 			 }
 		 }
@@ -450,27 +442,21 @@ bool SolucaoInicialOperacional::alocaAulaSeq(SolucaoOperacional * solucao, vecto
 	   coluna_matriz = std::distance(
 		   solucao->getMatrizAulas()->at(idOperacionalProf)->begin(), itHorariosProf );
 
-	   id_horario_aula = ( coluna_matriz % solucao->getTotalHorarios() );
+	   id_horario_aula = ( coluna_matriz % total_horarios );
 
-	   aula.horarios_profs_alocados.clear();
+	   aula.bloco_aula.clear();
 	   bool encontrou = false;
 
 	   GGroup< Horario * >::iterator it_horario
 		   = professor.horarios.begin();
 	   for (int i = 0; i < aula.getTotalCreditos(); i++)
 	   {
-		   encontrou = false;
-		   id_horario_aula += i;
-		   if (id_horario_aula-1 >= 0 && id_horario_aula-1 < total_horarios_aula)
-		   {
-   				horario_aula = problemData.horarios_aula_ordenados[ id_horario_aula-1 ];
-		   }
-		   else
-		   {
-			   std::cout << "SolucaoInicialOperacional::alocaAulaSeq()" <<std::endl;
-			   std::cout << "Erro ao preencher os vector 'horarios_profs_alocados'" << std::endl;
-			   exit(1);
-		   }
+		 encontrou = false;
+
+		 // Recupera o objeto 'HorarioAula' do horário atual
+		 id_horario_aula += i;
+   	     id_horario_aula %= ( total_horarios );
+		 horario_aula = problemData.horarios_aula_ordenados[ id_horario_aula ];
 
          for (; it_horario != professor.horarios.end() && !encontrou;
             it_horario++)
@@ -481,7 +467,7 @@ bool SolucaoInicialOperacional::alocaAulaSeq(SolucaoOperacional * solucao, vecto
             {
                encontrou = true;
 
-               aula.horarios_profs_alocados.push_back(
+               aula.bloco_aula.push_back(
                   std::make_pair( &(professor), horario ) );
             }
          }

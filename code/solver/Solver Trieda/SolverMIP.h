@@ -202,6 +202,8 @@ public:
    */
    int solveTatico();
 
+   int solveTaticoBasico();
+
    void converteCjtSalaEmSala();
 
    void getSolutionTatico();

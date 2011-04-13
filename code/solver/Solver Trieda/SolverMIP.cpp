@@ -326,7 +326,7 @@ void SolverMIP::carregaVariaveisSolucaoTatico()
 
    while (vit != vHash.end())
    {
-      Variable *v = new Variable(vit->first);
+      Variable * v = new Variable( vit->first );
       int col = vit->second;
       v->setValue( xSol[col] );
 
@@ -334,8 +334,8 @@ void SolverMIP::carregaVariaveisSolucaoTatico()
       {
 #ifdef DEBUG
          char auxName[100];
-         lp->getColName(auxName,col,100);
-         fprintf(fout,"%s = %f\n",auxName,v->getValue());
+         lp->getColName( auxName, col, 100 );
+         fprintf(fout, "%s = %f\n", auxName, v->getValue());
 #endif
          switch(v->getType())
          {
@@ -343,11 +343,12 @@ void SolverMIP::carregaVariaveisSolucaoTatico()
             std::cout << "Variável inválida " << std::endl;
             break;
          case Variable::V_CREDITOS:
-            //cout << "Oferta de " << v->getValue() << 
-            //   " creditos da disciplina " << v->getDisciplina()->codigo
-            //   << " para a turma " << v->getTurma()
-            //   << " no dia " << v->getDia() << " para alguma de sala com capacidade " <<
-            //   v->getSubCjtSala()->getId() << std::endl;
+            std::cout << "Oferta de " << v->getValue()
+					  << " creditos da disciplina " << v->getDisciplina()->getCodigo()
+					  << " para a turma " << v->getTurma()
+					  << " no dia " << v->getDia()
+					  << " para alguma de sala com capacidade " << v->getSubCjtSala()->getId()
+					  << std::endl << std::endl;
 
             vars_x.push_back(v);
 
@@ -371,10 +372,11 @@ void SolverMIP::carregaVariaveisSolucaoTatico()
          case Variable::V_OFERECIMENTO: break;
          case Variable::V_ABERTURA: break;
          case Variable::V_ALUNOS:
-            //cout << "Oferecimento de " << v->getValue() << 
-            //   " vagas da disciplina " << v->getDisciplina()->codigo
-            //   << " para a turma " << v->getTurma()
-            //   << " do curso " << v->getOferta()->curso->codigo << std::endl;
+			 std::cout << "Oferecimento de " << v->getValue()
+					   << " vagas da disciplina " << v->getDisciplina()->getCodigo()
+					   << " para a turma " << v->getTurma()
+					   << " do curso " << v->getOferta()->curso->getCodigo()
+					   << std::endl << std::endl;
 
             vars_a[std::make_pair(v->getTurma(),v->getDisciplina())].push_back(v);
 
@@ -649,10 +651,85 @@ int SolverMIP::solveTatico()
 
    delete[] xSol;
 
+   return status;
+}
 
+int SolverMIP::solveTaticoBasico()
+{
+   int varNum = 0;
+   int constNum = 0;
+
+   if( problemData->parametros->funcao_objetivo == 0
+	   || problemData->parametros->funcao_objetivo == 2 )
+   {
+	   lp->createLP( "Solver Trieda", OPTSENSE_MINIMIZE, PROB_MIP );
+   }
+   else if( problemData->parametros->funcao_objetivo == 1 )
+   {
+	   lp->createLP( "Solver Trieda", OPTSENSE_MAXIMIZE, PROB_MIP );
+   }
+
+#ifdef DEBUG
+   printf("Creating LP...\n");
+#endif
+
+   /* Variable creation */
+   varNum = cria_variaveis();
+
+   lp->updateLP();
+
+#ifdef DEBUG
+   printf("Total of Variables: %i\n\n",varNum);
+#endif
+
+   /* Constraint creation */
+   constNum = cria_restricoes();
+
+   lp->updateLP();
+
+#ifdef DEBUG
+   printf("Total of Constraints: %i\n\n",constNum);
+#endif
+
+#ifdef DEBUG
+   lp->writeProbLP("Solver Trieda");
+#endif
+
+   int status = 0;
+
+   //lp->setHeurFrequency(1.0);
+   lp->setTimeLimit(60);
+   //lp->setMIPStartAlg(METHOD_PRIMAL);
+   lp->setMIPEmphasis(0);
+   lp->setMIPScreenLog(4);
+   //lp->setMIPRelTol(0.02);
+   //lp->setNoCuts();
+   //lp->setNodeLimit(1);
+   lp->setPreSolve(OPT_TRUE);
+
+   // Resolve problema olhando somente atendimento
+   status = lp->optimize(METHOD_MIP);
+
+   double * xSol = NULL;
+   xSol = new double[lp->getNumCols()];
+   lp->getX(xSol);
+   FILE *fout = fopen("solBin.bin","wb");
+   int nCols = lp->getNumCols();
+
+   fwrite(&nCols,sizeof(int),1,fout);
+   for (int i=0; i < lp->getNumCols(); i++)
+   {
+      fwrite(&(xSol[i]),sizeof(double),1,fout);
+   }
+
+   fclose(fout);
+
+   delete[] xSol;
 
    return status;
 }
+
+
 
 void SolverMIP::converteCjtSalaEmSala()
 {
@@ -1852,7 +1929,9 @@ int SolverMIP::solve()
 
    if(problemData->parametros->modo_otimizacao == "TATICO" && problemData->atendimentosTatico == NULL)
    {
-      status = solveTatico();
+      // status = solveTatico();
+	  status = solveTaticoBasico();
+
       carregaVariaveisSolucaoTatico();
       converteCjtSalaEmSala();
    }
@@ -1879,7 +1958,10 @@ int SolverMIP::solve()
          // deve-se resolver o modelo operacional com base na saída do modelo tático gerada.
 
          // Gerando uma saída para o modelo tático.
-         status = solveTatico();
+
+         // status = solveTatico();
+		 status = solveTaticoBasico();
+
          carregaVariaveisSolucaoTatico();
          converteCjtSalaEmSala();
 
