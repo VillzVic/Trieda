@@ -28,31 +28,31 @@ void ProblemData::le_arvore(TriedaInput & raiz)
 
    ITERA_SEQ(it_campi, raiz.campi(), Campus)
    {
-      Campus* c = new Campus;
-      c->le_arvore(*it_campi);
-      campi.add(c);
+      Campus * campus = new Campus;
+      campus->le_arvore( *it_campi );
+      campi.add( campus );
    }
 
    ITERA_SEQ(it_tsalas, raiz.tiposSala(), TipoSala)
    {
-      TipoSala* t = new TipoSala;
-      t->le_arvore(*it_tsalas);
-      tipos_sala.add(t);
+      TipoSala * tipo_sala = new TipoSala;
+      tipo_sala->le_arvore( *it_tsalas );
+      tipos_sala.add( tipo_sala );
    }
 
-   LE_SEQ(tipos_sala, raiz.tiposSala(), TipoSala);
-   LE_SEQ(tipos_contrato, raiz.tiposContrato(), TipoContrato);
-   LE_SEQ(tipos_titulacao, raiz.tiposTitulacao(), TipoTitulacao);
-   LE_SEQ(areas_titulacao, raiz.areasTitulacao(), AreaTitulacao);
-   LE_SEQ(tipos_disciplina, raiz.tiposDisciplina(), TipoDisciplina);
-   LE_SEQ(niveis_dificuldade, raiz.niveisDificuldade(), NivelDificuldade);
-   LE_SEQ(tipos_curso, raiz.tiposCurso(), TipoCurso);
-   LE_SEQ(regras_div, raiz.regrasDivisaoCredito(), DivisaoCreditos);
-   LE_SEQ(tempo_campi, raiz.temposDeslocamentosCampi(), Deslocamento);
-   LE_SEQ(tempo_unidades, raiz.temposDeslocamentosUnidades(), Deslocamento);
-   LE_SEQ(disciplinas, raiz.disciplinas(), Disciplina);
-   LE_SEQ(cursos, raiz.cursos(), Curso);
-   LE_SEQ(demandas, raiz.demandas(), Demanda);
+   LE_SEQ( tipos_sala, raiz.tiposSala(), TipoSala );
+   LE_SEQ( tipos_contrato, raiz.tiposContrato(), TipoContrato );
+   LE_SEQ( tipos_titulacao, raiz.tiposTitulacao(), TipoTitulacao );
+   LE_SEQ( areas_titulacao, raiz.areasTitulacao(), AreaTitulacao );
+   LE_SEQ( tipos_disciplina, raiz.tiposDisciplina(), TipoDisciplina );
+   LE_SEQ( niveis_dificuldade, raiz.niveisDificuldade(), NivelDificuldade );
+   LE_SEQ( tipos_curso, raiz.tiposCurso(), TipoCurso );
+   LE_SEQ( regras_div, raiz.regrasDivisaoCredito(), DivisaoCreditos );
+   LE_SEQ( tempo_campi, raiz.temposDeslocamentosCampi(), Deslocamento );
+   LE_SEQ( tempo_unidades, raiz.temposDeslocamentosUnidades(), Deslocamento );
+   LE_SEQ( disciplinas, raiz.disciplinas(), Disciplina );
+   LE_SEQ( cursos, raiz.cursos(), Curso );
+   LE_SEQ( demandas, raiz.demandas(), Demanda );
 
    int id = 1;
    Demanda * demanda = NULL;
@@ -63,11 +63,11 @@ void ProblemData::le_arvore(TriedaInput & raiz)
 	   id++;
    }
 
-   ITERA_SEQ(it_of, raiz.ofertaCursosCampi(), OfertaCurso)
+   ITERA_SEQ(it_oferta, raiz.ofertaCursosCampi(), OfertaCurso)
    {
-      Oferta * o = new Oferta;
-      o->le_arvore( *it_of );
-      ofertas.add( o );
+      Oferta * oferta = new Oferta;
+      oferta->le_arvore( *it_oferta );
+      ofertas.add( oferta );
    }
 
    parametros = new ParametrosPlanejamento;
@@ -106,6 +106,43 @@ void ProblemData::le_arvore(TriedaInput & raiz)
    }
 
    //-----------------------------------------------------------
+   // Primeiro caso : executar o
+   // solver apenas com a entrada do tático
+   bool primeiroCaso = ( parametros->modo_otimizacao == "TATICO" );
+
+   // Segundo caso  : executar o solver com
+   // a saída do tático e a entrada do operacional
+   bool segundoCaso  = ( parametros->modo_otimizacao == "OPERACIONAL"
+							&& raiz.atendimentosTatico().present() == true );
+
+   // Terceiro caso : executar o solver apenas
+   // com a entrada do operacional (sem saída do tático)
+   bool terceiroCaso = ( parametros->modo_otimizacao == "OPERACIONAL"
+							&& raiz.atendimentosTatico().present() == false );
+
+   // Informa o modo de otimização que será execuado
+   if (primeiroCaso)
+   {
+	   std::cout << "TATICO" << std::endl;
+   }
+   else if (segundoCaso)
+   {
+	   std::cout << "OPERACIONAL COM OUTPUT TATICO" << std::endl;
+   }
+   else if (terceiroCaso)
+   {
+	   std::cout << "OPERACIONAL SEM OUTPUT TATICO" << std::endl;
+   }
+	else
+	{
+		// ERRO no XML de entrada
+		std::cout << "WARNING!!! input inválido para os campos:\n"
+				  << "'horariosDisponiveis' e/ou 'creditosDisponiveis'"
+				  << "\n\nSando." << std::endl;
+
+		exit(1);
+	}
+
    // Prencher os horários e/ou créditos das salas
    ITERA_GGROUP(it_campi, campi, Campus)
    {
@@ -119,11 +156,11 @@ void ProblemData::le_arvore(TriedaInput & raiz)
             if (it != mapItemSala.end())
             {
                // Objeto de entrada do XML
-               ItemSala* elem = it->second;
+               ItemSala * elem = it->second;
 
                it_sala->construirCreditosHorarios(
-                  *elem, parametros->modo_otimizacao,
-                  raiz.atendimentosTatico().present());
+                  *(elem), parametros->modo_otimizacao,
+                  raiz.atendimentosTatico().present() );
             }
          }
       }

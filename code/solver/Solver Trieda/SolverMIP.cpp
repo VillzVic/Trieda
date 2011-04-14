@@ -736,22 +736,21 @@ void SolverMIP::converteCjtSalaEmSala()
    // ---------------------------------------
 
    // POS PROCESSAMENTO
-
    // Convertendo as variáveis x_{i,d,u,tps,t} para x_{i,d,u,s,t}.
 
    // PASSO 1: Criando uma estrutura que irá gerenciar os créditos livres para cada sala.
 
-   std::map<Sala*,std::vector<std::pair<int/*dia*/,int/*creds. Livres*/> > > creditos_Livres_Sala;
+   std::map< Sala *, std::vector< std::pair< int /*dia*/, int/*creds. Livres*/ > > > creditos_Livres_Sala;
 
    { // METODO
       // Inicializando a estrutura criada acima
-      ITERA_GGROUP(it_Campus,problemData->campi,Campus)
+      ITERA_GGROUP(it_Campus, problemData->campi, Campus)
       {
-         ITERA_GGROUP(it_Unidade,it_Campus->unidades,Unidade)
+         ITERA_GGROUP(it_Unidade, it_Campus->unidades, Unidade)
          {
-            ITERA_GGROUP(it_Sala,it_Unidade->salas,Sala)
+            ITERA_GGROUP(it_Sala, it_Unidade->salas, Sala)
             {
-               ITERA_GGROUP(it_Creds_Disp,it_Sala->creditos_disponiveis,CreditoDisponivel)
+               ITERA_GGROUP(it_Creds_Disp, it_Sala->creditos_disponiveis, CreditoDisponivel)
                { 
                   creditos_Livres_Sala[*it_Sala].push_back(
                      std::make_pair( it_Creds_Disp->getDiaSemana(),
@@ -764,26 +763,29 @@ void SolverMIP::converteCjtSalaEmSala()
 
    // PASSO 2: Ordenando os vetores de Salas para cada disciplina da estrutura <disc_Salas_Pref>.
 
-   /*
-   As disciplinas que possuem o menor número de preferências, acima de 0, serão consideradas primeiro.
-   Em seguida, a ordem das demais disciplinas será mantida.
-   */
+   // As disciplinas que possuem o menor número de
+   // preferências, acima de 0, serão consideradas primeiro.
+   // Em seguida, a ordem das demais disciplinas será mantida.
 
-   /* Vetor de disciplinas responsável por informar a ordem em que a 
-   heurística irá alocar as disicplinas. */
+   // Vetor de disciplinas responsável por informar a ordem em que a 
+   // heurística irá alocar as disicplinas.
    std::vector<std::pair<int/*Disc id*/, int/*Qtd salas associadas*/> > disc_Salas_Cont;
 
    { // METODO
 
       // Adicionando as disicplinas que possuem alguma associação.
-      std::map<int/*Id Disc*/,GGroup<Sala*> >::iterator 
+      std::map< int /*Id Disc*/, GGroup< Sala * > >::iterator 
          it_Disc_Salas_Pref = problemData->disc_Salas_Pref.begin();
 
-      for(; it_Disc_Salas_Pref != problemData->disc_Salas_Pref.end(); ++it_Disc_Salas_Pref)
-      { disc_Salas_Cont.push_back(std::make_pair(it_Disc_Salas_Pref->first,it_Disc_Salas_Pref->second.size())); }
+      for(; it_Disc_Salas_Pref != problemData->disc_Salas_Pref.end();
+			++it_Disc_Salas_Pref)
+      {
+		  disc_Salas_Cont.push_back(
+			  std::make_pair( it_Disc_Salas_Pref->first, it_Disc_Salas_Pref->second.size() ) );
+	  }
 
       // Ordenando.
-      sort(disc_Salas_Cont.begin(),disc_Salas_Cont.end(),ordenaDiscSalas);
+	  std::sort( disc_Salas_Cont.begin(), disc_Salas_Cont.end(), ordenaDiscSalas );
 
       // Adicionando as demais disciplinas (as que não possuem nenhuma associação).
 
@@ -791,22 +793,26 @@ void SolverMIP::converteCjtSalaEmSala()
 
       ITERA_GGROUP(it_Disciplina,problemData->disciplinas,Disciplina)
       {
-         std::pair<int/*Disc id*/, int/*Qtd salas associadas*/> chave
-            (it_Disciplina->getId(),problemData->disc_Salas_Pref[it_Disciplina->getId()].size());
+		 // Estrutura: Dado o 'id' de uma disciplina,
+		 // retorna-se quantas salas estão associadas a essa disciplina
+         std::pair< int, int > chave( it_Disciplina->getId(),
+			 problemData->disc_Salas_Pref[it_Disciplina->getId()].size() );
 
          // Verificando para disciplina não adicionar a mesma disciplina várias vezes.
-         std::vector<std::pair<int/*Disc id*/, int/*Qtd salas associadas*/> >::iterator 
-
-            it_Disc_Salas = 
-
-            std::find(disc_Salas_Cont.begin(),disc_Salas_Cont.end(),chave);
+		 // Estrutura dos itens do vector: Dado o 'id' de uma disciplina,
+		 // retorna-se quantas salas estão associadas a essa disciplina
+         std::vector< std::pair< int, int > >::iterator it_Disc_Salas
+			 = std::find(disc_Salas_Cont.begin(), disc_Salas_Cont.end(), chave);
 
          if(it_Disc_Salas == disc_Salas_Cont.end())
-         { disc_Salas_TEMP.push_back(chave); }
+         {
+			 disc_Salas_TEMP.push_back(chave);
+		 }
       }
 
       // Concatenando os 2 vetores.
-      disc_Salas_Cont.insert(disc_Salas_Cont.end(),disc_Salas_TEMP.begin(),disc_Salas_TEMP.end());
+      disc_Salas_Cont.insert(disc_Salas_Cont.end(),
+						     disc_Salas_TEMP.begin(), disc_Salas_TEMP.end());
    }
 
    std::vector<std::pair<int/*Disc id*/, int/*Qtd salas associadas*/> >::iterator
@@ -816,59 +822,56 @@ void SolverMIP::converteCjtSalaEmSala()
    for(; it_Disc_Salas != disc_Salas_Cont.end(); ++it_Disc_Salas)
    {
       // Obtendo uma referencia para a disciplina em questão.
-      std::map<int/*Id Disc*/,Disciplina*>::iterator 
-         it_Ref_Disciplinas = problemData->refDisciplinas.find(it_Disc_Salas->first);
+      std::map< int /*Id Disc*/, Disciplina * >::iterator 
+         it_Ref_Disciplinas = problemData->refDisciplinas.find( it_Disc_Salas->first );
 
       if(it_Ref_Disciplinas == problemData->refDisciplinas.end())
       {
-         std::cout << "Opa. Disciplina inexistente (SolverMIP::getSolution()) !!! \n\nSaindo.\n";
+		  std::cout << "\nOpa. Disciplina inexistente."
+					<< "\n(SolverMIP::converteCjtSalaEmSala()) !!!"
+					<< "\n\nSaindo." << std::endl;
+
          exit(1);
       }
 
       Disciplina * disciplina = it_Ref_Disciplinas->second;
 
-      //int id_Disc = disciplina->getId();
-      //std::cout << "TESTE" << std::endl;
+      // Estrutura responsável por armazenar as
+	  // variaveis "x" para a disciplina em questão.
+	  std::vector< Variable * > vars_x_Disc;
 
-      /* Estrutura responsável por armazenar as variaveis "x" para a disciplina em questão. */
-      vector<Variable*> vars_x_Disc;
-
-      { // METODO
-
-         /* Listando todas as variaveis "x" para a disciplina em questão. */
-         ITERA_VECTOR(it_Vars_x,vars_x,Variable)
-         {
-            if((*it_Vars_x)->getDisciplina() == disciplina)
-            { vars_x_Disc.push_back(*it_Vars_x); }
-         }
-
-         /*
-         Ordenando as variaveis coletadas segundo a ordem dos critérios estabelecidos:
-
-         1 - unidade
-         2 - turma
-         3 - dia
-         */
-         sort(vars_x_Disc.begin(),vars_x_Disc.end(),ordenaVarsX);
-
+      // Listando todas as variaveis "x" para a disciplina em questão.
+      ITERA_VECTOR(it_Vars_x, vars_x, Variable)
+      {
+		  if ( (*it_Vars_x)->getDisciplina() == disciplina )
+		  {
+			  vars_x_Disc.push_back(*it_Vars_x);
+  		  }
       }
+
+      // Ordenando as variaveis coletadas segundo
+	  // a ordem dos critérios estabelecidos:
+      // 1 - unidade
+      // 2 - turma
+      // 3 - dia
+	  std::sort(vars_x_Disc.begin(),
+			    vars_x_Disc.end(), ordenaVarsX);
 
       // Estrutura que armazena separadamente, por unidade,
 	  // turma e tipo de sala, as variaveis x coletadas.
-      std::map< std::vector< int /*Unidade, TPS, Turma*/ >,
+	  // --> Unidade, TPS, Turma
+      std::map< std::vector< int >,
 		  std::vector< Variable * > > vars_x_Disc_Und_TPS_Turma;
+      ITERA_VECTOR(it_Vars_x_Disc, vars_x_Disc, Variable)
+      {
+			// Unidade, TPS, Turma
+         std::vector< int > chave;
 
-      { // METODO
-         ITERA_VECTOR(it_Vars_x_Disc, vars_x_Disc, Variable)
-         {
-            std::vector< int /*Unidade, TPS, Turma*/ > chave;
+         chave.push_back((*it_Vars_x_Disc)->getUnidade()->getId());
+         chave.push_back((*it_Vars_x_Disc)->getSubCjtSala()->getId());
+         chave.push_back((*it_Vars_x_Disc)->getTurma());
 
-            chave.push_back((*it_Vars_x_Disc)->getUnidade()->getId());
-            chave.push_back((*it_Vars_x_Disc)->getSubCjtSala()->getId());
-            chave.push_back((*it_Vars_x_Disc)->getTurma());
-
-            vars_x_Disc_Und_TPS_Turma[chave].push_back(*it_Vars_x_Disc);
-         }
+	     vars_x_Disc_Und_TPS_Turma[chave].push_back(*it_Vars_x_Disc);
       }
 
       // Estrutura que armazena as salas na ordem em
@@ -890,56 +893,38 @@ void SolverMIP::converteCjtSalaEmSala()
          // Adicionando as salas que foram associadas pelo usuario.
          std::map< int /*Id Disc*/, GGroup< Sala * > >::iterator
             it_Disc_Salas_Pref = problemData->disc_Salas_Pref.find( disciplina->getId() );
-
-         if(it_Disc_Salas_Pref == problemData->disc_Salas_Pref.end())
-         {
-            std::cout << "Opa. Disciplina nao encontrada na estrutura\n"
-					  << "<disc_Salas_Pref> (SolverMIP::converteCjtSalaEmSala()) !!!"
-					  << "\nId da disciplina : " << disciplina->getId()
-					  << "\nNome da disciplina : " << disciplina->getNome()
-					  << "\n\nSaindo." << std::endl;
-
-            exit(1);
-         }
-
-         // Iterando sobre as salas preferenciais para a disciplina em questão.
-         ITERA_GGROUP(it_Sala, it_Disc_Salas_Pref->second, Sala)
-         {
-			 salas_Ordenadas.push_back( *it_Sala );
+         if(it_Disc_Salas_Pref != problemData->disc_Salas_Pref.end())
+		 {
+			 // Iterando sobre as salas preferenciais para a disciplina em questão.
+			 ITERA_GGROUP(it_Sala, it_Disc_Salas_Pref->second, Sala)
+			 {
+				 salas_Ordenadas.push_back( *it_Sala );
+			 }
 		 }
 
          // Adicionando as demais salas associadas à disciplina em questão.
-		 int id_disciplina = disciplina->getId();
-
          std::map< int /*Id Disc*/, std::vector< Sala * > >::iterator
-            it_Disc_Demais_Salas = problemData->discSalas.find( id_disciplina );
-
-         if(it_Disc_Demais_Salas == problemData->discSalas.end())
-         {
-            std::cout << "Opa. Disciplina nao encontrada na estrutura\n"
-					  << "<discSalas> (SolverMIP::converteCjtSalaEmSala()) !!!"
-					  << "\nId da disciplina : " << disciplina->getId()
-					  << "\nNome da disciplina : " << disciplina->getNome()
-					  << "\n\nSaindo." << std::endl;
-
-            exit(1);
-         }
-
-         ITERA_VECTOR(it_Sala, it_Disc_Demais_Salas->second, Sala)
-         {
-            // Para não adicionar repetidas
-            if(std::find(salas_Ordenadas.begin(),
-						 salas_Ordenadas.end(), *(it_Sala) ) == salas_Ordenadas.end())
-            {
-               salas_Ordenadas.push_back(*it_Sala);
-            }
-         }
+            it_Disc_Demais_Salas = problemData->discSalas.find( disciplina->getId() );
+		 if(it_Disc_Demais_Salas != problemData->discSalas.end())
+		 {
+			 ITERA_VECTOR(it_Sala, it_Disc_Demais_Salas->second, Sala)
+			 {
+				// Para não adicionar repetidas
+				if( std::find(salas_Ordenadas.begin(),
+							  salas_Ordenadas.end(), *(it_Sala) ) == salas_Ordenadas.end())
+				{
+					salas_Ordenadas.push_back( *it_Sala );
+				}
+			 }
+		 }
       }
 
-      std::map< std::vector< int /*Unidade, TPS, Turma*/ >, std::vector< Variable * > >::iterator
+	  // Estrutura do vector: Unidade, TPS, Turma
+      std::map< std::vector< int >, std::vector< Variable * > >::iterator
          it_Vars_x_Disc_Und_TPS_Turma = vars_x_Disc_Und_TPS_Turma.begin();
 
-      // Iterando em cada conjunto de variaveis da estrutura <vars_x_Disc_Und_TPS_Turma>
+      // Iterando em cada conjunto de variaveis
+	  // da estrutura <vars_x_Disc_Und_TPS_Turma>
       for(; it_Vars_x_Disc_Und_TPS_Turma != vars_x_Disc_Und_TPS_Turma.end();
 			++it_Vars_x_Disc_Und_TPS_Turma)
       {
@@ -1480,17 +1465,16 @@ void SolverMIP::getSolutionTatico()
       //else
       {
          bool novo_Campus = true;
-
-         ITERA_GGROUP(it_At_Campus, *(problemSolution->atendimento_campus),
-					  AtendimentoCampus)
+         ITERA_GGROUP( it_At_Campus, *(problemSolution->atendimento_campus),
+					   AtendimentoCampus)
          {
-            if(it_At_Campus->getId() == campus->getId())
+            if ( it_At_Campus->getId() == campus->getId() )
             {
-               
-               if(it_At_Campus->atendimentos_unidades->size() == 0)
+               if ( it_At_Campus->atendimentos_unidades->size() == 0 )
                {
-				  // NOVA UNIDADE
                   std::cout << "Achei que nao era pra cair aqui <dbg1>" << std::endl;
+
+				  // NOVA UNIDADE
                   exit(1);
                }
                else
@@ -1501,50 +1485,44 @@ void SolverMIP::getSolutionTatico()
                   ITERA_GGROUP(it_At_Unidade, *(it_At_Campus->atendimentos_unidades),
 							   AtendimentoUnidade)
                   {
-                     if(it_At_Unidade->getId() == unidade->getId())
+                     if ( it_At_Unidade->getId() == unidade->getId() )
                      {
-                        //if(it_At_Unidade->atendimentos_salas.size() == 0)
-                        if(it_At_Unidade->atendimentos_salas->size() == 0)
+                        if ( it_At_Unidade->atendimentos_salas->size() == 0 )
                         {
                            std::cout << "Achei que nao era pra cair aqui <dbg2>" << std::endl;
+
+						   // NOVA SALA
                            exit(1);
-                           //NOVA SALA
                         }
                         else
                         {
                            Sala * sala = (*it_Vars_x)->getSala();
-
                            bool nova_Sala = true;
-
-                           //ITERA_GGROUP(it_At_Sala,it_At_Unidade->atendimentos_salas,AtendimentoSala)
-                           ITERA_GGROUP(it_At_Sala,*it_At_Unidade->atendimentos_salas,AtendimentoSala)
+                           ITERA_GGROUP(it_At_Sala, *(it_At_Unidade->atendimentos_salas), AtendimentoSala)
                            {
-                              if(it_At_Sala->getId() == sala->getId())
+                              if ( it_At_Sala->getId() == sala->getId() )
                               {
-                                 //if(it_At_Sala->atendimentos_dias_semana.size() == 0)
-                                 if(it_At_Sala->atendimentos_dias_semana->size() == 0)
+                                 if ( it_At_Sala->atendimentos_dias_semana->size() == 0 )
                                  {
                                     std::cout << "Achei que nao era pra cair aqui <dbg3>" << std::endl;
+
+									// NOVO DIA SEMANA
                                     exit(1);
-                                    // NOVO DIA SEMANA
                                  }
                                  else
                                  {
                                     int dia = (*it_Vars_x)->getDia();
-
                                     bool novo_Dia = true;
-
-                                    //ITERA_GGROUP(it_At_Dia,it_At_Sala->atendimentos_dias_semana,AtendimentoDiaSemana)
-                                    ITERA_GGROUP(it_At_Dia,*it_At_Sala->atendimentos_dias_semana,AtendimentoDiaSemana)
+                                    ITERA_GGROUP(it_At_Dia, *(it_At_Sala->atendimentos_dias_semana), AtendimentoDiaSemana)
                                     {
-                                       if(it_At_Dia->dia_semana == dia)
+                                       if ( it_At_Dia->dia_semana == dia )
                                        {
-                                          //if(it_At_Dia->atendimentos_tatico.size() == 0)
-                                          if(it_At_Dia->atendimentos_tatico->size() == 0)
+                                          if ( it_At_Dia->atendimentos_tatico->size() == 0 )
                                           {
                                              std::cout << "Achei que nao era pra cair aqui <dbg4>" << std::endl;
-                                             exit(1);
-                                             // NOVO ATENDIMENTO
+
+											 // NOVO ATENDIMENTO
+                                             exit(1);                                             
                                           }
                                           else
                                           {
@@ -1552,14 +1530,14 @@ void SolverMIP::getSolutionTatico()
 
                                              // Para cada variavel a__i_d_o existem para a variavel x__i_d_u_s_t em questão.
                                              ITERA_VECTOR(it_Vars_a,
-                                                vars_a.find(std::make_pair((*it_Vars_x)->getTurma(),(*it_Vars_x)->getDisciplina()))->second,
-                                                Variable)
+                                                vars_a.find( std::make_pair((*it_Vars_x)->getTurma(),
+																			(*it_Vars_x)->getDisciplina()))->second, Variable)
                                              {
                                                 AtendimentoTatico * at_Tatico = new AtendimentoTatico();
 
                                                 // Verificando se a disicplina é de carater prático ou teórico.
-                                                if((*it_Vars_x)->getDisciplina()->getId() > 0
-														&& (*it_Vars_x)->getDisciplina()->getCredTeoricos() > 0)
+                                                if ( (*it_Vars_x)->getDisciplina()->getId() > 0
+														&& (*it_Vars_x)->getDisciplina()->getCredTeoricos() > 0 )
                                                 {
                                                    at_Tatico->qtde_creditos_teoricos = (int)((*it_Vars_x)->getValue());
                                                 }
@@ -1581,12 +1559,9 @@ void SolverMIP::getSolutionTatico()
 
                                                 at_Oferta->quantidade = (int)((*it_Vars_a)->getValue());
                                                 at_Oferta->turma = (*it_Vars_a)->getTurma();
-
                                                 at_Oferta->oferta = (*it_Vars_a)->getOferta();
-
                                                 at_Tatico->atendimento_oferta = at_Oferta;
 
-                                                //it_At_Dia->atendimentos_tatico.add(at_Tatico);
                                                 it_At_Dia->atendimentos_tatico->add(at_Tatico);
                                              
                                                 ++at_Tatico_Counter;
@@ -1598,7 +1573,7 @@ void SolverMIP::getSolutionTatico()
                                        }
                                     }
 
-                                    if(novo_Dia)
+                                    if ( novo_Dia )
                                     {
                                           // Cadastrando o dia da semana
                                           AtendimentoDiaSemana * at_Dia_Semana = new AtendimentoDiaSemana();
@@ -1612,8 +1587,8 @@ void SolverMIP::getSolutionTatico()
                                           AtendimentoTatico * at_Tatico = new AtendimentoTatico();
 
                                           // Verificando se a disicplina é de carater prático ou teórico.
-                                          if((*it_Vars_x)->getDisciplina()->getId() > 0
-												&& (*it_Vars_x)->getDisciplina()->getCredTeoricos() > 0)
+                                          if ( (*it_Vars_x)->getDisciplina()->getId() > 0
+												&& (*it_Vars_x)->getDisciplina()->getCredTeoricos() > 0 )
                                           {
                                              at_Tatico->qtde_creditos_teoricos = (int)((*it_Vars_x)->getValue());
                                           }
@@ -1631,22 +1606,18 @@ void SolverMIP::getSolutionTatico()
 										  at_Oferta->disciplina_id = 
 										     ((*it_Vars_a)->getDisciplina()->getId() > 0 ? 
 										     (*it_Vars_a)->getDisciplina()->getId() :
-										  (-(*it_Vars_a)->getDisciplina()->getId()));
+										     (-(*it_Vars_a)->getDisciplina()->getId()));
 
                                           at_Oferta->quantidade = (int)((*it_Vars_a)->getValue());
                                           at_Oferta->turma = (*it_Vars_a)->getTurma();
-
                                           at_Oferta->oferta = (*it_Vars_a)->getOferta();
-
                                           at_Tatico->atendimento_oferta = at_Oferta;
 
-                                          //at_Dia_Semana->atendimentos_tatico.add(at_Tatico);
                                           at_Dia_Semana->atendimentos_tatico->add(at_Tatico);
 
                                           ++at_Tatico_Counter;
                                        }
 
-                                       //it_At_Sala->atendimentos_dias_semana.add(at_Dia_Semana);
                                        it_At_Sala->atendimentos_dias_semana->add(at_Dia_Semana);
                                     }
                                  }
@@ -1656,13 +1627,12 @@ void SolverMIP::getSolutionTatico()
                               }
                            }
 
-                           if(nova_Sala)
+                           if ( nova_Sala )
                            {
                               // Cadastrando a Sala
                               AtendimentoSala * at_Sala = new AtendimentoSala();
                               at_Sala->setId((*it_Vars_x)->getSala()->getId());
                               at_Sala->sala_id = (*it_Vars_x)->getSala()->getCodigo();
-
                               at_Sala->sala = (*it_Vars_x)->getSala();
 
                               // Cadastrando o dia da semana
@@ -1671,14 +1641,14 @@ void SolverMIP::getSolutionTatico()
 
                               // Para cada variavel a__i_d_o existem para a variavel x__i_d_u_s_t em questão.
                               ITERA_VECTOR(it_Vars_a,
-                                 vars_a.find(std::make_pair((*it_Vars_x)->getTurma(),(*it_Vars_x)->getDisciplina()))->second,
-                                 Variable)
+										   vars_a.find(std::make_pair((*it_Vars_x)->getTurma(),
+													   (*it_Vars_x)->getDisciplina()))->second, Variable)
                               {
                                  AtendimentoTatico * at_Tatico = new AtendimentoTatico();
 
                                  // Verificando se a disicplina é de carater prático ou teórico.
-                                 if((*it_Vars_x)->getDisciplina()->getId() > 0
-										&& (*it_Vars_x)->getDisciplina()->getCredTeoricos() > 0)
+                                 if ( (*it_Vars_x)->getDisciplina()->getId() > 0
+										&& (*it_Vars_x)->getDisciplina()->getCredTeoricos() > 0 )
                                  {
                                     at_Tatico->qtde_creditos_teoricos = (int)((*it_Vars_x)->getValue());
                                  }
@@ -1696,24 +1666,18 @@ void SolverMIP::getSolutionTatico()
 								 at_Oferta->disciplina_id = 
 								   ((*it_Vars_a)->getDisciplina()->getId() > 0 ? 
 								   (*it_Vars_a)->getDisciplina()->getId() :
-								 (-(*it_Vars_a)->getDisciplina()->getId()));
+								   (-(*it_Vars_a)->getDisciplina()->getId()));
 
                                  at_Oferta->quantidade = (int)((*it_Vars_a)->getValue());
                                  at_Oferta->turma = (*it_Vars_a)->getTurma();
-
                                  at_Oferta->oferta = (*it_Vars_a)->getOferta();
-
                                  at_Tatico->atendimento_oferta = at_Oferta;
 
-                                 //at_Dia_Semana->atendimentos_tatico.add(at_Tatico);
                                  at_Dia_Semana->atendimentos_tatico->add(at_Tatico);
-
                                  ++at_Tatico_Counter;
                               }
 
-                              //at_Sala->atendimentos_dias_semana.add(at_Dia_Semana);
                               at_Sala->atendimentos_dias_semana->add(at_Dia_Semana);
-                              //it_At_Unidade->atendimentos_salas.add(at_Sala);
                               it_At_Unidade->atendimentos_salas->add(at_Sala);
                            }
                         }
@@ -1770,24 +1734,16 @@ void SolverMIP::getSolutionTatico()
 						at_Oferta->disciplina_id = 
 						   ((*it_Vars_a)->getDisciplina()->getId() > 0 ? 
 						   (*it_Vars_a)->getDisciplina()->getId() :
-						(-(*it_Vars_a)->getDisciplina()->getId()));
+						   (-(*it_Vars_a)->getDisciplina()->getId()));
 
                         at_Oferta->quantidade = (int)((*it_Vars_a)->getValue());
                         at_Oferta->turma = (*it_Vars_a)->getTurma();
-
                         at_Oferta->oferta = (*it_Vars_a)->getOferta();
-
                         at_Tatico->atendimento_oferta = at_Oferta;
 
-                        //at_Dia_Semana->atendimentos_tatico.add(at_Tatico);
                         at_Dia_Semana->atendimentos_tatico->add(at_Tatico);
-
                         ++at_Tatico_Counter;
                      }
-
-                     //at_Sala->atendimentos_dias_semana.add(at_Dia_Semana);
-                     //at_Unidade->atendimentos_salas.add(at_Sala);
-                     //it_At_Campus->atendimentos_unidades.add(at_Unidade);
 
                      at_Sala->atendimentos_dias_semana->add(at_Dia_Semana);
                      at_Unidade->atendimentos_salas->add(at_Sala);
@@ -1834,8 +1790,8 @@ void SolverMIP::getSolutionTatico()
                AtendimentoTatico * at_Tatico = new AtendimentoTatico();
 
                // Verificando se a disicplina é de carater prático ou teórico.
-               if((*it_Vars_x)->getDisciplina()->getId() > 0
-					&& (*it_Vars_x)->getDisciplina()->getCredTeoricos() > 0)
+               if ( (*it_Vars_x)->getDisciplina()->getId() > 0
+					&& (*it_Vars_x)->getDisciplina()->getCredTeoricos() > 0 )
                {
                   at_Tatico->qtde_creditos_teoricos = (int)((*it_Vars_x)->getValue());
                }
@@ -1853,37 +1809,27 @@ void SolverMIP::getSolutionTatico()
                at_Oferta->disciplina_id = 
                   ((*it_Vars_a)->getDisciplina()->getId() > 0 ? 
                   (*it_Vars_a)->getDisciplina()->getId() :
-               (-(*it_Vars_a)->getDisciplina()->getId()));
+                  (-(*it_Vars_a)->getDisciplina()->getId()));
 
                at_Oferta->quantidade = (int)((*it_Vars_a)->getValue());
                at_Oferta->turma = (*it_Vars_a)->getTurma();
-
                at_Oferta->oferta = (*it_Vars_a)->getOferta();
-
                at_Tatico->atendimento_oferta = at_Oferta;
 
-               //at_Dia_Semana->atendimentos_tatico.add(at_Tatico);
                at_Dia_Semana->atendimentos_tatico->add(at_Tatico);
-
                ++at_Tatico_Counter;
             }
-
-            //at_Sala->atendimentos_dias_semana.add(at_Dia_Semana);
-            //at_Unidade->atendimentos_salas.add(at_Sala);
-            //at_Campus->atendimentos_unidades.add(at_Unidade);
 
             at_Sala->atendimentos_dias_semana->add(at_Dia_Semana);
             at_Unidade->atendimentos_salas->add(at_Sala);
             at_Campus->atendimentos_unidades->add(at_Unidade);
 
-            //problemSolution->atendimento_campus.add(at_Campus);
             problemSolution->atendimento_campus->add(at_Campus);
          }
       }
    }
 
    std::cout << "at_Tatico_Counter: " << at_Tatico_Counter << std::endl;
-   //getchar();
 }
 
 int SolverMIP::solveOperacional()
@@ -1895,7 +1841,7 @@ int SolverMIP::solveOperacional()
    SolucaoOperacional & sol = solIni.geraSolucaoInicial();
    sol.toString();
 
-   std::cout << "Avaliando a solucao inicial..." << std::endl;
+   std::cout << "Avaliando a solucao inicial" << std::endl;
    Avaliador * avaliador = new Avaliador();
    double valor_solucao = avaliador->avaliaSolucao(sol, true);
    std::cout << "Valor da solucao : "  << valor_solucao
@@ -1916,7 +1862,8 @@ int SolverMIP::solve()
 {
    int status = 0;
 
-   if(problemData->parametros->modo_otimizacao == "TATICO" && problemData->atendimentosTatico == NULL)
+   if ( problemData->parametros->modo_otimizacao == "TATICO"
+			&& problemData->atendimentosTatico == NULL )
    {
       // status = solveTatico();
 	  status = solveTaticoBasico();
@@ -1924,15 +1871,15 @@ int SolverMIP::solve()
       carregaVariaveisSolucaoTatico();
       converteCjtSalaEmSala();
    }
-   else if(problemData->parametros->modo_otimizacao == "OPERACIONAL")
+   else if ( problemData->parametros->modo_otimizacao == "OPERACIONAL" )
    {
 	   if(problemData->atendimentosTatico != NULL
 		   && problemData->atendimentosTatico->size() > 0)
       {
-         ITERA_GGROUP(it_At_Campus, *problemSolution->atendimento_campus, AtendimentoCampus)
+         ITERA_GGROUP(it_At_Campus, *(problemSolution->atendimento_campus), AtendimentoCampus)
          {
-            problemData->atendimentosTatico = new GGroup<AtendimentoCampusSolucao*>();
-            problemData->atendimentosTatico->add(new AtendimentoCampusSolucao(**it_At_Campus));
+            problemData->atendimentosTatico = new GGroup< AtendimentoCampusSolucao * >();
+            problemData->atendimentosTatico->add( new AtendimentoCampusSolucao( **it_At_Campus ) );
          }
 
          // Criando as aulas que serão utilizadas para resolver o modelo operacional
@@ -1959,8 +1906,8 @@ int SolverMIP::solve()
 
          ITERA_GGROUP(it_At_Campus, *problemSolution->atendimento_campus, AtendimentoCampus)
          {
-            problemData->atendimentosTatico = new GGroup<AtendimentoCampusSolucao*>();
-            problemData->atendimentosTatico->add(new AtendimentoCampusSolucao(**it_At_Campus));
+            problemData->atendimentosTatico = new GGroup< AtendimentoCampusSolucao * >();
+            problemData->atendimentosTatico->add( new AtendimentoCampusSolucao( **it_At_Campus ) );
          }
 
          // -----------------------------------------------------

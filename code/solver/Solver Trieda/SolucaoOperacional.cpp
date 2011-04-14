@@ -23,9 +23,10 @@ SolucaoOperacional::SolucaoOperacional(ProblemData * prbDt)
       for (; it_prof != it_campi->professores.end(); it_prof++)
       {
          mapProfessores[ it_prof->getId() ] = (*it_prof);
-         ++total_professores;
       }
    }
+
+   total_professores = mapProfessores.size();
 
    // Inicializando a estrutura <matrizAulas>
    matriz_aulas = new MatrizSolucao (total_professores);
@@ -54,9 +55,9 @@ SolucaoOperacional::SolucaoOperacional(ProblemData * prbDt)
        int idProf = professor->getIdOperacional();
 
 	   // Vetor de aulas do professor atual
-	   vector< Aula * > * linha = *(itMatrizAulas);
+	   vector< Aula * > * linha = *( itMatrizAulas );
 	   vector< Aula * >::iterator it_aula = linha->begin();
-	   for(j = 0; j < linha->size(); j++, it_aula++)
+	   for( j = 0; j < linha->size(); j++, it_aula++ )
 	   {
 		   // DIA DA SEMANA
 		   // 1 --> domingo,
@@ -69,8 +70,8 @@ SolucaoOperacional::SolucaoOperacional(ProblemData * prbDt)
 		   // Índice do horário da aula
 		   horario_aula_id = ( j % total_horarios );
 
-		   if (!horarioDisponivelProfessor(professor,
-					dia_semana, horario_aula_id))
+		   if ( !horarioDisponivelProfessor(
+					professor, dia_semana, horario_aula_id) )
 		   {
 			   // A aula NAO pode ser alocada
 			   *it_aula = aula_virtual;

@@ -39,100 +39,87 @@ void Sala::construirCreditosHorarios(ItemSala& elem, std::string modo_operacao, 
 	// Terceiro caso : executar o solver apenas com a entrada do operacional (sem saída do tático)
 	bool terceiroCaso = ( modo_operacao == "OPERACIONAL" && possuiOutputTatico == false );
 
-	if(primeiroCaso)
+	if( primeiroCaso )
 	{
 		// Lê creditos disponiveis
-		if (elem.creditosDispon_veis().present())
+		if ( elem.creditosDispon_veis().present() )
 		{
 			ITERA_SEQ(it_cred, elem.creditosDispon_veis().get(), CreditoDisponivel)
 			{
-				CreditoDisponivel* credito_disp = new CreditoDisponivel();
-				credito_disp->le_arvore(*it_cred);
-				creditos_disponiveis.add(credito_disp);
+				CreditoDisponivel * credito_disp = new CreditoDisponivel();
+				credito_disp->le_arvore( *it_cred );
+				creditos_disponiveis.add( credito_disp );
 			}
 		}
-
-		std::cout << "TATICO" << std::endl;
 	}
-	else if(segundoCaso)
+	else if( segundoCaso )
 	{
 		// Lê horarios disponiveis
-		if (elem.horariosDisponiveis().present())
+		if ( elem.horariosDisponiveis().present() )
 		{
 			ITERA_SEQ(it_hora, elem.horariosDisponiveis().get(), Horario)
 			{
-				Horario* horario = new Horario();
-				horario->le_arvore(*it_hora);
-				horarios_disponiveis.add(horario);
+				Horario * horario = new Horario();
+				horario->le_arvore( *it_hora );
+				horarios_disponiveis.add( horario );
 			}
 		}
-
-		std::cout << "OPERACIONAL COM OUTPUT TATICO" << std::endl;
 	}
-	else if(terceiroCaso)
+	else if( terceiroCaso )
 	{
-		if (elem.horariosDisponiveis().present())
+		if ( elem.horariosDisponiveis().present() )
 		{
 			// Lê horarios disponiveis
 			ITERA_SEQ(it_hora, elem.horariosDisponiveis().get(), Horario)
 			{
-				Horario* horario = new Horario();
-				horario->le_arvore(*it_hora);
-				horarios_disponiveis.add(horario);
+				Horario * horario = new Horario();
+				horario->le_arvore( *it_hora );
+				horarios_disponiveis.add( horario );
 			}
 
 			// A partir dos 'horários disponíveis' (input operacional),
 			// devemos construir a estrutura de 'créditos disponíveis'
-			GGroup<CreditoDisponivel*> creditosDisponiveis
+			GGroup< CreditoDisponivel * > creditosDisponiveis
 				= converteHorariosParaCreditos();
 
 			ITERA_GGROUP(it_cred, creditosDisponiveis, CreditoDisponivel)
 			{
-				CreditoDisponivel* credito_disp = new CreditoDisponivel();
+				CreditoDisponivel * credito_disp = new CreditoDisponivel();
 
 				credito_disp->setTurnoId( it_cred->getTurnoId() );
 				credito_disp->setDiaSemana( it_cred->getDiaSemana() );
 				credito_disp->setMaxCreditos( it_cred->getMaxCreditos() );
 
-				creditos_disponiveis.add(credito_disp);
+				creditos_disponiveis.add( credito_disp );
 			}
 		}
-
-		std::cout << "OPERACIONAL SEM OUTPUT TATICO" << std::endl;
-	}
-	else
-	{
-		// ERRO no XML de entrada
-		std::cout << "WARNING!!! input inválido para os campos:\n"
-				  << "'horariosDisponiveis' e/ou 'creditosDisponiveis'"
-				  << std::endl;
 	}
 }
 
-GGroup<CreditoDisponivel*> Sala::converteHorariosParaCreditos()
+GGroup< CreditoDisponivel * > Sala::converteHorariosParaCreditos()
 {
-   //using 
-
 	// Objeto de retorno, contendo os créditos criados
 	// a partir dos horários contidos no XML de entrada
-	GGroup<CreditoDisponivel*> creditosDisponiveis;
+	GGroup< CreditoDisponivel * > creditosDisponiveis;
 
-	GGroup<ConverteHorariosCreditos*> groupHorariosCreditos;
+	GGroup< ConverteHorariosCreditos * > groupHorariosCreditos;
 	ITERA_GGROUP(it_horario, horarios_disponiveis, Horario)
 	{
-		GGroup<int>::iterator it_dia_semana = it_horario->dias_semana.begin();
-		for (; it_dia_semana != it_horario->dias_semana.end(); it_dia_semana++)
+		GGroup< int >::iterator it_dia_semana = it_horario->dias_semana.begin();
+		for (; it_dia_semana != it_horario->dias_semana.end();
+			   it_dia_semana++)
 		{
-            int diaaaa = *it_dia_semana;
+            int diaaaa = *(it_dia_semana);
 
-			ConverteHorariosCreditos* item = new ConverteHorariosCreditos();
+			ConverteHorariosCreditos * item = new ConverteHorariosCreditos();
 			item->setTurno( it_horario->getTurnoId() );
 			item->setDiaSemana( *it_dia_semana );
 
 			bool found = false;
-			ITERA_GGROUP(it,groupHorariosCreditos,ConverteHorariosCreditos)
+			ITERA_GGROUP(it, groupHorariosCreditos, ConverteHorariosCreditos)
 			{
-			   if((it->getDiaSemana() == *it_dia_semana) && (it->getTurno() == it_horario->getTurnoId()))
+			   if((it->getDiaSemana() == *it_dia_semana)
+					&& (it->getTurno() == it_horario->getTurnoId()))
 			   {
 			      // Inserir mais um horário em 'groupHorariosCreditos'
 			      it->horarios.add( it_horario->getHorarioAulaId() );
@@ -142,10 +129,11 @@ GGroup<CreditoDisponivel*> Sala::converteHorariosParaCreditos()
 			   }
 			}
 
-			if(!found)
+			if( !found )
 			{
-			   // Adicionar novo item na lista 'groupHorariosCreditos' e inserir o horário				
-			   groupHorariosCreditos.add(item);
+			   // Adicionar novo item na lista
+			   // 'groupHorariosCreditos' e inserir o horário				
+			   groupHorariosCreditos.add( item );
 			   item->horarios.add( it_horario->getHorarioAulaId() );
 			}
 		}
@@ -155,7 +143,7 @@ GGroup<CreditoDisponivel*> Sala::converteHorariosParaCreditos()
 	// preenchida, construimos agora os crétidos correspondentes
 	ITERA_GGROUP(it_converte, groupHorariosCreditos, ConverteHorariosCreditos)
 	{
-		CreditoDisponivel* credito = new CreditoDisponivel();
+		CreditoDisponivel * credito = new CreditoDisponivel();
 
 		credito->setTurnoId( it_converte->getTurno() );
 		credito->setDiaSemana( it_converte->getDiaSemana() );
@@ -172,7 +160,7 @@ int Sala::max_creds(int dia)
    int creds = 0;
    ITERA_GGROUP(it_creds, creditos_disponiveis, CreditoDisponivel)
    {
-      if (it_creds->getDiaSemana() == dia)
+      if ( it_creds->getDiaSemana() == dia )
 	  {
          creds += it_creds->getMaxCreditos();
       }

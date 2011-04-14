@@ -13,6 +13,7 @@ ProblemDataLoader::ProblemDataLoader( char *inputFile, ProblemData* data )
 
 ProblemDataLoader::~ProblemDataLoader()
 {
+
 }
 
 void ProblemDataLoader::load()
@@ -656,34 +657,35 @@ void ProblemDataLoader::relacionaProfessoresDisciplinasFixadas()
    }
 }
 
-void ProblemDataLoader::combinacaoDivCreditos(){
-
-   std::vector<std::vector<std::pair<int/*dia*/, int/*numCreditos*/>>> combinacao_divisao_creditos; 
-   std::vector<std::pair<int/*dia*/, int/*numCreditos*/> > vAux; 
-   std::vector<std::pair<int/*dia*/, int/*numCreditos*/> > vec; 
-   std::pair<int/*dia*/, int/*numCreditos*/> p;
+void ProblemDataLoader::combinacaoDivCreditos()
+{
+   std::vector< std::vector< std::pair< int /*dia*/, int /*numCreditos*/ > > > combinacao_divisao_creditos; 
+   std::vector< std::pair< int /*dia*/, int /*numCreditos*/ > > vAux; 
+   std::vector< std::pair< int /*dia*/, int /*numCreditos*/ > > vec; 
+   std::pair< int /*dia*/, int/*numCreditos*/ > p;
    bool atualiza = false;
 
-   ITERA_GGROUP(itDisc,problemData->disciplinas,Disciplina)
+   ITERA_GGROUP(itDisc, problemData->disciplinas, Disciplina)
    {
       if(itDisc->divisao_creditos != NULL)
       {
-         std::vector<std::pair<int/*dia*/, int/*numCreditos*/> > vAux; 
+         std::vector< std::pair< int /*dia*/, int /*numCreditos*/ > > vAux; 
          for(int i = 1;i <= 7; i++)
          {
-            p = make_pair(i,itDisc->divisao_creditos->dia[i]);
-            vAux.push_back(p);
+            p = make_pair( i, itDisc->divisao_creditos->dia[i] );
+            vAux.push_back( p );
          }
 
-         //verifica se a regra de divisão de créditos é válida
-         for(int a = 0;a < 7;a++)
+         // verifica se a regra de divisão de créditos é válida
+         for(int a = 0; a < 7; a++)
          {
-            if(vAux[a].second != 0)
+            if ( vAux[a].second != 0 )
             {
-               GGroup<int>::iterator itDiasLetivosDiscs = itDisc->diasLetivos.begin();
-               for(; itDiasLetivosDiscs != itDisc->diasLetivos.end(); itDiasLetivosDiscs++)
+               GGroup< int >::iterator itDiasLetivosDiscs = itDisc->diasLetivos.begin();
+               for(; itDiasLetivosDiscs != itDisc->diasLetivos.end();
+					 itDiasLetivosDiscs++)
                { 
-                  if(vAux[a].first == *itDiasLetivosDiscs)
+                  if ( vAux[a].first == *itDiasLetivosDiscs )
                   {
                      atualiza = true;
                      break;
@@ -695,18 +697,19 @@ void ProblemDataLoader::combinacaoDivCreditos(){
                }
             }
          }
-         if(atualiza)
+
+         if ( atualiza )
          {
-            itDisc->combinacao_divisao_creditos.push_back(vAux);
+            itDisc->combinacao_divisao_creditos.push_back( vAux );
             atualiza = false;
          }
 
-         //Para cada regra de divisão de creditos pode existir mais 6
-         for(int k = 0;k < 6;k++)
+         // Para cada regra de divisão de creditos pode existir mais 6
+         for(int k = 0; k < 6; k++)
          {
-            for(int j = 0;j < 7;j++)
+            for(int j = 0; j < 7; j++)
             {
-               if(j == 0)
+               if ( j == 0 )
                {
                   p = make_pair(vAux[0].first, vAux[6].second);
                }
@@ -714,21 +717,24 @@ void ProblemDataLoader::combinacaoDivCreditos(){
                {
                   p = make_pair(vAux[j].first, vAux[j-1].second);
                }
+
                vec.push_back(p);
             }
+
             vAux.clear();
             vAux = vec;
             vec.clear();
 
-            //verifica se as regras de divisão de créditos criadas são válidas
-            for(int b = 0;b < 7;b++)
+            // Verifica se as regras de divisão de créditos criadas são válidas
+            for ( int b = 0; b < 7; b++ )
             {
-               if(vAux[b].second != 0)
+               if ( vAux[b].second != 0 )
                {
-                  GGroup<int>::iterator itDiasLetivosDiscs = itDisc->diasLetivos.begin();
-                  for(; itDiasLetivosDiscs != itDisc->diasLetivos.end(); itDiasLetivosDiscs++)
+                  GGroup< int >::iterator itDiasLetivosDiscs = itDisc->diasLetivos.begin();
+                  for(; itDiasLetivosDiscs != itDisc->diasLetivos.end();
+						itDiasLetivosDiscs++)
                   { 
-                     if(vAux[b].first == *itDiasLetivosDiscs)
+                     if ( vAux[b].first == *itDiasLetivosDiscs )
                      {
                         atualiza = true;
                         break;
@@ -740,9 +746,10 @@ void ProblemDataLoader::combinacaoDivCreditos(){
                   }
                }
             }
-            if(atualiza)
+
+            if ( atualiza )
             {
-               itDisc->combinacao_divisao_creditos.push_back(vAux);
+               itDisc->combinacao_divisao_creditos.push_back( vAux );
                atualiza = false;
             }	
          }
@@ -750,35 +757,37 @@ void ProblemDataLoader::combinacaoDivCreditos(){
    }
 }
 
-template<class T> 
-void ProblemDataLoader::find_and_set(int id, 
-                                     GGroup<T*>& haystack, 
-                                     T*& needle,bool print = false)
+template< class T > 
+void ProblemDataLoader::find_and_set(int id, GGroup< T * > & haystack, 
+                                     T * & needle, bool print = false)
 {
-   T* finder = new T;
+   T * finder = new T;
    finder->setId( id );
 
-   GGroup<T*>::iterator it_g = haystack.begin();
+   GGroup< T * >::iterator it_g = haystack.begin();
 
-   /* Versão lenta... Entender o porquê depois */
-   while(it_g != haystack.end() && it_g->getId() != finder->getId())
+   // Versão lenta... Entender o porquê depois
+   while ( it_g != haystack.end()
+			&& it_g->getId() != finder->getId() )
    {
       ++it_g;
    }
-   /* FIM */
+   // FIM
 
-   if (it_g != haystack.end())
+   if ( it_g != haystack.end() )
    {
-      needle = *it_g;
+      needle = *(it_g);
 
-      if(print)
+      if ( print )
       {
          std::cout << "Found " << id << std::endl;
       }
    }
    else
    {
-      std::cout << "Warnning: Problema na funcao FindAndSet do ProblemDataLoader." << std::endl;
+      std::cout << "Warnning: Problema na funcao"
+				<< "FindAndSet do ProblemDataLoader." << std::endl;
+
       exit(1);
    }
 
@@ -2055,7 +2064,7 @@ void ProblemDataLoader::print_stats()
 			 << std::endl;
 }
 
-/* Salva algumas informações que são usadas frequentemente */
+// Salva algumas informações que são usadas frequentemente
 void ProblemDataLoader::cache()
 {
    problemData->totalSalas = 0;
@@ -2257,12 +2266,14 @@ void ProblemDataLoader::associaDisciplinasSalas()
             ITERA_GGROUP(it_Disc_Assoc_Sala,
 				it_sala->disciplinas_Associadas_Usuario, Disciplina)
             {
+			   int id_disciplina = it_Disc_Assoc_Sala->getId();
+
                // Adicionando um ponteiro para qdo tiver uma dada
 			   // disciplina for fácil descobrir a lista de salas associadas.
-               problemData->discSalas[ it_Disc_Assoc_Sala->getId() ].push_back( *it_sala );
+               problemData->discSalas[ id_disciplina ].push_back( *it_sala );
 
                // Adicionando uma preferência de sala para uma dada disciplina.
-               problemData->disc_Salas_Pref[ it_Disc_Assoc_Sala->getId() ].add( *it_sala );
+               problemData->disc_Salas_Pref[ id_disciplina ].add( *it_sala );
             }
          }
 
@@ -2274,10 +2285,14 @@ void ProblemDataLoader::associaDisciplinasSalas()
          // Para cada disciplina associada ao campus em questao
          ITERA_GGROUP_N_PT(it_disciplina, it_Cp_Discs->second, int)
          {
-            Disciplina * disciplina = (problemData->refDisciplinas.find( *it_disciplina )->second);
+            Disciplina * disciplina = ( problemData->refDisciplinas.find( *it_disciplina )->second );
 
             // Se a disciplina foi associada pelo usuário.
-			if(disciplina->eLab())
+			std::map< int, GGroup< Sala * > >::iterator it_salas_associadas
+				= problemData->disc_Salas_Pref.find( disciplina->getId() );
+			bool salas_associadas = ( it_salas_associadas != problemData->disc_Salas_Pref.end() );
+
+			if(disciplina->eLab() && !salas_associadas)
             {
                // RESTRICAO FORTE
                // NAO DEVO CRIAR MAIS NENHUMA ASSOCIACAO.
