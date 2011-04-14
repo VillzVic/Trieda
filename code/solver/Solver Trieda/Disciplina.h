@@ -16,24 +16,24 @@ public:
    Disciplina(void);
    ~Disciplina(void);
 
-   DivisaoCreditos* divisao_creditos;
-   TipoDisciplina* tipo_disciplina;
-   NivelDificuldade* nivel_dificuldade;
+   DivisaoCreditos * divisao_creditos;
+   TipoDisciplina * tipo_disciplina;
+   NivelDificuldade * nivel_dificuldade;
 
-   GGroup<int> equivalentes;
-   GGroup<int> incompativeis;
-   GGroup<Horario*> horarios;
+   GGroup< int > equivalentes;
+   GGroup< int > incompativeis;
+   GGroup< Horario * > horarios;
 
-   // Conjunto de combinações possíveis de divisão de créditos de uma uma disciplina d
-   std::vector<std::vector<std::pair<int/*dia*/, int/*numCreditos*/> > > combinacao_divisao_creditos;
+   // Conjunto de combinações possíveis de divisão de créditos de uma uma disciplina 'd'
+   std::vector< std::vector< std::pair< int /*dia*/, int /*numCreditos*/ > > > combinacao_divisao_creditos;
 
    // =========== METODOS AUXILIARES
-   virtual void le_arvore(ItemDisciplina& elem);
+   virtual void le_arvore(ItemDisciplina &);
 
    int adicionaDemandaTotal(int d) { return (demanda_total += d); }
 
    // Armazena os dias letivos em que a disciplina pode ser ministrada.
-   GGroup<int> diasLetivos;
+   GGroup< int > diasLetivos;
 
    // =========== METODOS SET
    void setDemandaTotal(int value) { demanda_total = value; }

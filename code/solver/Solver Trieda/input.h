@@ -14,4 +14,6 @@
 
 #define ITERA_GGROUP(it,ggroup,type) for ( GGroup<type *>::iterator it = (ggroup).begin(); it != (ggroup).end(); ++it )
 
+#define ITERA_GGROUP_LESSPTR(it,ggroup,type) for ( GGroup<type *, LessPtr< type > >::iterator it = (ggroup).begin(); it != (ggroup).end(); ++it )
+
 #endif

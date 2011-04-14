@@ -10,15 +10,15 @@ class Demanda :
 {
 public:
    Demanda(void);
-   Demanda(Demanda const & demanda);
+   Demanda(Demanda const &);
    ~Demanda(void);
 
-   virtual void le_arvore(ItemDemanda& elem);
+   virtual void le_arvore(ItemDemanda &);
 
    Oferta * oferta;
    Disciplina * disciplina;
 
-   bool operator ==(Demanda const & demanda);
+   bool operator ==(Demanda const &);
 
    void setQuantidade(int value) { quantidade = value; }
    void setOfertaId(int value) { oferta_id = value; }

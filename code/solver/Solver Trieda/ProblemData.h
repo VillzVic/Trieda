@@ -66,6 +66,11 @@ public:
    // Armazena para cada campus a demanda de cada disciplina.
    std::map< std::pair< int /*disc_id*/, int /*campus_id*/ >, int > demandas_campus;
 
+   // Dado um par 'Campus' e 'Curso', obtemos
+   // todas as 'Demandas' relacionadas a esse par
+   std::map< std::pair< Campus *, Curso * >,
+	   GGroup< Demanda *, LessPtr< Demanda > > > map_campus_curso_demanda;
+
    int totalSalas;
    int totalTurmas;
    int totalConjuntosSalas;
@@ -79,53 +84,38 @@ public:
    // Dado um curso e uma disciplina, retorna o bloco curricular correspondente
    std::map< std::pair< Curso *, Disciplina * > , BlocoCurricular * > mapCursoDisciplina_BlocoCurricular;
 
-   // >>> 14/10/2010
-   //GGroup<std::map<int/*novo_id_Disc*/,std::pair<int/*id_Disc*/,int/*id_Curriculo*/> > > relacao_disc_curriculo;
-   //std::map<int/*novo_id_Disc*/,std::pair<int/*id_Disc*/,int/*id_Curriculo*/> > relacao_disc_curriculo;
-   // <<< 14/10/2010
-
-   // >>> 15/10/2010
-   //typedef std::map<int/*novo_id_Disc*/,std::pair<int/*id_Disc*/,int/*id_Curriculo*/> > relacao_disc_curriculo;
-
-   // Admitindo que o id de um curso seja único, construiremos um map de relacoes_disc_curriculo para cada curso
-   //std::map<int/*id do curso*/,relacao_disc_curriculo> relacao_curso_discs_curric;
-
-   // <<< 15/10/2010
-
    // >>> Variáveis e/ou estruturas de dados para realizar o pré processamento dos dados.
 
-   std::map<int/*Id Campus*/,unsigned/*Tamanho médio das salas*/> cp_medSalas;
+   std::map< int /*Id Campus*/, unsigned /*Tamanho médio das salas*/ > cp_medSalas;
 
    // Armazena todas as disciplinas ofertadas em um campus.
-   std::map<int/*Id Campus*/,GGroup<int>/*Id Discs*/> cp_discs;
+   std::map< int /*Id Campus*/, GGroup< int > /*Id Discs*/ > cp_discs;
 
    //------------------
    // Essa estrutura ficaria melhor dentro das disciplinas !!!!
-   /* 
-   Armazena todas as salas (sala de aula ou lab) em que uma 
-   disciplina pode ser oferecida.
-   */
-   //std::map<int/*Id Disc*/,GGroup<Sala*> > discSalas;
-   std::map<int/*Id Disc*/,std::vector<Sala*> > discSalas;
+   // Armazena todas as salas (sala de aula ou lab) em que uma 
+   // disciplina pode ser oferecida.   
+   std::map< int /*Id Disc*/, std::vector< Sala * > > discSalas;
 
+   //------------------
    /* Armazena todas as salas (sala de aula ou lab) em que uma 
    disciplina, preferencialmente, deve ser oferecida. */
    std::map<int/*Id Disc*/,GGroup<Sala*> > disc_Salas_Pref;
 
    //------------------
-
-   /* Relaciona as turmas com alguma disciplina. Armazena tb o tamanho das turmas da
-   disc em questão. A princípio, todas as turmas vão ter o msm tamanho.
-   Lembrando que turmas são representadas por inteiros, definidos em estima_turmas.
-   Por equanto, os ids das turmas não estão sendo utilizados, ou seja, podem existir
-   duas turmas diferentes com o msm id. Isto não é considerado um erro pq, do modo que
-   está implementado, qdo isso acontecer, as turmas serão de discs diferentes. */
+   // Relaciona as turmas com alguma disciplina. Armazena tb o tamanho das turmas da
+   // disc em questão. A princípio, todas as turmas vão ter o msm tamanho.
+   // Lembrando que turmas são representadas por inteiros, definidos em estima_turmas.
+   // Por equanto, os ids das turmas não estão sendo utilizados, ou seja, podem existir
+   // duas turmas diferentes com o msm id. Isto não é considerado um erro pq, do modo que
+   // está implementado, qdo isso acontecer, as turmas serão de discs diferentes.
    //std::map<int/*Id Disciplina*/,GGroup<std::pair<int/*Id Turma*/,int/*Tamanho Turma*/> > > disc_turmas;
 
-   /* Estrutura responsavel por referenciar os campus.
-   Nao precisaria dessa estrutura se o FIND do GGroup estivesse funcionando normalmente.
-   VER ISSO DEPOIS */
-   std::map<int/*Id Campus*/,Campus*> refCampus;
+   //------------------
+   // Estrutura responsavel por referenciar os campus.
+   // Nao precisaria dessa estrutura se o FIND do GGroup
+   // estivesse funcionando normalmente. VER ISSO DEPOIS
+   std::map< int /*Id Campus*/, Campus * > refCampus;
 
    /* Estrutura responsavel por referenciar as unidades.
    Nao precisaria dessa estrutura se o FIND do GGroup estivesse funcionando normalmente.
@@ -145,39 +135,37 @@ public:
    /* Estrutura responsavel por referenciar as disciplinas.
    Nao precisaria dessa estrutura se o FIND do GGroup estivesse funcionando normalmente.
    VER ISSO DEPOIS */
-   std::map<int/*Id Oferta*/,Oferta*> refOfertas;
+   std::map< int /*Id Oferta*/, Oferta * > refOfertas;
 
    /* Listando todas as ofertas que contem uma disciplina especificada. */
    //Disciplina * discPresenteOferta(Disciplina&,Oferta&);
-   std::map<int/*Id disc*/, GGroup<Oferta*> > ofertasDisc;
+   std::map< int /*Id disc*/, GGroup< Oferta * > > ofertasDisc;
 
-   /* Listando os dias letivos de uma disciplina em relação a cada sala. */
-   std::map<std::pair<int/*idDisc*/,int/*idSala*/>, GGroup<int>/*Dias*/ > disc_Salas_Dias;
+   // Listando os dias letivos de uma disciplina em relação a cada sala.
+   std::map<std::pair< int /*idDisc*/, int /*idSala*/ >, GGroup< int > /*Dias*/ > disc_Salas_Dias;
 
-   /* Listando os dias letivos de uma disciplina em relação a um conjunto de salas de mesmo tipo. */
+   // Listando os dias letivos de uma disciplina em relação a um conjunto de salas de mesmo tipo.
    std::map<std::pair<int/*idDisc*/,int/*idSubCjtSala*/>, GGroup<int>/*Dias*/ > disc_Conjutno_Salas__Dias;
 
-   /* Listando os dias letivos comuns entre um bloco curricular e um campus.
+   // Listando os dias letivos comuns entre um bloco curricular
+   // e um campus. Obs.: Quando tiver mais de um campus, pode
+   // acontecer que uma associação entre um bloco curricular
+   // que não pertence a um determinado campus seja criada. "Arrumar isso depois".
+   std::map< std::pair< int /*idBloco*/, int /*idCampus*/ >, GGroup< int > /*Dias*/ > bloco_Campus_Dias;
 
-      Quando tiver mais de um campus, pode acontecer que uma associação entre um bloco curricular 
-      que não pertence a um determinado campus seja criada. Arrumar isso depois.
-   */
-   std::map<std::pair<int/*idBloco*/,int/*idCampus*/>, GGroup<int>/*Dias*/ > bloco_Campus_Dias;
+   // Listando as regras de créditos para cada possível valor de crédito.
+   std::map< int /*Num. Creds*/, GGroup< DivisaoCreditos * > > creds_Regras;
 
-   /* Listando as regras de créditos para cada possível valor de crédito. */
-   std::map<int/*Num. Creds*/,GGroup<DivisaoCreditos*> > creds_Regras;
+    // Dias letivos comuns de um professor e uma disciplina.
+   std::map< std::pair< int /*idProf*/, int /*idDisc*/>, GGroup< int > /*Dias*/ > prof_Disc_Dias;
 
-    /* Dias letivos comuns de um professor e uma disciplina. */
-   std::map<std::pair<int/*idProf*/,int/*idDisc*/>, GGroup<int>/*Dias*/ > prof_Disc_Dias;
-
-   /* Lista, para cada professor, todas as disciplinas as quais ele é fixado. */
+   // Lista, para cada professor, todas as disciplinas as quais ele é fixado.
    //std::map<Professor*,GGroup<Disciplina*> > prof_Fix_Disc;
 
-   /* */
-   GGroup<Aula*> aulas;
+   GGroup< Aula * > aulas;
 
-   /* Lista para cada par <professor,disciplina> todas as fixacoes existentes. */
-   std::map<std::pair<Professor*,Disciplina*>,GGroup<Fixacao*> > fixacoesProfDisc;
+   // Lista para cada par <professor,disciplina> todas as fixacoes existentes.
+   std::map< std::pair< Professor *, Disciplina * >, GGroup< Fixacao * > > fixacoesProfDisc;
 
    virtual void le_arvore(TriedaInput& raiz);
 };

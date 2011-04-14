@@ -20,7 +20,7 @@ Demanda::~Demanda(void)
 {
 }
 
-void Demanda::le_arvore(ItemDemanda& elem)
+void Demanda::le_arvore(ItemDemanda & elem)
 {
 	quantidade = elem.quantidade();
 	disciplina_id = elem.disciplinaId();

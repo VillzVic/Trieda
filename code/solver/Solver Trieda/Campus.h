@@ -1,9 +1,14 @@
-#pragma once
+#ifndef _CAMPUS_H_
+#define _CAMPUS_H_
+
 #include "ofbase.h"
 
 #include "Unidade.h"
 #include "Professor.h"
 #include "Horario.h"
+#include "Curso.h"
+
+class Oferta;
 
 class Campus:
    public OFBase
@@ -11,34 +16,37 @@ class Campus:
 public:
    Campus(void);
    ~Campus(void);
-   
-   virtual void le_arvore(ItemCampus& raiz);
 
-//private:
+   GGroup< Unidade * > unidades;
+   GGroup< Professor * > professores;
+   GGroup< Horario * > horarios;
+
+   GGroup< Curso  *, LessPtr< Curso  > > cursos;
+   GGroup< Oferta *, LessPtr< Oferta > > ofertas;
+
+   // Armazena os dias letivos para um determinado campus
+   GGroup< int > diasLetivos;
+
+   std::map< int, // ConjuntoSalaId
+	   GGroup< std::pair< Unidade *, ConjuntoSala * > > > conjutoSalas;
+
+   virtual void le_arvore(ItemCampus &);
+
+   void setCodigo(std::string s) { codigo = s; }
+   void setNome(std::string s) { nome = s; }
+   void setTotalSalas(int value) { totalSalas = value; }
+   void setMaiorSala(int value) { maiorSala = value; }
+
+   std::string getCodigo() { return codigo; }
+   std::string getNome(std::string s) { return nome; }
+   int getTotalSalas() { return totalSalas; }
+   int getMaiorSala() { return maiorSala; }
+
+private:
    std::string codigo;
    std::string nome;
-
-   GGroup<Unidade*> unidades;
-   GGroup<Professor*> professores;
-   GGroup<Horario*> horarios;
-
    int totalSalas;
    int maiorSala;
-
-   /* Armazena os dias letivos para um determinado campus */
-   GGroup<int> diasLetivos;
-
-   // =========================
-   std::map<int/*ConjuntoSalaId*/,GGroup<std::pair<Unidade* /*Unidade*/, ConjuntoSala*> > > conjutoSalas;
-   //std::map<int/*DisciplinaId*/,>
-   // =========================
-
-public:
-
-   // =========== METODOS SET
-
-   // =========== METODOS GET
-
-   // ToDo : implementar os métodos básicos para todos os membros da classe.
-
 };
+
+#endif

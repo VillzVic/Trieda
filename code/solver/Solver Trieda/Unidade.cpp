@@ -2,7 +2,7 @@
 
 Unidade::Unidade(void)
 {
-   maiorSala = 0;
+   maior_sala = 0;
 }
 
 Unidade::~Unidade(void)

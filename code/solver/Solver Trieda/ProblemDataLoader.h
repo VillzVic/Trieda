@@ -143,6 +143,9 @@ private:
 
    /* Relaciona cada possível valor de crédito com as regras de créditos existentes. */
    void relacionaCredsRegras();
+
+   // Relaciona cada curso com o seu respectivo campus
+   void relacionaCursosCampus();
 };
 
 #endif // _PROBLEM_DATA_LOADER_H_

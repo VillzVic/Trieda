@@ -853,113 +853,98 @@ void SolverMIP::converteCjtSalaEmSala()
 
       }
 
-      /* Estrutura que armazena separadamente, por unidade, turma e tipo de sala, as variaveis x coletadas. */
-      std::map<std::vector<int/*Unidade,TPS,Turma*/>, std::vector<Variable*> > vars_x_Disc_Und_TPS_Turma;
+      // Estrutura que armazena separadamente, por unidade,
+	  // turma e tipo de sala, as variaveis x coletadas.
+      std::map< std::vector< int /*Unidade, TPS, Turma*/ >,
+		  std::vector< Variable * > > vars_x_Disc_Und_TPS_Turma;
 
       { // METODO
-
-         ITERA_VECTOR(it_Vars_x_Disc,vars_x_Disc,Variable)
+         ITERA_VECTOR(it_Vars_x_Disc, vars_x_Disc, Variable)
          {
-            std::vector<int/*Unidade,TPS,Turma*/> chave;
+            std::vector< int /*Unidade, TPS, Turma*/ > chave;
 
             chave.push_back((*it_Vars_x_Disc)->getUnidade()->getId());
             chave.push_back((*it_Vars_x_Disc)->getSubCjtSala()->getId());
             chave.push_back((*it_Vars_x_Disc)->getTurma());
 
-            //vars_x_Disc_Und_Turma[chave].push_back(*it_Vars_x_Disc);
             vars_x_Disc_Und_TPS_Turma[chave].push_back(*it_Vars_x_Disc);
          }
       }
 
-      /* 
-      Estrutura que armazena as salas na ordem em que se deve tentar alocar a disciplina em questão.
-      */
-      std::vector<Sala*> salas_Ordenadas;
+      // Estrutura que armazena as salas na ordem em
+	  // que se deve tentar alocar a disciplina em questão.
+
+      std::vector< Sala * > salas_Ordenadas;
 
       { // METODO
+         // Ordenando a estrutura <discSalas> do problemData
+		 // de acordo com os seguintes critérios:
+         // 1 - Salas preferenciais sugeridas pelo usuário.
+         // 2 - Outras salas da mesma unidade em que todas,
+		 // ou a maioria, das salas estavam associadas.
+         // 3 - Qualquer outra sala.
+         // OBS.: Por eqto tento fazer o passo 1 e depois o 3.
+		 // O 2 talvez nem precise pq agt ja esta convertendo
+         // a lista de cursos predios para associacoes de disciplinas a salas.
 
-         /*
-         Ordenando a estrutura <discSalas> do problemData de acordo com os seguintes critérios:
-
-         1 - Salas preferenciais sugeridas pelo usuário.
-         2 - Outras salas da mesma unidade em que todas, ou a maioria, das salas estavam associadas.
-         3 - Qualquer outra sala.
-
-         OBS.: Por eqto tento fazer o passo 1 e depois o 3. O 2 talvez nem precise pq agt ja esta convertendo
-         a lista de cursos predios para associacoes de disciplinas a salas.
-         */
-
-         //std::vector<std::pair<int/*Prioridade*/,Sala*> > salas_Prioridade;
-
-         //std::map<int/*Id Disc*/,std::vector<Sala*> >::iterator
-         //   it__Disc__Salas = problemData->discSalas.begin();
-
-         //// Para cada disciplina da estrutura <discSalas>
-         //for(; it__Disc__Salas != disc_Salas_Cont.end(); ++it__Disc__Salas)
-         //{
-         //   // Checando se a sala em questão é uma das salas preferenciais.
-         //   if()
-         //   {}
-         //}
-
-         // Por eqto, uma gamb.
-
-         //Adicionando as salas que foram associadas pelo usuario.
-
-         std::map<int/*Id Disc*/,GGroup<Sala*> >::iterator
-            it_Disc_Salas_Pref = problemData->disc_Salas_Pref.find(disciplina->getId());
+         // Adicionando as salas que foram associadas pelo usuario.
+         std::map< int /*Id Disc*/, GGroup< Sala * > >::iterator
+            it_Disc_Salas_Pref = problemData->disc_Salas_Pref.find( disciplina->getId() );
 
          if(it_Disc_Salas_Pref == problemData->disc_Salas_Pref.end())
          {
-            std::cout << "11111 Opa. Disciplina nao encontrada na estrutura <disc_Salas_Pref> (SolverMIP::getSolution()) !!! \n\nSaindo.\n";
+            std::cout << "Opa. Disciplina nao encontrada na estrutura\n"
+					  << "<disc_Salas_Pref> (SolverMIP::converteCjtSalaEmSala()) !!!"
+					  << "\nId da disciplina : " << disciplina->getId()
+					  << "\nNome da disciplina : " << disciplina->getNome()
+					  << "\n\nSaindo." << std::endl;
+
             exit(1);
          }
 
          // Iterando sobre as salas preferenciais para a disciplina em questão.
-         ITERA_GGROUP(it_Sala,it_Disc_Salas_Pref->second,Sala)
-         { salas_Ordenadas.push_back(*it_Sala); }
+         ITERA_GGROUP(it_Sala, it_Disc_Salas_Pref->second, Sala)
+         {
+			 salas_Ordenadas.push_back( *it_Sala );
+		 }
 
          // Adicionando as demais salas associadas à disciplina em questão.
+		 int id_disciplina = disciplina->getId();
 
-         std::map<int/*Id Disc*/,std::vector<Sala*> >::iterator
-            it_Disc_Demais_Salas = problemData->discSalas.find(disciplina->getId());
+         std::map< int /*Id Disc*/, std::vector< Sala * > >::iterator
+            it_Disc_Demais_Salas = problemData->discSalas.find( id_disciplina );
 
          if(it_Disc_Demais_Salas == problemData->discSalas.end())
          {
-            std::cout << "11111 Opa. Disciplina nao encontrada na estrutura <disc_Salas_Pref> (SolverMIP::getSolution()) !!! \n\nSaindo.\n";
+            std::cout << "Opa. Disciplina nao encontrada na estrutura\n"
+					  << "<discSalas> (SolverMIP::converteCjtSalaEmSala()) !!!"
+					  << "\nId da disciplina : " << disciplina->getId()
+					  << "\nNome da disciplina : " << disciplina->getNome()
+					  << "\n\nSaindo." << std::endl;
+
             exit(1);
          }
 
-         ITERA_VECTOR(it_Sala,it_Disc_Demais_Salas->second,Sala)
+         ITERA_VECTOR(it_Sala, it_Disc_Demais_Salas->second, Sala)
          {
             // Para não adicionar repetidas
-            if(std::find(salas_Ordenadas.begin(),salas_Ordenadas.end(),*it_Sala) == salas_Ordenadas.end())
+            if(std::find(salas_Ordenadas.begin(),
+						 salas_Ordenadas.end(), *(it_Sala) ) == salas_Ordenadas.end())
             {
                salas_Ordenadas.push_back(*it_Sala);
             }
          }
-
       }
 
-      std::map<std::vector<int/*Unidade,TPS,Turma*/>, std::vector<Variable*> >::iterator
+      std::map< std::vector< int /*Unidade, TPS, Turma*/ >, std::vector< Variable * > >::iterator
          it_Vars_x_Disc_Und_TPS_Turma = vars_x_Disc_Und_TPS_Turma.begin();
 
       // Iterando em cada conjunto de variaveis da estrutura <vars_x_Disc_Und_TPS_Turma>
-      for(; it_Vars_x_Disc_Und_TPS_Turma != vars_x_Disc_Und_TPS_Turma.end(); ++it_Vars_x_Disc_Und_TPS_Turma)
+      for(; it_Vars_x_Disc_Und_TPS_Turma != vars_x_Disc_Und_TPS_Turma.end();
+			++it_Vars_x_Disc_Und_TPS_Turma)
       {
          bool alocou = false;
 
-         //std::map<int/*Id Disc*/,GGroup<Sala*> >::iterator
-         //   it_Disc_Salas_Pref = problemData->disc_Salas_Pref.find(disciplina->getId());
-
-         //if(it_Disc_Salas_Pref == problemData->disc_Salas_Pref.end())
-         //{
-         //   std::cout << "Opa. Disciplina nao encontrada na estrutura <disc_Salas_Pref> (SolverMIP::getSolution()) !!! \n\nSaindo.\n";
-         //   exit(1);
-         //}
-
-         // Iterando sobre as salas preferenciais para a disciplina em questão.
-         //ITERA_GGROUP(it_Sala,it_Disc_Salas_Pref->second,Sala)
          // Iterando sobre as salas ordenadas para a disciplina em questão.
          ITERA_VECTOR(it_Salas_Ordenadas,salas_Ordenadas,Sala)
          {
@@ -968,35 +953,36 @@ void SolverMIP::converteCjtSalaEmSala()
                (*it_Salas_Ordenadas)->getId()) != 
                it_Vars_x_Disc_Und_TPS_Turma->second.front()->getSubCjtSala()->getTodasSalas().end())
             {
-               std::map<Sala*,std::vector<std::pair<int/*dia*/,int/*creds. Livres*/> > >::iterator
-                  it_Creditos_Livres_Sala = creditos_Livres_Sala.find(*it_Salas_Ordenadas);
+               std::map< Sala *, std::vector< std::pair< int /*dia*/, int /*creds. Livres*/ > > >::iterator
+                  it_Creditos_Livres_Sala = creditos_Livres_Sala.find( *it_Salas_Ordenadas );
 
                if(it_Creditos_Livres_Sala == creditos_Livres_Sala.end())
                {
-                  std::cout << "Opa. Sala nao encontrada na estrutura <creditos_Livres_Sala> (SolverMIP::getSolution()) !!! \n\nSaindo.\n";
+                  std::cout << "Opa. Sala nao encontrada na estrutura\n"
+							<< "<creditos_Livres_Sala> (SolverMIP::converteCjtSalaEmSala()) !!!"
+							<< "\n\nSaindo." <<std::endl;
+
                   exit(1);
                }
 
-               // Indica se os dias demandados pelas vars x são compatíveis com os dias disponíveis da sala.
+               // Indica se os dias demandados pelas vars x são
+			   // compatíveis com os dias disponíveis da sala.
                bool dias_Sala_Compativeis = true;
 
                { // METODO
 
                   // Iterando em cada variavel X armazenada para o conjunto em questão
-                  //ITERA_VECTOR(it_Dias_Demandados_Vars_x,it_Vars_x_Disc_Und_Turma->second,Variable)
-                  ITERA_VECTOR(it_Dias_Demandados_Vars_x,it_Vars_x_Disc_Und_TPS_Turma->second,Variable)
+                  ITERA_VECTOR(it_Dias_Demandados_Vars_x, it_Vars_x_Disc_Und_TPS_Turma->second, Variable)
                   {
                      // Iterando nos dias disponiveis da sala
-                     std::vector<std::pair<int/*dia*/,int/*creds. Livres*/> >::iterator
+                     std::vector< std::pair< int /*dia*/, int /*creds. Livres*/ > >::iterator
                         it_Dia = it_Creditos_Livres_Sala->second.begin();
 
                      for(; it_Dia != it_Creditos_Livres_Sala->second.end(); ++it_Dia)
                      {
-                        /*
-                        Se encontrei o dia, testo se tem a qtd de creds livres necessaria. Caso
-                        nao possua a qtd de creditos livres necessaria, posso parar de tentar
-                        alocar nessa sala.
-                        */
+                        // Se encontrei o dia, testo se tem a qtd de creds livres necessaria. Caso
+                        // nao possua a qtd de creditos livres necessaria, posso parar de tentar
+                        // alocar nessa sala.
                         if(it_Dia->first == (*it_Dias_Demandados_Vars_x)->getDia())
                         {
                            if(it_Dia->second >= (*it_Dias_Demandados_Vars_x)->getValue())
@@ -1008,19 +994,19 @@ void SolverMIP::converteCjtSalaEmSala()
                            else
                            {
                               dias_Sala_Compativeis = false;
-                              break; // Já que o dia é inviável, não faz sentido buscar os outros dias.
+
+							  // Já que o dia é inviável, não
+							  // faz sentido buscar os outros dias.
+                              break;
                            }
                         }
                      }
 
                      if(!dias_Sala_Compativeis)
                      {
-                        /*
-                        Parando o iterador <it_Dias_Demandados_Vars_x>.
-
-                        Já se sabe que a sala não é compatível para o dia em questão. Portanto
-                        paro a busca pelos demais dias livres que a sala pode ter.
-                        */
+                        // Parando o iterador <it_Dias_Demandados_Vars_x>.
+                        // Já se sabe que a sala não é compatível para o dia em questão. Portanto
+                        // paro a busca pelos demais dias livres que a sala pode ter.
                         break;
                      }
                   }
@@ -1029,29 +1015,37 @@ void SolverMIP::converteCjtSalaEmSala()
                   if(dias_Sala_Compativeis)
                   {
                      // Iterando em cada variavel X armazenada
-                     ITERA_VECTOR(it_Dias_Demandados_Vars_x,it_Vars_x_Disc_Und_TPS_Turma->second,Variable)
+                     ITERA_VECTOR(it_Dias_Demandados_Vars_x,
+								  it_Vars_x_Disc_Und_TPS_Turma->second, Variable)
                      {
                         if((*it_Dias_Demandados_Vars_x)->getSala() != NULL)
                         {
-                           std::cout << "Opa. Fui setar a sala para uma var x__i_u_tps_t e ja estava setada. (SolverMIP::getSolution()) !!! \n\nSaindo.\n";
+                           std::cout << "Opa. Fui setar a sala para uma\n"
+									 << "var x__i_u_tps_t e ja estava setada.\n"
+									 << "(// Já que o dia é inviável, não faz sentido\n"
+									 << "buscar os outros dias.) !!!"
+									 << "\n\nSaindo." << std::endl;
+
                            exit(1);
                         }
 
                         // Setando a sala na(s) variavel(eis)
-                        (*it_Dias_Demandados_Vars_x)->setSala(*it_Salas_Ordenadas);
+                        (*it_Dias_Demandados_Vars_x)->setSala( *it_Salas_Ordenadas );
 
                         // Iterando nos dias disponiveis da sala
-                        std::vector<std::pair<int/*dia*/,int/*creds. Livres*/> >::iterator
+                        std::vector< std::pair< int /*dia*/, int /*creds. Livres*/ > >::iterator
                            it_Dia = it_Creditos_Livres_Sala->second.begin();
 
                         for(; it_Dia != it_Creditos_Livres_Sala->second.end(); ++it_Dia)
                         {
-                           /* Quando encontro o dia correto, atualizo a estrutura que armazena 
-                           os créditos livres. */
+                           // Quando encontro o dia correto, atualizo
+							// a estrutura que armazena  os créditos livres.
                            if(it_Dia->first == (*it_Dias_Demandados_Vars_x)->getDia())
                            {
                               it_Dia->second -= (int) (*it_Dias_Demandados_Vars_x)->getValue();
-                              break; // Apenas por eficiência
+
+							  // Apenas por eficiência
+                              break;
                            }
                         }
                      }
@@ -1059,65 +1053,74 @@ void SolverMIP::converteCjtSalaEmSala()
                      // Setando a FLAG que indica se alocou ou não
                      alocou = true;
 
-                     break; // Parando a busca de salas.
+					 // Parando a busca de salas.
+                     break;
                   }
                   else
-				  { /* Nao faço nada. Deixo continuar tentando alocar nas outras salas associadas.  */ }
-
+				  {
+					  // Nao faço nada. Deixo continuar
+					  // tentando alocar nas outras salas associadas.
+				  }
                }
-
             }
             else
-            { /* Nao faço nada. Deixo continuar tentando alocar nas outras salas associadas.  */ }
+            {
+				// Nao faço nada. Deixo continuar
+				// tentando alocar nas outras salas associadas.
+			}
          }
 
-         /*        
-         Checando se a alocação foi realizada.
+         // Checando se a alocação foi realizada.
 
-         Abaixo, devemos tratar da possível causa da alocação da turma da disciplina em questão
-         não ter sido realizada.
+         // Abaixo, devemos tratar da possível causa da alocação da turma da disciplina em questão
+         // não ter sido realizada.
 
-         1 - Quando a disciplina foi dividida em mais de 1 dia letivo para realizar um atendimento,
-         pode ser que não se tenha mais nenhuma sala com os dias letivos demandados com créditos livres
-         o suficiente.
+         // 1 - Quando a disciplina foi dividida em mais de 1 dia letivo para realizar um atendimento,
+         // pode ser que não se tenha mais nenhuma sala com os dias letivos demandados com créditos livres
+         // o suficiente.
 
-         Solução: Por eqto, atendo em quantas salas diferentes forem necessárias, sem um padrão de
-         escolha das salas.
+         // Solução: Por eqto, atendo em quantas salas diferentes forem necessárias, sem um padrão de
+         // escolha das salas.
 
-         Tinha outras causas, mas como mudei a heurística pra poder rodar pra todas as salas
-         associadas (pelo usuário e pelo solver), acredito que este seja o único erro.
-         */
+         // Tinha outras causas, mas como mudei a heurística pra poder rodar pra todas as salas
+         // associadas (pelo usuário e pelo solver), acredito que este seja o único erro.
+
          if(!alocou)
          {
-            /* 
-            Estrutura que armazena separadamente, por unidade, turma, tipo de sala e DIA, as variaveis x coletadas.
-            */
-            //std::map<std::vector<int/*Unidade,TPS,Turma,dia*/>, std::vector<Variable*> > 
-            std::map<std::vector<int/*Unidade,TPS,Turma,dia*/>, Variable* > 
+             
+            // Estrutura que armazena separadamente, por unidade,
+			// turma, tipo de sala e DIA, as variaveis x coletadas.
+
+            std::map< std::vector< int /*Unidade, TPS, Turma, dia*/ >, Variable * > 
                vars_x_Disc_Und_TPS_Turma_DIA;
 
             // Armazenando os dados na estrutura
-            ITERA_VECTOR(it_Dias_Demandados_Vars_x,it_Vars_x_Disc_Und_TPS_Turma->second,Variable)
+            ITERA_VECTOR(it_Dias_Demandados_Vars_x,
+						 it_Vars_x_Disc_Und_TPS_Turma->second, Variable)
             {
-               std::vector<int/*Unidade,TPS,Turma,Dia*/> chave;
+               std::vector< int /*Unidade, TPS, Turma, Dia*/ > chave;
 
                chave.push_back((*it_Dias_Demandados_Vars_x)->getUnidade()->getId());
                chave.push_back((*it_Dias_Demandados_Vars_x)->getSubCjtSala()->getId());
                chave.push_back((*it_Dias_Demandados_Vars_x)->getTurma());
                chave.push_back((*it_Dias_Demandados_Vars_x)->getDia());
 
-               if(vars_x_Disc_Und_TPS_Turma_DIA.find(chave) != vars_x_Disc_Und_TPS_Turma_DIA.end())
+               if(vars_x_Disc_Und_TPS_Turma_DIA.find(chave)
+					!= vars_x_Disc_Und_TPS_Turma_DIA.end())
                {
-                  std::cout << "Opa. Fui add um dado na estrutura <vars_x_Disc_Und_TPS_Turma_DIA> e iria sobrescrever um existente. VOLTAR PARA VECTOR. (SolverMIP::getSolution()) !!! \n\nSaindo.\n";
+                  std::cout << "Opa. Fui add um dado na estrutura\n"
+							<< "<vars_x_Disc_Und_TPS_Turma_DIA> e iria\n"
+							<< "sobrescrever um existente. VOLTAR PARA VECTOR.\n"
+							<< "(SolverMIP::converteCjtSalaEmSala()) !!!"
+							<< "\n\nSaindo." << std::endl;
+
                   exit(1);
                }
 
-               vars_x_Disc_Und_TPS_Turma_DIA[chave] = *it_Dias_Demandados_Vars_x;
-               //vars_x_Disc_Und_TPS_Turma_DIA[chave].push_back(*it_Dias_Demandados_Vars_x);
+               vars_x_Disc_Und_TPS_Turma_DIA[chave] = *(it_Dias_Demandados_Vars_x);
             }
 
-            std::map<std::vector<int/*Unidade,TPS,Turma,Dia*/>, Variable*>::iterator
-               //std::map<std::vector<int/*Unidade,TPS,Turma,Dia*/>, std::vector<Variable*> >::iterator
+            std::map< std::vector< int /*Unidade, TPS, Turma, Dia */ >, Variable * >::iterator
                it_Vars_x_Disc_Und_TPS_Turma_DIA = vars_x_Disc_Und_TPS_Turma_DIA.begin();
 
             // Iterando em cada variavel da estrutura <vars_x_Disc_Und_TPS_Turma_DIA>
@@ -1127,71 +1130,65 @@ void SolverMIP::converteCjtSalaEmSala()
                bool continuaBusca = false;
 
                // Iterando sobre as salas ordenadas para a disciplina em questão.
-               ITERA_VECTOR(it_Salas_Ordenadas,salas_Ordenadas,Sala)
+               ITERA_VECTOR(it_Salas_Ordenadas, salas_Ordenadas, Sala)
                {
                   // Checando se a sala em questão pertence ao TPS especificado pelo solver
-                  /*
-                  if((*it_Vars_x_Disc_Und_TPS_Turma_DIA->second.begin())->getSubCjtSala()->getTodasSalas().find(
-                  (*it_Salas_Ordenadas)->getId()) != 
-                  (*it_Vars_x_Disc_Und_TPS_Turma_DIA->second.begin())->getSubCjtSala()->getTodasSalas().end())
-                  */
                   if(it_Vars_x_Disc_Und_TPS_Turma_DIA->second->getSubCjtSala()->getTodasSalas().find(
                      (*it_Salas_Ordenadas)->getId()) != 
                      it_Vars_x_Disc_Und_TPS_Turma_DIA->second->getSubCjtSala()->getTodasSalas().end())
                   {
-                     std::map<Sala*,std::vector<std::pair<int/*dia*/,int/*creds. Livres*/> > >::iterator
-                        it_Creditos_Livres_Sala = creditos_Livres_Sala.find(*it_Salas_Ordenadas);
+                     std::map< Sala *, std::vector< std::pair< int /*dia*/, int /*creds. Livres*/ > > >::iterator
+                        it_Creditos_Livres_Sala = creditos_Livres_Sala.find( *it_Salas_Ordenadas );
 
                      if(it_Creditos_Livres_Sala == creditos_Livres_Sala.end())
                      {
-                        std::cout << "Opa. Sala nao encontrada na estrutura <creditos_Livres_Sala> (SolverMIP::getSolution()) !!! \n\nSaindo.\n";
+                        std::cout << "Opa. Sala nao encontrada na estrutura <creditos_Livres_Sala>\n"
+							<< "(SolverMIP::converteCjtSalaEmSala()) !!!\n"
+							<< "\n\nSaindo." << std::endl;
+
                         exit(1);
                      }
 
-                     // Indica se o dia demandado pela var x em questão é compatível com o dia disponível da sala.
-                     //bool dia_Sala_Compativel = true;
-
+                     // Indica se o dia demandado pela var x em
+					 // questão é compatível com o dia disponível da sala.
                      { // METODO
 
                         // Iterando nos dias disponiveis da sala
-                        std::vector<std::pair<int/*dia*/,int/*creds. Livres*/> >::iterator
+                        std::vector< std::pair< int /*dia*/, int /*creds. Livres*/ > >::iterator
                            it_Dia = it_Creditos_Livres_Sala->second.begin();
 
                         for(; it_Dia != it_Creditos_Livres_Sala->second.end(); ++it_Dia)
                         {
-                           /*
-                           Se encontrei o dia, testo se tem a qtd de creds livres necessaria. Caso
-                           nao possua a qtd de creditos livres necessaria, posso parar de tentar
-                           alocar nessa sala.
-                           */
-                           //if(it_Dia->first == (*it_Vars_x_Disc_Und_TPS_Turma_DIA->second.begin())->getDia())
+                           
+                           // Se encontrei o dia, testo se tem a qtd de creds livres necessaria. Caso
+                           // nao possua a qtd de creditos livres necessaria, posso parar de tentar
+                           // alocar nessa sala.
+
                            if(it_Dia->first == it_Vars_x_Disc_Und_TPS_Turma_DIA->second->getDia())
                            {
-                              //if(it_Dia->second >= ((int) (*it_Vars_x_Disc_Und_TPS_Turma_DIA->second.begin())->getValue()))
                               if(it_Dia->second >= ((int) it_Vars_x_Disc_Und_TPS_Turma_DIA->second->getValue()))
                               {
-                                 /*
-                                 Já posso alocar. Pois trata-se de apenas um dia.
-                                 */
+                                 // Já posso alocar. Pois trata-se de apenas um dia.
 
                                  // Setando a sala na variavel
-                                 //(*it_Vars_x_Disc_Und_TPS_Turma_DIA->second.begin())->setSala(*it_Salas_Ordenadas);
-                                 it_Vars_x_Disc_Und_TPS_Turma_DIA->second->setSala(*it_Salas_Ordenadas);
+                                 it_Vars_x_Disc_Und_TPS_Turma_DIA->second->setSala( *it_Salas_Ordenadas );
 
                                  // Atualizo a estrutura que armazena os créditos livres.
-                                 //it_Dia->second -= (int) (*it_Vars_x_Disc_Und_TPS_Turma_DIA->second.begin())->getValue();
                                  it_Dia->second -= (int) it_Vars_x_Disc_Und_TPS_Turma_DIA->second->getValue();
-
                                  it_Salas_Ordenadas = salas_Ordenadas.begin();
 
                                  alocou = true;
 
-                                 break; // Apenas dou um break por eficiência
+								 // Apenas dou um break por eficiência
+                                 break;
                               }
                               else
                               {
-                                 continuaBusca = true; // Continuo a busca em outras salas.
-                                 break; // Dia é inviável.
+								 // Continuo a busca em outras salas.
+                                 continuaBusca = true;
+
+								 // Dia é inviável.
+								 break;
                               }
                            }
                         }
@@ -1204,38 +1201,31 @@ void SolverMIP::converteCjtSalaEmSala()
                      }
                   }
                   else
-                  { /* Nao faço nada. Deixo continuar tentando alocar nas outras salas associadas.  */ }
+                  {
+					  // Nao faço nada. Deixo continuar
+					  // tentando alocar nas outras salas associadas.
+				  }
                }
-
-               // ======================
 
                // TRIEDA-715
 
-               /*
-               Ainda assim, a variável x em questão pode não ter sido convertida.
+               //Ainda assim, a variável x em questão pode não ter sido convertida.
+               //Pode acontecer o caso em que a variável x tem valor maior que 1 e todas as salas
+               //do TPS especificado pela variável em questão possuem apenas 1 cred livre. Desse modo,
+               //deve-se dividir os créditos da disciplina, alocando-os separadamente por sala.
 
-               Pode acontecer o caso em que a variável x tem valor maior que 1 e todas as salas
-               do TPS especificado pela variável em questão possuem apenas 1 cred livre. Desse modo,
-               deve-se dividir os créditos da disciplina, alocando-os separadamente por sala.
-               */
                if(continuaBusca && !alocou)
                {
-                  //std::cout << "Ainda nao alocou pq nenhuma sala possui a quantidade de creditos livres necessarios." << std::endl;
-                  //exit(1);
-
                   // Referenciando a variável em questão.
-                  Variable * pt_Var_x = it_Vars_x_Disc_Und_TPS_Turma_DIA->second;
+                  Variable * pt_Var_x = (it_Vars_x_Disc_Und_TPS_Turma_DIA->second);
 
-                  /*
-                  A ideia aqui é pegar a variável em questão e sair tentando alocar os créditos
-                  separadamente. Eles serão separados de acordo com a disponibilidade de cada
-                  sala.
+                  //A ideia aqui é pegar a variável em questão e sair tentando alocar os créditos
+                  //separadamente. Eles serão separados de acordo com a disponibilidade de cada
+                  //sala.
+                  //Quando a variável for totalmente alocada, aponta-se para NULL e finaliza a alocação da mesma.
+                  //IMPORTANTE: Como estou dividindo os créditos, tenho que criar novas variáveis. Lembrar de adiciona-las
+                  //à estrutura <vars_x> que armazena todas as variáveis do tipo x.
 
-                  Quando a variável for totalmente alocada, aponta-se para NULL e finaliza a alocação da mesma.
-
-                  IMPORTANTE: Como estou dividindo os créditos, tenho que criar novas variáveis. Lembrar de adiciona-las
-                  à estrutura <vars_x> que armazena todas as variáveis do tipo x.
-                  */
                   while(pt_Var_x)
                   {
                      // Iterando sobre as salas ordenadas para a disciplina em questão.
@@ -1251,30 +1241,31 @@ void SolverMIP::converteCjtSalaEmSala()
 
                            if(it_Creditos_Livres_Sala == creditos_Livres_Sala.end())
                            {
-                              std::cout << "Opa. Sala nao encontrada na estrutura <creditos_Livres_Sala> (SolverMIP::getSolution()) !!! \n\nSaindo.\n";
+                              std::cout << "Opa. Sala nao encontrada na estrutura\n"
+										<< "<creditos_Livres_Sala>\n"
+										<< "(SolverMIP::converteCjtSalaEmSala()) !!!"
+										<< "\n\nSaindo." << std::endl;
+
                               exit(1);
                            }
 
                            { // METODO
 
                               // Iterando nos dias disponiveis da sala
-                              std::vector<std::pair<int/*dia*/,int/*creds. Livres*/> >::iterator
+                              std::vector< std::pair< int /*dia*/, int /*creds. Livres*/ > >::iterator
                                  it_Dia = it_Creditos_Livres_Sala->second.begin();
 
                               for(; it_Dia != it_Creditos_Livres_Sala->second.end(); ++it_Dia)
                               {
-                                 /*
-                                 Se encontrei o dia, testo se tem a qtd de creds livres necessaria. Caso
-                                 nao possua a qtd de creditos livres necessaria, posso parar de tentar
-                                 alocar nessa sala.
-                                 */
+                                 // Se encontrei o dia, testo se tem a qtd de creds
+								 // livres necessaria. Caso nao possua a qtd de creditos
+								 // livres necessaria, posso parar de tentar alocar nessa sala.
+
                                  if(it_Dia->first == pt_Var_x->getDia())
                                  {
                                     if(it_Dia->second > 0)
                                     {
-                                       /*
-                                       Já posso alocar. Pois trata-se de apenas um dia.
-                                       */
+                                       // Já posso alocar. Pois trata-se de apenas um dia.
 
                                        // Cálculo do total de créditos que serão alocados.
                                        int creds_Alocar = (int)(pt_Var_x->getValue() - it_Dia->second);
@@ -1282,18 +1273,18 @@ void SolverMIP::converteCjtSalaEmSala()
                                        // Criando uma nova variável para uma divisão da variável em questão.
                                        Variable * var_x_NAO_ALOCADA = NULL;
 
-                                       /* Se o total de créditos a serem alocados for maior do que a 
-                                       o total de crédtios livres da sala (creds_Alocar > 0), devo criar uma cópia da variável
-                                       x em questão e atualizar o seu valor com a diferença entre
-                                       o total de créditos da var subtraido do total de cred. livre da sala.
+									   // Se o total de créditos a serem alocados for maior do que a 
+                                       // o total de crédtios livres da sala (creds_Alocar > 0), devo
+									   // criar uma cópia da variável 'x' em questão e atualizar o seu
+									   // valor com a diferença entre o total de créditos da var subtraido
+									   // do total de cred. livre da sala. Já no caso em que o total de
+									   // créditos alocados é menor ou igual ao total de créditos livres
+									   // da sala em questão (creds_Alocar <= 0), devo apenas alocar.
 
-                                       Já no caso em que o total de créditos alocados é menor ou igual ao total
-                                       de créditos livres da sala em questão (creds_Alocar <= 0), devo apenas alocar.
-                                       */
                                        if(creds_Alocar > 0)
                                        {
                                           // Criando uma nova variável para a divisão da variável em questão.
-                                          var_x_NAO_ALOCADA = new Variable(*pt_Var_x);
+                                          var_x_NAO_ALOCADA = new Variable( *pt_Var_x );
 
                                           // Atualizando a quantidade de créditos não alocada.
                                           var_x_NAO_ALOCADA->setValue(pt_Var_x->getValue() - creds_Alocar);
@@ -1306,26 +1297,29 @@ void SolverMIP::converteCjtSalaEmSala()
                                        }
 
                                        // Setando a sala na variavel
-                                       pt_Var_x->setSala(*it_Salas_Ordenadas);
+                                       pt_Var_x->setSala( *it_Salas_Ordenadas );
 
                                        // Atualizo a estrutura que armazena os créditos livres.
                                        it_Dia->second -= (int) pt_Var_x->getValue();
 
-                                       //it_Salas_Ordenadas = salas_Ordenadas.begin();
-
-                                       /* Checando se ainda existe algum crédito para alocar. */
+                                       // Checando se ainda existe algum crédito para alocar.
                                        if(var_x_NAO_ALOCADA)
                                        { pt_Var_x = var_x_NAO_ALOCADA; }
                                        else
-                                       { pt_Var_x = NULL; /* Condição para sair do loop. */ }
+                                       {
+										   // Condição para sair do loop.
+										   pt_Var_x = NULL;
+									   }
 
                                        alocou = true;
 
-                                       break; // Apenas dou um break por eficiência
+									   // Apenas dou um break por eficiência
+                                       break;
                                     }
                                     else
                                     {
-                                       break; // Dia é inviável.
+									    // Dia é inviável.
+                                        break;
                                     }
                                  }
                               }
@@ -1336,20 +1330,19 @@ void SolverMIP::converteCjtSalaEmSala()
                                  break;
                               }
                            }
-
                         }
                         else
-                        { /* Nao faço nada. Deixo continuar tentando alocar nas outras salas associadas.  */ }
+                        {
+							// Nao faço nada. Deixo continuar tentando alocar nas outras salas associadas.
+						}
                      }
                   }
                }
-               // ======================
 
-               // ======================
-               /*
-               Teste para saber se deixou de alocar a disciplina após ter varrido todas as
-               salas.
-               */
+               
+               // Teste para saber se deixou de alocar a disciplina após ter varrido todas as
+               // salas.
+               
                //if(!continuaBusca)
                //{
                //   std::cout << "Ainda nao alocou. Agora eu nao sei pq. REFLITA !! (getSolution())" << std::endl;
@@ -1358,8 +1351,6 @@ void SolverMIP::converteCjtSalaEmSala()
                //   exit(1);
                //}
                //alocou = false;
-               // ======================
-
             }
          }
       }
@@ -1369,10 +1360,9 @@ void SolverMIP::converteCjtSalaEmSala()
    // Imprimindo as variáveis x_{i,d,u,s,t} convertidas.
 
    std::cout << "\n\n\n";
-
    std::cout << "x\t\ti\td\tu\ts\tt\n";
 
-   ITERA_VECTOR(it_Vars_x,vars_x,Variable)
+   ITERA_VECTOR(it_Vars_x, vars_x, Variable)
    {
       if ( (*it_Vars_x)->getSala() == NULL )
       {
@@ -1405,7 +1395,7 @@ void SolverMIP::getSolutionTatico()
    ITERA_VECTOR(it_Vars_x,vars_x,Variable)
    {
       // Descobrindo qual Campus a variável x em questão pertence.
-      Campus * campus = problemData->refCampus[(*it_Vars_x)->getUnidade()->getIdCampus()];
+      Campus * campus = problemData->refCampus[ (*it_Vars_x)->getUnidade()->getIdCampus() ];
 
       // Caso básico: Ainda não cadastrei nenhum Campus.
       //if(problemSolution->atendimento_campus.size() == 0)
@@ -1491,26 +1481,25 @@ void SolverMIP::getSolutionTatico()
       {
          bool novo_Campus = true;
 
-         //ITERA_GGROUP(it_At_Campus,problemSolution->atendimento_campus,AtendimentoCampus)
-         ITERA_GGROUP(it_At_Campus,*problemSolution->atendimento_campus,AtendimentoCampus)
+         ITERA_GGROUP(it_At_Campus, *(problemSolution->atendimento_campus),
+					  AtendimentoCampus)
          {
             if(it_At_Campus->getId() == campus->getId())
             {
-               //if(it_At_Campus->atendimentos_unidades.size() == 0)
+               
                if(it_At_Campus->atendimentos_unidades->size() == 0)
                {
+				  // NOVA UNIDADE
                   std::cout << "Achei que nao era pra cair aqui <dbg1>" << std::endl;
                   exit(1);
-                  // NOVA UNIDADE
                }
                else
                {
                   Unidade * unidade = (*it_Vars_x)->getUnidade();
 
                   bool nova_Unidade = true;
-
-                  //ITERA_GGROUP(it_At_Unidade,it_At_Campus->atendimentos_unidades,AtendimentoUnidade)
-                  ITERA_GGROUP(it_At_Unidade,*it_At_Campus->atendimentos_unidades,AtendimentoUnidade)
+                  ITERA_GGROUP(it_At_Unidade, *(it_At_Campus->atendimentos_unidades),
+							   AtendimentoUnidade)
                   {
                      if(it_At_Unidade->getId() == unidade->getId())
                      {
@@ -1815,7 +1804,7 @@ void SolverMIP::getSolutionTatico()
          {
             AtendimentoCampus * at_Campus = new AtendimentoCampus();
             at_Campus->setId(campus->getId());
-            at_Campus->campus_id = campus->codigo;
+            at_Campus->campus_id = campus->getCodigo();
 
             at_Campus->campus = campus;
 
@@ -2554,12 +2543,12 @@ int SolverMIP::cria_variavel_abertura(void)
             v.setDisciplina(*it_disc);    // d
             v.setCampus(*it_campus);	  // cp
 
-            std::pair<int,int> dc = std::make_pair
-               (it_disc->getId(),it_campus->getId());
-
+            std::pair<int,int> dc = std::make_pair( it_disc->getId(), it_campus->getId() );
 
             if(problemData->demandas_campus.find(dc) ==	problemData->demandas_campus.end())
-            { problemData->demandas_campus[dc] = 0; }
+            {
+				problemData->demandas_campus[dc] = 0;
+			}
 
             double ratioDem = ( it_disc->getDemandaTotal() - 
                problemData->demandas_campus[dc] ) 
@@ -4251,7 +4240,7 @@ int SolverMIP::cria_restricao_carga_horaria(void)
 
             if (cHash.find(c) != cHash.end()) continue;
 
-            nnz = itCampus->totalSalas * 7;
+            nnz = itCampus->getTotalSalas() * 7;
 
             OPT_ROW row( nnz + 1, OPT_ROW::EQUAL , 0 , name );
 
@@ -4989,16 +4978,16 @@ int SolverMIP::cria_restricao_evita_sobreposicao(void)
    Variable v;
    VariableHash::iterator it_v;
 
-   ITERA_GGROUP(itCampus,problemData->campi,Campus)
+   ITERA_GGROUP(itCampus, problemData->campi, Campus)
    {
-      ITERA_GGROUP(itUnidade,itCampus->unidades,Unidade)
+      ITERA_GGROUP(itUnidade, itCampus->unidades, Unidade)
       {
          GGroup<int>::iterator itDiasLetUnid =
-            itUnidade->diasLetivos.begin();
+            itUnidade->dias_letivos.begin();
 
-         for(; itDiasLetUnid != itUnidade->diasLetivos.end(); itDiasLetUnid++)
+         for(; itDiasLetUnid != itUnidade->dias_letivos.end(); itDiasLetUnid++)
          {
-            ITERA_GGROUP(itDisc,problemData->disciplinas,Disciplina)
+            ITERA_GGROUP(itDisc, problemData->disciplinas, Disciplina)
             {
                for(int turma = 0; turma < itDisc->getNumTurmas(); turma++)
                {
@@ -6253,16 +6242,15 @@ int SolverMIP::cria_restricao_cap_sala_compativel_turma(void)
 			}
 
             nnz = problemData->ofertas.size() * problemData->cursos.size() +
-               itCampus->totalSalas * 7;
+				  itCampus->getTotalSalas() * 7;
 
             OPT_ROW row( nnz , OPT_ROW::LESS , 0.0 , name );
 
             GGroup<Oferta*>::iterator itOferta = 
-               problemData->ofertasDisc[itDisc->getId()].begin();
-            for(; itOferta != problemData->ofertasDisc[itDisc->getId()].end(); itOferta++)
+               problemData->ofertasDisc[ itDisc->getId() ].begin();
+            for(; itOferta != problemData->ofertasDisc[ itDisc->getId() ].end();
+				  itOferta++)
             {
-               //if(itOferta->curso_id == itCurso->getId())
-               //{
                v.reset();
                v.setType(Variable::V_ALUNOS);
                v.setTurma(turma);
@@ -6274,25 +6262,22 @@ int SolverMIP::cria_restricao_cap_sala_compativel_turma(void)
                {
 				   row.insert(it_v->second, 1.0);
 			   }
-               //}
             }
 
-            ITERA_GGROUP(itUnidade,itCampus->unidades,Unidade)
+            ITERA_GGROUP(itUnidade, itCampus->unidades, Unidade)
             {
                ITERA_GGROUP(itCjtSala,itUnidade->conjutoSalas,ConjuntoSala)
                {
-                  GGroup<int/*Dias*/>::iterator itDiscSala_Dias =
-                     problemData->disc_Conjutno_Salas__Dias[std::make_pair<int,int>
-                     //problemData->discSala_Dias[std::make_pair<int,int>
-                     (itDisc->getId(),itCjtSala->getId())].begin();
+                  GGroup< int /*Dias*/ >::iterator itDiscSala_Dias =
+                     problemData->disc_Conjutno_Salas__Dias
+					 [ std::make_pair< int, int >( itDisc->getId(), itCjtSala->getId() ) ].begin();
 
-                  for(; itDiscSala_Dias !=                     
-                     problemData->disc_Conjutno_Salas__Dias[std::make_pair<int,int>
-                     //problemData->discSala_Dias[std::make_pair<int,int>
-                     (itDisc->getId(),itCjtSala->getId())].end(); itDiscSala_Dias++)
+                  for(; itDiscSala_Dias != problemData->disc_Conjutno_Salas__Dias
+					 [ std::make_pair< int, int >( itDisc->getId(), itCjtSala->getId() ) ].end();
+						itDiscSala_Dias++)
                   { 
                      v.reset();
-                     v.setType(Variable::V_OFERECIMENTO);
+                     v.setType( Variable::V_OFERECIMENTO );
                      v.setTurma(turma);
                      v.setDisciplina(*itDisc);
                      v.setUnidade(*itUnidade);
@@ -6302,11 +6287,12 @@ int SolverMIP::cria_restricao_cap_sala_compativel_turma(void)
                      it_v = vHash.find(v);
                      if( it_v != vHash.end() )
                      { 
-                        //int tmp = (itCjtSala->getId() > 0 ? itCjtSala->getId() : (-itCjtSala->getId()));
-                        int tmp = (itCjtSala->getCapacidadeRepr() > 0 ? itCjtSala->getCapacidadeRepr() : (-itCjtSala->getCapacidadeRepr()));
+                        int tmp = (itCjtSala->getCapacidadeRepr() > 0 ?
+								   itCjtSala->getCapacidadeRepr() :
+								   (-itCjtSala->getCapacidadeRepr()));
+
                         row.insert(it_v->second, -tmp);
                      }
-                     //-itCjtSala->capTotalSalas()); }
                   }
                }
             }
@@ -6320,7 +6306,6 @@ int SolverMIP::cria_restricao_cap_sala_compativel_turma(void)
             }
          }
       }
-      //}
    }
 
    //ITERA_GGROUP(itCampus,problemData->campi,Campus)
@@ -7202,11 +7187,11 @@ int SolverMIP::cria_restricao_aluno_curso_disc(void)
    Variable v;
    VariableHash::iterator it_v;
 
-   ITERA_GGROUP(itCampus,problemData->campi,Campus)
+   ITERA_GGROUP(itCampus, problemData->campi, Campus)
    {
-      ITERA_GGROUP(itCurso,problemData->cursos,Curso)
+      ITERA_GGROUP(itCurso, problemData->cursos, Curso)
       {
-         ITERA_GGROUP(itDisc,problemData->disciplinas,Disciplina)
+         ITERA_GGROUP(itDisc, problemData->disciplinas, Disciplina)
          {
             for(int turma = 0; turma < itDisc->getNumTurmas(); turma++)
             {
@@ -7227,9 +7212,10 @@ int SolverMIP::cria_restricao_aluno_curso_disc(void)
                nnz = problemData->ofertasDisc[itDisc->getId()].size() + 1;
                OPT_ROW row( nnz, OPT_ROW::LESS , 0.0 , name );
 
-               GGroup<Oferta*>::iterator itOfertasDisc = 
+               GGroup< Oferta * >::iterator itOfertasDisc = 
                   problemData->ofertasDisc[itDisc->getId()].begin();
-               for(; itOfertasDisc != problemData->ofertasDisc[itDisc->getId()].end(); itOfertasDisc++)
+               for(; itOfertasDisc != problemData->ofertasDisc[itDisc->getId()].end();
+				     itOfertasDisc++)
                {
                   if(itOfertasDisc->campus == *itCampus)
                   {
@@ -7259,7 +7245,9 @@ int SolverMIP::cria_restricao_aluno_curso_disc(void)
 
                it_v = vHash.find(v);
                if( it_v != vHash.end() )
-               { row.insert(it_v->second, -itCampus->maiorSala * 100 ); }
+               {
+				   row.insert(it_v->second, -itCampus->getMaiorSala() * 100 );
+			   }
 
                if(row.getnnz() != 0)
                {
