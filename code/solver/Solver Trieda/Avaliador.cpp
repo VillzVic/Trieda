@@ -62,59 +62,63 @@ Avaliador::~Avaliador()
 
 void Avaliador::imprimeResultados()
 {
-	std::cout << std::endl << "Violacoes de restricao de fixacao : "
-			  << totalViolacaoRestricaoFixacao << std::endl;
+	std::cout << "Violacoes de restricao de fixacao : "
+			  << totalViolacaoRestricaoFixacao << std::endl << std::endl;
 
-	std::cout << std::endl << "Violacoes de deslocamento de professor : "
-			  << totalViolacoesDeslocamentoProfessor << std::endl;
+	std::cout << "Violacoes de deslocamento de professor : "
+			  << totalViolacoesDeslocamentoProfessor << std::endl << std::endl;
 
-	std::cout << std::endl << "Tempo de deslocamento de professor : "
-			  << totalDeslocamentosProfessor << std::endl;
+	std::cout << "Tempo de deslocamento de professor : "
+			  << totalDeslocamentosProfessor << std::endl << std::endl;
 
-	std::cout << std::endl << "Violacoes de deslocamento de alunos : "
-			  << totalViolacoesDescolamento << std::endl;
+	std::cout << "Violacoes de deslocamento de alunos : "
+			  << totalViolacoesDescolamento << std::endl << std::endl;
 
-	std::cout << std::endl << "Tempo de deslocamento de alunos : "
-			  << totalTempoDescolamento << std::endl;
+	std::cout << "Tempo de deslocamento de alunos : "
+			  << totalTempoDescolamento << std::endl << std::endl;
 
-	std::cout << std::endl << "Total de gaps nos horarios dos professores : "
-			  << totalGapsHorariosProfessores << std::endl;
+	std::cout << "Total de gaps nos horarios dos professores : "
+			  << totalGapsHorariosProfessores << std::endl << std::endl;
 
-	std::cout << std::endl << "Avaliacao do corpo docente : "
-			  << totalAvaliacaoCorpoDocente << std::endl;
+	std::cout << "Avaliacao do corpo docente : "
+			  << totalAvaliacaoCorpoDocente << std::endl << std::endl;
 
-	std::cout << std::endl << "Custo do corpo docente : "
-			  << totalCustoCorpoDocente << std::endl;
+	std::cout << "Custo do corpo docente : "
+			  << totalCustoCorpoDocente << std::endl << std::endl;
 
-	std::cout << std::endl << "Violacoes de carga horaria minima do semestre anterior (sindicato) : "
-			  << totalViolacoesCHMinimaSemestreAterior << std::endl;
+	std::cout << "Violacoes de carga horaria minima do semestre anterior (sindicato) : "
+			  << totalViolacoesCHMinimaSemestreAterior << std::endl << std::endl;
 
-	std::cout << std::endl << "Violacoes de carga horaria minima dos professores : "
-			  << totalViolacoesCHMinimaProfessor << std::endl;
+	std::cout << "Violacoes de carga horaria minima dos professores : "
+			  << totalViolacoesCHMinimaProfessor << std::endl << std::endl;
 
-	std::cout << std::endl << "Violacoes de carga horaria maxima dos professores : "
-			  << totalViolacoesCHMaximaProfessor << std::endl;
+	std::cout << "Violacoes de carga horaria maxima dos professores : "
+			  << totalViolacoesCHMaximaProfessor << std::endl << std::endl;
 
-	std::cout << std::endl << "Dias em que os professores ministram aulas : "
-			  << totalDiasProfessorMinistraAula << std::endl;
+	std::cout << "Dias em que os professores ministram aulas : "
+			  << totalDiasProfessorMinistraAula << std::endl << std::endl;
 
-	std::cout << std::endl << "Violacoes do tipo ultima aula dia D / primeira aula dia D+1 : "
-			  << totalViolacoesUltimaPrimeiraAula << std::endl;
+	std::cout << "Violacoes do tipo ultima aula dia D / primeira aula dia D+1 : "
+			  << totalViolacoesUltimaPrimeiraAula << std::endl << std::endl;
 
-	std::cout << std::endl << "Violacoes de percentual minimo de mestres : "
-			  << totalViolacoesMestres << std::endl;
+	std::cout << "Violacoes de percentual minimo de mestres : "
+			  << totalViolacoesMestres << std::endl << std::endl;
 
-	std::cout << std::endl << "Violacoes de percentual minimo de doutores : "
-			  << totalViolacoesDoutores << std::endl;
+	std::cout << "Violacoes de percentual minimo de doutores : "
+			  << totalViolacoesDoutores << std::endl << std::endl;
 
-	std::cout << std::endl << "Violacoes de numero de disciplinas por professor por curso : "
-			  << totalViolacoesDiscProfCurso << std::endl;
+	std::cout << "Violacoes de numero de disciplinas por professor por curso : "
+			  << totalViolacoesDiscProfCurso << std::endl << std::endl;
 
-	std::cout << std::endl << "Avaliacao de preferencia de professor pelas disciplinas : "
-			  << totalPreferenciasProfessorDisciplina << std::endl;
+	std::cout << "Avaliacao de preferencia de professor pelas disciplinas : "
+			  << totalPreferenciasProfessorDisciplina << std::endl << std::endl;
 
-	std::cout << std::endl << "Total de professores virtuais : "
+	std::cout << "Total de professores virtuais : "
 			  << totalProfessoresVirtuais << std::endl << std::endl;
+
+	std::cout << "Total de creditos de professores virtuais : "
+			  << totalCreditosProfessoresVirtuais
+			  << std::endl << std::endl << std::endl;
 }
 
 double Avaliador::avaliaSolucao(SolucaoOperacional & solucao, bool imprime_resultados)
@@ -345,7 +349,7 @@ void Avaliador::calculaDescolamentoProfessor(SolucaoOperacional & solucao)
 	totalDeslocamentosProfessor = num_deslocamentos_professor;
 }
 
-void Avaliador::calculaDescolamentoBlocoCurricular(SolucaoOperacional& solucao)
+void Avaliador::calculaDescolamentoBlocoCurricular(SolucaoOperacional & solucao)
 {
 	int violacoes_deslocamento = 0;  // TRIEDA-739
 	double tempo_deslocamento = 0.0; // TRIEDA-740
@@ -490,12 +494,12 @@ void Avaliador::calculaDescolamentoBlocoCurricular(SolucaoOperacional& solucao)
 				tempo_minimo = abs(tempo_minimo);
 
 				// Tempo existente entre as aulas 'aula_anterior' e 'aula_atual'
-				tempo_disponivel = (indice_horario_atual - indice_horario_anterior) * (MINUTOS_POR_HORARIO);
-				tempo_disponivel = abs(tempo_disponivel);
+				tempo_disponivel = ( indice_horario_atual - indice_horario_anterior ) * ( MINUTOS_POR_HORARIO );
+				tempo_disponivel = abs( tempo_disponivel );
 
 				// Verifica se ocorreu a violação de tempo mínimo
 				// necessário para se deslocar entre campus/unidades
-				if (tempo_disponivel < tempo_minimo)
+				if ( tempo_disponivel < tempo_minimo )
 				{
 					// Critério de avaliação n° 1:
 					// Número de violações ocorridas de tempo viável
@@ -504,7 +508,7 @@ void Avaliador::calculaDescolamentoBlocoCurricular(SolucaoOperacional& solucao)
 
 				// Critério de avaliação n° 2:
 				// Tempo de deslocamento entre uma aula e outra
-				tempo_deslocamento += (tempo_minimo);
+				tempo_deslocamento += ( tempo_minimo );
 			}
 
 			// Atualiza os ponteiros para a próxima iteração

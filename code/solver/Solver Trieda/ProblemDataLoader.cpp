@@ -1460,7 +1460,7 @@ void ProblemDataLoader::cria_blocos_curriculares()
 			   int id_oferta = 0;
 			   ITERA_GGROUP_LESSPTR(it_demanda, *(demandas), Demanda)
                {
-				   id_disciplina = disciplina->getId();
+				   id_disciplina = abs( disciplina->getId() );
 				   id_oferta = oferta->getId();
 
 				   if ( it_demanda->disciplina->getId() == id_disciplina &&
@@ -1719,35 +1719,45 @@ void ProblemDataLoader::calculaDemandas()
    Curso * curso = NULL;
    ITERA_GGROUP(it_demanda, problemData->demandas, Demanda)
    {
-	  demanda = *(it_demanda);
+	  demanda = *( it_demanda );
 	  campus = demanda->oferta->campus;
 	  curso = demanda->oferta->curso;
 
+	  //-------------------------------------------------------------------
 	  // Relaciona a 'Demanda' atual a seus respectivos 'Campus' e 'Curso'
-	  std::pair< Campus *, Curso * > campus_curso = std::make_pair( campus, curso );
-	  GGroup< Demanda *, LessPtr< Demanda > > * demandas = &( problemData->map_campus_curso_demanda[ campus_curso ] );
-	  demandas->add( demanda );
+	  std::pair< Campus *, Curso * > campus_curso
+		  = std::make_pair( campus, curso );
 
+	  GGroup< Demanda *, LessPtr< Demanda > > * demandas
+		  = &( problemData->map_campus_curso_demanda[ campus_curso ] );
+
+	  demandas->add( demanda );
+	  //-------------------------------------------------------------------
+
+	  //-------------------------------------------------------------------
       int dem = it_demanda->getQuantidade();
 
       it_demanda->disciplina->setMaxDemanda(
-							std::max( it_demanda->disciplina->getMaxDemanda(), dem) );
+			std::max( it_demanda->disciplina->getMaxDemanda(), dem ) );
 
       it_demanda->disciplina->adicionaDemandaTotal( dem );
+	  //-------------------------------------------------------------------
 
+	  //-------------------------------------------------------------------
       // Armazenando a demanda total de cada Campus
       std::pair< int, int > demanda_campus
 		  = std::make_pair( it_demanda->disciplina->getId(),
 							it_demanda->oferta->campus->getId());
 
       // Inicializa com zero caso ainda não exista;
-      if(problemData->demandas_campus.find( demanda_campus ) !=
-         problemData->demandas_campus.end())
+      if ( problemData->demandas_campus.find( demanda_campus ) !=
+           problemData->demandas_campus.end() )
 	  {
          problemData->demandas_campus[ demanda_campus ] = 0;
 	  }
 
       problemData->demandas_campus[ demanda_campus ] += (dem);
+	  //-------------------------------------------------------------------
    }
 }
 
