@@ -283,32 +283,13 @@ SolverMIP::~SolverMIP()
 
 void SolverMIP::carregaVariaveisSolucaoTatico()
 {
-   double *xSol = NULL;
+   double * xSol = NULL;
    VariableHash::iterator vit;
 
-   SolutionLoader sLoader(problemData, problemSolution);
+   SolutionLoader sLoader( problemData, problemSolution );
 
-   xSol = new double[lp->getNumCols()];
-   lp->getX(xSol);
-
-
-   /*FILE* fin = fopen("solBin.bin","rb");
-
-   int nCols;
-
-   fread(&nCols,sizeof(int),1,fin);
-
-   if ( nCols == lp->getNumCols() )
-   {
-   for (int i =0; i < nCols; i++)
-   {
-   double auxDbl;
-   fread(&auxDbl,sizeof(double),1,fin);
-   xSol[i] = auxDbl;
-   }
-   }
-
-   fclose(fin);*/
+   xSol = new double[ lp->getNumCols() ];
+   lp->getX( xSol );
 
    vit = vHash.begin();
 
@@ -688,7 +669,7 @@ int SolverMIP::solveTaticoBasico()
    lp->updateLP();
 
 #ifdef DEBUG
-   printf("Total of Constraints: %i\n\n",constNum);
+   printf( "Total of Constraints: %i\n\n", constNum );
 #endif
 
 #ifdef DEBUG
@@ -728,8 +709,6 @@ int SolverMIP::solveTaticoBasico()
 
    return status;
 }
-
-
 
 void SolverMIP::converteCjtSalaEmSala()
 {
@@ -1759,26 +1738,20 @@ int SolverMIP::solveOperacional()
    // Criando uma solução inicial
    SolucaoInicialOperacional solIni( *problemData );
 
-   std::cout << "Carregando a solucao inicial"
-			 << "do módulo operacional" << std::endl;
-   SolucaoOperacional & sol = solIni.geraSolucaoInicial();
-   sol.toString();
+   std::cout << "Carregando a solucao inicial operacional" << std::endl;
+   SolucaoOperacional & solucao_operacional = solIni.geraSolucaoInicial();
 
-   std::cout << "Avaliando a solucao inicial" << std::endl;
-   Avaliador * avaliador = new Avaliador();
-   double valor_solucao = avaliador->avaliaSolucao(sol, true);
-   std::cout << "Valor da solucao : "  << valor_solucao
-			 << std::endl << std::endl;
+   std::cout << "\nTODO -- Implementar <SolverMIP::solveOperacional()>" << std::endl;
 
-   std::cout << "Implementar <SolverMIP::solveOperacional()>" << std::endl;
-   exit(1);
-   return -1;
+   // Armazena a solução operacional no problem solution
+   problemSolution->solucao_operacional = &( solucao_operacional );
+
+   return 1;
 }
 
 void SolverMIP::getSolutionOperacional()
 {
-   std::cout << "Implementar <SolverMIP::getSolutionOperacional()>" << std::endl;
-   exit(1);
+   std::cout << "\nTODO -- Implementar <SolverMIP::getSolutionOperacional()>" << std::endl;
 }
 
 int SolverMIP::solve()
@@ -1835,13 +1808,6 @@ int SolverMIP::solve()
             problemData->atendimentosTatico->add( new AtendimentoCampusSolucao( **it_At_Campus ) );
          }
 
-         // -----------------------------------------------------
-         // Deletando o output do Tatico.
-         problemSolution->atendimento_campus->deleteElements();
-         delete problemSolution->atendimento_campus;
-         problemSolution->atendimento_campus = NULL;
-         // -----------------------------------------------------
-
          // Criando as aulas que serão utilizadas para resolver o modelo operacional
          problemDataLoader->criaAulas();
 
@@ -1853,14 +1819,14 @@ int SolverMIP::solve()
    return status;
 }
 
-int SolverMIP::localBranching(double *xSol, double maxTime)
+int SolverMIP::localBranching(double * xSol, double maxTime)
 {
    // Adiciona restrição de local branching
    int status = 0;
    int nIter = 0;
-   int *idxSol = new int[lp->getNumCols()];
+   int * idxSol = new int[ lp->getNumCols() ];
 
-   for (int i=0; i < lp->getNumCols(); i++)
+   for (int i = 0; i < lp->getNumCols(); i++)
    {
       idxSol[i] = i;
    }
@@ -1869,29 +1835,29 @@ int SolverMIP::localBranching(double *xSol, double maxTime)
    {
       VariableHash::iterator vit = vHash.begin();
 
-      OPT_ROW nR(100,OPT_ROW::GREATER,0.0,"LOCBRANCH");
-      double rhsLB = -5000 ;//+ nIter * 2;
+      OPT_ROW nR(100, OPT_ROW::GREATER, 0.0, "LOCBRANCH");
+      double rhsLB = -5000;
 
-      while (vit != vHash.end())
+      while ( vit != vHash.end() )
       {
          if ( vit->first.getType() == Variable::V_OFERECIMENTO )
          {
             if ( xSol[vit->second] > 0.1 )
             {
                rhsLB += 1.0;
-               nR.insert(vit->second,1.0);
+               nR.insert( vit->second,1.0 );
             }
             else
             {
-               nR.insert(vit->second,-1.0);
+               nR.insert( vit->second,-1.0 );
             }
          }
 
          vit++;
       }
 
-      nR.setRhs(rhsLB);
-      lp->addRow(nR);
+      nR.setRhs( rhsLB );
+      lp->addRow( nR );
 
       lp->updateLP();
 
@@ -1925,35 +1891,23 @@ int SolverMIP::localBranching(double *xSol, double maxTime)
    return status;
 }
 
-void SolverMIP::getSolution(ProblemSolution *problemSolution)
+void SolverMIP::getSolution(ProblemSolution * problem_solution)
 {
-   // Vai dar um erro no segundo termo da comparação qdo o
-   // cleiton tiver corrigido a leitura  do atendimentosTatico.
-   // Dai, ao inves de comparar se é igual a NULL, vou ter que testar se o SIZE.
-   if(problemData->parametros->modo_otimizacao == "TATICO" && problemData->atendimentosTatico == NULL)
+   // Input TATICO
+   if ( problemData->parametros->modo_otimizacao == "TATICO"
+			&& problemData->atendimentosTatico == NULL )
    {
       getSolutionTatico();
    }
-   else if(problemData->parametros->modo_otimizacao == "OPERACIONAL")
+   // Input OPERACIONAL
+   else if ( problemData->parametros->modo_otimizacao == "OPERACIONAL" )
    {
-      //getSolutionTatico();
-      //delete problemSolution;
+      if ( problemData->atendimentosTatico == NULL )
+      {
+         getSolutionTatico();
+      }
 
-      //problemSolution->atendimento_campus->deleteElements();
-      //delete problemSolution->atendimento_campus;
-      //problemSolution->atendimento_campus = NULL;
-
-      //getSolutionOperacional();
-
-      //if(problemData->atendimentosTatico)
-      //{
-      //   //getSolutionOperacional();
-      //}
-      //else
-      //{
-      //   //getSolutionTatico();
-      //   //getSolutionOperacional();
-      //}
+	  getSolutionOperacional();
    }
 }
 
@@ -1965,7 +1919,7 @@ int SolverMIP::cria_variaveis()
    int numVarsAnterior = 0;
 #endif
 
-   num_vars += cria_variavel_oferecimentos(); // o
+   num_vars += cria_variavel_oferecimentos(); // variável 'o'
 
 #ifdef PRINT_cria_variaveis
    std::cout << "numVars \"o\": " << (num_vars - numVarsAnterior) << std::endl;

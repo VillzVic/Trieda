@@ -4,10 +4,7 @@
 ProblemSolution::ProblemSolution()
 {
    folgas = new RestricaoVioladaGroup();
-   atendimento_campus = new GGroup<AtendimentoCampus*>();
-
-   //folgas = NULL;
-   //atendimento_campus = NULL;
+   atendimento_campus = new GGroup< AtendimentoCampus * >();
 }
 
 ProblemSolution::~ProblemSolution()
@@ -25,47 +22,65 @@ ProblemSolution::~ProblemSolution()
    }
 }
 
-std::ostream& operator << (std::ostream& out, ProblemSolution& solution )
+std::ostream & operator << ( std::ostream & out, ProblemSolution & solution )
 {
-   /**
-   ToDo:
-   The XML that describes the output should be written here
-   **/
-
-   if(solution.atendimento_campus != NULL)
+   // TATICO
+   if ( solution.solucao_operacional == NULL )
    {
-
-      //out << "<?xml version=\"1.0\" encoding=\"utf-8\"?>" << endl;
       out << "<?xml version=\"1.0\" encoding=\"ISO-8859-1\" standalone=\"yes\"?>" << endl;
-
-      //out << "<TriedaOutput xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">" << endl;
       out << "<TriedaOutput>" << endl;
 
+	  //-----------------------------------------------------------------------
       out << "<atendimentos>" << endl;
-
-      GGroup<AtendimentoCampus*>::GGroupIterator it_campus = solution.atendimento_campus->begin();
-
+      GGroup< AtendimentoCampus * >::GGroupIterator it_campus
+		  = solution.atendimento_campus->begin();
       for(; it_campus != solution.atendimento_campus->end(); it_campus++)
       {
          out << **it_campus;
       }
-
       out << "</atendimentos>" << endl;
+	  //-----------------------------------------------------------------------
 
+	  //-----------------------------------------------------------------------
       // Folgas:
       out << "<restricoesVioladas>\n";
-      for (RestricaoVioladaGroup::iterator it = solution.getFolgas()->begin();
-         it != solution.getFolgas()->end(); 
-         ++it)
+	  RestricaoVioladaGroup::iterator it
+		  = solution.getFolgas()->begin();
+      for (; it != solution.getFolgas()->end();  ++it)
+	  {
          out << **it;
+	  }
       out << "</restricoesVioladas>\n";
+	  //-----------------------------------------------------------------------
 
-
+	  //-----------------------------------------------------------------------
       // Erros e warnings:
       out << *ErrorHandler::getInstance();
+	  //-----------------------------------------------------------------------
 
       out << "</TriedaOutput>" << endl;
+   }
+   // OPERACIONAL
+   else
+   {
+      out << "<?xml version=\"1.0\" encoding=\"ISO-8859-1\" standalone=\"yes\"?>" << endl;
+      out << "<TriedaOutput>" << endl;
 
+	  //-----------------------------------------------------------------------
+      out << "<atendimentos>" << endl;
+	  if ( solution.atendimento_campus != NULL )
+	  {
+		  GGroup< AtendimentoCampus * >::GGroupIterator it_campus
+			  = solution.atendimento_campus->begin();
+		  for(; it_campus != solution.atendimento_campus->end(); it_campus++)
+		  {
+			 out << **it_campus;
+		  }
+		  out << "</atendimentos>" << endl;
+	  }
+	  //-----------------------------------------------------------------------
+
+	  out << "</TriedaOutput>" << endl;
    }
 
    return out;
