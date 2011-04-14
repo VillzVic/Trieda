@@ -679,7 +679,7 @@ int SolverMIP::solveTaticoBasico()
    int status = 0;
 
    //lp->setHeurFrequency(1.0);
-   lp->setTimeLimit(60);
+   lp->setTimeLimit(10);
    //lp->setMIPStartAlg(METHOD_PRIMAL);
    lp->setMIPEmphasis(0);
    lp->setMIPScreenLog(4);

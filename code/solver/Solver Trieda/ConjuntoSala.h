@@ -16,7 +16,7 @@ public:
 
    ConjuntoSala(ConjuntoSala const & cjt_Sala)
    {
-      std::cout << "Construto de copia de ConuntoSala nao esta implementado. SAINDO.";
+      std::cout << "Construtor de copia de ConuntoSala nao esta implementado. SAINDO.";
       exit(1);
    }
 

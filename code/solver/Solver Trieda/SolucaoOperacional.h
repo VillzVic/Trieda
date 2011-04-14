@@ -9,6 +9,8 @@
 #include "Professor.h"
 #include "ProblemData.h"
 
+#include "input.h"
+
 typedef vector< vector< Aula * > * > MatrizSolucao;
 
 class SolucaoOperacional
@@ -69,6 +71,15 @@ public:
    int getTotalDias() const;
    int getTotalHorarios() const;
    int getTotalDeProfessores() const;
+
+   // Armazena os índices para cada dia de cada horário.
+   std::map<std::pair<Horario*,int/*dia*/>, int/*col - idOperacional*/> refHorarios;
+
+   /* Verifica se as aula <aX> e <aY> podem ter trocados os seus respectivos horários. */
+   bool podeTrocarHorariosAulas(Aula & aX, Aula & aY) const;
+
+   /* Função auxiliar à função podeTrocarHorariosAulas */
+   bool checkConflitoBlocoCurricular(Aula & aula, std::vector< std::pair< Professor *, Horario * > > & novosHorariosAula) const;
 
 private:
    int total_dias;

@@ -79,6 +79,9 @@ public:
    void criaAulas();
 
    /* */
+   void relacionaBlocoCurricularAulas();
+
+   /* */
    void calculaMaxHorariosProfessor();
 
    // Cria um vetor ordenado dos horários de

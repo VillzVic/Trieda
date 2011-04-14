@@ -167,6 +167,12 @@ public:
    // Lista para cada par <professor,disciplina> todas as fixacoes existentes.
    std::map< std::pair< Professor *, Disciplina * >, GGroup< Fixacao * > > fixacoesProfDisc;
 
+   /* Estrutura que agrupa as aulas por bloco curricular. */
+   std::map<BlocoCurricular*,GGroup<Aula*,LessPtr<Aula> > > blocoCurricularAulas;
+
+   /* Estrutura que informa a quais blocos curriculares uma aula pertence. */
+   std::map<Aula *, GGroup<BlocoCurricular*,LessPtr<BlocoCurricular> > > aulaBlocosCurriculares;
+
    virtual void le_arvore(TriedaInput& raiz);
 };
 

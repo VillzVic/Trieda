@@ -40,13 +40,27 @@ public:
 
    virtual bool operator < (Aula const & right) 
    { 
-      return 
-         ((turma < right.getTurma()) &&
-         (disciplina < right.getDisciplina()) &&
-         (sala < right.getSala()) &&
-         (dia_semana < right.getDiaSemana()) &&
-         (creditos_teoricos < right.getCreditosTeoricos()) &&
-         (creditos_praticos < right.getCreditosPraticos()));
+      if(disciplina < right.getDisciplina() )
+         return true;
+      else if(disciplina > right.getDisciplina() )
+         return false;
+      
+      if(turma < right.getTurma())
+         return true;
+      else if(turma > right.getTurma())
+         return false;
+
+      if(dia_semana < right.getDiaSemana())
+         return true;
+      else if(dia_semana > right.getDiaSemana())
+         return false;
+
+      if(sala < right.getSala())
+         return true;
+      else if(sala > right.getSala())
+         return false;
+
+      return false;
    }
 
    virtual bool operator == (Aula const & right)
@@ -58,6 +72,11 @@ public:
          (dia_semana == right.getDiaSemana()) &&
          (creditos_teoricos == right.getCreditosTeoricos()) &&
          (creditos_praticos == right.getCreditosPraticos()));
+   }
+
+   virtual bool operator != (Aula const & right)
+   { 
+      return !(*this == right);
    }
 
    void toSring();

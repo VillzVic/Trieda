@@ -78,6 +78,30 @@ SolucaoOperacional::SolucaoOperacional(ProblemData * prbDt)
 		   }
 	   }
    }
+
+   // -----------------------------------------------------
+   /* Inicializando a estrutura <refHorarios> */
+
+   ITERA_GGROUP(itCampus,problem_data->campi,Campus)
+   {
+      ITERA_GGROUP(itHorario,itCampus->horarios,Horario)
+      {
+         ITERA_GGROUP_N_PT(itDia,itHorario->dias_semana,int)
+         {
+            std::vector<HorarioAula*>::iterator 
+               itHA = std::find(
+               problem_data->horarios_aula_ordenados.begin(),
+               problem_data->horarios_aula_ordenados.end(),
+               itHorario->horario_aula);
+
+            int idOperacional = ((*itDia - 1) * total_horarios) + std::distance(problem_data->horarios_aula_ordenados.begin(),itHA);
+
+            refHorarios[std::make_pair(*itHorario,*itDia)] = idOperacional;
+         }
+      }
+   }
+
+   // -----------------------------------------------------
 }
 
 SolucaoOperacional::~SolucaoOperacional()
@@ -334,4 +358,76 @@ int SolucaoOperacional::getTotalDeProfessores() const
 int SolucaoOperacional::getTotalDias() const
 {
 	return total_dias;
+}
+
+bool SolucaoOperacional::podeTrocarHorariosAulas(Aula & aX, Aula & aY) const
+{
+   std::vector< std::pair< Professor *, Horario * > > novosHorariosAX;
+   std::vector< std::pair< Professor *, Horario * > > novosHorariosAY;
+
+   novosHorariosAX = aY.bloco_aula;
+   novosHorariosAY = aX.bloco_aula;
+
+   return (!checkConflitoBlocoCurricular(aX, novosHorariosAX) && !checkConflitoBlocoCurricular(aY, novosHorariosAY));
+}
+
+
+bool SolucaoOperacional::checkConflitoBlocoCurricular(
+   Aula & aula, std::vector< std::pair< Professor *, Horario * > > & novosHorariosAula) const
+{
+   std::map<Aula *, GGroup<BlocoCurricular*,LessPtr<BlocoCurricular> > >::iterator
+      itAulaBlocosCurriculares = problem_data->aulaBlocosCurriculares.find(&aula);
+
+   if(itAulaBlocosCurriculares == problem_data->aulaBlocosCurriculares.end())
+   {
+      std::cout << "Na funcao <SolucaoOperacional::checkConflitoBlocoCurricular> alguma aula nao foi encontrada." << std::endl;
+      exit(1);
+   }
+
+   // Para cada Bloco Curricular ao qual a aula pertence
+   ITERA_GGROUP_LESSPTR(itBlocoCurric,itAulaBlocosCurriculares->second,BlocoCurricular)
+   {
+      std::map<BlocoCurricular*,GGroup<Aula*,LessPtr<Aula> > >::iterator
+         itBlocoCurricularAulas = problem_data->blocoCurricularAulas.find(
+         *itBlocoCurric);
+
+      if(itBlocoCurricularAulas == problem_data->blocoCurricularAulas.end())
+      {
+         std::cout << "Na funcao <SolucaoOperacional::checkConflitoBlocoCurricular> algum bloco nao foi encontrado." << std::endl;
+         exit(1);
+      }
+
+      /* Para todas as aulas do bloco curricular em questão, salvo a aula corrente, verificar
+      se há conflito de horário. */
+      ITERA_GGROUP_LESSPTR(itAulasBloco,itBlocoCurricularAulas->second,Aula)
+      {
+         /* Somente se não for igual a Aula em questão E se a aula selecionada para análise
+         já estiver alocada a algum horário. A segunda condição é necessária para a criação de
+         uma solução inicial. */
+         if(**itAulasBloco != aula && !(itAulasBloco->bloco_aula.empty()))
+         {
+            std::vector< std::pair< Professor *, Horario * > >::iterator 
+               itNovosHorariosAula = novosHorariosAula.begin();
+
+            /* Para cada novo horário da aula em questão, checo se ele conflita com 
+            algum horário da aula selecionada do bloco curricular. */
+            for(; itNovosHorariosAula != novosHorariosAula.end(); ++itNovosHorariosAula)
+            {
+               std::vector< std::pair< Professor *, Horario * > >::iterator 
+                  itHorariosAula = itAulasBloco->bloco_aula.begin();
+
+               /* Para cada horário da da aula selecionada do bloco curricular */
+               for(; itHorariosAula != itAulasBloco->bloco_aula.end(); ++itHorariosAula)
+               {
+                  // Se conflitar, o movimento é inviável.
+                  if( (*(itNovosHorariosAula->first) == *(itHorariosAula->first)) &&
+                     (*(itNovosHorariosAula->second) == *(itHorariosAula->second)) )
+                     return true;
+               }
+            }
+         }
+      }
+   }
+
+   return false;
 }

@@ -1546,111 +1546,6 @@ void ProblemDataLoader::cria_blocos_curriculares()
    }
 }
 
-//{
-//   ITERA_GGROUP(it_campi,problemData->campi,Campus)
-//   {
-//      ITERA_GGROUP(it_curso,problemData->cursos,Curso)
-//      {
-//         ITERA_GGROUP(it_curr,it_curso->curriculos,Curriculo)
-//         {
-//            // Descobrindo oferta em questão
-//            Oferta * pt_Oferta = NULL;
-//  
-//            ITERA_GGROUP(it_Oferta,problemData->ofertas,Oferta)
-//            {
-//               if(it_Oferta->campus->getId() == it_campi->getId() &&
-//                  it_Oferta->curriculo->getId() == it_curr->getId() &&
-//                  it_Oferta->curso->getId() == it_curso->getId())
-//               {
-//                  pt_Oferta = *it_Oferta;
-//                  break;
-//               }
-//            }
-//            // ---
-//
-//            GGroup<DisciplinaPeriodo>::iterator it_dp = 
-//               it_curr->disciplinas_periodo.begin();
-//
-//            // Percorrendo todas as disciplinas de um curso cadastradas para um currículo.
-//            for(;it_dp != it_curr->disciplinas_periodo.end(); ++it_dp)
-//            {
-//               DisciplinaPeriodo dp = *it_dp;
-//               int periodo = dp.first;
-//               int disc_id = dp.second;
-//
-//               Disciplina * disc = problemData->refDisciplinas[disc_id];
-//
-//               // Encontrando e armazenando a demanda específica da disciplina em questão
-//               Demanda * pt_Demanda = NULL;
-//
-//               ITERA_GGROUP(it_Demanda,problemData->demandas,Demanda)
-//               {
-//                  if(it_Demanda->disciplina == disc &&
-//                     it_Demanda->oferta == pt_Oferta)
-//                  {
-//                     pt_Demanda = *it_Demanda;
-//                     break;
-//                  }
-//               }
-//               //---
-//
-//               GGroup<BlocoCurricular*>::iterator it_bc = 
-//                  problemData->blocos.begin();
-//
-//               int id_blc = it_curso->getId() * 100 + periodo;
-//
-//               bool found = false;
-//
-//               // Verificando a existência do bloco curricular para a disciplina em questão.
-//               for(;it_bc != problemData->blocos.end(); ++it_bc) 
-//               {
-//                  if(it_bc->getId() == id_blc)
-//                  {
-//                     it_bc->disciplinas.add(disc);
-//
-//                     it_bc->disciplina_Demanda[disc] = pt_Demanda;
-//
-//                     found = true;
-//                     break;
-//                  }
-//               }
-//
-//               if(!found) 
-//               {
-//                  BlocoCurricular * b = new BlocoCurricular();
-//
-//                  b->setId(id_blc);
-//                  b->periodo = periodo;
-//                  b->campus = *it_campi;
-//                  b->curso = *it_curso;
-//
-//                  b->curriculo = *it_curr;
-//
-//                  b->disciplinas.add(disc);
-//
-//                  b->disciplina_Demanda[disc] = pt_Demanda;
-//
-//                  problemData->blocos.add(b);
-//               }
-//            }
-//         }
-//      }
-//   }
-//
-//   /* Setando os dias letivos de cada bloco. */
-//   ITERA_GGROUP(itBlocoCurric,problemData->blocos,BlocoCurricular)
-//   {
-//      ITERA_GGROUP(itDisc,itBlocoCurric->disciplinas,Disciplina)
-//      {
-//         GGroup<int>::iterator itDiasLet =
-//            itDisc->diasLetivos.begin();
-//
-//         for(; itDiasLet != itDisc->diasLetivos.end(); itDiasLet++)
-//         { itBlocoCurric->diasLetivos.add(*itDiasLet); }
-//      }
-//   }
-//}
-
 void ProblemDataLoader::relacionaCampusDiscs()
 {
    ITERA_GGROUP(it_oferta,problemData->ofertas,Oferta)
@@ -2538,6 +2433,13 @@ void ProblemDataLoader::criaAulas()
             }
          }
       }
+
+      /*
+      O método abaixo só pode ser executado após a execução dos método de criação 
+      de blocos curriculares e de criação das aulas.
+      */
+      relacionaBlocoCurricularAulas();
+
    }
 
    cout << "\t >>> AULAS CRIADAS <<<\n";
@@ -2547,6 +2449,37 @@ void ProblemDataLoader::criaAulas()
 
    //std::cout << "Total de aulas criadas: "
 			// << problemData->aulas.size() << std::endl;
+}
+
+void ProblemDataLoader::relacionaBlocoCurricularAulas()
+{
+   ITERA_GGROUP(itAula,problemData->aulas,Aula)
+   {
+      Disciplina * disciplina = itAula->getDisciplina();
+
+      ITERA_GGROUP(itOferta,itAula->ofertas,Oferta)
+      {
+         Curso * curso = itOferta->curso;
+
+         std::map< std::pair< Curso *, Disciplina * > , BlocoCurricular * >::iterator
+            itMapCursoDisciplina_BlocoCurricular = problemData->mapCursoDisciplina_BlocoCurricular.find(
+            std::make_pair(curso,disciplina));
+
+         if(itMapCursoDisciplina_BlocoCurricular != problemData->mapCursoDisciplina_BlocoCurricular.end())
+         {
+            // Adicionando a aula ao bloco curricular correspondente.
+            problemData->blocoCurricularAulas[itMapCursoDisciplina_BlocoCurricular->second].add(*itAula);
+            
+            // Adicionando o bloco curricular a aula correspondente.
+            problemData->aulaBlocosCurriculares[*itAula].add(itMapCursoDisciplina_BlocoCurricular->second);
+         }
+         else
+         {
+            std::cout << "Na funcao <ProblemDataLoader::relacionaBlocoCurricularAulas()> algum par <curso,disciplina> nao foi encontrado na estrutura <mapCursoDisciplina_BlocoCurricular>." << std::endl;
+            exit(1);
+         }
+      }
+   }
 }
 
 void ProblemDataLoader::print_csv(void)
