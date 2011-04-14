@@ -9,7 +9,6 @@ public class UsuarioDTO extends AbstractDTO<String> implements Comparable<Usuari
 	private static final long serialVersionUID = 5815525344760896272L;
 	
 	// Propriedades
-	public static final String PROPERTY_ID = "id";
 	public static final String PROPERTY_VERSION = "version";
 	public static final String PROPERTY_NOME = "nime";
 	public static final String PROPERTY_EMAIL = "email";
@@ -18,13 +17,6 @@ public class UsuarioDTO extends AbstractDTO<String> implements Comparable<Usuari
 	public static final String PROPERTY_ENABLED = "enabled";
 	
 	public UsuarioDTO() {
-	}
-
-	public void setId(Long value) {
-		set(PROPERTY_ID, value);
-	}
-	public Long getId() {
-		return get(PROPERTY_ID);
 	}
 	
 	public void setVersion(Integer value) {

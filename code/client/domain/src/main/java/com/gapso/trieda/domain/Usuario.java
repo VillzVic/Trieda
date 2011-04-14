@@ -6,8 +6,6 @@ import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
@@ -26,7 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Entity
 @RooJavaBean
 @RooToString
-@RooEntity(identifierColumn = "USU_ID")
+@RooEntity(identifierColumn = "USERNAME")
 @Table(name = "users")
 public class Usuario implements Serializable {
 
@@ -41,9 +39,10 @@ public class Usuario implements Serializable {
     @Size(min = 5, max = 100)
     private String email;
 
+    @Id
     @NotNull
-    @Column(name = "USERNAME")
-    @Size(min = 5, max = 20)
+    @Column(name = "USERNAME", unique = true)
+    @Size(min = 5, max = 50)
     private String username;
 
     @NotNull
@@ -51,6 +50,7 @@ public class Usuario implements Serializable {
     @Size(min = 5, max = 255)
     private String password;
     
+    @NotNull
     @Column(name = "ENABLED")
     private Boolean enabled;
 
@@ -91,7 +91,6 @@ public class Usuario implements Serializable {
 	
 	public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("Id: ").append(getId()).append(", ");
         sb.append("Version: ").append(getVersion()).append(", ");
         sb.append("Nome: ").append(getNome()).append(", ");
         sb.append("Email: ").append(getEmail()).append(", ");
@@ -104,22 +103,9 @@ public class Usuario implements Serializable {
 	@PersistenceContext
     transient EntityManager entityManager;
 
-	@Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "USU_ID")
-    private Long id;
-
 	@Version
     @Column(name = "version")
     private Integer version;
-
-	public Long getId() {
-        return this.id;
-    }
-
-	public void setId(Long id) {
-        this.id = id;
-    }
 
 	public Integer getVersion() {
         return this.version;
@@ -141,7 +127,7 @@ public class Usuario implements Serializable {
         if (this.entityManager.contains(this)) {
             this.entityManager.remove(this);
         } else {
-            Usuario attached = this.entityManager.find(this.getClass(), this.id);
+            Usuario attached = this.entityManager.find(this.getClass(), this.username);
             this.entityManager.remove(attached);
         }
     }

@@ -29,7 +29,7 @@ public class UsuarioFormView extends MyComposite implements UsuarioFormPresenter
 	}
 	
 	private void initUI() {
-		String title = (usuarioDTO.getId() == null)? "Inserção de Usuário" : "Edição de Usuário";
+		String title = (usuarioDTO.getVersion() == null)? "Inserção de Usuário" : "Edição de Usuário";
 		simpleModal = new SimpleModal(title, Resources.DEFAULTS.turno16());
 		simpleModal.setHeight(190);
 		createForm();
@@ -65,12 +65,13 @@ public class UsuarioFormView extends MyComposite implements UsuarioFormPresenter
 		usernameTF.setMinLength(5);
 		usernameTF.setMaxLength(20);
 		usernameTF.setEmptyText("Preencha o username");
+		usernameTF.setReadOnly(usuarioDTO.getVersion() == null);
 		formPanel.add(usernameTF, formData);
 		
 		passwordTF = new TextField<String>();
 		passwordTF.setValue(usuarioDTO.getUsername());
 		passwordTF.setFieldLabel("Password");
-		passwordTF.setAllowBlank(usuarioDTO.getId() == null);
+		passwordTF.setAllowBlank(usuarioDTO.getVersion() == null);
 		passwordTF.setMinLength(5);
 		passwordTF.setMaxLength(20);
 		passwordTF.setEmptyText("Preencha o password");

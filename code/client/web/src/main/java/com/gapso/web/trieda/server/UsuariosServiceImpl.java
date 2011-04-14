@@ -36,7 +36,8 @@ public class UsuariosServiceImpl extends RemoteServiceServlet implements Usuario
 				orderBy = orderBy + " desc";
 			}
 		}
-		for(Usuario usuario : Usuario.findAllBy(nome, username, email, config.getOffset(), config.getLimit(), orderBy)) {
+		List<Usuario> usuarios = Usuario.findAllBy(nome, username, email, config.getOffset(), config.getLimit(), orderBy);
+		for(Usuario usuario : usuarios) {
 			list.add(ConvertBeans.toUsuarioDTO(usuario));
 		}
 		BasePagingLoadResult<UsuarioDTO> result = new BasePagingLoadResult<UsuarioDTO>(list);
@@ -48,7 +49,7 @@ public class UsuariosServiceImpl extends RemoteServiceServlet implements Usuario
 	@Override
 	public void save(UsuarioDTO usuarioDTO) {
 		Usuario usuario = ConvertBeans.toUsuario(usuarioDTO);
-		if(usuario.getId() != null && usuario.getId() > 0) {
+		if(usuario.getVersion() != null) {
 			usuario.merge();
 		} else {
 			usuario.persist();

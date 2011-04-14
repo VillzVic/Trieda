@@ -90,7 +90,6 @@ public class ConvertBeans {
 	// USUÁRIO
 	public static Usuario toUsuario(UsuarioDTO dto) {
 		Usuario domain = new Usuario();
-		domain.setId(dto.getId());
 		domain.setVersion(dto.getVersion());
 		domain.setNome(dto.getNome());
 		domain.setEmail(dto.getEmail());
@@ -101,7 +100,6 @@ public class ConvertBeans {
 	
 	public static UsuarioDTO toUsuarioDTO(Usuario domain) {
 		UsuarioDTO dto = new UsuarioDTO();
-		dto.setId(domain.getId());
 		dto.setVersion(domain.getVersion());
 		dto.setNome(domain.getNome());
 		dto.setEmail(domain.getEmail());
