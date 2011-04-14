@@ -1377,455 +1377,377 @@ void SolverMIP::getSolutionTatico()
    int at_Tatico_Counter = 0;
 
    // Iterando sobre as variáveis do tipo x.
-   ITERA_VECTOR(it_Vars_x,vars_x,Variable)
+   ITERA_VECTOR(it_Vars_x, vars_x, Variable)
    {
       // Descobrindo qual Campus a variável x em questão pertence.
       Campus * campus = problemData->refCampus[ (*it_Vars_x)->getUnidade()->getIdCampus() ];
 
-      // Caso básico: Ainda não cadastrei nenhum Campus.
-      //if(problemSolution->atendimento_campus.size() == 0)
-      //if(problemSolution->atendimento_campus != NULL)
-      //if(problemSolution->atendimento_campus == NULL)
-      //{
-      //   AtendimentoCampus * at_Campus = new AtendimentoCampus();
-      //   at_Campus->setId(campus->getId());
-      //   at_Campus->campus_id = campus->codigo;
-
-      //   at_Campus->campus = campus;
-
-      //   // Cadastrando a Unidade
-      //   AtendimentoUnidade * at_Unidade = new AtendimentoUnidade();
-      //   at_Unidade->setId((*it_Vars_x)->getUnidade()->getId());
-      //   at_Unidade->unidade_id = (*it_Vars_x)->getUnidade()->codigo;
-
-      //   at_Unidade->unidade = (*it_Vars_x)->getUnidade();
-
-      //   // Cadastrando a Sala
-      //   AtendimentoSala * at_Sala = new AtendimentoSala();
-      //   at_Sala->setId((*it_Vars_x)->getSala()->getId());
-      //   at_Sala->sala_id = (*it_Vars_x)->getSala()->getCodigo();
-
-      //   at_Sala->sala = (*it_Vars_x)->getSala();
-
-      //   // Cadastrando o dia da semana
-      //   AtendimentoDiaSemana * at_Dia_Semana = new AtendimentoDiaSemana();
-      //   at_Dia_Semana->dia_semana = (*it_Vars_x)->getDia();
-
-      //   // Para cada variavel a__i_d_o existem para a variavel x__i_d_u_s_t em questão.
-      //   ITERA_VECTOR(it_Vars_a,
-      //      vars_a.find(std::make_pair((*it_Vars_x)->getTurma(),(*it_Vars_x)->getDisciplina()))->second,
-      //      Variable)
-      //   {
-      //      AtendimentoTatico * at_Tatico = new AtendimentoTatico();
-
-      //      // Verificando se a disicplina é de carater prático ou teórico.
-      //      if((*it_Vars_x)->getDisciplina()->getId() > 0 && (*it_Vars_x)->getDisciplina()->cred_teoricos > 0)
-      //      {
-      //         at_Tatico->qtde_creditos_teoricos = (int)(*it_Vars_x)->getValue();
-      //      }
-      //      else
-      //      {
-      //         at_Tatico->qtde_creditos_praticos = (int)(*it_Vars_x)->getValue();
-      //      }
-
-      //      AtendimentoOferta * at_Oferta = new AtendimentoOferta();
-
-      //      stringstream str;
-      //      str << (*it_Vars_a)->getOferta()->getId();
-      //      at_Oferta->oferta_curso_campi_id = str.str();
-
-      //      at_Oferta->disciplina_id = 
-      //         ((*it_Vars_a)->getDisciplina()->getId() > 0 ? 
-      //         (*it_Vars_a)->getDisciplina()->getId() :
-      //      (-(*it_Vars_a)->getDisciplina()->getId()));
-
-      //      at_Oferta->quantidade = (int)((*it_Vars_a)->getValue());
-      //      at_Oferta->turma = (*it_Vars_a)->getTurma();
-
-      //      at_Oferta->oferta = (*it_Vars_a)->getOferta();
-
-      //      at_Tatico->atendimento_oferta = at_Oferta;
-
-      //      //at_Dia_Semana->atendimentos_tatico.add(at_Tatico);
-      //      at_Dia_Semana->atendimentos_tatico->add(at_Tatico);
-      //   }
-
-      //   //at_Sala->atendimentos_dias_semana.add(at_Dia_Semana);
-      //   //at_Unidade->atendimentos_salas.add(at_Sala);
-      //   //at_Campus->atendimentos_unidades.add(at_Unidade);
-
-      //   at_Sala->atendimentos_dias_semana->add(at_Dia_Semana);
-      //   at_Unidade->atendimentos_salas->add(at_Sala);
-      //   at_Campus->atendimentos_unidades->add(at_Unidade);
-
-
-      //   //problemSolution->atendimento_campus.add(at_Campus);
-      //   problemSolution->atendimento_campus->add(at_Campus);
-      //}
-      //else
+      bool novo_Campus = true;
+      ITERA_GGROUP( it_At_Campus, *(problemSolution->atendimento_campus),
+				   AtendimentoCampus)
       {
-         bool novo_Campus = true;
-         ITERA_GGROUP( it_At_Campus, *(problemSolution->atendimento_campus),
-					   AtendimentoCampus)
+         if ( it_At_Campus->getId() == campus->getId() )
          {
-            if ( it_At_Campus->getId() == campus->getId() )
+            if ( it_At_Campus->atendimentos_unidades->size() == 0 )
             {
-               if ( it_At_Campus->atendimentos_unidades->size() == 0 )
-               {
-                  std::cout << "Achei que nao era pra cair aqui <dbg1>" << std::endl;
+               std::cout << "Achei que nao era pra cair aqui <dbg1>" << std::endl;
 
-				  // NOVA UNIDADE
-                  exit(1);
-               }
-               else
-               {
-                  Unidade * unidade = (*it_Vars_x)->getUnidade();
+			   // NOVA UNIDADE
+               exit(1);
+            }
+            else
+            {
+               Unidade * unidade = (*it_Vars_x)->getUnidade();
 
-                  bool nova_Unidade = true;
-                  ITERA_GGROUP(it_At_Unidade, *(it_At_Campus->atendimentos_unidades),
-							   AtendimentoUnidade)
+               bool nova_Unidade = true;
+               ITERA_GGROUP(it_At_Unidade, *(it_At_Campus->atendimentos_unidades),
+			  		        AtendimentoUnidade)
+               {
+                  if ( it_At_Unidade->getId() == unidade->getId() )
                   {
-                     if ( it_At_Unidade->getId() == unidade->getId() )
+                     if ( it_At_Unidade->atendimentos_salas->size() == 0 )
                      {
-                        if ( it_At_Unidade->atendimentos_salas->size() == 0 )
-                        {
-                           std::cout << "Achei que nao era pra cair aqui <dbg2>" << std::endl;
+                        std::cout << "Achei que nao era pra cair aqui <dbg2>" << std::endl;
 
-						   // NOVA SALA
-                           exit(1);
-                        }
-                        else
+						// NOVA SALA
+                        exit(1);
+                     }
+                     else
+                     {
+                        Sala * sala = (*it_Vars_x)->getSala();
+                        bool nova_Sala = true;
+                        ITERA_GGROUP(it_At_Sala, *(it_At_Unidade->atendimentos_salas),
+									 AtendimentoSala)
                         {
-                           Sala * sala = (*it_Vars_x)->getSala();
-                           bool nova_Sala = true;
-                           ITERA_GGROUP(it_At_Sala, *(it_At_Unidade->atendimentos_salas), AtendimentoSala)
+                           if ( it_At_Sala->getId() == sala->getId() )
                            {
-                              if ( it_At_Sala->getId() == sala->getId() )
+                              if ( it_At_Sala->atendimentos_dias_semana->size() == 0 )
                               {
-                                 if ( it_At_Sala->atendimentos_dias_semana->size() == 0 )
-                                 {
-                                    std::cout << "Achei que nao era pra cair aqui <dbg3>" << std::endl;
+                                 std::cout << "Achei que nao era pra cair aqui <dbg3>" << std::endl;
 
-									// NOVO DIA SEMANA
-                                    exit(1);
-                                 }
-                                 else
+								 // NOVO DIA SEMANA
+                                 exit(1);
+                              }
+                              else
+                              {
+                                 int dia = (*it_Vars_x)->getDia();
+                                 bool novo_Dia = true;
+                                 ITERA_GGROUP(it_At_Dia, *(it_At_Sala->atendimentos_dias_semana),
+											  AtendimentoDiaSemana)
                                  {
-                                    int dia = (*it_Vars_x)->getDia();
-                                    bool novo_Dia = true;
-                                    ITERA_GGROUP(it_At_Dia, *(it_At_Sala->atendimentos_dias_semana), AtendimentoDiaSemana)
+                                    if ( it_At_Dia->dia_semana == dia )
                                     {
-                                       if ( it_At_Dia->dia_semana == dia )
+                                       if ( it_At_Dia->atendimentos_tatico->size() == 0 )
                                        {
-                                          if ( it_At_Dia->atendimentos_tatico->size() == 0 )
-                                          {
-                                             std::cout << "Achei que nao era pra cair aqui <dbg4>" << std::endl;
+                                          std::cout << "Achei que nao era pra cair aqui <dbg4>" << std::endl;
 
-											 // NOVO ATENDIMENTO
-                                             exit(1);                                             
-                                          }
-                                          else
-                                          {
-                                             // CADASTRO DE ATENDIMENTO TATICO
-
-                                             // Para cada variavel a__i_d_o existem para a variavel x__i_d_u_s_t em questão.
-                                             ITERA_VECTOR(it_Vars_a,
-                                                vars_a.find( std::make_pair( (*it_Vars_x)->getTurma(),
-																			 (*it_Vars_x)->getDisciplina()))->second, Variable)
-                                             {
-                                                AtendimentoTatico * at_Tatico = new AtendimentoTatico();
-
-                                                // Verificando se a disicplina é de carater prático ou teórico.
-                                                if ( (*it_Vars_x)->getDisciplina()->getId() > 0
-														&& (*it_Vars_x)->getDisciplina()->getCredTeoricos() > 0 )
-                                                {
-                                                   at_Tatico->qtde_creditos_teoricos = (int)( (*it_Vars_x)->getValue() );
-                                                }
-                                                else
-                                                {
-                                                   at_Tatico->qtde_creditos_praticos = (int)( (*it_Vars_x)->getValue() );
-                                                }
-
-												AtendimentoOferta * at_Oferta = new AtendimentoOferta();
-
-												stringstream str;
-												str << (*it_Vars_a)->getOferta()->getId();
-												at_Oferta->oferta_curso_campi_id = str.str();
-
-												at_Oferta->disciplina_id = 
-												   ((*it_Vars_a)->getDisciplina()->getId() > 0 ? 
-												   (*it_Vars_a)->getDisciplina()->getId() :
-												(-(*it_Vars_a)->getDisciplina()->getId()));
-
-                                                at_Oferta->quantidade = (int)((*it_Vars_a)->getValue());
-                                                at_Oferta->turma = (*it_Vars_a)->getTurma();
-                                                at_Oferta->oferta = (*it_Vars_a)->getOferta();
-                                                at_Tatico->atendimento_oferta = at_Oferta;
-
-                                                it_At_Dia->atendimentos_tatico->add(at_Tatico);
-                                             
-                                                ++at_Tatico_Counter;
-                                             }
-                                          }
-
-                                          novo_Dia = false;
-                                          break;
+										  // NOVO ATENDIMENTO
+                                          exit(1);                                             
                                        }
-                                    }
-
-                                    if ( novo_Dia )
-                                    {
-                                          // Cadastrando o dia da semana
-                                          AtendimentoDiaSemana * at_Dia_Semana = new AtendimentoDiaSemana();
-                                          at_Dia_Semana->dia_semana = (*it_Vars_x)->getDia();
+                                       else
+                                       {
+                                          // CADASTRO DE ATENDIMENTO TATICO
 
                                           // Para cada variavel a__i_d_o existem para a variavel x__i_d_u_s_t em questão.
                                           ITERA_VECTOR(it_Vars_a,
-											vars_a.find(std::make_pair((*it_Vars_x)->getTurma(),
-														(*it_Vars_x)->getDisciplina()))->second, Variable)
-                                       {
-                                          AtendimentoTatico * at_Tatico = new AtendimentoTatico();
-
-                                          // Verificando se a disicplina é de carater prático ou teórico.
-                                          if ( (*it_Vars_x)->getDisciplina()->getId() > 0
-												&& (*it_Vars_x)->getDisciplina()->getCredTeoricos() > 0 )
+                                             vars_a.find( std::make_pair( (*it_Vars_x)->getTurma(),
+									 									  (*it_Vars_x)->getDisciplina()))->second, Variable)
                                           {
-                                             at_Tatico->qtde_creditos_teoricos = (int)((*it_Vars_x)->getValue());
+                                             AtendimentoTatico * at_Tatico = new AtendimentoTatico();
+
+                                             // Verificando se a disicplina é de carater prático ou teórico.
+                                             if ( (*it_Vars_x)->getDisciplina()->getId() > 0
+													&& (*it_Vars_x)->getDisciplina()->getCredTeoricos() > 0 )
+                                             {
+                                                at_Tatico->qtde_creditos_teoricos = (int)( (*it_Vars_x)->getValue() );
+                                             }
+                                             else
+                                             {
+                                                at_Tatico->qtde_creditos_praticos = (int)( (*it_Vars_x)->getValue() );
+                                             }
+
+ 											 AtendimentoOferta * at_Oferta = new AtendimentoOferta();
+
+											 stringstream str;
+											 str << (*it_Vars_a)->getOferta()->getId();
+											 at_Oferta->oferta_curso_campi_id = str.str();
+
+											 at_Oferta->disciplina_id = 
+											    ((*it_Vars_a)->getDisciplina()->getId() > 0 ? 
+												(*it_Vars_a)->getDisciplina()->getId() :
+												(-(*it_Vars_a)->getDisciplina()->getId()));
+
+                                             at_Oferta->quantidade = (int)((*it_Vars_a)->getValue());
+                                             at_Oferta->turma = (*it_Vars_a)->getTurma();
+                                             at_Oferta->oferta = (*it_Vars_a)->getOferta();
+                                             at_Tatico->atendimento_oferta = at_Oferta;
+
+                                             it_At_Dia->atendimentos_tatico->add(at_Tatico);
+                                             
+                                             ++at_Tatico_Counter;
                                           }
-                                          else
-                                          {
-                                             at_Tatico->qtde_creditos_praticos = (int)((*it_Vars_x)->getValue());
-                                          }
-
-										  AtendimentoOferta * at_Oferta = new AtendimentoOferta();
-
-										  stringstream str;
-										  str << (*it_Vars_a)->getOferta()->getId();
-										  at_Oferta->oferta_curso_campi_id = str.str();
-
-										  at_Oferta->disciplina_id = 
-										     ((*it_Vars_a)->getDisciplina()->getId() > 0 ? 
-										     (*it_Vars_a)->getDisciplina()->getId() :
-										     (-(*it_Vars_a)->getDisciplina()->getId()));
-
-                                          at_Oferta->quantidade = (int)((*it_Vars_a)->getValue());
-                                          at_Oferta->turma = (*it_Vars_a)->getTurma();
-                                          at_Oferta->oferta = (*it_Vars_a)->getOferta();
-                                          at_Tatico->atendimento_oferta = at_Oferta;
-
-                                          at_Dia_Semana->atendimentos_tatico->add(at_Tatico);
-
-                                          ++at_Tatico_Counter;
                                        }
 
-                                       it_At_Sala->atendimentos_dias_semana->add(at_Dia_Semana);
+                                       novo_Dia = false;
+                                       break;
                                     }
                                  }
 
-                                 nova_Sala = false;
-                                 break;
-                              }
-                           }
+                                 if ( novo_Dia )
+                                 {
+                                    // Cadastrando o dia da semana
+                                    AtendimentoDiaSemana * at_Dia_Semana = new AtendimentoDiaSemana();
+                                    at_Dia_Semana->dia_semana = (*it_Vars_x)->getDia();
 
-                           if ( nova_Sala )
+                                    // Para cada variavel a__i_d_o existem para a variavel x__i_d_u_s_t em questão.
+                                    ITERA_VECTOR(it_Vars_a,
+										vars_a.find( std::make_pair((*it_Vars_x)->getTurma(),
+										   		     (*it_Vars_x)->getDisciplina()))->second, Variable)
+                                    {
+									   AtendimentoTatico * at_Tatico = new AtendimentoTatico();
+
+                                       // Verificando se a disicplina é de carater prático ou teórico.
+                                       if ( (*it_Vars_x)->getDisciplina()->getId() > 0
+												&& (*it_Vars_x)->getDisciplina()->getCredTeoricos() > 0 )
+                                       {
+                                          at_Tatico->qtde_creditos_teoricos = (int)((*it_Vars_x)->getValue());
+                                       }
+                                       else
+                                       {
+                                          at_Tatico->qtde_creditos_praticos = (int)((*it_Vars_x)->getValue());
+                                       }
+
+									   AtendimentoOferta * at_Oferta = new AtendimentoOferta();
+
+									   stringstream str;
+									   str << (*it_Vars_a)->getOferta()->getId();
+									   at_Oferta->oferta_curso_campi_id = str.str();
+
+									   at_Oferta->disciplina_id = 
+									      ((*it_Vars_a)->getDisciplina()->getId() > 0 ? 
+									      (*it_Vars_a)->getDisciplina()->getId() :
+									      (-(*it_Vars_a)->getDisciplina()->getId()));
+
+                                       at_Oferta->quantidade = (int)((*it_Vars_a)->getValue());
+                                       at_Oferta->turma = (*it_Vars_a)->getTurma();
+                                       at_Oferta->oferta = (*it_Vars_a)->getOferta();
+                                       at_Tatico->atendimento_oferta = at_Oferta;
+
+                                       at_Dia_Semana->atendimentos_tatico->add(at_Tatico);
+
+                                       ++at_Tatico_Counter;
+                                    }
+
+                                    it_At_Sala->atendimentos_dias_semana->add(at_Dia_Semana);
+                                 }
+                              }
+
+                              nova_Sala = false;
+                              break;
+                           }
+                        }
+
+                        if ( nova_Sala )
+                        {
+                           // Cadastrando a Sala
+                           AtendimentoSala * at_Sala = new AtendimentoSala();
+
+                           at_Sala->setId( (*it_Vars_x)->getSala()->getId() );
+                           at_Sala->sala_id = (*it_Vars_x)->getSala()->getCodigo();
+                           at_Sala->sala = (*it_Vars_x)->getSala();
+
+                           // Cadastrando o dia da semana
+                           AtendimentoDiaSemana * at_Dia_Semana = new AtendimentoDiaSemana();
+                           at_Dia_Semana->dia_semana = (*it_Vars_x)->getDia();
+
+                           // Para cada variavel a__i_d_o existem para a variavel x__i_d_u_s_t em questão.
+                           ITERA_VECTOR(it_Vars_a,
+								vars_a.find( std::make_pair( (*it_Vars_x)->getTurma(),
+														     (*it_Vars_x)->getDisciplina()))->second, Variable)
                            {
-                              // Cadastrando a Sala
-                              AtendimentoSala * at_Sala = new AtendimentoSala();
-                              at_Sala->setId( (*it_Vars_x)->getSala()->getId() );
-                              at_Sala->sala_id = (*it_Vars_x)->getSala()->getCodigo();
-                              at_Sala->sala = (*it_Vars_x)->getSala();
+                              AtendimentoTatico * at_Tatico = new AtendimentoTatico();
 
-                              // Cadastrando o dia da semana
-                              AtendimentoDiaSemana * at_Dia_Semana = new AtendimentoDiaSemana();
-                              at_Dia_Semana->dia_semana = (*it_Vars_x)->getDia();
-
-                              // Para cada variavel a__i_d_o existem para a variavel x__i_d_u_s_t em questão.
-                              ITERA_VECTOR(it_Vars_a,
-									vars_a.find( std::make_pair( (*it_Vars_x)->getTurma(),
-															     (*it_Vars_x)->getDisciplina()))->second, Variable)
-                              {
-                                 AtendimentoTatico * at_Tatico = new AtendimentoTatico();
-
-                                 // Verificando se a disicplina é de carater prático ou teórico.
-                                 if ( (*it_Vars_x)->getDisciplina()->getId() > 0
+                              // Verificando se a disicplina é de carater prático ou teórico.
+                              if ( (*it_Vars_x)->getDisciplina()->getId() > 0
 										&& (*it_Vars_x)->getDisciplina()->getCredTeoricos() > 0 )
-                                 {
-                                    at_Tatico->qtde_creditos_teoricos = (int)( (*it_Vars_x)->getValue() );
-                                 }
-                                 else
-                                 {
-                                    at_Tatico->qtde_creditos_praticos = (int)( (*it_Vars_x)->getValue() );
-                                 }
-
-								 AtendimentoOferta * at_Oferta = new AtendimentoOferta();
-
-								 stringstream str;
-								 str << (*it_Vars_a)->getOferta()->getId();
-								 at_Oferta->oferta_curso_campi_id = str.str();
-
-								 at_Oferta->disciplina_id = 
-								   ((*it_Vars_a)->getDisciplina()->getId() > 0 ? 
-								   (*it_Vars_a)->getDisciplina()->getId() :
-								   (-(*it_Vars_a)->getDisciplina()->getId()));
-
-                                 at_Oferta->quantidade = (int)( (*it_Vars_a)->getValue() );
-                                 at_Oferta->turma = (*it_Vars_a)->getTurma();
-                                 at_Oferta->oferta = (*it_Vars_a)->getOferta();
-                                 at_Tatico->atendimento_oferta = at_Oferta;
-
-                                 at_Dia_Semana->atendimentos_tatico->add( at_Tatico );
-                                 ++at_Tatico_Counter;
+                              {
+                                 at_Tatico->qtde_creditos_teoricos = (int)( (*it_Vars_x)->getValue() );
+                              }
+                              else
+                              {
+                                 at_Tatico->qtde_creditos_praticos = (int)( (*it_Vars_x)->getValue() );
                               }
 
-                              at_Sala->atendimentos_dias_semana->add( at_Dia_Semana );
-                              it_At_Unidade->atendimentos_salas->add( at_Sala );
+							  AtendimentoOferta * at_Oferta = new AtendimentoOferta();
+
+							  stringstream str;
+							  str << (*it_Vars_a)->getOferta()->getId();
+							  at_Oferta->oferta_curso_campi_id = str.str();
+
+							  at_Oferta->disciplina_id = 
+							    ((*it_Vars_a)->getDisciplina()->getId() > 0 ? 
+							    (*it_Vars_a)->getDisciplina()->getId() :
+							    (-(*it_Vars_a)->getDisciplina()->getId()));
+
+                              at_Oferta->quantidade = (int)( (*it_Vars_a)->getValue() );
+                              at_Oferta->turma = (*it_Vars_a)->getTurma();
+                              at_Oferta->oferta = (*it_Vars_a)->getOferta();
+                              at_Tatico->atendimento_oferta = at_Oferta;
+
+                              at_Dia_Semana->atendimentos_tatico->add( at_Tatico );
+                              ++at_Tatico_Counter;
                            }
+
+                           at_Sala->atendimentos_dias_semana->add( at_Dia_Semana );
+                           it_At_Unidade->atendimentos_salas->add( at_Sala );
                         }
-
-                        nova_Unidade = false;
-                        break;
                      }
-                  }
 
-                  if(nova_Unidade)
+                     nova_Unidade = false;
+                     break;
+                  }
+               }
+
+               if ( nova_Unidade )
+               {
+                  // Cadastrando a Unidade
+                  AtendimentoUnidade * at_Unidade = new AtendimentoUnidade();
+
+                  at_Unidade->setId( (*it_Vars_x)->getUnidade()->getId() );
+                  at_Unidade->unidade_id = (*it_Vars_x)->getUnidade()->getCodigo();
+                  at_Unidade->unidade = (*it_Vars_x)->getUnidade();
+
+                  // Cadastrando a Sala
+                  AtendimentoSala * at_Sala = new AtendimentoSala();
+
+                  at_Sala->setId( (*it_Vars_x)->getSala()->getId() );
+                  at_Sala->sala_id = (*it_Vars_x)->getSala()->getCodigo();
+                  at_Sala->sala = (*it_Vars_x)->getSala();
+
+                  // Cadastrando o dia da semana
+                  AtendimentoDiaSemana * at_Dia_Semana = new AtendimentoDiaSemana();
+
+                  at_Dia_Semana->dia_semana = (*it_Vars_x)->getDia();
+
+                  // Para cada variavel a__i_d_o existem para a variavel x__i_d_u_s_t em questão.
+                  ITERA_VECTOR(it_Vars_a,
+                      vars_a.find( std::make_pair( (*it_Vars_x)->getTurma(),
+												   (*it_Vars_x)->getDisciplina()))->second, Variable)
                   {
-                     // Cadastrando a Unidade
-                     AtendimentoUnidade * at_Unidade = new AtendimentoUnidade();
-                     at_Unidade->setId( (*it_Vars_x)->getUnidade()->getId() );
-                     at_Unidade->unidade_id = (*it_Vars_x)->getUnidade()->getCodigo();
+                     AtendimentoTatico * at_Tatico = new AtendimentoTatico();
 
-                     at_Unidade->unidade = (*it_Vars_x)->getUnidade();
-
-                     // Cadastrando a Sala
-                     AtendimentoSala * at_Sala = new AtendimentoSala();
-                     at_Sala->setId( (*it_Vars_x)->getSala()->getId() );
-                     at_Sala->sala_id = (*it_Vars_x)->getSala()->getCodigo();
-
-                     at_Sala->sala = (*it_Vars_x)->getSala();
-
-                     // Cadastrando o dia da semana
-                     AtendimentoDiaSemana * at_Dia_Semana = new AtendimentoDiaSemana();
-                     at_Dia_Semana->dia_semana = (*it_Vars_x)->getDia();
-
-                     // Para cada variavel a__i_d_o existem para a variavel x__i_d_u_s_t em questão.
-                     ITERA_VECTOR(it_Vars_a,
-                        vars_a.find( std::make_pair( (*it_Vars_x)->getTurma(),
-													 (*it_Vars_x)->getDisciplina()))->second, Variable)
+                     // Verificando se a disicplina é de carater prático ou teórico.
+                     if((*it_Vars_x)->getDisciplina()->getId() > 0
+							&& (*it_Vars_x)->getDisciplina()->getCredTeoricos() > 0)
                      {
-                        AtendimentoTatico * at_Tatico = new AtendimentoTatico();
-
-                        // Verificando se a disicplina é de carater prático ou teórico.
-                        if((*it_Vars_x)->getDisciplina()->getId() > 0
-								&& (*it_Vars_x)->getDisciplina()->getCredTeoricos() > 0)
-                        {
-                           at_Tatico->qtde_creditos_teoricos = (int)( (*it_Vars_x)->getValue() );
-                        }
-                        else
-                        {
-                           at_Tatico->qtde_creditos_praticos = (int)( (*it_Vars_x)->getValue() );
-                        }
-
-						AtendimentoOferta * at_Oferta = new AtendimentoOferta();
-
-						stringstream str;
-						str << (*it_Vars_a)->getOferta()->getId();
-						at_Oferta->oferta_curso_campi_id = str.str();
-
-						at_Oferta->disciplina_id = 
-						   ((*it_Vars_a)->getDisciplina()->getId() > 0 ? 
-						   (*it_Vars_a)->getDisciplina()->getId() :
-						   (-(*it_Vars_a)->getDisciplina()->getId()));
-
-                        at_Oferta->quantidade = (int)( (*it_Vars_a)->getValue() );
-                        at_Oferta->turma = (*it_Vars_a)->getTurma();
-                        at_Oferta->oferta = (*it_Vars_a)->getOferta();
-                        at_Tatico->atendimento_oferta = at_Oferta;
-
-                        at_Dia_Semana->atendimentos_tatico->add( at_Tatico );
-                        ++at_Tatico_Counter;
+                        at_Tatico->qtde_creditos_teoricos = (int)( (*it_Vars_x)->getValue() );
+                     }
+                     else
+                     {
+                        at_Tatico->qtde_creditos_praticos = (int)( (*it_Vars_x)->getValue() );
                      }
 
-                     at_Sala->atendimentos_dias_semana->add( at_Dia_Semana );
-                     at_Unidade->atendimentos_salas->add( at_Sala );
-                     it_At_Campus->atendimentos_unidades->add( at_Unidade );
+					 AtendimentoOferta * at_Oferta = new AtendimentoOferta();
+
+					 stringstream str;
+					 str << (*it_Vars_a)->getOferta()->getId();
+					 at_Oferta->oferta_curso_campi_id = str.str();
+
+					 at_Oferta->disciplina_id = 
+					    ((*it_Vars_a)->getDisciplina()->getId() > 0 ? 
+					    (*it_Vars_a)->getDisciplina()->getId() :
+					    (-(*it_Vars_a)->getDisciplina()->getId()));
+
+                     at_Oferta->quantidade = (int)( (*it_Vars_a)->getValue() );
+                     at_Oferta->turma = (*it_Vars_a)->getTurma();
+                     at_Oferta->oferta = (*it_Vars_a)->getOferta();
+                     at_Tatico->atendimento_oferta = at_Oferta;
+
+                     at_Dia_Semana->atendimentos_tatico->add( at_Tatico );
+                     ++at_Tatico_Counter;
                   }
+
+                  at_Sala->atendimentos_dias_semana->add( at_Dia_Semana );
+                  at_Unidade->atendimentos_salas->add( at_Sala );
+                  it_At_Campus->atendimentos_unidades->add( at_Unidade );
                }
-
-               novo_Campus = false;
-               break;
             }
-         }
 
-         if ( novo_Campus )
+            novo_Campus = false;
+            break;
+         }
+      }
+
+      if ( novo_Campus )
+      {
+         AtendimentoCampus * at_Campus = new AtendimentoCampus();
+
+         at_Campus->setId( campus->getId() );
+         at_Campus->campus_id = campus->getCodigo();
+         at_Campus->campus = campus;
+
+         // Cadastrando a Unidade
+         AtendimentoUnidade * at_Unidade = new AtendimentoUnidade();
+         at_Unidade->setId( (*it_Vars_x)->getUnidade()->getId() );
+         at_Unidade->unidade_id = (*it_Vars_x)->getUnidade()->getCodigo();
+         at_Unidade->unidade = (*it_Vars_x)->getUnidade();
+
+         // Cadastrando a Sala
+         AtendimentoSala * at_Sala = new AtendimentoSala();
+
+         at_Sala->setId( (*it_Vars_x)->getSala()->getId() );
+         at_Sala->sala_id = (*it_Vars_x)->getSala()->getCodigo();
+
+         at_Sala->sala = (*it_Vars_x)->getSala();
+
+         // Cadastrando o dia da semana
+         AtendimentoDiaSemana * at_Dia_Semana = new AtendimentoDiaSemana();
+
+         at_Dia_Semana->dia_semana = (*it_Vars_x)->getDia();
+
+         // Para cada variavel a__i_d_o existem para a variavel x__i_d_u_s_t em questão.
+         ITERA_VECTOR(it_Vars_a,
+            vars_a.find( std::make_pair( (*it_Vars_x)->getTurma(),
+										 (*it_Vars_x)->getDisciplina()))->second, Variable)
          {
-            AtendimentoCampus * at_Campus = new AtendimentoCampus();
-            at_Campus->setId( campus->getId() );
-            at_Campus->campus_id = campus->getCodigo();
+            AtendimentoTatico * at_Tatico = new AtendimentoTatico();
 
-            at_Campus->campus = campus;
-
-            // Cadastrando a Unidade
-            AtendimentoUnidade * at_Unidade = new AtendimentoUnidade();
-            at_Unidade->setId( (*it_Vars_x)->getUnidade()->getId() );
-            at_Unidade->unidade_id = (*it_Vars_x)->getUnidade()->getCodigo();
-
-            at_Unidade->unidade = (*it_Vars_x)->getUnidade();
-
-            // Cadastrando a Sala
-            AtendimentoSala * at_Sala = new AtendimentoSala();
-            at_Sala->setId( (*it_Vars_x)->getSala()->getId() );
-            at_Sala->sala_id = (*it_Vars_x)->getSala()->getCodigo();
-
-            at_Sala->sala = (*it_Vars_x)->getSala();
-
-            // Cadastrando o dia da semana
-            AtendimentoDiaSemana * at_Dia_Semana = new AtendimentoDiaSemana();
-            at_Dia_Semana->dia_semana = (*it_Vars_x)->getDia();
-
-            // Para cada variavel a__i_d_o existem para a variavel x__i_d_u_s_t em questão.
-            ITERA_VECTOR(it_Vars_a,
-               vars_a.find(	std::make_pair((*it_Vars_x)->getTurma(),
-						    (*it_Vars_x)->getDisciplina()))->second, Variable)
+            // Verificando se a disicplina é de carater prático ou teórico.
+            if ( (*it_Vars_x)->getDisciplina()->getId() > 0
+					&& (*it_Vars_x)->getDisciplina()->getCredTeoricos() > 0 )
             {
-               AtendimentoTatico * at_Tatico = new AtendimentoTatico();
-
-               // Verificando se a disicplina é de carater prático ou teórico.
-               if ( (*it_Vars_x)->getDisciplina()->getId() > 0
-						&& (*it_Vars_x)->getDisciplina()->getCredTeoricos() > 0 )
-               {
-                  at_Tatico->qtde_creditos_teoricos = (int)( (*it_Vars_x)->getValue() );
-               }
-               else
-               {
-                  at_Tatico->qtde_creditos_praticos = (int)( (*it_Vars_x)->getValue() );
-               }
-
-               AtendimentoOferta * at_Oferta = new AtendimentoOferta();
-
-               stringstream str;
-               str << (*it_Vars_a)->getOferta()->getId();
-               at_Oferta->oferta_curso_campi_id = str.str();
-
-               at_Oferta->disciplina_id = 
-                  ((*it_Vars_a)->getDisciplina()->getId() > 0 ? 
-                  (*it_Vars_a)->getDisciplina()->getId() :
-                  (-(*it_Vars_a)->getDisciplina()->getId()));
-
-               at_Oferta->quantidade = (int)( (*it_Vars_a)->getValue() );
-               at_Oferta->turma = (*it_Vars_a)->getTurma();
-               at_Oferta->oferta = (*it_Vars_a)->getOferta();
-               at_Tatico->atendimento_oferta = at_Oferta;
-
-               at_Dia_Semana->atendimentos_tatico->add(at_Tatico);
-               ++at_Tatico_Counter;
+               at_Tatico->qtde_creditos_teoricos = (int)( (*it_Vars_x)->getValue() );
+            }
+            else
+            {
+               at_Tatico->qtde_creditos_praticos = (int)( (*it_Vars_x)->getValue() );
             }
 
-            at_Sala->atendimentos_dias_semana->add( at_Dia_Semana );
-            at_Unidade->atendimentos_salas->add( at_Sala );
-            at_Campus->atendimentos_unidades->add( at_Unidade );
+            AtendimentoOferta * at_Oferta = new AtendimentoOferta();
 
-            problemSolution->atendimento_campus->add( at_Campus );
+            stringstream str;
+            str << (*it_Vars_a)->getOferta()->getId();
+            at_Oferta->oferta_curso_campi_id = str.str();
+
+            at_Oferta->disciplina_id = 
+               ((*it_Vars_a)->getDisciplina()->getId() > 0 ? 
+               (*it_Vars_a)->getDisciplina()->getId() :
+               (-(*it_Vars_a)->getDisciplina()->getId()));
+
+            at_Oferta->quantidade = (int)( (*it_Vars_a)->getValue() );
+            at_Oferta->turma = (*it_Vars_a)->getTurma();
+            at_Oferta->oferta = (*it_Vars_a)->getOferta();
+            at_Tatico->atendimento_oferta = at_Oferta;
+
+            at_Dia_Semana->atendimentos_tatico->add( at_Tatico );
+            ++at_Tatico_Counter;
          }
+
+         at_Sala->atendimentos_dias_semana->add( at_Dia_Semana );
+         at_Unidade->atendimentos_salas->add( at_Sala );
+         at_Campus->atendimentos_unidades->add( at_Unidade );
+
+         problemSolution->atendimento_campus->add( at_Campus );
       }
    }
 
@@ -1877,7 +1799,8 @@ int SolverMIP::solve()
 	   if(problemData->atendimentosTatico != NULL
 		   && problemData->atendimentosTatico->size() > 0)
       {
-         ITERA_GGROUP(it_At_Campus, *(problemSolution->atendimento_campus), AtendimentoCampus)
+         ITERA_GGROUP(it_At_Campus, *(problemSolution->atendimento_campus),
+					  AtendimentoCampus)
          {
             problemData->atendimentosTatico = new GGroup< AtendimentoCampusSolucao * >();
             problemData->atendimentosTatico->add( new AtendimentoCampusSolucao( **it_At_Campus ) );
@@ -1905,7 +1828,8 @@ int SolverMIP::solve()
          // Preenchendo a estrutura "atendimentosTatico" com a saída.
          getSolutionTatico();
 
-         ITERA_GGROUP(it_At_Campus, *problemSolution->atendimento_campus, AtendimentoCampus)
+         ITERA_GGROUP(it_At_Campus, *(problemSolution->atendimento_campus),
+					  AtendimentoCampus)
          {
             problemData->atendimentosTatico = new GGroup< AtendimentoCampusSolucao * >();
             problemData->atendimentosTatico->add( new AtendimentoCampusSolucao( **it_At_Campus ) );
