@@ -16,14 +16,14 @@ import com.extjs.gxt.ui.client.widget.layout.ColumnLayout;
 import com.extjs.gxt.ui.client.widget.layout.FormData;
 import com.extjs.gxt.ui.client.widget.layout.FormLayout;
 import com.gapso.web.trieda.main.client.mvp.presenter.RelatorioVisaoSalaPresenter;
-import com.gapso.web.trieda.main.client.util.resources.Resources;
-import com.gapso.web.trieda.main.client.util.view.CampusComboBox;
-import com.gapso.web.trieda.main.client.util.view.GTabItem;
-import com.gapso.web.trieda.main.client.util.view.GradeHorariaSalaGrid;
-import com.gapso.web.trieda.main.client.util.view.SalaComboBox;
-import com.gapso.web.trieda.main.client.util.view.TurnoComboBox;
-import com.gapso.web.trieda.main.client.util.view.UnidadeComboBox;
 import com.gapso.web.trieda.shared.mvp.view.MyComposite;
+import com.gapso.web.trieda.shared.util.resources.Resources;
+import com.gapso.web.trieda.shared.util.view.CampusComboBox;
+import com.gapso.web.trieda.shared.util.view.GTabItem;
+import com.gapso.web.trieda.shared.util.view.GradeHorariaSalaGrid;
+import com.gapso.web.trieda.shared.util.view.SalaComboBox;
+import com.gapso.web.trieda.shared.util.view.TurnoComboBox;
+import com.gapso.web.trieda.shared.util.view.UnidadeComboBox;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
 public class RelatorioVisaoSalaView extends MyComposite implements RelatorioVisaoSalaPresenter.Display {

@@ -6,10 +6,10 @@ import com.extjs.gxt.ui.client.widget.form.FormPanel;
 import com.extjs.gxt.ui.client.widget.form.NumberField;
 import com.extjs.gxt.ui.client.widget.layout.FormData;
 import com.gapso.web.trieda.main.client.mvp.presenter.DivisaoCreditosFormPresenter;
-import com.gapso.web.trieda.main.client.util.resources.Resources;
-import com.gapso.web.trieda.main.client.util.view.SimpleModal;
 import com.gapso.web.trieda.shared.dtos.DivisaoCreditoDTO;
 import com.gapso.web.trieda.shared.mvp.view.MyComposite;
+import com.gapso.web.trieda.shared.util.resources.Resources;
+import com.gapso.web.trieda.shared.util.view.SimpleModal;
 
 public class DivisaoCreditosFormView extends MyComposite implements DivisaoCreditosFormPresenter.Display {
 

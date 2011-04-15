@@ -23,12 +23,12 @@ import com.extjs.gxt.ui.client.widget.layout.ColumnLayout;
 import com.extjs.gxt.ui.client.widget.layout.FormData;
 import com.extjs.gxt.ui.client.widget.layout.FormLayout;
 import com.gapso.web.trieda.main.client.mvp.presenter.CompartilharCursosPresenter;
-import com.gapso.web.trieda.main.client.util.resources.Resources;
-import com.gapso.web.trieda.main.client.util.view.CursoComboBox;
-import com.gapso.web.trieda.main.client.util.view.SimpleModal;
 import com.gapso.web.trieda.shared.dtos.CursoDescompartilhaDTO;
 import com.gapso.web.trieda.shared.dtos.ParametroDTO;
 import com.gapso.web.trieda.shared.mvp.view.MyComposite;
+import com.gapso.web.trieda.shared.util.resources.Resources;
+import com.gapso.web.trieda.shared.util.view.CursoComboBox;
+import com.gapso.web.trieda.shared.util.view.SimpleModal;
 
 public class CompartilharCursosView extends MyComposite implements CompartilharCursosPresenter.Display {
 

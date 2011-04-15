@@ -5,16 +5,16 @@ import com.extjs.gxt.ui.client.widget.form.FormButtonBinding;
 import com.extjs.gxt.ui.client.widget.form.FormPanel;
 import com.extjs.gxt.ui.client.widget.layout.FormData;
 import com.gapso.web.trieda.main.client.mvp.presenter.OfertaFormPresenter;
-import com.gapso.web.trieda.main.client.util.resources.Resources;
-import com.gapso.web.trieda.main.client.util.view.CampusComboBox;
-import com.gapso.web.trieda.main.client.util.view.CurriculoComboBox;
-import com.gapso.web.trieda.main.client.util.view.SimpleModal;
-import com.gapso.web.trieda.main.client.util.view.TurnoComboBox;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.CurriculoDTO;
 import com.gapso.web.trieda.shared.dtos.OfertaDTO;
 import com.gapso.web.trieda.shared.dtos.TurnoDTO;
 import com.gapso.web.trieda.shared.mvp.view.MyComposite;
+import com.gapso.web.trieda.shared.util.resources.Resources;
+import com.gapso.web.trieda.shared.util.view.CampusComboBox;
+import com.gapso.web.trieda.shared.util.view.CurriculoComboBox;
+import com.gapso.web.trieda.shared.util.view.SimpleModal;
+import com.gapso.web.trieda.shared.util.view.TurnoComboBox;
 
 public class OfertaFormView extends MyComposite implements OfertaFormPresenter.Display {
 

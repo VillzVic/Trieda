@@ -7,13 +7,13 @@ import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.widget.Component;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.grid.Grid;
-import com.gapso.web.trieda.main.client.util.view.CursoComboBox;
-import com.gapso.web.trieda.main.client.util.view.SimpleModal;
 import com.gapso.web.trieda.shared.dtos.CursoDTO;
 import com.gapso.web.trieda.shared.dtos.CursoDescompartilhaDTO;
 import com.gapso.web.trieda.shared.dtos.ParametroDTO;
 import com.gapso.web.trieda.shared.i18n.ITriedaI18nGateway;
 import com.gapso.web.trieda.shared.mvp.presenter.Presenter;
+import com.gapso.web.trieda.shared.util.view.CursoComboBox;
+import com.gapso.web.trieda.shared.util.view.SimpleModal;
 import com.google.gwt.user.client.ui.Widget;
 
 public class CompartilharCursosPresenter implements Presenter {

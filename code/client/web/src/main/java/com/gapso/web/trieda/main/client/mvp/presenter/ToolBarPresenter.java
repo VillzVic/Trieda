@@ -45,13 +45,13 @@ import com.gapso.web.trieda.main.client.mvp.view.UnidadesDeslocamentoView;
 import com.gapso.web.trieda.main.client.mvp.view.UnidadesView;
 import com.gapso.web.trieda.main.client.mvp.view.UsuariosView;
 import com.gapso.web.trieda.main.client.mvp.view.VincularAreasTitulacaoView;
-import com.gapso.web.trieda.main.client.services.CampiServiceAsync;
-import com.gapso.web.trieda.main.client.services.Services;
-import com.gapso.web.trieda.main.client.util.view.CenarioPanel;
-import com.gapso.web.trieda.main.client.util.view.GTab;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.DeslocamentoCampusDTO;
 import com.gapso.web.trieda.shared.mvp.presenter.Presenter;
+import com.gapso.web.trieda.shared.services.CampiServiceAsync;
+import com.gapso.web.trieda.shared.services.Services;
+import com.gapso.web.trieda.shared.util.view.CenarioPanel;
+import com.gapso.web.trieda.shared.util.view.GTab;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
 

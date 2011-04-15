@@ -4,14 +4,14 @@ import com.extjs.gxt.ui.client.event.ButtonEvent;
 import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.widget.Component;
 import com.extjs.gxt.ui.client.widget.button.Button;
-import com.gapso.web.trieda.main.client.util.view.CampusComboBox;
-import com.gapso.web.trieda.main.client.util.view.GTab;
-import com.gapso.web.trieda.main.client.util.view.GTabItem;
-import com.gapso.web.trieda.main.client.util.view.GradeHorariaProfessorGrid;
-import com.gapso.web.trieda.main.client.util.view.ProfessorComboBox;
-import com.gapso.web.trieda.main.client.util.view.TurnoComboBox;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.mvp.presenter.Presenter;
+import com.gapso.web.trieda.shared.util.view.CampusComboBox;
+import com.gapso.web.trieda.shared.util.view.GTab;
+import com.gapso.web.trieda.shared.util.view.GTabItem;
+import com.gapso.web.trieda.shared.util.view.GradeHorariaProfessorGrid;
+import com.gapso.web.trieda.shared.util.view.ProfessorComboBox;
+import com.gapso.web.trieda.shared.util.view.TurnoComboBox;
 import com.google.gwt.user.client.ui.Widget;
 
 public class RelatorioVisaoProfessorPresenter implements Presenter {

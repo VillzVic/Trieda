@@ -7,16 +7,16 @@ import com.extjs.gxt.ui.client.widget.form.NumberField;
 import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.extjs.gxt.ui.client.widget.layout.FormData;
 import com.gapso.web.trieda.main.client.mvp.presenter.ProfessorFormPresenter;
-import com.gapso.web.trieda.main.client.util.resources.Resources;
-import com.gapso.web.trieda.main.client.util.view.AreaTitulacaoComboBox;
-import com.gapso.web.trieda.main.client.util.view.SimpleModal;
-import com.gapso.web.trieda.main.client.util.view.TipoContratoComboBox;
-import com.gapso.web.trieda.main.client.util.view.TitulacaoComboBox;
 import com.gapso.web.trieda.shared.dtos.AreaTitulacaoDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorDTO;
 import com.gapso.web.trieda.shared.dtos.TipoContratoDTO;
 import com.gapso.web.trieda.shared.dtos.TitulacaoDTO;
 import com.gapso.web.trieda.shared.mvp.view.MyComposite;
+import com.gapso.web.trieda.shared.util.resources.Resources;
+import com.gapso.web.trieda.shared.util.view.AreaTitulacaoComboBox;
+import com.gapso.web.trieda.shared.util.view.SimpleModal;
+import com.gapso.web.trieda.shared.util.view.TipoContratoComboBox;
+import com.gapso.web.trieda.shared.util.view.TitulacaoComboBox;
 
 public class ProfessorFormView extends MyComposite implements ProfessorFormPresenter.Display {
 

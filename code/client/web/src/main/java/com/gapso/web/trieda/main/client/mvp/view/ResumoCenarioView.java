@@ -14,12 +14,12 @@ import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
 import com.extjs.gxt.ui.client.widget.layout.FitLayout;
 import com.extjs.gxt.ui.client.widget.treepanel.TreePanel;
 import com.gapso.web.trieda.main.client.mvp.presenter.ResumoCenarioPresenter;
-import com.gapso.web.trieda.main.client.services.Services;
-import com.gapso.web.trieda.main.client.util.resources.Resources;
-import com.gapso.web.trieda.main.client.util.view.GTabItem;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.TreeNodeDTO;
 import com.gapso.web.trieda.shared.mvp.view.MyComposite;
+import com.gapso.web.trieda.shared.services.Services;
+import com.gapso.web.trieda.shared.util.resources.Resources;
+import com.gapso.web.trieda.shared.util.view.GTabItem;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class ResumoCenarioView extends MyComposite implements ResumoCenarioPresenter.Display {

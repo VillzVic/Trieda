@@ -14,10 +14,10 @@ import com.extjs.gxt.ui.client.widget.layout.FitLayout;
 import com.extjs.gxt.ui.client.widget.layout.RowData;
 import com.extjs.gxt.ui.client.widget.layout.RowLayout;
 import com.gapso.web.trieda.main.client.mvp.presenter.SelecionarCampiPresenter;
-import com.gapso.web.trieda.main.client.util.resources.Resources;
-import com.gapso.web.trieda.main.client.util.view.SimpleModal;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.mvp.view.MyComposite;
+import com.gapso.web.trieda.shared.util.resources.Resources;
+import com.gapso.web.trieda.shared.util.view.SimpleModal;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
 public class SelecionarCampiView extends MyComposite implements SelecionarCampiPresenter.Display {

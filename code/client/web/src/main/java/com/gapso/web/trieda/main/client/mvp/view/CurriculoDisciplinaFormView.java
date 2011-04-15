@@ -7,12 +7,12 @@ import com.extjs.gxt.ui.client.widget.form.NumberField;
 import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.extjs.gxt.ui.client.widget.layout.FormData;
 import com.gapso.web.trieda.main.client.mvp.presenter.CurriculoDisciplinaFormPresenter;
-import com.gapso.web.trieda.main.client.util.resources.Resources;
-import com.gapso.web.trieda.main.client.util.view.DisciplinaComboBox;
-import com.gapso.web.trieda.main.client.util.view.SimpleModal;
 import com.gapso.web.trieda.shared.dtos.CurriculoDTO;
 import com.gapso.web.trieda.shared.dtos.CurriculoDisciplinaDTO;
 import com.gapso.web.trieda.shared.mvp.view.MyComposite;
+import com.gapso.web.trieda.shared.util.resources.Resources;
+import com.gapso.web.trieda.shared.util.view.DisciplinaComboBox;
+import com.gapso.web.trieda.shared.util.view.SimpleModal;
 
 public class CurriculoDisciplinaFormView extends MyComposite implements CurriculoDisciplinaFormPresenter.Display {
 

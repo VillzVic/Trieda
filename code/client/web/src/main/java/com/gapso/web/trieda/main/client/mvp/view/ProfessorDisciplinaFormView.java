@@ -6,14 +6,14 @@ import com.extjs.gxt.ui.client.widget.form.FormPanel;
 import com.extjs.gxt.ui.client.widget.form.NumberField;
 import com.extjs.gxt.ui.client.widget.layout.FormData;
 import com.gapso.web.trieda.main.client.mvp.presenter.ProfessorDisciplinaFormPresenter;
-import com.gapso.web.trieda.main.client.util.resources.Resources;
-import com.gapso.web.trieda.main.client.util.view.DisciplinaComboBox;
-import com.gapso.web.trieda.main.client.util.view.ProfessorComboBox;
-import com.gapso.web.trieda.main.client.util.view.SimpleModal;
 import com.gapso.web.trieda.shared.dtos.DisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorDisciplinaDTO;
 import com.gapso.web.trieda.shared.mvp.view.MyComposite;
+import com.gapso.web.trieda.shared.util.resources.Resources;
+import com.gapso.web.trieda.shared.util.view.DisciplinaComboBox;
+import com.gapso.web.trieda.shared.util.view.ProfessorComboBox;
+import com.gapso.web.trieda.shared.util.view.SimpleModal;
 
 public class ProfessorDisciplinaFormView extends MyComposite implements ProfessorDisciplinaFormPresenter.Display {
 

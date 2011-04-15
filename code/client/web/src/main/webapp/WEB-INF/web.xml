@@ -237,6 +237,22 @@
   		<url-pattern>/trieda/usuarios</url-pattern>
 	</servlet-mapping>
 	
+	<servlet-mapping>
+		<servlet-name>cenariosServlet</servlet-name>
+		<url-pattern>/professor/cenarios</url-pattern>
+	</servlet-mapping>	
+	<servlet-mapping>
+		<servlet-name>professoresServlet</servlet-name>
+		<url-pattern>/professor/professores</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+  		<servlet-name>usuariosServlet</servlet-name>
+  		<url-pattern>/professor/usuarios</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+  		<servlet-name>campiServlet</servlet-name>
+  		<url-pattern>/professor/campi</url-pattern>
+	</servlet-mapping>
 
 	<welcome-file-list>
 		<welcome-file>index.html</welcome-file>

@@ -14,15 +14,15 @@ import com.extjs.gxt.ui.client.widget.grid.ColumnConfig;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayout;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
 import com.gapso.web.trieda.main.client.mvp.presenter.HorariosAulaPresenter;
-import com.gapso.web.trieda.main.client.util.resources.Resources;
-import com.gapso.web.trieda.main.client.util.view.GTabItem;
-import com.gapso.web.trieda.main.client.util.view.SemanaLetivaComboBox;
-import com.gapso.web.trieda.main.client.util.view.SimpleFilter;
-import com.gapso.web.trieda.main.client.util.view.SimpleGrid;
-import com.gapso.web.trieda.main.client.util.view.SimpleToolBar;
-import com.gapso.web.trieda.main.client.util.view.TurnoComboBox;
 import com.gapso.web.trieda.shared.dtos.HorarioAulaDTO;
 import com.gapso.web.trieda.shared.mvp.view.MyComposite;
+import com.gapso.web.trieda.shared.util.resources.Resources;
+import com.gapso.web.trieda.shared.util.view.GTabItem;
+import com.gapso.web.trieda.shared.util.view.SemanaLetivaComboBox;
+import com.gapso.web.trieda.shared.util.view.SimpleFilter;
+import com.gapso.web.trieda.shared.util.view.SimpleGrid;
+import com.gapso.web.trieda.shared.util.view.SimpleToolBar;
+import com.gapso.web.trieda.shared.util.view.TurnoComboBox;
 import com.google.gwt.i18n.client.DateTimeFormat;
 
 public class HorariosAulaView extends MyComposite implements HorariosAulaPresenter.Display {

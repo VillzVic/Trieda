@@ -19,12 +19,12 @@ import com.extjs.gxt.ui.client.widget.layout.FormData;
 import com.extjs.gxt.ui.client.widget.layout.FormLayout;
 import com.extjs.gxt.ui.client.widget.layout.RowLayout;
 import com.gapso.web.trieda.main.client.mvp.presenter.ParametrosPresenter;
-import com.gapso.web.trieda.main.client.util.resources.Resources;
-import com.gapso.web.trieda.main.client.util.view.CargaHorariaComboBox;
-import com.gapso.web.trieda.main.client.util.view.FuncaoObjetivoComboBox;
-import com.gapso.web.trieda.main.client.util.view.GTabItem;
 import com.gapso.web.trieda.shared.dtos.ParametroDTO;
 import com.gapso.web.trieda.shared.mvp.view.MyComposite;
+import com.gapso.web.trieda.shared.util.resources.Resources;
+import com.gapso.web.trieda.shared.util.view.CargaHorariaComboBox;
+import com.gapso.web.trieda.shared.util.view.FuncaoObjetivoComboBox;
+import com.gapso.web.trieda.shared.util.view.GTabItem;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
 public class ParametrosView extends MyComposite implements ParametrosPresenter.Display {

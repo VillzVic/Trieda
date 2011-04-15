@@ -6,14 +6,14 @@ import com.extjs.gxt.ui.client.widget.Info;
 import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.TextField;
-import com.gapso.web.trieda.main.client.services.AreasTitulacaoServiceAsync;
-import com.gapso.web.trieda.main.client.services.Services;
-import com.gapso.web.trieda.main.client.util.view.AbstractAsyncCallbackWithDefaultOnFailure;
-import com.gapso.web.trieda.main.client.util.view.SimpleGrid;
-import com.gapso.web.trieda.main.client.util.view.SimpleModal;
 import com.gapso.web.trieda.shared.dtos.AreaTitulacaoDTO;
 import com.gapso.web.trieda.shared.i18n.ITriedaI18nGateway;
 import com.gapso.web.trieda.shared.mvp.presenter.Presenter;
+import com.gapso.web.trieda.shared.services.AreasTitulacaoServiceAsync;
+import com.gapso.web.trieda.shared.services.Services;
+import com.gapso.web.trieda.shared.util.view.AbstractAsyncCallbackWithDefaultOnFailure;
+import com.gapso.web.trieda.shared.util.view.SimpleGrid;
+import com.gapso.web.trieda.shared.util.view.SimpleModal;
 import com.google.gwt.user.client.ui.Widget;
 
 public class AreaTitulacaoFormPresenter implements Presenter {

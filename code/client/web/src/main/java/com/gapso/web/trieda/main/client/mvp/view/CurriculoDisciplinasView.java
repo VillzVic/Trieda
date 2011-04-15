@@ -26,12 +26,12 @@ import com.extjs.gxt.ui.client.widget.grid.SummaryType;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayout;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
 import com.gapso.web.trieda.main.client.mvp.presenter.CurriculoDisciplinasPresenter;
-import com.gapso.web.trieda.main.client.util.resources.Resources;
-import com.gapso.web.trieda.main.client.util.view.GTabItem;
-import com.gapso.web.trieda.main.client.util.view.SimpleToolBar;
 import com.gapso.web.trieda.shared.dtos.CurriculoDTO;
 import com.gapso.web.trieda.shared.dtos.CurriculoDisciplinaDTO;
 import com.gapso.web.trieda.shared.mvp.view.MyComposite;
+import com.gapso.web.trieda.shared.util.resources.Resources;
+import com.gapso.web.trieda.shared.util.view.GTabItem;
+import com.gapso.web.trieda.shared.util.view.SimpleToolBar;
 
 public class CurriculoDisciplinasView extends MyComposite implements CurriculoDisciplinasPresenter.Display {
 

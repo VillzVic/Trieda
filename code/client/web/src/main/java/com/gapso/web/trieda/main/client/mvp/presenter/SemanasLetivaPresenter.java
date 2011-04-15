@@ -14,13 +14,13 @@ import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.gapso.web.trieda.main.client.mvp.view.HorarioDisponivelCenarioFormView;
 import com.gapso.web.trieda.main.client.mvp.view.SemanaLetivaFormView;
-import com.gapso.web.trieda.main.client.services.SemanasLetivaServiceAsync;
-import com.gapso.web.trieda.main.client.services.Services;
-import com.gapso.web.trieda.main.client.util.view.GTab;
-import com.gapso.web.trieda.main.client.util.view.GTabItem;
-import com.gapso.web.trieda.main.client.util.view.SimpleGrid;
 import com.gapso.web.trieda.shared.dtos.SemanaLetivaDTO;
 import com.gapso.web.trieda.shared.mvp.presenter.Presenter;
+import com.gapso.web.trieda.shared.services.SemanasLetivaServiceAsync;
+import com.gapso.web.trieda.shared.services.Services;
+import com.gapso.web.trieda.shared.util.view.GTab;
+import com.gapso.web.trieda.shared.util.view.GTabItem;
+import com.gapso.web.trieda.shared.util.view.SimpleGrid;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
 

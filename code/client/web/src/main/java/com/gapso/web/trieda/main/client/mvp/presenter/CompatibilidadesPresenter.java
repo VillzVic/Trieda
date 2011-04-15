@@ -11,18 +11,18 @@ import com.extjs.gxt.ui.client.widget.Info;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.SimpleComboBox;
 import com.extjs.gxt.ui.client.widget.form.SimpleComboValue;
-import com.gapso.web.trieda.main.client.services.Services;
-import com.gapso.web.trieda.main.client.util.view.AbstractAsyncCallbackWithDefaultOnFailure;
-import com.gapso.web.trieda.main.client.util.view.CurriculoComboBox;
-import com.gapso.web.trieda.main.client.util.view.CursoComboBox;
-import com.gapso.web.trieda.main.client.util.view.GTab;
-import com.gapso.web.trieda.main.client.util.view.GTabItem;
-import com.gapso.web.trieda.main.client.util.view.IncompatibilidadeGrid;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.CurriculoDTO;
 import com.gapso.web.trieda.shared.dtos.DisciplinaIncompativelDTO;
 import com.gapso.web.trieda.shared.i18n.ITriedaI18nGateway;
 import com.gapso.web.trieda.shared.mvp.presenter.Presenter;
+import com.gapso.web.trieda.shared.services.Services;
+import com.gapso.web.trieda.shared.util.view.AbstractAsyncCallbackWithDefaultOnFailure;
+import com.gapso.web.trieda.shared.util.view.CurriculoComboBox;
+import com.gapso.web.trieda.shared.util.view.CursoComboBox;
+import com.gapso.web.trieda.shared.util.view.GTab;
+import com.gapso.web.trieda.shared.util.view.GTabItem;
+import com.gapso.web.trieda.shared.util.view.IncompatibilidadeGrid;
 import com.google.gwt.user.client.ui.Widget;
 
 public class CompatibilidadesPresenter implements Presenter {

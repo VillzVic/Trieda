@@ -13,13 +13,13 @@ import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.gapso.web.trieda.main.client.mvp.view.TipoCursoFormView;
-import com.gapso.web.trieda.main.client.services.Services;
-import com.gapso.web.trieda.main.client.services.TiposCursosServiceAsync;
-import com.gapso.web.trieda.main.client.util.view.GTab;
-import com.gapso.web.trieda.main.client.util.view.GTabItem;
-import com.gapso.web.trieda.main.client.util.view.SimpleGrid;
 import com.gapso.web.trieda.shared.dtos.TipoCursoDTO;
 import com.gapso.web.trieda.shared.mvp.presenter.Presenter;
+import com.gapso.web.trieda.shared.services.Services;
+import com.gapso.web.trieda.shared.services.TiposCursosServiceAsync;
+import com.gapso.web.trieda.shared.util.view.GTab;
+import com.gapso.web.trieda.shared.util.view.GTabItem;
+import com.gapso.web.trieda.shared.util.view.SimpleGrid;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
 

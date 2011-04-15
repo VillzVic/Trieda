@@ -15,14 +15,14 @@ import com.extjs.gxt.ui.client.widget.layout.BorderLayout;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
 import com.extjs.gxt.ui.client.widget.toolbar.SeparatorToolItem;
 import com.gapso.web.trieda.main.client.mvp.presenter.UnidadesPresenter;
-import com.gapso.web.trieda.main.client.util.resources.Resources;
-import com.gapso.web.trieda.main.client.util.view.CampusComboBox;
-import com.gapso.web.trieda.main.client.util.view.GTabItem;
-import com.gapso.web.trieda.main.client.util.view.SimpleFilter;
-import com.gapso.web.trieda.main.client.util.view.SimpleGrid;
-import com.gapso.web.trieda.main.client.util.view.SimpleToolBar;
 import com.gapso.web.trieda.shared.dtos.UnidadeDTO;
 import com.gapso.web.trieda.shared.mvp.view.MyComposite;
+import com.gapso.web.trieda.shared.util.resources.Resources;
+import com.gapso.web.trieda.shared.util.view.CampusComboBox;
+import com.gapso.web.trieda.shared.util.view.GTabItem;
+import com.gapso.web.trieda.shared.util.view.SimpleFilter;
+import com.gapso.web.trieda.shared.util.view.SimpleGrid;
+import com.gapso.web.trieda.shared.util.view.SimpleToolBar;
 
 public class UnidadesView extends MyComposite implements UnidadesPresenter.Display {
 

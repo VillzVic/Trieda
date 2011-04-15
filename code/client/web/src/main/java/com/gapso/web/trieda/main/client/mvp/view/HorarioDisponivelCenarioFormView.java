@@ -16,14 +16,14 @@ import com.extjs.gxt.ui.client.widget.layout.VBoxLayout;
 import com.extjs.gxt.ui.client.widget.layout.VBoxLayout.VBoxLayoutAlign;
 import com.extjs.gxt.ui.client.widget.layout.VBoxLayoutData;
 import com.gapso.web.trieda.main.client.mvp.presenter.HorarioDisponivelCenarioFormPresenter;
-import com.gapso.web.trieda.main.client.util.resources.Resources;
-import com.gapso.web.trieda.main.client.util.view.SemanaLetivaGrid;
-import com.gapso.web.trieda.main.client.util.view.SimpleModal;
-import com.gapso.web.trieda.main.client.util.view.TextFieldMask;
-import com.gapso.web.trieda.main.client.util.view.TurnoComboBox;
 import com.gapso.web.trieda.shared.dtos.HorarioDisponivelCenarioDTO;
 import com.gapso.web.trieda.shared.dtos.SemanaLetivaDTO;
 import com.gapso.web.trieda.shared.mvp.view.MyComposite;
+import com.gapso.web.trieda.shared.util.resources.Resources;
+import com.gapso.web.trieda.shared.util.view.SemanaLetivaGrid;
+import com.gapso.web.trieda.shared.util.view.SimpleModal;
+import com.gapso.web.trieda.shared.util.view.TextFieldMask;
+import com.gapso.web.trieda.shared.util.view.TurnoComboBox;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
 public class HorarioDisponivelCenarioFormView extends MyComposite implements HorarioDisponivelCenarioFormPresenter.Display {

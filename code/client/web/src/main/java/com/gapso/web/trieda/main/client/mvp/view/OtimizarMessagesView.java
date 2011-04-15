@@ -3,9 +3,9 @@ package com.gapso.web.trieda.main.client.mvp.view;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
 import com.extjs.gxt.ui.client.widget.layout.RowLayout;
 import com.gapso.web.trieda.main.client.mvp.presenter.OtimizarMessagesPresenter;
-import com.gapso.web.trieda.main.client.util.resources.Resources;
-import com.gapso.web.trieda.main.client.util.view.SimpleModal;
 import com.gapso.web.trieda.shared.mvp.view.MyComposite;
+import com.gapso.web.trieda.shared.util.resources.Resources;
+import com.gapso.web.trieda.shared.util.view.SimpleModal;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
 public class OtimizarMessagesView extends MyComposite implements OtimizarMessagesPresenter.Display {

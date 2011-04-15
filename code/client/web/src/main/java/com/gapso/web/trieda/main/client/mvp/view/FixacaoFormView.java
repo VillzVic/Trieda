@@ -15,14 +15,6 @@ import com.extjs.gxt.ui.client.widget.layout.VBoxLayout;
 import com.extjs.gxt.ui.client.widget.layout.VBoxLayout.VBoxLayoutAlign;
 import com.extjs.gxt.ui.client.widget.layout.VBoxLayoutData;
 import com.gapso.web.trieda.main.client.mvp.presenter.FixacaoFormPresenter;
-import com.gapso.web.trieda.main.client.util.resources.Resources;
-import com.gapso.web.trieda.main.client.util.view.CampusComboBox;
-import com.gapso.web.trieda.main.client.util.view.DisciplinaComboBox;
-import com.gapso.web.trieda.main.client.util.view.ProfessorComboBox;
-import com.gapso.web.trieda.main.client.util.view.SalaComboBox;
-import com.gapso.web.trieda.main.client.util.view.SemanaLetivaDoCenarioGrid;
-import com.gapso.web.trieda.main.client.util.view.SimpleModal;
-import com.gapso.web.trieda.main.client.util.view.UnidadeComboBox;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.DisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.FixacaoDTO;
@@ -31,6 +23,14 @@ import com.gapso.web.trieda.shared.dtos.ProfessorDTO;
 import com.gapso.web.trieda.shared.dtos.SalaDTO;
 import com.gapso.web.trieda.shared.dtos.UnidadeDTO;
 import com.gapso.web.trieda.shared.mvp.view.MyComposite;
+import com.gapso.web.trieda.shared.util.resources.Resources;
+import com.gapso.web.trieda.shared.util.view.CampusComboBox;
+import com.gapso.web.trieda.shared.util.view.DisciplinaComboBox;
+import com.gapso.web.trieda.shared.util.view.ProfessorComboBox;
+import com.gapso.web.trieda.shared.util.view.SalaComboBox;
+import com.gapso.web.trieda.shared.util.view.SemanaLetivaDoCenarioGrid;
+import com.gapso.web.trieda.shared.util.view.SimpleModal;
+import com.gapso.web.trieda.shared.util.view.UnidadeComboBox;
 
 public class FixacaoFormView extends MyComposite implements FixacaoFormPresenter.Display {
 

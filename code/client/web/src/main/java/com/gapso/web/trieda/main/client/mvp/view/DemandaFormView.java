@@ -6,13 +6,6 @@ import com.extjs.gxt.ui.client.widget.form.FormPanel;
 import com.extjs.gxt.ui.client.widget.form.NumberField;
 import com.extjs.gxt.ui.client.widget.layout.FormData;
 import com.gapso.web.trieda.main.client.mvp.presenter.DemandaFormPresenter;
-import com.gapso.web.trieda.main.client.util.resources.Resources;
-import com.gapso.web.trieda.main.client.util.view.CampusComboBox;
-import com.gapso.web.trieda.main.client.util.view.CurriculoComboBox;
-import com.gapso.web.trieda.main.client.util.view.CursoComboBox;
-import com.gapso.web.trieda.main.client.util.view.DisciplinaComboBox;
-import com.gapso.web.trieda.main.client.util.view.SimpleModal;
-import com.gapso.web.trieda.main.client.util.view.TurnoComboBox;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.CurriculoDTO;
 import com.gapso.web.trieda.shared.dtos.CursoDTO;
@@ -20,6 +13,13 @@ import com.gapso.web.trieda.shared.dtos.DemandaDTO;
 import com.gapso.web.trieda.shared.dtos.DisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.TurnoDTO;
 import com.gapso.web.trieda.shared.mvp.view.MyComposite;
+import com.gapso.web.trieda.shared.util.resources.Resources;
+import com.gapso.web.trieda.shared.util.view.CampusComboBox;
+import com.gapso.web.trieda.shared.util.view.CurriculoComboBox;
+import com.gapso.web.trieda.shared.util.view.CursoComboBox;
+import com.gapso.web.trieda.shared.util.view.DisciplinaComboBox;
+import com.gapso.web.trieda.shared.util.view.SimpleModal;
+import com.gapso.web.trieda.shared.util.view.TurnoComboBox;
 
 public class DemandaFormView extends MyComposite implements DemandaFormPresenter.Display {
 

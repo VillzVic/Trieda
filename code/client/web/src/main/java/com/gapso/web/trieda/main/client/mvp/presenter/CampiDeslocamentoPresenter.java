@@ -7,16 +7,16 @@ import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.widget.Component;
 import com.extjs.gxt.ui.client.widget.Info;
 import com.extjs.gxt.ui.client.widget.button.Button;
-import com.gapso.web.trieda.main.client.services.CampiServiceAsync;
-import com.gapso.web.trieda.main.client.services.Services;
-import com.gapso.web.trieda.main.client.util.view.AbstractAsyncCallbackWithDefaultOnFailure;
-import com.gapso.web.trieda.main.client.util.view.DeslocamentoGrid;
-import com.gapso.web.trieda.main.client.util.view.GTab;
-import com.gapso.web.trieda.main.client.util.view.GTabItem;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.DeslocamentoCampusDTO;
 import com.gapso.web.trieda.shared.i18n.ITriedaI18nGateway;
 import com.gapso.web.trieda.shared.mvp.presenter.Presenter;
+import com.gapso.web.trieda.shared.services.CampiServiceAsync;
+import com.gapso.web.trieda.shared.services.Services;
+import com.gapso.web.trieda.shared.util.view.AbstractAsyncCallbackWithDefaultOnFailure;
+import com.gapso.web.trieda.shared.util.view.DeslocamentoGrid;
+import com.gapso.web.trieda.shared.util.view.GTab;
+import com.gapso.web.trieda.shared.util.view.GTabItem;
 import com.google.gwt.user.client.ui.Widget;
 
 public class CampiDeslocamentoPresenter implements Presenter {

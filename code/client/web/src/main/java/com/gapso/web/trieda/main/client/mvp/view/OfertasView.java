@@ -13,17 +13,17 @@ import com.extjs.gxt.ui.client.widget.grid.ColumnConfig;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayout;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
 import com.gapso.web.trieda.main.client.mvp.presenter.OfertasPresenter;
-import com.gapso.web.trieda.main.client.util.resources.Resources;
-import com.gapso.web.trieda.main.client.util.view.CampusComboBox;
-import com.gapso.web.trieda.main.client.util.view.CurriculoComboBox;
-import com.gapso.web.trieda.main.client.util.view.CursoComboBox;
-import com.gapso.web.trieda.main.client.util.view.GTabItem;
-import com.gapso.web.trieda.main.client.util.view.SimpleFilter;
-import com.gapso.web.trieda.main.client.util.view.SimpleGrid;
-import com.gapso.web.trieda.main.client.util.view.SimpleToolBar;
-import com.gapso.web.trieda.main.client.util.view.TurnoComboBox;
 import com.gapso.web.trieda.shared.dtos.OfertaDTO;
 import com.gapso.web.trieda.shared.mvp.view.MyComposite;
+import com.gapso.web.trieda.shared.util.resources.Resources;
+import com.gapso.web.trieda.shared.util.view.CampusComboBox;
+import com.gapso.web.trieda.shared.util.view.CurriculoComboBox;
+import com.gapso.web.trieda.shared.util.view.CursoComboBox;
+import com.gapso.web.trieda.shared.util.view.GTabItem;
+import com.gapso.web.trieda.shared.util.view.SimpleFilter;
+import com.gapso.web.trieda.shared.util.view.SimpleGrid;
+import com.gapso.web.trieda.shared.util.view.SimpleToolBar;
+import com.gapso.web.trieda.shared.util.view.TurnoComboBox;
 
 public class OfertasView extends MyComposite implements OfertasPresenter.Display {
 
