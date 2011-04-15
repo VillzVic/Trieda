@@ -15,5 +15,6 @@ public interface UsuariosServiceAsync {
 	void getBuscaList(String nome, String username, String email,
 			PagingLoadConfig config,
 			AsyncCallback<PagingLoadResult<UsuarioDTO>> callback);
+	void getCurrentUser(AsyncCallback<UsuarioDTO> callback);
 
 }

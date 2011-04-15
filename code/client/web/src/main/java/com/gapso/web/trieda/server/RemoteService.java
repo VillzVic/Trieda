@@ -29,7 +29,7 @@ public class RemoteService extends RemoteServiceServlet {
 		return getUsuario().getProfessor() == null;
 	}
 	protected void onlyAdministrador() {
-		if(isAdministrador()) {
+		if(!isAdministrador()) {
 			throw new RuntimeException("Permissão negada, usuário \""+getUsuario().getUsername()+"\" não é de Administrador");
 		}
 	}

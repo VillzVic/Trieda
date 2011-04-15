@@ -19,5 +19,6 @@ public interface UsuariosService extends RemoteService {
 	void remove(List<UsuarioDTO> usuarioDTOList);
 	PagingLoadResult<UsuarioDTO> getBuscaList(String nome, String username,
 			String email, PagingLoadConfig config);
+	UsuarioDTO getCurrentUser();
 	
 }

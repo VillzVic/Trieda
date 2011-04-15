@@ -11,18 +11,22 @@ import com.gapso.trieda.domain.Usuario;
 import com.gapso.web.trieda.server.util.ConvertBeans;
 import com.gapso.web.trieda.shared.dtos.UsuarioDTO;
 import com.gapso.web.trieda.shared.services.UsuariosService;
-import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 /**
  * The server side implementation of the RPC service.
  */
-public class UsuariosServiceImpl extends RemoteServiceServlet implements UsuariosService {
+public class UsuariosServiceImpl extends RemoteService implements UsuariosService {
 
 	private static final long serialVersionUID = 5672570072070386404L;
 
 	@Override
 	public UsuarioDTO getUsuario(String username) {
 		return ConvertBeans.toUsuarioDTO(Usuario.find(username));
+	}
+	
+	@Override
+	public UsuarioDTO getCurrentUser() {
+		return ConvertBeans.toUsuarioDTO(getUsuario());
 	}
 	
 	@Override

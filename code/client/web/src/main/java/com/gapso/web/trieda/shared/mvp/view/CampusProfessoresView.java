@@ -11,6 +11,7 @@ import com.extjs.gxt.ui.client.widget.grid.ColumnConfig;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayout;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
 import com.gapso.web.trieda.shared.dtos.ProfessorCampusDTO;
+import com.gapso.web.trieda.shared.dtos.UsuarioDTO;
 import com.gapso.web.trieda.shared.mvp.presenter.CampusProfessoresPresenter;
 import com.gapso.web.trieda.shared.util.resources.Resources;
 import com.gapso.web.trieda.shared.util.view.CampusComboBox;
@@ -30,16 +31,22 @@ public class CampusProfessoresView extends MyComposite implements CampusProfesso
 	private ContentPanel panel;
 	private GTabItem tabItem;
 	
-	public CampusProfessoresView() {
+	private UsuarioDTO usuario;
+	
+	public CampusProfessoresView(UsuarioDTO usuario) {
+		this.usuario = usuario;
 		initUI();
 	}
 	
 	private void initUI() {
 		panel = new ContentPanel(new BorderLayout());
-		panel.setHeading("Master Data » Campi de Trabalho");
-		createToolBar();
+		String title = (usuario.isAdministrador())? "Professor » Campi de Trabalho" : "Master Data » Campi de Trabalho";
+		panel.setHeading(title);
 		createGrid();
-		createFilter();
+		if(usuario.isAdministrador()) {
+			createToolBar();
+			createFilter();
+		}
 		createTabItem();
 		initComponent(tabItem);
 	}

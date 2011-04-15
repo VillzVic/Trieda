@@ -13,6 +13,7 @@ import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorCampusDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorDTO;
+import com.gapso.web.trieda.shared.dtos.UsuarioDTO;
 import com.gapso.web.trieda.shared.i18n.ITriedaI18nGateway;
 import com.gapso.web.trieda.shared.mvp.view.CampusProfessorFormView;
 import com.gapso.web.trieda.shared.services.Services;
@@ -41,10 +42,12 @@ public class CampusProfessoresPresenter implements Presenter {
 		Component getComponent();
 	}
 	private CenarioDTO cenario;
+	private UsuarioDTO usuario;
 	private Display display; 
 	
-	public CampusProfessoresPresenter(CenarioDTO cenario, Display display) {
+	public CampusProfessoresPresenter(CenarioDTO cenario, UsuarioDTO usuario, Display display) {
 		this.cenario = cenario;
+		this.usuario = usuario;
 		this.display = display;
 		configureProxy();
 		setListeners();
@@ -54,60 +57,66 @@ public class CampusProfessoresPresenter implements Presenter {
 		RpcProxy<PagingLoadResult<ProfessorCampusDTO>> proxy = new RpcProxy<PagingLoadResult<ProfessorCampusDTO>>() {
 			@Override
 			public void load(Object loadConfig, AsyncCallback<PagingLoadResult<ProfessorCampusDTO>> callback) {
-				CampusDTO campus = display.getCampusBuscaComboBox().getValue();
-				ProfessorDTO professor = display.getProfessorBuscaComboBox().getValue();
-				Services.professores().getProfessorCampusList(campus, professor, callback);
+				if(usuario.isAdministrador()) {
+					CampusDTO campus = display.getCampusBuscaComboBox().getValue();
+					ProfessorDTO professor = display.getProfessorBuscaComboBox().getValue();
+					Services.professores().getProfessorCampusList(campus, professor, callback);
+				} else {
+					Services.professores().getProfessorCampusByCurrentProfessor(callback);
+				}
 			}
 		};
 		display.getGrid().setProxy(proxy);
 	}
 	
 	private void setListeners() {
-		display.getNewButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
-			@Override
-			public void componentSelected(ButtonEvent ce) {
-				Presenter presenter = new CampusProfessorFormPresenter(cenario, new CampusProfessorFormView(null), display.getGrid());
-				presenter.go(null);
-			}
-		});
-		display.getEditButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
-			@Override
-			public void componentSelected(ButtonEvent ce) {
-				ProfessorCampusDTO pcDTO = display.getGrid().getGrid().getSelectionModel().getSelectedItem();
-				CampusDTO campusDTO = new CampusDTO();
-				campusDTO.setId(pcDTO.getCampusId());
-				campusDTO.setCodigo(pcDTO.getCampusString());
-				Presenter presenter = new CampusProfessorFormPresenter(cenario, new CampusProfessorFormView(campusDTO), display.getGrid());
-				presenter.go(null);
-			}
-		});
-		display.getRemoveButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
-			@Override
-			public void componentSelected(ButtonEvent ce) {
-				List<ProfessorCampusDTO> list = display.getGrid().getGrid().getSelectionModel().getSelectedItems();
-				Services.professores().removeProfessorCampus(list, new AbstractAsyncCallbackWithDefaultOnFailure<Void>(display) {
-					@Override
-					public void onSuccess(Void result) {
-						display.getGrid().updateList();
-						Info.display("Removido", "Item removido com sucesso!");
-					}
-				});
-			}
-		});
-		display.getResetBuscaButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
-			@Override
-			public void componentSelected(ButtonEvent ce) {
-				display.getCampusBuscaComboBox().setValue(null);
-				display.getProfessorBuscaComboBox().setValue(null);
-				display.getGrid().updateList();
-			}
-		});
-		display.getSubmitBuscaButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
-			@Override
-			public void componentSelected(ButtonEvent ce) {
-				display.getGrid().updateList();
-			}
-		});
+		if(usuario.isAdministrador()) {
+			display.getNewButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
+				@Override
+				public void componentSelected(ButtonEvent ce) {
+					Presenter presenter = new CampusProfessorFormPresenter(cenario, new CampusProfessorFormView(null), display.getGrid());
+					presenter.go(null);
+				}
+			});
+			display.getEditButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
+				@Override
+				public void componentSelected(ButtonEvent ce) {
+					ProfessorCampusDTO pcDTO = display.getGrid().getGrid().getSelectionModel().getSelectedItem();
+					CampusDTO campusDTO = new CampusDTO();
+					campusDTO.setId(pcDTO.getCampusId());
+					campusDTO.setCodigo(pcDTO.getCampusString());
+					Presenter presenter = new CampusProfessorFormPresenter(cenario, new CampusProfessorFormView(campusDTO), display.getGrid());
+					presenter.go(null);
+				}
+			});
+			display.getRemoveButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
+				@Override
+				public void componentSelected(ButtonEvent ce) {
+					List<ProfessorCampusDTO> list = display.getGrid().getGrid().getSelectionModel().getSelectedItems();
+					Services.professores().removeProfessorCampus(list, new AbstractAsyncCallbackWithDefaultOnFailure<Void>(display) {
+						@Override
+						public void onSuccess(Void result) {
+							display.getGrid().updateList();
+							Info.display("Removido", "Item removido com sucesso!");
+						}
+					});
+				}
+			});
+			display.getResetBuscaButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
+				@Override
+				public void componentSelected(ButtonEvent ce) {
+					display.getCampusBuscaComboBox().setValue(null);
+					display.getProfessorBuscaComboBox().setValue(null);
+					display.getGrid().updateList();
+				}
+			});
+			display.getSubmitBuscaButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
+				@Override
+				public void componentSelected(ButtonEvent ce) {
+					display.getGrid().updateList();
+				}
+			});
+		}
 	}
 	
 	@Override

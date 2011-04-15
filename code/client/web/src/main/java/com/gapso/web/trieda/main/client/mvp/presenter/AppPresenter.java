@@ -4,15 +4,19 @@ import com.extjs.gxt.ui.client.widget.Component;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
 import com.gapso.web.trieda.main.client.mvp.view.ToolBarView;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
+import com.gapso.web.trieda.shared.dtos.UsuarioDTO;
 import com.gapso.web.trieda.shared.i18n.ITriedaI18nGateway;
 import com.gapso.web.trieda.shared.mvp.presenter.Presenter;
 import com.gapso.web.trieda.shared.services.CenariosServiceAsync;
 import com.gapso.web.trieda.shared.services.Services;
+import com.gapso.web.trieda.shared.services.UsuariosServiceAsync;
 import com.gapso.web.trieda.shared.util.view.AbstractAsyncCallbackWithDefaultOnFailure;
 import com.gapso.web.trieda.shared.util.view.CenarioPanel;
 import com.gapso.web.trieda.shared.util.view.GTab;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.googlecode.future.FutureResult;
+import com.googlecode.future.FutureSynchronizer;
 
 public class AppPresenter implements Presenter {
 
@@ -33,12 +37,25 @@ public class AppPresenter implements Presenter {
 	@Override
 	public void go(final Widget widget) {
 		
-		final CenariosServiceAsync cenariosServer = Services.cenarios();
-		cenariosServer.getMasterData(new AbstractAsyncCallbackWithDefaultOnFailure<CenarioDTO>(viewport) {
+		CenariosServiceAsync cenarioService = Services.cenarios();
+		UsuariosServiceAsync usuarioService = Services.usuarios();
+		
+		final FutureResult<CenarioDTO> futureCenarioDTO = new FutureResult<CenarioDTO>();
+		final FutureResult<UsuarioDTO> futureUsuarioDTO = new FutureResult<UsuarioDTO>();
+		
+		cenarioService.getMasterData(futureCenarioDTO);
+		usuarioService.getCurrentUser(futureUsuarioDTO);
+		
+		FutureSynchronizer synch = new FutureSynchronizer(futureCenarioDTO, futureUsuarioDTO);
+		
+		synch.addCallback(new AbstractAsyncCallbackWithDefaultOnFailure<Boolean>(viewport) {
 			@Override
-			public void onSuccess(CenarioDTO masterData) {
+			public void onSuccess(Boolean result) {
+				CenarioDTO cenario = futureCenarioDTO.result();
+				UsuarioDTO usuario = futureUsuarioDTO.result();
+				
 				RootPanel rp = (RootPanel) widget;
-				Presenter presenter = new ToolBarPresenter(masterData, viewport.getCenarioPanel(), new ToolBarView());
+				Presenter presenter = new ToolBarPresenter(cenario, usuario, viewport.getCenarioPanel(), new ToolBarView());
 				presenter.go(viewport.asWidget());
 				rp.add(viewport.asWidget());
 				RootPanel.get("loading").setVisible(false);

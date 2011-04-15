@@ -81,6 +81,9 @@ public class UsuarioDTO extends AbstractDTO<String> implements Comparable<Usuari
 	public boolean isProfessor() {
 		return getProfessorId() != null && getProfessorId() > 0;
 	}
+	public boolean isAdministrador() {
+		return !isProfessor();
+	}
 	
 	@Override
 	public String getNaturalKey() {

@@ -36,7 +36,7 @@ public class ToolBarPresenter implements Presenter {
 		toolBar.getProfessoresCampusListprofessoresBt().addSelectionListener(new SelectionListener<ButtonEvent>() {
 			@Override
 			public void componentSelected(ButtonEvent ce) {
-				Presenter presenter = new CampusProfessoresPresenter(masterData, /*usuario, */new CampusProfessoresView(/*usuario*/));
+				Presenter presenter = new CampusProfessoresPresenter(masterData, usuario, new CampusProfessoresView(usuario));
 				presenter.go(gTab);
 			}
 		});

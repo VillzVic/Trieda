@@ -11,7 +11,6 @@ import com.gapso.web.trieda.main.client.mvp.view.AreasTitulacaoView;
 import com.gapso.web.trieda.main.client.mvp.view.CampiDeslocamentoView;
 import com.gapso.web.trieda.main.client.mvp.view.CampiView;
 import com.gapso.web.trieda.main.client.mvp.view.CampusFormView;
-import com.gapso.web.trieda.main.client.mvp.view.CampusProfessoresView;
 import com.gapso.web.trieda.main.client.mvp.view.CompatibilidadesView;
 import com.gapso.web.trieda.main.client.mvp.view.CurriculosView;
 import com.gapso.web.trieda.main.client.mvp.view.CursoFormView;
@@ -47,7 +46,10 @@ import com.gapso.web.trieda.main.client.mvp.view.UsuariosView;
 import com.gapso.web.trieda.main.client.mvp.view.VincularAreasTitulacaoView;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.DeslocamentoCampusDTO;
+import com.gapso.web.trieda.shared.dtos.UsuarioDTO;
+import com.gapso.web.trieda.shared.mvp.presenter.CampusProfessoresPresenter;
 import com.gapso.web.trieda.shared.mvp.presenter.Presenter;
+import com.gapso.web.trieda.shared.mvp.view.CampusProfessoresView;
 import com.gapso.web.trieda.shared.services.CampiServiceAsync;
 import com.gapso.web.trieda.shared.services.Services;
 import com.gapso.web.trieda.shared.util.view.CenarioPanel;
@@ -115,11 +117,13 @@ public class ToolBarPresenter implements Presenter {
 	}
 	
 	private CenarioDTO masterData;
+	private UsuarioDTO usuario;
 	private Display toolBar;
 	private GTab gTab;
 	
-	public ToolBarPresenter(CenarioDTO masterData, CenarioPanel cenarioPanel, Display toolBar) {
+	public ToolBarPresenter(CenarioDTO masterData, UsuarioDTO usuario, CenarioPanel cenarioPanel, Display toolBar) {
 		this.masterData = masterData;
+		this.usuario = usuario;
 		this.toolBar = toolBar;
 		addListeners();
 	}
@@ -343,7 +347,7 @@ public class ToolBarPresenter implements Presenter {
 		toolBar.getProfessoresCampusListprofessoresBt().addSelectionListener(new SelectionListener<ButtonEvent>() {
 			@Override
 			public void componentSelected(ButtonEvent ce) {
-				Presenter presenter = new CampusProfessoresPresenter(masterData, new CampusProfessoresView());
+				Presenter presenter = new CampusProfessoresPresenter(masterData, usuario, new CampusProfessoresView(usuario));
 				presenter.go(gTab);
 			}
 		});

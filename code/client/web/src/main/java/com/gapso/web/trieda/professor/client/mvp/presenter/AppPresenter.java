@@ -42,7 +42,7 @@ public class AppPresenter implements Presenter {
 		final FutureResult<UsuarioDTO> futureUsuarioDTO = new FutureResult<UsuarioDTO>();
 		
 		cenarioService.getMasterData(futureCenarioDTO);
-		usuarioService.getUsuario("admin", futureUsuarioDTO);
+		usuarioService.getCurrentUser(futureUsuarioDTO);
 		
 		FutureSynchronizer synch = new FutureSynchronizer(futureCenarioDTO, futureUsuarioDTO);
 		
