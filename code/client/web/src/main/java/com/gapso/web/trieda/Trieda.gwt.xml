@@ -10,6 +10,7 @@
   <inherits name='com.extjs.gxt.ui.GXT'/>
   <inherits name='com.googlecode.future.AsyncFuture'/>
   <inherits name="com.google.gwt.i18n.I18N"/>
+  <inherits name="com.gapso.web.trieda.shared.Shared"/>
   
   <!-- <inherits name='com.google.gwt.user.theme.chrome.Chrome'/> -->
   <!-- <inherits name='com.google.gwt.user.theme.dark.Dark'/>     -->
@@ -21,6 +22,5 @@
 
   <!-- Specify the paths for translatable code                    -->
   <source path='client'/>
-  <source path='shared'/>
 
 </module>
