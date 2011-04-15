@@ -1,0 +1,281 @@
+/** Add css rules here for your application. */
+
+
+/** Example rules used by the template application (remove for your app) */
+h1 {
+  font-size: 2em;
+  font-weight: bold;
+  color: #777777;
+  margin: 40px 0px 70px;
+  text-align: center;
+}
+
+.sendButton {
+  display: block;
+  font-size: 16pt;
+}
+
+/** Most GWT widgets already have a style name defined */
+.gwt-DialogBox {
+  width: 400px;
+}
+
+.dialogVPanel {
+  margin: 5px;
+}
+
+.serverResponseLabelError {
+  color: red;
+}
+
+.borderBottom {
+	border-bottom: 1px solid #CCD;
+}
+
+/** Set ids using widget.getElement().setId("idOfElement") */
+#closeButton {
+  margin: 15px 6px 6px;
+}
+
+#loading {
+  position: absolute;
+  left: 45%;
+  top: 40%;
+  margin-left: -45px;
+  padding: 2px;
+  z-index: 20001;
+  height: auto;
+  border: 1px solid #ccc;
+}
+
+#loading a {
+  color: #225588;
+}
+
+#loading .loading-indicator {
+  background: white;
+  color: #444;
+  font: bold 13px tahoma, arial, helvetica;
+  padding: 10px;
+  margin: 0;
+  height: auto;
+}
+
+#loading .loading-indicator img {
+  margin-right:8px;
+  float:left;
+  vertical-align:top;
+}
+
+#loading-msg {
+  font: normal 10px arial, tahoma, sans-serif;
+}
+
+.ext-el-mask-msg.loading div {
+	padding-left: 30px;
+	background-image: url('images/ajax16.gif');
+	background-position: 5px 4px;
+	background-repeat: no-repeat;
+}
+
+.toggle-image-button .x-btn-text {
+    cursor: pointer !important;
+    cursor: hand !important;
+    border: none !important;
+    /* Disable the button-style */
+    background-color: transparent !important;
+    background:none !important;
+    background-image:none !important;
+    padding: 0px !important;
+    color: #4784C3 !important;
+    text-decoration: none !important;
+}
+
+ /* remove images */
+.toggle-image-button .x-btn-tl,
+.toggle-image-button .x-btn-tr,
+.toggle-image-button .x-btn-tc,
+.toggle-image-button .x-btn-ml,
+.toggle-image-button .x-btn-mr,
+.toggle-image-button .x-btn-mc,
+.toggle-image-button .x-btn-bl,
+.toggle-image-button .x-btn-br,
+.toggle-image-button .x-btn-bc {
+    background-image: none !important;
+}
+
+/* remove little dots in FF */
+.toggle-image-button .x-btn-tl i,
+.toggle-image-button .x-btn-tr i,
+.toggle-image-button .x-btn-tc i,
+.toggle-image-button .x-btn-ml i,
+.toggle-image-button .x-btn-mr i,
+.toggle-image-button .x-btn-mc i,
+.toggle-image-button .x-btn-bl i,
+.toggle-image-button .x-btn-br i,
+.toggle-image-button .x-btn-bc i {
+    font-size: 0px;
+}
+
+table.cw-FlexTable td {
+	text-align: center;
+}	
+table.cw-FlexTable td.cw-FlexTable-content {
+	padding:0 10px 0 10px;
+}
+
+.SemanaLetivaGrid .x-grid3-row {
+	border: 0;
+}
+.SemanaLetivaGrid td.x-grid3-cell {
+	vertical-align: middle;
+	padding-left: 0;
+	padding-right: 0;
+}
+.SemanaLetivaGrid .x-grid3-row-selected {
+	background-color: #FFF !important;
+	border-color: #FFF;
+}
+
+.x-grid3-summary-row {
+	font: 11px arial,tahoma,helvetica,sans-serif;
+	background:none repeat scroll 0 50% #F1F2F4;
+	border-left:1px solid #FFFFFF;
+	border-right:1px solid #FFFFFF;
+	color:#333333;
+}
+
+.x-grid3-summary-row .x-grid3-cell-inner {
+	font-weight:bold;
+	padding-bottom:4px;
+}
+
+.GradeHorariaGrid .x-grid3-col-creditos {
+	font-size: 15px;
+	font-weight: bold;
+	display: table-cell;
+	vertical-align: middle;
+	text-align: center;
+}
+.GradeHorariaGrid .x-grid3-col-horario {
+	font-size: 12px;
+	font-weight: bold;
+	display: table-cell;
+	vertical-align: middle;
+	text-align: center;
+}
+.GradeHorariaGrid .x-grid3-row {
+}
+.GradeHorariaGrid .x-grid3-cell-inner {
+	height: 74px;
+	width: 80px;
+	overflow: visible;
+}
+.GradeHorariaGrid .x-grid3-row-table .horario {
+	position: absolute;
+	/* background-color: #D2E1F0; */
+	border: 1px solid #8DB2E3;
+	border-radius: 3px;
+	webkit-border-radius: 3px;
+	width: 86px;
+}
+.GradeHorariaGrid .x-grid3-row-table .horario.multi {
+	background-color: #FFC273;
+}
+.GradeHorariaGrid .x-grid3-row-table .drag .horario {
+	left: auto;
+	top: auto;
+}
+.GradeHorariaGrid .x-grid3-row-selected {
+	background-color:#FFFFFF !important;
+	border-color:#FFFFFF #EDEDED #EDEDED;
+	border-style:solid;
+	border-width:1px;
+}
+
+.GradeHorariaGrid .x-grid3-row-table .horario.c1  { top:    7px; _top:    7px; }
+.GradeHorariaGrid .x-grid3-row-table .horario.c2  { top:   87px; _top:   81px; }
+.GradeHorariaGrid .x-grid3-row-table .horario.c3  { top:  167px; _top:  155px; }
+.GradeHorariaGrid .x-grid3-row-table .horario.c4  { top:  247px; _top:  229px; }
+.GradeHorariaGrid .x-grid3-row-table .horario.c5  { top:  327px; _top:  303px; }
+.GradeHorariaGrid .x-grid3-row-table .horario.c6  { top:  407px; _top:  377px; }
+.GradeHorariaGrid .x-grid3-row-table .horario.c7  { top:  487px; _top:  451px; }
+.GradeHorariaGrid .x-grid3-row-table .horario.c8  { top:  567px; _top:  525px; }
+.GradeHorariaGrid .x-grid3-row-table .horario.c9  { top:  647px; _top:  599px; }
+.GradeHorariaGrid .x-grid3-row-table .horario.c10 { top:  727px; _top:  673px; }
+.GradeHorariaGrid .x-grid3-row-table .horario.c11 { top:  807px; _top:  747px; }
+.GradeHorariaGrid .x-grid3-row-table .horario.c12 { top:  887px; _top:  821px; }
+.GradeHorariaGrid .x-grid3-row-table .horario.c13 { top:  967px; _top:  895px; }
+.GradeHorariaGrid .x-grid3-row-table .horario.c14 { top: 1047px; _top:  969px; }
+.GradeHorariaGrid .x-grid3-row-table .horario.c15 { top: 1127px; _top: 1043px; }
+
+.GradeHorariaGrid .x-grid3-row-table .horario.tc1  { height:  66px; _height:  60px; }
+.GradeHorariaGrid .x-grid3-row-table .horario.tc2  { height: 146px; _height: 134px; }
+.GradeHorariaGrid .x-grid3-row-table .horario.tc3  { height: 226px; _height: 208px; }
+.GradeHorariaGrid .x-grid3-row-table .horario.tc4  { height: 306px; _height: 280px; }
+.GradeHorariaGrid .x-grid3-row-table .horario.tc5  { height: 386px; _height: 355px; }
+.GradeHorariaGrid .x-grid3-row-table .horario.tc6  { height: 466px; _height: 430px; }
+
+.GradeHorariaGrid .x-grid3-row-table .horario.s1 { left:     7px; }
+.GradeHorariaGrid .x-grid3-row-table .horario.s2 { left:   107px; }
+.GradeHorariaGrid .x-grid3-row-table .horario.s3 { left:   207px; }
+.GradeHorariaGrid .x-grid3-row-table .horario.s4 { left:   307px; }
+.GradeHorariaGrid .x-grid3-row-table .horario.s5 { left:   407px; }
+.GradeHorariaGrid .x-grid3-row-table .horario.s6 { left:   507px; }
+.GradeHorariaGrid .x-grid3-row-table .horario.s7 { left:   607px; }
+.GradeHorariaGrid .x-grid3-row-table .horario.s8 { left:   707px; }
+.GradeHorariaGrid .x-grid3-row-table .horario.s9 { left:   807px; }
+.GradeHorariaGrid .x-grid3-row-table .horario.s10 { left:  907px; }
+.GradeHorariaGrid .x-grid3-row-table .horario.s11 { left: 1007px; }
+.GradeHorariaGrid .x-grid3-row-table .horario.s12 { left: 1107px; }
+.GradeHorariaGrid .x-grid3-row-table .horario.s13 { left: 1207px; }
+.GradeHorariaGrid .x-grid3-row-table .horario.s14 { left: 1307px; }
+.GradeHorariaGrid .x-grid3-row-table .horario.s15 { left: 1407px; }
+.GradeHorariaGrid .x-grid3-row-table .horario.s16 { left: 1507px; }
+.GradeHorariaGrid .x-grid3-row-table .horario.s17 { left: 1607px; }
+.GradeHorariaGrid .x-grid3-row-table .horario.s18 { left: 1707px; }
+.GradeHorariaGrid .x-grid3-row-table .horario.s19 { left: 1807px; }
+.GradeHorariaGrid .x-grid3-row-table .horario.s20 { left: 1907px; }
+.GradeHorariaGrid .x-grid3-row-table .horario.s21 { left: 2007px; }
+.GradeHorariaGrid .x-grid3-row-table .horario.s22 { left: 2107px; }
+.GradeHorariaGrid .x-grid3-row-table .horario.s23 { left: 2207px; }
+.GradeHorariaGrid .x-grid3-row-table .horario.s24 { left: 2307px; }
+.GradeHorariaGrid .x-grid3-row-table .horario.s25 { left: 2407px; }
+.GradeHorariaGrid .x-grid3-row-table .horario.s26 { left: 2507px; }
+
+.tabPanelMasterData .x-item-disabled {
+	opacity: 1;
+}
+
+.tabPanelMasterData .x-item-disabled * {
+    opacity: 1;
+    color: #15428B !important;
+    font-family: tahoma,arial,verdana,sans-serif;
+    font-size: 11px;
+    font-weight: bold !important;
+    background-image: none;
+}
+.x-tab-strip .tabPanelMasterData .x-item-disabled span.x-tab-strip-text {
+	font-weight: bold;	
+}
+
+.errorList .x-panel-body {
+	padding: 10px;
+}
+
+.corDisciplina0 { background-color: #FFDAAF; }
+.corDisciplina1 { background-color: #D2E1F0; }
+.corDisciplina2 { background-color: #CCCCFF; }
+.corDisciplina3 { background-color: #AFFFD0; }
+.corDisciplina4 { background-color: #F7FFAF; }
+.corDisciplina5 { background-color: #FFDAAF; }
+.corDisciplina6 { background-color: #FFAFC1; }
+.corDisciplina7 { background-color: #F4AFFF; }
+.corDisciplina8 { background-color: #D1FFAF; }
+.corDisciplina9 { background-color: #C3DFD1; }
+.corDisciplina10 { background-color: #D0CFFF; }
+.corDisciplina11 { background-color: #CFEEFF; }
+.corDisciplina12 { background-color: #C9FF8F; }
+.corDisciplina13 { background-color: #ECFF9F; }
+.corDisciplina14 { background-color: #EFEAD1; }
+	

@@ -1,13 +1,13 @@
-package com.gapso.web.professor.client.mvp.presenter;
+package com.gapso.web.trieda.professor.client.mvp.presenter;
 
 import com.extjs.gxt.ui.client.widget.Component;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
-import com.gapso.web.professor.client.mvp.view.ToolBarView;
 import com.gapso.web.trieda.main.client.services.CenariosServiceAsync;
 import com.gapso.web.trieda.main.client.services.Services;
 import com.gapso.web.trieda.main.client.services.UsuariosServiceAsync;
 import com.gapso.web.trieda.main.client.util.view.AbstractAsyncCallbackWithDefaultOnFailure;
 import com.gapso.web.trieda.main.client.util.view.GTab;
+import com.gapso.web.trieda.professor.client.mvp.view.ToolBarView;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.UsuarioDTO;
 import com.gapso.web.trieda.shared.i18n.ITriedaI18nGateway;

@@ -1,4 +1,4 @@
-package com.gapso.web.professor.client.mvp.view;
+package com.gapso.web.trieda.professor.client.mvp.view;
 
 import com.extjs.gxt.ui.client.Style.ButtonArrowAlign;
 import com.extjs.gxt.ui.client.Style.ButtonScale;
@@ -9,8 +9,8 @@ import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayout;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
 import com.extjs.gxt.ui.client.widget.toolbar.ToolBar;
-import com.gapso.web.professor.client.mvp.presenter.ToolBarPresenter;
 import com.gapso.web.trieda.main.client.util.resources.Resources;
+import com.gapso.web.trieda.professor.client.mvp.presenter.ToolBarPresenter;
 import com.gapso.web.trieda.shared.mvp.view.MyComposite;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;

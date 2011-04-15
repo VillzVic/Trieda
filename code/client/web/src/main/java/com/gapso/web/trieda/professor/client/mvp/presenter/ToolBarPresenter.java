@@ -1,4 +1,4 @@
-package com.gapso.web.professor.client.mvp.presenter;
+package com.gapso.web.trieda.professor.client.mvp.presenter;
 
 import com.extjs.gxt.ui.client.event.ButtonEvent;
 import com.extjs.gxt.ui.client.event.SelectionListener;
