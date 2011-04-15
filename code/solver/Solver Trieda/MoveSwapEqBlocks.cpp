@@ -17,9 +17,14 @@ Move & MoveSwapEqBlocks::apply(SolucaoOperacional & s)
 
    */
 
+   std::cout << "------------------------------------------" << std::endl;
+   std::cout << "ANTES" << std::endl;
+   a1.toString();
+   a2.toString();
+   std::cout << "------------------------------------------" << std::endl;
+
    std::vector< std::pair< Professor *, Horario * > >::iterator 
       itBlocoAula;
-   
    
    itBlocoAula = a1.bloco_aula.begin();
 
@@ -43,6 +48,12 @@ Move & MoveSwapEqBlocks::apply(SolucaoOperacional & s)
 
    // Trocando os horários.
    a1.bloco_aula.swap(a2.bloco_aula);
+
+   std::cout << "------------------------------------------" << std::endl;
+   std::cout << "DEPOIS" << std::endl;
+   a1.toString();
+   a2.toString();
+   std::cout << "------------------------------------------" << std::endl;
 
    return *(new MoveSwapEqBlocks(a2,profA1,a1,profA2));
 }

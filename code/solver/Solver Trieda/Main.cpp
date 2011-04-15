@@ -37,12 +37,6 @@ int main(int argc, char** argv)
 {
    srand( (unsigned int)(time(NULL)) );
 
-   vector< int > myvector;
-   for (int i = 1; i <= 5; i++)
-   {
-	   myvector.push_back(i);
-   }
-
    _signals();
 
    char path[1024];

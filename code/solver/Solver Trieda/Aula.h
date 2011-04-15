@@ -79,7 +79,7 @@ public:
       return !(*this == right);
    }
 
-   void toSring();
+   void toString();
 
 private:
    int turma;

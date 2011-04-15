@@ -187,8 +187,7 @@ void SolucaoOperacional::setMatrizAulas(MatrizSolucao* matriz)
 // percorrendo as linhas de cada professor
 void SolucaoOperacional::toString()
 {
-   std::cout << std::endl << "Alocacao das aulas : "
-			 << std::endl << std::endl;
+   std::cout << std::endl << "Alocacao das aulas : " << std::endl << std::endl;
 
    Professor * professor = NULL;
    for (unsigned int i = 0; i < this->getMatrizAulas()->size(); i++)
@@ -207,19 +206,50 @@ void SolucaoOperacional::toString()
          Aula* aula = aulas->at(j);
          if (aula != NULL && !aula->eVirtual())
          {
-            aula->toSring();
+            aula->toString();
          }
          else if (aula != NULL && aula->eVirtual())
          {
-            // std::cout << "Aula virtual" << std::endl;
+             //std::cout << "Aula virtual" << std::endl;
          }
          else
          {
-            // std::cout << "Aula nao alocada" << std::endl;
+             //std::cout << "Aula nao alocada" << std::endl;
          }
       }
 
       std::cout << std::endl << "-----------------------" << std::endl;
+   }
+}
+
+void SolucaoOperacional::toString2()
+{
+   std::cout << "\nAlocacao das aulas\n\n";
+
+   Professor * professor = NULL;
+
+   for (unsigned int i = 0; i < this->getMatrizAulas()->size(); i++)
+   {
+      professor = this->getProfessorMatriz(i);
+
+      if (professor != NULL)
+         std::cout << "P" << professor->getId() << ": ";
+
+      std::vector< Aula * > * aulas = ( this->getMatrizAulas()->at(i) );
+      for (unsigned int j = 0; j < aulas->size(); j++)
+      {
+         Aula* aula = aulas->at(j);
+         if (aula != NULL && !aula->eVirtual())
+            std::cout << "A" << aula->getDisciplina()->getCodigo()
+               << "_" << aula->getSala()->getCodigo()
+               << "_" << aula->getDiaSemana() << ",\t";
+         else if (aula != NULL && aula->eVirtual())
+             std::cout << "Aula Virtual,\t";
+         else
+             std::cout << "Aula nao aloc.,\t";
+      }
+
+      std::cout << std::endl;
    }
 }
 
@@ -235,21 +265,21 @@ int SolucaoOperacional::getIndiceMatriz(int dia, Horario* horario)
    return (dia_semana + horario_dia);
 }
 
-Horario * SolucaoOperacional::getHorario(int i, int j)
+Horario * SolucaoOperacional::getHorario(int idOpProf, int idHorarioProf)
 {
    Aula * aula = NULL;
-   Aula * aula_referencia = ( this->getMatrizAulas()->at(i)->at(j) );
+   Aula * aula_referencia = ( this->getMatrizAulas()->at(idOpProf)->at(idHorarioProf) );
    Horario * horario = NULL;
 
    // Procura pelo primeiro horário
    // do bloco de aula correspondente
-   int k = (j - 1);
+   int k = (idHorarioProf - 1);
    while( k >= 0 )
    {
       // Recupera a aula atual
-      aula = this->getMatrizAulas()->at(i)->at(k);
-	  if ( aula == NULL || aula != aula_referencia
-			|| aula->eVirtual() == false)
+      aula = this->getMatrizAulas()->at(idOpProf)->at(k);
+      if ( aula == NULL || aula != aula_referencia
+         || aula->eVirtual() == false)
       {
          break;
       }
@@ -266,19 +296,18 @@ Horario * SolucaoOperacional::getHorario(int i, int j)
 
    // Pega a posição do horário desejado
    // dentro do bloco de aulas atual
-   int posicao_aula = (j-k);
+   int posicao_aula = (idHorarioProf-k);
 
    // Recupera o horário desejado
-   aula = this->getMatrizAulas()->at(i)->at(k);
+   aula = this->getMatrizAulas()->at(idOpProf)->at(k);
    if (posicao_aula < (int)aula->bloco_aula.size())
    {
-       horario = aula->bloco_aula[ posicao_aula ].second;
+      horario = aula->bloco_aula[ posicao_aula ].second;
    }
    else
    {
-	   std::cout << "metodo SolucaoOperacional::getHorario()" << std::endl;
-	   std::cout << "Existe aulas que nao foram alocadas" << std::endl << std::endl;
-	   exit(1);
+      std::cout << "Erro em SolucaoOperacional::getHorario(). Existem aulas que nao foram alocadas." << std::endl;
+      exit(1);
    }
 
    return horario;
@@ -387,19 +416,33 @@ bool SolucaoOperacional::checkConflitoBlocoCurricular(
    // Para cada Bloco Curricular ao qual a aula pertence
    ITERA_GGROUP_LESSPTR(itBlocoCurric,itAulaBlocosCurriculares->second,BlocoCurricular)
    {
-      std::map<BlocoCurricular*,GGroup<Aula*,LessPtr<Aula> > >::iterator
-         itBlocoCurricularAulas = problem_data->blocoCurricularAulas.find(
+      //std::map<BlocoCurricular*,GGroup<Aula*,LessPtr<Aula> > >::iterator
+      //   itBlocoCurricularAulas = problem_data->blocoCurricularAulas.find(
+      //   *itBlocoCurric);
+
+      std::map<BlocoCurricular*,std::map<int/*dia*/,GGroup<Aula*,LessPtr<Aula> > > >::iterator
+         itBlocoCurricularAulas = problem_data->blocoCurricularDiaAulas.find(
          *itBlocoCurric);
 
-      if(itBlocoCurricularAulas == problem_data->blocoCurricularAulas.end())
+      if(itBlocoCurricularAulas == problem_data->blocoCurricularDiaAulas.end())
       {
          std::cout << "Na funcao <SolucaoOperacional::checkConflitoBlocoCurricular> algum bloco nao foi encontrado." << std::endl;
          exit(1);
       }
 
-      /* Para todas as aulas do bloco curricular em questão, salvo a aula corrente, verificar
+      std::map<int/*dia*/,GGroup<Aula*,LessPtr<Aula> > >::iterator 
+         itBlocoCurricularDiaAulas = itBlocoCurricularAulas->second.find(aula.getDiaSemana());
+
+      if(itBlocoCurricularDiaAulas == itBlocoCurricularAulas->second.end())
+      {
+         std::cout << "Na funcao <SolucaoOperacional::checkConflitoBlocoCurricular> algum dia nao foi encontrado." << std::endl;
+         exit(1);
+      }
+
+      /* Para todas as aulas de um dado dia do bloco curricular em questão, salvo a aula corrente, verificar
       se há conflito de horário. */
-      ITERA_GGROUP_LESSPTR(itAulasBloco,itBlocoCurricularAulas->second,Aula)
+      //ITERA_GGROUP_LESSPTR(itAulasBloco,itBlocoCurricularAulas->second,Aula)
+      ITERA_GGROUP_LESSPTR(itAulasBloco,itBlocoCurricularDiaAulas->second,Aula)
       {
          /* Somente se não for igual a Aula em questão E se a aula selecionada para análise
          já estiver alocada a algum horário. A segunda condição é necessária para a criação de

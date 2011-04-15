@@ -7,18 +7,26 @@
 #include "opt_lp.h"
 #include "input.h"
 
-//#include "Solucao.h"
-
 #include <iostream>
 #include <algorithm>
 
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "opt_gurobi.h"
+#include "ProblemData.h"
+#include "ProblemSolution.h"
+#include "SolutionLoader.h"
+#include "ErrorHandler.h"
+
 #include "ProblemDataLoader.h"
 
 #include "SolucaoOperacional.h"
 #include "SolucaoInicialOperacional.h"
+
+// Includes para teste --- DELETAR DEPOIS.
+#include "Avaliador.h"
+#include "NSSwapEqBlocks.h"
 
 #define PRINT_cria_variaveis
 #define PRINT_cria_restricoes

@@ -15,7 +15,7 @@ public:
    // Obs.: o parâmetro 'bool' informa se o
    // avaliador deve ou não imprimir os resultados
    // detalhados da avaliação da solução operacional
-   double avaliaSolucao(SolucaoOperacional &, bool);
+   double avaliaSolucao(SolucaoOperacional &, bool imprime_resultados = false);
 
    // Pesos atribuídos a cada avaliação da solução
    double PESO_FIXACAO;

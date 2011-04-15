@@ -2445,7 +2445,7 @@ void ProblemDataLoader::criaAulas()
    cout << "\t >>> AULAS CRIADAS <<<\n";
 
    ITERA_GGROUP(itAula,problemData->aulas,Aula)
-      itAula->toSring();
+      itAula->toString();
 
    //std::cout << "Total de aulas criadas: "
 			// << problemData->aulas.size() << std::endl;
@@ -2467,8 +2467,9 @@ void ProblemDataLoader::relacionaBlocoCurricularAulas()
 
          if(itMapCursoDisciplina_BlocoCurricular != problemData->mapCursoDisciplina_BlocoCurricular.end())
          {
-            // Adicionando a aula ao bloco curricular correspondente.
-            problemData->blocoCurricularAulas[itMapCursoDisciplina_BlocoCurricular->second].add(*itAula);
+            // Adicionando a aula ao bloco curricular e dia correspondentes.
+            problemData->blocoCurricularDiaAulas[
+               itMapCursoDisciplina_BlocoCurricular->second][itAula->getDiaSemana()].add(*itAula);
             
             // Adicionando o bloco curricular a aula correspondente.
             problemData->aulaBlocosCurriculares[*itAula].add(itMapCursoDisciplina_BlocoCurricular->second);

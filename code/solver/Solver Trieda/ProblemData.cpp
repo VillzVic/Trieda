@@ -158,6 +158,9 @@ void ProblemData::le_arvore(TriedaInput & raiz)
                // Objeto de entrada do XML
                ItemSala * elem = it->second;
 
+               /* ToDo : Acredito ter um erro na func abaixo. Ver isso depois com o Cleiton. 
+               Talvez por isso não esteja rodando o MultiCampi Op. */
+
                it_sala->construirCreditosHorarios(
                   *(elem), parametros->modo_otimizacao,
                   raiz.atendimentosTatico().present() );

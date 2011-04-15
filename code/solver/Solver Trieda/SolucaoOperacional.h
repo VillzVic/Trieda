@@ -41,6 +41,8 @@ public:
 
    void toString();
 
+   void toString2();
+
    // Dado o ID do professor, retorna um
    // ponteiro para o objeto 'Professor'
    std::map< int, Professor * > mapProfessores;

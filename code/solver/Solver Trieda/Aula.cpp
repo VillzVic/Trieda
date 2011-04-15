@@ -90,7 +90,7 @@ bool Aula::eVirtual() const
    return aula_virtual;
 }
 
-void Aula::toSring()
+void Aula::toString()
 {
    std::cout << "\n====================AULA====================\n";
    std::cout << "Turma: " << turma << std::endl;
@@ -107,4 +107,15 @@ void Aula::toSring()
    std::cout << "Dia: " << dia_semana << std::endl;
    std::cout << "Cred. Prat.: " << creditos_praticos << std::endl;
    std::cout << "Cred. Teo: " << creditos_teoricos << std::endl;
+
+
+   std::cout << "Horario(s):\n\t";
+
+   std::vector< std::pair< Professor *, Horario * > >::iterator
+      itBloco_aula = bloco_aula.begin();
+
+   for(; itBloco_aula != bloco_aula.end(); ++itBloco_aula)
+      std::cout << itBloco_aula->second->horario_aula->getInicio() << "\n\t";
+
+   std::cout << std::endl;
 }
