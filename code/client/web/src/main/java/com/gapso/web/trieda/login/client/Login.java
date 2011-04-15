@@ -1,4 +1,4 @@
-package com.gapso.web.login.client;
+package com.gapso.web.trieda.login.client;
 
 import com.extjs.gxt.ui.client.event.ButtonEvent;
 import com.extjs.gxt.ui.client.event.ComponentEvent;
