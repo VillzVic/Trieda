@@ -19,7 +19,7 @@ import com.gapso.trieda.domain.SemanaLetiva;
 import com.gapso.trieda.domain.Turno;
 import com.gapso.trieda.domain.Unidade;
 import com.gapso.trieda.misc.Semanas;
-import com.gapso.web.trieda.client.services.HorariosAulaService;
+import com.gapso.web.trieda.main.client.services.HorariosAulaService;
 import com.gapso.web.trieda.server.util.ConvertBeans;
 import com.gapso.web.trieda.shared.dtos.HorarioAulaDTO;
 import com.gapso.web.trieda.shared.dtos.SemanaLetivaDTO;

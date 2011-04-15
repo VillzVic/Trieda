@@ -20,7 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.gapso.trieda.domain.Campus;
 import com.gapso.trieda.domain.Cenario;
 import com.gapso.trieda.domain.Parametro;
-import com.gapso.web.trieda.client.services.OtimizarService;
+import com.gapso.web.trieda.main.client.services.OtimizarService;
 import com.gapso.web.trieda.server.util.ConvertBeans;
 import com.gapso.web.trieda.server.util.SolverInput;
 import com.gapso.web.trieda.server.util.SolverOutput;

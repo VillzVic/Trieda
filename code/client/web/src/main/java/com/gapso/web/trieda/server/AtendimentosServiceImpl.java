@@ -17,7 +17,7 @@ import com.gapso.trieda.domain.Curriculo;
 import com.gapso.trieda.domain.Professor;
 import com.gapso.trieda.domain.Sala;
 import com.gapso.trieda.domain.Turno;
-import com.gapso.web.trieda.client.services.AtendimentosService;
+import com.gapso.web.trieda.main.client.services.AtendimentosService;
 import com.gapso.web.trieda.server.util.ConvertBeans;
 import com.gapso.web.trieda.shared.dtos.AtendimentoOperacionalDTO;
 import com.gapso.web.trieda.shared.dtos.AtendimentoTaticoDTO;

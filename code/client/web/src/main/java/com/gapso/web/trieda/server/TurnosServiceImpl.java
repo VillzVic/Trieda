@@ -12,7 +12,7 @@ import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.gapso.trieda.domain.Campus;
 import com.gapso.trieda.domain.Turno;
-import com.gapso.web.trieda.client.services.TurnosService;
+import com.gapso.web.trieda.main.client.services.TurnosService;
 import com.gapso.web.trieda.server.util.ConvertBeans;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.TurnoDTO;

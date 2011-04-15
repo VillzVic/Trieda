@@ -23,7 +23,7 @@ import com.gapso.trieda.domain.HorarioDisponivelCenario;
 import com.gapso.trieda.domain.Sala;
 import com.gapso.trieda.domain.TipoSala;
 import com.gapso.trieda.domain.Unidade;
-import com.gapso.web.trieda.client.services.SalasService;
+import com.gapso.web.trieda.main.client.services.SalasService;
 import com.gapso.web.trieda.server.util.ConvertBeans;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.GrupoSalaDTO;
