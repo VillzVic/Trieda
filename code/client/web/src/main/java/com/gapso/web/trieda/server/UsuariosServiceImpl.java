@@ -21,8 +21,8 @@ public class UsuariosServiceImpl extends RemoteServiceServlet implements Usuario
 	private static final long serialVersionUID = 5672570072070386404L;
 
 	@Override
-	public UsuarioDTO getUsuario(Long id) {
-		return ConvertBeans.toUsuarioDTO(Usuario.find(id));
+	public UsuarioDTO getUsuario(String username) {
+		return ConvertBeans.toUsuarioDTO(Usuario.find(username));
 	}
 	
 	@Override

@@ -95,6 +95,7 @@ public class ConvertBeans {
 		domain.setEmail(dto.getEmail());
 		domain.setUsername(dto.getUsername());
 		domain.setEnabled(dto.getEnabled());
+		domain.setProfessor(Professor.find(dto.getProfessorId()));
 		return domain;
 	}
 	
@@ -106,6 +107,12 @@ public class ConvertBeans {
 		dto.setUsername(domain.getUsername());
 		dto.setEnabled(domain.getEnabled());
 		dto.setDisplayText(domain.getNome());
+		
+		Professor professor = domain.getProfessor();
+		if(professor != null) {
+			dto.setProfessorId(domain.getProfessor().getId());
+			dto.setProfessorDisplayText(domain.getProfessor().getNome());
+		}
 		return dto;
 	}
 	

@@ -14,7 +14,7 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 @RemoteServiceRelativePath("usuarios")
 public interface UsuariosService extends RemoteService {
 
-	UsuarioDTO getUsuario(Long id);
+	UsuarioDTO getUsuario(String username);
 	void save(UsuarioDTO usuarioDTO);
 	void remove(List<UsuarioDTO> usuarioDTOList);
 	PagingLoadResult<UsuarioDTO> getBuscaList(String nome, String username,

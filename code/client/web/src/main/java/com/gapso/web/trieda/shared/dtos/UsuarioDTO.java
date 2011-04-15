@@ -4,6 +4,7 @@ package com.gapso.web.trieda.shared.dtos;
 
 
 
+
 public class UsuarioDTO extends AbstractDTO<String> implements Comparable<UsuarioDTO> {
 
 	private static final long serialVersionUID = 5815525344760896272L;
@@ -15,6 +16,8 @@ public class UsuarioDTO extends AbstractDTO<String> implements Comparable<Usuari
 	public static final String PROPERTY_USERNAME = "username";
 	public static final String PROPERTY_PASSWORD = "maxpassword";
 	public static final String PROPERTY_ENABLED = "enabled";
+	public static final String PROPERTY_PROFESSOR_ID = "professorId";
+	public static final String PROPERTY_PROFESSOR_DISPLAYTEXT = "professorDisplayText";
 	
 	public UsuarioDTO() {
 	}
@@ -59,6 +62,24 @@ public class UsuarioDTO extends AbstractDTO<String> implements Comparable<Usuari
 	}
 	public Boolean getEnabled() {
 		return get(PROPERTY_ENABLED);
+	}
+	
+	public void setProfessorId(Long value) {
+		set(PROPERTY_PROFESSOR_ID, value);
+	}
+	public Long getProfessorId() {
+		return get(PROPERTY_PROFESSOR_ID);
+	}
+	
+	public void setProfessorDisplayText(String value) {
+		set(PROPERTY_PROFESSOR_DISPLAYTEXT, value);
+	}
+	public String getProfessorDisplayText() {
+		return get(PROPERTY_PROFESSOR_DISPLAYTEXT);
+	}
+	
+	public boolean isProfessor() {
+		return getProfessorId() != null && getProfessorId() > 0;
 	}
 	
 	@Override
