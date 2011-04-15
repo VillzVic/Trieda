@@ -16,11 +16,11 @@ import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.gapso.trieda.domain.GrupoSala;
 import com.gapso.trieda.domain.Sala;
 import com.gapso.trieda.domain.Unidade;
-import com.gapso.web.trieda.main.client.services.GruposSalasService;
 import com.gapso.web.trieda.server.util.ConvertBeans;
 import com.gapso.web.trieda.shared.dtos.GrupoSalaDTO;
 import com.gapso.web.trieda.shared.dtos.SalaDTO;
 import com.gapso.web.trieda.shared.dtos.UnidadeDTO;
+import com.gapso.web.trieda.shared.services.GruposSalasService;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 /**

@@ -39,7 +39,6 @@ import com.gapso.trieda.domain.Turno;
 import com.gapso.trieda.domain.Unidade;
 import com.gapso.trieda.misc.Dificuldades;
 import com.gapso.trieda.misc.Semanas;
-import com.gapso.web.trieda.main.client.util.view.CargaHorariaComboBox.CargaHoraria;
 import com.gapso.web.trieda.server.xml.input.GrupoAreaTitulacao;
 import com.gapso.web.trieda.server.xml.input.GrupoCampus;
 import com.gapso.web.trieda.server.xml.input.GrupoCreditoDisponivel;
@@ -106,6 +105,7 @@ import com.gapso.web.trieda.server.xml.input.ItemTurno;
 import com.gapso.web.trieda.server.xml.input.ItemUnidade;
 import com.gapso.web.trieda.server.xml.input.ObjectFactory;
 import com.gapso.web.trieda.server.xml.input.TriedaInput;
+import com.gapso.web.trieda.shared.util.view.CargaHorariaComboBox.CargaHoraria;
 
 @Transactional
 public class SolverInput {

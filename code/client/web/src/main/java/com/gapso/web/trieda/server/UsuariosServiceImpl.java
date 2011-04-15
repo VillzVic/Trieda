@@ -8,9 +8,9 @@ import com.extjs.gxt.ui.client.data.BasePagingLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.gapso.trieda.domain.Usuario;
-import com.gapso.web.trieda.main.client.services.UsuariosService;
 import com.gapso.web.trieda.server.util.ConvertBeans;
 import com.gapso.web.trieda.shared.dtos.UsuarioDTO;
+import com.gapso.web.trieda.shared.services.UsuariosService;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 /**
