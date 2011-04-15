@@ -23,6 +23,7 @@ import com.gapso.web.trieda.main.client.util.view.TextFieldMask;
 import com.gapso.web.trieda.main.client.util.view.TurnoComboBox;
 import com.gapso.web.trieda.shared.dtos.HorarioDisponivelCenarioDTO;
 import com.gapso.web.trieda.shared.dtos.SemanaLetivaDTO;
+import com.gapso.web.trieda.shared.mvp.view.MyComposite;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
 public class HorarioDisponivelCenarioFormView extends MyComposite implements HorarioDisponivelCenarioFormPresenter.Display {

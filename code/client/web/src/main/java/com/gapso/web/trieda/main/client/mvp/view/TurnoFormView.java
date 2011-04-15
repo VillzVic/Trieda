@@ -10,6 +10,7 @@ import com.gapso.web.trieda.main.client.mvp.presenter.TurnoFormPresenter;
 import com.gapso.web.trieda.main.client.util.resources.Resources;
 import com.gapso.web.trieda.main.client.util.view.SimpleModal;
 import com.gapso.web.trieda.shared.dtos.TurnoDTO;
+import com.gapso.web.trieda.shared.mvp.view.MyComposite;
 
 public class TurnoFormView extends MyComposite implements TurnoFormPresenter.Display {
 

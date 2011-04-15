@@ -21,6 +21,7 @@ import com.gapso.web.trieda.main.client.util.resources.Resources;
 import com.gapso.web.trieda.main.client.util.view.SimpleModal;
 import com.gapso.web.trieda.shared.dtos.GrupoSalaDTO;
 import com.gapso.web.trieda.shared.dtos.SalaDTO;
+import com.gapso.web.trieda.shared.mvp.view.MyComposite;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
 public class GrupoSalaAssociarSalaView extends MyComposite implements GrupoSalaAssociarSalaPresenter.Display {

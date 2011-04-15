@@ -1,8 +1,8 @@
 package com.gapso.web.trieda.main.client;
 
 import com.gapso.web.trieda.main.client.mvp.presenter.AppPresenter;
-import com.gapso.web.trieda.main.client.mvp.presenter.Presenter;
 import com.gapso.web.trieda.main.client.mvp.view.AppView;
+import com.gapso.web.trieda.shared.mvp.presenter.Presenter;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.user.client.ui.RootPanel;
 

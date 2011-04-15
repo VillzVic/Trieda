@@ -11,6 +11,7 @@ import com.gapso.web.trieda.main.client.util.view.GradeHorariaProfessorGrid;
 import com.gapso.web.trieda.main.client.util.view.ProfessorComboBox;
 import com.gapso.web.trieda.main.client.util.view.TurnoComboBox;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
+import com.gapso.web.trieda.shared.mvp.presenter.Presenter;
 import com.google.gwt.user.client.ui.Widget;
 
 public class RelatorioVisaoProfessorPresenter implements Presenter {

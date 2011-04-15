@@ -31,6 +31,7 @@ import com.gapso.web.trieda.main.client.util.view.GTabItem;
 import com.gapso.web.trieda.main.client.util.view.SimpleToolBar;
 import com.gapso.web.trieda.shared.dtos.CurriculoDTO;
 import com.gapso.web.trieda.shared.dtos.CurriculoDisciplinaDTO;
+import com.gapso.web.trieda.shared.mvp.view.MyComposite;
 
 public class CurriculoDisciplinasView extends MyComposite implements CurriculoDisciplinasPresenter.Display {
 

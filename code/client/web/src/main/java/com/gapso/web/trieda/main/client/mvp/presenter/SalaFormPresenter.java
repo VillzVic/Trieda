@@ -14,6 +14,7 @@ import com.gapso.web.trieda.main.client.util.view.SimpleModal;
 import com.gapso.web.trieda.main.client.util.view.TipoSalaComboBox;
 import com.gapso.web.trieda.main.client.util.view.UnidadeComboBox;
 import com.gapso.web.trieda.shared.dtos.SalaDTO;
+import com.gapso.web.trieda.shared.mvp.presenter.Presenter;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
 

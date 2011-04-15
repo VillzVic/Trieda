@@ -14,6 +14,7 @@ import com.gapso.web.trieda.main.client.util.view.SimpleModal;
 import com.gapso.web.trieda.main.client.util.view.TipoDisciplinaComboBox;
 import com.gapso.web.trieda.shared.dtos.DisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.TipoDisciplinaDTO;
+import com.gapso.web.trieda.shared.mvp.view.MyComposite;
 
 public class DisciplinaFormView extends MyComposite implements DisciplinaFormPresenter.Display {
 

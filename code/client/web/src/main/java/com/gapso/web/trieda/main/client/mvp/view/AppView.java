@@ -11,6 +11,7 @@ import com.gapso.web.trieda.main.client.mvp.presenter.AppPresenter;
 import com.gapso.web.trieda.main.client.util.resources.Resources;
 import com.gapso.web.trieda.main.client.util.view.CenarioPanel;
 import com.gapso.web.trieda.main.client.util.view.GTab;
+import com.gapso.web.trieda.shared.mvp.view.MyComposite;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.Widget;
 

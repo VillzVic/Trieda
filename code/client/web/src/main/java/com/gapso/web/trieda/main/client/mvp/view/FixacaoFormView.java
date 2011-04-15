@@ -30,6 +30,7 @@ import com.gapso.web.trieda.shared.dtos.HorarioDisponivelCenarioDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorDTO;
 import com.gapso.web.trieda.shared.dtos.SalaDTO;
 import com.gapso.web.trieda.shared.dtos.UnidadeDTO;
+import com.gapso.web.trieda.shared.mvp.view.MyComposite;
 
 public class FixacaoFormView extends MyComposite implements FixacaoFormPresenter.Display {
 

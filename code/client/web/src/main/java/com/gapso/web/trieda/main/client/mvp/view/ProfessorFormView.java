@@ -16,6 +16,7 @@ import com.gapso.web.trieda.shared.dtos.AreaTitulacaoDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorDTO;
 import com.gapso.web.trieda.shared.dtos.TipoContratoDTO;
 import com.gapso.web.trieda.shared.dtos.TitulacaoDTO;
+import com.gapso.web.trieda.shared.mvp.view.MyComposite;
 
 public class ProfessorFormView extends MyComposite implements ProfessorFormPresenter.Display {
 

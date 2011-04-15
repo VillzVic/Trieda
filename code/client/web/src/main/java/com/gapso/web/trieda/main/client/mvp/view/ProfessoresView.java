@@ -24,6 +24,7 @@ import com.gapso.web.trieda.main.client.util.view.SimpleToolBar;
 import com.gapso.web.trieda.main.client.util.view.TipoContratoComboBox;
 import com.gapso.web.trieda.main.client.util.view.TitulacaoComboBox;
 import com.gapso.web.trieda.shared.dtos.ProfessorDTO;
+import com.gapso.web.trieda.shared.mvp.view.MyComposite;
 
 public class ProfessoresView extends MyComposite implements ProfessoresPresenter.Display {
 

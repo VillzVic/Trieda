@@ -7,12 +7,12 @@ import com.extjs.gxt.ui.client.event.FormEvent;
 import com.extjs.gxt.ui.client.event.Listener;
 import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.gapso.web.trieda.main.client.mvp.presenter.OtimizarMessagesPresenter;
-import com.gapso.web.trieda.main.client.mvp.presenter.Presenter;
 import com.gapso.web.trieda.main.client.mvp.view.OtimizarMessagesView;
 import com.gapso.web.trieda.shared.dtos.AbstractDTO;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nMessages;
+import com.gapso.web.trieda.shared.mvp.presenter.Presenter;
 
 public class ExcelFormListener implements Listener<FormEvent> {
 	

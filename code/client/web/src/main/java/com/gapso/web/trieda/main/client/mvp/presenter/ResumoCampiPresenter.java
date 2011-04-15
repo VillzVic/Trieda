@@ -7,6 +7,7 @@ import com.gapso.web.trieda.main.client.util.view.GTab;
 import com.gapso.web.trieda.main.client.util.view.GTabItem;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.TreeNodeDTO;
+import com.gapso.web.trieda.shared.mvp.presenter.Presenter;
 import com.google.gwt.user.client.ui.Widget;
 
 public class ResumoCampiPresenter implements Presenter {

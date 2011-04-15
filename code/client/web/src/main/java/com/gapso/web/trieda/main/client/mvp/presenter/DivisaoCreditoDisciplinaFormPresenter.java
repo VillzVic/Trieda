@@ -13,6 +13,7 @@ import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.DisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.DivisaoCreditoDTO;
 import com.gapso.web.trieda.shared.i18n.ITriedaI18nGateway;
+import com.gapso.web.trieda.shared.mvp.presenter.Presenter;
 import com.google.gwt.user.client.ui.Widget;
 
 public class DivisaoCreditoDisciplinaFormPresenter implements Presenter {

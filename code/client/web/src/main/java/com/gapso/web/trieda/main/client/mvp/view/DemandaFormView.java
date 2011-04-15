@@ -19,6 +19,7 @@ import com.gapso.web.trieda.shared.dtos.CursoDTO;
 import com.gapso.web.trieda.shared.dtos.DemandaDTO;
 import com.gapso.web.trieda.shared.dtos.DisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.TurnoDTO;
+import com.gapso.web.trieda.shared.mvp.view.MyComposite;
 
 public class DemandaFormView extends MyComposite implements DemandaFormPresenter.Display {
 

@@ -22,6 +22,7 @@ import com.gapso.web.trieda.main.client.util.view.SimpleGrid;
 import com.gapso.web.trieda.main.client.util.view.SimpleToolBar;
 import com.gapso.web.trieda.main.client.util.view.TurnoComboBox;
 import com.gapso.web.trieda.shared.dtos.HorarioAulaDTO;
+import com.gapso.web.trieda.shared.mvp.view.MyComposite;
 import com.google.gwt.i18n.client.DateTimeFormat;
 
 public class HorariosAulaView extends MyComposite implements HorariosAulaPresenter.Display {

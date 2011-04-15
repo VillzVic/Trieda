@@ -10,10 +10,10 @@ import com.extjs.gxt.ui.client.widget.form.FormPanel;
 import com.extjs.gxt.ui.client.widget.form.FormPanel.Encoding;
 import com.extjs.gxt.ui.client.widget.form.FormPanel.Method;
 import com.extjs.gxt.ui.client.widget.form.HiddenField;
-import com.gapso.web.trieda.main.client.mvp.view.MyComposite;
 import com.gapso.web.trieda.main.client.util.resources.Resources;
 import com.gapso.web.trieda.shared.dtos.AbstractDTO;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
+import com.gapso.web.trieda.shared.mvp.view.MyComposite;
 import com.google.gwt.core.client.GWT;
 
 public class ImportExcelFormView extends MyComposite {

@@ -24,6 +24,7 @@ import com.gapso.web.trieda.main.client.util.view.UnidadeComboBox;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.SalaDTO;
 import com.gapso.web.trieda.shared.dtos.UnidadeDTO;
+import com.gapso.web.trieda.shared.mvp.view.MyComposite;
 
 public class SalasView extends MyComposite implements SalasPresenter.Display {
 

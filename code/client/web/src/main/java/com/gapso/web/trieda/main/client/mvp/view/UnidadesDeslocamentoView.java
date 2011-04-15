@@ -18,6 +18,7 @@ import com.gapso.web.trieda.main.client.util.view.DeslocamentoToolBar;
 import com.gapso.web.trieda.main.client.util.view.GTabItem;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.DeslocamentoUnidadeDTO;
+import com.gapso.web.trieda.shared.mvp.view.MyComposite;
 
 public class UnidadesDeslocamentoView extends MyComposite implements UnidadesDeslocamentoPresenter.Display {
 

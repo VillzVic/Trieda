@@ -19,6 +19,7 @@ import com.gapso.web.trieda.main.client.util.view.SimpleFilter;
 import com.gapso.web.trieda.main.client.util.view.SimpleGrid;
 import com.gapso.web.trieda.main.client.util.view.SimpleToolBar;
 import com.gapso.web.trieda.shared.dtos.ProfessorCampusDTO;
+import com.gapso.web.trieda.shared.mvp.view.MyComposite;
 
 public class CampusProfessoresView extends MyComposite implements CampusProfessoresPresenter.Display {
 

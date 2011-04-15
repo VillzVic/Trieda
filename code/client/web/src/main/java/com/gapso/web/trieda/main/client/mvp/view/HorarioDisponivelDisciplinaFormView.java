@@ -14,6 +14,7 @@ import com.gapso.web.trieda.main.client.util.view.SemanaLetivaDoCenarioGrid;
 import com.gapso.web.trieda.main.client.util.view.SimpleModal;
 import com.gapso.web.trieda.shared.dtos.DisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.HorarioDisponivelCenarioDTO;
+import com.gapso.web.trieda.shared.mvp.view.MyComposite;
 
 public class HorarioDisponivelDisciplinaFormView extends MyComposite implements HorarioDisponivelDisciplinaFormPresenter.Display {
 

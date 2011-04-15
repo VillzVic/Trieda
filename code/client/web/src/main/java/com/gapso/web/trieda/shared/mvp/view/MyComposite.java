@@ -1,4 +1,4 @@
-package com.gapso.web.trieda.main.client.mvp.view;
+package com.gapso.web.trieda.shared.mvp.view;
 
 import java.util.Iterator;
 

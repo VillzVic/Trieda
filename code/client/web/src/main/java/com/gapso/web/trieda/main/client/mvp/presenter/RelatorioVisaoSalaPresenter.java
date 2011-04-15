@@ -16,6 +16,7 @@ import com.gapso.web.trieda.main.client.util.view.TurnoComboBox;
 import com.gapso.web.trieda.main.client.util.view.UnidadeComboBox;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.SalaDTO;
+import com.gapso.web.trieda.shared.mvp.presenter.Presenter;
 import com.google.gwt.user.client.ui.Widget;
 
 public class RelatorioVisaoSalaPresenter implements Presenter {

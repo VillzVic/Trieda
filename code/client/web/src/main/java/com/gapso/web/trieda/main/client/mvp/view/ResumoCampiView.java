@@ -21,6 +21,7 @@ import com.gapso.web.trieda.main.client.util.resources.Resources;
 import com.gapso.web.trieda.main.client.util.view.GTabItem;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.TreeNodeDTO;
+import com.gapso.web.trieda.shared.mvp.view.MyComposite;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class ResumoCampiView extends MyComposite implements ResumoCampiPresenter.Display {

@@ -11,6 +11,7 @@ import com.gapso.web.trieda.main.client.util.view.CampusComboBox;
 import com.gapso.web.trieda.main.client.util.view.SimpleModal;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.UnidadeDTO;
+import com.gapso.web.trieda.shared.mvp.view.MyComposite;
 
 public class UnidadeFormView extends MyComposite implements UnidadeFormPresenter.Display {
 

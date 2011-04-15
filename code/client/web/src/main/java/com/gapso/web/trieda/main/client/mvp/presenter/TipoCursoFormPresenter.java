@@ -11,6 +11,7 @@ import com.gapso.web.trieda.main.client.services.TiposCursosServiceAsync;
 import com.gapso.web.trieda.main.client.util.view.SimpleGrid;
 import com.gapso.web.trieda.main.client.util.view.SimpleModal;
 import com.gapso.web.trieda.shared.dtos.TipoCursoDTO;
+import com.gapso.web.trieda.shared.mvp.presenter.Presenter;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
 

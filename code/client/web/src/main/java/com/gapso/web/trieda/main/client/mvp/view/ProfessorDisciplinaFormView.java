@@ -13,6 +13,7 @@ import com.gapso.web.trieda.main.client.util.view.SimpleModal;
 import com.gapso.web.trieda.shared.dtos.DisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorDisciplinaDTO;
+import com.gapso.web.trieda.shared.mvp.view.MyComposite;
 
 public class ProfessorDisciplinaFormView extends MyComposite implements ProfessorDisciplinaFormPresenter.Display {
 

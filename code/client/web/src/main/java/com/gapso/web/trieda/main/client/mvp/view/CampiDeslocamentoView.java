@@ -14,6 +14,7 @@ import com.gapso.web.trieda.main.client.util.view.DeslocamentoGrid;
 import com.gapso.web.trieda.main.client.util.view.DeslocamentoToolBar;
 import com.gapso.web.trieda.main.client.util.view.GTabItem;
 import com.gapso.web.trieda.shared.dtos.DeslocamentoCampusDTO;
+import com.gapso.web.trieda.shared.mvp.view.MyComposite;
 
 public class CampiDeslocamentoView extends MyComposite implements CampiDeslocamentoPresenter.Display {
 

@@ -23,6 +23,7 @@ import com.gapso.web.trieda.main.client.util.view.GradeHorariaSalaGrid;
 import com.gapso.web.trieda.main.client.util.view.SalaComboBox;
 import com.gapso.web.trieda.main.client.util.view.TurnoComboBox;
 import com.gapso.web.trieda.main.client.util.view.UnidadeComboBox;
+import com.gapso.web.trieda.shared.mvp.view.MyComposite;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
 public class RelatorioVisaoSalaView extends MyComposite implements RelatorioVisaoSalaPresenter.Display {

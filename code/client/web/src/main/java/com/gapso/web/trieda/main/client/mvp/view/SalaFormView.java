@@ -16,6 +16,7 @@ import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.SalaDTO;
 import com.gapso.web.trieda.shared.dtos.TipoSalaDTO;
 import com.gapso.web.trieda.shared.dtos.UnidadeDTO;
+import com.gapso.web.trieda.shared.mvp.view.MyComposite;
 
 public class SalaFormView extends MyComposite implements SalaFormPresenter.Display {
 

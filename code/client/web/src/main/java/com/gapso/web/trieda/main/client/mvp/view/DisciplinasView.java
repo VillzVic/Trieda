@@ -23,6 +23,7 @@ import com.gapso.web.trieda.main.client.util.view.SimpleGrid;
 import com.gapso.web.trieda.main.client.util.view.SimpleToolBar;
 import com.gapso.web.trieda.main.client.util.view.TipoDisciplinaComboBox;
 import com.gapso.web.trieda.shared.dtos.DisciplinaDTO;
+import com.gapso.web.trieda.shared.mvp.view.MyComposite;
 
 public class DisciplinasView extends MyComposite implements DisciplinasPresenter.Display {
 

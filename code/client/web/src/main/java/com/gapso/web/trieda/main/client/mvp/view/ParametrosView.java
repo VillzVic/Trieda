@@ -24,6 +24,7 @@ import com.gapso.web.trieda.main.client.util.view.CargaHorariaComboBox;
 import com.gapso.web.trieda.main.client.util.view.FuncaoObjetivoComboBox;
 import com.gapso.web.trieda.main.client.util.view.GTabItem;
 import com.gapso.web.trieda.shared.dtos.ParametroDTO;
+import com.gapso.web.trieda.shared.mvp.view.MyComposite;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
 public class ParametrosView extends MyComposite implements ParametrosPresenter.Display {

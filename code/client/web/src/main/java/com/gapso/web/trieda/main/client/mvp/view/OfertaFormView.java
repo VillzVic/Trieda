@@ -14,6 +14,7 @@ import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.CurriculoDTO;
 import com.gapso.web.trieda.shared.dtos.OfertaDTO;
 import com.gapso.web.trieda.shared.dtos.TurnoDTO;
+import com.gapso.web.trieda.shared.mvp.view.MyComposite;
 
 public class OfertaFormView extends MyComposite implements OfertaFormPresenter.Display {
 

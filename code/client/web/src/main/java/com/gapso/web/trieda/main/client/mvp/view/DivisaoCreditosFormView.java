@@ -9,6 +9,7 @@ import com.gapso.web.trieda.main.client.mvp.presenter.DivisaoCreditosFormPresent
 import com.gapso.web.trieda.main.client.util.resources.Resources;
 import com.gapso.web.trieda.main.client.util.view.SimpleModal;
 import com.gapso.web.trieda.shared.dtos.DivisaoCreditoDTO;
+import com.gapso.web.trieda.shared.mvp.view.MyComposite;
 
 public class DivisaoCreditosFormView extends MyComposite implements DivisaoCreditosFormPresenter.Display {
 

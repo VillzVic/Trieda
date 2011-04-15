@@ -22,6 +22,7 @@ import com.gapso.web.trieda.main.client.util.view.SimpleFilter;
 import com.gapso.web.trieda.main.client.util.view.SimpleGrid;
 import com.gapso.web.trieda.main.client.util.view.SimpleToolBar;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
+import com.gapso.web.trieda.shared.mvp.view.MyComposite;
 
 public class CampiView extends MyComposite implements CampiPresenter.Display {
 

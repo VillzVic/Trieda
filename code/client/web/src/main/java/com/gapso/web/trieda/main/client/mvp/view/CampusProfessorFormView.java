@@ -23,6 +23,7 @@ import com.gapso.web.trieda.main.client.util.view.CampusComboBox;
 import com.gapso.web.trieda.main.client.util.view.SimpleModal;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorDTO;
+import com.gapso.web.trieda.shared.mvp.view.MyComposite;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
 public class CampusProfessorFormView extends MyComposite implements CampusProfessorFormPresenter.Display {

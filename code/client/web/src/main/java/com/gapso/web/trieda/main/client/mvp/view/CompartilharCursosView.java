@@ -28,6 +28,7 @@ import com.gapso.web.trieda.main.client.util.view.CursoComboBox;
 import com.gapso.web.trieda.main.client.util.view.SimpleModal;
 import com.gapso.web.trieda.shared.dtos.CursoDescompartilhaDTO;
 import com.gapso.web.trieda.shared.dtos.ParametroDTO;
+import com.gapso.web.trieda.shared.mvp.view.MyComposite;
 
 public class CompartilharCursosView extends MyComposite implements CompartilharCursosPresenter.Display {
 

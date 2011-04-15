@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.extjs.gxt.ui.client.widget.ContentPanel;
 import com.gapso.web.trieda.main.client.util.view.SimpleModal;
+import com.gapso.web.trieda.shared.mvp.presenter.Presenter;
 import com.google.gwt.user.client.ui.Widget;
 
 public class OtimizarMessagesPresenter implements Presenter {

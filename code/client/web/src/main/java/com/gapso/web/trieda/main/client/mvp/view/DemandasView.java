@@ -24,6 +24,7 @@ import com.gapso.web.trieda.main.client.util.view.SimpleGrid;
 import com.gapso.web.trieda.main.client.util.view.SimpleToolBar;
 import com.gapso.web.trieda.main.client.util.view.TurnoComboBox;
 import com.gapso.web.trieda.shared.dtos.DemandaDTO;
+import com.gapso.web.trieda.shared.mvp.view.MyComposite;
 
 public class DemandasView extends MyComposite implements DemandasPresenter.Display {
 

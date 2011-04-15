@@ -1,4 +1,4 @@
-package com.gapso.web.trieda.main.client.mvp.presenter;
+package com.gapso.web.trieda.shared.mvp.presenter;
 
 import com.google.gwt.user.client.ui.Widget;
 

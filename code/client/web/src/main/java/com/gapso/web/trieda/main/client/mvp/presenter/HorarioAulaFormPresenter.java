@@ -14,6 +14,7 @@ import com.gapso.web.trieda.main.client.util.view.SimpleModal;
 import com.gapso.web.trieda.main.client.util.view.TurnoComboBox;
 import com.gapso.web.trieda.shared.dtos.HorarioAulaDTO;
 import com.gapso.web.trieda.shared.i18n.ITriedaI18nGateway;
+import com.gapso.web.trieda.shared.mvp.presenter.Presenter;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.user.client.ui.Widget;
 

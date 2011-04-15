@@ -10,6 +10,7 @@ import com.gapso.web.trieda.main.client.util.view.CenarioPanel;
 import com.gapso.web.trieda.main.client.util.view.GTab;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.i18n.ITriedaI18nGateway;
+import com.gapso.web.trieda.shared.mvp.presenter.Presenter;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
 

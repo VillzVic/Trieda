@@ -17,6 +17,7 @@ import com.gapso.web.trieda.main.client.mvp.presenter.SelecionarCampiPresenter;
 import com.gapso.web.trieda.main.client.util.resources.Resources;
 import com.gapso.web.trieda.main.client.util.view.SimpleModal;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
+import com.gapso.web.trieda.shared.mvp.view.MyComposite;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
 public class SelecionarCampiView extends MyComposite implements SelecionarCampiPresenter.Display {

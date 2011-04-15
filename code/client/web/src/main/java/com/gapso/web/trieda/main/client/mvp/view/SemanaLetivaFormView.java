@@ -9,6 +9,7 @@ import com.gapso.web.trieda.main.client.mvp.presenter.SemanaLetivaFormPresenter;
 import com.gapso.web.trieda.main.client.util.resources.Resources;
 import com.gapso.web.trieda.main.client.util.view.SimpleModal;
 import com.gapso.web.trieda.shared.dtos.SemanaLetivaDTO;
+import com.gapso.web.trieda.shared.mvp.view.MyComposite;
 
 public class SemanaLetivaFormView extends MyComposite implements SemanaLetivaFormPresenter.Display {
 

@@ -15,6 +15,7 @@ import com.gapso.web.trieda.main.client.util.resources.Resources;
 import com.gapso.web.trieda.main.client.util.view.EstadoComboBox;
 import com.gapso.web.trieda.main.client.util.view.SimpleModal;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
+import com.gapso.web.trieda.shared.mvp.view.MyComposite;
 
 public class CampusFormView extends MyComposite implements CampusFormPresenter.Display {
 
