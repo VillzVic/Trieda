@@ -27,12 +27,11 @@ import com.gapso.web.trieda.shared.dtos.ProfessorDTO;
 import com.gapso.web.trieda.shared.dtos.TipoContratoDTO;
 import com.gapso.web.trieda.shared.dtos.TitulacaoDTO;
 import com.gapso.web.trieda.shared.services.ProfessoresService;
-import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 /**
  * The server side implementation of the RPC service.
  */
-public class ProfessoresServiceImpl extends RemoteServiceServlet implements ProfessoresService {
+public class ProfessoresServiceImpl extends RemoteService implements ProfessoresService {
 
 	private static final long serialVersionUID = -1972558331232685995L;
 
@@ -134,6 +133,8 @@ public class ProfessoresServiceImpl extends RemoteServiceServlet implements Prof
 	
 	@Override
 	public void save(ProfessorDTO professorDTO) {
+		onlyAdministrador();
+		
 		Professor professor = ConvertBeans.toProfessor(professorDTO);
 		if(professor.getId() != null && professor.getId() > 0) {
 			professor.merge();
@@ -153,6 +154,8 @@ public class ProfessoresServiceImpl extends RemoteServiceServlet implements Prof
 	
 	@Override
 	public void remove(List<ProfessorDTO> professorDTOList) {
+		onlyAdministrador();
+		
 		for(ProfessorDTO professorDTO : professorDTOList) {
 //			ConvertBeans.toProfessor(professorDTO).remove();
 			Professor.find(professorDTO.getId()).remove();
@@ -161,6 +164,8 @@ public class ProfessoresServiceImpl extends RemoteServiceServlet implements Prof
 
 	@Override
 	public ListLoadResult<ProfessorDTO> getProfessoresEmCampus(CampusDTO campusDTO) {
+		onlyAdministrador();
+		
 		Campus campus = Campus.find(campusDTO.getId());
 		Set<Professor> list = campus.getProfessores();
 		List<ProfessorDTO> listDTO = new ArrayList<ProfessorDTO>(list.size());
@@ -172,6 +177,8 @@ public class ProfessoresServiceImpl extends RemoteServiceServlet implements Prof
 	
 	@Override
 	public List<ProfessorDTO> getProfessoresNaoEmCampus(CampusDTO campusDTO) {
+		onlyAdministrador();
+		
 		Campus campus = Campus.find(campusDTO.getId());
 		Set<Professor> listAssociados = campus.getProfessores();
 		List<Professor> list = Professor.findAll();
@@ -182,9 +189,18 @@ public class ProfessoresServiceImpl extends RemoteServiceServlet implements Prof
 		}
 		return listDTO;
 	}
+	
+	@Override
+	public PagingLoadResult<ProfessorCampusDTO> getProfessorCampusByCurrentProfessor() {
+		onlyProfessor();
 		
+		List<ProfessorCampusDTO> list = ConvertBeans.toProfessorCampusDTO(getUsuario().getProfessor());
+		return new BasePagingLoadResult<ProfessorCampusDTO>(list);
+	}
 	@Override
 	public PagingLoadResult<ProfessorCampusDTO> getProfessorCampusList(CampusDTO campusDTO, ProfessorDTO professorDTO) {
+		onlyAdministrador();
+		
 		List<ProfessorCampusDTO> list = null;
 		if(campusDTO != null && professorDTO == null) list = ConvertBeans.toProfessorCampusDTO(Campus.find(campusDTO.getId()));
 		else if(campusDTO == null && professorDTO != null) list = ConvertBeans.toProfessorCampusDTO(Professor.find(professorDTO.getId()));
@@ -216,6 +232,8 @@ public class ProfessoresServiceImpl extends RemoteServiceServlet implements Prof
 	
 	@Override
 	public void salvarProfessorCampus(CampusDTO campusDTO, List<ProfessorDTO> professorDTOList) {
+		onlyAdministrador();
+		
 		Campus campus = Campus.find(campusDTO.getId());
 		List<Professor> professorList = new ArrayList<Professor>(professorDTOList.size());
 		for(ProfessorDTO professorDTO : professorDTOList) {
@@ -239,9 +257,13 @@ public class ProfessoresServiceImpl extends RemoteServiceServlet implements Prof
 	
 	@Override
 	public void removeProfessorCampus(List<ProfessorCampusDTO> professorCampusDTOList) {
+		onlyAdministrador();
+		
 		for(ProfessorCampusDTO pcDTO : professorCampusDTOList) {
 			Professor professor = Professor.find(pcDTO.getProfessorId());
-			professor.getCampi().remove(Campus.find(pcDTO.getCampusId()));
+			Campus campus = Campus.find(pcDTO.getCampusId());
+			
+			professor.getCampi().remove(campus);
 			professor.merge();
 		}
 	}

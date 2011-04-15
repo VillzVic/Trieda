@@ -1,4 +1,4 @@
-package com.gapso.web.trieda.shared.util.view;
+package com.gapso.web.trieda.shared.mvp.view;
 
 import com.extjs.gxt.ui.client.Style.Orientation;
 import com.extjs.gxt.ui.client.Style.SelectionMode;
@@ -20,8 +20,9 @@ import com.extjs.gxt.ui.client.widget.layout.VBoxLayoutData;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorDTO;
 import com.gapso.web.trieda.shared.mvp.presenter.CampusProfessorFormPresenter;
-import com.gapso.web.trieda.shared.mvp.view.MyComposite;
 import com.gapso.web.trieda.shared.util.resources.Resources;
+import com.gapso.web.trieda.shared.util.view.CampusComboBox;
+import com.gapso.web.trieda.shared.util.view.SimpleModal;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
 public class CampusProfessorFormView extends MyComposite implements CampusProfessorFormPresenter.Display {

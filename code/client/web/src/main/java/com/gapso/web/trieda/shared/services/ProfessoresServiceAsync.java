@@ -33,5 +33,6 @@ public interface ProfessoresServiceAsync {
 	void getProfessoresEmCampus(CampusDTO campusDTO, AsyncCallback<ListLoadResult<ProfessorDTO>> callback);
 	void getProfessoresNaoEmCampus(CampusDTO campusDTO, AsyncCallback<List<ProfessorDTO>> callback);
 	void salvarProfessorCampus(CampusDTO campusDTO, List<ProfessorDTO> professorDTOList, AsyncCallback<Void> callback);
+	void getProfessorCampusByCurrentProfessor(AsyncCallback<PagingLoadResult<ProfessorCampusDTO>> callback);
 	
 }

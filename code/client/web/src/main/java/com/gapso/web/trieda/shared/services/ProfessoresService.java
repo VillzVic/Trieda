@@ -37,5 +37,6 @@ public interface ProfessoresService extends RemoteService {
 	ListLoadResult<ProfessorDTO> getProfessoresEmCampus(CampusDTO campusDTO);
 	List<ProfessorDTO> getProfessoresNaoEmCampus(CampusDTO campusDTO);
 	void salvarProfessorCampus(CampusDTO campusDTO, List<ProfessorDTO> professorDTOList);
+	PagingLoadResult<ProfessorCampusDTO> getProfessorCampusByCurrentProfessor();
 	
 }

@@ -16,6 +16,7 @@
 		<intercept-url pattern="/resources/**" access="permitAll" />
 		<intercept-url pattern="/login/*" access="permitAll" />
 		<intercept-url pattern="/trieda/*" access="isAuthenticated()" />
+		<intercept-url pattern="/professor/*" access="isAuthenticated()" />
 	</http>
 	
 	<!-- Configure Authentication mechanism -->
