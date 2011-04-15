@@ -6,7 +6,10 @@ import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.Table;
@@ -53,6 +56,10 @@ public class Usuario implements Serializable {
     @NotNull
     @Column(name = "ENABLED")
     private Boolean enabled;
+    
+    @ManyToOne(targetEntity = Professor.class, fetch=FetchType.LAZY)
+    @JoinColumn(name = "PRF_ID")
+    private Professor professor;
 
 	public String getNome() {
         return this.nome;
@@ -89,6 +96,13 @@ public class Usuario implements Serializable {
         this.enabled = enabled;
     }
 	
+	public Professor getProfessor() {
+		return professor;
+	}
+	public void setProfessor(Professor professor) {
+		this.professor = professor;
+	}
+	
 	public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("Version: ").append(getVersion()).append(", ");
@@ -97,6 +111,7 @@ public class Usuario implements Serializable {
         sb.append("Username: ").append(getUsername()).append(", ");
         sb.append("Password: ").append(getPassword());
         sb.append("Enabled: ").append(getEnabled());
+        sb.append("Professor: ").append(getProfessor());
         return sb.toString();
     }
 
@@ -151,7 +166,7 @@ public class Usuario implements Serializable {
         if (em == null) throw new IllegalStateException("Entity manager has not been injected (is the Spring Aspects JAR configured as an AJC/AJDT aspects library?)");
         return em;
     }
-
+	
 	public static int count(String nome, String username, String email) {
 		Query q = entityManager().createQuery("SELECT COUNT(o) FROM Usuario o WHERE" +
 				" LOWER(o.nome) LIKE LOWER(:nome) AND " +
@@ -188,9 +203,9 @@ public class Usuario implements Serializable {
         return q.setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
 
-	public static Usuario find(Long id) {
-        if (id == null) return null;
-        return entityManager().find(Usuario.class, id);
+	public static Usuario find(String username) {
+        if (username == null) return null;
+        return entityManager().find(Usuario.class, username);
     }
 	
 }

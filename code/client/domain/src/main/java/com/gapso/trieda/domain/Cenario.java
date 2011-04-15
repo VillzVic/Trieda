@@ -10,6 +10,7 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -45,7 +46,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Table(name = "CENARIOS")
 public class Cenario implements Serializable {
 
-    @OneToOne(mappedBy="cenario")
+    @OneToOne(mappedBy="cenario", fetch=FetchType.LAZY)
     private Parametro parametro;
 	
 //    TODO @NotNull
