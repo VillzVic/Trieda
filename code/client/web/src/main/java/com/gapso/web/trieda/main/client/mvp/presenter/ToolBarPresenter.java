@@ -28,7 +28,6 @@ import com.gapso.web.trieda.main.client.mvp.view.OfertasView;
 import com.gapso.web.trieda.main.client.mvp.view.ProfessorFormView;
 import com.gapso.web.trieda.main.client.mvp.view.ProfessoresView;
 import com.gapso.web.trieda.main.client.mvp.view.RelatorioVisaoCursoView;
-import com.gapso.web.trieda.main.client.mvp.view.RelatorioVisaoProfessorView;
 import com.gapso.web.trieda.main.client.mvp.view.RelatorioVisaoSalaView;
 import com.gapso.web.trieda.main.client.mvp.view.ResumoCampiView;
 import com.gapso.web.trieda.main.client.mvp.view.ResumoCenarioView;
@@ -49,8 +48,10 @@ import com.gapso.web.trieda.shared.dtos.UsuarioDTO;
 import com.gapso.web.trieda.shared.mvp.presenter.CampusProfessoresPresenter;
 import com.gapso.web.trieda.shared.mvp.presenter.Presenter;
 import com.gapso.web.trieda.shared.mvp.presenter.ProfessoresDisciplinaPresenter;
+import com.gapso.web.trieda.shared.mvp.presenter.RelatorioVisaoProfessorPresenter;
 import com.gapso.web.trieda.shared.mvp.view.CampusProfessoresView;
 import com.gapso.web.trieda.shared.mvp.view.ProfessoresDisciplinaView;
+import com.gapso.web.trieda.shared.mvp.view.RelatorioVisaoProfessorView;
 import com.gapso.web.trieda.shared.services.CampiServiceAsync;
 import com.gapso.web.trieda.shared.services.Services;
 import com.gapso.web.trieda.shared.util.view.CenarioPanel;
@@ -341,7 +342,7 @@ public class ToolBarPresenter implements Presenter {
 		toolBar.getProfessoresDisciplinaListProfessoresButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
 			@Override
 			public void componentSelected(ButtonEvent ce) {
-				Presenter presenter = new ProfessoresDisciplinaPresenter(masterData, new ProfessoresDisciplinaView());
+				Presenter presenter = new ProfessoresDisciplinaPresenter(masterData, usuario, new ProfessoresDisciplinaView(usuario));
 				presenter.go(gTab);
 			}
 		});

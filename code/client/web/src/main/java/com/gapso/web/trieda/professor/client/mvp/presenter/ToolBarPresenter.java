@@ -9,8 +9,10 @@ import com.gapso.web.trieda.shared.dtos.UsuarioDTO;
 import com.gapso.web.trieda.shared.mvp.presenter.CampusProfessoresPresenter;
 import com.gapso.web.trieda.shared.mvp.presenter.Presenter;
 import com.gapso.web.trieda.shared.mvp.presenter.ProfessoresDisciplinaPresenter;
+import com.gapso.web.trieda.shared.mvp.presenter.RelatorioVisaoProfessorPresenter;
 import com.gapso.web.trieda.shared.mvp.view.CampusProfessoresView;
 import com.gapso.web.trieda.shared.mvp.view.ProfessoresDisciplinaView;
+import com.gapso.web.trieda.shared.mvp.view.RelatorioVisaoProfessorView;
 import com.gapso.web.trieda.shared.util.view.GTab;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -46,15 +48,15 @@ public class ToolBarPresenter implements Presenter {
 		toolBar.getProfessoresDisciplinaListProfessoresButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
 			@Override
 			public void componentSelected(ButtonEvent ce) {
-				Presenter presenter = new ProfessoresDisciplinaPresenter(masterData, new ProfessoresDisciplinaView());
+				Presenter presenter = new ProfessoresDisciplinaPresenter(masterData, usuario, new ProfessoresDisciplinaView(usuario));
 				presenter.go(gTab);
 			}
 		});
 		toolBar.getRelatorioVisaoProfessorButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
 			@Override
 			public void componentSelected(ButtonEvent ce) {
-//				Presenter presenter = new RelatorioVisaoProfessorPresenter(masterData, new RelatorioVisaoProfessorView());
-//				presenter.go(gTab);
+				Presenter presenter = new RelatorioVisaoProfessorPresenter(masterData, new RelatorioVisaoProfessorView());
+				presenter.go(gTab);
 			}
 		});
 	}

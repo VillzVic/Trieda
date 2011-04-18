@@ -7,6 +7,7 @@ import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.NumberField;
 import com.gapso.web.trieda.shared.dtos.ProfessorDisciplinaDTO;
+import com.gapso.web.trieda.shared.dtos.UsuarioDTO;
 import com.gapso.web.trieda.shared.services.ProfessoresDisciplinaServiceAsync;
 import com.gapso.web.trieda.shared.services.Services;
 import com.gapso.web.trieda.shared.util.view.DisciplinaComboBox;
@@ -31,8 +32,10 @@ public class ProfessorDisciplinaFormPresenter implements Presenter {
 	}
 	private SimpleGrid<ProfessorDisciplinaDTO> gridPanel;
 	private Display display;
+	private UsuarioDTO usuario;
 	
-	public ProfessorDisciplinaFormPresenter(Display display, SimpleGrid<ProfessorDisciplinaDTO> gridPanel) {
+	public ProfessorDisciplinaFormPresenter(UsuarioDTO usuario, Display display, SimpleGrid<ProfessorDisciplinaDTO> gridPanel) {
+		this.usuario = usuario;;
 		this.gridPanel = gridPanel;
 		this.display = display;
 		setListeners();
@@ -69,14 +72,15 @@ public class ProfessorDisciplinaFormPresenter implements Presenter {
 	
 	private ProfessorDisciplinaDTO getDTO() {
 		ProfessorDisciplinaDTO unidadeDTO = display.getProfessorDisciplinaDTO();
-		unidadeDTO.setProfessorId(display.getProfessorComboBox().getValue().getId());
-		unidadeDTO.setProfessorString(display.getProfessorComboBox().getValue().getNome());
-		unidadeDTO.setProfessorCpf(display.getProfessorComboBox().getValue().getCpf());
-		unidadeDTO.setDisciplinaId(display.getDisciplinaComboBox().getValue().getId());
-		unidadeDTO.setDisciplinaString(display.getDisciplinaComboBox().getValue().getCodigo());
-		
+		if(usuario.isAdministrador()) {
+			unidadeDTO.setProfessorId(display.getProfessorComboBox().getValue().getId());
+			unidadeDTO.setProfessorString(display.getProfessorComboBox().getValue().getNome());
+			unidadeDTO.setProfessorCpf(display.getProfessorComboBox().getValue().getCpf());
+			unidadeDTO.setDisciplinaId(display.getDisciplinaComboBox().getValue().getId());
+			unidadeDTO.setDisciplinaString(display.getDisciplinaComboBox().getValue().getCodigo());
+			unidadeDTO.setNotaDesempenho(display.getNotaDesempenhoNumberField().getValue().intValue());
+		}
 		unidadeDTO.setPreferencia(display.getPreferenciaNumberField().getValue().intValue());
-		unidadeDTO.setNotaDesempenho(display.getNotaDesempenhoNumberField().getValue().intValue());
 		return unidadeDTO;
 	}
 	

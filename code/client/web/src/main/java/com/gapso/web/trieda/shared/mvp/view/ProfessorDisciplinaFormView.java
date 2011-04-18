@@ -8,6 +8,7 @@ import com.extjs.gxt.ui.client.widget.layout.FormData;
 import com.gapso.web.trieda.shared.dtos.DisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorDisciplinaDTO;
+import com.gapso.web.trieda.shared.dtos.UsuarioDTO;
 import com.gapso.web.trieda.shared.mvp.presenter.ProfessorDisciplinaFormPresenter;
 import com.gapso.web.trieda.shared.util.resources.Resources;
 import com.gapso.web.trieda.shared.util.view.DisciplinaComboBox;
@@ -24,11 +25,13 @@ public class ProfessorDisciplinaFormView extends MyComposite implements Professo
 	private NumberField preferenciaNF;
 	private NumberField notaDesempenhoNF;
 
+	private UsuarioDTO usuario;
 	private ProfessorDisciplinaDTO professorDisciplinaDTO;
 	private ProfessorDTO professorDTO;
 	private DisciplinaDTO disciplinaDTO;
 	
-	public ProfessorDisciplinaFormView(ProfessorDisciplinaDTO professorDisciplinaDTO, ProfessorDTO professorDTO, DisciplinaDTO disciplinaDTO) {
+	public ProfessorDisciplinaFormView(UsuarioDTO usuario, ProfessorDisciplinaDTO professorDisciplinaDTO, ProfessorDTO professorDTO, DisciplinaDTO disciplinaDTO) {
+		this.usuario = usuario;
 		this.professorDisciplinaDTO = professorDisciplinaDTO;
 		this.professorDTO = professorDTO;
 		this.disciplinaDTO = disciplinaDTO;
@@ -51,12 +54,12 @@ public class ProfessorDisciplinaFormView extends MyComposite implements Professo
 		formPanel = new FormPanel();
 		formPanel.setHeaderVisible(false);
 		
-		professorCB = new ProfessorComboBox();
+		professorCB = new ProfessorComboBox(usuario.isProfessor());
 		professorCB.setAllowBlank(false);
 		professorCB.setValue(professorDTO);
 		formPanel.add(professorCB, formData);
 		
-		disciplinaCB = new DisciplinaComboBox();
+		disciplinaCB = new DisciplinaComboBox(usuario.isProfessor());
 		disciplinaCB.setAllowBlank(false);
 		disciplinaCB.setValue(disciplinaDTO);
 		formPanel.add(disciplinaCB, formData);
@@ -81,6 +84,7 @@ public class ProfessorDisciplinaFormView extends MyComposite implements Professo
 		notaDesempenhoNF.setAllowDecimals(false);
 		notaDesempenhoNF.setMaxValue(10);
 		notaDesempenhoNF.setEmptyText("Preencha de 0 à 10");
+		notaDesempenhoNF.setReadOnly(usuario.isProfessor());
 		formPanel.add(notaDesempenhoNF, formData);
 		
 		FormButtonBinding binding = new FormButtonBinding(formPanel);

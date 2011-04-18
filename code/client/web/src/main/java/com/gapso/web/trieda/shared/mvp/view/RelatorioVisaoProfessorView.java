@@ -1,4 +1,4 @@
-package com.gapso.web.trieda.main.client.mvp.view;
+package com.gapso.web.trieda.shared.mvp.view;
 
 import com.extjs.gxt.ui.client.Style.LayoutRegion;
 import com.extjs.gxt.ui.client.util.Margins;
@@ -13,8 +13,7 @@ import com.extjs.gxt.ui.client.widget.layout.ColumnData;
 import com.extjs.gxt.ui.client.widget.layout.ColumnLayout;
 import com.extjs.gxt.ui.client.widget.layout.FormData;
 import com.extjs.gxt.ui.client.widget.layout.FormLayout;
-import com.gapso.web.trieda.main.client.mvp.presenter.RelatorioVisaoProfessorPresenter;
-import com.gapso.web.trieda.shared.mvp.view.MyComposite;
+import com.gapso.web.trieda.shared.mvp.presenter.RelatorioVisaoProfessorPresenter;
 import com.gapso.web.trieda.shared.util.resources.Resources;
 import com.gapso.web.trieda.shared.util.view.CampusComboBox;
 import com.gapso.web.trieda.shared.util.view.GTabItem;

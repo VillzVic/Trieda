@@ -13,6 +13,7 @@ import com.extjs.gxt.ui.client.widget.grid.ColumnConfig;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayout;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
 import com.gapso.web.trieda.shared.dtos.ProfessorDisciplinaDTO;
+import com.gapso.web.trieda.shared.dtos.UsuarioDTO;
 import com.gapso.web.trieda.shared.mvp.presenter.ProfessoresDisciplinaPresenter;
 import com.gapso.web.trieda.shared.util.resources.Resources;
 import com.gapso.web.trieda.shared.util.view.DisciplinaComboBox;
@@ -31,17 +32,27 @@ public class ProfessoresDisciplinaView extends MyComposite implements Professore
 	private DisciplinaComboBox disciplinaBuscaCB;
 	private ContentPanel panel;
 	private GTabItem tabItem;
+	private UsuarioDTO usuario;
 	
-	public ProfessoresDisciplinaView() {
+	public ProfessoresDisciplinaView(UsuarioDTO usuario) {
+		this.usuario = usuario;
 		initUI();
 	}
 	
 	private void initUI() {
 		panel = new ContentPanel(new BorderLayout());
-		panel.setHeading("Master Data » Habilitação dos Professores");
+		String title = null;
+		if(usuario.isProfessor()) {
+			title = "Professor » Habilitação do Professor";
+		} else {
+			title = "Master Data » Habilitação dos Professores";
+		}
+		panel.setHeading(title);
 		createToolBar();
 		createGrid();
-		createFilter();
+		if(usuario.isAdministrador()) {
+			createFilter();
+		}
 		createTabItem();
 		initComponent(tabItem);
 	}
@@ -52,7 +63,11 @@ public class ProfessoresDisciplinaView extends MyComposite implements Professore
 	}
 	
 	private void createToolBar() {
-		toolBar = new SimpleToolBar(this);
+		if(usuario.isProfessor()) {
+			toolBar = new SimpleToolBar(false, true, false, false, false, this);
+		} else {
+			toolBar = new SimpleToolBar(this);
+		}
 		panel.setTopComponent(toolBar);
 	}
 	

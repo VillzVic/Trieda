@@ -13,7 +13,6 @@ import com.extjs.gxt.ui.client.event.Listener;
 import com.extjs.gxt.ui.client.store.ListStore;
 import com.extjs.gxt.ui.client.widget.form.ComboBox;
 import com.gapso.web.trieda.shared.dtos.DisciplinaDTO;
-import com.gapso.web.trieda.shared.services.DisciplinasServiceAsync;
 import com.gapso.web.trieda.shared.services.Services;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -22,21 +21,30 @@ public class DisciplinaComboBox extends ComboBox<DisciplinaDTO> {
 	private ListStore<DisciplinaDTO> store;
 	
 	public DisciplinaComboBox() {
-		final DisciplinasServiceAsync service = Services.disciplinas();
-		RpcProxy<ListLoadResult<DisciplinaDTO>> proxy = new RpcProxy<ListLoadResult<DisciplinaDTO>>() {
-			@Override
-			public void load(Object loadConfig, AsyncCallback<ListLoadResult<DisciplinaDTO>> callback) {
-				service.getList((BasePagingLoadConfig)loadConfig, callback);
-			}
-		};
-		ListLoader<BaseListLoadResult<DisciplinaDTO>> load = new BaseListLoader<BaseListLoadResult<DisciplinaDTO>>(proxy);
-		load.addListener(Loader.BeforeLoad, new Listener<LoadEvent>() {
-			public void handleEvent(LoadEvent be) {
-				be.<ModelData> getConfig().set("offset", 0);
-				be.<ModelData> getConfig().set("limit", 10);
-			}
-		});
-		store = new ListStore<DisciplinaDTO>(load);
+		this(false);
+	}
+	public DisciplinaComboBox(boolean readOnly) {
+		setReadOnly(readOnly);
+		
+		if(!readOnly) {
+			RpcProxy<ListLoadResult<DisciplinaDTO>> proxy = new RpcProxy<ListLoadResult<DisciplinaDTO>>() {
+				@Override
+				public void load(Object loadConfig, AsyncCallback<ListLoadResult<DisciplinaDTO>> callback) {
+					Services.disciplinas().getList((BasePagingLoadConfig)loadConfig, callback);
+				}
+			};
+			ListLoader<BaseListLoadResult<DisciplinaDTO>> load = new BaseListLoader<BaseListLoadResult<DisciplinaDTO>>(proxy);
+			load.addListener(Loader.BeforeLoad, new Listener<LoadEvent>() {
+				public void handleEvent(LoadEvent be) {
+					be.<ModelData> getConfig().set("offset", 0);
+					be.<ModelData> getConfig().set("limit", 10);
+				}
+			});
+			store = new ListStore<DisciplinaDTO>(load);
+		} else {
+			store = new ListStore<DisciplinaDTO>();
+		}
+		
 		setFieldLabel("Disciplina");
 		setDisplayField(DisciplinaDTO.PROPERTY_CODIGO);
 		setStore(store);

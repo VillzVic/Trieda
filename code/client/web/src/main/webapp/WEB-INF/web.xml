@@ -257,6 +257,10 @@
 		<servlet-name>professoresDisciplinaServlet</servlet-name>
 		<url-pattern>/professor/professoresDisciplina</url-pattern>
 	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>disciplinasServlet</servlet-name>
+		<url-pattern>/professor/disciplinas</url-pattern>
+	</servlet-mapping>
 	
 	<servlet-mapping>
   		<servlet-name>usuariosServlet</servlet-name>
