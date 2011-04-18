@@ -1,4 +1,4 @@
-package com.gapso.web.trieda.main.client.mvp.view;
+package com.gapso.web.trieda.shared.mvp.view;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,9 +12,8 @@ import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.grid.ColumnConfig;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayout;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
-import com.gapso.web.trieda.main.client.mvp.presenter.ProfessoresDisciplinaPresenter;
 import com.gapso.web.trieda.shared.dtos.ProfessorDisciplinaDTO;
-import com.gapso.web.trieda.shared.mvp.view.MyComposite;
+import com.gapso.web.trieda.shared.mvp.presenter.ProfessoresDisciplinaPresenter;
 import com.gapso.web.trieda.shared.util.resources.Resources;
 import com.gapso.web.trieda.shared.util.view.DisciplinaComboBox;
 import com.gapso.web.trieda.shared.util.view.GTabItem;

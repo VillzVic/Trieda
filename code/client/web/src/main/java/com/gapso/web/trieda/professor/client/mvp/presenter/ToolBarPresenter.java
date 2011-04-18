@@ -8,7 +8,9 @@ import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.UsuarioDTO;
 import com.gapso.web.trieda.shared.mvp.presenter.CampusProfessoresPresenter;
 import com.gapso.web.trieda.shared.mvp.presenter.Presenter;
+import com.gapso.web.trieda.shared.mvp.presenter.ProfessoresDisciplinaPresenter;
 import com.gapso.web.trieda.shared.mvp.view.CampusProfessoresView;
+import com.gapso.web.trieda.shared.mvp.view.ProfessoresDisciplinaView;
 import com.gapso.web.trieda.shared.util.view.GTab;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -18,6 +20,7 @@ public class ToolBarPresenter implements Presenter {
 		Component getComponent();
 		Button getProfessoresCampusListprofessoresBt();
 		Button getRelatorioVisaoProfessorButton();
+		Button getProfessoresDisciplinaListProfessoresButton();
 	}
 	
 	private CenarioDTO masterData;
@@ -37,6 +40,13 @@ public class ToolBarPresenter implements Presenter {
 			@Override
 			public void componentSelected(ButtonEvent ce) {
 				Presenter presenter = new CampusProfessoresPresenter(masterData, usuario, new CampusProfessoresView(usuario));
+				presenter.go(gTab);
+			}
+		});
+		toolBar.getProfessoresDisciplinaListProfessoresButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
+			@Override
+			public void componentSelected(ButtonEvent ce) {
+				Presenter presenter = new ProfessoresDisciplinaPresenter(masterData, new ProfessoresDisciplinaView());
 				presenter.go(gTab);
 			}
 		});

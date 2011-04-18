@@ -21,6 +21,7 @@ public class ToolBarView extends MyComposite implements ToolBarPresenter.Display
 	private ToolBar toolBar;
 	
 	private Button professoresCampusListprofessoresBt;
+	private Button professoresDisciplinaListprofessoresBt;
 	private Button relatorioVisaoProfessorBt;
 	
 	public ToolBarView() {
@@ -49,6 +50,9 @@ public class ToolBarView extends MyComposite implements ToolBarPresenter.Display
 		professoresCampusListprofessoresBt = createButton("Campi de<br />Trabalho", "Campi de Trabalho", Resources.DEFAULTS.campiTrabalho24());
 		toolBar.add(professoresCampusListprofessoresBt);
 		
+		professoresDisciplinaListprofessoresBt = createButton("Habilitação<br />do Professor", "Habilitação do Professor", Resources.DEFAULTS.habilitacaoProfessor24());
+		toolBar.add(professoresDisciplinaListprofessoresBt);
+		
 		relatorioVisaoProfessorBt = createButton("Grade Horária<br />Visão Professor", "Grade Horária Visão Professor", Resources.DEFAULTS.saidaProfessor24());
 		toolBar.add(relatorioVisaoProfessorBt);		
 	}
@@ -75,6 +79,10 @@ public class ToolBarView extends MyComposite implements ToolBarPresenter.Display
 	@Override
 	public Button getRelatorioVisaoProfessorButton() {
 		return relatorioVisaoProfessorBt;
+	}
+	@Override
+	public Button getProfessoresDisciplinaListProfessoresButton() {
+		return professoresDisciplinaListprofessoresBt;
 	}
 	
 }

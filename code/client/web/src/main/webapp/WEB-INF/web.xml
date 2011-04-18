@@ -253,6 +253,10 @@
   		<servlet-name>campiServlet</servlet-name>
   		<url-pattern>/professor/campi</url-pattern>
 	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>professoresDisciplinaServlet</servlet-name>
+		<url-pattern>/professor/professoresDisciplina</url-pattern>
+	</servlet-mapping>
 	
 	<servlet-mapping>
   		<servlet-name>usuariosServlet</servlet-name>
