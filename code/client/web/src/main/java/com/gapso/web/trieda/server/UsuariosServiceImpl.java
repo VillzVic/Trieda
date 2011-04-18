@@ -26,7 +26,8 @@ public class UsuariosServiceImpl extends RemoteService implements UsuariosServic
 	
 	@Override
 	public UsuarioDTO getCurrentUser() {
-		return ConvertBeans.toUsuarioDTO(getUsuario());
+		Usuario usuario = getUsuario();
+		return (usuario == null) ? null : ConvertBeans.toUsuarioDTO(usuario);
 	}
 	
 	@Override

@@ -7,6 +7,7 @@ import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.util.KeyNav;
 import com.extjs.gxt.ui.client.widget.Component;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
+import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.Viewport;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.FormPanel;
@@ -16,9 +17,16 @@ import com.extjs.gxt.ui.client.widget.layout.CenterLayout;
 import com.extjs.gxt.ui.client.widget.layout.FitLayout;
 import com.extjs.gxt.ui.client.widget.layout.FormData;
 import com.extjs.gxt.ui.client.widget.layout.FormLayout;
+import com.gapso.web.trieda.shared.dtos.UsuarioDTO;
+import com.gapso.web.trieda.shared.services.Services;
+import com.gapso.web.trieda.shared.services.UsuariosServiceAsync;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.user.client.Element;
+import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.RootPanel;
+import com.googlecode.future.FutureResult;
+import com.googlecode.future.FutureSynchronizer;
 
 /**
  * Entry point classes define <code>onModuleLoad()</code>.
@@ -31,18 +39,46 @@ public class Login implements EntryPoint {
 	 * This is the entry point method.
 	 */
 	public void onModuleLoad() {
+		redirect();
+	}
+	
+	public void redirect() {
+		UsuariosServiceAsync usuarioService = Services.usuarios();
+		final FutureResult<UsuarioDTO> futureUsuarioDTO = new FutureResult<UsuarioDTO>();
+		usuarioService.getCurrentUser(futureUsuarioDTO);
+		FutureSynchronizer synch = new FutureSynchronizer(futureUsuarioDTO);
+		
+		synch.addCallback(new AsyncCallback<Boolean>() {
+			@Override
+			public void onSuccess(Boolean result) {
+				UsuarioDTO usuario = futureUsuarioDTO.result();
+				if(usuario == null) {
+					loadLogin();
+				} else if(usuario.isAdministrador()) {
+					Window.open("../trieda/?gwt.codesvr=127.0.0.1:9997", "_self", ""); 
+				} else if(usuario.isProfessor()) {
+					Window.open("../professor/?gwt.codesvr=127.0.0.1:9997", "_self", ""); 
+				}
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				MessageBox.alert("ERRO!", "Deu falha na conexão", null);
+			}
+		});
+	}
+	
+	private void loadLogin() {
 		viewport = new Viewport();
 		viewport.setLayout(new FitLayout());
 		ContentPanel panel = new ContentPanel(new CenterLayout());
 		
 		final FormPanel form = new FormPanel() {
-
 			@Override
 			protected void onRender(Element target, int index) {
 				super.onRender(target, index);
 				getLayoutTarget().dom.setPropertyString("target", null);
 			}
-			
 		};
 		form.setAction("/resources/j_spring_security_check");
 		form.setMethod(Method.POST);
@@ -93,4 +129,5 @@ public class Login implements EntryPoint {
 			}
 		};
 	}
+	
 }
