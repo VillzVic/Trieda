@@ -433,7 +433,7 @@ public class ToolBarPresenter implements Presenter {
 		toolBar.getRelatorioVisaoProfessorButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
 			@Override
 			public void componentSelected(ButtonEvent ce) {
-				Presenter presenter = new RelatorioVisaoProfessorPresenter(masterData, new RelatorioVisaoProfessorView());
+				Presenter presenter = new RelatorioVisaoProfessorPresenter(masterData, usuario, new RelatorioVisaoProfessorView(usuario));
 				presenter.go(gTab);
 			}
 		});

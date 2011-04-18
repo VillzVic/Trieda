@@ -13,6 +13,7 @@ import com.extjs.gxt.ui.client.widget.layout.ColumnData;
 import com.extjs.gxt.ui.client.widget.layout.ColumnLayout;
 import com.extjs.gxt.ui.client.widget.layout.FormData;
 import com.extjs.gxt.ui.client.widget.layout.FormLayout;
+import com.gapso.web.trieda.shared.dtos.UsuarioDTO;
 import com.gapso.web.trieda.shared.mvp.presenter.RelatorioVisaoProfessorPresenter;
 import com.gapso.web.trieda.shared.util.resources.Resources;
 import com.gapso.web.trieda.shared.util.view.CampusComboBox;
@@ -31,8 +32,10 @@ public class RelatorioVisaoProfessorView extends MyComposite implements Relatori
 	private ProfessorComboBox professorCB;
 	private ContentPanel panel;
 	private GTabItem tabItem;
+	private UsuarioDTO usuario;
 	
-	public RelatorioVisaoProfessorView() {
+	public RelatorioVisaoProfessorView(UsuarioDTO usuario) {
+		this.usuario = usuario;
 		initUI();
 	}
 	
@@ -68,14 +71,18 @@ public class RelatorioVisaoProfessorView extends MyComposite implements Relatori
 		LayoutContainer left = new LayoutContainer(new FormLayout(LabelAlign.RIGHT));
 		LayoutContainer right = new LayoutContainer(new FormLayout(LabelAlign.RIGHT));
 		
-		campusCB = new CampusComboBox();
-		left.add(campusCB, formData);
+		if(usuario.isAdministrador()) {
+			campusCB = new CampusComboBox();
+			left.add(campusCB, formData);
+		}
 		
 		turnoCB = new TurnoComboBox();
 		left.add(turnoCB, formData);
 		
-		professorCB = new ProfessorComboBox();
-		right.add(professorCB, formData);
+		if(usuario.isAdministrador()) {
+			professorCB = new ProfessorComboBox(campusCB);
+			right.add(professorCB, formData);
+		}
 		
 		submitBt = new Button("Filtrar", AbstractImagePrototype.create(Resources.DEFAULTS.filter16()));
 		panel.addButton(submitBt);
@@ -88,7 +95,11 @@ public class RelatorioVisaoProfessorView extends MyComposite implements Relatori
 		BorderLayoutData bld = new BorderLayoutData(LayoutRegion.NORTH);
 		bld.setMargins(new Margins(5, 5, 0, 5));
 		bld.setCollapsible(true);
-		bld.setSize(130);
+		if(usuario.isAdministrador()) {
+			bld.setSize(130);
+		} else {
+			bld.setSize(103);
+		}
 		
 		this.panel.add(panel, bld);
 	}
