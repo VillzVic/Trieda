@@ -352,8 +352,8 @@ SolucaoOperacional & SolucaoInicialOperacional::geraSolucaoInicial()
    return *(solucaoInicial);
 }
 
-bool SolucaoInicialOperacional::alocaAulaSeq( SolucaoOperacional * solucao, vector< Aula * >::iterator itHorariosProf,
-                                              int totalHorariosConsiderados, Professor & professor, Aula & aula )
+bool SolucaoInicialOperacional::alocaAulaSeq(SolucaoOperacional * solucao, vector< Aula * >::iterator itHorariosProf,
+                                             int totalHorariosConsiderados, Professor & professor, Aula & aula)
 {
    bool alocou = false;
 
@@ -381,21 +381,21 @@ bool SolucaoInicialOperacional::alocaAulaSeq( SolucaoOperacional * solucao, vect
          ++h, ++itHorariosProf)
    {
       // Se a aula não for 'NULL'
-      if ( *itHorariosProf )
+      if(*itHorariosProf)
       {
          sequenciaDeHorariosLivres = false;
          totalCredsAlocar = aula.getTotalCreditos();
          continue;
       }
 
-      if ( totalCredsAlocar == aula.getTotalCreditos() )
+      if(totalCredsAlocar == aula.getTotalCreditos())
       {
          itInicioHorariosAlocar = itHorariosProf;
       }
 
       // Se a disciplina possuir apenas um crédito
       // para o dia em questão, basta alocá-la.
-      if ( aula.getTotalCreditos() == 1 )
+      if(aula.getTotalCreditos() == 1)
       {
 	     // Procura a coluna da aula para a
 		 // qual o iterador destá apontando
@@ -407,40 +407,40 @@ bool SolucaoInicialOperacional::alocaAulaSeq( SolucaoOperacional * solucao, vect
          id_horario_aula = ( coluna_matriz % total_horarios );
          horario_aula = problemData.horarios_aula_ordenados[ id_horario_aula ];
 
-         GGroup< Horario * >::iterator it_horario
-			 = professor.horarios.begin();
+         GGroup< Horario * >::iterator it_horario = professor.horarios.begin();
+
          for (; it_horario != professor.horarios.end(); it_horario++)
          {
             horario = *( it_horario );
-            if ( horario->dias_semana.find( dia_semana ) != horario->dias_semana.end()
-					&& horario->horario_aula->getId() == horario_aula->getId() )
+            if (horario->dias_semana.find(dia_semana) != horario->dias_semana.end()
+               && horario->horario_aula->getId() == horario_aula->getId())
             {
 			   // Cria o novo par professor/horario que será inserido
                std::vector< std::pair< Professor *, Horario * > > novoHorarioAula; 
 			   novoHorarioAula.push_back( std::make_pair( &(professor), horario ) );
 
-               bool haConflito = solucao->checkConflitoBlocoCurricular( aula, novoHorarioAula );
-               if ( !haConflito )
+               bool haConflito = solucao->checkConflitoBlocoCurricular(aula,novoHorarioAula);
+               if(!haConflito)
                {
                   aula.bloco_aula = novoHorarioAula;
-                  if ( *itHorariosProf )
+                  if(*itHorariosProf)
                   {
                      std::cout << "<I> Sobreposicao de CREDITO" << std::endl;
                      exit(1);
                   }
                   else
-				  {
 					  sequenciaDeHorariosLivres = false;
                      (*itHorariosProf) = &( aula );
-				  }
 
                   alocou = true;
                   break;
                }
             }
          }
+
+         ///solucao->checkConflitoBlocoCurricular
       }
-      else if ( aula.getTotalCreditos() > 1 )
+      else if(aula.getTotalCreditos() > 1)
       {
          // Caso a disciplina possua mais de um crédito
          // a ser alocado, a ideia aqui é aloca-los em 
@@ -450,10 +450,9 @@ bool SolucaoInicialOperacional::alocaAulaSeq( SolucaoOperacional * solucao, vect
          // Atualizo o total de créditos alocados.
          --totalCredsAlocar;
 
-         if ( totalCredsAlocar == 0 )
+         if(totalCredsAlocar == 0)
          {
             sequenciaDeHorariosLivres = true;
-
             // Posso parar a busca pq já
             // encontrei o total de créditos necessários.
             break;
@@ -462,7 +461,7 @@ bool SolucaoInicialOperacional::alocaAulaSeq( SolucaoOperacional * solucao, vect
    }
 
    // Se encontrei uma sequência de horários livres, aloco.
-   if ( sequenciaDeHorariosLivres )
+   if(sequenciaDeHorariosLivres)
    {
 	  // Procura a coluna da aula para a
 	  // qual o iterador destá apontando
@@ -470,10 +469,12 @@ bool SolucaoInicialOperacional::alocaAulaSeq( SolucaoOperacional * solucao, vect
 		  = solucao->getMatrizAulas()->at( idOperacionalProf )->begin();
       coluna_matriz = (std::distance(it_aula, itHorariosProf) + 1);
 
-      id_horario_aula = ( coluna_matriz % total_horarios );
+      //id_horario_aula = ( coluna_matriz % total_horarios );
+
       std::vector< std::pair< Professor *, Horario * > > novosHorariosAula;
 
 	  int total_creditos_aula = aula.getTotalCreditos();
+
 
       GGroup< Horario * >::iterator it_horario
          = professor.horarios.begin();
@@ -496,25 +497,24 @@ bool SolucaoInicialOperacional::alocaAulaSeq( SolucaoOperacional * solucao, vect
          }
       }
 
-      bool haConflito = solucao->checkConflitoBlocoCurricular( aula, novosHorariosAula );
-      if ( !haConflito )
+      bool haConflito = solucao->checkConflitoBlocoCurricular(aula,novosHorariosAula);
+      if(!haConflito)
       {
-         for ( int h = 0; h < aula.getTotalCreditos();
-               ++h, ++itInicioHorariosAlocar )
+         for(int h = 0; h < aula.getTotalCreditos();
+            ++h, ++itInicioHorariosAlocar)
          {
-            if ( *itInicioHorariosAlocar )
+            if(*itInicioHorariosAlocar)
             {
                std::cout << "<II> Sobreposicao de CREDITO" << std::endl;
                exit(1);
             }
             else
-			{
                // Alocação da aula
 			   (*itInicioHorariosAlocar) = &(aula);
-			}
          }
 
          aula.bloco_aula = novosHorariosAula;
+
          alocou = true;
       }
    }
@@ -534,20 +534,18 @@ bool SolucaoInicialOperacional::professorRepetido(Professor & professor, Aula & 
       BlocoCurricular * bc = problemData.mapCursoDisciplina_BlocoCurricular
          [std::make_pair(itOferta->curso,aula.getDisciplina())];
 
-      std::map< BlocoCurricular *, GGroup< Professor *, LessPtr< Professor > > >::iterator
-         itBlocosProfs = blocosProfs.find( bc );
+      std::map<BlocoCurricular *, GGroup<Professor*,LessPtr<Professor> > >::iterator
+         itBlocosProfs = blocosProfs.find(bc);
 
       // Se encontrei o bloco
-      if ( itBlocosProfs != blocosProfs.end() )
+      if(itBlocosProfs != blocosProfs.end())
       {
-         GGroup< Professor *, LessPtr< Professor > >::iterator 
-            itProf = itBlocosProfs->second.find( &professor );
+         GGroup<Professor*,LessPtr<Professor> >::iterator 
+            itProf = itBlocosProfs->second.find(&professor);
 
          // Se o professor em questão já está associado ao bloco
          if(itProf != itBlocosProfs->second.end())
-		 {
             return true;
-		 }
       }
    }
 
@@ -560,26 +558,26 @@ void SolucaoInicialOperacional::executaFuncaoPrioridade()
    {
       ITERA_GGROUP(itProfessor, itCampus->professores, Professor)
       {
-         // Contabilizando os horários disponíveis de um professor. 
-         // Assim, toda vez que um CustoAlocacao for instanciado, o custo
-         // referente à "disponibilidade do professor p" será atualizado.
-         // Há necessidade de converter o valor para que seja somado corretamente.
+         //Contabilizando os horários disponíveis de um professor. 
+         //Assim, toda vez que um CustoAlocacao for instanciado, o custo
+         //referente à "disponibilidade do professor p" será atualizado.
+         //Há necessidade de converter o valor para que seja somado corretamente.
 
-         // Ex.:
-         // custoDispProf_A = 10 -> 10 horarios disponiveis
-         // custoDispProf_B = 5 -> 5 horarios disponiveis
-         // custoDispProf_B tem prioridade MAIOR que custoDispProf_A.
-         // prioridade = -(custoDispProf_A - (TOTALHORARIOSCAMPUS+1))
+         //Ex. 
+         //custoDispProf_A = 10 -> 10 horarios disponiveis
+         //custoDispProf_B = 5 -> 5 horarios disponiveis
+         //custoDispProf_B tem prioridade MAIOR que custoDispProf_A.
+         //prioridade = -(custoDispProf_A - (TOTALHORARIOSCAMPUS+1))
 
-         // Dado que TOTALHORARIOSCAMPUS = 10, então:
-         // prioridade(custoDispProf_A) = 1
-         // prioridade(custoDispProf_A) = 6
-         // Estamos adimitindo aqui que a inst. possui apenas um CAMPUS.
-         // Não funcionará para multicampus.
+         //Dado que TOTALHORARIOSCAMPUS = 10, então:
+         //prioridade(custoDispProf_A) = 1
+         //prioridade(custoDispProf_A) = 6
+         //Estamos adimitindo aqui que a inst. possui apenas um CAMPUS.
+         //Não funcionará para multicampus.
 
-         // TODO : ADAPTAR TODO O CÓDIGO PARA CONTEMPLAR MULTICAMPUS.
+         //TODO : ADAPTAR TODO O COD PARA CONTEMPLAR MULTICAMPUS.
 
-         itProfessor->setCustoDispProf( itCampus->horarios.size() );
+         itProfessor->setCustoDispProf(itCampus->horarios.size());
 
          ITERA_GGROUP(itMagisterio, itProfessor->magisterio, Magisterio)
          {
@@ -589,46 +587,41 @@ void SolucaoInicialOperacional::executaFuncaoPrioridade()
             ITERA_GGROUP(itAula, problemData.aulas, Aula)
             {
                Disciplina * discAula = itAula->getDisciplina();
-               if ( discMinistradaProf == discAula )
-               {
-                  // Para o primeiro custo da função de prioridade,
-				  // tenho que testar agora se existe fixação desse
-				  // professor para a disciplina da aula em questão.
 
-                  std::pair< Professor *, Disciplina * > chave ( *itProfessor, discMinistradaProf );
+               if(discMinistradaProf == discAula)
+               {
+                  // Para o primeiro custo da função de prioridade, tenho que testar agora se
+                  // existe fixação desse professor para a disciplina da aula em questão.
+
+                  std::pair< Professor *, Disciplina * > chave (*itProfessor, discMinistradaProf);
 
                   std::map< std::pair< Professor *, Disciplina * >, GGroup< Fixacao * > >::iterator
-                     itFixacoesProfDisc = problemData.fixacoesProfDisc.find( chave );
+                     itFixacoesProfDisc = problemData.fixacoesProfDisc.find(chave);
 
-                  // Somente se existir, pelo menos, uma
-				  // fixação de um professor a uma disciplina.
-                  if ( itFixacoesProfDisc != problemData.fixacoesProfDisc.end() )
+                  // Somente se existir, pelo menos, uma fixação de um professor a uma disciplina.
+                  if(itFixacoesProfDisc != problemData.fixacoesProfDisc.end())
                   {
                      ITERA_GGROUP(itFixacao, itFixacoesProfDisc->second, Fixacao)
                      {
-                        calculaCustoFixProf( **itProfessor, **itAula, 0 );
+                        calculaCustoFixProf(**itProfessor, **itAula,0);
                      }
                   }
 
-                  // Para o segundo custo considerado para o cálculo
-				  // da função de prioridade, tenho que somar a nota
-				  // (preferência) dada pelo professor para a disciplina em questão.
+                  // Para o segundo custo considerado para o cálculo da função de prioridade, tenho
+                  // que somar a nota (preferência) dada pelo professor para a disciplina em questão.
 
-                  // Dado que a maior preferência recebe nota 1 e a
-				  // menor recebe nota 10, basta subtrair a nota
-				  // (preferência) por 11 e, em seguida, multiplicar
-				  // o resultado por -1. Assim, somaremos um valor
-				  // correto ao custo, já que o melhor custo total
-				  // possuirá o maior valor atribuido.
-                  calculaCustoFixProf( **itProfessor, **itAula, 1, itMagisterio->getPreferencia() );
+                  // Dado que a maior preferência recebe nota 1 e a menor recebe nota 10, basta subtrair a
+                  // nota (preferência) por 11 e, em seguida, multiplicar o resultado por -1. Assim, somaremos
+                  // um valor correto ao custo, já que o melhor custo total possuirá o maior valor atribuido.
+                  calculaCustoFixProf(**itProfessor, **itAula, 1, itMagisterio->getPreferencia());
 
-				  std::pair< int, int > chaveGamb ( itProfessor->getId(), discMinistradaProf->getId() );
+                  pair<int, int> chaveGamb (itProfessor->getId(), discMinistradaProf->getId());
 
                   // Se o professor e a disciplina da aula em questão se relacionarem:
                   if(problemData.prof_Disc_Dias.find(chaveGamb) != problemData.prof_Disc_Dias.end())
                   {
                      int custo = problemData.prof_Disc_Dias[chaveGamb].size();
-                     calculaCustoFixProf( **itProfessor, **itAula, 3, custo, itCampus->horarios.size() );
+                     calculaCustoFixProf(**itProfessor, **itAula, 3, custo, itCampus->horarios.size());
                   }
                }
             }
@@ -637,26 +630,25 @@ void SolucaoInicialOperacional::executaFuncaoPrioridade()
    }
 }
 
-void SolucaoInicialOperacional::calculaCustoFixProf( Professor& prof , Aula& aula,
-                                                     unsigned idCusto, int custo, int maxHorariosCP )
+void SolucaoInicialOperacional::calculaCustoFixProf(Professor& prof , Aula& aula,
+                                                    unsigned idCusto, int custo, int maxHorariosCP)
 {
-   std::pair< Professor *, Aula * > chave ( &prof, &aula );
+   pair< Professor *, Aula * > chave (&prof, &aula);
 
    std::map< pair< Professor *, Aula * >, CustoAlocacao * >::iterator 
-      itCustoProfTurma = custoProfTurma.find( chave );
+      itCustoProfTurma = custoProfTurma.find(chave);
 
    // Criando, se necessário, um novo CustoAlocacao dada a chave em questão.
    if(itCustoProfTurma == custoProfTurma.end())
    {
-      custoProfTurma[ chave ] = new CustoAlocacao( prof, aula );
+      custoProfTurma[chave] = new CustoAlocacao(prof, aula);
    }
 
-   // custoFixProfTurma
-   if ( idCusto == 0 )
+   if(idCusto == 0) // custoFixProfTurma
    {
-      custoProfTurma[ chave ]->addCustoFixProfTurma(1);
+      custoProfTurma[chave]->addCustoFixProfTurma(1);
    }
-   else if( idCusto == 1 )
+   else if(idCusto == 1)
    {
       int preferenciaProfDisc = (custo - 11) * (-1);
       custoProfTurma[chave]->addCustoPrefProfTurma(preferenciaProfDisc);

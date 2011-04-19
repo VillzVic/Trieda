@@ -779,11 +779,31 @@
 						Name="Neighborhood Structures"
 						>
 						<File
-							RelativePath=".\MoveSwapEqBlocks.cpp"
+							RelativePath=".\NSSwapEqBlocks.cpp"
 							>
 						</File>
+						<Filter
+							Name="NSIterators"
+							>
+							<File
+								RelativePath=".\NSIteratorSwapEqBlocks.cpp"
+								>
+							</File>
+						</Filter>
+						<Filter
+							Name="Moves"
+							>
+							<File
+								RelativePath=".\MoveSwapEqBlocks.cpp"
+								>
+							</File>
+						</Filter>
+					</Filter>
+					<Filter
+						Name="Heuristics"
+						>
 						<File
-							RelativePath=".\NSSwapEqBlocks.cpp"
+							RelativePath=".\TabuSearch.cpp"
 							>
 						</File>
 					</Filter>
@@ -1168,19 +1188,51 @@
 						Name="Neighborhood Structures"
 						>
 						<File
-							RelativePath=".\Move.hpp"
-							>
-						</File>
-						<File
-							RelativePath=".\MoveSwapEqBlocks.h"
-							>
-						</File>
-						<File
 							RelativePath=".\NS.hpp"
 							>
 						</File>
 						<File
+							RelativePath=".\NSSeq.hpp"
+							>
+						</File>
+						<File
 							RelativePath=".\NSSwapEqBlocks.h"
+							>
+						</File>
+						<Filter
+							Name="NSIterators"
+							>
+							<File
+								RelativePath=".\NSIterator.hpp"
+								>
+							</File>
+							<File
+								RelativePath=".\NSIteratorSwapEqBlocks.h"
+								>
+							</File>
+						</Filter>
+						<Filter
+							Name="Moves"
+							>
+							<File
+								RelativePath=".\Move.hpp"
+								>
+							</File>
+							<File
+								RelativePath=".\MoveSwapEqBlocks.h"
+								>
+							</File>
+						</Filter>
+					</Filter>
+					<Filter
+						Name="Heuristics"
+						>
+						<File
+							RelativePath=".\Heuristic.hpp"
+							>
+						</File>
+						<File
+							RelativePath=".\TabuSearch.h"
 							>
 						</File>
 					</Filter>

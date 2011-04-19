@@ -24,9 +24,11 @@
 #include "SolucaoOperacional.h"
 #include "SolucaoInicialOperacional.h"
 
-// Includes para teste --- DELETAR DEPOIS.
 #include "Avaliador.h"
+
 #include "NSSwapEqBlocks.h"
+
+#include "TabuSearch.h"
 
 #define PRINT_cria_variaveis
 #define PRINT_cria_restricoes

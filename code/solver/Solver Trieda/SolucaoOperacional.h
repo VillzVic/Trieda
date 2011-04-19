@@ -76,9 +76,6 @@ public:
    int getTotalHorarios() const;
    int getTotalDeProfessores() const;
 
-   // Armazena os índices para cada dia de cada horário.
-   std::map< std::pair< Horario *, int /*dia*/>, int /*col - idOperacional*/ > refHorarios;
-
    // Verifica se as aula <aX> e <aY> podem
    // ter trocados os seus respectivos horários.
    bool podeTrocarHorariosAulas(Aula & aX, Aula & aY) const;

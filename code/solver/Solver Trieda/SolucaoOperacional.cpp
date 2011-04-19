@@ -81,26 +81,6 @@ SolucaoOperacional::SolucaoOperacional(ProblemData * prbDt)
    // -----------------------------------------------------
 
    // -----------------------------------------------------
-   // Inicializando a estrutura <refHorarios>
-   ITERA_GGROUP(itCampus, problem_data->campi, Campus)
-   {
-      ITERA_GGROUP(itHorario, itCampus->horarios, Horario)
-      {
-         ITERA_GGROUP_N_PT(itDia, itHorario->dias_semana, int)
-         {
-            std::vector< HorarioAula * >::iterator  itHA
-				= std::find( problem_data->horarios_aula_ordenados.begin(),
-						     problem_data->horarios_aula_ordenados.end(),
-							 itHorario->horario_aula) ;
-
-            int idOperacional = ( (*itDia - 1) * total_horarios)
-								  + std::distance( problem_data->horarios_aula_ordenados.begin(), itHA );
-
-            this->refHorarios[ std::make_pair( *itHorario, *itDia ) ] = idOperacional;
-         }
-      }
-   }
-   // -----------------------------------------------------
 }
 
 SolucaoOperacional::~SolucaoOperacional()

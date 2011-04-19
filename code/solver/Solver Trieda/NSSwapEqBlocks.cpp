@@ -29,6 +29,9 @@ std::pair<Aula*,Aula*> NSSwapEqBlocks::pickTwoClasses(const SolucaoOperacional& 
 
    7 - As aulas escolhidas tem que estar alocadas para a mesma sala.
 
+   8 - As aulas a serem trocadas só podem ser do tipo teóricas (ou seja, a disciplina
+   da aula em questão deve ter o eLab = False ). - NAO IMPLEMENTADA.
+
    */
 
    Aula * a1 = NULL;
@@ -38,7 +41,8 @@ std::pair<Aula*,Aula*> NSSwapEqBlocks::pickTwoClasses(const SolucaoOperacional& 
    {
       GGroup<Aula*>::iterator itAula = problemData.aulas.begin();
 
-      int maxIter = rand() % s.getMatrizAulas()->size();
+      int maxIter = rand() % (s.getMatrizAulas()->size()-1);
+      //int maxIter = 7;
       for(int i = 0; i < maxIter; ++i, ++itAula);
 
       a1 = *itAula;
@@ -53,17 +57,22 @@ std::pair<Aula*,Aula*> NSSwapEqBlocks::pickTwoClasses(const SolucaoOperacional& 
          a1->eVirtual() ||
          itAula->eVirtual() ||
          itAula->getDiaSemana() != a1->getDiaSemana() || // modo não otimizado. Poderia ter alguma estrutura que auxiliasse nessa escolha.
-         itAula->getSala() != a1->getSala()
+         itAula->getSala() != a1->getSala() ||
+         itAula->getDisciplina()->eLab() ||
+         a1->getDisciplina()->eLab()
          )
       {
          itAula = problemData.aulas.begin();
 
-         maxIter = rand() % s.getMatrizAulas()->size();
+         maxIter = rand() % (s.getMatrizAulas()->size()-1);
+         //maxIter = 6;
          for(int i = 0; i < maxIter; ++i, ++itAula);
 
          profA2 = *itAula->bloco_aula.begin()->first;
 
-         if(a1->eVirtual())
+         if(a1->eVirtual() ||
+            a1->getDisciplina()->eLab()
+            )
          {
             a1 = *itAula;
             continue;

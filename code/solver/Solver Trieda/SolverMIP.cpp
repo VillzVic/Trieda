@@ -1721,22 +1721,47 @@ int SolverMIP::solveOperacional()
    std::cout << "Carregando a solucao inicial operacional" << std::endl;
    SolucaoOperacional & solucaoOperacional = solIni.geraSolucaoInicial();
 
-   //ITERA_GGROUP(itAula,problemData->aulas,Aula)
-   //   itAula->toString();
+   // -----------------------------------------------------------------------------------------
+   /* Realizando alguns checks. */
 
+   bool error = false;
+   ITERA_GGROUP(itAula,problemData->aulas,Aula)
+   {
+      if(itAula->bloco_aula.empty())
+      {
+         std::cout << "\n======================================================";
+         std::cout << "\nA aula abaixo nao possui nenhum horario alocado:\n\n";
+         itAula->toString();
 
-   //std::cout << " **************************************************** \n";
-   //std::cout << " **************************************************** \n";
-   //std::cout << " **************************************************** \n";
-   //std::cout << " **************************************************** \n";
-   //std::cout << " **************************************************** \n";
+         error = true;
+      }
+      else if(itAula->bloco_aula.size() < itAula->getTotalCreditos())
+      {
+         std::cout << "\n======================================================";
+         std::cout << "\nA aula abaixo possui um total de horarios alocados inferior ao total de creditos a serem alocados:\n\n";
+         itAula->toString();
 
-   //solucaoOperacional.toString();
+         error = true;
+      }
+      else if(itAula->bloco_aula.size() > itAula->getTotalCreditos())
+      {
+         std::cout << "\n======================================================";
+         std::cout << "\nA aula abaixo possui um total de horarios alocados superior ao total de creditos a serem alocados:\n\n";
+         itAula->toString();
+
+         error = true;
+
+      }
+
+   }
+
+   if(error)
+      exit(1);
+   // -----------------------------------------------------------------------------------------
+
+   solucaoOperacional.toString();
 
    //solucaoOperacional.toString2();
-
-
-
 
    //Avaliador avaliador;
 
@@ -1746,11 +1771,9 @@ int SolverMIP::solveOperacional()
 
    //NSSwapEqBlocks nsSwapEqBlocks(*problemData);
 
-   //for(int iter = 0; iter < 1; ++iter)
+   //for(int iter = 0; iter < 10; ++iter)
    //{
    //   MoveSwapEqBlocks & m = (MoveSwapEqBlocks&) nsSwapEqBlocks.move(solucaoOperacional);
-   //   //m.apply(solucaoOperacional);
-
    //   m.apply(solucaoOperacional);
 
    //   double fo = avaliador.avaliaSolucao(solucaoOperacional);
@@ -1762,6 +1785,11 @@ int SolverMIP::solveOperacional()
    //}
 
    //std::cout << "Avaliacao da melhor Sol.: " << bestFO << std::endl;
+
+   // -----------------------------------------------------
+
+   //TabuSearch ts;
+   //ts.exec(solucaoOperacional,10,0);
 
    std::cout << "\nTODO -- Implementar <SolverMIP::solveOperacional()>" << std::endl;
 

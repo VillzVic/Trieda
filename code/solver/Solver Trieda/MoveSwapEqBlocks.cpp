@@ -31,7 +31,22 @@ Move & MoveSwapEqBlocks::apply(SolucaoOperacional & s)
    // Alocando a aula 2 nos horários da aula 1
    for(; itBlocoAula != a1.bloco_aula.end(); ++itBlocoAula)
    {
-      int indice = (s.refHorarios.find(std::make_pair(itBlocoAula->second,a1.getDiaSemana())))->second;
+      //int indice = (s.refHorarios.find(std::make_pair(itBlocoAula->second,a1.getDiaSemana())))->second;
+
+      int indice = 0;
+      int totalHorariosAula = s.getProblemData()->horarios_aula_ordenados.size();
+      
+      for(; indice < totalHorariosAula; ++indice)
+      {
+         if(s.getProblemData()->horarios_aula_ordenados.at(indice) == itBlocoAula->second->horario_aula)
+            break;
+      }
+
+      if(indice >= totalHorariosAula)
+      {
+         std::cout << "ERRO em <MoveSwapEqBlocks::apply(SolucaoOperacional & s)>. Indice de horario nao encontrado." << std::endl;
+         exit(1);
+      }
 
       s.getMatrizAulas()->at(profA1.getIdOperacional())->at(indice) = &a2;
    }
@@ -41,7 +56,22 @@ Move & MoveSwapEqBlocks::apply(SolucaoOperacional & s)
    // Alocando a aula 1 nos horários da aula 2
    for(; itBlocoAula != a2.bloco_aula.end(); ++itBlocoAula)
    {
-      int indice = (s.refHorarios.find(std::make_pair(itBlocoAula->second,a2.getDiaSemana())))->second;
+      //int indice = (s.refHorarios.find(std::make_pair(itBlocoAula->second,a2.getDiaSemana())))->second;
+
+      int indice = 0;
+      int totalHorariosAula = s.getProblemData()->horarios_aula_ordenados.size();
+      
+      for(; indice < totalHorariosAula; ++indice)
+      {
+         if(s.getProblemData()->horarios_aula_ordenados.at(indice) == itBlocoAula->second->horario_aula)
+            break;
+      }
+
+      if(indice >= totalHorariosAula)
+      {
+         std::cout << "ERRO em <MoveSwapEqBlocks::apply(SolucaoOperacional & s)>. Indice de horario nao encontrado." << std::endl;
+         exit(1);
+      }
 
       s.getMatrizAulas()->at(profA2.getIdOperacional())->at(indice) = &a1;
    }
