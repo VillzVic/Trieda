@@ -70,6 +70,7 @@ public class UsuariosView extends MyComposite implements UsuariosPresenter.Displ
 		list.add(new ColumnConfig(UsuarioDTO.PROPERTY_NOME, "Nome", 100));
 		list.add(new ColumnConfig(UsuarioDTO.PROPERTY_USERNAME, "Username", 100));
 		list.add(new ColumnConfig(UsuarioDTO.PROPERTY_EMAIL, "Email", 100));
+		list.add(new ColumnConfig(UsuarioDTO.PROPERTY_PROFESSOR_DISPLAYTEXT, "Professor", 100));
 		return list;
 	}
 

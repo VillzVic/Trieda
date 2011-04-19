@@ -10,6 +10,7 @@ import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.Table;
@@ -60,6 +61,10 @@ public class Usuario implements Serializable {
     @ManyToOne(targetEntity = Professor.class, fetch=FetchType.LAZY)
     @JoinColumn(name = "PRF_ID")
     private Professor professor;
+    
+    @OneToOne(targetEntity = Authority.class, fetch=FetchType.LAZY)
+    @JoinColumn(name = "USERNAME")
+    private Authority authority;
 
 	public String getNome() {
         return this.nome;
@@ -103,6 +108,13 @@ public class Usuario implements Serializable {
 		this.professor = professor;
 	}
 	
+	public Authority getAuthority() {
+		return authority;
+	}
+	public void setAuthority(Authority authority) {
+		this.authority = authority;
+	}
+	
 	public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("Version: ").append(getVersion()).append(", ");
@@ -112,6 +124,7 @@ public class Usuario implements Serializable {
         sb.append("Password: ").append(getPassword());
         sb.append("Enabled: ").append(getEnabled());
         sb.append("Professor: ").append(getProfessor());
+        sb.append("Authority: ").append(getAuthority());
         return sb.toString();
     }
 

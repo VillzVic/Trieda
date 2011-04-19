@@ -7,6 +7,7 @@ import com.extjs.gxt.ui.client.Style.SortDir;
 import com.extjs.gxt.ui.client.data.BasePagingLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
+import com.gapso.trieda.domain.Authority;
 import com.gapso.trieda.domain.Usuario;
 import com.gapso.web.trieda.server.util.ConvertBeans;
 import com.gapso.web.trieda.server.util.Encryption;
@@ -61,13 +62,20 @@ public class UsuariosServiceImpl extends RemoteService implements UsuariosServic
 			usuario.setPassword(Encryption.toMD5(usuario.getPassword()));
 			usuario.setEnabled(true);
 			usuario.persist();
+			
+			Authority authority = new Authority();
+			authority.setAuthority("ROLE_USER");
+			authority.setUsername(usuario.getUsername());
+			authority.persist();
 		}
 	}
 	
 	@Override
 	public void remove(List<UsuarioDTO> usuarioDTOList) {
 		for(UsuarioDTO usuarioDTO : usuarioDTOList) {
-			ConvertBeans.toUsuario(usuarioDTO).remove();
+			Usuario usuario = Usuario.find(usuarioDTO.getUsername());
+			usuario.getAuthority().remove();
+			usuario.remove();
 		}
 	}
 

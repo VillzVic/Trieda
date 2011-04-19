@@ -1,14 +1,17 @@
 package com.gapso.web.trieda.main.client.mvp.view;
 
 import com.extjs.gxt.ui.client.widget.button.Button;
+import com.extjs.gxt.ui.client.widget.form.FieldSet;
 import com.extjs.gxt.ui.client.widget.form.FormButtonBinding;
 import com.extjs.gxt.ui.client.widget.form.FormPanel;
 import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.extjs.gxt.ui.client.widget.layout.FormData;
+import com.extjs.gxt.ui.client.widget.layout.FormLayout;
 import com.gapso.web.trieda.main.client.mvp.presenter.UsuarioFormPresenter;
 import com.gapso.web.trieda.shared.dtos.UsuarioDTO;
 import com.gapso.web.trieda.shared.mvp.view.MyComposite;
 import com.gapso.web.trieda.shared.util.resources.Resources;
+import com.gapso.web.trieda.shared.util.view.ProfessorComboBox;
 import com.gapso.web.trieda.shared.util.view.SimpleModal;
 
 public class UsuarioFormView extends MyComposite implements UsuarioFormPresenter.Display {
@@ -19,6 +22,7 @@ public class UsuarioFormView extends MyComposite implements UsuarioFormPresenter
 	private TextField<String> emailTF;
 	private TextField<String> usernameTF;
 	private TextField<String> passwordTF;
+	private ProfessorComboBox professorCB;
 	private UsuarioDTO usuarioDTO;
 	
 	public UsuarioFormView(UsuarioDTO usuarioDTO) {
@@ -32,7 +36,7 @@ public class UsuarioFormView extends MyComposite implements UsuarioFormPresenter
 	private void initUI() {
 		String title = (usuarioDTO.getVersion() == null)? "Inserção de Usuário" : "Edição de Usuário";
 		simpleModal = new SimpleModal(title, Resources.DEFAULTS.turno16());
-		simpleModal.setHeight(190);
+		simpleModal.setHeight(255);
 		createForm();
 		simpleModal.setContent(formPanel);
 	}
@@ -78,6 +82,20 @@ public class UsuarioFormView extends MyComposite implements UsuarioFormPresenter
 		passwordTF.setPassword(true);
 		formPanel.add(passwordTF, formData);
 		
+	    FieldSet fieldSet = new FieldSet();
+	    FormLayout layout = new FormLayout();  
+	    layout.setLabelWidth(70);
+	    fieldSet.setLayout(layout);
+	    fieldSet.setHeading("Professor?");  
+	    fieldSet.setCheckboxToggle(true);
+	    fieldSet.setExpanded(false);
+	    
+	    professorCB = new ProfessorComboBox();
+//		professorCB.setValue(usuarioDTO.isProfessor());
+		fieldSet.add(professorCB, formData);
+		
+		formPanel.add(fieldSet);
+		
 		FormButtonBinding binding = new FormButtonBinding(formPanel);
 		binding.addButton(simpleModal.getSalvarBt());
 		
@@ -121,6 +139,11 @@ public class UsuarioFormView extends MyComposite implements UsuarioFormPresenter
 	@Override
 	public UsuarioDTO getUsuarioDTO() {
 		return usuarioDTO;
+	}
+
+	@Override
+	public ProfessorComboBox getProfessorComboBox() {
+		return professorCB;
 	}
 	
 }

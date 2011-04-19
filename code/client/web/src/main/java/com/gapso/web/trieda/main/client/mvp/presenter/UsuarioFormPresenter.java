@@ -7,12 +7,14 @@ import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
+import com.gapso.web.trieda.shared.dtos.ProfessorDTO;
 import com.gapso.web.trieda.shared.dtos.UsuarioDTO;
 import com.gapso.web.trieda.shared.i18n.ITriedaI18nGateway;
 import com.gapso.web.trieda.shared.mvp.presenter.Presenter;
 import com.gapso.web.trieda.shared.services.Services;
 import com.gapso.web.trieda.shared.services.UsuariosServiceAsync;
 import com.gapso.web.trieda.shared.util.view.AbstractAsyncCallbackWithDefaultOnFailure;
+import com.gapso.web.trieda.shared.util.view.ProfessorComboBox;
 import com.gapso.web.trieda.shared.util.view.SimpleGrid;
 import com.gapso.web.trieda.shared.util.view.SimpleModal;
 import com.google.gwt.user.client.ui.Widget;
@@ -25,6 +27,7 @@ public class UsuarioFormPresenter implements Presenter {
 		TextField<String> getEmailTextField();
 		TextField<String> getUsernameTextField();
 		TextField<String> getPasswordTextField();
+		ProfessorComboBox getProfessorComboBox();
 		UsuarioDTO getUsuarioDTO();
 		boolean isValid();
 		
@@ -71,6 +74,11 @@ public class UsuarioFormPresenter implements Presenter {
 		usuarioDTO.setEmail(display.getEmailTextField().getValue());
 		usuarioDTO.setUsername(display.getUsernameTextField().getValue());
 		usuarioDTO.setPassword(display.getPasswordTextField().getValue());
+		ProfessorDTO professor = display.getProfessorComboBox().getValue();
+		if(professor != null) {
+			usuarioDTO.setProfessorId(professor.getId());
+			usuarioDTO.setProfessorDisplayText(professor.getNome());
+		}
 		return usuarioDTO;
 	}
 	
