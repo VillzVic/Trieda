@@ -265,52 +265,28 @@ int SolucaoOperacional::getIndiceMatriz(int dia, Horario* horario)
    return (dia_semana + horario_dia);
 }
 
-Horario * SolucaoOperacional::getHorario(int idOpProf, int idHorarioProf)
+Horario * SolucaoOperacional::getHorario(int id_professor_operacional, int dia_semana, int id_horario_aula)
 {
-   Aula * aula = NULL;
-   Aula * aula_referencia = ( this->getMatrizAulas()->at(idOpProf)->at(idHorarioProf) );
-   Horario * horario = NULL;
+   Professor * professor = this->getProfessorMatriz( id_professor_operacional );
+   HorarioAula * horario_aula = this->getProblemData()->horarios_aula_ordenados[ id_horario_aula ];
+   Aula * aula = this->getMatrizAulas()->at( id_professor_operacional )->at( id_horario_aula );
 
-   // Procura pelo primeiro horário
-   // do bloco de aula correspondente
-   int k = (idHorarioProf - 1);
-   while( k >= 0 )
+   // Se o professor tem aula alocada nesse horário
+   if ( aula != NULL )
    {
-      // Recupera a aula atual
-      aula = this->getMatrizAulas()->at(idOpProf)->at(k);
-      if ( aula == NULL || aula != aula_referencia
-         || aula->eVirtual() == false)
-      {
-         break;
-      }
-
-      k--;
+	   ITERA_GGROUP( it_horario, professor->horarios, Horario )
+	   {
+		   GGroup< int >::iterator it_dia_semana
+			   = it_horario->dias_semana.find( dia_semana ); 
+		   if ( it_dia_semana != it_horario->dias_semana.end()
+				&& it_horario->horario_aula->getInicio() == horario_aula->getInicio() )
+		   {
+			   return (*it_horario);
+		   }
+	   }
    }
 
-   // Se k = -1, então a aula do índice 'zero' é a aula que
-   // procuramos, ou seja, a primeira aula do bloco de aulas
-   // atual. Caso contrário, a aula procurada é a primeira à
-   // direita da aula de índice 'k'. Nos dois casos, devemos
-   // incrementar o índice 'k' em uma unidade.
-   k++;
-
-   // Pega a posição do horário desejado
-   // dentro do bloco de aulas atual
-   int posicao_aula = (idHorarioProf-k);
-
-   // Recupera o horário desejado
-   aula = this->getMatrizAulas()->at(idOpProf)->at(k);
-   if (posicao_aula < (int)aula->bloco_aula.size())
-   {
-      horario = aula->bloco_aula[ posicao_aula ].second;
-   }
-   else
-   {
-      std::cout << "Erro em SolucaoOperacional::getHorario(). Existem aulas que nao foram alocadas." << std::endl;
-      exit(1);
-   }
-
-   return horario;
+   return NULL;
 }
 
 Professor * SolucaoOperacional::getProfessorMatriz(int linha)

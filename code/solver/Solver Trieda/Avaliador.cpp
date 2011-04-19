@@ -383,6 +383,9 @@ void Avaliador::calculaDescolamentoBlocoCurricular(SolucaoOperacional & solucao)
 
    Horario * horario = NULL;
 
+   int dia_semana = 0;
+   int id_horario_aula = 0;
+
    // Dado um bloco curricular, recupera-se as aulas desse bloco
    // Estrutura do map 'mapBlocoAulaHorario':
    // Dado um bloco curricular qualquer (BlocoCurricular *), o map
@@ -401,7 +404,9 @@ void Avaliador::calculaDescolamentoBlocoCurricular(SolucaoOperacional & solucao)
          }
 
          // Recupera o horário referente à aula atual
-         horario = solucao.getHorario(i, j);
+		 dia_semana = ( j / solucao.getTotalHorarios() );
+		 id_horario_aula = ( j % solucao.getTotalHorarios() );
+         horario = solucao.getHorario(i, dia_semana, id_horario_aula);
 
          // Disciplina correspondente à aula atual
          disciplina = aula->getDisciplina();
@@ -707,8 +712,8 @@ void Avaliador::calculaGapsHorariosProfessores(SolucaoOperacional & solucao)
             if (gap > 1)
             {
                dia_semana = aula_atual->getDiaSemana();
-               h1 = solucao.getHorario(i, indice_aula_anterior);
-               h2 = solucao.getHorario(i, indice_aula_atual);
+               h1 = solucao.getHorario(i, dia_semana, indice_aula_anterior);
+               h2 = solucao.getHorario(i, dia_semana, indice_aula_atual);
 
                // Dado que ocorreu um gap entre duas aulas, devo
                // verificar se o professor possui horários disponíveis
@@ -737,16 +742,22 @@ void Avaliador::calculaGapsHorariosProfessores(SolucaoOperacional & solucao)
 int Avaliador::horariosDisponiveisIntervalo(Professor * professor,
                                             int dia_semana, Horario * h1, Horario * h2)
 {
+   if ( !h1 || !h2 )
+   {
+	   int x = 0;
+	   x++;
+   }
+
    HorarioAula * horario_aula1 = h1->horario_aula;
    HorarioAula * horario_aula2 = h2->horario_aula;
 
    int horariosDisponiveis = 0;
-   GGroup<Horario*>::iterator it_horario = professor->horarios.begin();
+   GGroup< Horario * >::iterator it_horario = professor->horarios.begin();
    for (; it_horario != professor->horarios.end(); it_horario++)
    {
       // Se o horário disponível estiver dentro do intervalo de gap,
       // então encontrei mais um gap indesejado de horário para esse professor
-      if ( ( it_horario->dias_semana.find(dia_semana) != it_horario->dias_semana.end() ) &&
+      if ( ( it_horario->dias_semana.find( dia_semana ) != it_horario->dias_semana.end() ) &&
          ( horario_aula1->getInicio() < it_horario->horario_aula->getInicio() ) &&
          ( horario_aula2->getInicio() > it_horario->horario_aula->getInicio() ) )
       {
