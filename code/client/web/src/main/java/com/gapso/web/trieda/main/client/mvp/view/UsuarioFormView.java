@@ -51,7 +51,7 @@ public class UsuarioFormView extends MyComposite implements UsuarioFormPresenter
 		formPanel.add(nomeTF, formData);
 		
 		emailTF = new TextField<String>();
-		emailTF.setValue(usuarioDTO.getNome());
+		emailTF.setValue(usuarioDTO.getEmail());
 		emailTF.setFieldLabel("Email");
 		emailTF.setAllowBlank(false);
 		emailTF.setMinLength(5);
@@ -66,13 +66,12 @@ public class UsuarioFormView extends MyComposite implements UsuarioFormPresenter
 		usernameTF.setMinLength(5);
 		usernameTF.setMaxLength(20);
 		usernameTF.setEmptyText("Preencha o username");
-		usernameTF.setReadOnly(usuarioDTO.getVersion() == null);
+		usernameTF.setReadOnly(usuarioDTO.getVersion() != null);
 		formPanel.add(usernameTF, formData);
 		
 		passwordTF = new TextField<String>();
-		passwordTF.setValue(usuarioDTO.getUsername());
 		passwordTF.setFieldLabel("Password");
-		passwordTF.setAllowBlank(usuarioDTO.getVersion() == null);
+		passwordTF.setAllowBlank(usuarioDTO.getVersion() != null);
 		passwordTF.setMinLength(5);
 		passwordTF.setMaxLength(20);
 		passwordTF.setEmptyText("Preencha o password");

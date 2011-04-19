@@ -9,6 +9,7 @@ import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.gapso.trieda.domain.Usuario;
 import com.gapso.web.trieda.server.util.ConvertBeans;
+import com.gapso.web.trieda.server.util.Encryption;
 import com.gapso.web.trieda.shared.dtos.UsuarioDTO;
 import com.gapso.web.trieda.shared.services.UsuariosService;
 
@@ -57,6 +58,8 @@ public class UsuariosServiceImpl extends RemoteService implements UsuariosServic
 		if(usuario.getVersion() != null) {
 			usuario.merge();
 		} else {
+			usuario.setPassword(Encryption.toMD5(usuario.getPassword()));
+			usuario.setEnabled(true);
 			usuario.persist();
 		}
 	}
