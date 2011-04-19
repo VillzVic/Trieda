@@ -2310,22 +2310,27 @@ void ProblemDataLoader::associaDisciplinasSalas()
 
 void ProblemDataLoader::associaDisciplinasConjuntoSalas()
 {
-   ITERA_GGROUP(itCampus,problemData->campi,Campus)
+   ITERA_GGROUP(itCampus, problemData->campi, Campus)
    {
-      ITERA_GGROUP(itUnidade,itCampus->unidades,Unidade)
+      ITERA_GGROUP(itUnidade, itCampus->unidades, Unidade)
       {
-         ITERA_GGROUP(itCjtSala,itUnidade->conjutoSalas,ConjuntoSala)
+         ITERA_GGROUP(itCjtSala, itUnidade->conjutoSalas, ConjuntoSala)
          {
-            std::map<int/*Id Sala*/,Sala*>::iterator itSala =
+			// Estrutura do map: Dado o 'id' de uma
+			// sala, retorna-se o ponteiro da sala
+            std::map< int, Sala * >::iterator itSala =
                itCjtSala->getTodasSalas().begin();
 
-            for(; itSala != itCjtSala->getTodasSalas().end(); itSala++)
+            for(; itSala != itCjtSala->getTodasSalas().end();
+				  itSala++)
             {
-               GGroup<Disciplina*>::iterator itDiscs = itSala->second->disciplinasAssociadas.begin();
+               GGroup< Disciplina * >::iterator itDiscs
+				   = itSala->second->disciplinasAssociadas.begin();
 
-               for(; itDiscs != itSala->second->disciplinasAssociadas.end(); itDiscs++)
+               for(; itDiscs != itSala->second->disciplinasAssociadas.end();
+					 itDiscs++)
                {
-                  itCjtSala->getDiscsAssociadas().add(*itDiscs);
+                  itCjtSala->getDiscsAssociadas().add( *itDiscs );
                }
             }
          }
@@ -2335,37 +2340,26 @@ void ProblemDataLoader::associaDisciplinasConjuntoSalas()
 
 void ProblemDataLoader::relacionaDiscOfertas()
 {
-   ITERA_GGROUP(it_Oferta,problemData->ofertas,Oferta)
+   ITERA_GGROUP(it_Oferta, problemData->ofertas, Oferta)
    {
       GGroup<DisciplinaPeriodo>::iterator it_Prd_Disc = 
          it_Oferta->curriculo->disciplinas_periodo.begin();
 
-      for(; it_Prd_Disc != it_Oferta->curriculo->disciplinas_periodo.end(); it_Prd_Disc++)
+      for(; it_Prd_Disc != it_Oferta->curriculo->disciplinas_periodo.end();
+			it_Prd_Disc++)
       { 
          int disc = (*it_Prd_Disc).second;
-         problemData->ofertasDisc[disc].add(*it_Oferta);
+         problemData->ofertasDisc[disc].add( *it_Oferta );
       }
    }
 }
-
-//void ProblemDataLoader::relacionaDiscCampusOfertas()
-//{
-//   std::map<int/*Id disc*/, GGroup<Oferta*> >::iterator itDiscOft
-//      problemData->ofertasDisc.begin();
-//
-//   for(; itDiscOft != problemData->ofertasDisc.end(); itDiscOft++)
-//   {
-//      ofertasCPDisc[std::pair<int,int>(itDiscOft->second.begin()->campus_id,
-//         itDiscOft->first)]
-//   }
-//}
 
 // Método de pré-processamento
 // relacionado com a issue TRIEDA-700
 void ProblemDataLoader::criaAulas()
 {
    // Checando se o XML de entrada possui a saída do TÁTICO,
-   if (problemData->atendimentosTatico)
+   if ( problemData->atendimentosTatico )
    {
       AtendimentoOfertaSolucao * atendOferta;
 
@@ -2379,16 +2373,17 @@ void ProblemDataLoader::criaAulas()
                {
                   ITERA_GGROUP(it_atend_tatico, it_atend_dia_semana->atendimentosTatico, AtendimentoTaticoSolucao)
                   {
-                     atendOferta = it_atend_tatico->atendimento_oferta;
+                     atendOferta = ( it_atend_tatico->atendimento_oferta );
 
                      // Informa a 'turma' da aula
-                     int turma = atoi(atendOferta->getTurma().c_str());
+                     int turma = atoi( atendOferta->getTurma().c_str() );
 
-                     Disciplina* disciplina = problemData->refDisciplinas.find(atendOferta->getDisciplinaId())->second;
+                     Disciplina * disciplina
+						 = problemData->refDisciplinas.find( atendOferta->getDisciplinaId() )->second;
 
                      int idDisc = disciplina->getId();
 
-                     Sala* sala = problemData->refSala.find(it_atend_sala->getSalaId())->second;
+                     Sala * sala = problemData->refSala.find( it_atend_sala->getSalaId() )->second;
 
                      // Informa o dia da semana da aula
                      int diaSemana = it_atend_dia_semana->getDiaSemana();
@@ -2399,26 +2394,30 @@ void ProblemDataLoader::criaAulas()
                      // Informa os créditos práticos da aula
                      int creditos_praticos = it_atend_tatico->getQtdeCreditosPraticos();
 
-                     /* Procurando nas aulas cadastradas, se existe alguma aula que possui os mesmos ídices de 
-                     dia da semana, sala e turma. Caso encontre, devo apenas add a oferta à aula existente.
-                     */
+                     // Procurando nas aulas cadastradas, se existe
+					 // alguma aula que possui os mesmos ídices de 
+                     // dia da semana, sala e turma. Caso encontre,
+					 // devo apenas add a oferta à aula existente.
                      bool novaAula = true;
 
                      ITERA_GGROUP(itAula,problemData->aulas,Aula)
                      {
-                        if( (itAula->getTurma() == turma) && (itAula->getDisciplina() == disciplina) && (itAula->getDiaSemana() == diaSemana) && (itAula->getSala() == sala))
+                        if( ( itAula->getTurma() == turma)
+								 && (itAula->getDisciplina() == disciplina)
+								 && (itAula->getDiaSemana() == diaSemana)
+								 && (itAula->getSala() == sala) )
                         {
-                           itAula->ofertas.add(problemData->refOfertas[atendOferta->getOfertaCursoCampiId()]);
+                           itAula->ofertas.add( problemData->refOfertas[ atendOferta->getOfertaCursoCampiId() ] );
                            novaAula = false;
                            break;
                         }
                      }
 
-                     if(novaAula)
+                     if( novaAula )
                      {
                         // Monta o objeto 'aula'
                         Aula * aula = new Aula();
-                        aula->ofertas.add(problemData->refOfertas[atendOferta->getOfertaCursoCampiId()]);
+                        aula->ofertas.add( problemData->refOfertas[ atendOferta->getOfertaCursoCampiId() ] );
                         aula->setTurma( turma );
                         aula->setDisciplina( disciplina );
                         aula->setSala( sala );
@@ -2434,21 +2433,15 @@ void ProblemDataLoader::criaAulas()
          }
       }
 
-      /*
-      O método abaixo só pode ser executado após a execução dos método de criação 
-      de blocos curriculares e de criação das aulas.
-      */
+      // O método abaixo só pode ser executado
+	  // após a execução dos método de criação 
+      // de blocos curriculares e de criação das aulas.
       relacionaBlocoCurricularAulas();
 
    }
 
-   cout << "\t >>> AULAS CRIADAS <<<\n";
-
-   ITERA_GGROUP(itAula,problemData->aulas,Aula)
-      itAula->toString();
-
-   //std::cout << "Total de aulas criadas: "
-			// << problemData->aulas.size() << std::endl;
+   std::cout << "Total de aulas criadas: "
+			 << problemData->aulas.size() << std::endl;
 }
 
 void ProblemDataLoader::relacionaBlocoCurricularAulas()

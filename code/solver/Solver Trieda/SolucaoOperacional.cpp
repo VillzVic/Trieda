@@ -203,18 +203,18 @@ void SolucaoOperacional::toString()
       std::vector< Aula * > * aulas = ( this->getMatrizAulas()->at(i) );
       for (unsigned int j = 0; j < aulas->size(); j++)
       {
-         Aula* aula = aulas->at(j);
+         Aula * aula = aulas->at(j);
          if (aula != NULL && !aula->eVirtual())
          {
             aula->toString();
          }
          else if (aula != NULL && aula->eVirtual())
          {
-             //std::cout << "Aula virtual" << std::endl;
+             // std::cout << "Aula virtual" << std::endl;
          }
          else
          {
-             //std::cout << "Aula nao alocada" << std::endl;
+             // std::cout << "Aula nao alocada" << std::endl;
          }
       }
 

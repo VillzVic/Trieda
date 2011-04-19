@@ -18,8 +18,8 @@ public:
    GGroup< Oferta * > ofertas;
 
    void setTurma(int);
-   void setDisciplina(Disciplina*);
-   void setSala(Sala*);
+   void setDisciplina(Disciplina *);
+   void setSala(Sala *);
    void setDiaSemana(int);
    void setCreditosTeoricos(int);
    void setCreditosPraticos(int);
@@ -83,8 +83,8 @@ public:
 
 private:
    int turma;
-   Disciplina* disciplina;
-   Sala* sala;
+   Disciplina * disciplina;
+   Sala * sala;
    int dia_semana;
    int quantidade;
    int creditos_teoricos;

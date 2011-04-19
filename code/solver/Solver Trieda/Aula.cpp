@@ -13,6 +13,7 @@ Aula::Aula(bool _aulaVirtual) : aula_virtual(_aulaVirtual)
 
 Aula::~Aula(void)
 {
+
 }
 
 void Aula::setTurma(int t)
@@ -20,7 +21,7 @@ void Aula::setTurma(int t)
    this->turma = t;
 }
 
-void Aula::setDisciplina(Disciplina* d)
+void Aula::setDisciplina(Disciplina * d)
 {
    this->disciplina = d;
 }
@@ -92,30 +93,44 @@ bool Aula::eVirtual() const
 
 void Aula::toString()
 {
-   std::cout << "\n====================AULA====================\n";
-   std::cout << "Turma: " << turma << std::endl;
-   std::cout << "Disciplina: " << disciplina->getCodigo() << std::endl;
-   
-   std::cout << "Ofertas (ids): ";
-   ITERA_GGROUP(itOferta,ofertas,Oferta)
+   //-------------------------------------------------------------
+   std::cout << "\n=================AULA================="
+			 << "\nTurma: " << turma
+			 << "\nDisciplina: " << disciplina->getCodigo()
+			 << std::endl;
+   //-------------------------------------------------------------
+
+   //-------------------------------------------------------------
+   // Exibe a lista de ofertas atendidas por essa aula
+   std::cout << "Ofertas atendidas: ";
+   ITERA_GGROUP(itOferta, ofertas, Oferta)
    {
       std::cout << itOferta->getId() << " ";
    }
+   //-------------------------------------------------------------
 
-   std::cout << std::endl;
-   std::cout << "Sala: " << sala->getCodigo() << std::endl;
-   std::cout << "Dia: " << dia_semana << std::endl;
-   std::cout << "Cred. Prat.: " << creditos_praticos << std::endl;
-   std::cout << "Cred. Teo: " << creditos_teoricos << std::endl;
+   //-------------------------------------------------------------
+   // Exibe os dados da aula
+   std::cout << "\nSala de Aula: " << sala->getCodigo()
+			 << "\nDia da Semana: " << dia_semana
+			 << "\nCreditos Praticos: " << creditos_praticos
+			 << "\nCreditos Teoricos: " << creditos_teoricos
+			 << std::endl;
+   //-------------------------------------------------------------
 
-
+   //-------------------------------------------------------------
+   // Mostra os horários (bloco de aula) alocados ao professor
    std::cout << "Horario(s):\n\t";
-
    std::vector< std::pair< Professor *, Horario * > >::iterator
       itBloco_aula = bloco_aula.begin();
 
    for(; itBloco_aula != bloco_aula.end(); ++itBloco_aula)
-      std::cout << itBloco_aula->second->horario_aula->getInicio() << "\n\t";
+   {
+	   HorarioAula * horario_aula
+		   = itBloco_aula->second->horario_aula;
 
+       std::cout << horario_aula->getInicio() << "\n\t";
+   }
    std::cout << std::endl;
+   //-------------------------------------------------------------
 }

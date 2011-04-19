@@ -742,12 +742,6 @@ void Avaliador::calculaGapsHorariosProfessores(SolucaoOperacional & solucao)
 int Avaliador::horariosDisponiveisIntervalo(Professor * professor,
                                             int dia_semana, Horario * h1, Horario * h2)
 {
-   if ( !h1 || !h2 )
-   {
-	   int x = 0;
-	   x++;
-   }
-
    HorarioAula * horario_aula1 = h1->horario_aula;
    HorarioAula * horario_aula2 = h2->horario_aula;
 
