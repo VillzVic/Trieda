@@ -30,9 +30,6 @@ private:
    // Estrutura que armazena o custo de alocar um professor a uma dada aula.
    std::map< std::pair< Professor *, Aula * >, CustoAlocacao * > custoProfTurma;
 
-   // Armazena, em ordem decrescente, os Custos de Alocação para cada Aula.
-   //std::vector<std::pair<Aula*,std::vector<CustoAlocacao*> > > custosAlocacaoAulaOrdenado;
-
    // Armazena, em ordem decrescente, os Custos de Alocação.
    std::vector< CustoAlocacao * > custosAlocacaoAulaOrdenado;
 

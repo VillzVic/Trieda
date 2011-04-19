@@ -2165,14 +2165,14 @@ void ProblemDataLoader::associaDisciplinasSalas()
 
       ITERA_GGROUP(it_und, campus->unidades, Unidade)
       {
+		 //------------------------------------------------------------------------
          // PASSO 1
          // Armazenando as disciplinas que foram associadas pelo usuário e não 
          // deverão ser consideradas para a associação automática.
-
          ITERA_GGROUP(it_sala, it_und->salas, Sala)
          {
-            ITERA_GGROUP(it_Disc_Assoc_Sala,
-				it_sala->disciplinas_Associadas_Usuario, Disciplina)
+            ITERA_GGROUP( it_Disc_Assoc_Sala,
+						  it_sala->disciplinas_Associadas_Usuario, Disciplina)
             {
 			   int id_disciplina = it_Disc_Assoc_Sala->getId();
 
@@ -2184,9 +2184,9 @@ void ProblemDataLoader::associaDisciplinasSalas()
                problemData->disc_Salas_Pref[ id_disciplina ].add( *it_sala );
             }
          }
+         //------------------------------------------------------------------------
 
-         // ------------------------
-
+		 //------------------------------------------------------------------------
          // PASSO 2
          // Associando as demais disciplinas às salas
 
@@ -2200,7 +2200,7 @@ void ProblemDataLoader::associaDisciplinasSalas()
 				= problemData->disc_Salas_Pref.find( disciplina->getId() );
 			bool salas_associadas = ( it_salas_associadas != problemData->disc_Salas_Pref.end() );
 
-			if(disciplina->eLab() && !salas_associadas)
+			if ( disciplina->eLab() && !salas_associadas )
             {
                // RESTRICAO FORTE
                // NAO DEVO CRIAR MAIS NENHUMA ASSOCIACAO.
@@ -2221,11 +2221,11 @@ void ProblemDataLoader::associaDisciplinasSalas()
                {
                   ITERA_GGROUP(it_sala, it_unidade->salas, Sala)
                   {
-                     if(it_sala->disciplinas_Associadas_Usuario.find( disciplina ) ==
-                        it_sala->disciplinas_Associadas_Usuario.end())
+                     if ( it_sala->disciplinas_Associadas_Usuario.find( disciplina ) ==
+                          it_sala->disciplinas_Associadas_Usuario.end() )
                      {
                         // Somente se for uma sala de aula.
-                        if(it_sala->getTipoSalaId() == 1)
+                        if ( it_sala->getTipoSalaId() == 1 )
                         {
                            // Estabelecendo o critério de intereseção de dias letivos.
                            // I.E. Só associo uma sala de aula a uma disciplina se a sala tem, 
@@ -2234,8 +2234,8 @@ void ProblemDataLoader::associaDisciplinasSalas()
                            {
                               // Só continuo quando a sala possuir o dia
 							  // letivo (pertencente à disciplina) em questão.
-                              if(it_sala->diasLetivos.find( *it_Dias_Let_Disc )
-									!= it_sala->diasLetivos.end())
+                              if ( it_sala->diasLetivos.find( *it_Dias_Let_Disc )
+									  != it_sala->diasLetivos.end() )
                               {
                                  it_sala->disciplinas_Associadas_AUTOMATICA.add( disciplina );
 
@@ -2251,8 +2251,10 @@ void ProblemDataLoader::associaDisciplinasSalas()
                }
             }
          }
+		 //------------------------------------------------------------------------
       }
 
+	  //------------------------------------------------------------------------
       // Com as duas estruturas <disciplinas_Associadas_Usuario> e 
       // <disciplinas_Associadas_AUTOMATICA> preenchidas para cada sala,
       // deve-se fazer a uniao delas preenchendo a estrutura <disciplinasAssociadas> 
@@ -2273,6 +2275,7 @@ void ProblemDataLoader::associaDisciplinasSalas()
             }
          }
       }
+	  //------------------------------------------------------------------------
    }
 
    std::cout << "\n\nARRUMAR: ProblemDataLoader::associaDisciplinasSalas()\n"

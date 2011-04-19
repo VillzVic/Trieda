@@ -1722,74 +1722,51 @@ int SolverMIP::solveOperacional()
    SolucaoOperacional & solucaoOperacional = solIni.geraSolucaoInicial();
 
    // -----------------------------------------------------------------------------------------
-   /* Realizando alguns checks. */
-
+   // Realizando alguns checks.
    bool error = false;
-   ITERA_GGROUP(itAula,problemData->aulas,Aula)
+   ITERA_GGROUP(itAula, problemData->aulas, Aula)
    {
-      if(itAula->bloco_aula.empty())
+      if ( itAula->bloco_aula.empty() )
       {
          std::cout << "\n======================================================";
-         std::cout << "\nA aula abaixo nao possui nenhum horario alocado:\n\n";
+         std::cout << "\nA aula abaixo nao possui nenhum horario alocado:\n";
          itAula->toString();
 
          error = true;
       }
-      else if(itAula->bloco_aula.size() < itAula->getTotalCreditos())
+      else if ( (int)itAula->bloco_aula.size() < itAula->getTotalCreditos() )
       {
-         std::cout << "\n======================================================";
-         std::cout << "\nA aula abaixo possui um total de horarios alocados inferior ao total de creditos a serem alocados:\n\n";
-         itAula->toString();
+         std::cout << "\n==================================================="
+                   << "\nA aula abaixo possui um total de horarios alocados"
+				   << "\ninferior ao total de creditos a serem alocados:\n";
 
+         itAula->toString();
          error = true;
       }
-      else if(itAula->bloco_aula.size() > itAula->getTotalCreditos())
+      else if ( (int)itAula->bloco_aula.size() > itAula->getTotalCreditos() )
       {
-         std::cout << "\n======================================================";
-         std::cout << "\nA aula abaixo possui um total de horarios alocados superior ao total de creditos a serem alocados:\n\n";
+         std::cout << "\n=================================================="
+				   << "\nA aula abaixo possui um total de horarios alocados"
+				   << "\nsuperior ao total de creditos a serem alocados:\n";
+
          itAula->toString();
-
          error = true;
-
       }
-
    }
 
-   if(error)
+   if ( error )
+   {
+      std::cout << "ERRO!!! SolverMIP::solveOperacional()" << std::endl;
       exit(1);
+   }
    // -----------------------------------------------------------------------------------------
 
-   solucaoOperacional.toString();
+   // solucaoOperacional.toString();
+   solucaoOperacional.toString2();
 
-   //solucaoOperacional.toString2();
-
-   //Avaliador avaliador;
-
-   //double bestFO = avaliador.avaliaSolucao(solucaoOperacional);
-
-   //std::cout << "Avaliacao da Sol. Ini: " << bestFO << std::endl;
-
-   //NSSwapEqBlocks nsSwapEqBlocks(*problemData);
-
-   //for(int iter = 0; iter < 10; ++iter)
-   //{
-   //   MoveSwapEqBlocks & m = (MoveSwapEqBlocks&) nsSwapEqBlocks.move(solucaoOperacional);
-   //   m.apply(solucaoOperacional);
-
-   //   double fo = avaliador.avaliaSolucao(solucaoOperacional);
-
-   //   std::cout << "Avaliacao da Sol. Corrente: " << fo << std::endl;
-
-   //   if(fo < bestFO)
-   //      bestFO = fo;
-   //}
-
-   //std::cout << "Avaliacao da melhor Sol.: " << bestFO << std::endl;
-
-   // -----------------------------------------------------
-
-   //TabuSearch ts;
-   //ts.exec(solucaoOperacional,10,0);
+   Avaliador avaliador;
+   double bestFO = avaliador.avaliaSolucao(solucaoOperacional);
+   std::cout << "Avaliacao da Sol. Ini: " << bestFO << std::endl;
 
    std::cout << "\nTODO -- Implementar <SolverMIP::solveOperacional()>" << std::endl;
 
@@ -1809,7 +1786,7 @@ int SolverMIP::solve()
    int status = 0;
 
    if ( problemData->parametros->modo_otimizacao == "TATICO"
-      && problemData->atendimentosTatico == NULL )
+			&& problemData->atendimentosTatico == NULL )
    {
       //status = solveTatico();
       status = solveTaticoBasico();
@@ -1819,11 +1796,11 @@ int SolverMIP::solve()
    }
    else if ( problemData->parametros->modo_otimizacao == "OPERACIONAL" )
    {
-      if(problemData->atendimentosTatico != NULL
-         && problemData->atendimentosTatico->size() > 0)
+      if ( problemData->atendimentosTatico != NULL
+			&& problemData->atendimentosTatico->size() > 0 )
       {
-         ITERA_GGROUP(it_At_Campus, *(problemSolution->atendimento_campus),
-            AtendimentoCampus)
+         ITERA_GGROUP( it_At_Campus, *(problemSolution->atendimento_campus),
+					   AtendimentoCampus )
          {
             problemData->atendimentosTatico = new GGroup< AtendimentoCampusSolucao * >();
             problemData->atendimentosTatico->add( new AtendimentoCampusSolucao( **it_At_Campus ) );
@@ -1851,7 +1828,8 @@ int SolverMIP::solve()
          // Preenchendo a estrutura "atendimentosTatico" com a saída.
          getSolutionTatico();
 
-         ITERA_GGROUP(it_At_Campus, *(problemSolution->atendimento_campus),AtendimentoCampus)
+         ITERA_GGROUP( it_At_Campus, *(problemSolution->atendimento_campus),
+					   AtendimentoCampus )
          {
             problemData->atendimentosTatico = new GGroup< AtendimentoCampusSolucao * >();
             problemData->atendimentosTatico->add( new AtendimentoCampusSolucao( **it_At_Campus ) );
@@ -1880,11 +1858,11 @@ int SolverMIP::localBranching(double * xSol, double maxTime)
       idxSol[i] = i;
    }
 
-   while (nIter < 3)
+   while ( nIter < 3 )
    {
       VariableHash::iterator vit = vHash.begin();
 
-      OPT_ROW nR(100, OPT_ROW::GREATER, 0.0, "LOCBRANCH");
+      OPT_ROW nR( 100, OPT_ROW::GREATER, 0.0, "LOCBRANCH" );
       double rhsLB = -5000;
 
       while ( vit != vHash.end() )
@@ -1916,16 +1894,16 @@ int SolverMIP::localBranching(double * xSol, double maxTime)
       lp->setMIPEmphasis(1);
       lp->setHeurFrequency(1.0);
 
-      lp->copyMIPStartSol(lp->getNumCols(),idxSol,xSol);
+      lp->copyMIPStartSol( lp->getNumCols(), idxSol, xSol );
 
-      status = lp->optimize(METHOD_MIP);
+      status = lp->optimize( METHOD_MIP );
 
       if ( nIter == 2 )
       {
          break;
       }
 
-      lp->getX(xSol);
+      lp->getX( xSol );
 
       int *idxs = new int[1];
       idxs[0] = lp->getNumRows() - 1;
@@ -1935,7 +1913,7 @@ int SolverMIP::localBranching(double * xSol, double maxTime)
       nIter++;
    }
 
-   delete[] idxSol;
+   delete [] idxSol;
 
    return status;
 }
