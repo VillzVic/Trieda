@@ -137,8 +137,10 @@ public class OtimizarServiceImpl extends RemoteServiceServlet implements Otimiza
 				return ret;
 			}
 			SolverOutput solverOutput = new SolverOutput(cenario, triedaOutput);
-			solverOutput.generateAtendimentosTatico();
-			solverOutput.salvarAtendimentosTatico();
+//			solverOutput.generateAtendimentosTatico();
+//			solverOutput.salvarAtendimentosTatico();
+			solverOutput.generateAtendimentosOperacional();
+			solverOutput.salvarAtendimentosOperacional();
 			
 		} catch (JAXBException e) {
 			e.printStackTrace();

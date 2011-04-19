@@ -5,17 +5,23 @@ import java.util.List;
 
 import org.springframework.transaction.annotation.Transactional;
 
+import com.gapso.trieda.domain.AtendimentoOperacional;
 import com.gapso.trieda.domain.AtendimentoTatico;
 import com.gapso.trieda.domain.Cenario;
 import com.gapso.trieda.domain.Disciplina;
+import com.gapso.trieda.domain.HorarioAula;
+import com.gapso.trieda.domain.HorarioDisponivelCenario;
 import com.gapso.trieda.domain.Oferta;
+import com.gapso.trieda.domain.Professor;
 import com.gapso.trieda.domain.Sala;
 import com.gapso.trieda.misc.Semanas;
 import com.gapso.web.trieda.server.xml.output.ItemAtendimentoCampus;
 import com.gapso.web.trieda.server.xml.output.ItemAtendimentoDiaSemana;
+import com.gapso.web.trieda.server.xml.output.ItemAtendimentoHorarioAula;
 import com.gapso.web.trieda.server.xml.output.ItemAtendimentoOferta;
 import com.gapso.web.trieda.server.xml.output.ItemAtendimentoSala;
 import com.gapso.web.trieda.server.xml.output.ItemAtendimentoTatico;
+import com.gapso.web.trieda.server.xml.output.ItemAtendimentoTurno;
 import com.gapso.web.trieda.server.xml.output.ItemAtendimentoUnidade;
 import com.gapso.web.trieda.server.xml.output.TriedaOutput;
 
@@ -25,11 +31,13 @@ public class SolverOutput {
 	private Cenario cenario;
 	private TriedaOutput triedaOutput;
 	private List<AtendimentoTatico> atendimentosTatico;
+	private List<AtendimentoOperacional> atendimentosOperacional;
 
 	public SolverOutput(Cenario cenario, TriedaOutput triedaOutput) {
 		this.cenario = cenario;
 		this.triedaOutput = triedaOutput;
 		atendimentosTatico = new ArrayList<AtendimentoTatico>();
+		atendimentosOperacional = new ArrayList<AtendimentoOperacional>();
 	}
 
 	@Transactional
@@ -49,15 +57,15 @@ public class SolverOutput {
 					for(ItemAtendimentoDiaSemana itemAtendimentoDiaSemana : itemAtendimentoDiaSemanaList) {
 						Semanas semana = Semanas.get(itemAtendimentoDiaSemana.getDiaSemana());
 						if(itemAtendimentoDiaSemana.getAtendimentosTatico() == null) continue;
+						
+						// COLETANDO INFORMAÇÕES DO TÁTICO
 						List<ItemAtendimentoTatico> itemAtendimentoTaticoList = itemAtendimentoDiaSemana.getAtendimentosTatico().getAtendimentoTatico();
 						for(ItemAtendimentoTatico itemAtendimentoTatico : itemAtendimentoTaticoList) {
 							int qtdeCreditosTeoricos = itemAtendimentoTatico.getQtdeCreditosTeoricos();
 							int qtdeCreditosPraticos = itemAtendimentoTatico.getQtdeCreditosPraticos();
 							ItemAtendimentoOferta itemAtendimentoOferta = itemAtendimentoTatico.getAtendimentoOferta();
 							Oferta oferta = Oferta.find(Long.valueOf(itemAtendimentoOferta.getOfertaCursoCampiId()));
-							// TODO CORRIGIR NO SOLVER IDs NEGATIVOS
-							int disciplinaId = Math.abs(itemAtendimentoOferta.getDisciplinaId());
-							Disciplina disciplina = Disciplina.find(Long.valueOf(disciplinaId));
+							Disciplina disciplina = Disciplina.find(Long.valueOf(itemAtendimentoOferta.getDisciplinaId()));
 							int quantidade = itemAtendimentoOferta.getQuantidade();
 							String turma = "TURMA" + itemAtendimentoOferta.getTurma();
 							
@@ -74,11 +82,81 @@ public class SolverOutput {
 							
 							atendimentosTatico.add(atendimentoTatico);
 						}
+						
 					}
 				}
 			}
 		}
 		return atendimentosTatico;
+	}
+	
+	@Transactional
+	public List<AtendimentoOperacional> generateAtendimentosOperacional() {
+		List<ItemAtendimentoCampus> itemAtendimentoCampusList =  triedaOutput.getAtendimentos().getAtendimentoCampus();
+		for(ItemAtendimentoCampus itemAtendimentoCampus : itemAtendimentoCampusList) {
+			// Não há necessidade de procurar campus, pq essa informação já existe em sala
+			// Campus campus = Campus.find(Long.valueOf(itemAtendimentoCampus.getCampusId()));
+			List<ItemAtendimentoUnidade> itemAtendimentoUnidadeList = itemAtendimentoCampus.getAtendimentosUnidades().getAtendimentoUnidade();
+			for(ItemAtendimentoUnidade itemAtendimentoUnidade : itemAtendimentoUnidadeList) {
+				// Não há necessidade de procurar campus, pq essa informação já existe em sala
+				// Unidade unidade = Unidade.find(Long.valueOf(itemAtendimentoUnidade.getUnidadeId()));
+				List<ItemAtendimentoSala> itemAtendimentoSalaList = itemAtendimentoUnidade.getAtendimentosSalas().getAtendimentoSala();
+				for(ItemAtendimentoSala itemAtendimentoSala : itemAtendimentoSalaList) {
+					Sala sala = Sala.find(Long.valueOf(itemAtendimentoSala.getSalaId()));
+					List<ItemAtendimentoDiaSemana> itemAtendimentoDiaSemanaList = itemAtendimentoSala.getAtendimentosDiasSemana().getAtendimentoDiaSemana();
+					for(ItemAtendimentoDiaSemana itemAtendimentoDiaSemana : itemAtendimentoDiaSemanaList) {
+						Semanas semana = Semanas.get(itemAtendimentoDiaSemana.getDiaSemana());
+						if(itemAtendimentoDiaSemana.getAtendimentosTatico() == null) continue;
+						
+						// COLETANDO INFORMAÇÕES DO OPERACIONAL
+						List<ItemAtendimentoTurno> itemAtendimentoTurnoList = itemAtendimentoDiaSemana.getAtendimentosTurnos().getAtendimentoTurno();
+						for(ItemAtendimentoTurno itemAtendimentoTurno : itemAtendimentoTurnoList) {
+							// Não há necessidade do turno
+							// Turno turno = Turno.find(Long.valueOf(itemAtendimentoTurno.getTurnoId()));
+							List<ItemAtendimentoHorarioAula> itemAtendimentoHorarioAulaList = itemAtendimentoTurno.getAtendimentosHorariosAula().getAtendimentoHorarioAula();
+							for(ItemAtendimentoHorarioAula itemAtendimentoHorarioAula : itemAtendimentoHorarioAulaList) {
+								HorarioAula horarioAula = HorarioAula.find(Long.valueOf(itemAtendimentoHorarioAula.getHorarioAulaId()));
+								Professor professor = null;
+								Integer professorVirtual = null;
+								int idProfessor = itemAtendimentoHorarioAula.getProfessorId();
+								if(idProfessor > 0) {
+									professor = Professor.find(Long.valueOf(idProfessor));
+								} else {
+									professorVirtual = idProfessor * -1;
+								}
+								boolean creditoTeorico = itemAtendimentoHorarioAula.isCreditoTeorico();
+								List<ItemAtendimentoOferta> itemAtendimentoOfertaList = itemAtendimentoHorarioAula.getAtendimentosOfertas().getAtendimentoOferta();
+								for(ItemAtendimentoOferta itemAtendimentoOferta : itemAtendimentoOfertaList) {
+									Oferta oferta = Oferta.find(Long.valueOf(itemAtendimentoOferta.getOfertaCursoCampiId()));
+									Disciplina disciplina = Disciplina.find(Long.valueOf(itemAtendimentoOferta.getDisciplinaId()));
+									int quantidade = itemAtendimentoOferta.getQuantidade();
+									String turma = "TURMA" + itemAtendimentoOferta.getTurma();
+									
+									AtendimentoOperacional atendimentoOperacional = new AtendimentoOperacional();
+									atendimentoOperacional.setCenario(cenario);
+									atendimentoOperacional.setTurma(turma);
+									atendimentoOperacional.setSala(sala);
+									atendimentoOperacional.setOferta(oferta);
+									atendimentoOperacional.setDisciplina(disciplina);
+									atendimentoOperacional.setQuantidadeAlunos(quantidade);
+									if(professor != null) {
+										atendimentoOperacional.setProfessor(professor);
+									} else {
+										atendimentoOperacional.setProfessorVirtual(professorVirtual);
+									}
+									atendimentoOperacional.setCreditoTeorico(creditoTeorico);
+									HorarioDisponivelCenario horarioDisponivelCenario = HorarioDisponivelCenario.findBy(horarioAula, semana);
+									atendimentoOperacional.setHorarioDisponivelCenario(horarioDisponivelCenario);
+									
+									atendimentosOperacional.add(atendimentoOperacional);
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		return atendimentosOperacional;
 	}
 	
 	@Transactional
@@ -94,6 +172,22 @@ public class SolverOutput {
 		List<AtendimentoTatico> atendimentosTatico = AtendimentoTatico.findAll();
 		for(AtendimentoTatico atendimentoTatico : atendimentosTatico) {
 			atendimentoTatico.remove();
+		}
+	}
+	
+	@Transactional
+	public void salvarAtendimentosOperacional() {
+		removerTodosAtendimentosOperacionalJaSalvos();
+		for(AtendimentoOperacional atendimentoOperacional : atendimentosOperacional) {
+			atendimentoOperacional.persist();
+		}
+	}
+	
+	@Transactional
+	private void removerTodosAtendimentosOperacionalJaSalvos() {
+		List<AtendimentoOperacional> atendimentosOperacional = AtendimentoOperacional.findAll();
+		for(AtendimentoOperacional atendimentoOperacional : atendimentosOperacional) {
+			atendimentoOperacional.remove();
 		}
 	}
 

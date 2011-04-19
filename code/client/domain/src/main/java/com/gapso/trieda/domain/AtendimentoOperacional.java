@@ -77,6 +77,11 @@ public class AtendimentoOperacional implements Serializable {
     @Min(0L)
     @Max(999L)
     private Integer quantidadeAlunos;
+    
+    @Column(name = "ATP_PROF_VIRTUAL")
+    @Min(1L)
+    @Max(999L)
+    private Integer professorVirtual;
 
 	public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -166,6 +171,11 @@ public class AtendimentoOperacional implements Serializable {
     }
 	
 	@SuppressWarnings("unchecked")
+	public static List<AtendimentoOperacional> findAll() {
+		return entityManager().createQuery("SELECT o FROM AtendimentoOperacional o").getResultList();
+	}
+	
+	@SuppressWarnings("unchecked")
 	public static List<AtendimentoOperacional> findAllBy(Professor professor, Turno turno) {
 		Query q = entityManager().createQuery("SELECT o FROM AtendimentoOperacional o WHERE o.oferta.turno = :turno AND o.professor = :professor");
 		q.setParameter("turno", turno);
@@ -240,6 +250,13 @@ public class AtendimentoOperacional implements Serializable {
 	}
 	public void setQuantidadeAlunos(Integer quantidadeAlunos) {
 		this.quantidadeAlunos = quantidadeAlunos;
+	}
+	
+	public Integer getProfessorVirtual() {
+		return professorVirtual;
+	}
+	public void setProfessorVirtual(Integer professorVirtual) {
+		this.professorVirtual = professorVirtual;
 	}
 	
 }

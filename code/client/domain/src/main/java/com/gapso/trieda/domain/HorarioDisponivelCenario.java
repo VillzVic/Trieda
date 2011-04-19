@@ -18,6 +18,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import javax.persistence.Table;
 import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
@@ -154,6 +155,13 @@ public class HorarioDisponivelCenario implements Serializable {
         return entityManager().find(HorarioDisponivelCenario.class, id);
     }
 
+    public static HorarioDisponivelCenario findBy(HorarioAula horarioAula, Semanas semana) {
+		Query q = entityManager().createQuery("SELECT o FROM HorarioDisponivelCenario o WHERE o.horarioAula = :horarioAula AND o.semana = :semana");
+		q.setParameter("horarioAula", horarioAula);
+		q.setParameter("semana", semana);
+		return (HorarioDisponivelCenario) q.getSingleResult();
+	}
+	
 	public HorarioAula getHorarioAula() {
         return this.horarioAula;
     }
