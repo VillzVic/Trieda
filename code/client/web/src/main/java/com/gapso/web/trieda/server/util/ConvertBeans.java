@@ -146,10 +146,15 @@ public class ConvertBeans {
 		// TODO Criar ligação com o usuário (Edição e criação)
 		// TODO Criar ligação com data de edição e criação
 		dto.setComentario(domain.getComentario());
+		SemanaLetiva semanaLetiva = null;
+		// TODO Quando criar o conceito de cenario, não irá mais existir semana letiva para o master data: 
 		if(!domain.getMasterData()) {
-			dto.setSemanaLetivaId(domain.getSemanaLetiva().getId());
-			dto.setSemanaLetivaString(domain.getSemanaLetiva().getCodigo());
+			semanaLetiva = domain.getSemanaLetiva();
+		} else {
+			semanaLetiva = SemanaLetiva.findAll().get(0);
 		}
+		dto.setSemanaLetivaId(semanaLetiva.getId());
+		dto.setSemanaLetivaString(semanaLetiva.getCodigo());
 		dto.setDisplayText(domain.getNome());
 		return dto;
 	}

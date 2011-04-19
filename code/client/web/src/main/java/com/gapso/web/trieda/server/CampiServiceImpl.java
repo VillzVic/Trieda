@@ -29,6 +29,7 @@ import com.gapso.trieda.domain.Demanda;
 import com.gapso.trieda.domain.DeslocamentoCampus;
 import com.gapso.trieda.domain.HorarioDisponivelCenario;
 import com.gapso.trieda.domain.Sala;
+import com.gapso.trieda.domain.SemanaLetiva;
 import com.gapso.trieda.domain.Turno;
 import com.gapso.trieda.domain.Unidade;
 import com.gapso.trieda.misc.Estados;
@@ -40,6 +41,7 @@ import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.DeslocamentoCampusDTO;
 import com.gapso.web.trieda.shared.dtos.HorarioDisponivelCenarioDTO;
 import com.gapso.web.trieda.shared.dtos.SalaDTO;
+import com.gapso.web.trieda.shared.dtos.SemanaLetivaDTO;
 import com.gapso.web.trieda.shared.dtos.TreeNodeDTO;
 import com.gapso.web.trieda.shared.dtos.TurnoDTO;
 import com.gapso.web.trieda.shared.services.CampiService;
@@ -61,8 +63,9 @@ public class CampiServiceImpl extends RemoteServiceServlet implements CampiServi
 	}
 	
 	@Override
-	public PagingLoadResult<HorarioDisponivelCenarioDTO> getHorariosDisponiveis(CampusDTO campusDTO) {
-		List<HorarioDisponivelCenario> list = new ArrayList<HorarioDisponivelCenario>(Campus.find(campusDTO.getId()).getHorarios());
+	public PagingLoadResult<HorarioDisponivelCenarioDTO> getHorariosDisponiveis(CampusDTO campusDTO, SemanaLetivaDTO semanaLetivaDTO) {
+		SemanaLetiva semanaLetiva = SemanaLetiva.find(semanaLetivaDTO.getId());
+		List<HorarioDisponivelCenario> list = new ArrayList<HorarioDisponivelCenario>(Campus.find(campusDTO.getId()).getHorarios(semanaLetiva));
 		List<HorarioDisponivelCenarioDTO> listDTO = ConvertBeans.toHorarioDisponivelCenarioDTO(list);
 		
 		Map<String, List<HorarioDisponivelCenarioDTO>> horariosTurnos = new HashMap<String, List<HorarioDisponivelCenarioDTO>>();

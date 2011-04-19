@@ -269,6 +269,10 @@
 		<servlet-name>atendimentosServlet</servlet-name>
 		<url-pattern>/professor/atendimentos</url-pattern>
 	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>semanasLetivaServlet</servlet-name>
+		<url-pattern>/professor/semanasLetiva</url-pattern>
+	</servlet-mapping>
 	
 	<servlet-mapping>
   		<servlet-name>usuariosServlet</servlet-name>

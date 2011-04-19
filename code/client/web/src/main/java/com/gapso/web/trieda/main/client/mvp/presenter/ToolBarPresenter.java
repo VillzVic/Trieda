@@ -197,7 +197,7 @@ public class ToolBarPresenter implements Presenter {
 		toolBar.getSalasListSalasButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
 			@Override
 			public void componentSelected(ButtonEvent ce) {
-				Presenter presenter = new SalasPresenter(new SalasView());
+				Presenter presenter = new SalasPresenter(masterData, new SalasView());
 				presenter.go(gTab);
 			}
 		});

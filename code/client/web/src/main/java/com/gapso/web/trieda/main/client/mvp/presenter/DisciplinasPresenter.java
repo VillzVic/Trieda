@@ -20,6 +20,7 @@ import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.DisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.DivisaoCreditoDTO;
 import com.gapso.web.trieda.shared.dtos.HorarioDisponivelCenarioDTO;
+import com.gapso.web.trieda.shared.dtos.SemanaLetivaDTO;
 import com.gapso.web.trieda.shared.dtos.TipoDisciplinaDTO;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 import com.gapso.web.trieda.shared.i18n.ITriedaI18nGateway;
@@ -145,14 +146,19 @@ public class DisciplinasPresenter implements Presenter {
 			@Override
 			public void componentSelected(ButtonEvent ce) {
 				final DisciplinaDTO disciplinaDTO = display.getGrid().getGrid().getSelectionModel().getSelectedItem();
-				Services.disciplinas().getHorariosDisponiveis(disciplinaDTO, new AsyncCallback<List<HorarioDisponivelCenarioDTO>>() {
+				SemanaLetivaDTO semanaLetivaDTO = new SemanaLetivaDTO();
+				semanaLetivaDTO.setId(cenario.getSemanaLetivaId());
+				
+				Services.disciplinas().getHorariosDisponiveis(disciplinaDTO, semanaLetivaDTO, new AsyncCallback<List<HorarioDisponivelCenarioDTO>>() {
 					@Override
 					public void onFailure(Throwable caught) {
 						MessageBox.alert("ERRO!", "Deu falha na conexão", null);
 					}
 					@Override
 					public void onSuccess(List<HorarioDisponivelCenarioDTO> result) {
-						Presenter presenter = new HorarioDisponivelDisciplinaFormPresenter(cenario, new HorarioDisponivelDisciplinaFormView(disciplinaDTO, result));
+						SemanaLetivaDTO semanaLetiva = new SemanaLetivaDTO();
+						semanaLetiva.setId(cenario.getSemanaLetivaId());
+						Presenter presenter = new HorarioDisponivelDisciplinaFormPresenter(cenario, semanaLetiva, new HorarioDisponivelDisciplinaFormView(disciplinaDTO, result));
 						presenter.go(null);
 					}
 				});

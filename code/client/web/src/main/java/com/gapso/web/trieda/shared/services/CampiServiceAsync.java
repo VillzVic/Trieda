@@ -10,6 +10,7 @@ import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.DeslocamentoCampusDTO;
 import com.gapso.web.trieda.shared.dtos.HorarioDisponivelCenarioDTO;
+import com.gapso.web.trieda.shared.dtos.SemanaLetivaDTO;
 import com.gapso.web.trieda.shared.dtos.TreeNodeDTO;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -24,9 +25,10 @@ public interface CampiServiceAsync {
 	void getBuscaList(CenarioDTO cenario, String nome, String codigo, String estadoString, String municipio, String bairro, PagingLoadConfig config, AsyncCallback<PagingLoadResult<CampusDTO>> callback);
 	void getCampus(Long id, AsyncCallback<CampusDTO> callback);
 	void getDeslocamentos(AsyncCallback<List<DeslocamentoCampusDTO>> callback);
-	void getHorariosDisponiveis(CampusDTO campusDTO, AsyncCallback<PagingLoadResult<HorarioDisponivelCenarioDTO>> callback);
 	void saveHorariosDisponiveis(CampusDTO campusDTO, List<HorarioDisponivelCenarioDTO> listDTO, AsyncCallback<Void> callback);
 	void getResumos(CenarioDTO cenarioDTO, TreeNodeDTO treeNodeDTO, AsyncCallback<List<TreeNodeDTO>> callback);
 	void saveDeslocamento(CenarioDTO cenario, List<DeslocamentoCampusDTO> list, AsyncCallback<Void> callback);
+	void getHorariosDisponiveis(CampusDTO campusDTO, SemanaLetivaDTO semanaLetivaDTO, AsyncCallback<PagingLoadResult<HorarioDisponivelCenarioDTO>> callback);
+	
 	
 }

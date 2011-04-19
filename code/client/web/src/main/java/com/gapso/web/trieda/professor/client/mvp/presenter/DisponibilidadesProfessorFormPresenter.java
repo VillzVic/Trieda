@@ -1,4 +1,4 @@
-package com.gapso.web.trieda.main.client.mvp.presenter;
+package com.gapso.web.trieda.professor.client.mvp.presenter;
 
 import java.util.List;
 
@@ -19,7 +19,7 @@ import com.gapso.web.trieda.shared.util.view.SimpleModal;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
 
-public class HorarioDisponivelProfessorFormPresenter implements Presenter {
+public class DisponibilidadesProfessorFormPresenter implements Presenter {
 
 	public interface Display {
 		Button getSalvarButton();
@@ -32,7 +32,7 @@ public class HorarioDisponivelProfessorFormPresenter implements Presenter {
 	private CenarioDTO cenario;
 	private SemanaLetivaDTO semanaLetiva;
 	
-	public HorarioDisponivelProfessorFormPresenter(CenarioDTO cenario, SemanaLetivaDTO semanaLetiva, Display display) {
+	public DisponibilidadesProfessorFormPresenter(CenarioDTO cenario, SemanaLetivaDTO semanaLetiva, Display display) {
 		this.cenario = cenario;
 		this.semanaLetiva = semanaLetiva;
 		this.display = display;
@@ -56,9 +56,8 @@ public class HorarioDisponivelProfessorFormPresenter implements Presenter {
 			public void componentSelected(ButtonEvent ce) {
 				display.getStore().commitChanges();
 				List<HorarioDisponivelCenarioDTO> hdcDTOList = display.getStore().getModels();
-				SemanaLetivaDTO semanaLetivaDTO = new SemanaLetivaDTO();
-				semanaLetivaDTO.setId(cenario.getSemanaLetivaId());
-				Services.professores().saveHorariosDisponiveis(getDTO(), semanaLetivaDTO, hdcDTOList, new AsyncCallback<Void>() {
+				
+				Services.professores().saveHorariosDisponiveis(getDTO(), semanaLetiva, hdcDTOList, new AsyncCallback<Void>() {
 					@Override
 					public void onFailure(Throwable caught) {
 						caught.printStackTrace();

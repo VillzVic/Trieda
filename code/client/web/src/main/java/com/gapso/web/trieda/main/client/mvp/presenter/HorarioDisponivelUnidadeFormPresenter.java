@@ -11,6 +11,7 @@ import com.extjs.gxt.ui.client.widget.Info;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.HorarioDisponivelCenarioDTO;
+import com.gapso.web.trieda.shared.dtos.SemanaLetivaDTO;
 import com.gapso.web.trieda.shared.dtos.UnidadeDTO;
 import com.gapso.web.trieda.shared.mvp.presenter.Presenter;
 import com.gapso.web.trieda.shared.services.Services;
@@ -29,9 +30,11 @@ public class HorarioDisponivelUnidadeFormPresenter implements Presenter {
 	}
 	private Display display;
 	private CampusDTO campus;
+	private SemanaLetivaDTO semanaLetiva;
 	
-	public HorarioDisponivelUnidadeFormPresenter(CampusDTO campus, Display display) {
+	public HorarioDisponivelUnidadeFormPresenter(CampusDTO campus, SemanaLetivaDTO semanaLetiva, Display display) {
 		this.campus = campus;
+		this.semanaLetiva = semanaLetiva;
 		this.display = display;
 		configureProxy();
 		setListeners();
@@ -41,7 +44,7 @@ public class HorarioDisponivelUnidadeFormPresenter implements Presenter {
 		RpcProxy<PagingLoadResult<HorarioDisponivelCenarioDTO>> proxy = new RpcProxy<PagingLoadResult<HorarioDisponivelCenarioDTO>>() {
 			@Override
 			protected void load(Object loadConfig, AsyncCallback<PagingLoadResult<HorarioDisponivelCenarioDTO>> callback) {
-				Services.campi().getHorariosDisponiveis(campus, callback);
+				Services.campi().getHorariosDisponiveis(campus, semanaLetiva, callback);
 			}
 		};
 		display.setProxy(proxy);

@@ -40,6 +40,7 @@ import com.gapso.web.trieda.shared.dtos.GrupoSalaDTO;
 import com.gapso.web.trieda.shared.dtos.HorarioDisponivelCenarioDTO;
 import com.gapso.web.trieda.shared.dtos.OfertaDTO;
 import com.gapso.web.trieda.shared.dtos.SalaDTO;
+import com.gapso.web.trieda.shared.dtos.SemanaLetivaDTO;
 import com.gapso.web.trieda.shared.dtos.TipoDisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.TreeNodeDTO;
 import com.gapso.web.trieda.shared.services.DisciplinasService;
@@ -60,8 +61,9 @@ public class DisciplinasServiceImpl extends RemoteServiceServlet implements Disc
 	}
 	
 	@Override
-	public List<HorarioDisponivelCenarioDTO> getHorariosDisponiveis(DisciplinaDTO disciplinaDTO) {
-		List<HorarioDisponivelCenario> list = new ArrayList<HorarioDisponivelCenario>(Disciplina.find(disciplinaDTO.getId()).getHorarios());
+	public List<HorarioDisponivelCenarioDTO> getHorariosDisponiveis(DisciplinaDTO disciplinaDTO, SemanaLetivaDTO semanaLetivaDTO) {
+		SemanaLetiva semanaLetiva = SemanaLetiva.find(semanaLetivaDTO.getId());
+		List<HorarioDisponivelCenario> list = new ArrayList<HorarioDisponivelCenario>(Disciplina.find(disciplinaDTO.getId()).getHorarios(semanaLetiva));
 		List<HorarioDisponivelCenarioDTO> listDTO = ConvertBeans.toHorarioDisponivelCenarioDTO(list);
 		
 		return listDTO;

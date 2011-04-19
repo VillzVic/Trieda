@@ -4,6 +4,7 @@ import com.extjs.gxt.ui.client.event.ButtonEvent;
 import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.widget.Component;
 import com.extjs.gxt.ui.client.widget.button.Button;
+import com.gapso.web.trieda.professor.client.mvp.view.DisponibilidadesProfessorView;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.UsuarioDTO;
 import com.gapso.web.trieda.shared.mvp.presenter.CampusProfessoresPresenter;
@@ -22,6 +23,7 @@ public class ToolBarPresenter implements Presenter {
 		Component getComponent();
 		Button getProfessoresCampusListprofessoresBt();
 		Button getRelatorioVisaoProfessorButton();
+		Button getDisponibilidadeProfessorButton();
 		Button getProfessoresDisciplinaListProfessoresButton();
 	}
 	
@@ -49,6 +51,13 @@ public class ToolBarPresenter implements Presenter {
 			@Override
 			public void componentSelected(ButtonEvent ce) {
 				Presenter presenter = new ProfessoresDisciplinaPresenter(masterData, usuario, new ProfessoresDisciplinaView(usuario));
+				presenter.go(gTab);
+			}
+		});
+		toolBar.getDisponibilidadeProfessorButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
+			@Override
+			public void componentSelected(ButtonEvent ce) {
+				Presenter presenter = new DisponibilidadesProfessorPresenter(masterData, usuario, new DisponibilidadesProfessorView(usuario));
 				presenter.go(gTab);
 			}
 		});

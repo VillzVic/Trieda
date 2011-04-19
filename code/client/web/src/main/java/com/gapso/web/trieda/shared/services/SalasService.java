@@ -10,6 +10,7 @@ import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.GrupoSalaDTO;
 import com.gapso.web.trieda.shared.dtos.HorarioDisponivelCenarioDTO;
 import com.gapso.web.trieda.shared.dtos.SalaDTO;
+import com.gapso.web.trieda.shared.dtos.SemanaLetivaDTO;
 import com.gapso.web.trieda.shared.dtos.TipoSalaDTO;
 import com.gapso.web.trieda.shared.dtos.UnidadeDTO;
 import com.google.gwt.user.client.rpc.RemoteService;
@@ -33,7 +34,7 @@ public interface SalasService extends RemoteService {
 	Map<String, List<SalaDTO>> getSalasEAndareMap(Long unidadeId);
 	List<GrupoSalaDTO> getGruposDeSalas(Long unidadeId);
 	ListLoadResult<SalaDTO> getBuscaList(UnidadeDTO unidadeDTO);
-	List<HorarioDisponivelCenarioDTO> getHorariosDisponiveis(SalaDTO salaDTO);
+	List<HorarioDisponivelCenarioDTO> getHorariosDisponiveis(SalaDTO salaDTO, SemanaLetivaDTO semanaLetivaDTO);
 	void saveHorariosDisponiveis(SalaDTO salaDTO, List<HorarioDisponivelCenarioDTO> listDTO);
 	ListLoadResult<SalaDTO> getSalasDoAndareList(UnidadeDTO unidade, List<String> andares);
 	

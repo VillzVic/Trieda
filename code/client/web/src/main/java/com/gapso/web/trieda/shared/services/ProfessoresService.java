@@ -10,6 +10,7 @@ import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.HorarioDisponivelCenarioDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorCampusDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorDTO;
+import com.gapso.web.trieda.shared.dtos.SemanaLetivaDTO;
 import com.gapso.web.trieda.shared.dtos.TipoContratoDTO;
 import com.gapso.web.trieda.shared.dtos.TitulacaoDTO;
 import com.google.gwt.user.client.rpc.RemoteService;
@@ -30,8 +31,8 @@ public interface ProfessoresService extends RemoteService {
 	ListLoadResult<TitulacaoDTO> getTitulacoesAll();
 	void save(ProfessorDTO professorDTO);
 	void remove(List<ProfessorDTO> professorDTOList);
-	List<HorarioDisponivelCenarioDTO> getHorariosDisponiveis(ProfessorDTO professorDTO);
-	void saveHorariosDisponiveis(ProfessorDTO professorDTO, List<HorarioDisponivelCenarioDTO> listDTO);
+	List<HorarioDisponivelCenarioDTO> getHorariosDisponiveis(ProfessorDTO professorDTO, SemanaLetivaDTO semanaLetivaDTO);
+	void saveHorariosDisponiveis(ProfessorDTO professorDTO, SemanaLetivaDTO semanaLetivaDTO, List<HorarioDisponivelCenarioDTO> listDTO);
 	PagingLoadResult<ProfessorCampusDTO> getProfessorCampusList(CampusDTO campusDTO, ProfessorDTO professorDTO);
 	void removeProfessorCampus(List<ProfessorCampusDTO> professorCampusDTOList);
 	ListLoadResult<ProfessorDTO> getProfessoresEmCampus(CampusDTO campusDTO);

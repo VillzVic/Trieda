@@ -10,6 +10,7 @@ import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.HorarioDisponivelCenarioDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorCampusDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorDTO;
+import com.gapso.web.trieda.shared.dtos.SemanaLetivaDTO;
 import com.gapso.web.trieda.shared.dtos.TipoContratoDTO;
 import com.gapso.web.trieda.shared.dtos.TitulacaoDTO;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -26,8 +27,8 @@ public interface ProfessoresServiceAsync {
 	void getTitulacoesAll(AsyncCallback<ListLoadResult<TitulacaoDTO>> callback);
 	void save(ProfessorDTO professorDTO, AsyncCallback<Void> callback);
 	void remove(List<ProfessorDTO> professorDTOList, AsyncCallback<Void> callback);
-	void getHorariosDisponiveis(ProfessorDTO professorDTO, AsyncCallback<List<HorarioDisponivelCenarioDTO>> callback);
-	void saveHorariosDisponiveis(ProfessorDTO professorDTO, List<HorarioDisponivelCenarioDTO> listDTO, AsyncCallback<Void> callback);
+	void getHorariosDisponiveis(ProfessorDTO professorDTO, SemanaLetivaDTO semanaLetivaDTO, AsyncCallback<List<HorarioDisponivelCenarioDTO>> callback);
+	void saveHorariosDisponiveis(ProfessorDTO professorDTO, SemanaLetivaDTO semanaLetivaDTO, List<HorarioDisponivelCenarioDTO> listDTO, AsyncCallback<Void> callback);
 	void getProfessorCampusList(CampusDTO campusDTO, ProfessorDTO professorDTO, AsyncCallback<PagingLoadResult<ProfessorCampusDTO>> callback);
 	void removeProfessorCampus(List<ProfessorCampusDTO> professorCampusDTOList, AsyncCallback<Void> callback);
 	void getProfessoresEmCampus(CampusDTO campusDTO, AsyncCallback<ListLoadResult<ProfessorDTO>> callback);

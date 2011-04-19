@@ -21,6 +21,7 @@ import com.gapso.trieda.domain.Campus;
 import com.gapso.trieda.domain.GrupoSala;
 import com.gapso.trieda.domain.HorarioDisponivelCenario;
 import com.gapso.trieda.domain.Sala;
+import com.gapso.trieda.domain.SemanaLetiva;
 import com.gapso.trieda.domain.TipoSala;
 import com.gapso.trieda.domain.Unidade;
 import com.gapso.web.trieda.server.util.ConvertBeans;
@@ -28,6 +29,7 @@ import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.GrupoSalaDTO;
 import com.gapso.web.trieda.shared.dtos.HorarioDisponivelCenarioDTO;
 import com.gapso.web.trieda.shared.dtos.SalaDTO;
+import com.gapso.web.trieda.shared.dtos.SemanaLetivaDTO;
 import com.gapso.web.trieda.shared.dtos.TipoSalaDTO;
 import com.gapso.web.trieda.shared.dtos.UnidadeDTO;
 import com.gapso.web.trieda.shared.services.SalasService;
@@ -48,8 +50,9 @@ public class SalasServiceImpl extends RemoteServiceServlet implements SalasServi
 	}
 	
 	@Override
-	public List<HorarioDisponivelCenarioDTO> getHorariosDisponiveis(SalaDTO salaDTO) {
-		List<HorarioDisponivelCenario> list = new ArrayList<HorarioDisponivelCenario>(Sala.find(salaDTO.getId()).getHorarios());
+	public List<HorarioDisponivelCenarioDTO> getHorariosDisponiveis(SalaDTO salaDTO, SemanaLetivaDTO semanaLetivaDTO) {
+		SemanaLetiva semanaLetiva = SemanaLetiva.find(semanaLetivaDTO.getId());
+		List<HorarioDisponivelCenario> list = new ArrayList<HorarioDisponivelCenario>(Sala.find(salaDTO.getId()).getHorarios(semanaLetiva));
 		List<HorarioDisponivelCenarioDTO> listDTO = ConvertBeans.toHorarioDisponivelCenarioDTO(list);
 
 		// ORDENANDO HORARIOS POR ORDEM DE TURNOS E HORARIOS

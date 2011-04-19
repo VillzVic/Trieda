@@ -26,6 +26,5 @@ public interface SemanasLetivaService extends RemoteService {
 	PagingLoadResult<HorarioDisponivelCenarioDTO> getHorariosDisponiveisCenario(SemanaLetivaDTO semanaLetivaDTO);
 	void saveHorariosDisponiveisCenario(SemanaLetivaDTO semanaLetivaDTO, List<HorarioDisponivelCenarioDTO> listDTO);
 	SemanaLetivaDTO getSemanaLetiva(CenarioDTO cenario);
-	PagingLoadResult<HorarioDisponivelCenarioDTO> getHorariosDisponiveisByCenario(CenarioDTO cenario);
 	
 }

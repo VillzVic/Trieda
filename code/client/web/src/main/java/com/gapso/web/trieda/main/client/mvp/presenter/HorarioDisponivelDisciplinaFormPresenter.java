@@ -12,6 +12,7 @@ import com.extjs.gxt.ui.client.widget.button.Button;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.DisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.HorarioDisponivelCenarioDTO;
+import com.gapso.web.trieda.shared.dtos.SemanaLetivaDTO;
 import com.gapso.web.trieda.shared.mvp.presenter.Presenter;
 import com.gapso.web.trieda.shared.services.Services;
 import com.gapso.web.trieda.shared.util.view.SimpleModal;
@@ -29,9 +30,11 @@ public class HorarioDisponivelDisciplinaFormPresenter implements Presenter {
 	}
 	private Display display;
 	private CenarioDTO cenario;
+	private SemanaLetivaDTO semanaLetiva;
 	
-	public HorarioDisponivelDisciplinaFormPresenter(CenarioDTO cenario, Display display) {
+	public HorarioDisponivelDisciplinaFormPresenter(CenarioDTO cenario, SemanaLetivaDTO semanaLetiva, Display display) {
 		this.cenario = cenario;
+		this.semanaLetiva = semanaLetiva;
 		this.display = display;
 		configureProxy();
 		setListeners();
@@ -41,7 +44,7 @@ public class HorarioDisponivelDisciplinaFormPresenter implements Presenter {
 		RpcProxy<PagingLoadResult<HorarioDisponivelCenarioDTO>> proxy = new RpcProxy<PagingLoadResult<HorarioDisponivelCenarioDTO>>() {
 			@Override
 			protected void load(Object loadConfig, AsyncCallback<PagingLoadResult<HorarioDisponivelCenarioDTO>> callback) {
-				Services.semanasLetiva().getHorariosDisponiveisByCenario(cenario, callback);
+				Services.semanasLetiva().getHorariosDisponiveisCenario(semanaLetiva, callback);
 			}
 		};
 		display.setProxy(proxy);

@@ -19,6 +19,7 @@ import com.gapso.web.trieda.main.client.mvp.view.UnidadesDeslocamentoView;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.HorarioDisponivelCenarioDTO;
+import com.gapso.web.trieda.shared.dtos.SemanaLetivaDTO;
 import com.gapso.web.trieda.shared.dtos.UnidadeDTO;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 import com.gapso.web.trieda.shared.i18n.ITriedaI18nGateway;
@@ -59,10 +60,12 @@ public class UnidadesPresenter implements Presenter {
 		void setProxy(RpcProxy<PagingLoadResult<UnidadeDTO>> proxy);
 	}
 	private Display display; 
+	private CenarioDTO cenario; 
 	private GTab gTab;
 	
 	public UnidadesPresenter(CenarioDTO cenario, Display display) {
 		this.display = display;
+		this.cenario = cenario;
 		configureProxy();
 		setListeners();
 	}
@@ -163,7 +166,7 @@ public class UnidadesPresenter implements Presenter {
 					}
 					@Override
 					public void onSuccess(CampusDTO campusDTO) {
-						Presenter presenter = new SalasPresenter(new SalasView(campusDTO, unidadeDTO));
+						Presenter presenter = new SalasPresenter(cenario, new SalasView(campusDTO, unidadeDTO));
 						presenter.go(gTab);
 					}
 				});
@@ -172,13 +175,17 @@ public class UnidadesPresenter implements Presenter {
 		display.getDisponibilidadeButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
 			@Override
 			public void componentSelected(ButtonEvent ce) {
+				
+				final SemanaLetivaDTO semanaLetivaDTO = new SemanaLetivaDTO();
+				semanaLetivaDTO.setId(cenario.getSemanaLetivaId());
+				
 				final UnidadeDTO unidadeDTO = display.getGrid().getGrid().getSelectionModel().getSelectedItem();
 				
 				final FutureResult<CampusDTO> futureCampusDTO = new FutureResult<CampusDTO>();
 				final FutureResult<PagingLoadResult<HorarioDisponivelCenarioDTO>> futureHorarioDisponivelCenarioDTOList = new FutureResult<PagingLoadResult<HorarioDisponivelCenarioDTO>>();
 				
 				Services.campi().getCampus(unidadeDTO.getCampusId(), futureCampusDTO);
-				Services.unidades().getHorariosDisponiveis(unidadeDTO, futureHorarioDisponivelCenarioDTOList);
+				Services.unidades().getHorariosDisponiveis(unidadeDTO, semanaLetivaDTO, futureHorarioDisponivelCenarioDTOList);
 				
 				FutureSynchronizer synch = new FutureSynchronizer(futureCampusDTO, futureHorarioDisponivelCenarioDTOList);
 				synch.addCallback(new AsyncCallback<Boolean>() {
@@ -186,7 +193,7 @@ public class UnidadesPresenter implements Presenter {
 					public void onSuccess(Boolean result) {
 						CampusDTO campusDTO = futureCampusDTO.result();
 						List<HorarioDisponivelCenarioDTO> horarioDisponivelCenarioDTOList = futureHorarioDisponivelCenarioDTOList.result().getData();
-						Presenter presenter = new HorarioDisponivelUnidadeFormPresenter(campusDTO, new HorarioDisponivelUnidadeFormView(unidadeDTO, horarioDisponivelCenarioDTOList));
+						Presenter presenter = new HorarioDisponivelUnidadeFormPresenter(campusDTO, semanaLetivaDTO, new HorarioDisponivelUnidadeFormView(unidadeDTO, horarioDisponivelCenarioDTOList));
 						presenter.go(null);
 					}
 				});

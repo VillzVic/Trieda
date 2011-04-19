@@ -24,6 +24,7 @@ import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.HorarioDisponivelCenarioDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorCampusDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorDTO;
+import com.gapso.web.trieda.shared.dtos.SemanaLetivaDTO;
 import com.gapso.web.trieda.shared.dtos.TipoContratoDTO;
 import com.gapso.web.trieda.shared.dtos.TitulacaoDTO;
 import com.gapso.web.trieda.shared.services.ProfessoresService;
@@ -42,20 +43,23 @@ public class ProfessoresServiceImpl extends RemoteService implements Professores
 	}
 
 	@Override
-	public List<HorarioDisponivelCenarioDTO> getHorariosDisponiveis(ProfessorDTO professorDTO) {
-		List<HorarioDisponivelCenario> list = new ArrayList<HorarioDisponivelCenario>(Professor.find(professorDTO.getId()).getHorarios());
+	public List<HorarioDisponivelCenarioDTO> getHorariosDisponiveis(ProfessorDTO professorDTO, SemanaLetivaDTO semanaLetivaDTO) {
+		Professor professor = Professor.find(professorDTO.getId());
+		SemanaLetiva semanaLetiva = SemanaLetiva.find(semanaLetivaDTO.getId());
+		List<HorarioDisponivelCenario> list = professor.getHorarios(semanaLetiva);
 		List<HorarioDisponivelCenarioDTO> listDTO = ConvertBeans.toHorarioDisponivelCenarioDTO(list);
 		
 		return listDTO;
 	}
 	
 	@Override
-	public void saveHorariosDisponiveis(ProfessorDTO professorDTO, List<HorarioDisponivelCenarioDTO> listDTO) {
+	public void saveHorariosDisponiveis(ProfessorDTO professorDTO, SemanaLetivaDTO semanaLetivaDTO, List<HorarioDisponivelCenarioDTO> listDTO) {
+		SemanaLetiva semanaLetiva = SemanaLetiva.find(semanaLetivaDTO.getId());
 		List<HorarioDisponivelCenario> listSelecionados = ConvertBeans.toHorarioDisponivelCenario(listDTO);
 		Professor professor = Professor.find(professorDTO.getId());
 		List<HorarioDisponivelCenario> adicionarList = new ArrayList<HorarioDisponivelCenario> (listSelecionados);
-		adicionarList.removeAll(professor.getHorarios());
-		List<HorarioDisponivelCenario> removerList = new ArrayList<HorarioDisponivelCenario> (professor.getHorarios());
+		adicionarList.removeAll(professor.getHorarios(semanaLetiva));
+		List<HorarioDisponivelCenario> removerList = new ArrayList<HorarioDisponivelCenario> (professor.getHorarios(semanaLetiva));
 		removerList.removeAll(listSelecionados);
 		for(HorarioDisponivelCenario o : removerList) {
 			o.getProfessores().remove(professor);

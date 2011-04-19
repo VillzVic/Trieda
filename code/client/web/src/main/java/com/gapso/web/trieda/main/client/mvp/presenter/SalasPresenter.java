@@ -14,8 +14,10 @@ import com.extjs.gxt.ui.client.widget.button.Button;
 import com.gapso.web.trieda.main.client.mvp.view.HorarioDisponivelSalaFormView;
 import com.gapso.web.trieda.main.client.mvp.view.SalaFormView;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
+import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.HorarioDisponivelCenarioDTO;
 import com.gapso.web.trieda.shared.dtos.SalaDTO;
+import com.gapso.web.trieda.shared.dtos.SemanaLetivaDTO;
 import com.gapso.web.trieda.shared.dtos.TipoSalaDTO;
 import com.gapso.web.trieda.shared.dtos.UnidadeDTO;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
@@ -58,9 +60,11 @@ public class SalasPresenter implements Presenter {
 	}
 
 	private Display display;
+	private CenarioDTO cenario;
 
-	public SalasPresenter(Display display) {
+	public SalasPresenter(CenarioDTO cenario, Display display) {
 		this.display = display;
+		this.cenario = cenario;
 		configureProxy();
 		setListeners();
 	}
@@ -143,13 +147,17 @@ public class SalasPresenter implements Presenter {
 		display.getDisponibilidadeButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
 			@Override
 			public void componentSelected(ButtonEvent ce) {
+				
+				final SemanaLetivaDTO semanaLetivaDTO = new SemanaLetivaDTO();
+				semanaLetivaDTO.setId(cenario.getSemanaLetivaId());
+				
 				final SalaDTO salaDTO = display.getGrid().getGrid().getSelectionModel().getSelectedItem();
 				
 				final FutureResult<UnidadeDTO> futureUnidadeDTO = new FutureResult<UnidadeDTO>();
 				final FutureResult<List<HorarioDisponivelCenarioDTO>> futureHorarioDisponivelCenarioDTOList = new FutureResult<List<HorarioDisponivelCenarioDTO>>();
 				
 				Services.unidades().getUnidade(salaDTO.getUnidadeId(), futureUnidadeDTO);
-				Services.salas().getHorariosDisponiveis(salaDTO, futureHorarioDisponivelCenarioDTOList);
+				Services.salas().getHorariosDisponiveis(salaDTO, semanaLetivaDTO, futureHorarioDisponivelCenarioDTOList);
 				
 				FutureSynchronizer synch = new FutureSynchronizer(futureUnidadeDTO, futureHorarioDisponivelCenarioDTOList);
 				synch.addCallback(new AsyncCallback<Boolean>() {
@@ -157,7 +165,7 @@ public class SalasPresenter implements Presenter {
 					public void onSuccess(Boolean result) {
 						UnidadeDTO unidadeDTO = futureUnidadeDTO.result();
 						List<HorarioDisponivelCenarioDTO> horarioDisponivelCenarioDTOList = futureHorarioDisponivelCenarioDTOList.result();
-						Presenter presenter = new HorarioDisponivelSalaFormPresenter(unidadeDTO, new HorarioDisponivelSalaFormView(salaDTO, horarioDisponivelCenarioDTOList));
+						Presenter presenter = new HorarioDisponivelSalaFormPresenter(unidadeDTO, semanaLetivaDTO, new HorarioDisponivelSalaFormView(salaDTO, horarioDisponivelCenarioDTOList));
 						presenter.go(null);
 					}
 				});

@@ -10,6 +10,7 @@ import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.DeslocamentoCampusDTO;
 import com.gapso.web.trieda.shared.dtos.HorarioDisponivelCenarioDTO;
+import com.gapso.web.trieda.shared.dtos.SemanaLetivaDTO;
 import com.gapso.web.trieda.shared.dtos.TreeNodeDTO;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
@@ -29,7 +30,7 @@ public interface CampiService extends RemoteService {
 	PagingLoadResult<CampusDTO> getBuscaList(CenarioDTO cenario, String nome, String codigo, String estadoString, String municipio, String bairro, PagingLoadConfig config);
 	CampusDTO getCampus(Long id);
 	List<DeslocamentoCampusDTO> getDeslocamentos();
-	PagingLoadResult<HorarioDisponivelCenarioDTO> getHorariosDisponiveis(CampusDTO campusDTO);
+	PagingLoadResult<HorarioDisponivelCenarioDTO> getHorariosDisponiveis(CampusDTO campusDTO, SemanaLetivaDTO semanaLetivaDTO);
 	void saveHorariosDisponiveis(CampusDTO campusDTO, List<HorarioDisponivelCenarioDTO> listDTO);
 	List<TreeNodeDTO> getResumos(CenarioDTO cenarioDTO, TreeNodeDTO treeNodeDTO);
 	void saveDeslocamento(CenarioDTO cenario, List<DeslocamentoCampusDTO> list);
