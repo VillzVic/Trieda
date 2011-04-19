@@ -31,7 +31,7 @@ public:
    // o dia da semana e o horário de aula desejado,
    // retorna o horário correspondente à aula
    // alocada (ou NULL, caso não haja aula alocada)
-   Horario* getHorario(int, int, int);
+   Horario * getHorario(int, int, int);
 
    // Dado um índice que corresponde a uma linha da
    // matriz de solução, retorna o professor correspondente
@@ -43,7 +43,6 @@ public:
    MatrizSolucao * getMatrizAulas() const;
 
    void toString();
-
    void toString2();
 
    // Dado o ID do professor, retorna um
@@ -61,7 +60,7 @@ public:
    // 6: sexta
    // 7: sábado
    //int getItHorariosProf(Professor & professor, int dia = 2, int horario = 0);
-   std::vector<Aula*>::iterator getItHorariosProf(Professor &, int = 2, int = 0);
+   std::vector< Aula * >::iterator getItHorariosProf(Professor &, int = 2, int = 0);
 
    // Adiciona um novo professor à solução. O inteiro retornado
    // é referente à posição (linha) que o novo  professor ocupa na solução.
@@ -78,13 +77,14 @@ public:
    int getTotalDeProfessores() const;
 
    // Armazena os índices para cada dia de cada horário.
-   std::map<std::pair<Horario*,int/*dia*/>, int/*col - idOperacional*/> refHorarios;
+   std::map< std::pair< Horario *, int /*dia*/>, int /*col - idOperacional*/ > refHorarios;
 
-   /* Verifica se as aula <aX> e <aY> podem ter trocados os seus respectivos horários. */
+   // Verifica se as aula <aX> e <aY> podem
+   // ter trocados os seus respectivos horários.
    bool podeTrocarHorariosAulas(Aula & aX, Aula & aY) const;
 
-   /* Função auxiliar à função podeTrocarHorariosAulas */
-   bool checkConflitoBlocoCurricular(Aula & aula, std::vector< std::pair< Professor *, Horario * > > & novosHorariosAula) const;
+   // Função auxiliar à função podeTrocarHorariosAulas
+   bool checkConflitoBlocoCurricular(Aula &, std::vector< std::pair< Professor *, Horario * > > &) const;
 
 private:
    int total_dias;

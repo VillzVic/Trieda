@@ -105,7 +105,7 @@ void ProblemData::le_arvore(TriedaInput & raiz)
       }
    }
 
-   //-----------------------------------------------------------
+   //-------------------------------------------------------------------------------
    // Primeiro caso : executar o
    // solver apenas com a entrada do tático
    bool primeiroCaso = ( parametros->modo_otimizacao == "TATICO" );
@@ -136,8 +136,8 @@ void ProblemData::le_arvore(TriedaInput & raiz)
 	else
 	{
 		// ERRO no XML de entrada
-		std::cout << "WARNING!!! input inválido para os campos:\n"
-				  << "'horariosDisponiveis' e/ou 'creditosDisponiveis'"
+		std::cout << "ERROR!!! input inválido para os campos:"
+				  << "\n'horariosDisponiveis' e/ou 'creditosDisponiveis'"
 				  << "\n\nSando." << std::endl;
 
 		exit(1);
@@ -151,22 +151,19 @@ void ProblemData::le_arvore(TriedaInput & raiz)
          ITERA_GGROUP(it_sala, it_unidade->salas, Sala)
          {
 			 std::map< int, ItemSala * >::iterator it
-               = mapItemSala.find(it_sala->getId());
+				 = mapItemSala.find(it_sala->getId());
 
-            if (it != mapItemSala.end())
+            if ( it != mapItemSala.end() )
             {
                // Objeto de entrada do XML
                ItemSala * elem = it->second;
 
-               /* ToDo : Acredito ter um erro na func abaixo. Ver isso depois com o Cleiton. 
-               Talvez por isso não esteja rodando o MultiCampi Op. */
-
                it_sala->construirCreditosHorarios(
-                  *(elem), parametros->modo_otimizacao,
-                  raiz.atendimentosTatico().present() );
+					*(elem), parametros->modo_otimizacao,
+					raiz.atendimentosTatico().present() );
             }
          }
       }
    }
-   //-----------------------------------------------------------
+   //-------------------------------------------------------------------------------
 }

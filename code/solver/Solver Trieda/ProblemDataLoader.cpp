@@ -134,7 +134,7 @@ bool ordena_horarios_aula(HorarioAula* h1, HorarioAula* h2)
 
 void ProblemDataLoader::criaListaHorariosOrdenados()
 {
-	GGroup<HorarioAula*> horarios_aula;
+	GGroup< HorarioAula * > horarios_aula;
 
 	// Adiciona os horários de aula, sem repetição
 	ITERA_GGROUP(it_campi, problemData->campi, Campus)
@@ -143,7 +143,7 @@ void ProblemDataLoader::criaListaHorariosOrdenados()
 		{
 			ITERA_GGROUP(it_horario, it_professor->horarios, Horario)
 			{
-				horarios_aula.add(it_horario->horario_aula);
+				horarios_aula.add( it_horario->horario_aula );
 			}
 		}
 	}
@@ -151,12 +151,12 @@ void ProblemDataLoader::criaListaHorariosOrdenados()
 	// Insere os horarios de aula (distintos) no vector
 	ITERA_GGROUP(it_h, horarios_aula, HorarioAula)
 	{
-		problemData->horarios_aula_ordenados.push_back(*it_h);
+		problemData->horarios_aula_ordenados.push_back( *it_h );
 	}
 
 	// Ordena os horarios de aula pelo inicio de cada um
-	sort( problemData->horarios_aula_ordenados.begin(),
-		  problemData->horarios_aula_ordenados.end(), ordena_horarios_aula );
+	std::sort( problemData->horarios_aula_ordenados.begin(),
+			   problemData->horarios_aula_ordenados.end(), ordena_horarios_aula );
 }
 
 void ProblemDataLoader::calculaMaxHorariosProfessor()
@@ -216,7 +216,7 @@ void ProblemDataLoader::relacionaCredsRegras()
 {
    ITERA_GGROUP(it_Regra, problemData->regras_div, DivisaoCreditos)
    { 
-	   problemData->creds_Regras[ it_Regra->getCreditos() ].add(*it_Regra);
+	   problemData->creds_Regras[ it_Regra->getCreditos() ].add( *it_Regra );
    }
 }
 
@@ -229,12 +229,11 @@ void ProblemDataLoader::carregaDiasLetivosCampusUnidadeSala()
       // Adicionando os dias letivos de cada Campus
       ITERA_GGROUP(it_Horario, it_Campus->horarios, Horario)
       {
-         ITERA_GGROUP_N_PT(it_Dias_Letivos,it_Horario->dias_semana,int)
+         ITERA_GGROUP_N_PT(it_Dias_Letivos, it_Horario->dias_semana, int)
          {
             it_Campus->diasLetivos.add( *it_Dias_Letivos );
          }         
       }
-
       // --------------------------------------------------------
 
       // Para cada Unidade
@@ -258,7 +257,8 @@ void ProblemDataLoader::carregaDiasLetivosCampusUnidadeSala()
             // Adicionando os dias letivos de cada Sala
             ITERA_GGROUP(it_Horario, it_Unidade->horarios, Horario)
             {
-               ITERA_GGROUP(it_Creds_Disp, it_Sala->creditos_disponiveis, CreditoDisponivel)
+               ITERA_GGROUP( it_Creds_Disp, it_Sala->creditos_disponiveis,
+						     CreditoDisponivel)
                {
                   if(it_Creds_Disp->getMaxCreditos() > 0)
                   { 
@@ -298,7 +298,7 @@ void ProblemDataLoader::criaConjuntoSalasUnidade()
          // uma disciplina com a FLAG <eLab> marcada (TRUE)
          GGroup< ConjuntoSala * > conjunto_Salas_Disc_eLab;
 
-         //* Conjunto de salas (SALAS OU LABORATORIOS) que
+         // Conjunto de salas (SALAS OU LABORATORIOS) que
 		 // foram criadas sendo que não possuiam nenhuma 
          // disciplina com a FLAG <eLab> marcada (TRUE)
          GGroup< ConjuntoSala * > conjunto_Salas_Disc_GERAL;
@@ -308,17 +308,19 @@ void ProblemDataLoader::criaConjuntoSalasUnidade()
             bool exige_Conjunto_Individual = false;
 
             // Checando se a sala em questão exige
-            // a criação de um Conjunto de Salas só pra ela.
-            // Ex.: Qdo uma sala, na verdade, um laboratório possui pelo menos uma 
+            // a criação de um Conjunto de Salas só
+			// pra ela. Ex.: Qdo uma sala, na verdade,
+			// um laboratório possui pelo menos uma 
             // disciplina com a FLAG <eLab> marcada (TRUE).
 
-            if(it_Sala->getTipoSalaId() == 2)
+            if ( it_Sala->getTipoSalaId() == 2 )
             {
-               ITERA_GGROUP(it_Disc, it_Sala->disciplinasAssociadas, Disciplina)
+               ITERA_GGROUP( it_Disc, it_Sala->disciplinasAssociadas,
+							 Disciplina)
                {
                   // Procurando por, pelo menos, uma
 				  // disciplina que possua a FLAG <eLab> marcada (TRUE)
-                  if(it_Disc->eLab())
+                  if ( it_Disc->eLab() )
                   {
                      exige_Conjunto_Individual = true;
                      break;
@@ -335,44 +337,47 @@ void ProblemDataLoader::criaConjuntoSalasUnidade()
             // Teste para escolher qual estrutura de dados (<conjunto_Salas_Disc_eLab> ou 
             // <conjunto_Salas_Disc_GERAL>) deve-se utilizar.
 
-            if(!exige_Conjunto_Individual)
+            if ( !exige_Conjunto_Individual )
             {
 				gg_Cjt_Salas_Esc = &( conjunto_Salas_Disc_GERAL );
 			}
 
             bool encontrou_Conjunto_Compat = false;
 
-            /* Antes de criar um novo conjunto de salas (labs ou SA), deve-se
-            procurar por algum conjunto de salas existente que represente a capacidade e
-            o tipo da sala em questão. Além disso, a diferença das disciplinas associadas de ambos 
-            tem que ser nula (ou seja, todas as disciplinas que forem associadas a sala em questão,
-            tem de estar associadas ao conjunto de salas encontrado, e vice versa). */
+            // Antes de criar um novo conjunto de salas (labs ou SA),
+			// deve-se procurar por algum conjunto de salas existente
+			// que represente a capacidade e o tipo da sala em questão.
+			// Além disso, a diferença das disciplinas associadas de ambos 
+            // tem que ser nula (ou seja, todas as disciplinas que forem
+			// associadas a sala em questão, tem de estar associadas ao
+			// conjunto de salas encontrado, e vice versa).
             ITERA_GGROUP(it_Cjt_Salas_Disc, (*gg_Cjt_Salas_Esc), ConjuntoSala)
             {
-               /* Se o conjunto de salas em questão representa a capacidade da sala em questão.
-
-               Estou testando tb se o conjunto de salas representa o mesmo tipo da sala em questão.
-               Acredito que não seja necessário no caso em que estejamos lidando APENAS com laboratórios.
-               Como não sei qual GGroup está sendo referenciado, testo os 2 casos pra lá.
-               */
-               if(it_Cjt_Salas_Disc->getCapacidadeRepr() == it_Sala->getCapacidade()
+               // Se o conjunto de salas em questão representa a capacidade
+			   // da sala em questão. Estou testando tb se o conjunto de
+			   // salas representa o mesmo tipo da sala em questão. Acredito
+			   // que não seja necessário no caso em que estejamos lidando
+			   // APENAS com laboratórios. Como não sei qual GGroup está
+			   // sendo referenciado, testo os 2 casos pra lá.
+               if ( it_Cjt_Salas_Disc->getCapacidadeRepr() == it_Sala->getCapacidade()
                   && it_Cjt_Salas_Disc->getTipoSalasRepr() == it_Sala->tipo_sala->getId() )
                {
                   bool mesmas_Disciplinas_Associadas = true;
 
                   // Checando se tem o mesmo tamanho.
-                  if(it_Cjt_Salas_Disc->getDiscsAssociadas().size() == 
-                     it_Sala->disciplinasAssociadas.size())
+                  if ( it_Cjt_Salas_Disc->getDiscsAssociadas().size() == 
+                       it_Sala->disciplinasAssociadas.size())
                   {
                      // Iterando sobre as disciplinas associadas da sala em questão.
-                     ITERA_GGROUP(it_Disc_Assoc_Sala, it_Sala->disciplinasAssociadas, Disciplina)
+                     ITERA_GGROUP( it_Disc_Assoc_Sala, it_Sala->disciplinasAssociadas,
+								   Disciplina)
                      {
-                        //* Se encontrei alguma disciplina que não está
+                        // Se encontrei alguma disciplina que não está
 						// associada ao conjunto de salas e  à sala em
 						// questão, paro o teste de compatibilidade
 						// entre a sala e o cjt em questão.
-                        if(it_Cjt_Salas_Disc->getDiscsAssociadas().find(*it_Disc_Assoc_Sala)
-                           == it_Cjt_Salas_Disc->getDiscsAssociadas().end() )
+                        if ( it_Cjt_Salas_Disc->getDiscsAssociadas().find(*it_Disc_Assoc_Sala)
+								== it_Cjt_Salas_Disc->getDiscsAssociadas().end() )
                         {
 							mesmas_Disciplinas_Associadas = false;
 							break;
@@ -386,7 +391,7 @@ void ProblemDataLoader::criaConjuntoSalasUnidade()
 
                   if(mesmas_Disciplinas_Associadas)
                   {
-                     it_Cjt_Salas_Disc->addSala(**it_Sala);
+                     it_Cjt_Salas_Disc->addSala( **it_Sala );
 
                      // Adicionando os dias letivos ao conjunto de salas
                      ITERA_GGROUP_N_PT(it_Dias_Letivos, it_Sala->diasLetivos, int)
@@ -403,15 +408,15 @@ void ProblemDataLoader::criaConjuntoSalasUnidade()
                }
             }
 
-            if(!encontrou_Conjunto_Compat)
+            if ( !encontrou_Conjunto_Compat )
             {
                ConjuntoSala * cjt_Sala = new ConjuntoSala();
 
-               cjt_Sala->setId(idCjtSala);
-               cjt_Sala->setCapacidadeRepr(it_Sala->getCapacidade());
-               cjt_Sala->setTipoSalasRepr(it_Sala->getTipoSalaId());
+               cjt_Sala->setId( idCjtSala );
+               cjt_Sala->setCapacidadeRepr( it_Sala->getCapacidade() );
+               cjt_Sala->setTipoSalasRepr( it_Sala->getTipoSalaId() );
 
-               cjt_Sala->addSala(**it_Sala);
+               cjt_Sala->addSala( **it_Sala );
 
                // Atualizando para o próximo id.
                ++idCjtSala;
@@ -419,13 +424,12 @@ void ProblemDataLoader::criaConjuntoSalasUnidade()
                // Adicionando os dias letivos ao conjunto de salas
                ITERA_GGROUP_N_PT(it_Dias_Letivos, it_Sala->diasLetivos, int)
                {
-                  cjt_Sala->diasLetivos.add(*it_Dias_Letivos);
+                  cjt_Sala->diasLetivos.add( *it_Dias_Letivos );
                }
 
                // Associando as disciplinas ao conjunto.
-               ITERA_GGROUP(it_Disc_Assoc_Sala,
-                  it_Sala->disciplinasAssociadas,
-                  Disciplina)
+               ITERA_GGROUP( it_Disc_Assoc_Sala,
+							 it_Sala->disciplinasAssociadas, Disciplina )
                {
                   cjt_Sala->associaDisciplina( **it_Disc_Assoc_Sala );
                }
@@ -439,16 +443,14 @@ void ProblemDataLoader::criaConjuntoSalasUnidade()
 		 // CRIADOS, TENHO QUE ARMAZENA-LOS NA ESTRUTURA
 		 // <conjuntoSala> da Unidade em questão.
 
-         ITERA_GGROUP(it_Cjt_Salas_Disc_Elab,
-            conjunto_Salas_Disc_eLab,
-            ConjuntoSala)
+         ITERA_GGROUP( it_Cjt_Salas_Disc_Elab,
+					   conjunto_Salas_Disc_eLab, ConjuntoSala )
          {
             it_Unidade->conjutoSalas.add( *it_Cjt_Salas_Disc_Elab );
          }
 
-         ITERA_GGROUP(it_Cjt_Salas_Disc_GERAL,
-            conjunto_Salas_Disc_GERAL,
-            ConjuntoSala)
+         ITERA_GGROUP( it_Cjt_Salas_Disc_GERAL,
+					   conjunto_Salas_Disc_GERAL, ConjuntoSala )
          {
             it_Unidade->conjutoSalas.add( *it_Cjt_Salas_Disc_GERAL );
          }
@@ -456,9 +458,8 @@ void ProblemDataLoader::criaConjuntoSalasUnidade()
          // ----------------------------
 		 std::cout << "Cod. Und.: " << it_Unidade->getCodigo() << std::endl;
 
-         ITERA_GGROUP(it_Cjt_Salas_Und,
-            it_Unidade->conjutoSalas,
-            ConjuntoSala)
+         ITERA_GGROUP( it_Cjt_Salas_Und,
+					   it_Unidade->conjutoSalas, ConjuntoSala )
          {
             std::cout << "\tCod. Cjt. Sala: "
 					  << it_Cjt_Salas_Und->getId() << std::endl;
@@ -485,23 +486,21 @@ void ProblemDataLoader::estabeleceDiasLetivosBlocoCampus()
    {
       ITERA_GGROUP_N_PT(it_Dia_Letivo, it_Bloco_Curric->diasLetivos, int)
       {
-         if(it_Bloco_Curric->campus->diasLetivos.find
-            (*it_Dia_Letivo) != it_Bloco_Curric->campus->diasLetivos.end())
+         if ( it_Bloco_Curric->campus->diasLetivos.find
+              (*it_Dia_Letivo) != it_Bloco_Curric->campus->diasLetivos.end() )
          {
             problemData->bloco_Campus_Dias
-               [std::make_pair(it_Bloco_Curric->getId(),
-							   it_Bloco_Curric->campus->getId())].add(*it_Dia_Letivo);
+               [ std::make_pair( it_Bloco_Curric->getId(),
+							     it_Bloco_Curric->campus->getId())].add( *it_Dia_Letivo );
          }
          else
          {
-            /*
-            PS: Quando tiver mais de um campus, pode acontecer que uma associação entre um bloco curricular 
-            que não pertence a um determinado campus seja criada. Arrumar isso depois.
-            Ou seja, essa checagem só serve para quando se tem 1 campus. Se tiver mais de um, quando cair aqui,
-            nada pode-se afirmar sobre a corretude da instância.
-            */
+            // PS: Quando tiver mais de um campus, pode acontecer que uma associação entre um bloco curricular 
+            // que não pertence a um determinado campus seja criada. Arrumar isso depois.
+            // Ou seja, essa checagem só serve para quando se tem 1 campus. Se tiver mais de um, quando cair aqui,
+            // nada pode-se afirmar sobre a corretude da instância.
             std::cout << "Warnning: Bloco Curricular e Campus Incompativeis. "
-				<< "(ProblemDataLoader::estabeleceDiasLetivosBlocoCampus())" << std::endl;
+					  << "(ProblemDataLoader::estabeleceDiasLetivosBlocoCampus())" << std::endl;
 
             exit(1);
          }
@@ -511,24 +510,24 @@ void ProblemDataLoader::estabeleceDiasLetivosBlocoCampus()
 
 void ProblemDataLoader::estabeleceDiasLetivosDisciplinasSalas()
 {
-   ITERA_GGROUP(itCampus,problemData->campi,Campus)
+   ITERA_GGROUP(itCampus, problemData->campi, Campus)
    {
-      ITERA_GGROUP(itUnidade,itCampus->unidades,Unidade)
+      ITERA_GGROUP(itUnidade, itCampus->unidades, Unidade)
       {
-         ITERA_GGROUP(itSala,itUnidade->salas,Sala)
+         ITERA_GGROUP(itSala, itUnidade->salas, Sala)
          {
-            ITERA_GGROUP(itDiscAssoc,itSala->disciplinasAssociadas,Disciplina)
+            ITERA_GGROUP(itDiscAssoc, itSala->disciplinasAssociadas, Disciplina)
             {
-               ITERA_GGROUP_N_PT(itDiasLetivosDisc,itDiscAssoc->diasLetivos,int)
+               ITERA_GGROUP_N_PT(itDiasLetivosDisc, itDiscAssoc->diasLetivos, int)
                {
-                  /* Se o dia letivo da disciplina é também um dia letivo da sala em questão, 
-                  adiciona-se ao map <disc_Salas_Dias> o dia em comum. */
+                  // Se o dia letivo da disciplina é também um dia letivo da sala em questão, 
+                  // adiciona-se ao map <disc_Salas_Dias> o dia em comum.
                   if(itSala->diasLetivos.find(*itDiasLetivosDisc) != itSala->diasLetivos.end())
                   {
                      std::pair<int,int> ids_Disc_Sala 
-                        (itDiscAssoc->getId(),itSala->getId());
+                        (itDiscAssoc->getId(), itSala->getId());
 
-                     problemData->disc_Salas_Dias[ids_Disc_Sala].add(*itDiasLetivosDisc);
+                     problemData->disc_Salas_Dias[ ids_Disc_Sala ].add( *itDiasLetivosDisc );
                   }
                }
             }
@@ -539,19 +538,20 @@ void ProblemDataLoader::estabeleceDiasLetivosDisciplinasSalas()
 
 void ProblemDataLoader::estabeleceDiasLetivosDiscCjtSala()
 {
-   /* Os dias letivos das disciplinas em relação aos conjuntos de salas são obtidos
-   via união dos dias letivos das disciplinas em relação às salas pertencentes ao conjunto
-   de salas em questão. */
+   // Os dias letivos das disciplinas em relação aos
+   // conjuntos de salas são obtidos via união dos
+   // dias letivos das disciplinas em relação às salas
+   // pertencentes ao conjunto de salas em questão.
 
-   ITERA_GGROUP(itCampus,problemData->campi,Campus)
+   ITERA_GGROUP(itCampus, problemData->campi, Campus)
    {
-      ITERA_GGROUP(itUnidade,itCampus->unidades,Unidade)
+      ITERA_GGROUP(itUnidade, itCampus->unidades, Unidade)
       {
          // p tds conjuntos de salas de um campus
-         ITERA_GGROUP(itCjtSala,itUnidade->conjutoSalas,ConjuntoSala)
+         ITERA_GGROUP(itCjtSala, itUnidade->conjutoSalas, ConjuntoSala)
          {
             // p tds as discAssoc de um conjunto
-            ITERA_GGROUP(itDiscAssoc,itCjtSala->getDiscsAssociadas(),Disciplina)
+            ITERA_GGROUP(itDiscAssoc, itCjtSala->getDiscsAssociadas(), Disciplina)
             {
                std::map<int/*Id Sala*/,Sala*>::iterator itSala =
                   itCjtSala->getTodasSalas().begin();
@@ -561,16 +561,17 @@ void ProblemDataLoader::estabeleceDiasLetivosDiscCjtSala()
                   std::pair<int/*idDisc*/,int/*idSala*/> ids_Disc_Sala 
                      (itDiscAssoc->getId(),itSala->second->getId());
 
-                  /* Se a disciplina se relaciona com a sala em questao. Como estamos 
-                  lidando com um conjunto de salas, podemos ter o caso em que uma disciplina
-                  é associada a uma sala do conjunto e a outra não. */
-                  if(problemData->disc_Salas_Dias.find(ids_Disc_Sala) !=
-                     problemData->disc_Salas_Dias.end())
+                  // Se a disciplina se relaciona com a sala em questao.
+				  // Como estamos  lidando com um conjunto de salas,
+				  // podemos ter o caso em que uma disciplina
+                  // é associada a uma sala do conjunto e a outra não.
+                  if ( problemData->disc_Salas_Dias.find(ids_Disc_Sala) !=
+                       problemData->disc_Salas_Dias.end() )
                   {
-                     ITERA_GGROUP_N_PT(itDiasLetDisc,
-                        problemData->disc_Salas_Dias[ids_Disc_Sala],int)
+                     ITERA_GGROUP_N_PT( itDiasLetDisc,
+										problemData->disc_Salas_Dias[ ids_Disc_Sala ], int)
                      {
-                        problemData->disc_Conjutno_Salas__Dias[std::make_pair<int,int>
+                        problemData->disc_Conjutno_Salas__Dias[ std::make_pair< int, int >
                            (itDiscAssoc->getId(),itCjtSala->getId())].add
                            (*itDiasLetDisc);
                      }
@@ -604,30 +605,32 @@ void ProblemDataLoader::estabeleceDiasLetivosProfessorDisciplina()
 {
    ITERA_GGROUP(itCampus,problemData->campi,Campus)
    {
-      /*TODO: Tem que ser para os blocos do campus em questao !!!!*/
-      ITERA_GGROUP(itBloco,problemData->blocos,BlocoCurricular)
+      // TODO: Tem que ser para os blocos do campus em questao !!!!
+      ITERA_GGROUP(itBloco, problemData->blocos, BlocoCurricular)
       {
-         ITERA_GGROUP(itDisc,itBloco->disciplinas,Disciplina)
+         ITERA_GGROUP(itDisc, itBloco->disciplinas, Disciplina)
          {
-            ITERA_GGROUP(it_prof,itCampus->professores,Professor) 
+            ITERA_GGROUP(it_prof, itCampus->professores, Professor) 
             {							  
-               ITERA_GGROUP(it_mag,it_prof->magisterio,Magisterio) 
+               ITERA_GGROUP(it_mag, it_prof->magisterio, Magisterio) 
                {
-                  ITERA_GGROUP(it_hor,it_prof->horarios,Horario) 
+                  ITERA_GGROUP(it_hor, it_prof->horarios, Horario) 
                   {
-                     GGroup<int>::iterator itDiasLetDisc =
+                     GGroup< int >::iterator itDiasLetDisc =
                         itDisc->diasLetivos.begin();
 
-                     for(; itDiasLetDisc != itDisc->diasLetivos.end(); itDiasLetDisc++ )
+                     for(; itDiasLetDisc != itDisc->diasLetivos.end();
+						   itDiasLetDisc++ )
                      {			
-                        if(it_mag->getDisciplinaId() == itDisc->getId()) 
+                        if ( it_mag->getDisciplinaId() == itDisc->getId() )
                         {
-                           if(it_hor->dias_semana.find(*itDiasLetDisc) != it_hor->dias_semana.end())
+                           if ( it_hor->dias_semana.find( *itDiasLetDisc )
+									!= it_hor->dias_semana.end() )
                            {
-                              std::pair<int,int> ids_Prof_Disc 
-                                 (it_prof->getId(),itDisc->getId());
+                              std::pair< int, int > ids_Prof_Disc 
+                                 (it_prof->getId(), itDisc->getId());
 
-                              problemData->prof_Disc_Dias[ids_Prof_Disc].add(*itDiasLetDisc);
+                              problemData->prof_Disc_Dias[ ids_Prof_Disc ].add( *itDiasLetDisc );
                            }
                         }
                      }
@@ -641,18 +644,14 @@ void ProblemDataLoader::estabeleceDiasLetivosProfessorDisciplina()
 
 void ProblemDataLoader::relacionaProfessoresDisciplinasFixadas()
 {
-   //ITERA_GGROUP(it_Fixacao,problemData->fixacoes,Fixacao)
-   //{ 
-   //   if(it_Fixacao->professor && it_Fixacao->disciplina)
-   //      problemData->prof_Fix_Disc[it_Fixacao->professor].add(it_Fixacao->disciplina);
-   //}
-
-   ITERA_GGROUP(itFixacao,problemData->fixacoes,Fixacao)
+   ITERA_GGROUP(itFixacao, problemData->fixacoes, Fixacao)
    {
-      if(itFixacao->professor && itFixacao->disciplina)
+      if ( itFixacao->professor && itFixacao->disciplina )
       {
-         pair<Professor*,Disciplina*> chave (itFixacao->professor,itFixacao->disciplina);
-         problemData->fixacoesProfDisc[chave].add(*itFixacao);
+		  std::pair< Professor *, Disciplina * > chave
+			  ( itFixacao->professor, itFixacao->disciplina );
+
+          problemData->fixacoesProfDisc[ chave ].add( *itFixacao );
       }
    }
 }
@@ -667,21 +666,23 @@ void ProblemDataLoader::combinacaoDivCreditos()
 
    ITERA_GGROUP(itDisc, problemData->disciplinas, Disciplina)
    {
-      if(itDisc->divisao_creditos != NULL)
+      if ( itDisc->divisao_creditos != NULL )
       {
          std::vector< std::pair< int /*dia*/, int /*numCreditos*/ > > vAux; 
-         for(int i = 1;i <= 7; i++)
+         for (int i = 1; i <= 7; i++)
          {
-            p = make_pair( i, itDisc->divisao_creditos->dia[i] );
-            vAux.push_back( p );
+			 p = std::make_pair( i, itDisc->divisao_creditos->dia[i] );
+             vAux.push_back( p );
          }
 
-         // verifica se a regra de divisão de créditos é válida
-         for(int a = 0; a < 7; a++)
+         // Verifica se a regra de divisão de créditos é válida
+         for (int a = 0; a < 7; a++)
          {
             if ( vAux[a].second != 0 )
             {
-               GGroup< int >::iterator itDiasLetivosDiscs = itDisc->diasLetivos.begin();
+               GGroup< int >::iterator itDiasLetivosDiscs
+				   = itDisc->diasLetivos.begin();
+
                for(; itDiasLetivosDiscs != itDisc->diasLetivos.end();
 					 itDiasLetivosDiscs++)
                { 
@@ -705,13 +706,13 @@ void ProblemDataLoader::combinacaoDivCreditos()
          }
 
          // Para cada regra de divisão de creditos pode existir mais 6
-         for(int k = 0; k < 6; k++)
+         for (int k = 0; k < 6; k++)
          {
-            for(int j = 0; j < 7; j++)
+            for (int j = 0; j < 7; j++)
             {
                if ( j == 0 )
                {
-                  p = make_pair(vAux[0].first, vAux[6].second);
+				  p = std::make_pair( vAux[0].first, vAux[6].second);
                }
                else
                {
@@ -730,7 +731,9 @@ void ProblemDataLoader::combinacaoDivCreditos()
             {
                if ( vAux[b].second != 0 )
                {
-                  GGroup< int >::iterator itDiasLetivosDiscs = itDisc->diasLetivos.begin();
+                  GGroup< int >::iterator itDiasLetivosDiscs
+					  = itDisc->diasLetivos.begin();
+
                   for(; itDiasLetivosDiscs != itDisc->diasLetivos.end();
 						itDiasLetivosDiscs++)
                   { 
