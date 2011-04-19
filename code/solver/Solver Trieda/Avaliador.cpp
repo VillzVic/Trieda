@@ -131,18 +131,18 @@ double Avaliador::avaliaSolucao(SolucaoOperacional & solucao, bool imprime_resul
    // precisa-se de uma instância multi-campi
 
    // Chamada dos métodos que fazem a avaliação da solução
-   calculaViolacaoRestricaoFixacao(solucao); // finalizado
-   calculaDescolamentoProfessor(solucao); // pendente
-   calculaDescolamentoBlocoCurricular(solucao); // pendente
-   calculaGapsHorariosProfessores(solucao); // pendente
-   avaliacaoCustoCorpoDocente(solucao); // finalizado
-   violacoesCargasHorarias(solucao); // finalizado
-   avaliaDiasProfessorMinistraAula(solucao); // finalizado
-   violacaoUltimaPrimeiraAula(solucao); // finalizado
-   avaliaNumeroMestresDoutores(solucao); // finalizado
-   avaliaMaximoDisciplinasProfessorPorCurso(solucao); // finalizado
-   avaliaPreferenciasProfessorDisciplina(solucao); // finalizado
-   avaliaCustoProfessorVirtual(solucao); // finalizado
+   calculaViolacaoRestricaoFixacao(solucao);
+   calculaDescolamentoProfessor(solucao);
+   calculaDescolamentoBlocoCurricular(solucao);
+   calculaGapsHorariosProfessores(solucao);
+   avaliacaoCustoCorpoDocente(solucao);
+   violacoesCargasHorarias(solucao);
+   avaliaDiasProfessorMinistraAula(solucao);
+   violacaoUltimaPrimeiraAula(solucao);
+   avaliaNumeroMestresDoutores(solucao);
+   avaliaMaximoDisciplinasProfessorPorCurso(solucao);
+   avaliaPreferenciasProfessorDisciplina(solucao);
+   avaliaCustoProfessorVirtual(solucao);
 
    double funcao_objetivo = 0.0;
 
@@ -169,7 +169,7 @@ double Avaliador::avaliaSolucao(SolucaoOperacional & solucao, bool imprime_resul
    funcao_objetivo += (PESO_CREDITOS_PROFESSORES_VIRTUAIS * totalCreditosProfessoresVirtuais);
 
    // Exibe os resultados detalhados da avaliação
-   if (imprime_resultados)
+   if ( imprime_resultados )
    {
       this->imprimeResultados();
 
@@ -361,7 +361,7 @@ void Avaliador::calculaDescolamentoBlocoCurricular(SolucaoOperacional & solucao)
    int violacoes_deslocamento = 0;  // TRIEDA-739
    double tempo_deslocamento = 0.0; // TRIEDA-740
 
-   unsigned int i, j;
+   unsigned int i = 0, j = 0;
 
    Aula * aula = NULL;
    Curso * curso = NULL;
@@ -542,22 +542,23 @@ void Avaliador::calculaDescolamentoBlocoCurricular(SolucaoOperacional & solucao)
 
 // Método que compara duas aulas, de acordo
 // com o dia da semana e o horário da aula
-bool ordenaAulas( pair<Aula*, Horario*> aula_horario1,
-                 pair<Aula*, Horario*> aula_horario2 )
+bool ordenaAulas( std::pair< Aula *, Horario * > aula_horario1,
+                  std::pair< Aula *, Horario * > aula_horario2 )
 {
+   //-----------------------------------------------------------
    // Verifica a consistência dos objetos 'aula'
-   if ( aula_horario1.first == NULL
-      && aula_horario1.first == NULL )
+   if (    aula_horario1.first == NULL
+		&& aula_horario1.first == NULL )
    {
       return false;
    }
-   else if ( aula_horario1.first == NULL
-      && aula_horario2.first != NULL )
+   else if (    aula_horario1.first == NULL
+			 && aula_horario2.first != NULL )
    {
       return true;
    }
-   else if ( aula_horario1.first != NULL
-      && aula_horario2.first == NULL )
+   else if (    aula_horario1.first != NULL
+			 && aula_horario2.first == NULL )
    {
       return false;
    }
@@ -573,6 +574,25 @@ bool ordenaAulas( pair<Aula*, Horario*> aula_horario1,
    {
       return false;
    }
+   //-----------------------------------------------------------
+
+   //-----------------------------------------------------------
+   // Verifica a consistência dos objetos 'horario'
+   if (    aula_horario1.second == NULL
+		&& aula_horario1.second == NULL )
+   {
+      return false;
+   }
+   else if (    aula_horario1.second == NULL
+			 && aula_horario2.second != NULL )
+   {
+      return true;
+   }
+   else if (    aula_horario1.second != NULL
+			 && aula_horario2.second == NULL )
+   {
+      return false;
+   }
 
    // Segundo critério: horário da aula
    DateTime horario1 = ( aula_horario1.second->horario_aula->getInicio() );
@@ -585,18 +605,20 @@ bool ordenaAulas( pair<Aula*, Horario*> aula_horario1,
    {
       return false;
    }
+   //-----------------------------------------------------------
 
    return false;
 }
 
-// Ordena as aulas por 'dia da semana'
-// e 'horário', nessa ordem de prioridade
+// Ordena as aulas por 'dia_da_semana'
+// e 'horario_aula', nessa ordem de prioridade
 vector< Aula * > Avaliador::retornaVectorAulasOrdenado(
-   GGroup< pair<Aula*, Horario*> > aulas_horarios)
+	GGroup< std::pair< Aula *, Horario * > > aulas_horarios )
 {
    // Passa da representaçao de 'GGroup'
    // para 'vector', para ordenar as aulas
    std::vector< std::pair< Aula *, Horario * > > pares_aulas_horarios;
+
    GGroup< std::pair< Aula *, Horario * > >::iterator it_pair
       = aulas_horarios.begin();
    for (; it_pair != aulas_horarios.end(); it_pair++)
@@ -604,9 +626,9 @@ vector< Aula * > Avaliador::retornaVectorAulasOrdenado(
       pares_aulas_horarios.push_back( *it_pair );
    }
 
-   // Ordena o vetor com os critérios de dia da semana e horários de aula
-   std::sort(pares_aulas_horarios.begin(),
-      pares_aulas_horarios.end(), ordenaAulas);
+   // Ordena o vetor com os critérios de 'dia_da_semana' e 'horario_aula'
+   std::sort( pares_aulas_horarios.begin(),
+			  pares_aulas_horarios.end(), ordenaAulas );
 
    // Recupera as aulas do vertor ordenado
    std::vector< Aula* > aulas_ordenado;
@@ -618,37 +640,37 @@ vector< Aula * > Avaliador::retornaVectorAulasOrdenado(
    return aulas_ordenado;
 }
 
-double Avaliador::calculaTempoEntreCampusUnidades(SolucaoOperacional & solucao,
-                                                  Campus * campus_atual, Campus * campus_anterior,
-                                                  Unidade * unidade_atual, Unidade * unidade_anterior)
+double Avaliador::calculaTempoEntreCampusUnidades( SolucaoOperacional & solucao,
+                                                   Campus * campus_atual, Campus * campus_anterior,
+                                                   Unidade * unidade_atual, Unidade * unidade_anterior )
 {
    double distancia = 0.0;
 
    // As aulas são realizadas em campus diferentes
-   if (campus_atual->getId() != campus_anterior->getId())
+   if ( campus_atual->getId() != campus_anterior->getId() )
    {
       GGroup<Deslocamento*>::iterator it_tempo_campi
          = solucao.getProblemData()->tempo_campi.begin();
       for (; it_tempo_campi != solucao.getProblemData()->tempo_campi.end();
-         it_tempo_campi++)
+			 it_tempo_campi++)
       {
-         if (it_tempo_campi->getOrigemId() == campus_anterior->getId()
-            && it_tempo_campi->getDestinoId() == campus_atual->getId())
+         if ( it_tempo_campi->getOrigemId() == campus_anterior->getId()
+				&& it_tempo_campi->getDestinoId() == campus_atual->getId() )
          {
             distancia = it_tempo_campi->getTempo();
          }
       }
    }
    // As aulas são realizadas em unidades diferentes
-   else if (unidade_atual->getId() != unidade_anterior->getId())
+   else if ( unidade_atual->getId() != unidade_anterior->getId() )
    {
-      GGroup<Deslocamento*>::iterator it_tempo_unidade
+      GGroup< Deslocamento * >::iterator it_tempo_unidade
          = solucao.getProblemData()->tempo_unidades.begin();
       for (; it_tempo_unidade != solucao.getProblemData()->tempo_unidades.end();
-         it_tempo_unidade++)
+			 it_tempo_unidade++)
       {
-         if (it_tempo_unidade->getOrigemId() == unidade_anterior->getId()
-            && it_tempo_unidade->getDestinoId() == unidade_atual->getId())
+         if ( it_tempo_unidade->getOrigemId() == unidade_anterior->getId()
+				&& it_tempo_unidade->getDestinoId() == unidade_atual->getId() )
          {
             distancia = it_tempo_unidade->getTempo();
          }

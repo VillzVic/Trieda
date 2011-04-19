@@ -196,7 +196,7 @@ private:
 	// -----------------------------------------------------------
 	// Ordena um GGroup de aulas
 	// -----------------------------------------------------------
-	vector< Aula * > retornaVectorAulasOrdenado(GGroup< std::pair<Aula *, Horario * > >);
+	vector< Aula * > retornaVectorAulasOrdenado( GGroup< std::pair<Aula *, Horario * > > );
 
 	// -----------------------------------------------------------
 	// Exibe os resultados da avaliação, APÓS todo o
