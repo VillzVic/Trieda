@@ -5,12 +5,12 @@
 
 SolucaoOperacional::SolucaoOperacional(ProblemData * prbDt)
 {
-   // FIXAR OS VALORES: 7 (dias) 4 (horarios)
+   // FIXANDO OS VALORES: 7 (dias) 4 (horarios)
    total_dias = 7;
    total_horarios = 4;
    total_professores = 0;
 
-   this->problem_data = (prbDt);
+   this->problem_data = ( prbDt );
 
    // Montando um map: dado o índice da matriz (o 'idOperacional'
    // do professor) o map retorna o ponteiro para o professor correspondente
@@ -29,7 +29,7 @@ SolucaoOperacional::SolucaoOperacional(ProblemData * prbDt)
    total_professores = mapProfessores.size();
 
    // Inicializando a estrutura <matrizAulas>
-   matriz_aulas = new MatrizSolucao (total_professores);
+   matriz_aulas = new MatrizSolucao ( total_professores );
    MatrizSolucao::iterator itMatrizAulas = matriz_aulas->begin();
    for(; itMatrizAulas != matriz_aulas->end(); ++itMatrizAulas)
    {
@@ -55,8 +55,8 @@ SolucaoOperacional::SolucaoOperacional(ProblemData * prbDt)
        int idProf = professor->getIdOperacional();
 
 	   // Vetor de aulas do professor atual
-	   vector< Aula * > * linha = *( itMatrizAulas );
-	   vector< Aula * >::iterator it_aula = linha->begin();
+	   std::vector< Aula * > * linha = *( itMatrizAulas );
+	   std::vector< Aula * >::iterator it_aula = linha->begin();
 	   for( j = 0; j < linha->size(); j++, it_aula++ )
 	   {
 		   // DIA DA SEMANA
@@ -71,36 +71,35 @@ SolucaoOperacional::SolucaoOperacional(ProblemData * prbDt)
 		   horario_aula_id = ( j % total_horarios );
 
 		   if ( !horarioDisponivelProfessor(
-					professor, dia_semana, horario_aula_id) )
+					professor, dia_semana, horario_aula_id ) )
 		   {
 			   // A aula NAO pode ser alocada
-			   *it_aula = aula_virtual;
+			   (*it_aula) = aula_virtual;
 		   }
 	   }
    }
+   // -----------------------------------------------------
 
    // -----------------------------------------------------
-   /* Inicializando a estrutura <refHorarios> */
-
-   ITERA_GGROUP(itCampus,problem_data->campi,Campus)
+   // Inicializando a estrutura <refHorarios>
+   ITERA_GGROUP(itCampus, problem_data->campi, Campus)
    {
-      ITERA_GGROUP(itHorario,itCampus->horarios,Horario)
+      ITERA_GGROUP(itHorario, itCampus->horarios, Horario)
       {
-         ITERA_GGROUP_N_PT(itDia,itHorario->dias_semana,int)
+         ITERA_GGROUP_N_PT(itDia, itHorario->dias_semana, int)
          {
-            std::vector<HorarioAula*>::iterator 
-               itHA = std::find(
-               problem_data->horarios_aula_ordenados.begin(),
-               problem_data->horarios_aula_ordenados.end(),
-               itHorario->horario_aula);
+            std::vector< HorarioAula * >::iterator  itHA
+				= std::find( problem_data->horarios_aula_ordenados.begin(),
+						     problem_data->horarios_aula_ordenados.end(),
+							 itHorario->horario_aula) ;
 
-            int idOperacional = ((*itDia - 1) * total_horarios) + std::distance(problem_data->horarios_aula_ordenados.begin(),itHA);
+            int idOperacional = ( (*itDia - 1) * total_horarios)
+								  + std::distance( problem_data->horarios_aula_ordenados.begin(), itHA );
 
-            refHorarios[std::make_pair(*itHorario,*itDia)] = idOperacional;
+            this->refHorarios[ std::make_pair( *itHorario, *itDia ) ] = idOperacional;
          }
       }
    }
-
    // -----------------------------------------------------
 }
 
@@ -116,7 +115,7 @@ SolucaoOperacional::~SolucaoOperacional()
    MatrizSolucao::iterator itMatrizAulas
 	   = this->getMatrizAulas()->begin();
    for(; itMatrizAulas != this->getMatrizAulas()->end();
-	   ++itMatrizAulas)
+	     ++itMatrizAulas)
    {
       delete *itMatrizAulas;
    }
@@ -125,20 +124,21 @@ SolucaoOperacional::~SolucaoOperacional()
 }
 
 bool SolucaoOperacional::horarioDisponivelProfessor(
-	Professor* professor, int dia_semana, int horario_aula_id)
+	Professor * professor, int dia_semana, int horario_aula_id )
 {
 	// Recupera o horário de aula que
 	// corresponde ao 'horario_aula_id' informado
 	HorarioAula* horario_aula = NULL;
 	int tam_vector = this->getProblemData()->horarios_aula_ordenados.size();
-	if (horario_aula_id < tam_vector)
+	if ( horario_aula_id < tam_vector )
 	{
-		horario_aula = this->getProblemData()->horarios_aula_ordenados.at(horario_aula_id);
+		horario_aula = this->getProblemData()->horarios_aula_ordenados.at( horario_aula_id );
 	}
 	else
 	{
-		std::cerr << "Acessando indice invalido do vector." << std::endl;
-		std::cerr << "SolucaoOperacional::horarioDisponivelProfessor()" << std::endl;
+		std::cerr << "Acessando indice invalido do vector."
+				  << "\nSolucaoOperacional::horarioDisponivelProfessor()" << std::endl;
+
 		exit(1);
 	}
 
@@ -151,12 +151,13 @@ bool SolucaoOperacional::horarioDisponivelProfessor(
 		{
 			// Verifica-se se o professor pode atender
 			// a esse horário de aula no dia da semana procurado
-			GGroup<int>::iterator it_dia_semana
+			GGroup< int >::iterator it_dia_semana
 				= it_horario->dias_semana.begin();
-			for (; it_dia_semana != it_horario->dias_semana.end(); it_dia_semana++)
+			for (; it_dia_semana != it_horario->dias_semana.end();
+				   it_dia_semana++ )
 			{
 				// Dia da semana disponível
-				if (*it_dia_semana == dia_semana)
+				if ( *it_dia_semana == dia_semana )
 				{
 					return true;
 				}
@@ -175,27 +176,28 @@ void SolucaoOperacional::carregaSolucaoInicial()
 
 MatrizSolucao* SolucaoOperacional::getMatrizAulas() const
 {
-   return (this->matriz_aulas);
+   return ( this->matriz_aulas );
 }
 
-void SolucaoOperacional::setMatrizAulas(MatrizSolucao* matriz)
+void SolucaoOperacional::setMatrizAulas( MatrizSolucao* matriz )
 {
-   this->matriz_aulas = (matriz);
+   this->matriz_aulas = ( matriz );
 }
 
 // Imprime as aulas da matriz de solução,
 // percorrendo as linhas de cada professor
 void SolucaoOperacional::toString()
 {
-   std::cout << std::endl << "Alocacao das aulas : " << std::endl << std::endl;
+   std::cout << std::endl << "Alocacao das aulas : "
+		     << std::endl << std::endl;
 
    Professor * professor = NULL;
    for (unsigned int i = 0; i < this->getMatrizAulas()->size(); i++)
    {
       professor = this->getProfessorMatriz(i);
-      if (professor != NULL)
+      if ( professor != NULL )
       {
-         std::cout << std::endl << "Nome do professor : " << std::endl
+         std::cout << std::endl << "Nome do professor :\n"
 				   << professor->getNome() << std::endl << std::endl;
       }
 
@@ -204,11 +206,11 @@ void SolucaoOperacional::toString()
       for (unsigned int j = 0; j < aulas->size(); j++)
       {
          Aula * aula = aulas->at(j);
-         if (aula != NULL && !aula->eVirtual())
+         if ( aula != NULL && !aula->eVirtual() )
          {
             aula->toString();
          }
-         else if (aula != NULL && aula->eVirtual())
+         else if ( aula != NULL && aula->eVirtual() )
          {
              // std::cout << "Aula virtual" << std::endl;
          }
@@ -217,38 +219,42 @@ void SolucaoOperacional::toString()
              // std::cout << "Aula nao alocada" << std::endl;
          }
       }
-
-      std::cout << std::endl << "-----------------------" << std::endl;
+      std::cout << "\n-----------------------\n";
    }
 }
 
 void SolucaoOperacional::toString2()
 {
    std::cout << "\nAlocacao das aulas\n\n";
-
    Professor * professor = NULL;
-
-   for (unsigned int i = 0; i < this->getMatrizAulas()->size(); i++)
+   for ( unsigned int i = 0; i < this->getMatrizAulas()->size(); i++ )
    {
       professor = this->getProfessorMatriz(i);
 
-      if (professor != NULL)
+      if ( professor != NULL )
+	  {
          std::cout << "P" << professor->getId() << ": ";
+	  }
 
       std::vector< Aula * > * aulas = ( this->getMatrizAulas()->at(i) );
       for (unsigned int j = 0; j < aulas->size(); j++)
       {
-         Aula* aula = aulas->at(j);
-         if (aula != NULL && !aula->eVirtual())
+         Aula * aula = aulas->at(j);
+         if ( aula != NULL && !aula->eVirtual() )
+		 {
             std::cout << "A" << aula->getDisciplina()->getCodigo()
-               << "_" << aula->getSala()->getCodigo()
-               << "_" << aula->getDiaSemana() << ",\t";
-         else if (aula != NULL && aula->eVirtual())
+					  << "_" << aula->getSala()->getCodigo()
+					  << "_" << aula->getDiaSemana() << ",\t";
+		 }
+         else if ( aula != NULL && aula->eVirtual() )
+		 {
              std::cout << "Aula Virtual,\t";
+		 }
          else
+		 {
              std::cout << "Aula nao aloc.,\t";
+		 }
       }
-
       std::cout << std::endl;
    }
 }
@@ -257,15 +263,16 @@ void SolucaoOperacional::toString2()
 // a coluna da matriz de solução correspondente a esse par de
 // dia da semana/horário. A linha da matriz já é dada pelo índice
 // do professor que faz a busca com esse dia e horário
-int SolucaoOperacional::getIndiceMatriz(int dia, Horario* horario)
+int SolucaoOperacional::getIndiceMatriz( int dia, Horario * horario )
 {
-   int dia_semana = ((dia-1) * problem_data->max_horarios_professor);
-   int horario_dia = (horario->getHorarioAulaId()-1);
-   
-   return (dia_semana + horario_dia);
+   int dia_semana = ( (dia-1) * problem_data->max_horarios_professor );
+   int horario_dia = ( horario->getHorarioAulaId()-1 );
+
+   return ( dia_semana + horario_dia );
 }
 
-Horario * SolucaoOperacional::getHorario(int id_professor_operacional, int dia_semana, int id_horario_aula)
+Horario * SolucaoOperacional::getHorario( int id_professor_operacional,
+										  int dia_semana, int id_horario_aula )
 {
    Professor * professor = this->getProfessorMatriz( id_professor_operacional );
    HorarioAula * horario_aula = this->getProblemData()->horarios_aula_ordenados[ id_horario_aula ];
@@ -281,7 +288,7 @@ Horario * SolucaoOperacional::getHorario(int id_professor_operacional, int dia_s
 		   if ( it_dia_semana != it_horario->dias_semana.end()
 				&& it_horario->horario_aula->getInicio() == horario_aula->getInicio() )
 		   {
-			   return (*it_horario);
+			   return ( *it_horario );
 		   }
 	   }
    }
@@ -289,7 +296,7 @@ Horario * SolucaoOperacional::getHorario(int id_professor_operacional, int dia_s
    return NULL;
 }
 
-Professor * SolucaoOperacional::getProfessorMatriz(int linha)
+Professor * SolucaoOperacional::getProfessorMatriz( int linha )
 {
    Professor * professor = NULL;
 
@@ -300,7 +307,7 @@ Professor * SolucaoOperacional::getProfessorMatriz(int linha)
       = mapProfessores.begin();
    for (; it_professor != mapProfessores.end(); it_professor++)
    {
-      if (it_professor->second->getIdOperacional() == linha)
+      if ( it_professor->second->getIdOperacional() == linha )
       {
          professor = it_professor->second;
          break;
@@ -320,11 +327,11 @@ std::vector< Aula * >::iterator SolucaoOperacional::getItHorariosProf(
 {
    if(dia < 1 || dia > 7 )
    {
-      throw (out_of_range("Dias validos [1,7] -> dom. a sab."));
+      throw ( out_of_range( "Dias validos [1,7] -> dom. a sab." ) );
    }
 
-   return ((matriz_aulas->at(professor.getIdOperacional())->begin()) +
-		   ( ((dia - 1) * total_horarios) + horario ) );
+   return ( (matriz_aulas->at(professor.getIdOperacional())->begin()) +
+		    ( ((dia - 1) * total_horarios) + horario ) );
 }
 
 int SolucaoOperacional::addProfessor(
@@ -334,19 +341,19 @@ int SolucaoOperacional::addProfessor(
 
    int id_operacional = (matriz_aulas->size() - 1);
 
-   professor.setId(-id_operacional);
-   professor.setIdOperacional(id_operacional);
+   professor.setId( -id_operacional );
+   professor.setIdOperacional( id_operacional );
 
-   if(mapProfessores.find(professor.getId()) != mapProfessores.end())
+   if ( mapProfessores.find( professor.getId() ) != mapProfessores.end() )
    {
-	  std::cerr << "SolucaoOperacional::addProfessor" << std::endl;
-      std::cerr << "Erro ao adicionar um professor virtual"
+	  std::cerr << "SolucaoOperacional::addProfessor"
+				<< "\nErro ao adicionar um professor virtual"
 				<< std::endl << std::endl;
+
       exit(1);
    }
 
-   mapProfessores[ professor.getId() ] = &(professor);
-
+   mapProfessores[ professor.getId() ] = &( professor );
    return id_operacional;
 }
 
@@ -365,7 +372,7 @@ int SolucaoOperacional::getTotalDias() const
 	return total_dias;
 }
 
-bool SolucaoOperacional::podeTrocarHorariosAulas(Aula & aX, Aula & aY) const
+bool SolucaoOperacional::podeTrocarHorariosAulas( Aula & aX, Aula & aY ) const
 {
    std::vector< std::pair< Professor *, Horario * > > novosHorariosAX;
    std::vector< std::pair< Professor *, Horario * > > novosHorariosAY;
@@ -373,7 +380,8 @@ bool SolucaoOperacional::podeTrocarHorariosAulas(Aula & aX, Aula & aY) const
    novosHorariosAX = aY.bloco_aula;
    novosHorariosAY = aX.bloco_aula;
 
-   return (!checkConflitoBlocoCurricular(aX, novosHorariosAX) && !checkConflitoBlocoCurricular(aY, novosHorariosAY));
+   return (    !checkConflitoBlocoCurricular( aX, novosHorariosAX )
+			&& !checkConflitoBlocoCurricular( aY, novosHorariosAY ) );
 }
 
 
@@ -381,67 +389,73 @@ bool SolucaoOperacional::checkConflitoBlocoCurricular(
    Aula & aula, std::vector< std::pair< Professor *, Horario * > > & novosHorariosAula) const
 {
    std::map<Aula *, GGroup<BlocoCurricular*,LessPtr<BlocoCurricular> > >::iterator
-      itAulaBlocosCurriculares = problem_data->aulaBlocosCurriculares.find(&aula);
+      itAulaBlocosCurriculares = problem_data->aulaBlocosCurriculares.find( &aula );
 
-   if(itAulaBlocosCurriculares == problem_data->aulaBlocosCurriculares.end())
+   if ( itAulaBlocosCurriculares == problem_data->aulaBlocosCurriculares.end() )
    {
-      std::cout << "Na funcao <SolucaoOperacional::checkConflitoBlocoCurricular> alguma aula nao foi encontrada." << std::endl;
+      std::cout << "Na funcao <SolucaoOperacional::checkConflitoBlocoCurricular>"
+			    << "alguma aula nao foi encontrada." << std::endl;
+
       exit(1);
    }
 
    // Para cada Bloco Curricular ao qual a aula pertence
-   ITERA_GGROUP_LESSPTR(itBlocoCurric,itAulaBlocosCurriculares->second,BlocoCurricular)
+   ITERA_GGROUP_LESSPTR( itBlocoCurric, itAulaBlocosCurriculares->second, BlocoCurricular )
    {
-      //std::map<BlocoCurricular*,GGroup<Aula*,LessPtr<Aula> > >::iterator
-      //   itBlocoCurricularAulas = problem_data->blocoCurricularAulas.find(
-      //   *itBlocoCurric);
+      std::map< BlocoCurricular *, std::map< int /*dia*/, GGroup< Aula *, LessPtr< Aula > > > >::iterator
+         itBlocoCurricularAulas = problem_data->blocoCurricularDiaAulas.find( *itBlocoCurric );
 
-      std::map<BlocoCurricular*,std::map<int/*dia*/,GGroup<Aula*,LessPtr<Aula> > > >::iterator
-         itBlocoCurricularAulas = problem_data->blocoCurricularDiaAulas.find(
-         *itBlocoCurric);
-
-      if(itBlocoCurricularAulas == problem_data->blocoCurricularDiaAulas.end())
+      if ( itBlocoCurricularAulas == problem_data->blocoCurricularDiaAulas.end() )
       {
-         std::cout << "Na funcao <SolucaoOperacional::checkConflitoBlocoCurricular> algum bloco nao foi encontrado." << std::endl;
+         std::cout << "Na funcao <SolucaoOperacional::checkConflitoBlocoCurricular>"
+				   << "algum bloco nao foi encontrado." << std::endl;
+
          exit(1);
       }
 
-      std::map<int/*dia*/,GGroup<Aula*,LessPtr<Aula> > >::iterator 
-         itBlocoCurricularDiaAulas = itBlocoCurricularAulas->second.find(aula.getDiaSemana());
+      std::map< int /*dia*/, GGroup< Aula *, LessPtr< Aula > > >::iterator 
+         itBlocoCurricularDiaAulas = itBlocoCurricularAulas->second.find( aula.getDiaSemana() );
 
-      if(itBlocoCurricularDiaAulas == itBlocoCurricularAulas->second.end())
+      if ( itBlocoCurricularDiaAulas == itBlocoCurricularAulas->second.end() )
       {
-         std::cout << "Na funcao <SolucaoOperacional::checkConflitoBlocoCurricular> algum dia nao foi encontrado." << std::endl;
+         std::cout << "Na funcao <SolucaoOperacional::checkConflitoBlocoCurricular>"
+				   << "algum dia nao foi encontrado." << std::endl;
+
          exit(1);
       }
 
-      /* Para todas as aulas de um dado dia do bloco curricular em questão, salvo a aula corrente, verificar
-      se há conflito de horário. */
-      //ITERA_GGROUP_LESSPTR(itAulasBloco,itBlocoCurricularAulas->second,Aula)
-      ITERA_GGROUP_LESSPTR(itAulasBloco,itBlocoCurricularDiaAulas->second,Aula)
+      // Para todas as aulas de um dado dia do bloco curricular
+	  // em questão, salvo a aula corrente, verificar se há conflito de horário.
+      ITERA_GGROUP_LESSPTR( itAulasBloco, itBlocoCurricularDiaAulas->second, Aula )
       {
-         /* Somente se não for igual a Aula em questão E se a aula selecionada para análise
-         já estiver alocada a algum horário. A segunda condição é necessária para a criação de
-         uma solução inicial. */
-         if(**itAulasBloco != aula && !(itAulasBloco->bloco_aula.empty()))
+         // Somente se não for igual a Aula em questão E se
+		 // a aula selecionada para análise já estiver alocada
+		 // a algum horário. A segunda condição é necessária
+		 // para a criação de uma solução inicial.
+         if ( **itAulasBloco != aula && !( itAulasBloco->bloco_aula.empty() ) )
          {
             std::vector< std::pair< Professor *, Horario * > >::iterator 
                itNovosHorariosAula = novosHorariosAula.begin();
 
-            /* Para cada novo horário da aula em questão, checo se ele conflita com 
-            algum horário da aula selecionada do bloco curricular. */
-            for(; itNovosHorariosAula != novosHorariosAula.end(); ++itNovosHorariosAula)
+            // Para cada novo horário da aula em questão,
+			// checo se ele conflita com  algum horário da
+			// aula selecionada do bloco curricular.
+            for (; itNovosHorariosAula != novosHorariosAula.end();
+				   ++itNovosHorariosAula )
             {
                std::vector< std::pair< Professor *, Horario * > >::iterator 
                   itHorariosAula = itAulasBloco->bloco_aula.begin();
 
-               /* Para cada horário da da aula selecionada do bloco curricular */
-               for(; itHorariosAula != itAulasBloco->bloco_aula.end(); ++itHorariosAula)
+               // Para cada horário da da aula selecionada do bloco curricular
+               for(; itHorariosAula != itAulasBloco->bloco_aula.end();
+					 ++itHorariosAula)
                {
                   // Se conflitar, o movimento é inviável.
-                  if( (*(itNovosHorariosAula->first) == *(itHorariosAula->first)) &&
-                     (*(itNovosHorariosAula->second) == *(itHorariosAula->second)) )
+                  if(    (*(itNovosHorariosAula->first) == *(itHorariosAula->first))
+					  && (*(itNovosHorariosAula->second) == *(itHorariosAula->second)) )
+				  {
                      return true;
+				  }
                }
             }
          }

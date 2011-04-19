@@ -377,8 +377,8 @@ bool SolucaoInicialOperacional::alocaAulaSeq( SolucaoOperacional * solucao, vect
    HorarioAula * horario_aula = NULL;
    Horario * horario = NULL;
 
-   for(int h = 0; h < totalHorariosConsiderados;
-      ++h, ++itHorariosProf)
+   for ( int h = 0; h < totalHorariosConsiderados;
+         ++h, ++itHorariosProf)
    {
       // Se a aula não for 'NULL'
       if ( *itHorariosProf )
@@ -387,8 +387,6 @@ bool SolucaoInicialOperacional::alocaAulaSeq( SolucaoOperacional * solucao, vect
          totalCredsAlocar = aula.getTotalCreditos();
          continue;
       }
-
-      //sequenciaDeHorariosLivres = true;
 
       if ( totalCredsAlocar == aula.getTotalCreditos() )
       {
@@ -399,8 +397,11 @@ bool SolucaoInicialOperacional::alocaAulaSeq( SolucaoOperacional * solucao, vect
       // para o dia em questão, basta alocá-la.
       if ( aula.getTotalCreditos() == 1 )
       {
-         coluna_matriz = std::distance(
-            solucao->getMatrizAulas()->at( idOperacionalProf )->begin(), itHorariosProf );
+	     // Procura a coluna da aula para a
+		 // qual o iterador destá apontando
+		 std::vector< Aula * >::iterator it_aula
+			 = solucao->getMatrizAulas()->at( idOperacionalProf )->begin();
+         coluna_matriz = (std::distance(it_aula, itHorariosProf) + 1);
 
          // Recupera o objeto 'HorarioAula' do horário atual
          id_horario_aula = ( coluna_matriz % total_horarios );
@@ -410,29 +411,27 @@ bool SolucaoInicialOperacional::alocaAulaSeq( SolucaoOperacional * solucao, vect
 			 = professor.horarios.begin();
          for (; it_horario != professor.horarios.end(); it_horario++)
          {
-            horario = *(it_horario);
+            horario = *( it_horario );
             if ( horario->dias_semana.find( dia_semana ) != horario->dias_semana.end()
 					&& horario->horario_aula->getId() == horario_aula->getId() )
             {
-               std::vector< std::pair< Professor *, Horario * > > novoHorarioAula 
-                  (1,std::make_pair( &(professor), horario ));
+			   // Cria o novo par professor/horario que será inserido
+               std::vector< std::pair< Professor *, Horario * > > novoHorarioAula; 
+			   novoHorarioAula.push_back( std::make_pair( &(professor), horario ) );
 
                bool haConflito = solucao->checkConflitoBlocoCurricular( aula, novoHorarioAula );
-
                if ( !haConflito )
                {
                   aula.bloco_aula = novoHorarioAula;
-                  *itHorariosProf = &( aula );
-
                   if ( *itHorariosProf )
                   {
                      std::cout << "<I> Sobreposicao de CREDITO" << std::endl;
-                     getchar();
                      exit(1);
                   }
                   else
 				  {
-                     std::cout << "OK" << std::endl;
+					  sequenciaDeHorariosLivres = false;
+                     (*itHorariosProf) = &( aula );
 				  }
 
                   alocou = true;
@@ -465,41 +464,39 @@ bool SolucaoInicialOperacional::alocaAulaSeq( SolucaoOperacional * solucao, vect
    // Se encontrei uma sequência de horários livres, aloco.
    if ( sequenciaDeHorariosLivres )
    {
-      // Marca a posição do vector de aulas do
-      // professor onde serão alocadas as aulas
-      coluna_matriz = std::distance(
-         solucao->getMatrizAulas()->at( idOperacionalProf )->begin(), itHorariosProf );
+	  // Procura a coluna da aula para a
+	  // qual o iterador destá apontando
+	  std::vector< Aula * >::iterator it_aula
+		  = solucao->getMatrizAulas()->at( idOperacionalProf )->begin();
+      coluna_matriz = (std::distance(it_aula, itHorariosProf) + 1);
 
       id_horario_aula = ( coluna_matriz % total_horarios );
       std::vector< std::pair< Professor *, Horario * > > novosHorariosAula;
 
-      bool encontrou = false;
+	  int total_creditos_aula = aula.getTotalCreditos();
+
       GGroup< Horario * >::iterator it_horario
          = professor.horarios.begin();
-      for (int i = 0; i < aula.getTotalCreditos(); i++)
+	  for ( int i = 0; i < total_creditos_aula; i++ )
       {
-         encontrou = false;
-
          // Recupera o objeto 'HorarioAula' do horário atual
          id_horario_aula += i;
          id_horario_aula %= ( total_horarios );
          horario_aula = problemData.horarios_aula_ordenados[ id_horario_aula ];
 
-         for (; it_horario != professor.horarios.end() && !encontrou;
-            it_horario++)
+         for (; it_horario != professor.horarios.end(); it_horario++)
          {
             horario = *(it_horario);
-            if (horario->dias_semana.find(dia_semana) != horario->dias_semana.end()
-               && horario->horario_aula->getId() == horario_aula->getId())
+            if ( horario->dias_semana.find( dia_semana ) != horario->dias_semana.end()
+					&& horario->horario_aula->getInicio() == horario_aula->getInicio() )
             {
-               encontrou = true;
-               novosHorariosAula.push_back(std::make_pair( &(professor), horario ) );
+               novosHorariosAula.push_back( std::make_pair( &(professor), horario ) );
+			   break;
             }
          }
       }
 
       bool haConflito = solucao->checkConflitoBlocoCurricular( aula, novosHorariosAula );
-
       if ( !haConflito )
       {
          for ( int h = 0; h < aula.getTotalCreditos();
@@ -508,16 +505,13 @@ bool SolucaoInicialOperacional::alocaAulaSeq( SolucaoOperacional * solucao, vect
             if ( *itInicioHorariosAlocar )
             {
                std::cout << "<II> Sobreposicao de CREDITO" << std::endl;
-               getchar();
                exit(1);
             }
             else
 			{
-               std::cout << "OK" << std::endl;
+               // Alocação da aula
+			   (*itInicioHorariosAlocar) = &(aula);
 			}
-
-            // Alocação da aula
-            (*itInicioHorariosAlocar) = &(aula);
          }
 
          aula.bloco_aula = novosHorariosAula;
