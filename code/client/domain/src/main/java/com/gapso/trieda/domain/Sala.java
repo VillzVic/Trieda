@@ -359,6 +359,14 @@ public class Sala implements Serializable, Comparable<Sala> {
         return q.setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
 
+	@SuppressWarnings("unchecked")
+	public List<HorarioDisponivelCenario> getHorarios(SemanaLetiva semanaLetiva) {
+		Query q = entityManager().createQuery("SELECT o FROM HorarioDisponivelCenario o, IN (o.salas) c WHERE c = :sala AND o.horarioAula.semanaLetiva = :semanaLetiva");
+		q.setParameter("sala", this);
+		q.setParameter("semanaLetiva", semanaLetiva);
+		return q.getResultList();
+	}
+	
 	public TipoSala getTipoSala() {
         return this.tipoSala;
     }

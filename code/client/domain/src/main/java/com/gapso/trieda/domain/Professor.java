@@ -369,5 +369,13 @@ public class Professor implements Serializable {
         return entityManager().createQuery("SELECT o FROM Professor o").setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
 
+	@SuppressWarnings("unchecked")
+	public List<HorarioDisponivelCenario> getHorarios(SemanaLetiva semanaLetiva) {
+		Query q = entityManager().createQuery("SELECT o FROM HorarioDisponivelCenario o, IN (o.professores) c WHERE c = :professor AND o.horarioAula.semanaLetiva = :semanaLetiva");
+		q.setParameter("professor", this);
+		q.setParameter("semanaLetiva", semanaLetiva);
+		return q.getResultList();
+	}
+	
 	private static final long serialVersionUID = 265242535107921721L;
 }

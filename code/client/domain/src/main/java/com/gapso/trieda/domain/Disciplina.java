@@ -390,6 +390,14 @@ public class Disciplina implements Serializable, Comparable<Disciplina> {
     	return ((Number) q.getSingleResult()).intValue() > 0;
     }
     
+	@SuppressWarnings("unchecked")
+	public List<HorarioDisponivelCenario> getHorarios(SemanaLetiva semanaLetiva) {
+		Query q = entityManager().createQuery("SELECT o FROM HorarioDisponivelCenario o, IN (o.disciplinas) c WHERE c = :disciplina AND o.horarioAula.semanaLetiva = :semanaLetiva");
+		q.setParameter("disciplina", this);
+		q.setParameter("semanaLetiva", semanaLetiva);
+		return q.getResultList();
+	}
+    
 	private static final long serialVersionUID = 7980821696468062987L;
 
 	public Cenario getCenario() {

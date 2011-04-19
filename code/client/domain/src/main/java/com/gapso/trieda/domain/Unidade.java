@@ -239,6 +239,14 @@ public class Unidade implements Serializable {
         return q.setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
     
+	@SuppressWarnings("unchecked")
+	public List<HorarioDisponivelCenario> getHorarios(SemanaLetiva semanaLetiva) {
+		Query q = entityManager().createQuery("SELECT o FROM HorarioDisponivelCenario o, IN (o.unidades) u WHERE u = :unidade AND o.horarioAula.semanaLetiva = :semanaLetiva");
+		q.setParameter("unidade", this);
+		q.setParameter("semanaLetiva", semanaLetiva);
+		return q.getResultList();
+	}
+    
     private static final long serialVersionUID = -5763084706316974453L;
 
     public Campus getCampus() {

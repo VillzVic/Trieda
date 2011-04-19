@@ -430,6 +430,14 @@ public class Campus implements Serializable, Comparable<Campus> {
         return q.setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
     
+	@SuppressWarnings("unchecked")
+	public List<HorarioDisponivelCenario> getHorarios(SemanaLetiva semanaLetiva) {
+		Query q = entityManager().createQuery("SELECT o FROM HorarioDisponivelCenario o, IN (o.campi) c WHERE c = :campus AND o.horarioAula.semanaLetiva = :semanaLetiva");
+		q.setParameter("campus", this);
+		q.setParameter("semanaLetiva", semanaLetiva);
+		return q.getResultList();
+	}
+    
 	public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("Id: ").append(getId()).append(", ");
