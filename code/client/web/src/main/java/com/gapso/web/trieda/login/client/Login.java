@@ -55,9 +55,11 @@ public class Login implements EntryPoint {
 				if(usuario == null) {
 					loadLogin();
 				} else if(usuario.isAdministrador()) {
-					Window.open("../trieda/?gwt.codesvr=127.0.0.1:9997", "_self", ""); 
+					 Window.open("../trieda/?gwt.codesvr=127.0.0.1:9997", "_self", ""); 
+//					Window.open("../trieda/", "_self", ""); 
 				} else if(usuario.isProfessor()) {
-					Window.open("../professor/?gwt.codesvr=127.0.0.1:9997", "_self", ""); 
+					 Window.open("../professor/?gwt.codesvr=127.0.0.1:9997", "_self", ""); 
+//					Window.open("../professor/", "_self", ""); 
 				}
 			}
 			
