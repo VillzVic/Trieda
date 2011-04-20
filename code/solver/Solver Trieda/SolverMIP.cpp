@@ -1761,12 +1761,9 @@ int SolverMIP::solveOperacional()
    }
    // -----------------------------------------------------------------------------------------
 
-   // solucaoOperacional.toString();
-   solucaoOperacional.toString2();
+   solucaoOperacional.toString();
 
-   Avaliador avaliador;
-   double bestFO = avaliador.avaliaSolucao(solucaoOperacional);
-   std::cout << "Avaliacao da Sol. Ini: " << bestFO << std::endl;
+   solucaoOperacional.toString2();
 
    std::cout << "\nTODO -- Implementar <SolverMIP::solveOperacional()>" << std::endl;
 
@@ -2136,8 +2133,6 @@ int SolverMIP::cria_variavel_creditos(void)
             {
                for(int turma = 0; turma < itDisc->getNumTurmas(); turma++)
                {
-                  int idDisc = itDisc->getId();
-
                   GGroup<int/*Dias*/>::iterator itDiscSala_Dias =
                      //problemData->discSala_Dias[std::make_pair<int,int>
                      problemData->disc_Conjutno_Salas__Dias[std::make_pair<int,int>
@@ -3136,8 +3131,6 @@ int SolverMIP::cria_variavel_de_folga_dist_cred_dia_superior(void)
                            v.setDisciplina(*it_disc);
                            v.setDia(*itDiasLetDisc);
                            v.setSubCjtSala(*itCjtSala);
-
-                           int idDisc = it_disc->getId();
 
                            if (vHash.find(v) == vHash.end())
                            {
