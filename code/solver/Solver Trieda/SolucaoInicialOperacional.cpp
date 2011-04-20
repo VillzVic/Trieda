@@ -575,56 +575,60 @@ void SolucaoInicialOperacional::executaFuncaoPrioridade()
          //Estamos adimitindo aqui que a inst. possui apenas um CAMPUS.
          //Não funcionará para multicampus.
 
-         //TODO : ADAPTAR TODO O COD PARA CONTEMPLAR MULTICAMPUS.
-
          itProfessor->setCustoDispProf(itCampus->horarios.size());
 
          ITERA_GGROUP(itMagisterio, itProfessor->magisterio, Magisterio)
          {
             Disciplina * discMinistradaProf = itMagisterio->disciplina;
 
-            // TODO : Teria que ser para toda aula do campus em questão.
             ITERA_GGROUP(itAula, problemData.aulas, Aula)
             {
-               Disciplina * discAula = itAula->getDisciplina();
-
-               if(discMinistradaProf == discAula)
+               /* Como todoas as ofertas de uma aula devem ser para o mesmo campus, podemos 
+               comparar a primeira oferta. Desse modo, estamos tratando apenas das aulas de um
+               dado campus. */
+               if(itAula->ofertas.begin()->campus == *itCampus)
                {
-                  // Para o primeiro custo da função de prioridade, tenho que testar agora se
-                  // existe fixação desse professor para a disciplina da aula em questão.
+                  Disciplina * discAula = itAula->getDisciplina();
 
-                  std::pair< Professor *, Disciplina * > chave (*itProfessor, discMinistradaProf);
-
-                  std::map< std::pair< Professor *, Disciplina * >, GGroup< Fixacao * > >::iterator
-                     itFixacoesProfDisc = problemData.fixacoesProfDisc.find(chave);
-
-                  // Somente se existir, pelo menos, uma fixação de um professor a uma disciplina.
-                  if(itFixacoesProfDisc != problemData.fixacoesProfDisc.end())
+                  if(discMinistradaProf == discAula)
                   {
-                     ITERA_GGROUP(itFixacao, itFixacoesProfDisc->second, Fixacao)
+                     // Para o primeiro custo da função de prioridade, tenho que testar agora se
+                     // existe fixação desse professor para a disciplina da aula em questão.
+
+                     std::pair< Professor *, Disciplina * > chave (*itProfessor, discMinistradaProf);
+
+                     std::map< std::pair< Professor *, Disciplina * >, GGroup< Fixacao * > >::iterator
+                        itFixacoesProfDisc = problemData.fixacoesProfDisc.find(chave);
+
+                     // Somente se existir, pelo menos, uma fixação de um professor a uma disciplina.
+                     if(itFixacoesProfDisc != problemData.fixacoesProfDisc.end())
                      {
-                        calculaCustoFixProf(**itProfessor, **itAula,0);
+                        ITERA_GGROUP(itFixacao, itFixacoesProfDisc->second, Fixacao)
+                        {
+                           calculaCustoFixProf(**itProfessor, **itAula,0);
+                        }
+                     }
+
+                     // Para o segundo custo considerado para o cálculo da função de prioridade, tenho
+                     // que somar a nota (preferência) dada pelo professor para a disciplina em questão.
+
+                     // Dado que a maior preferência recebe nota 1 e a menor recebe nota 10, basta subtrair a
+                     // nota (preferência) por 11 e, em seguida, multiplicar o resultado por -1. Assim, somaremos
+                     // um valor correto ao custo, já que o melhor custo total possuirá o maior valor atribuido.
+                     calculaCustoFixProf(**itProfessor, **itAula, 1, itMagisterio->getPreferencia());
+
+                     pair<int, int> chaveGamb (itProfessor->getId(), discMinistradaProf->getId());
+
+                     // Se o professor e a disciplina da aula em questão se relacionarem:
+                     if(problemData.prof_Disc_Dias.find(chaveGamb) != problemData.prof_Disc_Dias.end())
+                     {
+                        int custo = problemData.prof_Disc_Dias[chaveGamb].size();
+                        calculaCustoFixProf(**itProfessor, **itAula, 3, custo, itCampus->horarios.size());
                      }
                   }
-
-                  // Para o segundo custo considerado para o cálculo da função de prioridade, tenho
-                  // que somar a nota (preferência) dada pelo professor para a disciplina em questão.
-
-                  // Dado que a maior preferência recebe nota 1 e a menor recebe nota 10, basta subtrair a
-                  // nota (preferência) por 11 e, em seguida, multiplicar o resultado por -1. Assim, somaremos
-                  // um valor correto ao custo, já que o melhor custo total possuirá o maior valor atribuido.
-                  calculaCustoFixProf(**itProfessor, **itAula, 1, itMagisterio->getPreferencia());
-
-                  pair<int, int> chaveGamb (itProfessor->getId(), discMinistradaProf->getId());
-
-                  // Se o professor e a disciplina da aula em questão se relacionarem:
-                  if(problemData.prof_Disc_Dias.find(chaveGamb) != problemData.prof_Disc_Dias.end())
-                  {
-                     int custo = problemData.prof_Disc_Dias[chaveGamb].size();
-                     calculaCustoFixProf(**itProfessor, **itAula, 3, custo, itCampus->horarios.size());
-                  }
                }
-            }
+
+         }
          }
       }
    }
