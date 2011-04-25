@@ -15,6 +15,7 @@ import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
 import com.extjs.gxt.ui.client.widget.layout.FitLayout;
 import com.gapso.web.trieda.main.client.mvp.presenter.AppPresenter;
 import com.gapso.web.trieda.shared.mvp.view.MyComposite;
+import com.gapso.web.trieda.shared.util.TriedaUtil;
 import com.gapso.web.trieda.shared.util.resources.Resources;
 import com.gapso.web.trieda.shared.util.view.CenarioPanel;
 import com.gapso.web.trieda.shared.util.view.GTab;
@@ -72,7 +73,7 @@ public class AppView extends MyComposite implements AppPresenter.Display {
 		b.addSelectionListener(new SelectionListener<ButtonEvent>() {
 			@Override
 			public void componentSelected(ButtonEvent ce) {
-				 Window.open("../resources/j_spring_security_logout?gwt.codesvr=127.0.0.1:9997", "_self", "");
+				 Window.open("../resources/j_spring_security_logout"+TriedaUtil.paramsDebug(), "_self", "");
 //				Window.open("../resources/j_spring_security_logout", "_self", "");
 			}
 		});

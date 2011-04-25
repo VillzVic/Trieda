@@ -20,6 +20,7 @@ import com.extjs.gxt.ui.client.widget.layout.FormLayout;
 import com.gapso.web.trieda.shared.dtos.UsuarioDTO;
 import com.gapso.web.trieda.shared.services.Services;
 import com.gapso.web.trieda.shared.services.UsuariosServiceAsync;
+import com.gapso.web.trieda.shared.util.TriedaUtil;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.Window;
@@ -55,11 +56,9 @@ public class Login implements EntryPoint {
 				if(usuario == null) {
 					loadLogin();
 				} else if(usuario.isAdministrador()) {
-					 Window.open("../trieda/?gwt.codesvr=127.0.0.1:9997", "_self", ""); 
-//					Window.open("../trieda/", "_self", ""); 
+					 Window.open("../trieda/"+TriedaUtil.paramsDebug(), "_self", ""); 
 				} else if(usuario.isProfessor()) {
-					 Window.open("../professor/?gwt.codesvr=127.0.0.1:9997", "_self", ""); 
-//					Window.open("../professor/", "_self", ""); 
+					 Window.open("../professor/"+TriedaUtil.paramsDebug(), "_self", ""); 
 				}
 			}
 			

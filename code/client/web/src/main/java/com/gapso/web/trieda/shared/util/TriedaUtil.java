@@ -1,5 +1,7 @@
 package com.gapso.web.trieda.shared.util;
 
+import com.google.gwt.user.client.Window.Location;
+
 
 public class TriedaUtil {
 
@@ -35,6 +37,16 @@ public class TriedaUtil {
 			value = value.replace(",",".");
 		}
 		return value;
+	}
+	
+	static boolean isBlank(String value) {
+		return value == null || value == "";
+	}
+	
+	static public String paramsDebug() {
+		String codesvr = Location.getParameter("gwt.codesvr");
+		if(isBlank(codesvr)) return "";
+		return "?gwt.codesvr="+codesvr;
 	}
 	
 }
