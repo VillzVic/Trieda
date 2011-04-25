@@ -74,7 +74,6 @@ public class AppView extends MyComposite implements AppPresenter.Display {
 			@Override
 			public void componentSelected(ButtonEvent ce) {
 				 Window.open("../resources/j_spring_security_logout"+TriedaUtil.paramsDebug(), "_self", "");
-//				Window.open("../resources/j_spring_security_logout", "_self", "");
 			}
 		});
 		return b;
