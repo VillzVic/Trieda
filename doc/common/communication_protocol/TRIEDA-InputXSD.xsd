@@ -1,5 +1,5 @@
-<?xml version="1.0" encoding="utf-8" ?>
-<!--Created with Liquid XML Studio 6.1.18.0 - FREE Community Edition (http://www.liquid-technologies.com)-->
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Created with Liquid XML Studio 1.0.8.0 (http://www.liquid-technologies.com) -->
 <xs:schema elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
   <xs:element name="TriedaInput">
     <xs:complexType>
@@ -687,6 +687,8 @@
           <xs:documentation>lista das matrizes curriculares do curso em questão</xs:documentation>
         </xs:annotation>
       </xs:element>
+      <xs:element name="minTempoIntegral" type="xs:double" />
+      <xs:element name="minTempoIntegralParcial" type="xs:double" />
     </xs:sequence>
   </xs:complexType>
   <xs:complexType name="ItemPercentualMinimo">
