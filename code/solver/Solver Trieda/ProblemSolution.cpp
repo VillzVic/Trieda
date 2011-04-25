@@ -34,11 +34,13 @@ std::ostream & operator << ( std::ostream & out, ProblemSolution & solution )
    // TATICO
    if ( solution.solucao_operacional == NULL )
    {
-      out << "<?xml version=\"1.0\" encoding=\"ISO-8859-1\" standalone=\"yes\"?>" << endl;
-      out << "<TriedaOutput>" << endl;
+	   out << "<?xml version=\"1.0\" encoding=\"ISO-8859-1\" standalone=\"yes\"?>"
+		   << std::endl;
+
+      out << "<TriedaOutput>" << std::endl;
 
 	  //-----------------------------------------------------------------------
-      out << "<atendimentos>" << endl;
+      out << "<atendimentos>" << std::endl;
       GGroup< AtendimentoCampus * >::GGroupIterator it_campus
 		  = solution.atendimento_campus->begin();
       for(; it_campus != solution.atendimento_campus->end();
@@ -46,7 +48,7 @@ std::ostream & operator << ( std::ostream & out, ProblemSolution & solution )
       {
          out << ( **it_campus );
       }
-      out << "</atendimentos>" << endl;
+      out << "</atendimentos>" << std::endl;
 	  //-----------------------------------------------------------------------
 
 	  //-----------------------------------------------------------------------
@@ -54,11 +56,11 @@ std::ostream & operator << ( std::ostream & out, ProblemSolution & solution )
       out << "<restricoesVioladas>\n";
 	  RestricaoVioladaGroup::iterator it
 		  = solution.getFolgas()->begin();
-      for (; it != solution.getFolgas()->end();  ++it)
+      for (; it != solution.getFolgas()->end(); ++it)
 	  {
          out << ( **it );
 	  }
-      out << "</restricoesVioladas>\n";
+      out << "</restricoesVioladas>" << std::endl;
 	  //-----------------------------------------------------------------------
 
 	  //-----------------------------------------------------------------------
@@ -66,30 +68,33 @@ std::ostream & operator << ( std::ostream & out, ProblemSolution & solution )
       out << ( *ErrorHandler::getInstance() );
 	  //-----------------------------------------------------------------------
 
-      out << "</TriedaOutput>" << endl;
+      out << "</TriedaOutput>" << std::endl;
    }
    // OPERACIONAL
    else
    {
-      out << "<?xml version=\"1.0\" encoding=\"ISO-8859-1\" standalone=\"yes\"?>" << endl;
-      out << "<TriedaOutput>" << endl;
+      out << "<?xml version=\"1.0\" encoding=\"ISO-8859-1\" standalone=\"yes\"?>"
+		  << std::endl;
+
+      out << "<TriedaOutput>" << std::endl;
 
 	  //-----------------------------------------------------------------------
-      out << "<atendimentos>" << endl;
+      out << "<atendimentos>" << std::endl;
 	  if ( solution.atendimento_campus != NULL )
 	  {
 		  GGroup< AtendimentoCampus * >::GGroupIterator it_campus
 			  = solution.atendimento_campus->begin();
-		  for(; it_campus != solution.atendimento_campus->end(); it_campus++)
+		  for(; it_campus != solution.atendimento_campus->end();
+			    it_campus++ )
 		  {
 			 out << ( **it_campus );
 		  }
-		  out << "</atendimentos>" << endl;
+		  out << "</atendimentos>" << std::endl;
 	  }
 	  //-----------------------------------------------------------------------
 
 	  //-----------------------------------------------------------------------
-      out << "<professoresVirtuais>" << endl;
+      out << "<professoresVirtuais>" << std::endl;
 	  if ( solution.professores_virtuais != NULL )
 	  {
 		  GGroup< ProfessorVirtualOutput * >::GGroupIterator it_professor_virtual
@@ -99,11 +104,11 @@ std::ostream & operator << ( std::ostream & out, ProblemSolution & solution )
 		  {
 			 out << ( **it_professor_virtual );
 		  }
-		  out << "</professoresVirtuais>" << endl;
+		  out << "</professoresVirtuais>" << std::endl;
 	  }
 	  //-----------------------------------------------------------------------
 
-	  out << "</TriedaOutput>" << endl;
+	  out << "</TriedaOutput>" << std::endl;
    }
 
    return out;

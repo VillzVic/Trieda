@@ -56,10 +56,12 @@ public:
    ParametrosPlanejamento * parametros;
    GGroup< Fixacao * > fixacoes;
 
-   vector< HorarioAula * > horarios_aula_ordenados;
+   std::vector< HorarioAula * > horarios_aula_ordenados;
 
    GGroup< AtendimentoCampusSolucao * > * atendimentosTatico;
    //--------------------
+
+   std::vector< Professor * > professores_virtuais;
 
    GGroup< BlocoCurricular * > blocos;
 
@@ -69,7 +71,7 @@ public:
    // Dado um par 'Campus' e 'Curso', obtemos
    // todas as 'Demandas' relacionadas a esse par
    std::map< std::pair< Campus *, Curso * >,
-	   GGroup< Demanda *, LessPtr< Demanda > > > map_campus_curso_demanda;
+			 GGroup< Demanda *, LessPtr< Demanda > > > map_campus_curso_demanda;
 
    int totalSalas;
    int totalTurmas;

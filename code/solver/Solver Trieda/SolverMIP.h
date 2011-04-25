@@ -1,33 +1,26 @@
-#ifndef SOLVERMIP_H
-#define SOLVERMIP_H
+#ifndef _SOLVER_MIP_H_
+#define _SOLVER_MIP_H_
+
+#include <iostream>
+#include <algorithm>
+#include <stdio.h>
+#include <stdlib.h>
 
 #include "Solver.h"
 #include "Variable.h"
 #include "Constraint.h"
 #include "opt_lp.h"
 #include "input.h"
-
-#include <iostream>
-#include <algorithm>
-
-#include <stdio.h>
-#include <stdlib.h>
-
 #include "opt_gurobi.h"
 #include "ProblemData.h"
 #include "ProblemSolution.h"
 #include "SolutionLoader.h"
 #include "ErrorHandler.h"
-
 #include "ProblemDataLoader.h"
-
 #include "SolucaoOperacional.h"
 #include "SolucaoInicialOperacional.h"
-
 #include "Avaliador.h"
-
 #include "NSSwapEqBlocks.h"
-
 #include "TabuSearch.h"
 
 #define PRINT_cria_variaveis
@@ -47,7 +40,7 @@ public:
    * Default Constructor.
    * @param aProblemData The problem's input data.
    */
-   SolverMIP(ProblemData *, ProblemSolution *, ProblemDataLoader *);
+   SolverMIP( ProblemData *, ProblemSolution *, ProblemDataLoader * );
 
    /** Destructor. */
    ~SolverMIP();
@@ -62,7 +55,7 @@ public:
    * Processes the variable values and populates the output class.
    * @param ps A reference to the class to be populated.
    */
-   void getSolution(ProblemSolution *ps);
+   void getSolution( ProblemSolution * ps );
 
 private:
 
@@ -72,7 +65,8 @@ private:
 
    /* Estrutura responsável por armazenar referências para todas variáveis
    do tipo V_ALUNOS que possuirem algum valor de atendimento maior que 0. */
-   typedef std::map<std::pair<int/*turma*/,Disciplina*>, vector<Variable*> > vars__A___i_d_o;
+   typedef std::map< std::pair< int /*turma*/, Disciplina * >,
+					 std::vector< Variable * > > vars__A___i_d_o;
 
    vars__X___i_d_u_tps_t vars_x;
 
@@ -83,7 +77,7 @@ private:
    ProblemDataLoader * problemDataLoader;
 
    /** The linear problem. */
-   OPT_LP *lp;
+   OPT_LP * lp;
 
    /** Hash which associates the column number with the Variable object. */
    VariableHash vHash;
@@ -92,24 +86,21 @@ private:
    ConstraintHash cHash;
 
    /** Stores the solution variables (non-zero). */
-   std::vector<Variable*> solVars;
+   std::vector< Variable * > solVars;
 
 
    /********************************************************************
    **                     VARIABLE CREATION                           **
    *********************************************************************/
 
-   /*
-   ToDo:
-   All methods of variable creation should be defined here
-   */
-
    double alpha, beta, gamma, delta, lambda, epsilon, rho, M, psi, tau;
 
    struct Ordena
    {
-      bool operator() (std::vector<int> xI, std::vector<int> xJ)
-      { return (xI.front() > xJ.front()); }
+      bool operator() ( std::vector< int > xI, std::vector< int > xJ )
+      {
+		  return (xI.front() > xJ.front());
+	  }
    } ordenaPorCreditos;
 
 public:

@@ -11,7 +11,7 @@
 
 #include "input.h"
 
-typedef vector< vector< Aula * > * > MatrizSolucao;
+typedef std::vector< std::vector< Aula * > * > MatrizSolucao;
 
 class SolucaoOperacional
 {
@@ -64,7 +64,7 @@ public:
 
    // Adiciona um novo professor à solução. O inteiro retornado
    // é referente à posição (linha) que o novo  professor ocupa na solução.
-   int addProfessor(Professor &, vector< Aula * > &);
+   int addProfessor(Professor &, std::vector< Aula * > &);
 
    // FUTURAMENTE, VAI SER NECESSARIO CRIAR UM METODO PARA REMOVER UM PROFESSOR.
 
@@ -78,10 +78,10 @@ public:
 
    // Verifica se as aula <aX> e <aY> podem
    // ter trocados os seus respectivos horários.
-   bool podeTrocarHorariosAulas(Aula & aX, Aula & aY) const;
+   bool podeTrocarHorariosAulas( Aula &, Aula & ) const;
 
    // Função auxiliar à função podeTrocarHorariosAulas
-   bool checkConflitoBlocoCurricular(Aula &, std::vector< std::pair< Professor *, Horario * > > &) const;
+   bool checkConflitoBlocoCurricular( Aula &, std::vector< std::pair< Professor *, Horario * > > & ) const;
 
 private:
    int total_dias;

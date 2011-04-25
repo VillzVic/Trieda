@@ -22,7 +22,7 @@ public:
 
 private:
 
-   bool alocaAulaSeq( SolucaoOperacional *, vector< Aula * >::iterator,
+   bool alocaAulaSeq( SolucaoOperacional *, std::vector< Aula * >::iterator,
 				      int, Professor &, Aula &);
 
    ProblemData & problemData;

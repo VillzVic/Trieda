@@ -33,7 +33,7 @@ void _signals();
 void _tprocesshandler( int );
 void writeOutput( ProblemSolution *, char *, char * );
 
-int main(int argc, char** argv)
+int main( int argc, char** argv )
 {
    srand( (unsigned int)(time(NULL)) );
 
@@ -62,7 +62,7 @@ int main(int argc, char** argv)
    {
       if ( argc == 2 && strcmp(argv[1], "-version") == 0 )
       {
-         printf("%s_%s\n", __DATE__, __TIME__);
+         printf( "%s_%s\n", __DATE__, __TIME__ );
 
          return 0;
       }

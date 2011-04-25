@@ -9,6 +9,7 @@
 #include "AtendimentoCampus.h"
 #include "RestricaoViolada.h"
 #include "ProfessorVirtualOutput.h"
+#include "Aula.h"
 
 // Stores output data
 class ProblemSolution

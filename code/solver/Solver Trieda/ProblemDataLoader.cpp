@@ -722,7 +722,7 @@ void ProblemDataLoader::combinacaoDivCreditos()
                }
                else
                {
-                  p = make_pair(vAux[j].first, vAux[j-1].second);
+				   p = std::make_pair( vAux[j].first, vAux[j-1].second );
                }
 
                vec.push_back(p);

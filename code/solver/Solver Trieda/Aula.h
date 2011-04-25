@@ -11,7 +11,7 @@
 class Aula
 {
 public:
-   Aula(bool _aulaVirtual = false);
+   Aula(bool = false);
    virtual ~Aula(void);
 
    // Ofertas que são atendidas por essa aula

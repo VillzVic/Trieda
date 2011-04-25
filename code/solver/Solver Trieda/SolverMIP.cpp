@@ -1394,7 +1394,7 @@ void SolverMIP::getSolutionTatico()
                                  ITERA_GGROUP(it_At_Dia, *(it_At_Sala->atendimentos_dias_semana),
                                     AtendimentoDiaSemana)
                                  {
-                                    if ( it_At_Dia->dia_semana == dia )
+                                    if ( it_At_Dia->getDiaSemana() == dia )
                                     {
                                        if ( it_At_Dia->atendimentos_tatico->size() == 0 )
                                        {
@@ -1418,26 +1418,26 @@ void SolverMIP::getSolutionTatico()
                                              if ( (*it_Vars_x)->getDisciplina()->getId() > 0
                                                 && (*it_Vars_x)->getDisciplina()->getCredTeoricos() > 0 )
                                              {
-                                                at_Tatico->qtde_creditos_teoricos = (int)( (*it_Vars_x)->getValue() );
+												 at_Tatico->setQtdCreditosTeoricos( (int)( (*it_Vars_x)->getValue() ) );
                                              }
                                              else
                                              {
-                                                at_Tatico->qtde_creditos_praticos = (int)( (*it_Vars_x)->getValue() );
+												 at_Tatico->setQtdCreditosPraticos( (int)( (*it_Vars_x)->getValue() ) );
                                              }
 
                                              AtendimentoOferta * at_Oferta = new AtendimentoOferta();
 
                                              stringstream str;
                                              str << (*it_Vars_a)->getOferta()->getId();
-                                             at_Oferta->oferta_curso_campi_id = str.str();
+                                             at_Oferta->setOfertaCursoCampiId( str.str() );
 
-                                             at_Oferta->disciplina_id = 
+                                             at_Oferta->setDisciplinaId(
                                                 ((*it_Vars_a)->getDisciplina()->getId() > 0 ? 
                                                 (*it_Vars_a)->getDisciplina()->getId() :
-                                             (-(*it_Vars_a)->getDisciplina()->getId()));
+                                                (-(*it_Vars_a)->getDisciplina()->getId())) );
 
-                                             at_Oferta->quantidade = (int)((*it_Vars_a)->getValue());
-                                             at_Oferta->turma = (*it_Vars_a)->getTurma();
+                                             at_Oferta->setQuantidade( (int)((*it_Vars_a)->getValue()) );
+                                             at_Oferta->setTurma( (*it_Vars_a)->getTurma() );
                                              at_Oferta->oferta = (*it_Vars_a)->getOferta();
                                              at_Tatico->atendimento_oferta = at_Oferta;
 
@@ -1456,7 +1456,7 @@ void SolverMIP::getSolutionTatico()
                                  {
                                     // Cadastrando o dia da semana
                                     AtendimentoDiaSemana * at_Dia_Semana = new AtendimentoDiaSemana();
-                                    at_Dia_Semana->dia_semana = (*it_Vars_x)->getDia();
+                                    at_Dia_Semana->setDiaSemana( (*it_Vars_x)->getDia() );
 
                                     // Para cada variavel a__i_d_o existem para a variavel x__i_d_u_s_t em questão.
                                     ITERA_VECTOR(it_Vars_a,
@@ -1469,26 +1469,26 @@ void SolverMIP::getSolutionTatico()
                                        if ( (*it_Vars_x)->getDisciplina()->getId() > 0
                                           && (*it_Vars_x)->getDisciplina()->getCredTeoricos() > 0 )
                                        {
-                                          at_Tatico->qtde_creditos_teoricos = (int)((*it_Vars_x)->getValue());
+										   at_Tatico->setQtdCreditosTeoricos( (int)((*it_Vars_x)->getValue()) );
                                        }
                                        else
                                        {
-                                          at_Tatico->qtde_creditos_praticos = (int)((*it_Vars_x)->getValue());
+										   at_Tatico->setQtdCreditosPraticos( (int)((*it_Vars_x)->getValue()) );
                                        }
 
                                        AtendimentoOferta * at_Oferta = new AtendimentoOferta();
 
                                        stringstream str;
                                        str << (*it_Vars_a)->getOferta()->getId();
-                                       at_Oferta->oferta_curso_campi_id = str.str();
+                                       at_Oferta->setOfertaCursoCampiId( str.str() );
 
-                                       at_Oferta->disciplina_id = 
+                                       at_Oferta->setDisciplinaId( 
                                           ((*it_Vars_a)->getDisciplina()->getId() > 0 ? 
                                           (*it_Vars_a)->getDisciplina()->getId() :
-                                       (-(*it_Vars_a)->getDisciplina()->getId()));
+                                          (-(*it_Vars_a)->getDisciplina()->getId())) );
 
-                                       at_Oferta->quantidade = (int)((*it_Vars_a)->getValue());
-                                       at_Oferta->turma = (*it_Vars_a)->getTurma();
+                                       at_Oferta->setQuantidade( (int)((*it_Vars_a)->getValue()) );
+                                       at_Oferta->setTurma( (*it_Vars_a)->getTurma() );
                                        at_Oferta->oferta = (*it_Vars_a)->getOferta();
                                        at_Tatico->atendimento_oferta = at_Oferta;
 
@@ -1512,12 +1512,12 @@ void SolverMIP::getSolutionTatico()
                            AtendimentoSala * at_Sala = new AtendimentoSala();
 
                            at_Sala->setId( (*it_Vars_x)->getSala()->getId() );
-                           at_Sala->sala_id = (*it_Vars_x)->getSala()->getCodigo();
+						   at_Sala->setSalaId( (*it_Vars_x)->getSala()->getCodigo() );
                            at_Sala->sala = (*it_Vars_x)->getSala();
 
                            // Cadastrando o dia da semana
                            AtendimentoDiaSemana * at_Dia_Semana = new AtendimentoDiaSemana();
-                           at_Dia_Semana->dia_semana = (*it_Vars_x)->getDia();
+                           at_Dia_Semana->setDiaSemana( (*it_Vars_x)->getDia() );
 
                            // Para cada variavel a__i_d_o existem para a variavel x__i_d_u_s_t em questão.
                            ITERA_VECTOR(it_Vars_a,
@@ -1530,26 +1530,26 @@ void SolverMIP::getSolutionTatico()
                               if ( (*it_Vars_x)->getDisciplina()->getId() > 0
                                  && (*it_Vars_x)->getDisciplina()->getCredTeoricos() > 0 )
                               {
-                                 at_Tatico->qtde_creditos_teoricos = (int)( (*it_Vars_x)->getValue() );
+								  at_Tatico->setQtdCreditosTeoricos( (int)( (*it_Vars_x)->getValue() ) );
                               }
                               else
                               {
-                                 at_Tatico->qtde_creditos_praticos = (int)( (*it_Vars_x)->getValue() );
+								  at_Tatico->setQtdCreditosPraticos( (int)( (*it_Vars_x)->getValue() ) );
                               }
 
                               AtendimentoOferta * at_Oferta = new AtendimentoOferta();
 
                               stringstream str;
                               str << (*it_Vars_a)->getOferta()->getId();
-                              at_Oferta->oferta_curso_campi_id = str.str();
+                              at_Oferta->setOfertaCursoCampiId( str.str() );
 
-                              at_Oferta->disciplina_id = 
+                              at_Oferta->setDisciplinaId( 
                                  ((*it_Vars_a)->getDisciplina()->getId() > 0 ? 
                                  (*it_Vars_a)->getDisciplina()->getId() :
-                              (-(*it_Vars_a)->getDisciplina()->getId()));
+                                 (-(*it_Vars_a)->getDisciplina()->getId())) );
 
-                              at_Oferta->quantidade = (int)( (*it_Vars_a)->getValue() );
-                              at_Oferta->turma = (*it_Vars_a)->getTurma();
+                              at_Oferta->setQuantidade( (int)( (*it_Vars_a)->getValue() ) );
+							  at_Oferta->setTurma( (*it_Vars_a)->getTurma() );
                               at_Oferta->oferta = (*it_Vars_a)->getOferta();
                               at_Tatico->atendimento_oferta = at_Oferta;
 
@@ -1573,52 +1573,52 @@ void SolverMIP::getSolutionTatico()
                   AtendimentoUnidade * at_Unidade = new AtendimentoUnidade();
 
                   at_Unidade->setId( (*it_Vars_x)->getUnidade()->getId() );
-                  at_Unidade->unidade_id = (*it_Vars_x)->getUnidade()->getCodigo();
+                  at_Unidade->setUnidadeId( (*it_Vars_x)->getUnidade()->getCodigo() );
                   at_Unidade->unidade = (*it_Vars_x)->getUnidade();
 
                   // Cadastrando a Sala
                   AtendimentoSala * at_Sala = new AtendimentoSala();
 
                   at_Sala->setId( (*it_Vars_x)->getSala()->getId() );
-                  at_Sala->sala_id = (*it_Vars_x)->getSala()->getCodigo();
+                  at_Sala->setSalaId( (*it_Vars_x)->getSala()->getCodigo() );
                   at_Sala->sala = (*it_Vars_x)->getSala();
 
                   // Cadastrando o dia da semana
                   AtendimentoDiaSemana * at_Dia_Semana = new AtendimentoDiaSemana();
 
-                  at_Dia_Semana->dia_semana = (*it_Vars_x)->getDia();
+                  at_Dia_Semana->setDiaSemana( (*it_Vars_x)->getDia() );
 
                   // Para cada variavel a__i_d_o existem para a variavel x__i_d_u_s_t em questão.
-                  ITERA_VECTOR(it_Vars_a,
+                  ITERA_VECTOR( it_Vars_a,
                      vars_a.find( std::make_pair( (*it_Vars_x)->getTurma(),
-                     (*it_Vars_x)->getDisciplina()))->second, Variable)
+                     (*it_Vars_x)->getDisciplina()))->second, Variable )
                   {
                      AtendimentoTatico * at_Tatico = new AtendimentoTatico();
 
                      // Verificando se a disicplina é de carater prático ou teórico.
-                     if((*it_Vars_x)->getDisciplina()->getId() > 0
-                        && (*it_Vars_x)->getDisciplina()->getCredTeoricos() > 0)
+                     if ( (*it_Vars_x)->getDisciplina()->getId() > 0
+                          && (*it_Vars_x)->getDisciplina()->getCredTeoricos() > 0 )
                      {
-                        at_Tatico->qtde_creditos_teoricos = (int)( (*it_Vars_x)->getValue() );
+						 at_Tatico->setQtdCreditosTeoricos( (int)( (*it_Vars_x)->getValue() ) );
                      }
                      else
                      {
-                        at_Tatico->qtde_creditos_praticos = (int)( (*it_Vars_x)->getValue() );
+						 at_Tatico->setQtdCreditosPraticos( (int)( (*it_Vars_x)->getValue() ) );
                      }
 
                      AtendimentoOferta * at_Oferta = new AtendimentoOferta();
 
                      stringstream str;
                      str << (*it_Vars_a)->getOferta()->getId();
-                     at_Oferta->oferta_curso_campi_id = str.str();
+                     at_Oferta->setOfertaCursoCampiId( str.str() );
 
-                     at_Oferta->disciplina_id = 
+                     at_Oferta->setDisciplinaId( 
                         ((*it_Vars_a)->getDisciplina()->getId() > 0 ? 
                         (*it_Vars_a)->getDisciplina()->getId() :
-                     (-(*it_Vars_a)->getDisciplina()->getId()));
+                        (-(*it_Vars_a)->getDisciplina()->getId())) );
 
-                     at_Oferta->quantidade = (int)( (*it_Vars_a)->getValue() );
-                     at_Oferta->turma = (*it_Vars_a)->getTurma();
+                     at_Oferta->setQuantidade( (int)( (*it_Vars_a)->getValue() ) );
+                     at_Oferta->setTurma( (*it_Vars_a)->getTurma() );
                      at_Oferta->oferta = (*it_Vars_a)->getOferta();
                      at_Tatico->atendimento_oferta = at_Oferta;
 
@@ -1648,26 +1648,25 @@ void SolverMIP::getSolutionTatico()
          // Cadastrando a Unidade
          AtendimentoUnidade * at_Unidade = new AtendimentoUnidade();
          at_Unidade->setId( (*it_Vars_x)->getUnidade()->getId() );
-         at_Unidade->unidade_id = (*it_Vars_x)->getUnidade()->getCodigo();
+         at_Unidade->setUnidadeId( (*it_Vars_x)->getUnidade()->getCodigo() );
          at_Unidade->unidade = (*it_Vars_x)->getUnidade();
 
          // Cadastrando a Sala
          AtendimentoSala * at_Sala = new AtendimentoSala();
 
          at_Sala->setId( (*it_Vars_x)->getSala()->getId() );
-         at_Sala->sala_id = (*it_Vars_x)->getSala()->getCodigo();
-
+         at_Sala->setSalaId( (*it_Vars_x)->getSala()->getCodigo() );
          at_Sala->sala = (*it_Vars_x)->getSala();
 
          // Cadastrando o dia da semana
          AtendimentoDiaSemana * at_Dia_Semana = new AtendimentoDiaSemana();
 
-         at_Dia_Semana->dia_semana = (*it_Vars_x)->getDia();
+         at_Dia_Semana->setDiaSemana( (*it_Vars_x)->getDia() );
 
          // Para cada variavel a__i_d_o existem para a variavel x__i_d_u_s_t em questão.
-         ITERA_VECTOR(it_Vars_a,
+         ITERA_VECTOR( it_Vars_a,
             vars_a.find( std::make_pair( (*it_Vars_x)->getTurma(),
-            (*it_Vars_x)->getDisciplina()))->second, Variable)
+            (*it_Vars_x)->getDisciplina()))->second, Variable )
          {
             AtendimentoTatico * at_Tatico = new AtendimentoTatico();
 
@@ -1675,26 +1674,26 @@ void SolverMIP::getSolutionTatico()
             if ( (*it_Vars_x)->getDisciplina()->getId() > 0
                && (*it_Vars_x)->getDisciplina()->getCredTeoricos() > 0 )
             {
-               at_Tatico->qtde_creditos_teoricos = (int)( (*it_Vars_x)->getValue() );
+				at_Tatico->setQtdCreditosTeoricos( (int)( (*it_Vars_x)->getValue() ) );
             }
             else
             {
-               at_Tatico->qtde_creditos_praticos = (int)( (*it_Vars_x)->getValue() );
+				at_Tatico->setQtdCreditosPraticos( (int)( (*it_Vars_x)->getValue() ) );
             }
 
             AtendimentoOferta * at_Oferta = new AtendimentoOferta();
 
             stringstream str;
             str << (*it_Vars_a)->getOferta()->getId();
-            at_Oferta->oferta_curso_campi_id = str.str();
+            at_Oferta->setOfertaCursoCampiId( str.str() );
 
-            at_Oferta->disciplina_id = 
+            at_Oferta->setDisciplinaId( 
                ((*it_Vars_a)->getDisciplina()->getId() > 0 ? 
                (*it_Vars_a)->getDisciplina()->getId() :
-            (-(*it_Vars_a)->getDisciplina()->getId()));
+               (-(*it_Vars_a)->getDisciplina()->getId())) );
 
-            at_Oferta->quantidade = (int)( (*it_Vars_a)->getValue() );
-            at_Oferta->turma = (*it_Vars_a)->getTurma();
+            at_Oferta->setQuantidade( (int)( (*it_Vars_a)->getValue() ) );
+            at_Oferta->setTurma( (*it_Vars_a)->getTurma() );
             at_Oferta->oferta = (*it_Vars_a)->getOferta();
             at_Tatico->atendimento_oferta = at_Oferta;
 
@@ -1768,7 +1767,8 @@ int SolverMIP::solveOperacional()
    double funcao_objetivo = avaliador.avaliaSolucao( solucaoOperacional, true );
    std::cout << "\nValor da solucao inicial : " << funcao_objetivo << std::endl;
 
-   std::cout << "\nTODO -- Implementar <SolverMIP::solveOperacional()>" << std::endl;
+   std::cout << "\nTODO -- Implementar <SolverMIP::solveOperacional()>"
+			 << std::endl;
 
    // Armazena a solução operacional no problem solution
    problemSolution->solucao_operacional = &( solucaoOperacional );
@@ -1778,7 +1778,51 @@ int SolverMIP::solveOperacional()
 
 void SolverMIP::getSolutionOperacional()
 {
-   std::cout << "\nTODO -- Implementar <SolverMIP::getSolutionOperacional()>" << std::endl;
+   std::cout << "\nTODO -- Implementar <SolverMIP::getSolutionOperacional()>"
+			 << std::endl;
+
+   unsigned int i = 0;
+   unsigned int j = 0;
+   int id_operacional = 0;
+
+   Aula * aula = NULL;
+   Professor * professor = NULL;
+   ProfessorVirtualOutput * professor_virtual = NULL;
+
+   // Preenche a lista de professores virtuais do output
+   MatrizSolucao * matriz_solucao
+	   = problemSolution->solucao_operacional->getMatrizAulas();
+   for (; i < this->problemData->professores_virtuais.size(); i++)
+   {
+		// Devo apenas analisar os professores virtuais
+	    professor = this->problemData->professores_virtuais.at(i);
+
+		// Inclui um novo professor na
+		// lista de professores virtuais
+		professor_virtual = new ProfessorVirtualOutput();
+
+		professor_virtual->setId( professor->getId() );
+		professor_virtual->setChMin( professor->getChMin() );
+		professor_virtual->setChMax( professor->getChMax() );
+		professor_virtual->setTitulacaoId( professor->getTitulacaoId() );
+		professor_virtual->setAreaTitulacaoId( professor->getAreaId() );
+
+		// Procura pelas disciplinas que o professor deverá ministrar
+		id_operacional = professor->getIdOperacional();
+		for (; j < matriz_solucao->at(id_operacional)->size(); j++)
+		{
+			aula = matriz_solucao->at(id_operacional)->at(j);
+
+			if ( aula != NULL && aula->eVirtual() == false )
+			{
+				// Adiciona uma disciplina a mais ao professor virtual
+				professor_virtual->disciplinas.add(
+					aula->getDisciplina()->getId() );
+			}
+		}
+
+		this->problemSolution->professores_virtuais->add( professor_virtual );
+   }
 }
 
 int SolverMIP::solve()
