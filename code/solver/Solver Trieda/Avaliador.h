@@ -2,6 +2,7 @@
 #define _AVALIADOR_H_
 
 #include <vector>
+
 #include "ProblemData.h"
 #include "SolucaoOperacional.h"
 
@@ -15,7 +16,7 @@ public:
    // Obs.: o parâmetro 'bool' informa se o
    // avaliador deve ou não imprimir os resultados
    // detalhados da avaliação da solução operacional
-   double avaliaSolucao(SolucaoOperacional &, bool imprime_resultados = false);
+   double avaliaSolucao( SolucaoOperacional &, bool = false );
 
    // Pesos atribuídos a cada avaliação da solução
    double PESO_FIXACAO;
@@ -37,13 +38,15 @@ public:
    double PESO_PREFERENCIA_DISCIPLINA;
    double PESO_NUMERO_PROFESSORES_VIRTUAIS;
    double PESO_CREDITOS_PROFESSORES_VIRTUAIS;
+   double PESO_VIOLACOES_PARCIAL_INTEGRAL;
+   double PESO_VIOLACOES_INTEGRAL;
 
 private:
 	//------------------ MÉTODOS DE AVALIAÇÃO DA SOLUÇÃO -----------------//
 	// -----------------------------------------------------------
 	// Avaliação de fixações não atendidas na soluçao
 	// -----------------------------------------------------------
-	void calculaViolacaoRestricaoFixacao(SolucaoOperacional &);
+	void calculaViolacaoRestricaoFixacao( SolucaoOperacional & );
 	double totalViolacaoRestricaoFixacao;
 
 	// -----------------------------------------------------------
@@ -54,7 +57,7 @@ private:
 	// do item do critério de avaliação no Product Backlog,
 	// para evitar mal entendimento do significado das variáveis
 	// -----------------------------------------------------------
-	void calculaDescolamentoProfessor(SolucaoOperacional &);
+	void calculaDescolamentoProfessor( SolucaoOperacional & );
 	int totalViolacoesDeslocamentoProfessor; // TRIEDA-776
 	int totalDeslocamentosProfessor;         // TRIEDA-777
 
@@ -75,15 +78,15 @@ private:
 	// Avaliação de gap's nos horários dos professores
 	// --> Cada Professor possui um conjunto de gap's
 	// -----------------------------------------------------------
-	void calculaGapsHorariosProfessores(SolucaoOperacional &);
-	vector< vector< int > > gapsProfessores;
+	void calculaGapsHorariosProfessores( SolucaoOperacional & );
+	std::vector< std::vector< int > > gapsProfessores;
 	double totalGapsHorariosProfessores;
 
 	// -----------------------------------------------------------
 	// Avaliação da NOTA e do CUSTO do corpo
 	// docente da maneira que foi alocado na solução
 	// -----------------------------------------------------------
-	void avaliacaoCustoCorpoDocente(SolucaoOperacional &);
+	void avaliacaoCustoCorpoDocente( SolucaoOperacional & );
 	double totalAvaliacaoCorpoDocente;
 	double totalCustoCorpoDocente;
 
@@ -99,13 +102,13 @@ private:
 	// de solução terá suas violações armazenadas nas
 	// colunas de índice 'i' dos três vetores abaixo.
 	// -----------------------------------------------------------
-	void violacoesCargasHorarias(SolucaoOperacional &);
+	void violacoesCargasHorarias( SolucaoOperacional & );
 	int totalViolacoesCHMinimaSemestreAterior;
 	int totalViolacoesCHMinimaProfessor;
 	int totalViolacoesCHMaximaProfessor;
-	vector< int > violacoesCHMinimaSemestreAterior;
-	vector< int > violacoesCHMinimaProfessor;
-	vector< int > violacoesCHMaximaProfessor;
+	std::vector< int > violacoesCHMinimaSemestreAterior;
+	std::vector< int > violacoesCHMinimaProfessor;
+	std::vector< int > violacoesCHMaximaProfessor;
 
 	// -----------------------------------------------------------
 	// Avaliação do número de dias que cada
@@ -117,47 +120,58 @@ private:
 	// de solução terá seu total de dias armazenado na
 	// coluna de índice 'i' do vetor abaixo.
 	// -----------------------------------------------------------
-	void avaliaDiasProfessorMinistraAula(SolucaoOperacional &);
+	void avaliaDiasProfessorMinistraAula( SolucaoOperacional & );
 	int totalDiasProfessorMinistraAula;
-	vector< int > professorMinistraAula;
+	std::vector< int > professorMinistraAula;
 
 	// -----------------------------------------------------------
 	// Avaliação da alocação do professor na última
 	// aula do dia D e na primeira aula do dia D+1
 	// -----------------------------------------------------------
-	void violacaoUltimaPrimeiraAula(SolucaoOperacional &);
+	void violacaoUltimaPrimeiraAula( SolucaoOperacional & );
 	int totalViolacoesUltimaPrimeiraAula;
-	vector< int > violacoesUltimaPrimeiraAulaProfessor;
+	std::vector< int > violacoesUltimaPrimeiraAulaProfessor;
 
 	// -----------------------------------------------------------
 	// Avaliação se percentual mínimo de mestres e doutores
 	// por curso foi atendido ou não na solução operacional
 	// -----------------------------------------------------------
-	void avaliaNumeroMestresDoutores(SolucaoOperacional &);
+	void avaliaNumeroMestresDoutores( SolucaoOperacional & );
 	int totalViolacoesMestres;
 	int totalViolacoesDoutores;
 
 	// -----------------------------------------------------------
 	// Avaliação do máximo de disciplinas ppor professor por curso
 	// -----------------------------------------------------------
-	void avaliaMaximoDisciplinasProfessorPorCurso(SolucaoOperacional &);
+	void avaliaMaximoDisciplinasProfessorPorCurso( SolucaoOperacional & );
 	int totalViolacoesDiscProfCurso;
-	vector< int > violacoesDisciplinasProfessor;
+	std::vector< int > violacoesDisciplinasProfessor;
 
 	// -----------------------------------------------------------
 	// Avaliação das violações de preferências dos professores
 	// -----------------------------------------------------------
-	void avaliaPreferenciasProfessorDisciplina(SolucaoOperacional &);
+	void avaliaPreferenciasProfessorDisciplina( SolucaoOperacional & );
 	int totalPreferenciasProfessorDisciplina;
-	vector< int > preferenciasProfessor;
+	std::vector< int > preferenciasProfessor;
 
 	// -----------------------------------------------------------
 	// Avaliação do custo de se utilizar um ou
 	// mais professores virtuais na solução operacional
 	// -----------------------------------------------------------
-	void avaliaCustoProfessorVirtual(SolucaoOperacional &);
+	void avaliaCustoProfessorVirtual( SolucaoOperacional & );
 	int totalProfessoresVirtuais;
 	int totalCreditosProfessoresVirtuais;
+
+	// -----------------------------------------------------------
+	// Avaliação da porcentagem de professores tempo
+	// parcial e tempo integral para cada curso
+	// OBS.: são duas avaliações: uma que considera
+	// a soma de tempo parcial com tempo integral e outra
+	// que considera apenas os professores de tempo integral
+	// -----------------------------------------------------------
+	void avaliaTempoParcialIntegral( SolucaoOperacional & );
+	int totalViolacoesTempoParcialIntegral;
+	int totalViolacoesTempoIntegral;
 	//--------------------------------------------------------------------//
 
 	//--------------------------- UTILITÁRIOS ----------------------------//
@@ -171,13 +185,13 @@ private:
 	// se deslocar entre uma aula e outra
 	// -----------------------------------------------------------
 	double calculaTempoEntreCampusUnidades(
-		SolucaoOperacional& ,Campus *, Campus *, Unidade *, Unidade *);
+		SolucaoOperacional& , Campus *, Campus *, Unidade *, Unidade *);
 
 	// -----------------------------------------------------------
 	// Informa quantos horários um determinado
 	// professor tem disponíveis em um intervalo de aulas
 	// -----------------------------------------------------------
-	int horariosDisponiveisIntervalo(Professor *, int, Horario *, Horario *);
+	int horariosDisponiveisIntervalo( Professor *, int, Horario *, Horario * );
 
 	// -----------------------------------------------------------
 	// Método que calcula quantos horários por dia são
@@ -186,17 +200,17 @@ private:
 	// créditos disponíveis dentre os professores da
 	// matriz de solução operacional informada
 	// -----------------------------------------------------------
-	int calculaTamanhoBlocoAula(SolucaoOperacional &);
+	int calculaTamanhoBlocoAula( SolucaoOperacional & );
 
 	// -----------------------------------------------------------
 	// Retorna o curso com o id informado
 	// -----------------------------------------------------------
-	Curso * procuraCurso(int, GGroup< Curso * >);
+	Curso * procuraCurso( int, GGroup< Curso * > );
 
 	// -----------------------------------------------------------
 	// Ordena um GGroup de aulas
 	// -----------------------------------------------------------
-	vector< Aula * > retornaVectorAulasOrdenado( GGroup< std::pair<Aula *, Horario * > > );
+	std::vector< Aula * > retornaVectorAulasOrdenado( GGroup< std::pair<Aula *, Horario * > > );
 
 	// -----------------------------------------------------------
 	// Exibe os resultados da avaliação, APÓS todo o

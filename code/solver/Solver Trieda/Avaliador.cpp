@@ -53,6 +53,8 @@ Avaliador::Avaliador()
    PESO_PREFERENCIA_DISCIPLINA = 1;
    PESO_NUMERO_PROFESSORES_VIRTUAIS = 1;
    PESO_CREDITOS_PROFESSORES_VIRTUAIS = 1;
+   PESO_VIOLACOES_PARCIAL_INTEGRAL = 1;
+   PESO_VIOLACOES_INTEGRAL = 1;
 }
 
 Avaliador::~Avaliador()
@@ -65,67 +67,75 @@ void Avaliador::imprimeResultados()
    std::cout << "===========================================================================\n\n";
 
    std::cout << "Violacoes de restricao de fixacao : "
-      << totalViolacaoRestricaoFixacao << std::endl << std::endl;
+			 << totalViolacaoRestricaoFixacao << std::endl << std::endl;
 
    std::cout << "Violacoes de deslocamento de professor : "
-      << totalViolacoesDeslocamentoProfessor << std::endl << std::endl;
+			 << totalViolacoesDeslocamentoProfessor << std::endl << std::endl;
 
    std::cout << "Tempo de deslocamento de professor : "
-      << totalDeslocamentosProfessor << std::endl << std::endl;
+			 << totalDeslocamentosProfessor << std::endl << std::endl;
 
    std::cout << "Violacoes de deslocamento de alunos : "
-      << totalViolacoesDescolamento << std::endl << std::endl;
+			 << totalViolacoesDescolamento << std::endl << std::endl;
 
    std::cout << "Tempo de deslocamento de alunos : "
-      << totalTempoDescolamento << std::endl << std::endl;
+			 << totalTempoDescolamento << std::endl << std::endl;
 
    std::cout << "Total de gaps nos horarios dos professores : "
-      << totalGapsHorariosProfessores << std::endl << std::endl;
+			 << totalGapsHorariosProfessores << std::endl << std::endl;
 
    std::cout << "Avaliacao do corpo docente : "
-      << totalAvaliacaoCorpoDocente << std::endl << std::endl;
+			 << totalAvaliacaoCorpoDocente << std::endl << std::endl;
 
    std::cout << "Custo do corpo docente : "
-      << totalCustoCorpoDocente << std::endl << std::endl;
+			 << totalCustoCorpoDocente << std::endl << std::endl;
 
    std::cout << "Violacoes de carga horaria minima do semestre anterior (sindicato) : "
-      << totalViolacoesCHMinimaSemestreAterior << std::endl << std::endl;
+			 << totalViolacoesCHMinimaSemestreAterior << std::endl << std::endl;
 
    std::cout << "Violacoes de carga horaria minima dos professores : "
-      << totalViolacoesCHMinimaProfessor << std::endl << std::endl;
+			 << totalViolacoesCHMinimaProfessor << std::endl << std::endl;
 
    std::cout << "Violacoes de carga horaria maxima dos professores : "
-      << totalViolacoesCHMaximaProfessor << std::endl << std::endl;
+			 << totalViolacoesCHMaximaProfessor << std::endl << std::endl;
 
    std::cout << "Dias em que os professores ministram aulas : "
-      << totalDiasProfessorMinistraAula << std::endl << std::endl;
+			 << totalDiasProfessorMinistraAula << std::endl << std::endl;
 
    std::cout << "Violacoes do tipo ultima aula dia D / primeira aula dia D+1 : "
-      << totalViolacoesUltimaPrimeiraAula << std::endl << std::endl;
+			 << totalViolacoesUltimaPrimeiraAula << std::endl << std::endl;
 
    std::cout << "Violacoes de percentual minimo de mestres : "
-      << totalViolacoesMestres << std::endl << std::endl;
+			 << totalViolacoesMestres << std::endl << std::endl;
 
    std::cout << "Violacoes de percentual minimo de doutores : "
-      << totalViolacoesDoutores << std::endl << std::endl;
+			 << totalViolacoesDoutores << std::endl << std::endl;
 
    std::cout << "Violacoes de numero de disciplinas por professor por curso : "
-      << totalViolacoesDiscProfCurso << std::endl << std::endl;
+			 << totalViolacoesDiscProfCurso << std::endl << std::endl;
 
    std::cout << "Avaliacao de preferencia de professor pelas disciplinas : "
-      << totalPreferenciasProfessorDisciplina << std::endl << std::endl;
+			 << totalPreferenciasProfessorDisciplina << std::endl << std::endl;
 
    std::cout << "Total de professores virtuais : "
-      << totalProfessoresVirtuais << std::endl << std::endl;
+			 << totalProfessoresVirtuais << std::endl << std::endl;
 
    std::cout << "Total de creditos de professores virtuais : "
-      << totalCreditosProfessoresVirtuais
-      << std::endl << std::endl << std::endl;
+			 << totalCreditosProfessoresVirtuais
+			 << std::endl << std::endl;
+
+   std::cout << "Total de vioacoes % professores tempo parcial + tempo integral : "
+			 << totalViolacoesTempoParcialIntegral
+			 << std::endl << std::endl;
+
+   std::cout << "Total de vioacoes % professores tempo integral : "
+			 << totalViolacoesTempoIntegral
+			 << std::endl << std::endl << std::endl;
 
    std::cout << "===========================================================================\n\n";
 }
 
-double Avaliador::avaliaSolucao(SolucaoOperacional & solucao, bool imprime_resultados)
+double Avaliador::avaliaSolucao( SolucaoOperacional & solucao, bool imprime_resultados )
 {
    // Para testar as avaliações de deslocamento,
    // precisa-se de uma instância multi-campi
@@ -143,6 +153,7 @@ double Avaliador::avaliaSolucao(SolucaoOperacional & solucao, bool imprime_resul
    avaliaMaximoDisciplinasProfessorPorCurso(solucao);
    avaliaPreferenciasProfessorDisciplina(solucao);
    avaliaCustoProfessorVirtual(solucao);
+   avaliaTempoParcialIntegral(solucao);
 
    double funcao_objetivo = 0.0;
 
@@ -167,46 +178,56 @@ double Avaliador::avaliaSolucao(SolucaoOperacional & solucao, bool imprime_resul
    funcao_objetivo += (PESO_PREFERENCIA_DISCIPLINA * totalPreferenciasProfessorDisciplina);
    funcao_objetivo += (PESO_NUMERO_PROFESSORES_VIRTUAIS * totalProfessoresVirtuais);
    funcao_objetivo += (PESO_CREDITOS_PROFESSORES_VIRTUAIS * totalCreditosProfessoresVirtuais);
+   funcao_objetivo += (PESO_VIOLACOES_PARCIAL_INTEGRAL * totalViolacoesTempoParcialIntegral);
+   funcao_objetivo += (PESO_VIOLACOES_INTEGRAL * totalViolacoesTempoIntegral);
 
    // Exibe os resultados detalhados da avaliação
    if ( imprime_resultados )
    {
       this->imprimeResultados();
 
-      std::cout << "FO: " << funcao_objetivo << std::endl;
+	  std::cout << "FO value: " << funcao_objetivo
+				<< std::endl << std::endl;
       std::cout << "===========================================================================\n\n";
    }
 
    return funcao_objetivo;
 }
 
-void Avaliador::calculaViolacaoRestricaoFixacao(SolucaoOperacional & solucao)
+void Avaliador::calculaViolacaoRestricaoFixacao( SolucaoOperacional & solucao )
 {
-   double numViolacoes = 0.0;
+   double num_violacoes = 0.0;
+
    bool encontrou_fixacao = false;
+   int linha_professor = 0;
+   int id_professor = 0;
+
+   Aula * aula = NULL;
+   Professor * professor = NULL;
 
    // Para cada fixação de aula a um professor, verifica se há
    // uma aula atribuída ao professor que corresponda a essa fixação
-   ITERA_GGROUP(it_fixacao, solucao.getProblemData()->fixacoes, Fixacao)
+   ITERA_GGROUP( it_fixacao, solucao.getProblemData()->fixacoes, Fixacao )
    {
       // Recupera o professor correspondente à fixação
-      int id_professor = it_fixacao->getProfessorId();
-      Professor * professor = solucao.mapProfessores[id_professor];
-      int linha_professor = professor->getIdOperacional();
+      id_professor = it_fixacao->getProfessorId();
+      professor = solucao.mapProfessores[ id_professor ];
+      linha_professor = professor->getIdOperacional();
+	  encontrou_fixacao = false;
 
       // Percorre a linha correspondente ao professor na matriz de solução
-      for (unsigned int i = 0; i < solucao.getMatrizAulas()->at(linha_professor)->size(); i++)
+      for ( unsigned int i = 0; i < solucao.getMatrizAulas()->at( linha_professor )->size(); i++ )
       {
-         Aula * aula = solucao.getMatrizAulas()->at(linha_professor)->at(i);
-         if (aula == NULL || aula->eVirtual() == true)
+         aula = solucao.getMatrizAulas()->at( linha_professor )->at(i);
+         if ( aula == NULL || aula->eVirtual() == true )
          {
             continue;
          }
 
          // TODO -- devo considerar 'turno' e 'horário' ?????
          if ( (it_fixacao->getDiaSemana() == aula->getDiaSemana()) &&
-            (it_fixacao->getDisciplinaId() == aula->getDisciplina()->getId()) &&
-            (it_fixacao->getSalaId() == aula->getSala()->getId()) )
+              (it_fixacao->getDisciplinaId() == aula->getDisciplina()->getId()) &&
+              (it_fixacao->getSalaId() == aula->getSala()->getId()) )
          {
             encontrou_fixacao = true;
             break;
@@ -215,24 +236,22 @@ void Avaliador::calculaViolacaoRestricaoFixacao(SolucaoOperacional & solucao)
 
       // Caso não tenha encontrado a
       // fixação, anota-se a violação
-      if (!encontrou_fixacao)
+      if ( !encontrou_fixacao )
       {
-         numViolacoes++;
+         num_violacoes++;
       }
    }
 
-   totalViolacaoRestricaoFixacao = numViolacoes;
+   totalViolacaoRestricaoFixacao = num_violacoes;
 }
 
-void Avaliador::calculaDescolamentoProfessor(SolucaoOperacional & solucao)
+void Avaliador::calculaDescolamentoProfessor( SolucaoOperacional & solucao )
 {
    int violacoes_deslocamento_professor = 0; // TRIEDA-776
-   int num_deslocamentos_professor = 0; // TRIEDA-777
+   int num_deslocamentos_professor = 0;      // TRIEDA-777
 
    Unidade * unidade_atual = NULL;
    Unidade * unidade_anterior = NULL;
-   Campus * campus_atual = NULL;
-   Campus * campus_anterior = NULL;
    Aula * aula_atual = NULL;
    Aula * aula_anterior = NULL;
 
@@ -257,7 +276,7 @@ void Avaliador::calculaDescolamentoProfessor(SolucaoOperacional & solucao)
    // Percorrer a matriz da solução, verificando cada par
    // de aulas consecutivo, em um mesmo dia da semana, para
    // avaliar o deslocamento entre as respectivas salas de aula
-   for (unsigned int i = 0; i < solucao.getMatrizAulas()->size(); i++)
+   for ( unsigned int i = 0; i < solucao.getMatrizAulas()->size(); i++ )
    {
       // Inicializa o número de deslocamentos entre
       // campus diferentes para o professor atual
@@ -269,81 +288,74 @@ void Avaliador::calculaDescolamentoProfessor(SolucaoOperacional & solucao)
       // Para cada par de aulas consecutivas de um determinado
       // professor, no mesmo dia da semana, verifica-se se houve
       // um deslocamento acima do desejado entre uma sala e outra
-      for (unsigned int j = 0; j < solucao.getMatrizAulas()->at(i)->size(); j++)
+      for ( unsigned int j = 0; j < solucao.getMatrizAulas()->at(i)->size(); j++ )
       {
          // O índice 'j' corresponde à coluna da matriz
          indice_horario_atual = j;
 
          // Recupera o objeto 'aula' atual
-         aula_atual = solucao.getMatrizAulas()->at(i)->at(indice_horario_atual);
-
-         // O professor não teve aula atribuída nesse horário
-         if (aula_atual == NULL || aula_atual->eVirtual() == true)
+         aula_atual = solucao.getMatrizAulas()->at(i)->at( indice_horario_atual );
+         if ( aula_atual != NULL && aula_atual->eVirtual() == false )
          {
-            continue;
+			 // Unidade da sala atual
+			 id_unidade_atual = aula_atual->getSala()->getIdUnidade();
+			 unidade_atual = solucao.getProblemData()->refUnidade[ id_unidade_atual ];
+
+			 // Campus da sala atual - só preciso
+			 // armazenar o id para comparação)
+			 id_campus_atual = unidade_atual->getIdCampus();
          }
 
-         // Unidade da sala atual
-         id_unidade_atual = aula_atual->getSala()->getIdUnidade();
-         unidade_atual = solucao.getProblemData()->refUnidade[id_unidade_atual];
-
-         // Campus da sala atual
-         id_campus_atual = unidade_atual->getIdCampus();
-         campus_atual = solucao.getProblemData()->refCampus[id_campus_atual];
-
          // Recupera o objeto 'aula' anterior
-         aula_anterior = solucao.getMatrizAulas()->at(i)->at(indice_horario_anterior);
-         if (aula_anterior == NULL || aula_anterior->eVirtual() == true)
+         aula_anterior = solucao.getMatrizAulas()->at(i)->at( indice_horario_anterior );
+         if ( aula_anterior != NULL && aula_anterior->eVirtual() == false )
          {
-            // Atualiza os ponteiros para a próxima iteração
-            campus_anterior = campus_atual;
-            id_campus_anterior = id_campus_atual;
+			 // Unidade da sala anterior
+			 id_unidade_anterior = aula_anterior->getSala()->getIdUnidade();
+			 unidade_anterior = solucao.getProblemData()->refUnidade[ id_unidade_anterior ];
 
-            unidade_anterior = unidade_atual;
-            id_unidade_anterior = id_unidade_atual;
-
-            aula_anterior = aula_atual;
-            indice_horario_anterior = indice_horario_atual;
-
-            continue;
+			 // Campus da sala anterior - só preciso
+			 // armazenar o id para comparação)
+			 id_campus_anterior = unidade_anterior->getIdCampus();
          }
 
          // Verifica se houve violação no deslocamento viável
-         // Verifica se as aulas são em um mesmo dia da semana
-         if (aula_anterior->getDiaSemana() == aula_atual->getDiaSemana())
-         {
-            // O professor teve que se deslocar entre CAMPUS diferentes
-            // Obs.: Não está sendo considerado o deslocamento entre UNIDADES
-            if (id_campus_atual != id_campus_anterior)
-            {
-               // Essa variável guarda apenas os
-               // deslocamentos de um único professor,
-               // para verificar se excedeu o limite permitido
-               // (Será utilizado no critério n° 3)
-               num_desloc_professor_temp++;
+		 if (   aula_anterior != NULL && aula_anterior->eVirtual() == false
+			 && aula_atual != NULL && aula_atual->eVirtual() == false )
+		 {
+			 // Verifica se as aulas são em um mesmo dia da semana
+			 if ( aula_anterior->getDiaSemana() == aula_atual->getDiaSemana() )
+			 {
+				// O professor teve que se deslocar entre CAMPUS diferentes
+				// Obs.: Não está sendo considerado o deslocamento entre UNIDADES
+				if ( id_campus_atual != id_campus_anterior )
+				{
+				   // Essa variável guarda apenas os
+				   // deslocamentos de um único professor,
+				   // para verificar se excedeu o limite permitido
+				   // (Será utilizado no critério n° 3)
+				   num_desloc_professor_temp++;
 
-               // Critério de avaliação n° 4:
-               // Número de deslocamentos do professor
-               // Obs.: Armazena TODOS os deslocamentos ocorridos
-               num_deslocamentos_professor++;
-            }
-         }
+				   // Critério de avaliação n° 4:
+				   // Número de deslocamentos do professor
+				   // Obs.: Armazena TODOS os deslocamentos ocorridos
+				   num_deslocamentos_professor++;
+				}
+			 }
+		 }
 
-         // Atualiza os ponteiros para a próxima iteração
-         campus_anterior = campus_atual;
-         id_campus_anterior = id_campus_atual;
-
-         unidade_anterior = unidade_atual;
-         id_unidade_anterior = id_unidade_atual;
-
-         aula_anterior = aula_atual;
-         indice_horario_anterior = indice_horario_atual;
+         // Atualiza o índice da aula anterior
+		 // para ser utilizado na próxima iteração
+		 if ( aula_atual != NULL && aula_atual->eVirtual() == false )
+		 {
+			indice_horario_anterior = indice_horario_atual;
+		 }
       }
 
       // Critério de avaliação n° 3:
       // Verifica se o número de deslocamentos entre campus
       // diferentes excedeu o limite fornecido como parâmetro de entrada
-      if (num_desloc_professor_temp > limite_deslocamentos_professor)
+      if ( num_desloc_professor_temp > limite_deslocamentos_professor )
       {
          violacoes_deslocamento_professor++;
       }
@@ -356,7 +368,7 @@ void Avaliador::calculaDescolamentoProfessor(SolucaoOperacional & solucao)
    totalDeslocamentosProfessor = num_deslocamentos_professor;
 }
 
-void Avaliador::calculaDescolamentoBlocoCurricular(SolucaoOperacional & solucao)
+void Avaliador::calculaDescolamentoBlocoCurricular( SolucaoOperacional & solucao )
 {
    int violacoes_deslocamento = 0;  // TRIEDA-739
    double tempo_deslocamento = 0.0; // TRIEDA-740
@@ -391,14 +403,14 @@ void Avaliador::calculaDescolamentoBlocoCurricular(SolucaoOperacional & solucao)
    // Dado um bloco curricular qualquer (BlocoCurricular *), o map
    // retorna a lista de horários desse bloco curricular, onde cada
    // horário é representado por um par `Aula*, Horario*`
-   std::map< BlocoCurricular *, GGroup< pair< Aula *, Horario * > > > mapBlocoAulaHorario;
+   std::map< BlocoCurricular *, GGroup< std::pair< Aula *, Horario * > > > mapBlocoAulaHorario;
    for (i = 0; i < solucao.getMatrizAulas()->size(); i++)
    {
       for (j = 0; j < solucao.getMatrizAulas()->at(i)->size(); j++)
       {
          // Aula atual
          aula = solucao.getMatrizAulas()->at(i)->at(j);
-         if (aula == NULL || aula->eVirtual() == true)
+         if ( aula == NULL || aula->eVirtual() == true )
          {
             continue;
          }
@@ -411,10 +423,10 @@ void Avaliador::calculaDescolamentoBlocoCurricular(SolucaoOperacional & solucao)
          // Disciplina correspondente à aula atual
          disciplina = aula->getDisciplina();
 
-         ITERA_GGROUP(it_oferta, aula->ofertas, Oferta)
+         ITERA_GGROUP( it_oferta, aula->ofertas, Oferta )
          {
             // Oferta atendida pela aula
-            oferta = *(it_oferta);
+            oferta = (*it_oferta);
 
             // Curso correspondente a essa oferta
             curso = oferta->curso;
@@ -434,10 +446,11 @@ void Avaliador::calculaDescolamentoBlocoCurricular(SolucaoOperacional & solucao)
    }
 
    // Ordena as aulas de cada bloco curricular
-   std::map< BlocoCurricular * , vector< Aula * > > mapBlocoAulas_Ordenado;
+   std::map< BlocoCurricular * , std::vector< Aula * > > mapBlocoAulas_Ordenado;
    std::map< BlocoCurricular * , GGroup< std::pair< Aula *, Horario * > > > ::iterator it_map
       = mapBlocoAulaHorario.begin();
-   for (; it_map != mapBlocoAulaHorario.end(); it_map++)
+   for (; it_map != mapBlocoAulaHorario.end();
+	      it_map++ )
    {
       // Bloco curricular
       bloco = it_map->first;
@@ -456,78 +469,96 @@ void Avaliador::calculaDescolamentoBlocoCurricular(SolucaoOperacional & solucao)
 
    // Verificar violações de deslocamento
    // entre as aulas de um memso bloco curricular
-   std::map< BlocoCurricular * , vector< Aula * > >::iterator it_bloco_aulas
+   std::map< BlocoCurricular * , std::vector< Aula * > >::iterator it_bloco_aulas
       = mapBlocoAulas_Ordenado.begin();
-   for (; it_bloco_aulas != mapBlocoAulas_Ordenado.end(); it_bloco_aulas++)
+   for (; it_bloco_aulas != mapBlocoAulas_Ordenado.end();
+	      it_bloco_aulas++ )
    {
       // Recupera o bloco curricular
       bloco = it_bloco_aulas->first;
 
       // Recupera as aulas desse bloco
-      vector< Aula * > aulas = it_bloco_aulas->second;
+	  std::vector< Aula * > aulas = it_bloco_aulas->second;
 
       // Inicializa o índice do horário anterior
       indice_horario_anterior = 0;
 
-      for (i = 1; i < aulas.size(); i++)
+      for ( i = 1; i < aulas.size(); i++ )
       {
          // Índice da aula atual no vector
          indice_horario_atual = i;
 
+		 //----------------------------------------------------------------------
          // Recupera a aula atual
-         aula_atual = aulas.at(indice_horario_atual);
-         if (aula_atual == NULL || aula_atual->eVirtual() == true)
+         aula_atual = aulas.at( indice_horario_atual );
+         if ( aula_atual != NULL && aula_atual->eVirtual() == false )
          {
-            continue;
-         }
+			 // Unidade da sala atual
+			 id_unidade_atual = aula_atual->getSala()->getIdUnidade();
+			 unidade_atual = solucao.getProblemData()->refUnidade[ id_unidade_atual ];
 
+			 // Campus da sala atual
+			 id_campus_atual = unidade_atual->getIdCampus();
+			 campus_atual = solucao.getProblemData()->refCampus[ id_campus_atual ];
+		 }
+		 //----------------------------------------------------------------------
+
+		 //----------------------------------------------------------------------
          // Recupera a aula anterior
-         aula_anterior = aulas.at(indice_horario_anterior);
-         if (aula_anterior == NULL || aula_anterior->eVirtual() == true)
+         aula_anterior = aulas.at( indice_horario_anterior );
+         if ( aula_anterior != NULL && aula_anterior->eVirtual() == false )
          {
-            continue;
+			 // Unidade da sala anterior
+			 id_unidade_anterior = aula_anterior->getSala()->getIdUnidade();
+			 unidade_anterior = solucao.getProblemData()->refUnidade[ id_unidade_anterior ];
+
+			 // Campus da sala anterior
+			 id_campus_anterior = unidade_anterior->getIdCampus();
+			 campus_anterior = solucao.getProblemData()->refCampus[ id_campus_anterior ];
          }
-
-         // Unidade da sala atual
-         id_unidade_atual = aula_atual->getSala()->getIdUnidade();
-         unidade_atual = solucao.getProblemData()->refUnidade[id_unidade_atual];
-
-         // Campus da sala atual
-         id_campus_atual = unidade_atual->getIdCampus();
-         campus_atual = solucao.getProblemData()->refCampus[id_campus_atual];
+		 //----------------------------------------------------------------------
 
          // Verifica se houve violação no deslocamento viável
          // Verifica se as aulas são em um mesmo dia da semana
-         if (aula_anterior->getDiaSemana() == aula_atual->getDiaSemana())
-         {
-            // Tempo de deslocamento entre uma aula e outra
-            tempo_minimo = calculaTempoEntreCampusUnidades(solucao,
-               campus_atual, campus_anterior, unidade_atual, unidade_anterior);
-            tempo_minimo = abs(tempo_minimo);
+		 if (   aula_anterior != NULL && aula_anterior->eVirtual() == false
+			 && aula_atual != NULL && aula_atual->eVirtual() == false )
+		 {
+			 if ( aula_anterior->getDiaSemana() == aula_atual->getDiaSemana() )
+			 {
+				// Tempo de deslocamento entre uma aula e outra
+				tempo_minimo = calculaTempoEntreCampusUnidades(
+					solucao, campus_atual, campus_anterior, unidade_atual, unidade_anterior );
 
-            // Tempo existente entre as aulas 'aula_anterior' e 'aula_atual'
-            tempo_disponivel = ( indice_horario_atual - indice_horario_anterior ) * ( MINUTOS_POR_HORARIO );
-            tempo_disponivel = abs( tempo_disponivel );
+				tempo_minimo = abs( tempo_minimo );
 
-            // Verifica se ocorreu a violação de tempo mínimo
-            // necessário para se deslocar entre campus/unidades
-            if ( tempo_disponivel < tempo_minimo )
-            {
-               // Critério de avaliação n° 1:
-               // Número de violações ocorridas de tempo viável
-               violacoes_deslocamento++;
-            }
+				// Tempo existente entre as aulas 'aula_anterior' e 'aula_atual'
+				tempo_disponivel = ( indice_horario_atual - indice_horario_anterior ) * ( MINUTOS_POR_HORARIO );
+				tempo_disponivel = abs( tempo_disponivel );
 
-            // Critério de avaliação n° 2:
-            // Tempo de deslocamento entre uma aula e outra
-            tempo_deslocamento += ( tempo_minimo );
-         }
+				// Verifica se ocorreu a violação de tempo mínimo
+				// necessário para se deslocar entre campus/unidades
+				if ( tempo_disponivel < tempo_minimo )
+				{
+				   // Critério de avaliação n° 1:
+				   // Número de violações ocorridas de tempo viável
+				   violacoes_deslocamento++;
+				}
+
+				// Critério de avaliação n° 2:
+				// Tempo de deslocamento entre uma aula e outra
+				tempo_deslocamento += ( tempo_minimo );
+			 }
+		 }
 
          // Atualiza os ponteiros para a próxima iteração
-         campus_anterior = campus_atual;
-         unidade_anterior = unidade_atual;
-         aula_anterior = aula_atual;
-         indice_horario_anterior = indice_horario_atual;
+		 // Obs.: Apenas atualizo o campo referente à aula
+		 // anterior quando a aula atual é válida ( não-nula
+		 // e não-virtual ), pois somentes aulas válidas devem
+		 // ser consideradas na avaliação de deslocamento
+		 if ( aula_atual == NULL || aula_atual->eVirtual() == true )
+		 {
+			indice_horario_anterior = indice_horario_atual;
+		 }
       }
    }
 
@@ -612,7 +643,7 @@ bool ordenaAulas( std::pair< Aula *, Horario * > aula_horario1,
 
 // Ordena as aulas por 'dia_da_semana'
 // e 'horario_aula', nessa ordem de prioridade
-vector< Aula * > Avaliador::retornaVectorAulasOrdenado(
+std::vector< Aula * > Avaliador::retornaVectorAulasOrdenado(
 	GGroup< std::pair< Aula *, Horario * > > aulas_horarios )
 {
    // Passa da representaçao de 'GGroup'
@@ -813,7 +844,7 @@ void Avaliador::avaliacaoCustoCorpoDocente(SolucaoOperacional & solucao)
    totalCustoCorpoDocente = custoCorpoDocente;
 }
 
-void Avaliador::violacoesCargasHorarias(SolucaoOperacional & solucao)
+void Avaliador::violacoesCargasHorarias( SolucaoOperacional & solucao )
 {
    // Armazena o total de violações de cada tipo
    int violacoesSemestreAnterior = 0;
@@ -832,7 +863,7 @@ void Avaliador::violacoesCargasHorarias(SolucaoOperacional & solucao)
    violacoesCHMinimaSemestreAterior.clear();
    violacoesCHMinimaProfessor.clear();
    violacoesCHMaximaProfessor.clear();
-   for (unsigned int i = 0; i < solucao.mapProfessores.size(); i++)
+   for ( unsigned int i = 0; i < solucao.mapProfessores.size(); i++ )
    {
       violacoesCHMinimaSemestreAterior.push_back(0);
       violacoesCHMinimaProfessor.push_back(0);
@@ -846,16 +877,16 @@ void Avaliador::violacoesCargasHorarias(SolucaoOperacional & solucao)
    std::map<int, Professor*>::iterator it_professor
       = solucao.mapProfessores.begin();
    for (; it_professor != solucao.mapProfessores.end();
-      it_professor++)
+          it_professor++ )
    {
       cont_creditos = 0;
       linha_professor = it_professor->second->getIdOperacional();
 
       // Verifica quantos créditos o professor ministrará na semana
-      for (unsigned i = 0; i < solucao.getMatrizAulas()->at(linha_professor)->size(); i++)
+      for ( unsigned i = 0; i < solucao.getMatrizAulas()->at(linha_professor)->size(); i++)
       {
-         aula = solucao.getMatrizAulas()->at(linha_professor)->at(i);
-         if (aula != NULL && aula->eVirtual() == false)
+         aula = solucao.getMatrizAulas()->at( linha_professor )->at(i);
+         if ( aula != NULL && aula->eVirtual() == false )
          {
             cont_creditos++;
          }
@@ -867,26 +898,26 @@ void Avaliador::violacoesCargasHorarias(SolucaoOperacional & solucao)
 
       // Verifica carga horária do semestre anterior
       tempSemestreAnterior = ( cont_creditos - semestre_anterior );
-      if (tempSemestreAnterior < 0)
+      if ( tempSemestreAnterior < 0 )
       {
          violacoesSemestreAnterior++;
-         violacoesCHMinimaSemestreAterior[linha_professor] = abs( tempSemestreAnterior );
+         violacoesCHMinimaSemestreAterior[ linha_professor ] = abs( tempSemestreAnterior );
       }
 
       // Verifica carga horária mínima do professor
       tempCHMinima = ( cont_creditos - ch_min );
-      if (tempCHMinima < 0)
+      if ( tempCHMinima < 0 )
       {
          violacoesCHMinima++;
-         violacoesCHMinimaProfessor[linha_professor] = abs( tempCHMinima );
+         violacoesCHMinimaProfessor[ linha_professor ] = abs( tempCHMinima );
       }
 
       // Verifica carga horária máxima do professor
       tempCHMaxima = ( cont_creditos - ch_max );
-      if (tempCHMaxima > 0)
+      if ( tempCHMaxima > 0 )
       {
          violacoesCHMaxima++;
-         violacoesCHMaximaProfessor[linha_professor] = abs( tempCHMaxima );
+         violacoesCHMaximaProfessor[ linha_professor ] = abs( tempCHMaxima );
       }
    }
 
@@ -896,7 +927,7 @@ void Avaliador::violacoesCargasHorarias(SolucaoOperacional & solucao)
    totalViolacoesCHMaximaProfessor = violacoesCHMaxima;
 }
 
-void Avaliador::avaliaDiasProfessorMinistraAula(SolucaoOperacional & solucao)
+void Avaliador::avaliaDiasProfessorMinistraAula( SolucaoOperacional & solucao )
 {
    int numDias = 0;
 
@@ -1001,7 +1032,7 @@ int Avaliador::calculaTamanhoBlocoAula(SolucaoOperacional & solucao)
    int bloco_aula = 0;
 
    unsigned i = 0;
-   vector< int > cont_horarios;
+   std::vector< int > cont_horarios;
 
    // Esse vetor contém uma posição para
    // cada dia da semana, iniciando o contador
@@ -1017,14 +1048,16 @@ int Avaliador::calculaTamanhoBlocoAula(SolucaoOperacional & solucao)
    // Para cada um dos horários disponíveis, essa iteração
    // incrementa o número de horários disponíveis em cada dia da
    // semana, a cada ocorrência de horário/dia da semana encontrada
-   ITERA_GGROUP(it_campi, solucao.getProblemData()->campi, Campus)
+   ITERA_GGROUP( it_campi, solucao.getProblemData()->campi,
+				 Campus )
    {
-      ITERA_GGROUP(it_horario, it_campi->horarios, Horario)
+      ITERA_GGROUP( it_horario, it_campi->horarios,
+					Horario )
       {
          GGroup< int >::iterator it_dia_semana
             = it_horario->dias_semana.begin();
          for (; it_dia_semana != it_horario->dias_semana.end();
-            it_dia_semana++)
+                it_dia_semana++ )
          {
             cont_horarios[ *it_dia_semana ]++;
          }
@@ -1043,10 +1076,10 @@ int Avaliador::calculaTamanhoBlocoAula(SolucaoOperacional & solucao)
    return bloco_aula;
 }
 
-void Avaliador::avaliaNumeroMestresDoutores(SolucaoOperacional & solucao)
+void Avaliador::avaliaNumeroMestresDoutores( SolucaoOperacional & solucao )
 {
    int violacoesMestres = 0,
-      violacoesDoutores = 0;
+       violacoesDoutores = 0;
 
    int id_titulacao_mestre = 4;
    int id_titulacao_doutor = 5;
@@ -1081,15 +1114,17 @@ void Avaliador::avaliaNumeroMestresDoutores(SolucaoOperacional & solucao)
          // Adiciona o professor na lista de professores
          // do curso ao qual a aula atual atende
          Oferta * oferta = NULL;
-         ITERA_GGROUP(it_oferta, solucao.getProblemData()->ofertas, Oferta)
+         ITERA_GGROUP( it_oferta, solucao.getProblemData()->ofertas,
+					   Oferta )
          {
-            ITERA_GGROUP(it_oferta_aula, aula->ofertas, Oferta)
+            ITERA_GGROUP( it_oferta_aula, aula->ofertas,
+						  Oferta )
             {
-               if (it_oferta_aula->getId() == it_oferta->getId())
+               if ( it_oferta_aula->getId() == it_oferta->getId() )
                {
-                  oferta = *(it_oferta_aula);
+                  oferta = (*it_oferta_aula);
                   id_curso = oferta->getCursoId();
-                  mapCursosProfessores[ id_curso ].add(professor);
+                  mapCursosProfessores[ id_curso ].add( professor );
                   break;
                }
             }
@@ -1111,7 +1146,7 @@ void Avaliador::avaliaNumeroMestresDoutores(SolucaoOperacional & solucao)
    std::map< int, GGroup< Professor * > >::iterator it_cursos_professores
       = mapCursosProfessores.begin();
    for (; it_cursos_professores != mapCursosProfessores.end();
-      it_cursos_professores++)
+		  it_cursos_professores++ )
    {
       // Id do curso atual
       id_curso = it_cursos_professores->first;
@@ -1127,18 +1162,19 @@ void Avaliador::avaliaNumeroMestresDoutores(SolucaoOperacional & solucao)
       // Total de professores que ministram aulas desse curso
       num_professores_curso = professores.size();
 
-      ITERA_GGROUP(it_professor, professores, Professor)
+      ITERA_GGROUP( it_professor, professores,
+					Professor )
       {
          // Se for doutor, incrementa-se o contador de mestres
          // e também o contador de doutores associados ao curso
-         if (it_professor->getTitulacaoId() == id_titulacao_doutor)
+         if ( it_professor->getTitulacaoId() == id_titulacao_doutor )
          {
             cont_mestres++;
             cont_doutores++;
          }
          // Se for mestre, incrementa-se apenas
          // o contador de mestres associados ao curso atual
-         else if (it_professor->getTitulacaoId() == id_titulacao_mestre)
+         else if ( it_professor->getTitulacaoId() == id_titulacao_mestre )
          {
             cont_mestres++;
          }
@@ -1312,7 +1348,7 @@ Curso* Avaliador::procuraCurso(int id_curso, GGroup<Curso*> cursos)
    return curso;
 }
 
-void Avaliador::avaliaPreferenciasProfessorDisciplina(SolucaoOperacional & solucao)
+void Avaliador::avaliaPreferenciasProfessorDisciplina( SolucaoOperacional & solucao )
 {
    int nota_acumulada = 0;
 
@@ -1325,7 +1361,7 @@ void Avaliador::avaliaPreferenciasProfessorDisciplina(SolucaoOperacional & soluc
 
    // Inicializa o vetor de violações de acda professor
    preferenciasProfessor.clear();
-   for (unsigned int i = 0; i < solucao.mapProfessores.size(); i++)
+   for ( unsigned int i = 0; i < solucao.mapProfessores.size(); i++ )
    {
       preferenciasProfessor.push_back(0);
    }
@@ -1338,9 +1374,9 @@ void Avaliador::avaliaPreferenciasProfessorDisciplina(SolucaoOperacional & soluc
    // Para cada professor, criamos um 'map' que
    // relaciona cada uma de suas disciplinas com
    // a preferência do professor em lecionar essa disciplina
-   ITERA_GGROUP(it_campi, solucao.getProblemData()->campi, Campus)
+   ITERA_GGROUP( it_campi, solucao.getProblemData()->campi, Campus )
    {
-      ITERA_GGROUP(it_professor, it_campi->professores, Professor)
+      ITERA_GGROUP( it_professor, it_campi->professores, Professor )
       {
          // Recupera o 'objeto' professor 
          id_professor = it_professor->getId();
@@ -1352,7 +1388,7 @@ void Avaliador::avaliaPreferenciasProfessorDisciplina(SolucaoOperacional & soluc
 
          // Percorre as disciplinas desse professor,
          // formando os pares 'disciplina'/'preferência'
-         ITERA_GGROUP(it_disciplina, it_professor->magisterio, Magisterio)
+         ITERA_GGROUP( it_disciplina, it_professor->magisterio, Magisterio )
          {
             // Id da disciplina
             id_disciplina = abs( it_disciplina->getDisciplinaId() );
@@ -1361,7 +1397,7 @@ void Avaliador::avaliaPreferenciasProfessorDisciplina(SolucaoOperacional & soluc
             preferencia_disciplina = it_disciplina->getNota();
 
             // Relaciona o par disciplina/preferência ao professor
-            (*mapDiscPreferencia)[ id_disciplina ] = preferencia_disciplina;
+            ( *mapDiscPreferencia )[ id_disciplina ] = preferencia_disciplina;
          }
       }
    }
@@ -1372,7 +1408,7 @@ void Avaliador::avaliaPreferenciasProfessorDisciplina(SolucaoOperacional & soluc
 
    // Com as preferências de cada disciplinas relacionadas, devo agora
    // calcular a avaliação da solução no critério 'preferência por discipina'
-   for (unsigned int i = 0; i < solucao.getMatrizAulas()->size(); i++)
+   for ( unsigned int i = 0; i < solucao.getMatrizAulas()->size(); i++ )
    {
       // Recupera o 'objeto' professor
       professor = solucao.getProfessorMatriz(i);
@@ -1383,11 +1419,11 @@ void Avaliador::avaliaPreferenciasProfessorDisciplina(SolucaoOperacional & soluc
          = &( mapProfDiscPreferencia[ id_professor ] );
 
       // Percorre as aulas do professor na matriz de solução
-      for (unsigned int j = 0; j < solucao.getMatrizAulas()->at(i)->size(); j++)
+      for ( unsigned int j = 0; j < solucao.getMatrizAulas()->at(i)->size(); j++ )
       {
          // Recupera o objeto 'aula' atual
          aula = solucao.getMatrizAulas()->at(i)->at(j);
-         if (aula == NULL || aula->eVirtual() == true)
+         if ( aula == NULL || aula->eVirtual() == true )
          {
             // Não tem aula alocada nesse horário
             continue;
@@ -1403,7 +1439,7 @@ void Avaliador::avaliaPreferenciasProfessorDisciplina(SolucaoOperacional & soluc
          // 'quanto maior o valor, pior a solução'. Como a 'pior' preferência
          // tem nota 1 e a 'maior' preferência tem nota 10, um valor mais próximo
          // de 1 deve contribuir mais para o valor da avaliação no critério atual
-         nota_avaliacao = (10 - preferencia_disciplina);
+         nota_avaliacao = ( 10 - preferencia_disciplina );
 
          // Adiciona a avaliação no somatório total
          nota_acumulada += nota_avaliacao;
@@ -1416,7 +1452,7 @@ void Avaliador::avaliaPreferenciasProfessorDisciplina(SolucaoOperacional & soluc
    totalPreferenciasProfessorDisciplina = nota_acumulada;
 }
 
-void Avaliador::avaliaCustoProfessorVirtual(SolucaoOperacional & solucao)
+void Avaliador::avaliaCustoProfessorVirtual( SolucaoOperacional & solucao )
 {
    // Total de crétidos atribuídos a professores virtuais
    int creditos_virtuais = 0;
@@ -1427,14 +1463,14 @@ void Avaliador::avaliaCustoProfessorVirtual(SolucaoOperacional & solucao)
    unsigned int i = 0;
    int id_professor = 0;
    int linha_professor = 0;
-   Professor* professor = NULL;
-   Aula* aula = NULL;
+   Professor * professor = NULL;
+   Aula * aula = NULL;
 
    // Percorre o conjunto de professores da solução
-   std::map<int, Professor*>::iterator it_professor
+   std::map< int, Professor * >::iterator it_professor
       = solucao.mapProfessores.begin();
    for (; it_professor != solucao.mapProfessores.end();
-      it_professor++)
+          it_professor++ )
    {
       // Recupera o objeto 'professor'
       id_professor = it_professor->first;
@@ -1442,7 +1478,7 @@ void Avaliador::avaliaCustoProfessorVirtual(SolucaoOperacional & solucao)
       linha_professor = it_professor->second->getIdOperacional();
 
       // Caso o professor seja um 'professor virtual'
-      if (professor->eVirtual())
+      if ( professor->eVirtual() )
       {
          // Incrementa-se o número de professores
          // virtuais utilizados na solução operacional
@@ -1450,11 +1486,11 @@ void Avaliador::avaliaCustoProfessorVirtual(SolucaoOperacional & solucao)
 
          // Para o professor atual, contabilizamos o
          // número de créditos atribuídos a ele na solução
-         for (i = 0; i < solucao.getMatrizAulas()->at(linha_professor)->size(); i++)
+         for ( i = 0; i < solucao.getMatrizAulas()->at( linha_professor )->size(); i++ )
          {
             // Recupera a aula atual
-            aula = solucao.getMatrizAulas()->at(linha_professor)->at(i);
-            if (aula != NULL && aula->eVirtual() == false)
+            aula = solucao.getMatrizAulas()->at( linha_professor )->at(i);
+            if ( aula != NULL && aula->eVirtual() == false )
             {
                // Incrementa o total de créditos
                // atribuídos a professor virtual na solução
@@ -1466,4 +1502,125 @@ void Avaliador::avaliaCustoProfessorVirtual(SolucaoOperacional & solucao)
 
    totalCreditosProfessoresVirtuais = creditos_virtuais;
    totalProfessoresVirtuais = professores_virtuais;
+}
+
+void Avaliador::avaliaTempoParcialIntegral( SolucaoOperacional & solucao )
+{
+	int violacoesParcialIntegral = 0;
+	int violacoesIntegral = 0;
+
+	// Dado um curso, obtemos um par que informa o número
+	// de professores desse curso com regime de dedicação
+	// parcial e dedicação integral, nessa ordem
+	std::map< Curso *, std::pair< int, int > > map_Curso_TempoParcialIntegral;
+
+	// Informa quais professores já
+	// foram vinculados a um determinado curso
+	std::map< Curso *, GGroup< Professor * > > map_Curso_Professores;
+
+	Aula * aula = NULL;
+	Curso * curso = NULL;
+	Oferta * oferta = NULL;
+	Professor * professor = NULL;
+	std::string tipo_contrato = "";
+	std::pair< int, int > * parcial_integral = NULL;
+
+	//------------------------------------------------------------------------
+	// Para cada curso, procuro pelo total
+	// de professores tempo parcial e tempo
+	// integral que ministram disciplinas do curso
+	MatrizSolucao * matriz_solucao = solucao.getMatrizAulas();
+	for (int i = 0; i < (int)matriz_solucao->size(); i++)
+	{
+		// Recupera o tipo do contrato do professor
+		// --> Horista ou Integral
+		professor = solucao.getProfessorMatriz(i);
+		tipo_contrato = professor->tipo_contrato->getNome();
+
+		for (int j = 0; j < (int)matriz_solucao->at(i)->size(); j++)
+		{
+			// Recupera a aula atual
+			aula = matriz_solucao->at(i)->at(j);
+
+			// Percorre as ofertas atendidas por essa aula
+			ITERA_GGROUP( it_oferta, aula->ofertas,
+						  Oferta )
+			{
+				// Recupera o curso atual
+				oferta = ( *it_oferta );
+				curso = ( oferta->curso );
+
+				// Quantidade de professores de
+				// tempo parcial/integral por curso
+				std::pair< int, int > * parcial_integral
+					= &( map_Curso_TempoParcialIntegral[ curso ] );
+
+				// Professores vinculados ao curso em questão
+				GGroup< Professor * > * professores_curso
+					= &( map_Curso_Professores[ curso ] );
+
+				// Caso o professor ainda não tenha
+				// sido já vinculado ao curso atual
+				GGroup< Professor * >::iterator it_professor
+					= professores_curso->find( professor );
+				if ( it_professor == professores_curso->end() )
+				{
+					if ( tipo_contrato == "Integral" )
+					{
+						parcial_integral->second++;
+
+					}
+					else if ( tipo_contrato == "Horista" )
+					{
+						parcial_integral->first++;
+					}
+
+					// Informa que esse professor
+					// já foi analisado nesse curso
+					professores_curso->add( professor );
+				}
+			}
+		}
+	}
+	//------------------------------------------------------------------------
+
+	//------------------------------------------------------------------------
+	// Avalia se houve alguma violação de porcentagem mínima de
+	// professores de tempo parcial e/ou tempo integral por curso
+	int tempo_parcial = 0;
+	int tempo_integral = 0;
+	double porcentagem_parcial = 0.0;
+	double porcentagem_integral = 0.0;
+	double total_professores_curso = 0.0;
+	ITERA_GGROUP( it_curso, solucao.getProblemData()->cursos,
+				  Curso )
+	{
+		// Recupera o par 'tempo parcial' / 'tempo integral',
+		// referente a todos os professores que ministram
+		// pelo menos uma disciplina do curso atual
+		parcial_integral = &( map_Curso_TempoParcialIntegral[ (*it_curso) ] );
+
+		// Total de professores do curso em cada tipo de contrato
+		tempo_parcial = parcial_integral->first;
+		tempo_integral = parcial_integral->second;
+		total_professores_curso = (tempo_parcial + tempo_integral);
+
+		// Porcentagem de cada tipo de contrato
+		porcentagem_parcial  = (tempo_parcial+tempo_integral)/(total_professores_curso);
+		porcentagem_integral = (tempo_integral)/(total_professores_curso);
+
+		// Verifica se houve violações
+		if ( porcentagem_parcial < curso->getMinTempoIntegralParcial() )
+		{
+			violacoesParcialIntegral++;
+		}
+		if ( porcentagem_integral < curso->getMinTempoIntegral() )
+		{
+			violacoesIntegral++;
+		}
+	}
+	//------------------------------------------------------------------------
+
+	this->totalViolacoesTempoParcialIntegral = violacoesParcialIntegral;
+	this->totalViolacoesTempoIntegral = violacoesIntegral;
 }
