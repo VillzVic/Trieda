@@ -1,23 +1,19 @@
-#ifndef HEURISTIC_HPP_
-#define HEURISTIC_HPP_
+#ifndef _HEURISTIC_HPP_
+#define _HEURISTIC_HPP_
 
 #include "SolucaoOperacional.h"
 #include "Avaliador.h"
-
-using namespace std;
 
 class Heuristic
 {
 public:
 
-   Heuristic()
-   {}
+   Heuristic() { }
 
-   virtual ~Heuristic()
-   {}
+   virtual ~Heuristic() { }
 
-   virtual void exec(SolucaoOperacional & s, double timelimit, double target_f) = 0;
+   virtual void exec( SolucaoOperacional &, double, double ) = 0;
 
 };
 
-#endif /* HEURISTIC_HPP_ */
+#endif // _HEURISTIC_HPP_

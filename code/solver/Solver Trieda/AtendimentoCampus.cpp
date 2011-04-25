@@ -17,10 +17,10 @@ AtendimentoCampus::~AtendimentoCampus(void)
 
 std::ostream & operator << ( std::ostream & out, AtendimentoCampus & campus )
 {
-    out << "<AtendimentoCampus>" << endl;
-   out << "<campusId>" << campus.getId() << "</campusId>" << endl;
-   out << "<campusCodigo>" << campus.campus_id << "</campusCodigo>" << endl;
-   out << "<atendimentosUnidades>" << endl;
+   out << "<AtendimentoCampus>" << std::endl;
+   out << "<campusId>" << campus.getId() << "</campusId>" << std::endl;
+   out << "<campusCodigo>" << campus.campus_id << "</campusCodigo>" << std::endl;
+   out << "<atendimentosUnidades>" << std::endl;
 
    GGroup< AtendimentoUnidade * >::GGroupIterator it_unidade
 	   = campus.atendimentos_unidades->begin();
@@ -30,8 +30,8 @@ std::ostream & operator << ( std::ostream & out, AtendimentoCampus & campus )
       out << ( **it_unidade );
    }
 
-   out << "</atendimentosUnidades>" << endl;
-   out << "</AtendimentoCampus>" << endl;
+   out << "</atendimentosUnidades>" << std::endl;
+   out << "</AtendimentoCampus>" << std::endl;
 
    return out;
 }

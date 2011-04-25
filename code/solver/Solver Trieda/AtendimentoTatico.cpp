@@ -18,22 +18,28 @@ AtendimentoTatico::~AtendimentoTatico(void)
    }
 }
 
-std::ostream& operator << (std::ostream& out, AtendimentoTatico& tatico)
+std::ostream& operator << ( std::ostream& out, AtendimentoTatico & tatico )
 {
-   out << "<AtendimentoTatico>" << endl;
+   out << "<AtendimentoTatico>" << std::endl;
 
-   if(tatico.atendimento_oferta) {
-      out << "<atendimentoOferta>" << endl << (*tatico.atendimento_oferta) << "</atendimentoOferta>" << endl;
+   if ( tatico.atendimento_oferta )
+   {
+      out << "<atendimentoOferta>" << std::endl
+		  << ( *tatico.atendimento_oferta )
+		  << "</atendimentoOferta>" << std::endl;
    }
-   else {
-      out << "<atendimentoOferta />" << endl;
+   else
+   {
+      out << "<atendimentoOferta />" << std::endl;
    }
 
-   out << "<qtdeCreditosTeoricos>" << tatico.qtde_creditos_teoricos << "</qtdeCreditosTeoricos>" << endl;
+   out << "<qtdeCreditosTeoricos>" << tatico.getQtdCreditosTeoricos()
+	   << "</qtdeCreditosTeoricos>" << std::endl;
 
-   out << "<qtdeCreditosPraticos>" << tatico.qtde_creditos_praticos << "</qtdeCreditosPraticos>" << endl;
+   out << "<qtdeCreditosPraticos>" << tatico.getQtdCreditosPraticos()
+	   << "</qtdeCreditosPraticos>" << std::endl;
 
-   out << "</AtendimentoTatico>" << endl;
+   out << "</AtendimentoTatico>" << std::endl;
 
    return out;
 }

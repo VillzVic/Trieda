@@ -1,9 +1,7 @@
-#ifndef NSITERATOR_HPP_
-#define NSITERATOR_HPP_
+#ifndef _NS_ITERATOR_HPP_
+#define _NS_ITERATOR_HPP_
 
 #include "Move.hpp"
-
-using namespace std;
 
 class IteratorOutOfBound
 {
@@ -15,18 +13,13 @@ public:
 	{
 	}
 
-	int getId()
-	{
-		return id;
-	}
+	int getId() { return id; }
 };
 
 class NSIterator
 {
 public:
-	virtual ~NSIterator()
-	{
-	}
+	virtual ~NSIterator() { }
 
 	virtual void first() = 0;
 	virtual void next() = 0;
@@ -34,4 +27,4 @@ public:
 	virtual Move & current() = 0;
 };
 
-#endif /*NSITERATOR_HPP_*/
+#endif // _NS_ITERATOR_HPP_

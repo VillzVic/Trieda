@@ -7,14 +7,14 @@ AtendimentoOfertaSolucao::AtendimentoOfertaSolucao(void)
 {
 }
 
-AtendimentoOfertaSolucao::AtendimentoOfertaSolucao(AtendimentoOferta & at_Oft)
+AtendimentoOfertaSolucao::AtendimentoOfertaSolucao( AtendimentoOferta & at_Oft )
 {
 	ofertaCursoCampiId = at_Oft.oferta->getCursoId();
-    disciplinaId= at_Oft.disciplina_id;
-    quantidade = at_Oft.quantidade;
+    disciplinaId= at_Oft.getDisciplinaId();
+    quantidade = at_Oft.getQuantidade();
 
-    stringstream str;
-    str << at_Oft.turma;
+	std::stringstream str;
+    str << at_Oft.getTurma();
 
     turma = str.str();
 }

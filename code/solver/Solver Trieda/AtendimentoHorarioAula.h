@@ -1,10 +1,9 @@
-#pragma once
+#ifndef _ATENDIMENTO_HORARIO_AULA_H_
+#define _ATENDIMENTO_HORARIO_AULA_H_
+
 #include "ofbase.h"
 #include "TRIEDA-OutputXSD.h"
-
 #include "AtendimentoOferta.h"
-
-using namespace std;
 
 class AtendimentoHorarioAula:
    public OFBase
@@ -13,12 +12,22 @@ public:
    AtendimentoHorarioAula(void);
    virtual ~AtendimentoHorarioAula(void);
 
+   GGroup< AtendimentoOferta * > * atendimentos_ofertas;
+
+   void setHorarioAulaId(int value) { horario_aula_id = value; }
+   void setProfessorId(int value) { professor_id = value; }
+   void setCreditoTeorico(bool value) { credito_teorico = value; }
+
+   int getHorarioAulaId() { return horario_aula_id; }
+   int getProfessorId() { return professor_id; }
+   bool getCreditoTeorico() { return credito_teorico; }
+
+private:
    int horario_aula_id;
    int professor_id;
    bool credito_teorico;
-   GGroup<AtendimentoOferta*> * atendimentos_ofertas;
-
-   //virtual void escreve_arvore(ItemAtendimentoUnidade& elem);
 };
 
-std::ostream& operator << (std::ostream& out, AtendimentoHorarioAula& horario_aula);
+std::ostream & operator << ( std::ostream &, AtendimentoHorarioAula & );
+
+#endif

@@ -7,14 +7,14 @@ AtendimentoTaticoSolucao::AtendimentoTaticoSolucao(void)
 {
 }
 
-AtendimentoTaticoSolucao::AtendimentoTaticoSolucao(AtendimentoTatico & at_Tatico)
+AtendimentoTaticoSolucao::AtendimentoTaticoSolucao( AtendimentoTatico & at_Tatico )
 {
-   this->setId(at_Tatico.atendimento_oferta->oferta->getId());
+   this->setId( at_Tatico.atendimento_oferta->oferta->getId() );
 
-   qtdeCreditosTeoricos = at_Tatico.qtde_creditos_teoricos;
-   qtdeCreditosPraticos = at_Tatico.qtde_creditos_praticos;
+   qtdeCreditosTeoricos = at_Tatico.getQtdCreditosTeoricos();
+   qtdeCreditosPraticos = at_Tatico.getQtdCreditosPraticos();
 
-   atendimento_oferta = new AtendimentoOfertaSolucao(*at_Tatico.atendimento_oferta);
+   atendimento_oferta = new AtendimentoOfertaSolucao( *at_Tatico.atendimento_oferta );
 }
 
 AtendimentoTaticoSolucao::~AtendimentoTaticoSolucao(void)
