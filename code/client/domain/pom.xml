@@ -10,7 +10,7 @@
 	<groupId>com.gapso.trieda</groupId>
 	<artifactId>trieda-domain</artifactId>
 	<packaging>jar</packaging>
-	<version>0.1.0</version>
+	<version>0.1.1</version>
 	<name>trieda-domain</name>
 	<properties>
 		<roo.version>1.1.0.M2</roo.version>
