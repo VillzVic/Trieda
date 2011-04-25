@@ -1724,7 +1724,7 @@ int SolverMIP::solveOperacional()
    // -----------------------------------------------------------------------------------------
    // Realizando alguns checks.
    bool error = false;
-   ITERA_GGROUP(itAula, problemData->aulas, Aula)
+   ITERA_GGROUP( itAula, problemData->aulas, Aula )
    {
       if ( itAula->bloco_aula.empty() )
       {
@@ -1761,9 +1761,12 @@ int SolverMIP::solveOperacional()
    }
    // -----------------------------------------------------------------------------------------
 
-   solucaoOperacional.toString();
+   // solucaoOperacional.toString();
+   // solucaoOperacional.toString2();
 
-   solucaoOperacional.toString2();
+   Avaliador avaliador;
+   double funcao_objetivo = avaliador.avaliaSolucao( solucaoOperacional, true );
+   std::cout << "\nValor da solucao inicial : " << funcao_objetivo << std::endl;
 
    std::cout << "\nTODO -- Implementar <SolverMIP::solveOperacional()>" << std::endl;
 

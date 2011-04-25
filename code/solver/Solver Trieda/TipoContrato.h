@@ -1,4 +1,6 @@
-#pragma once
+#ifndef _TIPO_CONTRATO_H_
+#define _TIPO_CONTRATO_H_
+
 #include "ofbase.h"
 
 class TipoContrato :
@@ -6,8 +8,16 @@ class TipoContrato :
 {
 public:
    TipoContrato(void);
-   ~TipoContrato(void);
-   virtual void le_arvore(ItemTipoContrato& elem);
-//private:
+   virtual ~TipoContrato(void);
+
+   virtual void le_arvore( ItemTipoContrato & );
+
+   void setNome(std::string s) { nome = s; }
+
+   std::string getNome() const { return nome; }
+
+private:
    std::string nome;
 };
+
+#endif

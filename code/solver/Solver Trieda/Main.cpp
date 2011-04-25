@@ -125,8 +125,8 @@ int main(int argc, char** argv)
       {
          char mensagem[ 200 ];
          sprintf( mensagem, "Não foi possível processar o modelo matemático (erro %d)", status );
-         ErrorHandler::addErrorMessage( UNEXPECTED_ERROR,
-            std::string(mensagem), "Solver::main()", false);
+         ErrorHandler::addErrorMessage(
+			 UNEXPECTED_ERROR, std::string(mensagem), "Solver::main()", false );
 
          error = true;
       }
@@ -140,8 +140,8 @@ int main(int argc, char** argv)
       {
          char mensagem[ 200 ];
          sprintf( mensagem, "Não foi possível escrever a solução. Error code: %d.", status );
-         ErrorHandler::addErrorMessage( UNEXPECTED_ERROR,
-			 std::string( mensagem ), "Solver::main()", false);
+         ErrorHandler::addErrorMessage(
+			 UNEXPECTED_ERROR, std::string( mensagem ), "Solver::main()", false );
 
          error = true;
       }
@@ -172,13 +172,13 @@ int main(int argc, char** argv)
 }
 
 void writeOutput( ProblemSolution * solution,
-				  char * outputFile, char * tempOutput)
+				  char * outputFile, char * tempOutput )
 {
    // Write output
    remove( tempOutput );
    std::ofstream file;
    file.open( tempOutput );
-   file << *solution;
+   file << ( *solution );
    file.close();
 
    remove( outputFile );

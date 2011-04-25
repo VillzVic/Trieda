@@ -5,6 +5,7 @@ ProblemSolution::ProblemSolution()
 {
    folgas = new RestricaoVioladaGroup();
    atendimento_campus = new GGroup< AtendimentoCampus * >();
+   professores_virtuais = new GGroup< ProfessorVirtualOutput * >();
 }
 
 ProblemSolution::~ProblemSolution()
@@ -20,6 +21,12 @@ ProblemSolution::~ProblemSolution()
       atendimento_campus->deleteElements();
       delete atendimento_campus;
    }
+
+   if ( professores_virtuais != NULL )
+   {
+	   professores_virtuais->deleteElements();
+	   delete professores_virtuais;
+   }
 }
 
 std::ostream & operator << ( std::ostream & out, ProblemSolution & solution )
@@ -34,9 +41,10 @@ std::ostream & operator << ( std::ostream & out, ProblemSolution & solution )
       out << "<atendimentos>" << endl;
       GGroup< AtendimentoCampus * >::GGroupIterator it_campus
 		  = solution.atendimento_campus->begin();
-      for(; it_campus != solution.atendimento_campus->end(); it_campus++)
+      for(; it_campus != solution.atendimento_campus->end();
+		    it_campus++ )
       {
-         out << **it_campus;
+         out << ( **it_campus );
       }
       out << "</atendimentos>" << endl;
 	  //-----------------------------------------------------------------------
@@ -48,14 +56,14 @@ std::ostream & operator << ( std::ostream & out, ProblemSolution & solution )
 		  = solution.getFolgas()->begin();
       for (; it != solution.getFolgas()->end();  ++it)
 	  {
-         out << **it;
+         out << ( **it );
 	  }
       out << "</restricoesVioladas>\n";
 	  //-----------------------------------------------------------------------
 
 	  //-----------------------------------------------------------------------
       // Erros e warnings:
-      out << *ErrorHandler::getInstance();
+      out << ( *ErrorHandler::getInstance() );
 	  //-----------------------------------------------------------------------
 
       out << "</TriedaOutput>" << endl;
@@ -74,9 +82,24 @@ std::ostream & operator << ( std::ostream & out, ProblemSolution & solution )
 			  = solution.atendimento_campus->begin();
 		  for(; it_campus != solution.atendimento_campus->end(); it_campus++)
 		  {
-			 out << **it_campus;
+			 out << ( **it_campus );
 		  }
 		  out << "</atendimentos>" << endl;
+	  }
+	  //-----------------------------------------------------------------------
+
+	  //-----------------------------------------------------------------------
+      out << "<professoresVirtuais>" << endl;
+	  if ( solution.professores_virtuais != NULL )
+	  {
+		  GGroup< ProfessorVirtualOutput * >::GGroupIterator it_professor_virtual
+			  = solution.professores_virtuais->begin();
+		  for(; it_professor_virtual != solution.professores_virtuais->end();
+			    it_professor_virtual++ )
+		  {
+			 out << ( **it_professor_virtual );
+		  }
+		  out << "</professoresVirtuais>" << endl;
 	  }
 	  //-----------------------------------------------------------------------
 

@@ -1,5 +1,5 @@
-#ifndef PROBLEMSOLUTION_H
-#define PROBLEMSOLUTION_H
+#ifndef _PROBLEM_SOLUTION_H_
+#define _PROBLEM_SOLUTION_H_
 
 #include <ostream>
 
@@ -8,8 +8,7 @@
 #include "SolucaoOperacional.h"
 #include "AtendimentoCampus.h"
 #include "RestricaoViolada.h"
-
-using namespace std;
+#include "ProfessorVirtualOutput.h"
 
 // Stores output data
 class ProblemSolution
@@ -25,6 +24,8 @@ public:
 
    GGroup< AtendimentoCampus * > * atendimento_campus;
    SolucaoOperacional * solucao_operacional;
+
+   GGroup< ProfessorVirtualOutput * > * professores_virtuais;
 
 private:
    RestricaoVioladaGroup * folgas;
