@@ -2241,6 +2241,42 @@ curriculos (::std::auto_ptr< curriculos_type > x)
   this->curriculos_.set (x);
 }
 
+const ItemCurso::minTempoIntegral_type& ItemCurso::
+minTempoIntegral () const
+{
+  return this->minTempoIntegral_.get ();
+}
+
+ItemCurso::minTempoIntegral_type& ItemCurso::
+minTempoIntegral ()
+{
+  return this->minTempoIntegral_.get ();
+}
+
+void ItemCurso::
+minTempoIntegral (const minTempoIntegral_type& x)
+{
+  this->minTempoIntegral_.set (x);
+}
+
+const ItemCurso::minTempoIntegralParcial_type& ItemCurso::
+minTempoIntegralParcial () const
+{
+  return this->minTempoIntegralParcial_.get ();
+}
+
+ItemCurso::minTempoIntegralParcial_type& ItemCurso::
+minTempoIntegralParcial ()
+{
+  return this->minTempoIntegralParcial_.get ();
+}
+
+void ItemCurso::
+minTempoIntegralParcial (const minTempoIntegralParcial_type& x)
+{
+  this->minTempoIntegralParcial_.set (x);
+}
+
 
 // ItemPercentualMinimo
 // 
@@ -8600,7 +8636,9 @@ ItemCurso (const id_type& id,
            const qtdMaxProfDisc_type& qtdMaxProfDisc,
            const maisDeUmaDiscPeriodo_type& maisDeUmaDiscPeriodo,
            const areasTitulacao_type& areasTitulacao,
-           const curriculos_type& curriculos)
+           const curriculos_type& curriculos,
+           const minTempoIntegral_type& minTempoIntegral,
+           const minTempoIntegralParcial_type& minTempoIntegralParcial)
 : ::xml_schema::type (),
   id_ (id, ::xml_schema::flags (), this),
   codigo_ (codigo, ::xml_schema::flags (), this),
@@ -8610,7 +8648,9 @@ ItemCurso (const id_type& id,
   qtdMaxProfDisc_ (qtdMaxProfDisc, ::xml_schema::flags (), this),
   maisDeUmaDiscPeriodo_ (maisDeUmaDiscPeriodo, ::xml_schema::flags (), this),
   areasTitulacao_ (areasTitulacao, ::xml_schema::flags (), this),
-  curriculos_ (curriculos, ::xml_schema::flags (), this)
+  curriculos_ (curriculos, ::xml_schema::flags (), this),
+  minTempoIntegral_ (minTempoIntegral, ::xml_schema::flags (), this),
+  minTempoIntegralParcial_ (minTempoIntegralParcial, ::xml_schema::flags (), this)
 {
 }
 
@@ -8623,7 +8663,9 @@ ItemCurso (const id_type& id,
            const qtdMaxProfDisc_type& qtdMaxProfDisc,
            const maisDeUmaDiscPeriodo_type& maisDeUmaDiscPeriodo,
            ::std::auto_ptr< areasTitulacao_type >& areasTitulacao,
-           ::std::auto_ptr< curriculos_type >& curriculos)
+           ::std::auto_ptr< curriculos_type >& curriculos,
+           const minTempoIntegral_type& minTempoIntegral,
+           const minTempoIntegralParcial_type& minTempoIntegralParcial)
 : ::xml_schema::type (),
   id_ (id, ::xml_schema::flags (), this),
   codigo_ (codigo, ::xml_schema::flags (), this),
@@ -8633,7 +8675,9 @@ ItemCurso (const id_type& id,
   qtdMaxProfDisc_ (qtdMaxProfDisc, ::xml_schema::flags (), this),
   maisDeUmaDiscPeriodo_ (maisDeUmaDiscPeriodo, ::xml_schema::flags (), this),
   areasTitulacao_ (areasTitulacao, ::xml_schema::flags (), this),
-  curriculos_ (curriculos, ::xml_schema::flags (), this)
+  curriculos_ (curriculos, ::xml_schema::flags (), this),
+  minTempoIntegral_ (minTempoIntegral, ::xml_schema::flags (), this),
+  minTempoIntegralParcial_ (minTempoIntegralParcial, ::xml_schema::flags (), this)
 {
 }
 
@@ -8650,7 +8694,9 @@ ItemCurso (const ItemCurso& x,
   qtdMaxProfDisc_ (x.qtdMaxProfDisc_, f, this),
   maisDeUmaDiscPeriodo_ (x.maisDeUmaDiscPeriodo_, f, this),
   areasTitulacao_ (x.areasTitulacao_, f, this),
-  curriculos_ (x.curriculos_, f, this)
+  curriculos_ (x.curriculos_, f, this),
+  minTempoIntegral_ (x.minTempoIntegral_, f, this),
+  minTempoIntegralParcial_ (x.minTempoIntegralParcial_, f, this)
 {
 }
 
@@ -8667,7 +8713,9 @@ ItemCurso (const ::xercesc::DOMElement& e,
   qtdMaxProfDisc_ (f, this),
   maisDeUmaDiscPeriodo_ (f, this),
   areasTitulacao_ (f, this),
-  curriculos_ (f, this)
+  curriculos_ (f, this),
+  minTempoIntegral_ (f, this),
+  minTempoIntegralParcial_ (f, this)
 {
   if ((f & ::xml_schema::flags::base) == 0)
   {
@@ -8800,6 +8848,28 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
       }
     }
 
+    // minTempoIntegral
+    //
+    if (n.name () == "minTempoIntegral" && n.namespace_ ().empty ())
+    {
+      if (!minTempoIntegral_.present ())
+      {
+        this->minTempoIntegral_.set (minTempoIntegral_traits::create (i, f, this));
+        continue;
+      }
+    }
+
+    // minTempoIntegralParcial
+    //
+    if (n.name () == "minTempoIntegralParcial" && n.namespace_ ().empty ())
+    {
+      if (!minTempoIntegralParcial_.present ())
+      {
+        this->minTempoIntegralParcial_.set (minTempoIntegralParcial_traits::create (i, f, this));
+        continue;
+      }
+    }
+
     break;
   }
 
@@ -8863,6 +8933,20 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
   {
     throw ::xsd::cxx::tree::expected_element< char > (
       "curriculos",
+      "");
+  }
+
+  if (!minTempoIntegral_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "minTempoIntegral",
+      "");
+  }
+
+  if (!minTempoIntegralParcial_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "minTempoIntegralParcial",
       "");
   }
 }

@@ -2740,6 +2740,34 @@ class ItemCurso: public ::xml_schema::type
   void
   curriculos (::std::auto_ptr< curriculos_type > p);
 
+  // minTempoIntegral
+  // 
+  typedef ::xml_schema::double_ minTempoIntegral_type;
+  typedef ::xsd::cxx::tree::traits< minTempoIntegral_type, char, ::xsd::cxx::tree::schema_type::double_ > minTempoIntegral_traits;
+
+  const minTempoIntegral_type&
+  minTempoIntegral () const;
+
+  minTempoIntegral_type&
+  minTempoIntegral ();
+
+  void
+  minTempoIntegral (const minTempoIntegral_type& x);
+
+  // minTempoIntegralParcial
+  // 
+  typedef ::xml_schema::double_ minTempoIntegralParcial_type;
+  typedef ::xsd::cxx::tree::traits< minTempoIntegralParcial_type, char, ::xsd::cxx::tree::schema_type::double_ > minTempoIntegralParcial_traits;
+
+  const minTempoIntegralParcial_type&
+  minTempoIntegralParcial () const;
+
+  minTempoIntegralParcial_type&
+  minTempoIntegralParcial ();
+
+  void
+  minTempoIntegralParcial (const minTempoIntegralParcial_type& x);
+
   // Constructors.
   //
   ItemCurso (const id_type&,
@@ -2750,7 +2778,9 @@ class ItemCurso: public ::xml_schema::type
              const qtdMaxProfDisc_type&,
              const maisDeUmaDiscPeriodo_type&,
              const areasTitulacao_type&,
-             const curriculos_type&);
+             const curriculos_type&,
+             const minTempoIntegral_type&,
+             const minTempoIntegralParcial_type&);
 
   ItemCurso (const id_type&,
              const codigo_type&,
@@ -2760,7 +2790,9 @@ class ItemCurso: public ::xml_schema::type
              const qtdMaxProfDisc_type&,
              const maisDeUmaDiscPeriodo_type&,
              ::std::auto_ptr< areasTitulacao_type >&,
-             ::std::auto_ptr< curriculos_type >&);
+             ::std::auto_ptr< curriculos_type >&,
+             const minTempoIntegral_type&,
+             const minTempoIntegralParcial_type&);
 
   ItemCurso (const ::xercesc::DOMElement& e,
              ::xml_schema::flags f = 0,
@@ -2794,6 +2826,8 @@ class ItemCurso: public ::xml_schema::type
   ::xsd::cxx::tree::one< maisDeUmaDiscPeriodo_type > maisDeUmaDiscPeriodo_;
   ::xsd::cxx::tree::one< areasTitulacao_type > areasTitulacao_;
   ::xsd::cxx::tree::one< curriculos_type > curriculos_;
+  ::xsd::cxx::tree::one< minTempoIntegral_type > minTempoIntegral_;
+  ::xsd::cxx::tree::one< minTempoIntegralParcial_type > minTempoIntegralParcial_;
 };
 
 class ItemPercentualMinimo: public ::xml_schema::type
