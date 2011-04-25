@@ -1535,12 +1535,21 @@ void Avaliador::avaliaTempoParcialIntegral( SolucaoOperacional & solucao )
 		// Recupera o tipo do contrato do professor
 		// --> Horista ou Integral
 		professor = solucao.getProfessorMatriz(i);
-		tipo_contrato = professor->tipo_contrato->getNome();
+		if ( professor->eVirtual() == true
+				|| professor->tipo_contrato == NULL )
+		{
+			continue;
+		}
 
+		tipo_contrato = professor->tipo_contrato->getNome();
 		for (int j = 0; j < (int)matriz_solucao->at(i)->size(); j++)
 		{
 			// Recupera a aula atual
 			aula = matriz_solucao->at(i)->at(j);
+			if ( aula == NULL || aula->eVirtual() == true )
+			{
+				continue;
+			}
 
 			// Percorre as ofertas atendidas por essa aula
 			ITERA_GGROUP( it_oferta, aula->ofertas,
