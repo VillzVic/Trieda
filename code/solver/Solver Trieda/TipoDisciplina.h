@@ -8,9 +8,9 @@ class TipoDisciplina :
 {
 public:
    TipoDisciplina(void);
-   ~TipoDisciplina(void);
+   virtual ~TipoDisciplina(void);
 
-   virtual void le_arvore(ItemTipoDisciplina& elem);
+   virtual void le_arvore( ItemTipoDisciplina & );
 
    void setNome(std::string s) { nome = s; }
    std::string getNome() const { return nome; }

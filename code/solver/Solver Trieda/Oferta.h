@@ -2,7 +2,6 @@
 #define _OFERTA_H_
 
 #include "ofbase.h"
-
 #include "Curriculo.h"
 #include "Curso.h"
 #include "Turno.h"
@@ -13,9 +12,9 @@ class Oferta :
 {
 public:
    Oferta(void);
-   ~Oferta(void);
+   virtual ~Oferta(void);
 
-   void le_arvore(ItemOfertaCurso& elem);
+   void le_arvore( ItemOfertaCurso & );
 
    void setCurriculoId(int v) { curriculo_id = v; }
    void setCursoId(int v) { curso_id = v; }

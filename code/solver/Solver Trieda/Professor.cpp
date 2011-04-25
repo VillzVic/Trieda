@@ -45,7 +45,7 @@ void Professor::le_arvore(ItemProfessor & elem)
 {
 	this->setId( elem.id() );
 
-	if(elem.areaTitulacaoId().present())
+	if ( elem.areaTitulacaoId().present() )
 	{
 		area_id = elem.areaTitulacaoId().get();
 	}
@@ -60,14 +60,16 @@ void Professor::le_arvore(ItemProfessor & elem)
 	ch_anterior = elem.credAnterior();
 	valor_credito = elem.valorCred();
 
-	ITERA_SEQ(it_mag, elem.disciplinas(), ProfessorDisciplina)
+	ITERA_SEQ( it_mag, elem.disciplinas(),
+			   ProfessorDisciplina )
 	{
 		Magisterio * m = new Magisterio();
 		m->le_arvore( *it_mag );
 		magisterio.add( m );
 	}
 
-	ITERA_SEQ(it_h, elem.horariosDisponiveis(), Horario)
+	ITERA_SEQ( it_h, elem.horariosDisponiveis(),
+			   Horario )
 	{
 		Horario * h = new Horario();
 		h->le_arvore( *it_h );

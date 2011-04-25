@@ -1,4 +1,6 @@
-#pragma once
+#ifndef _TIPO_CURSO_H_
+#define _TIPO_CURSO_H_
+
 #include "ofbase.h"
 
 class TipoCurso :
@@ -6,9 +8,9 @@ class TipoCurso :
 {
 public:
    TipoCurso(void);
-   ~TipoCurso(void);
+   virtual ~TipoCurso(void);
 
-   virtual void le_arvore(ItemTipoCurso& elem);
+   virtual void le_arvore( ItemTipoCurso & );
 
    void setNome(std::string s) { nome  = s; }
    std::string getNome() const { return nome; }
@@ -16,3 +18,5 @@ public:
 private:
    std::string nome;
 };
+
+#endif

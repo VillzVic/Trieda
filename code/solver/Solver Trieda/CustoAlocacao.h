@@ -9,8 +9,8 @@
 class CustoAlocacao
 {
 public:
-   CustoAlocacao(Professor & professor, Aula & aula);
-   CustoAlocacao(CustoAlocacao const & custoAlocacao);
+   CustoAlocacao( Professor &, Aula & );
+   CustoAlocacao( CustoAlocacao const & );
    virtual ~CustoAlocacao();
 
    // Metodos GET
@@ -27,23 +27,23 @@ public:
    double getGamma() const;
 
    // Metodos ADD
-   void addCustoFixProfTurma(double c);
-   void addCustoPrefProfTurma(double c);
-   void addCustoDispProf(double c);
-   void addCustoDispProfTurma(double c);
+   void addCustoFixProfTurma(double);
+   void addCustoPrefProfTurma(double);
+   void addCustoDispProf(double);
+   void addCustoDispProfTurma(double);
 
    // Metodos SET
-   void setAlfa(double p);
-   void setBeta(double p);
-   void setTeta(double p);
-   void setGamma(double p);
+   void setAlfa(double);
+   void setBeta(double);
+   void setTeta(double);
+   void setGamma(double);
 
    // Operadores
-   virtual bool operator < (CustoAlocacao const & right);
-   virtual bool operator == (CustoAlocacao const & right);
-   virtual bool operator > (CustoAlocacao const & right);
-   virtual bool operator >= (CustoAlocacao const & right);
-   virtual CustoAlocacao & operator = (CustoAlocacao const & right);
+   virtual bool operator < ( CustoAlocacao const & );
+   virtual bool operator == ( CustoAlocacao const & );
+   virtual bool operator > ( CustoAlocacao const & );
+   virtual bool operator >= ( CustoAlocacao const & );
+   virtual CustoAlocacao & operator = ( CustoAlocacao const & );
 
 private:
 
@@ -56,7 +56,7 @@ private:
    2 - disponibilidade do professor p. {custoDispProf}
    3 - disponibilidade do professor p para lecionar na turma i.   {custoDispProfTurma}
    */
-   vector<double> custosAlocacao;
+   std::vector< double > custosAlocacao;
 
    double custo_total;
 

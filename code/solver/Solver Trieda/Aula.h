@@ -2,11 +2,11 @@
 #define _AULA_H_
 
 #include <vector>
-#include "GGroup.h"
 
-#include "disciplina.h"
+#include "GGroup.h"
+#include "Disciplina.h"
 #include "Oferta.h"
-#include "sala.h"
+#include "Sala.h"
 
 class Aula
 {
@@ -23,11 +23,11 @@ public:
    void setDiaSemana(int);
    void setCreditosTeoricos(int);
    void setCreditosPraticos(int);
-   void setAulaVirtual(bool value);
+   void setAulaVirtual(bool);
 
    int getTurma() const;
-   Disciplina* getDisciplina() const;
-   Sala* getSala() const;
+   Disciplina * getDisciplina() const;
+   Sala * getSala() const;
    int getDiaSemana() const;
    int getCreditosTeoricos() const;
    int getCreditosPraticos() const;

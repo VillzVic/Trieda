@@ -13,7 +13,6 @@ public:
    virtual void le_arvore( ItemTipoContrato & );
 
    void setNome(std::string s) { nome = s; }
-
    std::string getNome() const { return nome; }
 
 private:

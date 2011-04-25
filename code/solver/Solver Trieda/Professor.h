@@ -9,9 +9,8 @@ class Professor :
    public OFBase
 {
 public:
-   //Professor(void);
 	Professor(bool = false);
-   ~Professor(void);
+   virtual ~Professor(void);
 
    virtual void le_arvore(ItemProfessor &);
 

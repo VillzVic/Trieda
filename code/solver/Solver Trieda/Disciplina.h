@@ -14,7 +14,7 @@ class Disciplina :
 {
 public:
    Disciplina(void);
-   ~Disciplina(void);
+   virtual ~Disciplina(void);
 
    DivisaoCreditos * divisao_creditos;
    TipoDisciplina * tipo_disciplina;
@@ -28,7 +28,7 @@ public:
    std::vector< std::vector< std::pair< int /*dia*/, int /*numCreditos*/ > > > combinacao_divisao_creditos;
 
    // =========== METODOS AUXILIARES
-   virtual void le_arvore(ItemDisciplina &);
+   virtual void le_arvore( ItemDisciplina & );
 
    int adicionaDemandaTotal(int d) { return (demanda_total += d); }
 

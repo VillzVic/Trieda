@@ -1,10 +1,9 @@
 #include "SolucaoInicialOperacional.h"
 
-CustoAlocacao::CustoAlocacao(Professor & _professor, Aula & _aula)
+CustoAlocacao::CustoAlocacao( Professor & _professor, Aula & _aula )
 : professor(_professor), aula(_aula)
-//CustoAlocacao::CustoAlocacao()
 {
-   for(unsigned c = 0; c <= 3; c++)
+   for( unsigned c = 0; c <= 3; c++ )
    {
       custosAlocacao.push_back(.0);
    }
@@ -17,18 +16,18 @@ CustoAlocacao::CustoAlocacao(Professor & _professor, Aula & _aula)
    gamma = 1.0;
 
    // Setando o custo referente à "disponibilidade do professor p".
-   addCustoDispProf(professor.getCustoDispProf());
+   addCustoDispProf( professor.getCustoDispProf() );
 }
 
-CustoAlocacao::CustoAlocacao(CustoAlocacao const & cstAlc) :
-professor(cstAlc.professor), aula(cstAlc.aula)
+CustoAlocacao::CustoAlocacao( CustoAlocacao const & cstAlc )
+: professor( cstAlc.professor ), aula( cstAlc.aula )
 {
-   this->custosAlocacao = (cstAlc.custosAlocacao);
-   this->custo_total = (cstAlc.custo_total);
-   this->alfa = (cstAlc.alfa);
-   this->beta = (cstAlc.beta);
-   this->teta = (cstAlc.teta);
-   this->gamma = (cstAlc.gamma);
+   this->custosAlocacao = ( cstAlc.custosAlocacao );
+   this->custo_total = ( cstAlc.custo_total );
+   this->alfa = ( cstAlc.alfa );
+   this->beta = ( cstAlc.beta );
+   this->teta = ( cstAlc.teta );
+   this->gamma = ( cstAlc.gamma );
 }
 
 CustoAlocacao::~CustoAlocacao()
