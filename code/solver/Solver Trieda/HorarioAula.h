@@ -10,11 +10,11 @@ class HorarioAula :
 {
 public:
    HorarioAula(void);
-   ~HorarioAula(void);
+   virtual ~HorarioAula(void);
 
-   virtual void le_arvore(ItemHorarioAula& elem);
+   virtual void le_arvore(ItemHorarioAula &);
 
-   GGroup<int> dias_semana;
+   GGroup< int > dias_semana;
 
    DateTime getInicio() const { return inicio; }
    void setInicio(DateTime dt) { inicio = dt; }

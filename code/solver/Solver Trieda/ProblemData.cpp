@@ -21,19 +21,19 @@ ProblemData::~ProblemData()
 
 }
 
-void ProblemData::le_arvore(TriedaInput & raiz)
+void ProblemData::le_arvore( TriedaInput & raiz )
 {
    calendario = new Calendario();
-   calendario->le_arvore(raiz.calendario());
+   calendario->le_arvore( raiz.calendario() );
 
-   ITERA_SEQ(it_campi, raiz.campi(), Campus)
+   ITERA_SEQ( it_campi, raiz.campi(), Campus )
    {
       Campus * campus = new Campus;
       campus->le_arvore( *it_campi );
       campi.add( campus );
    }
 
-   ITERA_SEQ(it_tsalas, raiz.tiposSala(), TipoSala)
+   ITERA_SEQ( it_tsalas, raiz.tiposSala(), TipoSala )
    {
       TipoSala * tipo_sala = new TipoSala;
       tipo_sala->le_arvore( *it_tsalas );
@@ -56,14 +56,14 @@ void ProblemData::le_arvore(TriedaInput & raiz)
 
    int id = 1;
    Demanda * demanda = NULL;
-   ITERA_GGROUP(it_demanda, demandas, Demanda)
+   ITERA_GGROUP( it_demanda, demandas, Demanda )
    {
 	   demanda = *(it_demanda);
 	   demanda->setId( id );
 	   id++;
    }
 
-   ITERA_SEQ(it_oferta, raiz.ofertaCursosCampi(), OfertaCurso)
+   ITERA_SEQ( it_oferta, raiz.ofertaCursosCampi(), OfertaCurso )
    {
       Oferta * oferta = new Oferta;
       oferta->le_arvore( *it_oferta );
@@ -74,11 +74,12 @@ void ProblemData::le_arvore(TriedaInput & raiz)
    parametros->le_arvore( raiz.parametrosPlanejamento() );
 
    // Se a tag existir (mesmo que esteja em branco) no xml de entrada
-   if (raiz.atendimentosTatico().present())
+   if ( raiz.atendimentosTatico().present() )
    {
-      atendimentosTatico = new GGroup<AtendimentoCampusSolucao*> ();
+      atendimentosTatico = new GGroup< AtendimentoCampusSolucao * > ();
 
-      for (unsigned int i = 0; i < raiz.atendimentosTatico().get().AtendimentoCampus().size(); i++)
+      for ( unsigned int i = 0;
+		    i < raiz.atendimentosTatico().get().AtendimentoCampus().size(); i++ )
       {
          ItemAtendimentoCampusSolucao * it_atendimento
             = &( raiz.atendimentosTatico().get().AtendimentoCampus().at(i) );
@@ -89,16 +90,16 @@ void ProblemData::le_arvore(TriedaInput & raiz)
       }
    }
 
-   LE_SEQ(fixacoes, raiz.fixacoes(), Fixacao);
+   LE_SEQ( fixacoes, raiz.fixacoes(), Fixacao );
 
    // Monta um 'map' para recuperar cada 'ItemSala'
    // do campus a partir de seu respectivo id de sala
    std::map< int, ItemSala * > mapItemSala;
-   ITERA_SEQ(it_campi, raiz.campi(), Campus)
+   ITERA_SEQ( it_campi, raiz.campi(), Campus )
    {
-      ITERA_SEQ(it_unidade, it_campi->unidades(), Unidade)
+      ITERA_SEQ( it_unidade, it_campi->unidades(), Unidade )
       {
-         ITERA_SEQ(it_sala, it_unidade->salas(), Sala)
+         ITERA_SEQ( it_sala, it_unidade->salas(), Sala )
          {
             mapItemSala[ it_sala->id() ] = &(*(it_sala));
          }
@@ -144,11 +145,11 @@ void ProblemData::le_arvore(TriedaInput & raiz)
 	}
 
    // Prencher os horários e/ou créditos das salas
-   ITERA_GGROUP(it_campi, campi, Campus)
+   ITERA_GGROUP( it_campi, campi, Campus )
    {
-      ITERA_GGROUP(it_unidade, it_campi->unidades, Unidade)
+      ITERA_GGROUP( it_unidade, it_campi->unidades, Unidade )
       {
-         ITERA_GGROUP(it_sala, it_unidade->salas, Sala)
+         ITERA_GGROUP( it_sala, it_unidade->salas, Sala )
          {
 			 std::map< int, ItemSala * >::iterator it
 				 = mapItemSala.find(it_sala->getId());

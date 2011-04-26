@@ -93,7 +93,14 @@ private:
 
    // Verifica se o professor tem disponível
    // um determinado horário em um dia da semana
-   bool horarioDisponivelProfessor(Professor *, int, int);
+   bool horarioDisponivelProfessor( Professor *, int, int );
+
+   // Informa quantos horáros cada dia da semana terá na
+   // matriz da solução. Esse valor corresponde à quantidade
+   // máxima que os dias da semana tem de horários de aula.
+   // Os dias que tiverem menos horários de aula deverão ter
+   // aulas virtuais alocadas para completar a matriz
+   int max_horarios_dia();
 };
 
 #endif

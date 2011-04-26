@@ -35,18 +35,19 @@ class OFBase
 {
 public:
    OFBase(void);
-   ~OFBase(void);
+   virtual ~OFBase(void);
+
    virtual int getId() const { return id; }
-   virtual void setId(int id) { this->id = id; }
+   virtual void setId( int id ) { this->id = id; }
 
-   virtual void le_arvore(::xml_schema::type& raiz) { };
+   virtual void le_arvore( ::xml_schema::type & raiz ) { };
 
-   virtual bool operator < (const OFBase& right) 
+   virtual bool operator < ( const OFBase& right )
    { 
       return (getId() < right.getId()); 
    }
 
-   virtual bool operator == (const OFBase& right)
+   virtual bool operator == ( const OFBase & right )
    { 
       return (getId() == right.getId()); 
    }

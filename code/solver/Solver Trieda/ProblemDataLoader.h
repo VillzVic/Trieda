@@ -21,41 +21,45 @@ public:
    ProblemDataLoader( char *, ProblemData *);
 
    // Destructor
-   ~ProblemDataLoader();
+   virtual ~ProblemDataLoader();
 
    // Load the XML file
    void load();
 
-   /* Carrega os dias letivos dos Campus, Unidades e Salas. */
+   // Para cada dia da semana, relaciona os
+   // seus respectivos horários de aula disponíveis
+   void relacionaHorariosAulaDiaSemana();
+
+   // Carrega os dias letivos dos Campus, Unidades e Salas.
    void carregaDiasLetivosCampusUnidadeSala();
 
-   /* Carrega os dias letivos de cada disciplina. */
+   // Carrega os dias letivos de cada disciplina.
    void carregaDiasLetivosDiscs();
 
-   /* Cria os Conjuntos de Salas para cada Unidade. */
+   // Cria os Conjuntos de Salas para cada Unidade.
    void criaConjuntoSalasUnidade();
 
-   /* Establece os dias letivos comuns entre um bloco curricular e um campus. */
+   // Establece os dias letivos comuns entre um bloco curricular e um campus.
    void estabeleceDiasLetivosBlocoCampus();
 
-   /* Establece os dias letivos comuns entre as salas e suas disciplinas associadas. */
+   // Establece os dias letivos comuns entre as salas e suas disciplinas associadas.
    void estabeleceDiasLetivosDisciplinasSalas();
 
-   /* Establece os dias letivos comuns entre os conjuntos de salas e suas disciplinas associadas. */
+   // Establece os dias letivos comuns entre os conjuntos de salas e suas disciplinas associadas.
    void estabeleceDiasLetivosDiscCjtSala();
 
-   /* Establece os dias letivos comuns entre os professores e suas disciplinas. */
+   // Establece os dias letivos comuns entre os professores e suas disciplinas.
    void estabeleceDiasLetivosProfessorDisciplina();
 
-   /* Relaciona cada professor com as disciplinas as quais ele é fixado. */
+   // Relaciona cada professor com as disciplinas as quais ele é fixado.
    void relacionaProfessoresDisciplinasFixadas();
-      
+
    /* */
    void divideDisciplinas();
 
    /* */
    template<class T> 
-   void find_and_set(int id, GGroup<T*>& haystack, T*& needle, bool print) ;
+   void find_and_set( int, GGroup< T * > &, T * &, bool );
 
    /* */
    void gera_refs();
@@ -90,61 +94,56 @@ public:
 
 private:
    // Input data object of the problem
-   ProblemData *problemData;
-   char *inputFile;
+   ProblemData * problemData;
+   char * inputFile;
 
    // XML parser
-   std::auto_ptr<TriedaInput> root;
-
-   // >>> Variáveis e/ou estruturas de dados para realizar o pré processamento dos dados.
-
-   // >>> Métodos para realizar o pré processamento dos dados.
+   std::auto_ptr< TriedaInput > root;
 
    // =========== METODOS AUXILIARES
 
    void referenciaCampusUnidadesSalas();
-
    void referenciaDisciplinas();
    void referenciaOfertas();
-
    void calculaTamanhoMedioSalasCampus();
 
-   /* Armazena todas as disciplinas ofertadas em um campus. */
+   // Armazena todas as disciplinas ofertadas em um campus.
    void relacionaCampusDiscs();
 
-   /* Calcula a demanda máxima e demanda total da disciplina em questão. Esses valores
-   são armazenados na própria disciplina. */
+   // Calcula a demanda máxima e demanda total da disciplina
+   // em questão. Esses valores são armazenados na própria disciplina.
    void calculaDemandas();
 
-   /* Armazena em cada sala, referências para as disciplinas associadas. Armazena também,
-   para cada disciplina, ponteiros para as salas compatíveis.*/
-   //void carregaDisciplinasAssociadasSalas();
+   // Armazena em cada sala, referências para as disciplinas
+   // associadas. Armazena também, para cada disciplina,
+   // ponteiros para as salas compatíveis.
    void associaDisciplinasSalas();
 
    // Armazena, para cada disciplina, ponteiros para as salas compatíveis.
    void carregaDiscSalas();
 
-   /* Armazena referências para as disciplinas associadas em cada elemento do <ConjuntoSala>. 
-   Como o método associaDisciplinasSalas() já associou as disciplinas às salas, basta
-   percorrer o map de salas de um dado elemento do <ConjuntoSala> adicionando as salas ao map de
-   disciplinas associadas do <ConjuntoSala>.*/
+   // Armazena referências para as disciplinas associadas
+   // em cada elemento do <ConjuntoSala>. Como o método
+   // associaDisciplinasSalas() já associou as disciplinas
+   // às salas, basta percorrer o map de salas de um dado
+   // elemento do <ConjuntoSala> adicionando as salas ao
+   // map de disciplinas associadas do <ConjuntoSala>.
    void associaDisciplinasConjuntoSalas();
 
-   /* Relaciona cada disciplina com as ofertas em que ela aparece. */
+   // Relaciona cada disciplina com as ofertas em que ela aparece.
    void relacionaDiscOfertas();
 
-   /* Relaciona cada disciplina de um campus com as ofertas em que ela aparece. */
+   // Relaciona cada disciplina de um campus com as ofertas em que ela aparece.
    //void relacionaDiscCampusOfertas();
 
-   /* Inicializando as estruturas presentes em cada Sala, que são responsáveis por 
-   informar a quantidade de créditos livres em um dado dia letivo. */
+   // Inicializando as estruturas presentes em cada Sala, que são responsáveis por 
+   // informar a quantidade de créditos livres em um dado dia letivo.
    void calculaCredsLivresSalas();
 
-   /*conjunto de combinações possíveis de divisão de créditos de uma uma disciplina*/
+   // Conjunto de combinações possíveis de divisão de créditos de uma uma disciplina
    void combinacaoDivCreditos();
-   // <<<
 
-   /* Relaciona cada possível valor de crédito com as regras de créditos existentes. */
+   // Relaciona cada possível valor de crédito com as regras de créditos existentes.
    void relacionaCredsRegras();
 
    // Relaciona cada curso com o seu respectivo campus

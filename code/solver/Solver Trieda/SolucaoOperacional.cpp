@@ -3,14 +3,14 @@
 #include "SolucaoOperacional.h"
 #include "Aula.h"
 
-SolucaoOperacional::SolucaoOperacional(ProblemData * prbDt)
+SolucaoOperacional::SolucaoOperacional( ProblemData * prbDt )
 {
-   // FIXANDO OS VALORES: 7 (dias) 4 (horarios)
-   total_dias = 7;
-   total_horarios = 4;
-   total_professores = 0;
-
    this->problem_data = ( prbDt );
+
+   // FIXANDO OS VALORES: 7 (dias)
+   total_dias = 7;
+   total_horarios = max_horarios_dia();
+   total_professores = 0;
 
    // Montando um map: dado o índice da matriz (o 'idOperacional'
    // do professor) o map retorna o ponteiro para o professor correspondente
@@ -31,9 +31,10 @@ SolucaoOperacional::SolucaoOperacional(ProblemData * prbDt)
    // Inicializando a estrutura <matrizAulas>
    matriz_aulas = new MatrizSolucao ( total_professores );
    MatrizSolucao::iterator itMatrizAulas = matriz_aulas->begin();
-   for(; itMatrizAulas != matriz_aulas->end(); ++itMatrizAulas)
+   for(; itMatrizAulas != matriz_aulas->end();
+		 ++itMatrizAulas )
    {
-	   *(itMatrizAulas) = new std::vector< Aula * > ( (total_dias * total_horarios), NULL );
+	   (*itMatrizAulas) = new std::vector< Aula * > ( (total_dias * total_horarios), NULL );
    }
 
    unsigned int i = 0;
@@ -83,6 +84,25 @@ SolucaoOperacional::SolucaoOperacional(ProblemData * prbDt)
    // -----------------------------------------------------
 }
 
+int SolucaoOperacional::max_horarios_dia()
+{
+	int tam = 0;
+	int max_horarios = 0;
+	std::map< int, GGroup< HorarioAula *, LessPtr< HorarioAula > > >::iterator
+		it_map = this->getProblemData()->horarios_aula_dia_semana.begin();
+	for (; it_map != this->getProblemData()->horarios_aula_dia_semana.end();
+		   it_map++ )
+	{
+		tam = it_map->second.size();
+		if ( tam > max_horarios )
+		{
+			max_horarios = tam;
+		}
+	}
+
+	return tam;
+}
+
 SolucaoOperacional::~SolucaoOperacional()
 {
    // Limpa as referências do map de professores
@@ -109,17 +129,23 @@ bool SolucaoOperacional::horarioDisponivelProfessor(
 	// Recupera o horário de aula que
 	// corresponde ao 'horario_aula_id' informado
 	HorarioAula * horario_aula = NULL;
-	int tam_vector = this->getProblemData()->horarios_aula_ordenados.size();
+	std::vector< HorarioAula * > horarios
+		= this->getProblemData()->horarios_aula_ordenados;
+
+	int tam_vector = horarios.size();
 	if ( horario_aula_id < tam_vector )
 	{
-		horario_aula = this->getProblemData()->horarios_aula_ordenados.at( horario_aula_id );
+		horario_aula = horarios.at( horario_aula_id );
 	}
 	else
 	{
-		std::cerr << "Acessando indice invalido do vector."
-				  << "\nSolucaoOperacional::horarioDisponivelProfessor()" << std::endl;
-
-		exit(1);
+		// Quando o índice de horário informado não correspopnde
+		// a um horário de aula válido significa que possivelmente no
+		// dia da semana em questão, o professor ou o dia da semana
+		// não tem esse horário de aula disponível. Portanto, informamos
+		// apenas que esse horário de aula não está disponível, para que
+		// uma aula virtual seja alocada na posição correspondente na solução.
+		return false;
 	}
 
 	// Para cada horário disponível do professor informado,
