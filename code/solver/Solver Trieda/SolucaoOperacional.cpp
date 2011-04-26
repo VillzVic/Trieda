@@ -12,8 +12,9 @@ SolucaoOperacional::SolucaoOperacional( ProblemData * prbDt )
    total_horarios = max_horarios_dia();
    total_professores = 0;
 
-   // Montando um map: dado o índice da matriz (o 'idOperacional'
-   // do professor) o map retorna o ponteiro para o professor correspondente
+   // Montando um map: dado o índice da matriz
+   // (o 'idOperacional' do professor) o map
+   // retorna o ponteiro para o professor correspondente
    GGroup< Campus * >::iterator it_campi
       = prbDt->campi.begin();
    for (; it_campi != prbDt->campi.end(); it_campi++)
@@ -22,11 +23,11 @@ SolucaoOperacional::SolucaoOperacional( ProblemData * prbDt )
          = it_campi->professores.begin();
       for (; it_prof != it_campi->professores.end(); it_prof++)
       {
-         mapProfessores[ it_prof->getId() ] = (*it_prof);
+         this->mapProfessores[ it_prof->getId() ] = (*it_prof);
       }
    }
 
-   total_professores = mapProfessores.size();
+   this->total_professores = this->mapProfessores.size();
 
    // Inicializando a estrutura <matrizAulas>
    matriz_aulas = new MatrizSolucao ( total_professores );
@@ -34,7 +35,7 @@ SolucaoOperacional::SolucaoOperacional( ProblemData * prbDt )
    for(; itMatrizAulas != matriz_aulas->end();
 		 ++itMatrizAulas )
    {
-	   (*itMatrizAulas) = new std::vector< Aula * > ( (total_dias * total_horarios), NULL );
+	   ( *itMatrizAulas ) = new std::vector< Aula * > ( (total_dias * total_horarios), NULL );
    }
 
    unsigned int i = 0;
@@ -75,7 +76,7 @@ SolucaoOperacional::SolucaoOperacional( ProblemData * prbDt )
 					professor, dia_semana, horario_aula_id ) )
 		   {
 			   // A aula NAO pode ser alocada
-			   (*it_aula) = aula_virtual;
+			   ( *it_aula ) = aula_virtual;
 		   }
 	   }
    }

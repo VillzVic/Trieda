@@ -1192,232 +1192,247 @@ void ProblemDataLoader::referenciaDisciplinas()
 
 void ProblemDataLoader::referenciaOfertas()
 {
-   ITERA_GGROUP(itOferta, problemData->ofertas, Oferta)
+   ITERA_GGROUP( itOferta, problemData->ofertas, Oferta )
    {
-      problemData->refOfertas[itOferta->getId()] = *itOferta;
+      problemData->refOfertas[ itOferta->getId() ] = ( *itOferta );
    }
 }
 
 void ProblemDataLoader::gera_refs()
 {
-   ITERA_GGROUP(it_campi, problemData->campi, Campus)
+   ITERA_GGROUP( it_campi, problemData->campi, Campus )
    {
-      ITERA_GGROUP(it_unidades, it_campi->unidades, Unidade)
+      ITERA_GGROUP( it_unidades, it_campi->unidades, Unidade )
       {
-         ITERA_GGROUP(it_horario, it_unidades->horarios, Horario)
+         ITERA_GGROUP( it_horario, it_unidades->horarios, Horario )
          {
-            find_and_set(it_horario->getTurnoId(),
-               problemData->calendario->turnos,
-               it_horario->turno);
+            find_and_set( it_horario->getTurnoId(),
+						  problemData->calendario->turnos,
+						  it_horario->turno );
 
-            find_and_set(it_horario->getHorarioAulaId(),
-               it_horario->turno->horarios_aula,
-               it_horario->horario_aula);
+            find_and_set( it_horario->getHorarioAulaId(),
+						  it_horario->turno->horarios_aula,
+						  it_horario->horario_aula );
          }
 
-         ITERA_GGROUP(it_salas, it_unidades->salas, Sala)
+         ITERA_GGROUP( it_salas, it_unidades->salas, Sala )
          {
-            find_and_set(it_salas->getTipoSalaId(),
-               problemData->tipos_sala,
-               it_salas->tipo_sala);
+            find_and_set( it_salas->getTipoSalaId(),
+						  problemData->tipos_sala,
+						  it_salas->tipo_sala );
 
-            ITERA_GGROUP(it_horario, it_salas->horarios_disponiveis, Horario)
+            ITERA_GGROUP( it_horario, it_salas->horarios_disponiveis,
+						  Horario )
             {
-               find_and_set(it_horario->getTurnoId(),
-                  problemData->calendario->turnos,
-                  it_horario->turno);
+               find_and_set( it_horario->getTurnoId(),
+							 problemData->calendario->turnos,
+							 it_horario->turno );
 
-               find_and_set(it_horario->getHorarioAulaId(),
-                  it_horario->turno->horarios_aula,
-                  it_horario->horario_aula);
+               find_and_set( it_horario->getHorarioAulaId(),
+						     it_horario->turno->horarios_aula,
+						     it_horario->horario_aula );
             }
 
-            ITERA_GGROUP(it_credito,it_salas->creditos_disponiveis,
-               CreditoDisponivel) 
+            ITERA_GGROUP( it_credito,it_salas->creditos_disponiveis,
+						  CreditoDisponivel )
             {
-               find_and_set(it_credito->getTurnoId(),
-                  problemData->calendario->turnos,
-                  it_credito->turno);
+               find_and_set( it_credito->getTurnoId(),
+							 problemData->calendario->turnos,
+							 it_credito->turno );
             }
 
             // Disciplinas associadas ? TODO (ou não)
-            ITERA_GGROUP_N_PT(it_id_Disc, it_salas->disciplinas_associadas, int)
+            ITERA_GGROUP_N_PT( it_id_Disc, it_salas->disciplinas_associadas, int )
             {
-               ITERA_GGROUP(it_Disc, problemData->disciplinas, Disciplina)
+               ITERA_GGROUP( it_Disc, problemData->disciplinas, Disciplina )
                {
-                  if((*it_id_Disc) == it_Disc->getId())
+                  if ( (*it_id_Disc) == it_Disc->getId() )
                   {
-                     it_salas->disciplinas_Associadas_Usuario.add(*it_Disc);
+                     it_salas->disciplinas_Associadas_Usuario.add( *it_Disc );
                   }
                }
             }
          } // end salas
       }
 
-      ITERA_GGROUP(it_prof, it_campi->professores, Professor)
+      ITERA_GGROUP( it_prof, it_campi->professores, Professor )
       {
-         find_and_set(it_prof->getTipoContratoId(), 
-            problemData->tipos_contrato, 
-            it_prof->tipo_contrato);
+         find_and_set( it_prof->getTipoContratoId(), 
+					   problemData->tipos_contrato, 
+					   it_prof->tipo_contrato );
 
-         ITERA_GGROUP(it_horario, it_prof->horarios, Horario)
+         ITERA_GGROUP( it_horario, it_prof->horarios, Horario )
          {
-            find_and_set(it_horario->getTurnoId(),
-               problemData->calendario->turnos,
-               it_horario->turno);
+            find_and_set( it_horario->getTurnoId(),
+						  problemData->calendario->turnos,
+						  it_horario->turno );
 
-            find_and_set(it_horario->getHorarioAulaId(),
-               it_horario->turno->horarios_aula,
-               it_horario->horario_aula);
+            find_and_set( it_horario->getHorarioAulaId(),
+						  it_horario->turno->horarios_aula,
+						  it_horario->horario_aula );
          }
 
-         ITERA_GGROUP(it_mag, it_prof->magisterio, Magisterio)
+         ITERA_GGROUP( it_mag, it_prof->magisterio, Magisterio )
          {
-            find_and_set(it_mag->getDisciplinaId(),
-               problemData->disciplinas,
-               it_mag->disciplina);
+            find_and_set( it_mag->getDisciplinaId(),
+						  problemData->disciplinas,
+						  it_mag->disciplina );
          }
       } // end professores
 
-      ITERA_GGROUP(it_horario, it_campi->horarios, Horario)
+      ITERA_GGROUP( it_horario, it_campi->horarios, Horario )
       {
-         find_and_set(it_horario->getTurnoId(),
-            problemData->calendario->turnos,
-            it_horario->turno);
+         find_and_set( it_horario->getTurnoId(),
+					   problemData->calendario->turnos,
+					   it_horario->turno );
 
-         find_and_set(it_horario->getHorarioAulaId(),
-            it_horario->turno->horarios_aula,
-            it_horario->horario_aula);
+         find_and_set( it_horario->getHorarioAulaId(),
+					   it_horario->turno->horarios_aula,
+					   it_horario->horario_aula );
       } 
    } // campus
 
-
-   ITERA_GGROUP(it_desl, problemData->tempo_campi, Deslocamento)
+   ITERA_GGROUP( it_desl, problemData->tempo_campi, Deslocamento )
    {
-      find_and_set(it_desl->getOrigemId(),
-         problemData->campi, (Campus*&) it_desl->origem);
+      find_and_set( it_desl->getOrigemId(),
+					problemData->campi,
+					( Campus * & ) it_desl->origem );
 
-      find_and_set(it_desl->getDestinoId(),
-         problemData->campi, (Campus*&) it_desl->destino);
+      find_and_set( it_desl->getDestinoId(),
+					problemData->campi,
+					( Campus * & ) it_desl->destino );
    } // deslocamento campi
 
-   ITERA_GGROUP(it_desl, problemData->tempo_unidades, Deslocamento)
+   ITERA_GGROUP( it_desl, problemData->tempo_unidades, Deslocamento )
    {
-      /* É preciso procurar a unidade nos campi */
-      ITERA_GGROUP(it_campi, problemData->campi, Campus)
+      // É preciso procurar a unidade nos campi
+      ITERA_GGROUP( it_campi, problemData->campi, Campus )
       {
-         /* posso fazer find_and_set em todos sem ifs, porque ele
-         só seta se encontrar. Posso continuar fazendo mesmo depois de 
-         encontrar pelo mesmo motivo */
+         // Posso fazer find_and_set em todos sem ifs,
+		 // porque ele só seta se encontrar. Posso continuar
+		 // fazendo mesmo depois de encontrar pelo mesmo motivo
 
-         find_and_set(it_desl->getOrigemId(),
-            it_campi->unidades, (Unidade*&) it_desl->origem);
+         find_and_set( it_desl->getOrigemId(),
+					   it_campi->unidades,
+					   ( Unidade * & ) it_desl->origem );
 
-         find_and_set(it_desl->getDestinoId(),
-            it_campi->unidades, (Unidade*&) it_desl->destino);
+         find_and_set( it_desl->getDestinoId(),
+					   it_campi->unidades,
+					   ( Unidade * & ) it_desl->destino );
       }
    } // deslocamento unidades 
 
 
-   ITERA_GGROUP(it_disc, problemData->disciplinas, Disciplina)
+   ITERA_GGROUP( it_disc, problemData->disciplinas, Disciplina )
    {
-      find_and_set(it_disc->getTipoDisciplinaId(),
-         problemData->tipos_disciplina,
-         it_disc->tipo_disciplina);
+      find_and_set( it_disc->getTipoDisciplinaId(),
+					problemData->tipos_disciplina,
+					it_disc->tipo_disciplina );
 
-      find_and_set(it_disc->getNivelDificuldadeId(),
-         problemData->niveis_dificuldade,
-         it_disc->nivel_dificuldade);
+      find_and_set( it_disc->getNivelDificuldadeId(),
+					problemData->niveis_dificuldade,
+					it_disc->nivel_dificuldade );
 
-      ITERA_GGROUP(it_horario, it_disc->horarios, Horario)
+      ITERA_GGROUP( it_horario, it_disc->horarios, Horario )
       {
-         find_and_set(it_horario->getTurnoId(),
-            problemData->calendario->turnos, it_horario->turno);
+         find_and_set( it_horario->getTurnoId(),
+					   problemData->calendario->turnos,
+					   it_horario->turno );
 
-         find_and_set(it_horario->getHorarioAulaId(),
-            it_horario->turno->horarios_aula, it_horario->horario_aula);
+         find_and_set( it_horario->getHorarioAulaId(),
+					   it_horario->turno->horarios_aula,
+					   it_horario->horario_aula );
       } 
    } // disciplinas
 
-   ITERA_GGROUP(it_curso, problemData->cursos, Curso) 
+   ITERA_GGROUP( it_curso, problemData->cursos, Curso )
    {
-      find_and_set(it_curso->getTipoId(),
-         problemData->tipos_curso,
-         it_curso->tipo_curso);
+      find_and_set( it_curso->getTipoId(),
+					problemData->tipos_curso,
+					it_curso->tipo_curso );
    }
 
-   ITERA_GGROUP(it_oferta, problemData->ofertas, Oferta) 
+   ITERA_GGROUP( it_oferta, problemData->ofertas, Oferta )
    {
-      find_and_set(it_oferta->getCursoId(),
-         problemData->cursos, it_oferta->curso);
+      find_and_set( it_oferta->getCursoId(),
+					problemData->cursos,
+					it_oferta->curso );
 
-      find_and_set(it_oferta->getCurriculoId(),
-         it_oferta->curso->curriculos, it_oferta->curriculo);
+      find_and_set( it_oferta->getCurriculoId(),
+					it_oferta->curso->curriculos,
+					it_oferta->curriculo );
 
-      find_and_set(it_oferta->getTurnoId(),
-         problemData->calendario->turnos, it_oferta->turno);
+      find_and_set( it_oferta->getTurnoId(),
+					problemData->calendario->turnos,
+					it_oferta->turno );
 
-      find_and_set(it_oferta->getCampusId(),
-         problemData->campi, it_oferta->campus);
+      find_and_set( it_oferta->getCampusId(),
+					problemData->campi,
+					it_oferta->campus );
    }
 
-   ITERA_GGROUP(it_dem, problemData->demandas, Demanda) 
+   ITERA_GGROUP( it_dem, problemData->demandas, Demanda ) 
    {
-      find_and_set(it_dem->getOfertaId(),
-         problemData->ofertas,
-         it_dem->oferta);
+      find_and_set( it_dem->getOfertaId(),
+				    problemData->ofertas,
+				    it_dem->oferta );
 
-      find_and_set(it_dem->getDisciplinaId(),
-         problemData->disciplinas,
-         it_dem->disciplina);
+      find_and_set( it_dem->getDisciplinaId(),
+					problemData->disciplinas,
+					it_dem->disciplina );
    }
 
    // Falta: parametros (?) e fixacoes
 
-   ITERA_GGROUP(it_ndh,
-      problemData->parametros->niveis_dificuldade_horario,
-      NivelDificuldadeHorario)
+   ITERA_GGROUP( it_ndh,
+				 problemData->parametros->niveis_dificuldade_horario,
+				 NivelDificuldadeHorario )
    {
-      find_and_set(it_ndh->nivel_dificuldade_id,
-         problemData->niveis_dificuldade,
-         it_ndh->nivel_dificuldade);
+      find_and_set( it_ndh->nivel_dificuldade_id,
+					problemData->niveis_dificuldade,
+					it_ndh->nivel_dificuldade );
    }
 
-   ITERA_GGROUP(it_fix, problemData->fixacoes, Fixacao)
+   ITERA_GGROUP( it_fix, problemData->fixacoes, Fixacao )
    {
-      find_and_set(it_fix->getDisciplinaId(), 
-         problemData->disciplinas, it_fix->disciplina);
+      find_and_set( it_fix->getDisciplinaId(), 
+					problemData->disciplinas,
+					it_fix->disciplina );
 
-      find_and_set(it_fix->getTurnoId(), 
-         problemData->calendario->turnos, it_fix->turno);
+      find_and_set( it_fix->getTurnoId(), 
+					problemData->calendario->turnos,
+					it_fix->turno );
 
-      if(it_fix->turno != NULL)
+      if ( it_fix->turno != NULL )
       {	
-         find_and_set(it_fix->getHorarioId(),
-            it_fix->turno->horarios_aula, it_fix->horario);
+         find_and_set( it_fix->getHorarioId(),
+					   it_fix->turno->horarios_aula,
+					   it_fix->horario );
       }
 
-      ITERA_GGROUP(it_campi, problemData->campi, Campus)
+      ITERA_GGROUP( it_campi, problemData->campi, Campus )
       {
-         find_and_set(it_fix->getProfessorId(), 
-            it_campi->professores, it_fix->professor);
+         find_and_set( it_fix->getProfessorId(), 
+					   it_campi->professores,
+					   it_fix->professor );
 
-         ITERA_GGROUP(it_unidades, it_campi->unidades, Unidade)
+         ITERA_GGROUP( it_unidades, it_campi->unidades, Unidade )
          {
-            find_and_set(it_fix->getSalaId(),
-               it_unidades->salas, it_fix->sala);
+            find_and_set( it_fix->getSalaId(),
+						  it_unidades->salas,
+						  it_fix->sala );
          }
       }
    }
 
-   ITERA_GGROUP(it_campi, problemData->campi, Campus)
+   ITERA_GGROUP( it_campi, problemData->campi, Campus )
    {
-      ITERA_GGROUP(it_unidades, it_campi->unidades, Unidade) 
+      ITERA_GGROUP( it_unidades, it_campi->unidades, Unidade ) 
       {
          it_unidades->setIdCampus( it_campi->getId() );
-         ITERA_GGROUP(it_salas, it_unidades->salas, Sala) 
+         ITERA_GGROUP( it_salas, it_unidades->salas, Sala ) 
          {
-            it_salas->setIdUnidade(it_unidades->getId());
+            it_salas->setIdUnidade( it_unidades->getId() );
          }
       }
    }
@@ -1435,19 +1450,19 @@ void ProblemDataLoader::cria_blocos_curriculares()
    Disciplina * disciplina = NULL;
    DisciplinaPeriodo disciplina_periodo;
 
-   ITERA_GGROUP(it_campus, problemData->campi, Campus)
+   ITERA_GGROUP( it_campus, problemData->campi, Campus )
    {
-      campus = *(it_campus);
-      ITERA_GGROUP_LESSPTR(it_curso, it_campus->cursos, Curso)
+      campus = ( *it_campus );
+      ITERA_GGROUP_LESSPTR( it_curso, it_campus->cursos, Curso )
       {
-         curso = *(it_curso);
-         ITERA_GGROUP(it_curriculo, it_curso->curriculos, Curriculo)
+         curso = ( *it_curso );
+         ITERA_GGROUP( it_curriculo, it_curso->curriculos, Curriculo )
          {
-            curriculo = *(it_curriculo);
+            curriculo = ( *it_curriculo );
 
             // Descobrindo oferta em questão
             oferta = NULL;
-            ITERA_GGROUP_LESSPTR(it_oferta, campus->ofertas, Oferta)
+            ITERA_GGROUP_LESSPTR( it_oferta, campus->ofertas, Oferta )
             {
                if(it_oferta->campus->getId() == campus->getId() &&
                   it_oferta->curriculo->getId() == curriculo->getId() &&
@@ -1459,7 +1474,7 @@ void ProblemDataLoader::cria_blocos_curriculares()
             }
 
             // Checando se foi encontrada alguma oferta válida.
-            if(oferta == NULL)
+            if ( oferta == NULL )
             {
                continue;
             }
@@ -1470,7 +1485,7 @@ void ProblemDataLoader::cria_blocos_curriculares()
             // Percorrendo todas as disciplinas de
             // um curso cadastradas para um currículo.
             for(; it_disc_periodo != curriculo->disciplinas_periodo.end();
-               ++it_disc_periodo)
+                  ++it_disc_periodo )
             {
                disciplina_periodo = *(it_disc_periodo);
 
@@ -1492,26 +1507,26 @@ void ProblemDataLoader::cria_blocos_curriculares()
                demanda = NULL;
                int id_disciplina = 0;
                int id_oferta = 0;
-               ITERA_GGROUP_LESSPTR(it_demanda, *(demandas), Demanda)
+               ITERA_GGROUP_LESSPTR( it_demanda, ( *demandas ), Demanda )
                {
                   id_disciplina = abs( disciplina->getId() );
                   id_oferta = oferta->getId();
 
-                  if ( it_demanda->disciplina->getId() == id_disciplina &&
-                     it_demanda->oferta->getId() == id_oferta )
+                  if ( it_demanda->disciplina->getId() == id_disciplina
+							&& it_demanda->oferta->getId() == id_oferta )
                   {
-                     demanda = *(it_demanda);
+                     demanda = ( *it_demanda );
                      break;
                   }
                }
 
-               if(demanda == NULL)
+               if ( demanda == NULL )
                {
                   std::cout << "\nERRO: DEMANDA NAO ENCONTRADA EM:"
-                     << "\nProblemDataLoadaer::cria_blocos_curriculares()"
-                     << "\nDisciplina : " << id_disciplina
-                     << "\nOferta : " << id_oferta
-                     << std::endl << std::endl;
+							<< "\nProblemDataLoadaer::cria_blocos_curriculares()"
+							<< "\nDisciplina : " << id_disciplina
+							<< "\nOferta : " << id_oferta
+							<< std::endl << std::endl;
 
                   exit(1);
                }
@@ -1520,12 +1535,13 @@ void ProblemDataLoader::cria_blocos_curriculares()
 
                // Verificando a existência do bloco
                // curricular para a disciplina em questão.
-               ITERA_GGROUP(it_bloco_curricular, problemData->blocos, BlocoCurricular)
+               ITERA_GGROUP( it_bloco_curricular, problemData->blocos,
+							 BlocoCurricular )
                {
                   if( it_bloco_curricular->campus->getId() == campus->getId() &&
-                     it_bloco_curricular->curso->getId() == curso->getId() &&
-                     it_bloco_curricular->curriculo->getId() == curriculo->getId() &&
-                     it_bloco_curricular->getPeriodo() == periodo )
+                      it_bloco_curricular->curso->getId() == curso->getId() &&
+                      it_bloco_curricular->curriculo->getId() == curriculo->getId() &&
+                      it_bloco_curricular->getPeriodo() == periodo )
                   {
                      it_bloco_curricular->disciplinas.add( disciplina );
                      it_bloco_curricular->disciplina_Demanda[ disciplina ] = demanda;
@@ -1534,7 +1550,7 @@ void ProblemDataLoader::cria_blocos_curriculares()
                   }
                }
 
-               if(!found) 
+               if ( !found ) 
                {
                   BlocoCurricular * bloco_curricular = new BlocoCurricular();
 

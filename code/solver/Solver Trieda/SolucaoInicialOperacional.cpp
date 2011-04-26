@@ -102,8 +102,8 @@ SolucaoOperacional & SolucaoInicialOperacional::geraSolucaoInicial()
 
             if( !professorRepetido( professor, aula ) )
             {
-               alocouProfAula = alocaAulaSeq(solucaoInicial, it_horarios_prof,
-                  total_horarios, professor, aula);
+               alocouProfAula = alocaAulaSeq(
+				   solucaoInicial, it_horarios_prof, total_horarios, professor, aula );
             }
 
             if ( alocouProfAula )
@@ -112,7 +112,7 @@ SolucaoOperacional & SolucaoInicialOperacional::geraSolucaoInicial()
                // Atualizando a estrutura <blocosProfs>
 
                // Para cada oferta da aula
-               ITERA_GGROUP(itOferta,aula.ofertas,Oferta)
+               ITERA_GGROUP( itOferta, aula.ofertas, Oferta )
                {
                   // Descobrindo o bloco da oferta em questão.
                   BlocoCurricular * bc = problemData.mapCursoDisciplina_BlocoCurricular
@@ -123,14 +123,14 @@ SolucaoOperacional & SolucaoInicialOperacional::geraSolucaoInicial()
                // -------------------------
 
                std::cout << "\nForam alocados " << aula.getTotalCreditos()
-                  << " horarios CONSECUTIVOS para a aula da turma "
-                  << aula.getTurma() << " da disciplina "
-                  << aula.getDisciplina()->getCodigo()
-                  << " no dia " << aula.getDiaSemana()
-                  << " ao professor " << professor.getCpf() << std::endl;
+					     << " horarios CONSECUTIVOS para a aula da turma "
+					     << aula.getTurma() << " da disciplina "
+					     << aula.getDisciplina()->getCodigo()
+					     << " no dia " << aula.getDiaSemana()
+					     << " ao professor " << professor.getCpf() << std::endl;
 
                // Para não tentar alocar esse custo novamente.
-               (*itCustosAlocacaoAulaOrdenado) = NULL;
+               ( *itCustosAlocacaoAulaOrdenado ) = NULL;
 
                // Para não tentar alocar essa aula novamente.
                aulasNaoAlocadas.remove( itAulasNaoAlocadas );
@@ -145,24 +145,24 @@ SolucaoOperacional & SolucaoInicialOperacional::geraSolucaoInicial()
 					     << " FRACASSOU." << std::endl;
 
                // Para não tentar alocar esse custo novamente.
-               (*itCustosAlocacaoAulaOrdenado) = NULL;		
+               ( *itCustosAlocacaoAulaOrdenado ) = NULL;		
             }
          }
          else
          {
             // Essa aula ja foi alocada. Portanto,
             // devo remover esse custo sem aloca-lo.
-            (*itCustosAlocacaoAulaOrdenado) = NULL;
+            ( *itCustosAlocacaoAulaOrdenado ) = NULL;
          }
       }
 
       // Removendo os custos das aulas que foram alocadas na rodada atual.
-      for(int p = (custosAlocacaoAulaOrdenado.size() - 1); p >= 0; --p)
+      for ( int p = ( custosAlocacaoAulaOrdenado.size() - 1 ); p >= 0; --p )
       {
-         if(custosAlocacaoAulaOrdenado.at(p) == NULL)
+         if ( custosAlocacaoAulaOrdenado.at( p ) == NULL )
          {
             custosAlocacaoAulaOrdenado.erase(
-               custosAlocacaoAulaOrdenado.begin()+p);
+               custosAlocacaoAulaOrdenado.begin() + p );
          }
       }
    }

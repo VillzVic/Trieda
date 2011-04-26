@@ -183,27 +183,27 @@ peso associado a função objetivo.
 
 %DocEnd
 /===================================================================*/
-bool ordenaDiscSalas(std::pair<int/*Disc id*/, int/*Qtd salas associadas*/> & left,
-                     std::pair<int/*Disc id*/, int/*Qtd salas associadas*/> & right)
+bool ordenaDiscSalas( std::pair< int /*Disc id*/, int /*Qtd salas associadas*/ > & left,
+                      std::pair< int /*Disc id*/, int /*Qtd salas associadas*/ > & right )
 {
-   return (left.second < right.second);
+   return ( left.second < right.second );
 }
 
-bool ordenaVarsX(Variable * left, Variable * right)
+bool ordenaVarsX( Variable * left, Variable * right )
 {
-   if(left->getUnidade() > right->getUnidade())
+   if ( left->getUnidade() > right->getUnidade() )
    {
       return false;
    }
    else
    {
-      if(left->getTurma() > right->getTurma())
+      if ( left->getTurma() > right->getTurma() )
       {
          return false;
       }
       else
       {
-         if(left->getDia() > right->getDia())
+         if ( left->getDia() > right->getDia() )
          {
             return false;
          }
@@ -213,12 +213,10 @@ bool ordenaVarsX(Variable * left, Variable * right)
    return true;
 }
 
-// >>>
-//#define PRINT_CSV
-// <<<
-
-SolverMIP::SolverMIP(ProblemData *aProblemData, ProblemSolution * _ProblemSolution, ProblemDataLoader * _problemDataLoader)
-:Solver(aProblemData)
+SolverMIP::SolverMIP( ProblemData * aProblemData,
+					  ProblemSolution * _ProblemSolution,
+					  ProblemDataLoader * _problemDataLoader )
+:Solver( aProblemData )
 {
    problemSolution = _ProblemSolution;
    problemDataLoader = _problemDataLoader;
@@ -231,6 +229,7 @@ SolverMIP::SolverMIP(ProblemData *aProblemData, ProblemSolution * _ProblemSoluti
    epsilon = 1.0;
    M = 1.0;
    rho = 5;
+
    //verificar o valor
    psi = 1.0;
    tau = 1.0;
@@ -238,7 +237,6 @@ SolverMIP::SolverMIP(ProblemData *aProblemData, ProblemSolution * _ProblemSoluti
 
    try
    {
-      //lp = new OPT_CPLEX;
       lp = new OPT_GUROBI;
    }
    catch(...)
@@ -252,7 +250,7 @@ SolverMIP::~SolverMIP()
 {
    int i;
 
-   if (lp != NULL)
+   if ( lp != NULL )
    {
       delete lp;
    }
@@ -281,7 +279,7 @@ void SolverMIP::carregaVariaveisSolucaoTatico()
    vit = vHash.begin();
 
 #ifdef DEBUG
-   FILE *fout = fopen("solucao.txt","wt");
+   FILE * fout = fopen( "solucao.txt", "wt" );
 #endif
 
 #ifdef PRINT_CSV
@@ -292,31 +290,31 @@ void SolverMIP::carregaVariaveisSolucaoTatico()
    FILE *f_V_ALUNOS = fopen("./CSV/V_ALUNOS.csv","wt");
 #endif
 
-   while (vit != vHash.end())
+   while ( vit != vHash.end() )
    {
       Variable * v = new Variable( vit->first );
       int col = vit->second;
-      v->setValue( xSol[col] );
+      v->setValue( xSol[ col ] );
 
       if ( v->getValue() > 0.00001 )
       {
 #ifdef DEBUG
          char auxName[100];
          lp->getColName( auxName, col, 100 );
-         fprintf(fout, "%s = %f\n", auxName, v->getValue());
+         fprintf( fout, "%s = %f\n", auxName, v->getValue() );
 #endif
-         switch(v->getType())
+         switch( v->getType() )
          {
          case Variable::V_ERROR:
             std::cout << "Variável inválida " << std::endl;
             break;
          case Variable::V_CREDITOS:
             std::cout << "Oferta de " << v->getValue()
-               << " creditos da disciplina " << v->getDisciplina()->getCodigo()
-               << " para a turma " << v->getTurma()
-               << " no dia " << v->getDia()
-               << " para alguma de sala com capacidade " << v->getSubCjtSala()->getId()
-               << std::endl << std::endl;
+					  << " creditos da disciplina " << v->getDisciplina()->getCodigo()
+					  << " para a turma " << v->getTurma()
+					  << " no dia " << v->getDia()
+					  << " para alguma de sala com capacidade " << v->getSubCjtSala()->getId()
+					  << std::endl << std::endl;
 
             vars_x.push_back(v);
 
@@ -341,12 +339,12 @@ void SolverMIP::carregaVariaveisSolucaoTatico()
          case Variable::V_ABERTURA: break;
          case Variable::V_ALUNOS:
             std::cout << "Oferecimento de " << v->getValue()
-               << " vagas da disciplina " << v->getDisciplina()->getCodigo()
-               << " para a turma " << v->getTurma()
-               << " do curso " << v->getOferta()->curso->getCodigo()
-               << std::endl << std::endl;
+					  << " vagas da disciplina " << v->getDisciplina()->getCodigo()
+					  << " para a turma " << v->getTurma()
+					  << " do curso " << v->getOferta()->curso->getCodigo()
+					  << std::endl << std::endl;
 
-            vars_a[std::make_pair(v->getTurma(),v->getDisciplina())].push_back(v);
+            vars_a[ std::make_pair( v->getTurma(), v->getDisciplina() ) ].push_back( v );
 
 #ifdef PRINT_CSV
             if(printLegend_V_ALUNOS)
@@ -379,11 +377,12 @@ void SolverMIP::carregaVariaveisSolucaoTatico()
       vit++;
    }
 
-   for (vit = vHash.begin(); vit != vHash.end(); ++vit)
+   vit = vHash.begin();
+   for (; vit != vHash.end(); ++vit )
    {
-      Variable* v = new Variable(vit->first);
+      Variable * v = new Variable( vit->first );
       int col = vit->second;
-      v->setValue(xSol[col]);
+      v->setValue( xSol[ col ] );
       if ( v->getValue() > 0.00001 )
       {
          sLoader.setFolgas(v);
@@ -409,7 +408,7 @@ void SolverMIP::carregaVariaveisSolucaoTatico()
 
    if ( xSol )
    {
-      delete[] xSol;
+      delete [] xSol;
    }
 
    // ---------------------------------------
@@ -417,14 +416,14 @@ void SolverMIP::carregaVariaveisSolucaoTatico()
 
    std::cout << "x\t\ti\td\tu\ttps\tt\n";
 
-   ITERA_VECTOR(it_Vars_x,vars_x,Variable)
+   ITERA_VECTOR( it_Vars_x, vars_x, Variable )
    {
       std::cout << (*it_Vars_x)->getValue() << "\t\t"
-         << (*it_Vars_x)->getTurma() << "\t"
-         << (*it_Vars_x)->getDisciplina()->getCodigo() << "\t"
-         << (*it_Vars_x)->getUnidade()->getCodigo() << "\t"
-         << (*it_Vars_x)->getSubCjtSala()->getId() << "\t"
-         << (*it_Vars_x)->getDia() << "\n";
+				<< (*it_Vars_x)->getTurma() << "\t"
+				<< (*it_Vars_x)->getDisciplina()->getCodigo() << "\t"
+				<< (*it_Vars_x)->getUnidade()->getCodigo() << "\t"
+				<< (*it_Vars_x)->getSubCjtSala()->getId() << "\t"
+				<< (*it_Vars_x)->getDia() << "\n";
    }
 
    std::cout << "\n\n\n";
@@ -434,15 +433,15 @@ void SolverMIP::carregaVariaveisSolucaoTatico()
 
    vars__A___i_d_o::iterator it_Vars_a = vars_a.begin();
 
-   for(; it_Vars_a != vars_a.end(); ++it_Vars_a)
+   for (; it_Vars_a != vars_a.end(); ++it_Vars_a )
    {
       ITERA_VECTOR(it_Vars_a_TEMP,it_Vars_a->second,Variable)
       {
          std::cout << (*it_Vars_a_TEMP)->getValue() << "\t\t"
-            << (*it_Vars_a_TEMP)->getTurma() << "\t"
-            << (*it_Vars_a_TEMP)->getDisciplina()->getCodigo() << "\t"
-            << (*it_Vars_a_TEMP)->getOferta()->getId() << "\t"
-            << (*it_Vars_a_TEMP)->getOferta()->curso->getCodigo() << "\n";
+				   << (*it_Vars_a_TEMP)->getTurma() << "\t"
+				   << (*it_Vars_a_TEMP)->getDisciplina()->getCodigo() << "\t"
+				   << (*it_Vars_a_TEMP)->getOferta()->getId() << "\t"
+				   << (*it_Vars_a_TEMP)->getOferta()->curso->getCodigo() << "\n";
       }
    }
 }
@@ -452,70 +451,49 @@ int SolverMIP::solveTatico()
    int varNum = 0;
    int constNum = 0;
 
-   if(problemData->parametros->funcao_objetivo == 0
-      || problemData->parametros->funcao_objetivo == 2)
+   if ( problemData->parametros->funcao_objetivo == 0
+			|| problemData->parametros->funcao_objetivo == 2 )
    {
-      lp->createLP("Solver Trieda", OPTSENSE_MINIMIZE, PROB_MIP);
+      lp->createLP( "Solver Trieda", OPTSENSE_MINIMIZE, PROB_MIP );
    }
-   else if(problemData->parametros->funcao_objetivo == 1)
+   else if( problemData->parametros->funcao_objetivo == 1 )
    {
-      lp->createLP("Solver Trieda", OPTSENSE_MAXIMIZE, PROB_MIP);
+      lp->createLP( "Solver Trieda", OPTSENSE_MAXIMIZE, PROB_MIP );
    }
 
 #ifdef DEBUG
-   printf("Creating LP...\n");
+   printf( "Creating LP...\n" );
 #endif
 
-   /* Variable creation */
+   // Variable creation
    varNum = cria_variaveis();
 
    lp->updateLP();
 
 #ifdef DEBUG
-   printf("Total of Variables: %i\n\n",varNum);
+   printf( "Total of Variables: %i\n\n", varNum );
 #endif
 
-   /* Constraint creation */
+   // Constraint creation
    constNum = cria_restricoes();
 
    lp->updateLP();
 
 #ifdef DEBUG
-   printf("Total of Constraints: %i\n\n",constNum);
+   printf( "Total of Constraints: %i\n\n", constNum );
 #endif
 
 #ifdef DEBUG
-   lp->writeProbLP("Solver Trieda");
+   lp->writeProbLP( "Solver Trieda" );
 #endif
-
-   // TRIEDA-560
-
-   //// Gerando Soluções
-   //vector<Solucao*> conjunto_de_Solucoes;
-
-   //for(int num_Sol = 0; num_Sol < 5; num_Sol++)
-   //{
-   //Solucao * sol = new Solucao(*problemData);
-   //Solucao sol (*problemData);
-   //   //sol->geraSolucao();
-   //sol.geraSolucaoSubBlocos();
-   //sol.imprimeInfo();
-   //   cout << "FO: " << sol->demanda_Nao_Atendida << endl;
-
-   //   conjunto_de_Solucoes.push_back(sol);
-   //}
-
-   //sort(conjunto_de_Solucoes.begin(),conjunto_de_Solucoes.end(),ordenaSolucoes);
-
-   // Gerando Soluções - FIM
 
    int status = 0;
 
    // Muda FO para considerar somente atendimento
-   double *objOrig = new double[lp->getNumCols()];
-   lp->getObj(0,lp->getNumCols()-1,objOrig);
-   double *objNova = new double[lp->getNumCols()];
-   int *idxNova = new int[lp->getNumCols()];
+   double * objOrig = new double[ lp->getNumCols() ];
+   lp->getObj( 0, lp->getNumCols()-1, objOrig );
+   double * objNova = new double[ lp->getNumCols() ];
+   int * idxNova = new int[ lp->getNumCols() ];
 
    for (int i=0; i < lp->getNumCols(); i++)
    {
@@ -524,33 +502,32 @@ int SolverMIP::solveTatico()
    }
 
    VariableHash::iterator vit = vHash.begin();
-
-   while (vit != vHash.end())
+   while ( vit != vHash.end() )
    {
       if ( vit->first.getType() == Variable::V_SLACK_DEMANDA )
       {
-         objNova[vit->second] = 1.0;
+         objNova[ vit->second ] = 1.0;
       }
       vit++;
    }
 
-   lp->chgObj(lp->getNumCols(),idxNova,objNova);
+   lp->chgObj( lp->getNumCols(), idxNova, objNova );
 
    //lp->setHeurFrequency(1.0);
    lp->setTimeLimit(2400);
-   //lp->setMIPStartAlg(METHOD_PRIMAL);
+   //lp->setMIPStartAlg( METHOD_PRIMAL );
    lp->setMIPEmphasis(0);
    lp->setMIPScreenLog(4);
-   //lp->setMIPRelTol(0.02);
-   //lp->setNoCuts();
-   //lp->setNodeLimit(1);
-   lp->setPreSolve(OPT_TRUE);
+   // lp->setMIPRelTol(0.02);
+   // lp->setNoCuts();
+   // lp->setNodeLimit(1);
+   lp->setPreSolve( OPT_TRUE );
 
    // Resolve problema olhando somente atendimento
-   status = lp->optimize(METHOD_MIP);
+   status = lp->optimize( METHOD_MIP );
 
    // Passa solucao inicial obtida e fixa atendimento
-   double *xSolInic = new double[lp->getNumCols()];
+   double * xSolInic = new double[ lp->getNumCols() ];
    lp->getX(xSolInic);
 
    double lbAtend = lp->getBestObj();
@@ -560,62 +537,57 @@ int SolverMIP::solveTatico()
    OPT_ROW rowUB( 100, OPT_ROW::LESS , ubAtend , "UBATEND" );
 
    vit = vHash.begin();
-
-   while (vit != vHash.end())
+   while ( vit != vHash.end() )
    {
       if ( vit->first.getType() == Variable::V_SLACK_DEMANDA )
       {
          rowLB.insert(vit->second,1.0);
          rowUB.insert(vit->second,1.0);
       }
-
       if ( vit->first.getType() == Variable::V_N_SUBBLOCOS )
       {
-         xSolInic[vit->second] = GRB_UNDEFINED;
+         xSolInic[ vit->second ] = GRB_UNDEFINED;
       }
 
       vit++;
    }
 
-   lp->addRow(rowLB);
-   lp->addRow(rowUB);
-
+   lp->addRow( rowLB );
+   lp->addRow( rowUB );
    lp->updateLP();
 
    lp->setHeurFrequency(1.0);
    lp->setTimeLimit(1200);
-   //lp->setMIPStartAlg(METHOD_PRIMAL);
+   // lp->setMIPStartAlg( METHOD_PRIMAL );
    lp->setMIPEmphasis(1);
    lp->setMIPScreenLog(4);
-   //lp->setMIPRelTol(0.02);
-   //lp->setNoCuts();
-   //lp->setNodeLimit(1);
-   lp->setPreSolve(OPT_TRUE);
-   lp->copyMIPStartSol(lp->getNumCols(),idxNova,xSolInic);
+   // lp->setMIPRelTol(0.02);
+   // lp->setNoCuts();
+   // lp->setNodeLimit(1);
+   lp->setPreSolve( OPT_TRUE );
+   lp->copyMIPStartSol( lp->getNumCols(), idxNova, xSolInic );
+   lp->chgObj( lp->getNumCols(), idxNova, objOrig );
 
-   lp->chgObj(lp->getNumCols(),idxNova,objOrig);
+   status = localBranching( xSolInic, 1200.0 );
 
-   status = localBranching(xSolInic,1200.0);
-   //lp->optimize(METHOD_MIP);
+   delete [] objNova;
+   delete [] objOrig;
+   delete [] idxNova;
+   delete [] xSolInic;
 
-   delete[] objNova;
-   delete[] objOrig;
-   delete[] idxNova;
-   delete[] xSolInic;
-
-   double *xSol = NULL;
-   xSol = new double[lp->getNumCols()];
-   lp->getX(xSol);
-   FILE *fout = fopen("solBin.bin","wb");
+   double * xSol = NULL;
+   xSol = new double[ lp->getNumCols() ];
+   lp->getX( xSol );
+   FILE * fout = fopen( "solBin.bin", "wb" );
    int nCols = lp->getNumCols();
 
-   fwrite(&nCols,sizeof(int),1,fout);
-   for (int i=0; i < lp->getNumCols(); i++)
+   fwrite( &nCols, sizeof( int ), 1, fout );
+   for ( int i = 0; i < lp->getNumCols(); i++ )
    {
-      fwrite(&(xSol[i]),sizeof(double),1,fout);
+      fwrite( &( xSol[i] ), sizeof( double ), 1, fout );
    }
 
-   fclose(fout);
+   fclose( fout );
 
    delete[] xSol;
 
@@ -627,65 +599,64 @@ int SolverMIP::solveTaticoBasico()
    int varNum = 0;
    int constNum = 0;
 
-   if(problemData->parametros->funcao_objetivo == 0
-      || problemData->parametros->funcao_objetivo == 2)
+   if ( problemData->parametros->funcao_objetivo == 0
+			|| problemData->parametros->funcao_objetivo == 2 )
    {
-      lp->createLP("Solver Trieda", OPTSENSE_MINIMIZE, PROB_MIP);
+      lp->createLP( "Solver Trieda", OPTSENSE_MINIMIZE, PROB_MIP );
    }
-   else if(problemData->parametros->funcao_objetivo == 1)
+   else if( problemData->parametros->funcao_objetivo == 1 )
    {
-      lp->createLP("Solver Trieda", OPTSENSE_MAXIMIZE, PROB_MIP);
+      lp->createLP( "Solver Trieda", OPTSENSE_MAXIMIZE, PROB_MIP );
    }
 
 #ifdef DEBUG
-   printf("Creating LP...\n");
+   printf( "Creating LP...\n" );
 #endif
 
-   /* Variable creation */
+   // Variable creation
    varNum = cria_variaveis();
 
    lp->updateLP();
 
 #ifdef DEBUG
-   printf("Total of Variables: %i\n\n",varNum);
+   printf( "Total of Variables: %i\n\n", varNum );
 #endif
 
-   /* Constraint creation */
+   // Constraint creation
    constNum = cria_restricoes();
 
    lp->updateLP();
 
 #ifdef DEBUG
-   printf("Total of Constraints: %i\n\n",constNum);
+   printf( "Total of Constraints: %i\n\n", constNum );
 #endif
 
 #ifdef DEBUG
-   lp->writeProbLP("Solver Trieda");
+   lp->writeProbLP( "Solver Trieda" );
 #endif
 
    int status = 0;
 
-   //lp->setTimeLimit(60);
-   lp->setTimeLimit(20);
+   lp->setTimeLimit(60);
    lp->setMIPScreenLog(4);
 
-   status = lp->optimize(METHOD_PRIMAL);
+   status = lp->optimize( METHOD_PRIMAL );
 
-   double *xSol = NULL;
-   xSol = new double[lp->getNumCols()];
-   lp->getX(xSol);
-   FILE *fout = fopen("solBin.bin","wb");
+   double * xSol = NULL;
+   xSol = new double[ lp->getNumCols() ];
+   lp->getX( xSol );
+   FILE * fout = fopen( "solBin.bin", "wb" );
    int nCols = lp->getNumCols();
 
-   fwrite(&nCols,sizeof(int),1,fout);
-   for (int i=0; i < lp->getNumCols(); i++)
+   fwrite( &nCols, sizeof(int), 1, fout );
+   for ( int i = 0; i < lp->getNumCols(); i++ )
    {
-      fwrite(&(xSol[i]),sizeof(double),1,fout);
+      fwrite( &( xSol[i] ), sizeof( double ), 1, fout );
    }
 
-   fclose(fout);
+   fclose( fout );
 
-   delete[] xSol;
+   delete [] xSol;
 
    return status;
 }
@@ -1193,86 +1164,86 @@ void SolverMIP::converteCjtSalaEmSala()
                               exit(1);
                            }
 
-                           { // METODO
+                           // Iterando nos dias disponiveis da sala
+                           std::vector< std::pair< int /*dia*/, int /*creds. Livres*/ > >::iterator
+                              it_Dia = ( it_Creditos_Livres_Sala->second.begin() );
 
-                              // Iterando nos dias disponiveis da sala
-                              std::vector< std::pair< int /*dia*/, int /*creds. Livres*/ > >::iterator
-                                 it_Dia = it_Creditos_Livres_Sala->second.begin();
+                           for(; it_Dia != it_Creditos_Livres_Sala->second.end();
+								 ++it_Dia )
+                           {
+                              // Se encontrei o dia, testo se tem a qtd de creds
+                              // livres necessaria. Caso nao possua a qtd de creditos
+                              // livres necessaria, posso parar de tentar alocar nessa sala.
 
-                              for(; it_Dia != it_Creditos_Livres_Sala->second.end(); ++it_Dia)
+                              if ( it_Dia->first == pt_Var_x->getDia() )
                               {
-                                 // Se encontrei o dia, testo se tem a qtd de creds
-                                 // livres necessaria. Caso nao possua a qtd de creditos
-                                 // livres necessaria, posso parar de tentar alocar nessa sala.
-
-                                 if(it_Dia->first == pt_Var_x->getDia())
+                                 if ( it_Dia->second > 0 )
                                  {
-                                    if(it_Dia->second > 0)
+                                    // Já posso alocar. Pois trata-se de apenas um dia.
+
+                                    // Cálculo do total de créditos que serão alocados.
+                                    int creds_Alocar = (int)( pt_Var_x->getValue() - it_Dia->second );
+
+                                    // Criando uma nova variável para uma divisão da variável em questão.
+                                    Variable * var_x_NAO_ALOCADA = NULL;
+
+                                    // Se o total de créditos a serem alocados for maior do que a 
+                                    // o total de crédtios livres da sala (creds_Alocar > 0), devo
+                                    // criar uma cópia da variável 'x' em questão e atualizar o seu
+                                    // valor com a diferença entre o total de créditos da var subtraido
+                                    // do total de cred. livre da sala. Já no caso em que o total de
+                                    // créditos alocados é menor ou igual ao total de créditos livres
+                                    // da sala em questão (creds_Alocar <= 0), devo apenas alocar.
+
+                                    if ( creds_Alocar > 0 )
                                     {
-                                       // Já posso alocar. Pois trata-se de apenas um dia.
+                                       // Criando uma nova variável para a divisão da variável em questão.
+                                       var_x_NAO_ALOCADA = new Variable( *pt_Var_x );
 
-                                       // Cálculo do total de créditos que serão alocados.
-                                       int creds_Alocar = (int)(pt_Var_x->getValue() - it_Dia->second);
+                                       // Atualizando a quantidade de créditos não alocada.
+                                       var_x_NAO_ALOCADA->setValue( pt_Var_x->getValue() - creds_Alocar );
 
-                                       // Criando uma nova variável para uma divisão da variável em questão.
-                                       Variable * var_x_NAO_ALOCADA = NULL;
+                                       // Adicionando a nova variável à estrutura <vars_x>
+                                       vars_x.push_back( var_x_NAO_ALOCADA );
 
-                                       // Se o total de créditos a serem alocados for maior do que a 
-                                       // o total de crédtios livres da sala (creds_Alocar > 0), devo
-                                       // criar uma cópia da variável 'x' em questão e atualizar o seu
-                                       // valor com a diferença entre o total de créditos da var subtraido
-                                       // do total de cred. livre da sala. Já no caso em que o total de
-                                       // créditos alocados é menor ou igual ao total de créditos livres
-                                       // da sala em questão (creds_Alocar <= 0), devo apenas alocar.
-
-                                       if(creds_Alocar > 0)
-                                       {
-                                          // Criando uma nova variável para a divisão da variável em questão.
-                                          var_x_NAO_ALOCADA = new Variable( *pt_Var_x );
-
-                                          // Atualizando a quantidade de créditos não alocada.
-                                          var_x_NAO_ALOCADA->setValue(pt_Var_x->getValue() - creds_Alocar);
-
-                                          // Adicionando a nova variável à estrutura <vars_x>
-                                          vars_x.push_back(var_x_NAO_ALOCADA);
-
-                                          // Atualizando o valor da variável a ser atendida.
-                                          pt_Var_x->setValue(creds_Alocar);
-                                       }
-
-                                       // Setando a sala na variavel
-                                       pt_Var_x->setSala( *it_Salas_Ordenadas );
-
-                                       // Atualizo a estrutura que armazena os créditos livres.
-                                       it_Dia->second -= (int) pt_Var_x->getValue();
-
-                                       // Checando se ainda existe algum crédito para alocar.
-                                       if(var_x_NAO_ALOCADA)
-                                       { pt_Var_x = var_x_NAO_ALOCADA; }
-                                       else
-                                       {
-                                          // Condição para sair do loop.
-                                          pt_Var_x = NULL;
-                                       }
-
-                                       alocou = true;
-
-                                       // Apenas dou um break por eficiência
-                                       break;
+                                       // Atualizando o valor da variável a ser atendida.
+                                       pt_Var_x->setValue( creds_Alocar );
                                     }
+
+                                    // Setando a sala na variavel
+                                    pt_Var_x->setSala( *it_Salas_Ordenadas );
+
+                                    // Atualizo a estrutura que armazena os créditos livres.
+                                    it_Dia->second -= (int) pt_Var_x->getValue();
+
+                                    // Checando se ainda existe algum crédito para alocar.
+                                    if ( var_x_NAO_ALOCADA )
+                                    {
+									   pt_Var_x = var_x_NAO_ALOCADA;
+									}
                                     else
                                     {
-                                       // Dia é inviável.
-                                       break;
+                                       // Condição para sair do loop.
+                                       pt_Var_x = NULL;
                                     }
+
+                                    alocou = true;
+
+                                    // Apenas dou um break por eficiência
+                                    break;
+                                 }
+                                 else
+                                 {
+                                    // Dia é inviável.
+                                    break;
                                  }
                               }
+                           }
 
-                              if(alocou)
-                              {
-                                 alocou = false;
-                                 break;
-                              }
+                           if ( alocou )
+                           {
+                              alocou = false;
+                              break;
                            }
                         }
                         else
@@ -1282,19 +1253,6 @@ void SolverMIP::converteCjtSalaEmSala()
                      }
                   }
                }
-
-
-               // Teste para saber se deixou de alocar a disciplina após ter varrido todas as
-               // salas.
-
-               //if(!continuaBusca)
-               //{
-               //   std::cout << "Ainda nao alocou. Agora eu nao sei pq. REFLITA !! (getSolution())" << std::endl;
-
-               //   std::cout << "DISC ID: " << disciplina->getId() << std::endl;
-               //   exit(1);
-               //}
-               //alocou = false;
             }
          }
       }
@@ -1306,26 +1264,26 @@ void SolverMIP::converteCjtSalaEmSala()
    std::cout << "\n\n\n";
    std::cout << "x\t\ti\td\tu\ts\tt\n";
 
-   ITERA_VECTOR(it_Vars_x, vars_x, Variable)
+   ITERA_VECTOR( it_Vars_x, vars_x, Variable )
    {
       if ( (*it_Vars_x)->getSala() == NULL )
       {
-         printf("OPA. Variavel x (x_i(%d)_d(%d)_u(%d)_tps(%d)_t(%d))nao convertida.\n",
-            (*it_Vars_x)->getTurma(),
-            (*it_Vars_x)->getDisciplina()->getId(),
-            (*it_Vars_x)->getUnidade()->getId(),
-            (*it_Vars_x)->getSubCjtSala()->getId(),
-            (*it_Vars_x)->getDia());
+         printf( "OPA. Variavel x (x_i(%d)_d(%d)_u(%d)_tps(%d)_t(%d))nao convertida.\n",
+				 (*it_Vars_x)->getTurma(),
+				 (*it_Vars_x)->getDisciplina()->getId(),
+				 (*it_Vars_x)->getUnidade()->getId(),
+				 (*it_Vars_x)->getSubCjtSala()->getId(),
+				 (*it_Vars_x)->getDia());
 
          exit(1);
       }
 
       std::cout << (*it_Vars_x)->getValue() << "\t\t"
-         << (*it_Vars_x)->getTurma() << "\t"
-         << (*it_Vars_x)->getDisciplina()->getCodigo() << "\t"
-         << (*it_Vars_x)->getUnidade()->getCodigo() << "\t"
-         << (*it_Vars_x)->getSala()->getCodigo() << "\t"
-         << (*it_Vars_x)->getDia() << "\n";
+			    << (*it_Vars_x)->getTurma() << "\t"
+			    << (*it_Vars_x)->getDisciplina()->getCodigo() << "\t"
+			    << (*it_Vars_x)->getUnidade()->getCodigo() << "\t"
+			    << (*it_Vars_x)->getSala()->getCodigo() << "\t"
+			    << (*it_Vars_x)->getDia() << "\n";
    }
 }
 
@@ -1336,14 +1294,14 @@ void SolverMIP::getSolutionTatico()
    int at_Tatico_Counter = 0;
 
    // Iterando sobre as variáveis do tipo x.
-   ITERA_VECTOR(it_Vars_x, vars_x, Variable)
+   ITERA_VECTOR( it_Vars_x, vars_x, Variable )
    {
       // Descobrindo qual Campus a variável x em questão pertence.
       Campus * campus = problemData->refCampus[ (*it_Vars_x)->getUnidade()->getIdCampus() ];
 
       bool novo_Campus = true;
-      ITERA_GGROUP( it_At_Campus, *(problemSolution->atendimento_campus),
-         AtendimentoCampus)
+      ITERA_GGROUP( it_At_Campus, (*problemSolution->atendimento_campus),
+				    AtendimentoCampus)
       {
          if ( it_At_Campus->getId() == campus->getId() )
          {
@@ -1356,11 +1314,11 @@ void SolverMIP::getSolutionTatico()
             }
             else
             {
-               Unidade * unidade = (*it_Vars_x)->getUnidade();
+               Unidade * unidade = ( *it_Vars_x )->getUnidade();
 
                bool nova_Unidade = true;
-               ITERA_GGROUP(it_At_Unidade, *(it_At_Campus->atendimentos_unidades),
-                  AtendimentoUnidade)
+               ITERA_GGROUP( it_At_Unidade, (*it_At_Campus->atendimentos_unidades),
+							 AtendimentoUnidade)
                {
                   if ( it_At_Unidade->getId() == unidade->getId() )
                   {
@@ -1373,10 +1331,10 @@ void SolverMIP::getSolutionTatico()
                      }
                      else
                      {
-                        Sala * sala = (*it_Vars_x)->getSala();
+                        Sala * sala = ( *it_Vars_x )->getSala();
                         bool nova_Sala = true;
-                        ITERA_GGROUP(it_At_Sala, *(it_At_Unidade->atendimentos_salas),
-                           AtendimentoSala)
+                        ITERA_GGROUP( it_At_Sala, (*it_At_Unidade->atendimentos_salas),
+									  AtendimentoSala )
                         {
                            if ( it_At_Sala->getId() == sala->getId() )
                            {
@@ -1832,7 +1790,7 @@ int SolverMIP::solve()
    if ( problemData->parametros->modo_otimizacao == "TATICO"
 			&& problemData->atendimentosTatico == NULL )
    {
-      //status = solveTatico();
+      // status = solveTatico();
       status = solveTaticoBasico();
 
       carregaVariaveisSolucaoTatico();
@@ -1841,9 +1799,9 @@ int SolverMIP::solve()
    else if ( problemData->parametros->modo_otimizacao == "OPERACIONAL" )
    {
       if ( problemData->atendimentosTatico != NULL
-			&& problemData->atendimentosTatico->size() > 0 )
+				&& problemData->atendimentosTatico->size() > 0 )
       {
-         ITERA_GGROUP( it_At_Campus, *(problemSolution->atendimento_campus),
+         ITERA_GGROUP( it_At_Campus, ( *problemSolution->atendimento_campus ),
 					   AtendimentoCampus )
          {
             problemData->atendimentosTatico = new GGroup< AtendimentoCampusSolucao * >();
@@ -1863,7 +1821,7 @@ int SolverMIP::solve()
 
          // Gerando uma saída para o modelo tático.
 
-         //status = solveTatico();
+         // status = solveTatico();
          status = solveTaticoBasico();
 
          carregaVariaveisSolucaoTatico();
@@ -1890,7 +1848,7 @@ int SolverMIP::solve()
    return status;
 }
 
-int SolverMIP::localBranching(double * xSol, double maxTime)
+int SolverMIP::localBranching( double * xSol, double maxTime )
 {
    // Adiciona restrição de local branching
    int status = 0;
@@ -5178,45 +5136,6 @@ int SolverMIP::cria_restricao_turma_sala(void)
       }
    }
 
-   //ITERA_GGROUP(it_disc,problemData->disciplinas,Disciplina) {
-   //   for(int i=0;i<it_disc->num_turmas;++i) {
-   //      c.reset();
-   //      c.setType(Constraint::C_TURMA_SALA);
-   //      c.setDisciplina(*it_disc);
-   //      c.setTurma(i);
-
-   //      sprintf( name, "%s", c.toString().c_str() ); 
-
-   //      if (cHash.find(c) != cHash.end()) continue;
-
-   //      cHash[ c ] = lp->getNumRows();
-
-   //      nnz = problemData->totalSalas;
-   //      OPT_ROW row( nnz, OPT_ROW::LESS , 1.0, name );
-
-   //      ITERA_GGROUP(it_campus,problemData->campi,Campus) {
-   //         ITERA_GGROUP(it_u,it_campus->unidades,Unidade) {
-   //            ITERA_GGROUP(it_sala,it_u->salas,Sala) {
-   //               v.reset();
-   //               v.setType(Variable::V_ALOC_DISCIPLINA);
-   //               v.setTurma(i);
-   //               v.setDisciplina(*it_disc);
-   //               v.setUnidade(*it_u);
-   //               v.setSala(*it_sala);
-
-   //               it_v = vHash.find(v);
-   //               if( it_v != vHash.end() )
-   //               {
-   //                  row.insert(it_v->second, 1.0);
-   //               }
-   //            }
-   //         }
-   //      }
-   //      lp->addRow(row);
-   //      restricoes++;
-   //   }
-   //}
-
    return restricoes;
 }
 
@@ -5247,44 +5166,44 @@ int SolverMIP::cria_restricao_evita_turma_disc_camp_d(void)
    Variable v;
    VariableHash::iterator it_v;
 
-   ITERA_GGROUP(it_disc, problemData->disciplinas, Disciplina)
+   ITERA_GGROUP( it_disc, problemData->disciplinas, Disciplina )
    {
-      for(int i = 0; i < it_disc->getNumTurmas(); ++i)
+      for ( int i = 0; i < it_disc->getNumTurmas(); ++i )
       {
          c.reset();
-         c.setType(Constraint::C_EVITA_TURMA_DISC_CAMP_D);
-         c.setDisciplina(*it_disc);
+         c.setType( Constraint::C_EVITA_TURMA_DISC_CAMP_D );
+         c.setDisciplina( *it_disc );
          c.setTurma(i);
 
          sprintf( name, "%s", c.toString().c_str() ); 
-
-         if (cHash.find(c) != cHash.end()) continue;
-
-         //cHash[ c ] = lp->getNumRows();
+         if (cHash.find(c) != cHash.end())
+		 {
+			 continue;
+		 }
 
          nnz = problemData->totalSalas;
          OPT_ROW row( nnz, OPT_ROW::LESS , 1.0, name );
 
-         ITERA_GGROUP(it_campus, problemData->campi, Campus)
+         ITERA_GGROUP( it_campus, problemData->campi, Campus )
          {
             v.reset();
-            v.setType(Variable::V_ABERTURA);
+            v.setType( Variable::V_ABERTURA );
             v.setTurma(i);
-            v.setDisciplina(*it_disc);
-            v.setCampus(*it_campus);
+            v.setDisciplina( *it_disc );
+            v.setCampus( *it_campus );
 
             it_v = vHash.find(v);
             if( it_v != vHash.end() )
             {
-               row.insert(it_v->second, 1.0);
+               row.insert( it_v->second, 1.0 );
             }
          }
 
-         if(row.getnnz() != 0)
+         if ( row.getnnz() != 0 )
          {
             cHash[ c ] = lp->getNumRows();
 
-            lp->addRow(row);
+            lp->addRow( row );
             restricoes++;
          }
       }
@@ -5325,53 +5244,54 @@ int SolverMIP::cria_restricao_turmas_bloco(void)
    Variable v;
    VariableHash::iterator it_v;
 
-   ITERA_GGROUP(itCampus,problemData->campi,Campus)
+   ITERA_GGROUP( itCampus, problemData->campi, Campus )
    {
       GGroup<int>::iterator itDiasLetCampus =
          itCampus->diasLetivos.begin();
 
-      for(; itDiasLetCampus != itCampus->diasLetivos.end(); itDiasLetCampus++ )
+      for(; itDiasLetCampus != itCampus->diasLetivos.end();
+			itDiasLetCampus++ )
       {
-         ITERA_GGROUP(itBloco,problemData->blocos,BlocoCurricular)
+         ITERA_GGROUP( itBloco, problemData->blocos, BlocoCurricular )
          {
             c.reset();
-            c.setType(Constraint::C_TURMAS_BLOCO);
-            c.setBloco(*itBloco);
-            c.setDia(*itDiasLetCampus);
-            c.setCampus(*itCampus);
+            c.setType( Constraint::C_TURMAS_BLOCO );
+            c.setBloco( *itBloco );
+            c.setDia( *itDiasLetCampus );
+            c.setCampus( *itCampus );
 
             sprintf( name, "%s", c.toString().c_str() ); 
 
-            if (cHash.find(c) != cHash.end()) continue;
+            if (cHash.find(c) != cHash.end())
+			{
+				continue;
+			}
 
-            //cHash[ c ] = lp->getNumRows();
-
-            nnz = 100; /*FIX-ME*/
-            //itBloco->total_turmas * problemData->totalSalas;
+			// FIX-ME
+            nnz = 100;
 
             OPT_ROW row( (nnz+1), OPT_ROW::LESS , 0.0, name );
-            //OPT_ROW row( OPT_ROW::LESS , 0.0, name );
 
-            ITERA_GGROUP(itDisc,itBloco->disciplinas,Disciplina)
+            ITERA_GGROUP( itDisc, itBloco->disciplinas, Disciplina )
             {
-               ITERA_GGROUP(itUnidade,itCampus->unidades,Unidade)
+               ITERA_GGROUP( itUnidade, itCampus->unidades, Unidade )
                {
-                  ITERA_GGROUP(itCjtSala,itUnidade->conjutoSalas,ConjuntoSala)
+                  ITERA_GGROUP( itCjtSala, itUnidade->conjutoSalas, ConjuntoSala )
                   {
-                     for(int turma = 0; turma < itDisc->getNumTurmas(); turma++)
+                     for ( int turma = 0; turma < itDisc->getNumTurmas(); turma++ )
                      {
                         v.reset();
-                        v.setType(Variable::V_OFERECIMENTO);
-                        v.setTurma(turma);
-                        v.setDisciplina(*itDisc);
-                        v.setUnidade(*itUnidade);
-                        v.setSubCjtSala(*itCjtSala);
-                        v.setDia(*itDiasLetCampus);
+                        v.setType( Variable::V_OFERECIMENTO );
+                        v.setTurma( turma );
+                        v.setDisciplina( *itDisc );
+                        v.setUnidade( *itUnidade );
+                        v.setSubCjtSala( *itCjtSala );
+                        v.setDia( *itDiasLetCampus );
 
                         it_v = vHash.find(v);
                         if( it_v != vHash.end() )
                         {
-                           row.insert(it_v->second, 1.0);
+                           row.insert( it_v->second, 1.0 );
                         }
                      }
                   }
@@ -5379,19 +5299,19 @@ int SolverMIP::cria_restricao_turmas_bloco(void)
             }
 
             v.reset();
-            v.setType(Variable::V_N_SUBBLOCOS);
-            v.setBloco(*itBloco);
-            v.setDia(*itDiasLetCampus);
-            v.setCampus(*itCampus);
+            v.setType( Variable::V_N_SUBBLOCOS );
+            v.setBloco( *itBloco );
+            v.setDia( *itDiasLetCampus );
+            v.setCampus( *itCampus );
 
             it_v = vHash.find(v);
             if( it_v != vHash.end() )
             {
-               row.insert(it_v->second, -9999.0);
+               row.insert( it_v->second, -9999.0 );
             }
-            /* Provavelmente esta restrição é inútil */
+            // Provavelmente esta restrição é inútil
 
-            if(row.getnnz() != 0)
+            if ( row.getnnz() != 0 )
             {
                cHash[ c ] = lp->getNumRows();
 
