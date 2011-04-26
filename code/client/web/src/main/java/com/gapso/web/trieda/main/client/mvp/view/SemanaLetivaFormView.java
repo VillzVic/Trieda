@@ -1,6 +1,7 @@
 package com.gapso.web.trieda.main.client.mvp.view;
 
 import com.extjs.gxt.ui.client.widget.button.Button;
+import com.extjs.gxt.ui.client.widget.form.CheckBox;
 import com.extjs.gxt.ui.client.widget.form.FormButtonBinding;
 import com.extjs.gxt.ui.client.widget.form.FormPanel;
 import com.extjs.gxt.ui.client.widget.form.TextField;
@@ -17,6 +18,7 @@ public class SemanaLetivaFormView extends MyComposite implements SemanaLetivaFor
 	private FormPanel formPanel;
 	private TextField<String> codigoTF;
 	private TextField<String> descricaoTF;
+	private CheckBox oficialCB;
 	private SemanaLetivaDTO semanaLetivaDTO;
 	
 	public SemanaLetivaFormView(SemanaLetivaDTO semanaLetivaDTO) {
@@ -30,7 +32,7 @@ public class SemanaLetivaFormView extends MyComposite implements SemanaLetivaFor
 	private void initUI() {
 		String title = (semanaLetivaDTO.getId() == null)? "Inserção de Semana Letiva" : "Edição de Semana Letiva";
 		simpleModal = new SimpleModal(title, Resources.DEFAULTS.semanaLetiva16());
-		simpleModal.setHeight(138);
+		simpleModal.setHeight(158);
 		createForm();
 		simpleModal.setContent(formPanel);
 	}
@@ -58,6 +60,12 @@ public class SemanaLetivaFormView extends MyComposite implements SemanaLetivaFor
 		descricaoTF.setMaxLength(50);
 		descricaoTF.setEmptyText("Preencha uma descrição");
 		formPanel.add(descricaoTF, formData);
+		
+		oficialCB = new CheckBox();
+		oficialCB.setName(SemanaLetivaDTO.PROPERTY_OFICIAL);
+		oficialCB.setValue(semanaLetivaDTO.getOficial());
+		oficialCB.setFieldLabel("Oficial?");
+		formPanel.add(oficialCB, formData);
 		
 		FormButtonBinding binding = new FormButtonBinding(formPanel);
 		binding.addButton(simpleModal.getSalvarBt());
@@ -92,6 +100,11 @@ public class SemanaLetivaFormView extends MyComposite implements SemanaLetivaFor
 	@Override
 	public SemanaLetivaDTO getSemanaLetivaDTO() {
 		return semanaLetivaDTO;
+	}
+
+	@Override
+	public CheckBox getOficialCheckBox() {
+		return oficialCB;
 	}
 	
 

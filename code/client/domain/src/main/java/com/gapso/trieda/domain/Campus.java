@@ -183,7 +183,7 @@ public class Campus implements Serializable, Comparable<Campus> {
         this.professores = professores;
     }
 
-	public Set<HorarioDisponivelCenario> getHorarios() {
+	private Set<HorarioDisponivelCenario> getHorarios() {
         return this.horarios;
     }
 

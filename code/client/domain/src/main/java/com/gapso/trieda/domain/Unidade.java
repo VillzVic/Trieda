@@ -281,7 +281,7 @@ public class Unidade implements Serializable {
         this.deslocamentos = deslocamentos;
     }
 
-    public Set<HorarioDisponivelCenario> getHorarios() {
+    private Set<HorarioDisponivelCenario> getHorarios() {
         return this.horarios;
     }
 

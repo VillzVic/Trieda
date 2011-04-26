@@ -1,6 +1,7 @@
 package com.gapso.web.trieda.server.util;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -114,12 +115,14 @@ public class SolverInput {
 	private ObjectFactory of;
 	private TriedaInput triedaInput;
 	private List<Campus> campi;
+	private SemanaLetiva semanaLetiva;
 
 	public SolverInput(Cenario cenario, List<Campus> campi) {
 		this.cenario = cenario;
 		this.campi = campi;
 		of = new ObjectFactory();
 		triedaInput = of.createTriedaInput();
+		this.semanaLetiva = SemanaLetiva.getByOficial();
 	}
 
 	@Transactional
@@ -162,7 +165,7 @@ public class SolverInput {
 	@Transactional
 	private void generateCalendario() {
 		ItemCalendario itemCalendario = of.createItemCalendario();
-		SemanaLetiva calendario = SemanaLetiva.findAll().get(0);
+		SemanaLetiva calendario = SemanaLetiva.getByOficial();
 		itemCalendario.setId(calendario.getId().intValue());
 		itemCalendario.setCodigo(calendario.getCodigo());
 		
@@ -309,7 +312,7 @@ public class SolverInput {
 			itemCampus.setId(campus.getId().intValue());
 			itemCampus.setCodigo(campus.getCodigo());
 			itemCampus.setNome(campus.getNome());
-			itemCampus.setHorariosDisponiveis(createGrupoHorario(campus.getHorarios()));
+			itemCampus.setHorariosDisponiveis(createGrupoHorario(campus.getHorarios(this.semanaLetiva)));
 			
 			Set<String> salasJaAssociadasADisciplina = new HashSet<String>();
 			
@@ -321,7 +324,7 @@ public class SolverInput {
 				itemUnidade.setId(unidade.getId().intValue());
 				itemUnidade.setCodigo(unidade.getCodigo());
 				itemUnidade.setNome(unidade.getNome());
-				itemUnidade.setHorariosDisponiveis(createGrupoHorario(unidade.getHorarios()));
+				itemUnidade.setHorariosDisponiveis(createGrupoHorario(unidade.getHorarios(this.semanaLetiva)));
 				
 				GrupoSala grupoSala = of.createGrupoSala();
 				Set<Sala> salas = unidade.getSalas();
@@ -334,9 +337,9 @@ public class SolverInput {
 					itemSala.setTipoSalaId(sala.getTipoSala().getId().intValue());
 					itemSala.setCapacidade(sala.getCapacidade());
 					if(tatico) { // Tático
-						itemSala.setCreditosDisponiveis(createCreditosDisponiveis(createGrupoHorario(sala.getHorarios())));
+						itemSala.setCreditosDisponiveis(createCreditosDisponiveis(createGrupoHorario(sala.getHorarios(this.semanaLetiva))));
 					} else { // Operacional
-						itemSala.setHorariosDisponiveis(createGrupoHorario(sala.getHorarios()));
+						itemSala.setHorariosDisponiveis(createGrupoHorario(sala.getHorarios(this.semanaLetiva)));
 					}
 					
 					GrupoIdentificador grupoIdentificador = of.createGrupoIdentificador();
@@ -373,7 +376,7 @@ public class SolverInput {
 				}
 				itemProfessor.setCredAnterior(professor.getCreditoAnterior());
 				itemProfessor.setValorCred(professor.getValorCredito());
-				itemProfessor.setHorariosDisponiveis(createGrupoHorario(professor.getHorarios()));
+				itemProfessor.setHorariosDisponiveis(createGrupoHorario(professor.getHorarios(this.semanaLetiva)));
 				
 				GrupoProfessorDisciplina grupoProfessorDisciplina = of.createGrupoProfessorDisciplina();
 				Set<ProfessorDisciplina> professorDisciplinas = professor.getDisciplinas();
@@ -489,7 +492,7 @@ public class SolverInput {
 			}
 			itemDisciplina.setDisciplinasIncompativeis(grupoIdentificadorIncompativeis);
 			
-			itemDisciplina.setHorariosDisponiveis(createGrupoHorario(disciplina.getHorarios()));
+			itemDisciplina.setHorariosDisponiveis(createGrupoHorario(disciplina.getHorarios(this.semanaLetiva)));
 			grupoDisciplina.getDisciplina().add(itemDisciplina);
 		}
 		triedaInput.setDisciplinas(grupoDisciplina);
@@ -689,7 +692,7 @@ public class SolverInput {
 
 		List<Fixacao> fixacoes = Fixacao.findAll(); // Pegar fixações do cenário
 		for(Fixacao fixacao : fixacoes) {
-			Set<HorarioDisponivelCenario> horarios = fixacao.getHorarios();
+			List<HorarioDisponivelCenario> horarios = fixacao.getHorarios(this.semanaLetiva);
 			if(horarios.size() > 0) {
 				for(HorarioDisponivelCenario horario : horarios) {
 					ItemFixacao itemFixacao = of.createItemFixacao();
@@ -852,7 +855,7 @@ public class SolverInput {
 	 * MÉTODOS AUXILIARES
 	 */
 	
-	private GrupoHorario createGrupoHorario(Set<HorarioDisponivelCenario> horarios) {
+	private GrupoHorario createGrupoHorario(Collection<HorarioDisponivelCenario> horarios) {
 		
 		GrupoHorario grupoHorario = of.createGrupoHorario();
 		for(HorarioDisponivelCenario horarioDisponivelCenario : horarios) {

@@ -28,6 +28,8 @@ public class CursoFormPresenter implements Presenter {
 		TipoCursoComboBox getTipoCursoComboBox();
 		NumberField getNumMinDoutoresTextField();
 		NumberField getNumMinMestresTextField();
+		NumberField getMinTempoIntegralParcialTextField();
+		NumberField getMinTempoIntegralTextField();
 		NumberField getMaxDisciplinasPeloProfessorTextField();
 		CheckBox getAdmMaisDeUmDisciplinaCheckBox();
 		CursoDTO getCursoDTO();
@@ -87,6 +89,8 @@ public class CursoFormPresenter implements Presenter {
 		cursoDTO.setCodigo(display.getCodigoTextField().getValue());
 		cursoDTO.setNumMinDoutores(display.getNumMinDoutoresTextField().getValue().intValue());
 		cursoDTO.setNumMinMestres(display.getNumMinMestresTextField().getValue().intValue());
+		cursoDTO.setMinTempoIntegralParcial(display.getMinTempoIntegralParcialTextField().getValue().intValue());
+		cursoDTO.setMinTempoIntegral(display.getMinTempoIntegralTextField().getValue().intValue());
 		cursoDTO.setMaxDisciplinasPeloProfessor(display.getMaxDisciplinasPeloProfessorTextField().getValue().intValue());
 		cursoDTO.setAdmMaisDeUmDisciplina(display.getAdmMaisDeUmDisciplinaCheckBox().getValue());
 		cursoDTO.setTipoId(display.getTipoCursoComboBox().getSelection().get(0).getId());

@@ -51,7 +51,7 @@ public class SalasServiceImpl extends RemoteServiceServlet implements SalasServi
 	
 	@Override
 	public List<HorarioDisponivelCenarioDTO> getHorariosDisponiveis(SalaDTO salaDTO, SemanaLetivaDTO semanaLetivaDTO) {
-		SemanaLetiva semanaLetiva = SemanaLetiva.find(semanaLetivaDTO.getId());
+		SemanaLetiva semanaLetiva = SemanaLetiva.getByOficial();
 		List<HorarioDisponivelCenario> list = new ArrayList<HorarioDisponivelCenario>(Sala.find(salaDTO.getId()).getHorarios(semanaLetiva));
 		List<HorarioDisponivelCenarioDTO> listDTO = ConvertBeans.toHorarioDisponivelCenarioDTO(list);
 
@@ -95,11 +95,12 @@ public class SalasServiceImpl extends RemoteServiceServlet implements SalasServi
 	
 	@Override
 	public void saveHorariosDisponiveis(SalaDTO salaDTO, List<HorarioDisponivelCenarioDTO> listDTO) {
+		SemanaLetiva semanaLetiva = SemanaLetiva.getByOficial();
 		List<HorarioDisponivelCenario> listSelecionados = ConvertBeans.toHorarioDisponivelCenario(listDTO);
 		Sala sala = Sala.find(salaDTO.getId());
 		List<HorarioDisponivelCenario> adicionarList = new ArrayList<HorarioDisponivelCenario> (listSelecionados);
-		adicionarList.removeAll(sala.getHorarios());
-		List<HorarioDisponivelCenario> removerList = new ArrayList<HorarioDisponivelCenario> (sala.getHorarios());
+		adicionarList.removeAll(sala.getHorarios(semanaLetiva));
+		List<HorarioDisponivelCenario> removerList = new ArrayList<HorarioDisponivelCenario> (sala.getHorarios(semanaLetiva));
 		removerList.removeAll(listSelecionados);
 		for(HorarioDisponivelCenario o : removerList) {
 			o.getSalas().remove(sala);

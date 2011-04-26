@@ -62,7 +62,7 @@ public class DisciplinasServiceImpl extends RemoteServiceServlet implements Disc
 	
 	@Override
 	public List<HorarioDisponivelCenarioDTO> getHorariosDisponiveis(DisciplinaDTO disciplinaDTO, SemanaLetivaDTO semanaLetivaDTO) {
-		SemanaLetiva semanaLetiva = SemanaLetiva.find(semanaLetivaDTO.getId());
+		SemanaLetiva semanaLetiva = SemanaLetiva.getByOficial();
 		List<HorarioDisponivelCenario> list = new ArrayList<HorarioDisponivelCenario>(Disciplina.find(disciplinaDTO.getId()).getHorarios(semanaLetiva));
 		List<HorarioDisponivelCenarioDTO> listDTO = ConvertBeans.toHorarioDisponivelCenarioDTO(list);
 		
@@ -74,8 +74,9 @@ public class DisciplinasServiceImpl extends RemoteServiceServlet implements Disc
 		List<HorarioDisponivelCenario> listSelecionados = ConvertBeans.toHorarioDisponivelCenario(listDTO);
 		Disciplina disciplina = Disciplina.find(disciplinaDTO.getId());
 		List<HorarioDisponivelCenario> adicionarList = new ArrayList<HorarioDisponivelCenario>(listSelecionados);
-		adicionarList.removeAll(disciplina.getHorarios());
-		List<HorarioDisponivelCenario> removerList = new ArrayList<HorarioDisponivelCenario>(disciplina.getHorarios());
+		SemanaLetiva semanaLetiva = SemanaLetiva.getByOficial(); 
+		adicionarList.removeAll(disciplina.getHorarios(semanaLetiva));
+		List<HorarioDisponivelCenario> removerList = new ArrayList<HorarioDisponivelCenario>(disciplina.getHorarios(semanaLetiva));
 		removerList.removeAll(listSelecionados);
 		for(HorarioDisponivelCenario o : removerList) {
 			o.getDisciplinas().remove(disciplina);
@@ -153,7 +154,7 @@ public class DisciplinasServiceImpl extends RemoteServiceServlet implements Disc
 		} else {
 			disciplina.persist();
 			// TODO Pegar a semana letiva do cenario da disciplina
-			Set<HorarioAula> horariosAula = SemanaLetiva.findAll().get(0).getHorariosAula();
+			Set<HorarioAula> horariosAula = SemanaLetiva.getByOficial().getHorariosAula();
 			for(HorarioAula horarioAula : horariosAula) {
 				Set<HorarioDisponivelCenario> horariosDisponiveis = horarioAula.getHorariosDisponiveisCenario();
 				for(HorarioDisponivelCenario horarioDisponivel : horariosDisponiveis) {

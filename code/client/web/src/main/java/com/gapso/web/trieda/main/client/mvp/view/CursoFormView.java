@@ -24,6 +24,8 @@ public class CursoFormView extends MyComposite implements CursoFormPresenter.Dis
 	private TipoCursoComboBox tipoCursoCB;
 	private NumberField numMinDoutoresTF;
 	private NumberField numMinMestresTF;
+	private NumberField minTempoIntegralParcialTF;
+	private NumberField minTempoIntegralTF;
 	private NumberField maxDisciplinasPeloProfessorTF;
 	private CheckBox admMaisDeUmDisciplinaCB;
 	private CursoDTO cursoDTO;
@@ -44,7 +46,7 @@ public class CursoFormView extends MyComposite implements CursoFormPresenter.Dis
 	private void initUI() {
 		String title = (cursoDTO.getId() == null)? "Inserção de Curso" : "Edição de Curso";
 		simpleModal = new SimpleModal(title, Resources.DEFAULTS.curso16());
-		simpleModal.setHeight(300);
+		simpleModal.setHeight(430);
 		createForm();
 		simpleModal.setContent(formPanel);
 	}
@@ -101,6 +103,24 @@ public class CursoFormView extends MyComposite implements CursoFormPresenter.Dis
 		numMinDoutoresTF.setMaxValue(100);
 		numMinDoutoresTF.setEmptyText("Preencha a porcentagem mínima de doutores");
 		formPanel.add(numMinDoutoresTF, formData);
+		
+		minTempoIntegralParcialTF = new NumberField();
+		minTempoIntegralParcialTF.setName(CursoDTO.PROPERTY_MIN_TEMPO_INTEGRAL_PARCIAL);
+		minTempoIntegralParcialTF.setValue(cursoDTO.getMinTempoIntegralParcial());
+		minTempoIntegralParcialTF.setFieldLabel("% min Tempo Int + Par");
+		minTempoIntegralParcialTF.setAllowBlank(false);
+		minTempoIntegralParcialTF.setAllowDecimals(false);
+		minTempoIntegralParcialTF.setMaxValue(100);
+		formPanel.add(minTempoIntegralParcialTF, formData);
+		
+		minTempoIntegralTF = new NumberField();
+		minTempoIntegralTF.setName(CursoDTO.PROPERTY_MIN_TEMPO_INTEGRAL);
+		minTempoIntegralTF.setValue(cursoDTO.getMinTempoIntegral());
+		minTempoIntegralTF.setFieldLabel("% min Tempo Integral");
+		minTempoIntegralTF.setAllowBlank(false);
+		minTempoIntegralTF.setAllowDecimals(false);
+		minTempoIntegralTF.setMaxValue(100);
+		formPanel.add(minTempoIntegralTF, formData);
 		
 		maxDisciplinasPeloProfessorTF = new NumberField();
 		maxDisciplinasPeloProfessorTF.setName(CursoDTO.PROPERTY_MAX_DISCIPLINAS_PELO_PROFESSOR);
@@ -176,6 +196,14 @@ public class CursoFormView extends MyComposite implements CursoFormPresenter.Dis
 	@Override
 	public CheckBox getAdmMaisDeUmDisciplinaCheckBox() {
 		return admMaisDeUmDisciplinaCB;
+	}
+	@Override
+	public NumberField getMinTempoIntegralParcialTextField() {
+		return minTempoIntegralParcialTF;
+	}
+	@Override
+	public NumberField getMinTempoIntegralTextField() {
+		return minTempoIntegralTF;
 	}
 	
 

@@ -415,7 +415,7 @@ public class Sala implements Serializable, Comparable<Sala> {
         this.capacidade = capacidade;
     }
 
-	public Set<HorarioDisponivelCenario> getHorarios() {
+	private Set<HorarioDisponivelCenario> getHorarios() {
         return this.horarios;
     }
 

@@ -41,7 +41,7 @@ public class SemanasLetivaServiceImpl extends RemoteServiceServlet implements Se
 	@Override
 	public SemanaLetivaDTO getSemanaLetiva(CenarioDTO cenario) {
 		// TODO Pegar a semana letiva do cenário
-		return ConvertBeans.toSemanaLetivaDTO(SemanaLetiva.findAll().get(0));
+		return ConvertBeans.toSemanaLetivaDTO(SemanaLetiva.getByOficial());
 	}
 	
 	@Override
@@ -86,6 +86,9 @@ public class SemanasLetivaServiceImpl extends RemoteServiceServlet implements Se
 		} else {
 			semanaLetiva.persist();
 		}
+		if(semanaLetiva.getOficial()) {
+			semanaLetiva.markOficial();
+		}
 	}
 	
 	@Override
@@ -97,7 +100,7 @@ public class SemanasLetivaServiceImpl extends RemoteServiceServlet implements Se
 	
 	@Override
 	public PagingLoadResult<HorarioDisponivelCenarioDTO> getHorariosDisponiveisCenario(SemanaLetivaDTO semanaLetivaDTO) {
-		SemanaLetiva semanaLetiva = SemanaLetiva.find(semanaLetivaDTO.getId());
+		SemanaLetiva semanaLetiva = SemanaLetiva.getByOficial();
 		List<HorarioDisponivelCenarioDTO> list = new ArrayList<HorarioDisponivelCenarioDTO>();
 		for(HorarioAula o : semanaLetiva.getHorariosAula()) {
 			list.add(ConvertBeans.toHorarioDisponivelCenarioDTO(o));

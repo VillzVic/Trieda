@@ -492,7 +492,7 @@ public class Disciplina implements Serializable, Comparable<Disciplina> {
         this.maxAlunosPratico = maxAlunosPratico;
     }
 
-	public Set<HorarioDisponivelCenario> getHorarios() {
+	private Set<HorarioDisponivelCenario> getHorarios() {
         return this.horarios;
     }
 

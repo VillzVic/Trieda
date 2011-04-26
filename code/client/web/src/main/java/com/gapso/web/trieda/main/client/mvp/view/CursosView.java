@@ -79,6 +79,8 @@ public class CursosView extends MyComposite implements CursosPresenter.Display {
 		list.add(new ColumnConfig(CursoDTO.PROPERTY_TIPO_STRING, "Tipo", 100));
 		list.add(new ColumnConfig(CursoDTO.PROPERTY_NUM_MIN_DOUTORES, "% Min. PhD", 100));
 		list.add(new ColumnConfig(CursoDTO.PROPERTY_NUM_MIN_MESTRES, "% Min. MSc", 100));
+		list.add(new ColumnConfig(CursoDTO.PROPERTY_MIN_TEMPO_INTEGRAL_PARCIAL, "% min Tempo Integral + Tempo Parcial", 100));
+		list.add(new ColumnConfig(CursoDTO.PROPERTY_MIN_TEMPO_INTEGRAL, "% min Tempo Integral", 100));
 		list.add(new ColumnConfig(CursoDTO.PROPERTY_MAX_DISCIPLINAS_PELO_PROFESSOR, "Max. Disc. por Prof.", 110));
 		list.add(new CheckColumnConfig(CursoDTO.PROPERTY_ADM_MAIS_DE_UMA_DISCIPLINA, "Permite mais de uma Disc. por Prof.?", 200));
 		return list;

@@ -202,6 +202,14 @@ public class Fixacao implements Serializable {
         return q.setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
     
+	@SuppressWarnings("unchecked")
+	public List<HorarioDisponivelCenario> getHorarios(SemanaLetiva semanaLetiva) {
+		Query q = entityManager().createQuery("SELECT o FROM Fixacao o, IN (o.fixacoes) c WHERE c = :fixacao AND o.horarioAula.semanaLetiva = :semanaLetiva");
+		q.setParameter("fixacao", this);
+		q.setParameter("semanaLetiva", semanaLetiva);
+		return q.getResultList();
+	}
+    
     public String getCodigo() {
         return this.codigo;
     }
@@ -251,7 +259,7 @@ public class Fixacao implements Serializable {
 		this.sala = sala;
 	}
 
-	public Set<HorarioDisponivelCenario> getHorarios() {
+	private Set<HorarioDisponivelCenario> getHorarios() {
         return this.horarios;
     }
 

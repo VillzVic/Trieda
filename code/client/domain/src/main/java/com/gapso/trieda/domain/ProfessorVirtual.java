@@ -15,15 +15,12 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.Table;
 import javax.persistence.Version;
-import javax.validation.constraints.Digits;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.roo.addon.entity.RooEntity;
@@ -35,39 +32,18 @@ import org.springframework.transaction.annotation.Transactional;
 @Entity
 @RooJavaBean
 @RooToString
-@RooEntity(identifierColumn = "PRF_ID")
-@Table(name = "PROFESSORES")
-public class Professor implements Serializable {
-
-    @NotNull
-    @ManyToOne(targetEntity = Cenario.class)
-    @JoinColumn(name = "CEN_ID")
-    private Cenario cenario;
-
-    @NotNull
-    @ManyToOne(targetEntity = TipoContrato.class)
-    @JoinColumn(name = "TCO_ID")
-    private TipoContrato tipoContrato;
+@RooEntity(identifierColumn = "PRV_ID")
+@Table(name = "PROFESSORES_VIRTUAIS")
+public class ProfessorVirtual implements Serializable {
 
     @NotNull
     @ManyToOne(targetEntity = Titulacao.class)
     @JoinColumn(name = "TIT_ID")
     private Titulacao titulacao;
 
-    @NotNull
     @ManyToOne(targetEntity = AreaTitulacao.class)
     @JoinColumn(name = "ATI_ID")
     private AreaTitulacao areaTitulacao;
-
-    @NotNull
-    @Column(name = "PRF_CPF")
-    @Size(min = 14, max = 14)
-    private String cpf;
-
-    @NotNull
-    @Column(name = "PRF_NOME")
-    @Size(min = 3, max = 20)
-    private String nome;
 
     @Column(name = "PRF_CH_MIN")
     @Max(999L)
@@ -77,62 +53,20 @@ public class Professor implements Serializable {
     @Max(999L)
     private Integer cargaHorariaMax;
 
-    @Column(name = "PRF_CRED_ANTERIOR")
-    @Max(999L)
-    private Integer creditoAnterior;
-
-    @Column(name = "PRF_VALOR_CREDITO")
-    @Digits(integer = 6, fraction = 2)
-    private Double valorCredito;
-
-    @ManyToMany
-    private Set<Campus> campi = new HashSet<Campus>();
-
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, mappedBy="professores")
-    private Set<HorarioDisponivelCenario> horarios = new HashSet<HorarioDisponivelCenario>();
-
     @NotNull
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "professor")
-    private Set<ProfessorDisciplina> disciplinas = new HashSet<ProfessorDisciplina>();
-    
-    @OneToMany(cascade = CascadeType.ALL, mappedBy="professor")
-    private Set<AtendimentoOperacional> atendimentosOperacionais =  new HashSet<AtendimentoOperacional>();
+    @ManyToMany(cascade = CascadeType.ALL)
+    private Set<Disciplina> disciplinas = new HashSet<Disciplina>();
 
 	public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("Id: ").append(getId()).append(", ");
         sb.append("Version: ").append(getVersion()).append(", ");
-        sb.append("Cenario: ").append(getCenario()).append(", ");
-        sb.append("TipoContrato: ").append(getTipoContrato()).append(", ");
         sb.append("Titulacao: ").append(getTitulacao()).append(", ");
         sb.append("AreaTitulacao: ").append(getAreaTitulacao()).append(", ");
-        sb.append("Cpf: ").append(getCpf()).append(", ");
-        sb.append("Nome: ").append(getNome()).append(", ");
         sb.append("CargaHorariaMin: ").append(getCargaHorariaMin()).append(", ");
         sb.append("CargaHorariaMax: ").append(getCargaHorariaMax()).append(", ");
-        sb.append("CreditoAnterior: ").append(getCreditoAnterior()).append(", ");
-        sb.append("ValorCredito: ").append(getValorCredito()).append(", ");
-        sb.append("Campi: ").append(getCampi() == null ? "null" : getCampi().size()).append(", ");
-        sb.append("Horarios: ").append(getHorarios() == null ? "null" : getHorarios().size()).append(", ");
         sb.append("Disciplinas: ").append(getDisciplinas() == null ? "null" : getDisciplinas().size());
-        sb.append("Atendimentos Operacionais: ").append(getAtendimentosOperacionais() == null ? "null" : getAtendimentosOperacionais().size());
         return sb.toString();
-    }
-
-	public Cenario getCenario() {
-        return this.cenario;
-    }
-
-	public void setCenario(Cenario cenario) {
-        this.cenario = cenario;
-    }
-
-	public TipoContrato getTipoContrato() {
-        return this.tipoContrato;
-    }
-
-	public void setTipoContrato(TipoContrato tipoContrato) {
-        this.tipoContrato = tipoContrato;
     }
 
 	public Titulacao getTitulacao() {
@@ -151,22 +85,6 @@ public class Professor implements Serializable {
         this.areaTitulacao = areaTitulacao;
     }
 
-	public String getCpf() {
-        return this.cpf;
-    }
-
-	public void setCpf(String cpf) {
-        this.cpf = cpf;
-    }
-
-	public String getNome() {
-        return this.nome;
-    }
-
-	public void setNome(String nome) {
-        this.nome = nome;
-    }
-
 	public Integer getCargaHorariaMin() {
         return this.cargaHorariaMin;
     }
@@ -183,53 +101,13 @@ public class Professor implements Serializable {
         this.cargaHorariaMax = cargaHorariaMax;
     }
 
-	public Integer getCreditoAnterior() {
-        return this.creditoAnterior;
-    }
-
-	public void setCreditoAnterior(Integer creditoAnterior) {
-        this.creditoAnterior = creditoAnterior;
-    }
-
-	public Double getValorCredito() {
-        return this.valorCredito;
-    }
-
-	public void setValorCredito(Double valorCredito) {
-        this.valorCredito = valorCredito;
-    }
-
-	public Set<Campus> getCampi() {
-        return this.campi;
-    }
-
-	public void setCampi(Set<Campus> campi) {
-        this.campi = campi;
-    }
-
-	private Set<HorarioDisponivelCenario> getHorarios() {
-        return this.horarios;
-    }
-
-	public void setHorarios(Set<HorarioDisponivelCenario> horarios) {
-        this.horarios = horarios;
-    }
-
-	public Set<ProfessorDisciplina> getDisciplinas() {
+	public Set<Disciplina> getDisciplinas() {
         return this.disciplinas;
     }
 
-	public void setDisciplinas(Set<ProfessorDisciplina> disciplinas) {
+	public void setDisciplinas(Set<Disciplina> disciplinas) {
         this.disciplinas = disciplinas;
     }
-	
-	public Set<AtendimentoOperacional> getAtendimentosOperacionais() {
-		return this.atendimentosOperacionais;
-	}
-	
-	public void setAtendimentosOperacionais(Set<AtendimentoOperacional> atendimentosOperacionais) {
-		this.atendimentosOperacionais = atendimentosOperacionais;
-	}
 	
 	@PersistenceContext
     transient EntityManager entityManager;
@@ -275,22 +153,11 @@ public class Professor implements Serializable {
     public void remove() {
         if (this.entityManager == null) this.entityManager = entityManager();
         if (this.entityManager.contains(this)) {
-        	this.removeHorariosDisponivelCenario();
             this.entityManager.remove(this);
         } else {
-            Professor attached = this.entityManager.find(this.getClass(), this.id);
-            attached.removeHorariosDisponivelCenario();
+            ProfessorVirtual attached = this.entityManager.find(this.getClass(), this.id);
             this.entityManager.remove(attached);
         }
-    }
-
-    @Transactional
-    public void removeHorariosDisponivelCenario() {
-    	Set<HorarioDisponivelCenario> horarios = this.getHorarios();
-    	for(HorarioDisponivelCenario horario : horarios) {
-    		horario.getProfessores().remove(this);
-    		horario.merge();
-    	}
     }
 	
 	@Transactional
@@ -300,21 +167,21 @@ public class Professor implements Serializable {
     }
 
 	@Transactional
-    public Professor merge() {
+    public ProfessorVirtual merge() {
         if (this.entityManager == null) this.entityManager = entityManager();
-        Professor merged = this.entityManager.merge(this);
+        ProfessorVirtual merged = this.entityManager.merge(this);
         this.entityManager.flush();
         return merged;
     }
 
 	public static final EntityManager entityManager() {
-        EntityManager em = new Professor().entityManager;
+        EntityManager em = new ProfessorVirtual().entityManager;
         if (em == null) throw new IllegalStateException("Entity manager has not been injected (is the Spring Aspects JAR configured as an AJC/AJDT aspects library?)");
         return em;
     }
 
 	@SuppressWarnings("unchecked")
-    public static List<Professor> findAll() {
+    public static List<ProfessorVirtual> findAll() {
         return entityManager().createQuery("SELECT o FROM Professor o").getResultList();
     }
 	
@@ -338,7 +205,7 @@ public class Professor implements Serializable {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public static List<Professor> findBy(String cpf, TipoContrato tipoContrato, Titulacao titulacao, AreaTitulacao areaTitulacao, int firstResult, int maxResults, String orderBy) {
+	public static List<ProfessorVirtual> findBy(String cpf, TipoContrato tipoContrato, Titulacao titulacao, AreaTitulacao areaTitulacao, int firstResult, int maxResults, String orderBy) {
 		String where = "";
 		
 		if(cpf != null)           where += " o.cpf = :cpf AND ";
@@ -359,13 +226,13 @@ public class Professor implements Serializable {
 		return q.setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
 	}
 
-	public static Professor find(Long id) {
+	public static ProfessorVirtual find(Long id) {
         if (id == null) return null;
-        return entityManager().find(Professor.class, id);
+        return entityManager().find(ProfessorVirtual.class, id);
     }
 
 	@SuppressWarnings("unchecked")
-    public static List<Professor> find(int firstResult, int maxResults) {
+    public static List<ProfessorVirtual> find(int firstResult, int maxResults) {
         return entityManager().createQuery("SELECT o FROM Professor o").setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
 

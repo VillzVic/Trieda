@@ -25,6 +25,8 @@ public class AtendimentoOperacionalDTO extends AbstractDTO<String> implements Co
 	public static final String PROPERTY_HORARIO_STRING = "horarioString";
 	public static final String PROPERTY_PROFESSOR_ID = "professorId";
 	public static final String PROPERTY_PROFESSOR_STRING = "professorString";
+	public static final String PROPERTY_PROFESSOR_VIRTUAL_ID = "professorVirtualId";
+	public static final String PROPERTY_PROFESSOR_VIRTUAL_STRING = "professorVirtualString";
 	public static final String PROPERTY_CREDITO_TEORICO_BOOLEAN = "creditoTeoricoBoolean";
 	public static final String PROPERTY_CURSO_STRING = "cursoString";
 	public static final String PROPERTY_CURSO_NOME = "cursoNome";
@@ -148,6 +150,20 @@ public class AtendimentoOperacionalDTO extends AbstractDTO<String> implements Co
 	}
 	public String getProfessorString() {
 		return get(PROPERTY_PROFESSOR_STRING);
+	}
+	
+	public void setProfessorVirtualId(Long value) {
+		set(PROPERTY_PROFESSOR_VIRTUAL_ID, value);
+	}
+	public Long getProfessorVirtualId() {
+		return get(PROPERTY_PROFESSOR_VIRTUAL_ID);
+	}
+	
+	public void setProfessorVirtualString(String value) {
+		set(PROPERTY_PROFESSOR_VIRTUAL_STRING, value);
+	}
+	public String getProfessorVirtualString() {
+		return get(PROPERTY_PROFESSOR_VIRTUAL_STRING);
 	}
 	
 	public void setCreditoTeoricoBoolean(Boolean value) {

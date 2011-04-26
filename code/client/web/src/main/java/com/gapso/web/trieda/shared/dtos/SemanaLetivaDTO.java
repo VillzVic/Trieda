@@ -11,6 +11,7 @@ public class SemanaLetivaDTO extends AbstractDTO<String> implements Comparable<S
 	public static final String PROPERTY_VERSION = "version";
 	public static final String PROPERTY_CODIGO = "codigo";
 	public static final String PROPERTY_DESCRICAO = "descricao";
+	public static final String PROPERTY_OFICIAL = "oficial";
 	
 	public SemanaLetivaDTO() {
 	}
@@ -41,6 +42,13 @@ public class SemanaLetivaDTO extends AbstractDTO<String> implements Comparable<S
 	}
 	public String getDescricao() {
 		return get(PROPERTY_DESCRICAO);
+	}
+	
+	public void setOficial(Boolean value) {
+		set(PROPERTY_OFICIAL, value);
+	}
+	public Boolean getOficial() {
+		return get(PROPERTY_OFICIAL);
 	}
 	
 	@Override

@@ -72,6 +72,18 @@ public class Curso implements Serializable {
     @Min(0L)
     @Max(100L)
     private Integer numMinMestres;
+    
+    @NotNull
+    @Column(name = "CUR_TEM_INTPARC")
+    @Min(0L)
+    @Max(100L)
+    private Integer minTempoIntegralParcial;
+    
+    @NotNull
+    @Column(name = "CUR_TEM_INT")
+    @Min(0L)
+    @Max(100L)
+    private Integer minTempoIntegral;
 
     @NotNull
     @Column(name = "CUR_MAX_DISC_PROF")
@@ -99,6 +111,8 @@ public class Curso implements Serializable {
         sb.append("Nome: ").append(getNome()).append(", ");
         sb.append("NumMinDoutores: ").append(getNumMinDoutores()).append(", ");
         sb.append("NumMinMestres: ").append(getNumMinMestres()).append(", ");
+        sb.append("MinTempoIntegralParcial: ").append(getMinTempoIntegralParcial()).append(", ");
+        sb.append("MinTempoIntegral: ").append(getMinTempoIntegral()).append(", ");
         sb.append("MaxDisciplinasPeloProfessor: ").append(getMaxDisciplinasPeloProfessor()).append(", ");
         sb.append("AdmMaisDeUmDisciplina: ").append(getAdmMaisDeUmDisciplina()).append(", ");
         sb.append("AreasTitulacao: ").append(getAreasTitulacao() == null ? "null" : getAreasTitulacao().size());
@@ -152,6 +166,22 @@ public class Curso implements Serializable {
 	public void setNumMinMestres(Integer numMinMestres) {
         this.numMinMestres = numMinMestres;
     }
+
+	public Integer getMinTempoIntegralParcial() {
+		return minTempoIntegralParcial;
+	}
+
+	public void setMinTempoIntegralParcial(Integer minTempoIntegralParcial) {
+		this.minTempoIntegralParcial = minTempoIntegralParcial;
+	}
+
+	public Integer getMinTempoIntegral() {
+		return minTempoIntegral;
+	}
+
+	public void setMinTempoIntegral(Integer minTempoIntegral) {
+		this.minTempoIntegral = minTempoIntegral;
+	}
 
 	public Integer getMaxDisciplinasPeloProfessor() {
         return this.maxDisciplinasPeloProfessor;

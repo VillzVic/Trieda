@@ -48,6 +48,9 @@ public class SemanaLetiva implements Serializable {
     @Size(max = 50)
     private String descricao;
     
+    @Column(name = "SLE_OFICIAL")
+    private Boolean oficial;
+    
     @OneToMany(cascade = CascadeType.ALL, mappedBy="semanaLetiva")
     private Set<HorarioAula> horariosAula =  new HashSet<HorarioAula>();
 
@@ -75,6 +78,14 @@ public class SemanaLetiva implements Serializable {
 
 	public void setDescricao(String descricao) {
         this.descricao = descricao;
+    }
+	
+	public Boolean getOficial() {
+        return this.oficial;
+    }
+
+	public void setOficial(Boolean oficial) {
+        this.oficial = oficial;
     }
 	
 	public Set<HorarioAula> getHorariosAula() {
@@ -150,15 +161,27 @@ public class SemanaLetiva implements Serializable {
         return merged;
     }
 
+	
 	public static final EntityManager entityManager() {
         EntityManager em = new SemanaLetiva().entityManager;
         if (em == null) throw new IllegalStateException("Entity manager has not been injected (is the Spring Aspects JAR configured as an AJC/AJDT aspects library?)");
         return em;
     }
+	
+	public static SemanaLetiva getByOficial() {
+		return (SemanaLetiva) entityManager().createQuery("SELECT o FROM SemanaLetiva o WHERE o.oficial = true").setMaxResults(1).getSingleResult();
+	}
 
+	@Transactional
+	public void markOficial() {
+		Query q = entityManager().createQuery("UPDATE SemanaLetiva o SET o.oficial = false WHERE o.oficial = true AND o <> :semanaLetiva");
+		q.setParameter("semanaLetiva", this);
+		q.executeUpdate();
+	}
+	
 	@SuppressWarnings("unchecked")
     public static List<SemanaLetiva> findAll() {
-        return entityManager().createQuery("select o from SemanaLetiva o").getResultList();
+        return entityManager().createQuery("SELECT o FROM SemanaLetiva o").getResultList();
     }
 
 	public static SemanaLetiva find(Long id) {
@@ -174,7 +197,7 @@ public class SemanaLetiva implements Serializable {
 	@SuppressWarnings("unchecked")
     public static List<SemanaLetiva> find(int firstResult, int maxResults, String orderBy) {
 		orderBy = (orderBy != null)? "ORDER BY o."+orderBy : "";
-        return entityManager().createQuery("select o from SemanaLetiva o "+orderBy).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
+        return entityManager().createQuery("SELECT o FROM SemanaLetiva o "+orderBy).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
 	
 	public static int count(String codigo, String descricao) {
@@ -213,6 +236,7 @@ public class SemanaLetiva implements Serializable {
         sb.append("Codigo: ").append(getCodigo()).append(", ");
         sb.append("HorariosAula: ").append(getHorariosAula() == null ? "null" : getHorariosAula().size()).append(", ");
         sb.append("Descricao: ").append(getDescricao());
+        sb.append("Oficial: ").append(getOficial());
         return sb.toString();
     }
 }

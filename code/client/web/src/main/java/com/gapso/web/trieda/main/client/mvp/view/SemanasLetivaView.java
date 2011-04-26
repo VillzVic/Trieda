@@ -10,6 +10,7 @@ import com.extjs.gxt.ui.client.util.Margins;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.TextField;
+import com.extjs.gxt.ui.client.widget.grid.CheckColumnConfig;
 import com.extjs.gxt.ui.client.widget.grid.ColumnConfig;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayout;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
@@ -73,6 +74,7 @@ public class SemanasLetivaView extends MyComposite implements SemanasLetivaPrese
 		List<ColumnConfig> list = new ArrayList<ColumnConfig>();
 		list.add(new ColumnConfig(SemanaLetivaDTO.PROPERTY_CODIGO, "Codigo", 100));
 		list.add(new ColumnConfig(SemanaLetivaDTO.PROPERTY_DESCRICAO, "Descrição", 100));
+		list.add(new CheckColumnConfig(SemanaLetivaDTO.PROPERTY_OFICIAL, "Oficial?", 100));
 		return list;
 	}
 

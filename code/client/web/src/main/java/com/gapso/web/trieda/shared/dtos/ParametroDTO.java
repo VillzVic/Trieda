@@ -15,6 +15,12 @@ public class ParametroDTO extends AbstractDTO<Long> implements Comparable<Parame
 	public static final String PROPERTY_VERSION = "version";
 	public static final String PROPERTY_CENARIOID = "cenarioid";
 	public static final String PROPERTY_MODOOTIMIZACAO = "modootimizacao";
+	public static final String PROPERTY_SEMANALETIVA_ID = "semanaLetivaId";
+	public static final String PROPERTY_SEMANALETIVA_DISPLAY = "semanaLetivaDisplay";
+	public static final String PROPERTY_CAMPUS_ID = "campusId";
+	public static final String PROPERTY_CAMPUS_DISPLAY = "campusDisplay";
+	public static final String PROPERTY_TURNO_ID = "turnoId";
+	public static final String PROPERTY_TURNO_DISPLAY = "turnoDisplay";
 	public static final String PROPERTY_CARGAHORARIAALUNO = "cargahorariaaluno";
 	public static final String PROPERTY_CARGAHORARIAALUNOSEL = "cargahorariaalunosel";
 	public static final String PROPERTY_ALUNODEPERIODOMESMASALA = "alunodeperiodomesmasala";
@@ -37,6 +43,7 @@ public class ParametroDTO extends AbstractDTO<Long> implements Comparable<Parame
 	public static final String PROPERTY_REGRASESPECIFICASDIVISAOCREDITO = "regrasespecificasdivisaocredito";
 	public static final String PROPERTY_MAXIMIZARNOTAAVALIACAOCORPODOCENTE = "maximizarnotaavaliacaocorpodocente";
 	public static final String PROPERTY_MINIMIZARCUSTODOCENTECURSOS = "minimizarcustodocentecursos";
+	public static final String PROPERTY_CONSIDERAREQUIVALENCIA = "considerarEquivalencias";
 	public static final String PROPERTY_MINALUNOSPARAABRIRTURMA = "minalunosparaabrirturma";
 	public static final String PROPERTY_MINALUNOSPARAABRIRTURMAVALUE = "minalunosparaabrirturmavalue";
 	public static final String PROPERTY_COMPARTILHARDISCIPLINASCAMPI = "compartilhardisciplinascampi";
@@ -94,7 +101,49 @@ public class ParametroDTO extends AbstractDTO<Long> implements Comparable<Parame
 	public void setModoOtimizacao(String value) {
 		set(PROPERTY_MODOOTIMIZACAO, value);
 	}
-
+	
+	public Long getSemanaLetivaId() {
+		return get(PROPERTY_SEMANALETIVA_ID);
+	}
+	public void setSemanaLetivaId(Long value) {
+		set(PROPERTY_SEMANALETIVA_ID, value);
+	}
+	
+	public String getSemanaLetivaDisplay() {
+		return get(PROPERTY_SEMANALETIVA_DISPLAY);
+	}
+	public void setSemanaLetivaDisplay(String value) {
+		set(PROPERTY_SEMANALETIVA_DISPLAY, value);
+	}
+	
+	public Long getCampusId() {
+		return get(PROPERTY_CAMPUS_ID);
+	}
+	public void setCampusId(Long value) {
+		set(PROPERTY_CAMPUS_ID, value);
+	}
+	
+	public String getCampusDisplay() {
+		return get(PROPERTY_CAMPUS_DISPLAY);
+	}
+	public void setCampusDisplay(String value) {
+		set(PROPERTY_CAMPUS_DISPLAY, value);
+	}
+	
+	public Long getTurnoId() {
+		return get(PROPERTY_TURNO_ID);
+	}
+	public void setTurnoId(Long value) {
+		set(PROPERTY_TURNO_ID, value);
+	}
+	
+	public String getTurnoDisplay() {
+		return get(PROPERTY_TURNO_DISPLAY);
+	}
+	public void setTurnoDisplay(String value) {
+		set(PROPERTY_TURNO_DISPLAY, value);
+	}
+	
 	public Boolean getCargaHorariaAluno() {
 		return get(PROPERTY_CARGAHORARIAALUNO);
 	}
@@ -184,6 +233,13 @@ public class ParametroDTO extends AbstractDTO<Long> implements Comparable<Parame
 	}
 	public void setMinAlunosParaAbrirTurma(Boolean value) {
 		set(PROPERTY_MINALUNOSPARAABRIRTURMA, value);
+	}
+	
+	public Boolean getConsiderarEquivalencia() {
+		return get(PROPERTY_CONSIDERAREQUIVALENCIA);
+	}
+	public void setConsiderarEquivalencia(Boolean value) {
+		set(PROPERTY_CONSIDERAREQUIVALENCIA, value);
 	}
 
 	public Integer getMinAlunosParaAbrirTurmaValue() {

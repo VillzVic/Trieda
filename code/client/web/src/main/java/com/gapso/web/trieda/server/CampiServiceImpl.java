@@ -64,7 +64,7 @@ public class CampiServiceImpl extends RemoteServiceServlet implements CampiServi
 	
 	@Override
 	public PagingLoadResult<HorarioDisponivelCenarioDTO> getHorariosDisponiveis(CampusDTO campusDTO, SemanaLetivaDTO semanaLetivaDTO) {
-		SemanaLetiva semanaLetiva = SemanaLetiva.find(semanaLetivaDTO.getId());
+		SemanaLetiva semanaLetiva = SemanaLetiva.getByOficial();
 		List<HorarioDisponivelCenario> list = new ArrayList<HorarioDisponivelCenario>(Campus.find(campusDTO.getId()).getHorarios(semanaLetiva));
 		List<HorarioDisponivelCenarioDTO> listDTO = ConvertBeans.toHorarioDisponivelCenarioDTO(list);
 		
@@ -107,13 +107,14 @@ public class CampiServiceImpl extends RemoteServiceServlet implements CampiServi
 	public void saveHorariosDisponiveis(CampusDTO campusDTO, List<HorarioDisponivelCenarioDTO> listDTO) {
 		List<HorarioDisponivelCenario> listSelecionados = ConvertBeans.toHorarioDisponivelCenario(listDTO);
 		Campus campus = Campus.find(campusDTO.getId());
+		SemanaLetiva semanaLetiva = SemanaLetiva.getByOficial();
 		List<Unidade> unidades = Unidade.findByCampus(campus);
 		List<Sala> salas = new ArrayList<Sala>();
 		for(Unidade unidade : unidades) {
 			salas.addAll(Sala.findByUnidade(unidade)); 
 		}
 		
-		List<HorarioDisponivelCenario> removerList = new ArrayList<HorarioDisponivelCenario> (campus.getHorarios());
+		List<HorarioDisponivelCenario> removerList = new ArrayList<HorarioDisponivelCenario> (campus.getHorarios(semanaLetiva));
 		removerList.removeAll(listSelecionados);
 		for(HorarioDisponivelCenario o : removerList) {
 			o.getCampi().remove(campus);
@@ -123,7 +124,7 @@ public class CampiServiceImpl extends RemoteServiceServlet implements CampiServi
 		}
 		
 		List<HorarioDisponivelCenario> adicionarList = new ArrayList<HorarioDisponivelCenario> (listSelecionados);
-		adicionarList.removeAll(campus.getHorarios());
+		adicionarList.removeAll(campus.getHorarios(semanaLetiva));
 		for(HorarioDisponivelCenario o : adicionarList) {
 			o.getCampi().add(campus);
 			o.getUnidades().addAll(unidades);

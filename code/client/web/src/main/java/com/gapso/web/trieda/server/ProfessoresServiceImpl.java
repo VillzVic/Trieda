@@ -45,7 +45,7 @@ public class ProfessoresServiceImpl extends RemoteService implements Professores
 	@Override
 	public List<HorarioDisponivelCenarioDTO> getHorariosDisponiveis(ProfessorDTO professorDTO, SemanaLetivaDTO semanaLetivaDTO) {
 		Professor professor = Professor.find(professorDTO.getId());
-		SemanaLetiva semanaLetiva = SemanaLetiva.find(semanaLetivaDTO.getId());
+		SemanaLetiva semanaLetiva = SemanaLetiva.getByOficial();
 		List<HorarioDisponivelCenario> list = professor.getHorarios(semanaLetiva);
 		List<HorarioDisponivelCenarioDTO> listDTO = ConvertBeans.toHorarioDisponivelCenarioDTO(list);
 		
@@ -54,7 +54,7 @@ public class ProfessoresServiceImpl extends RemoteService implements Professores
 	
 	@Override
 	public void saveHorariosDisponiveis(ProfessorDTO professorDTO, SemanaLetivaDTO semanaLetivaDTO, List<HorarioDisponivelCenarioDTO> listDTO) {
-		SemanaLetiva semanaLetiva = SemanaLetiva.find(semanaLetivaDTO.getId());
+		SemanaLetiva semanaLetiva = SemanaLetiva.getByOficial();
 		List<HorarioDisponivelCenario> listSelecionados = ConvertBeans.toHorarioDisponivelCenario(listDTO);
 		Professor professor = Professor.find(professorDTO.getId());
 		List<HorarioDisponivelCenario> adicionarList = new ArrayList<HorarioDisponivelCenario> (listSelecionados);
@@ -145,7 +145,7 @@ public class ProfessoresServiceImpl extends RemoteService implements Professores
 		} else {
 			professor.persist();
 			// TODO Pegar a semana letiva do cenario do professor
-			Set<HorarioAula> horariosAula = SemanaLetiva.findAll().get(0).getHorariosAula();
+			Set<HorarioAula> horariosAula = SemanaLetiva.getByOficial().getHorariosAula();
 			for(HorarioAula horarioAula : horariosAula) {
 				Set<HorarioDisponivelCenario> horariosDisponiveis = horarioAula.getHorariosDisponiveisCenario();
 				for(HorarioDisponivelCenario horarioDisponivel : horariosDisponiveis) {

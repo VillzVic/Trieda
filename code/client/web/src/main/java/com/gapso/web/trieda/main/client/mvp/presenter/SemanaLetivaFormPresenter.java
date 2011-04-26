@@ -5,6 +5,7 @@ import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.widget.Info;
 import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.button.Button;
+import com.extjs.gxt.ui.client.widget.form.CheckBox;
 import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.gapso.web.trieda.shared.dtos.SemanaLetivaDTO;
 import com.gapso.web.trieda.shared.mvp.presenter.Presenter;
@@ -21,6 +22,7 @@ public class SemanaLetivaFormPresenter implements Presenter {
 		Button getSalvarButton();
 		TextField<String> getCodigoTextField();
 		TextField<String> getDescricaoTextField();
+		CheckBox getOficialCheckBox();
 		SemanaLetivaDTO getSemanaLetivaDTO();
 		boolean isValid();
 		
@@ -68,6 +70,7 @@ public class SemanaLetivaFormPresenter implements Presenter {
 		SemanaLetivaDTO dto = display.getSemanaLetivaDTO();
 		dto.setCodigo(display.getCodigoTextField().getValue());
 		dto.setDescricao(display.getDescricaoTextField().getValue());
+		dto.setOficial(display.getOficialCheckBox().getValue());
 		return dto;
 	}
 	

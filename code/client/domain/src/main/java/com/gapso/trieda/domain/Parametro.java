@@ -13,6 +13,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.PersistenceContext;
@@ -48,6 +49,21 @@ public class Parametro implements Serializable {
 	@Size(min = 1, max = 20)
 	@Column(name = "PAR_MODOOTIMIZACAO")
 	private String modoOtimizacao;
+	
+	@NotNull
+	@ManyToOne(targetEntity = Campus.class)
+	@JoinColumn(name = "SEM_ID")
+	private SemanaLetiva semanaLetiva;
+	
+	@NotNull
+	@ManyToOne(targetEntity = Campus.class)
+	@JoinColumn(name = "CAM_ID")
+	private Campus campus;
+	
+	@NotNull
+	@ManyToOne(targetEntity = Turno.class)
+	@JoinColumn(name = "TUR_ID")
+	private Turno turno;
 	
 	//////////////////////////////////////////////
 	// PREFERENCIAS DO ALUNO
@@ -123,6 +139,10 @@ public class Parametro implements Serializable {
     @Column(name = "PAR_FUNCAOOBJETIVO")
     private Integer funcaoObjetivo = 0;
     
+    //Considerar Equivalências entre Disciplinas
+    @Column(name = "PAR_CONSIDERAR_EQUIV")
+    private Boolean considerarEquivalencia = false;
+    
     //Número mínimo de alunos para abrir uma turma
     @Column(name = "PAR_MINALUNTURMA")
     private Boolean minAlunosParaAbrirTurma = false;
@@ -184,7 +204,7 @@ public class Parametro implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "TUR_ID")
+    @Column(name = "PAR_ID")
     private Long id;
 
     @Version
@@ -391,6 +411,14 @@ public class Parametro implements Serializable {
 	public void setMinAlunosParaAbrirTurmaValue(Integer minAlunosParaAbrirTurmaValue) {
 		this.minAlunosParaAbrirTurmaValue = minAlunosParaAbrirTurmaValue;
 	}
+	
+	public Boolean getConsiderarEquivalencia() {
+		return considerarEquivalencia;
+	}
+
+	public void setConsiderarEquivalencia(Boolean considerarEquivalencia) {
+		this.considerarEquivalencia = considerarEquivalencia;
+	}
 
 	public Boolean getNivelDificuldadeDisciplina() {
 		return nivelDificuldadeDisciplina;
@@ -515,11 +543,32 @@ public class Parametro implements Serializable {
 	public Set<CursoDescompartilha> getCursosDescompartDiscCampi() {
 		return cursosDescompartDiscCampi;
 	}
-	public void setCursosIncompartDiscCampi(Set<CursoDescompartilha> cursosDescompartDiscCampi) {
+	public void setCursosDescompartDiscCampi(Set<CursoDescompartilha> cursosDescompartDiscCampi) {
 		this.cursosDescompartDiscCampi = cursosDescompartDiscCampi;
 	}
+	
+    public SemanaLetiva getSemanaLetiva() {
+		return semanaLetiva;
+	}
+	public void setSemanaLetiva(SemanaLetiva semanaLetiva) {
+		this.semanaLetiva = semanaLetiva;
+	}
 
-    public String getModoOtimizacao() {
+	public Campus getCampus() {
+		return campus;
+	}
+	public void setCampus(Campus campus) {
+		this.campus = campus;
+	}
+
+	public Turno getTurno() {
+		return turno;
+	}
+	public void setTurno(Turno turno) {
+		this.turno = turno;
+	}
+
+	public String getModoOtimizacao() {
 		return modoOtimizacao;
 	}
 	public void setModoOtimizacao(String modoOtimizacao) {
@@ -532,6 +581,9 @@ public class Parametro implements Serializable {
         sb.append("Version: ").append(getVersion()).append(", ");
         sb.append("Cenario: ").append(getCenario()).append(", ");
         sb.append("ModoOtimizacao: ").append(getModoOtimizacao()).append(", ");
+        sb.append("SemanaLetiva: ").append(getSemanaLetiva()).append(", ");
+        sb.append("Campus: ").append(getCampus()).append(", ");
+        sb.append("Turno: ").append(getTurno()).append(", ");
         sb.append("CargaHorariaAluno: ").append(getCargaHorariaAluno()).append(", ");
         sb.append("CargaHorariaAlunoSel: ").append(getCargaHorariaAlunoSel()).append(", ");
         sb.append("AlunoDePeriodoMesmaSala: ").append(getAlunoDePeriodoMesmaSala()).append(", ");
@@ -548,6 +600,7 @@ public class Parametro implements Serializable {
         sb.append("EditarUltimoEPrimeiroHorarioProfessor: ").append(getEvitarUltimoEPrimeiroHorarioProfessor()).append(", ");
         sb.append("PreferenciaDeProfessores: ").append(getPreferenciaDeProfessores()).append(", ");
         sb.append("AvaliacaoDesempenhoProfessor: ").append(getAvaliacaoDesempenhoProfessor()).append(", ");
+        sb.append("ConsiderarEquivalencia: ").append(getConsiderarEquivalencia()).append(", ");
         sb.append("NivelDificuldadeDisciplina: ").append(getNivelDificuldadeDisciplina()).append(", ");
         sb.append("CompatibilidadeDisciplinasMesmoDia: ").append(getCompatibilidadeDisciplinasMesmoDia()).append(", ");
         sb.append("RegrasGenericasDivisaoCredito: ").append(getRegrasGenericasDivisaoCredito()).append(", ");

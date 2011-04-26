@@ -22,14 +22,17 @@ import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.CursoDTO;
 import com.gapso.web.trieda.shared.dtos.CursoDescompartilhaDTO;
 import com.gapso.web.trieda.shared.dtos.ParametroDTO;
+import com.gapso.web.trieda.shared.dtos.TurnoDTO;
 import com.gapso.web.trieda.shared.mvp.presenter.Presenter;
 import com.gapso.web.trieda.shared.services.OtimizarServiceAsync;
 import com.gapso.web.trieda.shared.services.Services;
 import com.gapso.web.trieda.shared.util.resources.Resources;
+import com.gapso.web.trieda.shared.util.view.CampusComboBox;
 import com.gapso.web.trieda.shared.util.view.CargaHorariaComboBox;
 import com.gapso.web.trieda.shared.util.view.FuncaoObjetivoComboBox;
 import com.gapso.web.trieda.shared.util.view.GTab;
 import com.gapso.web.trieda.shared.util.view.GTabItem;
+import com.gapso.web.trieda.shared.util.view.TurnoComboBox;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
@@ -43,6 +46,8 @@ public class ParametrosPresenter implements Presenter {
 		ParametroDTO getParametroDTO();
 		Radio getTaticoRadio();
 		Radio getOperacionalRadio();
+		TurnoComboBox getTurnoComboBox();
+		CampusComboBox getCampusComboBox();
 		CheckBox getCargaHorariaAlunoCheckBox();
 		CargaHorariaComboBox getCargaHorariaAlunoComboBox();
 		CheckBox getAlunoDePeriodoMesmaSalaCheckBox();
@@ -65,6 +70,7 @@ public class ParametrosPresenter implements Presenter {
 		CheckBox getRegrasEspecificasDivisaoCreditoCheckBox();
 		CheckBox getMaximizarNotaAvaliacaoCorpoDocenteCheckBox();
 		CheckBox getMinimizarCustoDocenteCursosCheckBox();
+		CheckBox getConsiderarEquivalenciaCheckBox();
 		NumberField getMinAlunosParaAbrirTurmaValueNumberField();
 		CheckBox getMinAlunosParaAbrirTurmaCheckBox();
 		CheckBox getCompartilharDisciplinasCampiCheckBox();
@@ -202,6 +208,14 @@ public class ParametrosPresenter implements Presenter {
 		ParametroDTO dto = display.getParametroDTO();
 		
 		dto.setModoOtimizacao(display.getTaticoRadio().getValue() ? ParametroDTO.TATICO : ParametroDTO.OPERACIONAL);
+		dto.setFuncaoObjetivo(display.getFuncaoObjetivoComboBox().getValue().getValue().ordinal());
+				
+		CampusDTO campusDTO = display.getCampusComboBox().getValue();
+		dto.setCampusId(campusDTO.getId());
+		dto.setCampusDisplay(campusDTO.getDisplayText());
+		TurnoDTO turnoDTO = display.getTurnoComboBox().getValue();
+		dto.setTurnoId(turnoDTO.getId());
+		dto.setTurnoDisplay(turnoDTO.getDisplayText());
 		
 		dto.setCargaHorariaAluno(display.getCargaHorariaAlunoCheckBox().getValue());
 		dto.setCargaHorariaAlunoSel(display.getCargaHorariaAlunoComboBox().getValueString());
@@ -225,7 +239,7 @@ public class ParametrosPresenter implements Presenter {
 		dto.setPreferenciaDeProfessores(display.getPreferenciaDeProfessoresCheckBox().getValue());
 		dto.setAvaliacaoDesempenhoProfessor(display.getAvaliacaoDesempenhoProfessorCheckBox().getValue());
 
-		dto.setFuncaoObjetivo(display.getFuncaoObjetivoComboBox().getValue().getValue().ordinal());
+		dto.setConsiderarEquivalencia(display.getConsiderarEquivalenciaCheckBox().getValue());
 		dto.setNivelDificuldadeDisciplina(display.getNivelDificuldadeDisciplinaCheckBox().getValue());
 		dto.setCompatibilidadeDisciplinasMesmoDia(display.getCompatibilidadeDisciplinasMesmoDiaCheckBox().getValue());
 		dto.setRegrasGenericasDivisaoCredito(display.getRegrasGenericasDivisaoCreditoCheckBox().getValue());

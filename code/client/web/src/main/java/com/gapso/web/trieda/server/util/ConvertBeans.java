@@ -35,6 +35,7 @@ import com.gapso.trieda.domain.Oferta;
 import com.gapso.trieda.domain.Parametro;
 import com.gapso.trieda.domain.Professor;
 import com.gapso.trieda.domain.ProfessorDisciplina;
+import com.gapso.trieda.domain.ProfessorVirtual;
 import com.gapso.trieda.domain.Sala;
 import com.gapso.trieda.domain.SemanaLetiva;
 import com.gapso.trieda.domain.TipoContrato;
@@ -72,6 +73,7 @@ import com.gapso.web.trieda.shared.dtos.ParametroDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorCampusDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorDisciplinaDTO;
+import com.gapso.web.trieda.shared.dtos.ProfessorVirtualDTO;
 import com.gapso.web.trieda.shared.dtos.SalaDTO;
 import com.gapso.web.trieda.shared.dtos.SemanaLetivaDTO;
 import com.gapso.web.trieda.shared.dtos.TipoContratoDTO;
@@ -151,9 +153,9 @@ public class ConvertBeans {
 		SemanaLetiva semanaLetiva = null;
 		// TODO Quando criar o conceito de cenario, não irá mais existir semana letiva para o master data: 
 		if(!domain.getMasterData()) {
-			semanaLetiva = domain.getSemanaLetiva();
+			semanaLetiva = SemanaLetiva.getByOficial();
 		} else {
-			semanaLetiva = SemanaLetiva.findAll().get(0);
+			semanaLetiva = SemanaLetiva.getByOficial();
 		}
 		dto.setSemanaLetivaId(semanaLetiva.getId());
 		dto.setSemanaLetivaString(semanaLetiva.getCodigo());
@@ -405,6 +407,7 @@ public class ConvertBeans {
 		domain.setVersion(dto.getVersion());
 		domain.setCodigo(dto.getCodigo());
 		domain.setDescricao(dto.getDescricao());
+		domain.setOficial(dto.getOficial());
 		return domain;
 	}
 
@@ -414,6 +417,7 @@ public class ConvertBeans {
 		dto.setVersion(domain.getVersion());
 		dto.setCodigo(domain.getCodigo());
 		dto.setDescricao(domain.getDescricao());
+		dto.setOficial(domain.getOficial());
 		dto.setDisplayText(domain.getCodigo() + " (" + domain.getDescricao() + ")");
 		return dto;
 	}
@@ -712,6 +716,8 @@ public class ConvertBeans {
 		domain.setNome(dto.getNome());
 		domain.setNumMinDoutores(dto.getNumMinDoutores());
 		domain.setNumMinMestres(dto.getNumMinMestres());
+		domain.setMinTempoIntegralParcial(dto.getMinTempoIntegralParcial());
+		domain.setMinTempoIntegral(dto.getMinTempoIntegral());
 		domain.setMaxDisciplinasPeloProfessor(dto.getMaxDisciplinasPeloProfessor());
 		domain.setAdmMaisDeUmDisciplina(dto.getAdmMaisDeUmDisciplina());
 		
@@ -730,6 +736,8 @@ public class ConvertBeans {
 		dto.setNome(domain.getNome());
 		dto.setNumMinDoutores(domain.getNumMinDoutores());
 		dto.setNumMinMestres(domain.getNumMinMestres());
+		dto.setMinTempoIntegralParcial(domain.getMinTempoIntegralParcial());
+		dto.setMinTempoIntegral(domain.getMinTempoIntegral());
 		dto.setMaxDisciplinasPeloProfessor(domain.getMaxDisciplinasPeloProfessor());
 		dto.setAdmMaisDeUmDisciplina(domain.getAdmMaisDeUmDisciplina());
 		dto.setTipoId(domain.getTipoCurso().getId());
@@ -1314,6 +1322,31 @@ public class ConvertBeans {
 		return dto;
 	}
 	
+	// PROFESSOR VIRTUAL
+	public static ProfessorVirtual toProfessorVirtual(ProfessorVirtualDTO dto) {
+		ProfessorVirtual domain = new ProfessorVirtual();
+		domain.setId(dto.getId());
+		domain.setVersion(dto.getVersion());
+		domain.setCargaHorariaMax(dto.getCargaHorariaMax());
+		domain.setCargaHorariaMin(dto.getCargaHorariaMin());
+		domain.setTitulacao(Titulacao.find(dto.getTitulacaoId()));
+		domain.setAreaTitulacao(AreaTitulacao.find(dto.getAreaTitulacaoId()));
+		return domain;
+	}
+	
+	public static ProfessorVirtualDTO toProfessorVirtualDTO(ProfessorVirtual domain) {
+		ProfessorVirtualDTO dto = new ProfessorVirtualDTO();
+		dto.setId(domain.getId());
+		dto.setVersion(domain.getVersion());
+		dto.setCargaHorariaMax(domain.getCargaHorariaMax());
+		dto.setCargaHorariaMin(domain.getCargaHorariaMin());
+		dto.setTitulacaoId(domain.getTitulacao().getId());
+		dto.setTitulacaoString(domain.getTitulacao().getNome());
+		dto.setAreaTitulacaoId(domain.getAreaTitulacao().getId());
+		dto.setAreaTitulacaoString(domain.getAreaTitulacao().getCodigo());
+		return dto;
+	}
+	
 	// TURNO
 	public static Equivalencia toEquivalencia(EquivalenciaDTO dto) {
 		Equivalencia domain = new Equivalencia();
@@ -1398,6 +1431,9 @@ public class ConvertBeans {
 		domain.setVersion(dto.getVersion());
 		domain.setCenario(Cenario.find(dto.getCenarioId()));
 		domain.setModoOtimizacao(dto.getModoOtimizacao());
+		domain.setSemanaLetiva(SemanaLetiva.find(dto.getSemanaLetivaId()));
+		domain.setCampus(Campus.find(dto.getCampusId()));
+		domain.setTurno(Turno.find(dto.getTurnoId()));
 		domain.setCargaHorariaAluno(dto.getCargaHorariaAluno());
 		domain.setCargaHorariaAlunoSel(dto.getCargaHorariaAlunoSel());
 		domain.setAlunoDePeriodoMesmaSala(dto.getAlunoDePeriodoMesmaSala());
@@ -1414,6 +1450,7 @@ public class ConvertBeans {
 		domain.setEvitarUltimoEPrimeiroHorarioProfessor(dto.getEvitarUltimoEPrimeiroHorarioProfessor());
 		domain.setPreferenciaDeProfessores(dto.getPreferenciaDeProfessores());
 		domain.setAvaliacaoDesempenhoProfessor(dto.getAvaliacaoDesempenhoProfessor());
+		domain.setConsiderarEquivalencia(dto.getConsiderarEquivalencia());
 		domain.setMinAlunosParaAbrirTurma(dto.getMinAlunosParaAbrirTurma());
 		domain.setMinAlunosParaAbrirTurmaValue(dto.getMinAlunosParaAbrirTurmaValue());
 		domain.setNivelDificuldadeDisciplina(dto.getNivelDificuldadeDisciplina());
@@ -1439,6 +1476,25 @@ public class ConvertBeans {
 		dto.setVersion(domain.getVersion());
 		dto.setCenarioId(domain.getCenario().getId());
 		dto.setModoOtimizacao(domain.getModoOtimizacao());
+		
+		SemanaLetiva semanaLetiva = domain.getSemanaLetiva();
+		if(semanaLetiva != null) {
+			dto.setSemanaLetivaId(semanaLetiva.getId());
+			dto.setSemanaLetivaDisplay(semanaLetiva.getCodigo());
+		}
+		
+		Campus campus = domain.getCampus();
+		if(campus != null) {
+			dto.setCampusId(campus.getId());
+			dto.setCampusDisplay(campus.getCodigo());
+		}
+		
+		Turno turno = domain.getTurno();
+		if(turno != null) {
+			dto.setTurnoId(turno.getId());
+			dto.setTurnoDisplay(turno.getNome());
+		}
+		
 		dto.setCargaHorariaAluno(domain.getCargaHorariaAluno());
 		dto.setAlunoDePeriodoMesmaSala(domain.getAlunoDePeriodoMesmaSala());
 		dto.setAlunoEmMuitosCampi(domain.getAlunoEmMuitosCampi());
@@ -1451,6 +1507,7 @@ public class ConvertBeans {
 		dto.setEvitarUltimoEPrimeiroHorarioProfessor(domain.getEvitarUltimoEPrimeiroHorarioProfessor());
 		dto.setPreferenciaDeProfessores(domain.getPreferenciaDeProfessores());
 		dto.setAvaliacaoDesempenhoProfessor(domain.getAvaliacaoDesempenhoProfessor());
+		dto.setConsiderarEquivalencia(domain.getConsiderarEquivalencia());
 		dto.setMinAlunosParaAbrirTurma(domain.getMinAlunosParaAbrirTurma());
 		dto.setMinAlunosParaAbrirTurmaValue(domain.getMinAlunosParaAbrirTurmaValue());
 		dto.setNivelDificuldadeDisciplina(domain.getNivelDificuldadeDisciplina());

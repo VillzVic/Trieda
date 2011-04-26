@@ -139,11 +139,12 @@ public class SolverOutput {
 									atendimentoOperacional.setOferta(oferta);
 									atendimentoOperacional.setDisciplina(disciplina);
 									atendimentoOperacional.setQuantidadeAlunos(quantidade);
-									if(professor != null) {
-										atendimentoOperacional.setProfessor(professor);
-									} else {
-										atendimentoOperacional.setProfessorVirtual(professorVirtual);
-									}
+									// TODO Salvar o professor virtual aqui 
+//									if(professor != null) {
+//										atendimentoOperacional.setProfessor(professor);
+//									} else {
+//										atendimentoOperacional.setProfessorVirtual(professorVirtual);
+//									}
 									atendimentoOperacional.setCreditoTeorico(creditoTeorico);
 									HorarioDisponivelCenario horarioDisponivelCenario = HorarioDisponivelCenario.findBy(horarioAula, semana);
 									atendimentoOperacional.setHorarioDisponivelCenario(horarioDisponivelCenario);

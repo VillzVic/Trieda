@@ -1,13 +1,13 @@
 package com.gapso.web.trieda.server;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 import java.util.TreeMap;
 
 import com.extjs.gxt.ui.client.Style.SortDir;
@@ -19,6 +19,7 @@ import com.gapso.trieda.domain.Fixacao;
 import com.gapso.trieda.domain.HorarioDisponivelCenario;
 import com.gapso.trieda.domain.Professor;
 import com.gapso.trieda.domain.Sala;
+import com.gapso.trieda.domain.SemanaLetiva;
 import com.gapso.web.trieda.server.util.ConvertBeans;
 import com.gapso.web.trieda.shared.dtos.DisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.FixacaoDTO;
@@ -66,6 +67,7 @@ public class FixacoesServiceImpl extends RemoteServiceServlet implements Fixacoe
 		Fixacao fixacao = ConvertBeans.toFixacao(fixacaoDTO);
 		List<HorarioDisponivelCenario> listSelecionados = ConvertBeans.toHorarioDisponivelCenario(hdcDTOList);
 		List<HorarioDisponivelCenario> adicionarList = new ArrayList<HorarioDisponivelCenario>(listSelecionados);
+		SemanaLetiva semanaLetiva = SemanaLetiva.getByOficial();
 		
 		if(fixacao.getId() != null && fixacao.getId() > 0) {
 			fixacao.merge();
@@ -77,14 +79,14 @@ public class FixacoesServiceImpl extends RemoteServiceServlet implements Fixacoe
 		
 		fixacao = Fixacao.find(id);
 		
-		adicionarList.removeAll(fixacao.getHorarios());
+		adicionarList.removeAll(fixacao.getHorarios(semanaLetiva));
 		for(HorarioDisponivelCenario o : adicionarList) {
 			HorarioDisponivelCenario hdc = HorarioDisponivelCenario.find(o.getId());
 			hdc.getFixacoes().add(fixacao);
 			hdc.merge();
 		}
 		
-		List<HorarioDisponivelCenario> removerList = new ArrayList<HorarioDisponivelCenario>(fixacao.getHorarios());
+		List<HorarioDisponivelCenario> removerList = new ArrayList<HorarioDisponivelCenario>(fixacao.getHorarios(semanaLetiva));
 		removerList.removeAll(listSelecionados);
 		for(HorarioDisponivelCenario o : removerList) {
 			o.getFixacoes().remove(fixacao);
@@ -102,7 +104,8 @@ public class FixacoesServiceImpl extends RemoteServiceServlet implements Fixacoe
 	@Override
 	public List<HorarioDisponivelCenarioDTO> getHorariosSelecionados(FixacaoDTO fixacaoDTO) {
 		Fixacao fixacao = Fixacao.find(fixacaoDTO.getId());
-		return ConvertBeans.toHorarioDisponivelCenarioDTO(new ArrayList<HorarioDisponivelCenario>(fixacao.getHorarios()));
+		SemanaLetiva semanaLetiva = SemanaLetiva.getByOficial();
+		return ConvertBeans.toHorarioDisponivelCenarioDTO(new ArrayList<HorarioDisponivelCenario>(fixacao.getHorarios(semanaLetiva)));
 	}
 
 	@Override
@@ -110,23 +113,25 @@ public class FixacoesServiceImpl extends RemoteServiceServlet implements Fixacoe
 		if(disciplinaDTO == null && salaDTO == null && professorDTO == null) {
 			return new BasePagingLoadResult<HorarioDisponivelCenarioDTO>(new ArrayList<HorarioDisponivelCenarioDTO>());
 		}
-		Set<HorarioDisponivelCenario> professorHorarios = null;
-		Set<HorarioDisponivelCenario> disciplinaHorarios = null;
-		Set<HorarioDisponivelCenario> salaHorarios = null;
+		SemanaLetiva semanaLetiva = SemanaLetiva.getByOficial();
+		
+		List<HorarioDisponivelCenario> professorHorarios = null;
+		List<HorarioDisponivelCenario> disciplinaHorarios = null;
+		List<HorarioDisponivelCenario> salaHorarios = null;
 		
 		if(professorDTO != null) {
 			Professor professor = Professor.find(professorDTO.getId());
-			professorHorarios = professor.getHorarios();
+			professorHorarios = professor.getHorarios(semanaLetiva);
 		}
 		
 		if(disciplinaDTO != null) {
 			Disciplina disciplina = Disciplina.find(disciplinaDTO.getId());
-			disciplinaHorarios = disciplina.getHorarios();
+			disciplinaHorarios = disciplina.getHorarios(semanaLetiva);
 		}
 		
 		if(salaDTO != null) {
 			Sala sala = Sala.find(salaDTO.getId());
-			salaHorarios = sala.getHorarios();
+			salaHorarios = sala.getHorarios(semanaLetiva);
 		}
 		
 		List<HorarioDisponivelCenario> list = intercessaoHorarios(professorHorarios, disciplinaHorarios, salaHorarios);
@@ -167,7 +172,7 @@ public class FixacoesServiceImpl extends RemoteServiceServlet implements Fixacoe
 		return new BasePagingLoadResult<HorarioDisponivelCenarioDTO>(listDTO);
 	}
 
-	private List<HorarioDisponivelCenario> intercessaoHorarios(Set<HorarioDisponivelCenario> horario1, Set<HorarioDisponivelCenario> horario2, Set<HorarioDisponivelCenario> horario3) {
+	private List<HorarioDisponivelCenario> intercessaoHorarios(Collection<HorarioDisponivelCenario> horario1, Collection<HorarioDisponivelCenario> horario2, Collection<HorarioDisponivelCenario> horario3) {
 		List<HorarioDisponivelCenario> horarios = new ArrayList<HorarioDisponivelCenario>();
 		
 		if(horarios.size() == 0 && horario1 != null) horarios.addAll(horario1);

@@ -16,6 +16,8 @@ public class CursoDTO extends AbstractDTO<String> implements Comparable<CursoDTO
 	public static final String PROPERTY_TIPO_STRING = "tipoString";
 	public static final String PROPERTY_NUM_MIN_DOUTORES = "numMinDoutores";
 	public static final String PROPERTY_NUM_MIN_MESTRES = "numMinMestres";
+	public static final String PROPERTY_MIN_TEMPO_INTEGRAL_PARCIAL = "minTempoIntegralParcial";
+	public static final String PROPERTY_MIN_TEMPO_INTEGRAL = "minTempoIntegral";
 	public static final String PROPERTY_MAX_DISCIPLINAS_PELO_PROFESSOR = "maxDisciplinasPeloProfessor";
 	public static final String PROPERTY_ADM_MAIS_DE_UMA_DISCIPLINA = "admMaisDeUmDisciplina";
 
@@ -84,6 +86,20 @@ public class CursoDTO extends AbstractDTO<String> implements Comparable<CursoDTO
 	}
 	public void setNumMinMestres(Integer value) {
 		set(PROPERTY_NUM_MIN_MESTRES, value);
+	}
+	
+	public Integer getMinTempoIntegralParcial() {
+		return get(PROPERTY_MIN_TEMPO_INTEGRAL_PARCIAL);
+	}
+	public void setMinTempoIntegralParcial(Integer value) {
+		set(PROPERTY_MIN_TEMPO_INTEGRAL_PARCIAL, value);
+	}
+	
+	public Integer getMinTempoIntegral() {
+		return get(PROPERTY_MIN_TEMPO_INTEGRAL);
+	}
+	public void setMinTempoIntegral(Integer value) {
+		set(PROPERTY_MIN_TEMPO_INTEGRAL, value);
 	}
 	
 	public Integer getMaxDisciplinasPeloProfessor() {

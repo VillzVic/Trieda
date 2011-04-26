@@ -52,7 +52,7 @@ public class UnidadesServiceImpl extends RemoteServiceServlet implements Unidade
 	
 	@Override
 	public PagingLoadResult<HorarioDisponivelCenarioDTO> getHorariosDisponiveis(UnidadeDTO unidadeDTO, SemanaLetivaDTO semanaLetivaDTO) {
-		SemanaLetiva semanaLetiva = SemanaLetiva.find(semanaLetivaDTO.getId());
+		SemanaLetiva semanaLetiva = SemanaLetiva.getByOficial();
 		List<HorarioDisponivelCenario> list = new ArrayList<HorarioDisponivelCenario>(Unidade.find(unidadeDTO.getId()).getHorarios(semanaLetiva));
 		List<HorarioDisponivelCenarioDTO> listDTO = ConvertBeans.toHorarioDisponivelCenarioDTO(list);
 
@@ -96,8 +96,9 @@ public class UnidadesServiceImpl extends RemoteServiceServlet implements Unidade
 		List<HorarioDisponivelCenario> listSelecionados = ConvertBeans.toHorarioDisponivelCenario(listDTO);
 		Unidade unidade = Unidade.find(unidadeDTO.getId());
 		List<Sala> salas = Sala.findByUnidade(unidade);
+		SemanaLetiva semanaLetiva = SemanaLetiva.getByOficial();
 		
-		List<HorarioDisponivelCenario> removerList = new ArrayList<HorarioDisponivelCenario> (unidade.getHorarios());
+		List<HorarioDisponivelCenario> removerList = new ArrayList<HorarioDisponivelCenario> (unidade.getHorarios(semanaLetiva));
 		removerList.removeAll(listSelecionados);
 		for(HorarioDisponivelCenario o : removerList) {
 			o.getUnidades().remove(unidade);
@@ -106,7 +107,7 @@ public class UnidadesServiceImpl extends RemoteServiceServlet implements Unidade
 		}
 		
 		List<HorarioDisponivelCenario> adicionarList = new ArrayList<HorarioDisponivelCenario> (listSelecionados);
-		adicionarList.removeAll(unidade.getHorarios());
+		adicionarList.removeAll(unidade.getHorarios(semanaLetiva));
 		for(HorarioDisponivelCenario o : adicionarList) {
 			o.getUnidades().add(unidade);
 			o.getSalas().addAll(salas);

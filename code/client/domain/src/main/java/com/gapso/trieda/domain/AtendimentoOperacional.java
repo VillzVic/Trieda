@@ -69,6 +69,11 @@ public class AtendimentoOperacional implements Serializable {
     @JoinColumn(name = "PRF_ID")
     private Professor professor;
     
+    @NotNull
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH}, targetEntity = ProfessorVirtual.class)
+    @JoinColumn(name = "PRV_ID")
+    private ProfessorVirtual professorVirtual;
+    
     @Column(name = "ATP_CREDITOTEOTICO")
     private Boolean creditoTeorico;
     
@@ -77,11 +82,6 @@ public class AtendimentoOperacional implements Serializable {
     @Min(0L)
     @Max(999L)
     private Integer quantidadeAlunos;
-    
-    @Column(name = "ATP_PROF_VIRTUAL")
-    @Min(1L)
-    @Max(999L)
-    private Integer professorVirtual;
 
 	public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -92,6 +92,7 @@ public class AtendimentoOperacional implements Serializable {
         sb.append("Sala: ").append(getSala()).append(", ");
         sb.append("HorarioDisponivelCenario: ").append(getHorarioDisponivelCenario()).append(", ");
         sb.append("Professor: ").append(getProfessor()).append(", ");
+        sb.append("ProfessorVirtual: ").append(getProfessorVirtual()).append(", ");
         sb.append("CreditoTeorico: ").append(getCreditoTeorico()).append(", ");
         sb.append("Oferta: ").append(getOferta()).append(", ");
         sb.append("Disciplina: ").append(getDisciplina()).append(", ");
@@ -251,12 +252,12 @@ public class AtendimentoOperacional implements Serializable {
 	public void setQuantidadeAlunos(Integer quantidadeAlunos) {
 		this.quantidadeAlunos = quantidadeAlunos;
 	}
-	
-	public Integer getProfessorVirtual() {
+
+	public ProfessorVirtual getProfessorVirtual() {
 		return professorVirtual;
 	}
-	public void setProfessorVirtual(Integer professorVirtual) {
+	public void setProfessorVirtual(ProfessorVirtual professorVirtual) {
 		this.professorVirtual = professorVirtual;
 	}
-	
+
 }

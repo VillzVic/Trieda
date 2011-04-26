@@ -22,9 +22,11 @@ import com.gapso.web.trieda.main.client.mvp.presenter.ParametrosPresenter;
 import com.gapso.web.trieda.shared.dtos.ParametroDTO;
 import com.gapso.web.trieda.shared.mvp.view.MyComposite;
 import com.gapso.web.trieda.shared.util.resources.Resources;
+import com.gapso.web.trieda.shared.util.view.CampusComboBox;
 import com.gapso.web.trieda.shared.util.view.CargaHorariaComboBox;
 import com.gapso.web.trieda.shared.util.view.FuncaoObjetivoComboBox;
 import com.gapso.web.trieda.shared.util.view.GTabItem;
+import com.gapso.web.trieda.shared.util.view.TurnoComboBox;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
 public class ParametrosView extends MyComposite implements ParametrosPresenter.Display {
@@ -36,6 +38,8 @@ public class ParametrosView extends MyComposite implements ParametrosPresenter.D
 	
 	private Radio taticoRadio;
 	private Radio operacionalRadio;
+	private TurnoComboBox turnoComboBox;
+	private CampusComboBox campusComboBox;
 	
 	private CheckBox cargaHorariaAlunoCheckBox;
 	private CargaHorariaComboBox cargaHorariaAlunoComboBox;
@@ -56,6 +60,7 @@ public class ParametrosView extends MyComposite implements ParametrosPresenter.D
 	private CheckBox avaliacaoDesempenhoProfessorCheckBox;
 
 	private FuncaoObjetivoComboBox funcaoObjetivoCheckBox;
+	private CheckBox considerarEquivalenciaCheckBox;
 	private CheckBox nivelDificuldadeDisciplinaCheckBox;
 	private CheckBox compatibilidadeDisciplinasMesmoDiaCheckBox;
 	private CheckBox regrasGenericasDivisaoCreditoCheckBox;
@@ -123,6 +128,16 @@ public class ParametrosView extends MyComposite implements ParametrosPresenter.D
 		funcaoObjetivoCheckBox.setValue(parametroDTO.getFuncaoObjetivo());
 		funcaoObjetivoCheckBox.setFieldLabel("Função Objetivo");
 		form.add(funcaoObjetivoCheckBox);
+		
+		campusComboBox = new CampusComboBox();
+		// TODO campusComboBox.setValue(parametroDTO.getCampusId());
+		campusComboBox.setFieldLabel("Campus");
+		form.add(campusComboBox);
+		
+		turnoComboBox = new TurnoComboBox(campusComboBox);
+		// TODO turnoComboBox.setValue(parametroDTO.getTurnoId());
+		turnoComboBox.setFieldLabel("Turno");
+		form.add(turnoComboBox);
 		
 		FieldSet alunoFS = new FieldSet();
 		alunoFS.setHeading("Preferências do Aluno");
@@ -221,6 +236,7 @@ public class ParametrosView extends MyComposite implements ParametrosPresenter.D
 		rowLayout.setExtraStyle("x-form-item borderBottom");
 		LayoutContainer instituicaoRight = new LayoutContainer(rowLayout);
 		
+		considerarEquivalenciaCheckBox = createCheckBox("Considerar Equivalências entre Disciplinas", parametroDTO.getConsiderarEquivalencia());
 		minAlunosParaAbrirTurmaCheckBox = createCheckBox("Número mínimo de alunos para abertura de turma", parametroDTO.getMinAlunosParaAbrirTurma());
 		nivelDificuldadeDisciplinaCheckBox = createCheckBox("Considerar nível de dificuldade de disciplinas", parametroDTO.getNivelDificuldadeDisciplina());
 		compatibilidadeDisciplinasMesmoDiaCheckBox = createCheckBox("Considerar compatibilidade de disciplinas no mesmo dia", parametroDTO.getCompatibilidadeDisciplinasMesmoDia());
@@ -234,6 +250,7 @@ public class ParametrosView extends MyComposite implements ParametrosPresenter.D
 		areaTitulacaoProfessoresECursosCheckBox = createCheckBox("Considerar áreas de titulação dos professores e cursos", parametroDTO.getAreaTitulacaoProfessoresECursos());
 		limitarMaximoDisciplinaProfessorCheckBox = createCheckBox("Limitar máximo de disciplinas que um professor pode ministrar por curso", parametroDTO.getLimitarMaximoDisciplinaProfessor());
 		
+		instituicaoLeft.add(considerarEquivalenciaCheckBox, formData);
 		instituicaoLeft.add(minAlunosParaAbrirTurmaCheckBox, formData);
 		instituicaoLeft.add(nivelDificuldadeDisciplinaCheckBox, formData);
 		instituicaoLeft.add(compatibilidadeDisciplinasMesmoDiaCheckBox, formData);
@@ -250,6 +267,9 @@ public class ParametrosView extends MyComposite implements ParametrosPresenter.D
 		minAlunosParaAbrirTurmaValueNumberField = new NumberField();
 		minAlunosParaAbrirTurmaValueNumberField.setEmptyText("Quantidade mínimo");
 		minAlunosParaAbrirTurmaValueNumberField.setValue(parametroDTO.getMinAlunosParaAbrirTurmaValue());
+		label = new Label();
+		label.setHeight(22);
+		instituicaoRight.add(label);
 		instituicaoRight.add(minAlunosParaAbrirTurmaValueNumberField);
 		instituicaoRight.add(createButton("Configurar níveis de dificuldade"));
 		instituicaoRight.add(createButton("Configurar compatibilidades"));
@@ -484,6 +504,21 @@ public class ParametrosView extends MyComposite implements ParametrosPresenter.D
 	@Override
 	public FuncaoObjetivoComboBox getFuncaoObjetivoComboBox() {
 		return funcaoObjetivoCheckBox;
+	}
+
+	@Override
+	public TurnoComboBox getTurnoComboBox() {
+		return turnoComboBox;
+	}
+
+	@Override
+	public CampusComboBox getCampusComboBox() {
+		return campusComboBox;
+	}
+
+	@Override
+	public CheckBox getConsiderarEquivalenciaCheckBox() {
+		return considerarEquivalenciaCheckBox;
 	}
 	
 }
