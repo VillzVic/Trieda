@@ -1,10 +1,13 @@
 package com.gapso.web.trieda.server.util;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.transaction.annotation.Transactional;
 
+import com.gapso.trieda.domain.AreaTitulacao;
 import com.gapso.trieda.domain.AtendimentoOperacional;
 import com.gapso.trieda.domain.AtendimentoTatico;
 import com.gapso.trieda.domain.Cenario;
@@ -13,7 +16,9 @@ import com.gapso.trieda.domain.HorarioAula;
 import com.gapso.trieda.domain.HorarioDisponivelCenario;
 import com.gapso.trieda.domain.Oferta;
 import com.gapso.trieda.domain.Professor;
+import com.gapso.trieda.domain.ProfessorVirtual;
 import com.gapso.trieda.domain.Sala;
+import com.gapso.trieda.domain.Titulacao;
 import com.gapso.trieda.misc.Semanas;
 import com.gapso.web.trieda.server.xml.output.ItemAtendimentoCampus;
 import com.gapso.web.trieda.server.xml.output.ItemAtendimentoDiaSemana;
@@ -23,6 +28,7 @@ import com.gapso.web.trieda.server.xml.output.ItemAtendimentoSala;
 import com.gapso.web.trieda.server.xml.output.ItemAtendimentoTatico;
 import com.gapso.web.trieda.server.xml.output.ItemAtendimentoTurno;
 import com.gapso.web.trieda.server.xml.output.ItemAtendimentoUnidade;
+import com.gapso.web.trieda.server.xml.output.ItemProfessorVirtual;
 import com.gapso.web.trieda.server.xml.output.TriedaOutput;
 
 @Transactional
@@ -92,6 +98,9 @@ public class SolverOutput {
 	
 	@Transactional
 	public List<AtendimentoOperacional> generateAtendimentosOperacional() {
+		
+		Map<Integer, ProfessorVirtual> virtuais = new HashMap<Integer, ProfessorVirtual>();
+		
 		List<ItemAtendimentoCampus> itemAtendimentoCampusList =  triedaOutput.getAtendimentos().getAtendimentoCampus();
 		for(ItemAtendimentoCampus itemAtendimentoCampus : itemAtendimentoCampusList) {
 			// Não há necessidade de procurar campus, pq essa informação já existe em sala
@@ -117,12 +126,17 @@ public class SolverOutput {
 							for(ItemAtendimentoHorarioAula itemAtendimentoHorarioAula : itemAtendimentoHorarioAulaList) {
 								HorarioAula horarioAula = HorarioAula.find(Long.valueOf(itemAtendimentoHorarioAula.getHorarioAulaId()));
 								Professor professor = null;
-								Integer professorVirtual = null;
-								int idProfessor = itemAtendimentoHorarioAula.getProfessorId();
-								if(idProfessor > 0) {
+								ProfessorVirtual professorVirtual = null;
+								Integer idProfessor = itemAtendimentoHorarioAula.getProfessorId();
+								if(!itemAtendimentoHorarioAula.isVirtual()) {
 									professor = Professor.find(Long.valueOf(idProfessor));
 								} else {
-									professorVirtual = idProfessor * -1;
+									Integer professorVirtualIdAux = idProfessor * -1;
+									if(virtuais.containsKey(professorVirtualIdAux)) {
+										professorVirtual = virtuais.get(professorVirtualIdAux); 
+									} else {
+										professorVirtual = getProfessorVirtual(professorVirtualIdAux);
+									}
 								}
 								boolean creditoTeorico = itemAtendimentoHorarioAula.isCreditoTeorico();
 								List<ItemAtendimentoOferta> itemAtendimentoOfertaList = itemAtendimentoHorarioAula.getAtendimentosOfertas().getAtendimentoOferta();
@@ -139,12 +153,11 @@ public class SolverOutput {
 									atendimentoOperacional.setOferta(oferta);
 									atendimentoOperacional.setDisciplina(disciplina);
 									atendimentoOperacional.setQuantidadeAlunos(quantidade);
-									// TODO Salvar o professor virtual aqui 
-//									if(professor != null) {
-//										atendimentoOperacional.setProfessor(professor);
-//									} else {
-//										atendimentoOperacional.setProfessorVirtual(professorVirtual);
-//									}
+									if(!itemAtendimentoHorarioAula.isVirtual()) {
+										atendimentoOperacional.setProfessor(professor);
+									} else {
+										atendimentoOperacional.setProfessorVirtual(professorVirtual);
+									}
 									atendimentoOperacional.setCreditoTeorico(creditoTeorico);
 									HorarioDisponivelCenario horarioDisponivelCenario = HorarioDisponivelCenario.findBy(horarioAula, semana);
 									atendimentoOperacional.setHorarioDisponivelCenario(horarioDisponivelCenario);
@@ -158,6 +171,24 @@ public class SolverOutput {
 			}
 		}
 		return atendimentosOperacional;
+	}
+	
+	private ProfessorVirtual getProfessorVirtual(Integer idAux) {
+		for(ItemProfessorVirtual pvAux : triedaOutput.getProfessoresVirtuais().getProfessorVirtual()) {
+			if(idAux.equals(pvAux.getId())) {
+				ProfessorVirtual pv = new ProfessorVirtual();
+				pv.setAreaTitulacao(AreaTitulacao.find(pvAux.getAreaTitulacaoId().longValue()));
+				pv.setCargaHorariaMax(pvAux.getChMax());
+				pv.setCargaHorariaMin(pvAux.getChMin());
+				for(Integer discId : pvAux.getDisciplinas().getId()) {
+					pv.getDisciplinas().add(Disciplina.find(discId.longValue()));
+				}
+				pv.setTitulacao(Titulacao.find(Integer.valueOf(pvAux.getTitulacaoId()).longValue()));
+				pv.persist();
+				return pv;
+			}
+		}
+		return null;
 	}
 	
 	@Transactional

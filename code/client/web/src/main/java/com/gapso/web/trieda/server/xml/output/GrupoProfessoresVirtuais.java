@@ -17,16 +17,16 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for GrupoAtendimentoUnidade complex type.
+ * <p>Java class for GrupoProfessoresVirtuais complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="GrupoAtendimentoUnidade">
+ * &lt;complexType name="GrupoProfessoresVirtuais">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence maxOccurs="unbounded" minOccurs="0">
- *         &lt;element name="AtendimentoUnidade" type="{}ItemAtendimentoUnidade"/>
+ *         &lt;element name="ProfessorVirtual" type="{}ItemProfessorVirtual"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -36,41 +36,41 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "GrupoAtendimentoUnidade", propOrder = {
-    "atendimentoUnidade"
+@XmlType(name = "GrupoProfessoresVirtuais", propOrder = {
+    "professorVirtual"
 })
-public class GrupoAtendimentoUnidade {
+public class GrupoProfessoresVirtuais {
 
-    @XmlElement(name = "AtendimentoUnidade")
-    protected List<ItemAtendimentoUnidade> atendimentoUnidade;
+    @XmlElement(name = "ProfessorVirtual")
+    protected List<ItemProfessorVirtual> professorVirtual;
 
     /**
-     * Gets the value of the atendimentoUnidade property.
+     * Gets the value of the professorVirtual property.
      * 
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the atendimentoUnidade property.
+     * This is why there is not a <CODE>set</CODE> method for the professorVirtual property.
      * 
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
-     *    getAtendimentoUnidade().add(newItem);
+     *    getProfessorVirtual().add(newItem);
      * </pre>
      * 
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link ItemAtendimentoUnidade }
+     * {@link ItemProfessorVirtual }
      * 
      * 
      */
-    public List<ItemAtendimentoUnidade> getAtendimentoUnidade() {
-        if (atendimentoUnidade == null) {
-            atendimentoUnidade = new ArrayList<ItemAtendimentoUnidade>();
+    public List<ItemProfessorVirtual> getProfessorVirtual() {
+        if (professorVirtual == null) {
+            professorVirtual = new ArrayList<ItemProfessorVirtual>();
         }
-        return this.atendimentoUnidade;
+        return this.professorVirtual;
     }
 
 }
