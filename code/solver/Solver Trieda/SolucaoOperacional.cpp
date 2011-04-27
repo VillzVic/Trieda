@@ -1,3 +1,5 @@
+#include <fstream>
+
 #include "ofbase.h"
 #include "GGroup.h"
 #include "SolucaoOperacional.h"
@@ -200,7 +202,7 @@ void SolucaoOperacional::toString()
 		     << std::endl << std::endl;
 
    Professor * professor = NULL;
-   for (unsigned int i = 0; i < this->getMatrizAulas()->size(); i++)
+   for ( unsigned int i = 0; i < this->getMatrizAulas()->size(); i++ )
    {
       professor = this->getProfessorMatriz(i);
       if ( professor != NULL )
@@ -216,15 +218,7 @@ void SolucaoOperacional::toString()
          Aula * aula = aulas->at(j);
          if ( aula != NULL && !aula->eVirtual() )
          {
-            aula->toString();
-         }
-         else if ( aula != NULL && aula->eVirtual() )
-         {
-             // std::cout << "Aula virtual" << std::endl;
-         }
-         else
-         {
-             // std::cout << "Aula nao alocada" << std::endl;
+			aula->toString();
          }
       }
       std::cout << "\n-----------------------\n";
@@ -256,11 +250,11 @@ void SolucaoOperacional::toString2()
 		 }
          else if ( aula != NULL && aula->eVirtual() )
 		 {
-             std::cout << "Aula Virtual,\t";
+             std::cout << "A-Virt,\t";
 		 }
          else
 		 {
-             std::cout << "Aula nao aloc.,\t";
+             std::cout << "N-Aloc,\t";
 		 }
       }
       std::cout << std::endl;

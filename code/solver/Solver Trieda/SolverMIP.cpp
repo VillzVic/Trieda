@@ -1696,8 +1696,8 @@ int SolverMIP::solveOperacional()
          std::cout << "\n==================================================="
                    << "\nA aula abaixo possui um total de horarios alocados"
 				   << "\ninferior ao total de creditos a serem alocados:\n";
-
          itAula->toString();
+
          error = true;
       }
       else if ( (int)itAula->bloco_aula.size() > itAula->getTotalCreditos() )
@@ -1705,8 +1705,8 @@ int SolverMIP::solveOperacional()
          std::cout << "\n=================================================="
 				   << "\nA aula abaixo possui um total de horarios alocados"
 				   << "\nsuperior ao total de creditos a serem alocados:\n";
-
          itAula->toString();
+
          error = true;
       }
    }
@@ -1718,7 +1718,7 @@ int SolverMIP::solveOperacional()
    }
    // -----------------------------------------------------------------------------------------
 
-   // solucaoOperacional.toString();
+   solucaoOperacional.toString();
    solucaoOperacional.toString2();
 
    Avaliador avaliador;
@@ -1837,8 +1837,9 @@ int SolverMIP::solve()
       }
       else
       {
-         // Neste caso, primeiro deve-se gerar uma saída para o modelo tático. Em seguida,
-         // deve-se resolver o modelo operacional com base na saída do modelo tático gerada.
+         // Neste caso, primeiro deve-se gerar uma saída para
+		 // o modelo tático. Em seguida, deve-se resolver o
+		 // modelo operacional com base na saída do modelo tático gerada.
 
          // Gerando uma saída para o modelo tático.
 

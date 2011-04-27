@@ -126,7 +126,7 @@ int main( int argc, char** argv )
          char mensagem[ 200 ];
          sprintf( mensagem, "Não foi possível processar o modelo matemático (erro %d)", status );
          ErrorHandler::addErrorMessage(
-			 UNEXPECTED_ERROR, std::string(mensagem), "Solver::main()", false );
+			 UNEXPECTED_ERROR, std::string( mensagem ), "Solver::main()", false );
 
          error = true;
       }

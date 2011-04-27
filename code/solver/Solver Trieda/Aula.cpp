@@ -123,8 +123,8 @@ void Aula::toString()
    std::cout << "Horario(s):\n\t";
    std::vector< std::pair< Professor *, Horario * > >::iterator
       itBloco_aula = bloco_aula.begin();
-
-   for(; itBloco_aula != bloco_aula.end(); ++itBloco_aula)
+   for(; itBloco_aula != bloco_aula.end();
+		 ++itBloco_aula )
    {
 	   HorarioAula * horario_aula
 		   = itBloco_aula->second->horario_aula;

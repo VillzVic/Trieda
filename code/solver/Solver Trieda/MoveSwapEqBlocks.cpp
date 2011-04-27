@@ -1,6 +1,8 @@
 #include "MoveSwapEqBlocks.h"
 
-MoveSwapEqBlocks::MoveSwapEqBlocks(Aula & _a1, Professor & _profA1, Aula & _a2, Professor & _profA2) : a1(_a1), profA1(_profA1), a2(_a2), profA2(_profA2)
+MoveSwapEqBlocks::MoveSwapEqBlocks( Aula & _a1, Professor & _profA1,
+									Aula & _a2, Professor & _profA2 )
+: a1( _a1 ), profA1( _profA1 ), a2( _a2 ), profA2( _profA2 )
 {
 }
 
@@ -10,16 +12,14 @@ MoveSwapEqBlocks::MoveSwapEqBlocks(Aula & _a1, Aula & _a2) : a1(_a1), profA1(*_a
 
 MoveSwapEqBlocks::~MoveSwapEqBlocks()
 {
+
 }
 
-Move & MoveSwapEqBlocks::apply(SolucaoOperacional & s)
+Move & MoveSwapEqBlocks::apply( SolucaoOperacional & s )
 {
-   /* Para trocar dois blocos de aula de horários deve-se: 
-   
-   1 - Na solução, trocar as referências das aulas.
-   2 - Nas aulas, trocar os vetores que indicam os blocos.
-
-   */
+   // Para trocar dois blocos de aula de horários deve-se: 
+   // 1 - Na solução, trocar as referências das aulas.
+   // 2 - Nas aulas, trocar os vetores que indicam os blocos.
 
    std::cout << "------------------------------------------" << std::endl;
    std::cout << "ANTES" << std::endl;
@@ -29,59 +29,63 @@ Move & MoveSwapEqBlocks::apply(SolucaoOperacional & s)
 
    std::vector< std::pair< Professor *, Horario * > >::iterator 
       itBlocoAula;
-   
-   itBlocoAula = a1.bloco_aula.begin();
 
    // Alocando a aula 2 nos horários da aula 1
+   itBlocoAula = a1.bloco_aula.begin();
    for(; itBlocoAula != a1.bloco_aula.end(); ++itBlocoAula)
    {
-      //int indice = (s.refHorarios.find(std::make_pair(itBlocoAula->second,a1.getDiaSemana())))->second;
-
       int indice = 0;
-      int totalHorariosAula = s.getProblemData()->horarios_aula_ordenados.size();
-      
-      for(; indice < totalHorariosAula; ++indice)
+      int totalHorariosAula
+		  = s.getProblemData()->horarios_aula_ordenados.size();
+      for(; indice < totalHorariosAula; ++indice )
       {
-         if(s.getProblemData()->horarios_aula_ordenados.at(indice) == itBlocoAula->second->horario_aula)
+         if ( s.getProblemData()->horarios_aula_ordenados.at( indice )
+				== itBlocoAula->second->horario_aula )
+		 {
             break;
+		 }
       }
 
-      if(indice >= totalHorariosAula)
+      if ( indice >= totalHorariosAula )
       {
-         std::cout << "ERRO em <MoveSwapEqBlocks::apply(SolucaoOperacional & s)>. Indice de horario nao encontrado." << std::endl;
+         std::cout << "ERRO em <MoveSwapEqBlocks::apply(SolucaoOperacional & s)>. "
+				   << "Indice de horario nao encontrado." << std::endl;
+
          exit(1);
       }
 
-      s.getMatrizAulas()->at(profA1.getIdOperacional())->at(indice) = &a2;
+      s.getMatrizAulas()->at( profA1.getIdOperacional() )->at( indice ) = ( &a2 );
    }
 
-   itBlocoAula = a2.bloco_aula.begin();
-
    // Alocando a aula 1 nos horários da aula 2
-   for(; itBlocoAula != a2.bloco_aula.end(); ++itBlocoAula)
+   itBlocoAula = a2.bloco_aula.begin();
+   for(; itBlocoAula != a2.bloco_aula.end(); ++itBlocoAula )
    {
-      //int indice = (s.refHorarios.find(std::make_pair(itBlocoAula->second,a2.getDiaSemana())))->second;
-
       int indice = 0;
-      int totalHorariosAula = s.getProblemData()->horarios_aula_ordenados.size();
-      
-      for(; indice < totalHorariosAula; ++indice)
+      int totalHorariosAula
+		  = s.getProblemData()->horarios_aula_ordenados.size();      
+      for(; indice < totalHorariosAula; ++indice )
       {
-         if(s.getProblemData()->horarios_aula_ordenados.at(indice) == itBlocoAula->second->horario_aula)
+         if ( s.getProblemData()->horarios_aula_ordenados.at( indice )
+				== itBlocoAula->second->horario_aula )
+		 {
             break;
+		 }
       }
 
-      if(indice >= totalHorariosAula)
+      if ( indice >= totalHorariosAula )
       {
-         std::cout << "ERRO em <MoveSwapEqBlocks::apply(SolucaoOperacional & s)>. Indice de horario nao encontrado." << std::endl;
+         std::cout << "ERRO em <MoveSwapEqBlocks::apply(SolucaoOperacional & s)>. "
+				   << "Indice de horario nao encontrado." << std::endl;
+
          exit(1);
       }
 
-      s.getMatrizAulas()->at(profA2.getIdOperacional())->at(indice) = &a1;
+      s.getMatrizAulas()->at( profA2.getIdOperacional() )->at( indice ) = ( &a1 );
    }
 
    // Trocando os horários.
-   a1.bloco_aula.swap(a2.bloco_aula);
+   a1.bloco_aula.swap( a2.bloco_aula );
 
    std::cout << "------------------------------------------" << std::endl;
    std::cout << "DEPOIS" << std::endl;
@@ -89,14 +93,14 @@ Move & MoveSwapEqBlocks::apply(SolucaoOperacional & s)
    a2.toString();
    std::cout << "------------------------------------------" << std::endl;
 
-   return *(new MoveSwapEqBlocks(a2,profA1,a1,profA2));
+   return ( *new MoveSwapEqBlocks( a2, profA1, a1, profA2 ) );
 }
 
-bool MoveSwapEqBlocks::operator==(const Move & m) const
+bool MoveSwapEqBlocks::operator ==( const Move & m ) const
 {
-   const MoveSwapEqBlocks & _m = (const MoveSwapEqBlocks &) m;
+   const MoveSwapEqBlocks & _m = ( const MoveSwapEqBlocks & ) m;
 
-   return ((_m.a1 == a1) && (_m.a2 == a2));
+   return ( (_m.a1 == a1) && (_m.a2 == a2) );
 }
 
 void MoveSwapEqBlocks::print()

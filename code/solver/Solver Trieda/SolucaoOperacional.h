@@ -8,7 +8,6 @@
 #include "Horario.h"
 #include "Professor.h"
 #include "ProblemData.h"
-
 #include "input.h"
 
 typedef std::vector< std::vector< Aula * > * > MatrizSolucao;
@@ -16,7 +15,7 @@ typedef std::vector< std::vector< Aula * > * > MatrizSolucao;
 class SolucaoOperacional
 {
 public:
-   SolucaoOperacional(ProblemData *);
+   SolucaoOperacional( ProblemData * );
    virtual ~SolucaoOperacional(void);
 
    void carregaSolucaoInicial();
@@ -24,14 +23,14 @@ public:
    // Dado um par 'dia da semana' e 'horário',
    // retornar a coluna correspondente a esse
    // par na matriz (a linha é o professor atual)
-   int getIndiceMatriz(int, Horario *);
+   int getIndiceMatriz( int, Horario * );
 
    // Dado um índice que corresponde a uma linha
    // de um dado professor na matriz de solução,
    // o dia da semana e o horário de aula desejado,
    // retorna o horário correspondente à aula
    // alocada (ou NULL, caso não haja aula alocada)
-   Horario * getHorario(int, int, int);
+   Horario * getHorario( int, int, int );
 
    // Dado um índice que corresponde a uma linha da
    // matriz de solução, retorna o professor correspondente
@@ -39,7 +38,7 @@ public:
 
    ProblemData * getProblemData() const;
 
-   void setMatrizAulas(MatrizSolucao *);
+   void setMatrizAulas( MatrizSolucao * );
    MatrizSolucao * getMatrizAulas() const;
 
    void toString();
@@ -59,7 +58,7 @@ public:
    // 5: quinta
    // 6: sexta
    // 7: sábado
-   std::vector< Aula * >::iterator getItHorariosProf(Professor &, int = 2, int = 0);
+   std::vector< Aula * >::iterator getItHorariosProf( Professor &, int = 2, int = 0 );
 
    // Adiciona um novo professor à solução. O inteiro retornado
    // é referente à posição (linha) que o novo  professor ocupa na solução.

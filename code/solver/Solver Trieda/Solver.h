@@ -1,9 +1,8 @@
-#ifndef SOLVER_H
-#define SOLVER_H
+#ifndef _SOLVER_H
+#define _SOLVER_H
 
 class ProblemData;
 class ProblemSolution;
-//class ProblemDataLoader;
 
 /**
 * Defines a generic solver.
@@ -15,10 +14,10 @@ public:
    * Default Constructor.
    * @param aProblemData The problem's input data.
    */
-   Solver(ProblemData *aProblemData);
+   Solver( ProblemData * );
 
    /** Destructor. */
-   ~Solver();
+   virtual ~Solver();
 
    /**
    * Solves the problem.
@@ -30,11 +29,11 @@ public:
    * Processes the variable values and populates the output class.
    * @param ps A reference to the class to be populated.
    */
-   virtual void getSolution(ProblemSolution *ps) = 0;
+   virtual void getSolution( ProblemSolution * ) = 0;
 
 protected:
-   /** A reference to the problem's input data. */
-   ProblemData *problemData;
+   // A reference to the problem's input data.
+   ProblemData * problemData;
 };
 
 #endif
