@@ -1730,15 +1730,29 @@ int SolverMIP::solveOperacional()
 
    //***********************
    // TESTES !!!!
-   NSSeqSwapEqBlocks * nsSeqSwapEqBlocks = new NSSeqSwapEqBlocks( *problemData );
+   NSSeqSwapEqBlocks nsSeqSwapEqBlocks (*problemData);
 
-   NSSeqSwapEqBlocks nsSwapEqBlocks (*problemData);
+   MoveSwapEqBlocks & mIni = (MoveSwapEqBlocks&) nsSeqSwapEqBlocks.move(solucaoOperacional);
 
-   RandomDescentMethod rdm (avaliador,nsSwapEqBlocks,50);
+   MoveSwapEqBlocks & mRev = (MoveSwapEqBlocks&) mIni.apply(solucaoOperacional);
 
-   ILSLPerturbationLPlus2 ilslPerturbationPlus2 (avaliador,5,nsSwapEqBlocks);
+   std::cout << " ***************************************" << std::endl;
+   std::cout << " ***************************************" << std::endl;
+   std::cout << " ***************************************" << std::endl;
 
-   IteratedLocalSearchLevels ilsl (avaliador,rdm, ilslPerturbationPlus2, 50, 5);
+   mRev.apply(solucaoOperacional);
+   
+
+   //std::cout << avaliador.avaliaSolucao(mIni) << std::endl;
+
+
+   //RandomDescentMethod rdm (avaliador,nsSeqSwapEqBlocks,50);
+
+   //rdm.exec(solucaoOperacional,20,0);
+
+   //ILSLPerturbationLPlus2 ilslPerturbationPlus2 (avaliador,5,nsSwapEqBlocks);
+
+   //IteratedLocalSearchLevels ilsl (avaliador,rdm, ilslPerturbationPlus2, 50, 5);
 
    //NSIteratorSwapEqBlocks & it = (NSIteratorSwapEqBlocks &) nsSeqSwapEqBlocks.getIterator(solucaoOperacional);
    //it.current();
