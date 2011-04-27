@@ -701,6 +701,10 @@
 				Name="Utility"
 				>
 				<File
+					RelativePath="..\..\..\..\..\..\..\Bibliotecas\codelib\CPUTimerWin.cpp"
+					>
+				</File>
+				<File
 					RelativePath="$(CODELIB)\DateTime.cpp"
 					>
 				</File>
@@ -815,7 +819,15 @@
 						Name="Heuristics"
 						>
 						<File
-							RelativePath=".\TabuSearch.cpp"
+							RelativePath=".\ILSLPerturbation.cpp"
+							>
+						</File>
+						<File
+							RelativePath=".\IteratedLocalSearchLevels.cpp"
+							>
+						</File>
+						<File
+							RelativePath=".\RandomDescentMethod.cpp"
 							>
 						</File>
 					</Filter>
@@ -1126,6 +1138,10 @@
 				Name="Utility"
 				>
 				<File
+					RelativePath="..\..\..\..\..\..\..\Bibliotecas\codelib\CPUTimerWin.h"
+					>
+				</File>
+				<File
 					RelativePath="$(CODELIB)\DateTime.h"
 					>
 				</File>
@@ -1264,7 +1280,15 @@
 							>
 						</File>
 						<File
-							RelativePath=".\TabuSearch.h"
+							RelativePath=".\ILSLPerturbation.h"
+							>
+						</File>
+						<File
+							RelativePath=".\IteratedLocalSearchLevels.h"
+							>
+						</File>
+						<File
+							RelativePath=".\RandomDescentMethod.h"
 							>
 						</File>
 					</Filter>

@@ -15,6 +15,11 @@ MoveSwapEqBlocks::~MoveSwapEqBlocks()
 
 }
 
+//bool MoveSwapEqBlocks::canBeApplied(const SolucaoOperacional & s)
+//{
+//   return true;
+//}
+
 Move & MoveSwapEqBlocks::apply( SolucaoOperacional & s )
 {
    // Para trocar dois blocos de aula de horários deve-se: 

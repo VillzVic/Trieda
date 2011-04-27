@@ -87,6 +87,12 @@ SolucaoOperacional::SolucaoOperacional( ProblemData * prbDt )
    // -----------------------------------------------------
 }
 
+SolucaoOperacional::SolucaoOperacional(SolucaoOperacional const & s)
+{
+   std::cout << "Implementar construtor de cópia da SolucaoOperacional.\n";
+   exit(1);
+}
+
 int SolucaoOperacional::max_horarios_dia()
 {
 	int tam = 0;

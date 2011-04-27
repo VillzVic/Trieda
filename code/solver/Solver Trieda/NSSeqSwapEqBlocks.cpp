@@ -39,71 +39,32 @@ std::pair<Aula*,Aula*> NSSeqSwapEqBlocks::pickTwoClasses(const SolucaoOperaciona
    Aula * a1 = NULL;
    Aula * a2 = NULL;
 
-   //do
-   //{
-      GGroup<Aula*>::iterator itAula = problemData.aulas.begin();
+   GGroup<Aula*>::iterator itAula = problemData.aulas.begin();
 
-      int maxIter = rand() % (s.getMatrizAulas()->size()-1);
-      //int maxIter = 7;
+   int maxIter = rand() % (s.getMatrizAulas()->size()-1);
+   for(int i = 0; i < maxIter; ++i, ++itAula);
+
+   a1 = *itAula;
+   a2 = *itAula;
+
+   while(!moveValidator->isValid(*a1,*a2))
+   {
+      itAula = problemData.aulas.begin();
+      maxIter = rand() % (s.getMatrizAulas()->size()-1);
       for(int i = 0; i < maxIter; ++i, ++itAula);
-
       a1 = *itAula;
 
-   //   Professor & profA1 = *a1->bloco_aula.begin()->first;
-   //   Professor & profA2 = profA1;
-
-   //   while(
-   //      (*itAula == a1) ||
-   //      //(profA1 == profA2) ||
-   //      (itAula->getTotalCreditos() != a1->getTotalCreditos()) ||
-   //      a1->eVirtual() ||
-   //      itAula->eVirtual() ||
-   //      itAula->getDiaSemana() != a1->getDiaSemana() || // modo não otimizado. Poderia ter alguma estrutura que auxiliasse nessa escolha.
-   //      itAula->getSala() != a1->getSala() ||
-   //      itAula->getDisciplina()->eLab() ||
-   //      a1->getDisciplina()->eLab()
-   //      )
-   //   {
-   //      itAula = problemData.aulas.begin();
-
-   //      maxIter = rand() % (s.getMatrizAulas()->size()-1);
-   //      //maxIter = 6;
-   //      for(int i = 0; i < maxIter; ++i, ++itAula);
-
-   //      profA2 = *itAula->bloco_aula.begin()->first;
-
-   //      if(a1->eVirtual() ||
-   //         a1->getDisciplina()->eLab()
-   //         )
-   //      {
-   //         a1 = *itAula;
-   //         continue;
-   //      }
-   //   }
-
+      itAula = problemData.aulas.begin();
+      maxIter = rand() % (s.getMatrizAulas()->size()-1);
+      for(int i = 0; i < maxIter; ++i, ++itAula);
       a2 = *itAula;
-
-   //} while(!s.podeTrocarHorariosAulas(*a1,*a2));
-
-      while(!moveValidator->isValid(*a1,*a2))
-      {
-         itAula = problemData.aulas.begin();
-         maxIter = rand() % (s.getMatrizAulas()->size()-1);
-         for(int i = 0; i < maxIter; ++i, ++itAula);
-         a1 = *itAula;
-
-         itAula = problemData.aulas.begin();
-         maxIter = rand() % (s.getMatrizAulas()->size()-1);
-         for(int i = 0; i < maxIter; ++i, ++itAula);
-         a2 = *itAula;
-      }
+   }
 
    return std::make_pair<Aula*,Aula*> (a1,a2);
 }
 
 Move & NSSeqSwapEqBlocks::move(const SolucaoOperacional& s)
 {
-   // Selecionando 2 aulas quaisquer.
    std::pair<Aula*,Aula*> aulas = pickTwoClasses(s);
 
    Aula & a1 = *aulas.first;

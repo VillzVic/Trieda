@@ -1732,13 +1732,19 @@ int SolverMIP::solveOperacional()
    // TESTES !!!!
    NSSeqSwapEqBlocks * nsSeqSwapEqBlocks = new NSSeqSwapEqBlocks( *problemData );
 
-   NSIteratorSwapEqBlocks & it
-	   = ( NSIteratorSwapEqBlocks & ) nsSeqSwapEqBlocks->getIterator( solucaoOperacional );
+   NSSeqSwapEqBlocks nsSwapEqBlocks (*problemData);
 
-   it.current();
-   std::cout << "\n\n ----------------------------- \n\n";
-   it.next();
-   it.current();
+   RandomDescentMethod rdm (avaliador,nsSwapEqBlocks,50);
+
+   ILSLPerturbationLPlus2 ilslPerturbationPlus2 (avaliador,5,nsSwapEqBlocks);
+
+   IteratedLocalSearchLevels ilsl (avaliador,rdm, ilslPerturbationPlus2, 50, 5);
+
+   //NSIteratorSwapEqBlocks & it = (NSIteratorSwapEqBlocks &) nsSeqSwapEqBlocks.getIterator(solucaoOperacional);
+   //it.current();
+   //std::cout << "\n\n ----------------------------- \n\n";
+   //it.next();
+   //it.current();
    //***********************
 
    // Armazena a solução operacional no problem solution

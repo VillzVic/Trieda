@@ -22,6 +22,8 @@ public:
 
    virtual ~MoveSwapEqBlocks();
 
+   //bool canBeApplied(const SolucaoOperacional & s);
+
    Move & apply(SolucaoOperacional & s);
 
    bool operator==(const Move & m) const;

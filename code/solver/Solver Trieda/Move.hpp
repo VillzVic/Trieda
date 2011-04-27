@@ -12,6 +12,8 @@ public:
 
    virtual ~Move() { }
 
+   //bool canBeApplied(const SolucaoOperacional & s) = 0;
+
    virtual Move & apply( SolucaoOperacional & ) = 0;
 
    virtual bool operator == ( const Move & ) const = 0;

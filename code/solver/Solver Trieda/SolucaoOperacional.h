@@ -18,6 +18,9 @@ class SolucaoOperacional
 {
 public:
    SolucaoOperacional( ProblemData * );
+
+   SolucaoOperacional(SolucaoOperacional const & s);
+
    virtual ~SolucaoOperacional(void);
 
    void carregaSolucaoInicial();

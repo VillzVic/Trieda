@@ -20,19 +20,14 @@
 #include "SolucaoOperacional.h"
 #include "SolucaoInicialOperacional.h"
 #include "Avaliador.h"
-//#include "NSSwapEqBlocks.h"
-//#include "NSIteratorSwapEqBlocks.h"
 
 #include "NSSeqSwapEqBlocks.h"
 
-#include "TabuSearch.h"
+#include "IteratedLocalSearchLevels.h"
+#include "RandomDescentMethod.h"
 
 #define PRINT_cria_variaveis
 #define PRINT_cria_restricoes
-
-#ifndef DEGUG
-#define DEBUG
-#endif
 
 /*
  * Implements a MIP Solver.
