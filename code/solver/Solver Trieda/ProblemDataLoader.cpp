@@ -505,18 +505,15 @@ void ProblemDataLoader::criaConjuntoSalasUnidade()
 
 void ProblemDataLoader::estabeleceDiasLetivosBlocoCampus()
 {
-   /*
-   Analisar esse metodo e o de criacao de blocos curriculares.
-
-   Um bloco pode pertencer a mais de um cp !?
-   */
-
-   ITERA_GGROUP(it_Bloco_Curric, problemData->blocos, BlocoCurricular)
+   // Analisar esse metodo e o de criacao de blocos curriculares.
+   // Um bloco pode pertencer a mais de um campus !?
+   ITERA_GGROUP( it_Bloco_Curric, problemData->blocos,
+				 BlocoCurricular )
    {
-      ITERA_GGROUP_N_PT(it_Dia_Letivo, it_Bloco_Curric->diasLetivos, int)
+      ITERA_GGROUP_N_PT( it_Dia_Letivo, it_Bloco_Curric->diasLetivos, int )
       {
          if ( it_Bloco_Curric->campus->diasLetivos.find
-            (*it_Dia_Letivo) != it_Bloco_Curric->campus->diasLetivos.end() )
+              (*it_Dia_Letivo) != it_Bloco_Curric->campus->diasLetivos.end() )
          {
             problemData->bloco_Campus_Dias
                [ std::make_pair( it_Bloco_Curric->getId(),
@@ -524,12 +521,15 @@ void ProblemDataLoader::estabeleceDiasLetivosBlocoCampus()
          }
          else
          {
-            // PS: Quando tiver mais de um campus, pode acontecer que uma associação entre um bloco curricular 
-            // que não pertence a um determinado campus seja criada. Arrumar isso depois.
-            // Ou seja, essa checagem só serve para quando se tem 1 campus. Se tiver mais de um, quando cair aqui,
-            // nada pode-se afirmar sobre a corretude da instância.
-            std::cout << "Warnning: Bloco Curricular e Campus Incompativeis. "
-               << "(ProblemDataLoader::estabeleceDiasLetivosBlocoCampus())" << std::endl;
+            // PS: Quando tiver mais de um campus, pode acontecer que
+			// uma associação entre um bloco curricular  que não pertence
+			// a um determinado campus seja criada. Arrumar isso depois.
+            // Ou seja, essa checagem só serve para quando se tem 1 campus.
+			// Se tiver mais de um, quando cair aqui, nada pode-se afirmar
+			// sobre a corretude da instância.
+            std::cerr << "ERRO: Bloco Curricular e Campus Incompativeis. "
+					  << "(ProblemDataLoader::estabeleceDiasLetivosBlocoCampus())"
+					  << std::endl;
 
             exit(1);
          }

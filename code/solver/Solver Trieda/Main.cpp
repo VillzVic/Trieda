@@ -60,7 +60,7 @@ int main( int argc, char** argv )
    // Check command line
    if( argc <= 2 )
    {
-      if ( argc == 2 && strcmp(argv[1], "-version") == 0 )
+      if ( argc == 2 && strcmp( argv[1], "-version" ) == 0 )
       {
          printf( "%s_%s\n", __DATE__, __TIME__ );
 
@@ -118,8 +118,8 @@ int main( int argc, char** argv )
          solver = new SolverMIP( data, solution, dataLoader );
          solver->solve();
          solver->getSolution( solution );
-         delete solver;
-         delete dataLoader;
+         // delete solver;
+         // delete dataLoader;
       }
       catch( int & status )
       {

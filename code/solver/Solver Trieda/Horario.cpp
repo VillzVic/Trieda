@@ -1,4 +1,5 @@
 #include "Horario.h"
+
 #include <iostream>
 
 Horario::Horario(void)
@@ -9,20 +10,16 @@ Horario::Horario(void)
 
 Horario::~Horario(void)
 {
+
 }
 
-void Horario::le_arvore(ItemHorario& elem) 
+void Horario::le_arvore( ItemHorario & elem ) 
 {
-   ITERA_NSEQ(it_dia, elem.diasSemana(), diaSemana, DiaSemana)
+   ITERA_NSEQ( it_dia, elem.diasSemana(), diaSemana, DiaSemana )
    {
-      dias_semana.add(*it_dia);
+      dias_semana.add( *it_dia );
    }
 
    horarioAulaId = elem.horarioAulaId();
    turnoId = elem.turnoId();
 }
-
-//int Horario::getId()
-//{
-//   return ((turnoId * 1000) + (horarioAulaId * 10)/* + diaSemana*/);
-//}

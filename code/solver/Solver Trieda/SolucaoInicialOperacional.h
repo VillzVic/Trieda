@@ -8,7 +8,6 @@
 #include "Professor.h"
 #include "ProblemData.h"
 #include "Aula.h"
-
 #include "SolucaoOperacional.h"
 #include "CustoAlocacao.h"
 
@@ -52,20 +51,22 @@ private:
    // grupo de professores do bloco em questão.
    std::map< BlocoCurricular *, GGroup< Professor *, LessPtr< Professor > > > blocosProfs;
 
-   /* Armazena para cada sala os horarios que já foram alocados. */
-   std::map<Sala*,GGroup<Horario*,LessPtr<Horario> > > salaHorarios;
+   // Armazena para cada sala os horarios que já foram alocados.
+   // Estrutura: para cada sala, retorna-se o conjuntos de pares
+   // de horario aula / dia da semana que a sala já está ocupada
+   std::map< Sala *, GGroup< std::pair< HorarioAula *, int > > > sala_horarios_alocados;
 
    // Função que utiliza a estrutura acima para
    // dizer se um dado professor está sendo alocado
    // mais de uma vez para um bloco curricular.
-   bool professorRepetido(Professor &, Aula &);
+   bool professorRepetido( Professor &, Aula & );
 
    void executaFuncaoPrioridade();
 
    // Funções auxilares à função de prioridade.
    // Calcula o custo dados um professor,
    // uma aula e o id do custo em questão.
-   void calculaCustoFixProf(Professor &, Aula &, unsigned, int = 0, int = 0);
+   void calculaCustoFixProf( Professor &, Aula &, unsigned, int = 0, int = 0 );
 };
 
 #endif // _SOLUCAO_INICIAL_OPERACIONAL_H_

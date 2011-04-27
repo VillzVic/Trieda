@@ -11,29 +11,29 @@ class Horario :
 {
 public:
    Horario(void);
-   ~Horario(void);
+   virtual ~Horario(void);
 
-   virtual void le_arvore(ItemHorario& raiz);
+   virtual void le_arvore( ItemHorario & );
 
    Turno * turno;
    HorarioAula * horario_aula;
 
-   GGroup<int> dias_semana;
+   GGroup< int > dias_semana;
 
    void setHorarioAulaId(int v) { horarioAulaId = v; }
    void setTurnoId(int v) { turnoId = v; }
 
-   int getHorarioAulaId() { return horarioAulaId; }
-   int getTurnoId() { return turnoId; }
+   int getHorarioAulaId() const { return horarioAulaId; }
+   int getTurnoId() const { return turnoId; }
 
-   virtual bool operator < (Horario const & right) 
+   virtual bool operator < ( Horario const & right ) 
    { 
-      return ( *horario_aula <  *right.horario_aula );
+      return ( (*horario_aula) <  (*right.horario_aula) );
    }
 
-   virtual bool operator == (Horario const & right) 
+   virtual bool operator == ( Horario const & right ) 
    { 
-      return ( *horario_aula ==  *right.horario_aula );
+	   return ( (*horario_aula) ==  (*right.horario_aula) );
    }
 
 private:
