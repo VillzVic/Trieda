@@ -10,6 +10,8 @@
 #include "ProblemData.h"
 #include "input.h"
 
+#include "MoveValidator.h"
+
 typedef std::vector< std::vector< Aula * > * > MatrizSolucao;
 
 class SolucaoOperacional
@@ -90,6 +92,7 @@ private:
    int total_professores;
 
    MatrizSolucao * matriz_aulas;
+
    ProblemData* problem_data;
 
    // Verifica se o professor tem disponível

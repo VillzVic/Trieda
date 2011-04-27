@@ -103,7 +103,7 @@ SolucaoOperacional & SolucaoInicialOperacional::geraSolucaoInicial()
                = solucaoInicial->getItHorariosProf( professor, aula.getDiaSemana() );
 
             bool alocouProfAula = false;
-
+       
             if( !professorRepetido( professor, aula ) )
             {
                alocouProfAula = alocaAulaSeq(
@@ -399,6 +399,45 @@ bool SolucaoInicialOperacional::alocaAulaSeq( SolucaoOperacional * solucao, std:
          continue;
       }
 
+      // ----------------------------------------------------
+      // Checando se o horário em questão está disponível na sala.
+
+      /* Garantido que vou sempre achar o horario aula id que procuro pq nunca
+      procuro um horario que já esteja preenchido. Portanto, não há como acontecer
+      um caso em que o horário procurado não pertença a sala. */
+      int idHorarioAula = problemData.horarios_aula_ordenados.at(h)->getId();
+
+      GGroup<Horario*>::iterator 
+         itHorarioSala = aula.getSala()->horarios_disponiveis.begin();
+
+      for(; itHorarioSala != aula.getSala()->horarios_disponiveis.end(); ++itHorarioSala)
+      {
+         if(itHorarioSala->horario_aula->getId() == idHorarioAula)
+            break;
+      }
+
+      std::map<Sala*,GGroup<Horario*,LessPtr<Horario> > >::iterator 
+         itSala = salaHorarios.find(aula.getSala());
+      
+      // Se a sala já possui algum registro de alocação.
+      if(itSala != salaHorarios.end())
+      {
+         bool skip = true;
+
+         ITERA_GGROUP_LESSPTR(itSalaHorarios,itSala->second,Horario)
+         {
+            if(*itSalaHorarios == *itHorarioSala)
+            {
+               skip = false;
+               break;
+            }
+         }
+
+         if(skip)
+            continue;
+      }
+      // ----------------------------------------------------
+
       if ( totalCredsAlocar == aula.getTotalCreditos() )
       {
          itInicioHorariosAlocar = itHorariosProf;
@@ -450,6 +489,8 @@ bool SolucaoInicialOperacional::alocaAulaSeq( SolucaoOperacional * solucao, std:
                   {
                      sequenciaDeHorariosLivres = false;
                      (*itHorariosProf) = &( aula );
+                     
+                     salaHorarios[aula.getSala()].add(horario);
                   }
 
                   alocou = true;
@@ -507,6 +548,9 @@ bool SolucaoInicialOperacional::alocaAulaSeq( SolucaoOperacional * solucao, std:
                && horario->horario_aula->getId() == horario_aula->getId() )
             {
                novosHorariosAula.push_back( std::make_pair( &(professor), horario ) );
+
+               salaHorarios[aula.getSala()].add(horario);
+
                break;
             }
          }

@@ -12,8 +12,6 @@
 #include "SolucaoOperacional.h"
 #include "CustoAlocacao.h"
 
-#include "MoveValidator.h"
-
 class SolucaoInicialOperacional
 {
 public:
@@ -53,6 +51,9 @@ private:
    // questão pertence e em seguida adiciona-se o professor ao
    // grupo de professores do bloco em questão.
    std::map< BlocoCurricular *, GGroup< Professor *, LessPtr< Professor > > > blocosProfs;
+
+   /* Armazena para cada sala os horarios que já foram alocados. */
+   std::map<Sala*,GGroup<Horario*,LessPtr<Horario> > > salaHorarios;
 
    // Função que utiliza a estrutura acima para
    // dizer se um dado professor está sendo alocado
