@@ -883,6 +883,8 @@
           <xs:documentation>considerar a avaliação de desempenho do professor para desempate de disponibilidade. Ver requisito RF-PP-6.</xs:documentation>
         </xs:annotation>
       </xs:element>
+      <xs:element name="funcaoObjetivo" type="xs:int" />
+      <xs:element name="considerarEquivalencia" type="xs:boolean" />
       <xs:element name="minAlunosAberturaTurmas" type="xs:boolean">
         <xs:annotation>
           <xs:documentation>Número mínimo de alunos para abertura de turma</xs:documentation>
@@ -958,7 +960,6 @@ Maximizar/gerenciar a nota da avaliação institucional média coletiva do corpo
           <xs:documentation>considerar a custo docente do professor para desempate de disponibilidade. Ver requisito RF-PP-7.</xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element name="funcaoObjetivo" type="xs:int" />
     </xs:sequence>
   </xs:complexType>
   <xs:complexType name="ItemNivelDificuldadeHorario">
