@@ -46,8 +46,11 @@ import org.springframework.transaction.annotation.Transactional;
 @Table(name = "CENARIOS")
 public class Cenario implements Serializable {
 
-    @OneToOne(mappedBy="cenario", fetch=FetchType.LAZY)
-    private Parametro parametro;
+//    @OneToOne(mappedBy="cenario", fetch=FetchType.LAZY)
+//    private Parametro parametro;
+    @OneToMany(mappedBy="cenario")
+    private Set<Parametro> parametros;
+
 	
 //    TODO @NotNull
     @ManyToOne(targetEntity = Usuario.class)
@@ -151,7 +154,7 @@ public class Cenario implements Serializable {
         sb.append("Curriculos: ").append(getCurriculos() == null ? "null" : getCurriculos().size());
         sb.append("Atendimentos Operacionais: ").append(getAtendimentosOperacionais() == null ? "null" : getAtendimentosOperacionais().size());
         sb.append("Atendimentos Taticos: ").append(getAtendimentosTaticos() == null ? "null" : getAtendimentosTaticos().size());
-        sb.append("Parametro: ").append(getParametro()).append(", ");
+        sb.append("Parametros: ").append(getParametros() == null ? "null" : getParametros().size());
         return sb.toString();
     }
 
@@ -241,6 +244,14 @@ public class Cenario implements Serializable {
         return ((Number) entityManager().createQuery("SELECT count(o) FROM Cenario o").getSingleResult()).intValue();
     }
 
+	public Parametro getUltimoParametro() {
+		int i = ((Number) entityManager().createQuery("SELECT count(o) FROM Parametro o WHERE o.cenario = :cenario").setParameter("cenario", this).getSingleResult()).intValue();
+		if(i > 0) {
+			return (Parametro) entityManager().createQuery("SELECT o FROM Parametro o WHERE o.cenario = :cenario ORDER BY o.id DESC").setParameter("cenario", this).setMaxResults(1).getSingleResult();
+		}
+		return null;
+	}
+	
 	@SuppressWarnings("unchecked")
     public static List<Cenario> findAll() {
         Query q = entityManager().createQuery("SELECT o FROM Cenario o WHERE o.masterData = :masterData");
@@ -452,12 +463,12 @@ public class Cenario implements Serializable {
 		this.atendimentosTaticos = atendimentosTaticos;
 	}
 	
-	public Parametro getParametro() {
-		return parametro;
+	public Set<Parametro> getParametros() {
+		return parametros;
 	}
 
-	public void setParametro(Parametro parametro) {
-		this.parametro = parametro;
+	public void setParametro(Set<Parametro> parametros) {
+		this.parametros = parametros;
 	}
 
 	private static final long serialVersionUID = -8610380359760552949L;

@@ -186,9 +186,7 @@ public class SemanaLetiva implements Serializable {
 
 	public static SemanaLetiva find(Long id) {
         if (id == null) return null;
-        SemanaLetiva o = entityManager().find(SemanaLetiva.class, id);
-        o.getHorariosAula();
-        return o;
+        return entityManager().find(SemanaLetiva.class, id);
     }
 
 	public static List<SemanaLetiva> find(int firstResult, int maxResults) {

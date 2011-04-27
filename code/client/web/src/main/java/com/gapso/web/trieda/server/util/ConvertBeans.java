@@ -1429,11 +1429,19 @@ public class ConvertBeans {
 		Parametro domain = new Parametro();
 		domain.setId(dto.getId());
 		domain.setVersion(dto.getVersion());
-		domain.setCenario(Cenario.find(dto.getCenarioId()));
+		Cenario cenario = Cenario.find(dto.getCenarioId());
+		Cenario.entityManager().refresh(cenario);
+		domain.setCenario(cenario);
 		domain.setModoOtimizacao(dto.getModoOtimizacao());
-		domain.setSemanaLetiva(SemanaLetiva.find(dto.getSemanaLetivaId()));
-		domain.setCampus(Campus.find(dto.getCampusId()));
-		domain.setTurno(Turno.find(dto.getTurnoId()));
+		SemanaLetiva semanaLetiva = SemanaLetiva.find(dto.getSemanaLetivaId());
+		semanaLetiva.flush();
+		domain.setSemanaLetiva(semanaLetiva);
+		Campus campus = Campus.find(dto.getCampusId());
+		campus.flush();
+		domain.setCampus(campus);
+		Turno turno = Turno.find(dto.getTurnoId());
+		turno.flush();
+		domain.setTurno(turno);
 		domain.setCargaHorariaAluno(dto.getCargaHorariaAluno());
 		domain.setCargaHorariaAlunoSel(dto.getCargaHorariaAlunoSel());
 		domain.setAlunoDePeriodoMesmaSala(dto.getAlunoDePeriodoMesmaSala());
@@ -1478,10 +1486,11 @@ public class ConvertBeans {
 		dto.setModoOtimizacao(domain.getModoOtimizacao());
 		
 		SemanaLetiva semanaLetiva = domain.getSemanaLetiva();
-		if(semanaLetiva != null) {
-			dto.setSemanaLetivaId(semanaLetiva.getId());
-			dto.setSemanaLetivaDisplay(semanaLetiva.getCodigo());
+		if(semanaLetiva == null) {
+			semanaLetiva = SemanaLetiva.getByOficial();
 		}
+		dto.setSemanaLetivaId(semanaLetiva.getId());
+		dto.setSemanaLetivaDisplay(semanaLetiva.getCodigo());
 		
 		Campus campus = domain.getCampus();
 		if(campus != null) {

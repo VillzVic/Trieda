@@ -41,8 +41,12 @@ public class Parametro implements Serializable {
 	public static final String TATICO = "TATICO";
 	public static final String OPERACIONAL = "OPERACIONAL";
 
-	@NotNull
-    @OneToOne(targetEntity = Cenario.class)
+//	@NotNull
+//    @OneToOne
+//    @JoinColumn(name = "CEN_ID")
+//    private Cenario cenario;
+    @NotNull
+    @ManyToOne
     @JoinColumn(name = "CEN_ID")
     private Cenario cenario;
 	
@@ -51,17 +55,17 @@ public class Parametro implements Serializable {
 	private String modoOtimizacao;
 	
 	@NotNull
-	@ManyToOne(targetEntity = Campus.class)
+	@ManyToOne
 	@JoinColumn(name = "SEM_ID")
 	private SemanaLetiva semanaLetiva;
 	
 	@NotNull
-	@ManyToOne(targetEntity = Campus.class)
+	@ManyToOne
 	@JoinColumn(name = "CAM_ID")
 	private Campus campus;
 	
 	@NotNull
-	@ManyToOne(targetEntity = Turno.class)
+	@ManyToOne
 	@JoinColumn(name = "TUR_ID")
 	private Turno turno;
 	

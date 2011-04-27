@@ -115,11 +115,15 @@ public class SolverInput {
 	private ObjectFactory of;
 	private TriedaInput triedaInput;
 	private List<Campus> campi;
+	private Turno turno;
+	private Parametro parametro;
 	private SemanaLetiva semanaLetiva;
 
-	public SolverInput(Cenario cenario, List<Campus> campi) {
+	public SolverInput(Cenario cenario, Parametro parametro, List<Campus> campi, Turno turno) {
 		this.cenario = cenario;
+		this.parametro = parametro;
 		this.campi = campi;
+		this.turno = turno;
 		of = new ObjectFactory();
 		triedaInput = of.createTriedaInput();
 		this.semanaLetiva = SemanaLetiva.getByOficial();
@@ -453,10 +457,10 @@ public class SolverInput {
 			
 			DivisaoCredito divisaoCredito = null;
 			
-			if(cenario.getParametro().getRegrasEspecificasDivisaoCredito()) {
+			if(parametro.getRegrasEspecificasDivisaoCredito()) {
 				divisaoCredito = disciplina.getDivisaoCreditos();
 			}
-			if(divisaoCredito == null && cenario.getParametro().getRegrasGenericasDivisaoCredito()) {
+			if(divisaoCredito == null && parametro.getRegrasGenericasDivisaoCredito()) {
 				divisaoCredito = DivisaoCredito.findByCredito(disciplina.getTotalCreditos());
 			}
 			if(divisaoCredito != null) {
@@ -596,7 +600,7 @@ public class SolverInput {
 	
 	private void generateParametrosPlanejamento(boolean tatico) {
 		
-		Parametro parametro = cenario.getParametro();
+//		Parametro parametro = cenario.getParametro();
 		
 		ItemParametrosPlanejamento itemParametrosPlanejamento = of.createItemParametrosPlanejamento();
 		

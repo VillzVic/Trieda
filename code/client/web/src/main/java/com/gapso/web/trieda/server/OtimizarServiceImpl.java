@@ -53,7 +53,7 @@ public class OtimizarServiceImpl extends RemoteServiceServlet implements Otimiza
 	@Transactional
 	public ParametroDTO getParametro(CenarioDTO cenarioDTO) {
 		Cenario cenario = Cenario.find(cenarioDTO.getId());
-		Parametro parametro = cenario.getParametro();
+		Parametro parametro = cenario.getUltimoParametro();
 		if(parametro == null){
 			parametro = new Parametro();
 			parametro.setCenario(cenario);
@@ -65,15 +65,19 @@ public class OtimizarServiceImpl extends RemoteServiceServlet implements Otimiza
 	@Override
 	@Transactional
 	public Long input(ParametroDTO parametroDTO, List<CampusDTO> campiDTO) {
-		List<Campus> campi = new ArrayList<Campus>(campiDTO.size());
-		for(CampusDTO campusDTO : campiDTO) {
-			campi.add(Campus.find(campusDTO.getId()));
-		}
+//		List<Campus> campi = new ArrayList<Campus>(campiDTO.size());
+//		for(CampusDTO campusDTO : campiDTO) {
+//			campi.add(Campus.find(campusDTO.getId()));
+//		}
 		Parametro parametro = ConvertBeans.toParametro(parametroDTO);
+		parametro.setId(null);
+		parametro.flush();
 		parametro.save();
 		Cenario cenario = parametro.getCenario();
-		cenario.setParametro(parametro);
-		SolverInput solverInput = new SolverInput(cenario, campi);
+		cenario.getParametros().add(parametro);
+		List<Campus> campi = new ArrayList<Campus>(1);
+		campi.add(parametro.getCampus());
+		SolverInput solverInput = new SolverInput(cenario, parametro, campi, null);
 		
 		TriedaInput triedaInput = null;
 		if(parametro.isTatico()) {
