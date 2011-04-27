@@ -517,6 +517,9 @@ public class SolverInput {
 			itemPercentualMinimoDoutores.setTipoTitulacaoId(5); // TODO pegar titulacao pela constante
 			itemCurso.setRegraPercMinDoutores(itemPercentualMinimoDoutores);
 			
+			itemCurso.setMinTempoIntegralParcial(curso.getMinTempoIntegralParcial());
+			itemCurso.setMinTempoIntegral(curso.getMinTempoIntegral());
+			
 			itemCurso.setQtdMaxProfDisc(curso.getMaxDisciplinasPeloProfessor());
 			itemCurso.setMaisDeUmaDiscPeriodo(curso.getAdmMaisDeUmDisciplina());
 			
@@ -598,7 +601,6 @@ public class SolverInput {
 		ItemParametrosPlanejamento itemParametrosPlanejamento = of.createItemParametrosPlanejamento();
 		
 		itemParametrosPlanejamento.setModoOtimizacao(tatico ? "TATICO" : "OPERACIONAL");
-		
 		itemParametrosPlanejamento.setFuncaoObjetivo(itemParametrosPlanejamento.getFuncaoObjetivo());
 		
 		CargaHorariaSemanalAluno cargaHorariaSemanalAluno = of.createItemParametrosPlanejamentoCargaHorariaSemanalAluno();
@@ -636,6 +638,7 @@ public class SolverInput {
 		itemParametrosPlanejamento.setPreferenciaProfessorDisciplina(parametro.getPreferenciaDeProfessores());
 		itemParametrosPlanejamento.setDesempenhoProfDisponibilidade(parametro.getAvaliacaoDesempenhoProfessor());
 		
+		itemParametrosPlanejamento.setConsiderarEquivalencia(parametro.getConsiderarEquivalencia());
 		itemParametrosPlanejamento.setMinAlunosAberturaTurmas(parametro.getMinAlunosParaAbrirTurma());
 		itemParametrosPlanejamento.setMinAlunosAberturaTurmasValor(parametro.getMinAlunosParaAbrirTurmaValue());
 		// TODO
