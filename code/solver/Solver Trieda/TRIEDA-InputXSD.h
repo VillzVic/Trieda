@@ -3626,6 +3626,34 @@ class ItemParametrosPlanejamento: public ::xml_schema::type
   void
   desempenhoProfDisponibilidade (const desempenhoProfDisponibilidade_type& x);
 
+  // funcaoObjetivo
+  // 
+  typedef ::xml_schema::int_ funcaoObjetivo_type;
+  typedef ::xsd::cxx::tree::traits< funcaoObjetivo_type, char > funcaoObjetivo_traits;
+
+  const funcaoObjetivo_type&
+  funcaoObjetivo () const;
+
+  funcaoObjetivo_type&
+  funcaoObjetivo ();
+
+  void
+  funcaoObjetivo (const funcaoObjetivo_type& x);
+
+  // considerarEquivalencia
+  // 
+  typedef ::xml_schema::boolean considerarEquivalencia_type;
+  typedef ::xsd::cxx::tree::traits< considerarEquivalencia_type, char > considerarEquivalencia_traits;
+
+  const considerarEquivalencia_type&
+  considerarEquivalencia () const;
+
+  considerarEquivalencia_type&
+  considerarEquivalencia ();
+
+  void
+  considerarEquivalencia (const considerarEquivalencia_type& x);
+
   // minAlunosAberturaTurmas
   // 
   typedef ::xml_schema::boolean minAlunosAberturaTurmas_type;
@@ -3892,20 +3920,6 @@ class ItemParametrosPlanejamento: public ::xml_schema::type
   void
   custoProfDisponibilidade (const custoProfDisponibilidade_type& x);
 
-  // funcaoObjetivo
-  // 
-  typedef ::xml_schema::int_ funcaoObjetivo_type;
-  typedef ::xsd::cxx::tree::traits< funcaoObjetivo_type, char > funcaoObjetivo_traits;
-
-  const funcaoObjetivo_type&
-  funcaoObjetivo () const;
-
-  funcaoObjetivo_type&
-  funcaoObjetivo ();
-
-  void
-  funcaoObjetivo (const funcaoObjetivo_type& x);
-
   // Constructors.
   //
   ItemParametrosPlanejamento (const modoOtimizacao_type&,
@@ -3921,6 +3935,8 @@ class ItemParametrosPlanejamento: public ::xml_schema::type
                               const evitarProfUltimoPrimeiroHor_type&,
                               const preferenciaProfessorDisciplina_type&,
                               const desempenhoProfDisponibilidade_type&,
+                              const funcaoObjetivo_type&,
+                              const considerarEquivalencia_type&,
                               const minAlunosAberturaTurmas_type&,
                               const niveisDificuldadeHorario_type&,
                               const equilibrarDiversidadeDiscDia_type&,
@@ -3933,8 +3949,7 @@ class ItemParametrosPlanejamento: public ::xml_schema::type
                               const percentuaisMinimoDoutores_type&,
                               const areaTitulacaoProfessorCurso_type&,
                               const maximoDisciplinasDeUmProfessorPorCurso_type&,
-                              const custoProfDisponibilidade_type&,
-                              const funcaoObjetivo_type&);
+                              const custoProfDisponibilidade_type&);
 
   ItemParametrosPlanejamento (const modoOtimizacao_type&,
                               ::std::auto_ptr< cargaHorariaSemanalAluno_type >&,
@@ -3949,6 +3964,8 @@ class ItemParametrosPlanejamento: public ::xml_schema::type
                               const evitarProfUltimoPrimeiroHor_type&,
                               const preferenciaProfessorDisciplina_type&,
                               const desempenhoProfDisponibilidade_type&,
+                              const funcaoObjetivo_type&,
+                              const considerarEquivalencia_type&,
                               const minAlunosAberturaTurmas_type&,
                               ::std::auto_ptr< niveisDificuldadeHorario_type >&,
                               const equilibrarDiversidadeDiscDia_type&,
@@ -3961,8 +3978,7 @@ class ItemParametrosPlanejamento: public ::xml_schema::type
                               const percentuaisMinimoDoutores_type&,
                               const areaTitulacaoProfessorCurso_type&,
                               const maximoDisciplinasDeUmProfessorPorCurso_type&,
-                              const custoProfDisponibilidade_type&,
-                              const funcaoObjetivo_type&);
+                              const custoProfDisponibilidade_type&);
 
   ItemParametrosPlanejamento (const ::xercesc::DOMElement& e,
                               ::xml_schema::flags f = 0,
@@ -4002,6 +4018,8 @@ class ItemParametrosPlanejamento: public ::xml_schema::type
   ::xsd::cxx::tree::one< evitarProfUltimoPrimeiroHor_type > evitarProfUltimoPrimeiroHor_;
   ::xsd::cxx::tree::one< preferenciaProfessorDisciplina_type > preferenciaProfessorDisciplina_;
   ::xsd::cxx::tree::one< desempenhoProfDisponibilidade_type > desempenhoProfDisponibilidade_;
+  ::xsd::cxx::tree::one< funcaoObjetivo_type > funcaoObjetivo_;
+  ::xsd::cxx::tree::one< considerarEquivalencia_type > considerarEquivalencia_;
   ::xsd::cxx::tree::one< minAlunosAberturaTurmas_type > minAlunosAberturaTurmas_;
   minAlunosAberturaTurmasValor_optional minAlunosAberturaTurmasValor_;
   ::xsd::cxx::tree::one< niveisDificuldadeHorario_type > niveisDificuldadeHorario_;
@@ -4019,7 +4037,6 @@ class ItemParametrosPlanejamento: public ::xml_schema::type
   ::xsd::cxx::tree::one< areaTitulacaoProfessorCurso_type > areaTitulacaoProfessorCurso_;
   ::xsd::cxx::tree::one< maximoDisciplinasDeUmProfessorPorCurso_type > maximoDisciplinasDeUmProfessorPorCurso_;
   ::xsd::cxx::tree::one< custoProfDisponibilidade_type > custoProfDisponibilidade_;
-  ::xsd::cxx::tree::one< funcaoObjetivo_type > funcaoObjetivo_;
 };
 
 class ItemNivelDificuldadeHorario: public ::xml_schema::type

@@ -3049,6 +3049,42 @@ desempenhoProfDisponibilidade (const desempenhoProfDisponibilidade_type& x)
   this->desempenhoProfDisponibilidade_.set (x);
 }
 
+const ItemParametrosPlanejamento::funcaoObjetivo_type& ItemParametrosPlanejamento::
+funcaoObjetivo () const
+{
+  return this->funcaoObjetivo_.get ();
+}
+
+ItemParametrosPlanejamento::funcaoObjetivo_type& ItemParametrosPlanejamento::
+funcaoObjetivo ()
+{
+  return this->funcaoObjetivo_.get ();
+}
+
+void ItemParametrosPlanejamento::
+funcaoObjetivo (const funcaoObjetivo_type& x)
+{
+  this->funcaoObjetivo_.set (x);
+}
+
+const ItemParametrosPlanejamento::considerarEquivalencia_type& ItemParametrosPlanejamento::
+considerarEquivalencia () const
+{
+  return this->considerarEquivalencia_.get ();
+}
+
+ItemParametrosPlanejamento::considerarEquivalencia_type& ItemParametrosPlanejamento::
+considerarEquivalencia ()
+{
+  return this->considerarEquivalencia_.get ();
+}
+
+void ItemParametrosPlanejamento::
+considerarEquivalencia (const considerarEquivalencia_type& x)
+{
+  this->considerarEquivalencia_.set (x);
+}
+
 const ItemParametrosPlanejamento::minAlunosAberturaTurmas_type& ItemParametrosPlanejamento::
 minAlunosAberturaTurmas () const
 {
@@ -3401,24 +3437,6 @@ void ItemParametrosPlanejamento::
 custoProfDisponibilidade (const custoProfDisponibilidade_type& x)
 {
   this->custoProfDisponibilidade_.set (x);
-}
-
-const ItemParametrosPlanejamento::funcaoObjetivo_type& ItemParametrosPlanejamento::
-funcaoObjetivo () const
-{
-  return this->funcaoObjetivo_.get ();
-}
-
-ItemParametrosPlanejamento::funcaoObjetivo_type& ItemParametrosPlanejamento::
-funcaoObjetivo ()
-{
-  return this->funcaoObjetivo_.get ();
-}
-
-void ItemParametrosPlanejamento::
-funcaoObjetivo (const funcaoObjetivo_type& x)
-{
-  this->funcaoObjetivo_.set (x);
 }
 
 
@@ -9763,6 +9781,8 @@ ItemParametrosPlanejamento (const modoOtimizacao_type& modoOtimizacao,
                             const evitarProfUltimoPrimeiroHor_type& evitarProfUltimoPrimeiroHor,
                             const preferenciaProfessorDisciplina_type& preferenciaProfessorDisciplina,
                             const desempenhoProfDisponibilidade_type& desempenhoProfDisponibilidade,
+                            const funcaoObjetivo_type& funcaoObjetivo,
+                            const considerarEquivalencia_type& considerarEquivalencia,
                             const minAlunosAberturaTurmas_type& minAlunosAberturaTurmas,
                             const niveisDificuldadeHorario_type& niveisDificuldadeHorario,
                             const equilibrarDiversidadeDiscDia_type& equilibrarDiversidadeDiscDia,
@@ -9775,8 +9795,7 @@ ItemParametrosPlanejamento (const modoOtimizacao_type& modoOtimizacao,
                             const percentuaisMinimoDoutores_type& percentuaisMinimoDoutores,
                             const areaTitulacaoProfessorCurso_type& areaTitulacaoProfessorCurso,
                             const maximoDisciplinasDeUmProfessorPorCurso_type& maximoDisciplinasDeUmProfessorPorCurso,
-                            const custoProfDisponibilidade_type& custoProfDisponibilidade,
-                            const funcaoObjetivo_type& funcaoObjetivo)
+                            const custoProfDisponibilidade_type& custoProfDisponibilidade)
 : ::xml_schema::type (),
   modoOtimizacao_ (modoOtimizacao, ::xml_schema::flags (), this),
   cargaHorariaSemanalAluno_ (cargaHorariaSemanalAluno, ::xml_schema::flags (), this),
@@ -9793,6 +9812,8 @@ ItemParametrosPlanejamento (const modoOtimizacao_type& modoOtimizacao,
   evitarProfUltimoPrimeiroHor_ (evitarProfUltimoPrimeiroHor, ::xml_schema::flags (), this),
   preferenciaProfessorDisciplina_ (preferenciaProfessorDisciplina, ::xml_schema::flags (), this),
   desempenhoProfDisponibilidade_ (desempenhoProfDisponibilidade, ::xml_schema::flags (), this),
+  funcaoObjetivo_ (funcaoObjetivo, ::xml_schema::flags (), this),
+  considerarEquivalencia_ (considerarEquivalencia, ::xml_schema::flags (), this),
   minAlunosAberturaTurmas_ (minAlunosAberturaTurmas, ::xml_schema::flags (), this),
   minAlunosAberturaTurmasValor_ (::xml_schema::flags (), this),
   niveisDificuldadeHorario_ (niveisDificuldadeHorario, ::xml_schema::flags (), this),
@@ -9809,8 +9830,7 @@ ItemParametrosPlanejamento (const modoOtimizacao_type& modoOtimizacao,
   percentuaisMinimoDoutores_ (percentuaisMinimoDoutores, ::xml_schema::flags (), this),
   areaTitulacaoProfessorCurso_ (areaTitulacaoProfessorCurso, ::xml_schema::flags (), this),
   maximoDisciplinasDeUmProfessorPorCurso_ (maximoDisciplinasDeUmProfessorPorCurso, ::xml_schema::flags (), this),
-  custoProfDisponibilidade_ (custoProfDisponibilidade, ::xml_schema::flags (), this),
-  funcaoObjetivo_ (funcaoObjetivo, ::xml_schema::flags (), this)
+  custoProfDisponibilidade_ (custoProfDisponibilidade, ::xml_schema::flags (), this)
 {
 }
 
@@ -9828,6 +9848,8 @@ ItemParametrosPlanejamento (const modoOtimizacao_type& modoOtimizacao,
                             const evitarProfUltimoPrimeiroHor_type& evitarProfUltimoPrimeiroHor,
                             const preferenciaProfessorDisciplina_type& preferenciaProfessorDisciplina,
                             const desempenhoProfDisponibilidade_type& desempenhoProfDisponibilidade,
+                            const funcaoObjetivo_type& funcaoObjetivo,
+                            const considerarEquivalencia_type& considerarEquivalencia,
                             const minAlunosAberturaTurmas_type& minAlunosAberturaTurmas,
                             ::std::auto_ptr< niveisDificuldadeHorario_type >& niveisDificuldadeHorario,
                             const equilibrarDiversidadeDiscDia_type& equilibrarDiversidadeDiscDia,
@@ -9840,8 +9862,7 @@ ItemParametrosPlanejamento (const modoOtimizacao_type& modoOtimizacao,
                             const percentuaisMinimoDoutores_type& percentuaisMinimoDoutores,
                             const areaTitulacaoProfessorCurso_type& areaTitulacaoProfessorCurso,
                             const maximoDisciplinasDeUmProfessorPorCurso_type& maximoDisciplinasDeUmProfessorPorCurso,
-                            const custoProfDisponibilidade_type& custoProfDisponibilidade,
-                            const funcaoObjetivo_type& funcaoObjetivo)
+                            const custoProfDisponibilidade_type& custoProfDisponibilidade)
 : ::xml_schema::type (),
   modoOtimizacao_ (modoOtimizacao, ::xml_schema::flags (), this),
   cargaHorariaSemanalAluno_ (cargaHorariaSemanalAluno, ::xml_schema::flags (), this),
@@ -9858,6 +9879,8 @@ ItemParametrosPlanejamento (const modoOtimizacao_type& modoOtimizacao,
   evitarProfUltimoPrimeiroHor_ (evitarProfUltimoPrimeiroHor, ::xml_schema::flags (), this),
   preferenciaProfessorDisciplina_ (preferenciaProfessorDisciplina, ::xml_schema::flags (), this),
   desempenhoProfDisponibilidade_ (desempenhoProfDisponibilidade, ::xml_schema::flags (), this),
+  funcaoObjetivo_ (funcaoObjetivo, ::xml_schema::flags (), this),
+  considerarEquivalencia_ (considerarEquivalencia, ::xml_schema::flags (), this),
   minAlunosAberturaTurmas_ (minAlunosAberturaTurmas, ::xml_schema::flags (), this),
   minAlunosAberturaTurmasValor_ (::xml_schema::flags (), this),
   niveisDificuldadeHorario_ (niveisDificuldadeHorario, ::xml_schema::flags (), this),
@@ -9874,8 +9897,7 @@ ItemParametrosPlanejamento (const modoOtimizacao_type& modoOtimizacao,
   percentuaisMinimoDoutores_ (percentuaisMinimoDoutores, ::xml_schema::flags (), this),
   areaTitulacaoProfessorCurso_ (areaTitulacaoProfessorCurso, ::xml_schema::flags (), this),
   maximoDisciplinasDeUmProfessorPorCurso_ (maximoDisciplinasDeUmProfessorPorCurso, ::xml_schema::flags (), this),
-  custoProfDisponibilidade_ (custoProfDisponibilidade, ::xml_schema::flags (), this),
-  funcaoObjetivo_ (funcaoObjetivo, ::xml_schema::flags (), this)
+  custoProfDisponibilidade_ (custoProfDisponibilidade, ::xml_schema::flags (), this)
 {
 }
 
@@ -9899,6 +9921,8 @@ ItemParametrosPlanejamento (const ItemParametrosPlanejamento& x,
   evitarProfUltimoPrimeiroHor_ (x.evitarProfUltimoPrimeiroHor_, f, this),
   preferenciaProfessorDisciplina_ (x.preferenciaProfessorDisciplina_, f, this),
   desempenhoProfDisponibilidade_ (x.desempenhoProfDisponibilidade_, f, this),
+  funcaoObjetivo_ (x.funcaoObjetivo_, f, this),
+  considerarEquivalencia_ (x.considerarEquivalencia_, f, this),
   minAlunosAberturaTurmas_ (x.minAlunosAberturaTurmas_, f, this),
   minAlunosAberturaTurmasValor_ (x.minAlunosAberturaTurmasValor_, f, this),
   niveisDificuldadeHorario_ (x.niveisDificuldadeHorario_, f, this),
@@ -9915,8 +9939,7 @@ ItemParametrosPlanejamento (const ItemParametrosPlanejamento& x,
   percentuaisMinimoDoutores_ (x.percentuaisMinimoDoutores_, f, this),
   areaTitulacaoProfessorCurso_ (x.areaTitulacaoProfessorCurso_, f, this),
   maximoDisciplinasDeUmProfessorPorCurso_ (x.maximoDisciplinasDeUmProfessorPorCurso_, f, this),
-  custoProfDisponibilidade_ (x.custoProfDisponibilidade_, f, this),
-  funcaoObjetivo_ (x.funcaoObjetivo_, f, this)
+  custoProfDisponibilidade_ (x.custoProfDisponibilidade_, f, this)
 {
 }
 
@@ -9940,6 +9963,8 @@ ItemParametrosPlanejamento (const ::xercesc::DOMElement& e,
   evitarProfUltimoPrimeiroHor_ (f, this),
   preferenciaProfessorDisciplina_ (f, this),
   desempenhoProfDisponibilidade_ (f, this),
+  funcaoObjetivo_ (f, this),
+  considerarEquivalencia_ (f, this),
   minAlunosAberturaTurmas_ (f, this),
   minAlunosAberturaTurmasValor_ (f, this),
   niveisDificuldadeHorario_ (f, this),
@@ -9956,8 +9981,7 @@ ItemParametrosPlanejamento (const ::xercesc::DOMElement& e,
   percentuaisMinimoDoutores_ (f, this),
   areaTitulacaoProfessorCurso_ (f, this),
   maximoDisciplinasDeUmProfessorPorCurso_ (f, this),
-  custoProfDisponibilidade_ (f, this),
-  funcaoObjetivo_ (f, this)
+  custoProfDisponibilidade_ (f, this)
 {
   if ((f & ::xml_schema::flags::base) == 0)
   {
@@ -10146,6 +10170,28 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
       if (!desempenhoProfDisponibilidade_.present ())
       {
         this->desempenhoProfDisponibilidade_.set (desempenhoProfDisponibilidade_traits::create (i, f, this));
+        continue;
+      }
+    }
+
+    // funcaoObjetivo
+    //
+    if (n.name () == "funcaoObjetivo" && n.namespace_ ().empty ())
+    {
+      if (!funcaoObjetivo_.present ())
+      {
+        this->funcaoObjetivo_.set (funcaoObjetivo_traits::create (i, f, this));
+        continue;
+      }
+    }
+
+    // considerarEquivalencia
+    //
+    if (n.name () == "considerarEquivalencia" && n.namespace_ ().empty ())
+    {
+      if (!considerarEquivalencia_.present ())
+      {
+        this->considerarEquivalencia_.set (considerarEquivalencia_traits::create (i, f, this));
         continue;
       }
     }
@@ -10349,17 +10395,6 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
       }
     }
 
-    // funcaoObjetivo
-    //
-    if (n.name () == "funcaoObjetivo" && n.namespace_ ().empty ())
-    {
-      if (!funcaoObjetivo_.present ())
-      {
-        this->funcaoObjetivo_.set (funcaoObjetivo_traits::create (i, f, this));
-        continue;
-      }
-    }
-
     break;
   }
 
@@ -10454,6 +10489,20 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
       "");
   }
 
+  if (!funcaoObjetivo_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "funcaoObjetivo",
+      "");
+  }
+
+  if (!considerarEquivalencia_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "considerarEquivalencia",
+      "");
+  }
+
   if (!minAlunosAberturaTurmas_.present ())
   {
     throw ::xsd::cxx::tree::expected_element< char > (
@@ -10542,13 +10591,6 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
   {
     throw ::xsd::cxx::tree::expected_element< char > (
       "custoProfDisponibilidade",
-      "");
-  }
-
-  if (!funcaoObjetivo_.present ())
-  {
-    throw ::xsd::cxx::tree::expected_element< char > (
-      "funcaoObjetivo",
       "");
   }
 }
