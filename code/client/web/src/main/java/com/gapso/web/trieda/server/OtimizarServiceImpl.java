@@ -28,7 +28,6 @@ import com.gapso.web.trieda.server.xml.input.TriedaInput;
 import com.gapso.web.trieda.server.xml.output.ItemError;
 import com.gapso.web.trieda.server.xml.output.ItemWarning;
 import com.gapso.web.trieda.server.xml.output.TriedaOutput;
-import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.ParametroDTO;
 import com.gapso.web.trieda.shared.services.OtimizarService;
@@ -47,7 +46,7 @@ public class OtimizarServiceImpl extends RemoteServiceServlet implements Otimiza
 //	private static final String linkSolver = "http://offspring:8080/SolverWS";    // SERVIDOR // OFFSPRING
 //	private static final String linkSolver = "http://toquinho:8080/SolverWS";     // MAQUINA DO MÁRIO // TOQUINHO
 //	private static final String linkSolver = "http://localhost:8080/SolverWS"; // MAQUINA DO CLAUDIO // NIRVANA
-	private static final String linkSolver = "http://localhost:8080/SolverWS";    // MAQUINA DESENVOLVIMENTO (CLAUDIO)
+	private static final String linkSolver = "http://localhost:3402/SolverWS";    // MAQUINA DESENVOLVIMENTO (CLAUDIO)
 
 	@Override
 	@Transactional
@@ -64,7 +63,7 @@ public class OtimizarServiceImpl extends RemoteServiceServlet implements Otimiza
 	
 	@Override
 	@Transactional
-	public Long input(ParametroDTO parametroDTO, List<CampusDTO> campiDTO) {
+	public Long input(ParametroDTO parametroDTO) {
 //		List<Campus> campi = new ArrayList<Campus>(campiDTO.size());
 //		for(CampusDTO campusDTO : campiDTO) {
 //			campi.add(Campus.find(campusDTO.getId()));

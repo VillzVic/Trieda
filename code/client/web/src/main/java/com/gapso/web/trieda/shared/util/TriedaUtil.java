@@ -39,8 +39,11 @@ public class TriedaUtil {
 		return value;
 	}
 	
-	static boolean isBlank(String value) {
+	static public boolean isBlank(String value) {
 		return value == null || value == "";
+	}
+	static public boolean isBlank(Long value) {
+		return value == null || value == 0;
 	}
 	
 	static public String paramsDebug() {

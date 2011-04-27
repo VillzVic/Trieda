@@ -23,10 +23,15 @@ import com.gapso.web.trieda.shared.dtos.CursoDTO;
 import com.gapso.web.trieda.shared.dtos.CursoDescompartilhaDTO;
 import com.gapso.web.trieda.shared.dtos.ParametroDTO;
 import com.gapso.web.trieda.shared.dtos.TurnoDTO;
+import com.gapso.web.trieda.shared.i18n.ITriedaI18nGateway;
 import com.gapso.web.trieda.shared.mvp.presenter.Presenter;
+import com.gapso.web.trieda.shared.services.CampiServiceAsync;
 import com.gapso.web.trieda.shared.services.OtimizarServiceAsync;
 import com.gapso.web.trieda.shared.services.Services;
+import com.gapso.web.trieda.shared.services.TurnosServiceAsync;
+import com.gapso.web.trieda.shared.util.TriedaUtil;
 import com.gapso.web.trieda.shared.util.resources.Resources;
+import com.gapso.web.trieda.shared.util.view.AbstractAsyncCallbackWithDefaultOnFailure;
 import com.gapso.web.trieda.shared.util.view.CampusComboBox;
 import com.gapso.web.trieda.shared.util.view.CargaHorariaComboBox;
 import com.gapso.web.trieda.shared.util.view.FuncaoObjetivoComboBox;
@@ -42,7 +47,7 @@ import com.googlecode.future.FutureSynchronizer;
 
 public class ParametrosPresenter implements Presenter {
 
-	public interface Display {
+	public interface Display extends ITriedaI18nGateway {
 		ParametroDTO getParametroDTO();
 		Radio getTaticoRadio();
 		Radio getOperacionalRadio();
@@ -87,15 +92,43 @@ public class ParametrosPresenter implements Presenter {
 	}
 	private Display display; 
 	private CenarioDTO cenario;
-	private List<CampusDTO> campi;
 	
-	public ParametrosPresenter(CenarioDTO cenario, List<CampusDTO> campi, Display display) {
+	public ParametrosPresenter(CenarioDTO cenario, Display display) {
 		this.cenario = cenario;
 		this.display = display;
-		this.campi = campi;
+		selectComboBoxs();
 		setListeners();
 	}
 
+	private void selectComboBoxs() {
+		Services.otimizar().getParametro(cenario, new AbstractAsyncCallbackWithDefaultOnFailure<ParametroDTO>(display) {
+			@Override
+			public void onSuccess(ParametroDTO parametroDTO) {
+				if(TriedaUtil.isBlank(parametroDTO.getCampusId()) && TriedaUtil.isBlank(parametroDTO.getTurnoId())) return;
+				final CampiServiceAsync campiService = Services.campi();
+				final TurnosServiceAsync turnosService = Services.turnos();
+				
+				final FutureResult<CampusDTO> futureCampusDTO = new FutureResult<CampusDTO>();
+				final FutureResult<TurnoDTO> futureTurnoDTO = new FutureResult<TurnoDTO>();
+				
+				campiService.getCampus(parametroDTO.getCampusId(), futureCampusDTO);
+				turnosService.getTurno(parametroDTO.getTurnoId(), futureTurnoDTO);
+				
+				FutureSynchronizer synch = new FutureSynchronizer(futureCampusDTO, futureTurnoDTO);
+				
+				synch.addCallback(new AbstractAsyncCallbackWithDefaultOnFailure<Boolean>(display) {
+					@Override
+					public void onSuccess(Boolean result) {
+						CampusDTO campusDTO = futureCampusDTO.result();
+						TurnoDTO turnoDTO = futureTurnoDTO.result();
+						display.getCampusComboBox().setValue(campusDTO);
+						display.getTurnoComboBox().setValue(turnoDTO);
+					}
+				});
+			}
+		});
+	}
+	
 	private void setListeners() {
 		display.getSubmitButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
 			@Override
@@ -106,7 +139,7 @@ public class ParametrosPresenter implements Presenter {
 					public void handleEvent(MessageBoxEvent be) {
 						if(be.getButtonClicked().getText().equalsIgnoreCase("yes")) {
 							OtimizarServiceAsync service = Services.otimizar();
-							service.input(getDTO(), campi, new AsyncCallback<Long>() {
+							service.input(getDTO(), new AsyncCallback<Long>() {
 								@Override
 								public void onFailure(Throwable caught) {
 									MessageBox.alert("ERRO!", "Deu falha na conexão", null);

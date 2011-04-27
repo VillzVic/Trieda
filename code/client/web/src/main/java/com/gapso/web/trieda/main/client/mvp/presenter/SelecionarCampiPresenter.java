@@ -96,7 +96,7 @@ public class SelecionarCampiPresenter implements Presenter {
 					public void onSuccess(ParametroDTO parametroDTO) {
 						display.getSimpleModal().hide();
 						List<CampusDTO> campi = display.getSelecionadoList().getStore().getModels();
-						Presenter presenter = new ParametrosPresenter(cenario, campi, new ParametrosView(parametroDTO));
+						Presenter presenter = new ParametrosPresenter(cenario, /*campi, */new ParametrosView(parametroDTO));
 						presenter.go(gTab);
 					}
 				});
