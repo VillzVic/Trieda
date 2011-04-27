@@ -4,6 +4,10 @@ MoveSwapEqBlocks::MoveSwapEqBlocks(Aula & _a1, Professor & _profA1, Aula & _a2, 
 {
 }
 
+MoveSwapEqBlocks::MoveSwapEqBlocks(Aula & _a1, Aula & _a2) : a1(_a1), profA1(*_a1.bloco_aula.begin()->first), a2(_a2), profA2(*_a2.bloco_aula.begin()->first)
+{
+}
+
 MoveSwapEqBlocks::~MoveSwapEqBlocks()
 {
 }

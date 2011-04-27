@@ -12,6 +12,8 @@
 #include "SolucaoOperacional.h"
 #include "CustoAlocacao.h"
 
+#include "MoveValidator.h"
+
 class SolucaoInicialOperacional
 {
 public:
@@ -26,6 +28,8 @@ private:
 				      int, Professor &, Aula &);
 
    ProblemData & problemData;
+
+   MoveValidator * moveValidator;
 
    // Estrutura que armazena o custo de alocar um professor a uma dada aula.
    std::map< std::pair< Professor *, Aula * >, CustoAlocacao * > custoProfTurma;

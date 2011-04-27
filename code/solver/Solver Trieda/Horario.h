@@ -26,6 +26,16 @@ public:
    int getHorarioAulaId() { return horarioAulaId; }
    int getTurnoId() { return turnoId; }
 
+   virtual bool operator < (Horario const & right) 
+   { 
+      return ( *horario_aula <  *right.horario_aula );
+   }
+
+   virtual bool operator == (Horario const & right) 
+   { 
+      return ( *horario_aula ==  *right.horario_aula );
+   }
+
 private:
    int horarioAulaId;
    int turnoId;

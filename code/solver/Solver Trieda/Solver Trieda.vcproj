@@ -99,87 +99,6 @@
 			/>
 		</Configuration>
 		<Configuration
-			Name="Debug|x64"
-			OutputDirectory="$(SolutionDir)$(PlatformName)\$(ConfigurationName)"
-			IntermediateDirectory="$(PlatformName)\$(ConfigurationName)"
-			ConfigurationType="1"
-			CharacterSet="2"
-			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-				TargetEnvironment="3"
-			/>
-			<Tool
-				Name="VCCLCompilerTool"
-				Optimization="0"
-				AdditionalIncludeDirectories="$(CODELIB);$(OPT_LP)\include;$(GUROBI_HOME)\include;$(XSD)\include"
-				PreprocessorDefinitions="WIN32;_WINDOWS;PORTUGUES;VERSAOCPLEX10;_CRT_SECURE_NO_DEPRECATE;_DEBUG;DEBUG"
-				MinimalRebuild="true"
-				BasicRuntimeChecks="3"
-				RuntimeLibrary="1"
-				BufferSecurityCheck="true"
-				UsePrecompiledHeader="0"
-				WarningLevel="3"
-				WarnAsError="false"
-				SuppressStartupBanner="true"
-				DebugInformationFormat="3"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLinkerTool"
-				AdditionalDependencies="gurobi40.lib xerces-c_3.lib"
-				LinkIncremental="2"
-				AdditionalLibraryDirectories="&quot;$(GUROBI_HOME)\lib&quot;;&quot;$(XSD)\lib\vc-8.0&quot;"
-				IgnoreDefaultLibraryNames="LIBCMT"
-				GenerateDebugInformation="true"
-				SubSystem="1"
-				OptimizeReferences="1"
-				LinkTimeCodeGeneration="0"
-				TargetMachine="17"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCManifestTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-			/>
-		</Configuration>
-		<Configuration
 			Name="Release|Win32"
 			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
 			IntermediateDirectory="$(ConfigurationName)"
@@ -242,6 +161,173 @@
 				EnableCOMDATFolding="2"
 				LinkTimeCodeGeneration="1"
 				TargetMachine="1"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+			/>
+		</Configuration>
+		<Configuration
+			Name="Release64|Win32"
+			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
+			IntermediateDirectory="$(ConfigurationName)"
+			ConfigurationType="1"
+			CharacterSet="2"
+			WholeProgramOptimization="1"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+			/>
+			<Tool
+				Name="VCCLCompilerTool"
+				Optimization="3"
+				EnableIntrinsicFunctions="true"
+				OmitFramePointers="true"
+				WholeProgramOptimization="true"
+				AdditionalIncludeDirectories="$(CODELIB);$(OPT_LP)\include;$(GUROBI_HOME)\include;$(XSD)\include"
+				PreprocessorDefinitions="WIN32;_WINDOWS;PORTUGUES;VERSAOCPLEX10;_CRT_SECURE_NO_DEPRECATE;_RELEASE;RELEASE"
+				MinimalRebuild="false"
+				BasicRuntimeChecks="0"
+				RuntimeLibrary="0"
+				BufferSecurityCheck="false"
+				EnableFunctionLevelLinking="true"
+				UsePrecompiledHeader="0"
+				WarningLevel="3"
+				WarnAsError="false"
+				SuppressStartupBanner="true"
+				DebugInformationFormat="0"
+			/>
+			<Tool
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
+			<Tool
+				Name="VCLinkerTool"
+				AdditionalDependencies="gurobi40.lib xerces-c_3.lib"
+				LinkIncremental="1"
+				AdditionalLibraryDirectories="&quot;$(GUROBI_HOME)\lib&quot;;&quot;$(XSD)\lib64\vc-8.0&quot;"
+				GenerateDebugInformation="false"
+				SubSystem="1"
+				LargeAddressAware="2"
+				OptimizeReferences="2"
+				EnableCOMDATFolding="2"
+				LinkTimeCodeGeneration="1"
+				TargetMachine="1"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+			/>
+		</Configuration>
+		<Configuration
+			Name="Debug|x64"
+			OutputDirectory="$(SolutionDir)$(PlatformName)\$(ConfigurationName)"
+			IntermediateDirectory="$(PlatformName)\$(ConfigurationName)"
+			ConfigurationType="1"
+			CharacterSet="2"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+				TargetEnvironment="3"
+			/>
+			<Tool
+				Name="VCCLCompilerTool"
+				Optimization="0"
+				AdditionalIncludeDirectories="$(CODELIB);$(OPT_LP)\include;$(GUROBI_HOME)\include;$(XSD)\include"
+				PreprocessorDefinitions="WIN32;_WINDOWS;PORTUGUES;VERSAOCPLEX10;_CRT_SECURE_NO_DEPRECATE;_DEBUG;DEBUG"
+				MinimalRebuild="true"
+				BasicRuntimeChecks="3"
+				RuntimeLibrary="1"
+				BufferSecurityCheck="true"
+				UsePrecompiledHeader="0"
+				WarningLevel="3"
+				WarnAsError="false"
+				SuppressStartupBanner="true"
+				DebugInformationFormat="3"
+			/>
+			<Tool
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
+			<Tool
+				Name="VCLinkerTool"
+				AdditionalDependencies="gurobi40.lib xerces-c_3.lib"
+				LinkIncremental="2"
+				AdditionalLibraryDirectories="&quot;$(GUROBI_HOME)\lib&quot;;&quot;$(XSD)\lib\vc-8.0&quot;"
+				IgnoreDefaultLibraryNames="LIBCMT"
+				GenerateDebugInformation="true"
+				SubSystem="1"
+				OptimizeReferences="1"
+				LinkTimeCodeGeneration="0"
+				TargetMachine="17"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -329,92 +415,6 @@
 				EnableCOMDATFolding="2"
 				LinkTimeCodeGeneration="1"
 				TargetMachine="17"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCManifestTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-			/>
-		</Configuration>
-		<Configuration
-			Name="Release64|Win32"
-			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
-			IntermediateDirectory="$(ConfigurationName)"
-			ConfigurationType="1"
-			CharacterSet="2"
-			WholeProgramOptimization="1"
-			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-			/>
-			<Tool
-				Name="VCCLCompilerTool"
-				Optimization="3"
-				EnableIntrinsicFunctions="true"
-				OmitFramePointers="true"
-				WholeProgramOptimization="true"
-				AdditionalIncludeDirectories="$(CODELIB);$(OPT_LP)\include;$(GUROBI_HOME)\include;$(XSD)\include"
-				PreprocessorDefinitions="WIN32;_WINDOWS;PORTUGUES;VERSAOCPLEX10;_CRT_SECURE_NO_DEPRECATE;_RELEASE;RELEASE"
-				MinimalRebuild="false"
-				BasicRuntimeChecks="0"
-				RuntimeLibrary="0"
-				BufferSecurityCheck="false"
-				EnableFunctionLevelLinking="true"
-				UsePrecompiledHeader="0"
-				WarningLevel="3"
-				WarnAsError="false"
-				SuppressStartupBanner="true"
-				DebugInformationFormat="0"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLinkerTool"
-				AdditionalDependencies="gurobi40.lib xerces-c_3.lib"
-				LinkIncremental="1"
-				AdditionalLibraryDirectories="&quot;$(GUROBI_HOME)\lib&quot;;&quot;$(XSD)\lib64\vc-8.0&quot;"
-				GenerateDebugInformation="false"
-				SubSystem="1"
-				LargeAddressAware="2"
-				OptimizeReferences="2"
-				EnableCOMDATFolding="2"
-				LinkTimeCodeGeneration="1"
-				TargetMachine="1"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -779,7 +779,7 @@
 						Name="Neighborhood Structures"
 						>
 						<File
-							RelativePath=".\NSSwapEqBlocks.cpp"
+							RelativePath=".\NSSeqSwapEqBlocks.cpp"
 							>
 						</File>
 						<Filter
@@ -795,6 +795,18 @@
 							>
 							<File
 								RelativePath=".\MoveSwapEqBlocks.cpp"
+								>
+							</File>
+						</Filter>
+						<Filter
+							Name="Validators"
+							>
+							<File
+								RelativePath=".\MoveSwapEqBlocksValidator.cpp"
+								>
+							</File>
+							<File
+								RelativePath=".\MoveValidator.cpp"
 								>
 							</File>
 						</Filter>
@@ -1150,10 +1162,6 @@
 				Name="Solver"
 				>
 				<File
-					RelativePath=".\Constraint.h"
-					>
-				</File>
-				<File
 					RelativePath=".\Solver.h"
 					>
 				</File>
@@ -1181,6 +1189,10 @@
 						>
 					</File>
 					<File
+						RelativePath=".\Constraint.h"
+						>
+					</File>
+					<File
 						RelativePath=".\CustoAlocacao.h"
 						>
 					</File>
@@ -1204,7 +1216,7 @@
 							>
 						</File>
 						<File
-							RelativePath=".\NSSwapEqBlocks.h"
+							RelativePath=".\NSSeqSwapEqBlocks.h"
 							>
 						</File>
 						<Filter
@@ -1228,6 +1240,18 @@
 							</File>
 							<File
 								RelativePath=".\MoveSwapEqBlocks.h"
+								>
+							</File>
+						</Filter>
+						<Filter
+							Name="Validators"
+							>
+							<File
+								RelativePath=".\MoveSwapEqBlocksValidator.h"
+								>
+							</File>
+							<File
+								RelativePath=".\MoveValidator.h"
 								>
 							</File>
 						</Filter>

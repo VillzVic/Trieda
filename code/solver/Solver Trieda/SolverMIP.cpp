@@ -1719,7 +1719,7 @@ int SolverMIP::solveOperacional()
    // -----------------------------------------------------------------------------------------
 
    // solucaoOperacional.toString();
-   // solucaoOperacional.toString2();
+   solucaoOperacional.toString2();
 
    Avaliador avaliador;
    double funcao_objetivo = avaliador.avaliaSolucao( solucaoOperacional, true );
@@ -1727,6 +1727,27 @@ int SolverMIP::solveOperacional()
 
    std::cout << "\nTODO -- Implementar <SolverMIP::solveOperacional()>"
 			 << std::endl;
+
+   //***********************
+   // TESTES !!!!
+
+   /*
+   PAREI AQUI !!
+
+   ESTÁ DANDO PAU NA HORA DE ALOCAR OS HORARIOS !!!
+   VER COM O CLEITON SE QDO ELE EXECUTA NA MAQUINA DELE ESTA DANDO TB.
+
+   */
+
+   NSSeqSwapEqBlocks * nsSeqSwapEqBlocks = new NSSeqSwapEqBlocks(*problemData);
+
+   NSIteratorSwapEqBlocks & it = (NSIteratorSwapEqBlocks &) nsSeqSwapEqBlocks->getIterator(solucaoOperacional);
+   it.current();
+   std::cout << "\n\n ----------------------------- \n\n";
+   it.next();
+   it.current();
+
+   //***********************
 
    // Armazena a solução operacional no problem solution
    problemSolution->solucao_operacional = &( solucaoOperacional );

@@ -559,6 +559,34 @@ void ProblemDataLoader::estabeleceDiasLetivosDisciplinasSalas()
                         ( itDiscAssoc->getId(), itSala->getId() );
 
                      problemData->disc_Salas_Dias[ ids_Disc_Sala ].add( *itDiasLetivosDisc );
+
+                     if(problemData->parametros->modo_otimizacao == "OPERACIONAL")
+                     {
+                        // Adicionando informações referentes aos horários comuns entre uma sala e uma disciplina para um dado dia.
+                        ITERA_GGROUP(itHorarioSala,itSala->horarios_disponiveis,Horario)
+                        {
+                           // Checando o dia em questão para a sala
+                           if(itHorarioSala->dias_semana.find(*itDiasLetivosDisc) !=
+                              itHorarioSala->dias_semana.end())
+                           {
+                              ITERA_GGROUP(itHorarioDisc,itDiscAssoc->horarios,Horario)
+                              {
+                                 // Checando o dia em questão para a disciplina
+                                 if(itHorarioDisc->dias_semana.find(*itDiasLetivosDisc) !=
+                                    itHorarioDisc->dias_semana.end())
+                                 {
+                                    // Checando se é um horário comum entre a disc e a sala.
+                                    if(itHorarioSala->horario_aula == itHorarioDisc->horario_aula)
+                                    {
+                                       problemData->disc_Salas_Dias_Horarios[ ids_Disc_Sala ][*itDiasLetivosDisc].add
+                                          (*itHorarioSala);
+                                       break;
+                                    }
+                                 }
+                              }
+                           }
+                        }
+                     }
                   }
                }
             }

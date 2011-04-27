@@ -1,14 +1,38 @@
 #ifndef NSITERATORSWAPEQBLOCKS_H_
 #define NSITERATORSWAPEQBLOCKS_H_
 
-//#include "Aula.h"
-//#include "GGroup.h"
+#include "NSIterator.hpp"
 
-class NSIteratorSwapEqBlocks
+#include "MoveSwapEqBlocks.h"
+#include "MoveSwapEqBlocksValidator.h"
+
+#include "GGroup.h"
+
+class NSIteratorSwapEqBlocks : public NSIterator
 {
 public:
-   NSIteratorSwapEqBlocks(/*3 iteradores ?! a1,a2,end*/);
+   NSIteratorSwapEqBlocks(ProblemData & pD, GGroup<Aula*> & aulas);
    virtual ~NSIteratorSwapEqBlocks();
+
+	void first();
+
+	void next();
+
+	bool isDone();
+
+	Move & current();
+
+private:
+   MoveSwapEqBlocks * move;
+
+   MoveSwapEqBlocksValidator * moveValidator;
+
+   GGroup<Aula*>::iterator itCurrent;
+   GGroup<Aula*>::iterator itNext;
+
+   GGroup<Aula*>::iterator itBegin;
+   GGroup<Aula*>::iterator itBeforeEnd;
+   GGroup<Aula*>::iterator itEnd;
 };
 
 #endif /*NSITERATORSWAPEQBLOCKS_H_*/

@@ -20,7 +20,11 @@
 #include "SolucaoOperacional.h"
 #include "SolucaoInicialOperacional.h"
 #include "Avaliador.h"
-#include "NSSwapEqBlocks.h"
+//#include "NSSwapEqBlocks.h"
+//#include "NSIteratorSwapEqBlocks.h"
+
+#include "NSSeqSwapEqBlocks.h"
+
 #include "TabuSearch.h"
 
 #define PRINT_cria_variaveis

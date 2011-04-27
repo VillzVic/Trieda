@@ -147,8 +147,22 @@ public:
    // Listando todas as ofertas que contem uma disciplina especificada.
    std::map< int, GGroup< Oferta * > > ofertasDisc;
 
+   // =============================================================================================
+   /* Estruturas conflitantes !!!
+
+   A segunda estrutura engloba a primeira. Portanto, basta substituir as ocorrências da primeira
+   estrutura pela segunda.
+
+   Os horários somente serão utilizados no módulo operacional.
+   */
+
    // Listando os dias letivos de uma disciplina em relação a cada sala.
    std::map< std::pair< int /*idDisc*/, int /*idSala*/ >, GGroup< int > /*Dias*/ > disc_Salas_Dias;
+
+   // Listando todos os horários para cada dia letivo comum entre um disciplina e uma sala.
+   std::map<std::pair< int /*idDisc*/, int /*idSala*/ >, 
+      std::map< int /*Dias*/, GGroup<Horario*, LessPtr<Horario> > > > disc_Salas_Dias_Horarios;
+   // =============================================================================================
 
    // Listando os dias letivos de uma disciplina em relação a um conjunto de salas de mesmo tipo.
    std::map<std::pair<int/*idDisc*/,int/*idSubCjtSala*/>, GGroup<int>/*Dias*/ > disc_Conjutno_Salas__Dias;

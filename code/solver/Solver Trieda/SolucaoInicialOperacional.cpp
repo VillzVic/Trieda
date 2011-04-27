@@ -9,6 +9,10 @@ bool ordenaCustosAlocacao(CustoAlocacao * left, CustoAlocacao * right)
 SolucaoInicialOperacional::SolucaoInicialOperacional(ProblemData & _problemData)
 : problemData(_problemData)
 {
+   moveValidator = new MoveValidator(&problemData);
+
+   // ----------------------------------------------------------------------
+
    executaFuncaoPrioridade();
 
    // ----------------------------------------------------------------------
@@ -53,7 +57,7 @@ SolucaoInicialOperacional::SolucaoInicialOperacional(ProblemData & _problemData)
 
 SolucaoInicialOperacional::~SolucaoInicialOperacional()
 {
-
+   delete moveValidator;
 }
 
 SolucaoOperacional & SolucaoInicialOperacional::geraSolucaoInicial()
@@ -406,9 +410,10 @@ bool SolucaoInicialOperacional::alocaAulaSeq( SolucaoOperacional * solucao, std:
       {
          // Procura a coluna da aula para a
          // qual o iterador destá apontando
-         std::vector< Aula * >::iterator it_aula
-            = solucao->getMatrizAulas()->at( idOperacionalProf )->begin();
+         std::vector< Aula * >::iterator it_aula = solucao->getMatrizAulas()->at( idOperacionalProf )->begin();
+
          coluna_matriz = ( std::distance( it_aula, itHorariosProf ) );
+
          id_horario_aula = ( coluna_matriz % total_horarios );
 
          // Recupera o objeto 'HorarioAula' do horário atual
@@ -421,15 +426,19 @@ bool SolucaoInicialOperacional::alocaAulaSeq( SolucaoOperacional * solucao, std:
          {
             horario = *( it_horario );
 
+            // Checando se encontrei o horário que estou buscando. 
             if ( horario->dias_semana.find(dia_semana) != horario->dias_semana.end()
 					&& horario->horario_aula->getId() == horario_aula->getId() )
             {
                // Cria o novo par professor/horario que será inserido
-               std::vector< std::pair< Professor *, Horario * > > novoHorarioAula; 
+               std::vector< std::pair< Professor *, Horario * > > novoHorarioAula;
+
                novoHorarioAula.push_back( std::make_pair( &(professor), horario ) );
 
-               bool haConflito = solucao->checkConflitoBlocoCurricular( aula, novoHorarioAula );
-               if ( !haConflito )
+               //if(!(solucao->checkConflitoBlocoCurricular(aula, novoHorarioAula)) &&
+               //   (solucao->checkDisponibilidadeHorarioSalaAula(aula,novoHorarioAula)))
+               if(!(moveValidator->checkBlockConflict(aula, novoHorarioAula)) &&
+                  (moveValidator->checkClassDisponibility(aula, novoHorarioAula)))
                {
                   aula.bloco_aula = novoHorarioAula;
                   if ( *itHorariosProf )
@@ -503,8 +512,10 @@ bool SolucaoInicialOperacional::alocaAulaSeq( SolucaoOperacional * solucao, std:
          }
       }
 
-      bool haConflito = solucao->checkConflitoBlocoCurricular( aula, novosHorariosAula );
-      if ( !haConflito )
+      //if(!(solucao->checkConflitoBlocoCurricular(aula, novosHorariosAula)) &&
+      //   (solucao->checkDisponibilidadeHorarioSalaAula(aula,novosHorariosAula)))
+      if(!(moveValidator->checkBlockConflict(aula, novosHorariosAula)) &&
+         (moveValidator->checkClassDisponibility(aula, novosHorariosAula)))
       {
          for ( int h = 0; h < aula.getTotalCreditos();
             ++h, ++itInicioHorariosAlocar )

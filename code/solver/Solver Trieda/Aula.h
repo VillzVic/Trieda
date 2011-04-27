@@ -11,6 +11,7 @@
 class Aula
 {
 public:
+
    Aula(bool = false);
    virtual ~Aula(void);
 

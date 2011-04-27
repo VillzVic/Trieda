@@ -59,7 +59,6 @@ public:
    // 5: quinta
    // 6: sexta
    // 7: sábado
-   //int getItHorariosProf(Professor & professor, int dia = 2, int horario = 0);
    std::vector< Aula * >::iterator getItHorariosProf(Professor &, int = 2, int = 0);
 
    // Adiciona um novo professor à solução. O inteiro retornado
@@ -68,20 +67,23 @@ public:
 
    // FUTURAMENTE, VAI SER NECESSARIO CRIAR UM METODO PARA REMOVER UM PROFESSOR.
 
-   // TODO: Implementar o método abaixo.
-   // bool alocaAula(Professor & professor, int dia, Horario & horario, Aula & aula);
-   // bool alocaAula(Professor & professor, Aula & aula, vector<Aula*> & horarios);
-
    int getTotalDias() const;
    int getTotalHorarios() const;
    int getTotalDeProfessores() const;
 
-   // Verifica se as aula <aX> e <aY> podem
-   // ter trocados os seus respectivos horários.
-   bool podeTrocarHorariosAulas( Aula &, Aula & ) const;
+   // Verifica se as aula <aX> e <aY> podem ter trocados os seus respectivos horários.
+   //bool podeTrocarHorariosAulas( Aula &, Aula & ) const;
 
    // Função auxiliar à função podeTrocarHorariosAulas
-   bool checkConflitoBlocoCurricular( Aula &, std::vector< std::pair< Professor *, Horario * > > & ) const;
+   //bool checkConflitoBlocoCurricular( Aula &, std::vector< std::pair< Professor *, Horario * > > & ) const;
+
+   /* Armazena o professor alocado para ministrar os créditos teóricos e práticos de uma disciplina. */
+   std::map<std::pair<int/*turma*/,int/*modulo do id da disciplina*/>, Professor*> profTurmaDiscAula;
+
+   /* Checa a disponibilidade dos horários da(s) sala(s) demandados pelas aulas em questão. */
+   //bool checkDisponibilidadeHorarioSalaAula(
+      //Aula & aula, 
+      //std::vector< std::pair< Professor *, Horario * > > & novosHorariosAula) const;
 
 private:
    int total_dias;
