@@ -174,8 +174,8 @@ public class SolverInput {
 		itemCalendario.setCodigo(calendario.getCodigo());
 		
 		GrupoTurno grupoTurno = of.createGrupoTurno();
-		Set<Turno> turnos = cenario.getTurnos();
-		for(Turno turno : turnos) {
+//		Set<Turno> turnos = cenario.getTurnos();
+//		for(Turno turno : turnos) { TODO Depois remover esses comentários para pegar todos os turnos
 			ItemTurno itemTurno = of.createItemTurno();
 			itemTurno.setId(turno.getId().intValue());
 			itemTurno.setNome(turno.getNome());
@@ -201,7 +201,7 @@ public class SolverInput {
 			itemTurno.setHorariosAula(grupoHorarioAula);
 			
 			grupoTurno.getTurno().add(itemTurno);
-		}
+//		}
 		itemCalendario.setTurnos(grupoTurno);
 		triedaInput.setCalendario(itemCalendario);
 	}
@@ -566,6 +566,7 @@ public class SolverInput {
 		for(Campus campus : campi) {
 			Set<Oferta> ofertas = campus.getOfertas();
 			for(Oferta oferta : ofertas) {
+				if(!oferta.getTurno().equals(turno)) continue; // TODO Depois remover esse if para listar todos os turnos 
 				ItemOfertaCurso itemOfertaCurso = of.createItemOfertaCurso();
 				itemOfertaCurso.setId(oferta.getId().intValue());
 				Curriculo curriculo = oferta.getCurriculo();
@@ -642,7 +643,7 @@ public class SolverInput {
 		itemParametrosPlanejamento.setPreferenciaProfessorDisciplina(parametro.getPreferenciaDeProfessores());
 		itemParametrosPlanejamento.setDesempenhoProfDisponibilidade(parametro.getAvaliacaoDesempenhoProfessor());
 		
-		itemParametrosPlanejamento.setConsiderarEquivalencia(parametro.getConsiderarEquivalencia());
+//		itemParametrosPlanejamento.setConsiderarEquivalencia(parametro.getConsiderarEquivalencia());
 		itemParametrosPlanejamento.setMinAlunosAberturaTurmas(parametro.getMinAlunosParaAbrirTurma());
 		itemParametrosPlanejamento.setMinAlunosAberturaTurmasValor(parametro.getMinAlunosParaAbrirTurmaValue());
 		// TODO
@@ -702,6 +703,7 @@ public class SolverInput {
 			List<HorarioDisponivelCenario> horarios = fixacao.getHorarios(this.semanaLetiva);
 			if(horarios.size() > 0) {
 				for(HorarioDisponivelCenario horario : horarios) {
+					if(!horario.getHorarioAula().getTurno().equals(turno)) continue; // TODO Depois remover esse if para listar todos os turnos
 					ItemFixacao itemFixacao = of.createItemFixacao();
 					itemFixacao.setId(id++);
 					itemFixacao.setDiaSemana(Semanas.toInt(horario.getSemana()));
@@ -878,6 +880,7 @@ public class SolverInput {
 			if(itemHorarioAux != null) {
 				itemHorarioAux.getDiasSemana().getDiaSemana().add(Semanas.toInt(semana));
 			} else {
+				if(!horarioAula.getTurno().equals(turno)) continue; // TODO Depois remover esse if para listar todos os turnos
 				itemHorarioAux = of.createItemHorario();
 				itemHorarioAux.setHorarioAulaId(horarioAula.getId().intValue());
 				itemHorarioAux.setTurnoId(horarioAula.getTurno().getId().intValue());
@@ -896,6 +899,7 @@ public class SolverInput {
 		
 		for(Semanas semana : Semanas.values()) {
 			for(Turno turno : cenario.getTurnos()) {
+				if(!turno.equals(this.turno)) continue; // TODO Depois remover esse if para listar todos os turnos
 				ItemCreditoDisponivel itemCD = of.createItemCreditoDisponivel();
 				itemCD.setDiaSemana(Semanas.toInt(semana));
 				itemCD.setTurnoId(turno.getId().intValue());

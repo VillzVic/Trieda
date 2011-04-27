@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.gapso.trieda.domain.Campus;
 import com.gapso.trieda.domain.Cenario;
 import com.gapso.trieda.domain.Parametro;
+import com.gapso.trieda.domain.Turno;
 import com.gapso.web.trieda.server.util.ConvertBeans;
 import com.gapso.web.trieda.server.util.SolverInput;
 import com.gapso.web.trieda.server.util.SolverOutput;
@@ -76,7 +77,8 @@ public class OtimizarServiceImpl extends RemoteServiceServlet implements Otimiza
 		cenario.getParametros().add(parametro);
 		List<Campus> campi = new ArrayList<Campus>(1);
 		campi.add(parametro.getCampus());
-		SolverInput solverInput = new SolverInput(cenario, parametro, campi, null);
+		Turno turno = parametro.getTurno();
+		SolverInput solverInput = new SolverInput(cenario, parametro, campi, turno);
 		
 		TriedaInput triedaInput = null;
 		if(parametro.isTatico()) {
