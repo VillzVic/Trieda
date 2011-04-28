@@ -94,6 +94,7 @@ std::ostream & operator << ( std::ostream & out, ProblemSolution & solution )
 	  //-----------------------------------------------------------------------
 
 	  //-----------------------------------------------------------------------
+	  // Código relacionado à issue TRIEDA-833
       out << "<professoresVirtuais>" << std::endl;
 	  if ( solution.professores_virtuais != NULL )
 	  {
