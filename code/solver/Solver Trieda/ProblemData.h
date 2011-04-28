@@ -161,7 +161,7 @@ public:
 
    // Listando todos os horários para cada dia letivo comum entre um disciplina e uma sala.
    std::map<std::pair< int /*idDisc*/, int /*idSala*/ >, 
-      std::map< int /*Dias*/, GGroup<Horario*, LessPtr<Horario> > > > disc_Salas_Dias_Horarios;
+	   std::map< int /*Dias*/, GGroup< HorarioAula *, LessPtr< HorarioAula > > > > disc_Salas_Dias_HorariosAula;
    // =============================================================================================
 
    // Listando os dias letivos de uma disciplina em relação a um conjunto de salas de mesmo tipo.

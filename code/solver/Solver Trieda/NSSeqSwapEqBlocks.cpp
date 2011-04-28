@@ -68,11 +68,9 @@ Move & NSSeqSwapEqBlocks::move(const SolucaoOperacional& s)
    std::pair<Aula*,Aula*> aulas = pickTwoClasses(s);
 
    Aula & a1 = *aulas.first;
-   
    Aula & a2 = *aulas.second;
 
    Professor & profA1 = *(a1.bloco_aula.begin()->first);
-
    Professor & profA2 = *(a2.bloco_aula.begin()->first);
 
    return *(new MoveSwapEqBlocks(a1,profA1,a2,profA2));

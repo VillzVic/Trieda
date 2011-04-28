@@ -1730,31 +1730,20 @@ int SolverMIP::solveOperacional()
 
    //***********************
    // TESTES !!!!
-   NSSeqSwapEqBlocks nsSeqSwapEqBlocks (*problemData);
+   // NSSeqSwapEqBlocks nsSeqSwapEqBlocks ( *problemData );
+   // MoveSwapEqBlocks & mIni = ( MoveSwapEqBlocks & ) nsSeqSwapEqBlocks.move( solucaoOperacional );
+   // MoveSwapEqBlocks & mRev = ( MoveSwapEqBlocks & ) mIni.apply( solucaoOperacional );
+   // std::cout << " ***************************************" << std::endl;
+   // std::cout << " ***************************************" << std::endl;
+   // std::cout << " ***************************************" << std::endl;
+   // mRev.apply( solucaoOperacional );
 
-   MoveSwapEqBlocks & mIni = (MoveSwapEqBlocks&) nsSeqSwapEqBlocks.move(solucaoOperacional);
-
-   MoveSwapEqBlocks & mRev = (MoveSwapEqBlocks&) mIni.apply(solucaoOperacional);
-
-   std::cout << " ***************************************" << std::endl;
-   std::cout << " ***************************************" << std::endl;
-   std::cout << " ***************************************" << std::endl;
-
-   mRev.apply(solucaoOperacional);
-   
-
-   //std::cout << avaliador.avaliaSolucao(mIni) << std::endl;
-
-
-   //RandomDescentMethod rdm (avaliador,nsSeqSwapEqBlocks,50);
-
-   //rdm.exec(solucaoOperacional,20,0);
-
-   //ILSLPerturbationLPlus2 ilslPerturbationPlus2 (avaliador,5,nsSwapEqBlocks);
-
-   //IteratedLocalSearchLevels ilsl (avaliador,rdm, ilslPerturbationPlus2, 50, 5);
-
-   //NSIteratorSwapEqBlocks & it = (NSIteratorSwapEqBlocks &) nsSeqSwapEqBlocks.getIterator(solucaoOperacional);
+   //std::cout << avaliador.avaliaSolucao( mIni ) << std::endl;
+   //RandomDescentMethod rdm ( avaliador, nsSeqSwapEqBlocks, 50 );
+   //rdm.exec( solucaoOperacional, 20, 0 );
+   //ILSLPerturbationLPlus2 ilslPerturbationPlus2 ( avaliador, 5, nsSwapEqBlocks );
+   //IteratedLocalSearchLevels ilsl ( avaliador,rdm, ilslPerturbationPlus2, 50, 5 );
+   //NSIteratorSwapEqBlocks & it = ( NSIteratorSwapEqBlocks & ) nsSeqSwapEqBlocks.getIterator( solucaoOperacional );
    //it.current();
    //std::cout << "\n\n ----------------------------- \n\n";
    //it.next();

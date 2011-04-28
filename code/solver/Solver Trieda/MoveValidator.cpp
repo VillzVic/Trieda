@@ -1,14 +1,16 @@
 #include "MoveValidator.h"
 
-MoveValidator::MoveValidator(ProblemData * pD) : problem_data(pD)
+MoveValidator::MoveValidator( ProblemData * pD )
+	: problem_data( pD )
 {
 }
 
 MoveValidator::~MoveValidator()
 {
+
 }
 
-bool MoveValidator::canSwapSchedule(Aula & aX, Aula & aY) const
+bool MoveValidator::canSwapSchedule( Aula & aX, Aula & aY ) const
 {
    std::vector< std::pair< Professor *, Horario * > > novosHorariosAX;
    std::vector< std::pair< Professor *, Horario * > > novosHorariosAY;
@@ -16,21 +18,22 @@ bool MoveValidator::canSwapSchedule(Aula & aX, Aula & aY) const
    novosHorariosAX = aY.bloco_aula;
    novosHorariosAY = aX.bloco_aula;
 
-   return ( !checkBlockConflict(aX, novosHorariosAX)
-      && !checkBlockConflict(aY, novosHorariosAY)
-      && checkClassDisponibility(aX, novosHorariosAX)
-      && checkClassDisponibility(aY, novosHorariosAY) );
+   return ( !checkBlockConflict( aX, novosHorariosAX )
+			&& !checkBlockConflict( aY, novosHorariosAY )
+			&& checkClassDisponibility( aX, novosHorariosAX )
+			&& checkClassDisponibility( aY, novosHorariosAY ) );
 }
 
-bool MoveValidator::checkBlockConflict( Aula & aula, std::vector< std::pair< Professor *, Horario * > > & novosHorariosAula ) const
+bool MoveValidator::checkBlockConflict(
+	Aula & aula, std::vector< std::pair< Professor *, Horario * > > & novosHorariosAula ) const
 {
-   std::map<Aula *, GGroup<BlocoCurricular*,LessPtr<BlocoCurricular> > >::iterator
+   std::map< Aula *, GGroup< BlocoCurricular *, LessPtr< BlocoCurricular > > >::iterator
       itAulaBlocosCurriculares = problem_data->aulaBlocosCurriculares.find( &aula );
 
    if ( itAulaBlocosCurriculares == problem_data->aulaBlocosCurriculares.end() )
    {
       std::cout << "Na funcao <SolucaoOperacional::checkConflitoBlocoCurricular>"
-         << "alguma aula nao foi encontrada." << std::endl;
+				<< "alguma aula nao foi encontrada." << std::endl;
 
       exit(1);
    }
@@ -44,18 +47,17 @@ bool MoveValidator::checkBlockConflict( Aula & aula, std::vector< std::pair< Pro
       if ( itBlocoCurricularAulas == problem_data->blocoCurricularDiaAulas.end() )
       {
          std::cout << "Na funcao <SolucaoOperacional::checkConflitoBlocoCurricular>"
-            << "algum bloco nao foi encontrado." << std::endl;
+				   << "algum bloco nao foi encontrado." << std::endl;
 
          exit(1);
       }
 
       std::map< int /*dia*/, GGroup< Aula *, LessPtr< Aula > > >::iterator 
          itBlocoCurricularDiaAulas = itBlocoCurricularAulas->second.find( aula.getDiaSemana() );
-
       if ( itBlocoCurricularDiaAulas == itBlocoCurricularAulas->second.end() )
       {
          std::cout << "Na funcao <SolucaoOperacional::checkConflitoBlocoCurricular>"
-            << "algum dia nao foi encontrado." << std::endl;
+				   << "algum dia nao foi encontrado." << std::endl;
 
          exit(1);
       }
@@ -77,18 +79,18 @@ bool MoveValidator::checkBlockConflict( Aula & aula, std::vector< std::pair< Pro
             // checo se ele conflita com  algum horário da
             // aula selecionada do bloco curricular.
             for (; itNovosHorariosAula != novosHorariosAula.end();
-               ++itNovosHorariosAula )
+                   ++itNovosHorariosAula )
             {
                std::vector< std::pair< Professor *, Horario * > >::iterator 
                   itHorariosAula = itAulasBloco->bloco_aula.begin();
 
                // Para cada horário da da aula selecionada do bloco curricular
                for(; itHorariosAula != itAulasBloco->bloco_aula.end();
-                  ++itHorariosAula)
+					 ++itHorariosAula )
                {
                   // Se conflitar, o movimento é inviável.
-                  if(    (*(itNovosHorariosAula->first) == *(itHorariosAula->first))
-                     && (*(itNovosHorariosAula->second) == *(itHorariosAula->second)) )
+                  if(   ( *(itNovosHorariosAula->first) == *(itHorariosAula->first ) )
+                     && ( *(itNovosHorariosAula->second) == *(itHorariosAula->second) ) )
                   {
                      return true;
                   }
@@ -102,60 +104,51 @@ bool MoveValidator::checkBlockConflict( Aula & aula, std::vector< std::pair< Pro
 }
 
 bool MoveValidator::checkClassDisponibility(
-   Aula & aula, 
-   std::vector< std::pair< Professor *, Horario * > > & novosHorariosAula) const
+   Aula & aula, std::vector< std::pair< Professor *, Horario * > > & novosHorariosAula ) const
 {
-   /* Verificando se os possíveis novos horários da aula são compatíveis com a sala a qual
-   a aula está alocada. */
+   // Verificando se os possíveis novos horários da aula
+   // são compatíveis com a sala a qual a aula está alocada.
 
-   // Obtendo as listas de horários para cada dia letivo comum entre uma sala e uma disciplina (aula).
-   std::map<std::pair< int /*idDisc*/, int /*idSala*/ >, 
-      std::map< int /*Dias*/, GGroup<Horario*, LessPtr<Horario> > > >::iterator
-      it_Disc_Salas_Dias_Horarios_Aula = problem_data->disc_Salas_Dias_Horarios.find(
-      std::make_pair(aula.getDisciplina()->getId(),aula.getSala()->getId()));
+   // Obtendo as listas de horários para cada dia
+   // letivo comum entre uma sala e uma disciplina (aula).
+   std::map< std::pair< int /*idDisc*/, int /*idSala*/ >, 
+			 std::map< int /*Dias*/, GGroup< HorarioAula *, LessPtr< HorarioAula > > > >::iterator
+      it_Disc_Salas_Dias_Horarios_Aula = problem_data->disc_Salas_Dias_HorariosAula.find(
+      std::make_pair( aula.getDisciplina()->getId(), aula.getSala()->getId() ) );
 
-   if(it_Disc_Salas_Dias_Horarios_Aula != problem_data->disc_Salas_Dias_Horarios.end())
+   if ( it_Disc_Salas_Dias_Horarios_Aula != problem_data->disc_Salas_Dias_HorariosAula.end() )
    {
       std::vector< std::pair< Professor *, Horario * > >::iterator 
          itNovosHorariosAula = novosHorariosAula.begin();
 
       // Para cada horário
-      for(; (itNovosHorariosAula != novosHorariosAula.end()); ++itNovosHorariosAula)
+      for(; ( itNovosHorariosAula != novosHorariosAula.end() );
+		      ++itNovosHorariosAula )
       {
-
-         std::map< int /*Dias*/, GGroup<Horario*, LessPtr<Horario> > >::iterator
-            it_Dias_Horarios_Aula = it_Disc_Salas_Dias_Horarios_Aula->second.find(aula.getDiaSemana());
+         std::map< int /*Dias*/, GGroup< HorarioAula *, LessPtr< HorarioAula > > >::iterator
+            it_Dias_Horarios_Aula = it_Disc_Salas_Dias_Horarios_Aula->second.find( aula.getDiaSemana() );
 
          // Se encontrei o dia procurado para as duas aulas
-         if(it_Dias_Horarios_Aula != it_Disc_Salas_Dias_Horarios_Aula->second.end())
+         if ( it_Dias_Horarios_Aula != it_Disc_Salas_Dias_Horarios_Aula->second.end() )
          {
             // Verificando os horários.
-            if(it_Dias_Horarios_Aula->second.find(itNovosHorariosAula->second) == it_Dias_Horarios_Aula->second.end())
+			 if ( it_Dias_Horarios_Aula->second.find( itNovosHorariosAula->second->horario_aula )
+					== it_Dias_Horarios_Aula->second.end() )
             {
                return false;
             }
          }
          else
          {
-            std::cout << "ERRO 1 em <>\n";
-            exit(1);
+            std::cout << "ERRO 1 em <MoveValidator::checkClassDisponibility()>\n";
+            // exit(1);
          }
-
-         //if(aX.getSala()->horarios_disponiveis.find(itNovosHorariosAX->second) == 
-         //   aX.getSala()->horarios_disponiveis.end() 
-         //   ||
-         //   aY.getSala()->horarios_disponiveis.find(itNovosHorariosAY->second) == 
-         //   aY.getSala()->horarios_disponiveis.end() )
-         //{
-         //   return false;
-         //}
-
       }
    }
    else
    {
-      std::cout << "ERRO 2 em <>\n";
-      exit(1);
+      std::cout << "ERRO 2 em <MoveValidator::checkClassDisponibility()>\n";
+      // exit(1);
    }
 
    return true;
