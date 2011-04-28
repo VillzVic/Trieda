@@ -1351,6 +1351,7 @@ Curso* Avaliador::procuraCurso(int id_curso, GGroup<Curso*> cursos)
    return curso;
 }
 
+// Método de avaliação relacionado à issue TRIEDA-880
 void Avaliador::avaliaPreferenciasProfessorDisciplina( SolucaoOperacional & solucao )
 {
    int nota_acumulada = 0;
