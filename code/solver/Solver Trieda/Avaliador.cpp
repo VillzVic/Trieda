@@ -847,6 +847,7 @@ void Avaliador::avaliacaoCustoCorpoDocente(SolucaoOperacional & solucao)
    totalCustoCorpoDocente = custoCorpoDocente;
 }
 
+// Método de avaliação relacionado à issue TRIEDA-878
 void Avaliador::violacoesCargasHorarias( SolucaoOperacional & solucao )
 {
    // Armazena o total de violações de cada tipo
