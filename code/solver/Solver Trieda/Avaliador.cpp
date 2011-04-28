@@ -194,7 +194,7 @@ double Avaliador::avaliaSolucao( SolucaoOperacional & solucao, bool imprime_resu
    return funcao_objetivo;
 }
 
-// Método de avaliação relacionado à issiue TRIEDA-737
+// Método de avaliação relacionado à issue TRIEDA-737
 void Avaliador::calculaViolacaoRestricaoFixacao( SolucaoOperacional & solucao )
 {
    double num_violacoes = 0.0;
@@ -369,10 +369,11 @@ void Avaliador::calculaDescolamentoProfessor( SolucaoOperacional & solucao )
    totalDeslocamentosProfessor = num_deslocamentos_professor;
 }
 
+// Método de avaliação relacionado às issues TRIEDA-802 e TRIEDA-803
 void Avaliador::calculaDescolamentoBlocoCurricular( SolucaoOperacional & solucao )
 {
-   int violacoes_deslocamento = 0;  // TRIEDA-739
-   double tempo_deslocamento = 0.0; // TRIEDA-740
+   int violacoes_deslocamento = 0;
+   double tempo_deslocamento = 0.0;
 
    unsigned int i = 0, j = 0;
 
