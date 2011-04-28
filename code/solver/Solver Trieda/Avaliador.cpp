@@ -246,10 +246,11 @@ void Avaliador::calculaViolacaoRestricaoFixacao( SolucaoOperacional & solucao )
    totalViolacaoRestricaoFixacao = num_violacoes;
 }
 
+// Método de avaliação relacionado à issue TRIEDA-876 e TRIEDA-877
 void Avaliador::calculaDescolamentoProfessor( SolucaoOperacional & solucao )
 {
-   int violacoes_deslocamento_professor = 0; // TRIEDA-776
-   int num_deslocamentos_professor = 0;      // TRIEDA-777
+   int violacoes_deslocamento_professor = 0;
+   int num_deslocamentos_professor = 0;
 
    Unidade * unidade_atual = NULL;
    Unidade * unidade_anterior = NULL;
