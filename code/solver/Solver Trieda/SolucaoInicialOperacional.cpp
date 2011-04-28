@@ -275,6 +275,7 @@ SolucaoOperacional & SolucaoInicialOperacional::geraSolucaoInicial()
             }
          }
 
+		 // Código relacionado à issue TRIEDA-882
          if ( !alocouAula )
          {
             Professor * novoProfessor = NULL;
@@ -353,10 +354,10 @@ SolucaoOperacional & SolucaoInicialOperacional::geraSolucaoInicial()
    if ( aulasNaoRelacionadasProf.size() > 0 )
    {
       std::cout << "ATENCAO: Existem aulas sem professor associado, "
-         << "ou seja, nao foi calculado um custo para ela pq o "
-         << "usuario nao associou a disciplina da aula "
-         << "em questao a nenhum professor."
-         << std::endl;
+                << "ou seja, nao foi calculado um custo para ela pq o "
+				<< "usuario nao associou a disciplina da aula "
+				<< "em questao a nenhum professor."
+				<< std::endl;
 
       exit(1);
    }

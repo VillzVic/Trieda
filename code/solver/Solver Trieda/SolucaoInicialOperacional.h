@@ -14,7 +14,7 @@
 class SolucaoInicialOperacional
 {
 public:
-   SolucaoInicialOperacional(ProblemData &);
+   SolucaoInicialOperacional( ProblemData & );
    virtual ~SolucaoInicialOperacional();
 
    SolucaoOperacional & geraSolucaoInicial();
