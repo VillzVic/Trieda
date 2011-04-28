@@ -9,6 +9,7 @@
 #include "AtendimentoCampus.h"
 #include "RestricaoViolada.h"
 
+// Código relacionado à issue TRIEDA-881
 class ProfessorVirtualOutput
 {
 public:
