@@ -28,7 +28,7 @@ public class ExportExcelFormSubmit {
 	}
 	
 	public void submit() {
-		RootPanel.get().add(this.formPanel);	
+		RootPanel.get().add(this.formPanel);
 		this.formPanel.submit();
 	}
 }

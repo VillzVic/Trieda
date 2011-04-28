@@ -12,12 +12,16 @@ public class CursosImportExcelBean extends AbstractImportExcelBean implements Co
 	private String tipoStr;
 	private String minDoutorPrecentStr;
 	private String minMestrePrecentStr;
+	private String minTempoIntegralParcialPrecentStr;
+	private String minTempoIntegralPrecentStr;
 	private String maxDisciplinasProfessorStr;
 	private String maisDeUmaDisciplinaProfessorStr;
 	
 	private TipoCurso tipo;
 	private Integer minDoutorPrecent;
 	private Integer minMestrePrecent;
+	private Integer minTempoIntegralParcialPrecent;
+	private Integer minTempoIntegralPrecent;
 	private Integer maxDisciplinasProfessor;
 	private Boolean maisDeUmaDisciplinaProfessor;
 	
@@ -33,10 +37,14 @@ public class CursosImportExcelBean extends AbstractImportExcelBean implements Co
 			checkMandatoryField(tipoStr,ImportExcelError.CURSO_TIPO_VAZIO,erros);
 			checkMandatoryField(minDoutorPrecentStr,ImportExcelError.CURSO_MIN_DOUTOR_VAZIO,erros);
 			checkMandatoryField(minMestrePrecentStr,ImportExcelError.CURSO_MIN_MESTRE_VAZIO,erros);
+			checkMandatoryField(minTempoIntegralParcialPrecentStr,ImportExcelError.CURSO_MIN_TEMPO_INTEGRAL_PARCIAL_VAZIO,erros);
+			checkMandatoryField(minTempoIntegralPrecentStr,ImportExcelError.CURSO_MIN_TEMPO_INTEGRAL_VAZIO,erros);
 			checkMandatoryField(maxDisciplinasProfessorStr,ImportExcelError.CURSO_MAX_DISC_PROF_VAZIO,erros);
 			checkMandatoryField(maisDeUmaDisciplinaProfessorStr,ImportExcelError.CURSO_MAIS_DE_UMA_DISC_PROF_VAZIO,erros);
 			minDoutorPrecent = checkNonNegativeIntegerField(minDoutorPrecentStr,ImportExcelError.CURSO_MIN_DOUTOR_FORMATO_INVALIDO,ImportExcelError.CURSO_MIN_DOUTOR_VALOR_NEGATIVO,erros);
 			minMestrePrecent = checkNonNegativeIntegerField(minMestrePrecentStr,ImportExcelError.CURSO_MIN_MESTRE_FORMATO_INVALIDO,ImportExcelError.CURSO_MIN_MESTRE_VALOR_NEGATIVO,erros);
+			minTempoIntegralParcialPrecent = checkNonNegativeIntegerField(minTempoIntegralParcialPrecentStr,ImportExcelError.CURSO_MIN_TEMPO_INTEGRAL_PARCIAL_FORMATO_INVALIDO,ImportExcelError.CURSO_MIN_TEMPO_INTEGRAL_PARCIAL_VALOR_NEGATIVO,erros);
+			minTempoIntegralPrecent = checkNonNegativeIntegerField(minTempoIntegralPrecentStr,ImportExcelError.CURSO_MIN_TEMPO_INTEGRAL_FORMATO_INVALIDO,ImportExcelError.CURSO_MIN_TEMPO_INTEGRAL_VALOR_NEGATIVO,erros);
 			maxDisciplinasProfessor = checkNonNegativeIntegerField(maxDisciplinasProfessorStr,ImportExcelError.CURSO_MAX_DISC_PROF_FORMATO_INVALIDO,ImportExcelError.CURSO_MAX_DISC_PROF_VALOR_NEGATIVO,erros);
 			maisDeUmaDisciplinaProfessor = checkBooleanField(maisDeUmaDisciplinaProfessorStr,ImportExcelError.CURSO_MAIS_DE_UMA_DISC_PROF_FORMATO_INVALIDO,erros);
 		} else {
@@ -79,6 +87,31 @@ public class CursosImportExcelBean extends AbstractImportExcelBean implements Co
 
 	public void setMinDoutorPrecentStr(String minDoutorPrecentStr) {
 		this.minDoutorPrecentStr = minDoutorPrecentStr;
+	}
+	
+	public String getMinTempoIntegralParcialPrecentStr() {
+		return minTempoIntegralParcialPrecentStr;
+	}
+
+	public void setMinTempoIntegralParcialPrecentStr(
+			String minTempoIntegralParcialPrecentStr) {
+		this.minTempoIntegralParcialPrecentStr = minTempoIntegralParcialPrecentStr;
+	}
+
+	public String getMinTempoIntegralPrecentStr() {
+		return minTempoIntegralPrecentStr;
+	}
+
+	public void setMinTempoIntegralPrecentStr(String minTempoIntegralPrecentStr) {
+		this.minTempoIntegralPrecentStr = minTempoIntegralPrecentStr;
+	}
+
+	public Integer getMinTempoIntegralParcialPrecent() {
+		return minTempoIntegralParcialPrecent;
+	}
+
+	public Integer getMinTempoIntegralPrecent() {
+		return minTempoIntegralPrecent;
 	}
 
 	public String getMinMestrePrecentStr() {

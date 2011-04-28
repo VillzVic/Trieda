@@ -44,6 +44,8 @@ public interface TriedaI18nConstants extends Constants {
 	String mensagemErro();
 	String minPercentualDoutor();
 	String minPercentualMestre();
+	String minTempoIntegralParcial();
+	String minTempoIntegral();
 	String municipio();
 	String nao();
 	String nivelDificuldade();

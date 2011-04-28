@@ -27,6 +27,8 @@ public class CursosImportExcel extends AbstractImportExcel<CursosImportExcelBean
 	static public String TIPO_COLUMN_NAME;
 	static public String MIN_DOUTOR_COLUMN_NAME;
 	static public String MIN_MESTRE_COLUMN_NAME;
+	static public String MIN_TEMPO_INTEGRAL_PARCIAL_COLUMN_NAME;
+	static public String MIN_TEMPO_INTEGRAL_COLUMN_NAME;
 	static public String MAX_DISC_PROF_COLUMN_NAME;
 	static public String MAIS_DE_UMA_DISC_PROF_COLUMN_NAME;
 	
@@ -41,6 +43,8 @@ public class CursosImportExcel extends AbstractImportExcel<CursosImportExcelBean
 		this.headerColumnsNames.add(TIPO_COLUMN_NAME);
 		this.headerColumnsNames.add(MIN_DOUTOR_COLUMN_NAME);
 		this.headerColumnsNames.add(MIN_MESTRE_COLUMN_NAME);
+		this.headerColumnsNames.add(MIN_TEMPO_INTEGRAL_PARCIAL_COLUMN_NAME);
+		this.headerColumnsNames.add(MIN_TEMPO_INTEGRAL_COLUMN_NAME);
 		this.headerColumnsNames.add(MAX_DISC_PROF_COLUMN_NAME);
 		this.headerColumnsNames.add(MAIS_DE_UMA_DISC_PROF_COLUMN_NAME);
 	}
@@ -76,6 +80,10 @@ public class CursosImportExcel extends AbstractImportExcel<CursosImportExcelBean
 						bean.setMinDoutorPrecentStr(cellValue);
 					} else if (MIN_MESTRE_COLUMN_NAME.endsWith(columnName)) {
 						bean.setMinMestrePrecentStr(cellValue);
+					} else if (MIN_TEMPO_INTEGRAL_PARCIAL_COLUMN_NAME.endsWith(columnName)) {
+						bean.setMinTempoIntegralParcialPrecentStr(cellValue);
+					} else if (MIN_TEMPO_INTEGRAL_COLUMN_NAME.endsWith(columnName)) {
+						bean.setMinTempoIntegralPrecentStr(cellValue);
 					} else if (MAX_DISC_PROF_COLUMN_NAME.endsWith(columnName)) {
 						bean.setMaxDisciplinasProfessorStr(cellValue);
 					} else if (MAIS_DE_UMA_DISC_PROF_COLUMN_NAME.endsWith(columnName)) {
@@ -188,6 +196,8 @@ public class CursosImportExcel extends AbstractImportExcel<CursosImportExcelBean
 				cursoBD.setNome(cursoExcel.getNomeStr());
 				cursoBD.setNumMinDoutores(cursoExcel.getMinDoutorPrecent());
 				cursoBD.setNumMinMestres(cursoExcel.getMinMestrePrecent());
+				cursoBD.setMinTempoIntegralParcial(cursoExcel.getMinTempoIntegralParcialPrecent());
+				cursoBD.setMinTempoIntegral(cursoExcel.getMinTempoIntegralPrecent());
 				cursoBD.setMaxDisciplinasPeloProfessor(cursoExcel.getMaxDisciplinasProfessor());
 				cursoBD.setAdmMaisDeUmDisciplina(cursoExcel.getMaisDeUmaDisciplinaProfessor());
 				cursoBD.setTipoCurso(cursoExcel.getTipo());
@@ -201,6 +211,8 @@ public class CursosImportExcel extends AbstractImportExcel<CursosImportExcelBean
 				newCurso.setNome(cursoExcel.getNomeStr());
 				newCurso.setNumMinDoutores(cursoExcel.getMinDoutorPrecent());
 				newCurso.setNumMinMestres(cursoExcel.getMinMestrePrecent());
+				newCurso.setMinTempoIntegralParcial(cursoExcel.getMinTempoIntegralParcialPrecent());
+				newCurso.setMinTempoIntegral(cursoExcel.getMinTempoIntegralPrecent());
 				newCurso.setMaxDisciplinasPeloProfessor(cursoExcel.getMaxDisciplinasProfessor());
 				newCurso.setAdmMaisDeUmDisciplina(cursoExcel.getMaisDeUmaDisciplinaProfessor());
 				newCurso.setTipoCurso(cursoExcel.getTipo());
@@ -217,6 +229,8 @@ public class CursosImportExcel extends AbstractImportExcel<CursosImportExcelBean
 			TIPO_COLUMN_NAME = HtmlUtils.htmlUnescape(getI18nConstants().tipo());
 			MIN_DOUTOR_COLUMN_NAME = HtmlUtils.htmlUnescape(getI18nConstants().minPercentualDoutor());
 			MIN_MESTRE_COLUMN_NAME = HtmlUtils.htmlUnescape(getI18nConstants().minPercentualMestre());
+			MIN_TEMPO_INTEGRAL_PARCIAL_COLUMN_NAME = HtmlUtils.htmlUnescape(getI18nConstants().minTempoIntegralParcial());
+			MIN_TEMPO_INTEGRAL_COLUMN_NAME = HtmlUtils.htmlUnescape(getI18nConstants().minTempoIntegral());
 			MAX_DISC_PROF_COLUMN_NAME = HtmlUtils.htmlUnescape(getI18nConstants().maxDisciplinasProfessor());
 			MAIS_DE_UMA_DISC_PROF_COLUMN_NAME = HtmlUtils.htmlUnescape(getI18nConstants().maisDeUmaDisciplinaProfessor());			
 		}

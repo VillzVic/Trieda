@@ -103,10 +103,14 @@ public class CursosExportExcel extends AbstractExportExcel {
 		setCell(row,5,sheet,cellStyles[ExcelCellStyleReference.NUMBER_DOUBLE.ordinal()],curso.getNumMinDoutores());
 		// % Min MSc
 		setCell(row,6,sheet,cellStyles[ExcelCellStyleReference.NUMBER_DOUBLE.ordinal()],curso.getNumMinMestres());
+		// % min Tempo Integral + Parcial
+		setCell(row,7,sheet,cellStyles[ExcelCellStyleReference.NUMBER_DOUBLE.ordinal()],curso.getMinTempoIntegralParcial());
+		// % min Tempo Integral
+		setCell(row,8,sheet,cellStyles[ExcelCellStyleReference.NUMBER_DOUBLE.ordinal()],curso.getMinTempoIntegral());
 		// Max Disciplinas Professor
-		setCell(row,7,sheet,cellStyles[ExcelCellStyleReference.NUMBER_INT.ordinal()],curso.getMaxDisciplinasPeloProfessor());
+		setCell(row,9,sheet,cellStyles[ExcelCellStyleReference.NUMBER_INT.ordinal()],curso.getMaxDisciplinasPeloProfessor());
 		// Permite mais de uma Disciplina por Professor
-		setCell(row,8,sheet,cellStyles[ExcelCellStyleReference.TEXT.ordinal()],(curso.getAdmMaisDeUmDisciplina() ? getI18nConstants().sim() : HtmlUtils.htmlUnescape(getI18nConstants().nao())));
+		setCell(row,10,sheet,cellStyles[ExcelCellStyleReference.TEXT.ordinal()],(curso.getAdmMaisDeUmDisciplina() ? getI18nConstants().sim() : HtmlUtils.htmlUnescape(getI18nConstants().nao())));
 		
 		row++;
 		return row;
