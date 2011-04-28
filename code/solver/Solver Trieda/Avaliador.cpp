@@ -1456,6 +1456,7 @@ void Avaliador::avaliaPreferenciasProfessorDisciplina( SolucaoOperacional & solu
    totalPreferenciasProfessorDisciplina = nota_acumulada;
 }
 
+// Método de avaliação relacionado à issue TRIEDA-879
 void Avaliador::avaliaCustoProfessorVirtual( SolucaoOperacional & solucao )
 {
    // Total de crétidos atribuídos a professores virtuais
