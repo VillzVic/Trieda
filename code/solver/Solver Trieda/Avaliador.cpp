@@ -713,6 +713,7 @@ double Avaliador::calculaTempoEntreCampusUnidades( SolucaoOperacional & solucao,
    return distancia;
 }
 
+// Método de avaliação relacionado à issue TRIEDA-806
 void Avaliador::calculaGapsHorariosProfessores(SolucaoOperacional & solucao)
 {
    double numGaps = 0.0;
