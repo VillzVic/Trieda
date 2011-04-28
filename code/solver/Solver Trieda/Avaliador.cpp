@@ -194,6 +194,7 @@ double Avaliador::avaliaSolucao( SolucaoOperacional & solucao, bool imprime_resu
    return funcao_objetivo;
 }
 
+// Método de avaliação relacionado à issiue TRIEDA-737
 void Avaliador::calculaViolacaoRestricaoFixacao( SolucaoOperacional & solucao )
 {
    double num_violacoes = 0.0;
