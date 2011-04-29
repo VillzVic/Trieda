@@ -292,7 +292,14 @@ public class Professor implements Serializable {
     		horario.merge();
     	}
     }
-	
+
+	@SuppressWarnings("unchecked")
+	public static List<Professor> findByCenario(Cenario cenario) {
+    	Query q = entityManager().createQuery("SELECT o FROM Professor o WHERE o.cenario = :cenario");
+    	q.setParameter("cenario", cenario);
+    	return q.getResultList();
+    }
+    
 	@Transactional
     public void flush() {
         if (this.entityManager == null) this.entityManager = entityManager();

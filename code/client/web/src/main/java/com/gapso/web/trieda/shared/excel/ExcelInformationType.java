@@ -9,6 +9,7 @@ public enum ExcelInformationType {
 	DISCIPLINAS("Disciplinas"),
 	DISCIPLINAS_SALAS("Disciplinas-Salas"),
 	PALETA_CORES("PaletaCores"),
+	PROFESSORES("Professores"),
 	RELATORIO_VISAO_SALA("Relatório Visão Sala"),
 	SALAS("Salas"),
 	UNIDADES("Unidades");

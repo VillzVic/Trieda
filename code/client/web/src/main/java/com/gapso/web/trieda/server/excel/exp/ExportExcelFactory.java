@@ -20,6 +20,7 @@ public class ExportExcelFactory {
 			case DISCIPLINAS: exporter = new DisciplinasExportExcel(cenario,i18nConstants,i18nMessages); break;
 			case UNIDADES: exporter = new UnidadesExportExcel(cenario,i18nConstants,i18nMessages); break;
 			case SALAS: exporter = new SalasExportExcel(cenario,i18nConstants,i18nMessages); break;
+			case PROFESSORES: exporter = new ProfessoresExportExcel(cenario,i18nConstants,i18nMessages); break;
 		}
 		
 		return exporter;
