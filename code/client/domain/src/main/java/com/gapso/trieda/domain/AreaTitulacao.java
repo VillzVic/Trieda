@@ -1,7 +1,9 @@
 package com.gapso.trieda.domain;
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.persistence.Column;
@@ -160,6 +162,14 @@ public class AreaTitulacao implements Serializable {
         return q.setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
 	
+	public static Map<String,AreaTitulacao> buildAreaTitulacaoCodigoToAreaTitulacaoMap(List<AreaTitulacao> areasTitulacoes) {
+		Map<String,AreaTitulacao> areasTitulacoesMap = new HashMap<String,AreaTitulacao>();
+		for (AreaTitulacao areaTitulacao : areasTitulacoes) {
+			areasTitulacoesMap.put(areaTitulacao.getCodigo(),areaTitulacao);
+		}
+		return areasTitulacoesMap;
+	}
+    
 	public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("Id: ").append(getId()).append(", ");

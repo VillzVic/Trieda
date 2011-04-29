@@ -1,8 +1,10 @@
 package com.gapso.trieda.domain;
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -382,6 +384,14 @@ public class Professor implements Serializable {
 		q.setParameter("professor", this);
 		q.setParameter("semanaLetiva", semanaLetiva);
 		return q.getResultList();
+	}
+	
+	public static Map<String,Professor> buildProfessorCpfToProfessorMap(List<Professor> professores) {
+		Map<String,Professor> professoresMap = new HashMap<String,Professor>();
+		for (Professor professor : professores) {
+			professoresMap.put(professor.getCpf(), professor);
+		}
+		return professoresMap;
 	}
 	
 	private static final long serialVersionUID = 265242535107921721L;

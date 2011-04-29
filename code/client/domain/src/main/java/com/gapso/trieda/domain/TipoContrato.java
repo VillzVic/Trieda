@@ -1,7 +1,9 @@
 package com.gapso.trieda.domain;
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -118,6 +120,14 @@ public class TipoContrato implements Serializable {
         return entityManager().createQuery("SELECT o FROM TipoContrato o").setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
 
+	public static Map<String,TipoContrato> buildTipoContratoNomeToTipoContratoMap(List<TipoContrato> tiposContrato) {
+		Map<String,TipoContrato> tiposContratoMap = new HashMap<String,TipoContrato>();
+		for (TipoContrato tipoContrato : tiposContrato) {
+			tiposContratoMap.put(tipoContrato.getNome(),tipoContrato);
+		}
+		return tiposContratoMap;
+	}
+	
 	public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("Id: ").append(getId()).append(", ");

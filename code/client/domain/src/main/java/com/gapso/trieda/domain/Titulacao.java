@@ -1,7 +1,9 @@
 package com.gapso.trieda.domain;
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -126,6 +128,14 @@ public class Titulacao implements Serializable {
         return entityManager().createQuery("SELECT o FROM Titulacao o").setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
 
+	public static Map<String,Titulacao> buildTitulacaoNomeToTitulacaoMap(List<Titulacao> titulacoes) {
+		Map<String,Titulacao> titulacoesMap = new HashMap<String,Titulacao>();
+		for (Titulacao titulacao : titulacoes) {
+			titulacoesMap.put(titulacao.getNome(),titulacao);
+		}
+		return titulacoesMap;
+	}
+	
 	private static final long serialVersionUID = 8929281662490204744L;
 
 	public String getNome() {

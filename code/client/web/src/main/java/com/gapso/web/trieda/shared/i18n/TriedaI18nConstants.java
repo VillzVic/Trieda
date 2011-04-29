@@ -6,14 +6,19 @@ public interface TriedaI18nConstants extends Constants {
 
 	String adicionar();
 	String andar();
+	String areaTitulacao();
 	String bairro();
 	String campi();
 	String campiHeadingPanel();
 	String campus();
 	String capacidade();
 	String capacidadeMediaSalas();
+	String cargaHorariaAnterior();
+	String cargaHorariaMax();
+	String cargaHorariaMin();
 	String codigo();
 	String confirmacao();
+	String cpf();
 	String creditosPraticos();
 	String creditosTeoricos();
 	String curriculos();
@@ -65,10 +70,14 @@ public interface TriedaI18nConstants extends Constants {
 	String selecioneO();
 	String sim();
 	String tipo();
+	String tipoContrato();
+	String titulacao();
 	String trieda();
 	String triedaDetailMessageHeadingText();
 	String unidade();
 	String unidades();
 	String unidadesHeadingPanel();
 	String usaLaboratorio();
+	String valorCredito();
+	
 }
