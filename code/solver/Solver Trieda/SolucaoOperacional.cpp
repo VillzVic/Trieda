@@ -93,6 +93,7 @@ SolucaoOperacional::SolucaoOperacional(SolucaoOperacional const & s)
    exit(1);
 }
 
+// Método relacionado com a issue TRIEDA-887
 int SolucaoOperacional::max_horarios_dia()
 {
 	int tam = 0;
