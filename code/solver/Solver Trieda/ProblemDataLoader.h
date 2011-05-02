@@ -92,6 +92,8 @@ public:
    // aula (todos os horários de todos os professores)
    void criaListaHorariosOrdenados();
 
+   void disciplinasCursosCompativeis();
+
 private:
    // Input data object of the problem
    ProblemData * problemData;

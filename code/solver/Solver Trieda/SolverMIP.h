@@ -92,7 +92,7 @@ private:
    **                     VARIABLE CREATION                           **
    *********************************************************************/
 
-   double alpha, beta, gamma, delta, lambda, epsilon, rho, M, psi, tau;
+   double alpha, beta, gamma, delta, lambda, epsilon, rho, M, psi, tau, eta;
 
    struct Ordena
    {

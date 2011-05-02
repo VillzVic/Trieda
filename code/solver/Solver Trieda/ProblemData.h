@@ -88,6 +88,7 @@ public:
    // disponíveis entre os professores
    int max_horarios_professor;
 
+   //map de compatibilidade e incompatibilidade entre 2 turmas.
    std::map< std::pair< Curso *, Curso * >, bool > compat_cursos;
 
    // Dado um curso e uma disciplina, retorna o bloco curricular correspondente
@@ -193,6 +194,8 @@ public:
 
    // Estrutura que informa a quais blocos curriculares uma aula pertence.
    std::map< Aula *, GGroup< BlocoCurricular *, LessPtr< BlocoCurricular > > > aulaBlocosCurriculares;
+
+   std::map<std::pair<Curso*,Curso*>,std::vector<int/*idDisc*/>> cursosComp_disc;
 
    virtual void le_arvore(TriedaInput &);
 };

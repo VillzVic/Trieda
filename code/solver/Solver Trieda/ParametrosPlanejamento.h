@@ -32,6 +32,7 @@ public:
    bool evitar_prof_ultimo_primeiro_hr;
    bool min_alunos_abertura_turmas;
    bool considerar_equivalencia;
+   bool permite_compartilhamento_turma_sel;
 
    virtual void le_arvore( ItemParametrosPlanejamento & );
 };

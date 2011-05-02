@@ -180,6 +180,9 @@ peso associado a função objetivo.
 %Data \tau
 %Desc 
 peso associado a função objetivo.
+%Data \eta
+%Desc 
+peso associado a função objetivo.
 
 %DocEnd
 /===================================================================*/
@@ -1373,14 +1376,13 @@ void SolverMIP::getSolutionTatico()
                                              AtendimentoTatico * at_Tatico = new AtendimentoTatico();
 
                                              // Verificando se a disicplina é de carater prático ou teórico.
-                                             if ( (*it_Vars_x)->getDisciplina()->getId() > 0
-                                                && (*it_Vars_x)->getDisciplina()->getCredTeoricos() > 0 )
+                                             if((*it_Vars_x)->getDisciplina()->getId() > 0 && (*it_Vars_x)->getDisciplina()->getCredTeoricos() > 0)
                                              {
-												 at_Tatico->setQtdCreditosTeoricos( (int)( (*it_Vars_x)->getValue() ) );
+												 at_Tatico->setQtdCreditosTeoricos((int)((*it_Vars_x)->getValue()));
                                              }
                                              else
                                              {
-												 at_Tatico->setQtdCreditosPraticos( (int)( (*it_Vars_x)->getValue() ) );
+												 at_Tatico->setQtdCreditosPraticos((int)((*it_Vars_x)->getValue()));
                                              }
 
                                              AtendimentoOferta * at_Oferta = new AtendimentoOferta();
@@ -1424,14 +1426,13 @@ void SolverMIP::getSolutionTatico()
                                        AtendimentoTatico * at_Tatico = new AtendimentoTatico();
 
                                        // Verificando se a disicplina é de carater prático ou teórico.
-                                       if ( (*it_Vars_x)->getDisciplina()->getId() > 0
-                                          && (*it_Vars_x)->getDisciplina()->getCredTeoricos() > 0 )
+                                       if((*it_Vars_x)->getDisciplina()->getId() > 0 && (*it_Vars_x)->getDisciplina()->getCredTeoricos() > 0)
                                        {
-										   at_Tatico->setQtdCreditosTeoricos( (int)((*it_Vars_x)->getValue()) );
+										   at_Tatico->setQtdCreditosTeoricos((int)((*it_Vars_x)->getValue()));
                                        }
                                        else
                                        {
-										   at_Tatico->setQtdCreditosPraticos( (int)((*it_Vars_x)->getValue()) );
+										   at_Tatico->setQtdCreditosPraticos((int)((*it_Vars_x)->getValue()));
                                        }
 
                                        AtendimentoOferta * at_Oferta = new AtendimentoOferta();
@@ -1485,14 +1486,13 @@ void SolverMIP::getSolutionTatico()
                               AtendimentoTatico * at_Tatico = new AtendimentoTatico();
 
                               // Verificando se a disicplina é de carater prático ou teórico.
-                              if ( (*it_Vars_x)->getDisciplina()->getId() > 0
-                                 && (*it_Vars_x)->getDisciplina()->getCredTeoricos() > 0 )
+                              if((*it_Vars_x)->getDisciplina()->getId() > 0 && (*it_Vars_x)->getDisciplina()->getCredTeoricos() > 0)
                               {
-								  at_Tatico->setQtdCreditosTeoricos( (int)( (*it_Vars_x)->getValue() ) );
+								  at_Tatico->setQtdCreditosTeoricos((int)((*it_Vars_x)->getValue()));
                               }
                               else
                               {
-								  at_Tatico->setQtdCreditosPraticos( (int)( (*it_Vars_x)->getValue() ) );
+								  at_Tatico->setQtdCreditosPraticos((int)((*it_Vars_x)->getValue()));
                               }
 
                               AtendimentoOferta * at_Oferta = new AtendimentoOferta();
@@ -1554,14 +1554,13 @@ void SolverMIP::getSolutionTatico()
                      AtendimentoTatico * at_Tatico = new AtendimentoTatico();
 
                      // Verificando se a disicplina é de carater prático ou teórico.
-                     if ( (*it_Vars_x)->getDisciplina()->getId() > 0
-                          && (*it_Vars_x)->getDisciplina()->getCredTeoricos() > 0 )
+                     if((*it_Vars_x)->getDisciplina()->getId() > 0 && (*it_Vars_x)->getDisciplina()->getCredTeoricos() > 0)
                      {
-						 at_Tatico->setQtdCreditosTeoricos( (int)( (*it_Vars_x)->getValue() ) );
+						 at_Tatico->setQtdCreditosTeoricos((int)((*it_Vars_x)->getValue()));
                      }
                      else
                      {
-						 at_Tatico->setQtdCreditosPraticos( (int)( (*it_Vars_x)->getValue() ) );
+						 at_Tatico->setQtdCreditosPraticos((int)((*it_Vars_x)->getValue()));
                      }
 
                      AtendimentoOferta * at_Oferta = new AtendimentoOferta();
@@ -1629,14 +1628,13 @@ void SolverMIP::getSolutionTatico()
             AtendimentoTatico * at_Tatico = new AtendimentoTatico();
 
             // Verificando se a disicplina é de carater prático ou teórico.
-            if ( (*it_Vars_x)->getDisciplina()->getId() > 0
-               && (*it_Vars_x)->getDisciplina()->getCredTeoricos() > 0 )
+            if((*it_Vars_x)->getDisciplina()->getId() > 0 && (*it_Vars_x)->getDisciplina()->getCredTeoricos() > 0)
             {
-				at_Tatico->setQtdCreditosTeoricos( (int)( (*it_Vars_x)->getValue() ) );
+				at_Tatico->setQtdCreditosTeoricos((int)((*it_Vars_x)->getValue()));
             }
             else
             {
-				at_Tatico->setQtdCreditosPraticos( (int)( (*it_Vars_x)->getValue() ) );
+				at_Tatico->setQtdCreditosPraticos((int)((*it_Vars_x)->getValue()));
             }
 
             AtendimentoOferta * at_Oferta = new AtendimentoOferta();
@@ -2182,7 +2180,6 @@ int SolverMIP::cria_variavel_creditos(void)
                      v.setSubCjtSala( *itCjtSala );  // tps  
                      v.setDia( *itDiscSala_Dias );   // t
 
-                     int coef = 0;
                      ITERA_GGROUP( it_prof, itCampus->professores, Professor )
                      {
 						// id_professor + id_disciplina
@@ -2191,11 +2188,11 @@ int SolverMIP::cria_variavel_creditos(void)
                         if ( problemData->prof_Disc_Dias.find( prof_Disc )
 								!= problemData->prof_Disc_Dias.end() )
                         {
-                           coef = 0;
+                           eta = 0;
                         }
                         else
                         {
-                           coef = 10;
+                           eta = 10;
                         }
 
                         if ( vHash.find(v) == vHash.end() )
@@ -2204,7 +2201,7 @@ int SolverMIP::cria_variavel_creditos(void)
 
                            if ( problemData->parametros->funcao_objetivo == 0 )
                            {
-                              OPT_COL col( OPT_COL::VAR_INTEGRAL, coef, 0.0,
+                              OPT_COL col( OPT_COL::VAR_INTEGRAL, eta, 0.0,
 										   itCjtSala->maxCredsDia( *itDiscSala_Dias ),
 										   ( char * )v.toString().c_str() );
 
@@ -3780,11 +3777,11 @@ int SolverMIP::cria_restricoes(void)
    numRestAnterior = restricoes;
 #endif
 
-   //restricoes += cria_restricao_alunos_cursos_dif();			// Restricao 1.2.21
+   restricoes += cria_restricao_alunos_cursos_dif();			// Restricao 1.2.21
 
 #ifdef PRINT_cria_restricoes
-   //std::cout << "numRest \"1.2.21\": " << (restricoes - numRestAnterior) << std::endl;
-   std::cout << "numVars \"1.2.21\": NAO ESTA SENDO CRIADA DEVIDO A ERROS DE IMPLEMENTACAO (A Inst. UNI-BH nao precisa dessa restricao implementada)." << std::endl;
+   std::cout << "numRest \"1.2.21\": " << (restricoes - numRestAnterior) << std::endl;
+   //std::cout << "numVars \"1.2.21\": NAO ESTA SENDO CRIADA DEVIDO A ERROS DE IMPLEMENTACAO (A Inst. UNI-BH nao precisa dessa restricao implementada)." << std::endl;
    numRestAnterior = restricoes;
 #endif
 
@@ -5322,21 +5319,37 @@ int SolverMIP::cria_restricao_max_cred_disc_bloco(void)
                            itCjtSala->diasLetivos.begin();
                         for(; itDiasLetCjtSala != itCjtSala->diasLetivos.end(); itDiasLetCjtSala++ )
                         {
-                           maxCredsSalaDia = (maxCredsSalaDia < itCjtSala->maxCredsDia(*itDiasLetCjtSala) ?
-                              itCjtSala->maxCredsDia(*itDiasLetCjtSala) : maxCredsSalaDia);
+							if(*itDiasLetCampus == *itDiasLetCjtSala)
+							{
+								maxCredsSalaDia = (maxCredsSalaDia < itCjtSala->maxCredsDia(*itDiasLetCjtSala) ?
+									itCjtSala->maxCredsDia(*itDiasLetCjtSala) : maxCredsSalaDia);
+							}
                         }
 
-                        ITERA_GGROUP(it_prof,itCampus->professores,Professor) 
-                        {
-                           std::pair<int/*idProf*/,int/*idDisc*/> prof_Disc 
-                              (it_prof->getId(),itDisc->getId());
-                           if(problemData->prof_Disc_Dias.find(prof_Disc) !=
-                              problemData->prof_Disc_Dias.end())
-                           {
-                              maxCredsProfDia = (maxCredsProfDia < itDisc->getMaxCreds() ?
-                                 itDisc->getMaxCreds() : maxCredsProfDia);
-                           }
-                        }
+         //               ITERA_GGROUP(it_prof,itCampus->professores,Professor) 
+         //               {
+         //                  std::pair<int/*idProf*/,int/*idDisc*/> prof_Disc 
+         //                     (it_prof->getId(),itDisc->getId());
+         //                  if(problemData->prof_Disc_Dias.find(prof_Disc) !=
+         //                     problemData->prof_Disc_Dias.end())
+         //                  {
+							  // std::map<std::pair<int/*idProf*/,int/*idDisc*/>,GGroup<int>>::iterator it_prof_disc =
+								 //  problemData->prof_Disc_Dias.begin();
+
+							  // for(; it_prof_disc != problemData->prof_Disc_Dias.end(); it_prof_disc++)
+							  // {
+								 //  GGroup<int>::iterator it_dias = it_prof_disc->second.begin();
+								 //  for(; it_dias != it_prof_disc->second.end(); ++it_dias)
+								 //  {
+									//   if(*itDiasLetCampus == *it_dias)
+									//   {
+									//	   maxCredsProfDia = (maxCredsProfDia < itDisc->getMaxCreds() ?
+									//		itDisc->getMaxCreds() : maxCredsProfDia);
+									//   }
+								 //  }
+							  // }
+						   //}
+         //               }
                      }
                   }
                }
@@ -5348,7 +5361,8 @@ int SolverMIP::cria_restricao_max_cred_disc_bloco(void)
             v.setDia(*itDiasLetCampus);
             v.setCampus(*itCampus);
 
-            int H_t = (maxCredsProfDia < maxCredsSalaDia ? maxCredsProfDia : maxCredsSalaDia);  
+            //int H_t = (maxCredsProfDia < maxCredsSalaDia ? maxCredsProfDia : maxCredsSalaDia);
+			int H_t = maxCredsSalaDia;
             it_v = vHash.find(v);
             if( it_v != vHash.end() )
                //{ row.insert(it_v->second, -24.0); /* #Warning: FIXME */ }
@@ -5367,7 +5381,6 @@ int SolverMIP::cria_restricao_max_cred_disc_bloco(void)
          }
       }
    }
-
 
    //ITERA_GGROUP(it_campus,problemData->campi,Campus) {
    //   for(int t=0;t<7;t++) {
@@ -6959,102 +6972,81 @@ int SolverMIP::cria_restricao_alunos_cursos_dif(void)
       {
          for(int turma = 0; turma < itDisc->getNumTurmas(); turma++)
          {
-            std::map<std::pair<Curso*,Curso*>,bool>::iterator itCC =
-               problemData->compat_cursos.begin();
+			 std::map<std::pair<Curso*,Curso*>,std::vector<int>>::iterator it_cursoComp_disc =
+               problemData->cursosComp_disc.begin();
 
-            for(; itCC != problemData->compat_cursos.end(); itCC++)
+            for(; it_cursoComp_disc != problemData->cursosComp_disc.end(); it_cursoComp_disc++)
             {
-               if(!itCC->second)
-               {
-                  c.reset();
-                  c.setType(Constraint::C_ALUNOS_CURSOS_DIF);
 
-                  c.setCampus(*itCampus);
+				std::vector<int>::iterator it_disc = it_cursoComp_disc->second.begin();
+                for(; it_disc != it_cursoComp_disc->second.end(); ++it_disc)
+                {
+					  Disciplina *nova_disc = new Disciplina();
+					  nova_disc->setId(*it_disc);
 
-                  c.setCurso(itCC->first.first);
-                  c.setCursoIncompat(itCC->first.second);
+					  c.reset();
+					  c.setType(Constraint::C_ALUNOS_CURSOS_DIF);
 
-                  c.setDisciplina(*itDisc);
-                  c.setTurma(turma);
+					  c.setCampus(*itCampus);
+					  c.setCurso(it_cursoComp_disc->first.first);
+					  c.setCursoIncompat(it_cursoComp_disc->first.second);
+					  c.setDisciplina(nova_disc);
+					  c.setTurma(turma);
 
-                  sprintf( name, "%s", c.toString().c_str() ); 
+					  sprintf( name, "%s", c.toString().c_str() ); 
 
-                  if (cHash.find(c) != cHash.end()) continue;
+					  if (cHash.find(c) != cHash.end()) continue;
 
-                  // Testando com os cursos invertidos
+					  nnz = 3;
 
-                  c.setCurso(itCC->first.second);
-                  c.setCursoIncompat(itCC->first.first);
+					  OPT_ROW row( nnz, OPT_ROW::LESS , 1.0 , name );
 
-                  if (cHash.find(c) != cHash.end()) continue;
+					  v.reset();
+					  v.setType(Variable::V_ALOC_ALUNO);
 
-                  nnz = 3;
+					  v.setTurma(turma);
+					  v.setDisciplina(nova_disc);
+					  v.setCurso(it_cursoComp_disc->first.first);
+					  v.setCampus(*itCampus);
 
-                  OPT_ROW row( nnz, OPT_ROW::LESS , 1.0 , name );
+					  it_v = vHash.find(v);
+					  if( it_v != vHash.end() )
+					  { row.insert(it_v->second, 1); }
 
-                  // ---
-                  // b -> curso compatível
+					  v.reset();
+					  v.setType(Variable::V_ALOC_ALUNO);
 
-                  v.reset();
-                  v.setType(Variable::V_ALOC_ALUNO);
+					  v.setTurma(turma);
+					  v.setDisciplina(nova_disc);
+					  v.setCurso(it_cursoComp_disc->first.second);
+					  v.setCampus(*itCampus);
 
-                  v.setTurma(turma);
-                  v.setDisciplina(*itDisc);
-                  v.setCurso(itCC->first.first);
-                  v.setCampus(*itCampus);
+					  it_v = vHash.find(v);
+					  if( it_v != vHash.end() )
+					  { row.insert(it_v->second, 1); }
 
-                  it_v = vHash.find(v);
-                  if( it_v != vHash.end() )
-                  { row.insert(it_v->second, 1); }
+					  v.reset();
+					  v.setType(Variable::V_SLACK_ALOC_ALUNOS_CURSO_INCOMPAT);
 
-                  // ---
-                  // b -> curso incompatível
+					  v.setTurma(turma);
+					  v.setDisciplina(nova_disc);
+					  v.setCurso(it_cursoComp_disc->first.first);
+					  v.setCursoIncompat(it_cursoComp_disc->first.second);
+					  v.setCampus(*itCampus);
 
-                  v.reset();
-                  v.setType(Variable::V_ALOC_ALUNO);
+					  it_v = vHash.find(v);
+					  if( it_v != vHash.end() )
+					  { row.insert(it_v->second, -1); }
 
-                  v.setTurma(turma);
-                  v.setDisciplina(*itDisc);
+					  if(row.getnnz() != 0)
+					  {
+						 cHash[ c ] = lp->getNumRows();
 
-                  //v.setCurso(itCC->first.second);
-                  v.setCursoIncompat(itCC->first.second);
-
-                  v.setCampus(*itCampus);
-
-                  it_v = vHash.find(v);
-                  if( it_v != vHash.end() )
-                  { row.insert(it_v->second, 1); }
-
-                  // ---
-                  // bs
-
-                  v.reset();
-                  v.setType(Variable::V_SLACK_ALOC_ALUNOS_CURSO_INCOMPAT);
-
-                  v.setTurma(turma);
-                  v.setDisciplina(*itDisc);
-                  v.setCurso(itCC->first.first);
-                  v.setCursoIncompat(itCC->first.second);
-                  v.setCampus(*itCampus);
-
-                  it_v = vHash.find(v);
-                  if( it_v != vHash.end() )
-                  { row.insert(it_v->second, -1); }
-
-                  if(row.getnnz() != 0)
-                  {
-                     cHash[ c ] = lp->getNumRows();
-
-                     lp->addRow(row);
-                     restricoes++;
-                  }
-
-                  //lp->addRow(row);
-                  //restricoes++;
-
-               }
-            }
-
+						 lp->addRow(row);
+						 restricoes++;
+					  }
+				}
+			}
          }
       }
    }

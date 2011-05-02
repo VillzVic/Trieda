@@ -115,6 +115,9 @@ void ProblemDataLoader::load()
 
    // ---------
    criaListaHorariosOrdenados();
+
+   // ---------
+   disciplinasCursosCompativeis();
 }
 
 bool ordena_horarios_aula( HorarioAula * h1, HorarioAula * h2 )
@@ -820,6 +823,121 @@ void ProblemDataLoader::combinacaoDivCreditos()
          }
       }
    }
+}
+
+void ProblemDataLoader::disciplinasCursosCompativeis()
+{
+	if(problemData->parametros->permite_compartilhamento_turma_sel){
+		std::map<std::pair<Curso*,Curso*>,bool>::iterator itCompatCursos = 
+		  problemData->compat_cursos.begin();
+
+	   for(; itCompatCursos != problemData->compat_cursos.end(); itCompatCursos++)
+	   {
+		  std::pair<Curso*,Curso*> c = 
+			 std::make_pair<Curso*,Curso*>(itCompatCursos->first.first,itCompatCursos->first.second);
+
+		  std::pair<Curso*,Curso*> cAux = 
+			  std::make_pair<Curso*,Curso*>(itCompatCursos->first.second,itCompatCursos->first.first);
+
+		  if(itCompatCursos->first.first != itCompatCursos->first.second)
+		  {
+			  //Adicionar as disciplinas em comum dos cursos compativeis
+			  if(problemData->compat_cursos[c] == true)
+			  {
+				  ITERA_GGROUP(itCurso, problemData->cursos, Curso)
+				  {
+					  if(itCompatCursos->first.first == *itCurso)
+					  {
+						  ITERA_GGROUP(itCursoAux, problemData->cursos, Curso)
+						  {
+							  if(itCompatCursos->first.second == *itCursoAux)
+							  {
+								  ITERA_GGROUP(itCurric, itCurso->curriculos, Curriculo)
+								  {
+									  GGroup<DisciplinaPeriodo>::iterator it_disc_prd =
+										  itCurric->disciplinas_periodo.begin();
+									  for(; it_disc_prd != itCurric->disciplinas_periodo.end(); it_disc_prd++)
+									  {
+										  DisciplinaPeriodo dp = *it_disc_prd;
+										  int disc_id = dp.second;
+
+										  ITERA_GGROUP(itCurricAux, itCursoAux->curriculos, Curriculo)
+										  {
+											  GGroup<DisciplinaPeriodo>::iterator it_disc_prd_aux =
+												  itCurricAux->disciplinas_periodo.begin();
+											  for(; it_disc_prd_aux != itCurricAux->disciplinas_periodo.end(); it_disc_prd_aux++)
+											  {
+												   DisciplinaPeriodo dpAux = *it_disc_prd_aux;
+												   int disc_id_aux = dpAux.second;
+
+												   if(disc_id == disc_id_aux)
+												   {
+													   if(problemData->cursosComp_disc.find(cAux) == problemData->cursosComp_disc.end())
+													   {
+														   problemData->cursosComp_disc[c].push_back(disc_id);
+													   }
+												   }
+											  }
+										  }
+									  }
+								  }
+							  }
+						  }
+					  }
+				  }
+			  }
+		  }
+	   }
+	}
+	else
+	{
+		ITERA_GGROUP(itCurso, problemData->cursos, Curso)
+		{
+			ITERA_GGROUP(itCursoAux, problemData->cursos, Curso)
+			{
+				if(itCurso != itCursoAux)
+				{
+					ITERA_GGROUP(itCurric, itCurso->curriculos, Curriculo)
+					{
+						GGroup<DisciplinaPeriodo>::iterator it_disc_prd =
+							itCurric->disciplinas_periodo.begin();
+						for(; it_disc_prd != itCurric->disciplinas_periodo.end(); it_disc_prd++)
+						{
+							DisciplinaPeriodo dp = *it_disc_prd;
+							int disc_id = dp.second;
+
+							ITERA_GGROUP(itCurricAux, itCursoAux->curriculos, Curriculo)
+							{
+								GGroup<DisciplinaPeriodo>::iterator it_disc_prd_aux =
+									itCurricAux->disciplinas_periodo.begin();
+								for(; it_disc_prd_aux != itCurricAux->disciplinas_periodo.end(); it_disc_prd_aux++)
+								{
+									DisciplinaPeriodo dpAux = *it_disc_prd_aux;
+									int disc_id_aux = dpAux.second;
+
+									if(disc_id == disc_id_aux)
+									{
+										std::pair<Curso*,Curso*> c = 
+												std::make_pair<Curso*,Curso*>(*itCurso,*itCursoAux);
+
+										std::pair<Curso*,Curso*> cAux = 
+												std::make_pair<Curso*,Curso*>(*itCursoAux,*itCurso);
+
+										if(problemData->cursosComp_disc.find(cAux) == problemData->cursosComp_disc.end())
+										{
+											problemData->cursosComp_disc[c].push_back(disc_id);
+										}
+																		
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
 }
 
 template< class T > 

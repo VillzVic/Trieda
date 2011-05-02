@@ -91,4 +91,5 @@ void ParametrosPlanejamento::le_arvore( ItemParametrosPlanejamento & elem )
    min_alunos_abertura_turmas = elem.minAlunosAberturaTurmas();
    funcao_objetivo = elem.funcaoObjetivo();
    considerar_equivalencia = elem.considerarEquivalencia();
+   permite_compartilhamento_turma_sel = elem.permiteCompartilhamentoTurmaSel();
 }

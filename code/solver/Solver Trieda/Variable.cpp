@@ -226,6 +226,8 @@ std::string Variable::toString()
    if (j >= 0) str << "," << j;
    if (c) str << "," << c->getId();
 
+   if (c_incompat) str << "," <<c_incompat->getId();
+
    if (cp) str << "," << cp->getId();
 
    if (o) str << "," << o->getId();
@@ -268,6 +270,9 @@ size_t VariableHasher::operator()(const Variable& v) const
    }
    if(v.getCurso()) {
       sum *= HASH_PRIME; sum+= intHash(v.getCurso()->getId());
+   }
+   if(v.getCursoIncompat()) {
+	   sum *= HASH_PRIME; sum+= intHash(v.getCursoIncompat()->getId());
    }
    if(v.getBloco()) {
       sum *= HASH_PRIME; sum+= intHash(v.getBloco()->getId());
