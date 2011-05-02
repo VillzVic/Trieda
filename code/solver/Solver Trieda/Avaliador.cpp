@@ -1511,6 +1511,7 @@ void Avaliador::avaliaCustoProfessorVirtual( SolucaoOperacional & solucao )
    totalProfessoresVirtuais = professores_virtuais;
 }
 
+// Método de avaliação relacionado às issues TRIEDA-884 e TRIEDA-885
 void Avaliador::avaliaTempoParcialIntegral( SolucaoOperacional & solucao )
 {
 	int violacoesParcialIntegral = 0;
