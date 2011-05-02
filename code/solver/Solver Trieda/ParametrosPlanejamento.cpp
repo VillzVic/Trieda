@@ -92,4 +92,5 @@ void ParametrosPlanejamento::le_arvore( ItemParametrosPlanejamento & elem )
    funcao_objetivo = elem.funcaoObjetivo();
    considerar_equivalencia = elem.considerarEquivalencia();
    permite_compartilhamento_turma_sel = elem.permiteCompartilhamentoTurmaSel();
+   permitir_alunos_em_varios_campi = elem.permitirAlunosEmVariosCampi();
 }

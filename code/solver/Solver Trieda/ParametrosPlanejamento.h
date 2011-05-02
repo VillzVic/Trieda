@@ -33,6 +33,7 @@ public:
    bool min_alunos_abertura_turmas;
    bool considerar_equivalencia;
    bool permite_compartilhamento_turma_sel;
+   bool permitir_alunos_em_varios_campi;
 
    virtual void le_arvore( ItemParametrosPlanejamento & );
 };
