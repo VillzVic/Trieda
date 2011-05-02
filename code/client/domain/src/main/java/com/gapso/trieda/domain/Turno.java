@@ -157,6 +157,13 @@ public class Turno implements Serializable {
     	q.setParameter("campus", campus);
     	return q.getResultList();
     }
+    
+    @SuppressWarnings("unchecked")
+    public static List<Turno> findByNome(String nome) {
+    	Query q = entityManager().createQuery("SELECT o FROM Turno o WHERE o.nome = :nome");
+    	q.setParameter("nome", nome);
+    	return q.getResultList();
+    }
 
     @SuppressWarnings("unchecked")
     public static List<Turno> findAll() {
@@ -213,6 +220,14 @@ public class Turno implements Serializable {
         if(tempo != null) q.setParameter("tempo", tempo);
         return q.setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
+    
+	public static Map<String,Turno> buildTurnoNomeToTurnoMap(List<Turno> turnos) {
+		Map<String,Turno> turnosMap = new HashMap<String,Turno>();
+		for (Turno turno : turnos) {
+			turnosMap.put(turno.getNome(),turno);
+		}
+		return turnosMap;
+	}
     
 	public Cenario getCenario() {
         return this.cenario;

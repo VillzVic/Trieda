@@ -2,8 +2,10 @@ package com.gapso.trieda.domain;
 
 import java.io.Serializable;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -224,14 +226,16 @@ public class Oferta implements Serializable {
         return q.setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
     
-    @SuppressWarnings("unchecked")
-    public List<Integer> getPeriodosBy(Sala sala, Oferta oferta) {
-//		Query q = entityManager().createQuery("SELECT o.disciplina FROM CurriculoDisciplina o WHERE o.periodo = :periodo AND o.curriculo = :curriculo AND :sala IN o.salas");
-//		q.setParameter("sala", sala);
-//		q.setParameter("oferta", oferta);
-//		return q.getResultList();
-    	return null;
-    }
+	public static Map<String,Oferta> buildCampusTurnoCurriculoToOfertaMap(List<Oferta> ofertas) {
+		Map<String,Oferta> ofertasMap = new HashMap<String,Oferta>();
+		for (Oferta oferta : ofertas) {
+			String codigo = oferta.getCampus().getCodigo() + "-";
+			codigo += oferta.getTurno().getNome() + "-";
+			codigo += oferta.getCurriculo().getCodigo();
+			ofertasMap.put(codigo,oferta);
+		}
+		return ofertasMap;
+	}
     
 	public Curriculo getCurriculo() {
         return this.curriculo;

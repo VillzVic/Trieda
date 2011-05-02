@@ -1,7 +1,9 @@
 package com.gapso.trieda.domain;
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -236,6 +238,18 @@ public class Demanda implements Serializable {
         return entityManager().createQuery("SELECT o FROM Demanda o").setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
 
+	public static Map<String,Demanda> buildCampusTurnoCurriculoDisciplinaToDemandaMap(List<Demanda> demandas) {
+		Map<String,Demanda> demandasMap = new HashMap<String,Demanda>();
+		for (Demanda demanda : demandas) {
+			String codigo = demanda.getOferta().getCampus().getCodigo() + "-";
+			codigo += demanda.getOferta().getTurno().getNome() + "-";
+			codigo += demanda.getOferta().getCurriculo().getCodigo() + "-";
+			codigo += demanda.getDisciplina().getCodigo();
+			demandasMap.put(codigo,demanda);
+		}
+		return demandasMap;
+	}
+	
 	public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("Id: ").append(getId()).append(", ");

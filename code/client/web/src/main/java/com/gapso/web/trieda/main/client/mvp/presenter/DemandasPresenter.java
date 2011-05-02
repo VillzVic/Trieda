@@ -36,6 +36,7 @@ import com.gapso.web.trieda.shared.util.view.DisciplinaComboBox;
 import com.gapso.web.trieda.shared.util.view.ExportExcelFormSubmit;
 import com.gapso.web.trieda.shared.util.view.GTab;
 import com.gapso.web.trieda.shared.util.view.GTabItem;
+import com.gapso.web.trieda.shared.util.view.ImportExcelFormView;
 import com.gapso.web.trieda.shared.util.view.SimpleGrid;
 import com.gapso.web.trieda.shared.util.view.TurnoComboBox;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -153,8 +154,8 @@ public class DemandasPresenter implements Presenter {
 		display.getImportExcelButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
 			@Override
 			public void componentSelected(ButtonEvent ce) {
-				//ImportExcelFormView importExcelFormView = new ImportExcelFormView(ExcelInformationType.DEMANDAS,display.getGrid());
-				//importExcelFormView.show();
+				ImportExcelFormView importExcelFormView = new ImportExcelFormView(ExcelInformationType.DEMANDAS,display.getGrid());
+				importExcelFormView.show();
 			}
 		});
 		display.getExportExcelButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
