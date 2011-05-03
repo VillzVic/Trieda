@@ -22,6 +22,7 @@ public class ImportExcelFactory {
 			case UNIDADES: importer = new UnidadesImportExcel(cenario,i18nConstants,i18nMessages); break;
 			case SALAS: importer = new SalasImportExcel(cenario,i18nConstants,i18nMessages); break;
 			case DEMANDAS: importer = new DemandasImportExcel(cenario,i18nConstants,i18nMessages); break;
+			case HABILITACAO_PROFESSORES: importer = new HabilitacoesProfessoresImportExcel(cenario,i18nConstants,i18nMessages); break;
 		}
 		
 		return importer;

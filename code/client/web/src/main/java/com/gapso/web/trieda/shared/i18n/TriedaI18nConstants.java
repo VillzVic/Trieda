@@ -58,11 +58,13 @@ public interface TriedaI18nConstants extends Constants {
 	String nao();
 	String nivelDificuldade();
 	String nome();
+	String notaDesempenho();
 	String numero();
 	String ofertasEDemandas();
 	String periodo();
 	String preenchaA();
 	String preenchaO();
+	String preferencia();
 	String professores();
 	String relatorioVisaoSala();
 	String remover();
