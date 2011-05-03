@@ -138,11 +138,7 @@ public class CampiPresenter implements Presenter {
 				// QUANDO EU COLOCO LA, ELE BUGA O HEADER DA TABELA
 				UnidadesServiceAsync service = Services.unidades();
 				final CampusDTO campusDTO = display.getGrid().getGrid().getSelectionModel().getSelectedItem();
-				service.getDeslocamento(campusDTO, new AsyncCallback<List<DeslocamentoUnidadeDTO>>() {
-					@Override
-					public void onFailure(Throwable caught) {
-						MessageBox.alert("ERRO!", "Deu falha na conexão", null);
-					}
+				service.getDeslocamento(campusDTO, new AbstractAsyncCallbackWithDefaultOnFailure<List<DeslocamentoUnidadeDTO>>(display) {
 					@Override
 					public void onSuccess(List<DeslocamentoUnidadeDTO> result) {
 						Presenter presenter = new UnidadesDeslocamentoPresenter(new UnidadesDeslocamentoView(campusDTO, result));
@@ -150,7 +146,6 @@ public class CampiPresenter implements Presenter {
 					}
 				});
 				
-
 			}
 		});
 		display.getDisponibilidadeButton().addSelectionListener(new SelectionListener<ButtonEvent>() {

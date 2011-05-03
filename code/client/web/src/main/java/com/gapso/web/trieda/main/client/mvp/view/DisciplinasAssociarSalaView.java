@@ -22,6 +22,7 @@ import com.extjs.gxt.ui.client.widget.Info;
 import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.TabItem;
 import com.extjs.gxt.ui.client.widget.TabPanel;
+import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.button.ToolButton;
 import com.extjs.gxt.ui.client.widget.form.FormPanel;
 import com.extjs.gxt.ui.client.widget.form.FormPanel.LabelAlign;
@@ -48,6 +49,7 @@ import com.gapso.web.trieda.shared.services.Services;
 import com.gapso.web.trieda.shared.util.resources.Resources;
 import com.gapso.web.trieda.shared.util.view.CampusComboBox;
 import com.gapso.web.trieda.shared.util.view.GTabItem;
+import com.gapso.web.trieda.shared.util.view.SimpleToolBar;
 import com.gapso.web.trieda.shared.util.view.TurnoComboBox;
 import com.gapso.web.trieda.shared.util.view.UnidadeComboBox;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -55,6 +57,7 @@ import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
 public class DisciplinasAssociarSalaView extends MyComposite implements DisciplinasAssociarSalaPresenter.Display {
 
+	private SimpleToolBar toolBar;
 	private ContentPanel panel;
 	private ContentPanel panelLists;
 	
@@ -88,11 +91,17 @@ public class DisciplinasAssociarSalaView extends MyComposite implements Discipli
 	private void initUI() {
 		panel = new ContentPanel(new BorderLayout());
 		panel.setHeading("Master Data » Associação de Disciplinas à Salas");
+		createToolBar();
 	}
 
 	private void createTabItem() {
 		tabItem = new GTabItem("Associação de Disciplinas à Salas", Resources.DEFAULTS.associacaoDisciplinaSala16());
 		tabItem.setContent(panel);
+	}
+	
+	private void createToolBar() {
+		toolBar = new SimpleToolBar(false, false, false, true, true, this);
+		panel.setTopComponent(toolBar);
 	}
 	
 	private void createForm() {
@@ -163,7 +172,9 @@ public class DisciplinasAssociarSalaView extends MyComposite implements Discipli
 		
 		formPanel.add(tabs, formData);
 		
-		panel.setTopComponent(formPanel);
+		BorderLayoutData bld = new BorderLayoutData(LayoutRegion.NORTH);
+		bld.setMargins(new Margins(0, 0, 0, 0));
+		panel.add(formPanel, bld);
 		
 		panelLists = new ContentPanel(new RowLayout(Orientation.HORIZONTAL));
 		panelLists.setHeaderVisible(false);
@@ -302,7 +313,7 @@ public class DisciplinasAssociarSalaView extends MyComposite implements Discipli
 		panelLists.add(blankListPanel, new RowData(10, 1, new Margins(0, 0, 0, 0)));
 		panelLists.add(salasListPanel, new RowData(.5, 1, new Margins(0, 10, 10, 0)));
 		
-		BorderLayoutData bld = new BorderLayoutData(LayoutRegion.CENTER);
+		bld = new BorderLayoutData(LayoutRegion.CENTER);
 		bld.setMargins(new Margins(0, 0, 0, 0));
 		panel.setBodyBorder(false);
 		panelLists.setBodyStyle("background-color: #DFE8F6;");
@@ -457,6 +468,16 @@ public class DisciplinasAssociarSalaView extends MyComposite implements Discipli
 			setStoreSala(store);
 		}
 		return this.storeSala;
+	}
+
+	@Override
+	public Button getImportExcelButton() {
+		return toolBar.getImportExcelButton();
+	}
+
+	@Override
+	public Button getExportExcelButton() {
+		return toolBar.getExportExcelButton();
 	}
 	
 }

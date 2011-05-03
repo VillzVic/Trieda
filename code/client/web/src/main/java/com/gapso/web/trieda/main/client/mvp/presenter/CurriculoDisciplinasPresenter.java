@@ -8,15 +8,16 @@ import com.extjs.gxt.ui.client.event.ButtonEvent;
 import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.widget.Component;
 import com.extjs.gxt.ui.client.widget.Info;
-import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.grid.Grid;
 import com.gapso.web.trieda.main.client.mvp.view.CurriculoDisciplinaFormView;
 import com.gapso.web.trieda.shared.dtos.CurriculoDTO;
 import com.gapso.web.trieda.shared.dtos.CurriculoDisciplinaDTO;
+import com.gapso.web.trieda.shared.i18n.ITriedaI18nGateway;
 import com.gapso.web.trieda.shared.mvp.presenter.Presenter;
 import com.gapso.web.trieda.shared.services.CurriculosServiceAsync;
 import com.gapso.web.trieda.shared.services.Services;
+import com.gapso.web.trieda.shared.util.view.AbstractAsyncCallbackWithDefaultOnFailure;
 import com.gapso.web.trieda.shared.util.view.GTab;
 import com.gapso.web.trieda.shared.util.view.GTabItem;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -24,7 +25,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class CurriculoDisciplinasPresenter implements Presenter {
 
-	public interface Display {
+	public interface Display extends ITriedaI18nGateway {
 		Button getNewButton();
 		Button getRemoveButton();
 		CurriculoDTO getCurriculoDTO();
@@ -66,11 +67,7 @@ public class CurriculoDisciplinasPresenter implements Presenter {
 			public void componentSelected(ButtonEvent ce) {
 				List<CurriculoDisciplinaDTO> list = display.getGrid().getSelectionModel().getSelectedItems();
 				final CurriculosServiceAsync service = Services.curriculos();
-				service.removeDisciplina(list, new AsyncCallback<Void>() {
-					@Override
-					public void onFailure(Throwable caught) {
-						MessageBox.alert("ERRO!", "Deu falha na conexão", null);
-					}
+				service.removeDisciplina(list, new AbstractAsyncCallbackWithDefaultOnFailure<Void>(display) {
 					@Override
 					public void onSuccess(Void result) {
 						display.getGrid().getStore().getLoader().load();

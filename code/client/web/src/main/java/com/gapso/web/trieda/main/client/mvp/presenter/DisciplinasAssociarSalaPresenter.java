@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.extjs.gxt.ui.client.data.ListLoadResult;
+import com.extjs.gxt.ui.client.event.ButtonEvent;
 import com.extjs.gxt.ui.client.event.Events;
 import com.extjs.gxt.ui.client.event.IconButtonEvent;
 import com.extjs.gxt.ui.client.event.SelectionChangedEvent;
@@ -14,6 +15,7 @@ import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.store.TreeStore;
 import com.extjs.gxt.ui.client.widget.Component;
 import com.extjs.gxt.ui.client.widget.Info;
+import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.button.ToolButton;
 import com.extjs.gxt.ui.client.widget.form.SimpleComboBox;
 import com.extjs.gxt.ui.client.widget.form.SimpleComboValue;
@@ -26,14 +28,17 @@ import com.gapso.web.trieda.shared.dtos.SalaDTO;
 import com.gapso.web.trieda.shared.dtos.TreeNodeDTO;
 import com.gapso.web.trieda.shared.dtos.TurnoDTO;
 import com.gapso.web.trieda.shared.dtos.UnidadeDTO;
+import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 import com.gapso.web.trieda.shared.i18n.ITriedaI18nGateway;
 import com.gapso.web.trieda.shared.mvp.presenter.Presenter;
 import com.gapso.web.trieda.shared.services.DisciplinasServiceAsync;
 import com.gapso.web.trieda.shared.services.SalasServiceAsync;
 import com.gapso.web.trieda.shared.services.Services;
 import com.gapso.web.trieda.shared.util.view.CampusComboBox;
+import com.gapso.web.trieda.shared.util.view.ExportExcelFormSubmit;
 import com.gapso.web.trieda.shared.util.view.GTab;
 import com.gapso.web.trieda.shared.util.view.GTabItem;
+import com.gapso.web.trieda.shared.util.view.ImportExcelFormView;
 import com.gapso.web.trieda.shared.util.view.TurnoComboBox;
 import com.gapso.web.trieda.shared.util.view.UnidadeComboBox;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -52,6 +57,8 @@ public class DisciplinasAssociarSalaPresenter implements Presenter {
 		TreePanel<TreeNodeDTO> getDisciplinasList();
 		TreePanel<TreeNodeDTO> getSalasList();
 		ToolButton getRemoveButton();
+		Button getImportExcelButton();
+		Button getExportExcelButton();
 		void setTabEnabled(boolean flag);
 		Component getComponent();
 	}
@@ -229,7 +236,20 @@ public class DisciplinasAssociarSalaPresenter implements Presenter {
 				}
 			}
 		});
-
+		display.getImportExcelButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
+			@Override
+			public void componentSelected(ButtonEvent ce) {
+				ImportExcelFormView importExcelFormView = new ImportExcelFormView(ExcelInformationType.DISCIPLINAS_SALAS,null);
+				importExcelFormView.show();
+			}
+		});
+		display.getExportExcelButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
+			@Override
+			public void componentSelected(ButtonEvent ce) {
+				ExportExcelFormSubmit e = new ExportExcelFormSubmit(ExcelInformationType.DISCIPLINAS_SALAS,display.getI18nConstants(),display.getI18nMessages());
+				e.submit();
+			}
+		});
 	}
 
 	@Override
