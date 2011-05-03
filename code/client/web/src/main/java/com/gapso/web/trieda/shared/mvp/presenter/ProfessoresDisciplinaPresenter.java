@@ -16,14 +16,18 @@ import com.gapso.web.trieda.shared.dtos.DisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorDisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.UsuarioDTO;
+import com.gapso.web.trieda.shared.excel.ExcelInformationType;
+import com.gapso.web.trieda.shared.i18n.ITriedaI18nGateway;
 import com.gapso.web.trieda.shared.mvp.view.ProfessorDisciplinaFormView;
 import com.gapso.web.trieda.shared.services.DisciplinasServiceAsync;
 import com.gapso.web.trieda.shared.services.ProfessoresDisciplinaServiceAsync;
 import com.gapso.web.trieda.shared.services.ProfessoresServiceAsync;
 import com.gapso.web.trieda.shared.services.Services;
 import com.gapso.web.trieda.shared.util.view.DisciplinaComboBox;
+import com.gapso.web.trieda.shared.util.view.ExportExcelFormSubmit;
 import com.gapso.web.trieda.shared.util.view.GTab;
 import com.gapso.web.trieda.shared.util.view.GTabItem;
+import com.gapso.web.trieda.shared.util.view.ImportExcelFormView;
 import com.gapso.web.trieda.shared.util.view.ProfessorComboBox;
 import com.gapso.web.trieda.shared.util.view.SimpleGrid;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -33,7 +37,7 @@ import com.googlecode.future.FutureSynchronizer;
 
 public class ProfessoresDisciplinaPresenter implements Presenter {
 
-	public interface Display {
+	public interface Display extends ITriedaI18nGateway {
 		Button getNewButton();
 		Button getEditButton();
 		Button getRemoveButton();
@@ -152,6 +156,20 @@ public class ProfessoresDisciplinaPresenter implements Presenter {
 				@Override
 				public void componentSelected(ButtonEvent ce) {
 					display.getGrid().updateList();
+				}
+			});
+			display.getExportExcelButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
+				@Override
+				public void componentSelected(ButtonEvent ce) {
+					ExportExcelFormSubmit e = new ExportExcelFormSubmit(ExcelInformationType.HABILITACAO_PROFESSORES,display.getI18nConstants(),display.getI18nMessages());
+					e.submit();
+				}
+			});
+			display.getImportExcelButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
+				@Override
+				public void componentSelected(ButtonEvent ce) {
+					ImportExcelFormView importExcelFormView = new ImportExcelFormView(ExcelInformationType.HABILITACAO_PROFESSORES,display.getGrid());
+					importExcelFormView.show();
 				}
 			});
 		}

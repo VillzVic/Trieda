@@ -39,6 +39,7 @@ public interface TriedaI18nConstants extends Constants {
 	String editar();
 	String estado();
 	String exportarExcel();
+	String habilitacaoProfessores();
 	String gruposSalas();
 	String importarExcel();
 	String informacao();
