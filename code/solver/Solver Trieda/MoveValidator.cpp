@@ -128,27 +128,31 @@ bool MoveValidator::checkClassDisponibility(
          std::map< int /*Dias*/, GGroup< HorarioAula *, LessPtr< HorarioAula > > >::iterator
             it_Dias_Horarios_Aula = it_Disc_Salas_Dias_Horarios_Aula->second.find( aula.getDiaSemana() );
 
-         // Se encontrei o dia procurado para as duas aulas
+         // Se encontrei o dia procurado para a aula
          if ( it_Dias_Horarios_Aula != it_Disc_Salas_Dias_Horarios_Aula->second.end() )
          {
             // Verificando os horários.
 			 if ( it_Dias_Horarios_Aula->second.find( itNovosHorariosAula->second->horario_aula )
 					== it_Dias_Horarios_Aula->second.end() )
             {
+			   // Essa sala não está disponível nesse
+			   // horário de aula para esse dia da semana
                return false;
             }
          }
          else
          {
-            std::cout << "ERRO 1 em <MoveValidator::checkClassDisponibility()>\n";
-            // exit(1);
+			// Essa sala não está disponível em nenhum
+			// horário de aula para esse dia da semana
+            return false;
          }
       }
    }
    else
    {
-      std::cout << "ERRO 2 em <MoveValidator::checkClassDisponibility()>\n";
-      // exit(1);
+	  // Não existe relação entre a disciplina dessa
+	  // aula e a sala à qual a aula está sendo alocada
+      return false;
    }
 
    return true;
