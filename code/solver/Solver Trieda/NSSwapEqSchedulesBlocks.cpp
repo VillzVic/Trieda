@@ -2,6 +2,7 @@
 
 NSSwapEqSchedulesBlocks::NSSwapEqSchedulesBlocks(ProblemData & _problemData) : problemData(_problemData)
 {
+   moveValidator = new MoveSwapEqSchedulesBlocksValidator (&problemData);
 }
 
 NSSwapEqSchedulesBlocks::~NSSwapEqSchedulesBlocks()
@@ -46,9 +47,9 @@ std::pair<Aula*,Aula*> NSSwapEqSchedulesBlocks::pickTwoClasses(const SolucaoOper
    a1 = *itAula;
    a2 = *itAula;
 
-   int attempt = 0;
+   int attempt = -1;
 
-   while(!moveValidator->isValid(*a1,*a2) && attempt < MAX_ATTEMPTS)
+   while(!moveValidator->isValid(*a1,*a2) && ++attempt < MAX_ATTEMPTS)
    {
       itAula = problemData.aulas.begin();
       maxIter = rand() % (s.getMatrizAulas()->size()-1);
@@ -59,6 +60,14 @@ std::pair<Aula*,Aula*> NSSwapEqSchedulesBlocks::pickTwoClasses(const SolucaoOper
       maxIter = rand() % (s.getMatrizAulas()->size()-1);
       for(int i = 0; i < maxIter; ++i, ++itAula);
       a2 = *itAula;
+   }
+
+   if(attempt >= MAX_ATTEMPTS)
+   {
+      std::cout << "Warnning: No valid move generated after MAX_ATTEMPTS (" << MAX_ATTEMPTS << ") iterations." << std::endl;
+
+      a1 = ( *itAula );
+      a2 = ( *itAula );
    }
 
    return std::make_pair<Aula*,Aula*> (a1,a2);

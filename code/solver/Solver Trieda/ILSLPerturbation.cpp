@@ -23,6 +23,9 @@ void ILSLPerturbationLPlus2::perturb(SolucaoOperacional & s, double timelimit, d
 
    int x = rand() % ns.size();
 
+   std::cout << "Using ";
+   ns[x]->print();
+
    //while ((a < level) && (f < pMax))
    while (a < level)
    {

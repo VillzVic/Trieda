@@ -12,7 +12,7 @@
 
 class NSSwapEqTeachersBlocks : public NS
 {
-   private:
+private:
    ProblemData & problemData;
 
    std::pair<Aula*,Aula*> pickTwoClasses(const SolucaoOperacional& s);

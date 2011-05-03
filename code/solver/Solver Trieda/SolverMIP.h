@@ -22,6 +22,8 @@
 #include "Avaliador.h"
 
 #include "NSSeqSwapEqBlocks.h"
+#include "NSSwapEqSchedulesBlocks.h"
+#include "NSSwapEqTeachersBlocks.h"
 
 #include "IteratedLocalSearchLevels.h"
 #include "RandomDescentMethod.h"

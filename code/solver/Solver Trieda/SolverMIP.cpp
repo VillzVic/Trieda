@@ -1757,6 +1757,8 @@ int SolverMIP::solveOperacional()
    //***********************
    // TESTES !!!!
    NSSeqSwapEqBlocks nsSeqSwapEqBlocks ( *problemData );
+   NSSwapEqSchedulesBlocks nsSwapEqSchedulesBlocks ( *problemData );
+   NSSwapEqTeachersBlocks nsSwapEqTeachersBlocks ( *problemData );
 
    //MoveSwapEqBlocks & mIni = ( MoveSwapEqBlocks & ) nsSeqSwapEqBlocks.move( solucaoOperacional );
    //MoveSwapEqBlocks & mRev = ( MoveSwapEqBlocks & ) mIni.apply( solucaoOperacional );
@@ -1771,8 +1773,11 @@ int SolverMIP::solveOperacional()
    //rdm.exec( solucaoOperacional, 20, 0 );
 
    ILSLPerturbationLPlus2 ilslPerturbationPlus2 ( avaliador, -1, nsSeqSwapEqBlocks );
-   IteratedLocalSearchLevels ilsl ( avaliador, rdm, ilslPerturbationPlus2, 5, 2 );
-   //IteratedLocalSearchLevels ilsl ( avaliador, rdm, ilslPerturbationPlus2, 50, 6 );
+   ilslPerturbationPlus2.add_ns(nsSwapEqSchedulesBlocks);
+   ilslPerturbationPlus2.add_ns(nsSwapEqTeachersBlocks);
+
+   //IteratedLocalSearchLevels ilsl ( avaliador, rdm, ilslPerturbationPlus2, 5, 2 );
+   IteratedLocalSearchLevels ilsl ( avaliador, rdm, ilslPerturbationPlus2, 50, 6 );
    ilsl.exec(solucaoOperacional, 1, 0);
 
    //NSIteratorSwapEqBlocks & it = ( NSIteratorSwapEqBlocks & ) nsSeqSwapEqBlocks.getIterator( solucaoOperacional );
