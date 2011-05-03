@@ -1,9 +1,10 @@
-#ifndef NSSEQSWAPEQBLOCKS_H
-#define NSSEQSWAPEQBLOCKS_H
+#ifndef _NS_SEQ_SWAP_EQ_BLOCKS_H_
+#define _NS_SEQ_SWAP_EQ_BLOCKS_H_
 
 #include "NSSeq.hpp"
 
-#include "MoveSwapEqBlocks.h"
+#include "MoveGeneric.h"
+
 #include "MoveSwapEqBlocksValidator.h"
 
 #include "NSIteratorSwapEqBlocks.h"
@@ -32,4 +33,4 @@ public:
 
 };
 
-#endif /*NSSEQSWAPEQBLOCKS_H*/
+#endif /*_NS_SEQ_SWAP_EQ_BLOCKS_H_*/

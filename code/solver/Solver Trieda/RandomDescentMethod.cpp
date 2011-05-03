@@ -11,6 +11,8 @@ RandomDescentMethod::~RandomDescentMethod()
 
 void RandomDescentMethod::exec(SolucaoOperacional & s, double timelimit, double target_f)
 {
+   std::cout << "RDM exec(" << target_f << "," << timelimit << ")" << std::endl;
+
    CPUTimer * timer = new CPUTimer();
    timer->start();
 
@@ -19,6 +21,8 @@ void RandomDescentMethod::exec(SolucaoOperacional & s, double timelimit, double 
 
    unsigned int iter = 0;
 
+   std::cout << "RDM starts:\tSolution Evaluation: " << evaluator.avaliaSolucao(s) << std::endl;
+
    while (iter < iterMax && ((tnow - tini) < timelimit))
    {
       Move & move = ns.move(s);
@@ -26,19 +30,19 @@ void RandomDescentMethod::exec(SolucaoOperacional & s, double timelimit, double 
       double cost = 0;
 
       //if (move.canBeApplied(e, s))
-      {
+      //{
          //cost = evaluator.moveCost(e, move, s);
          Move & revMove = move.apply(s);
-         double eRevMove = evaluator.avaliaSolucao(s);
+         double newEvalSolution = evaluator.avaliaSolucao(s);
 
          Move & iniMove = revMove.apply(s);
-         double eIniMove = evaluator.avaliaSolucao(s);
+         double oldEvalSolution = evaluator.avaliaSolucao(s);
 
-         cost = eRevMove - eIniMove;
+         cost = newEvalSolution - oldEvalSolution;
 
          delete &revMove;
          delete &iniMove;
-      }
+      //}
       //else
       //{
          //iter++;
@@ -51,6 +55,8 @@ void RandomDescentMethod::exec(SolucaoOperacional & s, double timelimit, double 
 
       if (cost < 0)
       {
+         std::cout << "RDM : Best fo: " << newEvalSolution << " on [iter " << iter << "]" << std::endl;
+
          move.apply(s);
          iter = 0;
       }
@@ -58,4 +64,6 @@ void RandomDescentMethod::exec(SolucaoOperacional & s, double timelimit, double 
       delete &move;
       tnow = timer->getCPUTotalSecs();
    }
+
+   std::cout << "RDM ends:\t Solution Evaluation: " << evaluator.avaliaSolucao(s) << std::endl;
 }

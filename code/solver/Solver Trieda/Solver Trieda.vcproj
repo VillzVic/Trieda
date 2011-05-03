@@ -786,6 +786,14 @@
 							RelativePath=".\NSSeqSwapEqBlocks.cpp"
 							>
 						</File>
+						<File
+							RelativePath=".\NSSwapEqSchedulesBlocks.cpp"
+							>
+						</File>
+						<File
+							RelativePath=".\NSSwapEqTeachersBlocks.cpp"
+							>
+						</File>
 						<Filter
 							Name="NSIterators"
 							>
@@ -798,7 +806,7 @@
 							Name="Moves"
 							>
 							<File
-								RelativePath=".\MoveSwapEqBlocks.cpp"
+								RelativePath=".\MoveGeneric.cpp"
 								>
 							</File>
 						</Filter>
@@ -807,6 +815,14 @@
 							>
 							<File
 								RelativePath=".\MoveSwapEqBlocksValidator.cpp"
+								>
+							</File>
+							<File
+								RelativePath=".\MoveSwapEqSchedulesBlocksValidator.cpp"
+								>
+							</File>
+							<File
+								RelativePath=".\MoveSwapEqTeachersBlocksValidator.cpp"
 								>
 							</File>
 							<File
@@ -1235,6 +1251,14 @@
 							RelativePath=".\NSSeqSwapEqBlocks.h"
 							>
 						</File>
+						<File
+							RelativePath=".\NSSwapEqSchedulesBlocks.h"
+							>
+						</File>
+						<File
+							RelativePath=".\NSSwapEqTeachersBlocks.h"
+							>
+						</File>
 						<Filter
 							Name="NSIterators"
 							>
@@ -1255,7 +1279,7 @@
 								>
 							</File>
 							<File
-								RelativePath=".\MoveSwapEqBlocks.h"
+								RelativePath=".\MoveGeneric.h"
 								>
 							</File>
 						</Filter>
@@ -1264,6 +1288,14 @@
 							>
 							<File
 								RelativePath=".\MoveSwapEqBlocksValidator.h"
+								>
+							</File>
+							<File
+								RelativePath=".\MoveSwapEqSchedulesBlocksValidator.h"
+								>
+							</File>
+							<File
+								RelativePath=".\MoveSwapEqTeachersBlocksValidator.h"
 								>
 							</File>
 							<File

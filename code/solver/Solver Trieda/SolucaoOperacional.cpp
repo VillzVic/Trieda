@@ -5,10 +5,8 @@
 #include "SolucaoOperacional.h"
 #include "Aula.h"
 
-SolucaoOperacional::SolucaoOperacional( ProblemData * prbDt )
+SolucaoOperacional::SolucaoOperacional( ProblemData * prbDt ) : problem_data(prbDt)
 {
-   this->problem_data = ( prbDt );
-
    // FIXANDO OS VALORES: 7 (dias)
    total_dias = 7;
    total_horarios = max_horarios_dia();
@@ -89,8 +87,31 @@ SolucaoOperacional::SolucaoOperacional( ProblemData * prbDt )
 
 SolucaoOperacional::SolucaoOperacional(SolucaoOperacional const & s)
 {
-   std::cout << "Implementar construtor de cópia da SolucaoOperacional.\n";
-   exit(1);
+   this->problem_data = s.getProblemData();
+
+   this->mapProfessores = s.mapProfessores;
+
+   this->total_dias = s.getTotalDias();
+   this->total_horarios = s.getTotalHorarios();
+   this->total_professores = s.getTotalDeProfessores();
+
+   this->matriz_aulas = new MatrizSolucao(s.getMatrizAulas()->size());
+   //this->matriz_aulas = new MatrizSolucao(*s.getMatrizAulas());
+
+   for(unsigned prof = 0; prof < s.getMatrizAulas()->size(); ++prof)
+   {
+      std::vector<Aula*> * aulas = new std::vector<Aula*> (s.getMatrizAulas()->at(prof)->size(),NULL);
+
+      for(unsigned a = 0; a < s.getMatrizAulas()->at(prof)->size(); ++a)
+      {
+         aulas->at(a) = s.getMatrizAulas()->at(prof)->at(a);
+      }
+
+      this->matriz_aulas->at(prof) = (aulas);
+   }
+
+   //std::cout << "Implementar construtor de copia da SolucaoOperacional.\n";
+   //exit(1);
 }
 
 // Método relacionado com a issue TRIEDA-887
@@ -186,10 +207,10 @@ bool SolucaoOperacional::horarioDisponivelProfessor(
 	return false;
 }
 
-void SolucaoOperacional::carregaSolucaoInicial()
-{
-   // TODO -- Carregar a solução inicial, antes de avaliar
-}
+//void SolucaoOperacional::carregaSolucaoInicial()
+//{
+//   // TODO -- Carregar a solução inicial, antes de avaliar
+//}
 
 MatrizSolucao* SolucaoOperacional::getMatrizAulas() const
 {

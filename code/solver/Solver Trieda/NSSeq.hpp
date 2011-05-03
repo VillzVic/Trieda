@@ -19,6 +19,7 @@ public:
    virtual NSIterator& getIterator(const SolucaoOperacional &) = 0;
 
    virtual void print() = 0;
+
 };
 
 #endif //_NS_SEQ_HPP_

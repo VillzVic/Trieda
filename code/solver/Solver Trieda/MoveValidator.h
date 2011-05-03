@@ -10,10 +10,12 @@
 class MoveValidator
 {
 public:
-   
+
    MoveValidator(ProblemData * pD);
 
    virtual ~MoveValidator();
+
+   virtual bool isValid(Aula & aX, Aula & aY);
 
 //protected:
 

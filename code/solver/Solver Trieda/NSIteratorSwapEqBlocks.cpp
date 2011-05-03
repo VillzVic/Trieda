@@ -97,5 +97,5 @@ Move & NSIteratorSwapEqBlocks::current()
    itCurrent->toString();
    itNext->toString();
 
-   return *new MoveSwapEqBlocks( (**itCurrent), (**itNext) );
+   return *new MoveGeneric( (**itCurrent), (**itNext) );
 }

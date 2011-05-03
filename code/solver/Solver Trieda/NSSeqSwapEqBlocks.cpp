@@ -36,7 +36,9 @@ std::pair< Aula *, Aula * > NSSeqSwapEqBlocks::pickTwoClasses( const SolucaoOper
    a1 = ( *itAula );
    a2 = ( *itAula );
 
-   while ( !moveValidator->isValid( *a1, *a2 ) )
+   int attempt = 0;
+
+   while(!moveValidator->isValid(*a1,*a2) && attempt < MAX_ATTEMPTS)
    {
       itAula = problemData.aulas.begin();
       maxIter = ( rand() % ( s.getMatrizAulas()->size() - 1 ) );
@@ -62,7 +64,7 @@ Move & NSSeqSwapEqBlocks::move( const SolucaoOperacional & s )
    Professor & profA1 = *(a1.bloco_aula.begin()->first);
    Professor & profA2 = *(a2.bloco_aula.begin()->first);
 
-   return *(new MoveSwapEqBlocks(a1,profA1,a2,profA2));
+   return *(new MoveGeneric(a1,profA1,a2,profA2));
 }
 
 NSIterator & NSSeqSwapEqBlocks::getIterator(const SolucaoOperacional & s)

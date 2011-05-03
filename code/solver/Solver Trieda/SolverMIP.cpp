@@ -1673,11 +1673,12 @@ int SolverMIP::solveOperacional()
    // Criando uma solução inicial
    SolucaoInicialOperacional solIni( *problemData );
 
-   std::cout << "Carregando a solucao inicial operacional" << std::endl;
+   std::cout << "Gerando uma solucao inicial para o modelo operacional" << std::endl;
    SolucaoOperacional & solucaoOperacional = solIni.geraSolucaoInicial();
 
    // -----------------------------------------------------------------------------------------
    // Realizando alguns checks.
+   int totalCredsAulas = 0;
    bool error = false;
    ITERA_GGROUP( itAula, problemData->aulas, Aula )
    {
@@ -1707,6 +1708,7 @@ int SolverMIP::solveOperacional()
 
          error = true;
       }
+      totalCredsAulas += ((int)itAula->bloco_aula.size());
    }
 
    if ( error )
@@ -1714,33 +1716,65 @@ int SolverMIP::solveOperacional()
       std::cout << "ERRO!!! SolverMIP::solveOperacional()" << std::endl;
       exit(1);
    }
+
+   int totalCredsAulasSol = 0;
+
+   MatrizSolucao::iterator itProf = solucaoOperacional.getMatrizAulas()->begin();
+
+   for(; itProf != solucaoOperacional.getMatrizAulas()->end(); ++itProf)
+   {
+      for(unsigned a = 0; a < (*itProf)->size(); ++a)
+      {
+         if((*itProf)->at(a) != NULL)
+         {
+            if( !(*itProf)->at(a)->eVirtual() )
+            {
+               ++totalCredsAulasSol;
+            }
+         }
+      }
+   }
+
+   if(totalCredsAulas != totalCredsAulasSol)
+   {
+      /* Total de créditos alocados eh diferente do total de creditos a serem alocados. */
+      std::cout << "ERRO!!! SolverMIP::solveOperacional()" << std::endl;
+      exit(1);
+   }
+
    // -----------------------------------------------------------------------------------------
 
-   solucaoOperacional.toString();
-   solucaoOperacional.toString2();
+   //solucaoOperacional.toString();
+   //solucaoOperacional.toString2();
 
    Avaliador avaliador;
-   double funcao_objetivo = avaliador.avaliaSolucao( solucaoOperacional, true );
-   std::cout << "\nValor da solucao inicial : " << funcao_objetivo << std::endl;
+   //double funcao_objetivo = avaliador.avaliaSolucao( solucaoOperacional, true );
+   //std::cout << "\nValor da solucao inicial : " << funcao_objetivo << std::endl;
 
-   std::cout << "\nTODO -- Implementar <SolverMIP::solveOperacional()>"
-			 << std::endl;
+   //std::cout << "\nTODO -- Implementar <SolverMIP::solveOperacional()>"
+			// << std::endl;
 
    //***********************
    // TESTES !!!!
-   // NSSeqSwapEqBlocks nsSeqSwapEqBlocks ( *problemData );
-   // MoveSwapEqBlocks & mIni = ( MoveSwapEqBlocks & ) nsSeqSwapEqBlocks.move( solucaoOperacional );
-   // MoveSwapEqBlocks & mRev = ( MoveSwapEqBlocks & ) mIni.apply( solucaoOperacional );
-   // std::cout << " ***************************************" << std::endl;
-   // std::cout << " ***************************************" << std::endl;
-   // std::cout << " ***************************************" << std::endl;
-   // mRev.apply( solucaoOperacional );
+   NSSeqSwapEqBlocks nsSeqSwapEqBlocks ( *problemData );
+
+   //MoveSwapEqBlocks & mIni = ( MoveSwapEqBlocks & ) nsSeqSwapEqBlocks.move( solucaoOperacional );
+   //MoveSwapEqBlocks & mRev = ( MoveSwapEqBlocks & ) mIni.apply( solucaoOperacional );
+   //std::cout << " ***************************************" << std::endl;
+   //std::cout << " ***************************************" << std::endl;
+   //std::cout << " ***************************************" << std::endl;
+   //mRev.apply( solucaoOperacional );
 
    //std::cout << avaliador.avaliaSolucao( mIni ) << std::endl;
-   //RandomDescentMethod rdm ( avaliador, nsSeqSwapEqBlocks, 50 );
+
+   RandomDescentMethod rdm ( avaliador, nsSeqSwapEqBlocks, 10 );
    //rdm.exec( solucaoOperacional, 20, 0 );
-   //ILSLPerturbationLPlus2 ilslPerturbationPlus2 ( avaliador, 5, nsSwapEqBlocks );
-   //IteratedLocalSearchLevels ilsl ( avaliador,rdm, ilslPerturbationPlus2, 50, 5 );
+
+   ILSLPerturbationLPlus2 ilslPerturbationPlus2 ( avaliador, -1, nsSeqSwapEqBlocks );
+   IteratedLocalSearchLevels ilsl ( avaliador, rdm, ilslPerturbationPlus2, 5, 2 );
+   //IteratedLocalSearchLevels ilsl ( avaliador, rdm, ilslPerturbationPlus2, 50, 6 );
+   ilsl.exec(solucaoOperacional, 1, 0);
+
    //NSIteratorSwapEqBlocks & it = ( NSIteratorSwapEqBlocks & ) nsSeqSwapEqBlocks.getIterator( solucaoOperacional );
    //it.current();
    //std::cout << "\n\n ----------------------------- \n\n";
@@ -1756,8 +1790,8 @@ int SolverMIP::solveOperacional()
 
 void SolverMIP::getSolutionOperacional()
 {
-   std::cout << "\nTODO -- Implementar <SolverMIP::getSolutionOperacional()>"
-			 << std::endl;
+   //std::cout << "\nTODO -- Implementar <SolverMIP::getSolutionOperacional()>"
+			// << std::endl;
 
    unsigned int i = 0;
    unsigned int j = 0;

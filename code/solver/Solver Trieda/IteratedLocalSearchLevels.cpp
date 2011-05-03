@@ -38,7 +38,7 @@ void IteratedLocalSearchLevels::perturbation(SolucaoOperacional & s, double time
    {
       iter = 0;
       level++;
-      cout << "level " << level << ".." << endl;
+      cout << ">> Level: " << level << ".." << endl;
    }
 
    // Atualiza o historico
@@ -99,14 +99,12 @@ void IteratedLocalSearchLevels::exec(SolucaoOperacional & s, double timelimit, d
    // 's0' <- GenerateSolution
    // 's*' <- localSearch 's'
 
-
    localSearch(s, (timelimit - timer->getCPUTotalSecs()), target_f);
 
    SolucaoOperacional * sStar = new SolucaoOperacional(s);
-   double eStar = e.avaliaSolucao(s);
+   double eStar = e.avaliaSolucao(*sStar);
 
-   cout << "ILS starts: ";
-   std::cout  << "Solution Evaluation: " << eStar << std::endl;
+   cout << "ILS starts:\tSolution Evaluation: " << eStar << std::endl;
 
    do
    {
@@ -117,15 +115,16 @@ void IteratedLocalSearchLevels::exec(SolucaoOperacional & s, double timelimit, d
 
       localSearch(*s1, (timelimit - timer->getCPUTotalSecs()), target_f);
 
-      SolucaoOperacional * s2 = s1;
-      double e2 = e1;
+      //SolucaoOperacional * s2 = s1;
+      //double e2 = e1;
 
-      SolucaoOperacional * sStar1 = &acceptanceCriterion(*sStar, *s2, *history);
+      SolucaoOperacional * sStar1 = &acceptanceCriterion(*sStar, *s1, *history);
 
       delete sStar;
-      delete s2;
+      //delete s2;
+      delete s1;
 
-      //sStar = sStar1;
+      sStar = sStar1;
       eStar = e.avaliaSolucao(*sStar);
 
    } while ( (target_f < eStar) && !terminationCondition(*history) && (timer->getCPUTotalSecs() < timelimit));
@@ -135,4 +134,6 @@ void IteratedLocalSearchLevels::exec(SolucaoOperacional & s, double timelimit, d
    delete sStar;
 
    delete timer;
+
+   cout << "ILS ends:\tSolution Evaluation: " << eStar << std::endl;
 }

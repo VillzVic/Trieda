@@ -3,7 +3,7 @@
 
 #include "NSIterator.hpp"
 
-#include "MoveSwapEqBlocks.h"
+#include "MoveGeneric.h"
 #include "MoveSwapEqBlocksValidator.h"
 
 #include "GGroup.h"
@@ -23,7 +23,7 @@ public:
 	Move & current();
 
 private:
-   MoveSwapEqBlocks * move;
+   MoveGeneric * move;
 
    MoveSwapEqBlocksValidator * moveValidator;
 

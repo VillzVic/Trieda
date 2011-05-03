@@ -23,7 +23,7 @@ public:
 
    virtual ~SolucaoOperacional(void);
 
-   void carregaSolucaoInicial();
+   //void carregaSolucaoInicial();
 
    // Dado um par 'dia da semana' e 'horário',
    // retornar a coluna correspondente a esse
@@ -81,8 +81,11 @@ public:
    // Função auxiliar à função podeTrocarHorariosAulas
    //bool checkConflitoBlocoCurricular( Aula &, std::vector< std::pair< Professor *, Horario * > > & ) const;
 
+   /* ToDo : utilizar a estrutura abaixo para alocar o mesmo professor para créditos teóricos e práticos de
+   uma disciplina (qdo a disc foi dividida). Uma outra maneira seria dar uma prioridade maior para alocar
+   essas disciplinas. O problema é como tratar isso nos movimentos. */
    /* Armazena o professor alocado para ministrar os créditos teóricos e práticos de uma disciplina. */
-   std::map<std::pair<int/*turma*/,int/*modulo do id da disciplina*/>, Professor*> profTurmaDiscAula;
+   //std::map<std::pair<int/*turma*/,int/*modulo do id da disciplina*/>, Professor*> profTurmaDiscAula;
 
    /* Checa a disponibilidade dos horários da(s) sala(s) demandados pelas aulas em questão. */
    //bool checkDisponibilidadeHorarioSalaAula(
@@ -90,13 +93,14 @@ public:
       //std::vector< std::pair< Professor *, Horario * > > & novosHorariosAula) const;
 
 private:
+   
+   ProblemData* problem_data;
+
    int total_dias;
    int total_horarios;
    int total_professores;
 
    MatrizSolucao * matriz_aulas;
-
-   ProblemData* problem_data;
 
    // Verifica se o professor tem disponível
    // um determinado horário em um dia da semana

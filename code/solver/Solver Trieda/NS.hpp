@@ -8,7 +8,7 @@ class NS
 {
 public:
 
-   NS()
+   NS() : MAX_ATTEMPTS(250)
    {
    }
 
@@ -19,6 +19,10 @@ public:
    virtual Move & move(const SolucaoOperacional& s) = 0;
 
    virtual void print() = 0;
+   
+protected:
+
+   int MAX_ATTEMPTS;
 };
 
 #endif /*NS_HPP_*/
