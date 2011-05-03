@@ -15,6 +15,8 @@ import org.springframework.web.util.HtmlUtils;
 
 import com.gapso.trieda.domain.Campus;
 import com.gapso.trieda.domain.Cenario;
+import com.gapso.trieda.domain.Curriculo;
+import com.gapso.trieda.domain.CurriculoDisciplina;
 import com.gapso.trieda.domain.Curso;
 import com.gapso.trieda.domain.Demanda;
 import com.gapso.trieda.domain.Disciplina;
@@ -139,6 +141,8 @@ public class DemandasImportExcel extends AbstractImportExcel<DemandasImportExcel
 		checkNonRegisteredTurno(sheetContent);
 		checkNonRegisteredCurso(sheetContent);
 		checkNonRegisteredDisciplina(sheetContent);
+		checkNonRegisteredCurriculo(sheetContent);
+		checkNonRegisteredDisciplinaEmCurricular(sheetContent);
 		
 		return getErrors().isEmpty();
 	}
@@ -233,6 +237,38 @@ public class DemandasImportExcel extends AbstractImportExcel<DemandasImportExcel
 			getErrors().add(getI18nMessages().excelErroLogicoEntidadesNaoCadastradas(DISCIPLINA_COLUMN_NAME,rowsWithErrors.toString()));
 		}
 	}
+	private void checkNonRegisteredCurriculo(List<DemandasImportExcelBean> sheetContent) {
+		// [CodigoCurriculo -> Curriculo]
+		Map<String,Curriculo> curriculosBDMap = Curriculo.buildCurriculoCodigoToCurriculoMap(Curriculo.findByCenario(getCenario()));
+		
+		List<Integer> rowsWithErrors = new ArrayList<Integer>();
+		for (DemandasImportExcelBean bean : sheetContent) {
+			Curriculo curriculo = curriculosBDMap.get(bean.getMatrizCurricularStr());
+			if (curriculo != null) {
+				bean.setMatrizCurricular(curriculo);
+			} else {
+				rowsWithErrors.add(bean.getRow());
+			}
+		}
+		if (!rowsWithErrors.isEmpty()) {
+			getErrors().add(getI18nMessages().excelErroLogicoEntidadesNaoCadastradas(MATRIZ_CURRICULAR_COLUMN_NAME,rowsWithErrors.toString()));
+		}
+	}
+	private void checkNonRegisteredDisciplinaEmCurricular(List<DemandasImportExcelBean> sheetContent) {
+		// [ChaveNaturalCurriculo -> Curriculo]
+		Map<String, CurriculoDisciplina> curriculosDisciplinasBDMap = CurriculoDisciplina.buildNaturalKeyToCurriculoDisciplinaMap(CurriculoDisciplina.findByCenario(getCenario()));
+		
+		List<Integer> rowsWithErrors = new ArrayList<Integer>();
+		for (DemandasImportExcelBean bean : sheetContent) {
+			CurriculoDisciplina curriculoDisciplina = curriculosDisciplinasBDMap.get(getNaturalKeyStringDeCurriculoDisciplina(bean));
+			if (curriculoDisciplina == null) {
+				rowsWithErrors.add(bean.getRow());
+			}
+		}
+		if (!rowsWithErrors.isEmpty()) {
+			getErrors().add(getI18nMessages().excelErroLogicoDisciplinaEmMatrizCurricular(DISCIPLINA_COLUMN_NAME,rowsWithErrors.toString()));
+		}
+	}
 
 	@Transactional
 	private void updateDataBase(String sheetName, List<DemandasImportExcelBean> sheetContent) {
@@ -285,6 +321,10 @@ public class DemandasImportExcel extends AbstractImportExcel<DemandasImportExcel
 	// campus + turno + matrizcurricular + disciplina
 	private String getCodeDemanda(DemandasImportExcelBean bean) {
 		return bean.getCampusStr() + "-" + bean.getTurnoStr() + "-" + bean.getMatrizCurricularStr() + "-" + bean.getDisciplinaStr();
+	}
+	
+	public String getNaturalKeyStringDeCurriculoDisciplina(DemandasImportExcelBean bean) {
+		return bean.getCursoStr() + "-" + bean.getMatrizCurricularStr() + "-" + bean.getPeriodo() + "-" + bean.getDisciplinaStr();
 	}
 	
 }

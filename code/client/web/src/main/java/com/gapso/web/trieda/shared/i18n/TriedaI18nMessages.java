@@ -9,6 +9,7 @@ public interface TriedaI18nMessages extends Messages {
 	String excelErroBD(String nomeArquivo, String motivo);
 	String excelErroImportadorNulo(String infoASerImportada);
 	String excelErroLogicoEntidadesNaoCadastradas(String nomeColuna, String linhasComErro);
+	String excelErroLogicoDisciplinaEmMatrizCurricular(String nomeColuna, String linhasComErro);
 	String excelErroLogicoUnicidadeViolada(String valorRepetido, String linhasComErro);
 	String excelErroLogicoUnicidadeVioladaCurriculoPorCurso(String valorRepetido, String linhasComErro);
 	String excelErroLogicoUnicidadeVioladaCurriculoPorDescricao(String valorRepetido, String linhasComErro);
