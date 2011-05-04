@@ -19,7 +19,7 @@ public:
    Disciplina * disciplina;
    Sala * sala;
    Turno * turno;
-   HorarioAula * horario;
+   HorarioAula * horario_aula;
 
    void setProfessorId(int v) { professor_id = v; }
    void setDisciplinaId(int v) { disciplina_id = v; }

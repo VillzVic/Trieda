@@ -208,7 +208,7 @@ void Avaliador::calculaViolacaoRestricaoFixacao( SolucaoOperacional & solucao )
 
    // Para cada fixação de aula a um professor, verifica se há
    // uma aula atribuída ao professor que corresponda a essa fixação
-   ITERA_GGROUP( it_fixacao, solucao.getProblemData()->fixacoes, Fixacao )
+   ITERA_GGROUP_LESSPTR( it_fixacao, solucao.getProblemData()->fixacoes, Fixacao )
    {
       // Recupera o professor correspondente à fixação
       id_professor = it_fixacao->getProfessorId();
@@ -1053,8 +1053,7 @@ int Avaliador::calculaTamanhoBlocoAula(SolucaoOperacional & solucao)
    // Para cada um dos horários disponíveis, essa iteração
    // incrementa o número de horários disponíveis em cada dia da
    // semana, a cada ocorrência de horário/dia da semana encontrada
-   ITERA_GGROUP( it_campi, solucao.getProblemData()->campi,
-				 Campus )
+   ITERA_GGROUP_LESSPTR( it_campi, solucao.getProblemData()->campi, Campus )
    {
       ITERA_GGROUP( it_horario, it_campi->horarios,
 					Horario )
@@ -1380,7 +1379,7 @@ void Avaliador::avaliaPreferenciasProfessorDisciplina( SolucaoOperacional & solu
    // Para cada professor, criamos um 'map' que
    // relaciona cada uma de suas disciplinas com
    // a preferência do professor em lecionar essa disciplina
-   ITERA_GGROUP( it_campi, solucao.getProblemData()->campi, Campus )
+   ITERA_GGROUP_LESSPTR( it_campi, solucao.getProblemData()->campi, Campus )
    {
       ITERA_GGROUP( it_professor, it_campi->professores, Professor )
       {

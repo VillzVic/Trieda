@@ -677,7 +677,7 @@ void SolverMIP::converteCjtSalaEmSala()
 
    { // METODO
       // Inicializando a estrutura criada acima
-      ITERA_GGROUP(it_Campus, problemData->campi, Campus)
+	   ITERA_GGROUP_LESSPTR(it_Campus, problemData->campi, Campus)
       {
          ITERA_GGROUP(it_Unidade, it_Campus->unidades, Unidade)
          {
@@ -2213,7 +2213,7 @@ int SolverMIP::cria_variavel_creditos(void)
 {
    int num_vars = 0;
 
-   ITERA_GGROUP( itCampus, problemData->campi, Campus )
+   ITERA_GGROUP_LESSPTR( itCampus, problemData->campi, Campus )
    {
       ITERA_GGROUP( itUnidade, itCampus->unidades, Unidade )
       {
@@ -2296,7 +2296,7 @@ int SolverMIP::cria_variavel_creditos_permitir_alunos_varios_campi(void)
 {
 	int num_vars = 0;
 
-   ITERA_GGROUP(itCampus,problemData->campi,Campus)
+   ITERA_GGROUP_LESSPTR(itCampus,problemData->campi,Campus)
    {
 	  ITERA_GGROUP(itUnidade,itCampus->unidades,Unidade)
 	  {
@@ -2411,7 +2411,7 @@ int SolverMIP::cria_variavel_oferecimentos(void)
 {
    int num_vars = 0;
 
-   ITERA_GGROUP( itCampus, problemData->campi, Campus )
+   ITERA_GGROUP_LESSPTR( itCampus, problemData->campi, Campus )
    {
       ITERA_GGROUP( itUnidade, itCampus->unidades, Unidade )
       {
@@ -2464,7 +2464,7 @@ int SolverMIP::cria_variavel_oferecimentos_permitir_alunos_varios_campi(void)
 {
 	int num_vars = 0;
 
-   ITERA_GGROUP(itCampus,problemData->campi,Campus)
+   ITERA_GGROUP_LESSPTR(itCampus,problemData->campi,Campus)
    {
       ITERA_GGROUP(itUnidade,itCampus->unidades,Unidade)
       {
@@ -2570,7 +2570,7 @@ int SolverMIP::cria_variavel_abertura(void)
    // à disciplinas que não existem em outros campus) seriam evitadas.
    // VER <demandas_campus> em <ProblemData>
 
-   ITERA_GGROUP( it_campus, problemData->campi, Campus )
+   ITERA_GGROUP_LESSPTR( it_campus, problemData->campi, Campus )
    {
       ITERA_GGROUP( it_disc, problemData->disciplinas, Disciplina )
       {
@@ -2643,7 +2643,7 @@ int SolverMIP::cria_variavel_abertura_permitir_alunos_varios_campi()
 {
 	int num_vars = 0;
 
-   ITERA_GGROUP(it_campus,problemData->campi,Campus)
+   ITERA_GGROUP_LESSPTR(it_campus,problemData->campi,Campus)
    {
       ITERA_GGROUP(it_disc,problemData->disciplinas,Disciplina)
       {
@@ -3148,7 +3148,7 @@ int SolverMIP::cria_variavel_aloc_disciplina(void)
 
    int num_vars = 0;
 
-   ITERA_GGROUP( itCampus, problemData->campi, Campus )
+   ITERA_GGROUP_LESSPTR( itCampus, problemData->campi, Campus )
    {
       ITERA_GGROUP( itUnidade, itCampus->unidades, Unidade )
       {
@@ -3195,7 +3195,7 @@ int SolverMIP::cria_variavel_aloc_disciplina_permitir_alunos_varios_campi(void)
 
    int num_vars = 0;
 
-   ITERA_GGROUP(itCampus, problemData->campi, Campus)
+   ITERA_GGROUP_LESSPTR(itCampus, problemData->campi, Campus)
    {
       ITERA_GGROUP(itUnidade, itCampus->unidades, Unidade)
       {
@@ -3393,7 +3393,7 @@ int SolverMIP::cria_variavel_de_folga_dist_cred_dia_superior(void)
 {
    int num_vars = 0;
 
-   ITERA_GGROUP( itCampus, problemData->campi, Campus )
+   ITERA_GGROUP_LESSPTR( itCampus, problemData->campi, Campus )
    {
       ITERA_GGROUP( itUnidade, itCampus->unidades, Unidade )
       {
@@ -3408,7 +3408,7 @@ int SolverMIP::cria_variavel_de_folga_dist_cred_dia_superior(void)
                   for(; itDiasLetDisc != it_disc->diasLetivos.end();
 						itDiasLetDisc++ )
                   {
-                     ITERA_GGROUP( it_fix, problemData->fixacoes, Fixacao )
+                     ITERA_GGROUP_LESSPTR( it_fix, problemData->fixacoes, Fixacao )
                      {
                         if ( it_fix->getDisciplinaId() == it_disc->getId() 
 								&& it_fix->getDiaSemana() == *itDiasLetDisc )
@@ -3465,7 +3465,7 @@ int SolverMIP::cria_variavel_de_folga_dist_cred_dia_superior_permitir_alunos_var
 {
    int num_vars = 0;
 
-   ITERA_GGROUP(itCampus,problemData->campi,Campus) 
+   ITERA_GGROUP_LESSPTR(itCampus,problemData->campi,Campus) 
    {
       ITERA_GGROUP(itUnidade,itCampus->unidades,Unidade)
       {
@@ -3480,7 +3480,7 @@ int SolverMIP::cria_variavel_de_folga_dist_cred_dia_superior_permitir_alunos_var
 
                   for(; itDiasLetDisc != it_disc->diasLetivos.end(); itDiasLetDisc++ )
                   {
-                     ITERA_GGROUP(it_fix,problemData->fixacoes,Fixacao)
+                     ITERA_GGROUP_LESSPTR(it_fix,problemData->fixacoes,Fixacao)
                      {
                         if(it_fix->getDisciplinaId() == it_disc->getId() 
                            && it_fix->getDiaSemana() == *itDiasLetDisc) 
@@ -3562,7 +3562,7 @@ int SolverMIP::cria_variavel_de_folga_dist_cred_dia_inferior(void)
 {
    int num_vars = 0;
 
-   ITERA_GGROUP(itCampus,problemData->campi,Campus) 
+   ITERA_GGROUP_LESSPTR(itCampus,problemData->campi,Campus) 
    {
       ITERA_GGROUP(itUnidade,itCampus->unidades,Unidade)
       {
@@ -3577,7 +3577,7 @@ int SolverMIP::cria_variavel_de_folga_dist_cred_dia_inferior(void)
 
                   for(; itDiasLetDisc != it_disc->diasLetivos.end(); itDiasLetDisc++ )
                   {
-                     ITERA_GGROUP(it_fix,problemData->fixacoes,Fixacao)
+                     ITERA_GGROUP_LESSPTR(it_fix,problemData->fixacoes,Fixacao)
                      {
                         if(it_fix->getDisciplinaId() == it_disc->getId() 
                            && it_fix->getDiaSemana() == *itDiasLetDisc) 
@@ -3631,7 +3631,7 @@ int SolverMIP::cria_variavel_de_folga_dist_cred_dia_inferior_permitir_alunos_var
 {
    int num_vars = 0;
 
-   ITERA_GGROUP(itCampus,problemData->campi,Campus) 
+   ITERA_GGROUP_LESSPTR(itCampus,problemData->campi,Campus) 
    {
       ITERA_GGROUP(itUnidade,itCampus->unidades,Unidade)
       {
@@ -3646,7 +3646,7 @@ int SolverMIP::cria_variavel_de_folga_dist_cred_dia_inferior_permitir_alunos_var
 
                   for(; itDiasLetDisc != it_disc->diasLetivos.end(); itDiasLetDisc++ )
                   {
-                     ITERA_GGROUP(it_fix,problemData->fixacoes,Fixacao)
+                     ITERA_GGROUP_LESSPTR(it_fix,problemData->fixacoes,Fixacao)
                      {
                         if(it_fix->getDisciplinaId() == it_disc->getId() 
                            && it_fix->getDiaSemana() == *itDiasLetDisc) 
@@ -4100,7 +4100,7 @@ int SolverMIP::cria_variavel_creditos_modificada(void)
 
    int num_vars = 0;
 
-   ITERA_GGROUP(itCampus,problemData->campi,Campus)
+   ITERA_GGROUP_LESSPTR(itCampus,problemData->campi,Campus)
    {
       ITERA_GGROUP(itUnidade,itCampus->unidades,Unidade)
       {
@@ -4153,7 +4153,7 @@ int SolverMIP::cria_variavel_creditos_modificada_permitir_alunos_varios_campi(vo
 {
    int num_vars = 0;
 
-   ITERA_GGROUP(itCampus,problemData->campi,Campus)
+   ITERA_GGROUP_LESSPTR(itCampus,problemData->campi,Campus)
    {
       ITERA_GGROUP(itUnidade,itCampus->unidades,Unidade)
       {
@@ -4277,7 +4277,7 @@ int SolverMIP::cria_variavel_abertura_bloco_mesmoTPS(void)
 
    ITERA_GGROUP(itBloco, problemData->blocos, BlocoCurricular)
    {
-      ITERA_GGROUP(itCampus,problemData->campi,Campus)
+      ITERA_GGROUP_LESSPTR(itCampus,problemData->campi,Campus)
       {
          ITERA_GGROUP(itUnidade,itCampus->unidades,Unidade)
          {
@@ -4334,7 +4334,7 @@ int SolverMIP::cria_variavel_de_folga_abertura_bloco_mesmoTPS(){
 
    ITERA_GGROUP(itBloco, problemData->blocos, BlocoCurricular)
    {
-      ITERA_GGROUP(itCampus,problemData->campi,Campus)
+      ITERA_GGROUP_LESSPTR(itCampus,problemData->campi,Campus)
       {
          ITERA_GGROUP(itUnidade,itCampus->unidades,Unidade)
          {
@@ -4664,7 +4664,7 @@ int SolverMIP::cria_restricao_carga_horaria(void)
    Variable v;
    VariableHash::iterator it_v;
 
-   ITERA_GGROUP(itCampus,problemData->campi,Campus)
+   ITERA_GGROUP_LESSPTR(itCampus,problemData->campi,Campus)
    {
       ITERA_GGROUP(itDisciplina,problemData->disciplinas,Disciplina)
       {
@@ -4864,7 +4864,7 @@ int SolverMIP::cria_restricao_max_cred_sd(void)
    Variable v;
    VariableHash::iterator it_v;
 
-   ITERA_GGROUP(itCampus,problemData->campi,Campus)
+   ITERA_GGROUP_LESSPTR(itCampus,problemData->campi,Campus)
    {
       ITERA_GGROUP(itUnidade,itCampus->unidades,Unidade)
       {
@@ -5029,7 +5029,7 @@ int SolverMIP::cria_restricao_min_cred_dd(void)
    Variable v;
    VariableHash::iterator it_v;
 
-   ITERA_GGROUP(itCampus,problemData->campi,Campus)
+   ITERA_GGROUP_LESSPTR(itCampus,problemData->campi,Campus)
    {
       ITERA_GGROUP(itUnidade,itCampus->unidades,Unidade)
       {
@@ -5227,7 +5227,7 @@ int SolverMIP::cria_restricao_ativacao_var_o(void)
    Variable v;
    VariableHash::iterator it_v;
 
-   ITERA_GGROUP(itCampus,problemData->campi,Campus)
+   ITERA_GGROUP_LESSPTR(itCampus,problemData->campi,Campus)
    {
       ITERA_GGROUP(itUnidade,itCampus->unidades,Unidade)
       {
@@ -5419,7 +5419,7 @@ int SolverMIP::cria_restricao_evita_sobreposicao(void)
    Variable v;
    VariableHash::iterator it_v;
 
-   ITERA_GGROUP(itCampus, problemData->campi, Campus)
+   ITERA_GGROUP_LESSPTR(itCampus, problemData->campi, Campus)
    {
       ITERA_GGROUP(itUnidade, itCampus->unidades, Unidade)
       {
@@ -5571,7 +5571,7 @@ int SolverMIP::cria_restricao_disciplina_sala(void)
    Variable v;
    VariableHash::iterator it_v;
 
-   ITERA_GGROUP(itCampus,problemData->campi,Campus)
+   ITERA_GGROUP_LESSPTR(itCampus,problemData->campi,Campus)
    {
       ITERA_GGROUP(itUnidade,itCampus->unidades,Unidade)
       {
@@ -5754,7 +5754,7 @@ int SolverMIP::cria_restricao_turma_sala(void)
          nnz = problemData->totalSalas;
          OPT_ROW row( nnz, OPT_ROW::LESS , 1.0, name );
 
-         ITERA_GGROUP(itCampus,problemData->campi,Campus)
+         ITERA_GGROUP_LESSPTR(itCampus,problemData->campi,Campus)
          {
             ITERA_GGROUP(itUnidade,itCampus->unidades,Unidade) 
             {
@@ -5836,7 +5836,7 @@ int SolverMIP::cria_restricao_evita_turma_disc_camp_d(void)
          nnz = problemData->totalSalas;
          OPT_ROW row( nnz, OPT_ROW::LESS , 1.0, name );
 
-         ITERA_GGROUP( it_campus, problemData->campi, Campus )
+         ITERA_GGROUP_LESSPTR( it_campus, problemData->campi, Campus )
          {
             v.reset();
             v.setType( Variable::V_ABERTURA );
@@ -5896,7 +5896,7 @@ int SolverMIP::cria_restricao_turmas_bloco(void)
    Variable v;
    VariableHash::iterator it_v;
 
-   ITERA_GGROUP( itCampus, problemData->campi, Campus )
+   ITERA_GGROUP_LESSPTR( itCampus, problemData->campi, Campus )
    {
       GGroup<int>::iterator itDiasLetCampus =
          itCampus->diasLetivos.begin();
@@ -6009,7 +6009,7 @@ int SolverMIP::cria_restricao_max_cred_disc_bloco(void)
    Variable v;
    VariableHash::iterator it_v;
 
-   ITERA_GGROUP(itCampus,problemData->campi,Campus)
+   ITERA_GGROUP_LESSPTR(itCampus,problemData->campi,Campus)
    {
       GGroup<int>::iterator itDiasLetCampus =
          itCampus->diasLetivos.begin();
@@ -6245,7 +6245,8 @@ int SolverMIP::cria_restricao_num_tur_bloc_dia_difunid(void)
          OPT_ROW row( nnz + 1, OPT_ROW::LESS , 1.0 , 
             name );
 
-         ITERA_GGROUP(it_cp,problemData->campi,Campus) {
+         ITERA_GGROUP_LESSPTR(it_cp,problemData->campi,Campus)
+		 {
             v.reset();
             v.setType(Variable::V_ABERTURA_SUBBLOCO_DE_BLC_DIA_CAMPUS);
 
@@ -6324,7 +6325,7 @@ int SolverMIP::cria_restricao_lim_cred_diar_disc(void)
    Variable v;
    VariableHash::iterator it_v;
 
-   ITERA_GGROUP(itCampus,problemData->campi,Campus)
+   ITERA_GGROUP_LESSPTR(itCampus,problemData->campi,Campus)
    {
       ITERA_GGROUP(itUnidade,itCampus->unidades,Unidade)
       {
@@ -6632,10 +6633,8 @@ int SolverMIP::cria_restricao_cap_sala_compativel_turma(void)
    Variable v;
    VariableHash::iterator it_v;
 
-   ITERA_GGROUP(itCampus,problemData->campi,Campus)
+   ITERA_GGROUP_LESSPTR(itCampus,problemData->campi,Campus)
    {
-      //ITERA_GGROUP(itCurso,problemData->cursos,Curso)
-      //{
       ITERA_GGROUP(itDisc,problemData->disciplinas,Disciplina)
       {
          for(int turma = 0; turma < itDisc->getNumTurmas(); turma++)
@@ -6915,10 +6914,7 @@ int SolverMIP::cria_restricao_cap_sala_unidade(void)
    Variable v;
    VariableHash::iterator it_v;
 
-   //std::cout << "ANTES(disc_Conjutno_Salas__Dias): " << problemData->disc_Conjutno_Salas__Dias.size() << std::endl;
-   //std::cout << "ANTES(problemData->ofertasDisc): " << problemData->ofertasDisc.size() << std::endl;
-
-   ITERA_GGROUP(itCampus,problemData->campi,Campus)
+   ITERA_GGROUP_LESSPTR(itCampus,problemData->campi,Campus)
    {
       ITERA_GGROUP(itUnidade,itCampus->unidades,Unidade)
       {
@@ -7258,7 +7254,7 @@ int SolverMIP::cria_restricao_turma_disc_dias_consec(void)
             if( it_v != vHash.end() )
             { row.insert(it_v->second, 1.0); }
 
-            ITERA_GGROUP(itCampus,problemData->campi,Campus)
+            ITERA_GGROUP_LESSPTR(itCampus,problemData->campi,Campus)
             {
                ITERA_GGROUP(itUnidade,itCampus->unidades,Unidade)
                {
@@ -7606,7 +7602,7 @@ int SolverMIP::cria_restricao_aluno_curso_disc(void)
    Variable v;
    VariableHash::iterator it_v;
 
-   ITERA_GGROUP(itCampus, problemData->campi, Campus)
+   ITERA_GGROUP_LESSPTR(itCampus, problemData->campi, Campus)
    {
       ITERA_GGROUP(itCurso, problemData->cursos, Curso)
       {
@@ -7712,7 +7708,7 @@ int SolverMIP::cria_restricao_alunos_cursos_dif(void)
    Variable v;
    VariableHash::iterator it_v;
 
-   ITERA_GGROUP(itCampus,problemData->campi,Campus) 
+   ITERA_GGROUP_LESSPTR(itCampus,problemData->campi,Campus) 
    {
       ITERA_GGROUP(itDisc,problemData->disciplinas,Disciplina)
       {
@@ -7832,7 +7828,7 @@ int SolverMIP::cria_restricao_de_folga_dist_cred_dia(void)
    Variable v;
    VariableHash::iterator it_v;
 
-   ITERA_GGROUP(itCampus,problemData->campi,Campus) 
+   ITERA_GGROUP_LESSPTR(itCampus,problemData->campi,Campus) 
    {
       ITERA_GGROUP(itUnidade,itCampus->unidades,Unidade)
       {
@@ -7846,7 +7842,7 @@ int SolverMIP::cria_restricao_de_folga_dist_cred_dia(void)
                      itDisc->diasLetivos.begin();
                   for(; itDiasLetDisc != itDisc->diasLetivos.end(); itDiasLetDisc++ )
                   {
-                     ITERA_GGROUP(it_fix, problemData->fixacoes, Fixacao)
+                     ITERA_GGROUP_LESSPTR(it_fix, problemData->fixacoes, Fixacao)
                      {
                         if(it_fix->getDisciplinaId() == itDisc->getId()
                            && it_fix->getDiaSemana() == *itDiasLetDisc) 
@@ -7871,7 +7867,7 @@ int SolverMIP::cria_restricao_de_folga_dist_cred_dia(void)
 
                            if(itCjtSala->capTotalSalas() == it_fix->sala->getCapacidade())
                            {
-                              ITERA_GGROUP(itCampus1, problemData->campi, Campus)
+                              ITERA_GGROUP_LESSPTR(itCampus1, problemData->campi, Campus)
                               {
                                  if(itCampus->getId() == itCampus1->getId())
                                  {
@@ -8271,7 +8267,7 @@ int SolverMIP::cria_restricao_limita_abertura_turmas()
    Variable v;
    VariableHash::iterator it_v;
 
-   ITERA_GGROUP(itCampus, problemData->campi, Campus)
+   ITERA_GGROUP_LESSPTR(itCampus, problemData->campi, Campus)
    {
       ITERA_GGROUP(itDisc, problemData->disciplinas, Disciplina)
       {
@@ -8531,7 +8527,7 @@ int SolverMIP::cria_restricao_abre_turmas_em_sequencia(void)
             nnz = 9999;
             OPT_ROW row( nnz, OPT_ROW::GREATER , 0.0, name );
 
-            ITERA_GGROUP(itCampus, problemData->campi, Campus)
+            ITERA_GGROUP_LESSPTR(itCampus, problemData->campi, Campus)
             {
                ITERA_GGROUP(itUnidade, itCampus->unidades, Unidade)
                {
@@ -8733,7 +8729,7 @@ int SolverMIP::cria_restricao_divisao_credito(){
                nnz = problemData->totalSalas + (itDisc->combinacao_divisao_creditos.size() * 2);
                OPT_ROW row( nnz, OPT_ROW::EQUAL , 0.0 , name );
 
-               ITERA_GGROUP(itCampus, problemData->campi, Campus)
+               ITERA_GGROUP_LESSPTR(itCampus, problemData->campi, Campus)
                {
                   ITERA_GGROUP(itUnidade, itCampus->unidades, Unidade)
                   {
@@ -8910,7 +8906,7 @@ int SolverMIP::cria_restricao_ativacao_var_y()
    Variable v;
    VariableHash::iterator it_v;
 
-   ITERA_GGROUP(itCampus,problemData->campi,Campus)
+   ITERA_GGROUP_LESSPTR(itCampus,problemData->campi,Campus)
    {
       ITERA_GGROUP(itUnidade,itCampus->unidades,Unidade)
       {
@@ -9040,7 +9036,7 @@ int SolverMIP::cria_restricao_max_creds_disc_dia()
 
             OPT_ROW row( nnz, OPT_ROW::LESS, 0.0, name );
 
-            ITERA_GGROUP(it_Campus,problemData->campi,Campus)
+            ITERA_GGROUP_LESSPTR(it_Campus,problemData->campi,Campus)
             {
                ITERA_GGROUP(it_Unidade,it_Campus->unidades,Unidade)
                {
@@ -9229,7 +9225,7 @@ int SolverMIP::cria_restricao_ativacao_var_zc()
 
          OPT_ROW row( nnz, OPT_ROW::LESS, 0.0, name );
 
-         ITERA_GGROUP(itCampus, problemData->campi, Campus)
+         ITERA_GGROUP_LESSPTR(itCampus, problemData->campi, Campus)
          {
             ITERA_GGROUP(itUnidade, itCampus->unidades, Unidade)
             {
@@ -9388,7 +9384,7 @@ int SolverMIP::cria_restricao_abertura_bloco_mesmoTPS()
 
    ITERA_GGROUP(itBloco, problemData->blocos, BlocoCurricular)
    {
-      ITERA_GGROUP(itCampus,problemData->campi,Campus)
+      ITERA_GGROUP_LESSPTR(itCampus,problemData->campi,Campus)
       {
          ITERA_GGROUP(itUnidade,itCampus->unidades,Unidade)
          {
@@ -9414,7 +9410,7 @@ int SolverMIP::cria_restricao_abertura_bloco_mesmoTPS()
 
                   OPT_ROW row( nnz, OPT_ROW::LESS, 0.0, name );
 
-                  ITERA_GGROUP(it_campus,problemData->campi,Campus)
+                  ITERA_GGROUP_LESSPTR(it_campus,problemData->campi,Campus)
                   {
                      ITERA_GGROUP(it_unidade,it_campus->unidades,Unidade)
                      {
@@ -9502,7 +9498,7 @@ int SolverMIP::cria_restricao_folga_abertura_bloco_mesmoTPS()
 
       OPT_ROW row( nnz, OPT_ROW::LESS, 1.0, name );
 
-      ITERA_GGROUP(itCampus,problemData->campi,Campus)
+      ITERA_GGROUP_LESSPTR(itCampus,problemData->campi,Campus)
       {
          ITERA_GGROUP(itUnidade,itCampus->unidades,Unidade)
          {

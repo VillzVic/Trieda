@@ -15,7 +15,7 @@ SolucaoOperacional::SolucaoOperacional( ProblemData * prbDt ) : problem_data(prb
    // Montando um map: dado o índice da matriz
    // (o 'idOperacional' do professor) o map
    // retorna o ponteiro para o professor correspondente
-   GGroup< Campus * >::iterator it_campi
+   GGroup< Campus *, LessPtr< Campus > >::iterator it_campi
       = prbDt->campi.begin();
    for (; it_campi != prbDt->campi.end(); it_campi++)
    {

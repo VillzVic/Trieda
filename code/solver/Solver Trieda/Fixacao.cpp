@@ -6,7 +6,7 @@ Fixacao::Fixacao(void)
 	disciplina = NULL;
 	sala = NULL;
 	turno = NULL;
-	horario = NULL;
+	horario_aula = NULL;
     dia_semana = -1;
 }
 
