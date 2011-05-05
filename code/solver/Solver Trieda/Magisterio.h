@@ -1,4 +1,6 @@
-#pragma once
+#ifndef _MAGISTERIO_H_
+#define _MAGISTERIO_H_
+
 #include "ofbase.h"
 #include "Disciplina.h"
 
@@ -26,3 +28,5 @@ private:
    int preferencia;
    int disciplina_id;
 };
+
+#endif

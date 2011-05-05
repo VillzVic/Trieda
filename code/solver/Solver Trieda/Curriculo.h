@@ -4,8 +4,6 @@
 #include "ofbase.h"
 #include "GGroup.h"
 
-typedef std::pair< int /*periodo*/, int /*disciplina_id*/ > DisciplinaPeriodo;
-
 class Curriculo :
    public OFBase
 {
@@ -15,7 +13,7 @@ public:
 
    virtual void le_arvore( ItemCurriculo & );
 
-   GGroup< DisciplinaPeriodo > disciplinas_periodo;
+   GGroup< std::pair< int /*periodo*/, int /*disciplina_id*/ > > disciplinas_periodo;
 
    void setCodigo( std::string s ) { codigo = s; }
    std::string getCodigo() const { return codigo; }

@@ -201,7 +201,6 @@ void Avaliador::calculaViolacaoRestricaoFixacao( SolucaoOperacional & solucao )
 
    bool encontrou_fixacao = false;
    int linha_professor = 0;
-   int id_professor = 0;
 
    Aula * aula = NULL;
    Professor * professor = NULL;
@@ -211,12 +210,17 @@ void Avaliador::calculaViolacaoRestricaoFixacao( SolucaoOperacional & solucao )
    ITERA_GGROUP_LESSPTR( it_fixacao, solucao.getProblemData()->fixacoes, Fixacao )
    {
       // Recupera o professor correspondente à fixação
-      id_professor = it_fixacao->getProfessorId();
-      professor = solucao.mapProfessores[ id_professor ];
+	  professor = it_fixacao->professor;
+	  if ( professor == NULL )
+	  {
+		  continue;
+	  }
+
+      // Recupera a linha do professor na matriz de solução
       linha_professor = professor->getIdOperacional();
-	  encontrou_fixacao = false;
 
       // Percorre a linha correspondente ao professor na matriz de solução
+	  encontrou_fixacao = false;
       for ( unsigned int i = 0; i < solucao.getMatrizAulas()->at( linha_professor )->size(); i++ )
       {
          aula = solucao.getMatrizAulas()->at( linha_professor )->at(i);

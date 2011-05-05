@@ -1,4 +1,5 @@
 #include "ProblemData.h"
+
 #include <iostream>
 
 // Macro baseada na ITERA_SEQ para facilitar a leitura dos dados no
@@ -153,9 +154,9 @@ void ProblemData::le_arvore( TriedaInput & raiz )
    // Prencher os horários e/ou créditos das salas
    ITERA_GGROUP_LESSPTR( it_campi, campi, Campus )
    {
-      ITERA_GGROUP( it_unidade, it_campi->unidades, Unidade )
+      ITERA_GGROUP_LESSPTR( it_unidade, it_campi->unidades, Unidade )
       {
-         ITERA_GGROUP( it_sala, it_unidade->salas, Sala )
+         ITERA_GGROUP_LESSPTR( it_sala, it_unidade->salas, Sala )
          {
 			 std::map< int, ItemSala * >::iterator it
 				 = mapItemSala.find( it_sala->getId() );
@@ -173,4 +174,17 @@ void ProblemData::le_arvore( TriedaInput & raiz )
       }
    }
    //-------------------------------------------------------------------------------
+}
+
+int ProblemData::creditosFixadosDisciplinaDia( Disciplina * disciplina, int dia_semana )
+{
+	if ( disciplina != NULL && dia_semana >= 0 )
+	{
+		std::pair< Disciplina *, int > disciplina_dia
+			= std::make_pair( disciplina, dia_semana );
+
+		return this->map_Discicplina_DiaSemana_CreditosFixados[ disciplina_dia ];
+	}
+
+	return 0;
 }

@@ -214,6 +214,12 @@ public:
    GGroup< Fixacao *, LessPtr< Fixacao > > fixacoes_Prof_Sala;
    //----------------------------------------------------------------
 
+   // Dado um par disciplina/dia da semana, informa quantos
+   // crétidos estão fixados dessa disciplina nesse dia da semana
+   std::map< std::pair< Disciplina *, int >, int > map_Discicplina_DiaSemana_CreditosFixados;
+
+   int creditosFixadosDisciplinaDia( Disciplina *, int );
+
    virtual void le_arvore( TriedaInput & );
 };
 

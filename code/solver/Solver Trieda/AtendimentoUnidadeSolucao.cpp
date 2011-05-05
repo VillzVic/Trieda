@@ -1,10 +1,8 @@
-#ifndef _ATENDIMENTO_UNIDADE_SOLUCAO_H_
-#define _ATENDIMENTO_UNIDADE_SOLUCAO_H_
-
 #include "AtendimentoUnidadeSolucao.h"
 
 AtendimentoUnidadeSolucao::AtendimentoUnidadeSolucao(void)
 {
+
 }
 
 AtendimentoUnidadeSolucao::AtendimentoUnidadeSolucao(AtendimentoUnidade & at_Und)
@@ -38,5 +36,3 @@ void AtendimentoUnidadeSolucao::le_arvore(ItemAtendimentoUnidadeSolucao& elem)
        atendimentosSalas.add(sala);
    }
 }
-
-#endif

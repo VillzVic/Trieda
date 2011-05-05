@@ -1,4 +1,5 @@
 #include "Campus.h"
+
 #include <iostream>
 
 Campus::Campus(void)
@@ -9,6 +10,7 @@ Campus::Campus(void)
 
 Campus::~Campus(void)
 {
+
 }
 
 void Campus::le_arvore(ItemCampus& elem) 
@@ -17,11 +19,11 @@ void Campus::le_arvore(ItemCampus& elem)
    codigo = elem.codigo();
    nome = elem.nome();
 
-   ITERA_SEQ(it_unidades, elem.unidades(), Unidade)
+   ITERA_SEQ( it_unidades, elem.unidades(), Unidade )
    {
-      Unidade* unidade = new Unidade();
-      unidade->le_arvore(*it_unidades);
-      unidades.add(unidade);
+      Unidade * unidade = new Unidade();
+      unidade->le_arvore( *it_unidades );
+      unidades.add( unidade );
    }
 
    // O campo 'id_operacional_professor' é utilizado na classe
@@ -29,23 +31,21 @@ void Campus::le_arvore(ItemCampus& elem)
    // da solução. O id_operacional deve ser preenchido de forma
    // sequencial, começando a partir de zero.
    int id_operacional_professor = 0;
-   ITERA_SEQ(it_professores, elem.professores(), Professor)
+   ITERA_SEQ( it_professores, elem.professores(), Professor )
    {
-      Professor* professor = new Professor();
+      Professor * professor = new Professor();
 
-      professor->le_arvore(*it_professores);
-
-      professor->setIdOperacional(id_operacional_professor);
-
+      professor->le_arvore( *it_professores );
+      professor->setIdOperacional( id_operacional_professor );
       id_operacional_professor++;
 
-      professores.add(professor);
+      professores.add( professor );
    }
 
-   ITERA_SEQ(it_horarios, elem.horariosDisponiveis(), Horario)
+   ITERA_SEQ( it_horarios, elem.horariosDisponiveis(), Horario )
    {
-      Horario* horario = new Horario();
-      horario->le_arvore(*it_horarios);
-      horarios.add(horario);
+      Horario * horario = new Horario();
+      horario->le_arvore( *it_horarios );
+      horarios.add( horario );
    }
 }

@@ -1,4 +1,6 @@
-#pragma once
+#ifndef _FIXACAO_H_
+#define _FIXACAO_H_
+
 #include "ofbase.h"
 #include "Professor.h"
 #include "Disciplina.h"
@@ -10,10 +12,10 @@ class Fixacao :
    public OFBase
 {
 public:
-   Fixacao(void);
-   ~Fixacao(void);
+   Fixacao( void );
+   virtual ~Fixacao( void );
 
-   void le_arvore(ItemFixacao &);
+   virtual void le_arvore( ItemFixacao & );
 
    Professor * professor;
    Disciplina * disciplina;
@@ -21,19 +23,19 @@ public:
    Turno * turno;
    HorarioAula * horario_aula;
 
-   void setProfessorId(int v) { professor_id = v; }
-   void setDisciplinaId(int v) { disciplina_id = v; }
-   void setSalaId(int v) { sala_id = v; }
-   void setDiaSemana(int v) { dia_semana = v; }
-   void setTurnoId(int v) { turno_id = v; }
-   void setHorarioId(int v) { horario_id = v; }
+   void setProfessorId( int v ) { professor_id = v; }
+   void setDisciplinaId( int v ) { disciplina_id = v; }
+   void setSalaId( int v ) { sala_id = v; }
+   void setDiaSemana( int v ) { dia_semana = v; }
+   void setTurnoId( int v ) { turno_id = v; }
+   void setHorarioId( int v ) { horario_id = v; }
 
-   int getProfessorId() { return professor_id; }
-   int getDisciplinaId() { return disciplina_id; }
-   int getSalaId() { return sala_id; }
-   int getDiaSemana() { return dia_semana; }
-   int getTurnoId() { return turno_id; }
-   int getHorarioId() { return horario_id; }
+   int getProfessorId() const { return professor_id; }
+   int getDisciplinaId() const { return disciplina_id; }
+   int getSalaId() const { return sala_id; }
+   int getDiaSemana() const { return dia_semana; }
+   int getTurnoId() const { return turno_id; }
+   int getHorarioId() const { return horario_id; }
 
 private:
    int professor_id;
@@ -44,3 +46,4 @@ private:
    int horario_id;
 };
 
+#endif

@@ -1,4 +1,6 @@
-#pragma once
+#ifndef _ATENDIMENTO_SALA_H_
+#define _ATENDIMENTO_SALA_H_
+
 #include "ofbase.h"
 #include "TRIEDA-OutputXSD.h"
 
@@ -24,3 +26,5 @@ private:
 };
 
 std::ostream& operator << (std::ostream& out, AtendimentoSala& sala);
+
+#endif

@@ -1,4 +1,6 @@
-#pragma once
+#ifndef _DESLOCAMENTO_H_
+#define _DESLOCAMENTO_H_
+
 #include "ofbase.h"
 
 class Deslocamento :
@@ -29,3 +31,5 @@ private:
    int tempo;
    double custo;
 };
+
+#endif

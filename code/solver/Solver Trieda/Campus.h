@@ -15,9 +15,9 @@ class Campus:
 {
 public:
    Campus(void);
-   ~Campus(void);
+   virtual ~Campus(void);
 
-   GGroup< Unidade * > unidades;
+   GGroup< Unidade *, LessPtr< Unidade > > unidades;
    GGroup< Professor * > professores;
    GGroup< Horario * > horarios;
 
@@ -30,7 +30,7 @@ public:
    std::map< int, // ConjuntoSalaId
 	   GGroup< std::pair< Unidade *, ConjuntoSala * > > > conjutoSalas;
 
-   virtual void le_arvore(ItemCampus &);
+   virtual void le_arvore( ItemCampus & );
 
    void setCodigo(std::string s) { codigo = s; }
    void setNome(std::string s) { nome = s; }

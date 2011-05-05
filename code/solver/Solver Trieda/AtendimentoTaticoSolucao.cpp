@@ -1,10 +1,8 @@
-#ifndef _ATENDIMENTO_SALA_SOLUCAO_H_
-#define _ATENDIMENTO_SALA_SOLUCAO_H_
-
 #include "AtendimentoTaticoSolucao.h"
 
 AtendimentoTaticoSolucao::AtendimentoTaticoSolucao(void)
 {
+
 }
 
 AtendimentoTaticoSolucao::AtendimentoTaticoSolucao( AtendimentoTatico & at_Tatico )
@@ -19,11 +17,12 @@ AtendimentoTaticoSolucao::AtendimentoTaticoSolucao( AtendimentoTatico & at_Tatic
 
 AtendimentoTaticoSolucao::~AtendimentoTaticoSolucao(void)
 {
+
 }
 
-void AtendimentoTaticoSolucao::le_arvore(ItemAtendimentoTaticoSolucao& elem)
+void AtendimentoTaticoSolucao::le_arvore( ItemAtendimentoTaticoSolucao & elem )
 {
-   this->setId(elem.atendimentoOferta().ofertaCursoCampiId());
+   this->setId( elem.atendimentoOferta().ofertaCursoCampiId() );
 
    qtdeCreditosTeoricos = elem.qtdeCreditosTeoricos();
    qtdeCreditosPraticos = elem.qtdeCreditosPraticos();
@@ -31,5 +30,3 @@ void AtendimentoTaticoSolucao::le_arvore(ItemAtendimentoTaticoSolucao& elem)
    atendimento_oferta = new AtendimentoOfertaSolucao();
    atendimento_oferta->le_arvore(elem.atendimentoOferta());
 }
-
-#endif

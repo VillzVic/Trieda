@@ -1,6 +1,7 @@
-#pragma once
-#include "ofbase.h"
+#ifndef _ATENDIMENTO_CAMPUS_SOLUCAO_H_
+#define _ATENDIMENTO_CAMPUS_SOLUCAO_H_
 
+#include "ofbase.h"
 #include "AtendimentoUnidadeSolucao.h"
 #include "AtendimentoCampus.h"
 
@@ -9,10 +10,9 @@ class AtendimentoCampusSolucao :
 {
 public:
    AtendimentoCampusSolucao( void );
-
    AtendimentoCampusSolucao( AtendimentoCampus & );
+   virtual ~AtendimentoCampusSolucao( void );
 
-   ~AtendimentoCampusSolucao( void );
    virtual void le_arvore( ItemAtendimentoCampusSolucao & );
 
    GGroup< AtendimentoUnidadeSolucao * > atendimentosUnidades;
@@ -37,3 +37,5 @@ private:
    int campusId;
    std::string campusCodigo;
 };
+
+#endif
