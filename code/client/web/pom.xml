@@ -6,9 +6,10 @@
 	<artifactId>Trieda</artifactId>
 	<packaging>war</packaging>
 	<version>0.0.1</version>
+	<name>Trieda</name>
 
 	<properties>
-		<gwt.version>2.0.4</gwt.version>
+		<gwt.version>2.2.0</gwt.version>
 		<project.build.sourceEncoding>utf-8</project.build.sourceEncoding>
 		<spring-security.version>3.0.3.RELEASE</spring-security.version>
 	</properties>
@@ -24,6 +25,11 @@
 			<version>${gwt.version}</version>
 		</dependency>
 		<dependency>
+			<groupId>com.google.gwt</groupId>
+			<artifactId>gwt-dev</artifactId>
+			<version>2.2.0</version>
+		</dependency>
+		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>4.4</version>
@@ -32,7 +38,7 @@
 		<dependency>
 			<groupId>com.extjs</groupId>
 			<artifactId>gxt</artifactId>
-			<version>2.2.0</version>
+			<version>2.2.3</version>
 		</dependency>
 		<dependency>
 			<groupId>com.gapso.trieda</groupId>
@@ -84,38 +90,38 @@
 			<artifactId>poi</artifactId>
 			<version>3.7</version>
 		</dependency>
-        <dependency>
-            <groupId>org.springframework.security</groupId>
-            <artifactId>spring-security-core</artifactId>
-            <version>${spring-security.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>commons-logging</groupId>
-                    <artifactId>commons-logging</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.security</groupId>
-            <artifactId>spring-security-config</artifactId>
-            <version>${spring-security.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>commons-logging</groupId>
-                    <artifactId>commons-logging</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.security</groupId>
-            <artifactId>spring-security-web</artifactId>
-            <version>${spring-security.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.security</groupId>
-            <artifactId>spring-security-taglibs</artifactId>
-            <version>${spring-security.version}</version>
-        </dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-core</artifactId>
+			<version>${spring-security.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>commons-logging</groupId>
+					<artifactId>commons-logging</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-config</artifactId>
+			<version>${spring-security.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>commons-logging</groupId>
+					<artifactId>commons-logging</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-web</artifactId>
+			<version>${spring-security.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-taglibs</artifactId>
+			<version>${spring-security.version}</version>
+		</dependency>
 	</dependencies>
 	<profiles>
 		<profile>
@@ -134,7 +140,8 @@
 						</executions>
 						<configuration>
 							<generateDirectory>src/main/java</generateDirectory>
-							<generatePackage>com.gapso.web.trieda.server.xml.input</generatePackage>
+							<generatePackage>com.gapso.web.trieda.server.xml.input
+							</generatePackage>
 							<includeSchemas>
 								<includeSchema>TRIEDA-InputXSD.xsd</includeSchema>
 							</includeSchemas>
@@ -160,7 +167,8 @@
 						</executions>
 						<configuration>
 							<generateDirectory>src/main/java</generateDirectory>
-							<generatePackage>com.gapso.web.trieda.server.xml.output</generatePackage>
+							<generatePackage>com.gapso.web.trieda.server.xml.output
+							</generatePackage>
 							<includeSchemas>
 								<includeSchema>TRIEDA-OutputXSD.xsd</includeSchema>
 							</includeSchemas>
@@ -172,43 +180,7 @@
 		</profile>
 	</profiles>
 	<build>
-		<outputDirectory>${basedir}/src/main/webapp/WEB-INF/classes</outputDirectory>
-		<testOutputDirectory>${basedir}/src/main/webapp/WEB-INF/classes</testOutputDirectory>
-		<resources>
-			<resource>
-				<directory>${basedir}/src/main/java</directory>
-			</resource>
-			<resource>
-				<directory>${basedir}/src/test/java</directory>
-			</resource>
-			<resource>
-				<directory>${basedir}/src/main/resources</directory>
-				<excludes>
-					<exclude>**/public/**/*.*</exclude>
-				</excludes>
-			</resource>
-			<resource>
-				<directory>src/main/java</directory>
-				<includes>
-					<include>**/*.java</include>
-					<include>**/*.gwt.xml</include>
-				</includes>
-			</resource>
-		</resources>
 		<plugins>
-			<plugin>
-				<artifactId>maven-clean-plugin</artifactId>
-				<configuration>
-					<excludeDefaultDirectories>true</excludeDefaultDirectories>
-					<filesets>
-						<fileset>
-							<directory>src/main/webapp/trieda</directory>
-						</fileset>
-						<!-- fileset> <directory>src/main/webapp/WEB-INF/classes</directory> 
-							</fileset -->
-					</filesets>
-				</configuration>
-			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
@@ -216,33 +188,6 @@
 					<source>1.6</source>
 					<target>1.6</target>
 					<encoding>utf-8</encoding>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-war-plugin</artifactId>
-				<configuration>
-					<warSourceDirectory>src/main/webapp/</warSourceDirectory>
-					<webXml>src/main/webapp/WEB-INF/web.xml</webXml>
-					<warSourceExcludes>.gwt-tmp/**</warSourceExcludes>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>gwt-maven-plugin</artifactId>
-				<version>1.2.0-11137</version>
-				<executions>
-					<execution>
-						<goals>
-							<goal>compile</goal>
-						</goals>
-						<phase>prepare-package</phase>
-					</execution>
-				</executions>
-				<configuration>
-					<runTarget>trieda/trieda.html</runTarget>
-					<hostedWebapp>${project.build.directory}/${project.build.finalName}</hostedWebapp>
-					<style>OBF</style>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -271,8 +216,8 @@
 				</executions>
 				<configuration>
 					<outxml>true</outxml>
-					<ajdtBuildDefFile>build.ajproperties</ajdtBuildDefFile>
 					<verbose>true</verbose>
+					<ajdtBuildDefFile>build.ajproperties</ajdtBuildDefFile>
 					<aspectLibraries>
 						<aspectLibrary>
 							<groupId>org.springframework</groupId>
@@ -283,6 +228,87 @@
 					<target>1.6</target>
 				</configuration>
 			</plugin>
+			<plugin>
+				<groupId>org.mortbay.jetty</groupId>
+				<artifactId>jetty-maven-plugin</artifactId>
+				<version>7.2.2.v20101205</version>
+				<configuration>
+					<webAppConfig>
+						<contextPath>/${project.name}</contextPath>
+					</webAppConfig>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>gwt-maven-plugin</artifactId>
+				<version>${gwt.version}</version>
+				<configuration>
+					<logLevel>INFO</logLevel>
+					<style>PRETTY</style>
+					<runTarget>/trieda/index.html</runTarget>
+					<hostedWebapp>${project.build.directory}/${project.build.finalName}
+					</hostedWebapp>
+					<modules>
+						<module>com.gapso.web.trieda.login.Login</module>
+						<module>com.gapso.web.trieda.shared.Shared</module>
+						<module>com.gapso.web.trieda.main.Trieda</module>
+						<module>com.gapso.web.trieda.professor.Professor</module>
+					</modules>
+					<copyWebapp>true</copyWebapp>
+					<extraJvmArgs>-Ddebug.url=?gwt.codesvr=127.0.0.1:9997</extraJvmArgs>
+				</configuration>
+				<executions>
+					<execution>
+						<id>gwtcompile</id>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>compile</goal>
+						</goals>
+					</execution>
+				</executions>
+				<dependencies>
+					<dependency>
+						<groupId>com.google.gwt</groupId>
+						<artifactId>gwt-dev</artifactId>
+						<version>${gwt.version}</version>
+					</dependency>
+					<dependency>
+						<groupId>com.google.gwt</groupId>
+						<artifactId>gwt-user</artifactId>
+						<version>${gwt.version}</version>
+					</dependency>
+				</dependencies>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-war-plugin</artifactId>
+				<version>2.1-beta-1</version>
+				<executions>
+					<execution>
+						<phase>process-resources</phase>
+						<goals>
+							<goal>exploded</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<version>2.2-beta-5</version>
+				<configuration>
+					<descriptorRefs>
+						<descriptorRef>jar-with-dependencies</descriptorRef>
+					</descriptorRefs>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-deploy-plugin</artifactId>
+				<version>2.5</version>
+			</plugin>
 		</plugins>
+		<outputDirectory>${project.build.directory}/${project.build.finalName}/WEB-INF/classes
+		</outputDirectory>
 	</build>
 </project>

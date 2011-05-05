@@ -362,6 +362,7 @@ public class CampiServiceImpl extends RemoteServiceServlet implements CampiServi
 			
 			Double mediaCreditoTurma = (qtdTurma == 0)? 0.0 : qtdCreditos/qtdTurma;
 			Double custoDocenteSemestral = qtdCreditos * custoCredito * 4.5 * 6.0;
+//			Double receitaSemestral = qtdCreditos * qtdAlunosAtendidos * 4.5 * 6.0 * receita;
 			
 			list.add(new TreeNodeDTO("Turmas abertas: <b>"+qtdTurma+"</b>"));
 			list.add(new TreeNodeDTO("Total de Cr&eacute;ditos semanais: <b>"+qtdCreditos+"</b>"));

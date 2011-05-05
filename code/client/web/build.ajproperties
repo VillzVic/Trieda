@@ -1,1 +1,2 @@
-src.includes =	src/main/java/com/gapso/web/trieda/server/*Impl.java,src/main/java/com/gapso/web/trieda/server/util/CenarioUtil.java,src/main/java/com/gapso/web/trieda/server/util/SolverInput.java,src/main/java/com/gapso/web/trieda/server/*ImportExcel.java
+src.includes =	src/main/java/com/gapso/web/trieda/server/**/*.java,\
+				src/main/java/com/gapso/web/trieda/shared/**/*.java
