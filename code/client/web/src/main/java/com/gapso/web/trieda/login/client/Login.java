@@ -81,7 +81,7 @@ public class Login implements EntryPoint {
 				getLayoutTarget().dom.setPropertyString("target", null);
 			}
 		};
-		form.setAction("/resources/j_spring_security_check");
+		form.setAction("../resources/j_spring_security_check");
 		form.setMethod(Method.POST);
 		form.setFrame(true);  
 		form.setHeading("Acesso restrito");  
