@@ -32,7 +32,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="capacidade" type="{http://www.w3.org/2001/XMLSchema}int"/>
  *         &lt;choice>
  *           &lt;element name="horariosDisponiveis" type="{}GrupoHorario"/>
- *           &lt;element name="creditosDisponíveis" type="{}GrupoCreditoDisponivel"/>
+ *           &lt;element name="creditosDisponiveis" type="{}GrupoCreditoDisponivel"/>
  *         &lt;/choice>
  *         &lt;element name="disciplinasAssociadas" type="{}GrupoIdentificador"/>
  *       &lt;/sequence>
@@ -52,7 +52,7 @@ import javax.xml.bind.annotation.XmlType;
     "tipoSalaId",
     "capacidade",
     "horariosDisponiveis",
-    "creditosDispon\u00edveis",
+    "creditosDisponiveis",
     "disciplinasAssociadas"
 })
 public class ItemSala {
@@ -67,7 +67,7 @@ public class ItemSala {
     protected int tipoSalaId;
     protected int capacidade;
     protected GrupoHorario horariosDisponiveis;
-    protected GrupoCreditoDisponivel creditosDisponíveis;
+    protected GrupoCreditoDisponivel creditosDisponiveis;
     @XmlElement(required = true)
     protected GrupoIdentificador disciplinasAssociadas;
 
@@ -216,19 +216,19 @@ public class ItemSala {
     }
 
     /**
-     * Gets the value of the creditosDisponíveis property.
+     * Gets the value of the creditosDisponiveis property.
      * 
      * @return
      *     possible object is
      *     {@link GrupoCreditoDisponivel }
      *     
      */
-    public GrupoCreditoDisponivel getCreditosDisponíveis() {
-        return creditosDisponíveis;
+    public GrupoCreditoDisponivel getCreditosDisponiveis() {
+        return creditosDisponiveis;
     }
 
     /**
-     * Sets the value of the creditosDisponíveis property.
+     * Sets the value of the creditosDisponiveis property.
      * 
      * @param value
      *     allowed object is
@@ -236,7 +236,7 @@ public class ItemSala {
      *     
      */
     public void setCreditosDisponiveis(GrupoCreditoDisponivel value) {
-        this.creditosDisponíveis = value;
+        this.creditosDisponiveis = value;
     }
 
     /**

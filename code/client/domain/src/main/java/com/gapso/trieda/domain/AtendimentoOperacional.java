@@ -184,6 +184,14 @@ public class AtendimentoOperacional implements Serializable {
 		return q.getResultList();
 	}
 
+	@SuppressWarnings("unchecked")
+	public static List<AtendimentoOperacional> findAllBy(Campus campus, Turno turno) {
+		Query q = entityManager().createQuery("SELECT o FROM AtendimentoOperacional o WHERE o.oferta.campus = :campus AND o.oferta.turno = :turno");
+		q.setParameter("campus", campus);
+		q.setParameter("turno", turno);
+		return q.getResultList();
+	}
+	
 	public static AtendimentoOperacional find(Long id) {
         if (id == null) return null;
         return entityManager().find(AtendimentoOperacional.class, id);

@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.gapso.trieda.domain.AreaTitulacao;
 import com.gapso.trieda.domain.AtendimentoOperacional;
 import com.gapso.trieda.domain.AtendimentoTatico;
+import com.gapso.trieda.domain.Campus;
 import com.gapso.trieda.domain.Cenario;
 import com.gapso.trieda.domain.Disciplina;
 import com.gapso.trieda.domain.HorarioAula;
@@ -19,6 +20,7 @@ import com.gapso.trieda.domain.Professor;
 import com.gapso.trieda.domain.ProfessorVirtual;
 import com.gapso.trieda.domain.Sala;
 import com.gapso.trieda.domain.Titulacao;
+import com.gapso.trieda.domain.Turno;
 import com.gapso.trieda.misc.Semanas;
 import com.gapso.web.trieda.server.xml.output.ItemAtendimentoCampus;
 import com.gapso.web.trieda.server.xml.output.ItemAtendimentoDiaSemana;
@@ -192,32 +194,32 @@ public class SolverOutput {
 	}
 	
 	@Transactional
-	public void salvarAtendimentosTatico() {
-		removerTodosAtendimentosTaticoJaSalvos();
+	public void salvarAtendimentosTatico(Campus campus, Turno turno) {
+		removerTodosAtendimentosTaticoJaSalvos(campus, turno);
 		for(AtendimentoTatico atendimentoTatico : atendimentosTatico) {
 			atendimentoTatico.persist();
 		}
 	}
 	
 	@Transactional
-	private void removerTodosAtendimentosTaticoJaSalvos() {
-		List<AtendimentoTatico> atendimentosTatico = AtendimentoTatico.findAll();
+	private void removerTodosAtendimentosTaticoJaSalvos(Campus campus, Turno turno) {
+		List<AtendimentoTatico> atendimentosTatico = AtendimentoTatico.findAllBy(campus, turno);
 		for(AtendimentoTatico atendimentoTatico : atendimentosTatico) {
 			atendimentoTatico.remove();
 		}
 	}
 	
 	@Transactional
-	public void salvarAtendimentosOperacional() {
-		removerTodosAtendimentosOperacionalJaSalvos();
+	public void salvarAtendimentosOperacional(Campus campus, Turno turno) {
+		removerTodosAtendimentosOperacionalJaSalvos(campus, turno);
 		for(AtendimentoOperacional atendimentoOperacional : atendimentosOperacional) {
 			atendimentoOperacional.persist();
 		}
 	}
 	
 	@Transactional
-	private void removerTodosAtendimentosOperacionalJaSalvos() {
-		List<AtendimentoOperacional> atendimentosOperacional = AtendimentoOperacional.findAll();
+	private void removerTodosAtendimentosOperacionalJaSalvos(Campus campus, Turno turno) {
+		List<AtendimentoOperacional> atendimentosOperacional = AtendimentoOperacional.findAllBy(campus, turno);
 		for(AtendimentoOperacional atendimentoOperacional : atendimentosOperacional) {
 			atendimentoOperacional.remove();
 		}

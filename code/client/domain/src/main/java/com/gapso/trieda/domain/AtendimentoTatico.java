@@ -199,6 +199,14 @@ public class AtendimentoTatico implements Serializable {
 	public static List<AtendimentoTatico> findAll() {
 		return entityManager().createQuery("SELECT o FROM AtendimentoTatico o").getResultList();
 	}
+	
+	@SuppressWarnings("unchecked")
+	public static List<AtendimentoTatico> findAllBy(Campus campus, Turno turno) {
+		Query q = entityManager().createQuery("SELECT o FROM AtendimentoTatico o WHERE o.oferta.campus = :campus AND o.oferta.turno = :turno");
+		q.setParameter("campus", campus);
+		q.setParameter("turno", turno);
+		return q.getResultList();
+	}
 
 	public static AtendimentoTatico find(Long id) {
         if (id == null) return null;
