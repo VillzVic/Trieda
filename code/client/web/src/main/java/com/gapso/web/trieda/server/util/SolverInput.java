@@ -743,6 +743,9 @@ public class SolverInput {
 	private void generateTaticoInput() {
 		Set<AtendimentoTatico> ats = cenario.getAtendimentosTaticos();
 		for(AtendimentoTatico at : ats) {
+			if(!at.getOferta().getTurno().equals(turno) || !at.getOferta().getCampus().equals(campi.get(0))) {
+				continue;
+			}
 			createItemAtendimentoTaticoSolucao(at.getSala(), at.getSemana(), at.getOferta(), at.getDisciplina(), at.getQuantidadeAlunos(), at.getTurma(), at.getCreditosTeorico(), at.getCreditosPratico());
 		}
 	}

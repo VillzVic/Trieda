@@ -61,11 +61,13 @@ public interface TriedaI18nConstants extends Constants {
 	String notaDesempenho();
 	String numero();
 	String ofertasEDemandas();
+	String otimizado();
 	String periodo();
 	String preenchaA();
 	String preenchaO();
 	String preferencia();
 	String professores();
+	String publicado();
 	String relatorioVisaoSala();
 	String remover();
 	String sala();
@@ -85,5 +87,6 @@ public interface TriedaI18nConstants extends Constants {
 	String unidadesHeadingPanel();
 	String usaLaboratorio();
 	String valorCredito();
-	
+	String otimizadoTatico();
+	String otimizadoOperacional();
 }

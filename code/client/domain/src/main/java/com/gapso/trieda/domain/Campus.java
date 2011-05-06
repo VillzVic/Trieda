@@ -76,6 +76,9 @@ public class Campus implements Serializable, Comparable<Campus> {
     @Size(max = 25)
     private String bairro;
 
+    @Column(name = "CAM_PUBLICAR")
+    private Boolean publicado;
+    
     @OneToMany(cascade = CascadeType.ALL, mappedBy="campus")
     private Set<Unidade> unidades =  new HashSet<Unidade>();
     
@@ -98,7 +101,6 @@ public class Campus implements Serializable, Comparable<Campus> {
 	public Cenario getCenario() {
         return this.cenario;
     }
-
 	public void setCenario(Cenario cenario) {
         this.cenario = cenario;
     }
@@ -106,7 +108,6 @@ public class Campus implements Serializable, Comparable<Campus> {
 	public String getCodigo() {
         return this.codigo;
     }
-
 	public void setCodigo(String codigo) {
         this.codigo = codigo;
     }
@@ -114,7 +115,6 @@ public class Campus implements Serializable, Comparable<Campus> {
 	public String getNome() {
         return this.nome;
     }
-
 	public void setNome(String nome) {
         this.nome = nome;
     }
@@ -122,7 +122,6 @@ public class Campus implements Serializable, Comparable<Campus> {
 	public Double getValorCredito() {
         return this.valorCredito;
     }
-
 	public void setValorCredito(Double valorCredito) {
         this.valorCredito = valorCredito;
     }
@@ -130,7 +129,6 @@ public class Campus implements Serializable, Comparable<Campus> {
 	public Estados getEstado() {
 		return estado;
 	}
-
 	public void setEstado(Estados estado) {
 		this.estado = estado;
 	}
@@ -138,7 +136,6 @@ public class Campus implements Serializable, Comparable<Campus> {
 	public String getMunicipio() {
 		return municipio;
 	}
-
 	public void setMunicipio(String municipio) {
 		this.municipio = municipio;
 	}
@@ -146,7 +143,6 @@ public class Campus implements Serializable, Comparable<Campus> {
 	public String getBairro() {
 		return bairro;
 	}
-
 	public void setBairro(String bairro) {
 		this.bairro = bairro;
 	}
@@ -154,7 +150,6 @@ public class Campus implements Serializable, Comparable<Campus> {
 	public Set<Unidade> getUnidades() {
 		return this.unidades;
 	}
-	
 	public void setUnidades(Set<Unidade> unidades) {
 		this.unidades = unidades;
 	}
@@ -162,7 +157,6 @@ public class Campus implements Serializable, Comparable<Campus> {
 	public Set<DeslocamentoCampus> getDeslocamentos() {
         return this.deslocamentos;
     }
-
 	public void setDeslocamentos(Set<DeslocamentoCampus> deslocamentos) {
         this.deslocamentos = deslocamentos;
     }
@@ -170,7 +164,6 @@ public class Campus implements Serializable, Comparable<Campus> {
 	public Set<DeslocamentoCampus> getDeslocamentosDestino() {
 		return this.deslocamentosDestino;
 	}
-	
 	public void setDeslocamentosDestino(Set<DeslocamentoCampus> deslocamentosDestino) {
 		this.deslocamentosDestino = deslocamentosDestino;
 	}
@@ -178,7 +171,6 @@ public class Campus implements Serializable, Comparable<Campus> {
 	public Set<Professor> getProfessores() {
         return this.professores;
     }
-
 	public void setProfessores(Set<Professor> professores) {
         this.professores = professores;
     }
@@ -186,7 +178,6 @@ public class Campus implements Serializable, Comparable<Campus> {
 	private Set<HorarioDisponivelCenario> getHorarios() {
         return this.horarios;
     }
-
 	public void setHorarios(Set<HorarioDisponivelCenario> horarios) {
         this.horarios = horarios;
     }
@@ -194,11 +185,18 @@ public class Campus implements Serializable, Comparable<Campus> {
 	public Set<Oferta> getOfertas() {
         return this.ofertas;
     }
-
 	public void setOfertas(Set<Oferta> ofertas) {
         this.ofertas = ofertas;
     }
 
+	public Boolean getPublicado() {
+		return publicado;
+	}
+	public void setPublicado(Boolean publicado) {
+		this.publicado = publicado;
+	}
+
+	
 	@PersistenceContext
     transient EntityManager entityManager;
 
@@ -438,6 +436,26 @@ public class Campus implements Serializable, Comparable<Campus> {
 		return q.getResultList();
 	}
     
+	public boolean isOtimizadoTatico() {
+		Query q = entityManager().createQuery("SELECT COUNT(o) FROM AtendimentoTatico o WHERE o.oferta.campus = :campus");
+		q.setParameter("campus", this);
+		Number size = (Number) q.setMaxResults(1).getSingleResult();
+		return size.intValue() > 0;
+	}
+	public boolean isOtimizadoOperacional() {
+		Query q = entityManager().createQuery("SELECT COUNT(o) FROM AtendimentoOperacional o WHERE o.oferta.campus = :campus");
+		q.setParameter("campus", this);
+		Number size = (Number) q.setMaxResults(1).getSingleResult();
+		return size.intValue() > 0;
+	}
+	public boolean isOtimizadoTotal() {
+		return isOtimizadoTatico() && isOtimizadoOperacional();
+	}
+	public boolean isOtimizado() {
+		return isOtimizadoTatico() || isOtimizadoOperacional();
+	}
+	
+	
 	public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("Id: ").append(getId()).append(", ");
@@ -455,6 +473,7 @@ public class Campus implements Serializable, Comparable<Campus> {
         sb.append("Professores: ").append(getProfessores() == null ? "null" : getProfessores().size()).append(", ");
         sb.append("Horarios: ").append(getHorarios() == null ? "null" : getHorarios().size()).append(", ");
         sb.append("Ofertas: ").append(getOfertas() == null ? "null" : getOfertas().size());
+        sb.append("Publicado: ").append(getPublicado());
         return sb.toString();
     }
 

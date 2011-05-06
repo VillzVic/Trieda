@@ -16,6 +16,9 @@ public class CampusDTO extends AbstractDTO<String> implements Comparable<CampusD
 	public static final String PROPERTY_MUNICIPIO = "municipio";
 	public static final String PROPERTY_BAIRRO = "bairro";
 	public static final String PROPERTY_VALOR_CREDITO = "valorCredito";
+	public static final String PROPERTY_OTIMIZADO_TATICO = "otimizadoTatico";
+	public static final String PROPERTY_OTIMIZADO_OPERACIONAL = "otimizadoOperacional";
+	public static final String PROPERTY_PUBLICADO = "publicado";
 
 	public CampusDTO() {
 	}
@@ -81,6 +84,27 @@ public class CampusDTO extends AbstractDTO<String> implements Comparable<CampusD
 	}
 	public Double getValorCredito() {
 		return get(PROPERTY_VALOR_CREDITO);
+	}
+	
+	public void setOtimizadoTatico(Boolean value) {
+		set(PROPERTY_OTIMIZADO_TATICO, value);
+	}
+	public Boolean getOtimizadoTatico() {
+		return get(PROPERTY_OTIMIZADO_TATICO);
+	}
+	
+	public void setOtimizadoOperacional(Boolean value) {
+		set(PROPERTY_OTIMIZADO_OPERACIONAL, value);
+	}
+	public Boolean getOtimizadoOperacional() {
+		return get(PROPERTY_OTIMIZADO_OPERACIONAL);
+	}
+	
+	public void setPublicado(Boolean value) {
+		set(PROPERTY_PUBLICADO, value);
+	}
+	public Boolean getPublicado() {
+		return get(PROPERTY_PUBLICADO);
 	}
 	
 	@Override

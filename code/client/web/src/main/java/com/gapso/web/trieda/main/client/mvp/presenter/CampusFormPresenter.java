@@ -5,6 +5,7 @@ import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.widget.Info;
 import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.button.Button;
+import com.extjs.gxt.ui.client.widget.form.CheckBox;
 import com.extjs.gxt.ui.client.widget.form.NumberField;
 import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
@@ -29,6 +30,7 @@ public class CampusFormPresenter implements Presenter {
 		EstadoComboBox getEstadoComboBox();
 		TextField<String> getMunicipioTextField();
 		TextField<String> getBairroTextField();
+		CheckBox getPublicadoCheckBox();
 		CampusDTO getCampusDTO();
 		boolean isValid();
 		
@@ -84,6 +86,7 @@ public class CampusFormPresenter implements Presenter {
 		campusDTO.setEstado(display.getEstadoComboBox().getValue().getValue().name());
 		campusDTO.setMunicipio(display.getMunicipioTextField().getValue());
 		campusDTO.setBairro(display.getBairroTextField().getValue());
+		campusDTO.setPublicado(display.getPublicadoCheckBox().getValue());
 		return campusDTO;
 	}
 	

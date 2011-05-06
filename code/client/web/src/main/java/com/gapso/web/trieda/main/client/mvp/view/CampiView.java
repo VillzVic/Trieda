@@ -10,6 +10,7 @@ import com.extjs.gxt.ui.client.util.Margins;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.TextField;
+import com.extjs.gxt.ui.client.widget.grid.CheckColumnConfig;
 import com.extjs.gxt.ui.client.widget.grid.ColumnConfig;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayout;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
@@ -84,6 +85,9 @@ public class CampiView extends MyComposite implements CampiPresenter.Display {
 		list.add(new ColumnConfig(CampusDTO.PROPERTY_ESTADO, getI18nConstants().estado(), 100));
 		list.add(new ColumnConfig(CampusDTO.PROPERTY_MUNICIPIO, getI18nConstants().municipio(), 100));
 		list.add(new ColumnConfig(CampusDTO.PROPERTY_BAIRRO, getI18nConstants().bairro(), 100));
+		list.add(new CheckColumnConfig(CampusDTO.PROPERTY_OTIMIZADO_TATICO, getI18nConstants().otimizadoTatico() + "?", 100));
+		list.add(new CheckColumnConfig(CampusDTO.PROPERTY_OTIMIZADO_OPERACIONAL, getI18nConstants().otimizadoOperacional() + "?", 100));
+		list.add(new CheckColumnConfig(CampusDTO.PROPERTY_PUBLICADO, getI18nConstants().publicado() + "?", 100));
 		return list;
 	}
 

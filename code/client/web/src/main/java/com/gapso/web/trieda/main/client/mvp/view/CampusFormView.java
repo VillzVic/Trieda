@@ -1,6 +1,7 @@
 package com.gapso.web.trieda.main.client.mvp.view;
 
 import com.extjs.gxt.ui.client.widget.button.Button;
+import com.extjs.gxt.ui.client.widget.form.CheckBox;
 import com.extjs.gxt.ui.client.widget.form.FieldSet;
 import com.extjs.gxt.ui.client.widget.form.FormButtonBinding;
 import com.extjs.gxt.ui.client.widget.form.FormPanel;
@@ -27,6 +28,7 @@ public class CampusFormView extends MyComposite implements CampusFormPresenter.D
 	private TextField<String> municipioTF;
 	private TextField<String> bairroTF;
 	private NumberField valorCreditoNF;
+	private CheckBox publicadoCB;
 	private CampusDTO campusDTO;
 	
 	public CampusFormView() {
@@ -43,7 +45,7 @@ public class CampusFormView extends MyComposite implements CampusFormPresenter.D
 	private void initUI() {
 		String title = (campusDTO.getId() == null)? "Inserção de Campus" : "Edição de Campus";
 		simpleModal = new SimpleModal(title, Resources.DEFAULTS.campus16());
-		simpleModal.setHeight(320);
+		simpleModal.setHeight(350);
 		simpleModal.setWidth(320);
 		createForm();
 		simpleModal.setContent(formPanel);
@@ -92,6 +94,13 @@ public class CampusFormView extends MyComposite implements CampusFormPresenter.D
 		valorCreditoNF.setEmptyText("Custo médio do crédito (R$)");
 		geralFS.add(valorCreditoNF, formData);
 		
+		publicadoCB = new CheckBox();
+		publicadoCB.setEnabled(campusDTO.getPublicado());
+		publicadoCB.setName(CampusDTO.PROPERTY_PUBLICADO);
+		publicadoCB.setValue(campusDTO.getPublicado());
+		publicadoCB.setFieldLabel("Publicar?");
+		publicadoCB.setLabelSeparator("");
+		geralFS.add(publicadoCB, formData);
 		
 		formPanel.add(geralFS, formData);
 		
@@ -179,6 +188,10 @@ public class CampusFormView extends MyComposite implements CampusFormPresenter.D
 	@Override
 	public TextField<String> getBairroTextField() {
 		return bairroTF;
+	}
+	@Override
+	public CheckBox getPublicadoCheckBox() {
+		return publicadoCB;
 	}
 	
 
