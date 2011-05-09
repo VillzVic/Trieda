@@ -1,4 +1,6 @@
-#pragma once
+#ifndef _NIVEL_DIFICULDADE_HORARIO_H_
+#define _PARAMETROS_PLANEJAMENTO_H_
+
 #include "ofbase.h"
 
 #include "NivelDificuldadeHorario.h"
@@ -37,3 +39,5 @@ public:
 
    virtual void le_arvore( ItemParametrosPlanejamento & );
 };
+
+#endif

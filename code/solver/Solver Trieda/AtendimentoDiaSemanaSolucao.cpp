@@ -1,6 +1,3 @@
-#ifndef _ATENDIMENTO_SALA_SOLUCAO_H_
-#define _ATENDIMENTO_SALA_SOLUCAO_H_
-
 #include "AtendimentoDiaSemanaSolucao.h"
 
 AtendimentoDiaSemanaSolucao::AtendimentoDiaSemanaSolucao(void)
@@ -38,5 +35,3 @@ void AtendimentoDiaSemanaSolucao::le_arvore( ItemAtendimentoDiaSemanaSolucao & e
       atendimentosTatico.add(tatico);
    }
 }
-
-#endif

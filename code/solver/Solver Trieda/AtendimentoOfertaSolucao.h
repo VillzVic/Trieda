@@ -1,7 +1,9 @@
-#pragma once
-#include "ofbase.h"
+#ifndef _ATENDIMENTO_OFERTA_SOLUCAO_H_
+#define _ATENDIMENTO_OFERTA_SOLUCAO_H_
 
 #include <iostream>
+
+#include "ofbase.h"
 #include "AtendimentoOferta.h"
 
 class AtendimentoOfertaSolucao :
@@ -9,24 +11,23 @@ class AtendimentoOfertaSolucao :
 {
 public:
    AtendimentoOfertaSolucao(void);
+   AtendimentoOfertaSolucao( AtendimentoOferta & );
+   virtual ~AtendimentoOfertaSolucao(void);
 
-   AtendimentoOfertaSolucao(AtendimentoOferta & at_Oft);
+   virtual void le_arvore( ItemAtendimentoOfertaSolucao & );
 
-   ~AtendimentoOfertaSolucao(void);
-   virtual void le_arvore(ItemAtendimentoOfertaSolucao& elem);
-
-   virtual bool operator < (AtendimentoOfertaSolucao & right) 
+   virtual bool operator < ( AtendimentoOfertaSolucao & right ) 
    { 
-	   return ( ( ofertaCursoCampiId < right.getOfertaCursoCampiId()) &&
-			( disciplinaId < right.getDisciplinaId()) &&
-			( turma < right.getTurma()) );
+	   return ( ( ofertaCursoCampiId < right.getOfertaCursoCampiId() ) &&
+				( disciplinaId < right.getDisciplinaId() ) &&
+				( turma < right.getTurma() ) );
    }
 
-   virtual bool operator == (AtendimentoOfertaSolucao & right)
+   virtual bool operator == ( AtendimentoOfertaSolucao & right )
    { 
-	   return ( ( ofertaCursoCampiId == right.getOfertaCursoCampiId()) &&
-			( disciplinaId == right.getDisciplinaId()) &&
-			( turma == right.getTurma()) );
+	   return ( ( ofertaCursoCampiId == right.getOfertaCursoCampiId() ) &&
+				( disciplinaId == right.getDisciplinaId() ) &&
+				( turma == right.getTurma() ) );
    }
 
    void setOfertaCursoCampiId(int v) { ofertaCursoCampiId = v; }
@@ -45,3 +46,5 @@ private:
    int quantidade;
    std::string turma;
 };
+
+#endif

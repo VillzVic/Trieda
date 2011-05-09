@@ -1,4 +1,6 @@
-#pragma once
+#ifndef _TIPO_TITULACAO_H_
+#define _TIPO_TITULACAO_H_
+
 #include "ofbase.h"
 
 class TipoTitulacao :
@@ -6,13 +8,16 @@ class TipoTitulacao :
 {
 public:
    TipoTitulacao(void);
-   ~TipoTitulacao(void);
+   virtual ~TipoTitulacao(void);
+
    virtual void le_arvore(ItemTipoTitulacao& elem);
 
-   void setNome(std::string s) { nome = s; }
+   void setNome( std::string s ) { nome = s; }
 
    std::string getNome() { return nome; }
 
 private:
    std::string nome;
 };
+
+#endif

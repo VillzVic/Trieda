@@ -1,4 +1,5 @@
 #include "ProblemData.h"
+
 #include <iostream>
 
 // Macro baseada na ITERA_SEQ para facilitar a leitura dos dados no
@@ -25,6 +26,11 @@ void ProblemData::le_arvore( TriedaInput & raiz )
 {
    calendario = new Calendario();
    calendario->le_arvore( raiz.calendario() );
+
+   ITERA_GGROUP( it_turno, calendario->turnos, Turno )
+   {
+	   todos_turnos.add( ( *it_turno ) );
+   }
 
    ITERA_SEQ( it_campi, raiz.campi(), Campus )
    {
@@ -90,7 +96,8 @@ void ProblemData::le_arvore( TriedaInput & raiz )
       }
    }
 
-   LE_SEQ( fixacoes, raiz.fixacoes(), Fixacao );
+   TriedaInput::fixacoes_type & list_fixacoes = raiz.fixacoes();
+   LE_SEQ( fixacoes, list_fixacoes, Fixacao );
 
    // Monta um 'map' para recuperar cada 'ItemSala'
    // do campus a partir de seu respectivo id de sala
@@ -101,7 +108,7 @@ void ProblemData::le_arvore( TriedaInput & raiz )
       {
          ITERA_SEQ( it_sala, it_unidade->salas(), Sala )
          {
-            mapItemSala[ it_sala->id() ] = &(*(it_sala));
+            mapItemSala[ it_sala->id() ] = &( ( *it_sala ) );
          }
       }
    }
@@ -122,15 +129,15 @@ void ProblemData::le_arvore( TriedaInput & raiz )
 							&& raiz.atendimentosTatico().present() == false );
 
    // Informa o modo de otimização que será execuado
-   if (primeiroCaso)
+   if ( primeiroCaso )
    {
 	   std::cout << "TATICO" << std::endl;
    }
-   else if (segundoCaso)
+   else if ( segundoCaso )
    {
 	   std::cout << "OPERACIONAL COM OUTPUT TATICO" << std::endl;
    }
-   else if (terceiroCaso)
+   else if ( terceiroCaso )
    {
 	   std::cout << "OPERACIONAL SEM OUTPUT TATICO" << std::endl;
    }
@@ -145,14 +152,14 @@ void ProblemData::le_arvore( TriedaInput & raiz )
 	}
 
    // Prencher os horários e/ou créditos das salas
-   ITERA_GGROUP( it_campi, campi, Campus )
+   ITERA_GGROUP_LESSPTR( it_campi, campi, Campus )
    {
-      ITERA_GGROUP( it_unidade, it_campi->unidades, Unidade )
+      ITERA_GGROUP_LESSPTR( it_unidade, it_campi->unidades, Unidade )
       {
-         ITERA_GGROUP( it_sala, it_unidade->salas, Sala )
+         ITERA_GGROUP_LESSPTR( it_sala, it_unidade->salas, Sala )
          {
 			 std::map< int, ItemSala * >::iterator it
-				 = mapItemSala.find(it_sala->getId());
+				 = mapItemSala.find( it_sala->getId() );
 
             if ( it != mapItemSala.end() )
             {
@@ -160,11 +167,24 @@ void ProblemData::le_arvore( TriedaInput & raiz )
                ItemSala * elem = it->second;
 
                it_sala->construirCreditosHorarios(
-					*(elem), parametros->modo_otimizacao,
+					( *elem ), parametros->modo_otimizacao,
 					raiz.atendimentosTatico().present() );
             }
          }
       }
    }
    //-------------------------------------------------------------------------------
+}
+
+int ProblemData::creditosFixadosDisciplinaDia( Disciplina * disciplina, int dia_semana )
+{
+	if ( disciplina != NULL && dia_semana >= 0 )
+	{
+		std::pair< Disciplina *, int > disciplina_dia
+			= std::make_pair( disciplina, dia_semana );
+
+		return this->map_Discicplina_DiaSemana_CreditosFixados[ disciplina_dia ];
+	}
+
+	return 0;
 }

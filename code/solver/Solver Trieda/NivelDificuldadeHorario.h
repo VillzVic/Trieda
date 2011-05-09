@@ -1,4 +1,6 @@
-#pragma once
+#ifndef _NIVEL_DIFICULDADE_HORARIO_H_
+#define _NIVEL_DIFICULDADE_HORARIO_H_
+
 #include "ofbase.h"
 #include "NivelDificuldade.h"
 
@@ -17,3 +19,4 @@ public:
    NivelDificuldade* nivel_dificuldade;
 };
  
+#endif

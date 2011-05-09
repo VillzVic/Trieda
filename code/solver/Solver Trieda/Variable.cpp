@@ -18,32 +18,21 @@ Variable::Variable(const Variable& var)
 
 void Variable::reset()
 {
-   /* ToDo:
-   All pointers that define a variable should be addressed to NULL
-   */
    value = -1;
+   i = -1;
+   j = -1;
+   t = -1;
+   k = -1;
 
    cp = NULL;
    u = NULL;
    s = NULL;
-
    tps = NULL;
-
-   i = -1;
    c = NULL;
-   
    c_incompat = NULL;
-
    b = NULL;
    d = NULL;
-
-   j = -1;
-
-   t = -1;
-
    o = NULL;
-
-   k = -1;
 }
 
 Variable::~Variable()
@@ -51,7 +40,7 @@ Variable::~Variable()
    reset();
 }
 
-Variable& Variable::operator=(const Variable& var)
+Variable& Variable::operator = ( const Variable & var )
 {
    this->value = var.getValue();
    this->type = var.getType();

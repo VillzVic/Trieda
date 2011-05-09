@@ -9,7 +9,8 @@ NSShift::~NSShift()
 {
 }
 
-std::pair<Aula*, std::vector< std::pair< Professor*, Horario* > > > NSShift::pickSomeClassAndNewSchedule( const SolucaoOperacional & s )
+//std::pair<Aula*, std::vector< std::pair< Professor*, Horario* > > > NSShift::pickSomeClassAndNewSchedule( const SolucaoOperacional & s )
+bool NSShift::pickSomeClassAndNewSchedule( const SolucaoOperacional & s ) // So para poder compilar !!!!
 {
    // Critérios a serem respeitados para a escolha da aula.
    // 1 - Somente serão realocados os horários da aula se os novos horários assumidos por ela 
@@ -53,10 +54,11 @@ std::pair<Aula*, std::vector< std::pair< Professor*, Horario* > > > NSShift::pic
       std::cout << "Warnning: No valid move generated after MAX_ATTEMPTS (" << MAX_ATTEMPTS << ") iterations." << std::endl;
       
 	  result.first = ( *itAula );
-	  result.second = ( * itAula );
+	  //result.second = ( * itAula );
    }
 
-   return result;
+   //return result;
+   return false;
 }
 
 Move & NSShift::move(const SolucaoOperacional & s)

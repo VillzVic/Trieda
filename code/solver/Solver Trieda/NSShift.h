@@ -14,7 +14,8 @@ class NSShift : public NS
 private:
    ProblemData & problemData;
 
-   std::pair<Aula*, std::vector< std::pair< Professor*, Horario* > > > pickSomeClassAndNewSchedule( const SolucaoOperacional & s );
+   //std::pair<Aula*, std::vector< std::pair< Professor*, Horario* > > > pickSomeClassAndNewSchedule( const SolucaoOperacional & s );
+   bool pickSomeClassAndNewSchedule( const SolucaoOperacional & s ); // So para poder compilar !!!!
 
    MoveShiftValidator * moveValidator;
 
