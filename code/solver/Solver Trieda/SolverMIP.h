@@ -25,11 +25,10 @@
 #include "NSSwapEqSchedulesBlocks.h"
 #include "NSSwapEqTeachersBlocks.h"
 
+#include "NSShift.h"
+
 #include "IteratedLocalSearchLevels.h"
 #include "RandomDescentMethod.h"
-
-// Temporario
-#include "MoveShift.h"
 
 #define PRINT_cria_variaveis
 #define PRINT_cria_restricoes

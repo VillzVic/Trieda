@@ -17,7 +17,7 @@ Move & MoveShift::apply( SolucaoOperacional & s )
 {
    // Para realocar uma aula deve-se: 
    // 1 - Na solução, referenciar os novos horários da aula e apontar para NULL os horários antigos.
-   // 2 - Nas aulas, trocar os vetores que indicam os blocos.
+   // 2 - Na aula, trocar o vetor que indica o bloco.
 
    //std::cout << "------------------------------------------" << std::endl;
    //std::cout << "ANTES" << std::endl;

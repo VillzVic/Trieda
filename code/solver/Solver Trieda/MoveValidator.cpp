@@ -167,24 +167,27 @@ bool MoveValidator::checkClassDisponibility(
    return true;
 }
 
-bool MoveValidator::canShiftSchedule(Aula & aula, std::vector< std::pair< Professor*, Horario* > > blocoHorariosVagos) const
-{
-  // Verificar aqui tb se alem da sala possuir os horarios, se na solucao em questao os possiveis novos horarios estao desocupados.
-
-   Professor & professor = *blocoHorariosVagos.begin()->first;
-
-   GGroup<int> horarioAulaId;
-
-   for(unsigned h = 0; h < blocoHorariosVagos.size(); ++h)
-      horarioAulaId.add(blocoHorariosVagos.at(h).second->getHorarioAulaId());
-
-   int diaSemana = aula.getDiaSemana();
-
-   /*
-   Receber como parametro dessa funcao a solucao operacional em questao.
-   Dai, com o dia, os ids dos horarios aula e do professor em maos (ja listei todos acima),
-   basta verificar se estao todos NULL.
-   */
-
-   return ((!checkBlockConflict(aula,blocoHorariosVagos)) && checkClassDisponibility(aula,blocoHorariosVagos));
-}
+//bool MoveValidator::canShiftSchedule(Aula & aula, std::vector< std::pair< Professor*, Horario* > > blocoHorariosVagos, SolucaoOperacional & solucaoOperacional) const
+//bool MoveValidator::canShiftSchedule(Aula & aula, std::vector< std::pair< Professor*, Horario* > > blocoHorariosVagos) const
+//{
+//   SolucaoOperacional * solOp;
+//
+//  // Verificando se os possíveis novos horarios estão desocupados (NULL) na solução.
+//
+//   Professor & professor = *blocoHorariosVagos.begin()->first;
+//
+//   GGroup<int> horarioAulaId;
+//
+//   for(unsigned h = 0; h < blocoHorariosVagos.size(); ++h)
+//      horarioAulaId.add(blocoHorariosVagos.at(h).second->getHorarioAulaId());
+//
+//   int diaSemana = aula.getDiaSemana();
+//
+//   /*
+//   Receber como parametro dessa funcao a solucao operacional em questao.
+//   Dai, com o dia, os ids dos horarios aula e do professor em maos (ja listei todos acima),
+//   basta verificar se estao todos NULL.
+//   */
+//
+//   return ((!checkBlockConflict(aula,blocoHorariosVagos)) && checkClassDisponibility(aula,blocoHorariosVagos));
+//}

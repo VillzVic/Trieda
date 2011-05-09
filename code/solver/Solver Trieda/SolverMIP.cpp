@@ -1745,12 +1745,18 @@ int SolverMIP::solveOperacional()
    // -----------------------------------------------------------------------------------------
 
    //solucaoOperacional.toString();
-   //solucaoOperacional.toString2();
+   solucaoOperacional.toString2();
 
-   //TESTAR O MOVESHIFT AQUI.
+   // TESTAR AGORA A ESTRUTURA DE VIZ.
+
+   NSShift nsShift(*problemData, solucaoOperacional);
+
+   MoveShift & mShiftIni = (MoveShift &) nsShift.move(solucaoOperacional);
+
+   mShiftIni.apply(solucaoOperacional);
+
    std::cout << "Saindo no metodo solveOperacional() by Mario." << std::endl;
    exit(1);
-
 
    Avaliador avaliador;
    //double funcao_objetivo = avaliador.avaliaSolucao( solucaoOperacional, true );

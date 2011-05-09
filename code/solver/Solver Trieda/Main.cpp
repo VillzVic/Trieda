@@ -35,7 +35,7 @@ void writeOutput( ProblemSolution *, char *, char * );
 
 int main( int argc, char** argv )
 {
-   srand( (unsigned int)(time(NULL)) );
+   //srand( (unsigned int)(time(NULL)) );
 
    _signals();
 
