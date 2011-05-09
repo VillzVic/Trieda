@@ -317,6 +317,12 @@ public class Campus implements Serializable, Comparable<Campus> {
     }
 	
 	@SuppressWarnings("unchecked")
+	public static List<Campus> findAllOtimized() {
+		Query q = entityManager().createQuery("SELECT DISTINCT(o.oferta.campus) FROM AtendimentoOperacional o");
+		return q.getResultList();
+	}
+	
+	@SuppressWarnings("unchecked")
 	public static List<Campus> findByCenario(Cenario cenario) {
 		Query q = entityManager().createQuery("SELECT o FROM Campus o WHERE cenario = :cenario");
     	q.setParameter("cenario", cenario);

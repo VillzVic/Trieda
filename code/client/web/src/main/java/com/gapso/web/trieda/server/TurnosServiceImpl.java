@@ -10,18 +10,18 @@ import com.extjs.gxt.ui.client.data.BasePagingLoadResult;
 import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
+import com.gapso.trieda.domain.AtendimentoOperacional;
 import com.gapso.trieda.domain.Campus;
 import com.gapso.trieda.domain.Turno;
 import com.gapso.web.trieda.server.util.ConvertBeans;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.TurnoDTO;
 import com.gapso.web.trieda.shared.services.TurnosService;
-import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 /**
  * The server side implementation of the RPC service.
  */
-public class TurnosServiceImpl extends RemoteServiceServlet implements TurnosService {
+public class TurnosServiceImpl extends RemoteService implements TurnosService {
 
 	private static final long serialVersionUID = 5250776996542788849L;
 
@@ -48,6 +48,23 @@ public class TurnosServiceImpl extends RemoteServiceServlet implements TurnosSer
 		result.setOffset(config.getOffset());
 		result.setTotalLength(Turno.count(nome, tempo));
 		return result;
+	}
+	
+	@Override
+	public ListLoadResult<TurnoDTO> getListOtimizedOnly() {
+		onlyProfessor();
+		List<Campus> campi = Campus.findAllOtimized();
+		List<Turno> turnos = null;
+		if(campi.isEmpty()) {
+			turnos = new ArrayList<Turno>(0);
+		} else {
+			turnos = AtendimentoOperacional.findAllTurnosByCursos(campi);
+		}
+		List<TurnoDTO> turnosDTO = new ArrayList<TurnoDTO>(turnos.size());
+		for(Turno turno : turnos) {
+			turnosDTO.add(ConvertBeans.toTurnoDTO(turno));
+		}
+		return new BaseListLoadResult<TurnoDTO>(turnosDTO);
 	}
 	
 	@Override

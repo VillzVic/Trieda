@@ -18,9 +18,12 @@ public class TurnoComboBox extends ComboBox<TurnoDTO> {
 	private CampusComboBox campusComboBox;
 	
 	public TurnoComboBox() {
-		this(null);
+		this(null, false);
 	}
 	public TurnoComboBox(CampusComboBox campusCB) {
+		this(campusCB, false);
+	}
+	public TurnoComboBox(CampusComboBox campusCB, final boolean somenteOtimizadoOperacional) {
 		this.campusComboBox = campusCB;
 		
 		RpcProxy<ListLoadResult<TurnoDTO>> proxy = new RpcProxy<ListLoadResult<TurnoDTO>>() {
@@ -29,7 +32,11 @@ public class TurnoComboBox extends ComboBox<TurnoDTO> {
 				if(campusComboBox != null) {
 					Services.turnos().getListByCampus(campusComboBox.getValue(), callback);
 				} else {
-					Services.turnos().getList(callback);
+					if(somenteOtimizadoOperacional) {
+						Services.turnos().getListOtimizedOnly(callback);
+					} else {
+						Services.turnos().getList(callback);
+					}
 				}
 			}
 		};

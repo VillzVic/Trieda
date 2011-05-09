@@ -19,5 +19,6 @@ public interface TurnosServiceAsync {
 	void remove(List<TurnoDTO> turnoDTOList, AsyncCallback<Void> callback);
 	void getBuscaList(String nome, Integer tempo, PagingLoadConfig config, AsyncCallback<PagingLoadResult<TurnoDTO>> callback);
 	void getListByCampus(CampusDTO campusDTO, AsyncCallback<ListLoadResult<TurnoDTO>> callback);
+	void getListOtimizedOnly(AsyncCallback<ListLoadResult<TurnoDTO>> callback);
 	
 }

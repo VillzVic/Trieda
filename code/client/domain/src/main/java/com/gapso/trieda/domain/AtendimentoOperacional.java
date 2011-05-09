@@ -172,6 +172,13 @@ public class AtendimentoOperacional implements Serializable {
     }
 	
 	@SuppressWarnings("unchecked")
+	public static List<Turno> findAllTurnosByCursos(List<Campus> campi) {
+		Query q = entityManager().createQuery("SELECT DISTINCT o.oferta.turno FROM AtendimentoOperacional o WHERE o.oferta.campus IN (:campi)");
+		q.setParameter("campi", campi);
+		return q.getResultList();
+	}
+	
+	@SuppressWarnings("unchecked")
 	public static List<AtendimentoOperacional> findAll() {
 		return entityManager().createQuery("SELECT o FROM AtendimentoOperacional o").getResultList();
 	}

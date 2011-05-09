@@ -76,7 +76,7 @@ public class RelatorioVisaoProfessorView extends MyComposite implements Relatori
 			left.add(campusCB, formData);
 		}
 		
-		turnoCB = new TurnoComboBox();
+		turnoCB = new TurnoComboBox(campusCB, usuario.isProfessor());
 		left.add(turnoCB, formData);
 		
 		if(usuario.isAdministrador()) {
