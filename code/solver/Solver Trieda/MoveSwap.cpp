@@ -1,26 +1,26 @@
-#include "MoveGeneric.h"
+#include "MoveSwap.h"
 
-MoveGeneric::MoveGeneric( Aula & _a1, Professor & _profA1,
+MoveSwap::MoveSwap( Aula & _a1, Professor & _profA1,
 									Aula & _a2, Professor & _profA2 )
 : a1( _a1 ), profA1( _profA1 ), a2( _a2 ), profA2( _profA2 )
 {
 }
 
-MoveGeneric::MoveGeneric(Aula & _a1, Aula & _a2) : a1(_a1), profA1(*_a1.bloco_aula.begin()->first), a2(_a2), profA2(*_a2.bloco_aula.begin()->first)
+MoveSwap::MoveSwap(Aula & _a1, Aula & _a2) : a1(_a1), profA1(*_a1.bloco_aula.begin()->first), a2(_a2), profA2(*_a2.bloco_aula.begin()->first)
 {
 }
 
-MoveGeneric::~MoveGeneric()
+MoveSwap::~MoveSwap()
 {
 
 }
 
-//bool MoveGeneric::canBeApplied(const SolucaoOperacional & s)
+//bool MoveSwap::canBeApplied(const SolucaoOperacional & s)
 //{
 //   return true;
 //}
 
-Move & MoveGeneric::apply( SolucaoOperacional & s )
+Move & MoveSwap::apply( SolucaoOperacional & s )
 {
    // Para trocar dois blocos de aula de horários deve-se: 
    // 1 - Na solução, trocar as referências das aulas.
@@ -53,7 +53,7 @@ Move & MoveGeneric::apply( SolucaoOperacional & s )
 
       if ( indice >= totalHorariosAula )
       {
-         std::cout << "ERRO em <MoveGeneric::apply(SolucaoOperacional & s)>. "
+         std::cout << "ERRO em <MoveSwap::apply(SolucaoOperacional & s)>. "
 				   << "Indice de horario nao encontrado." << std::endl;
 
          exit(1);
@@ -81,7 +81,7 @@ Move & MoveGeneric::apply( SolucaoOperacional & s )
 
       if ( indice >= totalHorariosAula )
       {
-         std::cout << "ERRO em <MoveGeneric::apply(SolucaoOperacional & s)>. "
+         std::cout << "ERRO em <MoveSwap::apply(SolucaoOperacional & s)>. "
 				   << "Indice de horario nao encontrado." << std::endl;
 
          exit(1);
@@ -100,17 +100,17 @@ Move & MoveGeneric::apply( SolucaoOperacional & s )
    //a2.toString();
    //std::cout << "------------------------------------------" << std::endl;
 
-   return ( *new MoveGeneric( a2, profA1, a1, profA2 ) );
+   return ( *new MoveSwap( a2, profA1, a1, profA2 ) );
 }
 
-bool MoveGeneric::operator ==( const Move & m ) const
+bool MoveSwap::operator ==( const Move & m ) const
 {
-   const MoveGeneric & _m = ( const MoveGeneric & ) m;
+   const MoveSwap & _m = ( const MoveSwap & ) m;
 
    return ( (_m.a1 == a1) && (_m.a2 == a2) );
 }
 
-void MoveGeneric::print()
+void MoveSwap::print()
 {
-   std::cout << "MoveGeneric" << std::endl;
+   std::cout << "MoveSwap" << std::endl;
 }

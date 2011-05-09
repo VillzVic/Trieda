@@ -1,3 +1,6 @@
+#ifndef _ATENDIMENTO_CAMPUS_SOLUCAO_H_
+#define _ATENDIMENTO_CAMPUS_SOLUCAO_H_
+
 #include "ofbase.h"
 #include "AtendimentoCampusSolucao.h"
 
@@ -39,3 +42,5 @@ void AtendimentoCampusSolucao::le_arvore( ItemAtendimentoCampusSolucao & elem )
        atendimentosUnidades.add( unidade );
    }
 }
+
+#endif

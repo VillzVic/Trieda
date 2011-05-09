@@ -1,6 +1,4 @@
-#ifndef _AREA_TITULACAO_H_
-#define _AREA_TITULACAO_H_
-
+#pragma once
 #include "ofbase.h"
 
 class AreaTitulacao :
@@ -8,15 +6,10 @@ class AreaTitulacao :
 {
 public:
    AreaTitulacao(void);
-   virtual ~AreaTitulacao(void);
+   ~AreaTitulacao(void);
 
-   virtual void le_arvore( ItemAreaTitulacao & );
+   virtual void le_arvore(ItemAreaTitulacao& elem);
 
-   void setNome( std::string s ) { nome = s; }
-   std::string getNome() { return nome; }
-
-private:
+//private:
    std::string nome;
 };
-
-#endif

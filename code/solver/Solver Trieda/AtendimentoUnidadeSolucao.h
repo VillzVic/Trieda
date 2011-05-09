@@ -1,5 +1,4 @@
-#ifndef _ATENDIMENTO_UNIDADE_SOLUCAO_H_
-#define _ATENDIMENTO_UNIDADE_SOLUCAO_H_
+#pragma once
 
 #include "ofbase.h"
 #include "GGroup.h"
@@ -11,21 +10,22 @@ class AtendimentoUnidadeSolucao :
 {
 public:
    AtendimentoUnidadeSolucao(void);
-   AtendimentoUnidadeSolucao( AtendimentoUnidade & );
-   virtual ~AtendimentoUnidadeSolucao(void);
 
-   virtual void le_arvore( ItemAtendimentoUnidadeSolucao & );
+   AtendimentoUnidadeSolucao(AtendimentoUnidade & at_Und);
 
-   GGroup< AtendimentoSalaSolucao * > atendimentosSalas;
+   ~AtendimentoUnidadeSolucao(void);
+   virtual void le_arvore(ItemAtendimentoUnidadeSolucao& elem);
 
-   virtual bool operator < ( AtendimentoUnidadeSolucao & right )
+   GGroup<AtendimentoSalaSolucao *> atendimentosSalas;
+
+   virtual bool operator < (AtendimentoUnidadeSolucao & right) 
    { 
-	   return ( unidadeId < right.getUnidadeId() );
+	   return (unidadeId < right.getUnidadeId());
    }
 
-   virtual bool operator == ( AtendimentoUnidadeSolucao & right )
+   virtual bool operator == (AtendimentoUnidadeSolucao & right)
    { 
-	   return ( unidadeId == right.getUnidadeId() );
+	   return (unidadeId == right.getUnidadeId());
    }
 
    void setUnidadeId(int v) { unidadeId = v; }
@@ -38,5 +38,3 @@ private:
    int unidadeId;
    std::string unidadeCodigo;   
 };
-
-#endif

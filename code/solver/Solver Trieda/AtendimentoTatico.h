@@ -1,6 +1,4 @@
-#ifndef _ATENDIMENTO_TATICO_H_
-#define _ATENDIMENTO_TATICO_H_
-
+#pragma once
 #include "ofbase.h"
 #include "TRIEDA-OutputXSD.h"
 
@@ -27,5 +25,3 @@ private:
 };
 
 std::ostream& operator << (std::ostream& out, AtendimentoTatico& tatico);
-
-#endif

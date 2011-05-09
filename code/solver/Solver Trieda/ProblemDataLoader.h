@@ -1,11 +1,10 @@
 #ifndef _PROBLEM_DATA_LOADER_H_
 #define _PROBLEM_DATA_LOADER_H_
 
-// O XSD Code Synthesis gera uma estrutura de dados para listas de
-// objetos que é um pouco estranha e contra-intuitiva. A macro abaixo
-// gera uma iteração por ela que pode ser representada por um código
-// mais legível e intuitivo, baseada nos padrões de projeto escolhidos
-
+/* O XSD Code Synthesis gera uma estrutura de dados para listas de
+objetos que é um pouco estranha e contra-intuitiva. A macro abaixo
+gera uma iteração por ela que pode ser representada por um código
+mais legível e intuitivo, baseada nos padrões de projeto escolhidos */
 #ifndef ITERA_SEQ
 #define ITERA_SEQ(it,addr,type) for (Grupo##type##::##type##_iterator it = \
    (addr).##type##().begin(); it != (addr).##type##().end(); ++it) 
@@ -59,11 +58,8 @@ public:
    void divideDisciplinas();
 
    /* */
-   template< class T > 
+   template<class T> 
    void find_and_set( int, GGroup< T * > &, T * &, bool );
-
-   template< class T > 
-   void find_and_set_lessptr( int, GGroup< T *, LessPtr< T > > &, T * &, bool );
 
    /* */
    void gera_refs();
@@ -96,11 +92,7 @@ public:
    // aula (todos os horários de todos os professores)
    void criaListaHorariosOrdenados();
 
-   /* */
    void disciplinasCursosCompativeis();
-
-   /* */
-   void relacionaFixacoes();
 
 private:
    // Input data object of the problem
@@ -160,4 +152,4 @@ private:
    void relacionaCursosCampus();
 };
 
-#endif
+#endif // _PROBLEM_DATA_LOADER_H_

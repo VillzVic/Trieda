@@ -9,10 +9,10 @@ MoveValidator::~MoveValidator()
 {
 }
 
-bool MoveValidator::isValid(Aula & aX, Aula & aY)
-{
-   return true;
-}
+//bool MoveValidator::isValid(Aula & aX, Aula & aY)
+//{
+//   return true;
+//}
 
 bool MoveValidator::canSwapSchedule( Aula & aX, Aula & aY ) const
 {
@@ -110,8 +110,13 @@ bool MoveValidator::checkBlockConflict(
 bool MoveValidator::checkClassDisponibility(
    Aula & aula, std::vector< std::pair< Professor *, Horario * > > & novosHorariosAula ) const
 {
-   // Verificando se os possíveis novos horários da aula
-   // são compatíveis com a sala a qual a aula está alocada.
+   /*
+   Verificando se os possíveis novos horários da aula são compatíveis com a sala a qual a aula está alocada.
+   Verifica-se apenas se a sala possui os horarios demandados. Se eles estao, ou nao, ocupados nao vem ao caso.
+   */
+
+   // AQUI, SO EH VERIFICADO SE A SALA POSSUI OS HORARIOS DESEJADOS. SE ELES
+   // ESTAO LIVRES OU NAO, NAO INTERESSA AQUI.
 
    // Obtendo as listas de horários para cada dia
    // letivo comum entre uma sala e uma disciplina (aula).
@@ -160,4 +165,26 @@ bool MoveValidator::checkClassDisponibility(
    }
 
    return true;
+}
+
+bool MoveValidator::canShiftSchedule(Aula & aula, std::vector< std::pair< Professor*, Horario* > > blocoHorariosVagos) const
+{
+  // Verificar aqui tb se alem da sala possuir os horarios, se na solucao em questao os possiveis novos horarios estao desocupados.
+
+   Professor & professor = *blocoHorariosVagos.begin()->first;
+
+   GGroup<int> horarioAulaId;
+
+   for(unsigned h = 0; h < blocoHorariosVagos.size(); ++h)
+      horarioAulaId.add(blocoHorariosVagos.at(h).second->getHorarioAulaId());
+
+   int diaSemana = aula.getDiaSemana();
+
+   /*
+   Receber como parametro dessa funcao a solucao operacional em questao.
+   Dai, com o dia, os ids dos horarios aula e do professor em maos (ja listei todos acima),
+   basta verificar se estao todos NULL.
+   */
+
+   return ((!checkBlockConflict(aula,blocoHorariosVagos)) && checkClassDisponibility(aula,blocoHorariosVagos));
 }

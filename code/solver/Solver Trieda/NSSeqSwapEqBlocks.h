@@ -3,7 +3,7 @@
 
 #include "NSSeq.hpp"
 
-#include "MoveGeneric.h"
+#include "MoveSwap.h"
 
 #include "MoveSwapEqBlocksValidator.h"
 

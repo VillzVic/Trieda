@@ -701,7 +701,7 @@
 				Name="Utility"
 				>
 				<File
-					RelativePath="..\..\..\..\..\..\..\Bibliotecas\codelib\CPUTimerWin.cpp"
+					RelativePath="$(CODELIB)\CPUTimerWin.cpp"
 					>
 				</File>
 				<File
@@ -787,6 +787,10 @@
 							>
 						</File>
 						<File
+							RelativePath=".\NSShift.cpp"
+							>
+						</File>
+						<File
 							RelativePath=".\NSSwapEqSchedulesBlocks.cpp"
 							>
 						</File>
@@ -806,13 +810,21 @@
 							Name="Moves"
 							>
 							<File
-								RelativePath=".\MoveGeneric.cpp"
+								RelativePath=".\MoveShift.cpp"
+								>
+							</File>
+							<File
+								RelativePath=".\MoveSwap.cpp"
 								>
 							</File>
 						</Filter>
 						<Filter
 							Name="Validators"
 							>
+							<File
+								RelativePath=".\MoveShiftValidator.cpp"
+								>
+							</File>
 							<File
 								RelativePath=".\MoveSwapEqBlocksValidator.cpp"
 								>
@@ -1154,7 +1166,7 @@
 				Name="Utility"
 				>
 				<File
-					RelativePath="..\..\..\..\..\..\..\Bibliotecas\codelib\CPUTimerWin.h"
+					RelativePath="$(CODELIB)\CPUTimerWin.h"
 					>
 				</File>
 				<File
@@ -1162,7 +1174,7 @@
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\..\..\..\..\Bibliotecas\codelib\ErrorHandler.h"
+					RelativePath="$(CODELIB)\codelib\ErrorHandler.h"
 					>
 				</File>
 				<File
@@ -1252,6 +1264,10 @@
 							>
 						</File>
 						<File
+							RelativePath=".\NSShift.h"
+							>
+						</File>
+						<File
 							RelativePath=".\NSSwapEqSchedulesBlocks.h"
 							>
 						</File>
@@ -1279,13 +1295,21 @@
 								>
 							</File>
 							<File
-								RelativePath=".\MoveGeneric.h"
+								RelativePath=".\MoveShift.h"
+								>
+							</File>
+							<File
+								RelativePath=".\MoveSwap.h"
 								>
 							</File>
 						</Filter>
 						<Filter
 							Name="Validators"
 							>
+							<File
+								RelativePath=".\MoveShiftValidator.h"
+								>
+							</File>
 							<File
 								RelativePath=".\MoveSwapEqBlocksValidator.h"
 								>

@@ -28,6 +28,9 @@
 #include "IteratedLocalSearchLevels.h"
 #include "RandomDescentMethod.h"
 
+// Temporario
+#include "MoveShift.h"
+
 #define PRINT_cria_variaveis
 #define PRINT_cria_restricoes
 
@@ -58,9 +61,53 @@ public:
    */
    void getSolution( ProblemSolution * );
 
+private:
+
+   /* Vetor responsável por armazenar ponteiros para todas as variáveis do 
+   tipo V_CREDITOS com credito(s) alocado(s). */
+   typedef vector< Variable * > vars__X___i_d_u_tps_t;
+
+   /* Estrutura responsável por armazenar referências para todas variáveis
+   do tipo V_ALUNOS que possuirem algum valor de atendimento maior que 0. */
+   typedef std::map< std::pair< int /*turma*/, Disciplina * >,
+					 std::vector< Variable * > > vars__A___i_d_o;
+
+   vars__X___i_d_u_tps_t vars_x;
+
+   vars__A___i_d_o vars_a;
+
+   ProblemSolution * problemSolution;
+
+   ProblemDataLoader * problemDataLoader;
+
+   /** The linear problem. */
+   OPT_LP * lp;
+
+   /** Hash which associates the column number with the Variable object. */
+   VariableHash vHash;
+
+   /** Hash which associates the row number with the Constraint object. */
+   ConstraintHash cHash;
+
+   /** Stores the solution variables (non-zero). */
+   std::vector< Variable * > solVars;
+
+
    /********************************************************************
    **                     VARIABLE CREATION                           **
    *********************************************************************/
+
+   double alpha, beta, gamma, delta, lambda, epsilon, rho, M, psi, tau, eta;
+
+   struct Ordena
+   {
+      bool operator() ( std::vector< int > xI, std::vector< int > xJ )
+      {
+		  return (xI.front() > xJ.front());
+	  }
+   } ordenaPorCreditos;
+
+public:
 
    int cria_variaveis(void);
 
@@ -151,47 +198,6 @@ public:
 
    int solveOperacional();
    void getSolutionOperacional();
-
-private:
-
-   /* Vetor responsável por armazenar ponteiros para todas as variáveis do 
-   tipo V_CREDITOS com credito(s) alocado(s). */
-   typedef vector< Variable * > vars__X___i_d_u_tps_t;
-
-   /* Estrutura responsável por armazenar referências para todas variáveis
-   do tipo V_ALUNOS que possuirem algum valor de atendimento maior que 0. */
-   typedef std::map< std::pair< int /*turma*/, Disciplina * >,
-					 std::vector< Variable * > > vars__A___i_d_o;
-
-   vars__X___i_d_u_tps_t vars_x;
-
-   vars__A___i_d_o vars_a;
-
-   ProblemSolution * problemSolution;
-
-   ProblemDataLoader * problemDataLoader;
-
-   /** The linear problem. */
-   OPT_LP * lp;
-
-   /** Hash which associates the column number with the Variable object. */
-   VariableHash vHash;
-
-   /** Hash which associates the row number with the Constraint object. */
-   ConstraintHash cHash;
-
-   // Stores the solution variables (non-zero).
-   std::vector< Variable * > solVars;
-
-   double alpha, beta, gamma, delta, lambda, epsilon, rho, M, psi, tau, eta;
-
-   struct Ordena
-   {
-      bool operator() ( std::vector< int > xI, std::vector< int > xJ )
-      {
-		  return (xI.front() > xJ.front());
-	  }
-   } ordenaPorCreditos;
 };
 
 #endif

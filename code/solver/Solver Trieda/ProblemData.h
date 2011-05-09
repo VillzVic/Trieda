@@ -1,7 +1,6 @@
 #ifndef _PROBLEM_DATA_H_
 #define _PROBLEM_DATA_H_
 
-#include "input.h"
 #include "GGroup.h"
 #include "Calendario.h"
 #include "TipoSala.h"
@@ -32,8 +31,11 @@
 class ProblemData : public OFBase
 {
 public:
+   // Constructor for initial state
    ProblemData();
-   virtual ~ProblemData();
+
+   // Destructor
+   ~ProblemData();
 
    Calendario * calendario;
    GGroup< TipoSala * > tipos_sala;
@@ -44,7 +46,7 @@ public:
    GGroup< NivelDificuldade * > niveis_dificuldade;
    GGroup< TipoCurso * > tipos_curso;
    GGroup< DivisaoCreditos * > regras_div;
-   GGroup< Campus *, LessPtr< Campus > > campi;
+   GGroup< Campus * > campi;
    GGroup< Deslocamento * > tempo_campi;
    GGroup< Deslocamento * > tempo_unidades;
    GGroup< Disciplina * > disciplinas;
@@ -52,11 +54,12 @@ public:
    GGroup< Demanda * > demandas;
    GGroup< Oferta * > ofertas;
    ParametrosPlanejamento * parametros;
-   GGroup< Fixacao *, LessPtr< Fixacao > > fixacoes;
+   GGroup< Fixacao * > fixacoes;
 
    std::vector< HorarioAula * > horarios_aula_ordenados;
 
    GGroup< AtendimentoCampusSolucao * > * atendimentosTatico;
+   //--------------------
 
    // Para cada dia da semana, informa o
    // conjunto de horários aula disponíveis nesse dia
@@ -108,6 +111,15 @@ public:
    std::map<int/*Id Disc*/,GGroup<Sala*> > disc_Salas_Pref;
 
    //------------------
+   // Relaciona as turmas com alguma disciplina. Armazena tb o tamanho das turmas da
+   // disc em questão. A princípio, todas as turmas vão ter o msm tamanho.
+   // Lembrando que turmas são representadas por inteiros, definidos em estima_turmas.
+   // Por equanto, os ids das turmas não estão sendo utilizados, ou seja, podem existir
+   // duas turmas diferentes com o msm id. Isto não é considerado um erro pq, do modo que
+   // está implementado, qdo isso acontecer, as turmas serão de discs diferentes.
+   //std::map<int/*Id Disciplina*/,GGroup<std::pair<int/*Id Turma*/,int/*Tamanho Turma*/> > > disc_turmas;
+
+   //------------------
    // Estrutura responsavel por referenciar os campus.
    // Nao precisaria dessa estrutura se o FIND do GGroup
    // estivesse funcionando normalmente. VER ISSO DEPOIS
@@ -116,17 +128,17 @@ public:
    // Estrutura responsavel por referenciar as unidades.
    // Nao precisaria dessa estrutura se o FIND do GGroup
    // estivesse funcionando normalmente. VER ISSO DEPOIS
-   std::map< int/*Id Unidade*/, Unidade * > refUnidade;
+   std::map<int/*Id Unidade*/,Unidade*> refUnidade;
 
    // Estrutura responsavel por referenciar as salas.
    // Nao precisaria dessa estrutura se o FIND do
    // GGroup estivesse funcionando normalmente. VER ISSO DEPOIS
-   std::map< int/*Id Sala*/, Sala * > refSala;
+   std::map<int/*Id Sala*/,Sala*> refSala;
 
    // Estrutura responsavel por referenciar as disciplinas.
    // Nao precisaria dessa estrutura se o FIND do GGroup
    // estivesse funcionando normalmente. VER ISSO DEPOIS
-   std::map< int, Disciplina * > refDisciplinas;
+   std::map< int,Disciplina * > refDisciplinas;
 
    // Estrutura responsavel por referenciar as disciplinas.
    // Nao precisaria dessa estrutura se o FIND do GGroup
@@ -137,11 +149,13 @@ public:
    std::map< int, GGroup< Oferta * > > ofertasDisc;
 
    // =============================================================================================
-   // Estruturas conflitantes !!!
+   /* Estruturas conflitantes !!!
 
-   // A segunda estrutura engloba a primeira. Portanto, basta
-   // substituir as ocorrências da primeira estrutura pela segunda.
-   // Os horários somente serão utilizados no módulo operacional.
+   A segunda estrutura engloba a primeira. Portanto, basta substituir as ocorrências da primeira
+   estrutura pela segunda.
+
+   Os horários somente serão utilizados no módulo operacional.
+   */
 
    // Listando os dias letivos de uma disciplina em relação a cada sala.
    std::map< std::pair< int /*idDisc*/, int /*idSala*/ >, GGroup< int > /*Dias*/ > disc_Salas_Dias;
@@ -152,7 +166,7 @@ public:
    // =============================================================================================
 
    // Listando os dias letivos de uma disciplina em relação a um conjunto de salas de mesmo tipo.
-   std::map< std::pair< int /*idDisc*/, int /*idSubCjtSala*/>, GGroup< int > /*Dias*/ > disc_Conjutno_Salas__Dias;
+   std::map<std::pair<int/*idDisc*/,int/*idSubCjtSala*/>, GGroup<int>/*Dias*/ > disc_Conjutno_Salas__Dias;
 
    // Listando os dias letivos comuns entre um bloco curricular
    // e um campus. Obs.: Quando tiver mais de um campus, pode
@@ -166,6 +180,9 @@ public:
    // Dias letivos comuns de um professor e uma disciplina.
    std::map< std::pair< int /*idProf*/, int /*idDisc*/>, GGroup< int > /*Dias*/ > prof_Disc_Dias;
 
+   // Lista, para cada professor, todas as disciplinas as quais ele é fixado.
+   //std::map<Professor*,GGroup<Disciplina*> > prof_Fix_Disc;
+
    GGroup< Aula * > aulas;
 
    // Lista para cada par <professor,disciplina> todas as fixacoes existentes.
@@ -178,49 +195,9 @@ public:
    // Estrutura que informa a quais blocos curriculares uma aula pertence.
    std::map< Aula *, GGroup< BlocoCurricular *, LessPtr< BlocoCurricular > > > aulaBlocosCurriculares;
 
-   std::map< std::pair< Curso *, Curso * >, std::vector< int /*idDisc*/ > > cursosComp_disc;
+   std::map<std::pair<Curso*,Curso*>,std::vector<int/*idDisc*/>> cursosComp_disc;
 
-   // Armazena todos os objetos turnos, de todos os campus
-   GGroup< Turno *, LessPtr< Turno > > todos_turnos;
-
-   //----------------------------------------------------------------
-   // FIXAÇÕES
-   // Fixações - Tático:
-   // Disciplina, Sala
-   GGroup< Fixacao *, LessPtr< Fixacao > > fixacoes_Disc_Sala;
-
-   // Disciplina, Sala, Dia, Horário
-   GGroup< Fixacao *, LessPtr< Fixacao > > fixacoes_Disc_Sala_Dia_Horario;
-
-   // Disciplina, Dia, Horário
-   GGroup< Fixacao *, LessPtr< Fixacao > > fixacoes_Disc_Dia_Horario;
-   //----------------------------------------------------------------
-
-   //----------------------------------------------------------------
-   // Fixações - Operacional:
-   // Professor, Disciplina, Sala, Dia, Horário
-   GGroup< Fixacao *, LessPtr< Fixacao > > fixacoes_Prof_Disc_Sala_Dia_Horario;
-
-   // Professor, Disciplina, Dia, Horário
-   GGroup< Fixacao *, LessPtr< Fixacao > > fixacoes_Prof_Disc_Dia_Horario;
-
-   // Professor, Disciplina
-   GGroup< Fixacao *, LessPtr< Fixacao > > fixacoes_Prof_Disc;
-
-   // Professor, Disciplina, Sala
-   GGroup< Fixacao *, LessPtr< Fixacao > > fixacoes_Prof_Disc_Sala;
-
-   // Professor, Sala
-   GGroup< Fixacao *, LessPtr< Fixacao > > fixacoes_Prof_Sala;
-   //----------------------------------------------------------------
-
-   // Dado um par disciplina/dia da semana, informa quantos
-   // crétidos estão fixados dessa disciplina nesse dia da semana
-   std::map< std::pair< Disciplina *, int >, int > map_Discicplina_DiaSemana_CreditosFixados;
-
-   int creditosFixadosDisciplinaDia( Disciplina *, int );
-
-   virtual void le_arvore( TriedaInput & );
+   virtual void le_arvore(TriedaInput &);
 };
 
-#endif
+#endif // _PROBLEM_DATA_H_

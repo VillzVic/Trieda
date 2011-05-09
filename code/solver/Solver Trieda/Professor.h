@@ -1,6 +1,4 @@
-#ifndef _PROFESSOR_H_
-#define _PROFESSOR_H_
-
+#pragma once
 #include "ofbase.h"
 #include "Magisterio.h"
 #include "TipoContrato.h"
@@ -67,5 +65,3 @@ private:
    int custoDispProf;
    bool is_virtual;
 };
-
-#endif

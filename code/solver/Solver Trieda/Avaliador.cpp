@@ -201,26 +201,22 @@ void Avaliador::calculaViolacaoRestricaoFixacao( SolucaoOperacional & solucao )
 
    bool encontrou_fixacao = false;
    int linha_professor = 0;
+   int id_professor = 0;
 
    Aula * aula = NULL;
    Professor * professor = NULL;
 
    // Para cada fixação de aula a um professor, verifica se há
    // uma aula atribuída ao professor que corresponda a essa fixação
-   ITERA_GGROUP_LESSPTR( it_fixacao, solucao.getProblemData()->fixacoes, Fixacao )
+   ITERA_GGROUP( it_fixacao, solucao.getProblemData()->fixacoes, Fixacao )
    {
       // Recupera o professor correspondente à fixação
-	  professor = it_fixacao->professor;
-	  if ( professor == NULL )
-	  {
-		  continue;
-	  }
-
-      // Recupera a linha do professor na matriz de solução
+      id_professor = it_fixacao->getProfessorId();
+      professor = solucao.mapProfessores[ id_professor ];
       linha_professor = professor->getIdOperacional();
+	  encontrou_fixacao = false;
 
       // Percorre a linha correspondente ao professor na matriz de solução
-	  encontrou_fixacao = false;
       for ( unsigned int i = 0; i < solucao.getMatrizAulas()->at( linha_professor )->size(); i++ )
       {
          aula = solucao.getMatrizAulas()->at( linha_professor )->at(i);
@@ -1057,7 +1053,8 @@ int Avaliador::calculaTamanhoBlocoAula(SolucaoOperacional & solucao)
    // Para cada um dos horários disponíveis, essa iteração
    // incrementa o número de horários disponíveis em cada dia da
    // semana, a cada ocorrência de horário/dia da semana encontrada
-   ITERA_GGROUP_LESSPTR( it_campi, solucao.getProblemData()->campi, Campus )
+   ITERA_GGROUP( it_campi, solucao.getProblemData()->campi,
+				 Campus )
    {
       ITERA_GGROUP( it_horario, it_campi->horarios,
 					Horario )
@@ -1383,7 +1380,7 @@ void Avaliador::avaliaPreferenciasProfessorDisciplina( SolucaoOperacional & solu
    // Para cada professor, criamos um 'map' que
    // relaciona cada uma de suas disciplinas com
    // a preferência do professor em lecionar essa disciplina
-   ITERA_GGROUP_LESSPTR( it_campi, solucao.getProblemData()->campi, Campus )
+   ITERA_GGROUP( it_campi, solucao.getProblemData()->campi, Campus )
    {
       ITERA_GGROUP( it_professor, it_campi->professores, Professor )
       {

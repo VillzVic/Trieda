@@ -72,7 +72,7 @@ Move & NSSeqSwapEqBlocks::move( const SolucaoOperacional & s )
    Professor & profA1 = *(a1.bloco_aula.begin()->first);
    Professor & profA2 = *(a2.bloco_aula.begin()->first);
 
-   return *(new MoveGeneric(a1,profA1,a2,profA2));
+   return *(new MoveSwap(a1,profA1,a2,profA2));
 }
 
 NSIterator & NSSeqSwapEqBlocks::getIterator(const SolucaoOperacional & s)

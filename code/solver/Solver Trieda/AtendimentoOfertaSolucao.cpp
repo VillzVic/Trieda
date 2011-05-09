@@ -1,3 +1,6 @@
+#ifndef _ATENDIMENTO_SALA_SOLUCAO_H_
+#define _ATENDIMENTO_SALA_SOLUCAO_H_
+
 #include "AtendimentoOfertaSolucao.h"
 
 AtendimentoOfertaSolucao::AtendimentoOfertaSolucao(void)
@@ -27,3 +30,5 @@ void AtendimentoOfertaSolucao::le_arvore(ItemAtendimentoOfertaSolucao& elem)
 	quantidade = elem.quantidade();
 	turma = elem.turma();
 }
+
+#endif

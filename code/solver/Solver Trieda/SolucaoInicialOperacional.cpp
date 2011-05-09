@@ -209,7 +209,8 @@ SolucaoOperacional & SolucaoInicialOperacional::geraSolucaoInicial()
          novoProfessor->magisterio.add( mag );
       }
 
-      ITERA_GGROUP_LESSPTR( itCampus, problemData.campi, Campus )
+      ITERA_GGROUP( itCampus, problemData.campi,
+					Campus )
       {
          ITERA_GGROUP( itHorario, itCampus->horarios,
 					   Horario )
@@ -222,7 +223,8 @@ SolucaoOperacional & SolucaoInicialOperacional::geraSolucaoInicial()
       solucaoInicial->addProfessor( *novoProfessor, *horariosNovoProfessor );
 
       // Adicionando o novo professor a todos os campus
-      ITERA_GGROUP_LESSPTR( itCampus, problemData.campi, Campus )
+      ITERA_GGROUP( itCampus, problemData.campi,
+					Campus )
       {
          itCampus->professores.add( novoProfessor );
       }
@@ -301,7 +303,7 @@ SolucaoOperacional & SolucaoInicialOperacional::geraSolucaoInicial()
                novoProfessor->magisterio.add( mag );
             }
 
-            ITERA_GGROUP_LESSPTR( itCampus, problemData.campi, Campus )
+            ITERA_GGROUP( itCampus, problemData.campi, Campus )
             {
                ITERA_GGROUP( itHorario, itCampus->horarios, Horario )
                {
@@ -313,7 +315,7 @@ SolucaoOperacional & SolucaoInicialOperacional::geraSolucaoInicial()
             solucaoInicial->addProfessor( *novoProfessor, *horariosNovoProfessor );
 
             // Adicionando o novo professor a todos os campus
-            ITERA_GGROUP_LESSPTR( itCampus, problemData.campi, Campus )
+            ITERA_GGROUP( itCampus, problemData.campi, Campus )
             {
                itCampus->professores.add( novoProfessor );
             }
@@ -657,7 +659,7 @@ bool SolucaoInicialOperacional::professorRepetido( Professor & professor, Aula &
 
 void SolucaoInicialOperacional::executaFuncaoPrioridade()
 {
-   ITERA_GGROUP_LESSPTR( itCampus, problemData.campi, Campus )
+   ITERA_GGROUP( itCampus, problemData.campi, Campus )
    {
       ITERA_GGROUP( itProfessor, itCampus->professores, Professor )
       {

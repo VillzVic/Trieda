@@ -1,5 +1,4 @@
-#ifndef _ATENDIMENTO_TATICO_SOLUCAO_H_
-#define _ATENDIMENTO_TATICO_SOLUCAO_H_
+#pragma once
 
 #include "ofbase.h"
 #include "GGroup.h"
@@ -11,23 +10,24 @@ class AtendimentoTaticoSolucao :
 {
 public:
    AtendimentoTaticoSolucao(void);
-   AtendimentoTaticoSolucao( AtendimentoTatico & );
-   virtual ~AtendimentoTaticoSolucao(void);
 
-   virtual void le_arvore( ItemAtendimentoTaticoSolucao & );
+   AtendimentoTaticoSolucao(AtendimentoTatico & at_Tatico);
 
-   AtendimentoOfertaSolucao * atendimento_oferta;
+   ~AtendimentoTaticoSolucao(void);
+   virtual void le_arvore(ItemAtendimentoTaticoSolucao& elem);
 
-   virtual bool operator < ( AtendimentoTaticoSolucao & right ) 
+   AtendimentoOfertaSolucao* atendimento_oferta;
+
+   virtual bool operator < (AtendimentoTaticoSolucao & right) 
    { 
-	   return ( ( qtdeCreditosTeoricos < right.getQtdeCreditosTeoricos() ) &&
-				( qtdeCreditosPraticos < right.getQtdeCreditosPraticos() ) );
+	   return ( ( qtdeCreditosTeoricos < right.getQtdeCreditosTeoricos()) &&
+			( qtdeCreditosPraticos < right.getQtdeCreditosPraticos()) );
    }
 
-   virtual bool operator == ( AtendimentoTaticoSolucao & right )
+   virtual bool operator == (AtendimentoTaticoSolucao & right)
    { 
-	   return ( ( qtdeCreditosTeoricos == right.getQtdeCreditosTeoricos() ) &&
-				( qtdeCreditosPraticos == right.getQtdeCreditosPraticos() ) );
+	   return ( ( qtdeCreditosTeoricos == right.getQtdeCreditosTeoricos()) &&
+			( qtdeCreditosPraticos == right.getQtdeCreditosPraticos()) );
    }
 
    void setQtdeCreditosTeoricos(int v) { qtdeCreditosTeoricos = v; }
@@ -40,5 +40,3 @@ private:
    int qtdeCreditosTeoricos;
    int qtdeCreditosPraticos;
 };
-
-#endif

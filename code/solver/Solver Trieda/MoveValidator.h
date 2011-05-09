@@ -1,5 +1,5 @@
-#ifndef _MOVEVALIDATOR_HPP_
-#define _MOVEVALIDATOR_HPP_
+#ifndef _MOVE_VALIDATOR_HPP_
+#define _MOVE_VALIDATOR_HPP_
 
 #include "input.h"
 
@@ -15,7 +15,7 @@ public:
 
    virtual ~MoveValidator();
 
-   virtual bool isValid(Aula & aX, Aula & aY);
+   //virtual bool isValid(Aula & aX, Aula & aY);
 
 //protected:
 
@@ -27,9 +27,14 @@ public:
       Aula & a, 
       std::vector< std::pair< Professor *, Horario * > > & s) const;
 
+protected:
+   
+   //bool canShiftSchedule(Aula & aula, Professor & novoProfAula, vector<pair<Professor*,Horario*> > blocoHorariosVagos) const;
+   bool canShiftSchedule(Aula & aula, std::vector< std::pair< Professor*, Horario* > > blocoHorariosVagos) const;
+
 private:
 
    ProblemData * problem_data;
 };
 
-#endif // _MOVEVALIDATOR_HPP_
+#endif /*_MOVE_VALIDATOR_HPP_*/

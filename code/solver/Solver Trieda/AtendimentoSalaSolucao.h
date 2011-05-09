@@ -1,5 +1,4 @@
-#ifndef _ATENDIMENTO_SALA_SOLUCAO_H_
-#define _ATENDIMENTO_SALA_SOLUCAO_H_
+#pragma once
 
 #include "ofbase.h"
 #include "GGroup.h"
@@ -11,21 +10,22 @@ class AtendimentoSalaSolucao :
 {
 public:
    AtendimentoSalaSolucao(void);
-   AtendimentoSalaSolucao( AtendimentoSala & );
-   virtual ~AtendimentoSalaSolucao(void);
 
-   virtual void le_arvore( ItemAtendimentoSalaSolucao & elem );
+   AtendimentoSalaSolucao(AtendimentoSala & at_Sala);
 
-   GGroup< AtendimentoDiaSemanaSolucao * > atendimentosDiasSemana;
+   ~AtendimentoSalaSolucao(void);
+   virtual void le_arvore(ItemAtendimentoSalaSolucao& elem);
 
-   virtual bool operator < ( AtendimentoSalaSolucao & right )
+   GGroup<AtendimentoDiaSemanaSolucao *> atendimentosDiasSemana;
+
+   virtual bool operator < (AtendimentoSalaSolucao & right) 
    { 
-	   return ( salaId < right.getSalaId() );
+	   return (salaId < right.getSalaId());
    }
 
-   virtual bool operator == ( AtendimentoSalaSolucao & right )
+   virtual bool operator == (AtendimentoSalaSolucao & right)
    { 
-	   return ( salaId == right.getSalaId() );
+	   return (salaId == right.getSalaId());
    }
 
    void setSalaId(int v) { salaId = v; }
@@ -38,5 +38,3 @@ private:
    int salaId;
    std::string salaNome;
 };
-
-#endif

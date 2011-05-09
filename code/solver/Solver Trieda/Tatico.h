@@ -1,14 +1,13 @@
-#ifndef _TATICO_H_
-#define _TATICO_H_
+#pragma once
 
 class Tatico
 {
 public:
    Tatico(void);
-   virtual ~Tatico(void);
+   ~Tatico(void);
 
    int qtde_creditos_teoricos;
    int qtde_creditos_praticos;
-};
 
-#endif
+   //virtual void escreve_arvore(ItemTatico& elem);
+};
