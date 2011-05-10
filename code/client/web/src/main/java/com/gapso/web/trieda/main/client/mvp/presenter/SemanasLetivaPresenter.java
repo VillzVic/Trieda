@@ -14,6 +14,7 @@ import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.gapso.web.trieda.main.client.mvp.view.HorarioDisponivelCenarioFormView;
 import com.gapso.web.trieda.main.client.mvp.view.SemanaLetivaFormView;
+import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.SemanaLetivaDTO;
 import com.gapso.web.trieda.shared.mvp.presenter.Presenter;
 import com.gapso.web.trieda.shared.services.SemanasLetivaServiceAsync;
@@ -42,9 +43,11 @@ public class SemanasLetivaPresenter implements Presenter {
 		void setProxy(RpcProxy<PagingLoadResult<SemanaLetivaDTO>> proxy);
 	}
 	private Display display; 
+	private CenarioDTO cenario; 
 	
-	public SemanasLetivaPresenter(Display display) {
+	public SemanasLetivaPresenter(CenarioDTO cenario, Display display) {
 		this.display = display;
+		this.cenario = cenario;
 		configureProxy();
 		setListeners();
 	}
@@ -67,7 +70,7 @@ public class SemanasLetivaPresenter implements Presenter {
 		display.getNewButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
 			@Override
 			public void componentSelected(ButtonEvent ce) {
-				Presenter presenter = new SemanaLetivaFormPresenter(new SemanaLetivaFormView(new SemanaLetivaDTO()), display.getGrid());
+				Presenter presenter = new SemanaLetivaFormPresenter(new SemanaLetivaFormView(cenario), display.getGrid());
 				presenter.go(null);
 			}
 		});
@@ -75,7 +78,7 @@ public class SemanasLetivaPresenter implements Presenter {
 			@Override
 			public void componentSelected(ButtonEvent ce) {
 				SemanaLetivaDTO dto = display.getGrid().getGrid().getSelectionModel().getSelectedItem();
-				Presenter presenter = new SemanaLetivaFormPresenter(new SemanaLetivaFormView(dto), display.getGrid());
+				Presenter presenter = new SemanaLetivaFormPresenter(new SemanaLetivaFormView(dto, cenario), display.getGrid());
 				presenter.go(null);
 			}
 		});

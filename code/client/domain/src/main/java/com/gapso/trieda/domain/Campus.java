@@ -467,7 +467,7 @@ public class Campus implements Serializable, Comparable<Campus> {
 	}
 	
 	public static boolean checkCodigoUnique(Cenario cenario, String codigo) {
-		Query q = entityManager().createQuery("SELECT COUNT(o) FROM Campus o WHERE cenario = :cenario AND codigo = :codigo");
+		Query q = entityManager().createQuery("SELECT COUNT(o) FROM Campus o WHERE o.cenario = :cenario AND o.codigo = :codigo");
 		q.setParameter("cenario", cenario);
 		q.setParameter("codigo", codigo);
 		Number size = (Number) q.setMaxResults(1).getSingleResult();

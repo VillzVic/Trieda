@@ -13,6 +13,7 @@ import com.extjs.gxt.ui.client.widget.button.Button;
 import com.gapso.web.trieda.main.client.mvp.view.GrupoSalaAssociarSalaView;
 import com.gapso.web.trieda.main.client.mvp.view.GrupoSalaFormView;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
+import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.GrupoSalaDTO;
 import com.gapso.web.trieda.shared.dtos.UnidadeDTO;
 import com.gapso.web.trieda.shared.i18n.ITriedaI18nGateway;
@@ -42,9 +43,11 @@ public class GruposSalasPresenter implements Presenter {
 		void setProxy(RpcProxy<PagingLoadResult<GrupoSalaDTO>> proxy);
 	}
 	private Display display; 
+	private CenarioDTO cenario; 
 	
-	public GruposSalasPresenter(Display display) {
+	public GruposSalasPresenter(CenarioDTO cenario, Display display) {
 		this.display = display;
+		this.cenario = cenario;
 		configureProxy();
 		setListeners();
 	}
@@ -64,7 +67,7 @@ public class GruposSalasPresenter implements Presenter {
 		display.getNewButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
 			@Override
 			public void componentSelected(ButtonEvent ce) {
-				Presenter presenter = new GrupoSalaFormPresenter(new GrupoSalaFormView(new GrupoSalaDTO(), null, null), display.getGrid());
+				Presenter presenter = new GrupoSalaFormPresenter(new GrupoSalaFormView(new GrupoSalaDTO(), null, null, cenario), display.getGrid());
 				presenter.go(null);
 			}
 		});
@@ -86,7 +89,7 @@ public class GruposSalasPresenter implements Presenter {
 					public void onSuccess(Boolean result) {
 						CampusDTO campusDTO = futureCampusDTO.result();
 						UnidadeDTO unidadeDTO = futureUnidadeDTO.result();
-						Presenter presenter = new GrupoSalaFormPresenter(new GrupoSalaFormView(grupoSalaDTO, campusDTO, unidadeDTO), display.getGrid());
+						Presenter presenter = new GrupoSalaFormPresenter(new GrupoSalaFormView(grupoSalaDTO, campusDTO, unidadeDTO, cenario), display.getGrid());
 						presenter.go(null);
 					}
 				});

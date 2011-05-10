@@ -89,7 +89,7 @@ public class ProfessoresPresenter implements Presenter {
 		display.getNewButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
 			@Override
 			public void componentSelected(ButtonEvent ce) {
-				Presenter presenter = new ProfessorFormPresenter(cenario, new ProfessorFormView(new ProfessorDTO(), null, null, null), display.getGrid());
+				Presenter presenter = new ProfessorFormPresenter(cenario, new ProfessorFormView(new ProfessorDTO(), null, null, null, cenario), display.getGrid());
 				presenter.go(null);
 			}
 		});
@@ -122,7 +122,7 @@ public class ProfessoresPresenter implements Presenter {
 						TitulacaoDTO titulacaoDTO = futureTitulacaoDTO.result();
 						AreaTitulacaoDTO areaTitulacaoDTO = futureAreaTitulacaoDTO.result();
 						
-						Presenter presenter = new ProfessorFormPresenter(cenario, new ProfessorFormView(professorDTO, tipoContratoDTO, titulacaoDTO, areaTitulacaoDTO), display.getGrid());
+						Presenter presenter = new ProfessorFormPresenter(cenario, new ProfessorFormView(professorDTO, tipoContratoDTO, titulacaoDTO, areaTitulacaoDTO, cenario), display.getGrid());
 						presenter.go(null);
 					}
 				});

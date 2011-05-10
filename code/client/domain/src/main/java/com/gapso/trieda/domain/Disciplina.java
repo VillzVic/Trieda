@@ -24,6 +24,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import javax.persistence.Version;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
@@ -44,7 +45,11 @@ import com.gapso.trieda.misc.Dificuldades;
 @RooJavaBean
 @RooToString
 @RooEntity(identifierColumn = "DIS_ID")
-@Table(name = "DISCIPLINAS")
+@Table(
+	name = "DISCIPLINAS",
+	uniqueConstraints=
+		@UniqueConstraint(columnNames={"DIS_CODIGO", "CEN_ID"})
+)
 public class Disciplina implements Serializable, Comparable<Disciplina> {
 
 	@NotNull
@@ -398,6 +403,14 @@ public class Disciplina implements Serializable, Comparable<Disciplina> {
 		return q.getResultList();
 	}
     
+	public static boolean checkCodigoUnique(Cenario cenario, String codigo) {
+		Query q = entityManager().createQuery("SELECT COUNT(o) FROM Disciplina o WHERE o.cenario = :cenario AND o.codigo = :codigo");
+		q.setParameter("cenario", cenario);
+		q.setParameter("codigo", codigo);
+		Number size = (Number) q.setMaxResults(1).getSingleResult();
+		return size.intValue() > 0;
+	}
+	
 	private static final long serialVersionUID = 7980821696468062987L;
 
 	public Cenario getCenario() {

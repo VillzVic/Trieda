@@ -7,10 +7,13 @@ import com.extjs.gxt.ui.client.widget.form.FormPanel;
 import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.extjs.gxt.ui.client.widget.layout.FormData;
 import com.gapso.web.trieda.main.client.mvp.presenter.SemanaLetivaFormPresenter;
+import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.SemanaLetivaDTO;
 import com.gapso.web.trieda.shared.mvp.view.MyComposite;
 import com.gapso.web.trieda.shared.util.resources.Resources;
 import com.gapso.web.trieda.shared.util.view.SimpleModal;
+import com.gapso.web.trieda.shared.util.view.UniqueDomain;
+import com.gapso.web.trieda.shared.util.view.UniqueTextField;
 
 public class SemanaLetivaFormView extends MyComposite implements SemanaLetivaFormPresenter.Display {
 
@@ -20,9 +23,14 @@ public class SemanaLetivaFormView extends MyComposite implements SemanaLetivaFor
 	private TextField<String> descricaoTF;
 	private CheckBox oficialCB;
 	private SemanaLetivaDTO semanaLetivaDTO;
+	private CenarioDTO cenarioDTO;
 	
-	public SemanaLetivaFormView(SemanaLetivaDTO semanaLetivaDTO) {
+	public SemanaLetivaFormView(CenarioDTO cenarioDTO) {
+		this(new SemanaLetivaDTO(), cenarioDTO);
+	}
+	public SemanaLetivaFormView(SemanaLetivaDTO semanaLetivaDTO, CenarioDTO cenarioDTO) {
 		this.semanaLetivaDTO = semanaLetivaDTO;
+		this.cenarioDTO = cenarioDTO;
 		initUI();
 		// TODO
 //		initComponent(simpleModal);
@@ -42,7 +50,7 @@ public class SemanaLetivaFormView extends MyComposite implements SemanaLetivaFor
 		formPanel = new FormPanel();
 		formPanel.setHeaderVisible(false);
 		
-		codigoTF = new TextField<String>();
+		codigoTF = new UniqueTextField(cenarioDTO, UniqueDomain.SEMANA_LETIVA);
 		codigoTF.setName(SemanaLetivaDTO.PROPERTY_CODIGO);
 		codigoTF.setValue(semanaLetivaDTO.getCodigo());
 		codigoTF.setFieldLabel("Codigo");

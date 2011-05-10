@@ -17,6 +17,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -32,7 +33,11 @@ import org.springframework.transaction.annotation.Transactional;
 @RooJavaBean
 @RooToString
 @RooEntity(identifierColumn = "SLE_ID")
-@Table(name = "SEMANA_LETIVA")
+@Table(
+	name = "SEMANA_LETIVA",
+	uniqueConstraints=
+		@UniqueConstraint(columnNames={"SLE_CODIGO"})
+)
 public class SemanaLetiva implements Serializable {
 	
     @OneToOne(mappedBy="semanaLetiva")
@@ -226,6 +231,14 @@ public class SemanaLetiva implements Serializable {
         return q.setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
 	
+	public static boolean checkCodigoUnique(Cenario cenario, String codigo) {
+		Query q = entityManager().createQuery("SELECT COUNT(o) FROM SemanaLetiva o WHERE o.codigo = :codigo");
+		// TODO q.setParameter("cenario", cenario);
+		q.setParameter("codigo", codigo);
+		Number size = (Number) q.setMaxResults(1).getSingleResult();
+		return size.intValue() > 0;
+	}
+    
 	public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("Id: ").append(getId()).append(", ");

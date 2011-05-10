@@ -17,6 +17,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -32,7 +33,11 @@ import org.springframework.transaction.annotation.Transactional;
 @RooJavaBean
 @RooToString
 @RooEntity(identifierColumn = "GRS_ID")
-@Table(name = "GRUPOS_SALA")
+@Table(
+	name = "GRUPOS_SALA",
+	uniqueConstraints=
+		@UniqueConstraint(columnNames={"GRS_CODIGO", "UNI_ID"})
+)
 public class GrupoSala implements Serializable {
 
 	@NotNull
@@ -253,4 +258,12 @@ public class GrupoSala implements Serializable {
 		orderBy = (orderBy != null) ? "ORDER BY o." + orderBy : "";
         return entityManager().createQuery("select o from GrupoSala o " + orderBy).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
+	
+	public static boolean checkCodigoUnique(Cenario cenario, String codigo) {
+		Query q = entityManager().createQuery("SELECT COUNT(o) FROM GrupoSala o WHERE o.unidade.campus.cenario = :cenario AND o.codigo = :codigo");
+		q.setParameter("cenario", cenario);
+		q.setParameter("codigo", codigo);
+		Number size = (Number) q.setMaxResults(1).getSingleResult();
+		return size.intValue() > 0;
+	}
 }

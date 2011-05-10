@@ -8,6 +8,7 @@ import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.extjs.gxt.ui.client.widget.layout.FormData;
 import com.gapso.web.trieda.main.client.mvp.presenter.ProfessorFormPresenter;
 import com.gapso.web.trieda.shared.dtos.AreaTitulacaoDTO;
+import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorDTO;
 import com.gapso.web.trieda.shared.dtos.TipoContratoDTO;
 import com.gapso.web.trieda.shared.dtos.TitulacaoDTO;
@@ -17,6 +18,8 @@ import com.gapso.web.trieda.shared.util.view.AreaTitulacaoComboBox;
 import com.gapso.web.trieda.shared.util.view.SimpleModal;
 import com.gapso.web.trieda.shared.util.view.TipoContratoComboBox;
 import com.gapso.web.trieda.shared.util.view.TitulacaoComboBox;
+import com.gapso.web.trieda.shared.util.view.UniqueDomain;
+import com.gapso.web.trieda.shared.util.view.UniqueTextField;
 
 public class ProfessorFormView extends MyComposite implements ProfessorFormPresenter.Display {
 
@@ -37,15 +40,17 @@ public class ProfessorFormView extends MyComposite implements ProfessorFormPrese
 	private TipoContratoDTO tipoContratoDTO;
 	private TitulacaoDTO titulacaoDTO;
 	private AreaTitulacaoDTO areaTitulacaoDTO;
+	private CenarioDTO cenarioDTO;
 	
-	public ProfessorFormView() {
-		this(new ProfessorDTO(), null, null, null);
+	public ProfessorFormView(CenarioDTO cenarioDTO) {
+		this(new ProfessorDTO(), null, null, null, cenarioDTO);
 	}
-	public ProfessorFormView(ProfessorDTO professorDTO, TipoContratoDTO tipoContratoDTO, TitulacaoDTO titulacaoDTO, AreaTitulacaoDTO areaTitulacaoDTO) {
+	public ProfessorFormView(ProfessorDTO professorDTO, TipoContratoDTO tipoContratoDTO, TitulacaoDTO titulacaoDTO, AreaTitulacaoDTO areaTitulacaoDTO, CenarioDTO cenarioDTO) {
 		this.professorDTO = professorDTO;
 		this.tipoContratoDTO = tipoContratoDTO;
 		this.titulacaoDTO = titulacaoDTO;
 		this.areaTitulacaoDTO = areaTitulacaoDTO;
+		this.cenarioDTO = cenarioDTO;
 		initUI();
 		// TODO
 //		initComponent(simpleModal);
@@ -65,7 +70,7 @@ public class ProfessorFormView extends MyComposite implements ProfessorFormPrese
 		formPanel = new FormPanel();
 		formPanel.setHeaderVisible(false);
 		
-		cpfTF = new TextField<String>();
+		cpfTF = new UniqueTextField(cenarioDTO, UniqueDomain.PROFESSOR);
 		cpfTF.setName(ProfessorDTO.PROPERTY_CPF);
 		cpfTF.setValue(professorDTO.getCpf());
 		cpfTF.setFieldLabel("CPF");

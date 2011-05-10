@@ -88,7 +88,7 @@ public class DisciplinasPresenter implements Presenter {
 		display.getNewButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
 			@Override
 			public void componentSelected(ButtonEvent ce) {
-				Presenter presenter = new DisciplinaFormPresenter(cenario, new DisciplinaFormView(new DisciplinaDTO(), null), display.getGrid());
+				Presenter presenter = new DisciplinaFormPresenter(cenario, new DisciplinaFormView(new DisciplinaDTO(), null, cenario), display.getGrid());
 				presenter.go(null);
 			}
 		});
@@ -104,7 +104,7 @@ public class DisciplinasPresenter implements Presenter {
 					}
 					@Override
 					public void onSuccess(TipoDisciplinaDTO tipoDisciplinaDTO) {
-						Presenter presenter = new DisciplinaFormPresenter(cenario, new DisciplinaFormView(disciplinaDTO, tipoDisciplinaDTO), display.getGrid());
+						Presenter presenter = new DisciplinaFormPresenter(cenario, new DisciplinaFormView(disciplinaDTO, tipoDisciplinaDTO, cenario), display.getGrid());
 						presenter.go(null);
 					}
 				});

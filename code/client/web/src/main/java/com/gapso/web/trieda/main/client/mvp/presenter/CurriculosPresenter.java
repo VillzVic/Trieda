@@ -79,7 +79,7 @@ public class CurriculosPresenter implements Presenter {
 		display.getNewButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
 			@Override
 			public void componentSelected(ButtonEvent ce) {
-				Presenter presenter = new CurriculoFormPresenter(cenario, new CurriculoFormView(new CurriculoDTO(), null), display.getGrid());
+				Presenter presenter = new CurriculoFormPresenter(cenario, new CurriculoFormView(new CurriculoDTO(), null, cenario), display.getGrid());
 				presenter.go(null);
 			}
 		});
@@ -95,7 +95,7 @@ public class CurriculosPresenter implements Presenter {
 					}
 					@Override
 					public void onSuccess(CursoDTO cursoDTO) {
-						Presenter presenter = new CurriculoFormPresenter(cenario, new CurriculoFormView(curriculoDTO, cursoDTO), display.getGrid());
+						Presenter presenter = new CurriculoFormPresenter(cenario, new CurriculoFormView(curriculoDTO, cursoDTO, cenario), display.getGrid());
 						presenter.go(null);
 					}
 				});

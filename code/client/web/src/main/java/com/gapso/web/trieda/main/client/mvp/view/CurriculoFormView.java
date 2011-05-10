@@ -6,12 +6,15 @@ import com.extjs.gxt.ui.client.widget.form.FormPanel;
 import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.extjs.gxt.ui.client.widget.layout.FormData;
 import com.gapso.web.trieda.main.client.mvp.presenter.CurriculoFormPresenter;
+import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.CurriculoDTO;
 import com.gapso.web.trieda.shared.dtos.CursoDTO;
 import com.gapso.web.trieda.shared.mvp.view.MyComposite;
 import com.gapso.web.trieda.shared.util.resources.Resources;
 import com.gapso.web.trieda.shared.util.view.CursoComboBox;
 import com.gapso.web.trieda.shared.util.view.SimpleModal;
+import com.gapso.web.trieda.shared.util.view.UniqueDomain;
+import com.gapso.web.trieda.shared.util.view.UniqueTextField;
 
 public class CurriculoFormView extends MyComposite implements CurriculoFormPresenter.Display {
 
@@ -22,10 +25,12 @@ public class CurriculoFormView extends MyComposite implements CurriculoFormPrese
 	private CursoComboBox cursoCB;
 	private CurriculoDTO curriculoDTO;
 	private CursoDTO cursoDTO;
+	private CenarioDTO cenarioDTO;
 	
-	public CurriculoFormView(CurriculoDTO curriculoDTO, CursoDTO cursoDTO) {
+	public CurriculoFormView(CurriculoDTO curriculoDTO, CursoDTO cursoDTO, CenarioDTO cenarioDTO) {
 		this.curriculoDTO = curriculoDTO;
 		this.cursoDTO = cursoDTO;
+		this.cenarioDTO = cenarioDTO;
 		initUI();
 		// TODO
 //		initComponent(simpleModal);
@@ -45,7 +50,7 @@ public class CurriculoFormView extends MyComposite implements CurriculoFormPrese
 		formPanel = new FormPanel();
 		formPanel.setHeaderVisible(false);
 		
-		codigoTF = new TextField<String>();
+		codigoTF = new UniqueTextField(cenarioDTO, UniqueDomain.MATRIZ_CURRICULAR);
 		codigoTF.setName(CurriculoDTO.PROPERTY_CODIGO);
 		codigoTF.setValue(curriculoDTO.getCodigo());
 		codigoTF.setFieldLabel("Código");

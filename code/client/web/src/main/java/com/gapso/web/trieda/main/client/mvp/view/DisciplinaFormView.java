@@ -8,6 +8,7 @@ import com.extjs.gxt.ui.client.widget.form.NumberField;
 import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.extjs.gxt.ui.client.widget.layout.FormData;
 import com.gapso.web.trieda.main.client.mvp.presenter.DisciplinaFormPresenter;
+import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.DisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.TipoDisciplinaDTO;
 import com.gapso.web.trieda.shared.mvp.view.MyComposite;
@@ -15,6 +16,8 @@ import com.gapso.web.trieda.shared.util.resources.Resources;
 import com.gapso.web.trieda.shared.util.view.DificuldadeComboBox;
 import com.gapso.web.trieda.shared.util.view.SimpleModal;
 import com.gapso.web.trieda.shared.util.view.TipoDisciplinaComboBox;
+import com.gapso.web.trieda.shared.util.view.UniqueDomain;
+import com.gapso.web.trieda.shared.util.view.UniqueTextField;
 
 public class DisciplinaFormView extends MyComposite implements DisciplinaFormPresenter.Display {
 
@@ -31,13 +34,15 @@ public class DisciplinaFormView extends MyComposite implements DisciplinaFormPre
 	private NumberField maxAlunosPraticoTF;
 	private DisciplinaDTO disciplinaDTO;
 	private TipoDisciplinaDTO tipoDisciplinaDTO;
+	private CenarioDTO cenarioDTO;
 
-	public DisciplinaFormView() {
-		this(new DisciplinaDTO(), null);
+	public DisciplinaFormView(CenarioDTO cenarioDTO) {
+		this(new DisciplinaDTO(), null, cenarioDTO);
 	}
-	public DisciplinaFormView(DisciplinaDTO disciplinaDTO, TipoDisciplinaDTO tipoDisciplinaDTO) {
+	public DisciplinaFormView(DisciplinaDTO disciplinaDTO, TipoDisciplinaDTO tipoDisciplinaDTO, CenarioDTO cenarioDTO) {
 		this.disciplinaDTO = disciplinaDTO;
 		this.tipoDisciplinaDTO = tipoDisciplinaDTO;
+		this.cenarioDTO = cenarioDTO;
 		initUI();
 		// TODO
 //		initComponent(simpleModal);
@@ -57,7 +62,7 @@ public class DisciplinaFormView extends MyComposite implements DisciplinaFormPre
 		formPanel = new FormPanel();
 		formPanel.setHeaderVisible(false);
 		
-		codigoTF = new TextField<String>();
+		codigoTF = new UniqueTextField(cenarioDTO, UniqueDomain.DISCIPLINA);
 		codigoTF.setName(DisciplinaDTO.PROPERTY_CODIGO);
 		codigoTF.setValue(disciplinaDTO.getCodigo());
 		codigoTF.setFieldLabel("Código");

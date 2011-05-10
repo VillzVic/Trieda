@@ -7,6 +7,7 @@ import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.extjs.gxt.ui.client.widget.layout.FormData;
 import com.gapso.web.trieda.main.client.mvp.presenter.GrupoSalaFormPresenter;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
+import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.GrupoSalaDTO;
 import com.gapso.web.trieda.shared.dtos.UnidadeDTO;
 import com.gapso.web.trieda.shared.mvp.view.MyComposite;
@@ -14,6 +15,8 @@ import com.gapso.web.trieda.shared.util.resources.Resources;
 import com.gapso.web.trieda.shared.util.view.CampusComboBox;
 import com.gapso.web.trieda.shared.util.view.SimpleModal;
 import com.gapso.web.trieda.shared.util.view.UnidadeComboBox;
+import com.gapso.web.trieda.shared.util.view.UniqueDomain;
+import com.gapso.web.trieda.shared.util.view.UniqueTextField;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
 public class GrupoSalaFormView extends MyComposite implements GrupoSalaFormPresenter.Display {
@@ -26,12 +29,14 @@ public class GrupoSalaFormView extends MyComposite implements GrupoSalaFormPrese
 	private GrupoSalaDTO grupoSalaDTO;
 	private UnidadeDTO unidadeDTO;
 	private CampusDTO campusDTO;
+	private CenarioDTO cenarioDTO;
 	private Button salvarEAssociarBT;
 	
-	public GrupoSalaFormView(GrupoSalaDTO grupoSalaDTO, CampusDTO campusDTO, UnidadeDTO unidadeDTO) {
+	public GrupoSalaFormView(GrupoSalaDTO grupoSalaDTO, CampusDTO campusDTO, UnidadeDTO unidadeDTO, CenarioDTO cenarioDTO) {
 		this.grupoSalaDTO = grupoSalaDTO;
 		this.unidadeDTO = unidadeDTO;
 		this.campusDTO = campusDTO;
+		this.cenarioDTO = cenarioDTO;
 		initUI();
 		// TODO
 //		initComponent(simpleModal);
@@ -55,7 +60,7 @@ public class GrupoSalaFormView extends MyComposite implements GrupoSalaFormPrese
 		formPanel = new FormPanel();
 		formPanel.setHeaderVisible(false);
 		
-		codigoTF = new TextField<String>();
+		codigoTF = new UniqueTextField(cenarioDTO, UniqueDomain.GRUPO_SALA);
 		codigoTF.setName(GrupoSalaDTO.PROPERTY_CODIGO);
 		codigoTF.setValue(grupoSalaDTO.getCodigo());
 		codigoTF.setFieldLabel("Código");

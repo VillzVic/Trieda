@@ -149,7 +149,7 @@ public class ToolBarPresenter implements Presenter {
 		toolBar.getSemanasLetivaListCampiButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
 			@Override
 			public void componentSelected(ButtonEvent ce) {
-				Presenter presenter = new SemanasLetivaPresenter(new SemanasLetivaView());
+				Presenter presenter = new SemanasLetivaPresenter(masterData, new SemanasLetivaView());
 				presenter.go(gTab);
 			}
 		});
@@ -205,7 +205,7 @@ public class ToolBarPresenter implements Presenter {
 		toolBar.getGruposSalasListSalasButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
 			@Override
 			public void componentSelected(ButtonEvent ce) {
-				Presenter presenter = new GruposSalasPresenter(new GruposSalasView());
+				Presenter presenter = new GruposSalasPresenter(masterData, new GruposSalasView());
 				presenter.go(gTab);
 			}
 		});
@@ -273,7 +273,7 @@ public class ToolBarPresenter implements Presenter {
 		toolBar.getDisciplinasNovoDisciplinasButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
 			@Override
 			public void componentSelected(ButtonEvent ce) {
-				Presenter presenter = new DisciplinaFormPresenter(masterData, new DisciplinaFormView());
+				Presenter presenter = new DisciplinaFormPresenter(masterData, new DisciplinaFormView(masterData));
 				presenter.go(null);
 			}
 		});
@@ -329,7 +329,7 @@ public class ToolBarPresenter implements Presenter {
 		toolBar.getProfessoresNovoProfessoresButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
 			@Override
 			public void componentSelected(ButtonEvent ce) {
-				Presenter presenter = new ProfessorFormPresenter(masterData, new ProfessorFormView());
+				Presenter presenter = new ProfessorFormPresenter(masterData, new ProfessorFormView(masterData));
 				presenter.go(null);
 			}
 		});

@@ -2,8 +2,13 @@ package com.gapso.web.trieda.server;
 
 import com.gapso.trieda.domain.Campus;
 import com.gapso.trieda.domain.Cenario;
+import com.gapso.trieda.domain.Curriculo;
 import com.gapso.trieda.domain.Curso;
+import com.gapso.trieda.domain.Disciplina;
+import com.gapso.trieda.domain.GrupoSala;
+import com.gapso.trieda.domain.Professor;
 import com.gapso.trieda.domain.Sala;
+import com.gapso.trieda.domain.SemanaLetiva;
 import com.gapso.trieda.domain.Unidade;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.services.UniquesService;
@@ -25,7 +30,12 @@ public class UniquesServiceImpl extends RemoteService implements UniquesService 
 			case CAMPI: exist = checkCampus(cenario, value); break;
 			case UNIDADE: exist = checkUnidade(cenario, value); break;
 			case SALA: exist = checkSala(cenario, value); break;
+			case GRUPO_SALA: exist = checkGrupoSala(cenario, value); break;
 			case CURSO: exist = checkCurso(cenario, value); break;
+			case SEMANA_LETIVA: exist = checkSemanaLetiva(cenario, value); break;
+			case PROFESSOR: exist = checkProfessor(cenario, value); break;
+			case DISCIPLINA: exist = checkDisciplina(cenario, value); break;
+			case MATRIZ_CURRICULAR: exist = checkMatrizCurricular(cenario, value); break;
 		}
 		return exist;
 	}
@@ -39,8 +49,23 @@ public class UniquesServiceImpl extends RemoteService implements UniquesService 
 	private Boolean checkSala(Cenario cenario, String value) {
 		return Sala.checkCodigoUnique(cenario, value);
 	}
+	private Boolean checkGrupoSala(Cenario cenario, String value) {
+		return GrupoSala.checkCodigoUnique(cenario, value);
+	}
 	private Boolean checkCurso(Cenario cenario, String value) {
 		return Curso.checkCodigoUnique(cenario, value);
+	}
+	private Boolean checkSemanaLetiva(Cenario cenario, String value) {
+		return SemanaLetiva.checkCodigoUnique(cenario, value);
+	}
+	private Boolean checkProfessor(Cenario cenario, String value) {
+		return Professor.checkCodigoUnique(cenario, value);
+	}
+	private Boolean checkDisciplina(Cenario cenario, String value) {
+		return Disciplina.checkCodigoUnique(cenario, value);
+	}
+	private Boolean checkMatrizCurricular(Cenario cenario, String value) {
+		return Curriculo.checkCodigoUnique(cenario, value);
 	}
 
 }
