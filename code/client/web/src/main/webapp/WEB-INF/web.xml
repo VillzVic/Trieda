@@ -135,6 +135,10 @@
 		<servlet-name>usuariosServlet</servlet-name>
 		<servlet-class>com.gapso.web.trieda.server.UsuariosServiceImpl</servlet-class>
 	</servlet>
+	<servlet>
+		<servlet-name>uniquesServlet</servlet-name>
+		<servlet-class>com.gapso.web.trieda.server.UniquesServiceImpl</servlet-class>
+	</servlet>
 
 	<servlet-mapping>
 		<servlet-name>otimizarServlet</servlet-name>
@@ -236,6 +240,10 @@
   		<servlet-name>usuariosServlet</servlet-name>
   		<url-pattern>/trieda/usuarios</url-pattern>
 	</servlet-mapping>
+	<servlet-mapping>
+  		<servlet-name>uniquesServlet</servlet-name>
+  		<url-pattern>/trieda/uniques</url-pattern>
+	</servlet-mapping>
 	
 	<servlet-mapping>
 		<servlet-name>cenariosServlet</servlet-name>
@@ -272,6 +280,10 @@
 	<servlet-mapping>
 		<servlet-name>semanasLetivaServlet</servlet-name>
 		<url-pattern>/professor/semanasLetiva</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>uniquesServlet</servlet-name>
+		<url-pattern>/professor/uniques</url-pattern>
 	</servlet-mapping>
 	
 	<servlet-mapping>

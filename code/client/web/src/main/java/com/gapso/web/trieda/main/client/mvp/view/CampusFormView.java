@@ -13,10 +13,13 @@ import com.extjs.gxt.ui.client.widget.layout.FormData;
 import com.extjs.gxt.ui.client.widget.layout.FormLayout;
 import com.gapso.web.trieda.main.client.mvp.presenter.CampusFormPresenter;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
+import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.mvp.view.MyComposite;
 import com.gapso.web.trieda.shared.util.resources.Resources;
 import com.gapso.web.trieda.shared.util.view.EstadoComboBox;
 import com.gapso.web.trieda.shared.util.view.SimpleModal;
+import com.gapso.web.trieda.shared.util.view.UniqueTextField;
+import com.gapso.web.trieda.shared.util.view.UniqueDomain;
 
 public class CampusFormView extends MyComposite implements CampusFormPresenter.Display {
 
@@ -29,12 +32,14 @@ public class CampusFormView extends MyComposite implements CampusFormPresenter.D
 	private TextField<String> bairroTF;
 	private NumberField valorCreditoNF;
 	private CheckBox publicadoCB;
+	private CenarioDTO cenarioDTO;
 	private CampusDTO campusDTO;
 	
-	public CampusFormView() {
-		this(new CampusDTO());
+	public CampusFormView(CenarioDTO cenarioDTO) {
+		this(cenarioDTO, new CampusDTO());
 	}
-	public CampusFormView(CampusDTO campusDTO) {
+	public CampusFormView(CenarioDTO cenarioDTO, CampusDTO campusDTO) {
+		this.cenarioDTO = cenarioDTO;
 		this.campusDTO = campusDTO;
 		initUI();
 		// TODO
@@ -64,7 +69,7 @@ public class CampusFormView extends MyComposite implements CampusFormPresenter.D
 		geralFS.setLayout(formLayout);
 		geralFS.setHeading("Informações Gerais");
 		
-		codigoTF = new TextField<String>();
+		codigoTF = new UniqueTextField(cenarioDTO, UniqueDomain.CAMPI);
 		codigoTF.setName(CampusDTO.PROPERTY_CODIGO);
 		codigoTF.setValue(campusDTO.getCodigo());
 		codigoTF.setFieldLabel("Código");
@@ -95,9 +100,13 @@ public class CampusFormView extends MyComposite implements CampusFormPresenter.D
 		geralFS.add(valorCreditoNF, formData);
 		
 		publicadoCB = new CheckBox();
-		publicadoCB.setEnabled(campusDTO.getPublicado());
+		if(campusDTO.getPublicado() != null) {
+			publicadoCB.setEnabled(campusDTO.getPublicado());
+		}
 		publicadoCB.setName(CampusDTO.PROPERTY_PUBLICADO);
-		publicadoCB.setValue(campusDTO.getPublicado());
+		if(campusDTO.getPublicado() != null) {
+			publicadoCB.setValue(campusDTO.getPublicado());
+		}
 		publicadoCB.setFieldLabel("Publicar?");
 		publicadoCB.setLabelSeparator("");
 		geralFS.add(publicadoCB, formData);

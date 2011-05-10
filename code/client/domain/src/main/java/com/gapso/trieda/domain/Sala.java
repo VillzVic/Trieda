@@ -22,6 +22,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import javax.persistence.Version;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
@@ -39,7 +40,11 @@ import org.springframework.transaction.annotation.Transactional;
 @RooJavaBean
 @RooToString
 @RooEntity(identifierColumn = "SAL_ID")
-@Table(name = "SALAS")
+@Table(
+	name = "SALAS",
+	uniqueConstraints=
+		@UniqueConstraint(columnNames={"UNI_ID", "SAL_CODIGO"})
+)
 public class Sala implements Serializable, Comparable<Sala> {
 
     @NotNull
@@ -365,6 +370,14 @@ public class Sala implements Serializable, Comparable<Sala> {
 		q.setParameter("sala", this);
 		q.setParameter("semanaLetiva", semanaLetiva);
 		return q.getResultList();
+	}
+	
+	public static boolean checkCodigoUnique(Cenario cenario, String codigo) {
+		Query q = entityManager().createQuery("SELECT COUNT(o) FROM Sala o WHERE o.unidade.campus.cenario = :cenario AND o.codigo = :codigo");
+		q.setParameter("cenario", cenario);
+		q.setParameter("codigo", codigo);
+		Number size = (Number) q.setMaxResults(1).getSingleResult();
+		return size.intValue() > 0;
 	}
 	
 	public TipoSala getTipoSala() {

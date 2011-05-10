@@ -90,7 +90,7 @@ public class CampiPresenter implements Presenter {
 		display.getNewButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
 			@Override
 			public void componentSelected(ButtonEvent ce) {
-				Presenter presenter = new CampusFormPresenter(cenario, new CampusFormView(new CampusDTO()), display.getGrid());
+				Presenter presenter = new CampusFormPresenter(cenario, new CampusFormView(cenario, new CampusDTO()), display.getGrid());
 				presenter.go(null);
 			}
 		});
@@ -98,7 +98,7 @@ public class CampiPresenter implements Presenter {
 			@Override
 			public void componentSelected(ButtonEvent ce) {
 				CampusDTO campusDTO = display.getGrid().getGrid().getSelectionModel().getSelectedItem();
-				Presenter presenter = new CampusFormPresenter(cenario, new CampusFormView(campusDTO), display.getGrid());
+				Presenter presenter = new CampusFormPresenter(cenario, new CampusFormView(cenario, campusDTO), display.getGrid());
 				presenter.go(null);
 			}
 		});

@@ -8,12 +8,15 @@ import com.extjs.gxt.ui.client.widget.form.NumberField;
 import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.extjs.gxt.ui.client.widget.layout.FormData;
 import com.gapso.web.trieda.main.client.mvp.presenter.CursoFormPresenter;
+import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.CursoDTO;
 import com.gapso.web.trieda.shared.dtos.TipoCursoDTO;
 import com.gapso.web.trieda.shared.mvp.view.MyComposite;
 import com.gapso.web.trieda.shared.util.resources.Resources;
 import com.gapso.web.trieda.shared.util.view.SimpleModal;
 import com.gapso.web.trieda.shared.util.view.TipoCursoComboBox;
+import com.gapso.web.trieda.shared.util.view.UniqueDomain;
+import com.gapso.web.trieda.shared.util.view.UniqueTextField;
 
 public class CursoFormView extends MyComposite implements CursoFormPresenter.Display {
 
@@ -30,13 +33,15 @@ public class CursoFormView extends MyComposite implements CursoFormPresenter.Dis
 	private CheckBox admMaisDeUmDisciplinaCB;
 	private CursoDTO cursoDTO;
 	private TipoCursoDTO tipoCursoDTO;
+	private CenarioDTO cenarioDTO;
 	
-	public CursoFormView() {
-		this(new CursoDTO(), null);
+	public CursoFormView(CenarioDTO cenarioDTO) {
+		this(new CursoDTO(), null, cenarioDTO);
 	}
-	public CursoFormView(CursoDTO cursoDTO, TipoCursoDTO tipoCursoDTO) {
+	public CursoFormView(CursoDTO cursoDTO, TipoCursoDTO tipoCursoDTO, CenarioDTO cenarioDTO) {
 		this.cursoDTO = cursoDTO;
 		this.tipoCursoDTO = tipoCursoDTO;
+		this.cenarioDTO = cenarioDTO;
 		initUI();
 		// TODO
 //		initComponent(simpleModal);
@@ -56,7 +61,7 @@ public class CursoFormView extends MyComposite implements CursoFormPresenter.Dis
 		formPanel = new FormPanel();
 		formPanel.setHeaderVisible(false);
 		
-		codigoTF = new TextField<String>();
+		codigoTF = new UniqueTextField(cenarioDTO, UniqueDomain.CURSO);
 		codigoTF.setName(CursoDTO.PROPERTY_CODIGO);
 		codigoTF.setValue(cursoDTO.getCodigo());
 		codigoTF.setFieldLabel("Código");

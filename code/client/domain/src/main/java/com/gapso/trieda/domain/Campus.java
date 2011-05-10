@@ -22,6 +22,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import javax.persistence.Version;
 import javax.validation.constraints.Digits;
 import javax.validation.constraints.NotNull;
@@ -40,7 +41,11 @@ import com.gapso.trieda.misc.Estados;
 @RooJavaBean
 @RooToString
 @RooEntity(identifierColumn = "CAM_ID")
-@Table(name = "CAMPI")
+@Table(
+	name = "CAMPI",
+	uniqueConstraints=
+		@UniqueConstraint(columnNames={"CAM_CODIGO", "CEN_ID"})
+)
 public class Campus implements Serializable, Comparable<Campus> {
 
 	private static final long serialVersionUID = 6690100103369325015L;
@@ -461,6 +466,13 @@ public class Campus implements Serializable, Comparable<Campus> {
 		return isOtimizadoTatico() || isOtimizadoOperacional();
 	}
 	
+	public static boolean checkCodigoUnique(Cenario cenario, String codigo) {
+		Query q = entityManager().createQuery("SELECT COUNT(o) FROM Campus o WHERE cenario = :cenario AND codigo = :codigo");
+		q.setParameter("cenario", cenario);
+		q.setParameter("codigo", codigo);
+		Number size = (Number) q.setMaxResults(1).getSingleResult();
+		return size.intValue() > 0;
+	}
 	
 	public String toString() {
         StringBuilder sb = new StringBuilder();

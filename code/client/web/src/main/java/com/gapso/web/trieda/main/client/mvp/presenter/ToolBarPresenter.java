@@ -163,7 +163,7 @@ public class ToolBarPresenter implements Presenter {
 		toolBar.getCampiNovoCampiButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
 			@Override
 			public void componentSelected(ButtonEvent ce) {
-				Presenter presenter = new CampusFormPresenter(masterData, new CampusFormView());
+				Presenter presenter = new CampusFormPresenter(masterData, new CampusFormView(masterData));
 				presenter.go(null);
 			}
 		});
@@ -177,7 +177,7 @@ public class ToolBarPresenter implements Presenter {
 		toolBar.getUnidadesNovoUnidadesButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
 			@Override
 			public void componentSelected(ButtonEvent ce) {
-				Presenter presenter = new UnidadeFormPresenter(new UnidadeFormView());
+				Presenter presenter = new UnidadeFormPresenter(new UnidadeFormView(masterData));
 				presenter.go(null);
 			}
 		});
@@ -191,7 +191,7 @@ public class ToolBarPresenter implements Presenter {
 		toolBar.getSalasNovoSalasButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
 			@Override
 			public void componentSelected(ButtonEvent ce) {
-				Presenter presenter = new SalaFormPresenter(new SalaFormView());
+				Presenter presenter = new SalaFormPresenter(new SalaFormView(masterData));
 				presenter.go(null);
 			}
 		});
@@ -259,7 +259,7 @@ public class ToolBarPresenter implements Presenter {
 		toolBar.getCursosNovoCursosButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
 			@Override
 			public void componentSelected(ButtonEvent ce) {
-				Presenter presenter = new CursoFormPresenter(masterData, new CursoFormView());
+				Presenter presenter = new CursoFormPresenter(masterData, new CursoFormView(masterData));
 				presenter.go(null);
 			}
 		});

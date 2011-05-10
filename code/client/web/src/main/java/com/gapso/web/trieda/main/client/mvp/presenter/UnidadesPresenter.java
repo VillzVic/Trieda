@@ -89,7 +89,7 @@ public class UnidadesPresenter implements Presenter {
 		display.getNewButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
 			@Override
 			public void componentSelected(ButtonEvent ce) {
-				Presenter presenter = new UnidadeFormPresenter(new UnidadeFormView(new UnidadeDTO(), null), display.getGrid());
+				Presenter presenter = new UnidadeFormPresenter(new UnidadeFormView(cenario), display.getGrid());
 				presenter.go(null);
 			}
 		});
@@ -105,7 +105,7 @@ public class UnidadesPresenter implements Presenter {
 					}
 					@Override
 					public void onSuccess(CampusDTO campusDTO) {
-						Presenter presenter = new UnidadeFormPresenter(new UnidadeFormView(unidadeDTO, campusDTO), display.getGrid());
+						Presenter presenter = new UnidadeFormPresenter(new UnidadeFormView(unidadeDTO, campusDTO, cenario), display.getGrid());
 						presenter.go(null);
 					}
 				});

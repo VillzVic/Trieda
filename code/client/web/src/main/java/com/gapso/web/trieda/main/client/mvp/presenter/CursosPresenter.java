@@ -83,7 +83,7 @@ public class CursosPresenter implements Presenter {
 		display.getNewButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
 			@Override
 			public void componentSelected(ButtonEvent ce) {
-				Presenter presenter = new CursoFormPresenter(cenario, new CursoFormView(new CursoDTO(), null), display.getGrid());
+				Presenter presenter = new CursoFormPresenter(cenario, new CursoFormView(cenario), display.getGrid());
 				presenter.go(null);
 			}
 		});
@@ -99,7 +99,7 @@ public class CursosPresenter implements Presenter {
 					}
 					@Override
 					public void onSuccess(TipoCursoDTO tipoCursoDTO) {
-						Presenter presenter = new CursoFormPresenter(cenario, new CursoFormView(cursoDTO, tipoCursoDTO), display.getGrid());
+						Presenter presenter = new CursoFormPresenter(cenario, new CursoFormView(cursoDTO, tipoCursoDTO, cenario), display.getGrid());
 						presenter.go(null);
 					}
 				});

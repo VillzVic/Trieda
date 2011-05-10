@@ -7,11 +7,14 @@ import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.extjs.gxt.ui.client.widget.layout.FormData;
 import com.gapso.web.trieda.main.client.mvp.presenter.UnidadeFormPresenter;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
+import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.UnidadeDTO;
 import com.gapso.web.trieda.shared.mvp.view.MyComposite;
 import com.gapso.web.trieda.shared.util.resources.Resources;
 import com.gapso.web.trieda.shared.util.view.CampusComboBox;
 import com.gapso.web.trieda.shared.util.view.SimpleModal;
+import com.gapso.web.trieda.shared.util.view.UniqueDomain;
+import com.gapso.web.trieda.shared.util.view.UniqueTextField;
 
 public class UnidadeFormView extends MyComposite implements UnidadeFormPresenter.Display {
 
@@ -22,13 +25,15 @@ public class UnidadeFormView extends MyComposite implements UnidadeFormPresenter
 	private CampusComboBox campusCB;
 	private UnidadeDTO unidadeDTO;
 	private CampusDTO campusDTO;
+	private CenarioDTO cenarioDTO;
 	
-	public UnidadeFormView() {
-		this(new UnidadeDTO(), null);
+	public UnidadeFormView(CenarioDTO cenarioDTO) {
+		this(new UnidadeDTO(), null, cenarioDTO);
 	}
-	public UnidadeFormView(UnidadeDTO unidadeDTO, CampusDTO campusDTO) {
+	public UnidadeFormView(UnidadeDTO unidadeDTO, CampusDTO campusDTO, CenarioDTO cenarioDTO) {
 		this.unidadeDTO = unidadeDTO;
 		this.campusDTO = campusDTO;
+		this.cenarioDTO = cenarioDTO;
 		initUI();
 		// TODO
 //		initComponent(simpleModal);
@@ -48,7 +53,7 @@ public class UnidadeFormView extends MyComposite implements UnidadeFormPresenter
 		formPanel = new FormPanel();
 		formPanel.setHeaderVisible(false);
 		
-		codigoTF = new TextField<String>();
+		codigoTF = new UniqueTextField(cenarioDTO, UniqueDomain.UNIDADE);
 		codigoTF.setName(UnidadeDTO.PROPERTY_CODIGO);
 		codigoTF.setValue(unidadeDTO.getCodigo());
 		codigoTF.setFieldLabel(getI18nConstants().codigo());

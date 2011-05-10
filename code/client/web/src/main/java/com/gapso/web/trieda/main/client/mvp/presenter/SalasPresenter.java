@@ -86,7 +86,7 @@ public class SalasPresenter implements Presenter {
 		display.getNewButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
 			@Override
 			public void componentSelected(ButtonEvent ce) {
-				Presenter presenter = new SalaFormPresenter(new SalaFormView(new SalaDTO(), null, null, null), display.getGrid());
+				Presenter presenter = new SalaFormPresenter(new SalaFormView(cenario), display.getGrid());
 				presenter.go(null);
 			}
 		});
@@ -109,7 +109,7 @@ public class SalasPresenter implements Presenter {
 						CampusDTO campusDTO = futureCampusDTO.result();
 						UnidadeDTO unidadeDTO = futureUnidadeDTO.result();
 						TipoSalaDTO tipoSalaDTO = futureSalaDTO.result();
-						Presenter presenter = new SalaFormPresenter(new SalaFormView(salaDTO, campusDTO, unidadeDTO, tipoSalaDTO), display.getGrid());
+						Presenter presenter = new SalaFormPresenter(new SalaFormView(salaDTO, campusDTO, unidadeDTO, tipoSalaDTO, cenario), display.getGrid());
 						presenter.go(null);
 					}
 				});

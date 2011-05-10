@@ -8,6 +8,7 @@ import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.extjs.gxt.ui.client.widget.layout.FormData;
 import com.gapso.web.trieda.main.client.mvp.presenter.SalaFormPresenter;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
+import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.SalaDTO;
 import com.gapso.web.trieda.shared.dtos.TipoSalaDTO;
 import com.gapso.web.trieda.shared.dtos.UnidadeDTO;
@@ -17,6 +18,8 @@ import com.gapso.web.trieda.shared.util.view.CampusComboBox;
 import com.gapso.web.trieda.shared.util.view.SimpleModal;
 import com.gapso.web.trieda.shared.util.view.TipoSalaComboBox;
 import com.gapso.web.trieda.shared.util.view.UnidadeComboBox;
+import com.gapso.web.trieda.shared.util.view.UniqueDomain;
+import com.gapso.web.trieda.shared.util.view.UniqueTextField;
 
 public class SalaFormView extends MyComposite implements SalaFormPresenter.Display {
 
@@ -32,15 +35,17 @@ public class SalaFormView extends MyComposite implements SalaFormPresenter.Displ
 	private CampusDTO campusDTO;
 	private UnidadeDTO unidadeDTO;
 	private TipoSalaDTO tipoSalaDTO;
+	private CenarioDTO cenarioDTO;
 	
-	public SalaFormView() {
-		this(new SalaDTO(), null, null, null);
+	public SalaFormView(CenarioDTO cenarioDTO) {
+		this(new SalaDTO(), null, null, null, cenarioDTO);
 	}
-	public SalaFormView(SalaDTO salaDTO, CampusDTO campusDTO, UnidadeDTO unidadeDTO, TipoSalaDTO tipoSalaDTO) {
+	public SalaFormView(SalaDTO salaDTO, CampusDTO campusDTO, UnidadeDTO unidadeDTO, TipoSalaDTO tipoSalaDTO, CenarioDTO cenarioDTO) {
 		this.salaDTO = salaDTO;
 		this.campusDTO = campusDTO;
 		this.unidadeDTO = unidadeDTO;
 		this.tipoSalaDTO = tipoSalaDTO;
+		this.cenarioDTO = cenarioDTO;
 		initUI();
 		// TODO
 //		initComponent(simpleModal);
@@ -60,7 +65,7 @@ public class SalaFormView extends MyComposite implements SalaFormPresenter.Displ
 		formPanel = new FormPanel();
 		formPanel.setHeaderVisible(false);
 		
-		codigoTF = new TextField<String>();
+		codigoTF = new UniqueTextField(cenarioDTO, UniqueDomain.SALA);
 		codigoTF.setName(SalaDTO.PROPERTY_CODIGO);
 		codigoTF.setValue(salaDTO.getCodigo());
 		codigoTF.setFieldLabel(getI18nConstants().codigo());

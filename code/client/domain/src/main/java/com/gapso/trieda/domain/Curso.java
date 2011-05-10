@@ -21,6 +21,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import javax.persistence.Version;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
@@ -38,7 +39,11 @@ import org.springframework.transaction.annotation.Transactional;
 @RooJavaBean
 @RooToString
 @RooEntity(identifierColumn = "CUR_ID")
-@Table(name = "CURSOS")
+@Table(
+	name = "CURSOS",
+	uniqueConstraints=
+		@UniqueConstraint(columnNames={"CEN_ID", "CUR_CODIGO"})
+)
 public class Curso implements Serializable {
 
     @NotNull
@@ -386,5 +391,13 @@ public class Curso implements Serializable {
     	return ((Number)q.getSingleResult()).intValue();
     }
 	
+	public static boolean checkCodigoUnique(Cenario cenario, String codigo) {
+		Query q = entityManager().createQuery("SELECT COUNT(o) FROM Curso o WHERE o.cenario = :cenario AND o.codigo = :codigo");
+		q.setParameter("cenario", cenario);
+		q.setParameter("codigo", codigo);
+		Number size = (Number) q.setMaxResults(1).getSingleResult();
+		return size.intValue() > 0;
+	}
+    
 	private static final long serialVersionUID = 2645879541329424105L;
 }
