@@ -1709,26 +1709,26 @@ class ItemSala: public ::xml_schema::type
   void
   horariosDisponiveis (::std::auto_ptr< horariosDisponiveis_type > p);
 
-  // creditosDispon?veis
+  // creditosDisponiveis
   // 
-  typedef ::GrupoCreditoDisponivel creditosDispon_veis_type;
-  typedef ::xsd::cxx::tree::optional< creditosDispon_veis_type > creditosDispon_veis_optional;
-  typedef ::xsd::cxx::tree::traits< creditosDispon_veis_type, char > creditosDispon_veis_traits;
+  typedef ::GrupoCreditoDisponivel creditosDisponiveis_type;
+  typedef ::xsd::cxx::tree::optional< creditosDisponiveis_type > creditosDisponiveis_optional;
+  typedef ::xsd::cxx::tree::traits< creditosDisponiveis_type, char > creditosDisponiveis_traits;
 
-  const creditosDispon_veis_optional&
-  creditosDispon_veis () const;
+  const creditosDisponiveis_optional&
+  creditosDisponiveis () const;
 
-  creditosDispon_veis_optional&
-  creditosDispon_veis ();
-
-  void
-  creditosDispon_veis (const creditosDispon_veis_type& x);
+  creditosDisponiveis_optional&
+  creditosDisponiveis ();
 
   void
-  creditosDispon_veis (const creditosDispon_veis_optional& x);
+  creditosDisponiveis (const creditosDisponiveis_type& x);
 
   void
-  creditosDispon_veis (::std::auto_ptr< creditosDispon_veis_type > p);
+  creditosDisponiveis (const creditosDisponiveis_optional& x);
+
+  void
+  creditosDisponiveis (::std::auto_ptr< creditosDisponiveis_type > p);
 
   // disciplinasAssociadas
   // 
@@ -1795,7 +1795,7 @@ class ItemSala: public ::xml_schema::type
   ::xsd::cxx::tree::one< tipoSalaId_type > tipoSalaId_;
   ::xsd::cxx::tree::one< capacidade_type > capacidade_;
   horariosDisponiveis_optional horariosDisponiveis_;
-  creditosDispon_veis_optional creditosDispon_veis_;
+  creditosDisponiveis_optional creditosDisponiveis_;
   ::xsd::cxx::tree::one< disciplinasAssociadas_type > disciplinasAssociadas_;
 };
 

@@ -1239,34 +1239,34 @@ horariosDisponiveis (::std::auto_ptr< horariosDisponiveis_type > x)
   this->horariosDisponiveis_.set (x);
 }
 
-const ItemSala::creditosDispon_veis_optional& ItemSala::
-creditosDispon_veis () const
+const ItemSala::creditosDisponiveis_optional& ItemSala::
+creditosDisponiveis () const
 {
-  return this->creditosDispon_veis_;
+  return this->creditosDisponiveis_;
 }
 
-ItemSala::creditosDispon_veis_optional& ItemSala::
-creditosDispon_veis ()
+ItemSala::creditosDisponiveis_optional& ItemSala::
+creditosDisponiveis ()
 {
-  return this->creditosDispon_veis_;
-}
-
-void ItemSala::
-creditosDispon_veis (const creditosDispon_veis_type& x)
-{
-  this->creditosDispon_veis_.set (x);
+  return this->creditosDisponiveis_;
 }
 
 void ItemSala::
-creditosDispon_veis (const creditosDispon_veis_optional& x)
+creditosDisponiveis (const creditosDisponiveis_type& x)
 {
-  this->creditosDispon_veis_ = x;
+  this->creditosDisponiveis_.set (x);
 }
 
 void ItemSala::
-creditosDispon_veis (::std::auto_ptr< creditosDispon_veis_type > x)
+creditosDisponiveis (const creditosDisponiveis_optional& x)
 {
-  this->creditosDispon_veis_.set (x);
+  this->creditosDisponiveis_ = x;
+}
+
+void ItemSala::
+creditosDisponiveis (::std::auto_ptr< creditosDisponiveis_type > x)
+{
+  this->creditosDisponiveis_.set (x);
 }
 
 const ItemSala::disciplinasAssociadas_type& ItemSala::
@@ -7262,7 +7262,7 @@ ItemSala (const id_type& id,
   tipoSalaId_ (tipoSalaId, ::xml_schema::flags (), this),
   capacidade_ (capacidade, ::xml_schema::flags (), this),
   horariosDisponiveis_ (::xml_schema::flags (), this),
-  creditosDispon_veis_ (::xml_schema::flags (), this),
+  creditosDisponiveis_ (::xml_schema::flags (), this),
   disciplinasAssociadas_ (disciplinasAssociadas, ::xml_schema::flags (), this)
 {
 }
@@ -7283,7 +7283,7 @@ ItemSala (const id_type& id,
   tipoSalaId_ (tipoSalaId, ::xml_schema::flags (), this),
   capacidade_ (capacidade, ::xml_schema::flags (), this),
   horariosDisponiveis_ (::xml_schema::flags (), this),
-  creditosDispon_veis_ (::xml_schema::flags (), this),
+  creditosDisponiveis_ (::xml_schema::flags (), this),
   disciplinasAssociadas_ (disciplinasAssociadas, ::xml_schema::flags (), this)
 {
 }
@@ -7300,7 +7300,7 @@ ItemSala (const ItemSala& x,
   tipoSalaId_ (x.tipoSalaId_, f, this),
   capacidade_ (x.capacidade_, f, this),
   horariosDisponiveis_ (x.horariosDisponiveis_, f, this),
-  creditosDispon_veis_ (x.creditosDispon_veis_, f, this),
+  creditosDisponiveis_ (x.creditosDisponiveis_, f, this),
   disciplinasAssociadas_ (x.disciplinasAssociadas_, f, this)
 {
 }
@@ -7317,7 +7317,7 @@ ItemSala (const ::xercesc::DOMElement& e,
   tipoSalaId_ (f, this),
   capacidade_ (f, this),
   horariosDisponiveis_ (f, this),
-  creditosDispon_veis_ (f, this),
+  creditosDisponiveis_ (f, this),
   disciplinasAssociadas_ (f, this)
 {
   if ((f & ::xml_schema::flags::base) == 0)
@@ -7426,16 +7426,16 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
       }
     }
 
-    // creditosDispon?veis
+    // creditosDisponiveis
     //
-    if (n.name () == "creditosDispon\xC3\xAD""veis" && n.namespace_ ().empty ())
+    if (n.name () == "creditosDisponiveis" && n.namespace_ ().empty ())
     {
-      ::std::auto_ptr< creditosDispon_veis_type > r (
-        creditosDispon_veis_traits::create (i, f, this));
+      ::std::auto_ptr< creditosDisponiveis_type > r (
+        creditosDisponiveis_traits::create (i, f, this));
 
-      if (!this->creditosDispon_veis_)
+      if (!this->creditosDisponiveis_)
       {
-        this->creditosDispon_veis_.set (r);
+        this->creditosDisponiveis_.set (r);
         continue;
       }
     }

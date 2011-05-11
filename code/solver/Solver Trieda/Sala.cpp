@@ -42,9 +42,9 @@ void Sala::construirCreditosHorarios(ItemSala& elem, std::string modo_operacao, 
 	if( primeiroCaso )
 	{
 		// Lê creditos disponiveis
-		if ( elem.creditosDispon_veis().present() )
+		if ( elem.creditosDisponiveis().present() )
 		{
-			ITERA_SEQ(it_cred, elem.creditosDispon_veis().get(), CreditoDisponivel)
+			ITERA_SEQ(it_cred, elem.creditosDisponiveis().get(), CreditoDisponivel)
 			{
 				CreditoDisponivel * credito_disp = new CreditoDisponivel();
 				credito_disp->le_arvore( *it_cred );
