@@ -92,7 +92,13 @@ public class Login implements EntryPoint {
 		
 		FormData formData = new FormData("-20");  
 		
-		TextField<String> usernameTF = new TextField<String>();
+		TextField<String> usernameTF = new TextField<String>() {
+			@Override
+			protected void onRender(Element target, int index) {
+				super.onRender(target, index);
+				getInputEl().setElementAttribute("autocomplete", "off");
+			}
+		};
 		usernameTF.setName("j_username");
 		usernameTF.setFieldLabel("Usuário");  
 		form.add(usernameTF, formData);  
