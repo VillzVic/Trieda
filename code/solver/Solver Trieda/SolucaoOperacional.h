@@ -17,16 +17,16 @@ class SolucaoOperacional
 {
 public:
    SolucaoOperacional( ProblemData * );
-
-   SolucaoOperacional( SolucaoOperacional const & s );
-
+   SolucaoOperacional( SolucaoOperacional const & );
    virtual ~SolucaoOperacional( void );
 
-   // Dado um índice que corresponde a uma linha
-   // de um dado professor na matriz de solução,
-   // o dia da semana e o horário de aula desejado,
-   // retorna o horário correspondente à aula
-   // alocada (ou NULL, caso não haja aula alocada)
+   // Dado um índice que corresponde a uma linha de um dado
+   // professor na matriz de solução, o dia da semana e o
+   // índice de um horário de aula, retorna o horário
+   // correspondente à aula alocada (ou NULL, caso não haja
+   // aula alocada) OBS.: o índice do horário de aula que
+   // deve ser informado é a posição desse horário no vetor
+   // de horários de aula ordenado, que fica no 'problemData'
    Horario * getHorario( int, int, int );
 
    // Dado um índice que corresponde a uma linha da
@@ -59,7 +59,7 @@ public:
 
    // Adiciona um novo professor à solução. O inteiro retornado
    // é referente à posição (linha) que o novo  professor ocupa na solução.
-   int addProfessor(Professor &, std::vector< Aula * > &);
+   int addProfessor( Professor &, std::vector< Aula * > & );
 
    // FUTURAMENTE, VAI SER NECESSARIO CRIAR UM METODO PARA REMOVER UM PROFESSOR.
 
@@ -68,21 +68,20 @@ public:
    int getTotalDeProfessores() const;
 
    // Verifica se as aula <aX> e <aY> podem ter trocados os seus respectivos horários.
-   //bool podeTrocarHorariosAulas( Aula &, Aula & ) const;
+   // bool podeTrocarHorariosAulas( Aula &, Aula & ) const;
 
    // Função auxiliar à função podeTrocarHorariosAulas
-   //bool checkConflitoBlocoCurricular( Aula &, std::vector< std::pair< Professor *, Horario * > > & ) const;
+   // bool checkConflitoBlocoCurricular( Aula &, std::vector< std::pair< Professor *, Horario * > > & ) const;
 
-   /* ToDo : utilizar a estrutura abaixo para alocar o mesmo professor para créditos teóricos e práticos de
-   uma disciplina (qdo a disc foi dividida). Uma outra maneira seria dar uma prioridade maior para alocar
-   essas disciplinas. O problema é como tratar isso nos movimentos. */
-   /* Armazena o professor alocado para ministrar os créditos teóricos e práticos de uma disciplina. */
-   //std::map<std::pair<int/*turma*/,int/*modulo do id da disciplina*/>, Professor*> profTurmaDiscAula;
+   // ToDo : utilizar a estrutura abaixo para alocar o mesmo professor para créditos teóricos e práticos de
+   // uma disciplina (qdo a disc foi dividida). Uma outra maneira seria dar uma prioridade maior para alocar
+   // essas disciplinas. O problema é como tratar isso nos movimentos.
+   // Armazena o professor alocado para ministrar os créditos teóricos e práticos de uma disciplina.
+   // std::map< std::pair< int /*turma*/ , int /*modulo do id da disciplina*/ >, Professor * > profTurmaDiscAula;
 
-   /* Checa a disponibilidade dos horários da(s) sala(s) demandados pelas aulas em questão. */
-   //bool checkDisponibilidadeHorarioSalaAula(
-   //Aula & aula, 
-   //std::vector< std::pair< Professor *, Horario * > > & novosHorariosAula) const;
+   // Checa a disponibilidade dos horários da(s) sala(s) demandados pelas aulas em questão.
+   // bool checkDisponibilidadeHorarioSalaAula(
+   //	   Aula & , std::vector< std::pair< Professor *, Horario * > > & ) const;
 
    int indice_horario_aula_ordenado( int );
 

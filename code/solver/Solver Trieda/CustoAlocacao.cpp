@@ -92,7 +92,7 @@ double CustoAlocacao::getGamma() const
 void CustoAlocacao::addCustoFixProfTurma(double c)
 {
    custosAlocacao.at(0) += c;
-   custo_total += (alfa*c);
+   custo_total += ( alfa * c );
 }
 
 void CustoAlocacao::addCustoPrefProfTurma(double c)

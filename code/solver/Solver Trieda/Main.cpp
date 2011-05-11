@@ -36,6 +36,7 @@ void writeOutput( ProblemSolution *, char *, char * );
 int main( int argc, char** argv )
 {
    //srand( (unsigned int)(time(NULL)) );
+   srand ( 1305057265 );
 
    _signals();
 
@@ -118,8 +119,8 @@ int main( int argc, char** argv )
          solver = new SolverMIP( data, solution, dataLoader );
          solver->solve();
          solver->getSolution( solution );
-         // delete solver;
-         // delete dataLoader;
+         delete solver;
+         delete dataLoader;
       }
       catch( int & status )
       {

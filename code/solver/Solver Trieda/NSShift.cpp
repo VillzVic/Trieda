@@ -11,7 +11,7 @@ NSShift::~NSShift()
 
 //std::pair<Aula*, std::vector< std::pair< Professor*, Horario* > > > NSShift::pickSomeClassAndNewSchedule( const SolucaoOperacional & s )
 //bool NSShift::pickSomeClassAndNewSchedule( const SolucaoOperacional & s ) // So para poder compilar !!!!
-std::pair<Aula*, std::vector< std::pair< Professor*, Horario* > > > NSShift::pickSomeClassAndNewSchedule()
+std::pair< Aula *, std::vector< std::pair< Professor *, Horario * > > > NSShift::pickSomeClassAndNewSchedule()
 {
    // Critérios a serem respeitados para a escolha da aula.
    // 1 - Somente serão realocados os horários da aula se os novos horários assumidos por ela 
@@ -23,19 +23,17 @@ std::pair<Aula*, std::vector< std::pair< Professor*, Horario* > > > NSShift::pic
    // da aula em questão deve ter o eLab == False ).
 
    Aula * aula = NULL;
-
-   GGroup<Aula*>::iterator itAula = problemData.aulas.begin();
+   GGroup< Aula * >::iterator itAula = problemData.aulas.begin();
 
    int maxIter = ( rand() % ( solOp.getMatrizAulas()->size() - 1 ) );
    for( int i = 0; i < maxIter; ++i, ++itAula );
 
    aula = ( *itAula );
 
-   std::vector< std::pair< Professor*, Horario* > > blocoAula (aula->bloco_aula);
+   std::vector< std::pair< Professor *, Horario * > > blocoAula ( aula->bloco_aula );
 
    int attempt = -1;
-
-   while(!moveValidator->isValid(*aula,blocoAula) && ++attempt < MAX_ATTEMPTS)
+   while( !moveValidator->isValid( *aula, blocoAula ) && ++attempt < MAX_ATTEMPTS )
    {
       // Selecionando uma aula.
       itAula = problemData.aulas.begin();
@@ -44,37 +42,35 @@ std::pair<Aula*, std::vector< std::pair< Professor*, Horario* > > > NSShift::pic
       aula = ( *itAula );
 
       // Selecionando o novo professor.
-      int idOpProf = rand() % solOp.getMatrizAulas()->size();
+      int idOpProf = ( rand() % solOp.getMatrizAulas()->size() );
 
       // Selecionando os novos horarios pertencentes ao novo professor selecionado anteriormente.
-      /*
-      Devo me basear no total de creditos da aula em questao para poder selecionar os horarios validos.
-      sortear o primeiro id e pegar em sequencia os demais horarios. TOMAR CUIDADO PARA NAO EXTRAPOLAR O DIA.
-      */
+      // Devo me basear no total de creditos da aula em questao para poder selecionar os horarios validos.
+      // sortear o primeiro id e pegar em sequencia os demais horarios. TOMAR CUIDADO PARA NAO EXTRAPOLAR O DIA.
 
-      int hrMaxIniPlus1 = solOp.getTotalHorarios() - aula->getTotalCreditos() + 1;
-
-      int hrIni = (rand() % hrMaxIniPlus1);
-
+      int hrMaxIniPlus1 = ( solOp.getTotalHorarios() - aula->getTotalCreditos() + 1 );
+      int hrIni = ( rand() % hrMaxIniPlus1 );
       blocoAula.clear();
-     
-      // Armazenando os possíveis novos horários.
-      for(int i = 0; i < aula->getTotalCreditos(); ++i, ++hrIni)
-      {
-         Horario * hrAula = solOp.getHorario(idOpProf,aula->getDiaSemana(),hrIni);
 
-         if(hrAula == NULL)
-         { blocoAula.clear(); break; }
+      // Armazenando os possíveis novos horários.
+      for ( int i = 0; i < aula->getTotalCreditos(); ++i, ++hrIni )
+      {
+         Horario * hrAula = solOp.getHorario( idOpProf, aula->getDiaSemana(), hrIni );
+         if ( hrAula == NULL )
+         {
+			 blocoAula.clear();
+			 break;
+		 }
 
          blocoAula.push_back(
             std::make_pair(
-            solOp.getProfessorMatriz(idOpProf),
-            solOp.getHorario(idOpProf,aula->getDiaSemana(),hrIni)));
+            solOp.getProfessorMatriz( idOpProf ),
+            solOp.getHorario( idOpProf, aula->getDiaSemana(), hrIni ) ) );
       }
 
-      if(blocoAula.empty())
+      if ( blocoAula.empty() )
       {
-         blocoAula = (aula->bloco_aula);
+         blocoAula = ( aula->bloco_aula );
       }
    }
 

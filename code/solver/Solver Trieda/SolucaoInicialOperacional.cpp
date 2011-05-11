@@ -21,8 +21,8 @@ SolucaoInicialOperacional::SolucaoInicialOperacional( ProblemData & _problemData
    { 
       std::map< std::pair< Professor *, Aula * >, CustoAlocacao * >::iterator
          itCustoProfTurma = custoProfTurma.begin();
-      for(; itCustoProfTurma != custoProfTurma.end();
-			++itCustoProfTurma )
+      for (; itCustoProfTurma != custoProfTurma.end();
+			 ++itCustoProfTurma )
       {
          if ( itCustoProfTurma->first.second->getDisciplina()
 				== itAula->getDisciplina() )
@@ -106,7 +106,11 @@ SolucaoOperacional & SolucaoInicialOperacional::geraSolucaoInicial()
 			int coluna_matriz = std::distance(
 				solucaoInicial->getMatrizAulas()->at( professor.getIdOperacional() )->begin(), it_horarios_prof );
 			int horario_aula_id = ( coluna_matriz % solucaoInicial->getTotalHorarios() );
-			int dia_semana = ( coluna_matriz / solucaoInicial->getTotalHorarios() );
+			int dia_semana = ( coluna_matriz / solucaoInicial->getTotalHorarios() + 1 );
+
+			// Verifica se essa aula é fixada ao professor
+			bool possui_fixacao = possui_fixacao_professor_dia_horario(
+						professor, dia_semana, horario_aula_id );
 
             bool alocouProfAula = false;
             if( !professorRepetido( professor, aula ) )
@@ -118,7 +122,7 @@ SolucaoOperacional & SolucaoInicialOperacional::geraSolucaoInicial()
             if ( alocouProfAula )
             {
 			   // Informa que a aula alocada não poderá ser movida
-			   if ( possui_fixacao_professor_dia_horario( professor, dia_semana, horario_aula_id ) )
+			   if ( possui_fixacao )
 			   {
 				   aula.setAulaFixada( true );
 			   }
@@ -131,7 +135,7 @@ SolucaoOperacional & SolucaoInicialOperacional::geraSolucaoInicial()
                {
                   // Descobrindo o bloco da oferta em questão.
                   BlocoCurricular * bc = problemData.mapCursoDisciplina_BlocoCurricular
-                     [ std::make_pair( itOferta->curso,aula.getDisciplina() ) ];
+                     [ std::make_pair( itOferta->curso, aula.getDisciplina() ) ];
 
                   blocosProfs[ bc ].add( &professor );
                }
@@ -799,10 +803,10 @@ void SolucaoInicialOperacional::executaFuncaoPrioridade()
    }
 }
 
-void SolucaoInicialOperacional::calculaCustoFixProf( Professor& prof , Aula& aula,
+void SolucaoInicialOperacional::calculaCustoFixProf( Professor & prof , Aula & aula,
                                                      unsigned idCusto, int custo, int maxHorariosCP )
 {
-   std::pair< Professor *, Aula * > chave ( &prof, &aula );
+   std::pair< Professor *, Aula * > chave ( & prof, & aula );
    std::map< std::pair< Professor *, Aula * >, CustoAlocacao * >::iterator 
       itCustoProfTurma = custoProfTurma.find( chave );
 
@@ -815,17 +819,17 @@ void SolucaoInicialOperacional::calculaCustoFixProf( Professor& prof , Aula& aul
    // custoFixProfTurma
    if ( idCusto == 0 )
    {
-      custoProfTurma[ chave ]->addCustoFixProfTurma(1);
+      custoProfTurma[ chave ]->addCustoFixProfTurma( 100 );
    }
    else if ( idCusto == 1 )
    {
-      int preferenciaProfDisc = (custo - 11) * (-1);
+      int preferenciaProfDisc = ( custo - 11 ) * ( -1 );
       custoProfTurma[ chave ]->addCustoPrefProfTurma( preferenciaProfDisc );
    }
    else if ( idCusto == 3 )
    {
       // Aqui, compartilha-se a ideia da terceira restrição da função de prioridade.
-      int custoDispProfTurma = -(custo - (maxHorariosCP+1));
+      int custoDispProfTurma = -( custo - ( maxHorariosCP + 1 ) );
       custoProfTurma[ chave ]->addCustoDispProfTurma( custoDispProfTurma );
    }
    else

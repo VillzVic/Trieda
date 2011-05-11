@@ -294,11 +294,13 @@ int SolucaoOperacional::indice_horario_aula_ordenado( int horario_aula_id )
 }
 
 Horario * SolucaoOperacional::getHorario( int id_professor_operacional,
-										  int dia_semana, int id_horario_aula )
+										  int dia_semana, int indice_horario_aula )
 {
+   int coluna_matriz = ( ( dia_semana - 1 ) * this->getTotalHorarios() +  indice_horario_aula );
+
    Professor * professor = this->getProfessorMatriz( id_professor_operacional );
-   HorarioAula * horario_aula = this->getProblemData()->horarios_aula_ordenados[ id_horario_aula ];
-   Aula * aula = this->getMatrizAulas()->at( id_professor_operacional )->at( id_horario_aula );
+   HorarioAula * horario_aula = this->getProblemData()->horarios_aula_ordenados[ indice_horario_aula ];
+   Aula * aula = this->getMatrizAulas()->at( id_professor_operacional )->at( coluna_matriz );
 
    // Se o professor tem aula alocada nesse horário
    if ( aula != NULL )

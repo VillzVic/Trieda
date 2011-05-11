@@ -95,11 +95,6 @@ int Aula::getTotalCreditos() const
 
 bool Aula::eVirtual() const
 {
-   if ( aula_fixada )
-   {
-	   return true;
-   }
-
    return aula_virtual;
 }
 
