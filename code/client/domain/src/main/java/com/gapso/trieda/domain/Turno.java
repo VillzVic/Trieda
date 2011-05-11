@@ -66,6 +66,9 @@ public class Turno implements Serializable {
     @OneToMany(mappedBy="turno")
     Set<HorarioAula> horariosAula = new HashSet<HorarioAula>();
     
+    @OneToMany(cascade = CascadeType.ALL, mappedBy="turno")
+    private Set<Parametro> parametros =  new HashSet<Parametro>();
+    
     @PersistenceContext
     transient EntityManager entityManager;
 
@@ -232,7 +235,6 @@ public class Turno implements Serializable {
 	public Cenario getCenario() {
         return this.cenario;
     }
-
 	public void setCenario(Cenario cenario) {
         this.cenario = cenario;
     }
@@ -240,7 +242,6 @@ public class Turno implements Serializable {
     public String getNome() {
         return this.nome;
     }
-
     public void setNome(String nome) {
         this.nome = nome;
     }
@@ -248,7 +249,6 @@ public class Turno implements Serializable {
     public Integer getTempo() {
         return this.tempo;
     }
-
     public void setTempo(Integer tempo) {
         this.tempo = tempo;
     }
@@ -256,7 +256,6 @@ public class Turno implements Serializable {
     public Set<Oferta> getOfertas() {
         return this.ofertas;
     }
-
     public void setOfertas(Set<Oferta> ofertas) {
         this.ofertas = ofertas;
     }
@@ -264,9 +263,15 @@ public class Turno implements Serializable {
     public Set<HorarioAula> getHorariosAula() {
 		return horariosAula;
 	}
-
 	public void setHorariosAula(Set<HorarioAula> horariosAula) {
 		this.horariosAula = horariosAula;
+	}
+
+	public Set<Parametro> getParametros() {
+		return parametros;
+	}
+	public void setParametros(Set<Parametro> parametros) {
+		this.parametros = parametros;
 	}
 
 	private static final long serialVersionUID = 2608398950191790873L;
@@ -280,6 +285,7 @@ public class Turno implements Serializable {
         sb.append("Tempo: ").append(getTempo()).append(", ");
         sb.append("Oferta: ").append(getOfertas() == null ? "null" : getOfertas().size());
         sb.append("HorariosAula: ").append(getHorariosAula() == null ? "null" : getHorariosAula().size());
+        sb.append("Parametros: ").append(getParametros() == null ? "null" : getParametros().size()).append(", ");
         return sb.toString();
     }
 }

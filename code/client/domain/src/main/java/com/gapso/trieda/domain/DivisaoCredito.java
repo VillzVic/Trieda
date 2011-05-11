@@ -135,13 +135,23 @@ public class DivisaoCredito implements Serializable {
     public void remove() {
         if (this.entityManager == null) this.entityManager = entityManager();
         if (this.entityManager.contains(this)) {
+        	removeCenario(this);
             this.entityManager.remove(this);
         } else {
             DivisaoCredito attached = this.entityManager.find(this.getClass(), this.id);
+            removeCenario(attached);
             this.entityManager.remove(attached);
         }
     }
 
+	private void removeCenario(DivisaoCredito cd) {
+		if(cd.getCenario() != null) return;
+		for(Cenario cenario : cd.getCenario()) {
+			cenario.getDivisoesCredito().remove(cd);
+			cenario.merge();
+		}
+	}
+	
 	@Transactional
     public void flush() {
         if (this.entityManager == null) this.entityManager = entityManager();
@@ -163,7 +173,7 @@ public class DivisaoCredito implements Serializable {
     }
 
 	public static int count(Cenario cenario) {
-		Query q = entityManager().createQuery("SELECT COUNT(o) FROM DivisaoCredito o, IN(o.cenario) c WHERE c = :cenario");
+		Query q = entityManager().createQuery("SELECT COUNT(o) FROM DivisaoCredito o, IN(o.cenario) c WHERE c = :cenario AND o.disciplina is null");
 		q.setParameter("cenario", cenario);
         return ((Number) q.getSingleResult()).intValue();
     }
@@ -183,8 +193,10 @@ public class DivisaoCredito implements Serializable {
 	}
 
 	@SuppressWarnings("unchecked")
-    public static List<DivisaoCredito> find(int firstResult, int maxResults) {
-        return entityManager().createQuery("SELECT o FROM DivisaoCredito o ORDER BY o.creditos ASC").setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
+    public static List<DivisaoCredito> findWithoutDisciplina(Cenario cenario, int firstResult, int maxResults) {
+        Query q = entityManager().createQuery("SELECT o FROM DivisaoCredito o, IN(o.cenario) c WHERE c = :cenario ORDER BY o.creditos ASC");
+        q.setParameter("cenario", cenario);
+        return q.setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
 
 	public String toString() {

@@ -18,6 +18,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.Table;
@@ -105,6 +106,9 @@ public class Professor implements Serializable {
     @OneToMany(cascade = CascadeType.ALL, mappedBy="professor")
     private Set<AtendimentoOperacional> atendimentosOperacionais =  new HashSet<AtendimentoOperacional>();
 
+    @OneToOne(cascade = CascadeType.ALL, mappedBy="professor")
+    private Usuario usuario;
+    
 	public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("Id: ").append(getId()).append(", ");
@@ -123,13 +127,13 @@ public class Professor implements Serializable {
         sb.append("Horarios: ").append(getHorarios() == null ? "null" : getHorarios().size()).append(", ");
         sb.append("Disciplinas: ").append(getDisciplinas() == null ? "null" : getDisciplinas().size());
         sb.append("Atendimentos Operacionais: ").append(getAtendimentosOperacionais() == null ? "null" : getAtendimentosOperacionais().size());
+        sb.append("Usuario: ").append(getUsuario()).append(", ");
         return sb.toString();
     }
 
 	public Cenario getCenario() {
         return this.cenario;
     }
-
 	public void setCenario(Cenario cenario) {
         this.cenario = cenario;
     }
@@ -137,7 +141,6 @@ public class Professor implements Serializable {
 	public TipoContrato getTipoContrato() {
         return this.tipoContrato;
     }
-
 	public void setTipoContrato(TipoContrato tipoContrato) {
         this.tipoContrato = tipoContrato;
     }
@@ -145,7 +148,6 @@ public class Professor implements Serializable {
 	public Titulacao getTitulacao() {
         return this.titulacao;
     }
-
 	public void setTitulacao(Titulacao titulacao) {
         this.titulacao = titulacao;
     }
@@ -153,7 +155,6 @@ public class Professor implements Serializable {
 	public AreaTitulacao getAreaTitulacao() {
         return this.areaTitulacao;
     }
-
 	public void setAreaTitulacao(AreaTitulacao areaTitulacao) {
         this.areaTitulacao = areaTitulacao;
     }
@@ -161,7 +162,6 @@ public class Professor implements Serializable {
 	public String getCpf() {
         return this.cpf;
     }
-
 	public void setCpf(String cpf) {
         this.cpf = cpf;
     }
@@ -169,7 +169,6 @@ public class Professor implements Serializable {
 	public String getNome() {
         return this.nome;
     }
-
 	public void setNome(String nome) {
         this.nome = nome;
     }
@@ -177,7 +176,6 @@ public class Professor implements Serializable {
 	public Integer getCargaHorariaMin() {
         return this.cargaHorariaMin;
     }
-
 	public void setCargaHorariaMin(Integer cargaHorariaMin) {
         this.cargaHorariaMin = cargaHorariaMin;
     }
@@ -185,7 +183,6 @@ public class Professor implements Serializable {
 	public Integer getCargaHorariaMax() {
         return this.cargaHorariaMax;
     }
-
 	public void setCargaHorariaMax(Integer cargaHorariaMax) {
         this.cargaHorariaMax = cargaHorariaMax;
     }
@@ -193,7 +190,6 @@ public class Professor implements Serializable {
 	public Integer getCreditoAnterior() {
         return this.creditoAnterior;
     }
-
 	public void setCreditoAnterior(Integer creditoAnterior) {
         this.creditoAnterior = creditoAnterior;
     }
@@ -201,7 +197,6 @@ public class Professor implements Serializable {
 	public Double getValorCredito() {
         return this.valorCredito;
     }
-
 	public void setValorCredito(Double valorCredito) {
         this.valorCredito = valorCredito;
     }
@@ -209,7 +204,6 @@ public class Professor implements Serializable {
 	public Set<Campus> getCampi() {
         return this.campi;
     }
-
 	public void setCampi(Set<Campus> campi) {
         this.campi = campi;
     }
@@ -217,7 +211,6 @@ public class Professor implements Serializable {
 	private Set<HorarioDisponivelCenario> getHorarios() {
         return this.horarios;
     }
-
 	public void setHorarios(Set<HorarioDisponivelCenario> horarios) {
         this.horarios = horarios;
     }
@@ -225,7 +218,6 @@ public class Professor implements Serializable {
 	public Set<ProfessorDisciplina> getDisciplinas() {
         return this.disciplinas;
     }
-
 	public void setDisciplinas(Set<ProfessorDisciplina> disciplinas) {
         this.disciplinas = disciplinas;
     }
@@ -233,11 +225,18 @@ public class Professor implements Serializable {
 	public Set<AtendimentoOperacional> getAtendimentosOperacionais() {
 		return this.atendimentosOperacionais;
 	}
-	
 	public void setAtendimentosOperacionais(Set<AtendimentoOperacional> atendimentosOperacionais) {
 		this.atendimentosOperacionais = atendimentosOperacionais;
 	}
 	
+	public Usuario getUsuario() {
+		return usuario;
+	}
+	public void setUsuario(Usuario usuario) {
+		this.usuario = usuario;
+	}
+
+
 	@PersistenceContext
     transient EntityManager entityManager;
 

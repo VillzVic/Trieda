@@ -103,6 +103,9 @@ public class Campus implements Serializable, Comparable<Campus> {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "campus")
     private Set<Oferta> ofertas = new HashSet<Oferta>();
 
+    @OneToMany(cascade = CascadeType.ALL, mappedBy="campus")
+    private Set<Parametro> parametros =  new HashSet<Parametro>();
+    
 	public Cenario getCenario() {
         return this.cenario;
     }
@@ -200,8 +203,14 @@ public class Campus implements Serializable, Comparable<Campus> {
 	public void setPublicado(Boolean publicado) {
 		this.publicado = publicado;
 	}
-
 	
+	public Set<Parametro> getParametros() {
+		return parametros;
+	}
+	public void setParametros(Set<Parametro> parametros) {
+		this.parametros = parametros;
+	}
+
 	@PersistenceContext
     transient EntityManager entityManager;
 
@@ -249,6 +258,7 @@ public class Campus implements Serializable, Comparable<Campus> {
         	removeProfessores();
         	removeHorariosDisponivelCenario();
         	removeDeslocamentosDestino();
+//        	removeUnidades();
             this.entityManager.remove(this);
         } else {
             Campus attached = this.entityManager.find(this.getClass(), this.id);
@@ -285,6 +295,16 @@ public class Campus implements Serializable, Comparable<Campus> {
 			deslocamentoDestino.getOrigem().merge();
 		}
 	}
+	
+//	@Transactional
+//	public void removeUnidades() {
+//		Set<Unidade> unidades = this.getUnidades();
+//		for(Unidade unidade : unidades) {
+//			unidade.getCampus().remove(this);
+//			
+//			deslocamentoDestino.getOrigem().merge();
+//		}
+//	}
 	
 	@Transactional
     public void flush() {
@@ -492,6 +512,7 @@ public class Campus implements Serializable, Comparable<Campus> {
         sb.append("Horarios: ").append(getHorarios() == null ? "null" : getHorarios().size()).append(", ");
         sb.append("Ofertas: ").append(getOfertas() == null ? "null" : getOfertas().size());
         sb.append("Publicado: ").append(getPublicado());
+        sb.append("Parametros: ").append(getParametros() == null ? "null" : getParametros().size()).append(", ");
         return sb.toString();
     }
 

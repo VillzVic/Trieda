@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Set;
 
 import com.extjs.gxt.ui.client.data.BasePagingLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
@@ -33,7 +32,7 @@ public class DivisoesCreditosServiceImpl extends RemoteServiceServlet implements
 	public PagingLoadResult<DivisaoCreditoDTO> getList(CenarioDTO cenarioDTO, PagingLoadConfig config) {
 		Cenario cenario = Cenario.find(cenarioDTO.getId());
 		List<DivisaoCreditoDTO> list = new ArrayList<DivisaoCreditoDTO>();
-		Set<DivisaoCredito> divisoesCreditos = cenario.getDivisoesCredito();
+		List<DivisaoCredito> divisoesCreditos = DivisaoCredito.findWithoutDisciplina(cenario, config.getOffset(), config.getLimit());
 		
 		for(DivisaoCredito divisaoCredito : divisoesCreditos) {
 			list.add(ConvertBeans.toDivisaoCreditoDTO(divisaoCredito));

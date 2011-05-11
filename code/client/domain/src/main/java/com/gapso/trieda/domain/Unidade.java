@@ -65,10 +65,10 @@ public class Unidade implements Serializable {
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, mappedBy = "unidades")
     private Set<HorarioDisponivelCenario> horarios = new HashSet<HorarioDisponivelCenario>();
 
-    @OneToMany(mappedBy="unidade")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy="unidade")
     private Set<GrupoSala> gruposSalas = new HashSet<GrupoSala>();
     
-    @OneToMany(mappedBy="unidade")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy="unidade")
     private Set<Sala> salas = new HashSet<Sala>();
     
     @PersistenceContext

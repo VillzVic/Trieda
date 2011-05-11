@@ -9,7 +9,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
@@ -58,7 +57,7 @@ public class Usuario implements Serializable {
     @Column(name = "ENABLED")
     private Boolean enabled;
     
-    @ManyToOne(targetEntity = Professor.class, fetch=FetchType.LAZY)
+    @OneToOne(targetEntity = Professor.class, fetch=FetchType.LAZY)
     @JoinColumn(name = "PRF_ID")
     private Professor professor;
     

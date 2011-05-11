@@ -206,6 +206,7 @@ public class DisciplinasServiceImpl extends RemoteServiceServlet implements Disc
 			divisaoCredito.setCreditos(d1+d2+d3+d4+d5+d6+d7);
 			divisaoCredito.merge();
 		} else {
+			divisaoCreditoDTO.setDisciplinaId(disciplinaDTO.getId());
 			divisaoCredito = ConvertBeans.toDivisaoCredito(divisaoCreditoDTO);
 			disciplina.setDivisaoCreditos(divisaoCredito);
 			disciplina.merge();
