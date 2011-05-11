@@ -17,13 +17,13 @@ SolucaoOperacional::SolucaoOperacional( ProblemData * prbDt ) : problem_data(prb
    // retorna o ponteiro para o professor correspondente
    GGroup< Campus *, LessPtr< Campus > >::iterator it_campi
       = prbDt->campi.begin();
-   for (; it_campi != prbDt->campi.end(); it_campi++)
+   for (; it_campi != prbDt->campi.end(); it_campi++ )
    {
       GGroup< Professor * >::iterator it_prof
          = it_campi->professores.begin();
-      for (; it_prof != it_campi->professores.end(); it_prof++)
+      for (; it_prof != it_campi->professores.end(); it_prof++ )
       {
-         this->mapProfessores[ it_prof->getId() ] = (*it_prof);
+         this->mapProfessores[ it_prof->getId() ] = ( *it_prof);
       }
    }
 
@@ -32,10 +32,10 @@ SolucaoOperacional::SolucaoOperacional( ProblemData * prbDt ) : problem_data(prb
    // Inicializando a estrutura <matrizAulas>
    matriz_aulas = new MatrizSolucao ( total_professores );
    MatrizSolucao::iterator itMatrizAulas = matriz_aulas->begin();
-   for(; itMatrizAulas != matriz_aulas->end();
+   for (; itMatrizAulas != matriz_aulas->end();
 		 ++itMatrizAulas )
    {
-	   ( *itMatrizAulas ) = new std::vector< Aula * > ( (total_dias * total_horarios), NULL );
+	   ( *itMatrizAulas ) = new std::vector< Aula * > ( ( total_dias * total_horarios ), NULL );
    }
 
    unsigned int i = 0;
@@ -43,7 +43,7 @@ SolucaoOperacional::SolucaoOperacional( ProblemData * prbDt ) : problem_data(prb
    int dia_semana = 0;
    int horario_aula_id = 0;
 
-   Aula * aula_virtual = new Aula(true);
+   Aula * aula_virtual = new Aula( true );
    Professor * professor = NULL;
 
    // Deixando livres, apenas os horarios em que o professor pode
@@ -57,9 +57,9 @@ SolucaoOperacional::SolucaoOperacional( ProblemData * prbDt ) : problem_data(prb
        int idProf = professor->getIdOperacional();
 
 	   // Vetor de aulas do professor atual
-	   std::vector< Aula * > * linha = *( itMatrizAulas );
+	   std::vector< Aula * > * linha = ( *itMatrizAulas );
 	   std::vector< Aula * >::iterator it_aula = linha->begin();
-	   for( j = 0; j < linha->size(); j++, it_aula++ )
+	   for ( j = 0; j < linha->size(); j++, it_aula++ )
 	   {
 		   // DIA DA SEMANA
 		   // 1 --> domingo,
@@ -67,7 +67,7 @@ SolucaoOperacional::SolucaoOperacional( ProblemData * prbDt ) : problem_data(prb
 		   // (...)
 		   // 6 --> sexta-feira
 		   // 7 --> sábado
-		   dia_semana = ( j / total_horarios ) + 1;
+		   dia_semana = ( ( j / total_horarios ) + 1 );
 
 		   // Índice do horário da aula
 		   horario_aula_id = ( j % total_horarios );
@@ -394,4 +394,252 @@ int SolucaoOperacional::getTotalDeProfessores() const
 int SolucaoOperacional::getTotalDias() const
 {
 	return total_dias;
+}
+
+// Fixações do tático
+bool SolucaoOperacional::fixacaoDiscSala( Aula * aula )
+{
+	int disciplina_id = aula->getDisciplina()->getId();
+	int sala_id = aula->getSala()->getId();
+
+	std::map< Disciplina *, Sala * >::iterator it_disc_sala
+		= problem_data->map_Discicplina_Sala_Fixados.begin();
+	for (; it_disc_sala != problem_data->map_Discicplina_Sala_Fixados.end();
+		   it_disc_sala++ )
+	{
+		if ( it_disc_sala->first->getId() == disciplina_id
+			&& it_disc_sala->second->getId() == sala_id )
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
+bool SolucaoOperacional::fixacaoDiscSalaDiaHorario( Aula * aula, int indice_horario_aula )
+{
+	int disciplina_id = aula->getDisciplina()->getId();
+	int sala_id = aula->getSala()->getId();
+	int dia_semana = aula->getDiaSemana();
+	int horairo_aula_id = problem_data->horarios_aula_ordenados[ indice_horario_aula ]->getId();
+
+	ITERA_GGROUP_LESSPTR( it_fixacao,
+		problem_data->fixacoes_Disc_Sala_Dia_Horario, Fixacao )
+	{
+		if ( it_fixacao->disciplina->getId() == disciplina_id
+			&& it_fixacao->sala->getId() == sala_id
+			&& it_fixacao->getDiaSemana() == dia_semana
+			&& it_fixacao->horario_aula->getId() == horairo_aula_id )
+		{
+			return true;
+		}
+	}
+
+	ITERA_GGROUP_LESSPTR( it_fixacao,
+		problem_data->fixacoes_Prof_Disc_Sala_Dia_Horario, Fixacao )
+	{
+		if ( it_fixacao->disciplina->getId() == disciplina_id
+			&& it_fixacao->sala->getId() == sala_id
+			&& it_fixacao->getDiaSemana() == dia_semana
+			&& it_fixacao->horario_aula->getId() == horairo_aula_id )
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
+bool SolucaoOperacional::fixacaoDiscDiaHorario( Aula * aula, int indice_horario_aula )
+{
+	int disciplina_id = aula->getDisciplina()->getId();
+	int dia_semana = aula->getDiaSemana();
+	int horairo_aula_id = problem_data->horarios_aula_ordenados[ indice_horario_aula ]->getId();
+
+	std::map< std::pair< Disciplina *, int >, int >::iterator it_map
+		= problem_data->map_Discicplina_DiaSemana_CreditosFixados.begin();
+	for (; it_map != problem_data->map_Discicplina_DiaSemana_CreditosFixados.end();
+		   it_map++ )
+	{
+		if ( it_map->first.first->getId() == disciplina_id
+			&& it_map->first.second == dia_semana
+			&& it_map->second > 0 ) // número de créditos fixados
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
+// Fixações do operacional
+bool SolucaoOperacional::fixacaoProfDiscSalaDiaHorario( Aula * aula, int id_operacional_professor, int indice_horario_aula )
+{
+	int disciplina_id = aula->getDisciplina()->getId();
+	int sala_id = aula->getSala()->getId();
+	int dia_semana = aula->getDiaSemana();
+	int horairo_aula_id = problem_data->horarios_aula_ordenados[ indice_horario_aula ]->getId();
+
+	ITERA_GGROUP_LESSPTR( it_fixacao,
+		problem_data->fixacoes_Prof_Disc_Sala_Dia_Horario, Fixacao )
+	{
+		if ( it_fixacao->professor->getIdOperacional() == id_operacional_professor
+			&& it_fixacao->disciplina->getId() == disciplina_id
+			&& it_fixacao->sala->getId() == sala_id
+			&& it_fixacao->getDiaSemana() == dia_semana
+			&& it_fixacao->horario_aula->getId() == horairo_aula_id )
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
+bool SolucaoOperacional::fixacaoProfDiscDiaHorario( Aula * aula, int id_operacional_professor, int indice_horario_aula )
+{
+	int disciplina_id = aula->getDisciplina()->getId();
+	int dia_semana = aula->getDiaSemana();
+	int horairo_aula_id = problem_data->horarios_aula_ordenados[ indice_horario_aula ]->getId();
+
+	ITERA_GGROUP_LESSPTR( it_fixacao,
+		problem_data->fixacoes_Prof_Disc_Dia_Horario, Fixacao )
+	{
+		if ( it_fixacao->professor->getIdOperacional() == id_operacional_professor
+			&& it_fixacao->disciplina->getId() == disciplina_id
+			&& it_fixacao->getDiaSemana() == dia_semana
+			&& it_fixacao->horario_aula->getId() == horairo_aula_id )
+		{
+			return true;
+		}
+	}
+
+	ITERA_GGROUP_LESSPTR( it_fixacao,
+		problem_data->fixacoes_Prof_Disc_Sala_Dia_Horario, Fixacao )
+	{
+		if ( it_fixacao->professor->getIdOperacional() == id_operacional_professor
+			&& it_fixacao->disciplina->getId() == disciplina_id
+			&& it_fixacao->getDiaSemana() == dia_semana
+			&& it_fixacao->horario_aula->getId() == horairo_aula_id )
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
+bool SolucaoOperacional::fixacaoProfDisc( Aula * aula, int id_operacional_professor )
+{
+	int disciplina_id = aula->getDisciplina()->getId();
+
+	ITERA_GGROUP_LESSPTR( it_fixacao,
+		problem_data->fixacoes_Prof_Disc_Sala_Dia_Horario, Fixacao )
+	{
+		if ( it_fixacao->professor->getIdOperacional() == id_operacional_professor
+			&& it_fixacao->disciplina->getId() == disciplina_id )
+		{
+			return true;
+		}
+	}
+
+	ITERA_GGROUP_LESSPTR( it_fixacao,
+		problem_data->fixacoes_Prof_Disc_Dia_Horario, Fixacao )
+	{
+		if ( it_fixacao->professor->getIdOperacional() == id_operacional_professor
+			&& it_fixacao->disciplina->getId() == disciplina_id )
+		{
+			return true;
+		}
+	}
+
+	ITERA_GGROUP_LESSPTR( it_fixacao,
+		problem_data->fixacoes_Prof_Disc, Fixacao )
+	{
+		if ( it_fixacao->professor->getIdOperacional() == id_operacional_professor
+			&& it_fixacao->disciplina->getId() == disciplina_id )
+		{
+			return true;
+		}
+	}
+
+	ITERA_GGROUP_LESSPTR( it_fixacao,
+		problem_data->fixacoes_Prof_Disc_Sala, Fixacao )
+	{
+		if ( it_fixacao->professor->getIdOperacional() == id_operacional_professor
+			&& it_fixacao->disciplina->getId() == disciplina_id )
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
+bool SolucaoOperacional::fixacaoProfDiscSala( Aula * aula, int id_operacional_professor )
+{
+	int disciplina_id = aula->getDisciplina()->getId();
+	int sala_id = aula->getSala()->getId();
+
+	ITERA_GGROUP_LESSPTR( it_fixacao,
+		problem_data->fixacoes_Prof_Disc_Sala_Dia_Horario, Fixacao )
+	{
+		if ( it_fixacao->professor->getIdOperacional() == id_operacional_professor
+			&& it_fixacao->disciplina->getId() == disciplina_id
+			&& it_fixacao->sala->getId() == sala_id )
+		{
+			return true;
+		}
+	}
+
+	ITERA_GGROUP_LESSPTR( it_fixacao,
+		problem_data->fixacoes_Prof_Disc_Sala, Fixacao )
+	{
+		if ( it_fixacao->professor->getIdOperacional() == id_operacional_professor
+			&& it_fixacao->disciplina->getId() == disciplina_id
+			&& it_fixacao->sala->getId() == sala_id )
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
+bool SolucaoOperacional::fixacaoProfSala( Aula * aula, int id_operacional_professor )
+{
+	int sala_id = aula->getSala()->getId();
+
+	ITERA_GGROUP_LESSPTR( it_fixacao,
+		problem_data->fixacoes_Prof_Disc_Sala_Dia_Horario, Fixacao )
+	{
+		if ( it_fixacao->professor->getIdOperacional() == id_operacional_professor
+			&& it_fixacao->sala->getId() == sala_id )
+		{
+			return true;
+		}
+	}
+
+	ITERA_GGROUP_LESSPTR( it_fixacao,
+		problem_data->fixacoes_Prof_Disc_Sala, Fixacao )
+	{
+		if ( it_fixacao->professor->getIdOperacional() == id_operacional_professor
+			&& it_fixacao->sala->getId() == sala_id )
+		{
+			return true;
+		}
+	}
+
+	ITERA_GGROUP_LESSPTR( it_fixacao,
+		problem_data->fixacoes_Prof_Sala, Fixacao )
+	{
+		if ( it_fixacao->professor->getIdOperacional() == id_operacional_professor
+			&& it_fixacao->sala->getId() == sala_id )
+		{
+			return true;
+		}
+	}
+
+	return false;
 }

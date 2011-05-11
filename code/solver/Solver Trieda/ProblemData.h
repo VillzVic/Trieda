@@ -218,6 +218,10 @@ public:
    // crétidos estão fixados dessa disciplina nesse dia da semana
    std::map< std::pair< Disciplina *, int >, int > map_Discicplina_DiaSemana_CreditosFixados;
 
+   // Dada uma disciplina, informa a sala à qual essa disciplina
+   // está fixada, caso haja a fixação disciplina/sala
+   std::map< Disciplina *, Sala * > map_Discicplina_Sala_Fixados;
+
    int creditosFixadosDisciplinaDia( Disciplina *, int );
 
    virtual void le_arvore( TriedaInput & );

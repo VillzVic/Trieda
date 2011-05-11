@@ -1026,6 +1026,12 @@ void ProblemDataLoader::relacionaFixacoes()
 
 			this->problemData->map_Discicplina_DiaSemana_CreditosFixados[ disciplina_dia ]++;
 		}
+
+		// Informa a fixação entre o par disciplina/sala
+		if ( fixacao->disciplina != NULL && fixacao->sala != NULL )
+		{
+			this->problemData->map_Discicplina_Sala_Fixados[ fixacao->disciplina ] = fixacao->sala;
+		}
 	}
 }
 

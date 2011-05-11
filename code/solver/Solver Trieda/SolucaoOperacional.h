@@ -85,6 +85,18 @@ public:
 
    int indice_horario_aula_ordenado( int );
 
+   // Fixações do tático
+   bool fixacaoDiscSala( Aula * );
+   bool fixacaoDiscSalaDiaHorario( Aula *, int  );
+   bool fixacaoDiscDiaHorario( Aula *, int );
+
+   // Fixações do operacional
+   bool fixacaoProfDiscSalaDiaHorario( Aula *, int, int );
+   bool fixacaoProfDiscDiaHorario( Aula *, int, int );
+   bool fixacaoProfDisc( Aula *, int );
+   bool fixacaoProfDiscSala( Aula *, int );
+   bool fixacaoProfSala( Aula *, int );
+
 private:
    
    ProblemData * problem_data;
