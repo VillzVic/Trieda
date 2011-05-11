@@ -13,10 +13,10 @@ Fixacao::Fixacao(void)
 	sala_id = -1;
 	dia_semana = -1;
 	turno_id = -1;
-	horario_id = -1;
+	horario_aula_id = -1;
 }
 
-Fixacao::~Fixacao(void)
+Fixacao::~Fixacao( void )
 {
 
 }
@@ -52,6 +52,6 @@ void Fixacao::le_arvore( ItemFixacao & elem )
 
 	if ( elem.horarioAulaId().present() )
 	{
-		horario_id = elem.horarioAulaId().get();
+		horario_aula_id = elem.horarioAulaId().get();
 	}
 }

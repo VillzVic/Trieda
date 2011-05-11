@@ -99,8 +99,13 @@ public:
    /* */
    void disciplinasCursosCompativeis();
 
-   /* */
+   // Divide as fixações de acordo com seus tipos
    void relacionaFixacoes();
+
+   // Quando houver uma fixação de uma disciplina em um dia
+   // da semana, esse método remove os demais dias da semana
+   // no conjunto de dias letivos da disciplina em questão
+   void verificaFixacoesDiasLetivosDisciplinas();
 
 private:
    // Input data object of the problem

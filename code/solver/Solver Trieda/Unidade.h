@@ -15,7 +15,7 @@ public:
 
 	GGroup< Horario * > horarios;
 	GGroup< Sala *, LessPtr< Sala > > salas;
-	GGroup< ConjuntoSala * > conjutoSalas;
+	GGroup< ConjuntoSala *, LessPtr< ConjuntoSala > > conjutoSalas;
 
     // Armazena os dias letivos em que, pelo
 	// menos, uma sala possui algum crédito disponível

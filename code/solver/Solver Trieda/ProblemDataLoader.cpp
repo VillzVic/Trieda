@@ -121,6 +121,9 @@ void ProblemDataLoader::load()
 
    // ---------
    relacionaFixacoes();
+
+   // ---------
+   verificaFixacoesDiasLetivosDisciplinas();
 }
 
 bool ordena_horarios_aula( HorarioAula * h1, HorarioAula * h2 )
@@ -302,7 +305,7 @@ void ProblemDataLoader::carregaDiasLetivosCampusUnidadeSala()
 
 void ProblemDataLoader::carregaDiasLetivosDiscs()
 {
-   ITERA_GGROUP( it_Disc, problemData->disciplinas, Disciplina )
+   ITERA_GGROUP_LESSPTR( it_Disc, problemData->disciplinas, Disciplina )
    {
       ITERA_GGROUP( it_Horario, it_Disc->horarios, Horario )
       {
@@ -344,8 +347,8 @@ void ProblemDataLoader::criaConjuntoSalasUnidade()
 
             if ( it_Sala->getTipoSalaId() == 2 )
             {
-               ITERA_GGROUP( it_Disc, it_Sala->disciplinasAssociadas,
-							 Disciplina )
+               ITERA_GGROUP( it_Disc,
+							 it_Sala->disciplinasAssociadas, Disciplina )
                {
                   // Procurando por, pelo menos, uma
                   // disciplina que possua a FLAG <eLab> marcada (TRUE)
@@ -357,21 +360,16 @@ void ProblemDataLoader::criaConjuntoSalasUnidade()
                }
             }
 
-            // Referência para algum dos GGroup de conjuntos
-            // de salas (<conjunto_Salas_Disc_eLab> ou 
-            // <conjunto_Salas_Disc_GERAL>).
-
+            // Referência para algum dos GGroup de conjuntos de
+			// salas (<conjunto_Salas_Disc_eLab> ou  <conjunto_Salas_Disc_GERAL>).
             GGroup< ConjuntoSala * > * gg_Cjt_Salas_Esc = &( conjunto_Salas_Disc_eLab );
 
-            // Teste para escolher qual estrutura de dados (<conjunto_Salas_Disc_eLab> ou 
-            // <conjunto_Salas_Disc_GERAL>) deve-se utilizar.
-
+            // Teste para escolher qual estrutura de dados
+			// (<conjunto_Salas_Disc_eLab> ou  <conjunto_Salas_Disc_GERAL>) deve-se utilizar.
             if ( !exige_Conjunto_Individual )
             {
                gg_Cjt_Salas_Esc = &( conjunto_Salas_Disc_GERAL );
             }
-
-            bool encontrou_Conjunto_Compat = false;
 
             // Antes de criar um novo conjunto de salas (labs ou SA),
             // deve-se procurar por algum conjunto de salas existente
@@ -380,7 +378,8 @@ void ProblemDataLoader::criaConjuntoSalasUnidade()
             // tem que ser nula (ou seja, todas as disciplinas que forem
             // associadas a sala em questão, tem de estar associadas ao
             // conjunto de salas encontrado, e vice versa).
-            ITERA_GGROUP( it_Cjt_Salas_Disc, (*gg_Cjt_Salas_Esc), ConjuntoSala )
+			bool encontrou_Conjunto_Compat = false;
+            ITERA_GGROUP( it_Cjt_Salas_Disc, ( *gg_Cjt_Salas_Esc ), ConjuntoSala )
             {
                // Se o conjunto de salas em questão representa a capacidade
                // da sala em questão. Estou testando tb se o conjunto de
@@ -388,25 +387,24 @@ void ProblemDataLoader::criaConjuntoSalasUnidade()
                // que não seja necessário no caso em que estejamos lidando
                // APENAS com laboratórios. Como não sei qual GGroup está
                // sendo referenciado, testo os 2 casos pra lá.
-               if ( it_Cjt_Salas_Disc->getCapacidadeRepr() == it_Sala->getCapacidade()
-						&& it_Cjt_Salas_Disc->getTipoSalasRepr() == it_Sala->tipo_sala->getId() )
+               if (	   it_Cjt_Salas_Disc->getCapacidadeRepr() == it_Sala->getCapacidade()
+					&& it_Cjt_Salas_Disc->getTipoSalasRepr() == it_Sala->tipo_sala->getId() )
                {
-                  bool mesmas_Disciplinas_Associadas = true;
-
                   // Checando se tem o mesmo tamanho.
-                  if ( it_Cjt_Salas_Disc->getDiscsAssociadas().size() == 
-					   it_Sala->disciplinasAssociadas.size())
+				  bool mesmas_Disciplinas_Associadas = true;
+                  if ( it_Cjt_Salas_Disc->disciplinas_associadas.size()
+					  == it_Sala->disciplinasAssociadas.size() )
                   {
                      // Iterando sobre as disciplinas associadas da sala em questão.
-                     ITERA_GGROUP( it_Disc_Assoc_Sala, it_Sala->disciplinasAssociadas,
-								   Disciplina )
+                     ITERA_GGROUP( it_Disc_Assoc_Sala,
+								   it_Sala->disciplinasAssociadas, Disciplina )
                      {
                         // Se encontrei alguma disciplina que não está
                         // associada ao conjunto de salas e  à sala em
                         // questão, paro o teste de compatibilidade
                         // entre a sala e o cjt em questão.
-                        if ( it_Cjt_Salas_Disc->getDiscsAssociadas().find(*it_Disc_Assoc_Sala)
-								== it_Cjt_Salas_Disc->getDiscsAssociadas().end() )
+                        if ( it_Cjt_Salas_Disc->disciplinas_associadas.find( *it_Disc_Assoc_Sala )
+								== it_Cjt_Salas_Disc->disciplinas_associadas.end() )
                         {
                            mesmas_Disciplinas_Associadas = false;
                            break;
@@ -422,15 +420,17 @@ void ProblemDataLoader::criaConjuntoSalasUnidade()
                   {
                      it_Cjt_Salas_Disc->addSala( **it_Sala );
 
-                     // Adicionando os dias letivos ao conjunto de salas
-                     ITERA_GGROUP_N_PT( it_Dias_Letivos, it_Sala->diasLetivos, int )
-                     {
-                        it_Cjt_Salas_Disc->diasLetivos.add( *it_Dias_Letivos );
-                     }
+					 // Adicionando os dias letivos ao conjunto de salas
+                     ITERA_GGROUP( it_disc, it_Sala->disciplinasAssociadas, Disciplina )
+					 {
+						 ITERA_GGROUP_N_PT( it_Dias_Letivos, it_Sala->diasLetivos, int )
+						 {
+							 it_Cjt_Salas_Disc->dias_letivos_disciplinas[ ( *it_disc ) ].add( *it_Dias_Letivos );
+						 }
+					 }
 
                      // COMO AS DISCIPLINAS ASSOCIADAS SÃO AS MESMAS, NÃO HÁ NECESSIDADE DE 
                      // ADICIONAR NENHUMA DISICIPLINA ASSOCIADA AO CONJUNTO DE SALAS EM QUESTÃO.
-
                      encontrou_Conjunto_Compat = true;
                      break;
                   }
@@ -450,15 +450,18 @@ void ProblemDataLoader::criaConjuntoSalasUnidade()
                // Atualizando para o próximo id.
                ++idCjtSala;
 
-               // Adicionando os dias letivos ao conjunto de salas
-               ITERA_GGROUP_N_PT(it_Dias_Letivos, it_Sala->diasLetivos, int)
-               {
-                  cjt_Sala->diasLetivos.add( *it_Dias_Letivos );
-               }
+			   // Adicionando os dias letivos ao conjunto de salas
+               ITERA_GGROUP( it_disc, it_Sala->disciplinasAssociadas, Disciplina )
+			   {
+				   ITERA_GGROUP_N_PT( it_Dias_Letivos, it_Sala->diasLetivos, int )
+				   {
+				      cjt_Sala->dias_letivos_disciplinas[ ( *it_disc ) ].add( *it_Dias_Letivos );
+			       }
+			   }
 
                // Associando as disciplinas ao conjunto.
                ITERA_GGROUP( it_Disc_Assoc_Sala,
-                  it_Sala->disciplinasAssociadas, Disciplina )
+						     it_Sala->disciplinasAssociadas, Disciplina )
                {
                   cjt_Sala->associaDisciplina( **it_Disc_Assoc_Sala );
                }
@@ -487,21 +490,21 @@ void ProblemDataLoader::criaConjuntoSalasUnidade()
          // ----------------------------
          std::cout << "Cod. Und.: " << it_Unidade->getCodigo() << std::endl;
 
-         ITERA_GGROUP( it_Cjt_Salas_Und,
-            it_Unidade->conjutoSalas, ConjuntoSala )
+         ITERA_GGROUP_LESSPTR( it_Cjt_Salas_Und,
+							   it_Unidade->conjutoSalas, ConjuntoSala )
          {
             std::cout << "\tCod. Cjt. Sala: "
-               << it_Cjt_Salas_Und->getId() << std::endl;
+                      << it_Cjt_Salas_Und->getId() << std::endl;
 
             std::map< int /*Id Sala*/, Sala * >::iterator 
                it_Salas_Cjt = it_Cjt_Salas_Und->getTodasSalas().begin();
 
             for(; it_Salas_Cjt != it_Cjt_Salas_Und->getTodasSalas().end();
-               ++it_Salas_Cjt)
+                  it_Salas_Cjt++ )
             {
                std::cout << "\t\tCod. Sala: "
-                  << it_Salas_Cjt->second->getCodigo()
-                  << std::endl;
+						 << it_Salas_Cjt->second->getCodigo()
+						 << std::endl;
             }
          }
          // ----------------------------
@@ -614,10 +617,10 @@ void ProblemDataLoader::estabeleceDiasLetivosDiscCjtSala()
       ITERA_GGROUP_LESSPTR( itUnidade, itCampus->unidades, Unidade )
       {
          // p tds conjuntos de salas de um campus
-         ITERA_GGROUP( itCjtSala, itUnidade->conjutoSalas, ConjuntoSala )
+         ITERA_GGROUP_LESSPTR( itCjtSala, itUnidade->conjutoSalas, ConjuntoSala )
          {
             // p tds as discAssoc de um conjunto
-            ITERA_GGROUP( itDiscAssoc, itCjtSala->getDiscsAssociadas(), Disciplina )
+            ITERA_GGROUP_LESSPTR( itDiscAssoc, itCjtSala->disciplinas_associadas, Disciplina )
             {
                std::map<int/*Id Sala*/,Sala*>::iterator itSala =
                   itCjtSala->getTodasSalas().begin();
@@ -734,7 +737,7 @@ void ProblemDataLoader::combinacaoDivCreditos()
    std::pair< int /*dia*/, int/*numCreditos*/ > p;
    bool atualiza = false;
 
-   ITERA_GGROUP( itDisc, problemData->disciplinas, Disciplina )
+   ITERA_GGROUP_LESSPTR( itDisc, problemData->disciplinas, Disciplina )
    {
       if ( itDisc->divisao_creditos != NULL )
       {
@@ -1023,6 +1026,71 @@ void ProblemDataLoader::relacionaFixacoes()
 	}
 }
 
+// Quando uma disciplina tiver um dia da semana fixado, devo
+// remover os demais dias da semana do seu conjunto de dias letivos
+void ProblemDataLoader::verificaFixacoesDiasLetivosDisciplinas()
+{
+	Fixacao * fixacao = NULL;
+	Disciplina * disciplina = NULL;
+	ConjuntoSala * conjunto_sala = NULL;
+	int dia_semana = 0;
+	bool encontrou_disciplina = false;
+
+	ITERA_GGROUP_LESSPTR( it_fixacao, this->problemData->fixacoes, Fixacao )
+	{
+		fixacao = ( *it_fixacao );
+		disciplina = ( fixacao->disciplina );
+		dia_semana = ( fixacao->getDiaSemana() );
+
+		// Verifica se o dia da semana e a disciplina foram fixados
+		if ( disciplina != NULL && dia_semana >= 0 )
+		{
+			////////////////////////////////////////////////////////////////////////////
+			// Como a disciplina atual possui um dia da semana fixado,
+			// procuro co conjunto de sala ao qual ela está relacionada
+			encontrou_disciplina = false;
+			GGroup< Campus *, LessPtr< Campus > >::iterator itCampus
+				= problemData->campi.begin();
+			for (; itCampus != problemData->campi.end() && !encontrou_disciplina;
+				   itCampus++ )
+			{
+			   GGroup< Unidade *, LessPtr< Unidade > >::iterator itUnidade
+				   = itCampus->unidades.begin();
+			   for (; itUnidade != itCampus->unidades.end() && !encontrou_disciplina;
+				      itUnidade++ )
+			   {
+				  GGroup< ConjuntoSala *, LessPtr< ConjuntoSala > >::iterator itCjtSala
+					  = itUnidade->conjutoSalas.begin();
+				  for (; itCjtSala != itUnidade->conjutoSalas.end() && !encontrou_disciplina;
+					     itCjtSala++ )
+				  {
+					  conjunto_sala = ( *itCjtSala );
+
+					  std::map< Disciplina *, GGroup< int > >::iterator
+						  it_disc_dias = conjunto_sala->dias_letivos_disciplinas.begin();
+					  for (; it_disc_dias != conjunto_sala->dias_letivos_disciplinas.end();
+						     it_disc_dias++ )
+					  {
+						  // Procura pela disciplina da fixação no conjunto de salas
+						  if ( it_disc_dias->first->getId() == disciplina->getId() )
+						  {
+							  // Deixa apenas o dia letivo fixado no
+							  // conjunto de dias letivos da disciplina
+							  GGroup< int > * dias_letivos = &( it_disc_dias->second );
+							  dias_letivos->clear();
+						      dias_letivos->add( dia_semana );
+							  encontrou_disciplina = true;
+							  break;
+						  }
+					  }
+			      }
+			   }
+			}
+			////////////////////////////////////////////////////////////////////////////
+		}
+	}
+}
+
 template< class T > 
 void ProblemDataLoader::find_and_set( int id, GGroup< T * > & haystack, 
                                       T * & needle, bool print = false )
@@ -1099,7 +1167,7 @@ void ProblemDataLoader::divideDisciplinas()
 {
    // O que significam todos esses comentários abaixo escrito 'alterado' ????
    GGroup< Disciplina * > disciplinas_novas;
-   ITERA_GGROUP( it_disc, problemData->disciplinas, Disciplina )
+   ITERA_GGROUP_LESSPTR( it_disc, problemData->disciplinas, Disciplina )
    {
       if ( it_disc->getCredTeoricos() > 0
 			&& it_disc->getCredPraticos() > 0
@@ -1449,9 +1517,9 @@ void ProblemDataLoader::referenciaCampusUnidadesSalas()
 
 void ProblemDataLoader::referenciaDisciplinas()
 {
-   ITERA_GGROUP( it_disc, problemData->disciplinas, Disciplina )
+   ITERA_GGROUP_LESSPTR( it_disc, problemData->disciplinas, Disciplina )
    {
-      problemData->refDisciplinas[it_disc->getId()] = ( *it_disc );
+      problemData->refDisciplinas[ it_disc->getId() ] = ( *it_disc );
    }
 }
 
@@ -1509,9 +1577,9 @@ void ProblemDataLoader::gera_refs()
             // Disciplinas associadas ? TODO (ou não)
             ITERA_GGROUP_N_PT( it_id_Disc, it_salas->disciplinas_associadas, int )
             {
-               ITERA_GGROUP( it_Disc, problemData->disciplinas, Disciplina )
+               ITERA_GGROUP_LESSPTR( it_Disc, problemData->disciplinas, Disciplina )
                {
-                  if ( (*it_id_Disc) == it_Disc->getId() )
+                  if ( ( *it_id_Disc ) == it_Disc->getId() )
                   {
                      it_salas->disciplinas_Associadas_Usuario.add( *it_Disc );
                   }
@@ -1539,9 +1607,9 @@ void ProblemDataLoader::gera_refs()
 
          ITERA_GGROUP( it_mag, it_prof->magisterio, Magisterio )
          {
-            find_and_set( it_mag->getDisciplinaId(),
-						  problemData->disciplinas,
-						  it_mag->disciplina, false );
+            find_and_set_lessptr( it_mag->getDisciplinaId(),
+								  problemData->disciplinas,
+								 it_mag->disciplina, false );
          }
       } // end professores
 
@@ -1587,7 +1655,7 @@ void ProblemDataLoader::gera_refs()
       }
    } // deslocamento unidades 
 
-   ITERA_GGROUP( it_disc, problemData->disciplinas, Disciplina )
+   ITERA_GGROUP_LESSPTR( it_disc, problemData->disciplinas, Disciplina )
    {
       find_and_set( it_disc->getTipoDisciplinaId(),
 					problemData->tipos_disciplina,
@@ -1641,9 +1709,9 @@ void ProblemDataLoader::gera_refs()
 				    problemData->ofertas,
 				    it_dem->oferta, false );
 
-      find_and_set( it_dem->getDisciplinaId(),
-					problemData->disciplinas,
-					it_dem->disciplina, false );
+      find_and_set_lessptr( it_dem->getDisciplinaId(),
+							problemData->disciplinas,
+							it_dem->disciplina, false );
    }
 
    // Falta: parametros (?) e fixacoes
@@ -1661,8 +1729,8 @@ void ProblemDataLoader::gera_refs()
 	  // Seta a referência à disciplina da fixação
 	  if ( it_fix->getDisciplinaId() >= 0 )
 	  {
-	      find_and_set( it_fix->getDisciplinaId(), problemData->disciplinas,
-						it_fix->disciplina, false );
+	      find_and_set_lessptr( it_fix->getDisciplinaId(), problemData->disciplinas,
+								it_fix->disciplina, false );
 	  }
 
 	  // Seta a referência ao turno da fixação
@@ -1673,11 +1741,11 @@ void ProblemDataLoader::gera_refs()
 	  }
 
 	  // Seta a referência ao horário de aula da fixação
-	  if ( it_fix->getHorarioId() >= 0 )
+	  if ( it_fix->getHorarioAulaId() >= 0 )
 	  {
 		  if ( it_fix->turno != NULL )
 		  {
-			  find_and_set( it_fix->getHorarioId(), it_fix->turno->horarios_aula,
+			  find_and_set( it_fix->getHorarioAulaId(), it_fix->turno->horarios_aula,
 									it_fix->horario_aula, false );
 		  }
 		  else
@@ -1694,7 +1762,7 @@ void ProblemDataLoader::gera_refs()
 				  }
 			  }
 
-			  find_and_set( it_fix->getHorarioId(), todos_horarios_aula,
+			  find_and_set( it_fix->getHorarioAulaId(), todos_horarios_aula,
 							it_fix->horario_aula, false );
 		  }
 	  }
@@ -2129,7 +2197,7 @@ void ProblemDataLoader::print_stats()
       }
    }
 
-   ITERA_GGROUP( it_disc, problemData->disciplinas, Disciplina )
+   ITERA_GGROUP_LESSPTR( it_disc, problemData->disciplinas, Disciplina )
    {
       if ( it_disc->getId() > 0 )
       {
@@ -2194,7 +2262,7 @@ void ProblemDataLoader::cache()
    }
 
    problemData->totalTurmas = 0;
-   ITERA_GGROUP( it_disciplinas, problemData->disciplinas, Disciplina )
+   ITERA_GGROUP_LESSPTR( it_disciplinas, problemData->disciplinas, Disciplina )
    {
       problemData->totalTurmas += it_disciplinas->getNumTurmas();
    }
@@ -2210,7 +2278,7 @@ void ProblemDataLoader::cache()
       it_bloco->setTotalTurmas( totalTurmas );
    }
 
-   ITERA_GGROUP( it_disc, problemData->disciplinas, Disciplina )
+   ITERA_GGROUP_LESSPTR( it_disc, problemData->disciplinas, Disciplina )
    {
       if ( it_disc->divisao_creditos != NULL )
       {
@@ -2473,7 +2541,7 @@ void ProblemDataLoader::associaDisciplinasConjuntoSalas()
    {
       ITERA_GGROUP_LESSPTR( itUnidade, itCampus->unidades, Unidade )
       {
-         ITERA_GGROUP( itCjtSala, itUnidade->conjutoSalas, ConjuntoSala )
+         ITERA_GGROUP_LESSPTR( itCjtSala, itUnidade->conjutoSalas, ConjuntoSala )
          {
             // Estrutura do map: Dado o 'id' de uma
             // sala, retorna-se o ponteiro da sala
@@ -2489,7 +2557,7 @@ void ProblemDataLoader::associaDisciplinasConjuntoSalas()
                for(; itDiscs != itSala->second->disciplinasAssociadas.end();
                      itDiscs++ )
                {
-                  itCjtSala->getDiscsAssociadas().add( *itDiscs );
+                  itCjtSala->disciplinas_associadas.add( *itDiscs );
                }
             }
          }
@@ -2558,13 +2626,12 @@ void ProblemDataLoader::criaAulas()
                      // dia da semana, sala e turma. Caso encontre,
                      // devo apenas add a oferta à aula existente.
                      bool novaAula = true;
-
-                     ITERA_GGROUP(itAula,problemData->aulas,Aula)
+                     ITERA_GGROUP( itAula, problemData->aulas, Aula )
                      {
-                        if( ( itAula->getTurma() == turma)
-                           && (itAula->getDisciplina() == disciplina)
-                           && (itAula->getDiaSemana() == diaSemana)
-                           && (itAula->getSala() == sala) )
+                        if( ( itAula->getTurma() == turma )
+                           && ( itAula->getDisciplina() == disciplina )
+                           && ( itAula->getDiaSemana() == diaSemana )
+                           && ( itAula->getSala() == sala ) )
                         {
                            itAula->ofertas.add( problemData->refOfertas[ atendOferta->getOfertaCursoCampiId() ] );
                            novaAula = false;
@@ -2584,7 +2651,7 @@ void ProblemDataLoader::criaAulas()
                         aula->setCreditosTeoricos( creditos_teoricos );
                         aula->setCreditosPraticos( creditos_praticos );
 
-                        problemData->aulas.add(aula);
+                        problemData->aulas.add( aula );
                      }
                   }
                }
@@ -2600,35 +2667,40 @@ void ProblemDataLoader::criaAulas()
    }
 
    std::cout << "Total de aulas criadas: "
-      << problemData->aulas.size() << std::endl;
+			 << problemData->aulas.size() << std::endl;
 }
 
 void ProblemDataLoader::relacionaBlocoCurricularAulas()
 {
-   ITERA_GGROUP(itAula,problemData->aulas,Aula)
+   ITERA_GGROUP( itAula, problemData->aulas, Aula )
    {
       Disciplina * disciplina = itAula->getDisciplina();
 
-      ITERA_GGROUP(itOferta,itAula->ofertas,Oferta)
+      ITERA_GGROUP( itOferta, itAula->ofertas, Oferta )
       {
          Curso * curso = itOferta->curso;
 
          std::map< std::pair< Curso *, Disciplina * > , BlocoCurricular * >::iterator
-            itMapCursoDisciplina_BlocoCurricular = problemData->mapCursoDisciplina_BlocoCurricular.find(
-            std::make_pair(curso,disciplina));
+            itMapCursoDisciplina_BlocoCurricular =
+			problemData->mapCursoDisciplina_BlocoCurricular.find( std::make_pair( curso, disciplina ) );
 
-         if(itMapCursoDisciplina_BlocoCurricular != problemData->mapCursoDisciplina_BlocoCurricular.end())
+         if ( itMapCursoDisciplina_BlocoCurricular
+				!= problemData->mapCursoDisciplina_BlocoCurricular.end() )
          {
             // Adicionando a aula ao bloco curricular e dia correspondentes.
-            problemData->blocoCurricularDiaAulas[
-               itMapCursoDisciplina_BlocoCurricular->second][itAula->getDiaSemana()].add(*itAula);
+            problemData->blocoCurricularDiaAulas
+				[ itMapCursoDisciplina_BlocoCurricular->second ][ itAula->getDiaSemana() ].add( *itAula );
 
                // Adicionando o bloco curricular a aula correspondente.
-               problemData->aulaBlocosCurriculares[*itAula].add(itMapCursoDisciplina_BlocoCurricular->second);
+               problemData->aulaBlocosCurriculares[ ( *itAula ) ].add(
+				   itMapCursoDisciplina_BlocoCurricular->second );
          }
          else
          {
-            std::cout << "Na funcao <ProblemDataLoader::relacionaBlocoCurricularAulas()> algum par <curso,disciplina> nao foi encontrado na estrutura <mapCursoDisciplina_BlocoCurricular>." << std::endl;
+            std::cout << "Na funcao <ProblemDataLoader::relacionaBlocoCurricularAulas()> "
+					  << "algum par <curso,disciplina> nao foi encontrado na estrutura "
+					  << "<mapCursoDisciplina_BlocoCurricular>." << std::endl;
+
             exit(1);
          }
       }
@@ -2652,12 +2724,12 @@ void ProblemDataLoader::print_csv(void)
    tdemanda = 0;
    nofertas = problemData->ofertas.size();
    ndiscs = problemData->disciplinas.size();
-   ITERA_GGROUP(it_disc, problemData->disciplinas, Disciplina)
+   ITERA_GGROUP_LESSPTR( it_disc, problemData->disciplinas, Disciplina )
    {
       tdemanda += it_disc->getDemandaTotal();
    }
 
-   FILE *file = fopen("./CSV/PROBLEM_SETTINGS.csv", "wt");
+   FILE * file = fopen("./CSV/PROBLEM_SETTINGS.csv", "wt");
    fprintf(file,"Campi:\t%4d,\n", ncampi);
    fprintf(file,"Unidades:\t%4d,\n", nunidades);
    fprintf(file,"Salas:\t%4d,\n", problemData->campi.begin()->getTotalSalas() );

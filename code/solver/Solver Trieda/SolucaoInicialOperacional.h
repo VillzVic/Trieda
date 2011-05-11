@@ -21,8 +21,10 @@ public:
 
 private:
 
+   bool possui_fixacao_professor_dia_horario( Professor &, int, int );
+
    bool alocaAulaSeq( SolucaoOperacional *, std::vector< Aula * >::iterator,
-				      int, Professor &, Aula &);
+				      int, Professor &, Aula & );
 
    ProblemData & problemData;
 
@@ -69,4 +71,4 @@ private:
    void calculaCustoFixProf( Professor &, Aula &, unsigned, int = 0, int = 0 );
 };
 
-#endif // _SOLUCAO_INICIAL_OPERACIONAL_H_
+#endif

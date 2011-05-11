@@ -773,8 +773,8 @@ void Avaliador::calculaGapsHorariosProfessores(SolucaoOperacional & solucao)
             if (gap > 1)
             {
                dia_semana = aula_atual->getDiaSemana();
-               h1 = solucao.getHorario(i, dia_semana, indice_aula_anterior);
-               h2 = solucao.getHorario(i, dia_semana, indice_aula_atual);
+               h1 = solucao.getHorario( i, dia_semana, indice_aula_anterior );
+               h2 = solucao.getHorario( i, dia_semana, indice_aula_atual );
 
                // Dado que ocorreu um gap entre duas aulas, devo
                // verificar se o professor possui horários disponíveis

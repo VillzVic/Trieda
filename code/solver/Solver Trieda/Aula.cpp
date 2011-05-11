@@ -1,6 +1,6 @@
 #include "Aula.h"
 
-Aula::Aula(bool _aulaVirtual) : aula_virtual(_aulaVirtual)
+Aula::Aula( bool _aulaVirtual )
 {
    turma = 0;
    disciplina = NULL;
@@ -9,46 +9,53 @@ Aula::Aula(bool _aulaVirtual) : aula_virtual(_aulaVirtual)
    quantidade = 0;
    creditos_teoricos = 0;
    creditos_praticos = 0;
+   aula_fixada = false;
+   aula_virtual = _aulaVirtual;
 }
 
-Aula::~Aula(void)
+Aula::~Aula( void )
 {
 
 }
 
-void Aula::setTurma(int t)
+void Aula::setTurma( int t )
 {
    this->turma = t;
 }
 
-void Aula::setDisciplina(Disciplina * d)
+void Aula::setDisciplina( Disciplina * d )
 {
    this->disciplina = d;
 }
 
-void Aula::setSala(Sala* s)
+void Aula::setSala( Sala * s )
 {
    this->sala = s;
 }
 
-void Aula::setDiaSemana(int d)
+void Aula::setDiaSemana( int d )
 {
    this->dia_semana = d;
 }
 
-void Aula::setCreditosTeoricos(int ct)
+void Aula::setCreditosTeoricos( int ct )
 {
    this->creditos_teoricos = ct;
 }
 
-void Aula::setCreditosPraticos(int cp)
+void Aula::setCreditosPraticos( int cp )
 {
    this->creditos_praticos = cp;
 }
 
-void Aula::setAulaVirtual(bool value)
+void Aula::setAulaVirtual( bool value )
 {
 	aula_virtual = value;
+}
+
+void Aula::setAulaFixada( bool value )
+{
+	aula_fixada = value;
 }
 
 int Aula::getTurma() const
@@ -56,12 +63,12 @@ int Aula::getTurma() const
    return this->turma;
 }
 
-Disciplina* Aula::getDisciplina() const
+Disciplina * Aula::getDisciplina() const
 {
    return this->disciplina;
 }
 
-Sala* Aula::getSala() const
+Sala * Aula::getSala() const
 {
    return this->sala;
 }
@@ -83,12 +90,22 @@ int Aula::getCreditosPraticos() const
 
 int Aula::getTotalCreditos() const
 {
-   return (creditos_praticos+creditos_teoricos);
+   return ( creditos_praticos + creditos_teoricos );
 }
 
 bool Aula::eVirtual() const
 {
+   if ( aula_fixada )
+   {
+	   return true;
+   }
+
    return aula_virtual;
+}
+
+bool Aula::eFixada() const
+{
+   return aula_fixada;
 }
 
 void Aula::toString()

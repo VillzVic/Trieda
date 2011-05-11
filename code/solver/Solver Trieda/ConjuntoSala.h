@@ -48,8 +48,13 @@ public:
    // referentes às salas, tais como: addSala, remSala, findSala, etc.
    std::map< int /*Id Sala*/, Sala * > & getTodasSalas() { return salas; }
 
-   // Para não precisar criar os métodos de acesso ao GGROUP.
-   GGroup< Disciplina * > & getDiscsAssociadas() { return disciplinasAssociadas; }
+   // Armazena referências para todas as disciplinas
+   // associadas a, pelo menos, uma sala pertencente ao map <salas>
+   GGroup< Disciplina *, LessPtr< Disciplina > > disciplinas_associadas;
+
+   // Dado uma disciplina, informamos os
+   // dias da semana que essa disciplina tem aula
+   std::map< Disciplina *, GGroup< int > > dias_letivos_disciplinas;
 
    bool addSala( Sala & sala )
    {
@@ -68,13 +73,13 @@ public:
 
    bool associaDisciplina( Disciplina & disc )
    {
-      if ( disciplinasAssociadas.find( &disc )
-			!= disciplinasAssociadas.end() )
+      if ( disciplinas_associadas.find( &disc )
+			!= disciplinas_associadas.end() )
       {
          return false;
       }
 
-      disciplinasAssociadas.add( &disc );
+      disciplinas_associadas.add( &disc );
       return true;
    }
 
@@ -141,17 +146,13 @@ public:
       return capSalas;
    }
 
-   GGroup< int > diasLetivos;
+   // GGroup< int > diasLetivos;
 
 private:
    std::map< int /*Id Sala*/, Sala * > salas;
 
    int cap_Representada;
    int tipo_Salas_Representada;
-
-   // Armazena referências para todas as disciplinas
-   // associadas a, pelo menos, uma sala pertencente ao map <salas>
-   GGroup< Disciplina * > disciplinasAssociadas;
 };
 
 #endif

@@ -28,14 +28,14 @@ public:
    void setSalaId( int v ) { sala_id = v; }
    void setDiaSemana( int v ) { dia_semana = v; }
    void setTurnoId( int v ) { turno_id = v; }
-   void setHorarioId( int v ) { horario_id = v; }
+   void setHorarioAulaId( int v ) { horario_aula_id = v; }
 
    int getProfessorId() const { return professor_id; }
    int getDisciplinaId() const { return disciplina_id; }
    int getSalaId() const { return sala_id; }
    int getDiaSemana() const { return dia_semana; }
    int getTurnoId() const { return turno_id; }
-   int getHorarioId() const { return horario_id; }
+   int getHorarioAulaId() const { return horario_aula_id; }
 
 private:
    int professor_id;
@@ -43,7 +43,7 @@ private:
    int sala_id;
    int dia_semana;
    int turno_id;
-   int horario_id;
+   int horario_aula_id;
 };
 
 #endif

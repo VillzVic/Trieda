@@ -4,12 +4,11 @@
 #include <map>
 #include <vector>
 
+#include "input.h"
 #include "Aula.h"
 #include "Horario.h"
 #include "Professor.h"
 #include "ProblemData.h"
-#include "input.h"
-
 #include "MoveValidator.h"
 
 typedef std::vector< std::vector< Aula * > * > MatrizSolucao;
@@ -19,16 +18,9 @@ class SolucaoOperacional
 public:
    SolucaoOperacional( ProblemData * );
 
-   SolucaoOperacional(SolucaoOperacional const & s);
+   SolucaoOperacional( SolucaoOperacional const & s );
 
-   virtual ~SolucaoOperacional(void);
-
-   //void carregaSolucaoInicial();
-
-   // Dado um par 'dia da semana' e 'horário',
-   // retornar a coluna correspondente a esse
-   // par na matriz (a linha é o professor atual)
-   int getIndiceMatriz( int, Horario * );
+   virtual ~SolucaoOperacional( void );
 
    // Dado um índice que corresponde a uma linha
    // de um dado professor na matriz de solução,
@@ -39,7 +31,7 @@ public:
 
    // Dado um índice que corresponde a uma linha da
    // matriz de solução, retorna o professor correspondente
-   Professor * getProfessorMatriz(int);
+   Professor * getProfessorMatriz( int );
 
    ProblemData * getProblemData() const;
 
@@ -89,12 +81,14 @@ public:
 
    /* Checa a disponibilidade dos horários da(s) sala(s) demandados pelas aulas em questão. */
    //bool checkDisponibilidadeHorarioSalaAula(
-      //Aula & aula, 
-      //std::vector< std::pair< Professor *, Horario * > > & novosHorariosAula) const;
+   //Aula & aula, 
+   //std::vector< std::pair< Professor *, Horario * > > & novosHorariosAula) const;
+
+   int indice_horario_aula_ordenado( int );
 
 private:
    
-   ProblemData* problem_data;
+   ProblemData * problem_data;
 
    int total_dias;
    int total_horarios;

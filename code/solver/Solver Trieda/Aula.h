@@ -12,19 +12,20 @@ class Aula
 {
 public:
 
-   Aula(bool = false);
-   virtual ~Aula(void);
+   Aula( bool = false );
+   virtual ~Aula( void );
 
    // Ofertas que são atendidas por essa aula
    GGroup< Oferta * > ofertas;
 
-   void setTurma(int);
-   void setDisciplina(Disciplina *);
-   void setSala(Sala *);
-   void setDiaSemana(int);
-   void setCreditosTeoricos(int);
-   void setCreditosPraticos(int);
-   void setAulaVirtual(bool);
+   void setTurma( int );
+   void setDisciplina( Disciplina * );
+   void setSala( Sala * );
+   void setDiaSemana( int );
+   void setCreditosTeoricos( int );
+   void setCreditosPraticos( int );
+   void setAulaVirtual( bool );
+   void setAulaFixada( bool );
 
    int getTurma() const;
    Disciplina * getDisciplina() const;
@@ -34,50 +35,51 @@ public:
    int getCreditosPraticos() const;
    int getTotalCreditos() const;
    bool eVirtual() const;
+   bool eFixada() const;
 
    // Para cada crédito alocado da aula em questão armazena-se uma
    // referência para o horário do professor em que tal alocação foi realizada.
    std::vector< std::pair< Professor *, Horario * > > bloco_aula;
 
-   virtual bool operator < (Aula const & right) 
+   virtual bool operator < ( Aula const & right )
    { 
-      if(disciplina < right.getDisciplina() )
+      if ( disciplina < right.getDisciplina() )
          return true;
-      else if(disciplina > right.getDisciplina() )
-         return false;
-      
-      if(turma < right.getTurma())
-         return true;
-      else if(turma > right.getTurma())
+      else if ( disciplina > right.getDisciplina() )
          return false;
 
-      if(dia_semana < right.getDiaSemana())
+      if ( turma < right.getTurma() )
          return true;
-      else if(dia_semana > right.getDiaSemana())
+      else if ( turma > right.getTurma() )
          return false;
 
-      if(sala < right.getSala())
+      if ( dia_semana < right.getDiaSemana() )
          return true;
-      else if(sala > right.getSala())
+      else if ( dia_semana > right.getDiaSemana() )
+         return false;
+
+      if ( sala < right.getSala() )
+         return true;
+      else if ( sala > right.getSala() )
          return false;
 
       return false;
    }
 
-   virtual bool operator == (Aula const & right)
+   virtual bool operator == ( Aula const & right )
    { 
-      return 
-         ((turma == right.getTurma()) &&
-         (disciplina == right.getDisciplina()) &&
-         (sala == right.getSala()) &&
-         (dia_semana == right.getDiaSemana()) &&
-         (creditos_teoricos == right.getCreditosTeoricos()) &&
-         (creditos_praticos == right.getCreditosPraticos()));
+      return  (
+		 ( turma == right.getTurma() ) &&
+		 ( disciplina == right.getDisciplina() ) &&
+         ( sala == right.getSala() ) &&
+         ( dia_semana == right.getDiaSemana() ) &&
+         ( creditos_teoricos == right.getCreditosTeoricos() ) &&
+         ( creditos_praticos == right.getCreditosPraticos() ) );
    }
 
-   virtual bool operator != (Aula const & right)
+   virtual bool operator != ( Aula const & right )
    { 
-      return !(*this == right);
+      return ( !( *this == right ) );
    }
 
    void toString();
@@ -93,6 +95,11 @@ private:
 
    // Indica se uma aula é virtual ou não.
    bool aula_virtual;
+
+   // Informa se uma aula possui fixação do tipo
+   // professor + dia + horário, indicando que essa
+   // aula não poderá ser trocada na matriz de solução
+   bool aula_fixada;
 };
 
-#endif // _AULA_H_
+#endif

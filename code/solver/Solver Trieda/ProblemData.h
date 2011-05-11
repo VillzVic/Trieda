@@ -47,7 +47,7 @@ public:
    GGroup< Campus *, LessPtr< Campus > > campi;
    GGroup< Deslocamento * > tempo_campi;
    GGroup< Deslocamento * > tempo_unidades;
-   GGroup< Disciplina * > disciplinas;
+   GGroup< Disciplina *, LessPtr< Disciplina > > disciplinas;
    GGroup< Curso * > cursos;
    GGroup< Demanda * > demandas;
    GGroup< Oferta * > ofertas;

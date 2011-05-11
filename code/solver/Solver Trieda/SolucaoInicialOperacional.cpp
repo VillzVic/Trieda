@@ -91,19 +91,24 @@ SolucaoOperacional & SolucaoInicialOperacional::geraSolucaoInicial()
       for(; itCustosAlocacaoAulaOrdenado != custosAlocacaoAulaOrdenado.end();
             ++itCustosAlocacaoAulaOrdenado )
       {
-         Aula & aula = (*itCustosAlocacaoAulaOrdenado)->getAula();
+         Aula & aula = ( *itCustosAlocacaoAulaOrdenado )->getAula();
          GGroup< Aula * >::iterator itAulasNaoAlocadas = aulasNaoAlocadas.find( &(aula) );
 
          // Somente se a aula do custo em questão não foi alocada.
          if ( itAulasNaoAlocadas != aulasNaoAlocadas.end() )
          {
-            Professor & professor = (*itCustosAlocacaoAulaOrdenado)->getProfessor();
+            Professor & professor = ( *itCustosAlocacaoAulaOrdenado )->getProfessor();
 
             std::vector< Aula * >::iterator it_horarios_prof
                = solucaoInicial->getItHorariosProf( professor, aula.getDiaSemana() );
 
+			// Recupera a posição do primeiro horário de aula
+			int coluna_matriz = std::distance(
+				solucaoInicial->getMatrizAulas()->at( professor.getIdOperacional() )->begin(), it_horarios_prof );
+			int horario_aula_id = ( coluna_matriz % solucaoInicial->getTotalHorarios() );
+			int dia_semana = ( coluna_matriz / solucaoInicial->getTotalHorarios() );
+
             bool alocouProfAula = false;
-       
             if( !professorRepetido( professor, aula ) )
             {
                alocouProfAula = alocaAulaSeq(
@@ -112,6 +117,12 @@ SolucaoOperacional & SolucaoInicialOperacional::geraSolucaoInicial()
 
             if ( alocouProfAula )
             {
+			   // Informa que a aula alocada não poderá ser movida
+			   if ( possui_fixacao_professor_dia_horario( professor, dia_semana, horario_aula_id ) )
+			   {
+				   aula.setAulaFixada( true );
+			   }
+
                // -------------------------
                // Atualizando a estrutura <blocosProfs>
 
@@ -190,22 +201,24 @@ SolucaoOperacional & SolucaoInicialOperacional::geraSolucaoInicial()
       // Criando o primeiro professor virtual.
       // Criando a "agenda semanal" do novo professor
       std::vector< Aula * > * horariosNovoProfessor = new std::vector< Aula * >
-         ( (solucaoInicial->getTotalDias() * solucaoInicial->getTotalHorarios() ), NULL );
+         ( ( solucaoInicial->getTotalDias() * solucaoInicial->getTotalHorarios() ), NULL );
 
       // Criando um professor virtual.
       Professor * novoProfessor = new Professor( true );
 
       // Setando alguns dados para o novo professor
-      novoProfessor->tipo_contrato = *( problemData.tipos_contrato.begin() );
+      novoProfessor->tipo_contrato = ( *problemData.tipos_contrato.begin() );
 
-      ITERA_GGROUP( itDisciplina, problemData.disciplinas,
-					Disciplina )
+      ITERA_GGROUP_LESSPTR( itDisciplina, problemData.disciplinas,
+					        Disciplina )
       {
          Magisterio * mag = new Magisterio();
-         mag->disciplina = (*itDisciplina);
+
+         mag->disciplina = ( *itDisciplina );
          mag->setDisciplinaId( itDisciplina->getId() );
-         mag->setNota(10);
-         mag->setPreferencia(1);
+         mag->setNota( 10 );
+         mag->setPreferencia( 1 );
+
          novoProfessor->magisterio.add( mag );
       }
 
@@ -219,7 +232,7 @@ SolucaoOperacional & SolucaoInicialOperacional::geraSolucaoInicial()
       }
 
       // Adicionando os horários do novo professor à solução.
-      solucaoInicial->addProfessor( *novoProfessor, *horariosNovoProfessor );
+      solucaoInicial->addProfessor( ( *novoProfessor ), ( *horariosNovoProfessor ) );
 
       // Adicionando o novo professor a todos os campus
       ITERA_GGROUP_LESSPTR( itCampus, problemData.campi, Campus )
@@ -289,7 +302,7 @@ SolucaoOperacional & SolucaoInicialOperacional::geraSolucaoInicial()
             // Setando alguns dados para o novo professor
             novoProfessor->tipo_contrato = ( *problemData.tipos_contrato.begin() );
 
-            ITERA_GGROUP( itDisciplina, problemData.disciplinas, Disciplina )
+            ITERA_GGROUP_LESSPTR( itDisciplina, problemData.disciplinas, Disciplina )
             {
                Magisterio * mag = new Magisterio();
 
@@ -360,7 +373,48 @@ SolucaoOperacional & SolucaoInicialOperacional::geraSolucaoInicial()
       exit(1);
    }
 
-   return (*solucaoInicial);
+   return ( *solucaoInicial );
+}
+
+bool SolucaoInicialOperacional::possui_fixacao_professor_dia_horario(
+	Professor & professor, int dia_semana, int horario_aula_id )
+{
+   // Verificar quais aulas são fixadas, para impedir que as mesmas
+   // sejam trocadas no solveOperacional Obs.: As aulas que são
+   // 'fixadas' aqui são apenas as fixações de professor, dia e horário.
+   // Qualquer outro tipo de verificação de fixação deve ser feita
+   // na realização de cada movimento.
+   Fixacao * fixacao = NULL;
+
+   // Fixações do tipo 'professor + disciplina + sala + dia + horário'
+   ITERA_GGROUP_LESSPTR( it_fixacao,
+	   problemData.fixacoes_Prof_Disc_Sala_Dia_Horario, Fixacao )
+   {
+	   fixacao = ( *it_fixacao );
+
+	   if ( fixacao->getDiaSemana() == dia_semana
+		   && fixacao->getHorarioAulaId() == horario_aula_id
+		   && fixacao->professor->getId() == professor.getId() )
+	   {
+		   return true;
+	   }
+   }
+
+   // Fixações do tipo 'professor + disciplina + dia + horário'
+   ITERA_GGROUP_LESSPTR( it_fixacao,
+	   problemData.fixacoes_Prof_Disc_Dia_Horario, Fixacao )
+   {
+	   fixacao = ( *it_fixacao );
+
+	   if ( fixacao->getDiaSemana() == dia_semana
+		   && fixacao->getHorarioAulaId() == horario_aula_id
+		   && fixacao->professor->getId() == professor.getId() )
+	   {
+		   return true;
+	   }
+   }
+	
+	return false;
 }
 
 bool SolucaoInicialOperacional::alocaAulaSeq( SolucaoOperacional * solucao, std::vector< Aula * >::iterator itHorariosProf,
