@@ -35,6 +35,8 @@ public:
    // Armazena os dias letivos em que a disciplina pode ser ministrada.
    GGroup< int > diasLetivos;
 
+   GGroup<Disciplina *> discEquivalentes;
+
    // =========== METODOS SET
    void setDemandaTotal(int value) { demanda_total = value; }
    void setMaxDemanda(int value) { max_demanda = value; }

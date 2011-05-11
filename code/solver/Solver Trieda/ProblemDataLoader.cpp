@@ -39,6 +39,9 @@ void ProblemDataLoader::load()
    carregaDiasLetivosDiscs();
 
    // ---------
+   disciplinasEquivalentes();
+
+   // ---------
    divideDisciplinas();
 
    // ---------
@@ -1161,6 +1164,290 @@ void ProblemDataLoader::find_and_set_lessptr( int id, GGroup< T *, LessPtr< T > 
    }
 
    delete finder;
+}
+
+void ProblemDataLoader::disciplinasEquivalentes()
+{
+	GGroup<int> disc;
+	ITERA_GGROUP_LESSPTR(itdisc,problemData->disciplinas,Disciplina) 
+	{
+		disc.add(itdisc->getId());
+	}
+	
+	ITERA_GGROUP_LESSPTR(itDisc,problemData->disciplinas,Disciplina) 
+	{
+		GGroup<int>::iterator itDiscEq = itDisc->equivalentes.begin();
+		for(; itDiscEq != itDisc->equivalentes.end(); itDiscEq++)
+		{
+			//verifica se os ids das disciplinas equivalentes são validos
+			if(disc.find(*itDiscEq) == disc.end())
+			{
+				std::cout<<"Erro: Disciplina "<<*itDiscEq<<" nao existe"<<std::endl;
+				exit(1);
+			}
+
+			//verifica se uma disciplina não é equivalente a ela mesma
+			if(itDisc->getId() == *itDiscEq)
+			{
+				std::cout<<"Erro: Disciplina "<<itDisc->getId()<<" equivalente a ela mesma!"<<std::endl;
+				exit(1);
+			}
+
+			ITERA_GGROUP_LESSPTR(it_disc,problemData->disciplinas,Disciplina) 
+			{
+				if(it_disc->getId() == *itDiscEq)
+				{
+					if((itDisc->getCredTeoricos() == it_disc->getCredTeoricos()) &&
+						(itDisc->getCredPraticos() == it_disc->getCredPraticos()) &&
+						(itDisc->eLab() == it_disc->eLab()) &&
+						(itDisc->getTipoDisciplinaId() == it_disc->getTipoDisciplinaId()) )
+					{
+						Disciplina * substituida = new Disciplina();
+
+						substituida->setId(it_disc->getId());
+						substituida->setCodigo(it_disc->getCodigo());
+						substituida->setNome(it_disc->getNome());
+						substituida->setCredTeoricos(it_disc->getCredTeoricos());
+						substituida->setCredPraticos(it_disc->getCredPraticos());
+						substituida->setELab(it_disc->eLab());
+
+						//maxAlunosT, maxAlunosP e nivelDificuldade: escolher o maior
+						if(itDisc->getMaxAlunosT() >= it_disc->getMaxAlunosT())
+							substituida->setMaxAlunosT(itDisc->getMaxAlunosT());
+						else
+							substituida->setMaxAlunosT(it_disc->getMaxAlunosT());
+
+						if(itDisc->getMaxAlunosP() >= it_disc->getMaxAlunosP())
+							substituida->setMaxAlunosP(itDisc->getMaxAlunosP());
+						else
+							substituida->setMaxAlunosP(it_disc->getMaxAlunosP());
+
+						substituida->setTipoDisciplinaId(it_disc->getTipoDisciplinaId());
+
+						if(itDisc->getNivelDificuldadeId() >= it_disc->getNivelDificuldadeId())
+							substituida->setNivelDificuldadeId(itDisc->getNivelDificuldadeId());
+						else
+							substituida->setNivelDificuldadeId(it_disc->getNivelDificuldadeId());
+
+						if(it_disc->divisao_creditos)
+						{
+							std::map<int/*Num. Creds*/,GGroup<DivisaoCreditos*>>::iterator it_Creds_Regras;
+
+							it_Creds_Regras = problemData->creds_Regras.find(it_disc->getCredTeoricos());
+
+							if(it_Creds_Regras != problemData->creds_Regras.end())
+							{
+								substituida->divisao_creditos = new DivisaoCreditos(
+										**it_Creds_Regras->second.begin());
+							}
+						}
+						else if(itDisc->divisao_creditos)
+						{
+							std::map<int/*Num. Creds*/,GGroup<DivisaoCreditos*>>::iterator it_Creds_Regras;
+
+							it_Creds_Regras = problemData->creds_Regras.find(it_disc->getCredTeoricos());
+
+							if(it_Creds_Regras != problemData->creds_Regras.end())
+							{
+								substituida->divisao_creditos = new DivisaoCreditos(
+										**it_Creds_Regras->second.begin());
+							}
+						}
+						else
+						{
+							substituida->divisao_creditos = NULL;
+						}
+
+						//>>> Copiando HORARIO
+						ITERA_GGROUP(it_hr,it_disc->horarios,Horario)
+						{
+							Horario * h =  new Horario;
+							h->setId(it_hr->getId());
+
+							//>>> >>> Copiando DiaSemana
+							GGroup<int>::iterator it_dia = it_hr->dias_semana.begin();
+							for(unsigned dia = 0;dia < it_hr->dias_semana.size();dia++)
+							{
+								h->dias_semana.add(*it_dia);
+								it_dia++;
+							}
+
+							h->setHorarioAulaId(it_hr->getHorarioAulaId());
+							h->setTurnoId(it_hr->getTurnoId());
+							
+							// >>> >>> Copiando TURNO
+							Turno * turno;
+							if(it_hr->turno != NULL)
+							{
+								turno = new Turno();
+
+								turno->setId(it_hr->turno->getId());
+								turno->setNome(it_hr->turno->getNome());
+								turno->setTempoAula(it_hr->turno->getTempoAula());
+								
+								// >>> >>> >>> Copiando HorariosAula
+								HorarioAula * hr_aula;
+								if(it_hr->turno->horarios_aula.size() > 0)
+								{
+									ITERA_GGROUP(it_hr_aula,turno->horarios_aula,HorarioAula)
+									{
+										hr_aula = new HorarioAula();
+										hr_aula->setId(it_hr_aula->getId());
+										hr_aula->setInicio(it_hr_aula->getInicio());
+
+										GGroup<int>::iterator it_dia_sem = it_hr_aula->dias_semana.begin();
+										for(unsigned dia = 0;dia < it_hr_aula->dias_semana.size();dia++)
+										{
+											hr_aula->dias_semana.add(*it_dia_sem);
+											it_dia_sem++;
+										}
+									}
+
+									turno->horarios_aula.add(hr_aula);
+								}
+								
+								h->turno = turno;
+							}
+
+							HorarioAula * hr_aula;
+							if(it_hr->horario_aula != NULL)
+							{
+								hr_aula = new HorarioAula();								
+								hr_aula->setId(it_hr->horario_aula->getId());
+								hr_aula->setInicio(it_hr->horario_aula->getInicio());
+
+								GGroup<int>::iterator it_dia_sem = it_hr->horario_aula->dias_semana.begin();
+								for(unsigned dia = 0;dia < it_hr->horario_aula->dias_semana.size();dia++)
+								{
+									hr_aula->dias_semana.add(*it_dia_sem);
+									it_dia_sem++;
+								}
+							}
+
+							substituida->horarios.add(h);
+						}
+
+						GGroup<int>::iterator it_discEq = itDisc->equivalentes.begin();
+						for(; it_discEq != itDisc->equivalentes.end(); it_discEq++)
+						{
+							if(*it_discEq != *itDiscEq)
+							{
+								substituida->equivalentes.add(*it_discEq);
+							}
+						}
+
+						GGroup<int>::iterator itInc = itDisc->incompativeis.begin();
+						for(; itInc != itDisc->incompativeis.end();itInc++)
+						{
+							substituida->incompativeis.add(*itInc);
+						}
+
+						GGroup<int>::iterator it_inc = it_disc->incompativeis.begin();
+						for(; it_inc != it_disc->incompativeis.end();it_inc++)
+						{
+							substituida->incompativeis.add(*it_inc);
+						}
+
+						// Adicionando os dados da nova disciplina
+						// em <Campi->Professor->disciplinas>:
+						Magisterio * novo_mag;
+						ITERA_GGROUP_LESSPTR(it_cp,problemData->campi,Campus)
+						{
+							ITERA_GGROUP(it_prof,it_cp->professores,Professor)
+							{
+								ITERA_GGROUP(it_mag,it_prof->magisterio,Magisterio)
+								{
+									if(it_mag->getDisciplinaId() == it_disc->getId())
+									{
+										novo_mag = new Magisterio();
+
+										novo_mag->setId(it_mag->getId());
+										novo_mag->setNota(it_mag->getNota());
+										novo_mag->setPreferencia(it_mag->getPreferencia());
+										novo_mag->setDisciplinaId(substituida->getId());
+										it_prof->magisterio.add(novo_mag);
+										
+										// Garantindo que um mesmo professor nao possui
+										// preferencias diferentes em relacao a uma mesma disciplina.
+										break;
+									}
+								}
+							}
+						}
+
+						 // Adicionando os dados da nova disciplina em <GrupoCurso->curriculos>
+						 ITERA_GGROUP( it_curso, problemData->cursos, Curso )
+						 {
+							ITERA_GGROUP( it_curriculo, it_curso->curriculos, Curriculo )
+							{
+							   // FIXME, isto está errado, deveria-se, de algum jeito,
+							   // saber o periodo da disciplina ou, iterar sobre todos os periodos 
+							   // validos de um curso e nao sobre uma estimativa.
+							   for ( unsigned num_periodos = 0; num_periodos < 20;
+									 num_periodos++ )
+							   {
+								  std::pair< int, int > disc_periodo( num_periodos, it_disc->getId() );
+
+								  if ( it_curriculo->disciplinas_periodo.find( disc_periodo ) !=
+									   it_curriculo->disciplinas_periodo.end() )
+								  {
+									 it_curriculo->disciplinas_periodo.add(
+										std::pair< int, int >( disc_periodo.first, disc_periodo.second ) );
+
+									 // Garantido que uma disciplina aparece
+									 // apenas uma vez em um curriculo de um curso.
+									 break;
+								  }
+							   }
+							}
+						 }
+
+						GGroup<int>::iterator itDiasLetivosDiscs = it_disc->diasLetivos.begin();
+						for(;itDiasLetivosDiscs != it_disc->diasLetivos.end();itDiasLetivosDiscs++)
+						{
+							substituida->diasLetivos.add(*itDiasLetivosDiscs);
+						}
+
+						// Adicionar a nova disciplina na estrutura 'discSalas'
+						ITERA_GGROUP_LESSPTR(it_campus, problemData->campi, Campus)
+						{
+							ITERA_GGROUP_LESSPTR(it_unidade,it_campus->unidades,Unidade)
+							{
+								ITERA_GGROUP_LESSPTR(it_sala,it_unidade->salas,Sala)
+								{
+									if(it_sala->disciplinasAssociadas.find(substituida) ==
+										it_sala->disciplinasAssociadas.end())
+									{
+										// Estabelecendo o critério de intereseção de dias letivos.
+										// I.E. Só associo uma sala de aula a uma disciplina se a sala tem, 
+										// pelo menos, um dia letivo comum com a disciplina.
+										ITERA_GGROUP_N_PT(it_Dias_Let_Disc,substituida->diasLetivos,int)
+										{
+											// Só continuo quando a sala possuir o dia
+											// letivo (pertencente à disciplina) em questão.
+											if(it_sala->diasLetivos.find(*it_Dias_Let_Disc)
+												!= it_sala->diasLetivos.end())
+											{
+												it_sala->disciplinasAssociadas.add(substituida);
+
+												// Adicionando um ponteiro para quando
+												// tiver uma dada disciplina, for fácil
+												// descobrir a lista de salas associadas.
+												problemData->discSalas[substituida->getId()].push_back(*it_sala);
+											}
+										}
+									}
+								}
+							}
+						}
+
+						itDisc->discEquivalentes.add(substituida);
+					}
+				}
+			}
+		}
+	}
+
 }
 
 void ProblemDataLoader::divideDisciplinas()

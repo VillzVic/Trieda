@@ -107,6 +107,15 @@ public:
    // no conjunto de dias letivos da disciplina em questão
    void verificaFixacoesDiasLetivosDisciplinas();
 
+    /* 
+	Uma disciplina é equivalente a outra se:
+		- creditos teoricos são iguais
+		- creditos praticos são iguais
+		- o parametro e_lab é igual
+		- tipo da disciplina é igual
+	*/
+   void disciplinasEquivalentes();
+
 private:
    // Input data object of the problem
    ProblemData * problemData;
