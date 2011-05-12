@@ -110,6 +110,7 @@ public class Unidade implements Serializable {
     public void persist() {
         if (this.entityManager == null) this.entityManager = entityManager();
         this.entityManager.persist(this);
+        preencheHorarios();
     }
 
     @Transactional
@@ -125,6 +126,15 @@ public class Unidade implements Serializable {
         }
     }
 
+	public void preencheHorarios() {
+		for(SemanaLetiva semanaLetiva : SemanaLetiva.findAll()) {
+			for(HorarioDisponivelCenario hdc : this.getCampus().getHorarios(semanaLetiva)) {
+				hdc.getUnidades().add(this);
+				hdc.merge();
+			}
+		}
+	}
+    
     @Transactional
     public void removeHorariosDisponivelCenario() {
     	Set<HorarioDisponivelCenario> horarios = this.getHorarios();

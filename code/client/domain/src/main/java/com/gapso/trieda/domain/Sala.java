@@ -153,8 +153,18 @@ public class Sala implements Serializable, Comparable<Sala> {
     public void persist() {
         if (this.entityManager == null) this.entityManager = entityManager();
         this.entityManager.persist(this);
+        preencheHorarios();
     }
 
+	public void preencheHorarios() {
+		for(SemanaLetiva semanaLetiva : SemanaLetiva.findAll()) {
+			for(HorarioDisponivelCenario hdc : this.getUnidade().getHorarios(semanaLetiva)) {
+				hdc.getSalas().add(this);
+				hdc.merge();
+			}
+		}
+	}
+	
 	@Transactional
     public void remove() {
         if (this.entityManager == null) this.entityManager = entityManager();

@@ -207,8 +207,20 @@ public class Disciplina implements Serializable, Comparable<Disciplina> {
     public void persist() {
         if (this.entityManager == null) this.entityManager = entityManager();
         this.entityManager.persist(this);
+        preencheHorarios();
     }
 
+	public void preencheHorarios() {
+		for(SemanaLetiva semanaLetiva : SemanaLetiva.findAll()) {
+			for(HorarioAula horarioAula : semanaLetiva.getHorariosAula()) {
+				for(HorarioDisponivelCenario hdc : horarioAula.getHorariosDisponiveisCenario()) {
+					hdc.getDisciplinas().add(this);
+					hdc.merge();
+				}
+			}
+		}
+	}
+	
 	@Transactional
     public void remove() {
         if (this.entityManager == null) this.entityManager = entityManager();

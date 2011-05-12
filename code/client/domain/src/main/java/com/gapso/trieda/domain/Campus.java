@@ -249,6 +249,7 @@ public class Campus implements Serializable, Comparable<Campus> {
     public void persist() {
         if (this.entityManager == null) this.entityManager = entityManager();
         this.entityManager.persist(this);
+        preencheHorarios();
     }
 
 	@Transactional
@@ -269,6 +270,17 @@ public class Campus implements Serializable, Comparable<Campus> {
         }
     }
 
+	public void preencheHorarios() {
+		for(SemanaLetiva semanaLetiva : SemanaLetiva.findAll()) {
+			for(HorarioAula horarioAula : semanaLetiva.getHorariosAula()) {
+				for(HorarioDisponivelCenario hdc : horarioAula.getHorariosDisponiveisCenario()) {
+					hdc.getCampi().add(this);
+					hdc.merge();
+				}
+			}
+		}
+	}
+	
 	@Transactional
     public void removeProfessores() {
     	Set<Professor> professores = this.getProfessores();

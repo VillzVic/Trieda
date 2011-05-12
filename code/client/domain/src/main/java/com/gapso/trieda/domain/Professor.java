@@ -275,8 +275,20 @@ public class Professor implements Serializable {
     public void persist() {
         if (this.entityManager == null) this.entityManager = entityManager();
         this.entityManager.persist(this);
+        preencheHorarios();
     }
 
+	public void preencheHorarios() {
+		for(SemanaLetiva semanaLetiva : SemanaLetiva.findAll()) {
+			for(HorarioAula horarioAula : semanaLetiva.getHorariosAula()) {
+				for(HorarioDisponivelCenario hdc : horarioAula.getHorariosDisponiveisCenario()) {
+					hdc.getProfessores().add(this);
+					hdc.merge();
+				}
+			}
+		}
+	}
+	
 	@Transactional
     public void remove() {
         if (this.entityManager == null) this.entityManager = entityManager();

@@ -3,17 +3,17 @@ package com.gapso.web.trieda.shared.excel;
 public enum ExcelInformationType {
 	TUDO(""),
 	CAMPI("Campi"),
-	CURRICULOS("Currículos"),
+	CURRICULOS("Curriculos"),
 	CURSOS("Cursos"),
 	DEMANDAS("Ofertas e Demandas"),
 	DISCIPLINAS("Disciplinas"),
 	DISCIPLINAS_SALAS("Disciplinas-Salas"),
 	PALETA_CORES("PaletaCores"),
 	PROFESSORES("Professores"),
-	RELATORIO_VISAO_SALA("Relatório Visão Sala"),
+	RELATORIO_VISAO_SALA("Relatorio Visao Sala"),
 	SALAS("Salas"),
 	UNIDADES("Unidades"),
-	HABILITACAO_PROFESSORES("Habilitação dos Professores");
+	HABILITACAO_PROFESSORES("Habilitacao dos Professores");
 	
 	private String sheetName;
 	
