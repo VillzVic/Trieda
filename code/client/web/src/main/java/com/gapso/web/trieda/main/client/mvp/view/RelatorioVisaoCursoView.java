@@ -18,6 +18,7 @@ import com.extjs.gxt.ui.client.widget.layout.FormLayout;
 import com.gapso.web.trieda.main.client.mvp.presenter.RelatorioVisaoCursoPresenter;
 import com.gapso.web.trieda.shared.mvp.view.MyComposite;
 import com.gapso.web.trieda.shared.util.resources.Resources;
+import com.gapso.web.trieda.shared.util.view.CampusComboBox;
 import com.gapso.web.trieda.shared.util.view.CurriculoComboBox;
 import com.gapso.web.trieda.shared.util.view.CursoComboBox;
 import com.gapso.web.trieda.shared.util.view.GTabItem;
@@ -29,6 +30,7 @@ public class RelatorioVisaoCursoView extends MyComposite implements RelatorioVis
 
 	private GradeHorariaCursoGrid grid;
 	private Button submitBt;
+	private CampusComboBox campusCB;
 	private CursoComboBox cursoCB;
 	private CurriculoComboBox curriculoCB;
 	private TurnoComboBox turnoCB;
@@ -88,6 +90,10 @@ public class RelatorioVisaoCursoView extends MyComposite implements RelatorioVis
 		layout = new FormLayout();
 		right.setLayout(layout);
 		
+		
+		campusCB = new CampusComboBox(curriculoCB);
+		right.add(campusCB, formData);
+		
 		periodoCB = new SimpleComboBox<Integer>();
 		periodoCB.setFieldLabel("Período");
 		periodoCB.setEditable(false);
@@ -95,7 +101,7 @@ public class RelatorioVisaoCursoView extends MyComposite implements RelatorioVis
 		
 		right.add(periodoCB, formData);
 		
-		turnoCB = new TurnoComboBox();
+		turnoCB = new TurnoComboBox(campusCB);
 		right.add(turnoCB, formData);
 		
 		main.add(left, new ColumnData(.5));
@@ -109,7 +115,7 @@ public class RelatorioVisaoCursoView extends MyComposite implements RelatorioVis
 		BorderLayoutData bld = new BorderLayoutData(LayoutRegion.NORTH);
 		bld.setMargins(new Margins(5, 5, 0, 5));
 		bld.setCollapsible(true);
-		bld.setSize(130);
+		bld.setSize(155);
 		
 		this.panel.add(panel, bld);
 	}
@@ -142,6 +148,11 @@ public class RelatorioVisaoCursoView extends MyComposite implements RelatorioVis
 	@Override
 	public SimpleComboBox<Integer> getPeriodoComboBox() {
 		return periodoCB;
+	}
+
+	@Override
+	public CampusComboBox getCampusComboBox() {
+		return campusCB;
 	}
 
 

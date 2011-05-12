@@ -15,6 +15,7 @@ import com.gapso.web.trieda.shared.dtos.CurriculoDTO;
 import com.gapso.web.trieda.shared.mvp.presenter.Presenter;
 import com.gapso.web.trieda.shared.services.CurriculosServiceAsync;
 import com.gapso.web.trieda.shared.services.Services;
+import com.gapso.web.trieda.shared.util.view.CampusComboBox;
 import com.gapso.web.trieda.shared.util.view.CurriculoComboBox;
 import com.gapso.web.trieda.shared.util.view.CursoComboBox;
 import com.gapso.web.trieda.shared.util.view.GTab;
@@ -28,6 +29,7 @@ public class RelatorioVisaoCursoPresenter implements Presenter {
 
 	public interface Display {
 		Button getSubmitBuscaButton();
+		CampusComboBox getCampusComboBox();
 		CursoComboBox getCursoComboBox();
 		CurriculoComboBox getCurriculoComboBox();
 		TurnoComboBox getTurnoComboBox();
@@ -49,6 +51,7 @@ public class RelatorioVisaoCursoPresenter implements Presenter {
 				display.getGrid().setCurriculoDTO(display.getCurriculoComboBox().getValue());
 				display.getGrid().setPeriodo(display.getPeriodoComboBox().getValue().getValue());
 				display.getGrid().setTurnoDTO(display.getTurnoComboBox().getValue());
+				display.getGrid().setCampusDTO(display.getCampusComboBox().getValue());
 				display.getGrid().requestAtendimentos();
 			}
 		});

@@ -13,6 +13,7 @@ import com.extjs.gxt.ui.client.data.BasePagingLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.gapso.trieda.domain.AtendimentoOperacional;
 import com.gapso.trieda.domain.AtendimentoTatico;
+import com.gapso.trieda.domain.Campus;
 import com.gapso.trieda.domain.Curriculo;
 import com.gapso.trieda.domain.Professor;
 import com.gapso.trieda.domain.Sala;
@@ -20,6 +21,7 @@ import com.gapso.trieda.domain.Turno;
 import com.gapso.web.trieda.server.util.ConvertBeans;
 import com.gapso.web.trieda.shared.dtos.AtendimentoOperacionalDTO;
 import com.gapso.web.trieda.shared.dtos.AtendimentoTaticoDTO;
+import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.CurriculoDTO;
 import com.gapso.web.trieda.shared.dtos.ParDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorDTO;
@@ -93,11 +95,12 @@ public class AtendimentosServiceImpl extends RemoteServiceServlet implements Ate
 	}
 	
 	@Override
-	public ParDTO<List<AtendimentoTaticoDTO>, List<Integer>> getBusca(CurriculoDTO curriculoDTO, Integer periodo, TurnoDTO turnoDTO) {
+	public ParDTO<List<AtendimentoTaticoDTO>, List<Integer>> getBusca(CurriculoDTO curriculoDTO, Integer periodo, TurnoDTO turnoDTO, CampusDTO campusDTO) {
 		Curriculo curriculo = Curriculo.find(curriculoDTO.getId());
 		Turno turno = Turno.find(turnoDTO.getId());
+		Campus campus = Campus.find(campusDTO.getId());
 		List<AtendimentoTaticoDTO> list = new ArrayList<AtendimentoTaticoDTO>();
-		List<AtendimentoTatico> atendimentosTatico = AtendimentoTatico.findByCurriculoAndPeriodoAndTurno(curriculo, periodo, turno);
+		List<AtendimentoTatico> atendimentosTatico = AtendimentoTatico.findBy(campus, curriculo, periodo, turno);
 		for(AtendimentoTatico atendimentoTatico : atendimentosTatico) {
 			list.add(ConvertBeans.toAtendimentoTaticoDTO(atendimentoTatico));
 		}

@@ -25,6 +25,7 @@ import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.gapso.trieda.domain.AtendimentoTatico;
 import com.gapso.trieda.domain.Campus;
 import com.gapso.trieda.domain.Cenario;
+import com.gapso.trieda.domain.Curriculo;
 import com.gapso.trieda.domain.Demanda;
 import com.gapso.trieda.domain.DeslocamentoCampus;
 import com.gapso.trieda.domain.HorarioDisponivelCenario;
@@ -38,6 +39,7 @@ import com.gapso.web.trieda.shared.dtos.AbstractDTO;
 import com.gapso.web.trieda.shared.dtos.AtendimentoTaticoDTO;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
+import com.gapso.web.trieda.shared.dtos.CurriculoDTO;
 import com.gapso.web.trieda.shared.dtos.DeslocamentoCampusDTO;
 import com.gapso.web.trieda.shared.dtos.HorarioDisponivelCenarioDTO;
 import com.gapso.web.trieda.shared.dtos.SalaDTO;
@@ -131,6 +133,17 @@ public class CampiServiceImpl extends RemoteServiceServlet implements CampiServi
 			o.getSalas().addAll(salas);
 			o.merge();
 		}
+	}
+	
+	@Override
+	public ListLoadResult<CampusDTO> getListByCurriculo(CurriculoDTO curriculoDTO) {
+		Curriculo curriculo = Curriculo.find(curriculoDTO.getId());
+		List<CampusDTO> campiDTO = new ArrayList<CampusDTO>();
+		List<Campus> campi = Campus.findByCurriculo(curriculo);
+		for(Campus c : campi) {
+			campiDTO.add(ConvertBeans.toCampusDTO(c));
+		}
+		return new BaseListLoadResult<CampusDTO>(campiDTO);
 	}
 	
 	@Override

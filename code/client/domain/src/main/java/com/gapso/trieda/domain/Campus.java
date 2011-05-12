@@ -478,6 +478,13 @@ public class Campus implements Serializable, Comparable<Campus> {
 		q.setParameter("semanaLetiva", semanaLetiva);
 		return q.getResultList();
 	}
+	
+	@SuppressWarnings("unchecked")
+	public static List<Campus> findByCurriculo(Curriculo curriculo) {
+		Query q = entityManager().createQuery("SELECT c FROM Campus c, IN (c.ofertas) o WHERE o.curriculo = :curriculo");
+		q.setParameter("curriculo", curriculo);
+		return q.getResultList();
+	}
     
 	public boolean isOtimizadoTatico() {
 		Query q = entityManager().createQuery("SELECT COUNT(o) FROM AtendimentoTatico o WHERE o.oferta.campus = :campus");

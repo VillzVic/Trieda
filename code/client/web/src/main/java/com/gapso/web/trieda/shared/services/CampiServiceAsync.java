@@ -8,6 +8,7 @@ import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
+import com.gapso.web.trieda.shared.dtos.CurriculoDTO;
 import com.gapso.web.trieda.shared.dtos.DeslocamentoCampusDTO;
 import com.gapso.web.trieda.shared.dtos.HorarioDisponivelCenarioDTO;
 import com.gapso.web.trieda.shared.dtos.SemanaLetivaDTO;
@@ -29,6 +30,7 @@ public interface CampiServiceAsync {
 	void getResumos(CenarioDTO cenarioDTO, TreeNodeDTO treeNodeDTO, AsyncCallback<List<TreeNodeDTO>> callback);
 	void saveDeslocamento(CenarioDTO cenario, List<DeslocamentoCampusDTO> list, AsyncCallback<Void> callback);
 	void getHorariosDisponiveis(CampusDTO campusDTO, SemanaLetivaDTO semanaLetivaDTO, AsyncCallback<PagingLoadResult<HorarioDisponivelCenarioDTO>> callback);
+	void getListByCurriculo(CurriculoDTO curriculoDTO, AsyncCallback<ListLoadResult<CampusDTO>> callback);
 	
 	
 }

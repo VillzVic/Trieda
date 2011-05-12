@@ -8,6 +8,7 @@ import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
+import com.gapso.web.trieda.shared.dtos.CurriculoDTO;
 import com.gapso.web.trieda.shared.dtos.DeslocamentoCampusDTO;
 import com.gapso.web.trieda.shared.dtos.HorarioDisponivelCenarioDTO;
 import com.gapso.web.trieda.shared.dtos.SemanaLetivaDTO;
@@ -34,5 +35,6 @@ public interface CampiService extends RemoteService {
 	void saveHorariosDisponiveis(CampusDTO campusDTO, List<HorarioDisponivelCenarioDTO> listDTO);
 	List<TreeNodeDTO> getResumos(CenarioDTO cenarioDTO, TreeNodeDTO treeNodeDTO);
 	void saveDeslocamento(CenarioDTO cenario, List<DeslocamentoCampusDTO> list);
+	ListLoadResult<CampusDTO> getListByCurriculo(CurriculoDTO curriculoDTO);
 	
 }
