@@ -204,6 +204,13 @@ public class AtendimentoOperacional implements Serializable {
         return entityManager().find(AtendimentoOperacional.class, id);
     }
 
+	@SuppressWarnings("unchecked")
+    public static List<AtendimentoOperacional> findBySalaAndTurno(Sala sala, Turno turno) {
+        Query q = entityManager().createQuery("SELECT o FROM AtendimentoOperacional o WHERE o.sala = :sala AND o.oferta.turno = :turno");
+        q.setParameter("sala", sala);
+        q.setParameter("turno", turno);
+        return q.getResultList();
+    }
 	
 	public Cenario getCenario() {
 		return cenario;
