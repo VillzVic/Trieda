@@ -21,7 +21,7 @@ import com.gapso.trieda.domain.Turno;
 import com.gapso.trieda.misc.Semanas;
 import com.gapso.web.trieda.server.AtendimentosServiceImpl;
 import com.gapso.web.trieda.server.util.ConvertBeans;
-import com.gapso.web.trieda.shared.dtos.AtendimentoTaticoDTO;
+import com.gapso.web.trieda.shared.dtos.AtendimentoRelatorioDTO;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nMessages;
@@ -100,20 +100,20 @@ public class RelatorioVisaoSalaExportExcel extends AbstractExportExcel {
 			
 			List<HSSFCellStyle> excelColorsPool = buildColorPaletteCellStyles(workbook);
 			Map<String,HSSFCellStyle> codigoDisciplinaToColorMap = new HashMap<String,HSSFCellStyle>();
-			Map<Sala,Map<Turno,List<AtendimentoTaticoDTO>>> mapNivel1 = new TreeMap<Sala,Map<Turno,List<AtendimentoTaticoDTO>>>();
+			Map<Sala,Map<Turno,List<AtendimentoRelatorioDTO>>> mapNivel1 = new TreeMap<Sala,Map<Turno,List<AtendimentoRelatorioDTO>>>();
 			for (AtendimentoTatico atendimento : atendimentos) {
 				Sala sala = atendimento.getSala();
 				Turno turno = atendimento.getOferta().getTurno();
 				
-				Map<Turno,List<AtendimentoTaticoDTO>> mapNivel2 = mapNivel1.get(sala);
+				Map<Turno,List<AtendimentoRelatorioDTO>> mapNivel2 = mapNivel1.get(sala);
 				if (mapNivel2 == null) {
-					mapNivel2 = new HashMap<Turno,List<AtendimentoTaticoDTO>>();
+					mapNivel2 = new HashMap<Turno,List<AtendimentoRelatorioDTO>>();
 					mapNivel1.put(sala,mapNivel2);
 				}
 				
-				List<AtendimentoTaticoDTO> list = mapNivel2.get(turno);
+				List<AtendimentoRelatorioDTO> list = mapNivel2.get(turno);
 				if (list == null) {
-					list = new ArrayList<AtendimentoTaticoDTO>();
+					list = new ArrayList<AtendimentoRelatorioDTO>();
 					mapNivel2.put(turno,list);
 				}
 				
@@ -128,7 +128,7 @@ public class RelatorioVisaoSalaExportExcel extends AbstractExportExcel {
 			
 			int nextRow = this.initialRow;
 			for (Sala sala : mapNivel1.keySet()) {
-				Map<Turno,List<AtendimentoTaticoDTO>> mapNivel2 = mapNivel1.get(sala);
+				Map<Turno,List<AtendimentoRelatorioDTO>> mapNivel2 = mapNivel1.get(sala);
 				for (Turno turno : mapNivel2.keySet()) {
 					nextRow = writeSala(sala,turno,mapNivel2.get(turno),nextRow,sheet,itExcelCommentsPool,codigoDisciplinaToColorMap);
 				}				
@@ -142,7 +142,7 @@ public class RelatorioVisaoSalaExportExcel extends AbstractExportExcel {
 		return false;
 	}
 	
-	private int writeSala(Sala sala, Turno turno, List<AtendimentoTaticoDTO> atendimentos, int row, HSSFSheet sheet, Iterator<HSSFComment> itExcelCommentsPool, Map<String,HSSFCellStyle> codigoDisciplinaToColorMap) {
+	private int writeSala(Sala sala, Turno turno, List<AtendimentoRelatorioDTO> atendimentos, int row, HSSFSheet sheet, Iterator<HSSFComment> itExcelCommentsPool, Map<String,HSSFCellStyle> codigoDisciplinaToColorMap) {
 		row = writeHeader(sala,turno,row,sheet);
 		
 		int initialRow = row;
@@ -164,14 +164,14 @@ public class RelatorioVisaoSalaExportExcel extends AbstractExportExcel {
 		
 		// processa os atendimentos lidos do BD para que os mesmos sejam visualizados na visão sala
 		AtendimentosServiceImpl atendimentosService = new AtendimentosServiceImpl();
-		List<AtendimentoTaticoDTO> atendimentosParaVisaoSala = atendimentosService.montaListaParaVisaoSala(atendimentos);
+		List<AtendimentoRelatorioDTO> atendimentosParaVisaoSala = atendimentosService.montaListaParaVisaoSala(atendimentos);
 		
 		// agrupa os atendimentos por dia da semana
-		Map<Integer,List<AtendimentoTaticoDTO>> diaSemanaToAtendimentosMap = new HashMap<Integer,List<AtendimentoTaticoDTO>>();
-		for (AtendimentoTaticoDTO atendimento : atendimentosParaVisaoSala) {
-			List<AtendimentoTaticoDTO> list = diaSemanaToAtendimentosMap.get(atendimento.getSemana());
+		Map<Integer,List<AtendimentoRelatorioDTO>> diaSemanaToAtendimentosMap = new HashMap<Integer,List<AtendimentoRelatorioDTO>>();
+		for (AtendimentoRelatorioDTO atendimento : atendimentosParaVisaoSala) {
+			List<AtendimentoRelatorioDTO> list = diaSemanaToAtendimentosMap.get(atendimento.getSemana());
 			if (list == null) {
-				list = new ArrayList<AtendimentoTaticoDTO>();
+				list = new ArrayList<AtendimentoRelatorioDTO>();
 				diaSemanaToAtendimentosMap.put(atendimento.getSemana(),list);
 			}
 			list.add(atendimento);
@@ -192,7 +192,7 @@ public class RelatorioVisaoSalaExportExcel extends AbstractExportExcel {
 				case DOM: col = 9; break;
 			}
 
-			for (AtendimentoTaticoDTO atendimento : diaSemanaToAtendimentosMap.get(diaSemanaInt)) {
+			for (AtendimentoRelatorioDTO atendimento : diaSemanaToAtendimentosMap.get(diaSemanaInt)) {
 				HSSFCellStyle style = codigoDisciplinaToColorMap.get(atendimento.getDisciplinaString());
 				// escreve célula principal
 				setCell(row,col,sheet,style,itExcelCommentsPool,atendimento.getExcelContentVisaoSala(),atendimento.getExcelCommentVisaoSala());

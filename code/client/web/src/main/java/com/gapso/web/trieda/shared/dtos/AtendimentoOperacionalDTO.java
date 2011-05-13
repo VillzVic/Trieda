@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.gapso.web.trieda.shared.util.TriedaUtil;
 
-public class AtendimentoOperacionalDTO extends AbstractDTO<String> implements Comparable<AtendimentoOperacionalDTO> {
+public class AtendimentoOperacionalDTO extends AbstractDTO<String> implements Comparable<AtendimentoOperacionalDTO>, AtendimentoRelatorioDTO {
 
 	private static final long serialVersionUID = -2870302894382757778L;
 	
@@ -36,7 +36,7 @@ public class AtendimentoOperacionalDTO extends AbstractDTO<String> implements Co
 	public static final String PROPERTY_DISCIPLINA_ID = "disciplinaId";
 	public static final String PROPERTY_DISCIPLINA_STRING = "disciplinaString";
 	public static final String PROPERTY_DISCIPLINA_NOME = "disciplinaNome";
-	public static final String PROPERTY_TOTAL_CRETIDOS_DISCIPLINA = "totalCreditoDisciplina";
+	public static final String PROPERTY_TOTAL_CRETIDOS= "totalCreditos";
 	public static final String PROPERTY_OFERTA_ID = "ofertaId";
 	public static final String PROPERTY_TURMA = "turma";
 	public static final String PROPERTY_QUANTIDADE_ALUNOS = "quantidadeAlunos";
@@ -236,11 +236,11 @@ public class AtendimentoOperacionalDTO extends AbstractDTO<String> implements Co
 		set(PROPERTY_DISCIPLINA_NOME, value);
 	}
 	
-	public void setTotalCreditoDisciplina(Integer value) {
-		set(PROPERTY_TOTAL_CRETIDOS_DISCIPLINA, value);
+	public void setTotalCreditos(Integer value) {
+		set(PROPERTY_TOTAL_CRETIDOS, value);
 	}
-	public Integer getTotalCreditoDisciplina() {
-		return get(PROPERTY_TOTAL_CRETIDOS_DISCIPLINA);
+	public Integer getTotalCreditos() {
+		return get(PROPERTY_TOTAL_CRETIDOS);
 	}
 	
 	public void setOfertaId(Long value) {
@@ -279,7 +279,7 @@ public class AtendimentoOperacionalDTO extends AbstractDTO<String> implements Co
 		this.totalLinhas = value;
 	}
 	
-	public void concatenateVisaoSala(AtendimentoOperacionalDTO other) {
+	public void concatenateVisaoSala(AtendimentoRelatorioDTO other) {
 		setCursoNome(getCursoNome() + " / " + other.getCursoNome());
 		setCurricularString(getCurriculoString() + " / " + other.getCurriculoString());
 		setPeriodoString(getPeriodoString() + " / " + other.getPeriodoString());
@@ -306,7 +306,7 @@ public class AtendimentoOperacionalDTO extends AbstractDTO<String> implements Co
 	
 	public String getContentToolTipVisaoSala() {
 		return "<b>Turma:</b> "+ getTurma() + "<br />"
-		+ "<b>Crédito(s) " + ((getCreditoTeoricoBoolean())? "Teórico(s)" : "Prático(s)") + ":</b> " + getTotalLinhas()+" de "+getTotalCreditoDisciplina() + "<br />"
+		+ "<b>Crédito(s) " + ((getCreditoTeoricoBoolean())? "Teórico(s)" : "Prático(s)") + ":</b> " + getTotalLinhas()+" de "+getTotalCreditos() + "<br />"
 		+ "<b>Curso:</b> " + getCursoNome() +"<br />"
 		+ "<b>Matriz Curricular:</b> " + getCurriculoString() + "<br />"
 		+ "<b>Período:</b> "+ getPeriodoString() +"<br />" 
@@ -323,7 +323,7 @@ public class AtendimentoOperacionalDTO extends AbstractDTO<String> implements Co
 	
 	public String getContentToolTipVisaoProfessor() {
 		return "<b>Turma:</b> "+ getTurma() + "<br />"
-		+ "<b>Crédito(s) " + ((getCreditoTeoricoBoolean())? "Teórico(s)" : "Prático(s)") + ":</b> " + getTotalLinhas()+" de "+getTotalCreditoDisciplina() + "<br />"
+		+ "<b>Crédito(s) " + ((getCreditoTeoricoBoolean())? "Teórico(s)" : "Prático(s)") + ":</b> " + getTotalLinhas()+" de "+getTotalCreditos() + "<br />"
 		+ "<b>Curso:</b> " + getCursoNome() +"<br />"
 		+ "<b>Matriz Curricular:</b> " + getCurriculoString() + "<br />"
 		+ "<b>Período:</b> "+ getPeriodoString() +"<br />" 
@@ -332,6 +332,20 @@ public class AtendimentoOperacionalDTO extends AbstractDTO<String> implements Co
 		+ "<b>Unidade:</b> "+ getUnidadeString() +"<br />"
 		+ "<b>Sala:</b> "+ getSalaString() +"<br />";
 		
+	}
+	
+	public String getExcelContentVisaoSala() {
+		return getDisciplinaString() + " / " + getTurma();
+	}
+	
+	public String getExcelCommentVisaoSala() {
+		return getDisciplinaNome() + "\n"
+		+ "Turma: "+ getTurma() + "\n"
+		+ "Crédito(s) " + ((getCreditoTeoricoBoolean())? "Teórico(s)" : "Prático(s)") + ": " + getTotalCreditos()+" de "+getTotalCreditos() + "\n"
+		+ "Curso: " + getCursoNome() + "\n"
+		+ "Matriz Curricular: " + getCurriculoString() + "\n"
+		+ "Período: "+ getPeriodoString() + "\n" 
+		+ "Quantidade: "+ getQuantidadeAlunosString();
 	}
 	
 	@Override
@@ -371,9 +385,10 @@ public class AtendimentoOperacionalDTO extends AbstractDTO<String> implements Co
 	static public int countListDTOsCreditos(List<AtendimentoOperacionalDTO> listDTOs) {
 		int count = 0;
 		for (AtendimentoOperacionalDTO dto : listDTOs) {
-			count += dto.getTotalCreditoDisciplina();
+			count += dto.getTotalCreditos();
 		}
 		return count;
 	}
+
 	
 }

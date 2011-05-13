@@ -20,6 +20,7 @@ import com.gapso.trieda.domain.Sala;
 import com.gapso.trieda.domain.Turno;
 import com.gapso.web.trieda.server.util.ConvertBeans;
 import com.gapso.web.trieda.shared.dtos.AtendimentoOperacionalDTO;
+import com.gapso.web.trieda.shared.dtos.AtendimentoRelatorioDTO;
 import com.gapso.web.trieda.shared.dtos.AtendimentoTaticoDTO;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.CurriculoDTO;
@@ -51,7 +52,37 @@ public class AtendimentosServiceImpl extends RemoteServiceServlet implements Ate
 	}
 
 	@Override
-	public List<AtendimentoTaticoDTO> getBusca(SalaDTO salaDTO, TurnoDTO turnoDTO) {
+	public List<AtendimentoRelatorioDTO> getBusca(SalaDTO salaDTO, TurnoDTO turnoDTO) {
+		List<AtendimentoRelatorioDTO> arDTOList = new ArrayList<AtendimentoRelatorioDTO>();
+		
+		List<AtendimentoTaticoDTO> taticoList = getBuscaTatico(salaDTO, turnoDTO);
+		if(!taticoList.isEmpty()) {
+			for(AtendimentoTaticoDTO atdto : taticoList) {
+				arDTOList.add(atdto);
+			}
+		} else {
+			List<AtendimentoOperacionalDTO> operacionalList = getBuscaOperacional(salaDTO, turnoDTO);
+			for(AtendimentoOperacionalDTO atdto : operacionalList) {
+				arDTOList.add(atdto);
+			}
+		}
+		
+		return montaListaParaVisaoSala(arDTOList);
+	}
+	
+	public List<AtendimentoOperacionalDTO> getBuscaOperacional(SalaDTO salaDTO, TurnoDTO turnoDTO) {
+		Sala sala = Sala.find(salaDTO.getId());
+		Turno turno = Turno.find(turnoDTO.getId());
+		List<AtendimentoOperacionalDTO> list = new ArrayList<AtendimentoOperacionalDTO>();
+		List<AtendimentoOperacional> atendimentosTatico = AtendimentoOperacional.findBySalaAndTurno(sala, turno);
+		for(AtendimentoOperacional atendimentoTatico : atendimentosTatico) {
+			list.add(ConvertBeans.toAtendimentoOperacionalDTO(atendimentoTatico));
+		}
+		
+		return list;
+	}
+	
+	public List<AtendimentoTaticoDTO> getBuscaTatico(SalaDTO salaDTO, TurnoDTO turnoDTO) {
 		Sala sala = Sala.find(salaDTO.getId());
 		Turno turno = Turno.find(turnoDTO.getId());
 		List<AtendimentoTaticoDTO> list = new ArrayList<AtendimentoTaticoDTO>();
@@ -60,17 +91,17 @@ public class AtendimentosServiceImpl extends RemoteServiceServlet implements Ate
 			list.add(ConvertBeans.toAtendimentoTaticoDTO(atendimentoTatico));
 		}
 		
-		return montaListaParaVisaoSala(list);
+		return list;
 	}
 
-	public List<AtendimentoTaticoDTO> montaListaParaVisaoSala(List<AtendimentoTaticoDTO> list) {
+	public List<AtendimentoRelatorioDTO> montaListaParaVisaoSala(List<AtendimentoRelatorioDTO> list) {
 		// Agrupa os DTOS pela chave [Disciplina-Turma-DiaSemana] 
-		Map<String, List<AtendimentoTaticoDTO>> atendimentoTaticoDTOMap = new HashMap<String, List<AtendimentoTaticoDTO>>();
-		for (AtendimentoTaticoDTO dto : list) {
+		Map<String, List<AtendimentoRelatorioDTO>> atendimentoTaticoDTOMap = new HashMap<String, List<AtendimentoRelatorioDTO>>();
+		for (AtendimentoRelatorioDTO dto : list) {
 			String key = dto.getDisciplinaString() + "-" + dto.getTurma() + "-" + dto.getSemana();
-			List<AtendimentoTaticoDTO> dtoList = atendimentoTaticoDTOMap.get(key);
+			List<AtendimentoRelatorioDTO> dtoList = atendimentoTaticoDTOMap.get(key);
 			if (dtoList == null) {
-				dtoList = new ArrayList<AtendimentoTaticoDTO>();
+				dtoList = new ArrayList<AtendimentoRelatorioDTO>();
 				atendimentoTaticoDTOMap.put(key,dtoList);
 			}
 			dtoList.add(dto);
@@ -78,14 +109,14 @@ public class AtendimentosServiceImpl extends RemoteServiceServlet implements Ate
 		
 		// Quando há mais de um DTO por chave [Disciplina-Turma-DiaSemana], concatena as informações
 		// de todos em um único DTO.
-		List<AtendimentoTaticoDTO> processedList = new ArrayList<AtendimentoTaticoDTO>();
-		for (Entry<String,List<AtendimentoTaticoDTO>> entry : atendimentoTaticoDTOMap.entrySet()) {
+		List<AtendimentoRelatorioDTO> processedList = new ArrayList<AtendimentoRelatorioDTO>();
+		for (Entry<String,List<AtendimentoRelatorioDTO>> entry : atendimentoTaticoDTOMap.entrySet()) {
 			if (entry.getValue().size() == 1) {
 				processedList.addAll(entry.getValue());
 			} else {
-				AtendimentoTaticoDTO dtoMain = entry.getValue().get(0);
+				AtendimentoRelatorioDTO dtoMain = entry.getValue().get(0);
 				for (int i = 1; i < entry.getValue().size(); i++) {
-					AtendimentoTaticoDTO dtoCurrent = entry.getValue().get(i);
+					AtendimentoRelatorioDTO dtoCurrent = entry.getValue().get(i);
 					dtoMain.concatenateVisaoSala(dtoCurrent);
 				}
 				processedList.add(dtoMain);

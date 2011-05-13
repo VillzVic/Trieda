@@ -196,8 +196,18 @@ public class SolverOutput {
 	@Transactional
 	public void salvarAtendimentosTatico(Campus campus, Turno turno) {
 		removerTodosAtendimentosTaticoJaSalvos(campus, turno);
+		removerTodosAtendimentosOperacionalJaSalvos(campus, turno);
 		for(AtendimentoTatico atendimentoTatico : atendimentosTatico) {
 			atendimentoTatico.persist();
+		}
+	}
+	
+	@Transactional
+	public void salvarAtendimentosOperacional(Campus campus, Turno turno) {
+		removerTodosAtendimentosTaticoJaSalvos(campus, turno);
+		removerTodosAtendimentosOperacionalJaSalvos(campus, turno);
+		for(AtendimentoOperacional atendimentoOperacional : atendimentosOperacional) {
+			atendimentoOperacional.persist();
 		}
 	}
 	
@@ -206,14 +216,6 @@ public class SolverOutput {
 		List<AtendimentoTatico> atendimentosTatico = AtendimentoTatico.findAllBy(campus, turno);
 		for(AtendimentoTatico atendimentoTatico : atendimentosTatico) {
 			atendimentoTatico.remove();
-		}
-	}
-	
-	@Transactional
-	public void salvarAtendimentosOperacional(Campus campus, Turno turno) {
-		removerTodosAtendimentosOperacionalJaSalvos(campus, turno);
-		for(AtendimentoOperacional atendimentoOperacional : atendimentosOperacional) {
-			atendimentoOperacional.persist();
 		}
 	}
 	

@@ -36,7 +36,7 @@ import com.gapso.trieda.domain.Unidade;
 import com.gapso.trieda.misc.Estados;
 import com.gapso.web.trieda.server.util.ConvertBeans;
 import com.gapso.web.trieda.shared.dtos.AbstractDTO;
-import com.gapso.web.trieda.shared.dtos.AtendimentoTaticoDTO;
+import com.gapso.web.trieda.shared.dtos.AtendimentoRelatorioDTO;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.CurriculoDTO;
@@ -357,8 +357,8 @@ public class CampiServiceImpl extends RemoteServiceServlet implements CampiServi
 			AtendimentosServiceImpl atService = new AtendimentosServiceImpl();
 			for(TurnoDTO turnoDTO : turnosDTO) {
 				for(SalaDTO salaDTO : salasDTO) {
-					List<AtendimentoTaticoDTO> atendimentosDTO = atService.getBusca(salaDTO, turnoDTO);
-					for(AtendimentoTaticoDTO atendimentoDTO : atendimentosDTO) {
+					List<AtendimentoRelatorioDTO> atendimentosDTO = atService.getBusca(salaDTO, turnoDTO);
+					for(AtendimentoRelatorioDTO atendimentoDTO : atendimentosDTO) {
 						if(!salaDTO.isLaboratorio()) {
 							numeradorSala += atendimentoDTO.getQuantidadeAlunos();
 							denominadorSala += salaDTO.getCapacidade();

@@ -1209,7 +1209,7 @@ public class ConvertBeans {
 		dto.setCurricularString(domain.getOferta().getCurriculo().getCodigo());
 		dto.setPeriodo(domain.getOferta().getCurriculo().getPeriodo(domain.getDisciplina()));
 		dto.setPeriodoString(String.valueOf(domain.getOferta().getCurriculo().getPeriodo(domain.getDisciplina())));
-		dto.setTotalCreditoDisciplina(domain.getDisciplina().getTotalCreditos());
+		dto.setTotalCreditos(domain.getDisciplina().getTotalCreditos());
 		dto.setDisplayText(dto.getNaturalKey());
 		
 		return dto;

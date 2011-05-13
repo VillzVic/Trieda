@@ -25,6 +25,7 @@ import com.extjs.gxt.ui.client.widget.grid.Grid;
 import com.extjs.gxt.ui.client.widget.grid.GridCellRenderer;
 import com.extjs.gxt.ui.client.widget.layout.FitLayout;
 import com.extjs.gxt.ui.client.widget.tips.QuickTip;
+import com.gapso.web.trieda.shared.dtos.AtendimentoRelatorioDTO;
 import com.gapso.web.trieda.shared.dtos.AtendimentoTaticoDTO;
 import com.gapso.web.trieda.shared.dtos.SalaDTO;
 import com.gapso.web.trieda.shared.dtos.TurnoDTO;
@@ -36,7 +37,7 @@ public class GradeHorariaSalaGrid extends ContentPanel {
 
 	private Grid<LinhaDeCredito> grid;
 	private ListStore<LinhaDeCredito> store;
-	private List<AtendimentoTaticoDTO> atendimentos;
+	private List<AtendimentoRelatorioDTO> atendimentos;
 	private SalaDTO salaDTO;
 	private TurnoDTO turnoDTO;
 	private QuickTip quickTip;
@@ -100,13 +101,13 @@ public class GradeHorariaSalaGrid extends ContentPanel {
 	public void requestAtendimentos() {
 		if(getSalaDTO() == null || getTurnoDTO() == null) return;
 		grid.mask("Carregando os dados, aguarde alguns instantes", "loading");
-		Services.atendimentos().getBusca(getSalaDTO(), getTurnoDTO(), new AsyncCallback<List<AtendimentoTaticoDTO>>(){
+		Services.atendimentos().getBusca(getSalaDTO(), getTurnoDTO(), new AsyncCallback<List<AtendimentoRelatorioDTO>>(){
 			@Override
 			public void onFailure(Throwable caught) {
 				MessageBox.alert("ERRO!", "Deu falha na conexão", null);
 			}
 			@Override
-			public void onSuccess(List<AtendimentoTaticoDTO> result) {
+			public void onSuccess(List<AtendimentoRelatorioDTO> result) {
 				atendimentos = result;
 				preencheCores();
 				grid.reconfigure(getListStore(), new ColumnModel(getColumnList()));
@@ -123,8 +124,14 @@ public class GradeHorariaSalaGrid extends ContentPanel {
 			store.removeAll();
 		}	
 		if(turnoDTO != null) {
-			for(int i = 1; i <= turnoDTO.getMaxCreditos(); i++) {
-				store.add(new LinhaDeCredito(i));
+			if(isTatico()) {
+				for(Integer i = 1; i <= turnoDTO.getMaxCreditos(); i++) {
+					store.add(new LinhaDeCredito(i.toString()));
+				}
+			} else {
+				for(Long horarioId : turnoDTO.getHorariosStringMap().keySet()) {
+					store.add(new LinhaDeCredito(turnoDTO.getHorariosStringMap().get(horarioId)));
+				}
 			}
 		}
 		return store;
@@ -138,7 +145,11 @@ public class GradeHorariaSalaGrid extends ContentPanel {
 	public List<ColumnConfig> getColumnList() {
 		List<ColumnConfig> list = new ArrayList<ColumnConfig>();
 		
-		addColumn(list, "creditos", "Créditos");
+		if(isTatico()) {
+			addColumn(list, "display", "Créditos");
+		} else {
+			addColumn(list, "display", "Horários");
+		}
 		addColumn(list, "segunda", "Segunda");
 		addColumn(list, "terca", "Terça");
 		addColumn(list, "quarta", "Quarta");
@@ -153,11 +164,11 @@ public class GradeHorariaSalaGrid extends ContentPanel {
 		
 		GridCellRenderer<LinhaDeCredito> change = new GridCellRenderer<LinhaDeCredito>() {
 			public Html render(LinhaDeCredito model, String property, ColumnData config, int rowIndex, int colIndex, ListStore<LinhaDeCredito> store, Grid<LinhaDeCredito> grid) {
-				return versaoChico(rowIndex, colIndex);
+				if(colIndex == 0) return new Html(model.getDisplay());
+				return content(rowIndex, colIndex);
 			}
 
-			private Html versaoClaudio(int rowIndex, int colIndex) {
-				if(colIndex == 0) return new Html(String.valueOf(rowIndex + 1));
+			private Html content(int rowIndex, int colIndex) {
 				if(atendimentos == null || atendimentos.size() == 0) new Html("");
 				
 				int semana = -1;
@@ -169,66 +180,7 @@ public class GradeHorariaSalaGrid extends ContentPanel {
 				else if(colIndex == 6) semana = 7;
 				else if(colIndex == 7) semana = 1;
 				
-				AtendimentoTaticoDTO atDTO = getAtendimento(rowIndex + 1, semana);
-				
-				if(atDTO == null) return new Html("");
-				
-				final String title = atDTO.getDisciplinaString();
-				
-				final String contentToolTip = "<b>Curso:</b> "+ atDTO.getCursoString() +"<br />"
-					+ "<b>Matriz Curricular:</b> "+ atDTO.getCurriculoString() +"<br />"
-					+ "<b>Período:</b> "+ atDTO.getPeriodo() +"<br />"
-					+ "<b>Turma:</b> "+ atDTO.getTurma() + "<br />"
-					+ "<b>Quantidade:</b> "+ atDTO.getQuantidadeAlunos() +"<br />"
-					+ "<b>"+((atDTO.isTeorico())? "Teórico" : "Prático") +"</b><br />"
-					+ "<b>Creditos:</b> "+atDTO.getTotalCreditos()+"/"+atDTO.getTotalCreditoDisciplina()+"<br />";
-				
-				String content = atDTO.getDisciplinaString() + "<br />";
-				content += atDTO.getCursoString() + "<br />";
-				content += atDTO.getTurma() + "<br />";
-				content += atDTO.getQuantidadeAlunos() +" aluno(s)";
-				
-				final Html html = new Html(content) {
-					@Override
-					protected void onRender(Element target, int index) {
-						super.onRender(target, index);
-						target.setAttribute("qtip", contentToolTip);
-						target.setAttribute("qtitle", title);
-						target.setAttribute("qwidth", "200px");
-					}
-				};
-				html.addStyleName("horario");
-				html.addStyleName("c"+(rowIndex + 1));
-				html.addStyleName("tc"+atDTO.getTotalCreditos());
-				html.addStyleName("s"+atDTO.getSemana());
-				html.addStyleName(getCssDisciplina(atDTO.getDisciplinaId()));
-				
-				new DragSource(html) {
-					@Override
-					protected void onDragStart(DNDEvent event) {
-						event.setData(html);
-						event.getStatus().update(El.fly(html.getElement()).cloneNode(true));
-						quickTip.hide();
-					}
-				};
-				
-				return html;
-			}
-			
-			private Html versaoChico(int rowIndex, int colIndex) {
-				if(colIndex == 0) return new Html(String.valueOf(rowIndex + 1));
-				if(atendimentos == null || atendimentos.size() == 0) new Html("");
-				
-				int semana = -1;
-				if(colIndex == 1) semana = 2;
-				else if(colIndex == 2) semana = 3;
-				else if(colIndex == 3) semana = 4;
-				else if(colIndex == 4) semana = 5;
-				else if(colIndex == 5) semana = 6;
-				else if(colIndex == 6) semana = 7;
-				else if(colIndex == 7) semana = 1;
-				
-				AtendimentoTaticoDTO atDTO = getAtendimento(rowIndex + 1, semana);
+				AtendimentoRelatorioDTO atDTO = getAtendimento(rowIndex + 1, semana);
 				
 				if(atDTO == null) return new Html("");
 				
@@ -271,12 +223,11 @@ public class GradeHorariaSalaGrid extends ContentPanel {
 		list.add(column);
 	}
 	
-	private AtendimentoTaticoDTO getAtendimento(int credito, int semana) {
+	private AtendimentoRelatorioDTO getAtendimento(int credito, int semana) {
 		int ocupado = 0;
 		if(atendimentos != null) {
-			for(AtendimentoTaticoDTO at : atendimentos) {
+			for(AtendimentoRelatorioDTO at : atendimentos) {
 				if(at.getSemana() == semana) {
-	//				if(credito == 1) return at;
 					if(credito - 1 == ocupado) {
 						return at;
 					}
@@ -285,6 +236,13 @@ public class GradeHorariaSalaGrid extends ContentPanel {
 			}
 		}
 		return null;
+	}
+	
+	private boolean isTatico() {
+		if(atendimentos == null) return false;
+		AtendimentoRelatorioDTO atm = atendimentos.get(0);
+		if(atm == null) return false;
+		return atm instanceof AtendimentoTaticoDTO;
 	}
 	
 	public SalaDTO getSalaDTO() {
@@ -313,7 +271,7 @@ public class GradeHorariaSalaGrid extends ContentPanel {
 
 	public void preencheCores() {
 		Set<Long> set = new HashSet<Long>();
-		for(AtendimentoTaticoDTO a : atendimentos) {
+		for(AtendimentoRelatorioDTO a : atendimentos) {
 			set.add(a.getDisciplinaId());
 		}
 		disciplinasCores.clear();
@@ -324,15 +282,15 @@ public class GradeHorariaSalaGrid extends ContentPanel {
 
 		private static final long serialVersionUID = 3996652461744817138L;
 		
-		public LinhaDeCredito(Integer creditos) {
-			setCreditos(creditos);
+		public LinhaDeCredito(String display) {
+			setDisplay(display);
 		}
 		
-		public Integer getCreditos() {
-			return get("creditos");
+		public String getDisplay() {
+			return get("display");
 		}
-		public void setCreditos(Integer value) {
-			set("creditos", value);
+		public void setDisplay(String value) {
+			set("display", value);
 		}
 		public Integer getTotalCreditos() {
 			return get("totalCreditos");

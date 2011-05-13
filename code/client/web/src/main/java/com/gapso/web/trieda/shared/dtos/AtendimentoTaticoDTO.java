@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.gapso.web.trieda.shared.util.TriedaUtil;
 
-public class AtendimentoTaticoDTO extends AbstractDTO<String> implements Comparable<AtendimentoTaticoDTO> {
+public class AtendimentoTaticoDTO extends AbstractDTO<String> implements Comparable<AtendimentoTaticoDTO>, AtendimentoRelatorioDTO {
 
 	private static final long serialVersionUID = -2870302894382757778L;
 	
@@ -221,7 +221,7 @@ public class AtendimentoTaticoDTO extends AbstractDTO<String> implements Compara
 		return getCreditosTeorico() + getCreditosPratico();
 	}
 	
-	public void concatenateVisaoSala(AtendimentoTaticoDTO other) {
+	public void concatenateVisaoSala(AtendimentoRelatorioDTO other) {
 		setCursoNome(getCursoNome() + " / " + other.getCursoNome());
 		setCurricularString(getCurriculoString() + " / " + other.getCurriculoString());
 		setPeriodoString(getPeriodoString() + " / " + other.getPeriodoString());

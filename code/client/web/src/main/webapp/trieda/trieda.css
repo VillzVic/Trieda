@@ -157,7 +157,8 @@ table.cw-FlexTable td.cw-FlexTable-content {
 	vertical-align: middle;
 	text-align: center;
 }
-.GradeHorariaGrid .x-grid3-col-horario {
+.GradeHorariaGrid .x-grid3-col-horario,
+.GradeHorariaGrid .x-grid3-col-display {
 	font-size: 12px;
 	font-weight: bold;
 	display: table-cell;
