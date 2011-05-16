@@ -2233,46 +2233,64 @@ int SolverMIP::cria_variavel_creditos(void)
                      v.setSubCjtSala( *itCjtSala );  // tps  
                      v.setDia( *itDiscSala_Dias );   // t
 
-                     ITERA_GGROUP( it_prof, itCampus->professores, Professor )
-                     {
-						// id_professor + id_disciplina
-                        std::pair< int, int > prof_Disc 
-                           ( it_prof->getId(), itDisc->getId() );
-                        if ( problemData->prof_Disc_Dias.find( prof_Disc )
-								!= problemData->prof_Disc_Dias.end() )
-                        {
-                           eta = 0;
-                        }
-                        else
-                        {
-                           eta = 10;
-                        }
+					 if(problemData->parametros->modo_otimizacao == "OPERACIONAL")
+					 {
+						 ITERA_GGROUP( it_prof, itCampus->professores, Professor )
+						 {
+							// id_professor + id_disciplina
+							std::pair< int, int > prof_Disc 
+							   ( it_prof->getId(), itDisc->getId() );
+							if ( problemData->prof_Disc_Dias.find( prof_Disc )
+									!= problemData->prof_Disc_Dias.end() )
+							{
+							   eta = 0;
+							}
+							else
+							{
+							   eta = 10;
+							}
 
-                        if ( vHash.find(v) == vHash.end() )
-                        {
-                           vHash[v] = lp->getNumCols();
+							if ( vHash.find(v) == vHash.end() )
+							{
+							   vHash[v] = lp->getNumCols();
 
-                           if ( problemData->parametros->funcao_objetivo == 0 )
-                           {
-                              OPT_COL col( OPT_COL::VAR_INTEGRAL, eta, 0.0,
-										   itCjtSala->maxCredsDia( *itDiscSala_Dias ),
-										   ( char * )v.toString().c_str() );
+							   if ( problemData->parametros->funcao_objetivo == 0 )
+							   {
+								  OPT_COL col( OPT_COL::VAR_INTEGRAL, eta, 0.0,
+											   itCjtSala->maxCredsDia( *itDiscSala_Dias ),
+											   ( char * )v.toString().c_str() );
 
-                              lp->newCol( col );
-                           }
-                           else if( problemData->parametros->funcao_objetivo == 1 ||
-									problemData->parametros->funcao_objetivo == 2 )
-                           {
-                              OPT_COL col( OPT_COL::VAR_INTEGRAL, 0.0, 0.0,
-										   itCjtSala->maxCredsDia( *itDiscSala_Dias ),
-										   ( char * )v.toString().c_str() );
+								  lp->newCol( col );
+							   }
+							   else if( problemData->parametros->funcao_objetivo == 1 ||
+										problemData->parametros->funcao_objetivo == 2 )
+							   {
+								  OPT_COL col( OPT_COL::VAR_INTEGRAL, 0.0, 0.0,
+											   itCjtSala->maxCredsDia( *itDiscSala_Dias ),
+											   ( char * )v.toString().c_str() );
 
-                              lp->newCol( col );
-                           }
+								  lp->newCol( col );
+							   }
 
-                           num_vars++;
-                        }
-                     }
+							   num_vars++;
+							}
+						 }
+					 }
+					 else
+					 {
+						 if(vHash.find(v) == vHash.end())
+						 {
+							   vHash[v] = lp->getNumCols();
+
+							   OPT_COL col( OPT_COL::VAR_INTEGRAL, 0.0, 0.0,
+								   itCjtSala->maxCredsDia( *itDiscSala_Dias ),
+								   ( char * )v.toString().c_str() );
+
+							   lp->newCol( col );
+						 }
+
+						 num_vars++;
+					 }
                   }
                }
             }
@@ -2327,44 +2345,62 @@ int SolverMIP::cria_variavel_creditos_permitir_alunos_varios_campi(void)
 								 v.setSubCjtSala( *itCjtSala );  // tps  
 								 v.setDia( *itDiscSala_Dias );   // t
 
-								 ITERA_GGROUP( it_prof, itCampus->professores, Professor )
+								 if(problemData->parametros->modo_otimizacao == "OPERACIONAL")
 								 {
-									std::pair< int /*idProf*/ , int /*idDisc*/ > prof_Disc 
-									   ( it_prof->getId(), itDisc->getId() );
-									if ( problemData->prof_Disc_Dias.find( prof_Disc )
-										!= problemData->prof_Disc_Dias.end() )
-									{
-									   eta = 0;
-									}
-									else
-									{
-									   eta = 10;
-									}
-
-									if (vHash.find(v) == vHash.end())
-									{
-									   vHash[v] = lp->getNumCols();
-
-									   if ( problemData->parametros->funcao_objetivo == 0 )
+									 ITERA_GGROUP( it_prof, itCampus->professores, Professor )
+									 {
+										std::pair< int /*idProf*/ , int /*idDisc*/ > prof_Disc 
+										   ( it_prof->getId(), itDisc->getId() );
+										if ( problemData->prof_Disc_Dias.find( prof_Disc )
+											!= problemData->prof_Disc_Dias.end() )
 										{
-											OPT_COL col( OPT_COL::VAR_INTEGRAL, eta, 0.0,
-														 itCjtSala->maxCredsDia( *itDiscSala_Dias ),
-														 ( char* )v.toString().c_str() );
-
-											lp->newCol( col );
+										   eta = 0;
 										}
-										else if ( problemData->parametros->funcao_objetivo == 1 ||
-												  problemData->parametros->funcao_objetivo == 2 )
+										else
 										{
-											OPT_COL col( OPT_COL::VAR_INTEGRAL,0.0,0.0,
-														 itCjtSala->maxCredsDia( *itDiscSala_Dias ),
-														 ( char* )v.toString().c_str() );
-
-											lp->newCol( col );
+										   eta = 10;
 										}
 
-									   num_vars += 1;
-									}
+										if (vHash.find(v) == vHash.end())
+										{
+										   vHash[v] = lp->getNumCols();
+
+										   if ( problemData->parametros->funcao_objetivo == 0 )
+											{
+												OPT_COL col( OPT_COL::VAR_INTEGRAL, eta, 0.0,
+															 itCjtSala->maxCredsDia( *itDiscSala_Dias ),
+															 ( char* )v.toString().c_str() );
+
+												lp->newCol( col );
+											}
+											else if ( problemData->parametros->funcao_objetivo == 1 ||
+													  problemData->parametros->funcao_objetivo == 2 )
+											{
+												OPT_COL col( OPT_COL::VAR_INTEGRAL,0.0,0.0,
+															 itCjtSala->maxCredsDia( *itDiscSala_Dias ),
+															 ( char* )v.toString().c_str() );
+
+												lp->newCol( col );
+											}
+
+										   num_vars += 1;
+										}
+									 }
+								 }
+								 else
+								 {
+									 if (vHash.find(v) == vHash.end())
+									 {
+										 vHash[v] = lp->getNumCols();
+
+										 OPT_COL col( OPT_COL::VAR_INTEGRAL,0.0,0.0,
+											 itCjtSala->maxCredsDia( *itDiscSala_Dias ),
+											 ( char* )v.toString().c_str() );
+
+										 lp->newCol( col );
+									 }
+									 
+									 num_vars += 1;
 								 }
 							 }
 						 }
@@ -3929,7 +3965,7 @@ int SolverMIP::cria_variavel_de_folga_demanda_disciplina()
             else if(problemData->parametros->funcao_objetivo == 1 ||
                problemData->parametros->funcao_objetivo == 2)
             {
-               OPT_COL col(OPT_COL::VAR_INTEGRAL,100000.0,0.0,qtdDem,
+               OPT_COL col(OPT_COL::VAR_INTEGRAL,1000.0,0.0,qtdDem,
                   (char*)v.toString().c_str());
 
                lp->newCol(col);
