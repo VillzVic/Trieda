@@ -19,6 +19,11 @@ public interface AtendimentosServiceAsync {
 	void getList(AsyncCallback<PagingLoadResult<AtendimentoTaticoDTO>> callback);
 	void getBusca(SalaDTO sala, TurnoDTO turno, AsyncCallback<List<AtendimentoRelatorioDTO>> callback);
 	void getAtendimentosOperacional(ProfessorDTO professorDTO, TurnoDTO turnoDTO, AsyncCallback<List<AtendimentoOperacionalDTO>> callback);
-	void getBusca(CurriculoDTO curriculoDTO, Integer periodo, TurnoDTO turnoDTO, CampusDTO campusDTO, AsyncCallback<ParDTO<List<AtendimentoTaticoDTO>, List<Integer>>> callback);
+	void getBusca(
+			CurriculoDTO curriculoDTO,
+			Integer periodo,
+			TurnoDTO turnoDTO,
+			CampusDTO campusDTO,
+			AsyncCallback<ParDTO<List<AtendimentoRelatorioDTO>, List<Integer>>> callback);
 	
 }

@@ -382,6 +382,11 @@ public class AtendimentoOperacionalDTO extends AbstractDTO<String> implements Co
 			   dto1.getSemana().equals(dto2.getSemana());
 	}
 	
+	static public boolean compatibleSameTime(AtendimentoOperacionalDTO dto1, AtendimentoOperacionalDTO dto2) {
+		return dto1.getHorarioId().equals(dto2.getHorarioId()) && 
+		dto1.getSemana().equals(dto2.getSemana());
+	}
+	
 	static public int countListDTOsCreditos(List<AtendimentoOperacionalDTO> listDTOs) {
 		int count = 0;
 		for (AtendimentoOperacionalDTO dto : listDTOs) {
@@ -390,5 +395,16 @@ public class AtendimentoOperacionalDTO extends AbstractDTO<String> implements Co
 		return count;
 	}
 
+	@Override
+	public boolean isTeorico() {
+		return getCreditoTeoricoBoolean();
+	}
+
+	@Override
+	public Integer getTotalCreditoDisciplina() {
+		return getTotalCreditos();
+	}
+
+	
 	
 }

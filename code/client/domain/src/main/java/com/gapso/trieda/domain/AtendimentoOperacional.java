@@ -212,6 +212,16 @@ public class AtendimentoOperacional implements Serializable {
         return q.getResultList();
     }
 	
+	@SuppressWarnings("unchecked")
+	public static List<AtendimentoOperacional> findBy(Campus campus, Curriculo curriculo, Integer periodo, Turno turno) {
+		Query q = entityManager().createQuery("SELECT o FROM AtendimentoOperacional o WHERE o.oferta.curriculo = :curriculo AND o.oferta.campus = :campus AND o.oferta.turno = :turno AND o.disciplina IN (SELECT d.disciplina FROM CurriculoDisciplina d WHERE d.curriculo = :curriculo AND d.periodo = :periodo)");
+		q.setParameter("campus", campus);
+		q.setParameter("curriculo", curriculo);
+		q.setParameter("periodo", periodo);
+		q.setParameter("turno", turno);
+		return q.getResultList();
+	}
+	
 	public Cenario getCenario() {
 		return cenario;
 	}

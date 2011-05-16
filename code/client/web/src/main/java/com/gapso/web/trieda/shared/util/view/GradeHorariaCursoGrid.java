@@ -25,7 +25,7 @@ import com.extjs.gxt.ui.client.widget.grid.Grid;
 import com.extjs.gxt.ui.client.widget.grid.GridCellRenderer;
 import com.extjs.gxt.ui.client.widget.layout.FitLayout;
 import com.extjs.gxt.ui.client.widget.tips.QuickTip;
-import com.gapso.web.trieda.shared.dtos.AtendimentoTaticoDTO;
+import com.gapso.web.trieda.shared.dtos.AtendimentoRelatorioDTO;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.CurriculoDTO;
 import com.gapso.web.trieda.shared.dtos.ParDTO;
@@ -40,7 +40,7 @@ public class GradeHorariaCursoGrid extends ContentPanel {
 
 	private Grid<LinhaDeCredito> grid;
 	private ListStore<LinhaDeCredito> store;
-	private List<AtendimentoTaticoDTO> atendimentos;
+	private List<AtendimentoRelatorioDTO> atendimentos;
 	private List<Integer> diaSemanaTamanhoList;
 	private CurriculoDTO curriculoDTO;
 	private int periodo;
@@ -103,13 +103,13 @@ public class GradeHorariaCursoGrid extends ContentPanel {
 		if(getCurriculoDTO() == null || getTurnoDTO() == null  || getCampusDTO() == null || getPeriodo() <= 0) return;
 		grid.mask("Carregando os dados, aguarde alguns instantes", "loading");
 		AtendimentosServiceAsync service = Services.atendimentos();
-		service.getBusca(getCurriculoDTO(), getPeriodo(), getTurnoDTO(), getCampusDTO(), new AsyncCallback<ParDTO<List<AtendimentoTaticoDTO>, List<Integer>>>(){
+		service.getBusca(getCurriculoDTO(), getPeriodo(), getTurnoDTO(), getCampusDTO(), new AsyncCallback<ParDTO<List<AtendimentoRelatorioDTO>, List<Integer>>>(){
 			@Override
 			public void onFailure(Throwable caught) {
 				MessageBox.alert("ERRO!", "Deu falha na conexão", null);
 			}
 			@Override
-			public void onSuccess(ParDTO<List<AtendimentoTaticoDTO>, List<Integer>> result) {
+			public void onSuccess(ParDTO<List<AtendimentoRelatorioDTO>, List<Integer>> result) {
 				atendimentos = result.getPrimeiro();
 				diaSemanaTamanhoList = result.getSegundo();
 				
@@ -173,7 +173,7 @@ public class GradeHorariaCursoGrid extends ContentPanel {
 				
 				int semana = colIndex;
 				
-				AtendimentoTaticoDTO atDTO = getAtendimento(rowIndex + 1, semana);
+				AtendimentoRelatorioDTO atDTO = getAtendimento(rowIndex + 1, semana);
 				
 				if(atDTO == null) return new Html("");
 				
@@ -238,10 +238,10 @@ public class GradeHorariaCursoGrid extends ContentPanel {
 		list.add(column);
 	}
 	
-	private AtendimentoTaticoDTO getAtendimento(int credito, int semana) {
+	private AtendimentoRelatorioDTO getAtendimento(int credito, int semana) {
 		int ocupado = 0;
 		if(atendimentos != null) {
-			for(AtendimentoTaticoDTO at : atendimentos) {
+			for(AtendimentoRelatorioDTO at : atendimentos) {
 				//if(!atendimentosParalelos.containsKey(at)) continue;
 				if(at.getSemana() == semana) {
 					if(credito - 1 == ocupado) {
@@ -306,7 +306,7 @@ public class GradeHorariaCursoGrid extends ContentPanel {
 
 	public void preencheCores() {
 		Set<Long> set = new HashSet<Long>();
-		for(AtendimentoTaticoDTO a : atendimentos) {
+		for(AtendimentoRelatorioDTO a : atendimentos) {
 			set.add(a.getDisciplinaId());
 		}
 		disciplinasCores.clear();

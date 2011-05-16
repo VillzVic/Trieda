@@ -24,6 +24,6 @@ public interface AtendimentosService extends RemoteService {
 	PagingLoadResult<AtendimentoTaticoDTO> getList();
 	List<AtendimentoRelatorioDTO> getBusca(SalaDTO sala, TurnoDTO turno);
 	List<AtendimentoOperacionalDTO> getAtendimentosOperacional(ProfessorDTO professorDTO, TurnoDTO turnoDTO);
-	ParDTO<List<AtendimentoTaticoDTO>, List<Integer>> getBusca(CurriculoDTO curriculoDTO, Integer periodo, TurnoDTO turnoDTO, CampusDTO campusDTO);
+	ParDTO<List<AtendimentoRelatorioDTO>, List<Integer>> getBusca(CurriculoDTO curriculoDTO, Integer periodo, TurnoDTO turnoDTO, CampusDTO campusDTO);
 	
 }
