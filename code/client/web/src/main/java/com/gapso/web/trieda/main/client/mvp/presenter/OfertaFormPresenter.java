@@ -5,6 +5,7 @@ import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.widget.Info;
 import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.button.Button;
+import com.extjs.gxt.ui.client.widget.form.NumberField;
 import com.gapso.web.trieda.shared.dtos.OfertaDTO;
 import com.gapso.web.trieda.shared.mvp.presenter.Presenter;
 import com.gapso.web.trieda.shared.services.OfertasServiceAsync;
@@ -25,6 +26,7 @@ public class OfertaFormPresenter implements Presenter {
 		CampusComboBox getCampusComboBox();
 		CurriculoComboBox getCurriculoComboBox();
 		OfertaDTO getOfertaDTO();
+		NumberField getReceitaNumberField();
 		boolean isValid();
 		
 		SimpleModal getSimpleModal();
@@ -75,6 +77,7 @@ public class OfertaFormPresenter implements Presenter {
 		ofertaDTO.setCampusString(display.getCampusComboBox().getSelection().get(0).getCodigo());
 		ofertaDTO.setMatrizCurricularId(display.getCurriculoComboBox().getSelection().get(0).getId());
 		ofertaDTO.setMatrizCurricularString(display.getCurriculoComboBox().getSelection().get(0).getCodigo());
+		ofertaDTO.setReceita(display.getReceitaNumberField().getValue().doubleValue());
 		return ofertaDTO;
 	}
 	

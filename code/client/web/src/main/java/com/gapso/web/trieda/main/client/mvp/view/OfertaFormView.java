@@ -3,6 +3,7 @@ package com.gapso.web.trieda.main.client.mvp.view;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.FormButtonBinding;
 import com.extjs.gxt.ui.client.widget.form.FormPanel;
+import com.extjs.gxt.ui.client.widget.form.NumberField;
 import com.extjs.gxt.ui.client.widget.layout.FormData;
 import com.gapso.web.trieda.main.client.mvp.presenter.OfertaFormPresenter;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
@@ -27,6 +28,7 @@ public class OfertaFormView extends MyComposite implements OfertaFormPresenter.D
 	private TurnoDTO turnoDTO;
 	private CampusDTO campusDTO;
 	private CurriculoDTO curriculoDTO;
+	private NumberField receitaNF;
 	
 	public OfertaFormView(OfertaDTO ofertaDTO, TurnoDTO turnoDTO, CampusDTO campusDTO, CurriculoDTO curriculoDTO) {
 		this.ofertaDTO = ofertaDTO;
@@ -42,7 +44,7 @@ public class OfertaFormView extends MyComposite implements OfertaFormPresenter.D
 	private void initUI() {
 		String title = (ofertaDTO.getId() == null)? "Inserção de Oferta de Curso em Campus" : "Edição de de Oferta de Curso em Campus";
 		simpleModal = new SimpleModal(title, Resources.DEFAULTS.matrizCurricular16());
-		simpleModal.setHeight(165);
+		simpleModal.setHeight(200);
 		createForm();
 		simpleModal.setContent(formPanel);
 	}
@@ -75,6 +77,16 @@ public class OfertaFormView extends MyComposite implements OfertaFormPresenter.D
 		curriculoCB.setValue(curriculoDTO);
 		curriculoCB.setEmptyText("Selecione uma Matriz Curricular");
 		formPanel.add(curriculoCB, formData);
+		
+		receitaNF = new NumberField();
+		receitaNF.setName(OfertaDTO.PROPERTY_RECEITA);
+		receitaNF.setValue(ofertaDTO.getReceita());
+		receitaNF.setFieldLabel("Receita (R$)");
+		receitaNF.setAllowBlank(false);
+		receitaNF.setAllowDecimals(true);
+		receitaNF.setMaxValue(999999);
+		receitaNF.setEmptyText("Receita médio por crédito (R$)");
+		formPanel.add(receitaNF, formData);
 		
 		FormButtonBinding binding = new FormButtonBinding(formPanel);
 		binding.addButton(simpleModal.getSalvarBt());
@@ -114,6 +126,11 @@ public class OfertaFormView extends MyComposite implements OfertaFormPresenter.D
 	@Override
 	public OfertaDTO getOfertaDTO() {
 		return ofertaDTO;
+	}
+
+	@Override
+	public NumberField getReceitaNumberField() {
+		return receitaNF;
 	}
 
 }

@@ -343,6 +343,7 @@
           <xs:documentation>lista com os horários disponíveis no campus em questão</xs:documentation>
         </xs:annotation>
       </xs:element>
+      <xs:element name="custo" type="xs:double" />
     </xs:sequence>
   </xs:complexType>
   <xs:complexType name="ItemUnidade">
@@ -431,7 +432,7 @@
             <xs:documentation>lista com os horários disponíveis da sala em questão (caso seja considerado o planejamento operacional)</xs:documentation>
           </xs:annotation>
         </xs:element>
-        <xs:element name="creditosDisponíveis" type="GrupoCreditoDisponivel">
+        <xs:element name="creditosDisponiveis" type="GrupoCreditoDisponivel">
           <xs:annotation>
             <xs:documentation>lista com o máximo de créditos disponíveis por dia da sala em questão (caso seja considerado o planejamento tático). Ver requisito RF-O-9 (as disponibilidades de uma sala irão determinar, para o modelo tático, o número máximo de créditos disponíveis em uma sala de aula em um dado dia).</xs:documentation>
           </xs:annotation>
@@ -761,6 +762,7 @@
           <xs:documentation>identificador (ItemCampus) de um campus</xs:documentation>
         </xs:annotation>
       </xs:element>
+      <xs:element name="receita" type="xs:double" />
     </xs:sequence>
   </xs:complexType>
   <xs:complexType name="ItemDemanda">

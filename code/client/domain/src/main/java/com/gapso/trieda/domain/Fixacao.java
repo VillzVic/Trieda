@@ -204,7 +204,7 @@ public class Fixacao implements Serializable {
     
 	@SuppressWarnings("unchecked")
 	public List<HorarioDisponivelCenario> getHorarios(SemanaLetiva semanaLetiva) {
-		Query q = entityManager().createQuery("SELECT o FROM Fixacao o, IN (o.fixacoes) c WHERE c = :fixacao AND o.horarioAula.semanaLetiva = :semanaLetiva");
+		Query q = entityManager().createQuery("SELECT o FROM HorarioDisponivelCenario o, IN (o.fixacoes) c WHERE c = :fixacao AND o.horarioAula.semanaLetiva = :semanaLetiva");
 		q.setParameter("fixacao", this);
 		q.setParameter("semanaLetiva", semanaLetiva);
 		return q.getResultList();

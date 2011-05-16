@@ -1029,6 +1029,7 @@ public class ConvertBeans {
 		domain.setCampus(Campus.find(dto.getCampusId()));
 		domain.setCurriculo(Curriculo.find(dto.getMatrizCurricularId()));
 		domain.setTurno(Turno.find(dto.getTurnoId()));
+		domain.setReceita(dto.getReceita());
 		return domain;
 	}
 	
@@ -1044,6 +1045,7 @@ public class ConvertBeans {
 		dto.setMatrizCurricularId(domain.getCurriculo().getId());
 		dto.setTurnoString(domain.getTurno().getNome());
 		dto.setTurnoId(domain.getTurno().getId());
+		dto.setReceita(domain.getReceita());
 		dto.setDisplayText(dto.getMatrizCurricularString() + " (" + curso.getNome() + ")");
 		return dto;
 	}

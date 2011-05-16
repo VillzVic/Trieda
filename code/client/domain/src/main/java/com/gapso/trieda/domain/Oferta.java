@@ -22,6 +22,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.Table;
 import javax.persistence.Version;
+import javax.validation.constraints.Digits;
 import javax.validation.constraints.NotNull;
 
 import org.springframework.beans.factory.annotation.Configurable;
@@ -53,6 +54,10 @@ public class Oferta implements Serializable {
     @JoinColumn(name = "TUR_ID")
     private Turno turno;
 
+    @Column(name = "OFE_RECEITA")
+    @Digits(integer = 6, fraction = 2)
+    private Double receita;
+    
     @NotNull
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "oferta")
     private Set<Demanda> demandas = new HashSet<Demanda>();
@@ -240,7 +245,6 @@ public class Oferta implements Serializable {
 	public Curriculo getCurriculo() {
         return this.curriculo;
     }
-
 	public void setCurriculo(Curriculo curriculo) {
         this.curriculo = curriculo;
     }
@@ -248,7 +252,6 @@ public class Oferta implements Serializable {
 	public Campus getCampus() {
         return this.campus;
     }
-
 	public void setCampus(Campus campus) {
         this.campus = campus;
     }
@@ -256,7 +259,6 @@ public class Oferta implements Serializable {
 	public Turno getTurno() {
         return this.turno;
     }
-
 	public void setTurno(Turno turno) {
         this.turno = turno;
     }
@@ -264,15 +266,20 @@ public class Oferta implements Serializable {
 	public Set<Demanda> getDemandas() {
         return this.demandas;
     }
-
 	public void setDemandas(Set<Demanda> demandas) {
         this.demandas = demandas;
     }
 	
+	public Double getReceita() {
+		return receita;
+	}
+	public void setReceita(Double receita) {
+		this.receita = receita;
+	}
+
 	public Set<AtendimentoOperacional> getAtendimentosOperacionais() {
 		return this.atendimentosOperacionais;
 	}
-	
 	public void setAtendimentosOperacionais(Set<AtendimentoOperacional> atendimentosOperacionais) {
 		this.atendimentosOperacionais = atendimentosOperacionais;
 	}
@@ -280,7 +287,6 @@ public class Oferta implements Serializable {
 	public Set<AtendimentoTatico> getAtendimentosTaticos() {
 		return this.atendimentosTaticos;
 	}
-	
 	public void setAtendimentosTaticos(Set<AtendimentoTatico> atendimentosTaticos) {
 		this.atendimentosTaticos = atendimentosTaticos;
 	}
@@ -295,6 +301,7 @@ public class Oferta implements Serializable {
         sb.append("Campus: ").append(getCampus()).append(", ");
         sb.append("Turno: ").append(getTurno()).append(", ");
         sb.append("Demandas: ").append(getDemandas() == null ? "null" : getDemandas().size());
+        sb.append("Receita: ").append(getReceita()).append(", ");
         sb.append("Atendimentos Operacionais: ").append(getAtendimentosOperacionais() == null ? "null" : getAtendimentosOperacionais().size());
         sb.append("Atendimentos Taticos: ").append(getAtendimentosTaticos() == null ? "null" : getAtendimentosTaticos().size());
         return sb.toString();

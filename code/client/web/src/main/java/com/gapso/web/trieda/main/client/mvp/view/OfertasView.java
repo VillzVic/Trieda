@@ -75,6 +75,7 @@ public class OfertasView extends MyComposite implements OfertasPresenter.Display
 		list.add(new ColumnConfig(OfertaDTO.PROPERTY_CURSO_STRING, "Curso", 100));
 		list.add(new ColumnConfig(OfertaDTO.PROPERTY_MATRIZ_CURRICULAR_STRING, "Matriz Curricular", 100));
 		list.add(new ColumnConfig(OfertaDTO.PROPERTY_TURNO_STRING, "Turno", 200));
+		list.add(new ColumnConfig(OfertaDTO.PROPERTY_RECEITA, "Receita", 100));
 		return list;
 	}
 

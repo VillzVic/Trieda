@@ -12,6 +12,7 @@ public class OfertaDTO extends AbstractDTO<String> implements Comparable<OfertaD
 	public static final String PROPERTY_CAMPUS_ID = "campusId";
 	public static final String PROPERTY_CAMPUS_STRING = "campusString";
 	public static final String PROPERTY_CURSO_STRING = "cursoString";
+	public static final String PROPERTY_RECEITA = "receita";
 	public static final String PROPERTY_MATRIZ_CURRICULAR_ID = "matrizCurricularId";
 	public static final String PROPERTY_MATRIZ_CURRICULAR_STRING = "matrizCurricularString";
 	public static final String PROPERTY_TURNO_ID = "turnoId";
@@ -21,18 +22,6 @@ public class OfertaDTO extends AbstractDTO<String> implements Comparable<OfertaD
 		super();
 	}
 
-	public OfertaDTO(Long id, Long campusId, String campusString, String cursoString, Long matrizCurricularId, String matrizCurricularString, Long turnoId, String turnoString, Integer version) {
-		setId(id);
-		setCampusId(campusId);
-		setCampusString(campusString);
-		setCursoString(cursoString);
-		setMatrizCurricularId(matrizCurricularId);
-		setMatrizCurricularString(matrizCurricularString);
-		setTurnoId(turnoId);
-		setTurnoString(turnoString);
-		setVersion(version);
-	}
-	
 	public void setId(Long value) {
 		set(PROPERTY_ID, value);
 	}
@@ -66,6 +55,13 @@ public class OfertaDTO extends AbstractDTO<String> implements Comparable<OfertaD
 	}
 	public void setCursoString(String value) {
 		set(PROPERTY_CURSO_STRING, value);
+	}
+	
+	public void setReceita(Double value) {
+		set(PROPERTY_RECEITA, value);
+	}
+	public Double getReceita() {
+		return get(PROPERTY_RECEITA);
 	}
 	
 	public Long getMatrizCurricularId() {
