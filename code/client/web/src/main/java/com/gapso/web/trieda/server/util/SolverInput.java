@@ -317,6 +317,7 @@ public class SolverInput {
 			itemCampus.setCodigo(campus.getCodigo());
 			itemCampus.setNome(campus.getNome());
 			itemCampus.setHorariosDisponiveis(createGrupoHorario(campus.getHorarios(this.semanaLetiva)));
+			itemCampus.setCusto(campus.getValorCredito());
 			
 			Set<String> salasJaAssociadasADisciplina = new HashSet<String>();
 			
@@ -574,6 +575,7 @@ public class SolverInput {
 				itemOfertaCurso.setCursoId(curriculo.getCurso().getId().intValue());
 				itemOfertaCurso.setTurnoId(oferta.getTurno().getId().intValue());
 				itemOfertaCurso.setCampusId(campus.getId().intValue());
+				itemOfertaCurso.setReceita(oferta.getReceita());
 				grupoOfertaCurso.getOfertaCurso().add(itemOfertaCurso);
 			}
 		}
