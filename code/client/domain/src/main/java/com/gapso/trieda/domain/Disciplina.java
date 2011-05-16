@@ -423,6 +423,10 @@ public class Disciplina implements Serializable, Comparable<Disciplina> {
 		return size.intValue() > 0;
 	}
 	
+	public Integer getCreditosTotal() {
+        return getCreditosPratico() + getCreditosTeorico();
+    }
+	
 	private static final long serialVersionUID = 7980821696468062987L;
 
 	public Cenario getCenario() {

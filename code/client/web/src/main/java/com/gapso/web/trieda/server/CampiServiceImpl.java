@@ -294,6 +294,7 @@ public class CampiServiceImpl extends RemoteServiceServlet implements CampiServi
 			List<Demanda> demandas = Demanda.findAllByCampus(campus);
 			Integer qtdAlunosAtendidos = 0;
 			Integer qtdAlunosNaoAtendidos = 0;
+			Map<Demanda, Integer> qtdAlunosNaoAtendidosDemandaMap = new HashMap<Demanda, Integer>();
 			for(Demanda demanda : demandas) {
 //				System.out.println("DEMANDA: "+demanda.getOferta().getCampus().getNome()+"-"+demanda.getOferta().getCurriculo().getCurso().getNome()+"-"+demanda.getOferta().getCurriculo().getDescricao());// TODO: retirar
 //				System.out.println("  discp: "+demanda.getDisciplina().getNome()+" ("+demanda.getQuantidade()+")");// TODO: retirar
@@ -308,13 +309,16 @@ public class CampiServiceImpl extends RemoteServiceServlet implements CampiServi
 					demandaAlunosCreditosNeutros -= atendimento.getTotalCreditos()*atendimento.getQuantidadeAlunos();
 				}
 //				System.out.println("  discp creds: "+demanda.getDisciplina().getTotalCreditos());// TODO: retirar
+				int qtdAlunosNaoAtendidosDemanda = 0;
 				if (atendimentos.isEmpty()) {
 					qtdAlunosNaoAtendidos += demanda.getQuantidade();
+					qtdAlunosNaoAtendidosDemanda = demanda.getQuantidade();
 //					System.out.println("  nao atendidos: "+demanda.getQuantidade());// TODO: retirar
 				} else {
 					if ((demandaAlunosCreditosP > 0) && !demanda.getDisciplina().getLaboratorio()) {
 						if(demandaAlunosCreditosNeutros > 0) {
 							qtdAlunosNaoAtendidos += demandaAlunosCreditosNeutros/demanda.getDisciplina().getTotalCreditos();
+							qtdAlunosNaoAtendidosDemanda = demandaAlunosCreditosNeutros/demanda.getDisciplina().getTotalCreditos();
 //							System.out.println("  nao atendidosN: "+(demandaAlunosCreditosNeutros/demanda.getDisciplina().getTotalCreditos()));// TODO: retirar
 						} else if (demandaAlunosCreditosNeutros < 0) {
 //							System.out.println("  sobra: "+demandaAlunosCreditosNeutros);// TODO: retirar
@@ -322,18 +326,21 @@ public class CampiServiceImpl extends RemoteServiceServlet implements CampiServi
 					} else {
 						if(demandaAlunosCreditosT > 0) {
 							qtdAlunosNaoAtendidos += demandaAlunosCreditosT/demanda.getDisciplina().getCreditosTeorico();
+							qtdAlunosNaoAtendidosDemanda = demandaAlunosCreditosT/demanda.getDisciplina().getCreditosTeorico();
 //							System.out.println("  nao atendidosT: "+(demandaAlunosCreditosT/demanda.getDisciplina().getCreditosTeorico()));// TODO: retirar
 						} else if (demandaAlunosCreditosT < 0) {
 //							System.out.println("  sobra: "+demandaAlunosCreditosT);// TODO: retirar
 						}
 						if(demandaAlunosCreditosP > 0) {
 							qtdAlunosNaoAtendidos += demandaAlunosCreditosP/demanda.getDisciplina().getCreditosPratico();
+							qtdAlunosNaoAtendidosDemanda = demandaAlunosCreditosP/demanda.getDisciplina().getCreditosPratico();
 //							System.out.println("  nao atendidosP: "+(demandaAlunosCreditosP/demanda.getDisciplina().getCreditosPratico()));// TODO: retirar
 						} else if (demandaAlunosCreditosT < 0) {
 //							System.out.println("  sobra: "+demandaAlunosCreditosP);// TODO: retirar
 						}
 					}
 				}
+				qtdAlunosNaoAtendidosDemandaMap.put(demanda, qtdAlunosNaoAtendidosDemanda);
 //				System.out.println("  total nao atendidos: "+qtdAlunosNaoAtendidos);// TODO: retirar
 			}
 			qtdAlunosAtendidos = Demanda.sumDemanda(campus) - qtdAlunosNaoAtendidos;
@@ -377,11 +384,19 @@ public class CampiServiceImpl extends RemoteServiceServlet implements CampiServi
 			Double custoDocenteSemestral = qtdCreditos * custoCredito * 4.5 * 6.0;
 //			Double receitaSemestral = qtdCreditos * qtdAlunosAtendidos * 4.5 * 6.0 * receita;
 			
+			Double receitaSemestral = 0.0;
+			for(Demanda demanda : qtdAlunosNaoAtendidosDemandaMap.keySet()) {
+				int qtdAlunosAtendidosDemanda = demanda.getQuantidade() - qtdAlunosNaoAtendidosDemandaMap.get(demanda);
+				receitaSemestral += demanda.getDisciplina().getCreditosTotal() * qtdAlunosAtendidosDemanda * demanda.getOferta().getReceita();
+			}
+			receitaSemestral *= 4.5 * 6.0; 
+			
 			list.add(new TreeNodeDTO("Turmas abertas: <b>"+qtdTurma+"</b>"));
 			list.add(new TreeNodeDTO("Total de Cr&eacute;ditos semanais: <b>"+qtdCreditos+"</b>"));
 			list.add(new TreeNodeDTO("M&eacute;dia de cr&eacute;ditos por turma: <b>"+mediaCreditoTurma+"</b>"));
 			list.add(new TreeNodeDTO("Custo m&eacute;dio do cr&eacute;dito: <b>R$ "+custoCredito+"</b>"));
 			list.add(new TreeNodeDTO("Custo docente semestral estimado: <b>R$ "+custoDocenteSemestral+"</b>"));
+			list.add(new TreeNodeDTO("Receita: <b>R$ "+receitaSemestral+"</b>"));
 			list.add(new TreeNodeDTO("Utiliza&ccedil;&atilde;o m&eacute;dia das salas de aula: <b>"+mediaSalaDeAula+"%</b>"));
 			list.add(new TreeNodeDTO("Utiliza&ccedil;&atilde;o m&eacute;dia dos laborat&oacute;rios: <b>"+mediaLaboratorio+"%</b>"));
 //			list.add(new TreeNodeDTO("Custo docente por curso"));
