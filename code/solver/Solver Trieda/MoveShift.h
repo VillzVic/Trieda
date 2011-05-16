@@ -15,14 +15,16 @@ class MoveShift : public Move
 protected:
    
    Aula & aula;
-   Professor & profAula;
+   Professor * profAula;
 
    Professor & novoProfAula;
-   vector<pair<Professor*,Horario*> > blocoHorariosVagos;
+   std::vector<HorarioAula*> blocoHorariosVagos;
 
 public:
+
+   using Move::apply; // prevents name hiding
    
-   MoveShift(Aula & aula, Professor & novoProfAula, vector<pair<Professor*,Horario*> > blocoHorariosVagos);
+   MoveShift(Aula & aula, Professor & novoProfAula, std::vector<HorarioAula*> blocoHorariosVagos);
 
    virtual ~MoveShift();
 

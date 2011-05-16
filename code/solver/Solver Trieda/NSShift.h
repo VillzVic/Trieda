@@ -12,23 +12,20 @@
 class NSShift : public NS
 {
 public:
-   //NSShift(ProblemData & problemData);
-   NSShift(ProblemData & problemData, SolucaoOperacional & solOp);
+   
+   NSShift(ProblemData & problemData);
 
    virtual ~NSShift();
 
-   Move & move(const SolucaoOperacional & s);
+   Move & move(SolucaoOperacional & solOp);
 
    void print();
 
 private:
+
    ProblemData & problemData;
    
-   SolucaoOperacional & solOp;
-
-   //std::pair<Aula*, std::vector< std::pair< Professor*, Horario* > > > pickSomeClassAndNewSchedule( const SolucaoOperacional & s );
-   //bool pickSomeClassAndNewSchedule( const SolucaoOperacional & s ); // So para poder compilar !!!!
-   std::pair<Aula*, std::vector< std::pair< Professor*, Horario* > > > pickSomeClassAndNewSchedule();
+   std::pair<Aula*, std::pair<Professor*,std::vector<HorarioAula*> > > pickSomeClassAndNewSchedule(SolucaoOperacional & solOp);
 
    MoveShiftValidator * moveValidator;
 };

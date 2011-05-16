@@ -10,7 +10,7 @@ NSSeqSwapEqBlocks::~NSSeqSwapEqBlocks()
    delete moveValidator;
 }
 
-std::pair< Aula *, Aula * > NSSeqSwapEqBlocks::pickTwoClasses( const SolucaoOperacional & s )
+std::pair< Aula *, Aula * > NSSeqSwapEqBlocks::pickTwoClasses(SolucaoOperacional & s)
 {
    // Critérios a serem respeitados para a escolha das 2 aulas.
    // 1 - Não se deve selecionar a mesma aula.
@@ -38,7 +38,7 @@ std::pair< Aula *, Aula * > NSSeqSwapEqBlocks::pickTwoClasses( const SolucaoOper
 
    int attempt = -1;
 
-   while(!moveValidator->isValid(*a1,*a2) && ++attempt < MAX_ATTEMPTS)
+   while(!moveValidator->isValid(*a1,*a2,s) && ++attempt < MAX_ATTEMPTS)
    {
       itAula = problemData.aulas.begin();
       maxIter = ( rand() % ( s.getMatrizAulas()->size() - 1 ) );
@@ -55,29 +55,38 @@ std::pair< Aula *, Aula * > NSSeqSwapEqBlocks::pickTwoClasses( const SolucaoOper
    {
       std::cout << "Warnning: No valid move generated after MAX_ATTEMPTS (" << MAX_ATTEMPTS << ") iterations." << std::endl;
       
-      a1 = ( *itAula );
-      a2 = ( *itAula );
+      a1 = *problemData.aulas.begin();
+      a2 = *problemData.aulas.begin();
    }
 
    return std::make_pair< Aula *, Aula * > ( a1, a2 );
 }
 
-Move & NSSeqSwapEqBlocks::move( const SolucaoOperacional & s )
+Move & NSSeqSwapEqBlocks::move(SolucaoOperacional & s)
 {
    std::pair< Aula *, Aula * > aulas = pickTwoClasses( s );
 
    Aula & a1 = ( *aulas.first );
    Aula & a2 = ( *aulas.second );
 
-   Professor & profA1 = *(a1.bloco_aula.begin()->first);
-   Professor & profA2 = *(a2.bloco_aula.begin()->first);
+   //std::cout << "************ AULAS SELECIONADAS ************\n\n";
+   //a1.toString();
+   //a2.toString();
 
-   return *(new MoveSwap(a1,profA1,a2,profA2));
+   ////s.toString();
+   //s.toString2();
+
+   //std::cout << "************ ***** ************ ************\n\n";
+
+   //Professor & profA1 = *(a1.bloco_aula.begin()->first);
+   //Professor & profA2 = *(a2.bloco_aula.begin()->first);
+
+   return *(new MoveSwap(a1,a2));
 }
 
-NSIterator & NSSeqSwapEqBlocks::getIterator(const SolucaoOperacional & s)
+NSIterator & NSSeqSwapEqBlocks::getIterator(SolucaoOperacional & s)
 {
-   return *new NSIteratorSwapEqBlocks(*s.getProblemData(),s.getProblemData()->aulas);
+   return *new NSIteratorSwapEqBlocks(*s.getProblemData(),s.getProblemData()->aulas,s);
 }
 
 void NSSeqSwapEqBlocks::print()

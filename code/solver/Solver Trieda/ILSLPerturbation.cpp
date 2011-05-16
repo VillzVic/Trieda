@@ -20,11 +20,12 @@ void ILSLPerturbationLPlus2::perturb(SolucaoOperacional & s, double timelimit, d
    int a = 0; // number of appliable moves
 
    level += 2; // level 0 applies 2 moves
+   std::cout << "Perturbation level: " << level << std::endl;
 
    int x = rand() % ns.size();
 
-   std::cout << "Using ";
-   ns[x]->print();
+   //std::cout << "Using ";
+   //ns[x]->print();
 
    //while ((a < level) && (f < pMax))
    while (a < level)
@@ -34,7 +35,8 @@ void ILSLPerturbationLPlus2::perturb(SolucaoOperacional & s, double timelimit, d
       //if (m.canBeApplied(e, s))
       {
          a++;
-         delete &m.apply(s);
+         delete &(m.apply(s));
+         s.validaSolucao("\tValidando a solucao depois do aplicar um movimento.");
       }
       //else
          //f++;

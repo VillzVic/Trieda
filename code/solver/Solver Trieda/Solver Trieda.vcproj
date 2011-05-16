@@ -1347,6 +1347,10 @@
 							RelativePath=".\RandomDescentMethod.h"
 							>
 						</File>
+						<File
+							RelativePath=".\RVND.hpp"
+							>
+						</File>
 					</Filter>
 				</Filter>
 			</Filter>

@@ -1,6 +1,6 @@
 #include "Aula.h"
 
-Aula::Aula( bool _aulaVirtual )
+Aula::Aula(bool _aulaVirtual)
 {
    turma = 0;
    disciplina = NULL;
@@ -13,42 +13,41 @@ Aula::Aula( bool _aulaVirtual )
    aula_virtual = _aulaVirtual;
 }
 
-Aula::~Aula( void )
+Aula::~Aula(void)
 {
-
 }
 
-void Aula::setTurma( int t )
+void Aula::setTurma(int t)
 {
    this->turma = t;
 }
 
-void Aula::setDisciplina( Disciplina * d )
+void Aula::setDisciplina(Disciplina * d)
 {
    this->disciplina = d;
 }
 
-void Aula::setSala( Sala * s )
+void Aula::setSala(Sala* s)
 {
    this->sala = s;
 }
 
-void Aula::setDiaSemana( int d )
+void Aula::setDiaSemana(int d)
 {
    this->dia_semana = d;
 }
 
-void Aula::setCreditosTeoricos( int ct )
+void Aula::setCreditosTeoricos(int ct)
 {
    this->creditos_teoricos = ct;
 }
 
-void Aula::setCreditosPraticos( int cp )
+void Aula::setCreditosPraticos(int cp)
 {
    this->creditos_praticos = cp;
 }
 
-void Aula::setAulaVirtual( bool value )
+void Aula::setAulaVirtual(bool value)
 {
 	aula_virtual = value;
 }
@@ -63,12 +62,12 @@ int Aula::getTurma() const
    return this->turma;
 }
 
-Disciplina * Aula::getDisciplina() const
+Disciplina* Aula::getDisciplina() const
 {
    return this->disciplina;
 }
 
-Sala * Aula::getSala() const
+Sala* Aula::getSala() const
 {
    return this->sala;
 }
@@ -90,7 +89,7 @@ int Aula::getCreditosPraticos() const
 
 int Aula::getTotalCreditos() const
 {
-   return ( creditos_praticos + creditos_teoricos );
+   return (creditos_praticos+creditos_teoricos);
 }
 
 bool Aula::eVirtual() const
@@ -103,7 +102,7 @@ bool Aula::eFixada() const
    return aula_fixada;
 }
 
-void Aula::toString()
+void Aula::toString() const
 {
    //-------------------------------------------------------------
    std::cout << "\n=================AULA================="
@@ -130,19 +129,38 @@ void Aula::toString()
 			 << std::endl;
    //-------------------------------------------------------------
 
-   //-------------------------------------------------------------
-   // Mostra os horários (bloco de aula) alocados ao professor
-   std::cout << "Horario(s):\n\t";
-   std::vector< std::pair< Professor *, Horario * > >::iterator
-      itBloco_aula = bloco_aula.begin();
-   for(; itBloco_aula != bloco_aula.end();
-		 ++itBloco_aula )
-   {
-	   HorarioAula * horario_aula
-		   = itBloco_aula->second->horario_aula;
+   //std::cout << "\nProfessor (idOperacional): ";
 
-       std::cout << horario_aula->getInicio() << "\n\t";
-   }
-   std::cout << std::endl;
-   //-------------------------------------------------------------
+   //if(bloco_aula.empty())
+   //{ std::cout << " --- " << std::endl; }
+   //else
+   //{ std::cout << bloco_aula.begin()->first->getIdOperacional() << std::endl; }
+
+   ////-------------------------------------------------------------
+   //// Mostra os horários (bloco de aula) alocados ao professor
+   ////std::cout << "Horario(s):\n\t";
+   ////std::vector< std::pair< Professor *, Horario * > >::const_iterator
+   ////   itBloco_aula = bloco_aula.begin();
+   ////for(; itBloco_aula != bloco_aula.end();
+		 ////++itBloco_aula )
+   ////{
+	  //// HorarioAula * horario_aula
+		 ////  = itBloco_aula->second->horario_aula;
+
+   ////    std::cout << horario_aula->getInicio() << "\n\t";
+   ////}
+   //std::cout << "Horario\t\t\t\tHrio Id\t\tProfessor (id;idOperacional)\n\t";
+   //std::vector< std::pair< Professor *, Horario * > >::const_iterator
+   //   itBloco_aula = bloco_aula.begin();
+   //
+   //for(; itBloco_aula != bloco_aula.end();
+		 //++itBloco_aula )
+   //{
+	  // HorarioAula * horario_aula
+		 //  = itBloco_aula->second->horario_aula;
+
+   //   std::cout << horario_aula->getInicio() << "\t" << horario_aula->getId() << "\t\t(" << itBloco_aula->first->getId() << ";" << itBloco_aula->first->getIdOperacional() << ")\n\t";
+   //}
+   //std::cout << std::endl;
+   ////-------------------------------------------------------------
 }

@@ -35,8 +35,19 @@ void writeOutput( ProblemSolution *, char *, char * );
 
 int main( int argc, char** argv )
 {
-   //srand( (unsigned int)(time(NULL)) );
-   srand ( 1305057265 );
+   //unsigned seed = time(NULL);
+   unsigned seed = 1305057265;
+   srand( seed );
+   
+   //srand( 1305052750 );
+   //srand( 1305057265 );
+
+   std::cout << "SEED: " << seed << std::endl;
+
+   FILE * seedFile = fopen("./SEEDS.txt", "a");
+   fprintf(seedFile,"%d\n", seed);
+   if(seedFile)
+      fclose(seedFile);
 
    _signals();
 
@@ -119,8 +130,8 @@ int main( int argc, char** argv )
          solver = new SolverMIP( data, solution, dataLoader );
          solver->solve();
          solver->getSolution( solution );
-         delete solver;
-         delete dataLoader;
+         // delete solver;
+         // delete dataLoader;
       }
       catch( int & status )
       {
@@ -168,6 +179,8 @@ int main( int argc, char** argv )
    {
       return 0;
    }
+
+   std::cout << "TRIEDA executado com sucesso.\n";
 
    return 1;
 }

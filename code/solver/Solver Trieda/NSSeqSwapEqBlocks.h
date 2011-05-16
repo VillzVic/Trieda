@@ -1,3 +1,4 @@
+//TRIEDA-890
 #ifndef _NS_SEQ_SWAP_EQ_BLOCKS_H_
 #define _NS_SEQ_SWAP_EQ_BLOCKS_H_
 
@@ -16,7 +17,7 @@ class NSSeqSwapEqBlocks : public NSSeq
 private:
    ProblemData & problemData;
 
-   std::pair<Aula*,Aula*> pickTwoClasses(const SolucaoOperacional& s);
+   std::pair<Aula*,Aula*> pickTwoClasses(SolucaoOperacional& s);
 
    MoveSwapEqBlocksValidator * moveValidator;
 
@@ -25,9 +26,9 @@ public:
 
    virtual ~NSSeqSwapEqBlocks();
 
-   Move & move(const SolucaoOperacional & s);
+   Move & move(SolucaoOperacional & s);
 
-   NSIterator & getIterator(const SolucaoOperacional & s);
+   NSIterator & getIterator(SolucaoOperacional & s);
 
    void print();
 

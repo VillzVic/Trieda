@@ -10,13 +10,14 @@ class MoveSwap : public Move
 {
 protected:
    Aula & a1;
-   Professor & profA1;
+   Professor * profA1;
 
    Aula & a2;
-   Professor & profA2;
+   Professor * profA2;
 
 public:
-   MoveSwap(Aula & a1, Professor & profA1, Aula & a2, Professor & profA2);
+
+   using Move::apply; // prevents name hiding
 
    MoveSwap(Aula & _a1, Aula & _a2);
 

@@ -1,10 +1,6 @@
 #include "MoveShiftValidator.h"
 
-//MoveShiftValidator::MoveShiftValidator(ProblemData * pD) : MoveValidator(pD)
-//{
-//}
-
-MoveShiftValidator::MoveShiftValidator(ProblemData * pD, SolucaoOperacional & _solOp) : MoveValidator(pD), solOp(_solOp)
+MoveShiftValidator::MoveShiftValidator(ProblemData * pD) : MoveValidator(pD)
 {
 }
 
@@ -12,17 +8,24 @@ MoveShiftValidator::~MoveShiftValidator()
 {
 }
 
-bool MoveShiftValidator::canShiftSchedule(Aula & aula, std::vector< std::pair< Professor*, Horario* > > blocoHorariosVagos) const
+bool MoveShiftValidator::canShiftSchedule(Aula & aula, Professor & professor, std::vector<HorarioAula*> novosHorariosAula, SolucaoOperacional & solOp) const
 {
    // -------------------------------------------------------------------------------------------
    /*
    Checando se a qtd de horários a serem alocados são iguais (em quantidade) aos horários da aula em questão.
    */
 
-   if(aula.bloco_aula.size() != blocoHorariosVagos.size())
-      return false;
+   std::map<Aula*,std::pair<Professor*,std::vector<HorarioAula*> > >::const_iterator
+      itBlocoAulas = solOp.blocoAulas.find(&aula);
 
-   //std::cout << "\tCheck SIZE - OK\n";
+   if(itBlocoAulas == solOp.blocoAulas.end())
+   {
+      std::cout << "Nao encontrei a aula desejada na estrutura de blocoAula de uma dada solucao. ERRO.\n";
+      exit(1);
+   }
+
+   if(itBlocoAulas->second.second.size() != novosHorariosAula.size())
+      return false;
 
    // -------------------------------------------------------------------------------------------
    /*
@@ -41,59 +44,46 @@ bool MoveShiftValidator::canShiftSchedule(Aula & aula, std::vector< std::pair< P
    if(aula.eVirtual())
       return false;
 
-   //std::cout << "\tCheck VIRTUAL - OK\n";
-
    // -------------------------------------------------------------------------------------------
-   /* Checando se o professor e os horários correntes são os mesmos que o novo professor e horários */
-
-   // Professor candidato
-   Professor & professor = *blocoHorariosVagos.begin()->first;
-
-   if(professor.getId()==aula.bloco_aula.begin()->first->getId())
+   // Checando se o professor corrente é o mesmo que o novo professor.
+   if(professor.getId() == itBlocoAulas->second.first->getId())
    {
-      GGroup<int> idsHorarioAula;
-      
-      std::vector< std::pair< Professor*, Horario* > >::iterator 
-         itBlocoHorariosVagos = blocoHorariosVagos.begin();
+      /* Se, pelo menos, um dos novos horários for comum aos horários antigos da aula em questão deve-se
+      retornar false. Ou seja, o shift não será realizado. */
 
-      // Para cada horario novo
-      for(; itBlocoHorariosVagos != blocoHorariosVagos.end(); ++itBlocoHorariosVagos)
-      { idsHorarioAula.add(itBlocoHorariosVagos->second->getHorarioAulaId()); }
+      std::vector<HorarioAula*>::iterator
+         itNovosHorariosAula = novosHorariosAula.begin();
 
-      std::vector< std::pair< Professor*, Horario* > >::iterator 
-         itBlocoHorariosAntigos = aula.bloco_aula.begin();
-
-      bool equals = true;
-
-      // Para cada horario antigo
-      for(; itBlocoHorariosAntigos != aula.bloco_aula.end(); ++itBlocoHorariosAntigos)
+      /* Para cada novo horário da aula em questão, checo se ele conflita com  algum horário da
+      aula selecionada do bloco curricular. */
+      for (; itNovosHorariosAula != novosHorariosAula.end(); ++itNovosHorariosAula)
       {
-         if(idsHorarioAula.find(itBlocoHorariosAntigos->second->getHorarioAulaId()) == 
-            idsHorarioAula.end())
+         std::vector<HorarioAula*>::const_iterator 
+            itHorarioAula = itBlocoAulas->second.second.begin();               
+
+         // Para cada horário alocado da aula selecionada de algum bloco curricular.
+         for(; (itHorarioAula != itBlocoAulas->second.second.end()); ++itHorarioAula)
          {
-            equals = false;
-            break;
+            // Se conflitar o horario, o movimento é inviável.
+            if( **itNovosHorariosAula == **itHorarioAula )
+            {
+               return false;
+            }
          }
       }
-
-      if(equals)
-         return false;
    }
 
    // -------------------------------------------------------------------------------------------
    // Verificando se os possíveis novos horarios estão desocupados (NULL) na solução.
-   /**/
 
-   //Professor & professor = *blocoHorariosVagos.begin()->first;
-
-   for(unsigned h = 0; h < blocoHorariosVagos.size(); ++h)
+   for(unsigned h = 0; h < novosHorariosAula.size(); ++h)
    {
       std::vector< HorarioAula * >::iterator itHorariosAulaOrd = problem_data->horarios_aula_ordenados.begin();
 
       int indice = 0;
       for(; itHorariosAulaOrd != problem_data->horarios_aula_ordenados.end(); ++itHorariosAulaOrd, ++indice)
       {
-         if( (*itHorariosAulaOrd)->getId() == blocoHorariosVagos.at(h).second->getHorarioAulaId())
+         if( (*itHorariosAulaOrd)->getId() == novosHorariosAula.at(h)->getId())
             break;
       }
 
@@ -110,25 +100,20 @@ bool MoveShiftValidator::canShiftSchedule(Aula & aula, std::vector< std::pair< P
 
       if(solOp.getMatrizAulas()->at(professor.getIdOperacional())->at(colHorarioDia) != NULL)
       {
-         //std::cout << "\tFALSE\n";
          return false;
       }
    }
-   /**/
 
    // -------------------------------------------------------------------------------------------
 
    //std::cout << "\tCheck HORARIOS VAGOS SOLUCAO - OK\n";
 
-   /*
-   Se chegou até aqui, é pq todos os horários estão livres.
-   */
+   // Se chegou até aqui, é pq todos os horários estão livres.
 
-   return ((!checkBlockConflict(aula,blocoHorariosVagos)) && checkClassDisponibility(aula,blocoHorariosVagos));
+   return ((!checkBlockConflict(aula,novosHorariosAula,solOp)) && checkClassAndLessonDisponibility(aula,novosHorariosAula,solOp));
 }
 
-bool MoveShiftValidator::isValid(Aula & aula, std::vector< std::pair< Professor*, Horario* > > blocoHorariosVagos)
+bool MoveShiftValidator::isValid(Aula & aula, Professor & prof, std::vector<HorarioAula*> novosHorariosAula, SolucaoOperacional & solOp)
 {
-	//std::cout << "\n\nWarnning: IMPLEMENTAR O METODO <bool MoveShiftValidator::isValid(Aula & aula, std::vector< std::pair< Professor*, Horario* > > blocoHorariosVagos)>. Retornando sempre false, por padrao.\n\n";
-   return ((canShiftSchedule(aula,blocoHorariosVagos)) && !(aula.getDisciplina()->eLab()));
+   return ((canShiftSchedule(aula,prof,novosHorariosAula,solOp)) && !(aula.getDisciplina()->eLab()));
 }

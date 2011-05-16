@@ -14,9 +14,9 @@ public:
 
    virtual ~NSSeq() { }
 
-   virtual Move & move(const SolucaoOperacional &) = 0;
+   virtual Move & move(SolucaoOperacional &) = 0;
 
-   virtual NSIterator& getIterator(const SolucaoOperacional &) = 0;
+   virtual NSIterator& getIterator(SolucaoOperacional &) = 0;
 
    virtual void print() = 0;
 

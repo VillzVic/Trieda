@@ -10,7 +10,7 @@ NSSwapEqTeachersBlocks::~NSSwapEqTeachersBlocks()
    delete moveValidator;
 }
 
-std::pair<Aula*,Aula*> NSSwapEqTeachersBlocks::pickTwoClasses(const SolucaoOperacional& s)
+std::pair<Aula*,Aula*> NSSwapEqTeachersBlocks::pickTwoClasses(SolucaoOperacional& s)
 {
    /*
    Critérios a serem respeitados para a escolha das 2 aulas.
@@ -49,7 +49,7 @@ std::pair<Aula*,Aula*> NSSwapEqTeachersBlocks::pickTwoClasses(const SolucaoOpera
 
    int attempt = -1;
 
-   while(!moveValidator->isValid(*a1,*a2) && ++attempt < MAX_ATTEMPTS)
+   while(!moveValidator->isValid(*a1,*a2,s) && ++attempt < MAX_ATTEMPTS)
    {
       itAula = problemData.aulas.begin();
       maxIter = rand() % (s.getMatrizAulas()->size()-1);
@@ -73,17 +73,17 @@ std::pair<Aula*,Aula*> NSSwapEqTeachersBlocks::pickTwoClasses(const SolucaoOpera
    return std::make_pair<Aula*,Aula*> (a1,a2);
 }
 
-Move & NSSwapEqTeachersBlocks::move(const SolucaoOperacional& s)
+Move & NSSwapEqTeachersBlocks::move(SolucaoOperacional& s)
 {
    std::pair<Aula*,Aula*> aulas = pickTwoClasses(s);
 
    Aula & a1 = *aulas.first;
    Aula & a2 = *aulas.second;
 
-   Professor & profA1 = *(a1.bloco_aula.begin()->first);
-   Professor & profA2 = *(a2.bloco_aula.begin()->first);
+   //Professor & profA1 = *(a1.bloco_aula.begin()->first);
+   //Professor & profA2 = *(a2.bloco_aula.begin()->first);
 
-   return *(new MoveSwap(a1,profA1,a2,profA2));
+   return *(new MoveSwap(a1,a2));
 }
 
 void NSSwapEqTeachersBlocks::print()

@@ -11,7 +11,7 @@ public:
 
    virtual ~MoveSwapEqBlocksValidator();
 
-   bool isValid(Aula & aX, Aula & aY);
+   bool isValid(Aula & aX, Aula & aY, SolucaoOperacional & solOp);
 };
 
 #endif /*_MOVE_SWAP_EQ_BLOCKS_VALIDATOR_HPP_*/

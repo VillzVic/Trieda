@@ -9,7 +9,7 @@
 
 // -----------------------------
 // Para evitar uma dependência circular entre SolucaoOperacional e ProblemData
-//#include "SolucaoOperacional.h"
+#include "SolucaoOperacional.h"
 //class SolucaoOperacional;
 // -----------------------------
 
@@ -19,8 +19,6 @@ public:
 
    MoveValidator(ProblemData * pD);
 
-   //MoveValidator(SolucaoOperacional * solOp) {};
-
    virtual ~MoveValidator();
 
    //virtual bool isValid(Aula & aX, Aula & aY);
@@ -28,20 +26,21 @@ public:
 //protected:
 
    // ToDo : Passar o metodo abaixo para a classe MoveSwapValidator(Cria-la antes. Ela servirá apenas para armazenar esse método.).
-   bool canSwapSchedule(Aula & aX, Aula & aY) const;
+   // PASSAR TB A SOLUCAO PARA PODER EXTRAIR OS HORARIOS DE CADA AULA.
+   bool canSwapSchedule(Aula & aX, Aula & aY, SolucaoOperacional & solOp) const;
 
-   bool checkBlockConflict( Aula & a, std::vector< std::pair< Professor *, Horario * > > & s ) const;
+   bool checkBlockConflict( 
+      Aula & a,
+      std::vector<HorarioAula*> & novosHorariosAula,
+      SolucaoOperacional & solOp ) const;
 
-   bool checkClassDisponibility(
-      Aula & a, 
-      std::vector< std::pair< Professor *, Horario * > > & s) const;
+   bool checkClassAndLessonDisponibility(
+      Aula & a,
+      std::vector<HorarioAula*> & novosHorariosAula,
+      SolucaoOperacional & solOp ) const;
 
 protected:
    
-   //bool canShiftSchedule(Aula & aula, std::vector< std::pair< Professor*, Horario* > > blocoHorariosVagos) const;
-
-//private:
-
    ProblemData * problem_data;
 };
 

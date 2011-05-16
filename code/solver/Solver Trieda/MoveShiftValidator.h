@@ -3,23 +3,20 @@
 
 #include "MoveValidator.h"
 
-#include "SolucaoOperacional.h"
-
 class MoveShiftValidator : public MoveValidator
 {
 public:
-   //MoveShiftValidator(ProblemData * pD);
 
-   MoveShiftValidator(ProblemData * pD, SolucaoOperacional & solOp);
+   MoveShiftValidator(ProblemData * pD);
 
    virtual ~MoveShiftValidator();
 
-   bool canShiftSchedule(Aula & aula, std::vector< std::pair< Professor*, Horario* > > blocoHorariosVagos) const;
+   bool canShiftSchedule(Aula & aula, Professor & prof, std::vector<HorarioAula*> novosHorariosAula, SolucaoOperacional & solOp) const;
 
-   bool isValid(Aula & aula, std::vector< std::pair< Professor*, Horario* > > blocoHorariosVagos);
+   bool isValid(Aula & aula, Professor & prof, std::vector<HorarioAula*> novosHorariosAula, SolucaoOperacional & solOp);
 
 private:
-   SolucaoOperacional & solOp;
+   
 };
 
 #endif /*_MOVE_SHIFT_VALIDATOR_HPP_*/

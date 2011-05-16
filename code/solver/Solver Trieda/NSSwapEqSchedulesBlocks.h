@@ -1,3 +1,4 @@
+//TRIEDA-892
 #ifndef _NS_SWAP_EQ_SCHEDULES_BLOCKS_H_
 #define _NS_SWAP_EQ_SCHEDULES_BLOCKS_H_
 
@@ -14,7 +15,7 @@ class NSSwapEqSchedulesBlocks : public NS
 private:
    ProblemData & problemData;
 
-   std::pair<Aula*,Aula*> pickTwoClasses(const SolucaoOperacional& s);
+   std::pair<Aula*,Aula*> pickTwoClasses(SolucaoOperacional& s);
 
    MoveSwapEqSchedulesBlocksValidator * moveValidator;
 
@@ -23,7 +24,7 @@ public:
 
    virtual ~NSSwapEqSchedulesBlocks();
 
-   Move & move(const SolucaoOperacional & s);
+   Move & move(SolucaoOperacional & s);
 
    void print();
 };

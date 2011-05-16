@@ -13,10 +13,18 @@ class Aula
 public:
 
    Aula( bool = false );
+
    virtual ~Aula( void );
 
    // Ofertas que são atendidas por essa aula
    GGroup< Oferta * > ofertas;
+
+   // ---------------------------------------------------------------------------
+   // DELETAR ISSO !!!!
+   // Para cada crédito alocado da aula em questão armazena-se uma
+   // referência para o horário do professor em que tal alocação foi realizada.
+   //std::vector< std::pair< Professor *, Horario * > > bloco_aula;
+   // ---------------------------------------------------------------------------
 
    void setTurma( int );
    void setDisciplina( Disciplina * );
@@ -36,10 +44,6 @@ public:
    int getTotalCreditos() const;
    bool eVirtual() const;
    bool eFixada() const;
-
-   // Para cada crédito alocado da aula em questão armazena-se uma
-   // referência para o horário do professor em que tal alocação foi realizada.
-   std::vector< std::pair< Professor *, Horario * > > bloco_aula;
 
    virtual bool operator < ( Aula const & right )
    { 
@@ -82,9 +86,10 @@ public:
       return ( !( *this == right ) );
    }
 
-   void toString();
+   void toString() const;
 
 private:
+
    int turma;
    Disciplina * disciplina;
    Sala * sala;

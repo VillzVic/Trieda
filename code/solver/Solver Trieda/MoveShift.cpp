@@ -2,9 +2,9 @@
 
 MoveShift::MoveShift(
                      Aula & _aula,
-                     Professor & _novoProfAula,
-                     vector<pair<Professor*,Horario*> > _blocoHorariosVagos
-                     ) : aula(_aula), profAula(*aula.bloco_aula.begin()->first), novoProfAula(_novoProfAula)
+                     Professor & _novoProfAula, 
+                     std::vector<HorarioAula*> _blocoHorariosVagos
+                     ) : aula(_aula), novoProfAula(_novoProfAula)
 {
    blocoHorariosVagos = _blocoHorariosVagos;
 }
@@ -15,80 +15,92 @@ MoveShift::~MoveShift(void)
 
 Move & MoveShift::apply( SolucaoOperacional & s )
 {
+   print();
    // Para realocar uma aula deve-se: 
    // 1 - Na solução, referenciar os novos horários da aula e apontar para NULL os horários antigos.
    // 2 - Na aula, trocar o vetor que indica o bloco.
 
+   std::map<Aula*,std::pair<Professor*,std::vector<HorarioAula*> > >::iterator 
+      itBlocoAula = s.blocoAulas.find(&aula);
+
+   if(itBlocoAula == s.blocoAulas.end())
+   {
+      std::cout << "MoveShift -> Aula nao encontrada no blocoAulas da solucao corrente." << std::endl;
+      exit(1);
+   }
+
+   profAula = itBlocoAula->second.first;
+
+   //std::cout << "MOVE SHIFT - INIT\n\n";
+
    //std::cout << "------------------------------------------" << std::endl;
    //std::cout << "ANTES" << std::endl;
-   //a1.toString();
-   //a2.toString();
+   //aula.toString();
+
+   //std::cout << "\nNovo professor (idOperacional): " << novoProfAula.getIdOperacional() << std::endl;
+   //std::cout << "\nNovo(s) Horario(s):\n\t";
+
+   //std::vector< std::pair< Professor *, Horario * > >::iterator
+   //   itBA = blocoHorariosVagos.begin();
+   //for(; itBA != blocoHorariosVagos.end();
+   //   ++itBA )
+   //{
+   //   HorarioAula * horario_aula
+   //      = itBA->second->horario_aula;
+   //   std::cout << horario_aula->getInicio() << "\n\t";
+   //}
+   //std::cout << std::endl;
    //std::cout << "------------------------------------------" << std::endl;
 
-   vector< pair< Professor *, Horario * > >::iterator
-      itBlocoAula = aula.bloco_aula.begin();
+   std::vector<HorarioAula*>::iterator
+      itHorarioAula = itBlocoAula->second.second.begin();
 
    // Desalocando os horários da aula em questão.
-   for(; itBlocoAula != aula.bloco_aula.end(); ++itBlocoAula)
+   for(; itHorarioAula != itBlocoAula->second.second.end(); ++itHorarioAula)
    {
-      int indice = 0;
-      int totalHorariosAula
-		  = s.getProblemData()->horarios_aula_ordenados.size();
-      for(; indice < totalHorariosAula; ++indice )
-      {
-         if ( s.getProblemData()->horarios_aula_ordenados.at( indice )
-				== itBlocoAula->second->horario_aula )
-		 {
-            break;
-		 }
-      }
+      int indice = (*itHorarioAula)->getId();
+      int totalHorariosAula = s.getProblemData()->horarios_aula_ordenados.size();
 
-      if ( indice >= totalHorariosAula )
-      {
-         std::cout << "ERRO em <MoveShift::apply(SolucaoOperacional & s)>. "
-				   << "Indice de horario nao encontrado." << std::endl;
-         exit(1);
-      }
-      
-      s.getMatrizAulas()->at( profAula.getIdOperacional() )->at( ( (aula.getDiaSemana()-1) * totalHorariosAula ) + indice ) = ( NULL );
+      s.getMatrizAulas()->at( profAula->getIdOperacional() )->at( ( (aula.getDiaSemana()-1) * totalHorariosAula ) + indice ) = ( NULL );
    }
 
    // Alocando os novos horários para a aula em questão.
-   itBlocoAula =  blocoHorariosVagos.begin();
-   for(; itBlocoAula != blocoHorariosVagos.end(); ++itBlocoAula )
-   {
-      int indice = 0;
-      int totalHorariosAula
-		  = s.getProblemData()->horarios_aula_ordenados.size();      
-      for(; indice < totalHorariosAula; ++indice )
-      {
-         if ( s.getProblemData()->horarios_aula_ordenados.at( indice )
-				== itBlocoAula->second->horario_aula )
-		 {
-            break;
-		 }
-      }
+   itHorarioAula =  blocoHorariosVagos.begin();
 
-      if ( indice >= totalHorariosAula )
-      {
-         std::cout << "ERRO em <MoveShift::apply(SolucaoOperacional & s)>. "
-				   << "Indice de horario nao encontrado." << std::endl;
-         exit(1);
-      }
+   for(; itHorarioAula != blocoHorariosVagos.end(); ++itHorarioAula )
+   {
+      int indice = (*itHorarioAula)->getId();
+      int totalHorariosAula = s.getProblemData()->horarios_aula_ordenados.size();      
 
       s.getMatrizAulas()->at( novoProfAula.getIdOperacional() )->at( ( (aula.getDiaSemana()-1) * totalHorariosAula ) + indice ) = ( &aula );
    }
 
-   // Trocando os horários.
-   aula.bloco_aula.swap(blocoHorariosVagos);
+   // Trocando o professor e os horários.
+   itBlocoAula->second.first = &novoProfAula;
+
+   itBlocoAula->second.second.swap(blocoHorariosVagos);
 
    //std::cout << "------------------------------------------" << std::endl;
    //std::cout << "DEPOIS" << std::endl;
-   //a1.toString();
-   //a2.toString();
+   //aula.toString();
+
+   //std::cout << "\nAntigo professor (idOperacional): " << profAula.getIdOperacional() << std::endl;
+   //std::cout << "\nAntigo(s) Horario(s):\n\t";
+   ////std::vector< std::pair< Professor *, Horario * > >::iterator
+   //itBA = blocoHorariosVagos.begin();
+   //for(; itBA != blocoHorariosVagos.end();
+   //   ++itBA )
+   //{
+   //   HorarioAula * horario_aula
+   //      = itBA->second->horario_aula;
+   //   std::cout << horario_aula->getInicio() << "\n\t";
+   //}
+   //std::cout << std::endl;
    //std::cout << "------------------------------------------" << std::endl;
 
-   return ( *new MoveShift( aula, profAula, blocoHorariosVagos ) );
+   //std::cout << "MOVE SHIFT - END\n\n";
+
+   return ( *new MoveShift( aula, *profAula, blocoHorariosVagos ) );
 }
 
 bool MoveShift::operator ==( const Move & m ) const
@@ -96,36 +108,21 @@ bool MoveShift::operator ==( const Move & m ) const
    const MoveShift & _m = ( const MoveShift & ) m;
 
    if (_m.aula != aula)
-      return false;
-
-   // Checando se os horários são os mesmos.
-   vector<pair<Professor*,Horario*> >::const_iterator itBlocoHorariosVagos = blocoHorariosVagos.begin();
-
-   for(; itBlocoHorariosVagos != blocoHorariosVagos.end(); ++itBlocoHorariosVagos)
    {
-      bool encontrou = false;
-
-      vector<pair<Professor*,Horario*> >::iterator
-         itHorariosAula = aula.bloco_aula.begin();
-
-      for(; itHorariosAula != aula.bloco_aula.end(); ++itHorariosAula)
-      {
-         if(*(itHorariosAula->second) == *(itBlocoHorariosVagos->second))
-         {
-            encontrou = true;
-            break;
-         }
-      }
-
-      if(!encontrou)
-         return false;
+      //std::cout << "AULAS DIFERENTES!\n";
+      return false;
    }
 
-   /*Se chegou aqui, eh pq os horarios sao iguais*/
-   return ( profAula == novoProfAula );
+   //std::cout << "AULAS IGUAIS!\n";
+
+   return ( _m.novoProfAula == novoProfAula );
 }
 
 void MoveShift::print()
 {
    std::cout << "MoveShift" << std::endl;
+
+   //aula.toString();
+   //std::cout << "Professor atual (idOp): " << profAula.getIdOperacional() << std::endl;
+   //std::cout << "Professor candidato (idOp): " << novoProfAula.getIdOperacional() << std::endl;
 }

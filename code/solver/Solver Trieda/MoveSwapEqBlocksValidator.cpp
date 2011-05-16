@@ -8,10 +8,10 @@ MoveSwapEqBlocksValidator::~MoveSwapEqBlocksValidator()
 {
 }
 
-bool MoveSwapEqBlocksValidator::isValid(Aula & aX, Aula & aY)
+bool MoveSwapEqBlocksValidator::isValid(Aula & aX, Aula & aY, SolucaoOperacional & solOp)
 {
    return(
-      (canSwapSchedule(aX,aY)) &&
+      (canSwapSchedule(aX,aY,solOp)) &&
 
       (aX.getTotalCreditos() == aY.getTotalCreditos()) &&
 

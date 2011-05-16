@@ -4,12 +4,12 @@
 #include <map>
 #include <vector>
 
-#include "input.h"
 #include "Aula.h"
 #include "Horario.h"
+#include "HorarioAula.h"
 #include "Professor.h"
 #include "ProblemData.h"
-#include "MoveValidator.h"
+#include "input.h"
 
 typedef std::vector< std::vector< Aula * > * > MatrizSolucao;
 
@@ -17,29 +17,42 @@ class SolucaoOperacional
 {
 public:
    SolucaoOperacional( ProblemData * );
-   SolucaoOperacional( SolucaoOperacional const & );
-   virtual ~SolucaoOperacional( void );
 
-   // Dado um índice que corresponde a uma linha de um dado
-   // professor na matriz de solução, o dia da semana e o
-   // índice de um horário de aula, retorna o horário
-   // correspondente à aula alocada (ou NULL, caso não haja
-   // aula alocada) OBS.: o índice do horário de aula que
-   // deve ser informado é a posição desse horário no vetor
-   // de horários de aula ordenado, que fica no 'problemData'
-   Horario * getHorario( int, int, int );
+   SolucaoOperacional(SolucaoOperacional const & s);
+
+   virtual ~SolucaoOperacional(void);
+
+   /* Armazena o professor e todos os horarios (<HorarioAula>) que uma aula foi alocada na solucao corrente.
+   Essa estrutura serve para agilizar o acesso ao professor e todos os horarios (<HorarioAula>) em que cada
+   aula esta alocada. Assim, ha necessidade de percorrer uma solucao para saber onde uma determinada aula esta
+   alocada. */
+   std::map<Aula*,std::pair<Professor*,std::vector<HorarioAula*> > > blocoAulas;
+
+   //void carregaSolucaoInicial();
+
+   // Dado um par 'dia da semana' e 'horário',
+   // retornar a coluna correspondente a esse
+   // par na matriz (a linha é o professor atual)
+   int getIndiceMatriz( int, Horario * );
+
+   // Dado um índice que corresponde a uma linha
+   // de um dado professor na matriz de solução,
+   // o dia da semana e o horário de aula desejado,
+   // retorna o horário correspondente à aula
+   // alocada (ou NULL, caso não haja aula alocada)
+   Horario * getHorario( int, int, int ) const;
 
    // Dado um índice que corresponde a uma linha da
    // matriz de solução, retorna o professor correspondente
-   Professor * getProfessorMatriz( int );
+   Professor * getProfessorMatriz(int) const;
 
    ProblemData * getProblemData() const;
 
    void setMatrizAulas( MatrizSolucao * );
    MatrizSolucao * getMatrizAulas() const;
 
-   void toString();
-   void toString2();
+   void toString() const;
+   void toString2() const;
 
    // Dado o ID do professor, retorna um
    // ponteiro para o objeto 'Professor'
@@ -59,7 +72,7 @@ public:
 
    // Adiciona um novo professor à solução. O inteiro retornado
    // é referente à posição (linha) que o novo  professor ocupa na solução.
-   int addProfessor( Professor &, std::vector< Aula * > & );
+   int addProfessor(Professor &, std::vector< Aula * > &);
 
    // FUTURAMENTE, VAI SER NECESSARIO CRIAR UM METODO PARA REMOVER UM PROFESSOR.
 
@@ -68,22 +81,31 @@ public:
    int getTotalDeProfessores() const;
 
    // Verifica se as aula <aX> e <aY> podem ter trocados os seus respectivos horários.
-   // bool podeTrocarHorariosAulas( Aula &, Aula & ) const;
+   //bool podeTrocarHorariosAulas( Aula &, Aula & ) const;
 
    // Função auxiliar à função podeTrocarHorariosAulas
-   // bool checkConflitoBlocoCurricular( Aula &, std::vector< std::pair< Professor *, Horario * > > & ) const;
+   //bool checkConflitoBlocoCurricular( Aula &, std::vector< std::pair< Professor *, Horario * > > & ) const;
 
-   // ToDo : utilizar a estrutura abaixo para alocar o mesmo professor para créditos teóricos e práticos de
-   // uma disciplina (qdo a disc foi dividida). Uma outra maneira seria dar uma prioridade maior para alocar
-   // essas disciplinas. O problema é como tratar isso nos movimentos.
-   // Armazena o professor alocado para ministrar os créditos teóricos e práticos de uma disciplina.
-   // std::map< std::pair< int /*turma*/ , int /*modulo do id da disciplina*/ >, Professor * > profTurmaDiscAula;
+   /* ToDo : utilizar a estrutura abaixo para alocar o mesmo professor para créditos teóricos e práticos de
+   uma disciplina (qdo a disc foi dividida). Uma outra maneira seria dar uma prioridade maior para alocar
+   essas disciplinas. O problema é como tratar isso nos movimentos. */
+   /* Armazena o professor alocado para ministrar os créditos teóricos e práticos de uma disciplina. */
+   //std::map<std::pair<int/*turma*/,int/*modulo do id da disciplina*/>, Professor*> profTurmaDiscAula;
 
-   // Checa a disponibilidade dos horários da(s) sala(s) demandados pelas aulas em questão.
-   // bool checkDisponibilidadeHorarioSalaAula(
-   //	   Aula & , std::vector< std::pair< Professor *, Horario * > > & ) const;
+   /* Checa a disponibilidade dos horários da(s) sala(s) demandados pelas aulas em questão. */
+   //bool checkDisponibilidadeHorarioSalaAula(
+      //Aula & aula, 
+      //std::vector< std::pair< Professor *, Horario * > > & novosHorariosAula) const;
 
-   int indice_horario_aula_ordenado( int );
+   /* 
+   Testa a solução em questão. Se ela for factível retorna TRUE, cc. retorna FALSE. 
+
+   ESSA FUNÇÃO SERVE APENAS PARA PODER TESTAR OS MOVIMENTOS REALIZADOS PELAS ESTRUTURAS DE VIZINHANÇA.
+   PROVAVELMENTE ELA SERÁ CARA, EM TERMOS DE TEMPO DE PROCESSAMENTO. DEVE-SE UTILIZA-LA APENAS PARA VALIDAÇÃO
+   DAS ESTRUTURAS DE VIZINHANÇA. UMA VEZ QUE ESTEJA GARANTIDO QUE AS ESTRUTURAS DE VIZINHANÇA ESTÃO FUNCIONANDO
+   DE ACORDO COM O PROPOSTO, DEVE-SE RETIRAR AS CHAMADAS A ESSE METODO.
+   */
+   void validaSolucao(std::string msg = "") const;
 
    // Fixações do tático
    bool fixacaoDiscSala( Aula * );
@@ -99,7 +121,7 @@ public:
 
 private:
    
-   ProblemData * problem_data;
+   ProblemData* problem_data;
 
    int total_dias;
    int total_horarios;
@@ -117,6 +139,18 @@ private:
    // Os dias que tiverem menos horários de aula deverão ter
    // aulas virtuais alocadas para completar a matriz
    int max_horarios_dia();
+};
+
+class TesteSolucaoOperacional
+{
+public:
+   TesteSolucaoOperacional(std::string str)
+   {
+      std::cout << "Erro na validacao da solucao.\n\n" << str << std::endl;
+      exit(1);
+   }
+
+   virtual ~TesteSolucaoOperacional() {};
 };
 
 #endif

@@ -16,7 +16,7 @@ public:
    {
    }
 
-   virtual Move & move(const SolucaoOperacional& s) = 0;
+   virtual Move & move(SolucaoOperacional& s) = 0;
 
    virtual void print() = 0;
    

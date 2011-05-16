@@ -29,6 +29,7 @@
 
 #include "IteratedLocalSearchLevels.h"
 #include "RandomDescentMethod.h"
+#include "RVND.hpp"
 
 #define PRINT_cria_variaveis
 #define PRINT_cria_restricoes

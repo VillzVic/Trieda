@@ -1,17 +1,16 @@
 #include "NSShift.h"
 
-NSShift::NSShift(ProblemData & _problemData, SolucaoOperacional & _solOp) : problemData(_problemData), solOp(_solOp)
+NSShift::NSShift(ProblemData & _problemData) : problemData(_problemData)
 {
-	moveValidator = new MoveShiftValidator(&problemData,solOp);
+   moveValidator = new MoveShiftValidator(&problemData);
 }
 
 NSShift::~NSShift()
 {
+   delete moveValidator;
 }
 
-//std::pair<Aula*, std::vector< std::pair< Professor*, Horario* > > > NSShift::pickSomeClassAndNewSchedule( const SolucaoOperacional & s )
-//bool NSShift::pickSomeClassAndNewSchedule( const SolucaoOperacional & s ) // So para poder compilar !!!!
-std::pair< Aula *, std::vector< std::pair< Professor *, Horario * > > > NSShift::pickSomeClassAndNewSchedule()
+std::pair<Aula*, std::pair<Professor*,std::vector<HorarioAula*> > > NSShift::pickSomeClassAndNewSchedule(SolucaoOperacional & solOp)
 {
    // Critérios a serem respeitados para a escolha da aula.
    // 1 - Somente serão realocados os horários da aula se os novos horários assumidos por ela 
@@ -23,17 +22,33 @@ std::pair< Aula *, std::vector< std::pair< Professor *, Horario * > > > NSShift:
    // da aula em questão deve ter o eLab == False ).
 
    Aula * aula = NULL;
-   GGroup< Aula * >::iterator itAula = problemData.aulas.begin();
+
+   GGroup<Aula*>::iterator itAula = problemData.aulas.begin();
 
    int maxIter = ( rand() % ( solOp.getMatrizAulas()->size() - 1 ) );
    for( int i = 0; i < maxIter; ++i, ++itAula );
 
    aula = ( *itAula );
 
-   std::vector< std::pair< Professor *, Horario * > > blocoAula ( aula->bloco_aula );
+   std::map<Aula*,std::pair<Professor*,std::vector<HorarioAula*> > >::iterator
+      itBlocoAulas = solOp.blocoAulas.find(aula);
+
+   if(itBlocoAulas == solOp.blocoAulas.end())
+   {
+      std::cout << "NSShift : Aula nao encontrada no blocoAulas da solucao corrente." << std::endl;
+      exit(1);
+   }
+
+   std::vector<HorarioAula*> novosHorariosAula (itBlocoAulas->second.second);
+   Professor * professor = NULL;
+
+   // Selecionando o novo professor.
+   int idOpProf = rand() % solOp.getMatrizAulas()->size();
+   Professor & novoProf = *solOp.getProfessorMatriz(idOpProf);
 
    int attempt = -1;
-   while( !moveValidator->isValid( *aula, blocoAula ) && ++attempt < MAX_ATTEMPTS )
+
+   while(!moveValidator->isValid(*aula,novoProf,novosHorariosAula,solOp) && ++attempt < MAX_ATTEMPTS)
    {
       // Selecionando uma aula.
       itAula = problemData.aulas.begin();
@@ -42,59 +57,48 @@ std::pair< Aula *, std::vector< std::pair< Professor *, Horario * > > > NSShift:
       aula = ( *itAula );
 
       // Selecionando o novo professor.
-      int idOpProf = ( rand() % solOp.getMatrizAulas()->size() );
+      int idOpProf = rand() % solOp.getMatrizAulas()->size();
+      professor = solOp.getProfessorMatriz(idOpProf);
 
-      // Selecionando os novos horarios pertencentes ao novo professor selecionado anteriormente.
-      // Devo me basear no total de creditos da aula em questao para poder selecionar os horarios validos.
-      // sortear o primeiro id e pegar em sequencia os demais horarios. TOMAR CUIDADO PARA NAO EXTRAPOLAR O DIA.
+      /*
+      Selecionando os novos horarios (pertencentes ao novo professor selecionado anteriormente).
+      
+      Devo me basear no total de creditos da aula em questao para poder selecionar os horarios validos.
+      sortear o primeiro id e pegar em sequencia os demais horarios. TOMAR CUIDADO PARA NAO EXTRAPOLAR O DIA.
+      */
 
-      int hrMaxIniPlus1 = ( solOp.getTotalHorarios() - aula->getTotalCreditos() + 1 );
-      int hrIni = ( rand() % hrMaxIniPlus1 );
-      blocoAula.clear();
+      int hrMaxIniPlus1 = solOp.getTotalHorarios() - aula->getTotalCreditos() + 1;
 
+      int hrIni = (rand() % hrMaxIniPlus1);
+
+      novosHorariosAula.clear();
+     
       // Armazenando os possíveis novos horários.
-      for ( int i = 0; i < aula->getTotalCreditos(); ++i, ++hrIni )
+      for(int i = 0; i < aula->getTotalCreditos(); ++i, ++hrIni)
       {
-         Horario * hrAula = solOp.getHorario( idOpProf, aula->getDiaSemana(), hrIni );
-         if ( hrAula == NULL )
-         {
-			 blocoAula.clear();
-			 break;
-		 }
-
-         blocoAula.push_back(
-            std::make_pair(
-            solOp.getProfessorMatriz( idOpProf ),
-            solOp.getHorario( idOpProf, aula->getDiaSemana(), hrIni ) ) );
-      }
-
-      if ( blocoAula.empty() )
-      {
-         blocoAula = ( aula->bloco_aula );
+         HorarioAula * hrAula = problemData.horarios_aula_ordenados.at(hrIni);
+         novosHorariosAula.push_back(hrAula);
       }
    }
 
    if(attempt >= MAX_ATTEMPTS)
    {
       std::cout << "Warnning: No valid move generated after MAX_ATTEMPTS (" << MAX_ATTEMPTS << ") iterations." << std::endl;
-      
-      return std::make_pair(aula,aula->bloco_aula);
+      return std::make_pair(aula,itBlocoAulas->second);
    }
 
-   return std::make_pair(aula,blocoAula);
+   return std::make_pair(aula,std::make_pair(professor,novosHorariosAula));
 }
 
-Move & NSShift::move(const SolucaoOperacional & s)
+Move & NSShift::move(SolucaoOperacional & solOp)
 {
-	std::pair<Aula*, std::vector< std::pair< Professor*, Horario* > > > aux = pickSomeClassAndNewSchedule();
+   std::pair<Aula*, std::pair<Professor*,std::vector<HorarioAula*> > >
+      classAndNewSchedule = pickSomeClassAndNewSchedule(solOp);
 
-	//std::cout << "Metodo Move & move(const SolucaoOperacional & s) de NSShift nao implementado ainda.\nSaindo.\n\n";
-	//exit(1);
-
-   Aula & aula = *aux.first;
-   Professor & novoProfAula = *aux.second.begin()->first;
+   Aula & aula = *(classAndNewSchedule.first);
+   Professor & novoProfAula = *(classAndNewSchedule.second.first);
    
-   return *new MoveShift(aula,novoProfAula,aux.second);
+   return *new MoveShift(aula,novoProfAula,classAndNewSchedule.second.second);
 }
 
 void NSShift::print()

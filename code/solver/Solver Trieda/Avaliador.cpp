@@ -141,45 +141,59 @@ double Avaliador::avaliaSolucao( SolucaoOperacional & solucao, bool imprime_resu
    // precisa-se de uma instância multi-campi
 
    // Chamada dos métodos que fazem a avaliação da solução
-   calculaViolacaoRestricaoFixacao( solucao );
-   calculaDescolamentoProfessor( solucao );
-   calculaDescolamentoBlocoCurricular( solucao );
-   calculaGapsHorariosProfessores( solucao );
-   avaliacaoCustoCorpoDocente( solucao );
-   violacoesCargasHorarias( solucao );
-   avaliaDiasProfessorMinistraAula( solucao );
-   violacaoUltimaPrimeiraAula( solucao );
-   avaliaNumeroMestresDoutores( solucao );
-   avaliaMaximoDisciplinasProfessorPorCurso( solucao );
-   avaliaPreferenciasProfessorDisciplina( solucao );
-   avaliaCustoProfessorVirtual( solucao );
-   avaliaTempoParcialIntegral( solucao );
+   //std::cout << "Avaliacao: ";
+   calculaViolacaoRestricaoFixacao(solucao);
+   //std::cout << "1";
+   calculaDescolamentoProfessor(solucao);
+   //std::cout << ", 2";
+   calculaDescolamentoBlocoCurricular(solucao);
+   //std::cout << ", 3";
+   calculaGapsHorariosProfessores(solucao);
+   //std::cout << ", 4";
+   avaliacaoCustoCorpoDocente(solucao);
+   //std::cout << ", 5";
+   violacoesCargasHorarias(solucao);
+   //std::cout << ", 6";
+   avaliaDiasProfessorMinistraAula(solucao);
+   //std::cout << ", 7";
+   violacaoUltimaPrimeiraAula(solucao);
+   //std::cout << ", 8";
+   avaliaNumeroMestresDoutores(solucao);
+   //std::cout << ", 9";
+   avaliaMaximoDisciplinasProfessorPorCurso(solucao);
+   //std::cout << ", 10";
+   avaliaPreferenciasProfessorDisciplina(solucao);
+   //std::cout << ", 11";
+   avaliaCustoProfessorVirtual(solucao);
+   //std::cout << ", 12";
+   avaliaTempoParcialIntegral(solucao);
+   //std::cout << ", 13\n";
 
    double funcao_objetivo = 0.0;
 
    // Contabilização do valor da solução
    // TODO -- atribuir valores adequados aos PESOS
-   funcao_objetivo += ( PESO_FIXACAO * totalViolacaoRestricaoFixacao );
-   funcao_objetivo += ( PESO_DESLOCAMENTO * totalViolacoesDescolamento );
-   funcao_objetivo += ( PESO_TEMPO_DESLOCAMENTO * totalTempoDescolamento );
-   funcao_objetivo += ( PESO_VIOLACAO_DESLOCAMENTO_PROFESSOR * totalViolacoesDeslocamentoProfessor );
-   funcao_objetivo += ( PESO_DESLOCAMENTO_PROFESSOR * totalDeslocamentosProfessor );
-   funcao_objetivo += ( PESO_GAPS_HORARIO * totalGapsHorariosProfessores );
-   funcao_objetivo += ( PESO_NOTA_CORPO_DOCENTE * totalAvaliacaoCorpoDocente );
-   funcao_objetivo += ( PESO_CUSTO_CORPO_DOCENTE * totalCustoCorpoDocente );
-   funcao_objetivo += ( PESO_CH_MINIMA_ANTERIOR * totalViolacoesCHMinimaSemestreAterior );
-   funcao_objetivo += ( PESO_CH_MINIMA_PROFESSOR * totalViolacoesCHMinimaProfessor );
-   funcao_objetivo += ( PESO_CH_MAXIMA_PROFESSOR * totalViolacoesCHMaximaProfessor );
-   funcao_objetivo += ( PESO_TOTAL_DIAS_SEMANA * totalDiasProfessorMinistraAula );
-   funcao_objetivo += ( PESO_ULTIMA_E_PRIMEIRA_AULA * totalViolacoesUltimaPrimeiraAula );
-   funcao_objetivo += ( PESO_PERCENTUAL_MESTRES * totalViolacoesMestres );
-   funcao_objetivo += ( PESO_PERCENTUAL_DOUTORES * totalViolacoesDoutores );
-   funcao_objetivo += ( PESO_DISCIPLINAS_PROFESSOR_CURSO * totalViolacoesDiscProfCurso );
-   funcao_objetivo += ( PESO_PREFERENCIA_DISCIPLINA * totalPreferenciasProfessorDisciplina );
-   funcao_objetivo += ( PESO_NUMERO_PROFESSORES_VIRTUAIS * totalProfessoresVirtuais );
-   funcao_objetivo += ( PESO_CREDITOS_PROFESSORES_VIRTUAIS * totalCreditosProfessoresVirtuais );
-   funcao_objetivo += ( PESO_VIOLACOES_PARCIAL_INTEGRAL * totalViolacoesTempoParcialIntegral );
-   funcao_objetivo += ( PESO_VIOLACOES_INTEGRAL * totalViolacoesTempoIntegral );
+   funcao_objetivo += (PESO_FIXACAO * totalViolacaoRestricaoFixacao);
+   funcao_objetivo += (PESO_DESLOCAMENTO * totalViolacoesDescolamento);
+   funcao_objetivo += (PESO_TEMPO_DESLOCAMENTO * totalTempoDescolamento);
+   funcao_objetivo += (PESO_VIOLACAO_DESLOCAMENTO_PROFESSOR * totalViolacoesDeslocamentoProfessor);
+   funcao_objetivo += (PESO_DESLOCAMENTO_PROFESSOR * totalDeslocamentosProfessor);
+   funcao_objetivo += (PESO_GAPS_HORARIO * totalGapsHorariosProfessores);
+   funcao_objetivo += (PESO_NOTA_CORPO_DOCENTE * totalAvaliacaoCorpoDocente);
+   funcao_objetivo += (PESO_CUSTO_CORPO_DOCENTE * totalCustoCorpoDocente);
+   funcao_objetivo += (PESO_CH_MINIMA_ANTERIOR * totalViolacoesCHMinimaSemestreAterior);
+   funcao_objetivo += (PESO_CH_MINIMA_PROFESSOR * totalViolacoesCHMinimaProfessor);
+   funcao_objetivo += (PESO_CH_MAXIMA_PROFESSOR * totalViolacoesCHMaximaProfessor);
+   funcao_objetivo += (PESO_TOTAL_DIAS_SEMANA * totalDiasProfessorMinistraAula);
+   funcao_objetivo += (PESO_ULTIMA_E_PRIMEIRA_AULA * totalViolacoesUltimaPrimeiraAula);
+   funcao_objetivo += (PESO_PERCENTUAL_MESTRES * totalViolacoesMestres);
+   funcao_objetivo += (PESO_PERCENTUAL_DOUTORES * totalViolacoesDoutores);
+   funcao_objetivo += (PESO_DISCIPLINAS_PROFESSOR_CURSO * totalViolacoesDiscProfCurso);
+   funcao_objetivo += (PESO_PREFERENCIA_DISCIPLINA * totalPreferenciasProfessorDisciplina);
+   funcao_objetivo += (PESO_NUMERO_PROFESSORES_VIRTUAIS * totalProfessoresVirtuais);
+   funcao_objetivo += (PESO_CREDITOS_PROFESSORES_VIRTUAIS * totalCreditosProfessoresVirtuais);
+   funcao_objetivo += (PESO_VIOLACOES_PARCIAL_INTEGRAL * totalViolacoesTempoParcialIntegral);
+   funcao_objetivo += (PESO_VIOLACOES_INTEGRAL * totalViolacoesTempoIntegral);
 
    // Exibe os resultados detalhados da avaliação
    if ( imprime_resultados )
@@ -423,9 +437,9 @@ void Avaliador::calculaDescolamentoBlocoCurricular( SolucaoOperacional & solucao
          }
 
          // Recupera o horário referente à aula atual
-		 dia_semana = ( j / solucao.getTotalHorarios() + 1 );
+		 dia_semana = ( j / solucao.getTotalHorarios() );
 		 id_horario_aula = ( j % solucao.getTotalHorarios() );
-         horario = solucao.getHorario( i, dia_semana, id_horario_aula );
+         horario = solucao.getHorario(i, dia_semana, id_horario_aula);
 
          // Disciplina correspondente à aula atual
          disciplina = aula->getDisciplina();
@@ -433,7 +447,7 @@ void Avaliador::calculaDescolamentoBlocoCurricular( SolucaoOperacional & solucao
          ITERA_GGROUP( it_oferta, aula->ofertas, Oferta )
          {
             // Oferta atendida pela aula
-            oferta = ( *it_oferta );
+            oferta = (*it_oferta);
 
             // Curso correspondente a essa oferta
             curso = oferta->curso;
@@ -719,81 +733,82 @@ double Avaliador::calculaTempoEntreCampusUnidades( SolucaoOperacional & solucao,
 }
 
 // Método de avaliação relacionado à issue TRIEDA-806
-void Avaliador::calculaGapsHorariosProfessores( SolucaoOperacional & solucao )
+void Avaliador::calculaGapsHorariosProfessores(SolucaoOperacional & solucao)
 {
-   double numGaps = 0.0;
+   //double numGaps = 0.0;
 
-   Aula * aula_atual = NULL;
-   Aula * aula_anterior = NULL;
+   //Aula * aula_atual = NULL;
+   //Aula * aula_anterior = NULL;
 
-   int indice_aula_atual = -1;
-   int indice_aula_anterior = -1;
+   //int indice_aula_atual = -1;
+   //int indice_aula_anterior = -1;
 
-   Professor * professor = NULL;
-   Horario * h1 = NULL;
-   Horario * h2 = NULL;
+   //Professor * professor = NULL;
+   //Horario * h1 = NULL;
+   //Horario * h2 = NULL;
 
-   // Inicializa o vetor de gaps de cada professor
-   gapsProfessores.clear();
-   for ( unsigned int i = 0; i < solucao.mapProfessores.size(); i++ )
-   {
-      std::vector< int > gaps;
-      gaps.clear();
-      gapsProfessores.push_back( gaps );
-   }
+   //// Inicializa o vetor de gaps de cada professor
+   //gapsProfessores.clear();
+   //for (unsigned int i = 0; i < solucao.mapProfessores.size(); i++)
+   //{
+   //   std::vector< int > gaps;
+   //   gaps.clear();
+   //   gapsProfessores.push_back( gaps );
+   //}
 
-   // Percorre as aulas alocadas a cada professor
-   int dia_semana = 0;
-   for ( int i = 0; i < (int)solucao.getMatrizAulas()->size(); i++ )
-   {
-      // Inicializa os índices
-      aula_anterior = NULL;
-      indice_aula_anterior = -1;
+   //int dia_semana = 0;
 
-      // Recupera o professor atual
-      professor = solucao.getProfessorMatriz(i);
+   //// Percorre as aulas alocadas a cada professor
+   //for (unsigned int i = 0; i < solucao.getMatrizAulas()->size(); i++)
+   //{
+   //   // Inicializa os índices
+   //   aula_anterior = NULL;
+   //   indice_aula_anterior = -1;
 
-      for ( int j = 0; j < (int)solucao.getMatrizAulas()->at(i)->size(); j++ )
-      {
-         indice_aula_atual = j;
-         aula_atual = solucao.getMatrizAulas()->at(i)->at(j);
+   //   // Recupera o professor atual
+   //   professor = solucao.getProfessorMatriz(i);
 
-         // O professor não tem aula atribuída nesse horário
-         if ( aula_atual == NULL || aula_atual->eVirtual() == true )
-         {
-            continue;
-         }
+   //   for (unsigned int j = 0; j < solucao.getMatrizAulas()->at(i)->size(); j++)
+   //   {
+   //      indice_aula_atual = j;
+   //      aula_atual = solucao.getMatrizAulas()->at(i)->at(j);
 
-         if ( aula_anterior != NULL
-            && aula_anterior->getDiaSemana() == aula_atual->getDiaSemana() )
-         {
-            // Avalia se ocorreu um gap no horário
-            int gap = ( indice_aula_atual - indice_aula_anterior );
-            if ( gap > 1 )
-            {
-               dia_semana = aula_atual->getDiaSemana();
-               h1 = solucao.getHorario( i, dia_semana, indice_aula_anterior );
-               h2 = solucao.getHorario( i, dia_semana, indice_aula_atual );
+   //      // O professor não tem aula atribuída nesse horário
+   //      if (aula_atual == NULL || aula_atual->eVirtual() == true)
+   //      {
+   //         continue;
+   //      }
 
-               // Dado que ocorreu um gap entre duas aulas, devo
-               // verificar se o professor possui horários disponíveis
-               // no período entre a aula anterior e a aula atual, o que
-               // caracterizaria um fato 'indesejado' na solução operacional
-               if ( horariosDisponiveisIntervalo( professor, dia_semana, h1, h2 ) > 0 )
-               {
-                  totalGapsHorariosProfessores++;
-                  gapsProfessores.at( i ).push_back( gap );
-               }
-            }
-         }
+   //      if ( aula_anterior != NULL
+   //         && aula_anterior->getDiaSemana() == aula_atual->getDiaSemana() )
+   //      {
+   //         // Avalia se ocorreu um gap no horário
+   //         int gap = (indice_aula_atual - indice_aula_anterior);
+   //         if (gap > 1)
+   //         {
+   //            dia_semana = aula_atual->getDiaSemana();
+   //            h1 = solucao.getHorario(i, dia_semana, indice_aula_anterior);
+   //            h2 = solucao.getHorario(i, dia_semana, indice_aula_atual);
 
-         // Atualiza os ponteiros para a próxima iteração
-         indice_aula_anterior = indice_aula_atual;
-         aula_anterior = aula_atual;
-      }
-   }
+   //            // Dado que ocorreu um gap entre duas aulas, devo
+   //            // verificar se o professor possui horários disponíveis
+   //            // no período entre a aula anterior e a aula atual, o que
+   //            // caracterizaria um fato 'indesejado' na solução operacional
+   //            if (horariosDisponiveisIntervalo(professor, dia_semana, h1, h2) > 0)
+   //            {
+   //               totalGapsHorariosProfessores++;
+   //               gapsProfessores.at(i).push_back(gap);
+   //            }
+   //         }
+   //      }
 
-   totalGapsHorariosProfessores = numGaps;
+   //      // Atualiza os ponteiros para a próxima iteração
+   //      indice_aula_anterior = indice_aula_atual;
+   //      aula_anterior = aula_atual;
+   //   }
+   //}
+
+   //totalGapsHorariosProfessores = numGaps;
 }
 
 // Dados dois horários de um professor, em um mesmo dia da semana,

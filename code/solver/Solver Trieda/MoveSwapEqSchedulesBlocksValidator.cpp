@@ -8,21 +8,37 @@ MoveSwapEqSchedulesBlocksValidator::~MoveSwapEqSchedulesBlocksValidator()
 {
 }
 
-bool MoveSwapEqSchedulesBlocksValidator::isValid(Aula & aX, Aula & aY)
+bool MoveSwapEqSchedulesBlocksValidator::isValid(Aula & aX, Aula & aY, SolucaoOperacional & solOp)
 {
-   std::vector< std::pair< Professor *, Horario * > >::iterator 
-      itBlocoAulaX = aX.bloco_aula.begin();
+   // --------------------------------------------------------------------------
+   // Checking the schedules.
 
-   for(; itBlocoAulaX != aX.bloco_aula.end(); ++itBlocoAulaX)
+   std::map<Aula*,std::pair<Professor*,std::vector<HorarioAula*> > >::iterator
+      itBlocoAula_X = solOp.blocoAulas.find(&aX);
+
+   std::map<Aula*,std::pair<Professor*,std::vector<HorarioAula*> > >::iterator
+      itBlocoAula_Y = solOp.blocoAulas.find(&aY);
+
+   if((itBlocoAula_X == solOp.blocoAulas.end()) || (itBlocoAula_Y == solOp.blocoAulas.end()))
    {
-      std::vector< std::pair< Professor *, Horario * > >::iterator 
-         itBlocoAulaY = aY.bloco_aula.begin();
+      std::cout << "Nao encontrei a aula desejada na estrutura de blocoAula de uma dada solucao. ERRO.\n";
+      exit(1);
+   }
+
+   std::vector<HorarioAula*>::iterator 
+      itScheduleAX = itBlocoAula_X->second.second.begin();
+
+   for(; itScheduleAX != itBlocoAula_X->second.second.end(); ++itScheduleAX)
+   {
+
+      std::vector<HorarioAula*>::iterator 
+         itScheduleAY = itBlocoAula_Y->second.second.begin();
 
       bool found = false;
 
-      for(; itBlocoAulaY != aY.bloco_aula.end(); ++itBlocoAulaY)
+      for(; itScheduleAY != itBlocoAula_Y->second.second.end(); ++itScheduleAY)
       {
-         if(itBlocoAulaX->second->getHorarioAulaId() == itBlocoAulaY->second->getHorarioAulaId())
+         if(**itScheduleAX == **itScheduleAY)
          {
             found = true;
             break;
@@ -34,9 +50,11 @@ bool MoveSwapEqSchedulesBlocksValidator::isValid(Aula & aX, Aula & aY)
          return false;
       }
    }
-   
+
+   // --------------------------------------------------------------------------
+  
    return(
-      (canSwapSchedule(aX,aY)) &&
+      (canSwapSchedule(aX,aY,solOp)) &&
 
       (aX.getTotalCreditos() == aY.getTotalCreditos()) &&
 

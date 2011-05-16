@@ -1658,128 +1658,55 @@ int SolverMIP::solveOperacional()
 
    std::cout << "Gerando uma solucao inicial para o modelo operacional" << std::endl;
    SolucaoOperacional & solucaoOperacional = solIni.geraSolucaoInicial();
+   
+   solucaoOperacional.validaSolucao("Verificando a viabilidade da solucao inicial.");
 
-   // -----------------------------------------------------------------------------------------
-   // Realizando alguns checks.
-   int totalCredsAulas = 0;
-   bool error = false;
-   ITERA_GGROUP( itAula, problemData->aulas, Aula )
-   {
-      if ( itAula->bloco_aula.empty() )
-      {
-         std::cout << "\n======================================================";
-         std::cout << "\nA aula abaixo nao possui nenhum horario alocado:\n";
-         itAula->toString();
-
-         error = true;
-      }
-      else if ( (int)itAula->bloco_aula.size() < itAula->getTotalCreditos() )
-      {
-         std::cout << "\n==================================================="
-                   << "\nA aula abaixo possui um total de horarios alocados"
-				   << "\ninferior ao total de creditos a serem alocados:\n";
-         itAula->toString();
-
-         error = true;
-      }
-      else if ( (int)itAula->bloco_aula.size() > itAula->getTotalCreditos() )
-      {
-         std::cout << "\n=================================================="
-				   << "\nA aula abaixo possui um total de horarios alocados"
-				   << "\nsuperior ao total de creditos a serem alocados:\n";
-         itAula->toString();
-
-         error = true;
-      }
-      totalCredsAulas += ((int)itAula->bloco_aula.size());
-   }
-
-   if ( error )
-   {
-      std::cout << "ERRO!!! SolverMIP::solveOperacional()" << std::endl;
-      exit(1);
-   }
-
-   int totalCredsAulasSol = 0;
-
-   MatrizSolucao::iterator itProf = solucaoOperacional.getMatrizAulas()->begin();
-
-   for(; itProf != solucaoOperacional.getMatrizAulas()->end(); ++itProf)
-   {
-      for(unsigned a = 0; a < (*itProf)->size(); ++a)
-      {
-         if((*itProf)->at(a) != NULL)
-         {
-            if( !(*itProf)->at(a)->eVirtual() )
-            {
-               ++totalCredsAulasSol;
-            }
-         }
-      }
-   }
-
-   if(totalCredsAulas != totalCredsAulasSol)
-   {
-      /* Total de créditos alocados eh diferente do total de creditos a serem alocados. */
-      std::cout << "ERRO!!! SolverMIP::solveOperacional()" << std::endl;
-      exit(1);
-   }
-
-   // -----------------------------------------------------------------------------------------
-
-   //solucaoOperacional.toString();
    solucaoOperacional.toString2();
 
-   // TESTAR AGORA A ESTRUTURA DE VIZ.
-
-   NSShift nsShift(*problemData, solucaoOperacional);
-
-   MoveShift & mShiftIni = (MoveShift &) nsShift.move(solucaoOperacional);
-
-   mShiftIni.apply(solucaoOperacional);
-
-   std::cout << "Saindo no metodo solveOperacional() by Mario." << std::endl;
-   exit(1);
-
+   // Avaliador
    Avaliador avaliador;
-   //double funcao_objetivo = avaliador.avaliaSolucao( solucaoOperacional, true );
-   //std::cout << "\nValor da solucao inicial : " << funcao_objetivo << std::endl;
 
-   //std::cout << "\nTODO -- Implementar <SolverMIP::solveOperacional()>"
-			// << std::endl;
+   //TESTE - NAO APAGAR.
+   //avaliador.avaliaSolucao(solucaoOperacional,true);
 
-   //***********************
-   // TESTES !!!!
+   // Estruturas de Vizinhança
    NSSeqSwapEqBlocks nsSeqSwapEqBlocks ( *problemData );
    NSSwapEqSchedulesBlocks nsSwapEqSchedulesBlocks ( *problemData );
    NSSwapEqTeachersBlocks nsSwapEqTeachersBlocks ( *problemData );
+   NSShift nsShift(*problemData);
 
-   //MoveSwapEqBlocks & mIni = ( MoveSwapEqBlocks & ) nsSeqSwapEqBlocks.move( solucaoOperacional );
-   //MoveSwapEqBlocks & mRev = ( MoveSwapEqBlocks & ) mIni.apply( solucaoOperacional );
-   //std::cout << " ***************************************" << std::endl;
-   //std::cout << " ***************************************" << std::endl;
-   //std::cout << " ***************************************" << std::endl;
-   //mRev.apply( solucaoOperacional );
+   // Heurísticas de Busca Local - Descida Randômica
+   RandomDescentMethod rdmSeqSwapEqBlocks ( avaliador, nsSeqSwapEqBlocks, 10 );
+   RandomDescentMethod rdmSwapEqSchedulesBlocks ( avaliador, nsSwapEqSchedulesBlocks, 10 );
+   RandomDescentMethod rdmSwapEqTeachersBlocks ( avaliador, nsSwapEqTeachersBlocks, 10 );
+   RandomDescentMethod rdmShift ( avaliador, nsShift, 10 );
 
-   //std::cout << avaliador.avaliaSolucao( mIni ) << std::endl;
-
-   RandomDescentMethod rdm ( avaliador, nsSeqSwapEqBlocks, 10 );
-   //rdm.exec( solucaoOperacional, 20, 0 );
-
+   // Mecanismo de perturbação
    ILSLPerturbationLPlus2 ilslPerturbationPlus2 ( avaliador, -1, nsSeqSwapEqBlocks );
-   ilslPerturbationPlus2.add_ns(nsSwapEqSchedulesBlocks);
-   ilslPerturbationPlus2.add_ns(nsSwapEqTeachersBlocks);
+   //ilslPerturbationPlus2.add_ns(nsSwapEqSchedulesBlocks);
+   //ilslPerturbationPlus2.add_ns(nsSwapEqTeachersBlocks);
+   ilslPerturbationPlus2.add_ns(nsShift);
 
-   //IteratedLocalSearchLevels ilsl ( avaliador, rdm, ilslPerturbationPlus2, 5, 2 );
-   IteratedLocalSearchLevels ilsl ( avaliador, rdm, ilslPerturbationPlus2, 50, 6 );
-   ilsl.exec(solucaoOperacional, 1, 0);
+   // RVND
+   std::vector<Heuristic*> heuristicasBuscaLocal;
+   heuristicasBuscaLocal.push_back(&rdmSeqSwapEqBlocks);
+   //heuristicasBuscaLocal.push_back(&rdmSwapEqSchedulesBlocks);
+   //heuristicasBuscaLocal.push_back(&rdmSwapEqTeachersBlocks);
+   heuristicasBuscaLocal.push_back(&rdmShift);
+   
+   RVND rvnd(avaliador,heuristicasBuscaLocal);
 
-   //NSIteratorSwapEqBlocks & it = ( NSIteratorSwapEqBlocks & ) nsSeqSwapEqBlocks.getIterator( solucaoOperacional );
-   //it.current();
-   //std::cout << "\n\n ----------------------------- \n\n";
-   //it.next();
-   //it.current();
-   //***********************
+   // Busca Local Iterada por Níveis
+   IteratedLocalSearchLevels ilsl ( avaliador, rvnd, ilslPerturbationPlus2, 20 , 4 );
+   //IteratedLocalSearchLevels ilsl ( avaliador, rvnd, ilslPerturbationPlus2, 50, 6 );
+
+   //IteratedLocalSearchLevels ilsl ( avaliador, rdmSeqSwapEqBlocks, ilslPerturbationPlus2, 5, 2 );
+   //IteratedLocalSearchLevels ilsl ( avaliador, rdmShift, ilslPerturbationPlus2, 5, 2 );
+
+   //ilsl.exec(solucaoOperacional, 3600, 0);
+
+   //TESTE - NAO APAGAR.
+   //rdmSeqSwapEqBlocks.exec(solucaoOperacional,3600,0);
 
    // Armazena a solução operacional no problem solution
    problemSolution->solucao_operacional = &( solucaoOperacional );
