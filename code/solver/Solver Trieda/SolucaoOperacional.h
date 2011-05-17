@@ -16,6 +16,7 @@ typedef std::vector< std::vector< Aula * > * > MatrizSolucao;
 class SolucaoOperacional
 {
 public:
+
    SolucaoOperacional( ProblemData * );
 
    SolucaoOperacional(SolucaoOperacional const & s);

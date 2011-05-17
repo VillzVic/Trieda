@@ -13,6 +13,9 @@ class Fixacao :
 {
 public:
    Fixacao( void );
+
+   Fixacao( Fixacao const & fixacao);
+
    virtual ~Fixacao( void );
 
    virtual void le_arvore( ItemFixacao & );

@@ -16,6 +16,7 @@
 class SolucaoInicialOperacional
 {
 public:
+
    SolucaoInicialOperacional( ProblemData & );
 
    virtual ~SolucaoInicialOperacional();
@@ -24,12 +25,11 @@ public:
 
 private:
 
-   bool possui_fixacao_professor_dia_horario( Professor &, int, int );
-
-   bool alocaAulaSeq( SolucaoOperacional *, std::vector< Aula * >::iterator,
-				      int, Professor &, Aula &);
-
    ProblemData & problemData;
+
+   // Armazena todas as aulas que devem ser alocadas.
+   GGroup<Aula*,LessPtr<Aula> > aulas;
+
 
    MoveValidator * moveValidator;
 
@@ -61,17 +61,26 @@ private:
    // de horario aula / dia da semana que a sala já está ocupada
    std::map< Sala *, GGroup< std::pair< HorarioAula *, int > > > sala_horarios_alocados;
 
+
+   // Métodos
+
+
+   void executaFuncaoPrioridade();
+
+   // Função auxilar à função de prioridade.
+   void calculaCustoFixProf( Professor &, Aula &, unsigned, int = 0, int = 0 );
+   
    // Função que utiliza a estrutura acima para
    // dizer se um dado professor está sendo alocado
    // mais de uma vez para um bloco curricular.
    bool professorRepetido( Professor &, Aula & );
 
-   void executaFuncaoPrioridade();
+   // novo nome pro metodo : possuiFixacaoProfDiaHorario
+   bool possui_fixacao_professor_dia_horario( Professor &, int, int );
 
-   // Funções auxilares à função de prioridade.
-   // Calcula o custo dados um professor,
-   // uma aula e o id do custo em questão.
-   void calculaCustoFixProf( Professor &, Aula &, unsigned, int = 0, int = 0 );
+   bool aulaFixadaProfDiaHorario (Aula const & aula) const;
+
+   bool alocaAulaSeq( SolucaoOperacional *, std::vector< Aula * >::iterator, int, Professor &, Aula &);
 };
 
 #endif // _SOLUCAO_INICIAL_OPERACIONAL_H_

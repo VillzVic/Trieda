@@ -1658,7 +1658,7 @@ int SolverMIP::solveOperacional()
 
    std::cout << "Gerando uma solucao inicial para o modelo operacional" << std::endl;
    SolucaoOperacional & solucaoOperacional = solIni.geraSolucaoInicial();
-   solucaoOperacional.validaSolucao("Verificando a viabilidade da solucao inicial.");
+   //solucaoOperacional.validaSolucao("Verificando a viabilidade da solucao inicial.");
    // solucaoOperacional.toString2();
 
    // Avaliador

@@ -16,6 +16,24 @@ Fixacao::Fixacao(void)
 	horario_aula_id = -1;
 }
 
+Fixacao::Fixacao( Fixacao const & fixacao )
+{
+   this->setId(-fixacao.getId());
+
+   this->professor_id = fixacao.getProfessorId();
+   this->disciplina_id = fixacao.getDisciplinaId();
+   this->sala_id = fixacao.getSalaId();
+   this->dia_semana = fixacao.getDiaSemana();
+   this->turno_id = fixacao.getTurnoId();
+   this->horario_aula_id = fixacao.getHorarioAulaId();
+
+   this->professor = fixacao.professor;
+   this->disciplina = fixacao.disciplina;
+   this->sala = fixacao.sala;
+   this->turno = fixacao.turno;
+   this->horario_aula = fixacao.horario_aula;
+}
+
 Fixacao::~Fixacao( void )
 {
 
