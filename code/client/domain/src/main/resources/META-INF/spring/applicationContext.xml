@@ -7,7 +7,8 @@
 
 	<bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor" />
 
-	<context:property-placeholder location="classpath*:META-INF/spring/database.properties" />
+	<!-- development | production | otimization -->
+	<context:property-placeholder location="classpath*:META-INF/spring/trieda-development.properties" />
 
 	<context:spring-configured />
 
