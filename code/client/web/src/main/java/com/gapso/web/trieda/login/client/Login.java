@@ -78,7 +78,7 @@ public class Login implements EntryPoint {
 			@Override
 			protected void onRender(Element target, int index) {
 				super.onRender(target, index);
-				getLayoutTarget().dom.setPropertyString("target", null);
+				getLayoutTarget().dom.setPropertyString("target", "_self");
 			}
 		};
 		form.setAction("../resources/j_spring_security_check");
