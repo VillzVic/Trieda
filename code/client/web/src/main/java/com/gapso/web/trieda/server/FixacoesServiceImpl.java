@@ -74,8 +74,9 @@ public class FixacoesServiceImpl extends RemoteServiceServlet implements Fixacoe
 		} else {
 			fixacao.persist();
 		}
-		Long id = fixacao.getId();
-		Fixacao.entityManager().clear();
+		long id = fixacao.getId();
+		Fixacao.entityManager().detach(fixacao);
+//		Fixacao.entityManager().refresh(fixacao);
 		
 		fixacao = Fixacao.find(id);
 		
@@ -85,7 +86,6 @@ public class FixacoesServiceImpl extends RemoteServiceServlet implements Fixacoe
 			hdc.getFixacoes().add(fixacao);
 			hdc.merge();
 		}
-		
 		List<HorarioDisponivelCenario> removerList = new ArrayList<HorarioDisponivelCenario>(fixacao.getHorarios(semanaLetiva));
 		removerList.removeAll(listSelecionados);
 		for(HorarioDisponivelCenario o : removerList) {
