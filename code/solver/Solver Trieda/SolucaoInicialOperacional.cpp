@@ -11,6 +11,117 @@ SolucaoInicialOperacional::SolucaoInicialOperacional( ProblemData & _problemData
 {
    // ----------------------------------------------------------------------
 
+   solIni = new SolucaoOperacional( &problemData );
+
+   // ----------------------------------------------------------------------
+   /* 
+   Inicializando a estrutura que mantem referência para as aulas que não foram relacionadas (associadas)
+   a nenhum professor. Caso existam aulas nessa situação, deve-se alocá-las à professores virtuais no final 
+   do método.
+
+   Inicializando também, a estrutura que mantem referência para todas as aulas que possuem, pelo menos, uma
+   associção.
+   */
+
+   ITERA_GGROUP(itAula,problemData.aulas,Aula)
+   { 
+      std::map< std::pair< Professor *, Aula * >, CustoAlocacao * >::iterator
+         itCustoProfTurma = custoProfTurma.begin();
+
+      for (; itCustoProfTurma != custoProfTurma.end(); ++itCustoProfTurma )
+         if ( *(itCustoProfTurma->first.second->getDisciplina()) == *(itAula->getDisciplina()) )
+         { aulas.add(*itAula); break; }
+
+      if ( itCustoProfTurma == custoProfTurma.end() )
+         aulasNaoRelacionadasProf.add(*itAula);
+   }
+
+   // ----------------------------------------------------------------------
+   /* Armazena separadamente (seguindo so critérios estabelecidos abaixo) as fixações mais 
+   restritivas(pré-processadas).*/
+   std::map<
+      std::vector<int/*ID's : prof, disc, sala, dia*/>,
+      GGroup<Fixacao*,LessPtr<Fixacao> > >
+
+      horariosFixados;
+
+   // Separando as fixacoes por professor, disc, sala e dia.
+   ITERA_GGROUP_LESSPTR(itFixacao,problemData.fixacoes_Prof_Disc_Sala_Dia_Horario,Fixacao)
+   {
+      std::vector<int/*ID's : prof, disc, sala, dia*/> chave (4,-1);
+
+      chave.at(0) = itFixacao->getProfessorId();
+      chave.at(1) = itFixacao->getDisciplinaId();
+      chave.at(2) = itFixacao->getSalaId();
+      chave.at(4) = itFixacao->getDiaSemana();
+
+      horariosFixados[chave].add(*itFixacao);
+   }
+
+   // Se a estrutura <horariosFixados> possui algum elemento.
+   if(horariosFixados.size() > 0)
+   {
+      /* Fazer o processamento para verificar se existe alguma aula que é fortemente fixada. Ou seja,
+      se existe alguma aula que foi fixada para um total de horários IGUAL ao total de créditos que 
+      ela dispõe. Assim, não há como tentar trocar de horário. 
+      
+      Caso exista alguma aula nessa situação, deve-se removê-la da estrutura <aulas>. Em seguida,
+      deve-se alocá-la à solução nos horários fixados. (Obs.: Não é necessário preocupar com a estrutura
+      <aulasNaoRelacionadasProf> a estrutura <horariosFixados> trata apenas de fixações que possuem o 
+      campo Professor setado).
+      */
+
+      // Para cada conjunto de horários fixados
+      std::map<
+         std::vector<int/*ID's : prof, disc, sala, dia*/>,
+         GGroup<Fixacao*,LessPtr<Fixacao> > >::iterator
+         
+         itHorariosFixados = horariosFixados.begin();
+
+      for(; itHorariosFixados != horariosFixados.end(); ++itHorariosFixados)
+      {
+         // Como todas as fixações são relacionadas a mesma disc., sala ...  não tem problema.
+         Disciplina & disc = *(itHorariosFixados->second.begin()->disciplina);
+        
+         if(itHorariosFixados->second.size() == (disc.getCredPraticos() + disc.getCredTeoricos()))
+         {
+            Sala & sala = *(itHorariosFixados->second.begin()->sala);
+
+            Aula * aula = NULL;
+
+            // Procurando a aula a ser removida.
+            ITERA_GGROUP_LESSPTR(itAula,aulas,Aula)
+            {
+               if((*(itAula->getDisciplina()) == disc) &&
+                  (*(itAula->getSala()) == sala) && 
+                  itAula->getDiaSemana() == itHorariosFixados->first.at(3/*dia*/))
+               {
+                  aula = *itAula;
+                  break; // Encontrei a aula, então PARO.
+               }
+            }
+
+            // Removendo a aula do grupo de aulas a serem alocadas pela função de prioridade.
+            aulas.remove(aula);
+
+            Professor & professor = *(itHorariosFixados->second.begin()->professor);
+
+            // ToDo : Alocar a aula imediatamente !!!
+         }
+      }
+   }
+   //else
+   //{
+      /* Apesar da fixação ter sido bastante restritiva, pode ser que o usuário tenha fixado mais horários
+      do que a disciplina precisa para poder alocar os créditos. Também podem ter sido feitas outras fixações,
+      ou nenhuma. Portanto, pode-se tentar alocar todas as aulas. */
+
+      /* Não deve-se fazer nada aqui (APENAS DEIXAR O COMENTÁRIO =]). 
+      A estrutura <aulas> está pronta para ser utilizada no cálculo da função de prioridade. */
+   //}
+
+   // ----------------------------------------------------------------------
+
    executaFuncaoPrioridade();
 
    // ----------------------------------------------------------------------
@@ -39,27 +150,6 @@ SolucaoInicialOperacional::SolucaoInicialOperacional( ProblemData & _problemData
    moveValidator = new MoveValidator( &problemData );
 
    // ----------------------------------------------------------------------
-   /* Inicializando a estrutura que mantem referência para as aulas que não foram relacionadas (associadas)
-   a nenhum professor. Caso existam aulas nessa situação, deve-se alocá-las à professores virtuais no final 
-   do método.
-   */
-
-   ITERA_GGROUP( itAula, problemData.aulas, Aula )
-   { 
-      std::map< std::pair< Professor *, Aula * >, CustoAlocacao * >::iterator
-         itCustoProfTurma = custoProfTurma.begin();
-
-      for (; itCustoProfTurma != custoProfTurma.end(); ++itCustoProfTurma )
-      {
-         if ( *(itCustoProfTurma->first.second->getDisciplina()) == *(itAula->getDisciplina()) )
-            break;
-      }
-
-      if ( itCustoProfTurma == custoProfTurma.end() )
-         aulasNaoRelacionadasProf.add( *itAula );
-   }
-
-   // ----------------------------------------------------------------------
 }
 
 SolucaoInicialOperacional::~SolucaoInicialOperacional()
@@ -69,7 +159,6 @@ SolucaoInicialOperacional::~SolucaoInicialOperacional()
 
 SolucaoOperacional & SolucaoInicialOperacional::geraSolucaoInicial()
 {
-   SolucaoOperacional * solIni = new SolucaoOperacional( &problemData );
    return * solIni;
 }
 //{
@@ -808,8 +897,10 @@ void SolucaoInicialOperacional::executaFuncaoPrioridade()
          {
             Disciplina * discMinistradaProf = itMagisterio->disciplina;
 
-            // ToDo : Iterar sobre as aulas que não possuem a fixação mais restritiva.
-            ITERA_GGROUP( itAula, problemData.aulas, Aula )
+            
+            // Iterarndo sobre as aulas que não possuem a fixação mais restritiva.
+            //ITERA_GGROUP( itAula, problemData.aulas, Aula )
+            ITERA_GGROUP_LESSPTR(itAula,aulas,Aula)
             {
                // Como todoas as ofertas de uma aula devem
                // ser para o mesmo campus, podemos comparar

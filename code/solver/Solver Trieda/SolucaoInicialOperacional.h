@@ -27,17 +27,7 @@ private:
 
    ProblemData & problemData;
 
-   // Armazena todas as aulas que devem ser alocadas.
-   GGroup<Aula*,LessPtr<Aula> > aulas;
-
-
-   MoveValidator * moveValidator;
-
-   // Estrutura que armazena o custo de alocar um professor a uma dada aula.
-   std::map< std::pair< Professor *, Aula * >, CustoAlocacao * > custoProfTurma;
-
-   // Armazena, em ordem decrescente, os Custos de Alocação.
-   std::vector< CustoAlocacao * > custosAlocacaoAulaOrdenado;
+   SolucaoOperacional * solIni;
 
    // Estrutura que armazena todas as aulas que não foram
    // associadas a nenhum professor. Baseando-se nessa
@@ -47,6 +37,23 @@ private:
    // Est. com um, ou mais elementos -> com crtz é necessário
    // criar um, ou mais, professores virtuais.
    GGroup< Aula * > aulasNaoRelacionadasProf;
+
+   // Armazena todas as aulas que devem ser alocadas.
+   GGroup<Aula*,LessPtr<Aula> > aulas;
+
+   /* OBS.: As estruturas <aulas> e <aulasNaoRelacionadasProf> juntas equivalem a todas as aulas. 
+   Uma aula nunca pertence às duas estruturas ao mesmo tempo. */
+
+   // Estrutura auxiliar que indica as aulas que ainda não foram alocadas no processo de geração da solução inicial.
+   GGroup< Aula * > aulasNaoAlocadas;
+
+   MoveValidator * moveValidator;
+
+   // Estrutura que armazena o custo de alocar um professor a uma dada aula.
+   std::map< std::pair< Professor *, Aula * >, CustoAlocacao * > custoProfTurma;
+
+   // Armazena, em ordem decrescente, os Custos de Alocação.
+   std::vector< CustoAlocacao * > custosAlocacaoAulaOrdenado;
 
    // Cada professor deve, preferencialmente, ministrar apenas
    // uma disciplina de um bloco curricular. A estrutura abaixo
