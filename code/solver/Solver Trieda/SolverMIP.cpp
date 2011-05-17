@@ -1611,13 +1611,13 @@ void SolverMIP::getSolutionTatico()
             AtendimentoTatico * at_Tatico = new AtendimentoTatico();
 
             // Verificando se a disicplina é de carater prático ou teórico.
-            if((*it_Vars_x)->getDisciplina()->getId() > 0 && (*it_Vars_x)->getDisciplina()->getCredTeoricos() > 0)
+            if ( ( *it_Vars_x )->getDisciplina()->getId() > 0 && ( *it_Vars_x )->getDisciplina()->getCredTeoricos() > 0 )
             {
-				at_Tatico->setQtdCreditosTeoricos((int)((*it_Vars_x)->getValue()));
+				at_Tatico->setQtdCreditosTeoricos( (int)( ( *it_Vars_x )->getValue() ) );
             }
             else
             {
-				at_Tatico->setQtdCreditosPraticos((int)((*it_Vars_x)->getValue()));
+				at_Tatico->setQtdCreditosPraticos((int)( ( *it_Vars_x )->getValue() ) );
             }
 
             AtendimentoOferta * at_Oferta = new AtendimentoOferta();
@@ -1658,55 +1658,49 @@ int SolverMIP::solveOperacional()
 
    std::cout << "Gerando uma solucao inicial para o modelo operacional" << std::endl;
    SolucaoOperacional & solucaoOperacional = solIni.geraSolucaoInicial();
-   
    solucaoOperacional.validaSolucao("Verificando a viabilidade da solucao inicial.");
-
-   solucaoOperacional.toString2();
+   // solucaoOperacional.toString2();
 
    // Avaliador
    Avaliador avaliador;
-
-   //TESTE - NAO APAGAR.
-   //avaliador.avaliaSolucao(solucaoOperacional,true);
+   avaliador.avaliaSolucao( solucaoOperacional, true );
 
    // Estruturas de Vizinhança
-   NSSeqSwapEqBlocks nsSeqSwapEqBlocks ( *problemData );
-   NSSwapEqSchedulesBlocks nsSwapEqSchedulesBlocks ( *problemData );
-   NSSwapEqTeachersBlocks nsSwapEqTeachersBlocks ( *problemData );
-   NSShift nsShift(*problemData);
+   // NSSeqSwapEqBlocks nsSeqSwapEqBlocks ( *problemData );
+   // NSSwapEqSchedulesBlocks nsSwapEqSchedulesBlocks ( *problemData );
+   // NSSwapEqTeachersBlocks nsSwapEqTeachersBlocks ( *problemData );
+   // NSShift nsShift( *problemData );
 
    // Heurísticas de Busca Local - Descida Randômica
-   RandomDescentMethod rdmSeqSwapEqBlocks ( avaliador, nsSeqSwapEqBlocks, 10 );
-   RandomDescentMethod rdmSwapEqSchedulesBlocks ( avaliador, nsSwapEqSchedulesBlocks, 10 );
-   RandomDescentMethod rdmSwapEqTeachersBlocks ( avaliador, nsSwapEqTeachersBlocks, 10 );
-   RandomDescentMethod rdmShift ( avaliador, nsShift, 10 );
+   // RandomDescentMethod rdmSeqSwapEqBlocks ( avaliador, nsSeqSwapEqBlocks, 10 );
+   // RandomDescentMethod rdmSwapEqSchedulesBlocks ( avaliador, nsSwapEqSchedulesBlocks, 10 );
+   // RandomDescentMethod rdmSwapEqTeachersBlocks ( avaliador, nsSwapEqTeachersBlocks, 10 );
+   // RandomDescentMethod rdmShift ( avaliador, nsShift, 10 );
 
    // Mecanismo de perturbação
-   ILSLPerturbationLPlus2 ilslPerturbationPlus2 ( avaliador, -1, nsSeqSwapEqBlocks );
-   //ilslPerturbationPlus2.add_ns(nsSwapEqSchedulesBlocks);
-   //ilslPerturbationPlus2.add_ns(nsSwapEqTeachersBlocks);
-   ilslPerturbationPlus2.add_ns(nsShift);
+   // ILSLPerturbationLPlus2 ilslPerturbationPlus2 ( avaliador, -1, nsSeqSwapEqBlocks );
+   // ilslPerturbationPlus2.add_ns( nsSwapEqSchedulesBlocks );
+   // ilslPerturbationPlus2.add_ns( nsSwapEqTeachersBlocks );
+   // ilslPerturbationPlus2.add_ns( nsShift );
 
    // RVND
-   std::vector<Heuristic*> heuristicasBuscaLocal;
-   heuristicasBuscaLocal.push_back(&rdmSeqSwapEqBlocks);
-   //heuristicasBuscaLocal.push_back(&rdmSwapEqSchedulesBlocks);
-   //heuristicasBuscaLocal.push_back(&rdmSwapEqTeachersBlocks);
-   heuristicasBuscaLocal.push_back(&rdmShift);
-   
-   RVND rvnd(avaliador,heuristicasBuscaLocal);
+   // std::vector< Heuristic * > heuristicasBuscaLocal;
+   // heuristicasBuscaLocal.push_back( &rdmSeqSwapEqBlocks );
+   // heuristicasBuscaLocal.push_back( &rdmSwapEqSchedulesBlocks );
+   // heuristicasBuscaLocal.push_back( &rdmSwapEqTeachersBlocks );
+   // heuristicasBuscaLocal.push_back( &rdmShift );
+
+   // RVND rvnd( avaliador, heuristicasBuscaLocal );
 
    // Busca Local Iterada por Níveis
-   IteratedLocalSearchLevels ilsl ( avaliador, rvnd, ilslPerturbationPlus2, 20 , 4 );
-   //IteratedLocalSearchLevels ilsl ( avaliador, rvnd, ilslPerturbationPlus2, 50, 6 );
+   // IteratedLocalSearchLevels ilsl ( avaliador, rvnd, ilslPerturbationPlus2, 20 , 4 );
+   // ilsl.exec( solucaoOperacional, 30, 0 ); // Parâmetro 2 : tempo ( em segundos )
 
-   //IteratedLocalSearchLevels ilsl ( avaliador, rdmSeqSwapEqBlocks, ilslPerturbationPlus2, 5, 2 );
-   //IteratedLocalSearchLevels ilsl ( avaliador, rdmShift, ilslPerturbationPlus2, 5, 2 );
+   // Parâmetro 2 : tempo ( em segundos )
+   // rdmSeqSwapEqBlocks.exec( solucaoOperacional, 30, 0 );
 
-   //ilsl.exec(solucaoOperacional, 3600, 0);
-
-   //TESTE - NAO APAGAR.
-   //rdmSeqSwapEqBlocks.exec(solucaoOperacional,3600,0);
+   // Avaliação final
+   // avaliador.avaliaSolucao( solucaoOperacional, true );
 
    // Armazena a solução operacional no problem solution
    problemSolution->solucao_operacional = &( solucaoOperacional );
@@ -1716,9 +1710,7 @@ int SolverMIP::solveOperacional()
 
 void SolverMIP::getSolutionOperacional()
 {
-   unsigned int i = 0;
-   unsigned int j = 0;
-   int id_operacional = 0;
+   int i = 0, j = 0, id_operacional = 0;
 
    Aula * aula = NULL;
    Professor * professor = NULL;
@@ -1727,10 +1719,10 @@ void SolverMIP::getSolutionOperacional()
    // Preenche a lista de professores virtuais do output
    MatrizSolucao * matriz_solucao
 	   = problemSolution->solucao_operacional->getMatrizAulas();
-   for (; i < this->problemData->professores_virtuais.size(); i++)
+   for (; i < (int)this->problemData->professores_virtuais.size(); i++ )
    {
 		// Devo apenas analisar os professores virtuais
-	    professor = this->problemData->professores_virtuais.at(i);
+	    professor = this->problemData->professores_virtuais.at( i );
 
 		// Inclui um novo professor na
 		// lista de professores virtuais
@@ -1744,9 +1736,9 @@ void SolverMIP::getSolutionOperacional()
 
 		// Procura pelas disciplinas que o professor deverá ministrar
 		id_operacional = professor->getIdOperacional();
-		for (; j < matriz_solucao->at( id_operacional )->size(); j++ )
+		for (; j < (int)matriz_solucao->at( id_operacional )->size(); j++ )
 		{
-			aula = matriz_solucao->at( id_operacional )->at(j);
+			aula = matriz_solucao->at( id_operacional )->at( j );
 
 			if ( aula != NULL && aula->eVirtual() == false )
 			{
@@ -1778,8 +1770,8 @@ int SolverMIP::solve()
       if ( problemData->atendimentosTatico != NULL
 				&& problemData->atendimentosTatico->size() > 0 )
       {
-         ITERA_GGROUP( it_At_Campus, ( *problemSolution->atendimento_campus ),
-					   AtendimentoCampus )
+         ITERA_GGROUP( it_At_Campus,
+			 ( *problemSolution->atendimento_campus ), AtendimentoCampus )
          {
             problemData->atendimentosTatico = new GGroup< AtendimentoCampusSolucao * >();
             problemData->atendimentosTatico->add( new AtendimentoCampusSolucao( **it_At_Campus ) );
@@ -1808,8 +1800,8 @@ int SolverMIP::solve()
          // Preenchendo a estrutura "atendimentosTatico" com a saída.
          getSolutionTatico();
 
-         ITERA_GGROUP( it_At_Campus, *(problemSolution->atendimento_campus),
-					   AtendimentoCampus )
+         ITERA_GGROUP( it_At_Campus,
+			 ( *problemSolution->atendimento_campus ), AtendimentoCampus )
          {
             problemData->atendimentosTatico = new GGroup< AtendimentoCampusSolucao * >();
             problemData->atendimentosTatico->add( new AtendimentoCampusSolucao( **it_At_Campus ) );

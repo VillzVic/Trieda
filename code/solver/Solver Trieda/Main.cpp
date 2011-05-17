@@ -130,8 +130,8 @@ int main( int argc, char** argv )
          solver = new SolverMIP( data, solution, dataLoader );
          solver->solve();
          solver->getSolution( solution );
-         // delete solver;
-         // delete dataLoader;
+         delete solver;
+         delete dataLoader;
       }
       catch( int & status )
       {

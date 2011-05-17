@@ -26,14 +26,7 @@ public:
    Essa estrutura serve para agilizar o acesso ao professor e todos os horarios (<HorarioAula>) em que cada
    aula esta alocada. Assim, ha necessidade de percorrer uma solucao para saber onde uma determinada aula esta
    alocada. */
-   std::map<Aula*,std::pair<Professor*,std::vector<HorarioAula*> > > blocoAulas;
-
-   //void carregaSolucaoInicial();
-
-   // Dado um par 'dia da semana' e 'horário',
-   // retornar a coluna correspondente a esse
-   // par na matriz (a linha é o professor atual)
-   int getIndiceMatriz( int, Horario * );
+   std::map< Aula *, std::pair< Professor *, std::vector< HorarioAula * > > > blocoAulas;
 
    // Dado um índice que corresponde a uma linha
    // de um dado professor na matriz de solução,
@@ -48,8 +41,9 @@ public:
 
    ProblemData * getProblemData() const;
 
-   void setMatrizAulas( MatrizSolucao * );
    MatrizSolucao * getMatrizAulas() const;
+
+   int posicao_horario_aula( int );
 
    void toString() const;
    void toString2() const;
