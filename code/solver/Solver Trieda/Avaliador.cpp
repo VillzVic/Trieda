@@ -141,33 +141,33 @@ double Avaliador::avaliaSolucao( SolucaoOperacional & solucao, bool imprime_resu
    // precisa-se de uma instância multi-campi
 
    // Chamada dos métodos que fazem a avaliação da solução
-   //std::cout << "Avaliacao: ";
+   // std::cout << "Avaliacao: ";
    calculaViolacaoRestricaoFixacao(solucao);
-   //std::cout << "1";
+   // std::cout << "1";
    calculaDescolamentoProfessor(solucao);
-   //std::cout << ", 2";
+   // std::cout << ", 2";
    calculaDescolamentoBlocoCurricular(solucao);
-   //std::cout << ", 3";
+   // std::cout << ", 3";
    calculaGapsHorariosProfessores(solucao);
-   //std::cout << ", 4";
+   // std::cout << ", 4";
    avaliacaoCustoCorpoDocente(solucao);
-   //std::cout << ", 5";
+   // std::cout << ", 5";
    violacoesCargasHorarias(solucao);
-   //std::cout << ", 6";
+   // std::cout << ", 6";
    avaliaDiasProfessorMinistraAula(solucao);
-   //std::cout << ", 7";
+   // std::cout << ", 7";
    violacaoUltimaPrimeiraAula(solucao);
-   //std::cout << ", 8";
+   // std::cout << ", 8";
    avaliaNumeroMestresDoutores(solucao);
-   //std::cout << ", 9";
+   // std::cout << ", 9";
    avaliaMaximoDisciplinasProfessorPorCurso(solucao);
-   //std::cout << ", 10";
+   // std::cout << ", 10";
    avaliaPreferenciasProfessorDisciplina(solucao);
-   //std::cout << ", 11";
+   // std::cout << ", 11";
    avaliaCustoProfessorVirtual(solucao);
-   //std::cout << ", 12";
+   // std::cout << ", 12";
    avaliaTempoParcialIntegral(solucao);
-   //std::cout << ", 13\n";
+   // std::cout << ", 13\n";
 
    double funcao_objetivo = 0.0;
 
@@ -1626,9 +1626,10 @@ void Avaliador::avaliaTempoParcialIntegral( SolucaoOperacional & solucao )
 	double porcentagem_parcial = 0.0;
 	double porcentagem_integral = 0.0;
 	double total_professores_curso = 0.0;
-	ITERA_GGROUP( it_curso, solucao.getProblemData()->cursos,
-				  Curso )
+	ITERA_GGROUP( it_curso, solucao.getProblemData()->cursos, Curso )
 	{
+		curso = ( *it_curso );
+
 		// Recupera o par 'tempo parcial' / 'tempo integral',
 		// referente a todos os professores que ministram
 		// pelo menos uma disciplina do curso atual
@@ -1637,11 +1638,11 @@ void Avaliador::avaliaTempoParcialIntegral( SolucaoOperacional & solucao )
 		// Total de professores do curso em cada tipo de contrato
 		tempo_parcial = parcial_integral->first;
 		tempo_integral = parcial_integral->second;
-		total_professores_curso = (tempo_parcial + tempo_integral);
+		total_professores_curso = ( tempo_parcial + tempo_integral );
 
 		// Porcentagem de cada tipo de contrato
-		porcentagem_parcial  = (tempo_parcial+tempo_integral)/(total_professores_curso);
-		porcentagem_integral = (tempo_integral)/(total_professores_curso);
+		porcentagem_parcial  = ( tempo_parcial + tempo_integral ) / ( total_professores_curso );
+		porcentagem_integral = ( tempo_integral ) / ( total_professores_curso );
 
 		// Verifica se houve violações
 		if ( porcentagem_parcial < curso->getMinTempoIntegralParcial() )
