@@ -11,7 +11,7 @@
 class NSIteratorSwapEqBlocks : public NSIterator
 {
 public:
-   NSIteratorSwapEqBlocks(ProblemData & pD, GGroup<Aula*> & aulas, SolucaoOperacional & solOp);
+   NSIteratorSwapEqBlocks(ProblemData & pD, GGroup<Aula*, LessPtr<Aula> > & aulas, SolucaoOperacional & solOp);
    virtual ~NSIteratorSwapEqBlocks();
 
 	void first();
@@ -27,12 +27,12 @@ private:
 
    MoveSwapEqBlocksValidator * moveValidator;
 
-   GGroup<Aula*>::iterator itCurrent;
-   GGroup<Aula*>::iterator itNext;
+   GGroup<Aula*,LessPtr<Aula> >::iterator itCurrent;
+   GGroup<Aula*,LessPtr<Aula> >::iterator itNext;
 
-   GGroup<Aula*>::iterator itBegin;
-   GGroup<Aula*>::iterator itBeforeEnd;
-   GGroup<Aula*>::iterator itEnd;
+   GGroup<Aula*,LessPtr<Aula> >::iterator itBegin;
+   GGroup<Aula*,LessPtr<Aula> >::iterator itBeforeEnd;
+   GGroup<Aula*,LessPtr<Aula> >::iterator itEnd;
 
    SolucaoOperacional & solOp;
 };

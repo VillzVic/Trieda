@@ -1,6 +1,6 @@
 #include "NSIteratorSwapEqBlocks.h"
 
-NSIteratorSwapEqBlocks::NSIteratorSwapEqBlocks(ProblemData & pD, GGroup<Aula*> & aulas, SolucaoOperacional & _solOp) : 
+NSIteratorSwapEqBlocks::NSIteratorSwapEqBlocks(ProblemData & pD, GGroup<Aula*, LessPtr<Aula> > & aulas, SolucaoOperacional & _solOp) : 
    move(NULL), itBegin(aulas.begin()), itCurrent(aulas.begin()), itNext(aulas.begin()), itEnd(aulas.end()), itBeforeEnd(aulas.end()), solOp(_solOp)
 {
    moveValidator = new MoveSwapEqBlocksValidator(&pD);
@@ -38,7 +38,7 @@ void NSIteratorSwapEqBlocks::next()
       }
       else
       {
-         GGroup<Aula*>::iterator it2BeforeEnd = itBeforeEnd;
+         GGroup<Aula*,LessPtr<Aula> >::iterator it2BeforeEnd = itBeforeEnd;
          --it2BeforeEnd;
 
          if(itCurrent != it2BeforeEnd)

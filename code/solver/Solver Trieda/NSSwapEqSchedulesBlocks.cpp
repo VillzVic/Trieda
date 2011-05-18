@@ -39,7 +39,7 @@ std::pair<Aula*,Aula*> NSSwapEqSchedulesBlocks::pickTwoClasses(SolucaoOperaciona
    Aula * a1 = NULL;
    Aula * a2 = NULL;
 
-   GGroup<Aula*>::iterator itAula = problemData.aulas.begin();
+   GGroup<Aula*, LessPtr<Aula> >::iterator itAula = problemData.aulas.begin();
 
    int maxIter = rand() % (s.getMatrizAulas()->size()-1);
    for(int i = 0; i < maxIter; ++i, ++itAula);

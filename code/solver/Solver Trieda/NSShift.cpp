@@ -23,7 +23,7 @@ std::pair<Aula*, std::pair<Professor*,std::vector<HorarioAula*> > > NSShift::pic
 
    Aula * aula = NULL;
 
-   GGroup<Aula*>::iterator itAula = problemData.aulas.begin();
+   GGroup<Aula*, LessPtr<Aula> >::iterator itAula = problemData.aulas.begin();
 
    int maxIter = ( rand() % ( solOp.getMatrizAulas()->size() - 1 ) );
    for( int i = 0; i < maxIter; ++i, ++itAula );

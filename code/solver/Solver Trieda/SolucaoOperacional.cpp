@@ -240,7 +240,7 @@ void SolucaoOperacional::toString() const
                    << professor->getNome() << std::endl << std::endl;
       }
 
-      // Imprima as aulas deste professor
+      // Imprime as aulas deste professor
       std::vector< Aula * > * aulas = ( this->getMatrizAulas()->at(i) );
       for ( int j = 0; j < (int)aulas->size(); j++)
       {
@@ -643,4 +643,22 @@ bool SolucaoOperacional::fixacaoProfSala( Aula * aula, int id_operacional_profes
 	}
 
 	return false;
+}
+
+void SolucaoOperacional::alocaAulaProf(Aula & aula, Professor & professor, std::vector<HorarioAula*> horariosAula)
+{
+   int diaSemana = aula.getDiaSemana();
+
+   std::vector<HorarioAula*>::iterator itHorariosAula = horariosAula.begin();
+
+   for(; itHorariosAula != horariosAula.end(); ++itHorariosAula)
+   {
+      int horarioAulaId = (*itHorariosAula)->getId();
+      int profIdOp = professor.getIdOperacional();
+
+      this->matriz_aulas->at(profIdOp)->at(
+         ((diaSemana-1) * total_horarios ) + posicao_horario_aula(horarioAulaId) )
+         
+         = &aula;
+   }
 }

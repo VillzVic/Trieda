@@ -1648,7 +1648,7 @@ void SolverMIP::getSolutionTatico()
       }
    }
 
-   std::cout << "at_Tatico_Counter: " << at_Tatico_Counter << std::endl;
+   //std::cout << "at_Tatico_Counter: " << at_Tatico_Counter << std::endl;
 }
 
 int SolverMIP::solveOperacional()
@@ -1663,7 +1663,9 @@ int SolverMIP::solveOperacional()
 
    // Avaliador
    Avaliador avaliador;
-   avaliador.avaliaSolucao( solucaoOperacional, true );
+   //avaliador.avaliaSolucao( solucaoOperacional, true );
+
+   solucaoOperacional.toString2();
 
    // Estruturas de Vizinhança
    // NSSeqSwapEqBlocks nsSeqSwapEqBlocks ( *problemData );
@@ -1763,6 +1765,7 @@ int SolverMIP::solve()
       status = solveTaticoBasico();
 
       carregaVariaveisSolucaoTatico();
+
       converteCjtSalaEmSala();
    }
    else if ( problemData->parametros->modo_otimizacao == "OPERACIONAL" )
@@ -3843,6 +3846,7 @@ int SolverMIP::cria_variavel_de_folga_demanda_disciplina()
    {
       GGroup< std::pair< int, int > >::iterator itPrdDisc = 
          itOferta->curriculo->disciplinas_periodo.begin();
+
       for(; itPrdDisc != itOferta->curriculo->disciplinas_periodo.end(); itPrdDisc++ )
       {
          // Calculando P_{d,o}
@@ -3851,16 +3855,16 @@ int SolverMIP::cria_variavel_de_folga_demanda_disciplina()
          ITERA_GGROUP( itDem, problemData->demandas, Demanda )
          {
             if ( itDem->disciplina->getId() == ptDisc->getId() &&
-				 itDem->getOfertaId() == itOferta->getId() )
+               itDem->getOfertaId() == itOferta->getId() )
             {
                qtdDem += itDem->getQuantidade();
             }
          }
 
          if ( qtdDem <= 0 )
-		 {
+         {
             continue;
-		 }
+         }
 
          Variable v;
          v.reset();
@@ -3873,18 +3877,23 @@ int SolverMIP::cria_variavel_de_folga_demanda_disciplina()
          {
             vHash[v] = lp->getNumCols();
 
+            double ub = qtdDem;
+
+            //if ( v.toString() == "fd_{37,10}" ) ub = 0;
+            //ub = 0;
+
             if ( problemData->parametros->funcao_objetivo == 0 )
             {
                OPT_COL col( OPT_COL::VAR_INTEGRAL,
-							1000.0, 0.0, qtdDem,
-						    ( char* )v.toString().c_str() );
+                  1000.0, 0.0, ub,
+                  ( char* )v.toString().c_str() );
 
                lp->newCol(col);
             }
             else if(problemData->parametros->funcao_objetivo == 1 ||
                problemData->parametros->funcao_objetivo == 2)
             {
-               OPT_COL col(OPT_COL::VAR_INTEGRAL,1000.0,0.0,qtdDem,
+               OPT_COL col(OPT_COL::VAR_INTEGRAL,1000.0,0.0,ub,
                   (char*)v.toString().c_str());
 
                lp->newCol(col);
@@ -4540,14 +4549,14 @@ int SolverMIP::cria_restricoes(void)
    numRestAnterior = restricoes;
 #endif
 
-   restricoes +=  cria_restricao_abertura_bloco_mesmoTPS();
+   //restricoes +=  cria_restricao_abertura_bloco_mesmoTPS();
 
 #ifdef PRINT_cria_restricoes
    std::cout << "numRest \"1.2.33\": " << (restricoes - numRestAnterior) << std::endl;
    numRestAnterior = restricoes;
 #endif
 
-   restricoes +=  cria_restricao_folga_abertura_bloco_mesmoTPS();
+   //restricoes +=  cria_restricao_folga_abertura_bloco_mesmoTPS();
 
 #ifdef PRINT_cria_restricoes
    std::cout << "numRest \"1.2.34\": " << (restricoes - numRestAnterior) << std::endl;
@@ -8436,7 +8445,7 @@ int SolverMIP::cria_restricao_abertura_bloco_mesmoTPS()
 					      itDiasLetCjtSala++ )
 				   {
 					  c.reset();
-					  c.setType( Constraint::C_MAX_CREDITOS_SD );
+					  c.setType( Constraint::C_EVITA_BLOCO_TPS_D );
 
 					  c.setSubCjtSala( *itCjtSala );
 					  c.setBloco( *itBloco );

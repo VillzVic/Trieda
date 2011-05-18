@@ -180,7 +180,7 @@ int main( int argc, char** argv )
       return 0;
    }
 
-   std::cout << "TRIEDA executado com sucesso.\n";
+   std::cout << "\n\nTRIEDA executado com sucesso !!!\n";
 
    return 1;
 }

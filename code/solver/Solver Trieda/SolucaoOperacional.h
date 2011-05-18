@@ -114,6 +114,10 @@ public:
    bool fixacaoProfDiscSala( Aula *, int );
    bool fixacaoProfSala( Aula *, int );
 
+   /* Trata-se de um método para facilitar a alocação das aulas.
+   Nenhuma checagem é realizada. As aulas apenas são alocadas para o(s) horário(s) especificado(s).*/
+   void alocaAulaProf(Aula &, Professor &, std::vector<HorarioAula*>);
+
 private:
    
    ProblemData* problem_data;

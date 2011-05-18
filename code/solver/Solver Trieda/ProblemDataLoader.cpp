@@ -111,9 +111,6 @@ void ProblemDataLoader::load()
    criaAulas();
 
    // ---------
-   print_stats();
-
-   // ---------
    calculaMaxHorariosProfessor();
 
    // ---------
@@ -130,6 +127,9 @@ void ProblemDataLoader::load()
 
    // ---------
    criaFixacoesDisciplinasDivididas();
+
+   // ---------
+   print_stats();
 }
 
 void ProblemDataLoader::criaFixacoesDisciplinasDivididas()
@@ -2934,7 +2934,7 @@ void ProblemDataLoader::criaAulas()
                      // dia da semana, sala e turma. Caso encontre,
                      // devo apenas add a oferta à aula existente.
                      bool novaAula = true;
-                     ITERA_GGROUP( itAula, problemData->aulas, Aula )
+                     ITERA_GGROUP_LESSPTR( itAula, problemData->aulas, Aula )
                      {
                         if( ( itAula->getTurma() == turma )
                            && ( itAula->getDisciplina() == disciplina )
@@ -2980,7 +2980,7 @@ void ProblemDataLoader::criaAulas()
 
 void ProblemDataLoader::relacionaBlocoCurricularAulas()
 {
-   ITERA_GGROUP( itAula, problemData->aulas, Aula )
+   ITERA_GGROUP_LESSPTR( itAula, problemData->aulas, Aula )
    {
       Disciplina * disciplina = itAula->getDisciplina();
 
