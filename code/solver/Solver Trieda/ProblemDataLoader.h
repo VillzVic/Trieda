@@ -107,6 +107,11 @@ public:
    // no conjunto de dias letivos da disciplina em questão
    void verificaFixacoesDiasLetivosDisciplinas();
 
+   // Quando houver uma disciplina que use laboratórios e também
+   // existir uma fixação dessa disciplina, devemos criar a fixação
+   // correta para a disciplina dividida (créditos práticos)
+   void criaFixacoesDisciplinasDivididas();
+
     /* 
 	Uma disciplina é equivalente a outra se:
 		- creditos teoricos são iguais

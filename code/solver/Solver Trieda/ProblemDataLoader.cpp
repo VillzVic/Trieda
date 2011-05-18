@@ -127,6 +127,48 @@ void ProblemDataLoader::load()
 
    // ---------
    verificaFixacoesDiasLetivosDisciplinas();
+
+   // ---------
+   criaFixacoesDisciplinasDivididas();
+}
+
+void ProblemDataLoader::criaFixacoesDisciplinasDivididas()
+{
+	Fixacao * fixacao = NULL;
+	Disciplina * disciplina_pratica = NULL;
+
+	ITERA_GGROUP_LESSPTR( it_disciplina, problemData->disciplinas, Disciplina )
+	{
+		// Verifica se a disciplina é prática
+		if ( it_disciplina->getId() > 0 )
+		{
+			continue;
+		}
+
+		disciplina_pratica = ( *it_disciplina );
+
+		// Procura se existe uma fixação
+		// correspondente à disciplina teórica 
+		ITERA_GGROUP_LESSPTR( it_fixacao, problemData->fixacoes, Fixacao )
+		{
+			fixacao = ( *it_fixacao );
+
+			if ( fixacao->disciplina != NULL
+				&& abs( fixacao->disciplina->getId() ) == abs( disciplina_pratica->getId() ) )
+			{
+				// Cria fixação com os mesmos dados, porém com 'id' negativo
+				Fixacao * fixacao_disciplina_pratica = new Fixacao( *fixacao );
+
+				// Atualiza as referência de disciplina para a disciplina prática
+				fixacao_disciplina_pratica->setDisciplinaId( disciplina_pratica->getId() );
+				fixacao_disciplina_pratica->disciplina = ( disciplina_pratica );
+
+				// Assim como temos dois objetos 'disciplina', agora temos
+				// dois objetos 'fixação', para os créditos teóricos e práticos
+				problemData->fixacoes.add( fixacao_disciplina_pratica );
+			}
+		}
+	}
 }
 
 bool ordena_horarios_aula( HorarioAula * h1, HorarioAula * h2 )
@@ -1463,7 +1505,7 @@ void ProblemDataLoader::divideDisciplinas()
    {
       if ( it_disc->getCredTeoricos() > 0
 			&& it_disc->getCredPraticos() > 0
-			&& it_disc->eLab() )
+			&& it_disc->eLab() == true )
       {
          Disciplina * nova_disc = new Disciplina();
 
@@ -1480,14 +1522,14 @@ void ProblemDataLoader::divideDisciplinas()
          nova_disc->setELab( it_disc->eLab() );
          it_disc->setELab( false );
 
-         nova_disc->setMaxAlunosT(-1);
+         nova_disc->setMaxAlunosT( -1 );
          nova_disc->setMaxAlunosP( it_disc->getMaxAlunosP() );
-         it_disc->setMaxAlunosP(-1);
+         it_disc->setMaxAlunosP( -1 );
 
          nova_disc->setTipoDisciplinaId( it_disc->getTipoDisciplinaId() );
          nova_disc->setNivelDificuldadeId( it_disc->getNivelDificuldadeId() );
 
-         if( it_disc->divisao_creditos )
+         if( it_disc->divisao_creditos != NULL )
          {
             std::map< int /*Num. Creds*/ ,
 					  GGroup< DivisaoCreditos * > >::iterator it_Creds_Regras;
@@ -1679,128 +1721,6 @@ void ProblemDataLoader::divideDisciplinas()
                }
             }
          }
-
-         // ------------------------------------------------------------
-         // ToDo : terminar a implementação das fixações para qdo a disciplina é dividida.
-         // TRATANDO AS FIXAÇÕES !!!!
-
-         // Armazena as fixações para a disciplina em questão.
-         GGroup< Fixacao *, LessPtr< Fixacao > > fixacoesDisc;
-
-         // Armazena as fixações por tipo de sala. Essa estrutura
-		 // pode ficar vazia após o processamento. Nesse caso,
-		 // conclui-se que  nenhuma fixação em relação à sala foi realizada.
-         //std::map<TipoSala*,Sala*,LessPtr<TipoSala> > fixacoesTipoSala;
-         std::map< TipoSala *, 
-            GGroup< Sala *, LessPtr< Sala > >, 
-            LessPtr< TipoSala > > fixacoesTipoSala;
-
-         // Listando todas as fixações de uma disciplina.
-         ITERA_GGROUP_LESSPTR( itFixacao, problemData->fixacoes, Fixacao )
-         {
-            // Caso possua o campo Disciplina setado.
-            if ( itFixacao->disciplina != NULL )
-            {
-               // Somente qdo se tratar da disciplina em questão.
-               if ( ( **it_disc ) == ( *itFixacao->disciplina ) )
-               {
-                  fixacoesDisc.add( *itFixacao );
-
-                  // Caso possua o campo Sala setado.
-                  if ( itFixacao->sala != NULL )
-				  {
-                     fixacoesTipoSala[ itFixacao->sala->tipo_sala ].add( itFixacao->sala );
-				  }
-               }
-            }
-         }
-
-         // Se não existir fixação com o campo <Sala> preenchido.
-         if ( fixacoesTipoSala.size() == 0 )
-         {
-            // Se existir qualquer outro tipo de fixação,
-			// deve-se manter a fixação para as duas partes.
-            if ( fixacoesDisc.size() > 0 )
-            {
-               // Para cada fixação existente.
-               ITERA_GGROUP_LESSPTR( itFixacao, fixacoesDisc, Fixacao )
-               {
-                  // Copiando a fixação
-                  Fixacao * fixacaoNovaDisc = new Fixacao( **itFixacao );
-
-                  fixacaoNovaDisc->setDisciplinaId( nova_disc->getId() );
-                  fixacaoNovaDisc->disciplina = nova_disc;
-
-                  problemData->fixacoes.add( fixacaoNovaDisc );
-               }
-            }
-         }
-         // Se todas fixações forem para apenas um tipo de sala.
-         else if ( fixacoesTipoSala.size() == 1 )
-         {
-            // Aqui, ao dividir a disciplina, apenas
-			// uma parte fica fixada. A outra fica livre.
-
-			// Laboratório
-            if ( fixacoesDisc.begin()->sala->tipo_sala->getId() == 2 )
-            {
-			   // Se existir qualquer outro tipo de fixação,
-			   // deve-se manter a fixação para as duas partes.
-               // Para cada fixação existente.
-               ITERA_GGROUP_LESSPTR( itFixacao, fixacoesDisc, Fixacao )
-               {
-                   // Copiando a fixação
-                   Fixacao * fixacaoNovaDisc = new Fixacao( **itFixacao );
-
-                   fixacaoNovaDisc->setDisciplinaId( nova_disc->getId() );
-                   fixacaoNovaDisc->disciplina = nova_disc;
-
-                   problemData->fixacoes.add( fixacaoNovaDisc );
-               }
-            }
-			// Erro na entrada
-            else if ( fixacoesDisc.begin()->sala->tipo_sala->getId() > 2
-				  ||  fixacoesDisc.begin()->sala->tipo_sala->getId() < 1 )
-            {
-			   // Erro no arquivo de entrada
-               std::cout << "Erro em divideDisciplinas(). "
-						 << "FOI INFORMADO UM TIPO DE SALA INVALIDO." << std::endl;
-
-               exit(1);
-            }
-         }
-         else if ( fixacoesTipoSala.size() == 2 )
-         {
-            // Aqui, ao dividir a disciplina, cada parte deve ficar
-			// com as fixações que possam ser aplicadas. Não adianta
-			// em nada a parte prática da disciplina ficar com associações
-			// à salas teóricas. Não nesse caso onde estamos dividindo
-			// a disciplina ( eLab = true ).
-			ITERA_GGROUP_LESSPTR( itFixacao, fixacoesDisc, Fixacao )
-			{
-				// Somente se houver fixação de sala que for laboratório
-				if ( itFixacao->sala != NULL
-						&& itFixacao->sala->tipo_sala->getId() == 2 ) // LAB
-				{
-					// Copiando a fixação
-					Fixacao * fixacaoNovaDisc = new Fixacao( **itFixacao );
-
-					fixacaoNovaDisc->setDisciplinaId( nova_disc->getId() );
-					fixacaoNovaDisc->disciplina = nova_disc;
-
-					problemData->fixacoes.add( fixacaoNovaDisc );
-				}
-			}
-         }
-         else if ( fixacoesTipoSala.size() > 2 )
-         {
-			// Erro no arquivo de entrada
-            std::cout << "Erro em divideDisciplinas(). "
-					  << "EXISTEM MAIS DO QUE 2 TIPOS DE SALA." << std::endl;
-
-            exit(1);
-         }
-         // ------------------------------------------------------------
 
          // Adicionando os dados da nova disciplina em <GrupoCurso->curriculos>
          ITERA_GGROUP( it_curso, problemData->cursos, Curso )
