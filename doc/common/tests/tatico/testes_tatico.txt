@@ -1,0 +1,50 @@
+Obs: Semanas letivas, horários de aula e turnos já foram cadastrados.
+-> Teste 1: ok
+	- 1 campus
+	- 1 unidade
+	- 1 sala (capacidade: 50)
+	- 5 disciplinas teóricas (40 alunos)
+	- Todas as disciplinas tem 2 créditos
+	- 1 período
+	
+-> Teste 2: ok
+	- 1 campus
+	- 1 unidade
+	- 1 sala (capacidade: 50)
+	- 10 disciplinas teóricas (40 alunos)
+	- Todas as disciplinas tem 2 créditos
+	- 2 períodos	
+
+-> Teste 3: está alocando a disciplina prática em sala de aula e não no laboratório 
+	- 1 campus
+	- 1 unidade
+	- 1 sala de aula (capacidade: 50)
+	- 1 laboratório (capacidade: 20)
+	- 4 disciplinas teóricas (40 alunos)
+	- 1 disciplina teórica e prática (40 alunos)
+	- Todas as disciplinas tem 2 créditos
+	- 1 período
+
+-> Teste 4: está alocando a disciplina prática em sala de aula e não no laboratório 
+	- 1 campus
+	- 1 unidade
+	- 1 sala de aula (capacidade: 50)
+	- 1 laboratório (capacidade: 20)
+	- 4 disciplinas teóricas (40 alunos)
+	- 1 disciplina prática (40 alunos)
+	- Todas as disciplinas tem 2 créditos
+	- 1 período
+
+-> Teste 5: não aloca a disciplina de 6 créditos
+	- 1 campus
+	- 1 unidade
+	- 1 sala (capacidade: 50)
+	- 5 disciplinas teóricas (40 alunos)
+	- 4 disciplinas com 2 créditos
+	- 1 disciplina com 6 créditos
+	- 1 período
+
+-> Teste 6: não está criando duas turmas para a disciplina 1 
+	Utilizando a instância do teste 1 verificar se o solver cria duas turmas para uma determinada disciplina 
+	   se a sala não tiver capacidade para criar apenas uma turma. (No teste 1 a disciplina 1 tinha 40 alunos,
+	   no teste 2 ela tem 90).
