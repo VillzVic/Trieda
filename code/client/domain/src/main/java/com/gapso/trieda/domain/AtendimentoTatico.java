@@ -292,12 +292,19 @@ public class AtendimentoTatico implements Serializable {
 		return q.getResultList();
 	}
 
-//	@SuppressWarnings("unchecked")
-//	public static List<Sala> findAllSalasUtilizadasByCampus(Campus campus) {
-//		Query q = entityManager().createQuery("SELECT DISTINCT(o.sala) FROM AtendimentoTatico o WHERE o.sala.unidade.campus = :campus");
-//		q.setParameter("campus", campus);
-//		return q.getResultList();
-//	}
+	@SuppressWarnings("unchecked")
+	public static List<AtendimentoTatico> findAllBy(Curso curso) {
+		Query q = entityManager().createQuery("SELECT o FROM AtendimentoTatico o WHERE o.oferta.curriculo.curso = :curso");
+		q.setParameter("curso", curso);
+		return q.getResultList();
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static List<AtendimentoTatico> findAllBy(Oferta oferta) {
+		Query q = entityManager().createQuery("SELECT o FROM AtendimentoTatico o WHERE o.oferta = :oferta");
+		q.setParameter("oferta", oferta);
+		return q.getResultList();
+	}
 	
 	public Cenario getCenario() {
 		return cenario;
@@ -375,4 +382,16 @@ public class AtendimentoTatico implements Serializable {
 		return getCreditosPratico() + getCreditosTeorico();
 	}
 	
+	public String getNaturalKey() {
+		Oferta oferta = getOferta();
+		Curriculo curriculo = oferta.getCurriculo();
+		return oferta.getCampus().getId()+"-"+
+			oferta.getTurno().getId()+"-"+
+			curriculo.getCurso().getId()+"-"+
+			curriculo.getId()+"-"+
+			curriculo.getPeriodo(getDisciplina())+"-"+
+			getDisciplina().getId()+"-"+
+			getTurma()+"-"+
+			(getCreditosTeorico() > 0);
+	}
 }

@@ -47,7 +47,7 @@ public class OtimizarServiceImpl extends RemoteServiceServlet implements Otimiza
 //	private static final String linkSolver = "http://offspring:8080/SolverWS";    // SERVIDOR // OFFSPRING
 //	private static final String linkSolver = "http://toquinho:8080/SolverWS";     // MAQUINA DO MÁRIO // TOQUINHO
 //	private static final String linkSolver = "http://localhost:8080/SolverWS"; // MAQUINA DO CLAUDIO // NIRVANA
-	private static final String linkSolver = "http://localhost:3402/SolverWS";    // MAQUINA DESENVOLVIMENTO (CLAUDIO)
+	private static final String linkSolver = "http://localhost:8080/SolverWS";    // MAQUINA DESENVOLVIMENTO (CLAUDIO)
 
 	@Override
 	@Transactional
@@ -65,47 +65,70 @@ public class OtimizarServiceImpl extends RemoteServiceServlet implements Otimiza
 	@Override
 	@Transactional
 	public Long input(ParametroDTO parametroDTO) {
+		System.out.println("AAA1");
 //		List<Campus> campi = new ArrayList<Campus>(campiDTO.size());
 //		for(CampusDTO campusDTO : campiDTO) {
 //			campi.add(Campus.find(campusDTO.getId()));
 //		}
 		Parametro parametro = ConvertBeans.toParametro(parametroDTO);
+		System.out.println("AAA2");
 		parametro.setId(null);
+		System.out.println("AAA3");
 		parametro.flush();
+		System.out.println("AAA4");
 		parametro.save();
+		System.out.println("AAA5");
 		Cenario cenario = parametro.getCenario();
+		System.out.println("AAA6");
 		cenario.getParametros().add(parametro);
+		System.out.println("AAA7");
 		List<Campus> campi = new ArrayList<Campus>(1);
+		System.out.println("AAA8");
 		campi.add(parametro.getCampus());
+		System.out.println("AAA9");
 		Turno turno = parametro.getTurno();
+		System.out.println("AAA10");
 		SolverInput solverInput = new SolverInput(cenario, parametro, campi, turno);
-		
+		System.out.println("AAA11");
 		TriedaInput triedaInput = null;
 		if(parametro.isTatico()) {
+			System.out.println("AAA12");
 			triedaInput = solverInput.generateTaticoTriedaInput();
 		} else {
+			System.out.println("AAA13");
 			triedaInput = solverInput.generateOperacionalTriedaInput();
 		}
-
+		System.out.println("AAA14");
 		byte[] fileBytes = null;
 		try {
+			System.out.println("AAA15");
 			final ByteArrayOutputStream temp = new ByteArrayOutputStream();
+			System.out.println("AAA16");
 			JAXBContext jc = JAXBContext.newInstance("com.gapso.web.trieda.server.xml.input");
+			System.out.println("AAA17");
 			Marshaller m = jc.createMarshaller();
+			System.out.println("AAA18");
 			m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+			System.out.println("AAA19");
 			m.setProperty(Marshaller.JAXB_ENCODING, "ISO-8859-1");
+			System.out.println("AAA20");
 			m.marshal(triedaInput, temp);
+			System.out.println("AAA21");
 			fileBytes = temp.toByteArray();
-			
+			System.out.println("AAA22");
 		} catch (Exception e) {
+			System.out.println("AAA23");
 			e.printStackTrace();
 		}
+		System.out.println("AAA24");
+		System.out.println("URL do otimizador: " + linkSolver);
 		SolverClient solverClient = new SolverClient(linkSolver, "trieda");
 		return solverClient.requestOptimization(fileBytes);
 	}
 
 	@Override
 	public Boolean isOptimizing(Long round) {
+		System.out.println("URL do otimizador: " + linkSolver);
 		SolverClient solverClient = new SolverClient(linkSolver, "trieda");
 		return !solverClient.isFinished(round);
 	}
@@ -119,6 +142,7 @@ public class OtimizarServiceImpl extends RemoteServiceServlet implements Otimiza
 		ret.put("error", new ArrayList<String>());
 		
 		try {
+			System.out.println("URL do otimizador: " + linkSolver);
 			SolverClient solverClient = new SolverClient(linkSolver, "trieda");
 			byte[] xmlBytes = solverClient.getContent(round);
 			if(xmlBytes == null) {

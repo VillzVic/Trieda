@@ -7,7 +7,9 @@ import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
+import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.CursoDTO;
+import com.gapso.web.trieda.shared.dtos.ResumoCursoDTO;
 import com.gapso.web.trieda.shared.dtos.TipoCursoDTO;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -21,5 +23,6 @@ public interface CursosServiceAsync {
 	void remove(List<CursoDTO> cursoDTOList, AsyncCallback<Void> callback);
 	void getListAll(AsyncCallback<ListLoadResult<CursoDTO>> callback);
 	void getListByCampus(CampusDTO campusDTO, List<CursoDTO> retirarCursosDTO, AsyncCallback<ListLoadResult<CursoDTO>> callback);
+	void getResumos(CenarioDTO cenarioDTO, ResumoCursoDTO currentNode, AsyncCallback<List<ResumoCursoDTO>> callback);
 	
 }

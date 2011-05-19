@@ -44,7 +44,7 @@ import org.springframework.transaction.annotation.Transactional;
 	uniqueConstraints=
 		@UniqueConstraint(columnNames={"CEN_ID", "CUR_CODIGO"})
 )
-public class Curso implements Serializable {
+public class Curso implements Serializable, Comparable<Curso> {
 
     @NotNull
     @ManyToOne(targetEntity = TipoCurso.class)
@@ -400,4 +400,10 @@ public class Curso implements Serializable {
 	}
     
 	private static final long serialVersionUID = 2645879541329424105L;
+
+
+	@Override
+	public int compareTo(Curso c) {
+		return this.getCodigo().compareTo(c.getCodigo());
+	}
 }

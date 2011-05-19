@@ -19,11 +19,13 @@ public interface TriedaI18nConstants extends Constants {
 	String codigo();
 	String confirmacao();
 	String cpf();
+	String creditos();
 	String creditosPraticos();
 	String creditosTeoricos();
 	String curriculos();
 	String curso();
 	String cursos();
+	String custoDocente();
 	String custoMedioCredito();
 	String custoMedioCreditoExcel();
 	String demandaDeAlunos();
@@ -45,6 +47,8 @@ public interface TriedaI18nConstants extends Constants {
 	String informacao();
 	String insercaoDe();
 	String maisDeUmaDisciplinaProfessor();
+	String margem();
+	String margemPercente();
 	String matrizCurricular();
 	String maxAlunosPratico();
 	String maxAlunosTeorico();
@@ -68,6 +72,9 @@ public interface TriedaI18nConstants extends Constants {
 	String preferencia();
 	String professores();
 	String publicado();
+	String quantidadeAlunos();
+	String rateio();
+	String receita();
 	String relatorioVisaoSala();
 	String remover();
 	String sala();
@@ -78,9 +85,11 @@ public interface TriedaI18nConstants extends Constants {
 	String sim();
 	String tipo();
 	String tipoContrato();
+	String TipoCredito();
 	String titulacao();
 	String trieda();
 	String triedaDetailMessageHeadingText();
+	String turma();
 	String turno();
 	String unidade();
 	String unidades();
@@ -89,4 +98,5 @@ public interface TriedaI18nConstants extends Constants {
 	String valorCredito();
 	String otimizadoTatico();
 	String otimizadoOperacional();
+	
 }

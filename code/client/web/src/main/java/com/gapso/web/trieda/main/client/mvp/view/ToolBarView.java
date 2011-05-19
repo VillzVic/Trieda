@@ -86,6 +86,7 @@ public class ToolBarView extends MyComposite implements ToolBarPresenter.Display
 	private Button relatorioVisaoProfessorBt;
 	private Button resumoCenarioBt;
 	private Button resumoCampiBt;
+	private Button resumoCursosBt;
 	
 	// Cenário
 	private Button fixacoesListBt;
@@ -332,6 +333,9 @@ public class ToolBarView extends MyComposite implements ToolBarPresenter.Display
 		resumoCampiBt = createButton("Resumo por<br />Campus", "Resumo por Campus", Resources.DEFAULTS.resumoCampi24());
 		relatoriosToolBar.add(resumoCampiBt);
 		
+		resumoCursosBt = createButton("Resumo por<br />Cursos", "Resumo por Curso", Resources.DEFAULTS.resumoCampi24());
+		relatoriosToolBar.add(resumoCursosBt);
+		
 		relatoriosToolBar.add(new SeparatorToolItem());
 		
 		relatorioVisaoSalaBt = createButton("Grade Horária<br />Visão Sala", "Grade Horária Visão Sala", Resources.DEFAULTS.saidaSala24());
@@ -504,6 +508,10 @@ public class ToolBarView extends MyComposite implements ToolBarPresenter.Display
 	@Override
 	public Button getResumoCampiButton() {
 		return resumoCampiBt;
+	}
+	@Override
+	public Button getResumoCursosButton() {
+		return resumoCursosBt;
 	}
 
 	@Override

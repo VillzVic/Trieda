@@ -190,6 +190,13 @@ public class AtendimentoOperacional implements Serializable {
 		q.setParameter("professor", professor);
 		return q.getResultList();
 	}
+	
+	@SuppressWarnings("unchecked")
+	public static List<AtendimentoOperacional> findAllBy(Curso curso) {
+		Query q = entityManager().createQuery("SELECT o FROM AtendimentoOperacional o WHERE o.oferta.curriculo.curso = :curso");
+		q.setParameter("curso", curso);
+		return q.getResultList();
+	}
 
 	@SuppressWarnings("unchecked")
 	public static List<AtendimentoOperacional> findAllBy(Campus campus, Turno turno) {
@@ -292,4 +299,17 @@ public class AtendimentoOperacional implements Serializable {
 		this.professorVirtual = professorVirtual;
 	}
 
+	public String getNaturalKey() {
+		Oferta oferta = getOferta();
+		Curriculo curriculo = oferta.getCurriculo();
+		return oferta.getCampus().getId()+"-"+
+			oferta.getTurno().getId()+"-"+
+			curriculo.getCurso().getId()+"-"+
+			curriculo.getId()+"-"+
+			curriculo.getPeriodo(getDisciplina())+"-"+
+			getDisciplina().getId()+"-"+
+			getTurma()+"-"+
+			getCreditoTeorico();
+	}
+	
 }

@@ -37,7 +37,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RooToString
 @RooEntity(identifierColumn = "OFE_ID")
 @Table(name = "OFERTAS")
-public class Oferta implements Serializable {
+public class Oferta implements Serializable, Comparable<Oferta> {
 
     @NotNull
     @ManyToOne(targetEntity = Curriculo.class)
@@ -306,4 +306,9 @@ public class Oferta implements Serializable {
         sb.append("Atendimentos Taticos: ").append(getAtendimentosTaticos() == null ? "null" : getAtendimentosTaticos().size());
         return sb.toString();
     }
+
+	@Override
+	public int compareTo(Oferta o) {
+		return this.getCampus().getNome().compareTo(o.getCampus().getNome());
+	}
 }
