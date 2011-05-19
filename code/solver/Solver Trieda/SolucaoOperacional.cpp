@@ -223,6 +223,18 @@ MatrizSolucao * SolucaoOperacional::getMatrizAulas() const
    return ( this->matriz_aulas );
 }
 
+bool SolucaoOperacional::seqHorarioLivre(int idOperacionaProf, std::vector<int> & seqHorarioAula) const
+{
+   std::vector<int>::const_iterator 
+      itHorarioAula = seqHorarioAula.begin();
+
+   for(; itHorarioAula != seqHorarioAula.end(); ++itHorarioAula)
+      if(matriz_aulas->at(idOperacionaProf)->at(*itHorarioAula) != NULL)
+         return false;
+
+   return true;
+}
+
 // Imprime as aulas da matriz de solução,
 // percorrendo as linhas de cada professor
 void SolucaoOperacional::toString() const

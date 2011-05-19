@@ -52,9 +52,6 @@ public:
    // Establece os dias letivos comuns entre os professores e suas disciplinas.
    void estabeleceDiasLetivosProfessorDisciplina();
 
-   // Relaciona cada professor com as disciplinas as quais ele é fixado.
-   void relacionaProfessoresDisciplinasFixadas();
-
    /* */
    void divideDisciplinas();
 
@@ -79,9 +76,6 @@ public:
 
    /* */
    void cache();
-
-   /* */
-   void print_csv();
 
    /* */
    void criaAulas();

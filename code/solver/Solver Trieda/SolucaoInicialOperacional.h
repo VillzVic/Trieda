@@ -52,7 +52,7 @@ private:
    // Armazena para cada sala os horarios que já foram alocados.
    // Estrutura: para cada sala, retorna-se o conjuntos de pares
    // de horario aula / dia da semana que a sala já está ocupada
-   std::map< Sala *, GGroup< std::pair< HorarioAula *, int > > > sala_horarios_alocados;
+   std::map< Sala *, GGroup< std::pair< HorarioAula *, int > > > horariosAulaSala; // PAREI AQUI -> Preencher esse cara.
 
 
    // Métodos
@@ -68,10 +68,7 @@ private:
    // mais de uma vez para um bloco curricular.
    bool professorRepetido( Professor &, Aula & );
 
-   // novo nome pro metodo : possuiFixacaoProfDiaHorario
-   bool possui_fixacao_professor_dia_horario( Professor &, int, int );
-
-   bool aulaFixadaProfDiaHorario (Aula const & aula) const;
+   //bool possui_fixacao_professor_dia_horario( Professor &, int, int );
 
    bool alocaAulaSeq( SolucaoOperacional *, std::vector< Aula * >::iterator, int, Professor &, Aula &);
 };

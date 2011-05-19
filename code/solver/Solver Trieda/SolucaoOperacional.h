@@ -44,6 +44,9 @@ public:
 
    MatrizSolucao * getMatrizAulas() const;
 
+   // Checa se a sequência de horários do professor está livre.
+   bool seqHorarioLivre(int idOperacionaProf, std::vector<int> & seqHorarioAula) const;
+
    int posicao_horario_aula( int );
 
    void toString() const;

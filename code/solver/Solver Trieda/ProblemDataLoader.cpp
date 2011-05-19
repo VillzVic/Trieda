@@ -19,11 +19,13 @@ ProblemDataLoader::~ProblemDataLoader()
 void ProblemDataLoader::load()
 {
    std::cout << "Loading file..." << std::endl;
+
    root = std::auto_ptr< TriedaInput >( TriedaInput_( inputFile, xml_schema::flags::dont_validate ) );
+
    std::cout << "Extracting data..." << std::endl;
+
    problemData->le_arvore( *root );
 
-   // processamento...
    std::cout << "Some preprocessing..." << std::endl;
 
    // ---------
@@ -108,9 +110,6 @@ void ProblemDataLoader::load()
    estabeleceDiasLetivosProfessorDisciplina();
 
    // --------- 
-   relacionaProfessoresDisciplinasFixadas();
-
-   // --------- 
    criaAulas();
 
    // ---------
@@ -127,9 +126,6 @@ void ProblemDataLoader::load()
 
    // ---------
    verificaFixacoesDiasLetivosDisciplinas();
-
-   // ---------
-   criaFixacoesDisciplinasDivididas();
 
    // ---------
    print_stats();
@@ -805,20 +801,6 @@ void ProblemDataLoader::estabeleceDiasLetivosProfessorDisciplina()
    }
 }
 
-void ProblemDataLoader::relacionaProfessoresDisciplinasFixadas()
-{
-	ITERA_GGROUP_LESSPTR( itFixacao, problemData->fixacoes, Fixacao)
-   {
-      if ( itFixacao->professor && itFixacao->disciplina )
-      {
-         std::pair< Professor *, Disciplina * > chave
-            ( itFixacao->professor, itFixacao->disciplina );
-
-         problemData->fixacoesProfDisc[ chave ].add( *itFixacao );
-      }
-   }
-}
-
 void ProblemDataLoader::combinacaoDivCreditos()
 {
    std::vector< std::vector< std::pair< int /*dia*/, int /*numCreditos*/ > > > combinacao_divisao_creditos; 
@@ -1040,10 +1022,9 @@ void ProblemDataLoader::disciplinasCursosCompativeis()
 // Realiza a separação da fixações por tipo de fixação
 void ProblemDataLoader::relacionaFixacoes()
 {
-	Fixacao * fixacao = NULL;
 	ITERA_GGROUP_LESSPTR( it_fixacao, this->problemData->fixacoes, Fixacao )
 	{
-		fixacao = ( *it_fixacao );
+		Fixacao * fixacao = ( *it_fixacao );
 
 		// TÁTICO
 		// Apenas disciplina/sala
@@ -1119,6 +1100,15 @@ void ProblemDataLoader::relacionaFixacoes()
 		{
 			this->problemData->map_Discicplina_Sala_Fixados[ fixacao->disciplina ] = fixacao->sala;
 		}
+
+      // Preenche a estrutura <fixacoesProfDisc>.
+      if(fixacao->professor && fixacao->disciplina)
+      {
+         std::pair< Professor *, Disciplina * > chave = std::make_pair(
+            fixacao->professor,fixacao->disciplina);
+
+         problemData->fixacoesProfDisc[chave].add(fixacao);
+      }
 	}
 }
 
@@ -1848,6 +1838,10 @@ void ProblemDataLoader::divideDisciplinas()
    {
       problemData->disciplinas.add( *it_disc );
    }
+
+   // ---------
+   criaFixacoesDisciplinasDivididas();
+
 }
 
 void ProblemDataLoader::referenciaCampusUnidadesSalas()
@@ -3194,43 +3188,5 @@ void ProblemDataLoader::relacionaBlocoCurricularAulas()
             exit(1);
          }
       }
-   }
-}
-
-void ProblemDataLoader::print_csv(void)
-{
-   int ncampi, nunidades, ndiscs,
-      nprofs, ncursos, nofertas, tdemanda;
-
-   ncampi = problemData->campi.size();
-   nunidades = 0, nprofs = 0, ncursos = 0;
-   ITERA_GGROUP_LESSPTR(it_campi, problemData->campi, Campus)
-   {
-      nunidades += it_campi->unidades.size();
-      nprofs += it_campi->professores.size();
-      ncursos += problemData->cursos.size();
-   }
-
-   tdemanda = 0;
-   nofertas = problemData->ofertas.size();
-   ndiscs = problemData->disciplinas.size();
-   ITERA_GGROUP_LESSPTR( it_disc, problemData->disciplinas, Disciplina )
-   {
-      tdemanda += it_disc->getDemandaTotal();
-   }
-
-   FILE * file = fopen("./CSV/PROBLEM_SETTINGS.csv", "wt");
-   fprintf(file,"Campi:\t%4d,\n", ncampi);
-   fprintf(file,"Unidades:\t%4d,\n", nunidades);
-   fprintf(file,"Salas:\t%4d,\n", problemData->campi.begin()->getTotalSalas() );
-   fprintf(file,"Disciplinas:\t%4d,\n", ndiscs);
-   fprintf(file,"Cursos:\t%4d,\n", ncursos);
-   fprintf(file,"Professores:\t%4d,\n", nprofs);
-   fprintf(file,"Ofertas:\t%4d,\n", nofertas);
-   fprintf(file,"Demanda total:\t%4d,\n", tdemanda);
-
-   if(file)
-   {
-      fclose(file);
    }
 }

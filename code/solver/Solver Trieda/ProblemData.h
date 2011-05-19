@@ -168,9 +168,6 @@ public:
 
    GGroup<Aula*,LessPtr<Aula> > aulas;
 
-   // Lista para cada par <professor,disciplina> todas as fixacoes existentes.
-   std::map< std::pair< Professor *, Disciplina * >, GGroup< Fixacao * > > fixacoesProfDisc;
-
    // Estrutura que agrupa as aulas por bloco curricular e dia.
    std::map< BlocoCurricular *,
 			 std::map< int /*dia*/, GGroup< Aula *, LessPtr< Aula > > > > blocoCurricularDiaAulas;
@@ -209,10 +206,14 @@ public:
 
    // Professor, Disciplina, Sala
    GGroup< Fixacao *, LessPtr< Fixacao > > fixacoes_Prof_Disc_Sala;
-
+   
    // Professor, Sala
    GGroup< Fixacao *, LessPtr< Fixacao > > fixacoes_Prof_Sala;
    //----------------------------------------------------------------
+
+   /* Lista para cada par <professor,disciplina> todas as fixacoes existentes. */
+   std::map< std::pair< Professor *, Disciplina * >, GGroup< Fixacao * > > fixacoesProfDisc;
+
 
    // Dado um par disciplina/dia da semana, informa quantos
    // crétidos estão fixados dessa disciplina nesse dia da semana

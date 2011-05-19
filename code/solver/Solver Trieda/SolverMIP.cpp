@@ -275,21 +275,36 @@ void SolverMIP::carregaVariaveisSolucaoTatico()
    SolutionLoader sLoader( problemData, problemSolution );
 
    xSol = new double[ lp->getNumCols() ];
+
+#ifndef READ_SOLUTION_TATICO_BIN
    lp->getX( xSol );
+#endif
+
+#ifdef READ_SOLUTION_TATICO_BIN
+   FILE* fin = fopen("solBin.bin","rb");
+
+   int nCols = 0;
+
+   fread(&nCols,sizeof(int),1,fin);
+
+   if ( nCols == lp->getNumCols() )
+   {
+      for (int i =0; i < nCols; i++)
+      {
+         double auxDbl;
+         fread(&auxDbl,sizeof(double),1,fin);
+         xSol[i] = auxDbl;
+      }
+   }
+
+   fclose(fin);
+#endif
 
    vit = vHash.begin();
 
-#ifdef DEBUG
+//#ifdef DEBUG
    FILE * fout = fopen( "solucao.txt", "wt" );
-#endif
-
-#ifdef PRINT_CSV
-   FILE *f_V_CREDITOS = fopen("./CSV/V_CREDITOS.csv","wt");
-   bool printLegend_V_CREDITOS = true;
-
-   bool printLegend_V_ALUNOS = true;
-   FILE *f_V_ALUNOS = fopen("./CSV/V_ALUNOS.csv","wt");
-#endif
+//#endif
 
    while ( vit != vHash.end() )
    {
@@ -299,11 +314,11 @@ void SolverMIP::carregaVariaveisSolucaoTatico()
 
       if ( v->getValue() > 0.00001 )
       {
-#ifdef DEBUG
+//#ifdef DEBUG
          char auxName[100];
          lp->getColName( auxName, col, 100 );
          fprintf( fout, "%s = %f\n", auxName, v->getValue() );
-#endif
+//#endif
          switch( v->getType() )
          {
          case Variable::V_ERROR:
@@ -314,27 +329,10 @@ void SolverMIP::carregaVariaveisSolucaoTatico()
 					  << " creditos da disciplina " << v->getDisciplina()->getCodigo()
 					  << " para a turma " << v->getTurma()
 					  << " no dia " << v->getDia()
-					  << " para alguma de sala com capacidade " << v->getSubCjtSala()->getId()
+					  << " para alguma de sala do conjunto de salas " << v->getSubCjtSala()->getId()
 					  << std::endl << std::endl;
 
             vars_x.push_back(v);
-
-#ifdef PRINT_CSV
-            if(printLegend_V_CREDITOS)
-            {
-               fprintf(f_V_CREDITOS,"Var. x,\t\ti,\td,\tu,\ts,\t\tt,\n");
-               printLegend_V_CREDITOS = false;
-            }
-
-            // >>> 07/10/2010
-            /*
-            fprintf(f_V_CREDITOS,"%f,\t%d,\t%d,\t%d,\t%d,\t%d,\n",v->getValue(),v->getTurma(),v->getDisciplina()->getId(),
-            v->getUnidade()->getId(),v->getSala()->getId(),v->getDia());
-            */
-            fprintf(f_V_CREDITOS,"%f,\t%d,\t%d,\t%d,\t%d,\t%d,\n",v->getValue(),v->getTurma(),id_disc,
-               v->getUnidade()->getId(),v->getSala()->getId(),v->getDia());
-            // <<< 07/10/2010
-#endif
             break;
          case Variable::V_OFERECIMENTO: break;
          case Variable::V_ABERTURA: break;
@@ -346,23 +344,6 @@ void SolverMIP::carregaVariaveisSolucaoTatico()
 					  << std::endl << std::endl;
 
             vars_a[ std::make_pair( v->getTurma(), v->getDisciplina() ) ].push_back( v );
-
-#ifdef PRINT_CSV
-            if(printLegend_V_ALUNOS)
-            {
-               fprintf(f_V_ALUNOS,"Var. a,\t\ti,\td,\tc,\tcp,\n");
-               printLegend_V_ALUNOS = false;
-            }
-
-            // >>> 07/10/2010
-            /*
-            fprintf(f_V_ALUNOS,"%f,\t%d,\t%d,\t%d,\t%d,\n",v->getValue(),v->getTurma(),
-            v->getDisciplina()->getId(),v->getCurso()->getId(),v->getCampus()->getId());
-            */
-            fprintf(f_V_ALUNOS,"%f,\t%d,\t%d,\t%d,\t%d,\n",v->getValue(),v->getTurma(),
-               id_disc,v->getCurso()->getId(),v->getCampus()->getId());
-            // <<< 07/10/2010
-#endif
             break;
          case Variable::V_ALOC_ALUNO: break;
          case Variable::V_N_SUBBLOCOS: break;
@@ -392,20 +373,12 @@ void SolverMIP::carregaVariaveisSolucaoTatico()
       delete v;
    }
 
-#ifdef DEBUG
+//#ifdef DEBUG
    if ( fout )
    {
       fclose(fout);
    }
-#endif
-
-#ifdef PRINT_CSV
-   if (f_V_CREDITOS)
-      fclose(f_V_CREDITOS);
-
-   if(f_V_ALUNOS)
-      fclose(f_V_ALUNOS);
-#endif
+//#endif
 
    if ( xSol )
    {
@@ -471,7 +444,7 @@ int SolverMIP::solveTatico()
 
    lp->updateLP();
 
-#ifdef DEBUG
+#ifdef PRINT_cria_variaveis
    printf( "Total of Variables: %i\n\n", varNum );
 #endif
 
@@ -480,7 +453,7 @@ int SolverMIP::solveTatico()
 
    lp->updateLP();
 
-#ifdef DEBUG
+#ifdef PRINT_cria_restricoes
    printf( "Total of Constraints: %i\n\n", constNum );
 #endif
 
@@ -490,6 +463,7 @@ int SolverMIP::solveTatico()
 
    int status = 0;
 
+#ifndef READ_SOLUTION_TATICO_BIN
    // Muda FO para considerar somente atendimento
    double * objOrig = new double[ lp->getNumCols() ];
    lp->getObj( 0, lp->getNumCols()-1, objOrig );
@@ -575,7 +549,9 @@ int SolverMIP::solveTatico()
    delete [] objOrig;
    delete [] idxNova;
    delete [] xSolInic;
+#endif
 
+#ifdef WRITE_SOLUTION_TATICO_BIN
    double * xSol = NULL;
    xSol = new double[ lp->getNumCols() ];
    lp->getX( xSol );
@@ -591,6 +567,7 @@ int SolverMIP::solveTatico()
    fclose( fout );
 
    delete[] xSol;
+#endif
 
    return status;
 }
@@ -619,7 +596,7 @@ int SolverMIP::solveTaticoBasico()
 
    lp->updateLP();
 
-#ifdef DEBUG
+#ifdef PRINT_cria_variaveis
    printf( "Total of Variables: %i\n\n", varNum );
 #endif
 
@@ -628,7 +605,7 @@ int SolverMIP::solveTaticoBasico()
 
    lp->updateLP();
 
-#ifdef DEBUG
+#ifdef PRINT_cria_restricoes
    printf( "Total of Constraints: %i\n\n", constNum );
 #endif
 
@@ -638,11 +615,14 @@ int SolverMIP::solveTaticoBasico()
 
    int status = 0;
 
-   lp->setTimeLimit(60);
+   lp->setTimeLimit(15);
    lp->setMIPScreenLog(4);
 
+#ifndef READ_SOLUTION_TATICO_BIN
    status = lp->optimize( METHOD_PRIMAL );
+#endif
 
+#ifdef WRITE_SOLUTION_TATICO_BIN
    double * xSol = NULL;
    xSol = new double[ lp->getNumCols() ];
    lp->getX( xSol );
@@ -658,6 +638,7 @@ int SolverMIP::solveTaticoBasico()
    fclose( fout );
 
    delete [] xSol;
+#endif
 
    return status;
 }
@@ -1655,6 +1636,10 @@ int SolverMIP::solveOperacional()
    SolucaoInicialOperacional solIni( *problemData );
 
    std::cout << "Gerando uma solucao inicial para o modelo operacional" << std::endl;
+
+   std::cout << "Saindo antes de gerar uma solucao inicial." << std::endl;
+   exit(1);
+
    SolucaoOperacional & solucaoOperacional = solIni.geraSolucaoInicial();
    solucaoOperacional.validaSolucao( "Verificando a viabilidade da solucao inicial." );
 
@@ -4629,14 +4614,16 @@ int SolverMIP::cria_restricoes( void )
    //restricoes +=  cria_restricao_abertura_bloco_mesmoTPS();
 
 #ifdef PRINT_cria_restricoes
-   std::cout << "numRest \"1.2.33\": " << (restricoes - numRestAnterior) << std::endl;
+   //std::cout << "numRest \"1.2.33\": " << (restricoes - numRestAnterior) << std::endl;
+   std::cout << "numRest \"1.2.33\": NAO ESTA SENDO CRIADA DEVIDO A ERRO DE MODELAGEM - (MARIO)" << std::endl;
    numRestAnterior = restricoes;
 #endif
 
    //restricoes +=  cria_restricao_folga_abertura_bloco_mesmoTPS();
 
 #ifdef PRINT_cria_restricoes
-   std::cout << "numRest \"1.2.34\": " << (restricoes - numRestAnterior) << std::endl;
+   //std::cout << "numRest \"1.2.34\": " << (restricoes - numRestAnterior) << std::endl;
+   std::cout << "numRest \"1.2.34\": NAO ESTA SENDO CRIADA DEVIDO A ERRO DE MODELAGEM DA RESTRICAO 1.2.33 - (MARIO)" << std::endl;
    numRestAnterior = restricoes;
 #endif
 
