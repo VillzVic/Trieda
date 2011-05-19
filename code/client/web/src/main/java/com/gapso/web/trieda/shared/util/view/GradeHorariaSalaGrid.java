@@ -239,7 +239,7 @@ public class GradeHorariaSalaGrid extends ContentPanel {
 	}
 	
 	private boolean isTatico() {
-		if(atendimentos == null) return false;
+		if(atendimentos == null || atendimentos.isEmpty()) return false;
 		AtendimentoRelatorioDTO atm = atendimentos.get(0);
 		if(atm == null) return false;
 		return atm instanceof AtendimentoTaticoDTO;
