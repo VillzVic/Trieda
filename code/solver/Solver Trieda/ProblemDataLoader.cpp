@@ -84,6 +84,9 @@ void ProblemDataLoader::load()
    criaConjuntoSalasUnidade();
 
    // ---------
+   associaDisciplinasConjuntoSalas();
+
+   // ---------
    cache();
 
    // ---------
@@ -468,9 +471,21 @@ void ProblemDataLoader::criaConjuntoSalasUnidade()
 					 // Adicionando os dias letivos ao conjunto de salas
                      ITERA_GGROUP( it_disc, it_Sala->disciplinasAssociadas, Disciplina )
 					 {
-						 ITERA_GGROUP_N_PT( it_Dias_Letivos, it_Sala->diasLetivos, int )
+						 GGroup< int > dias_fixados = retorna_foxacoes_dias_letivos( *it_disc );
+
+						 if ( dias_fixados.size() == 0 )
 						 {
-							 it_Cjt_Salas_Disc->dias_letivos_disciplinas[ ( *it_disc ) ].add( *it_Dias_Letivos );
+							 ITERA_GGROUP_N_PT( it_Dias_Letivos, it_Sala->diasLetivos, int )
+							 {
+								 it_Cjt_Salas_Disc->dias_letivos_disciplinas[ ( *it_disc ) ].add( *it_Dias_Letivos );
+							 }
+						 }
+						 else
+						 {
+							 ITERA_GGROUP_N_PT( it_Dias_Letivos, dias_fixados, int )
+							 {
+								 it_Cjt_Salas_Disc->dias_letivos_disciplinas[ ( *it_disc ) ].add( *it_Dias_Letivos );
+							 }
 						 }
 					 }
 
@@ -498,10 +513,22 @@ void ProblemDataLoader::criaConjuntoSalasUnidade()
 			   // Adicionando os dias letivos ao conjunto de salas
                ITERA_GGROUP( it_disc, it_Sala->disciplinasAssociadas, Disciplina )
 			   {
-				   ITERA_GGROUP_N_PT( it_Dias_Letivos, it_Sala->diasLetivos, int )
+				   GGroup< int > dias_fixados = retorna_foxacoes_dias_letivos( *it_disc );
+
+				   if ( dias_fixados.size() == 0 )
 				   {
-				      cjt_Sala->dias_letivos_disciplinas[ ( *it_disc ) ].add( *it_Dias_Letivos );
-			       }
+					   ITERA_GGROUP_N_PT( it_Dias_Letivos, it_Sala->diasLetivos, int )
+					   {
+						  cjt_Sala->dias_letivos_disciplinas[ ( *it_disc ) ].add( *it_Dias_Letivos );
+					   }
+				   }
+				   else
+				   {
+					   ITERA_GGROUP_N_PT( it_Dias_Letivos, dias_fixados, int )
+					   {
+						  cjt_Sala->dias_letivos_disciplinas[ ( *it_disc ) ].add( *it_Dias_Letivos );
+					   }
+				   }
 			   }
 
                // Associando as disciplinas ao conjunto.
@@ -542,9 +569,9 @@ void ProblemDataLoader::criaConjuntoSalasUnidade()
                       << it_Cjt_Salas_Und->getId() << std::endl;
 
             std::map< int /*Id Sala*/, Sala * >::iterator 
-               it_Salas_Cjt = it_Cjt_Salas_Und->getTodasSalas().begin();
+               it_Salas_Cjt = it_Cjt_Salas_Und->salas.begin();
 
-            for(; it_Salas_Cjt != it_Cjt_Salas_Und->getTodasSalas().end();
+            for(; it_Salas_Cjt != it_Cjt_Salas_Und->salas.end();
                   it_Salas_Cjt++ )
             {
                std::cout << "\t\tCod. Sala: "
@@ -555,6 +582,24 @@ void ProblemDataLoader::criaConjuntoSalasUnidade()
          // ----------------------------
       }
    }
+}
+
+GGroup< int > ProblemDataLoader::retorna_foxacoes_dias_letivos( Disciplina * disciplina )
+{
+	GGroup< int > dias_letivos;
+	dias_letivos.clear();
+
+	ITERA_GGROUP_LESSPTR( it_fixacao, problemData->fixacoes, Fixacao )
+	{
+		if ( it_fixacao->disciplina != NULL
+				&& abs( it_fixacao->disciplina->getId() ) == abs( disciplina->getId() )
+				&& it_fixacao->getDiaSemana() >= 0 )
+		{
+			dias_letivos.add( it_fixacao->getDiaSemana() );
+		}
+	}
+
+	return dias_letivos;
 }
 
 void ProblemDataLoader::estabeleceDiasLetivosBlocoCampus()
@@ -668,9 +713,9 @@ void ProblemDataLoader::estabeleceDiasLetivosDiscCjtSala()
             ITERA_GGROUP_LESSPTR( itDiscAssoc, itCjtSala->disciplinas_associadas, Disciplina )
             {
                std::map<int/*Id Sala*/,Sala*>::iterator itSala =
-                  itCjtSala->getTodasSalas().begin();
+                  itCjtSala->salas.begin();
 
-               for(; itSala != itCjtSala->getTodasSalas().end();
+               for(; itSala != itCjtSala->salas.end();
 					 itSala++ )
                {
                   std::pair< int /*idDisc*/, int /*idSala*/> ids_Disc_Sala 
@@ -1457,31 +1502,31 @@ void ProblemDataLoader::disciplinasEquivalentes()
 						}
 
 						// Adicionar a nova disciplina na estrutura 'discSalas'
-						ITERA_GGROUP_LESSPTR(it_campus, problemData->campi, Campus)
+						ITERA_GGROUP_LESSPTR( it_campus, problemData->campi, Campus )
 						{
-							ITERA_GGROUP_LESSPTR(it_unidade,it_campus->unidades,Unidade)
+							ITERA_GGROUP_LESSPTR( it_unidade, it_campus->unidades, Unidade )
 							{
-								ITERA_GGROUP_LESSPTR(it_sala,it_unidade->salas,Sala)
+								ITERA_GGROUP_LESSPTR( it_sala, it_unidade->salas, Sala )
 								{
-									if(it_sala->disciplinasAssociadas.find(substituida) ==
-										it_sala->disciplinasAssociadas.end())
+									if ( it_sala->disciplinasAssociadas.find( substituida )
+											== it_sala->disciplinasAssociadas.end() )
 									{
 										// Estabelecendo o critério de intereseção de dias letivos.
 										// I.E. Só associo uma sala de aula a uma disciplina se a sala tem, 
 										// pelo menos, um dia letivo comum com a disciplina.
-										ITERA_GGROUP_N_PT(it_Dias_Let_Disc,substituida->diasLetivos,int)
+										ITERA_GGROUP_N_PT( it_Dias_Let_Disc, substituida->diasLetivos, int )
 										{
 											// Só continuo quando a sala possuir o dia
 											// letivo (pertencente à disciplina) em questão.
-											if(it_sala->diasLetivos.find(*it_Dias_Let_Disc)
-												!= it_sala->diasLetivos.end())
+											if ( it_sala->diasLetivos.find( *it_Dias_Let_Disc )
+													!= it_sala->diasLetivos.end() )
 											{
-												it_sala->disciplinasAssociadas.add(substituida);
+												it_sala->disciplinasAssociadas.add( substituida );
 
 												// Adicionando um ponteiro para quando
 												// tiver uma dada disciplina, for fácil
 												// descobrir a lista de salas associadas.
-												problemData->discSalas[substituida->getId()].push_back(*it_sala);
+												problemData->discSalas[ substituida ].push_back( *it_sala );
 											}
 										}
 									}
@@ -2700,14 +2745,12 @@ void ProblemDataLoader::associaDisciplinasSalas()
 						  it_sala->disciplinas_Associadas_Usuario,
 						  Disciplina )
             {
-               int id_disciplina = it_Disc_Assoc_Sala->getId();
-
                // Adicionando um ponteiro para qdo tiver uma dada
                // disciplina for fácil descobrir a lista de salas associadas.
-               problemData->discSalas[ id_disciplina ].push_back( *it_sala );
+               problemData->discSalas[ *it_Disc_Assoc_Sala ].push_back( *it_sala );
 
                // Adicionando uma preferência de sala para uma dada disciplina.
-               problemData->disc_Salas_Pref[ id_disciplina ].add( *it_sala );
+               problemData->disc_Salas_Pref[ *it_Disc_Assoc_Sala ].add( *it_sala );
             }
          }
          //------------------------------------------------------------------------
@@ -2723,8 +2766,8 @@ void ProblemDataLoader::associaDisciplinasSalas()
 				= ( problemData->refDisciplinas.find( *it_disciplina )->second );
 
             // Se a disciplina foi associada pelo usuário.
-            std::map< int, GGroup< Sala * > >::iterator it_salas_associadas
-               = problemData->disc_Salas_Pref.find( disciplina->getId() );
+            std::map< Disciplina *, GGroup< Sala * > >::iterator it_salas_associadas
+               = problemData->disc_Salas_Pref.find( disciplina );
             bool salas_associadas = ( it_salas_associadas != problemData->disc_Salas_Pref.end() );
 
             if ( disciplina->eLab() && !salas_associadas )
@@ -2748,8 +2791,8 @@ void ProblemDataLoader::associaDisciplinasSalas()
                {
                   ITERA_GGROUP_LESSPTR( it_sala, it_unidade->salas, Sala )
                   {
-                     if ( it_sala->disciplinas_Associadas_Usuario.find( disciplina ) ==
-						  it_sala->disciplinas_Associadas_Usuario.end() )
+                     if ( it_sala->disciplinas_Associadas_Usuario.find( disciplina )
+							== it_sala->disciplinas_Associadas_Usuario.end() )
                      {
                         // Somente se for uma sala de aula.
                         if ( it_sala->getTipoSalaId() == 1 )
@@ -2769,7 +2812,7 @@ void ProblemDataLoader::associaDisciplinasSalas()
                                  // Adicionando um ponteiro para quando
                                  // tiver uma dada disciplina, for fácil
                                  // descobrir a lista de salas associadas.
-                                 problemData->discSalas[ disciplina->getId() ].push_back( *it_sala );
+                                 problemData->discSalas[ disciplina ].push_back( *it_sala );
                               }
                            }
                         }
@@ -2807,62 +2850,71 @@ void ProblemDataLoader::associaDisciplinasSalas()
       //------------------------------------------------------------------------
    }
 
-   std::cout << "\n\nARRUMAR: ProblemDataLoader::associaDisciplinasSalas()\n"
-			 << "-> METODO DA MICHELE ABAIXO !!" << std::endl << std::endl;
+   Sala * sala = NULL;
+   Disciplina * disciplina = NULL;
 
-   // CODIGO DA MIHCELE !!! -> ADAPTAR !!!!!!!!!!!!!!!!!!!!
+   // ------------------------ Verificando as Fixações -------------------------
+   // Se uma disciplina está fixada a uma determinada sala associa
+   // essa disciplina  somente aquela sala (e não a um grupo de salas)
+   std::map< Disciplina *, std::vector< Sala * > >::iterator
+	   it_Disc_Salas = problemData->discSalas.begin();
 
-   //ARRUMAR NO CODIGO ACIMA PARA ATENDER O SEGUINTE CASO:
-   //QUANDO FOR FIXAR UMA DISC TEO EM UMA SALA, DEVE-SE CRIAR UM TIPO DE SA ESPECIFICO PARA A SALA EM QUESTAO.
-   //POIS A DISC SO PODE SER MINISTRADA NESSA SALA. DO JEITO QUE ESTA, MSM QUE EU REMOVA TODAS AS ASSOCIACOES
-   //AOS DEMAIS CONJUNTOS, PODE ACONTECER DE O CONJUNTO QUE CONTEM A SALA FIXADA, CONTENHA MAIS SALAS. SE ISSO
-   //ACONTECER, EU NAO POSSO SIMPLESMENTE REMOVER AS DEMAIS SALAS (SE FIZESSE ISSO, IRIA DEIXAR DE UTILIZAR ALGUMAS
-   //SALAS). PORTANTO, POSSO VERIFICAR ISSO NA HORA DE ASSOCIAR AS DISCS AOS TPS. OU DEPOIS DE TUDO FEITO, EU PROCURO
-   //POR ACONTECIMENTOS COMO ESSE, E DIVIDO O TPS EM DOIS (UMA PARA A SALA FIXADA E OUTRO PARA AS DEMAIS SALAS, SE EXISTIREM).
-   //ALEM DISSO, TENHO QUE REFAZER TODAS AS ASSOCIACOES DAS OUTRAS DISCIPLINAS (QUE PODEM, OU NAO, EXISTIR) COM OS DOIS 
-   //TPS.
+   for (; it_Disc_Salas != problemData->discSalas.end(); it_Disc_Salas++ )
+   {
+	   disciplina = ( it_Disc_Salas->first );
 
-   //Como na inst da uni-bh nao tem fix. deixei isso pra depois.
-   //MARIO - 23/02/2011
+	   bool encontrou_sala = false;
+	   for ( int i = 0; i < (int)it_Disc_Salas->second.size() && !encontrou_sala; i++ )
+	   {
+		   sala = it_Disc_Salas->second[ i ];
 
-   //Se uma disciplina está fixada a uma determinada sala associa essa disciplina 
-   //somente aquela sala (e não a um grupo de salas)
-   //std::map<int/*Id Disc*/,GGroup<Sala*> >::iterator it_Disc_Salas =
-   //   problemData->discSalas.begin();
+		   ITERA_GGROUP_LESSPTR( it_fix, problemData->fixacoes, Fixacao )
+		   {
+			   if ( disciplina->getId() == it_fix->disciplina->getId()
+						&& sala->getId() == it_fix->sala->getId() )
+			  {
+				 problemData->discSalas[ it_fix->disciplina ].clear();
+				 problemData->discSalas[ it_fix->disciplina ].push_back( it_fix->sala );
 
-   //for(; it_Disc_Salas != problemData->discSalas.end(); it_Disc_Salas++)
-   //{
-   //   ITERA_GGROUP(it_fix,problemData->fixacoes,Fixacao)
-   //   {
-   //      if(it_Disc_Salas->first == it_fix->disciplina_id)
-   //      {
-   //         problemData->discSalas[it_fix->disciplina_id].clear();
-   //         problemData->discSalas[it_fix->disciplina_id].add(it_fix->sala);
-   //      }
-   //   }
-   //}
+				 encontrou_sala = true;
+				 break;
+			  }
+		   }
+	   }
+   }
+   // --------------------------------------------------------------------------
 }
 
 void ProblemDataLoader::associaDisciplinasConjuntoSalas()
 {
+   // Guarda uma referência para os 'ids' dos
+   // novos conjuntos salas que forem criados aqui
+   int maior_id_conjunto_salas = 0;
+
+   //-------------------------------------------------------------------------------
    ITERA_GGROUP_LESSPTR( itCampus, problemData->campi, Campus )
    {
       ITERA_GGROUP_LESSPTR( itUnidade, itCampus->unidades, Unidade )
       {
          ITERA_GGROUP_LESSPTR( itCjtSala, itUnidade->conjutoSalas, ConjuntoSala )
          {
+			// Guarda sempre o maior 'id' dos conjuntos de sala
+			if ( itCjtSala->getId() > maior_id_conjunto_salas )
+			{
+			    maior_id_conjunto_salas = itCjtSala->getId();
+			}
+
             // Estrutura do map: Dado o 'id' de uma
             // sala, retorna-se o ponteiro da sala
             std::map< int, Sala * >::iterator itSala =
-               itCjtSala->getTodasSalas().begin();
+               itCjtSala->salas.begin();
 
-            for(; itSala != itCjtSala->getTodasSalas().end();
-				  itSala++ )
+            for (; itSala != itCjtSala->salas.end(); itSala++ )
             {
                GGroup< Disciplina * >::iterator itDiscs
                   = itSala->second->disciplinasAssociadas.begin();
 
-               for(; itDiscs != itSala->second->disciplinasAssociadas.end();
+               for (; itDiscs != itSala->second->disciplinasAssociadas.end();
                      itDiscs++ )
                {
                   itCjtSala->disciplinas_associadas.add( *itDiscs );
@@ -2871,6 +2923,136 @@ void ProblemDataLoader::associaDisciplinasConjuntoSalas()
          }
       }
    }
+   //-------------------------------------------------------------------------------
+
+   maior_id_conjunto_salas++;
+
+   Sala * sala = NULL;
+   Fixacao * fixacao = NULL;
+   Disciplina * disciplina = NULL;
+
+   //-------------------------------------------------------------------------------
+   // Dividindo os conjuntos de sala, em caso de fixação 'disciplina - sala'
+   ITERA_GGROUP_LESSPTR( it_fixacao, problemData->fixacoes, Fixacao )
+   {
+	   fixacao = ( *it_fixacao );
+	   sala = fixacao->sala;
+	   disciplina = fixacao->disciplina;
+
+	   // Verifica se é uma fixação de disciplina e sala
+	   if ( sala == NULL || disciplina == NULL )
+	   {
+		   continue;
+	   }
+
+	   bool encontrou = false;
+	   ITERA_GGROUP_LESSPTR( itCampus, problemData->campi, Campus )
+       {
+		  if ( encontrou ) { break; }
+
+		  ITERA_GGROUP_LESSPTR( itUnidade, itCampus->unidades, Unidade )
+          {
+			  if ( encontrou ) { break; }
+
+			  ITERA_GGROUP_LESSPTR( it_conjunto_sala, itUnidade->conjutoSalas, ConjuntoSala )
+			   {
+				   // Verifica se esse conjunto sala possui a sala da fixação
+				   std::map< int, Sala * >::iterator
+					   find_sala = it_conjunto_sala->salas.find( sala->getId() );
+				   if ( find_sala == it_conjunto_sala->salas.end() )
+				   {
+					   continue;
+				   }
+
+				   // Caso o conjunto de salas possua apenas a sala fixada,
+				   // não precisamos então criar um novo conjunto de salas
+				   if ( it_conjunto_sala->salas.size() == 1 )
+				   {
+					   continue;
+				   }
+
+				   // Verifica se já existe nessa unidade um
+				   // conjunto de sala que corresponda a essa fixação
+				   if ( existe_conjunto_sala__fixacao( *itUnidade, disciplina, sala ) )
+				   {
+					   continue;
+				   }
+
+				   // Criamos um novo conjunto de sala, que conterá todas
+				   // as disciplinas do conjunto de sala atual, exceto a disciplina fixada
+				   ConjuntoSala * novo_conjunto_sala = new ConjuntoSala( **it_conjunto_sala );
+				   novo_conjunto_sala->setId( maior_id_conjunto_salas );
+				   maior_id_conjunto_salas++;
+
+				   // Chegando aqui, sabemos que o
+				   // conjunto sala possui a sala que está fixada
+				   novo_conjunto_sala->salas.clear();
+
+				   std::map< int, Sala * >::iterator it_sala
+					   = it_conjunto_sala->salas.begin();
+				   for (; it_sala != it_conjunto_sala->salas.end(); it_sala++ )
+				   {
+					   // Devo incluir no novo conjunto de
+					   // salas apenas as salas que NÃO estão fixadas
+					   if ( it_sala->second->getId() != sala->getId() )
+					   {
+						   novo_conjunto_sala->salas[ it_sala->second->getId() ] = ( it_sala->second );
+					   }
+				   }
+
+				   // O novo conjunto de salas não possui a disciplina fixada,
+				   // pois ela está apenas no outro conjunto de salas, já existente
+				   novo_conjunto_sala->disciplinas_associadas.remove( disciplina );
+				   novo_conjunto_sala->dias_letivos_disciplinas.erase( disciplina );
+
+				   // No conjunto de salas da sala fixada, apenas
+				   // existirá uma sala, que é exatamente a sala fixada
+				   it_conjunto_sala->salas.clear();
+				   it_conjunto_sala->salas[ sala->getId() ] = sala;
+
+				   // No novo conjunto de salas, devo remover a sala fixada
+				   novo_conjunto_sala->salas.erase( sala->getId() );
+
+				   // Adiciona o novo conjunto de salas criado na unidade atual
+				   itUnidade->conjutoSalas.add( novo_conjunto_sala );
+
+				   encontrou = true;
+				   break;
+			   }
+	      }
+       }
+   }
+   //-------------------------------------------------------------------------------
+}
+
+bool ProblemDataLoader::existe_conjunto_sala__fixacao( Unidade * unidade, Disciplina * disciplina, Sala * sala )
+{
+	ITERA_GGROUP_LESSPTR( it_campus, problemData->campi, Campus )
+	{
+		ITERA_GGROUP_LESSPTR( it_unidade, it_campus->unidades, Unidade )
+		{
+			// Analiso apenas a unidade em questão
+			if ( it_unidade->getId() != unidade->getId() )
+			{
+				continue;
+			}
+
+			ITERA_GGROUP_LESSPTR( it_conjunto_sala, it_unidade->conjutoSalas, ConjuntoSala )
+			{
+				if ( it_conjunto_sala->salas.size() == 1 // O conjunto possui apenas a sala fixada
+					&& it_conjunto_sala->salas.begin()->second->getId() == sala->getId()
+					&& it_conjunto_sala->disciplinas_associadas.size() == 1 // O conjunto possui apenas a disciplina fixada
+					&& it_conjunto_sala->disciplinas_associadas.begin()->getId() == disciplina->getId() )
+				{
+					// Já existe o conjunto de salas correspondente à fixação.
+					// Portanto, não precisamos criar outro conjunto de salas
+					return true;
+				}
+			}
+		}
+	}
+
+	return false;
 }
 
 void ProblemDataLoader::relacionaDiscOfertas()

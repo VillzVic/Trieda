@@ -13,8 +13,8 @@ class Disciplina :
    public OFBase
 {
 public:
-   Disciplina(void);
-   virtual ~Disciplina(void);
+   Disciplina( void );
+   virtual ~Disciplina( void );
 
    DivisaoCreditos * divisao_creditos;
    TipoDisciplina * tipo_disciplina;
@@ -30,12 +30,12 @@ public:
    // =========== METODOS AUXILIARES
    virtual void le_arvore( ItemDisciplina & );
 
-   int adicionaDemandaTotal(int d) { return (demanda_total += d); }
+   int adicionaDemandaTotal( int d ) { return ( demanda_total += d ); }
 
    // Armazena os dias letivos em que a disciplina pode ser ministrada.
    GGroup< int > diasLetivos;
 
-   GGroup<Disciplina *> discEquivalentes;
+   GGroup< Disciplina * > discEquivalentes;
 
    // =========== METODOS SET
    void setDemandaTotal(int value) { demanda_total = value; }

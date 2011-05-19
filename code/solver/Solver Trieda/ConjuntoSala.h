@@ -17,8 +17,12 @@ public:
 
    ConjuntoSala( ConjuntoSala const & cjt_Sala )
    {
-      std::cout << "Construtor de copia de ConuntoSala nao esta implementado. SAINDO.";
-      exit(1);
+      this->cap_Representada = cjt_Sala.cap_Representada;
+      this->tipo_Salas_Representada = cjt_Sala.tipo_Salas_Representada;
+
+	  this->disciplinas_associadas = GGroup< Disciplina *, LessPtr< Disciplina > >( cjt_Sala.disciplinas_associadas );
+	  this->dias_letivos_disciplinas = std::map< Disciplina *, GGroup< int > >( cjt_Sala.dias_letivos_disciplinas );
+	  this->salas = std::map< int, Sala * >( cjt_Sala.salas );
    }
 
    virtual ~ConjuntoSala() { }
@@ -43,10 +47,6 @@ public:
 	  // à esse tipo de sala, ou não existe.
       return NULL;
    }
-
-   // Para não precisar criar os métodos auxiliares
-   // referentes às salas, tais como: addSala, remSala, findSala, etc.
-   std::map< int /*Id Sala*/, Sala * > & getTodasSalas() { return salas; }
 
    // Armazena referências para todas as disciplinas
    // associadas a, pelo menos, uma sala pertencente ao map <salas>
@@ -146,11 +146,9 @@ public:
       return capSalas;
    }
 
-   // GGroup< int > diasLetivos;
-
-private:
    std::map< int /*Id Sala*/, Sala * > salas;
 
+private:
    int cap_Representada;
    int tipo_Salas_Representada;
 };

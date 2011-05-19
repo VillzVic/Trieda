@@ -100,12 +100,12 @@ public:
    // Essa estrutura ficaria melhor dentro das disciplinas !!!!
    // Armazena todas as salas (sala de aula ou lab) em que uma 
    // disciplina pode ser oferecida.   
-   std::map< int /*Id Disc*/, std::vector< Sala * > > discSalas;
+   std::map< Disciplina *, std::vector< Sala * > > discSalas;
 
    //------------------
    // Armazena todas as salas (sala de aula ou lab) em que uma 
    // disciplina, preferencialmente, deve ser oferecida.
-   std::map<int/*Id Disc*/,GGroup<Sala*> > disc_Salas_Pref;
+   std::map< Disciplina *, GGroup< Sala * > > disc_Salas_Pref;
 
    //------------------
    // Estrutura responsavel por referenciar os campus.
@@ -222,7 +222,7 @@ public:
    // está fixada, caso haja a fixação disciplina/sala
    std::map< Disciplina *, Sala * > map_Discicplina_Sala_Fixados;
 
-   int creditosFixadosDisciplinaDia( Disciplina *, int );
+   int creditosFixadosDisciplinaDia( Disciplina *, int, ConjuntoSala * );
 
    virtual void le_arvore( TriedaInput & );
 };

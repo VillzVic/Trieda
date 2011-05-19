@@ -121,6 +121,10 @@ public:
 	*/
    void disciplinasEquivalentes();
 
+   GGroup< int > retorna_foxacoes_dias_letivos( Disciplina * );
+
+   bool existe_conjunto_sala__fixacao( Unidade *, Disciplina *, Sala * );
+
 private:
    // Input data object of the problem
    ProblemData * problemData;

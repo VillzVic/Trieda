@@ -460,6 +460,7 @@ bool SolucaoOperacional::fixacaoDiscDiaHorario( Aula * aula, int indice_horario_
 
 	std::map< std::pair< Disciplina *, int >, int >::iterator it_map
 		= problem_data->map_Discicplina_DiaSemana_CreditosFixados.begin();
+
 	for (; it_map != problem_data->map_Discicplina_DiaSemana_CreditosFixados.end();
 		   it_map++ )
 	{
@@ -475,7 +476,8 @@ bool SolucaoOperacional::fixacaoDiscDiaHorario( Aula * aula, int indice_horario_
 }
 
 // Fixações do operacional
-bool SolucaoOperacional::fixacaoProfDiscSalaDiaHorario( Aula * aula, int id_operacional_professor, int indice_horario_aula )
+bool SolucaoOperacional::fixacaoProfDiscSalaDiaHorario(
+	 Aula * aula, int id_operacional_professor, int indice_horario_aula )
 {
 	int disciplina_id = aula->getDisciplina()->getId();
 	int sala_id = aula->getSala()->getId();

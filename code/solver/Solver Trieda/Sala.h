@@ -15,31 +15,31 @@ class Sala :
 {
 public:
 	Sala(void);
-	~Sala(void);
+	virtual ~Sala(void);
 
-	GGroup<Horario*> horarios_disponiveis;
-	GGroup<CreditoDisponivel*> creditos_disponiveis;
+	GGroup< Horario * > horarios_disponiveis;
+	GGroup< CreditoDisponivel * > creditos_disponiveis;
 
 	// Alterar para ref, depois
-	GGroup<int> disciplinas_associadas;
+	GGroup< int > disciplinas_associadas;
 
     // Conjunto de disciplinas que foram associadas a sala em questão pelo usuario.
-    GGroup<Disciplina*> disciplinas_Associadas_Usuario;
+    GGroup< Disciplina * > disciplinas_Associadas_Usuario;
 
     // Conjunto de disciplinas que foram associadas a sala em questão
     // por um pré processamento realizado. Aqui, as associãções são criadas
     // independentemente da unidade em que uma sala se encontra.
-    GGroup<Disciplina*> disciplinas_Associadas_AUTOMATICA;
+    GGroup< Disciplina * > disciplinas_Associadas_AUTOMATICA;
 
     // UNIAO dos conjuntos acima.
-    GGroup<Disciplina*> disciplinasAssociadas;
+    GGroup< Disciplina * > disciplinasAssociadas;
 
     // Armazena os dias letivos para uma determinada sala
-    GGroup<int> diasLetivos;
-	TipoSala* tipo_sala;
+    GGroup< int > diasLetivos;
+	TipoSala * tipo_sala;
 
-	virtual void le_arvore(ItemSala& elem);
-	int max_creds(int dia);
+	virtual void le_arvore( ItemSala & );
+	int max_creds( int );
 
 	// Métodos get
 	int getTipoSalaId() const { return tipo_sala_id; }
@@ -50,23 +50,23 @@ public:
 	std::string getNumero() const { return numero; }
 
 	// Métodos set
-	void setTipoSalaId(int id) { tipo_sala_id = id; }
-	void setCapacidade(int cap) { capacidade = cap; }
-	void setIdUnidade(int id) { id_unidade = id; }
-	void setCodigo(std::string cod) { codigo = cod; }
-	void setAndar(std::string a) { andar = a; }
-	void setNumero(std::string n) { numero  = n; }
+	void setTipoSalaId( int id ) { tipo_sala_id = id; }
+	void setCapacidade( int cap ) { capacidade = cap; }
+	void setIdUnidade( int id ) { id_unidade = id; }
+	void setCodigo( std::string cod ) { codigo = cod; }
+	void setAndar( std::string a ) { andar = a; }
+	void setNumero( std::string n ) { numero  = n; }
 
-	void construirCreditosHorarios(ItemSala&, std::string, bool);
+	void construirCreditosHorarios( ItemSala &, std::string, bool );
 
-    virtual bool operator < (Sala& right) 
+    virtual bool operator < ( Sala & right ) 
     { 
-       return (getId() < right.getId());
+       return ( getId() < right.getId() );
     }
 
-    virtual bool operator == (Sala& right)
+    virtual bool operator == ( Sala & right )
     { 
-		return (getId() == right.getId());
+		return ( getId() == right.getId() );
     }
 
 private:
@@ -81,7 +81,7 @@ private:
 	int id_unidade;
 
 	// Dado um conjunto de horários, retorna o conjunto de créditos correspondentes
-	GGroup<CreditoDisponivel*> converteHorariosParaCreditos();
+	GGroup< CreditoDisponivel * > converteHorariosParaCreditos();
 };
 
 #endif

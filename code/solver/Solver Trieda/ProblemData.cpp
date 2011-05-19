@@ -176,15 +176,40 @@ void ProblemData::le_arvore( TriedaInput & raiz )
    //-------------------------------------------------------------------------------
 }
 
-int ProblemData::creditosFixadosDisciplinaDia( Disciplina * disciplina, int dia_semana )
+int ProblemData::creditosFixadosDisciplinaDia(
+	Disciplina * disciplina, int dia_semana, ConjuntoSala * conjunto_sala )
 {
+	int creditos_fixados = 0;
 	if ( disciplina != NULL && dia_semana >= 0 )
 	{
+		// Inicialmente, consideramos o número de créditos fixados entre
+		// o par 'disciplina/dia da semana', sem levar em consideração a sala
 		std::pair< Disciplina *, int > disciplina_dia
 			= std::make_pair( disciplina, dia_semana );
 
-		return this->map_Discicplina_DiaSemana_CreditosFixados[ disciplina_dia ];
+		creditos_fixados = this->map_Discicplina_DiaSemana_CreditosFixados[ disciplina_dia ];
+
+		//-------------------------------------------------------------------------------------
+		ITERA_GGROUP_LESSPTR( it_fixacao, fixacoes, Fixacao )
+		{
+			// Procura pela fixação de 'disciplina/sala/dia da semana' atual
+			if ( it_fixacao->disciplina != NULL
+				&& it_fixacao->disciplina->getId() == disciplina->getId()
+				&& it_fixacao->getDiaSemana() == dia_semana
+				&& it_fixacao->sala != NULL )
+			{
+				// Caso exista uma fixaçao do par 'disciplina/dia da semana' informados
+				// com alguma sala, devo verificar se essa sala está no conjunto de salas
+				// informados. Caso não esteja, o total de créditos fixados nesse caso é zerado
+				if ( conjunto_sala->salas.find( it_fixacao->sala->getId() )
+						== conjunto_sala->salas.end() )
+				{
+					creditos_fixados = 0;
+				}
+			}
+		}
+		//-------------------------------------------------------------------------------------
 	}
 
-	return 0;
+	return creditos_fixados;
 }
