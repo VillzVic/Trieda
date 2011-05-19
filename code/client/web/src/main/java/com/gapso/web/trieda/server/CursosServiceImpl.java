@@ -239,7 +239,7 @@ public class CursosServiceImpl extends RemoteServiceServlet implements CursosSer
 					rc1.setMargem(rc1.getMargem() + rc3.getMargem());
 					rc2.setMargem(rc2.getMargem() + rc3.getMargem());
 					
-					rc1.setMargemPercente(rc2.getMargem() / rc1.getReceita());
+					rc1.setMargemPercente(rc1.getMargem() / rc1.getReceita());
 					rc2.setMargemPercente(rc2.getMargem() / rc2.getReceita());
 				}
 			}
@@ -299,7 +299,6 @@ public class CursosServiceImpl extends RemoteServiceServlet implements CursosSer
 			resumoCursoDTONew.setDisciplinaString(resumoCursoDTO.getDisciplinaString());
 			resumoCursoDTONew.setTurma(resumoCursoDTO.getTurma());
 			resumoCursoDTONew.setTipoCreditoTeorico(resumoCursoDTO.getTipoCreditoTeorico());
-			resumoCursoDTONew.setCreditos(resumoCursoDTO.getCreditos());
 			resumoCursoDTONew.setCreditos(resumoCursoDTO.getCreditos());
 			map.get(key1).get(key2).put(key3, resumoCursoDTONew);
 		}
