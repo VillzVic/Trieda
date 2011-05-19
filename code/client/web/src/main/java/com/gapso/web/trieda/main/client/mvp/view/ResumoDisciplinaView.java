@@ -83,13 +83,27 @@ public class ResumoDisciplinaView extends MyComposite implements ResumoDisciplin
 				return (((Double)model.get(property)) * 100) + "%";
 			}
 		};
+		GridCellRenderer<ResumoDisciplinaDTO> tipoDeCreditoRenderer = new GridCellRenderer<ResumoDisciplinaDTO>() {
+			@Override
+			public String render(ResumoDisciplinaDTO model, String property,
+					ColumnData config, int rowIndex, int colIndex,
+					ListStore<ResumoDisciplinaDTO> store, Grid<ResumoDisciplinaDTO> grid) {
+				if(model.get(property) == null) return "";
+				return ((Boolean)model.get(property)) ? "Teórico" : "Pratico";
+			}
+		};
 		
 		List<ColumnConfig> list = new ArrayList<ColumnConfig>();
 		ColumnConfig campusColumnConfig = new ColumnConfig(ResumoDisciplinaDTO.PROPERTY_DISCIPLINA_STRING, getI18nConstants().disciplina(), 80);
 		campusColumnConfig.setRenderer(new TreeGridCellRenderer<ResumoDisciplinaDTO>());
 		list.add(campusColumnConfig);
+		
 		list.add(new ColumnConfig(ResumoDisciplinaDTO.PROPERTY_TURMA_STRING, getI18nConstants().turma(), 80));
-		list.add(new ColumnConfig(ResumoDisciplinaDTO.PROPERTY_TIPO_CREDITO_TEORICO_BOOLEAN, getI18nConstants().TipoCredito(), 80));
+		
+		ColumnConfig tipoDeCreditoColumnConfig = new ColumnConfig(ResumoDisciplinaDTO.PROPERTY_TIPO_CREDITO_TEORICO_BOOLEAN, getI18nConstants().TipoCredito(), 80);
+		tipoDeCreditoColumnConfig.setRenderer(tipoDeCreditoRenderer);
+		list.add(tipoDeCreditoColumnConfig);
+		
 		list.add(new ColumnConfig(ResumoDisciplinaDTO.PROPERTY_CREDITOS_INT, getI18nConstants().creditos(), 60));
 		list.add(new ColumnConfig(ResumoDisciplinaDTO.PROPERTY_QUANTIDADE_ALUNOS_INT, getI18nConstants().quantidadeAlunos(), 70));
 		list.add(new ColumnConfig(ResumoDisciplinaDTO.PROPERTY_CUSTO_DOCENTE_DOUBLE, getI18nConstants().custoDocente(), 100));

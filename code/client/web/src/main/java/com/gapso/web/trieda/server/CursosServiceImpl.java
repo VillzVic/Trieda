@@ -200,7 +200,7 @@ public class CursosServiceImpl extends RemoteServiceServlet implements CursosSer
 					ResumoCursoDTO resumo3DTO = map3.get(key1).get(key2).get(key3);
 					AtendimentoTatico atendimentoTatico = atendimentoTaticoMap.get(key3);
 					Campus campus = atendimentoTatico.getOferta().getCampus();
-					Double rateio = 100.0/100;
+					Double rateio = 100.0/100; // TODO Arrumar este número
 					Double docente = campus.getValorCredito();
 					Double receita = atendimentoTatico.getOferta().getReceita();
 					int qtdAlunos = atendimentoTatico.getQuantidadeAlunos();
