@@ -7,6 +7,7 @@ public interface TriedaI18nConstants extends Constants {
 	String adicionar();
 	String andar();
 	String areaTitulacao();
+	String areasTitulacao();
 	String bairro();
 	String campi();
 	String campiHeadingPanel();
@@ -103,5 +104,6 @@ public interface TriedaI18nConstants extends Constants {
 	String valorCredito();
 	String otimizadoTatico();
 	String otimizadoOperacional();
+	String equivalencias();
 	
 }

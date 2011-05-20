@@ -13,11 +13,13 @@ import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.gapso.web.trieda.main.client.mvp.view.AreaTitulacaoFormView;
 import com.gapso.web.trieda.shared.dtos.AreaTitulacaoDTO;
+import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 import com.gapso.web.trieda.shared.i18n.ITriedaI18nGateway;
 import com.gapso.web.trieda.shared.mvp.presenter.Presenter;
 import com.gapso.web.trieda.shared.services.AreasTitulacaoServiceAsync;
 import com.gapso.web.trieda.shared.services.Services;
 import com.gapso.web.trieda.shared.util.view.AbstractAsyncCallbackWithDefaultOnFailure;
+import com.gapso.web.trieda.shared.util.view.ExportExcelFormSubmit;
 import com.gapso.web.trieda.shared.util.view.GTab;
 import com.gapso.web.trieda.shared.util.view.GTabItem;
 import com.gapso.web.trieda.shared.util.view.SimpleGrid;
@@ -89,6 +91,13 @@ public class AreasTitulacaoPresenter implements Presenter {
 						Info.display("Removido", "Item removido com sucesso!");
 					}
 				});
+			}
+		});
+		display.getExportExcelButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
+			@Override
+			public void componentSelected(ButtonEvent ce) {
+				ExportExcelFormSubmit e = new ExportExcelFormSubmit(ExcelInformationType.AREAS_TITULACAO,display.getI18nConstants(),display.getI18nMessages());
+				e.submit();
 			}
 		});
 		display.getResetBuscaButton().addSelectionListener(new SelectionListener<ButtonEvent>(){

@@ -9,16 +9,19 @@ import com.extjs.gxt.ui.client.event.ButtonEvent;
 import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.widget.Component;
 import com.extjs.gxt.ui.client.widget.Info;
-import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.gapso.web.trieda.main.client.mvp.view.EquivalenciaFormView;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.DisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.EquivalenciaDTO;
+import com.gapso.web.trieda.shared.excel.ExcelInformationType;
+import com.gapso.web.trieda.shared.i18n.ITriedaI18nGateway;
 import com.gapso.web.trieda.shared.mvp.presenter.Presenter;
 import com.gapso.web.trieda.shared.services.Services;
+import com.gapso.web.trieda.shared.util.view.AbstractAsyncCallbackWithDefaultOnFailure;
 import com.gapso.web.trieda.shared.util.view.CampusComboBox;
 import com.gapso.web.trieda.shared.util.view.DisciplinaComboBox;
+import com.gapso.web.trieda.shared.util.view.ExportExcelFormSubmit;
 import com.gapso.web.trieda.shared.util.view.GTab;
 import com.gapso.web.trieda.shared.util.view.GTabItem;
 import com.gapso.web.trieda.shared.util.view.SimpleGrid;
@@ -27,7 +30,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class EquivalenciasPresenter implements Presenter {
 
-	public interface Display {
+	public interface Display extends ITriedaI18nGateway {
 		Button getNewButton();
 		Button getRemoveButton();
 		Button getImportExcelButton();
@@ -71,17 +74,20 @@ public class EquivalenciasPresenter implements Presenter {
 			@Override
 			public void componentSelected(ButtonEvent ce) {
 				List<EquivalenciaDTO> list = display.getGrid().getGrid().getSelectionModel().getSelectedItems();
-				Services.equivalencias().remove(list, new AsyncCallback<Void>() {
-					@Override
-					public void onFailure(Throwable caught) {
-						MessageBox.alert("ERRO!", "Deu falha na conexão", null);
-					}
+				Services.equivalencias().remove(list, new AbstractAsyncCallbackWithDefaultOnFailure<Void>(display) {
 					@Override
 					public void onSuccess(Void result) {
 						display.getGrid().updateList();
 						Info.display("Removido", "Item removido com sucesso!");
 					}
 				});
+			}
+		});
+		display.getExportExcelButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
+			@Override
+			public void componentSelected(ButtonEvent ce) {
+				ExportExcelFormSubmit e = new ExportExcelFormSubmit(ExcelInformationType.EQUIVALENCIAS,display.getI18nConstants(),display.getI18nMessages());
+				e.submit();
 			}
 		});
 		display.getResetBuscaButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
