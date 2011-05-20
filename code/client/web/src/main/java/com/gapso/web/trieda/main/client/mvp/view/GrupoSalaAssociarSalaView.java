@@ -4,6 +4,7 @@ import com.extjs.gxt.ui.client.Style.Orientation;
 import com.extjs.gxt.ui.client.Style.SortDir;
 import com.extjs.gxt.ui.client.store.ListStore;
 import com.extjs.gxt.ui.client.util.Margins;
+import com.extjs.gxt.ui.client.util.Padding;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
 import com.extjs.gxt.ui.client.widget.LayoutContainer;
 import com.extjs.gxt.ui.client.widget.ListView;
@@ -14,6 +15,9 @@ import com.extjs.gxt.ui.client.widget.form.FormPanel.LabelAlign;
 import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.extjs.gxt.ui.client.widget.layout.FitLayout;
 import com.extjs.gxt.ui.client.widget.layout.FormData;
+import com.extjs.gxt.ui.client.widget.layout.HBoxLayout;
+import com.extjs.gxt.ui.client.widget.layout.HBoxLayout.HBoxLayoutAlign;
+import com.extjs.gxt.ui.client.widget.layout.HBoxLayoutData;
 import com.extjs.gxt.ui.client.widget.layout.RowData;
 import com.extjs.gxt.ui.client.widget.layout.RowLayout;
 import com.gapso.web.trieda.main.client.mvp.presenter.GrupoSalaAssociarSalaPresenter;
@@ -51,7 +55,7 @@ public class GrupoSalaAssociarSalaView extends MyComposite implements GrupoSalaA
 	private void initUI() {
 		simpleModal = new SimpleModal("Associar Sala ao Grupo", Resources.DEFAULTS.sala16());
 		simpleModal.setHeight(500);
-		simpleModal.setWidth(600);
+		simpleModal.setWidth(585);
 	}
 
 	private void createForm() {
@@ -89,12 +93,18 @@ public class GrupoSalaAssociarSalaView extends MyComposite implements GrupoSalaA
 		
 		contentPanel.add(formPanel);
 		
-		panelLists = new ContentPanel(new RowLayout(Orientation.HORIZONTAL));
-		panelLists.setHeaderVisible(false);
-		panelLists.setHeight(330);
+		panelLists = new ContentPanel();
 		panelLists.setBodyBorder(false);
+		panelLists.setHeaderVisible(false);
+        HBoxLayout layout = new HBoxLayout();  
+        layout.setHBoxLayoutAlign(HBoxLayoutAlign.TOP);  
+        layout.setPadding(new Padding(5));  
+        panelLists.setLayout(layout);
+		panelLists.setHeight(330);
 		
 		ContentPanel andaresListPanel = new ContentPanel(new FitLayout());
+		andaresListPanel.setWidth(95);
+		andaresListPanel.setHeight(320);
 		andaresListPanel.setHeading("Andares");
 		ListStore<SalaDTO> store = new ListStore<SalaDTO>();
 		store.setDefaultSort(SalaDTO.PROPERTY_ANDAR, SortDir.ASC);
@@ -103,6 +113,8 @@ public class GrupoSalaAssociarSalaView extends MyComposite implements GrupoSalaA
 		andaresListPanel.add(andaresList);
 		
 		ContentPanel naoAssociadasListPanel = new ContentPanel(new FitLayout());
+		naoAssociadasListPanel.setWidth(190);
+		naoAssociadasListPanel.setHeight(320);
 		naoAssociadasListPanel.setHeading("Sala(s) não associadas ao Grupo");
 		store = new ListStore<SalaDTO>();
 		store.setDefaultSort(SalaDTO.PROPERTY_CODIGO, SortDir.ASC);
@@ -111,6 +123,8 @@ public class GrupoSalaAssociarSalaView extends MyComposite implements GrupoSalaA
 		naoAssociadasListPanel.add(salasNaoPertencesList);
 		
 		ContentPanel associadasListPanel = new ContentPanel(new FitLayout());
+		associadasListPanel.setWidth(190);
+		associadasListPanel.setHeight(320);
 		associadasListPanel.setHeading("Sala(s) associadas ao Grupo");
 		store = new ListStore<SalaDTO>();
 		store.setDefaultSort(SalaDTO.PROPERTY_CODIGO, SortDir.ASC);
@@ -118,11 +132,11 @@ public class GrupoSalaAssociarSalaView extends MyComposite implements GrupoSalaA
 		salasPertencesList.setDisplayProperty(SalaDTO.PROPERTY_CODIGO);
 		associadasListPanel.add(salasPertencesList);
 		
-		panelLists.add(andaresListPanel, new RowData(.2, 1, new Margins(0, 0, 0, 0)));
-		panelLists.add(getAtualizaSalasDoAndarButtonsPanel(), new RowData(42, 1, new Margins(0, 5, 0, 5)));
-		panelLists.add(naoAssociadasListPanel, new RowData(.4, 1, new Margins(0, 0, 0, 0)));
-		panelLists.add(getAtualizaSalasButtonsPanel(), new RowData(42, 1, new Margins(0, 5, 0, 5)));
-		panelLists.add(associadasListPanel, new RowData(.4, 1, new Margins(0, 0, 0, 0)));
+		panelLists.add(andaresListPanel, new HBoxLayoutData(new Margins(0, 0, 0, 0)));
+		panelLists.add(getAtualizaSalasDoAndarButtonsPanel(), new HBoxLayoutData(new Margins(0, 5, 0, 5)));
+		panelLists.add(naoAssociadasListPanel, new HBoxLayoutData(new Margins(0, 0, 0, 0)));
+		panelLists.add(getAtualizaSalasButtonsPanel(), new HBoxLayoutData(new Margins(0, 5, 0, 5)));
+		panelLists.add(associadasListPanel, new HBoxLayoutData(new Margins(0, 0, 0, 0)));
 		
 		contentPanel.add(panelLists);
 		
@@ -143,7 +157,8 @@ public class GrupoSalaAssociarSalaView extends MyComposite implements GrupoSalaA
 		RowData rowData = new RowData(-1, -1, new Margins(4, 0, 4, 0));
 		
 		panel.add(atualizaSalasDoAndarBT, rowData);
-		
+		panel.setWidth(30);
+		panel.setHeight(320);
 		return panel;
 	}
 	
@@ -166,7 +181,8 @@ public class GrupoSalaAssociarSalaView extends MyComposite implements GrupoSalaA
 		
 		panel.add(adicionaSalasBT, rowData);
 		panel.add(removeSalasBT, rowData);
-		
+		panel.setWidth(30);
+		panel.setHeight(320);
 		return panel;
 	}
 	

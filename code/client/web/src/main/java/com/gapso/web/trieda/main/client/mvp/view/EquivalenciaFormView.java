@@ -4,6 +4,7 @@ import com.extjs.gxt.ui.client.Style.Orientation;
 import com.extjs.gxt.ui.client.Style.SortDir;
 import com.extjs.gxt.ui.client.store.ListStore;
 import com.extjs.gxt.ui.client.util.Margins;
+import com.extjs.gxt.ui.client.util.Padding;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
 import com.extjs.gxt.ui.client.widget.LayoutContainer;
 import com.extjs.gxt.ui.client.widget.ListView;
@@ -12,6 +13,9 @@ import com.extjs.gxt.ui.client.widget.form.FormButtonBinding;
 import com.extjs.gxt.ui.client.widget.form.FormPanel;
 import com.extjs.gxt.ui.client.widget.layout.FitLayout;
 import com.extjs.gxt.ui.client.widget.layout.FormData;
+import com.extjs.gxt.ui.client.widget.layout.HBoxLayout;
+import com.extjs.gxt.ui.client.widget.layout.HBoxLayout.HBoxLayoutAlign;
+import com.extjs.gxt.ui.client.widget.layout.HBoxLayoutData;
 import com.extjs.gxt.ui.client.widget.layout.RowData;
 import com.extjs.gxt.ui.client.widget.layout.RowLayout;
 import com.gapso.web.trieda.main.client.mvp.presenter.EquivalenciaFormPresenter;
@@ -48,9 +52,9 @@ public class EquivalenciaFormView extends MyComposite implements EquivalenciaFor
 	}
 	
 	private void initUI() {
-		String title = "Inserção de Turno";
+		String title = "Inserção de Equivalências";
 		simpleModal = new SimpleModal(title, Resources.DEFAULTS.equivalencia16());
-		simpleModal.setHeight(500);
+		simpleModal.setHeight(470);
 		simpleModal.setWidth(600);
 		createForm();
 		simpleModal.setContent(formPanel);
@@ -68,12 +72,16 @@ public class EquivalenciaFormView extends MyComposite implements EquivalenciaFor
 		disciplinaComboBox.setAllowBlank(false);
 		formPanel.add(disciplinaComboBox, formData);
 		
-		ContentPanel panelLists = new ContentPanel(new RowLayout(Orientation.HORIZONTAL));
-		panelLists.setHeaderVisible(false);
+		LayoutContainer panelLists = new LayoutContainer();
+        HBoxLayout layout = new HBoxLayout();  
+        layout.setPadding(new Padding(5));  
+        layout.setHBoxLayoutAlign(HBoxLayoutAlign.TOP);  
+        panelLists.setLayout(layout);  
 		panelLists.setHeight(330);
-		panelLists.setBodyBorder(false);
 		
 		ContentPanel cursoListPanel = new ContentPanel(new FitLayout());
+		cursoListPanel.setWidth(95);
+		cursoListPanel.setHeight(320);
 		cursoListPanel.setHeading("Curso(s)");
 		ListStore<CursoDTO> store1 = new ListStore<CursoDTO>();
 		store1.setDefaultSort(CursoDTO.PROPERTY_CODIGO, SortDir.ASC);
@@ -82,6 +90,8 @@ public class EquivalenciaFormView extends MyComposite implements EquivalenciaFor
 		cursoListPanel.add(cursosList);
 		
 		ContentPanel naoAssociadasListPanel = new ContentPanel(new FitLayout());
+		naoAssociadasListPanel.setWidth(190);
+		naoAssociadasListPanel.setHeight(320);
 		naoAssociadasListPanel.setHeading("Disciplina(s) não associadas a Equivalência");
 		ListStore<DisciplinaDTO> store2 = new ListStore<DisciplinaDTO>();
 		store2.setDefaultSort(DisciplinaDTO.PROPERTY_CODIGO, SortDir.ASC);
@@ -90,6 +100,8 @@ public class EquivalenciaFormView extends MyComposite implements EquivalenciaFor
 		naoAssociadasListPanel.add(disciplinasNaoPertencesList);
 		
 		ContentPanel associadasListPanel = new ContentPanel(new FitLayout());
+		associadasListPanel.setWidth(190);
+		associadasListPanel.setHeight(320);
 		associadasListPanel.setHeading("Disciplina(s) associadas a Equivalência");
 		ListStore<DisciplinaDTO> store3 = new ListStore<DisciplinaDTO>();
 		store3.setDefaultSort(DisciplinaDTO.PROPERTY_CODIGO, SortDir.ASC);
@@ -97,11 +109,11 @@ public class EquivalenciaFormView extends MyComposite implements EquivalenciaFor
 		disciplinasPertencesList.setDisplayProperty(DisciplinaDTO.PROPERTY_CODIGO);
 		associadasListPanel.add(disciplinasPertencesList);
 		
-		panelLists.add(cursoListPanel, new RowData(.2, 1, new Margins(0, 0, 0, 0)));
-		panelLists.add(getAtualizaSalasDoAndarButtonsPanel(), new RowData(42, 1, new Margins(0, 5, 0, 5)));
-		panelLists.add(naoAssociadasListPanel, new RowData(.4, 1, new Margins(0, 0, 0, 0)));
-		panelLists.add(getAtualizaSalasButtonsPanel(), new RowData(42, 1, new Margins(0, 5, 0, 5)));
-		panelLists.add(associadasListPanel, new RowData(.4, 1, new Margins(0, 0, 0, 0)));
+		panelLists.add(cursoListPanel, new HBoxLayoutData(new Margins(0, 0, 0, 0)));
+		panelLists.add(getAtualizaSalasDoAndarButtonsPanel(), new HBoxLayoutData(new Margins(0, 5, 0, 5)));
+		panelLists.add(naoAssociadasListPanel, new HBoxLayoutData(new Margins(0, 0, 0, 0)));
+		panelLists.add(getAtualizaSalasButtonsPanel(), new HBoxLayoutData(new Margins(0, 5, 0, 5)));
+		panelLists.add(associadasListPanel, new HBoxLayoutData(new Margins(0, 0, 0, 0)));
 		
 		formPanel.add(panelLists);
 		
@@ -112,10 +124,7 @@ public class EquivalenciaFormView extends MyComposite implements EquivalenciaFor
 	}
 	
 	private LayoutContainer getAtualizaSalasDoAndarButtonsPanel() {
-		ContentPanel panel = new ContentPanel();
-		panel.setHeaderVisible(false);
-		panel.setBodyBorder(false);
-		panel.setBodyStyle("display: table-cell; vertical-align: middle");
+		LayoutContainer panel = new LayoutContainer();
 		panel.setLayout(new RowLayout(Orientation.VERTICAL));
 		
 		atualizaDisciplinasDoCursoBT = new Button();
@@ -125,15 +134,13 @@ public class EquivalenciaFormView extends MyComposite implements EquivalenciaFor
 		RowData rowData = new RowData(-1, -1, new Margins(4, 0, 4, 0));
 		
 		panel.add(atualizaDisciplinasDoCursoBT, rowData);
-		
+		panel.setWidth(30);
+		panel.setHeight(320);
 		return panel;
 	}
 	
 	private LayoutContainer getAtualizaSalasButtonsPanel() {
-		ContentPanel panel = new ContentPanel();
-		panel.setHeaderVisible(false);
-		panel.setBodyBorder(false);
-		panel.setBodyStyle("display: table-cell; vertical-align: middle");
+		LayoutContainer panel = new LayoutContainer();
 		panel.setLayout(new RowLayout(Orientation.VERTICAL));
 		
 		adicionaDisciplinaBT = new Button();
@@ -148,7 +155,8 @@ public class EquivalenciaFormView extends MyComposite implements EquivalenciaFor
 		
 		panel.add(adicionaDisciplinaBT, rowData);
 		panel.add(removeDisciplinaBT, rowData);
-		
+		panel.setWidth(30);
+		panel.setHeight(320);
 		return panel;
 	}
 	

@@ -12,6 +12,9 @@ import com.extjs.gxt.ui.client.widget.form.FormButtonBinding;
 import com.extjs.gxt.ui.client.widget.form.FormPanel;
 import com.extjs.gxt.ui.client.widget.layout.FitLayout;
 import com.extjs.gxt.ui.client.widget.layout.FormData;
+import com.extjs.gxt.ui.client.widget.layout.HBoxLayout;
+import com.extjs.gxt.ui.client.widget.layout.HBoxLayout.HBoxLayoutAlign;
+import com.extjs.gxt.ui.client.widget.layout.HBoxLayoutData;
 import com.extjs.gxt.ui.client.widget.layout.RowData;
 import com.extjs.gxt.ui.client.widget.layout.RowLayout;
 import com.extjs.gxt.ui.client.widget.layout.VBoxLayout;
@@ -30,7 +33,7 @@ public class CampusProfessorFormView extends MyComposite implements CampusProfes
 	private SimpleModal simpleModal;
 	private LayoutContainer container;
 	private FormPanel formPanel;
-	private ContentPanel panelLists;
+	private LayoutContainer panelLists;
 	private CampusComboBox campusCB;
 	private ListView<ProfessorDTO> professorNaoAssociadoList;
 	private ListView<ProfessorDTO> professorAssociadoList;
@@ -49,8 +52,8 @@ public class CampusProfessorFormView extends MyComposite implements CampusProfes
 	private void initUI() {
 		String title = "Professores no campus";
 		simpleModal = new SimpleModal(title, Resources.DEFAULTS.professor16());
-		simpleModal.setHeight(400);
-		simpleModal.setWidth(600);
+		simpleModal.setHeight(455);
+		simpleModal.setWidth(595);
 		createForm();
 		simpleModal.setContent(container);
 	}
@@ -66,11 +69,15 @@ public class CampusProfessorFormView extends MyComposite implements CampusProfes
 		formPanel = new FormPanel();
 		formPanel.setHeaderVisible(false);
 		
-		panelLists = new ContentPanel(new RowLayout(Orientation.HORIZONTAL));
-		panelLists.setHeaderVisible(false);
-		panelLists.setBodyBorder(false);
+		panelLists = new LayoutContainer();
+        HBoxLayout layout2 = new HBoxLayout();  
+        layout2.setHBoxLayoutAlign(HBoxLayoutAlign.TOP);  
+        layout2.setPadding(new Padding(5));  
+        panelLists.setLayout(layout2);
 		
 		ContentPanel naoVinculadaListPanel = new ContentPanel(new FitLayout());
+		naoVinculadaListPanel.setWidth(267);
+		naoVinculadaListPanel.setHeight(320);
 		naoVinculadaListPanel.setHeading("Professor(es) NÃO associado(s) ao Campus");
 		professorNaoAssociadoList = new ListView<ProfessorDTO>();
 		professorNaoAssociadoList.disable();
@@ -79,6 +86,8 @@ public class CampusProfessorFormView extends MyComposite implements CampusProfes
 		naoVinculadaListPanel.add(professorNaoAssociadoList);
 		
 		ContentPanel vinculadaListPanel = new ContentPanel(new FitLayout());
+		vinculadaListPanel.setWidth(267);
+		vinculadaListPanel.setHeight(320);
 		vinculadaListPanel.setHeading("Professor(es) associado(s) ao Campus");
 		professorAssociadoList = new ListView<ProfessorDTO>();
 		professorAssociadoList.disable();
@@ -86,9 +95,9 @@ public class CampusProfessorFormView extends MyComposite implements CampusProfes
 		professorAssociadoList.getSelectionModel().setSelectionMode(SelectionMode.MULTI);
 		vinculadaListPanel.add(professorAssociadoList);
 		
-		panelLists.add(naoVinculadaListPanel, new RowData(.5, 1, new Margins(0)));
-		panelLists.add(getAtualizaProfessoresButtonsPanel(), new RowData(30, 1, new Margins(0)));
-		panelLists.add(vinculadaListPanel, new RowData(.5, 1, new Margins(0)));
+		panelLists.add(naoVinculadaListPanel, new HBoxLayoutData(new Margins(0)));
+		panelLists.add(getAtualizaProfessoresButtonsPanel(), new HBoxLayoutData(new Margins(0)));
+		panelLists.add(vinculadaListPanel, new HBoxLayoutData(new Margins(0)));
 		
 		container.add(formPanel, new VBoxLayoutData(new Margins(0, 0, 5, 0)));
 		VBoxLayoutData flex = new VBoxLayoutData(new Margins(0));  
@@ -107,10 +116,7 @@ public class CampusProfessorFormView extends MyComposite implements CampusProfes
 	}
 	
 	private LayoutContainer getAtualizaProfessoresButtonsPanel() {
-		ContentPanel panel = new ContentPanel();
-		panel.setHeaderVisible(false);
-		panel.setBodyBorder(false);
-		panel.setBodyStyle("display: table-cell; vertical-align: middle; background-color: #DFE8F6;");
+		LayoutContainer panel = new LayoutContainer();
 		panel.setLayout(new RowLayout(Orientation.VERTICAL));
 		
 		adicionaBT = new Button();
@@ -127,7 +133,8 @@ public class CampusProfessorFormView extends MyComposite implements CampusProfes
 		
 		panel.add(adicionaBT, rowData);
 		panel.add(removeBT, rowData);
-		
+		panel.setWidth(30);
+		panel.setHeight(320);
 		return panel;
 	}
 	
