@@ -1330,6 +1330,20 @@ class ItemCampus: public ::xml_schema::type
   void
   horariosDisponiveis (::std::auto_ptr< horariosDisponiveis_type > p);
 
+  // custo
+  // 
+  typedef ::xml_schema::double_ custo_type;
+  typedef ::xsd::cxx::tree::traits< custo_type, char, ::xsd::cxx::tree::schema_type::double_ > custo_traits;
+
+  const custo_type&
+  custo () const;
+
+  custo_type&
+  custo ();
+
+  void
+  custo (const custo_type& x);
+
   // Constructors.
   //
   ItemCampus (const id_type&,
@@ -1337,14 +1351,16 @@ class ItemCampus: public ::xml_schema::type
               const nome_type&,
               const unidades_type&,
               const professores_type&,
-              const horariosDisponiveis_type&);
+              const horariosDisponiveis_type&,
+              const custo_type&);
 
   ItemCampus (const id_type&,
               const codigo_type&,
               const nome_type&,
               ::std::auto_ptr< unidades_type >&,
               ::std::auto_ptr< professores_type >&,
-              ::std::auto_ptr< horariosDisponiveis_type >&);
+              ::std::auto_ptr< horariosDisponiveis_type >&,
+              const custo_type&);
 
   ItemCampus (const ::xercesc::DOMElement& e,
               ::xml_schema::flags f = 0,
@@ -1375,6 +1391,7 @@ class ItemCampus: public ::xml_schema::type
   ::xsd::cxx::tree::one< unidades_type > unidades_;
   ::xsd::cxx::tree::one< professores_type > professores_;
   ::xsd::cxx::tree::one< horariosDisponiveis_type > horariosDisponiveis_;
+  ::xsd::cxx::tree::one< custo_type > custo_;
 };
 
 class ItemUnidade: public ::xml_schema::type
@@ -3118,13 +3135,28 @@ class ItemOfertaCurso: public ::xml_schema::type
   void
   campusId (const campusId_type& x);
 
+  // receita
+  // 
+  typedef ::xml_schema::double_ receita_type;
+  typedef ::xsd::cxx::tree::traits< receita_type, char, ::xsd::cxx::tree::schema_type::double_ > receita_traits;
+
+  const receita_type&
+  receita () const;
+
+  receita_type&
+  receita ();
+
+  void
+  receita (const receita_type& x);
+
   // Constructors.
   //
   ItemOfertaCurso (const id_type&,
                    const curriculoId_type&,
                    const cursoId_type&,
                    const turnoId_type&,
-                   const campusId_type&);
+                   const campusId_type&,
+                   const receita_type&);
 
   ItemOfertaCurso (const ::xercesc::DOMElement& e,
                    ::xml_schema::flags f = 0,
@@ -3154,6 +3186,7 @@ class ItemOfertaCurso: public ::xml_schema::type
   ::xsd::cxx::tree::one< cursoId_type > cursoId_;
   ::xsd::cxx::tree::one< turnoId_type > turnoId_;
   ::xsd::cxx::tree::one< campusId_type > campusId_;
+  ::xsd::cxx::tree::one< receita_type > receita_;
 };
 
 class ItemDemanda: public ::xml_schema::type

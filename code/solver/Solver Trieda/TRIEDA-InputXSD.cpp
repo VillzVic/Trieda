@@ -897,6 +897,24 @@ horariosDisponiveis (::std::auto_ptr< horariosDisponiveis_type > x)
   this->horariosDisponiveis_.set (x);
 }
 
+const ItemCampus::custo_type& ItemCampus::
+custo () const
+{
+  return this->custo_.get ();
+}
+
+ItemCampus::custo_type& ItemCampus::
+custo ()
+{
+  return this->custo_.get ();
+}
+
+void ItemCampus::
+custo (const custo_type& x)
+{
+  this->custo_.set (x);
+}
+
 
 // ItemUnidade
 // 
@@ -2519,6 +2537,24 @@ void ItemOfertaCurso::
 campusId (const campusId_type& x)
 {
   this->campusId_.set (x);
+}
+
+const ItemOfertaCurso::receita_type& ItemOfertaCurso::
+receita () const
+{
+  return this->receita_.get ();
+}
+
+ItemOfertaCurso::receita_type& ItemOfertaCurso::
+receita ()
+{
+  return this->receita_.get ();
+}
+
+void ItemOfertaCurso::
+receita (const receita_type& x)
+{
+  this->receita_.set (x);
 }
 
 
@@ -6706,14 +6742,16 @@ ItemCampus (const id_type& id,
             const nome_type& nome,
             const unidades_type& unidades,
             const professores_type& professores,
-            const horariosDisponiveis_type& horariosDisponiveis)
+            const horariosDisponiveis_type& horariosDisponiveis,
+            const custo_type& custo)
 : ::xml_schema::type (),
   id_ (id, ::xml_schema::flags (), this),
   codigo_ (codigo, ::xml_schema::flags (), this),
   nome_ (nome, ::xml_schema::flags (), this),
   unidades_ (unidades, ::xml_schema::flags (), this),
   professores_ (professores, ::xml_schema::flags (), this),
-  horariosDisponiveis_ (horariosDisponiveis, ::xml_schema::flags (), this)
+  horariosDisponiveis_ (horariosDisponiveis, ::xml_schema::flags (), this),
+  custo_ (custo, ::xml_schema::flags (), this)
 {
 }
 
@@ -6723,14 +6761,16 @@ ItemCampus (const id_type& id,
             const nome_type& nome,
             ::std::auto_ptr< unidades_type >& unidades,
             ::std::auto_ptr< professores_type >& professores,
-            ::std::auto_ptr< horariosDisponiveis_type >& horariosDisponiveis)
+            ::std::auto_ptr< horariosDisponiveis_type >& horariosDisponiveis,
+            const custo_type& custo)
 : ::xml_schema::type (),
   id_ (id, ::xml_schema::flags (), this),
   codigo_ (codigo, ::xml_schema::flags (), this),
   nome_ (nome, ::xml_schema::flags (), this),
   unidades_ (unidades, ::xml_schema::flags (), this),
   professores_ (professores, ::xml_schema::flags (), this),
-  horariosDisponiveis_ (horariosDisponiveis, ::xml_schema::flags (), this)
+  horariosDisponiveis_ (horariosDisponiveis, ::xml_schema::flags (), this),
+  custo_ (custo, ::xml_schema::flags (), this)
 {
 }
 
@@ -6744,7 +6784,8 @@ ItemCampus (const ItemCampus& x,
   nome_ (x.nome_, f, this),
   unidades_ (x.unidades_, f, this),
   professores_ (x.professores_, f, this),
-  horariosDisponiveis_ (x.horariosDisponiveis_, f, this)
+  horariosDisponiveis_ (x.horariosDisponiveis_, f, this),
+  custo_ (x.custo_, f, this)
 {
 }
 
@@ -6758,7 +6799,8 @@ ItemCampus (const ::xercesc::DOMElement& e,
   nome_ (f, this),
   unidades_ (f, this),
   professores_ (f, this),
-  horariosDisponiveis_ (f, this)
+  horariosDisponiveis_ (f, this),
+  custo_ (f, this)
 {
   if ((f & ::xml_schema::flags::base) == 0)
   {
@@ -6858,6 +6900,17 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
       }
     }
 
+    // custo
+    //
+    if (n.name () == "custo" && n.namespace_ ().empty ())
+    {
+      if (!custo_.present ())
+      {
+        this->custo_.set (custo_traits::create (i, f, this));
+        continue;
+      }
+    }
+
     break;
   }
 
@@ -6900,6 +6953,13 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
   {
     throw ::xsd::cxx::tree::expected_element< char > (
       "horariosDisponiveis",
+      "");
+  }
+
+  if (!custo_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "custo",
       "");
   }
 }
@@ -9325,13 +9385,15 @@ ItemOfertaCurso (const id_type& id,
                  const curriculoId_type& curriculoId,
                  const cursoId_type& cursoId,
                  const turnoId_type& turnoId,
-                 const campusId_type& campusId)
+                 const campusId_type& campusId,
+                 const receita_type& receita)
 : ::xml_schema::type (),
   id_ (id, ::xml_schema::flags (), this),
   curriculoId_ (curriculoId, ::xml_schema::flags (), this),
   cursoId_ (cursoId, ::xml_schema::flags (), this),
   turnoId_ (turnoId, ::xml_schema::flags (), this),
-  campusId_ (campusId, ::xml_schema::flags (), this)
+  campusId_ (campusId, ::xml_schema::flags (), this),
+  receita_ (receita, ::xml_schema::flags (), this)
 {
 }
 
@@ -9344,7 +9406,8 @@ ItemOfertaCurso (const ItemOfertaCurso& x,
   curriculoId_ (x.curriculoId_, f, this),
   cursoId_ (x.cursoId_, f, this),
   turnoId_ (x.turnoId_, f, this),
-  campusId_ (x.campusId_, f, this)
+  campusId_ (x.campusId_, f, this),
+  receita_ (x.receita_, f, this)
 {
 }
 
@@ -9357,7 +9420,8 @@ ItemOfertaCurso (const ::xercesc::DOMElement& e,
   curriculoId_ (f, this),
   cursoId_ (f, this),
   turnoId_ (f, this),
-  campusId_ (f, this)
+  campusId_ (f, this),
+  receita_ (f, this)
 {
   if ((f & ::xml_schema::flags::base) == 0)
   {
@@ -9431,6 +9495,17 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
       }
     }
 
+    // receita
+    //
+    if (n.name () == "receita" && n.namespace_ ().empty ())
+    {
+      if (!receita_.present ())
+      {
+        this->receita_.set (receita_traits::create (i, f, this));
+        continue;
+      }
+    }
+
     break;
   }
 
@@ -9466,6 +9541,13 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
   {
     throw ::xsd::cxx::tree::expected_element< char > (
       "campusId",
+      "");
+  }
+
+  if (!receita_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "receita",
       "");
   }
 }
