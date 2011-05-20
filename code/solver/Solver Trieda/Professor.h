@@ -11,32 +11,32 @@ class Professor :
    public OFBase
 {
 public:
-	Professor(bool = false);
-   virtual ~Professor(void);
+   Professor( bool = false );
+   virtual ~Professor( void );
 
-   virtual void le_arvore(ItemProfessor &);
+   virtual void le_arvore( ItemProfessor & );
 
    GGroup< Horario * > horarios;
 
    // Esse eh o disciplinas do XSD de input
-   GGroup< Magisterio * > magisterio;
+   GGroup< Magisterio *, LessPtr< Magisterio > > magisterio;
 
    TipoContrato * tipo_contrato;
    TipoTitulacao * titulacao; 
    AreaTitulacao * area;
 
-   void setCpf(std::string s) { cpf = s; }
-   void setNome(std::string s) { nome = s; }
-   void setTipoContratoId(int s) { tipo_contrato_id = s; }
-   void setChMin(int s) { ch_min = s; }
-   void setChMax(int s) { ch_max = s; }
-   void setChAnterior(int s) { ch_anterior = s; }
-   void setTitulacaoId(int s) { titulacao_id = s; }
-   void setAreaId(int s) { area_id = s; }
-   void setValorCredito(int s) { valor_credito = s; }
-   void setIdOperacional(int s) { id_operacional = s; }
-   void setCustoDispProf(int c) { custoDispProf = c; }
-   void setIsVirtual(bool value) { is_virtual = value; }
+   void setCpf( std::string s ) { cpf = s; }
+   void setNome( std::string s ) { nome = s; }
+   void setTipoContratoId( int s ) { tipo_contrato_id = s; }
+   void setChMin( int s ) { ch_min = s; }
+   void setChMax( int s ) { ch_max = s; }
+   void setChAnterior( int s ) { ch_anterior = s; }
+   void setTitulacaoId( int s ) { titulacao_id = s; }
+   void setAreaId( int s ) { area_id = s; }
+   void setValorCredito( int s ) { valor_credito = s; }
+   void setIdOperacional( int s ) { id_operacional = s; }
+   void setCustoDispProf( int c ) { custoDispProf = c; }
+   void setIsVirtual( bool value ) { is_virtual = value; }
 
    std::string getCpf() const { return cpf; }
    std::string getNome() const { return nome; }

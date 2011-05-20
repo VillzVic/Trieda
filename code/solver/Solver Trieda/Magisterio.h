@@ -9,19 +9,19 @@ class Magisterio :
 {
 public:
    Magisterio();
-   ~Magisterio(void);
+   virtual ~Magisterio(void);
 
-   virtual void le_arvore(ItemProfessorDisciplina& elem);
+   virtual void le_arvore( ItemProfessorDisciplina & );
 
    Disciplina * disciplina;
 
-   void setNota(int v) { nota = v; }
-   void setPreferencia(int v) { preferencia = v; }
-   void setDisciplinaId(int v) { disciplina_id = v;  }
+   void setNota( int v ) { nota = v; }
+   void setPreferencia( int v ) { preferencia = v; }
+   void setDisciplinaId( int v ) { disciplina_id = v;  }
 
-   int getNota() { return nota; }
-   int getPreferencia() { return preferencia; }
-   int getDisciplinaId() { return disciplina_id; }
+   int getNota() const { return nota; }
+   int getPreferencia() const { return preferencia; }
+   int getDisciplinaId() const { return disciplina_id; }
 
 private:
    int nota;

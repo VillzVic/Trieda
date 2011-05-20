@@ -2,7 +2,6 @@
 #define _PROBLEM_DATA_H_
 
 #include "input.h"
-#include "GGroup.h"
 #include "Calendario.h"
 #include "TipoSala.h"
 #include "TipoContrato.h"
@@ -28,8 +27,8 @@
 #include <iostream>
 #include <vector>
 
-// Stores input data
-class ProblemData : public OFBase
+class ProblemData
+	: public OFBase
 {
 public:
    ProblemData();
@@ -48,7 +47,7 @@ public:
    GGroup< Deslocamento * > tempo_campi;
    GGroup< Deslocamento * > tempo_unidades;
    GGroup< Disciplina *, LessPtr< Disciplina > > disciplinas;
-   GGroup< Curso * > cursos;
+   GGroup< Curso *, LessPtr< Curso > > cursos;
    GGroup< Demanda * > demandas;
    GGroup< Oferta * > ofertas;
    ParametrosPlanejamento * parametros;
@@ -166,7 +165,7 @@ public:
    // Dias letivos comuns de um professor e uma disciplina.
    std::map< std::pair< int /*idProf*/, int /*idDisc*/>, GGroup< int > /*Dias*/ > prof_Disc_Dias;
 
-   GGroup<Aula*,LessPtr<Aula> > aulas;
+   GGroup< Aula *, LessPtr< Aula > > aulas;
 
    // Estrutura que agrupa as aulas por bloco curricular e dia.
    std::map< BlocoCurricular *,
@@ -174,8 +173,6 @@ public:
 
    // Estrutura que informa a quais blocos curriculares uma aula pertence.
    std::map< Aula *, GGroup< BlocoCurricular *, LessPtr< BlocoCurricular > > > aulaBlocosCurriculares;
-
-   std::map< std::pair< Curso *, Curso * >, std::vector< int /*idDisc*/ > > cursosComp_disc;
 
    // Armazena todos os objetos turnos, de todos os campus
    GGroup< Turno *, LessPtr< Turno > > todos_turnos;
@@ -211,9 +208,8 @@ public:
    GGroup< Fixacao *, LessPtr< Fixacao > > fixacoes_Prof_Sala;
    //----------------------------------------------------------------
 
-   /* Lista para cada par <professor,disciplina> todas as fixacoes existentes. */
+   // Lista para cada par <professor,disciplina> todas as fixacoes existentes.
    std::map< std::pair< Professor *, Disciplina * >, GGroup< Fixacao * > > fixacoesProfDisc;
-
 
    // Dado um par disciplina/dia da semana, informa quantos
    // crétidos estão fixados dessa disciplina nesse dia da semana
@@ -226,6 +222,20 @@ public:
    int creditosFixadosDisciplinaDia( Disciplina *, int, ConjuntoSala * );
 
    virtual void le_arvore( TriedaInput & );
+
+   //-----------------------------------------------------------------------------------------------
+   // Equivalências entre discilpinas
+
+   // Armazena od 'ids' das disciplinas compatíveis entre os pares de cursos
+   std::map< std::pair< Curso *, Curso * >, std::vector< int /*idDisc*/ > > cursosComp_disc;
+
+   // Dado um curso e um curriculo, retorna-se um map
+   // que referencia cada disciplina com sua correspondente
+   // disciplina substituta, caso tenha ocorrido uma
+   // substituição por equivalência entre essas disciplinas
+   std::map< std::pair< Curso *, Curriculo * >,
+			 std::map< Disciplina *, Disciplina * > > map_CursoCurriculo_DisciplinasSubstituidas;
+   //-----------------------------------------------------------------------------------------------
 };
 
 #endif

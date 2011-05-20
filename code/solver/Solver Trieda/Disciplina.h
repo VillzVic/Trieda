@@ -20,14 +20,13 @@ public:
    TipoDisciplina * tipo_disciplina;
    NivelDificuldade * nivel_dificuldade;
 
-   GGroup< int > equivalentes;
-   GGroup< int > incompativeis;
+   GGroup< int > ids_disciplinas_equivalentes;
+   GGroup< int > ids_disciplinas_incompativeis;
    GGroup< Horario * > horarios;
 
    // Conjunto de combinações possíveis de divisão de créditos de uma uma disciplina 'd'
    std::vector< std::vector< std::pair< int /*dia*/, int /*numCreditos*/ > > > combinacao_divisao_creditos;
 
-   // =========== METODOS AUXILIARES
    virtual void le_arvore( ItemDisciplina & );
 
    int adicionaDemandaTotal( int d ) { return ( demanda_total += d ); }
@@ -35,25 +34,24 @@ public:
    // Armazena os dias letivos em que a disciplina pode ser ministrada.
    GGroup< int > diasLetivos;
 
-   GGroup< Disciplina * > discEquivalentes;
+   GGroup< Disciplina *, LessPtr< Disciplina > > discEquivalentes;
+   GGroup< Disciplina *, LessPtr< Disciplina > > discIncompativeis;
 
-   // =========== METODOS SET
-   void setDemandaTotal(int value) { demanda_total = value; }
-   void setMaxDemanda(int value) { max_demanda = value; }
-   void setCodigo(std::string s) { codigo = s; }
-   void setNome(std::string s) { nome = s; }
-   void setCredTeoricos(int value) { cred_teoricos = value; }
-   void setCredPraticos(int value) { cred_praticos = value; }
-   void setELab(bool value) { e_lab = value; }
-   void setMaxAlunosT(int value) { max_alunos_t = value; }
-   void setMaxAlunosP(int value) { max_alunos_p = value; }
-   void setTipoDisciplinaId(int value) { tipo_disciplina_id = value; }
-   void setNivelDificuldadeId(int value) { nivel_dificuldade_id = value; }
-   void setNumTurmas(int value) { num_turmas = value; }
-   void setMinCreds(int value) { min_creds = value; }
-   void setMaxCreds(int value) { max_creds = value; }
+   void setDemandaTotal( int value ) { demanda_total = value; }
+   void setMaxDemanda( int value ) { max_demanda = value; }
+   void setCodigo( std::string s ) { codigo = s; }
+   void setNome( std::string s ) { nome = s; }
+   void setCredTeoricos( int value ) { cred_teoricos = value; }
+   void setCredPraticos( int value ) { cred_praticos = value; }
+   void setELab( bool value ) { e_lab = value; }
+   void setMaxAlunosT( int value ) { max_alunos_t = value; }
+   void setMaxAlunosP( int value ) { max_alunos_p = value; }
+   void setTipoDisciplinaId( int value ) { tipo_disciplina_id = value; }
+   void setNivelDificuldadeId( int value ) { nivel_dificuldade_id = value; }
+   void setNumTurmas( int value ) { num_turmas = value; }
+   void setMinCreds( int value ) { min_creds = value; }
+   void setMaxCreds( int value ) { max_creds = value; }
 
-   // =========== METODOS GET
    int getDemandaTotal() const { return demanda_total; }
    int getMaxDemanda() const { return max_demanda; }
    std::string getCodigo() const { return codigo; }
@@ -68,6 +66,9 @@ public:
    int getNumTurmas() const { return num_turmas; }
    int getMinCreds() const { return min_creds; }
    int getMaxCreds() const { return max_creds; }
+
+   // Informa se uma dada disciplina é equivalente à esta disciplina
+   bool eh_equivalente( Disciplina * );
 
 private:
    // Soma das demandas de uma disciplina.

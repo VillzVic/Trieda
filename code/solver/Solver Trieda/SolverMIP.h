@@ -35,14 +35,12 @@
 #define PRINT_cria_restricoes
 
 // -----------------------------------
-#define READ_SOLUTION_TATICO_BIN
+// #define READ_SOLUTION_TATICO_BIN
 
 #ifndef READ_SOLUTION_TATICO_BIN
 #define WRITE_SOLUTION_TATICO_BIN
 #endif
 // -----------------------------------
-
-
 
 /*
  * Implements a MIP Solver.
@@ -57,7 +55,7 @@ public:
    SolverMIP( ProblemData *, ProblemSolution *, ProblemDataLoader * );
 
    /** Destructor. */
-   ~SolverMIP();
+   virtual ~SolverMIP();
 
    /**
    * Solves the MIP previously created.

@@ -16,7 +16,7 @@ public:
    virtual void le_arvore( ItemCurso & );
 
    GGroup< int > area_ids;
-   GGroup< Curriculo * > curriculos;
+   GGroup< Curriculo *, LessPtr< Curriculo > > curriculos;
 
    TipoCurso * tipo_curso;
 

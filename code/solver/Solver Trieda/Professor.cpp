@@ -1,7 +1,7 @@
 #include "Professor.h"
 
 //Professor::Professor()
-Professor::Professor(bool eVirtual)
+Professor::Professor( bool eVirtual )
 {
 	cpf = nome = "";
 	tipo_contrato_id = 0;
@@ -23,7 +23,7 @@ Professor::Professor(bool eVirtual)
 	custoDispProf = 0;
 
 	is_virtual = eVirtual;
-	if(is_virtual)
+	if ( is_virtual )
 	{
        cpf = "000.000.000-00";
        nome = "PROFESSOR VIRTUAL";
@@ -41,7 +41,7 @@ Professor::~Professor(void)
 
 }
 
-void Professor::le_arvore(ItemProfessor & elem)
+void Professor::le_arvore( ItemProfessor & elem )
 {
 	this->setId( elem.id() );
 
@@ -60,16 +60,19 @@ void Professor::le_arvore(ItemProfessor & elem)
 	ch_anterior = elem.credAnterior();
 	valor_credito = elem.valorCred();
 
-	ITERA_SEQ( it_mag, elem.disciplinas(),
-			   ProfessorDisciplina )
+	int id_magisterio = 1;
+	ITERA_SEQ( it_mag, elem.disciplinas(), ProfessorDisciplina )
 	{
 		Magisterio * m = new Magisterio();
+
+		m->setId( id_magisterio );
+		id_magisterio++;
+
 		m->le_arvore( *it_mag );
 		magisterio.add( m );
 	}
 
-	ITERA_SEQ( it_h, elem.horariosDisponiveis(),
-			   Horario )
+	ITERA_SEQ( it_h, elem.horariosDisponiveis(), Horario )
 	{
 		Horario * h = new Horario();
 		h->le_arvore( *it_h );

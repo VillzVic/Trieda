@@ -9,9 +9,9 @@ class Calendario :
 {
 public:
    Calendario(void);
-   ~Calendario(void);
+   virtual ~Calendario(void);
 
-   GGroup< Turno * > turnos;
+   GGroup< Turno *, LessPtr< Turno > > turnos;
 
    virtual void le_arvore(ItemCalendario &);
 

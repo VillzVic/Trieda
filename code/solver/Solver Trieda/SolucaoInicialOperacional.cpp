@@ -669,7 +669,7 @@ void SolucaoInicialOperacional::executaFuncaoPrioridade()
 {
    ITERA_GGROUP_LESSPTR( itCampus, problemData.campi, Campus )
    {
-      ITERA_GGROUP( itProfessor, itCampus->professores, Professor )
+      ITERA_GGROUP_LESSPTR( itProfessor, itCampus->professores, Professor )
       {
          // Contabilizando os horários disponíveis de um professor. 
          // Assim, toda vez que um CustoAlocacao for instanciado, o custo
@@ -690,7 +690,7 @@ void SolucaoInicialOperacional::executaFuncaoPrioridade()
 
          itProfessor->setCustoDispProf( itCampus->horarios.size() );
 
-         ITERA_GGROUP( itMagisterio, itProfessor->magisterio, Magisterio )
+         ITERA_GGROUP_LESSPTR( itMagisterio, itProfessor->magisterio, Magisterio )
          {
             Disciplina * discMinistradaProf = itMagisterio->disciplina;
 

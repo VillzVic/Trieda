@@ -849,17 +849,17 @@ void Avaliador::avaliacaoCustoCorpoDocente(SolucaoOperacional & solucao)
    std::map< int, Professor * >::iterator it_professor
       = solucao.mapProfessores.begin();
    for (; it_professor != solucao.mapProfessores.end();
-      it_professor++)
+          it_professor++ )
    {
       // Somando as notas de avaliação do professor nas suas disciplinas
-      ITERA_GGROUP(it_mag, it_professor->second->magisterio, Magisterio)
+      ITERA_GGROUP_LESSPTR( it_mag, it_professor->second->magisterio, Magisterio )
       {
-         avaliacaoCorpoDocente += it_mag->getNota();
+         avaliacaoCorpoDocente += ( it_mag->getNota() );
       }
 
       // Adiciona o custo desse professor
       // no custo total do corpo docente da solução
-      custoCorpoDocente += it_professor->second->getValorCredito();
+      custoCorpoDocente += ( it_professor->second->getValorCredito() );
    }
 
    totalAvaliacaoCorpoDocente = avaliacaoCorpoDocente;
@@ -1326,7 +1326,7 @@ void Avaliador::avaliaMaximoDisciplinasProfessorPorCurso(SolucaoOperacional & so
       {
          // ID do curso
          id_curso = it_cursos->first;
-         curso = procuraCurso(id_curso, solucao.getProblemData()->cursos);
+         curso = procuraCurso( id_curso, solucao.getProblemData()->cursos );
 
          // Disciplinas às quais o professor está alocado nesse curso
          disc_professor = it_cursos->second.size();
@@ -1354,15 +1354,15 @@ void Avaliador::avaliaMaximoDisciplinasProfessorPorCurso(SolucaoOperacional & so
    totalViolacoesDiscProfCurso = violacoes;
 }
 
-Curso* Avaliador::procuraCurso(int id_curso, GGroup<Curso*> cursos)
+Curso* Avaliador::procuraCurso(int id_curso, GGroup< Curso *, LessPtr< Curso > > cursos)
 {
    // Procura pelo curso desejado na lista de cursos
    Curso* curso = NULL;
-   ITERA_GGROUP(it_curso, cursos, Curso)
+   ITERA_GGROUP_LESSPTR( it_curso, cursos, Curso )
    {
-      if (it_curso->getId() == id_curso)
+      if ( it_curso->getId() == id_curso )
       {
-         curso = *(it_curso);
+         curso = ( *it_curso );
          break;
       }
    }
@@ -1399,7 +1399,7 @@ void Avaliador::avaliaPreferenciasProfessorDisciplina( SolucaoOperacional & solu
    // a preferência do professor em lecionar essa disciplina
    ITERA_GGROUP_LESSPTR( it_campi, solucao.getProblemData()->campi, Campus )
    {
-      ITERA_GGROUP( it_professor, it_campi->professores, Professor )
+      ITERA_GGROUP_LESSPTR( it_professor, it_campi->professores, Professor )
       {
          // Recupera o 'objeto' professor 
          id_professor = it_professor->getId();
@@ -1411,7 +1411,7 @@ void Avaliador::avaliaPreferenciasProfessorDisciplina( SolucaoOperacional & solu
 
          // Percorre as disciplinas desse professor,
          // formando os pares 'disciplina'/'preferência'
-         ITERA_GGROUP( it_disciplina, it_professor->magisterio, Magisterio )
+         ITERA_GGROUP_LESSPTR( it_disciplina, it_professor->magisterio, Magisterio )
          {
             // Id da disciplina
             id_disciplina = abs( it_disciplina->getDisciplinaId() );
@@ -1626,7 +1626,7 @@ void Avaliador::avaliaTempoParcialIntegral( SolucaoOperacional & solucao )
 	double porcentagem_parcial = 0.0;
 	double porcentagem_integral = 0.0;
 	double total_professores_curso = 0.0;
-	ITERA_GGROUP( it_curso, solucao.getProblemData()->cursos, Curso )
+	ITERA_GGROUP_LESSPTR( it_curso, solucao.getProblemData()->cursos, Curso )
 	{
 		curso = ( *it_curso );
 

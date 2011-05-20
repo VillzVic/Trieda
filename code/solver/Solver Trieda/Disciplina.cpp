@@ -20,9 +20,10 @@ Disciplina::Disciplina(void)
 
 Disciplina::~Disciplina(void)
 {
+
 }
 
-void Disciplina::le_arvore(ItemDisciplina& elem)
+void Disciplina::le_arvore( ItemDisciplina & elem )
 {
    this->setId( elem.id() );
    codigo = elem.codigo();
@@ -32,40 +33,49 @@ void Disciplina::le_arvore(ItemDisciplina& elem)
    max_creds = cred_teoricos + cred_praticos;
    e_lab = elem.laboratorio();
 
-   if(elem.maxAlunosTeorico().present())
+   if ( elem.maxAlunosTeorico().present() )
    {
       max_alunos_t = elem.maxAlunosTeorico().get();
    }
 
-   if(elem.maxAlunosPratico().present())
+   if ( elem.maxAlunosPratico().present() )
    {
       max_alunos_p = elem.maxAlunosPratico().get();
    }
 
    tipo_disciplina_id = elem.tipoDisciplinaId();
    nivel_dificuldade_id = elem.nivelDificuldadeId();
-   
+
    divisao_creditos = NULL;
-   if (elem.divisaoDeCreditos().present())
+   if ( elem.divisaoDeCreditos().present() )
    {
       divisao_creditos = new DivisaoCreditos();
-      divisao_creditos->le_arvore(elem.divisaoDeCreditos().get());
+      divisao_creditos->le_arvore( elem.divisaoDeCreditos().get() );
    }
 
-   ITERA_NSEQ(it_contem, elem.disciplinasEquivalentes(), id, Identificador)
+   ITERA_NSEQ( it_contem, elem.disciplinasEquivalentes(), id, Identificador )
    {
-      equivalentes.add(*it_contem);
+      ids_disciplinas_equivalentes.add( *it_contem );
    }
 
-   ITERA_NSEQ(it_inc, elem.disciplinasIncompativeis(), id, Identificador)
+   ITERA_NSEQ( it_inc, elem.disciplinasIncompativeis(), id, Identificador )
    {
-      incompativeis.add(*it_inc);
+      ids_disciplinas_incompativeis.add( *it_inc );
    }
 
-   ITERA_SEQ(it_hora, elem.horariosDisponiveis(), Horario)
+   ITERA_SEQ( it_hora, elem.horariosDisponiveis(), Horario )
    {
-      Horario* horario = new Horario();
-      horario->le_arvore(*it_hora);
-      horarios.add(horario);
+      Horario * horario = new Horario();
+      horario->le_arvore( *it_hora );
+      horarios.add( horario );
    }
+}
+
+// Informa se uma dada disciplina é equivalente à esta disciplina
+bool Disciplina::eh_equivalente( Disciplina * other )
+{
+	return (   ( this->getCredTeoricos() == other->getCredTeoricos() )
+			&& ( this->getCredPraticos() == other->getCredPraticos() )
+			&& ( this->eLab() == other->eLab() )
+			&& ( this->getTipoDisciplinaId() == other->getTipoDisciplinaId() ) );
 }

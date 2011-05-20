@@ -18,7 +18,7 @@ public:
    virtual ~Campus(void);
 
    GGroup< Unidade *, LessPtr< Unidade > > unidades;
-   GGroup< Professor * > professores;
+   GGroup< Professor *, LessPtr< Professor > > professores;
    GGroup< Horario * > horarios;
 
    GGroup< Curso  *, LessPtr< Curso  > > cursos;

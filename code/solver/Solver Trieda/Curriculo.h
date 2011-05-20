@@ -3,6 +3,7 @@
 
 #include "ofbase.h"
 #include "GGroup.h"
+#include "Disciplina.h"
 
 class Curriculo :
    public OFBase
@@ -13,12 +14,15 @@ public:
 
    virtual void le_arvore( ItemCurriculo & );
 
-   GGroup< std::pair< int /*periodo*/, int /*disciplina_id*/ > > disciplinas_periodo;
+   GGroup< std::pair< int, Disciplina * > > disciplinas_periodo;
 
    void setCodigo( std::string s ) { codigo = s; }
    std::string getCodigo() const { return codigo; }
 
+   void refDisciplinaPeriodo( GGroup< Disciplina *, LessPtr< Disciplina > > );
+
 private:
+   GGroup< std::pair< int, int > > ids_disciplinas_periodo;
    std::string codigo;
 };
 

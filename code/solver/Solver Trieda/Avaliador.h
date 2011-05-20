@@ -205,7 +205,7 @@ private:
 	// -----------------------------------------------------------
 	// Retorna o curso com o id informado
 	// -----------------------------------------------------------
-	Curso * procuraCurso( int, GGroup< Curso * > );
+	Curso * procuraCurso( int, GGroup< Curso *, LessPtr< Curso > > );
 
 	// -----------------------------------------------------------
 	// Ordena um GGroup de aulas

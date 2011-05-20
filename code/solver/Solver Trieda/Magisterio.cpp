@@ -7,9 +7,10 @@ Magisterio::Magisterio()
 
 Magisterio::~Magisterio(void)
 {
+
 }
 
-void Magisterio::le_arvore(ItemProfessorDisciplina& elem)
+void Magisterio::le_arvore( ItemProfessorDisciplina & elem )
 {
 	nota = elem.nota();
 	preferencia = elem.preferencia();

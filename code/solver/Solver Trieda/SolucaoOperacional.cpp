@@ -19,9 +19,7 @@ SolucaoOperacional::SolucaoOperacional( ProblemData * prbDt ) : problem_data( pr
       = prbDt->campi.begin();
    for (; it_campi != prbDt->campi.end(); it_campi++)
    {
-      GGroup< Professor * >::iterator it_prof
-         = it_campi->professores.begin();
-      for (; it_prof != it_campi->professores.end(); it_prof++ )
+	  ITERA_GGROUP_LESSPTR( it_prof, it_campi->professores, Professor )
       {
          this->mapProfessores[ it_prof->getId() ] = ( *it_prof );
       }

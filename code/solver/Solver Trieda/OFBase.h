@@ -57,7 +57,6 @@ public:
       return !(getId() == right.getId()); 
    }
 
-
 private:
    int id;
 }; 

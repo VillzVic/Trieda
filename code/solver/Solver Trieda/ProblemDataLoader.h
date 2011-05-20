@@ -27,6 +27,10 @@ public:
    // Load the XML file
    void load();
 
+   void referenciaDisciplinasEquivalentesIncompativeis();
+
+   void referenciaDisciplinasCurriculos();
+
    // Para cada dia da semana, relaciona os
    // seus respectivos horários de aula disponíveis
    void relacionaHorariosAulaDiaSemana();
@@ -51,6 +55,9 @@ public:
 
    // Establece os dias letivos comuns entre os professores e suas disciplinas.
    void estabeleceDiasLetivosProfessorDisciplina();
+
+   /* */
+   void disciplinasEquivalentes();
 
    /* */
    void divideDisciplinas();
@@ -106,28 +113,14 @@ public:
    // correta para a disciplina dividida (créditos práticos)
    void criaFixacoesDisciplinasDivididas();
 
-    /* 
-	Uma disciplina é equivalente a outra se:
-		- creditos teoricos são iguais
-		- creditos praticos são iguais
-		- o parametro e_lab é igual
-		- tipo da disciplina é igual
-	*/
-   void disciplinasEquivalentes();
-
    GGroup< int > retorna_foxacoes_dias_letivos( Disciplina * );
 
    bool existe_conjunto_sala__fixacao( Unidade *, Disciplina *, Sala * );
 
 private:
-   // Input data object of the problem
    ProblemData * problemData;
    char * inputFile;
-
-   // XML parser
    std::auto_ptr< TriedaInput > root;
-
-   // =========== METODOS AUXILIARES
 
    void referenciaCampusUnidadesSalas();
    void referenciaDisciplinas();

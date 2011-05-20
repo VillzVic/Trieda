@@ -27,9 +27,9 @@ void ProblemData::le_arvore( TriedaInput & raiz )
    calendario = new Calendario();
    calendario->le_arvore( raiz.calendario() );
 
-   ITERA_GGROUP( it_turno, calendario->turnos, Turno )
+   ITERA_GGROUP_LESSPTR( it_turno, calendario->turnos, Turno )
    {
-	   todos_turnos.add( ( *it_turno ) );
+	   todos_turnos.add( *it_turno );
    }
 
    ITERA_SEQ( it_campi, raiz.campi(), Campus )
