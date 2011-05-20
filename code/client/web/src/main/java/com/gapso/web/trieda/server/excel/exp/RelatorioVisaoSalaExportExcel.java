@@ -142,6 +142,7 @@ public class RelatorioVisaoSalaExportExcel extends AbstractExportExcel {
 		return false;
 	}
 	
+	@SuppressWarnings("unused")
 	private int writeSala(Sala sala, Turno turno, List<AtendimentoRelatorioDTO> atendimentos, int row, HSSFSheet sheet, Iterator<HSSFComment> itExcelCommentsPool, Map<String,HSSFCellStyle> codigoDisciplinaToColorMap) {
 		row = writeHeader(sala,turno,row,sheet);
 		
