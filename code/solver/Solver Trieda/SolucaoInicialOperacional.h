@@ -49,10 +49,13 @@ private:
    // grupo de professores do bloco em questão.
    std::map< BlocoCurricular *, GGroup< Professor *, LessPtr< Professor > > > blocosProfs;
 
-   // Armazena para cada sala os horarios que já foram alocados.
+   // Armazena os horarios que já foram alocados para cada sala.
    // Estrutura: para cada sala, retorna-se o conjuntos de pares
-   // de horario aula / dia da semana que a sala já está ocupada
-   std::map< Sala *, GGroup< std::pair< HorarioAula *, int > > > horariosAulaSala; // PAREI AQUI -> Preencher esse cara.
+   // dia da semana / de horario aula que a sala já está ocupada.
+   //std::map< Sala *, GGroup< std::pair< int /*Dia Semana*/, HorarioAula * > >, LessPtr<Sala> > horariosAulaSala;
+   std::map< Sala*, 
+      std::map< int /*Dia*/, GGroup<HorarioAula*, LessPtr<HorarioAula> > >,
+      LessPtr<Sala> > horariosAulaSala;
 
 
    // Métodos

@@ -661,6 +661,7 @@ bool SolucaoOperacional::fixacaoProfSala( Aula * aula, int id_operacional_profes
 
 void SolucaoOperacional::alocaAulaProf(Aula & aula, Professor & professor, std::vector<HorarioAula*> horariosAula)
 {
+   // Alocando a aula.
    int diaSemana = aula.getDiaSemana();
 
    std::vector<HorarioAula*>::iterator itHorariosAula = horariosAula.begin();
@@ -675,4 +676,8 @@ void SolucaoOperacional::alocaAulaProf(Aula & aula, Professor & professor, std::
          
          = &aula;
    }
+
+   /* Anotando na estrutura auxiliar da solução as posições dos horários alocados pra um professor 
+   ministrar uma aula. */
+   this->blocoAulas[&aula] = std::make_pair(&professor,horariosAula);
 }

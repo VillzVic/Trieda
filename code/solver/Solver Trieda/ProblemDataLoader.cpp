@@ -125,7 +125,7 @@ void ProblemDataLoader::load()
    relacionaFixacoes();
 
    // ---------
-   verificaFixacoesDiasLetivosDisciplinas();
+   //verificaFixacoesDiasLetivosDisciplinas();
 
    // ---------
    print_stats();

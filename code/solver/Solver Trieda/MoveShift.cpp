@@ -22,7 +22,7 @@ Move & MoveShift::apply( SolucaoOperacional & s )
 
    print();
 
-   std::map< Aula *, std::pair< Professor * , std::vector< HorarioAula * > > >::iterator 
+   std::map< Aula *, std::pair< Professor * , std::vector< HorarioAula * > >, LessPtr<Aula> >::iterator 
       itBlocoAula = s.blocoAulas.find( &aula );
 
    if ( itBlocoAula == s.blocoAulas.end() )

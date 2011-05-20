@@ -19,7 +19,7 @@ bool MoveValidator::canSwapSchedule( Aula & aX, Aula & aY, SolucaoOperacional & 
    std::vector<HorarioAula*> novosHorariosAX;
    std::vector<HorarioAula*> novosHorariosAY;
 
-   std::map<Aula*,std::pair<Professor*,std::vector<HorarioAula*> > >::const_iterator
+   std::map< Aula *, std::pair< Professor *, std::vector< HorarioAula * > >, LessPtr<Aula> >::const_iterator
       itAula = solOp.blocoAulas.find(&aX);
 
    if(itAula != solOp.blocoAulas.end())
@@ -96,7 +96,7 @@ bool MoveValidator::checkBlockConflict( Aula & aula, std::vector<HorarioAula*> &
          if ( **itAula != aula )
          {
             // Buscando, na solução, uma referência para a aula em questão.
-            std::map<Aula*,std::pair<Professor*,std::vector<HorarioAula*> > >::iterator
+            std::map< Aula *, std::pair< Professor *, std::vector< HorarioAula * > >, LessPtr<Aula> >::iterator 
                itAula = solOp.blocoAulas.find(itAula->first);
 
             if(!itAula->second.second.empty())

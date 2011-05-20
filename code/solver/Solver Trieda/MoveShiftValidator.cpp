@@ -15,7 +15,7 @@ bool MoveShiftValidator::canShiftSchedule(Aula & aula, Professor & professor, st
    Checando se a qtd de horários a serem alocados são iguais (em quantidade) aos horários da aula em questão.
    */
 
-   std::map<Aula*,std::pair<Professor*,std::vector<HorarioAula*> > >::const_iterator
+   std::map< Aula *, std::pair< Professor *, std::vector< HorarioAula * > >, LessPtr<Aula> >::const_iterator
       itBlocoAulas = solOp.blocoAulas.find(&aula);
 
    if(itBlocoAulas == solOp.blocoAulas.end())

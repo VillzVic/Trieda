@@ -24,9 +24,9 @@ Move & MoveSwap::apply( SolucaoOperacional & s )
 {
    print();
 
-   std::map< Aula *, std::pair< Professor *, std::vector< HorarioAula * > > >::iterator 
+   std::map< Aula *, std::pair< Professor *, std::vector< HorarioAula * > >, LessPtr<Aula> >::iterator 
       itBlocoAula_1 = s.blocoAulas.find( &a1 );
-   std::map< Aula *, std::pair< Professor *, std::vector< HorarioAula * > > >::iterator 
+   std::map< Aula *, std::pair< Professor *, std::vector< HorarioAula * > >, LessPtr<Aula> >::iterator 
       itBlocoAula_2 = s.blocoAulas.find( &a2 );
 
    if( (itBlocoAula_1 == s.blocoAulas.end()) || (itBlocoAula_2 == s.blocoAulas.end()))

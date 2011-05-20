@@ -12,10 +12,10 @@ bool MoveSwapEqTeachersBlocksValidator::isValid(Aula & aX, Aula & aY, SolucaoOpe
 {
    // --------------------------------------------------------------------------
    // Comparing the teachers.
-   std::map<Aula*,std::pair<Professor*,std::vector<HorarioAula*> > >::iterator
+   std::map< Aula *, std::pair< Professor *, std::vector< HorarioAula * > >, LessPtr<Aula> >::iterator 
       itBlocoAula_X = solOp.blocoAulas.find(&aX);
 
-   std::map<Aula*,std::pair<Professor*,std::vector<HorarioAula*> > >::iterator
+   std::map< Aula *, std::pair< Professor *, std::vector< HorarioAula * > >, LessPtr<Aula> >::iterator 
       itBlocoAula_Y = solOp.blocoAulas.find(&aY);
 
    if((itBlocoAula_X == solOp.blocoAulas.end()) || (itBlocoAula_Y == solOp.blocoAulas.end()))

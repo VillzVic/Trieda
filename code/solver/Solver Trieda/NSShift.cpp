@@ -30,7 +30,7 @@ std::pair<Aula*, std::pair<Professor*,std::vector<HorarioAula*> > > NSShift::pic
 
    aula = ( *itAula );
 
-   std::map<Aula*,std::pair<Professor*,std::vector<HorarioAula*> > >::iterator
+   std::map<Aula*,std::pair<Professor*,std::vector<HorarioAula*> >, LessPtr<Aula> >::iterator
       itBlocoAulas = solOp.blocoAulas.find(aula);
 
    if(itBlocoAulas == solOp.blocoAulas.end())

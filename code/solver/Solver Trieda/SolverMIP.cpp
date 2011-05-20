@@ -1637,11 +1637,14 @@ int SolverMIP::solveOperacional()
 
    std::cout << "Gerando uma solucao inicial para o modelo operacional" << std::endl;
 
+   /// DEBUGAR A GERAÇÃO DA SOLUÇÃO INICIAL. comentar o cod abaixo p/ fazer isso.
+
    std::cout << "Saindo antes de gerar uma solucao inicial." << std::endl;
    exit(1);
 
    SolucaoOperacional & solucaoOperacional = solIni.geraSolucaoInicial();
-   solucaoOperacional.validaSolucao( "Verificando a viabilidade da solucao inicial." );
+
+   //solucaoOperacional.validaSolucao( "Verificando a viabilidade da solucao inicial." );
 
    // Avaliador
    Avaliador avaliador;
