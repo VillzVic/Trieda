@@ -67,6 +67,7 @@ public interface TriedaI18nConstants extends Constants {
 	String ofertasEDemandas();
 	String otimizado();
 	String periodo();
+	String pratico();
 	String preenchaA();
 	String preenchaO();
 	String preferencia();
@@ -77,12 +78,15 @@ public interface TriedaI18nConstants extends Constants {
 	String receita();
 	String relatorioVisaoSala();
 	String remover();
+	String resumoDisciplina();
+	String resumoCurso();
 	String sala();
 	String salas();
 	String salasHeadingPanel();
 	String selecioneA();
 	String selecioneO();
 	String sim();
+	String teorico();
 	String tipo();
 	String tipoContrato();
 	String TipoCredito();

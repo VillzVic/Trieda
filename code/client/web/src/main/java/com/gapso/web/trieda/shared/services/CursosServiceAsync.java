@@ -23,6 +23,6 @@ public interface CursosServiceAsync {
 	void remove(List<CursoDTO> cursoDTOList, AsyncCallback<Void> callback);
 	void getListAll(AsyncCallback<ListLoadResult<CursoDTO>> callback);
 	void getListByCampus(CampusDTO campusDTO, List<CursoDTO> retirarCursosDTO, AsyncCallback<ListLoadResult<CursoDTO>> callback);
-	void getResumos(CenarioDTO cenarioDTO, ResumoCursoDTO currentNode, AsyncCallback<List<ResumoCursoDTO>> callback);
+	void getResumos(CenarioDTO cenarioDTO, CampusDTO campusDTO, AsyncCallback<List<ResumoCursoDTO>> callback);
 	
 }

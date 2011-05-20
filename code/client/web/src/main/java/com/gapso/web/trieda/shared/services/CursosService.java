@@ -27,6 +27,6 @@ public interface CursosService extends RemoteService {
 	void remove(List<CursoDTO> cursoDTOList);
 	ListLoadResult<CursoDTO> getListAll();
 	ListLoadResult<CursoDTO> getListByCampus(CampusDTO campusDTO, List<CursoDTO> retirarCursosDTO);
-	List<ResumoCursoDTO> getResumos(CenarioDTO cenarioDTO, ResumoCursoDTO currentNode);
+	List<ResumoCursoDTO> getResumos(CenarioDTO cenarioDTO, CampusDTO campusDTO);
 	
 }

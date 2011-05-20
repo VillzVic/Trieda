@@ -89,7 +89,7 @@ public class ResumoCursosView extends MyComposite implements ResumoCursosPresent
 					ColumnData config, int rowIndex, int colIndex,
 					ListStore<ResumoCursoDTO> store, Grid<ResumoCursoDTO> grid) {
 				if(model.get(property) == null) return "";
-				return ((Boolean)model.get(property)) ? "Teórico" : "Prático";
+				return ((Boolean)model.get(property)) ? getI18nConstants().teorico() : getI18nConstants().pratico();
 			}
 		};
 		

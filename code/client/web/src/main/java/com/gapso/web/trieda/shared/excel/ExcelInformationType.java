@@ -13,6 +13,8 @@ public enum ExcelInformationType {
 	RELATORIO_VISAO_SALA("Relatorio Visao Sala"),
 	SALAS("Salas"),
 	UNIDADES("Unidades"),
+	RESUMO_CURSO("Resumo por curso"),
+	RESUMO_DISCIPLINA("Resumo por disciplina"),
 	HABILITACAO_PROFESSORES("Habilitacao dos Professores");
 	
 	private String sheetName;

@@ -89,7 +89,7 @@ public class ResumoDisciplinaView extends MyComposite implements ResumoDisciplin
 					ColumnData config, int rowIndex, int colIndex,
 					ListStore<ResumoDisciplinaDTO> store, Grid<ResumoDisciplinaDTO> grid) {
 				if(model.get(property) == null) return "";
-				return ((Boolean)model.get(property)) ? "Teórico" : "Pratico";
+				return ((Boolean)model.get(property)) ? getI18nConstants().teorico() : getI18nConstants().pratico();
 			}
 		};
 		

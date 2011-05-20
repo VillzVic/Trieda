@@ -121,7 +121,7 @@ public class CursosServiceImpl extends RemoteServiceServlet implements CursosSer
 	}
 
 	@Override
-	public List<ResumoCursoDTO> getResumos(CenarioDTO cenarioDTO, ResumoCursoDTO currentNode) {
+	public List<ResumoCursoDTO> getResumos(CenarioDTO cenarioDTO, CampusDTO campusDTO) {
 		Cenario cenario = Cenario.find(cenarioDTO.getId());
 		Campus campus = Campus.findByCenario(cenario).get(0);
 	
@@ -160,10 +160,12 @@ public class CursosServiceImpl extends RemoteServiceServlet implements CursosSer
 				resumoDTO.setMatrizCurricularId(curriculo.getId());
 				resumoDTO.setMatrizCurricularString(curriculo.getCodigo());
 				resumoDTO.setPeriodo(oferta.getCurriculo().getPeriodo(atendimentoTatico.getDisciplina()));
+				resumoDTO.setQuantidadeAlunos(atendimentoTatico.getQuantidadeAlunos());
 				resumoDTO.setDisciplinaId(disciplina.getId());
 				resumoDTO.setDisciplinaString(disciplina.getNome());
 				resumoDTO.setTurma(atendimentoTatico.getTurma());
 				resumoDTO.setTipoCreditoTeorico(atendimentoTatico.getCreditosTeorico() > 0);
+				resumoDTO.setCreditos(atendimentoTatico.getTotalCreditos());
 				
 				createResumoNivel1(nivel1Map, nivel2Map, nivel3Map, resumoDTO);
 				createResumoNivel2(nivel2Map, nivel3Map, resumoDTO);
@@ -297,6 +299,7 @@ public class CursosServiceImpl extends RemoteServiceServlet implements CursosSer
 			resumoCursoDTONew.setPeriodo(resumoCursoDTO.getPeriodo());
 			resumoCursoDTONew.setDisciplinaId(resumoCursoDTO.getDisciplinaId());
 			resumoCursoDTONew.setDisciplinaString(resumoCursoDTO.getDisciplinaString());
+			resumoCursoDTONew.setQuantidadeAlunos(resumoCursoDTO.getQuantidadeAlunos());
 			resumoCursoDTONew.setTurma(resumoCursoDTO.getTurma());
 			resumoCursoDTONew.setTipoCreditoTeorico(resumoCursoDTO.getTipoCreditoTeorico());
 			resumoCursoDTONew.setCreditos(resumoCursoDTO.getCreditos());
