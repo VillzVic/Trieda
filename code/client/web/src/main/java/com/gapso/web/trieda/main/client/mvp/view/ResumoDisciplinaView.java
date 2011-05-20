@@ -104,6 +104,7 @@ public class ResumoDisciplinaView extends MyComposite implements ResumoDisciplin
 		tipoDeCreditoColumnConfig.setRenderer(tipoDeCreditoRenderer);
 		list.add(tipoDeCreditoColumnConfig);
 		
+		list.add(new ColumnConfig(ResumoDisciplinaDTO.PROPERTY_CREDITOS_INT, getI18nConstants().totalDecreditos(), 60));
 		list.add(new ColumnConfig(ResumoDisciplinaDTO.PROPERTY_CREDITOS_INT, getI18nConstants().creditos(), 60));
 		list.add(new ColumnConfig(ResumoDisciplinaDTO.PROPERTY_QUANTIDADE_ALUNOS_INT, getI18nConstants().quantidadeAlunos(), 70));
 		list.add(new ColumnConfig(ResumoDisciplinaDTO.PROPERTY_CUSTO_DOCENTE_DOUBLE, getI18nConstants().custoDocente(), 100));

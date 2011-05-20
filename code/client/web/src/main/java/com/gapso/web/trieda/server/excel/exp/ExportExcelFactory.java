@@ -23,6 +23,7 @@ public class ExportExcelFactory {
 			case SALAS: exporter = new SalasExportExcel(cenario,i18nConstants,i18nMessages); break;
 			case PROFESSORES: exporter = new ProfessoresExportExcel(cenario,i18nConstants,i18nMessages); break;
 			case RESUMO_CURSO: exporter = new ResumoCursoExportExcel(cenario,i18nConstants,i18nMessages); break;
+			case RESUMO_DISCIPLINA: exporter = new ResumoDisciplinaExportExcel(cenario,i18nConstants,i18nMessages); break;
 			case HABILITACAO_PROFESSORES: exporter = new HabilitacoesProfessoresExportExcel(cenario,i18nConstants,i18nMessages); break;
 		}
 		

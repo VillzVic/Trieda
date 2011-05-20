@@ -12,6 +12,7 @@ public class ResumoDisciplinaDTO extends AbstractTreeDTO<String> implements Comp
 	public static final String PROPERTY_TURMA_STRING = "turmaString";
 	public static final String PROPERTY_TIPO_CREDITO_TEORICO_BOOLEAN = "tipoCreditoString";
 	public static final String PROPERTY_CREDITOS_INT = "creditosInt";
+	public static final String PROPERTY_TOTAL_CREDITOS_INT = "totalCreditosInt";
 	public static final String PROPERTY_QUANTIDADE_ALUNOS_INT = "quantidadeAlunosInt";
 	public static final String PROPERTY_CUSTO_DOCENTE_DOUBLE = "custoDocenteDouble";
 	public static final String PROPERTY_RECEITA_DOUBLE = "receitaDouble";
@@ -57,6 +58,13 @@ public class ResumoDisciplinaDTO extends AbstractTreeDTO<String> implements Comp
 	}
 	public Integer getCreditos() {
 		return get(PROPERTY_CREDITOS_INT);
+	}
+	
+	public void setTotalCreditos(Integer value) {
+		set(PROPERTY_TOTAL_CREDITOS_INT, value);
+	}
+	public Integer getTotalCreditos() {
+		return get(PROPERTY_TOTAL_CREDITOS_INT);
 	}
 	
 	public void setQuantidadeAlunos(Integer value) {

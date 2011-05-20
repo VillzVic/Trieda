@@ -91,6 +91,7 @@ public interface TriedaI18nConstants extends Constants {
 	String tipoContrato();
 	String TipoCredito();
 	String titulacao();
+	String totalDecreditos();
 	String trieda();
 	String triedaDetailMessageHeadingText();
 	String turma();

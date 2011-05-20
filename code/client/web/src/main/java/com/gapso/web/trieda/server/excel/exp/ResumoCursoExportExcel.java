@@ -6,6 +6,7 @@ import java.util.List;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.springframework.web.util.HtmlUtils;
 
 import com.extjs.gxt.ui.client.data.ModelData;
 import com.gapso.trieda.domain.Campus;
@@ -23,6 +24,7 @@ public class ResumoCursoExportExcel extends AbstractExportExcel {
 	
 	enum ExcelCellStyleReference {
 		TEXT(6,2),
+		PERCENTE(6,16),
 		INTEGER(6,6),
 		DOUBLE(6,15);
 		private int row;
@@ -130,13 +132,14 @@ public class ResumoCursoExportExcel extends AbstractExportExcel {
 		setCell(row,i++,sheet,cellStyles[ExcelCellStyleReference.TEXT.ordinal()],resumoCursoDTO.getTurma());
 		// Tipo de Crédito
 		String tipoDeCredito = resumoCursoDTO.getTipoCreditoTeorico()? getI18nConstants().teorico() : getI18nConstants().pratico();
+		tipoDeCredito = HtmlUtils.htmlUnescape(tipoDeCredito);
 		setCell(row,i++,sheet,cellStyles[ExcelCellStyleReference.TEXT.ordinal()],tipoDeCredito);
 		// Créditos
 		setCell(row,i++,sheet,cellStyles[ExcelCellStyleReference.INTEGER.ordinal()],resumoCursoDTO.getCreditos());
 		// Qtde. Alunos
 		setCell(row,i++,sheet,cellStyles[ExcelCellStyleReference.INTEGER.ordinal()],resumoCursoDTO.getQuantidadeAlunos());
 		// Rateio
-		setCell(row,i++,sheet,cellStyles[ExcelCellStyleReference.DOUBLE.ordinal()],resumoCursoDTO.getRateio());
+		setCell(row,i++,sheet,cellStyles[ExcelCellStyleReference.PERCENTE.ordinal()],resumoCursoDTO.getRateio());
 		// Custo Docente
 		setCell(row,i++,sheet,cellStyles[ExcelCellStyleReference.DOUBLE.ordinal()],resumoCursoDTO.getCustoDocente());
 		// Receita
@@ -144,7 +147,7 @@ public class ResumoCursoExportExcel extends AbstractExportExcel {
 		// Margem
 		setCell(row,i++,sheet,cellStyles[ExcelCellStyleReference.DOUBLE.ordinal()],resumoCursoDTO.getMargem());
 		// Margem %
-		setCell(row,i++,sheet,cellStyles[ExcelCellStyleReference.DOUBLE.ordinal()],resumoCursoDTO.getMargemPercente());
+		setCell(row,i++,sheet,cellStyles[ExcelCellStyleReference.PERCENTE.ordinal()],resumoCursoDTO.getMargemPercente());
 		
 		row++;
 		return row;

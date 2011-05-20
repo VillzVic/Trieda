@@ -573,6 +573,7 @@ public class DisciplinasServiceImpl extends RemoteServiceServlet implements Disc
 			resumoDTO.setTurma(atendimentoTatico.getTurma());
 			resumoDTO.setTipoCreditoTeorico(atendimentoTatico.getCreditosTeorico() > 0);
 			resumoDTO.setCreditos(atendimentoTatico.getTotalCreditos());
+			resumoDTO.setTotalCreditos(disciplina.getCreditosTotal());
 			resumoDTO.setQuantidadeAlunos(atendimentoTatico.getQuantidadeAlunos());
 			
 			createResumoNivel1(nivel1Map, nivel2Map, resumoDTO);
@@ -653,6 +654,7 @@ public class DisciplinasServiceImpl extends RemoteServiceServlet implements Disc
 			resumoDTONew.setTurma(resumoDTO.getTurma());
 			resumoDTONew.setTipoCreditoTeorico(resumoDTO.getTipoCreditoTeorico());
 			resumoDTONew.setCreditos(resumoDTO.getCreditos());
+			resumoDTONew.setTotalCreditos(resumoDTO.getTotalCreditos());
 			resumoDTONew.setQuantidadeAlunos(resumoDTO.getQuantidadeAlunos());
 			map2.get(key1).put(key2, resumoDTONew);
 		}
