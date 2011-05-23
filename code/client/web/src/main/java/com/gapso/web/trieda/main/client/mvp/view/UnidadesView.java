@@ -54,6 +54,11 @@ public class UnidadesView extends MyComposite implements UnidadesPresenter.Displ
 	
 	private void createTabItem() {
 		tabItem = new GTabItem(getI18nConstants().unidades(), Resources.DEFAULTS.unidade16());
+		tabItem.setContent(panel);
+	}
+	
+	private void createToolBar() {
+		toolBar = new SimpleToolBar(this);
 		toolBar.add(new SeparatorToolItem());
 		deslocamentoUnidadesBT = toolBar.createButton(getI18nConstants().deslocamentoUnidades(), Resources.DEFAULTS.deslocamentoUnidade16());
 		toolBar.add(deslocamentoUnidadesBT);
@@ -61,11 +66,6 @@ public class UnidadesView extends MyComposite implements UnidadesPresenter.Displ
 		toolBar.add(salasBT);
 		disponibilidadeBT = toolBar.createButton(getI18nConstants().disponibilidadesSemanaLetiva(), Resources.DEFAULTS.disponibilidade16());
 		toolBar.add(disponibilidadeBT);
-		tabItem.setContent(panel);
-	}
-	
-	private void createToolBar() {
-		toolBar = new SimpleToolBar(this);
 		panel.setTopComponent(toolBar);
 	}
 	

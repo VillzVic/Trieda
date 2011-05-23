@@ -16,16 +16,19 @@ import com.extjs.gxt.ui.client.widget.layout.FitLayout;
 import com.extjs.gxt.ui.client.widget.layout.FormData;
 import com.extjs.gxt.ui.client.widget.layout.RowData;
 import com.extjs.gxt.ui.client.widget.layout.RowLayout;
+import com.extjs.gxt.ui.client.widget.toolbar.SeparatorToolItem;
 import com.gapso.web.trieda.main.client.mvp.presenter.VincularAreasTitulacaoPresenter;
 import com.gapso.web.trieda.shared.dtos.AreaTitulacaoDTO;
 import com.gapso.web.trieda.shared.mvp.view.MyComposite;
 import com.gapso.web.trieda.shared.util.resources.Resources;
 import com.gapso.web.trieda.shared.util.view.CursoComboBox;
 import com.gapso.web.trieda.shared.util.view.GTabItem;
+import com.gapso.web.trieda.shared.util.view.SimpleToolBar;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
 public class VincularAreasTitulacaoView extends MyComposite implements VincularAreasTitulacaoPresenter.Display {
 
+	private SimpleToolBar toolBar;
 	private ContentPanel panel;
 	private ContentPanel panelLists;
 	
@@ -41,6 +44,7 @@ public class VincularAreasTitulacaoView extends MyComposite implements VincularA
 	
 	public VincularAreasTitulacaoView() {
 		initUI();
+		createToolBar();
 		createTabItem();
 		createForm();
 		initComponent(tabItem);
@@ -56,6 +60,12 @@ public class VincularAreasTitulacaoView extends MyComposite implements VincularA
 		tabItem.setContent(panel);
 	}
 	
+	private void createToolBar() {
+		toolBar = new SimpleToolBar(false, false, false, true, true, this);
+		toolBar.add(new SeparatorToolItem());
+		panel.setTopComponent(toolBar);
+	}
+	
 	private void createForm() {
 		FormData formData = new FormData("100%");
 		FormPanel formPanel = new FormPanel();
@@ -68,7 +78,10 @@ public class VincularAreasTitulacaoView extends MyComposite implements VincularA
 		cursoCB = new CursoComboBox();
 		formPanel.add(cursoCB, formData);
 		
-		panel.setTopComponent(formPanel);
+		BorderLayoutData bld = new BorderLayoutData(LayoutRegion.NORTH);
+		bld.setMargins(new Margins(0, 0, 0, 0));
+		bld.setSize(42);
+		panel.add(formPanel, bld);
 		
 		panelLists = new ContentPanel(new RowLayout(Orientation.HORIZONTAL));
 		panelLists.setHeaderVisible(false);
@@ -94,7 +107,7 @@ public class VincularAreasTitulacaoView extends MyComposite implements VincularA
 		panelLists.add(getAtualizaSalasButtonsPanel(), new RowData(30, 1, new Margins(0, 0, 0, 0)));
 		panelLists.add(vinculadaListPanel, new RowData(.5, 1, new Margins(0, 10, 10, 0)));
 		
-		BorderLayoutData bld = new BorderLayoutData(LayoutRegion.CENTER);
+		bld = new BorderLayoutData(LayoutRegion.CENTER);
 		bld.setMargins(new Margins(0, 0, 0, 0));
 		panel.setBodyBorder(false);
 		panelLists.setBodyStyle("background-color: #DFE8F6;");
