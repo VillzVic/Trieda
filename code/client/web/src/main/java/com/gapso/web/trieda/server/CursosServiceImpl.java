@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,6 +32,7 @@ import com.gapso.web.trieda.shared.dtos.CursoDTO;
 import com.gapso.web.trieda.shared.dtos.ResumoCursoDTO;
 import com.gapso.web.trieda.shared.dtos.TipoCursoDTO;
 import com.gapso.web.trieda.shared.services.CursosService;
+import com.gapso.web.trieda.shared.util.TriedaUtil;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 /**
@@ -196,13 +198,14 @@ public class CursosServiceImpl extends RemoteServiceServlet implements CursosSer
 	}
 	
 	private void calculaResumo3(Map<String, Map<String, Map<String, ResumoCursoDTO>>> map3, Map<String, AtendimentoTatico> atendimentoTaticoMap) {
+		Map<String, Double> rateioMap = createRateioMap(atendimentoTaticoMap);
 		for(String key1 : map3.keySet()) {
 			for(String key2 : map3.get(key1).keySet()) {
 				for(String key3 : map3.get(key1).get(key2).keySet()) {
 					ResumoCursoDTO resumo3DTO = map3.get(key1).get(key2).get(key3);
 					AtendimentoTatico atendimentoTatico = atendimentoTaticoMap.get(key3);
+					Double rateio = TriedaUtil.roundTwoDecimals(rateioMap.get(key3));
 					Campus campus = atendimentoTatico.getOferta().getCampus();
-					Double rateio = 100.0/100; // TODO Arrumar este número
 					Double docente = campus.getValorCredito();
 					Double receita = atendimentoTatico.getOferta().getReceita();
 					int qtdAlunos = atendimentoTatico.getQuantidadeAlunos();
@@ -211,7 +214,7 @@ public class CursosServiceImpl extends RemoteServiceServlet implements CursosSer
 					resumo3DTO.setCustoDocente(creditos * docente * rateio * 4.5 * 6);
 					resumo3DTO.setReceita(receita * creditos * qtdAlunos * 4.5 * 6);
 					resumo3DTO.setMargem(resumo3DTO.getReceita() - resumo3DTO.getCustoDocente());
-					resumo3DTO.setMargemPercente(resumo3DTO.getMargem() / resumo3DTO.getReceita());
+					resumo3DTO.setMargemPercente(TriedaUtil.roundTwoDecimals(resumo3DTO.getMargem() / resumo3DTO.getReceita()));
 				}
 			}
 		}
@@ -241,8 +244,8 @@ public class CursosServiceImpl extends RemoteServiceServlet implements CursosSer
 					rc1.setMargem(rc1.getMargem() + rc3.getMargem());
 					rc2.setMargem(rc2.getMargem() + rc3.getMargem());
 					
-					rc1.setMargemPercente(rc1.getMargem() / rc1.getReceita());
-					rc2.setMargemPercente(rc2.getMargem() / rc2.getReceita());
+					rc1.setMargemPercente(TriedaUtil.roundTwoDecimals(rc1.getMargem() / rc1.getReceita()));
+					rc2.setMargemPercente(TriedaUtil.roundTwoDecimals(rc2.getMargem() / rc2.getReceita()));
 				}
 			}
 		}
@@ -305,6 +308,48 @@ public class CursosServiceImpl extends RemoteServiceServlet implements CursosSer
 			resumoCursoDTONew.setCreditos(resumoCursoDTO.getCreditos());
 			map.get(key1).get(key2).put(key3, resumoCursoDTONew);
 		}
+	}
+	
+	
+	private Map<String, Double> createRateioMap(Map<String, AtendimentoTatico> atendimentoTaticoMap) {
+		Map<String, List<AtendimentoTatico>> rateioAuxMap = new HashMap<String, List<AtendimentoTatico>>();
+		for(AtendimentoTatico atTatico : atendimentoTaticoMap.values()) {
+			Oferta oferta = atTatico.getOferta();
+			Disciplina disciplina = atTatico.getDisciplina();
+			String key = oferta.getCampus().getId() +"-"+ oferta.getTurno() +"-"+ disciplina.getId() +"-"+ atTatico.getTurma() +"-"+ (disciplina.getCreditosTeorico() > 0);
+			List<AtendimentoTatico> listDto = rateioAuxMap.get(key);
+			if(listDto == null) {
+				listDto = new ArrayList<AtendimentoTatico>();
+				rateioAuxMap.put(key, listDto);
+			}
+			listDto.add(atTatico);
+		}
+		
+		Map<String, Double> rateioMap = new HashMap<String, Double>();
+		for(Entry<String, List<AtendimentoTatico>> i : rateioAuxMap.entrySet()) {
+			Map<String, Double> rateioAux2Map = new HashMap<String, Double>();
+			Double total = 0.0;
+			for(AtendimentoTatico at : i.getValue()) {
+				Curriculo curriculo = at.getOferta().getCurriculo();
+				Double qtdAlunos = rateioAux2Map.get(curriculo.getCurso().getId());
+				rateioAux2Map.put(curriculo.getCurso().getId().toString(), at.getQuantidadeAlunos() + (qtdAlunos == null? 0.0 : qtdAlunos));
+				total += at.getQuantidadeAlunos();
+			}
+			for(AtendimentoTatico at : i.getValue()) {
+				Oferta oferta = at.getOferta();
+				Disciplina disciplina = at.getDisciplina();
+				Integer periodo = oferta.getCurriculo().getPeriodo(at.getDisciplina());
+				Curriculo curriculo = oferta.getCurriculo();
+				
+				String key1 = oferta.getCampus().getId() +"-"+ oferta.getTurno().getId() +"-"+ curriculo.getCurso().getId();
+				String key2 = key1 +"-"+ curriculo.getId() +"-"+ periodo;
+				String key3 = key2 +"-"+ disciplina.getId() +"-"+ at.getTurma() +"-"+ (at.getCreditosTeorico() > 0);
+				
+				Double numerador = rateioAux2Map.get(curriculo.getCurso().getId().toString());
+				rateioMap.put(key3, numerador/total);
+			}
+		}
+		return rateioMap;
 	}
 	
 }

@@ -52,6 +52,7 @@ import com.gapso.web.trieda.shared.dtos.SemanaLetivaDTO;
 import com.gapso.web.trieda.shared.dtos.TipoDisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.TreeNodeDTO;
 import com.gapso.web.trieda.shared.services.DisciplinasService;
+import com.gapso.web.trieda.shared.util.TriedaUtil;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 /**
@@ -611,7 +612,7 @@ public class DisciplinasServiceImpl extends RemoteServiceServlet implements Disc
 				resumo2DTO.setCustoDocente(creditos * docente * 4.5 * 6);
 				resumo2DTO.setReceita(receita * creditos * qtdAlunos * 4.5 * 6);
 				resumo2DTO.setMargem(resumo2DTO.getReceita() - resumo2DTO.getCustoDocente());
-				resumo2DTO.setMargemPercente(resumo2DTO.getMargem() / resumo2DTO.getReceita());
+				resumo2DTO.setMargemPercente(TriedaUtil.roundTwoDecimals(resumo2DTO.getMargem() / resumo2DTO.getReceita()));
 			}
 		}
 	}
@@ -629,7 +630,7 @@ public class DisciplinasServiceImpl extends RemoteServiceServlet implements Disc
 				rc1.setCustoDocente(rc1.getCustoDocente() + rc2.getCustoDocente());
 				rc1.setReceita(rc1.getReceita() + rc2.getReceita());
 				rc1.setMargem(rc1.getMargem() + rc2.getMargem());
-				rc1.setMargemPercente(rc1.getMargem() / rc1.getReceita());
+				rc1.setMargemPercente(TriedaUtil.roundTwoDecimals(rc1.getMargem() / rc1.getReceita()));
 			}
 		}
 	}

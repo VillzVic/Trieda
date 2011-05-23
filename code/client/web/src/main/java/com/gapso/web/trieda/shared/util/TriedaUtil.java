@@ -64,4 +64,9 @@ public class TriedaUtil {
 		return ret;
 	}
 	
+	static public Double roundTwoDecimals(double d) {
+	    long y=(long)(d*100);
+	    return (double)y/100;
+	}
+	
 }
