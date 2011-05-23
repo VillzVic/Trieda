@@ -76,6 +76,7 @@ public interface TriedaI18nConstants extends Constants {
 	String preenchaA();
 	String preenchaO();
 	String preferencia();
+	String professor();
 	String professores();
 	String publicado();
 	String quantidadeAlunos();
