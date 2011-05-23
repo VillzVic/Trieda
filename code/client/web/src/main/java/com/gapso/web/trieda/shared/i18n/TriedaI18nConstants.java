@@ -11,6 +11,7 @@ public interface TriedaI18nConstants extends Constants {
 	String bairro();
 	String campi();
 	String campiHeadingPanel();
+	String campiTrabalho();
 	String campus();
 	String capacidade();
 	String capacidadeMediaSalas();

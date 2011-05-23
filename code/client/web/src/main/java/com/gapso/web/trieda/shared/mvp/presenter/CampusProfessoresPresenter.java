@@ -14,13 +14,16 @@ import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorCampusDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorDTO;
 import com.gapso.web.trieda.shared.dtos.UsuarioDTO;
+import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 import com.gapso.web.trieda.shared.i18n.ITriedaI18nGateway;
 import com.gapso.web.trieda.shared.mvp.view.CampusProfessorFormView;
 import com.gapso.web.trieda.shared.services.Services;
 import com.gapso.web.trieda.shared.util.view.AbstractAsyncCallbackWithDefaultOnFailure;
 import com.gapso.web.trieda.shared.util.view.CampusComboBox;
+import com.gapso.web.trieda.shared.util.view.ExportExcelFormSubmit;
 import com.gapso.web.trieda.shared.util.view.GTab;
 import com.gapso.web.trieda.shared.util.view.GTabItem;
+import com.gapso.web.trieda.shared.util.view.ImportExcelFormView;
 import com.gapso.web.trieda.shared.util.view.ProfessorComboBox;
 import com.gapso.web.trieda.shared.util.view.SimpleGrid;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -114,6 +117,20 @@ public class CampusProfessoresPresenter implements Presenter {
 				@Override
 				public void componentSelected(ButtonEvent ce) {
 					display.getGrid().updateList();
+				}
+			});
+			display.getImportExcelButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
+				@Override
+				public void componentSelected(ButtonEvent ce) {
+					ImportExcelFormView importExcelFormView = new ImportExcelFormView(ExcelInformationType.CAMPI_TRABALHO,display.getGrid());
+					importExcelFormView.show();
+				}
+			});
+			display.getExportExcelButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
+				@Override
+				public void componentSelected(ButtonEvent ce) {
+					ExportExcelFormSubmit e = new ExportExcelFormSubmit(ExcelInformationType.CAMPI_TRABALHO,display.getI18nConstants(),display.getI18nMessages());
+					e.submit();
 				}
 			});
 		}

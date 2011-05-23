@@ -42,6 +42,7 @@ public class TRIEDAExportExcel extends AbstractExportExcel {
 		exporters.add(new DisciplinasExportExcel(false,getCenario(),getI18nConstants(),getI18nMessages()));
 		exporters.add(new DisciplinasSalasExportExcel(false,getCenario(),getI18nConstants(),getI18nMessages()));
 		exporters.add(new EquivalenciasExportExcel(false,getCenario(),getI18nConstants(),getI18nMessages()));
+		exporters.add(new CampiTrabalhoExportExcel(false,getCenario(),getI18nConstants(),getI18nMessages()));
 		exporters.add(new CurriculosExportExcel(false,getCenario(),getI18nConstants(),getI18nMessages()));
 		exporters.add(new DemandasExportExcel(false,getCenario(),getI18nConstants(),getI18nMessages()));
 		exporters.add(new ProfessoresExportExcel(false,getCenario(),getI18nConstants(),getI18nMessages()));

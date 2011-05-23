@@ -21,6 +21,7 @@ public class ExportExcelFactory {
 			case DEMANDAS: exporter = new DemandasExportExcel(cenario,i18nConstants,i18nMessages); break;
 			case DISCIPLINAS: exporter = new DisciplinasExportExcel(cenario,i18nConstants,i18nMessages); break;
 			case EQUIVALENCIAS: exporter = new EquivalenciasExportExcel(cenario,i18nConstants,i18nMessages); break;
+			case CAMPI_TRABALHO: exporter = new CampiTrabalhoExportExcel(cenario,i18nConstants,i18nMessages); break;
 			case UNIDADES: exporter = new UnidadesExportExcel(cenario,i18nConstants,i18nMessages); break;
 			case SALAS: exporter = new SalasExportExcel(cenario,i18nConstants,i18nMessages); break;
 			case PROFESSORES: exporter = new ProfessoresExportExcel(cenario,i18nConstants,i18nMessages); break;
