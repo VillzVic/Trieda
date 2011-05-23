@@ -35,7 +35,7 @@ public class CurriculoDisciplinaFormView extends MyComposite implements Curricul
 	private void initUI() {
 		String title = "Inserção de Disciplina no Curriculo";
 		simpleModal = new SimpleModal(title, Resources.DEFAULTS.disciplina16());
-		simpleModal.setHeight(400);
+		simpleModal.setHeight(200);
 		createForm();
 		simpleModal.setContent(formPanel);
 	}
