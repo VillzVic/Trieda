@@ -1371,7 +1371,7 @@ public class ConvertBeans {
 		Set<Disciplina> eliminaList = new TreeSet<Disciplina>(domain.getElimina());
 		String eliminaString = "";
 		for (Disciplina d : eliminaList) {
-			eliminaString += d.getCodigo() + ", ";
+			eliminaString += d.getCodigo() + "; ";
 		}
 		if(eliminaString.length() > 0) eliminaString = eliminaString.substring(0, eliminaString.length()-2);
 		dto.setEliminaString(eliminaString);

@@ -98,7 +98,7 @@ public class EquivalenciasExportExcel extends AbstractExportExcel {
 		for(Disciplina disciplinaElimina : equivalencia.getElimina()) {
 			eliminaArray.add(disciplinaElimina.getCodigo());
 		}
-		setCell(row,3,sheet,cellStyles[ExcelCellStyleReference.TEXT.ordinal()],TriedaUtil.arrayJoin(eliminaArray, ","));
+		setCell(row,3,sheet,cellStyles[ExcelCellStyleReference.TEXT.ordinal()],TriedaUtil.arrayJoin(eliminaArray, ";"));
 		
 		row++;
 		return row;

@@ -1,7 +1,9 @@
 package com.gapso.trieda.domain;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.persistence.Column;
@@ -177,4 +179,12 @@ public class Equivalencia implements java.io.Serializable {
     public static List<Equivalencia> find(int firstResult, int maxResults) {
         return entityManager().createQuery("SELECT o FROM Equivalencia o").setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
+	
+	public static Map<String, Equivalencia> buildEquivalenciaCursouCodigoToEquivalenciaMap(List<Equivalencia> equivalencias) {
+		Map<String, Equivalencia> equivalenciasMap = new HashMap<String, Equivalencia>();
+		for (Equivalencia equivalencia : equivalencias) {
+			equivalenciasMap.put(equivalencia.getCursou().getCodigo(), equivalencia);
+		}
+		return equivalenciasMap;
+	}
 }

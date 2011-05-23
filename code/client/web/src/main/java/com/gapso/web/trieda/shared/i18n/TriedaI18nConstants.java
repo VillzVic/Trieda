@@ -26,6 +26,7 @@ public interface TriedaI18nConstants extends Constants {
 	String curriculos();
 	String curso();
 	String cursos();
+	String cursou();
 	String custoDocente();
 	String custoMedioCredito();
 	String custoMedioCreditoExcel();
@@ -40,6 +41,8 @@ public interface TriedaI18nConstants extends Constants {
 	String disponibilidadesSemanaLetiva();
 	String edicaoDe();
 	String editar();
+	String elimina();
+	String equivalencias();
 	String estado();
 	String exportarExcel();
 	String habilitacaoProfessores();
@@ -104,6 +107,4 @@ public interface TriedaI18nConstants extends Constants {
 	String valorCredito();
 	String otimizadoTatico();
 	String otimizadoOperacional();
-	String equivalencias();
-	
 }
