@@ -19,7 +19,6 @@ import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.gapso.trieda.domain.AtendimentoTatico;
 import com.gapso.trieda.domain.Campus;
-import com.gapso.trieda.domain.Cenario;
 import com.gapso.trieda.domain.Curriculo;
 import com.gapso.trieda.domain.CurriculoDisciplina;
 import com.gapso.trieda.domain.Curso;
@@ -547,8 +546,8 @@ public class DisciplinasServiceImpl extends RemoteServiceServlet implements Disc
 	
 	@Override
 	public List<ResumoDisciplinaDTO> getResumos(CenarioDTO cenarioDTO, CampusDTO campusDTO) {
-		Cenario cenario = Cenario.find(cenarioDTO.getId());
-		Campus campus = Campus.findByCenario(cenario).get(0);
+//		Cenario cenario = Cenario.find(cenarioDTO.getId());
+		Campus campus = Campus.find(campusDTO.getId());
 	
 		List<Oferta> ofertas = new ArrayList<Oferta>(campus.getOfertas());
 		Collections.sort(ofertas);

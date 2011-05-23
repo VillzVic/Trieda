@@ -8,6 +8,8 @@ import com.extjs.gxt.ui.client.store.ListStore;
 import com.extjs.gxt.ui.client.store.TreeStore;
 import com.extjs.gxt.ui.client.util.Margins;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
+import com.extjs.gxt.ui.client.widget.form.FormPanel;
+import com.extjs.gxt.ui.client.widget.form.FormPanel.LabelAlign;
 import com.extjs.gxt.ui.client.widget.grid.ColumnConfig;
 import com.extjs.gxt.ui.client.widget.grid.ColumnData;
 import com.extjs.gxt.ui.client.widget.grid.ColumnModel;
@@ -16,31 +18,32 @@ import com.extjs.gxt.ui.client.widget.grid.GridCellRenderer;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayout;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
 import com.extjs.gxt.ui.client.widget.layout.FitLayout;
+import com.extjs.gxt.ui.client.widget.layout.FormData;
 import com.extjs.gxt.ui.client.widget.treegrid.TreeGrid;
 import com.extjs.gxt.ui.client.widget.treegrid.TreeGridCellRenderer;
 import com.gapso.web.trieda.main.client.mvp.presenter.ResumoCursosPresenter;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.ResumoCursoDTO;
 import com.gapso.web.trieda.shared.mvp.view.MyComposite;
-import com.gapso.web.trieda.shared.services.Services;
 import com.gapso.web.trieda.shared.util.resources.Resources;
+import com.gapso.web.trieda.shared.util.view.CampusComboBox;
 import com.gapso.web.trieda.shared.util.view.GTabItem;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class ResumoCursosView extends MyComposite implements ResumoCursosPresenter.Display {
 
-	private TreeStore<ResumoCursoDTO> store;
+	private TreeStore<ResumoCursoDTO> store = new TreeStore<ResumoCursoDTO>();
 	private TreeGrid<ResumoCursoDTO> tree;
 
 	private ContentPanel panel;
 	private GTabItem tabItem;
+	private CampusComboBox campusCB;
 	
-	private CenarioDTO cenario;
+//	private CenarioDTO cenario;
 	
 	public ResumoCursosView(CenarioDTO cenario) {
-		this.cenario = cenario;
-		configureProxy();
+//		this.cenario = cenario;
 		initUI();
+		createForm();
 		createGrid();
 		createTabItem();
 		initComponent(tabItem);
@@ -59,6 +62,20 @@ public class ResumoCursosView extends MyComposite implements ResumoCursosPresent
 	private void createTabItem() {
 		tabItem = new GTabItem("Resumo por Cursos", Resources.DEFAULTS.resumoCampi16());
 		tabItem.setContent(panel);
+	}
+	
+	private void createForm() {
+		FormData formData = new FormData("100%");
+		FormPanel formPanel = new FormPanel();
+		formPanel.setBodyBorder(false);
+		formPanel.setLabelWidth(100);
+		formPanel.setLabelAlign(LabelAlign.RIGHT);
+		formPanel.setHeaderVisible(false);
+		formPanel.setAutoHeight(true);
+		
+		campusCB = new CampusComboBox();
+		formPanel.add(campusCB, formData);
+		panel.setTopComponent(formPanel);
 	}
 	
 	private void createGrid() {
@@ -122,10 +139,6 @@ public class ResumoCursosView extends MyComposite implements ResumoCursosPresent
 	}
 	
 	@Override
-	public void setStore(TreeStore<ResumoCursoDTO> store) {
-		this.store = store;
-	}
-
 	public TreeStore<ResumoCursoDTO> getStore() {
 		return store;
 	}
@@ -135,19 +148,10 @@ public class ResumoCursosView extends MyComposite implements ResumoCursosPresent
 		return tree;
 	}
 	
-	private void configureProxy() {
-		store = new TreeStore<ResumoCursoDTO>();
-		
-		Services.cursos().getResumos(cenario, null, new AsyncCallback<List<ResumoCursoDTO>>() {
-			@Override
-			public void onFailure(Throwable caught) {
-				caught.printStackTrace();
-			}
-			@Override
-			public void onSuccess(List<ResumoCursoDTO> list) {
-				store.add(list, true);
-			}
-		});
+	@Override
+	public CampusComboBox getCampusComboBox() {
+		return campusCB;
 	}
+
 	
 }

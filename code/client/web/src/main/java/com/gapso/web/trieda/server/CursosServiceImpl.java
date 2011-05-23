@@ -18,7 +18,6 @@ import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.gapso.trieda.domain.AtendimentoTatico;
 import com.gapso.trieda.domain.Campus;
-import com.gapso.trieda.domain.Cenario;
 import com.gapso.trieda.domain.Curriculo;
 import com.gapso.trieda.domain.Curso;
 import com.gapso.trieda.domain.Disciplina;
@@ -124,8 +123,8 @@ public class CursosServiceImpl extends RemoteServiceServlet implements CursosSer
 
 	@Override
 	public List<ResumoCursoDTO> getResumos(CenarioDTO cenarioDTO, CampusDTO campusDTO) {
-		Cenario cenario = Cenario.find(cenarioDTO.getId());
-		Campus campus = Campus.findByCenario(cenario).get(0);
+//		Cenario cenario = Cenario.find(cenarioDTO.getId());
+		Campus campus = Campus.find(campusDTO.getId());
 	
 		List<Oferta> ofertas = new ArrayList<Oferta>(campus.getOfertas());
 		Collections.sort(ofertas);

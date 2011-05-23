@@ -8,6 +8,8 @@ import com.extjs.gxt.ui.client.store.ListStore;
 import com.extjs.gxt.ui.client.store.TreeStore;
 import com.extjs.gxt.ui.client.util.Margins;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
+import com.extjs.gxt.ui.client.widget.form.FormPanel;
+import com.extjs.gxt.ui.client.widget.form.FormPanel.LabelAlign;
 import com.extjs.gxt.ui.client.widget.grid.ColumnConfig;
 import com.extjs.gxt.ui.client.widget.grid.ColumnData;
 import com.extjs.gxt.ui.client.widget.grid.ColumnModel;
@@ -16,31 +18,32 @@ import com.extjs.gxt.ui.client.widget.grid.GridCellRenderer;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayout;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
 import com.extjs.gxt.ui.client.widget.layout.FitLayout;
+import com.extjs.gxt.ui.client.widget.layout.FormData;
 import com.extjs.gxt.ui.client.widget.treegrid.TreeGrid;
 import com.extjs.gxt.ui.client.widget.treegrid.TreeGridCellRenderer;
 import com.gapso.web.trieda.main.client.mvp.presenter.ResumoDisciplinaPresenter;
-import com.gapso.web.trieda.shared.dtos.ResumoDisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
+import com.gapso.web.trieda.shared.dtos.ResumoDisciplinaDTO;
 import com.gapso.web.trieda.shared.mvp.view.MyComposite;
-import com.gapso.web.trieda.shared.services.Services;
 import com.gapso.web.trieda.shared.util.resources.Resources;
+import com.gapso.web.trieda.shared.util.view.CampusComboBox;
 import com.gapso.web.trieda.shared.util.view.GTabItem;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class ResumoDisciplinaView extends MyComposite implements ResumoDisciplinaPresenter.Display {
 
-	private TreeStore<ResumoDisciplinaDTO> store;
+	private TreeStore<ResumoDisciplinaDTO> store = new TreeStore<ResumoDisciplinaDTO>();
 	private TreeGrid<ResumoDisciplinaDTO> tree;
 
 	private ContentPanel panel;
 	private GTabItem tabItem;
+	private CampusComboBox campusCB;
 	
-	private CenarioDTO cenario;
+//	private CenarioDTO cenario;
 	
 	public ResumoDisciplinaView(CenarioDTO cenario) {
-		this.cenario = cenario;
-		configureProxy();
+//		this.cenario = cenario;
 		initUI();
+		createForm();
 		createGrid();
 		createTabItem();
 		initComponent(tabItem);
@@ -59,6 +62,20 @@ public class ResumoDisciplinaView extends MyComposite implements ResumoDisciplin
 	private void createTabItem() {
 		tabItem = new GTabItem("Resumo por Disciplina", Resources.DEFAULTS.resumoCampi16());
 		tabItem.setContent(panel);
+	}
+	
+	private void createForm() {
+		FormData formData = new FormData("100%");
+		FormPanel formPanel = new FormPanel();
+		formPanel.setBodyBorder(false);
+		formPanel.setLabelWidth(100);
+		formPanel.setLabelAlign(LabelAlign.RIGHT);
+		formPanel.setHeaderVisible(false);
+		formPanel.setAutoHeight(true);
+		
+		campusCB = new CampusComboBox();
+		formPanel.add(campusCB, formData);
+		panel.setTopComponent(formPanel);
 	}
 	
 	private void createGrid() {
@@ -116,11 +133,11 @@ public class ResumoDisciplinaView extends MyComposite implements ResumoDisciplin
 		return list;
 	}
 	
-	@Override
 	public void setStore(TreeStore<ResumoDisciplinaDTO> store) {
 		this.store = store;
 	}
 
+	@Override
 	public TreeStore<ResumoDisciplinaDTO> getStore() {
 		return store;
 	}
@@ -129,20 +146,11 @@ public class ResumoDisciplinaView extends MyComposite implements ResumoDisciplin
 	public TreeGrid<ResumoDisciplinaDTO> getTree() {
 		return tree;
 	}
-	
-	private void configureProxy() {
-		store = new TreeStore<ResumoDisciplinaDTO>();
-		
-		Services.disciplinas().getResumos(cenario, null, new AsyncCallback<List<ResumoDisciplinaDTO>>() {
-			@Override
-			public void onFailure(Throwable caught) {
-				caught.printStackTrace();
-			}
-			@Override
-			public void onSuccess(List<ResumoDisciplinaDTO> list) {
-				store.add(list, true);
-			}
-		});
+
+	@Override
+	public CampusComboBox getCampusComboBox() {
+		return campusCB;
 	}
+	
 	
 }
