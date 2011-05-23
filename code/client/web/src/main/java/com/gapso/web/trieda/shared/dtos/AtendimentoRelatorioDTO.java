@@ -13,7 +13,11 @@ public interface AtendimentoRelatorioDTO {
 	public String getDisciplinaString();
 	public String getTurma();
 	public String getCursoNome();
+	public Long getCursoId();
+	public String getTurnoString();
+	public Long getTurnoId();
 	public String getCurriculoString();
+	public Long getCurriculoId();
 	public String getPeriodoString();
 	public String getQuantidadeAlunosString();
 	public void concatenateVisaoSala(AtendimentoRelatorioDTO other);	

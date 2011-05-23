@@ -30,7 +30,9 @@ public class AtendimentoOperacionalDTO extends AbstractDTO<String> implements Co
 	public static final String PROPERTY_CREDITO_TEORICO_BOOLEAN = "creditoTeoricoBoolean";
 	public static final String PROPERTY_CURSO_STRING = "cursoString";
 	public static final String PROPERTY_CURSO_NOME = "cursoNome";
+	public static final String PROPERTY_CURSO_ID = "cursoNome";
 	public static final String PROPERTY_CURRICULO_STRING = "curriculoString";
+	public static final String PROPERTY_CURRICULO_ID = "curriculoId";
 	public static final String PROPERTY_PERIODO = "periodo";
 	public static final String PROPERTY_PERIODO_STRING = "periodoString";
 	public static final String PROPERTY_DISCIPLINA_ID = "disciplinaId";
@@ -192,6 +194,20 @@ public class AtendimentoOperacionalDTO extends AbstractDTO<String> implements Co
 	}
 	public String getCursoNome() {
 		return get(PROPERTY_CURSO_NOME);
+	}
+	
+	public void setCursoId(Long value) {
+		set(PROPERTY_CURSO_ID, value);
+	}
+	public Long getCursoId() {
+		return get(PROPERTY_CURSO_ID);
+	}
+	
+	public void setCurricularId(Long value) {
+		set(PROPERTY_CURRICULO_ID, value);
+	}
+	public Long getCurriculoId() {
+		return get(PROPERTY_CURRICULO_ID);
 	}
 	
 	public void setCurricularString(String value) {

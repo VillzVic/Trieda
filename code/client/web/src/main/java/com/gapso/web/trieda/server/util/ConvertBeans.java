@@ -1147,10 +1147,14 @@ public class ConvertBeans {
 		dto.setCreditosPratico(domain.getCreditosPratico());
 		dto.setCursoString(domain.getOferta().getCurriculo().getCurso().getCodigo());
 		dto.setCursoNome(domain.getOferta().getCurriculo().getCurso().getNome());
+		dto.setCursoId(domain.getOferta().getCurriculo().getCurso().getId());
 		dto.setCurricularString(domain.getOferta().getCurriculo().getCodigo());
+		dto.setCurricularId(domain.getOferta().getCurriculo().getId());
 		dto.setPeriodo(domain.getOferta().getCurriculo().getPeriodo(domain.getDisciplina()));
 		dto.setPeriodoString(String.valueOf(domain.getOferta().getCurriculo().getPeriodo(domain.getDisciplina())));
 		dto.setTotalCreditoDisciplina(domain.getDisciplina().getTotalCreditos());
+		dto.setTurnoId(domain.getOferta().getTurno().getId());
+		dto.setTurnoString(domain.getOferta().getTurno().getNome());
 		dto.setDisplayText(dto.getNaturalKey());
 		
 		return dto;
@@ -1208,7 +1212,9 @@ public class ConvertBeans {
 		
 		dto.setCursoString(domain.getOferta().getCurriculo().getCurso().getCodigo());
 		dto.setCursoNome(domain.getOferta().getCurriculo().getCurso().getNome());
+		dto.setCursoId(domain.getOferta().getCurriculo().getCurso().getId());
 		dto.setCurricularString(domain.getOferta().getCurriculo().getCodigo());
+		dto.setCurricularId(domain.getOferta().getCurriculo().getId());
 		dto.setPeriodo(domain.getOferta().getCurriculo().getPeriodo(domain.getDisciplina()));
 		dto.setPeriodoString(String.valueOf(domain.getOferta().getCurriculo().getPeriodo(domain.getDisciplina())));
 		dto.setTotalCreditos(domain.getDisciplina().getTotalCreditos());

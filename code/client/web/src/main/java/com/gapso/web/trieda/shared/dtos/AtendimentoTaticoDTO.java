@@ -21,6 +21,8 @@ public class AtendimentoTaticoDTO extends AbstractDTO<String> implements Compara
 	public static final String PROPERTY_DIA_SEMANA = "semana";
 	public static final String PROPERTY_CURSO_STRING = "cursoString";
 	public static final String PROPERTY_CURSO_NOME = "cursoNome";
+	public static final String PROPERTY_CURSO_ID = "cursoId";
+	public static final String PROPERTY_CURRICULO_ID = "curriculoId";
 	public static final String PROPERTY_CURRICULO_STRING = "curriculoString";
 	public static final String PROPERTY_PERIODO = "periodo";
 	public static final String PROPERTY_PERIODO_STRING = "periodoString";
@@ -30,6 +32,8 @@ public class AtendimentoTaticoDTO extends AbstractDTO<String> implements Compara
 	public static final String PROPERTY_TOTAL_CRETIDOS_DISCIPLINA = "totalCreditoDisciplina";
 	public static final String PROPERTY_OFERTA_ID = "ofertaId";
 	public static final String PROPERTY_TURMA = "turma";
+	public static final String PROPERTY_TURNO_ID = "turmaId";
+	public static final String PROPERTY_TURNO_STRING = "turmaString";
 	public static final String PROPERTY_QUANTIDADE_ALUNOS = "quantidadeAlunos";
 	public static final String PROPERTY_QUANTIDADE_ALUNOS_STRING = "quantidadeAlunosString";
 	public static final String PROPERTY_CREDITOS_TEORICOS = "creditosTeorico";
@@ -122,6 +126,20 @@ public class AtendimentoTaticoDTO extends AbstractDTO<String> implements Compara
 		return get(PROPERTY_CURSO_NOME);
 	}
 	
+	public void setCursoId(Long value) {
+		set(PROPERTY_CURSO_ID, value);
+	}
+	public Long getCursoId() {
+		return get(PROPERTY_CURSO_ID);
+	}
+	
+	public void setCurricularId(Long value) {
+		set(PROPERTY_CURRICULO_ID, value);
+	}
+	public Long getCurriculoId() {
+		return get(PROPERTY_CURRICULO_ID);
+	}
+	
 	public void setCurricularString(String value) {
 		set(PROPERTY_CURRICULO_STRING, value);
 	}
@@ -155,6 +173,20 @@ public class AtendimentoTaticoDTO extends AbstractDTO<String> implements Compara
 	}
 	public void setDisciplinaString(String value) {
 		set(PROPERTY_DISCIPLINA_STRING, value);
+	}
+	
+	public void setTurnoId(Long value) {
+		set(PROPERTY_TURNO_ID, value);
+	}
+	public Long getTurnoId() {
+		return get(PROPERTY_TURNO_ID);
+	}
+	
+	public String getTurnoString() {
+		return get(PROPERTY_TURNO_STRING);
+	}
+	public void setTurnoString(String value) {
+		set(PROPERTY_TURNO_STRING, value);
 	}
 	
 	public String getDisciplinaNome() {
