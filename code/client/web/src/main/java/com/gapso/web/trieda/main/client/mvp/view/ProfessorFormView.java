@@ -60,7 +60,7 @@ public class ProfessorFormView extends MyComposite implements ProfessorFormPrese
 	private void initUI() {
 		String title = (professorDTO.getId() == null)? "Inserção de Professor" : "Edição de Professor";
 		simpleModal = new SimpleModal(title, Resources.DEFAULTS.professor16());
-		simpleModal.setHeight(385);
+		simpleModal.setHeight(395);
 		createForm();
 		simpleModal.setContent(formPanel);
 	}
