@@ -57,7 +57,7 @@ public class AppView extends MyComposite implements AppPresenter.Display {
 	    bld.setFloatable(true);
 	    
 	    cenarioPanel = new CenarioPanel();
-	    panel.add(cenarioPanel, bld);
+//	    panel.add(cenarioPanel, bld);
 	}
 	
 	private void createCenter() {
