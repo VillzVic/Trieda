@@ -259,13 +259,14 @@ public class Campus implements Serializable, Comparable<Campus> {
         	removeProfessores();
         	removeHorariosDisponivelCenario();
         	removeDeslocamentosDestino();
-//        	removeUnidades();
+        	removeUnidades();
             this.entityManager.remove(this);
         } else {
             Campus attached = this.entityManager.find(this.getClass(), this.id);
             attached.removeProfessores();
             attached.removeHorariosDisponivelCenario();
             attached.removeDeslocamentosDestino();
+            attached.removeUnidades();
             this.entityManager.remove(attached);
         }
     }
@@ -308,16 +309,14 @@ public class Campus implements Serializable, Comparable<Campus> {
 		}
 	}
 	
-//	@Transactional
-//	public void removeUnidades() {
-//		Set<Unidade> unidades = this.getUnidades();
-//		for(Unidade unidade : unidades) {
-//			unidade.getCampus().remove(this);
-//			
-//			deslocamentoDestino.getOrigem().merge();
-//		}
-//	}
-	
+	@Transactional
+	public void removeUnidades() {
+		Set<Unidade> unidades = this.getUnidades();
+		for(Unidade unidade : unidades) {
+			unidade.remove();
+		}
+	}
+		
 	@Transactional
     public void flush() {
         if (this.entityManager == null) this.entityManager = entityManager();

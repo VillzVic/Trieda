@@ -118,15 +118,17 @@ public class Unidade implements Serializable {
         if (this.entityManager == null) this.entityManager = entityManager();
         if (this.entityManager.contains(this)) {
         	this.removeHorariosDisponivelCenario();
+        	this.removeSalas();
             this.entityManager.remove(this);
         } else {
             Unidade attached = this.entityManager.find(this.getClass(), this.id);
             attached.removeHorariosDisponivelCenario();
+            attached.removeSalas();
             this.entityManager.remove(attached);
         }
     }
 
-	public void preencheHorarios() {
+	private void preencheHorarios() {
 		for(SemanaLetiva semanaLetiva : SemanaLetiva.findAll()) {
 			for(HorarioDisponivelCenario hdc : this.getCampus().getHorarios(semanaLetiva)) {
 				hdc.getUnidades().add(this);
@@ -136,13 +138,21 @@ public class Unidade implements Serializable {
 	}
     
     @Transactional
-    public void removeHorariosDisponivelCenario() {
+    private void removeHorariosDisponivelCenario() {
     	Set<HorarioDisponivelCenario> horarios = this.getHorarios();
     	for(HorarioDisponivelCenario horario : horarios) {
     		horario.getUnidades().remove(this);
     		horario.merge();
     	}
     }
+    
+	@Transactional
+	private void removeSalas() {
+		Set<Sala> salas = this.getSalas();
+		for(Sala sala : salas) {
+			sala.remove();
+		}
+	}
     
     @Transactional
     public void flush() {
