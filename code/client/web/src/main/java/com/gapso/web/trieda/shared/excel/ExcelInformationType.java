@@ -6,6 +6,7 @@ public enum ExcelInformationType {
 	CURRICULOS("Curriculos"),
 	CURSOS("Cursos"),
 	AREAS_TITULACAO("Areas de Titulacao"),
+	CURSO_AREAS_TITULACAO("Curso - Area de Titulacao"),
 	DEMANDAS("Ofertas e Demandas"),
 	DISCIPLINAS("Disciplinas"),
 	EQUIVALENCIAS("Equivalencias"),

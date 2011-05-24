@@ -17,6 +17,7 @@ public class ExportExcelFactory {
 			case CURRICULOS: exporter = new CurriculosExportExcel(cenario,i18nConstants,i18nMessages); break;
 			case CURSOS: exporter = new CursosExportExcel(cenario,i18nConstants,i18nMessages); break;
 			case AREAS_TITULACAO: exporter = new AreasTitulacaoExportExcel(cenario,i18nConstants,i18nMessages); break;
+			case CURSO_AREAS_TITULACAO: exporter = new CursoAreasTitulacaoExportExcel(cenario,i18nConstants,i18nMessages); break;
 			case DISCIPLINAS_SALAS: exporter = new DisciplinasSalasExportExcel(cenario,i18nConstants,i18nMessages); break;
 			case DEMANDAS: exporter = new DemandasExportExcel(cenario,i18nConstants,i18nMessages); break;
 			case DISCIPLINAS: exporter = new DisciplinasExportExcel(cenario,i18nConstants,i18nMessages); break;

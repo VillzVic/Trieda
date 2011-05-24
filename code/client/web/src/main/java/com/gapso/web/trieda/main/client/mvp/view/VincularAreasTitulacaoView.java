@@ -163,4 +163,14 @@ public class VincularAreasTitulacaoView extends MyComposite implements VincularA
 	public Button getRemoveBT() {
 		return removeBT;
 	}
+
+	@Override
+	public Button getImportExcelButton() {
+		return toolBar.getImportExcelButton();
+	}
+
+	@Override
+	public Button getExportExcelButton() {
+		return toolBar.getExportExcelButton();
+	}
 }

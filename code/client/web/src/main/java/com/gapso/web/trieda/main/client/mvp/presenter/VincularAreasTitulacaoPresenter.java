@@ -19,14 +19,17 @@ import com.extjs.gxt.ui.client.widget.ListView;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.gapso.web.trieda.shared.dtos.AreaTitulacaoDTO;
 import com.gapso.web.trieda.shared.dtos.CursoDTO;
+import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 import com.gapso.web.trieda.shared.i18n.ITriedaI18nGateway;
 import com.gapso.web.trieda.shared.mvp.presenter.Presenter;
 import com.gapso.web.trieda.shared.services.AreasTitulacaoServiceAsync;
 import com.gapso.web.trieda.shared.services.Services;
 import com.gapso.web.trieda.shared.util.view.AbstractAsyncCallbackWithDefaultOnFailure;
 import com.gapso.web.trieda.shared.util.view.CursoComboBox;
+import com.gapso.web.trieda.shared.util.view.ExportExcelFormSubmit;
 import com.gapso.web.trieda.shared.util.view.GTab;
 import com.gapso.web.trieda.shared.util.view.GTabItem;
+import com.gapso.web.trieda.shared.util.view.ImportExcelFormView;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -38,6 +41,8 @@ public class VincularAreasTitulacaoPresenter implements Presenter {
 		ListView<AreaTitulacaoDTO> getVinculadaList();
 		Button getAdicionaBT();
 		Button getRemoveBT();
+		Button getImportExcelButton();
+		Button getExportExcelButton();
 		Component getComponent();
 	}
 	private Display display;
@@ -112,7 +117,6 @@ public class VincularAreasTitulacaoPresenter implements Presenter {
 				});
 			}
 		});
-		
 		display.getRemoveBT().addSelectionListener(new SelectionListener<ButtonEvent>(){
 			@Override
 			public void componentSelected(ButtonEvent ce) {
@@ -127,7 +131,20 @@ public class VincularAreasTitulacaoPresenter implements Presenter {
 				});
 			}
 		});
-		
+		display.getImportExcelButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
+			@Override
+			public void componentSelected(ButtonEvent ce) {
+				ImportExcelFormView importExcelFormView = new ImportExcelFormView(ExcelInformationType.CURSO_AREAS_TITULACAO, null);
+				importExcelFormView.show();
+			}
+		});
+		display.getExportExcelButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
+			@Override
+			public void componentSelected(ButtonEvent ce) {
+				ExportExcelFormSubmit e = new ExportExcelFormSubmit(ExcelInformationType.CURSO_AREAS_TITULACAO, display.getI18nConstants(), display.getI18nMessages());
+				e.submit();
+			}
+		});
 	}
 
 	private void transfere(ListView<AreaTitulacaoDTO> origem, ListView<AreaTitulacaoDTO> destino, List<AreaTitulacaoDTO> areaTitulacaoDTOList) {
