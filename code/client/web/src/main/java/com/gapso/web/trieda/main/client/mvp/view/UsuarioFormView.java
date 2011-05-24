@@ -8,11 +8,15 @@ import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.extjs.gxt.ui.client.widget.layout.FormData;
 import com.extjs.gxt.ui.client.widget.layout.FormLayout;
 import com.gapso.web.trieda.main.client.mvp.presenter.UsuarioFormPresenter;
+import com.gapso.web.trieda.shared.dtos.CenarioDTO;
+import com.gapso.web.trieda.shared.dtos.ProfessorDTO;
 import com.gapso.web.trieda.shared.dtos.UsuarioDTO;
 import com.gapso.web.trieda.shared.mvp.view.MyComposite;
 import com.gapso.web.trieda.shared.util.resources.Resources;
 import com.gapso.web.trieda.shared.util.view.ProfessorComboBox;
 import com.gapso.web.trieda.shared.util.view.SimpleModal;
+import com.gapso.web.trieda.shared.util.view.UniqueDomain;
+import com.gapso.web.trieda.shared.util.view.UniqueTextField;
 
 public class UsuarioFormView extends MyComposite implements UsuarioFormPresenter.Display {
 
@@ -24,9 +28,13 @@ public class UsuarioFormView extends MyComposite implements UsuarioFormPresenter
 	private TextField<String> passwordTF;
 	private ProfessorComboBox professorCB;
 	private UsuarioDTO usuarioDTO;
+	private CenarioDTO cenarioDTO;
+	private ProfessorDTO professorDTO;
 	
-	public UsuarioFormView(UsuarioDTO usuarioDTO) {
+	public UsuarioFormView(CenarioDTO cenarioDTO, UsuarioDTO usuarioDTO, ProfessorDTO professorDTO) {
 		this.usuarioDTO = usuarioDTO;
+		this.cenarioDTO = cenarioDTO;
+		this.professorDTO = professorDTO;
 		initUI();
 		// TODO
 //		initComponent(simpleModal);
@@ -63,7 +71,7 @@ public class UsuarioFormView extends MyComposite implements UsuarioFormPresenter
 		emailTF.setEmptyText("Preencha o email");
 		formPanel.add(emailTF, formData);
 		
-		usernameTF = new TextField<String>();
+		usernameTF = new UniqueTextField(cenarioDTO, UniqueDomain.USUARIO);
 		usernameTF.setValue(usuarioDTO.getUsername());
 		usernameTF.setFieldLabel("Username");
 		usernameTF.setAllowBlank(false);
@@ -88,10 +96,10 @@ public class UsuarioFormView extends MyComposite implements UsuarioFormPresenter
 	    fieldSet.setLayout(layout);
 	    fieldSet.setHeading("Professor?");  
 	    fieldSet.setCheckboxToggle(true);
-	    fieldSet.setExpanded(false);
+	    fieldSet.setExpanded(usuarioDTO.isProfessor());
 	    
 	    professorCB = new ProfessorComboBox();
-//		professorCB.setValue(usuarioDTO.isProfessor());
+		professorCB.setValue(professorDTO);
 		fieldSet.add(professorCB, formData);
 		
 		formPanel.add(fieldSet);

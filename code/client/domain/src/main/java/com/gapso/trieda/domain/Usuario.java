@@ -224,4 +224,11 @@ public class Usuario implements Serializable {
         return entityManager().<Usuario>find(Usuario.class, username);
     }
 	
+	public static boolean checkUsernameUnique(Cenario cenario, String username) {
+		Query q = entityManager().createQuery("SELECT COUNT(o) FROM Usuario o WHERE o.username = :username");
+		q.setParameter("username", username);
+		Number size = (Number) q.setMaxResults(1).getSingleResult();
+		return size.intValue() > 0;
+	}
+	
 }

@@ -10,6 +10,7 @@ import com.gapso.trieda.domain.Professor;
 import com.gapso.trieda.domain.Sala;
 import com.gapso.trieda.domain.SemanaLetiva;
 import com.gapso.trieda.domain.Unidade;
+import com.gapso.trieda.domain.Usuario;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.services.UniquesService;
 import com.gapso.web.trieda.shared.util.view.UniqueDomain;
@@ -36,6 +37,7 @@ public class UniquesServiceImpl extends RemoteService implements UniquesService 
 			case PROFESSOR: exist = checkProfessor(cenario, value); break;
 			case DISCIPLINA: exist = checkDisciplina(cenario, value); break;
 			case MATRIZ_CURRICULAR: exist = checkMatrizCurricular(cenario, value); break;
+			case USUARIO: exist = checkUsuario(cenario, value); break;
 		}
 		return exist;
 	}
@@ -66,6 +68,9 @@ public class UniquesServiceImpl extends RemoteService implements UniquesService 
 	}
 	private Boolean checkMatrizCurricular(Cenario cenario, String value) {
 		return Curriculo.checkCodigoUnique(cenario, value);
+	}
+	private Boolean checkUsuario(Cenario cenario, String value) {
+		return Usuario.checkUsernameUnique(cenario, value);
 	}
 
 }

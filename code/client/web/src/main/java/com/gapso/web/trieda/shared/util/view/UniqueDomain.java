@@ -9,5 +9,6 @@ public enum UniqueDomain {
 	SEMANA_LETIVA,
 	PROFESSOR,
 	DISCIPLINA,
+	USUARIO,
 	MATRIZ_CURRICULAR;
 }

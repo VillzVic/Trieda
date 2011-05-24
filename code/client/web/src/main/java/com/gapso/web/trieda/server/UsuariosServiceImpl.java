@@ -59,11 +59,11 @@ public class UsuariosServiceImpl extends RemoteService implements UsuariosServic
 	public void save(UsuarioDTO usuarioDTO) {
 //		Usuario usuario = ConvertBeans.toUsuario(usuarioDTO);
 		Usuario usuario = Usuario.find(usuarioDTO.getUsername());
-		if(usuario.getVersion() != null) {
+		if(usuario != null) {
 			usuario.setNome(usuarioDTO.getNome());
 			usuario.setEmail(usuarioDTO.getEmail());
 			if(!TriedaUtil.isBlank(usuarioDTO.getPassword())) {
-				usuario.setPassword(Encryption.toMD5(usuario.getPassword()));
+				usuario.setPassword(Encryption.toMD5(usuarioDTO.getPassword()));
 			}
 			if(!TriedaUtil.isBlank(usuarioDTO.getProfessorId())) {
 				usuario.setProfessor(Professor.find(usuarioDTO.getProfessorId()));

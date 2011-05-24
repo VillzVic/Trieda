@@ -13,9 +13,11 @@ import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.gapso.web.trieda.main.client.mvp.view.UsuarioFormView;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
+import com.gapso.web.trieda.shared.dtos.ProfessorDTO;
 import com.gapso.web.trieda.shared.dtos.UsuarioDTO;
 import com.gapso.web.trieda.shared.i18n.ITriedaI18nGateway;
 import com.gapso.web.trieda.shared.mvp.presenter.Presenter;
+import com.gapso.web.trieda.shared.services.ProfessoresServiceAsync;
 import com.gapso.web.trieda.shared.services.Services;
 import com.gapso.web.trieda.shared.services.UsuariosServiceAsync;
 import com.gapso.web.trieda.shared.util.view.AbstractAsyncCallbackWithDefaultOnFailure;
@@ -73,16 +75,22 @@ public class UsuariosPresenter implements Presenter {
 		display.getNewButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
 			@Override
 			public void componentSelected(ButtonEvent ce) {
-				Presenter presenter = new UsuarioFormPresenter(cenario, new UsuarioFormView(new UsuarioDTO()), display.getGrid());
+				Presenter presenter = new UsuarioFormPresenter(cenario, new UsuarioFormView(cenario, new UsuarioDTO(), null), display.getGrid());
 				presenter.go(null);
 			}
 		});
 		display.getEditButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
 			@Override
 			public void componentSelected(ButtonEvent ce) {
-				UsuarioDTO usuarioDTO = display.getGrid().getGrid().getSelectionModel().getSelectedItem();
-				Presenter presenter = new UsuarioFormPresenter(cenario, new UsuarioFormView(usuarioDTO), display.getGrid());
-				presenter.go(null);
+				final UsuarioDTO usuarioDTO = display.getGrid().getGrid().getSelectionModel().getSelectedItem();
+				final ProfessoresServiceAsync professoresService = Services.professores();
+				professoresService.getProfessor(usuarioDTO.getProfessorId(), new AbstractAsyncCallbackWithDefaultOnFailure<ProfessorDTO>(display) {
+					@Override
+					public void onSuccess(ProfessorDTO professorDTO) {
+						Presenter presenter = new UsuarioFormPresenter(cenario, new UsuarioFormView(cenario, usuarioDTO, professorDTO), display.getGrid());
+						presenter.go(null);
+					}
+				});
 			}
 		});
 		display.getRemoveButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
