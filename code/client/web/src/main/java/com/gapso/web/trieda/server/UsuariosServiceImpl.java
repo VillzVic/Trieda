@@ -8,11 +8,13 @@ import com.extjs.gxt.ui.client.data.BasePagingLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.gapso.trieda.domain.Authority;
+import com.gapso.trieda.domain.Professor;
 import com.gapso.trieda.domain.Usuario;
 import com.gapso.web.trieda.server.util.ConvertBeans;
 import com.gapso.web.trieda.server.util.Encryption;
 import com.gapso.web.trieda.shared.dtos.UsuarioDTO;
 import com.gapso.web.trieda.shared.services.UsuariosService;
+import com.gapso.web.trieda.shared.util.TriedaUtil;
 
 /**
  * The server side implementation of the RPC service.
@@ -55,10 +57,20 @@ public class UsuariosServiceImpl extends RemoteService implements UsuariosServic
 
 	@Override
 	public void save(UsuarioDTO usuarioDTO) {
-		Usuario usuario = ConvertBeans.toUsuario(usuarioDTO);
+//		Usuario usuario = ConvertBeans.toUsuario(usuarioDTO);
+		Usuario usuario = Usuario.find(usuarioDTO.getUsername());
 		if(usuario.getVersion() != null) {
+			usuario.setNome(usuarioDTO.getNome());
+			usuario.setEmail(usuarioDTO.getEmail());
+			if(!TriedaUtil.isBlank(usuarioDTO.getPassword())) {
+				usuario.setPassword(Encryption.toMD5(usuario.getPassword()));
+			}
+			if(!TriedaUtil.isBlank(usuarioDTO.getProfessorId())) {
+				usuario.setProfessor(Professor.find(usuarioDTO.getProfessorId()));
+			}
 			usuario.merge();
 		} else {
+			usuario = ConvertBeans.toUsuario(usuarioDTO);
 			usuario.setPassword(Encryption.toMD5(usuario.getPassword()));
 			usuario.setEnabled(true);
 			usuario.persist();
@@ -74,7 +86,6 @@ public class UsuariosServiceImpl extends RemoteService implements UsuariosServic
 	public void remove(List<UsuarioDTO> usuarioDTOList) {
 		for(UsuarioDTO usuarioDTO : usuarioDTOList) {
 			Usuario usuario = Usuario.find(usuarioDTO.getUsername());
-			usuario.getAuthority().remove();
 			usuario.remove();
 		}
 	}

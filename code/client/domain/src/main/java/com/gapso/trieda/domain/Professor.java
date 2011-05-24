@@ -18,7 +18,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.Table;
@@ -106,8 +105,8 @@ public class Professor implements Serializable {
     @OneToMany(cascade = CascadeType.ALL, mappedBy="professor")
     private Set<AtendimentoOperacional> atendimentosOperacionais =  new HashSet<AtendimentoOperacional>();
 
-    @OneToOne(cascade = CascadeType.ALL, mappedBy="professor")
-    private Usuario usuario;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy="professor")
+    private Set<Usuario> usuario =  new HashSet<Usuario>();
     
 	public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -127,7 +126,7 @@ public class Professor implements Serializable {
         sb.append("Horarios: ").append(getHorarios() == null ? "null" : getHorarios().size()).append(", ");
         sb.append("Disciplinas: ").append(getDisciplinas() == null ? "null" : getDisciplinas().size());
         sb.append("Atendimentos Operacionais: ").append(getAtendimentosOperacionais() == null ? "null" : getAtendimentosOperacionais().size());
-        sb.append("Usuario: ").append(getUsuario()).append(", ");
+        sb.append("Usuario: ").append(getUsuario() == null ? "null" : getUsuario().size());
         return sb.toString();
     }
 
@@ -229,10 +228,10 @@ public class Professor implements Serializable {
 		this.atendimentosOperacionais = atendimentosOperacionais;
 	}
 	
-	public Usuario getUsuario() {
+	public Set<Usuario> getUsuario() {
 		return usuario;
 	}
-	public void setUsuario(Usuario usuario) {
+	public void setUsuario(Set<Usuario> usuario) {
 		this.usuario = usuario;
 	}
 

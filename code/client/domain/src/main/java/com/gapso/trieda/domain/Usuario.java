@@ -3,12 +3,14 @@ package com.gapso.trieda.domain;
 import java.io.Serializable;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
@@ -57,7 +59,7 @@ public class Usuario implements Serializable {
     @Column(name = "ENABLED")
     private Boolean enabled;
     
-    @OneToOne(targetEntity = Professor.class, fetch=FetchType.LAZY)
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH}, fetch=FetchType.LAZY)
     @JoinColumn(name = "PRF_ID")
     private Professor professor;
     
@@ -152,9 +154,11 @@ public class Usuario implements Serializable {
     public void remove() {
         if (this.entityManager == null) this.entityManager = entityManager();
         if (this.entityManager.contains(this)) {
+        	if(this.getAuthority() != null) this.getAuthority().remove();
             this.entityManager.remove(this);
         } else {
             Usuario attached = this.entityManager.find(this.getClass(), this.username);
+            if(attached.getAuthority() != null) attached.getAuthority().remove();
             this.entityManager.remove(attached);
         }
     }
@@ -217,7 +221,7 @@ public class Usuario implements Serializable {
 
 	public static Usuario find(String username) {
         if (username == null) return null;
-        return entityManager().find(Usuario.class, username);
+        return entityManager().<Usuario>find(Usuario.class, username);
     }
 	
 }
