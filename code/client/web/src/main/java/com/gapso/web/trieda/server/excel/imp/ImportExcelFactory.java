@@ -21,6 +21,7 @@ public class ImportExcelFactory {
 			case PROFESSORES: importer = new ProfessoresImportExcel(cenario,i18nConstants,i18nMessages); break;
 			case DISCIPLINAS: importer = new DisciplinasImportExcel(cenario,i18nConstants,i18nMessages); break;
 			case EQUIVALENCIAS: importer = new EquivalenciasImportExcel(cenario,i18nConstants,i18nMessages); break;
+			case CURSO_AREAS_TITULACAO: importer = new CursoAreasTitulacaoImportExcel(cenario,i18nConstants,i18nMessages); break;
 			case CAMPI_TRABALHO: importer = new CampiTrabalhoImportExcel(cenario,i18nConstants,i18nMessages); break;
 			case UNIDADES: importer = new UnidadesImportExcel(cenario,i18nConstants,i18nMessages); break;
 			case SALAS: importer = new SalasImportExcel(cenario,i18nConstants,i18nMessages); break;
