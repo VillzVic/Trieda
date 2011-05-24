@@ -396,7 +396,7 @@ public class AtendimentosServiceImpl extends RemoteServiceServlet implements Ate
 	public List<AtendimentoOperacionalDTO> getAtendimentosOperacional(ProfessorDTO professorDTO, TurnoDTO turnoDTO) {
 		Professor professor = Professor.find(professorDTO.getId());
 		Turno turno = Turno.find(turnoDTO.getId());
-		List<AtendimentoOperacional> atendimentosOperacional = AtendimentoOperacional.findAllBy(professor, turno);
+		List<AtendimentoOperacional> atendimentosOperacional = AtendimentoOperacional.findAllPublicadoBy(professor, turno);
 		List<AtendimentoOperacionalDTO> listDTO = new ArrayList<AtendimentoOperacionalDTO>(atendimentosOperacional.size());
 		for(AtendimentoOperacional atendimentoOperacional : atendimentosOperacional) {
 			listDTO.add(ConvertBeans.toAtendimentoOperacionalDTO(atendimentoOperacional));
