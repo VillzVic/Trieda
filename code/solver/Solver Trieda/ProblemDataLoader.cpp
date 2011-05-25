@@ -2081,6 +2081,9 @@ void ProblemDataLoader::divideDisciplinas()
                nova_demanda->setOfertaId( it_dem->getOfertaId() );
                nova_demanda->setDisciplinaId( nova_disc->getId() );
                nova_demanda->setQuantidade( it_dem->getQuantidade() );
+			   nova_demanda->oferta = it_dem->oferta;
+
+			   nova_demanda->disciplina = nova_disc;
 
                problemData->demandas.add( nova_demanda );
                if ( num_vezes_ecncontrado > 0 )
@@ -2452,14 +2455,14 @@ void ProblemDataLoader::cria_blocos_curriculares()
 
                // Recupera o conjunto de demandas
                // relacionadas ao par 'Campus' e 'Curso' atual
-               GGroup< Demanda *, LessPtr< Demanda > > * demandas
-                  = &( problemData->map_campus_curso_demanda[ campus_curso ] );
+                GGroup< Demanda *, LessPtr< Demanda > > * demandas
+					= &( problemData->map_campus_curso_demanda[ campus_curso ] );
 
                // Encontrando e armazenando a demanda
                // específica da disciplina em questão
-               demanda = NULL;
                int id_disciplina = 0;
                int id_oferta = 0;
+			   demanda = NULL;
                ITERA_GGROUP_LESSPTR( it_demanda, ( *demandas ), Demanda )
                {
                   id_disciplina = abs( disciplina->getId() );
@@ -2502,7 +2505,7 @@ void ProblemDataLoader::cria_blocos_curriculares()
                   }
                }
 
-               if ( !found ) 
+               if ( !found )
                {
                   BlocoCurricular * bloco_curricular = new BlocoCurricular();
 
@@ -2607,6 +2610,13 @@ void ProblemDataLoader::calculaDemandas()
    ITERA_GGROUP_LESSPTR( it_demanda, problemData->demandas, Demanda )
    {
       demanda = ( *it_demanda );
+
+	  if ( demanda->oferta == NULL )
+	  {
+		  int k = 0;
+		  k++;
+	  }
+
       campus = demanda->oferta->campus;
       curso = demanda->oferta->curso;
 
