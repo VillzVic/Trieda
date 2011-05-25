@@ -68,7 +68,9 @@ public abstract class AbstractImportExcelBean {
 		if (!isEmptyField(value)) {
 			if ("Sim".equalsIgnoreCase(value)) {
 				booleanValue = true;
-			} else if ("Não".equalsIgnoreCase(value)) {
+			// COMPARAÇÂO COM O "Não" FOI RETIRADA POR DAR PROBLEMAS COM ACENTOS
+			// } else if ("Não".equalsIgnoreCase(value)) {
+			} else {
 				booleanValue = false;
 			}
 		}

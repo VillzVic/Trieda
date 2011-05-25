@@ -23,7 +23,6 @@ import com.gapso.web.trieda.main.client.mvp.view.DivisoesCreditosView;
 import com.gapso.web.trieda.main.client.mvp.view.EquivalenciasView;
 import com.gapso.web.trieda.main.client.mvp.view.FixacoesView;
 import com.gapso.web.trieda.main.client.mvp.view.GruposSalasView;
-import com.gapso.web.trieda.main.client.mvp.view.HorariosAulaView;
 import com.gapso.web.trieda.main.client.mvp.view.OfertasView;
 import com.gapso.web.trieda.main.client.mvp.view.ParametrosView;
 import com.gapso.web.trieda.main.client.mvp.view.ProfessorFormView;
@@ -76,9 +75,6 @@ public class ToolBarPresenter implements Presenter {
 		Button getCampiNovoCampiButton();
 		Button getCampiListCampiButton();
 		Button getCampusDeslocamentoListCampiButton();
-		Button getSemanasLetivaListCampiButton();
-		Button getHorariosAulaListCampiButton();
-		Button getTurnosListCampiButton();
 		Button getOfertasListCampiButton();
 		
 		Button getUnidadesNovoUnidadesButton();
@@ -126,6 +122,9 @@ public class ToolBarPresenter implements Presenter {
 		Button getUsuariosListButton();
 		Button getImportarButton();
 		Button getExportarButton();
+		
+		Button getSemanasLetivaListCampiButton();
+		Button getTurnosListCampiButton();
 	}
 	
 	private CenarioDTO masterData;
@@ -159,13 +158,6 @@ public class ToolBarPresenter implements Presenter {
 			@Override
 			public void componentSelected(ButtonEvent ce) {
 				Presenter presenter = new SemanasLetivaPresenter(masterData, new SemanasLetivaView());
-				presenter.go(gTab);
-			}
-		});
-		toolBar.getHorariosAulaListCampiButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
-			@Override
-			public void componentSelected(ButtonEvent ce) {
-				Presenter presenter = new HorariosAulaPresenter(new HorariosAulaView());
 				presenter.go(gTab);
 			}
 		});
