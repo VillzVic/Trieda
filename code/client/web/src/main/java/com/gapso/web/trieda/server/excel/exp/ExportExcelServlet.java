@@ -24,12 +24,14 @@ public class ExportExcelServlet extends HttpServlet {
 	private static TriedaI18nMessages i18nMessages = null;
 	private static TriedaI18nConstants i18nConstants = null;
 	private static Cenario cenario = null;
-
+	{
+		LocaleProxy.initialize();
+		i18nConstants = LocaleFactory.get(TriedaI18nConstants.class);
+		i18nMessages = LocaleFactory.get(TriedaI18nMessages.class);
+	}
+	
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		LocaleProxy.initialize();
-		i18nMessages = LocaleFactory.get(TriedaI18nMessages.class);
-		i18nConstants = LocaleFactory.get(TriedaI18nConstants.class);
 		cenario = Cenario.findMasterData();
 		
 		// Obtém os parâmetros

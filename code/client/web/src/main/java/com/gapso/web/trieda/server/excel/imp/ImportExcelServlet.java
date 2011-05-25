@@ -28,12 +28,14 @@ public class ImportExcelServlet extends HttpServlet {
 	private static TriedaI18nConstants i18nConstants = null;
 	private static TriedaI18nMessages i18nMessages = null;
 	private Cenario cenario = null;
-
-	@Override
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	{
 		LocaleProxy.initialize();
 		i18nConstants = LocaleFactory.get(TriedaI18nConstants.class);
 		i18nMessages = LocaleFactory.get(TriedaI18nMessages.class);
+	}
+	
+	@Override
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		cenario = Cenario.findMasterData();
 		
 		FileItemFactory factory = new DiskFileItemFactory();

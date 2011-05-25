@@ -31,6 +31,11 @@
 			<version>${gwt.version}</version>
 		</dependency>
 		<dependency>
+			<groupId>com.teklabs.gwt-i18n-server</groupId>
+			<artifactId>gwt-i18n-server</artifactId>
+			<version>0.6</version>
+		</dependency>
+		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>4.4</version>
@@ -80,11 +85,6 @@
 			<groupId>commons-fileupload</groupId>
 			<artifactId>commons-fileupload</artifactId>
 			<version>1.2.2</version>
-		</dependency>
-		<dependency>
-			<groupId>org.scb.gwt</groupId>
-			<artifactId>gwt_i18n_server</artifactId>
-			<version>1.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.poi</groupId>
