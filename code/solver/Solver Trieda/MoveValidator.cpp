@@ -74,7 +74,7 @@ bool MoveValidator::checkBlockConflict( Aula & aula, std::vector<HorarioAula*> &
          exit(1);
       }
 
-	  // Procurando as aulas do bloco em selecionado que possuam o dia da aula em questao.
+	  // Procurando as aulas do bloco selecionado que possuam o dia da aula em questao.
       std::map< int /*dia*/, GGroup< Aula *, LessPtr< Aula > > >::iterator 
          itBlocoCurricularAulasDia = itBlocoCurricularAulas->second.find( aula.getDiaSemana() );
 
@@ -97,27 +97,30 @@ bool MoveValidator::checkBlockConflict( Aula & aula, std::vector<HorarioAula*> &
          {
             // Buscando, na solução, uma referência para a aula em questão.
             std::map< Aula *, std::pair< Professor *, std::vector< HorarioAula * > >, LessPtr<Aula> >::iterator 
-               itAula = solOp.blocoAulas.find(itAula->first);
+               itAulaBlocoAulas = solOp.blocoAulas.find(*itAula);
 
-            if(!itAula->second.second.empty())
+            if(itAulaBlocoAulas != solOp.blocoAulas.end())
             {
-               std::vector<HorarioAula*>::iterator
-                  itNovosHorariosAula = novosHorariosAula.begin();
-
-               /* Para cada novo horário da aula em questão, checo se ele conflita com  algum horário da
-               aula selecionada do bloco curricular. */
-               for (; itNovosHorariosAula != novosHorariosAula.end(); ++itNovosHorariosAula)
+               if(!itAulaBlocoAulas->second.second.empty())
                {
-                  std::vector<HorarioAula*>::iterator 
-                     itHorarioAula = itAula->second.second.begin();               
+                  std::vector<HorarioAula*>::iterator
+                     itNovosHorariosAula = novosHorariosAula.begin();
 
-                  // Para cada horário alocado da aula selecionada de algum bloco curricular.
-                  for(; (itHorarioAula != itAula->second.second.end()); ++itHorarioAula)
+                  /* Para cada novo horário da aula em questão, checo se ele conflita com  algum horário da
+                  aula selecionada do bloco curricular. */
+                  for (; itNovosHorariosAula != novosHorariosAula.end(); ++itNovosHorariosAula)
                   {
-                     // Se conflitar o horario, o movimento é inviável.
-                     if( **itNovosHorariosAula == **itHorarioAula )
+                     std::vector<HorarioAula*>::iterator 
+                        itHorarioAula = itAulaBlocoAulas->second.second.begin();               
+
+                     // Para cada horário alocado da aula selecionada de algum bloco curricular.
+                     for(; (itHorarioAula != itAulaBlocoAulas->second.second.end()); ++itHorarioAula)
                      {
-                        return true;
+                        // Se conflitar o horario, o movimento é inviável.
+                        if( **itNovosHorariosAula == **itHorarioAula )
+                        {
+                           return true;
+                        }
                      }
                   }
                }

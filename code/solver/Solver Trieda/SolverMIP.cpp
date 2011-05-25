@@ -1638,18 +1638,16 @@ int SolverMIP::solveOperacional()
 
    std::cout << "Gerando uma solucao inicial para o modelo operacional" << std::endl;
 
-   /// DEBUGAR A GERAÇÃO DA SOLUÇÃO INICIAL. comentar o cod abaixo p/ fazer isso.
-
-   std::cout << "Saindo antes de gerar uma solucao inicial." << std::endl;
-   exit(1);
-
    SolucaoOperacional & solucaoOperacional = solIni.geraSolucaoInicial();
+
+   solucaoOperacional.toString2();
+
 
    //solucaoOperacional.validaSolucao( "Verificando a viabilidade da solucao inicial." );
 
    // Avaliador
    Avaliador avaliador;
-   avaliador.avaliaSolucao( solucaoOperacional, true );
+   //avaliador.avaliaSolucao( solucaoOperacional, true );
 
    // solucaoOperacional.toString2();
 
@@ -8182,10 +8180,10 @@ int SolverMIP::cria_restricao_max_creds_bloco_dia()
          nnz = 100;
          double rhs = 4.0;
 
-         if ( *it_Dias_Letivos == 7 )
-		 {
-            rhs = 12.0;
-		 }
+         //if ( *it_Dias_Letivos == 7 )
+         //{
+         //   rhs = 12.0;
+         //}
 
          OPT_ROW row( nnz, OPT_ROW::LESS, rhs, name );
 

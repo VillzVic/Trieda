@@ -3063,11 +3063,20 @@ void ProblemDataLoader::criaAulas()
 
 void ProblemDataLoader::relacionaBlocoCurricularAulas()
 {
+   std::cout << "\n\n\nALTERAR O METODO <void ProblemDataLoader::relacionaBlocoCurricularAulas()> PARA PODER CONTEMPLAR AS MUDANCAS NAS ESTRUTURAS <aulaBlocosCurriculares> E <blocoCurricularDiaAulas>.\n\n\n";
+   //getchar();
+
+   /*
+   
+   ANTES DISSO, ALTERAR AS ESTRUTURAS. COMO SERÃO?! PENSAR.
+
+   */
+
    ITERA_GGROUP_LESSPTR( itAula, problemData->aulas, Aula )
    {
       Disciplina * disciplina = itAula->getDisciplina();
 
-      ITERA_GGROUP( itOferta, itAula->ofertas, Oferta )
+      ITERA_GGROUP_LESSPTR( itOferta, itAula->ofertas, Oferta )
       {
          Curso * curso = itOferta->curso;
 

@@ -444,7 +444,7 @@ void Avaliador::calculaDescolamentoBlocoCurricular( SolucaoOperacional & solucao
          // Disciplina correspondente à aula atual
          disciplina = aula->getDisciplina();
 
-         ITERA_GGROUP( it_oferta, aula->ofertas, Oferta )
+         ITERA_GGROUP_LESSPTR( it_oferta, aula->ofertas, Oferta )
          {
             // Oferta atendida pela aula
             oferta = (*it_oferta);
@@ -1139,8 +1139,7 @@ void Avaliador::avaliaNumeroMestresDoutores( SolucaoOperacional & solucao )
          ITERA_GGROUP( it_oferta, solucao.getProblemData()->ofertas,
 					   Oferta )
          {
-            ITERA_GGROUP( it_oferta_aula, aula->ofertas,
-						  Oferta )
+            ITERA_GGROUP_LESSPTR( it_oferta_aula, aula->ofertas, Oferta )
             {
                if ( it_oferta_aula->getId() == it_oferta->getId() )
                {
@@ -1273,9 +1272,7 @@ void Avaliador::avaliaMaximoDisciplinasProfessorPorCurso(SolucaoOperacional & so
             // Como uma aula pode atender a mais de uma
             // oferta, então devo relacionar a aula atual
             // com cada curso correspondente a cada oferta
-            GGroup< Oferta * >::iterator it_oferta
-               = aula->ofertas.begin();
-            for (; it_oferta != aula->ofertas.end(); it_oferta++)
+            ITERA_GGROUP_LESSPTR(it_oferta,aula->ofertas,Oferta)
             {
                // Id do curso correspondente à oferta
                id_curso = it_oferta->getCursoId();
@@ -1577,8 +1574,7 @@ void Avaliador::avaliaTempoParcialIntegral( SolucaoOperacional & solucao )
 			}
 
 			// Percorre as ofertas atendidas por essa aula
-			ITERA_GGROUP( it_oferta, aula->ofertas,
-						  Oferta )
+			ITERA_GGROUP_LESSPTR( it_oferta, aula->ofertas, Oferta )
 			{
 				// Recupera o curso atual
 				oferta = ( *it_oferta );

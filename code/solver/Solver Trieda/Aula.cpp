@@ -114,10 +114,16 @@ void Aula::toString() const
    //-------------------------------------------------------------
    // Exibe a lista de ofertas atendidas por essa aula
    std::cout << "Ofertas atendidas: ";
-   ITERA_GGROUP(itOferta, ofertas, Oferta)
+
+   GGroup< Oferta *, LessPtr<Oferta> >::iterator 
+      itOferta = ofertas.begin();
+
+   for(; itOferta != ofertas.end(); ++itOferta)
+   //ITERA_GGROUP_LESSPTR(itOferta, ofertas, Oferta)
    {
       std::cout << itOferta->getId() << " ";
    }
+
    //-------------------------------------------------------------
 
    //-------------------------------------------------------------

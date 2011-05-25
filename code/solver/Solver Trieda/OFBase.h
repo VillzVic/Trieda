@@ -47,6 +47,11 @@ public:
       return (getId() < right.getId()); 
    }
 
+   virtual bool operator > ( const OFBase& right )
+   { 
+      return (getId() > right.getId()); 
+   }
+
    virtual bool operator == ( const OFBase & right )
    { 
       return (getId() == right.getId()); 

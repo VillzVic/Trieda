@@ -1,6 +1,6 @@
-#include "SolucaoInicialOperacional.h"
+#include "CustoAlocacao.h"
 
-CustoAlocacao::CustoAlocacao( Professor & _professor, Aula & _aula )
+CustoAlocacao::CustoAlocacao( ProblemData & problemData, Professor & _professor, Aula & _aula )
 : professor(_professor), aula(_aula)
 {
    for( unsigned c = 0; c <= 3; c++ )
@@ -17,6 +17,17 @@ CustoAlocacao::CustoAlocacao( Professor & _professor, Aula & _aula )
 
    // Setando o custo referente à "disponibilidade do professor p".
    addCustoDispProf( professor.getCustoDispProf() );
+
+   std::map< Aula *, GGroup< BlocoCurricular *, LessPtr< BlocoCurricular > > >::iterator
+      itAulaBlocosCurriculares = problemData.aulaBlocosCurriculares.find(&aula);
+
+   if(itAulaBlocosCurriculares == problemData.aulaBlocosCurriculares.end())
+   {
+      std::cout << "\n\nAo calcular o custo de alocacao (Construtor da classe CustoAlocacao) alguma aula nao foi encontrada na estrutura <aulaBlocosCurriculares> do problemData.\n\n";
+      exit(1);
+   }
+
+   nivelPrioridade = itAulaBlocosCurriculares->second.size();
 }
 
 CustoAlocacao::CustoAlocacao( CustoAlocacao const & cstAlc )
@@ -24,10 +35,11 @@ CustoAlocacao::CustoAlocacao( CustoAlocacao const & cstAlc )
 {
    this->custosAlocacao = ( cstAlc.custosAlocacao );
    this->custo_total = ( cstAlc.custo_total );
-   this->alfa = ( cstAlc.alfa );
-   this->beta = ( cstAlc.beta );
-   this->teta = ( cstAlc.teta );
-   this->gamma = ( cstAlc.gamma );
+   this->alfa = cstAlc.alfa;
+   this->beta = cstAlc.beta;
+   this->teta = cstAlc.teta;
+   this->gamma = cstAlc.gamma;
+   this->nivelPrioridade = cstAlc.nivelPrioridade;
 }
 
 CustoAlocacao::~CustoAlocacao()
@@ -89,6 +101,11 @@ double CustoAlocacao::getGamma() const
    return gamma;
 }
 
+unsigned CustoAlocacao::getNivelPrioridade() const
+{
+   return nivelPrioridade;
+}
+
 void CustoAlocacao::addCustoFixProfTurma(double c)
 {
    custosAlocacao.at(0) += c;
@@ -137,7 +154,29 @@ bool CustoAlocacao::operator < (CustoAlocacao const & right)
 {
    //return (professor < right.professor && aula < right.aula);
    //return custoTotal > right.custoTotal;
-   return (custo_total < right.custo_total);
+   //return (custo_total < right.custo_total);
+   
+   if(nivelPrioridade < right.nivelPrioridade) return true;
+
+   if(nivelPrioridade == right.nivelPrioridade)
+   {
+      if(custo_total < right.custo_total)
+         return true;
+
+      if(custo_total == right.custo_total)
+      {
+         if(aula < right.aula)
+            return true;
+
+         if(aula == right.aula)
+         {
+            if(professor < right.professor)
+               return true;
+         }
+      }
+   }
+
+   return false;
 }
 
 bool CustoAlocacao::operator == (CustoAlocacao const & right)
@@ -154,18 +193,39 @@ bool CustoAlocacao::operator == (CustoAlocacao const & right)
 	   (custosAlocacao.at(0) == right.custosAlocacao.at(0)) &&
 	   (custosAlocacao.at(1) == right.custosAlocacao.at(1)) &&
 	   (custosAlocacao.at(2) == right.custosAlocacao.at(2)) &&
-	   (custosAlocacao.at(3) == right.custosAlocacao.at(3)) );
+	   (custosAlocacao.at(3) == right.custosAlocacao.at(3)) &&
+      (nivelPrioridade == right.nivelPrioridade));
 }
 
 bool CustoAlocacao::operator > (CustoAlocacao const & right)
 {
-   return (custo_total > right.custo_total);
+   if(nivelPrioridade > right.nivelPrioridade) return true;
+
+   if(nivelPrioridade == right.nivelPrioridade)
+   {
+      if(custo_total > right.custo_total)
+         return true;
+
+      if(custo_total == right.custo_total)
+      {
+         if(aula > right.aula)
+            return true;
+
+         if(aula == right.aula)
+         {
+            if(professor > right.professor)
+               return true;
+         }
+      }
+   }
+
+   return false;
 }
 
-bool CustoAlocacao::operator >= (CustoAlocacao const & right)
-{
-   return (custo_total >= right.custo_total);
-}
+//bool CustoAlocacao::operator >= (CustoAlocacao const & right)
+//{
+//   return (custo_total >= right.custo_total);
+//}
 
 CustoAlocacao & CustoAlocacao::operator = (CustoAlocacao const & right)
 {

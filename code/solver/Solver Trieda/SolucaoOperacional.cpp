@@ -221,13 +221,13 @@ MatrizSolucao * SolucaoOperacional::getMatrizAulas() const
    return ( this->matriz_aulas );
 }
 
-bool SolucaoOperacional::seqHorarioLivre(int idOperacionaProf, std::vector<int> & seqHorarioAula) const
+bool SolucaoOperacional::seqHorarioLivre(int idOperacionaProf, int dia, std::vector<int> & seqHorarioAula) const
 {
    std::vector<int>::const_iterator 
       itHorarioAula = seqHorarioAula.begin();
 
    for(; itHorarioAula != seqHorarioAula.end(); ++itHorarioAula)
-      if(matriz_aulas->at(idOperacionaProf)->at(*itHorarioAula) != NULL)
+      if(matriz_aulas->at(idOperacionaProf)->at((((dia-1)*total_horarios) + (*itHorarioAula))) != NULL)
          return false;
 
    return true;

@@ -8,6 +8,8 @@
 #include "Oferta.h"
 #include "Sala.h"
 
+//#include "input.h"
+
 class Aula
 {
 public:
@@ -17,7 +19,7 @@ public:
    virtual ~Aula( void );
 
    // Ofertas que são atendidas por essa aula
-   GGroup< Oferta * > ofertas;
+   GGroup< Oferta *, LessPtr<Oferta> > ofertas;
 
    void setTurma( int );
    void setDisciplina( Disciplina * );
@@ -40,9 +42,9 @@ public:
 
    virtual bool operator < ( Aula const & right )
    { 
-      if ( disciplina < right.getDisciplina() )
+      if ( *disciplina < *right.getDisciplina() )
          return true;
-      else if ( disciplina > right.getDisciplina() )
+      else if ( *disciplina > *right.getDisciplina() )
          return false;
 
       if ( turma < right.getTurma() )
@@ -55,9 +57,34 @@ public:
       else if ( dia_semana > right.getDiaSemana() )
          return false;
 
-      if ( sala < right.getSala() )
+      if ( *sala < *right.getSala() )
          return true;
-      else if ( sala > right.getSala() )
+      else if ( *sala > *right.getSala() )
+         return false;
+
+      return false;
+   }
+
+   virtual bool operator > ( Aula const & right )
+   { 
+      if ( *disciplina > *right.getDisciplina() )
+         return true;
+      else if ( *disciplina < *right.getDisciplina() )
+         return false;
+
+      if ( turma > right.getTurma() )
+         return true;
+      else if ( turma < right.getTurma() )
+         return false;
+
+      if ( dia_semana > right.getDiaSemana() )
+         return true;
+      else if ( dia_semana < right.getDiaSemana() )
+         return false;
+
+      if ( *sala > *right.getSala() )
+         return true;
+      else if ( *sala < *right.getSala() )
          return false;
 
       return false;
@@ -66,9 +93,10 @@ public:
    virtual bool operator == ( Aula const & right )
    { 
       return  (
+         ( ofertas == right.ofertas ) &&
          ( turma == right.getTurma() ) &&
-         ( disciplina == right.getDisciplina() ) &&
-         ( sala == right.getSala() ) &&
+         ( *disciplina == *right.getDisciplina() ) &&
+         ( *sala == *right.getSala() ) &&
          ( dia_semana == right.getDiaSemana() ) &&
          ( creditos_teoricos == right.getCreditosTeoricos() ) &&
          ( creditos_praticos == right.getCreditosPraticos() ) );

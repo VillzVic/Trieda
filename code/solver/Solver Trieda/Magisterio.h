@@ -23,6 +23,18 @@ public:
    int getPreferencia() const { return preferencia; }
    int getDisciplinaId() const { return disciplina_id; }
 
+   // Ver com o Cleiton antes o que ele faz com o magistério em disciplinasEquivalentes().
+
+   //virtual bool operator == ( const Magisterio & right )
+   //{ 
+   //   return ((nota == right.getNota()) && (preferencia == right.getPreferencia()) && (disciplina_id == right.getDisciplinaId())); 
+   //}
+
+   //virtual bool operator != ( const Magisterio & right )
+   //{ 
+   //   return !((*this) == right); 
+   //}
+
 private:
    int nota;
    int preferencia;

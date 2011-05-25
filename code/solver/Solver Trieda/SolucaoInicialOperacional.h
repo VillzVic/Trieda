@@ -38,8 +38,16 @@ private:
    // Estrutura que armazena o custo de alocar um professor a uma dada aula.
    std::map< std::pair< Professor *, Aula * >, CustoAlocacao * > custoProfTurma;
 
+   /* Estrutura que armazena, separadamente, os custos de alocação por nivel de prioridade. 
+   
+   CADA SUBCONJUNTO DE <CustoAlocacao> JÁ ESTÁ ORDENADO.
+   */
+   std::map<unsigned /*Nivel de prioridade*/,
+      GGroup< CustoAlocacao *, GreaterPtr<CustoAlocacao> > > custoAlocacaoNiveisPrioridade;
+
    // Armazena, em ordem decrescente, os Custos de Alocação.
-   std::vector< CustoAlocacao * > custosAlocacaoAulaOrdenado;
+   //std::vector< CustoAlocacao * > custosAlocacaoAulaOrdenado;
+   GGroup< CustoAlocacao *, GreaterPtr<CustoAlocacao> > custosAlocacaoAulaOrdenado;
 
    // Cada professor deve, preferencialmente, ministrar apenas
    // uma disciplina de um bloco curricular. A estrutura abaixo
@@ -61,19 +69,22 @@ private:
    // Métodos
 
 
-   void executaFuncaoPrioridade();
+   void executaFuncaoPrioridade(Campus & campus, GGroup<Professor*, LessPtr<Professor> > & professoresCP);
 
    // Função auxilar à função de prioridade.
    void calculaCustoFixProf( Professor &, Aula &, unsigned, int = 0, int = 0 );
-   
+
+   /* Função recursiva de alocação de aulas. */
+   void alocaAulasRec(bool primeiraTentativaAlocacao);
+
+   /* Função auxiliar. */
+   Professor & addProfessor();
+
    // Função que utiliza a estrutura acima para
    // dizer se um dado professor está sendo alocado
    // mais de uma vez para um bloco curricular.
    bool professorRepetido( Professor &, Aula & );
 
-   //bool possui_fixacao_professor_dia_horario( Professor &, int, int );
-
-   bool alocaAulaSeq( SolucaoOperacional *, std::vector< Aula * >::iterator, int, Professor &, Aula &);
 };
 
 #endif // _SOLUCAO_INICIAL_OPERACIONAL_H_

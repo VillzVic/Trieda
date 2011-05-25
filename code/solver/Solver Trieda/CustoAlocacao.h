@@ -5,11 +5,12 @@
 
 #include "Professor.h"
 #include "Aula.h"
+#include "ProblemData.h"
 
 class CustoAlocacao
 {
 public:
-   CustoAlocacao( Professor &, Aula & );
+   CustoAlocacao( ProblemData & problemData, Professor &, Aula & );
    CustoAlocacao( CustoAlocacao const & );
    virtual ~CustoAlocacao();
 
@@ -25,6 +26,7 @@ public:
    double getBeta() const;
    double getTeta() const;
    double getGamma() const;
+   unsigned getNivelPrioridade() const;
 
    // Metodos ADD
    void addCustoFixProfTurma(double);
@@ -42,15 +44,37 @@ public:
    virtual bool operator < ( CustoAlocacao const & );
    virtual bool operator == ( CustoAlocacao const & );
    virtual bool operator > ( CustoAlocacao const & );
-   virtual bool operator >= ( CustoAlocacao const & );
+   //virtual bool operator >= ( CustoAlocacao const & );
    virtual CustoAlocacao & operator = ( CustoAlocacao const & );
+
+protected:
+
+   /*
+   Total de blocos curriculares que a aula pertence.
+
+   OBS.: Esse valor é necessário para o caso em que uma aula pertença a mais de um bloco 
+   curricular (de cursos compatíveis) simultaneamente. A ideia é SEMPRE alocar essa(s) aula(s) primeiro.
+   Assim, garante-se (EMPIRICAMENTE e pelo solver TÁTICO) que sempre existirá solução. Se, para um dado 
+   dia, a alocação das aulas for realizada sem considerar esse custo específico pode-se alocar as aulas
+   de modo que resulte um conflito de blocos curriculares.
+
+   Para um exemplo, ver planilha "OUTPUT-OPERACIONAL-CONFLITO-BLOCOCURRIC-DISC6-DIA5".
+
+   Nessa planilha, analisa-se a alocação das aulas para o dia 5.
+
+   Na primeira parte, temos a saída do solver, onde NÃO é possível alocar a aula 6.
+   Já na segunda parte (solução manual que considera prioritárias as aulas que pertencem a mais 
+   blocos curriculares) temos uma saída em que todas as aulas são alocadas.
+   */
+
+   unsigned nivelPrioridade;
 
 private:
 
    Professor & professor;
    Aula & aula;
 
-   /* Armazena, separadamente, os custos de alocar um professor a uma turma.
+   /* Armazena, separadamente, os custos de:
    0 - fixação do professor p a turma i.  {custoFixProfTurma}
    1 - preferência do professor p para lecionar na turma i. {custoPrefProfTurma}
    2 - disponibilidade do professor p. {custoDispProf}
