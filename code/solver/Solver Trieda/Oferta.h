@@ -11,15 +11,15 @@ class Oferta :
    public OFBase
 {
 public:
-   Oferta(void);
-   virtual ~Oferta(void);
+   Oferta( void );
+   virtual ~Oferta( void );
 
    void le_arvore( ItemOfertaCurso & );
 
-   void setCurriculoId(int v) { curriculo_id = v; }
-   void setCursoId(int v) { curso_id = v; }
-   void setTurnoId(int v) { turno_id = v; }
-   void setCampusId(int v) { campus_id = v; }
+   void setCurriculoId( int v ) { curriculo_id = v; }
+   void setCursoId( int v ) { curso_id = v; }
+   void setTurnoId( int v ) { turno_id = v; }
+   void setCampusId( int v ) { campus_id = v; }
 
    int getCurriculoId() { return curriculo_id; }
    int getCursoId() { return curso_id; }

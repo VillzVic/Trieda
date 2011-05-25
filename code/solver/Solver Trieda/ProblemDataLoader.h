@@ -57,7 +57,9 @@ public:
    void estabeleceDiasLetivosProfessorDisciplina();
 
    /* */
-   void disciplinasEquivalentes();
+   void relacionaDisciplinasEquivalentes();
+
+   void substituiDisciplinasEquivalentes();
 
    /* */
    void divideDisciplinas();
@@ -102,6 +104,15 @@ public:
 
    // Divide as fixações de acordo com seus tipos
    void relacionaFixacoes();
+
+   // Verifica se já existe uma fixação equivalente
+   bool contemFixacao( GGroup< Fixacao *, LessPtr< Fixacao > > ,Professor *, Disciplina *, Sala *, int, HorarioAula * );
+
+   // Informa se já não existe uma fixação contendo exatamente os mesmos dados
+   bool contemFixacaoExato( GGroup< Fixacao *, LessPtr< Fixacao > > ,Professor *, Disciplina *, Sala *, int, HorarioAula * );
+
+   // Cria uma nova fixação com os dados informados
+   Fixacao * criaFixacao( int, Professor *, Disciplina *, Sala *, int, HorarioAula * );
 
    // Quando houver uma fixação de uma disciplina em um dia
    // da semana, esse método remove os demais dias da semana

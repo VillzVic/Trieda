@@ -49,7 +49,7 @@ public:
    GGroup< Disciplina *, LessPtr< Disciplina > > disciplinas;
    GGroup< Curso *, LessPtr< Curso > > cursos;
    GGroup< Demanda * > demandas;
-   GGroup< Oferta * > ofertas;
+   GGroup< Oferta *, LessPtr< Oferta > > ofertas;
    ParametrosPlanejamento * parametros;
    GGroup< Fixacao *, LessPtr< Fixacao > > fixacoes;
 
@@ -84,7 +84,7 @@ public:
    // disponíveis entre os professores
    int max_horarios_professor;
 
-   //map de compatibilidade e incompatibilidade entre 2 turmas.
+   // map de compatibilidade e incompatibilidade entre 2 turmas.
    std::map< std::pair< Curso *, Curso * >, bool > compat_cursos;
 
    // Dado um curso e uma disciplina, retorna o bloco curricular correspondente
@@ -234,7 +234,19 @@ public:
    // disciplina substituta, caso tenha ocorrido uma
    // substituição por equivalência entre essas disciplinas
    std::map< std::pair< Curso *, Curriculo * >,
-			 std::map< Disciplina *, Disciplina * > > map_CursoCurriculo_DisciplinasSubstituidas;
+			 std::map< Disciplina *, Disciplina * > > map_CursoCurriculo_DiscSubst;
+
+   // Dada uma disciplina, informamos o seu curso e curriculo
+   std::map< Disciplina *, std::pair< Curso *, Curriculo * > > map_Disc_CursoCurriculo;
+
+   // Dada uma disciplina, esse método retorna qual
+   // disciplina a substituiu, ou retorna NULL caso
+   // a disciplina não tenha sido substituída
+   Disciplina * disciplinaSubstituida( Curso *, Curriculo *, Disciplina * );
+
+   std::map< Curso *, GGroup< std::pair< Curriculo *, Oferta * > > > map_Curso_CurriculosOfertas;
+
+   bool cursosCompativeis( Curso *, Curso * );
    //-----------------------------------------------------------------------------------------------
 };
 

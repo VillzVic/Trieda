@@ -1136,8 +1136,7 @@ void Avaliador::avaliaNumeroMestresDoutores( SolucaoOperacional & solucao )
          // Adiciona o professor na lista de professores
          // do curso ao qual a aula atual atende
          Oferta * oferta = NULL;
-         ITERA_GGROUP( it_oferta, solucao.getProblemData()->ofertas,
-					   Oferta )
+		 ITERA_GGROUP_LESSPTR( it_oferta, solucao.getProblemData()->ofertas, Oferta )
          {
             ITERA_GGROUP_LESSPTR( it_oferta_aula, aula->ofertas, Oferta )
             {

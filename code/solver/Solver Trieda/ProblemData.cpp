@@ -176,6 +176,53 @@ void ProblemData::le_arvore( TriedaInput & raiz )
    //-------------------------------------------------------------------------------
 }
 
+bool ProblemData::cursosCompativeis( Curso * curso1, Curso * curso2 )
+{
+	std::map< std::pair< Curso *, Curso * >, bool >::iterator
+		it_map = compat_cursos.begin();
+	for (; it_map != compat_cursos.end(); it_map++ )
+	{
+		int id1 = it_map->first.first->getId();
+		int id2 = it_map->first.second->getId();
+
+		if (   ( id1 == curso1->getId() && id2 == curso2->getId() )
+			|| ( id2 == curso1->getId() && id1 == curso2->getId() ) )
+		{
+			if ( it_map->second == true )
+			{
+				return true;
+			}
+		}
+	}
+
+	return false;
+}
+
+Disciplina * ProblemData::disciplinaSubstituida( Curso * curso, Curriculo * curriculo, Disciplina * disciplina )
+{
+    Disciplina * disciplina_equivalente = NULL;
+
+	std::pair< Curso *, Curriculo * > curso_curriculo
+		= std::make_pair( curso, curriculo );
+
+	std::map< Disciplina *, Disciplina * >::iterator
+		it_map = map_CursoCurriculo_DiscSubst[ curso_curriculo ].begin();
+
+	for (; it_map != map_CursoCurriculo_DiscSubst[ curso_curriculo ].end(); it_map++ )
+	{			
+		disciplina_equivalente = ( *it_map ).first;
+
+		if ( disciplina_equivalente->getId() == disciplina->getId() )
+		{
+			// A disciplina informada foi substituída
+			// --> retorna-se a disciplina que substituiu a disciplina informada
+			return ( *it_map ).second;
+		}
+	}
+
+	return NULL;
+}
+
 int ProblemData::creditosFixadosDisciplinaDia(
 	Disciplina * disciplina, int dia_semana, ConjuntoSala * conjunto_sala )
 {

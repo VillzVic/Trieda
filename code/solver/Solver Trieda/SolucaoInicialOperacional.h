@@ -43,11 +43,11 @@ private:
    CADA SUBCONJUNTO DE <CustoAlocacao> JÁ ESTÁ ORDENADO.
    */
    std::map<unsigned /*Nivel de prioridade*/,
-      GGroup< CustoAlocacao *, GreaterPtr<CustoAlocacao> > > custoAlocacaoNiveisPrioridade;
+      GGroup< CustoAlocacao *, GreaterPtr< CustoAlocacao > > > custoAlocacaoNiveisPrioridade;
 
    // Armazena, em ordem decrescente, os Custos de Alocação.
    //std::vector< CustoAlocacao * > custosAlocacaoAulaOrdenado;
-   GGroup< CustoAlocacao *, GreaterPtr<CustoAlocacao> > custosAlocacaoAulaOrdenado;
+   GGroup< CustoAlocacao *, GreaterPtr< CustoAlocacao > > custosAlocacaoAulaOrdenado;
 
    // Cada professor deve, preferencialmente, ministrar apenas
    // uma disciplina de um bloco curricular. A estrutura abaixo
@@ -61,23 +61,19 @@ private:
    // Estrutura: para cada sala, retorna-se o conjuntos de pares
    // dia da semana / de horario aula que a sala já está ocupada.
    //std::map< Sala *, GGroup< std::pair< int /*Dia Semana*/, HorarioAula * > >, LessPtr<Sala> > horariosAulaSala;
-   std::map< Sala*, 
-      std::map< int /*Dia*/, GGroup<HorarioAula*, LessPtr<HorarioAula> > >,
-      LessPtr<Sala> > horariosAulaSala;
-
+   std::map< Sala*,  std::map< int /*Dia*/, GGroup< HorarioAula *, LessPtr< HorarioAula > > >,
+			 LessPtr< Sala > > horariosAulaSala;
 
    // Métodos
-
-
-   void executaFuncaoPrioridade(Campus & campus, GGroup<Professor*, LessPtr<Professor> > & professoresCP);
+   void executaFuncaoPrioridade( Campus &, GGroup< Professor *, LessPtr< Professor > > & );
 
    // Função auxilar à função de prioridade.
    void calculaCustoFixProf( Professor &, Aula &, unsigned, int = 0, int = 0 );
 
    /* Função recursiva de alocação de aulas. */
-   void alocaAulasRec(bool primeiraTentativaAlocacao);
+   void alocaAulasRec( bool );
 
-   /* Função auxiliar. */
+   // Função auxiliar.
    Professor & addProfessor();
 
    // Função que utiliza a estrutura acima para

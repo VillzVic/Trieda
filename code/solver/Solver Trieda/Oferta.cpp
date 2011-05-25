@@ -10,11 +10,13 @@ Oferta::Oferta(void)
 
 Oferta::~Oferta(void)
 {
+
 }
 
-void Oferta::le_arvore(ItemOfertaCurso& elem)
+void Oferta::le_arvore( ItemOfertaCurso & elem )
 {
 	this->setId( elem.id() );
+
 	curriculo_id = elem.curriculoId();
 	curso_id = elem.cursoId();
 	turno_id = elem.turnoId();
