@@ -1605,16 +1605,19 @@ void ProblemDataLoader::substituiDisciplinasEquivalentes()
 							}
 
 							//-----------------------------------------------------------------------------
-							// TODO -- substituir disciplinas equivalentes
+							// Substituir disciplinas equivalentes
 							Disciplina * disciplina_substituta
-								= problemData->disciplinaSubstituida( curso, curriculo, disciplina );
+								= problemData->retornaDisciplinaSubstituta( curso, curriculo, disciplina );
+
 							if ( disciplina_substituta != NULL
 									&& disciplina_substituta->getId() == disciplina_comp->getId() )
 							{
-								std::pair< int, Disciplina * > novaDiscPeriodo
+								// O período é o mesmo, mas mudamos a disciplina
+								std::pair< int, Disciplina * > novoPeriodoDisciplina
 									= std::make_pair( ( *it_disciplina ).first, disciplina_substituta );
 
-								( *it_disciplina ) = novaDiscPeriodo;
+								( *it_disciplina ).swap( novoPeriodoDisciplina );
+								break;
 							}
 							//-----------------------------------------------------------------------------
 						}

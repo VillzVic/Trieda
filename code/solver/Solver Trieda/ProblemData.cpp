@@ -198,7 +198,7 @@ bool ProblemData::cursosCompativeis( Curso * curso1, Curso * curso2 )
 	return false;
 }
 
-Disciplina * ProblemData::disciplinaSubstituida( Curso * curso, Curriculo * curriculo, Disciplina * disciplina )
+Disciplina * ProblemData::retornaDisciplinaSubstituta( Curso * curso, Curriculo * curriculo, Disciplina * disciplina )
 {
     Disciplina * disciplina_equivalente = NULL;
 

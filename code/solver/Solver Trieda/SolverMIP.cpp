@@ -1638,19 +1638,15 @@ int SolverMIP::solveOperacional()
    SolucaoInicialOperacional solIni( *problemData );
 
    std::cout << "Gerando uma solucao inicial para o modelo operacional" << std::endl;
+   exit(1);
 
    SolucaoOperacional & solucaoOperacional = solIni.geraSolucaoInicial();
-
    solucaoOperacional.toString2();
-
-
-   //solucaoOperacional.validaSolucao( "Verificando a viabilidade da solucao inicial." );
+   solucaoOperacional.validaSolucao( "Verificando a viabilidade da solucao inicial." );
 
    // Avaliador
    Avaliador avaliador;
-   //avaliador.avaliaSolucao( solucaoOperacional, true );
-
-   // solucaoOperacional.toString2();
+   avaliador.avaliaSolucao( solucaoOperacional, true );
 
    // Estruturas de Vizinhança
    // NSSeqSwapEqBlocks nsSeqSwapEqBlocks ( *problemData );
@@ -2140,7 +2136,7 @@ int SolverMIP::cria_variavel_creditos( void )
 			   curso = curso_curriculo.first;
 			   curriculo = curso_curriculo.second;
 
-			   disciplina_equivalente = problemData->disciplinaSubstituida( curso, curriculo, disciplina );
+			   disciplina_equivalente = problemData->retornaDisciplinaSubstituta( curso, curriculo, disciplina );
 			   if ( disciplina_equivalente != NULL )
 			   {
 				   disciplina = disciplina_equivalente;
@@ -2262,7 +2258,7 @@ int SolverMIP::cria_variavel_creditos_permitir_alunos_varios_campi(void)
 			      curso = curso_curriculo.first;
 			      curriculo = curso_curriculo.second;
 
-			      disciplina_equivalente = problemData->disciplinaSubstituida( curso, curriculo, disciplina );
+			      disciplina_equivalente = problemData->retornaDisciplinaSubstituta( curso, curriculo, disciplina );
 			      if ( disciplina_equivalente != NULL )
 			      {
 				      disciplina = disciplina_equivalente;
@@ -2405,7 +2401,7 @@ int SolverMIP::cria_variavel_oferecimentos(void)
 			   curso = curso_curriculo.first;
 			   curriculo = curso_curriculo.second;
 
-			   disciplina_equivalente = problemData->disciplinaSubstituida( curso, curriculo, disciplina );
+			   disciplina_equivalente = problemData->retornaDisciplinaSubstituta( curso, curriculo, disciplina );
 			   if ( disciplina_equivalente != NULL )
 			   {
 				   disciplina = disciplina_equivalente;
@@ -2476,7 +2472,7 @@ int SolverMIP::cria_variavel_oferecimentos_permitir_alunos_varios_campi(void)
 			   curso = curso_curriculo.first;
 			   curriculo = curso_curriculo.second;
 
-			   disciplina_equivalente = problemData->disciplinaSubstituida( curso, curriculo, disciplina );
+			   disciplina_equivalente = problemData->retornaDisciplinaSubstituta( curso, curriculo, disciplina );
 			   if ( disciplina_equivalente != NULL )
 			   {
 				   disciplina = disciplina_equivalente;
@@ -2598,7 +2594,7 @@ int SolverMIP::cria_variavel_abertura(void)
 		 curso = curso_curriculo.first;
 		 curriculo = curso_curriculo.second;
 
-		 disciplina_equivalente = problemData->disciplinaSubstituida( curso, curriculo, disciplina );
+		 disciplina_equivalente = problemData->retornaDisciplinaSubstituta( curso, curriculo, disciplina );
 		 if ( disciplina_equivalente != NULL )
 	     {
 		     disciplina = disciplina_equivalente;
@@ -2690,7 +2686,7 @@ int SolverMIP::cria_variavel_abertura_permitir_alunos_varios_campi()
 		  curso = curso_curriculo.first;
 		  curriculo = curso_curriculo.second;
 
-		  disciplina_equivalente = problemData->disciplinaSubstituida( curso, curriculo, disciplina );
+		  disciplina_equivalente = problemData->retornaDisciplinaSubstituta( curso, curriculo, disciplina );
 		  if ( disciplina_equivalente != NULL )
 		  {
 		      disciplina = disciplina_equivalente;
@@ -2809,7 +2805,7 @@ int SolverMIP::cria_variavel_alunos(void)
 		 curso = curso_curriculo.first;
 		 curriculo = curso_curriculo.second;
 
-		 disciplina_equivalente = problemData->disciplinaSubstituida( curso, curriculo, ptDisc );
+		 disciplina_equivalente = problemData->retornaDisciplinaSubstituta( curso, curriculo, ptDisc );
 		 if ( disciplina_equivalente != NULL )
 	     {
 		     ptDisc = disciplina_equivalente;
@@ -2912,7 +2908,7 @@ int SolverMIP::cria_variavel_aloc_alunos(void)
 		 curso = curso_curriculo.first;
 		 curriculo = curso_curriculo.second;
 
-		 disciplina_equivalente = problemData->disciplinaSubstituida( curso, curriculo, disciplina );
+		 disciplina_equivalente = problemData->retornaDisciplinaSubstituta( curso, curriculo, disciplina );
 	     if ( disciplina_equivalente != NULL )
 		 {
 		     disciplina = disciplina_equivalente;
@@ -2975,7 +2971,7 @@ int SolverMIP::cria_variavel_aloc_alunos_permitir_alunos_varios_campi( void )
 		 curso = curso_curriculo.first;
 		 curriculo = curso_curriculo.second;
 
-		 disciplina_equivalente = problemData->disciplinaSubstituida( curso, curriculo, disciplina );
+		 disciplina_equivalente = problemData->retornaDisciplinaSubstituta( curso, curriculo, disciplina );
 		 if ( disciplina_equivalente != NULL )
 		 {
 		     disciplina = disciplina_equivalente;
@@ -3070,7 +3066,7 @@ int SolverMIP::cria_variavel_consecutivos( void )
 			      curso = curso_curriculo.first;
 			      curriculo = curso_curriculo.second;
 
-			      disciplina_equivalente = problemData->disciplinaSubstituida( curso, curriculo, disciplina );
+			      disciplina_equivalente = problemData->retornaDisciplinaSubstituta( curso, curriculo, disciplina );
 			      if ( disciplina_equivalente != NULL )
 			      {
 				      disciplina = disciplina_equivalente;
@@ -3169,7 +3165,7 @@ int SolverMIP::cria_variavel_min_creds(void)
 		 curso = curso_curriculo.first;
 		 curriculo = curso_curriculo.second;
 
-		 disciplina_equivalente = problemData->disciplinaSubstituida( curso, curriculo, disciplina );
+		 disciplina_equivalente = problemData->retornaDisciplinaSubstituta( curso, curriculo, disciplina );
 	     if ( disciplina_equivalente != NULL )
 		 {
 			 disciplina = disciplina_equivalente;
@@ -3249,7 +3245,7 @@ int SolverMIP::cria_variavel_max_creds(void)
 		 curso = curso_curriculo.first;
 		 curriculo = curso_curriculo.second;
 
-		 disciplina_equivalente = problemData->disciplinaSubstituida( curso, curriculo, disciplina );
+		 disciplina_equivalente = problemData->retornaDisciplinaSubstituta( curso, curriculo, disciplina );
 		 if ( disciplina_equivalente != NULL )
 		 {
 				   disciplina = disciplina_equivalente;
@@ -3333,7 +3329,7 @@ int SolverMIP::cria_variavel_aloc_disciplina(void)
 			   curso = curso_curriculo.first;
 			   curriculo = curso_curriculo.second;
 
-			   disciplina_equivalente = problemData->disciplinaSubstituida( curso, curriculo, disciplina );
+			   disciplina_equivalente = problemData->retornaDisciplinaSubstituta( curso, curriculo, disciplina );
 			   if ( disciplina_equivalente != NULL )
 			   {
 				   disciplina = disciplina_equivalente;
@@ -3398,7 +3394,7 @@ int SolverMIP::cria_variavel_aloc_disciplina_permitir_alunos_varios_campi( void 
 			   curso = curso_curriculo.first;
 			   curriculo = curso_curriculo.second;
 
-			   disciplina_equivalente = problemData->disciplinaSubstituida( curso, curriculo, disciplina );
+			   disciplina_equivalente = problemData->retornaDisciplinaSubstituta( curso, curriculo, disciplina );
 			   if ( disciplina_equivalente != NULL )
 			   {
 				   disciplina = disciplina_equivalente;
@@ -3618,7 +3614,7 @@ int SolverMIP::cria_variavel_de_folga_dist_cred_dia_superior(void)
 			   curso = curso_curriculo.first;
 			   curriculo = curso_curriculo.second;
 
-			   disciplina_equivalente = problemData->disciplinaSubstituida( curso, curriculo, disciplina );
+			   disciplina_equivalente = problemData->retornaDisciplinaSubstituta( curso, curriculo, disciplina );
 			   if ( disciplina_equivalente != NULL )
 			   {
 				   disciplina = disciplina_equivalente;
@@ -3712,7 +3708,7 @@ int SolverMIP::cria_variavel_de_folga_dist_cred_dia_superior_permitir_alunos_var
 			   curso = curso_curriculo.first;
 			   curriculo = curso_curriculo.second;
 
-			   disciplina_equivalente = problemData->disciplinaSubstituida( curso, curriculo, disciplina );
+			   disciplina_equivalente = problemData->retornaDisciplinaSubstituta( curso, curriculo, disciplina );
 			   if ( disciplina_equivalente != NULL )
 			   {
 				   disciplina = disciplina_equivalente;
@@ -3837,7 +3833,7 @@ int SolverMIP::cria_variavel_de_folga_dist_cred_dia_inferior(void)
 			   curso = curso_curriculo.first;
 			   curriculo = curso_curriculo.second;
 
-			   disciplina_equivalente = problemData->disciplinaSubstituida( curso, curriculo, disciplina );
+			   disciplina_equivalente = problemData->retornaDisciplinaSubstituta( curso, curriculo, disciplina );
 			   if ( disciplina_equivalente != NULL )
 			   {
 				   disciplina = disciplina_equivalente;
@@ -3933,7 +3929,7 @@ int SolverMIP::cria_variavel_de_folga_dist_cred_dia_inferior_permitir_alunos_var
 			   curso = curso_curriculo.first;
 			   curriculo = curso_curriculo.second;
 
-			   disciplina_equivalente = problemData->disciplinaSubstituida( curso, curriculo, disciplina );
+			   disciplina_equivalente = problemData->retornaDisciplinaSubstituta( curso, curriculo, disciplina );
 			   if ( disciplina_equivalente != NULL )
 			   {
 				   disciplina = disciplina_equivalente;
@@ -4104,7 +4100,7 @@ int SolverMIP::cria_variavel_de_folga_aloc_alunos_curso_incompat()
 			 curso = curso_curriculo.first;
 			 curriculo = curso_curriculo.second;
 
-			 disciplina_equivalente = problemData->disciplinaSubstituida( curso, curriculo, disciplina );
+			 disciplina_equivalente = problemData->retornaDisciplinaSubstituta( curso, curriculo, disciplina );
 			 if ( disciplina_equivalente != NULL )
 			 {
 				 disciplina = disciplina_equivalente;
@@ -4170,7 +4166,7 @@ int SolverMIP::cria_variavel_de_folga_aloc_alunos_curso_incompat_permitir_alunos
 			 curso = curso_curriculo.first;
 			 curriculo = curso_curriculo.second;
 
-			 disciplina_equivalente = problemData->disciplinaSubstituida( curso, curriculo, disciplina );
+			 disciplina_equivalente = problemData->retornaDisciplinaSubstituta( curso, curriculo, disciplina );
 			 if ( disciplina_equivalente != NULL )
 			 {
 				 disciplina = disciplina_equivalente;
@@ -4264,7 +4260,7 @@ int SolverMIP::cria_variavel_de_folga_demanda_disciplina()
 		 curso = curso_curriculo.first;
 		 curriculo = curso_curriculo.second;
 
-		 disciplina_equivalente = problemData->disciplinaSubstituida( curso, curriculo, disciplina );
+		 disciplina_equivalente = problemData->retornaDisciplinaSubstituta( curso, curriculo, disciplina );
 		 if ( disciplina_equivalente != NULL )
 		 {
 			 disciplina = disciplina_equivalente;
@@ -4352,7 +4348,7 @@ int SolverMIP::cria_variavel_combinacao_divisao_credito()
 	  curso = curso_curriculo.first;
 	  curriculo = curso_curriculo.second;
 	   
-	  disciplina_equivalente = problemData->disciplinaSubstituida( curso, curriculo, disciplina );
+	  disciplina_equivalente = problemData->retornaDisciplinaSubstituta( curso, curriculo, disciplina );
 	  if ( disciplina_equivalente != NULL )
 	  {
 		  disciplina = disciplina_equivalente;
@@ -4432,7 +4428,7 @@ int SolverMIP::cria_variavel_de_folga_combinacao_divisao_credito()
 			      curso = curso_curriculo.first;
 			      curriculo = curso_curriculo.second;
 
-			      disciplina_equivalente = problemData->disciplinaSubstituida( curso, curriculo, disciplina );
+			      disciplina_equivalente = problemData->retornaDisciplinaSubstituta( curso, curriculo, disciplina );
 			      if ( disciplina_equivalente != NULL )
 			      {
 				      disciplina = disciplina_equivalente;
@@ -4525,7 +4521,7 @@ int SolverMIP::cria_variavel_creditos_modificada(void)
 			   curso = curso_curriculo.first;
 			   curriculo = curso_curriculo.second;
 
-			   disciplina_equivalente = problemData->disciplinaSubstituida( curso, curriculo, disciplina );
+			   disciplina_equivalente = problemData->retornaDisciplinaSubstituta( curso, curriculo, disciplina );
 			   if ( disciplina_equivalente != NULL )
 			   {
 				   disciplina = disciplina_equivalente;
@@ -4592,7 +4588,7 @@ int SolverMIP::cria_variavel_creditos_modificada_permitir_alunos_varios_campi(vo
 			   curso = curso_curriculo.first;
 			   curriculo = curso_curriculo.second;
 
-			   disciplina_equivalente = problemData->disciplinaSubstituida( curso, curriculo, disciplina );
+			   disciplina_equivalente = problemData->retornaDisciplinaSubstituta( curso, curriculo, disciplina );
 			   if ( disciplina_equivalente != NULL )
 			   {
 				   disciplina = disciplina_equivalente;
@@ -4686,7 +4682,7 @@ int SolverMIP::cria_variavel_abertura_compativel( void )
 				  curso = curso_curriculo.first;
 				  curriculo = curso_curriculo.second;
 
-				  disciplina_equivalente = problemData->disciplinaSubstituida( curso, curriculo, disciplina );
+				  disciplina_equivalente = problemData->retornaDisciplinaSubstituta( curso, curriculo, disciplina );
 				  if ( disciplina_equivalente != NULL )
 				  {
 					  disciplina = disciplina_equivalente;
@@ -5149,7 +5145,7 @@ int SolverMIP::cria_restricao_carga_horaria(void)
 		 curso = curso_curriculo.first;
 		 curriculo = curso_curriculo.second;
 
-	     disciplina_equivalente = problemData->disciplinaSubstituida( curso, curriculo, disciplina );
+	     disciplina_equivalente = problemData->retornaDisciplinaSubstituta( curso, curriculo, disciplina );
 		 if ( disciplina_equivalente != NULL )
 		 {
 			 disciplina = disciplina_equivalente;
@@ -5298,7 +5294,7 @@ int SolverMIP::cria_restricao_max_cred_sd( void )
 			    curso = curso_curriculo.first;
 			    curriculo = curso_curriculo.second;
 
-			    if ( problemData->disciplinaSubstituida( curso, curriculo, disciplina ) != NULL )
+			    if ( problemData->retornaDisciplinaSubstituta( curso, curriculo, disciplina ) != NULL )
 				{
 					// Como a disciplina foi substituída,
 					// não percorremos os dias letivos da mesma
@@ -5428,7 +5424,7 @@ int SolverMIP::cria_restricao_min_cred_dd(void)
 			   curso = curso_curriculo.first;
 			   curriculo = curso_curriculo.second;
 
-			   disciplina_equivalente = problemData->disciplinaSubstituida( curso, curriculo, disciplina );
+			   disciplina_equivalente = problemData->retornaDisciplinaSubstituta( curso, curriculo, disciplina );
 			   if ( disciplina_equivalente != NULL )
 			   {
 				   disciplina = disciplina_equivalente;
@@ -5580,7 +5576,7 @@ int SolverMIP::cria_restricao_ativacao_var_o(void)
 			   curso = curso_curriculo.first;
 			   curriculo = curso_curriculo.second;
 
-			   disciplina_equivalente = problemData->disciplinaSubstituida( curso, curriculo, disciplina );
+			   disciplina_equivalente = problemData->retornaDisciplinaSubstituta( curso, curriculo, disciplina );
 			   if ( disciplina_equivalente != NULL )
 			   {
 				   disciplina = disciplina_equivalente;
@@ -5717,7 +5713,7 @@ int SolverMIP::cria_restricao_evita_sobreposicao(void)
 			   curso = curso_curriculo.first;
 			   curriculo = curso_curriculo.second;
 
-			   disciplina_equivalente = problemData->disciplinaSubstituida( curso, curriculo, disciplina );
+			   disciplina_equivalente = problemData->retornaDisciplinaSubstituta( curso, curriculo, disciplina );
 			   if ( disciplina_equivalente != NULL )
 			   {
 				   disciplina = disciplina_equivalente;
@@ -5830,7 +5826,7 @@ int SolverMIP::cria_restricao_disciplina_sala(void)
 			   curso = curso_curriculo.first;
 			   curriculo = curso_curriculo.second;
 
-			   disciplina_equivalente = problemData->disciplinaSubstituida( curso, curriculo, disciplina );
+			   disciplina_equivalente = problemData->retornaDisciplinaSubstituta( curso, curriculo, disciplina );
 			   if ( disciplina_equivalente != NULL )
 			   {
 				   disciplina = disciplina_equivalente;
@@ -5952,7 +5948,7 @@ int SolverMIP::cria_restricao_turma_sala(void)
 	  curso = curso_curriculo.first;
 	  curriculo = curso_curriculo.second;
 
-	  disciplina_equivalente = problemData->disciplinaSubstituida( curso, curriculo, disciplina );
+	  disciplina_equivalente = problemData->retornaDisciplinaSubstituta( curso, curriculo, disciplina );
 	  if ( disciplina_equivalente != NULL )
 	  {
 		  disciplina = disciplina_equivalente;
@@ -6056,7 +6052,7 @@ int SolverMIP::cria_restricao_evita_turma_disc_camp_d(void)
 	  curso = curso_curriculo.first;
 	  curriculo = curso_curriculo.second;
 
-	  disciplina_equivalente = problemData->disciplinaSubstituida( curso, curriculo, disciplina );
+	  disciplina_equivalente = problemData->retornaDisciplinaSubstituta( curso, curriculo, disciplina );
 	  if ( disciplina_equivalente != NULL )
 	  {
 		  disciplina = disciplina_equivalente;
@@ -6184,7 +6180,7 @@ int SolverMIP::cria_restricao_turmas_bloco(void)
 			   curso = curso_curriculo.first;
 			   curriculo = curso_curriculo.second;
 
-			   disciplina_equivalente = problemData->disciplinaSubstituida( curso, curriculo, disciplina );
+			   disciplina_equivalente = problemData->retornaDisciplinaSubstituta( curso, curriculo, disciplina );
 			   if ( disciplina_equivalente != NULL )
 			   {
 				   disciplina = disciplina_equivalente;
@@ -6321,7 +6317,7 @@ int SolverMIP::cria_restricao_max_cred_disc_bloco(void)
 			   curso = curso_curriculo.first;
 			   curriculo = curso_curriculo.second;
 
-			   disciplina_equivalente = problemData->disciplinaSubstituida( curso, curriculo, disciplina );
+			   disciplina_equivalente = problemData->retornaDisciplinaSubstituta( curso, curriculo, disciplina );
 			   if ( disciplina_equivalente != NULL )
 			   {
 				   disciplina = disciplina_equivalente;
@@ -6553,7 +6549,7 @@ int SolverMIP::cria_restricao_lim_cred_diar_disc(void)
 			   curso = curso_curriculo.first;
 			   curriculo = curso_curriculo.second;
 
-			   disciplina_equivalente = problemData->disciplinaSubstituida( curso, curriculo, disciplina );
+			   disciplina_equivalente = problemData->retornaDisciplinaSubstituta( curso, curriculo, disciplina );
 			   if ( disciplina_equivalente != NULL )
 			   {
 				   disciplina = disciplina_equivalente;
@@ -6686,7 +6682,7 @@ int SolverMIP::cria_restricao_cap_aloc_dem_disc(void)
 		 curso = curso_curriculo.first;
 		 curriculo = curso_curriculo.second;
 
-		 disciplina_equivalente = problemData->disciplinaSubstituida( curso, curriculo, disciplina );
+		 disciplina_equivalente = problemData->retornaDisciplinaSubstituta( curso, curriculo, disciplina );
 		 if ( disciplina_equivalente != NULL )
 		 {
 			 disciplina = disciplina_equivalente;
@@ -6811,7 +6807,7 @@ int SolverMIP::cria_restricao_cap_sala_compativel_turma(void)
 		 curso = curso_curriculo.first;
 		 curriculo = curso_curriculo.second;
 
-		 disciplina_equivalente = problemData->disciplinaSubstituida( curso, curriculo, disciplina );
+		 disciplina_equivalente = problemData->retornaDisciplinaSubstituta( curso, curriculo, disciplina );
 		 if ( disciplina_equivalente != NULL )
 		 {
 			 disciplina = disciplina_equivalente;
@@ -7110,7 +7106,7 @@ int SolverMIP::cria_restricao_cap_sala_unidade(void)
 			   curso = curso_curriculo.first;
 			   curriculo = curso_curriculo.second;
 
-			   disciplina_equivalente = problemData->disciplinaSubstituida( curso, curriculo, disciplina );
+			   disciplina_equivalente = problemData->retornaDisciplinaSubstituta( curso, curriculo, disciplina );
 			   if ( disciplina_equivalente != NULL )
 			   {
 				   disciplina = disciplina_equivalente;
@@ -7250,7 +7246,7 @@ int SolverMIP::cria_restricao_turma_disc_dias_consec(void)
 	  curso = curso_curriculo.first;
 	  curriculo = curso_curriculo.second;
 
-	  disciplina_equivalente = problemData->disciplinaSubstituida( curso, curriculo, disciplina );
+	  disciplina_equivalente = problemData->retornaDisciplinaSubstituta( curso, curriculo, disciplina );
 	  if ( disciplina_equivalente != NULL )
 	  {
 		  disciplina = disciplina_equivalente;
@@ -7412,7 +7408,7 @@ int SolverMIP::cria_restricao_min_creds_turm_bloco(void)
 			   curso = curso_curriculo.first;
 			   curriculo = curso_curriculo.second;
 
-			   disciplina_equivalente = problemData->disciplinaSubstituida( curso, curriculo, disciplina );
+			   disciplina_equivalente = problemData->retornaDisciplinaSubstituta( curso, curriculo, disciplina );
 			   if ( disciplina_equivalente != NULL )
 			   {
 				   disciplina = disciplina_equivalente;
@@ -7539,7 +7535,7 @@ int SolverMIP::cria_restricao_max_creds_turm_bloco(void)
 			   curso = curso_curriculo.first;
 			   curriculo = curso_curriculo.second;
 
-			   disciplina_equivalente = problemData->disciplinaSubstituida( curso, curriculo, disciplina );
+			   disciplina_equivalente = problemData->retornaDisciplinaSubstituta( curso, curriculo, disciplina );
 			   if ( disciplina_equivalente != NULL )
 			   {
 				   disciplina = disciplina_equivalente;
@@ -7650,7 +7646,7 @@ int SolverMIP::cria_restricao_aluno_curso_disc(void)
 			curso = curso_curriculo.first;
 			curriculo = curso_curriculo.second;
 
-			disciplina_equivalente = problemData->disciplinaSubstituida( curso, curriculo, disciplina );
+			disciplina_equivalente = problemData->retornaDisciplinaSubstituta( curso, curriculo, disciplina );
 			if ( disciplina_equivalente != NULL )
 			{
 				disciplina = disciplina_equivalente;
@@ -7775,7 +7771,7 @@ int SolverMIP::cria_restricao_alunos_cursos_dif(void)
 		 curso = curso_curriculo.first;
 		 curriculo = curso_curriculo.second;
 
-		 disciplina_equivalente = problemData->disciplinaSubstituida( curso, curriculo, disciplina );
+		 disciplina_equivalente = problemData->retornaDisciplinaSubstituta( curso, curriculo, disciplina );
 		 if ( disciplina_equivalente != NULL )
 		 {
 			 disciplina = disciplina_equivalente;
@@ -7929,7 +7925,7 @@ int SolverMIP::cria_restricao_de_folga_dist_cred_dia(void)
 			   curso = curso_curriculo.first;
 			   curriculo = curso_curriculo.second;
 
-			   disciplina_equivalente = problemData->disciplinaSubstituida( curso, curriculo, disciplina );
+			   disciplina_equivalente = problemData->retornaDisciplinaSubstituta( curso, curriculo, disciplina );
 			   if ( disciplina_equivalente != NULL )
 			   {
 				   disciplina = disciplina_equivalente;
@@ -8196,7 +8192,7 @@ int SolverMIP::cria_restricao_limita_abertura_turmas()
 		 curso = curso_curriculo.first;
 		 curriculo = curso_curriculo.second;
 
-		 disciplina_equivalente = problemData->disciplinaSubstituida( curso, curriculo, disciplina );
+		 disciplina_equivalente = problemData->retornaDisciplinaSubstituta( curso, curriculo, disciplina );
 		 if ( disciplina_equivalente != NULL )
 		 {
 			 disciplina = disciplina_equivalente;
@@ -8315,7 +8311,7 @@ int SolverMIP::cria_restricao_abre_turmas_em_sequencia(void)
 	  curso = curso_curriculo.first;
 	  curriculo = curso_curriculo.second;
 
-	  disciplina_equivalente = problemData->disciplinaSubstituida( curso, curriculo, disciplina );
+	  disciplina_equivalente = problemData->retornaDisciplinaSubstituta( curso, curriculo, disciplina );
 	  if ( disciplina_equivalente != NULL )
 	  {
 		  disciplina = disciplina_equivalente;
@@ -8451,7 +8447,7 @@ int SolverMIP::cria_restricao_divisao_credito()
 	  curso = curso_curriculo.first;
 	  curriculo = curso_curriculo.second;
 
-	  disciplina_equivalente = problemData->disciplinaSubstituida( curso, curriculo, disciplina );
+	  disciplina_equivalente = problemData->retornaDisciplinaSubstituta( curso, curriculo, disciplina );
 	  if ( disciplina_equivalente != NULL )
 	  {
 		  disciplina = disciplina_equivalente;
@@ -8596,7 +8592,7 @@ int SolverMIP::cria_restricao_combinacao_divisao_credito(){
 	  curso = curso_curriculo.first;
 	  curriculo = curso_curriculo.second;
 
-	  disciplina_equivalente = problemData->disciplinaSubstituida( curso, curriculo, disciplina );
+	  disciplina_equivalente = problemData->retornaDisciplinaSubstituta( curso, curriculo, disciplina );
 	  if ( disciplina_equivalente != NULL )
 	  {
 		  disciplina = disciplina_equivalente;
@@ -8701,7 +8697,7 @@ int SolverMIP::cria_restricao_ativacao_var_y()
 			   curso = curso_curriculo.first;
 			   curriculo = curso_curriculo.second;
 
-			   disciplina_equivalente = problemData->disciplinaSubstituida( curso, curriculo, disciplina );
+			   disciplina_equivalente = problemData->retornaDisciplinaSubstituta( curso, curriculo, disciplina );
 			   if ( disciplina_equivalente != NULL )
 			   {
 				   disciplina = disciplina_equivalente;
@@ -8824,7 +8820,7 @@ int SolverMIP::cria_restricao_max_creds_disc_dia()
 	  curso = curso_curriculo.first;
 	  curriculo = curso_curriculo.second;
 
-	  disciplina_equivalente = problemData->disciplinaSubstituida( curso, curriculo, disciplina );
+	  disciplina_equivalente = problemData->retornaDisciplinaSubstituta( curso, curriculo, disciplina );
 	  if ( disciplina_equivalente != NULL )
 	  {
 		  disciplina = disciplina_equivalente;
@@ -8990,7 +8986,7 @@ int SolverMIP::cria_restricao_max_creds_bloco_dia()
 		    curso = curso_curriculo.first;
 		    curriculo = curso_curriculo.second;
 
-		    disciplina_equivalente = problemData->disciplinaSubstituida( curso, curriculo, disciplina );
+		    disciplina_equivalente = problemData->retornaDisciplinaSubstituta( curso, curriculo, disciplina );
 		    if ( disciplina_equivalente != NULL )
 		    {
 			    disciplina = disciplina_equivalente;
@@ -9065,7 +9061,7 @@ int SolverMIP::cria_restricao_ativacao_var_zc()
 	  curso = curso_curriculo.first;
 	  curriculo = curso_curriculo.second;
 
-	  disciplina_equivalente = problemData->disciplinaSubstituida( curso, curriculo, disciplina );
+	  disciplina_equivalente = problemData->retornaDisciplinaSubstituta( curso, curriculo, disciplina );
 	  if ( disciplina_equivalente != NULL )
 	  {
 		  disciplina = disciplina_equivalente;
@@ -9185,7 +9181,7 @@ int SolverMIP::cria_restricao_disciplinas_incompativeis()
 	  curso = curso_curriculo.first;
 	  curriculo = curso_curriculo.second;
 
-	  disciplina_equivalente = problemData->disciplinaSubstituida( curso, curriculo, disciplina );
+	  disciplina_equivalente = problemData->retornaDisciplinaSubstituta( curso, curriculo, disciplina );
 	  if ( disciplina_equivalente != NULL )
 	  {
 		  disciplina = disciplina_equivalente;
@@ -9334,7 +9330,7 @@ int SolverMIP::cria_restricao_abertura_bloco_mesmoTPS()
 							   curso = curso_curriculo.first;
 							   curriculo = curso_curriculo.second;
 
-							   disciplina_equivalente = problemData->disciplinaSubstituida( curso, curriculo, disciplina );
+							   disciplina_equivalente = problemData->retornaDisciplinaSubstituta( curso, curriculo, disciplina );
 							   if ( disciplina_equivalente != NULL )
 							   {
 								   disciplina = disciplina_equivalente;

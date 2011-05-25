@@ -242,7 +242,7 @@ public:
    // Dada uma disciplina, esse método retorna qual
    // disciplina a substituiu, ou retorna NULL caso
    // a disciplina não tenha sido substituída
-   Disciplina * disciplinaSubstituida( Curso *, Curriculo *, Disciplina * );
+   Disciplina * retornaDisciplinaSubstituta( Curso *, Curriculo *, Disciplina * );
 
    std::map< Curso *, GGroup< std::pair< Curriculo *, Oferta * > > > map_Curso_CurriculosOfertas;
 
