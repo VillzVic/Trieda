@@ -31,6 +31,7 @@ public class ToolBarView extends MyComposite implements ToolBarPresenter.Display
 	private ToolBar professoresToolBar;
 	private ToolBar relatoriosToolBar;
 	private ToolBar administracaoToolBar;
+	private ToolBar calendarioToolBar;
 	
 	private ToolBar planejamentoToolBar;
 		
@@ -127,6 +128,7 @@ public class ToolBarView extends MyComposite implements ToolBarPresenter.Display
 		TabItem professoresTabItem = new TabItem("Professores");
 		TabItem relatoriosTabItem = new TabItem("Relatórios");
 		TabItem administracaoTabItem = new TabItem("Administração");
+		TabItem calendarioTabItem = new TabItem("Calendário");
 		
 		planejamentoToolBar = new ToolBar();
 		
@@ -139,6 +141,7 @@ public class ToolBarView extends MyComposite implements ToolBarPresenter.Display
 		professoresToolBar = new ToolBar();
 		relatoriosToolBar = new ToolBar();
 		administracaoToolBar = new ToolBar();
+		calendarioToolBar = new ToolBar();
 
 		campiTabItem.add(campiToolBar);
 		unidadesTabItem.add(unidadesToolBar);
@@ -148,6 +151,7 @@ public class ToolBarView extends MyComposite implements ToolBarPresenter.Display
 		professoresTabItem.add(professoresToolBar);
 		relatoriosTabItem.add(relatoriosToolBar);
 		administracaoTabItem.add(administracaoToolBar);
+		calendarioTabItem.add(calendarioToolBar);
 		
 		createGroups();
 		
@@ -170,6 +174,7 @@ public class ToolBarView extends MyComposite implements ToolBarPresenter.Display
 		masterDataTab.add(professoresTabItem);
 		masterDataTab.add(relatoriosTabItem);
 		masterDataTab.add(administracaoTabItem);
+		masterDataTab.add(calendarioTabItem);
 		
 		planejamentoPanel.add(planejamentoToolBar);
 		masterDataPanel.setTopComponent(masterDataTab);
@@ -189,6 +194,7 @@ public class ToolBarView extends MyComposite implements ToolBarPresenter.Display
 		createProfessores();
 		createRelatorios();
 		createAdministracao();
+		createCalendario();
 		
 		createPlanejamento();
 	}
@@ -208,15 +214,6 @@ public class ToolBarView extends MyComposite implements ToolBarPresenter.Display
 		
 		campusDeslocamentoListCampiBt = createButton("Deslocamento<br />entre Campi", "Deslocamento entre Campi", Resources.DEFAULTS.deslocamentoCampi24());
 		campiToolBar.add(campusDeslocamentoListCampiBt);
-		
-		semanasLetivaListCampiBt = createButton("Semanas<br />Letivas", "Semanas Letivas", Resources.DEFAULTS.semanaLetiva24());
-		campiToolBar.add(semanasLetivaListCampiBt);
-		
-		horariosAulaListCampiBt = createButton("Horários<br />de Aula", "Horários de Aula", Resources.DEFAULTS.horarioAula24());
-		campiToolBar.add(horariosAulaListCampiBt);
-		
-		turnosListCampiBt = createButton("Turnos", "Turnos", Resources.DEFAULTS.turno24());
-		campiToolBar.add(turnosListCampiBt);
 		
 		ofertasListCampiBt = createButton("Oferta de Cursos<br />em Campi", "Oferta de Cursos em Campi", Resources.DEFAULTS.ofertaCurso24());
 		campiToolBar.add(ofertasListCampiBt);
@@ -354,6 +351,18 @@ public class ToolBarView extends MyComposite implements ToolBarPresenter.Display
 		
 		exportarBt = createButton("Exportar<br />Tudo", "Exportar Tudo", Resources.DEFAULTS.exportar24());
 		administracaoToolBar.add(exportarBt);
+	}
+	
+	private void createCalendario() {
+		
+		semanasLetivaListCampiBt = createButton("Semanas<br />Letivas", "Semanas Letivas", Resources.DEFAULTS.semanaLetiva24());
+		calendarioToolBar.add(semanasLetivaListCampiBt);
+		
+		horariosAulaListCampiBt = createButton("Horários<br />de Aula", "Horários de Aula", Resources.DEFAULTS.horarioAula24());
+		calendarioToolBar.add(horariosAulaListCampiBt);
+		
+		turnosListCampiBt = createButton("Turnos", "Turnos", Resources.DEFAULTS.turno24());
+		calendarioToolBar.add(turnosListCampiBt);
 	}
 	
 	private void createPlanejamento() {
