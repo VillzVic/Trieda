@@ -27,6 +27,8 @@ public:
    // Load the XML file
    void load();
 
+   void geraRefsOfertasDemandas();
+
    void referenciaDisciplinasEquivalentesIncompativeis();
 
    void referenciaDisciplinasCurriculos();
@@ -56,10 +58,11 @@ public:
    // Establece os dias letivos comuns entre os professores e suas disciplinas.
    void estabeleceDiasLetivosProfessorDisciplina();
 
-   /* */
+   // Trata das equivalências entre disciplinas
    void relacionaDisciplinasEquivalentes();
-
    void substituiDisciplinasEquivalentes();
+   void atualizaDemandas();
+   GGroup< Demanda *, LessPtr< Demanda > > retornaDemandaDisciplinasSubstituidas( Curso *, Curriculo *, Disciplina * );
 
    /* */
    void divideDisciplinas();

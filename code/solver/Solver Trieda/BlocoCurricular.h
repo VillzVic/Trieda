@@ -22,7 +22,7 @@ public:
    Campus * campus;
    Curriculo * curriculo;
 
-   GGroup< Disciplina * > disciplinas;
+   GGroup< Disciplina *, LessPtr< Disciplina > > disciplinas;
    GGroup< int > diasLetivos;
 
    // Associa às disciplinas do bloco

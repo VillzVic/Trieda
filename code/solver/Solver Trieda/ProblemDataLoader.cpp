@@ -28,6 +28,10 @@ void ProblemDataLoader::load()
 
    std::cout << "Some preprocessing..." << std::endl;
 
+   // ---------
+   geraRefsOfertasDemandas();
+
+   // ---------
    referenciaDisciplinasEquivalentesIncompativeis();
 
    // ---------
@@ -137,6 +141,39 @@ void ProblemDataLoader::load()
 
    // ---------
    print_stats();
+}
+
+void ProblemDataLoader::geraRefsOfertasDemandas()
+{
+   ITERA_GGROUP_LESSPTR( it_oferta, problemData->ofertas, Oferta )
+   {
+      find_and_set_lessptr( it_oferta->getCursoId(),
+							problemData->cursos,
+							it_oferta->curso, false );
+
+      find_and_set_lessptr( it_oferta->getCurriculoId(),
+							it_oferta->curso->curriculos,
+							it_oferta->curriculo, false );
+
+      find_and_set_lessptr( it_oferta->getTurnoId(),
+							problemData->calendario->turnos,
+							it_oferta->turno, false );
+
+      find_and_set_lessptr( it_oferta->getCampusId(),
+							problemData->campi,
+							it_oferta->campus, false );
+   }
+
+   ITERA_GGROUP_LESSPTR( it_dem, problemData->demandas, Demanda ) 
+   {
+      find_and_set_lessptr( it_dem->getOfertaId(),
+							problemData->ofertas,
+							it_dem->oferta, false );
+
+      find_and_set_lessptr( it_dem->getDisciplinaId(),
+							problemData->disciplinas,
+							it_dem->disciplina, false );
+   }
 }
 
 void ProblemDataLoader::criaFixacoesDisciplinasDivididas()
@@ -668,8 +705,7 @@ void ProblemDataLoader::estabeleceDiasLetivosBlocoCampus()
 {
    // Analisar esse metodo e o de criacao de blocos curriculares.
    // Um bloco pode pertencer a mais de um campus !?
-   ITERA_GGROUP( it_Bloco_Curric, problemData->blocos,
-				 BlocoCurricular )
+   ITERA_GGROUP_LESSPTR( it_Bloco_Curric, problemData->blocos, BlocoCurricular )
    {
       ITERA_GGROUP_N_PT( it_Dia_Letivo, it_Bloco_Curric->diasLetivos, int )
       {
@@ -831,9 +867,9 @@ void ProblemDataLoader::estabeleceDiasLetivosProfessorDisciplina()
    ITERA_GGROUP_LESSPTR( itCampus, problemData->campi, Campus )
    {
       // TODO: Tem que ser para os blocos do campus em questao !!!!
-      ITERA_GGROUP( itBloco, problemData->blocos, BlocoCurricular )
+      ITERA_GGROUP_LESSPTR( itBloco, problemData->blocos, BlocoCurricular )
       {
-         ITERA_GGROUP( itDisc, itBloco->disciplinas, Disciplina )
+         ITERA_GGROUP_LESSPTR( itDisc, itBloco->disciplinas, Disciplina )
          {
             ITERA_GGROUP_LESSPTR( it_prof, itCampus->professores, Professor )
             {							  
@@ -1633,12 +1669,97 @@ void ProblemDataLoader::substituiDisciplinasEquivalentes()
 			}
 		}
 	}
+
+	atualizaDemandas();
+}
+
+void ProblemDataLoader::atualizaDemandas()
+{
+	Curso * curso = NULL;
+	Curriculo * curriculo = NULL;
+
+	Disciplina * disciplina = NULL;
+	Disciplina * disciplina_substituta = NULL;
+
+	Demanda * demanda = NULL;
+
+    std::map< std::pair< Curso *, Curriculo * >,
+	    std::map< Disciplina *, Disciplina * > >::iterator it_map
+	    = problemData->map_CursoCurriculo_DiscSubst.begin();
+    for (; it_map != problemData->map_CursoCurriculo_DiscSubst.end(); it_map++ )
+    {
+		curso = ( *it_map ).first.first;
+		curriculo = ( *it_map ).first.second;
+
+		std::map< Disciplina *, Disciplina * >::iterator
+			it_disciplinas = ( *it_map ).second.begin();
+
+		for (; it_disciplinas != ( *it_map ).second.end(); it_disciplinas++ )
+		{
+			disciplina = it_disciplinas->first;
+			disciplina_substituta = it_disciplinas->second;
+
+			GGroup< Demanda *, LessPtr< Demanda > > demandas
+				= retornaDemandaDisciplinasSubstituidas( curso, curriculo, disciplina );
+
+			ITERA_GGROUP_LESSPTR( it_demanda, demandas, Demanda )
+			{
+				demanda = ( *it_demanda );
+
+				demanda->setDisciplinaId( disciplina_substituta->getId() );
+				demanda->disciplina = disciplina_substituta;
+				demanda->setQuantidade( demanda->getQuantidade() + disciplina_substituta->getDemandaTotal() );
+			}
+		}
+    }
+}
+
+GGroup< Demanda *, LessPtr< Demanda > > ProblemDataLoader::retornaDemandaDisciplinasSubstituidas(
+	Curso * curso, Curriculo * curriculo, Disciplina * disciplina )
+{
+	GGroup< Demanda *, LessPtr< Demanda > > demandas;
+	GGroup< Oferta *, LessPtr< Oferta > > ofertas;
+
+	Demanda * demanda = NULL;
+	Oferta * oferta = NULL;
+
+	// Procura pela oferta
+	ITERA_GGROUP_LESSPTR( it_oferta, problemData->ofertas, Oferta )
+	{
+		oferta = ( *it_oferta );
+
+		if ( oferta->curso->getId() == curso->getId()
+			&& oferta->curriculo->getId() == curriculo->getId() )
+		{
+			ofertas.add( oferta );
+		}
+	}
+
+	ITERA_GGROUP_LESSPTR( it_oferta, ofertas, Oferta )
+	{
+		oferta = ( *it_oferta );
+
+		// Procura pela demanda
+		ITERA_GGROUP_LESSPTR( it_demanda, problemData->demandas, Demanda )
+		{
+			demanda = ( *it_demanda );
+
+			if ( demanda->oferta->getId() == oferta->getId()
+				&& demanda->disciplina->getId() == disciplina->getId() )
+			{
+				demandas.add( demanda );
+			}
+		}
+	}
+
+	return demandas;
 }
 
 void ProblemDataLoader::relacionaDisciplinasEquivalentes()
 {
 	Curso * curso = NULL;
 	Curriculo * curriculo = NULL;
+
 	Disciplina * disciplina = NULL;
 	Disciplina * disciplina_equivalente = NULL;
 	Disciplina * disciplina_substituta = NULL;
@@ -1939,7 +2060,7 @@ void ProblemDataLoader::divideDisciplinas()
 
          // Procura pelo maior id de demanda já cadastrado
          int id = 0;
-         ITERA_GGROUP( it_dem, problemData->demandas, Demanda )
+         ITERA_GGROUP_LESSPTR( it_dem, problemData->demandas, Demanda )
          {
             if ( id < it_dem->getId() )
             {
@@ -1949,7 +2070,7 @@ void ProblemDataLoader::divideDisciplinas()
 
          // Adicionando os dados da nova disciplina em <Demanda>
          Demanda * nova_demanda = NULL;
-         ITERA_GGROUP( it_dem, problemData->demandas, Demanda )
+         ITERA_GGROUP_LESSPTR( it_dem, problemData->demandas, Demanda )
          {
             int num_vezes_ecncontrado = 0;
             if( it_dem->getDisciplinaId() == it_disc->getId())
@@ -2185,38 +2306,6 @@ void ProblemDataLoader::gera_refs()
 					it_curso->tipo_curso, false );
    }
 
-   ITERA_GGROUP_LESSPTR( it_oferta, problemData->ofertas, Oferta )
-   {
-      find_and_set_lessptr( it_oferta->getCursoId(),
-							problemData->cursos,
-							it_oferta->curso, false );
-
-      find_and_set_lessptr( it_oferta->getCurriculoId(),
-							it_oferta->curso->curriculos,
-							it_oferta->curriculo, false );
-
-      find_and_set_lessptr( it_oferta->getTurnoId(),
-							problemData->calendario->turnos,
-							it_oferta->turno, false );
-
-      find_and_set_lessptr( it_oferta->getCampusId(),
-							problemData->campi,
-							it_oferta->campus, false );
-   }
-
-   ITERA_GGROUP( it_dem, problemData->demandas, Demanda ) 
-   {
-      find_and_set_lessptr( it_dem->getOfertaId(),
-							problemData->ofertas,
-							it_dem->oferta, false );
-
-      find_and_set_lessptr( it_dem->getDisciplinaId(),
-							problemData->disciplinas,
-							it_dem->disciplina, false );
-   }
-
-   // Falta: parametros (?) e fixacoes
-
    ITERA_GGROUP( it_ndh, problemData->parametros->niveis_dificuldade_horario,
 				 NivelDificuldadeHorario )
    {
@@ -2313,6 +2402,7 @@ void ProblemDataLoader::cria_blocos_curriculares()
    Demanda * demanda = NULL;
    Curriculo * curriculo = NULL;
    Disciplina * disciplina = NULL;
+
    std::pair< int, Disciplina * > disciplina_periodo;
 
    ITERA_GGROUP_LESSPTR( it_campus, problemData->campi, Campus )
@@ -2355,9 +2445,7 @@ void ProblemDataLoader::cria_blocos_curriculares()
                disciplina_periodo = ( *it_disc_periodo );
 
                int periodo = disciplina_periodo.first;
-			   int disc_id = disciplina_periodo.second->getId();
-
-               disciplina = problemData->refDisciplinas[ disc_id ];
+               disciplina = disciplina_periodo.second;
 
                std::pair< Campus *, Curso * > campus_curso
                   = std::make_pair( campus, curso );
@@ -2400,8 +2488,7 @@ void ProblemDataLoader::cria_blocos_curriculares()
 
                // Verificando a existência do bloco
                // curricular para a disciplina em questão.
-               ITERA_GGROUP( it_bloco_curricular, problemData->blocos,
-							 BlocoCurricular )
+               ITERA_GGROUP_LESSPTR( it_bloco_curricular, problemData->blocos, BlocoCurricular )
                {
                   if ( it_bloco_curricular->campus->getId() == campus->getId()
 						&& it_bloco_curricular->curso->getId() == curso->getId()
@@ -2435,17 +2522,16 @@ void ProblemDataLoader::cria_blocos_curriculares()
       }
    }
 
-   BlocoCurricular * bloco = NULL;
-
    // Setando os dias letivos de cada bloco.
-   ITERA_GGROUP( it_bc, problemData->blocos, BlocoCurricular )
+   BlocoCurricular * bloco = NULL;
+   ITERA_GGROUP_LESSPTR( it_bc, problemData->blocos, BlocoCurricular )
    {
       bloco = ( *it_bc );
       curso = it_bc->curso;
 
       int totalTurmas = 0;
 
-      ITERA_GGROUP( it_Disc, it_bc->disciplinas, Disciplina )
+      ITERA_GGROUP_LESSPTR( it_Disc, it_bc->disciplinas, Disciplina )
       {
          disciplina = ( *it_Disc );
 
@@ -2518,7 +2604,7 @@ void ProblemDataLoader::calculaDemandas()
    Demanda * demanda = NULL;
    Campus * campus = NULL;
    Curso * curso = NULL;
-   ITERA_GGROUP( it_demanda, problemData->demandas, Demanda )
+   ITERA_GGROUP_LESSPTR( it_demanda, problemData->demandas, Demanda )
    {
       demanda = ( *it_demanda );
       campus = demanda->oferta->campus;
@@ -2778,10 +2864,10 @@ void ProblemDataLoader::cache()
       problemData->totalTurmas += it_disciplinas->getNumTurmas();
    }
 
-   ITERA_GGROUP( it_bloco, problemData->blocos, BlocoCurricular )
+   ITERA_GGROUP_LESSPTR( it_bloco, problemData->blocos, BlocoCurricular )
    {
       int totalTurmas = 0;
-      ITERA_GGROUP( it_disciplinas, it_bloco->disciplinas, Disciplina )
+      ITERA_GGROUP_LESSPTR( it_disciplinas, it_bloco->disciplinas, Disciplina )
       {
          totalTurmas += it_disciplinas->getNumTurmas();
       }

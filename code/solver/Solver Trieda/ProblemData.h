@@ -48,13 +48,12 @@ public:
    GGroup< Deslocamento * > tempo_unidades;
    GGroup< Disciplina *, LessPtr< Disciplina > > disciplinas;
    GGroup< Curso *, LessPtr< Curso > > cursos;
-   GGroup< Demanda * > demandas;
+   GGroup< Demanda *, LessPtr< Demanda > > demandas;
    GGroup< Oferta *, LessPtr< Oferta > > ofertas;
    ParametrosPlanejamento * parametros;
    GGroup< Fixacao *, LessPtr< Fixacao > > fixacoes;
 
    std::vector< HorarioAula * > horarios_aula_ordenados;
-
    GGroup< AtendimentoCampusSolucao * > * atendimentosTatico;
 
    // Para cada dia da semana, informa o
@@ -64,7 +63,7 @@ public:
    // Conjunto de professores virtuais alocados na solução operacional
    std::vector< Professor * > professores_virtuais;
 
-   GGroup< BlocoCurricular * > blocos;
+   GGroup< BlocoCurricular *, LessPtr< BlocoCurricular > > blocos;
 
    // Dado o id de uma disciplina e o id de um campus,
    // retorna o total de demandas desse par 'disciplina/campus'

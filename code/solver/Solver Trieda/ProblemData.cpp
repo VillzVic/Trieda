@@ -62,7 +62,7 @@ void ProblemData::le_arvore( TriedaInput & raiz )
 
    int id = 1;
    Demanda * demanda = NULL;
-   ITERA_GGROUP( it_demanda, demandas, Demanda )
+   ITERA_GGROUP_LESSPTR( it_demanda, demandas, Demanda )
    {
 	   demanda = *(it_demanda);
 	   demanda->setId( id );

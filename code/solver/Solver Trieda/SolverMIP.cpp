@@ -2802,7 +2802,7 @@ int SolverMIP::cria_variavel_alunos(void)
 
          // Calculando P_{d,o}
          int qtdDem = 0;
-         ITERA_GGROUP( itDem, problemData->demandas, Demanda )
+         ITERA_GGROUP_LESSPTR( itDem, problemData->demandas, Demanda )
          {
             if ( itDem->disciplina->getId() == ptDisc->getId() &&
                  itDem->getOfertaId() == itOferta->getId() )
@@ -3143,9 +3143,9 @@ int SolverMIP::cria_variavel_min_creds(void)
    Curso * curso = NULL;
    Curriculo * curriculo = NULL;
 
-   ITERA_GGROUP( it_bloco, problemData->blocos, BlocoCurricular )
+   ITERA_GGROUP_LESSPTR( it_bloco, problemData->blocos, BlocoCurricular )
    {
-      ITERA_GGROUP( it_disciplina, it_bloco->disciplinas, Disciplina )
+      ITERA_GGROUP_LESSPTR( it_disciplina, it_bloco->disciplinas, Disciplina )
       {
 		 disciplina = ( *it_disciplina );
 
@@ -3223,9 +3223,9 @@ int SolverMIP::cria_variavel_max_creds(void)
    Curso * curso = NULL;
    Curriculo * curriculo = NULL;
 
-   ITERA_GGROUP( it_bloco, problemData->blocos, BlocoCurricular )
+   ITERA_GGROUP_LESSPTR( it_bloco, problemData->blocos, BlocoCurricular )
    {
-      ITERA_GGROUP( it_disciplina, it_bloco->disciplinas, Disciplina )
+      ITERA_GGROUP_LESSPTR( it_disciplina, it_bloco->disciplinas, Disciplina )
       {
 	     disciplina = ( *it_disciplina );
 
@@ -3455,7 +3455,7 @@ int SolverMIP::cria_variavel_num_subblocos(void)
 {
    int num_vars = 0;
 
-   ITERA_GGROUP( it_bloco, problemData->blocos, BlocoCurricular )
+   ITERA_GGROUP_LESSPTR( it_bloco, problemData->blocos, BlocoCurricular )
    {
       Campus * campus = it_bloco->campus;
 
@@ -3519,7 +3519,7 @@ int SolverMIP::cria_variavel_num_abertura_turma_bloco(void)
 {
    int num_vars = 0;
 
-   ITERA_GGROUP( it_bloco, problemData->blocos, BlocoCurricular )
+   ITERA_GGROUP_LESSPTR( it_bloco, problemData->blocos, BlocoCurricular )
    {
       GGroup< int >::iterator itDiasLetBloco =
          it_bloco->diasLetivos.begin();
@@ -4017,7 +4017,7 @@ int SolverMIP::cria_variavel_abertura_subbloco_de_blc_dia_campus()
 {
    int num_vars = 0;
 
-   ITERA_GGROUP( it_bloco, problemData->blocos, BlocoCurricular )
+   ITERA_GGROUP_LESSPTR( it_bloco, problemData->blocos, BlocoCurricular )
    {
 	  ITERA_GGROUP_N_PT( itDia, it_bloco->campus->diasLetivos, int )
       {
@@ -4255,7 +4255,7 @@ int SolverMIP::cria_variavel_de_folga_demanda_disciplina()
 			 disciplina = disciplina_equivalente;
 		 }
 
-         ITERA_GGROUP( itDem, problemData->demandas, Demanda )
+         ITERA_GGROUP_LESSPTR( itDem, problemData->demandas, Demanda )
          {
             if ( itDem->disciplina->getId() == disciplina->getId() &&
                  itDem->getOfertaId() == itOferta->getId() )
@@ -4725,7 +4725,7 @@ int SolverMIP::cria_variavel_abertura_bloco_mesmoTPS(void)
 {
    int num_vars = 0;
 
-   ITERA_GGROUP( itBloco, problemData->blocos, BlocoCurricular )
+   ITERA_GGROUP_LESSPTR( itBloco, problemData->blocos, BlocoCurricular )
    {
       ITERA_GGROUP_LESSPTR( itCampus, problemData->campi, Campus )
       {
@@ -4782,7 +4782,7 @@ int SolverMIP::cria_variavel_de_folga_abertura_bloco_mesmoTPS()
 {
    int num_vars = 0;
 
-   ITERA_GGROUP( itBloco, problemData->blocos, BlocoCurricular )
+   ITERA_GGROUP_LESSPTR( itBloco, problemData->blocos, BlocoCurricular )
    {
       ITERA_GGROUP_LESSPTR( itCampus, problemData->campi, Campus )
       {
@@ -6140,7 +6140,7 @@ int SolverMIP::cria_restricao_turmas_bloco(void)
       for(; itDiasLetCampus != itCampus->diasLetivos.end();
 			itDiasLetCampus++ )
       {
-         ITERA_GGROUP( itBloco, problemData->blocos, BlocoCurricular )
+         ITERA_GGROUP_LESSPTR( itBloco, problemData->blocos, BlocoCurricular )
          {
             c.reset();
             c.setType( Constraint::C_TURMAS_BLOCO );
@@ -6160,7 +6160,7 @@ int SolverMIP::cria_restricao_turmas_bloco(void)
 
             OPT_ROW row( ( nnz + 1 ), OPT_ROW::LESS , 0.0, name );
 
-            ITERA_GGROUP( it_disciplina, itBloco->disciplinas, Disciplina )
+            ITERA_GGROUP_LESSPTR( it_disciplina, itBloco->disciplinas, Disciplina )
             {
 			   disciplina = ( *it_disciplina );
 
@@ -6274,7 +6274,7 @@ int SolverMIP::cria_restricao_max_cred_disc_bloco(void)
 
       for (; itDiasLetCampus != itCampus->diasLetivos.end(); itDiasLetCampus++ )
       {
-         ITERA_GGROUP( itBloco, problemData->blocos, BlocoCurricular )
+         ITERA_GGROUP_LESSPTR( itBloco, problemData->blocos, BlocoCurricular )
          {
             c.reset();
             c.setType( Constraint::C_MAX_CRED_DISC_BLOCO );
@@ -6297,7 +6297,7 @@ int SolverMIP::cria_restricao_max_cred_disc_bloco(void)
 			// creditos disponiveis  dentre todas as salas para um dado dia.
             int maxCredsSalaDia = 0;
             int maxCredsProfDia = 0;
-            ITERA_GGROUP( it_disciplina, itBloco->disciplinas, Disciplina )
+            ITERA_GGROUP_LESSPTR( it_disciplina, itBloco->disciplinas, Disciplina )
             {
 			   disciplina = ( *it_disciplina );
 
@@ -6420,7 +6420,7 @@ int SolverMIP::cria_restricao_num_tur_bloc_dia_difunid(void)
    Constraint c;
    VariableHash::iterator it_v;
 
-   ITERA_GGROUP( it_bloco, problemData->blocos, BlocoCurricular )
+   ITERA_GGROUP_LESSPTR( it_bloco, problemData->blocos, BlocoCurricular )
    {
       GGroup< int >::iterator itDiasLetBloco =
          it_bloco->diasLetivos.begin();
@@ -6693,7 +6693,7 @@ int SolverMIP::cria_restricao_cap_aloc_dem_disc(void)
          int rhs = 0;
 
          // Calculando P_{d,o}
-         ITERA_GGROUP( itDem, problemData->demandas, Demanda )
+         ITERA_GGROUP_LESSPTR( itDem, problemData->demandas, Demanda )
          {
             if ( itDem->disciplina->getId() == disciplina->getId()
 				&& itDem->getOfertaId() == itOferta->getId() )
@@ -7360,7 +7360,7 @@ int SolverMIP::cria_restricao_min_creds_turm_bloco(void)
    Curso * curso = NULL;
    Curriculo * curriculo = NULL;
 
-   ITERA_GGROUP( itBloco, problemData->blocos, BlocoCurricular )
+   ITERA_GGROUP_LESSPTR( itBloco, problemData->blocos, BlocoCurricular )
    {
       for ( int turma = 0; turma < itBloco->getTotalTurmas(); turma++ )
       {
@@ -7388,7 +7388,7 @@ int SolverMIP::cria_restricao_min_creds_turm_bloco(void)
 
             OPT_ROW row( nnz, OPT_ROW::GREATER , 0.0 , name );
 
-            ITERA_GGROUP( it_disciplina, itBloco->disciplinas, Disciplina )
+            ITERA_GGROUP_LESSPTR( it_disciplina, itBloco->disciplinas, Disciplina )
             {
 			   disciplina = ( *it_disciplina );
 
@@ -7490,7 +7490,7 @@ int SolverMIP::cria_restricao_max_creds_turm_bloco(void)
    Curso * curso = NULL;
    Curriculo * curriculo = NULL;
 
-   ITERA_GGROUP( itBloco, problemData->blocos, BlocoCurricular )
+   ITERA_GGROUP_LESSPTR( itBloco, problemData->blocos, BlocoCurricular )
    {
       for ( int turma = 0; turma < itBloco->getTotalTurmas(); turma++ )
       {
@@ -7515,7 +7515,7 @@ int SolverMIP::cria_restricao_max_creds_turm_bloco(void)
 
             OPT_ROW row( nnz, OPT_ROW::LESS , 0.0 , name );
 
-            ITERA_GGROUP( it_disciplina, itBloco->disciplinas, Disciplina )
+            ITERA_GGROUP_LESSPTR( it_disciplina, itBloco->disciplinas, Disciplina )
             {
 			   disciplina = ( *it_disciplina );
 
@@ -8071,7 +8071,7 @@ int SolverMIP::cria_restricao_ativacao_var_r()
    Constraint c;
    VariableHash::iterator it_v;
 
-   ITERA_GGROUP( it_bloco, problemData->blocos, BlocoCurricular )
+   ITERA_GGROUP_LESSPTR( it_bloco, problemData->blocos, BlocoCurricular )
    {
       GGroup< int >::iterator itDiasLetBloco =
          it_bloco->diasLetivos.begin();
@@ -8939,7 +8939,7 @@ int SolverMIP::cria_restricao_max_creds_bloco_dia()
    Curso * curso = NULL;
    Curriculo * curriculo = NULL;
 
-   ITERA_GGROUP( it_Bloco, problemData->blocos, BlocoCurricular )
+   ITERA_GGROUP_LESSPTR( it_Bloco, problemData->blocos, BlocoCurricular )
    {
       ITERA_GGROUP_N_PT( it_Dias_Letivos, it_Bloco->diasLetivos, int )
       {
@@ -8959,14 +8959,9 @@ int SolverMIP::cria_restricao_max_creds_bloco_dia()
          nnz = 100;
          double rhs = 4.0;
 
-         //if ( *it_Dias_Letivos == 7 )
-         //{
-         //   rhs = 12.0;
-         //}
-
          OPT_ROW row( nnz, OPT_ROW::LESS, rhs, name );
 
-         ITERA_GGROUP( it_disciplina, it_Bloco->disciplinas, Disciplina )
+         ITERA_GGROUP_LESSPTR( it_disciplina, it_Bloco->disciplinas, Disciplina )
          {
 		    disciplina = ( *it_disciplina );
 
@@ -9269,7 +9264,7 @@ int SolverMIP::cria_restricao_abertura_bloco_mesmoTPS()
    Curso * curso = NULL;
    Curriculo * curriculo = NULL;
 
-   ITERA_GGROUP( itBloco, problemData->blocos, BlocoCurricular )
+   ITERA_GGROUP_LESSPTR( itBloco, problemData->blocos, BlocoCurricular )
    {
       ITERA_GGROUP_LESSPTR( itCampus, problemData->campi, Campus )
       {
@@ -9310,7 +9305,7 @@ int SolverMIP::cria_restricao_abertura_bloco_mesmoTPS()
 					  {
 						 ITERA_GGROUP_LESSPTR( it_unidade, it_campus->unidades, Unidade )
 						 {
-							ITERA_GGROUP( it_disciplina, itBloco->disciplinas, Disciplina )
+							ITERA_GGROUP_LESSPTR( it_disciplina, itBloco->disciplinas, Disciplina )
 							{
 							   disciplina = ( *it_disciplina );
 
@@ -9402,7 +9397,7 @@ int SolverMIP::cria_restricao_folga_abertura_bloco_mesmoTPS()
    Variable v;
    VariableHash::iterator it_v;
 
-   ITERA_GGROUP( itBloco, problemData->blocos, BlocoCurricular )
+   ITERA_GGROUP_LESSPTR( itBloco, problemData->blocos, BlocoCurricular )
    {
       c.reset();
       c.setType( Constraint::C_SLACK_EVITA_BLOCO_TPS_D );
