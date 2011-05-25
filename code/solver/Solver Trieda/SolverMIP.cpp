@@ -1638,11 +1638,9 @@ int SolverMIP::solveOperacional()
    SolucaoInicialOperacional solIni( *problemData );
 
    std::cout << "Gerando uma solucao inicial para o modelo operacional" << std::endl;
-   exit(1);
 
    SolucaoOperacional & solucaoOperacional = solIni.geraSolucaoInicial();
    solucaoOperacional.toString2();
-   solucaoOperacional.validaSolucao( "Verificando a viabilidade da solucao inicial." );
 
    // Avaliador
    Avaliador avaliador;
@@ -1754,13 +1752,6 @@ int SolverMIP::solve()
       if ( problemData->atendimentosTatico != NULL
 				&& problemData->atendimentosTatico->size() > 0 )
       {
-         ITERA_GGROUP( it_At_Campus,
-			 ( *problemSolution->atendimento_campus ), AtendimentoCampus )
-         {
-            problemData->atendimentosTatico = new GGroup< AtendimentoCampusSolucao * >();
-            problemData->atendimentosTatico->add( new AtendimentoCampusSolucao( **it_At_Campus ) );
-         }
-
          // Criando as aulas que serão utilizadas para resolver o modelo operacional
          problemDataLoader->criaAulas();
 
@@ -1784,12 +1775,10 @@ int SolverMIP::solve()
          // Preenchendo a estrutura "atendimentosTatico" com a saída.
          getSolutionTatico();
 
-         ITERA_GGROUP( it_At_Campus,
-			 ( *problemSolution->atendimento_campus ), AtendimentoCampus )
-         {
-            problemData->atendimentosTatico = new GGroup< AtendimentoCampusSolucao * >();
-            problemData->atendimentosTatico->add( new AtendimentoCampusSolucao( **it_At_Campus ) );
-         }
+         problemData->atendimentosTatico = new GGroup< AtendimentoCampusSolucao * >();
+
+         ITERA_GGROUP( it_At_Campus, ( *problemSolution->atendimento_campus ), AtendimentoCampus )
+         { problemData->atendimentosTatico->add( new AtendimentoCampusSolucao( **it_At_Campus ) ); }
 
          // Criando as aulas que serão utilizadas para resolver o modelo operacional
          problemDataLoader->criaAulas();

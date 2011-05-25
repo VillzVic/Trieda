@@ -93,7 +93,7 @@ public:
    virtual bool operator == ( Aula const & right )
    { 
       return  (
-         ( ofertas == right.ofertas ) &&
+         //( ofertas == right.ofertas ) &&
          ( turma == right.getTurma() ) &&
          ( *disciplina == *right.getDisciplina() ) &&
          ( *sala == *right.getSala() ) &&

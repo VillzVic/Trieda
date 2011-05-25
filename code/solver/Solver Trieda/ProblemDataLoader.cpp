@@ -2881,6 +2881,8 @@ void ProblemDataLoader::associaDisciplinasSalas()
 						 << "\nId da disciplina   : " << disciplina->getId()
 						 << "\nNome da disciplina : " << disciplina->getNome()
 						 << std::endl << std::endl;
+
+               exit(1);
             }
             else
             {
