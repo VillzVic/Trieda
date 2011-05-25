@@ -18,8 +18,6 @@ public:
    Oferta * oferta;
    Disciplina * disciplina;
 
-   bool operator ==(Demanda const &);
-
    void setQuantidade(int value) { quantidade = value; }
    void setOfertaId(int value) { oferta_id = value; }
    void setDisciplinaId(int value) { disciplina_id = value; }
@@ -27,6 +25,11 @@ public:
    int getQuantidade() const { return quantidade; }
    int getOfertaId() const { return oferta_id; }
    int getDisciplinaId() const { return disciplina_id; }
+
+   virtual bool operator < ( const Demanda& right );
+   virtual bool operator > ( const Demanda& right );
+   virtual bool operator == ( const Demanda & right );
+   virtual bool operator != ( const Demanda & right );
 
 private:
    int quantidade;

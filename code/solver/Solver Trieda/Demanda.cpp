@@ -4,6 +4,7 @@ Demanda::Demanda(void)
 {
 	oferta = NULL;
 	disciplina = NULL;
+   quantidade = -1;
 }
 
 Demanda::Demanda(Demanda const & demanda)
@@ -27,10 +28,34 @@ void Demanda::le_arvore(ItemDemanda & elem)
 	oferta_id = elem.ofertaCursoCampiId();
 }
 
-bool Demanda::operator== (Demanda const & right)
+bool Demanda::operator < ( const Demanda& right )
+{
+   if(quantidade < right.quantidade) return true;
+   if(quantidade > right.quantidade) return false;
+
+   if(disciplina_id < right.disciplina_id) return true;
+   if(disciplina_id > right.disciplina_id) return false;
+
+   if(oferta_id < right.oferta_id) return true;
+   if(oferta_id > right.oferta_id) return true;
+
+   return false;
+}
+
+bool Demanda::operator > ( const Demanda& right )
+{
+   return (quantidade > right.quantidade);
+}
+
+bool Demanda::operator == ( const Demanda & right )
 {
    return (
       (quantidade == right.quantidade) && 
-      (disciplina == right.disciplina) && 
-      (oferta == right.oferta));
+      (*disciplina == *right.disciplina) && 
+      (*oferta == *right.oferta));
+}
+
+bool Demanda::operator != ( const Demanda & right )
+{
+   return !(*this == right);
 }

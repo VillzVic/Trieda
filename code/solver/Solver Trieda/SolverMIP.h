@@ -122,31 +122,31 @@ public:
    int cria_variavel_creditos(void);   // x_{i,d,u,tps,t}
    int cria_variavel_creditos_permitir_alunos_varios_campi(void);   // x_{i,d,u,tps,t}
    int cria_variavel_oferecimentos(void); // o_{i,d,u,tps,t}
-   int cria_variavel_oferecimentos_permitir_alunos_varios_campi(void); // o_{i,d,u,tps,t}
+   //int cria_variavel_oferecimentos_permitir_alunos_varios_campi(void); // o_{i,d,u,tps,t}
    int cria_variavel_abertura(void);   // z_{i,d,cp}
-   int cria_variavel_abertura_permitir_alunos_varios_campi(void);   // z_{i,d,cp}
+   //int cria_variavel_abertura_permitir_alunos_varios_campi(void);   // z_{i,d,cp}
    int cria_variavel_alunos(void);  // a_{i,d,oft}
    int cria_variavel_aloc_alunos(void);   // b_{i,d,c,cp}
-   int cria_variavel_aloc_alunos_permitir_alunos_varios_campi(void);   // b_{i,d,c,cp}
+   //int cria_variavel_aloc_alunos_permitir_alunos_varios_campi(void);   // b_{i,d,c,cp}
    int cria_variavel_consecutivos(void);  // c_{i,d,t}
    int cria_variavel_min_creds(void);  // h_{bc,i}
    int cria_variavel_max_creds(void);  // H_{bc,i}
    int cria_variavel_aloc_disciplina(void);  // y_{i,d,tps,u}
-   int cria_variavel_aloc_disciplina_permitir_alunos_varios_campi(void);  // y_{i,d,tps,u}
+   //int cria_variavel_aloc_disciplina_permitir_alunos_varios_campi(void);  // y_{i,d,tps,u}
    int cria_variavel_num_subblocos(void); // w_{bc,t,cp}
    int cria_variavel_num_abertura_turma_bloco(void);  // v_{bc,t}
    int cria_variavel_de_folga_dist_cred_dia_superior(void); // fcp_{d,t}
-   int cria_variavel_de_folga_dist_cred_dia_superior_permitir_alunos_varios_campi(void); // fcp_{d,t}
+   //int cria_variavel_de_folga_dist_cred_dia_superior_permitir_alunos_varios_campi(void); // fcp_{d,t}
    int cria_variavel_de_folga_dist_cred_dia_inferior(void); // fcm_{d,t}
-   int cria_variavel_de_folga_dist_cred_dia_inferior_permitir_alunos_varios_campi(void); // fcm_{d,t}
+   //int cria_variavel_de_folga_dist_cred_dia_inferior_permitir_alunos_varios_campi(void); // fcm_{d,t}
    int cria_variavel_abertura_subbloco_de_blc_dia_campus(void);   // r_{bc,t,cp}
    int cria_variavel_de_folga_aloc_alunos_curso_incompat(void); // bs_{i,d,c,cp}
-   int cria_variavel_de_folga_aloc_alunos_curso_incompat_permitir_alunos_varios_campi(void); // bs_{i,d,c,cp}
+   //int cria_variavel_de_folga_aloc_alunos_curso_incompat_permitir_alunos_varios_campi(void); // bs_{i,d,c,cp}
    int cria_variavel_de_folga_demanda_disciplina(); // f_{d,o}
    int cria_variavel_combinacao_divisao_credito(void);//m_{i,d,k}
    int cria_variavel_de_folga_combinacao_divisao_credito(void); // fk_{i,d,k}
    int cria_variavel_creditos_modificada(void); // xm_{d,t}
-   int cria_variavel_creditos_modificada_permitir_alunos_varios_campi(void); // xm_{d,t}
+   //int cria_variavel_creditos_modificada_permitir_alunos_varios_campi(void); // xm_{d,t}
    int cria_variavel_abertura_compativel(void); // zc_{d,t}
    int cria_variavel_abertura_bloco_mesmoTPS(void); // n_{bc,tps}
    int cria_variavel_de_folga_abertura_bloco_mesmoTPS(void); //fn_{bc,tps}
