@@ -29,6 +29,7 @@ void Curriculo::refDisciplinaPeriodo(
 {
 	GGroup< std::pair< int, int > >::iterator
 		it_ids = ids_disciplinas_periodo.begin();
+
 	for (; it_ids != ids_disciplinas_periodo.end(); it_ids++ )
 	{
 		int id_periodo = ( *it_ids ).first;
@@ -45,4 +46,6 @@ void Curriculo::refDisciplinaPeriodo(
 			}
 		}
 	}
+
+	ids_disciplinas_periodo.clear();
 }

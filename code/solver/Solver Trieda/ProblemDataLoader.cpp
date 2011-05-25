@@ -1612,11 +1612,18 @@ void ProblemDataLoader::substituiDisciplinasEquivalentes()
 							if ( disciplina_substituta != NULL
 									&& disciplina_substituta->getId() == disciplina_comp->getId() )
 							{
+								// Antigo pair
+								std::pair< int, Disciplina * > pairPeriodoDisciplina
+									= std::make_pair( ( *it_disciplina ).first, ( *it_disciplina ).second );
+
 								// O período é o mesmo, mas mudamos a disciplina
 								std::pair< int, Disciplina * > novoPeriodoDisciplina
 									= std::make_pair( ( *it_disciplina ).first, disciplina_substituta );
 
-								( *it_disciplina ).swap( novoPeriodoDisciplina );
+								curriculo->disciplinas_periodo.remove( pairPeriodoDisciplina );
+								curriculo->disciplinas_periodo.add( novoPeriodoDisciplina );
+
+								it_disciplina = curriculo->disciplinas_periodo.begin();
 								break;
 							}
 							//-----------------------------------------------------------------------------
@@ -3260,14 +3267,11 @@ void ProblemDataLoader::criaAulas()
 
 void ProblemDataLoader::relacionaBlocoCurricularAulas()
 {
-   std::cout << "\n\n\nALTERAR O METODO <void ProblemDataLoader::relacionaBlocoCurricularAulas()> PARA PODER CONTEMPLAR AS MUDANCAS NAS ESTRUTURAS <aulaBlocosCurriculares> E <blocoCurricularDiaAulas>.\n\n\n";
-   //getchar();
+   std::cout << "\n\n\nALTERAR O METODO <void ProblemDataLoader::"
+			 << "relacionaBlocoCurricularAulas()> PARA PODER CONTEMPLAR AS "
+			 << "MUDANCAS NAS ESTRUTURAS <aulaBlocosCurriculares> E <blocoCurricularDiaAulas>.\n\n\n";
 
-   /*
-   
-   ANTES DISSO, ALTERAR AS ESTRUTURAS. COMO SERÃO?! PENSAR.
-
-   */
+   // ANTES DISSO, ALTERAR AS ESTRUTURAS. COMO SERÃO?! PENSAR.
 
    ITERA_GGROUP_LESSPTR( itAula, problemData->aulas, Aula )
    {
