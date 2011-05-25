@@ -46,9 +46,6 @@ void ProblemDataLoader::load()
    carregaDiasLetivosDiscs();
 
    // ---------
-   cache();
-
-   // ---------
    disciplinasCursosCompativeis();
 
    // ---------
@@ -101,6 +98,9 @@ void ProblemDataLoader::load()
 
    // ---------
    associaDisciplinasConjuntoSalas();
+
+   // ---------
+   cache();
 
    // ---------
    estabeleceDiasLetivosBlocoCampus();
@@ -2443,6 +2443,8 @@ void ProblemDataLoader::cria_blocos_curriculares()
       bloco = ( *it_bc );
       curso = it_bc->curso;
 
+      int totalTurmas = 0;
+
       ITERA_GGROUP( it_Disc, it_bc->disciplinas, Disciplina )
       {
          disciplina = ( *it_Disc );
@@ -2456,7 +2458,11 @@ void ProblemDataLoader::cria_blocos_curriculares()
          { 
             it_bc->diasLetivos.add( *it_Dias_Letivos );
          }
+
+         totalTurmas += it_Disc->getNumTurmas();
       }
+
+      it_bc->setTotalTurmas( totalTurmas );
    }
 }
 
@@ -2779,8 +2785,6 @@ void ProblemDataLoader::cache()
       {
          totalTurmas += it_disciplinas->getNumTurmas();
       }
-
-      it_bloco->setTotalTurmas( totalTurmas );
    }
 
    ITERA_GGROUP_LESSPTR( it_disc, problemData->disciplinas, Disciplina )
