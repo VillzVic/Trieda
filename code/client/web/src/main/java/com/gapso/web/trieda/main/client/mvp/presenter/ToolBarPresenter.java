@@ -48,6 +48,8 @@ import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.DeslocamentoCampusDTO;
 import com.gapso.web.trieda.shared.dtos.ParametroDTO;
 import com.gapso.web.trieda.shared.dtos.UsuarioDTO;
+import com.gapso.web.trieda.shared.excel.ExcelInformationType;
+import com.gapso.web.trieda.shared.i18n.ITriedaI18nGateway;
 import com.gapso.web.trieda.shared.mvp.presenter.CampusProfessoresPresenter;
 import com.gapso.web.trieda.shared.mvp.presenter.Presenter;
 import com.gapso.web.trieda.shared.mvp.presenter.ProfessoresDisciplinaPresenter;
@@ -58,13 +60,15 @@ import com.gapso.web.trieda.shared.mvp.view.RelatorioVisaoProfessorView;
 import com.gapso.web.trieda.shared.services.CampiServiceAsync;
 import com.gapso.web.trieda.shared.services.Services;
 import com.gapso.web.trieda.shared.util.view.CenarioPanel;
+import com.gapso.web.trieda.shared.util.view.ExportExcelFormSubmit;
 import com.gapso.web.trieda.shared.util.view.GTab;
+import com.gapso.web.trieda.shared.util.view.ImportExcelFormView;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
 
 public class ToolBarPresenter implements Presenter {
 
-	public interface Display {
+	public interface Display extends ITriedaI18nGateway {
 		Component getComponent();
 		
 //		MenuItem getCenariosListMenuItem();
@@ -76,7 +80,6 @@ public class ToolBarPresenter implements Presenter {
 		Button getHorariosAulaListCampiButton();
 		Button getTurnosListCampiButton();
 		Button getOfertasListCampiButton();
-		Button getUsuariosListButton();
 		
 		Button getUnidadesNovoUnidadesButton();
 		Button getUnidadesListUnidadesButton();
@@ -120,9 +123,9 @@ public class ToolBarPresenter implements Presenter {
 		Button getFixacoesListButton();
 		Button getParametrosButton();
 
-
-
-
+		Button getUsuariosListButton();
+		Button getImportarButton();
+		Button getExportarButton();
 	}
 	
 	private CenarioDTO masterData;
@@ -372,6 +375,20 @@ public class ToolBarPresenter implements Presenter {
 			public void componentSelected(ButtonEvent ce) {
 				Presenter presenter = new UsuariosPresenter(masterData, new UsuariosView());
 				presenter.go(gTab);
+			}
+		});
+		toolBar.getImportarButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
+			@Override
+			public void componentSelected(ButtonEvent ce) {
+				ImportExcelFormView importExcelFormView = new ImportExcelFormView(ExcelInformationType.TUDO, null);
+				importExcelFormView.show();
+			}
+		});
+		toolBar.getExportarButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
+			@Override
+			public void componentSelected(ButtonEvent ce) {
+				ExportExcelFormSubmit e = new ExportExcelFormSubmit(ExcelInformationType.TUDO, toolBar.getI18nConstants(),toolBar.getI18nMessages());
+				e.submit();
 			}
 		});
 		toolBar.getOfertasListCursosButton().addSelectionListener(new SelectionListener<ButtonEvent>() {

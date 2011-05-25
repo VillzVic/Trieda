@@ -1,6 +1,5 @@
 package com.gapso.web.trieda.server.excel.imp;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -42,11 +41,11 @@ public abstract class AbstractImportExcel<ExcelBeanType> implements IImportExcel
 	protected abstract void processSheetContent(String sheetName, List<ExcelBeanType> sheetContent);
 
 	@Override
-	public boolean load(String fileName, InputStream inputStream) {
+	public boolean load(String fileName, HSSFWorkbook workbook) {
 		errors.clear();
 		warnings.clear();
 		
-		Map<String,List<ExcelBeanType>> excelBeansMap = readInputStream(fileName,inputStream);
+		Map<String,List<ExcelBeanType>> excelBeansMap = readInputStream(fileName, null, workbook);
 		if (errors.isEmpty()) {
 			try {
 				for (Entry<String,List<ExcelBeanType>> entry : excelBeansMap.entrySet()) {
@@ -60,7 +59,27 @@ public abstract class AbstractImportExcel<ExcelBeanType> implements IImportExcel
 		
 		return errors.isEmpty();
 	}
-
+	
+	@Override
+	public boolean load(String fileName, InputStream inputStream) {
+		errors.clear();
+		warnings.clear();
+		
+		Map<String,List<ExcelBeanType>> excelBeansMap = readInputStream(fileName,inputStream, null);
+		if (errors.isEmpty()) {
+			try {
+				for (Entry<String,List<ExcelBeanType>> entry : excelBeansMap.entrySet()) {
+					processSheetContent(entry.getKey(),entry.getValue());
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+				errors.add(getI18nMessages().excelErroBD(fileName,extractMessage(e)));
+			}
+		}
+		
+		return errors.isEmpty();
+	}
+	
 	@Override
 	public List<String> getErrors() {
 		return errors;
@@ -71,13 +90,15 @@ public abstract class AbstractImportExcel<ExcelBeanType> implements IImportExcel
 		return warnings;
 	}
 	
-	private Map<String,List<ExcelBeanType>> readInputStream(String fileName, InputStream inputStream) {
+	private Map<String,List<ExcelBeanType>> readInputStream(String fileName, InputStream inputStream, HSSFWorkbook workbook) {
 		// [SheetName, List<ExcelBeanType>]
 		Map<String,List<ExcelBeanType>> excelBeansMap = new HashMap<String,List<ExcelBeanType>>();
 		
 		try {
-			POIFSFileSystem poifs = new POIFSFileSystem(inputStream);
-			HSSFWorkbook workbook = new HSSFWorkbook(poifs);
+			if(workbook == null) {
+				POIFSFileSystem poifs = new POIFSFileSystem(inputStream);
+				workbook = new HSSFWorkbook(poifs);
+			}
 			
 			for (int sheetIndex = 0; sheetIndex < workbook.getNumberOfSheets(); sheetIndex++) {
 				HSSFSheet sheet = workbook.getSheetAt(sheetIndex);
@@ -123,14 +144,14 @@ public abstract class AbstractImportExcel<ExcelBeanType> implements IImportExcel
 			e.printStackTrace();
 			errors.add(getI18nMessages().excelErroArquivoInvalido(fileName,extractMessage(e)));
 		} finally {
-			if (inputStream != null) {
-				try {
-					inputStream.close();
-				} catch (IOException e) {
-					errors.add(extractMessage(e));
-					e.printStackTrace();
-				}
-			}
+//			if (inputStream != null) {
+//				try {
+//					inputStream.close();
+//				} catch (IOException e) {
+//					errors.add(extractMessage(e));
+//					e.printStackTrace();
+//				}
+//			}
 		}
 		
 		return excelBeansMap;

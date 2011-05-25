@@ -126,7 +126,7 @@ public class CampiPresenter implements Presenter {
 		display.getExportExcelButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
 			@Override
 			public void componentSelected(ButtonEvent ce) {
-				ExportExcelFormSubmit e = new ExportExcelFormSubmit(ExcelInformationType.TUDO,display.getI18nConstants(),display.getI18nMessages());
+				ExportExcelFormSubmit e = new ExportExcelFormSubmit(ExcelInformationType.CAMPI,display.getI18nConstants(),display.getI18nMessages());
 				e.submit();
 			}
 		});

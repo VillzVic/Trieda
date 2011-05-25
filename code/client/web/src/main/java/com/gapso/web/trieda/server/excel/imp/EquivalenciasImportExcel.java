@@ -73,11 +73,14 @@ public class EquivalenciasImportExcel extends AbstractImportExcel<EquivalenciasI
 	}
 
 	@Override
+	public String getSheetName() {
+		return ExcelInformationType.EQUIVALENCIAS.getSheetName();
+	}
+	
+	@Override
 	protected void processSheetContent(String sheetName, List<EquivalenciasImportExcelBean> sheetContent) {
-		if (doSyntacticValidation(sheetName,sheetContent)) {
-			if (doLogicValidation(sheetName,sheetContent)) {
-				updateDataBase(sheetName,sheetContent);
-			}
+		if (doSyntacticValidation(sheetName,sheetContent) && doLogicValidation(sheetName,sheetContent)) {
+			updateDataBase(sheetName,sheetContent);
 		}
 	}
 

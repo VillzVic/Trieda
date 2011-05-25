@@ -138,7 +138,7 @@ public class Demanda implements Serializable {
     public Demanda merge() {
         if (this.entityManager == null) this.entityManager = entityManager();
         Demanda merged = this.entityManager.merge(this);
-        this.entityManager.flush();
+//        this.entityManager.flush();
         return merged;
     }
 

@@ -72,11 +72,14 @@ public class AreasTitulacaoImportExcel extends AbstractImportExcel<AreasTitulaca
 	}
 
 	@Override
+	public String getSheetName() {
+		return ExcelInformationType.AREAS_TITULACAO.getSheetName();
+	}
+	
+	@Override
 	protected void processSheetContent(String sheetName, List<AreasTitulacaoImportExcelBean> sheetContent) {
-		if (doSyntacticValidation(sheetName,sheetContent)) {
-			if (doLogicValidation(sheetName,sheetContent)) {
-				updateDataBase(sheetName,sheetContent);
-			}
+		if (doSyntacticValidation(sheetName,sheetContent) && doLogicValidation(sheetName,sheetContent)) {
+			updateDataBase(sheetName,sheetContent);
 		}
 	}
 

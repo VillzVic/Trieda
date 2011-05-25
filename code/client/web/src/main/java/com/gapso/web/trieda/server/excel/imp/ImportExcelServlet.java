@@ -43,11 +43,11 @@ public class ImportExcelServlet extends HttpServlet {
 		cenario = Cenario.findMasterData();
 		FileItemFactory factory = new DiskFileItemFactory();
         ServletFileUpload upload = new ServletFileUpload(factory);
+        InputStream inputStream = null;
         try {
         	@SuppressWarnings("unchecked")
 			List<FileItem> itens = upload.parseRequest(request);
         	
-        	InputStream inputStream = null;
         	String fileName = null;
         	String informationToBeImported = null;
 			for (FileItem iten : itens) {
@@ -79,6 +79,14 @@ public class ImportExcelServlet extends HttpServlet {
 			}
 		} catch (FileUploadException e) {
 			e.printStackTrace();
+		} finally {
+			if (inputStream != null) {
+				try {
+					inputStream.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
 		}
 	}
 }

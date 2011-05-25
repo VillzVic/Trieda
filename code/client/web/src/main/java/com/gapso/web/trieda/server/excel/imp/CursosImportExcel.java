@@ -101,11 +101,14 @@ public class CursosImportExcel extends AbstractImportExcel<CursosImportExcelBean
 	}
 
 	@Override
+	public String getSheetName() {
+		return ExcelInformationType.CURSOS.getSheetName();
+	}
+	
+	@Override
 	protected void processSheetContent(String sheetName, List<CursosImportExcelBean> sheetContent) {
-		if (doSyntacticValidation(sheetName,sheetContent)) {
-			if (doLogicValidation(sheetName,sheetContent)) {
-				updateDataBase(sheetName,sheetContent);
-			}
+		if (doSyntacticValidation(sheetName,sheetContent) && doLogicValidation(sheetName,sheetContent)) {
+			updateDataBase(sheetName,sheetContent);
 		}
 	}
 

@@ -77,11 +77,14 @@ public class UnidadesImportExcel extends AbstractImportExcel<UnidadesImportExcel
 	}
 
 	@Override
+	public String getSheetName() {
+		return ExcelInformationType.UNIDADES.getSheetName();
+	}
+	
+	@Override
 	protected void processSheetContent(String sheetName, List<UnidadesImportExcelBean> sheetContent) {
-		if (doSyntacticValidation(sheetName,sheetContent)) {
-			if (doLogicValidation(sheetName,sheetContent)) {
-				updateDataBase(sheetName,sheetContent);
-			}
+		if (doSyntacticValidation(sheetName,sheetContent) && doLogicValidation(sheetName,sheetContent)) {
+			updateDataBase(sheetName,sheetContent);
 		}
 	}
 

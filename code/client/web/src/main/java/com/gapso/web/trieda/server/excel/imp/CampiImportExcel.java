@@ -88,11 +88,14 @@ public class CampiImportExcel extends AbstractImportExcel<CampiImportExcelBean> 
 	}
 
 	@Override
+	public String getSheetName() {
+		return ExcelInformationType.CAMPI.getSheetName();
+	}
+	
+	@Override
 	protected void processSheetContent(String sheetName, List<CampiImportExcelBean> sheetContent) {
-		if (doSyntacticValidation(sheetName,sheetContent)) {
-			if (doLogicValidation(sheetName,sheetContent)) {
-				updateDataBase(sheetName,sheetContent);
-			}
+		if (doSyntacticValidation(sheetName,sheetContent) && doLogicValidation(sheetName,sheetContent)) {
+			updateDataBase(sheetName,sheetContent);
 		}
 	}
 
@@ -167,6 +170,7 @@ public class CampiImportExcel extends AbstractImportExcel<CampiImportExcelBean> 
 				campusBD.setValorCredito(campusExcel.getCustoMedioCredito());
 				
 				campusBD.merge();
+				Campus.entityManager().refresh(campusBD);
 			} else {
 				// insert
 				Campus newCampus = new Campus();
@@ -179,6 +183,7 @@ public class CampiImportExcel extends AbstractImportExcel<CampiImportExcelBean> 
 				newCampus.setValorCredito(campusExcel.getCustoMedioCredito());
 				
 				newCampus.persist();
+				Campus.entityManager().refresh(newCampus);
 			}
 		}
 	}
@@ -194,4 +199,5 @@ public class CampiImportExcel extends AbstractImportExcel<CampiImportExcelBean> 
 			CUSTO_CREDITO_COLUMN_NAME = HtmlUtils.htmlUnescape(getI18nConstants().custoMedioCreditoExcel());
 		}
 	}
+
 }

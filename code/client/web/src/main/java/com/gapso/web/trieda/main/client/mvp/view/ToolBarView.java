@@ -30,8 +30,8 @@ public class ToolBarView extends MyComposite implements ToolBarPresenter.Display
 	private ToolBar disciplinasToolBar;
 	private ToolBar professoresToolBar;
 	private ToolBar relatoriosToolBar;
+	private ToolBar administracaoToolBar;
 	
-	private ToolBar cenarioToolBar;
 	private ToolBar planejamentoToolBar;
 		
 	// Campi
@@ -42,7 +42,6 @@ public class ToolBarView extends MyComposite implements ToolBarPresenter.Display
 	private Button horariosAulaListCampiBt;
 	private Button turnosListCampiBt;
 	private Button ofertasListCampiBt;
-	private Button usuariosListBt;
 	
 	// Unidades
 	private Button unidadesNovoUnidadesBt;
@@ -89,6 +88,11 @@ public class ToolBarView extends MyComposite implements ToolBarPresenter.Display
 	private Button resumoCursosBt;
 	private Button resumoDisciplinasBt;
 	
+	// Administracao
+	private Button usuariosListBt;
+	private Button importarBt;
+	private Button exportarBt;
+	
 	// Cenário
 	private Button fixacoesListBt;
 	private Button parametrosBt;
@@ -100,10 +104,6 @@ public class ToolBarView extends MyComposite implements ToolBarPresenter.Display
 	private void initUI() {
 		container = new LayoutContainer(new HBoxLayout());
 		
-		ContentPanel cenarioPanel = new ContentPanel();
-		cenarioPanel.setHeading("Cenários");
-		cenarioPanel.setWidth(85);
-		
 		ContentPanel planejamentoPanel = new ContentPanel();
 		planejamentoPanel.setHeading("Planejamento");
 		planejamentoPanel.setWidth(150);
@@ -111,13 +111,11 @@ public class ToolBarView extends MyComposite implements ToolBarPresenter.Display
 		ContentPanel masterDataPanel = new ContentPanel();
 		masterDataPanel.setHeaderVisible(false);
 		
-		cenarioPanel.setBodyBorder(false);
 		planejamentoPanel.setBodyBorder(false);
 		masterDataPanel.setBodyBorder(false);
 		
 		HBoxLayoutData flex = new HBoxLayoutData(new Margins(0));
 		flex.setFlex(1);  
-		container.add(cenarioPanel, new HBoxLayoutData(new Margins(0)));
 		container.add(planejamentoPanel, new HBoxLayoutData(new Margins(0)));
 		container.add(masterDataPanel, flex);
 		
@@ -128,8 +126,7 @@ public class ToolBarView extends MyComposite implements ToolBarPresenter.Display
 		TabItem disciplinasTabItem = new TabItem("Disciplinas");
 		TabItem professoresTabItem = new TabItem("Professores");
 		TabItem relatoriosTabItem = new TabItem("Relatórios");
-		
-		cenarioToolBar = new ToolBar();
+		TabItem administracaoTabItem = new TabItem("Administração");
 		
 		planejamentoToolBar = new ToolBar();
 		
@@ -141,6 +138,7 @@ public class ToolBarView extends MyComposite implements ToolBarPresenter.Display
 		disciplinasToolBar = new ToolBar();
 		professoresToolBar = new ToolBar();
 		relatoriosToolBar = new ToolBar();
+		administracaoToolBar = new ToolBar();
 
 		campiTabItem.add(campiToolBar);
 		unidadesTabItem.add(unidadesToolBar);
@@ -149,6 +147,7 @@ public class ToolBarView extends MyComposite implements ToolBarPresenter.Display
 		disciplinasTabItem.add(disciplinasToolBar);
 		professoresTabItem.add(professoresToolBar);
 		relatoriosTabItem.add(relatoriosToolBar);
+		administracaoTabItem.add(administracaoToolBar);
 		
 		createGroups();
 		
@@ -157,7 +156,6 @@ public class ToolBarView extends MyComposite implements ToolBarPresenter.Display
 		TabPanel masterDataTab = new TabPanel();
 		masterDataTab.addStyleName("tabPanelMasterData");
 		masterDataTab.setHeight(height);
-		cenarioToolBar.setHeight(height - 26);
 		planejamentoToolBar.setHeight(height - 26);
 
 		TabItem masterDataItem = new TabItem("Master Data");
@@ -171,8 +169,8 @@ public class ToolBarView extends MyComposite implements ToolBarPresenter.Display
 		masterDataTab.add(disciplinasTabItem);
 		masterDataTab.add(professoresTabItem);
 		masterDataTab.add(relatoriosTabItem);
+		masterDataTab.add(administracaoTabItem);
 		
-		cenarioPanel.add(cenarioToolBar);
 		planejamentoPanel.add(planejamentoToolBar);
 		masterDataPanel.setTopComponent(masterDataTab);
 		
@@ -190,8 +188,8 @@ public class ToolBarView extends MyComposite implements ToolBarPresenter.Display
 		createDisciplinas();
 		createProfessores();
 		createRelatorios();
+		createAdministracao();
 		
-		createCenario();
 		createPlanejamento();
 	}
 
@@ -200,7 +198,6 @@ public class ToolBarView extends MyComposite implements ToolBarPresenter.Display
 	 */
 	
 	private void createCampi() {
-		// TODO Implementar o cadastro de campus pelo menu
 		campiNovoCampiBt = createButton("Novo", "Adicionar um campus", Resources.DEFAULTS.campusNovo24());
 		campiToolBar.add(campiNovoCampiBt);
 		
@@ -223,13 +220,9 @@ public class ToolBarView extends MyComposite implements ToolBarPresenter.Display
 		
 		ofertasListCampiBt = createButton("Oferta de Cursos<br />em Campi", "Oferta de Cursos em Campi", Resources.DEFAULTS.ofertaCurso24());
 		campiToolBar.add(ofertasListCampiBt);
-		
-		usuariosListBt = createButton("Usuários", "Usuários", Resources.DEFAULTS.turno24()); // TODO Ajustar o icone de usuários
-		campiToolBar.add(usuariosListBt);
 	}
 	
 	private void createUnidades() {
-		// TODO Implementar o cadastro de unidade pelo menu
 		unidadesNovoUnidadesBt = createButton("Nova", "Adicionar uma Unidade", Resources.DEFAULTS.unidadeNovo24()); 
 		unidadesToolBar.add(unidadesNovoUnidadesBt);
 		
@@ -352,19 +345,23 @@ public class ToolBarView extends MyComposite implements ToolBarPresenter.Display
 		relatoriosToolBar.add(relatorioVisaoProfessorBt);		
 	}
 	
+	private void createAdministracao() {
+		usuariosListBt = createButton("Usuários", "Usuários", Resources.DEFAULTS.turno24());
+		administracaoToolBar.add(usuariosListBt);
+		
+		importarBt = createButton("Importar<br />Tudo", "Importar Tudo", Resources.DEFAULTS.importar24());
+		administracaoToolBar.add(importarBt);
+		
+		exportarBt = createButton("Exportar<br />Tudo", "Exportar Tudo", Resources.DEFAULTS.exportar24());
+		administracaoToolBar.add(exportarBt);
+	}
+	
 	private void createPlanejamento() {
 		fixacoesListBt = createButton("Fixações", "Fixações", Resources.DEFAULTS.fixacao24());
 		planejamentoToolBar.add(fixacoesListBt);
 		
 		parametrosBt = createButton("Parâmetros de<br />Planejamento", "Parâmetros de Planejamento", Resources.DEFAULTS.parametroPlanejamento24());
 		planejamentoToolBar.add(parametrosBt);
-	}
-	
-	private void createCenario() {
-		cenarioToolBar.add(createButton("Novo", "Adicionar novo Cenário", Resources.DEFAULTS.cenarioAbrir24()));
-		cenarioToolBar.add(createButton("Listar", "Listar cenários", Resources.DEFAULTS.cenarioListar24()));
-//		cenarioToolBar.add(createButton("Clonar", "Clonar um cenário", Resources.DEFAULTS.cenarioClonar24()));
-//		cenarioToolBar.add(createButton("Abrir", "Abrir um cenário", Resources.DEFAULTS.cenarioNovo24()));
 	}
 	
 	private Button createButton(String text, String toolTip, ImageResource icon) {
@@ -452,6 +449,14 @@ public class ToolBarView extends MyComposite implements ToolBarPresenter.Display
 	@Override
 	public Button getUsuariosListButton() {
 		return usuariosListBt;
+	}
+	@Override
+	public Button getImportarButton() {
+		return importarBt;
+	}
+	@Override
+	public Button getExportarButton() {
+		return exportarBt;
 	}
 	@Override
 	public Button getAssociarDisciplinasSalasListSalasButton() {

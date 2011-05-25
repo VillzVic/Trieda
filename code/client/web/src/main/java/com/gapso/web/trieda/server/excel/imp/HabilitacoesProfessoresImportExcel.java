@@ -86,11 +86,14 @@ public class HabilitacoesProfessoresImportExcel extends AbstractImportExcel<Habi
 	}
 
 	@Override
+	public String getSheetName() {
+		return ExcelInformationType.HABILITACAO_PROFESSORES.getSheetName();
+	}
+	
+	@Override
 	protected void processSheetContent(String sheetName, List<HabilitacoesProfessoresImportExcelBean> sheetContent) {
-		if (doSyntacticValidation(sheetName,sheetContent)) {
-			if (doLogicValidation(sheetName,sheetContent)) {
-				updateDataBase(sheetName,sheetContent);
-			}
+		if (doSyntacticValidation(sheetName,sheetContent) && doLogicValidation(sheetName,sheetContent)) {
+			updateDataBase(sheetName,sheetContent);
 		}
 	}
 

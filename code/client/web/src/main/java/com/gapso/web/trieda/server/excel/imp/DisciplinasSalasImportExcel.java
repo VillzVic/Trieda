@@ -87,11 +87,14 @@ public class DisciplinasSalasImportExcel extends AbstractImportExcel<Disciplinas
 	}
 
 	@Override
+	public String getSheetName() {
+		return ExcelInformationType.DISCIPLINAS_SALAS.getSheetName();
+	}
+	
+	@Override
 	protected void processSheetContent(String sheetName, List<DisciplinasSalasImportExcelBean> sheetContent) {
-		if (doSyntacticValidation(sheetName,sheetContent)) {
-			if (doLogicValidation(sheetName,sheetContent)) {
-				updateDataBase(sheetName,sheetContent);
-			}
+		if (doSyntacticValidation(sheetName,sheetContent) && doLogicValidation(sheetName,sheetContent)) {
+			updateDataBase(sheetName,sheetContent);
 		}
 	}
 

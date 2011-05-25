@@ -78,11 +78,14 @@ public class CampiTrabalhoImportExcel extends AbstractImportExcel<CampiTrabalhoI
 	}
 
 	@Override
+	public String getSheetName() {
+		return ExcelInformationType.CAMPI_TRABALHO.getSheetName();
+	}
+	
+	@Override
 	protected void processSheetContent(String sheetName, List<CampiTrabalhoImportExcelBean> sheetContent) {
-		if (doSyntacticValidation(sheetName,sheetContent)) {
-			if (doLogicValidation(sheetName,sheetContent)) {
-				updateDataBase(sheetName,sheetContent);
-			}
+		if (doSyntacticValidation(sheetName,sheetContent) && doLogicValidation(sheetName,sheetContent)) {
+			updateDataBase(sheetName,sheetContent);
 		}
 	}
 

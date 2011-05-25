@@ -90,11 +90,14 @@ public class SalasImportExcel extends AbstractImportExcel<SalasImportExcelBean> 
 	}
 
 	@Override
+	public String getSheetName() {
+		return ExcelInformationType.SALAS.getSheetName();
+	}
+	
+	@Override
 	protected void processSheetContent(String sheetName, List<SalasImportExcelBean> sheetContent) {
-		if (doSyntacticValidation(sheetName,sheetContent)) {
-			if (doLogicValidation(sheetName,sheetContent)) {
-				updateDataBase(sheetName,sheetContent);
-			}
+		if (doSyntacticValidation(sheetName,sheetContent) && doLogicValidation(sheetName,sheetContent)) {
+			updateDataBase(sheetName,sheetContent);
 		}
 	}
 

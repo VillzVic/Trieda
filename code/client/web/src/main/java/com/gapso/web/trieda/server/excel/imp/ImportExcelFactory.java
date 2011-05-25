@@ -12,7 +12,7 @@ public class ImportExcelFactory {
 		
 		ExcelInformationType informationToBeImported = ExcelInformationType.valueOf(infoToBeImported);
 		switch (informationToBeImported) {
-			//case TUDO: importer = new TRIEDAImportExcel(); break;
+			case TUDO: importer = new TRIEDAImportExcel(cenario,i18nConstants,i18nMessages); break;
 			case CAMPI: importer = new CampiImportExcel(cenario,i18nConstants,i18nMessages); break;
 			case CURRICULOS: importer = new CurriculosImportExcel(cenario,i18nConstants,i18nMessages); break;
 			case CURSOS: importer = new CursosImportExcel(cenario,i18nConstants,i18nMessages); break;

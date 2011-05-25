@@ -98,16 +98,19 @@ public class ProfessoresImportExcel extends AbstractImportExcel<ProfessoresImpor
 	}
 
 	@Override
+	public String getSheetName() {
+		return ExcelInformationType.PROFESSORES.getSheetName();
+	}
+	
+	@Override
 	protected String getHeaderToString() {
 		return this.headerColumnsNames.toString();
 	}
 
 	@Override
 	protected void processSheetContent(String sheetName, List<ProfessoresImportExcelBean> sheetContent) {
-		if (doSyntacticValidation(sheetName,sheetContent)) {
-			if (doLogicValidation(sheetName,sheetContent)) {
-				updateDataBase(sheetName,sheetContent);
-			}
+		if (doSyntacticValidation(sheetName,sheetContent) && doLogicValidation(sheetName,sheetContent)) {
+			updateDataBase(sheetName,sheetContent);
 		}
 	}
 

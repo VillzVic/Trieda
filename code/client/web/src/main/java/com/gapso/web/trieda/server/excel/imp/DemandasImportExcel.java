@@ -99,11 +99,14 @@ public class DemandasImportExcel extends AbstractImportExcel<DemandasImportExcel
 	}
 
 	@Override
+	public String getSheetName() {
+		return ExcelInformationType.DEMANDAS.getSheetName();
+	}
+	
+	@Override
 	protected void processSheetContent(String sheetName, List<DemandasImportExcelBean> sheetContent) {
-		if (doSyntacticValidation(sheetName,sheetContent)) {
-			if (doLogicValidation(sheetName,sheetContent)) {
-				updateDataBase(sheetName,sheetContent);
-			}
+		if (doSyntacticValidation(sheetName,sheetContent) && doLogicValidation(sheetName,sheetContent)) {
+			updateDataBase(sheetName,sheetContent);
 		}
 	}
 

@@ -68,7 +68,7 @@ public abstract class AbstractImportExcelBean {
 		if (!isEmptyField(value)) {
 			if ("Sim".equalsIgnoreCase(value)) {
 				booleanValue = true;
-			} else if ("Não".equalsIgnoreCase(value) || "Nao".equalsIgnoreCase(value.replaceAll("[ãÃ]", "a"))) {
+			} else if ("Não".equalsIgnoreCase(value)) {
 				booleanValue = false;
 			}
 		}
