@@ -5,22 +5,22 @@
 #include "TRIEDA-OutputXSD.h"
 #include "AtendimentoHorarioAula.h"
 
-class AtendimentoTurno:
+class AtendimentoTurno :
    public OFBase
 {
 public:
-   AtendimentoTurno(void);
-   virtual ~AtendimentoTurno(void);
+   AtendimentoTurno( void );
+   virtual ~AtendimentoTurno( void );
 
    GGroup< AtendimentoHorarioAula * > * atendimentos_horarios_aula;
 
-   void setTurnoId(int value) { turno_id = value; }
+   void setTurnoId( int value ) { turno_id = value; }
    int getTurnoId() { return turno_id; }
 
 private:
    int turno_id;
 };
 
-std::ostream& operator << ( std::ostream &, AtendimentoTurno & );
+std::ostream & operator << ( std::ostream &, AtendimentoTurno & );
 
 #endif

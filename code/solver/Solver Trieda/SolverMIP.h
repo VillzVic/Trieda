@@ -159,6 +159,8 @@ public:
 
    int solveOperacional();
    void getSolutionOperacional();
+   void preencheOutputOperacional( ProblemSolution * );
+   bool aulaAlocada( Aula *, Campus *, Unidade *, Sala *, int );
 
 private:
    // Vetor responsável por armazenar ponteiros para todas as

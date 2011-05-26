@@ -13,13 +13,11 @@
 class Aula
 {
 public:
-
    Aula( bool = false );
-
    virtual ~Aula( void );
 
    // Ofertas que são atendidas por essa aula
-   GGroup< Oferta *, LessPtr<Oferta> > ofertas;
+   GGroup< Oferta *, LessPtr< Oferta > > ofertas;
 
    void setTurma( int );
    void setDisciplina( Disciplina * );
@@ -29,6 +27,7 @@ public:
    void setCreditosPraticos( int );
    void setAulaVirtual( bool );
    void setAulaFixada( bool );
+   void setQuantidade( int );
 
    int getTurma() const;
    Disciplina * getDisciplina() const;
@@ -39,6 +38,7 @@ public:
    int getTotalCreditos() const;
    bool eVirtual() const;
    bool eFixada() const;
+   int getQuantidade() const;
 
    virtual bool operator < ( Aula const & right )
    { 
@@ -93,7 +93,6 @@ public:
    virtual bool operator == ( Aula const & right )
    { 
       return  (
-         //( ofertas == right.ofertas ) &&
          ( turma == right.getTurma() ) &&
          ( *disciplina == *right.getDisciplina() ) &&
          ( *sala == *right.getSala() ) &&
@@ -110,7 +109,6 @@ public:
    void toString() const;
 
 private:
-
    int turma;
    Disciplina * disciplina;
    Sala * sala;

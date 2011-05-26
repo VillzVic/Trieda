@@ -57,6 +57,11 @@ void Aula::setAulaFixada( bool value )
 	aula_fixada = value;
 }
 
+void Aula::setQuantidade( int value )
+{
+   quantidade = value;
+}
+
 int Aula::getTurma() const
 {
    return this->turma;
@@ -100,6 +105,11 @@ bool Aula::eVirtual() const
 bool Aula::eFixada() const
 {
    return aula_fixada;
+}
+
+int Aula::getQuantidade() const
+{
+   return quantidade;
 }
 
 void Aula::toString() const

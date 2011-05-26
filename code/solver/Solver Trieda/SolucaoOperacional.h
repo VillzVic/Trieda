@@ -18,15 +18,14 @@ class SolucaoOperacional
 public:
 
    SolucaoOperacional( ProblemData * );
-
-   SolucaoOperacional(SolucaoOperacional const & s);
-
+   SolucaoOperacional( SolucaoOperacional const & );
    virtual ~SolucaoOperacional(void);
 
-   /* Armazena o professor e todos os horarios (<HorarioAula>) que uma aula foi alocada na solucao corrente.
-   Essa estrutura serve para agilizar o acesso ao professor e todos os horarios (<HorarioAula>) em que cada
-   aula esta alocada. Assim, ha necessidade de percorrer uma solucao para saber onde uma determinada aula esta
-   alocada. */
+   // Armazena o professor e todos os horarios (<HorarioAula>) que
+   // uma aula foi alocada na solucao corrente. Essa estrutura serve
+   // para agilizar o acesso ao professor e todos os horarios (<HorarioAula>)
+   // em que cada aula esta alocada. Assim, ha necessidade de percorrer uma
+   // solucao para saber onde uma determinada aula esta alocada.
    std::map< Aula *, std::pair< Professor *, std::vector< HorarioAula * > > , LessPtr<Aula> > blocoAulas;
 
    // Dado um índice que corresponde a uma linha
@@ -45,7 +44,7 @@ public:
    MatrizSolucao * getMatrizAulas() const;
 
    // Checa se a sequência de horários do professor está livre.
-   bool seqHorarioLivre(int idOperacionaProf, int dia, std::vector<int> & seqHorarioAula) const;
+   bool seqHorarioLivre( int, int, std::vector< int > & ) const;
 
    int posicao_horario_aula( int );
 
@@ -70,7 +69,7 @@ public:
 
    // Adiciona um novo professor à solução. O inteiro retornado
    // é referente à posição (linha) que o novo  professor ocupa na solução.
-   int addProfessor(Professor &, std::vector< Aula * > &);
+   int addProfessor( Professor &, std::vector< Aula * > & );
 
    // FUTURAMENTE, VAI SER NECESSARIO CRIAR UM METODO PARA REMOVER UM PROFESSOR.
 
@@ -82,28 +81,26 @@ public:
    //bool podeTrocarHorariosAulas( Aula &, Aula & ) const;
 
    // Função auxiliar à função podeTrocarHorariosAulas
-   //bool checkConflitoBlocoCurricular( Aula &, std::vector< std::pair< Professor *, Horario * > > & ) const;
+   // bool checkConflitoBlocoCurricular( Aula &, std::vector< std::pair< Professor *, Horario * > > & ) const;
 
-   /* ToDo : utilizar a estrutura abaixo para alocar o mesmo professor para créditos teóricos e práticos de
-   uma disciplina (qdo a disc foi dividida). Uma outra maneira seria dar uma prioridade maior para alocar
-   essas disciplinas. O problema é como tratar isso nos movimentos. */
-   /* Armazena o professor alocado para ministrar os créditos teóricos e práticos de uma disciplina. */
-   //std::map<std::pair<int/*turma*/,int/*modulo do id da disciplina*/>, Professor*> profTurmaDiscAula;
+   // ToDo : utilizar a estrutura abaixo para alocar o mesmo professor para créditos teóricos e práticos de
+   // uma disciplina (qdo a disc foi dividida). Uma outra maneira seria dar uma prioridade maior para alocar
+   // essas disciplinas. O problema é como tratar isso nos movimentos. */
+   // Armazena o professor alocado para ministrar os créditos teóricos e práticos de uma disciplina. */
+   // std::map< std::pair< int /*turma*/, int /*modulo do id da disciplina*/ >, Professor * > profTurmaDiscAula;
 
-   /* Checa a disponibilidade dos horários da(s) sala(s) demandados pelas aulas em questão. */
+   // Checa a disponibilidade dos horários da(s) sala(s) demandados pelas aulas em questão.
    //bool checkDisponibilidadeHorarioSalaAula(
-      //Aula & aula, 
-      //std::vector< std::pair< Professor *, Horario * > > & novosHorariosAula) const;
+   //   Aula & aula, 
+   //   std::vector< std::pair< Professor *, Horario * > > & ) const;
 
-   /* 
-   Testa a solução em questão. Se ela for factível retorna TRUE, cc. retorna FALSE. 
+   // Testa a solução em questão. Se ela for factível retorna TRUE, cc. retorna FALSE. 
 
-   ESSA FUNÇÃO SERVE APENAS PARA PODER TESTAR OS MOVIMENTOS REALIZADOS PELAS ESTRUTURAS DE VIZINHANÇA.
-   PROVAVELMENTE ELA SERÁ CARA, EM TERMOS DE TEMPO DE PROCESSAMENTO. DEVE-SE UTILIZA-LA APENAS PARA VALIDAÇÃO
-   DAS ESTRUTURAS DE VIZINHANÇA. UMA VEZ QUE ESTEJA GARANTIDO QUE AS ESTRUTURAS DE VIZINHANÇA ESTÃO FUNCIONANDO
-   DE ACORDO COM O PROPOSTO, DEVE-SE RETIRAR AS CHAMADAS A ESSE METODO.
-   */
-   void validaSolucao(std::string msg = "") const;
+   // ESSA FUNÇÃO SERVE APENAS PARA PODER TESTAR OS MOVIMENTOS REALIZADOS PELAS ESTRUTURAS DE VIZINHANÇA.
+   // PROVAVELMENTE ELA SERÁ CARA, EM TERMOS DE TEMPO DE PROCESSAMENTO. DEVE-SE UTILIZA-LA APENAS PARA VALIDAÇÃO
+   // DAS ESTRUTURAS DE VIZINHANÇA. UMA VEZ QUE ESTEJA GARANTIDO QUE AS ESTRUTURAS DE VIZINHANÇA ESTÃO FUNCIONANDO
+   // DE ACORDO COM O PROPOSTO, DEVE-SE RETIRAR AS CHAMADAS A ESSE METODO.
+   void validaSolucao( std::string = "" ) const;
 
    // Fixações do tático
    bool fixacaoDiscSala( Aula * );
@@ -119,11 +116,10 @@ public:
 
    /* Trata-se de um método para facilitar a alocação das aulas.
    Nenhuma checagem é realizada. As aulas apenas são alocadas para o(s) horário(s) especificado(s).*/
-   void alocaAulaProf(Aula &, Professor &, std::vector<HorarioAula*>);
+   void alocaAulaProf( Aula &, Professor &, std::vector< HorarioAula * > );
 
 private:
-   
-   ProblemData* problem_data;
+   ProblemData * problem_data;
 
    int total_dias;
    int total_horarios;

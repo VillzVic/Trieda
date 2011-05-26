@@ -1496,7 +1496,7 @@ void SolverMIP::getSolutionTatico()
                   AtendimentoUnidade * at_Unidade = new AtendimentoUnidade();
 
                   at_Unidade->setId( (*it_Vars_x)->getUnidade()->getId() );
-                  at_Unidade->setUnidadeId( (*it_Vars_x)->getUnidade()->getCodigo() );
+                  at_Unidade->setCodigoUnidade( (*it_Vars_x)->getUnidade()->getCodigo() );
                   at_Unidade->unidade = (*it_Vars_x)->getUnidade();
 
                   // Cadastrando a Sala
@@ -1570,7 +1570,7 @@ void SolverMIP::getSolutionTatico()
          // Cadastrando a Unidade
          AtendimentoUnidade * at_Unidade = new AtendimentoUnidade();
          at_Unidade->setId( (*it_Vars_x)->getUnidade()->getId() );
-         at_Unidade->setUnidadeId( (*it_Vars_x)->getUnidade()->getCodigo() );
+         at_Unidade->setCodigoUnidade( (*it_Vars_x)->getUnidade()->getCodigo() );
          at_Unidade->unidade = (*it_Vars_x)->getUnidade();
 
          // Cadastrando a Sala
@@ -1744,17 +1744,15 @@ int SolverMIP::solve()
       status = solveTaticoBasico();
 
       carregaVariaveisSolucaoTatico();
-
       converteCjtSalaEmSala();
-
-      separaDisciplinasEquivalentes();
+	   separaDisciplinasEquivalentes();
    }
    else if ( problemData->parametros->modo_otimizacao == "OPERACIONAL" )
    {
       problemSolution->atendimento_campus;
 
       if ( problemData->atendimentosTatico != NULL
-         && problemData->atendimentosTatico->size() > 0 )
+            && problemData->atendimentosTatico->size() > 0 )
       {
          ITERA_GGROUP(itAtTat,*problemData->atendimentosTatico,AtendimentoCampusSolucao)
          { 
@@ -1766,17 +1764,17 @@ int SolverMIP::solve()
             atCampus->campus_id = campus->getCodigo();
             atCampus->campus = campus;
 
-            ITERA_GGROUP(itAtUnd,itAtTat->atendimentosUnidades,AtendimentoUnidadeSolucao)
+            ITERA_GGROUP( itAtUnd, itAtTat->atendimentosUnidades, AtendimentoUnidadeSolucao )
             {
                Unidade * unidade = problemData->refUnidade[itAtUnd->getUnidadeId()];
 
                AtendimentoUnidade * atUnidade = new AtendimentoUnidade();
 
                atUnidade->setId( unidade->getId() );
-               atUnidade->setUnidadeId( unidade->getCodigo() );
+               atUnidade->setCodigoUnidade( unidade->getCodigo() );
                atUnidade->unidade = unidade;
 
-               ITERA_GGROUP(itAtSala,itAtUnd->atendimentosSalas,AtendimentoSalaSolucao)
+               ITERA_GGROUP( itAtSala, itAtUnd->atendimentosSalas, AtendimentoSalaSolucao )
                {
                   Sala * sala = problemData->refSala[itAtSala->getSalaId()];
 
@@ -1806,17 +1804,7 @@ int SolverMIP::solve()
          // Resolvendo o modelo operacional
          status = solveOperacional();
 
-         /*
-
-         ToDo Cleiton
-
-         Umas das impressões do arquivo de saída para o operacional deve ser realizada aqui.
-
-         Acima foi montada a estrutura até os dias e, em seguida, o solver foi executado.
-
-         Agora, com a solução do módulo operacional, deve-se preencher o resto da estrutura de saída.
-
-         */
+         preencheOutputOperacional( problemSolution );
       }
       else
       {
@@ -1839,23 +1827,29 @@ int SolverMIP::solve()
          // Preenchendo a estrutura "atendimentosTatico".
          problemData->atendimentosTatico = new GGroup< AtendimentoCampusSolucao * >();
 
-
-         //
-
-         /* 
-
-         ToDo: Cleiton
-         
-         Não basta fazer isso. Assim, estamos preenchendo a estrutura de saída com uma solução do 
-         tático. Deve-se construir essa estrutura até certa parte e, depois, preencher com os dados
-         solução obtida para o módulo operacional. 
-         
-         */
-
          ITERA_GGROUP( it_At_Campus, ( *problemSolution->atendimento_campus ), AtendimentoCampus )
-         { problemData->atendimentosTatico->add( new AtendimentoCampusSolucao( **it_At_Campus ) ); }
+         {
+            problemData->atendimentosTatico->add( new AtendimentoCampusSolucao( **it_At_Campus ) );
+         }
 
-         //
+         // Remove a referência para os atendimentos tático (que pertencem ao output tático)
+         ITERA_GGROUP( it_At_Campus, ( *problemSolution->atendimento_campus ), AtendimentoCampus )
+         {
+            ITERA_GGROUP( it_At_Unidade, ( *it_At_Campus->atendimentos_unidades ), AtendimentoUnidade )
+            {
+               ITERA_GGROUP( it_At_Sala, ( *it_At_Unidade->atendimentos_salas ), AtendimentoSala )
+               {
+                  ITERA_GGROUP( it_At_DiaSemana, ( *it_At_Sala->atendimentos_dias_semana ), AtendimentoDiaSemana )
+                  {
+                     GGroup< AtendimentoTatico * > * atendimentos_tatico = it_At_DiaSemana->atendimentos_tatico;
+                     atendimentos_tatico = NULL;
+                  }
+               }
+            }
+         }
+
+         // Preenche as classes do output ooperacional
+         preencheOutputOperacional( problemSolution );
 
          // Criando as aulas que serão utilizadas para resolver o modelo operacional
          problemDataLoader->criaAulas();
@@ -1868,9 +1862,136 @@ int SolverMIP::solve()
    return status;
 }
 
+void SolverMIP::preencheOutputOperacional( ProblemSolution * solution )
+{
+   Campus * campus = NULL;
+   Unidade * unidade = NULL;
+   Sala * sala = NULL;
+   int dia_semana = 0;
+
+   int total_horarios = solution->solucao_operacional->getTotalHorarios();
+   MatrizSolucao * matriz_aulas = solution->solucao_operacional->getMatrizAulas();
+
+   ITERA_GGROUP( it_At_Campus, ( *problemSolution->atendimento_campus ), AtendimentoCampus )
+   {
+      // Campus do atendimento
+      campus = it_At_Campus->campus;
+
+      ITERA_GGROUP( it_At_Unidade, ( *it_At_Campus->atendimentos_unidades ), AtendimentoUnidade )
+      {
+         // Unidade do atendimento
+         unidade = problemData->refUnidade[ it_At_Unidade->getId() ];
+
+         ITERA_GGROUP( it_At_Sala, ( *it_At_Unidade->atendimentos_salas ), AtendimentoSala )
+         {
+            // Sala do atendimento
+            sala = problemData->refSala[ it_At_Sala->getId() ];
+
+            ITERA_GGROUP( it_At_DiaSemana, ( *it_At_Sala->atendimentos_dias_semana ), AtendimentoDiaSemana )
+            {
+               // Dia da semana do atendimento
+               dia_semana = it_At_DiaSemana->getDiaSemana();
+
+               it_At_DiaSemana->atendimentos_turno = new GGroup< AtendimentoTurno * >();
+
+               vector< vector< Aula * > * >::iterator
+                  it_matriz_aulas = matriz_aulas->begin();
+               for (; it_matriz_aulas != matriz_aulas->end(); it_matriz_aulas++ )
+               {
+                  int linha_professor = std::distance( matriz_aulas->begin(), it_matriz_aulas );
+
+                  vector< Aula * > * aulas = ( *it_matriz_aulas );
+                  vector< Aula * >::iterator it_aula = aulas->begin();
+                  for (; it_aula != aulas->end(); it_aula++ )
+                  {
+                     int horario_aula_id = ( std::distance( aulas->begin(), it_aula ) % total_horarios );
+
+                     Aula * aula = ( *it_aula );
+                     if ( aula == NULL || aula->eVirtual() == true )
+                     {
+                        continue;
+                     }
+
+                     Oferta * temp = ( *( aula->ofertas.begin() ) );
+                     int turno = temp->getTurnoId();
+
+                     //-------------------------------------------------------------------------------------
+                     AtendimentoTurno * atendimento_turno = NULL;
+                     ITERA_GGROUP( it, ( *it_At_DiaSemana->atendimentos_turno ), AtendimentoTurno )
+                     {
+                        if ( it->getTurnoId() == turno )
+                        {
+                           atendimento_turno = ( *it );
+                           break;
+                        }
+                     }
+
+                     if ( atendimento_turno == NULL )
+                     {
+                        atendimento_turno = new AtendimentoTurno();
+
+                        atendimento_turno->setId( turno );
+                        atendimento_turno->setTurnoId( turno );
+
+                        it_At_DiaSemana->atendimentos_turno->add( atendimento_turno );
+                     }
+                     //-------------------------------------------------------------------------------------
+
+                     //-------------------------------------------------------------------------------------
+                     if ( aulaAlocada( aula, campus, unidade, sala, dia_semana ) )
+                     {
+                        AtendimentoHorarioAula * atendimento_horario_aula = new AtendimentoHorarioAula();
+
+                        HorarioAula * horario_aula = problemData->horarios_aula_ordenados[ horario_aula_id ];
+                        Professor * professor = solution->solucao_operacional->getProfessorMatriz( linha_professor );
+
+                        atendimento_horario_aula->setId( horario_aula->getId() );
+                        atendimento_horario_aula->setHorarioAulaId( horario_aula->getId() );
+                        atendimento_horario_aula->setProfessorId( professor->getId() );
+                        atendimento_horario_aula->setCreditoTeorico( aula->getCreditosTeoricos() > 0 );
+
+                        ITERA_GGROUP_LESSPTR( it_oferta, aula->ofertas, Oferta )
+                        {
+                           Oferta * oferta = ( *it_oferta );
+                           AtendimentoOferta * atendimento_oferta = new AtendimentoOferta();
+
+                           atendimento_oferta->setId( oferta->getId() );
+                           atendimento_oferta->setDisciplinaId( aula->getDisciplina()->getId() );
+                           atendimento_oferta->setTurma( aula->getTurma() );
+                           atendimento_oferta->setQuantidade( aula->getQuantidade() );
+
+                           char id_oferta_char[ 200 ];
+                           sprintf( id_oferta_char, "%d", oferta->getId() );
+                           std::string id_oferta_str = std::string( id_oferta_char );
+                           atendimento_oferta->setOfertaCursoCampiId( id_oferta_str );
+                           atendimento_oferta->oferta = oferta;
+
+                           atendimento_horario_aula->atendimentos_ofertas->add( atendimento_oferta );
+                        }
+
+                        atendimento_turno->atendimentos_horarios_aula->add( atendimento_horario_aula );
+                     }
+                     //-------------------------------------------------------------------------------------
+                  }
+               }
+            }
+         }
+      }
+   }
+}
+
+bool SolverMIP::aulaAlocada( Aula * aula, Campus * campus, Unidade * unidade, Sala * sala, int dia_semana ) 
+{
+   bool aula_alocada = true;
+
+   // TODO
+
+   return aula_alocada;
+}
+
 void SolverMIP::separaDisciplinasEquivalentes()
 {
-	// TODO
+	// TODO - Cleiton
 }
 
 int SolverMIP::localBranching( double * xSol, double maxTime )

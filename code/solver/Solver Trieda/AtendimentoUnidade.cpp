@@ -21,13 +21,14 @@ std::ostream& operator << ( std::ostream & out, AtendimentoUnidade & unidade )
 {
    out << "<AtendimentoUnidade>" << std::endl;
    out << "<unidadeId>" << unidade.getId() << "</unidadeId>" << std::endl;
-   out << "<unidadeCodigo>" << unidade.getUnidadeId() << "</unidadeCodigo>" << std::endl;
+   out << "<unidadeCodigo>" << unidade.getCodigoUnidade() << "</unidadeCodigo>" << std::endl;
    out << "<atendimentosSalas>" << std::endl;
 
    GGroup< AtendimentoSala * >::GGroupIterator it_sala
 	   = unidade.atendimentos_salas->begin();
-   for(; it_sala != unidade.atendimentos_salas->end();
-	     it_sala++ )
+
+   for (; it_sala != unidade.atendimentos_salas->end();
+	       it_sala++ )
    {
       out << ( **it_sala );
    }

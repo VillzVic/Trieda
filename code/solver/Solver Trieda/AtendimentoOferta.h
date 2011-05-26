@@ -5,19 +5,19 @@
 #include "TRIEDA-OutputXSD.h"
 #include "Oferta.h"
 
-class AtendimentoOferta:
+class AtendimentoOferta :
    public OFBase
 {
 public:
-   AtendimentoOferta(void);
-   virtual ~AtendimentoOferta(void);
+   AtendimentoOferta( void );
+   virtual ~AtendimentoOferta( void );
 
    Oferta * oferta;
 
-   void setOfertaCursoCampiId(std::string value) { oferta_curso_campi_id = value; }
-   void setDisciplinaId(int value) { disciplina_id = value; }
-   void setQuantidade(int value) { quantidade = value; }
-   void setTurma(int value) { turma = value; }
+   void setOfertaCursoCampiId( std::string value ) { oferta_curso_campi_id = value; }
+   void setDisciplinaId( int value ) { disciplina_id = value; }
+   void setQuantidade( int value ) { quantidade = value; }
+   void setTurma( int value ) { turma = value; }
 
    std::string getOfertaCursoCampiId() { return oferta_curso_campi_id; }
    int getDisciplinaId() { return disciplina_id; }
@@ -31,6 +31,6 @@ private:
    int turma;
 };
 
-std::ostream & operator << (std::ostream &, AtendimentoOferta &);
+std::ostream & operator << ( std::ostream &, AtendimentoOferta & );
 
 #endif

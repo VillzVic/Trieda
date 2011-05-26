@@ -6,23 +6,23 @@
 #include "AtendimentoSala.h"
 #include "Unidade.h"
 
-class AtendimentoUnidade:
+class AtendimentoUnidade :
    public OFBase
 {
 public:
-   AtendimentoUnidade(void);
-   virtual ~AtendimentoUnidade(void);
+   AtendimentoUnidade( void );
+   virtual ~AtendimentoUnidade( void );
 
-   GGroup< AtendimentoSala * > * atendimentos_salas;
    Unidade * unidade;
+   GGroup< AtendimentoSala * > * atendimentos_salas;
 
-   void setUnidadeId(std::string value) { unidade_id = value; }
-   std::string getUnidadeId() { return unidade_id; }
+   void setCodigoUnidade( std::string value ) { codigo_unidade = value; }
+   std::string getCodigoUnidade() { return codigo_unidade; }
 
 private:
-   std::string unidade_id;
+   std::string codigo_unidade;
 };
 
-std::ostream& operator << (std::ostream& out, AtendimentoUnidade& unidade);
+std::ostream & operator << ( std::ostream &, AtendimentoUnidade & );
 
 #endif
