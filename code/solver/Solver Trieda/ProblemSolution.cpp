@@ -94,6 +94,23 @@ std::ostream & operator << ( std::ostream & out, ProblemSolution & solution )
       //-----------------------------------------------------------------------
 
       //-----------------------------------------------------------------------
+      // Erros e warnings:
+      out << ( *ErrorHandler::getInstance() );
+      //-----------------------------------------------------------------------
+
+      //-----------------------------------------------------------------------
+      // Folgas:
+      out << "<restricoesVioladas>\n";
+      RestricaoVioladaGroup::iterator it
+         = solution.getFolgas()->begin();
+      for (; it != solution.getFolgas()->end(); ++it)
+      {
+         out << ( **it );
+      }
+      out << "</restricoesVioladas>" << std::endl;
+      //-----------------------------------------------------------------------
+
+      //-----------------------------------------------------------------------
       // Código relacionado à issue TRIEDA-833 e TRIEDA-883
       out << "<professoresVirtuais>" << std::endl;
       if ( solution.professores_virtuais != NULL )
