@@ -516,11 +516,11 @@ void ProblemDataLoader::criaConjuntoSalasUnidade()
             }
 
             // Referência para algum dos GGroup de conjuntos de
-			// salas (<conjunto_Salas_Disc_eLab> ou  <conjunto_Salas_Disc_GERAL>).
+			   // salas (<conjunto_Salas_Disc_eLab> ou  <conjunto_Salas_Disc_GERAL>).
             GGroup< ConjuntoSala * > * gg_Cjt_Salas_Esc = &( conjunto_Salas_Disc_eLab );
 
             // Teste para escolher qual estrutura de dados
-			// (<conjunto_Salas_Disc_eLab> ou  <conjunto_Salas_Disc_GERAL>) deve-se utilizar.
+			   // (<conjunto_Salas_Disc_eLab> ou  <conjunto_Salas_Disc_GERAL>) deve-se utilizar.
             if ( !exige_Conjunto_Individual )
             {
                gg_Cjt_Salas_Esc = &( conjunto_Salas_Disc_GERAL );
@@ -718,11 +718,11 @@ void ProblemDataLoader::estabeleceDiasLetivosBlocoCampus()
       ITERA_GGROUP_N_PT( it_Dia_Letivo, it_Bloco_Curric->diasLetivos, int )
       {
          if ( it_Bloco_Curric->campus->diasLetivos.find
-              (*it_Dia_Letivo) != it_Bloco_Curric->campus->diasLetivos.end() )
+              ( *it_Dia_Letivo ) != it_Bloco_Curric->campus->diasLetivos.end() )
          {
             problemData->bloco_Campus_Dias
                [ std::make_pair( it_Bloco_Curric->getId(),
-               it_Bloco_Curric->campus->getId())].add( *it_Dia_Letivo );
+                                 it_Bloco_Curric->campus->getId() ) ].add( *it_Dia_Letivo );
          }
          else
          {
@@ -1742,11 +1742,11 @@ void ProblemDataLoader::atualizaDemandas()
 			// substituídas, pois essas demandas deixarão de existir, e a quantidade
 			// de alunos demandados será adicionada na demanda da disciplina que substituiu
 			GGroup< Demanda *, LessPtr< Demanda > > demandas
-				= retornaDemandaDisciplinasSubstituidas( disciplina );
+				= problemData->retornaDemandaDisciplinasSubstituidas( disciplina );
 
 			// Procura por uma demanda da disciplina que substituiu a
          // anterior, em um curso que seja compatível com o curso atual
-			demanda_substituta = buscaDemanda( curso, disciplina_substituta );
+			demanda_substituta = problemData->buscaDemanda( curso, disciplina_substituta );
 
          // Não há demanda para 'disciplina_substituta' em
          // um curso que seja compatível com o curso atual
@@ -1782,6 +1782,10 @@ void ProblemDataLoader::atualizaDemandas()
             // deixa de existir e inserimos a nova demanda
 				problemData->demandas.remove( demanda_anterior );
             problemData->demandas.add( nova_demanda );
+
+            // Informa que a demanda criada vale para 'disciplina',
+            // mas foi criada como demanda de 'disciplina_substituta'
+            problemData->demandasDisciplinasSubstituidas[ disciplina ] = nova_demanda;
 			}
 		}
     }
@@ -1801,39 +1805,6 @@ int ProblemDataLoader::retornaMaiorIdDemandas()
    }
 
    return id_demanda;
-}
-
-GGroup< Demanda *, LessPtr< Demanda > >
-   ProblemDataLoader::retornaDemandaDisciplinasSubstituidas( Disciplina * disciplina )
-{
-	GGroup< Demanda *, LessPtr< Demanda > > demandas;
-
-	ITERA_GGROUP_LESSPTR( it_demanda, problemData->demandas, Demanda )
-	{
-		if ( it_demanda->disciplina->getId() == disciplina->getId() )
-		{
-			demandas.add( *it_demanda );
-		}
-	}
-
-	return demandas;
-}
-
-Demanda * ProblemDataLoader::buscaDemanda( Curso * curso, Disciplina * disciplina )
-{
-   Demanda * demanda = NULL;
-
-   ITERA_GGROUP_LESSPTR( it_demanda, problemData->demandas, Demanda )
-   {
-      if ( it_demanda->disciplina->getId() == disciplina->getId()
-         && problemData->cursosCompativeis( curso, it_demanda->oferta->curso ) )
-      {
-         demanda = ( *it_demanda );
-         break;
-      }
-   }
-
-	return demanda;
 }
 
 void ProblemDataLoader::relacionaDisciplinasEquivalentes()
@@ -1872,7 +1843,7 @@ void ProblemDataLoader::relacionaDisciplinasEquivalentes()
                // onde a disciplina 'disciplina_equivalente' está incluída,
                // para informar a substituição dessa disciplina por uma equivalente
                GGroup< std::pair< Curso *, Curriculo * > > cursos_curriculos
-                  = retornaCursosCurriculosDisciplina( disciplina_equivalente );
+                  = problemData->retornaCursosCurriculosDisciplina( disciplina_equivalente );
 
                GGroup< std::pair< Curso *, Curriculo * > >::iterator
                   it_curso_curriculo = cursos_curriculos.begin();
@@ -1893,39 +1864,15 @@ void ProblemDataLoader::relacionaDisciplinasEquivalentes()
 
 					   // Informa que a 'disciplina_equivalente' será substituída pela 'disciplina'
 					   problemData->map_CursoCurriculo_DiscSubst[ curso_curriculo ][ disciplina_equivalente ] = disciplina_substituta;
+
+                  // Adiciona a 'disciplina_equivalente' no conjunto de disciplina que foram substituidas por 'disciplina'
+                  problemData->mapGroupDisciplinasSubstituidas[ curso_curriculo ][ disciplina_substituta ].add( disciplina_equivalente );
                }
 					//------------------------------------------------------------------------------------------------
 				}
 			}
 		}
 	}
-}
-
-// Retorna todos os pares curso/curriculo
-// onde a disciplina informada está incluída
-GGroup< std::pair< Curso *, Curriculo * > >
-   ProblemDataLoader::retornaCursosCurriculosDisciplina( Disciplina * disciplina_equivalente )
-{
-   GGroup< std::pair< Curso *, Curriculo * > > cursos_curriculos;
-
-   ITERA_GGROUP_LESSPTR( it_curso, problemData->cursos, Curso )
-   {
-      ITERA_GGROUP_LESSPTR( it_curriculo, it_curso->curriculos, Curriculo )
-      {
-         GGroup< std::pair< int, Disciplina * > >::iterator
-            it_disciplina = it_curriculo->disciplinas_periodo.begin();
-         for (; it_disciplina != it_curriculo->disciplinas_periodo.end();
-                it_disciplina++ )
-         {
-            if ( ( *it_disciplina ).second->getId() == disciplina_equivalente->getId() )
-            {
-               cursos_curriculos.add( std::make_pair( ( *it_curso ), ( *it_curriculo ) ) );
-            }
-         }
-      }
-   }
-
-   return cursos_curriculos;
 }
 
 void ProblemDataLoader::divideDisciplinas()
@@ -2877,13 +2824,13 @@ void ProblemDataLoader::estima_turmas()
 void ProblemDataLoader::print_stats()
 {
    int ncampi(0), nunidades(0), nsalas(0), nconjuntoSalas(0),
-      ndiscs(0), ndiscsDiv(0), nturmas(0), nturmasDiscDiv(0),
-      nprofs(0),ncursos(0),nofertas(0), tdemanda(0),tdemandaDiv(0);
+       ndiscs(0), ndiscsDiv(0), nturmas(0), nturmasDiscDiv(0),
+       nprofs(0), ncursos(0), nofertas(0), tdemanda(0), tdemandaDiv(0);
 
    ncampi = problemData->campi.size();
-   ITERA_GGROUP_LESSPTR(it_campi,problemData->campi,Campus)
+   ITERA_GGROUP_LESSPTR( it_campi, problemData->campi, Campus )
    {
-      nunidades += it_campi->unidades.size();
+      nunidades += ( it_campi->unidades.size() );
       ITERA_GGROUP_LESSPTR( it_und, it_campi->unidades, Unidade )
       {
          nsalas += it_und->salas.size();
@@ -3483,8 +3430,8 @@ void ProblemDataLoader::criaAulas()
 void ProblemDataLoader::relacionaBlocoCurricularAulas()
 {
    std::cout << "\n\n\nALTERAR O METODO <void ProblemDataLoader::"
-			 << "relacionaBlocoCurricularAulas()> PARA PODER CONTEMPLAR AS "
-			 << "MUDANCAS NAS ESTRUTURAS <aulaBlocosCurriculares> E <blocoCurricularDiaAulas>.\n\n\n";
+			    << "relacionaBlocoCurricularAulas()> PARA PODER CONTEMPLAR AS "
+			    << "MUDANCAS NAS ESTRUTURAS <aulaBlocosCurriculares> E <blocoCurricularDiaAulas>.\n\n\n";
 
    // ANTES DISSO, ALTERAR AS ESTRUTURAS. COMO SERÃO?! PENSAR.
 

@@ -2,7 +2,6 @@
 
 AtendimentoTatico::AtendimentoTatico(void)
 {
-   //atendimento_oferta = NULL;
    atendimento_oferta = new AtendimentoOferta();
 
    qtde_creditos_teoricos = 0;
@@ -13,12 +12,11 @@ AtendimentoTatico::~AtendimentoTatico(void)
 {
    if( atendimento_oferta != NULL )
    {
-      //atendimento_oferta->deleteElements();
-      delete atendimento_oferta;
+       delete atendimento_oferta;
    }
 }
 
-std::ostream& operator << ( std::ostream& out, AtendimentoTatico & tatico )
+std::ostream & operator << ( std::ostream& out, AtendimentoTatico & tatico )
 {
    out << "<AtendimentoTatico>" << std::endl;
 

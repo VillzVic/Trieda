@@ -161,6 +161,7 @@ public:
    void getSolutionOperacional();
    void preencheOutputOperacional( ProblemSolution * );
    bool aulaAlocada( Aula *, Campus *, Unidade *, Sala *, int );
+   int totalCreditosAtendidos( Disciplina *, Curso *, Curriculo * );
 
 private:
    // Vetor responsável por armazenar ponteiros para todas as
@@ -170,10 +171,11 @@ private:
    // Estrutura responsável por armazenar referências para todas variáveis
    // do tipo V_ALUNOS que possuirem algum valor de atendimento maior que 0.
    typedef std::map< std::pair< int /*turma*/, Disciplina * >,
-					 std::vector< Variable * > > vars__A___i_d_o;
+					      std::vector< Variable * > > vars__A___i_d_o;
 
    vars__X___i_d_u_tps_t vars_x;
    vars__A___i_d_o vars_a;
+
    ProblemSolution * problemSolution;
    ProblemDataLoader * problemDataLoader;
 

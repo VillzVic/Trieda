@@ -198,6 +198,67 @@ bool ProblemData::cursosCompativeis( Curso * curso1, Curso * curso2 )
 	return false;
 }
 
+// Retorna todos os pares curso/curriculo
+// onde a disciplina informada está incluída
+GGroup< std::pair< Curso *, Curriculo * > >
+   ProblemData::retornaCursosCurriculosDisciplina( Disciplina * disciplina_equivalente )
+{
+   GGroup< std::pair< Curso *, Curriculo * > > cursos_curriculos;
+
+   ITERA_GGROUP_LESSPTR( it_curso, cursos, Curso )
+   {
+      ITERA_GGROUP_LESSPTR( it_curriculo, it_curso->curriculos, Curriculo )
+      {
+         GGroup< std::pair< int, Disciplina * > >::iterator
+            it_disciplina = it_curriculo->disciplinas_periodo.begin();
+
+         for (; it_disciplina != it_curriculo->disciplinas_periodo.end();
+                it_disciplina++ )
+         {
+            if ( ( *it_disciplina ).second->getId() == disciplina_equivalente->getId() )
+            {
+               cursos_curriculos.add( std::make_pair( ( *it_curso ), ( *it_curriculo ) ) );
+            }
+         }
+      }
+   }
+
+   return cursos_curriculos;
+}
+
+GGroup< Demanda *, LessPtr< Demanda > >
+   ProblemData::retornaDemandaDisciplinasSubstituidas( Disciplina * disciplina )
+{
+	GGroup< Demanda *, LessPtr< Demanda > > demandas;
+
+	ITERA_GGROUP_LESSPTR( it_demanda, demandas, Demanda )
+	{
+		if ( it_demanda->disciplina->getId() == disciplina->getId() )
+		{
+			demandas.add( *it_demanda );
+		}
+	}
+
+	return demandas;
+}
+
+Demanda * ProblemData::buscaDemanda( Curso * curso, Disciplina * disciplina )
+{
+   Demanda * demanda = NULL;
+
+   ITERA_GGROUP_LESSPTR( it_demanda, demandas, Demanda )
+   {
+      if ( it_demanda->disciplina->getId() == disciplina->getId()
+         && cursosCompativeis( curso, it_demanda->oferta->curso ) )
+      {
+         demanda = ( *it_demanda );
+         break;
+      }
+   }
+
+	return demanda;
+}
+
 Disciplina * ProblemData::retornaDisciplinaSubstituta( Curso * curso, Curriculo * curriculo, Disciplina * disciplina )
 {
     Disciplina * disciplina_equivalente = NULL;

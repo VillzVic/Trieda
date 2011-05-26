@@ -326,11 +326,11 @@ void SolverMIP::carregaVariaveisSolucaoTatico()
             break;
          case Variable::V_CREDITOS:
             std::cout << "Oferta de " << v->getValue()
-               << " creditos da disciplina " << v->getDisciplina()->getCodigo()
-               << " para a turma " << v->getTurma()
-               << " no dia " << v->getDia()
-               << " para alguma de sala do conjunto de salas " << v->getSubCjtSala()->getId()
-               << std::endl << std::endl;
+                      << " creditos da disciplina " << v->getDisciplina()->getCodigo()
+                      << " para a turma " << v->getTurma()
+                      << " no dia " << v->getDia()
+                      << " para alguma de sala do conjunto de salas " << v->getSubCjtSala()->getId()
+                      << std::endl << std::endl;
 
             vars_x.push_back(v);
             break;
@@ -338,10 +338,10 @@ void SolverMIP::carregaVariaveisSolucaoTatico()
          case Variable::V_ABERTURA: break;
          case Variable::V_ALUNOS:
             std::cout << "Oferecimento de " << v->getValue()
-               << " vagas da disciplina " << v->getDisciplina()->getCodigo()
-               << " para a turma " << v->getTurma()
-               << " do curso " << v->getOferta()->curso->getCodigo()
-               << std::endl << std::endl;
+                      << " vagas da disciplina " << v->getDisciplina()->getCodigo()
+                      << " para a turma " << v->getTurma()
+                      << " do curso " << v->getOferta()->curso->getCodigo()
+                      << std::endl << std::endl;
 
             vars_a[ std::make_pair( v->getTurma(), v->getDisciplina() ) ].push_back( v );
             break;
@@ -1826,7 +1826,6 @@ int SolverMIP::solve()
 
          // Preenchendo a estrutura "atendimentosTatico".
          problemData->atendimentosTatico = new GGroup< AtendimentoCampusSolucao * >();
-
          ITERA_GGROUP( it_At_Campus, ( *problemSolution->atendimento_campus ), AtendimentoCampus )
          {
             problemData->atendimentosTatico->add( new AtendimentoCampusSolucao( **it_At_Campus ) );
@@ -1991,7 +1990,71 @@ bool SolverMIP::aulaAlocada( Aula * aula, Campus * campus, Unidade * unidade, Sa
 
 void SolverMIP::separaDisciplinasEquivalentes()
 {
-	// TODO - Cleiton
+   Curso * curso = NULL;
+   Curriculo * curriculo = NULL;
+   Disciplina * disciplina_substituta = NULL;
+   Disciplina * disciplina_equivalente = NULL;
+
+   std::map< std::pair< Curso *, Curriculo * >,
+             std::map< Disciplina *, GGroup< Disciplina *, LessPtr< Disciplina > > > >::iterator
+             it_disc_substituidas = problemData->mapGroupDisciplinasSubstituidas.begin();
+
+   for (; it_disc_substituidas != problemData->mapGroupDisciplinasSubstituidas.end();
+          it_disc_substituidas++ )
+   {
+      curso = it_disc_substituidas->first.first;
+      curriculo = it_disc_substituidas->first.second;
+
+      std::map< Disciplina *, GGroup< Disciplina *, LessPtr< Disciplina > > >::iterator
+         it_conjunto_disc = it_disc_substituidas->second.begin();
+
+      for (; it_conjunto_disc != it_disc_substituidas->second.end();
+             it_conjunto_disc++ )
+      {
+         disciplina_substituta = it_conjunto_disc->first;
+         int alunos_atendidos = totalCreditosAtendidos( disciplina_substituta, curso, curriculo );
+
+         // Primeiramente, devo atender todos a demanda da
+         // disciplina 'disciplina_substituta', e em seguida
+         // alocar a demanda de alunos das suas disciplinas
+         // equivalentes, enquanto for possível
+         Demanda * demanda_substituta = problemData->buscaDemanda( curso, disciplina_substituta );
+
+         // Demanda da disciplina que substituiu as demais
+         int alunos_disciplina_substituta = demanda_substituta->getQuantidade();
+
+         ITERA_GGROUP_LESSPTR( it_disc_equi, it_conjunto_disc->second, Disciplina )
+         {
+            disciplina_equivalente = ( *it_disc_equi );
+         }
+      }
+   }
+}
+
+int SolverMIP::totalCreditosAtendidos( Disciplina * disciplina, Curso * curso, Curriculo * curriculo )
+{
+   int alunos_atendidos = 0;
+
+   vars__A___i_d_o::iterator it_a = vars_a.begin();
+   for (; it_a != vars_a.end(); it_a++ )
+   {
+      std::pair< int, Disciplina * > turma_disciplina = it_a->first;
+      vector< Variable * >::iterator it_variable = it_a->second.begin();
+
+      for (; it_variable != it_a->second.end(); it_variable++ )
+      {
+         Variable * v = ( *it_variable );
+
+         if ( v->getOferta()->curso->getId() == curso->getId()
+            && v->getOferta()->curriculo->getId() == curriculo->getId()
+            && v->getDisciplina()->getId() == disciplina->getId() )
+         {
+            alunos_atendidos += (int)( v->getValue() );
+         }
+      }
+   }
+
+   return alunos_atendidos;
 }
 
 int SolverMIP::localBranching( double * xSol, double maxTime )
@@ -2001,7 +2064,7 @@ int SolverMIP::localBranching( double * xSol, double maxTime )
    int nIter = 0;
    int * idxSol = new int[ lp->getNumCols() ];
 
-   for (int i = 0; i < lp->getNumCols(); i++)
+   for ( int i = 0; i < lp->getNumCols(); i++ )
    {
       idxSol[i] = i;
    }

@@ -62,9 +62,6 @@ public:
    void relacionaDisciplinasEquivalentes();
    void substituiDisciplinasEquivalentes();
    void atualizaDemandas();
-   GGroup< Demanda *, LessPtr< Demanda > > retornaDemandaDisciplinasSubstituidas( Disciplina * );
-   Demanda * buscaDemanda( Curso * , Disciplina * );
-   GGroup< std::pair< Curso *, Curriculo * > > retornaCursosCurriculosDisciplina( Disciplina * );
 
    /* */
    void divideDisciplinas();

@@ -233,7 +233,13 @@ public:
    // disciplina substituta, caso tenha ocorrido uma
    // substituição por equivalência entre essas disciplinas
    std::map< std::pair< Curso *, Curriculo * >,
-			 std::map< Disciplina *, Disciplina * > > map_CursoCurriculo_DiscSubst;
+			    std::map< Disciplina *, Disciplina * > > map_CursoCurriculo_DiscSubst;
+
+   // Dado um curso e um curriculo, retorna-se um map
+   // que referencia, para cada disciplina, as disciplinas que ela substituiu,
+   // caso tenha ocorrido uma substituição por equivalência entre essas disciplinas
+   std::map< std::pair< Curso *, Curriculo * >,
+			    std::map< Disciplina *, GGroup< Disciplina *, LessPtr< Disciplina > > > > mapGroupDisciplinasSubstituidas;
 
    // Dada uma disciplina, informamos o seu curso e curriculo
    std::map< Disciplina *, std::pair< Curso *, Curriculo * > > map_Disc_CursoCurriculo;
@@ -246,6 +252,20 @@ public:
    std::map< Curso *, GGroup< std::pair< Curriculo *, Oferta * > > > map_Curso_CurriculosOfertas;
 
    bool cursosCompativeis( Curso *, Curso * );
+
+   // Armazena as demandas criadas para as disciplinas substituídas
+   std::map< Disciplina *, Demanda * > demandasDisciplinasSubstituidas;
+
+   // Busca a demanda da disciplina informada,
+   // em cursos compatíveis com o curso também informado
+   Demanda * buscaDemanda( Curso * , Disciplina * );
+
+   // Retorna o conjunto de demandas da disciplina
+   // informada, que foi substituída por alguma outra
+   GGroup< Demanda *, LessPtr< Demanda > > retornaDemandaDisciplinasSubstituidas( Disciplina * );
+
+   // Retorna os pares curso/curriculo dos quais a disciplina informada possui demanda
+   GGroup< std::pair< Curso *, Curriculo * > > retornaCursosCurriculosDisciplina( Disciplina * );
    //-----------------------------------------------------------------------------------------------
 };
 
