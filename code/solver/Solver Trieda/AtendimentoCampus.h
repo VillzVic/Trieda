@@ -9,8 +9,9 @@ class AtendimentoCampus:
    public OFBase
 {
 public:
-   AtendimentoCampus( void );
-   virtual ~AtendimentoCampus( void );
+   AtendimentoCampus();
+   
+   virtual ~AtendimentoCampus();
 
    std::string campus_id;
    Campus * campus;

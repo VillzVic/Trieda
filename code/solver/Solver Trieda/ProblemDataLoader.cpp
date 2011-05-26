@@ -13,7 +13,6 @@ ProblemDataLoader::ProblemDataLoader( char *inputFile, ProblemData* data )
 
 ProblemDataLoader::~ProblemDataLoader()
 {
-
 }
 
 void ProblemDataLoader::load()

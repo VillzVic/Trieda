@@ -9,9 +9,9 @@ class AtendimentoCampusSolucao :
    public OFBase
 {
 public:
-   AtendimentoCampusSolucao( void );
-   AtendimentoCampusSolucao( AtendimentoCampus & );
-   virtual ~AtendimentoCampusSolucao( void );
+   AtendimentoCampusSolucao();
+   AtendimentoCampusSolucao(AtendimentoCampus &);
+   virtual ~AtendimentoCampusSolucao();
 
    virtual void le_arvore( ItemAtendimentoCampusSolucao & );
 

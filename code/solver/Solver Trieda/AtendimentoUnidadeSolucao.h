@@ -10,9 +10,9 @@ class AtendimentoUnidadeSolucao :
    public OFBase
 {
 public:
-   AtendimentoUnidadeSolucao(void);
-   AtendimentoUnidadeSolucao( AtendimentoUnidade & );
-   virtual ~AtendimentoUnidadeSolucao(void);
+   AtendimentoUnidadeSolucao();
+   AtendimentoUnidadeSolucao(AtendimentoUnidade &);
+   virtual ~AtendimentoUnidadeSolucao();
 
    virtual void le_arvore( ItemAtendimentoUnidadeSolucao & );
 
@@ -36,7 +36,7 @@ public:
 
 private:
    int unidadeId;
-   std::string unidadeCodigo;   
+   std::string unidadeCodigo;
 };
 
 #endif

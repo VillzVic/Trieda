@@ -1,6 +1,6 @@
 #include "AtendimentoCampus.h"
 
-AtendimentoCampus::AtendimentoCampus(void)
+AtendimentoCampus::AtendimentoCampus()
 {
    atendimentos_unidades = new GGroup< AtendimentoUnidade * >();
    campus = NULL;

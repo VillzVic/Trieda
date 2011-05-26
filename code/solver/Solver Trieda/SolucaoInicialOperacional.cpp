@@ -394,7 +394,7 @@ void SolucaoInicialOperacional::alocaAulasRec(bool primeiraTentativaAlocacao)
 
    /* Mesmo que tenha-se utilizado todos os custos de alocação, pode acontecer o caso em que uma, ou mais aulas
    não tenham sido alocadas. */
-   if(aulasNaoAlocadas.size() > 0)
+   if(aulasNaoAlocadas.size() > 0 && false)
    {
       // Criando um GGroup para o novo professor.
 

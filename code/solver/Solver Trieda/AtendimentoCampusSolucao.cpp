@@ -1,9 +1,8 @@
 #include "ofbase.h"
 #include "AtendimentoCampusSolucao.h"
 
-AtendimentoCampusSolucao::AtendimentoCampusSolucao( void )
+AtendimentoCampusSolucao::AtendimentoCampusSolucao()
 {
-
 }
 
 AtendimentoCampusSolucao::AtendimentoCampusSolucao( AtendimentoCampus & at_Campus )

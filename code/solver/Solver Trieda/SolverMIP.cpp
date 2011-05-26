@@ -1747,15 +1747,76 @@ int SolverMIP::solve()
 
       converteCjtSalaEmSala();
 
-	  separaDisciplinasEquivalentes();
+      separaDisciplinasEquivalentes();
    }
    else if ( problemData->parametros->modo_otimizacao == "OPERACIONAL" )
    {
+      problemSolution->atendimento_campus;
+
       if ( problemData->atendimentosTatico != NULL
          && problemData->atendimentosTatico->size() > 0 )
       {
+         ITERA_GGROUP(itAtTat,*problemData->atendimentosTatico,AtendimentoCampusSolucao)
+         { 
+            Campus * campus = problemData->refCampus[itAtTat->getCampusId()];
+
+            AtendimentoCampus * atCampus = new AtendimentoCampus();
+
+            atCampus->setId( campus->getId() );
+            atCampus->campus_id = campus->getCodigo();
+            atCampus->campus = campus;
+
+            ITERA_GGROUP(itAtUnd,itAtTat->atendimentosUnidades,AtendimentoUnidadeSolucao)
+            {
+               Unidade * unidade = problemData->refUnidade[itAtUnd->getUnidadeId()];
+
+               AtendimentoUnidade * atUnidade = new AtendimentoUnidade();
+
+               atUnidade->setId( unidade->getId() );
+               atUnidade->setUnidadeId( unidade->getCodigo() );
+               atUnidade->unidade = unidade;
+
+               ITERA_GGROUP(itAtSala,itAtUnd->atendimentosSalas,AtendimentoSalaSolucao)
+               {
+                  Sala * sala = problemData->refSala[itAtSala->getSalaId()];
+
+                  AtendimentoSala * atSala = new AtendimentoSala();
+
+                  atSala->setId( sala->getId() );
+                  atSala->setSalaId( sala->getCodigo() );
+                  atSala->sala = sala;
+
+                  ITERA_GGROUP(itAtDiaSemana,itAtSala->atendimentosDiasSemana,AtendimentoDiaSemanaSolucao)
+                  {
+                     AtendimentoDiaSemana * atDiaSemana = new AtendimentoDiaSemana();
+
+                     atDiaSemana->setDiaSemana( itAtDiaSemana->getDiaSemana() );
+
+                     atSala->atendimentos_dias_semana->add( atDiaSemana );
+                  }
+
+                  atUnidade->atendimentos_salas->add( atSala );
+               }
+
+               atCampus->atendimentos_unidades->add( atUnidade );
+            }
+            problemSolution->atendimento_campus->add(atCampus);
+         }
+
          // Resolvendo o modelo operacional
-         solveOperacional();
+         status = solveOperacional();
+
+         /*
+
+         ToDo Cleiton
+
+         Umas das impressões do arquivo de saída para o operacional deve ser realizada aqui.
+
+         Acima foi montada a estrutura até os dias e, em seguida, o solver foi executado.
+
+         Agora, com a solução do módulo operacional, deve-se preencher o resto da estrutura de saída.
+
+         */
       }
       else
       {
@@ -1770,15 +1831,31 @@ int SolverMIP::solve()
 
          carregaVariaveisSolucaoTatico();
          converteCjtSalaEmSala();
-		 separaDisciplinasEquivalentes();
+         separaDisciplinasEquivalentes();
 
-         // Preenchendo a estrutura "atendimentosTatico" com a saída.
+         // Preenchendo a estrutura "atendimento_campus" com a saída.
          getSolutionTatico();
 
+         // Preenchendo a estrutura "atendimentosTatico".
          problemData->atendimentosTatico = new GGroup< AtendimentoCampusSolucao * >();
+
+
+         //
+
+         /* 
+
+         ToDo: Cleiton
+         
+         Não basta fazer isso. Assim, estamos preenchendo a estrutura de saída com uma solução do 
+         tático. Deve-se construir essa estrutura até certa parte e, depois, preencher com os dados
+         solução obtida para o módulo operacional. 
+         
+         */
 
          ITERA_GGROUP( it_At_Campus, ( *problemSolution->atendimento_campus ), AtendimentoCampus )
          { problemData->atendimentosTatico->add( new AtendimentoCampusSolucao( **it_At_Campus ) ); }
+
+         //
 
          // Criando as aulas que serão utilizadas para resolver o modelo operacional
          problemDataLoader->criaAulas();
