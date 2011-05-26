@@ -4,8 +4,8 @@ import com.extjs.gxt.ui.client.Style.HorizontalAlignment;
 import com.extjs.gxt.ui.client.event.ButtonEvent;
 import com.extjs.gxt.ui.client.event.Events;
 import com.extjs.gxt.ui.client.event.SelectionListener;
-import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.FileUploadField;
+import com.extjs.gxt.ui.client.widget.form.FormButtonBinding;
 import com.extjs.gxt.ui.client.widget.form.FormPanel;
 import com.extjs.gxt.ui.client.widget.form.FormPanel.Encoding;
 import com.extjs.gxt.ui.client.widget.form.FormPanel.Method;
@@ -22,8 +22,6 @@ public class ImportExcelFormView extends MyComposite {
 	private FormPanel formPanel;
 	private HiddenField<String> hiddenField;
 	private FileUploadField fileUploadField;
-	private Button importBtn;
-	private Button cancelBtn;
 
 	public ImportExcelFormView(ExcelInformationType infoToBeImported, SimpleGrid<? extends AbstractDTO<?>> gridToBeUpdated) {
 		initUI(infoToBeImported,gridToBeUpdated);
@@ -33,6 +31,8 @@ public class ImportExcelFormView extends MyComposite {
 	private void initUI(ExcelInformationType infoToBeImported, SimpleGrid<? extends AbstractDTO<?>> gridToBeUpdated) {
 		this.simpleModal = new SimpleModal("Importação de Excel",Resources.DEFAULTS.importar16());
 		createForm(infoToBeImported,gridToBeUpdated);
+		this.simpleModal.setWidth(320);
+		this.simpleModal.setHeight(110);
 		this.simpleModal.setContent(formPanel);
 	}
 
@@ -44,13 +44,12 @@ public class ImportExcelFormView extends MyComposite {
 		this.fileUploadField = new FileUploadField();  
 		this.fileUploadField.setAllowBlank(false);
 		this.fileUploadField.setName(ExcelInformationType.getFileParameterName());  
-		this.fileUploadField.setFieldLabel("File");
+		this.fileUploadField.setFieldLabel("Arquivo");
 		
-		this.cancelBtn = new Button("Reset");  
-		this.importBtn = new Button("Submit");  
-
         this.formPanel = new FormPanel();
+        this.formPanel.setLabelWidth(50);
         this.formPanel.setFrame(true);
+        this.formPanel.setHeaderVisible(false);
         this.formPanel.setAction(GWT.getModuleBaseURL() + "importExcelServlet");
         this.formPanel.setEncoding(Encoding.MULTIPART); 
         this.formPanel.setMethod(Method.POST);
@@ -58,16 +57,17 @@ public class ImportExcelFormView extends MyComposite {
         
         this.formPanel.add(this.hiddenField);
         this.formPanel.add(this.fileUploadField);
-        this.formPanel.addButton(this.cancelBtn);  
-        this.formPanel.addButton(this.importBtn);
         
         this.formPanel.addListener(Events.Submit,new ExcelFormListener(simpleModal,gridToBeUpdated,getI18nConstants(),getI18nMessages()));
 		
 		this.simpleModal.setFocusWidget(this.fileUploadField);
+		
+		FormButtonBinding binding = new FormButtonBinding(formPanel);
+		binding.addButton(simpleModal.getSalvarBt());
 	}
 	
 	private void initActions() {
-		this.importBtn.addSelectionListener(new SelectionListener<ButtonEvent>() {  
+		this.simpleModal.getSalvarBt().addSelectionListener(new SelectionListener<ButtonEvent>() {  
 		      @Override  
 		      public void componentSelected(ButtonEvent ce) {  
 		        if (!formPanel.isValid()) {  
