@@ -11,5 +11,6 @@
 			<attribute name="owner.project.facets" value="java"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="con" path="com.google.gwt.eclipse.core.GWT_CONTAINER/gwt-2.2.0"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
