@@ -27,13 +27,19 @@ public:
    int getTurnoId() const { return turnoId; }
 
    virtual bool operator < ( Horario const & right ) 
-   { 
-      return ( (*horario_aula) <  (*right.horario_aula) );
+   {
+      if(horario_aula)
+         return ( (*horario_aula) <  (*right.horario_aula) );
+
+      return horarioAulaId < right.horarioAulaId;
    }
 
    virtual bool operator == ( Horario const & right ) 
-   { 
-	   return ( (*horario_aula) ==  (*right.horario_aula) );
+   {
+      if(horario_aula)
+         return ( (*horario_aula) ==  (*right.horario_aula) );
+
+      return horarioAulaId == right.horarioAulaId;
    }
 
 private:

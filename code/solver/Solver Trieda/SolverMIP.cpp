@@ -1752,9 +1752,6 @@ int SolverMIP::solve()
       if ( problemData->atendimentosTatico != NULL
          && problemData->atendimentosTatico->size() > 0 )
       {
-         // Criando as aulas que serão utilizadas para resolver o modelo operacional
-         problemDataLoader->criaAulas();
-
          // Resolvendo o modelo operacional
          solveOperacional();
       }
