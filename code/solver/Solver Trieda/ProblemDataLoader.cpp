@@ -441,14 +441,16 @@ void ProblemDataLoader::carregaDiasLetivosCampusUnidadeSala()
                   ITERA_GGROUP( it_Creds_Disp, it_Sala->creditos_disponiveis, CreditoDisponivel)
                   {
                      if ( it_Creds_Disp->getMaxCreditos() > 0 )
+					 {
                         it_Sala->diasLetivos.add( it_Creds_Disp->getDiaSemana() );
+					 }
                   }
                }
-               else if(problemData->parametros->modo_otimizacao == "OPERACIONAL")
+               else if ( problemData->parametros->modo_otimizacao == "OPERACIONAL" )
                {
-                  ITERA_GGROUP(itHorarioDisponivel,it_Sala->horarios_disponiveis,Horario)
+                  ITERA_GGROUP ( itHorarioDisponivel, it_Sala->horarios_disponiveis, Horario )
                   {
-                     it_Sala->diasLetivos.add(itHorarioDisponivel->dias_semana);
+                     it_Sala->diasLetivos.add( itHorarioDisponivel->dias_semana );
                   }
                }
             }
@@ -1598,7 +1600,13 @@ void ProblemDataLoader::substituiDisciplinasEquivalentes()
 
 	bool mesmo_curso = false;
 	bool mesmo_curriculo = false;
+	bool atualizar_demandas = false;
 
+	// Devo percorrer as disciplinas de todos os curriculos de cada curso,
+	// e verificar se há a necessidade de substituição por outras disciplinas.
+	// Essa verificação é feita para cada par de cursos (incluindo a verificação
+	// deum curso com ele mesmo) e para cada curriculo do par de cursos (não
+	// devendo verificar as disciplinas de um mesmo curriculo)
 	ITERA_GGROUP_LESSPTR( it_curso, problemData->cursos, Curso )
 	{
 		curso = ( *it_curso );
@@ -1608,6 +1616,7 @@ void ProblemDataLoader::substituiDisciplinasEquivalentes()
 			curso_comp = ( *it_curso_comp );
 			mesmo_curso = ( curso->getId() == curso_comp->getId() );
 
+			// Verifica a compatibilidade entre os cursos
 			if ( !problemData->cursosCompativeis( curso, curso_comp ) )
 			{
 				continue;
@@ -1623,6 +1632,7 @@ void ProblemDataLoader::substituiDisciplinasEquivalentes()
 					curriculo_comp = ( *it_curriculo_comp );
 					mesmo_curriculo = ( curriculo->getId() == curriculo_comp->getId() );
 
+					// Não devo substituir disciplinas do mesmo curso e currículo
 					if ( mesmo_curso && mesmo_curriculo )
 					{
 						continue;
@@ -1631,19 +1641,22 @@ void ProblemDataLoader::substituiDisciplinasEquivalentes()
 					GGroup< std::pair< int, Disciplina * > >::iterator it_disciplina
 						= curriculo->disciplinas_periodo.begin();
 
+					// Para cada disciplina do curriculo 'curriculo', procuro se devo
+					// substituir por alguma disciplina do curriculo 'curriculo_comp'
 					for (; it_disciplina != curriculo->disciplinas_periodo.end();
 						   it_disciplina++ )
 					{
 						disciplina = ( *it_disciplina ).second;
 
 						GGroup< std::pair< int, Disciplina * > >::iterator it_disciplina_comp
-							= curriculo->disciplinas_periodo.begin();
+							= curriculo_comp->disciplinas_periodo.begin();
 
-						for (; it_disciplina_comp != curriculo->disciplinas_periodo.end();
+						for (; it_disciplina_comp != curriculo_comp->disciplinas_periodo.end();
 							   it_disciplina_comp++ )
 						{
 							disciplina_comp = ( *it_disciplina_comp ).second;
 
+							// Não devo verificar uma disciplina com ela própria
 							if ( disciplina->getId() == disciplina_comp->getId() )
 							{
 								continue;
@@ -1657,7 +1670,9 @@ void ProblemDataLoader::substituiDisciplinasEquivalentes()
 							if ( disciplina_substituta != NULL
 									&& disciplina_substituta->getId() == disciplina_comp->getId() )
 							{
-								// Antigo pair
+								atualizar_demandas = true;
+
+								// Antigo par período/disciplina
 								std::pair< int, Disciplina * > pairPeriodoDisciplina
 									= std::make_pair( ( *it_disciplina ).first, ( *it_disciplina ).second );
 
@@ -1665,9 +1680,12 @@ void ProblemDataLoader::substituiDisciplinasEquivalentes()
 								std::pair< int, Disciplina * > novoPeriodoDisciplina
 									= std::make_pair( ( *it_disciplina ).first, disciplina_substituta );
 
+								// Troca a disciplina e mantém o período
 								curriculo->disciplinas_periodo.remove( pairPeriodoDisciplina );
 								curriculo->disciplinas_periodo.add( novoPeriodoDisciplina );
 
+								// Volta o iterador ao início, por a alteração feita logo acima
+								// em 'disciplinas_periodo' faz o iterator 'it_disciplina'
 								it_disciplina = curriculo->disciplinas_periodo.begin();
 								break;
 							}
@@ -1679,7 +1697,12 @@ void ProblemDataLoader::substituiDisciplinasEquivalentes()
 		}
 	}
 
-	atualizaDemandas();
+	// Caso alguma disciplina tenha sido
+	// substituída, devo substituir também as demandas
+	if ( atualizar_demandas )
+	{
+		atualizaDemandas();
+	}
 }
 
 void ProblemDataLoader::atualizaDemandas()
@@ -1691,33 +1714,49 @@ void ProblemDataLoader::atualizaDemandas()
 	Disciplina * disciplina_substituta = NULL;
 
 	Demanda * demanda = NULL;
+	Demanda * demanda_substituta = NULL;
 
+	// Percorre todos os pares de disciplina/disciplina substituta
     std::map< std::pair< Curso *, Curriculo * >,
 	    std::map< Disciplina *, Disciplina * > >::iterator it_map
 	    = problemData->map_CursoCurriculo_DiscSubst.begin();
+
     for (; it_map != problemData->map_CursoCurriculo_DiscSubst.end(); it_map++ )
     {
+		// Curso e currículo atual
 		curso = ( *it_map ).first.first;
 		curriculo = ( *it_map ).first.second;
 
+		// Percorre o map de disciplinas substituídas do curso e currículo atuais
 		std::map< Disciplina *, Disciplina * >::iterator
 			it_disciplinas = ( *it_map ).second.begin();
 
 		for (; it_disciplinas != ( *it_map ).second.end(); it_disciplinas++ )
 		{
+			// Disciplina que foi substituída
 			disciplina = it_disciplinas->first;
+
+			// Disciplina que substituiu a anterior
 			disciplina_substituta = it_disciplinas->second;
 
+			// Preciso pegar todas as demandas relacionadas às disciplinas
+			// substituídas, pois essas demandas deixarão de existir, e a quantidade
+			// de alunos demandados será adicionada na demanda da disciplina que substituiu
 			GGroup< Demanda *, LessPtr< Demanda > > demandas
 				= retornaDemandaDisciplinasSubstituidas( curso, curriculo, disciplina );
+
+			// Demanda da disciplina que substituiu a anterior, nesse curso e currículo
+			demanda_substituta = buscaDemanda( curso, curriculo, disciplina_substituta );
 
 			ITERA_GGROUP_LESSPTR( it_demanda, demandas, Demanda )
 			{
 				demanda = ( *it_demanda );
 
-				demanda->setDisciplinaId( disciplina_substituta->getId() );
-				demanda->disciplina = disciplina_substituta;
-				demanda->setQuantidade( demanda->getQuantidade() + disciplina_substituta->getDemandaTotal() );
+				// Adiciono a quantidade de alunos demandados da disciplina substituída na disciplina substituta
+				demanda_substituta->setQuantidade( demanda->getQuantidade() + demanda_substituta->getQuantidade() );
+
+				// A demanda da disciplina substituída deixa de existir
+				problemData->demandas.remove( demanda );
 			}
 		}
     }
@@ -1762,6 +1801,12 @@ GGroup< Demanda *, LessPtr< Demanda > > ProblemDataLoader::retornaDemandaDiscipl
 	}
 
 	return demandas;
+}
+
+Demanda * ProblemDataLoader::buscaDemanda( Curso * curso, Curriculo * curriculo, Disciplina * disciplina )
+{
+	// TODO
+	return NULL;
 }
 
 void ProblemDataLoader::relacionaDisciplinasEquivalentes()
@@ -2091,9 +2136,8 @@ void ProblemDataLoader::divideDisciplinas()
                nova_demanda->setDisciplinaId( nova_disc->getId() );
                nova_demanda->setQuantidade( it_dem->getQuantidade() );
 			   nova_demanda->oferta = it_dem->oferta;
-
 			   nova_demanda->disciplina = nova_disc;
-
+\
                problemData->demandas.add( nova_demanda );
                if ( num_vezes_ecncontrado > 0 )
                {

@@ -1746,6 +1746,8 @@ int SolverMIP::solve()
       carregaVariaveisSolucaoTatico();
 
       converteCjtSalaEmSala();
+
+	  separaDisciplinasEquivalentes();
    }
    else if ( problemData->parametros->modo_otimizacao == "OPERACIONAL" )
    {
@@ -1768,6 +1770,7 @@ int SolverMIP::solve()
 
          carregaVariaveisSolucaoTatico();
          converteCjtSalaEmSala();
+		 separaDisciplinasEquivalentes();
 
          // Preenchendo a estrutura "atendimentosTatico" com a saída.
          getSolutionTatico();
@@ -1786,6 +1789,11 @@ int SolverMIP::solve()
    }
 
    return status;
+}
+
+void SolverMIP::separaDisciplinasEquivalentes()
+{
+	// TODO
 }
 
 int SolverMIP::localBranching( double * xSol, double maxTime )

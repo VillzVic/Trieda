@@ -63,6 +63,7 @@ public:
    void substituiDisciplinasEquivalentes();
    void atualizaDemandas();
    GGroup< Demanda *, LessPtr< Demanda > > retornaDemandaDisciplinasSubstituidas( Curso *, Curriculo *, Disciplina * );
+   Demanda * buscaDemanda( Curso *, Curriculo *, Disciplina * );
 
    /* */
    void divideDisciplinas();
