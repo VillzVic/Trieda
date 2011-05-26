@@ -14,7 +14,7 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 @RemoteServiceRelativePath("otimizar")
 public interface OtimizarService extends RemoteService {
 
-	Long input(ParametroDTO parametroDTO);
+	Long sendInput(ParametroDTO parametroDTO);
 	Boolean isOptimizing(Long round);
 	Map<String, List<String>> saveContent(CenarioDTO cenarioDTO, Long round);
 	ParametroDTO getParametro(CenarioDTO cenarioDTO);

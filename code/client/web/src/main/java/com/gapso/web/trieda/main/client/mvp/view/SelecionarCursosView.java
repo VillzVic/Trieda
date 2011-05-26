@@ -4,6 +4,7 @@ import com.extjs.gxt.ui.client.Style.LayoutRegion;
 import com.extjs.gxt.ui.client.Style.Orientation;
 import com.extjs.gxt.ui.client.Style.SelectionMode;
 import com.extjs.gxt.ui.client.util.Margins;
+import com.extjs.gxt.ui.client.util.Padding;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
 import com.extjs.gxt.ui.client.widget.LayoutContainer;
 import com.extjs.gxt.ui.client.widget.ListView;
@@ -14,8 +15,11 @@ import com.extjs.gxt.ui.client.widget.layout.BorderLayout;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
 import com.extjs.gxt.ui.client.widget.layout.FitLayout;
 import com.extjs.gxt.ui.client.widget.layout.FormData;
+import com.extjs.gxt.ui.client.widget.layout.HBoxLayout;
+import com.extjs.gxt.ui.client.widget.layout.HBoxLayoutData;
 import com.extjs.gxt.ui.client.widget.layout.RowData;
 import com.extjs.gxt.ui.client.widget.layout.RowLayout;
+import com.extjs.gxt.ui.client.widget.layout.HBoxLayout.HBoxLayoutAlign;
 import com.gapso.web.trieda.main.client.mvp.presenter.SelecionarCursosPresenter;
 import com.gapso.web.trieda.shared.dtos.CursoDTO;
 import com.gapso.web.trieda.shared.mvp.view.MyComposite;
@@ -29,7 +33,7 @@ public class SelecionarCursosView extends MyComposite implements SelecionarCurso
 	private SimpleModal simpleModal;
 	
 	private ContentPanel panel;
-	private ContentPanel panelLists;
+	private LayoutContainer panelLists;
 	
 	private CampusComboBox campusCB;
 	
@@ -48,8 +52,8 @@ public class SelecionarCursosView extends MyComposite implements SelecionarCurso
 
 	private void initUI() {
 		simpleModal = new SimpleModal("Fechar", null, "Selecionar cursos", Resources.DEFAULTS.curso16());
-		simpleModal.setWidth(600);
-		simpleModal.setHeight(400);
+		simpleModal.setHeight(455);
+		simpleModal.setWidth(595);
 		createForm();
 		simpleModal.setContent(panel);
 	}
@@ -71,12 +75,16 @@ public class SelecionarCursosView extends MyComposite implements SelecionarCurso
 		
 		panel.setTopComponent(formPanel);
 		
-		panelLists = new ContentPanel(new RowLayout(Orientation.HORIZONTAL));
-		panelLists.setHeaderVisible(false);
-		panelLists.setBodyBorder(false);
-		
+		panelLists = new LayoutContainer();
+        HBoxLayout layout2 = new HBoxLayout();  
+        layout2.setHBoxLayoutAlign(HBoxLayoutAlign.TOP);  
+        layout2.setPadding(new Padding(5));  
+        panelLists.setLayout(layout2);
+        
 		ContentPanel naoSelecionadoListPanel = new ContentPanel(new FitLayout());
 		naoSelecionadoListPanel.setHeading("Cursos não selecionado");
+		naoSelecionadoListPanel.setWidth(267);
+		naoSelecionadoListPanel.setHeight(320);
 		naoSelecionadoList = new ListView<CursoDTO>();
 		naoSelecionadoList.disable();
 		naoSelecionadoList.setDisplayProperty(CursoDTO.PROPERTY_DISPLAY_TEXT);
@@ -85,19 +93,20 @@ public class SelecionarCursosView extends MyComposite implements SelecionarCurso
 		
 		ContentPanel selecionadoListPanel = new ContentPanel(new FitLayout());
 		selecionadoListPanel.setHeading("Cursos selecionados");
+		selecionadoListPanel.setWidth(267);
+		selecionadoListPanel.setHeight(320);
 		selecionadoList = new ListView<CursoDTO>();
 		selecionadoList.setDisplayProperty(CursoDTO.PROPERTY_DISPLAY_TEXT);
 		selecionadoList.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
 		selecionadoListPanel.add(selecionadoList);
 		
-		panelLists.add(naoSelecionadoListPanel, new RowData(.5, 1, new Margins(0, 0, 10, 10)));
-		panelLists.add(getAtualizaSalasButtonsPanel(), new RowData(30, 1, new Margins(0, 0, 0, 0)));
-		panelLists.add(selecionadoListPanel, new RowData(.5, 1, new Margins(0, 10, 10, 0)));
+		panelLists.add(naoSelecionadoListPanel, new HBoxLayoutData(new Margins(0)));
+		panelLists.add(getAtualizaSalasButtonsPanel(), new HBoxLayoutData(new Margins(0)));
+		panelLists.add(selecionadoListPanel, new HBoxLayoutData(new Margins(0)));
 		
 		BorderLayoutData bld = new BorderLayoutData(LayoutRegion.CENTER);
 		bld.setMargins(new Margins(0, 0, 0, 0));
 		panel.setBodyBorder(false);
-		panelLists.setBodyStyle("background-color: #DFE8F6;");
 		panel.add(panelLists, bld);
 	}
 	

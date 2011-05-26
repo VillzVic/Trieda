@@ -1,6 +1,5 @@
 package com.gapso.web.trieda.server.util;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -479,13 +478,15 @@ public class SolverInput {
 			}
 			
 			GrupoIdentificador grupoIdentificadorEquivalencias = of.createGrupoIdentificador();
-			Set<Equivalencia> equivalencias = disciplina.getEquivalencias();
-			for(Equivalencia equivalencia : equivalencias) {
-//				 TODO Arrumar para eliminar mais de 1 disciplina
-				Set<Disciplina> eliminas = equivalencia.getElimina();
-				if(eliminas != null && eliminas.size() > 0) {
-					List<Disciplina> disciplinasAux = new ArrayList<Disciplina>(eliminas);
-					grupoIdentificadorEquivalencias.getId().add(disciplinasAux.get(0).getId().intValue());
+			if(parametro.getConsiderarEquivalencia()) {
+				Set<Equivalencia> equivalencias = disciplina.getEquivalencias();
+				for(Equivalencia equivalencia : equivalencias) {
+					Set<Disciplina> eliminas = equivalencia.getElimina();
+					if(eliminas != null && eliminas.size() > 0) {
+						for(Disciplina disciplinaElimina : eliminas) {
+							grupoIdentificadorEquivalencias.getId().add(disciplinaElimina.getId().intValue());
+						}
+					}
 				}
 			}
 			itemDisciplina.setDisciplinasEquivalentes(grupoIdentificadorEquivalencias);
@@ -645,14 +646,15 @@ public class SolverInput {
 		itemParametrosPlanejamento.setPreferenciaProfessorDisciplina(parametro.getPreferenciaDeProfessores());
 		itemParametrosPlanejamento.setDesempenhoProfDisponibilidade(parametro.getAvaliacaoDesempenhoProfessor());
 		
-//		itemParametrosPlanejamento.setConsiderarEquivalencia(parametro.getConsiderarEquivalencia());
+		itemParametrosPlanejamento.setConsiderarEquivalencia(parametro.getConsiderarEquivalencia());
 		itemParametrosPlanejamento.setMinAlunosAberturaTurmas(parametro.getMinAlunosParaAbrirTurma());
 		itemParametrosPlanejamento.setMinAlunosAberturaTurmasValor(parametro.getMinAlunosParaAbrirTurmaValue());
-		// TODO
+
 		itemParametrosPlanejamento.setNiveisDificuldadeHorario(of.createGrupoNivelDificuldadeHorario());
 		itemParametrosPlanejamento.setEquilibrarDiversidadeDiscDia(parametro.getCompatibilidadeDisciplinasMesmoDia());
 		itemParametrosPlanejamento.setRegrasGenericasDivisaoCredito(parametro.getRegrasGenericasDivisaoCredito());
 		itemParametrosPlanejamento.setRegrasEspecificasDivisaoCredito(parametro.getRegrasEspecificasDivisaoCredito());
+		
 		itemParametrosPlanejamento.setMaximizarAvaliacaoCursosSel(parametro.getMaximizarNotaAvaliacaoCorpoDocente());
 		if(parametro.getMaximizarNotaAvaliacaoCorpoDocente()) {
 			//  TODO
@@ -686,6 +688,7 @@ public class SolverInput {
 			cursosCompartilharTurmaGrupo.getGrupoIdentificador().add(cursosCompartilharTurmas);
 			itemParametrosPlanejamento.setPermiteCompartilhamentoTurma(cursosCompartilharTurmaGrupo);
 		}
+		
 		itemParametrosPlanejamento.setPercentuaisMinimoMestres(parametro.getPercentuaisMinimosMestres());
 		itemParametrosPlanejamento.setPercentuaisMinimoDoutores(parametro.getPercentuaisMinimosDoutores());
 		itemParametrosPlanejamento.setAreaTitulacaoProfessorCurso(parametro.getAreaTitulacaoProfessoresECursos());

@@ -11,5 +11,6 @@
             <property name="hibernate.format_sql" value="true" />
             <property name="use_sql_comments" value="false" />
         </properties>
+        
     </persistence-unit>
 </persistence>

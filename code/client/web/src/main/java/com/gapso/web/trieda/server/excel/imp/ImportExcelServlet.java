@@ -16,11 +16,11 @@ import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 
 import com.gapso.trieda.domain.Cenario;
+import com.gapso.web.trieda.server.util.GTriedaI18nConstants;
+import com.gapso.web.trieda.server.util.GTriedaI18nMessages;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nMessages;
-import com.teklabs.gwt.i18n.client.LocaleFactory;
-import com.teklabs.gwt.i18n.server.LocaleProxy;
 
 public class ImportExcelServlet extends HttpServlet {
 
@@ -29,13 +29,15 @@ public class ImportExcelServlet extends HttpServlet {
 	private static TriedaI18nMessages i18nMessages = null;
 	private Cenario cenario = null;
 	{
-		LocaleProxy.initialize();
-		i18nConstants = LocaleFactory.get(TriedaI18nConstants.class);
-		i18nMessages = LocaleFactory.get(TriedaI18nMessages.class);
+		i18nConstants = new GTriedaI18nConstants();
+		i18nMessages = new GTriedaI18nMessages();
 	}
 	
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		System.out.println(">>campiTrabalho>: "+i18nConstants.campiTrabalho());
+		System.out.println(">>excelErroArquivoInvalido>: "+i18nMessages.excelErroArquivoInvalido("Claudio", "Escudero"));
+		
 		cenario = Cenario.findMasterData();
 		
 		FileItemFactory factory = new DiskFileItemFactory();

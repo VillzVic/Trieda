@@ -31,9 +31,9 @@
 			<version>${gwt.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>com.teklabs.gwt-i18n-server</groupId>
-			<artifactId>gwt-i18n-server</artifactId>
-			<version>0.6</version>
+			<groupId>gapso</groupId>
+			<artifactId>gipe</artifactId>
+			<version>1.8.0</version>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>

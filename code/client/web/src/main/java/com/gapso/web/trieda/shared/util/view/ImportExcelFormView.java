@@ -32,7 +32,7 @@ public class ImportExcelFormView extends MyComposite {
 		this.simpleModal = new SimpleModal("Importação de Excel",Resources.DEFAULTS.importar16());
 		createForm(infoToBeImported,gridToBeUpdated);
 		this.simpleModal.setWidth(320);
-		this.simpleModal.setHeight(110);
+		this.simpleModal.setHeight(115);
 		this.simpleModal.setContent(formPanel);
 	}
 

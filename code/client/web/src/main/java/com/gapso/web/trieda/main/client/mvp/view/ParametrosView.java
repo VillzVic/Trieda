@@ -153,7 +153,9 @@ public class ParametrosView extends MyComposite implements ParametrosPresenter.D
 		cargaHorariaAlunoCheckBox = createCheckBox("Distribuição da carga horária semanal do aluno", parametroDTO.getCargaHorariaAluno());
 		alunoDePeriodoMesmaSalaCheckBox = createCheckBox("Manter alunos do mesmo curso-período na mesma sala", parametroDTO.getAlunoDePeriodoMesmaSala());
 		alunoEmMuitosCampiCheckBox = createCheckBox("Permitir que o aluno estude em mais de um Campus", parametroDTO.getAlunoEmMuitosCampi());
+		alunoEmMuitosCampiCheckBox.disable();
 		minimizarDeslocamentoAlunoCheckBox = createCheckBox("Minimizar Deslocamento de Alunos entre Campi", parametroDTO.getMinimizarDeslocamentoAluno());
+		minimizarDeslocamentoAlunoCheckBox.disable();
 		
 		alunoLeft.add(cargaHorariaAlunoCheckBox, formData);
 		alunoLeft.add(alunoDePeriodoMesmaSalaCheckBox, formData);
@@ -184,7 +186,9 @@ public class ParametrosView extends MyComposite implements ParametrosPresenter.D
 		
 		cargaHorariaProfessorCheckBox = createCheckBox("Distribuição da carga horária semanal do professor", parametroDTO.getCargaHorariaProfessor());
 		professorEmMuitosCampiCheckBox = createCheckBox("Permitir que o professor ministre aulas em mais de um Campus", parametroDTO.getProfessorEmMuitosCampi());
+		professorEmMuitosCampiCheckBox.disable();
 		minimizarDeslocamentoProfessorCheckBox = createCheckBox("Minimizar Deslocamentos de Professores entre Campi", parametroDTO.getMinimizarDeslocamentoProfessor());
+		minimizarDeslocamentoProfessorCheckBox.disable();
 		minimizarGapProfessorCheckBox = createCheckBox("Minimizar Gaps nos Horários dos Professores", parametroDTO.getMinimizarGapProfessor());
 		evitarReducaoCargaHorariaProfessorCheckBox = createCheckBox("Evitar Redução de Carga Horária de Professor", parametroDTO.getEvitarReducaoCargaHorariaProfessor());
 		evitarUltimoEPrimeiroHorarioProfessorCheckBox = createCheckBox("Evitar alocação de professores no último horário do dia e primeiro do dia seguinte", parametroDTO.getEvitarUltimoEPrimeiroHorarioProfessor());
@@ -208,6 +212,7 @@ public class ParametrosView extends MyComposite implements ParametrosPresenter.D
 		minimizarDeslocamentoProfessorNumberField = new NumberField();
 		minimizarDeslocamentoProfessorNumberField.setEmptyText("Configurar Máx de deslocamento");
 		minimizarDeslocamentoProfessorNumberField.setValue(parametroDTO.getMinimizarDeslocamentoProfessorValue());
+		minimizarDeslocamentoProfessorNumberField.disable();
 		professorRight.add(minimizarDeslocamentoProfessorNumberField);
 		label = new Label();
 		label.setHeight(22);
@@ -239,6 +244,7 @@ public class ParametrosView extends MyComposite implements ParametrosPresenter.D
 		considerarEquivalenciaCheckBox = createCheckBox("Considerar Equivalências entre Disciplinas", parametroDTO.getConsiderarEquivalencia());
 		minAlunosParaAbrirTurmaCheckBox = createCheckBox("Número mínimo de alunos para abertura de turma", parametroDTO.getMinAlunosParaAbrirTurma());
 		nivelDificuldadeDisciplinaCheckBox = createCheckBox("Considerar nível de dificuldade de disciplinas", parametroDTO.getNivelDificuldadeDisciplina());
+		nivelDificuldadeDisciplinaCheckBox.disable();
 		compatibilidadeDisciplinasMesmoDiaCheckBox = createCheckBox("Considerar compatibilidade de disciplinas no mesmo dia", parametroDTO.getCompatibilidadeDisciplinasMesmoDia());
 		regrasGenericasDivisaoCreditoCheckBox = createCheckBox("Considerar regras genéricas de divisão de créditos", parametroDTO.getRegrasGenericasDivisaoCredito());
 		regrasEspecificasDivisaoCreditoCheckBox = createCheckBox("Considerar regras específicas de divisão de créditos", parametroDTO.getRegrasEspecificasDivisaoCredito());
@@ -271,7 +277,9 @@ public class ParametrosView extends MyComposite implements ParametrosPresenter.D
 		label.setHeight(22);
 		instituicaoRight.add(label);
 		instituicaoRight.add(minAlunosParaAbrirTurmaValueNumberField);
-		instituicaoRight.add(createButton("Configurar níveis de dificuldade"));
+		Button dificuldadeButton = createButton("Configurar níveis de dificuldade");
+		dificuldadeButton.disable();
+		instituicaoRight.add(dificuldadeButton);
 		instituicaoRight.add(createButton("Configurar compatibilidades"));
 		instituicaoRight.add(createButton("Configurar regras genéricas"));
 		label = new Label();

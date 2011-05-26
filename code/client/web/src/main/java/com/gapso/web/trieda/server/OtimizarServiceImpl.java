@@ -61,7 +61,7 @@ public class OtimizarServiceImpl extends RemoteServiceServlet implements Otimiza
 	
 	@Override
 	@Transactional
-	public Long input(ParametroDTO parametroDTO) {
+	public Long sendInput(ParametroDTO parametroDTO) {
 //		List<Campus> campi = new ArrayList<Campus>(campiDTO.size());
 //		for(CampusDTO campusDTO : campiDTO) {
 //			campi.add(Campus.find(campusDTO.getId()));

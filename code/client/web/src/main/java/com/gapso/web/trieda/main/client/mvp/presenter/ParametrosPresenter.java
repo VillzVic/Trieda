@@ -138,13 +138,7 @@ public class ParametrosPresenter implements Presenter {
 					@Override
 					public void handleEvent(MessageBoxEvent be) {
 						if(be.getButtonClicked().getText().equalsIgnoreCase("yes")) {
-							OtimizarServiceAsync service = Services.otimizar();
-							service.input(getDTO(), new AsyncCallback<Long>() {
-								@Override
-								public void onFailure(Throwable caught) {
-									MessageBox.alert("ERRO!", "Deu falha na conexão", null);
-									habilitarBotao();
-								}
+							Services.otimizar().sendInput(getDTO(), new AbstractAsyncCallbackWithDefaultOnFailure<Long>(display) {
 								@Override
 								public void onSuccess(final Long round) {
 									Info.display("Otimizando", "Otimizando com sucesso!");
@@ -242,7 +236,7 @@ public class ParametrosPresenter implements Presenter {
 		
 		dto.setModoOtimizacao(display.getTaticoRadio().getValue() ? ParametroDTO.TATICO : ParametroDTO.OPERACIONAL);
 		dto.setFuncaoObjetivo(display.getFuncaoObjetivoComboBox().getValue().getValue().ordinal());
-				
+		
 		CampusDTO campusDTO = display.getCampusComboBox().getValue();
 		dto.setCampusId(campusDTO.getId());
 		dto.setCampusDisplay(campusDTO.getDisplayText());
