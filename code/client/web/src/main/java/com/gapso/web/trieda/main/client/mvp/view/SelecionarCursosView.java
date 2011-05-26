@@ -16,11 +16,12 @@ import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
 import com.extjs.gxt.ui.client.widget.layout.FitLayout;
 import com.extjs.gxt.ui.client.widget.layout.FormData;
 import com.extjs.gxt.ui.client.widget.layout.HBoxLayout;
+import com.extjs.gxt.ui.client.widget.layout.HBoxLayout.HBoxLayoutAlign;
 import com.extjs.gxt.ui.client.widget.layout.HBoxLayoutData;
 import com.extjs.gxt.ui.client.widget.layout.RowData;
 import com.extjs.gxt.ui.client.widget.layout.RowLayout;
-import com.extjs.gxt.ui.client.widget.layout.HBoxLayout.HBoxLayoutAlign;
 import com.gapso.web.trieda.main.client.mvp.presenter.SelecionarCursosPresenter;
+import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.CursoDTO;
 import com.gapso.web.trieda.shared.mvp.view.MyComposite;
 import com.gapso.web.trieda.shared.util.resources.Resources;
@@ -43,8 +44,11 @@ public class SelecionarCursosView extends MyComposite implements SelecionarCurso
 	private Button adicionaBT;
 	private Button removeBT;
 	
+	private CampusDTO campus;
 	
-	public SelecionarCursosView() {
+	
+	public SelecionarCursosView(CampusDTO campus) {
+		this.campus = campus;
 		initUI();
 		// TODO
 		// initComponent(simpleModal);
@@ -71,6 +75,10 @@ public class SelecionarCursosView extends MyComposite implements SelecionarCurso
 		formPanel.setAutoHeight(true);
 		
 		campusCB = new CampusComboBox();
+		campusCB.setValue(campus);
+		if(campus != null) {
+			campusCB.disable();
+		}
 		formPanel.add(campusCB, formData);
 		
 		panel.setTopComponent(formPanel);
@@ -86,7 +94,9 @@ public class SelecionarCursosView extends MyComposite implements SelecionarCurso
 		naoSelecionadoListPanel.setWidth(267);
 		naoSelecionadoListPanel.setHeight(320);
 		naoSelecionadoList = new ListView<CursoDTO>();
-		naoSelecionadoList.disable();
+		if(campus == null) {
+			naoSelecionadoList.disable();
+		}
 		naoSelecionadoList.setDisplayProperty(CursoDTO.PROPERTY_DISPLAY_TEXT);
 		naoSelecionadoList.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
 		naoSelecionadoListPanel.add(naoSelecionadoList);
@@ -118,12 +128,16 @@ public class SelecionarCursosView extends MyComposite implements SelecionarCurso
 		panel.setLayout(new RowLayout(Orientation.VERTICAL));
 		
 		adicionaBT = new Button();
-		adicionaBT.setEnabled(false);
+		if(campus == null) {
+			adicionaBT.setEnabled(false);
+		}
 		adicionaBT.setSize(30, 50);
 		adicionaBT.setIcon(AbstractImagePrototype.create(Resources.DEFAULTS.toRight24()));
 		
 		removeBT = new Button();
-		removeBT.setEnabled(false);
+		if(campus == null) {
+			removeBT.setEnabled(false);
+		}
 		removeBT.setSize(30, 50);
 		removeBT.setIcon(AbstractImagePrototype.create(Resources.DEFAULTS.toLeft24()));
 		

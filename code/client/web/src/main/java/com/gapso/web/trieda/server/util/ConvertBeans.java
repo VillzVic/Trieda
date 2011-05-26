@@ -1486,6 +1486,27 @@ public class ConvertBeans {
 		domain.setCargaHorariaAlunoSel(dto.getCargaHorariaAlunoSel());
 		domain.setCargaHorariaProfessorSel(dto.getCargaHorariaProfessorSel());
 		domain.setFuncaoObjetivo(dto.getFuncaoObjetivo());
+		for(CursoDTO cursoDTO : dto.getMaximizarNotaAvaliacaoCorpoDocenteList()) {
+			Curso curso = Curso.find(cursoDTO.getId());
+			if(!domain.getCursosMaxNotaAval().contains(curso)) {
+				curso.flush();
+				domain.getCursosMaxNotaAval().add(curso);
+			}
+		}
+		for(CursoDTO cursoDTO : dto.getMinimizarCustoDocenteCursosList()) {
+			Curso curso = Curso.find(cursoDTO.getId());
+			curso.flush();
+			domain.getCursosMinCust().add(curso);
+		}
+		for(CursoDescompartilhaDTO cursoDescompartilhaDTO : dto.getDescompartilharDisciplinasList()) {
+			Curso curso1 = Curso.find(cursoDescompartilhaDTO.getCurso1Id());
+			Curso curso2 = Curso.find(cursoDescompartilhaDTO.getCurso2Id());
+			CursoDescompartilha cursoDescompartilha = new CursoDescompartilha();
+			cursoDescompartilha.setCurso1(curso1);
+			cursoDescompartilha.setCurso2(curso2);
+			cursoDescompartilha.setParametro(domain);
+			domain.getCursosDescompartDiscCampi().add(cursoDescompartilha);
+		}
 		return domain;
 	}
 	

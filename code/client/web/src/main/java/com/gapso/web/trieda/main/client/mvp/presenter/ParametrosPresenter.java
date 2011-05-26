@@ -6,6 +6,8 @@ import java.util.Map;
 import com.extjs.gxt.ui.client.event.ButtonEvent;
 import com.extjs.gxt.ui.client.event.Listener;
 import com.extjs.gxt.ui.client.event.MessageBoxEvent;
+import com.extjs.gxt.ui.client.event.SelectionChangedEvent;
+import com.extjs.gxt.ui.client.event.SelectionChangedListener;
 import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.widget.Component;
 import com.extjs.gxt.ui.client.widget.Info;
@@ -152,11 +154,19 @@ public class ParametrosPresenter implements Presenter {
 				});
 			}
 		});
+		display.getCampusComboBox().addSelectionChangedListener(new SelectionChangedListener<CampusDTO>(){
+			@Override
+			public void selectionChanged(SelectionChangedEvent<CampusDTO> se) {
+				display.getParametroDTO().getMaximizarNotaAvaliacaoCorpoDocenteList().clear();
+				display.getParametroDTO().getMinimizarCustoDocenteCursosList().clear();
+				display.getParametroDTO().getDescompartilharDisciplinasList().clear();
+			}
+		});
 		display.getMaximizarNotaAvaliacaoCorpoDocenteButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
 			@Override
 			public void componentSelected(ButtonEvent ce) {
 				List<CursoDTO> cursos = display.getParametroDTO().getMaximizarNotaAvaliacaoCorpoDocenteList();
-				Presenter presenter = new SelecionarCursosPresenter(cursos, new SelecionarCursosView());
+				Presenter presenter = new SelecionarCursosPresenter(cursos, new SelecionarCursosView(display.getCampusComboBox().getValue()));
 				presenter.go(null);
 			}
 		});
@@ -164,7 +174,7 @@ public class ParametrosPresenter implements Presenter {
 			@Override
 			public void componentSelected(ButtonEvent ce) {
 				List<CursoDTO> cursos = display.getParametroDTO().getMinimizarCustoDocenteCursosList();
-				Presenter presenter = new SelecionarCursosPresenter(cursos, new SelecionarCursosView());
+				Presenter presenter = new SelecionarCursosPresenter(cursos, new SelecionarCursosView(display.getCampusComboBox().getValue()));
 				presenter.go(null);
 			}
 		});

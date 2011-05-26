@@ -14,6 +14,7 @@ import com.gapso.trieda.domain.Cenario;
 import com.gapso.trieda.domain.Curriculo;
 import com.gapso.trieda.domain.CurriculoDisciplina;
 import com.gapso.trieda.domain.Curso;
+import com.gapso.trieda.domain.CursoDescompartilha;
 import com.gapso.trieda.domain.Demanda;
 import com.gapso.trieda.domain.DeslocamentoCampus;
 import com.gapso.trieda.domain.DeslocamentoUnidade;
@@ -656,38 +657,34 @@ public class SolverInput {
 		itemParametrosPlanejamento.setRegrasEspecificasDivisaoCredito(parametro.getRegrasEspecificasDivisaoCredito());
 		
 		itemParametrosPlanejamento.setMaximizarAvaliacaoCursosSel(parametro.getMaximizarNotaAvaliacaoCorpoDocente());
+		GrupoIdentificador cursosAvaliacaoGrupo = of.createGrupoIdentificador();
 		if(parametro.getMaximizarNotaAvaliacaoCorpoDocente()) {
-			//  TODO
-			Set<Curso> cursos = cenario.getCursos();
-			GrupoIdentificador cursosAvaliacaoGrupo = of.createGrupoIdentificador();
-			for(Curso curso : cursos) {
+			for(Curso curso : parametro.getCursosMaxNotaAval()) {
 				cursosAvaliacaoGrupo.getId().add(curso.getId().intValue());
 			}
-			itemParametrosPlanejamento.setMaximizarAvaliacaoCursos(cursosAvaliacaoGrupo);
 		}
+		itemParametrosPlanejamento.setMaximizarAvaliacaoCursos(cursosAvaliacaoGrupo);
 		
 		itemParametrosPlanejamento.setMinimizarCustoDocenteCursosSel(parametro.getMinimizarCustoDocenteCursos());
+		GrupoIdentificador cursosCustoGrupo = of.createGrupoIdentificador();
 		if(parametro.getMinimizarCustoDocenteCursos()) {
-			// TODO
-			Set<Curso> cursos = cenario.getCursos();
-			GrupoIdentificador cursosCustoGrupo = of.createGrupoIdentificador();
-			for(Curso curso : cursos) {
+			for(Curso curso : parametro.getCursosMinCust()) {
 				cursosCustoGrupo.getId().add(curso.getId().intValue());
 			}
-			itemParametrosPlanejamento.setMinimizarCustoDocenteCursos(cursosCustoGrupo);
 		}
+		itemParametrosPlanejamento.setMinimizarCustoDocenteCursos(cursosCustoGrupo);
+		
 		itemParametrosPlanejamento.setPermiteCompartilhamentoTurmaSel(parametro.getCompartilharDisciplinasCampi());
+		GrupoGrupo cursosCompartilharTurmaGrupo = of.createGrupoGrupo();
 		if(parametro.getCompartilharDisciplinasCampi()) {
-			// TODO
-			Set<Curso> cursos = cenario.getCursos();
-			GrupoIdentificador cursosCompartilharTurmas = of.createGrupoIdentificador();
-			for(Curso curso : cursos) {
-				cursosCompartilharTurmas.getId().add(curso.getId().intValue());
+			for(CursoDescompartilha cursoDescompartilha : parametro.getCursosDescompartDiscCampi()) {
+				GrupoIdentificador cursosCompartilharTurmas = of.createGrupoIdentificador();
+				cursosCompartilharTurmas.getId().add(cursoDescompartilha.getCurso1().getId().intValue());
+				cursosCompartilharTurmas.getId().add(cursoDescompartilha.getCurso2().getId().intValue());
+				cursosCompartilharTurmaGrupo.getGrupoIdentificador().add(cursosCompartilharTurmas);
 			}
-			GrupoGrupo cursosCompartilharTurmaGrupo = of.createGrupoGrupo();
-			cursosCompartilharTurmaGrupo.getGrupoIdentificador().add(cursosCompartilharTurmas);
-			itemParametrosPlanejamento.setPermiteCompartilhamentoTurma(cursosCompartilharTurmaGrupo);
 		}
+		itemParametrosPlanejamento.setPermiteCompartilhamentoTurma(cursosCompartilharTurmaGrupo);
 		
 		itemParametrosPlanejamento.setPercentuaisMinimoMestres(parametro.getPercentuaisMinimosMestres());
 		itemParametrosPlanejamento.setPercentuaisMinimoDoutores(parametro.getPercentuaisMinimosDoutores());

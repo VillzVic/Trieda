@@ -52,10 +52,6 @@ public class ParametroDTO extends AbstractDTO<Long> implements Comparable<Parame
 	public static final String PROPERTY_AREATITULACAOPROFESSORESECURSOS = "areatitulacaoprofessoresecursos";
 	public static final String PROPERTY_LIMITARMAXIMODISCIPLINAPROFESSOR = "limitarmaximodisciplinaprofessor";
 	public static final String PROPERTY_FUNCAOOBJETIVO = "funcaoObjetivo";
-	
-	public static final String PROPERTY_MAXIMIZARNOTAAVALIACAOCORPODOCENTE_LIST = "limitarmaximodisciplinaprofessor_list";
-	public static final String PROPERTY_MINIMIZARCUSTODOCENTECURSOS_LIST = "limitarmaximodisciplinaprofessor_list";
-	public static final String PROPERTY_DESCOMPARTILHARDISCIPLINAS_LIST = "descompartilhardisciplina_list";
 
 	public ParametroDTO() {
 		super();
@@ -362,25 +358,28 @@ public class ParametroDTO extends AbstractDTO<Long> implements Comparable<Parame
 		set(PROPERTY_FUNCAOOBJETIVO, value);
 	}
 	
+	public List<CursoDTO> limitarmaximodisciplinaprofessor_list;
 	public List<CursoDTO> getMaximizarNotaAvaliacaoCorpoDocenteList() {
-		return get(PROPERTY_MAXIMIZARNOTAAVALIACAOCORPODOCENTE_LIST);
+		return limitarmaximodisciplinaprofessor_list;
 	}
 	public void setMaximizarNotaAvaliacaoCorpoDocenteList(List<CursoDTO> value) {
-		set(PROPERTY_MAXIMIZARNOTAAVALIACAOCORPODOCENTE_LIST, value);
+		limitarmaximodisciplinaprofessor_list = value;
 	}
 	
+	public List<CursoDTO> minimizarcursodocentecursos_list;
 	public List<CursoDTO> getMinimizarCustoDocenteCursosList() {
-		return get(PROPERTY_MINIMIZARCUSTODOCENTECURSOS_LIST);
+		return minimizarcursodocentecursos_list;
 	}
 	public void setMinimizarCustoDocenteCursosList(List<CursoDTO> value) {
-		set(PROPERTY_MINIMIZARCUSTODOCENTECURSOS_LIST, value);
+		minimizarcursodocentecursos_list = value;
 	}
 	
+	public List<CursoDescompartilhaDTO> descompartilhardisciplina_list;
 	public List<CursoDescompartilhaDTO> getDescompartilharDisciplinasList() {
-		return get(PROPERTY_DESCOMPARTILHARDISCIPLINAS_LIST);
+		return descompartilhardisciplina_list;
 	}
 	public void setDescompartilharDisciplinasCampiList(List<CursoDescompartilhaDTO> value) {
-		set(PROPERTY_DESCOMPARTILHARDISCIPLINAS_LIST, value);
+		descompartilhardisciplina_list = value;
 	}
 	
 	@Override

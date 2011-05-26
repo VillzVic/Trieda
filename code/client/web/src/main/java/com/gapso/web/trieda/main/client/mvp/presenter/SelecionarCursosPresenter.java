@@ -47,6 +47,7 @@ public class SelecionarCursosPresenter implements Presenter {
 		this.cursos = cursos;
 		configureProxy();
 		setListeners();
+		display.getNaoSelecionadoList().getStore().getLoader().load();
 	}
 
 	private void configureProxy() {

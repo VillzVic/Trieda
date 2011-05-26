@@ -13,6 +13,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.PersistenceContext;
@@ -171,13 +172,13 @@ public class Parametro implements Serializable {
     //Maximizar nota da avaliação do corpo docente de cursos específicos
     @Column(name = "PAR_MAXNOTAAVALCORDOC")
     private Boolean maximizarNotaAvaliacaoCorpoDocente = false;
-    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private Set<Curso> cursosMaxNotaAval = new HashSet<Curso>();
 
     //Minimizar custo docente de cursos específicos
     @Column(name = "PAR_MINCUSTDOCCUR")
     private Boolean minimizarCustoDocenteCursos = false;
-    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private Set<Curso> cursosMinCust = new HashSet<Curso>();
 
     //Permitir compartilhamento de disciplinas entre cursos
