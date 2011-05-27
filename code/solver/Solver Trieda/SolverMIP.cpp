@@ -1804,6 +1804,7 @@ int SolverMIP::solve()
          // Resolvendo o modelo operacional
          status = solveOperacional();
 
+         // Preenche as classes do output operacional
          preencheOutputOperacional( problemSolution );
       }
       else
@@ -1831,6 +1832,12 @@ int SolverMIP::solve()
             problemData->atendimentosTatico->add( new AtendimentoCampusSolucao( **it_At_Campus ) );
          }
 
+         // Criando as aulas que serão utilizadas para resolver o modelo operacional
+         problemDataLoader->criaAulas();
+
+         // Resolvendo o modelo operacional
+         status = solveOperacional();
+
          // Remove a referência para os atendimentos tático (que pertencem ao output tático)
          ITERA_GGROUP( it_At_Campus, ( *problemSolution->atendimento_campus ), AtendimentoCampus )
          {
@@ -1847,14 +1854,8 @@ int SolverMIP::solve()
             }
          }
 
-         // Preenche as classes do output ooperacional
+         // Preenche as classes do output operacional
          preencheOutputOperacional( problemSolution );
-
-         // Criando as aulas que serão utilizadas para resolver o modelo operacional
-         problemDataLoader->criaAulas();
-
-         // Resolvendo o modelo operacional
-         solveOperacional();
       }
    }
 
@@ -1947,6 +1948,7 @@ void SolverMIP::preencheOutputOperacional( ProblemSolution * solution )
                         atendimento_horario_aula->setId( horario_aula->getId() );
                         atendimento_horario_aula->setHorarioAulaId( horario_aula->getId() );
                         atendimento_horario_aula->setProfessorId( professor->getId() );
+                        atendimento_horario_aula->setProfVirtual( professor->eVirtual() );
                         atendimento_horario_aula->setCreditoTeorico( aula->getCreditosTeoricos() > 0 );
 
                         ITERA_GGROUP_LESSPTR( it_oferta, aula->ofertas, Oferta )

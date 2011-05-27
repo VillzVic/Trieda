@@ -7,11 +7,7 @@
 
 #include "Aula.h"
 
-// -----------------------------
-// Para evitar uma dependência circular entre SolucaoOperacional e ProblemData
 #include "SolucaoOperacional.h"
-//class SolucaoOperacional;
-// -----------------------------
 
 class MoveValidator
 {

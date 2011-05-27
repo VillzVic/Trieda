@@ -13,7 +13,7 @@ class NSShift : public NS
 {
 public:
    
-   NSShift(ProblemData & problemData);
+   NSShift(ProblemData & problemData, bool keepFeasibility = false);
 
    virtual ~NSShift();
 
@@ -23,9 +23,13 @@ public:
 
 private:
 
+   bool keepFeasibility;
+
    ProblemData & problemData;
    
    std::pair<Aula*, std::pair<Professor*,std::vector<HorarioAula*> > > pickSomeClassAndNewSchedule(SolucaoOperacional & solOp);
+
+   std::pair<Aula*, std::pair<Professor*,std::vector<HorarioAula*> > > pickSomeClassAndNewScheduleWithouChecks(SolucaoOperacional & solOp);
 
    MoveShiftValidator * moveValidator;
 };

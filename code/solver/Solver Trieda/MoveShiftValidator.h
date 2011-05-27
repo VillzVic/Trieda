@@ -16,6 +16,9 @@ public:
    bool isValid(Aula & aula, Professor & prof, std::vector<HorarioAula*> novosHorariosAula, SolucaoOperacional & solOp);
 
 private:
+
+   //typedef int (*IntFunctionWithOneParameter) (int a);
+
    
 };
 

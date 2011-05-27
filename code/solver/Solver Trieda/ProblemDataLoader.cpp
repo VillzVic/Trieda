@@ -3342,7 +3342,7 @@ void ProblemDataLoader::criaAulas()
    // Checando se o XML de entrada possui a saída do TÁTICO,
    if ( problemData->atendimentosTatico )
    {
-      AtendimentoOfertaSolucao * atendOferta;
+      AtendimentoOfertaSolucao * atendOferta = NULL;
 
       ITERA_GGROUP( it_atend_campus, *problemData->atendimentosTatico, AtendimentoCampusSolucao )
       {

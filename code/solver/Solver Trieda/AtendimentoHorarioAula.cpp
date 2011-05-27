@@ -4,6 +4,8 @@ AtendimentoHorarioAula::AtendimentoHorarioAula(void)
 {
    atendimentos_ofertas = new GGroup<AtendimentoOferta*>();
 
+   _profVirtual = false;
+
    //atendimentos_ofertas = NULL;
 }
 
@@ -22,6 +24,7 @@ std::ostream& operator << (std::ostream& out, AtendimentoHorarioAula& horario_au
 
    out << "<horarioAulaId>" << horario_aula.getHorarioAulaId() << "</horarioAulaId>" << std::endl;
    out << "<professorId>" << horario_aula.getProfessorId() << "</professorId>" << std::endl;
+   out << "<virtual>" << ((horario_aula.profVirtual()) ? "true" : "false") << "</virtual>" << std::endl;
    out << "<creditoTeorico>" << horario_aula.getCreditoTeorico() << "</creditoTeorico>" << std::endl;
 
    out << "<atendimentosOfertas>" << std::endl;

@@ -2,7 +2,7 @@
 
 MoveShift::MoveShift( Aula & _aula, Professor & _novoProfAula,
                      std::vector<HorarioAula*> _blocoHorariosVagos )
-					 : aula( _aula ), novoProfAula( _novoProfAula )
+                     : aula( _aula ), novoProfAula( _novoProfAula )
 {
    blocoHorariosVagos = _blocoHorariosVagos;
 }
@@ -16,7 +16,7 @@ Move & MoveShift::apply( SolucaoOperacional & s )
 {
    // Para realocar uma aula deve-se: 
    // 1 - Na solução, referenciar os novos horários da aula e apontar para NULL os horários antigos.
-   // 2 - Na aula, trocar o vetor que indica o bloco.
+   // 2 - Na solução, trocar o vetor que indica o bloco.
 
    int indice = 0, linha = 0, coluna = 0;
 
@@ -28,7 +28,7 @@ Move & MoveShift::apply( SolucaoOperacional & s )
    if ( itBlocoAula == s.blocoAulas.end() )
    {
       std::cout << "MoveShift -> Aula nao encontrada no "
-		        << "blocoAulas da solucao corrente." << std::endl;
+         << "blocoAulas da solucao corrente." << std::endl;
 
       exit(1);
    }
@@ -43,8 +43,8 @@ Move & MoveShift::apply( SolucaoOperacional & s )
    {
       indice = s.posicao_horario_aula( ( *itHorarioAula )->getId() );
 
-	  linha = profAula->getIdOperacional();
-	  coluna = ( aula.getDiaSemana() - 1 ) * totalHorariosAula + indice;
+      linha = profAula->getIdOperacional();
+      coluna = ( aula.getDiaSemana() - 1 ) * totalHorariosAula + indice;
 
       s.getMatrizAulas()->at( linha )->at( coluna ) = ( NULL );
    }
@@ -55,8 +55,8 @@ Move & MoveShift::apply( SolucaoOperacional & s )
    {
       indice = s.posicao_horario_aula( ( *itHorarioAula )->getId() );
 
-	  linha = novoProfAula.getIdOperacional();
-	  coluna = ( aula.getDiaSemana() - 1 ) * totalHorariosAula + indice;
+      linha = novoProfAula.getIdOperacional();
+      coluna = ( aula.getDiaSemana() - 1 ) * totalHorariosAula + indice;
 
       s.getMatrizAulas()->at( linha )->at( coluna ) = ( &aula );
    }
