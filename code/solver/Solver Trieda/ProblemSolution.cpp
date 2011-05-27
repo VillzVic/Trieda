@@ -1,7 +1,7 @@
 #include "ProblemSolution.h"
 #include "ErrorHandler.h"
 
-ProblemSolution::ProblemSolution()
+ProblemSolution::ProblemSolution(bool _modoOtmTatico) : modoOtmTatico(_modoOtmTatico)
 {
    folgas = new RestricaoVioladaGroup();
    atendimento_campus = new GGroup< AtendimentoCampus * >();
@@ -32,7 +32,7 @@ ProblemSolution::~ProblemSolution()
 std::ostream & operator << ( std::ostream & out, ProblemSolution & solution )
 {
    // TATICO
-   if ( solution.solucao_operacional == NULL )
+   if ( solution.modoOtmTatico )
    {
       out << "<?xml version=\"1.0\" encoding=\"ISO-8859-1\" standalone=\"yes\"?>"
          << std::endl;

@@ -16,7 +16,9 @@ class ProblemSolution
 {
 public:
    // Constructor
-   ProblemSolution();
+   //ProblemSolution();
+
+   ProblemSolution(bool modoOtmTatico = true);
 
    // Destructor
    virtual ~ProblemSolution(); 
@@ -27,6 +29,8 @@ public:
    SolucaoOperacional * solucao_operacional;
 
    GGroup< ProfessorVirtualOutput * > * professores_virtuais;
+
+   bool modoOtmTatico;
 
 private:
    RestricaoVioladaGroup * folgas;
@@ -40,6 +44,7 @@ private:
    // abaixo, visa armazenar todas as salas em que uma disciplina 
    // pode ser alocada levando em conta o resultado do solver.
    // std::map< int /*Id Disc*/, GGroup< Sala * > > discSalas;
+
 };
 
 std::ostream & operator << ( std::ostream &, ProblemSolution & );

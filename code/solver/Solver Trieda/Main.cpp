@@ -59,7 +59,8 @@ int main( int argc, char** argv )
 
    ProblemDataLoader * dataLoader;
    ProblemData * data = new ProblemData();
-   ProblemSolution * solution = new ProblemSolution();
+   //ProblemSolution * solution = new ProblemSolution();
+   ProblemSolution * solution;// = new ProblemSolution();
    Solver * solver;
 
    // Initializations
@@ -96,6 +97,11 @@ int main( int argc, char** argv )
    strcat( inputFile, "input" );
    strcat( inputFile, argv[1] );
 
+   dataLoader = new ProblemDataLoader( inputFile, data );
+   dataLoader->load();
+
+   solution = new ProblemSolution((data->parametros->modo_otimizacao == "TATICO"));
+
    // Temporary output file name
    strcat( tempOutput, path );
    strcat( tempOutput, "partialSolution.xml" );
@@ -121,8 +127,10 @@ int main( int argc, char** argv )
    {
 #endif
       // Load data
-      dataLoader = new ProblemDataLoader( inputFile, data );
-      dataLoader->load();
+      //dataLoader = new ProblemDataLoader( inputFile, data );
+      //dataLoader->load();
+
+      //solution = new ProblemSolution((data->parametros->modo_otimizacao == "TATICO"));
 
       try
       {

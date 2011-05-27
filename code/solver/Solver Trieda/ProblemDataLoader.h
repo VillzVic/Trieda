@@ -183,6 +183,11 @@ private:
    void relacionaCursosCampus();
 
    int retornaMaiorIdDemandas();
+
+   /* Para o caso em que há uma solução do módulo tático e deseja-se executar o módulo operacional.
+   Deve-se verificar na solução informada se existe alguma disciplina que foi dividida está alocada 
+   com id positivo em um laboratório. Se isso acontecer, tem que converter o id da disciplina. */
+   void validaInputSolucaoTatico();
 };
 
 #endif

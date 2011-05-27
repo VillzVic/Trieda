@@ -267,6 +267,10 @@ public:
    // Retorna os pares curso/curriculo dos quais a disciplina informada possui demanda
    GGroup< std::pair< Curso *, Curriculo * > > retornaCursosCurriculosDisciplina( Disciplina * );
    //-----------------------------------------------------------------------------------------------
+
+   /* Estrutura utilizada para referenciar as novas disciplinas criadas após a execução do método
+   de divisão de disciplinas. */
+   GGroup<Disciplina*,LessPtr<Disciplina> > novasDisciplinas;
 };
 
 #endif

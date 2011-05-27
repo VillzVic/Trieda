@@ -62,6 +62,16 @@ public:
       else if ( *sala > *right.getSala() )
          return false;
 
+      if( ofertas.size() < right.ofertas.size() )
+         return true;
+      else if ( ofertas.size() > right.ofertas.size() )
+         return false;
+
+      if( quantidade < right.quantidade )
+         return true;
+      else if ( quantidade > right.quantidade )
+         return false;
+
       return false;
    }
 
@@ -87,6 +97,16 @@ public:
       else if ( *sala < *right.getSala() )
          return false;
 
+      if( ofertas.size() > right.ofertas.size() )
+         return true;
+      else if ( ofertas.size() < right.ofertas.size() )
+         return false;
+
+      if( quantidade > right.quantidade )
+         return true;
+      else if ( quantidade < right.quantidade )
+         return false;
+
       return false;
    }
 
@@ -95,10 +115,12 @@ public:
       return  (
          ( turma == right.getTurma() ) &&
          ( *disciplina == *right.getDisciplina() ) &&
+         ( ofertas == right.ofertas ) &&
          ( *sala == *right.getSala() ) &&
          ( dia_semana == right.getDiaSemana() ) &&
          ( creditos_teoricos == right.getCreditosTeoricos() ) &&
-         ( creditos_praticos == right.getCreditosPraticos() ) );
+         ( creditos_praticos == right.getCreditosPraticos() ) &&
+         ( quantidade == right.quantidade ));
    }
 
    virtual bool operator != ( Aula const & right )

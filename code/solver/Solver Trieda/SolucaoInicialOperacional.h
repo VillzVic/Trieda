@@ -71,7 +71,7 @@ private:
    void calculaCustoFixProf( Professor &, Aula &, unsigned, int = 0, int = 0 );
 
    /* Função recursiva de alocação de aulas. */
-   void alocaAulasRec( bool );
+   void alocaAulasRec(bool primeiraTentativaAlocacao, bool tentarManterViabilidade);
 
    // Função auxiliar.
    Professor & addProfessor();
