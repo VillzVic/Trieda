@@ -279,6 +279,9 @@ public class AtendimentoOperacional implements Serializable {
 	}
 
 	public Professor getProfessor() {
+		if(professor == null) {
+			return new Professor();
+		}
 		return professor;
 	}
 	public void setProfessor(Professor professor) {

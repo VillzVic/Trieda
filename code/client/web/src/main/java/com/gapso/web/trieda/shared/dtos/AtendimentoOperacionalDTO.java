@@ -30,7 +30,7 @@ public class AtendimentoOperacionalDTO extends AbstractDTO<String> implements Co
 	public static final String PROPERTY_CREDITO_TEORICO_BOOLEAN = "creditoTeoricoBoolean";
 	public static final String PROPERTY_CURSO_STRING = "cursoString";
 	public static final String PROPERTY_CURSO_NOME = "cursoNome";
-	public static final String PROPERTY_CURSO_ID = "cursoNome";
+	public static final String PROPERTY_CURSO_ID = "cursoId";
 	public static final String PROPERTY_CURRICULO_STRING = "curriculoString";
 	public static final String PROPERTY_CURRICULO_ID = "curriculoId";
 	public static final String PROPERTY_PERIODO = "periodo";
