@@ -539,4 +539,9 @@ public class GTriedaI18nConstants implements TriedaI18nConstants {
 		return languageManager.getText("otimizadoOperacional");
 	}
 
+	@Override
+	public String relatorioVisaoCurso() {
+		return languageManager.getText("relatorioVisaoCurso");
+	}
+
 }

@@ -2,10 +2,11 @@ package com.gapso.web.trieda.server.excel.exp;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
+import java.util.Set;
 
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
@@ -17,17 +18,20 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import com.gapso.trieda.domain.AtendimentoOperacional;
 import com.gapso.trieda.domain.AtendimentoTatico;
 import com.gapso.trieda.domain.Cenario;
-import com.gapso.trieda.domain.Sala;
-import com.gapso.trieda.domain.Turno;
+import com.gapso.trieda.domain.Oferta;
 import com.gapso.trieda.misc.Semanas;
 import com.gapso.web.trieda.server.AtendimentosServiceImpl;
 import com.gapso.web.trieda.server.util.ConvertBeans;
 import com.gapso.web.trieda.shared.dtos.AtendimentoRelatorioDTO;
+import com.gapso.web.trieda.shared.dtos.CampusDTO;
+import com.gapso.web.trieda.shared.dtos.CurriculoDTO;
+import com.gapso.web.trieda.shared.dtos.ParDTO;
+import com.gapso.web.trieda.shared.dtos.TurnoDTO;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nMessages;
 
-public class RelatorioVisaoSalaExportExcel extends AbstractExportExcel {
+public class RelatorioVisaoCursoExportExcel extends AbstractExportExcel {
 	
 	enum ExcelCellStyleReference {
 		HEADER_LEFT_TEXT(5,3),
@@ -49,29 +53,30 @@ public class RelatorioVisaoSalaExportExcel extends AbstractExportExcel {
 	}
 	private HSSFCellStyle[] cellStyles;
 	
+	
 	private boolean removeUnusedSheets;
 	private String sheetName;
 	private int initialRow;
 	
-	public RelatorioVisaoSalaExportExcel(Cenario cenario, TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages) {
+	public RelatorioVisaoCursoExportExcel(Cenario cenario, TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages) {
 		super(cenario,i18nConstants,i18nMessages);
 		this.cellStyles = new HSSFCellStyle[ExcelCellStyleReference.values().length];
 		this.removeUnusedSheets = true;
-		this.sheetName = ExcelInformationType.RELATORIO_VISAO_SALA.getSheetName();
+		this.sheetName = ExcelInformationType.RELATORIO_VISAO_CURSO.getSheetName();
 		this.initialRow = 5;
 	}
 	
-	public RelatorioVisaoSalaExportExcel(boolean removeUnusedSheets, Cenario cenario, TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages) {
+	public RelatorioVisaoCursoExportExcel(boolean removeUnusedSheets, Cenario cenario, TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages) {
 		super(cenario,i18nConstants,i18nMessages);
 		this.cellStyles = new HSSFCellStyle[ExcelCellStyleReference.values().length];
 		this.removeUnusedSheets = removeUnusedSheets;
-		this.sheetName = ExcelInformationType.RELATORIO_VISAO_SALA.getSheetName();
+		this.sheetName = ExcelInformationType.RELATORIO_VISAO_CURSO.getSheetName();
 		this.initialRow = 5;
 	}
 	
 	@Override
 	public String getFileName() {
-		return getI18nConstants().relatorioVisaoSala();
+		return getI18nConstants().relatorioVisaoCurso();
 	}
 	
 	@Override
@@ -81,10 +86,10 @@ public class RelatorioVisaoSalaExportExcel extends AbstractExportExcel {
 
 	@Override
 	protected String getReportName() {
-		return getI18nConstants().relatorioVisaoSala();
+		return getI18nConstants().relatorioVisaoCurso();
 	}
 
-	private List<AtendimentoRelatorioDTO> getAtendimentoRelatorioDTOList(Cenario cenario) {
+	public Set<Map<String, Object>> opcoesBuscaOperacional(Cenario cenario) {
 		List<AtendimentoTatico> atdTaticoList = AtendimentoTatico.findByCenario(cenario);
 		List<AtendimentoOperacional> atdOperacionalList = AtendimentoOperacional.findByCenario(cenario);
 		List<AtendimentoRelatorioDTO> atdRelatorioList = new ArrayList<AtendimentoRelatorioDTO>(atdTaticoList.size() + atdOperacionalList.size());
@@ -94,14 +99,57 @@ public class RelatorioVisaoSalaExportExcel extends AbstractExportExcel {
 		for(AtendimentoOperacional atdOperacional : atdOperacionalList) {
 			atdRelatorioList.add(ConvertBeans.toAtendimentoOperacionalDTO(atdOperacional));
 		}
-		return atdRelatorioList;
+		
+		Set<Map<String, Object>> opcoes = new HashSet<Map<String, Object>>();
+		for(AtendimentoRelatorioDTO atendimentoRelatorio : atdRelatorioList) {
+			Map<String, Object> opcao = new HashMap<String, Object>();
+			opcao.put("CurriculoDTO", atendimentoRelatorio.getCurriculoId());
+			opcao.put("Periodo", Integer.valueOf(atendimentoRelatorio.getPeriodoString()));
+			opcao.put("TurnoDTO", atendimentoRelatorio.getTurnoId());
+			opcao.put("CampusDTO", atendimentoRelatorio.getCampusId());
+			opcoes.add(opcao);
+		}
+		return opcoes;
+	}
+	
+	private ParDTO<List<List<AtendimentoRelatorioDTO>>, List<List<Integer>>> getAtendimentoRelatorioDTOList(Cenario cenario) {
+		List<List<AtendimentoRelatorioDTO>> atdRelatoriosList = new ArrayList<List<AtendimentoRelatorioDTO>>();
+		List<List<Integer>> tamanhosSemanaList = new ArrayList<List<Integer>>();
+		
+		AtendimentosServiceImpl atendimentosServiceImpl = new AtendimentosServiceImpl();
+		
+		Set<Map<String, Object>> opcoes = opcoesBuscaOperacional(cenario);
+		for(Map<String, Object> opcao : opcoes) {
+			CurriculoDTO curriculoDTO = new CurriculoDTO();
+			curriculoDTO.setId((Long)opcao.get("CurriculoDTO"));
+			Integer periodo = (Integer)opcao.get("Periodo");
+			TurnoDTO turnoDTO = new TurnoDTO();
+			turnoDTO.setId((Long)opcao.get("TurnoDTO"));
+			CampusDTO campusDTO = new CampusDTO();
+			campusDTO.setId((Long)opcao.get("CampusDTO"));
+			ParDTO<List<AtendimentoRelatorioDTO>, List<Integer>> parAtendimentos = atendimentosServiceImpl.getBusca(curriculoDTO, periodo, turnoDTO, campusDTO);
+			
+			List<AtendimentoRelatorioDTO> atdRelatorioList = new ArrayList<AtendimentoRelatorioDTO>(parAtendimentos.getPrimeiro());
+			atdRelatoriosList.add(atdRelatorioList);
+			
+			List<Integer> tamanhoSemanaList = new ArrayList<Integer>(parAtendimentos.getSegundo());
+			tamanhosSemanaList.add(tamanhoSemanaList);
+		}
+		
+		ParDTO<List<List<AtendimentoRelatorioDTO>>, List<List<Integer>>> par = new ParDTO<List<List<AtendimentoRelatorioDTO>>, List<List<Integer>>>();
+		par.setPrimeiro(atdRelatoriosList);
+		par.setSegundo(tamanhosSemanaList);
+		
+		return par;
 	}
 	
 	@Override
 	protected boolean fillInExcel(HSSFWorkbook workbook) {
-		List<AtendimentoRelatorioDTO> atdRelatorioList = getAtendimentoRelatorioDTOList(getCenario());
+		ParDTO<List<List<AtendimentoRelatorioDTO>>, List<List<Integer>>> par = getAtendimentoRelatorioDTOList(getCenario());
+		List<List<AtendimentoRelatorioDTO>> atdRelatoriosList = par.getPrimeiro();
+		List<List<Integer>> tamanhosSemanaList = par.getSegundo();
 		
-		if (!atdRelatorioList.isEmpty()) {
+		if (!atdRelatoriosList.isEmpty()) {
 			if (this.removeUnusedSheets) {
 				removeUnusedSheets(this.sheetName,workbook);
 			}
@@ -114,41 +162,28 @@ public class RelatorioVisaoSalaExportExcel extends AbstractExportExcel {
 			
 			List<HSSFCellStyle> excelColorsPool = buildColorPaletteCellStyles(workbook);
 			Map<String,HSSFCellStyle> codigoDisciplinaToColorMap = new HashMap<String,HSSFCellStyle>();
-			Map<Sala,Map<Turno,List<AtendimentoRelatorioDTO>>> mapNivel1 = new TreeMap<Sala,Map<Turno,List<AtendimentoRelatorioDTO>>>();
-			for (AtendimentoRelatorioDTO atendimento : atdRelatorioList) {
-				Sala sala = Sala.find(atendimento.getSalaId());
-				Turno turno = Turno.find(atendimento.getTurnoId());
-				
-				Map<Turno,List<AtendimentoRelatorioDTO>> mapNivel2 = mapNivel1.get(sala);
-				if (mapNivel2 == null) {
-					mapNivel2 = new HashMap<Turno,List<AtendimentoRelatorioDTO>>();
-					mapNivel1.put(sala,mapNivel2);
-				}
-				
-				List<AtendimentoRelatorioDTO> list = mapNivel2.get(turno);
-				if (list == null) {
-					list = new ArrayList<AtendimentoRelatorioDTO>();
-					mapNivel2.put(turno,list);
-				}
-				
-				list.add(atendimento);
-				
-				HSSFCellStyle style = codigoDisciplinaToColorMap.get(atendimento.getDisciplinaString());
-				if (style == null) {
-					int index = codigoDisciplinaToColorMap.size() % excelColorsPool.size();
-					codigoDisciplinaToColorMap.put(atendimento.getDisciplinaString(),excelColorsPool.get(index));
+			
+			for(List<AtendimentoRelatorioDTO> atdRelatorioList : atdRelatoriosList) {
+				for(AtendimentoRelatorioDTO atendimento : atdRelatorioList) {
+					HSSFCellStyle style = codigoDisciplinaToColorMap.get(atendimento.getDisciplinaString());
+					if (style == null) {
+						int index = codigoDisciplinaToColorMap.size() % excelColorsPool.size();
+						codigoDisciplinaToColorMap.put(atendimento.getDisciplinaString(),excelColorsPool.get(index));
+					}
 				}
 			}
 			
 			int nextRow = this.initialRow;
-			for (Sala sala : mapNivel1.keySet()) {
-				Map<Turno,List<AtendimentoRelatorioDTO>> mapNivel2 = mapNivel1.get(sala);
-				for (Turno turno : mapNivel2.keySet()) {
-					nextRow = writeSala(sala,turno,mapNivel2.get(turno),nextRow,sheet,itExcelCommentsPool,codigoDisciplinaToColorMap);
-				}				
+//			for(List<AtendimentoRelatorioDTO> atdRelatorioList : atdRelatoriosList) {
+			for(int i = 0; i < atdRelatoriosList.size(); i++) {
+				List<AtendimentoRelatorioDTO> atdRelatorioList = atdRelatoriosList.get(i);
+				List<Integer> tamanhoSemanaList = tamanhosSemanaList.get(i);
+				
+				if(atdRelatorioList.isEmpty()) continue;
+				Oferta oferta = Oferta.find(atdRelatorioList.get(0).getOfertaId());
+				Integer periodo = Integer.valueOf(atdRelatorioList.get(0).getPeriodoString());
+				nextRow = writeSala(oferta, periodo, atdRelatorioList, tamanhoSemanaList, nextRow, sheet, itExcelCommentsPool, codigoDisciplinaToColorMap);
 			}
-			
-			//autoSizeColumns((short)1,(short)6,sheet); TODO: rever autoSize pois atualmente o algoritmo do poi interfere na largura do logo
 			
 			return true;
 		}
@@ -157,14 +192,14 @@ public class RelatorioVisaoSalaExportExcel extends AbstractExportExcel {
 	}
 	
 	@SuppressWarnings("unused")
-	private int writeSala(Sala sala, Turno turno, List<AtendimentoRelatorioDTO> atendimentos, int row, HSSFSheet sheet, Iterator<HSSFComment> itExcelCommentsPool, Map<String,HSSFCellStyle> codigoDisciplinaToColorMap) {
-		row = writeHeader(sala,turno,row,sheet);
+	private int writeSala(Oferta oferta, Integer periodo, List<AtendimentoRelatorioDTO> atendimentos, List<Integer> tamanhoSemanaList, int row, HSSFSheet sheet, Iterator<HSSFComment> itExcelCommentsPool, Map<String,HSSFCellStyle> codigoDisciplinaToColorMap) {
+		row = writeHeader(oferta, periodo, tamanhoSemanaList, row, sheet);
 		
 		int initialRow = row;
 		int col = 2;
 		
 		// preenche grade com créditos e células vazias
-		int maxCreditos = turno.calculaMaxCreditos();
+		int maxCreditos = oferta.getTurno().calculaMaxCreditos();
 		for (int indexCredito = 1; indexCredito <= maxCreditos; indexCredito++) {
 			// Créditos
 			setCell(row,col++,sheet,cellStyles[ExcelCellStyleReference.TEXT.ordinal()],indexCredito);
@@ -221,31 +256,28 @@ public class RelatorioVisaoSalaExportExcel extends AbstractExportExcel {
 		return initialRow + maxCreditos + 1;
 	}
 
-	private int writeHeader(Sala sala, Turno turno, int row, HSSFSheet sheet) {
+	private int writeHeader(Oferta oferta, Integer periodo, List<Integer> tamanhoSemanaList, int row, HSSFSheet sheet) {
 		int col = 3;
 		
+		// Curso
+		setCell(row,col++,sheet,cellStyles[ExcelCellStyleReference.HEADER_LEFT_TEXT.ordinal()],"Curso");
+		setCell(row,col++,sheet,cellStyles[ExcelCellStyleReference.HEADER_CENTER_VALUE.ordinal()],oferta.getCurriculo().getCurso().getCodigo());
 		// Campus
 		setCell(row,col++,sheet,cellStyles[ExcelCellStyleReference.HEADER_LEFT_TEXT.ordinal()],"Campus");
-		setCell(row,col++,sheet,cellStyles[ExcelCellStyleReference.HEADER_CENTER_VALUE.ordinal()],sala.getUnidade().getCampus().getCodigo());
-		// Sala
-		setCell(row,col++,sheet,cellStyles[ExcelCellStyleReference.HEADER_LEFT_TEXT.ordinal()],"Sala");
-		setCell(row,col++,sheet,cellStyles[ExcelCellStyleReference.HEADER_CENTER_VALUE.ordinal()],sala.getCodigo());
-		// Capacidade
-		setCell(row,col++,sheet,cellStyles[ExcelCellStyleReference.HEADER_LEFT_TEXT.ordinal()],"Capacidade");
-		setCell(row,col++,sheet,cellStyles[ExcelCellStyleReference.HEADER_CENTER_VALUE.ordinal()],sala.getCapacidade());
+		setCell(row,col++,sheet,cellStyles[ExcelCellStyleReference.HEADER_CENTER_VALUE.ordinal()],oferta.getCampus().getCodigo());
+		// Turno
+		setCell(row,col++,sheet,cellStyles[ExcelCellStyleReference.HEADER_LEFT_TEXT.ordinal()],"Turno");
+		setCell(row,col++,sheet,cellStyles[ExcelCellStyleReference.HEADER_CENTER_VALUE.ordinal()],oferta.getTurno().getNome());
 		
 		row++;
 		col = 3;
 		
-		// Unidade
-		setCell(row,col++,sheet,cellStyles[ExcelCellStyleReference.HEADER_LEFT_TEXT.ordinal()],"Unidade");
-		setCell(row,col++,sheet,cellStyles[ExcelCellStyleReference.HEADER_CENTER_VALUE.ordinal()],sala.getUnidade().getCodigo());
-		// Turno
+		// Curriculo
+		setCell(row,col++,sheet,cellStyles[ExcelCellStyleReference.HEADER_LEFT_TEXT.ordinal()],"Matriz Curricular");
+		setCell(row,col++,sheet,cellStyles[ExcelCellStyleReference.HEADER_CENTER_VALUE.ordinal()],oferta.getCurriculo().getCodigo());
+		// Periodo
 		setCell(row,col++,sheet,cellStyles[ExcelCellStyleReference.HEADER_LEFT_TEXT.ordinal()],"Turno");
-		setCell(row,col++,sheet,cellStyles[ExcelCellStyleReference.HEADER_CENTER_VALUE.ordinal()],turno.getNome());
-		// Tipo
-		setCell(row,col++,sheet,cellStyles[ExcelCellStyleReference.HEADER_LEFT_TEXT.ordinal()],"Tipo");
-		setCell(row,col++,sheet,cellStyles[ExcelCellStyleReference.HEADER_CENTER_VALUE.ordinal()],sala.getTipoSala().getNome());
+		setCell(row,col++,sheet,cellStyles[ExcelCellStyleReference.HEADER_CENTER_VALUE.ordinal()], periodo);
 		
 		row++;
 		col = 2;
@@ -254,7 +286,11 @@ public class RelatorioVisaoSalaExportExcel extends AbstractExportExcel {
 		setCell(row,col++,sheet,cellStyles[ExcelCellStyleReference.HEADER_CENTER_TEXT.ordinal()],"Créditos");
 		// Dias Semana
 		for (Semanas semanas : Semanas.values()) {
-			setCell(row,col++,sheet,cellStyles[ExcelCellStyleReference.HEADER_CENTER_TEXT.ordinal()],semanas.name());
+			int qtd = tamanhoSemanaList.get(Semanas.toInt(semanas));
+			setCell(row,col,sheet,semanas.name());
+			HSSFCellStyle style = cellStyles[ExcelCellStyleReference.HEADER_CENTER_TEXT.ordinal()];
+			mergeCells(row,row,col,col + qtd - 1,sheet,style);
+			col = col + qtd;
 		}
 		
 		row++;

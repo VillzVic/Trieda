@@ -64,12 +64,10 @@ public class AtendimentoOperacional implements Serializable {
     @JoinColumn(name = "DIS_ID")
     private Disciplina disciplina;
     
-    @NotNull
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH}, targetEntity = Professor.class)
     @JoinColumn(name = "PRF_ID")
     private Professor professor;
     
-    @NotNull
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH}, targetEntity = ProfessorVirtual.class)
     @JoinColumn(name = "PRV_ID")
     private ProfessorVirtual professorVirtual;

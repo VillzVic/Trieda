@@ -20,7 +20,6 @@ import javax.persistence.Query;
 import javax.persistence.Table;
 import javax.persistence.Version;
 import javax.validation.constraints.Max;
-import javax.validation.constraints.NotNull;
 
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.roo.addon.entity.RooEntity;
@@ -36,7 +35,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Table(name = "PROFESSORES_VIRTUAIS")
 public class ProfessorVirtual implements Serializable {
 
-    @NotNull
     @ManyToOne(targetEntity = Titulacao.class)
     @JoinColumn(name = "TIT_ID")
     private Titulacao titulacao;
@@ -53,7 +51,6 @@ public class ProfessorVirtual implements Serializable {
     @Max(999L)
     private Integer cargaHorariaMax;
 
-    @NotNull
     @ManyToMany(cascade = CascadeType.ALL)
     private Set<Disciplina> disciplinas = new HashSet<Disciplina>();
 

@@ -15,6 +15,7 @@ public enum ExcelInformationType {
 	PROFESSORES("Professores"),
 	CAMPI_TRABALHO("Campi de Trabalho"),
 	RELATORIO_VISAO_SALA("Relatorio Visao Sala"),
+	RELATORIO_VISAO_CURSO("Relatorio Visao Curso"),
 	SALAS("Salas"),
 	UNIDADES("Unidades"),
 	RESUMO_CURSO("Resumo por curso"),

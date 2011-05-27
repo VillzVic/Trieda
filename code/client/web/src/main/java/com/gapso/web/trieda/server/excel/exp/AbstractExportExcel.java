@@ -104,7 +104,7 @@ public abstract class AbstractExportExcel implements IExportExcel {
 	}
 	
 	protected void removeUnusedSheet(String unusedSheetName, HSSFWorkbook workbook) {
-		workbook.removeSheetAt(workbook.getSheetIndex(unusedSheetName));
+//		workbook.removeSheetAt(workbook.getSheetIndex(unusedSheetName));
 	}
 	
 	protected void removeUnusedSheets(String usedSheetName, HSSFWorkbook workbook) {

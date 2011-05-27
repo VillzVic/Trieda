@@ -3,6 +3,9 @@ package com.gapso.web.trieda.shared.dtos;
 
 public interface AtendimentoRelatorioDTO {
 	
+	
+	public Long getOfertaId();
+	public Long getCampusId();
 	public Integer getSemana();
 	public Integer getTotalCreditos();
 	public Long getDisciplinaId();

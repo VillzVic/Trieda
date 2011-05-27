@@ -7,7 +7,6 @@ import java.util.Map;
 
 import org.springframework.transaction.annotation.Transactional;
 
-import com.gapso.trieda.domain.AreaTitulacao;
 import com.gapso.trieda.domain.AtendimentoOperacional;
 import com.gapso.trieda.domain.AtendimentoTatico;
 import com.gapso.trieda.domain.Campus;
@@ -177,9 +176,10 @@ public class SolverOutput {
 	
 	private ProfessorVirtual getProfessorVirtual(Integer idAux) {
 		for(ItemProfessorVirtual pvAux : triedaOutput.getProfessoresVirtuais().getProfessorVirtual()) {
-			if(idAux.equals(pvAux.getId())) {
+			if(idAux.equals(pvAux.getId() * -1)) {
 				ProfessorVirtual pv = new ProfessorVirtual();
-				pv.setAreaTitulacao(AreaTitulacao.find(pvAux.getAreaTitulacaoId().longValue()));
+				// TODO Pendencia futura
+				// pv.setAreaTitulacao(AreaTitulacao.find(pvAux.getAreaTitulacaoId().longValue()));
 				pv.setCargaHorariaMax(pvAux.getChMax());
 				pv.setCargaHorariaMin(pvAux.getChMin());
 				for(Integer discId : pvAux.getDisciplinas().getId()) {
