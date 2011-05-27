@@ -161,7 +161,8 @@ public:
    void getSolutionOperacional();
    void preencheOutputOperacional( ProblemSolution * );
    bool aulaAlocada( Aula *, Campus *, Unidade *, Sala *, int );
-   int totalCreditosAtendidos( Disciplina *, Curso *, Curriculo * );
+   vector< Variable * > variaveisAlunosAtendidos( Curso *, Disciplina * );
+   vector< Variable * > variaveisCreditosAtendidos( Disciplina * );
 
 private:
    // Vetor responsável por armazenar ponteiros para todas as

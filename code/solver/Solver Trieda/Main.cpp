@@ -151,7 +151,7 @@ int main( int argc, char** argv )
          error = true;
       }
 
-	  // Write output
+	   // Write output
       try
       {
          writeOutput( solution, outputFile, tempOutput );
@@ -161,7 +161,7 @@ int main( int argc, char** argv )
          char mensagem[ 200 ];
          sprintf( mensagem, "Não foi possível escrever a solução. Error code: %d.", status );
          ErrorHandler::addErrorMessage(
-			 UNEXPECTED_ERROR, std::string( mensagem ), "Solver::main()", false );
+			   UNEXPECTED_ERROR, std::string( mensagem ), "Solver::main()", false );
 
          error = true;
       }
@@ -194,7 +194,7 @@ int main( int argc, char** argv )
 }
 
 void writeOutput( ProblemSolution * solution,
-				  char * outputFile, char * tempOutput )
+				      char * outputFile, char * tempOutput )
 {
    // Write output
    remove( tempOutput );

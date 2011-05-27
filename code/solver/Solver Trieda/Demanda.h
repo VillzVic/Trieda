@@ -26,8 +26,8 @@ public:
    int getOfertaId() const { return oferta_id; }
    int getDisciplinaId() const { return disciplina_id; }
 
-   virtual bool operator < ( const Demanda& right );
-   virtual bool operator > ( const Demanda& right );
+   virtual bool operator < ( const Demanda & right );
+   virtual bool operator > ( const Demanda & right );
    virtual bool operator == ( const Demanda & right );
    virtual bool operator != ( const Demanda & right );
 

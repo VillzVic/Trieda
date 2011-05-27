@@ -61,7 +61,7 @@ public:
    // Trata das equivalências entre disciplinas
    void relacionaDisciplinasEquivalentes();
    void substituiDisciplinasEquivalentes();
-   void atualizaDemandas();
+   void atualizaOfertasDemandas();
 
    /* */
    void divideDisciplinas();

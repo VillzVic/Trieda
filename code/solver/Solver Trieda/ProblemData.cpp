@@ -179,8 +179,9 @@ void ProblemData::le_arvore( TriedaInput & raiz )
 bool ProblemData::cursosCompativeis( Curso * curso1, Curso * curso2 )
 {
 	std::map< std::pair< Curso *, Curso * >, bool >::iterator
-		it_map = compat_cursos.begin();
-	for (; it_map != compat_cursos.end(); it_map++ )
+		it_map = this->compat_cursos.begin();
+
+	for (; it_map != this->compat_cursos.end(); it_map++ )
 	{
 		int id1 = it_map->first.first->getId();
 		int id2 = it_map->first.second->getId();
@@ -205,7 +206,7 @@ GGroup< std::pair< Curso *, Curriculo * > >
 {
    GGroup< std::pair< Curso *, Curriculo * > > cursos_curriculos;
 
-   ITERA_GGROUP_LESSPTR( it_curso, cursos, Curso )
+   ITERA_GGROUP_LESSPTR( it_curso, this->cursos, Curso )
    {
       ITERA_GGROUP_LESSPTR( it_curriculo, it_curso->curriculos, Curriculo )
       {
@@ -229,24 +230,24 @@ GGroup< std::pair< Curso *, Curriculo * > >
 GGroup< Demanda *, LessPtr< Demanda > >
    ProblemData::retornaDemandaDisciplinasSubstituidas( Disciplina * disciplina )
 {
-	GGroup< Demanda *, LessPtr< Demanda > > demandas;
+	GGroup< Demanda *, LessPtr< Demanda > > demandas_disciplina;
 
-	ITERA_GGROUP_LESSPTR( it_demanda, demandas, Demanda )
+	ITERA_GGROUP_LESSPTR( it_demanda, this->demandas, Demanda )
 	{
 		if ( it_demanda->disciplina->getId() == disciplina->getId() )
 		{
-			demandas.add( *it_demanda );
+			demandas_disciplina.add( *it_demanda );
 		}
 	}
 
-	return demandas;
+	return demandas_disciplina;
 }
 
 Demanda * ProblemData::buscaDemanda( Curso * curso, Disciplina * disciplina )
 {
    Demanda * demanda = NULL;
 
-   ITERA_GGROUP_LESSPTR( it_demanda, demandas, Demanda )
+   ITERA_GGROUP_LESSPTR( it_demanda, this->demandas, Demanda )
    {
       if ( it_demanda->disciplina->getId() == disciplina->getId()
          && cursosCompativeis( curso, it_demanda->oferta->curso ) )
@@ -267,9 +268,9 @@ Disciplina * ProblemData::retornaDisciplinaSubstituta( Curso * curso, Curriculo 
 		= std::make_pair( curso, curriculo );
 
 	std::map< Disciplina *, Disciplina * >::iterator
-		it_map = map_CursoCurriculo_DiscSubst[ curso_curriculo ].begin();
+		it_map = this->map_CursoCurriculo_DiscSubst[ curso_curriculo ].begin();
 
-	for (; it_map != map_CursoCurriculo_DiscSubst[ curso_curriculo ].end(); it_map++ )
+	for (; it_map != this->map_CursoCurriculo_DiscSubst[ curso_curriculo ].end(); it_map++ )
 	{			
 		disciplina_equivalente = ( *it_map ).first;
 
@@ -298,7 +299,7 @@ int ProblemData::creditosFixadosDisciplinaDia(
 		creditos_fixados = this->map_Discicplina_DiaSemana_CreditosFixados[ disciplina_dia ];
 
 		//-------------------------------------------------------------------------------------
-		ITERA_GGROUP_LESSPTR( it_fixacao, fixacoes, Fixacao )
+		ITERA_GGROUP_LESSPTR( it_fixacao, this->fixacoes, Fixacao )
 		{
 			// Procura pela fixação de 'disciplina/sala/dia da semana' atual
 			if ( it_fixacao->disciplina != NULL

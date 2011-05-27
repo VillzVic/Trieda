@@ -55,9 +55,6 @@ void ProblemDataLoader::load()
    relacionaDisciplinasEquivalentes();
 
    // ---------
-   substituiDisciplinasEquivalentes();
-
-   // ---------
    divideDisciplinas();
 
    // ---------
@@ -1699,15 +1696,15 @@ void ProblemDataLoader::substituiDisciplinasEquivalentes()
       }
    }
 
-   // Caso alguma disciplina tenha sido
-   // substituída, devo substituir também as demandas
-   if ( atualizar_demandas )
-   {
-      atualizaDemandas();
-   }
+	// Caso alguma disciplina tenha sido
+	// substituída, devo substituir também as demandas
+	if ( atualizar_demandas )
+	{
+		atualizaOfertasDemandas();
+	}
 }
 
-void ProblemDataLoader::atualizaDemandas()
+void ProblemDataLoader::atualizaOfertasDemandas()
 {
    Curso * curso = NULL;
    Curriculo * curriculo = NULL;
@@ -1723,11 +1720,11 @@ void ProblemDataLoader::atualizaDemandas()
       std::map< Disciplina *, Disciplina * > >::iterator it_map
       = problemData->map_CursoCurriculo_DiscSubst.begin();
 
-   for (; it_map != problemData->map_CursoCurriculo_DiscSubst.end(); it_map++ )
-   {
-      // Curso e currículo atual
-      curso = ( *it_map ).first.first;
-      curriculo = ( *it_map ).first.second;
+    for (; it_map != problemData->map_CursoCurriculo_DiscSubst.end(); it_map++ )
+    {
+		// Curso e currículo da disciplina que foi substituída
+		curso = ( *it_map ).first.first;
+		curriculo = ( *it_map ).first.second;
 
       // Percorre o map de disciplinas substituídas do curso e currículo atuais
       std::map< Disciplina *, Disciplina * >::iterator
@@ -1766,6 +1763,7 @@ void ProblemDataLoader::atualizaDemandas()
          // disciplina substituta, porém referente à oferta da demanda anterior
          ITERA_GGROUP_LESSPTR( it_demanda, demandas, Demanda )
          {
+            //---------------------------------------------------------------------------
             // Demanda da disciplina que foi substituída
             demanda_anterior = ( *it_demanda );
 
@@ -1789,6 +1787,7 @@ void ProblemDataLoader::atualizaDemandas()
             // Informa que a demanda criada vale para 'disciplina',
             // mas foi criada como demanda de 'disciplina_substituta'
             problemData->demandasDisciplinasSubstituidas[ disciplina ] = nova_demanda;
+            //---------------------------------------------------------------------------
 			}
 		}
     }
@@ -1876,6 +1875,8 @@ void ProblemDataLoader::relacionaDisciplinasEquivalentes()
          }
       }
    }
+
+   substituiDisciplinasEquivalentes();
 }
 
 void ProblemDataLoader::divideDisciplinas()
