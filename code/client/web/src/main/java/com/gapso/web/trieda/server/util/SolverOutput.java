@@ -117,7 +117,7 @@ public class SolverOutput {
 					List<ItemAtendimentoDiaSemana> itemAtendimentoDiaSemanaList = itemAtendimentoSala.getAtendimentosDiasSemana().getAtendimentoDiaSemana();
 					for(ItemAtendimentoDiaSemana itemAtendimentoDiaSemana : itemAtendimentoDiaSemanaList) {
 						Semanas semana = Semanas.get(itemAtendimentoDiaSemana.getDiaSemana());
-						if(itemAtendimentoDiaSemana.getAtendimentosTatico() == null) continue;
+						if(itemAtendimentoDiaSemana.getAtendimentosTurnos() == null) continue;
 						
 						// COLETANDO INFORMAÇÕES DO OPERACIONAL
 						List<ItemAtendimentoTurno> itemAtendimentoTurnoList = itemAtendimentoDiaSemana.getAtendimentosTurnos().getAtendimentoTurno();
