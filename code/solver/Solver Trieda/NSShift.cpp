@@ -49,7 +49,10 @@ std::pair<Aula*, std::pair<Professor*,std::vector<HorarioAula*> > > NSShift::pic
 
    int attempt = -1;
 
-   while(!moveValidator->isValid(*aula,novoProf,novosHorariosAula,solOp) && ++attempt < MAX_ATTEMPTS)
+   // VAZIO POR EQTO.
+   std::vector<std::string> checksToDo;
+
+   while(!moveValidator->canShiftSchedule(*aula,novoProf,novosHorariosAula,solOp,checksToDo) && ++attempt < MAX_ATTEMPTS)
    {
       // Selecionando uma aula.
       itAula = problemData.aulas.begin();
@@ -129,7 +132,10 @@ std::pair<Aula*, std::pair<Professor*,std::vector<HorarioAula*> > > NSShift::pic
 
    int attempt = -1;
 
-   while(!moveValidator->isValid(*aula,novoProf,novosHorariosAula,solOp) && ++attempt < MAX_ATTEMPTS)
+   // VAZIO POR EQTO.
+   std::vector<std::string> checksToDo;
+
+   while(!moveValidator->canShiftSchedule(*aula,novoProf,novosHorariosAula,solOp,checksToDo) && ++attempt < MAX_ATTEMPTS)
    {
       // Selecionando uma aula.
       itAula = problemData.aulas.begin();

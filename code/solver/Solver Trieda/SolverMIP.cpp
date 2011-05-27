@@ -1651,9 +1651,9 @@ int SolverMIP::solveOperacional()
    // NSSeqSwapEqBlocks nsSeqSwapEqBlocks ( *problemData );
    // NSSwapEqSchedulesBlocks nsSwapEqSchedulesBlocks ( *problemData );
    // NSSwapEqTeachersBlocks nsSwapEqTeachersBlocks ( *problemData );
-   NSShift nsShift( *problemData );
 
-   nsShift.move(solucaoOperacional);
+//   NSShift nsShift( *problemData );
+//   nsShift.move(solucaoOperacional);
    
    // Heurísticas de Busca Local - Descida Randômica
    // RandomDescentMethod rdmSeqSwapEqBlocks ( avaliador, nsSeqSwapEqBlocks, 10 );
@@ -1834,12 +1834,6 @@ int SolverMIP::solve()
          {
             problemData->atendimentosTatico->add( new AtendimentoCampusSolucao( **it_At_Campus ) );
          }
-
-         // Criando as aulas que serão utilizadas para resolver o modelo operacional
-         problemDataLoader->criaAulas();
-
-         // Resolvendo o modelo operacional
-         status = solveOperacional();
 
          // Remove a referência para os atendimentos tático (que pertencem ao output tático)
          ITERA_GGROUP( it_At_Campus, ( *problemSolution->atendimento_campus ), AtendimentoCampus )

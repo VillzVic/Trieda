@@ -13,9 +13,9 @@ public:
 
    virtual ~MoveShiftValidator();
 
-   bool canShiftSchedule(Aula & aula, Professor & prof, std::vector<HorarioAula*> novosHorariosAula, SolucaoOperacional & solOp) const;
+   bool canShiftSchedule(Aula & aula, Professor & prof, std::vector<HorarioAula*> novosHorariosAula, SolucaoOperacional & solOp, std::vector<std::string> checksToDo);
 
-   bool isValid(Aula & aula, Professor & prof, std::vector<HorarioAula*> novosHorariosAula, SolucaoOperacional & solOp);
+protected:
 
    cItClassesBlocks getClassesBlocks(Aula & aula, SolucaoOperacional & solOp);
 
@@ -26,8 +26,6 @@ public:
    bool conflictScheduleTeachers(Professor & teacher, cItClassesBlocks & itBlocks, std::vector<HorarioAula*> & newSchedule);
 
    bool newScheduleFree(Aula & aula, Professor & teacher, std::vector<HorarioAula*> & newSchedule, SolucaoOperacional & solOp);
-
-   bool isValidV2(Aula & aula, Professor & teacher, std::vector<HorarioAula*> newSchedule, SolucaoOperacional & solOp, std::vector<std::string> checksToDo);
 
 };
 

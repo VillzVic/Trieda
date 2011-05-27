@@ -310,22 +310,20 @@ void SolucaoInicialOperacional::alocaAulasRec(bool primeiraTentativaAlocacao,boo
                if(moveValidator->checkClassAndLessonDisponibility(aula,horariosAula,*solIni))
                {
                   bool conflitoBloco = false;
-                  
+
                   if(tentarManterViabilidade)
                   { conflitoBloco = (moveValidator->checkBlockConflict(aula,horariosAula,*solIni)); }
 
                   if(!conflitoBloco)
                   {
 
-                  /* Iterador utilizado nos testes abaixo. */
-                  std::vector<HorarioAula*>::iterator itHorariosAula;
+                     /* Iterador utilizado nos testes abaixo. */
+                     std::vector<HorarioAula*>::iterator itHorariosAula;
 
-                  /* Checando se a sala está livre no horários indicados. */
+                     /* Checando se a sala está livre no horários indicados. */
 
-                  bool horariosAulaSalaLivres = false;
+                     bool horariosAulaSalaLivres = false;
 
-                  if(tentarManterViabilidade)
-                  {
                      std::map< Sala*, 
                         std::map< int /*Dia*/, GGroup<HorarioAula*, LessPtr<HorarioAula> > >,
                         LessPtr<Sala> >::iterator 
@@ -364,39 +362,36 @@ void SolucaoInicialOperacional::alocaAulasRec(bool primeiraTentativaAlocacao,boo
                            { horariosAulaSalaLivres = true; }
                         }
                      }
-                  }
-                  else
-                  { horariosAulaSalaLivres = true; }
 
-                  if(!horariosAulaSalaLivres)
-                  { /*Atualizar hrIni e hrFim.*/ ++hrIni; ++hrFim; continue; }
+                     if(!horariosAulaSalaLivres)
+                     { /*Atualizar hrIni e hrFim.*/ ++hrIni; ++hrFim; continue; }
 
-                  /* Procedimentos para alocar a aula. */
+                     /* Procedimentos para alocar a aula. */
 
-                  // Alocando a aula na matriz solução.
-                  solIni->alocaAulaProf(aula,professor,horariosAula);
+                     // Alocando a aula na matriz solução.
+                     solIni->alocaAulaProf(aula,professor,horariosAula);
 
-                  // Removendo a aula da relação de aulas não alocadas.
-                  aulasNaoAlocadas.remove(itAulasNaoAlocadas);
+                     // Removendo a aula da relação de aulas não alocadas.
+                     aulasNaoAlocadas.remove(itAulasNaoAlocadas);
 
-                  /* Atualizando a estrutura <horariosAulaSala>. */
-                  itHorariosAula = horariosAula.begin();
-                  for(; itHorariosAula != horariosAula.end(); ++itHorariosAula)
-                     horariosAulaSala[aula.getSala()][aula.getDiaSemana()].add(*itHorariosAula);
+                     /* Atualizando a estrutura <horariosAulaSala>. */
+                     itHorariosAula = horariosAula.begin();
+                     for(; itHorariosAula != horariosAula.end(); ++itHorariosAula)
+                        horariosAulaSala[aula.getSala()][aula.getDiaSemana()].add(*itHorariosAula);
 
-                  /* Atualizando a estrutura <blocosProfs>. */
-                  ITERA_GGROUP_LESSPTR( itOferta, aula.ofertas, Oferta )
-                  {
-                     // Descobrindo o bloco da oferta em questão.
-                     BlocoCurricular * blocoCurricular = problemData.mapCursoDisciplina_BlocoCurricular
-                        [ std::make_pair( itOferta->curso, aula.getDisciplina() ) ];
+                     /* Atualizando a estrutura <blocosProfs>. */
+                     ITERA_GGROUP_LESSPTR( itOferta, aula.ofertas, Oferta )
+                     {
+                        // Descobrindo o bloco da oferta em questão.
+                        BlocoCurricular * blocoCurricular = problemData.mapCursoDisciplina_BlocoCurricular
+                           [ std::make_pair( itOferta->curso, aula.getDisciplina() ) ];
 
-                     blocosProfs[blocoCurricular].add(&professor);
-                  }
+                        blocosProfs[blocoCurricular].add(&professor);
+                     }
 
-                  alocouAula = true;
+                     alocouAula = true;
 
-                  break; // NÃO DEVE mais buscar intervalos de horários livres.
+                     break; // NÃO DEVE mais buscar intervalos de horários livres.
 
                   }
                   else

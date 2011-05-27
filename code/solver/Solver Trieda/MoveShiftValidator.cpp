@@ -8,14 +8,41 @@ MoveShiftValidator::~MoveShiftValidator()
 {
 }
 
-bool MoveShiftValidator::canShiftSchedule(Aula & aula, Professor & professor, std::vector<HorarioAula*> novosHorariosAula, SolucaoOperacional & solOp) const
+bool MoveShiftValidator::canShiftSchedule(Aula & aula, Professor & teacher, std::vector<HorarioAula*> newSchedule, SolucaoOperacional & solOp, std::vector<std::string> checksToDo)
 {
-   return false;
-}
+   cItClassesBlocks itBlocks = getClassesBlocks(aula,solOp);
 
-bool MoveShiftValidator::isValid(Aula & aula, Professor & prof, std::vector<HorarioAula*> novosHorariosAula, SolucaoOperacional & solOp)
-{
-   return ((canShiftSchedule(aula,prof,novosHorariosAula,solOp)) && !(aula.getDisciplina()->eLab()));
+   while(!checksToDo.empty())
+   {    
+      std::string cmd = (*(checksToDo.begin()));
+
+      if(cmd == "totalSchedules")
+      { if(!totalSchedules(itBlocks,newSchedule)) { return false; } }
+      else if(cmd == "virtualClass")
+      { if(aula.eVirtual()) { return false; } }
+      else if(cmd == "avoidSameTeachers")
+      { if(sameTeachers(teacher,itBlocks)) { return false; } }
+      else if(cmd == "conflictScheduleTeachers")
+      { if(conflictScheduleTeachers(teacher,itBlocks,newSchedule)) { return false; } }
+      else if(cmd == "newScheduleFree")
+      { if(!newScheduleFree(aula,teacher,newSchedule,solOp)) { return false; } }
+      else if(cmd == "checkBlockConflict")
+      { if(checkBlockConflict(aula,newSchedule,solOp)) { return false; } }
+      else if(cmd == "checkClassAndLessonDisponibility")
+      { if(!checkClassAndLessonDisponibility(aula,newSchedule,solOp)) { return false; } }
+      else if(cmd == "dontChangePraticeClasses")
+      { if(aula.getDisciplina()->eLab()) { return false; } }
+      // add <else if> to others checks.
+      else 
+      {
+         std::cout << "CMD NAO ENCONTRADO EM MOVESHIFTVALIDATOR" << std::endl;
+         exit(1);
+      }
+
+      checksToDo.erase(checksToDo.begin());
+   }
+
+   return true;
 }
 
 cItClassesBlocks MoveShiftValidator::getClassesBlocks(Aula & aula, SolucaoOperacional & solOp)
@@ -105,39 +132,4 @@ bool MoveShiftValidator::newScheduleFree(Aula & aula, Professor & teacher, std::
 
    return true;
 
-}
-
-bool MoveShiftValidator::isValidV2(Aula & aula, Professor & teacher, std::vector<HorarioAula*> newSchedule, SolucaoOperacional & solOp, std::vector<std::string> checksToDo)
-{
-   cItClassesBlocks itBlocks = getClassesBlocks(aula,solOp);
-
-   while(!checksToDo.empty())
-   {    
-      std::string cmd = (*(checksToDo.begin()));
-
-      if(cmd == "totalSchedules")
-      { if(!totalSchedules(itBlocks,newSchedule)) { return false; } }
-      else if(cmd == "virtualClass")
-      { if(aula.eVirtual()) { return false; } }
-      else if(cmd == "avoidSameTeachers")
-      { if(sameTeachers(teacher,itBlocks)) { return false; } }
-      else if(cmd == "conflictScheduleTeachers")
-      { if(conflictScheduleTeachers(teacher,itBlocks,newSchedule)) { return false; } }
-      else if(cmd == "newScheduleFree")
-      { if(!newScheduleFree(aula,teacher,newSchedule,solOp)) { return false; } }
-      else if(cmd == "checkBlockConflict")
-      { if(checkBlockConflict(aula,newSchedule,solOp)) { return false; } }
-      else if(cmd == "checkClassAndLessonDisponibility")
-      { if(!checkClassAndLessonDisponibility(aula,newSchedule,solOp)) { return false; } }
-      // add <else if> to others checks.
-      else 
-      {
-         std::cout << "CMD NAO ENCONTRADO EM MOVESHIFTVALIDATOR" << std::endl;
-         exit(1);
-      }
-
-      checksToDo.erase(checksToDo.begin());
-   }
-
-   return true;
 }
