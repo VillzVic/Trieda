@@ -18,8 +18,7 @@ std::ostream & operator << ( std::ostream & out, ProfessorVirtualOutput & profes
 {
    out << "<ProfessorVirtual>" << std::endl;
 
-   out << "<Id>" << professor_virtual.getId()
-	   << "</Id>" << std::endl;
+   out << "<id>" << professor_virtual.getId() << "</id>" << std::endl;
 
    out << "<chMin>" << professor_virtual.getChMin()
 	   << "</chMin>" << std::endl;

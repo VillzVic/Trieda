@@ -1638,8 +1638,9 @@ int SolverMIP::solveOperacional()
    SolucaoInicialOperacional solIni( *problemData );
 
    std::cout << "Gerando uma solucao inicial para o modelo operacional" << std::endl;
-
    SolucaoOperacional & solucaoOperacional = solIni.geraSolucaoInicial();
+   std::cout << "Solucao Inidial gerada." << std::endl;
+
    solucaoOperacional.toString2();
 
    // Avaliador
@@ -1650,8 +1651,10 @@ int SolverMIP::solveOperacional()
    // NSSeqSwapEqBlocks nsSeqSwapEqBlocks ( *problemData );
    // NSSwapEqSchedulesBlocks nsSwapEqSchedulesBlocks ( *problemData );
    // NSSwapEqTeachersBlocks nsSwapEqTeachersBlocks ( *problemData );
-   // NSShift nsShift( *problemData );
+   NSShift nsShift( *problemData );
 
+   nsShift.move(solucaoOperacional);
+   
    // Heurísticas de Busca Local - Descida Randômica
    // RandomDescentMethod rdmSeqSwapEqBlocks ( avaliador, nsSeqSwapEqBlocks, 10 );
    // RandomDescentMethod rdmSwapEqSchedulesBlocks ( avaliador, nsSwapEqSchedulesBlocks, 10 );

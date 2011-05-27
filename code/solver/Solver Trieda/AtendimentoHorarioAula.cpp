@@ -33,7 +33,9 @@ std::ostream& operator << (std::ostream& out, AtendimentoHorarioAula& horario_au
    for(; it_oferta != horario_aula.atendimentos_ofertas->end();
 	     it_oferta++ )
    {
+      out << "<AtendimentoOferta>" << std::endl;
       out << ( **it_oferta );
+      out << "</AtendimentoOferta>" << std::endl;
    }
    out << "</atendimentosOfertas>" << std::endl;
 

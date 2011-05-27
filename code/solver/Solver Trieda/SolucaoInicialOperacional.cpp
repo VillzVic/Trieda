@@ -312,7 +312,7 @@ void SolucaoInicialOperacional::alocaAulasRec(bool primeiraTentativaAlocacao,boo
                   bool conflitoBloco = false;
                   
                   if(tentarManterViabilidade)
-                  { conflitoBloco = (!(moveValidator->checkBlockConflict(aula,horariosAula,*solIni))); }
+                  { conflitoBloco = (moveValidator->checkBlockConflict(aula,horariosAula,*solIni)); }
 
                   if(!conflitoBloco)
                   {
@@ -431,7 +431,7 @@ void SolucaoInicialOperacional::alocaAulasRec(bool primeiraTentativaAlocacao,boo
                { tentarManterViabilidade = false; }
 
                if(!tentarManterViabilidade)
-               { std::cout << "\nGerando Solução Inicial com alguma inviabilidade.\n"; }
+               { std::cout << "\nGerando Solucao Inicial com alguma INVIABILIDADE.\n"; }
             }
          }
       }
@@ -499,14 +499,7 @@ void SolucaoInicialOperacional::alocaAulasRec(bool primeiraTentativaAlocacao,boo
       for(; itCustoProfTurma != custoProfTurma.end(); ++itCustoProfTurma )
          custosAlocacaoAulaOrdenado.add(itCustoProfTurma->second);
 
-      /* Invocando recursivamente a função para geração da solução inicial. Agora, 
-      os únicos custos considerados são entre as aulas ainda não alocadas. */
-
-      if(aulasNaoAlocadas.size() == 2)
-      {
-         solIni->toString2();
-      }
-
+      /* Invocando recursivamente a função para geração da solução inicial. */
       alocaAulasRec(primeiraTentativaAlocacao,tentarManterViabilidade);
    }
 }

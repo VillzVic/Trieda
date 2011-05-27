@@ -52,6 +52,11 @@ std::ostream & operator << ( std::ostream & out, ProblemSolution & solution )
       //-----------------------------------------------------------------------
 
       //-----------------------------------------------------------------------
+      // Erros e warnings:
+      out << ( *ErrorHandler::getInstance() );
+      //-----------------------------------------------------------------------
+
+      //-----------------------------------------------------------------------
       // Folgas:
       out << "<restricoesVioladas>\n";
       RestricaoVioladaGroup::iterator it
@@ -63,10 +68,7 @@ std::ostream & operator << ( std::ostream & out, ProblemSolution & solution )
       out << "</restricoesVioladas>" << std::endl;
       //-----------------------------------------------------------------------
 
-      //-----------------------------------------------------------------------
-      // Erros e warnings:
-      out << ( *ErrorHandler::getInstance() );
-      //-----------------------------------------------------------------------
+      out << "<professoresVirtuais/>" << std::endl;
 
       out << "</TriedaOutput>" << std::endl;
    }
