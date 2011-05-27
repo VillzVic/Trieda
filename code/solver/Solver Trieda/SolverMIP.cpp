@@ -2106,7 +2106,7 @@ void SolverMIP::separaDisciplinasEquivalentes()
             {
                // Atende-se a parcela de alunos da
                // demanda que for possível alocar
-               v->setValue( alunos_disciplina );
+               v->setValue( alunos_atendidos );
                alunos_atendidos = 0;
             }
 
