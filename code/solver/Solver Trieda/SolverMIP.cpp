@@ -4746,10 +4746,10 @@ int SolverMIP::cria_variavel_de_folga_combinacao_divisao_credito()
 /*====================================================================/
 %DocBegin TRIEDA_LOAD_MODEL
 
-%Var xm_{d,t}
+%Var xm_{bc,d,t}
 
 %Desc
-máximo de créditos alocados para qualquer turma da disciplina $d$ no dia $t$.
+máximo de créditos alocados para qualquer turma da disciplina $d$ no bloco $bc$ no dia $t$.
 
 %DocEnd
 /====================================================================*/
@@ -4764,7 +4764,50 @@ int SolverMIP::cria_variavel_creditos_modificada(void)
    Curso * curso = NULL;
    Curriculo * curriculo = NULL;
 
-   ITERA_GGROUP_LESSPTR( itCampus, problemData->campi, Campus )
+   ITERA_GGROUP_LESSPTR( it_bloco, problemData->blocos, BlocoCurricular )
+   {
+      ITERA_GGROUP_LESSPTR(it_disciplina,it_bloco->disciplinas,Disciplina)
+      {
+         disciplina = ( *it_disciplina );
+
+         std::pair< Curso *, Curriculo * > curso_curriculo
+            = problemData->map_Disc_CursoCurriculo[ disciplina ];
+         curso = curso_curriculo.first;
+         curriculo = curso_curriculo.second;
+         disciplina_equivalente = problemData->retornaDisciplinaSubstituta( curso, curriculo, disciplina );
+         if ( disciplina_equivalente != NULL )
+         {
+            disciplina = disciplina_equivalente;
+         }
+         GGroup< int >::iterator itDiasLetBloco =
+            it_bloco->diasLetivos.begin();
+         for (; itDiasLetBloco != it_bloco->diasLetivos.end();
+            itDiasLetBloco++ )
+         {
+            Variable v;
+            v.reset();
+            v.setType( Variable::V_CREDITOS_MODF );
+
+            v.setDisciplina(disciplina);
+            v.setBloco( *it_bloco );
+            v.setDia( *itDiasLetBloco );
+
+            if ( vHash.find( v ) == vHash.end() )
+            {
+               vHash[v] = lp->getNumCols();
+
+               OPT_COL col( OPT_COL::VAR_INTEGRAL,
+                  0.0, 0.0, 50,
+                  ( char* )v.toString().c_str() );
+
+               lp->newCol( col );
+               num_vars++;
+            }
+         }
+      }
+   }
+
+   /*ITERA_GGROUP_LESSPTR( itCampus, problemData->campi, Campus )
    {
       ITERA_GGROUP_LESSPTR( itUnidade, itCampus->unidades, Unidade )
       {
@@ -4805,7 +4848,7 @@ int SolverMIP::cria_variavel_creditos_modificada(void)
                         vHash[v] = lp->getNumCols();
 
                         OPT_COL col( OPT_COL::VAR_INTEGRAL,
-                           0.0, 0.0, 50 /*FIX-ME*/,
+                           0.0, 0.0, 50 ,
                            ( char* )v.toString().c_str() );
 
                         lp->newCol( col );
@@ -4816,7 +4859,7 @@ int SolverMIP::cria_variavel_creditos_modificada(void)
             }
          }
       }
-   }
+   }*/
 
    return num_vars;
 }
@@ -9044,8 +9087,9 @@ Máximo de créditos diários da disciplina
 %MatExp
 
 \begin{eqnarray}
-\sum\limits_{u \in U} \sum\limits_{tps \in SCAP_{u}} x_{i,d,u,tps,t} - xm_{d, t} \leq 0 \nonumber \qquad 
-\forall d \in D \quad
+\sum\limits_{u \in U} \sum\limits_{tps \in SCAP_{u}} x_{i,d,u,tps,t} - xm_{bc, d, t} \leq 0 \nonumber \qquad 
+\forall bc \in BC \quad
+\forall d \in D_{bc} \quad
 \forall i \in I_{d} \quad
 \forall t \in T
 \end{eqnarray}
@@ -9069,7 +9113,117 @@ int SolverMIP::cria_restricao_max_creds_disc_dia()
    Curso * curso = NULL;
    Curriculo * curriculo = NULL;
 
-   ITERA_GGROUP_LESSPTR( it_disciplina, problemData->disciplinas, Disciplina )
+   ITERA_GGROUP_LESSPTR( it_bloco, problemData->blocos, BlocoCurricular )
+   {
+      ITERA_GGROUP_LESSPTR(it_disciplina,it_bloco->disciplinas,Disciplina)
+      {
+         disciplina = ( *it_disciplina );
+
+         std::pair< Curso *, Curriculo * > curso_curriculo
+            = problemData->map_Disc_CursoCurriculo[ disciplina ];
+         curso = curso_curriculo.first;
+         curriculo = curso_curriculo.second;
+         disciplina_equivalente = problemData->retornaDisciplinaSubstituta( curso, curriculo, disciplina );
+         if ( disciplina_equivalente != NULL )
+         {
+            disciplina = disciplina_equivalente;
+         }
+         GGroup< int >::iterator itDiasLetBloco =
+            it_bloco->diasLetivos.begin();
+         for (; itDiasLetBloco != it_bloco->diasLetivos.end();
+            itDiasLetBloco++ )
+         {
+            for ( int turma = 0; turma < disciplina->getNumTurmas(); turma++ )
+            {
+               c.reset();
+               c.setType( Constraint::C_MAX_CREDS_DISC_DIA );
+
+               c.setDisciplina( disciplina );
+               c.setTurma( turma );
+               c.setDia( *itDiasLetBloco );
+               c.setBloco(*it_bloco);
+
+               sprintf( name, "%s", c.toString().c_str() ); 
+               if (cHash.find(c) != cHash.end())
+               {
+                  continue;
+               }
+
+               nnz = 100;
+
+               OPT_ROW row( nnz, OPT_ROW::LESS, 0.0, name );
+
+               ITERA_GGROUP_LESSPTR( it_Campus, problemData->campi, Campus )
+               {
+                  ITERA_GGROUP_LESSPTR( it_Unidade, it_Campus->unidades, Unidade )
+                  {
+                     ITERA_GGROUP_LESSPTR( it_Cjt_Sala, it_Unidade->conjutoSalas, ConjuntoSala )
+                     {
+                        std::map< std::pair< int, int>, GGroup< int > >::iterator
+
+                           it_Disc_Cjt_Salas__Dias = problemData->disc_Conjutno_Salas__Dias.find(
+                           std::make_pair( disciplina->getId(), it_Cjt_Sala->getId() ) );
+
+                        // Testando se a disciplina em questao esta associada ao cjt de salas em questao
+                        if ( it_Disc_Cjt_Salas__Dias != problemData->disc_Conjutno_Salas__Dias.end() )
+                        {
+                           // Testando se a dia (referenciado por <*it_Dias_Letivos>) é um dia 
+                           // letivo comum à disciplina e o conjunto de salas em questão.
+                           if ( it_Disc_Cjt_Salas__Dias->second.find( *itDiasLetBloco ) != 
+                              it_Disc_Cjt_Salas__Dias->second.end() )
+                           {
+                              v.reset();
+                              v.setType( Variable::V_CREDITOS );
+
+                              v.setTurma( turma );
+                              v.setDisciplina( disciplina );
+                              v.setUnidade( *it_Unidade );
+                              v.setSubCjtSala( *it_Cjt_Sala );
+                              v.setDia( *itDiasLetBloco );
+
+                              it_v = vHash.find( v );
+                              if ( it_v != vHash.end() )
+                              {
+                                 row.insert( it_v->second, 1.0 );
+                              }
+                           }
+                        }
+                     }
+                  }
+               }
+
+               if ( row.getnnz() <= 0 )
+               {
+                  continue;
+               }
+
+               v.reset();
+               v.setType( Variable::V_CREDITOS_MODF );
+
+               v.setDisciplina( disciplina );
+               v.setDia( *itDiasLetBloco );
+               v.setBloco(*it_bloco);
+
+               it_v = vHash.find( v );
+               if ( it_v != vHash.end() )
+               {
+                  row.insert( it_v->second, -1.0 );
+               }
+
+               if ( row.getnnz() != 0 )
+               {
+                  cHash[ c ] = lp->getNumRows();
+
+                  lp->addRow( row );
+                  restricoes++;
+               }
+            }
+         }
+      }
+   }
+        
+
+   /*ITERA_GGROUP_LESSPTR( it_disciplina, problemData->disciplinas, Disciplina )
    {
       disciplina = ( *it_disciplina );
 
@@ -9111,7 +9265,7 @@ int SolverMIP::cria_restricao_max_creds_disc_dia()
                {
                   ITERA_GGROUP_LESSPTR( it_Cjt_Sala, it_Unidade->conjutoSalas, ConjuntoSala )
                   {
-                     std::map< std::pair< int /*idDisc*/, int /*idSubCjtSala*/ >, GGroup< int >/*Dias*/ >::iterator
+                     std::map< std::pair< int, int>, GGroup< int > >::iterator
 
                         it_Disc_Cjt_Salas__Dias = problemData->disc_Conjutno_Salas__Dias.find(
                         std::make_pair( disciplina->getId(), it_Cjt_Sala->getId() ) );
@@ -9170,7 +9324,7 @@ int SolverMIP::cria_restricao_max_creds_disc_dia()
             }
          }
       }
-   }
+   }*/
 
    return restricoes;
 }
@@ -9184,7 +9338,7 @@ Máximo de créditos diários do bloco
 
 %MatExp
 \begin{eqnarray}
-\sum\limits_{d \in D_{bc}} xm_{d, t} \leq 4 \nonumber \qquad 
+\sum\limits_{d \in D_{bc}} xm_{bc,d, t} \leq 4 \nonumber \qquad 
 \forall bc \in B \quad
 \forall t \in T
 \end{eqnarray}
@@ -9208,7 +9362,69 @@ int SolverMIP::cria_restricao_max_creds_bloco_dia()
    Curso * curso = NULL;
    Curriculo * curriculo = NULL;
 
-   ITERA_GGROUP_LESSPTR( it_Bloco, problemData->blocos, BlocoCurricular )
+   ITERA_GGROUP_LESSPTR( it_bloco, problemData->blocos, BlocoCurricular )
+   {
+      GGroup< int >::iterator itDiasLetBloco =
+         it_bloco->diasLetivos.begin();
+      for (; itDiasLetBloco != it_bloco->diasLetivos.end();
+         itDiasLetBloco++ )
+      {
+         c.reset();
+         c.setType( Constraint::C_MAX_CREDS_BLOCO_DIA );
+
+         c.setBloco( *it_bloco );
+         c.setDia( *itDiasLetBloco );
+
+         sprintf( name, "%s", c.toString().c_str() ); 
+
+         if ( cHash.find(c) != cHash.end() )
+         {
+            continue;
+         }
+
+         nnz = 100;
+         double rhs = 4.0;
+
+         OPT_ROW row( nnz, OPT_ROW::LESS, rhs, name );
+
+         ITERA_GGROUP_LESSPTR(it_disciplina,it_bloco->disciplinas,Disciplina)
+         {
+            disciplina = ( *it_disciplina );
+
+            std::pair< Curso *, Curriculo * > curso_curriculo
+               = problemData->map_Disc_CursoCurriculo[ disciplina ];
+            curso = curso_curriculo.first;
+            curriculo = curso_curriculo.second;
+            disciplina_equivalente = problemData->retornaDisciplinaSubstituta( curso, curriculo, disciplina );
+            if ( disciplina_equivalente != NULL )
+            {
+               disciplina = disciplina_equivalente;
+            }
+
+            v.reset();
+            v.setType( Variable::V_CREDITOS_MODF );
+
+            v.setBloco(*it_bloco);
+            v.setDisciplina( disciplina );
+            v.setDia( *itDiasLetBloco );
+
+            it_v = vHash.find( v );
+            if ( it_v != vHash.end() )
+            {
+               row.insert( it_v->second, 1.0 );
+            }
+         }
+         if ( row.getnnz() != 0 )
+         {
+            cHash[ c ] = lp->getNumRows();
+
+            lp->addRow( row );
+            restricoes++;
+         }
+      }
+   }
+
+   /*ITERA_GGROUP_LESSPTR( it_Bloco, problemData->blocos, BlocoCurricular )
    {
       ITERA_GGROUP_N_PT( it_Dias_Letivos, it_Bloco->diasLetivos, int )
       {
@@ -9271,7 +9487,7 @@ int SolverMIP::cria_restricao_max_creds_bloco_dia()
             restricoes++;
          }
       }
-   }
+   }*/
 
    return restricoes;
 }
