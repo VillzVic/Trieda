@@ -23,6 +23,7 @@ public interface AtendimentoRelatorioDTO {
 	public void concatenateVisaoSala(AtendimentoRelatorioDTO other);	
 	public String getExcelContentVisaoSala();
 	public String getExcelCommentVisaoSala();
+	public Long getSalaId();
 	public String getSalaString();
 	public boolean isTeorico();
 	public Integer getTotalCreditoDisciplina();

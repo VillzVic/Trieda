@@ -14,6 +14,7 @@ import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
+import com.gapso.trieda.domain.AtendimentoOperacional;
 import com.gapso.trieda.domain.AtendimentoTatico;
 import com.gapso.trieda.domain.Cenario;
 import com.gapso.trieda.domain.Sala;
@@ -83,11 +84,24 @@ public class RelatorioVisaoSalaExportExcel extends AbstractExportExcel {
 		return getI18nConstants().relatorioVisaoSala();
 	}
 
+	private List<AtendimentoRelatorioDTO> getAtendimentoRelatorioDTOList(Cenario cenario) {
+		List<AtendimentoTatico> atdTaticoList = AtendimentoTatico.findByCenario(cenario);
+		List<AtendimentoOperacional> atdOperacionalList = AtendimentoOperacional.findByCenario(getCenario());
+		List<AtendimentoRelatorioDTO> atdRelatorioList = new ArrayList<AtendimentoRelatorioDTO>(atdTaticoList.size() + atdOperacionalList.size());
+		for(AtendimentoTatico atdTatico : atdTaticoList) {
+			atdRelatorioList.add(ConvertBeans.toAtendimentoTaticoDTO(atdTatico));
+		}
+		for(AtendimentoOperacional atdOperacional : atdOperacionalList) {
+			atdRelatorioList.add(ConvertBeans.toAtendimentoOperacionalDTO(atdOperacional));
+		}
+		return atdRelatorioList;
+	}
+	
 	@Override
 	protected boolean fillInExcel(HSSFWorkbook workbook) {
-		List<AtendimentoTatico> atendimentos = AtendimentoTatico.findByCenario(getCenario());
+		List<AtendimentoRelatorioDTO> atdRelatorioList = getAtendimentoRelatorioDTOList(getCenario());
 		
-		if (!atendimentos.isEmpty()) {
+		if (!atdRelatorioList.isEmpty()) {
 			if (this.removeUnusedSheets) {
 				removeUnusedSheets(this.sheetName,workbook);
 			}
@@ -101,9 +115,9 @@ public class RelatorioVisaoSalaExportExcel extends AbstractExportExcel {
 			List<HSSFCellStyle> excelColorsPool = buildColorPaletteCellStyles(workbook);
 			Map<String,HSSFCellStyle> codigoDisciplinaToColorMap = new HashMap<String,HSSFCellStyle>();
 			Map<Sala,Map<Turno,List<AtendimentoRelatorioDTO>>> mapNivel1 = new TreeMap<Sala,Map<Turno,List<AtendimentoRelatorioDTO>>>();
-			for (AtendimentoTatico atendimento : atendimentos) {
-				Sala sala = atendimento.getSala();
-				Turno turno = atendimento.getOferta().getTurno();
+			for (AtendimentoRelatorioDTO atendimento : atdRelatorioList) {
+				Sala sala = Sala.find(atendimento.getSalaId());
+				Turno turno = Turno.find(atendimento.getTurnoId());
 				
 				Map<Turno,List<AtendimentoRelatorioDTO>> mapNivel2 = mapNivel1.get(sala);
 				if (mapNivel2 == null) {
@@ -117,12 +131,12 @@ public class RelatorioVisaoSalaExportExcel extends AbstractExportExcel {
 					mapNivel2.put(turno,list);
 				}
 				
-				list.add(ConvertBeans.toAtendimentoTaticoDTO(atendimento));
+				list.add(atendimento);
 				
-				HSSFCellStyle style = codigoDisciplinaToColorMap.get(atendimento.getDisciplina().getCodigo());
+				HSSFCellStyle style = codigoDisciplinaToColorMap.get(atendimento.getDisciplinaString());
 				if (style == null) {
 					int index = codigoDisciplinaToColorMap.size() % excelColorsPool.size();
-					codigoDisciplinaToColorMap.put(atendimento.getDisciplina().getCodigo(),excelColorsPool.get(index));
+					codigoDisciplinaToColorMap.put(atendimento.getDisciplinaString(),excelColorsPool.get(index));
 				}
 			}
 			
