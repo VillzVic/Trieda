@@ -44,7 +44,7 @@ public class OtimizarServiceImpl extends RemoteServiceServlet implements Otimiza
 
 	private static final long serialVersionUID = 5716065588362358065L;
 	
-	private static final String linkSolver = "http://localhost:3402/SolverWS";
+	private static final String linkSolver = "http://localhost:8080/SolverWS";
 
 	@Override
 	@Transactional
