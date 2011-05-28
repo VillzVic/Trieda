@@ -256,6 +256,9 @@ public:
    // Armazena as demandas criadas para as disciplinas substituídas
    std::map< Disciplina *, Demanda * > demandasDisciplinasSubstituidas;
 
+   // Informa se uma disciplina substituída foi atendida
+   std::map< Disciplina *, bool > disciplinasSubstituidasAtendidas;
+
    // Busca a demanda da disciplina informada,
    // em cursos compatíveis com o curso também informado
    Demanda * buscaDemanda( Curso * , Disciplina * );
@@ -268,9 +271,9 @@ public:
    GGroup< std::pair< Curso *, Curriculo * > > retornaCursosCurriculosDisciplina( Disciplina * );
    //-----------------------------------------------------------------------------------------------
 
-   /* Estrutura utilizada para referenciar as novas disciplinas criadas após a execução do método
-   de divisão de disciplinas. */
-   GGroup<Disciplina*,LessPtr<Disciplina> > novasDisciplinas;
+   // Estrutura utilizada para referenciar as novas disciplinas
+   // criadas após a execução do método de divisão de disciplinas.
+   GGroup< Disciplina *, LessPtr< Disciplina > > novasDisciplinas;
 };
 
 #endif

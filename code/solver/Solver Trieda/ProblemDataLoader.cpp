@@ -52,7 +52,7 @@ void ProblemDataLoader::load()
    disciplinasCursosCompativeis();
 
    // ---------
-   relacionaDisciplinasEquivalentes();
+   // relacionaDisciplinasEquivalentes();
 
    // ---------
    divideDisciplinas();

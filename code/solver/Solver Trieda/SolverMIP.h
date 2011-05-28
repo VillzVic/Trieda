@@ -1,6 +1,7 @@
 #ifndef _SOLVER_MIP_H_
 #define _SOLVER_MIP_H_
 
+#include <vector>
 #include <iostream>
 #include <algorithm>
 #include <stdio.h>
@@ -163,6 +164,16 @@ public:
    bool aulaAlocada( Aula *, Campus *, Unidade *, Sala *, int );
    vector< Variable * > variaveisAlunosAtendidos( Curso *, Disciplina * );
    vector< Variable * > variaveisCreditosAtendidos( Disciplina * );
+   void criaVariaveisAlunosDisciplinasSubstituidas();
+   void criaVariaveisCreditosDisciplinasSubstituidas();
+
+   Variable * criaVariavelAlunos(
+      Campus *, Unidade *, ConjuntoSala *, Sala *,
+      int, Oferta *, Curso *, Disciplina *, int );
+
+   Variable * criaVariavelCreditos(
+      Campus *, Unidade *, ConjuntoSala *, Sala *,
+      int, Oferta *, Curso *, Disciplina *, int, BlocoCurricular * );
 
 private:
    // Vetor responsável por armazenar ponteiros para todas as
