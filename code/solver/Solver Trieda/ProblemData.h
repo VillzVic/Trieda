@@ -132,7 +132,7 @@ public:
    std::map< int, Oferta * > refOfertas;
 
    // Listando todas as ofertas que contem uma disciplina especificada.
-   std::map< int, GGroup< Oferta * > > ofertasDisc;
+   std::map< int, GGroup< Oferta *, LessPtr< Oferta > > > ofertasDisc;
 
    // =============================================================================================
    // Estruturas conflitantes !!!
@@ -249,8 +249,6 @@ public:
    // a disciplina não tenha sido substituída
    Disciplina * retornaDisciplinaSubstituta( Curso *, Curriculo *, Disciplina * );
 
-   std::map< Curso *, GGroup< std::pair< Curriculo *, Oferta * > > > map_Curso_CurriculosOfertas;
-
    bool cursosCompativeis( Curso *, Curso * );
 
    // Armazena as demandas criadas para as disciplinas substituídas
@@ -269,6 +267,9 @@ public:
 
    // Retorna os pares curso/curriculo dos quais a disciplina informada possui demanda
    GGroup< std::pair< Curso *, Curriculo * > > retornaCursosCurriculosDisciplina( Disciplina * );
+
+	// Dada uma disciplina, e seu par curso/curriculo, retorna-se a oferta dessa disciplina
+	Oferta * retornaOfertaDiscilpina( Curso *, Curriculo *, Disciplina * );
    //-----------------------------------------------------------------------------------------------
 
    // Estrutura utilizada para referenciar as novas disciplinas

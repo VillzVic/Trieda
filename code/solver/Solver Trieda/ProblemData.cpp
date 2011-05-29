@@ -199,6 +199,29 @@ bool ProblemData::cursosCompativeis( Curso * curso1, Curso * curso2 )
 	return false;
 }
 
+// Dada uma disciplina, e seu par curso/curriculo, retorna-se a oferta dessa disciplina
+Oferta * ProblemData::retornaOfertaDiscilpina(
+	Curso * curso, Curriculo * curriculo, Disciplina * disciplina )
+{
+	Oferta * oferta = NULL;
+	Demanda * demanda = NULL;
+
+	ITERA_GGROUP_LESSPTR( it_demanda, this->demandas, Demanda )
+	{
+		demanda = ( *it_demanda );
+
+		if ( demanda->oferta->curso->getId() == curso->getId()
+			&& demanda->oferta->curriculo->getId() == curriculo->getId()
+			&& demanda->disciplina->getId() == disciplina->getId() )
+		{
+			oferta = demanda->oferta;
+			break;
+		}
+	}
+
+	return oferta;
+}
+
 // Retorna todos os pares curso/curriculo
 // onde a disciplina informada está incluída
 GGroup< std::pair< Curso *, Curriculo * > >
