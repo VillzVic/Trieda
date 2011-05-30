@@ -56,7 +56,7 @@ public class AppView extends MyComposite implements AppPresenter.Display {
 	}
 
 	public Button getLogoutButton() {
-		Button b = createButton("Bom dia, Claudio Escudero", "Sair", Resources.DEFAULTS.logout16());
+		Button b = createButton("Sair", "Sair", Resources.DEFAULTS.logout16());
 		b.addSelectionListener(new SelectionListener<ButtonEvent>() {
 			@Override
 			public void componentSelected(ButtonEvent ce) {
