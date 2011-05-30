@@ -28,6 +28,7 @@ public class TitulacaoComboBox extends ComboBox<TitulacaoDTO> {
 		setFieldLabel("Titulação");
 		setDisplayField(TitulacaoDTO.PROPERTY_NOME);
 		setEditable(false);
+		setTriggerAction(TriggerAction.ALL);
 	}
 
 }
