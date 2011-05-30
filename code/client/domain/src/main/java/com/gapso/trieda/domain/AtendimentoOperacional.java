@@ -204,6 +204,14 @@ public class AtendimentoOperacional implements Serializable {
 		q.setParameter("publicado", true);
 		return q.getResultList();
 	}
+	@SuppressWarnings("unchecked")
+	public static List<AtendimentoOperacional> findAllPublicadoBy(ProfessorVirtual professorVirtual, Turno turno) {
+		Query q = entityManager().createQuery("SELECT o FROM AtendimentoOperacional o WHERE o.oferta.turno = :turno AND o.professorVirtual = :professorVirtual AND o.oferta.campus.publicado = :publicado ");
+		q.setParameter("turno", turno);
+		q.setParameter("professorVirtual", professorVirtual);
+		q.setParameter("publicado", true);
+		return q.getResultList();
+	}
 	
 	@SuppressWarnings("unchecked")
 	public static List<AtendimentoOperacional> findAllBy(Curso curso) {

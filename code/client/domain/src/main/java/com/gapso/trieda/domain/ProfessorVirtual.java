@@ -15,6 +15,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.Table;
@@ -51,9 +52,13 @@ public class ProfessorVirtual implements Serializable {
     @Max(999L)
     private Integer cargaHorariaMax;
 
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
     private Set<Disciplina> disciplinas = new HashSet<Disciplina>();
 
+    @OneToMany(mappedBy="professorVirtual", cascade = CascadeType.ALL)
+    private Set<AtendimentoOperacional> atendimentos = new HashSet<AtendimentoOperacional>();
+
+    
 	public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("Id: ").append(getId()).append(", ");
@@ -63,13 +68,13 @@ public class ProfessorVirtual implements Serializable {
         sb.append("CargaHorariaMin: ").append(getCargaHorariaMin()).append(", ");
         sb.append("CargaHorariaMax: ").append(getCargaHorariaMax()).append(", ");
         sb.append("Disciplinas: ").append(getDisciplinas() == null ? "null" : getDisciplinas().size());
+        sb.append("Atendimentos: ").append(getAtendimentos() == null ? "null" : getAtendimentos().size());
         return sb.toString();
     }
 
 	public Titulacao getTitulacao() {
         return this.titulacao;
     }
-
 	public void setTitulacao(Titulacao titulacao) {
         this.titulacao = titulacao;
     }
@@ -77,7 +82,6 @@ public class ProfessorVirtual implements Serializable {
 	public AreaTitulacao getAreaTitulacao() {
         return this.areaTitulacao;
     }
-
 	public void setAreaTitulacao(AreaTitulacao areaTitulacao) {
         this.areaTitulacao = areaTitulacao;
     }
@@ -85,7 +89,6 @@ public class ProfessorVirtual implements Serializable {
 	public Integer getCargaHorariaMin() {
         return this.cargaHorariaMin;
     }
-
 	public void setCargaHorariaMin(Integer cargaHorariaMin) {
         this.cargaHorariaMin = cargaHorariaMin;
     }
@@ -93,7 +96,6 @@ public class ProfessorVirtual implements Serializable {
 	public Integer getCargaHorariaMax() {
         return this.cargaHorariaMax;
     }
-
 	public void setCargaHorariaMax(Integer cargaHorariaMax) {
         this.cargaHorariaMax = cargaHorariaMax;
     }
@@ -101,11 +103,17 @@ public class ProfessorVirtual implements Serializable {
 	public Set<Disciplina> getDisciplinas() {
         return this.disciplinas;
     }
-
 	public void setDisciplinas(Set<Disciplina> disciplinas) {
         this.disciplinas = disciplinas;
     }
 	
+	public Set<AtendimentoOperacional> getAtendimentos() {
+		return atendimentos;
+	}
+	public void setAtendimentos(Set<AtendimentoOperacional> atendimentos) {
+		this.atendimentos = atendimentos;
+	}
+
 	@PersistenceContext
     transient EntityManager entityManager;
 
@@ -177,69 +185,18 @@ public class ProfessorVirtual implements Serializable {
         return em;
     }
 
-	@SuppressWarnings("unchecked")
-    public static List<ProfessorVirtual> findAll() {
-        return entityManager().createQuery("SELECT o FROM Professor o").getResultList();
-    }
-	
-	public static int count(String cpf, TipoContrato tipoContrato, Titulacao titulacao, AreaTitulacao areaTitulacao) {
-		String where = "";
-		
-		if(cpf != null)           where += " o.cpf = :cpf AND ";
-		if(tipoContrato != null)  where += " o.tipoContrato = :tipoContrato AND ";
-		if(titulacao != null)     where += " o.titulacao = :titulacao AND ";
-		if(areaTitulacao != null) where += " o.areaTitulacao = :areaTitulacao AND ";
-		if(where.length() > 1) where = " WHERE " + where.substring(0, where.length()-4);
-		
-		Query q = entityManager().createQuery("SELECT COUNT(o) FROM Professor o " + where);
-		
-		if(cpf != null)           q.setParameter("cpf", cpf);
-		if(tipoContrato != null)  q.setParameter("tipoContrato", tipoContrato);
-		if(titulacao != null)     q.setParameter("titulacao", titulacao);
-		if(areaTitulacao != null) q.setParameter("areaTitulacao", areaTitulacao);
-		
-		return ((Number)q.getSingleResult()).intValue();
-	}
-	
-	@SuppressWarnings("unchecked")
-	public static List<ProfessorVirtual> findBy(String cpf, TipoContrato tipoContrato, Titulacao titulacao, AreaTitulacao areaTitulacao, int firstResult, int maxResults, String orderBy) {
-		String where = "";
-		
-		if(cpf != null)           where += " o.cpf = :cpf AND ";
-		if(tipoContrato != null)  where += " o.tipoContrato = :tipoContrato AND ";
-		if(titulacao != null)     where += " o.titulacao = :titulacao AND ";
-		if(areaTitulacao != null) where += " o.areaTitulacao = :areaTitulacao AND ";
-		if(where.length() > 1) where = " WHERE " + where.substring(0, where.length()-4);
-		
-		where += (orderBy != null) ? " ORDER BY o." + orderBy : "";
-		
-		Query q = entityManager().createQuery("SELECT o FROM Professor o " + where);
-		
-		if(cpf != null)           q.setParameter("cpf", cpf);
-		if(tipoContrato != null)  q.setParameter("tipoContrato", tipoContrato);
-		if(titulacao != null)     q.setParameter("titulacao", titulacao);
-		if(areaTitulacao != null) q.setParameter("areaTitulacao", areaTitulacao);
-		
-		return q.setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
-	}
-
 	public static ProfessorVirtual find(Long id) {
         if (id == null) return null;
         return entityManager().find(ProfessorVirtual.class, id);
     }
 
 	@SuppressWarnings("unchecked")
-    public static List<ProfessorVirtual> find(int firstResult, int maxResults) {
-        return entityManager().createQuery("SELECT o FROM Professor o").setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
+    public static List<ProfessorVirtual> findBy(Campus campus) {
+		Query q = entityManager().createQuery("SELECT DISTINCT o.professorVirtual FROM AtendimentoOperacional o WHERE o.oferta.campus = :campus");
+		q.setParameter("campus", campus);
+        return q.getResultList();
     }
 
-	@SuppressWarnings("unchecked")
-	public List<HorarioDisponivelCenario> getHorarios(SemanaLetiva semanaLetiva) {
-		Query q = entityManager().createQuery("SELECT o FROM HorarioDisponivelCenario o, IN (o.professores) c WHERE c = :professor AND o.horarioAula.semanaLetiva = :semanaLetiva");
-		q.setParameter("professor", this);
-		q.setParameter("semanaLetiva", semanaLetiva);
-		return q.getResultList();
-	}
 	
 	private static final long serialVersionUID = 265242535107921721L;
 }

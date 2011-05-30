@@ -9,7 +9,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 
+import com.extjs.gxt.ui.client.data.BaseListLoadResult;
 import com.extjs.gxt.ui.client.data.BasePagingLoadResult;
+import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.gapso.trieda.domain.AtendimentoOperacional;
 import com.gapso.trieda.domain.AtendimentoTatico;
@@ -17,6 +19,7 @@ import com.gapso.trieda.domain.Campus;
 import com.gapso.trieda.domain.Curriculo;
 import com.gapso.trieda.domain.HorarioAula;
 import com.gapso.trieda.domain.Professor;
+import com.gapso.trieda.domain.ProfessorVirtual;
 import com.gapso.trieda.domain.Sala;
 import com.gapso.trieda.domain.Turno;
 import com.gapso.web.trieda.server.util.ConvertBeans;
@@ -27,6 +30,7 @@ import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.CurriculoDTO;
 import com.gapso.web.trieda.shared.dtos.ParDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorDTO;
+import com.gapso.web.trieda.shared.dtos.ProfessorVirtualDTO;
 import com.gapso.web.trieda.shared.dtos.SalaDTO;
 import com.gapso.web.trieda.shared.dtos.TurnoDTO;
 import com.gapso.web.trieda.shared.services.AtendimentosService;
@@ -462,10 +466,17 @@ public class AtendimentosServiceImpl extends RemoteServiceServlet implements Ate
 	}
 	
 	@Override
-	public List<AtendimentoOperacionalDTO> getAtendimentosOperacional(ProfessorDTO professorDTO, TurnoDTO turnoDTO) {
-		Professor professor = Professor.find(professorDTO.getId());
+	public List<AtendimentoOperacionalDTO> getAtendimentosOperacional(ProfessorDTO professorDTO, ProfessorVirtualDTO professorVirtualDTO, TurnoDTO turnoDTO) {
 		Turno turno = Turno.find(turnoDTO.getId());
-		List<AtendimentoOperacional> atendimentosOperacional = AtendimentoOperacional.findAllPublicadoBy(professor, turno);
+		List<AtendimentoOperacional> atendimentosOperacional = null;
+		if(professorDTO != null) {
+			Professor professor = Professor.find(professorDTO.getId());
+			atendimentosOperacional = AtendimentoOperacional.findAllPublicadoBy(professor, turno);
+		}
+		if(professorVirtualDTO != null) {
+			ProfessorVirtual professorVirtual = ProfessorVirtual.find(professorVirtualDTO.getId());
+			atendimentosOperacional = AtendimentoOperacional.findAllPublicadoBy(professorVirtual, turno);
+		}
 		List<AtendimentoOperacionalDTO> listDTO = new ArrayList<AtendimentoOperacionalDTO>(atendimentosOperacional.size());
 		for(AtendimentoOperacional atendimentoOperacional : atendimentosOperacional) {
 			listDTO.add(ConvertBeans.toAtendimentoOperacionalDTO(atendimentoOperacional));
@@ -537,4 +548,16 @@ public class AtendimentosServiceImpl extends RemoteServiceServlet implements Ate
 		
 		return processedList;
 	}
+	
+	@Override
+	public ListLoadResult<ProfessorVirtualDTO> getProfessoresVirtuais(CampusDTO campusDTO) {
+		Campus campus = Campus.find(campusDTO.getId());
+		List<ProfessorVirtual> professoresVirtuais = ProfessorVirtual.findBy(campus);
+		List<ProfessorVirtualDTO> professoresVirtuaisDTO = new ArrayList<ProfessorVirtualDTO>();
+		for(ProfessorVirtual professorVirtual : professoresVirtuais) {
+			professoresVirtuaisDTO.add(ConvertBeans.toProfessorVirtualDTO(professorVirtual));
+		}
+		return new BaseListLoadResult<ProfessorVirtualDTO>(professoresVirtuaisDTO);
+	}
+	
 }

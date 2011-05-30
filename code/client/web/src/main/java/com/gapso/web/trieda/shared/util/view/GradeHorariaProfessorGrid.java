@@ -22,6 +22,7 @@ import com.extjs.gxt.ui.client.widget.layout.FitLayout;
 import com.extjs.gxt.ui.client.widget.tips.QuickTip;
 import com.gapso.web.trieda.shared.dtos.AtendimentoOperacionalDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorDTO;
+import com.gapso.web.trieda.shared.dtos.ProfessorVirtualDTO;
 import com.gapso.web.trieda.shared.dtos.TurnoDTO;
 import com.gapso.web.trieda.shared.services.Services;
 import com.google.gwt.user.client.Element;
@@ -33,6 +34,7 @@ public class GradeHorariaProfessorGrid extends ContentPanel {
 	private ListStore<LinhaDeCredito> store;
 	private List<AtendimentoOperacionalDTO> atendimentos;
 	private ProfessorDTO professorDTO;
+	private ProfessorVirtualDTO professorVirtualDTO;
 	private TurnoDTO turnoDTO;
 	private QuickTip quickTip;
 	private List<Long> disciplinasCores = new ArrayList<Long>();
@@ -68,9 +70,9 @@ public class GradeHorariaProfessorGrid extends ContentPanel {
 	}
 
 	public void requestAtendimentos() {
-		if(getProfessorDTO() == null) return;
+		if(getTurnoDTO() == null || (getProfessorDTO() == null && getProfessorVirtualDTO() == null)) return;
 		grid.mask("Carregando os dados, aguarde alguns instantes", "loading");
-		Services.atendimentos().getAtendimentosOperacional(getProfessorDTO(), getTurnoDTO(), new AsyncCallback<List<AtendimentoOperacionalDTO>>(){
+		Services.atendimentos().getAtendimentosOperacional(getProfessorDTO(), getProfessorVirtualDTO(), getTurnoDTO(), new AsyncCallback<List<AtendimentoOperacionalDTO>>(){
 			@Override
 			public void onFailure(Throwable caught) {
 				MessageBox.alert("ERRO!", "Deu falha na conexão", null);
@@ -189,6 +191,13 @@ public class GradeHorariaProfessorGrid extends ContentPanel {
 	}
 	public void setProfessorDTO(ProfessorDTO professorDTO) {
 		this.professorDTO = professorDTO;
+	}
+	
+	public ProfessorVirtualDTO getProfessorVirtualDTO() {
+		return professorVirtualDTO;
+	}
+	public void setProfessorVirtualDTO(ProfessorVirtualDTO professorVirtualDTO) {
+		this.professorVirtualDTO = professorVirtualDTO;
 	}
 	
 	public TurnoDTO getTurnoDTO() {

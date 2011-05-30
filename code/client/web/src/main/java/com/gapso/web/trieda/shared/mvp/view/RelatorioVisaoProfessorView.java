@@ -20,6 +20,7 @@ import com.gapso.web.trieda.shared.util.view.CampusComboBox;
 import com.gapso.web.trieda.shared.util.view.GTabItem;
 import com.gapso.web.trieda.shared.util.view.GradeHorariaProfessorGrid;
 import com.gapso.web.trieda.shared.util.view.ProfessorComboBox;
+import com.gapso.web.trieda.shared.util.view.ProfessorVirtualComboBox;
 import com.gapso.web.trieda.shared.util.view.TurnoComboBox;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
@@ -30,6 +31,7 @@ public class RelatorioVisaoProfessorView extends MyComposite implements Relatori
 	private CampusComboBox campusCB;
 	private TurnoComboBox turnoCB;
 	private ProfessorComboBox professorCB;
+	private ProfessorVirtualComboBox professorVirtualCB;
 	private ContentPanel panel;
 	private GTabItem tabItem;
 	private UsuarioDTO usuario;
@@ -82,6 +84,8 @@ public class RelatorioVisaoProfessorView extends MyComposite implements Relatori
 		if(usuario.isAdministrador()) {
 			professorCB = new ProfessorComboBox(campusCB);
 			right.add(professorCB, formData);
+			professorVirtualCB = new ProfessorVirtualComboBox(campusCB);
+			right.add(professorVirtualCB, formData);
 		}
 		
 		submitBt = new Button("Filtrar", AbstractImagePrototype.create(Resources.DEFAULTS.filter16()));
@@ -127,6 +131,11 @@ public class RelatorioVisaoProfessorView extends MyComposite implements Relatori
 	@Override
 	public ProfessorComboBox getProfessorComboBox() {
 		return professorCB;
+	}
+	
+	@Override
+	public ProfessorVirtualComboBox getProfessorVirtualComboBox() {
+		return professorVirtualCB;
 	}
 
 }

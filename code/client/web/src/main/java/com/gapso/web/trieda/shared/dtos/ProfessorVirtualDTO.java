@@ -10,6 +10,7 @@ public class ProfessorVirtualDTO extends AbstractDTO<Long> implements Comparable
 	// Propriedades
 	public static final String PROPERTY_ID = "id";
 	public static final String PROPERTY_VERSION = "version";
+	public static final String PROPERTY_NOME = "nome";
 	public static final String PROPERTY_TIPO_CONTRATO_STRING = "tipoContratoString";
 	public static final String PROPERTY_TIPO_CONTRATO_ID = "tipoContratoId";
 	public static final String PROPERTY_CARGA_HORARIA_MAX = "cargaHorariaMax";
@@ -34,6 +35,13 @@ public class ProfessorVirtualDTO extends AbstractDTO<Long> implements Comparable
 	}
 	public Integer getVersion() {
 		return get(PROPERTY_VERSION);
+	}
+	
+	public void setNome(String value) {
+		set(PROPERTY_NOME, value);
+	}
+	public String getNome() {
+		return get(PROPERTY_NOME);
 	}
 	
 	public void setTipoContratoString(String value) {

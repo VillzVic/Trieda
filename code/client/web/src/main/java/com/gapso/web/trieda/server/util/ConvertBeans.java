@@ -1358,12 +1358,19 @@ public class ConvertBeans {
 		ProfessorVirtualDTO dto = new ProfessorVirtualDTO();
 		dto.setId(domain.getId());
 		dto.setVersion(domain.getVersion());
+		dto.setNome("Virtual " + domain.getId());
 		dto.setCargaHorariaMax(domain.getCargaHorariaMax());
 		dto.setCargaHorariaMin(domain.getCargaHorariaMin());
-		dto.setTitulacaoId(domain.getTitulacao().getId());
-		dto.setTitulacaoString(domain.getTitulacao().getNome());
-		dto.setAreaTitulacaoId(domain.getAreaTitulacao().getId());
-		dto.setAreaTitulacaoString(domain.getAreaTitulacao().getCodigo());
+		Titulacao titulacao = domain.getTitulacao();
+		if(titulacao != null) {
+			dto.setTitulacaoId(titulacao.getId());
+			dto.setTitulacaoString(titulacao.getNome());
+		}
+		AreaTitulacao areaTitulacao = domain.getAreaTitulacao();
+		if(areaTitulacao != null) {
+			dto.setAreaTitulacaoId(areaTitulacao.getId());
+			dto.setAreaTitulacaoString(areaTitulacao.getCodigo());
+		}
 		return dto;
 	}
 	
