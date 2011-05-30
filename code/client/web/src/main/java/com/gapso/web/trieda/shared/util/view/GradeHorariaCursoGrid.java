@@ -25,7 +25,9 @@ import com.extjs.gxt.ui.client.widget.grid.Grid;
 import com.extjs.gxt.ui.client.widget.grid.GridCellRenderer;
 import com.extjs.gxt.ui.client.widget.layout.FitLayout;
 import com.extjs.gxt.ui.client.widget.tips.QuickTip;
+import com.gapso.web.trieda.shared.dtos.AtendimentoOperacionalDTO;
 import com.gapso.web.trieda.shared.dtos.AtendimentoRelatorioDTO;
+import com.gapso.web.trieda.shared.dtos.AtendimentoTaticoDTO;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.CurriculoDTO;
 import com.gapso.web.trieda.shared.dtos.ParDTO;
@@ -129,8 +131,14 @@ public class GradeHorariaCursoGrid extends ContentPanel {
 			store.removeAll();
 		}	
 		if(turnoDTO != null) {
-			for(int i = 1; i <= turnoDTO.getMaxCreditos() * 5; i++) {
-				store.add(new LinhaDeCredito(i));
+			if(isTatico()) {
+				for(Integer i = 1; i <= turnoDTO.getMaxCreditos(); i++) {
+					store.add(new LinhaDeCredito(i.toString()));
+				}
+			} else {
+				for(Long horarioId : turnoDTO.getHorariosStringMap().keySet()) {
+					store.add(new LinhaDeCredito(turnoDTO.getHorariosStringMap().get(horarioId), horarioId));
+				}
 			}
 		}
 		return store;
@@ -144,7 +152,11 @@ public class GradeHorariaCursoGrid extends ContentPanel {
 	public List<ColumnConfig> getColumnList() {
 		List<ColumnConfig> list = new ArrayList<ColumnConfig>();
 		
-		addColumn(list, "creditos", "Créditos");
+		if(isTatico()) {
+			addColumn(list, "display", "Créditos");
+		} else {
+			addColumn(list, "display", "Horários");
+		}
 		addColumn(list, "segunda", "Segunda");
 		addColumn(list, "terca", "Terça");
 		addColumn(list, "quarta", "Quarta");
@@ -152,28 +164,45 @@ public class GradeHorariaCursoGrid extends ContentPanel {
 		addColumn(list, "sexta", "Sexta");
 		addColumn(list, "sabado", "Sábado");
 		addColumn(list, "domingo", "Domingo");
-		addColumn(list, "extra1", "");
-		addColumn(list, "extra2", "");
-		addColumn(list, "extra3", "");
-		addColumn(list, "extra4", "");
+		
+		int columnsCount = getColumnsCount();
+		for(int i = 8; i < columnsCount; i++) {
+			addColumn(list, "extra"+i, "");
+		}
 		
 		return list;
 	}
+	
+	private int getColumnsCount() {
+		int count = 0;
+		if(diaSemanaTamanhoList == null) return count;
+		for(Integer c : diaSemanaTamanhoList) {
+			count += c;
+		}
+		return count;
+	}
+	
 	
 	private void addColumn(List<ColumnConfig> list, String id, String name) {
 		
 		GridCellRenderer<LinhaDeCredito> change = new GridCellRenderer<LinhaDeCredito>() {
 			public Html render(LinhaDeCredito model, String property, ColumnData config, int rowIndex, int colIndex, ListStore<LinhaDeCredito> store, Grid<LinhaDeCredito> grid) {
-				return content(rowIndex, colIndex);
+				if(colIndex == 0) return new Html(model.getDisplay());
+				return content(model, rowIndex, colIndex);
 			}
 
-			private Html content(int rowIndex, int colIndex) {
+			private Html content(LinhaDeCredito model, int rowIndex, int colIndex) {
 				if(colIndex == 0) return new Html(String.valueOf(rowIndex + 1));
 				if(atendimentos == null || atendimentos.size() == 0) new Html("");
 				
 				int semana = colIndex;
 				
-				AtendimentoRelatorioDTO atDTO = getAtendimento(rowIndex + 1, semana);
+				AtendimentoRelatorioDTO atDTO = null;
+				if(isTatico()) {
+					atDTO = getAtendimento(rowIndex + 1, semana);
+				} else {
+					atDTO = getAtendimento(model.getHorarioId(), semana);
+				}
 				
 				if(atDTO == null) return new Html("");
 				
@@ -230,7 +259,9 @@ public class GradeHorariaCursoGrid extends ContentPanel {
 			}
 		};
 		
-		ColumnConfig column = new ColumnConfig(id, name, getWidth(id));
+		int width = getWidth(id);
+		if(name.equals("")) { width = 0; } 
+		ColumnConfig column = new ColumnConfig(id, name, width);
 		column.setRenderer(change);
 		column.setResizable(false);
 		column.setMenuDisabled(true);
@@ -238,6 +269,20 @@ public class GradeHorariaCursoGrid extends ContentPanel {
 		list.add(column);
 	}
 	
+	private AtendimentoRelatorioDTO getAtendimento(Long horarioId, int semana) {
+		int ocupado = 0;
+		if(atendimentos != null) {
+			for(AtendimentoRelatorioDTO at : atendimentos) {
+				if(at.getSemana() == semana) {
+					if(((AtendimentoOperacionalDTO)at).getHorarioId().equals(horarioId)) {
+						return at;
+					}
+					ocupado += at.getTotalCreditos();
+				}
+			}
+		}
+		return null;
+	}
 	private AtendimentoRelatorioDTO getAtendimento(int credito, int semana) {
 		int ocupado = 0;
 		if(atendimentos != null) {
@@ -267,6 +312,13 @@ public class GradeHorariaCursoGrid extends ContentPanel {
 		return diaSemanaTamanhoList.get(i) * 100;
 	}
 	
+	private boolean isTatico() {
+		if(atendimentos == null) return false;
+		if(atendimentos.isEmpty()) return true;
+		AtendimentoRelatorioDTO atm = atendimentos.get(0);
+		if(atm == null) return false;
+		return atm instanceof AtendimentoTaticoDTO;
+	}
 	
 	public CurriculoDTO getCurriculoDTO() {
 		return curriculoDTO;
@@ -317,15 +369,25 @@ public class GradeHorariaCursoGrid extends ContentPanel {
 
 		private static final long serialVersionUID = 3996652461744817138L;
 		
-		public LinhaDeCredito(Integer creditos) {
-			setCreditos(creditos);
+		public LinhaDeCredito(String display) {
+			setDisplay(display);
+		}
+		public LinhaDeCredito(String display, Long horarioId) {
+			setDisplay(display);
+			setHorarioId(horarioId);
 		}
 		
-		public Integer getCreditos() {
-			return get("creditos");
+		public Long getHorarioId() {
+			return get("horarioId");
 		}
-		public void setCreditos(Integer value) {
-			set("creditos", value);
+		public void setHorarioId(Long value) {
+			set("horarioId", value);
+		}
+		public String getDisplay() {
+			return get("display");
+		}
+		public void setDisplay(String value) {
+			set("display", value);
 		}
 		public Integer getTotalCreditos() {
 			return get("totalCreditos");

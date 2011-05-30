@@ -331,7 +331,8 @@ public class AtendimentoOperacionalDTO extends AbstractDTO<String> implements Co
 		+ "<b>Crédito(s) " + ((getCreditoTeoricoBoolean())? "Teórico(s)" : "Prático(s)") + ":</b> " + getTotalLinhas()+" de "+getTotalCreditos() + "<br />"
 		+ "<b>Curso:</b> " + getCursoNome() +"<br />"
 		+ "<b>Matriz Curricular:</b> " + getCurriculoString() + "<br />"
-		+ "<b>Período:</b> "+ getPeriodoString() +"<br />" 
+		+ "<b>Período:</b> "+ getPeriodoString() +"<br />"
+		+ "<b>Horário:</b> " + getHorarioId()   +"<br />"
 		+ "<b>Quantidade:</b> "+ getQuantidadeAlunosString() +"<br />"
 		+ professor;
 		
@@ -387,7 +388,7 @@ public class AtendimentoOperacionalDTO extends AbstractDTO<String> implements Co
 
 	@Override
 	public String toString() {
-		return getDisciplinaString()+"@"+getTurma()+"@"+getSalaString()+"@"+getSemana();
+		return getDisciplinaString()+"@"+getTurma()+"@"+getSalaString()+"@"+getSemana()+"#"+getTotalCreditos()+"#"+getHorarioId();
 	}
 
 	static public boolean compatibleByApproach1(AtendimentoOperacionalDTO dto1, AtendimentoOperacionalDTO dto2) {
