@@ -81,9 +81,9 @@ bool MoveShift::operator == ( const Move & m ) const
 
 void MoveShift::print()
 {
-   std::cout << "MoveShift" << std::endl;
+   std::cout << "\n<---> MoveShift <--->\n" << std::endl;
 
-   //aula.toString();
+   aula.toString();
    //std::cout << "Professor atual (idOp): " << profAula.getIdOperacional() << std::endl;
-   //std::cout << "Professor candidato (idOp): " << novoProfAula.getIdOperacional() << std::endl;
+   std::cout << "Professor candidato (idOp): " << novoProfAula.getIdOperacional() << std::endl;
 }

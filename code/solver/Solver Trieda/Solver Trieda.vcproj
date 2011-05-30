@@ -1166,6 +1166,10 @@
 				Name="Utility"
 				>
 				<File
+					RelativePath="..\..\..\..\..\..\..\Bibliotecas\codelib\combinatoria.h"
+					>
+				</File>
+				<File
 					RelativePath="$(CODELIB)\CPUTimerWin.h"
 					>
 				</File>

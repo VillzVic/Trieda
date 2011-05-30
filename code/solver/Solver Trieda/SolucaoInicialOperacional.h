@@ -13,6 +13,8 @@
 
 #include "MoveValidator.h"
 
+#include "Combinatoria.h"
+
 class SolucaoInicialOperacional
 {
 public:

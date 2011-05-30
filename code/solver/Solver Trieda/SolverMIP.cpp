@@ -1644,8 +1644,10 @@ int SolverMIP::solveOperacional()
    SolucaoInicialOperacional solIni( *problemData );
 
    std::cout << "Gerando uma solucao inicial para o modelo operacional" << std::endl;
+
    SolucaoOperacional & solucaoOperacional = solIni.geraSolucaoInicial();
-   std::cout << "Solucao Inidial gerada." << std::endl;
+
+   std::cout << "Solucao Inicial gerada." << std::endl;
 
    solucaoOperacional.toString2();
 
@@ -1653,14 +1655,18 @@ int SolverMIP::solveOperacional()
    Avaliador avaliador;
    avaliador.avaliaSolucao( solucaoOperacional, true );
 
+   ITERA_GGROUP_LESSPTR(itAula,problemData->aulas,Aula)
+   { itAula->toString(); }
+
    // Estruturas de Vizinhança
    // NSSeqSwapEqBlocks nsSeqSwapEqBlocks ( *problemData );
    // NSSwapEqSchedulesBlocks nsSwapEqSchedulesBlocks ( *problemData );
    // NSSwapEqTeachersBlocks nsSwapEqTeachersBlocks ( *problemData );
 
-//   NSShift nsShift( *problemData );
-//   nsShift.move(solucaoOperacional);
-   
+   //NSShift nsShift( *problemData );
+   //MoveShift & mvSht = (MoveShift&) nsShift.move(solucaoOperacional);
+   //mvSht.print();
+
    // Heurísticas de Busca Local - Descida Randômica
    // RandomDescentMethod rdmSeqSwapEqBlocks ( avaliador, nsSeqSwapEqBlocks, 10 );
    // RandomDescentMethod rdmSwapEqSchedulesBlocks ( avaliador, nsSwapEqSchedulesBlocks, 10 );
@@ -1906,22 +1912,54 @@ void SolverMIP::preencheOutputOperacional( ProblemSolution * solution )
 
                vector< vector< Aula * > * >::iterator
                   it_matriz_aulas = matriz_aulas->begin();
+
                for (; it_matriz_aulas != matriz_aulas->end(); it_matriz_aulas++ )
                {
                   int linha_professor = std::distance( matriz_aulas->begin(), it_matriz_aulas );
 
                   vector< Aula * > * aulas = ( *it_matriz_aulas );
                   vector< Aula * >::iterator it_aula = aulas->begin();
+
                   for (; it_aula != aulas->end(); it_aula++ )
                   {
-                     int horario_aula_id = ( std::distance( aulas->begin(), it_aula ) % total_horarios );
-
                      Aula * aula = ( *it_aula );
                      if ( aula == NULL || aula->eVirtual() == true )
                      {
                         continue;
                      }
 
+                     // Verifica o dia da semana da aula
+                     int dia_aula = std::distance( aulas->begin(), it_aula );
+                     dia_aula /= total_horarios;
+                     dia_aula += 1;
+                     if ( dia_aula != dia_semana )
+                     {
+                        continue;
+                     }
+
+                     // Verifica a unidade onde a aula está alocada
+                     Unidade * unidade_aula = problemData->refUnidade[ aula->getSala()->getIdUnidade() ];
+                     if ( unidade_aula == NULL || unidade_aula->getId() != unidade->getId() )
+                     {
+                        continue;
+                     }
+
+                     // Verifica o campus onde a aula está alocada
+                     Campus * campus_aula = problemData->refCampus[ unidade_aula->getIdCampus() ];
+                     if ( campus_aula == NULL || campus_aula->getId() != campus->getId() )
+                     {
+                        continue;
+                     }
+
+                     // Verifica a sala onde a aula está alocada
+                     if ( aula->getSala() == NULL || aula->getSala()->getId() != sala->getId() )
+                     {
+                        continue;
+                     }
+
+                     int horario_aula_id = ( std::distance( aulas->begin(), it_aula ) % total_horarios );
+
+                     // Procura o turno da aula
                      Oferta * temp = ( *( aula->ofertas.begin() ) );
                      int turno = temp->getTurnoId();
 
@@ -1948,40 +1986,37 @@ void SolverMIP::preencheOutputOperacional( ProblemSolution * solution )
                      //-------------------------------------------------------------------------------------
 
                      //-------------------------------------------------------------------------------------
-                     if ( aulaAlocada( aula, campus, unidade, sala, dia_semana ) )
+                     AtendimentoHorarioAula * atendimento_horario_aula = new AtendimentoHorarioAula();
+
+                     HorarioAula * horario_aula = problemData->horarios_aula_ordenados[ horario_aula_id ];
+                     Professor * professor = solution->solucao_operacional->getProfessorMatriz( linha_professor );
+
+                     atendimento_horario_aula->setId( horario_aula->getId() );
+                     atendimento_horario_aula->setHorarioAulaId( horario_aula->getId() );
+                     atendimento_horario_aula->setProfessorId( professor->getId() );
+                     atendimento_horario_aula->setProfVirtual( professor->eVirtual() );
+                     atendimento_horario_aula->setCreditoTeorico( aula->getCreditosTeoricos() > 0 );
+
+                     ITERA_GGROUP_LESSPTR( it_oferta, aula->ofertas, Oferta )
                      {
-                        AtendimentoHorarioAula * atendimento_horario_aula = new AtendimentoHorarioAula();
+                        Oferta * oferta = ( *it_oferta );
+                        AtendimentoOferta * atendimento_oferta = new AtendimentoOferta();
 
-                        HorarioAula * horario_aula = problemData->horarios_aula_ordenados[ horario_aula_id ];
-                        Professor * professor = solution->solucao_operacional->getProfessorMatriz( linha_professor );
+                        atendimento_oferta->setId( oferta->getId() );
+                        atendimento_oferta->setDisciplinaId( aula->getDisciplina()->getId() );
+                        atendimento_oferta->setTurma( aula->getTurma() );
+                        atendimento_oferta->setQuantidade( aula->getQuantidade() );
 
-                        atendimento_horario_aula->setId( horario_aula->getId() );
-                        atendimento_horario_aula->setHorarioAulaId( horario_aula->getId() );
-                        atendimento_horario_aula->setProfessorId( professor->getId() );
-                        atendimento_horario_aula->setProfVirtual( professor->eVirtual() );
-                        atendimento_horario_aula->setCreditoTeorico( aula->getCreditosTeoricos() > 0 );
+                        char id_oferta_char[ 200 ];
+                        sprintf( id_oferta_char, "%d", oferta->getId() );
+                        std::string id_oferta_str = std::string( id_oferta_char );
+                        atendimento_oferta->setOfertaCursoCampiId( id_oferta_str );
+                        atendimento_oferta->oferta = oferta;
 
-                        ITERA_GGROUP_LESSPTR( it_oferta, aula->ofertas, Oferta )
-                        {
-                           Oferta * oferta = ( *it_oferta );
-                           AtendimentoOferta * atendimento_oferta = new AtendimentoOferta();
-
-                           atendimento_oferta->setId( oferta->getId() );
-                           atendimento_oferta->setDisciplinaId( aula->getDisciplina()->getId() );
-                           atendimento_oferta->setTurma( aula->getTurma() );
-                           atendimento_oferta->setQuantidade( aula->getQuantidade() );
-
-                           char id_oferta_char[ 200 ];
-                           sprintf( id_oferta_char, "%d", oferta->getId() );
-                           std::string id_oferta_str = std::string( id_oferta_char );
-                           atendimento_oferta->setOfertaCursoCampiId( id_oferta_str );
-                           atendimento_oferta->oferta = oferta;
-
-                           atendimento_horario_aula->atendimentos_ofertas->add( atendimento_oferta );
-                        }
-
-                        atendimento_turno->atendimentos_horarios_aula->add( atendimento_horario_aula );
+                        atendimento_horario_aula->atendimentos_ofertas->add( atendimento_oferta );
                      }
+
+                     atendimento_turno->atendimentos_horarios_aula->add( atendimento_horario_aula );
                      //-------------------------------------------------------------------------------------
                   }
                }

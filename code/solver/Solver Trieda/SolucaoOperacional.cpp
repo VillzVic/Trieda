@@ -227,8 +227,10 @@ bool SolucaoOperacional::seqHorarioLivre(int idOperacionaProf, int dia, std::vec
       itHorarioAula = seqHorarioAula.begin();
 
    for(; itHorarioAula != seqHorarioAula.end(); ++itHorarioAula)
+   {
       if(matriz_aulas->at(idOperacionaProf)->at((((dia-1)*total_horarios) + (*itHorarioAula))) != NULL)
-         return false;
+      { return false; }
+   }
 
    return true;
 }
@@ -286,7 +288,8 @@ void SolucaoOperacional::toString2() const
             std::cout << "T(" << aula->getTurma()
 					  << ")_D(" << aula->getDisciplina()->getCodigo()
                       << ")_S(" << aula->getSala()->getCodigo()
-					  << ")_Dia(" << aula->getDiaSemana() << "),\t";
+                      << ")_Dia(" << aula->getDiaSemana()
+                      << ")_Qtd(" << aula->getQuantidade() << "),\t";
          }
          else if ( aula != NULL && aula->eVirtual() )
          {

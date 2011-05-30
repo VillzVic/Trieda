@@ -142,6 +142,7 @@ void Aula::toString() const
 			 << "\nDia da Semana: " << dia_semana
 			 << "\nCreditos Praticos: " << creditos_praticos
 			 << "\nCreditos Teoricos: " << creditos_teoricos
+          << "\nQuantidade: " << quantidade
 			 << std::endl;
    //-------------------------------------------------------------
 

@@ -1881,6 +1881,8 @@ void ProblemDataLoader::relacionaDisciplinasEquivalentes()
 
 void ProblemDataLoader::divideDisciplinas()
 {
+   int idNovaMag = -1;
+
    ITERA_GGROUP_LESSPTR( it_disc, problemData->disciplinas, Disciplina )
    {
       if ( it_disc->getCredTeoricos() > 0
@@ -2053,6 +2055,8 @@ void ProblemDataLoader::divideDisciplinas()
             nova_disc->horarios.add(h);
          }
 
+         int idDisc = nova_disc->getId();
+
          ITERA_GGROUP_LESSPTR( it_cp, problemData->campi, Campus )
          {
             // Adicionando os dados da nova disciplina
@@ -2088,7 +2092,8 @@ void ProblemDataLoader::divideDisciplinas()
                   {
                      novo_mag = new Magisterio();
 
-                     novo_mag->setId(-1);
+                     idNovaMag--;
+                     novo_mag->setId(idNovaMag);
                      novo_mag->setNota( it_mag->getNota() );
                      novo_mag->setPreferencia( it_mag->getPreferencia() );
                      novo_mag->setDisciplinaId( nova_disc->getId() );
@@ -2110,7 +2115,7 @@ void ProblemDataLoader::divideDisciplinas()
                // FIXME, isto está errado, deveria-se, de algum jeito,
                // saber o periodo da disciplina ou, iterar sobre todos os periodos 
                // validos de um curso e nao sobre uma estimativa.
-               for ( int num_periodos = 0; num_periodos < 20; num_periodos++ )
+               for ( int num_periodos = 0; num_periodos < 20 /* FIX-ME */; num_periodos++ )
                {
                   std::pair< int, Disciplina * > disc_periodo( num_periodos, *it_disc );
 
@@ -3429,10 +3434,14 @@ void ProblemDataLoader::criaAulas()
       // de blocos curriculares e de criação das aulas.
       relacionaBlocoCurricularAulas();
 
-   }
+      std::cout << "Total de aulas criadas: "
+         << problemData->aulas.size() << std::endl;
 
-   std::cout << "Total de aulas criadas: "
-      << problemData->aulas.size() << std::endl;
+      //ITERA_GGROUP_LESSPTR(itAula,problemData->aulas,Aula)
+      //{
+      //   itAula->toString();
+      //}
+   }
 }
 
 void ProblemDataLoader::relacionaBlocoCurricularAulas()
