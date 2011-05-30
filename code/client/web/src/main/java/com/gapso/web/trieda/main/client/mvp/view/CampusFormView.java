@@ -100,9 +100,9 @@ public class CampusFormView extends MyComposite implements CampusFormPresenter.D
 		geralFS.add(valorCreditoNF, formData);
 		
 		publicadoCB = new CheckBox();
-		if(campusDTO.getPublicado() != null) {
-			publicadoCB.setEnabled(campusDTO.getPublicado());
-		}
+//		if(campusDTO.getPublicado() != null) {
+//			publicadoCB.setEnabled(campusDTO.getPublicado());
+//		}
 		publicadoCB.setName(CampusDTO.PROPERTY_PUBLICADO);
 		if(campusDTO.getPublicado() != null) {
 			publicadoCB.setValue(campusDTO.getPublicado());
