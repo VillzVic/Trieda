@@ -2,15 +2,20 @@
 #define _AVALIADOR_H_
 
 #include <vector>
+#include <cmath>
+#include <map>
 
+#include "ofbase.h"
+#include "Fixacao.h"
+#include "DateTime.h"
 #include "ProblemData.h"
 #include "SolucaoOperacional.h"
 
 class Avaliador
 {
 public:
-   Avaliador(void);
-   virtual ~Avaliador(void);
+   Avaliador( void );
+   virtual ~Avaliador( void );
 
    // Retorna o valor de uma solução operacional
    // Obs.: o parâmetro 'bool' informa se o
@@ -40,6 +45,9 @@ public:
    double PESO_CREDITOS_PROFESSORES_VIRTUAIS;
    double PESO_VIOLACOES_PARCIAL_INTEGRAL;
    double PESO_VIOLACOES_INTEGRAL;
+   double PESO_VIOLACOES_DISCIPLINAS_ASSOCIADAS;
+   double PESO_VIOLACOES_PROFESSOR_MESMO_BLOCO;
+   double PESO_VIOLACOES_CONFLITO_BLOCO_CURRICULAR;
 
 private:
 	//------------------ MÉTODOS DE AVALIAÇÃO DA SOLUÇÃO -----------------//
@@ -141,18 +149,20 @@ private:
 	int totalViolacoesDoutores;
 
 	// -----------------------------------------------------------
-	// Avaliação do máximo de disciplinas ppor professor por curso
+	// Avaliação do máximo de disciplinas por professor por curso
 	// -----------------------------------------------------------
 	void avaliaMaximoDisciplinasProfessorPorCurso( SolucaoOperacional & );
 	int totalViolacoesDiscProfCurso;
-	std::vector< int > violacoesDisciplinasProfessor;
+	std::vector< int > violacoesMaximoDisciplinasProfessor;
 
 	// -----------------------------------------------------------
 	// Avaliação das violações de preferências dos professores
 	// -----------------------------------------------------------
 	void avaliaPreferenciasProfessorDisciplina( SolucaoOperacional & );
+   // Informa o total geral de violações de preferência de disciplinas
 	int totalPreferenciasProfessorDisciplina;
-	std::vector< int > preferenciasProfessor;
+   // Informa o total de violações de preferência de disciplinas para cada professor
+   std::map< Professor *, int, LessPtr< Professor > > violacoesPreferenciasProfessor;
 
 	// -----------------------------------------------------------
 	// Avaliação do custo de se utilizar um ou
@@ -172,6 +182,34 @@ private:
 	void avaliaTempoParcialIntegral( SolucaoOperacional & );
 	int totalViolacoesTempoParcialIntegral;
 	int totalViolacoesTempoIntegral;
+
+	// -----------------------------------------------------------
+	// Avaliação do número de aulas alocadas a professores,
+   // tal que as disciplinas dessas aulas não estão associadas
+   // a esse professor no campo 'disciplinasAssociadas'
+	// -----------------------------------------------------------
+	void avaliaDisciplinasAssociadasProfessor( SolucaoOperacional & );
+   // Informa quantas disciplinas estão alocadas a
+   // professores que não possuem essas disciplinas associadas a eles
+	int totalViolacoesDisciplinasAssociadas;
+   // Informa quais disciplinas estão alocadas a cada
+   // professor, sem que as mesmas estão associadas ao profesor
+   std::map< Professor *, std::vector< Disciplina * >,
+      LessPtr< Professor > > violacoesDisciplinasAssociadasProfessor;
+
+	// -----------------------------------------------------------
+	// Avaliação do número de professores que
+   // ministram mais de uma aula para o mesmo bloco curricular
+	// -----------------------------------------------------------
+	void avaliaProfessorMesmoBlocoCurricular( SolucaoOperacional & );
+	int totalViolacoesProfessorMesmoBlocoCurricular;
+
+	// -----------------------------------------------------------
+	// Avaliação do número de aulas de um mesmo
+   // bloco curricular alocadas para o mesmo horário
+	// -----------------------------------------------------------
+	void avaliaConflitosBlocoCurricular( SolucaoOperacional & );
+	int totalViolacoesConflitosBlocoCurricular;
 	//--------------------------------------------------------------------//
 
 	//--------------------------- UTILITÁRIOS ----------------------------//

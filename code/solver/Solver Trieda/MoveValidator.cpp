@@ -48,13 +48,13 @@ bool MoveValidator::checkBlockConflict( Aula & aula, std::vector<HorarioAula*> &
    <checkClassAndLessonDisponibility>. Portanto, não há necessidade de fazer esse check aqui. */
 
    // Procurando o(s) bloco(s) curricular(es) ao(s) qual(is) a aula em questao pertence.
-   std::map< Aula *, GGroup< BlocoCurricular *, LessPtr< BlocoCurricular > > >::iterator
+   std::map< Aula *, GGroup< BlocoCurricular *, LessPtr< BlocoCurricular > >, LessPtr< Aula > >::iterator
       itAulaBlocosCurriculares = problem_data->aulaBlocosCurriculares.find( &aula );
 
    if ( itAulaBlocosCurriculares == problem_data->aulaBlocosCurriculares.end() )
    {
       std::cout << "Na funcao <SolucaoOperacional::checkConflitoBlocoCurricular>"
-         << "alguma aula nao foi encontrada." << std::endl;
+                << "alguma aula nao foi encontrada." << std::endl;
 
       exit(1);
    }
@@ -63,13 +63,14 @@ bool MoveValidator::checkBlockConflict( Aula & aula, std::vector<HorarioAula*> &
    ITERA_GGROUP_LESSPTR( itBlocoCurric, itAulaBlocosCurriculares->second, BlocoCurricular )
    {
       // Procurando a(s) aula(s) do bloco curricular selecionado.
-      std::map< BlocoCurricular *, std::map< int /*dia*/, GGroup< Aula *, LessPtr< Aula > > > >::iterator
-         itBlocoCurricularAulas = problem_data->blocoCurricularDiaAulas.find( *itBlocoCurric );
+      std::map< BlocoCurricular *, std::map< int /*dia*/, GGroup< Aula *, LessPtr< Aula > > >,
+         LessPtr< BlocoCurricular > >::iterator itBlocoCurricularAulas
+            = problem_data->blocoCurricularDiaAulas.find( *itBlocoCurric );
 
       if ( itBlocoCurricularAulas == problem_data->blocoCurricularDiaAulas.end() )
       {
          std::cout << "Na funcao <SolucaoOperacional::checkConflitoBlocoCurricular>"
-            << "algum bloco nao foi encontrado." << std::endl;
+                   << "algum bloco nao foi encontrado." << std::endl;
 
          exit(1);
       }
@@ -81,18 +82,18 @@ bool MoveValidator::checkBlockConflict( Aula & aula, std::vector<HorarioAula*> &
       if ( itBlocoCurricularAulasDia == itBlocoCurricularAulas->second.end() )
       {
          std::cout << "Na funcao <SolucaoOperacional::checkConflitoBlocoCurricular>"
-            << "algum dia nao foi encontrado." << std::endl;
+                   << "algum dia nao foi encontrado." << std::endl;
 
          exit(1);
       }
 
-      /* Para todas as aulas de um dado dia do bloco curricular em questão, salvo a aula corrente,
-      verificar se há conflito de horário. */
+      // Para todas as aulas de um dado dia do bloco curricular
+      // em questão, salvo a aula corrente, verificar se há conflito de horário.
       ITERA_GGROUP_LESSPTR( itAula, itBlocoCurricularAulasDia->second, Aula )
       {
-         /* Somente se não for igual a Aula em questão E se a aula selecionada para análise 
-         já estiver alocada a algum horário. A segunda condição é necessária para a criação 
-         de uma solução inicial. */
+         // Somente se não for igual a Aula em questão E se a aula
+         // selecionada para análise já estiver alocada a algum horário.
+         // A segunda condição é necessária para a criação de uma solução inicial.
          if ( **itAula != aula )
          {
             // Buscando, na solução, uma referência para a aula em questão.

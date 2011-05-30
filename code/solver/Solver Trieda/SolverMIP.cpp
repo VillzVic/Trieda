@@ -2111,7 +2111,7 @@ void SolverMIP::criaVariaveisAlunosDisciplinasSubstituidas()
 
          //------------------------------------------------------------------------------------
          // Enquanto for possível, criamos variáveis referentes ao atendimento da demanda
-         // das disciplinas substituídas. OBS.: Partimos do princípio que a escolha de qual
+         // das disciplinas substituídas. OBS.: Partimos do princípio qu\e a escolha de qual
          // disciplina deve ser atendida prioritariamente é INDIFERENTE para a solução
          ITERA_GGROUP_LESSPTR( it_disc_equi, it_conjunto_disc->second, Disciplina )
          {

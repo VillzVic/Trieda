@@ -19,14 +19,14 @@ public:
 
    SolucaoOperacional( ProblemData * );
    SolucaoOperacional( SolucaoOperacional const & );
-   virtual ~SolucaoOperacional(void);
+   virtual ~SolucaoOperacional( void );
 
    // Armazena o professor e todos os horarios (<HorarioAula>) que
    // uma aula foi alocada na solucao corrente. Essa estrutura serve
    // para agilizar o acesso ao professor e todos os horarios (<HorarioAula>)
    // em que cada aula esta alocada. Assim, ha necessidade de percorrer uma
    // solucao para saber onde uma determinada aula esta alocada.
-   std::map< Aula *, std::pair< Professor *, std::vector< HorarioAula * > > , LessPtr<Aula> > blocoAulas;
+   std::map< Aula *, std::pair< Professor *, std::vector< HorarioAula * > >, LessPtr< Aula > > blocoAulas;
 
    // Dado um índice que corresponde a uma linha
    // de um dado professor na matriz de solução,

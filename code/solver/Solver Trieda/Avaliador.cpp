@@ -1,11 +1,4 @@
-#include <cmath>
-#include <vector>
-#include <map>
-
 #include "Avaliador.h"
-#include "ofbase.h"
-#include "Fixacao.h"
-#include "DateTime.h"
 
 Avaliador::Avaliador()
 {
@@ -31,6 +24,9 @@ Avaliador::Avaliador()
    totalPreferenciasProfessorDisciplina = 0;
    totalProfessoresVirtuais = 0;
    totalCreditosProfessoresVirtuais = 0;
+   totalViolacoesDisciplinasAssociadas = 0;
+   totalViolacoesProfessorMesmoBlocoCurricular = 0;
+   totalViolacoesConflitosBlocoCurricular = 0;
 
    // Atribui o peso de cada critério
    // na nota de avaliação da solução
@@ -55,6 +51,9 @@ Avaliador::Avaliador()
    PESO_CREDITOS_PROFESSORES_VIRTUAIS = 1;
    PESO_VIOLACOES_PARCIAL_INTEGRAL = 1;
    PESO_VIOLACOES_INTEGRAL = 1;
+   PESO_VIOLACOES_DISCIPLINAS_ASSOCIADAS = 1;
+   PESO_VIOLACOES_PROFESSOR_MESMO_BLOCO = 1;
+   PESO_VIOLACOES_CONFLITO_BLOCO_CURRICULAR = 1;
 }
 
 Avaliador::~Avaliador()
@@ -67,70 +66,79 @@ void Avaliador::imprimeResultados()
    std::cout << "===========================================================================\n\n";
 
    std::cout << "Violacoes de restricao de fixacao : "
-			 << totalViolacaoRestricaoFixacao << std::endl << std::endl;
+			    << totalViolacaoRestricaoFixacao << std::endl << std::endl;
 
    std::cout << "Violacoes de deslocamento de professor : "
-			 << totalViolacoesDeslocamentoProfessor << std::endl << std::endl;
+			    << totalViolacoesDeslocamentoProfessor << std::endl << std::endl;
 
    std::cout << "Tempo de deslocamento de professor : "
-			 << totalDeslocamentosProfessor << std::endl << std::endl;
+			    << totalDeslocamentosProfessor << std::endl << std::endl;
 
    std::cout << "Violacoes de deslocamento de alunos : "
-			 << totalViolacoesDescolamento << std::endl << std::endl;
+			    << totalViolacoesDescolamento << std::endl << std::endl;
 
    std::cout << "Tempo de deslocamento de alunos : "
-			 << totalTempoDescolamento << std::endl << std::endl;
+			    << totalTempoDescolamento << std::endl << std::endl;
 
    std::cout << "Total de gaps nos horarios dos professores : "
-			 << totalGapsHorariosProfessores << std::endl << std::endl;
+			    << totalGapsHorariosProfessores << std::endl << std::endl;
 
    std::cout << "Avaliacao do corpo docente : "
-			 << totalAvaliacaoCorpoDocente << std::endl << std::endl;
+			    << totalAvaliacaoCorpoDocente << std::endl << std::endl;
 
    std::cout << "Custo do corpo docente : "
-			 << totalCustoCorpoDocente << std::endl << std::endl;
+			    << totalCustoCorpoDocente << std::endl << std::endl;
 
    std::cout << "Violacoes de carga horaria minima do semestre anterior (sindicato) : "
-			 << totalViolacoesCHMinimaSemestreAterior << std::endl << std::endl;
+			    << totalViolacoesCHMinimaSemestreAterior << std::endl << std::endl;
 
    std::cout << "Violacoes de carga horaria minima dos professores : "
-			 << totalViolacoesCHMinimaProfessor << std::endl << std::endl;
+			    << totalViolacoesCHMinimaProfessor << std::endl << std::endl;
 
    std::cout << "Violacoes de carga horaria maxima dos professores : "
-			 << totalViolacoesCHMaximaProfessor << std::endl << std::endl;
+			    << totalViolacoesCHMaximaProfessor << std::endl << std::endl;
 
    std::cout << "Dias em que os professores ministram aulas : "
-			 << totalDiasProfessorMinistraAula << std::endl << std::endl;
+			    << totalDiasProfessorMinistraAula << std::endl << std::endl;
 
    std::cout << "Violacoes do tipo ultima aula dia D / primeira aula dia D+1 : "
-			 << totalViolacoesUltimaPrimeiraAula << std::endl << std::endl;
+			    << totalViolacoesUltimaPrimeiraAula << std::endl << std::endl;
 
    std::cout << "Violacoes de percentual minimo de mestres : "
-			 << totalViolacoesMestres << std::endl << std::endl;
+			    << totalViolacoesMestres << std::endl << std::endl;
 
    std::cout << "Violacoes de percentual minimo de doutores : "
-			 << totalViolacoesDoutores << std::endl << std::endl;
+			    << totalViolacoesDoutores << std::endl << std::endl;
 
    std::cout << "Violacoes de numero de disciplinas por professor por curso : "
-			 << totalViolacoesDiscProfCurso << std::endl << std::endl;
+			    << totalViolacoesDiscProfCurso << std::endl << std::endl;
 
    std::cout << "Avaliacao de preferencia de professor pelas disciplinas : "
-			 << totalPreferenciasProfessorDisciplina << std::endl << std::endl;
+			    << totalPreferenciasProfessorDisciplina << std::endl << std::endl;
 
    std::cout << "Total de professores virtuais : "
-			 << totalProfessoresVirtuais << std::endl << std::endl;
+			    << totalProfessoresVirtuais << std::endl << std::endl;
 
    std::cout << "Total de creditos de professores virtuais : "
-			 << totalCreditosProfessoresVirtuais
-			 << std::endl << std::endl;
+			    << totalCreditosProfessoresVirtuais << std::endl << std::endl;
 
    std::cout << "Total de vioacoes % professores tempo parcial + tempo integral : "
-			 << totalViolacoesTempoParcialIntegral
-			 << std::endl << std::endl;
+			    << totalViolacoesTempoParcialIntegral << std::endl << std::endl;
 
    std::cout << "Total de vioacoes % professores tempo integral : "
-			 << totalViolacoesTempoIntegral
-			 << std::endl << std::endl << std::endl;
+			    << totalViolacoesTempoIntegral << std::endl << std::endl;
+
+   std::cout << "Total de disciplinas nao-associadas a professores : "
+			    << totalViolacoesDisciplinasAssociadas
+			    << std::endl << std::endl;
+
+   std::cout << "Total de professores que ministram mais de uma aula para um mesmo bloco curricular : "
+			    << totalViolacoesProfessorMesmoBlocoCurricular
+			    << std::endl << std::endl;
+
+   std::cout << "Total de aula de um mesmo bloco curricular alocadas no mesmo horario : "
+			    << totalViolacoesConflitosBlocoCurricular
+			    << std::endl << std::endl << std::endl;
 
    std::cout << "===========================================================================\n\n";
 }
@@ -141,59 +149,50 @@ double Avaliador::avaliaSolucao( SolucaoOperacional & solucao, bool imprime_resu
    // precisa-se de uma instância multi-campi
 
    // Chamada dos métodos que fazem a avaliação da solução
-   // std::cout << "Avaliacao: ";
-   calculaViolacaoRestricaoFixacao(solucao);
-   // std::cout << "1";
-   calculaDescolamentoProfessor(solucao);
-   // std::cout << ", 2";
-   calculaDescolamentoBlocoCurricular(solucao);
-   // std::cout << ", 3";
-   calculaGapsHorariosProfessores(solucao);
-   // std::cout << ", 4";
-   avaliacaoCustoCorpoDocente(solucao);
-   // std::cout << ", 5";
-   violacoesCargasHorarias(solucao);
-   // std::cout << ", 6";
-   avaliaDiasProfessorMinistraAula(solucao);
-   // std::cout << ", 7";
-   violacaoUltimaPrimeiraAula(solucao);
-   // std::cout << ", 8";
-   avaliaNumeroMestresDoutores(solucao);
-   // std::cout << ", 9";
-   avaliaMaximoDisciplinasProfessorPorCurso(solucao);
-   // std::cout << ", 10";
-   avaliaPreferenciasProfessorDisciplina(solucao);
-   // std::cout << ", 11";
-   avaliaCustoProfessorVirtual(solucao);
-   // std::cout << ", 12";
-   avaliaTempoParcialIntegral(solucao);
-   // std::cout << ", 13\n";
+   calculaViolacaoRestricaoFixacao( solucao );
+   calculaDescolamentoProfessor( solucao );
+   calculaDescolamentoBlocoCurricular( solucao );
+   calculaGapsHorariosProfessores( solucao );
+   avaliacaoCustoCorpoDocente( solucao );
+   violacoesCargasHorarias( solucao );
+   avaliaDiasProfessorMinistraAula( solucao );
+   violacaoUltimaPrimeiraAula( solucao );
+   avaliaNumeroMestresDoutores( solucao );
+   avaliaMaximoDisciplinasProfessorPorCurso( solucao );
+   avaliaPreferenciasProfessorDisciplina( solucao );
+   avaliaCustoProfessorVirtual( solucao );
+   avaliaTempoParcialIntegral( solucao );
+   avaliaDisciplinasAssociadasProfessor( solucao );
+   avaliaProfessorMesmoBlocoCurricular( solucao );
+   avaliaConflitosBlocoCurricular( solucao );
 
    double funcao_objetivo = 0.0;
 
    // Contabilização do valor da solução
-   // TODO -- atribuir valores adequados aos PESOS
-   funcao_objetivo += (PESO_FIXACAO * totalViolacaoRestricaoFixacao);
-   funcao_objetivo += (PESO_DESLOCAMENTO * totalViolacoesDescolamento);
-   funcao_objetivo += (PESO_TEMPO_DESLOCAMENTO * totalTempoDescolamento);
-   funcao_objetivo += (PESO_VIOLACAO_DESLOCAMENTO_PROFESSOR * totalViolacoesDeslocamentoProfessor);
-   funcao_objetivo += (PESO_DESLOCAMENTO_PROFESSOR * totalDeslocamentosProfessor);
-   funcao_objetivo += (PESO_GAPS_HORARIO * totalGapsHorariosProfessores);
-   funcao_objetivo += (PESO_NOTA_CORPO_DOCENTE * totalAvaliacaoCorpoDocente);
-   funcao_objetivo += (PESO_CUSTO_CORPO_DOCENTE * totalCustoCorpoDocente);
-   funcao_objetivo += (PESO_CH_MINIMA_ANTERIOR * totalViolacoesCHMinimaSemestreAterior);
-   funcao_objetivo += (PESO_CH_MINIMA_PROFESSOR * totalViolacoesCHMinimaProfessor);
-   funcao_objetivo += (PESO_CH_MAXIMA_PROFESSOR * totalViolacoesCHMaximaProfessor);
-   funcao_objetivo += (PESO_TOTAL_DIAS_SEMANA * totalDiasProfessorMinistraAula);
-   funcao_objetivo += (PESO_ULTIMA_E_PRIMEIRA_AULA * totalViolacoesUltimaPrimeiraAula);
-   funcao_objetivo += (PESO_PERCENTUAL_MESTRES * totalViolacoesMestres);
-   funcao_objetivo += (PESO_PERCENTUAL_DOUTORES * totalViolacoesDoutores);
-   funcao_objetivo += (PESO_DISCIPLINAS_PROFESSOR_CURSO * totalViolacoesDiscProfCurso);
-   funcao_objetivo += (PESO_PREFERENCIA_DISCIPLINA * totalPreferenciasProfessorDisciplina);
-   funcao_objetivo += (PESO_NUMERO_PROFESSORES_VIRTUAIS * totalProfessoresVirtuais);
-   funcao_objetivo += (PESO_CREDITOS_PROFESSORES_VIRTUAIS * totalCreditosProfessoresVirtuais);
-   funcao_objetivo += (PESO_VIOLACOES_PARCIAL_INTEGRAL * totalViolacoesTempoParcialIntegral);
-   funcao_objetivo += (PESO_VIOLACOES_INTEGRAL * totalViolacoesTempoIntegral);
+   funcao_objetivo += ( PESO_FIXACAO * totalViolacaoRestricaoFixacao );
+   funcao_objetivo += ( PESO_DESLOCAMENTO * totalViolacoesDescolamento );
+   funcao_objetivo += ( PESO_TEMPO_DESLOCAMENTO * totalTempoDescolamento );
+   funcao_objetivo += ( PESO_VIOLACAO_DESLOCAMENTO_PROFESSOR * totalViolacoesDeslocamentoProfessor );
+   funcao_objetivo += ( PESO_DESLOCAMENTO_PROFESSOR * totalDeslocamentosProfessor );
+   funcao_objetivo += ( PESO_GAPS_HORARIO * totalGapsHorariosProfessores );
+   funcao_objetivo += ( PESO_NOTA_CORPO_DOCENTE * totalAvaliacaoCorpoDocente );
+   funcao_objetivo += ( PESO_CUSTO_CORPO_DOCENTE * totalCustoCorpoDocente );
+   funcao_objetivo += ( PESO_CH_MINIMA_ANTERIOR * totalViolacoesCHMinimaSemestreAterior );
+   funcao_objetivo += ( PESO_CH_MINIMA_PROFESSOR * totalViolacoesCHMinimaProfessor );
+   funcao_objetivo += ( PESO_CH_MAXIMA_PROFESSOR * totalViolacoesCHMaximaProfessor );
+   funcao_objetivo += ( PESO_TOTAL_DIAS_SEMANA * totalDiasProfessorMinistraAula );
+   funcao_objetivo += ( PESO_ULTIMA_E_PRIMEIRA_AULA * totalViolacoesUltimaPrimeiraAula );
+   funcao_objetivo += ( PESO_PERCENTUAL_MESTRES * totalViolacoesMestres );
+   funcao_objetivo += ( PESO_PERCENTUAL_DOUTORES * totalViolacoesDoutores );
+   funcao_objetivo += ( PESO_DISCIPLINAS_PROFESSOR_CURSO * totalViolacoesDiscProfCurso );
+   funcao_objetivo += ( PESO_PREFERENCIA_DISCIPLINA * totalPreferenciasProfessorDisciplina );
+   funcao_objetivo += ( PESO_NUMERO_PROFESSORES_VIRTUAIS * totalProfessoresVirtuais );
+   funcao_objetivo += ( PESO_CREDITOS_PROFESSORES_VIRTUAIS * totalCreditosProfessoresVirtuais );
+   funcao_objetivo += ( PESO_VIOLACOES_PARCIAL_INTEGRAL * totalViolacoesTempoParcialIntegral );
+   funcao_objetivo += ( PESO_VIOLACOES_INTEGRAL * totalViolacoesTempoIntegral );
+   funcao_objetivo += ( PESO_VIOLACOES_DISCIPLINAS_ASSOCIADAS * totalViolacoesDisciplinasAssociadas );
+   funcao_objetivo += ( PESO_VIOLACOES_PROFESSOR_MESMO_BLOCO * totalViolacoesProfessorMesmoBlocoCurricular );
+   funcao_objetivo += ( PESO_VIOLACOES_CONFLITO_BLOCO_CURRICULAR * totalViolacoesConflitosBlocoCurricular );
 
    // Exibe os resultados detalhados da avaliação
    if ( imprime_resultados )
@@ -201,7 +200,8 @@ double Avaliador::avaliaSolucao( SolucaoOperacional & solucao, bool imprime_resu
       this->imprimeResultados();
 
 	  std::cout << "FO value: " << funcao_objetivo
-				<< std::endl << std::endl;
+				   << std::endl << std::endl;
+
       std::cout << "===========================================================================\n\n";
    }
 
@@ -1294,10 +1294,10 @@ void Avaliador::avaliaMaximoDisciplinasProfessorPorCurso(SolucaoOperacional & so
    int violacoes_professor = 0;
 
    // Inicializa as violações de cada professor como zero
-   violacoesDisciplinasProfessor.clear();
+   violacoesMaximoDisciplinasProfessor.clear();
    for (unsigned int i = 0; i < solucao.mapProfessores.size(); i++)
    {
-      violacoesDisciplinasProfessor.push_back(0);
+      violacoesMaximoDisciplinasProfessor.push_back( 0 );
    }
 
    //-------------------------------------------------------------------------------------
@@ -1343,7 +1343,7 @@ void Avaliador::avaliaMaximoDisciplinasProfessorPorCurso(SolucaoOperacional & so
       }
 
       // Armazena o número de disciplinas excedidas para esse professor
-      violacoesDisciplinasProfessor[ linha_professor ] = violacoes_professor;
+      violacoesMaximoDisciplinasProfessor[ linha_professor ] = violacoes_professor;
    }
    //-------------------------------------------------------------------------------------
 
@@ -1377,13 +1377,6 @@ void Avaliador::avaliaPreferenciasProfessorDisciplina( SolucaoOperacional & solu
    int id_professor = 0;
    int id_disciplina = 0;
    int preferencia_disciplina = 0;
-
-   // Inicializa o vetor de violações de acda professor
-   preferenciasProfessor.clear();
-   for ( unsigned int i = 0; i < solucao.mapProfessores.size(); i++ )
-   {
-      preferenciasProfessor.push_back(0);
-   }
 
    // Para cada professor, criamos um map que relaciona cada
    // disciplina que esse professor leciona com a preferência
@@ -1464,7 +1457,7 @@ void Avaliador::avaliaPreferenciasProfessorDisciplina( SolucaoOperacional & solu
          nota_acumulada += nota_avaliacao;
 
          // Adiciona a avaliação no somatório do professor
-         preferenciasProfessor[i] += nota_avaliacao;
+         violacoesPreferenciasProfessor[ professor ] += nota_avaliacao;
       }
    }
 
@@ -1653,4 +1646,137 @@ void Avaliador::avaliaTempoParcialIntegral( SolucaoOperacional & solucao )
 
 	this->totalViolacoesTempoParcialIntegral = violacoesParcialIntegral;
 	this->totalViolacoesTempoIntegral = violacoesIntegral;
+}
+
+void Avaliador::avaliaDisciplinasAssociadasProfessor( SolucaoOperacional & solucao )
+{
+   int totalViolacoes = 0;
+
+   Professor * professor = NULL;
+   MatrizSolucao * matriz_solucao = solucao.getMatrizAulas();
+   MatrizSolucao::iterator it_matriz = matriz_solucao->begin();
+
+   for (; it_matriz != matriz_solucao->end(); it_matriz++ )
+   {
+      std::vector< Aula * > * aulas = ( *it_matriz );
+      std::vector< Aula * >::iterator it_aula = aulas->begin();
+
+      for (; it_aula != aulas->end(); it_aula++ )
+      {
+         Aula * aula = ( *it_aula );
+         if ( aula == NULL || aula->eVirtual() == true )
+         {
+            continue;
+         }
+
+         // Para essa aula, temos o professor ao qual ela
+         // está alocada e os respectivos horários de aula dela
+         std::pair< Professor *, std::vector< HorarioAula * > >
+            professor_horarios_aula = solucao.blocoAulas[ aula ];
+
+         // Professor que irá ministrar a disciplina
+         Professor * professor = professor_horarios_aula.first;
+
+         // Disciplina correspondente à aula
+         Disciplina * disciplina = aula->getDisciplina();
+
+         // Disciplinas que estão associadas ao professor
+         GGroup< Magisterio *, LessPtr< Magisterio > >
+            disciplinas_professor = professor->magisterio;
+
+         // Verifica se a disciplina dessa aula está associada ao professor
+         bool disciplina_associada = false;
+         Magisterio * magisterio = NULL;
+         ITERA_GGROUP_LESSPTR( it_magisterio, disciplinas_professor, Magisterio )
+         {
+            magisterio = ( *it_magisterio );
+
+            if ( magisterio->disciplina->getId() == disciplina->getId() )
+            {
+               // A disciplina está associada ao professor
+               disciplina_associada = true;
+               break;
+            }
+         }
+
+         // Verifica se houve violação
+         if ( !disciplina_associada )
+         {
+            totalViolacoes++;
+            violacoesDisciplinasAssociadasProfessor[ professor ].push_back( disciplina );
+         }
+      }
+   }
+
+   totalViolacoesDisciplinasAssociadas = totalViolacoes;
+}
+
+void Avaliador::avaliaProfessorMesmoBlocoCurricular( SolucaoOperacional & solucao )
+{
+   int totalViolacoes = 0;
+
+   Aula * aula = NULL;
+   int dia_semana = 0;
+   BlocoCurricular * bloco_curricular = NULL;
+   Professor * professor = NULL;
+
+   std::map< BlocoCurricular *, GGroup< Professor *, LessPtr< Professor > >,
+             LessPtr< BlocoCurricular > > map_professores_bloco_curricular;
+
+   // Para cada bloco curricular, procuro pelos professores
+   // que ministram aulas desse bloco, para ver se há repetição de algum deles
+   ITERA_GGROUP_LESSPTR( it_bloco, solucao.getProblemData()->blocos, BlocoCurricular )
+   {
+      bloco_curricular = ( *it_bloco );
+
+      std::map< int, GGroup< Aula *, LessPtr< Aula > > > aulas_bloco
+         = solucao.getProblemData()->blocoCurricularDiaAulas[ bloco_curricular ];
+
+      std::map< int, GGroup< Aula *, LessPtr< Aula > > >::iterator
+         it_aulas_dia = aulas_bloco.begin();
+
+      for (; it_aulas_dia != aulas_bloco.end(); it_aulas_dia++ )
+      {
+         dia_semana = ( it_aulas_dia->first );
+
+         ITERA_GGROUP_LESSPTR( it_aula, it_aulas_dia->second, Aula )
+         {
+            aula = ( *it_aula );
+
+            // Para essa aula, recuperamos o professor que está
+            // alocado a ela e seus respectivos horários de aula
+            std::pair< Professor *, std::vector< HorarioAula * > >
+               professor_horarios_aula = solucao.blocoAulas[ aula ];
+
+            // Professor que mininstra a aula
+            professor = professor_horarios_aula.first;
+
+            // Verifica se o professor já está alocado
+            // a alguma aula desse bloco curricular
+            if ( map_professores_bloco_curricular[ bloco_curricular ].find( professor )
+                  != map_professores_bloco_curricular[ bloco_curricular ].end() )
+            {
+               // Informa que houve violação
+               totalViolacoes++;
+            }
+            else
+            {
+               // Adiciona o professor no conjunto de
+               // professores do bloco curricular atual
+               map_professores_bloco_curricular[ bloco_curricular ].add( professor );
+            }
+         }
+      }
+   }
+
+   totalViolacoesProfessorMesmoBlocoCurricular = totalViolacoes;
+}
+
+void Avaliador::avaliaConflitosBlocoCurricular( SolucaoOperacional & solucao )
+{
+   int totalViolacoes = 0;
+
+   // TODO
+
+   totalViolacoesConflitosBlocoCurricular = totalViolacoes;
 }

@@ -8,8 +8,6 @@
 #include "Oferta.h"
 #include "Sala.h"
 
-//#include "input.h"
-
 class Aula
 {
 public:

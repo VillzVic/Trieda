@@ -145,8 +145,8 @@ void ProblemData::le_arvore( TriedaInput & raiz )
 	{
 		// ERRO no XML de entrada
 		std::cout << "ERROR!!! input inválido para os campos:"
-				  << "\n'horariosDisponiveis' e/ou 'creditosDisponiveis'"
-				  << "\n\nSando." << std::endl;
+				    << "\n'horariosDisponiveis' e/ou 'creditosDisponiveis'"
+				    << "\n\nSando." << std::endl;
 
 		exit(1);
 	}

@@ -168,10 +168,12 @@ public:
 
    // Estrutura que agrupa as aulas por bloco curricular e dia.
    std::map< BlocoCurricular *,
-			 std::map< int /*dia*/, GGroup< Aula *, LessPtr< Aula > > > > blocoCurricularDiaAulas;
+             std::map< int /*dia*/, GGroup< Aula *, LessPtr< Aula > > >,
+             LessPtr< BlocoCurricular > > blocoCurricularDiaAulas;
 
    // Estrutura que informa a quais blocos curriculares uma aula pertence.
-   std::map< Aula *, GGroup< BlocoCurricular *, LessPtr< BlocoCurricular > > > aulaBlocosCurriculares;
+   std::map< Aula *, GGroup< BlocoCurricular *, LessPtr< BlocoCurricular > >,
+             LessPtr< Aula > > aulaBlocosCurriculares;
 
    // Armazena todos os objetos turnos, de todos os campus
    GGroup< Turno *, LessPtr< Turno > > todos_turnos;

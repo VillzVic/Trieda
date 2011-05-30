@@ -17,7 +17,7 @@ Demanda::Demanda(Demanda const & demanda)
    disciplina = demanda.disciplina;
 }
 
-Demanda::~Demanda(void)
+Demanda::~Demanda( void )
 {
 
 }

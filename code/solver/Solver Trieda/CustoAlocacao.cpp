@@ -18,12 +18,15 @@ CustoAlocacao::CustoAlocacao( ProblemData & problemData, Professor & _professor,
    // Setando o custo referente à "disponibilidade do professor p".
    addCustoDispProf( professor.getCustoDispProf() );
 
-   std::map< Aula *, GGroup< BlocoCurricular *, LessPtr< BlocoCurricular > > >::iterator
-      itAulaBlocosCurriculares = problemData.aulaBlocosCurriculares.find(&aula);
+   std::map< Aula *, GGroup< BlocoCurricular *, LessPtr< BlocoCurricular > >, LessPtr< Aula > >::iterator
+      itAulaBlocosCurriculares = problemData.aulaBlocosCurriculares.find( &aula );
 
-   if(itAulaBlocosCurriculares == problemData.aulaBlocosCurriculares.end())
+   if ( itAulaBlocosCurriculares == problemData.aulaBlocosCurriculares.end() )
    {
-      std::cout << "\n\nAo calcular o custo de alocacao (Construtor da classe CustoAlocacao) alguma aula nao foi encontrada na estrutura <aulaBlocosCurriculares> do problemData.\n\n";
+      std::cout << "\n\nAo calcular o custo de alocacao (Construtor da "
+                << "classe CustoAlocacao) alguma aula nao foi encontrada "
+                << "na estrutura <aulaBlocosCurriculares> do problemData.\n\n";
+
       exit(1);
    }
 
@@ -31,7 +34,7 @@ CustoAlocacao::CustoAlocacao( ProblemData & problemData, Professor & _professor,
 }
 
 CustoAlocacao::CustoAlocacao( CustoAlocacao const & cstAlc )
-: professor( cstAlc.professor ), aula( cstAlc.aula )
+   : professor( cstAlc.professor ), aula( cstAlc.aula )
 {
    this->custosAlocacao = ( cstAlc.custosAlocacao );
    this->custo_total = ( cstAlc.custo_total );
