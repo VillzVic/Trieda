@@ -65,6 +65,16 @@ public:
       else if ( ofertas.size() > right.ofertas.size() )
          return false;
 
+      GGroup< Oferta *, LessPtr< Oferta > >::iterator it_this = this->ofertas.begin();
+      GGroup< Oferta *, LessPtr< Oferta > >::iterator it_right = right.ofertas.begin();
+      for (; it_this != this->ofertas.end(); it_this++, it_right++ )
+      {
+         if ( *it_this < *it_right )
+            return true;
+         if ( *it_this > *it_right )
+            return false;
+      }
+
       if( quantidade < right.quantidade )
          return true;
       else if ( quantidade > right.quantidade )

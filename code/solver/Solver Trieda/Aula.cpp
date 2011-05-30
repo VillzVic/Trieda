@@ -116,68 +116,31 @@ void Aula::toString() const
 {
    //-------------------------------------------------------------
    std::cout << "\n=================AULA================="
-			 << "\nTurma: " << turma
-			 << "\nDisciplina: " << disciplina->getCodigo()
-			 << std::endl;
+			    << "\nTurma: " << turma
+			    << "\nDisciplina: " << disciplina->getCodigo()
+			    << std::endl;
    //-------------------------------------------------------------
 
    //-------------------------------------------------------------
    // Exibe a lista de ofertas atendidas por essa aula
    std::cout << "Ofertas atendidas: ";
 
-   GGroup< Oferta *, LessPtr<Oferta> >::iterator 
+   GGroup< Oferta *, LessPtr< Oferta > >::iterator 
       itOferta = ofertas.begin();
 
-   for(; itOferta != ofertas.end(); ++itOferta)
-   //ITERA_GGROUP_LESSPTR(itOferta, ofertas, Oferta)
+   for (; itOferta != ofertas.end(); ++itOferta )
    {
       std::cout << itOferta->getId() << " ";
    }
-
    //-------------------------------------------------------------
 
    //-------------------------------------------------------------
    // Exibe os dados da aula
    std::cout << "\nSala de Aula: " << sala->getCodigo()
-			 << "\nDia da Semana: " << dia_semana
-			 << "\nCreditos Praticos: " << creditos_praticos
-			 << "\nCreditos Teoricos: " << creditos_teoricos
-          << "\nQuantidade: " << quantidade
-			 << std::endl;
+			    << "\nDia da Semana: " << dia_semana
+			    << "\nCreditos Praticos: " << creditos_praticos
+			    << "\nCreditos Teoricos: " << creditos_teoricos
+             << "\nQuantidade: " << quantidade
+			    << std::endl;
    //-------------------------------------------------------------
-
-   //std::cout << "\nProfessor (idOperacional): ";
-
-   //if(bloco_aula.empty())
-   //{ std::cout << " --- " << std::endl; }
-   //else
-   //{ std::cout << bloco_aula.begin()->first->getIdOperacional() << std::endl; }
-
-   ////-------------------------------------------------------------
-   //// Mostra os horários (bloco de aula) alocados ao professor
-   ////std::cout << "Horario(s):\n\t";
-   ////std::vector< std::pair< Professor *, Horario * > >::const_iterator
-   ////   itBloco_aula = bloco_aula.begin();
-   ////for(; itBloco_aula != bloco_aula.end();
-		 ////++itBloco_aula )
-   ////{
-	  //// HorarioAula * horario_aula
-		 ////  = itBloco_aula->second->horario_aula;
-
-   ////    std::cout << horario_aula->getInicio() << "\n\t";
-   ////}
-   //std::cout << "Horario\t\t\t\tHrio Id\t\tProfessor (id;idOperacional)\n\t";
-   //std::vector< std::pair< Professor *, Horario * > >::const_iterator
-   //   itBloco_aula = bloco_aula.begin();
-   //
-   //for(; itBloco_aula != bloco_aula.end();
-		 //++itBloco_aula )
-   //{
-	  // HorarioAula * horario_aula
-		 //  = itBloco_aula->second->horario_aula;
-
-   //   std::cout << horario_aula->getInicio() << "\t" << horario_aula->getId() << "\t\t(" << itBloco_aula->first->getId() << ";" << itBloco_aula->first->getIdOperacional() << ")\n\t";
-   //}
-   //std::cout << std::endl;
-   ////-------------------------------------------------------------
 }

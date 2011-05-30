@@ -1655,8 +1655,10 @@ int SolverMIP::solveOperacional()
    Avaliador avaliador;
    avaliador.avaliaSolucao( solucaoOperacional, true );
 
-   ITERA_GGROUP_LESSPTR(itAula,problemData->aulas,Aula)
-   { itAula->toString(); }
+   ITERA_GGROUP_LESSPTR( itAula, problemData->aulas, Aula )
+   {
+      itAula->toString();
+   }
 
    // Estruturas de Vizinhança
    // NSSeqSwapEqBlocks nsSeqSwapEqBlocks ( *problemData );
@@ -1964,17 +1966,20 @@ void SolverMIP::preencheOutputOperacional( ProblemSolution * solution )
 
                      //-------------------------------------------------------------------------------------
                      AtendimentoHorarioAula * atendimento_horario_aula = new AtendimentoHorarioAula();
-                     
+
                      HorarioAula * horario_aula = problemData->horarios_aula_ordenados[ horario_aula_id ];
                      Professor * professor = solution->solucao_operacional->getProfessorMatriz( linha_professor );
-                     
+
                      atendimento_horario_aula->setId( horario_aula->getId() );
                      atendimento_horario_aula->setHorarioAulaId( horario_aula->getId() );
                      atendimento_horario_aula->setProfessorId( professor->getId() );
                      atendimento_horario_aula->setProfVirtual( professor->eVirtual() );
                      atendimento_horario_aula->setCreditoTeorico( aula->getCreditosTeoricos() > 0 );
 
-                     ITERA_GGROUP_LESSPTR( it_oferta, aula->ofertas, Oferta )
+                     GGroup< Oferta *, LessPtr< Oferta > >::iterator 
+                        it_oferta = aula->ofertas.begin();
+
+                     for (; it_oferta != aula->ofertas.end(); ++it_oferta )
                      {
                         Oferta * oferta = ( *it_oferta );
                         AtendimentoOferta * atendimento_oferta = new AtendimentoOferta();
@@ -1984,14 +1989,13 @@ void SolverMIP::preencheOutputOperacional( ProblemSolution * solution )
                         atendimento_oferta->setTurma( aula->getTurma() );
                         atendimento_oferta->setQuantidade( aula->getQuantidade() );
 
-                        
                         char id_oferta_char[ 200 ];
                         sprintf( id_oferta_char, "%d", oferta->getId() );
                         std::string id_oferta_str = std::string( id_oferta_char );
                         atendimento_oferta->setOfertaCursoCampiId( id_oferta_str );
                         atendimento_oferta->oferta = oferta;
 
-                        atendimento_horario_aula->atendimentos_ofertas->add( atendimento_oferta );
+                        atendimento_horario_aula->atendimentos_ofertas->add( atendimento_oferta );                        
                      }
 
                      atendimento_turno->atendimentos_horarios_aula->add( atendimento_horario_aula );
@@ -2015,7 +2019,7 @@ bool SolverMIP::aulaAlocada( Aula * aula, Campus * campus,
    bool aula_alocada = true;
 
    int id_unidade_aula = aula->getSala()->getIdUnidade();
-   int id_campus_aula = problemData->refCampus[ id_unidade_aula ]->getId();
+   int id_campus_aula = problemData->refUnidade[ id_unidade_aula ]->getIdCampus();
    int id_sala_aula = aula->getSala()->getId();
    int dia_semana_aula = aula->getDiaSemana();
 

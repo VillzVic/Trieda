@@ -129,12 +129,14 @@ int SolucaoOperacional::max_horarios_dia()
 {
    int tam = 0;
    int max_horarios = 0;
+
    std::map< int, GGroup< HorarioAula *, LessPtr< HorarioAula > > >::iterator
       it_map = this->getProblemData()->horarios_aula_dia_semana.begin();
-   for (; it_map != this->getProblemData()->horarios_aula_dia_semana.end();
-      it_map++ )
+
+   for (; it_map != this->getProblemData()->horarios_aula_dia_semana.end(); it_map++ )
    {
       tam = it_map->second.size();
+
       if ( tam > max_horarios )
       {
          max_horarios = tam;
@@ -221,15 +223,17 @@ MatrizSolucao * SolucaoOperacional::getMatrizAulas() const
    return ( this->matriz_aulas );
 }
 
-bool SolucaoOperacional::seqHorarioLivre(int idOperacionaProf, int dia, std::vector<int> & seqHorarioAula) const
+bool SolucaoOperacional::seqHorarioLivre( int idOperacionaProf, int dia, std::vector< int > & seqHorarioAula ) const
 {
-   std::vector<int>::const_iterator 
+   std::vector< int >::const_iterator 
       itHorarioAula = seqHorarioAula.begin();
 
-   for(; itHorarioAula != seqHorarioAula.end(); ++itHorarioAula)
+   for (; itHorarioAula != seqHorarioAula.end(); ++itHorarioAula )
    {
-      if(matriz_aulas->at(idOperacionaProf)->at((((dia-1)*total_horarios) + (*itHorarioAula))) != NULL)
-      { return false; }
+      if ( matriz_aulas->at( idOperacionaProf )->at( ( ( ( dia - 1) * total_horarios ) + ( *itHorarioAula ) ) ) != NULL )
+      {
+         return false;
+      }
    }
 
    return true;
@@ -286,7 +290,7 @@ void SolucaoOperacional::toString2() const
          if ( aula != NULL && !aula->eVirtual() )
          {
             std::cout << "T(" << aula->getTurma()
-					  << ")_D(" << aula->getDisciplina()->getCodigo()
+   					    << ")_D(" << aula->getDisciplina()->getCodigo()
                       << ")_S(" << aula->getSala()->getCodigo()
                       << ")_Dia(" << aula->getDiaSemana()
                       << ")_Qtd(" << aula->getQuantidade() << "),\t";
@@ -306,7 +310,7 @@ void SolucaoOperacional::toString2() const
 }
 
 Horario * SolucaoOperacional::getHorario( int id_professor_operacional,
-                                         int dia_semana, int id_horario_aula ) const
+                                          int dia_semana, int id_horario_aula ) const
 {
    Professor * professor = this->getProfessorMatriz( id_professor_operacional );
    HorarioAula * horario_aula = this->getProblemData()->horarios_aula_ordenados[ id_horario_aula ];

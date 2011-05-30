@@ -3399,6 +3399,7 @@ void ProblemDataLoader::criaAulas()
                      // dia da semana, sala e turma. Caso encontre,
                      // devo apenas add a oferta à aula existente.
                      bool novaAula = true;
+                     Aula *aulaAntiga = NULL;
                      ITERA_GGROUP_LESSPTR( itAula, problemData->aulas, Aula )
                      {
                         if( ( itAula->getTurma() == turma )
@@ -3408,9 +3409,9 @@ void ProblemDataLoader::criaAulas()
                            && ( itAula->getCreditosPraticos() == creditos_praticos )
                            && ( itAula->getCreditosTeoricos() == creditos_teoricos ) )
                         {
-                           itAula->ofertas.add( problemData->refOfertas[ atendOferta->getOfertaCursoCampiId() ] );
-                           itAula->setQuantidade((itAula->getQuantidade() + demandaAtendida));
+                           aulaAntiga = *itAula;
                            novaAula = false;
+                           problemData->aulas.remove(itAula);
                            break;
                         }
                      }
@@ -3430,6 +3431,12 @@ void ProblemDataLoader::criaAulas()
 
                         problemData->aulas.add( aula );
                      }
+                     else
+                     {
+                        aulaAntiga->ofertas.add(problemData->refOfertas[ atendOferta->getOfertaCursoCampiId() ]);
+                        aulaAntiga->setQuantidade((aulaAntiga->getQuantidade() + demandaAtendida));
+                        problemData->aulas.add(aulaAntiga);
+                     }
                   }
                }
             }
@@ -3442,20 +3449,15 @@ void ProblemDataLoader::criaAulas()
       relacionaBlocoCurricularAulas();
 
       std::cout << "Total de aulas criadas: "
-         << problemData->aulas.size() << std::endl;
-
-      //ITERA_GGROUP_LESSPTR(itAula,problemData->aulas,Aula)
-      //{
-      //   itAula->toString();
-      //}
+                << problemData->aulas.size() << std::endl;
    }
 }
 
 void ProblemDataLoader::relacionaBlocoCurricularAulas()
 {
    std::cout << "\n\n\nALTERAR O METODO <void ProblemDataLoader::"
-      << "relacionaBlocoCurricularAulas()> PARA PODER CONTEMPLAR AS "
-      << "MUDANCAS NAS ESTRUTURAS <aulaBlocosCurriculares> E <blocoCurricularDiaAulas>.\n\n\n";
+             << "relacionaBlocoCurricularAulas()> PARA PODER CONTEMPLAR AS "
+             << "MUDANCAS NAS ESTRUTURAS <aulaBlocosCurriculares> E <blocoCurricularDiaAulas>.\n\n\n";
 
    // ANTES DISSO, ALTERAR AS ESTRUTURAS. COMO SERÃO?! PENSAR.
 
