@@ -1715,11 +1715,13 @@ void Avaliador::avaliaProfessorMesmoBlocoCurricular( SolucaoOperacional & soluca
 {
    int totalViolacoes = 0;
 
-   Aula * aula = NULL;
    int dia_semana = 0;
+   Aula * aula = NULL;
    BlocoCurricular * bloco_curricular = NULL;
    Professor * professor = NULL;
 
+   // Para cada bloco curricular, relaciona os
+   // professores que ministram alguma aula desse bloco
    std::map< BlocoCurricular *, GGroup< Professor *, LessPtr< Professor > >,
              LessPtr< BlocoCurricular > > map_professores_bloco_curricular;
 
@@ -1729,19 +1731,28 @@ void Avaliador::avaliaProfessorMesmoBlocoCurricular( SolucaoOperacional & soluca
    {
       bloco_curricular = ( *it_bloco );
 
+      // Para cada dia da semana, temo o conjunto de aulas alocadas nesse dia
       std::map< int, GGroup< Aula *, LessPtr< Aula > > > aulas_bloco
          = solucao.getProblemData()->blocoCurricularDiaAulas[ bloco_curricular ];
 
       std::map< int, GGroup< Aula *, LessPtr< Aula > > >::iterator
          it_aulas_dia = aulas_bloco.begin();
 
+      // Para cada dia da semana, verificamos os professores
+      // que ministrarão aulas nesse dia, procurando por professores repetidos
       for (; it_aulas_dia != aulas_bloco.end(); it_aulas_dia++ )
       {
          dia_semana = ( it_aulas_dia->first );
 
+         // Percorre as aulas alocadas ao bloco
+         // curricular atual, em cada dia da semana
          ITERA_GGROUP_LESSPTR( it_aula, it_aulas_dia->second, Aula )
          {
             aula = ( *it_aula );
+            if ( aula == NULL || aula->eVirtual() == true )
+            {
+               continue;
+            }
 
             // Para essa aula, recuperamos o professor que está
             // alocado a ela e seus respectivos horários de aula
@@ -1776,7 +1787,92 @@ void Avaliador::avaliaConflitosBlocoCurricular( SolucaoOperacional & solucao )
 {
    int totalViolacoes = 0;
 
-   // TODO
+   int dia_semana = 0;
+   Aula * aula = NULL;
+   Disciplina * disciplina = NULL;
+   HorarioAula * horario_aula = NULL;
+   BlocoCurricular * bloco_curricular = NULL;
+   Professor * professor = NULL;
+
+   // Map que relaciona os horários de aula que foram alocados
+   // a cada disciplina, em cada dia da semana, para cada bloco curricular
+   std::map< std::pair< BlocoCurricular *, int >,
+             std::map< Disciplina *, GGroup< HorarioAula *, LessPtr< HorarioAula > > ,
+                       LessPtr< Disciplina > > > map_bloco_dia_disciplina_horarios;
+
+   // Para cada bloco curricular, procura pelos
+   // horários de aula de cada disciplina, por dia da semana
+   ITERA_GGROUP_LESSPTR( it_bloco, solucao.getProblemData()->blocos, BlocoCurricular )
+   {
+      bloco_curricular = ( *it_bloco );
+
+      // Para cada dia da semana, temo o conjunto de aulas alocadas nesse dia
+      std::map< int, GGroup< Aula *, LessPtr< Aula > > > aulas_bloco
+         = solucao.getProblemData()->blocoCurricularDiaAulas[ bloco_curricular ];
+
+      std::map< int, GGroup< Aula *, LessPtr< Aula > > >::iterator
+         it_aulas_dia = aulas_bloco.begin();
+
+      // Para cada dia da semana, verificamos se há aulas
+      // do mesmo bloco alocadas em um memso horário de aula
+      for (; it_aulas_dia != aulas_bloco.end(); it_aulas_dia++ )
+      {
+         dia_semana = ( it_aulas_dia->first );
+
+         std::pair< BlocoCurricular *, int > bloco_dia
+            = std::make_pair( bloco_curricular, dia_semana );
+
+         // Percorre as aulas alocadas ao bloco
+         // curricular atual, em cada dia da semana
+         ITERA_GGROUP_LESSPTR( it_aula, it_aulas_dia->second, Aula )
+         {
+            aula = ( *it_aula );
+            if ( aula == NULL || aula->eVirtual() == true )
+            {
+               continue;
+            }
+
+            // Disciplina correspondente à aula
+            disciplina = aula->getDisciplina();
+
+            // Para essa aula, recuperamos o professor que está
+            // alocado a ela e seus respectivos horários de aula
+            std::pair< Professor *, std::vector< HorarioAula * > >
+               professor_horarios_aula = solucao.blocoAulas[ aula ];
+
+            // Professor que mininstra a aula
+            professor = professor_horarios_aula.first;
+
+            // Horários aula dessa aula
+            std::vector< HorarioAula * > horarios_aula
+               = professor_horarios_aula.second;
+
+            // Informamos que para o bloco curricular e dia atuais,
+            // a disciplina da aula atual está alocada nos horários
+            // de aula citados abaixo. Caso o horário de aula já
+            // esteja assinalado à disciplina, verificamos que houve
+            // uma violação de disciplinas de um mesmo bloco curricular
+            // alocadas em um mesmo horário de aula na solução operacional
+            ITERA_VECTOR( it_horario_aula, horarios_aula, HorarioAula )
+            {
+               horario_aula = ( *it_horario_aula );
+
+               // Verifica se houve a violação
+               if ( map_bloco_dia_disciplina_horarios[ bloco_dia ][ disciplina ].find( horario_aula )
+                     != map_bloco_dia_disciplina_horarios[ bloco_dia ][ disciplina ].end() )
+               {
+                  totalViolacoes++;
+               }
+               else
+               {
+                  // Como não houve a violção, informamos aqui que
+                  // esse horário de aula já foi alocado a essa disciplina
+                  map_bloco_dia_disciplina_horarios[ bloco_dia ][ disciplina ].add( horario_aula );
+               }
+            }
+         }
+      }
+   }
 
    totalViolacoesConflitosBlocoCurricular = totalViolacoes;
 }

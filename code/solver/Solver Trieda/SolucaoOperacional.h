@@ -37,7 +37,7 @@ public:
 
    // Dado um índice que corresponde a uma linha da
    // matriz de solução, retorna o professor correspondente
-   Professor * getProfessorMatriz(int) const;
+   Professor * getProfessorMatriz( int ) const;
 
    ProblemData * getProblemData() const;
 
@@ -114,8 +114,9 @@ public:
    bool fixacaoProfDiscSala( Aula *, int );
    bool fixacaoProfSala( Aula *, int );
 
-   /* Trata-se de um método para facilitar a alocação das aulas.
-   Nenhuma checagem é realizada. As aulas apenas são alocadas para o(s) horário(s) especificado(s).*/
+   // Trata-se de um método para facilitar a alocação
+   // das aulas. Nenhuma checagem é realizada. As aulas
+   // apenas são alocadas para o(s) horário(s) especificado(s).
    void alocaAulaProf( Aula &, Professor &, std::vector< HorarioAula * > );
 
 private:
@@ -142,13 +143,14 @@ private:
 class TesteSolucaoOperacional
 {
 public:
-   TesteSolucaoOperacional(std::string str)
+   TesteSolucaoOperacional( std::string str )
    {
       std::cout << "Erro na validacao da solucao.\n\n" << str << std::endl;
+
       exit(1);
    }
 
-   virtual ~TesteSolucaoOperacional() {};
+   virtual ~TesteSolucaoOperacional() {  };
 };
 
 #endif
