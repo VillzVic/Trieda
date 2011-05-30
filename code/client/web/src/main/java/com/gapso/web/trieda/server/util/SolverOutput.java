@@ -174,7 +174,13 @@ public class SolverOutput {
 		return atendimentosOperacional;
 	}
 	
+	Map<Integer, ProfessorVirtual> professoresVirtuais = new HashMap<Integer, ProfessorVirtual>();
 	private ProfessorVirtual getProfessorVirtual(Integer idAux) {
+		ProfessorVirtual professorVirtualAux = professoresVirtuais.get(idAux);
+		if(professorVirtualAux != null) {
+			return professorVirtualAux;
+		}
+		
 		for(ItemProfessorVirtual pvAux : triedaOutput.getProfessoresVirtuais().getProfessorVirtual()) {
 			if(idAux.equals(pvAux.getId() * -1)) {
 				ProfessorVirtual pv = new ProfessorVirtual();
@@ -187,6 +193,7 @@ public class SolverOutput {
 				}
 				pv.setTitulacao(Titulacao.find(Integer.valueOf(pvAux.getTitulacaoId()).longValue()));
 				pv.persist();
+				professoresVirtuais.put(idAux, pv);
 				return pv;
 			}
 		}

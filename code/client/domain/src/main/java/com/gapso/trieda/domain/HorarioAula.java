@@ -2,8 +2,10 @@ package com.gapso.trieda.domain;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -194,6 +196,14 @@ public class HorarioAula implements Serializable {
     	q.setParameter("turno", turno);
     	return q.getResultList();
     }
+    
+	public static Map<Long, HorarioAula> buildHorarioAulaIdToHorarioAulaMap(List<HorarioAula> horariosAulas) {
+		Map<Long, HorarioAula> horariosMap = new HashMap<Long, HorarioAula>();
+		for (HorarioAula horario : horariosAulas) {
+			horariosMap.put(horario.getId(), horario);
+		}
+		return horariosMap;
+	}
     
     public SemanaLetiva getSemanaLetiva() {
         return this.semanaLetiva;

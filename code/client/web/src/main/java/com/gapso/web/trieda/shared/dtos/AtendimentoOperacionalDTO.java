@@ -321,12 +321,20 @@ public class AtendimentoOperacionalDTO extends AbstractDTO<String> implements Co
 	}
 	
 	public String getContentToolTipVisaoSala() {
+		String professor = "";
+		if(isProfessorVirtual()) {
+			professor = "<b>"+getProfessorVirtualString()+"</b>";
+		} else {
+			professor = "<b>Professor:</b> "+ getProfessorString();
+		}
 		return "<b>Turma:</b> "+ getTurma() + "<br />"
 		+ "<b>Crédito(s) " + ((getCreditoTeoricoBoolean())? "Teórico(s)" : "Prático(s)") + ":</b> " + getTotalLinhas()+" de "+getTotalCreditos() + "<br />"
 		+ "<b>Curso:</b> " + getCursoNome() +"<br />"
 		+ "<b>Matriz Curricular:</b> " + getCurriculoString() + "<br />"
 		+ "<b>Período:</b> "+ getPeriodoString() +"<br />" 
-		+ "<b>Quantidade:</b> "+ getQuantidadeAlunosString() +"<br />";
+		+ "<b>Quantidade:</b> "+ getQuantidadeAlunosString() +"<br />"
+		+ professor;
+		
 	}
 	
 	public String getContentVisaoProfessor() {
@@ -419,6 +427,16 @@ public class AtendimentoOperacionalDTO extends AbstractDTO<String> implements Co
 	@Override
 	public Integer getTotalCreditoDisciplina() {
 		return getTotalCreditos();
+	}
+
+	@Override
+	public boolean isTatico() {
+		return false;
+	}
+
+	@Override
+	public boolean isProfessorVirtual() {
+		return !TriedaUtil.isBlank(getProfessorVirtualId());
 	}
 
 	

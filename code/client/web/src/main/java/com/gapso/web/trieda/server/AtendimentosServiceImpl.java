@@ -15,6 +15,7 @@ import com.gapso.trieda.domain.AtendimentoOperacional;
 import com.gapso.trieda.domain.AtendimentoTatico;
 import com.gapso.trieda.domain.Campus;
 import com.gapso.trieda.domain.Curriculo;
+import com.gapso.trieda.domain.HorarioAula;
 import com.gapso.trieda.domain.Professor;
 import com.gapso.trieda.domain.Sala;
 import com.gapso.trieda.domain.Turno;
@@ -94,7 +95,55 @@ public class AtendimentosServiceImpl extends RemoteServiceServlet implements Ate
 		return list;
 	}
 
+	public List<AtendimentoRelatorioDTO> preMontaListaOperacionalParaVisaoSala(List<AtendimentoRelatorioDTO> list) {
+		List<AtendimentoRelatorioDTO> ret = new ArrayList<AtendimentoRelatorioDTO>();
+		
+		// Agrupa os DTOS pela chave [Curso-Disciplina-Turma-DiaSemana] 
+		Map<String, List<AtendimentoRelatorioDTO>> atendimentoTaticoDTOMap = new HashMap<String, List<AtendimentoRelatorioDTO>>();
+		for (AtendimentoRelatorioDTO dto : list) {
+			String key = dto.getCursoNome() + "-" + dto.getDisciplinaString() + "-" + dto.getTurma() + "-" + dto.getSemana();
+			List<AtendimentoRelatorioDTO> dtoList = atendimentoTaticoDTOMap.get(key);
+			if (dtoList == null) {
+				dtoList = new ArrayList<AtendimentoRelatorioDTO>();
+				atendimentoTaticoDTOMap.put(key,dtoList);
+			}
+			dtoList.add(dto);
+		}
+		
+		final Map<Long, HorarioAula> horarios = HorarioAula.buildHorarioAulaIdToHorarioAulaMap(HorarioAula.findAll());
+		
+		for (Entry<String,List<AtendimentoRelatorioDTO>> entry : atendimentoTaticoDTOMap.entrySet()) {
+		
+			List<AtendimentoRelatorioDTO> ordenadoPorHorario = new ArrayList<AtendimentoRelatorioDTO>(entry.getValue());
+			
+			Collections.sort(ordenadoPorHorario, new Comparator<AtendimentoRelatorioDTO>() {
+				@Override
+				public int compare(AtendimentoRelatorioDTO a1, AtendimentoRelatorioDTO a2) {
+					AtendimentoOperacionalDTO arg1= (AtendimentoOperacionalDTO)a1;
+					AtendimentoOperacionalDTO arg2 = (AtendimentoOperacionalDTO)a2;
+					
+					HorarioAula h1 = horarios.get(arg1.getHorarioId());
+					HorarioAula h2 = horarios.get(arg2.getHorarioId());
+					
+					return h1.getHorario().compareTo(h2.getHorario());
+				}
+			});
+			
+			AtendimentoOperacionalDTO dtoMain = (AtendimentoOperacionalDTO)ordenadoPorHorario.get(0);
+			dtoMain.setTotalCreditos(ordenadoPorHorario.size());
+			
+			ret.add(dtoMain);
+		}
+		
+		return ret;
+	}
 	public List<AtendimentoRelatorioDTO> montaListaParaVisaoSala(List<AtendimentoRelatorioDTO> list) {
+		
+		if(!list.isEmpty() && (list.get(0) instanceof AtendimentoOperacionalDTO)) {
+			list = preMontaListaOperacionalParaVisaoSala(list);
+		}
+		
+		
 		// Agrupa os DTOS pela chave [Disciplina-Turma-DiaSemana] 
 		Map<String, List<AtendimentoRelatorioDTO>> atendimentoTaticoDTOMap = new HashMap<String, List<AtendimentoRelatorioDTO>>();
 		for (AtendimentoRelatorioDTO dto : list) {
@@ -122,6 +171,7 @@ public class AtendimentosServiceImpl extends RemoteServiceServlet implements Ate
 				processedList.add(dtoMain);
 			}
 		}
+		
 		return processedList;
 	}
 	

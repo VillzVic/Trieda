@@ -1198,9 +1198,18 @@ public class ConvertBeans {
 		dto.setTurnoId(ha.getTurno().getId());
 		dto.setTurnoString(ha.getTurno().getNome());
 		
-		dto.setProfessorId(domain.getProfessor().getId());
-		dto.setProfessorString(domain.getProfessor().getNome());
+		
+		if(domain.getProfessorVirtual() == null) {
+			dto.setProfessorId(domain.getProfessor().getId());
+			dto.setProfessorString(domain.getProfessor().getNome());
+		} else {
+			dto.setProfessorVirtualId(domain.getProfessorVirtual().getId());
+			dto.setProfessorVirtualString("Professor Virtual " + domain.getProfessorVirtual().getId());
+		}
+		
 		dto.setCreditoTeoricoBoolean(domain.getCreditoTeorico());
+		
+		
 		
 		dto.setOfertaId(domain.getOferta().getId());
 		dto.setDisciplinaId(domain.getDisciplina().getId());

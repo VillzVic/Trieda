@@ -350,4 +350,19 @@ public class AtendimentoTaticoDTO extends AbstractDTO<String> implements Compara
 		}
 		return count;
 	}
+
+	@Override
+	public boolean isTatico() {
+		return true;
+	}
+
+	@Override
+	public boolean isProfessorVirtual() {
+		return false;
+	}
+
+	@Override
+	public String getProfessorString() {
+		return "";
+	}
 }
