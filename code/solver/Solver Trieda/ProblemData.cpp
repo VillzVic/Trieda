@@ -285,27 +285,31 @@ Demanda * ProblemData::buscaDemanda( Curso * curso, Disciplina * disciplina )
 
 Disciplina * ProblemData::retornaDisciplinaSubstituta( Curso * curso, Curriculo * curriculo, Disciplina * disciplina )
 {
-    Disciplina * disciplina_equivalente = NULL;
+   std::map< std::pair< Curso *, Curriculo * >,
+      std::map< Disciplina *, GGroup< Disciplina *, LessPtr< Disciplina > > > >::iterator
+      it_map = mapGroupDisciplinasSubstituidas.begin();
 
-	std::pair< Curso *, Curriculo * > curso_curriculo
-		= std::make_pair( curso, curriculo );
+   for (; it_map != mapGroupDisciplinasSubstituidas.end(); it_map++ )
+   {
+      std::map< Disciplina *, GGroup< Disciplina *, LessPtr< Disciplina > > >::iterator
+         it_disciplinas = it_map->second.begin();
+      for (; it_disciplinas != it_map->second.end(); it_disciplinas++ )
+      {
+         Disciplina * disciplina_substituta = it_disciplinas->first;
 
-	std::map< Disciplina *, Disciplina * >::iterator
-		it_map = this->map_CursoCurriculo_DiscSubst[ curso_curriculo ].begin();
+         ITERA_GGROUP_LESSPTR( it_disc_equi, it_disciplinas->second, Disciplina )
+         {
+            Disciplina * disciplina_equivalente = ( *it_disc_equi );
 
-	for (; it_map != this->map_CursoCurriculo_DiscSubst[ curso_curriculo ].end(); it_map++ )
-	{			
-		disciplina_equivalente = ( *it_map ).first;
+            if ( disciplina_equivalente->getId() == disciplina->getId() )
+            {
+               return disciplina_substituta;
+            }
+         }
+      }      
+   }
 
-		if ( disciplina_equivalente->getId() == disciplina->getId() )
-		{
-			// A disciplina informada foi substituída
-			// --> retorna-se a disciplina que substituiu a disciplina informada
-			return ( *it_map ).second;
-		}
-	}
-
-	return NULL;
+   return NULL;
 }
 
 int ProblemData::creditosFixadosDisciplinaDia(

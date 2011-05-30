@@ -237,11 +237,6 @@ size_t VariableHasher::operator()(const Variable& v) const
 {
    unsigned int sum = 0;
 
-   /**
-   ToDo:
-   All pointers different from NULL must be considered in the hash function
-   **/
-
    if(v.getCampus()) {
       sum *= HASH_PRIME; sum+= intHash(v.getCampus()->getId());
    }

@@ -3326,7 +3326,7 @@ void ProblemDataLoader::relacionaDiscOfertas()
          it_Oferta->curriculo->disciplinas_periodo.begin();
 
       for (; it_Prd_Disc != it_Oferta->curriculo->disciplinas_periodo.end();
-         it_Prd_Disc++ )
+             it_Prd_Disc++ )
       { 
          disciplina = ( *it_Prd_Disc ).second;
          int disc = disciplina->getId();
@@ -3336,6 +3336,13 @@ void ProblemDataLoader::relacionaDiscOfertas()
          // Utilizado em equivalências de disciplinas
          std::pair< Curso *, Curriculo * > curso_curriculo
             = std::make_pair( it_Oferta->curso, it_Oferta->curriculo );
+
+         if ( disciplina->getId() == 9 )
+         {
+            int k = 0;
+            k++;
+         }
+
          problemData->map_Disc_CursoCurriculo[ disciplina ] = curso_curriculo;
       }
    }

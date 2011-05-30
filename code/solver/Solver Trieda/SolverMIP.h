@@ -176,6 +176,13 @@ public:
       int, Oferta *, Curso *, Disciplina *, int, BlocoCurricular * );
 
 private:
+   // Dada uma disciplina 'A' que foi substituída por uma de suas disciplinas equivalentes 'B',
+   // esse map informa o conjunto de variáveis que foram criadas para 'B' referentes à disciplina 'A'
+   std::map< Disciplina *, std::vector< Variable > > mapVariaveisDisciplinasEquivalentes;
+
+   std::vector< Variable > filtraVariaveisAlunos( std::vector< Variable > );
+   std::vector< Variable > filtraVariaveisCreditos( std::vector< Variable > );
+
    // Vetor responsável por armazenar ponteiros para todas as
    // variáveis do  tipo V_CREDITOS com credito(s) alocado(s).
    typedef vector< Variable * > vars__X___i_d_u_tps_t;

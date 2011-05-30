@@ -4,7 +4,7 @@
 #include <hash_map>
 #include "input.h"
 
-//Variables
+// Variables
 class Variable 
 {
 public:
@@ -54,25 +54,23 @@ public:
    // Return value
    double getValue() const { return value; }
 
-   /*
-   ToDo:
-   All get methods of the private attributes should be defined here
-   */
+   Campus * getCampus() const { return cp; }
 
-   Campus* getCampus() const { return cp; }
-   Unidade* getUnidade() const { return u; }
-   Sala* getSala() const { return s; }
+   Unidade * getUnidade() const { return u; }
 
-   ConjuntoSala* getSubCjtSala() const { return tps; }
+   Sala * getSala() const { return s; }
+
+   ConjuntoSala * getSubCjtSala() const { return tps; }
 
    int getTurma() const { return i; }
 
-   Curso* getCurso() const { return c; }
+   Curso * getCurso() const { return c; }
 
-   Curso* getCursoIncompat() const { return c_incompat; }
+   Curso * getCursoIncompat() const { return c_incompat; }
 
-   BlocoCurricular* getBloco() const { return b; }
-   Disciplina* getDisciplina() const { return d; }
+   BlocoCurricular * getBloco() const { return b; }
+
+   Disciplina * getDisciplina() const { return d; }
 
    int getSubBloco() const { return j; }
 
@@ -89,97 +87,82 @@ public:
    void reset();
 
    // Set variable type
-   void setType(VariableType t)                 { type = t; }
+   void setType( VariableType t ) { type = t; }
 
    // Set value
-   void setValue(double v)                      { value = v; }
+   void setValue( double v ) { value = v; }
 
-   /*
-   ToDo:
-   All set methods of the private attributes should be defined here
-   */
+   void setCampus( Campus * cpp ) { cp = cpp; }
 
-   void setCampus(Campus* cpp) { cp = cpp; }
-   void setUnidade(Unidade* uu) {  u = uu; }
-   void setSala(Sala* ss) {  s = ss; }
+   void setUnidade( Unidade * uu ) {  u = uu; }
 
-   void setSubCjtSala(ConjuntoSala * tpss)  { tps = tpss; }
+   void setSala( Sala * ss ) {  s = ss; }
 
-   void setTurma(int ii) { i = ii; }
-   void setCurso(Curso* cc) { c = cc; }
+   void setSubCjtSala( ConjuntoSala * tpss )  { tps = tpss; }
 
-   void setCursoIncompat(Curso* cc) { c_incompat = cc; }
+   void setTurma( int ii ) { i = ii; }
 
-   void setBloco(BlocoCurricular* bb) {  b = bb; } 
-   void setDisciplina(Disciplina* dd) {  d = dd; }
+   void setCurso( Curso * cc ) { c = cc; }
 
-   void setSubBloco(int jj) { j = jj; }   
+   void setCursoIncompat( Curso * cc ) { c_incompat = cc; }
 
-   void setDia(int tt) {  t = tt; }
+   void setBloco( BlocoCurricular * bb ) {  b = bb; } 
 
-   void setOferta(Oferta * oferta) { o = oferta; }
+   void setDisciplina( Disciplina * dd ) {  d = dd; }
 
-   void setK(int kk) { k = kk; }
+   void setSubBloco( int jj ) { j = jj; }   
+
+   void setDia( int tt ) {  t = tt; }
+
+   void setOferta( Oferta * oferta ) { o = oferta; }
+
+   void setK( int kk ) { k = kk; }
 
    //==================================================
    // OPERATORS 
    //==================================================
-   //Assignment 
-   Variable& operator=(const Variable& var);
-   //Less 
-   bool operator<(const Variable& var) const;
-   //Equals 
-   bool operator==(const Variable& var) const;
+   // Assignment 
+   Variable & operator = ( const Variable & );
+   // Less 
+   bool operator < ( const Variable & ) const;
+   // Equals 
+   bool operator == ( const Variable & ) const;
 
-   //Variable name
+   // Variable name
    std::string toString();
 
 private:
    VariableType type;
    double value;
-
-   /* ToDo:
-   All attributes that define a variable should be declared here
-   */
-
-   Campus *cp;
-   Unidade* u;
-   Sala* s;
-
-   ConjuntoSala* tps;
-
+   Campus * cp;
+   Unidade * u;
+   Sala * s;
+   ConjuntoSala * tps;
    int i; // Turma
-   Curso* c;
-
-   Curso* c_incompat;
-
-   BlocoCurricular* b;
-   Disciplina* d;
-
+   Curso * c;
+   Curso * c_incompat;
+   BlocoCurricular * b;
+   Disciplina * d;
    int j; // subbloco
-
    int t; // dia
-
    Oferta * o; // oferta
-
    int k; // combinação de divisão de créditos
-
 };
 
 
 class VariableHasher : public stdext::hash_compare<Variable>
 {
 public:
-   //Less operator
-   bool operator()(const Variable& v1, const Variable& v2) const;
+   // Less operator
+   bool operator()( const Variable &, const Variable & ) const;
 
-   //Hash value
-   size_t operator()(const Variable& v) const;
+   // Hash value
+   size_t operator()( const Variable & ) const;
 };
 
 /**
 * Type definition for the hash object.
 */
-typedef stdext::hash_map<Variable, int, VariableHasher> VariableHash;
+typedef stdext::hash_map< Variable, int, VariableHasher > VariableHash;
 
 #endif 

@@ -1,6 +1,9 @@
 #ifndef _PROBLEM_DATA_H_
 #define _PROBLEM_DATA_H_
 
+#include <iostream>
+#include <vector>
+
 #include "input.h"
 #include "Calendario.h"
 #include "TipoSala.h"
@@ -24,8 +27,7 @@
 #include "AtendimentoUnidadeSolucao.h"
 #include "Aula.h"
 
-#include <iostream>
-#include <vector>
+class Variable;
 
 class ProblemData
 	: public OFBase

@@ -394,11 +394,11 @@ void SolverMIP::carregaVariaveisSolucaoTatico()
    ITERA_VECTOR( it_Vars_x, vars_x, Variable )
    {
       std::cout << ( *it_Vars_x )->getValue() << "\t\t"
-         << ( *it_Vars_x )->getTurma() << "\t"
-         << ( *it_Vars_x )->getDisciplina()->getCodigo() << "\t"
-         << ( *it_Vars_x )->getUnidade()->getCodigo() << "\t"
-         << ( *it_Vars_x )->getSubCjtSala()->getId() << "\t"
-         << ( *it_Vars_x )->getDia() << "\n";
+                << ( *it_Vars_x )->getTurma() << "\t"
+                << ( *it_Vars_x )->getDisciplina()->getCodigo() << "\t"
+                << ( *it_Vars_x )->getUnidade()->getCodigo() << "\t"
+                << ( *it_Vars_x )->getSubCjtSala()->getId() << "\t"
+                << ( *it_Vars_x )->getDia() << "\n";
    }
 
    std::cout << "\n\n\n";
@@ -413,10 +413,10 @@ void SolverMIP::carregaVariaveisSolucaoTatico()
       ITERA_VECTOR( it_Vars_a_TEMP, it_Vars_a->second, Variable )
       {
          std::cout << ( *it_Vars_a_TEMP )->getValue() << "\t\t"
-            << ( *it_Vars_a_TEMP )->getTurma() << "\t"
-            << ( *it_Vars_a_TEMP )->getDisciplina()->getCodigo() << "\t"
-            << ( *it_Vars_a_TEMP )->getOferta()->getId() << "\t"
-            << ( *it_Vars_a_TEMP )->getOferta()->curso->getCodigo() << "\n";
+                   << ( *it_Vars_a_TEMP )->getTurma() << "\t"
+                   << ( *it_Vars_a_TEMP )->getDisciplina()->getCodigo() << "\t"
+                   << ( *it_Vars_a_TEMP )->getOferta()->getId() << "\t"
+                   << ( *it_Vars_a_TEMP )->getOferta()->curso->getCodigo() << "\n";
       }
    }
 }
@@ -866,14 +866,14 @@ void SolverMIP::converteCjtSalaEmSala()
                      std::vector< std::pair< int /*dia*/, int /*creds. Livres*/ > >::iterator
                         it_Dia = it_Creditos_Livres_Sala->second.begin();
 
-                     for(; it_Dia != it_Creditos_Livres_Sala->second.end(); ++it_Dia)
+                     for (; it_Dia != it_Creditos_Livres_Sala->second.end(); ++it_Dia )
                      {
                         // Se encontrei o dia, testo se tem a qtd de creds livres necessaria. Caso
                         // nao possua a qtd de creditos livres necessaria, posso parar de tentar
                         // alocar nessa sala.
-                        if(it_Dia->first == (*it_Dias_Demandados_Vars_x)->getDia())
+                        if ( it_Dia->first == ( *it_Dias_Demandados_Vars_x )->getDia() )
                         {
-                           if(it_Dia->second >= (*it_Dias_Demandados_Vars_x)->getValue())
+                           if ( it_Dia->second >= ( *it_Dias_Demandados_Vars_x )->getValue() )
                            {
                               // Nao faço nada aqui. A busca pelos outros dias continua.
                               // Apenas dou um break por eficiência
@@ -890,7 +890,7 @@ void SolverMIP::converteCjtSalaEmSala()
                         }
                      }
 
-                     if(!dias_Sala_Compativeis)
+                     if ( !dias_Sala_Compativeis )
                      {
                         // Parando o iterador <it_Dias_Demandados_Vars_x>.
                         // Já se sabe que a sala não é compatível para o dia em questão. Portanto
@@ -900,19 +900,19 @@ void SolverMIP::converteCjtSalaEmSala()
                   }
 
                   // Teste para saber se posso alocar na sala em questão.
-                  if(dias_Sala_Compativeis)
+                  if ( dias_Sala_Compativeis )
                   {
                      // Iterando em cada variavel X armazenada
                      ITERA_VECTOR(it_Dias_Demandados_Vars_x,
                         it_Vars_x_Disc_Und_TPS_Turma->second, Variable)
                      {
-                        if((*it_Dias_Demandados_Vars_x)->getSala() != NULL)
+                        if ( ( *it_Dias_Demandados_Vars_x )->getSala() != NULL )
                         {
                            std::cout << "Opa. Fui setar a sala para uma\n"
-                              << "var x__i_u_tps_t e ja estava setada.\n"
-                              << "(// Já que o dia e inviável, não faz sentido\n"
-                              << "buscar os outros dias.) !!!"
-                              << "\n\nSaindo." << std::endl;
+                                     << "var x__i_u_tps_t e ja estava setada.\n"
+                                     << "(// Já que o dia e inviável, não faz sentido\n"
+                                     << "buscar os outros dias.) !!!"
+                                     << "\n\nSaindo." << std::endl;
 
                            exit(1);
                         }
@@ -1928,31 +1928,8 @@ void SolverMIP::preencheOutputOperacional( ProblemSolution * solution )
                         continue;
                      }
 
-                     // Verifica o dia da semana da aula
-                     int dia_aula = std::distance( aulas->begin(), it_aula );
-                     dia_aula /= total_horarios;
-                     dia_aula += 1;
-                     if ( dia_aula != dia_semana )
-                     {
-                        continue;
-                     }
-
-                     // Verifica a unidade onde a aula está alocada
-                     Unidade * unidade_aula = problemData->refUnidade[ aula->getSala()->getIdUnidade() ];
-                     if ( unidade_aula == NULL || unidade_aula->getId() != unidade->getId() )
-                     {
-                        continue;
-                     }
-
-                     // Verifica o campus onde a aula está alocada
-                     Campus * campus_aula = problemData->refCampus[ unidade_aula->getIdCampus() ];
-                     if ( campus_aula == NULL || campus_aula->getId() != campus->getId() )
-                     {
-                        continue;
-                     }
-
-                     // Verifica a sala onde a aula está alocada
-                     if ( aula->getSala() == NULL || aula->getSala()->getId() != sala->getId() )
+                     // Verifica se a aula está alocada na sala e dia da semana atuais
+                     if ( !aulaAlocada( aula, campus, unidade, sala, dia_semana ) )
                      {
                         continue;
                      }
@@ -1987,10 +1964,10 @@ void SolverMIP::preencheOutputOperacional( ProblemSolution * solution )
 
                      //-------------------------------------------------------------------------------------
                      AtendimentoHorarioAula * atendimento_horario_aula = new AtendimentoHorarioAula();
-
+                     
                      HorarioAula * horario_aula = problemData->horarios_aula_ordenados[ horario_aula_id ];
                      Professor * professor = solution->solucao_operacional->getProfessorMatriz( linha_professor );
-
+                     
                      atendimento_horario_aula->setId( horario_aula->getId() );
                      atendimento_horario_aula->setHorarioAulaId( horario_aula->getId() );
                      atendimento_horario_aula->setProfessorId( professor->getId() );
@@ -2007,6 +1984,7 @@ void SolverMIP::preencheOutputOperacional( ProblemSolution * solution )
                         atendimento_oferta->setTurma( aula->getTurma() );
                         atendimento_oferta->setQuantidade( aula->getQuantidade() );
 
+                        
                         char id_oferta_char[ 200 ];
                         sprintf( id_oferta_char, "%d", oferta->getId() );
                         std::string id_oferta_str = std::string( id_oferta_char );
@@ -2036,10 +2014,8 @@ bool SolverMIP::aulaAlocada( Aula * aula, Campus * campus,
 
    bool aula_alocada = true;
 
-   GGroup< Oferta *, LessPtr< Oferta > >::iterator it_oferta
-      = aula->ofertas.begin();
-   int id_campus_aula = it_oferta->campus->getId();
    int id_unidade_aula = aula->getSala()->getIdUnidade();
+   int id_campus_aula = problemData->refCampus[ id_unidade_aula ]->getId();
    int id_sala_aula = aula->getSala()->getId();
    int dia_semana_aula = aula->getDiaSemana();
 
@@ -2100,20 +2076,11 @@ void SolverMIP::criaVariaveisAlunosDisciplinasSubstituidas()
          // Total de alunos que foram atendidos
          int alunos_atendidos = 0;
 
-         // Armazena a variável que diz respeito EXATAMENTE à 'disciplina_substituta'
-         Variable * v_disc_substituta = NULL;
-
          for ( int i = 0; i < (int)variaveis_alunos.size(); i++ )
          {
             Variable * v = variaveis_alunos[i];
-            alunos_atendidos += (int)( v->getValue() );
 
-            if ( v_disc_substituta == NULL
-					&& v->getOferta()->curso->getId() == curso->getId()
-               && v->getOferta()->curriculo->getId() == curriculo->getId() )
-            {
-               v_disc_substituta = v;
-            }
+            alunos_atendidos += (int)( v->getValue() );
          }
 
          // Primeiramente, devo atender todos a demanda da disciplina
@@ -2125,15 +2092,37 @@ void SolverMIP::criaVariaveisAlunosDisciplinasSubstituidas()
          // Demanda da disciplina que substituiu as demais
          int alunos_disciplina_substituta = demanda_substituta->getQuantidade();
 
+         Variable * v_disc_substituta = NULL;
          if ( alunos_disciplina_substituta <= alunos_atendidos )
          {
             // Atende a disciplina 'disciplina_substituta'
-            v_disc_substituta->setValue( alunos_disciplina_substituta );
-            alunos_atendidos -= alunos_disciplina_substituta;
-
-            if ( alunos_atendidos == 0 )
+            ITERA_VECTOR( it_v_substituta, variaveis_alunos, Variable )
             {
-               continue;
+               v_disc_substituta = ( *it_v_substituta );
+
+               // Atende ESPECIFICAMENTE à disciplina 'disciplina_substituta'
+               if ( v_disc_substituta->getOferta()->curso == curso
+                  && v_disc_substituta->getOferta()->curriculo == curriculo )
+               {
+                  if ( v_disc_substituta->getValue() <= alunos_disciplina_substituta )
+                  {
+                     alunos_atendidos -= (int)( v_disc_substituta->getValue() );
+                     alunos_disciplina_substituta -= (int)( v_disc_substituta->getValue() );
+                  }
+                  else
+                  {
+                     v_disc_substituta->setValue( alunos_disciplina_substituta );
+                     alunos_atendidos -= alunos_disciplina_substituta;
+                     break;
+                  }
+               }
+
+               // Já atendi à demanda de disciplina 'disciplina_substituta'
+               if ( alunos_disciplina_substituta <= 0 )
+               {
+                  alunos_disciplina_substituta = 0;
+                  break;
+               }
             }
          }
          else
@@ -2144,64 +2133,73 @@ void SolverMIP::criaVariaveisAlunosDisciplinasSubstituidas()
             continue;
          }
 
-         //------------------------------------------------------------------------------------
          // Enquanto for possível, criamos variáveis referentes ao atendimento da demanda
          // das disciplinas substituídas. OBS.: Partimos do princípio qu\e a escolha de qual
          // disciplina deve ser atendida prioritariamente é INDIFERENTE para a solução
          ITERA_GGROUP_LESSPTR( it_disc_equi, it_conjunto_disc->second, Disciplina )
          {
-            disciplina_equivalente = ( *it_disc_equi );
-
-            // Procura pela demanda original da disciplina que foi substituída
-            // Demanda * demanda_equivalente = problemData->buscaDemanda( curso, disciplina_equivalente );
-            Demanda * demanda_equivalente
-               = problemData->demandasDisciplinasSubstituidas[ disciplina_equivalente ];
-
-            // Demanda da disciplina equivalente
-            int alunos_disciplina_equivalente = demanda_equivalente->getQuantidade();
-
-            //------------------------------------------------------------
-            // Criando uma nova  variável 'a' (alunos)
-            Campus * campus_alunos = demanda_equivalente->oferta->campus;
-            Unidade * unidade_alunos = v_disc_substituta->getUnidade();
-            ConjuntoSala * cjtSala_alunos = v_disc_substituta->getSubCjtSala();
-            Sala * sala_alunos = v_disc_substituta->getSala();
-            int dia_alunos = v_disc_substituta->getDia();
-            Oferta * oferta_alunos = demanda_equivalente->oferta;
-            Curso * curso_alunos = oferta_alunos->curso;
-            Disciplina * disc_alunos = disciplina_equivalente;
-
-				// int turma_alunos = v_disc_substituta->getTurma();
-				int turma_alunos = -1;
-
-            Variable * v = criaVariavelAlunos( campus_alunos, unidade_alunos, cjtSala_alunos, sala_alunos,
-                                               dia_alunos, oferta_alunos, curso_alunos, disc_alunos, turma_alunos );
-
-            if ( alunos_disciplina_equivalente <= alunos_atendidos )
-            {
-               // Atende toda a demanda da disciplina 'disciplina_equivalente'
-               v->setValue( alunos_disciplina_equivalente );
-               alunos_atendidos -= alunos_disciplina_equivalente;
-            }
-            else
-            {
-               // Atende-se a parcela de alunos da demanda que for possível alocar
-               v->setValue( alunos_atendidos );
-               alunos_atendidos = 0;
-            }
-
-            // Diz que a disciplina equivalente foi atendida, ou seja,
-            // posso posteriormente criar variável de créditos para essa disciplina
-            problemData->disciplinasSubstituidasAtendidas[ disciplina_equivalente ] = true;
-            //------------------------------------------------------------
-
             // Não pode atender mais disciplinas
             if ( alunos_atendidos == 0 )
             {
                break;
             }
+
+            disciplina_equivalente = ( *it_disc_equi );
+
+            // Variáveis criadas para 'disciplina_equivalente'
+            std::vector< Variable > variaveis_alunos_equivalente
+               = filtraVariaveisAlunos( mapVariaveisDisciplinasEquivalentes[ disciplina_equivalente ] );
+
+            // Alunos atendidos da disciplina
+            std::vector< Variable >::iterator it_variable
+               = variaveis_alunos_equivalente.begin();
+            for (; it_variable != variaveis_alunos_equivalente.end(); it_variable++ )
+            {
+               // 'v_temp' representa a variável do modelo que estava
+               // associada à disciplina 'disciplina_substituta', mas que
+               // na verdade foi criada para representar a disciplina 'disciplina_equivalente'
+               Variable v_temp = ( *it_variable );
+
+               // Criando uma nova  variável 'a' (alunos)
+               Campus * campus_alunos = v_temp.getCampus();
+               Unidade * unidade_alunos = v_temp.getUnidade();
+               ConjuntoSala * cjtSala_alunos = v_temp.getSubCjtSala();
+               Sala * sala_alunos = v_temp.getSala();
+               int dia_alunos = v_temp.getDia();
+               Oferta * oferta_alunos = v_temp.getOferta();
+               Curso * curso_alunos = v_temp.getCurso();
+               Disciplina * disc_alunos = v_temp.getDisciplina();
+				   int turma_alunos = v_temp.getTurma();
+
+               Variable * v = criaVariavelAlunos( campus_alunos, unidade_alunos, cjtSala_alunos, sala_alunos,
+                                                  dia_alunos, oferta_alunos, curso_alunos, disc_alunos, turma_alunos );
+
+               v->setValue( v_temp.getValue() );
+
+					std::pair< int, Disciplina * > turma_disciplina
+                  = std::make_pair( v->getTurma(), v->getDisciplina() );
+
+					// Adiciono uma variável 'a' a mais para o getSolutionTatico()
+               vars_a[ turma_disciplina ].push_back( v );
+
+               alunos_atendidos -= (int)( v_temp.getValue() );
+
+               // Remove a variável anterior da lista de variáveis
+               // a serem utilizadas no método getSolutionTatico()
+               for ( int i = 0; i < (int)( vars_a[ turma_disciplina ].size() ); i++ )                  
+               {
+                  if ( ( *vars_a[ turma_disciplina ][i] ) == v_temp )
+                  {
+                     vars_a[ turma_disciplina ].erase( vars_a[ turma_disciplina ].begin() + i );
+                     break;
+                  }
+               }
+            }
+
+            // Diz que a disciplina equivalente foi atendida, ou seja,
+            // posso posteriormente criar variável de créditos para essa disciplina
+            problemData->disciplinasSubstituidasAtendidas[ disciplina_equivalente ] = true;
          }
-         //------------------------------------------------------------------------------------
       }
    }
 }
@@ -2242,13 +2240,6 @@ void SolverMIP::criaVariaveisCreditosDisciplinasSubstituidas()
          std::vector< Variable * > variaveis_creditos
             = variaveisCreditosAtendidos( disciplina_substituta );
 
-			// Procura pela variável 'x' que corresponde EXATAMENTE à disciplina
-			// 'disciplina_substituta', e não à alguma das disciplinas que substituiu
-         Variable * v_disc_substituta = variaveis_creditos[ 0 ];
-
-			int cont_variaveis = 0;
-
-         //------------------------------------------------------------------------------------
          // Enquanto for possível, criamos variáveis referentes
          // ao atendimento da demanda das disciplinas substituídas.
          // OBS.: Partimos do princípio que a escolha de qual disciplina
@@ -2256,30 +2247,6 @@ void SolverMIP::criaVariaveisCreditosDisciplinasSubstituidas()
          ITERA_GGROUP_LESSPTR( it_disc_equi, it_conjunto_disc->second, Disciplina )
          {
             disciplina_equivalente = ( *it_disc_equi );
-
-				// Seleciona dentre as variáveis 'x' que correspondem à disciplina
-				// 'disciplina_substituta' qual será utilizada para 'disciplina_equivalente'
-				Variable * v = NULL;
-				if ( cont_variaveis < (int)variaveis_creditos.size() )
-				{
-					v = variaveis_creditos[ cont_variaveis ];
-					cont_variaveis++;
-				}
-				else
-				{
-					v = variaveis_creditos.back();
-				}
-
-				// Procura pela oferta da disciplina 'disciplina_equivalente'
-				Oferta * oferta_disc_equi = problemData->retornaOfertaDiscilpina(
-					curso, curriculo, disciplina_equivalente );
-
-				// Bloco curricular da disciplina 'disciplina_equivalente'
-				std::pair< Curso *, Disciplina * > curso_disciplina
-					= std::make_pair( curso, disciplina_equivalente );
-
-				BlocoCurricular * bloco_curricular_equi
-					= problemData->mapCursoDisciplina_BlocoCurricular[ curso_disciplina ];
 
             // Verifica se a disciplina equivalente
 				// teve pelo menos um aluno atendido na solução
@@ -2295,35 +2262,95 @@ void SolverMIP::criaVariaveisCreditosDisciplinasSubstituidas()
 
             if ( disciplina_atendida )
             {
-               //------------------------------------------------------------
-               // Criando uma nova  variável 'x' (créditos) para a disciplina equivalente
-					Campus * campus_creditos = problemData->refCampus[ v->getUnidade()->getIdCampus() ];
-               Unidade * unidade_creditos = v->getUnidade();
-               ConjuntoSala * cjtSala_creditos = v->getSubCjtSala();
-               Sala * sala_creditos = v->getSala();
-               int dia_creditos = v->getDia();
-               Oferta * oferta_creditos = oferta_disc_equi;
-               Curso * curso_creditos = curso;
-					Disciplina * disc_creditos = disciplina_equivalente;
-               int turma_creditos = v->getTurma();
-               BlocoCurricular * bloco_curricular = bloco_curricular_equi;
+			      // Procura pelas variáveis créditos que foram
+			      // criadas para atender a 'disciplina_substituta'
+               std::vector< Variable > variaveis_creditos_equivalente
+                  = filtraVariaveisCreditos( mapVariaveisDisciplinasEquivalentes[ disciplina_equivalente ] );
 
-               Variable * v = criaVariavelCreditos( campus_creditos, unidade_creditos, cjtSala_creditos,
-                                                    sala_creditos, dia_creditos, oferta_creditos, curso_creditos,
-                                                    disc_creditos, turma_creditos, bloco_curricular );
+               std::vector< Variable >::iterator it_variable
+                  = variaveis_creditos_equivalente.begin();
+               for (; it_variable != variaveis_creditos_equivalente.end(); it_variable++ )
+               {
+                  // 'v_temp' representa a variável do modelo que estava
+                  // associada à disciplina 'disciplina_substituta', mas que
+                  // na verdade foi criada para representar a disciplina 'disciplina_equivalente'
+                  Variable v_temp = ( *it_variable );
 
-               v->setValue( v_disc_substituta->getValue() );
-               vars_x.push_back( v );
+                  // Criando uma nova  variável 'x' (créditos) para a disciplina equivalente
+                  Campus * campus_creditos = v_temp.getCampus();
+                  Unidade * unidade_creditos = v_temp.getUnidade();
+                  ConjuntoSala * cjtSala_creditos = v_temp.getSubCjtSala();
+                  Sala * sala_creditos = v_temp.getSala();
+                  int dia_creditos = v_temp.getDia();
+                  Oferta * oferta_creditos = v_temp.getOferta();
+                  Curso * curso_creditos = v_temp.getCurso();
+					   Disciplina * disc_creditos = v_temp.getDisciplina();
+                  int turma_creditos = v_temp.getTurma();
+                  BlocoCurricular * bloco_curricular = v_temp.getBloco();
 
-					// Adiciono uma variável 'a' a mais para o getSolutionTatico()
-					std::pair< int, Disciplina * > turma_disciplina
-                  = std::make_pair( v->getTurma(), v->getDisciplina() );
-               vars_a[ turma_disciplina ].push_back( v );
-               //------------------------------------------------------------
+                  Variable * v = criaVariavelCreditos( campus_creditos, unidade_creditos, cjtSala_creditos,
+                                                       sala_creditos, dia_creditos, oferta_creditos, curso_creditos,
+                                                       disc_creditos, turma_creditos, bloco_curricular );
+
+                  v->setValue( v_temp.getValue() );
+                  vars_x.push_back( v );
+
+                  // Remove a variável anterior da lista de variáveis
+                  // a serem utilizadas no método getSolutionTatico()
+                  for ( int i = 0; i < (int)( vars_x.size() ); i++ )                  
+                  {
+                     if ( ( *vars_x[i] ) == v_temp )
+                     {
+                        vars_x.erase( vars_x.begin() + i );
+                        break;
+                     }
+                  }
+               }
             }
          }
       }
    }
+}
+
+std::vector< Variable > SolverMIP::filtraVariaveisAlunos( std::vector< Variable > variables )
+{
+   std::vector< Variable > result;
+
+   std::vector< Variable >::iterator
+      it_variable = variables.begin();
+
+   for (; it_variable != variables.end(); it_variable++ )
+   {
+      Variable v = ( *it_variable );
+
+      if ( v.getType() == Variable::V_ALUNOS )
+      {
+         result.push_back( v );
+      }
+   }
+
+   return result;
+}
+
+std::vector< Variable > SolverMIP::filtraVariaveisCreditos( std::vector< Variable > variables )
+{
+   std::vector< Variable > result;
+   
+   std::vector< Variable >::iterator
+      it_variable = variables.begin();
+
+   for (; it_variable != variables.end(); it_variable++ )
+   {
+      Variable v = ( *it_variable );
+
+      if ( v.getType() == Variable::V_CREDITOS
+            || v.getType() == Variable::V_CREDITOS_MODF )
+      {
+         result.push_back( v );
+      }
+   }
+
+   return result;
 }
 
 // Retorna as variáveis de alunos referentes à essa disciplina,
@@ -2742,14 +2769,25 @@ int SolverMIP::cria_variavel_creditos( void )
             {
                disciplina = ( *it_disc );
 
+               if ( disciplina->getId() == 9 )
+               {
+                  int k = 0;
+                  k++;
+               }
+
                std::pair< Curso *, Curriculo * > curso_curriculo
                   = problemData->map_Disc_CursoCurriculo[ disciplina ];
                curso = curso_curriculo.first;
                curriculo = curso_curriculo.second;
 
+               bool variavel_equivalente = false;
+               Disciplina * disc_equi = NULL;
+
                disciplina_equivalente = problemData->retornaDisciplinaSubstituta( curso, curriculo, disciplina );
                if ( disciplina_equivalente != NULL )
                {
+                  disc_equi = disciplina;
+                  variavel_equivalente = true;
                   disciplina = disciplina_equivalente;
                }
 
@@ -2793,22 +2831,27 @@ int SolverMIP::cria_variavel_creditos( void )
 
                            if ( vHash.find( v ) == vHash.end() )
                            {
+                              if ( variavel_equivalente )
+                              {
+                                 mapVariaveisDisciplinasEquivalentes[ disc_equi ].push_back( v );
+                              }
+
                               vHash[v] = lp->getNumCols();
 
                               if ( problemData->parametros->funcao_objetivo == 0 )
                               {
                                  OPT_COL col( OPT_COL::VAR_INTEGRAL, eta, 0.0,
-                                    itCjtSala->maxCredsDia( *itDiscSala_Dias ),
-                                    ( char * )v.toString().c_str() );
+                                              itCjtSala->maxCredsDia( *itDiscSala_Dias ),
+                                              ( char * )v.toString().c_str() );
 
                                  lp->newCol( col );
                               }
-                              else if( problemData->parametros->funcao_objetivo == 1
-                                 || problemData->parametros->funcao_objetivo == 2 )
+                              else if ( problemData->parametros->funcao_objetivo == 1
+                                          || problemData->parametros->funcao_objetivo == 2 )
                               {
                                  OPT_COL col( OPT_COL::VAR_INTEGRAL, 0.0, 0.0,
-                                    itCjtSala->maxCredsDia( *itDiscSala_Dias ),
-                                    ( char * )v.toString().c_str() );
+                                              itCjtSala->maxCredsDia( *itDiscSala_Dias ),
+                                              ( char * )v.toString().c_str() );
 
                                  lp->newCol( col );
                               }
@@ -2821,11 +2864,16 @@ int SolverMIP::cria_variavel_creditos( void )
                      {
                         if ( vHash.find( v ) == vHash.end() )
                         {
+                           if ( variavel_equivalente )
+                           {
+                              mapVariaveisDisciplinasEquivalentes[ disciplina ].push_back( v );
+                           }
+
                            vHash[v] = lp->getNumCols();
 
                            OPT_COL col( OPT_COL::VAR_INTEGRAL, 0.0, 0.0,
-                              itCjtSala->maxCredsDia( *itDiscSala_Dias ),
-                              ( char * )v.toString().c_str() );
+                                        itCjtSala->maxCredsDia( *itDiscSala_Dias ),
+                                        ( char * )v.toString().c_str() );
 
                            lp->newCol( col );
                         }
@@ -3013,9 +3061,14 @@ int SolverMIP::cria_variavel_oferecimentos(void)
                curso = curso_curriculo.first;
                curriculo = curso_curriculo.second;
 
+               bool variavel_equivalente = false;
+               Disciplina * disc_equi = NULL;
+
                disciplina_equivalente = problemData->retornaDisciplinaSubstituta( curso, curriculo, disciplina );
                if ( disciplina_equivalente != NULL )
                {
+                  disc_equi = disciplina;
+                  variavel_equivalente = true;
                   disciplina = disciplina_equivalente;
                }
 
@@ -3034,13 +3087,18 @@ int SolverMIP::cria_variavel_oferecimentos(void)
                      v.setType( Variable::V_OFERECIMENTO );
 
                      v.setTurma( turma );            // i
-                     v.setDisciplina( disciplina );     // d
+                     v.setDisciplina( disciplina );  // d
                      v.setUnidade( *itUnidade );     // u
                      v.setSubCjtSala( *itCjtSala );  // tps  
                      v.setDia( *itDiscSala_Dias );   // t
 
                      if ( vHash.find( v ) == vHash.end() )
                      {
+                        if ( variavel_equivalente )
+                        {
+	                        mapVariaveisDisciplinasEquivalentes[ disc_equi ].push_back( v );
+                        }
+
                         vHash[ v ] = lp->getNumCols();
 
                         OPT_COL col( OPT_COL::VAR_BINARY, 0.0, 0.0, 1.0,
@@ -3206,9 +3264,14 @@ int SolverMIP::cria_variavel_abertura(void)
          curso = curso_curriculo.first;
          curriculo = curso_curriculo.second;
 
+         bool variavel_equivalente = false;
+         Disciplina * disc_equi = NULL;
+
          disciplina_equivalente = problemData->retornaDisciplinaSubstituta( curso, curriculo, disciplina );
          if ( disciplina_equivalente != NULL )
          {
+            disc_equi = disciplina;
+            variavel_equivalente = true;
             disciplina = disciplina_equivalente;
          }
 
@@ -3243,6 +3306,11 @@ int SolverMIP::cria_variavel_abertura(void)
 
             if ( vHash.find(v) == vHash.end() )
             {
+               if ( variavel_equivalente )
+               {
+                  mapVariaveisDisciplinasEquivalentes[ disc_equi ].push_back( v );
+               }
+
                lp->getNumCols();
                vHash[v] = lp->getNumCols();
 
@@ -3417,9 +3485,14 @@ int SolverMIP::cria_variavel_alunos(void)
          curso = curso_curriculo.first;
          curriculo = curso_curriculo.second;
 
+         bool variavel_equivalente = false;
+         Disciplina * disc_equi = NULL;
+
          disciplina_equivalente = problemData->retornaDisciplinaSubstituta( curso, curriculo, ptDisc );
          if ( disciplina_equivalente != NULL )
          {
+            disc_equi = ptDisc;
+            variavel_equivalente = true;
             ptDisc = disciplina_equivalente;
          }
 
@@ -3455,6 +3528,11 @@ int SolverMIP::cria_variavel_alunos(void)
 
             if ( vHash.find(v) == vHash.end() )
             {
+               if ( variavel_equivalente )
+               {
+                  mapVariaveisDisciplinasEquivalentes[ disc_equi ].push_back( v );
+               }
+
                vHash[v] = lp->getNumCols();
 
                if ( problemData->parametros->funcao_objetivo == 0 ||
@@ -3520,9 +3598,14 @@ int SolverMIP::cria_variavel_aloc_alunos(void)
          curso = curso_curriculo.first;
          curriculo = curso_curriculo.second;
 
+         bool variavel_equivalente = false;
+         Disciplina * disc_equi = NULL;
+
          disciplina_equivalente = problemData->retornaDisciplinaSubstituta( curso, curriculo, disciplina );
          if ( disciplina_equivalente != NULL )
          {
+            disc_equi = disciplina;
+            variavel_equivalente = true;
             disciplina = disciplina_equivalente;
          }
 
@@ -3533,12 +3616,17 @@ int SolverMIP::cria_variavel_aloc_alunos(void)
             v.setType( Variable::V_ALOC_ALUNO );
 
             v.setTurma( turma );           // i
-            v.setDisciplina( disciplina );    // d
+            v.setDisciplina( disciplina ); // d
             v.setCurso( pt_Curso );        // c
-            v.setCampus( pt_Campus );	   // cp
+            v.setCampus( pt_Campus );	    // cp
 
             if ( vHash.find( v ) == vHash.end() )
             {
+               if ( variavel_equivalente )
+               {
+                  mapVariaveisDisciplinasEquivalentes[ disc_equi ].push_back( v );
+               }
+
                vHash[v] = lp->getNumCols();
 
                OPT_COL col( OPT_COL::VAR_BINARY, 0, 0.0, 1.0,
@@ -3678,9 +3766,14 @@ int SolverMIP::cria_variavel_consecutivos( void )
                curso = curso_curriculo.first;
                curriculo = curso_curriculo.second;
 
+               bool variavel_equivalente = false;
+               Disciplina * disc_equi = NULL;
+
                disciplina_equivalente = problemData->retornaDisciplinaSubstituta( curso, curriculo, disciplina );
                if ( disciplina_equivalente != NULL )
                {
+                  disc_equi = disciplina;
+                  variavel_equivalente = true;
                   disciplina = disciplina_equivalente;
                }
 
@@ -3704,6 +3797,11 @@ int SolverMIP::cria_variavel_consecutivos( void )
 
                      if ( vHash.find( v ) == vHash.end() )
                      {
+                        if ( variavel_equivalente )
+                        {
+	                        mapVariaveisDisciplinasEquivalentes[ disc_equi ].push_back( v );
+                        }
+
                         vHash[v] = lp->getNumCols();
 
                         if ( problemData->parametros->funcao_objetivo == 0 )
@@ -3777,9 +3875,14 @@ int SolverMIP::cria_variavel_min_creds(void)
          curso = curso_curriculo.first;
          curriculo = curso_curriculo.second;
 
+         bool variavel_equivalente = false;
+         Disciplina * disc_equi = NULL;
+
          disciplina_equivalente = problemData->retornaDisciplinaSubstituta( curso, curriculo, disciplina );
          if ( disciplina_equivalente != NULL )
          {
+            disc_equi = disciplina;
+            variavel_equivalente = true;
             disciplina = disciplina_equivalente;
          }
 
@@ -3794,6 +3897,11 @@ int SolverMIP::cria_variavel_min_creds(void)
 
             if ( vHash.find( v ) == vHash.end() )
             {
+               if ( variavel_equivalente )
+               {
+                  mapVariaveisDisciplinasEquivalentes[ disc_equi ].push_back( v );
+               }
+
                vHash[ v ] = lp->getNumCols();
 
                if ( problemData->parametros->funcao_objetivo == 0 )
@@ -3857,9 +3965,14 @@ int SolverMIP::cria_variavel_max_creds(void)
          curso = curso_curriculo.first;
          curriculo = curso_curriculo.second;
 
+         bool variavel_equivalente = false;
+         Disciplina * disc_equi = NULL;
+
          disciplina_equivalente = problemData->retornaDisciplinaSubstituta( curso, curriculo, disciplina );
          if ( disciplina_equivalente != NULL )
          {
+            disc_equi = disciplina;
+            variavel_equivalente = true;
             disciplina = disciplina_equivalente;
          }
 
@@ -3874,6 +3987,11 @@ int SolverMIP::cria_variavel_max_creds(void)
 
             if ( vHash.find( v ) == vHash.end() )
             {
+               if ( variavel_equivalente )
+               {
+                  mapVariaveisDisciplinasEquivalentes[ disc_equi ].push_back( v );
+               }
+
                vHash[v] = lp->getNumCols();
 
                if ( problemData->parametros->funcao_objetivo == 0 )
@@ -3941,9 +4059,14 @@ int SolverMIP::cria_variavel_aloc_disciplina(void)
                curso = curso_curriculo.first;
                curriculo = curso_curriculo.second;
 
+               bool variavel_equivalente = false;
+               Disciplina * disc_equi = NULL;
+
                disciplina_equivalente = problemData->retornaDisciplinaSubstituta( curso, curriculo, disciplina );
                if ( disciplina_equivalente != NULL )
                {
+                  disc_equi = disciplina;
+                  variavel_equivalente = true;
                   disciplina = disciplina_equivalente;
                }
 
@@ -3960,6 +4083,11 @@ int SolverMIP::cria_variavel_aloc_disciplina(void)
 
                   if ( vHash.find( v ) == vHash.end() )
                   {
+                     if ( variavel_equivalente )
+                     {
+                        mapVariaveisDisciplinasEquivalentes[ disc_equi ].push_back( v );
+                     }
+
                      vHash[v] = lp->getNumCols();
 
                      OPT_COL col( OPT_COL::VAR_BINARY, 0.0, 0.0, 1.0,
@@ -4146,8 +4274,9 @@ int SolverMIP::cria_variavel_num_abertura_turma_bloco(void)
    {
       GGroup< int >::iterator itDiasLetBloco =
          it_bloco->diasLetivos.begin();
+
       for (; itDiasLetBloco != it_bloco->diasLetivos.end();
-         itDiasLetBloco++ )
+             itDiasLetBloco++ )
       {
          Variable v;
          v.reset();
@@ -4226,9 +4355,14 @@ int SolverMIP::cria_variavel_de_folga_dist_cred_dia_superior(void)
                curso = curso_curriculo.first;
                curriculo = curso_curriculo.second;
 
+               bool variavel_equivalente = false;
+               Disciplina * disc_equi = NULL;
+
                disciplina_equivalente = problemData->retornaDisciplinaSubstituta( curso, curriculo, disciplina );
                if ( disciplina_equivalente != NULL )
                {
+                  disc_equi = disciplina;
+                  variavel_equivalente = true;
                   disciplina = disciplina_equivalente;
                }
 
@@ -4258,6 +4392,11 @@ int SolverMIP::cria_variavel_de_folga_dist_cred_dia_superior(void)
 
                            if ( vHash.find( v ) == vHash.end() )
                            {
+                              if ( variavel_equivalente )
+                              {
+      	                        mapVariaveisDisciplinasEquivalentes[ disc_equi ].push_back( v );
+                              }
+
                               vHash[v] = lp->getNumCols();
                               int cred_disc_dia = it_fix->disciplina->getMaxCreds();
 
@@ -4445,9 +4584,14 @@ int SolverMIP::cria_variavel_de_folga_dist_cred_dia_inferior(void)
                curso = curso_curriculo.first;
                curriculo = curso_curriculo.second;
 
+               bool variavel_equivalente = false;
+               Disciplina * disc_equi = NULL;
+
                disciplina_equivalente = problemData->retornaDisciplinaSubstituta( curso, curriculo, disciplina );
                if ( disciplina_equivalente != NULL )
                {
+                  disc_equi = disciplina;
+                  variavel_equivalente = true;
                   disciplina = disciplina_equivalente;
                }
 
@@ -4477,6 +4621,11 @@ int SolverMIP::cria_variavel_de_folga_dist_cred_dia_inferior(void)
 
                            if ( vHash.find( v ) == vHash.end() )
                            {
+                              if ( variavel_equivalente )
+                              {
+      	                        mapVariaveisDisciplinasEquivalentes[ disc_equi ].push_back( v );
+                              }
+
                               vHash[v] = lp->getNumCols();
                               int cred_disc_dia = it_fix->disciplina->getMinCreds();
 
@@ -4712,9 +4861,14 @@ int SolverMIP::cria_variavel_de_folga_aloc_alunos_curso_incompat()
             curso = curso_curriculo.first;
             curriculo = curso_curriculo.second;
 
+            bool variavel_equivalente = false;
+            Disciplina * disc_equi = NULL;
+
             disciplina_equivalente = problemData->retornaDisciplinaSubstituta( curso, curriculo, disciplina );
             if ( disciplina_equivalente != NULL )
             {
+               disc_equi = disciplina;
+               variavel_equivalente = true;
                disciplina = disciplina_equivalente;
             }
 
@@ -4724,14 +4878,19 @@ int SolverMIP::cria_variavel_de_folga_aloc_alunos_curso_incompat()
                v.reset();
                v.setType( Variable::V_SLACK_ALOC_ALUNOS_CURSO_INCOMPAT );
 
-               v.setTurma( turma );					 // i
-               v.setDisciplina( disciplina );   		 // d
-               v.setCurso( pt_Curso );					 // c
+               v.setTurma( turma );					        // i
+               v.setDisciplina( disciplina );   		  // d
+               v.setCurso( pt_Curso );					     // c
                v.setCursoIncompat( pt_Curso_Incompat );
-               v.setCampus( pt_Campus );		         // cp
+               v.setCampus( pt_Campus );		           // cp
 
                if ( vHash.find( v ) == vHash.end() )
                {
+                  if ( variavel_equivalente )
+                  {
+                     mapVariaveisDisciplinasEquivalentes[ disc_equi ].push_back( v );
+                  }
+
                   vHash[v] = lp->getNumCols();
 
                   OPT_COL col( OPT_COL::VAR_BINARY,
@@ -4872,9 +5031,14 @@ int SolverMIP::cria_variavel_de_folga_demanda_disciplina()
          curso = curso_curriculo.first;
          curriculo = curso_curriculo.second;
 
+         bool variavel_equivalente = false;
+         Disciplina * disc_equi = NULL;
+
          disciplina_equivalente = problemData->retornaDisciplinaSubstituta( curso, curriculo, disciplina );
          if ( disciplina_equivalente != NULL )
          {
+            disc_equi = disciplina;
+            variavel_equivalente = true;
             disciplina = disciplina_equivalente;
          }
 
@@ -4897,18 +5061,23 @@ int SolverMIP::cria_variavel_de_folga_demanda_disciplina()
          v.setType( Variable::V_SLACK_DEMANDA );
 
          v.setDisciplina( disciplina ); // d
-         v.setOferta( *itOferta );  // o
+         v.setOferta( *itOferta );      // o
 
          if ( vHash.find( v ) == vHash.end() )
          {
+            if ( variavel_equivalente )
+            {
+               mapVariaveisDisciplinasEquivalentes[ disc_equi ].push_back( v );
+            }
+
             vHash[ v ] = lp->getNumCols();
 
             double ub = qtdDem;
             if ( problemData->parametros->funcao_objetivo == 0 )
             {
                OPT_COL col( OPT_COL::VAR_INTEGRAL,
-                  1000.0, 0.0, ub,
-                  ( char * )v.toString().c_str() );
+                            1000.0, 0.0, ub,
+                            ( char * )v.toString().c_str() );
 
                lp->newCol( col );
             }
@@ -4916,7 +5085,7 @@ int SolverMIP::cria_variavel_de_folga_demanda_disciplina()
                problemData->parametros->funcao_objetivo == 2 )
             {
                OPT_COL col( OPT_COL::VAR_INTEGRAL, 1000.0, 0.0, ub,
-                  ( char * )v.toString().c_str() );
+                            ( char * )v.toString().c_str() );
 
                lp->newCol(col);
             }
@@ -4960,9 +5129,14 @@ int SolverMIP::cria_variavel_combinacao_divisao_credito()
       curso = curso_curriculo.first;
       curriculo = curso_curriculo.second;
 
+      bool variavel_equivalente = false;
+      Disciplina * disc_equi = NULL;
+
       disciplina_equivalente = problemData->retornaDisciplinaSubstituta( curso, curriculo, disciplina );
       if ( disciplina_equivalente != NULL )
       {
+         disc_equi = disciplina;
+         variavel_equivalente = true;
          disciplina = disciplina_equivalente;
       }
 
@@ -4974,17 +5148,22 @@ int SolverMIP::cria_variavel_combinacao_divisao_credito()
             v.reset();
             v.setType( Variable::V_COMBINACAO_DIVISAO_CREDITO );
 
-            v.setTurma( turma );        // i
+            v.setTurma( turma );           // i
             v.setDisciplina( disciplina ); // d
-            v.setK( k );	            // k
+            v.setK( k );	                // k
 
             if ( vHash.find( v ) == vHash.end() )
             {
+               if ( variavel_equivalente )
+               {
+                  mapVariaveisDisciplinasEquivalentes[ disc_equi ].push_back( v );
+               }
+
                vHash[ v ] = lp->getNumCols();
 
                OPT_COL col( OPT_COL::VAR_BINARY,
-                  0.0, 0.0, 1.0,
-                  ( char * )v.toString().c_str() );
+                            0.0, 0.0, 1.0,
+                            ( char * )v.toString().c_str() );
 
                lp->newCol( col );
                num_vars++;
@@ -5040,9 +5219,14 @@ int SolverMIP::cria_variavel_de_folga_combinacao_divisao_credito()
                curso = curso_curriculo.first;
                curriculo = curso_curriculo.second;
 
+               bool variavel_equivalente = false;
+               Disciplina * disc_equi = NULL;
+
                disciplina_equivalente = problemData->retornaDisciplinaSubstituta( curso, curriculo, disciplina );
                if ( disciplina_equivalente != NULL )
                {
+                  disc_equi = disciplina;
+                  variavel_equivalente = true;
                   disciplina = disciplina_equivalente;
                }
 
@@ -5066,22 +5250,27 @@ int SolverMIP::cria_variavel_de_folga_combinacao_divisao_credito()
 
                      if ( vHash.find( v ) == vHash.end() )
                      {
+                        if ( variavel_equivalente )
+                        {
+                           mapVariaveisDisciplinasEquivalentes[ disc_equi ].push_back( v );
+                        }
+
                         vHash[v] = lp->getNumCols();
 
                         if ( problemData->parametros->funcao_objetivo == 0 )
                         {
                            OPT_COL col( OPT_COL::VAR_INTEGRAL,
-                              psi, 0.0, 10000.0,
-                              ( char * )v.toString().c_str() );
+                                        psi, 0.0, 10000.0,
+                                        ( char * )v.toString().c_str() );
 
                            lp->newCol( col );
                         }
                         else if( problemData->parametros->funcao_objetivo == 1
-                           || problemData->parametros->funcao_objetivo == 2 )
+                                    || problemData->parametros->funcao_objetivo == 2 )
                         {
                            OPT_COL col( OPT_COL::VAR_INTEGRAL,
-                              50.0, 0.0, 10000.0,
-                              ( char * )v.toString().c_str() );
+                                        50.0, 0.0, 10000.0,
+                                        ( char * )v.toString().c_str() );
 
                            lp->newCol( col );
                         }
@@ -5094,6 +5283,7 @@ int SolverMIP::cria_variavel_de_folga_combinacao_divisao_credito()
          }
       }
    }
+
    return num_vars;
 }
 
@@ -5120,7 +5310,7 @@ int SolverMIP::cria_variavel_creditos_modificada(void)
 
    ITERA_GGROUP_LESSPTR( it_bloco, problemData->blocos, BlocoCurricular )
    {
-      ITERA_GGROUP_LESSPTR(it_disciplina,it_bloco->disciplinas,Disciplina)
+      ITERA_GGROUP_LESSPTR( it_disciplina, it_bloco->disciplinas, Disciplina )
       {
          disciplina = ( *it_disciplina );
 
@@ -5128,15 +5318,23 @@ int SolverMIP::cria_variavel_creditos_modificada(void)
             = problemData->map_Disc_CursoCurriculo[ disciplina ];
          curso = curso_curriculo.first;
          curriculo = curso_curriculo.second;
+
+         bool variavel_equivalente = false;
+         Disciplina * disc_equi = NULL;
+
          disciplina_equivalente = problemData->retornaDisciplinaSubstituta( curso, curriculo, disciplina );
          if ( disciplina_equivalente != NULL )
          {
+            disc_equi = disciplina;
+            variavel_equivalente = true;
             disciplina = disciplina_equivalente;
          }
+
          GGroup< int >::iterator itDiasLetBloco =
             it_bloco->diasLetivos.begin();
+
          for (; itDiasLetBloco != it_bloco->diasLetivos.end();
-            itDiasLetBloco++ )
+                itDiasLetBloco++ )
          {
             Variable v;
             v.reset();
@@ -5148,11 +5346,16 @@ int SolverMIP::cria_variavel_creditos_modificada(void)
 
             if ( vHash.find( v ) == vHash.end() )
             {
+               if ( variavel_equivalente )
+               {
+                  mapVariaveisDisciplinasEquivalentes[ disc_equi ].push_back( v );
+               }
+
                vHash[v] = lp->getNumCols();
 
                OPT_COL col( OPT_COL::VAR_INTEGRAL,
-                  0.0, 0.0, 50,
-                  ( char* )v.toString().c_str() );
+                            0.0, 0.0, 50,
+                            ( char * )v.toString().c_str() );
 
                lp->newCol( col );
                num_vars++;
@@ -5337,9 +5540,14 @@ int SolverMIP::cria_variavel_abertura_compativel( void )
                curso = curso_curriculo.first;
                curriculo = curso_curriculo.second;
 
+               bool variavel_equivalente = false;
+               Disciplina * disc_equi = NULL;
+
                disciplina_equivalente = problemData->retornaDisciplinaSubstituta( curso, curriculo, disciplina );
                if ( disciplina_equivalente != NULL )
                {
+                  disc_equi = disciplina;
+                  variavel_equivalente = true;
                   disciplina = disciplina_equivalente;
                }
 
@@ -5358,6 +5566,11 @@ int SolverMIP::cria_variavel_abertura_compativel( void )
 
                   if ( vHash.find( v ) == vHash.end() )
                   {
+                     if ( variavel_equivalente )
+                     {
+                        mapVariaveisDisciplinasEquivalentes[ disc_equi ].push_back( v );
+                     }
+
                      vHash[ v ] = lp->getNumCols();
 
                      OPT_COL col( OPT_COL::VAR_BINARY,
@@ -5411,10 +5624,10 @@ int SolverMIP::cria_variavel_abertura_bloco_mesmoTPS(void)
                   vHash[v] = lp->getNumCols();
 
                   OPT_COL col( OPT_COL::VAR_BINARY,
-                     0.0, 0.0, 1.0, ( char* )v.toString().c_str() );
+                               0.0, 0.0, 1.0,
+                               ( char * )v.toString().c_str() );
 
                   lp->newCol( col );
-
                   num_vars += 1;
                }
             }
@@ -5470,8 +5683,8 @@ int SolverMIP::cria_variavel_de_folga_abertura_bloco_mesmoTPS()
                   if ( problemData->parametros->funcao_objetivo == 0 )
                   {
                      OPT_COL col( OPT_COL::VAR_BINARY,
-                        tau, 0.0, 1.0,
-                        ( char * )v.toString().c_str() );
+                                  tau, 0.0, 1.0,
+                                  ( char * )v.toString().c_str() );
 
                      lp->newCol( col );
                   }
@@ -5479,8 +5692,8 @@ int SolverMIP::cria_variavel_de_folga_abertura_bloco_mesmoTPS()
                      || problemData->parametros->funcao_objetivo == 2 )
                   {
                      OPT_COL col( OPT_COL::VAR_BINARY,
-                        0.0, 0.0, 1.0,
-                        ( char * )v.toString().c_str() );
+                                  0.0, 0.0, 1.0,
+                                  ( char * )v.toString().c_str() );
 
                      lp->newCol( col );
                   }
