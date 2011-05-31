@@ -99,13 +99,13 @@ public:
    //------------------
    // Essa estrutura ficaria melhor dentro das disciplinas !!!!
    // Armazena todas as salas (sala de aula ou lab) em que uma 
-   // disciplina pode ser oferecida.   
-   std::map< Disciplina *, std::vector< Sala * > > discSalas;
+   // disciplina pode ser oferecida.
+   std::map< Disciplina *, std::vector< Sala * >, LessPtr< Disciplina > > discSalas;
 
    //------------------
    // Armazena todas as salas (sala de aula ou lab) em que uma 
    // disciplina, preferencialmente, deve ser oferecida.
-   std::map< Disciplina *, GGroup< Sala * > > disc_Salas_Pref;
+   std::map< Disciplina *, GGroup< Sala *, LessPtr< Sala > >, LessPtr< Disciplina > > disc_Salas_Pref;
 
    //------------------
    // Estrutura responsavel por referenciar os campus.

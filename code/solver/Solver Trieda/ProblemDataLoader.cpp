@@ -3001,8 +3001,8 @@ void ProblemDataLoader::associaDisciplinasSalas()
          ITERA_GGROUP_LESSPTR( it_sala, it_und->salas, Sala )
          {
             ITERA_GGROUP( it_Disc_Assoc_Sala,
-               it_sala->disciplinas_Associadas_Usuario,
-               Disciplina )
+                          it_sala->disciplinas_Associadas_Usuario,
+                          Disciplina )
             {
                // Adicionando um ponteiro para qdo tiver uma dada
                // disciplina for fácil descobrir a lista de salas associadas.
@@ -3025,8 +3025,9 @@ void ProblemDataLoader::associaDisciplinasSalas()
                = ( problemData->refDisciplinas.find( *it_disciplina )->second );
 
             // Se a disciplina foi associada pelo usuário.
-            std::map< Disciplina *, GGroup< Sala * > >::iterator it_salas_associadas
-               = problemData->disc_Salas_Pref.find( disciplina );
+            std::map< Disciplina *, GGroup< Sala *, LessPtr< Sala > >, LessPtr< Disciplina > >::iterator
+               it_salas_associadas = problemData->disc_Salas_Pref.find( disciplina );
+
             bool salas_associadas = ( it_salas_associadas != problemData->disc_Salas_Pref.end() );
 
             if ( disciplina->eLab() && !salas_associadas )
@@ -3035,25 +3036,25 @@ void ProblemDataLoader::associaDisciplinasSalas()
                // NAO DEVO CRIAR MAIS NENHUMA ASSOCIACAO.
 
                std::cout << "\nERRO!!! ProblemDataLoader::associaDisciplinasSalas()"
-                  << "\nUma disciplina pratica nao foi"
-                  << "\nassociada a nenhuma sala pelo usuario."
-                  << "\nId da disciplina   : " << disciplina->getId()
-                  << "\nNome da disciplina : " << disciplina->getNome()
-                  << std::endl << std::endl;
+                         << "\nUma disciplina pratica nao foi"
+                         << "\nassociada a nenhuma sala pelo usuario."
+                         << "\nId da disciplina   : " << disciplina->getId()
+                         << "\nNome da disciplina : " << disciplina->getNome()
+                         << std::endl << std::endl;
 
                exit(1);
             }
-            else
+            else if ( !salas_associadas )
             {
-               // RESTRICAO FRACA
-               // DEVO CRIAR ASSOCIACOES ENTRE A DISCIPLINA E TODAS AS SALAS DE AULA.
+               // RESTRICAO FRACA DEVO CRIAR ASSOCIACOES
+               // ENTRE A DISCIPLINA E TODAS AS SALAS DE AULA.
 
                ITERA_GGROUP_LESSPTR( it_unidade, campus->unidades, Unidade )
                {
                   ITERA_GGROUP_LESSPTR( it_sala, it_unidade->salas, Sala )
                   {
                      if ( it_sala->disciplinas_Associadas_Usuario.find( disciplina )
-                        == it_sala->disciplinas_Associadas_Usuario.end() )
+                           == it_sala->disciplinas_Associadas_Usuario.end() )
                      {
                         // Somente se for uma sala de aula.
                         if ( it_sala->getTipoSalaId() == 1 )
@@ -3066,7 +3067,7 @@ void ProblemDataLoader::associaDisciplinasSalas()
                               // Só continuo quando a sala possuir o dia
                               // letivo (pertencente à disciplina) em questão.
                               if ( it_sala->diasLetivos.find( *it_Dias_Let_Disc )
-                                 != it_sala->diasLetivos.end() )
+                                    != it_sala->diasLetivos.end() )
                               {
                                  it_sala->disciplinas_Associadas_AUTOMATICA.add( disciplina );
 
@@ -3117,7 +3118,7 @@ void ProblemDataLoader::associaDisciplinasSalas()
    // ------------------------ Verificando as Fixações -------------------------
    // Se uma disciplina está fixada a uma determinada sala associa
    // essa disciplina  somente aquela sala (e não a um grupo de salas)
-   std::map< Disciplina *, std::vector< Sala * > >::iterator
+   std::map< Disciplina *, std::vector< Sala * >, LessPtr< Disciplina > >::iterator
       it_Disc_Salas = problemData->discSalas.begin();
 
    for (; it_Disc_Salas != problemData->discSalas.end(); it_Disc_Salas++ )
