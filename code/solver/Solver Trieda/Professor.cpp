@@ -30,6 +30,7 @@ Professor::Professor( bool eVirtual )
        tipo_contrato_id = 1;
        ch_min = 0;
        valor_credito = 50000;
+       titulacao_id = 1;
 
 	   // 7 dias na semana, 4 creditos por dia
        ch_max = 28; 
