@@ -422,11 +422,12 @@ bool SolucaoOperacional::fixacaoDiscSala( Aula * aula )
 
 	std::map< Disciplina *, Sala * >::iterator it_disc_sala
 		= problem_data->map_Discicplina_Sala_Fixados.begin();
+
 	for (; it_disc_sala != problem_data->map_Discicplina_Sala_Fixados.end();
 		   it_disc_sala++ )
 	{
 		if ( it_disc_sala->first->getId() == disciplina_id
-			&& it_disc_sala->second->getId() == sala_id )
+            && it_disc_sala->second->getId() == sala_id )
 		{
 			return true;
 		}
@@ -446,9 +447,9 @@ bool SolucaoOperacional::fixacaoDiscSalaDiaHorario( Aula * aula, int indice_hora
 		problem_data->fixacoes_Disc_Sala_Dia_Horario, Fixacao )
 	{
 		if ( it_fixacao->disciplina->getId() == disciplina_id
-			&& it_fixacao->sala->getId() == sala_id
-			&& it_fixacao->getDiaSemana() == dia_semana
-			&& it_fixacao->horario_aula->getId() == horairo_aula_id )
+			   && it_fixacao->sala->getId() == sala_id
+			   && it_fixacao->getDiaSemana() == dia_semana
+			   && it_fixacao->horario_aula->getId() == horairo_aula_id )
 		{
 			return true;
 		}
@@ -458,9 +459,9 @@ bool SolucaoOperacional::fixacaoDiscSalaDiaHorario( Aula * aula, int indice_hora
 		problem_data->fixacoes_Prof_Disc_Sala_Dia_Horario, Fixacao )
 	{
 		if ( it_fixacao->disciplina->getId() == disciplina_id
-			&& it_fixacao->sala->getId() == sala_id
-			&& it_fixacao->getDiaSemana() == dia_semana
-			&& it_fixacao->horario_aula->getId() == horairo_aula_id )
+			   && it_fixacao->sala->getId() == sala_id
+			   && it_fixacao->getDiaSemana() == dia_semana
+			   && it_fixacao->horario_aula->getId() == horairo_aula_id )
 		{
 			return true;
 		}

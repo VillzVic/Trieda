@@ -1647,7 +1647,7 @@ int SolverMIP::solveOperacional()
 
    std::cout << "Gerando uma solucao inicial para o modelo operacional" << std::endl;
    SolucaoOperacional & solucaoOperacional = solIni.geraSolucaoInicial();
-   // solucaoOperacional.validaSolucao( "Validando a solucao inicial gerada" );
+   solucaoOperacional.validaSolucao( "Validando a solucao inicial gerada" );
    std::cout << "Solucao Inicial gerada." << std::endl;
 
    solucaoOperacional.toString2();
@@ -1656,48 +1656,44 @@ int SolverMIP::solveOperacional()
    Avaliador avaliador;
    avaliador.avaliaSolucao( solucaoOperacional, true );
 
-   ITERA_GGROUP_LESSPTR( itAula, problemData->aulas, Aula )
-   {
-      // itAula->toString();
-   }
-
    // Estruturas de Vizinhança
    NSSeqSwapEqBlocks nsSeqSwapEqBlocks ( *problemData );
-   // NSSwapEqSchedulesBlocks nsSwapEqSchedulesBlocks ( *problemData );
-   // NSSwapEqTeachersBlocks nsSwapEqTeachersBlocks ( *problemData );
-
+   NSSwapEqSchedulesBlocks nsSwapEqSchedulesBlocks ( *problemData );
+   NSSwapEqTeachersBlocks nsSwapEqTeachersBlocks ( *problemData );
    NSShift nsShift( *problemData );
-   // MoveShift & mvSht = ( MoveShift & ) nsShift.move( solucaoOperacional );
-   // mvSht.print();
 
    // Heurísticas de Busca Local - Descida Randômica
-   // RandomDescentMethod rdmSeqSwapEqBlocks ( avaliador, nsSeqSwapEqBlocks, 10 );
-   // RandomDescentMethod rdmSwapEqSchedulesBlocks ( avaliador, nsSwapEqSchedulesBlocks, 10 );
-   // RandomDescentMethod rdmSwapEqTeachersBlocks ( avaliador, nsSwapEqTeachersBlocks, 10 );
-   RandomDescentMethod rdmShift ( avaliador, nsShift, 10 );
+   RandomDescentMethod rdmSeqSwapEqBlocks ( avaliador, nsSeqSwapEqBlocks, 300 );
+   RandomDescentMethod rdmSwapEqSchedulesBlocks ( avaliador, nsSwapEqSchedulesBlocks, 300 );
+   RandomDescentMethod rdmSwapEqTeachersBlocks ( avaliador, nsSwapEqTeachersBlocks, 300 );
+   RandomDescentMethod rdmShift ( avaliador, nsShift, 300 );
+
+   rdmSeqSwapEqBlocks.exec( solucaoOperacional, 30, 0 );
+   rdmSwapEqSchedulesBlocks.exec( solucaoOperacional, 30, 0 );
+   rdmSwapEqTeachersBlocks.exec( solucaoOperacional, 30, 0 );
    rdmShift.exec( solucaoOperacional, 30, 0 );
 
    // Mecanismo de perturbação
    ILSLPerturbationLPlus2 ilslPerturbationPlus2 ( avaliador, -1, nsSeqSwapEqBlocks );
-   // ilslPerturbationPlus2.add_ns( nsSwapEqSchedulesBlocks );
-   // ilslPerturbationPlus2.add_ns( nsSwapEqTeachersBlocks );
+   ilslPerturbationPlus2.add_ns( nsSeqSwapEqBlocks );
+   ilslPerturbationPlus2.add_ns( nsSwapEqSchedulesBlocks );
+   ilslPerturbationPlus2.add_ns( nsSwapEqTeachersBlocks );
    ilslPerturbationPlus2.add_ns( nsShift );
 
    // RVND
    std::vector< Heuristic * > heuristicasBuscaLocal;
-   // heuristicasBuscaLocal.push_back( &rdmSeqSwapEqBlocks );
-   // heuristicasBuscaLocal.push_back( &rdmSwapEqSchedulesBlocks );
-   // heuristicasBuscaLocal.push_back( &rdmSwapEqTeachersBlocks );
+   heuristicasBuscaLocal.push_back( &rdmSeqSwapEqBlocks );
+   heuristicasBuscaLocal.push_back( &rdmSwapEqSchedulesBlocks );
+   heuristicasBuscaLocal.push_back( &rdmSwapEqTeachersBlocks );
    heuristicasBuscaLocal.push_back( &rdmShift );
 
    RVND rvnd( avaliador, heuristicasBuscaLocal );
 
    // Busca Local Iterada por Níveis
    IteratedLocalSearchLevels ilsl ( avaliador, rvnd, ilslPerturbationPlus2, 20 , 4 );
-   ilsl.exec( solucaoOperacional, 30, 0 ); // Parâmetro 2 : tempo ( em segundos )
 
    // Parâmetro 2 : tempo ( em segundos )
-   // rdmSeqSwapEqBlocks.exec( solucaoOperacional, 30, 0 );
+   ilsl.exec( solucaoOperacional, 30, 0 );
 
    // Avaliação final
    avaliador.avaliaSolucao( solucaoOperacional, true );
@@ -1773,7 +1769,7 @@ int SolverMIP::solve()
       if ( problemData->atendimentosTatico != NULL
             && problemData->atendimentosTatico->size() > 0 )
       {
-         ITERA_GGROUP( itAtTat,*problemData->atendimentosTatico,AtendimentoCampusSolucao )
+         ITERA_GGROUP( itAtTat, ( *problemData->atendimentosTatico ), AtendimentoCampusSolucao )
          { 
             Campus * campus = problemData->refCampus[ itAtTat->getCampusId() ];
 
@@ -1803,7 +1799,7 @@ int SolverMIP::solve()
                   atSala->setSalaId( sala->getCodigo() );
                   atSala->sala = sala;
 
-                  ITERA_GGROUP(itAtDiaSemana,itAtSala->atendimentosDiasSemana,AtendimentoDiaSemanaSolucao)
+                  ITERA_GGROUP( itAtDiaSemana, itAtSala->atendimentosDiasSemana, AtendimentoDiaSemanaSolucao )
                   {
                      AtendimentoDiaSemana * atDiaSemana = new AtendimentoDiaSemana();
 

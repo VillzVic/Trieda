@@ -135,6 +135,7 @@ std::pair< Aula *, std::pair< Professor *, std::vector< HorarioAula * > > >
 
    // VAZIO POR EQTO.
    std::vector< std::string > checksToDo;
+   checksToDo.push_back( "virtualClass" );
 
    while ( !moveValidator->canShiftSchedule( *aula, novoProf, novosHorariosAula, solOp, checksToDo ) && ++attempt < MAX_ATTEMPTS )
    {

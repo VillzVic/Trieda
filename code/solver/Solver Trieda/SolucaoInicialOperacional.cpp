@@ -1,14 +1,19 @@
 #include "SolucaoInicialOperacional.h"
 
-bool myVecIntSort(std::vector<int> & _Left, std::vector<int> & _Right)
+bool myVecIntSort( std::vector< int > & _Left, std::vector< int > & _Right )
 {
-   if(_Left.size() != _Right.size())
-   { std::cout << "\n\nComparando dois vetores de tamanhos diferentes em <MyVecIntSort>.\n\n"; exit(1); }
+   if ( _Left.size() != _Right.size() )
+   {
+      std::cout << "\n\nComparando dois vetores de "
+                << "tamanhos diferentes em <MyVecIntSort>.\n\n";
+
+      exit(1);
+   }
 
    int diffLeft = 0;
    int diffRight = 0;
 
-   if(_Left.size() == 1)
+   if ( _Left.size() == 1 )
    {
       diffLeft = _Left.front();
       diffRight = _Right.front();
@@ -16,16 +21,16 @@ bool myVecIntSort(std::vector<int> & _Left, std::vector<int> & _Right)
       std::cout << "diffLeft: " << diffLeft << std::endl;
       std::cout << "diffRight: " << diffRight << std::endl;
 
-      return (diffLeft < diffRight);
+      return ( diffLeft < diffRight );
    }
 
-   for(unsigned predLeftAndRight = (_Left.size()-1); predLeftAndRight > 0; --predLeftAndRight)
+   for ( unsigned predLeftAndRight = ( _Left.size() - 1 ); predLeftAndRight > 0; predLeftAndRight-- )
    {
       unsigned sucLeft = predLeftAndRight-1;
       unsigned sucRight = predLeftAndRight-1;
 
-      diffLeft += _Left.at(predLeftAndRight) - _Left.at(sucLeft);
-      diffRight += _Right.at(predLeftAndRight) - _Right.at(sucRight);
+      diffLeft += _Left.at( predLeftAndRight ) - _Left.at( sucLeft );
+      diffRight += _Right.at( predLeftAndRight ) - _Right.at( sucRight );
    }
 
 
@@ -39,7 +44,7 @@ bool ordenaCustosAlocacao( CustoAlocacao * left, CustoAlocacao * right )
 }
 
 SolucaoInicialOperacional::SolucaoInicialOperacional( ProblemData & _problemData )
-: problemData( _problemData )
+   : problemData( _problemData )
 {
    // ----------------------------------------------------------------------
 
@@ -164,7 +169,7 @@ SolucaoInicialOperacional::SolucaoInicialOperacional( ProblemData & _problemData
 
    // ----------------------------------------------------------------------
 
-   executaFuncaoPrioridade(**problemData.campi.begin(),problemData.campi.begin()->professores);
+   executaFuncaoPrioridade( **problemData.campi.begin(), problemData.campi.begin()->professores );
 
    // ----------------------------------------------------------------------
    // Limpando a estrutura de <aulasNaoAlocadas>.
@@ -177,7 +182,7 @@ SolucaoInicialOperacional::SolucaoInicialOperacional( ProblemData & _problemData
    std::map< std::pair< Professor *, Aula * >, CustoAlocacao * >::iterator 
       itCustoProfTurma = custoProfTurma.begin();
 
-   for(; itCustoProfTurma != custoProfTurma.end(); ++itCustoProfTurma )
+   for (; itCustoProfTurma != custoProfTurma.end(); ++itCustoProfTurma )
    {
       custoAlocacaoNiveisPrioridade[
          itCustoProfTurma->second->getNivelPrioridade()].add(
@@ -204,19 +209,25 @@ SolucaoInicialOperacional::~SolucaoInicialOperacional()
 SolucaoOperacional & SolucaoInicialOperacional::geraSolucaoInicial()
 {
    // Alocando os CustoAlocacao por nivel de prioridade.
-   for(unsigned nvPrd = custoAlocacaoNiveisPrioridade.size(); nvPrd > 0; --nvPrd)
+   for ( unsigned nvPrd = custoAlocacaoNiveisPrioridade.size(); nvPrd > 0; nvPrd-- )
    {
-      std::map<unsigned /*Nivel de prioridade*/,
-         GGroup< CustoAlocacao *, GreaterPtr<CustoAlocacao> > >::iterator
+      std::map< unsigned /*Nivel de prioridade*/,
+                GGroup< CustoAlocacao *, GreaterPtr< CustoAlocacao > > >::iterator
+         itCstAlocNvPrd = custoAlocacaoNiveisPrioridade.find( nvPrd );
 
-         itCstAlocNvPrd = custoAlocacaoNiveisPrioridade.find(nvPrd);
+      if ( itCstAlocNvPrd == custoAlocacaoNiveisPrioridade.end() )
+      {
+         std::cout << "\n\nNivel de prioridade nao encontrado em SolucaoOperacional "
+                   << "& SolucaoInicialOperacional::geraSolucaoInicial().\n\n";
 
-      if(itCstAlocNvPrd == custoAlocacaoNiveisPrioridade.end())
-      { std::cout << "\n\nNivel de prioridade nao encontrado em SolucaoOperacional & SolucaoInicialOperacional::geraSolucaoInicial().\n\n"; exit(1); }
+         exit(1);
+      }
 
       // Inicializando a estrutura <aulasNaoAlocadas>.
-      ITERA_GGROUP_GREATERPTR(itCustoAlocacaoNivelPrioridade,(itCstAlocNvPrd->second),CustoAlocacao)
-      { aulasNaoAlocadas.add(&(itCustoAlocacaoNivelPrioridade->getAula())); }
+      ITERA_GGROUP_GREATERPTR( itCustoAlocacaoNivelPrioridade, ( itCstAlocNvPrd->second ), CustoAlocacao )
+      {
+         aulasNaoAlocadas.add( &( itCustoAlocacaoNivelPrioridade->getAula() ) );
+      }
 
       // Inicializando o GGroup de custos ordenados.
       custosAlocacaoAulaOrdenado = itCstAlocNvPrd->second;
@@ -255,16 +266,21 @@ SolucaoOperacional & SolucaoInicialOperacional::geraSolucaoInicial()
       bool primeiraTentativaAlocacao = true;
       bool tentarManterViabilidade = true;
 
-      alocaAulasRec(primeiraTentativaAlocacao,tentarManterViabilidade);
+      alocaAulasRec( primeiraTentativaAlocacao, tentarManterViabilidade );
 
       // Pode ter restado algum custo durante a alocação.
       custosAlocacaoAulaOrdenado.clear();
 
-      if(aulasNaoAlocadas.size() > 0)
-      { std::cout << "\n\nA estrutura <aulasNaoAlocadas> deveria estar vazia em geraSolucaoInicial.\n\n"; exit(1); }
+      if ( aulasNaoAlocadas.size() > 0 )
+      {
+         std::cout << "\n\nA estrutura <aulasNaoAlocadas> "
+                   << "deveria estar vazia em geraSolucaoInicial.\n\n";
+
+         exit(1);
+      }
    }
 
-   return * solIni;
+   return *( solIni );
 }
 
 void SolucaoInicialOperacional::alocaAulasRec(bool primeiraTentativaAlocacao,bool tentaV)

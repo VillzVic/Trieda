@@ -1,12 +1,13 @@
 #include "RandomDescentMethod.h"
 
-RandomDescentMethod::RandomDescentMethod(Avaliador & _eval, NS & _ns, unsigned int _iterMax) :
-evaluator(_eval), ns(_ns), iterMax(_iterMax)
+RandomDescentMethod::RandomDescentMethod( Avaliador & _eval, NS & _ns, unsigned int _iterMax )
+   : evaluator( _eval ), ns( _ns ), iterMax( _iterMax )
 {
 }
 
 RandomDescentMethod::~RandomDescentMethod()
 {
+
 }
 
 void RandomDescentMethod::exec( SolucaoOperacional & s, double timelimit, double target_f )
@@ -25,16 +26,14 @@ void RandomDescentMethod::exec( SolucaoOperacional & s, double timelimit, double
    unsigned int iter = 0;
 
    // Teste
-   //unsigned int iterBKP = 0;
-
-   //std::cout << "RDM starts:\tSolution Evaluation: " << evaluator.avaliaSolucao(s) << std::endl;
+   // unsigned int iterBKP = 0;
+   // std::cout << "RDM starts:\tSolution Evaluation: " << evaluator.avaliaSolucao(s) << std::endl;
 
    while ( iter < iterMax && elapsedTime < timelimit )
    {
-      //1std::cout << "\n\nxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\n";
-      //1std::cout << "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\n";
-
-      //1std::cout << "\n\nstart iter " << iter << "\n\n\n";
+      // 1std::cout << "\n\nxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\n";
+      // 1std::cout << "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\n";
+      // 1std::cout << "\n\nstart iter " << iter << "\n\n\n";
 
       Move & move = ns.move( s );
 
@@ -81,26 +80,22 @@ void RandomDescentMethod::exec( SolucaoOperacional & s, double timelimit, double
       //}
 
       //1std::cout << "\n\nAvaliando movimento:\n";
-      double newEvalSolution = evaluator.avaliaSolucao(s);
+      double newEvalSolution = evaluator.avaliaSolucao( s );
 
-      //1std::cout << "\n\nAplicando movimento reverso e avaliando:\n";
-      Move & iniMove = revMove.apply(s);
+      // 1std::cout << "\n\nAplicando movimento reverso e avaliando:\n";
+      Move & iniMove = revMove.apply( s );
 
-      //1s.toString2();
-      //1s.validaSolucao("Validando a solucao apos o movimento reverso ser aplicado.");
+      // 1s.toString2();
+      // 1s.validaSolucao("Validando a solucao apos o movimento reverso ser aplicado.");
 
-      double oldEvalSolution = evaluator.avaliaSolucao(s);
+      double oldEvalSolution = evaluator.avaliaSolucao( s );
 
       if ( move != iniMove )
       {
          std::cout << "\n\n\nmove e inimove diferentes !!!\n\n\n";
-
          move.print();
-
          std::cout << "\n\n";
-
          iniMove.print();
-
          exit(1);
       }
 
@@ -112,7 +107,7 @@ void RandomDescentMethod::exec( SolucaoOperacional & s, double timelimit, double
       //   exit(1);
       //}
 
-      cost = newEvalSolution - oldEvalSolution;
+      cost = ( newEvalSolution - oldEvalSolution );
 
       //delete &revMove;
       //delete &iniMove;
@@ -126,44 +121,41 @@ void RandomDescentMethod::exec( SolucaoOperacional & s, double timelimit, double
       //}
 
       iter++;
-      //iterBKP++;
+      // iterBKP++;
 
-      if (cost < 0)
+      if ( cost < 0 )
       {
-         //std::cout << "RDM : Best fo: " << newEvalSolution << " on [iter " << iter << "]" << std::endl;
-         std::cout << "RDM : Best fo: " << newEvalSolution << " on [iter " << iter << "]\t Old fo: " << oldEvalSolution << std::endl;
+         // std::cout << "RDM : Best fo: " << newEvalSolution << " on [iter " << iter << "]" << std::endl;
+         std::cout << "RDM : Best fo: " << newEvalSolution << " on [iter "
+                   << iter << "]\t Old fo: " << oldEvalSolution << std::endl;
 
-         //1std::cout << "\n\nAplicando movimento e avaliando, pois MELHOROU:\n";
+         // 1std::cout << "\n\nAplicando movimento e avaliando, pois MELHOROU:\n";
 
-         //delete &(move.apply(s));
-         delete &(iniMove.apply(s));
-         
-         //1s.validaSolucao();
+         // delete &(move.apply(s));
+         delete &( iniMove.apply( s ) );
+
+         // 1s.validaSolucao();
 
          iter = 0;
       }
 
-      //1std::cout << "\nDeleted:";
-
+      // 1std::cout << "\nDeleted:";
       delete &revMove;
-      
-      //1std::cout << " revMove,";
+      // 1std::cout << " revMove,";
 
       delete &iniMove;
-      
-      //1std::cout << " iniMove,";
+      // 1std::cout << " iniMove,";
 
       delete &move;
-
-      //1std::cout << " move.\n";
+      // 1std::cout << " move.\n";
 
       timer->stop();
       elapsedTime = timer->getCPUTotalSecs();
       timer->start();
 
-      //1std::cout << "\n\nend iter " << iter << "\n\n";
+      // 1std::cout << "\n\nend iter " << iter << "\n\n";
    }
 
-   //std::cout << "RDM ends:\t Solution Evaluation: " << evaluator.avaliaSolucao(s) << std::endl;
-   //std::cout << "Elapsed time in RDM exec:\t" << elapsedTime << " secs.\n";
+   // std::cout << "RDM ends:\t Solution Evaluation: " << evaluator.avaliaSolucao(s) << std::endl;
+   // std::cout << "Elapsed time in RDM exec:\t" << elapsedTime << " secs.\n";
 }

@@ -70,7 +70,7 @@ Move & MoveShift::apply( SolucaoOperacional & s )
 bool MoveShift::operator == ( const Move & m ) const
 {
    const MoveShift & _m = ( const MoveShift & ) m;
-   if (_m.aula != aula)
+   if ( _m.aula != aula )
    {
       return false;
    }
@@ -80,8 +80,7 @@ bool MoveShift::operator == ( const Move & m ) const
 
 void MoveShift::print()
 {
-   std::cout << "\n<---> MoveShift <--->\n" << std::endl;
-
+   // std::cout << "\n<---> MoveShift <--->\n" << std::endl;
    // aula.toString();
    // std::cout << "Professor atual (idOp): " << profAula.getIdOperacional() << std::endl;
    // std::cout << "Professor candidato (idOp): " << novoProfAula.getIdOperacional() << std::endl;
