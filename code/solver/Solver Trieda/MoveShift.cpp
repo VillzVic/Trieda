@@ -1,8 +1,8 @@
 #include "MoveShift.h"
 
 MoveShift::MoveShift( Aula & _aula, Professor & _novoProfAula,
-                     std::vector<HorarioAula*> _blocoHorariosVagos )
-                     : aula( _aula ), novoProfAula( _novoProfAula )
+                      std::vector< HorarioAula * > _blocoHorariosVagos )
+                      : aula( _aula ), novoProfAula( _novoProfAula )
 {
    blocoHorariosVagos = _blocoHorariosVagos;
 }
@@ -18,17 +18,16 @@ Move & MoveShift::apply( SolucaoOperacional & s )
    // 1 - Na solução, referenciar os novos horários da aula e apontar para NULL os horários antigos.
    // 2 - Na solução, trocar o vetor que indica o bloco.
 
+   this->print();
    int indice = 0, linha = 0, coluna = 0;
 
-   print();
-
-   std::map< Aula *, std::pair< Professor * , std::vector< HorarioAula * > >, LessPtr<Aula> >::iterator 
+   std::map< Aula *, std::pair< Professor * , std::vector< HorarioAula * > >, LessPtr< Aula > >::iterator 
       itBlocoAula = s.blocoAulas.find( &aula );
 
    if ( itBlocoAula == s.blocoAulas.end() )
    {
       std::cout << "MoveShift -> Aula nao encontrada no "
-         << "blocoAulas da solucao corrente." << std::endl;
+                << "blocoAulas da solucao corrente." << std::endl;
 
       exit(1);
    }
@@ -83,7 +82,7 @@ void MoveShift::print()
 {
    std::cout << "\n<---> MoveShift <--->\n" << std::endl;
 
-   aula.toString();
-   //std::cout << "Professor atual (idOp): " << profAula.getIdOperacional() << std::endl;
-   std::cout << "Professor candidato (idOp): " << novoProfAula.getIdOperacional() << std::endl;
+   // aula.toString();
+   // std::cout << "Professor atual (idOp): " << profAula.getIdOperacional() << std::endl;
+   // std::cout << "Professor candidato (idOp): " << novoProfAula.getIdOperacional() << std::endl;
 }

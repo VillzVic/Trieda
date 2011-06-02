@@ -126,12 +126,6 @@ int main( int argc, char** argv )
    try
    {
 #endif
-      // Load data
-      //dataLoader = new ProblemDataLoader( inputFile, data );
-      //dataLoader->load();
-
-      //solution = new ProblemSolution((data->parametros->modo_otimizacao == "TATICO"));
-
       try
       {
          // Solve the Problem
@@ -146,7 +140,7 @@ int main( int argc, char** argv )
          char mensagem[ 200 ];
          sprintf( mensagem, "Não foi possível processar o modelo matemático (erro %d)", status );
          ErrorHandler::addErrorMessage(
-			 UNEXPECTED_ERROR, std::string( mensagem ), "Solver::main()", false );
+            UNEXPECTED_ERROR, std::string( mensagem ), "Solver::main()", false );
 
          error = true;
       }
@@ -175,7 +169,7 @@ int main( int argc, char** argv )
 		  std::string message = "Ocorreu um erro interno no resolvedor.";
 
           ErrorHandler::addErrorMessage(
-		     UNEXPECTED_ERROR, message, "main.cpp", true );
+             UNEXPECTED_ERROR, message, "main.cpp", true );
 	  }
 
       printf( "\n\nERROR: %s\n", e.what() );

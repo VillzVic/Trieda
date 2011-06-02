@@ -93,88 +93,69 @@ bool IteratedLocalSearchLevels::terminationCondition(levelHistory& history)
 }
 
 
-void IteratedLocalSearchLevels::exec(SolucaoOperacional & s, double timelimit, double target_f)
+void IteratedLocalSearchLevels::exec( SolucaoOperacional & s, double timelimit, double target_f )
 {
    cout << "ILS exec(" << target_f << "," << timelimit << ")" << endl;
-   //getchar();
 
    CPUTimer * timer = new CPUTimer();
    timer->start();
 
-   levelHistory * history = &initializeHistory();
-
-   // 's0' <- GenerateSolution
-   // 's*' <- localSearch 's'
+   levelHistory * history = &( initializeHistory() );
 
    timer->stop();
    double elapsedTime = timer->getCPUTotalSecs();
    timer->start();
 
-   localSearch(s, (timelimit - elapsedTime), target_f);
+   localSearch( s, ( timelimit - elapsedTime ), target_f );
 
-   //s.validaSolucao();
+   SolucaoOperacional * sStar = new SolucaoOperacional( s );
+   double eStar = e.avaliaSolucao( *sStar );
 
-   //std::cout << "GETCHAR PROGRAMADO - SOL INI!!!" << std::endl;
-   //getchar();
-
-   SolucaoOperacional * sStar = new SolucaoOperacional(s);
-   double eStar = e.avaliaSolucao(*sStar);
-
-   sStar->validaSolucao("Validando sStar");
-   //getchar();
-
+   sStar->validaSolucao( "Validando sStar" );
    cout << "ILS starts:\tSolution Evaluation: " << eStar << std::endl;
 
    do
    {
-      SolucaoOperacional * s1 = new SolucaoOperacional(*sStar);
+      SolucaoOperacional * s1 = new SolucaoOperacional( *sStar );
       double e1 = eStar;
 
       timer->stop();
       elapsedTime = timer->getCPUTotalSecs();
       timer->start();
 
-      s1->validaSolucao("Validando a solucao antes de realizar a perturbacao.");
-      perturbation(*s1, (timelimit - elapsedTime), target_f, *history);
+      s1->validaSolucao( "Validando a solucao antes de realizar a perturbacao." );
+      perturbation( *s1, ( timelimit - elapsedTime ), target_f, *history );
 
       timer->stop();
       elapsedTime = timer->getCPUTotalSecs();
       timer->start();
 
-      s1->validaSolucao("Validando a solucao depois de realizar a perturbacao e antes de fazer a busca local.");
-      localSearch(*s1, (timelimit - elapsedTime), target_f);
-      s1->validaSolucao("Validando a solucao depois de fazer a busca local.");
+      s1->validaSolucao( "Validando a solucao depois de realizar a perturbacao e antes de fazer a busca local." );
+      localSearch( *s1, ( timelimit - elapsedTime ), target_f );
+      s1->validaSolucao( "Validando a solucao depois de fazer a busca local." );
 
-      //SolucaoOperacional * s2 = s1;
-      //double e2 = e1;
-
-      sStar->validaSolucao("Validando sStar antes de acceptanceCriterion ser executado.");
-      SolucaoOperacional * sStar1 = &acceptanceCriterion(*sStar, *s1, *history);
-      sStar->validaSolucao("Validando sStar depois de acceptanceCriterion ser executado.");
-      sStar1->validaSolucao("Validando a solucao (sStar1) depois de executar o criterio de aceitacao.");
+      sStar->validaSolucao( "Validando sStar antes de acceptanceCriterion ser executado.");
+      SolucaoOperacional * sStar1 = &acceptanceCriterion( *sStar, *s1, *history );
+      sStar->validaSolucao( "Validando sStar depois de acceptanceCriterion ser executado." );
+      sStar1->validaSolucao( "Validando a solucao (sStar1) depois de executar o criterio de aceitacao." );
 
       delete sStar;
-      //delete s2;
       delete s1;
 
       sStar = sStar1;
-      eStar = e.avaliaSolucao(*sStar);
+      eStar = e.avaliaSolucao( *sStar );
 
       timer->stop();
       elapsedTime = timer->getCPUTotalSecs();
       timer->start();
 
-      //std::cout << "GETCHAR PROGRAMADO - ILS !!!" << std::endl;
-      //getchar();
-
       std::cout << "\n\n";
 
-   } while ( (target_f < eStar) && !terminationCondition(*history) && (elapsedTime < timelimit));
+   } while ( ( target_f < eStar ) && !terminationCondition( *history ) && ( elapsedTime < timelimit ) );
 
-   s = *sStar;
+   s = ( *sStar );
 
-   delete sStar;
-
+   // delete sStar;
    delete timer;
 
    std::cout << "ILS ends:\tSolution Evaluation: " << eStar << std::endl;

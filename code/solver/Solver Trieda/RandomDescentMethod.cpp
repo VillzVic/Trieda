@@ -9,7 +9,7 @@ RandomDescentMethod::~RandomDescentMethod()
 {
 }
 
-void RandomDescentMethod::exec(SolucaoOperacional & s, double timelimit, double target_f)
+void RandomDescentMethod::exec( SolucaoOperacional & s, double timelimit, double target_f )
 {
    std::cout << "RDM exec(" << target_f << "," << timelimit << ")" << std::endl;
    ns.print();
@@ -29,14 +29,14 @@ void RandomDescentMethod::exec(SolucaoOperacional & s, double timelimit, double 
 
    //std::cout << "RDM starts:\tSolution Evaluation: " << evaluator.avaliaSolucao(s) << std::endl;
 
-   while (iter < iterMax && elapsedTime < timelimit)
+   while ( iter < iterMax && elapsedTime < timelimit )
    {
       //1std::cout << "\n\nxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\n";
       //1std::cout << "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\n";
 
       //1std::cout << "\n\nstart iter " << iter << "\n\n\n";
 
-      Move & move = ns.move(s);
+      Move & move = ns.move( s );
 
       double cost = 0;
 
@@ -60,7 +60,7 @@ void RandomDescentMethod::exec(SolucaoOperacional & s, double timelimit, double 
       //1s.validaSolucao("Validando a solucao antes do movimento ser aplicado.");
 
       //1std::cout << "\n\nMovimento aplicado.\n\n";
-      Move & revMove = move.apply(s);
+      Move & revMove = move.apply( s );
 
       //1s.toString2();
       //1s.validaSolucao("Validando a solucao apos do movimento ser aplicado.");
@@ -91,7 +91,7 @@ void RandomDescentMethod::exec(SolucaoOperacional & s, double timelimit, double 
 
       double oldEvalSolution = evaluator.avaliaSolucao(s);
 
-      if(move != iniMove)
+      if ( move != iniMove )
       {
          std::cout << "\n\n\nmove e inimove diferentes !!!\n\n\n";
 
