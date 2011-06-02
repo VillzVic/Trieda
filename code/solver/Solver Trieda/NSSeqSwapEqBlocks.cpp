@@ -1,8 +1,9 @@
 #include "NSSeqSwapEqBlocks.h"
 
-NSSeqSwapEqBlocks::NSSeqSwapEqBlocks(ProblemData & _problemData) : problemData(_problemData)
+NSSeqSwapEqBlocks::NSSeqSwapEqBlocks( ProblemData & _problemData )
+   : problemData( _problemData )
 {
-   moveValidator = new MoveSwapEqBlocksValidator (&problemData);
+   moveValidator = new MoveSwapEqBlocksValidator ( &problemData );
 }
 
 NSSeqSwapEqBlocks::~NSSeqSwapEqBlocks()
@@ -10,7 +11,7 @@ NSSeqSwapEqBlocks::~NSSeqSwapEqBlocks()
    delete moveValidator;
 }
 
-std::pair< Aula *, Aula * > NSSeqSwapEqBlocks::pickTwoClasses(SolucaoOperacional & s)
+std::pair< Aula *, Aula * > NSSeqSwapEqBlocks::pickTwoClasses( SolucaoOperacional & s )
 {
    // Critérios a serem respeitados para a escolha das 2 aulas.
    // 1 - Não se deve selecionar a mesma aula.
@@ -28,41 +29,50 @@ std::pair< Aula *, Aula * > NSSeqSwapEqBlocks::pickTwoClasses(SolucaoOperacional
    Aula * a1 = NULL;
    Aula * a2 = NULL;
 
-   GGroup<Aula*,LessPtr<Aula> >::iterator itAula = problemData.aulas.begin();
+   GGroup< Aula *, LessPtr< Aula > >::iterator itAula = problemData.aulas.begin();
 
-   int maxIter = ( rand() % ( s.getMatrizAulas()->size() - 1 ) );
-   for( int i = 0; i < maxIter; ++i, ++itAula );
+   int tam_matriz = s.getMatrizAulas()->size();
+   int maxIter = ( rand() % ( tam_matriz > 1 ? tam_matriz - 1 : tam_matriz ) );
+
+   for ( int i = 0; i < maxIter; ++i, ++itAula );
 
    a1 = ( *itAula );
    a2 = ( *itAula );
 
    int attempt = -1;
 
-   while(!moveValidator->isValid(*a1,*a2,s) && ++attempt < MAX_ATTEMPTS)
+   while ( !moveValidator->isValid( *a1, *a2, s ) && ++attempt < MAX_ATTEMPTS )
    {
       itAula = problemData.aulas.begin();
-      maxIter = ( rand() % ( s.getMatrizAulas()->size() - 1 ) );
+
+      tam_matriz = s.getMatrizAulas()->size();
+      maxIter = ( rand() % ( tam_matriz > 1 ? tam_matriz - 1 : tam_matriz ) );
+
       for ( int i = 0; i < maxIter; ++i, ++itAula );
       a1 = ( *itAula );
 
       itAula = problemData.aulas.begin();
-      maxIter = ( rand() % ( s.getMatrizAulas()->size() - 1 ) );
+
+      tam_matriz = s.getMatrizAulas()->size();
+      maxIter = ( rand() % ( tam_matriz > 1 ? tam_matriz - 1 : tam_matriz ) );
+
       for ( int i = 0; i < maxIter; ++i, ++itAula );
       a2 = *itAula;
    }
 
-   if(attempt >= MAX_ATTEMPTS)
+   if ( attempt >= MAX_ATTEMPTS )
    {
-      std::cout << "Warnning: No valid move generated after MAX_ATTEMPTS (" << MAX_ATTEMPTS << ") iterations." << std::endl;
-      
-      a1 = *problemData.aulas.begin();
-      a2 = *problemData.aulas.begin();
+      std::cout << "Warnning: No valid move generated after MAX_ATTEMPTS ("
+                << MAX_ATTEMPTS << ") iterations." << std::endl;
+
+      a1 = ( *problemData.aulas.begin() );
+      a2 = ( *problemData.aulas.begin() );
    }
 
    return std::make_pair< Aula *, Aula * > ( a1, a2 );
 }
 
-Move & NSSeqSwapEqBlocks::move(SolucaoOperacional & s)
+Move & NSSeqSwapEqBlocks::move( SolucaoOperacional & s )
 {
    std::pair< Aula *, Aula * > aulas = pickTwoClasses( s );
 
@@ -81,12 +91,12 @@ Move & NSSeqSwapEqBlocks::move(SolucaoOperacional & s)
    //Professor & profA1 = *(a1.bloco_aula.begin()->first);
    //Professor & profA2 = *(a2.bloco_aula.begin()->first);
 
-   return *(new MoveSwap(a1,a2));
+   return *( new MoveSwap( a1, a2 ) );
 }
 
-NSIterator & NSSeqSwapEqBlocks::getIterator(SolucaoOperacional & s)
+NSIterator & NSSeqSwapEqBlocks::getIterator( SolucaoOperacional & s )
 {
-   return *new NSIteratorSwapEqBlocks(*s.getProblemData(),s.getProblemData()->aulas,s);
+   return *( new NSIteratorSwapEqBlocks( *s.getProblemData(), s.getProblemData()->aulas, s ) );
 }
 
 void NSSeqSwapEqBlocks::print()

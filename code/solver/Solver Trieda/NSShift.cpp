@@ -3,7 +3,7 @@
 NSShift::NSShift( ProblemData & _problemData, bool _keepFeasibility )
    : problemData( _problemData ), keepFeasibility( _keepFeasibility )
 {
-   moveValidator = new MoveShiftValidator(&problemData);
+   moveValidator = new MoveShiftValidator( &problemData );
 }
 
 NSShift::~NSShift()
@@ -26,11 +26,14 @@ std::pair< Aula *, std::pair< Professor *, std::vector< HorarioAula * > > >
    Aula * aula = NULL;
    GGroup< Aula *, LessPtr< Aula > >::iterator itAula = problemData.aulas.begin();
 
-   int maxIter = ( rand() % ( solOp.getMatrizAulas()->size() - 1 ) );
+   int tam_matriz = solOp.getMatrizAulas()->size();
+   int maxIter = ( rand() % ( tam_matriz > 1 ? tam_matriz - 1 : tam_matriz ) );
+
    for( int i = 0; i < maxIter; ++i, ++itAula );
+
    aula = ( *itAula );
 
-   std::map< Aula *, std::pair< Professor *, std::vector< HorarioAula * > >, LessPtr<Aula> >::iterator
+   std::map< Aula *, std::pair< Professor *, std::vector< HorarioAula * > >, LessPtr< Aula > >::iterator
       itBlocoAulas = solOp.blocoAulas.find( aula );
 
    if ( itBlocoAulas == solOp.blocoAulas.end() )
@@ -57,7 +60,10 @@ std::pair< Aula *, std::pair< Professor *, std::vector< HorarioAula * > > >
    {
       // Selecionando uma aula.
       itAula = problemData.aulas.begin();
-      maxIter = ( rand() % ( solOp.getMatrizAulas()->size() - 1 ) );
+
+      tam_matriz = solOp.getMatrizAulas()->size();
+      maxIter = ( rand() % ( tam_matriz > 1 ? tam_matriz - 1 : tam_matriz ) );
+
       for ( int i = 0; i < maxIter; ++i, ++itAula );
       aula = ( *itAula );
 
@@ -106,7 +112,9 @@ std::pair< Aula *, std::pair< Professor *, std::vector< HorarioAula * > > >
    Aula * aula = NULL;
    GGroup< Aula *, LessPtr< Aula > >::iterator itAula = problemData.aulas.begin();
 
-   int maxIter = ( rand() % ( solOp.getMatrizAulas()->size() - 1 ) );
+   int tam_matriz = solOp.getMatrizAulas()->size();
+   int maxIter = ( rand() % ( tam_matriz > 1 ? tam_matriz - 1 : tam_matriz ) );
+
    for( int i = 0; i < maxIter; ++i, ++itAula );
    aula = ( *itAula );
 
@@ -140,7 +148,10 @@ std::pair< Aula *, std::pair< Professor *, std::vector< HorarioAula * > > >
    {
       // Selecionando uma aula.
       itAula = problemData.aulas.begin();
-      maxIter = ( rand() % ( solOp.getMatrizAulas()->size() - 1 ) );
+
+      tam_matriz = solOp.getMatrizAulas()->size();
+      maxIter = ( rand() % ( tam_matriz > 1 ? tam_matriz - 1 : tam_matriz ) );
+
       for ( int i = 0; i < maxIter; ++i, ++itAula );
       aula = ( *itAula );
 

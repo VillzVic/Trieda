@@ -414,7 +414,7 @@ void SolucaoInicialOperacional::alocaAulasRec( bool primeiraTentativaAlocacao, b
                HorarioAula * primeiro_horario
                   = problemData.horarios_aula_ordenados[ seqHorarioAula.at( 0 ) ];
 
-               // PRocura pelo iterator correspondente ao primeiro horário
+               // Procura pelo iterator correspondente ao primeiro horário
                std::vector< HorarioAula * >::iterator 
                   itHA = problemData.horarios_aula_ordenados.begin();
 
@@ -428,7 +428,11 @@ void SolucaoInicialOperacional::alocaAulasRec( bool primeiraTentativaAlocacao, b
                }
 
                // Obtendo referências para os horários de aula.
-               std::vector< HorarioAula * > horariosAula ( ( itHA + hrIni ), ( itHA + hrFim + 1 ) );
+               std::vector< HorarioAula * > horariosAula;
+               for ( int i = hrIni, j = 0; i <= hrFim; i++, j++ )
+               {
+                  horariosAula.push_back( *( itHA + j ) );
+               }
                ////////////////////////////////////////////////////////////////////////////////////////////
 
                // Agora que alguma sequência de horários aula livres de um
