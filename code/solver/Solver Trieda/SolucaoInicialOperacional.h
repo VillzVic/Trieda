@@ -21,6 +21,8 @@ public:
 
    SolucaoOperacional & geraSolucaoInicial();
 
+   std::vector< int > retornaHorariosFixadosProfessor( Professor &, Disciplina &, Sala &, int );
+
 private:
    ProblemData & problemData;
    SolucaoOperacional * solIni;

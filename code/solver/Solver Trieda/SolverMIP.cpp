@@ -1647,8 +1647,16 @@ int SolverMIP::solveOperacional()
 
    std::cout << "Gerando uma solucao inicial para o modelo operacional" << std::endl;
    SolucaoOperacional & solucaoOperacional = solIni.geraSolucaoInicial();
-   solucaoOperacional.validaSolucao( "Validando a solucao inicial gerada" );
-   std::cout << "Solucao Inicial gerada." << std::endl;
+
+   bool solucao_valida = solucaoOperacional.validaSolucao( "Validando a solucao inicial gerada" );
+   if ( solucao_valida )
+   {
+      std::cout << "Solucao Inicial VALIDA gerada." << std::endl;
+   }
+   else
+   {
+      std::cout << "Solucao Inicial NAO-VALIDA gerada." << std::endl;
+   }
 
    solucaoOperacional.toString2();
 
@@ -1697,6 +1705,16 @@ int SolverMIP::solveOperacional()
 
    // Avaliação final
    avaliador.avaliaSolucao( solucaoOperacional, true );
+
+   solucao_valida = solucaoOperacional.validaSolucao( "Validando a solucao final" );
+   if ( solucao_valida )
+   {
+      std::cout << "Solucao final viavel." << std::endl;
+   }
+   else
+   {
+      std::cout << "A solucao final NAO ALOCOU todas as aulas." << std::endl;
+   }
 
    // Armazena a solução operacional no problem solution
    problemSolution->solucao_operacional = &( solucaoOperacional );

@@ -3,7 +3,11 @@
 
 #include <map>
 #include <vector>
+#include <fstream>
 
+#include "ofbase.h"
+#include "GGroup.h"
+#include "SolucaoOperacional.h"
 #include "Aula.h"
 #include "Horario.h"
 #include "HorarioAula.h"
@@ -100,7 +104,7 @@ public:
    // PROVAVELMENTE ELA SERÁ CARA, EM TERMOS DE TEMPO DE PROCESSAMENTO. DEVE-SE UTILIZA-LA APENAS PARA VALIDAÇÃO
    // DAS ESTRUTURAS DE VIZINHANÇA. UMA VEZ QUE ESTEJA GARANTIDO QUE AS ESTRUTURAS DE VIZINHANÇA ESTÃO FUNCIONANDO
    // DE ACORDO COM O PROPOSTO, DEVE-SE RETIRAR AS CHAMADAS A ESSE METODO.
-   void validaSolucao( std::string = "" ) const;
+   bool validaSolucao( std::string = "" ) const;
 
    // Fixações do tático
    bool fixacaoDiscSala( Aula * );

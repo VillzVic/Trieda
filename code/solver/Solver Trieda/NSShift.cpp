@@ -41,17 +41,17 @@ std::pair< Aula *, std::pair< Professor *, std::vector< HorarioAula * > > >
       exit(1);
    }
 
-   std::vector< HorarioAula * > novosHorariosAula ( itBlocoAulas->second.second );
    Professor * professor = NULL;
+   std::vector< HorarioAula * > novosHorariosAula ( itBlocoAulas->second.second );
 
    // Selecionando o novo professor.
-   int idOpProf = rand() % solOp.getMatrizAulas()->size();
+   int idOpProf = ( rand() % solOp.getMatrizAulas()->size() );
    Professor & novoProf = *( solOp.getProfessorMatriz( idOpProf ) );
 
    int attempt = -1;
 
    // VAZIO POR EQTO.
-   std::vector<std::string> checksToDo;
+   std::vector< std::string > checksToDo;
 
    while ( !moveValidator->canShiftSchedule( *aula, novoProf, novosHorariosAula, solOp, checksToDo ) && ++attempt < MAX_ATTEMPTS )
    {
@@ -62,7 +62,7 @@ std::pair< Aula *, std::pair< Professor *, std::vector< HorarioAula * > > >
       aula = ( *itAula );
 
       // Selecionando o novo professor.
-      int idOpProf = rand() % solOp.getMatrizAulas()->size();
+      int idOpProf = ( rand() % solOp.getMatrizAulas()->size() );
       professor = solOp.getProfessorMatriz( idOpProf );
 
       // Selecionando os novos horarios (pertencentes ao novo professor selecionado anteriormente).
@@ -70,7 +70,6 @@ std::pair< Aula *, std::pair< Professor *, std::vector< HorarioAula * > > >
       // sortear o primeiro id e pegar em sequencia os demais horarios. TOMAR CUIDADO PARA NAO EXTRAPOLAR O DIA.
 
       int hrMaxIniPlus1 = ( solOp.getTotalHorarios() - aula->getTotalCreditos() + 1 );
-
       int hrIni = ( rand() % hrMaxIniPlus1 );
 
       // Armazenando os possíveis novos horários.

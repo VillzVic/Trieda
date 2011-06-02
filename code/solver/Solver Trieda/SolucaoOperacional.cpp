@@ -1,11 +1,7 @@
-#include <fstream>
-
-#include "ofbase.h"
-#include "GGroup.h"
 #include "SolucaoOperacional.h"
-#include "Aula.h"
 
-SolucaoOperacional::SolucaoOperacional( ProblemData * prbDt ) : problem_data( prbDt )
+SolucaoOperacional::SolucaoOperacional( ProblemData * prbDt )
+   : problem_data( prbDt )
 {
    // FIXANDO OS VALORES: 7 (dias)
    total_dias = 7;
@@ -15,9 +11,10 @@ SolucaoOperacional::SolucaoOperacional( ProblemData * prbDt ) : problem_data( pr
    // Montando um map: dado o índice da matriz
    // (o 'idOperacional' do professor) o map
    // retorna o ponteiro para o professor correspondente
-   GGroup< Campus *, LessPtr< Campus > >::iterator it_campi
-      = prbDt->campi.begin();
-   for (; it_campi != prbDt->campi.end(); it_campi++)
+   GGroup< Campus *, LessPtr< Campus > >::iterator
+      it_campi = prbDt->campi.begin();
+
+   for (; it_campi != prbDt->campi.end(); it_campi++ )
    {
 	  ITERA_GGROUP_LESSPTR( it_prof, it_campi->professores, Professor )
       {
@@ -30,8 +27,9 @@ SolucaoOperacional::SolucaoOperacional( ProblemData * prbDt ) : problem_data( pr
    // Inicializando a estrutura <matrizAulas>
    matriz_aulas = new MatrizSolucao ( total_professores );
    MatrizSolucao::iterator itMatrizAulas = matriz_aulas->begin();
+
    for(; itMatrizAulas != matriz_aulas->end();
-      ++itMatrizAulas )
+         itMatrizAulas++ )
    {
       ( *itMatrizAulas ) = new std::vector< Aula * > ( (total_dias * total_horarios), NULL );
    }
@@ -47,8 +45,9 @@ SolucaoOperacional::SolucaoOperacional( ProblemData * prbDt ) : problem_data( pr
    // Deixando livres, apenas os horarios em que o professor pode
    // ministrar aulas. Para os demais, associa-as à uma aula virtual.
    itMatrizAulas = getMatrizAulas()->begin();
+
    for ( i = 0; itMatrizAulas != this->getMatrizAulas()->end();
-         ++itMatrizAulas, i++ )
+         itMatrizAulas++, i++ )
    {
       // Professor da linha atual da matriz
       professor = getProfessorMatriz(i);
@@ -157,6 +156,7 @@ SolucaoOperacional::~SolucaoOperacional()
    // Limpa as referências da matriz de solução operacional
    MatrizSolucao::iterator itMatrizAulas
       = this->getMatrizAulas()->begin();
+
    for(; itMatrizAulas != this->getMatrizAulas()->end();
       ++itMatrizAulas )
    {
@@ -202,11 +202,12 @@ bool SolucaoOperacional::horarioDisponivelProfessor(
          // a esse horário de aula no dia da semana procurado
          GGroup< int >::iterator it_dia_semana
             = it_horario->dias_semana.begin();
+
          for (; it_dia_semana != it_horario->dias_semana.end();
-            it_dia_semana++ )
+                it_dia_semana++ )
          {
             // Dia da semana disponível
-            if ( (*it_dia_semana) == dia_semana )
+            if ( ( *it_dia_semana ) == dia_semana )
             {
                return true;
             }
@@ -322,9 +323,10 @@ Horario * SolucaoOperacional::getHorario( int id_professor_operacional,
       ITERA_GGROUP( it_horario, professor->horarios, Horario )
       {
          GGroup< int >::iterator it_dia_semana
-            = it_horario->dias_semana.find( dia_semana ); 
+            = it_horario->dias_semana.find( dia_semana );
+
          if ( it_dia_semana != it_horario->dias_semana.end()
-            && it_horario->horario_aula->getInicio() == horario_aula->getInicio() )
+               && it_horario->horario_aula->getInicio() == horario_aula->getInicio() )
          {
             return ( *it_horario );
          }
@@ -343,7 +345,8 @@ Professor * SolucaoOperacional::getProfessorMatriz( int linha ) const
    // linha do professor na matriz de solução operacional
    std::map< int, Professor * >::const_iterator it_professor
       = mapProfessores.begin();
-   for (; it_professor != mapProfessores.end(); it_professor++)
+
+   for (; it_professor != mapProfessores.end(); it_professor++ )
    {
       if ( it_professor->second->getIdOperacional() == linha )
       {
@@ -355,7 +358,7 @@ Professor * SolucaoOperacional::getProfessorMatriz( int linha ) const
    return professor;
 }
 
-ProblemData* SolucaoOperacional::getProblemData() const
+ProblemData * SolucaoOperacional::getProblemData() const
 {
    return problem_data;
 }
@@ -368,8 +371,8 @@ std::vector< Aula * >::iterator SolucaoOperacional::getItHorariosProf(
       throw ( std::out_of_range( "Dias validos [1,7] -> dom. a sab." ) );
    }
 
-   return ( (matriz_aulas->at(professor.getIdOperacional())->begin()) +
-      ( ((dia - 1) * total_horarios) + horario ) );
+   return ( ( matriz_aulas->at( professor.getIdOperacional() )->begin()) +
+            ( ( ( dia - 1 ) * total_horarios ) + horario ) );
 }
 
 int SolucaoOperacional::addProfessor(
@@ -410,9 +413,45 @@ int SolucaoOperacional::getTotalDias() const
    return total_dias;
 }
 
-void SolucaoOperacional::validaSolucao( std::string msg ) const
+bool SolucaoOperacional::validaSolucao( std::string msg ) const
 {
+   // Aulas que devem ser alocadas
+   GGroup< Aula *, LessPtr< Aula > > * aulas = & ( problem_data->aulas );
+   GGroup< Aula *, LessPtr< Aula > > aulas_alocadas;
 
+   // Percorre a solução procurando por quais aulas foram alocadas
+   MatrizSolucao::iterator it_matriz
+      = this->matriz_aulas->begin();
+
+   for (; it_matriz != this->matriz_aulas->end(); it_matriz++ )
+   {
+      std::vector< Aula * > * aulas_prof = *( it_matriz );
+      std::vector< Aula * >::iterator it_aulas_prof
+         = aulas_prof->begin();
+
+      for (; it_aulas_prof != aulas_prof->end(); it_aulas_prof++ )
+      {
+         Aula * aula = *( it_aulas_prof );
+
+         if ( aula == NULL || aula->eVirtual() )
+         {
+            continue;
+         }
+
+         // Informa que essa aula foi alocada
+         aulas_alocadas.add( aula );
+      }
+   }
+
+   // Verifica se TODAS as aulas foram alocadas
+   if ( aulas->size() != aulas_alocadas.size() )
+   {
+      std::cout << "Solucao invalida : " << msg << std::endl;
+      return false;
+   }
+
+   // Todas as aulas foram alocadas
+   return true;
 }
 
 bool SolucaoOperacional::fixacaoDiscSala( Aula * aula )
@@ -424,7 +463,7 @@ bool SolucaoOperacional::fixacaoDiscSala( Aula * aula )
 		= problem_data->map_Discicplina_Sala_Fixados.begin();
 
 	for (; it_disc_sala != problem_data->map_Discicplina_Sala_Fixados.end();
-		   it_disc_sala++ )
+		    it_disc_sala++ )
 	{
 		if ( it_disc_sala->first->getId() == disciplina_id
             && it_disc_sala->second->getId() == sala_id )

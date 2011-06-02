@@ -1,6 +1,7 @@
 #include "MoveSwap.h"
 
-MoveSwap::MoveSwap( Aula & _a1, Aula & _a2 ): a1( _a1 ), a2( _a2 )
+MoveSwap::MoveSwap( Aula & _a1, Aula & _a2 )
+   : a1( _a1 ), a2( _a2 )
 {
    //itBlocoAula_1 = solOp.blocoAulas.find(&a1);
    //itBlocoAula_2 = solOp.blocoAulas.find(&a2);
@@ -29,7 +30,7 @@ Move & MoveSwap::apply( SolucaoOperacional & s )
    std::map< Aula *, std::pair< Professor *, std::vector< HorarioAula * > >, LessPtr<Aula> >::iterator 
       itBlocoAula_2 = s.blocoAulas.find( &a2 );
 
-   if( (itBlocoAula_1 == s.blocoAulas.end()) || (itBlocoAula_2 == s.blocoAulas.end()))
+   if( ( itBlocoAula_1 == s.blocoAulas.end() ) || ( itBlocoAula_2 == s.blocoAulas.end() ) )
    {
       std::cout << "MoveSwap -> Alguma aula nao foi encontrada no blocoAulas da solucao corrente." << std::endl;
       exit(1);
@@ -41,8 +42,6 @@ Move & MoveSwap::apply( SolucaoOperacional & s )
    // Para trocar dois blocos de aula de horários deve-se: 
    // 1 - Na solução, trocar as referências das aulas.
    // 2 - Nas aulas, trocar os vetores que indicam os blocos.
-
-   // s.toString2();
 
    int indice = 0, linha = 0, coluna = 0;
    int totalHorariosAula = s.getProblemData()->horarios_aula_ordenados.size();
@@ -90,8 +89,7 @@ bool MoveSwap::operator == ( const Move & m ) const
 
 void MoveSwap::print()
 {
-   std::cout << "MoveSwap" << std::endl;
-
+   // std::cout << "MoveSwap" << std::endl;
    // a1.toString();
    // a2.toString();
 }
