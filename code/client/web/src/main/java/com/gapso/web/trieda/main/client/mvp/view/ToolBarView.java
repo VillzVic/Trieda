@@ -326,10 +326,10 @@ public class ToolBarView extends MyComposite implements ToolBarPresenter.Display
 		resumoCampiBt = createButton("Resumo por<br />Campus", "Resumo por Campus", Resources.DEFAULTS.resumoCampi24());
 		relatoriosToolBar.add(resumoCampiBt);
 		
-		resumoCursosBt = createButton("Resumo por<br />Cursos", "Resumo por Curso", Resources.DEFAULTS.resumoCampi24());
+		resumoCursosBt = createButton("Resumo por<br />Cursos", "Resumo por Curso", Resources.DEFAULTS.resumoCursos24());
 		relatoriosToolBar.add(resumoCursosBt);
 		
-		resumoDisciplinasBt = createButton("Resumo por<br />Disciplinas", "Resumo por Disciplina", Resources.DEFAULTS.resumoCampi24());
+		resumoDisciplinasBt = createButton("Resumo por<br />Disciplinas", "Resumo por Disciplina", Resources.DEFAULTS.resumoDisciplinas24());
 		relatoriosToolBar.add(resumoDisciplinasBt);
 		
 		relatoriosToolBar.add(new SeparatorToolItem());

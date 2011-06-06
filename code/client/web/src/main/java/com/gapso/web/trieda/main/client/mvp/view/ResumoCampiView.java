@@ -54,7 +54,7 @@ public class ResumoCampiView extends MyComposite implements ResumoCampiPresenter
 	}
 
 	private void createTabItem() {
-		tabItem = new GTabItem("Resumo por Campus", Resources.DEFAULTS.resumoCampi16());
+		tabItem = new GTabItem("Resumo por Campus", Resources.DEFAULTS.resumoCursos16());
 		tabItem.setContent(panel);
 	}
 	

@@ -60,7 +60,7 @@ public class ResumoDisciplinaView extends MyComposite implements ResumoDisciplin
 	}
 
 	private void createTabItem() {
-		tabItem = new GTabItem("Resumo por Disciplina", Resources.DEFAULTS.resumoCampi16());
+		tabItem = new GTabItem("Resumo por Disciplina", Resources.DEFAULTS.resumoDisciplinas16());
 		tabItem.setContent(panel);
 	}
 	
