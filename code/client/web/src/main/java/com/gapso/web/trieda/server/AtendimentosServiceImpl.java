@@ -34,12 +34,11 @@ import com.gapso.web.trieda.shared.dtos.ProfessorVirtualDTO;
 import com.gapso.web.trieda.shared.dtos.SalaDTO;
 import com.gapso.web.trieda.shared.dtos.TurnoDTO;
 import com.gapso.web.trieda.shared.services.AtendimentosService;
-import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 /**
  * The server side implementation of the RPC service.
  */
-public class AtendimentosServiceImpl extends RemoteServiceServlet implements AtendimentosService {
+public class AtendimentosServiceImpl extends RemoteService implements AtendimentosService {
 
 	private static final long serialVersionUID = -1505176338607927637L;
 
@@ -469,13 +468,14 @@ public class AtendimentosServiceImpl extends RemoteServiceServlet implements Ate
 	public List<AtendimentoOperacionalDTO> getAtendimentosOperacional(ProfessorDTO professorDTO, ProfessorVirtualDTO professorVirtualDTO, TurnoDTO turnoDTO) {
 		Turno turno = Turno.find(turnoDTO.getId());
 		List<AtendimentoOperacional> atendimentosOperacional = null;
+		boolean isAdmin = !isAdministrador();
 		if(professorDTO != null) {
 			Professor professor = Professor.find(professorDTO.getId());
-			atendimentosOperacional = AtendimentoOperacional.findAllPublicadoBy(professor, turno);
+			atendimentosOperacional = AtendimentoOperacional.findAllPublicadoBy(professor, turno, isAdmin);
 		}
 		if(professorVirtualDTO != null) {
 			ProfessorVirtual professorVirtual = ProfessorVirtual.find(professorVirtualDTO.getId());
-			atendimentosOperacional = AtendimentoOperacional.findAllPublicadoBy(professorVirtual, turno);
+			atendimentosOperacional = AtendimentoOperacional.findAllPublicadoBy(professorVirtual, turno, isAdmin);
 		}
 		List<AtendimentoOperacionalDTO> listDTO = new ArrayList<AtendimentoOperacionalDTO>(atendimentosOperacional.size());
 		for(AtendimentoOperacional atendimentoOperacional : atendimentosOperacional) {

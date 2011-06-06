@@ -197,19 +197,21 @@ public class AtendimentoOperacional implements Serializable {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public static List<AtendimentoOperacional> findAllPublicadoBy(Professor professor, Turno turno) {
+	public static List<AtendimentoOperacional> findAllPublicadoBy(Professor professor, Turno turno, boolean isPublicado) {
 		Query q = entityManager().createQuery("SELECT o FROM AtendimentoOperacional o WHERE o.oferta.turno = :turno AND o.professor = :professor AND o.oferta.campus.publicado = :publicado ");
 		q.setParameter("turno", turno);
 		q.setParameter("professor", professor);
-		q.setParameter("publicado", true);
+		q.setParameter("publicado", isPublicado);
 		return q.getResultList();
 	}
 	@SuppressWarnings("unchecked")
-	public static List<AtendimentoOperacional> findAllPublicadoBy(ProfessorVirtual professorVirtual, Turno turno) {
-		Query q = entityManager().createQuery("SELECT o FROM AtendimentoOperacional o WHERE o.oferta.turno = :turno AND o.professorVirtual = :professorVirtual AND o.oferta.campus.publicado = :publicado ");
+	public static List<AtendimentoOperacional> findAllPublicadoBy(ProfessorVirtual professorVirtual, Turno turno, boolean isAdmin) {
+		String publicado = "";
+		if(!isAdmin) publicado = " AND o.oferta.campus.publicado = :publicado ";
+		Query q = entityManager().createQuery("SELECT o FROM AtendimentoOperacional o WHERE o.oferta.turno = :turno AND o.professorVirtual = :professorVirtual " + publicado);
 		q.setParameter("turno", turno);
 		q.setParameter("professorVirtual", professorVirtual);
-		q.setParameter("publicado", true);
+		if(!isAdmin) q.setParameter("publicado", true);
 		return q.getResultList();
 	}
 	
