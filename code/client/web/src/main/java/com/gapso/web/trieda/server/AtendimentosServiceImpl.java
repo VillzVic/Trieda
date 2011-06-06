@@ -102,10 +102,10 @@ public class AtendimentosServiceImpl extends RemoteServiceServlet implements Ate
 	private List<AtendimentoRelatorioDTO> preMontaListaOperacional(List<AtendimentoOperacionalDTO> list) {
 		List<AtendimentoRelatorioDTO> ret = new ArrayList<AtendimentoRelatorioDTO>();
 		
-		// Agrupa os DTOS pela chave [Curso-Disciplina-Turma-DiaSemana] 
+		// Agrupa os DTOS pela chave [Curso-Disciplina-Turma-DiaSemana-Sala] 
 		Map<String, List<AtendimentoRelatorioDTO>> atendimentoTaticoDTOMap = new HashMap<String, List<AtendimentoRelatorioDTO>>();
 		for (AtendimentoRelatorioDTO dto : list) {
-			String key = dto.getCursoNome() + "-" + dto.getDisciplinaString() + "-" + dto.getTurma() + "-" + dto.getSemana();
+			String key = dto.getCursoNome() + "-" + dto.getDisciplinaString() + "-" + dto.getTurma() + "-" + dto.getSemana() + "-" + dto.getSalaId();
 			List<AtendimentoRelatorioDTO> dtoList = atendimentoTaticoDTOMap.get(key);
 			if (dtoList == null) {
 				dtoList = new ArrayList<AtendimentoRelatorioDTO>();
