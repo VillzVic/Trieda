@@ -498,15 +498,31 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 			dtoList.add(dto);
 		}
 		
+		final Map<Long, HorarioAula> horarios = HorarioAula.buildHorarioAulaIdToHorarioAulaMap(HorarioAula.findAll());
+		
 		// Quando há mais de um DTO por chave [Curso-Disciplina-Turma-DiaSemana], concatena as informações
 		// de todos em um único DTO.
 		List<AtendimentoOperacionalDTO> processedList = new ArrayList<AtendimentoOperacionalDTO>();
 		for (Entry<String,List<AtendimentoOperacionalDTO>> entry : atendimentoOperacionalDTOMap.entrySet()) {
-			if (entry.getValue().size() == 1) {
-				processedList.addAll(entry.getValue());
+			
+			List<AtendimentoOperacionalDTO> ordenadoPorHorario = new ArrayList<AtendimentoOperacionalDTO>(entry.getValue());
+			
+			Collections.sort(ordenadoPorHorario, new Comparator<AtendimentoOperacionalDTO>() {
+				@Override
+				public int compare(AtendimentoOperacionalDTO arg1, AtendimentoOperacionalDTO arg2) {
+					
+					HorarioAula h1 = horarios.get(arg1.getHorarioId());
+					HorarioAula h2 = horarios.get(arg2.getHorarioId());
+					
+					return h1.getHorario().compareTo(h2.getHorario());
+				}
+			});
+			
+			if (ordenadoPorHorario.size() == 1) {
+				processedList.addAll(ordenadoPorHorario);
 			} else {
-				AtendimentoOperacionalDTO dtoMain = entry.getValue().get(0);
-				for (int i = 1; i < entry.getValue().size(); i++) {
+				AtendimentoOperacionalDTO dtoMain = ordenadoPorHorario.get(0);
+				for (int i = 1; i < ordenadoPorHorario.size(); i++) {
 					dtoMain.setTotalLinhas(dtoMain.getTotalLinhas() + 1);
 				}
 				processedList.add(dtoMain);

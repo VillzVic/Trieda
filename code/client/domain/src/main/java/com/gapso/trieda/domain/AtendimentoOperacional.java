@@ -197,11 +197,13 @@ public class AtendimentoOperacional implements Serializable {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public static List<AtendimentoOperacional> findAllPublicadoBy(Professor professor, Turno turno, boolean isPublicado) {
-		Query q = entityManager().createQuery("SELECT o FROM AtendimentoOperacional o WHERE o.oferta.turno = :turno AND o.professor = :professor AND o.oferta.campus.publicado = :publicado ");
+	public static List<AtendimentoOperacional> findAllPublicadoBy(Professor professor, Turno turno, boolean isAdmin) {
+		String publicado = "";
+		if(!isAdmin) publicado = " AND o.oferta.campus.publicado = :publicado ";
+		Query q = entityManager().createQuery("SELECT o FROM AtendimentoOperacional o WHERE o.oferta.turno = :turno AND o.professor = :professor " + publicado);
 		q.setParameter("turno", turno);
 		q.setParameter("professor", professor);
-		q.setParameter("publicado", isPublicado);
+		if(!isAdmin) q.setParameter("publicado", true);
 		return q.getResultList();
 	}
 	@SuppressWarnings("unchecked")
