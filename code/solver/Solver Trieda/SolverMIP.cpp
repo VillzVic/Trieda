@@ -616,7 +616,7 @@ int SolverMIP::solveTaticoBasico()
 
    int status = 0;
 
-   lp->setTimeLimit(15);
+   lp->setTimeLimit(1200);
    lp->setMIPScreenLog(4);
 
 #ifndef READ_SOLUTION_TATICO_BIN
@@ -1648,7 +1648,9 @@ int SolverMIP::solveOperacional()
    std::cout << "Gerando uma solucao inicial para o modelo operacional" << std::endl;
    SolucaoOperacional & solucaoOperacional = solIni.geraSolucaoInicial();
 
-   bool solucao_valida = solucaoOperacional.validaSolucao( "Validando a solucao inicial gerada" );
+   std::cout << "Solucao inicial gerada." << std::endl;
+
+   /*bool solucao_valida = solucaoOperacional.validaSolucao( "Validando a solucao inicial gerada" );
    if ( solucao_valida )
    {
       std::cout << "Solucao Inicial VALIDA gerada." << std::endl;
@@ -1656,57 +1658,59 @@ int SolverMIP::solveOperacional()
    else
    {
       std::cout << "Solucao Inicial NAO-VALIDA gerada." << std::endl;
-   }
+   }*/
 
    solucaoOperacional.toString2();
 
    // Avaliador
    Avaliador avaliador;
+   std::cout << "Avaliando solucao" << std::endl;
    avaliador.avaliaSolucao( solucaoOperacional, true );
+   std::cout << "Solucao avaliada." << std::endl;
 
    // Estruturas de Vizinhança
-   NSSeqSwapEqBlocks nsSeqSwapEqBlocks ( *problemData );
-   NSSwapEqSchedulesBlocks nsSwapEqSchedulesBlocks ( *problemData );
-   NSSwapEqTeachersBlocks nsSwapEqTeachersBlocks ( *problemData );
+   //NSSeqSwapEqBlocks nsSeqSwapEqBlocks ( *problemData );
+   //NSSwapEqSchedulesBlocks nsSwapEqSchedulesBlocks ( *problemData );
+   //NSSwapEqTeachersBlocks nsSwapEqTeachersBlocks ( *problemData );
    NSShift nsShift( *problemData );
 
    // Heurísticas de Busca Local - Descida Randômica
-   RandomDescentMethod rdmSeqSwapEqBlocks ( avaliador, nsSeqSwapEqBlocks, 300 );
-   RandomDescentMethod rdmSwapEqSchedulesBlocks ( avaliador, nsSwapEqSchedulesBlocks, 300 );
-   RandomDescentMethod rdmSwapEqTeachersBlocks ( avaliador, nsSwapEqTeachersBlocks, 300 );
+   //RandomDescentMethod rdmSeqSwapEqBlocks ( avaliador, nsSeqSwapEqBlocks, 300 );
+   //RandomDescentMethod rdmSwapEqSchedulesBlocks ( avaliador, nsSwapEqSchedulesBlocks, 300 );
+   //RandomDescentMethod rdmSwapEqTeachersBlocks ( avaliador, nsSwapEqTeachersBlocks, 300 );
    RandomDescentMethod rdmShift ( avaliador, nsShift, 300 );
 
-   rdmSeqSwapEqBlocks.exec( solucaoOperacional, 30, 0 );
-   rdmSwapEqSchedulesBlocks.exec( solucaoOperacional, 30, 0 );
-   rdmSwapEqTeachersBlocks.exec( solucaoOperacional, 30, 0 );
+   //rdmSeqSwapEqBlocks.exec( solucaoOperacional, 30, 0 );
+   //rdmSwapEqSchedulesBlocks.exec( solucaoOperacional, 30, 0 );
+   //rdmSwapEqTeachersBlocks.exec( solucaoOperacional, 30, 0 );
    rdmShift.exec( solucaoOperacional, 30, 0 );
 
    // Mecanismo de perturbação
-   ILSLPerturbationLPlus2 ilslPerturbationPlus2 ( avaliador, -1, nsSeqSwapEqBlocks );
-   ilslPerturbationPlus2.add_ns( nsSeqSwapEqBlocks );
-   ilslPerturbationPlus2.add_ns( nsSwapEqSchedulesBlocks );
-   ilslPerturbationPlus2.add_ns( nsSwapEqTeachersBlocks );
-   ilslPerturbationPlus2.add_ns( nsShift );
+   //ILSLPerturbationLPlus2 ilslPerturbationPlus2 ( avaliador, -1, nsSeqSwapEqBlocks );
+   //ilslPerturbationPlus2.add_ns( nsSeqSwapEqBlocks );
+   //ilslPerturbationPlus2.add_ns( nsSwapEqSchedulesBlocks );
+   //ilslPerturbationPlus2.add_ns( nsSwapEqTeachersBlocks );
+   //ilslPerturbationPlus2.add_ns( nsShift );
 
    // RVND
    std::vector< Heuristic * > heuristicasBuscaLocal;
-   heuristicasBuscaLocal.push_back( &rdmSeqSwapEqBlocks );
-   heuristicasBuscaLocal.push_back( &rdmSwapEqSchedulesBlocks );
-   heuristicasBuscaLocal.push_back( &rdmSwapEqTeachersBlocks );
+   //heuristicasBuscaLocal.push_back( &rdmSeqSwapEqBlocks );
+   //heuristicasBuscaLocal.push_back( &rdmSwapEqSchedulesBlocks );
+   //heuristicasBuscaLocal.push_back( &rdmSwapEqTeachersBlocks );
    heuristicasBuscaLocal.push_back( &rdmShift );
 
    RVND rvnd( avaliador, heuristicasBuscaLocal );
 
    // Busca Local Iterada por Níveis
-   IteratedLocalSearchLevels ilsl ( avaliador, rvnd, ilslPerturbationPlus2, 20 , 4 );
+   //IteratedLocalSearchLevels ilsl ( avaliador, rvnd, ilslPerturbationPlus2, 20 , 4 );
 
    // Parâmetro 2 : tempo ( em segundos )
-   ilsl.exec( solucaoOperacional, 30, 0 );
+   //ilsl.exec( solucaoOperacional, 30, 0 );
 
    // Avaliação final
    avaliador.avaliaSolucao( solucaoOperacional, true );
 
-   solucao_valida = solucaoOperacional.validaSolucao( "Validando a solucao final" );
+   /*solucao_valida = solucaoOperacional.validaSolucao( "Validando a solucao final" );
    if ( solucao_valida )
    {
       std::cout << "Solucao final viavel." << std::endl;
@@ -1714,7 +1718,7 @@ int SolverMIP::solveOperacional()
    else
    {
       std::cout << "A solucao final NAO ALOCOU todas as aulas." << std::endl;
-   }
+   }*/
 
    // Armazena a solução operacional no problem solution
    problemSolution->solucao_operacional = &( solucaoOperacional );

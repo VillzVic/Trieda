@@ -591,8 +591,26 @@ void SolucaoInicialOperacional::alocaAulasRec( bool primeiraTentativaAlocacao, b
                LessPtr< Sala > >::iterator
                itHorariosAulaSala = horariosAulaSala.find( aula.getSala() );
 
+            if ( itHorariosAulaSala == horariosAulaSala.end() )
+            {
+               GGroup< HorarioAula *, LessPtr< HorarioAula > > hV;
+               horariosAulaSala[aula.getSala()][aula.getDiaSemana()] = hV;
+
+               itHorariosAulaSala = horariosAulaSala.find( aula.getSala() );
+            }
+
             std::map< int /*Dia*/, GGroup< HorarioAula *, LessPtr< HorarioAula > > >::iterator
                itDiaHorariosAulaSala = itHorariosAulaSala->second.find( aula.getDiaSemana() );
+
+            if ( itDiaHorariosAulaSala == itHorariosAulaSala->second.end() )
+            {
+               GGroup< HorarioAula *, LessPtr< HorarioAula > > hV;
+               itHorariosAulaSala->second[aula.getDiaSemana()] = hV;
+
+               itDiaHorariosAulaSala = itHorariosAulaSala->second.find( aula.getDiaSemana() );
+            }
+
+
 
             int qtdHorariosJaAlocados = itDiaHorariosAulaSala->second.size();
             int qtdHorariosQueroAlocar = aula.getTotalCreditos();
