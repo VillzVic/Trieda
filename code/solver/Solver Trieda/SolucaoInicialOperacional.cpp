@@ -610,8 +610,6 @@ void SolucaoInicialOperacional::alocaAulasRec( bool primeiraTentativaAlocacao, b
                itDiaHorariosAulaSala = itHorariosAulaSala->second.find( aula.getDiaSemana() );
             }
 
-
-
             int qtdHorariosJaAlocados = itDiaHorariosAulaSala->second.size();
             int qtdHorariosQueroAlocar = aula.getTotalCreditos();
 
@@ -640,8 +638,10 @@ void SolucaoInicialOperacional::alocaAulasRec( bool primeiraTentativaAlocacao, b
 
                int qtdHrLivreEnc = 0;
 
-               for (; itHorariosAulaOrdenados != problemData.horarios_aula_ordenados.end();
-                      itHorariosAulaOrdenados++ )
+               std::vector< int > seqHorarioAula;
+
+               for (int hrAtual = 0; itHorariosAulaOrdenados != problemData.horarios_aula_ordenados.end();
+                  itHorariosAulaOrdenados++, ++hrAtual)
                {
                   if ( qtdHrLivreEnc == qtdHorariosQueroAlocar )
                   {
@@ -650,39 +650,44 @@ void SolucaoInicialOperacional::alocaAulasRec( bool primeiraTentativaAlocacao, b
                   }
 
                   if ( itDiaHorariosAulaSala->second.find( *itHorariosAulaOrdenados ) == 
-                       itDiaHorariosAulaSala->second.end() )
+                     itDiaHorariosAulaSala->second.end() )
                   {
                      horariosNaoAlocados.push_back( *itHorariosAulaOrdenados );
                      ++qtdHrLivreEnc;
+                     seqHorarioAula.push_back(hrAtual);
                   }
                }
 
-               // Alocando a aula na matriz solução.
-               solIni->alocaAulaProf( aula, professor, horariosNaoAlocados );
-
-               // Removendo a aula da relação de aulas não alocadas.
-               aulasNaoAlocadas.remove( &aula );
-
-               // Atualizando a estrutura < horariosAulaSala >.
-               std::vector< HorarioAula * >::iterator 
-                  itHorariosAula = horariosNaoAlocados.begin();
-
-               for (; itHorariosAula != horariosNaoAlocados.end(); itHorariosAula++ )
+               if(solIni->seqHorarioLivre(
+                  professor.getIdOperacional(), aula.getDiaSemana(), seqHorarioAula ))
                {
-                  horariosAulaSala[ aula.getSala() ][ aula.getDiaSemana() ].add( *itHorariosAula );
+                  // Alocando a aula na matriz solução.
+                  solIni->alocaAulaProf( aula, professor, horariosNaoAlocados );
+
+                  // Removendo a aula da relação de aulas não alocadas.
+                  aulasNaoAlocadas.remove( &aula );
+
+                  // Atualizando a estrutura < horariosAulaSala >.
+                  std::vector< HorarioAula * >::iterator 
+                     itHorariosAula = horariosNaoAlocados.begin();
+
+                  for (; itHorariosAula != horariosNaoAlocados.end(); itHorariosAula++ )
+                  {
+                     horariosAulaSala[ aula.getSala() ][ aula.getDiaSemana() ].add( *itHorariosAula );
+                  }
+
+                  // Atualizando a estrutura <blocosProfs>.
+                  ITERA_GGROUP_LESSPTR( itOferta, aula.ofertas, Oferta )
+                  {
+                     // Descobrindo o bloco da oferta em questão.
+                     BlocoCurricular * blocoCurricular = problemData.mapCursoDisciplina_BlocoCurricular
+                        [ std::make_pair( itOferta->curso, aula.getDisciplina() ) ];
+
+                     blocosProfs[ blocoCurricular ].add( &professor );
+                  }
+
+                  alocouAula = true;
                }
-
-               // Atualizando a estrutura <blocosProfs>.
-               ITERA_GGROUP_LESSPTR( itOferta, aula.ofertas, Oferta )
-               {
-                  // Descobrindo o bloco da oferta em questão.
-                  BlocoCurricular * blocoCurricular = problemData.mapCursoDisciplina_BlocoCurricular
-                     [ std::make_pair( itOferta->curso, aula.getDisciplina() ) ];
-
-                  blocosProfs[ blocoCurricular ].add( &professor );
-               }
-
-               alocouAula = true;
             }
          }
 
