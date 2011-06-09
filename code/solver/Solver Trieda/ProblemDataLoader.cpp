@@ -79,7 +79,7 @@ void ProblemDataLoader::load()
    relacionaCursosCampus();
 
    // ---------
-   cria_blocos_curriculares();
+   //cria_blocos_curriculares();
 
    // ---------
    calculaTamanhoMedioSalasCampus();
@@ -92,6 +92,8 @@ void ProblemDataLoader::load()
 
    // ---------
    estima_turmas();
+
+   cria_blocos_curriculares();
 
    // ---------
    associaDisciplinasSalas();

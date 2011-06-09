@@ -228,7 +228,7 @@ SolverMIP::SolverMIP( ProblemData * aProblemData,
    beta = 10.0;
    gamma = 0;
    delta = 0;
-   lambda = 0.1;
+   lambda = 15.0;
    epsilon = 1.0;
    M = 1.0;
    rho = 5;
@@ -618,6 +618,8 @@ int SolverMIP::solveTaticoBasico()
 
    lp->setTimeLimit(1200);
    lp->setMIPScreenLog(4);
+
+   lp->writeProbLP( "Solver Trieda" );
 
 #ifndef READ_SOLUTION_TATICO_BIN
    status = lp->optimize( METHOD_PRIMAL );
@@ -3925,7 +3927,17 @@ int SolverMIP::cria_variavel_min_creds(void)
 
                if ( problemData->parametros->funcao_objetivo == 0 )
                {
-                  OPT_COL col( OPT_COL::VAR_INTEGRAL, -lambda, 0.0, 1000.0,
+                  double obj = 0.0;
+                  if ( problemData->parametros->carga_horaria_semanal_aluno == ParametrosPlanejamento::EQUILIBRAR)
+                  {
+                     obj = lambda;
+                  }
+                  else if ( problemData->parametros->carga_horaria_semanal_aluno == ParametrosPlanejamento::MINIMIZAR_DIAS)
+                  {
+                     obj = 0.0;
+                  }
+
+                  OPT_COL col( OPT_COL::VAR_INTEGRAL, obj, 0.0, 1000.0,
                      ( char * )v.toString().c_str() );
 
                   lp->newCol( col );
@@ -4015,7 +4027,17 @@ int SolverMIP::cria_variavel_max_creds(void)
 
                if ( problemData->parametros->funcao_objetivo == 0 )
                {
-                  OPT_COL col( OPT_COL::VAR_INTEGRAL, lambda, 0.0, 1000.0,
+                  double obj = 0.0;
+                  if ( problemData->parametros->carga_horaria_semanal_aluno == ParametrosPlanejamento::EQUILIBRAR)
+                  {
+                     obj = lambda;
+                  }
+                  else if ( problemData->parametros->carga_horaria_semanal_aluno == ParametrosPlanejamento::MINIMIZAR_DIAS)
+                  {
+                     obj = -lambda;
+                  }
+                  
+                  OPT_COL col( OPT_COL::VAR_INTEGRAL, obj, 0.0, 1000.0,
                      ( char * )v.toString().c_str() );
 
                   lp->newCol( col );
