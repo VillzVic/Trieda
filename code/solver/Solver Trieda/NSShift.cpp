@@ -115,7 +115,9 @@ std::pair< Aula *, std::pair< Professor *, std::vector< HorarioAula * > > >
    int tam_matriz = solOp.getMatrizAulas()->size();
    int maxIter = ( rand() % ( tam_matriz > 1 ? tam_matriz - 1 : tam_matriz ) );
 
-   for( int i = 0; i < maxIter; ++i, ++itAula );
+   for( int i = 0; i < maxIter && itAula != problemData.aulas.end(); ++i, ++itAula );
+   if ( itAula == problemData.aulas.end() )
+      itAula--;
    aula = ( *itAula );
 
    // Obtendo referência para o(s) bloco(s) de aulas aos quais pertece a aula selecionada acima.

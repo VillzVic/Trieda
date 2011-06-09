@@ -21,6 +21,8 @@ public:
 
    SolucaoOperacional & geraSolucaoInicial();
 
+   SolucaoOperacional & geraSolucaoInicial2();
+
    std::vector< int > retornaHorariosFixadosProfessor( Professor &, Disciplina &, Sala &, int );
 
 private:
@@ -68,6 +70,8 @@ private:
 
    // Função recursiva de alocação de aulas.
    void alocaAulasRec( bool, bool );
+
+   void alocaAulas( bool, bool );
 
    // Função auxiliar.
    Professor & addProfessor();

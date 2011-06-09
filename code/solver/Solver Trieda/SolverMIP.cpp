@@ -1711,7 +1711,6 @@ int SolverMIP::solveOperacional()
 
    // Avaliação final
    avaliador.avaliaSolucao( solucaoOperacional, true );
-
    /*solucao_valida = solucaoOperacional.validaSolucao( "Validando a solucao final" );
    if ( solucao_valida )
    {
@@ -1724,7 +1723,6 @@ int SolverMIP::solveOperacional()
 
    // Armazena a solução operacional no problem solution
    problemSolution->solucao_operacional = &( solucaoOperacional );
-
    return 1;
 }
 

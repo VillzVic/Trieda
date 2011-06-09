@@ -36,7 +36,6 @@ void RandomDescentMethod::exec( SolucaoOperacional & s, double timelimit, double
       // 1std::cout << "\n\nstart iter " << iter << "\n\n\n";
 
       Move & move = ns.move( s );
-
       double cost = 0;
 
       //if (move.canBeApplied(e, s))
