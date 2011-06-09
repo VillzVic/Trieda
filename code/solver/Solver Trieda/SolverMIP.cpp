@@ -228,13 +228,13 @@ SolverMIP::SolverMIP( ProblemData * aProblemData,
    beta = 10.0;
    gamma = 0;
    delta = 0;
-   lambda = 15.0;
+   lambda = 5.0;
    epsilon = 1.0;
    M = 1.0;
    rho = 5;
 
    // Verificar o valor
-   psi = 1.0;
+   psi = 5.0;
    tau = 1.0;
 
    try
