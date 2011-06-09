@@ -127,6 +127,11 @@ public class GTriedaI18nConstants implements TriedaI18nConstants {
 	public String cursos() {
 		return languageManager.getText("cursos");
 	}
+	
+	@Override
+	public String cursosAreasTitulacao() {
+		return languageManager.getText("cursosAreasTitulacao");
+	}
 
 	@Override
 	public String cursou() {
@@ -543,5 +548,4 @@ public class GTriedaI18nConstants implements TriedaI18nConstants {
 	public String relatorioVisaoCurso() {
 		return languageManager.getText("relatorioVisaoCurso");
 	}
-
 }

@@ -1215,6 +1215,7 @@ public class ConvertBeans {
 		dto.setDisciplinaId(domain.getDisciplina().getId());
 		dto.setDisciplinaString(domain.getDisciplina().getCodigo());
 		dto.setDisciplinaNome(domain.getDisciplina().getNome());
+		dto.setTotalCreditoDisciplina(domain.getDisciplina().getTotalCreditos());
 		dto.setQuantidadeAlunos(domain.getQuantidadeAlunos());
 		dto.setQuantidadeAlunosString(domain.getQuantidadeAlunos().toString());
 		dto.setTurma(domain.getTurma());

@@ -297,9 +297,9 @@ public class Oferta implements Serializable, Comparable<Oferta> {
         StringBuilder sb = new StringBuilder();
         sb.append("Id: ").append(getId()).append(", ");
         sb.append("Version: ").append(getVersion()).append(", ");
-        sb.append("Curriculo: ").append(getCurriculo()).append(", ");
-        sb.append("Campus: ").append(getCampus()).append(", ");
-        sb.append("Turno: ").append(getTurno()).append(", ");
+        sb.append("Curriculo: ").append(getCurriculo().getCodigo()).append(", ");
+        sb.append("Campus: ").append(getCampus().getCodigo()).append(", ");
+        sb.append("Turno: ").append(getTurno().getNome()).append(", ");
         sb.append("Demandas: ").append(getDemandas() == null ? "null" : getDemandas().size());
         sb.append("Receita: ").append(getReceita()).append(", ");
         sb.append("Atendimentos Operacionais: ").append(getAtendimentosOperacionais() == null ? "null" : getAtendimentosOperacionais().size());

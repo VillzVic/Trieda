@@ -85,15 +85,15 @@ public class AtendimentoOperacional implements Serializable {
         StringBuilder sb = new StringBuilder();
         sb.append("Id: ").append(getId()).append(", ");
         sb.append("Version: ").append(getVersion()).append(", ");
-        sb.append("Cenario: ").append(getCenario()).append(", ");
+        sb.append("Cenario: ").append((getCenario() != null) ? getCenario().getNome() : "null").append(", ");
         sb.append("Turma: ").append(getTurma()).append(", ");
-        sb.append("Sala: ").append(getSala()).append(", ");
-        sb.append("HorarioDisponivelCenario: ").append(getHorarioDisponivelCenario()).append(", ");
-        sb.append("Professor: ").append(getProfessor()).append(", ");
-        sb.append("ProfessorVirtual: ").append(getProfessorVirtual()).append(", ");
+        sb.append("Sala: ").append((getSala() != null) ? getSala().getCodigo() : "null").append(", ");
+        sb.append("HorarioDisponivelCenario: ").append((getHorarioDisponivelCenario() != null) ? getHorarioDisponivelCenario().getHorarioAula().getHorario() : "null").append(", ");
+        sb.append("Professor: ").append((getProfessor() != null) ? getProfessor().getNome() : "null").append(", ");
+        sb.append("ProfessorVirtual: ").append((getProfessorVirtual() != null) ? getProfessorVirtual().getId() : "null").append(", ");
         sb.append("CreditoTeorico: ").append(getCreditoTeorico()).append(", ");
         sb.append("Oferta: ").append(getOferta()).append(", ");
-        sb.append("Disciplina: ").append(getDisciplina()).append(", ");
+        sb.append("Disciplina: ").append((getDisciplina() != null) ? getDisciplina().getCodigo() : "null").append(", ");
         sb.append("QuantidadeAlunos: ").append(getQuantidadeAlunos()).append(", ");
         return sb.toString();
     }

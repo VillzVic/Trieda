@@ -27,6 +27,7 @@ public interface TriedaI18nConstants extends Constants {
 	String curriculos();
 	String curso();
 	String cursos();
+	String cursosAreasTitulacao();
 	String cursou();
 	String custoDocente();
 	String custoMedioCredito();

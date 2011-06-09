@@ -39,6 +39,7 @@ public class TRIEDAExportExcel extends AbstractExportExcel {
 		exporters.add(new SalasExportExcel(false,getCenario(),getI18nConstants(),getI18nMessages()));
 		exporters.add(new CursosExportExcel(false,getCenario(),getI18nConstants(),getI18nMessages()));
 		exporters.add(new AreasTitulacaoExportExcel(false,getCenario(),getI18nConstants(),getI18nMessages()));
+		exporters.add(new CursoAreasTitulacaoExportExcel(false,getCenario(),getI18nConstants(),getI18nMessages()));
 		exporters.add(new DisciplinasExportExcel(false,getCenario(),getI18nConstants(),getI18nMessages()));
 		exporters.add(new DisciplinasSalasExportExcel(false,getCenario(),getI18nConstants(),getI18nMessages()));
 		exporters.add(new EquivalenciasExportExcel(false,getCenario(),getI18nConstants(),getI18nMessages()));
@@ -46,6 +47,7 @@ public class TRIEDAExportExcel extends AbstractExportExcel {
 		exporters.add(new CurriculosExportExcel(false,getCenario(),getI18nConstants(),getI18nMessages()));
 		exporters.add(new DemandasExportExcel(false,getCenario(),getI18nConstants(),getI18nMessages()));
 		exporters.add(new ProfessoresExportExcel(false,getCenario(),getI18nConstants(),getI18nMessages()));
+		exporters.add(new HabilitacoesProfessoresExportExcel(false,getCenario(),getI18nConstants(),getI18nMessages()));
 		exporters.add(new ResumoCursoExportExcel(false,getCenario(),getI18nConstants(),getI18nMessages()));
 		exporters.add(new ResumoDisciplinaExportExcel(false,getCenario(),getI18nConstants(),getI18nMessages()));
 		exporters.add(new RelatorioVisaoSalaExportExcel(false,getCenario(),getI18nConstants(),getI18nMessages()));

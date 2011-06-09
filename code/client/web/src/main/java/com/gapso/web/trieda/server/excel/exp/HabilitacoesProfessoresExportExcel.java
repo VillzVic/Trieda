@@ -5,6 +5,7 @@ import java.util.List;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.springframework.web.util.HtmlUtils;
 
 import com.gapso.trieda.domain.Cenario;
 import com.gapso.trieda.domain.Professor;
@@ -51,7 +52,7 @@ public class HabilitacoesProfessoresExportExcel extends AbstractExportExcel {
 	
 	@Override
 	public String getFileName() {
-		return getI18nConstants().habilitacaoProfessores();
+		return HtmlUtils.htmlUnescape(getI18nConstants().habilitacaoProfessores());
 	}
 	
 	@Override
@@ -61,7 +62,7 @@ public class HabilitacoesProfessoresExportExcel extends AbstractExportExcel {
 
 	@Override
 	protected String getReportName() {
-		return getI18nConstants().habilitacaoProfessores();
+		return HtmlUtils.htmlUnescape(getI18nConstants().habilitacaoProfessores());
 	}
 
 	@Override

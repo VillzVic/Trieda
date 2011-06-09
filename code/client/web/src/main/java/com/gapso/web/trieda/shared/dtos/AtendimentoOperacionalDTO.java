@@ -39,6 +39,7 @@ public class AtendimentoOperacionalDTO extends AbstractDTO<String> implements Co
 	public static final String PROPERTY_DISCIPLINA_STRING = "disciplinaString";
 	public static final String PROPERTY_DISCIPLINA_NOME = "disciplinaNome";
 	public static final String PROPERTY_TOTAL_CRETIDOS= "totalCreditos";
+	public static final String PROPERTY_TOTAL_CRETIDOS_DISCIPLINA = "totalCreditoDisciplina";
 	public static final String PROPERTY_OFERTA_ID = "ofertaId";
 	public static final String PROPERTY_TURMA = "turma";
 	public static final String PROPERTY_QUANTIDADE_ALUNOS = "quantidadeAlunos";
@@ -259,6 +260,14 @@ public class AtendimentoOperacionalDTO extends AbstractDTO<String> implements Co
 		return get(PROPERTY_TOTAL_CRETIDOS);
 	}
 	
+	public void setTotalCreditoDisciplina(Integer value) {
+		set(PROPERTY_TOTAL_CRETIDOS_DISCIPLINA, value);
+	}
+	@Override
+	public Integer getTotalCreditoDisciplina() {
+		return get(PROPERTY_TOTAL_CRETIDOS_DISCIPLINA);
+	}	
+	
 	public void setOfertaId(Long value) {
 		set(PROPERTY_OFERTA_ID, value);
 	}
@@ -328,7 +337,7 @@ public class AtendimentoOperacionalDTO extends AbstractDTO<String> implements Co
 			professor = "<b>Professor:</b> "+ getProfessorString();
 		}
 		return "<b>Turma:</b> "+ getTurma() + "<br />"
-		+ "<b>Crédito(s) " + ((getCreditoTeoricoBoolean())? "Teórico(s)" : "Prático(s)") + ":</b> " + getTotalLinhas()+" de "+getTotalCreditos() + "<br />"
+		+ "<b>Crédito(s) " + ((getCreditoTeoricoBoolean())? "Teórico(s)" : "Prático(s)") + ":</b> " + getTotalCreditos()+" de "+getTotalCreditoDisciplina() + "<br />"
 		+ "<b>Curso:</b> " + getCursoNome() +"<br />"
 		+ "<b>Matriz Curricular:</b> " + getCurriculoString() + "<br />"
 		+ "<b>Período:</b> "+ getPeriodoString() +"<br />"
@@ -426,11 +435,6 @@ public class AtendimentoOperacionalDTO extends AbstractDTO<String> implements Co
 	}
 
 	@Override
-	public Integer getTotalCreditoDisciplina() {
-		return getTotalCreditos();
-	}
-
-	@Override
 	public boolean isTatico() {
 		return false;
 	}
@@ -439,7 +443,4 @@ public class AtendimentoOperacionalDTO extends AbstractDTO<String> implements Co
 	public boolean isProfessorVirtual() {
 		return !TriedaUtil.isBlank(getProfessorVirtualId());
 	}
-
-	
-	
 }
