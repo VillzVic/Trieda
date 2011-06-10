@@ -370,6 +370,8 @@ public class ToolBarPresenter implements Presenter {
 			}
 		});
 		toolBar.getImportarButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
+			// Fazendo com que importe todos dados do masterdata.
+			// Lembrando que uma importação nunca exclui dados, apenas modifica e adiciona
 			@Override
 			public void componentSelected(ButtonEvent ce) {
 				ImportExcelFormView importExcelFormView = new ImportExcelFormView(ExcelInformationType.TUDO, null);
@@ -377,6 +379,7 @@ public class ToolBarPresenter implements Presenter {
 			}
 		});
 		toolBar.getExportarButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
+			// Fazendo com que exporte todos dados do masterdata.
 			@Override
 			public void componentSelected(ButtonEvent ce) {
 				ExportExcelFormSubmit e = new ExportExcelFormSubmit(ExcelInformationType.TUDO, toolBar.getI18nConstants(),toolBar.getI18nMessages());
