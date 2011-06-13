@@ -1731,24 +1731,27 @@ void Avaliador::avaliaProfessorMesmoBlocoCurricular( SolucaoOperacional & soluca
    {
       bloco_curricular = ( *it_bloco );
 
-      // Para cada dia da semana, temo o conjunto de aulas alocadas nesse dia
-      std::map< int, GGroup< Aula *, LessPtr< Aula > > > aulas_bloco
-         = solucao.getProblemData()->blocoCurricularDiaAulas[ bloco_curricular ];
+	   // Para cada dia da semana, temo o conjunto de aulas alocadas nesse dia
+		std::map< int, GGroup< Aula *, LessPtr< Aula > > > aulas_bloco
+			= solucao.getProblemData()->blocoCurricularDiaAulas[ bloco_curricular ];
 
       std::map< int, GGroup< Aula *, LessPtr< Aula > > >::iterator
-         it_aulas_dia = aulas_bloco.begin();
+			it_aulas_dia = aulas_bloco.begin();
 
       // Para cada dia da semana, verificamos os professores
       // que ministrarão aulas nesse dia, procurando por professores repetidos
-      for (; it_aulas_dia != aulas_bloco.end(); it_aulas_dia++ )
+		for (; it_aulas_dia != aulas_bloco.end(); it_aulas_dia++ )
       {
          dia_semana = ( it_aulas_dia->first );
 
          // Percorre as aulas alocadas ao bloco
          // curricular atual, em cada dia da semana
-         ITERA_GGROUP_LESSPTR( it_aula, it_aulas_dia->second, Aula )
+			GGroup< Aula *, LessPtr< Aula > > aulas_dia_bloco = it_aulas_dia->second;
+
+         ITERA_GGROUP_LESSPTR( it_aula, aulas_dia_bloco, Aula )
          {
             aula = ( *it_aula );
+
             if ( aula == NULL || aula->eVirtual() == true )
             {
                continue;
@@ -1759,8 +1762,14 @@ void Avaliador::avaliaProfessorMesmoBlocoCurricular( SolucaoOperacional & soluca
             std::pair< Professor *, std::vector< HorarioAula * > >
                professor_horarios_aula = solucao.blocoAulas[ aula ];
 
-            // Professor que mininstra a aula
+            // Professor que mininstra a aula e o shorários dessa aula
             professor = professor_horarios_aula.first;
+				std::vector< HorarioAula * > horarios_professor = professor_horarios_aula.second;
+				if ( professor == NULL || horarios_professor.size() == 0 )
+				{
+					// TODO -- Verificar porque o professor não foi alocado à aula corretamente
+					continue;
+				}
 
             // Verifica se o professor já está alocado
             // a alguma aula desse bloco curricular
