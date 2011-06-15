@@ -1890,6 +1890,9 @@ Professor* SolverMIP::criaProfessorVirtual(HorarioDia *horario, int cred, std::s
 
    // Criando um professor virtual.
    prof = new Professor( true );
+   int idProf = -1 * (int)(problemData->professores_virtuais.size());
+   idProf--;
+   prof->setId(idProf);
 
    // Setando alguns dados para o novo professor
    prof->tipo_contrato = *(problemData->tipos_contrato.begin());
