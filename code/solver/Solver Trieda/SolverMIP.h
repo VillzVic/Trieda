@@ -10,6 +10,8 @@
 #include "Solver.h"
 #include "Variable.h"
 #include "Constraint.h"
+#include "VariableOp.h"
+#include "ConstraintOp.h"
 #include "opt_lp.h"
 #include "input.h"
 #include "opt_gurobi.h"
@@ -148,6 +150,28 @@ public:
    int cria_restricao_abertura_bloco_mesmoTPS(void);		// Restricao 1.2.33
    int cria_restricao_folga_abertura_bloco_mesmoTPS(void);  // Restricao 1.2.34
 
+   // Criacao de variaveis operacional
+   int criaVariaveisOperacional();
+   int criaVariavelProfessorAulaHorario();
+   int criaVariavelProfessorDisciplina();
+   int criaVariavelFolgaFixProfDiscSalaDiaHor();
+   int criaVariavelFolgaFixProfDiscDiaHor();
+   int criaVariavelFolgaFixProfDisc();
+   int criaVariavelFolgaFixProfDiscSala();
+   int criaVariavelFolgaFixProfSala();
+   int criaRestricoesOperacional();
+   int criaRestricaoSalaHorario();
+   int criaRestricaoProfessorHorario();
+   int criaRestricaoBlocoHorario();
+   int criaRestricaoAlocAula();
+   int criaRestricaoProfessorDisciplina();
+   int criaRestricaoProfessorDisciplinaUnico();
+   int criaRestricaoFixProfDiscSalaDiaHor();
+   int criaRestricaoFixProfDiscDiaHor();
+   int criaRestricaoFixProfDisc();
+   int criaRestricaoFixProfDiscSala();
+   int criaRestricaoFixProfSala();
+      
    void cria_solucao_inicial( int , int * , double * );
    int localBranching( double *, double );
    void carregaVariaveisSolucaoTatico();
@@ -159,8 +183,13 @@ public:
    void getSolutionTatico();
 
    int solveOperacional();
+   int solveOperacionalMIP();
    void getSolutionOperacional();
+   void getSolutionOperacionalMIP();
+   void geraProfessoresVirtuaisMIP();
+   Professor* criaProfessorVirtual(HorarioDia *horario,int cred,std::set<std::pair<Professor*,HorarioDia*> > &profVirtualList);
    void preencheOutputOperacional( ProblemSolution * );
+   void preencheOutputOperacionalMIP( ProblemSolution * );
    bool aulaAlocada( Aula *, Campus *, Unidade *, Sala *, int );
    vector< Variable * > variaveisAlunosAtendidos( Curso *, Disciplina * );
    vector< Variable * > variaveisCreditosAtendidos( Disciplina * );
@@ -183,6 +212,8 @@ private:
    std::vector< Variable > filtraVariaveisAlunos( std::vector< Variable > );
    std::vector< Variable > filtraVariaveisCreditos( std::vector< Variable > );
 
+   void retornaHorariosPossiveis(Professor *prof, Aula *aula, std::list<HorarioDia*> &listaHor);
+
    // Vetor responsável por armazenar ponteiros para todas as
    // variáveis do  tipo V_CREDITOS com credito(s) alocado(s).
    typedef vector< Variable * > vars__X___i_d_u_tps_t;
@@ -191,6 +222,8 @@ private:
    // do tipo V_ALUNOS que possuirem algum valor de atendimento maior que 0.
    typedef std::map< std::pair< int /*turma*/, Disciplina * >,
 					      std::vector< Variable * > > vars__A___i_d_o;
+
+   void chgCoeffList(std::vector<std::pair<int,int> > cL, std::vector<double> cLV);
 
    vars__X___i_d_u_tps_t vars_x;
    vars__A___i_d_o vars_a;
@@ -207,8 +240,16 @@ private:
    // Hash which associates the row number with the Constraint object.
    ConstraintHash cHash;
 
+   // Hash which associates the column number with the VariableOp object.
+   VariableOpHash vHashOp;
+
+   // Hash which associates the row number with the ConstraintOp object.
+   ConstraintOpHash cHashOp;
+
    // Stores the solution variables (non-zero).
    std::vector< Variable * > solVars;
+
+   std::vector< VariableOp * > solVarsOp;
 
    double alpha, beta, gamma, delta, lambda, epsilon, rho, M, psi, tau, eta;
 

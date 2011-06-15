@@ -885,62 +885,62 @@ void SolucaoInicialOperacional::alocaAulas( bool primeiraTentativaAlocacao, bool
       GGroup< Aula *, LessPtr< Aula > >::iterator 
          itAulasNaoAlocadas = aulasNaoAlocadas.find( &aula );
 
-      // Somente se a aula do custo em questão não foi alocada.
-      if ( itAulasNaoAlocadas != aulasNaoAlocadas.end() )
+      if ( itAulasNaoAlocadas == aulasNaoAlocadas.end() )
+         continue;
+
+      // Teste simples para saber se uma aula que
+      // vamos tentar alocar já possui horários a serem alocados.
+      if ( solIni->blocoAulas.find( &aula ) != solIni->blocoAulas.end() )
       {
-         // Teste simples para saber se uma aula que
-         // vamos tentar alocar já possui horários a serem alocados.
-         if ( solIni->blocoAulas.find( &aula ) != solIni->blocoAulas.end() )
+         // Não pode tentar alocar a aula mais de uma vez
+         // na solução inicial. Se cair aqui é pq tem algum
+         // erro de lógica. Rever o algoritmo de geração da solução inicial.
+         std::cout << "\n\nERRO NA GERACAO DA SOLUCAO INICIAL: "
+            << "TENTANDO ALOCAR UMA AULA QUE JA FOI ALOCADA.\n\n";
+
+         exit(1);
+      }
+
+      Professor & professor = custoAlocacao.getProfessor();
+
+      // Checando se o professor selecionado já está ministrando
+      // alguma aula pertencente ao mesmo bloco curricular da aula em questão.
+
+      //if(tentarManterViabilidade)
+      //{ if(professorRepetido(professor,aula)) { continue; } }
+
+      /* Antes de tentar encontrar uma sequência de horários livres do professor em questão deve-se
+      checar se existe uma fixação que especifique o professor e, possivelmente a sala, o dia e os 
+      horários em que a aula deve ser ministrada.
+
+      Toda vez que uma fixação que não permita nenhuma outra possibilidade de alocação da aula for 
+      satisfeita, deve-se marcar a aula como FIXADA. Trata-se da fixação do Professor a uma aula em 
+      um determinado dia nos horários especificados.
+
+      POR ENQUANTO, NENHUMA FIXAÇÃO DO MÓDULO OPERACIONAL SERÁ CONSIDERADA. -> MÁRIO 19/05/2011
+      */
+
+      // Tentando todas as sequências de horários vagos do professor.
+
+      int hrIni = 0;
+      int hrFim = ( aula.getTotalCreditos() - 1 );
+
+      while ( hrFim < solIni->getTotalHorarios() )
+      {
+         // Define os ids dos horários de aula onde será feita a tentativa de alocação
+         std::vector< int > seqHorarioAula = retornaHorariosFixadosProfessor(
+            professor, ( *aula.getDisciplina() ), ( *aula.getSala() ), aula.getDiaSemana() );
+
+         // Não houve fixação fixação
+         if ( seqHorarioAula.size() == 0 )
          {
-            // Não pode tentar alocar a aula mais de uma vez
-            // na solução inicial. Se cair aqui é pq tem algum
-            // erro de lógica. Rever o algoritmo de geração da solução inicial.
-            std::cout << "\n\nERRO NA GERACAO DA SOLUCAO INICIAL: "
-                      << "TENTANDO ALOCAR UMA AULA QUE JA FOI ALOCADA.\n\n";
-
-            exit(1);
-         }
-
-         Professor & professor = custoAlocacao.getProfessor();
-
-         // Checando se o professor selecionado já está ministrando
-         // alguma aula pertencente ao mesmo bloco curricular da aula em questão.
-
-         //if(tentarManterViabilidade)
-         //{ if(professorRepetido(professor,aula)) { continue; } }
-
-         /* Antes de tentar encontrar uma sequência de horários livres do professor em questão deve-se
-         checar se existe uma fixação que especifique o professor e, possivelmente a sala, o dia e os 
-         horários em que a aula deve ser ministrada.
-
-         Toda vez que uma fixação que não permita nenhuma outra possibilidade de alocação da aula for 
-         satisfeita, deve-se marcar a aula como FIXADA. Trata-se da fixação do Professor a uma aula em 
-         um determinado dia nos horários especificados.
-
-         POR ENQUANTO, NENHUMA FIXAÇÃO DO MÓDULO OPERACIONAL SERÁ CONSIDERADA. -> MÁRIO 19/05/2011
-         */
-
-         // Tentando todas as sequências de horários vagos do professor.
-
-         int hrIni = 0;
-         int hrFim = ( aula.getTotalCreditos() - 1 );
-
-         while ( hrFim < solIni->getTotalHorarios() )
-         {
-            // Define os ids dos horários de aula onde será feita a tentativa de alocação
-            std::vector< int > seqHorarioAula = retornaHorariosFixadosProfessor(
-               professor, ( *aula.getDisciplina() ), ( *aula.getSala() ), aula.getDiaSemana() );
-
-            // Não houve fixação fixação
-            if ( seqHorarioAula.size() == 0 )
+            // Tenta alocar nos primeiros horários
+            seqHorarioAula.clear();
+            for ( int hrAtual = hrIni; hrAtual <= hrFim; ++hrAtual )
             {
-               // Tenta alocar nos primeiros horários
-               seqHorarioAula.clear();
-               for ( int hrAtual = hrIni; hrAtual <= hrFim; ++hrAtual )
-               {
-                  seqHorarioAula.push_back( hrAtual );
-               }
+               seqHorarioAula.push_back( hrAtual );
             }
+         }
 
             professorPossuiHorariosDisponiveis = solIni->seqHorarioLivre(
                professor.getIdOperacional(), aula.getDiaSemana(), seqHorarioAula );
@@ -1254,7 +1254,6 @@ void SolucaoInicialOperacional::alocaAulas( bool primeiraTentativaAlocacao, bool
                }
             }
          }
-      }
    }
 
    // Mesmo que tenha-se utilizado todos os custos de alocação, pode

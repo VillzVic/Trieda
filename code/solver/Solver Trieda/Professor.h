@@ -6,6 +6,7 @@
 #include "TipoContrato.h"
 #include "TipoTitulacao.h"
 #include "AreaTitulacao.h"
+#include "HorarioDia.h"
 
 class Professor :
    public OFBase
@@ -17,6 +18,8 @@ public:
    virtual void le_arvore( ItemProfessor & );
 
    GGroup< Horario * > horarios;
+
+   GGroup< HorarioDia*> horariosDia;
 
    // Esse eh o disciplinas do XSD de input
    GGroup< Magisterio *, LessPtr< Magisterio > > magisterio;

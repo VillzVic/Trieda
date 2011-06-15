@@ -66,6 +66,8 @@ public:
    /* */
    void divideDisciplinas();
 
+   void geraHorariosDia();
+
    /* */
    template< class T > 
    void find_and_set( int, GGroup< T * > &, T * &, bool );

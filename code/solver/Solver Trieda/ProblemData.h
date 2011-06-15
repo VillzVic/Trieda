@@ -26,6 +26,7 @@
 #include "AtendimentoCampusSolucao.h"
 #include "AtendimentoUnidadeSolucao.h"
 #include "Aula.h"
+#include "HorarioDia.h"
 
 class Variable;
 
@@ -54,6 +55,13 @@ public:
    GGroup< Oferta *, LessPtr< Oferta > > ofertas;
    ParametrosPlanejamento * parametros;
    GGroup< Fixacao *, LessPtr< Fixacao > > fixacoes;
+
+   GGroup<HorarioDia*, LessPtr<HorarioDia> > horariosDia;
+   std::vector<HorarioDia*> horariosDiaIdx;
+   int maxHorariosDif;
+
+   int getHorarioDiaIdx(HorarioDia *horarioDia);
+   int getHorarioDiaIdx(int dia, int horarioId);
 
    std::vector< HorarioAula * > horarios_aula_ordenados;
    GGroup< AtendimentoCampusSolucao * > * atendimentosTatico;

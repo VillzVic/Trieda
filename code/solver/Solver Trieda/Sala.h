@@ -6,6 +6,7 @@
 
 #include "TipoSala.h"
 #include "Horario.h"
+#include "HorarioDia.h"
 #include "CreditoDisponivel.h"
 
 #include "Disciplina.h"
@@ -19,6 +20,8 @@ public:
 
 	GGroup< Horario * > horarios_disponiveis;
 	GGroup< CreditoDisponivel * > creditos_disponiveis;
+
+   GGroup< HorarioDia *> horariosDia;
 
 	// Alterar para ref, depois
 	GGroup< int > disciplinas_associadas;

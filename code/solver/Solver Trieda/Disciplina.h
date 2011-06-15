@@ -8,6 +8,7 @@
 #include "DivisaoCreditos.h"
 #include "NivelDificuldade.h"
 #include "Horario.h"
+#include "HorarioDia.h"
 
 class Disciplina :
    public OFBase
@@ -23,6 +24,8 @@ public:
    GGroup< int > ids_disciplinas_equivalentes;
    GGroup< int > ids_disciplinas_incompativeis;
    GGroup< Horario * > horarios;
+
+   GGroup< HorarioDia * > horariosDia;
 
    // Conjunto de combinações possíveis de divisão de créditos de uma uma disciplina 'd'
    std::vector< std::vector< std::pair< int /*dia*/, int /*numCreditos*/ > > > combinacao_divisao_creditos;

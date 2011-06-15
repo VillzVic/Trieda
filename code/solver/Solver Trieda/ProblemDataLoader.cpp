@@ -140,6 +140,8 @@ void ProblemDataLoader::load()
    // ---------
    relacionaFixacoes();
 
+   geraHorariosDia();
+
    // ---------
    print_stats();
 }
@@ -3536,6 +3538,153 @@ void ProblemDataLoader::validaInputSolucaoTatico()
                }
             }
          }
+      }
+   }
+}
+
+void ProblemDataLoader::geraHorariosDia()
+{
+   int contador = 0;
+
+   problemData->maxHorariosDif = 0;
+
+   ITERA_GGROUP_LESSPTR(itTurno,problemData->todos_turnos,Turno)
+   {
+      Turno *turno = *itTurno;
+
+      ITERA_GGROUP(itHA,turno->horarios_aula,HorarioAula)
+      {
+         HorarioAula *horarioAula = *itHA;
+
+         if ( horarioAula->getId() > problemData->maxHorariosDif )
+            problemData->maxHorariosDif = horarioAula->getId();
+
+         ITERA_GGROUP_N_PT(itDia,horarioAula->dias_semana,int)
+         {
+            HorarioDia *horarioDia = new HorarioDia();
+            horarioDia->setId(contador);
+            horarioDia->setHorarioAulaId(horarioAula->getId());
+            horarioDia->setHorarioAula(horarioAula);
+            horarioDia->setDia(*itDia);
+            contador++;
+
+            problemData->horariosDia.add(horarioDia);
+         }
+      }
+   }
+
+   problemData->horariosDiaIdx.resize((problemData->maxHorariosDif+1)*8,NULL);
+
+   ITERA_GGROUP_LESSPTR(itHorario,problemData->horariosDia,HorarioDia)
+   {
+      HorarioDia *horarioDia = *itHorario;
+
+      problemData->horariosDiaIdx[problemData->getHorarioDiaIdx(horarioDia)] = horarioDia;
+   }
+
+   // Professores
+   ITERA_GGROUP_LESSPTR(itCamp,problemData->campi,Campus)
+   {
+      Campus *campus = *itCamp;
+
+      ITERA_GGROUP_LESSPTR(itProf,campus->professores,Professor)
+      {
+         Professor *professor = *itProf;
+
+         ITERA_GGROUP(itHor,professor->horarios,Horario)
+         {
+            Horario *horario = *itHor;
+
+            ITERA_GGROUP_N_PT(itD,horario->dias_semana,int)
+            {
+               HorarioDia *auxHD = new HorarioDia();
+               auxHD->setDia(*itD);
+               auxHD->setHorarioAula(horario->horario_aula);
+               auxHD->setHorarioAulaId(horario->getHorarioAulaId());
+
+               GGroup<HorarioDia*,LessPtr<HorarioDia> >::iterator itHorarioAula = problemData->horariosDia.find(auxHD);
+
+               if ( itHorarioAula == problemData->horariosDia.end() )
+               {
+                  printf("ERRO: HORARIODIA NAO ENCONTRADO\n");
+                  exit(1);
+               }
+
+               delete auxHD;
+               professor->horariosDia.add(*itHorarioAula);
+            }
+            
+         }
+      }
+   }
+
+   // Salas
+   ITERA_GGROUP_LESSPTR(itCamp,problemData->campi,Campus)
+   {
+      Campus *campus = *itCamp;
+
+      ITERA_GGROUP_LESSPTR(itUnidade,campus->unidades,Unidade)
+      {
+         Unidade* unidade = *itUnidade;
+
+         ITERA_GGROUP_LESSPTR(itSala,unidade->salas,Sala)
+         {
+            Sala* sala = *itSala;
+
+            ITERA_GGROUP(itHor,sala->horarios_disponiveis,Horario)
+            {
+               Horario *horario = *itHor;
+
+               ITERA_GGROUP_N_PT(itD,horario->dias_semana,int)
+               {
+                  HorarioDia *auxHD = new HorarioDia();
+                  auxHD->setDia(*itD);
+                  auxHD->setHorarioAula(horario->horario_aula);
+                  auxHD->setHorarioAulaId(horario->getHorarioAulaId());
+
+                  GGroup<HorarioDia*,LessPtr<HorarioDia> >::iterator itHorarioAula = problemData->horariosDia.find(auxHD);
+
+                  if ( itHorarioAula == problemData->horariosDia.end() )
+                  {
+                     printf("ERRO: HORARIODIA NAO ENCONTRADO\n");
+                     exit(1);
+                  }
+
+                  delete auxHD;
+                  sala->horariosDia.add(*itHorarioAula);
+               }      
+            }
+         }
+      }
+   }
+
+   // Disciplinas
+   ITERA_GGROUP_LESSPTR(itDisc,problemData->disciplinas,Disciplina)
+   {
+      Disciplina *disciplina = *itDisc;
+
+      ITERA_GGROUP(itHor,disciplina->horarios,Horario)
+      {
+         Horario *horario = *itHor;
+
+         ITERA_GGROUP_N_PT(itD,horario->dias_semana,int)
+         {
+            HorarioDia *auxHD = new HorarioDia();
+            auxHD->setDia(*itD);
+            auxHD->setHorarioAula(horario->horario_aula);
+            auxHD->setHorarioAulaId(horario->getHorarioAulaId());
+
+            GGroup<HorarioDia*,LessPtr<HorarioDia> >::iterator itHorarioAula = problemData->horariosDia.find(auxHD);
+
+            if ( itHorarioAula == problemData->horariosDia.end() )
+            {
+               printf("ERRO: HORARIODIA NAO ENCONTRADO\n");
+               exit(1);
+            }
+
+            delete auxHD;
+            disciplina->horariosDia.add(*itHorarioAula);
+         }      
       }
    }
 }

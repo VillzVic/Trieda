@@ -22,6 +22,19 @@ ProblemData::~ProblemData()
 
 }
 
+int ProblemData::getHorarioDiaIdx(HorarioDia *horarioDia)
+{
+   if ( horarioDia == NULL )
+      return -1;
+
+   return horarioDia->getDia() * (maxHorariosDif+1) + horarioDia->getHorarioAulaId();
+}
+
+int ProblemData::getHorarioDiaIdx(int dia, int horarioId)
+{
+   return dia * (maxHorariosDif+1) + horarioId;
+}
+
 void ProblemData::le_arvore( TriedaInput & raiz )
 {
    calendario = new Calendario();
