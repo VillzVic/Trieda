@@ -174,6 +174,11 @@ public:
    // Dias letivos comuns de um professor e uma disciplina.
    std::map< std::pair< int /*idProf*/, int /*idDisc*/>, GGroup< int > /*Dias*/ > prof_Disc_Dias;
 
+   // Filtro de dias letivos para o tatico usando os professores.
+   std::map< int, GGroup< int > > disc_Dias_Prof_Tatico;
+
+   bool usarProfDispDiscTatico;
+
    GGroup< Aula *, LessPtr< Aula > > aulas;
 
    // Estrutura que agrupa as aulas por bloco curricular e dia.

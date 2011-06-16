@@ -878,6 +878,9 @@ void ProblemDataLoader::calculaCredsLivresSalas()
 
 void ProblemDataLoader::estabeleceDiasLetivosProfessorDisciplina()
 {
+   problemData->disc_Dias_Prof_Tatico.clear();
+   problemData->usarProfDispDiscTatico = false;
+
    ITERA_GGROUP_LESSPTR( itCampus, problemData->campi, Campus )
    {
       // TODO: Tem que ser para os blocos do campus em questao !!!!
@@ -906,6 +909,8 @@ void ProblemDataLoader::estabeleceDiasLetivosProfessorDisciplina()
                                  (it_prof->getId(), itDisc->getId());
 
                               problemData->prof_Disc_Dias[ ids_Prof_Disc ].add( *itDiasLetDisc );
+                              problemData->disc_Dias_Prof_Tatico[itDisc->getId()].add( *itDiasLetDisc );
+                              problemData->usarProfDispDiscTatico = true;
                            }
                         }
                      }

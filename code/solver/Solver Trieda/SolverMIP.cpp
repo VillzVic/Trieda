@@ -3177,7 +3177,45 @@ int SolverMIP::cria_variavel_creditos( void )
 
                      if ( problemData->parametros->modo_otimizacao == "OPERACIONAL" )
                      {
-                        ITERA_GGROUP_LESSPTR( it_prof, itCampus->professores, Professor )
+                        double custo = 0.0;
+
+                        if ( problemData->usarProfDispDiscTatico )
+                        {
+                           if ( problemData->disc_Dias_Prof_Tatico[v.getDisciplina()->getId()].find( v.getDia() ) == problemData->disc_Dias_Prof_Tatico[v.getDisciplina()->getId()].end() )
+                           {
+                              custo = 100.0;
+                           }
+                        }
+                        if ( vHash.find( v ) == vHash.end() )
+                        {
+                           if ( variavel_equivalente )
+                           {
+                              mapVariaveisDisciplinasEquivalentes[ disc_equi ].push_back( v );
+                           }
+
+                           vHash[v] = lp->getNumCols();
+
+                           if ( problemData->parametros->funcao_objetivo == 0 )
+                           {
+                              OPT_COL col( OPT_COL::VAR_INTEGRAL, custo, 0.0,
+                                 itCjtSala->maxCredsDia( *itDiscSala_Dias ),
+                                 ( char * )v.toString().c_str() );
+
+                              lp->newCol( col );
+                           }
+                           else if ( problemData->parametros->funcao_objetivo == 1
+                              || problemData->parametros->funcao_objetivo == 2 )
+                           {
+                              OPT_COL col( OPT_COL::VAR_INTEGRAL, 0.0, 0.0,
+                                 itCjtSala->maxCredsDia( *itDiscSala_Dias ),
+                                 ( char * )v.toString().c_str() );
+
+                              lp->newCol( col );
+                           }
+
+                           num_vars++;
+                        }
+                        /*ITERA_GGROUP_LESSPTR( it_prof, itCampus->professores, Professor )
                         {
                            // id_professor + id_disciplina
                            std::pair< int, int > prof_Disc 
@@ -3222,7 +3260,7 @@ int SolverMIP::cria_variavel_creditos( void )
 
                               num_vars++;
                            }
-                        }
+                        }*/
                      }
                      else
                      {
@@ -3233,9 +3271,19 @@ int SolverMIP::cria_variavel_creditos( void )
                               mapVariaveisDisciplinasEquivalentes[ disciplina ].push_back( v );
                            }
 
+                           double custo = 0.0;
+
+                           if ( problemData->usarProfDispDiscTatico )
+                           {
+                              if ( problemData->disc_Dias_Prof_Tatico[v.getDisciplina()->getId()].find( v.getDia() ) == problemData->disc_Dias_Prof_Tatico[v.getDisciplina()->getId()].end() )
+                              {
+                                 custo = 100.0;
+                              }
+                           }
+
                            vHash[v] = lp->getNumCols();
 
-                           OPT_COL col( OPT_COL::VAR_INTEGRAL, 0.0, 0.0,
+                           OPT_COL col( OPT_COL::VAR_INTEGRAL, custo, 0.0,
                                         itCjtSala->maxCredsDia( *itDiscSala_Dias ),
                                         ( char * )v.toString().c_str() );
 
