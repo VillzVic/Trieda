@@ -30,12 +30,13 @@ public:
       V_SLACK_ALOC_ALUNOS_CURSO_INCOMPAT = 15,   // bs_{i,d,c,c',cp}
       V_SLACK_DEMANDA = 16, // fd_{d,o}
       V_COMBINACAO_DIVISAO_CREDITO = 17, // m{i,d,k}
-      V_SLACK_COMBINACAO_DIVISAO_CREDITO = 18, // fk{i,d,k}
+      V_SLACK_COMBINACAO_DIVISAO_CREDITO_M = 18, // fkm{i,d,k}
+      V_SLACK_COMBINACAO_DIVISAO_CREDITO_P = 19, // fkp{i,d,k}
 
-      V_CREDITOS_MODF = 19, // xm_{d,t}
-	  V_ABERTURA_COMPATIVEL = 20, //zc_{d,t}
-	  V_ABERTURA_BLOCO_MESMO_TPS = 21, //n_{bc,tps}
-	  V_SLACK_ABERTURA_BLOCO_MESMO_TPS = 22 //fn_{bc,tps}
+      V_CREDITOS_MODF = 20, // xm_{d,t}
+	  V_ABERTURA_COMPATIVEL = 21, //zc_{d,t}
+	  V_ABERTURA_BLOCO_MESMO_TPS = 22, //n_{bc,tps}
+	  V_SLACK_ABERTURA_BLOCO_MESMO_TPS = 23 //fn_{bc,tps}
    };
 
    //Constructors

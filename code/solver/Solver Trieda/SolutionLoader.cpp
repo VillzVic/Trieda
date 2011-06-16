@@ -81,7 +81,8 @@ void SolutionLoader::setFolgas( Variable* v )
 		  restricaoViolada->setValor(v->getValue());
 		  problemSolution->getFolgas()->add(restricaoViolada);
 		  break;
-	   case Variable::V_SLACK_COMBINACAO_DIVISAO_CREDITO: 
+	   case Variable::V_SLACK_COMBINACAO_DIVISAO_CREDITO_M: 
+      case Variable::V_SLACK_COMBINACAO_DIVISAO_CREDITO_P: 
 		   restricaoStr = "Regra de divisão de créditos (fk_{";
 		   restricaoStr += _itoa(v->getTurma(), buffer, 10);
 		   restricaoStr += ",";

@@ -176,8 +176,10 @@ std::string Variable::toString()
         str << "fd"; cond_disc = true; break;
 	case V_COMBINACAO_DIVISAO_CREDITO:
         str << "m"; break;
-	case V_SLACK_COMBINACAO_DIVISAO_CREDITO:
-        str << "fk"; break;
+   case V_SLACK_COMBINACAO_DIVISAO_CREDITO_M:
+        str << "fkm"; break;
+   case V_SLACK_COMBINACAO_DIVISAO_CREDITO_P:
+        str << "fkp"; break;
     case V_CREDITOS_MODF:
       str << "xm"; break;
     case V_ABERTURA_COMPATIVEL:

@@ -228,7 +228,7 @@ SolverMIP::SolverMIP( ProblemData * aProblemData,
    beta = 10.0;
    gamma = 0;
    delta = 0;
-   lambda = 5.0;
+   lambda = 10.0;
    epsilon = 1.0;
    M = 1.0;
    rho = 5;
@@ -4273,11 +4273,11 @@ int SolverMIP::cria_variavel_min_creds(void)
                   double obj = 0.0;
                   if ( problemData->parametros->carga_horaria_semanal_aluno == ParametrosPlanejamento::EQUILIBRAR)
                   {
-                     obj = lambda;
+                     obj = -lambda;
                   }
                   else if ( problemData->parametros->carga_horaria_semanal_aluno == ParametrosPlanejamento::MINIMIZAR_DIAS)
                   {
-                     obj = 0.0;
+                     obj = lambda;
                   }
 
                   OPT_COL col( OPT_COL::VAR_INTEGRAL, obj, 0.0, 1000.0,
@@ -4377,7 +4377,7 @@ int SolverMIP::cria_variavel_max_creds(void)
                   }
                   else if ( problemData->parametros->carga_horaria_semanal_aluno == ParametrosPlanejamento::MINIMIZAR_DIAS)
                   {
-                     obj = -lambda;
+                     obj = 0.0;
                   }
                   
                   OPT_COL col( OPT_COL::VAR_INTEGRAL, obj, 0.0, 1000.0,
@@ -5562,14 +5562,27 @@ int SolverMIP::cria_variavel_combinacao_divisao_credito()
 /*====================================================================/
 %DocBegin TRIEDA_LOAD_MODEL
 
-%Var fk_{d,i,t} 
+%Var fkp_{d,i,t} 
 
 %Desc 
-variável de folga para a restrição de combinação de divisão de créditos.
+variável de folga superior para a restrição de combinação de divisão de créditos.
 
 %ObjCoef
 \psi \cdot \sum\limits_{d \in D} 
-\sum\limits_{t \in T} \sum\limits_{i \in I_{d}} fk_{d,i,k}
+\sum\limits_{t \in T} \sum\limits_{i \in I_{d}} fkp_{d,i,k}
+
+%Data \psi
+%Desc
+peso associado a função objetivo.
+
+%Var fkm_{d,i,t} 
+
+%Desc 
+variável de folga inferior para a restrição de combinação de divisão de créditos.
+
+%ObjCoef
+\psi \cdot \sum\limits_{d \in D} 
+\sum\limits_{t \in T} \sum\limits_{i \in I_{d}} fkm_{d,i,k}
 
 %Data \psi
 %Desc
@@ -5626,7 +5639,44 @@ int SolverMIP::cria_variavel_de_folga_combinacao_divisao_credito()
                   {
                      Variable v;
                      v.reset();
-                     v.setType( Variable::V_SLACK_COMBINACAO_DIVISAO_CREDITO );
+                     v.setType( Variable::V_SLACK_COMBINACAO_DIVISAO_CREDITO_P );
+
+                     v.setTurma( turma );            // i
+                     v.setDisciplina( disciplina );  // d
+                     v.setDia( *itDiasLetDisc );	    // t
+
+                     if ( vHash.find( v ) == vHash.end() )
+                     {
+                        if ( variavel_equivalente )
+                        {
+                           mapVariaveisDisciplinasEquivalentes[ disc_equi ].push_back( v );
+                        }
+
+                        vHash[v] = lp->getNumCols();
+
+                        if ( problemData->parametros->funcao_objetivo == 0 )
+                        {
+                           OPT_COL col( OPT_COL::VAR_INTEGRAL,
+                                        psi, 0.0, 10000.0,
+                                        ( char * )v.toString().c_str() );
+
+                           lp->newCol( col );
+                        }
+                        else if( problemData->parametros->funcao_objetivo == 1
+                                    || problemData->parametros->funcao_objetivo == 2 )
+                        {
+                           OPT_COL col( OPT_COL::VAR_INTEGRAL,
+                                        50.0, 0.0, 10000.0,
+                                        ( char * )v.toString().c_str() );
+
+                           lp->newCol( col );
+                        }
+
+                        num_vars++;
+                     }
+
+                     v.reset();
+                     v.setType( Variable::V_SLACK_COMBINACAO_DIVISAO_CREDITO_M );
 
                      v.setTurma( turma );            // i
                      v.setDisciplina( disciplina );  // d
@@ -9660,7 +9710,7 @@ Regra de divisão de créditos
 %MatExp
 
 \begin{eqnarray}
-\sum\limits_{u \in U} \sum\limits_{tps \in SCAP_{u}} x_{i,d,u,tps,t} = \sum\limits_{k \in K_{d}}N_{d,k,t} \cdot m_{d,i,k} + fk_{d,i,t} \nonumber \qquad 
+\sum\limits_{u \in U} \sum\limits_{tps \in SCAP_{u}} x_{i,d,u,tps,t} = \sum\limits_{k \in K_{d}}N_{d,k,t} \cdot m_{d,i,k} + fkp_{d,i,t} - fkm_{d,i,t} \nonumber \qquad 
 \forall d \in D \quad
 \forall i \in I_{d} \quad
 \forall t \in T
@@ -9770,7 +9820,7 @@ int SolverMIP::cria_restricao_divisao_credito()
                            }
 
                            v.reset();
-                           v.setType( Variable::V_SLACK_COMBINACAO_DIVISAO_CREDITO );
+                           v.setType( Variable::V_SLACK_COMBINACAO_DIVISAO_CREDITO_M );
 
                            v.setDisciplina( disciplina );
                            v.setTurma( turma );
@@ -9780,6 +9830,19 @@ int SolverMIP::cria_restricao_divisao_credito()
                            if( it_v != vHash.end() )
                            {
                               row.insert( it_v->second, -1.0 );
+                           }
+
+                           v.reset();
+                           v.setType( Variable::V_SLACK_COMBINACAO_DIVISAO_CREDITO_P );
+
+                           v.setDisciplina( disciplina );
+                           v.setTurma( turma );
+                           v.setDia( *itDiasLetDisc );
+
+                           it_v = vHash.find( v );
+                           if( it_v != vHash.end() )
+                           {
+                              row.insert( it_v->second, 1.0 );
                            }
                         }
                      }
