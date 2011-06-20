@@ -1,0 +1,16 @@
+<assembly>
+	<id>standalone</id>
+	<includeBaseDirectory>false</includeBaseDirectory>
+	<formats>
+		<format>jar</format>
+	</formats>
+	<fileSets>
+		<fileSet>
+			<outputDirectory></outputDirectory>
+			<directory>target/classes</directory>
+			<includes>
+				<include>**/util/*.class</include>
+			</includes>
+		</fileSet>
+	</fileSets>
+</assembly>

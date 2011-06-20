@@ -10,9 +10,13 @@ import java.io.InputStream;
 
 public class FileManager {
 
+	private static final String PATH = System.getProperty("java.io.tmpdir")+ File.pathSeparator ;
+	private static final String INPUT = PATH + "input";
+	private static final String OUTPUT = PATH + "output";
+	
 	public static boolean createFile(String filename, Long uniqueID, BufferedInputStream bis) {
 		try {
-			BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(filename+uniqueID.toString()));
+			BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(PATH + filename+uniqueID.toString()));
 			int data;
 			byte[] buff = new byte[32 * 1024];
 			while ((data = bis.read(buff)) != -1) {
@@ -27,12 +31,12 @@ public class FileManager {
 	}
 
 	public static boolean createFile(Long uniqueID, BufferedInputStream bis) {
-		return createFile("input", uniqueID, bis);
+		return createFile(INPUT, uniqueID, bis);
 	}
 
 	
 	public static byte[] getContentOutputFile(Long uniqueID) throws IOException {
-		File file = new File("output"+uniqueID.toString()+"F");
+		File file = new File(OUTPUT+uniqueID.toString()+"F");
 		InputStream is = new FileInputStream(file);
 
 		// Get the size of the file
@@ -67,17 +71,17 @@ public class FileManager {
 
 	
 	public static boolean isExistInputFile(Long uniqueID) {
-		return (new File("input"+uniqueID.toString())).exists();
+		return (new File(INPUT+uniqueID.toString())).exists();
 	}
 	public static boolean isExistOutputFile(Long uniqueID) {
-		return (new File("output"+uniqueID.toString() + "F")).exists();
+		return (new File(OUTPUT+uniqueID.toString() + "F")).exists();
 	}
 	
 	public static boolean removeInputFile(Long uniqueID) {
-		return (new File("input"+uniqueID.toString())).delete();
+		return (new File(INPUT+uniqueID.toString())).delete();
 	}
 	public static boolean removeOutputFile(Long uniqueID) {
-		return (new File("output"+uniqueID.toString() + "F")).delete();
+		return (new File(OUTPUT+uniqueID.toString() + "F")).delete();
 	}
 	public static boolean removeFiles(Long uniqueID) {
 		return removeInputFile(uniqueID) && removeOutputFile(uniqueID);
