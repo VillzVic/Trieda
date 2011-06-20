@@ -6,6 +6,7 @@
 #include "MoveShiftValidator.h"
 #include "ProblemData.h"
 
+// TRIEDA-924
 class NSShift
    : public NS
 {

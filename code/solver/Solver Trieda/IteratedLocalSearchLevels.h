@@ -14,6 +14,7 @@ using namespace std;
 
 typedef pair<pair<int, int> , pair<int, int> > levelHistory;
 
+// TRIEDA-923
 class IteratedLocalSearchLevels: public Heuristic
 {
 protected:

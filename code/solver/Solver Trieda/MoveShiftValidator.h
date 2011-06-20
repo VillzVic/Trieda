@@ -5,6 +5,14 @@
 
 typedef std::map< Aula *, std::pair< Professor *, std::vector< HorarioAula * > >, LessPtr<Aula> >::const_iterator cItClassesBlocks;
 
+/*
+TRIEDA-955 e TRIEDA-957
+
+Foi realizada uma estruturação da classe abaixo de modo que as fixações pudessem ser tratadas.
+Falta adicionar o check de fixação para atender as issues acima e, posteriormente, mover alguns métodos
+dessa classe para a sua super classe (MoveValidator). Assim, bastará apenas adicionar o check de fixação
+nas estruturas de swap.
+*/
 class MoveShiftValidator : public MoveValidator
 {
 public:

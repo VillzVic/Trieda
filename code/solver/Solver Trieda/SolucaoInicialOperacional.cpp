@@ -466,6 +466,7 @@ void SolucaoInicialOperacional::alocaAulasRec( bool primeiraTentativaAlocacao, b
 
          while ( hrFim < solIni->getTotalHorarios() )
          {
+            // TRIEDA-954 e TRIEDA-956
             // Define os ids dos horários de aula onde será feita a tentativa de alocação
             std::vector< int > seqHorarioAula = retornaHorariosFixadosProfessor(
                professor, ( *aula.getDisciplina() ), ( *aula.getSala() ), aula.getDiaSemana() );

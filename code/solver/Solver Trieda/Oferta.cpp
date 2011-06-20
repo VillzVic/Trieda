@@ -6,6 +6,7 @@ Oferta::Oferta(void)
 	curso = NULL;
 	turno = NULL;
 	campus = NULL;
+   receita = 0;
 }
 
 Oferta::~Oferta(void)
@@ -21,4 +22,5 @@ void Oferta::le_arvore( ItemOfertaCurso & elem )
 	curso_id = elem.cursoId();
 	turno_id = elem.turnoId();
 	campus_id = elem.campusId();
+   receita = elem.receita();
 }

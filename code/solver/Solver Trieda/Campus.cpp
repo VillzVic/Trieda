@@ -6,11 +6,11 @@ Campus::Campus(void)
 {
    totalSalas = 0;
    maiorSala  = 0;
+   custo = 0;
 }
 
 Campus::~Campus(void)
 {
-
 }
 
 void Campus::le_arvore(ItemCampus& elem) 
@@ -18,6 +18,7 @@ void Campus::le_arvore(ItemCampus& elem)
    this->setId( elem.id() );
    codigo = elem.codigo();
    nome = elem.nome();
+   custo = elem.custo();
 
    ITERA_SEQ( it_unidades, elem.unidades(), Unidade )
    {

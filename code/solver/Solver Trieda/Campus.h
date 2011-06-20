@@ -36,17 +36,20 @@ public:
    void setNome(std::string s) { nome = s; }
    void setTotalSalas(int value) { totalSalas = value; }
    void setMaiorSala(int value) { maiorSala = value; }
+   void setCusto(double c) { custo = c; }
 
    std::string getCodigo() { return codigo; }
    std::string getNome(std::string s) { return nome; }
    int getTotalSalas() { return totalSalas; }
    int getMaiorSala() { return maiorSala; }
+   double getCusto() { return custo; }
 
 private:
    std::string codigo;
    std::string nome;
    int totalSalas;
    int maiorSala;
+   double custo;
 };
 
 #endif

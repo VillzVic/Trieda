@@ -20,11 +20,13 @@ public:
    void setCursoId( int v ) { curso_id = v; }
    void setTurnoId( int v ) { turno_id = v; }
    void setCampusId( int v ) { campus_id = v; }
+   void setReceita( double v ) { receita = v; }
 
    int getCurriculoId() { return curriculo_id; }
    int getCursoId() { return curso_id; }
    int getTurnoId() { return turno_id; }
    int getCampusId() { return campus_id; }
+   double getReceita() { return receita; }
 
    // Dados pré-processados
    Curriculo * curriculo;
@@ -37,6 +39,9 @@ private:
    int curso_id;
    int turno_id;
    int campus_id;
+
+   // TRIEDA-958 (Apenas a leitura, falta associar à func. obj.)
+   double receita;
 };
 
 #endif
