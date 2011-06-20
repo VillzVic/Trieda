@@ -10,9 +10,9 @@ import java.io.InputStream;
 
 public class FileManager {
 
-	public static boolean createFile(Long uniqueID, BufferedInputStream bis) {
+	public static boolean createFile(String filename, Long uniqueID, BufferedInputStream bis) {
 		try {
-			BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream("input"+uniqueID.toString()));
+			BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(filename+uniqueID.toString()));
 			int data;
 			byte[] buff = new byte[32 * 1024];
 			while ((data = bis.read(buff)) != -1) {
@@ -25,6 +25,11 @@ public class FileManager {
 		}
 		return true;
 	}
+
+	public static boolean createFile(Long uniqueID, BufferedInputStream bis) {
+		return createFile("input", uniqueID, bis);
+	}
+
 	
 	public static byte[] getContentOutputFile(Long uniqueID) throws IOException {
 		File file = new File("output"+uniqueID.toString()+"F");

@@ -1,4 +1,4 @@
-package com.gapso.web.solverws;
+package com.gapso.web.solverws.util;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -11,7 +11,6 @@ import java.util.concurrent.ExecutorCompletionService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-import com.gapso.web.solverws.util.FileManager;
 
 public class SolverQueue {
 	
@@ -51,4 +50,16 @@ public class SolverQueue {
 		return (tasks.get(uniqueID) == null)? true : tasks.get(uniqueID).isDone();
 	}
 	
+	public void cancelAll(){
+		tasks.clear();
+	}
+	
+	public Boolean cancelOptimization(Long uniqueID) {
+		return tasks.remove(uniqueID)!=null;
+	}
+
+	public String[] getQueue() {
+		return new String[]{"Queue Size: " + tasks.size()};
+	}
+
 }

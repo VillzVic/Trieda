@@ -11,12 +11,13 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
 
 import com.gapso.web.solverws.util.FileManager;
+import com.gapso.web.solverws.util.SolverQueue;
 import com.gapso.web.solverws.util.UniqueId;
 import com.sun.jersey.multipart.BodyPartEntity;
 import com.sun.jersey.multipart.MultiPart;
 
 @Path("/")
-public class SolverWS {
+public class SolverWS{
 
 	private String version = "0.1";
 	final static int NUMBER_OF_QUEUE = 2;
