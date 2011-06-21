@@ -248,6 +248,8 @@ $FO = \min \sum\limits_{i \in 1,2, \cdots,16} c_{i} \times x{i}$, sendo que:
 
 \item $\beta$ - peso associado a função objetivo.
 
+\item $\gamma$ - peso associado a função objetivo.
+
 \end{itemize}
 
 \newpage
@@ -259,11 +261,14 @@ $FO = \min \sum\limits_{i \in 1,2, \cdots,16} c_{i} \times x{i}$, sendo que:
 \item $x_{p,a,s,d,i,t,h}$ - variável binária indicando que o professor $p$ foi alocado a aula $a$ no horário $h$.
 \item $x_{pv,a,s,d,i,t,h}$ - variável binária indicando que o professor virtual $pv$ foi alocado a aula $a$ no horário $h$.
 \item $y_{p,d,i}$ - variável binária indicando que o professor $p$ foi alocado a turma $i$ da disciplina $d$.
+\item $z_{d,i,h}$ - variável binária indicando que o horário $h$ foi alocado para a turma $i$ da disciplina $d$.
 \item $f1_{p,d,s,t,h}$ - variável de folga para a restrição de fixação de professor $p$, disciplina $d$, sala $s$, dia $t$ e horário $h$. 
 \item $f2_{p,d,t,h}$ - variável de folga para a restrição de fixação de professor $p$, disciplina $d$, dia $t$ e horário $h$. 
 \item $f3_{p,d}$ - variável de folga para a restrição de fixação de professor $p$ e disciplina $d$. 
 \item $f4_{p,d,s}$ - variável de folga para a restrição de fixação de professor $p$, disciplina $d$ e sala $s$. 
 \item $f5_{p,s}$ - variável de folga para a restrição de fixação de professor $p$ e sala $s$. 
+\item $fdh_{d,i,t,h}$ - variável de folga para a restrição de um horário $h$ no dia $t$ para a turma $i$ da disciplina $d$. 
+
 \end{itemize}
 
 \subsection{Formulação}
@@ -289,6 +294,9 @@ $$
       \\
       &
        + \beta \cdot \sum\limits_{p \in P} \sum\limits_{s \in S} f5_{p,s}
+      \\
+      &
+       + \gamma \cdot \sum\limits_{d \in D} \sum\limits_{i \in I_{d}} \sum\limits_{t \in T} \sum\limits_{h \in H} fdh_{d,i,t,h}
       \\
 \end{array}
 $$
@@ -396,6 +404,24 @@ y_{p,d,i} \leq 1 \nonumber \qquad
 \forall p \in P \quad
 \forall s \in S \quad
 \forall f \in F_{p,s}
+\end{eqnarray}
+
+\subsubsection{Restrição de horário de disciplina no dia associando x e z}
+
+\begin{eqnarray}
+\sum\limits_{p \in P} \sum\limits_{pv \in PV} \sum\limits_{s \in S}  x_{p,a,s,d,i,t,h} + x_{pv,a,s,d,i,t,h} \leq z_{d,i,h} + fdh_{d,i,t,h} \nonumber \qquad 
+\forall d \in D \quad
+\forall i \in I_{d} \quad
+\forall t \in T \quad
+\forall h \in H 
+\end{eqnarray}
+
+\subsubsection{Restrição de horário de disciplina único na semana}
+
+\begin{eqnarray}
+\sum\limits_{h \in H} z_{d,i,h} \leq 1 \nonumber \qquad 
+\forall d \in D \quad
+\forall i \in I_{d}
 \end{eqnarray}
 
 \clearpage
