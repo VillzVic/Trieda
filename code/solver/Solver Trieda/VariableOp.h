@@ -16,11 +16,13 @@ public:
       V_ERROR = 0,
       V_X_PROF_AULA_HOR = 1,
       V_Y_PROF_DISCIPLINA = 2,
-      V_F_FIX_PROF_DISC_SALA_DIA_HOR = 3,
-      V_F_FIX_PROF_DISC_DIA_HOR = 4,
-      V_F_FIX_PROF_DISC = 5,
-      V_F_FIX_PROF_DISC_SALA = 6,
-      V_F_FIX_PROF_SALA = 7
+      V_Z_DISCIPLINA_HOR = 3,
+      V_F_FIX_PROF_DISC_SALA_DIA_HOR = 4,
+      V_F_FIX_PROF_DISC_DIA_HOR = 5,
+      V_F_FIX_PROF_DISC = 6,
+      V_F_FIX_PROF_DISC_SALA = 7,
+      V_F_FIX_PROF_SALA = 8,
+      V_F_DISC_HOR = 9
    };
 
    //Constructors
@@ -41,6 +43,8 @@ public:
 
    HorarioDia* getHorario() const { return h; }
 
+   HorarioAula* getHorarioAula() const { return horarioAula; }
+
    Aula* getAula() const { return aula; }
 
    Professor* getProfessor() const { return professor; }
@@ -50,6 +54,8 @@ public:
    Sala* getSala() const { return sala; }
 
    int getTurma() const { return turma; }
+
+   int getDia() const { return dia; }
 
 
    //==================================================
@@ -63,11 +69,15 @@ public:
 
    void setHorario( HorarioDia* hh ) {  h = hh; }
 
+   void setHorarioAula( HorarioAula* hh ) {  horarioAula = hh; }
+
    void setAula( Aula *a ) {  aula = a; }
 
    void setProfessor(Professor *p) { professor = p; }
 
    void setTurma (int aTurma) { turma = aTurma; }
+
+   void setDia (int aDia) { dia = aDia; }
 
    void setDisciplina (Disciplina *aD) { disciplina = aD; }
 
@@ -96,7 +106,9 @@ private:
    Sala *sala;
    Professor *professor;
    Disciplina *disciplina;
+   HorarioAula *horarioAula;
    int turma;
+   int dia;
 };
 
 

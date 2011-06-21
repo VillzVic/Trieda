@@ -154,11 +154,13 @@ public:
    int criaVariaveisOperacional();
    int criaVariavelProfessorAulaHorario();
    int criaVariavelProfessorDisciplina();
+   int criaVariavelDisciplinaHorario();
    int criaVariavelFolgaFixProfDiscSalaDiaHor();
    int criaVariavelFolgaFixProfDiscDiaHor();
    int criaVariavelFolgaFixProfDisc();
    int criaVariavelFolgaFixProfDiscSala();
    int criaVariavelFolgaFixProfSala();
+   int criaVariavelFolgaDisciplinaHorario();
    int criaRestricoesOperacional();
    int criaRestricaoSalaHorario();
    int criaRestricaoProfessorHorario();
@@ -171,6 +173,8 @@ public:
    int criaRestricaoFixProfDisc();
    int criaRestricaoFixProfDiscSala();
    int criaRestricaoFixProfSala();
+   int criaRestricaoDisciplinaMesmoHorario();
+   int criaRestricaoDisciplinaHorarioUnico();
       
    void cria_solucao_inicial( int , int * , double * );
    int localBranching( double *, double );

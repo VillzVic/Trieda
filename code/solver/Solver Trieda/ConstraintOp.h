@@ -27,7 +27,9 @@ public:
       C_FIX_PROF_DISC_DIA_HOR = 8,
       C_FIX_PROF_DISC = 9,
       C_FIX_PROF_DISC_SALA = 10,
-      C_FIX_PROF_SALA = 11
+      C_FIX_PROF_SALA = 11,
+      C_DISC_HORARIO = 12,
+      C_DISC_HORARIO_UNICO = 13
    };
 
    /** Default constructor. */
@@ -79,6 +81,8 @@ public:
 
    HorarioDia* getHorario() const { return h; }
 
+   HorarioAula* getHorarioAula() const { return horarioAula; }
+
    Disciplina* getDisciplina() const { return disciplina; }
 
    int getTurma() const { return turma; }
@@ -111,6 +115,8 @@ public:
 
    void setHorario(HorarioDia* hh) { h = hh; }
 
+   void setHorarioAula(HorarioAula* hh) { horarioAula = hh; }
+
    void setDisciplina (Disciplina *aD) { disciplina = aD; }
 
    void setTurma(int aT) { turma = aT; }
@@ -123,6 +129,7 @@ private:
    Sala* s;
 
    HorarioDia* h; // horario
+   HorarioAula* horarioAula;
    Aula *aula;
    Professor *professor;
    BlocoCurricular* b;

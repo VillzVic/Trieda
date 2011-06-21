@@ -33,6 +33,7 @@ ConstraintOp& ConstraintOp::operator= (const ConstraintOp& cons)
    this->h = cons.getHorario();
    this->disciplina = cons.getDisciplina();
    this->turma = cons.getTurma();
+   this->horarioAula = cons.getHorarioAula();
 
    return *this;
 }
@@ -104,6 +105,18 @@ bool ConstraintOp::operator< (const ConstraintOp& cons) const
 			return false;
 	}
 
+   if( this->getHorarioAula() == NULL && cons.getHorarioAula() != NULL )
+		return true;
+	else if( this->getHorarioAula() != NULL && cons.getHorarioAula() == NULL )
+		return false;
+	else if( this->getHorarioAula() != NULL && cons.getHorarioAula() != NULL )
+	{
+		if( *this->getHorarioAula() < *cons.getHorarioAula() )
+			return true;
+		else if( *cons.getHorarioAula() < *this->getHorarioAula() )
+			return false;
+	}
+
    if( this->getDisciplina() == NULL && cons.getDisciplina() != NULL )
 		return true;
 	else if( this->getDisciplina() != NULL && cons.getDisciplina() == NULL )
@@ -150,6 +163,7 @@ void ConstraintOp::reset()
    h = NULL;
    disciplina = NULL;
    turma = -1;
+   horarioAula = NULL;
    type = C_PROFESSOR_HORARIO;
 }
 
@@ -181,6 +195,10 @@ std::string ConstraintOp::toString()
       ss << "C_FIX_PROF_DISC_SALA"; break;
    case C_FIX_PROF_SALA:
       ss << "C_FIX_PROF_SALA"; break;
+   case C_DISC_HORARIO:
+      ss << "C_DISC_HORARIO"; break;
+   case C_DISC_HORARIO_UNICO:
+      ss << "C_DISC_HORARIO_UNICO"; break;
    default:
       ss << "!";
    }
@@ -237,6 +255,12 @@ size_t ConstraintOpHasher::operator() (const ConstraintOp& cons) const
    {
       sum *= HASH_PRIME; 
       sum+= intHash(cons.getHorario()->getId());
+   }
+
+   if(cons.getHorarioAula()!=NULL) 
+   {
+      sum *= HASH_PRIME; 
+      sum+= intHash(cons.getHorarioAula()->getId());
    }
 
    return sum;

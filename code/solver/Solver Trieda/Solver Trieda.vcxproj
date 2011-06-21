@@ -1,0 +1,498 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release64|Win32">
+      <Configuration>Release64</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release64|x64">
+      <Configuration>Release64</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectName>Solver Tático</ProjectName>
+    <ProjectGuid>{F1BE51D8-F246-4132-8DDC-04958EEACDBF}</ProjectGuid>
+    <RootNamespace>SolverTrieda</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release64|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release64|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release64|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release64|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)$(Configuration)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(Configuration)\</IntDir>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</LinkIncremental>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)$(Configuration)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(Configuration)\</IntDir>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkIncremental>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release64|Win32'">$(SolutionDir)$(Configuration)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release64|Win32'">$(Configuration)\</IntDir>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release64|Win32'">false</LinkIncremental>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(Platform)\$(Configuration)\</IntDir>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</LinkIncremental>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(Platform)\$(Configuration)\</IntDir>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkIncremental>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release64|x64'">$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release64|x64'">$(Platform)\$(Configuration)\</IntDir>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release64|x64'">false</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>$(CODELIB);$(OPT_LP)\include;$(GUROBI_HOME)\include;$(XSD)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;PORTUGUES;VERSAOCPLEX10;_CRT_SECURE_NO_DEPRECATE;_DEBUG;DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>true</MinimalRebuild>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <BufferSecurityCheck>true</BufferSecurityCheck>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <TreatWarningAsError>false</TreatWarningAsError>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>gurobi40.lib;xerces-c_3.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>c:\gurobi400\win32\lib;$(XSD)\lib\vc-8.0;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <IgnoreSpecificDefaultLibraries>LIBCMT;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Console</SubSystem>
+      <OptimizeReferences>false</OptimizeReferences>
+      <LinkTimeCodeGeneration>
+      </LinkTimeCodeGeneration>
+      <TargetMachine>MachineX86</TargetMachine>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <Optimization>Full</Optimization>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <OmitFramePointers>true</OmitFramePointers>
+      <WholeProgramOptimization>true</WholeProgramOptimization>
+      <AdditionalIncludeDirectories>$(CODELIB);$(OPT_LP)\include;$(GUROBI_32)\include;$(XSD)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;PORTUGUES;VERSAOCPLEX10;_CRT_SECURE_NO_DEPRECATE;_RELEASE;RELEASE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>false</MinimalRebuild>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <BufferSecurityCheck>false</BufferSecurityCheck>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <TreatWarningAsError>false</TreatWarningAsError>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <DebugInformationFormat>
+      </DebugInformationFormat>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>gurobi40.lib;xerces-c_3.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(GUROBI_32)\lib;$(XSD)\lib\vc-8.0;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <SubSystem>Console</SubSystem>
+      <LargeAddressAware>true</LargeAddressAware>
+      <OptimizeReferences>true</OptimizeReferences>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
+      <TargetMachine>MachineX86</TargetMachine>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release64|Win32'">
+    <ClCompile>
+      <Optimization>Full</Optimization>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <OmitFramePointers>true</OmitFramePointers>
+      <WholeProgramOptimization>true</WholeProgramOptimization>
+      <AdditionalIncludeDirectories>$(CODELIB);$(OPT_LP)\include;$(GUROBI_HOME)\include;$(XSD)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;PORTUGUES;VERSAOCPLEX10;_CRT_SECURE_NO_DEPRECATE;_RELEASE;RELEASE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>false</MinimalRebuild>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <BufferSecurityCheck>false</BufferSecurityCheck>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <TreatWarningAsError>false</TreatWarningAsError>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <DebugInformationFormat>
+      </DebugInformationFormat>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>gurobi40.lib;xerces-c_3.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(GUROBI_HOME)\lib;$(XSD)\lib64\vc-8.0;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <SubSystem>Console</SubSystem>
+      <LargeAddressAware>true</LargeAddressAware>
+      <OptimizeReferences>true</OptimizeReferences>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
+      <TargetMachine>MachineX86</TargetMachine>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Midl>
+      <TargetEnvironment>X64</TargetEnvironment>
+    </Midl>
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>$(CODELIB);$(OPT_LP)\include;$(GUROBI_HOME)\include;$(XSD)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;PORTUGUES;VERSAOCPLEX10;_CRT_SECURE_NO_DEPRECATE;_DEBUG;DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>true</MinimalRebuild>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <BufferSecurityCheck>true</BufferSecurityCheck>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <TreatWarningAsError>false</TreatWarningAsError>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>gurobi40.lib;xerces-c_3.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(GUROBI_HOME)\lib;$(XSD)\lib\vc-8.0;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <IgnoreSpecificDefaultLibraries>LIBCMT;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Console</SubSystem>
+      <OptimizeReferences>false</OptimizeReferences>
+      <LinkTimeCodeGeneration>
+      </LinkTimeCodeGeneration>
+      <TargetMachine>MachineX64</TargetMachine>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Midl>
+      <TargetEnvironment>X64</TargetEnvironment>
+    </Midl>
+    <ClCompile>
+      <Optimization>Full</Optimization>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <OmitFramePointers>true</OmitFramePointers>
+      <WholeProgramOptimization>true</WholeProgramOptimization>
+      <AdditionalIncludeDirectories>$(CODELIB);$(OPT_LP)\include;$(GUROBI_HOME)\include;$(XSD)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;PORTUGUES;VERSAOCPLEX10;_CRT_SECURE_NO_DEPRECATE;_RELEASE;RELEASE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>false</MinimalRebuild>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <BufferSecurityCheck>false</BufferSecurityCheck>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <TreatWarningAsError>false</TreatWarningAsError>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <DebugInformationFormat>
+      </DebugInformationFormat>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>gurobi40.lib;xerces-c_3.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(GUROBI_HOME)\lib;$(XSD)\lib64\vc-8.0;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <SubSystem>Console</SubSystem>
+      <LargeAddressAware>true</LargeAddressAware>
+      <OptimizeReferences>true</OptimizeReferences>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
+      <TargetMachine>MachineX64</TargetMachine>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release64|x64'">
+    <Midl>
+      <TargetEnvironment>X64</TargetEnvironment>
+    </Midl>
+    <ClCompile>
+      <Optimization>Full</Optimization>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <OmitFramePointers>true</OmitFramePointers>
+      <WholeProgramOptimization>true</WholeProgramOptimization>
+      <AdditionalIncludeDirectories>$(CODELIB);$(OPT_LP)\include;$(GUROBI_64)\include;$(XSD)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;PORTUGUES;VERSAOCPLEX10;_CRT_SECURE_NO_DEPRECATE;_RELEASE;RELEASE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>false</MinimalRebuild>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <BufferSecurityCheck>false</BufferSecurityCheck>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <TreatWarningAsError>false</TreatWarningAsError>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <DebugInformationFormat>
+      </DebugInformationFormat>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>gurobi40.lib;xerces-c_3.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(GUROBI_64)\lib;$(XSD)\lib64\vc-8.0;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <SubSystem>Console</SubSystem>
+      <LargeAddressAware>true</LargeAddressAware>
+      <OptimizeReferences>true</OptimizeReferences>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
+      <TargetMachine>MachineX64</TargetMachine>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="ConstraintOp.cpp" />
+    <ClCompile Include="HorarioDia.cpp" />
+    <ClCompile Include="Main.cpp" />
+    <ClCompile Include="AreaTitulacao.cpp" />
+    <ClCompile Include="AtendimentoCampusSolucao.cpp" />
+    <ClCompile Include="AtendimentoDiaSemanaSolucao.cpp" />
+    <ClCompile Include="AtendimentoOfertaSolucao.cpp" />
+    <ClCompile Include="AtendimentoSalaSolucao.cpp" />
+    <ClCompile Include="AtendimentoTaticoSolucao.cpp" />
+    <ClCompile Include="AtendimentoUnidadeSolucao.cpp" />
+    <ClCompile Include="BlocoCurricular.cpp" />
+    <ClCompile Include="Calendario.cpp" />
+    <ClCompile Include="Campus.cpp" />
+    <ClCompile Include="ConverteHorariosCreditos.cpp" />
+    <ClCompile Include="CreditoDisponivel.cpp" />
+    <ClCompile Include="Curriculo.cpp" />
+    <ClCompile Include="Curso.cpp" />
+    <ClCompile Include="Demanda.cpp" />
+    <ClCompile Include="Deslocamento.cpp" />
+    <ClCompile Include="Disciplina.cpp" />
+    <ClCompile Include="DivisaoCreditos.cpp" />
+    <ClCompile Include="Fixacao.cpp" />
+    <ClCompile Include="Horario.cpp" />
+    <ClCompile Include="HorarioAula.cpp" />
+    <ClCompile Include="Magisterio.cpp" />
+    <ClCompile Include="NivelDificuldade.cpp" />
+    <ClCompile Include="NivelDificuldadeHorario.cpp" />
+    <ClCompile Include="OFBase.cpp" />
+    <ClCompile Include="Oferta.cpp" />
+    <ClCompile Include="ParametrosPlanejamento.cpp" />
+    <ClCompile Include="ProblemData.cpp" />
+    <ClCompile Include="ProblemDataLoader.cpp" />
+    <ClCompile Include="Professor.cpp" />
+    <ClCompile Include="Sala.cpp" />
+    <ClCompile Include="TipoContrato.cpp" />
+    <ClCompile Include="TipoCurso.cpp" />
+    <ClCompile Include="TipoDisciplina.cpp" />
+    <ClCompile Include="TipoSala.cpp" />
+    <ClCompile Include="TipoTitulacao.cpp" />
+    <ClCompile Include="TRIEDA-InputXSD.cpp" />
+    <ClCompile Include="Turno.cpp" />
+    <ClCompile Include="Unidade.cpp" />
+    <ClCompile Include="$(CODELIB)\CPUTimerWin.cpp" />
+    <ClCompile Include="$(CODELIB)\DateTime.cpp" />
+    <ClCompile Include="$(CODELIB)\ErrorHandler.cpp" />
+    <ClCompile Include="HashUtil.cpp" />
+    <ClCompile Include="$(OPT_LP)\source\opt_col.cpp" />
+    <ClCompile Include="$(OPT_LP)\source\opt_gurobi.cpp" />
+    <ClCompile Include="$(OPT_LP)\source\opt_lp.cpp" />
+    <ClCompile Include="$(OPT_LP)\source\opt_row.cpp" />
+    <ClCompile Include="Constraint.cpp" />
+    <ClCompile Include="Solver.cpp" />
+    <ClCompile Include="SolverMIP.cpp" />
+    <ClCompile Include="Variable.cpp" />
+    <ClCompile Include="Aula.cpp" />
+    <ClCompile Include="Avaliador.cpp" />
+    <ClCompile Include="CustoAlocacao.cpp" />
+    <ClCompile Include="SolucaoInicialOperacional.cpp" />
+    <ClCompile Include="SolucaoOperacional.cpp" />
+    <ClCompile Include="NSSeqSwapEqBlocks.cpp" />
+    <ClCompile Include="NSShift.cpp" />
+    <ClCompile Include="NSSwapEqSchedulesBlocks.cpp" />
+    <ClCompile Include="NSSwapEqTeachersBlocks.cpp" />
+    <ClCompile Include="NSIteratorSwapEqBlocks.cpp" />
+    <ClCompile Include="MoveShift.cpp" />
+    <ClCompile Include="MoveSwap.cpp" />
+    <ClCompile Include="MoveShiftValidator.cpp" />
+    <ClCompile Include="MoveSwapEqBlocksValidator.cpp" />
+    <ClCompile Include="MoveSwapEqSchedulesBlocksValidator.cpp" />
+    <ClCompile Include="MoveSwapEqTeachersBlocksValidator.cpp" />
+    <ClCompile Include="MoveValidator.cpp" />
+    <ClCompile Include="ILSLPerturbation.cpp" />
+    <ClCompile Include="IteratedLocalSearchLevels.cpp" />
+    <ClCompile Include="RandomDescentMethod.cpp" />
+    <ClCompile Include="AtendimentoCampus.cpp" />
+    <ClCompile Include="AtendimentoDiaSemana.cpp" />
+    <ClCompile Include="AtendimentoHorarioAula.cpp" />
+    <ClCompile Include="AtendimentoOferta.cpp" />
+    <ClCompile Include="AtendimentoSala.cpp" />
+    <ClCompile Include="AtendimentoTatico.cpp" />
+    <ClCompile Include="AtendimentoTurno.cpp" />
+    <ClCompile Include="AtendimentoUnidade.cpp" />
+    <ClCompile Include="Operacional.cpp" />
+    <ClCompile Include="ProblemSolution.cpp" />
+    <ClCompile Include="ProfessorVirtualOutput.cpp" />
+    <ClCompile Include="RestricaoViolada.cpp" />
+    <ClCompile Include="SolutionLoader.cpp" />
+    <ClCompile Include="Tatico.cpp" />
+    <ClCompile Include="TRIEDA-OutputXSD.cpp" />
+    <ClCompile Include="VariableOp.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="AreaTitulacao.h" />
+    <ClInclude Include="AtendimentoCampusSolucao.h" />
+    <ClInclude Include="AtendimentoDiaSemanaSolucao.h" />
+    <ClInclude Include="AtendimentoOfertaSolucao.h" />
+    <ClInclude Include="AtendimentoSalaSolucao.h" />
+    <ClInclude Include="AtendimentoTaticoSolucao.h" />
+    <ClInclude Include="AtendimentoUnidadeSolucao.h" />
+    <ClInclude Include="BlocoCurricular.h" />
+    <ClInclude Include="Calendario.h" />
+    <ClInclude Include="Campus.h" />
+    <ClInclude Include="ConjuntoSala.h" />
+    <ClInclude Include="ConstraintOp.h" />
+    <ClInclude Include="ConverteHorariosCreditos.h" />
+    <ClInclude Include="CreditoDisponivel.h" />
+    <ClInclude Include="Curriculo.h" />
+    <ClInclude Include="Curso.h" />
+    <ClInclude Include="Demanda.h" />
+    <ClInclude Include="Deslocamento.h" />
+    <ClInclude Include="Disciplina.h" />
+    <ClInclude Include="DivisaoCreditos.h" />
+    <ClInclude Include="Fixacao.h" />
+    <ClInclude Include="Horario.h" />
+    <ClInclude Include="HorarioAula.h" />
+    <ClInclude Include="HorarioDia.h" />
+    <ClInclude Include="input.h" />
+    <ClInclude Include="Magisterio.h" />
+    <ClInclude Include="NivelDificuldade.h" />
+    <ClInclude Include="NivelDificuldadeHorario.h" />
+    <ClInclude Include="OFBase.h" />
+    <ClInclude Include="Oferta.h" />
+    <ClInclude Include="ParametrosPlanejamento.h" />
+    <ClInclude Include="ProblemData.h" />
+    <ClInclude Include="ProblemDataLoader.h" />
+    <ClInclude Include="Professor.h" />
+    <ClInclude Include="Sala.h" />
+    <ClInclude Include="TipoContrato.h" />
+    <ClInclude Include="TipoCurso.h" />
+    <ClInclude Include="TipoDisciplina.h" />
+    <ClInclude Include="TipoSala.h" />
+    <ClInclude Include="TipoTitulacao.h" />
+    <ClInclude Include="TRIEDA-InputXSD.h" />
+    <ClInclude Include="Turno.h" />
+    <ClInclude Include="Unidade.h" />
+    <ClInclude Include="AtendimentoCampus.h" />
+    <ClInclude Include="AtendimentoDiaSemana.h" />
+    <ClInclude Include="AtendimentoHorarioAula.h" />
+    <ClInclude Include="AtendimentoOferta.h" />
+    <ClInclude Include="AtendimentoSala.h" />
+    <ClInclude Include="AtendimentoTatico.h" />
+    <ClInclude Include="AtendimentoTurno.h" />
+    <ClInclude Include="AtendimentoUnidade.h" />
+    <ClInclude Include="Operacional.h" />
+    <ClInclude Include="ProblemSolution.h" />
+    <ClInclude Include="ProfessorVirtualOutput.h" />
+    <ClInclude Include="RestricaoViolada.h" />
+    <ClInclude Include="SolutionLoader.h" />
+    <ClInclude Include="Tatico.h" />
+    <ClInclude Include="TRIEDA-OutputXSD.h" />
+    <ClInclude Include="$(CODELIB)\CPUTimerWin.h" />
+    <ClInclude Include="$(CODELIB)\DateTime.h" />
+    <ClInclude Include="$(CODELIB)\codelib\ErrorHandler.h" />
+    <ClInclude Include="$(CODELIB)\GGroup.h" />
+    <ClInclude Include="HashUtil.h" />
+    <ClInclude Include="$(OPT_LP)\include\opt_col.h" />
+    <ClInclude Include="$(OPT_LP)\include\opt_gurobi.h" />
+    <ClInclude Include="$(OPT_LP)\include\opt_lp.h" />
+    <ClInclude Include="$(OPT_LP)\include\opt_row.h" />
+    <ClInclude Include="Solver.h" />
+    <ClInclude Include="SolverMIP.h" />
+    <ClInclude Include="Variable.h" />
+    <ClInclude Include="Aula.h" />
+    <ClInclude Include="Avaliador.h" />
+    <ClInclude Include="Constraint.h" />
+    <ClInclude Include="CustoAlocacao.h" />
+    <ClInclude Include="SolucaoInicialOperacional.h" />
+    <ClInclude Include="SolucaoOperacional.h" />
+    <ClInclude Include="NS.hpp" />
+    <ClInclude Include="NSSeq.hpp" />
+    <ClInclude Include="NSSeqSwapEqBlocks.h" />
+    <ClInclude Include="NSShift.h" />
+    <ClInclude Include="NSSwapEqSchedulesBlocks.h" />
+    <ClInclude Include="NSSwapEqTeachersBlocks.h" />
+    <ClInclude Include="NSIterator.hpp" />
+    <ClInclude Include="NSIteratorSwapEqBlocks.h" />
+    <ClInclude Include="Move.hpp" />
+    <ClInclude Include="MoveShift.h" />
+    <ClInclude Include="MoveSwap.h" />
+    <ClInclude Include="MoveShiftValidator.h" />
+    <ClInclude Include="MoveSwapEqBlocksValidator.h" />
+    <ClInclude Include="MoveSwapEqSchedulesBlocksValidator.h" />
+    <ClInclude Include="MoveSwapEqTeachersBlocksValidator.h" />
+    <ClInclude Include="MoveValidator.h" />
+    <ClInclude Include="Heuristic.hpp" />
+    <ClInclude Include="ILSLPerturbation.h" />
+    <ClInclude Include="IteratedLocalSearchLevels.h" />
+    <ClInclude Include="RandomDescentMethod.h" />
+    <ClInclude Include="RVND.hpp" />
+    <ClInclude Include="VariableOp.h" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

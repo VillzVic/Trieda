@@ -25,6 +25,8 @@ void VariableOp::reset()
    turma = -1;
    disciplina = NULL;
    sala = NULL;
+   horarioAula = NULL;
+   dia = -1;
 }
 
 VariableOp::~VariableOp()
@@ -43,6 +45,8 @@ VariableOp& VariableOp::operator = ( const VariableOp & var )
    this->turma = var.getTurma();
    this->disciplina = var.getDisciplina();
    this->sala = var.getSala();
+   this->horarioAula = var.getHorarioAula();
+   this->dia = var.getDia();
 
    return *this;
 }
@@ -65,6 +69,23 @@ bool VariableOp::operator <(const VariableOp& var) const
 		else if( *var.getHorario() < *this->getHorario() )
 			return false;
 	}
+
+   if( this->getHorarioAula() == NULL && var.getHorarioAula() != NULL )
+		return true;
+	else if( this->getHorarioAula() != NULL && var.getHorarioAula() == NULL )
+		return false;
+	else if( this->getHorarioAula() != NULL && var.getHorarioAula() != NULL )
+	{
+		if( *this->getHorarioAula() < *var.getHorarioAula() )
+			return true;
+		else if( *var.getHorarioAula() < *this->getHorarioAula() )
+			return false;
+	}
+
+   if( (int)this->getDia() < (int) var.getDia() )
+      return true;
+   else if( (int)this->getDia() > (int) var.getDia() )
+      return false;
 
    if( this->getAula() == NULL && var.getAula() != NULL )
 		return true;
@@ -139,6 +160,8 @@ std::string VariableOp::toString()
         str << "X"; break;
      case V_Y_PROF_DISCIPLINA:
         str << "Y"; break;
+     case V_Z_DISCIPLINA_HOR:
+        str << "Z"; break;
      case V_F_FIX_PROF_DISC_SALA_DIA_HOR:
         str << "F_FIX_PROF_DISC_SALA_DIA_HOR"; break;
      case V_F_FIX_PROF_DISC_DIA_HOR:
@@ -149,6 +172,8 @@ std::string VariableOp::toString()
         str << "F_FIX_PROF_DISC_SALA"; break;
       case V_F_FIX_PROF_SALA:
         str << "F_FIX_PROF_SALA"; break;
+      case V_F_DISC_HOR:
+        str << "F_DISC_HOR"; break;
     default:
         str << "!";
    }
@@ -166,6 +191,16 @@ std::string VariableOp::toString()
    if (h != NULL) 
    {
       str << "_(" << h->getDia() <<"," << h->getHorarioAulaId() << ")";
+   }
+
+   if (horarioAula != NULL) 
+   {
+      str << "_" << horarioAula->getId();
+   }
+
+   if (dia >= 0) 
+   {
+      str << "_" << dia;
    }
 
    if ( disciplina != NULL )
@@ -204,6 +239,12 @@ size_t VariableOpHasher::operator()(const VariableOp& v) const
    {
       sum *= HASH_PRIME; sum+= intHash(v.getHorario()->getId());
    }
+
+   if(v.getHorarioAula()) 
+   {
+      sum *= HASH_PRIME; sum+= intHash(v.getHorarioAula()->getId());
+   }
+
    if(v.getProfessor()) 
    {
       sum *= HASH_PRIME; sum+= intHash(v.getProfessor()->getId());
@@ -222,6 +263,11 @@ size_t VariableOpHasher::operator()(const VariableOp& v) const
    if ( v.getTurma() >= 0 ) 
    {
       sum *= HASH_PRIME; sum+= intHash(v.getTurma());
+   }
+
+   if ( v.getDia() >= 0 ) 
+   {
+      sum *= HASH_PRIME; sum+= intHash(v.getDia());
    }
 
    return sum;
