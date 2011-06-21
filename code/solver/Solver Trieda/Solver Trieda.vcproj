@@ -625,6 +625,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\HorarioDia.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\Magisterio.cpp"
 					>
 				</File>
@@ -741,6 +745,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\ConstraintOp.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\Solver.cpp"
 					>
 				</File>
@@ -750,6 +758,10 @@
 				</File>
 				<File
 					RelativePath=".\Variable.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\VariableOp.cpp"
 					>
 				</File>
 				<Filter
@@ -1022,6 +1034,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\HorarioDia.h"
+					>
+				</File>
+				<File
 					RelativePath=".\input.h"
 					>
 				</File>
@@ -1210,6 +1226,10 @@
 				Name="Solver"
 				>
 				<File
+					RelativePath=".\ConstraintOp.h"
+					>
+				</File>
+				<File
 					RelativePath=".\Solver.h"
 					>
 				</File>
@@ -1219,6 +1239,10 @@
 				</File>
 				<File
 					RelativePath=".\Variable.h"
+					>
+				</File>
+				<File
+					RelativePath=".\VariableOp.h"
 					>
 				</File>
 				<Filter
