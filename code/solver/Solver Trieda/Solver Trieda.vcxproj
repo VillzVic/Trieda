@@ -121,7 +121,7 @@
     </ClCompile>
     <Link>
       <AdditionalDependencies>gurobi40.lib;xerces-c_3.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>c:\gurobi400\win32\lib;$(XSD)\lib\vc-8.0;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(GUROBI_HOME)\lib;$(XSD)\lib\vc-8.0;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>LIBCMT;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
@@ -301,8 +301,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="ConstraintOp.cpp" />
-    <ClCompile Include="HorarioDia.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="AreaTitulacao.cpp" />
     <ClCompile Include="AtendimentoCampusSolucao.cpp" />
@@ -325,6 +323,7 @@
     <ClCompile Include="Fixacao.cpp" />
     <ClCompile Include="Horario.cpp" />
     <ClCompile Include="HorarioAula.cpp" />
+    <ClCompile Include="HorarioDia.cpp" />
     <ClCompile Include="Magisterio.cpp" />
     <ClCompile Include="NivelDificuldade.cpp" />
     <ClCompile Include="NivelDificuldadeHorario.cpp" />
@@ -352,9 +351,11 @@
     <ClCompile Include="$(OPT_LP)\source\opt_lp.cpp" />
     <ClCompile Include="$(OPT_LP)\source\opt_row.cpp" />
     <ClCompile Include="Constraint.cpp" />
+    <ClCompile Include="ConstraintOp.cpp" />
     <ClCompile Include="Solver.cpp" />
     <ClCompile Include="SolverMIP.cpp" />
     <ClCompile Include="Variable.cpp" />
+    <ClCompile Include="VariableOp.cpp" />
     <ClCompile Include="Aula.cpp" />
     <ClCompile Include="Avaliador.cpp" />
     <ClCompile Include="CustoAlocacao.cpp" />
@@ -390,7 +391,6 @@
     <ClCompile Include="SolutionLoader.cpp" />
     <ClCompile Include="Tatico.cpp" />
     <ClCompile Include="TRIEDA-OutputXSD.cpp" />
-    <ClCompile Include="VariableOp.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AreaTitulacao.h" />
@@ -404,7 +404,6 @@
     <ClInclude Include="Calendario.h" />
     <ClInclude Include="Campus.h" />
     <ClInclude Include="ConjuntoSala.h" />
-    <ClInclude Include="ConstraintOp.h" />
     <ClInclude Include="ConverteHorariosCreditos.h" />
     <ClInclude Include="CreditoDisponivel.h" />
     <ClInclude Include="Curriculo.h" />
@@ -451,6 +450,7 @@
     <ClInclude Include="SolutionLoader.h" />
     <ClInclude Include="Tatico.h" />
     <ClInclude Include="TRIEDA-OutputXSD.h" />
+    <ClInclude Include="..\..\..\..\..\..\..\Bibliotecas\codelib\combinatoria.h" />
     <ClInclude Include="$(CODELIB)\CPUTimerWin.h" />
     <ClInclude Include="$(CODELIB)\DateTime.h" />
     <ClInclude Include="$(CODELIB)\codelib\ErrorHandler.h" />
@@ -460,9 +460,11 @@
     <ClInclude Include="$(OPT_LP)\include\opt_gurobi.h" />
     <ClInclude Include="$(OPT_LP)\include\opt_lp.h" />
     <ClInclude Include="$(OPT_LP)\include\opt_row.h" />
+    <ClInclude Include="ConstraintOp.h" />
     <ClInclude Include="Solver.h" />
     <ClInclude Include="SolverMIP.h" />
     <ClInclude Include="Variable.h" />
+    <ClInclude Include="VariableOp.h" />
     <ClInclude Include="Aula.h" />
     <ClInclude Include="Avaliador.h" />
     <ClInclude Include="Constraint.h" />
@@ -490,7 +492,6 @@
     <ClInclude Include="IteratedLocalSearchLevels.h" />
     <ClInclude Include="RandomDescentMethod.h" />
     <ClInclude Include="RVND.hpp" />
-    <ClInclude Include="VariableOp.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
