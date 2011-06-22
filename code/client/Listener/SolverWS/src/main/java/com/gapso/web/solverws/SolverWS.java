@@ -19,9 +19,10 @@ import com.sun.jersey.multipart.MultiPart;
 @Path("/")
 public class SolverWS{
 
-	private String version = "0.1";
-	final static int NUMBER_OF_QUEUE = 2;
-	private static SolverQueue solverQueue = new SolverQueue(NUMBER_OF_QUEUE);
+	private final String version = "0.1";
+	private final static int NUMBER_OF_QUEUE = 2;
+	private final static SolverQueue solverQueue = new SolverQueue(NUMBER_OF_QUEUE);
+	private final FileManager fileManager = new FileManager(".");
 
 	@GET
 	public SolverResponse blank() {
@@ -52,7 +53,7 @@ public class SolverWS{
 	@Path("/containsResult/{problemName}")
 	public SolverResponse containsResult(@PathParam("problemName") String problemName, @QueryParam("round") String roundString) {
 		Long round = new Long(roundString);
-		return new SolverResponse(true, FileManager.isExistOutputFile(round));
+		return new SolverResponse(true, fileManager.isExistOutputFile(round));
 	}
 	
 	@POST
@@ -64,7 +65,7 @@ public class SolverWS{
 		try {
 			BodyPartEntity bpe = (BodyPartEntity)multiPart.getBodyParts().get(0).getEntity();
 			BufferedInputStream bis = (BufferedInputStream) bpe.getInputStream();
-			save = FileManager.createFile(uniqueID, bis);
+			save = fileManager.createFile(uniqueID, bis);
 	
 			if(save) solverQueue.addTask("trieda", uniqueID);
 		} catch (IOException e) {
@@ -81,7 +82,7 @@ public class SolverWS{
 		Long round = new Long(roundString);
 		SolverResponse sr = null;
 		try {
-			byte[] fileBytes = FileManager.getContentOutputFile(round);
+			byte[] fileBytes = fileManager.getContentOutputFile(round);
 			sr = new SolverResponse(true, fileBytes);
 		} catch (IOException e) {
 			e.printStackTrace();

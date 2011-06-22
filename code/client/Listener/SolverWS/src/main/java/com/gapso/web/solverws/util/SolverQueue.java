@@ -1,6 +1,7 @@
 package com.gapso.web.solverws.util;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.HashMap;
@@ -11,19 +12,28 @@ import java.util.concurrent.ExecutorCompletionService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 public class SolverQueue {
-	
+	private static final Logger logger = LoggerFactory.getLogger(SolverQueue.class);
 	private final CompletionService<Process> completionService;
 	private final Producer producer;
 	private final Map<Long, Future<Process>> tasks;
+	private final String basedir;
 	
-	public SolverQueue(int numberProducer) {
+	public SolverQueue(int numberProducer, String basedir) {
+		this.basedir = basedir;
 		completionService = new ExecutorCompletionService<Process>(Executors.newFixedThreadPool(numberProducer));
 		tasks = new HashMap<Long, Future<Process>>();
 		producer = new Producer();
 	}
 
+	public SolverQueue(int numberProducer){
+		this(numberProducer, ".");
+	}
+	
 	private class Producer {
 		public Future<Process> addTask(final ProcessBuilder value) {
 			return completionService.submit(new Callable<Process>() {
@@ -41,7 +51,13 @@ public class SolverQueue {
 	
 	// Adiciona na file
 	public void addTask(String problemName, Long uniqueID) {
-		Future<Process> future = producer.addTask(new ProcessBuilder(problemName+".exe", uniqueID.toString(), "."));
+		StringBuffer sb = new StringBuffer();
+		sb.append(basedir).append(File.separator);
+		String dir = sb.toString();
+		sb.append(problemName).append(".exe");
+		final String solverfile = sb.toString();
+		logger.info("dir: {} solver: {}", new Object[]{dir, solverfile});
+		Future<Process> future = producer.addTask(new ProcessBuilder(solverfile, uniqueID.toString(), dir));
 		tasks.put(uniqueID, future);
 	}
 	

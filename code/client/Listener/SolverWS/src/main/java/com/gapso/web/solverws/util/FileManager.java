@@ -4,19 +4,45 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class FileManager {
 
-	private static final String PATH = System.getProperty("java.io.tmpdir")+ File.pathSeparator ;
-	private static final String INPUT = PATH + "input";
-	private static final String OUTPUT = PATH + "output";
-	
-	public static boolean createFile(String filename, Long uniqueID, BufferedInputStream bis) {
+	private static final Logger logger = LoggerFactory.getLogger(FileManager.class);
+
+	private static final String INPUT = "input";
+	private static final String OUTPUT = "output";
+	private final String baseDir;
+
+	public FileManager() {
+		this(System.getProperty("java.io.tmpdir"));
+	}
+
+	public FileManager(String baseDir) {
+		this.baseDir = baseDir;
+
+	}
+
+	private File getFile(String prefix, long id, boolean isFinal) {
+
+		final StringBuffer name = new StringBuffer();
+		name.append(baseDir).append(File.separator).append(prefix).append(Long.toString(id));
+		if (isFinal)
+			name.append("F");
+		final String filename = name.toString();
+		logger.info("Filename: {}", filename);
+		return new File(filename);
+	}
+
+	public boolean createFile(String filename, Long uniqueID, BufferedInputStream bis) {
 		try {
-			BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(PATH + filename+uniqueID.toString()));
+			BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(getFile(filename, uniqueID, false)));
 			int data;
 			byte[] buff = new byte[32 * 1024];
 			while ((data = bis.read(buff)) != -1) {
@@ -30,15 +56,17 @@ public class FileManager {
 		return true;
 	}
 
-	public static boolean createFile(Long uniqueID, BufferedInputStream bis) {
+	public boolean createFile(Long uniqueID, BufferedInputStream bis) {
 		return createFile(INPUT, uniqueID, bis);
 	}
 
-	
-	public static byte[] getContentOutputFile(Long uniqueID) throws IOException {
-		File file = new File(OUTPUT+uniqueID.toString()+"F");
-		InputStream is = new FileInputStream(file);
+	public byte[] getContentOutputFile(Long uniqueID) throws IOException {
+		File file = getFile(OUTPUT, uniqueID, true);
+		return readFile(file);
+	}
 
+	private byte[] readFile(File file) throws FileNotFoundException, IOException {
+		InputStream is = new FileInputStream(file);
 		// Get the size of the file
 		long length = file.length();
 
@@ -69,22 +97,28 @@ public class FileManager {
 		return bytes;
 	}
 
-	
-	public static boolean isExistInputFile(Long uniqueID) {
-		return (new File(INPUT+uniqueID.toString())).exists();
+	public boolean isExistInputFile(Long uniqueID) {
+		return (getFile(INPUT, uniqueID, false)).exists();
 	}
-	public static boolean isExistOutputFile(Long uniqueID) {
-		return (new File(OUTPUT+uniqueID.toString() + "F")).exists();
+
+	public boolean isExistOutputFile(Long uniqueID) {
+		return (getFile(OUTPUT, uniqueID, true)).exists();
 	}
-	
-	public static boolean removeInputFile(Long uniqueID) {
-		return (new File(INPUT+uniqueID.toString())).delete();
+
+	public boolean removeInputFile(Long uniqueID) {
+		return (getFile(INPUT, uniqueID, false)).delete();
 	}
-	public static boolean removeOutputFile(Long uniqueID) {
-		return (new File(OUTPUT+uniqueID.toString() + "F")).delete();
+
+	public boolean removeOutputFile(Long uniqueID) {
+		return (getFile(OUTPUT, uniqueID, true)).delete();
 	}
-	public static boolean removeFiles(Long uniqueID) {
+
+	public boolean removeFiles(Long uniqueID) {
 		return removeInputFile(uniqueID) && removeOutputFile(uniqueID);
 	}
 
+	public byte[] getFile(String filename, long round) throws FileNotFoundException, IOException {
+		File file = getFile(filename, round, false);
+		return readFile(file);
+	}
 }

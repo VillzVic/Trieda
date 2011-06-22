@@ -12,9 +12,11 @@ public interface ISolver {
 
 	boolean hasResult(long round);
 
-	boolean requestOptimization(String[] names, InputStream[] data);
+	long requestOptimization(String[] names, InputStream[] data);
 
-	InputStream getContent(String filename, long round);
+	InputStream getFinalResult(String prefix, long round);
+
+	InputStream getFile(String prefix, long round);
 	
 	public boolean cancelOptimization(long round);
 
