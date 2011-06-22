@@ -13,7 +13,6 @@
 #include "HorarioAula.h"
 #include "Professor.h"
 #include "ProblemData.h"
-#include "input.h"
 
 typedef std::vector< std::vector< Aula * > * > MatrizSolucao;
 

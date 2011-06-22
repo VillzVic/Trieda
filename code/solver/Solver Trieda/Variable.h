@@ -2,7 +2,7 @@
 #define VARIABLE_H
 
 #include <hash_map>
-#include "input.h"
+#include "ProblemData.h"
 
 // Variables
 class Variable 

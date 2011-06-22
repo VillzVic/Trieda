@@ -416,7 +416,6 @@
     <ClInclude Include="Horario.h" />
     <ClInclude Include="HorarioAula.h" />
     <ClInclude Include="HorarioDia.h" />
-    <ClInclude Include="input.h" />
     <ClInclude Include="Magisterio.h" />
     <ClInclude Include="NivelDificuldade.h" />
     <ClInclude Include="NivelDificuldadeHorario.h" />

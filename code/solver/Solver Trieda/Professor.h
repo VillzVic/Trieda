@@ -18,8 +18,7 @@ public:
    virtual void le_arvore( ItemProfessor & );
 
    GGroup< Horario * > horarios;
-
-   GGroup< HorarioDia*> horariosDia;
+   GGroup< HorarioDia *, LessPtr< HorarioDia > > horariosDia;
 
    // Esse eh o disciplinas do XSD de input
    GGroup< Magisterio *, LessPtr< Magisterio > > magisterio;

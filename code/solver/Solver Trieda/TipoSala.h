@@ -8,12 +8,12 @@ class TipoSala :
    public OFBase
 {
 public:
-   TipoSala(void);
-   ~TipoSala(void);
+   TipoSala( void );
+   virtual ~TipoSala( void );
 
-   virtual void le_arvore(ItemTipoSala& elem);
+   virtual void le_arvore( ItemTipoSala & );
 
-   void setNome(std::string s) { nome = s; }
+   void setNome( std::string s ) { nome = s; }
    std::string getNome() const { return nome; }
 
 private:

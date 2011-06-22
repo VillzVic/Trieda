@@ -12,15 +12,13 @@
 #endif
 
 #include "ProblemData.h"
-#include "input.h"
 #include "TRIEDA-InputXSD.h"
 
 class ProblemDataLoader
 {
 public:
    // Constructor
-   ProblemDataLoader( char *, ProblemData *);
-
+   ProblemDataLoader( char *, ProblemData * );
    // Destructor
    virtual ~ProblemDataLoader();
 
@@ -28,9 +26,7 @@ public:
    void load();
 
    void geraRefsOfertasDemandas();
-
    void referenciaDisciplinasEquivalentesIncompativeis();
-
    void referenciaDisciplinasCurriculos();
 
    // Para cada dia da semana, relaciona os
@@ -66,6 +62,7 @@ public:
    /* */
    void divideDisciplinas();
 
+   /* */
    void geraHorariosDia();
 
    /* */
@@ -100,7 +97,7 @@ public:
    void calculaMaxHorariosProfessor();
 
    // Cria um vetor ordenado dos horários de
-   // aula (todos os horários de todos os professores)
+   // aula ( todos os horários de todos os professores )
    void criaListaHorariosOrdenados();
 
    /* */
@@ -186,9 +183,11 @@ private:
 
    int retornaMaiorIdDemandas();
 
-   /* Para o caso em que há uma solução do módulo tático e deseja-se executar o módulo operacional.
-   Deve-se verificar na solução informada se existe alguma disciplina que foi dividida está alocada 
-   com id positivo em um laboratório. Se isso acontecer, tem que converter o id da disciplina. */
+   // Para o caso em que há uma solução do módulo tático
+   // e deseja-se executar o módulo operacional. Deve-se
+   // verificar na solução informada se existe alguma disciplina
+   // que foi dividida está alocada com id positivo em um laboratório.
+   // Se isso acontecer, tem que converter o id da disciplina.
    void validaInputSolucaoTatico();
 };
 

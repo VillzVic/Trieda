@@ -38,29 +38,27 @@ int main( int argc, char** argv )
    //unsigned seed = time(NULL);
    unsigned seed = 1305057265;
    srand( seed );
-   
-   //srand( 1305052750 );
-   //srand( 1305057265 );
 
    std::cout << "SEED: " << seed << std::endl;
 
    FILE * seedFile = fopen("./SEEDS.txt", "a");
-   fprintf(seedFile,"%d\n", seed);
-   if(seedFile)
-      fclose(seedFile);
+   fprintf( seedFile, "%d\n", seed );
+   if ( seedFile )
+   {
+      fclose( seedFile );
+   }
 
    _signals();
 
-   char path[1024];
-   char inputFile[1024];
-   char tempOutput[1024];
-   char outputFile[1024];
+   char path[ 1024 ];
+   char inputFile[ 1024 ];
+   char tempOutput[ 1024 ];
+   char outputFile[ 1024 ];
    bool error;
 
    ProblemDataLoader * dataLoader;
    ProblemData * data = new ProblemData();
-   //ProblemSolution * solution = new ProblemSolution();
-   ProblemSolution * solution;// = new ProblemSolution();
+   ProblemSolution * solution;
    Solver * solver;
 
    // Initializations

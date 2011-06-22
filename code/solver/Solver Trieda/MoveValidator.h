@@ -1,43 +1,33 @@
 #ifndef _MOVE_VALIDATOR_HPP_
 #define _MOVE_VALIDATOR_HPP_
 
-#include "input.h"
-
 #include "ProblemData.h"
-
 #include "Aula.h"
-
 #include "SolucaoOperacional.h"
 
 class MoveValidator
 {
 public:
 
-   MoveValidator(ProblemData * pD);
-
+   MoveValidator( ProblemData * );
    virtual ~MoveValidator();
-
-   //virtual bool isValid(Aula & aX, Aula & aY);
-
-//protected:
 
    // ToDo : Passar o metodo abaixo para a classe MoveSwapValidator(Cria-la antes. Ela servirá apenas para armazenar esse método.).
    // PASSAR TB A SOLUCAO PARA PODER EXTRAIR OS HORARIOS DE CADA AULA.
-   bool canSwapSchedule(Aula & aX, Aula & aY, SolucaoOperacional & solOp) const;
+   bool canSwapSchedule( Aula &, Aula &, SolucaoOperacional & ) const;
 
    bool checkBlockConflict( 
-      Aula & a,
-      std::vector<HorarioAula*> & novosHorariosAula,
-      SolucaoOperacional & solOp ) const;
+      Aula &,
+      std::vector< HorarioAula * > &,
+      SolucaoOperacional & ) const;
 
    bool checkClassAndLessonDisponibility(
-      Aula & a,
-      std::vector<HorarioAula*> & novosHorariosAula,
-      SolucaoOperacional & solOp ) const;
+      Aula &,
+      std::vector< HorarioAula * > &,
+      SolucaoOperacional & ) const;
 
 protected:
-   
    ProblemData * problem_data;
 };
 
-#endif /*_MOVE_VALIDATOR_HPP_*/
+#endif

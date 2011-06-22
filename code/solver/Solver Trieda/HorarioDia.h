@@ -10,29 +10,28 @@ class HorarioDia
 {
 public:
    HorarioDia();
-   ~HorarioDia();
+   HorarioDia( const HorarioDia & );
+   virtual ~HorarioDia();
 
-   HorarioDia(const HorarioDia &right);
-
-   bool operator < ( const HorarioDia & right );
+   bool operator < ( const HorarioDia & );
 
    int getId() { return id; }
-   void setId(int i) { id = i; }
+   void setId( int i ) { id = i; }
 
    int getHorarioAulaId() { return idHorarioAula; }
-   void setHorarioAulaId(int i) { idHorarioAula = i; }
+   void setHorarioAulaId( int i ) { idHorarioAula = i; }
 
-   HorarioAula *getHorarioAula() { return horarioAula; }
-   void setHorarioAula(HorarioAula* ha) { horarioAula = ha; }
+   HorarioAula * getHorarioAula() { return horarioAula; }
+   void setHorarioAula( HorarioAula * ha ) { horarioAula = ha; }
 
    int getDia() { return dia; }
-   void setDia(int d) { dia = d; }
+   void setDia( int d ) { dia = d; }
 
 private:
    int id;
    int dia;
    int idHorarioAula;
-   HorarioAula *horarioAula;
+   HorarioAula * horarioAula;
 };
 
 #endif

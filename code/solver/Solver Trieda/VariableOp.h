@@ -2,9 +2,10 @@
 #define VARIABLEOP_H
 
 #include <hash_map>
-#include "input.h"
+
 #include "Aula.h"
 #include "Professor.h"
+#include "ProblemData.h"
 
 // Variables
 class VariableOp 
@@ -22,36 +23,45 @@ public:
       V_F_FIX_PROF_DISC = 6,
       V_F_FIX_PROF_DISC_SALA = 7,
       V_F_FIX_PROF_SALA = 8,
-      V_F_DISC_HOR = 9
+      V_F_DISC_HOR = 9,
+      V_PROF_CURSO = 10,
+      V_F_MIN_MEST_CURSO = 11,
+      V_F_MIN_DOUT_CURSO = 12,
+      V_F_CARGA_HOR_MIN_PROF = 13,
+      V_F_CARGA_HOR_MIN_PROF_SEMANA = 14,
+      V_F_CARGA_HOR_MAX_PROF_SEMANA = 15,
+      V_DIAS_PROF_MINISTRA_AULAS = 16
    };
 
-   //Constructors
+   // Constructors
    VariableOp();
-   VariableOp(const VariableOp& orig);
+   VariableOp( const VariableOp & );
 
-   //Destructor
+   // Destructor
    virtual ~VariableOp();
 
    //==================================================
    // GET METHODS 
    //==================================================
-   //Return variable type
+   // Return variable type
    VariableOpType getType() const { return type; }
 
    // Return value
    double getValue() const { return value; }
 
-   HorarioDia* getHorario() const { return h; }
+   Curso * getCurso() const { return this->curso; }
 
-   HorarioAula* getHorarioAula() const { return horarioAula; }
+   HorarioDia * getHorario() const { return h; }
 
-   Aula* getAula() const { return aula; }
+   HorarioAula * getHorarioAula() const { return horarioAula; }
 
-   Professor* getProfessor() const { return professor; }
+   Aula * getAula() const { return aula; }
 
-   Disciplina* getDisciplina() const { return disciplina; }
+   Professor * getProfessor() const { return professor; }
 
-   Sala* getSala() const { return sala; }
+   Disciplina * getDisciplina() const { return disciplina; }
+
+   Sala * getSala() const { return sala; }
 
    int getTurma() const { return turma; }
 
@@ -67,23 +77,25 @@ public:
    // Set value
    void setValue( double v ) { value = v; }
 
-   void setHorario( HorarioDia* hh ) {  h = hh; }
+   void setCurso( Curso * c ) { this->curso = c; }
 
-   void setHorarioAula( HorarioAula* hh ) {  horarioAula = hh; }
+   void setHorario( HorarioDia * hh ) {  h = hh; }
 
-   void setAula( Aula *a ) {  aula = a; }
+   void setHorarioAula( HorarioAula * hh ) {  horarioAula = hh; }
 
-   void setProfessor(Professor *p) { professor = p; }
+   void setAula( Aula * a ) {  aula = a; }
+
+   void setProfessor( Professor * p ) { professor = p; }
 
    void setTurma (int aTurma) { turma = aTurma; }
 
-   void setDia (int aDia) { dia = aDia; }
+   void setDia ( int aDia ) { dia = aDia; }
 
-   void setDisciplina (Disciplina *aD) { disciplina = aD; }
+   void setDisciplina ( Disciplina * aD ) { disciplina = aD; }
 
-   void setSala (Sala *aS) { sala = aS; }
+   void setSala ( Sala * aS ) { sala = aS; }
 
-   void setType(VariableOpType t) { type = t; }
+   void setType( VariableOpType t ) { type = t; }
 
    //==================================================
    // OPERATORS 
@@ -101,25 +113,25 @@ public:
 private:
    VariableOpType type;
    double value;
-   HorarioDia* h; // horario
-   Aula *aula;
-   Sala *sala;
-   Professor *professor;
-   Disciplina *disciplina;
-   HorarioAula *horarioAula;
+   Curso * curso;
+   HorarioDia * h; // horario
+   Aula * aula;
+   Sala * sala;
+   Professor * professor;
+   Disciplina * disciplina;
+   HorarioAula * horarioAula;
    int turma;
    int dia;
 };
 
-
-class VariableOpHasher : public stdext::hash_compare<VariableOp>
+class VariableOpHasher : public stdext::hash_compare< VariableOp >
 {
 public:
    // Less operator
-   bool operator()( const VariableOp &, const VariableOp & ) const;
+   bool operator() ( const VariableOp &, const VariableOp & ) const;
 
    // Hash value
-   size_t operator()( const VariableOp & ) const;
+   size_t operator() ( const VariableOp & ) const;
 };
 
 /**

@@ -3,8 +3,9 @@
 
 #include <iostream>
 #include <vector>
+#include <list>
+#include <map>
 
-#include "input.h"
 #include "Calendario.h"
 #include "TipoSala.h"
 #include "TipoContrato.h"
@@ -56,12 +57,12 @@ public:
    ParametrosPlanejamento * parametros;
    GGroup< Fixacao *, LessPtr< Fixacao > > fixacoes;
 
-   GGroup<HorarioDia*, LessPtr<HorarioDia> > horariosDia;
-   std::vector<HorarioDia*> horariosDiaIdx;
+   GGroup< HorarioDia *, LessPtr< HorarioDia > > horariosDia;
+   std::vector< HorarioDia * > horariosDiaIdx;
    int maxHorariosDif;
 
-   int getHorarioDiaIdx(HorarioDia *horarioDia);
-   int getHorarioDiaIdx(int dia, int horarioId);
+   int getHorarioDiaIdx ( HorarioDia * );
+   int getHorarioDiaIdx ( int, int );
 
    std::vector< HorarioAula * > horarios_aula_ordenados;
    GGroup< AtendimentoCampusSolucao * > * atendimentosTatico;
@@ -292,6 +293,8 @@ public:
    // Estrutura utilizada para referenciar as novas disciplinas
    // criadas após a execução do método de divisão de disciplinas.
    GGroup< Disciplina *, LessPtr< Disciplina > > novasDisciplinas;
+
+   std::map< Professor *, GGroup< std::pair< Aula *, Disciplina * > >, LessPtr< Professor > > mapProfessorDisciplinas;
 };
 
 #endif

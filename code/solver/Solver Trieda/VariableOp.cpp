@@ -2,23 +2,25 @@
 
 #include "HashUtil.h"
 
-#define E_MENOR(a,b) \
-   (a == NULL && b != NULL) || \
-   (b != NULL && a != NULL && (*a < *b))
+#define E_MENOR( a, b ) \
+   ( a == NULL && b != NULL) || \
+   ( b != NULL && a != NULL && ( *a < *b ) )
 
 VariableOp::VariableOp()
 {
    reset();
 }
 
-VariableOp::VariableOp(const VariableOp& var)
+VariableOp::VariableOp( const VariableOp & var )
 {
    *this = var;
 }
 
 void VariableOp::reset()
 {
+   type = VariableOp::V_ERROR;
    value = 0;
+   curso = NULL;
    h = NULL;
    aula = NULL;
    professor = NULL;
@@ -39,6 +41,7 @@ VariableOp& VariableOp::operator = ( const VariableOp & var )
    this->value = var.getValue();
    this->type = var.getType();
 
+   this->curso = var.curso;
    this->aula = var.getAula();
    this->professor = var.getProfessor();
    this->h = var.getHorario();
@@ -51,12 +54,24 @@ VariableOp& VariableOp::operator = ( const VariableOp & var )
    return *this;
 }
 
-bool VariableOp::operator <(const VariableOp& var) const
+bool VariableOp::operator < ( const VariableOp & var ) const
 {
    if( (int)this->getType() < (int) var.getType() )
       return true;
    else if( (int)this->getType() > (int) var.getType() )
       return false;
+
+   if( this->getCurso() == NULL && var.getCurso() != NULL )
+		return true;
+	else if( this->getCurso() != NULL && var.getCurso() == NULL )
+		return false;
+	else if( this->getCurso() != NULL && var.getCurso() != NULL )
+	{
+		if( *this->getCurso() < *var.getCurso() )
+			return true;
+		else if( *var.getCurso() < *this->getCurso() )
+			return false;
+	}
 
    if( this->getHorario() == NULL && var.getHorario() != NULL )
 		return true;
@@ -143,9 +158,9 @@ bool VariableOp::operator <(const VariableOp& var) const
    return false;
 }
 
-bool VariableOp::operator ==(const VariableOp& var) const
+bool VariableOp::operator == (const VariableOp& var) const
 {
-   return (!(*this < var) && !(var < *this));
+   return ( !( *this < var ) && !( var < *this ) );
 }
 
 std::string VariableOp::toString()
@@ -155,7 +170,8 @@ std::string VariableOp::toString()
 
    bool cond_disc = false;
 
-   switch(type) {
+   switch ( type )
+   {
      case V_X_PROF_AULA_HOR:
         str << "X"; break;
      case V_Y_PROF_DISCIPLINA:
@@ -174,7 +190,21 @@ std::string VariableOp::toString()
         str << "F_FIX_PROF_SALA"; break;
       case V_F_DISC_HOR:
         str << "F_DISC_HOR"; break;
-    default:
+      case V_PROF_CURSO:
+        str << "V_PROF_CURSO"; break;
+      case V_F_MIN_MEST_CURSO:
+        str << "V_F_MIN_MEST_CURSO"; break;
+      case V_F_MIN_DOUT_CURSO:
+        str << "V_F_MIN_DOUT_CURSO"; break;
+      case V_F_CARGA_HOR_MIN_PROF:
+        str << "V_F_CARGA_HOR_MIN_PROF"; break;
+      case V_F_CARGA_HOR_MIN_PROF_SEMANA:
+        str << "V_F_CARGA_HOR_MIN_PROF_SEMANA"; break;
+      case V_F_CARGA_HOR_MAX_PROF_SEMANA:
+        str << "V_F_CARGA_HOR_MAX_PROF_SEMANA"; break;
+      case V_DIAS_PROF_MINISTRA_AULAS:
+        str << "V_DIAS_PROF_MINISTRA_AULAS"; break;
+      default:
         str << "!";
    }
 
@@ -183,22 +213,30 @@ std::string VariableOp::toString()
       str << "_" << professor->getIdOperacional();
    }
 
-   if ( aula != NULL )
+   if ( curso != NULL )
    {
-      str << "_(" << aula->getDisciplina()->getId() <<","<<aula->getDiaSemana() << "," << aula->getSala()->getId() << "," <<aula->getTotalCreditos() << ")";
+      str << "_" << curso->getId();
    }
 
-   if (h != NULL) 
+   if ( aula != NULL )
+   {
+      str << "_(" << aula->getDisciplina()->getId()
+          << "," << aula->getDiaSemana()
+          << "," << aula->getSala()->getId()
+          << "," << aula->getTotalCreditos() << ")";
+   }
+
+   if ( h != NULL )
    {
       str << "_(" << h->getDia() <<"," << h->getHorarioAulaId() << ")";
    }
 
-   if (horarioAula != NULL) 
+   if ( horarioAula != NULL )
    {
       str << "_" << horarioAula->getId();
    }
 
-   if (dia >= 0) 
+   if ( dia >= 0 )
    {
       str << "_" << dia;
    }
@@ -222,54 +260,62 @@ std::string VariableOp::toString()
    return output;
 }
 
-bool VariableOpHasher::operator()(const VariableOp& v1, const VariableOp& v2) const
+bool VariableOpHasher::operator()( const VariableOp & v1, const VariableOp & v2 ) const
 {
-   return (v1 < v2);
+   return ( v1 < v2 );
 }
 
-size_t VariableOpHasher::operator()(const VariableOp& v) const
+size_t VariableOpHasher::operator()( const VariableOp & v ) const
 {
    unsigned int sum = 0;
 
-   if(v.getAula()) 
+   if ( v.getAula() ) 
    {
-      sum *= HASH_PRIME; sum+= intHash(v.getAula()->getSala()->getId());
-   }
-   if(v.getHorario()) 
-   {
-      sum *= HASH_PRIME; sum+= intHash(v.getHorario()->getId());
+      sum *= HASH_PRIME;
+      sum += intHash( v.getAula()->getSala()->getId() );
    }
 
-   if(v.getHorarioAula()) 
+   if ( v.getHorario() )
    {
-      sum *= HASH_PRIME; sum+= intHash(v.getHorarioAula()->getId());
+      sum *= HASH_PRIME;
+      sum += intHash( v.getHorario()->getId() );
    }
 
-   if(v.getProfessor()) 
+   if ( v.getHorarioAula() )
    {
-      sum *= HASH_PRIME; sum+= intHash(v.getProfessor()->getId());
+      sum *= HASH_PRIME;
+      sum += intHash( v.getHorarioAula()->getId() );
    }
 
-   if(v.getDisciplina()) 
+   if ( v.getProfessor() )
    {
-      sum *= HASH_PRIME; sum+= intHash(v.getDisciplina()->getId());
+      sum *= HASH_PRIME;
+      sum += intHash( v.getProfessor()->getId() );
    }
 
-   if(v.getSala()) 
+   if ( v.getDisciplina() )
    {
-      sum *= HASH_PRIME; sum+= intHash(v.getSala()->getId());
+      sum *= HASH_PRIME;
+      sum += intHash( v.getDisciplina()->getId() );
    }
 
-   if ( v.getTurma() >= 0 ) 
+   if ( v.getSala() )
    {
-      sum *= HASH_PRIME; sum+= intHash(v.getTurma());
+      sum *= HASH_PRIME;
+      sum += intHash( v.getSala()->getId() );
+   }
+
+   if ( v.getTurma() >= 0 )
+   {
+      sum *= HASH_PRIME;
+      sum += intHash( v.getTurma() );
    }
 
    if ( v.getDia() >= 0 ) 
    {
-      sum *= HASH_PRIME; sum+= intHash(v.getDia());
+      sum *= HASH_PRIME;
+      sum += intHash( v.getDia() );
    }
 
    return sum;
 }
-

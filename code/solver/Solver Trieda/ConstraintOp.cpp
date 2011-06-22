@@ -1,16 +1,16 @@
 #include "ConstraintOp.h"
 #include "HashUtil.h"
 
-#define E_MENOR(a,b) \
-   (a == NULL && b != NULL) || \
-   (b != NULL && a != NULL && (*a < *b))
+#define E_MENOR( a, b ) \
+   ( a == NULL && b != NULL ) || \
+   ( b != NULL && a != NULL && ( *a < *b ) )
 
 ConstraintOp::ConstraintOp()
 {
    reset();
 }
 
-ConstraintOp::ConstraintOp(const ConstraintOp &cons)
+ConstraintOp::ConstraintOp( const ConstraintOp & cons )
 {
    *this = cons;
 }
@@ -20,10 +20,11 @@ ConstraintOp::~ConstraintOp()
    reset();
 }
 
-ConstraintOp& ConstraintOp::operator= (const ConstraintOp& cons)
+ConstraintOp & ConstraintOp::operator = ( const ConstraintOp & cons )
 {   
    this->type = cons.getType();
 
+   this->curso = cons.curso;
    this->aula = cons.getAula();
    this->professor = cons.getProfessor();
    this->s = cons.getSala();
@@ -38,12 +39,24 @@ ConstraintOp& ConstraintOp::operator= (const ConstraintOp& cons)
    return *this;
 }
 
-bool ConstraintOp::operator< (const ConstraintOp& cons) const
+bool ConstraintOp::operator < ( const ConstraintOp & cons ) const
 {
    if( (int)this->getType() < (int) cons.getType() )
       return true;
    else if( (int)this->getType() > (int) cons.getType() )
       return false;
+
+   if( this->getCurso() == NULL && cons.getCurso() != NULL )
+		return true;
+	else if( this->getCurso() != NULL && cons.getCurso() == NULL )
+		return false;
+	else if( this->getCurso() != NULL && cons.getCurso() != NULL )
+	{
+		if( *this->getCurso() < *cons.getCurso() )
+			return true;
+		else if( *cons.getCurso() < *this->getCurso() )
+			return false;
+	}
 
    if( this->getAula() == NULL && cons.getAula() != NULL )
 		return true;
@@ -147,13 +160,14 @@ bool ConstraintOp::operator< (const ConstraintOp& cons) const
    return false;
 }
 
-bool ConstraintOp::operator== (const ConstraintOp& cons) const
+bool ConstraintOp::operator == ( const ConstraintOp & cons ) const
 {
-   return (!(*this < cons) && !(cons < *this));
+   return ( !( *this < cons ) && !( cons < *this ) );
 }
 
 void ConstraintOp::reset()
 {
+   curso = NULL;
    aula = NULL;
    professor = NULL;
    s = NULL;
@@ -171,7 +185,7 @@ std::string ConstraintOp::toString()
 {
    std::stringstream ss;
 
-   switch(type)
+   switch( type )
    {
    case C_SALA_HORARIO:
       ss << "C_SALA_HORARIO"; break;
@@ -199,6 +213,22 @@ std::string ConstraintOp::toString()
       ss << "C_DISC_HORARIO"; break;
    case C_DISC_HORARIO_UNICO:
       ss << "C_DISC_HORARIO_UNICO"; break;
+   case C_MIN_MEST_CURSO:
+      ss << "C_MIN_MEST_CURSO"; break;
+   case C_MIN_DOUT_CURSO:
+      ss << "C_MIN_DOUT_CURSO"; break;
+   case C_ALOC_PROF_CURSO_LESS:
+      ss << "C_ALOC_PROF_CURSO_LESS"; break;
+   case C_ALOC_PROF_CURSO_GREATER:
+      ss << "C_ALOC_PROF_CURSO_GREATER"; break;
+   case C_CARGA_HOR_MIN_PROF:
+      ss << "C_CARGA_HOR_MIN_PROF"; break;
+   case C_CARGA_HOR_MIN_PROF_SEMANA:
+      ss << "C_CARGA_HOR_MIN_PROF_SEMANA"; break;
+   case C_CARGA_HOR_MAX_PROF_SEMANA:
+      ss << "C_CARGA_HOR_MAX_PROF_SEMANA"; break;
+   case C_DIAS_PROF_MINISTRA_AULA:
+      ss << "C_DIAS_PROF_MINISTRA_AULA"; break;
    default:
       ss << "!";
    }
@@ -209,64 +239,80 @@ std::string ConstraintOp::toString()
    return consName;
 }
 
-size_t ConstraintOpHasher::operator() (const ConstraintOp& cons) const
+size_t ConstraintOpHasher::operator() ( const ConstraintOp & cons ) const
 {
    unsigned int sum = 0;
 
-   if(cons.getAula() != NULL) 
+   if ( cons.getCurso() != NULL) 
    {
-      sum *= HASH_PRIME; sum+= intHash(cons.getAula()->getSala()->getId());
-   }
-   
-   if(cons.getProfessor()!=NULL) 
-   {
-      sum *= HASH_PRIME; sum+= intHash(cons.getProfessor()->getId());
-   }
-   
-   if(cons.getSala()!=NULL) 
-   {
-      sum *= HASH_PRIME; sum+= intHash(cons.getSala()->getId());
-   }
-   
-   if(cons.getBloco()!=NULL) 
-   {
-      sum *= HASH_PRIME; sum+= intHash(cons.getBloco()->getId());
+      sum *= HASH_PRIME;
+      sum += intHash( cons.getCurso()->getId() );
    }
 
-   if(cons.getDisciplina()!=NULL) 
+   if ( cons.getAula() != NULL )
    {
-      sum *= HASH_PRIME; sum+= intHash(cons.getDisciplina()->getId());
+      sum *= HASH_PRIME;
+      sum += intHash( cons.getAula()->getSala()->getId() );
+   }
+   
+   if ( cons.getProfessor() != NULL )
+   {
+      sum *= HASH_PRIME;
+      sum += intHash( cons.getProfessor()->getId() );
+   }
+   
+   if ( cons.getSala() != NULL)
+   {
+      sum *= HASH_PRIME;
+      sum+= intHash( cons.getSala()->getId() );
    }
 
-   if(cons.getTurma() >= 0) 
+   if ( cons.getBloco() != NULL )
    {
-      sum *= HASH_PRIME; sum+= intHash(cons.getTurma());
+      sum *= HASH_PRIME;
+      sum += intHash( cons.getBloco()->getId() );
+   }
+
+   if ( cons.getDisciplina() != NULL )
+   {
+      sum *= HASH_PRIME;
+      sum+= intHash( cons.getDisciplina()->getId() );
+   }
+
+   if ( cons.getTurma() >= 0 )
+   {
+      sum *= HASH_PRIME;
+      sum += intHash( cons.getTurma() );
    }
  
-   if(cons.getSubBloco() >= 0) 
+   if ( cons.getSubBloco() >= 0 )
    {
-      sum *= HASH_PRIME; sum+= intHash(cons.getSubBloco());
-   }
-   if(cons.getDia() >= 0) 
-   {
-      sum *= HASH_PRIME; sum+= intHash(cons.getDia());
-   }
-   if(cons.getHorario()!=NULL) 
-   {
-      sum *= HASH_PRIME; 
-      sum+= intHash(cons.getHorario()->getId());
+      sum *= HASH_PRIME;
+      sum += intHash( cons.getSubBloco() );
    }
 
-   if(cons.getHorarioAula()!=NULL) 
+   if ( cons.getDia() >= 0 )
+   {
+      sum *= HASH_PRIME;
+      sum += intHash( cons.getDia() );
+   }
+
+   if ( cons.getHorario() != NULL ) 
    {
       sum *= HASH_PRIME; 
-      sum+= intHash(cons.getHorarioAula()->getId());
+      sum += intHash( cons.getHorario()->getId() );
+   }
+
+   if ( cons.getHorarioAula()!=NULL )
+   {
+      sum *= HASH_PRIME; 
+      sum += intHash( cons.getHorarioAula()->getId() );
    }
 
    return sum;
 }
 
-bool ConstraintOpHasher::operator() (const ConstraintOp& cons1, const ConstraintOp& cons2) const
+bool ConstraintOpHasher::operator() ( const ConstraintOp & cons1, const ConstraintOp & cons2 ) const
 {
-   return (cons1 < cons2);
+   return ( cons1 < cons2 );
 }

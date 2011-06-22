@@ -13,7 +13,6 @@
 #include "VariableOp.h"
 #include "ConstraintOp.h"
 #include "opt_lp.h"
-#include "input.h"
 #include "opt_gurobi.h"
 #include "ProblemData.h"
 #include "ProblemSolution.h"
@@ -161,6 +160,15 @@ public:
    int criaVariavelFolgaFixProfDiscSala();
    int criaVariavelFolgaFixProfSala();
    int criaVariavelFolgaDisciplinaHorario();
+   int criaVariavelProfessorCurso();
+   int criaVariavelDiasProfessoresMinistramAulas();
+   int criaVariavelFolgaMinimoMestresCurso();
+   int criaVariavelFolgaMinimoDoutoresCurso();
+   int criaVariavelFolgaCargaHorariaMinimaProfessor();
+   int criaVariavelFolgaCargaHorariaMinimaProfessorSemana();
+   int criaVariavelFolgaCargaHorariaMaximaProfessorSemana();
+
+   // Criacao de restrições operacional
    int criaRestricoesOperacional();
    int criaRestricaoSalaHorario();
    int criaRestricaoProfessorHorario();
@@ -175,10 +183,18 @@ public:
    int criaRestricaoFixProfSala();
    int criaRestricaoDisciplinaMesmoHorario();
    int criaRestricaoDisciplinaHorarioUnico();
-      
+   int criaRestricaoRelacionaVariavelXDiaProf();
+   int criaRestricaoCargaHorariaMinimaProfessor(); // x10
+   int criaRestricaoAlocacaoProfessorCurso(); // x12
+   int criaRestricaoMinimoMestresCurso(); // x12
+   int criaRestricaoMinimoDoutoresCurso(); // x12
+   int criaRestricaoCargaHorariaMinimaProfessorSemana(); // x14
+   int criaRestricaoCargaHorariaMaximaProfessorSemana(); // x15
+
    void cria_solucao_inicial( int , int * , double * );
    int localBranching( double *, double );
    void carregaVariaveisSolucaoTatico();
+   void relacionaProfessoresDisciplinas();
 
    int solveTatico();
    int solveTaticoBasico();
