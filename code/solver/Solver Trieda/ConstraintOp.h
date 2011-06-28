@@ -38,7 +38,8 @@ public:
       C_CARGA_HOR_MIN_PROF = 18,
       C_CARGA_HOR_MIN_PROF_SEMANA = 19,
       C_CARGA_HOR_MAX_PROF_SEMANA = 20,
-      C_DIAS_PROF_MINISTRA_AULA = 21
+      C_DIAS_PROF_MINISTRA_AULA = 21,
+      C_CUSTO_CORPO_DOCENTE = 22
    };
 
    /** Default constructor. */

@@ -30,7 +30,8 @@ public:
       V_F_CARGA_HOR_MIN_PROF = 13,
       V_F_CARGA_HOR_MIN_PROF_SEMANA = 14,
       V_F_CARGA_HOR_MAX_PROF_SEMANA = 15,
-      V_DIAS_PROF_MINISTRA_AULAS = 16
+      V_DIAS_PROF_MINISTRA_AULAS = 16,
+      V_CUSTO_CORPO_DOCENTE = 17
    };
 
    // Constructors

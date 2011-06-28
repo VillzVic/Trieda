@@ -161,6 +161,7 @@ public:
    int criaVariavelFolgaFixProfSala();
    int criaVariavelFolgaDisciplinaHorario();
    int criaVariavelProfessorCurso();
+   int criaVariavelCustoCorpoDocente();
    int criaVariavelDiasProfessoresMinistramAulas();
    int criaVariavelFolgaMinimoMestresCurso();
    int criaVariavelFolgaMinimoDoutoresCurso();
@@ -183,7 +184,8 @@ public:
    int criaRestricaoFixProfSala();
    int criaRestricaoDisciplinaMesmoHorario();
    int criaRestricaoDisciplinaHorarioUnico();
-   int criaRestricaoRelacionaVariavelXDiaProf();
+   int criaRestricaoCustoCorpoDocente(); // x7
+   int criaRestricaoRelacionaVariavelXDiaProf(); // x9
    int criaRestricaoCargaHorariaMinimaProfessor(); // x10
    int criaRestricaoAlocacaoProfessorCurso(); // x12
    int criaRestricaoMinimoMestresCurso(); // x12
