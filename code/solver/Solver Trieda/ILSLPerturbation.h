@@ -5,32 +5,28 @@
 #include <vector>
 
 #include "NS.hpp"
-
 #include "SolucaoOperacional.h"
-
-using namespace std;
 
 class ILSLPerturbation
 {
 public:
-   virtual void perturb(SolucaoOperacional & s, double timelimit, double target_f, int level) = 0;
+   virtual void perturb( SolucaoOperacional &, double, double, int ) = 0;
 };
 
-class ILSLPerturbationLPlus2: public ILSLPerturbation
+class ILSLPerturbationLPlus2
+   : public ILSLPerturbation
 {
-private:
-	vector<NS*> ns;
-   Avaliador & evaluator;
-	int pMax;
-
 public:
-	ILSLPerturbationLPlus2(Avaliador & e, int _pMax, NS& _ns);
-
+	ILSLPerturbationLPlus2( Avaliador &, int, NS & );
    virtual ~ILSLPerturbationLPlus2();
 
-	void add_ns(NS & _ns);
+	void add_ns( NS & );
+   void perturb( SolucaoOperacional &, double, double, int );
 
-   void perturb(SolucaoOperacional & s, double timelimit, double target_f, int level);
+private:
+	std::vector< NS * > ns;
+   Avaliador & evaluator;
+	int pMax;
 };
 
-#endif /*ILSLPerturbation_HPP_*/
+#endif

@@ -335,7 +335,7 @@
     <ClCompile Include="Magisterio.cpp" />
     <ClCompile Include="NivelDificuldade.cpp" />
     <ClCompile Include="NivelDificuldadeHorario.cpp" />
-    <ClCompile Include="OFBase.cpp" />
+    <ClCompile Include="ofbase.cpp" />
     <ClCompile Include="Oferta.cpp" />
     <ClCompile Include="ParametrosPlanejamento.cpp" />
     <ClCompile Include="ProblemData.cpp" />
@@ -436,7 +436,7 @@
     <ClInclude Include="Magisterio.h" />
     <ClInclude Include="NivelDificuldade.h" />
     <ClInclude Include="NivelDificuldadeHorario.h" />
-    <ClInclude Include="OFBase.h" />
+    <ClInclude Include="ofbase.h" />
     <ClInclude Include="Oferta.h" />
     <ClInclude Include="ParametrosPlanejamento.h" />
     <ClInclude Include="ProblemData.h" />

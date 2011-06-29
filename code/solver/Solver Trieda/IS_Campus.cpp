@@ -1,9 +1,9 @@
 #include "IS_Campus.h"
 
-IS_Campus::IS_Campus(Campus * _campus)
+IS_Campus::IS_Campus( Campus * _campus )
 {
    campus = _campus;
-   this->setId(_campus->getId());
+   this->setId( _campus->getId() );
 }
 
 IS_Campus::IS_Campus(IS_Campus const & is_campus)

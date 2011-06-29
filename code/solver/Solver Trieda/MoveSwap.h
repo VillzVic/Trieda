@@ -6,28 +6,24 @@
 #include "Aula.h"
 #include "Professor.h"
 
-class MoveSwap : public Move
+class MoveSwap
+   : public Move
 {
-protected:
-   Aula & a1;
-   Professor * profA1;
-
-   Aula & a2;
-   Professor * profA2;
-
 public:
 
    using Move::apply; // prevents name hiding
-
-   MoveSwap(Aula & _a1, Aula & _a2);
-
+   MoveSwap( Aula &, Aula & );
    virtual ~MoveSwap();
 
-   Move & apply(SolucaoOperacional & s);
-
-   bool operator==(const Move & m) const;
-
+   Move & apply( SolucaoOperacional & );
+   bool operator == ( const Move & ) const;
    void print();
+
+protected:
+   Aula & a1;
+   Professor * profA1;
+   Aula & a2;
+   Professor * profA2;
 };
 
-#endif /*_MOVE_SWAP_H_*/
+#endif

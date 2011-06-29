@@ -15,23 +15,22 @@
 // Put it this way: the operator() approach is never worse than, and sometimes
 // better than, the [][] approach. 
 
-#ifndef MATRIX_H_
-#define MATRIX_H_
+#ifndef _MATRIX_H_
+#define _MATRIX_H_
 
 #include <iostream>
+#include <string>
 #include <stdlib.h>
 #include <vector>
 #include <map>
 
-using namespace std;
-
 class BadIndex
 {
 private:
-   string message;
+   std::string message;
 
 public:
-   BadIndex (string m)
+   BadIndex ( std::string m )
    {
       message = m;
    }
@@ -42,16 +41,16 @@ class Matrix
 {
 private:
    unsigned rows, cols;
-   T* data;
+   T * data;
 
-   map< N, int > rows_Names;
-   map< N, int > cols_Names;
+   std::map< N, int > rows_Names;
+   std::map< N, int > cols_Names;
 
 public:
 
    // --------------------------
 
-   Matrix (const Matrix& m) // Copy constructor
+   Matrix ( const Matrix & m ) // Copy constructor
    {
       rows = m.rows;
       cols = m.cols;
@@ -59,31 +58,39 @@ public:
       unsigned int total = rows * cols;
       data = new T [total];
 
-      for (unsigned int i = 0; i < (total); i++)
+      for ( unsigned int i = 0; i < (total); i++ )
+      {
          data [i] = m.data [i];
+      }
    }
 
    // --------------------------
 
-   Matrix (unsigned _quadratic)
+   Matrix ( unsigned _quadratic )
    {
       rows = cols = _quadratic;
 
-      if (rows == 0 || cols == 0) throw BadIndex("Matrix constructor has 0 size");
+      if ( rows == 0 || cols == 0 )
+      {
+         throw BadIndex( "Matrix constructor has 0 size" );
+      }
 
-      data = new T [rows * cols];
+      data = new T [ rows * cols ];
    }
 
    // --------------------------
 
-   Matrix (unsigned _rows, unsigned _cols)
+   Matrix ( unsigned _rows, unsigned _cols )
    {
       rows = _rows;
       cols = _cols;
 
-      if (rows == 0 || cols == 0) throw BadIndex("Matrix constructor has 0 size");
+      if ( rows == 0 || cols == 0 )
+      {
+         throw BadIndex("Matrix constructor has 0 size");
+      }
 
-      data = new T [rows * cols];
+      data = new T [ rows * cols ];
    }
 
    // --------------------------
@@ -95,43 +102,48 @@ public:
 
    // --------------------------
 
-   T& operator() (unsigned row, unsigned col) // subscript operators often come in pairs
+   T & operator() ( unsigned row, unsigned col ) // subscript operators often come in pairs
    {
-      if (row >= rows || col >= cols)
+      if ( row >= rows || col >= cols )
       {
-         cout << "[set Matrix] Pedido de (" << row << "," << col << ")" << " de (" << rows << "," << cols << ")" << endl;
+         std::cout << "[set Matrix] Pedido de (" << row << "," << col << ")"
+                   << " de (" << rows << "," << cols << ")" << std::endl;
 
          int jkl;
-         cin >> jkl;
+         std::cin >> jkl;
 
-         throw BadIndex("Matrix subscript out of bounds");
+         throw BadIndex( "Matrix subscript out of bounds" );
       }
 
-      return data [cols * row + col];
+      return data [ cols * row + col ];
    }
 
    // --------------------------
 
-   T operator() (unsigned row, unsigned col) const // subscript operators often come in pairs
+   T operator() ( unsigned row, unsigned col ) const // subscript operators often come in pairs
    {
-      if (row >= rows || col >= cols)
+      if ( row >= rows || col >= cols )
       {
-         cout << "[get Matrix] Pedido de (" << row << "," << col << ")" << " de (" << rows << "," << cols << ")" << endl;
+         std::cout << "[get Matrix] Pedido de (" << row << "," << col << ")"
+                   << " de (" << rows << "," << cols << ")" << std::endl;
 
          int jkl;
-         cin >> jkl;
+         std::cin >> jkl;
 
-         throw BadIndex("const Matrix subscript out of bounds");
+         throw BadIndex( "const Matrix subscript out of bounds" );
       }
 
-      return data [cols * row + col];
+      return data [ cols * row + col ];
    }
 
    // --------------------------
 
-   Matrix& operator= (const Matrix& m) // Assignment operator
+   Matrix& operator = ( const Matrix & m ) // Assignment operator
    {
-      if (&m == this) return *this;
+      if ( &m == this )
+      {
+         return *this;
+      }
 
       delete [] data;
 
@@ -140,16 +152,18 @@ public:
 
       int total = rows * cols;
 
-      if (total < 0)
+      if ( total < 0 )
       {
-         cerr << "Valor maior do que o suportado pela Matrix! (" << total << ")" << endl;
+         std::cerr << "Valor maior do que o suportado pela Matrix! (" << total << ")" << std::endl;
          exit(1);
       }
 
-      data = new T [total];
+      data = new T [ total ];
 
-      for (int i = 0; i < (total); i++)
-         data [i] = m.data [i];
+      for ( int i = 0; i < (total); i++ )
+      {
+         data [ i ] = m.data [ i ];
+      }
 
       return *this;
    }
@@ -158,17 +172,19 @@ public:
 
    bool square () const
    {
-      return (rows == cols);
+      return ( rows == cols );
    }
 
    // --------------------------
 
-   void fill (T v)
+   void fill ( T v )
    {
       unsigned int total = rows * cols;
 
       for (unsigned int i = 0; i < (total); i++)
+      {
          data [i] = v;
+      }
    }
 
    // --------------------------
@@ -187,13 +203,13 @@ public:
 
    // --------------------------
 
-   vector< T > getRow (int _row) const
+   std::vector< T > getRow ( int _row ) const
    {
-      vector< T > row(cols);
+      std::vector< T > row( cols );
 
-      for (int i = 0; i < cols; i++)
+      for ( int i = 0; i < cols; i++ )
       {
-         row [i] = operator()(_row, i);
+         row [ i ] = operator()( _row, i );
       }
 
       return row;
@@ -201,25 +217,25 @@ public:
 
    // --------------------------
 
-   void setRow (int p, vector< T >& _row)
+   void setRow ( int p, std::vector< T > & _row )
    {
-      int numCol = (_row.size() < cols) ? _row.size() : cols;
+      int numCol = ( (_row.size() < cols) ? _row.size() : cols );
 
-      for (int i = 0; i < numCol; i++)
+      for ( int i = 0; i < numCol; i++ )
       {
-         operator()(p, i) = _row [i];
+         operator()( p, i ) = _row [ i ];
       }
    }
 
    // --------------------------
 
-   vector< T > getCol (int _col) const
+   std::vector< T > getCol ( int _col ) const
    {
-      vector< T > col(rows);
+      std::vector< T > col( rows );
 
-      for (int i = 0; i < (int)rows; i++)
+      for ( int i = 0; i < (int)rows; i++ )
       {
-         col [i] = operator()(i, _col);
+         col [ i ] = operator()( i, _col );
       }
 
       return col;
@@ -227,54 +243,63 @@ public:
 
    // --------------------------
 
-   void setCol (int p, vector< T >& _col)
+   void setCol ( int p, std::vector< T > & _col )
    {
-      int numRow = (_col.size() < rows) ? _col.size() : rows;
+      int numRow = ( (_col.size() < rows) ? _col.size() : rows );
 
-      for (int i = 0; i < numRow; i++)
+      for ( int i = 0; i < numRow; i++ )
       {
-         operator()(i, p) = _col [i];
+         operator()( i, p ) = _col [ i ];
       }
    }
 
    // --------------------------
 
-   void setRowName (unsigned index, N name)
+   void setRowName ( unsigned index, N name )
    {
-      if (index < 0 || index >= rows) throw BadIndex("Out of bound.");
+      if ( index < 0 || index >= rows )
+      {
+         throw BadIndex( "Out of bound." );
+      }
 
-      rows_Names [name] = index;
+      rows_Names [ name ] = index;
    }
 
    // --------------------------
 
-   void setRowByName (N name, vector< T >& _row)
+   void setRowByName ( N name, std::vector< T > & _row )
    {
-      int numCol = (_row.size() < cols) ? _row.size() : cols;
+      int numCol = ( (_row.size() < cols) ? _row.size() : cols );
 
-      if (rows_Names.find(name) == rows_Names.end()) throw BadIndex("Row name doesn't match.");
-
-      int r = rows_Names.find(name)->second;
-
-      for (int c = 0; c < numCol; c++)
+      if ( rows_Names.find( name ) == rows_Names.end() )
       {
-         operator()(r, c) = _row [c];
+         throw BadIndex( "Row name doesn't match." );
+      }
+
+      int r = rows_Names.find( name )->second;
+
+      for ( int c = 0; c < numCol; c++ )
+      {
+         operator()( r, c ) = _row [ c ];
       }
    }
 
    // --------------------------
 
-   vector< T > getRowByName (N name) const
+   std::vector< T > getRowByName ( N name ) const
    {
-      vector< T > row(cols);
+      std::vector< T > row( cols );
 
-      if (rows_Names.find(name) == rows_Names.end()) throw BadIndex("Row name doesn't match.");
-
-      int _row = rows_Names.find(name)->second;
-
-      for (int c = 0; c < cols; c++)
+      if ( rows_Names.find( name ) == rows_Names.end() )
       {
-         row [c] = operator()(_row, c);
+         throw BadIndex( "Row name doesn't match." );
+      }
+
+      int _row = ( rows_Names.find( name )->second );
+
+      for ( int c = 0; c < cols; c++ )
+      {
+         row [ c ] = operator()( _row, c );
       }
 
       return row;
@@ -282,50 +307,63 @@ public:
 
    // --------------------------
 
-   unsigned getRowIdByName (N name) const
+   unsigned getRowIdByName ( N name ) const
    {
-      if (rows_Names.find(name) == rows_Names.end()) throw BadIndex("Row name doesn't match.");
-      return rows_Names.find(name)->second;
-   }
-
-   // --------------------------
-
-   void setColName (unsigned index, N name)
-   {
-      if (index < 0 || index >= cols) throw BadIndex("Out of bound.");
-
-      cols_Names [name] = index;
-   }
-
-   // --------------------------
-
-   void setColByName (N name, vector< T >& _col)
-   {
-      int numRow = (_col.size() < rows) ? _col.size() : rows;
-
-      if (cols_Names.find(name) == cols_Names.end()) throw BadIndex("Col name doesn't match.");
-
-      int c = cols_Names.find(name)->second;
-
-      for (int r = 0; r < numRow; r++)
+      if ( rows_Names.find( name ) == rows_Names.end() )
       {
-         operator()(r, c) = _col [r];
+         throw BadIndex( "Row name doesn't match." );
+      }
+
+      return ( rows_Names.find( name )->second );
+   }
+
+   // --------------------------
+
+   void setColName ( unsigned index, N name )
+   {
+      if ( index < 0 || index >= cols )
+      {
+         throw BadIndex(" Out of bound." );
+      }
+
+      cols_Names [ name ] = index;
+   }
+
+   // --------------------------
+
+   void setColByName ( N name, std::vector< T > & _col )
+   {
+      int numRow = ( (_col.size() < rows) ? _col.size() : rows );
+
+      if ( cols_Names.find( name ) == cols_Names.end() )
+      {
+         throw BadIndex( "Col name doesn't match." );
+      }
+
+      int c = ( cols_Names.find( name )->second );
+
+      for ( int r = 0; r < numRow; r++ )
+      {
+         operator()( r, c ) = _col [ r ];
       }
    }
 
    // --------------------------
 
-   vector< T > getColByName (N name) const
+   std::vector< T > getColByName ( N name) const
    {
-      vector< T > col(rows);
+      std::vector< T > col( rows );
 
-      if (cols_Names.find(name) == cols_Names.end()) throw BadIndex("Col name doesn't match.");
-
-      int _col = cols_Names.find(name)->second;
-
-      for (unsigned r = 0; r < rows; r++)
+      if ( cols_Names.find( name ) == cols_Names.end() )
       {
-         col [r] = operator()(r, _col);
+         throw BadIndex( "Col name doesn't match." );
+      }
+
+      int _col = ( cols_Names.find(name)->second );
+
+      for ( unsigned r = 0; r < rows; r++ )
+      {
+         col[ r ] = operator()( r, _col );
       }
 
       return col;
@@ -333,12 +371,15 @@ public:
 
    // --------------------------
 
-   unsigned getColIdByName (N name) const
+   unsigned getColIdByName ( N name ) const
    {
-      if (cols_Names.find(name) == cols_Names.end()) throw BadIndex("Col name doesn't match.");
-      return cols_Names.find(name)->second;
-   }
+      if ( cols_Names.find( name ) == cols_Names.end() )
+      {
+         throw BadIndex( "Col name doesn't match." );
+      }
 
+      return cols_Names.find( name )->second;
+   }
 };
 
 //template< class T >
@@ -372,4 +413,4 @@ return os;
 }
 */
 
-#endif /*MATRIX_H_*/
+#endif

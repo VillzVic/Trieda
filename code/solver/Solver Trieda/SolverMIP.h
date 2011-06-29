@@ -22,13 +22,10 @@
 #include "SolucaoOperacional.h"
 #include "SolucaoInicialOperacional.h"
 #include "Avaliador.h"
-
 #include "NSSeqSwapEqBlocks.h"
 #include "NSSwapEqSchedulesBlocks.h"
 #include "NSSwapEqTeachersBlocks.h"
-
 #include "NSShift.h"
-
 #include "IteratedLocalSearchLevels.h"
 #include "RandomDescentMethod.h"
 #include "RVND.hpp"
@@ -209,7 +206,7 @@ public:
    void getSolutionOperacional();
    void getSolutionOperacionalMIP();
    void geraProfessoresVirtuaisMIP();
-   Professor* criaProfessorVirtual(HorarioDia *horario,int cred,std::set<std::pair<Professor*,HorarioDia*> > &profVirtualList);
+   Professor* criaProfessorVirtual( HorarioDia *, int, std::set< std::pair< Professor *, HorarioDia * > > & );
    void preencheOutputOperacional( ProblemSolution * );
    void preencheOutputOperacionalMIP( ProblemSolution * );
    bool aulaAlocada( Aula *, Campus *, Unidade *, Sala *, int );
@@ -245,7 +242,7 @@ private:
    typedef std::map< std::pair< int /*turma*/, Disciplina * >,
 					      std::vector< Variable * > > vars__A___i_d_o;
 
-   void chgCoeffList(std::vector<std::pair<int,int> > cL, std::vector<double> cLV);
+   void chgCoeffList( std::vector< std::pair< int, int > > cL, std::vector< double > cLV );
 
    vars__X___i_d_u_tps_t vars_x;
    vars__A___i_d_o vars_a;
@@ -268,7 +265,7 @@ private:
    // Hash which associates the row number with the ConstraintOp object.
    ConstraintOpHash cHashOp;
 
-   // Stores the solution variables (non-zero).
+   // Stores the solution variables ( non - zero ).
    std::vector< Variable * > solVars;
 
    std::vector< VariableOp * > solVarsOp;
@@ -279,7 +276,7 @@ private:
    {
       bool operator() ( std::vector< int > xI, std::vector< int > xJ )
       {
-		  return (xI.front() > xJ.front());
+		  return ( xI.front() > xJ.front() );
 	  }
    } ordenaPorCreditos;
 };

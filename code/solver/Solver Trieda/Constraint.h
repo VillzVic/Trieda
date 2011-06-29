@@ -41,14 +41,11 @@ public:
       C_ALUNOS_CURSOS_DIF = 20,			// Restricao 1.2.21
       C_SLACK_DIST_CRED_DIA = 21,			// Restricao 1.2.22
       C_VAR_R = 22,			            // Restricao 1.2.23
-
       C_LIMITA_ABERTURA_TURMAS = 23,			            // Restricao 1.2.24
       C_ABRE_TURMAS_EM_SEQUENCIA = 24,			            // Restricao 1.2.25
       C_DIVISAO_CREDITO = 25,			//Restricao 1.2.26
       C_COMBINACAO_DIVISAO_CREDITO = 26,	//Restricao 1.2.27
-      
       C_VAR_Y = 27,	//Restricao 1.2.28
-
       C_MAX_CREDS_DISC_DIA = 28, // Restricao 1.2.29
       C_MAX_CREDS_BLOCO_DIA = 29, // Restricao 1.2.30
 	  C_VAR_ZC = 30, // Restricao 1.2.31
@@ -61,19 +58,19 @@ public:
    Constraint();
 
    /** Copy constructor. */
-   Constraint(const Constraint& cons);
+   Constraint( const Constraint & );
 
    /** Destructor. */
-   ~Constraint();
+   virtual ~Constraint();
 
    /** Assign operator. */
-   Constraint& operator= (const Constraint& cons);
+   Constraint & operator = ( const Constraint & );
 
    /** Less operator. */
-   bool operator< (const Constraint& cons) const;
+   bool operator < ( const Constraint & ) const;
 
    /** Equals operator. */
-   bool operator== (const Constraint& cons) const;
+   bool operator == ( const Constraint & ) const;
 
    /**
    * Returns a string containing an unique name for the constraint.
@@ -84,32 +81,20 @@ public:
    //==================================================
    // GET METHODS 
    //==================================================
-   //Return constraint type
-   ConstraintType getType() const            { return type; }
+   // Return constraint type
+   ConstraintType getType() const { return type; }
 
-   /*
-   ToDo:
-   All get methods of the private attributes should be defined here
-   */
-
-   Campus* getCampus() const { return cp; }
-   Unidade* getUnidade() const { return u; }
-   Sala* getSala() const { return s; }
-
-   ConjuntoSala* getSubCjtSala() const { return tps; }
-
+   Campus * getCampus() const { return cp; }
+   Unidade * getUnidade() const { return u; }
+   Sala * getSala() const { return s; }
+   ConjuntoSala * getSubCjtSala() const { return tps; }
    int getTurma() const { return i; }
-   Curso* getCurso() const { return c; }
-
-   Curso* getCursoIncompat() const { return c_incompat; }
-
-   BlocoCurricular* getBloco() const { return b; }
+   Curso * getCurso() const { return c; }
+   Curso * getCursoIncompat() const { return c_incompat; }
+   BlocoCurricular * getBloco() const { return b; }
    Disciplina* getDisciplina() const { return d; }
-
    int getSubBloco() const { return j; }
-
    int getDia() const { return t; }
-
    Oferta * getOferta() const { return o; }
 
    //==================================================
@@ -119,32 +104,20 @@ public:
    void reset();
 
    // Set constraint type
-   void setType(ConstraintType t)               { type = t; }
+   void setType( ConstraintType t ) { type = t; }
 
-   /*
-   ToDo:
-   All set methods of the private attributes should be defined here
-   */
-
-   void setCampus(Campus* cpp) { cp = cpp; }
-   void setUnidade(Unidade* uu) {  u = uu; }
-   void setSala(Sala* ss) {  s = ss; }
-
-   void setSubCjtSala(ConjuntoSala * tpss)  { tps = tpss; }
-
-   void setTurma(int ii) { i = ii; }
-   void setCurso(Curso* cc) { c = cc; }
-
-   void setCursoIncompat(Curso* cc) { c_incompat = cc; }
-
-   void setBloco(BlocoCurricular* bb) {  b = bb; } 
-   void setDisciplina(Disciplina* dd) {  d = dd; }
-
-   void setSubBloco(int jj) { j = jj; }   
-
-   void setDia(int tt) {  t = tt; }
-
-   void setOferta(Oferta * oferta) { o = oferta; }
+   void setCampus( Campus * cpp ) { cp = cpp; }
+   void setUnidade( Unidade * uu ) {  u = uu; }
+   void setSala( Sala * ss ) {  s = ss; }
+   void setSubCjtSala( ConjuntoSala * tpss ) { tps = tpss; }
+   void setTurma( int ii ) { i = ii; }
+   void setCurso( Curso * cc ) { c = cc; }
+   void setCursoIncompat( Curso * cc ) { c_incompat = cc; }
+   void setBloco( BlocoCurricular * bb ) {  b = bb; } 
+   void setDisciplina( Disciplina * dd ) {  d = dd; }
+   void setSubBloco( int jj ) { j = jj; }   
+   void setDia( int tt ) {  t = tt; }
+   void setOferta( Oferta * oferta ) { o = oferta; }
 
 private:
 

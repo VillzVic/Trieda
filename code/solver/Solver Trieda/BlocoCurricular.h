@@ -16,7 +16,7 @@ class BlocoCurricular :
 {
 public:
    BlocoCurricular(void);
-   virtual ~BlocoCurricular(void);
+   virtual ~BlocoCurricular( void );
 
    Curso * curso;
    Campus * campus;

@@ -1,5 +1,5 @@
-#ifndef ILSL_HPP_
-#define ILSL_HPP_
+#ifndef _ILSL_HPP_
+#define _ILSL_HPP_
 
 #include <iostream>
 
@@ -14,36 +14,30 @@
 #include "CPUTimerUnix.h"
 #endif
 
-using namespace std;
-
-typedef pair<pair<int, int> , pair<int, int> > levelHistory;
+typedef std::pair< std::pair< int, int > , std::pair< int, int > > levelHistory;
 
 // TRIEDA-923
-class IteratedLocalSearchLevels: public Heuristic
+class IteratedLocalSearchLevels
+   : public Heuristic
 {
+public:
+   IteratedLocalSearchLevels( Avaliador &, Heuristic &, ILSLPerturbation &, int, int );
+   virtual ~IteratedLocalSearchLevels();
+
+   virtual levelHistory & initializeHistory();
+   virtual void localSearch( SolucaoOperacional &, double, double );
+   virtual void perturbation( SolucaoOperacional &, double, double, levelHistory & );
+   virtual SolucaoOperacional & acceptanceCriterion( SolucaoOperacional &, SolucaoOperacional &, levelHistory & );
+   virtual bool terminationCondition( levelHistory & );
+
+   void exec( SolucaoOperacional &, double, double );
+
 protected:
    Avaliador & e;
    Heuristic & h;
    ILSLPerturbation & p;
-   int iterMax, levelMax;
-
-public:
-
-   IteratedLocalSearchLevels(Avaliador & e, Heuristic & h, ILSLPerturbation & p, int iterMax, int levelMax);
-   
-   virtual ~IteratedLocalSearchLevels();
-
-   virtual levelHistory & initializeHistory();
-
-   virtual void localSearch(SolucaoOperacional & s, double timelimit, double target_f);
-
-   virtual void perturbation(SolucaoOperacional & s, double timelimit, double target_f, levelHistory& history);
-
-   virtual SolucaoOperacional & acceptanceCriterion(SolucaoOperacional & s1, SolucaoOperacional & s2, levelHistory& history);
-
-   virtual bool terminationCondition(levelHistory& history);
-
-   void exec(SolucaoOperacional & s, double timelimit, double target_f);
+   int iterMax;
+   int levelMax;
 };
 
-#endif /*ILSL_HPP_*/
+#endif

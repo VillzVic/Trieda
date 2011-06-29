@@ -19,14 +19,12 @@ IS_Sala::~IS_Sala(void)
 
 }
 
-void IS_Sala::aloca(
-                    int turma,
-                    Demanda * ref_Demanda_Alocada, // Referência para a Demanda que está sendo atendida (parcialmente ou totalmente)
-                    int demanda_Atendida, // Indica a quantidade da demanda que está sendo atendida
-                    vector<pair<int/*dia*/,int/*num creds*/> > & regra_De_Credito
-                    )
+void IS_Sala::aloca( int turma,
+                    Demanda * ref_Demanda_Alocada, /* Referência para a Demanda que está sendo atendida (parcialmente ou totalmente) */
+                    int demanda_Atendida, /* Indica a quantidade da demanda que está sendo atendida */
+                    std::vector< std::pair< int /*dia*/, int /*num creds*/ > > & regra_De_Credito )
 {
-   vector< pair< int /*dia*/, int /*num Creds*/ > >::iterator 
+   std::vector< std::pair< int /*dia*/, int /*num Creds*/ > >::iterator 
       it_Regra_De_Credito = regra_De_Credito.begin();
 
    // Para cada par<dia,numCreds> da regra de credito
@@ -50,9 +48,9 @@ void IS_Sala::aloca(
    }
 }
 
-bool IS_Sala::regraValida( vector< pair< int /*dia*/, int /*numCreditos*/ > > & regra )
+bool IS_Sala::regraValida( std::vector< std::pair< int /*dia*/, int /*numCreditos*/ > > & regra )
 {
-   vector< pair< int /*dia*/, int /*numCreditos*/ > >::iterator 
+   std::vector< std::pair< int /*dia*/, int /*numCreditos*/ > >::iterator 
       it_Dia_Regra = regra.begin();
 
    // Para cada dia da regra de crédito em questão
@@ -63,17 +61,15 @@ bool IS_Sala::regraValida( vector< pair< int /*dia*/, int /*numCreditos*/ > > & 
       // Procurando o dia correto
       ITERA_GGROUP( it_Is_Dia_Semana, is_Dia_Semana, IS_Dia_Semana )
       {
-         /*
-         Verificando se o dia em questão possui o mínimo de créditos livres necessários.
-         Caso não possua, retorno false indicando que a regra de crédito não é aplicável à
-         sala em questão.
-         */
+         // Verificando se o dia em questão possui o mínimo de créditos livres necessários.
+         // Caso não possua, retorno false indicando que a regra de crédito não é aplicável à
+         // sala em questão.
          if ( it_Is_Dia_Semana->creditos_Disponiveis->getDiaSemana() == dia )
          {
             if ( it_Is_Dia_Semana->creditos_Livres < it_Dia_Regra->second )
             {
-		return false;
-	    }
+               return false;
+            }
 
             break;
          }

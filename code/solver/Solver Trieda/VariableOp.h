@@ -1,11 +1,7 @@
 #ifndef VARIABLEOP_H
 #define VARIABLEOP_H
 
-#ifndef WIN32
 #include <map>
-#else
-#include <hash_map>
-#endif
 
 #include "Aula.h"
 #include "Professor.h"

@@ -5,32 +5,31 @@ IS_Atendimento_Tatico::IS_Atendimento_Tatico(void)
    credito = 0;
    turma = -1;
    demanda_Atendida = 0;
-   //credito_Alocado = false;
 }
 
-IS_Atendimento_Tatico::IS_Atendimento_Tatico(IS_Atendimento_Tatico const & is_Atendimento_Tatico)
+IS_Atendimento_Tatico::IS_Atendimento_Tatico( IS_Atendimento_Tatico const & is_Atendimento_Tatico )
 {
-   cerr << "COPY CONSTRUCTOR OF <IS_Atendimento_Tatico> NOT IMPLEMENTED YET" << endl;
+   std::cerr << "COPY CONSTRUCTOR OF <IS_Atendimento_Tatico> NOT IMPLEMENTED YET" << std::endl;
    exit(1);
 }
 
-IS_Atendimento_Tatico::IS_Atendimento_Tatico(int _credito)
+IS_Atendimento_Tatico::IS_Atendimento_Tatico( int _credito )
 {
    credito = _credito;
    turma = -1;
    demanda_Atendida = 0;
-   //credito_Alocado = false;
 }
-IS_Atendimento_Tatico::~IS_Atendimento_Tatico(void)
+IS_Atendimento_Tatico::~IS_Atendimento_Tatico( void )
 {
+
 }
 
-bool IS_Atendimento_Tatico::operator < (IS_Atendimento_Tatico const & right)
+bool IS_Atendimento_Tatico::operator < ( IS_Atendimento_Tatico const & right )
 {
-   return (credito <= right.credito);
+   return ( credito <= right.credito );
 }
 
-bool IS_Atendimento_Tatico::operator == (IS_Atendimento_Tatico const & right)
+bool IS_Atendimento_Tatico::operator == ( IS_Atendimento_Tatico const & right )
 {
-   return (credito == right.credito);
+   return ( credito == right.credito );
 }

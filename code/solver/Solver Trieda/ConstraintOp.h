@@ -1,11 +1,7 @@
 #ifndef _CONSTRAINT_OP_H_
 #define _CONSTRAINT_OP_H_
 
-#ifndef WIN32
 #include <map>
-#else
-#include <hash_map>
-#endif
 
 #include "Aula.h"
 #include "Professor.h"
@@ -77,25 +73,15 @@ public:
    ConstraintOpType getType() const { return type; }
 
    Curso * getCurso() const { return this->curso; }
-
    Sala * getSala() const { return s; }
-
    BlocoCurricular * getBloco() const { return b; }
-
    Professor * getProfessor() const { return professor; } 
-
    Aula * getAula() const { return aula; } 
-
    int getSubBloco() const { return j; }
-
    int getDia() const { return t; }
-
    HorarioDia * getHorario() const { return h; }
-
    HorarioAula * getHorarioAula() const { return horarioAula; }
-
    Disciplina * getDisciplina() const { return disciplina; }
-
    int getTurma() const { return turma; }
 
    //==================================================
@@ -106,27 +92,16 @@ public:
 
    // Set constraint type
    void setType( ConstraintOpType t ) { type = t; }
-
    void setCurso( Curso * c ) { this->curso = c; }
-
    void setSala( Sala * ss ) {  s = ss; }
-
    void setBloco( BlocoCurricular * bb ) {  b = bb; } 
-
    void setAula( Aula * a ) {  aula = a; }
-
    void setProfessor( Professor * p ) { professor = p; }
-
    void setSubBloco( int jj ) { j = jj; }   
-
    void setDia( int tt ) {  t = tt; }
-
    void setHorario( HorarioDia * hh ) { h = hh; }
-
    void setHorarioAula( HorarioAula * hh ) { horarioAula = hh; }
-
    void setDisciplina ( Disciplina * aD ) { disciplina = aD; }
-
    void setTurma( int aT ) { turma = aT; }
 
 private:

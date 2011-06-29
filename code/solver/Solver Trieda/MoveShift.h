@@ -4,35 +4,26 @@
 #include <vector>
 
 #include "Move.hpp"
-
 #include "Aula.h"
 #include "Professor.h"
 
-using namespace std;
-
-class MoveShift : public Move
+class MoveShift
+   : public Move
 {
-protected:
-   
-   Aula & aula;
-   Professor * profAula;
-
-   Professor & novoProfAula;
-   std::vector<HorarioAula*> blocoHorariosVagos;
-
 public:
-
-   using Move::apply; // prevents name hiding
-   
-   MoveShift(Aula & aula, Professor & novoProfAula, std::vector<HorarioAula*> blocoHorariosVagos);
-
+   using Move::apply; // prevents name hiding   
+   MoveShift( Aula &, Professor &, std::vector< HorarioAula * > );
    virtual ~MoveShift();
 
-   Move & apply(SolucaoOperacional & s);
-
-   bool operator==(const Move & m) const;
-
+   Move & apply( SolucaoOperacional & );
+   bool operator == ( const Move & ) const;
    void print();
+
+protected:
+   Aula & aula;
+   Professor * profAula;
+   Professor & novoProfAula;
+   std::vector< HorarioAula * > blocoHorariosVagos;
 };
 
-#endif /*_MOVE_SHIFT_H_*/
+#endif
