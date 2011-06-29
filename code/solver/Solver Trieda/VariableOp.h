@@ -34,7 +34,8 @@ public:
       V_CUSTO_CORPO_DOCENTE = 17,
       V_MAX_DISC_PROF_CURSO = 18,
       V_F_MAX_DISC_PROF_CURSO = 19,
-      V_AVALIACAO_CORPO_DOCENTE = 20
+      V_AVALIACAO_CORPO_DOCENTE = 20,
+      V_PREF_DISCIPLINAS = 21
    };
 
    // Constructors

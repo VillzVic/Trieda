@@ -11234,6 +11234,13 @@ int SolverMIP::criaVariaveisOperacional()
    numVarsAnterior = numVars;
 #endif
 
+   numVars += criaVariavelPrefDisciplinas();
+
+#ifdef PRINT_cria_variaveis
+   std::cout << "numVars V_PREF_DISCIPLINAS: " << ( numVars - numVarsAnterior ) << std::endl;
+   numVarsAnterior = numVars;
+#endif
+
    lp->updateLP();
 
    return numVars;
@@ -12317,6 +12324,63 @@ int SolverMIP::criaVariavelAvaliacaoCorpoDocente()
    return num_vars;
 }
 
+int SolverMIP::criaVariavelPrefDisciplinas()
+{
+   int num_vars = 0;
+   double coeff = 0.0;
+   double alfa = 10000.0;
+
+   GGroup< Professor *, LessPtr< Professor > > professores
+      = problemData->campi.begin()->professores;
+
+   GGroup< Disciplina *, LessPtr< Disciplina > > disciplinas
+      = problemData->disciplinas;
+
+   ITERA_GGROUP_LESSPTR( it_prof, professores, Professor )
+   {
+      Professor * professor = ( *it_prof );
+
+      ITERA_GGROUP_LESSPTR( it_disc, disciplinas, Disciplina )
+      {
+         Disciplina * disciplina = ( *it_disc );
+
+         VariableOp v;
+         v.reset();
+         v.setType( VariableOp::V_PREF_DISCIPLINAS );
+
+         v.setProfessor( professor );
+         v.setDisciplina( disciplina );
+
+         if ( vHashOp.find( v ) == vHashOp.end() )
+         {
+            v.setValue( 1.0 );
+
+            double preferencia = 0.0;
+            ITERA_GGROUP_LESSPTR( it_mag, professor->magisterio, Magisterio )
+            {
+               if ( it_mag->disciplina == disciplina )
+               {
+                  preferencia = it_mag->getPreferencia();
+                  break;
+               }
+            }
+
+            coeff = ( ( 10 - preferencia ) * alfa );
+
+            vHashOp[ v ] = lp->getNumCols();
+
+            OPT_COL col( OPT_COL::VAR_BINARY, coeff, 0.0, 1.0,
+               ( char * )v.toString().c_str() );
+
+            lp->newCol( col );
+            num_vars++;
+         }
+      }
+   }
+
+   return num_vars;
+}
+
 int SolverMIP::criaRestricoesOperacional()
 {
    int restricoes = 0;
@@ -12505,6 +12569,14 @@ int SolverMIP::criaRestricoesOperacional()
 
 #ifdef PRINT_cria_restricoes
    std::cout << "numRest C_CARGA_HOR_MAX_PROF_SEMANA: " << ( restricoes - numRestAnterior ) << std::endl;
+   numRestAnterior = restricoes;
+#endif
+
+   lp->updateLP();
+   restricoes += criaRestricaoPrefDisciplinas();
+
+#ifdef PRINT_cria_restricoes
+   std::cout << "numRest C_PREF_DISCIPLINAS: " << ( restricoes - numRestAnterior ) << std::endl;
    numRestAnterior = restricoes;
 #endif
 
@@ -14176,13 +14248,6 @@ int SolverMIP::criaRestricaoCargaHorariaMinimaProfessor()
 int SolverMIP::criaRestricaoMaxDiscProfCurso()
 {
    int restricoes = 0;
-   int nnz = problemData->aulas.size();
-   double rhs;
-   char name[ 200 ];
-
-   ConstraintOp c;
-   VariableOpHash::iterator vit;
-   ConstraintOpHash::iterator cit;
 
    // TODO
 
@@ -14488,6 +14553,95 @@ int SolverMIP::criaRestricaoAvaliacaoCorpoDocente()
          lp->addRow( row2 );
 
          restricoes += 2;
+      }
+   }
+
+   return restricoes;
+}
+
+int SolverMIP::criaRestricaoPrefDisciplinas()
+{
+   int restricoes = 0;
+
+   ConstraintOp c;
+   VariableOp v_find;
+   VariableOpHash::iterator vit;
+   ConstraintOpHash::iterator cit;
+
+   int nnz = 2;
+   double rhs = 0.0;
+   char name[ 200 ];
+   double M = 1000000;
+
+   GGroup< Professor *, LessPtr< Professor > > professores
+      = problemData->campi.begin()->professores;
+
+   GGroup< Disciplina *, LessPtr< Disciplina > > disciplinas
+      = problemData->disciplinas;
+
+   ITERA_GGROUP_LESSPTR( it_prof, professores, Professor )
+   {
+      Professor * professor = ( *it_prof );
+
+      ITERA_GGROUP_LESSPTR( it_disc, disciplinas, Disciplina )
+      {
+         Disciplina * disciplina = ( *it_disc );
+
+         c.reset();
+         c.setType( ConstraintOp::C_PREF_DISCIPLINAS );
+
+         c.setProfessor( professor );
+         c.setDisciplina( disciplina );
+
+         if ( cHashOp.find( c ) == cHashOp.end() )
+         {
+            // Cria duas novas linhas no modelo
+            sprintf( name, "%s", c.toString().c_str() );
+
+            // Procura pela variável 'lp' do professor e disciplina
+            v_find.reset();
+            v_find.setType( VariableOp::V_PREF_DISCIPLINAS );
+
+            v_find.setProfessor( professor );
+            v_find.setDisciplina( disciplina );
+
+            vit = vHashOp.find( v_find );
+
+            if ( vit == vHashOp.end() )
+            {
+               continue;
+            }
+      
+            // Hash da variável 'lp'
+            int idHashVLP = vit->second;
+            ///////
+
+            // Insere as variáveis 'y' do par
+            // professor/disciplina na restrição
+            vit = vHashOp.begin();
+            for (; vit != vHashOp.end(); vit++ )
+            {
+               if ( vit->first.getType() == VariableOp::V_Y_PROF_DISCIPLINA
+                  && vit->first.getDisciplina() == disciplina
+                  && vit->first.getProfessor() == professor )
+               {
+                  OPT_ROW row( nnz, OPT_ROW::GREATER, rhs, name );
+
+                  // Insere a variável 'lp' na restrição
+                  row.insert( idHashVLP, 1.0 );
+
+                  // Insere a variável 'y' na restrição
+                  row.insert( vit->second, -1.0 );
+
+                  // Adiciona a nova restrição no modelo
+                  lp->addRow( row );
+               }
+            }
+            ///////
+
+            cHashOp[ c ] = lp->getNumRows();
+            restricoes++;
+         }
       }
    }
 

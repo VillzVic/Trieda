@@ -235,6 +235,8 @@ std::string ConstraintOp::toString()
       ss << "C_MAX_DISC_PROF_CURSO"; break;
    case C_AVALIACAO_CORPO_DOCENTE:
       ss << "C_AVALIACAO_CORPO_DOCENTE"; break;
+   case C_PREF_DISCIPLINAS:
+      ss << "C_PREF_DISCIPLINAS"; break;
    default:
       ss << "!";
    }
@@ -324,4 +326,5 @@ bool ConstraintOpHasher::operator() ( const ConstraintOp & cons1, const Constrai
    return ( cons1 < cons2 );
 }
 */
+
 
