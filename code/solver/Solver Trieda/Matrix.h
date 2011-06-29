@@ -217,7 +217,7 @@ public:
    {
       vector< T > col(rows);
 
-      for (int i = 0; i < rows; i++)
+      for (int i = 0; i < (int)rows; i++)
       {
          col [i] = operator()(i, _col);
       }

@@ -9,9 +9,9 @@ class CreditoDisponivel :
 {
 public:
    CreditoDisponivel(void);
-   ~CreditoDisponivel(void);
+   virtual ~CreditoDisponivel(void);
 
-   void le_arvore(ItemCreditoDisponivel& elem);
+   void le_arvore( ItemCreditoDisponivel & );
 
    Turno * turno;
 

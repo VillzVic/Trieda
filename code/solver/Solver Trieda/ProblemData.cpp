@@ -5,11 +5,11 @@
 // Macro baseada na ITERA_SEQ para facilitar a leitura dos dados no
 // ProblemData
 #define LE_SEQ(ggroup,addr,type) \
-   for (Grupo##type##::##type##_iterator __##type##_it = \
-   (addr).type##().begin(); __##type##_it != (addr).type##().end(); \
+   for (Grupo##type::type##_iterator __##type##_it = \
+   (addr).type().begin(); __##type##_it != (addr).type().end(); \
    ++ __##type##_it) { \
-   type *__obj_##type## = new type; \
-   __obj_##type##->le_arvore(*__##type##_it); \
+   type *__obj_##type = new type; \
+   __obj_##type->le_arvore(*__##type##_it); \
    ggroup.add(__obj_##type); } 
 
 ProblemData::ProblemData()
@@ -22,17 +22,19 @@ ProblemData::~ProblemData()
 
 }
 
-int ProblemData::getHorarioDiaIdx(HorarioDia *horarioDia)
+int ProblemData::getHorarioDiaIdx( HorarioDia * horarioDia )
 {
    if ( horarioDia == NULL )
+   {
       return -1;
+   }
 
-   return horarioDia->getDia() * (maxHorariosDif+1) + horarioDia->getHorarioAulaId();
+   return ( horarioDia->getDia() * ( maxHorariosDif + 1 ) + horarioDia->getHorarioAulaId() );
 }
 
-int ProblemData::getHorarioDiaIdx(int dia, int horarioId)
+int ProblemData::getHorarioDiaIdx( int dia, int horarioId )
 {
-   return dia * (maxHorariosDif+1) + horarioId;
+   return ( dia * ( maxHorariosDif + 1 ) + horarioId );
 }
 
 void ProblemData::le_arvore( TriedaInput & raiz )

@@ -31,7 +31,8 @@ SolucaoOperacional::SolucaoOperacional( ProblemData * prbDt )
    for(; itMatrizAulas != matriz_aulas->end();
          itMatrizAulas++ )
    {
-      ( *itMatrizAulas ) = new std::vector< Aula * > ( (total_dias * total_horarios), NULL );
+      Aula * tmp = NULL;
+      ( *itMatrizAulas ) = new std::vector< Aula * >( total_dias * total_horarios, tmp );
    }
 
    unsigned int i = 0;

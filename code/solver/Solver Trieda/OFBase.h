@@ -1,21 +1,30 @@
-#ifndef OFBASE_H
-#define OFBASE_H
-
-#include <iostream>
+#ifndef _OFBASE_H_
+#define _OFBASE_H_
 
 #include "TRIEDA-InputXSD.h"
 #include "GGroup.h"
+#include <iostream>
 
 // O XSD Code Synthesis gera uma estrutura de dados para listas de
 // objetos que é um pouco estranha e contra-intuitiva. A macro abaixo
 // gera uma iteração por ela que pode ser representada por um código
 // mais legível e intuitivo, baseada nos padrões de projeto escolhidos
+
 #ifndef ITERA_SEQ
+#ifndef WIN32
+#define ITERA_SEQ(it,addr,type) for (Grupo##type::type##_iterator it = \
+   (addr).type().begin(); it != (addr).type().end(); ++it) 
+/* A macro ITERA_NSEQ serve quando o nome do tag não segue os padrões
+   de projeto */
+#define ITERA_NSEQ(it,addr,name,type) for (Grupo##type::name##_iterator \
+    it = (addr).name().begin(); it != (addr).name().end(); ++it) 
+#else
 #define ITERA_SEQ(it,addr,type) for (Grupo##type##::##type##_iterator it = \
    (addr).##type##().begin(); it != (addr).##type##().end(); ++it) 
 // A macro ITERA_NSEQ serve quando o nome do tag não segue os padrões de projeto
 #define ITERA_NSEQ(it,addr,name,type) for (Grupo##type##::##name##_iterator \
-    it = (addr).##name##().begin(); it != (addr).##name##().end(); ++it) 
+    it = (addr).##name##().begin(); it != (addr).##name##().end(); ++it)
+#endif
 #endif
 
 #ifndef ITERA_GGROUP

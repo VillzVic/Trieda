@@ -3,7 +3,11 @@
 
 #include "Heuristic.hpp"
 
+#ifdef WIN32
 #include "CPUTimerWin.h"
+#else
+#include "CPUTimerUnix.h"
+#endif
 
 #include "NS.hpp"
 

@@ -1,7 +1,11 @@
-#ifndef CONSTRAINTOP_H
-#define CONSTRAINTOP_H
+#ifndef _CONSTRAINT_OP_H_
+#define _CONSTRAINT_OP_H_
 
+#ifndef WIN32
+#include <map>
+#else
 #include <hash_map>
+#endif
 
 #include "Aula.h"
 #include "Professor.h"
@@ -143,30 +147,35 @@ private:
 };
 
 /**
-* Defines the operations needed by the hash object.
+//* Type definition for the hash object.
 */
-class ConstraintOpHasher : public stdext::hash_compare< ConstraintOp >
-{
-public:
-   /**
-   * Applies the hash function on a Constraint object.
-   * @param cons The constraint.
-   * @return The hash value for the constraint.
-   */
-   size_t operator() ( const ConstraintOp & ) const;
-
-   /**
-   * Defines an order rule for two Constraint objects.
-   * @param cons1 The first constraint to be compared.
-   * @param cons2 The second constraint to be compared.
-   * @return True if const1 comes before cons2, false otherwise.
-   */
-   bool operator() ( const ConstraintOp &, const ConstraintOp & ) const;
-};
+typedef std::map< ConstraintOp, int > ConstraintOpHash;
 
 /**
-* Type definition for the hash object.
+* Defines the operations needed by the hash object.
 */
-typedef stdext::hash_map< ConstraintOp, int, ConstraintOpHasher > ConstraintOpHash;
+// class ConstraintOpHasher : public stdext::hash_compare< ConstraintOp >
+// {
+// public:
+//    /**
+//    * Applies the hash function on a Constraint object.
+//    * @param cons The constraint.
+//    * @return The hash value for the constraint.
+//    */
+//    size_t operator() ( const ConstraintOp & ) const;
+// 
+//    /**
+//    * Defines an order rule for two Constraint objects.
+//    * @param cons1 The first constraint to be compared.
+//    * @param cons2 The second constraint to be compared.
+//    * @return True if const1 comes before cons2, false otherwise.
+//    */
+//    bool operator() ( const ConstraintOp &, const ConstraintOp & ) const;
+// };
+// 
+// /**
+// * Type definition for the hash object.
+// */
+// typedef stdext::hash_map< ConstraintOp, int, ConstraintOpHasher > ConstraintOpHash;
 
 #endif

@@ -1,4 +1,4 @@
-#include "OFBase.h"
+#include "ofbase.h"
 
 OFBase::OFBase(void)
 {

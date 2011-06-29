@@ -1,7 +1,12 @@
 #ifndef _CONSTRAINT_H_
 #define _CONSTRAINT_H_
 
+#ifndef WIN32
+#include <map>
+#else
 #include <hash_map>
+#endif
+
 #include "ProblemData.h"
 
 /**
@@ -182,30 +187,35 @@ private:
 };
 
 /**
-* Defines the operations needed by the hash object.
+//* Type definition for the hash object.
 */
-class ConstraintHasher : public stdext::hash_compare<Constraint>
-{
-public:
-   /**
-   * Applies the hash function on a Constraint object.
-   * @param cons The constraint.
-   * @return The hash value for the constraint.
-   */
-   size_t operator() (const Constraint& cons) const;
-
-   /**
-   * Defines an order rule for two Constraint objects.
-   * @param cons1 The first constraint to be compared.
-   * @param cons2 The second constraint to be compared.
-   * @return True if const1 comes before cons2, false otherwise.
-   */
-   bool operator() (const Constraint& cons1, const Constraint& cons2) const;
-};
+typedef std::map< Constraint, int > ConstraintHash;
 
 /**
-* Type definition for the hash object.
+* Defines the operations needed by the hash object.
 */
-typedef stdext::hash_map<Constraint, int, ConstraintHasher> ConstraintHash;
+//class ConstraintHasher : public stdext::hash_compare<Constraint>
+//{
+//public:
+//   /**
+//   * Applies the hash function on a Constraint object.
+//   * @param cons The constraint.
+//   * @return The hash value for the constraint.
+//   */
+//   size_t operator() (const Constraint& cons) const;
+//
+//   /**
+//   * Defines an order rule for two Constraint objects.
+//   * @param cons1 The first constraint to be compared.
+//   * @param cons2 The second constraint to be compared.
+//   * @return True if const1 comes before cons2, false otherwise.
+//   */
+//   bool operator() (const Constraint& cons1, const Constraint& cons2) const;
+//};
+//
+///**
+//* Type definition for the hash object.
+//*/
+//typedef stdext::hash_map<Constraint, int, ConstraintHasher> ConstraintHash;
 
 #endif

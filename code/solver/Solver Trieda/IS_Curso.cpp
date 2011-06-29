@@ -7,27 +7,29 @@ IS_Curso::IS_Curso(Curso * crs, ProblemData * pD)
    problem_Data = pD;
 
    // Para cada currículo
-   ITERA_GGROUP(it_Curriculo,curso->curriculos,Curriculo)
+   ITERA_GGROUP_LESSPTR( it_Curriculo, curso->curriculos, Curriculo )
    {
-      GGroup<pair<int/*periodo*/,int/*disciplina_id*/> >::iterator 
+      GGroup< std::pair< int /*periodo*/, Disciplina * > >::iterator 
          it_Prd_Disc = it_Curriculo->disciplinas_periodo.begin();
 
       // Criando as grades horárias para cada currículo em relação aos respectivos períodos
-      for(; it_Prd_Disc != it_Curriculo->disciplinas_periodo.end(); ++it_Prd_Disc)
+      for (; it_Prd_Disc != it_Curriculo->disciplinas_periodo.end(); ++it_Prd_Disc )
       {
-         Disciplina * pt_Disc = problem_Data->refDisciplinas[(*it_Prd_Disc).second];
-         int periodo = (*it_Prd_Disc).first;
+         Disciplina * pt_Disc = (*it_Prd_Disc).second;
+         int periodo = ( *it_Prd_Disc ).first;
 
-         if(grade_Horaria_Periodo.find(make_pair(*it_Curriculo,periodo)) == grade_Horaria_Periodo.end())
+         if ( grade_Horaria_Periodo.find( make_pair( *it_Curriculo, periodo ) ) == grade_Horaria_Periodo.end() )
          {
             int creditos = 4; // FIX-ME
             int dias = 7; // FIX-ME
 
-            grade_Horaria_Periodo[make_pair(*it_Curriculo,periodo)] = 
-               new Matrix<vector<pair<Disciplina*,int/*turma*/> > > (creditos,dias);
+            grade_Horaria_Periodo[ std::make_pair( *it_Curriculo, periodo ) ] = 
+               new Matrix<vector< std::pair< Disciplina *, int /*turma*/ > > > ( creditos, dias );
 
-            for(int r = 0; r < creditos; r++ )
-            { grade_Horaria_Periodo[make_pair(*it_Curriculo,periodo)]->setRowName(r,r); }
+            for ( int r = 0; r < creditos; r++ )
+            {
+               grade_Horaria_Periodo[ std::make_pair( *it_Curriculo, periodo ) ]->setRowName( r, r );
+            }
 
             for(int c = 0; c < dias; c++)
             { grade_Horaria_Periodo[make_pair(*it_Curriculo,periodo)]->setColName(c,(c+2)); }
@@ -67,7 +69,7 @@ vector<vector<pair<int/*dia*/, int/*numCreditos*/> > >::iterator IS_Curso::verif
    vector<pair<int/*dia*/, int/*numCreditos*/> > creditos_Livres_Grade;
 
    // Para cada dia da grade considerada
-   for(int dia = 2; dia < ((it_Grade_Horaria_Periodo->second->getCols())+2); dia++)
+   for(int dia = 2; dia < (int)((it_Grade_Horaria_Periodo->second->getCols())+2); dia++)
    {
       // Adicionando e setando um dia
       creditos_Livres_Grade.push_back(make_pair(dia,0));
@@ -75,7 +77,7 @@ vector<vector<pair<int/*dia*/, int/*numCreditos*/> > >::iterator IS_Curso::verif
       /*
       Contabilizando o número de créditos livres para o dia em questão
       */
-      for(int cred = 0; cred < it_Grade_Horaria_Periodo->second->getRows() /* FIX-ME num creds*/; cred++)
+      for(int cred = 0; cred < (int)it_Grade_Horaria_Periodo->second->getRows() /* FIX-ME num creds*/; cred++)
       {
          bool teste_Horario_Livre = false;
          //bool teste_Mesma_Disc_Alocada = false;
@@ -154,7 +156,7 @@ vector<vector<pair<int/*dia*/, int/*numCreditos*/> > >::iterator IS_Curso::verif
          // Para cada dia considerado em uma variação da regra de crédito.
          //for(;it_Dias_Regra != it_Variacoes_Regra_Credito->end(); ++it_Dias_Regra)
          //for(int dia = 2; dia < 7; dia++)
-         for(int dia = 0; dia < creditos_Livres_Grade.size(); ++dia)
+         for(int dia = 0; dia <(int) creditos_Livres_Grade.size(); ++dia)
          {
             // Testando se estou comparando o dia certo.
             if(it_Dias_Regra->first == creditos_Livres_Grade.at(dia).first)
@@ -709,7 +711,7 @@ void IS_Curso::aloca(
 
 void IS_Curso::imprimeGradesHorarias()
 {
-   cout << "GRADE CURRICULAR DO CURSO " << curso->codigo << endl;
+   cout << "GRADE CURRICULAR DO CURSO " << curso->getCodigo() << endl;
 
    map<pair<Curriculo*,int/*periodo*/>,
       //vector<vector<vector<pair<Disciplina*,int/*turma*/> > > > > grade_Horaria_Periodos;
@@ -722,12 +724,12 @@ void IS_Curso::imprimeGradesHorarias()
    {
       cout << "\tPERIODO: " << it_Grade_Horaria_Periodo->first.second << endl;
 
-      for(int c = 0; c < it_Grade_Horaria_Periodo->second->getCols(); ++c)         
+      for(int c = 0; c < (int)it_Grade_Horaria_Periodo->second->getCols(); ++c)         
       {
          cout << "==========================" << endl;
          cout << "Dia: " << (c+2) << endl;
 
-         for(int r = 0; r < it_Grade_Horaria_Periodo->second->getRows(); ++r)
+         for(int r = 0; r < (int)it_Grade_Horaria_Periodo->second->getRows(); ++r)
          {
             cout << "Credito: " << (r) << endl;
 
@@ -735,11 +737,11 @@ void IS_Curso::imprimeGradesHorarias()
 
             for(int disc = 0; disc < tot_Discs_Aloc; ++disc)
             {
-               cout << "[ " << it_Grade_Horaria_Periodo->second->getCol(c).at(r).at(disc).first->codigo
-                  << "; " << it_Grade_Horaria_Periodo->second->getCol(c).at(r).at(disc).second << "]" << endl;
+               std::cout << "[ " << it_Grade_Horaria_Periodo->second->getCol(c).at(r).at(disc).first->getCodigo()
+                    << "; " << it_Grade_Horaria_Periodo->second->getCol(c).at(r).at(disc).second << "]" << std::endl;
             }
 
-            cout << "---------" << endl;
+            std::cout << "---------" << std::endl;
          }
       }
    }

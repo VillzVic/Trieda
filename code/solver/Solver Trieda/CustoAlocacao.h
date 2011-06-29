@@ -16,7 +16,7 @@ public:
 
    // Metodos GET
    Professor & getProfessor() const;
-   Aula & CustoAlocacao::getAula() const;
+   Aula & getAula() const;
    double getCustoFixProfTurma() const;
    double getCustoPrefProfTurma() const;
    double getCustoDispProf() const;

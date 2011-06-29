@@ -7,7 +7,11 @@
 
 #include "Avaliador.h"
 
+#ifdef WIN32
 #include "CPUTimerWin.h"
+#else
+#include "CPUTimerUnix.h"
+#endif
 
 class RVND: public Heuristic
 {

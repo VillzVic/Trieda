@@ -11,7 +11,7 @@
 #include "SolucaoOperacional.h"
 #include "CustoAlocacao.h"
 #include "MoveValidator.h"
-#include "Combinatoria.h"
+#include "combinatoria.h"
 
 class SolucaoInicialOperacional
 {

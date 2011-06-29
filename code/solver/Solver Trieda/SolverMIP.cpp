@@ -186,11 +186,22 @@ peso associado a função objetivo.
 
 %DocEnd
 /===================================================================*/
+
+#ifndef WIN32
+struct ordenaDiscSalas {
+   bool operator()(const std::pair< int /*Disc id*/, int /*Qtd salas associadas*/ > & left,
+                   const std::pair< int /*Disc id*/, int /*Qtd salas associadas*/ > & right) const
+   {
+      return ( left.second < right.second );
+   }
+};
+#else
 bool ordenaDiscSalas( std::pair< int /*Disc id*/, int /*Qtd salas associadas*/ > & left,
-                     std::pair< int /*Disc id*/, int /*Qtd salas associadas*/ > & right )
+                      std::pair< int /*Disc id*/, int /*Qtd salas associadas*/ > & right )
 {
    return ( left.second < right.second );
 }
+#endif
 
 bool ordenaVarsX( Variable * left, Variable * right )
 {
@@ -694,7 +705,12 @@ void SolverMIP::converteCjtSalaEmSala()
    }
 
    // Ordenando.
+#ifndef WIN32
+   ordenaDiscSalas comparador;
+   std::sort( disc_Salas_Cont.begin(), disc_Salas_Cont.end(), comparador );
+#else
    std::sort( disc_Salas_Cont.begin(), disc_Salas_Cont.end(), ordenaDiscSalas );
+#endif
 
    // Adicionando as demais disciplinas (as que não possuem nenhuma associação).
    std::vector< std::pair< int /*Disc id*/, int /*Qtd salas associadas*/ > > disc_Salas_TEMP;
@@ -7468,6 +7484,7 @@ int SolverMIP::cria_restricao_evita_turma_disc_camp_d(void)
 
             v.setTurma( i );
             v.setDisciplina( disciplina );
+
             v.setCampus( *it_campus );
 
             it_v = vHash.find( v );
@@ -13231,6 +13248,7 @@ int SolverMIP::criaRestricaoDisciplinaMesmoHorario()
 
    return restricoes;
 }
+
 
 int SolverMIP::criaRestricaoCustoCorpoDocente()
 {

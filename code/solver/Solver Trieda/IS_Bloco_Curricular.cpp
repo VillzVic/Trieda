@@ -11,9 +11,9 @@ IS_Bloco_Curricular::IS_Bloco_Curricular(BlocoCurricular * blc)
 
    for(;it_Disciplina_Demanda != bloco->disciplina_Demanda.end(); ++it_Disciplina_Demanda)
    {
-      disciplina_Dem_Nao_Atendida[it_Disciplina_Demanda->first] = it_Disciplina_Demanda->second->quantidade;
+      disciplina_Dem_Nao_Atendida[it_Disciplina_Demanda->first] = it_Disciplina_Demanda->second->getQuantidade();
 
-      demanda_Total += it_Disciplina_Demanda->second->quantidade;
+      demanda_Total += it_Disciplina_Demanda->second->getQuantidade();
    }
 
    //atendido = false;

@@ -1531,7 +1531,13 @@ void ProblemDataLoader::find_and_set( int id, GGroup< T * > & haystack,
    finder->setId( id );
 
    // Versão lenta... Entender o porquê depois
+
+#ifndef WIN32
+   typename GGroup< T * >::iterator it_g = haystack.begin();
+#else
    GGroup< T * >::iterator it_g = haystack.begin();
+#endif
+
    while ( it_g != haystack.end()
       && it_g->getId() != finder->getId() )
    {
@@ -1567,7 +1573,11 @@ void ProblemDataLoader::find_and_set_lessptr( int id, GGroup< T *, LessPtr< T > 
    finder->setId( id );
 
    // Versão lenta... Entender o porquê depois
+#ifndef WIN32
+   typename GGroup< T *, LessPtr< T > >::iterator it_g = haystack.begin();
+#else
    GGroup< T *, LessPtr< T > >::iterator it_g = haystack.begin();
+#endif
    while ( it_g != haystack.end()
       && it_g->getId() != finder->getId() )
    {

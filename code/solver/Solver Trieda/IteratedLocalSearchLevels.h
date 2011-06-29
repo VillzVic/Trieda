@@ -8,7 +8,11 @@
 
 #include "ILSLPerturbation.h"
 
+#ifdef WIN32
 #include "CPUTimerWin.h"
+#else
+#include "CPUTimerUnix.h"
+#endif
 
 using namespace std;
 

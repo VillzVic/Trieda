@@ -4,6 +4,7 @@
 #include <map>
 #include <vector>
 #include <fstream>
+#include <stdexcept>
 
 #include "ofbase.h"
 #include "GGroup.h"

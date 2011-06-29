@@ -11,7 +11,7 @@ Variable::Variable()
    reset();
 }
 
-Variable::Variable(const Variable& var)
+Variable::Variable( const Variable & var )
 {
    *this = var;
 }
@@ -40,7 +40,7 @@ Variable::~Variable()
    reset();
 }
 
-Variable& Variable::operator = ( const Variable & var )
+Variable & Variable::operator = ( const Variable & var )
 {
    this->value = var.getValue();
    this->type = var.getType();
@@ -78,28 +78,43 @@ bool Variable::operator <(const Variable& var) const
       return false;
 
    if(E_MENOR(this->getCampus(), var.getCampus())) return true;
+   if(E_MENOR(var.getCampus(), this->getCampus())) return false;
+
    if (E_MENOR(this->getUnidade(),var.getUnidade())) return true;
+   if (E_MENOR(var.getUnidade(), this->getUnidade())) return false;
+
    if (E_MENOR(this->getSala(),var.getSala())) return true;
+   if (E_MENOR(var.getSala(), this->getSala())) return false;
 
    if (E_MENOR(this->getSubCjtSala(),var.getSubCjtSala())) return true;
+   if (E_MENOR(var.getSubCjtSala(), this->getSubCjtSala())) return false;
 
    if (this->getTurma() < var.getTurma()) return true;
+   if (this->getTurma() > var.getTurma()) return false;
    
    if(E_MENOR(this->getCurso(),var.getCurso())) return true;
-   
-   if(E_MENOR(this->getCursoIncompat(),var.getCursoIncompat())) return true;
+   if(E_MENOR(var.getCurso(), this->getCurso())) return false;   
 
+   if(E_MENOR(this->getCursoIncompat(),var.getCursoIncompat())) return true;
+   if(E_MENOR(var.getCursoIncompat(), this->getCursoIncompat())) return false;
 
    if (E_MENOR(this->getBloco(),var.getBloco())) return true;
+   if (E_MENOR(var.getBloco(), this->getBloco())) return false;
+
    if (E_MENOR(this->getDisciplina(),var.getDisciplina())) return true;
+   if (E_MENOR(var.getDisciplina(), this->getDisciplina())) return false;
 
    if (this->getSubBloco() < var.getSubBloco()) return true;
+   if (this->getSubBloco() > var.getSubBloco()) return false;
 
    if (this->getDia() < var.getDia()) return true;
+   if (this->getDia() > var.getDia()) return false;
 
    if (E_MENOR(this->getOferta(),var.getOferta())) return true;
+   if (E_MENOR(var.getOferta(), this->getOferta())) return false;
 
    if (this->getK() < var.getK()) return true;
+   if (this->getK() > var.getK()) return false;
 
    /*
    if( (int)this->getType() < (int) var.getType() )
@@ -127,19 +142,20 @@ bool Variable::operator <(const Variable& var) const
    return false;
 }
 
-bool Variable::operator ==(const Variable& var) const
+bool Variable::operator == ( const Variable & var ) const
 {
-   return (!(*this < var) && !(var < *this));
+   return ( !( *this < var ) && !( var < *this ) );
 }
 
 std::string Variable::toString()
 {
-   std::stringstream str("");
+   std::stringstream str( "" );
    std::string output;
 
    bool cond_disc = false;
 
-   switch(type) {
+   switch( type )
+   {
      case V_ABERTURA:
         str << "z"; break;
      case V_ALUNOS:
@@ -191,20 +207,28 @@ std::string Variable::toString()
     default:
         str << "!";
    }
-   str << "_";
 
    bool hb = false;
 
+   str << "_";
    if (b != NULL) { str << "{" << b->getId(); hb = true; }
 
    //if (i != NULL) str << (hb?",":"{") << i->getId();
    if (i >= 0) str << (hb?",":"{") << i;
 
-   if(cond_disc){
-      if (d != NULL) str << "{" << d->getId();
+   if ( cond_disc )
+   {
+      if (d != NULL)
+      {
+         str << "{" << d->getId();
+      }
    }
-   else {
-      if (d != NULL) str << "," << d->getId();
+   else
+   {
+      if ( d != NULL )
+      {
+         str << "," << d->getId();
+      }
    }
 
    if (u != NULL) str << "," << u->getId();
@@ -230,6 +254,7 @@ std::string Variable::toString()
    return output;
 }
 
+/*
 bool VariableHasher::operator()(const Variable& v1, const Variable& v2) const
 {
    return (v1 < v2);
@@ -282,4 +307,5 @@ size_t VariableHasher::operator()(const Variable& v) const
 
    return sum;
 }
+*/
 

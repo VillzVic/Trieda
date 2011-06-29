@@ -1,7 +1,11 @@
 #ifndef VARIABLEOP_H
 #define VARIABLEOP_H
 
+#ifndef WIN32
+#include <map>
+#else
 #include <hash_map>
+#endif
 
 #include "Aula.h"
 #include "Professor.h"
@@ -125,19 +129,25 @@ private:
    int dia;
 };
 
-class VariableOpHasher : public stdext::hash_compare< VariableOp >
-{
-public:
-   // Less operator
-   bool operator() ( const VariableOp &, const VariableOp & ) const;
-
-   // Hash value
-   size_t operator() ( const VariableOp & ) const;
-};
-
 /**
-* Type definition for the hash object.
+//* Type definition for the hash object.
 */
-typedef stdext::hash_map< VariableOp, int, VariableOpHasher > VariableOpHash;
+typedef std::map< VariableOp, int > VariableOpHash;
 
-#endif 
+// class VariableOpHasher : public stdext::hash_compare< VariableOp >
+// {
+// public:
+//    // Less operator
+//    bool operator() ( const VariableOp &, const VariableOp & ) const;
+// 
+//    // Hash value
+//    size_t operator() ( const VariableOp & ) const;
+// };
+// 
+// /**
+// * Type definition for the hash object.
+// */
+// typedef stdext::hash_map< VariableOp, int, VariableOpHasher > VariableOpHash;
+
+#endif
+

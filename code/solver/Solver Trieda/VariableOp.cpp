@@ -262,6 +262,7 @@ std::string VariableOp::toString()
    return output;
 }
 
+/*
 bool VariableOpHasher::operator()( const VariableOp & v1, const VariableOp & v2 ) const
 {
    return ( v1 < v2 );
@@ -321,3 +322,5 @@ size_t VariableOpHasher::operator()( const VariableOp & v ) const
 
    return sum;
 }
+*/
+
