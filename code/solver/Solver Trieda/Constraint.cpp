@@ -8,15 +8,9 @@
 Constraint::Constraint()
 {
    reset();
-
-   /*
-   ToDo:
-   Attributes should be initiated
-   */
-
 }
 
-Constraint::Constraint(const Constraint &cons)
+Constraint::Constraint( const Constraint & cons )
 {
    *this = cons;
 }
@@ -26,34 +20,27 @@ Constraint::~Constraint()
    reset();
 }
 
-Constraint& Constraint::operator= (const Constraint& cons)
+Constraint& Constraint::operator = ( const Constraint & cons )
 {   
    this->type = cons.getType();
 
    this->cp = cons.getCampus();
    this->u = cons.getUnidade();
    this->s = cons.getSala();
-
    this->tps = cons.getSubCjtSala();
-
    this->i = cons.getTurma();
    this->c = cons.getCurso();
-
    this->c_incompat = cons.getCursoIncompat();
-
    this->b = cons.getBloco();
    this->d = cons.getDisciplina();
-
    this->j = cons.getSubBloco();
-
    this->t = cons.getDia();
-
    this->o = cons.getOferta();
 
    return *this;
 }
 
-bool Constraint::operator< (const Constraint& cons) const
+bool Constraint::operator < ( const Constraint & cons ) const
 {
    if( (int)this->getType() < (int) cons.getType() )
       return true;
@@ -61,24 +48,40 @@ bool Constraint::operator< (const Constraint& cons) const
       return false;
 
    if(E_MENOR(this->getCampus(), cons.getCampus())) return true;
+   if(E_MENOR(cons.getCampus(), this->getCampus())) return false;
+
    if (E_MENOR(this->getUnidade(),cons.getUnidade())) return true;
+   if (E_MENOR(cons.getUnidade(), this->getUnidade())) return false;
+
    if (E_MENOR(this->getSala(),cons.getSala())) return true;
+   if (E_MENOR(cons.getSala(), this->getSala())) return false;
 
    if (E_MENOR(this->getSubCjtSala(),cons.getSubCjtSala())) return true;
+   if (E_MENOR(cons.getSubCjtSala(), this->getSubCjtSala())) return false;
 
    if (this->getTurma() < cons.getTurma()) return true;
+   if (this->getTurma() > cons.getTurma()) return false;
+
    if(E_MENOR(this->getCurso(),cons.getCurso())) return true;
+   if(E_MENOR(cons.getCurso(), this->getCurso())) return false;
 
    if(E_MENOR(this->getCursoIncompat(),cons.getCursoIncompat())) return true;
+   if(E_MENOR(cons.getCursoIncompat(), this->getCursoIncompat())) return false;
 
    if (E_MENOR(this->getBloco(),cons.getBloco())) return true;
+   if (E_MENOR(cons.getBloco(), this->getBloco())) return false;
+
    if (E_MENOR(this->getDisciplina(),cons.getDisciplina())) return true;
+   if (E_MENOR(cons.getDisciplina(), this->getDisciplina())) return false;
 
    if (this->getSubBloco() < cons.getSubBloco()) return true;
+   if (this->getSubBloco() > cons.getSubBloco()) return false;
 
    if (this->getDia() < cons.getDia()) return true;
+   if (this->getDia() > cons.getDia()) return false;
 
    if (E_MENOR(this->getOferta(),cons.getOferta())) return true;
+   if (E_MENOR(cons.getOferta(), this->getOferta())) return false;
 
    return false;
 
@@ -94,21 +97,14 @@ void Constraint::reset()
    cp = NULL;
    u = NULL;
    s = NULL;
-
    tps = NULL;
-
    i = -1;
    c = NULL;
-
    c_incompat = NULL;
-
    b = NULL;
    d = NULL;
-
    j = -1;
-
    t = -1;
-
    o = NULL;
 }
 
@@ -117,7 +113,7 @@ std::string Constraint::toString()
    std::stringstream ss;
    ss << "CType[" << (int) type << "]";
 
-   switch(type)
+   switch( type )
    {
    case C_CARGA_HORARIA:
       ss << "__(CARGA_HORARIA):"; break;
@@ -208,7 +204,8 @@ std::string Constraint::toString()
    return consName;
 }
 
-size_t ConstraintHasher::operator() (const Constraint& cons) const
+/*
+size_t ConstraintHasher::operator() ( const Constraint & cons ) const
 {
    unsigned int sum = 0;
 
@@ -260,3 +257,4 @@ bool ConstraintHasher::operator() (const Constraint& cons1, const Constraint& co
 {
    return (cons1 < cons2);
 }
+*/

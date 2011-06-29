@@ -241,6 +241,7 @@ std::string ConstraintOp::toString()
    return consName;
 }
 
+/*
 size_t ConstraintOpHasher::operator() ( const ConstraintOp & cons ) const
 {
    unsigned int sum = 0;
@@ -318,3 +319,5 @@ bool ConstraintOpHasher::operator() ( const ConstraintOp & cons1, const Constrai
 {
    return ( cons1 < cons2 );
 }
+*/
+

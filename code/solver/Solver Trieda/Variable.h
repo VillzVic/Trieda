@@ -1,7 +1,12 @@
 #ifndef VARIABLE_H
 #define VARIABLE_H
 
+#ifndef WIN32
+#include <map>
+#else
 #include <hash_map>
+#endif
+
 #include "ProblemData.h"
 
 // Variables
@@ -41,7 +46,7 @@ public:
 
    //Constructors
    Variable();
-   Variable(const Variable& orig);
+   Variable( const Variable & );
 
    //Destructor
    virtual ~Variable();
@@ -151,19 +156,24 @@ private:
 };
 
 
-class VariableHasher : public stdext::hash_compare<Variable>
-{
-public:
-   // Less operator
-   bool operator()( const Variable &, const Variable & ) const;
-
-   // Hash value
-   size_t operator()( const Variable & ) const;
-};
-
 /**
-* Type definition for the hash object.
+//* Type definition for the hash object.
 */
-typedef stdext::hash_map< Variable, int, VariableHasher > VariableHash;
+typedef std::map< Variable, int > VariableHash;
+
+//class VariableHasher : public stdext::hash_compare<Variable>
+//{
+//public:
+//   // Less operator
+//   bool operator()( const Variable &, const Variable & ) const;
+//
+//   // Hash value
+//   size_t operator()( const Variable & ) const;
+//};
+//
+///**
+//* Type definition for the hash object.
+//*/
+//typedef stdext::hash_map< Variable, int, VariableHasher > VariableHash;
 
 #endif 
