@@ -20,9 +20,7 @@ public:
    virtual ~SolucaoInicialOperacional();
 
    SolucaoOperacional & geraSolucaoInicial();
-
    SolucaoOperacional & geraSolucaoInicial2();
-
    std::vector< int > retornaHorariosFixadosProfessor( Professor &, Disciplina &, Sala &, int );
 
 private:

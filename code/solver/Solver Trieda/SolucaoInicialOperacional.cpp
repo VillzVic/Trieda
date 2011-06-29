@@ -26,15 +26,14 @@ bool myVecIntSort( std::vector< int > & _Left, std::vector< int > & _Right )
 
    for ( unsigned predLeftAndRight = ( _Left.size() - 1 ); predLeftAndRight > 0; predLeftAndRight-- )
    {
-      unsigned sucLeft = predLeftAndRight-1;
-      unsigned sucRight = predLeftAndRight-1;
+      unsigned sucLeft = predLeftAndRight - 1;
+      unsigned sucRight = predLeftAndRight - 1;
 
       diffLeft += _Left.at( predLeftAndRight ) - _Left.at( sucLeft );
       diffRight += _Right.at( predLeftAndRight ) - _Right.at( sucRight );
    }
 
-
-   return (diffLeft < diffRight);       
+   return ( diffLeft < diffRight );
 }
 
 bool ordenaCustosAlocacao( CustoAlocacao * left, CustoAlocacao * right )
@@ -51,28 +50,27 @@ SolucaoInicialOperacional::SolucaoInicialOperacional( ProblemData & _problemData
    solIni = new SolucaoOperacional( &problemData );
 
    // ----------------------------------------------------------------------
-   /* Inicialmente, todas as aulas devem ser consideradas como não alocadas. */
-
+   // Inicialmente, todas as aulas devem ser consideradas como não alocadas.
    aulasNaoAlocadas = problemData.aulas;
 
    // ----------------------------------------------------------------------
-   ///* Armazena separadamente (seguindo os critérios estabelecidos abaixo) as fixações mais 
-   //restritivas(pré-processadas).*/
+   // Armazena separadamente ( seguindo os critérios estabelecidos
+   // abaixo ) as fixações mais  restritivas( pré-processadas ).
 
    //std::map<
-   //   std::vector<int/*ID's : prof, disc, sala, dia*/>,
-   //   GGroup<Fixacao*,LessPtr<Fixacao> > >
+   //   std::vector< int /*ID's : prof, disc, sala, dia*/ >,
+   //   GGroup< Fixacao *, LessPtr< Fixacao > > >
 
-   //   horariosFixados;
+   // horariosFixados;
 
-   ///* Armazena o total de créditos fixados (admitindo apenas as fixações que pertencem à estrutura
-   //fixacoes_Prof_Disc_Sala_Dia_Horario) para cada disciplina. */
-   //std::map<Disciplina*,int/*Total Creds. Fixados*/,LessPtr<Disciplina> > discTTCredsFix;
+   // Armazena o total de créditos fixados (admitindo apenas as fixações que
+   // pertencem à estrutura fixacoes_Prof_Disc_Sala_Dia_Horario) para cada disciplina.
+   // std::map< Disciplina *, int /*Total Creds. Fixados*/, LessPtr< Disciplina > > discTTCredsFix;
 
    //// Separando as fixacoes por professor, disc, sala e dia.
-   //ITERA_GGROUP_LESSPTR(itFixacao,problemData.fixacoes_Prof_Disc_Sala_Dia_Horario,Fixacao)
+   //ITERA_GGROUP_LESSPTR( itFixacao, problemData.fixacoes_Prof_Disc_Sala_Dia_Horario, Fixacao )
    //{
-   //   std::vector<int/*ID's : prof, disc, sala, dia*/> chave (4,-1);
+   //   std::vector< int /*ID's : prof, disc, sala, dia*/ > chave ( 4, -1 );
 
    //   chave.at(0) = itFixacao->getProfessorId();
    //   chave.at(1) = itFixacao->getDisciplinaId();
@@ -91,7 +89,7 @@ SolucaoInicialOperacional::SolucaoInicialOperacional( ProblemData & _problemData
    //}
 
    //// Se a estrutura <horariosFixados> possui algum elemento.
-   //if(horariosFixados.size() > 0)
+   //if ( horariosFixados.size() > 0 )
    //{
    //   /* Fazer o processamento para verificar se existe alguma aula que é fortemente fixada. Ou seja,
    //   se existe alguma aula que foi fixada para um total de horários IGUAL ao total de créditos que 
@@ -727,8 +725,8 @@ void SolucaoInicialOperacional::alocaAulasRec( bool primeiraTentativaAlocacao, b
                   }
                }
 
-               if(solIni->seqHorarioLivre(
-                  professor.getIdOperacional(), aula.getDiaSemana(), seqHorarioAula ))
+               if ( solIni->seqHorarioLivre(
+                    professor.getIdOperacional(), aula.getDiaSemana(), seqHorarioAula ) )
                {
                   // Alocando a aula na matriz solução.
                   solIni->alocaAulaProf( aula, professor, horariosNaoAlocados );
@@ -975,7 +973,6 @@ void SolucaoInicialOperacional::alocaAulas( bool primeiraTentativaAlocacao, bool
                // Checando se a sala e a aula possuem, em comum, os horários demandados. Checando também se
                // existe algum conflito em relação as outras aulas do bloco curricular da aula em questão.
 
-
                salaPossuiHorariosDisponiveis =
                   moveValidator->checkClassAndLessonDisponibility( aula, horariosAula, ( *solIni ) );
 
@@ -990,7 +987,6 @@ void SolucaoInicialOperacional::alocaAulas( bool primeiraTentativaAlocacao, bool
 
                   if ( !conflitoBloco )
                   {
-
                      // Iterador utilizado nos testes abaixo.
                      std::vector< HorarioAula * >::iterator itHorariosAula;
 
@@ -1516,7 +1512,8 @@ void SolucaoInicialOperacional::executaFuncaoPrioridade(Campus & campus, GGroup<
    }
 }
 
-void SolucaoInicialOperacional::calculaCustoFixProf( Professor & prof , Aula & aula, unsigned idCusto, int custo, int maxHorariosCP )
+void SolucaoInicialOperacional::calculaCustoFixProf(
+   Professor & prof , Aula & aula, unsigned idCusto, int custo, int maxHorariosCP )
 {
    std::pair< Professor *, Aula * > chave ( & prof, & aula );
    std::map< std::pair< Professor *, Aula * >, CustoAlocacao * >::iterator 

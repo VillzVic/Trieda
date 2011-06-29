@@ -231,6 +231,10 @@ std::string ConstraintOp::toString()
       ss << "C_DIAS_PROF_MINISTRA_AULA"; break;
    case C_CUSTO_CORPO_DOCENTE:
       ss << "C_CUSTO_CORPO_DOCENTE"; break;
+   case C_MAX_DISC_PROF_CURSO:
+      ss << "C_MAX_DISC_PROF_CURSO"; break;
+   case C_AVALIACAO_CORPO_DOCENTE:
+      ss << "C_AVALIACAO_CORPO_DOCENTE"; break;
    default:
       ss << "!";
    }
