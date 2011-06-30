@@ -185,6 +185,7 @@ public:
    int criaRestricaoFixProfSala();
    int criaRestricaoDisciplinaMesmoHorario();
    int criaRestricaoDisciplinaHorarioUnico();
+   int criaRestricaoDeslocamentoViavel(); // x3
    int criaRestricaoDeslocamentoProfessor(); // x5
    int criaRestricaoAvaliacaoCorpoDocente(); // x6
    int criaRestricaoCustoCorpoDocente(); // x7

@@ -239,6 +239,8 @@ std::string ConstraintOp::toString()
       ss << "C_PREF_DISCIPLINAS"; break;
    case C_DESLOC_PROF:
       ss << "C_DESLOC_PROF"; break;
+   case C_DESLOC_VIAVEL:
+      ss << "C_DESLOC_VIAVEL"; break;
    default:
       ss << "!";
    }
