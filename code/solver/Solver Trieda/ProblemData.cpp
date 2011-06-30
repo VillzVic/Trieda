@@ -380,3 +380,51 @@ bool ProblemData::aulaAtendeCurso( Aula * aula, Curso * curso )
 
    return false;
 }
+
+int ProblemData::calculaTempoEntreCampusUnidades( Campus * campus_atual, Campus * campus_anterior,
+                                                  Unidade * unidade_atual, Unidade * unidade_anterior )
+{
+   int distancia = 0;
+
+   // As aulas são realizadas em campus diferentes
+   if ( campus_atual->getId() != campus_anterior->getId() )
+   {
+      GGroup< Deslocamento * >::iterator it_tempo_campi
+         = this->tempo_campi.begin();
+
+      for (; it_tempo_campi != this->tempo_campi.end();
+			 it_tempo_campi++)
+      {
+         if ( it_tempo_campi->getOrigemId() == campus_anterior->getId()
+				&& it_tempo_campi->getDestinoId() == campus_atual->getId() )
+         {
+            distancia = it_tempo_campi->getTempo();
+         }
+      }
+   }
+   // As aulas são realizadas em unidades diferentes
+   else if ( unidade_atual->getId() != unidade_anterior->getId() )
+   {
+      GGroup< Deslocamento * >::iterator it_tempo_unidade
+         = this->tempo_unidades.begin();
+
+      for (; it_tempo_unidade != this->tempo_unidades.end();
+			 it_tempo_unidade++)
+      {
+         if ( it_tempo_unidade->getOrigemId() == unidade_anterior->getId()
+				&& it_tempo_unidade->getDestinoId() == unidade_atual->getId() )
+         {
+            distancia = it_tempo_unidade->getTempo();
+         }
+      }
+   }
+
+   return distancia;
+}
+
+int ProblemData::minutosIntervalo( DateTime dt1, DateTime dt2 )
+{
+   DateTime back = ( dt1 - dt2 );
+   int minutes = ( back.getHour() * 60 + back.getMinute() );
+   return minutes;
+}

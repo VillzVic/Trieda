@@ -12439,6 +12439,14 @@ int SolverMIP::criaRestricoesOperacional()
 #endif
 
    lp->updateLP();
+   restricoes += criaRestricaoDeslocamentoProfessor();
+
+#ifdef PRINT_cria_restricoes
+   std::cout << "numRest C_DESLOC_PROF: " << ( restricoes - numRestAnterior ) << std::endl;
+   numRestAnterior = restricoes;
+#endif
+
+   lp->updateLP();
    restricoes += criaRestricaoAvaliacaoCorpoDocente();
 
 #ifdef PRINT_cria_restricoes
@@ -14765,6 +14773,100 @@ int SolverMIP::criaRestricaoMaxDiscProfCurso()
             cHashOp[ c ] = lp->getNumRows();
             restricoes++;
          }
+      }
+   }
+
+   return restricoes;
+}
+
+int SolverMIP::criaRestricaoDeslocamentoProfessor()
+{
+   int restricoes = 0;
+
+   ConstraintOp c;
+   VariableOpHash::iterator vit1;
+   VariableOpHash::iterator vit2;
+
+   int nnz = 2;
+   double rhs = 0.0;
+   char name[ 200 ];
+
+   // Hash que armazena apenas as variáveis 'Xpah'
+   VariableOpHash hashX;
+   vit1 = vHashOp.begin();
+   for (; vit1 != vHashOp.end(); vit1++ )
+   {
+      if ( vit1->first.getType() == VariableOp::V_X_PROF_AULA_HOR )
+      {
+         hashX[ vit1->first ] = vit1->second;
+      }
+   }
+   ///////
+
+   GGroup< Professor *, LessPtr< Professor > > professores
+      = problemData->campi.begin()->professores;
+
+   ITERA_GGROUP_LESSPTR( it_prof, professores, Professor )
+   {
+      Professor * professor = ( *it_prof );
+
+      c.reset();
+      c.setType( ConstraintOp::C_DESLOC_PROF );
+      c.setProfessor( professor );
+
+      if ( cHashOp.find( c ) == cHashOp.end() )
+      {
+         sprintf( name, "%s", c.toString().c_str() );
+
+         vit1 = hashX.begin();
+         for (; vit1 != hashX.end(); vit1++ )
+         {
+            VariableOp v1 = vit1->first;
+            int idUnidade1 = v1.getSala()->getIdUnidade();
+
+            vit2 = hashX.begin();
+            for (; vit2 != hashX.end(); vit2++ )
+            {
+               VariableOp v2 = vit2->first;
+               int idUnidade2 = v2.getSala()->getIdUnidade();
+
+               if ( v1 == v2 || idUnidade1 == idUnidade2
+                  || v1.getHorario()->getDia() != v2.getHorario()->getDia()
+                  || v1.getProfessor() != professor
+                  || v2.getProfessor() != professor )
+               {
+                  continue;
+               }
+
+               Unidade * unidade1 = problemData->refUnidade[ idUnidade1 ];
+               Campus * campus1 = problemData->refCampus[ unidade1->getIdCampus() ];
+
+               Unidade * unidade2 = problemData->refUnidade[ idUnidade2 ];
+               Campus * campus2 = problemData->refCampus[ unidade2->getIdCampus() ];
+
+               int tempo_minimo = problemData->calculaTempoEntreCampusUnidades(
+                  campus1, campus2, unidade1, unidade2 );
+
+               int tempo_disponivel = problemData->minutosIntervalo(
+                  v1.getHorario()->getHorarioAula()->getInicio(),
+                  v2.getHorario()->getHorarioAula()->getInicio() );
+
+               if ( tempo_minimo > tempo_disponivel )
+               {
+                  // Cria a restrição 'Xpah1 + Xpah2 <= 1'
+                  // --> Aloca no máximo uma das aulas ao professor
+                  OPT_ROW row( nnz, OPT_ROW::LESS, rhs, name );
+
+                  row.insert( vit1->second, 1.0 );
+                  row.insert( vit2->second, 1.0 );
+
+                  lp->addRow( row );
+               }
+            }
+         }
+
+         cHashOp[ c ] = lp->getNumRows();
+         restricoes++;
       }
    }
 

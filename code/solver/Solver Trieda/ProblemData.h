@@ -66,6 +66,13 @@ public:
 
    bool aulaAtendeCurso( Aula *, Curso * );
 
+   // Calcula o tempo NECESSÁRIO para
+   // se deslocar entre uma aula e outra
+   int calculaTempoEntreCampusUnidades(
+      Campus *, Campus *, Unidade *, Unidade * );
+
+   int minutosIntervalo( DateTime dt1, DateTime dt2 );
+
    std::vector< HorarioAula * > horarios_aula_ordenados;
    GGroup< AtendimentoCampusSolucao * > * atendimentosTatico;
 

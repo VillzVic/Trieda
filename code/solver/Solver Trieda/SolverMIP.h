@@ -185,6 +185,7 @@ public:
    int criaRestricaoFixProfSala();
    int criaRestricaoDisciplinaMesmoHorario();
    int criaRestricaoDisciplinaHorarioUnico();
+   int criaRestricaoDeslocamentoProfessor(); // x5
    int criaRestricaoAvaliacaoCorpoDocente(); // x6
    int criaRestricaoCustoCorpoDocente(); // x7
    int criaRestricaoRelacionaVariavelXDiaProf(); // x9
@@ -283,8 +284,8 @@ private:
    {
       bool operator() ( std::vector< int > xI, std::vector< int > xJ )
       {
-		  return ( xI.front() > xJ.front() );
-	  }
+         return ( xI.front() > xJ.front() );
+      }
    } ordenaPorCreditos;
 };
 

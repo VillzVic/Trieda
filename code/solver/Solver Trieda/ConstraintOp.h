@@ -42,7 +42,8 @@ public:
       C_CUSTO_CORPO_DOCENTE = 22,
       C_MAX_DISC_PROF_CURSO = 23,
       C_AVALIACAO_CORPO_DOCENTE = 24,
-      C_PREF_DISCIPLINAS = 25
+      C_PREF_DISCIPLINAS = 25,
+      C_DESLOC_PROF = 26
    };
 
    /** Default constructor. */

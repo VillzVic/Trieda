@@ -547,8 +547,8 @@ void Avaliador::calculaDescolamentoBlocoCurricular( SolucaoOperacional & solucao
 			 if ( aula_anterior->getDiaSemana() == aula_atual->getDiaSemana() )
 			 {
 				// Tempo de deslocamento entre uma aula e outra
-				tempo_minimo = calculaTempoEntreCampusUnidades(
-					solucao, campus_atual, campus_anterior, unidade_atual, unidade_anterior );
+             tempo_minimo = solucao.getProblemData()->calculaTempoEntreCampusUnidades(
+					campus_atual, campus_anterior, unidade_atual, unidade_anterior );
 
 				tempo_minimo = abs( tempo_minimo );
 
@@ -680,60 +680,20 @@ std::vector< Aula * > Avaliador::retornaVectorAulasOrdenado(
 
    // Ordena o vetor com os critérios de 'dia_da_semana' e 'horario_aula'
    std::sort( pares_aulas_horarios.begin(),
-			  pares_aulas_horarios.end(), ordenaAulas );
+			     pares_aulas_horarios.end(), ordenaAulas );
 
    // Recupera as aulas do vertor ordenado
-   std::vector< Aula* > aulas_ordenado;
-   for (unsigned int i = 0; i < pares_aulas_horarios.size(); i++)
+   std::vector< Aula * > aulas_ordenado;
+   for ( int i = 0; i < (int)pares_aulas_horarios.size(); i++ )
    {
-      aulas_ordenado.push_back( pares_aulas_horarios.at(i).first );
+      aulas_ordenado.push_back( pares_aulas_horarios.at( i ).first );
    }
 
    return aulas_ordenado;
 }
 
-double Avaliador::calculaTempoEntreCampusUnidades( SolucaoOperacional & solucao,
-                                                   Campus * campus_atual, Campus * campus_anterior,
-                                                   Unidade * unidade_atual, Unidade * unidade_anterior )
-{
-   double distancia = 0.0;
-
-   // As aulas são realizadas em campus diferentes
-   if ( campus_atual->getId() != campus_anterior->getId() )
-   {
-      GGroup<Deslocamento*>::iterator it_tempo_campi
-         = solucao.getProblemData()->tempo_campi.begin();
-      for (; it_tempo_campi != solucao.getProblemData()->tempo_campi.end();
-			 it_tempo_campi++)
-      {
-         if ( it_tempo_campi->getOrigemId() == campus_anterior->getId()
-				&& it_tempo_campi->getDestinoId() == campus_atual->getId() )
-         {
-            distancia = it_tempo_campi->getTempo();
-         }
-      }
-   }
-   // As aulas são realizadas em unidades diferentes
-   else if ( unidade_atual->getId() != unidade_anterior->getId() )
-   {
-      GGroup< Deslocamento * >::iterator it_tempo_unidade
-         = solucao.getProblemData()->tempo_unidades.begin();
-      for (; it_tempo_unidade != solucao.getProblemData()->tempo_unidades.end();
-			 it_tempo_unidade++)
-      {
-         if ( it_tempo_unidade->getOrigemId() == unidade_anterior->getId()
-				&& it_tempo_unidade->getDestinoId() == unidade_atual->getId() )
-         {
-            distancia = it_tempo_unidade->getTempo();
-         }
-      }
-   }
-
-   return distancia;
-}
-
 // Método de avaliação relacionado à issue TRIEDA-806
-void Avaliador::calculaGapsHorariosProfessores(SolucaoOperacional & solucao)
+void Avaliador::calculaGapsHorariosProfessores( SolucaoOperacional & solucao )
 {
    //double numGaps = 0.0;
 
@@ -814,14 +774,15 @@ void Avaliador::calculaGapsHorariosProfessores(SolucaoOperacional & solucao)
 // Dados dois horários de um professor, em um mesmo dia da semana,
 // devo informar se existem horários disponíveis ENTRE esses dois
 // horários, NÃO CONSIDERANDO os extremos do intervalo de horários
-int Avaliador::horariosDisponiveisIntervalo(Professor * professor,
-                                            int dia_semana, Horario * h1, Horario * h2)
+int Avaliador::horariosDisponiveisIntervalo( Professor * professor,
+                                             int dia_semana, Horario * h1, Horario * h2 )
 {
    HorarioAula * horario_aula1 = h1->horario_aula;
    HorarioAula * horario_aula2 = h2->horario_aula;
 
    int horariosDisponiveis = 0;
    GGroup< Horario * >::iterator it_horario = professor->horarios.begin();
+
    for (; it_horario != professor->horarios.end(); it_horario++)
    {
       // Se o horário disponível estiver dentro do intervalo de gap,

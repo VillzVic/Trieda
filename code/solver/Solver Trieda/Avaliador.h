@@ -219,13 +219,6 @@ private:
 	int MINUTOS_POR_HORARIO;
 
 	// -----------------------------------------------------------
-	// Calcula o tempo NECESSÁRIO para
-	// se deslocar entre uma aula e outra
-	// -----------------------------------------------------------
-	double calculaTempoEntreCampusUnidades(
-		SolucaoOperacional& , Campus *, Campus *, Unidade *, Unidade *);
-
-	// -----------------------------------------------------------
 	// Informa quantos horários um determinado
 	// professor tem disponíveis em um intervalo de aulas
 	// -----------------------------------------------------------
