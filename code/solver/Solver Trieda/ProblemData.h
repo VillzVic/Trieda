@@ -61,8 +61,10 @@ public:
    std::vector< HorarioDia * > horariosDiaIdx;
    int maxHorariosDif;
 
-   int getHorarioDiaIdx ( HorarioDia * );
-   int getHorarioDiaIdx ( int, int );
+   int getHorarioDiaIdx( HorarioDia * );
+   int getHorarioDiaIdx( int, int );
+
+   bool aulaAtendeCurso( Aula *, Curso * );
 
    std::vector< HorarioAula * > horarios_aula_ordenados;
    GGroup< AtendimentoCampusSolucao * > * atendimentosTatico;

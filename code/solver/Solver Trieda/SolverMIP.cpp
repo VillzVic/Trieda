@@ -12082,8 +12082,6 @@ int SolverMIP::criaVariavelFolgaMinimoDoutoresCurso()
 int SolverMIP::criaVariavelMaxDiscProfCurso()
 {
    int num_vars = 0;
-
-   /*
    double coeff = 0.0;
 
    GGroup< Professor *, LessPtr< Professor > > professores
@@ -12124,7 +12122,6 @@ int SolverMIP::criaVariavelMaxDiscProfCurso()
          }
       }
    }
-   */
 
    return num_vars;
 }
@@ -12132,8 +12129,6 @@ int SolverMIP::criaVariavelMaxDiscProfCurso()
 int SolverMIP::criaVariavelFolgaMaxDiscProfCurso()
 {
    int num_vars = 0;
-
-   /*
    double coeff = 1000000.0;
 
    GGroup< Professor *, LessPtr< Professor > > professores
@@ -12153,7 +12148,7 @@ int SolverMIP::criaVariavelFolgaMaxDiscProfCurso()
 
             VariableOp v;
             v.reset();
-            v.setType( VariableOp::V_MAX_DISC_PROF_CURSO );
+            v.setType( VariableOp::V_F_MAX_DISC_PROF_CURSO );
 
             v.setProfessor( professor );
             v.setDisciplina( disciplina );
@@ -12174,7 +12169,6 @@ int SolverMIP::criaVariavelFolgaMaxDiscProfCurso()
          }
       }
    }
-   */
 
    return num_vars;
 }
@@ -14245,15 +14239,6 @@ int SolverMIP::criaRestricaoCargaHorariaMinimaProfessor()
    return restricoes;
 }
 
-int SolverMIP::criaRestricaoMaxDiscProfCurso()
-{
-   int restricoes = 0;
-
-   // TODO
-
-   return restricoes;
-}
-
 int SolverMIP::criaRestricaoCargaHorariaMinimaProfessorSemana()
 {
    int restricoes = 0;
@@ -14571,7 +14556,7 @@ int SolverMIP::criaRestricaoPrefDisciplinas()
    int nnz = 2;
    double rhs = 0.0;
    char name[ 200 ];
-   double M = 1000000;
+   double M = 1000000.0;
 
    GGroup< Professor *, LessPtr< Professor > > professores
       = problemData->campi.begin()->professores;
@@ -14637,6 +14622,144 @@ int SolverMIP::criaRestricaoPrefDisciplinas()
                   lp->addRow( row );
                }
             }
+            ///////
+
+            cHashOp[ c ] = lp->getNumRows();
+            restricoes++;
+         }
+      }
+   }
+
+   return restricoes;
+}
+
+int SolverMIP::criaRestricaoMaxDiscProfCurso()
+{
+   int restricoes = 0;
+
+   ConstraintOp c;
+   VariableOp v_find;
+   VariableOpHash::iterator vit;
+   ConstraintOpHash::iterator cit;
+
+   int nnz = 0;
+   double rhs = 0.0;
+   char name[ 200 ];
+   double M = 1000000.0;
+
+   ///////
+   GGroup< Professor *, LessPtr< Professor > > professores
+      = problemData->campi.begin()->professores;
+
+   GGroup< Disciplina *, LessPtr< Disciplina > > disciplinas
+      = problemData->disciplinas;
+
+   GGroup< Curso *, LessPtr< Curso > > cursos
+      = problemData->cursos;
+
+   GGroup< Aula *, LessPtr< Aula > > aulas
+      = problemData->aulas;
+   ///////
+
+   ITERA_GGROUP_LESSPTR( it_prof, professores, Professor )
+   {
+      Professor * professor = ( *it_prof );
+      
+      ITERA_GGROUP_LESSPTR( it_curso, cursos, Curso )
+      {
+         Curso * curso = ( *it_curso );
+
+         c.reset();
+         c.setType( ConstraintOp::C_MAX_DISC_PROF_CURSO );
+
+         c.setProfessor( professor );
+         c.setCurso( curso );
+
+         if ( cHashOp.find( c ) == cHashOp.end() )
+         {
+            sprintf( name, "%s", c.toString().c_str() );
+
+            ITERA_GGROUP_LESSPTR( it_disc, disciplinas, Disciplina )
+            {
+               Disciplina * disciplina = ( *it_disc );
+
+               // Procura pela variável 'Lpcd'
+               v_find.reset();
+               v_find.setType( VariableOp::V_MAX_DISC_PROF_CURSO );
+
+               v_find.setProfessor( professor );
+               v_find.setCurso( curso );
+               v_find.setDisciplina( disciplina );
+
+               vit = vHashOp.find( v_find );
+
+               if ( vit == vHashOp.end() )
+               {
+                  continue;
+               }
+
+               // Hash da variável 'Lpcd'
+               int idHashVLpcd = vit->second;
+               ///////
+
+               // Sum[ Xpah ] - ( M * Lpcd ) <= 0
+               rhs = 0.0;
+               nnz = ( disciplina->getCredTeoricos() + disciplina->getCredPraticos() + 1 );
+
+               OPT_ROW row1( nnz, OPT_ROW::LESS, rhs, name );
+
+               // Máximo de horários que a disciplina pode ocupar
+               M = ( disciplina->getCredTeoricos() + disciplina->getCredPraticos() );
+
+               // ( - M * Lpcd )
+               row1.insert( idHashVLpcd, -M );
+
+               vit = vHashOp.begin();
+               for (; vit != vHashOp.end(); vit++ )
+               {
+                  if ( vit->first.getType() == VariableOp::V_X_PROF_AULA_HOR
+                     && vit->first.getProfessor() == professor
+                     && vit->first.getDisciplina() == disciplina )
+                  {
+                     if ( problemData->aulaAtendeCurso( vit->first.getAula(), curso ) )
+                     {
+                        // Sum[ Xpah ]
+                        row1.insert( vit->second, 1.0 );
+                     }
+                  }
+               }
+
+               lp->addRow( row1 );
+               ///////
+            }
+
+            // SUM[ Lpcd ] - SUM[ LpcdSlack ] <= MaxDiscCurso
+            rhs = curso->getQtdMaxProfDisc();
+            nnz = ( 2 * disciplinas.size() );
+
+            OPT_ROW row2( nnz, OPT_ROW::LESS, rhs, name );
+
+            vit = vHashOp.begin();
+            for (; vit != vHashOp.end(); vit++ )
+            {
+               if ( vit->first.getType() == VariableOp::V_MAX_DISC_PROF_CURSO
+                  && vit->first.getProfessor() == professor
+                  && vit->first.getCurso() == curso )
+               {
+                  // Sum[ Lpcd ]
+                  row2.insert( vit->second, 1.0 );
+               }
+
+               if ( vit->first.getType() == VariableOp::V_F_MAX_DISC_PROF_CURSO
+                  && vit->first.getProfessor() == professor
+                  && vit->first.getCurso() == curso )
+               {
+                  // - SUM[ LpcdSlack ]
+                  row2.insert( vit->second, -1.0 );
+               }
+            }
+
+            lp->addRow( row2 );
             ///////
 
             cHashOp[ c ] = lp->getNumRows();

@@ -364,3 +364,19 @@ int ProblemData::creditosFixadosDisciplinaDia(
 
 	return creditos_fixados;
 }
+
+bool ProblemData::aulaAtendeCurso( Aula * aula, Curso * curso )
+{
+   ITERA_GGROUP_LESSPTR( it_aula, this->aulas, Aula )
+   {
+      ITERA_GGROUP_LESSPTR( it_oferta, it_aula->ofertas, Oferta )
+      {
+         if ( it_oferta->curso == curso )
+         {
+            return true;
+         }
+      }
+   }
+
+   return false;
+}
