@@ -1,8 +1,6 @@
 package com.gapso.web.solverws;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -17,7 +15,7 @@ import com.gapso.web.solverws.util.SolverStandAloneImpl;
 
 public class ISolverTest {
 
-	// @Test
+	 @Test
 	public final void testRequestOptimization() throws Exception {
 		final URL resource = getClass().getResource("/prob2solver.exe");
 		final File file = new File(resource.getFile());
@@ -37,12 +35,11 @@ public class ISolverTest {
 		System.out.println(new String(cont));
 	}
 
-	// @Test
+	 @Test
 	public final void testCancelOptimization() throws Exception {
 		final URL resource = getClass().getResource("/prob2solver.exe");
 		final File file = new File(resource.getFile());
 		assertNotNull(resource);
-		InputStream[] data = getData();
 		ISolver solver = new SolverStandAloneImpl("prob2", file.getParent());
 		final long id = solver.requestOptimization(new String[] { "input" }, getData());
 		final long id1 = solver.requestOptimization(new String[] { "input" }, getData());
@@ -64,9 +61,9 @@ public class ISolverTest {
 	public void testQueueSize() throws Exception {
 		ISolver solver = getSolver(3);
 		final long id1 = solver.requestOptimization(new String[] { "input" }, getData());
-		final long id2 = solver.requestOptimization(new String[] { "input" }, getData());
-		final long id3 = solver.requestOptimization(new String[] { "input" }, getData());
-		final long id4 = solver.requestOptimization(new String[] { "input" }, getData());
+		solver.requestOptimization(new String[] { "input" }, getData());
+		solver.requestOptimization(new String[] { "input" }, getData());
+		solver.requestOptimization(new String[] { "input" }, getData());
 		final long id5 = solver.requestOptimization(new String[] { "input" }, getData());
 		Thread.sleep(1000);
 		System.out.println(Arrays.deepToString(solver.getQueue()).replace(", ", "\n"));
@@ -94,12 +91,11 @@ public class ISolverTest {
 		return solver;
 	}
 
-//	@Test
+	@Test
 	public void testGetFinalResult() throws Exception {
 		final URL resource = getClass().getResource("/prob2solver.exe");
 		final File file = new File(resource.getFile());
 		assertNotNull(resource);
-		InputStream[] data = getData();
 		ISolver solver = new SolverStandAloneImpl(3, "prob2", file.getParent());
 		final long id = solver.requestOptimization(new String[] { "input" }, getData());
 		File f = new File(file.getParent() + "\\output" + id + "F");
@@ -113,12 +109,11 @@ public class ISolverTest {
 	 @Test
 	public void testCancelAll() throws Exception {
 		ISolver solver = getSolver(1);
-		InputStream[] data = getData();
-		final long id1 = solver.requestOptimization(new String[] { "input" }, getData());
-		final long id2 = solver.requestOptimization(new String[] { "input" }, getData());
-		final long id3 = solver.requestOptimization(new String[] { "input" }, getData());
-		final long id4 = solver.requestOptimization(new String[] { "input" }, getData());
-		final long id5 = solver.requestOptimization(new String[] { "input" }, getData());
+		solver.requestOptimization(new String[] { "input" }, getData());
+		solver.requestOptimization(new String[] { "input" }, getData());
+		solver.requestOptimization(new String[] { "input" }, getData());
+		solver.requestOptimization(new String[] { "input" }, getData());
+		solver.requestOptimization(new String[] { "input" }, getData());
 		Thread.sleep(500);
 		System.out.println(Arrays.deepToString(solver.getQueue()).replace(", ", "\n"));
 		solver.cancelAll();
@@ -127,10 +122,10 @@ public class ISolverTest {
 
 	}
 
-	// @Test
+	 @Test
 	public void testSolverVersion() throws Exception {
 		final ISolver solver = getSolver(1);
-		System.out.println(solver.getSolverVersion());
+		assertEquals("1.0.0\r\n", solver.getSolverVersion());
 	}
 
 }
