@@ -5,7 +5,11 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public final class SolverStandAloneImpl implements ISolver {
+	private static final Logger logger = LoggerFactory.getLogger(SolverStandAloneImpl.class);
 
 	private final SolverQueue solverQueue;
 
@@ -14,12 +18,15 @@ public final class SolverStandAloneImpl implements ISolver {
 	private FileManager fileManager;
 	
 	public SolverStandAloneImpl(String problemName, String basedir) {
-		super();
-		this.problemName = problemName;
-		this.fileManager = new FileManager(basedir);
-		this.solverQueue = new SolverQueue(1, basedir);
+		this(1, problemName, basedir);
 	}	
 	
+	public SolverStandAloneImpl(int queueSize, String problemName, String basedir) {
+		this.problemName = problemName+"solver";
+		this.fileManager = new FileManager(basedir);
+		this.solverQueue = new SolverQueue(queueSize, basedir);
+	}
+
 	@Override
 	public String help() {
 		return "Stand Alone Solver Queue";
@@ -53,7 +60,7 @@ public final class SolverStandAloneImpl implements ISolver {
 	}
 
 	@Override
-	public InputStream getFinalResult(String filename, long round) {
+	public InputStream getFinalResult(long round) {
 		ByteArrayInputStream result = null;
 		try {
 			byte[] fileBytes = fileManager.getContentOutputFile(round);
@@ -71,7 +78,7 @@ public final class SolverStandAloneImpl implements ISolver {
 			byte[] fileBytes = fileManager.getFile(filename, round);
 			result = new ByteArrayInputStream(fileBytes);
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.debug("Error fetching file", e);
 		}
 		return result;
 	}
@@ -95,5 +102,10 @@ public final class SolverStandAloneImpl implements ISolver {
 	@Override
 	public String[] getQueue() {
 		return solverQueue.getQueue();
+	}
+
+	@Override
+	public String getSolverVersion() {
+		return solverQueue.getSolverVersion(problemName);
 	}
 }

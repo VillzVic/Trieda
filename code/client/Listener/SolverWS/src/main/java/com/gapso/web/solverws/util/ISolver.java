@@ -8,13 +8,15 @@ public interface ISolver {
 
 	String version();
 
+	String getSolverVersion();
+
 	boolean isFinished(long round);
 
 	boolean hasResult(long round);
 
 	long requestOptimization(String[] names, InputStream[] data);
 
-	InputStream getFinalResult(String prefix, long round);
+	InputStream getFinalResult(long round);
 
 	InputStream getFile(String prefix, long round);
 	
