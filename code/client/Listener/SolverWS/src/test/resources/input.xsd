@@ -1,0 +1,2188 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<xs:schema version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+  <xs:element name="alocacaoLoteTremSGDS" type="alocacaoLoteTremSGDS"/>
+
+  <xs:element name="alocacaoLoteTremSGDSKey" type="alocacaoLoteTremSGDSKey"/>
+
+  <xs:element name="analiseLoteSGDS" type="analiseLoteSGDS"/>
+
+  <xs:element name="analiseLoteSGDSKey" type="analiseLoteSGDSKey"/>
+
+  <xs:element name="analisePilhaSGDS" type="analisePilhaSGDS"/>
+
+  <xs:element name="analisePilhaSGDSKey" type="analisePilhaSGDSKey"/>
+
+  <xs:element name="apoio" type="apoio"/>
+
+  <xs:element name="arranjoProducao" type="arranjoProducao"/>
+
+  <xs:element name="associacaoProdutoElo" type="associacaoProdutoElo"/>
+
+  <xs:element name="associacaoProdutoGrupo" type="associacaoProdutoGrupo"/>
+
+  <xs:element name="associacaoProdutoGrupoKey" type="associacaoProdutoGrupoKey"/>
+
+  <xs:element name="blendagemProduto" type="blendagemProduto"/>
+
+  <xs:element name="cadeia" type="cadeia"/>
+
+  <xs:element name="capacidadeEstocagemEloProduto" type="capacidadeEstocagemEloProduto"/>
+
+  <xs:element name="capacidadeProducaoDisponibilizacaoElo" type="capacidadeProducaoDisponibilizacaoElo"/>
+
+  <xs:element name="capacidadeProducaoDisponibilizacaoProdutoElo" type="capacidadeProducaoDisponibilizacaoProdutoElo"/>
+
+  <xs:element name="categoriaProdutoAPS" type="categoriaProdutoAPS"/>
+
+  <xs:element name="cenario" type="cenario"/>
+
+  <xs:element name="clienteAPS" type="clienteAPS"/>
+
+  <xs:element name="clienteMapaAnalise" type="clienteMapaAnalise"/>
+
+  <xs:element name="clienteMapaAnaliseKey" type="clienteMapaAnaliseKey"/>
+
+  <xs:element name="clienteRegraBlendagem" type="clienteRegraBlendagem"/>
+
+  <xs:element name="clienteRegraBlendagemKey" type="clienteRegraBlendagemKey"/>
+
+  <xs:element name="complexoProdutivoAPS" type="complexoProdutivoAPS"/>
+
+  <xs:element name="composicaoPilhaSGDS" type="composicaoPilhaSGDS"/>
+
+  <xs:element name="composicaoPilhaSGDSKey" type="composicaoPilhaSGDSKey"/>
+
+  <xs:element name="configuracaoPeneiramento" type="configuracaoPeneiramento"/>
+
+  <xs:element name="demanda" type="demanda"/>
+
+  <xs:element name="direcionamentoAlocacaoSGDS" type="direcionamentoAlocacaoSGDS"/>
+
+  <xs:element name="direcionamentoAlocacaoSGDSKey" type="direcionamentoAlocacaoSGDSKey"/>
+
+  <xs:element name="direcionamentoLoteSGDS" type="direcionamentoLoteSGDS"/>
+
+  <xs:element name="direcionamentoLoteSGDSKey" type="direcionamentoLoteSGDSKey"/>
+
+  <xs:element name="disponibilidadeTransporte" type="disponibilidadeTransporte"/>
+
+  <xs:element name="disponibilidadeTransporteKey" type="disponibilidadeTransporteKey"/>
+
+  <xs:element name="eloCadeiaProducaoAPS" type="eloCadeiaProducaoAPS"/>
+
+  <xs:element name="especificacaoPlanejamento" type="especificacaoPlanejamento"/>
+
+  <xs:element name="especificacaoResultadoPeneiramento" type="especificacaoResultadoPeneiramento"/>
+
+  <xs:element name="especificacaoResultadoPeneiramentoKey" type="especificacaoResultadoPeneiramentoKey"/>
+
+  <xs:element name="estoqueEstrategico" type="estoqueEstrategico"/>
+
+  <xs:element name="estoqueEstrategicoKey" type="estoqueEstrategicoKey"/>
+
+  <xs:element name="estoqueInicial" type="estoqueInicial"/>
+
+  <xs:element name="fatorManuseio" type="fatorManuseio"/>
+
+  <xs:element name="fatorManuseioKey" type="fatorManuseioKey"/>
+
+  <xs:element name="fluxo" type="fluxo"/>
+
+  <xs:element name="fornecedorAPS" type="fornecedorAPS"/>
+
+  <xs:element name="grandezaEnsaioMapaAnaliseAPS" type="grandezaEnsaioMapaAnaliseAPS"/>
+
+  <xs:element name="grandezaEnsaioMapaAnaliseAPSKey" type="grandezaEnsaioMapaAnaliseAPSKey"/>
+
+  <xs:element name="grupoProdutoAPS" type="grupoProdutoAPS"/>
+
+  <xs:element name="grupoProdutosExclusivos" type="grupoProdutosExclusivos"/>
+
+  <xs:element name="historicoAssociacaoElo" type="historicoAssociacaoElo"/>
+
+  <xs:element name="historicoAssociacaoEloKey" type="historicoAssociacaoEloKey"/>
+
+  <xs:element name="instalacaoUsinaBeneficiamentoAPS" type="instalacaoUsinaBeneficiamentoAPS"/>
+
+  <xs:element name="limiteProducaoDisponibilizacaoElo" type="limiteProducaoDisponibilizacaoElo"/>
+
+  <xs:element name="limiteProducaoDisponibilizacaoEloKey" type="limiteProducaoDisponibilizacaoEloKey"/>
+
+  <xs:element name="limiteProducaoDisponibilizacaoProdutoElo" type="limiteProducaoDisponibilizacaoProdutoElo"/>
+
+  <xs:element name="loteSGDS" type="loteSGDS"/>
+
+  <xs:element name="loteSGDSKey" type="loteSGDSKey"/>
+
+  <xs:element name="manutencaoElo" type="manutencaoElo"/>
+
+  <xs:element name="mapaAnaliseAPS" type="mapaAnaliseAPS"/>
+
+  <xs:element name="minaAPS" type="minaAPS"/>
+
+  <xs:element name="movimentoEstoquePilhaSGDS" type="movimentoEstoquePilhaSGDS"/>
+
+  <xs:element name="movimentoEstoquePilhaSGDSKey" type="movimentoEstoquePilhaSGDSKey"/>
+
+  <xs:element name="movimentoPilhaPilhaSGDS" type="movimentoPilhaPilhaSGDS"/>
+
+  <xs:element name="movimentoPilhaPilhaSGDSKey" type="movimentoPilhaPilhaSGDSKey"/>
+
+  <xs:element name="movimentoPrevistoSGDS" type="movimentoPrevistoSGDS"/>
+
+  <xs:element name="movimentoPrevistoSGDSKey" type="movimentoPrevistoSGDSKey"/>
+
+  <xs:element name="patioAPS" type="patioAPS"/>
+
+  <xs:element name="peneiramentoAPS" type="peneiramentoAPS"/>
+
+  <xs:element name="pesoMedioTransporteProduto" type="pesoMedioTransporteProduto"/>
+
+  <xs:element name="pilha" type="pilha"/>
+
+  <xs:element name="pilhaPadrao" type="pilhaPadrao"/>
+
+  <xs:element name="pilhaPadraoKey" type="pilhaPadraoKey"/>
+
+  <xs:element name="pontoCargaDescargaAPS" type="pontoCargaDescargaAPS"/>
+
+  <xs:element name="portoAPS" type="portoAPS"/>
+
+  <xs:element name="previsaoAgregada" type="previsaoAgregada"/>
+
+  <xs:element name="produto" type="produto"/>
+
+  <xs:element name="produtoAPS" type="produtoAPS"/>
+
+  <xs:element name="produtoArranjo" type="produtoArranjo"/>
+
+  <xs:element name="produtoArranjoKey" type="produtoArranjoKey"/>
+
+  <xs:element name="produtoExclusivoArranjo" type="produtoExclusivoArranjo"/>
+
+  <xs:element name="produtoExclusivoArranjoKey" type="produtoExclusivoArranjoKey"/>
+
+  <xs:element name="programacaoDemandaFeed" type="programacaoDemandaFeed"/>
+
+  <xs:element name="programacaoVenda" type="programacaoVenda"/>
+
+  <xs:element name="propriedade" type="propriedade"/>
+
+  <xs:element name="qualidadeProdutoElo" type="qualidadeProdutoElo"/>
+
+  <xs:element name="qualidadeProdutoEloKey" type="qualidadeProdutoEloKey"/>
+
+  <xs:element name="qualidadeTransferencia" type="qualidadeTransferencia"/>
+
+  <xs:element name="qualidadeTransferenciaKey" type="qualidadeTransferenciaKey"/>
+
+  <xs:element name="receitaCusto" type="receitaCusto"/>
+
+  <xs:element name="regraBlendagemProduto" type="regraBlendagemProduto"/>
+
+  <xs:element name="resultadoPeneiramento" type="resultadoPeneiramento"/>
+
+  <xs:element name="sistemaProducaoAPS" type="sistemaProducaoAPS"/>
+
+  <xs:element name="siteProdutivoAPS" type="siteProdutivoAPS"/>
+
+  <xs:element name="sobraPilhaSGDS" type="sobraPilhaSGDS"/>
+
+  <xs:element name="solicitacaoCarga" type="solicitacaoCarga"/>
+
+  <xs:element name="solicitacaoProdutoSGDS" type="solicitacaoProdutoSGDS"/>
+
+  <xs:element name="solicitacaoProdutoSGDSKey" type="solicitacaoProdutoSGDSKey"/>
+
+  <xs:element name="splitInstalacaoAPS" type="splitInstalacaoAPS"/>
+
+  <xs:element name="splitInstalacaoAPSKey" type="splitInstalacaoAPSKey"/>
+
+  <xs:element name="subCategoriaProdutoAPS" type="subCategoriaProdutoAPS"/>
+
+  <xs:element name="subCategoriaProdutoAPSKey" type="subCategoriaProdutoAPSKey"/>
+
+  <xs:element name="subRedeTransporte" type="subRedeTransporte"/>
+
+  <xs:element name="submodalTransporte" type="submodalTransporte"/>
+
+  <xs:element name="taxaDescargaExpedicaoElo" type="taxaDescargaExpedicaoElo"/>
+
+  <xs:element name="tipoModalTransporte" type="tipoModalTransporte"/>
+
+  <xs:element name="trechoSubRedeTransporte" type="trechoSubRedeTransporte"/>
+
+  <xs:element name="trechoSubRedeTransporteKey" type="trechoSubRedeTransporteKey"/>
+
+  <xs:element name="trechoTransporte" type="trechoTransporte"/>
+
+  <xs:element name="trechoTransporteKey" type="trechoTransporteKey"/>
+
+  <xs:element name="usinaBeneficiamentoAPS" type="usinaBeneficiamentoAPS"/>
+
+  <xs:element name="usinaPelotizacaoAPS" type="usinaPelotizacaoAPS"/>
+
+  <xs:element name="utilizacaoObrigatoriaProduto" type="utilizacaoObrigatoriaProduto"/>
+
+  <xs:element name="utilizacaoObrigatoriaProdutoKey" type="utilizacaoObrigatoriaProdutoKey"/>
+
+  <xs:element name="utilizacaoProgramadaInstalacao" type="utilizacaoProgramadaInstalacao"/>
+
+  <xs:element name="utilizacaoProgramadaInstalacaoKey" type="utilizacaoProgramadaInstalacaoKey"/>
+
+  <xs:element name="valorParametroOtimizacao" type="valorParametroOtimizacao"/>
+
+  <xs:element name="valorParametroOtimizacaoKey" type="valorParametroOtimizacaoKey"/>
+
+  <xs:element name="variacaoCapacidadeVazaoTrecho" type="variacaoCapacidadeVazaoTrecho"/>
+
+  <xs:element name="vazaoObrigatoria" type="vazaoObrigatoria"/>
+
+  <xs:complexType name="cenario">
+    <xs:sequence>
+      <xs:element ref="apoio" minOccurs="0"/>
+      <xs:element ref="cadeia" minOccurs="0"/>
+      <xs:element ref="demanda" minOccurs="0"/>
+      <xs:element ref="fluxo" minOccurs="0"/>
+      <xs:element name="id" type="xs:string" minOccurs="0"/>
+      <xs:element ref="produto" minOccurs="0"/>
+      <xs:element ref="propriedade" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="apoio">
+    <xs:sequence>
+      <xs:element name="alocacoesLoteTremSGDS" minOccurs="0">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element ref="alocacaoLoteTremSGDS" minOccurs="0" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="analisesLoteSGDS" minOccurs="0">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element ref="analiseLoteSGDS" minOccurs="0" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="analisesPilhasSGDS" minOccurs="0">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element ref="analisePilhaSGDS" minOccurs="0" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="composicoesPilha" minOccurs="0">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element ref="composicaoPilhaSGDS" minOccurs="0" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="direcionamentosAlocacaoSGDS" minOccurs="0">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element ref="direcionamentoAlocacaoSGDS" minOccurs="0" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="direcionamentosLoteSGDS" minOccurs="0">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element ref="direcionamentoLoteSGDS" minOccurs="0" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="lotesSGDS" minOccurs="0">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element ref="loteSGDS" minOccurs="0" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="movimentosEstoquePilhaSGDS" minOccurs="0">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element ref="movimentoEstoquePilhaSGDS" minOccurs="0" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="movimentosPilhaPilhaSGDS" minOccurs="0">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element ref="movimentoPilhaPilhaSGDS" minOccurs="0" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="movimentosPrevistoSGDS" minOccurs="0">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element ref="movimentoPrevistoSGDS" minOccurs="0" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="pilhas" minOccurs="0">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element ref="pilha" minOccurs="0" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="sobrasPilhasSGDS" minOccurs="0">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element ref="sobraPilhaSGDS" minOccurs="0" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="solicitacoesCarga" minOccurs="0">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element ref="solicitacaoCarga" minOccurs="0" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="solicitacoesProdutoSGDS" minOccurs="0">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element ref="solicitacaoProdutoSGDS" minOccurs="0" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="alocacaoLoteTremSGDS">
+    <xs:sequence>
+      <xs:element name="anoCargaLote" type="xs:string" minOccurs="0"/>
+      <xs:element name="codigoFerroviaVagaoInicialLote" type="xs:string" minOccurs="0"/>
+      <xs:element name="codigoPontoDescarga" type="xs:string" minOccurs="0"/>
+      <xs:element name="codigoPrefixoTremLinhaTronco" type="xs:string" minOccurs="0"/>
+      <xs:element name="dataChegadaLotePontoDescarga" type="xs:dateTime" minOccurs="0"/>
+      <xs:element name="dataPrefixacaoTremLinhaTronco" type="xs:dateTime" minOccurs="0"/>
+      <xs:element name="dataPrevisaoDescarga" type="xs:dateTime" minOccurs="0"/>
+      <xs:element name="dataProntidao" type="xs:dateTime" minOccurs="0"/>
+      <xs:element name="dataTerminoDescarga" type="xs:dateTime" minOccurs="0"/>
+      <xs:element name="horaChegadaLotePontoDescarga" type="xs:string" minOccurs="0"/>
+      <xs:element name="horaPrefixacaoLinhaTronco" type="xs:string" minOccurs="0"/>
+      <xs:element name="horaPrevisaoDescarga" type="xs:string" minOccurs="0"/>
+      <xs:element name="horaProntidao" type="xs:string" minOccurs="0"/>
+      <xs:element name="horaTerminoDescarga" type="xs:string" minOccurs="0"/>
+      <xs:element name="id" type="alocacaoLoteTremSGDSKey" minOccurs="0"/>
+      <xs:element name="indicadorExistenciaInconsitencia" type="xs:string" minOccurs="0"/>
+      <xs:element name="indicadorSituacao" type="xs:string" minOccurs="0"/>
+      <xs:element name="numeroCargaLote" type="xs:string" minOccurs="0"/>
+      <xs:element name="numeroSequencialPosicaoLoteTremLinhaTronco" type="xs:string" minOccurs="0"/>
+      <xs:element name="numeroSerieVagaoInicialLote" type="xs:string" minOccurs="0"/>
+      <xs:element name="pesoMedioVagaoDescarga" type="xs:double" minOccurs="0"/>
+      <xs:element name="qtdProdutoAtualDescarga" type="xs:double" minOccurs="0"/>
+      <xs:element name="quantidadeProdutoDestino" type="xs:double" minOccurs="0"/>
+      <xs:element name="quantidadeVagaoAlocadoTronco" type="xs:int" minOccurs="0"/>
+      <xs:element name="quantidadeVagaoAtualDescarga" type="xs:int" minOccurs="0"/>
+      <xs:element name="quantidadeVagaoDisponivel" type="xs:int" minOccurs="0"/>
+      <xs:element name="sequencialLote" type="xs:string" minOccurs="0"/>
+      <xs:element name="sistemaProducaoLote" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="alocacaoLoteTremSGDSKey">
+    <xs:sequence>
+      <xs:element name="anoAlocacaoLoteTrem" type="xs:string" minOccurs="0"/>
+      <xs:element name="codigoSistemaProducaoAlocacaoLoteTrem" type="xs:string" minOccurs="0"/>
+      <xs:element name="numeroAlocacaoLoteTrem" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="analiseLoteSGDS">
+    <xs:sequence>
+      <xs:element name="id" type="analiseLoteSGDSKey" minOccurs="0"/>
+      <xs:element name="indicadorLocalExecucao" type="xs:string" minOccurs="0"/>
+      <xs:element name="pesoRetidoPeneira" type="xs:double" minOccurs="0"/>
+      <xs:element name="textoJustificativa" type="xs:string" minOccurs="0"/>
+      <xs:element name="valorMedioTipoGrandeza" type="xs:double" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="analiseLoteSGDSKey">
+    <xs:sequence>
+      <xs:element name="anoLote" type="xs:string" minOccurs="0"/>
+      <xs:element name="codigoAnalista" type="xs:string" minOccurs="0"/>
+      <xs:element name="codigoEnsaio" type="xs:string" minOccurs="0"/>
+      <xs:element name="codigoGrandeza" type="xs:string" minOccurs="0"/>
+      <xs:element name="codigoNatureza" type="xs:string" minOccurs="0"/>
+      <xs:element name="numeroLote" type="xs:string" minOccurs="0"/>
+      <xs:element name="sequencialLote" type="xs:string" minOccurs="0"/>
+      <xs:element name="sistemaProducaoLote" type="xs:string" minOccurs="0"/>
+      <xs:element name="tipoAnalise" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="analisePilhaSGDS">
+    <xs:sequence>
+      <xs:element name="empresaUsuario" type="xs:string" minOccurs="0"/>
+      <xs:element name="id" type="analisePilhaSGDSKey" minOccurs="0"/>
+      <xs:element name="matriculaUsuario" type="xs:string" minOccurs="0"/>
+      <xs:element name="quantidadeProdutoAnalisado" type="xs:double" minOccurs="0"/>
+      <xs:element name="valorDesvioPadraoGrandeza" type="xs:double" minOccurs="0"/>
+      <xs:element name="valorMaximoGrandezaAnalisada" type="xs:double" minOccurs="0"/>
+      <xs:element name="valorMedioTeorGrandeza" type="xs:double" minOccurs="0"/>
+      <xs:element name="valorMinimoGrandezaAnalisada" type="xs:double" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="analisePilhaSGDSKey">
+    <xs:sequence>
+      <xs:element name="anoPilha" type="xs:string" minOccurs="0"/>
+      <xs:element name="codigoEnsaioLaboratorio" type="xs:string" minOccurs="0"/>
+      <xs:element name="codigoGrandezaEnsaio" type="xs:string" minOccurs="0"/>
+      <xs:element name="codigoNaturezaEnsaio" type="xs:string" minOccurs="0"/>
+      <xs:element name="indicadorFormacaoRecuperacao" type="xs:string" minOccurs="0"/>
+      <xs:element name="numeroPilha" type="xs:string" minOccurs="0"/>
+      <xs:element name="sistemaProducaoPilha" type="xs:string" minOccurs="0"/>
+      <xs:element name="tipoAnalise" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="composicaoPilhaSGDS">
+    <xs:sequence>
+      <xs:element name="id" type="composicaoPilhaSGDSKey" minOccurs="0"/>
+      <xs:element name="percentualComposicao" type="xs:double" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="composicaoPilhaSGDSKey">
+    <xs:sequence>
+      <xs:element name="anoPilha" type="xs:string" minOccurs="0"/>
+      <xs:element name="codigoProduto" type="xs:string" minOccurs="0"/>
+      <xs:element name="indicadorPeneiramento" type="xs:string" minOccurs="0"/>
+      <xs:element name="numeroPeneiramentos" type="xs:string" minOccurs="0"/>
+      <xs:element name="numeroPilha" type="xs:string" minOccurs="0"/>
+      <xs:element name="sistemaProducaoPilha" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="direcionamentoAlocacaoSGDS">
+    <xs:sequence>
+      <xs:element name="id" type="direcionamentoAlocacaoSGDSKey" minOccurs="0"/>
+      <xs:element name="numSeqDescargaFormacaoPilha" type="xs:string" minOccurs="0"/>
+      <xs:element name="quantidadeVagoes" type="xs:int" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="direcionamentoAlocacaoSGDSKey">
+    <xs:sequence>
+      <xs:element name="anoAlocacaoLoteTrem" type="xs:string" minOccurs="0"/>
+      <xs:element name="anoLote" type="xs:string" minOccurs="0"/>
+      <xs:element name="codSistemaProducaoLote" type="xs:string" minOccurs="0"/>
+      <xs:element name="codigoSistemaProducao" type="xs:string" minOccurs="0"/>
+      <xs:element name="numSeqDirecionamentoLote" type="xs:string" minOccurs="0"/>
+      <xs:element name="numeroAlocacaoLoteTrem" type="xs:string" minOccurs="0"/>
+      <xs:element name="numeroLote" type="xs:string" minOccurs="0"/>
+      <xs:element name="sequencialLote" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="direcionamentoLoteSGDS">
+    <xs:sequence>
+      <xs:element name="anoSolicitacaoProduto" type="xs:string" minOccurs="0"/>
+      <xs:element name="codigoCliente" type="xs:string" minOccurs="0"/>
+      <xs:element name="codigoSistemaProducaoSolicitacaoProduto" type="xs:string" minOccurs="0"/>
+      <xs:element name="id" type="direcionamentoLoteSGDSKey" minOccurs="0"/>
+      <xs:element name="numeroSolicitacaoProduto" type="xs:string" minOccurs="0"/>
+      <xs:element name="quantidadeReservada" type="xs:double" minOccurs="0"/>
+      <xs:element name="quantidadeVagoes" type="xs:int" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="direcionamentoLoteSGDSKey">
+    <xs:sequence>
+      <xs:element name="anoCargaLote" type="xs:string" minOccurs="0"/>
+      <xs:element name="codigoSistemaProducaoLote" type="xs:string" minOccurs="0"/>
+      <xs:element name="idSequencial" type="xs:string" minOccurs="0"/>
+      <xs:element name="numeroCargaLote" type="xs:string" minOccurs="0"/>
+      <xs:element name="sequencialLote" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="loteSGDS">
+    <xs:sequence>
+      <xs:element name="codigoAreaOperacionalDestino" type="xs:string" minOccurs="0"/>
+      <xs:element name="codigoAreaOperacionalOrigem" type="xs:string" minOccurs="0"/>
+      <xs:element name="codigoCliente" type="xs:string" minOccurs="0"/>
+      <xs:element name="codigoIdentificadorMRS" type="xs:string" minOccurs="0"/>
+      <xs:element name="codigoMeioTransporte" type="xs:string" minOccurs="0"/>
+      <xs:element name="codigoPontoDescarga" type="xs:string" minOccurs="0"/>
+      <xs:element name="codigoProduto" type="xs:string" minOccurs="0"/>
+      <xs:element name="codigoProprietario" type="xs:string" minOccurs="0"/>
+      <xs:element name="dataETA" type="xs:dateTime" minOccurs="0"/>
+      <xs:element name="horaETA" type="xs:string" minOccurs="0"/>
+      <xs:element name="id" type="loteSGDSKey" minOccurs="0"/>
+      <xs:element name="pesoMedioVagao" type="xs:double" minOccurs="0"/>
+      <xs:element name="quantidadeTotalCarregada" type="xs:double" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="loteSGDSKey">
+    <xs:sequence>
+      <xs:element name="anoCargaLote" type="xs:string" minOccurs="0"/>
+      <xs:element name="codigoSistemaProducao" type="xs:string" minOccurs="0"/>
+      <xs:element name="numeroCargaLote" type="xs:string" minOccurs="0"/>
+      <xs:element name="sequencialLote" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="movimentoEstoquePilhaSGDS">
+    <xs:sequence>
+      <xs:element name="anoPilhaDestino" type="xs:string" minOccurs="0"/>
+      <xs:element name="anoSolicitacao" type="xs:string" minOccurs="0"/>
+      <xs:element name="codigoSistemaProducaoSolicitacao" type="xs:string" minOccurs="0"/>
+      <xs:element name="dataInicio" type="xs:dateTime" minOccurs="0"/>
+      <xs:element name="dataTermino" type="xs:dateTime" minOccurs="0"/>
+      <xs:element name="empresaProprietariaOrigem" type="xs:string" minOccurs="0"/>
+      <xs:element name="horaInicio" type="xs:string" minOccurs="0"/>
+      <xs:element name="horaTermino" type="xs:string" minOccurs="0"/>
+      <xs:element name="id" type="movimentoEstoquePilhaSGDSKey" minOccurs="0"/>
+      <xs:element name="indicadorSituacao" type="xs:string" minOccurs="0"/>
+      <xs:element name="numeroPilhaDestino" type="xs:string" minOccurs="0"/>
+      <xs:element name="numeroSolicitacao" type="xs:string" minOccurs="0"/>
+      <xs:element name="produtoOrigem" type="xs:string" minOccurs="0"/>
+      <xs:element name="quantidadeProdutoMovimentado" type="xs:double" minOccurs="0"/>
+      <xs:element name="rota" type="xs:int" minOccurs="0"/>
+      <xs:element name="sistemaProducaoPilhaDestino" type="xs:string" minOccurs="0"/>
+      <xs:element name="tempoEfetivoDuracao" type="xs:double" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="movimentoEstoquePilhaSGDSKey">
+    <xs:sequence>
+      <xs:element name="anoMovimento" type="xs:string" minOccurs="0"/>
+      <xs:element name="codigoSistemaProducaoMovimento" type="xs:string" minOccurs="0"/>
+      <xs:element name="numeroMovimento" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="movimentoPilhaPilhaSGDS">
+    <xs:sequence>
+      <xs:element name="analisesPilhaOrigem" minOccurs="0">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element ref="analisePilhaSGDS" minOccurs="0" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="anoPilhaDestino" type="xs:string" minOccurs="0"/>
+      <xs:element name="anoPilhaOrigem" type="xs:string" minOccurs="0"/>
+      <xs:element name="anoSolicitacao" type="xs:string" minOccurs="0"/>
+      <xs:element name="codigoSistemaProducaoSolicitacao" type="xs:string" minOccurs="0"/>
+      <xs:element name="dataInicio" type="xs:dateTime" minOccurs="0"/>
+      <xs:element name="dataTermino" type="xs:dateTime" minOccurs="0"/>
+      <xs:element name="horaInicio" type="xs:string" minOccurs="0"/>
+      <xs:element name="horaTermino" type="xs:string" minOccurs="0"/>
+      <xs:element name="id" type="movimentoPilhaPilhaSGDSKey" minOccurs="0"/>
+      <xs:element name="indicadorMovimentoPeneiramento" type="xs:string" minOccurs="0"/>
+      <xs:element name="indicadorSituacao" type="xs:string" minOccurs="0"/>
+      <xs:element name="numeroPilhaDestino" type="xs:string" minOccurs="0"/>
+      <xs:element name="numeroPilhaOrigem" type="xs:string" minOccurs="0"/>
+      <xs:element name="numeroSolicitacao" type="xs:string" minOccurs="0"/>
+      <xs:element name="produtoOrigem" type="xs:string" minOccurs="0"/>
+      <xs:element name="quantidadeProdutoMovimentado" type="xs:double" minOccurs="0"/>
+      <xs:element name="rota" type="xs:int" minOccurs="0"/>
+      <xs:element name="sistemaProducaoPilhaDestino" type="xs:string" minOccurs="0"/>
+      <xs:element name="sistemaProducaoPilhaOrigem" type="xs:string" minOccurs="0"/>
+      <xs:element name="tempoEfetivoDuracao" type="xs:double" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="movimentoPilhaPilhaSGDSKey">
+    <xs:sequence>
+      <xs:element name="anoMovimento" type="xs:string" minOccurs="0"/>
+      <xs:element name="codigoSistemaProducaoMovimento" type="xs:string" minOccurs="0"/>
+      <xs:element name="numeroMovimento" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="movimentoPrevistoSGDS">
+    <xs:sequence>
+      <xs:element name="anoAlocacao" type="xs:string" minOccurs="0"/>
+      <xs:element name="anoEmbarque" type="xs:string" minOccurs="0"/>
+      <xs:element name="anoEmbarqueSequenciaCargaDescargaNavioSGDS" type="xs:string" minOccurs="0"/>
+      <xs:element name="anoLoteDestino" type="xs:string" minOccurs="0"/>
+      <xs:element name="anoMovimentoAlocacaoLoteTremEmbarqueSGDS" type="xs:string" minOccurs="0"/>
+      <xs:element name="anoMovimentoAlocacaoLoteTremPilha" type="xs:string" minOccurs="0"/>
+      <xs:element name="anoMovimentoEstoqueEmbarqueSGDS" type="xs:string" minOccurs="0"/>
+      <xs:element name="anoMovimentoEstoquePilhaSGDS" type="xs:string" minOccurs="0"/>
+      <xs:element name="anoMovimentoPilhaEmbarqueSGDS" type="xs:string" minOccurs="0"/>
+      <xs:element name="anoMovimentoPilhaPilhaSGDS" type="xs:string" minOccurs="0"/>
+      <xs:element name="anoPilha" type="xs:string" minOccurs="0"/>
+      <xs:element name="anoPilhaDestino" type="xs:string" minOccurs="0"/>
+      <xs:element name="codigoAreaOperacional" type="xs:string" minOccurs="0"/>
+      <xs:element name="codigoEmpresaProprietariaEstoque" type="xs:string" minOccurs="0"/>
+      <xs:element name="codigoEquipamento" type="xs:string" minOccurs="0"/>
+      <xs:element name="codigoPilhaDestino" type="xs:string" minOccurs="0"/>
+      <xs:element name="codigoProduto" type="xs:string" minOccurs="0"/>
+      <xs:element name="codigoProdutoCarga" type="xs:string" minOccurs="0"/>
+      <xs:element name="codigoProdutoEstoque" type="xs:string" minOccurs="0"/>
+      <xs:element name="codigoRota" type="xs:long" minOccurs="0"/>
+      <xs:element name="dataInicioMovimentoPrevisto" type="xs:dateTime" minOccurs="0"/>
+      <xs:element name="dataTerminoMovimentoPrevisto" type="xs:dateTime" minOccurs="0"/>
+      <xs:element name="horaInicioMovimentoPrevisto" type="xs:string" minOccurs="0"/>
+      <xs:element name="horaTerminoMovimentoPrevisto" type="xs:string" minOccurs="0"/>
+      <xs:element name="id" type="movimentoPrevistoSGDSKey" minOccurs="0"/>
+      <xs:element name="indicadorDestinoMovimentoPeneiramento" type="xs:string" minOccurs="0"/>
+      <xs:element name="indicadorMovimentoAtivo" type="xs:string" minOccurs="0"/>
+      <xs:element name="indicadorMovimentoPeneiramento" type="xs:string" minOccurs="0"/>
+      <xs:element name="indicadorTipoMovimento" type="xs:string" minOccurs="0"/>
+      <xs:element name="numeroAlocacao" type="xs:string" minOccurs="0"/>
+      <xs:element name="numeroEmbarque" type="xs:string" minOccurs="0"/>
+      <xs:element name="numeroEmbarqueSequenciaCargaDescargaNavioSGDS" type="xs:string" minOccurs="0"/>
+      <xs:element name="numeroLote" type="xs:string" minOccurs="0"/>
+      <xs:element name="numeroMovimentoAlocacaoLoteTremEmbarqueSGDS" type="xs:string" minOccurs="0"/>
+      <xs:element name="numeroMovimentoAlocacaoLoteTremPilhaSGDS" type="xs:string" minOccurs="0"/>
+      <xs:element name="numeroMovimentoEstoqueEmbarqueSGDS" type="xs:string" minOccurs="0"/>
+      <xs:element name="numeroMovimentoEstoquePilhaSGDS" type="xs:string" minOccurs="0"/>
+      <xs:element name="numeroMovimentoPilhaEmbarqueSGDS" type="xs:string" minOccurs="0"/>
+      <xs:element name="numeroMovimentoPilhaPilhaSGDS" type="xs:string" minOccurs="0"/>
+      <xs:element name="numeroPilha" type="xs:string" minOccurs="0"/>
+      <xs:element name="numeroSequenciaCargaDescargaNavioSGDS" type="xs:long" minOccurs="0"/>
+      <xs:element name="quantidadeProdutoMovimentada" type="xs:double" minOccurs="0"/>
+      <xs:element name="quantidadeVagoes" type="xs:long" minOccurs="0"/>
+      <xs:element name="sistemaProducaoAlocacaoLoteTrem" type="xs:string" minOccurs="0"/>
+      <xs:element name="sistemaProducaoLoteDestino" type="xs:string" minOccurs="0"/>
+      <xs:element name="sistemaProducaoMovimentoAlocacaoLoteTremEmbarqueSGDS" type="xs:string" minOccurs="0"/>
+      <xs:element name="sistemaProducaoMovimentoAlocacaoLoteTremPilhaSGDS" type="xs:string" minOccurs="0"/>
+      <xs:element name="sistemaProducaoMovimentoEstoqueEmbarqueSGDS" type="xs:string" minOccurs="0"/>
+      <xs:element name="sistemaProducaoMovimentoEstoquePilhaSGDS" type="xs:string" minOccurs="0"/>
+      <xs:element name="sistemaProducaoMovimentoPilhaEmbarqueSGDS" type="xs:string" minOccurs="0"/>
+      <xs:element name="sistemaProducaoMovimentoPilhaPilhaSGDS" type="xs:string" minOccurs="0"/>
+      <xs:element name="sistemaProducaoPilha" type="xs:string" minOccurs="0"/>
+      <xs:element name="sistemaProducaoPilhaDestino" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="movimentoPrevistoSGDSKey">
+    <xs:sequence>
+      <xs:element name="anoMovimentoPrevisto" type="xs:string" minOccurs="0"/>
+      <xs:element name="codigoSistemaProducaoMovimentoPrevisto" type="xs:string" minOccurs="0"/>
+      <xs:element name="numeroMovimentoPrevisto" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="pilha">
+    <xs:sequence>
+      <xs:element name="anoFormacao" type="xs:string" minOccurs="0"/>
+      <xs:element name="anoSolicitacaoProdutoPilha" type="xs:string" minOccurs="0"/>
+      <xs:element name="areaPatio" type="xs:string" minOccurs="0"/>
+      <xs:element name="codigoArea" type="xs:string" minOccurs="0"/>
+      <xs:element name="codigoCliente" type="xs:string" minOccurs="0"/>
+      <xs:element name="codigoPatio" type="xs:string" minOccurs="0"/>
+      <xs:element name="codigoPilhaUsuario" type="xs:string" minOccurs="0"/>
+      <xs:element name="codigoPorto" type="xs:string" minOccurs="0"/>
+      <xs:element name="codigoProduto" type="xs:string" minOccurs="0"/>
+      <xs:element name="codigoSistemaProducao" type="xs:string" minOccurs="0"/>
+      <xs:element name="codigoSistemaProducaoSolicitacaoProdutoPilha" type="xs:string" minOccurs="0"/>
+      <xs:element name="dataTerminoFormacaoPilha" type="xs:dateTime" minOccurs="0"/>
+      <xs:element name="dataTerminoUltimaRecuperacaoPilha" type="xs:dateTime" minOccurs="0"/>
+      <xs:element name="dataInicioFormacaoPilha" type="xs:dateTime" minOccurs="0"/>
+      <xs:element name="dataInicioRecuperacaoPilha" type="xs:dateTime" minOccurs="0"/>
+      <xs:element name="dataPrevistaTerminoFormacaoPilha" type="xs:dateTime" minOccurs="0"/>
+      <xs:element name="dataPrevistaInicioFormacaoPilha" type="xs:dateTime" minOccurs="0"/>
+      <xs:element name="horaInicioFormacaoPilha" type="xs:string" minOccurs="0"/>
+      <xs:element name="horaInicioRecuperacaoPilha" type="xs:string" minOccurs="0"/>
+      <xs:element name="horaPrevistaInicioFormacaoPilha" type="xs:string" minOccurs="0"/>
+      <xs:element name="horaPrevistaTerminoFormacaoPilha" type="xs:string" minOccurs="0"/>
+      <xs:element name="horaTerminoFormacaoPilha" type="xs:string" minOccurs="0"/>
+      <xs:element name="horaTerminoUltimaRecuperacaoPilha" type="xs:string" minOccurs="0"/>
+      <xs:element name="id" type="xs:int" minOccurs="0"/>
+      <xs:element name="identificadorSituacaoPilha" type="xs:string" minOccurs="0"/>
+      <xs:element name="indicadorSituacaoFormacao" type="xs:string" minOccurs="0"/>
+      <xs:element name="numeroBalizaFinalAtual" type="xs:double" minOccurs="0"/>
+      <xs:element name="numeroBalizaInicialAtual" type="xs:double" minOccurs="0"/>
+      <xs:element name="numeroPilha" type="xs:string" minOccurs="0"/>
+      <xs:element name="numeroSolicitacaoProdutoPilha" type="xs:string" minOccurs="0"/>
+      <xs:element name="quantidadeDisponivel" type="xs:double" minOccurs="0"/>
+      <xs:element name="quantidadeEstoqueAtual" type="xs:double" minOccurs="0"/>
+      <xs:element name="quantidadeProgramadaTotal" type="xs:double" minOccurs="0"/>
+      <xs:element name="tempoResidenciaPilha" type="xs:double" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="sobraPilhaSGDS">
+    <xs:sequence>
+      <xs:element name="analisesPilhaOrigem" minOccurs="0">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element ref="analisePilhaSGDS" minOccurs="0" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="anoFormacaoPilha" type="xs:string" minOccurs="0"/>
+      <xs:element name="anoSolicitacao" type="xs:string" minOccurs="0"/>
+      <xs:element name="codigoSistemaProducaoPilha" type="xs:string" minOccurs="0"/>
+      <xs:element name="codigoSistemaProducaoSolicitacao" type="xs:string" minOccurs="0"/>
+      <xs:element name="indicadorRecirculacaoSobra" type="xs:string" minOccurs="0"/>
+      <xs:element name="numeroPilha" type="xs:string" minOccurs="0"/>
+      <xs:element name="numeroSolicitacao" type="xs:string" minOccurs="0"/>
+      <xs:element name="produtoOrigem" type="xs:string" minOccurs="0"/>
+      <xs:element name="quantidadeSobra" type="xs:double" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="solicitacaoCarga">
+    <xs:sequence>
+      <xs:element name="anoEmbarque" type="xs:int" minOccurs="0"/>
+      <xs:element name="codigoProdutoCarga" type="xs:string" minOccurs="0"/>
+      <xs:element name="idPilha" type="xs:int" minOccurs="0"/>
+      <xs:element name="numeroEmbarque" type="xs:string" minOccurs="0"/>
+      <xs:element name="quantidadeAtendida" type="xs:double" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="solicitacaoProdutoSGDS">
+    <xs:sequence>
+      <xs:element name="codigoAreaOperacional" type="xs:string" minOccurs="0"/>
+      <xs:element name="codigoCliente" type="xs:string" minOccurs="0"/>
+      <xs:element name="codigoProdutoProduzido" type="xs:string" minOccurs="0"/>
+      <xs:element name="codigoProdutoSolicitado" type="xs:string" minOccurs="0"/>
+      <xs:element name="dataPrevistaFimFormacao" type="xs:dateTime" minOccurs="0"/>
+      <xs:element name="dataPrevistaInicioFormacao" type="xs:dateTime" minOccurs="0"/>
+      <xs:element name="horaPrevistaFimFormacao" type="xs:string" minOccurs="0"/>
+      <xs:element name="horaPrevistaInicioFormacao" type="xs:string" minOccurs="0"/>
+      <xs:element name="id" type="solicitacaoProdutoSGDSKey" minOccurs="0"/>
+      <xs:element name="identificadorSolicitacaoPilhaUsuario" type="xs:string" minOccurs="0"/>
+      <xs:element name="quantidadeProdutoDirecionada" type="xs:double" minOccurs="0"/>
+      <xs:element name="quantidadeProdutoSolicitada" type="xs:double" minOccurs="0"/>
+      <xs:element name="situacaoSolicitacao" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="solicitacaoProdutoSGDSKey">
+    <xs:sequence>
+      <xs:element name="anoSolicitacao" type="xs:string" minOccurs="0"/>
+      <xs:element name="codigoSistemaProducao" type="xs:string" minOccurs="0"/>
+      <xs:element name="numeroSolicitacao" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="cadeia">
+    <xs:sequence>
+      <xs:element name="arranjosProducao" minOccurs="0">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element ref="arranjoProducao" minOccurs="0" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="capacidadesEstocagemEloProduto" minOccurs="0">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element ref="capacidadeEstocagemEloProduto" minOccurs="0" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="capacidadesProducaoDisponibilizacaoElo" minOccurs="0">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element ref="capacidadeProducaoDisponibilizacaoElo" minOccurs="0" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="capacidadesProducaoDisponibilizacaoProdutoElo" minOccurs="0">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element ref="capacidadeProducaoDisponibilizacaoProdutoElo" minOccurs="0" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="clientesAPS" minOccurs="0">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element ref="clienteAPS" minOccurs="0" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="complexosProdutivosAPS" minOccurs="0">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element ref="complexoProdutivoAPS" minOccurs="0" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="estoquesEstrategicos" minOccurs="0">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element ref="estoqueEstrategico" minOccurs="0" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="estoquesIniciais" minOccurs="0">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element ref="estoqueInicial" minOccurs="0" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="fornecedoresAPS" minOccurs="0">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element ref="fornecedorAPS" minOccurs="0" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="gruposProdutosExclusivos" minOccurs="0">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element ref="grupoProdutosExclusivos" minOccurs="0" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="historicoAssociacoesElo" minOccurs="0">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element ref="historicoAssociacaoElo" minOccurs="0" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="instalacoesUsinaBeneficiamento" minOccurs="0">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element ref="instalacaoUsinaBeneficiamentoAPS" minOccurs="0" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="limitesProducaoDisponibilizacaoElo" minOccurs="0">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element ref="limiteProducaoDisponibilizacaoElo" minOccurs="0" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="limitesProducaoDisponibilizacaoProdutoElo" minOccurs="0">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element ref="limiteProducaoDisponibilizacaoProdutoElo" minOccurs="0" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="manutencoesElo" minOccurs="0">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="ManutencaoElo" type="manutencaoElo" minOccurs="0" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="minasAPS" minOccurs="0">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element ref="minaAPS" minOccurs="0" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="patiosAPS" minOccurs="0">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element ref="patioAPS" minOccurs="0" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="peneiramentosAPS" minOccurs="0">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element ref="peneiramentoAPS" minOccurs="0" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="pilhasPadrao" minOccurs="0">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element ref="pilhaPadrao" minOccurs="0" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="pontosCargaDescargaAPS" minOccurs="0">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element ref="pontoCargaDescargaAPS" minOccurs="0" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="portosAPS" minOccurs="0">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element ref="portoAPS" minOccurs="0" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="produtosArranjo" minOccurs="0">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element ref="produtoArranjo" minOccurs="0" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="produtosExclusivosArranjo" minOccurs="0">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element ref="produtoExclusivoArranjo" minOccurs="0" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="qualidadesProdutoElo" minOccurs="0">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element ref="qualidadeProdutoElo" minOccurs="0" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="receitasCusto" minOccurs="0">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element ref="receitaCusto" minOccurs="0" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="sistemasProducaoAPS" minOccurs="0">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element ref="sistemaProducaoAPS" minOccurs="0" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="sitesProdutivosAPS" minOccurs="0">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element ref="siteProdutivoAPS" minOccurs="0" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="splitsInstalacaoAPS" minOccurs="0">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element ref="splitInstalacaoAPS" minOccurs="0" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="taxasDescargaExpedicaoElo" minOccurs="0">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element ref="taxaDescargaExpedicaoElo" minOccurs="0" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="usinasBeneficiamentoAPS" minOccurs="0">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element ref="usinaBeneficiamentoAPS" minOccurs="0" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="usinasPelotizacaoAPS" minOccurs="0">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element ref="usinaPelotizacaoAPS" minOccurs="0" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="utilizacoesProgramadasInstalacao" minOccurs="0">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element ref="utilizacaoProgramadaInstalacao" minOccurs="0" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="arranjoProducao">
+    <xs:sequence>
+      <xs:element name="codigoEloInstalacao" type="xs:int" minOccurs="0"/>
+      <xs:element name="descricao" type="xs:string" minOccurs="0"/>
+      <xs:element name="id" type="xs:int" minOccurs="0"/>
+      <xs:element name="indicadorPadrao" type="xs:string" minOccurs="0"/>
+      <xs:element name="indicadorSequencia" type="xs:string" minOccurs="0"/>
+      <xs:element name="tempoMinimoProducao" type="xs:double" minOccurs="0"/>
+      <xs:element name="valorTaxa" type="xs:double" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="capacidadeEstocagemEloProduto">
+    <xs:sequence>
+      <xs:element name="capacidadeEstocagem" type="xs:double" minOccurs="0"/>
+      <xs:element name="codigoCategoriaProduto" type="xs:string" minOccurs="0"/>
+      <xs:element name="codigoProduto" type="xs:string" minOccurs="0"/>
+      <xs:element name="dataInicioVigencia" type="xs:dateTime" minOccurs="0"/>
+      <xs:element name="id" type="xs:int" minOccurs="0"/>
+      <xs:element name="idEloCadeiaProducao" type="xs:int" minOccurs="0"/>
+      <xs:element name="tipoAssociacao" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="capacidadeProducaoDisponibilizacaoElo">
+    <xs:sequence>
+      <xs:element name="capacidadeProducaoDisponibilizacao" type="xs:double" minOccurs="0"/>
+      <xs:element name="codigoCategoriaProduto" type="xs:string" minOccurs="0"/>
+      <xs:element name="dataInicioVigencia" type="xs:dateTime" minOccurs="0"/>
+      <xs:element name="id" type="xs:int" minOccurs="0"/>
+      <xs:element name="idEloCadeiaProducao" type="xs:int" minOccurs="0"/>
+      <xs:element name="indicadorUnidadeTempo" type="xs:string" minOccurs="0"/>
+      <xs:element name="quantidadeMinimaMandatoria" type="xs:double" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="capacidadeProducaoDisponibilizacaoProdutoElo">
+    <xs:sequence>
+      <xs:element name="capacidadeProducaoDiponibilizacao" type="xs:double" minOccurs="0"/>
+      <xs:element name="codigoCategoriaProduto" type="xs:string" minOccurs="0"/>
+      <xs:element name="codigoProduto" type="xs:string" minOccurs="0"/>
+      <xs:element name="data" type="xs:dateTime" minOccurs="0"/>
+      <xs:element name="id" type="xs:int" minOccurs="0"/>
+      <xs:element name="idEloCadeiaProducao" type="xs:int" minOccurs="0"/>
+      <xs:element name="idSistemaProducao" type="xs:int" minOccurs="0"/>
+      <xs:element name="qtdeMinimaMandatoria" type="xs:double" minOccurs="0"/>
+      <xs:element name="tipoAssociacao" type="xs:string" minOccurs="0"/>
+      <xs:element name="tipoVisaoPrazo" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="clienteAPS">
+    <xs:complexContent>
+      <xs:extension base="eloCadeiaProducaoAPS">
+        <xs:sequence>
+          <xs:element name="codigoCliente" type="xs:string" minOccurs="0"/>
+          <xs:element name="codigoMercado" type="xs:string" minOccurs="0"/>
+          <xs:element name="codigoPais" type="xs:string" minOccurs="0"/>
+          <xs:element name="descricao" type="xs:string" minOccurs="0"/>
+          <xs:element name="indicadorPrioridadeAtendimento" type="xs:int" minOccurs="0"/>
+          <xs:element name="indicePercentualRetornoFino" type="xs:double" minOccurs="0"/>
+          <xs:element name="periodoIntervaloRecebimento" type="xs:int" minOccurs="0"/>
+          <xs:element name="quantidadeMaximaRetornoFino" type="xs:double" minOccurs="0"/>
+          <xs:element name="quantidadeMinimaRetornoFino" type="xs:double" minOccurs="0"/>
+          <xs:element name="tempoPadraoOperacao" type="xs:double" minOccurs="0"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="eloCadeiaProducaoAPS">
+    <xs:sequence>
+      <xs:element name="id" type="xs:int" minOccurs="0"/>
+      <xs:element name="tipoElo" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="complexoProdutivoAPS">
+    <xs:complexContent>
+      <xs:extension base="eloCadeiaProducaoAPS">
+        <xs:sequence>
+          <xs:element name="ativo" type="xs:boolean" minOccurs="0"/>
+          <xs:element name="codigoComplexo" type="xs:string" minOccurs="0"/>
+          <xs:element name="descricao" type="xs:string" minOccurs="0"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="estoqueEstrategico">
+    <xs:sequence>
+      <xs:element name="dataTerminoEstoque" type="xs:dateTime" minOccurs="0"/>
+      <xs:element name="id" type="estoqueEstrategicoKey" minOccurs="0"/>
+      <xs:element name="qtdeMaxEstoque" type="xs:double" minOccurs="0"/>
+      <xs:element name="qtdeMinEstoque" type="xs:double" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="estoqueEstrategicoKey">
+    <xs:sequence>
+      <xs:element name="codigoProduto" type="xs:string" minOccurs="0"/>
+      <xs:element name="dataInicioVigencia" type="xs:dateTime" minOccurs="0"/>
+      <xs:element name="idEloCadeia" type="xs:int" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="estoqueInicial">
+    <xs:sequence>
+      <xs:element name="codigoProduto" type="xs:string" minOccurs="0"/>
+      <xs:element name="data" type="xs:dateTime" minOccurs="0"/>
+      <xs:element name="id" type="xs:int" minOccurs="0"/>
+      <xs:element name="idEloCadeiaProducao" type="xs:int" minOccurs="0"/>
+      <xs:element name="quantidade" type="xs:double" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="fornecedorAPS">
+    <xs:complexContent>
+      <xs:extension base="eloCadeiaProducaoAPS">
+        <xs:sequence>
+          <xs:element name="ativo" type="xs:boolean" minOccurs="0"/>
+          <xs:element name="codigoFornecedor" type="xs:string" minOccurs="0"/>
+          <xs:element name="descricao" type="xs:string" minOccurs="0"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="grupoProdutosExclusivos">
+    <xs:sequence>
+      <xs:element name="id" type="xs:int" minOccurs="0"/>
+      <xs:element name="identificadorArranjo" type="xs:int" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="historicoAssociacaoElo">
+    <xs:sequence>
+      <xs:element name="id" type="historicoAssociacaoEloKey" minOccurs="0"/>
+      <xs:element name="idEloBase" type="xs:int" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="historicoAssociacaoEloKey">
+    <xs:sequence>
+      <xs:element name="dataAssociacao" type="xs:dateTime" minOccurs="0"/>
+      <xs:element name="idEloAtende" type="xs:int" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="instalacaoUsinaBeneficiamentoAPS">
+    <xs:complexContent>
+      <xs:extension base="eloCadeiaProducaoAPS">
+        <xs:sequence>
+          <xs:element name="ativa" type="xs:boolean" minOccurs="0"/>
+          <xs:element name="codigoInstalacaoUsinaBeneficiamento" type="xs:string" minOccurs="0"/>
+          <xs:element name="descricao" type="xs:string" minOccurs="0"/>
+          <xs:element name="idEloUsinaBeneficiamento" type="xs:int" minOccurs="0"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="limiteProducaoDisponibilizacaoElo">
+    <xs:sequence>
+      <xs:element name="dataFim" type="xs:dateTime" minOccurs="0"/>
+      <xs:element name="id" type="limiteProducaoDisponibilizacaoEloKey" minOccurs="0"/>
+      <xs:element name="limiteMaximo" type="xs:double" minOccurs="0"/>
+      <xs:element name="limiteMinimo" type="xs:double" minOccurs="0"/>
+      <xs:element name="unidadeTempo" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="limiteProducaoDisponibilizacaoEloKey">
+    <xs:sequence>
+      <xs:element name="dataInicio" type="xs:dateTime" minOccurs="0"/>
+      <xs:element name="identificadorEloCadeiaProducao" type="xs:int" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="limiteProducaoDisponibilizacaoProdutoElo">
+    <xs:sequence>
+      <xs:element name="codigoCategoriaProduto" type="xs:string" minOccurs="0"/>
+      <xs:element name="codigoProduto" type="xs:string" minOccurs="0"/>
+      <xs:element name="dataFim" type="xs:dateTime" minOccurs="0"/>
+      <xs:element name="dataInicio" type="xs:dateTime" minOccurs="0"/>
+      <xs:element name="id" type="xs:int" minOccurs="0"/>
+      <xs:element name="idEloCadeiaProducao" type="xs:int" minOccurs="0"/>
+      <xs:element name="indicadorUnidadeTempo" type="xs:string" minOccurs="0"/>
+      <xs:element name="limiteMaximo" type="xs:double" minOccurs="0"/>
+      <xs:element name="limiteMinimo" type="xs:double" minOccurs="0"/>
+      <xs:element name="tipoAssociacao" type="xs:string" minOccurs="0"/>
+      <xs:element name="tipoVisaoPrazo" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="manutencaoElo">
+    <xs:sequence>
+      <xs:element name="data" type="xs:dateTime" minOccurs="0"/>
+      <xs:element name="dataHoraTerminoManutencao" type="xs:dateTime" minOccurs="0"/>
+      <xs:element name="id" type="xs:int" minOccurs="0"/>
+      <xs:element name="idEloCadeiaProducao" type="xs:int" minOccurs="0"/>
+      <xs:element name="idPontoCargaDescargaAPS" type="xs:int" minOccurs="0"/>
+      <xs:element name="idUnidadeTempo" type="xs:string" minOccurs="0"/>
+      <xs:element name="tempoManutencao" type="xs:double" minOccurs="0"/>
+      <xs:element name="tipoOperacao" type="xs:string" minOccurs="0"/>
+      <xs:element name="tipoVisaoPrazo" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="minaAPS">
+    <xs:complexContent>
+      <xs:extension base="eloCadeiaProducaoAPS">
+        <xs:sequence>
+          <xs:element name="ativo" type="xs:boolean" minOccurs="0"/>
+          <xs:element name="blendagem" type="xs:boolean" minOccurs="0"/>
+          <xs:element name="codigoMina" type="xs:string" minOccurs="0"/>
+          <xs:element name="descricao" type="xs:string" minOccurs="0"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="patioAPS">
+    <xs:complexContent>
+      <xs:extension base="eloCadeiaProducaoAPS">
+        <xs:sequence>
+          <xs:element name="ativo" type="xs:boolean" minOccurs="0"/>
+          <xs:element name="blendagem" type="xs:boolean" minOccurs="0"/>
+          <xs:element name="capacidadeMaximaEstocagem" type="xs:double" minOccurs="0"/>
+          <xs:element name="capacidadeMinimaEstocagem" type="xs:double" minOccurs="0"/>
+          <xs:element name="codigoPatio" type="xs:string" minOccurs="0"/>
+          <xs:element name="codigoTipoPatio" type="xs:string" minOccurs="0"/>
+          <xs:element name="descricao" type="xs:string" minOccurs="0"/>
+          <xs:element name="operacional" type="xs:boolean" minOccurs="0"/>
+          <xs:element name="tempoPadraoOperacao" type="xs:double" minOccurs="0"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="peneiramentoAPS">
+    <xs:complexContent>
+      <xs:extension base="eloCadeiaProducaoAPS">
+        <xs:sequence>
+          <xs:element name="ativo" type="xs:boolean" minOccurs="0"/>
+          <xs:element name="codigoPeneiramento" type="xs:string" minOccurs="0"/>
+          <xs:element name="configuracoesPeneiramento" minOccurs="0">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="configuracaoPeneiramento" minOccurs="0" maxOccurs="unbounded"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="descricao" type="xs:string" minOccurs="0"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="configuracaoPeneiramento">
+    <xs:sequence>
+      <xs:element name="ativo" type="xs:boolean" minOccurs="0"/>
+      <xs:element name="codigoConfiguracaoPeneiramento" type="xs:string" minOccurs="0"/>
+      <xs:element name="codigoProduto" type="xs:string" minOccurs="0"/>
+      <xs:element name="dataInicioVigencia" type="xs:dateTime" minOccurs="0"/>
+      <xs:element name="descricao" type="xs:string" minOccurs="0"/>
+      <xs:element name="id" type="xs:int" minOccurs="0"/>
+      <xs:element name="idEloCadeiaProducao" type="xs:int" minOccurs="0"/>
+      <xs:element name="qtdeProdutoResultante" type="xs:int" minOccurs="0"/>
+      <xs:element name="resultadosPeneiramento" minOccurs="0">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element ref="resultadoPeneiramento" minOccurs="0" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="resultadoPeneiramento">
+    <xs:sequence>
+      <xs:element name="codigoProduto" type="xs:string" minOccurs="0"/>
+      <xs:element name="especificacoesResultadoPeneiramento" minOccurs="0">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element ref="especificacaoResultadoPeneiramento" minOccurs="0" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="id" type="xs:int" minOccurs="0"/>
+      <xs:element name="idConfiguracaoPeneiramento" type="xs:int" minOccurs="0"/>
+      <xs:element name="indicePercentualResultado" type="xs:double" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="especificacaoResultadoPeneiramento">
+    <xs:sequence>
+      <xs:element name="id" type="especificacaoResultadoPeneiramentoKey" minOccurs="0"/>
+      <xs:element name="valorVariacaoTeorGrandeza" type="xs:double" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="especificacaoResultadoPeneiramentoKey">
+    <xs:sequence>
+      <xs:element name="codigoEnsaio" type="xs:string" minOccurs="0"/>
+      <xs:element name="codigoGrandeza" type="xs:string" minOccurs="0"/>
+      <xs:element name="codigoNaturezaEnsaio" type="xs:string" minOccurs="0"/>
+      <xs:element name="idResultadoPeneiramento" type="xs:int" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="pilhaPadrao">
+    <xs:sequence>
+      <xs:element name="id" type="pilhaPadraoKey" minOccurs="0"/>
+      <xs:element name="qtdeProduto" type="xs:double" minOccurs="0"/>
+      <xs:element name="tempoFormacao" type="xs:double" minOccurs="0"/>
+      <xs:element name="valorIntervaloTempo" type="xs:double" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="pilhaPadraoKey">
+    <xs:sequence>
+      <xs:element name="codigoProduto" type="xs:string" minOccurs="0"/>
+      <xs:element name="idEloCadeiaProducao" type="xs:int" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="pontoCargaDescargaAPS">
+    <xs:complexContent>
+      <xs:extension base="eloCadeiaProducaoAPS">
+        <xs:sequence>
+          <xs:element name="codigoPonto" type="xs:string" minOccurs="0"/>
+          <xs:element name="descricao" type="xs:string" minOccurs="0"/>
+          <xs:element name="idEloCadeiaProducaoLocalizacao" type="xs:int" minOccurs="0"/>
+          <xs:element name="restricaoUtilizacaoElo" minOccurs="0">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="idElo" type="xs:int" minOccurs="0" maxOccurs="unbounded"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="submodaisPontoCargaDescarga" minOccurs="0">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="submodalTransporte" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="tipoPonto" type="xs:string" minOccurs="0"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="portoAPS">
+    <xs:complexContent>
+      <xs:extension base="eloCadeiaProducaoAPS">
+        <xs:sequence>
+          <xs:element name="ativo" type="xs:boolean" minOccurs="0"/>
+          <xs:element name="blendagem" type="xs:boolean" minOccurs="0"/>
+          <xs:element name="capacidadeMaximaEstocagem" type="xs:double" minOccurs="0"/>
+          <xs:element name="capacidadeMinimaEstocagem" type="xs:double" minOccurs="0"/>
+          <xs:element name="codigoPorto" type="xs:string" minOccurs="0"/>
+          <xs:element name="descricao" type="xs:string" minOccurs="0"/>
+          <xs:element name="horaFimDPC" type="xs:dateTime" minOccurs="0"/>
+          <xs:element name="horaInicioDPC" type="xs:dateTime" minOccurs="0"/>
+          <xs:element name="idClienteProprietario" type="xs:int" minOccurs="0"/>
+          <xs:element name="qtdeRebocadorDisponivel" type="xs:int" minOccurs="0"/>
+          <xs:element name="tempoAntecedenciaChegada" type="xs:double" minOccurs="0"/>
+          <xs:element name="tempoIntervaloAtracacao" type="xs:int" minOccurs="0"/>
+          <xs:element name="tempoIntervaloCarregamentoDesatracacao" type="xs:int" minOccurs="0"/>
+          <xs:element name="tempoPadraoOperacao" type="xs:double" minOccurs="0"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="produtoArranjo">
+    <xs:sequence>
+      <xs:element name="id" type="produtoArranjoKey" minOccurs="0"/>
+      <xs:element name="indicadorProdutoPadrao" type="xs:string" minOccurs="0"/>
+      <xs:element name="percentualMaximo" type="xs:double" minOccurs="0"/>
+      <xs:element name="percentualMinimo" type="xs:double" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="produtoArranjoKey">
+    <xs:sequence>
+      <xs:element name="codigoProduto" type="xs:string" minOccurs="0"/>
+      <xs:element name="identificadorArranjo" type="xs:int" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="produtoExclusivoArranjo">
+    <xs:sequence>
+      <xs:element name="id" type="produtoExclusivoArranjoKey" minOccurs="0"/>
+      <xs:element name="valorSequencia" type="xs:int" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="produtoExclusivoArranjoKey">
+    <xs:sequence>
+      <xs:element name="codigoProduto" type="xs:string" minOccurs="0"/>
+      <xs:element name="idGrupo" type="xs:int" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="qualidadeProdutoElo">
+    <xs:sequence>
+      <xs:element name="id" type="qualidadeProdutoEloKey" minOccurs="0"/>
+      <xs:element name="teorGrandeza" type="xs:double" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="qualidadeProdutoEloKey">
+    <xs:sequence>
+      <xs:element name="codigoEnsaio" type="xs:string" minOccurs="0"/>
+      <xs:element name="codigoGrandeza" type="xs:string" minOccurs="0"/>
+      <xs:element name="codigoNaturezaEnsaio" type="xs:string" minOccurs="0"/>
+      <xs:element name="codigoProduto" type="xs:string" minOccurs="0"/>
+      <xs:element name="dataInicioVigencia" type="xs:dateTime" minOccurs="0"/>
+      <xs:element name="idEloCadeiaProducao" type="xs:int" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="receitaCusto">
+    <xs:sequence>
+      <xs:element name="codigoCategoriaProduto" type="xs:string" minOccurs="0"/>
+      <xs:element name="codigoProduto" type="xs:string" minOccurs="0"/>
+      <xs:element name="codigoSubModal" type="xs:string" minOccurs="0"/>
+      <xs:element name="dataInicioVigencia" type="xs:dateTime" minOccurs="0"/>
+      <xs:element name="id" type="xs:int" minOccurs="0"/>
+      <xs:element name="idEloCadeiaProducao" type="xs:int" minOccurs="0"/>
+      <xs:element name="idEloCadeiaProducaoDestino" type="xs:int" minOccurs="0"/>
+      <xs:element name="idEloCadeiaProducaoOrigem" type="xs:int" minOccurs="0"/>
+      <xs:element name="indicadorUnidadeTempoCustoEstocagem" type="xs:string" minOccurs="0"/>
+      <xs:element name="tipoAssociacao" type="xs:string" minOccurs="0"/>
+      <xs:element name="tipoCusto" type="xs:string" minOccurs="0"/>
+      <xs:element name="tipoEntrega" type="xs:string" minOccurs="0"/>
+      <xs:element name="tipoOcorrencia" type="xs:string" minOccurs="0"/>
+      <xs:element name="valor" type="xs:double" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="sistemaProducaoAPS">
+    <xs:complexContent>
+      <xs:extension base="eloCadeiaProducaoAPS">
+        <xs:sequence>
+          <xs:element name="ativo" type="xs:boolean" minOccurs="0"/>
+          <xs:element name="codigoSistemaProducao" type="xs:string" minOccurs="0"/>
+          <xs:element name="descricao" type="xs:string" minOccurs="0"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="siteProdutivoAPS">
+    <xs:complexContent>
+      <xs:extension base="eloCadeiaProducaoAPS">
+        <xs:sequence>
+          <xs:element name="ativo" type="xs:boolean" minOccurs="0"/>
+          <xs:element name="codigoSiteProdutivo" type="xs:string" minOccurs="0"/>
+          <xs:element name="descricao" type="xs:string" minOccurs="0"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="splitInstalacaoAPS">
+    <xs:sequence>
+      <xs:element name="id" type="splitInstalacaoAPSKey" minOccurs="0"/>
+      <xs:element name="percentualUtilizacaoMaxima" type="xs:double" minOccurs="0"/>
+      <xs:element name="percentualUtilizacaoMinima" type="xs:double" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="splitInstalacaoAPSKey">
+    <xs:sequence>
+      <xs:element name="categoriaProduto" type="xs:string" minOccurs="0"/>
+      <xs:element name="dataInicioVigencia" type="xs:dateTime" minOccurs="0"/>
+      <xs:element name="idEloCadeia" type="xs:int" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="taxaDescargaExpedicaoElo">
+    <xs:sequence>
+      <xs:element name="codigoSubModal" type="xs:string" minOccurs="0"/>
+      <xs:element name="dataInicioVigencia" type="xs:dateTime" minOccurs="0"/>
+      <xs:element name="id" type="xs:int" minOccurs="0"/>
+      <xs:element name="idEloCadeiaProducao" type="xs:int" minOccurs="0"/>
+      <xs:element name="idEloCadeiaProducaoDestinoDescarga" type="xs:int" minOccurs="0"/>
+      <xs:element name="indicadorUnidadeTempoTaxaDescargaExpedicao" type="xs:string" minOccurs="0"/>
+      <xs:element name="tipoOperacao" type="xs:string" minOccurs="0"/>
+      <xs:element name="valorTaxaDescargaExpedicao" type="xs:double" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="usinaBeneficiamentoAPS">
+    <xs:complexContent>
+      <xs:extension base="eloCadeiaProducaoAPS">
+        <xs:sequence>
+          <xs:element name="ativo" type="xs:boolean" minOccurs="0"/>
+          <xs:element name="blendagem" type="xs:boolean" minOccurs="0"/>
+          <xs:element name="codigoUsinaBeneficiamento" type="xs:string" minOccurs="0"/>
+          <xs:element name="descricao" type="xs:string" minOccurs="0"/>
+          <xs:element name="valorQtdeDiasPeriodoCongelamento" type="xs:int" minOccurs="0"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="usinaPelotizacaoAPS">
+    <xs:complexContent>
+      <xs:extension base="eloCadeiaProducaoAPS">
+        <xs:sequence>
+          <xs:element name="ativo" type="xs:boolean" minOccurs="0"/>
+          <xs:element name="codigoUsinaPelotizacao" type="xs:string" minOccurs="0"/>
+          <xs:element name="descricao" type="xs:string" minOccurs="0"/>
+          <xs:element name="idEmpresaProprietaria" type="xs:int" minOccurs="0"/>
+          <xs:element name="indicePercentualProducaoFinos" type="xs:double" minOccurs="0"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="utilizacaoProgramadaInstalacao">
+    <xs:sequence>
+      <xs:element name="dataFim" type="xs:dateTime" minOccurs="0"/>
+      <xs:element name="id" type="utilizacaoProgramadaInstalacaoKey" minOccurs="0"/>
+      <xs:element name="utilizacaoMaxima" type="xs:double" minOccurs="0"/>
+      <xs:element name="utilizacaoMinima" type="xs:double" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="utilizacaoProgramadaInstalacaoKey">
+    <xs:sequence>
+      <xs:element name="dataInicio" type="xs:dateTime" minOccurs="0"/>
+      <xs:element name="identificadorArranjo" type="xs:int" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="demanda">
+    <xs:sequence>
+      <xs:element name="previsoesAgregadas" minOccurs="0">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element ref="previsaoAgregada" minOccurs="0" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="programacoesDemandaFeed" minOccurs="0">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element ref="programacaoDemandaFeed" minOccurs="0" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="programacoesVenda" minOccurs="0">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element ref="programacaoVenda" minOccurs="0" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="previsaoAgregada">
+    <xs:sequence>
+      <xs:element name="codigoElo" type="xs:int" minOccurs="0"/>
+      <xs:element name="codigoPilhaUsuario" type="xs:string" minOccurs="0"/>
+      <xs:element name="codigoProduto" type="xs:string" minOccurs="0"/>
+      <xs:element name="dataFim" type="xs:dateTime" minOccurs="0"/>
+      <xs:element name="dataInicio" type="xs:dateTime" minOccurs="0"/>
+      <xs:element name="id" type="xs:int" minOccurs="0"/>
+      <xs:element name="qtdeProduto" type="xs:double" minOccurs="0"/>
+      <xs:element name="tipoDemanda" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="programacaoDemandaFeed">
+    <xs:sequence>
+      <xs:element name="codigoElo" type="xs:int" minOccurs="0"/>
+      <xs:element name="codigoProduto" type="xs:string" minOccurs="0"/>
+      <xs:element name="dataDemanda" type="xs:dateTime" minOccurs="0"/>
+      <xs:element name="id" type="xs:int" minOccurs="0"/>
+      <xs:element name="qtdeProgramada" type="xs:double" minOccurs="0"/>
+      <xs:element name="tipoRegistro" type="xs:string" minOccurs="0"/>
+      <xs:element name="tipoVisaoPrazo" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="programacaoVenda">
+    <xs:sequence>
+      <xs:element name="codigoProduto" type="xs:string" minOccurs="0"/>
+      <xs:element name="dataDemanda" type="xs:dateTime" minOccurs="0"/>
+      <xs:element name="id" type="xs:int" minOccurs="0"/>
+      <xs:element name="idEloCliente" type="xs:int" minOccurs="0"/>
+      <xs:element name="idEloSistema" type="xs:int" minOccurs="0"/>
+      <xs:element name="indicadorTotalizacaoAno" type="xs:string" minOccurs="0"/>
+      <xs:element name="indicePercentualMinimo" type="xs:double" minOccurs="0"/>
+      <xs:element name="quantidadeProgramada" type="xs:double" minOccurs="0"/>
+      <xs:element name="tipoRegistro" type="xs:string" minOccurs="0"/>
+      <xs:element name="tipoVisao" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="fluxo">
+    <xs:sequence>
+      <xs:element name="disponibilidadesTransporte" minOccurs="0">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element ref="disponibilidadeTransporte" minOccurs="0" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="fatoresManuseio" minOccurs="0">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element ref="fatorManuseio" minOccurs="0" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="submodaisTransporte" minOccurs="0">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element ref="submodalTransporte" minOccurs="0" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="subRedesTransporte" minOccurs="0">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element ref="subRedeTransporte" minOccurs="0" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="tiposModalTransporte" minOccurs="0">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element ref="tipoModalTransporte" minOccurs="0" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="trechosSubRedeTransporte" minOccurs="0">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="TrechoSubRedeTransporte" type="trechoSubRedeTransporte" minOccurs="0" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="trechosTransporte" minOccurs="0">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element ref="trechoTransporte" minOccurs="0" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="disponibilidadeTransporte">
+    <xs:sequence>
+      <xs:element name="id" type="disponibilidadeTransporteKey" minOccurs="0"/>
+      <xs:element name="qtdeDisponivel" type="xs:double" minOccurs="0"/>
+      <xs:element name="unidadeMedidaTempo" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="disponibilidadeTransporteKey">
+    <xs:sequence>
+      <xs:element name="codigoSubModal" type="xs:string" minOccurs="0"/>
+      <xs:element name="dataInicioVigencia" type="xs:dateTime" minOccurs="0"/>
+      <xs:element name="idEloCadeia" type="xs:int" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="fatorManuseio">
+    <xs:sequence>
+      <xs:element name="id" type="fatorManuseioKey" minOccurs="0"/>
+      <xs:element name="valorTeorGrandeza" type="xs:double" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="fatorManuseioKey">
+    <xs:sequence>
+      <xs:element name="codigoEnsaio" type="xs:string" minOccurs="0"/>
+      <xs:element name="codigoGrandeza" type="xs:string" minOccurs="0"/>
+      <xs:element name="codigoNaturezaEnsaio" type="xs:string" minOccurs="0"/>
+      <xs:element name="codigoProduto" type="xs:string" minOccurs="0"/>
+      <xs:element name="codigoSubModal" type="xs:string" minOccurs="0"/>
+      <xs:element name="dataInicioVigencia" type="xs:dateTime" minOccurs="0"/>
+      <xs:element name="idEloCadeiaDestino" type="xs:int" minOccurs="0"/>
+      <xs:element name="idEloCadeiaOrigem" type="xs:int" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="submodalTransporte">
+    <xs:sequence>
+      <xs:element name="codigoTipoModal" type="xs:string" minOccurs="0"/>
+      <xs:element name="descricao" type="xs:string" minOccurs="0"/>
+      <xs:element name="id" type="xs:string" minOccurs="0"/>
+      <xs:element name="pesosMediosTransporteProduto" minOccurs="0">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element ref="pesoMedioTransporteProduto" minOccurs="0" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="quantidade" type="xs:double" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="pesoMedioTransporteProduto">
+    <xs:sequence>
+      <xs:element name="codigoCategoriaProduto" type="xs:string" minOccurs="0"/>
+      <xs:element name="codigoProduto" type="xs:string" minOccurs="0"/>
+      <xs:element name="codigoSubModal" type="xs:string" minOccurs="0"/>
+      <xs:element name="dataInicioVigencia" type="xs:dateTime" minOccurs="0"/>
+      <xs:element name="id" type="xs:int" minOccurs="0"/>
+      <xs:element name="pesoMedio" type="xs:double" minOccurs="0"/>
+      <xs:element name="tipoAssociacao" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="subRedeTransporte">
+    <xs:sequence>
+      <xs:element name="capacidadeVazaoSubModal" type="xs:double" minOccurs="0"/>
+      <xs:element name="codigoSubModal" type="xs:string" minOccurs="0"/>
+      <xs:element name="id" type="xs:int" minOccurs="0"/>
+      <xs:element name="unidadeMedidaTempo" type="xs:string" minOccurs="0"/>
+      <xs:element name="variacoesCapacidadeVazaoTrecho" minOccurs="0">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element ref="variacaoCapacidadeVazaoTrecho" minOccurs="0" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="vazoesObrigatorias" minOccurs="0">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element ref="vazaoObrigatoria" minOccurs="0" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="variacaoCapacidadeVazaoTrecho">
+    <xs:sequence>
+      <xs:element name="capacidadeVazao" type="xs:double" minOccurs="0"/>
+      <xs:element name="codSubModal" type="xs:string" minOccurs="0"/>
+      <xs:element name="codigoProduto" type="xs:string" minOccurs="0"/>
+      <xs:element name="dataFimVigencia" type="xs:dateTime" minOccurs="0"/>
+      <xs:element name="dataInicioVigencia" type="xs:dateTime" minOccurs="0"/>
+      <xs:element name="id" type="xs:int" minOccurs="0"/>
+      <xs:element name="idEloCadeiaProducaoDestino" type="xs:int" minOccurs="0"/>
+      <xs:element name="idEloCadeiaProducaoOrigem" type="xs:int" minOccurs="0"/>
+      <xs:element name="idSubRedeTransporte" type="xs:int" minOccurs="0"/>
+      <xs:element name="textoObservacao" type="xs:string" minOccurs="0"/>
+      <xs:element name="unidadeTempoVazao" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="vazaoObrigatoria">
+    <xs:sequence>
+      <xs:element name="capacidadeMeta" type="xs:double" minOccurs="0"/>
+      <xs:element name="capacidadeVazao" type="xs:double" minOccurs="0"/>
+      <xs:element name="codigoProduto" type="xs:string" minOccurs="0"/>
+      <xs:element name="codigoSubModal" type="xs:string" minOccurs="0"/>
+      <xs:element name="dataFimVigencia" type="xs:dateTime" minOccurs="0"/>
+      <xs:element name="dataInicioVigencia" type="xs:dateTime" minOccurs="0"/>
+      <xs:element name="id" type="xs:int" minOccurs="0"/>
+      <xs:element name="idEloCadeiaProducaoDestino" type="xs:int" minOccurs="0"/>
+      <xs:element name="idEloCadeiaProducaoOrigem" type="xs:int" minOccurs="0"/>
+      <xs:element name="idSubRedeTransporte" type="xs:int" minOccurs="0"/>
+      <xs:element name="indicadorUnidadeTempoVazao" type="xs:string" minOccurs="0"/>
+      <xs:element name="qualidadesTransferencia" minOccurs="0">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element ref="qualidadeTransferencia" minOccurs="0" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="tipoVisaoPrazo" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="qualidadeTransferencia">
+    <xs:sequence>
+      <xs:element name="id" type="qualidadeTransferenciaKey" minOccurs="0"/>
+      <xs:element name="valorQualidade" type="xs:double" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="qualidadeTransferenciaKey">
+    <xs:sequence>
+      <xs:element name="codigoEnsaio" type="xs:string" minOccurs="0"/>
+      <xs:element name="codigoGrandeza" type="xs:string" minOccurs="0"/>
+      <xs:element name="codigoNaturezaEnsaio" type="xs:string" minOccurs="0"/>
+      <xs:element name="idTransferencia" type="xs:int" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="tipoModalTransporte">
+    <xs:sequence>
+      <xs:element name="descricao" type="xs:string" minOccurs="0"/>
+      <xs:element name="id" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="trechoSubRedeTransporte">
+    <xs:sequence>
+      <xs:element name="descricaoTrecho" type="xs:string" minOccurs="0"/>
+      <xs:element name="id" type="trechoSubRedeTransporteKey" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="trechoSubRedeTransporteKey">
+    <xs:sequence>
+      <xs:element name="codigoSubModal" type="xs:string" minOccurs="0"/>
+      <xs:element name="idEloCadeiaDestino" type="xs:int" minOccurs="0"/>
+      <xs:element name="idEloCadeiaOrigem" type="xs:int" minOccurs="0"/>
+      <xs:element name="idSubRedeTransporte" type="xs:int" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="trechoTransporte">
+    <xs:sequence>
+      <xs:element name="capacidadeVazao" type="xs:double" minOccurs="0"/>
+      <xs:element name="considerarAtendimento" type="xs:boolean" minOccurs="0"/>
+      <xs:element name="descricao" type="xs:string" minOccurs="0"/>
+      <xs:element name="id" type="trechoTransporteKey" minOccurs="0"/>
+      <xs:element name="idSistemaProducao" type="xs:int" minOccurs="0"/>
+      <xs:element name="indicadorUnidadeMedidaTempoPercurso" type="xs:string" minOccurs="0"/>
+      <xs:element name="indicadorUnidadeTempoVazao" type="xs:string" minOccurs="0"/>
+      <xs:element name="interSistema" type="xs:boolean" minOccurs="0"/>
+      <xs:element name="tempoPercurso" type="xs:double" minOccurs="0"/>
+      <xs:element name="variacoesCapacidadeVazaoTrecho" minOccurs="0">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element ref="variacaoCapacidadeVazaoTrecho" minOccurs="0" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="vazoesObrigatorias" minOccurs="0">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element ref="vazaoObrigatoria" minOccurs="0" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="trechoTransporteKey">
+    <xs:sequence>
+      <xs:element name="codigoSubModal" type="xs:string" minOccurs="0"/>
+      <xs:element name="idEloCadeiaProducaoDestino" type="xs:int" minOccurs="0"/>
+      <xs:element name="idEloCadeiaProducaoOrigem" type="xs:int" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="produto">
+    <xs:sequence>
+      <xs:element name="associacoesProdutoElo" minOccurs="0">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element ref="associacaoProdutoElo" minOccurs="0" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="associacoesProdutoGrupo" minOccurs="0">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element ref="associacaoProdutoGrupo" minOccurs="0" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="blendagensProduto" minOccurs="0">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element ref="blendagemProduto" minOccurs="0" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="categoriasProdutoAPS" minOccurs="0">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element ref="categoriaProdutoAPS" minOccurs="0" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="clientesMapaAnalise" minOccurs="0">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element ref="clienteMapaAnalise" minOccurs="0" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="clientesRegraBlendagem" minOccurs="0">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element ref="clienteRegraBlendagem" minOccurs="0" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="especificacoesPlanejamento" minOccurs="0">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element ref="especificacaoPlanejamento" minOccurs="0" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="grandezasEnsaioMapaAnaliseAPS" minOccurs="0">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element ref="grandezaEnsaioMapaAnaliseAPS" minOccurs="0" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="gruposProdutoAPS" minOccurs="0">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element ref="grupoProdutoAPS" minOccurs="0" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="mapasAnaliseAPS" minOccurs="0">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element ref="mapaAnaliseAPS" minOccurs="0" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="produtosAPS" minOccurs="0">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element ref="produtoAPS" minOccurs="0" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="subcategoriasProdutoAPS" minOccurs="0">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element ref="subCategoriaProdutoAPS" minOccurs="0" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="utilizacoesObrigatorias" minOccurs="0">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="utilizacaoObrigatoria" type="utilizacaoObrigatoriaProduto" minOccurs="0" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="associacaoProdutoElo">
+    <xs:sequence>
+      <xs:element name="codigoCategoriaProduto" type="xs:string" minOccurs="0"/>
+      <xs:element name="codigoProduto" type="xs:string" minOccurs="0"/>
+      <xs:element name="id" type="xs:int" minOccurs="0"/>
+      <xs:element name="idEloCadeiaProducao" type="xs:int" minOccurs="0"/>
+      <xs:element name="quantidadeMinimaEntrega" type="xs:double" minOccurs="0"/>
+      <xs:element name="tipoAssociacao" type="xs:string" minOccurs="0"/>
+      <xs:element name="valorPrioridade" type="xs:int" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="associacaoProdutoGrupo">
+    <xs:sequence>
+      <xs:element name="id" type="associacaoProdutoGrupoKey" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="associacaoProdutoGrupoKey">
+    <xs:sequence>
+      <xs:element name="codigoGrupo" type="xs:string" minOccurs="0"/>
+      <xs:element name="codigoProduto" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="blendagemProduto">
+    <xs:sequence>
+      <xs:element name="codigoProduto" type="xs:string" minOccurs="0"/>
+      <xs:element name="dataInicio" type="xs:dateTime" minOccurs="0"/>
+      <xs:element name="id" type="xs:int" minOccurs="0"/>
+      <xs:element name="regrasBlendagemProduto" minOccurs="0">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element ref="regraBlendagemProduto" minOccurs="0" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="regraBlendagemProduto">
+    <xs:sequence>
+      <xs:element name="codigoBlendagemProduto" type="xs:int" minOccurs="0"/>
+      <xs:element name="codigoGrupoProduto" type="xs:string" minOccurs="0"/>
+      <xs:element name="codigoProduto" type="xs:string" minOccurs="0"/>
+      <xs:element name="id" type="xs:int" minOccurs="0"/>
+      <xs:element name="indicePercentualMaximo" type="xs:double" minOccurs="0"/>
+      <xs:element name="indicePercentualMinimo" type="xs:double" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="categoriaProdutoAPS">
+    <xs:sequence>
+      <xs:element name="descricao" type="xs:string" minOccurs="0"/>
+      <xs:element name="id" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="clienteMapaAnalise">
+    <xs:sequence>
+      <xs:element name="id" type="clienteMapaAnaliseKey" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="clienteMapaAnaliseKey">
+    <xs:sequence>
+      <xs:element name="idEloCadeia" type="xs:int" minOccurs="0"/>
+      <xs:element name="idMapaAnalise" type="xs:int" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="clienteRegraBlendagem">
+    <xs:sequence>
+      <xs:element name="id" type="clienteRegraBlendagemKey" minOccurs="0"/>
+      <xs:element name="otimizacaoCurtoCurtissimoPrazo" type="xs:boolean" minOccurs="0"/>
+      <xs:element name="otimizacaoLongoMedioPrazo" type="xs:boolean" minOccurs="0"/>
+      <xs:element name="situacaoOtimizCurtoCurtissimo" type="xs:string" minOccurs="0"/>
+      <xs:element name="situacaoOtimizLongoMedio" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="clienteRegraBlendagemKey">
+    <xs:sequence>
+      <xs:element name="idBlendagemProduto" type="xs:int" minOccurs="0"/>
+      <xs:element name="idEloCadeia" type="xs:int" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="especificacaoPlanejamento">
+    <xs:sequence>
+      <xs:element name="codigoCliente" type="xs:string" minOccurs="0"/>
+      <xs:element name="codigoEnsaio" type="xs:string" minOccurs="0"/>
+      <xs:element name="codigoGrandeza" type="xs:string" minOccurs="0"/>
+      <xs:element name="codigoNaturezaEnsaio" type="xs:string" minOccurs="0"/>
+      <xs:element name="codigoProduto" type="xs:string" minOccurs="0"/>
+      <xs:element name="dataInicioVigencia" type="xs:dateTime" minOccurs="0"/>
+      <xs:element name="id" type="xs:int" minOccurs="0"/>
+      <xs:element name="idEloCadeiaProducao" type="xs:int" minOccurs="0"/>
+      <xs:element name="tipoRegistro" type="xs:string" minOccurs="0"/>
+      <xs:element name="valorIndicadoContratual" type="xs:double" minOccurs="0"/>
+      <xs:element name="valorIndicadoEmbarque" type="xs:double" minOccurs="0"/>
+      <xs:element name="valorIndicadoOperacional" type="xs:double" minOccurs="0"/>
+      <xs:element name="valorLimiteInferiorContratual" type="xs:double" minOccurs="0"/>
+      <xs:element name="valorLimiteInferiorEmbarque" type="xs:double" minOccurs="0"/>
+      <xs:element name="valorLimiteInferiorOperacional" type="xs:double" minOccurs="0"/>
+      <xs:element name="valorLimiteSuperiorContratual" type="xs:double" minOccurs="0"/>
+      <xs:element name="valorLimiteSuperiorEmbarque" type="xs:double" minOccurs="0"/>
+      <xs:element name="valorLimiteSuperiorOperacional" type="xs:double" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="grandezaEnsaioMapaAnaliseAPS">
+    <xs:sequence>
+      <xs:element name="id" type="grandezaEnsaioMapaAnaliseAPSKey" minOccurs="0"/>
+      <xs:element name="valorCriticidadeViolacaoLimiteMaximo" type="xs:int" minOccurs="0"/>
+      <xs:element name="valorCriticidadeViolacaoLimiteMinimo" type="xs:int" minOccurs="0"/>
+      <xs:element name="valorLimiteMaximo" type="xs:double" minOccurs="0"/>
+      <xs:element name="valorLimiteMinimo" type="xs:double" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="grandezaEnsaioMapaAnaliseAPSKey">
+    <xs:sequence>
+      <xs:element name="codigoEnsaio" type="xs:string" minOccurs="0"/>
+      <xs:element name="codigoGrandeza" type="xs:string" minOccurs="0"/>
+      <xs:element name="codigoNaturezaEnsaio" type="xs:string" minOccurs="0"/>
+      <xs:element name="idMapaAnalise" type="xs:int" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="grupoProdutoAPS">
+    <xs:sequence>
+      <xs:element name="descricao" type="xs:string" minOccurs="0"/>
+      <xs:element name="id" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="mapaAnaliseAPS">
+    <xs:sequence>
+      <xs:element name="codigoProduto" type="xs:string" minOccurs="0"/>
+      <xs:element name="id" type="xs:int" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="produtoAPS">
+    <xs:sequence>
+      <xs:element name="codigoCategoria" type="xs:string" minOccurs="0"/>
+      <xs:element name="codigoSubCategoria" type="xs:string" minOccurs="0"/>
+      <xs:element name="descricao" type="xs:string" minOccurs="0"/>
+      <xs:element name="id" type="xs:string" minOccurs="0"/>
+      <xs:element name="indicadorOrigem" type="xs:string" minOccurs="0"/>
+      <xs:element name="pesoMaximoPilha" type="xs:double" minOccurs="0"/>
+      <xs:element name="pesoMinimoPilha" type="xs:double" minOccurs="0"/>
+      <xs:element name="projetado" type="xs:boolean" minOccurs="0"/>
+      <xs:element name="quantidadeMinimaVagao" type="xs:double" minOccurs="0"/>
+      <xs:element name="tipoProduto" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="subCategoriaProdutoAPS">
+    <xs:sequence>
+      <xs:element name="descricao" type="xs:string" minOccurs="0"/>
+      <xs:element name="id" type="subCategoriaProdutoAPSKey" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="subCategoriaProdutoAPSKey">
+    <xs:sequence>
+      <xs:element name="codigoCategoria" type="xs:string" minOccurs="0"/>
+      <xs:element name="codigoSubCategoria" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="utilizacaoObrigatoriaProduto">
+    <xs:sequence>
+      <xs:element name="id" type="utilizacaoObrigatoriaProdutoKey" minOccurs="0"/>
+      <xs:element name="percentualMaximoEstoque" type="xs:double" minOccurs="0"/>
+      <xs:element name="percentualMaximoProducao" type="xs:double" minOccurs="0"/>
+      <xs:element name="percentualMinimoEstoque" type="xs:double" minOccurs="0"/>
+      <xs:element name="percentualMinimoProducao" type="xs:double" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="utilizacaoObrigatoriaProdutoKey">
+    <xs:sequence>
+      <xs:element name="codigoProduto" type="xs:string" minOccurs="0"/>
+      <xs:element name="dataFim" type="xs:dateTime" minOccurs="0"/>
+      <xs:element name="dataInicio" type="xs:dateTime" minOccurs="0"/>
+      <xs:element name="tipoVisaoPrazo" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="propriedade">
+    <xs:sequence>
+      <xs:element name="codigoSistemaProducao" type="xs:string" minOccurs="0"/>
+      <xs:element name="dataHoraCriacaoCenario" type="xs:dateTime" minOccurs="0"/>
+      <xs:element name="dataHoraInstanteInicial" type="xs:dateTime" minOccurs="0"/>
+      <xs:element name="dataHoraUltimaAtualizacao" type="xs:dateTime" minOccurs="0"/>
+      <xs:element name="dataInicioCenarioImportado" type="xs:dateTime" minOccurs="0"/>
+      <xs:element name="dataInicioVigenciaCenario" type="xs:dateTime" minOccurs="0"/>
+      <xs:element name="dataTerminoCenarioImportado" type="xs:dateTime" minOccurs="0"/>
+      <xs:element name="dataTerminoVigenciaCenario" type="xs:dateTime" minOccurs="0"/>
+      <xs:element name="indicadorCurtissimoPrazo" type="xs:boolean"/>
+      <xs:element name="indicadorCurtoPrazoFuturo" type="xs:boolean"/>
+      <xs:element name="indicadorCurtoPrazo" type="xs:boolean"/>
+      <xs:element name="indicadorLongoPrazo" type="xs:boolean"/>
+      <xs:element name="indicadorMedioPrazoGlobal" type="xs:boolean"/>
+      <xs:element name="indicadorMedioPrazoLocal" type="xs:boolean"/>
+      <xs:element name="parametrosOtimizacao" minOccurs="0">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="parametroOtimizacao" type="valorParametroOtimizacao" minOccurs="0" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="valorParametroOtimizacao">
+    <xs:sequence>
+      <xs:element name="id" type="valorParametroOtimizacaoKey" minOccurs="0"/>
+      <xs:element name="valor" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="valorParametroOtimizacaoKey">
+    <xs:sequence>
+      <xs:element name="codigo" type="xs:string" minOccurs="0"/>
+      <xs:element name="tipoVisao" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+</xs:schema>
+
