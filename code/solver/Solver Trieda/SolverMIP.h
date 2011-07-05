@@ -191,6 +191,7 @@ public:
    int criaRestricaoCustoCorpoDocente(); // x7
    int criaRestricaoRelacionaVariavelXDiaProf(); // x9
    int criaRestricaoCargaHorariaMinimaProfessor(); // x10
+   int criaRestricaoUltimaPrimeiraAulas(); // x11
    int criaRestricaoAlocacaoProfessorCurso(); // x12
    int criaRestricaoMinimoMestresCurso(); // x12
    int criaRestricaoMinimoDoutoresCurso(); // x12

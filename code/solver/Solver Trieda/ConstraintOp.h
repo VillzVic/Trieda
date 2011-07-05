@@ -44,7 +44,8 @@ public:
       C_AVALIACAO_CORPO_DOCENTE = 24,
       C_PREF_DISCIPLINAS = 25,
       C_DESLOC_PROF = 26,
-      C_DESLOC_VIAVEL = 27
+      C_DESLOC_VIAVEL = 27,
+      C_ULTIMA_PRIMEIRA_AULA_PROF = 28
    };
 
    /** Default constructor. */

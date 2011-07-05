@@ -11242,7 +11242,6 @@ int SolverMIP::criaVariaveisOperacional()
 #endif
 
    lp->updateLP();
-
    return numVars;
 }
 
@@ -11265,11 +11264,11 @@ int SolverMIP::criaVariavelProfessorAulaHorario()
                continue;
             }
 
-            std::pair< int, int > chaveGamb ( itProfessor->getId(),
-               discMinistradaProf->getId() );
+            std::pair< int, int > prof_disc
+               ( itProfessor->getId(), discMinistradaProf->getId() );
 
             // Se o professor e a disciplina da aula em questão se relacionarem:
-            if ( problemData->prof_Disc_Dias.find( chaveGamb ) == problemData->prof_Disc_Dias.end() )
+            if ( problemData->prof_Disc_Dias.find( prof_disc ) == problemData->prof_Disc_Dias.end() )
             {
                continue;
             }
@@ -11282,7 +11281,7 @@ int SolverMIP::criaVariavelProfessorAulaHorario()
             for ( std::list< HorarioDia * >::iterator itHor = listaHorarios.begin();
                   itHor != listaHorarios.end(); itHor++ )
             {
-               HorarioDia * horarioDia = *itHor;
+               HorarioDia * horarioDia = ( *itHor );
 
                VariableOp v;
                v.reset();
@@ -12543,6 +12542,14 @@ int SolverMIP::criaRestricoesOperacional()
 #endif
 
    lp->updateLP();
+   restricoes += criaRestricaoUltimaPrimeiraAulas();
+
+#ifdef PRINT_cria_restricoes
+   std::cout << "numRest C_ULTIMA_PRIMEIRA_AULA_PROF: " << ( restricoes - numRestAnterior ) << std::endl;
+   numRestAnterior = restricoes;
+#endif
+
+   lp->updateLP();
    restricoes += criaRestricaoAlocacaoProfessorCurso();
 
 #ifdef PRINT_cria_restricoes
@@ -12676,8 +12683,7 @@ int SolverMIP::criaRestricaoSalaHorario()
       vit++;
    }
 
-   chgCoeffList(coeffList,coeffListVal);
-
+   chgCoeffList( coeffList, coeffListVal );
    return restricoes;
 }
 
@@ -12687,15 +12693,16 @@ int SolverMIP::criaRestricaoProfessorHorario()
    ConstraintOp c;
    VariableOpHash::iterator vit;
    ConstraintOpHash::iterator cit;
-   std::vector<std::pair<int,int> > coeffList;
-   std::vector<double> coeffListVal;
-   std::pair<int,int> auxCoef;
+
+   std::vector< std::pair< int, int > > coeffList;
+   std::vector< double > coeffListVal;
+   std::pair< int , int > auxCoef;
    int nnz;
    char name[ 200 ];
 
    vit = vHashOp.begin();
 
-   while (vit != vHashOp.end())
+   while ( vit != vHashOp.end() )
    {
       VariableOp v = vit->first;
 
@@ -12706,23 +12713,23 @@ int SolverMIP::criaRestricaoProfessorHorario()
       }
 
       int nCred = v.getAula()->getTotalCreditos();
-      int idxHor = problemData->getHorarioDiaIdx(v.getHorario());
+      int idxHor = problemData->getHorarioDiaIdx( v.getHorario() );
 
-      for (int h = idxHor; h < idxHor+nCred; h++)
+      for ( int h = idxHor; h < idxHor+nCred; h++ )
       {
          c.reset();
          c.setType( ConstraintOp::C_PROFESSOR_HORARIO );
-         c.setProfessor(v.getProfessor());
-         c.setHorario(problemData->horariosDiaIdx[h]);
+         c.setProfessor( v.getProfessor() );
+         c.setHorario( problemData->horariosDiaIdx[ h ] );
 
-         cit = cHashOp.find(c);
+         cit = cHashOp.find( c );
 
          if ( cit != cHashOp.end() )
          {
             auxCoef.first = cit->second;
             auxCoef.second = vit->second;
-            coeffList.push_back(auxCoef);
-            coeffListVal.push_back(1.0);
+            coeffList.push_back( auxCoef );
+            coeffListVal.push_back( 1.0 );
          }
          else
          {
@@ -12731,7 +12738,7 @@ int SolverMIP::criaRestricaoProfessorHorario()
 
             OPT_ROW row( nnz, OPT_ROW::LESS , 1.0, name );
 
-            row.insert(vit->second,1.0);
+            row.insert( vit->second, 1.0 );
             cHashOp[ c ] = lp->getNumRows();
 
             lp->addRow( row );
@@ -12742,8 +12749,7 @@ int SolverMIP::criaRestricaoProfessorHorario()
       vit++;
    }
 
-   chgCoeffList(coeffList,coeffListVal);
-
+   chgCoeffList( coeffList, coeffListVal );
    return restricoes;
 }
 
@@ -12753,15 +12759,16 @@ int SolverMIP::criaRestricaoBlocoHorario()
    ConstraintOp c;
    VariableOpHash::iterator vit;
    ConstraintOpHash::iterator cit;
-   std::vector<std::pair<int,int> > coeffList;
-   std::vector<double> coeffListVal;
-   std::pair<int,int> auxCoef;
+
+   std::vector< std::pair< int, int > > coeffList;
+   std::vector< double > coeffListVal;
+   std::pair< int, int > auxCoef;
    int nnz;
    char name[ 200 ];
 
    vit = vHashOp.begin();
 
-   while (vit != vHashOp.end())
+   while ( vit != vHashOp.end() )
    {
       VariableOp v = vit->first;
 
@@ -12777,16 +12784,17 @@ int SolverMIP::criaRestricaoBlocoHorario()
       // Para cada Bloco Curricular ao qual a aula pertence
       ITERA_GGROUP_LESSPTR( itBlocoCurric, itAulaBlocosCurriculares->second, BlocoCurricular )
       {
-         BlocoCurricular *bloco = *itBlocoCurric;
+         BlocoCurricular * bloco = ( *itBlocoCurric );
          int nCred = v.getAula()->getTotalCreditos();
-         int idxHor = problemData->getHorarioDiaIdx(v.getHorario());
+         int idxHor = problemData->getHorarioDiaIdx( v.getHorario() );
 
-         for (int h = idxHor; h < idxHor+nCred; h++)
+         for ( int h = idxHor; h < idxHor+nCred; h++ )
          {
             c.reset();
             c.setType( ConstraintOp::C_BLOCO_HORARIO );
-            c.setBloco(bloco);
-            c.setHorario(problemData->horariosDiaIdx[h]);
+            c.setBloco( bloco );
+            c.setHorario( problemData->horariosDiaIdx[ h ] );
+            c.setTurma( v.getTurma() );
 
             cit = cHashOp.find(c);
 
@@ -12794,8 +12802,8 @@ int SolverMIP::criaRestricaoBlocoHorario()
             {
                auxCoef.first = cit->second;
                auxCoef.second = vit->second;
-               coeffList.push_back(auxCoef);
-               coeffListVal.push_back(1.0);
+               coeffList.push_back( auxCoef );
+               coeffListVal.push_back( 1.0 );
             }
             else
             {
@@ -12804,7 +12812,7 @@ int SolverMIP::criaRestricaoBlocoHorario()
 
                OPT_ROW row( nnz, OPT_ROW::LESS , 1.0, name );
 
-               row.insert(vit->second,1.0);
+               row.insert( vit->second, 1.0 );
                cHashOp[ c ] = lp->getNumRows();
 
                lp->addRow( row );
@@ -12812,12 +12820,11 @@ int SolverMIP::criaRestricaoBlocoHorario()
             }   
          }
       }
-               
+
       vit++;
    }
 
-   chgCoeffList(coeffList,coeffListVal);
-
+   chgCoeffList( coeffList, coeffListVal );
    return restricoes;
 }
 
@@ -12827,15 +12834,16 @@ int SolverMIP::criaRestricaoAlocAula()
    ConstraintOp c;
    VariableOpHash::iterator vit;
    ConstraintOpHash::iterator cit;
-   std::vector<std::pair<int,int> > coeffList;
-   std::vector<double> coeffListVal;
-   std::pair<int,int> auxCoef;
+
+   std::vector< std::pair< int, int > > coeffList;
+   std::vector< double > coeffListVal;
+   std::pair< int, int > auxCoef;
    int nnz;
    char name[ 200 ];
 
    vit = vHashOp.begin();
 
-   while (vit != vHashOp.end())
+   while ( vit != vHashOp.end() )
    {
       VariableOp v = vit->first;
 
@@ -14796,7 +14804,7 @@ int SolverMIP::criaRestricaoDeslocamentoProfessor()
    VariableOpHash::iterator vit2;
 
    int nnz = 2;
-   double rhs = 0.0;
+   double rhs = 1.0;
    char name[ 200 ];
 
    // Hash que armazena apenas as variáveis 'Xpah'
@@ -14890,7 +14898,7 @@ int SolverMIP::criaRestricaoDeslocamentoViavel()
    VariableOpHash::iterator vit2;
 
    int nnz = 2;
-   double rhs = 0.0;
+   double rhs = 1.0;
    char name[ 200 ];
 
    // Hash que armazena apenas as variáveis 'Xpah'
@@ -14975,6 +14983,90 @@ int SolverMIP::criaRestricaoDeslocamentoViavel()
 
                      lp->addRow( row );
                   }
+               }
+            }
+         }
+
+         cHashOp[ c ] = lp->getNumRows();
+         restricoes++;
+      }
+   }
+
+   return restricoes;
+}
+
+int SolverMIP::criaRestricaoUltimaPrimeiraAulas()
+{
+   int restricoes = 0;
+
+   ConstraintOp c;
+   VariableOpHash::iterator vit1;
+   VariableOpHash::iterator vit2;
+
+   int nnz = 2;
+   double rhs = 1.0;
+   char name[ 200 ];
+
+   // Hash que armazena apenas as variáveis 'Xpah'
+   VariableOpHash hashX;
+   vit1 = vHashOp.begin();
+   for (; vit1 != vHashOp.end(); vit1++ )
+   {
+      if ( vit1->first.getType() == VariableOp::V_X_PROF_AULA_HOR )
+      {
+         hashX[ vit1->first ] = vit1->second;
+      }
+   }
+   ///////
+
+   GGroup< Professor *, LessPtr< Professor > > professores
+      = problemData->campi.begin()->professores;
+
+   ITERA_GGROUP_LESSPTR( it_prof, professores, Professor )
+   {
+      Professor * professor = ( *it_prof );
+
+      c.reset();
+      c.setType( ConstraintOp::C_ULTIMA_PRIMEIRA_AULA_PROF );
+      c.setProfessor( professor );
+
+      if ( cHashOp.find( c ) == cHashOp.end() )
+      {
+         sprintf( name, "%s", c.toString().c_str() );
+
+         vit1 = hashX.begin();
+         for (; vit1 != hashX.end(); vit1++ )
+         {
+            VariableOp v1 = vit1->first;
+
+            vit2 = hashX.begin();
+            for (; vit2 != hashX.end(); vit2++ )
+            {
+               VariableOp v2 = vit2->first;
+
+               if ( v1 == v2 || v1.getProfessor() != professor
+                  || v2.getProfessor() != professor )
+               {
+                  continue;
+               }
+
+               // Verifica se essas aulas ocorrem no último
+               // horário do dia D e no primeiro horário do dia (D+1)
+               bool verificaAulas = problemData->verificaUltimaPrimeiraAulas(
+                  v1.getHorario(), v2.getHorario() );               
+
+               if ( verificaAulas )
+               {
+                  // Cria a restrição 'Xpah1 + Xpah2 <= 1'
+                  // --> Aloca no máximo uma das aulas ao professor
+                  OPT_ROW row( nnz, OPT_ROW::LESS, rhs, name );
+
+                  row.insert( vit1->second, 1.0 );
+                  row.insert( vit2->second, 1.0 );
+
+                  // TODO -- inserir variável de folga na restrição
+
+                  lp->addRow( row );
                }
             }
          }

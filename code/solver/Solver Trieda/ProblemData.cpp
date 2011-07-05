@@ -428,3 +428,20 @@ int ProblemData::minutosIntervalo( DateTime dt1, DateTime dt2 )
    int minutes = ( back.getHour() * 60 + back.getMinute() );
    return minutes;
 }
+
+bool ProblemData::verificaUltimaPrimeiraAulas( HorarioDia * h1, HorarioDia * h2 )
+{
+   if ( abs( h1->getDia() - h2->getDia() ) == 1 )
+   {
+      HorarioAula * primeiroHorario = this->horarios_aula_ordenados[ 0 ];
+      HorarioAula * ultimoHorario = this->horarios_aula_ordenados[ this->horarios_aula_ordenados.size() - 1 ];
+
+      if ( ( h1->getHorarioAula() == primeiroHorario && h2->getHorarioAula() == ultimoHorario )
+         || ( h2->getHorarioAula() == primeiroHorario && h1->getHorarioAula() == ultimoHorario ) )
+      {
+         return true;
+      }
+   }
+
+   return false;
+}

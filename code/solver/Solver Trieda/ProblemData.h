@@ -4,6 +4,7 @@
 #include <iostream>
 #include <vector>
 #include <list>
+#include <cmath>
 #include <map>
 
 #include "Calendario.h"
@@ -71,7 +72,11 @@ public:
    int calculaTempoEntreCampusUnidades(
       Campus *, Campus *, Unidade *, Unidade * );
 
+   // Informa quantos minutos há entre os dados DateTime's
    int minutosIntervalo( DateTime dt1, DateTime dt2 );
+
+   // Verifica a ocorrência de última aula do dia (D) e primeira aula do dia (D+1)
+   bool verificaUltimaPrimeiraAulas( HorarioDia *, HorarioDia * );
 
    std::vector< HorarioAula * > horarios_aula_ordenados;
    GGroup< AtendimentoCampusSolucao * > * atendimentosTatico;
