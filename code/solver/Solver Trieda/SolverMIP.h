@@ -161,6 +161,7 @@ public:
    int criaVariavelAvaliacaoCorpoDocente();
    int criaVariavelCustoCorpoDocente();
    int criaVariavelDiasProfessoresMinistramAulas();
+   int criaVariavelFolgaUltimaPrimeiraAulas();
    int criaVariavelFolgaMinimoMestresCurso();
    int criaVariavelFolgaMinimoDoutoresCurso();
    int criaVariavelMaxDiscProfCurso();

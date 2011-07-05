@@ -35,7 +35,8 @@ public:
       V_MAX_DISC_PROF_CURSO = 18,
       V_F_MAX_DISC_PROF_CURSO = 19,
       V_AVALIACAO_CORPO_DOCENTE = 20,
-      V_PREF_DISCIPLINAS = 21
+      V_PREF_DISCIPLINAS = 21,
+      V_F_ULTIMA_PRIMEIRA_AULA_PROF = 22
    };
 
    // Constructors
@@ -65,6 +66,10 @@ public:
    Professor * getProfessor() const { return professor; }
 
    Disciplina * getDisciplina() const { return disciplina; }
+
+   Disciplina * getDisciplinaD() const { return disciplinaD; }
+
+   Disciplina * getDisciplinaD1() const { return disciplinaD1; }
 
    Sala * getSala() const { return sala; }
 
@@ -98,6 +103,10 @@ public:
 
    void setDisciplina ( Disciplina * aD ) { disciplina = aD; }
 
+   void setDisciplinaD ( Disciplina * aD ) { disciplinaD = aD; }
+
+   void setDisciplinaD1 ( Disciplina * aD ) { disciplinaD1 = aD; }
+
    void setSala ( Sala * aS ) { sala = aS; }
 
    void setType( VariableOpType t ) { type = t; }
@@ -127,27 +136,17 @@ private:
    HorarioAula * horarioAula;
    int turma;
    int dia;
+
+   // Disciplinas utilizadas no modelo operacional,
+   // no critério de última aula do dia D e primeira aula do dia D+1
+   Disciplina * disciplinaD;
+   Disciplina * disciplinaD1;
 };
 
 /**
 //* Type definition for the hash object.
 */
 typedef std::map< VariableOp, int > VariableOpHash;
-
-// class VariableOpHasher : public stdext::hash_compare< VariableOp >
-// {
-// public:
-//    // Less operator
-//    bool operator() ( const VariableOp &, const VariableOp & ) const;
-// 
-//    // Hash value
-//    size_t operator() ( const VariableOp & ) const;
-// };
-// 
-// /**
-// * Type definition for the hash object.
-// */
-// typedef stdext::hash_map< VariableOp, int, VariableOpHasher > VariableOpHash;
 
 #endif
 

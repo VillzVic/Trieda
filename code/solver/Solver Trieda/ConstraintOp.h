@@ -132,31 +132,4 @@ private:
 */
 typedef std::map< ConstraintOp, int > ConstraintOpHash;
 
-/**
-* Defines the operations needed by the hash object.
-*/
-// class ConstraintOpHasher : public stdext::hash_compare< ConstraintOp >
-// {
-// public:
-//    /**
-//    * Applies the hash function on a Constraint object.
-//    * @param cons The constraint.
-//    * @return The hash value for the constraint.
-//    */
-//    size_t operator() ( const ConstraintOp & ) const;
-// 
-//    /**
-//    * Defines an order rule for two Constraint objects.
-//    * @param cons1 The first constraint to be compared.
-//    * @param cons2 The second constraint to be compared.
-//    * @return True if const1 comes before cons2, false otherwise.
-//    */
-//    bool operator() ( const ConstraintOp &, const ConstraintOp & ) const;
-// };
-// 
-// /**
-// * Type definition for the hash object.
-// */
-// typedef stdext::hash_map< ConstraintOp, int, ConstraintOpHasher > ConstraintOpHash;
-
 #endif

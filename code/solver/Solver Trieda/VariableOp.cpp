@@ -26,6 +26,8 @@ void VariableOp::reset()
    professor = NULL;
    turma = -1;
    disciplina = NULL;
+   disciplinaD = NULL;
+   disciplinaD1 = NULL;
    sala = NULL;
    horarioAula = NULL;
    dia = -1;
@@ -47,6 +49,8 @@ VariableOp& VariableOp::operator = ( const VariableOp & var )
    this->h = var.getHorario();
    this->turma = var.getTurma();
    this->disciplina = var.getDisciplina();
+   this->disciplinaD = var.getDisciplinaD();
+   this->disciplinaD1 = var.getDisciplinaD1();
    this->sala = var.getSala();
    this->horarioAula = var.getHorarioAula();
    this->dia = var.getDia();
@@ -150,15 +154,33 @@ bool VariableOp::operator < ( const VariableOp & var ) const
 			return false;
 	}
 
-   if( (int)this->getTurma() < (int) var.getTurma() )
+   if ( (int)this->getTurma() < (int) var.getTurma() )
       return true;
-   else if( (int)this->getTurma() > (int) var.getTurma() )
+   else if ( (int)this->getTurma() > (int) var.getTurma() )
       return false;
+
+   if ( E_MENOR( this->getDisciplinaD(), var.getDisciplinaD() ) )
+   {
+      return true;
+   }
+   else if ( E_MENOR( var.getDisciplinaD(), this->getDisciplinaD() ) )
+   {
+      return false;
+   }
+
+   if ( E_MENOR( this->getDisciplinaD1(), var.getDisciplinaD1() ) )
+   {
+      return true;
+   }
+   else if ( E_MENOR( var.getDisciplinaD1(), this->getDisciplinaD1() ) )
+   {
+      return false;
+   }
 
    return false;
 }
 
-bool VariableOp::operator == (const VariableOp& var) const
+bool VariableOp::operator == ( const VariableOp & var ) const
 {
    return ( !( *this < var ) && !( var < *this ) );
 }
@@ -214,6 +236,8 @@ std::string VariableOp::toString()
         str << "V_AVALIACAO_CORPO_DOCENTE"; break;
       case V_PREF_DISCIPLINAS:
         str << "V_PREF_DISCIPLINAS"; break;
+      case V_F_ULTIMA_PRIMEIRA_AULA_PROF:
+        str << "V_F_ULTIMA_PRIMEIRA_AULA_PROF"; break;
       default:
         str << "!";
    }
@@ -269,66 +293,3 @@ std::string VariableOp::toString()
    str >> output;
    return output;
 }
-
-/*
-bool VariableOpHasher::operator()( const VariableOp & v1, const VariableOp & v2 ) const
-{
-   return ( v1 < v2 );
-}
-
-size_t VariableOpHasher::operator()( const VariableOp & v ) const
-{
-   unsigned int sum = 0;
-
-   if ( v.getAula() ) 
-   {
-      sum *= HASH_PRIME;
-      sum += intHash( v.getAula()->getSala()->getId() );
-   }
-
-   if ( v.getHorario() )
-   {
-      sum *= HASH_PRIME;
-      sum += intHash( v.getHorario()->getId() );
-   }
-
-   if ( v.getHorarioAula() )
-   {
-      sum *= HASH_PRIME;
-      sum += intHash( v.getHorarioAula()->getId() );
-   }
-
-   if ( v.getProfessor() )
-   {
-      sum *= HASH_PRIME;
-      sum += intHash( v.getProfessor()->getId() );
-   }
-
-   if ( v.getDisciplina() )
-   {
-      sum *= HASH_PRIME;
-      sum += intHash( v.getDisciplina()->getId() );
-   }
-
-   if ( v.getSala() )
-   {
-      sum *= HASH_PRIME;
-      sum += intHash( v.getSala()->getId() );
-   }
-
-   if ( v.getTurma() >= 0 )
-   {
-      sum *= HASH_PRIME;
-      sum += intHash( v.getTurma() );
-   }
-
-   if ( v.getDia() >= 0 ) 
-   {
-      sum *= HASH_PRIME;
-      sum += intHash( v.getDia() );
-   }
-
-   return sum;
-}
-*/
-

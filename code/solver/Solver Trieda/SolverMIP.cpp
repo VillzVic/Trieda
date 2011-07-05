@@ -11241,6 +11241,13 @@ int SolverMIP::criaVariaveisOperacional()
    numVarsAnterior = numVars;
 #endif
 
+   numVars += criaVariavelFolgaUltimaPrimeiraAulas();
+
+#ifdef PRINT_cria_variaveis
+   std::cout << "numVars V_PREF_DISCIPLINAS: " << ( numVars - numVarsAnterior ) << std::endl;
+   numVarsAnterior = numVars;
+#endif
+
    lp->updateLP();
    return numVars;
 }
@@ -11393,7 +11400,7 @@ int SolverMIP::criaVariavelProfessorDisciplina()
 
             double coeff = 0.0;
 
-            if ( vHashOp.find(v) == vHashOp.end() )
+            if ( vHashOp.find( v ) == vHashOp.end() )
             {
                vHashOp[v] = lp->getNumCols();
 
@@ -12367,6 +12374,60 @@ int SolverMIP::criaVariavelPrefDisciplinas()
 
             lp->newCol( col );
             num_vars++;
+         }
+      }
+   }
+
+   return num_vars;
+}
+
+int SolverMIP::criaVariavelFolgaUltimaPrimeiraAulas()
+{
+   int num_vars = 0;
+   double coeff = 0.0;
+   double alfa = 10000.0;
+
+   GGroup< Professor *, LessPtr< Professor > > professores
+      = problemData->campi.begin()->professores;
+
+   std::vector< Disciplina * > disciplinas;
+   ITERA_GGROUP_LESSPTR( it_disc, problemData->disciplinas, Disciplina )
+   {
+      disciplinas.push_back( *it_disc );
+   }
+
+   ITERA_GGROUP_LESSPTR( it_prof, professores, Professor )
+   {
+      Professor * professor = ( *it_prof );
+
+      for ( int i = 0; i < (int)disciplinas.size(); i++ )
+      {
+         Disciplina * disciplina1 = disciplinas[ i ];
+
+         for ( int j = i+1; j < (int)disciplinas.size(); j++ )
+         {
+            Disciplina * disciplina2 = disciplinas[ j ];
+
+            VariableOp v;
+            v.reset();
+            v.setType( VariableOp::V_F_ULTIMA_PRIMEIRA_AULA_PROF );
+
+            v.setProfessor( professor );
+            v.setDisciplinaD( disciplina1 );
+            v.setDisciplinaD1( disciplina2 );
+
+            if ( vHashOp.find( v ) == vHashOp.end() )
+            {
+               coeff = 1000.0;
+
+               vHashOp[ v ] = lp->getNumCols();
+
+               OPT_COL col( OPT_COL::VAR_BINARY, coeff, 0.0, 1.0,
+                  ( char * )v.toString().c_str() );
+
+               lp->newCol( col );
+               num_vars++;
+            }
          }
       }
    }
@@ -15002,8 +15063,9 @@ int SolverMIP::criaRestricaoUltimaPrimeiraAulas()
    ConstraintOp c;
    VariableOpHash::iterator vit1;
    VariableOpHash::iterator vit2;
+   VariableOpHash::iterator vitSlack;
 
-   int nnz = 2;
+   int nnz = 3;
    double rhs = 1.0;
    char name[ 200 ];
 
@@ -15018,6 +15080,8 @@ int SolverMIP::criaRestricaoUltimaPrimeiraAulas()
       }
    }
    ///////
+
+   GGroup< std::pair< VariableOp, VariableOp > > variaveisExaminadas;
 
    GGroup< Professor *, LessPtr< Professor > > professores
       = problemData->campi.begin()->professores;
@@ -15050,6 +15114,22 @@ int SolverMIP::criaRestricaoUltimaPrimeiraAulas()
                   continue;
                }
 
+               // Verifica se esse par de variáveis já foi verificado
+               std::pair< VariableOp, VariableOp > pair_variable
+                  = std::make_pair( v1, v2 );
+
+               GGroup< std::pair< VariableOp, VariableOp > >::iterator
+                  it_find = variaveisExaminadas.find( pair_variable );
+
+               if ( it_find != variaveisExaminadas.end() )
+               {
+                  continue;
+               }
+
+               // Informa que o par de variáveis já foi verificado
+               variaveisExaminadas.add( std::make_pair( v1, v2 ) );
+               variaveisExaminadas.add( std::make_pair( v2, v1 ) );
+
                // Verifica se essas aulas ocorrem no último
                // horário do dia D e no primeiro horário do dia (D+1)
                bool verificaAulas = problemData->verificaUltimaPrimeiraAulas(
@@ -15064,7 +15144,22 @@ int SolverMIP::criaRestricaoUltimaPrimeiraAulas()
                   row.insert( vit1->second, 1.0 );
                   row.insert( vit2->second, 1.0 );
 
-                  // TODO -- inserir variável de folga na restrição
+                  // Adiciona a variável de folga
+                  VariableOp vSlack;
+                  vSlack.reset();
+                  vSlack.setType( VariableOp::V_F_ULTIMA_PRIMEIRA_AULA_PROF );
+
+                  vSlack.setProfessor( professor );
+                  vSlack.setDisciplinaD( v1.getDisciplina() );
+                  vSlack.setDisciplinaD1( v2.getDisciplina() );
+
+                  vitSlack = vHashOp.find( vSlack );
+
+                  if ( vitSlack != vHashOp.end() )
+                  {
+                     row.insert( vitSlack->second, 1.0 );
+                  }
+                  ///////
 
                   lp->addRow( row );
                }
