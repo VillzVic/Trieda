@@ -2,9 +2,7 @@ package com.gapso.web.solverws;
 
 import static org.junit.Assert.*;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.zip.GZIPInputStream;
@@ -20,8 +18,20 @@ public class APSSoverTest {
 	public void testAPSSolver() throws Exception {
 		ISolver solver = getSolver(1);
 		final long id = solver.requestOptimization(new String[] { "input" }, getData());
+		assertFalse(solver.isFinished(id));
 		while (!solver.isFinished(id));
-		System.in.read();
+		assertTrue(solver.isFinished(id));
+		assertNotNull(solver.getFinalResult(id));
+	}
+
+	@Test
+	public void testCancelAPSSolver() throws Exception {
+		ISolver solver = getSolver(1);
+		final long id = solver.requestOptimization(new String[] { "input" }, getData());
+		Thread.sleep(1000);
+		solver.cancelOptimization(id);
+		Thread.sleep(1000);
+		assertNull(solver.getFinalResult(id));
 	}
 
 	private ISolver getSolver(int queueSize) {
