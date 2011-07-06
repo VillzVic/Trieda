@@ -109,6 +109,9 @@ public class SolverQueue {
 		final Process runningProcess = runningProcesses.get(uniqueID);
 		if (runningProcess != null)
 			runningProcess.destroy();
+		else
+			return false;
+		
 		final boolean result = future.cancel(true);
 		if (result) {
 			status.put(uniqueID, "Cancelado");
