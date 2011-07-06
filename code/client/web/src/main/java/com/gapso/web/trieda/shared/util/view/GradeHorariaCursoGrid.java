@@ -211,12 +211,12 @@ public class GradeHorariaCursoGrid extends ContentPanel {
 				String contentToolTipAux = "<b>Nome:</b> "+ atDTO.getDisciplinaNome() +"<br />"
 					+ "<b>Sala:</b> "+ atDTO.getSalaString() +"<br />"
 					+ "<b>Turma:</b> "+ atDTO.getTurma() + "<br />"
+					+ "<b>Professor:</b> "+ atDTO.getProfessorString() + "<br />"
 					+ "<b>"+atDTO.getQuantidadeAlunos()+" aluno(s)</b><br />"
 					+ "<b>Tipo Crédito:</b> "+((atDTO.isTeorico())? "Teórico" : "Prático") +"<br />"
 					+ "<b>Créditos:</b> "+atDTO.getTotalCreditos()+" de "+atDTO.getTotalCreditoDisciplina()+"<br />";
 				final String contentToolTip = contentToolTipAux;
-				
-				
+
 				String content = atDTO.getDisciplinaString() + "<br />";
 				
 				content += TriedaUtil.truncate(atDTO.getDisciplinaNome(),12);
