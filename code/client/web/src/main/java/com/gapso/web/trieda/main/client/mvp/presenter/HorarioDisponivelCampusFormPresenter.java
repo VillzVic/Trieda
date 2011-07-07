@@ -29,6 +29,7 @@ public class HorarioDisponivelCampusFormPresenter implements Presenter {
 		ListStore<HorarioDisponivelCenarioDTO> getStore();
 	}
 	private Display display;
+	@SuppressWarnings("unused")
 	private CenarioDTO cenario;
 	private SemanaLetivaDTO semanaLetiva;
 	

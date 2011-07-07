@@ -28,6 +28,7 @@ public class DisponibilidadesProfessorView extends MyComposite implements Dispon
 	private ContentPanel panel;
 	private GTabItem tabItem;
 	private Button diasDeAulaButton;
+	@SuppressWarnings("unused")
 	private UsuarioDTO usuario;
 	
 	public DisponibilidadesProfessorView(UsuarioDTO usuario) {

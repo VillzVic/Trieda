@@ -13,8 +13,10 @@ import com.sun.jersey.api.json.JSONJAXBContext;
 public class JAXBContextResolver implements ContextResolver<JAXBContext> {
 
 	private JAXBContext context;
+	@SuppressWarnings("rawtypes")
 	private Class[] types = { SolverResponse.class };
 
+	@SuppressWarnings("deprecation")
 	public JAXBContextResolver() throws Exception {
 		Map<String, Object> props = new HashMap<String, Object>();
 		props.put(JSONJAXBContext.JSON_NOTATION, "MAPPED_JETTISON");

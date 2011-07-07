@@ -92,6 +92,7 @@ public class SelecionarCampiPresenter implements Presenter {
 			@Override
 			public void componentSelected(ButtonEvent ce) {
 				Services.otimizar().getParametro(cenario, new AbstractAsyncCallbackWithDefaultOnFailure<ParametroDTO>(display) {
+					@SuppressWarnings("unused")
 					@Override
 					public void onSuccess(ParametroDTO parametroDTO) {
 						display.getSimpleModal().hide();

@@ -1,14 +1,12 @@
 package com.gapso.trieda;
 
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 
 import javax.sql.DataSource;
 
 import org.dbunit.database.DatabaseDataSourceConnection;
 import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.xml.FlatXmlDataSet;
-import org.dbunit.dataset.xml.XmlDataSetWriter;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

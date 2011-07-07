@@ -10,20 +10,21 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.Widget;
 
-public class MyComposite extends Composite implements HasWidgets, ITriedaI18nGateway {
-	
+public class MyComposite extends Composite implements HasWidgets,
+		ITriedaI18nGateway {
+
 	private TriedaI18nConstants i18nConstants;
 	private TriedaI18nMessages i18nMessages;
-	
+
 	public MyComposite() {
 		i18nConstants = GWT.create(TriedaI18nConstants.class);
 		i18nMessages = GWT.create(TriedaI18nMessages.class);
 	}
-	
+
 	public TriedaI18nConstants getI18nConstants() {
 		return i18nConstants;
 	}
-	
+
 	public TriedaI18nMessages getI18nMessages() {
 		return i18nMessages;
 	}
@@ -31,11 +32,11 @@ public class MyComposite extends Composite implements HasWidgets, ITriedaI18nGat
 	@Override
 	public void add(Widget w) {
 	}
-	
+
 	@Override
 	public void clear() {
 	}
-	
+
 	@Override
 	public Iterator<Widget> iterator() {
 		return null;
@@ -43,7 +44,6 @@ public class MyComposite extends Composite implements HasWidgets, ITriedaI18nGat
 
 	@Override
 	public boolean remove(Widget w) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 }

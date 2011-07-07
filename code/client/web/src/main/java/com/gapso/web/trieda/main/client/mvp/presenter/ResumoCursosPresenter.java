@@ -23,13 +23,17 @@ public class ResumoCursosPresenter implements Presenter {
 
 	public interface Display extends ITriedaI18nGateway {
 		Component getComponent();
+
 		CampusComboBox getCampusComboBox();
+
 		TreeStore<ResumoCursoDTO> getStore();
+
 		TreeGrid<ResumoCursoDTO> getTree();
 	}
+
 	private CenarioDTO cenario;
-	private Display display; 
-	
+	private Display display;
+
 	public ResumoCursosPresenter(CenarioDTO cenario, Display display) {
 		this.cenario = cenario;
 		this.display = display;
@@ -37,27 +41,38 @@ public class ResumoCursosPresenter implements Presenter {
 	}
 
 	private void setListeners() {
-		display.getCampusComboBox().addSelectionChangedListener(new SelectionChangedListener<CampusDTO>(){
-			@Override
-			public void selectionChanged(SelectionChangedEvent<CampusDTO> se) {
-				if(se.getSelectedItem() == null) return;
-				display.getTree().mask(display.getI18nMessages().loading());
-				Services.cursos().getResumos(cenario, se.getSelectedItem(), new AbstractAsyncCallbackWithDefaultOnFailure<List<ResumoCursoDTO>>(display) {
+		display.getCampusComboBox().addSelectionChangedListener(
+				new SelectionChangedListener<CampusDTO>() {
 					@Override
-					public void onSuccess(List<ResumoCursoDTO> list) {
-						display.getStore().removeAll();
-						display.getStore().add(list, true);
-						display.getTree().unmask();
+					public void selectionChanged(
+							SelectionChangedEvent<CampusDTO> se) {
+						if (se.getSelectedItem() == null)
+							return;
+						display.getTree().mask(
+								display.getI18nMessages().loading());
+						Services.cursos()
+								.getResumos(
+										cenario,
+										se.getSelectedItem(),
+										new AbstractAsyncCallbackWithDefaultOnFailure<List<ResumoCursoDTO>>(
+												display) {
+											@Override
+											public void onSuccess(
+													List<ResumoCursoDTO> list) {
+												display.getStore().removeAll();
+												display.getStore().add(list,
+														true);
+												display.getTree().unmask();
+											}
+										});
 					}
 				});
-			}
-		});
 	}
-	
+
 	@Override
 	public void go(Widget widget) {
-		GTab tab = (GTab)widget;
-		tab.add((GTabItem)display.getComponent());
+		GTab tab = (GTab) widget;
+		tab.add((GTabItem) display.getComponent());
 	}
 
 }

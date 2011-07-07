@@ -9,18 +9,19 @@ import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.ui.KeyboardListener;
 
+@SuppressWarnings("deprecation")
 public class TextFieldMask extends TextField<String> {
 
 	public class Settings {
 		private String placeHolder;
-		
+
 		public Settings() {
 		}
-		
+
 		public Settings(String placeHolder) {
 			this.placeHolder = placeHolder;
 		}
-		
+
 		public String getPlaceHolder() {
 			return placeHolder;
 		}
@@ -211,17 +212,19 @@ public class TextFieldMask extends TextField<String> {
 	@Override
 	protected void onKeyDown(FieldEvent fe) {
 		super.onKeyDown(fe);
-		
+
 		int k = fe.getKeyCode();
 		ignore = k < 16 || k > 16 && k < 32 || k > 32 && k < 41;
 
 		// delete selection before proceeding
-		if (cursorBegin - cursorEnd != 0 && (!ignore || k == KeyboardListener.KEY_BACKSPACE || k == KeyboardListener.KEY_DELETE)) {
+		if (cursorBegin - cursorEnd != 0
+				&& (!ignore || k == KeyboardListener.KEY_BACKSPACE || k == KeyboardListener.KEY_DELETE)) {
 			clearBuffer(cursorBegin, cursorEnd);
 		}
 
 		// backspace, delete, and escape get special treatment
-		if (k == KeyboardListener.KEY_BACKSPACE || k == KeyboardListener.KEY_DELETE) {
+		if (k == KeyboardListener.KEY_BACKSPACE
+				|| k == KeyboardListener.KEY_DELETE) {
 			shiftL(getCursorPos() + (k == KeyboardListener.KEY_DELETE ? 0 : -1));
 			fe.stopEvent();
 		} else if (k == KeyboardListener.KEY_ESCAPE) {// escape

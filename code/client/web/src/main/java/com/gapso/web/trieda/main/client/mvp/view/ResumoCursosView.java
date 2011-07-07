@@ -29,7 +29,8 @@ import com.gapso.web.trieda.shared.util.resources.Resources;
 import com.gapso.web.trieda.shared.util.view.CampusComboBox;
 import com.gapso.web.trieda.shared.util.view.GTabItem;
 
-public class ResumoCursosView extends MyComposite implements ResumoCursosPresenter.Display {
+public class ResumoCursosView extends MyComposite implements
+		ResumoCursosPresenter.Display {
 
 	private TreeStore<ResumoCursoDTO> store = new TreeStore<ResumoCursoDTO>();
 	private TreeGrid<ResumoCursoDTO> tree;
@@ -37,18 +38,18 @@ public class ResumoCursosView extends MyComposite implements ResumoCursosPresent
 	private ContentPanel panel;
 	private GTabItem tabItem;
 	private CampusComboBox campusCB;
-	
-//	private CenarioDTO cenario;
-	
+
+	// private CenarioDTO cenario;
+
 	public ResumoCursosView(CenarioDTO cenario) {
-//		this.cenario = cenario;
+		// this.cenario = cenario;
 		initUI();
 		createForm();
 		createGrid();
 		createTabItem();
 		initComponent(tabItem);
 	}
-	
+
 	private void initUI() {
 		panel = new ContentPanel(new BorderLayout());
 		panel.setHeading("Master Data » Resultados por Cursos");
@@ -60,10 +61,11 @@ public class ResumoCursosView extends MyComposite implements ResumoCursosPresent
 	}
 
 	private void createTabItem() {
-		tabItem = new GTabItem("Resumo por Cursos", Resources.DEFAULTS.resumoCampi16());
+		tabItem = new GTabItem("Resumo por Cursos",
+				Resources.DEFAULTS.resumoCampi16());
 		tabItem.setContent(panel);
 	}
-	
+
 	private void createForm() {
 		FormData formData = new FormData("100%");
 		FormPanel formPanel = new FormPanel();
@@ -72,22 +74,23 @@ public class ResumoCursosView extends MyComposite implements ResumoCursosPresent
 		formPanel.setLabelAlign(LabelAlign.RIGHT);
 		formPanel.setHeaderVisible(false);
 		formPanel.setAutoHeight(true);
-		
+
 		campusCB = new CampusComboBox();
 		formPanel.add(campusCB, formData);
 		panel.setTopComponent(formPanel);
 	}
-	
+
 	private void createGrid() {
-		tree = new TreeGrid<ResumoCursoDTO>(getStore(), new ColumnModel(getColumnList()));
-	    
-	    ContentPanel contentPanel = new ContentPanel(new FitLayout());
-	    contentPanel.setHeaderVisible(false);
-	    contentPanel.add(tree);
-	    
-	    BorderLayoutData bld = new BorderLayoutData(LayoutRegion.CENTER);
-	    bld.setMargins(new Margins(5));
-	    panel.add(contentPanel, bld);
+		tree = new TreeGrid<ResumoCursoDTO>(getStore(), new ColumnModel(
+				getColumnList()));
+
+		ContentPanel contentPanel = new ContentPanel(new FitLayout());
+		contentPanel.setHeaderVisible(false);
+		contentPanel.add(tree);
+
+		BorderLayoutData bld = new BorderLayoutData(LayoutRegion.CENTER);
+		bld.setMargins(new Margins(5));
+		panel.add(contentPanel, bld);
 	}
 
 	public List<ColumnConfig> getColumnList() {
@@ -96,8 +99,9 @@ public class ResumoCursosView extends MyComposite implements ResumoCursosPresent
 			public String render(ResumoCursoDTO model, String property,
 					ColumnData config, int rowIndex, int colIndex,
 					ListStore<ResumoCursoDTO> store, Grid<ResumoCursoDTO> grid) {
-				if(model.get(property) == null) return "";
-				return (((Double)model.get(property)) * 100) + "%";
+				if (model.get(property) == null)
+					return "";
+				return (((Double) model.get(property)) * 100) + "%";
 			}
 		};
 		GridCellRenderer<ResumoCursoDTO> tipoDeCreditoRenderer = new GridCellRenderer<ResumoCursoDTO>() {
@@ -105,53 +109,76 @@ public class ResumoCursosView extends MyComposite implements ResumoCursosPresent
 			public String render(ResumoCursoDTO model, String property,
 					ColumnData config, int rowIndex, int colIndex,
 					ListStore<ResumoCursoDTO> store, Grid<ResumoCursoDTO> grid) {
-				if(model.get(property) == null) return "";
-				return ((Boolean)model.get(property)) ? getI18nConstants().teorico() : getI18nConstants().pratico();
+				if (model.get(property) == null)
+					return "";
+				return ((Boolean) model.get(property)) ? getI18nConstants()
+						.teorico() : getI18nConstants().pratico();
 			}
 		};
-		
+
 		List<ColumnConfig> list = new ArrayList<ColumnConfig>();
-		ColumnConfig campusColumnConfig = new ColumnConfig(ResumoCursoDTO.PROPERTY_CAMPUS_STRING, getI18nConstants().campus(), 80);
-		campusColumnConfig.setRenderer(new TreeGridCellRenderer<ResumoCursoDTO>());
+		ColumnConfig campusColumnConfig = new ColumnConfig(
+				ResumoCursoDTO.PROPERTY_CAMPUS_STRING, getI18nConstants()
+						.campus(), 80);
+		campusColumnConfig
+				.setRenderer(new TreeGridCellRenderer<ResumoCursoDTO>());
 		list.add(campusColumnConfig);
-		list.add(new ColumnConfig(ResumoCursoDTO.PROPERTY_TURNO_STRING, getI18nConstants().turno(), 80));
-		list.add(new ColumnConfig(ResumoCursoDTO.PROPERTY_CURSO_STRING, getI18nConstants().curso(), 80));
-		list.add(new ColumnConfig(ResumoCursoDTO.PROPERTY_MATRIZCURRICULAR_STRING, getI18nConstants().matrizCurricular(), 80));
-		list.add(new ColumnConfig(ResumoCursoDTO.PROPERTY_PERIODO_INT, getI18nConstants().periodo(), 55));
-		list.add(new ColumnConfig(ResumoCursoDTO.PROPERTY_DISCIPLINA_STRING, getI18nConstants().disciplina(), 80));
-		list.add(new ColumnConfig(ResumoCursoDTO.PROPERTY_TURMA_STRING, getI18nConstants().turma(), 80));
-		
-		ColumnConfig tipoDeCreditoColumnConfig = new ColumnConfig(ResumoCursoDTO.PROPERTY_TIPO_CREDITO_TEORICO_BOOLEAN, getI18nConstants().TipoCredito(), 80);
+		list.add(new ColumnConfig(ResumoCursoDTO.PROPERTY_TURNO_STRING,
+				getI18nConstants().turno(), 80));
+		list.add(new ColumnConfig(ResumoCursoDTO.PROPERTY_CURSO_STRING,
+				getI18nConstants().curso(), 80));
+		list.add(new ColumnConfig(
+				ResumoCursoDTO.PROPERTY_MATRIZCURRICULAR_STRING,
+				getI18nConstants().matrizCurricular(), 80));
+		list.add(new ColumnConfig(ResumoCursoDTO.PROPERTY_PERIODO_INT,
+				getI18nConstants().periodo(), 55));
+		list.add(new ColumnConfig(ResumoCursoDTO.PROPERTY_DISCIPLINA_STRING,
+				getI18nConstants().disciplina(), 80));
+		list.add(new ColumnConfig(ResumoCursoDTO.PROPERTY_TURMA_STRING,
+				getI18nConstants().turma(), 80));
+
+		ColumnConfig tipoDeCreditoColumnConfig = new ColumnConfig(
+				ResumoCursoDTO.PROPERTY_TIPO_CREDITO_TEORICO_BOOLEAN,
+				getI18nConstants().TipoCredito(), 80);
 		tipoDeCreditoColumnConfig.setRenderer(tipoDeCreditoRenderer);
 		list.add(tipoDeCreditoColumnConfig);
-		list.add(new ColumnConfig(ResumoCursoDTO.PROPERTY_CREDITOS_INT, getI18nConstants().creditos(), 60));
-		list.add(new ColumnConfig(ResumoCursoDTO.PROPERTY_QUANTIDADE_ALUNOS_INT, getI18nConstants().quantidadeAlunos(), 70));
-		ColumnConfig rateioColumnConfig = new ColumnConfig(ResumoCursoDTO.PROPERTY_RATEIO_DOUBLE, getI18nConstants().rateio(), 80);
+		list.add(new ColumnConfig(ResumoCursoDTO.PROPERTY_CREDITOS_INT,
+				getI18nConstants().creditos(), 60));
+		list.add(new ColumnConfig(
+				ResumoCursoDTO.PROPERTY_QUANTIDADE_ALUNOS_INT,
+				getI18nConstants().quantidadeAlunos(), 70));
+		ColumnConfig rateioColumnConfig = new ColumnConfig(
+				ResumoCursoDTO.PROPERTY_RATEIO_DOUBLE, getI18nConstants()
+						.rateio(), 80);
 		rateioColumnConfig.setRenderer(percenteRenderer);
 		list.add(rateioColumnConfig);
-		list.add(new ColumnConfig(ResumoCursoDTO.PROPERTY_CUSTO_DOCENTE_DOUBLE, getI18nConstants().custoDocente(), 100));
-		list.add(new ColumnConfig(ResumoCursoDTO.PROPERTY_RECEITA_DOUBLE, getI18nConstants().receita(), 100));
-		list.add(new ColumnConfig(ResumoCursoDTO.PROPERTY_MARGEM_DOUBLE, getI18nConstants().margem(), 100));
-		ColumnConfig margemPercenteColumnConfig = new ColumnConfig(ResumoCursoDTO.PROPERTY_MARGEM_PERCENTE_DOUBLE, getI18nConstants().margemPercente(), 100);
+		list.add(new ColumnConfig(ResumoCursoDTO.PROPERTY_CUSTO_DOCENTE_DOUBLE,
+				getI18nConstants().custoDocente(), 100));
+		list.add(new ColumnConfig(ResumoCursoDTO.PROPERTY_RECEITA_DOUBLE,
+				getI18nConstants().receita(), 100));
+		list.add(new ColumnConfig(ResumoCursoDTO.PROPERTY_MARGEM_DOUBLE,
+				getI18nConstants().margem(), 100));
+		ColumnConfig margemPercenteColumnConfig = new ColumnConfig(
+				ResumoCursoDTO.PROPERTY_MARGEM_PERCENTE_DOUBLE,
+				getI18nConstants().margemPercente(), 100);
 		margemPercenteColumnConfig.setRenderer(percenteRenderer);
 		list.add(margemPercenteColumnConfig);
 		return list;
 	}
-	
+
 	@Override
 	public TreeStore<ResumoCursoDTO> getStore() {
 		return store;
 	}
-	
+
 	@Override
 	public TreeGrid<ResumoCursoDTO> getTree() {
 		return tree;
 	}
-	
+
 	@Override
 	public CampusComboBox getCampusComboBox() {
 		return campusCB;
 	}
 
-	
 }
