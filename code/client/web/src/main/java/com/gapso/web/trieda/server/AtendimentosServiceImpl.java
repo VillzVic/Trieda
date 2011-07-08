@@ -643,7 +643,7 @@ public class AtendimentosServiceImpl extends RemoteService implements
 					+ "-" + dto.getDisciplinaString()
 					+ "-" + dto.getTurma()
 					+ "-" + dto.getSemana()
-					+ "-" + dto.getSalaId(); // TODO
+					+ "-" + dto.getSalaId();
 
 			List< AtendimentoOperacionalDTO > dtoList
 				= atendimentoOperacionalDTOMap.get( key );
@@ -717,7 +717,7 @@ public class AtendimentosServiceImpl extends RemoteService implements
 			String key = dto.getDisciplinaString()
 					+ "-" + dto.getTurma()
 					+ "-" + dto.getSemana()
-					+ "-" + dto.getSalaId(); // TODO
+					+ "-" + dto.getSalaId();
 
 			List< AtendimentoOperacionalDTO > dtoList
 				= atendimentoOperacionalDTOMap.get( key );
