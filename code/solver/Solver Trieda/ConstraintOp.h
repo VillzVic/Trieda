@@ -45,7 +45,8 @@ public:
       C_PREF_DISCIPLINAS = 25,
       C_DESLOC_PROF = 26,
       C_DESLOC_VIAVEL = 27,
-      C_ULTIMA_PRIMEIRA_AULA_PROF = 28
+      C_ULTIMA_PRIMEIRA_AULA_PROF = 28,
+      C_GAPS_PROFESSORES = 29
    };
 
    /** Default constructor. */
@@ -89,6 +90,8 @@ public:
    HorarioAula * getHorarioAula() const { return horarioAula; }
    Disciplina * getDisciplina() const { return disciplina; }
    int getTurma() const { return turma; }
+   HorarioAula * getH1() const { return h1; }
+   HorarioAula * getH2() const { return h2; }
 
    //==================================================
    // SET METHODS 
@@ -109,6 +112,8 @@ public:
    void setHorarioAula( HorarioAula * hh ) { horarioAula = hh; }
    void setDisciplina ( Disciplina * aD ) { disciplina = aD; }
    void setTurma( int aT ) { turma = aT; }
+   void setH1 ( HorarioAula * aH1 ) { h1 = aH1; }
+   void setH2 ( HorarioAula * aH2 ) { h2 = aH2; }
 
 private:
    /** Attribute which defines the constraint type of the instance. */
@@ -125,6 +130,11 @@ private:
    int turma;
    int j; // subbloco
    int t; // dia
+
+   // Horários de aula utilizados no modelo operacional,
+   // no critério de minimização de gaps nos horários dos professores
+   HorarioAula * h1;
+   HorarioAula * h2;
 };
 
 /**

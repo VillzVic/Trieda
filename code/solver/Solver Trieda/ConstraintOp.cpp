@@ -35,6 +35,8 @@ ConstraintOp & ConstraintOp::operator = ( const ConstraintOp & cons )
    this->disciplina = cons.getDisciplina();
    this->turma = cons.getTurma();
    this->horarioAula = cons.getHorarioAula();
+   this->h1 = cons.getH1();
+   this->h2 = cons.getH2();
 
    return *this;
 }
@@ -157,6 +159,24 @@ bool ConstraintOp::operator < ( const ConstraintOp & cons ) const
    else if( (int)this->getSubBloco() > (int) cons.getSubBloco() )
       return false;
 
+   if ( E_MENOR( this->getH1(), cons.getH1() ) )
+   {
+      return true;
+   }
+   else if ( E_MENOR( cons.getH1(), this->getH1() ) )
+   {
+      return false;
+   }
+
+   if ( E_MENOR( this->getH2(), cons.getH2() ) )
+   {
+      return true;
+   }
+   else if ( E_MENOR( cons.getH2(), this->getH2() ) )
+   {
+      return false;
+   }
+
    return false;
 }
 
@@ -179,6 +199,8 @@ void ConstraintOp::reset()
    turma = -1;
    horarioAula = NULL;
    type = C_PROFESSOR_HORARIO;
+   h1 = NULL;
+   h2 = NULL;
 }
 
 std::string ConstraintOp::toString()
@@ -243,6 +265,8 @@ std::string ConstraintOp::toString()
       ss << "C_DESLOC_VIAVEL"; break;
    case C_ULTIMA_PRIMEIRA_AULA_PROF:
       ss << "C_ULTIMA_PRIMEIRA_AULA_PROF"; break;
+   case C_GAPS_PROFESSORES:
+      ss << "C_GAPS_PROFESSORES"; break;
    default:
       ss << "!";
    }

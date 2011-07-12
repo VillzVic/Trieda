@@ -170,6 +170,7 @@ public:
    int criaVariavelFolgaCargaHorariaMinimaProfessorSemana();
    int criaVariavelFolgaCargaHorariaMaximaProfessorSemana();
    int criaVariavelPrefDisciplinas();
+   int criaVariavelGapsProfessores();
 
    // Criacao de restrições operacional
    int criaRestricoesOperacional();
@@ -200,6 +201,7 @@ public:
    int criaRestricaoCargaHorariaMinimaProfessorSemana(); // x14
    int criaRestricaoCargaHorariaMaximaProfessorSemana(); // x15
    int criaRestricaoPrefDisciplinas(); // x16
+   int criaRestricaoGapsProfessores();
 
    void cria_solucao_inicial( int , int * , double * );
    int localBranching( double *, double );

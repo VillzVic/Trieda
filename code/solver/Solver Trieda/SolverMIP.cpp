@@ -11241,6 +11241,13 @@ int SolverMIP::criaVariaveisOperacional()
    numVarsAnterior = numVars;
 #endif
 
+   numVars += criaVariavelGapsProfessores();
+
+#ifdef PRINT_cria_variaveis
+   std::cout << "numVars V_GAPS_PROFESSORES: " << ( numVars - numVarsAnterior ) << std::endl;
+   numVarsAnterior = numVars;
+#endif
+
    numVars += criaVariavelFolgaUltimaPrimeiraAulas();
 
 #ifdef PRINT_cria_variaveis
@@ -12381,6 +12388,68 @@ int SolverMIP::criaVariavelPrefDisciplinas()
    return num_vars;
 }
 
+int SolverMIP::criaVariavelGapsProfessores()
+{
+   int num_vars = 0;
+   double coeff = 0.0;
+   double alfa = 10000.0;
+
+   GGroup< Professor *, LessPtr< Professor > > professores
+      = problemData->campi.begin()->professores;
+
+   GGroup< int > dias_letivos;
+   for ( int i = 2; i <= 6; i++ )
+   {
+      dias_letivos.add( i );
+   }
+
+   ITERA_GGROUP_LESSPTR( it_prof, professores, Professor )
+   {
+      Professor * professor = ( *it_prof );
+      
+      ITERA_GGROUP_N_PT( it_dia, dias_letivos, int )
+      {
+         int dia = ( *it_dia );
+
+         for ( int ini = 0; ini < (int)problemData->horarios_aula_ordenados.size(); ini++ )
+         {
+            for ( int fim = ini+1; fim < (int)problemData->horarios_aula_ordenados.size(); fim++ )
+            {
+               if ( abs( fim - ini ) <= 1 )
+               {
+                  continue;
+               }
+
+               VariableOp v;
+               v.reset();
+               v.setType( VariableOp::V_GAPS_PROFESSORES );
+
+               v.setProfessor( professor );
+               v.setDia( dia );
+               v.setH1( problemData->horarios_aula_ordenados[ ini ] );
+               v.setH2( problemData->horarios_aula_ordenados[ fim ] );
+
+               if ( vHashOp.find( v ) == vHashOp.end() )
+               {
+                  // Leva em consideração o número de horários no gap
+                  coeff = ( fim - ini )*1000000.0;
+
+                  vHashOp[ v ] = lp->getNumCols();
+
+                  OPT_COL col( OPT_COL::VAR_BINARY, coeff, 0.0, 1.0,
+                     ( char * )v.toString().c_str() );
+
+                  lp->newCol( col );
+                  num_vars++;
+               }
+            }
+         }
+      }
+   }
+
+   return num_vars;
+}
+
 int SolverMIP::criaVariavelFolgaUltimaPrimeiraAulas()
 {
    int num_vars = 0;
@@ -12655,6 +12724,14 @@ int SolverMIP::criaRestricoesOperacional()
 
 #ifdef PRINT_cria_restricoes
    std::cout << "numRest C_PREF_DISCIPLINAS: " << ( restricoes - numRestAnterior ) << std::endl;
+   numRestAnterior = restricoes;
+#endif
+
+   lp->updateLP();
+   restricoes += criaRestricaoGapsProfessores();
+
+#ifdef PRINT_cria_restricoes
+   std::cout << "numRest C_GAPS_PROFESSORES: " << ( restricoes - numRestAnterior ) << std::endl;
    numRestAnterior = restricoes;
 #endif
 
@@ -15168,6 +15245,104 @@ int SolverMIP::criaRestricaoUltimaPrimeiraAulas()
 
          cHashOp[ c ] = lp->getNumRows();
          restricoes++;
+      }
+   }
+
+   return restricoes;
+}
+
+int SolverMIP::criaRestricaoGapsProfessores()
+{
+   int restricoes = 0;
+
+   ConstraintOp c;
+   VariableOpHash::iterator vit1;
+   VariableOpHash::iterator vit2;
+
+   // Horários * Aulas * Dias Letivos
+   int nnz = problemData->horarios_aula_ordenados.size() * problemData->aulas.size() * 5;
+   double rhs = 1.0;
+   char name[ 200 ];
+
+   GGroup< Professor *, LessPtr< Professor > > professores
+      = problemData->campi.begin()->professores;
+
+   GGroup< int > dias_letivos;
+   for ( int i = 2; i <= 6; i++ )
+   {
+      dias_letivos.add( i );
+   }
+
+   ITERA_GGROUP_LESSPTR( it_prof, professores, Professor )
+   {
+      Professor * professor = ( *it_prof );
+
+      ITERA_GGROUP_N_PT( it_dia, dias_letivos, int )
+      {
+         int dia = ( *it_dia );
+
+         vit1 = vHashOp.begin();
+         for (; vit1 != vHashOp.end(); vit1++ )
+         {
+            VariableOp v_temp = vit1->first;
+
+            if ( v_temp.getType() == VariableOp::V_GAPS_PROFESSORES
+               && v_temp.getProfessor() == professor
+               && v_temp.getDia() == dia )
+            {
+               // Horários nos extremos do intervalo de horários
+               HorarioAula * h1 = v_temp.getH1();
+               HorarioAula * h2 = v_temp.getH2();
+
+               c.reset();
+               c.setType( ConstraintOp::C_GAPS_PROFESSORES );
+
+               c.setProfessor( professor );
+               c.setDia( dia );
+               c.setH1( h1 );
+               c.setH2( h2 );
+
+               if ( cHashOp.find( c ) == cHashOp.end() )
+               {
+                  sprintf( name, "%s", c.toString().c_str() );
+
+                  OPT_ROW row( nnz, OPT_ROW::LESS, rhs, name );
+
+                  // Variável do gap
+                  row.insert( vit1->second, -1.0 );
+
+                  vit2 = vHashOp.begin();
+                  for (; vit2 != vHashOp.end(); vit2++ )
+                  {
+                     VariableOp v_x = vit2->first;
+
+                     if ( v_x.getType() == VariableOp::V_X_PROF_AULA_HOR
+                        && v_x.getProfessor() == professor
+                        && v_x.getHorario()->getDia() == dia 
+                        && v_x.getHorario()->getHorarioAula()->getInicio() >= h1->getInicio()
+                        && v_x.getHorario()->getHorarioAula()->getInicio() <= h2->getInicio() )
+                     {
+                        // Variáveis dos horários nos extremos do intervalo
+                        if ( v_x.getHorario()->getHorarioAula()->getInicio() == h1->getInicio()
+                           || v_x.getHorario()->getHorarioAula()->getInicio() == h2->getInicio() )
+                        {
+                           row.insert( vit2->second, 1.0 );
+                        }
+                        // Variáveis dos horários no meio do intervalo
+                        else
+                        {
+                           row.insert( vit2->second, -1.0 );
+                        }
+                     }
+                  }
+
+                  lp->addRow( row );
+
+                  cHashOp[ c ] = lp->getNumRows();
+                  restricoes++;
+               }
+            }
+         }
       }
    }
 

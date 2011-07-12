@@ -31,6 +31,8 @@ void VariableOp::reset()
    sala = NULL;
    horarioAula = NULL;
    dia = -1;
+   h1 = NULL;
+   h2 = NULL;
 }
 
 VariableOp::~VariableOp()
@@ -54,6 +56,8 @@ VariableOp& VariableOp::operator = ( const VariableOp & var )
    this->sala = var.getSala();
    this->horarioAula = var.getHorarioAula();
    this->dia = var.getDia();
+   this->h1 = var.getH1();
+   this->h2 = var.getH2();
 
    return *this;
 }
@@ -177,6 +181,24 @@ bool VariableOp::operator < ( const VariableOp & var ) const
       return false;
    }
 
+   if ( E_MENOR( this->getH1(), var.getH1() ) )
+   {
+      return true;
+   }
+   else if ( E_MENOR( var.getH1(), this->getH1() ) )
+   {
+      return false;
+   }
+
+   if ( E_MENOR( this->getH2(), var.getH2() ) )
+   {
+      return true;
+   }
+   else if ( E_MENOR( var.getH2(), this->getH2() ) )
+   {
+      return false;
+   }
+
    return false;
 }
 
@@ -238,6 +260,8 @@ std::string VariableOp::toString()
         str << "V_PREF_DISCIPLINAS"; break;
       case V_F_ULTIMA_PRIMEIRA_AULA_PROF:
         str << "V_F_ULTIMA_PRIMEIRA_AULA_PROF"; break;
+      case V_GAPS_PROFESSORES:
+        str << "V_GAPS_PROFESSORES"; break;
       default:
         str << "!";
    }

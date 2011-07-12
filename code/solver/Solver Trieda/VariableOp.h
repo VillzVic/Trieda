@@ -36,7 +36,8 @@ public:
       V_F_MAX_DISC_PROF_CURSO = 19,
       V_AVALIACAO_CORPO_DOCENTE = 20,
       V_PREF_DISCIPLINAS = 21,
-      V_F_ULTIMA_PRIMEIRA_AULA_PROF = 22
+      V_F_ULTIMA_PRIMEIRA_AULA_PROF = 22,
+      V_GAPS_PROFESSORES = 23
    };
 
    // Constructors
@@ -54,29 +55,19 @@ public:
 
    // Return value
    double getValue() const { return value; }
-
    Curso * getCurso() const { return this->curso; }
-
    HorarioDia * getHorario() const { return h; }
-
    HorarioAula * getHorarioAula() const { return horarioAula; }
-
    Aula * getAula() const { return aula; }
-
    Professor * getProfessor() const { return professor; }
-
    Disciplina * getDisciplina() const { return disciplina; }
-
    Disciplina * getDisciplinaD() const { return disciplinaD; }
-
    Disciplina * getDisciplinaD1() const { return disciplinaD1; }
-
    Sala * getSala() const { return sala; }
-
    int getTurma() const { return turma; }
-
    int getDia() const { return dia; }
-
+   HorarioAula * getH1() const { return h1; }
+   HorarioAula * getH2() const { return h2; }
 
    //==================================================
    // SET METHODS 
@@ -86,30 +77,20 @@ public:
 
    // Set value
    void setValue( double v ) { value = v; }
-
    void setCurso( Curso * c ) { this->curso = c; }
-
    void setHorario( HorarioDia * hh ) {  h = hh; }
-
    void setHorarioAula( HorarioAula * hh ) {  horarioAula = hh; }
-
    void setAula( Aula * a ) {  aula = a; }
-
    void setProfessor( Professor * p ) { professor = p; }
-
    void setTurma (int aTurma) { turma = aTurma; }
-
    void setDia ( int aDia ) { dia = aDia; }
-
    void setDisciplina ( Disciplina * aD ) { disciplina = aD; }
-
    void setDisciplinaD ( Disciplina * aD ) { disciplinaD = aD; }
-
    void setDisciplinaD1 ( Disciplina * aD ) { disciplinaD1 = aD; }
-
    void setSala ( Sala * aS ) { sala = aS; }
-
    void setType( VariableOpType t ) { type = t; }
+   void setH1 ( HorarioAula * aH1 ) { h1 = aH1; }
+   void setH2 ( HorarioAula * aH2 ) { h2 = aH2; }
 
    //==================================================
    // OPERATORS 
@@ -141,6 +122,11 @@ private:
    // no critério de última aula do dia D e primeira aula do dia D+1
    Disciplina * disciplinaD;
    Disciplina * disciplinaD1;
+
+   // Horários de aula utilizados no modelo operacional,
+   // no critério de minimização de gaps nos horários dos professores
+   HorarioAula * h1;
+   HorarioAula * h2;
 };
 
 /**
