@@ -26,4 +26,11 @@
 		<nature>org.maven.ide.eclipse.maven2Nature</nature>
 		<nature>org.eclipse.wst.common.project.facet.core.nature</nature>
 	</natures>
+	<linkedResources>
+		<link>
+			<name>MavenRepository</name>
+			<type>2</type>
+			<location>D:/Cleiton/TRIEDA/Client/MavenRepository</location>
+		</link>
+	</linkedResources>
 </projectDescription>

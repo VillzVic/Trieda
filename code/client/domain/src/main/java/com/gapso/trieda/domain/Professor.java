@@ -95,19 +95,19 @@ public class Professor implements Serializable {
     @ManyToMany
     private Set<Campus> campi = new HashSet<Campus>();
 
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, mappedBy="professores")
-    private Set<HorarioDisponivelCenario> horarios = new HashSet<HorarioDisponivelCenario>();
+    @ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, mappedBy="professores")
+    private Set< HorarioDisponivelCenario > horarios = new HashSet< HorarioDisponivelCenario >();
 
     @NotNull
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "professor")
-    private Set<ProfessorDisciplina> disciplinas = new HashSet<ProfessorDisciplina>();
-    
-    @OneToMany(cascade = CascadeType.ALL, mappedBy="professor")
-    private Set<AtendimentoOperacional> atendimentosOperacionais =  new HashSet<AtendimentoOperacional>();
+    @OneToMany( cascade = { CascadeType.ALL, CascadeType.REMOVE }, mappedBy = "professor" )
+    private Set< ProfessorDisciplina > disciplinas = new HashSet< ProfessorDisciplina >();
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy="professor")
-    private Set<Usuario> usuario =  new HashSet<Usuario>();
-    
+    @OneToMany( cascade = CascadeType.ALL, mappedBy="professor" )
+    private Set< AtendimentoOperacional > atendimentosOperacionais =  new HashSet< AtendimentoOperacional >();
+
+    @OneToMany( cascade = CascadeType.ALL, mappedBy="professor" )
+    private Set< Usuario > usuario =  new HashSet< Usuario >();
+
 	public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("Id: ").append(getId()).append(", ");

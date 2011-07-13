@@ -14,7 +14,7 @@ public class SolverClient implements ISolverClient {
 	private String problemName;
 	private Client client = Client.create();
 	private WebResource webResource;
-	
+
 	public SolverClient(String url, String problemName) {
 		this.url = url;
 		this.problemName = problemName;
@@ -44,35 +44,41 @@ public class SolverClient implements ISolverClient {
 	public boolean isFinished(Long round) {
 		MultivaluedMapImpl queryParams = new MultivaluedMapImpl();
 		queryParams.add("round", round);
-		SolverResponse sr = webResource.path("/isFinished/"+getProblemName()+"/")
-			.queryParams(queryParams).post(SolverResponse.class);
-		return (sr.getStatus())? (Boolean)sr.getObject() : false;
+		SolverResponse sr = webResource
+				.path("/isFinished/" + getProblemName() + "/")
+				.queryParams(queryParams).post(SolverResponse.class);
+		return (sr.getStatus()) ? (Boolean) sr.getObject() : false;
 	}
 
 	@Override
 	public boolean containsResult(Long round) {
 		MultivaluedMapImpl queryParams = new MultivaluedMapImpl();
 		queryParams.add("round", round);
-		SolverResponse sr = webResource.path("/containsResult/"+getProblemName()+"/")
-			.queryParams(queryParams).post(SolverResponse.class);
-		return (sr.getStatus())? (Boolean)sr.getObject() : false;
+		SolverResponse sr = webResource
+				.path("/containsResult/" + getProblemName() + "/")
+				.queryParams(queryParams).post(SolverResponse.class);
+		return (sr.getStatus()) ? (Boolean) sr.getObject() : false;
 	}
 
 	@Override
 	public long requestOptimization(byte[] fileBytes) {
-		webResource = webResource.path("/requestOptimization/"+getProblemName()+"/");
-		MultiPart multiPart = new MultiPart().bodyPart(new BodyPart(fileBytes, MediaType.APPLICATION_OCTET_STREAM_TYPE));
-		SolverResponse sr = webResource.type("multipart/mixed").post(SolverResponse.class, multiPart);
-		return (sr.getStatus())? (Long)sr.getObject() : -1;
+		webResource = webResource.path("/requestOptimization/"
+				+ getProblemName() + "/");
+		MultiPart multiPart = new MultiPart().bodyPart(new BodyPart(fileBytes,
+				MediaType.APPLICATION_OCTET_STREAM_TYPE));
+		SolverResponse sr = webResource.type("multipart/mixed").post(
+				SolverResponse.class, multiPart);
+		return (sr.getStatus()) ? (Long) sr.getObject() : -1;
 	}
 
 	@Override
 	public byte[] getContent(Long round) {
 		MultivaluedMapImpl queryParams = new MultivaluedMapImpl();
 		queryParams.add("round", round);
-		SolverResponse sr = webResource.path("/getContent/"+getProblemName()+"/")
-			.queryParams(queryParams).post(SolverResponse.class);
-		return (sr.getStatus())? (byte[])sr.getObject() : null;
+		SolverResponse sr = webResource
+				.path("/getContent/" + getProblemName() + "/")
+				.queryParams(queryParams).post(SolverResponse.class);
+		return (sr.getStatus()) ? (byte[]) sr.getObject() : null;
 	}
 
 }

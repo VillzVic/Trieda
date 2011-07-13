@@ -39,240 +39,286 @@ import org.springframework.transaction.annotation.Transactional;
 @Table(name = "OFERTAS")
 public class Oferta implements Serializable, Comparable<Oferta> {
 
-    @NotNull
-    @ManyToOne(targetEntity = Curriculo.class)
-    @JoinColumn(name = "CRC_ID")
-    private Curriculo curriculo;
+	@NotNull
+	@ManyToOne(targetEntity = Curriculo.class)
+	@JoinColumn(name = "CRC_ID")
+	private Curriculo curriculo;
 
-    @NotNull
-    @ManyToOne(targetEntity = Campus.class)
-    @JoinColumn(name = "CAM_ID")
-    private Campus campus;
+	@NotNull
+	@ManyToOne(targetEntity = Campus.class)
+	@JoinColumn(name = "CAM_ID")
+	private Campus campus;
 
-    @NotNull
-    @ManyToOne(targetEntity = Turno.class)
-    @JoinColumn(name = "TUR_ID")
-    private Turno turno;
+	@NotNull
+	@ManyToOne(targetEntity = Turno.class)
+	@JoinColumn(name = "TUR_ID")
+	private Turno turno;
 
-    @Column(name = "OFE_RECEITA")
-    @Digits(integer = 6, fraction = 2)
-    private Double receita;
-    
-    @NotNull
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "oferta")
-    private Set<Demanda> demandas = new HashSet<Demanda>();
+	@Column(name = "OFE_RECEITA")
+	@Digits(integer = 6, fraction = 2)
+	private Double receita;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy="oferta")
-    private Set<AtendimentoOperacional> atendimentosOperacionais =  new HashSet<AtendimentoOperacional>();
+	@NotNull
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "oferta")
+	private Set<Demanda> demandas = new HashSet<Demanda>();
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy="oferta")
-    private Set<AtendimentoTatico> atendimentosTaticos =  new HashSet<AtendimentoTatico>();
-    
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "oferta")
+	private Set<AtendimentoOperacional> atendimentosOperacionais = new HashSet<AtendimentoOperacional>();
+
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "oferta")
+	private Set<AtendimentoTatico> atendimentosTaticos = new HashSet<AtendimentoTatico>();
+
 	@PersistenceContext
-    transient EntityManager entityManager;
+	transient EntityManager entityManager;
 
 	@Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "CAC_ID")
-    private Long id;
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	@Column(name = "CAC_ID")
+	private Long id;
 
 	@Version
-    @Column(name = "version")
-    private Integer version;
+	@Column(name = "version")
+	private Integer version;
 
 	public Long getId() {
-        return this.id;
-    }
+		return this.id;
+	}
 
 	public void setId(Long id) {
-        this.id = id;
-    }
+		this.id = id;
+	}
 
 	public Integer getVersion() {
-        return this.version;
-    }
+		return this.version;
+	}
 
 	public void setVersion(Integer version) {
-        this.version = version;
-    }
-	
+		this.version = version;
+	}
+
 	@Transactional
 	public void detach() {
-		if (this.entityManager == null) this.entityManager = entityManager();
+		if (this.entityManager == null)
+			this.entityManager = entityManager();
 		this.entityManager.detach(this);
 	}
-	
-	@Transactional
-    public void persist() {
-        if (this.entityManager == null) this.entityManager = entityManager();
-        this.entityManager.persist(this);
-    }
 
 	@Transactional
-    public void remove() {
-        if (this.entityManager == null) this.entityManager = entityManager();
-        if (this.entityManager.contains(this)) {
-            this.entityManager.remove(this);
-        } else {
-            Oferta attached = this.entityManager.find(this.getClass(), this.id);
-            this.entityManager.remove(attached);
-        }
-    }
+	public void persist() {
+		if (this.entityManager == null)
+			this.entityManager = entityManager();
+		this.entityManager.persist(this);
+	}
 
 	@Transactional
-    public void flush() {
-        if (this.entityManager == null) this.entityManager = entityManager();
-        this.entityManager.flush();
-    }
+	public void remove() {
+		if (this.entityManager == null)
+			this.entityManager = entityManager();
+		if (this.entityManager.contains(this)) {
+			this.entityManager.remove(this);
+		} else {
+			Oferta attached = this.entityManager.find(this.getClass(), this.id);
+			this.entityManager.remove(attached);
+		}
+	}
 
 	@Transactional
-    public Oferta merge() {
-        if (this.entityManager == null) this.entityManager = entityManager();
-        Oferta merged = this.entityManager.merge(this);
-        this.entityManager.flush();
-        return merged;
-    }
+	public void flush() {
+		if (this.entityManager == null)
+			this.entityManager = entityManager();
+		this.entityManager.flush();
+	}
+
+	@Transactional
+	public Oferta merge() {
+		if (this.entityManager == null)
+			this.entityManager = entityManager();
+		Oferta merged = this.entityManager.merge(this);
+		this.entityManager.flush();
+		return merged;
+	}
 
 	public static final EntityManager entityManager() {
-        EntityManager em = new Oferta().entityManager;
-        if (em == null) throw new IllegalStateException("Entity manager has not been injected (is the Spring Aspects JAR configured as an AJC/AJDT aspects library?)");
-        return em;
-    }
+		EntityManager em = new Oferta().entityManager;
+		if (em == null)
+			throw new IllegalStateException(
+					"Entity manager has not been injected (is the Spring Aspects JAR configured as an AJC/AJDT aspects library?)");
+		return em;
+	}
 
 	@SuppressWarnings("unchecked")
 	public static List<Oferta> findAllBy(Sala sala) {
-		Query q = entityManager().createQuery("SELECT DISTINCT(o) FROM Oferta o, IN (o.curriculo.disciplinas) dis WHERE dis IN (:disciplinas)");
-		Set<CurriculoDisciplina> curriculoDisciplinas = sala.getCurriculoDisciplinas();
+		Query q = entityManager()
+				.createQuery(
+						"SELECT DISTINCT(o) FROM Oferta o, IN (o.curriculo.disciplinas) dis WHERE dis IN (:disciplinas)");
+		Set<CurriculoDisciplina> curriculoDisciplinas = sala
+				.getCurriculoDisciplinas();
 		q.setParameter("disciplinas", sala.getCurriculoDisciplinas());
-		if(curriculoDisciplinas.isEmpty()) {
-			return Collections.<Oferta>emptyList();
+		if (curriculoDisciplinas.isEmpty()) {
+			return Collections.<Oferta> emptyList();
 		}
 		return q.getResultList();
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public static List<Oferta> findAllBy(GrupoSala grupoSala) {
-		Query q = entityManager().createQuery("SELECT DISTINCT(o) FROM Oferta o, IN (o.curriculo.disciplinas) dis WHERE dis IN (:disciplinas)");
-		Set<CurriculoDisciplina> curriculoDisciplinas = grupoSala.getCurriculoDisciplinas();
+		Query q = entityManager()
+				.createQuery(
+						"SELECT DISTINCT(o) FROM Oferta o, IN (o.curriculo.disciplinas) dis WHERE dis IN (:disciplinas)");
+		Set<CurriculoDisciplina> curriculoDisciplinas = grupoSala
+				.getCurriculoDisciplinas();
 		q.setParameter("disciplinas", grupoSala.getCurriculoDisciplinas());
-		if(curriculoDisciplinas.isEmpty()) {
-			return Collections.<Oferta>emptyList();
+		if (curriculoDisciplinas.isEmpty()) {
+			return Collections.<Oferta> emptyList();
 		}
 		return q.getResultList();
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public static List<Oferta> findByCampusAndTurno(Campus campus, Turno turno) {
-		Query q = entityManager().createQuery("SELECT o FROM Oferta o WHERE o.campus = :campus AND o.turno = :turno");
+		Query q = entityManager()
+				.createQuery(
+						"SELECT o FROM Oferta o WHERE o.campus = :campus AND o.turno = :turno");
 		q.setParameter("campus", campus);
 		q.setParameter("turno", turno);
 		return q.getResultList();
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public static List<Oferta> findByCenario(Cenario cenario) {
-		Query q = entityManager().createQuery("SELECT o FROM Oferta o WHERE o.campus.cenario = :cenario");
-    	q.setParameter("cenario", cenario);
-    	return q.getResultList();
-    }
-	
+		Query q = entityManager().createQuery(
+				"SELECT o FROM Oferta o WHERE o.campus.cenario = :cenario");
+		q.setParameter("cenario", cenario);
+		return q.getResultList();
+	}
+
 	@SuppressWarnings("unchecked")
-    public static List<Oferta> findAll() {
-        return entityManager().createQuery("select o from Oferta o").getResultList();
-    }
+	public static List<Oferta> findAll() {
+		return entityManager().createQuery("select o from Oferta o")
+				.getResultList();
+	}
 
 	public static Oferta find(Long id) {
-        if (id == null) return null;
-        return entityManager().find(Oferta.class, id);
-    }
+		if (id == null)
+			return null;
+		return entityManager().find(Oferta.class, id);
+	}
 
 	public static List<Oferta> find(int firstResult, int maxResults) {
 		return find(firstResult, maxResults, null);
 	}
+
 	@SuppressWarnings("unchecked")
-    public static List<Oferta> find(int firstResult, int maxResults, String orderBy) {
+	public static List<Oferta> find(int firstResult, int maxResults,
+			String orderBy) {
 		orderBy = (orderBy != null) ? "ORDER BY o." + orderBy : "";
-        return entityManager().createQuery("select o from Oferta o "+orderBy).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
-    }
-	
-	public static int count(Turno turno, Campus campus, Curso curso, Curriculo curriculo) {
-		
-		
-		String queryTurno = (turno != null) ? " o.turno = :turno AND " : "";
-		String queryCampus = (campus != null) ? " o.campus = :campus AND " : "";
-		String queryCurso = (curso != null) ? " o.curriculo.curso = :curso AND " : "";
-		String queryCurriculo = (curriculo != null) ? " o.curriculo = :curriculo AND " : "";
-		
-		Query q = entityManager().createQuery("SELECT COUNT(o) FROM Oferta o WHERE "+queryTurno+queryCampus+queryCurso+queryCurriculo+" 1=1 ");
-		if(turno != null) q.setParameter("turno", turno);
-		if(campus != null) q.setParameter("campus", campus);
-		if(curso != null) q.setParameter("curso", curso);
-		if(curriculo != null) q.setParameter("curriculo", curriculo);
-		
-		return ((Number)q.getSingleResult()).intValue();
+		return entityManager().createQuery("select o from Oferta o " + orderBy)
+				.setFirstResult(firstResult).setMaxResults(maxResults)
+				.getResultList();
 	}
 
-    @SuppressWarnings("unchecked")
-	public static List<Oferta> findBy(Turno turno, Campus campus, Curso curso, Curriculo curriculo, int firstResult, int maxResults, String orderBy) {
-        
-        orderBy = (orderBy != null) ? "ORDER BY o." + orderBy : "";
-        
-        String queryTurno = (turno != null) ? " o.turno = :turno AND " : "";
-        String queryCampus = (campus != null) ? " o.campus = :campus AND " : "";
-        String queryCurso = (curso != null) ? " o.curriculo.curso = :curso AND " : "";
-        String queryCurriculo = (curriculo != null) ? " o.curriculo = :curriculo AND " : "";
-        
-        Query q = entityManager().createQuery("SELECT o FROM Oferta o WHERE "+queryTurno+queryCampus+queryCurso+queryCurriculo+" 1=1 ");
-        if(turno != null) q.setParameter("turno", turno);
-        if(campus != null) q.setParameter("campus", campus);
-        if(curso != null) q.setParameter("curso", curso);
-        if(curriculo != null) q.setParameter("curriculo", curriculo);
-        
-        return q.setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
-    }
-    
-	public static Map<String,Oferta> buildCampusTurnoCurriculoToOfertaMap(List<Oferta> ofertas) {
-		Map<String,Oferta> ofertasMap = new HashMap<String,Oferta>();
+	public static int count(Turno turno, Campus campus, Curso curso,
+			Curriculo curriculo) {
+
+		String queryTurno = (turno != null) ? " o.turno = :turno AND " : "";
+		String queryCampus = (campus != null) ? " o.campus = :campus AND " : "";
+		String queryCurso = (curso != null) ? " o.curriculo.curso = :curso AND "
+				: "";
+		String queryCurriculo = (curriculo != null) ? " o.curriculo = :curriculo AND "
+				: "";
+
+		Query q = entityManager().createQuery(
+				"SELECT COUNT(o) FROM Oferta o WHERE " + queryTurno
+						+ queryCampus + queryCurso + queryCurriculo + " 1=1 ");
+		if (turno != null)
+			q.setParameter("turno", turno);
+		if (campus != null)
+			q.setParameter("campus", campus);
+		if (curso != null)
+			q.setParameter("curso", curso);
+		if (curriculo != null)
+			q.setParameter("curriculo", curriculo);
+
+		return ((Number) q.getSingleResult()).intValue();
+	}
+
+	@SuppressWarnings("unchecked")
+	public static List<Oferta> findBy(Turno turno, Campus campus, Curso curso,
+			Curriculo curriculo, int firstResult, int maxResults, String orderBy) {
+
+		orderBy = (orderBy != null) ? "ORDER BY o." + orderBy : "";
+
+		String queryTurno = (turno != null) ? " o.turno = :turno AND " : "";
+		String queryCampus = (campus != null) ? " o.campus = :campus AND " : "";
+		String queryCurso = (curso != null) ? " o.curriculo.curso = :curso AND "
+				: "";
+		String queryCurriculo = (curriculo != null) ? " o.curriculo = :curriculo AND "
+				: "";
+
+		Query q = entityManager().createQuery(
+				"SELECT o FROM Oferta o WHERE " + queryTurno + queryCampus
+						+ queryCurso + queryCurriculo + " 1=1 ");
+		if (turno != null)
+			q.setParameter("turno", turno);
+		if (campus != null)
+			q.setParameter("campus", campus);
+		if (curso != null)
+			q.setParameter("curso", curso);
+		if (curriculo != null)
+			q.setParameter("curriculo", curriculo);
+
+		return q.setFirstResult(firstResult).setMaxResults(maxResults)
+				.getResultList();
+	}
+
+	public static Map<String, Oferta> buildCampusTurnoCurriculoToOfertaMap(
+			List<Oferta> ofertas) {
+		Map<String, Oferta> ofertasMap = new HashMap<String, Oferta>();
 		for (Oferta oferta : ofertas) {
 			String codigo = oferta.getCampus().getCodigo() + "-";
 			codigo += oferta.getTurno().getNome() + "-";
 			codigo += oferta.getCurriculo().getCodigo();
-			ofertasMap.put(codigo,oferta);
+			ofertasMap.put(codigo, oferta);
 		}
 		return ofertasMap;
 	}
-    
+
 	public Curriculo getCurriculo() {
-        return this.curriculo;
-    }
+		return this.curriculo;
+	}
+
 	public void setCurriculo(Curriculo curriculo) {
-        this.curriculo = curriculo;
-    }
+		this.curriculo = curriculo;
+	}
 
 	public Campus getCampus() {
-        return this.campus;
-    }
+		return this.campus;
+	}
+
 	public void setCampus(Campus campus) {
-        this.campus = campus;
-    }
+		this.campus = campus;
+	}
 
 	public Turno getTurno() {
-        return this.turno;
-    }
+		return this.turno;
+	}
+
 	public void setTurno(Turno turno) {
-        this.turno = turno;
-    }
+		this.turno = turno;
+	}
 
 	public Set<Demanda> getDemandas() {
-        return this.demandas;
-    }
+		return this.demandas;
+	}
+
 	public void setDemandas(Set<Demanda> demandas) {
-        this.demandas = demandas;
-    }
-	
+		this.demandas = demandas;
+	}
+
 	public Double getReceita() {
 		return receita;
 	}
+
 	public void setReceita(Double receita) {
 		this.receita = receita;
 	}
@@ -280,32 +326,42 @@ public class Oferta implements Serializable, Comparable<Oferta> {
 	public Set<AtendimentoOperacional> getAtendimentosOperacionais() {
 		return this.atendimentosOperacionais;
 	}
-	public void setAtendimentosOperacionais(Set<AtendimentoOperacional> atendimentosOperacionais) {
+
+	public void setAtendimentosOperacionais(
+			Set<AtendimentoOperacional> atendimentosOperacionais) {
 		this.atendimentosOperacionais = atendimentosOperacionais;
 	}
-	
+
 	public Set<AtendimentoTatico> getAtendimentosTaticos() {
 		return this.atendimentosTaticos;
 	}
-	public void setAtendimentosTaticos(Set<AtendimentoTatico> atendimentosTaticos) {
+
+	public void setAtendimentosTaticos(
+			Set<AtendimentoTatico> atendimentosTaticos) {
 		this.atendimentosTaticos = atendimentosTaticos;
 	}
-	
+
 	private static final long serialVersionUID = -976299446108675926L;
 
 	public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("Id: ").append(getId()).append(", ");
-        sb.append("Version: ").append(getVersion()).append(", ");
-        sb.append("Curriculo: ").append(getCurriculo().getCodigo()).append(", ");
-        sb.append("Campus: ").append(getCampus().getCodigo()).append(", ");
-        sb.append("Turno: ").append(getTurno().getNome()).append(", ");
-        sb.append("Demandas: ").append(getDemandas() == null ? "null" : getDemandas().size());
-        sb.append("Receita: ").append(getReceita()).append(", ");
-        sb.append("Atendimentos Operacionais: ").append(getAtendimentosOperacionais() == null ? "null" : getAtendimentosOperacionais().size());
-        sb.append("Atendimentos Taticos: ").append(getAtendimentosTaticos() == null ? "null" : getAtendimentosTaticos().size());
-        return sb.toString();
-    }
+		StringBuilder sb = new StringBuilder();
+		sb.append("Id: ").append(getId()).append(", ");
+		sb.append("Version: ").append(getVersion()).append(", ");
+		sb.append("Curriculo: ").append(getCurriculo().getCodigo())
+				.append(", ");
+		sb.append("Campus: ").append(getCampus().getCodigo()).append(", ");
+		sb.append("Turno: ").append(getTurno().getNome()).append(", ");
+		sb.append("Demandas: ").append(
+				getDemandas() == null ? "null" : getDemandas().size());
+		sb.append("Receita: ").append(getReceita()).append(", ");
+		sb.append("Atendimentos Operacionais: ").append(
+				getAtendimentosOperacionais() == null ? "null"
+						: getAtendimentosOperacionais().size());
+		sb.append("Atendimentos Taticos: ").append(
+				getAtendimentosTaticos() == null ? "null"
+						: getAtendimentosTaticos().size());
+		return sb.toString();
+	}
 
 	@Override
 	public int compareTo(Oferta o) {

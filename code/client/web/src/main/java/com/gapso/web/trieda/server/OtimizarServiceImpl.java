@@ -40,117 +40,158 @@ import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 @Transactional
 @Service
 @Repository
-public class OtimizarServiceImpl extends RemoteServiceServlet implements OtimizarService {
-
+public class OtimizarServiceImpl extends RemoteServiceServlet implements
+		OtimizarService
+{
 	private static final long serialVersionUID = 5716065588362358065L;
-	
-	private static final String linkSolver = "http://localhost:8080/SolverWS";
+	private static final String linkSolver = "http://localhost:3402/SolverWS";
 
 	@Override
 	@Transactional
-	public ParametroDTO getParametro(CenarioDTO cenarioDTO) {
-		Cenario cenario = Cenario.find(cenarioDTO.getId());
+	public ParametroDTO getParametro( CenarioDTO cenarioDTO )
+	{
+		Cenario cenario = Cenario.find( cenarioDTO.getId() );
+
 		Parametro parametro = cenario.getUltimoParametro();
-		if(parametro == null){
+		if ( parametro == null )
+		{
 			parametro = new Parametro();
-			parametro.setCenario(cenario);
+			parametro.setCenario( cenario );
 		}
-		ParametroDTO parametroDTO = ConvertBeans.toParametroDTO(parametro);
+
+		ParametroDTO parametroDTO = ConvertBeans.toParametroDTO( parametro );
 		return parametroDTO;
 	}
-	
+
 	@Override
 	@Transactional
-	public Long sendInput(ParametroDTO parametroDTO) {
-//		List<Campus> campi = new ArrayList<Campus>(campiDTO.size());
-//		for(CampusDTO campusDTO : campiDTO) {
-//			campi.add(Campus.find(campusDTO.getId()));
-//		}
-		Parametro parametro = ConvertBeans.toParametro(parametroDTO);
-		parametro.setId(null);
+	public Long sendInput( ParametroDTO parametroDTO )
+	{
+		// List<Campus> campi = new ArrayList<Campus>(campiDTO.size());
+		// for(CampusDTO campusDTO : campiDTO) {
+		// campi.add(Campus.find(campusDTO.getId()));
+		// }
+
+		Parametro parametro = ConvertBeans.toParametro( parametroDTO );
+		parametro.setId( null );
 		parametro.flush();
 		parametro.save();
 		Cenario cenario = parametro.getCenario();
-		cenario.getParametros().add(parametro);
-		List<Campus> campi = new ArrayList<Campus>(1);
-		campi.add(parametro.getCampus());
+		cenario.getParametros().add( parametro );
+		List< Campus > campi = new ArrayList< Campus >( 1 );
+		campi.add( parametro.getCampus() );
 		Turno turno = parametro.getTurno();
-		SolverInput solverInput = new SolverInput(cenario, parametro, campi, turno);
+
+		SolverInput solverInput = new SolverInput(
+				cenario, parametro, campi, turno );
 		TriedaInput triedaInput = null;
-		if(parametro.isTatico()) {
+		if ( parametro.isTatico() )
+		{
 			triedaInput = solverInput.generateTaticoTriedaInput();
-		} else {
+		}
+		else
+		{
 			triedaInput = solverInput.generateOperacionalTriedaInput();
 		}
+
 		byte[] fileBytes = null;
-		try {
+		try
+		{
 			final ByteArrayOutputStream temp = new ByteArrayOutputStream();
-			JAXBContext jc = JAXBContext.newInstance("com.gapso.web.trieda.server.xml.input");
+
+			JAXBContext jc = JAXBContext.newInstance(
+					"com.gapso.web.trieda.server.xml.input" );
+
 			Marshaller m = jc.createMarshaller();
-			m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-			m.setProperty(Marshaller.JAXB_ENCODING, "ISO-8859-1");
-			m.marshal(triedaInput, temp);
+			m.setProperty( Marshaller.JAXB_FORMATTED_OUTPUT, true );
+			m.setProperty( Marshaller.JAXB_ENCODING, "ISO-8859-1" );
+			m.marshal( triedaInput, temp );
 			fileBytes = temp.toByteArray();
-		} catch (Exception e) {
+		}
+		catch ( Exception e )
+		{
 			e.printStackTrace();
 		}
-		SolverClient solverClient = new SolverClient(linkSolver, "trieda");
-		return solverClient.requestOptimization(fileBytes);
+
+		SolverClient solverClient = new SolverClient( linkSolver, "trieda" );
+		return solverClient.requestOptimization( fileBytes );
 	}
 
 	@Override
-	public Boolean isOptimizing(Long round) {
-		SolverClient solverClient = new SolverClient(linkSolver, "trieda");
-		return !solverClient.isFinished(round);
+	public Boolean isOptimizing( Long round )
+	{
+		SolverClient solverClient = new SolverClient( linkSolver, "trieda" );
+		return ( !solverClient.isFinished( round ) );
 	}
 
 	@Override
-	public Map<String, List<String>> saveContent(CenarioDTO cenarioDTO, Long round) {
-		Cenario cenario = Cenario.find(cenarioDTO.getId());
-		
-		Map<String, List<String>> ret = new HashMap<String, List<String>>(2);
-		ret.put("warning", new ArrayList<String>());
-		ret.put("error", new ArrayList<String>());
-		
-		try {
-			SolverClient solverClient = new SolverClient(linkSolver, "trieda");
-			byte[] xmlBytes = solverClient.getContent(round);
-			if(xmlBytes == null) {
-				ret.get("error").add("Erro no servidor");
+	public Map< String, List< String > > saveContent(
+			CenarioDTO cenarioDTO, Long round )
+	{
+		Cenario cenario = Cenario.find( cenarioDTO.getId() );
+
+		Map< String, List< String > > ret = new HashMap< String, List< String > >( 2 );
+		ret.put( "warning", new ArrayList< String >() );
+		ret.put( "error", new ArrayList< String >() );
+
+		try
+		{
+			SolverClient solverClient = new SolverClient( linkSolver, "trieda" );
+			byte [] xmlBytes = solverClient.getContent( round );
+
+			if ( xmlBytes == null )
+			{
+				ret.get( "error" ).add( "Erro no servidor" );
 				return ret;
 			}
-			
-			JAXBContext jc = JAXBContext.newInstance("com.gapso.web.trieda.server.xml.output");
+
+			JAXBContext jc = JAXBContext.newInstance(
+					"com.gapso.web.trieda.server.xml.output" );
+
 			Unmarshaller u = jc.createUnmarshaller();
-			StringBuffer xmlStr = new StringBuffer(new String(xmlBytes));
-			TriedaOutput triedaOutput = (TriedaOutput) u.unmarshal(new StreamSource(new StringReader(xmlStr.toString())));
-			
-			for(ItemError erro : triedaOutput.getErrors().getError()) {
-				ret.get("error").add(erro.getMessage());
+			StringBuffer xmlStr = new StringBuffer( new String( xmlBytes ) );
+
+			TriedaOutput triedaOutput = ( TriedaOutput ) u.unmarshal(
+					new StreamSource( new StringReader( xmlStr.toString() ) ) );
+
+			for ( ItemError erro : triedaOutput.getErrors().getError() )
+			{
+				ret.get( "error" ).add( erro.getMessage() );
 			}
-			for(ItemWarning warning : triedaOutput.getWarnings().getWarning()) {
-				ret.get("warning").add(warning.getMessage());
+
+			for ( ItemWarning warning : triedaOutput.getWarnings().getWarning() )
+			{
+				ret.get( "warning" ).add( warning.getMessage() );
 			}
-			
-			if(!triedaOutput.getErrors().getError().isEmpty()) {
+
+			if ( !triedaOutput.getErrors().getError().isEmpty() )
+			{
 				return ret;
 			}
+
 			Parametro parametro = cenario.getUltimoParametro();
-			SolverOutput solverOutput = new SolverOutput(cenario, triedaOutput);
-			if(cenario.getUltimoParametro().isTatico()) {
+			SolverOutput solverOutput = new SolverOutput( cenario, triedaOutput );
+
+			if ( cenario.getUltimoParametro().isTatico() )
+			{
 				solverOutput.generateAtendimentosTatico();
-				solverOutput.salvarAtendimentosTatico(parametro.getCampus(), parametro.getTurno());
-			} else {
-				solverOutput.generateAtendimentosOperacional();
-				solverOutput.salvarAtendimentosOperacional(parametro.getCampus(), parametro.getTurno());
+				solverOutput.salvarAtendimentosTatico(
+						parametro.getCampus(), parametro.getTurno() );
 			}
-			
-		} catch (JAXBException e) {
+			else
+			{
+				solverOutput.generateAtendimentosOperacional();
+				solverOutput.salvarAtendimentosOperacional(
+						parametro.getCampus(), parametro.getTurno());
+			}
+		}
+		catch ( JAXBException e )
+		{
 			e.printStackTrace();
-			ret.get("error").add("Erro ao salvar no banco");
+			ret.get( "error" ).add( "Erro ao salvar no banco" );
 			return ret;
 		}
+
 		return ret;
 	}
-	
 }
