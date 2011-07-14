@@ -33,8 +33,8 @@ import org.springframework.transaction.annotation.Transactional;
 @RooToString
 @RooEntity(identifierColumn = "DIP_ID")
 @Table(name = "PROFESSORES_DISCIPLINAS")
-public class ProfessorDisciplina implements java.io.Serializable {
-
+public class ProfessorDisciplina implements java.io.Serializable
+{
     @NotNull
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH}, targetEntity = Professor.class)
     @JoinColumn(name = "PRF_ID")

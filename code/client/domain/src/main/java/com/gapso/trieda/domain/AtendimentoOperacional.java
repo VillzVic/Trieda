@@ -32,8 +32,8 @@ import org.springframework.transaction.annotation.Transactional;
 @RooToString
 @RooEntity(identifierColumn = "ATP_ID")
 @Table(name = "ATENDIMENTO_OPERACIONAL")
-public class AtendimentoOperacional implements Serializable
-{
+public class AtendimentoOperacional implements Serializable {
+
 	private static final long serialVersionUID = -1061352455612316076L;
 
 	@NotNull
@@ -70,12 +70,12 @@ public class AtendimentoOperacional implements Serializable
 	private Disciplina disciplina;
 
 	@ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE,
-			CascadeType.REFRESH, CascadeType.REMOVE, CascadeType.ALL }, targetEntity = Professor.class )
+			CascadeType.REFRESH }, targetEntity = Professor.class )
 	@JoinColumn(name = "PRF_ID")
 	private Professor professor;
 
 	@ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE,
-			CascadeType.REFRESH, CascadeType.REMOVE, CascadeType.ALL }, targetEntity = ProfessorVirtual.class )
+			CascadeType.REFRESH }, targetEntity = ProfessorVirtual.class )
 	@JoinColumn(name = "PRV_ID")
 	private ProfessorVirtual professorVirtual;
 
@@ -90,7 +90,6 @@ public class AtendimentoOperacional implements Serializable
 
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-
 		sb.append("Id: ").append(getId()).append(", ");
 		sb.append("Version: ").append(getVersion()).append(", ");
 		sb.append("Cenario: ")
@@ -116,7 +115,6 @@ public class AtendimentoOperacional implements Serializable
 						: "null").append(", ");
 		sb.append("QuantidadeAlunos: ").append(getQuantidadeAlunos())
 				.append(", ");
-
 		return sb.toString();
 	}
 
@@ -150,65 +148,76 @@ public class AtendimentoOperacional implements Serializable
 
 	@Transactional
 	public void detach() {
-		if (this.entityManager == null) {
+		if (this.entityManager == null)
 			this.entityManager = entityManager();
-		}
-
 		this.entityManager.detach(this);
 	}
 
 	@Transactional
 	public void persist() {
-		if (this.entityManager == null) {
+		if (this.entityManager == null)
 			this.entityManager = entityManager();
-		}
-
 		this.entityManager.persist(this);
 	}
 
 	@Transactional
-	public void remove() {
-		if (this.entityManager == null) {
+	public void remove()
+	{
+		if ( this.entityManager == null )
+		{
 			this.entityManager = entityManager();
 		}
 
-		if (this.entityManager.contains(this)) {
-			this.entityManager.remove(this);
-		} else {
-			AtendimentoOperacional attached = this.entityManager.find(
-					this.getClass(), this.id);
+		if ( this.entityManager.contains( this ) )
+		{
+			if ( this.professorVirtual != null )
+			{
+				this.professorVirtual.remove();
+			}
 
-			this.entityManager.remove(attached);
+			this.entityManager.remove( this );
+		}
+		else
+		{
+			AtendimentoOperacional attached = this.entityManager.find(
+					this.getClass(), this.id );
+
+			if ( attached != null )
+			{
+				if ( attached.professorVirtual != null )
+				{
+					attached.professorVirtual.remove();
+				}
+
+				this.entityManager.remove( attached );
+			}
 		}
 	}
 
 	@Transactional
 	public void flush() {
-		if (this.entityManager == null) {
+		if (this.entityManager == null)
 			this.entityManager = entityManager();
-		}
-
 		this.entityManager.flush();
 	}
 
 	@Transactional
 	public AtendimentoOperacional merge() {
-		if (this.entityManager == null) {
+		if (this.entityManager == null)
 			this.entityManager = entityManager();
-		}
-
 		AtendimentoOperacional merged = this.entityManager.merge(this);
 		this.entityManager.flush();
 		return merged;
 	}
 
-	public static final EntityManager entityManager() {
+	public static final EntityManager entityManager()
+	{
 		EntityManager em = new AtendimentoOperacional().entityManager;
 
-		if (em == null) {
+		if ( em == null )
+		{
 			throw new IllegalStateException(
-					"Entity manager has not been injected (is the Spring "
-							+ "Aspects JAR configured as an AJC/AJDT aspects library?)");
+					"Entity manager has not been injected (is the Spring Aspects JAR configured as an AJC/AJDT aspects library?)");
 		}
 
 		return em;
@@ -216,10 +225,9 @@ public class AtendimentoOperacional implements Serializable
 
 	@SuppressWarnings("unchecked")
 	public static List<Turno> findAllTurnosByCursos(List<Campus> campi) {
-		Query q = entityManager().createQuery(
-				"SELECT DISTINCT o.oferta.turno FROM AtendimentoOperacional o "
-						+ "WHERE o.oferta.campus IN (:campi)");
-
+		Query q = entityManager()
+				.createQuery(
+						"SELECT DISTINCT o.oferta.turno FROM AtendimentoOperacional o WHERE o.oferta.campus IN (:campi)");
 		q.setParameter("campi", campi);
 		return q.getResultList();
 	}
@@ -229,7 +237,6 @@ public class AtendimentoOperacional implements Serializable
 		Query q = entityManager()
 				.createQuery(
 						"SELECT o FROM AtendimentoOperacional o WHERE cenario = :cenario");
-
 		q.setParameter("cenario", cenario);
 		return q.getResultList();
 	}
@@ -245,9 +252,7 @@ public class AtendimentoOperacional implements Serializable
 			Turno turno) {
 		Query q = entityManager()
 				.createQuery(
-						"SELECT o FROM AtendimentoOperacional o "
-								+ "WHERE o.oferta.turno = :turno AND o.professor = :professor");
-
+						"SELECT o FROM AtendimentoOperacional o WHERE o.oferta.turno = :turno AND o.professor = :professor");
 		q.setParameter("turno", turno);
 		q.setParameter("professor", professor);
 		return q.getResultList();
@@ -281,21 +286,16 @@ public class AtendimentoOperacional implements Serializable
 	public static List<AtendimentoOperacional> findAllPublicadoBy(
 			ProfessorVirtual professorVirtual, Turno turno, boolean isAdmin) {
 		String publicado = "";
-		if (!isAdmin) {
+		if (!isAdmin)
 			publicado = " AND o.oferta.campus.publicado = :publicado ";
-		}
-
-		Query q = entityManager().createQuery(
-				"SELECT o FROM AtendimentoOperacional o WHERE o.oferta.turno = :turno"
-						+ " AND o.professorVirtual = :professorVirtual "
-						+ publicado);
-
+		Query q = entityManager()
+				.createQuery(
+						"SELECT o FROM AtendimentoOperacional o WHERE o.oferta.turno = :turno AND o.professorVirtual = :professorVirtual "
+								+ publicado);
 		q.setParameter("turno", turno);
 		q.setParameter("professorVirtual", professorVirtual);
-		if (!isAdmin) {
+		if (!isAdmin)
 			q.setParameter("publicado", true);
-		}
-
 		return q.getResultList();
 	}
 
@@ -304,7 +304,6 @@ public class AtendimentoOperacional implements Serializable
 		Query q = entityManager()
 				.createQuery(
 						"SELECT o FROM AtendimentoOperacional o WHERE o.oferta.curriculo.curso = :curso");
-
 		q.setParameter("curso", curso);
 		return q.getResultList();
 	}
@@ -314,7 +313,6 @@ public class AtendimentoOperacional implements Serializable
 		Query q = entityManager()
 				.createQuery(
 						"SELECT o FROM AtendimentoOperacional o WHERE o.oferta = :oferta");
-
 		q.setParameter("oferta", oferta);
 		return q.getResultList();
 	}
@@ -322,30 +320,26 @@ public class AtendimentoOperacional implements Serializable
 	@SuppressWarnings("unchecked")
 	public static List<AtendimentoOperacional> findAllBy(Campus campus,
 			Turno turno) {
-		Query q = entityManager().createQuery(
-				"SELECT o FROM AtendimentoOperacional o WHERE o.oferta.campus = "
-						+ ":campus AND o.oferta.turno = :turno");
-
+		Query q = entityManager()
+				.createQuery(
+						"SELECT o FROM AtendimentoOperacional o WHERE o.oferta.campus = :campus AND o.oferta.turno = :turno");
 		q.setParameter("campus", campus);
 		q.setParameter("turno", turno);
 		return q.getResultList();
 	}
 
 	public static AtendimentoOperacional find(Long id) {
-		if (id == null) {
+		if (id == null)
 			return null;
-		}
-
 		return entityManager().find(AtendimentoOperacional.class, id);
 	}
 
 	@SuppressWarnings("unchecked")
 	public static List<AtendimentoOperacional> findBySalaAndTurno(Sala sala,
 			Turno turno) {
-		Query q = entityManager().createQuery(
-				"SELECT o FROM AtendimentoOperacional o WHERE o.sala = "
-						+ ":sala AND o.oferta.turno = :turno");
-
+		Query q = entityManager()
+				.createQuery(
+						"SELECT o FROM AtendimentoOperacional o WHERE o.sala = :sala AND o.oferta.turno = :turno");
 		q.setParameter("sala", sala);
 		q.setParameter("turno", turno);
 		return q.getResultList();
@@ -356,11 +350,7 @@ public class AtendimentoOperacional implements Serializable
 			Curriculo curriculo, Integer periodo, Turno turno) {
 		Query q = entityManager()
 				.createQuery(
-						"SELECT o FROM AtendimentoOperacional o WHERE o.oferta.curriculo = "
-								+ ":curriculo AND o.oferta.campus = :campus AND o.oferta.turno = "
-								+ ":turno AND o.disciplina IN (SELECT d.disciplina FROM CurriculoDisciplina d "
-								+ "WHERE d.curriculo = :curriculo AND d.periodo = :periodo)");
-
+						"SELECT o FROM AtendimentoOperacional o WHERE o.oferta.curriculo = :curriculo AND o.oferta.campus = :campus AND o.oferta.turno = :turno AND o.disciplina IN (SELECT d.disciplina FROM CurriculoDisciplina d WHERE d.curriculo = :curriculo AND d.periodo = :periodo)");
 		q.setParameter("campus", campus);
 		q.setParameter("curriculo", curriculo);
 		q.setParameter("periodo", periodo);
@@ -405,7 +395,6 @@ public class AtendimentoOperacional implements Serializable
 		if (professor == null) {
 			return new Professor();
 		}
-
 		return professor;
 	}
 
@@ -456,12 +445,10 @@ public class AtendimentoOperacional implements Serializable
 	public String getNaturalKey() {
 		Oferta oferta = getOferta();
 		Curriculo curriculo = oferta.getCurriculo();
-
 		return oferta.getCampus().getId() + "-" + oferta.getTurno().getId()
 				+ "-" + curriculo.getCurso().getId() + "-" + curriculo.getId()
 				+ "-" + curriculo.getPeriodo(getDisciplina()) + "-"
 				+ getDisciplina().getId() + "-" + getTurma() + "-"
 				+ getCreditoTeorico();
 	}
-
 }

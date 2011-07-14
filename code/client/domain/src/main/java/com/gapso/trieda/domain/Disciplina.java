@@ -110,8 +110,8 @@ public class Disciplina implements Serializable, Comparable<Disciplina> {
 	private Set<HorarioDisponivelCenario> horarios = new HashSet<HorarioDisponivelCenario>();
 
 	@NotNull
-	@OneToMany( cascade = { CascadeType.ALL, CascadeType.REMOVE }, mappedBy = "disciplina" )
-	private Set< ProfessorDisciplina > professores = new HashSet< ProfessorDisciplina >();
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "disciplina")
+	private Set<ProfessorDisciplina> professores = new HashSet<ProfessorDisciplina>();
 
 	@NotNull
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "disciplina1")
@@ -247,19 +247,48 @@ public class Disciplina implements Serializable, Comparable<Disciplina> {
 	}
 
 	@Transactional
-	public void remove() {
-		if (this.entityManager == null)
+	public void remove()
+	{
+		if ( this.entityManager == null )
+		{
 			this.entityManager = entityManager();
-		if (this.entityManager.contains(this)) {
+		}
+
+		if ( this.entityManager.contains( this ) )
+		{
+			if ( this.professores != null && this.professores.size() > 0 )
+			{
+				Set< ProfessorDisciplina > dataRemove
+					= new HashSet< ProfessorDisciplina >( this.professores );
+
+				this.professores.removeAll( dataRemove );
+				this.professores.clear();
+			}
+
 			this.removeHorariosDisponivelCenario();
 			this.removeEliminadasPor();
-			this.entityManager.remove(this);
-		} else {
-			Disciplina attached = this.entityManager.find(this.getClass(),
-					this.id);
-			attached.removeHorariosDisponivelCenario();
-			attached.removeEliminadasPor();
-			this.entityManager.remove(attached);
+			this.entityManager.remove( this );
+		}
+		else
+		{
+			Disciplina attached = this.entityManager.find(
+					this.getClass(), this.id );
+
+			if ( attached != null )
+			{
+				if ( attached.professores != null && attached.professores.size() > 0 )
+				{
+					Set< ProfessorDisciplina > dataRemove
+						= new HashSet< ProfessorDisciplina >( attached.professores );
+
+					attached.professores.removeAll( dataRemove );
+					attached.professores.clear();
+				}
+
+				attached.removeHorariosDisponivelCenario();
+				attached.removeEliminadasPor();
+				this.entityManager.remove( attached );
+			}
 		}
 	}
 
