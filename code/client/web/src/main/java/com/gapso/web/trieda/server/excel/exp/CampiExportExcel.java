@@ -36,83 +36,102 @@ public class CampiExportExcel extends AbstractExportExcel {
 	private String sheetName;
 	private int initialRow;
 	
-	public CampiExportExcel(Cenario cenario, TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages) {
-		super(cenario,i18nConstants,i18nMessages);
-		this.cellStyles = new HSSFCellStyle[ExcelCellStyleReference.values().length];
+	public CampiExportExcel( Cenario cenario,
+		TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages )
+	{
+		super( cenario, i18nConstants, i18nMessages );
+
+		this.cellStyles = new HSSFCellStyle[ ExcelCellStyleReference.values().length ];
 		this.removeUnusedSheets = true;
 		this.sheetName = ExcelInformationType.CAMPI.getSheetName();
 		this.initialRow = 6;
 	}
-	
-	public CampiExportExcel(boolean removeUnusedSheets, Cenario cenario, TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages) {
-		super(cenario,i18nConstants,i18nMessages);
-		this.cellStyles = new HSSFCellStyle[ExcelCellStyleReference.values().length];
+
+	public CampiExportExcel( boolean removeUnusedSheets, Cenario cenario,
+		TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages )
+	{
+		super( cenario, i18nConstants, i18nMessages );
+
+		this.cellStyles = new HSSFCellStyle[ ExcelCellStyleReference.values().length ];
 		this.removeUnusedSheets = removeUnusedSheets;
 		this.sheetName = ExcelInformationType.CAMPI.getSheetName();
 		this.initialRow = 6;
 	}
-	
+
 	@Override
-	public String getFileName() {
+	public String getFileName()
+	{
 		return getI18nConstants().campi();
 	}
-	
+
 	@Override
-	protected String getPathExcelTemplate() {
+	protected String getPathExcelTemplate()
+	{
 		return "/templateExport.xls";
 	}
 
 	@Override
-	protected String getReportName() {
+	protected String getReportName()
+	{
 		return getI18nConstants().campi();
 	}
 
 	@Override
-	protected boolean fillInExcel(HSSFWorkbook workbook) {
-		List<Campus> campi = Campus.findByCenario(getCenario());
-		
-		if (!campi.isEmpty()) {
-			if (this.removeUnusedSheets) {
-				removeUnusedSheets(this.sheetName,workbook);
+	protected boolean fillInExcel( HSSFWorkbook workbook )
+	{
+		List< Campus > campi = Campus.findByCenario( getCenario() );
+
+		if ( !campi.isEmpty() )
+		{
+			if ( this.removeUnusedSheets )
+			{
+				removeUnusedSheets( this.sheetName, workbook );
 			}
-			
-			HSSFSheet sheet = workbook.getSheet(this.sheetName);
-			fillInCellStyles(sheet);
-			
+
+			HSSFSheet sheet = workbook.getSheet( this.sheetName );
+			fillInCellStyles( sheet );
+
 			int nextRow = this.initialRow;
-			for (Campus c : campi) {
-				nextRow = writeData(c,nextRow,sheet);
+			for ( Campus c : campi )
+			{
+				nextRow = writeData( c, nextRow, sheet );
 			}
-			
-			//autoSizeColumns((short)1,(short)6,sheet); TODO: rever autoSize pois atualmente o algoritmo do poi interfere na largura do logo
-			
+
+			// TODO: rever autoSize pois atualmente o
+			// algoritmo do poi interfere na largura do logo
+			//autoSizeColumns( (short)1,(short)6, sheet );
+
 			return true;
 		}
-		
+
 		return false;
 	}
-	
-	private int writeData(Campus campus, int row, HSSFSheet sheet) {
+
+	private int writeData( Campus campus, int row, HSSFSheet sheet )
+	{
 		// Codigo
-		setCell(row,2,sheet,cellStyles[ExcelCellStyleReference.TEXT.ordinal()],campus.getCodigo());
+		setCell( row, 2, sheet, cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ], campus.getCodigo() );
 		// Nome
-		setCell(row,3,sheet,cellStyles[ExcelCellStyleReference.TEXT.ordinal()],campus.getNome());
+		setCell( row, 3, sheet, cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ], campus.getNome() );
 		// Estado
-		setCell(row,4,sheet,cellStyles[ExcelCellStyleReference.TEXT.ordinal()],campus.getEstado().toString());
+		setCell( row, 4, sheet, cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ], campus.getEstado().toString() );
 		// Municipio
-		setCell(row,5,sheet,cellStyles[ExcelCellStyleReference.TEXT.ordinal()],campus.getMunicipio());
+		setCell( row, 5, sheet, cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ], campus.getMunicipio() );
 		// Bairro
-		setCell(row,6,sheet,cellStyles[ExcelCellStyleReference.TEXT.ordinal()],campus.getBairro());
+		setCell( row, 6, sheet, cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ], campus.getBairro() );
 		// Custo Medio do Credito
-		setCell(row,7,sheet,cellStyles[ExcelCellStyleReference.CURRENCY.ordinal()],campus.getValorCredito());
-		
+		setCell( row, 7, sheet, cellStyles[ ExcelCellStyleReference.CURRENCY.ordinal() ], campus.getValorCredito() );
+
 		row++;
 		return row;
 	}
-	
-	private void fillInCellStyles(HSSFSheet sheet) {
-		for (ExcelCellStyleReference cellStyleReference : ExcelCellStyleReference.values()) {
-			cellStyles[cellStyleReference.ordinal()] = getCell(cellStyleReference.getRow(),cellStyleReference.getCol(),sheet).getCellStyle();
+
+	private void fillInCellStyles( HSSFSheet sheet )
+	{
+		for ( ExcelCellStyleReference cellStyleReference : ExcelCellStyleReference.values() )
+		{
+			cellStyles[ cellStyleReference.ordinal()] = getCell(
+				cellStyleReference.getRow(), cellStyleReference.getCol(), sheet ).getCellStyle();
 		}
 	}
 }

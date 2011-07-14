@@ -1,6 +1,7 @@
 package com.gapso.web.trieda.shared.excel;
 
-public enum ExcelInformationType {
+public enum ExcelInformationType
+{
 	TUDO(""),
 	CAMPI("Campi"),
 	CURRICULOS("Curriculos"),
@@ -24,27 +25,33 @@ public enum ExcelInformationType {
 	
 	private String sheetName;
 	
-	ExcelInformationType(String sheetName) {
+	ExcelInformationType( String sheetName )
+	{
 		this.sheetName = sheetName;
 	}
-	
-	public String getSheetName() {
+
+	public String getSheetName()
+	{
 		return sheetName;
 	}
-	
-	public static String getInformationParameterName() {
+
+	public static String getInformationParameterName()
+	{
 		return "excelInformationType";
 	}
-	
-	public static String getFileParameterName() {
+
+	public static String getFileParameterName()
+	{
 		return "uploadedFile";
 	}
-	
-	public static String prefixError() {
+
+	public static String prefixError()
+	{
 		return "@e@";
 	}
-	
-	public static String prefixWarning() {
+
+	public static String prefixWarning()
+	{
 		return "@w@";
 	}
 }
