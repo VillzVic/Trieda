@@ -4,10 +4,11 @@ import java.util.List;
 
 import com.gapso.web.trieda.shared.util.TriedaUtil;
 
-public class AtendimentoTaticoDTO extends AbstractDTO<String> implements Comparable<AtendimentoTaticoDTO>, AtendimentoRelatorioDTO {
-
+public class AtendimentoTaticoDTO extends AbstractDTO< String >
+	implements Comparable< AtendimentoTaticoDTO >, AtendimentoRelatorioDTO
+{
 	private static final long serialVersionUID = -2870302894382757778L;
-	
+
 	// Propriedades
 	public static final String PROPERTY_ID = "id";
 	public static final String PROPERTY_VERSION = "version";
@@ -39,9 +40,11 @@ public class AtendimentoTaticoDTO extends AbstractDTO<String> implements Compara
 	public static final String PROPERTY_CREDITOS_TEORICOS = "creditosTeorico";
 	public static final String PROPERTY_CREDITOS_PRATICOS = "creditosPratico";
 	
-	public AtendimentoTaticoDTO() {
+	public AtendimentoTaticoDTO()
+	{
+		super();
 	}
-	
+
 	public void setId(Long value) {
 		set(PROPERTY_ID, value);
 	}
@@ -278,56 +281,73 @@ public class AtendimentoTaticoDTO extends AbstractDTO<String> implements Compara
 		+ getQuantidadeAlunosString() + " aluno(s)";
 	}
 	
-	public String getContentToolTipVisaoSala() {
+	public String getContentToolTipVisaoSala()
+	{
 		return "<b>Turma:</b> "+ getTurma() + "<br />"
-		+ "<b>Crédito(s) " + ((isTeorico())? "Teórico(s)" : "Prático(s)") + ":</b> " + getTotalCreditos()+" de "+getTotalCreditoDisciplina() + "<br />"
-		+ "<b>Curso:</b> " + getCursoNome() +"<br />"
-		+ "<b>Matriz Curricular:</b> " + getCurriculoString() + "<br />"
-		+ "<b>Período:</b> "+ getPeriodoString() +"<br />" 
-		+ "<b>Quantidade:</b> "+ getQuantidadeAlunosString() +"<br />";
+			+ "<b>Crédito(s) " + ((isTeorico())? "Teórico(s)" : "Prático(s)") + ":</b> "
+			+ getTotalCreditos()+" de "+getTotalCreditoDisciplina() + "<br />"
+			+ "<b>Curso:</b> " + getCursoNome() +"<br />"
+			+ "<b>Matriz Curricular:</b> " + getCurriculoString() + "<br />"
+			+ "<b>Período:</b> "+ getPeriodoString() +"<br />" 
+			+ "<b>Quantidade:</b> "+ getQuantidadeAlunosString() +"<br />";
 	}
-	
-	public String getExcelContentVisaoSala() {
+
+	public String getExcelContentVisaoSala()
+	{
 		return getDisciplinaString() + " / " + getTurma();
 	}
-	
-	public String getExcelCommentVisaoSala() {
+
+	public String getExcelCommentVisaoSala()
+	{
 		return getDisciplinaNome() + "\n"
-		+ "Turma: "+ getTurma() + "\n"
-		+ "Crédito(s) " + ((isTeorico())? "Teórico(s)" : "Prático(s)") + ": " + getTotalCreditos()+" de "+getTotalCreditoDisciplina() + "\n"
-		+ "Curso: " + getCursoNome() + "\n"
-		+ "Matriz Curricular: " + getCurriculoString() + "\n"
-		+ "Período: "+ getPeriodoString() + "\n" 
-		+ "Quantidade: "+ getQuantidadeAlunosString();
+			+ "Turma: "+ getTurma() + "\n"
+			+ "Crédito(s) " + ((isTeorico())? "Teórico(s)" : "Prático(s)") + ": "
+			+ getTotalCreditos()+" de "+getTotalCreditoDisciplina() + "\n"
+			+ "Curso: " + getCursoNome() + "\n"
+			+ "Matriz Curricular: " + getCurriculoString() + "\n"
+			+ "Período: "+ getPeriodoString() + "\n" 
+			+ "Quantidade: "+ getQuantidadeAlunosString();
 	}
 	
 	@Override
-	public String getNaturalKey() {
-		return getCampusString() + "-" + getUnidadeString() + "-" + getSalaString() + "-" +
-		       getSemana() + "-" +
-		       getCursoString() + "-" + getCurriculoString() + "-" + getPeriodo() + "-" +
-		       getDisciplinaString() + "-" + getTurma();
+	public String getNaturalKey()
+	{
+		return getCampusString()
+			+ "-" + getUnidadeString()
+			+ "-" + getSalaString()
+			+ "-" + getSemana()
+			+ "-" + getCursoString()
+			+ "-" + getCurriculoString()
+			+ "-" + getPeriodo()
+			+ "-" + getDisciplinaString()
+			+ "-" + getTurma();
 	}
 
 	@Override
-	public int compareTo(AtendimentoTaticoDTO o) {
+	public int compareTo( AtendimentoTaticoDTO o )
+	{
 		return 0;
 	}
 
 	@Override
-	public String toString() {
-		return getDisciplinaString()+"@"+getTurma()+"@"+getSalaString()+"@"+getSemana();
+	public String toString()
+	{
+		return getDisciplinaString() + "@" + getTurma() + "@" + getSalaString() + "@" + getSemana();
 	}
 
-	static public boolean compatibleByApproach1(AtendimentoTaticoDTO dto1, AtendimentoTaticoDTO dto2) {
+	static public boolean compatibleByApproach1(
+			AtendimentoTaticoDTO dto1, AtendimentoTaticoDTO dto2 )
+	{
 		return dto1.getDisciplinaId().equals(dto2.getDisciplinaId()) && 
 			   !dto1.getSalaId().equals(dto2.getSalaId()) &&
 			   !dto1.getTurma().equals(dto2.getTurma()) &&
 			   dto1.getTotalCreditos().equals(dto2.getTotalCreditos()) &&
 			   dto1.getSemana().equals(dto2.getSemana());
 	}
-	
-	static public boolean compatibleByApproach2(AtendimentoTaticoDTO dto1, AtendimentoTaticoDTO dto2) {
+
+	static public boolean compatibleByApproach2(
+			AtendimentoTaticoDTO dto1, AtendimentoTaticoDTO dto2 )
+	{
 		return !dto1.getDisciplinaId().equals(dto2.getDisciplinaId()) && 
 			   !dto1.getSalaId().equals(dto2.getSalaId()) &&
 			   !dto1.getTurma().equals(dto2.getTurma()) &&
@@ -335,34 +355,44 @@ public class AtendimentoTaticoDTO extends AbstractDTO<String> implements Compara
 			   dto1.getSemana().equals(dto2.getSemana());
 	}
 	
-	static public int countListDTOsCreditos(List<AtendimentoTaticoDTO> listDTOs) {
+	static public int countListDTOsCreditos(
+			List< AtendimentoTaticoDTO > listDTOs )
+	{
 		int count = 0;
-		for (AtendimentoTaticoDTO dto : listDTOs) {
+		for ( AtendimentoTaticoDTO dto : listDTOs )
+		{
 			count += dto.getTotalCreditos();
 		}
+
 		return count;
 	}
 	
-	static public int countListListDTOsCreditos(List<List<AtendimentoTaticoDTO>> listListDTOs) {
+	static public int countListListDTOsCreditos( List< List< AtendimentoTaticoDTO > > listListDTOs )
+	{
 		int count = 0;
-		for (List<AtendimentoTaticoDTO> listDTOs : listListDTOs) {
+		for ( List<AtendimentoTaticoDTO> listDTOs : listListDTOs )
+		{
 			count += listDTOs.get(0).getTotalCreditos();
 		}
+
 		return count;
 	}
 
 	@Override
-	public boolean isTatico() {
+	public boolean isTatico()
+	{
 		return true;
 	}
 
 	@Override
-	public boolean isProfessorVirtual() {
+	public boolean isProfessorVirtual()
+	{
 		return false;
 	}
 
 	@Override
-	public String getProfessorString() {
+	public String getProfessorString()
+	{
 		return "";
 	}
 }

@@ -4,10 +4,11 @@ import java.util.List;
 
 import com.gapso.web.trieda.shared.util.TriedaUtil;
 
-public class AtendimentoOperacionalDTO extends AbstractDTO<String> implements Comparable<AtendimentoOperacionalDTO>, AtendimentoRelatorioDTO {
-
+public class AtendimentoOperacionalDTO extends AbstractDTO< String >
+	implements Comparable< AtendimentoOperacionalDTO >, AtendimentoRelatorioDTO
+{
 	private static final long serialVersionUID = -2870302894382757778L;
-	
+
 	// Propriedades
 	public static final String PROPERTY_ID = "id";
 	public static final String PROPERTY_VERSION = "version";
@@ -304,143 +305,180 @@ public class AtendimentoOperacionalDTO extends AbstractDTO<String> implements Co
 		this.totalLinhas = value;
 	}
 	
-	public void concatenateVisaoSala(AtendimentoRelatorioDTO other) {
+	public void concatenateVisaoSala( AtendimentoRelatorioDTO other )
+	{
 		setCursoNome(getCursoNome() + " / " + other.getCursoNome());
 		setCurricularString(getCurriculoString() + " / " + other.getCurriculoString());
 		setPeriodoString(getPeriodoString() + " / " + other.getPeriodoString());
 		setQuantidadeAlunosString(getQuantidadeAlunosString() + " / " + other.getQuantidadeAlunosString());
 		setQuantidadeAlunos(getQuantidadeAlunos() + other.getQuantidadeAlunos());
 	}
-	
-	public void concatenateVisaoCurso(AtendimentoOperacionalDTO other) {
-		setDisciplinaString(getDisciplinaString() + "/" + other.getDisciplinaString());
-		setTurma(getTurma() + "/" + other.getTurma());
-		setCampusString(getCampusString() + "/" + other.getCampusString());
-		setUnidadeString(getUnidadeString() + "/" + other.getUnidadeString());
-		setSalaString(getSalaString() + "/" + other.getSalaString());
-		setQuantidadeAlunosString(getQuantidadeAlunosString() + "/" + other.getQuantidadeAlunosString());
+
+	public void concatenateVisaoCurso( AtendimentoOperacionalDTO other )
+	{
+		setDisciplinaString( getDisciplinaString() + "/" + other.getDisciplinaString() );
+		setTurma( getTurma() + "/" + other.getTurma() );
+		setCampusString( getCampusString() + "/" + other.getCampusString() );
+		setUnidadeString( getUnidadeString() + "/" + other.getUnidadeString() );
+		setSalaString( getSalaString() + "/" + other.getSalaString() );
+		setQuantidadeAlunosString( getQuantidadeAlunosString() + "/" + other.getQuantidadeAlunosString() );
 	}
-	
-	public String getContentVisaoSala() {
+
+	public String getContentVisaoSala()
+	{
 		return getDisciplinaString() + "<br />"
-		+ TriedaUtil.truncate(getDisciplinaNome(),12) + "<br />"
-		+ "Turma " + getTurma() + "<br />"
-//		+ TriedaUtil.truncate(getCursoNome(),12) + "<br />"
-		+ getQuantidadeAlunosString() + " aluno(s)";
+			+ TriedaUtil.truncate( getDisciplinaNome(), 12 ) + "<br />"
+			+ "Turma " + getTurma() + "<br />"
+			// + TriedaUtil.truncate( getCursoNome(), 12 ) + "<br />"
+			+ getQuantidadeAlunosString() + " aluno(s)";
 	}
-	
-	public String getContentToolTipVisaoSala() {
+
+	public String getContentToolTipVisaoSala()
+	{
 		String professor = "";
-		if(isProfessorVirtual()) {
-			professor = "<b>"+getProfessorVirtualString()+"</b>";
-		} else {
-			professor = "<b>Professor:</b> "+ getProfessorString();
+		if ( isProfessorVirtual() )
+		{
+			professor = "<b>" + getProfessorVirtualString() + "</b>";
 		}
+		else
+		{
+			professor = "<b>Professor:</b> " + getProfessorString();
+		}
+
 		return "<b>Turma:</b> "+ getTurma() + "<br />"
-		+ "<b>Crédito(s) " + ((getCreditoTeoricoBoolean())? "Teórico(s)" : "Prático(s)") + ":</b> " + getTotalCreditos()+" de "+getTotalCreditoDisciplina() + "<br />"
-		+ "<b>Curso:</b> " + getCursoNome() +"<br />"
-		+ "<b>Matriz Curricular:</b> " + getCurriculoString() + "<br />"
-		+ "<b>Período:</b> "+ getPeriodoString() +"<br />"
-		+ "<b>Horário:</b> " + getHorarioId()   +"<br />"
-		+ "<b>Quantidade:</b> "+ getQuantidadeAlunosString() +"<br />"
-		+ professor;
-		
+			+ "<b>Crédito(s) " + ((getCreditoTeoricoBoolean())? "Teórico(s)" : "Prático(s)") + ":</b> "
+			+ getTotalCreditos()+" de "+getTotalCreditoDisciplina() + "<br />"
+			+ "<b>Curso:</b> " + getCursoNome() +"<br />"
+			+ "<b>Matriz Curricular:</b> " + getCurriculoString() + "<br />"
+			+ "<b>Período:</b> "+ getPeriodoString() +"<br />"
+			+ "<b>Horário:</b> " + getHorarioId()   +"<br />"
+			+ "<b>Quantidade:</b> "+ getQuantidadeAlunosString() +"<br />" + professor;
 	}
-	
-	public String getContentVisaoProfessor() {
+
+	public String getContentVisaoProfessor()
+	{
 		return getDisciplinaString() + "<br />"
 		+ TriedaUtil.truncate(getDisciplinaNome(),12) + "<br />"
 		+ "Turma " + getTurma() + "<br />"
-//		+ TriedaUtil.truncate(getCursoNome(),12) + "<br />"
+		// + TriedaUtil.truncate(getCursoNome(),12) + "<br />"
 		+ getSalaString();
 	}
-	
-	public String getContentToolTipVisaoProfessor() {
+
+	public String getContentToolTipVisaoProfessor()
+	{
 		return "<b>Turma:</b> "+ getTurma() + "<br />"
-		+ "<b>Crédito(s) " + ((getCreditoTeoricoBoolean())? "Teórico(s)" : "Prático(s)") + ":</b> " + getTotalLinhas()+" de "+getTotalCreditos() + "<br />"
-		+ "<b>Curso:</b> " + getCursoNome() +"<br />"
-		+ "<b>Matriz Curricular:</b> " + getCurriculoString() + "<br />"
-		+ "<b>Período:</b> "+ getPeriodoString() +"<br />" 
-		+ "<b>Quantidade:</b> "+ getQuantidadeAlunosString() +"<br />"
-		+ "<b>Campus:</b> "+ getCampusString() +"<br />"
-		+ "<b>Unidade:</b> "+ getUnidadeString() +"<br />"
-		+ "<b>Sala:</b> "+ getSalaString() +"<br />";
-		
+			+ "<b>Crédito(s) " + ((getCreditoTeoricoBoolean())? "Teórico(s)" : "Prático(s)") + ":</b> "
+			+ getTotalLinhas()+" de "+getTotalCreditos() + "<br />"
+			+ "<b>Curso:</b> " + getCursoNome() +"<br />"
+			+ "<b>Matriz Curricular:</b> " + getCurriculoString() + "<br />"
+			+ "<b>Período:</b> "+ getPeriodoString() +"<br />" 
+			+ "<b>Quantidade:</b> "+ getQuantidadeAlunosString() +"<br />"
+			+ "<b>Campus:</b> "+ getCampusString() +"<br />"
+			+ "<b>Unidade:</b> "+ getUnidadeString() +"<br />"
+			+ "<b>Sala:</b> "+ getSalaString() +"<br />";
 	}
 	
-	public String getExcelContentVisaoSala() {
+	public String getExcelContentVisaoSala()
+	{
 		return getDisciplinaString() + " / " + getTurma();
 	}
-	
-	public String getExcelCommentVisaoSala() {
+
+	public String getExcelCommentVisaoSala()
+	{
 		return getDisciplinaNome() + "\n"
-		+ "Turma: "+ getTurma() + "\n"
-		+ "Crédito(s) " + ((getCreditoTeoricoBoolean())? "Teórico(s)" : "Prático(s)") + ": " + getTotalCreditos()+" de "+getTotalCreditos() + "\n"
-		+ "Curso: " + getCursoNome() + "\n"
-		+ "Matriz Curricular: " + getCurriculoString() + "\n"
-		+ "Período: "+ getPeriodoString() + "\n" 
-		+ "Quantidade: "+ getQuantidadeAlunosString();
-	}
-	
-	@Override
-	public String getNaturalKey() {
-		return getCampusString() + "-" + getUnidadeString() + "-" + getSalaString() + "-" +
-		       getSemana() + "-" +
-		       getCursoString() + "-" + getCurriculoString() + "-" + getPeriodo() + "-" +
-		       getDisciplinaString() + "-" + getTurma();
+			+ "Turma: "+ getTurma() + "\n"
+			+ "Crédito(s) " + ( ( getCreditoTeoricoBoolean() )? "Teórico(s)" : "Prático(s)" )
+			+ ": " + getTotalCreditos() + " de " + getTotalCreditos() + "\n"
+			+ "Curso: " + getCursoNome() + "\n"
+			+ "Matriz Curricular: " + getCurriculoString() + "\n"
+			+ "Período: "+ getPeriodoString() + "\n" 
+			+ "Quantidade: "+ getQuantidadeAlunosString();
 	}
 
 	@Override
-	public int compareTo(AtendimentoOperacionalDTO o) {
+	public String getNaturalKey()
+	{
+		return getCampusString()
+			+ "-" + getUnidadeString()
+			+ "-" + getSalaString()
+			+ "-" + getSemana()
+			+ "-" + getCursoString()
+			+ "-" + getCurriculoString()
+			+ "-" + getPeriodo()
+			+ "-" + getDisciplinaString()
+			+ "-" + getTurma();
+	}
+
+	@Override
+	public int compareTo( AtendimentoOperacionalDTO o )
+	{
 		return 0;
 	}
 
 	@Override
-	public String toString() {
-		return getDisciplinaString()+"@"+getTurma()+"@"+getSalaString()+"@"+getSemana()+"#"+getTotalCreditos()+"#"+getHorarioId();
+	public String toString()
+	{
+		return getDisciplinaString()
+			+ "@" + getTurma()
+			+ "@" + getSalaString()
+			+ "@" + getSemana()
+			+ "#" + getTotalCreditos()
+			+ "#" + getHorarioId();
 	}
 
-	static public boolean compatibleByApproach1(AtendimentoOperacionalDTO dto1, AtendimentoOperacionalDTO dto2) {
-		return dto1.getDisciplinaId().equals(dto2.getDisciplinaId()) && 
-			   !dto1.getSalaId().equals(dto2.getSalaId()) &&
-			   !dto1.getTurma().equals(dto2.getTurma()) &&
-			   dto1.getTotalLinhas().equals(dto2.getTotalLinhas()) &&
-			   dto1.getSemana().equals(dto2.getSemana());
+	static public boolean compatibleByApproach1(
+			AtendimentoOperacionalDTO dto1, AtendimentoOperacionalDTO dto2 )
+	{
+		return dto1.getDisciplinaId().equals( dto2.getDisciplinaId() )
+			&& !dto1.getSalaId().equals( dto2.getSalaId() )
+			&& !dto1.getTurma().equals( dto2.getTurma() )
+			&& dto1.getTotalLinhas().equals( dto2.getTotalLinhas() )
+			&& dto1.getSemana().equals( dto2.getSemana() );
 	}
-	
-	static public boolean compatibleByApproach2(AtendimentoOperacionalDTO dto1, AtendimentoOperacionalDTO dto2) {
-		return !dto1.getDisciplinaId().equals(dto2.getDisciplinaId()) && 
-			   !dto1.getSalaId().equals(dto2.getSalaId()) &&
-			   !dto1.getTurma().equals(dto2.getTurma()) &&
-			   dto1.getTotalLinhas().equals(dto2.getTotalLinhas()) &&
-			   dto1.getSemana().equals(dto2.getSemana());
+
+	static public boolean compatibleByApproach2(
+			AtendimentoOperacionalDTO dto1, AtendimentoOperacionalDTO dto2 )
+	{
+		return !dto1.getDisciplinaId().equals( dto2.getDisciplinaId() )
+			&& !dto1.getSalaId().equals( dto2.getSalaId() )
+			&& !dto1.getTurma().equals( dto2.getTurma() )
+			&& dto1.getTotalLinhas().equals( dto2.getTotalLinhas() )
+			&& dto1.getSemana().equals( dto2.getSemana() );
 	}
-	
-	static public boolean compatibleSameTime(AtendimentoOperacionalDTO dto1, AtendimentoOperacionalDTO dto2) {
-		return dto1.getHorarioId().equals(dto2.getHorarioId()) && 
-		dto1.getSemana().equals(dto2.getSemana());
+
+	static public boolean compatibleSameTime(
+			AtendimentoOperacionalDTO dto1, AtendimentoOperacionalDTO dto2 )
+	{
+		return dto1.getHorarioId().equals( dto2.getHorarioId() )
+			&& dto1.getSemana().equals( dto2.getSemana() );
 	}
-	
-	static public int countListDTOsCreditos(List<AtendimentoOperacionalDTO> listDTOs) {
+
+	static public int countListDTOsCreditos( List< AtendimentoOperacionalDTO > listDTOs )
+	{
 		int count = 0;
-		for (AtendimentoOperacionalDTO dto : listDTOs) {
+		for ( AtendimentoOperacionalDTO dto : listDTOs )
+		{
 			count += dto.getTotalCreditos();
 		}
+
 		return count;
 	}
 
 	@Override
-	public boolean isTeorico() {
+	public boolean isTeorico()
+	{
 		return getCreditoTeoricoBoolean();
 	}
 
 	@Override
-	public boolean isTatico() {
+	public boolean isTatico()
+	{
 		return false;
 	}
 
 	@Override
-	public boolean isProfessorVirtual() {
-		return !TriedaUtil.isBlank(getProfessorVirtualId());
+	public boolean isProfessorVirtual()
+	{
+		return !TriedaUtil.isBlank( getProfessorVirtualId() );
 	}
 }

@@ -1,9 +1,7 @@
 package com.gapso.web.trieda.shared.dtos;
 
-
-public interface AtendimentoRelatorioDTO {
-	
-	
+public interface AtendimentoRelatorioDTO
+{
 	public Long getOfertaId();
 	public Long getCampusId();
 	public Integer getSemana();
@@ -23,7 +21,7 @@ public interface AtendimentoRelatorioDTO {
 	public Long getCurriculoId();
 	public String getPeriodoString();
 	public String getQuantidadeAlunosString();
-	public void concatenateVisaoSala(AtendimentoRelatorioDTO other);	
+	public void concatenateVisaoSala(AtendimentoRelatorioDTO other );
 	public String getExcelContentVisaoSala();
 	public String getExcelCommentVisaoSala();
 	public Long getSalaId();
@@ -31,7 +29,7 @@ public interface AtendimentoRelatorioDTO {
 	public boolean isTeorico();
 	public Integer getTotalCreditoDisciplina();
 	public String getUnidadeString();
-	
+
 	public boolean isTatico();
 	public boolean isProfessorVirtual();
 	public String getProfessorString();

@@ -23,13 +23,17 @@ public class ResumoDisciplinaPresenter implements Presenter {
 
 	public interface Display extends ITriedaI18nGateway {
 		Component getComponent();
+
 		CampusComboBox getCampusComboBox();
+
 		TreeStore<ResumoDisciplinaDTO> getStore();
+
 		TreeGrid<ResumoDisciplinaDTO> getTree();
 	}
+
 	private CenarioDTO cenario;
-	private Display display; 
-	
+	private Display display;
+
 	public ResumoDisciplinaPresenter(CenarioDTO cenario, Display display) {
 		this.cenario = cenario;
 		this.display = display;
@@ -37,27 +41,40 @@ public class ResumoDisciplinaPresenter implements Presenter {
 	}
 
 	private void setListeners() {
-		display.getCampusComboBox().addSelectionChangedListener(new SelectionChangedListener<CampusDTO>(){
-			@Override
-			public void selectionChanged(SelectionChangedEvent<CampusDTO> se) {
-				if(se.getSelectedItem() == null) return;
-				display.getTree().mask(display.getI18nMessages().loading());
-				Services.disciplinas().getResumos(cenario, se.getSelectedItem(), new AbstractAsyncCallbackWithDefaultOnFailure<List<ResumoDisciplinaDTO>>(display) {
+		display.getCampusComboBox().addSelectionChangedListener(
+				new SelectionChangedListener<CampusDTO>() {
 					@Override
-					public void onSuccess(List<ResumoDisciplinaDTO> list) {
-						display.getStore().removeAll();
-						display.getStore().add(list, true);
-						display.getTree().unmask();
+					public void selectionChanged(
+							SelectionChangedEvent<CampusDTO> se) {
+						if (se.getSelectedItem() == null) {
+							return;
+						}
+
+						display.getTree().mask(
+								display.getI18nMessages().loading());
+						Services.disciplinas()
+								.getResumos(
+										cenario,
+										se.getSelectedItem(),
+										new AbstractAsyncCallbackWithDefaultOnFailure<List<ResumoDisciplinaDTO>>(
+												display) {
+											@Override
+											public void onSuccess(
+													List<ResumoDisciplinaDTO> list) {
+												display.getStore().removeAll();
+												display.getStore().add(list,
+														true);
+												display.getTree().unmask();
+											}
+										});
 					}
 				});
-			}
-		});
 	}
-	
+
 	@Override
 	public void go(Widget widget) {
-		GTab tab = (GTab)widget;
-		tab.add((GTabItem)display.getComponent());
+		GTab tab = (GTab) widget;
+		tab.add((GTabItem) display.getComponent());
 	}
 
 }
