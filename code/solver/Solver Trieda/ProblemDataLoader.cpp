@@ -2340,13 +2340,17 @@ void ProblemDataLoader::gera_refs()
 
    ITERA_GGROUP( it_desl, problemData->tempo_campi, Deslocamento )
    {
-      find_and_set_lessptr( it_desl->getOrigemId(),
-         problemData->campi,
-         ( Campus * & ) it_desl->origem, false );
+      if ( problemData->refCampus[ it_desl->getOrigemId() ] != NULL )
+      {
+         find_and_set_lessptr( it_desl->getOrigemId(),
+            problemData->campi, ( Campus * & ) it_desl->origem, false );
+      }
 
-      find_and_set_lessptr( it_desl->getDestinoId(),
-         problemData->campi,
-         ( Campus * & ) it_desl->destino, false );
+      if ( problemData->refCampus[ it_desl->getDestinoId() ] != NULL )
+      {
+         find_and_set_lessptr( it_desl->getDestinoId(),
+            problemData->campi, ( Campus * & ) it_desl->destino, false );
+      }
    } // deslocamento campi
 
    ITERA_GGROUP( it_desl, problemData->tempo_unidades, Deslocamento )
@@ -2359,12 +2363,10 @@ void ProblemDataLoader::gera_refs()
          // fazendo mesmo depois de encontrar pelo mesmo motivo
 
          find_and_set_lessptr( it_desl->getOrigemId(),
-            it_campi->unidades,
-            ( Unidade * & ) it_desl->origem, false );
+            it_campi->unidades, ( Unidade * & ) it_desl->origem, false );
 
          find_and_set_lessptr( it_desl->getDestinoId(),
-            it_campi->unidades,
-            ( Unidade * & ) it_desl->destino, false );
+            it_campi->unidades, ( Unidade * & ) it_desl->destino, false );
       }
    } // deslocamento unidades 
 

@@ -8,9 +8,10 @@ Deslocamento::Deslocamento(void)
 
 Deslocamento::~Deslocamento(void)
 {
+
 }
 
-void Deslocamento::le_arvore(ItemDeslocamento& elem)
+void Deslocamento::le_arvore( ItemDeslocamento & elem )
 {
    origem_id = elem.origemId();
    destino_id = elem.destinoId();

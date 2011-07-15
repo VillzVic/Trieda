@@ -7,18 +7,18 @@ class Deslocamento :
    public OFBase
 {
 public:
-   Deslocamento(void);
-   ~Deslocamento(void);
+   Deslocamento( void );
+   virtual ~Deslocamento( void );
 
-   void le_arvore(ItemDeslocamento& elem);
+   void le_arvore( ItemDeslocamento & );
 
-   OFBase* origem;
-   OFBase* destino;
+   OFBase * origem;
+   OFBase * destino;
 
-   void setOrigemId(int v) { origem_id = v; }
-   void setDestinoId(int v) { destino_id = v; }
-   void setTempo(int v) { tempo = v; }
-   void setCusto(double v) { custo = v; }
+   void setOrigemId( int v ) { origem_id = v; }
+   void setDestinoId( int v ) { destino_id = v; }
+   void setTempo( int v ) { tempo = v; }
+   void setCusto( double v ) { custo = v; }
 
    int getOrigemId() { return origem_id; }
    int getDestinoId() { return destino_id; }
