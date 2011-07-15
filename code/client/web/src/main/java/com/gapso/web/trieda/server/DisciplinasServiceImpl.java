@@ -62,27 +62,33 @@ import com.google.gwt.user.server.rpc.RemoteServiceServlet;
  * The server side implementation of the RPC service.
  */
 @Transactional
-public class DisciplinasServiceImpl extends RemoteServiceServlet implements
-		DisciplinasService
+public class DisciplinasServiceImpl extends RemoteServiceServlet
+	implements DisciplinasService
 {
 	private static final long serialVersionUID = -4850774141421616870L;
 
 	@Override
-	public DisciplinaDTO getDisciplina(Long id) {
-		if (id == null)
+	public DisciplinaDTO getDisciplina( Long id )
+	{
+		if ( id == null )
+		{
 			return null;
-		return ConvertBeans.toDisciplinaDTO(Disciplina.find(id));
+		}
+
+		return ConvertBeans.toDisciplinaDTO( Disciplina.find( id ) );
 	}
 
 	@Override
-	public List<HorarioDisponivelCenarioDTO> getHorariosDisponiveis(
-			DisciplinaDTO disciplinaDTO, SemanaLetivaDTO semanaLetivaDTO) {
+	public List< HorarioDisponivelCenarioDTO > getHorariosDisponiveis(
+			DisciplinaDTO disciplinaDTO, SemanaLetivaDTO semanaLetivaDTO )
+	{
 		SemanaLetiva semanaLetiva = SemanaLetiva.getByOficial();
-		List<HorarioDisponivelCenario> list = new ArrayList<HorarioDisponivelCenario>(
-				Disciplina.find(disciplinaDTO.getId())
-						.getHorarios(semanaLetiva));
-		List<HorarioDisponivelCenarioDTO> listDTO = ConvertBeans
-				.toHorarioDisponivelCenarioDTO(list);
+
+		List< HorarioDisponivelCenario > list = new ArrayList< HorarioDisponivelCenario >(
+				Disciplina.find( disciplinaDTO.getId() ).getHorarios( semanaLetiva ) );
+
+		List< HorarioDisponivelCenarioDTO> listDTO
+			= ConvertBeans.toHorarioDisponivelCenarioDTO( list );
 
 		return listDTO;
 	}
@@ -139,9 +145,9 @@ public class DisciplinasServiceImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public ListLoadResult<DisciplinaDTO> getList(BasePagingLoadConfig loadConfig) {
-		return getBuscaList(null, loadConfig.get("query").toString(), null,
-				loadConfig);
+	public ListLoadResult< DisciplinaDTO > getList( BasePagingLoadConfig loadConfig )
+	{
+		return getBuscaList( null, loadConfig.get( "query" ).toString(), null, loadConfig );
 	}
 
 	@Override
@@ -198,28 +204,41 @@ public class DisciplinasServiceImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public void remove(List<DisciplinaDTO> disciplinaDTOList) {
-		for (DisciplinaDTO disciplinaDTO : disciplinaDTOList) {
-			Disciplina.find(disciplinaDTO.getId()).remove();
+	public void remove( List< DisciplinaDTO > disciplinaDTOList )
+	{
+		for ( DisciplinaDTO disciplinaDTO : disciplinaDTOList )
+		{
+			Disciplina disc = Disciplina.find( disciplinaDTO.getId() );
+			if ( disc != null )
+			{
+				disc.remove();
+			}
 		}
 	}
 
 	@Override
-	public DivisaoCreditoDTO getDivisaoCredito(DisciplinaDTO disciplinaDTO) {
-		Disciplina disciplina = Disciplina.find(disciplinaDTO.getId());
+	public DivisaoCreditoDTO getDivisaoCredito( DisciplinaDTO disciplinaDTO )
+	{
+		Disciplina disciplina = Disciplina.find( disciplinaDTO.getId() );
 		DivisaoCredito dc = disciplina.getDivisaoCreditos();
-		if (dc == null) {
+
+		if ( dc == null )
+		{
 			return new DivisaoCreditoDTO();
 		}
-		return ConvertBeans.toDivisaoCreditoDTO(dc);
+
+		return ConvertBeans.toDivisaoCreditoDTO( dc );
 	}
 
 	@Override
-	public void salvarDivisaoCredito(DisciplinaDTO disciplinaDTO,
-			DivisaoCreditoDTO divisaoCreditoDTO) {
-		Disciplina disciplina = Disciplina.find(disciplinaDTO.getId());
+	public void salvarDivisaoCredito( DisciplinaDTO disciplinaDTO,
+		DivisaoCreditoDTO divisaoCreditoDTO )
+	{
+		Disciplina disciplina = Disciplina.find( disciplinaDTO.getId() );
 		DivisaoCredito divisaoCredito = disciplina.getDivisaoCreditos();
-		if (divisaoCredito != null) {
+
+		if ( divisaoCredito != null )
+		{
 			int d1 = divisaoCreditoDTO.getDia1();
 			int d2 = divisaoCreditoDTO.getDia2();
 			int d3 = divisaoCreditoDTO.getDia3();
@@ -228,52 +247,58 @@ public class DisciplinasServiceImpl extends RemoteServiceServlet implements
 			int d6 = divisaoCreditoDTO.getDia6();
 			int d7 = divisaoCreditoDTO.getDia7();
 
-			divisaoCredito.setDia1(d1);
-			divisaoCredito.setDia2(d2);
-			divisaoCredito.setDia3(d3);
-			divisaoCredito.setDia4(d4);
-			divisaoCredito.setDia5(d5);
-			divisaoCredito.setDia6(d6);
-			divisaoCredito.setDia7(d7);
+			divisaoCredito.setDia1( d1 );
+			divisaoCredito.setDia2( d2 );
+			divisaoCredito.setDia3( d3 );
+			divisaoCredito.setDia4( d4 );
+			divisaoCredito.setDia5( d5 );
+			divisaoCredito.setDia6( d6 );
+			divisaoCredito.setDia7( d7 );
 
-			divisaoCredito.setCreditos(d1 + d2 + d3 + d4 + d5 + d6 + d7);
+			divisaoCredito.setCreditos( d1 + d2 + d3 + d4 + d5 + d6 + d7 );
 			divisaoCredito.merge();
-		} else {
-			divisaoCreditoDTO.setDisciplinaId(disciplinaDTO.getId());
-			divisaoCredito = ConvertBeans.toDivisaoCredito(divisaoCreditoDTO);
-			disciplina.setDivisaoCreditos(divisaoCredito);
+		}
+		else
+		{
+			divisaoCreditoDTO.setDisciplinaId( disciplinaDTO.getId() );
+			divisaoCredito = ConvertBeans.toDivisaoCredito( divisaoCreditoDTO );
+			disciplina.setDivisaoCreditos( divisaoCredito );
 			disciplina.merge();
 		}
-
 	}
 
 	@Override
-	public TipoDisciplinaDTO getTipoDisciplina(Long id) {
-		return ConvertBeans.toTipoDisciplinaDTO(TipoDisciplina.find(id));
+	public TipoDisciplinaDTO getTipoDisciplina( Long id )
+	{
+		return ConvertBeans.toTipoDisciplinaDTO( TipoDisciplina.find( id ) );
 	}
 
 	@Override
-	public ListLoadResult<TipoDisciplinaDTO> getTipoDisciplinaList() {
+	public ListLoadResult< TipoDisciplinaDTO > getTipoDisciplinaList()
+	{
 		// TODO REMOVER AS LINHAS DE BAIXO
-		if (TipoDisciplina.count() == 0) {
+		if ( TipoDisciplina.count() == 0 )
+		{
 			TipoDisciplina tipo1 = new TipoDisciplina();
-			tipo1.setNome("Presencial");
+			tipo1.setNome( "Presencial" );
 			tipo1.persist();
 
 			TipoDisciplina tipo2 = new TipoDisciplina();
-			tipo2.setNome("Telepresencial");
+			tipo2.setNome( "Telepresencial" );
 			tipo2.persist();
 
 			TipoDisciplina tipo3 = new TipoDisciplina();
-			tipo3.setNome("Online");
+			tipo3.setNome( "Online" );
 			tipo3.persist();
 		}
 
-		List<TipoDisciplinaDTO> list = new ArrayList<TipoDisciplinaDTO>();
-		for (TipoDisciplina tipo : TipoDisciplina.findAll()) {
-			list.add(ConvertBeans.toTipoDisciplinaDTO(tipo));
+		List< TipoDisciplinaDTO > list = new ArrayList< TipoDisciplinaDTO >();
+		for ( TipoDisciplina tipo : TipoDisciplina.findAll() )
+		{
+			list.add( ConvertBeans.toTipoDisciplinaDTO( tipo ) );
 		}
-		return new BaseListLoadResult<TipoDisciplinaDTO>(list);
+
+		return new BaseListLoadResult< TipoDisciplinaDTO >( list );
 	}
 
 	@Override

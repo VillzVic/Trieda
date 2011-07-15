@@ -54,9 +54,8 @@ public class ProfessorVirtual implements Serializable
 	@Max(999L)
 	private Integer cargaHorariaMax;
 
-	@ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE,
-			CascadeType.REFRESH })
-	private Set< Disciplina > disciplinas = new HashSet<Disciplina>();
+	@ManyToMany( cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH } )
+	private Set< Disciplina > disciplinas = new HashSet< Disciplina >();
 
 	@OneToMany(mappedBy = "professorVirtual", cascade = CascadeType.ALL)
 	private Set< AtendimentoOperacional > atendimentos = new HashSet< AtendimentoOperacional >();
@@ -65,14 +64,14 @@ public class ProfessorVirtual implements Serializable
 	{
 		StringBuilder sb = new StringBuilder();
 
-		sb.append("Id: ").append(getId()).append(", ");
-		sb.append("Version: ").append(getVersion()).append(", ");
-		sb.append("Titulacao: ").append(getTitulacao()).append(", ");
-		sb.append("AreaTitulacao: ").append(getAreaTitulacao()).append(", ");
-		sb.append("CargaHorariaMin: ").append(getCargaHorariaMin()).append(", ");
-		sb.append("CargaHorariaMax: ").append(getCargaHorariaMax()).append(", ");
-		sb.append("Disciplinas: ").append( getDisciplinas() == null ? "null" : getDisciplinas().size() );
-		sb.append("Atendimentos: ").append( getAtendimentos() == null ? "null" : getAtendimentos().size() );
+		sb.append( "Id: " ).append( getId() ).append( ", " );
+		sb.append( "Version: " ).append( getVersion() ).append( ", " );
+		sb.append( "Titulacao: " ).append( getTitulacao() ).append( ", " );
+		sb.append( "AreaTitulacao: " ).append( getAreaTitulacao() ).append( ", " );
+		sb.append( "CargaHorariaMin: " ).append( getCargaHorariaMin() ).append( ", " );
+		sb.append( "CargaHorariaMax: " ).append( getCargaHorariaMax() ).append( ", " );
+		sb.append( "Disciplinas: " ).append( getDisciplinas() == null ? "null" : getDisciplinas().size() );
+		sb.append( "Atendimentos: " ).append( getAtendimentos() == null ? "null" : getAtendimentos().size() );
 
 		return sb.toString();
 	}

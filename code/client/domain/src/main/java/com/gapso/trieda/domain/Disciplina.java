@@ -47,7 +47,10 @@ import com.gapso.trieda.misc.Dificuldades;
 @RooEntity(identifierColumn = "DIS_ID")
 @Table(name = "DISCIPLINAS", uniqueConstraints = @UniqueConstraint(columnNames = {
 		"DIS_CODIGO", "CEN_ID" }))
-public class Disciplina implements Serializable, Comparable<Disciplina> {
+public class Disciplina
+	implements Serializable, Comparable< Disciplina >
+{
+	private static final long serialVersionUID = 7980821696468062987L;
 
 	@NotNull
 	@ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE,
@@ -140,54 +143,37 @@ public class Disciplina implements Serializable, Comparable<Disciplina> {
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "disciplina")
 	private Set<AtendimentoTatico> atendimentosTaticos = new HashSet<AtendimentoTatico>();
 
-	public String toString() {
+	@ManyToMany( cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH }, mappedBy="disciplinas" )
+	private Set< ProfessorVirtual > professoresVirtuais = new HashSet< ProfessorVirtual >();
+
+	public String toString()
+	{
 		StringBuilder sb = new StringBuilder();
+
 		sb.append("Id: ").append(getId()).append(", ");
 		sb.append("Version: ").append(getVersion()).append(", ");
 		sb.append("Cenario: ").append(getCenario()).append(", ");
 		sb.append("TipoDisciplina: ").append(getTipoDisciplina()).append(", ");
-		sb.append("DivisaoCreditos: ").append(getDivisaoCreditos())
-				.append(", ");
+		sb.append("DivisaoCreditos: ").append(getDivisaoCreditos()).append(", ");
 		sb.append("Codigo: ").append(getCodigo()).append(", ");
 		sb.append("Nome: ").append(getNome()).append(", ");
-		sb.append("CreditosTeorico: ").append(getCreditosTeorico())
-				.append(", ");
-		sb.append("CreditosPratico: ").append(getCreditosPratico())
-				.append(", ");
+		sb.append("CreditosTeorico: ").append(getCreditosTeorico()).append(", ");
+		sb.append("CreditosPratico: ").append(getCreditosPratico()).append(", ");
 		sb.append("Laboratorio: ").append(getLaboratorio()).append(", ");
 		sb.append("Dificuldade: ").append(getDificuldade()).append(", ");
-		sb.append("MaxAlunosTeorico: ").append(getMaxAlunosTeorico())
-				.append(", ");
-		sb.append("MaxAlunosPratico: ").append(getMaxAlunosPratico())
-				.append(", ");
-		sb.append("Horarios: ")
-				.append(getHorarios() == null ? "null" : getHorarios().size())
-				.append(", ");
-		sb.append("Professores: ")
-				.append(getProfessores() == null ? "null" : getProfessores()
-						.size()).append(", ");
-		sb.append("Incompatibilidades: ")
-				.append(getIncompatibilidades() == null ? "null"
-						: getIncompatibilidades().size()).append(", ");
-		sb.append("Equivalencias: ")
-				.append(getEquivalencias() == null ? "null"
-						: getEquivalencias().size()).append(", ");
-		sb.append("EliminadaPor: ")
-				.append(getEliminadaPor() == null ? "null" : getEliminadaPor()
-						.size()).append(", ");
-		sb.append("Curriculos: ")
-				.append(getCurriculos() == null ? "null" : getCurriculos()
-						.size()).append(", ");
-		sb.append("Demandas: ").append(
-				getDemandas() == null ? "null" : getDemandas().size());
-		sb.append("Fixacoes: ").append(
-				getFixacoes() == null ? "null" : getFixacoes().size());
-		sb.append("Atendimentos Operacionais: ").append(
-				getAtendimentosOperacionais() == null ? "null"
-						: getAtendimentosOperacionais().size());
-		sb.append("Atendimentos Taticos: ").append(
-				getAtendimentosTaticos() == null ? "null"
-						: getAtendimentosTaticos().size());
+		sb.append("MaxAlunosTeorico: ").append(getMaxAlunosTeorico()).append(", ");
+		sb.append("MaxAlunosPratico: ").append(getMaxAlunosPratico()).append(", ");
+		sb.append("Horarios: ").append(getHorarios() == null ? "null" : getHorarios().size()).append(", ");
+		sb.append("Professores: ").append(getProfessores() == null ? "null" : getProfessores().size()).append(", ");
+		sb.append("Incompatibilidades: ").append(getIncompatibilidades() == null ? "null" : getIncompatibilidades().size()).append(", ");
+		sb.append("Equivalencias: ").append(getEquivalencias() == null ? "null" : getEquivalencias().size()).append(", ");
+		sb.append("EliminadaPor: ").append(getEliminadaPor() == null ? "null" : getEliminadaPor().size()).append(", ");
+		sb.append("Curriculos: ").append(getCurriculos() == null ? "null" : getCurriculos().size()).append(", ");
+		sb.append("Demandas: ").append( getDemandas() == null ? "null" : getDemandas().size() );
+		sb.append("Fixacoes: ").append( getFixacoes() == null ? "null" : getFixacoes().size() );
+		sb.append("Atendimentos Operacionais: ").append( getAtendimentosOperacionais() == null ? "null" : getAtendimentosOperacionais().size() );
+		sb.append("Atendimentos Taticos: ").append( getAtendimentosTaticos() == null ? "null" : getAtendimentosTaticos().size() );
+
 		return sb.toString();
 	}
 
@@ -265,6 +251,7 @@ public class Disciplina implements Serializable, Comparable<Disciplina> {
 				this.professores.clear();
 			}
 
+			this.removeProfessoresVirtuais();
 			this.removeHorariosDisponivelCenario();
 			this.removeEliminadasPor();
 			this.entityManager.remove( this );
@@ -285,6 +272,7 @@ public class Disciplina implements Serializable, Comparable<Disciplina> {
 					attached.professores.clear();
 				}
 
+				attached.removeProfessoresVirtuais();
 				attached.removeHorariosDisponivelCenario();
 				attached.removeEliminadasPor();
 				this.entityManager.remove( attached );
@@ -293,13 +281,38 @@ public class Disciplina implements Serializable, Comparable<Disciplina> {
 	}
 
 	@Transactional
-	public void removeHorariosDisponivelCenario() {
-		Set<HorarioDisponivelCenario> horarios = this.getHorarios();
-		for (HorarioDisponivelCenario horario : horarios) {
-			horario.getDisciplinas().remove(this);
+	public void removeProfessoresVirtuais()
+	{
+		Set< ProfessorVirtual > professoresVirtuais = this.getProfessoresVirtuais();
+
+		for ( ProfessorVirtual professorVirtual : professoresVirtuais )
+		{
+			professorVirtual.getDisciplinas().remove( this );
+			professorVirtual.merge();
+		}
+	}
+
+	public Set< ProfessorVirtual > getProfessoresVirtuais()
+	{
+		return this.professoresVirtuais;
+	}
+
+	public void setProfessoresVirtuais( Set< ProfessorVirtual > professoresVirtuais )
+	{
+		this.professoresVirtuais = professoresVirtuais;
+	}
+
+	@Transactional
+	public void removeHorariosDisponivelCenario()
+	{
+		Set< HorarioDisponivelCenario > horarios = this.getHorarios();
+		for ( HorarioDisponivelCenario horario : horarios )
+		{
+			horario.getDisciplinas().remove( this );
 			horario.merge();
 		}
 	}
+
 
 	@Transactional
 	public void removeEliminadasPor() {
@@ -310,6 +323,7 @@ public class Disciplina implements Serializable, Comparable<Disciplina> {
 		}
 	}
 
+
 	@Transactional
 	public void flush() {
 		if (this.entityManager == null)
@@ -317,59 +331,87 @@ public class Disciplina implements Serializable, Comparable<Disciplina> {
 		this.entityManager.flush();
 	}
 
+
 	@Transactional
-	public Disciplina merge() {
-		if (this.entityManager == null)
+	public Disciplina merge()
+	{
+		if ( this.entityManager == null )
+		{
 			this.entityManager = entityManager();
-		Disciplina merged = this.entityManager.merge(this);
+		}
+
+		Disciplina merged = this.entityManager.merge( this );
 		this.entityManager.flush();
 		return merged;
 	}
 
-	public static final EntityManager entityManager() {
+
+	public static final EntityManager entityManager()
+	{
 		EntityManager em = new Disciplina().entityManager;
-		if (em == null)
+		if ( em == null )
+		{
 			throw new IllegalStateException(
-					"Entity manager has not been injected (is the Spring Aspects JAR configured as an AJC/AJDT aspects library?)");
+				"Entity manager has not been injected (is the Spring Aspects JAR configured as an AJC/AJDT aspects library?)" );
+		}
+
 		return em;
 	}
 
-	public Incompatibilidade getIncompatibilidadeWith(Disciplina disciplina) {
-		Query q = entityManager()
-				.createQuery(
-						"SELECT o FROM Incompatibilidade o WHERE o.disciplina1 = :disciplina1 AND o.disciplina2 = :disciplina2");
-		q.setParameter("disciplina1", this);
-		q.setParameter("disciplina2", disciplina);
+
+	public Incompatibilidade getIncompatibilidadeWith( Disciplina disciplina )
+	{
+		Query q = entityManager().createQuery(
+					"SELECT o FROM Incompatibilidade o WHERE o.disciplina1 = :disciplina1 AND o.disciplina2 = :disciplina2" );
+
+		q.setParameter( "disciplina1", this );
+		q.setParameter( "disciplina2", disciplina );
 		Incompatibilidade incomp = null;
-		try {
+		try
+		{
 			incomp = (Incompatibilidade) q.getSingleResult();
-		} catch (EmptyResultDataAccessException e) {
+		}
+		catch ( EmptyResultDataAccessException e )
+		{
 			incomp = null;
 		}
+
 		return incomp;
 	}
 
-	public static int count(Cenario cenario) {
+
+	public static int count( Cenario cenario )
+	{
 		Query q = entityManager().createQuery(
-				"SELECT COUNT(o) FROM Disciplina o WHERE o.cenario = :cenario");
-		q.setParameter("cenario", cenario);
-		return ((Number) q.getSingleResult()).intValue();
+				"SELECT COUNT(o) FROM Disciplina o WHERE o.cenario = :cenario" );
+
+		q.setParameter( "cenario", cenario );
+		return ( (Number)q.getSingleResult() ).intValue();
 	}
+
 
 	@SuppressWarnings("unchecked")
-	public static List<Disciplina> findAll() {
-		return entityManager().createQuery("SELECT o FROM Disciplina o")
-				.getResultList();
+	public static List< Disciplina > findAll()
+	{
+		return entityManager().createQuery(
+				"SELECT o FROM Disciplina o" ).getResultList();
 	}
 
-	public static Map<String, Disciplina> buildDisciplinaCodigoToDisciplinaMap(
-			List<Disciplina> disciplinas) {
-		Map<String, Disciplina> disciplinasMap = new HashMap<String, Disciplina>();
-		for (Disciplina disciplina : disciplinas) {
-			disciplinasMap.put(disciplina.getCodigo(), disciplina);
+
+	public static Map< String, Disciplina > buildDisciplinaCodigoToDisciplinaMap(
+			List< Disciplina > disciplinas )
+	{
+		Map< String, Disciplina > disciplinasMap
+			= new HashMap< String, Disciplina >();
+
+		for ( Disciplina disciplina : disciplinas )
+		{
+			disciplinasMap.put( disciplina.getCodigo(), disciplina );
 		}
+
 		return disciplinasMap;
 	}
+
 
 	public static Disciplina find(Long id) {
 		if (id == null)
@@ -377,9 +419,11 @@ public class Disciplina implements Serializable, Comparable<Disciplina> {
 		return entityManager().find(Disciplina.class, id);
 	}
 
+
 	public static List<Disciplina> find(int firstResult, int maxResults) {
 		return find(firstResult, maxResults, null);
 	}
+
 
 	@SuppressWarnings("unchecked")
 	public static List<Disciplina> find(int firstResult, int maxResults,
@@ -391,6 +435,7 @@ public class Disciplina implements Serializable, Comparable<Disciplina> {
 				.getResultList();
 	}
 
+
 	@SuppressWarnings("unchecked")
 	public static List<Disciplina> findByCenario(Cenario cenario) {
 		Query q = entityManager().createQuery(
@@ -398,6 +443,7 @@ public class Disciplina implements Serializable, Comparable<Disciplina> {
 		q.setParameter("cenario", cenario);
 		return q.getResultList();
 	}
+
 
 	@SuppressWarnings("unchecked")
 	public static List<Disciplina> findBySalas(List<Sala> salas) {
@@ -408,26 +454,34 @@ public class Disciplina implements Serializable, Comparable<Disciplina> {
 		return q.getResultList();
 	}
 
+
 	@SuppressWarnings("unchecked")
-	public static List<Disciplina> findByCursos(List<Curso> cursos) {
+	public static List< Disciplina > findByCursos( List< Curso > cursos )
+	{
 		Query q = entityManager()
 				.createQuery(
-						"SELECT DISTINCT(o.disciplina) FROM CurriculoDisciplina o WHERE o.curriculo IN (SELECT c FROM Curriculo c WHERE c.curso IN (:cursos))")
-				.setParameter("cursos", cursos);
+						"SELECT DISTINCT(o.disciplina) FROM CurriculoDisciplina o WHERE o.curriculo IN "
+						+ "(SELECT c FROM Curriculo c WHERE c.curso IN (:cursos))").setParameter( "cursos", cursos );
+
 		return q.getResultList();
 	}
 
-	// CampusDTO campusDTO, TurnoDTO turnoDTO, Integer periodo
+
 	@SuppressWarnings("unchecked")
-	public static List<Disciplina> findByCampusAndTurnoAndPeriodo(
-			Campus campus, Turno turno, Integer periodo) {
+	public static List< Disciplina > findByCampusAndTurnoAndPeriodo(
+		Campus campus, Turno turno, Integer periodo )
+	{
 		Query q = entityManager()
 				.createQuery(
-						"SELECT DISTINCT(o.disciplina) FROM CurriculoDisciplina o WHERE o.periodo = :periodo AND o.curriculo.turno = :turno AND o.curriculo.campus = :campus")
-				.setParameter("campus", campus).setParameter("turno", turno)
-				.setParameter("periodo", periodo);
+					"SELECT DISTINCT(o.disciplina) FROM CurriculoDisciplina o "
+					+ "WHERE o.periodo = :periodo AND o.curriculo.turno = :turno"
+					+ " AND o.curriculo.campus = :campus" )
+				.setParameter( "campus", campus ).setParameter( "turno", turno )
+				.setParameter( "periodo", periodo );
+
 		return q.getResultList();
 	}
+
 
 	public static Disciplina findByCodigo(String codigo) {
 		Query q = entityManager().createQuery(
@@ -435,6 +489,7 @@ public class Disciplina implements Serializable, Comparable<Disciplina> {
 		q.setParameter("codigo", codigo);
 		return (Disciplina) q.getSingleResult();
 	}
+
 
 	public static int count(String codigo, String nome,
 			TipoDisciplina tipoDisciplina) {
@@ -461,6 +516,7 @@ public class Disciplina implements Serializable, Comparable<Disciplina> {
 		return ((Number) q.getSingleResult()).intValue();
 	}
 
+	
 	@SuppressWarnings("unchecked")
 	public static List<Disciplina> findBy(String codigo, String nome,
 			TipoDisciplina tipoDisciplina, int firstResult, int maxResults,
@@ -490,6 +546,7 @@ public class Disciplina implements Serializable, Comparable<Disciplina> {
 				.getResultList();
 	}
 
+
 	public Boolean isIncompativelCom(Disciplina disciplina) {
 		Query q = entityManager()
 				.createQuery(
@@ -498,6 +555,7 @@ public class Disciplina implements Serializable, Comparable<Disciplina> {
 		q.setParameter("disciplina2", disciplina);
 		return ((Number) q.getSingleResult()).intValue() > 0;
 	}
+
 
 	@SuppressWarnings("unchecked")
 	public List<HorarioDisponivelCenario> getHorarios(SemanaLetiva semanaLetiva) {
@@ -509,6 +567,7 @@ public class Disciplina implements Serializable, Comparable<Disciplina> {
 		return q.getResultList();
 	}
 
+
 	public static boolean checkCodigoUnique(Cenario cenario, String codigo) {
 		Query q = entityManager()
 				.createQuery(
@@ -519,180 +578,222 @@ public class Disciplina implements Serializable, Comparable<Disciplina> {
 		return size.intValue() > 0;
 	}
 
+
 	public Integer getCreditosTotal() {
 		return getCreditosPratico() + getCreditosTeorico();
 	}
 
-	private static final long serialVersionUID = 7980821696468062987L;
 
 	public Cenario getCenario() {
 		return this.cenario;
 	}
 
+
 	public Integer getTotalCreditos() {
 		return getCreditosPratico() + getCreditosTeorico();
 	}
+
 
 	public void setCenario(Cenario cenario) {
 		this.cenario = cenario;
 	}
 
+
 	public TipoDisciplina getTipoDisciplina() {
 		return this.tipoDisciplina;
 	}
+
 
 	public void setTipoDisciplina(TipoDisciplina tipoDisciplina) {
 		this.tipoDisciplina = tipoDisciplina;
 	}
 
+
 	public DivisaoCredito getDivisaoCreditos() {
 		return this.divisaoCreditos;
 	}
+
 
 	public void setDivisaoCreditos(DivisaoCredito divisaoCreditos) {
 		this.divisaoCreditos = divisaoCreditos;
 	}
 
+
 	public String getCodigo() {
 		return this.codigo;
 	}
+
 
 	public void setCodigo(String codigo) {
 		this.codigo = codigo;
 	}
 
+
 	public String getNome() {
 		return this.nome;
 	}
+
 
 	public void setNome(String nome) {
 		this.nome = nome;
 	}
 
+
 	public Integer getCreditosTeorico() {
 		return this.creditosTeorico;
 	}
+
 
 	public void setCreditosTeorico(Integer creditosTeorico) {
 		this.creditosTeorico = creditosTeorico;
 	}
 
+
 	public Integer getCreditosPratico() {
 		return this.creditosPratico;
 	}
+
 
 	public void setCreditosPratico(Integer creditosPratico) {
 		this.creditosPratico = creditosPratico;
 	}
 
+
 	public Boolean getLaboratorio() {
 		return this.laboratorio;
 	}
+
 
 	public void setLaboratorio(Boolean laboratorio) {
 		this.laboratorio = laboratorio;
 	}
 
+
 	public Dificuldades getDificuldade() {
 		return this.dificuldade;
 	}
+
 
 	public void setDificuldade(Dificuldades dificuldade) {
 		this.dificuldade = dificuldade;
 	}
 
+	
 	public Integer getMaxAlunosTeorico() {
 		return this.maxAlunosTeorico;
 	}
+
 
 	public void setMaxAlunosTeorico(Integer maxAlunosTeorico) {
 		this.maxAlunosTeorico = maxAlunosTeorico;
 	}
 
+
 	public Integer getMaxAlunosPratico() {
 		return this.maxAlunosPratico;
 	}
+
 
 	public void setMaxAlunosPratico(Integer maxAlunosPratico) {
 		this.maxAlunosPratico = maxAlunosPratico;
 	}
 
+
 	private Set<HorarioDisponivelCenario> getHorarios() {
 		return this.horarios;
 	}
+
 
 	public void setHorarios(Set<HorarioDisponivelCenario> horarios) {
 		this.horarios = horarios;
 	}
 
+
 	public Set<ProfessorDisciplina> getProfessores() {
 		return this.professores;
 	}
+
 
 	public void setProfessores(Set<ProfessorDisciplina> professores) {
 		this.professores = professores;
 	}
 
+
 	public Set<Incompatibilidade> getIncompatibilidades() {
 		return this.incompatibilidades;
 	}
+
 
 	public void setIncompatibilidades(Set<Incompatibilidade> incompatibilidades) {
 		this.incompatibilidades = incompatibilidades;
 	}
 
+
 	public Set<Equivalencia> getEquivalencias() {
 		return this.equivalencias;
 	}
+
 
 	public void setEquivalencias(Set<Equivalencia> equivalencias) {
 		this.equivalencias = equivalencias;
 	}
 
+
 	public Set<Equivalencia> getEliminadaPor() {
 		return this.eliminadaPor;
 	}
+
 
 	public void setEliminadaPor(Set<Equivalencia> eliminadaPor) {
 		this.eliminadaPor = eliminadaPor;
 	}
 
+
 	public Set<CurriculoDisciplina> getCurriculos() {
 		return this.curriculos;
 	}
+
 
 	public void setCurriculos(Set<CurriculoDisciplina> curriculos) {
 		this.curriculos = curriculos;
 	}
 
+
 	public Set<Demanda> getDemandas() {
 		return this.demandas;
 	}
+
 
 	public void setDemandas(Set<Demanda> demandas) {
 		this.demandas = demandas;
 	}
 
+
 	public Set<Fixacao> getFixacoes() {
 		return this.fixacoes;
 	}
+
 
 	public void setFixacoes(Set<Fixacao> fixacoes) {
 		this.fixacoes = fixacoes;
 	}
 
+
 	public Set<AtendimentoOperacional> getAtendimentosOperacionais() {
 		return this.atendimentosOperacionais;
 	}
+
 
 	public void setAtendimentosOperacionais(
 			Set<AtendimentoOperacional> atendimentosOperacionais) {
 		this.atendimentosOperacionais = atendimentosOperacionais;
 	}
 
+
 	public Set<AtendimentoTatico> getAtendimentosTaticos() {
 		return this.atendimentosTaticos;
 	}
+
 
 	public void setAtendimentosTaticos(
 			Set<AtendimentoTatico> atendimentosTaticos) {
@@ -700,6 +801,7 @@ public class Disciplina implements Serializable, Comparable<Disciplina> {
 	}
 
 	@Override
+
 	public int compareTo(Disciplina o) {
 		return getCodigo().compareTo(o.getCodigo());
 	}
