@@ -43,8 +43,8 @@ import com.gapso.trieda.misc.Estados;
 @RooEntity(identifierColumn = "CAM_ID")
 @Table(name = "CAMPI", uniqueConstraints = @UniqueConstraint(columnNames = {
 		"CAM_CODIGO", "CEN_ID" }))
-public class Campus implements Serializable, Comparable<Campus> {
-
+public class Campus implements Serializable, Comparable< Campus >
+{
 	private static final long serialVersionUID = 6690100103369325015L;
 
 	@NotNull
@@ -253,37 +253,55 @@ public class Campus implements Serializable, Comparable<Campus> {
 	}
 
 	@Transactional
-	public void detach() {
-		if (this.entityManager == null)
+	public void detach()
+	{
+		if ( this.entityManager == null )
+		{
 			this.entityManager = entityManager();
-		this.entityManager.detach(this);
+		}
+
+		this.entityManager.detach( this );
 	}
 
 	@Transactional
-	public void persist() {
-		if (this.entityManager == null)
+	public void persist()
+	{
+		if ( this.entityManager == null )
+		{
 			this.entityManager = entityManager();
-		this.entityManager.persist(this);
+		}
+
+		this.entityManager.persist( this );
 		preencheHorarios();
 	}
 
 	@Transactional
-	public void remove() {
-		if (this.entityManager == null)
+	public void remove()
+	{
+		if ( this.entityManager == null )
+		{
 			this.entityManager = entityManager();
-		if (this.entityManager.contains(this)) {
+		}
+
+		if (this.entityManager.contains( this ) )
+		{
 			removeProfessores();
 			removeHorariosDisponivelCenario();
 			removeDeslocamentosDestino();
 			removeUnidades();
-			this.entityManager.remove(this);
-		} else {
-			Campus attached = this.entityManager.find(this.getClass(), this.id);
+
+			this.entityManager.remove( this );
+		}
+		else
+		{
+			Campus attached = this.entityManager.find( this.getClass(), this.id );
+
 			attached.removeProfessores();
 			attached.removeHorariosDisponivelCenario();
 			attached.removeDeslocamentosDestino();
 			attached.removeUnidades();
-			this.entityManager.remove(attached);
+
+			this.entityManager.remove( attached );
 		}
 	}
 
@@ -329,9 +347,11 @@ public class Campus implements Serializable, Comparable<Campus> {
 	}
 
 	@Transactional
-	public void removeUnidades() {
-		Set<Unidade> unidades = this.getUnidades();
-		for (Unidade unidade : unidades) {
+	public void removeUnidades()
+	{
+		Set< Unidade > unidades = this.getUnidades();
+		for ( Unidade unidade : unidades )
+		{
 			unidade.remove();
 		}
 	}

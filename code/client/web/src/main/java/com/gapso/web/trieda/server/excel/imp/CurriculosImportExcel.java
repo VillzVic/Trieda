@@ -239,144 +239,192 @@ public class CurriculosImportExcel extends AbstractImportExcel<CurriculosImportE
 						allRows.addAll(rows);
 					}
 				}
-				
-				Collections.sort(allRows);
-				
-				getErrors().add(getI18nMessages().excelErroLogicoUnicidadeVioladaCurriculoPorDescricao(codCurriculo,allRows.toString()));
+
+				Collections.sort( allRows );
+
+				getErrors().add( getI18nMessages().excelErroLogicoUnicidadeVioladaCurriculoPorDescricao(
+					codCurriculo, allRows.toString() ) );
 			}
 		}
 	}
-	
-	private void checkUniquenessDisciplina(List<CurriculosImportExcelBean> sheetContent) {
+
+	private void checkUniquenessDisciplina( List< CurriculosImportExcelBean > sheetContent )
+	{
 		// Codigo referente á issue http://jira.gapso.com.br/browse/TRIEDA-791
-			
+
 		// map com o trio (CodCurriculo,Periodo,CodDisciplina) e os beans em que tal trio aparece no arquivo de entrada
 		// [CodCurriculo-Periodo-CodDisciplina -> Lista de Beans]
-		Map<String,List<CurriculosImportExcelBean>> trioToBeansMap = new HashMap<String,List<CurriculosImportExcelBean>>();
-		 
-		for (CurriculosImportExcelBean bean : sheetContent) {
-			String key = bean.getCodigoStr()+"-"+bean.getPeriodoStr()+"-"+bean.getDisciplinaCodigoStr();
-			List<CurriculosImportExcelBean> beans = trioToBeansMap.get(key);
-			if (beans == null) {
-				beans = new ArrayList<CurriculosImportExcelBean>();
-				trioToBeansMap.put(key,beans);
+		Map< String, List< CurriculosImportExcelBean > > trioToBeansMap
+			= new HashMap< String, List< CurriculosImportExcelBean > >();
+
+		for ( CurriculosImportExcelBean bean : sheetContent )
+		{
+			String key = bean.getCodigoStr()
+				+ "-" + bean.getPeriodoStr()
+				+ "-" + bean.getDisciplinaCodigoStr();
+
+			List< CurriculosImportExcelBean > beans = trioToBeansMap.get( key );
+			if ( beans == null )
+			{
+				beans = new ArrayList< CurriculosImportExcelBean >();
+				trioToBeansMap.put( key, beans );
 			}
-			beans.add(bean);
+
+			beans.add( bean );
 		}
-		
+
 		// verifica se algum trio (CodCurriculo,Periodo,CodDisciplina) apareceu mais de uma vez no arquivo de entrada
-		for (Entry<String,List<CurriculosImportExcelBean>> entry : trioToBeansMap.entrySet()) {
-			if (entry.getValue().size() > 1) {
-				CurriculosImportExcelBean firstBean = entry.getValue().get(0);
-				List<Integer> rows = new ArrayList<Integer>();
-				for (CurriculosImportExcelBean bean : entry.getValue()) {
-					rows.add(bean.getRow());
+		for ( Entry< String, List< CurriculosImportExcelBean > > entry : trioToBeansMap.entrySet() )
+		{
+			if ( entry.getValue().size() > 1 )
+			{
+				CurriculosImportExcelBean firstBean = entry.getValue().get( 0 );
+				List< Integer > rows = new ArrayList< Integer >();
+				for ( CurriculosImportExcelBean bean : entry.getValue() )
+				{
+					rows.add( bean.getRow() );
 				}
-				Collections.sort(rows);
-				getErrors().add(getI18nMessages().excelErroLogicoUnicidadeVioladaDisciplinaCurriculo(firstBean.getDisciplinaCodigoStr(),firstBean.getPeriodo().toString(),firstBean.getCodigoStr(),rows.toString()));
+
+				Collections.sort( rows );
+				getErrors().add( getI18nMessages().excelErroLogicoUnicidadeVioladaDisciplinaCurriculo(
+					firstBean.getDisciplinaCodigoStr(), firstBean.getPeriodo().toString(), firstBean.getCodigoStr(), rows.toString() ) );
 			}
 		}
 	}
-	
-	private void checkNonRegisteredCurso(List<CurriculosImportExcelBean> sheetContent) {
+
+	private void checkNonRegisteredCurso( List< CurriculosImportExcelBean > sheetContent )
+	{
 		// [CodigoCurso -> Curso]
-		Map<String,Curso> cursosBDMap = Curso.buildCursoCodigoToCursoMap(Curso.findByCenario(getCenario()));
-		
-		List<Integer> rowsWithErrors = new ArrayList<Integer>();
-		for (CurriculosImportExcelBean bean : sheetContent) {
-			Curso curso = cursosBDMap.get(bean.getCursoCodigoStr());
-			if (curso != null) {
-				bean.setCurso(curso);
-			} else {
-				rowsWithErrors.add(bean.getRow());
+		Map< String, Curso > cursosBDMap = Curso.buildCursoCodigoToCursoMap( Curso.findByCenario( getCenario() ) );
+
+		List< Integer > rowsWithErrors = new ArrayList< Integer >();
+
+		for ( CurriculosImportExcelBean bean : sheetContent )
+		{
+			Curso curso = cursosBDMap.get( bean.getCursoCodigoStr() );
+			if ( curso != null )
+			{
+				bean.setCurso( curso );
+			}
+			else
+			{
+				rowsWithErrors.add( bean.getRow() );
 			}
 		}
-		
-		if (!rowsWithErrors.isEmpty()) {
-			getErrors().add(getI18nMessages().excelErroLogicoEntidadesNaoCadastradas(CURSO_COLUMN_NAME,rowsWithErrors.toString()));
+
+		if ( !rowsWithErrors.isEmpty() )
+		{
+			getErrors().add( getI18nMessages().excelErroLogicoEntidadesNaoCadastradas(
+				CURSO_COLUMN_NAME,rowsWithErrors.toString() ) );
 		}
 	}
-	
-	private void checkNonRegisteredDisciplina(List<CurriculosImportExcelBean> sheetContent) {
+
+	private void checkNonRegisteredDisciplina( List< CurriculosImportExcelBean > sheetContent )
+	{
 		// Codigo referente á issue http://jira.gapso.com.br/browse/TRIEDA-791
-		
+
 		// [CodigoDisciplina -> Disciplina]
-		Map<String,Disciplina> disciplinasBDMap = Disciplina.buildDisciplinaCodigoToDisciplinaMap(Disciplina.findByCenario(getCenario()));
-		
-		List<Integer> rowsWithErrors = new ArrayList<Integer>();
-		for (CurriculosImportExcelBean bean : sheetContent) {
-			Disciplina disciplina = disciplinasBDMap.get(bean.getDisciplinaCodigoStr());
-			if (disciplina != null) {
-				bean.setDisciplina(disciplina);
-			} else {
-				rowsWithErrors.add(bean.getRow());
+		Map< String, Disciplina > disciplinasBDMap = Disciplina.buildDisciplinaCodigoToDisciplinaMap(
+			Disciplina.findByCenario( getCenario() ) );
+
+		List< Integer > rowsWithErrors = new ArrayList< Integer >();
+		for ( CurriculosImportExcelBean bean : sheetContent )
+		{
+			Disciplina disciplina = disciplinasBDMap.get( bean.getDisciplinaCodigoStr() );
+			if ( disciplina != null )
+			{
+				bean.setDisciplina( disciplina );
+			}
+			else
+			{
+				rowsWithErrors.add( bean.getRow() );
 			}
 		}
-		
-		if (!rowsWithErrors.isEmpty()) {
-			getErrors().add(getI18nMessages().excelErroLogicoEntidadesNaoCadastradas(DISCIPLINA_COLUMN_NAME,rowsWithErrors.toString()));
+
+		if ( !rowsWithErrors.isEmpty() )
+		{
+			getErrors().add( getI18nMessages().excelErroLogicoEntidadesNaoCadastradas(
+				DISCIPLINA_COLUMN_NAME, rowsWithErrors.toString() ) );
 		}
 	}
 
 	@Transactional
-	private void updateDataBase(String sheetName, List<CurriculosImportExcelBean> sheetContent) {
+	private void updateDataBase( String sheetName, List< CurriculosImportExcelBean > sheetContent )
+	{
 		// ATUALIZA CURRICULOS ------------------------------------------
-		
+
 		// [CodCurriculo -> Curriculo]
-		Map<String,Curriculo> curriculosBDMap = Curriculo.buildCurriculoCodigoToCurriculoMap(Curriculo.findByCenario(getCenario()));
+		Map< String, Curriculo > curriculosBDMap = Curriculo.buildCurriculoCodigoToCurriculoMap(
+			Curriculo.findByCenario( getCenario() ) );
+
 		// [CodCurriculo -> CurriculosImportExcelBean]
-		Map<String,CurriculosImportExcelBean> curriculosExcelMap = CurriculosImportExcelBean.buildCurriculoCodigoToImportExcelBeanMap(sheetContent); 
-		
-		for (String codigoCurriculo : curriculosExcelMap.keySet()) {
-			Curriculo curriculoBD = curriculosBDMap.get(codigoCurriculo);
-			CurriculosImportExcelBean curriculoExcel = curriculosExcelMap.get(codigoCurriculo);
-			if (curriculoBD != null) {
+		Map< String, CurriculosImportExcelBean > curriculosExcelMap
+			= CurriculosImportExcelBean.buildCurriculoCodigoToImportExcelBeanMap( sheetContent ); 
+
+		for ( String codigoCurriculo : curriculosExcelMap.keySet() )
+		{
+			Curriculo curriculoBD = curriculosBDMap.get( codigoCurriculo );
+			CurriculosImportExcelBean curriculoExcel = curriculosExcelMap.get( codigoCurriculo );
+
+			if ( curriculoBD != null )
+			{
 				// update
-				curriculoBD.setDescricao(curriculoExcel.getDescricaoStr());
-				curriculoBD.setCurso(curriculoExcel.getCurso());
-				
+				curriculoBD.setDescricao( curriculoExcel.getDescricaoStr() );
+				curriculoBD.setCurso( curriculoExcel.getCurso() );
+
 				curriculoBD.merge();
-			} else {
+			}
+			else
+			{
 				// insert
 				Curriculo newCurriculo = new Curriculo();
-				newCurriculo.setCenario(getCenario());
-				newCurriculo.setCodigo(curriculoExcel.getCodigoStr());
-				newCurriculo.setDescricao(curriculoExcel.getDescricaoStr());
-				newCurriculo.setCurso(curriculoExcel.getCurso());
-				
+
+				newCurriculo.setCenario( getCenario() );
+				newCurriculo.setCodigo( curriculoExcel.getCodigoStr() );
+				newCurriculo.setDescricao( curriculoExcel.getDescricaoStr() );
+				newCurriculo.setCurso( curriculoExcel.getCurso() );
+
 				newCurriculo.persist();
-				
-				curriculosBDMap.put(newCurriculo.getCodigo(),newCurriculo);
+
+				curriculosBDMap.put( newCurriculo.getCodigo(), newCurriculo );
 			}
 		}
-		
+
 		// ATUALIZA CURRICULOS-DISCIPLINAS ------------------------------------------
 		// Codigo referente á issue http://jira.gapso.com.br/browse/TRIEDA-791
-		
+
 		// [CodCurso-CodCurriculo-Periodo-CodDisciplina -> CurriculoDisciplina]
-		Map<String,CurriculoDisciplina> curriculosDisciplinasBDMap = CurriculoDisciplina.buildNaturalKeyToCurriculoDisciplinaMap(CurriculoDisciplina.findByCenario(getCenario()));
-		
-		for (CurriculosImportExcelBean curriculoExcel : sheetContent) {
-			CurriculoDisciplina curriculoDisciplinaBD = curriculosDisciplinasBDMap.get(curriculoExcel.getNaturalKeyString());
-			if (curriculoDisciplinaBD == null) {
+		Map< String, CurriculoDisciplina > curriculosDisciplinasBDMap
+			= CurriculoDisciplina.buildNaturalKeyToCurriculoDisciplinaMap( CurriculoDisciplina.findByCenario( getCenario() ) );
+
+		for ( CurriculosImportExcelBean curriculoExcel : sheetContent )
+		{
+			CurriculoDisciplina curriculoDisciplinaBD
+				= curriculosDisciplinasBDMap.get( curriculoExcel.getNaturalKeyString() );
+
+			if ( curriculoDisciplinaBD == null )
+			{
 				// insert
 				CurriculoDisciplina newCurriculoDisciplina = new CurriculoDisciplina();
-				newCurriculoDisciplina.setPeriodo(curriculoExcel.getPeriodo());
-				newCurriculoDisciplina.setDisciplina(curriculoExcel.getDisciplina());
-				newCurriculoDisciplina.setCurriculo(curriculosBDMap.get(curriculoExcel.getCodigoStr()));
-				
+
+				newCurriculoDisciplina.setPeriodo( curriculoExcel.getPeriodo() );
+				newCurriculoDisciplina.setDisciplina( curriculoExcel.getDisciplina() );
+				newCurriculoDisciplina.setCurriculo( curriculosBDMap.get( curriculoExcel.getCodigoStr() ) );
+
 				newCurriculoDisciplina.persist();
 			}
 		}
 	}
-	
-	private void resolveHeaderColumnNames() {
-		if (CODIGO_COLUMN_NAME == null) {
-			CURSO_COLUMN_NAME = HtmlUtils.htmlUnescape(getI18nConstants().curso());
-			CODIGO_COLUMN_NAME = HtmlUtils.htmlUnescape(getI18nConstants().codigo());
-			DESCRICAO_COLUMN_NAME = HtmlUtils.htmlUnescape(getI18nConstants().descricao());
-			PERIODO_COLUMN_NAME = HtmlUtils.htmlUnescape(getI18nConstants().periodo());
-			DISCIPLINA_COLUMN_NAME = HtmlUtils.htmlUnescape(getI18nConstants().disciplina());
+
+	private void resolveHeaderColumnNames()
+	{
+		if ( CODIGO_COLUMN_NAME == null )
+		{
+			CURSO_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().curso() );
+			CODIGO_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().codigo() );
+			DESCRICAO_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().descricao() );
+			PERIODO_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().periodo() );
+			DISCIPLINA_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().disciplina() );
 		}
 	}
 }

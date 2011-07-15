@@ -22,110 +22,165 @@ import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 /**
  * The server side implementation of the RPC service.
  */
-public class AreasTitulacaoServiceImpl extends RemoteServiceServlet implements AreasTitulacaoService {
-
+public class AreasTitulacaoServiceImpl extends RemoteServiceServlet
+	implements AreasTitulacaoService
+{
 	private static final long serialVersionUID = 5250776996542788849L;
 
 	@Override
-	public AreaTitulacaoDTO getAreaTitulacao(Long id) {
-		return ConvertBeans.toAreaTitulacaoDTO(AreaTitulacao.find(id));
+	public AreaTitulacaoDTO getAreaTitulacao( Long id )
+	{
+		return ConvertBeans.toAreaTitulacaoDTO( AreaTitulacao.find( id ) );
 	}
-	
+
 	@Override
-	public PagingLoadResult<AreaTitulacaoDTO> getBuscaList(String nome, String descricao, PagingLoadConfig config) {
-		List<AreaTitulacaoDTO> list = new ArrayList<AreaTitulacaoDTO>();
+	public PagingLoadResult< AreaTitulacaoDTO > getBuscaList(
+		String nome, String descricao, PagingLoadConfig config )
+	{
+		List< AreaTitulacaoDTO > list = new ArrayList< AreaTitulacaoDTO >();
 		String orderBy = config.getSortField();
-		if(orderBy != null) {
-			if(config.getSortDir() != null && config.getSortDir().equals(SortDir.DESC)) {
+
+		if ( orderBy != null )
+		{
+			if ( config.getSortDir() != null
+				&& config.getSortDir().equals( SortDir.DESC ) )
+			{
 				orderBy = orderBy + " asc";
-			} else {
+			}
+			else
+			{
 				orderBy = orderBy + " desc";
 			}
 		}
-		for(AreaTitulacao areaTitulacao : AreaTitulacao.findBy(nome, descricao, config.getOffset(), config.getLimit(), orderBy)) {
-			list.add(ConvertBeans.toAreaTitulacaoDTO(areaTitulacao));
+
+		List< AreaTitulacao > listAreaTitulacao = AreaTitulacao.findBy(
+				nome, descricao, config.getOffset(), config.getLimit(), orderBy );
+
+		for ( AreaTitulacao areaTitulacao : listAreaTitulacao )
+		{
+			list.add( ConvertBeans.toAreaTitulacaoDTO( areaTitulacao ) );
 		}
-		BasePagingLoadResult<AreaTitulacaoDTO> result = new BasePagingLoadResult<AreaTitulacaoDTO>(list);
-		result.setOffset(config.getOffset());
-		result.setTotalLength(AreaTitulacao.count(nome, descricao));
+
+		BasePagingLoadResult< AreaTitulacaoDTO > result
+			= new BasePagingLoadResult< AreaTitulacaoDTO >( list );
+
+		result.setOffset( config.getOffset() );
+		result.setTotalLength( AreaTitulacao.count( nome, descricao ) );
 		return result;
 	}
 
 	@Override
-	public ListLoadResult<AreaTitulacaoDTO> getListAll() {
-		List<AreaTitulacaoDTO> listDTO = new ArrayList<AreaTitulacaoDTO>();
-		List<AreaTitulacao> list = AreaTitulacao.findAll();
-		for(AreaTitulacao areaTitulacao : list) {
-			listDTO.add(ConvertBeans.toAreaTitulacaoDTO(areaTitulacao));
+	public ListLoadResult< AreaTitulacaoDTO > getListAll()
+	{
+		List< AreaTitulacaoDTO > listDTO = new ArrayList< AreaTitulacaoDTO >();
+		List< AreaTitulacao > list = AreaTitulacao.findAll();
+
+		for ( AreaTitulacao areaTitulacao : list )
+		{
+			listDTO.add( ConvertBeans.toAreaTitulacaoDTO( areaTitulacao ) );
 		}
-		return new BaseListLoadResult<AreaTitulacaoDTO>(listDTO);
+
+		return new BaseListLoadResult<AreaTitulacaoDTO>( listDTO );
 	}
 	
 	@Override
-	public void save(AreaTitulacaoDTO areaTitulacaoDTO) {
-		AreaTitulacao areaTitulacao = ConvertBeans.toAreaTitulacao(areaTitulacaoDTO);
-		if(areaTitulacao.getId() != null && areaTitulacao.getId() > 0) {
+	public void save( AreaTitulacaoDTO areaTitulacaoDTO )
+	{
+		AreaTitulacao areaTitulacao
+			= ConvertBeans.toAreaTitulacao( areaTitulacaoDTO );
+
+		if ( areaTitulacao.getId() != null && areaTitulacao.getId() > 0 )
+		{
 			areaTitulacao.merge();
-		} else {
-			areaTitulacao.persist();
 		}
-	}
-	
-	@Override
-	public void remove(List<AreaTitulacaoDTO> areaTitulacaoDTOList) {
-		for(AreaTitulacaoDTO areaTitulacaoDTO : areaTitulacaoDTOList) {
-			ConvertBeans.toAreaTitulacao(areaTitulacaoDTO).remove();
+		else
+		{
+			areaTitulacao.persist();
 		}
 	}
 
 	@Override
-	public List<AreaTitulacaoDTO> getListVinculadas(CursoDTO cursoDTO) {
-		if(cursoDTO == null) return Collections.<AreaTitulacaoDTO>emptyList();
-		
-		Curso curso = Curso.find(cursoDTO.getId());
-		Set<AreaTitulacao> areaTitulacaoList = curso.getAreasTitulacao();
-		List<AreaTitulacaoDTO> areaTitulacaoDTOList = new ArrayList<AreaTitulacaoDTO>(areaTitulacaoList.size());
-		for(AreaTitulacao areaTitulacao : areaTitulacaoList) {
-			areaTitulacaoDTOList.add(ConvertBeans.toAreaTitulacaoDTO(areaTitulacao));
+	public boolean remove( List< AreaTitulacaoDTO > areaTitulacaoDTOList )
+	{
+		// Caso alguma das áreas de titulação não possa ser removida, a flag
+		// retorna 'false'. Caso todas sejam removidas, retorna 'true'.
+		boolean flag = true;
+
+		for ( AreaTitulacaoDTO areaTitulacaoDTO : areaTitulacaoDTOList )
+		{
+			flag &= ConvertBeans.toAreaTitulacao( areaTitulacaoDTO ).remove();
 		}
+
+		return flag;
+	}
+
+	@Override
+	public List< AreaTitulacaoDTO > getListVinculadas( CursoDTO cursoDTO )
+	{
+		if ( cursoDTO == null )
+		{
+			return Collections.< AreaTitulacaoDTO >emptyList();
+		}
+
+		Curso curso = Curso.find( cursoDTO.getId() );
+		Set< AreaTitulacao > areaTitulacaoList = curso.getAreasTitulacao();
+		List< AreaTitulacaoDTO > areaTitulacaoDTOList
+			= new ArrayList<AreaTitulacaoDTO>( areaTitulacaoList.size() );
+
+		for ( AreaTitulacao areaTitulacao : areaTitulacaoList )
+		{
+			areaTitulacaoDTOList.add( ConvertBeans.toAreaTitulacaoDTO( areaTitulacao ) );
+		}
+
 		return areaTitulacaoDTOList;
 	}
-	
+
 	@Override
-	public List<AreaTitulacaoDTO> getListNaoVinculadas(CursoDTO cursoDTO) {
-		if(cursoDTO == null) return Collections.<AreaTitulacaoDTO>emptyList();
-		
-		Curso curso = Curso.find(cursoDTO.getId());
-		Set<AreaTitulacao> areaTitulacaoList = curso.getAreasTitulacao();
-		List<AreaTitulacao> naoAssociadasList = AreaTitulacao.findAll();
-		naoAssociadasList.removeAll(areaTitulacaoList);
-		
-		List<AreaTitulacaoDTO> areaTitulacaoDTOList = new ArrayList<AreaTitulacaoDTO>(naoAssociadasList.size());
-		for(AreaTitulacao areaTitulacao : naoAssociadasList) {
-			areaTitulacaoDTOList.add(ConvertBeans.toAreaTitulacaoDTO(areaTitulacao));
+	public List< AreaTitulacaoDTO > getListNaoVinculadas( CursoDTO cursoDTO )
+	{
+		if ( cursoDTO == null )
+		{
+			return Collections.< AreaTitulacaoDTO >emptyList();
 		}
-		
+
+		Curso curso = Curso.find( cursoDTO.getId() );
+		Set< AreaTitulacao > areaTitulacaoList = curso.getAreasTitulacao();
+		List< AreaTitulacao > naoAssociadasList = AreaTitulacao.findAll();
+		naoAssociadasList.removeAll( areaTitulacaoList );
+
+		List< AreaTitulacaoDTO > areaTitulacaoDTOList
+			= new ArrayList< AreaTitulacaoDTO >( naoAssociadasList.size() );
+		for ( AreaTitulacao areaTitulacao : naoAssociadasList )
+		{
+			areaTitulacaoDTOList.add( ConvertBeans.toAreaTitulacaoDTO( areaTitulacao ) );
+		}
+
 		return areaTitulacaoDTOList;
 	}
-	
+
 	@Override
-	public void vincula(CursoDTO cursoDTO, List<AreaTitulacaoDTO> areasTitulacaoDTO) {
-		Curso curso = Curso.find(cursoDTO.getId());
-		for(AreaTitulacaoDTO areaTitulacaoDTO : areasTitulacaoDTO) {
-			AreaTitulacao area = AreaTitulacao.find(areaTitulacaoDTO.getId());
-			area.getCursos().add(curso);
+	public void vincula( CursoDTO cursoDTO, List< AreaTitulacaoDTO > areasTitulacaoDTO )
+	{
+		Curso curso = Curso.find( cursoDTO.getId() );
+
+		for ( AreaTitulacaoDTO areaTitulacaoDTO : areasTitulacaoDTO )
+		{
+			AreaTitulacao area = AreaTitulacao.find( areaTitulacaoDTO.getId() );
+			area.getCursos().add( curso );
 			area.merge();
 		}
 	}
-	
+
 	@Override
-	public void desvincula(CursoDTO cursoDTO, List<AreaTitulacaoDTO> areasTitulacaoDTO) {
-		Curso curso = Curso.find(cursoDTO.getId());
-		for(AreaTitulacaoDTO areaTitulacaoDTO : areasTitulacaoDTO) {
-			AreaTitulacao area = AreaTitulacao.find(areaTitulacaoDTO.getId());
-			area.getCursos().remove(curso);
+	public void desvincula( CursoDTO cursoDTO, List< AreaTitulacaoDTO > areasTitulacaoDTO )
+	{
+		Curso curso = Curso.find( cursoDTO.getId() );
+
+		for ( AreaTitulacaoDTO areaTitulacaoDTO : areasTitulacaoDTO )
+		{
+			AreaTitulacao area = AreaTitulacao.find( areaTitulacaoDTO.getId() );
+			area.getCursos().remove( curso );
 			area.merge();
 		}
 	}
-	
 }

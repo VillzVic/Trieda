@@ -425,28 +425,29 @@ public class DisciplinasServiceImpl extends RemoteServiceServlet implements
 		return nodeChildrenList;
 	}
 
-	public List<TreeNodeDTO> getPeriodosByTreeGrupoSalas(
-			TreeNodeDTO grupoSalaTreeNodeDTO, TreeNodeDTO ofertaTreeNodeDTO) {
-		List<TreeNodeDTO> nodeChildrenList = new ArrayList<TreeNodeDTO>();
+	public List< TreeNodeDTO > getPeriodosByTreeGrupoSalas(
+			TreeNodeDTO grupoSalaTreeNodeDTO, TreeNodeDTO ofertaTreeNodeDTO )
+			{
+		List< TreeNodeDTO > nodeChildrenList = new ArrayList< TreeNodeDTO >();
 
-		GrupoSalaDTO grupoSalaDTO = (GrupoSalaDTO) grupoSalaTreeNodeDTO
-				.getContent();
-		GrupoSala grupoSala = GrupoSala.find(grupoSalaDTO.getId());
+		GrupoSalaDTO grupoSalaDTO = (GrupoSalaDTO) grupoSalaTreeNodeDTO.getContent();
+		GrupoSala grupoSala = GrupoSala.find( grupoSalaDTO.getId() );
 		OfertaDTO ofertaDTO = (OfertaDTO) ofertaTreeNodeDTO.getContent();
-		Oferta oferta = Oferta.find(ofertaDTO.getId());
-		List<CurriculoDisciplina> curriculoDisciplinas = CurriculoDisciplina
-				.findAllPeriodosBy(grupoSala, oferta);
+		Oferta oferta = Oferta.find( ofertaDTO.getId() );
+		List< CurriculoDisciplina > curriculoDisciplinas
+			= CurriculoDisciplina.findAllPeriodosBy( grupoSala, oferta );
 
-		for (CurriculoDisciplina cd : curriculoDisciplinas) {
-			CurriculoDisciplinaDTO cdDTO = ConvertBeans
-					.toCurriculoDisciplinaDTO(cd);
-			TreeNodeDTO nodeDTO = new TreeNodeDTO(cdDTO, ofertaTreeNodeDTO);
-			nodeDTO.setText("Periodo " + cdDTO.getPeriodo());
-			nodeChildrenList.add(nodeDTO);
+		for ( CurriculoDisciplina cd : curriculoDisciplinas )
+		{
+			CurriculoDisciplinaDTO cdDTO
+				= ConvertBeans.toCurriculoDisciplinaDTO( cd );
+
+			TreeNodeDTO nodeDTO = new TreeNodeDTO( cdDTO, ofertaTreeNodeDTO );
+			nodeDTO.setText( "Periodo " + cdDTO.getPeriodo() );
+			nodeChildrenList.add( nodeDTO );
 		}
 
-		Collections.sort(nodeChildrenList);
-
+		Collections.sort( nodeChildrenList );
 		return nodeChildrenList;
 	}
 

@@ -103,8 +103,10 @@ public class GrupoSala implements Serializable {
         this.curriculoDisciplinas = curriculoDisciplinas;
     }
 
-	public String toString() {
+	public String toString()
+	{
         StringBuilder sb = new StringBuilder();
+
         sb.append("Id: ").append(getId()).append(", ");
         sb.append("Version: ").append(getVersion()).append(", ");
         sb.append("Unidade: ").append(getUnidade()).append(", ");
@@ -112,6 +114,7 @@ public class GrupoSala implements Serializable {
         sb.append("Nome: ").append(getNome()).append(", ");
         sb.append("Salas: ").append(getSalas() == null ? "null" : getSalas().size()).append(", ");
         sb.append("CurriculoDisciplinas: ").append(getCurriculoDisciplinas() == null ? "null" : getCurriculoDisciplinas().size());
+
         return sb.toString();
     }
 
@@ -193,77 +196,97 @@ public class GrupoSala implements Serializable {
 		.getResultList();
 	}
 	
-	public static int count(String nome, String codigo, Unidade unidade) {
-		nome = (nome == null)? "" : nome;
-		nome = "%" + nome.replace('*', '%') + "%";
-		codigo = (codigo == null)? "" : codigo;
-		codigo = "%" + codigo.replace('*', '%') + "%";
-		
-		String unidadeQuery = (unidade==null)? "" : "o.unidade = :unidade AND ";
+	public static int count( String nome, String codigo, Unidade unidade )
+	{
+		nome = ( ( nome == null )? "" : nome );
+		nome = ( "%" + nome.replace( '*', '%' ) + "%" );
+		codigo = ( ( codigo == null ) ? "" : codigo );
+		codigo = ( "%" + codigo.replace( '*', '%' ) + "%" );
+
+		String unidadeQuery = ( ( unidade == null ) ? "" : "o.unidade = :unidade AND " );
 		Query q = entityManager().createQuery("SELECT COUNT(o) FROM GrupoSala o WHERE " +
 				"LOWER(o.nome) LIKE LOWER(:nome) AND " +
-				"LOWER(o.codigo) LIKE LOWER(:codigo) AND " +
-				unidadeQuery +
-				" 1=1 ");
+				"LOWER(o.codigo) LIKE LOWER(:codigo) AND " + unidadeQuery + " 1=1 ");
 		q.setParameter("nome", nome);
 		q.setParameter("codigo", codigo);
 		if(unidade != null) q.setParameter("unidade", unidade);
 		return ((Number)q.getSingleResult()).intValue();
 	}
-	
+
     @SuppressWarnings("unchecked")
-    public static List<GrupoSala> findBy(String nome, String codigo, Unidade unidade, int firstResult, int maxResults, String orderBy) {
-        nome = (nome == null)? "" : nome;
+    public static List< GrupoSala > findBy( String nome, String codigo, Unidade unidade,
+    		int firstResult, int maxResults, String orderBy )
+    {
+        nome = ( ( nome == null ) ? "" : nome );
         nome = "%" + nome.replace('*', '%') + "%";
         codigo = (codigo == null)? "" : codigo;
         codigo = "%" + codigo.replace('*', '%') + "%";
-        
-        orderBy = (orderBy != null) ? "ORDER BY o." + orderBy : "";
-        String unidadeQuery = (unidade==null)? "" : "o.unidade = :unidade AND ";
-        Query q = entityManager().createQuery("SELECT o FROM GrupoSala o WHERE " +
+
+        orderBy = ( ( orderBy != null ) ? "ORDER BY o." + orderBy : "" );
+        String unidadeQuery = ( ( unidade == null )? "" : "o.unidade = :unidade AND " );
+
+        Query q = entityManager().createQuery(
+        		"SELECT o FROM GrupoSala o WHERE " +
         		"LOWER(o.nome) LIKE LOWER(:nome) AND " +
         		"LOWER(o.codigo) LIKE LOWER(:codigo) AND " +
-        		unidadeQuery +
-        		" 1=1 " +
-        		""+orderBy);
+        		unidadeQuery + " 1=1 " + "" + orderBy );
         q.setParameter("nome", nome);
         q.setParameter("codigo", codigo);
-        if(unidade != null) q.setParameter("unidade", unidade);
-        return q.setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
+        if ( unidade != null )
+        {
+        	q.setParameter( "unidade", unidade );
+        }
+
+        return q.setFirstResult( firstResult ).setMaxResults( maxResults ).getResultList();
     }
 	
 	@SuppressWarnings("unchecked")
-	public List<Curriculo> getCurriculos() {
-		Query q = entityManager().createQuery("SELECT DISTINCT(cd.curriculo) FROM CurriculoDisciplina cd WHERE :gruposSala IN ELEMENTS(cd.gruposSala)");
-		q.setParameter("gruposSala", this);
+	public List<Curriculo> getCurriculos()
+	{
+		Query q = entityManager().createQuery(
+				"SELECT DISTINCT(cd.curriculo) FROM CurriculoDisciplina cd WHERE :gruposSala IN ELEMENTS(cd.gruposSala)" );
+
+		q.setParameter( "gruposSala", this );
 		return q.getResultList();
 	}
-	
+
 	@SuppressWarnings("unchecked")
-    public static List<GrupoSala> findAll() {
-        return entityManager().createQuery("select o from GrupoSala o").getResultList();
+    public static List< GrupoSala > findAll()
+    {
+        return entityManager().createQuery( "select o from GrupoSala o" ).getResultList();
     }
 
-	public static GrupoSala find(Long id) {
-        if (id == null) return null;
-        return entityManager().find(GrupoSala.class, id);
+	public static GrupoSala find( Long id )
+	{
+        if ( id == null )
+        {
+        	return null;
+        }
+
+        return entityManager().find( GrupoSala.class, id );
     }
 	
-	public static List<GrupoSala> find(int firstResult, int maxResults) {
-		return find(firstResult, maxResults, null);
+	public static List< GrupoSala > find( int firstResult, int maxResults )
+	{
+		return find( firstResult, maxResults, null );
 	}
 
 	@SuppressWarnings("unchecked")
-	public static List<GrupoSala> find(int firstResult, int maxResults, String orderBy) {
-		orderBy = (orderBy != null) ? "ORDER BY o." + orderBy : "";
-        return entityManager().createQuery("select o from GrupoSala o " + orderBy).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
+	public static List< GrupoSala > find( int firstResult, int maxResults, String orderBy )
+	{
+		orderBy = ( ( orderBy != null ) ? "ORDER BY o." + orderBy : "" );
+        return entityManager().createQuery( "select o from GrupoSala o " + orderBy )
+        	.setFirstResult( firstResult ).setMaxResults( maxResults ).getResultList();
     }
-	
-	public static boolean checkCodigoUnique(Cenario cenario, String codigo) {
-		Query q = entityManager().createQuery("SELECT COUNT(o) FROM GrupoSala o WHERE o.unidade.campus.cenario = :cenario AND o.codigo = :codigo");
-		q.setParameter("cenario", cenario);
-		q.setParameter("codigo", codigo);
+
+	public static boolean checkCodigoUnique( Cenario cenario, String codigo )
+	{
+		Query q = entityManager().createQuery(
+				"SELECT COUNT(o) FROM GrupoSala o WHERE o.unidade.campus.cenario = :cenario AND o.codigo = :codigo" );
+
+		q.setParameter( "cenario", cenario );
+		q.setParameter( "codigo", codigo );
 		Number size = (Number) q.setMaxResults(1).getSingleResult();
-		return size.intValue() > 0;
+		return ( size.intValue() > 0 );
 	}
 }

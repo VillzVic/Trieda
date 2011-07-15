@@ -9,6 +9,7 @@ import com.extjs.gxt.ui.client.event.ButtonEvent;
 import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.widget.Component;
 import com.extjs.gxt.ui.client.widget.Info;
+import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.gapso.web.trieda.main.client.mvp.view.AreaTitulacaoFormView;
@@ -80,16 +81,31 @@ public class AreasTitulacaoPresenter implements Presenter {
 				presenter.go(null);
 			}
 		});
-		display.getRemoveButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
+		display.getRemoveButton().addSelectionListener( new SelectionListener< ButtonEvent >()
+		{
 			@Override	
-			public void componentSelected(ButtonEvent ce) {
-				List<AreaTitulacaoDTO> list = display.getGrid().getGrid().getSelectionModel().getSelectedItems();
+			public void componentSelected( ButtonEvent ce )
+			{
+				List< AreaTitulacaoDTO > list
+					= display.getGrid().getGrid().getSelectionModel().getSelectedItems();
+
 				final AreasTitulacaoServiceAsync service = Services.areasTitulacao();
-				service.remove(list, new AbstractAsyncCallbackWithDefaultOnFailure<Void>(display) {
+				service.remove( list, new AbstractAsyncCallbackWithDefaultOnFailure< Boolean >( display )
+				{
 					@Override
-					public void onSuccess(Void result) {
+					public void onSuccess( Boolean result )
+					{
+						if (result)
+						{
+							Info.display( "Removido", "Item removido com sucesso!" );
+						}
+						else
+						{
+							MessageBox.alert( display.getI18nMessages().erroExclusaoAreaTitulacaoTitle(),
+											  display.getI18nMessages().erroExclusaoAreaTitulacao(), null );
+						}
+
 						display.getGrid().updateList();
-						Info.display("Removido", "Item removido com sucesso!");
 					}
 				});
 			}

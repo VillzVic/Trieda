@@ -2,9 +2,11 @@ package com.gapso.web.trieda.shared.i18n;
 
 import com.google.gwt.i18n.client.Messages;
 
-public interface TriedaI18nMessages extends Messages {
-	
+public interface TriedaI18nMessages extends Messages
+{
 	String confirmacaoButton();
+	String erroExclusaoAreaTitulacao();
+	String erroExclusaoAreaTitulacaoTitle();
 	String excelErroArquivoInvalido(String nomeArquivo, String motivo);
 	String excelErroBD(String nomeArquivo, String motivo);
 	String excelErroImportadorNulo(String infoASerImportada);

@@ -215,7 +215,8 @@ public class Curso implements Serializable, Comparable<Curso> {
 		this.areasTitulacao = areasTitulacao;
 	}
 
-	public Set<Curriculo> getCurriculos() {
+	public Set< Curriculo > getCurriculos()
+	{
 		return curriculos;
 	}
 
@@ -235,11 +236,13 @@ public class Curso implements Serializable, Comparable<Curso> {
 	@Column(name = "version")
 	private Integer version;
 
-	public Long getId() {
+	public Long getId()
+	{
 		return this.id;
 	}
 
-	public void setId(Long id) {
+	public void setId( Long id )
+	{
 		this.id = id;
 	}
 
@@ -247,101 +250,160 @@ public class Curso implements Serializable, Comparable<Curso> {
 		return this.version;
 	}
 
-	public void setVersion(Integer version) {
+	public void setVersion( Integer version )
+	{
 		this.version = version;
 	}
 
 	@Transactional
-	public void detach() {
-		if (this.entityManager == null)
+	public void detach()
+	{
+		if ( this.entityManager == null )
+		{
 			this.entityManager = entityManager();
-		this.entityManager.detach(this);
+		}
+
+		this.entityManager.detach( this );
 	}
 
 	@Transactional
-	public void persist() {
-		if (this.entityManager == null)
+	public void persist()
+	{
+		if ( this.entityManager == null )
+		{
 			this.entityManager = entityManager();
-		this.entityManager.persist(this);
+		}
+
+		this.entityManager.persist( this );
 	}
 
 	@Transactional
-	public void remove() {
-		if (this.entityManager == null)
+	public void remove()
+	{
+		if ( this.entityManager == null )
+		{
 			this.entityManager = entityManager();
-		if (this.entityManager.contains(this)) {
+		}
+
+		if ( this.entityManager.contains( this ) )
+		{
 			this.removeAreasTitulacao();
-			this.entityManager.remove(this);
-		} else {
-			Curso attached = this.entityManager.find(this.getClass(), this.id);
+			this.removeMatrizesCurriculares();
+			this.entityManager.remove( this );
+		}
+		else
+		{
+			Curso attached = this.entityManager.find( this.getClass(), this.id );
+
 			attached.removeAreasTitulacao();
-			this.entityManager.remove(attached);
+			attached.removeMatrizesCurriculares();
+			this.entityManager.remove( attached );
 		}
 	}
 
 	@Transactional
-	public void removeAreasTitulacao() {
-		Set<AreaTitulacao> areas = this.getAreasTitulacao();
-		for (AreaTitulacao area : areas) {
-			area.getCursos().remove(this);
+	public void removeMatrizesCurriculares()
+	{
+		Set< Curriculo > curriculos = this.getCurriculos();
+
+		for ( Curriculo curriculo : curriculos )
+		{
+			if ( curriculo != null )
+			{
+				curriculo.remove();
+			}
+		}
+	}
+
+	@Transactional
+	public void removeAreasTitulacao()
+	{
+		Set< AreaTitulacao > areas = this.getAreasTitulacao();
+
+		for ( AreaTitulacao area : areas )
+		{
+			area.getCursos().remove( this );
 			area.merge();
 		}
 	}
 
 	@Transactional
-	public void flush() {
-		if (this.entityManager == null)
+	public void flush()
+	{
+		if ( this.entityManager == null )
+		{
 			this.entityManager = entityManager();
+		}
+
 		this.entityManager.flush();
 	}
 
 	@Transactional
-	public Curso merge() {
-		if (this.entityManager == null)
+	public Curso merge()
+	{
+		if ( this.entityManager == null )
+		{
 			this.entityManager = entityManager();
-		Curso merged = this.entityManager.merge(this);
+		}
+
+		Curso merged = this.entityManager.merge( this );
 		this.entityManager.flush();
 		return merged;
 	}
 
-	public static final EntityManager entityManager() {
+	public static final EntityManager entityManager()
+	{
 		EntityManager em = new Curso().entityManager;
-		if (em == null)
+
+		if ( em == null )
+		{
 			throw new IllegalStateException(
 					"Entity manager has not been injected (is the Spring Aspects JAR configured as an AJC/AJDT aspects library?)");
+		}
+
 		return em;
 	}
 
-	public static int count(Cenario cenario) {
+	public static int count( Cenario cenario )
+	{
 		Query q = entityManager().createQuery(
-				"SELECT COUNT(o) FROM Curso o WHERE o.cenario = :cenario");
-		q.setParameter("cenario", cenario);
-		return ((Number) q.getSingleResult()).intValue();
+				"SELECT COUNT(o) FROM Curso o WHERE o.cenario = :cenario" );
+
+		q.setParameter( "cenario", cenario );
+		return ( (Number) q.getSingleResult() ).intValue();
 	}
 
 	@SuppressWarnings("unchecked")
-	public static List<Curso> findAll() {
-		return entityManager().createQuery("select o from Curso o")
-				.getResultList();
+	public static List< Curso > findAll()
+	{
+		return entityManager().createQuery( "select o from Curso o" ).getResultList();
 	}
 
-	public static Map<String, Curso> buildCursoCodigoToCursoMap(
-			List<Curso> cursos) {
-		Map<String, Curso> cursosMap = new HashMap<String, Curso>();
-		for (Curso curso : cursos) {
-			cursosMap.put(curso.getCodigo(), curso);
+	public static Map< String, Curso > buildCursoCodigoToCursoMap(
+			List< Curso > cursos )
+	{
+		Map< String, Curso > cursosMap = new HashMap< String, Curso >();
+		for ( Curso curso : cursos )
+		{
+			cursosMap.put( curso.getCodigo(), curso );
 		}
+
 		return cursosMap;
 	}
 
-	public static Curso find(Long id) {
-		if (id == null)
+	public static Curso find( Long id )
+	{
+		if ( id == null )
+		{
 			return null;
-		return entityManager().find(Curso.class, id);
+		}
+
+		return entityManager().find( Curso.class, id );
 	}
 
-	public static List<Curso> find(int firstResult, int maxResults) {
-		return find(firstResult, maxResults, null);
+	public static List< Curso > find( int firstResult, int maxResults )
+	{
+		return find( firstResult, maxResults, null );
 	}
 
 	@SuppressWarnings("unchecked")

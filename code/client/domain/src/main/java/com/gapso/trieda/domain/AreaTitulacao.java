@@ -21,6 +21,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.roo.addon.entity.RooEntity;
 import org.springframework.roo.addon.javabean.RooJavaBean;
 import org.springframework.roo.addon.tostring.RooToString;
@@ -32,8 +33,8 @@ import org.springframework.transaction.annotation.Transactional;
 @RooToString
 @RooEntity(identifierColumn = "ATI_ID")
 @Table(name = "AREAS_TITULACAO")
-public class AreaTitulacao implements Serializable {
-
+public class AreaTitulacao implements Serializable
+{
     @NotNull
     @Column(name = "ATI_CODIGO")
     @Size(min = 1, max = 50)
@@ -44,7 +45,7 @@ public class AreaTitulacao implements Serializable {
     private String descricao;
 
     @ManyToMany
-    private Set<Curso> cursos = new java.util.HashSet<Curso>();
+    private Set<Curso> cursos = new java.util.HashSet< Curso >();
 
 	private static final long serialVersionUID = 8739246006672184100L;
 
@@ -72,60 +73,136 @@ public class AreaTitulacao implements Serializable {
         return this.version;
     }
 
-	public void setVersion(Integer version) {
+	public void setVersion( Integer version )
+	{
         this.version = version;
     }
 
 	@Transactional
-    public void persist() {
-        if (this.entityManager == null) this.entityManager = entityManager();
-        this.entityManager.persist(this);
-    }
-
-	@Transactional
-    public void remove() {
-        if (this.entityManager == null) this.entityManager = entityManager();
-        if (this.entityManager.contains(this)) {
-            this.entityManager.remove(this);
-        } else {
-            AreaTitulacao attached = this.entityManager.find(this.getClass(), this.id);
-            this.entityManager.remove(attached);
+    public void persist()
+	{
+        if ( this.entityManager == null )
+        {
+        	this.entityManager = entityManager();
         }
+
+        this.entityManager.persist( this );
     }
 
 	@Transactional
-    public void flush() {
-        if (this.entityManager == null) this.entityManager = entityManager();
+    public boolean remove()
+	{
+        if ( this.entityManager == null )
+        {
+        	this.entityManager = entityManager();
+        }
+
+        if ( this.entityManager.contains( this ) )
+        {
+            List< Professor > verificaProfessres = this.getProfessores();
+            if ( verificaProfessres != null && verificaProfessres.size() > 0 )
+            {
+            	// Não posso remover a área de titulação,
+            	// pois há professores vinculados a ela
+            	return false;
+            }
+
+            this.entityManager.remove( this );
+        }
+        else
+        {
+            AreaTitulacao attached = this.entityManager.find( this.getClass(), this.id );
+
+            List< Professor > verificaProfessres = attached.getProfessores();
+            if ( verificaProfessres != null && verificaProfessres.size() > 0 )
+            {
+            	// Não posso remover a área de titulação,
+            	// pois há professores vinculados a ela
+            	return false;
+            }
+
+            this.entityManager.remove( attached );
+        }
+
+        return true;
+    }
+
+	@SuppressWarnings("unchecked")
+	@Transactional
+	public List< Professor > getProfessores()
+	{
+		List< Professor > professores = null;
+
+		Query q = entityManager().createQuery(
+				"SELECT p FROM Professor p WHERE p.areaTitulacao = :areaT" );
+
+		q.setParameter( "areaT", this );
+		try
+		{
+			professores = q.getResultList();
+		}
+		catch ( EmptyResultDataAccessException e ) { }
+
+		return professores;
+	}
+
+	@Transactional
+    public void flush()
+	{
+        if ( this.entityManager == null )
+        {
+        	this.entityManager = entityManager();
+        }
+
         this.entityManager.flush();
     }
 
 	@Transactional
-    public AreaTitulacao merge() {
-        if (this.entityManager == null) this.entityManager = entityManager();
-        AreaTitulacao merged = this.entityManager.merge(this);
+    public AreaTitulacao merge()
+	{
+        if ( this.entityManager == null )
+        {
+        	this.entityManager = entityManager();
+        }
+
+        AreaTitulacao merged = this.entityManager.merge( this );
         this.entityManager.flush();
         return merged;
     }
 
-	public static final EntityManager entityManager() {
+	public static final EntityManager entityManager()
+	{
         EntityManager em = new AreaTitulacao().entityManager;
-        if (em == null) throw new IllegalStateException("Entity manager has not been injected (is the Spring Aspects JAR configured as an AJC/AJDT aspects library?)");
+        if ( em == null )
+        {
+        	throw new IllegalStateException(
+        		"Entity manager has not been injected (is the Spring Aspects JAR configured as an AJC/AJDT aspects library?)");
+        }
+
         return em;
     }
 
 	@SuppressWarnings("unchecked")
-    public static List<AreaTitulacao> findAll() {
-        return entityManager().createQuery("select o from AreaTitulacao o").getResultList();
+    public static List< AreaTitulacao > findAll()
+    {
+        return entityManager().createQuery( "select o from AreaTitulacao o" ).getResultList();
     }
 
-	public static AreaTitulacao find(Long id) {
-        if (id == null) return null;
-        return entityManager().find(AreaTitulacao.class, id);
+	public static AreaTitulacao find( Long id )
+	{
+        if ( id == null )
+        {
+        	return null;
+        }
+
+        return entityManager().find( AreaTitulacao.class, id );
     }
-	
-	public static List<AreaTitulacao> find(int firstResult, int maxResults) {
-		return find(firstResult, maxResults, null);
+
+	public static List<AreaTitulacao> find( int firstResult, int maxResults )
+	{
+		return find( firstResult, maxResults, null );
 	}
+
 	@SuppressWarnings("unchecked")
     public static List<AreaTitulacao> find(int firstResult, int maxResults, String orderBy) {
 		orderBy = (orderBy != null) ? "ORDER BY o." + orderBy : "";
@@ -162,43 +239,56 @@ public class AreaTitulacao implements Serializable {
         return q.setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
 	
-	public static Map<String,AreaTitulacao> buildAreaTitulacaoCodigoToAreaTitulacaoMap(List<AreaTitulacao> areasTitulacoes) {
-		Map<String,AreaTitulacao> areasTitulacoesMap = new HashMap<String,AreaTitulacao>();
+	public static Map< String, AreaTitulacao > buildAreaTitulacaoCodigoToAreaTitulacaoMap(
+		List< AreaTitulacao > areasTitulacoes )
+	{
+		Map< String,AreaTitulacao> areasTitulacoesMap = new HashMap<String,AreaTitulacao>();
 		for (AreaTitulacao areaTitulacao : areasTitulacoes) {
 			areasTitulacoesMap.put(areaTitulacao.getCodigo(),areaTitulacao);
 		}
 		return areasTitulacoesMap;
 	}
     
-	public String toString() {
+	public String toString()
+	{
         StringBuilder sb = new StringBuilder();
-        sb.append("Id: ").append(getId()).append(", ");
-        sb.append("Version: ").append(getVersion()).append(", ");
-        sb.append("Codigo: ").append(getCodigo()).append(", ");
-        sb.append("Descricao: ").append(getDescricao()).append(", ");
-        sb.append("Cursos: ").append(getCursos() == null ? "null" : getCursos().size());
+
+        sb.append( "Id: " ).append( getId() ).append( ", " );
+        sb.append( "Version: " ).append( getVersion() ).append( ", " );
+        sb.append( "Codigo: " ).append( getCodigo() ).append( ", " );
+        sb.append( "Descricao: " ).append( getDescricao() ).append( ", " );
+        sb.append( "Cursos: " ).append( getCursos() == null ? "null" : getCursos().size() );
+
         return sb.toString();
     }
 
-	public String getCodigo() {
+	public String getCodigo()
+	{
         return this.codigo;
     }
-	public void setCodigo(String codigo) {
+
+	public void setCodigo( String codigo )
+	{
         this.codigo = codigo;
     }
-	
-	public String getDescricao() {
+
+	public String getDescricao()
+	{
 		return this.descricao;
 	}
-	public void setDescricao(String descricao) {
+
+	public void setDescricao( String descricao )
+	{
 		this.descricao = descricao;
 	}
 
-	public Set<Curso> getCursos() {
+	public Set< Curso > getCursos()
+	{
         return this.cursos;
     }
 
-	public void setCursos(Set<Curso> cursos) {
+	public void setCursos( Set< Curso > cursos )
+	{
         this.cursos = cursos;
     }
 }

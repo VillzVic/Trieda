@@ -253,38 +253,41 @@ public class ProfessoresPresenter implements Presenter {
 		display.getExportExcelButton().addSelectionListener(
 				new SelectionListener<ButtonEvent>() {
 					@Override
-					public void componentSelected(ButtonEvent ce) {
+					public void componentSelected( ButtonEvent ce )
+					{
 						ExportExcelFormSubmit e = new ExportExcelFormSubmit(
-								ExcelInformationType.PROFESSORES, display
-										.getI18nConstants(), display
-										.getI18nMessages());
+								ExcelInformationType.PROFESSORES,
+								display.getI18nConstants(), display.getI18nMessages() );
+
 						e.submit();
 					}
 				});
 		display.getResetBuscaButton().addSelectionListener(
 				new SelectionListener<ButtonEvent>() {
 					@Override
-					public void componentSelected(ButtonEvent ce) {
-						display.getCpfBuscaTextField().setValue(null);
-						display.getTipoContratoBuscaComboBox().setValue(null);
-						display.getTitulacaoBuscaComboBox().setValue(null);
-						display.getAreaTitulacaoBuscaComboBox().setValue(null);
+					public void componentSelected( ButtonEvent ce )
+					{
+						display.getCpfBuscaTextField().setValue( null );
+						display.getTipoContratoBuscaComboBox().setValue( null );
+						display.getTitulacaoBuscaComboBox().setValue( null );
+						display.getAreaTitulacaoBuscaComboBox().setValue( null );
 						display.getGrid().updateList();
 					}
 				});
 		display.getSubmitBuscaButton().addSelectionListener(
-				new SelectionListener<ButtonEvent>() {
+				new SelectionListener< ButtonEvent >() {
 					@Override
-					public void componentSelected(ButtonEvent ce) {
+					public void componentSelected( ButtonEvent ce )
+					{
 						display.getGrid().updateList();
 					}
 				});
 	}
 
 	@Override
-	public void go(Widget widget) {
+	public void go( Widget widget )
+	{
 		gTab = (GTab) widget;
-		gTab.add((GTabItem) display.getComponent());
+		gTab.add( (GTabItem) display.getComponent() );
 	}
-
 }
