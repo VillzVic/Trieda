@@ -38,9 +38,10 @@ import com.google.gwt.user.client.ui.Widget;
 import com.googlecode.future.FutureResult;
 import com.googlecode.future.FutureSynchronizer;
 
-public class SalasPresenter implements Presenter {
-
-	public interface Display extends ITriedaI18nGateway {
+public class SalasPresenter implements Presenter
+{
+	public interface Display extends ITriedaI18nGateway
+	{
 		Button getNewButton();
 		Button getEditButton();
 		Button getRemoveButton();
@@ -62,27 +63,34 @@ public class SalasPresenter implements Presenter {
 	private Display display;
 	private CenarioDTO cenario;
 
-	public SalasPresenter(CenarioDTO cenario, Display display) {
+	public SalasPresenter(CenarioDTO cenario, Display display)
+	{
 		this.display = display;
 		this.cenario = cenario;
 		configureProxy();
 		setListeners();
 	}
 
-	private void configureProxy() {
+	private void configureProxy()
+	{
 		final SalasServiceAsync service = Services.salas();
-		RpcProxy<PagingLoadResult<SalaDTO>> proxy = new RpcProxy<PagingLoadResult<SalaDTO>>() {
+
+		RpcProxy< PagingLoadResult< SalaDTO > > proxy = new RpcProxy< PagingLoadResult< SalaDTO > >()
+		{
 			@Override
-			public void load(Object loadConfig, AsyncCallback<PagingLoadResult<SalaDTO>> callback) {
+			public void load( Object loadConfig, AsyncCallback< PagingLoadResult< SalaDTO > > callback )
+			{
 				CampusDTO campusDTO = display.getCampusCB().getValue();
 				UnidadeDTO unidadeDTO = display.getUnidadeCB().getValue();
-				service.getList(campusDTO, unidadeDTO, (PagingLoadConfig) loadConfig, callback);
+				service.getList( campusDTO, unidadeDTO, (PagingLoadConfig) loadConfig, callback );
 			}
 		};
-		display.setProxy(proxy);
+
+		display.setProxy( proxy );
 	}
 
-	private void setListeners() {
+	private void setListeners()
+	{
 		display.getNewButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
 			@Override
 			public void componentSelected(ButtonEvent ce) {
@@ -98,19 +106,30 @@ public class SalasPresenter implements Presenter {
 				final FutureResult<CampusDTO> futureCampusDTO = new FutureResult<CampusDTO>();
 				final FutureResult<UnidadeDTO> futureUnidadeDTO = new FutureResult<UnidadeDTO>();
 				final FutureResult<TipoSalaDTO> futureSalaDTO = new FutureResult<TipoSalaDTO>();
+
 				Services.campi().getCampus(salaDTO.getCampusId(), futureCampusDTO);
 				Services.unidades().getUnidade(salaDTO.getUnidadeId(), futureUnidadeDTO);
 				Services.salas().getTipoSala(salaDTO.getTipoId(), futureSalaDTO);
 
-				FutureSynchronizer synch = new FutureSynchronizer(futureCampusDTO, futureUnidadeDTO, futureSalaDTO);
-				synch.addCallback(new AsyncCallback<Boolean>() {
-					public void onFailure(Throwable caught) { MessageBox.alert("ERRO!", "Deu falha na conexão", null); }
-					public void onSuccess(Boolean result) {
+				FutureSynchronizer synch = new FutureSynchronizer(
+					futureCampusDTO, futureUnidadeDTO, futureSalaDTO );
+
+				synch.addCallback( new AsyncCallback< Boolean >()
+				{
+					public void onFailure( Throwable caught )
+					{
+						MessageBox.alert( "ERRO!", "Deu falha na conexão", null );
+					}
+
+					public void onSuccess( Boolean result )
+					{
 						CampusDTO campusDTO = futureCampusDTO.result();
 						UnidadeDTO unidadeDTO = futureUnidadeDTO.result();
 						TipoSalaDTO tipoSalaDTO = futureSalaDTO.result();
-						Presenter presenter = new SalaFormPresenter(new SalaFormView(salaDTO, campusDTO, unidadeDTO, tipoSalaDTO, cenario), display.getGrid());
-						presenter.go(null);
+						Presenter presenter = new SalaFormPresenter( new SalaFormView(
+							salaDTO, campusDTO, unidadeDTO, tipoSalaDTO, cenario ), display.getGrid() );
+
+						presenter.go( null );
 					}
 				});
 

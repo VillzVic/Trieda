@@ -38,8 +38,8 @@ import com.gapso.web.trieda.shared.services.AtendimentosService;
 /**
  * The server side implementation of the RPC service.
  */
-public class AtendimentosServiceImpl extends RemoteService implements
-		AtendimentosService
+public class AtendimentosServiceImpl extends RemoteService
+	implements AtendimentosService
 {
 	private static final long serialVersionUID = -1505176338607927637L;
 
@@ -65,7 +65,7 @@ public class AtendimentosServiceImpl extends RemoteService implements
 
 	@Override
 	public List< AtendimentoRelatorioDTO > getBusca(
-			SalaDTO salaDTO, TurnoDTO turnoDTO)
+			SalaDTO salaDTO, TurnoDTO turnoDTO )
 	{
 		List< AtendimentoRelatorioDTO > arDTOList
 			= new ArrayList< AtendimentoRelatorioDTO >();
@@ -100,11 +100,11 @@ public class AtendimentosServiceImpl extends RemoteService implements
 		Turno turno = Turno.find( turnoDTO.getId() );
 
 		List< AtendimentoOperacionalDTO > list = new ArrayList< AtendimentoOperacionalDTO >();
-		List< AtendimentoOperacional > atendimentosTatico = AtendimentoOperacional.findBySalaAndTurno( sala, turno );
+		List< AtendimentoOperacional > atendimentosOperacional = AtendimentoOperacional.findBySalaAndTurno( sala, turno );
 
-		for ( AtendimentoOperacional atendimentoTatico : atendimentosTatico )
+		for ( AtendimentoOperacional atendimentoOperacional : atendimentosOperacional )
 		{
-			list.add( ConvertBeans.toAtendimentoOperacionalDTO( atendimentoTatico ) );
+			list.add( ConvertBeans.toAtendimentoOperacionalDTO( atendimentoOperacional ) );
 		}
 
 		return list;
@@ -155,7 +155,7 @@ public class AtendimentosServiceImpl extends RemoteService implements
 			dtoList.add( dto );
 		}
 
-		final Map<Long, HorarioAula> horarios
+		final Map< Long, HorarioAula > horarios
 			= HorarioAula.buildHorarioAulaIdToHorarioAulaMap( HorarioAula.findAll() );
 
 		for ( Entry< String, List< AtendimentoRelatorioDTO > > entry : atendimentoTaticoDTOMap.entrySet() )
@@ -165,7 +165,7 @@ public class AtendimentosServiceImpl extends RemoteService implements
 				= new ArrayList<AtendimentoRelatorioDTO>( entry.getValue() );
 
 			Collections.sort( ordenadoPorHorario,
-					new Comparator< AtendimentoRelatorioDTO>()
+					new Comparator< AtendimentoRelatorioDTO >()
 					{
 						@Override
 						public int compare( AtendimentoRelatorioDTO a1,
@@ -217,41 +217,50 @@ public class AtendimentosServiceImpl extends RemoteService implements
 				operacionalList.add( ( AtendimentoOperacionalDTO ) arDTO );
 			}
 
-			list = preMontaListaOperacional(operacionalList);
+			list = preMontaListaOperacional( operacionalList );
 		}
 
 		// Agrupa os DTOS pela chave [Disciplina-Turma-DiaSemana]
 		Map< String, List< AtendimentoRelatorioDTO > > atendimentoTaticoDTOMap
-			= new HashMap<String, List<AtendimentoRelatorioDTO>>();
+			= new HashMap< String, List< AtendimentoRelatorioDTO > >();
 
-		for (AtendimentoRelatorioDTO dto : list) {
-			String key = dto.getDisciplinaString() + "-" + dto.getTurma() + "-"
-					+ dto.getSemana();
-			List<AtendimentoRelatorioDTO> dtoList = atendimentoTaticoDTOMap
-					.get(key);
-			if (dtoList == null) {
-				dtoList = new ArrayList<AtendimentoRelatorioDTO>();
-				atendimentoTaticoDTOMap.put(key, dtoList);
+		for ( AtendimentoRelatorioDTO dto : list )
+		{
+			String key = dto.getDisciplinaString()
+				+ "-" + dto.getTurma()
+				+ "-" + dto.getSemana();
+
+			List< AtendimentoRelatorioDTO > dtoList
+				= atendimentoTaticoDTOMap .get( key );
+
+			if ( dtoList == null )
+			{
+				dtoList = new ArrayList< AtendimentoRelatorioDTO >();
+				atendimentoTaticoDTOMap.put( key, dtoList );
 			}
-			dtoList.add(dto);
+
+			dtoList.add( dto );
 		}
 
 		// Quando há mais de um DTO por chave [Disciplina-Turma-DiaSemana],
-		// concatena as informações
-		// de todos em um único DTO.
-		List<AtendimentoRelatorioDTO> processedList = new ArrayList<AtendimentoRelatorioDTO>();
-		for (Entry<String, List<AtendimentoRelatorioDTO>> entry : atendimentoTaticoDTOMap
-				.entrySet()) {
-			if (entry.getValue().size() == 1) {
-				processedList.addAll(entry.getValue());
-			} else {
-				AtendimentoRelatorioDTO dtoMain = entry.getValue().get(0);
-				for (int i = 1; i < entry.getValue().size(); i++) {
-					AtendimentoRelatorioDTO dtoCurrent = entry.getValue()
-							.get(i);
-					dtoMain.concatenateVisaoSala(dtoCurrent);
+		// concatena as informações de todos em um único DTO.
+		List< AtendimentoRelatorioDTO > processedList = new ArrayList< AtendimentoRelatorioDTO >();
+		for ( Entry< String, List< AtendimentoRelatorioDTO > > entry : atendimentoTaticoDTOMap.entrySet() )
+		{
+			if ( entry.getValue().size() == 1 )
+			{
+				processedList.addAll( entry.getValue() );
+			}
+			else
+			{
+				AtendimentoRelatorioDTO dtoMain = entry.getValue().get( 0 );
+				for ( int i = 1; i < entry.getValue().size(); i++ )
+				{
+					AtendimentoRelatorioDTO dtoCurrent = entry.getValue().get( i );
+					dtoMain.concatenateVisaoSala( dtoCurrent );
 				}
-				processedList.add(dtoMain);
+
+				processedList.add( dtoMain );
 			}
 		}
 
@@ -259,29 +268,41 @@ public class AtendimentosServiceImpl extends RemoteService implements
 	}
 
 	@Override
-	public ParDTO<List<AtendimentoRelatorioDTO>, List<Integer>> getBusca(
+	public ParDTO< List< AtendimentoRelatorioDTO >, List< Integer > > getBusca(
 			CurriculoDTO curriculoDTO, Integer periodo, TurnoDTO turnoDTO,
-			CampusDTO campusDTO) {
-		ParDTO<List<AtendimentoRelatorioDTO>, List<Integer>> parDTOTempl = new ParDTO<List<AtendimentoRelatorioDTO>, List<Integer>>();
-		parDTOTempl.setPrimeiro(new ArrayList<AtendimentoRelatorioDTO>());
+			CampusDTO campusDTO )
+	{
+		ParDTO< List< AtendimentoRelatorioDTO >, List< Integer > > parDTOTempl
+			= new ParDTO<List<AtendimentoRelatorioDTO>, List<Integer>>();
 
-		List<AtendimentoTaticoDTO> taticoList = getBuscaTatico(curriculoDTO,
-				periodo, turnoDTO, campusDTO);
-		if (!taticoList.isEmpty()) {
-			ParDTO<List<AtendimentoTaticoDTO>, List<Integer>> parDTO = montaListaParaVisaoCursoTatico(
-					turnoDTO, taticoList);
-			parDTOTempl.setSegundo(parDTO.getSegundo());
-			for (AtendimentoTaticoDTO atdto : parDTO.getPrimeiro()) {
-				parDTOTempl.getPrimeiro().add(atdto);
+		parDTOTempl.setPrimeiro( new ArrayList<AtendimentoRelatorioDTO>() );
+
+		List< AtendimentoTaticoDTO > taticoList = getBuscaTatico(
+			curriculoDTO, periodo, turnoDTO, campusDTO );
+
+		if ( !taticoList.isEmpty() )
+		{
+			ParDTO< List< AtendimentoTaticoDTO >, List< Integer > > parDTO
+				= montaListaParaVisaoCursoTatico( turnoDTO, taticoList );
+
+			parDTOTempl.setSegundo( parDTO.getSegundo() );
+			for ( AtendimentoTaticoDTO atdto : parDTO.getPrimeiro() )
+			{
+				parDTOTempl.getPrimeiro().add( atdto );
 			}
-		} else {
-			List<AtendimentoOperacionalDTO> operacionalList = getBuscaOperacional(
-					curriculoDTO, periodo, turnoDTO, campusDTO);
-			ParDTO<List<AtendimentoOperacionalDTO>, List<Integer>> parDTO = montaListaParaVisaoCursoOperacional(
-					turnoDTO, operacionalList);
-			parDTOTempl.setSegundo(parDTO.getSegundo());
-			for (AtendimentoOperacionalDTO atdto : parDTO.getPrimeiro()) {
-				parDTOTempl.getPrimeiro().add(atdto);
+		}
+		else
+		{
+			List< AtendimentoOperacionalDTO > operacionalList
+				= getBuscaOperacional( curriculoDTO, periodo, turnoDTO, campusDTO );
+
+			ParDTO< List< AtendimentoOperacionalDTO >, List< Integer > > parDTO
+				= montaListaParaVisaoCursoOperacional( turnoDTO, operacionalList );
+
+			parDTOTempl.setSegundo( parDTO.getSegundo() );
+			for ( AtendimentoOperacionalDTO atdto : parDTO.getPrimeiro() )
+			{
+				parDTOTempl.getPrimeiro().add( atdto );
 			}
 		}
 

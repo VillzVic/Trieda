@@ -39,7 +39,9 @@ import org.springframework.transaction.annotation.Transactional;
 @RooToString
 @RooEntity(identifierColumn = "HOR_ID")
 @Table(name = "HORARIOS_AULA")
-public class HorarioAula implements Serializable {
+public class HorarioAula implements Serializable
+{
+	private static final long serialVersionUID = 6415195416443296422L;
 
     @NotNull
     @ManyToOne(targetEntity = SemanaLetiva.class)
@@ -57,17 +59,21 @@ public class HorarioAula implements Serializable {
     @DateTimeFormat(style = "--")
     private Date horario;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy="horarioAula", orphanRemoval=true)
-    private Set<HorarioDisponivelCenario> horariosDisponiveisCenario =  new HashSet<HorarioDisponivelCenario>();
-    
-    public String toString() {
+    @OneToMany( cascade = CascadeType.ALL, mappedBy="horarioAula", orphanRemoval=true )
+    private Set< HorarioDisponivelCenario > horariosDisponiveisCenario =  new HashSet< HorarioDisponivelCenario >();
+
+    public String toString()
+    {
         StringBuilder sb = new StringBuilder();
-        sb.append("Id: ").append(getId()).append(", ");
-        sb.append("Version: ").append(getVersion()).append(", ");
-        sb.append("Semana Letiva: ").append(getSemanaLetiva()).append(", ");
-        sb.append("Turno: ").append(getTurno()).append(", ");
-        sb.append("HorariosDisponiveisCenario: ").append(getHorariosDisponiveisCenario() == null ? "null" : getHorariosDisponiveisCenario().size()).append(", ");
-        sb.append("Horario: ").append(getHorario());
+
+        sb.append( "Id: " ).append( getId() ).append( ", " );
+        sb.append( "Version: " ).append( getVersion() ).append( ", " );
+        sb.append( "Semana Letiva: " ).append( getSemanaLetiva() ).append( ", " );
+        sb.append( "Turno: " ).append( getTurno() ).append( ", " );
+        sb.append( "HorariosDisponiveisCenario: " ).append(
+        		getHorariosDisponiveisCenario() == null ? "null" : getHorariosDisponiveisCenario().size() ).append( ", " );
+        sb.append( "Horario: ").append( getHorario() );
+
         return sb.toString();
     }
 
@@ -100,143 +106,242 @@ public class HorarioAula implements Serializable {
     }
 
     @Transactional
-    public void persist() {
-        if (this.entityManager == null) this.entityManager = entityManager();
-        this.entityManager.persist(this);
+    public void persist()
+    {
+        if ( this.entityManager == null )
+        {
+        	this.entityManager = entityManager();
+        }
+
+        this.entityManager.persist( this );
     }
 
     @Transactional
-    public void remove() {
-        if (this.entityManager == null) this.entityManager = entityManager();
-        if (this.entityManager.contains(this)) {
-            this.entityManager.remove(this);
-        } else {
-            HorarioAula attached = this.entityManager.find(this.getClass(), this.id);
-            this.entityManager.remove(attached);
+    public void remove()
+    {
+        if ( this.entityManager == null )
+        {
+        	this.entityManager = entityManager();
+        }
+
+        if ( this.entityManager.contains( this ) )
+        {
+            this.entityManager.remove( this );
+        }
+        else
+        {
+            HorarioAula attached = this.entityManager.find( this.getClass(), this.id );
+            this.entityManager.remove( attached );
         }
     }
 
 	@Transactional
-	public void detach() {
-		if (this.entityManager == null) this.entityManager = entityManager();
-		this.entityManager.detach(this);
+	public void detach()
+	{
+		if ( this.entityManager == null )
+		{
+			this.entityManager = entityManager();
+		}
+
+		this.entityManager.detach( this );
 	}
     
     @Transactional
-    public void flush() {
-        if (this.entityManager == null) this.entityManager = entityManager();
+    public void flush()
+    {
+        if ( this.entityManager == null )
+        {
+        	this.entityManager = entityManager();
+        }
+
         this.entityManager.flush();
     }
 
     @Transactional
-    public HorarioAula merge() {
-        if (this.entityManager == null) this.entityManager = entityManager();
-        HorarioAula merged = this.entityManager.merge(this);
+    public HorarioAula merge()
+    {
+        if ( this.entityManager == null )
+        {
+        	this.entityManager = entityManager();
+        }
+
+        HorarioAula merged = this.entityManager.merge( this );
         this.entityManager.flush();
         return merged;
     }
 
-    public static final EntityManager entityManager() {
+    public static final EntityManager entityManager()
+    {
         EntityManager em = new HorarioAula().entityManager;
-        if (em == null) throw new IllegalStateException("Entity manager has not been injected (is the Spring Aspects JAR configured as an AJC/AJDT aspects library?)");
+        if ( em == null )
+        {
+        	throw new IllegalStateException( "Entity manager has not been injected (is the Spring"
+        			+ " Aspects JAR configured as an AJC/AJDT aspects library?)" );
+        }
+
         return em;
     }
 
     @SuppressWarnings("unchecked")
-    public static List<HorarioAula> findAll() {
-        return entityManager().createQuery("select o from HorarioAula o").getResultList();
+    public static List<HorarioAula> findAll()
+    {
+        return entityManager().createQuery(
+        	"select o from HorarioAula o").getResultList();
     }
 
-    public static HorarioAula find(Long id) {
-        if (id == null) return null;
-        return entityManager().find(HorarioAula.class, id);
+    public static HorarioAula find( Long id )
+    {
+        if ( id == null )
+        {
+        	return null;
+        }
+
+        return entityManager().find( HorarioAula.class, id );
     }
 
-    public static List<HorarioAula> find(int firstResult, int maxResults) {
-        return find(firstResult, maxResults, null);
-    }
-
-    @SuppressWarnings("unchecked")
-    public static List<HorarioAula> find(int firstResult, int maxResults, String orderBy) {
-        orderBy = (orderBy != null) ? "ORDER BY o." + orderBy : "";
-        return entityManager().createQuery("select o from HorarioAula o " + orderBy).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
-    }
-    
-    public static int count(SemanaLetiva semanaLetiva, Turno turno, Date horario) {
-    	String horarioQuery = (horario == null)? "" : "o.horario = :horario AND";
-    	String semanaLetivaQuery = (semanaLetiva == null)? "" : "o.semanaLetiva = :semanaLetiva AND";
-    	String turnoQuery = (turno == null)? "" : "o.turno = :turno AND";
-    	
-    	Query q = entityManager().createQuery("SELECT COUNT(o) FROM HorarioAula o WHERE "+horarioQuery+" "+semanaLetivaQuery+" "+turnoQuery+" 1=1 ");
-    	if(horario != null) q.setParameter("horario", horario);
-    	if(semanaLetiva != null) q.setParameter("semanaLetiva", semanaLetiva);
-    	if(turno != null) q.setParameter("turno", turno);
-    	return ((Number)q.getSingleResult()).intValue();
+    public static List<HorarioAula> find( int firstResult, int maxResults )
+    {
+        return find( firstResult, maxResults, null );
     }
 
     @SuppressWarnings("unchecked")
-    public static List<HorarioAula> findBy(SemanaLetiva semanaLetiva, Turno turno, Date horario, int firstResult, int maxResults, String orderBy) {
-    	orderBy = (orderBy != null) ? "ORDER BY o." + orderBy : "";
+    public static List< HorarioAula > find( int firstResult, int maxResults, String orderBy )
+    {
+        orderBy = ( ( orderBy != null ) ? "ORDER BY o." + orderBy : "" );
 
-        String horarioQuery = (horario == null)? "" : "o.horario = :horario AND";
-        String semanaLetivaQuery = (semanaLetiva == null)? "" : "o.semanaLetiva = :semanaLetiva AND";
-        String turnoQuery = (turno == null)? "" : "o.turno = :turno AND";
-        
-        Query q = entityManager().createQuery("SELECT o FROM HorarioAula o WHERE "+horarioQuery+" "+semanaLetivaQuery+" "+turnoQuery+" 1=1 " +orderBy);
-        if(horario != null) q.setParameter("horario", horario);
-        if(semanaLetiva != null) q.setParameter("semanaLetiva", semanaLetiva);
-        if(turno != null) q.setParameter("turno", turno);
+        return entityManager().createQuery(
+        	"select o from HorarioAula o " + orderBy ).setFirstResult(
+        			firstResult ).setMaxResults( maxResults ).getResultList();
+    }
+
+    public static int count( SemanaLetiva semanaLetiva, Turno turno, Date horario )
+    {
+    	String horarioQuery = ( ( horario == null )? "" : "o.horario = :horario AND" );
+    	String semanaLetivaQuery = ( ( semanaLetiva == null )? "" : "o.semanaLetiva = :semanaLetiva AND" );
+    	String turnoQuery = ( ( turno == null )? "" : "o.turno = :turno AND" );
+
+    	Query q = entityManager().createQuery(
+    		"SELECT COUNT(o) FROM HorarioAula o WHERE " + horarioQuery + " " + semanaLetivaQuery + " " + turnoQuery + " 1=1 " );
+
+    	if ( horario != null )
+    	{
+    		q.setParameter( "horario", horario );
+    	}
+
+    	if ( semanaLetiva != null )
+    	{
+    		q.setParameter( "semanaLetiva", semanaLetiva );
+    	}
+
+    	if ( turno != null )
+    	{
+    		q.setParameter("turno", turno );
+    	}
+
+    	return ( ( (Number)q.getSingleResult() ).intValue() );
+    }
+
+    @SuppressWarnings("unchecked")
+    public static List< HorarioAula > findBy( SemanaLetiva semanaLetiva, Turno turno,
+    	Date horario, int firstResult, int maxResults, String orderBy )
+    {
+    	orderBy = ( ( orderBy != null ) ? "ORDER BY o." + orderBy : "" );
+
+        String horarioQuery = ( ( horario == null )? "" : "o.horario = :horario AND" );
+        String semanaLetivaQuery = ( ( semanaLetiva == null )? "" : "o.semanaLetiva = :semanaLetiva AND" );
+        String turnoQuery = ( ( turno == null )? "" : "o.turno = :turno AND" );
+
+        Query q = entityManager().createQuery(
+        	"SELECT o FROM HorarioAula o WHERE " + horarioQuery + " " + semanaLetivaQuery + " " + turnoQuery + " 1=1 " + orderBy );
+
+        if ( horario != null )
+        {
+        	q.setParameter( "horario", horario );
+        }
+
+        if ( semanaLetiva != null )
+        {
+        	q.setParameter( "semanaLetiva", semanaLetiva );
+        }
+
+        if ( turno != null )
+        {
+        	q.setParameter( "turno", turno );
+        }
+
         return q.setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
     
     @SuppressWarnings("unchecked")
-    public static List<HorarioAula> findHorarioAulasBySemanaLetivaAndTurno(SemanaLetiva semanaLetiva, Turno turno) {
-    	Query q = entityManager().createQuery("SELECT o FROM HorarioAula o WHERE o.semanaLetiva = :semanaLetiva AND o.turno = :turno");
-    	q.setParameter("semanaLetiva", semanaLetiva);
-    	q.setParameter("turno", turno);
+    public static List< HorarioAula > findHorarioAulasBySemanaLetivaAndTurno(
+    		SemanaLetiva semanaLetiva, Turno turno )
+    {
+    	Query q = entityManager().createQuery(
+    		"SELECT o FROM HorarioAula o WHERE o.semanaLetiva = :semanaLetiva AND o.turno = :turno" );
+
+    	q.setParameter( "semanaLetiva", semanaLetiva );
+    	q.setParameter( "turno", turno );
     	return q.getResultList();
     }
     
-	public static Map<Long, HorarioAula> buildHorarioAulaIdToHorarioAulaMap(List<HorarioAula> horariosAulas) {
-		Map<Long, HorarioAula> horariosMap = new HashMap<Long, HorarioAula>();
-		for (HorarioAula horario : horariosAulas) {
-			horariosMap.put(horario.getId(), horario);
+	public static Map< Long, HorarioAula > buildHorarioAulaIdToHorarioAulaMap(
+		List< HorarioAula > horariosAulas )
+	{
+		Map< Long, HorarioAula > horariosMap = new HashMap< Long, HorarioAula >();
+		for ( HorarioAula horario : horariosAulas )
+		{
+			horariosMap.put( horario.getId(), horario );
 		}
+
 		return horariosMap;
 	}
-    
-    public SemanaLetiva getSemanaLetiva() {
+
+
+	public SemanaLetiva getSemanaLetiva()
+    {
         return this.semanaLetiva;
     }
 
-    public void setSemanaLetiva(SemanaLetiva semanaLetiva) {
+
+    public void setSemanaLetiva( SemanaLetiva semanaLetiva )
+    {
         this.semanaLetiva = semanaLetiva;
     }
 
-    public Turno getTurno() {
+
+    public Turno getTurno()
+    {
         return this.turno;
     }
 
-    public void setTurno(Turno turno) {
+
+    public void setTurno( Turno turno )
+    {
         this.turno = turno;
     }
 
-    public Date getHorario() {
+
+    public Date getHorario()
+    {
         return this.horario;
     }
 
-    public void setHorario(Date horario) {
+
+    public void setHorario( Date horario )
+    {
         this.horario = horario;
     }
 
 
-	public Set<HorarioDisponivelCenario> getHorariosDisponiveisCenario() {
+    public Set< HorarioDisponivelCenario > getHorariosDisponiveisCenario()
+	{
         return this.horariosDisponiveisCenario;
     }
 
-	public void setHorariosDisponiveisCenario(Set<HorarioDisponivelCenario> horariosDisponiveisCenario) {
+
+    public void setHorariosDisponiveisCenario(
+		Set< HorarioDisponivelCenario > horariosDisponiveisCenario )
+	{
         this.horariosDisponiveisCenario = horariosDisponiveisCenario;
     }
-    
-    private static final long serialVersionUID = 6415195416443296422L;
 }

@@ -345,14 +345,14 @@ public class AtendimentoOperacionalDTO extends AbstractDTO< String >
 			professor = "<b>Professor:</b> " + getProfessorString();
 		}
 
-		return "<b>Turma:</b> "+ getTurma() + "<br />"
-			+ "<b>Crédito(s) " + ((getCreditoTeoricoBoolean())? "Teórico(s)" : "Prático(s)") + ":</b> "
-			+ getTotalCreditos()+" de "+getTotalCreditoDisciplina() + "<br />"
-			+ "<b>Curso:</b> " + getCursoNome() +"<br />"
+		return "<b>Turma:</b> " + getTurma() + "<br />"
+			+ "<b>Crédito(s) " + ( ( getCreditoTeoricoBoolean() )? "Teórico(s)" : "Prático(s)" ) + ":</b> "
+			+ getTotalCreditos() + " de " + getTotalCreditoDisciplina() + "<br />"
+			+ "<b>Curso:</b> " + getCursoNome() + "<br />"
 			+ "<b>Matriz Curricular:</b> " + getCurriculoString() + "<br />"
-			+ "<b>Período:</b> "+ getPeriodoString() +"<br />"
-			+ "<b>Horário:</b> " + getHorarioId()   +"<br />"
-			+ "<b>Quantidade:</b> "+ getQuantidadeAlunosString() +"<br />" + professor;
+			+ "<b>Período:</b> " + getPeriodoString() + "<br />"
+			+ "<b>Horário:</b> " + getHorarioString() + "<br />"
+			+ "<b>Quantidade:</b> " + getQuantidadeAlunosString() + "<br />" + professor;
 	}
 
 	public String getContentVisaoProfessor()
@@ -367,7 +367,7 @@ public class AtendimentoOperacionalDTO extends AbstractDTO< String >
 	public String getContentToolTipVisaoProfessor()
 	{
 		return "<b>Turma:</b> "+ getTurma() + "<br />"
-			+ "<b>Crédito(s) " + ((getCreditoTeoricoBoolean())? "Teórico(s)" : "Prático(s)") + ":</b> "
+			+ "<b>Crédito(s) " + ( (getCreditoTeoricoBoolean() )? "Teórico(s)" : "Prático(s)") + ":</b> "
 			+ getTotalLinhas()+" de "+getTotalCreditos() + "<br />"
 			+ "<b>Curso:</b> " + getCursoNome() +"<br />"
 			+ "<b>Matriz Curricular:</b> " + getCurriculoString() + "<br />"

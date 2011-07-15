@@ -3,8 +3,8 @@ package com.gapso.web.trieda.shared.services;
 import com.extjs.gxt.ui.client.Registry;
 import com.google.gwt.core.client.GWT;
 
-public class Services {
-
+public class Services
+{
 	private static final String OTIMIZAR = "otimizar";
 	private static final String CENARIOS = "cenarios";
 	private static final String CAMPI = "campi";
@@ -30,12 +30,15 @@ public class Services {
 	private static final String FIXACOES = "fixacoes";
 	private static final String UNIQUES = "uniques";
 	
-	public static OtimizarServiceAsync otimizar() {
+	public static OtimizarServiceAsync otimizar()
+	{
 		OtimizarServiceAsync service = (OtimizarServiceAsync) Registry.get(OTIMIZAR);
-		if(service == null) {
-			service = GWT.create(OtimizarService.class);
-			Registry.register(OTIMIZAR, service);
+		if ( service == null )
+		{
+			service = GWT.create( OtimizarService.class );
+			Registry.register( OTIMIZAR, service );
 		}
+
 		return service;
 	}
 	

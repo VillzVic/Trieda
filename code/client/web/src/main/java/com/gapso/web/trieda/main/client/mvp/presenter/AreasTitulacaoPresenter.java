@@ -95,7 +95,7 @@ public class AreasTitulacaoPresenter implements Presenter {
 					@Override
 					public void onSuccess( Boolean result )
 					{
-						if (result)
+						if ( result )
 						{
 							Info.display( "Removido", "Item removido com sucesso!" );
 						}

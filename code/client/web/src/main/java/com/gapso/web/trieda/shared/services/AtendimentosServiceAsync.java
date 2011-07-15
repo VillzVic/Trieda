@@ -16,12 +16,19 @@ import com.gapso.web.trieda.shared.dtos.SalaDTO;
 import com.gapso.web.trieda.shared.dtos.TurnoDTO;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-public interface AtendimentosServiceAsync {
+public interface AtendimentosServiceAsync
+{
+	void getList( AsyncCallback< PagingLoadResult< AtendimentoTaticoDTO > > callback );
 
-	void getList(AsyncCallback<PagingLoadResult<AtendimentoTaticoDTO>> callback);
-	void getBusca(SalaDTO sala, TurnoDTO turno, AsyncCallback<List<AtendimentoRelatorioDTO>> callback);
-	void getAtendimentosOperacional(ProfessorDTO professorDTO, ProfessorVirtualDTO professorVirtualDTO, TurnoDTO turnoDTO, AsyncCallback<List<AtendimentoOperacionalDTO>> callback);
-	void getBusca(CurriculoDTO curriculoDTO, Integer periodo, TurnoDTO turnoDTO, CampusDTO campusDTO, AsyncCallback<ParDTO<List<AtendimentoRelatorioDTO>, List<Integer>>> callback);
-	void getProfessoresVirtuais(CampusDTO campusDTO, AsyncCallback<ListLoadResult<ProfessorVirtualDTO>> callback);
-	
+	void getBusca( SalaDTO sala, TurnoDTO turno,
+		AsyncCallback< List< AtendimentoRelatorioDTO > > callback );
+
+	void getAtendimentosOperacional( ProfessorDTO professorDTO, ProfessorVirtualDTO professorVirtualDTO,
+		TurnoDTO turnoDTO, AsyncCallback< List< AtendimentoOperacionalDTO > > callback );
+
+	void getBusca( CurriculoDTO curriculoDTO, Integer periodo, TurnoDTO turnoDTO,
+		CampusDTO campusDTO, AsyncCallback< ParDTO< List< AtendimentoRelatorioDTO >, List< Integer > > > callback );
+
+	void getProfessoresVirtuais( CampusDTO campusDTO,
+		AsyncCallback< ListLoadResult< ProfessorVirtualDTO > > callback );
 }
