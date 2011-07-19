@@ -229,8 +229,6 @@ public class SalasServiceImpl extends RemoteServiceServlet implements
 		for ( GrupoSala gs : grupoSalas )
 		{
 			GrupoSalaDTO gsDTO = ConvertBeans.toGrupoSalaDTO( gs );
-			// gsDTO.setName(gsDTO.getCodigo()); TODO: ***********
-			// gsDTO.setPath(gsDTO.getCodigo() + "/"); TODO: ***********
 			grupoSalasDTO.add( gsDTO );
 		}
 
@@ -238,11 +236,15 @@ public class SalasServiceImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public void save(SalaDTO salaDTO) {
-		Sala sala = ConvertBeans.toSala(salaDTO);
-		if (sala.getId() != null && sala.getId() > 0) {
+	public void save( SalaDTO salaDTO )
+	{
+		Sala sala = ConvertBeans.toSala( salaDTO );
+		if ( sala.getId() != null && sala.getId() > 0 )
+		{
 			sala.merge();
-		} else {
+		}
+		else
+		{
 			sala.persist();
 		}
 	}
@@ -262,18 +264,18 @@ public class SalasServiceImpl extends RemoteServiceServlet implements
 		if ( TipoSala.count() == 0 )
 		{
 			TipoSala tipo1 = new TipoSala();
-			tipo1.setNome("Sala de Aula");
-			tipo1.setDescricao("Sala de Aula");
+			tipo1.setNome( "Sala de Aula" );
+			tipo1.setDescricao( "Sala de Aula" );
 			tipo1.persist();
 
 			TipoSala tipo2 = new TipoSala();
-			tipo2.setNome("Laboratório");
-			tipo2.setDescricao("Laboratório");
+			tipo2.setNome( "Laboratório" );
+			tipo2.setDescricao( "Laboratório" );
 			tipo2.persist();
 
 			TipoSala tipo3 = new TipoSala();
-			tipo3.setNome("Auditório");
-			tipo3.setDescricao("Auditório");
+			tipo3.setNome( "Auditório" );
+			tipo3.setDescricao( "Auditório" );
 			tipo3.persist();
 		}
 

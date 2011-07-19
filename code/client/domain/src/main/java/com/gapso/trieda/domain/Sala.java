@@ -127,58 +127,89 @@ public class Sala implements Serializable, Comparable<Sala> {
     @Column(name = "version")
     private Integer version;
 
-	public Long getId() {
+	public Long getId()
+	{
         return this.id;
     }
 
-	public void setId(Long id) {
+	public void setId( Long id )
+	{
         this.id = id;
     }
 
-	public Integer getVersion() {
+	public Integer getVersion()
+	{
         return this.version;
     }
 
-	public void setVersion(Integer version) {
+	public void setVersion( Integer version )
+	{
         this.version = version;
     }
 	
 	@Transactional
-	public void detach() {
-		if (this.entityManager == null) this.entityManager = entityManager();
-		this.entityManager.detach(this);
+	public void detach()
+	{
+		if ( this.entityManager == null )
+		{
+			this.entityManager = entityManager();
+		}
+
+		this.entityManager.detach( this );
 	}
-	
+
 	@Transactional
-    public void persist() {
-        if (this.entityManager == null) this.entityManager = entityManager();
-        this.entityManager.persist(this);
-        preencheHorarios();
+    public void persist()
+	{
+        if ( this.entityManager == null )
+        {
+        	this.entityManager = entityManager();
+        }
+
+        Sala find = Sala.find( this.getId() );
+        if ( find == null )
+        {
+        	this.entityManager.persist( this );
+        	preencheHorarios();
+        }
     }
 
-	public void preencheHorarios() {
-		for(SemanaLetiva semanaLetiva : SemanaLetiva.findAll()) {
-			for(HorarioDisponivelCenario hdc : this.getUnidade().getHorarios(semanaLetiva)) {
-				hdc.getSalas().add(this);
+	public void preencheHorarios()
+	{
+		for ( SemanaLetiva semanaLetiva : SemanaLetiva.findAll() )
+		{
+			for ( HorarioDisponivelCenario hdc : this.getUnidade().getHorarios( semanaLetiva ) )
+			{
+				hdc.getSalas().add( this );
 				hdc.merge();
 			}
 		}
 	}
-	
+
 	@Transactional
-    public void remove() {
-        if (this.entityManager == null) this.entityManager = entityManager();
-        if (this.entityManager.contains(this)) {
+    public void remove()
+	{
+        if ( this.entityManager == null)
+        {
+        	this.entityManager = entityManager();
+        }
+
+        if ( this.entityManager.contains( this ) )
+        {
         	this.removeHorariosDisponivelCenario();
         	this.removeCurriculoDisciplinas();
         	this.removeGruposSala();
-            this.entityManager.remove(this);
-        } else {
-            Sala attached = this.entityManager.find(this.getClass(), this.id);
+            this.entityManager.remove( this );
+        }
+        else
+        {
+            Sala attached = this.entityManager.find(
+            	this.getClass(), this.id );
+
             attached.removeHorariosDisponivelCenario();
             attached.removeCurriculoDisciplinas();
             attached.removeGruposSala();
-            this.entityManager.remove(attached);
+            this.entityManager.remove( attached );
         }
     }
 
@@ -210,15 +241,25 @@ public class Sala implements Serializable, Comparable<Sala> {
     }
     
 	@Transactional
-    public void flush() {
-        if (this.entityManager == null) this.entityManager = entityManager();
+    public void flush()
+	{
+        if ( this.entityManager == null )
+        {
+        	this.entityManager = entityManager();
+        }
+
         this.entityManager.flush();
     }
 
 	@Transactional
-    public Sala merge() {
-        if (this.entityManager == null) this.entityManager = entityManager();
-        Sala merged = this.entityManager.merge(this);
+    public Sala merge()
+	{
+        if ( this.entityManager == null )
+        {
+        	this.entityManager = entityManager();
+        }
+
+        Sala merged = this.entityManager.merge( this );
         this.entityManager.flush();
         return merged;
     }
@@ -280,9 +321,11 @@ public class Sala implements Serializable, Comparable<Sala> {
 		return salasMap;
 	}
 	
-	public static List<Sala> findAndaresAll() {
-		return findAndaresAll(null);
+	public static List<Sala> findAndaresAll()
+	{
+		return findAndaresAll( null );
 	}
+
 	@SuppressWarnings("unchecked")
 	public static List<Sala> findAndaresAll(Unidade unidade) {
 		List<Sala> list;

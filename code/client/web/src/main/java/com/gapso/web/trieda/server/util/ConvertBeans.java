@@ -290,21 +290,23 @@ public class ConvertBeans
 		return list;
 	}
 
-	public static Sala toSala(SalaDTO dto) {
+	public static Sala toSala( SalaDTO dto )
+	{
 		Sala domain = new Sala();
-		domain.setId(dto.getId());
-		domain.setVersion(dto.getVersion());
-		domain.setCodigo(dto.getCodigo());
-		domain.setNumero(dto.getNumero());
-		domain.setAndar(dto.getAndar());
-		domain.setCapacidade(dto.getCapacidade());
-		
-		TipoSala tipoSala = TipoSala.find(dto.getTipoId());
-		domain.setTipoSala(tipoSala);
-		
-		Unidade unidade = Unidade.find(dto.getUnidadeId());
-		domain.setUnidade(unidade);
-		
+
+		domain.setId( dto.getId() );
+		domain.setVersion( dto.getVersion() );
+		domain.setCodigo( dto.getCodigo() );
+		domain.setNumero( dto.getNumero() );
+		domain.setAndar( dto.getAndar() );
+		domain.setCapacidade( dto.getCapacidade() );
+
+		TipoSala tipoSala = TipoSala.find( dto.getTipoId() );
+		domain.setTipoSala( tipoSala );
+
+		Unidade unidade = Unidade.find( dto.getUnidadeId() );
+		domain.setUnidade( unidade );
+
 		return domain;
 	}
 
