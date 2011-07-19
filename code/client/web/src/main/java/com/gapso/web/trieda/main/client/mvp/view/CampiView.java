@@ -25,175 +25,206 @@ import com.gapso.web.trieda.shared.util.view.SimpleFilter;
 import com.gapso.web.trieda.shared.util.view.SimpleGrid;
 import com.gapso.web.trieda.shared.util.view.SimpleToolBar;
 
-public class CampiView extends MyComposite implements CampiPresenter.Display {
-
+public class CampiView extends MyComposite
+	implements CampiPresenter.Display
+{
 	private SimpleToolBar toolBar;
-	private SimpleGrid<CampusDTO> gridPanel;
+	private SimpleGrid< CampusDTO > gridPanel;
 	private SimpleFilter filter;
-	private TextField<String> nomeBuscaTextField;
-	private TextField<String> codigoBuscaTextField;
+	private TextField< String > nomeBuscaTextField;
+	private TextField< String > codigoBuscaTextField;
 	private EstadoComboBox estadoBuscaComboBox;
-	private TextField<String> municipioBuscaTextField;
-	private TextField<String> bairroBuscaTextField;
+	private TextField< String > municipioBuscaTextField;
+	private TextField< String > bairroBuscaTextField;
 	private Button unidadesDeslocamentoBT;
 	private Button disponibilidadeBT;
 	private ContentPanel panel;
 	private GTabItem tabItem;
-	
-	public CampiView() {
+
+	public CampiView()
+	{
 		initUI();
 	}
-	
-	private void initUI() {
-		panel = new ContentPanel(new BorderLayout());
-		panel.setHeading(getI18nConstants().campiHeadingPanel());
+
+	private void initUI()
+	{
+		panel = new ContentPanel( new BorderLayout() );
+		panel.setHeading( getI18nConstants().campiHeadingPanel() );
+
 		createToolBar();
 		createGrid();
 		createFilter();
 		createTabItem();
-		initComponent(tabItem);
-	}
-	
-	private void createTabItem() {
-		tabItem = new GTabItem(getI18nConstants().campi(), Resources.DEFAULTS.campus16());
-		tabItem.setContent(panel);
-	}
-	
-	private void createToolBar() {
-		toolBar = new SimpleToolBar(this);
-		toolBar.add(new SeparatorToolItem());
-		unidadesDeslocamentoBT = toolBar.createButton(getI18nConstants().deslocamentoUnidadesCampus(), Resources.DEFAULTS.deslocamentoUnidade16());
-		toolBar.add(unidadesDeslocamentoBT);
-		disponibilidadeBT = toolBar.createButton(getI18nConstants().disponibilidadesSemanaLetiva(), Resources.DEFAULTS.disponibilidade16());
-		toolBar.add(disponibilidadeBT);
-		panel.setTopComponent(toolBar);
-	}
-	
-	private void createGrid() {
-		BorderLayoutData bld = new BorderLayoutData(LayoutRegion.CENTER);
-	    bld.setMargins(new Margins(5, 5, 5, 5));
-	    
-	    gridPanel = new SimpleGrid<CampusDTO>(getColumnList(), this);
-	    panel.add(gridPanel, bld);
+		initComponent( tabItem );
 	}
 
-	public List<ColumnConfig> getColumnList() {
-		List<ColumnConfig> list = new ArrayList<ColumnConfig>();
-		list.add(new ColumnConfig(CampusDTO.PROPERTY_CODIGO, getI18nConstants().codigo(), 100));
-		list.add(new ColumnConfig(CampusDTO.PROPERTY_NOME, getI18nConstants().nome(), 100));
-		list.add(new ColumnConfig(CampusDTO.PROPERTY_VALOR_CREDITO, getI18nConstants().custoMedioCredito(), 170));
-		list.add(new ColumnConfig(CampusDTO.PROPERTY_ESTADO, getI18nConstants().estado(), 100));
-		list.add(new ColumnConfig(CampusDTO.PROPERTY_MUNICIPIO, getI18nConstants().municipio(), 100));
-		list.add(new ColumnConfig(CampusDTO.PROPERTY_BAIRRO, getI18nConstants().bairro(), 100));
-		list.add(new CheckColumnConfig(CampusDTO.PROPERTY_OTIMIZADO_TATICO, getI18nConstants().otimizadoTatico() + "?", 100));
-		list.add(new CheckColumnConfig(CampusDTO.PROPERTY_OTIMIZADO_OPERACIONAL, getI18nConstants().otimizadoOperacional() + "?", 100));
-		list.add(new CheckColumnConfig(CampusDTO.PROPERTY_PUBLICADO, getI18nConstants().publicado() + "?", 100));
+	private void createTabItem()
+	{
+		tabItem = new GTabItem( getI18nConstants().campi(), Resources.DEFAULTS.campus16() );
+		tabItem.setContent( panel );
+	}
+
+	private void createToolBar()
+	{
+		toolBar = new SimpleToolBar( this );
+		toolBar.add( new SeparatorToolItem() );
+		unidadesDeslocamentoBT = toolBar.createButton(
+			getI18nConstants().deslocamentoUnidadesCampus(),
+			Resources.DEFAULTS.deslocamentoUnidade16() );
+
+		toolBar.add( unidadesDeslocamentoBT );
+		disponibilidadeBT = toolBar.createButton(
+			getI18nConstants().disponibilidadesSemanaLetiva(),
+			Resources.DEFAULTS.disponibilidade16() );
+
+		toolBar.add( disponibilidadeBT );
+		panel.setTopComponent( toolBar );
+	}
+
+	private void createGrid()
+	{
+		BorderLayoutData bld = new BorderLayoutData( LayoutRegion.CENTER );
+	    bld.setMargins( new Margins( 5, 5, 5, 5 ) );
+
+	    gridPanel = new SimpleGrid< CampusDTO >( getColumnList(), this );
+	    panel.add( gridPanel, bld );
+	}
+
+	public List< ColumnConfig > getColumnList()
+	{
+		List< ColumnConfig > list = new ArrayList< ColumnConfig >();
+
+		list.add( new ColumnConfig( CampusDTO.PROPERTY_CODIGO, getI18nConstants().codigo(), 100 ) );
+		list.add( new ColumnConfig( CampusDTO.PROPERTY_NOME, getI18nConstants().nome(), 100 ) );
+		list.add( new ColumnConfig( CampusDTO.PROPERTY_VALOR_CREDITO, getI18nConstants().custoMedioCredito(), 170 ) );
+		list.add( new ColumnConfig( CampusDTO.PROPERTY_ESTADO, getI18nConstants().estado(), 100 ) );
+		list.add( new ColumnConfig( CampusDTO.PROPERTY_MUNICIPIO, getI18nConstants().municipio(), 100 ) );
+		list.add( new ColumnConfig( CampusDTO.PROPERTY_BAIRRO, getI18nConstants().bairro(), 100 ) );
+		list.add( new CheckColumnConfig( CampusDTO.PROPERTY_OTIMIZADO_TATICO, getI18nConstants().otimizadoTatico() + "?", 100 ) );
+		list.add( new CheckColumnConfig( CampusDTO.PROPERTY_OTIMIZADO_OPERACIONAL, getI18nConstants().otimizadoOperacional() + "?", 100 ) );
+		list.add( new CheckColumnConfig( CampusDTO.PROPERTY_PUBLICADO, getI18nConstants().publicado() + "?", 100 ) );
+
 		return list;
 	}
 
-	private void createFilter() {
-		BorderLayoutData bld = new BorderLayoutData(LayoutRegion.EAST);
-		bld.setMargins(new Margins(5, 5, 5, 0));
-		bld.setCollapsible(true);
-		
+	private void createFilter()
+	{
+		BorderLayoutData bld = new BorderLayoutData( LayoutRegion.EAST );
+		bld.setMargins( new Margins( 5, 5, 5, 0 ) );
+		bld.setCollapsible( true );
+
 		filter = new SimpleFilter();
-		nomeBuscaTextField = new TextField<String>();
-		nomeBuscaTextField.setFieldLabel(getI18nConstants().nome());
-		codigoBuscaTextField = new TextField<String>();
-		codigoBuscaTextField.setFieldLabel(getI18nConstants().codigo());
+		nomeBuscaTextField = new TextField< String >();
+		nomeBuscaTextField.setFieldLabel( getI18nConstants().nome() );
+		codigoBuscaTextField = new TextField< String >();
+		codigoBuscaTextField.setFieldLabel( getI18nConstants().codigo() );
 		estadoBuscaComboBox = new EstadoComboBox();
-		estadoBuscaComboBox.setFieldLabel(getI18nConstants().estado());
-		municipioBuscaTextField = new TextField<String>();
-		municipioBuscaTextField.setFieldLabel(getI18nConstants().municipio());
-		bairroBuscaTextField = new TextField<String>();
-		bairroBuscaTextField.setFieldLabel(getI18nConstants().bairro());
-		filter.addField(nomeBuscaTextField);
-		filter.addField(codigoBuscaTextField); 
-//		TODO filter.addField(estadoBuscaComboBox); 
-		filter.addField(municipioBuscaTextField); 
-		filter.addField(bairroBuscaTextField); 
-		
-		panel.add(filter, bld);
+		estadoBuscaComboBox.setFieldLabel( getI18nConstants().estado() );
+		municipioBuscaTextField = new TextField< String >();
+		municipioBuscaTextField.setFieldLabel( getI18nConstants().municipio() );
+		bairroBuscaTextField = new TextField< String >();
+		bairroBuscaTextField.setFieldLabel( getI18nConstants().bairro() );
+		filter.addField( nomeBuscaTextField );
+		filter.addField( codigoBuscaTextField ); 
+		filter.addField( municipioBuscaTextField ); 
+		filter.addField( bairroBuscaTextField ); 
+
+		panel.add( filter, bld );
 	}
-	
+
 	@Override
-	public Button getNewButton() {
+	public Button getNewButton()
+	{
 		return toolBar.getNewButton();
 	}
 
 	@Override
-	public Button getEditButton() {
+	public Button getEditButton()
+	{
 		return toolBar.getEditButton();
 	}
 
 	@Override
-	public Button getRemoveButton() {
+	public Button getRemoveButton()
+	{
 		return toolBar.getRemoveButton();
 	}
 
 	@Override
-	public Button getImportExcelButton() {
+	public Button getImportExcelButton()
+	{
 		return toolBar.getImportExcelButton();
 	}
 
 	@Override
-	public Button getExportExcelButton() {
+	public Button getExportExcelButton()
+	{
 		return toolBar.getExportExcelButton();
 	}
 
 	@Override
-	public SimpleGrid<CampusDTO> getGrid() {
+	public SimpleGrid< CampusDTO > getGrid()
+	{
 		return gridPanel;
 	}
 
 	@Override
-	public void setProxy(RpcProxy<PagingLoadResult<CampusDTO>> proxy) {
-		gridPanel.setProxy(proxy);
+	public void setProxy( RpcProxy< PagingLoadResult< CampusDTO > > proxy )
+	{
+		gridPanel.setProxy( proxy );
 	}
-	
+
 	@Override
-	public TextField<String> getNomeBuscaTextField() {
+	public TextField< String > getNomeBuscaTextField()
+	{
 		return nomeBuscaTextField;
 	}
 
 	@Override
-	public TextField<String> getCodigoBuscaTextField() {
+	public TextField< String > getCodigoBuscaTextField()
+	{
 		return codigoBuscaTextField;
 	}
 
 	@Override
-	public Button getSubmitBuscaButton() {
+	public Button getSubmitBuscaButton()
+	{
 		return filter.getSubmitButton();
 	}
 
 	@Override
-	public Button getResetBuscaButton() {
+	public Button getResetBuscaButton()
+	{
 		return filter.getResetButton();
 	}
 
 	@Override
-	public EstadoComboBox getEstadoBuscaComboBox() {
+	public EstadoComboBox getEstadoBuscaComboBox()
+	{
 		return estadoBuscaComboBox;
 	}
 
 	@Override
-	public TextField<String> getMunicipioBuscaTextField() {
+	public TextField<String> getMunicipioBuscaTextField()
+	{
 		return municipioBuscaTextField;
 	}
 
 	@Override
-	public TextField<String> getBairroBuscaTextField() {
+	public TextField<String> getBairroBuscaTextField()
+	{
 		return bairroBuscaTextField;
 	}
 
 	@Override
-	public Button getUnidadeDeslocamentosButton() {
+	public Button getUnidadeDeslocamentosButton()
+	{
 		return unidadesDeslocamentoBT;
 	}
-	
+
 	@Override
-	public Button getDisponibilidadeButton() {
+	public Button getDisponibilidadeButton()
+	{
 		return disponibilidadeBT;
 	}
-	
 }

@@ -2,10 +2,10 @@ package com.gapso.web.trieda.shared.dtos;
 
 
 
-public class CampusDTO extends AbstractDTO<String> implements Comparable<CampusDTO> {
-
+public class CampusDTO extends AbstractDTO< String > implements Comparable< CampusDTO >
+{
 	private static final long serialVersionUID = -5134820110949139907L;
-	
+
 	// Propriedades
 	public static final String PROPERTY_ID = "id";
 	public static final String PROPERTY_VERSION = "version";
@@ -78,14 +78,14 @@ public class CampusDTO extends AbstractDTO<String> implements Comparable<CampusD
 	public void setBairro(String value) {
 		set(PROPERTY_BAIRRO, value);
 	}
-	
-	public void setValorCredito(Double value) {
+
+	public void setValorCredito(String value) {
 		set(PROPERTY_VALOR_CREDITO, value);
 	}
-	public Double getValorCredito() {
+	public String getValorCredito() {
 		return get(PROPERTY_VALOR_CREDITO);
 	}
-	
+
 	public void setOtimizadoTatico(Boolean value) {
 		set(PROPERTY_OTIMIZADO_TATICO, value);
 	}

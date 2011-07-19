@@ -15,6 +15,7 @@ import com.gapso.web.trieda.main.client.mvp.presenter.CampusFormPresenter;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.mvp.view.MyComposite;
+import com.gapso.web.trieda.shared.util.TriedaUtil;
 import com.gapso.web.trieda.shared.util.resources.Resources;
 import com.gapso.web.trieda.shared.util.view.EstadoComboBox;
 import com.gapso.web.trieda.shared.util.view.SimpleModal;
@@ -35,30 +36,32 @@ public class CampusFormView extends MyComposite implements CampusFormPresenter.D
 	private CenarioDTO cenarioDTO;
 	private CampusDTO campusDTO;
 	
-	public CampusFormView(CenarioDTO cenarioDTO) {
-		this(cenarioDTO, new CampusDTO());
+	public CampusFormView( CenarioDTO cenarioDTO )
+	{
+		this( cenarioDTO, new CampusDTO() );
 	}
-	public CampusFormView(CenarioDTO cenarioDTO, CampusDTO campusDTO) {
+
+	public CampusFormView( CenarioDTO cenarioDTO, CampusDTO campusDTO )
+	{
 		this.cenarioDTO = cenarioDTO;
 		this.campusDTO = campusDTO;
 		initUI();
-		// TODO
-//		initComponent(simpleModal);
-//		setParent(null);
 	}
 	
-	private void initUI() {
-		String title = (campusDTO.getId() == null)? "Inserção de Campus" : "Edição de Campus";
-		simpleModal = new SimpleModal(title, Resources.DEFAULTS.campus16());
-		simpleModal.setHeight(350);
-		simpleModal.setWidth(320);
+	private void initUI()
+	{
+		String title = ( ( campusDTO.getId() == null )? "Inserção de Campus" : "Edição de Campus" );
+		simpleModal = new SimpleModal( title, Resources.DEFAULTS.campus16() );
+		simpleModal.setHeight( 350 );
+		simpleModal.setWidth( 320 );
 		createForm();
-		simpleModal.setContent(formPanel);
+		simpleModal.setContent( formPanel );
 	}
 
-	private void createForm() {
-		FormData formData = new FormData("-20");
-		
+	private void createForm()
+	{
+		FormData formData = new FormData( "-20" );
+
 		formPanel = new FormPanel();
 		formPanel.setHeaderVisible(false);
 		formPanel.setLayout(new FlowLayout());
@@ -87,45 +90,47 @@ public class CampusFormView extends MyComposite implements CampusFormPresenter.D
 		nomeTF.setMinLength(1);
 		nomeTF.setMaxLength(50);
 		nomeTF.setEmptyText("Preencha o nome");
-		geralFS.add(nomeTF, formData);
+		geralFS.add( nomeTF, formData );
 		
 		valorCreditoNF = new NumberField();
 		valorCreditoNF.setName(CampusDTO.PROPERTY_VALOR_CREDITO);
-		valorCreditoNF.setValue(campusDTO.getValorCredito());
+		valorCreditoNF.setValue( TriedaUtil.parseDoubleFormat( campusDTO.getValorCredito() ) );
 		valorCreditoNF.setFieldLabel("Custo (R$)");
 		valorCreditoNF.setAllowBlank(false);
 		valorCreditoNF.setAllowDecimals(true);
 		valorCreditoNF.setMaxValue(999999);
 		valorCreditoNF.setEmptyText("Custo médio do crédito (R$)");
 		geralFS.add(valorCreditoNF, formData);
-		
+
 		publicadoCB = new CheckBox();
 //		if(campusDTO.getPublicado() != null) {
 //			publicadoCB.setEnabled(campusDTO.getPublicado());
 //		}
+
 		publicadoCB.setName(CampusDTO.PROPERTY_PUBLICADO);
 		if(campusDTO.getPublicado() != null) {
 			publicadoCB.setValue(campusDTO.getPublicado());
 		}
+
 		publicadoCB.setFieldLabel("Publicar?");
 		publicadoCB.setLabelSeparator("");
 		geralFS.add(publicadoCB, formData);
-		
+
 		formPanel.add(geralFS, formData);
-		
+
 		FieldSet enderecoFS = new FieldSet();
 		formLayout = new FormLayout(LabelAlign.RIGHT);
 		formLayout.setLabelWidth(75);
 		enderecoFS.setLayout(formLayout);
 		enderecoFS.setHeading("Endereço");
-		
+
 		estadoCB = new EstadoComboBox();
 		estadoCB.setName(CampusDTO.PROPERTY_ESTADO);
 		estadoCB.setValue(campusDTO.getEstado());
 		estadoCB.setFieldLabel("Estado");
 		estadoCB.setEmptyText("Selecione o estado");
 		enderecoFS.add(estadoCB, formData);
-		
+
 		municipioTF = new TextField<String>();
 		municipioTF.setName(CampusDTO.PROPERTY_MUNICIPIO);
 		municipioTF.setValue(campusDTO.getMunicipio());
@@ -133,7 +138,7 @@ public class CampusFormView extends MyComposite implements CampusFormPresenter.D
 		municipioTF.setMaxLength(20);
 		municipioTF.setEmptyText("Preencha o município");
 		enderecoFS.add(municipioTF, formData);
-		
+
 		bairroTF = new TextField<String>();
 		bairroTF.setName(CampusDTO.PROPERTY_BAIRRO);
 		bairroTF.setValue(campusDTO.getBairro());
@@ -141,11 +146,11 @@ public class CampusFormView extends MyComposite implements CampusFormPresenter.D
 		bairroTF.setMaxLength(20);
 		bairroTF.setEmptyText("Preencha o bairro");
 		enderecoFS.add(bairroTF, formData);
-		
+
 		formPanel.add(enderecoFS, formData);
-		
-		FormButtonBinding binding = new FormButtonBinding(formPanel);
-		binding.addButton(simpleModal.getSalvarBt());
+
+		FormButtonBinding binding = new FormButtonBinding( formPanel );
+		binding.addButton( simpleModal.getSalvarBt() );
 		
 		simpleModal.setFocusWidget(codigoTF);
 	}

@@ -146,16 +146,18 @@ public class ConvertBeans
 		dto.setOficial(domain.getOficial());
 		dto.setAno(domain.getAno());
 		dto.setSemestre(domain.getSemestre());
-		// TODO Criar ligação com o usuário (Edição e criação)
-		// TODO Criar ligação com data de edição e criação
 		dto.setComentario(domain.getComentario());
 		SemanaLetiva semanaLetiva = null;
-		// TODO Quando criar o conceito de cenario, não irá mais existir semana letiva para o master data: 
-		if(!domain.getMasterData()) {
-			semanaLetiva = SemanaLetiva.getByOficial();
-		} else {
+
+		if ( !domain.getMasterData() )
+		{
 			semanaLetiva = SemanaLetiva.getByOficial();
 		}
+		else
+		{
+			semanaLetiva = SemanaLetiva.getByOficial();
+		}
+
 		dto.setSemanaLetivaId(semanaLetiva.getId());
 		dto.setSemanaLetivaString(semanaLetiva.getCodigo());
 		dto.setDisplayText(domain.getNome());
@@ -163,42 +165,65 @@ public class ConvertBeans
 	}
 	
 	// CAMPUS
-	public static Campus toCampus(CampusDTO dto) {
+	public static Campus toCampus( CampusDTO dto )
+	{
 		Campus domain = new Campus();
-		domain.setId(dto.getId());
-		domain.setVersion(dto.getVersion());
-		Cenario cenario = Cenario.find(dto.getCenarioId());
-		domain.setCenario(cenario);
-		domain.setNome(dto.getNome());
-		domain.setCodigo(dto.getCodigo());
-		for(Estados estadoEnum : Estados.values()) {
-			if(estadoEnum.name().equals(dto.getEstado())) {
-				domain.setEstado(estadoEnum);
+
+		domain.setId( dto.getId() );
+		domain.setVersion( dto.getVersion() );
+		Cenario cenario = Cenario.find( dto.getCenarioId() );
+		domain.setCenario( cenario );
+		domain.setNome( dto.getNome() );
+		domain.setCodigo( dto.getCodigo() );
+
+		for ( Estados estadoEnum : Estados.values() )
+		{
+			if ( estadoEnum.name().equals( dto.getEstado() ) )
+			{
+				domain.setEstado( estadoEnum );
 				break;
 			}
 		}
-		domain.setMunicipio(dto.getMunicipio());
-		domain.setBairro(dto.getBairro());
-		domain.setValorCredito(dto.getValorCredito());
-		domain.setPublicado(dto.getPublicado());
+
+		domain.setMunicipio( dto.getMunicipio() );
+		domain.setBairro( dto.getBairro() );
+		domain.setValorCredito( TriedaUtil.parseDoubleFormat( dto.getValorCredito() ) );
+		domain.setPublicado( dto.getPublicado() );
+
 		return domain;
 	}
 	
-	public static CampusDTO toCampusDTO(Campus domain) {
+	public static CampusDTO toCampusDTO( Campus domain )
+	{
 		CampusDTO dto = new CampusDTO();
-		dto.setId(domain.getId());
-		dto.setVersion(domain.getVersion());
-		dto.setNome(domain.getNome());
-		dto.setCenarioId(domain.getCenario().getId());
-		dto.setCodigo(domain.getCodigo());
-		dto.setValorCredito(domain.getValorCredito());
-		dto.setDisplayText(domain.getCodigo() + " (" + domain.getNome() + ")");
-		if(domain.getEstado() != null) dto.setEstado(domain.getEstado().name());
-		if(domain.getMunicipio() != null) dto.setMunicipio(domain.getMunicipio());
-		if(domain.getBairro() != null) dto.setBairro(domain.getBairro());
-		dto.setPublicado(domain.getPublicado() == null ? false : domain.getPublicado());
-		dto.setOtimizadoTatico(domain.isOtimizadoTatico());
-		dto.setOtimizadoOperacional(domain.isOtimizadoOperacional());
+
+		dto.setId( domain.getId() );
+		dto.setVersion( domain.getVersion() );
+		dto.setNome( domain.getNome() );
+		dto.setCenarioId( domain.getCenario().getId() );
+		dto.setCodigo( domain.getCodigo() );
+		dto.setValorCredito( TriedaUtil.parseCurrencyFormat( domain.getValorCredito() ) );
+		dto.setDisplayText( domain.getCodigo() + " (" + domain.getNome() + ")" );
+
+		if ( domain.getEstado() != null )
+		{
+			dto.setEstado( domain.getEstado().name() );
+		}
+
+		if ( domain.getMunicipio() != null )
+		{
+			dto.setMunicipio( domain.getMunicipio() );
+		}
+
+		if ( domain.getBairro() != null )
+		{
+			dto.setBairro( domain.getBairro() );
+		}
+
+		dto.setPublicado( domain.getPublicado() == null ? false : domain.getPublicado() );
+		dto.setOtimizadoTatico( domain.isOtimizadoTatico() );
+		dto.setOtimizadoOperacional( domain.isOtimizadoOperacional() );
+
 		return dto;
 	}
 	

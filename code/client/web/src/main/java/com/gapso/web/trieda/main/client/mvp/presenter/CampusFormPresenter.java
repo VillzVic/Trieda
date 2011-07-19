@@ -82,7 +82,7 @@ public class CampusFormPresenter implements Presenter {
 		campusDTO.setCenarioId(cenario.getId());
 		campusDTO.setNome(display.getNomeTextField().getValue());
 		campusDTO.setCodigo(display.getCodigoTextField().getValue());
-		campusDTO.setValorCredito(display.getValorCreditoNumberField().getValue().doubleValue());
+		campusDTO.setValorCredito( ( (Double)display.getValorCreditoNumberField().getValue().doubleValue()).toString() );
 		campusDTO.setEstado(display.getEstadoComboBox().getValue().getValue().name());
 		campusDTO.setMunicipio(display.getMunicipioTextField().getValue());
 		campusDTO.setBairro(display.getBairroTextField().getValue());

@@ -11,56 +11,68 @@ import com.extjs.gxt.ui.client.widget.layout.FitLayout;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
-public class GTabItem extends TabItem {
-
+public class GTabItem extends TabItem
+{
 	private ContentPanel panel;
 	private String idTabItem;
-	
-	public GTabItem() {
+
+	public GTabItem()
+	{
 		configuration();
 	}
 
-	public GTabItem(String text) {
-		this(text, null);
+	public GTabItem( String text )
+	{
+		this( text, null );
 	}
-	public GTabItem(String text, ImageResource icon) {
-		super(text);
-		if(icon != null) setIcon(AbstractImagePrototype.create(icon));
+	public GTabItem( String text, ImageResource icon )
+	{
+		super( text );
+		if ( icon != null )
+		{
+			setIcon( AbstractImagePrototype.create( icon ) );
+		}
+
 		configuration();
 	}
 	
-	private void configuration() {
-		setClosable(true);
-		setLayout(new FitLayout());
-		panel = new ContentPanel(new BorderLayout());
-		panel.setHeaderVisible(false);
-		panel.setBodyBorder(false);
-		add(panel);
+	private void configuration()
+	{
+		setClosable( true );
+		setLayout( new FitLayout() );
+		panel = new ContentPanel( new BorderLayout() );
+		panel.setHeaderVisible( false );
+		panel.setBodyBorder( false );
+		add( panel );
 	}
 	
-	public void setTitle(String s) {
-		super.setTitle(s);
-		panel.setHeading(s);
-		panel.setHeaderVisible(s != null);
-	}
-	
-	public void setContent(Component widget) {
-		BorderLayoutData bld = new BorderLayoutData(LayoutRegion.CENTER);
-		panel.add(widget, bld);
-	}
-	
-	public void setContent(Component widget, Margins margins) {
-		BorderLayoutData bld = new BorderLayoutData(LayoutRegion.CENTER);
-		bld.setMargins(margins);
-		panel.add(widget, bld);
+	public void setTitle( String s )
+	{
+		super.setTitle( s );
+		panel.setHeading( s );
+		panel.setHeaderVisible( s != null );
 	}
 
-	public String getIdTabItem() {
+	public void setContent( Component widget )
+	{
+		BorderLayoutData bld = new BorderLayoutData( LayoutRegion.CENTER );
+		panel.add( widget, bld );
+	}
+
+	public void setContent( Component widget, Margins margins )
+	{
+		BorderLayoutData bld = new BorderLayoutData( LayoutRegion.CENTER );
+		bld.setMargins( margins );
+		panel.add( widget, bld );
+	}
+
+	public String getIdTabItem()
+	{
 		return idTabItem;
 	}
 
-	public void setIdTabItem(String idTabItem) {
+	public void setIdTabItem( String idTabItem )
+	{
 		this.idTabItem = idTabItem;
 	}
-	
 }

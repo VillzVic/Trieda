@@ -490,54 +490,70 @@ public class Campus implements Serializable, Comparable< Campus >
 	}
 
 	@SuppressWarnings("unchecked")
-	public static List<Campus> findBy(Cenario cenario, String nome,
+	public static List<Campus> findBy( Cenario cenario, String nome,
 			String codigo, Estados estado, String municipio, String bairro,
-			int firstResult, int maxResults, String orderBy) {
-		nome = (nome == null) ? "" : nome;
-		nome = "%" + nome.replace('*', '%') + "%";
-		codigo = (codigo == null) ? "" : codigo;
-		codigo = "%" + codigo.replace('*', '%') + "%";
+			int firstResult, int maxResults, String orderBy )
+	{
+		nome = ( ( nome == null ) ? "" : nome );
+		nome = ( "%" + nome.replace( '*', '%' ) + "%" );
+		codigo = ( ( codigo == null ) ? "" : codigo );
+		codigo = ( "%" + codigo.replace('*', '%') + "%" );
 
 		String municipioQuery = "";
-		if (municipio != null) {
+		if ( municipio != null )
+		{
 			municipioQuery = " LOWER(o.municipio) LIKE LOWER(:municipio) AND ";
-			municipio = "%" + municipio.replace('*', '%') + "%";
+			municipio = ( "%" + municipio.replace( '*', '%' ) + "%" );
 		}
 
 		String bairroQuery = "";
-		if (bairro != null) {
-			bairroQuery = " LOWER(o.bairro) LIKE LOWER(:bairro) AND ";
-			bairro = "%" + bairro.replace('*', '%') + "%";
+		if ( bairro != null )
+		{
+			bairroQuery = ( " LOWER(o.bairro) LIKE LOWER(:bairro) AND " );
+			bairro = ( "%" + bairro.replace( '*', '%' ) + "%" );
 		}
 
 		EntityManager em = Campus.entityManager();
-		orderBy = (orderBy != null) ? "ORDER BY o." + orderBy : "";
-		String estadoQuery = (estado == null) ? "" : "o.estado = :estado AND ";
-		Query q = em.createQuery("SELECT o FROM Campus o WHERE "
+		orderBy = ( ( orderBy != null ) ? "ORDER BY o." + orderBy : "" );
+		String estadoQuery = ( ( estado == null ) ? "" : "o.estado = :estado AND " );
+		Query q = em.createQuery( "SELECT o FROM Campus o WHERE "
 				+ "LOWER(o.nome) LIKE LOWER(:nome) AND "
 				+ "LOWER(o.codigo) LIKE LOWER(:codigo) AND "
 				+ "o.cenario = :cenario AND " + estadoQuery + bairroQuery
-				+ municipioQuery + " 1=1 " + orderBy);
-		q.setParameter("nome", nome);
-		q.setParameter("codigo", codigo);
-		q.setParameter("cenario", cenario);
-		if (estado != null)
-			q.setParameter("estado", estado);
-		if (municipio != null)
-			q.setParameter("municipio", municipio);
-		if (bairro != null)
-			q.setParameter("bairro", bairro);
-		return q.setFirstResult(firstResult).setMaxResults(maxResults)
-				.getResultList();
+				+ municipioQuery + " 1=1 " + orderBy );
+
+		q.setParameter( "nome", nome );
+		q.setParameter( "codigo", codigo );
+		q.setParameter( "cenario", cenario );
+
+		if ( estado != null )
+		{
+			q.setParameter("estado", estado );
+		}
+
+		if ( municipio != null )
+		{
+			q.setParameter( "municipio", municipio );
+		}
+
+		if ( bairro != null )
+		{
+			q.setParameter( "bairro", bairro );
+		}
+
+		return q.setFirstResult( firstResult ).setMaxResults( maxResults ).getResultList();
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<HorarioDisponivelCenario> getHorarios(SemanaLetiva semanaLetiva) {
-		Query q = entityManager()
-				.createQuery(
-						"SELECT o FROM HorarioDisponivelCenario o, IN (o.campi) c WHERE c = :campus AND o.horarioAula.semanaLetiva = :semanaLetiva");
-		q.setParameter("campus", this);
-		q.setParameter("semanaLetiva", semanaLetiva);
+	public List< HorarioDisponivelCenario > getHorarios( SemanaLetiva semanaLetiva )
+	{
+		Query q = entityManager().createQuery(
+						"SELECT o FROM HorarioDisponivelCenario o, IN (o.campi) c "
+					+ "WHERE c = :campus AND o.horarioAula.semanaLetiva = :semanaLetiva" );
+
+		q.setParameter( "campus", this );
+		q.setParameter( "semanaLetiva", semanaLetiva );
+
 		return q.getResultList();
 	}
 

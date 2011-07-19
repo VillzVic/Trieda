@@ -1,5 +1,6 @@
 package com.gapso.web.trieda.shared.util;
 
+import java.text.NumberFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -98,7 +99,7 @@ public class TriedaUtil
 
 		return ret;
 	}
-	
+
 	static public Double roundTwoDecimals( double d )
 	{
 	    long y = (long)( d * 100 );
@@ -128,5 +129,26 @@ public class TriedaUtil
 		}
 
 		return ( hour + ":" + minute );
+	}
+
+	static public String parseCurrencyFormat( Double value )
+	{
+		NumberFormat nf = NumberFormat.getCurrencyInstance();
+		nf.setMaximumFractionDigits( 2 );
+		String formatted = nf.format( value == null ? 0.0 : value );
+		return formatted;
+	}
+	
+	static public Double parseDoubleFormat( String str )
+	{
+		Double result = 0.0;
+		
+		try
+		{
+			result = Double.parseDouble( str );
+		}
+		catch( Exception e ) { result = 0.0; }
+
+		return result;
 	}
 }
