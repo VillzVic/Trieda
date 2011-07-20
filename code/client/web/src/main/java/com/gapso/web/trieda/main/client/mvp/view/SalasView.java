@@ -38,20 +38,20 @@ public class SalasView extends MyComposite implements SalasPresenter.Display {
 	private Button disponibilidadeBT;
 	private UnidadeComboBox unidadeCB;
 	private CampusComboBox campusCB;
-	
+
 	private CampusDTO campusDTO;
 	private UnidadeDTO unidadeDTO;
-	
+
 	public SalasView() {
 		this(null, null);
 	}
-	
+
 	public SalasView(CampusDTO campusDTO, UnidadeDTO unidadeDTO) {
 		this.campusDTO = campusDTO;
 		this.unidadeDTO = unidadeDTO;
 		initUI();
 	}
-	
+
 	private void initUI() {
 		panel = new ContentPanel(new BorderLayout());
 		panel.setHeading(getI18nConstants().salasHeadingPanel());
@@ -61,40 +61,51 @@ public class SalasView extends MyComposite implements SalasPresenter.Display {
 		createTabItem();
 		initComponent(tabItem);
 	}
-	
+
 	private void createTabItem() {
-		tabItem = new GTabItem(getI18nConstants().salas(), Resources.DEFAULTS.sala16());
+		tabItem = new GTabItem(getI18nConstants().salas(),
+				Resources.DEFAULTS.sala16());
 		tabItem.setContent(panel);
 	}
-	
+
 	private void createToolBar() {
 		toolBar = new SimpleToolBar(this);
 		toolBar.add(new SeparatorToolItem());
-		disciplinasAssociadasBT = toolBar.createButton(getI18nConstants().disciplinasAssociadas(), Resources.DEFAULTS.disciplina16());
+		disciplinasAssociadasBT = toolBar.createButton(getI18nConstants()
+				.disciplinasAssociadas(), Resources.DEFAULTS.disciplina16());
 		toolBar.add(disciplinasAssociadasBT);
-		gruposDeSalasBT = toolBar.createButton(getI18nConstants().gruposSalas(), Resources.DEFAULTS.sala16());
+		gruposDeSalasBT = toolBar.createButton(
+				getI18nConstants().gruposSalas(), Resources.DEFAULTS.sala16());
 		toolBar.add(gruposDeSalasBT);
-		disponibilidadeBT = toolBar.createButton(getI18nConstants().disponibilidadesSemanaLetiva(), Resources.DEFAULTS.disponibilidade16());
+		disponibilidadeBT = toolBar.createButton(getI18nConstants()
+				.disponibilidadesSemanaLetiva(), Resources.DEFAULTS
+				.disponibilidade16());
 		toolBar.add(disponibilidadeBT);
 		panel.setTopComponent(toolBar);
 	}
-	
+
 	private void createGrid() {
 		BorderLayoutData bld = new BorderLayoutData(LayoutRegion.CENTER);
-	    bld.setMargins(new Margins(5, 5, 5, 5));
-	    
-	    gridPanel = new SimpleGrid<SalaDTO>(getColumnList(), this);
-	    panel.add(gridPanel, bld);
+		bld.setMargins(new Margins(5, 5, 5, 5));
+
+		gridPanel = new SimpleGrid<SalaDTO>(getColumnList(), this);
+		panel.add(gridPanel, bld);
 	}
 
 	public List<ColumnConfig> getColumnList() {
 		List<ColumnConfig> list = new ArrayList<ColumnConfig>();
-		list.add(new ColumnConfig(SalaDTO.PROPERTY_CODIGO, getI18nConstants().codigo(), 100));
-		list.add(new ColumnConfig(SalaDTO.PROPERTY_TIPO_STRING, getI18nConstants().tipo(), 100));
-		list.add(new ColumnConfig(SalaDTO.PROPERTY_UNIDADE_STRING, getI18nConstants().unidade(), 100));
-		list.add(new ColumnConfig(SalaDTO.PROPERTY_NUMERO, getI18nConstants().numero(), 100));
-		list.add(new ColumnConfig(SalaDTO.PROPERTY_ANDAR, getI18nConstants().andar(), 100));
-		list.add(new ColumnConfig(SalaDTO.PROPERTY_CAPACIDADE, getI18nConstants().capacidade(), 100));
+		list.add(new ColumnConfig(SalaDTO.PROPERTY_CODIGO, getI18nConstants()
+				.codigoSala(), 100));
+		list.add(new ColumnConfig(SalaDTO.PROPERTY_TIPO_STRING,
+				getI18nConstants().tipo(), 100));
+		list.add(new ColumnConfig(SalaDTO.PROPERTY_UNIDADE_STRING,
+				getI18nConstants().codigoUnidade(), 100));
+		list.add(new ColumnConfig(SalaDTO.PROPERTY_NUMERO, getI18nConstants()
+				.numero(), 100));
+		list.add(new ColumnConfig(SalaDTO.PROPERTY_ANDAR, getI18nConstants()
+				.andar(), 100));
+		list.add(new ColumnConfig(SalaDTO.PROPERTY_CAPACIDADE,
+				getI18nConstants().capacidadeAlunos(), 100));
 		return list;
 	}
 
@@ -102,20 +113,20 @@ public class SalasView extends MyComposite implements SalasPresenter.Display {
 		BorderLayoutData bld = new BorderLayoutData(LayoutRegion.EAST);
 		bld.setMargins(new Margins(5, 5, 5, 0));
 		bld.setCollapsible(true);
-		
+
 		filter = new SimpleFilter();
-		
+
 		campusCB = new CampusComboBox();
 		campusCB.setValue(campusDTO);
 		unidadeCB = new UnidadeComboBox(campusCB);
 		unidadeCB.setValue(unidadeDTO);
-		
+
 		filter.addField(campusCB);
 		filter.addField(unidadeCB);
-		
+
 		panel.add(filter, bld);
 	}
-	
+
 	@Override
 	public Button getNewButton() {
 		return toolBar.getNewButton();
@@ -145,7 +156,7 @@ public class SalasView extends MyComposite implements SalasPresenter.Display {
 	public GTabItem getGTabItem() {
 		return tabItem;
 	}
-	
+
 	@Override
 	public SimpleGrid<SalaDTO> getGrid() {
 		return gridPanel;
@@ -165,12 +176,12 @@ public class SalasView extends MyComposite implements SalasPresenter.Display {
 	public Button getGruposDeSalasButton() {
 		return gruposDeSalasBT;
 	}
-	
+
 	@Override
 	public Button getDisponibilidadeButton() {
 		return disponibilidadeBT;
 	}
-	
+
 	@Override
 	public UnidadeComboBox getUnidadeCB() {
 		return unidadeCB;
@@ -185,10 +196,10 @@ public class SalasView extends MyComposite implements SalasPresenter.Display {
 	public Button getSubmitBuscaButton() {
 		return filter.getSubmitButton();
 	}
-	
+
 	@Override
 	public Button getResetBuscaButton() {
 		return filter.getResetButton();
 	}
-	
+
 }

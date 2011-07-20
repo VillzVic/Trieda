@@ -14,7 +14,8 @@ import com.gapso.web.trieda.shared.util.resources.Resources;
 import com.gapso.web.trieda.shared.util.view.DisciplinaComboBox;
 import com.gapso.web.trieda.shared.util.view.SimpleModal;
 
-public class CurriculoDisciplinaFormView extends MyComposite implements CurriculoDisciplinaFormPresenter.Display {
+public class CurriculoDisciplinaFormView extends MyComposite implements
+		CurriculoDisciplinaFormPresenter.Display {
 
 	private SimpleModal simpleModal;
 	private FormPanel formPanel;
@@ -23,15 +24,14 @@ public class CurriculoDisciplinaFormView extends MyComposite implements Curricul
 	private CurriculoDisciplinaDTO curriculoDisciplinaDTO;
 	private CurriculoDTO curriculoDTO;
 
-	public CurriculoDisciplinaFormView(CurriculoDisciplinaDTO curriculoDisciplinaDTO, CurriculoDTO curriculoDTO) {
+	public CurriculoDisciplinaFormView(
+			CurriculoDisciplinaDTO curriculoDisciplinaDTO,
+			CurriculoDTO curriculoDTO) {
 		this.curriculoDisciplinaDTO = curriculoDisciplinaDTO;
 		this.curriculoDTO = curriculoDTO;
 		initUI();
-		// TODO
-//		initComponent(simpleModal);
-//		setParent(null);
 	}
-	
+
 	private void initUI() {
 		String title = "Inserção de Disciplina no Curriculo";
 		simpleModal = new SimpleModal(title, Resources.DEFAULTS.disciplina16());
@@ -44,26 +44,26 @@ public class CurriculoDisciplinaFormView extends MyComposite implements Curricul
 		FormData formData = new FormData("-20");
 		formPanel = new FormPanel();
 		formPanel.setHeaderVisible(false);
-		
+
 		TextField<String> curriculoTF = new TextField<String>();
 		curriculoTF.setValue(curriculoDTO.getCodigo());
 		curriculoTF.setFieldLabel("Matriz Curriculo");
 		curriculoTF.setReadOnly(true);
 		formPanel.add(curriculoTF, formData);
-		
+
 		TextField<String> cursoTF = new TextField<String>();
 		cursoTF.setValue(curriculoDTO.getCursoString());
 		cursoTF.setFieldLabel("Curso");
 		cursoTF.setReadOnly(true);
 		formPanel.add(cursoTF, formData);
-		
+
 		disciplinaCB = new DisciplinaComboBox();
 		disciplinaCB.setName("disciplina");
 		disciplinaCB.setFieldLabel("Disciplina");
 		disciplinaCB.setAllowBlank(false);
 		disciplinaCB.setEmptyText("Preencha a disciplina");
 		formPanel.add(disciplinaCB, formData);
-		
+
 		periodoTF = new NumberField();
 		periodoTF.setName(CurriculoDisciplinaDTO.PROPERTY_PERIODO);
 		periodoTF.setValue(curriculoDisciplinaDTO.getPeriodo());
@@ -73,17 +73,17 @@ public class CurriculoDisciplinaFormView extends MyComposite implements Curricul
 		periodoTF.setMaxValue(99);
 		periodoTF.setEmptyText("Preencha o período");
 		formPanel.add(periodoTF, formData);
-		
+
 		FormButtonBinding binding = new FormButtonBinding(formPanel);
 		binding.addButton(simpleModal.getSalvarBt());
-		
+
 		simpleModal.setFocusWidget(curriculoTF);
 	}
-	
+
 	public boolean isValid() {
 		return formPanel.isValid();
 	}
-	
+
 	@Override
 	public Button getSalvarButton() {
 		return simpleModal.getSalvarBt();

@@ -8,11 +8,12 @@ import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
 public class GTriedaI18nConstants implements TriedaI18nConstants {
 
 	private GLanguageManager languageManager = null;
-	
+
 	public GTriedaI18nConstants() {
-		this.languageManager = new GLanguageManager("TriedaI18nConstants", new Locale("pt","BR"));
+		this.languageManager = new GLanguageManager("TriedaI18nConstants",
+				new Locale("pt", "BR"));
 	}
-	
+
 	@Override
 	public String adicionar() {
 		return languageManager.getText("adicionar");
@@ -127,7 +128,7 @@ public class GTriedaI18nConstants implements TriedaI18nConstants {
 	public String cursos() {
 		return languageManager.getText("cursos");
 	}
-	
+
 	@Override
 	public String cursosAreasTitulacao() {
 		return languageManager.getText("cursosAreasTitulacao");
@@ -494,6 +495,7 @@ public class GTriedaI18nConstants implements TriedaI18nConstants {
 		return languageManager.getText("trieda");
 
 	}
+
 	@Override
 	public String triedaDetailMessageHeadingText() {
 		return languageManager.getText("triedaDetailMessageHeadingText");
@@ -547,5 +549,80 @@ public class GTriedaI18nConstants implements TriedaI18nConstants {
 	@Override
 	public String relatorioVisaoCurso() {
 		return languageManager.getText("relatorioVisaoCurso");
+	}
+
+	@Override
+	public String capacidadeAlunos() {
+		return languageManager.getText("capacidadeAlunos");
+	}
+
+	@Override
+	public String codigoAreaTitulacao() {
+		return languageManager.getText("codigoAreaTitulacao");
+	}
+
+	@Override
+	public String codigoCampus() {
+		return languageManager.getText("codigoCampus");
+	}
+
+	@Override
+	public String codigoCurriculo() {
+		return languageManager.getText("codigoCurriculo");
+	}
+
+	@Override
+	public String codigoCurso() {
+		return languageManager.getText("codigoCurso");
+	}
+
+	@Override
+	public String codigoDisciplina() {
+		return languageManager.getText("codigoDisciplina");
+	}
+
+	@Override
+	public String codigoMatrizCurricular() {
+		return languageManager.getText("codigoMatrizCurricular");
+	}
+
+	@Override
+	public String codigoSala() {
+		return languageManager.getText("codigoSala");
+	}
+
+	@Override
+	public String codigoUnidade() {
+		return languageManager.getText("codigoUnidade");
+	}
+
+	@Override
+	public String descricaoCurriculo() {
+		return languageManager.getText("descricaoCurriculo");
+	}
+
+	@Override
+	public String nomeCurso() {
+		return languageManager.getText("nomeCurso");
+	}
+
+	@Override
+	public String nomeDisciplina() {
+		return languageManager.getText("nomeDisciplina");
+	}
+
+	@Override
+	public String nomeProfessor() {
+		return languageManager.getText("nomeProfessor");
+	}
+
+	@Override
+	public String tipoCurso() {
+		return languageManager.getText("tipoCurso");
+	}
+
+	@Override
+	public String tipoDisciplina() {
+		return languageManager.getText("tipoDisciplina");
 	}
 }

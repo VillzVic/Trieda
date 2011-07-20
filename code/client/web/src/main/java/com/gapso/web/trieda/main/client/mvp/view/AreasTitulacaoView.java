@@ -64,10 +64,13 @@ public class AreasTitulacaoView extends MyComposite implements AreasTitulacaoPre
 	    panel.add(gridPanel, bld);
 	}
 
-	private List<ColumnConfig> getColumnList() {
-		List<ColumnConfig> list = new ArrayList<ColumnConfig>();
-		list.add(new ColumnConfig(AreaTitulacaoDTO.PROPERTY_CODIGO, "Código", 100));
-		list.add(new ColumnConfig(AreaTitulacaoDTO.PROPERTY_DESCRICAO, "Descrição", 300));
+	private List< ColumnConfig > getColumnList()
+	{
+		List< ColumnConfig > list = new ArrayList< ColumnConfig >();
+
+		list.add( new ColumnConfig( AreaTitulacaoDTO.PROPERTY_CODIGO, getI18nConstants().codigoAreaTitulacao(), 100 ) );
+		list.add( new ColumnConfig( AreaTitulacaoDTO.PROPERTY_DESCRICAO, "Descrição", 300 ) );
+
 		return list;
 	}
 

@@ -84,9 +84,7 @@ public class CurriculosExportExcel extends AbstractExportExcel {
 			for (Curriculo c : curriculos) {
 				nextRow = writeData(c,nextRow,sheet);
 			}
-			
-			//autoSizeColumns((short)1,(short)6,sheet); TODO: rever autoSize pois atualmente o algoritmo do poi interfere na largura do logo
-			
+
 			return true;
 		}
 		

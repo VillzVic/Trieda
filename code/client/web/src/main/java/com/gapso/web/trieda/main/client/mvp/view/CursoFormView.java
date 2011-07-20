@@ -18,7 +18,8 @@ import com.gapso.web.trieda.shared.util.view.TipoCursoComboBox;
 import com.gapso.web.trieda.shared.util.view.UniqueDomain;
 import com.gapso.web.trieda.shared.util.view.UniqueTextField;
 
-public class CursoFormView extends MyComposite implements CursoFormPresenter.Display {
+public class CursoFormView extends MyComposite implements
+		CursoFormPresenter.Display {
 
 	private SimpleModal simpleModal;
 	private FormPanel formPanel;
@@ -34,22 +35,22 @@ public class CursoFormView extends MyComposite implements CursoFormPresenter.Dis
 	private CursoDTO cursoDTO;
 	private TipoCursoDTO tipoCursoDTO;
 	private CenarioDTO cenarioDTO;
-	
+
 	public CursoFormView(CenarioDTO cenarioDTO) {
 		this(new CursoDTO(), null, cenarioDTO);
 	}
-	public CursoFormView(CursoDTO cursoDTO, TipoCursoDTO tipoCursoDTO, CenarioDTO cenarioDTO) {
+
+	public CursoFormView(CursoDTO cursoDTO, TipoCursoDTO tipoCursoDTO,
+			CenarioDTO cenarioDTO) {
 		this.cursoDTO = cursoDTO;
 		this.tipoCursoDTO = tipoCursoDTO;
 		this.cenarioDTO = cenarioDTO;
 		initUI();
-		// TODO
-//		initComponent(simpleModal);
-//		setParent(null);
 	}
-	
+
 	private void initUI() {
-		String title = (cursoDTO.getId() == null)? "Inserção de Curso" : "Edição de Curso";
+		String title = (cursoDTO.getId() == null) ? "Inserção de Curso"
+				: "Edição de Curso";
 		simpleModal = new SimpleModal(title, Resources.DEFAULTS.curso16());
 		simpleModal.setHeight(430);
 		createForm();
@@ -60,7 +61,7 @@ public class CursoFormView extends MyComposite implements CursoFormPresenter.Dis
 		FormData formData = new FormData("-20");
 		formPanel = new FormPanel();
 		formPanel.setHeaderVisible(false);
-		
+
 		codigoTF = new UniqueTextField(cenarioDTO, UniqueDomain.CURSO);
 		codigoTF.setName(CursoDTO.PROPERTY_CODIGO);
 		codigoTF.setValue(cursoDTO.getCodigo());
@@ -70,7 +71,7 @@ public class CursoFormView extends MyComposite implements CursoFormPresenter.Dis
 		codigoTF.setMaxLength(50);
 		codigoTF.setEmptyText("Preencha o código");
 		formPanel.add(codigoTF, formData);
-		
+
 		nomeTF = new TextField<String>();
 		nomeTF.setName(CursoDTO.PROPERTY_NOME);
 		nomeTF.setValue(cursoDTO.getNome());
@@ -80,7 +81,7 @@ public class CursoFormView extends MyComposite implements CursoFormPresenter.Dis
 		nomeTF.setMaxLength(50);
 		nomeTF.setEmptyText("Preencha o nome");
 		formPanel.add(nomeTF, formData);
-		
+
 		tipoCursoCB = new TipoCursoComboBox();
 		tipoCursoCB.setName("tipoCurso");
 		tipoCursoCB.setFieldLabel("Tipo");
@@ -88,7 +89,7 @@ public class CursoFormView extends MyComposite implements CursoFormPresenter.Dis
 		tipoCursoCB.setValue(tipoCursoDTO);
 		tipoCursoCB.setEmptyText("Selecione um tipo de curso");
 		formPanel.add(tipoCursoCB, formData);
-		
+
 		numMinMestresTF = new NumberField();
 		numMinMestresTF.setName(CursoDTO.PROPERTY_NUM_MIN_MESTRES);
 		numMinMestresTF.setValue(cursoDTO.getNumMinMestres());
@@ -96,9 +97,10 @@ public class CursoFormView extends MyComposite implements CursoFormPresenter.Dis
 		numMinMestresTF.setAllowBlank(false);
 		numMinMestresTF.setAllowDecimals(false);
 		numMinMestresTF.setMaxValue(100);
-		numMinMestresTF.setEmptyText("Preencha a porcentagem mínima de mestres");
+		numMinMestresTF
+				.setEmptyText("Preencha a porcentagem mínima de mestres");
 		formPanel.add(numMinMestresTF, formData);
-		
+
 		numMinDoutoresTF = new NumberField();
 		numMinDoutoresTF.setName(CursoDTO.PROPERTY_NUM_MIN_DOUTORES);
 		numMinDoutoresTF.setValue(cursoDTO.getNumMinDoutores());
@@ -106,18 +108,21 @@ public class CursoFormView extends MyComposite implements CursoFormPresenter.Dis
 		numMinDoutoresTF.setAllowBlank(false);
 		numMinDoutoresTF.setAllowDecimals(false);
 		numMinDoutoresTF.setMaxValue(100);
-		numMinDoutoresTF.setEmptyText("Preencha a porcentagem mínima de doutores");
+		numMinDoutoresTF
+				.setEmptyText("Preencha a porcentagem mínima de doutores");
 		formPanel.add(numMinDoutoresTF, formData);
-		
+
 		minTempoIntegralParcialTF = new NumberField();
-		minTempoIntegralParcialTF.setName(CursoDTO.PROPERTY_MIN_TEMPO_INTEGRAL_PARCIAL);
-		minTempoIntegralParcialTF.setValue(cursoDTO.getMinTempoIntegralParcial());
+		minTempoIntegralParcialTF
+				.setName(CursoDTO.PROPERTY_MIN_TEMPO_INTEGRAL_PARCIAL);
+		minTempoIntegralParcialTF.setValue(cursoDTO
+				.getMinTempoIntegralParcial());
 		minTempoIntegralParcialTF.setFieldLabel("% min Tempo Int + Par");
 		minTempoIntegralParcialTF.setAllowBlank(false);
 		minTempoIntegralParcialTF.setAllowDecimals(false);
 		minTempoIntegralParcialTF.setMaxValue(100);
 		formPanel.add(minTempoIntegralParcialTF, formData);
-		
+
 		minTempoIntegralTF = new NumberField();
 		minTempoIntegralTF.setName(CursoDTO.PROPERTY_MIN_TEMPO_INTEGRAL);
 		minTempoIntegralTF.setValue(cursoDTO.getMinTempoIntegral());
@@ -126,33 +131,38 @@ public class CursoFormView extends MyComposite implements CursoFormPresenter.Dis
 		minTempoIntegralTF.setAllowDecimals(false);
 		minTempoIntegralTF.setMaxValue(100);
 		formPanel.add(minTempoIntegralTF, formData);
-		
+
 		maxDisciplinasPeloProfessorTF = new NumberField();
-		maxDisciplinasPeloProfessorTF.setName(CursoDTO.PROPERTY_MAX_DISCIPLINAS_PELO_PROFESSOR);
-		maxDisciplinasPeloProfessorTF.setValue(cursoDTO.getMaxDisciplinasPeloProfessor());
+		maxDisciplinasPeloProfessorTF
+				.setName(CursoDTO.PROPERTY_MAX_DISCIPLINAS_PELO_PROFESSOR);
+		maxDisciplinasPeloProfessorTF.setValue(cursoDTO
+				.getMaxDisciplinasPeloProfessor());
 		maxDisciplinasPeloProfessorTF.setFieldLabel("Max. Disc. por Prof.");
 		maxDisciplinasPeloProfessorTF.setAllowBlank(false);
 		maxDisciplinasPeloProfessorTF.setAllowDecimals(false);
 		maxDisciplinasPeloProfessorTF.setMaxValue(99);
-		maxDisciplinasPeloProfessorTF.setEmptyText("Número máximo de disciplina por professor");
+		maxDisciplinasPeloProfessorTF
+				.setEmptyText("Número máximo de disciplina por professor");
 		formPanel.add(maxDisciplinasPeloProfessorTF, formData);
-		
+
 		admMaisDeUmDisciplinaCB = new CheckBox();
-		admMaisDeUmDisciplinaCB.setName(CursoDTO.PROPERTY_ADM_MAIS_DE_UMA_DISCIPLINA);
+		admMaisDeUmDisciplinaCB
+				.setName(CursoDTO.PROPERTY_ADM_MAIS_DE_UMA_DISCIPLINA);
 		admMaisDeUmDisciplinaCB.setValue(cursoDTO.getAdmMaisDeUmDisciplina());
-		admMaisDeUmDisciplinaCB.setFieldLabel("Permite mais de uma Disc. por Prof.?");
+		admMaisDeUmDisciplinaCB
+				.setFieldLabel("Permite mais de uma Disc. por Prof.?");
 		formPanel.add(admMaisDeUmDisciplinaCB, formData);
-		
+
 		FormButtonBinding binding = new FormButtonBinding(formPanel);
 		binding.addButton(simpleModal.getSalvarBt());
-		
+
 		simpleModal.setFocusWidget(codigoTF);
 	}
-	
+
 	public boolean isValid() {
 		return formPanel.isValid();
 	}
-	
+
 	@Override
 	public Button getSalvarButton() {
 		return simpleModal.getSalvarBt();
@@ -162,7 +172,7 @@ public class CursoFormView extends MyComposite implements CursoFormPresenter.Dis
 	public TextField<String> getNomeTextField() {
 		return nomeTF;
 	}
-	
+
 	@Override
 	public SimpleModal getSimpleModal() {
 		return simpleModal;
@@ -202,14 +212,15 @@ public class CursoFormView extends MyComposite implements CursoFormPresenter.Dis
 	public CheckBox getAdmMaisDeUmDisciplinaCheckBox() {
 		return admMaisDeUmDisciplinaCB;
 	}
+
 	@Override
 	public NumberField getMinTempoIntegralParcialTextField() {
 		return minTempoIntegralParcialTF;
 	}
+
 	@Override
 	public NumberField getMinTempoIntegralTextField() {
 		return minTempoIntegralTF;
 	}
-	
 
 }

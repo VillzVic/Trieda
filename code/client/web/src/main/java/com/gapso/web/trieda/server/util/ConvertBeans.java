@@ -1400,8 +1400,10 @@ public class ConvertBeans {
 		dto.setAreaTitulacaoId(domain.getAreaTitulacao().getId());
 		dto.setAreaTitulacaoString(domain.getAreaTitulacao().getCodigo());
 		dto.setCreditoAnterior(domain.getCreditoAnterior());
+		dto.setNotaDesempenho( TriedaUtil.getNotaDesempenhoProfessor(domain).intValue() );
 		dto.setValorCredito( TriedaUtil.parseTriedaCurrency( domain.getValorCredito() ) );
 		dto.setDisplayText(domain.getNome() + " (" + domain.getCpf() + ")");
+
 		return dto;
 	}
 

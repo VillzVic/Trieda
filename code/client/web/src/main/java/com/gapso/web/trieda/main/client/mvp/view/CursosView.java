@@ -72,17 +72,20 @@ public class CursosView extends MyComposite implements CursosPresenter.Display {
 	    panel.add(gridPanel, bld);
 	}
 
-	public List<ColumnConfig> getColumnList() {
-		List<ColumnConfig> list = new ArrayList<ColumnConfig>();
-		list.add(new ColumnConfig(CursoDTO.PROPERTY_NOME, "Nome", 100));
-		list.add(new ColumnConfig(CursoDTO.PROPERTY_CODIGO, "Código", 100));
-		list.add(new ColumnConfig(CursoDTO.PROPERTY_TIPO_STRING, "Tipo", 100));
-		list.add(new ColumnConfig(CursoDTO.PROPERTY_NUM_MIN_DOUTORES, "% Min. PhD", 100));
-		list.add(new ColumnConfig(CursoDTO.PROPERTY_NUM_MIN_MESTRES, "% Min. MSc", 100));
-		list.add(new ColumnConfig(CursoDTO.PROPERTY_MIN_TEMPO_INTEGRAL_PARCIAL, "% min Tempo Integral + Tempo Parcial", 100));
-		list.add(new ColumnConfig(CursoDTO.PROPERTY_MIN_TEMPO_INTEGRAL, "% min Tempo Integral", 100));
-		list.add(new ColumnConfig(CursoDTO.PROPERTY_MAX_DISCIPLINAS_PELO_PROFESSOR, "Max. Disc. por Prof.", 110));
-		list.add(new CheckColumnConfig(CursoDTO.PROPERTY_ADM_MAIS_DE_UMA_DISCIPLINA, "Permite mais de uma Disc. por Prof.?", 200));
+	public List< ColumnConfig > getColumnList()
+	{
+		List< ColumnConfig > list = new ArrayList< ColumnConfig >();
+
+		list.add( new ColumnConfig( CursoDTO.PROPERTY_NOME, getI18nConstants().nomeCurso(), 100 ) );
+		list.add( new ColumnConfig( CursoDTO.PROPERTY_CODIGO, getI18nConstants().codigoCurso(), 100 ) );
+		list.add( new ColumnConfig( CursoDTO.PROPERTY_TIPO_STRING, getI18nConstants().tipoCurso(), 100 ) );
+		list.add( new ColumnConfig( CursoDTO.PROPERTY_NUM_MIN_DOUTORES, getI18nConstants().minPercentualDoutor(), 100 ) );
+		list.add( new ColumnConfig( CursoDTO.PROPERTY_NUM_MIN_MESTRES, getI18nConstants().minPercentualMestre(), 100 ) );
+		list.add( new ColumnConfig( CursoDTO.PROPERTY_MIN_TEMPO_INTEGRAL_PARCIAL, getI18nConstants().minTempoIntegralParcial(), 100 ) );
+		list.add( new ColumnConfig( CursoDTO.PROPERTY_MIN_TEMPO_INTEGRAL, getI18nConstants().minTempoIntegral(), 100 ) );
+		list.add( new ColumnConfig( CursoDTO.PROPERTY_MAX_DISCIPLINAS_PELO_PROFESSOR, getI18nConstants().maxDisciplinasProfessor(), 110 ) );
+		list.add( new CheckColumnConfig( CursoDTO.PROPERTY_ADM_MAIS_DE_UMA_DISCIPLINA, getI18nConstants().maisDeUmaDisciplinaProfessor(), 200 ) );
+
 		return list;
 	}
 

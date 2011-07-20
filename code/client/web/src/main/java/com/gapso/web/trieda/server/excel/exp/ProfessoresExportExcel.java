@@ -11,14 +11,13 @@ import com.gapso.trieda.domain.Professor;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nMessages;
+import com.gapso.web.trieda.shared.util.TriedaUtil;
 
 public class ProfessoresExportExcel extends AbstractExportExcel
 {
 	enum ExcelCellStyleReference
 	{
-		TEXT( 6, 2 ),
-		NUMBER_DOUBLE( 6, 10 ),
-		NUMBER_INT( 6, 5 );
+		TEXT(6, 2), NUMBER_DOUBLE(6, 10), NUMBER_INT(6, 5);
 		private int row;
 		private int col;
 
@@ -43,9 +42,9 @@ public class ProfessoresExportExcel extends AbstractExportExcel
 	private boolean removeUnusedSheets;
 	private String sheetName;
 	private int initialRow;
-	
+
 	public ProfessoresExportExcel( Cenario cenario,
-		TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages )
+			TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages )
 	{
 		super( cenario, i18nConstants, i18nMessages );
 
@@ -67,20 +66,17 @@ public class ProfessoresExportExcel extends AbstractExportExcel
 	}
 
 	@Override
-	public String getFileName()
-	{
+	public String getFileName() {
 		return getI18nConstants().professores();
 	}
 
 	@Override
-	protected String getPathExcelTemplate()
-	{
+	protected String getPathExcelTemplate() {
 		return "/templateExport.xls";
 	}
 
 	@Override
-	protected String getReportName()
-	{
+	protected String getReportName() {
 		return getI18nConstants().professores();
 	}
 
@@ -105,13 +101,9 @@ public class ProfessoresExportExcel extends AbstractExportExcel
 				nextRow = writeData( professor, nextRow, sheet );
 			}
 
-			// TODO: rever autoSize pois atualmente o
-			// algoritmo do poi interfere na largura do logo
-			//autoSizeColumns((short)1,(short)7,sheet);
-
 			return true;
 		}
-		
+
 		return false;
 	}
 
@@ -120,23 +112,54 @@ public class ProfessoresExportExcel extends AbstractExportExcel
 	private int writeData( Professor professor, int row, HSSFSheet sheet )
 	{
 		// CPF
-		setCell( row, 2, sheet, cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ], professor.getCpf() );
+		setCell( row, 2, sheet,
+				 cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ],
+				 professor.getCpf() );
+
 		// Nome
-		setCell( row,3,sheet,cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ], professor.getNome() );
+		setCell( row, 3, sheet,
+				 cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ],
+				 professor.getNome() );
+
 		// Tipo
-		setCell( row,4, sheet, cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ],professor.getTipoContrato().getNome() );
+		setCell( row, 4, sheet,
+				 cellStyles[ExcelCellStyleReference.TEXT.ordinal()],
+				 professor.getTipoContrato().getNome() );
+
 		// Carga Horária Máx
-		setCell( row,5, sheet, cellStyles[ ExcelCellStyleReference.NUMBER_INT.ordinal() ],professor.getCargaHorariaMax() );
+		setCell( row, 5, sheet,
+				 cellStyles[ ExcelCellStyleReference.NUMBER_INT.ordinal() ],
+				 professor.getCargaHorariaMax() );
+
 		// Carga Horária Min
-		setCell( row, 6, sheet,cellStyles[ ExcelCellStyleReference.NUMBER_INT.ordinal() ],professor.getCargaHorariaMin() );
+		setCell( row, 6, sheet,
+				 cellStyles[ ExcelCellStyleReference.NUMBER_INT.ordinal() ],
+				 professor.getCargaHorariaMin() );
+
 		// Titulação
-		setCell( row, 7, sheet,cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ], professor.getTitulacao().getNome() );
+		setCell( row, 7, sheet,
+				 cellStyles[ExcelCellStyleReference.TEXT.ordinal()],
+				 professor.getTitulacao().getNome() );
+
 		// Área de Titulação
-		setCell( row, 8, sheet,cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ], professor.getAreaTitulacao().getCodigo() );
+		setCell( row, 8, sheet,
+				 cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ],
+				 professor.getAreaTitulacao().getCodigo() );
+
+		// Nota de Desempenho
+		setCell( row, 9, sheet,
+				 cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ],
+				 TriedaUtil.getNotaDesempenhoProfessor( professor ) );
+
 		// Carga Horária Anterior
-		setCell( row, 9, sheet,cellStyles[ ExcelCellStyleReference.NUMBER_INT.ordinal() ], professor.getCreditoAnterior() );
+		setCell( row, 10, sheet,
+				 cellStyles[ ExcelCellStyleReference.NUMBER_INT.ordinal() ],
+				 professor.getCreditoAnterior() );
+
 		// Crédito (R$)
-		setCell( row, 10, sheet, cellStyles[ ExcelCellStyleReference.NUMBER_DOUBLE.ordinal() ], professor.getValorCredito() );
+		setCell( row, 11, sheet,
+				 cellStyles[ ExcelCellStyleReference.NUMBER_DOUBLE.ordinal() ],
+				 professor.getValorCredito() );
 
 		row++;
 		return row;
@@ -146,8 +169,8 @@ public class ProfessoresExportExcel extends AbstractExportExcel
 	{
 		for ( ExcelCellStyleReference cellStyleReference : ExcelCellStyleReference.values() )
 		{
-			cellStyles[ cellStyleReference.ordinal()] = getCell(
-					cellStyleReference.getRow(), cellStyleReference.getCol(), sheet ).getCellStyle();
+			cellStyles[ cellStyleReference.ordinal() ] = getCell( cellStyleReference.getRow(),
+				cellStyleReference.getCol(), sheet ).getCellStyle();
 		}
 	}
 }

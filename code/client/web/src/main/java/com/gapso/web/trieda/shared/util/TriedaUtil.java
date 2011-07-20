@@ -3,6 +3,8 @@ package com.gapso.web.trieda.shared.util;
 import java.util.Date;
 import java.util.List;
 
+import com.gapso.trieda.domain.Professor;
+import com.gapso.trieda.domain.ProfessorDisciplina;
 import com.gapso.web.trieda.main.client.TriedaCurrency;
 import com.google.gwt.user.client.Window.Location;
 
@@ -12,7 +14,7 @@ public class TriedaUtil
 	{
 		if ( precision != 0 )
 		{
-			double precisionFactor = precision * 10.0;
+			double precisionFactor = ( precision * 10.0 );
 			value = Math.round( value * precisionFactor );
 			return ( value / precisionFactor );
 		}
@@ -21,13 +23,14 @@ public class TriedaUtil
 	}
 
 	static public String truncate( String text, int max )
+	
 	{
 		return truncate( text, max, true );
 	}
 
 	static public String truncate( String text, int max, boolean etc )
 	{
-		if( max <= 0 )
+		if ( max <= 0 )
 		{
 			return text;
 		}
@@ -44,14 +47,15 @@ public class TriedaUtil
 
 		return ret;
 	}
-	
+
 	static public String financialFormatToDoubleFormat( String value )
 	{
 		boolean contemVirgula = value.contains( "," );
 		boolean contemPonto = value.contains( "." );
+
 		if ( contemVirgula && contemPonto )
 		{
-			value = value.replace(".","");
+			value = value.replace( ".", "" );
 		}
 
 		if ( contemVirgula )
@@ -64,7 +68,7 @@ public class TriedaUtil
 
 	static public boolean isBlank( String value )
 	{
-		return value == null || value == "";
+		return ( ( value == null ) || value == "");
 	}
 
 	static public boolean isBlank( Long value )
@@ -102,8 +106,8 @@ public class TriedaUtil
 
 	static public Double roundTwoDecimals( double d )
 	{
-	    long y = (long)( d * 100 );
-	    return ( (double)y/100 );
+		long y = (long)( d * 100 );
+		return ( (double) y / 100 );
 	}
 
 	@SuppressWarnings("deprecation")
@@ -131,24 +135,46 @@ public class TriedaUtil
 		return ( hour + ":" + minute );
 	}
 
-	static public TriedaCurrency parseTriedaCurrency(Double d) {
+	static public TriedaCurrency parseTriedaCurrency( Double d )
+	{
 		Double doubleValue = ( d == null ? 0.0 : d );
-		return new TriedaCurrency(doubleValue);
+		return new TriedaCurrency( doubleValue );
 	}
 
-	static public TriedaCurrency parseTriedaCurrency(Object o) {
+	static public TriedaCurrency parseTriedaCurrency( Object o )
+	{
 		String s = ( o == null ? "" : o.toString() );
-		return TriedaUtil.parseTriedaCurrency(s);
+		return TriedaUtil.parseTriedaCurrency( s );
 	}
 
-	static public TriedaCurrency parseTriedaCurrency(String s) {
+	static public TriedaCurrency parseTriedaCurrency( String s )
+	{
 		Double d = 0.0;
 		try
 		{
 			d = Double.parseDouble(s);
 		}
-		catch(Exception e) { d = 0.0; }
-		TriedaCurrency tc = new TriedaCurrency(d);
+		catch ( Exception e )
+		{
+			d = 0.0;
+		}
+
+		TriedaCurrency tc = new TriedaCurrency( d );
 		return tc;
+	}
+
+	static public Double getNotaDesempenhoProfessor(Professor p) {
+		if (p == null || p.getDisciplinas() == null
+				|| p.getDisciplinas().size() == 0) {
+			return 0.0;
+		}
+
+		Double sum = 0.0;
+		for (ProfessorDisciplina pd : p.getDisciplinas()) {
+			sum += pd.getNota();
+		}
+
+		Double average = sum / p.getDisciplinas().size();
+		return average;
 	}
 }

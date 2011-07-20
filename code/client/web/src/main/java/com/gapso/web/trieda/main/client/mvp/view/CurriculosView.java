@@ -25,7 +25,8 @@ import com.gapso.web.trieda.shared.util.view.SimpleFilter;
 import com.gapso.web.trieda.shared.util.view.SimpleGrid;
 import com.gapso.web.trieda.shared.util.view.SimpleToolBar;
 
-public class CurriculosView extends MyComposite implements CurriculosPresenter.Display {
+public class CurriculosView extends MyComposite implements
+		CurriculosPresenter.Display {
 
 	private SimpleToolBar toolBar;
 	private SimpleGrid<CurriculoDTO> gridPanel;
@@ -36,17 +37,18 @@ public class CurriculosView extends MyComposite implements CurriculosPresenter.D
 	private ContentPanel panel;
 	private GTabItem tabItem;
 	private Button associarDisciplinasBT;
-	
+
 	private CursoDTO cursoDTO;
-	
+
 	public CurriculosView() {
 		this(null);
 	}
+
 	public CurriculosView(CursoDTO cursoDTO) {
 		this.cursoDTO = cursoDTO;
 		initUI();
 	}
-	
+
 	private void initUI() {
 		panel = new ContentPanel(new BorderLayout());
 		panel.setHeading("Master Data » Matrizes Curriculares");
@@ -56,34 +58,39 @@ public class CurriculosView extends MyComposite implements CurriculosPresenter.D
 		createTabItem();
 		initComponent(tabItem);
 	}
-	
+
 	private void createTabItem() {
-		tabItem = new GTabItem("Matrizes Curriculares", Resources.DEFAULTS.matrizCurricular16());
+		tabItem = new GTabItem("Matrizes Curriculares",
+				Resources.DEFAULTS.matrizCurricular16());
 		tabItem.setContent(panel);
 	}
-	
+
 	private void createToolBar() {
 		toolBar = new SimpleToolBar(this);
 		toolBar.add(new SeparatorToolItem());
-		associarDisciplinasBT = toolBar.createButton("Associar Disciplinas", Resources.DEFAULTS.disciplina16());
+		associarDisciplinasBT = toolBar.createButton("Associar Disciplinas",
+				Resources.DEFAULTS.disciplina16());
 		toolBar.add(associarDisciplinasBT);
 		panel.setTopComponent(toolBar);
 	}
-	
+
 	private void createGrid() {
 		BorderLayoutData bld = new BorderLayoutData(LayoutRegion.CENTER);
-	    bld.setMargins(new Margins(5, 5, 5, 5));
-	    
-	    gridPanel = new SimpleGrid<CurriculoDTO>(getColumnList(), this);
-	    panel.add(gridPanel, bld);
+		bld.setMargins(new Margins(5, 5, 5, 5));
+
+		gridPanel = new SimpleGrid<CurriculoDTO>(getColumnList(), this);
+		panel.add(gridPanel, bld);
 	}
 
-	public List<ColumnConfig> getColumnList() {
-		List<ColumnConfig> list = new ArrayList<ColumnConfig>();
-		list.add(new ColumnConfig(CurriculoDTO.PROPERTY_CURSO_STRING, "Curso", 250));
-		list.add(new ColumnConfig(CurriculoDTO.PROPERTY_CODIGO, "Código", 100));
-		list.add(new ColumnConfig(CurriculoDTO.PROPERTY_DESCRICAO, "Descricao", 100));
-		list.add(new ColumnConfig(CurriculoDTO.PROPERTY_PERIODOS, "Períodos", 110));
+	public List<ColumnConfig> getColumnList()
+	{
+		List< ColumnConfig > list = new ArrayList< ColumnConfig >();
+
+		list.add( new ColumnConfig( CurriculoDTO.PROPERTY_CURSO_STRING, getI18nConstants().codigoCurso(), 250 ) );
+		list.add( new ColumnConfig( CurriculoDTO.PROPERTY_CODIGO, getI18nConstants().codigoCurriculo(), 100 ) );
+		list.add( new ColumnConfig( CurriculoDTO.PROPERTY_DESCRICAO, getI18nConstants().descricaoCurriculo(), 100 ) );
+		list.add( new ColumnConfig( CurriculoDTO.PROPERTY_PERIODOS, "Períodos", 110 ) );
+
 		return list;
 	}
 
@@ -91,7 +98,7 @@ public class CurriculosView extends MyComposite implements CurriculosPresenter.D
 		BorderLayoutData bld = new BorderLayoutData(LayoutRegion.EAST);
 		bld.setMargins(new Margins(5, 5, 5, 0));
 		bld.setCollapsible(true);
-		
+
 		filter = new SimpleFilter();
 		cursoBuscaComboBox = new CursoComboBox();
 		cursoBuscaComboBox.setFieldLabel("Curso");
@@ -100,14 +107,14 @@ public class CurriculosView extends MyComposite implements CurriculosPresenter.D
 		codigoBuscaTextField.setFieldLabel("Código");
 		descricaoBuscaTextField = new TextField<String>();
 		descricaoBuscaTextField.setFieldLabel("Descricao");
-		
+
 		filter.addField(cursoBuscaComboBox);
 		filter.addField(codigoBuscaTextField);
 		filter.addField(descricaoBuscaTextField);
-		
+
 		panel.add(filter, bld);
 	}
-	
+
 	@Override
 	public Button getNewButton() {
 		return toolBar.getNewButton();
@@ -132,12 +139,12 @@ public class CurriculosView extends MyComposite implements CurriculosPresenter.D
 	public Button getExportExcelButton() {
 		return toolBar.getExportExcelButton();
 	}
-	
+
 	@Override
 	public SimpleGrid<CurriculoDTO> getGrid() {
 		return gridPanel;
 	}
-	
+
 	@Override
 	public void setProxy(RpcProxy<PagingLoadResult<CurriculoDTO>> proxy) {
 		gridPanel.setProxy(proxy);
@@ -152,7 +159,7 @@ public class CurriculosView extends MyComposite implements CurriculosPresenter.D
 	public TextField<String> getCodigoBuscaTextField() {
 		return codigoBuscaTextField;
 	}
-	
+
 	@Override
 	public CursoComboBox getCursoBuscaComboBox() {
 		return cursoBuscaComboBox;

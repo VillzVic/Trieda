@@ -19,7 +19,8 @@ import com.gapso.web.trieda.shared.util.view.TipoDisciplinaComboBox;
 import com.gapso.web.trieda.shared.util.view.UniqueDomain;
 import com.gapso.web.trieda.shared.util.view.UniqueTextField;
 
-public class DisciplinaFormView extends MyComposite implements DisciplinaFormPresenter.Display {
+public class DisciplinaFormView extends MyComposite implements
+		DisciplinaFormPresenter.Display {
 
 	private SimpleModal simpleModal;
 	private FormPanel formPanel;
@@ -39,18 +40,18 @@ public class DisciplinaFormView extends MyComposite implements DisciplinaFormPre
 	public DisciplinaFormView(CenarioDTO cenarioDTO) {
 		this(new DisciplinaDTO(), null, cenarioDTO);
 	}
-	public DisciplinaFormView(DisciplinaDTO disciplinaDTO, TipoDisciplinaDTO tipoDisciplinaDTO, CenarioDTO cenarioDTO) {
+
+	public DisciplinaFormView(DisciplinaDTO disciplinaDTO,
+			TipoDisciplinaDTO tipoDisciplinaDTO, CenarioDTO cenarioDTO) {
 		this.disciplinaDTO = disciplinaDTO;
 		this.tipoDisciplinaDTO = tipoDisciplinaDTO;
 		this.cenarioDTO = cenarioDTO;
 		initUI();
-		// TODO
-//		initComponent(simpleModal);
-//		setParent(null);
 	}
-	
+
 	private void initUI() {
-		String title = (disciplinaDTO.getId() == null)? "Inserção de Disciplina" : "Edição de Disciplina";
+		String title = (disciplinaDTO.getId() == null) ? "Inserção de Disciplina"
+				: "Edição de Disciplina";
 		simpleModal = new SimpleModal(title, Resources.DEFAULTS.disciplina16());
 		simpleModal.setHeight(400);
 		createForm();
@@ -61,7 +62,7 @@ public class DisciplinaFormView extends MyComposite implements DisciplinaFormPre
 		FormData formData = new FormData("-20");
 		formPanel = new FormPanel();
 		formPanel.setHeaderVisible(false);
-		
+
 		codigoTF = new UniqueTextField(cenarioDTO, UniqueDomain.DISCIPLINA);
 		codigoTF.setName(DisciplinaDTO.PROPERTY_CODIGO);
 		codigoTF.setValue(disciplinaDTO.getCodigo());
@@ -71,7 +72,7 @@ public class DisciplinaFormView extends MyComposite implements DisciplinaFormPre
 		codigoTF.setMaxLength(20);
 		codigoTF.setEmptyText("Preencha o código");
 		formPanel.add(codigoTF, formData);
-		
+
 		nomeTF = new TextField<String>();
 		nomeTF.setName(DisciplinaDTO.PROPERTY_NOME);
 		nomeTF.setValue(disciplinaDTO.getNome());
@@ -81,7 +82,7 @@ public class DisciplinaFormView extends MyComposite implements DisciplinaFormPre
 		nomeTF.setMaxLength(50);
 		nomeTF.setEmptyText("Preencha o nome");
 		formPanel.add(nomeTF, formData);
-		
+
 		creditosTeoricoTF = new NumberField();
 		creditosTeoricoTF.setName(DisciplinaDTO.PROPERTY_CREDITOS_TEORICO);
 		creditosTeoricoTF.setValue(disciplinaDTO.getCreditosTeorico());
@@ -89,9 +90,10 @@ public class DisciplinaFormView extends MyComposite implements DisciplinaFormPre
 		creditosTeoricoTF.setAllowBlank(false);
 		creditosTeoricoTF.setAllowDecimals(false);
 		creditosTeoricoTF.setMaxValue(99);
-		creditosTeoricoTF.setEmptyText("Preencha a quantidade de créditos teóricos");
+		creditosTeoricoTF
+				.setEmptyText("Preencha a quantidade de créditos teóricos");
 		formPanel.add(creditosTeoricoTF, formData);
-		
+
 		creditosPraticoTF = new NumberField();
 		creditosPraticoTF.setName(DisciplinaDTO.PROPERTY_CREDITOS_PRATICO);
 		creditosPraticoTF.setValue(disciplinaDTO.getCreditosPratico());
@@ -99,15 +101,16 @@ public class DisciplinaFormView extends MyComposite implements DisciplinaFormPre
 		creditosPraticoTF.setAllowBlank(false);
 		creditosPraticoTF.setAllowDecimals(false);
 		creditosPraticoTF.setMaxValue(99);
-		creditosPraticoTF.setEmptyText("Preencha a quantidade de créditos práticos");
+		creditosPraticoTF
+				.setEmptyText("Preencha a quantidade de créditos práticos");
 		formPanel.add(creditosPraticoTF, formData);
-		
+
 		laboratorioCB = new CheckBox();
 		laboratorioCB.setName(DisciplinaDTO.PROPERTY_LABORATORIO);
 		laboratorioCB.setValue(disciplinaDTO.getLaboratorio());
 		laboratorioCB.setFieldLabel("Usa Laboratório");
 		formPanel.add(laboratorioCB, formData);
-		
+
 		tipoDisciplinaCB = new TipoDisciplinaComboBox();
 		tipoDisciplinaCB.setName("tipoDisciplina");
 		tipoDisciplinaCB.setFieldLabel("Tipo de Disciplina");
@@ -115,7 +118,7 @@ public class DisciplinaFormView extends MyComposite implements DisciplinaFormPre
 		tipoDisciplinaCB.setValue(tipoDisciplinaDTO);
 		tipoDisciplinaCB.setEmptyText("Selecione o tipo de disciplina");
 		formPanel.add(tipoDisciplinaCB, formData);
-		
+
 		dificuldadeCB = new DificuldadeComboBox();
 		dificuldadeCB.setName("dificuldade");
 		dificuldadeCB.setFieldLabel("Nível de Dificuldade");
@@ -123,7 +126,7 @@ public class DisciplinaFormView extends MyComposite implements DisciplinaFormPre
 		dificuldadeCB.setValue(disciplinaDTO.getDificuldade());
 		dificuldadeCB.setEmptyText("Selecione o nível de dificuldade");
 		formPanel.add(dificuldadeCB, formData);
-		
+
 		maxAlunosTeoricoTF = new NumberField();
 		maxAlunosTeoricoTF.setName(DisciplinaDTO.PROPERTY_MAX_ALUNOS_TEORICO);
 		maxAlunosTeoricoTF.setValue(disciplinaDTO.getMaxAlunosTeorico());
@@ -131,9 +134,10 @@ public class DisciplinaFormView extends MyComposite implements DisciplinaFormPre
 		maxAlunosTeoricoTF.setAllowBlank(false);
 		maxAlunosTeoricoTF.setAllowDecimals(false);
 		maxAlunosTeoricoTF.setMaxValue(999);
-		maxAlunosTeoricoTF.setEmptyText("Preencha o número máximo de alunos teóricos");
+		maxAlunosTeoricoTF
+				.setEmptyText("Preencha o número máximo de alunos teóricos");
 		formPanel.add(maxAlunosTeoricoTF, formData);
-		
+
 		maxAlunosPraticoTF = new NumberField();
 		maxAlunosPraticoTF.setName(DisciplinaDTO.PROPERTY_MAX_ALUNOS_PRATICO);
 		maxAlunosPraticoTF.setValue(disciplinaDTO.getMaxAlunosPratico());
@@ -141,19 +145,20 @@ public class DisciplinaFormView extends MyComposite implements DisciplinaFormPre
 		maxAlunosPraticoTF.setAllowBlank(false);
 		maxAlunosPraticoTF.setAllowDecimals(false);
 		maxAlunosPraticoTF.setMaxValue(999);
-		maxAlunosPraticoTF.setEmptyText("Preencha o número máximo de alunos práticos");
+		maxAlunosPraticoTF
+				.setEmptyText("Preencha o número máximo de alunos práticos");
 		formPanel.add(maxAlunosPraticoTF, formData);
-		
+
 		FormButtonBinding binding = new FormButtonBinding(formPanel);
 		binding.addButton(simpleModal.getSalvarBt());
-		
+
 		simpleModal.setFocusWidget(codigoTF);
 	}
-	
+
 	public boolean isValid() {
 		return formPanel.isValid();
 	}
-	
+
 	@Override
 	public Button getSalvarButton() {
 		return simpleModal.getSalvarBt();
@@ -163,7 +168,7 @@ public class DisciplinaFormView extends MyComposite implements DisciplinaFormPre
 	public TextField<String> getNomeTextField() {
 		return nomeTF;
 	}
-	
+
 	@Override
 	public SimpleModal getSimpleModal() {
 		return simpleModal;

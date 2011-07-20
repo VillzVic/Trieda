@@ -15,7 +15,8 @@ import com.gapso.web.trieda.shared.mvp.view.MyComposite;
 import com.gapso.web.trieda.shared.util.resources.Resources;
 import com.gapso.web.trieda.shared.util.view.SimpleModal;
 
-public class CenarioCloneFormView extends MyComposite implements CenarioCloneFormPresenter.Display {
+public class CenarioCloneFormView extends MyComposite implements
+		CenarioCloneFormPresenter.Display {
 
 	private SimpleModal simpleModal;
 	private FormPanel formPanel;
@@ -25,18 +26,16 @@ public class CenarioCloneFormView extends MyComposite implements CenarioCloneFor
 	private NumberField semestreTF;
 	private TextField<String> comentarioTF;
 	private CenarioDTO cenarioDTO;
-	
+
 	public CenarioCloneFormView(CenarioDTO cenarioDTO) {
 		this.cenarioDTO = cenarioDTO;
 		initUI();
-		// TODO
-//		initComponent(simpleModal);
-//		setParent(null);
 	}
-	
+
 	private void initUI() {
 		String title = "Clonar Cenário";
-		simpleModal = new SimpleModal(title, Resources.DEFAULTS.cenarioClonar16());
+		simpleModal = new SimpleModal(title,
+				Resources.DEFAULTS.cenarioClonar16());
 		simpleModal.setHeight(220);
 		createForm();
 		simpleModal.setContent(formPanel);
@@ -47,11 +46,11 @@ public class CenarioCloneFormView extends MyComposite implements CenarioCloneFor
 
 		FormLayout formLayout = new FormLayout(LabelAlign.RIGHT);
 		formLayout.setLabelWidth(75);
-		
+
 		formPanel = new FormPanel();
 		formPanel.setHeaderVisible(false);
 		formPanel.setLayout(formLayout);
-		
+
 		nomeTF = new TextField<String>();
 		nomeTF.setName(CenarioDTO.PROPERTY_NOME);
 		nomeTF.setValue(cenarioDTO.getNome());
@@ -61,13 +60,13 @@ public class CenarioCloneFormView extends MyComposite implements CenarioCloneFor
 		nomeTF.setMaxLength(50);
 		nomeTF.setEmptyText("Preencha o nome");
 		formPanel.add(nomeTF, formData);
-		
+
 		oficialCB = new CheckBox();
 		oficialCB.setName(CenarioDTO.PROPERTY_OFICIAL);
 		oficialCB.setValue(cenarioDTO.getOficial());
 		oficialCB.setFieldLabel("Oficial");
 		formPanel.add(oficialCB, formData);
-		
+
 		anoTF = new NumberField();
 		anoTF.setName(CenarioDTO.PROPERTY_ANO);
 		anoTF.setValue(cenarioDTO.getAno());
@@ -78,7 +77,7 @@ public class CenarioCloneFormView extends MyComposite implements CenarioCloneFor
 		anoTF.setMaxValue(9999);
 		anoTF.setEmptyText("Preencha o ano letívo");
 		formPanel.add(anoTF, formData);
-		
+
 		semestreTF = new NumberField();
 		semestreTF.setName(CenarioDTO.PROPERTY_SEMESTRE);
 		semestreTF.setValue(cenarioDTO.getSemestre());
@@ -97,17 +96,17 @@ public class CenarioCloneFormView extends MyComposite implements CenarioCloneFor
 		comentarioTF.setMaxLength(255);
 		comentarioTF.setEmptyText("Preencha um comentário");
 		formPanel.add(comentarioTF, formData);
-		
+
 		FormButtonBinding binding = new FormButtonBinding(formPanel);
 		binding.addButton(simpleModal.getSalvarBt());
-		
+
 		simpleModal.setFocusWidget(nomeTF);
 	}
-	
+
 	public boolean isValid() {
 		return formPanel.isValid();
 	}
-	
+
 	@Override
 	public Button getSalvarButton() {
 		return simpleModal.getSalvarBt();
@@ -117,27 +116,27 @@ public class CenarioCloneFormView extends MyComposite implements CenarioCloneFor
 	public SimpleModal getSimpleModal() {
 		return simpleModal;
 	}
-	
+
 	@Override
 	public CheckBox getOficialCheckBox() {
 		return oficialCB;
 	}
-	
+
 	@Override
 	public TextField<String> getNomeTextField() {
 		return nomeTF;
 	}
-	
+
 	@Override
 	public NumberField getAnoTextField() {
 		return anoTF;
 	}
-	
+
 	@Override
 	public NumberField getSemestreTextField() {
 		return semestreTF;
 	}
-	
+
 	@Override
 	public TextField<String> getComentarioTextField() {
 		return comentarioTF;

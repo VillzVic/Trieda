@@ -14,11 +14,20 @@ public interface TriedaI18nConstants extends Constants {
 	String campiTrabalho();
 	String campus();
 	String capacidade();
+	String capacidadeAlunos();
 	String capacidadeMediaSalas();
 	String cargaHorariaAnterior();
 	String cargaHorariaMax();
 	String cargaHorariaMin();
 	String codigo();
+	String codigoAreaTitulacao();
+	String codigoCampus();
+	String codigoCurriculo();
+	String codigoCurso();
+	String codigoDisciplina();
+	String codigoMatrizCurricular();
+	String codigoSala();
+	String codigoUnidade();
 	String confirmacao();
 	String cpf();
 	String creditos();
@@ -34,6 +43,7 @@ public interface TriedaI18nConstants extends Constants {
 	String custoMedioCreditoExcel();
 	String demandaDeAlunos();
 	String descricao();
+	String descricaoCurriculo();
 	String deslocamentoUnidades();
 	String deslocamentoUnidadesCampus();
 	String disciplina();
@@ -68,6 +78,9 @@ public interface TriedaI18nConstants extends Constants {
 	String nao();
 	String nivelDificuldade();
 	String nome();
+	String nomeCurso();
+	String nomeDisciplina();
+	String nomeProfessor();
 	String notaDesempenho();
 	String numero();
 	String ofertasEDemandas();
@@ -96,6 +109,7 @@ public interface TriedaI18nConstants extends Constants {
 	String sim();
 	String teorico();
 	String tipo();
+	String tipoCurso();
 	String tipoContrato();
 	String TipoCredito();
 	String titulacao();
@@ -111,4 +125,5 @@ public interface TriedaI18nConstants extends Constants {
 	String valorCredito();
 	String otimizadoTatico();
 	String otimizadoOperacional();
+	String tipoDisciplina();
 }

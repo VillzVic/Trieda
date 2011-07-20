@@ -32,7 +32,8 @@ import com.gapso.web.trieda.shared.util.view.SemanaLetivaDoCenarioGrid;
 import com.gapso.web.trieda.shared.util.view.SimpleModal;
 import com.gapso.web.trieda.shared.util.view.UnidadeComboBox;
 
-public class FixacaoFormView extends MyComposite implements FixacaoFormPresenter.Display {
+public class FixacaoFormView extends MyComposite implements
+		FixacaoFormPresenter.Display {
 
 	private SimpleModal simpleModal;
 	private LayoutContainer container;
@@ -46,7 +47,7 @@ public class FixacaoFormView extends MyComposite implements FixacaoFormPresenter
 	private SalaComboBox salaCB;
 	private SemanaLetivaDoCenarioGrid<HorarioDisponivelCenarioDTO> grid;
 	private boolean selectDefault;
-	
+
 	private FixacaoDTO fixacaoDTO;
 	private ProfessorDTO professorDTO;
 	private DisciplinaDTO disciplinaDTO;
@@ -54,24 +55,27 @@ public class FixacaoFormView extends MyComposite implements FixacaoFormPresenter
 	private UnidadeDTO unidadeDTO;
 	private SalaDTO salaDTO;
 	private List<HorarioDisponivelCenarioDTO> listHorarios;
-	
-	public FixacaoFormView(FixacaoDTO fixacaoDTO, ProfessorDTO professorDTO, DisciplinaDTO disciplinaDTO, CampusDTO campusDTO, UnidadeDTO unidadeDTO, SalaDTO salaDTO, List<HorarioDisponivelCenarioDTO> listHorarios, Boolean selectDefault) {
+
+	public FixacaoFormView(FixacaoDTO fixacaoDTO, ProfessorDTO professorDTO,
+			DisciplinaDTO disciplinaDTO, CampusDTO campusDTO,
+			UnidadeDTO unidadeDTO, SalaDTO salaDTO,
+			List<HorarioDisponivelCenarioDTO> listHorarios,
+			Boolean selectDefault) {
 		this.fixacaoDTO = fixacaoDTO;
 		this.professorDTO = professorDTO;
 		this.disciplinaDTO = disciplinaDTO;
 		this.campusDTO = campusDTO;
 		this.unidadeDTO = unidadeDTO;
 		this.salaDTO = salaDTO;
-		this.listHorarios = (listHorarios == null)? new ArrayList<HorarioDisponivelCenarioDTO>() : listHorarios;
+		this.listHorarios = (listHorarios == null) ? new ArrayList<HorarioDisponivelCenarioDTO>()
+				: listHorarios;
 		this.selectDefault = selectDefault;
 		initUI();
-		// TODO
-//		initComponent(simpleModal);
-//		setParent(null);
 	}
-	
+
 	private void initUI() {
-		String title = (fixacaoDTO.getId() == null)? "Inserção de Fixação" : "Edição de Fixação";
+		String title = (fixacaoDTO.getId() == null) ? "Inserção de Fixação"
+				: "Edição de Fixação";
 		simpleModal = new SimpleModal(title, Resources.DEFAULTS.fixacao16());
 		simpleModal.setHeight(500);
 		simpleModal.setWidth(617);
@@ -81,15 +85,15 @@ public class FixacaoFormView extends MyComposite implements FixacaoFormPresenter
 
 	private void createForm() {
 		container = new LayoutContainer();
-		VBoxLayout layout = new VBoxLayout();  
-		layout.setPadding(new Padding(5));  
-		layout.setVBoxLayoutAlign(VBoxLayoutAlign.STRETCH);  
-		container.setLayout(layout);  
-		
+		VBoxLayout layout = new VBoxLayout();
+		layout.setPadding(new Padding(5));
+		layout.setVBoxLayoutAlign(VBoxLayoutAlign.STRETCH);
+		container.setLayout(layout);
+
 		FormData formData = new FormData("-20");
 		formPanel = new FormPanel();
 		formPanel.setHeaderVisible(false);
-		
+
 		codigoTF = new TextField<String>();
 		codigoTF.setName(FixacaoDTO.PROPERTY_CODIGO);
 		codigoTF.setValue(fixacaoDTO.getCodigo());
@@ -99,7 +103,7 @@ public class FixacaoFormView extends MyComposite implements FixacaoFormPresenter
 		codigoTF.setMaxLength(50);
 		codigoTF.setEmptyText("Preencha o código");
 		formPanel.add(codigoTF, formData);
-		
+
 		descricaoTF = new TextField<String>();
 		descricaoTF.setName(FixacaoDTO.PROPERTY_DESCRICAO);
 		descricaoTF.setValue(fixacaoDTO.getDescricao());
@@ -109,55 +113,56 @@ public class FixacaoFormView extends MyComposite implements FixacaoFormPresenter
 		descricaoTF.setMaxLength(50);
 		descricaoTF.setEmptyText("Preencha a descrição");
 		formPanel.add(descricaoTF, formData);
-		
+
 		professorCB = new ProfessorComboBox();
 		professorCB.setValue(professorDTO);
 		formPanel.add(professorCB, formData);
-		
+
 		disciplinaCB = new DisciplinaComboBox();
 		disciplinaCB.setValue(disciplinaDTO);
 		formPanel.add(disciplinaCB, formData);
-		
+
 		campusCB = new CampusComboBox();
 		campusCB.setValue(campusDTO);
 		formPanel.add(campusCB, formData);
-		
+
 		unidadeCB = new UnidadeComboBox(campusCB);
 		unidadeCB.setValue(unidadeDTO);
 		formPanel.add(unidadeCB, formData);
-		
+
 		salaCB = new SalaComboBox(unidadeCB);
 		salaCB.setValue(salaDTO);
 		formPanel.add(salaCB, formData);
-		
-		grid = new SemanaLetivaDoCenarioGrid<HorarioDisponivelCenarioDTO>(listHorarios,HorarioDisponivelCenarioDTO.PROPERTY_ID);
+
+		grid = new SemanaLetivaDoCenarioGrid<HorarioDisponivelCenarioDTO>(
+				listHorarios, HorarioDisponivelCenarioDTO.PROPERTY_ID);
 		grid.setSelectDefault(selectDefault);
-		
+
 		container.add(formPanel, new VBoxLayoutData(new Margins(0, 0, 5, 0)));
-		VBoxLayoutData flex = new VBoxLayoutData(new Margins(0));  
-		flex.setFlex(1);  
+		VBoxLayoutData flex = new VBoxLayoutData(new Margins(0));
+		flex.setFlex(1);
 		container.add(grid, flex);
-		
+
 		FormButtonBinding binding = new FormButtonBinding(formPanel);
 		binding.addButton(simpleModal.getSalvarBt());
-		
+
 		simpleModal.setFocusWidget(codigoTF);
 	}
-	
+
 	public boolean isValid() {
 		return formPanel.isValid();
 	}
-	
+
 	@Override
 	public Button getSalvarButton() {
 		return simpleModal.getSalvarBt();
 	}
-	
+
 	@Override
 	public SimpleModal getSimpleModal() {
 		return simpleModal;
 	}
-	
+
 	@Override
 	public FixacaoDTO getFixacaoDTO() {
 		return fixacaoDTO;
@@ -167,32 +172,32 @@ public class FixacaoFormView extends MyComposite implements FixacaoFormPresenter
 	public TextField<String> getCodigoTextField() {
 		return codigoTF;
 	}
-	
+
 	@Override
 	public TextField<String> getDescricaoTextField() {
 		return descricaoTF;
 	}
-	
+
 	@Override
 	public ProfessorComboBox getProfessorComboBox() {
 		return professorCB;
 	}
-	
+
 	@Override
 	public DisciplinaComboBox getDisciplinaComboBox() {
 		return disciplinaCB;
 	}
-	
+
 	@Override
 	public CampusComboBox getCampusComboBox() {
 		return campusCB;
 	}
-	
+
 	@Override
 	public UnidadeComboBox getUnidadeComboBox() {
 		return unidadeCB;
 	}
-	
+
 	@Override
 	public SalaComboBox getSalaComboBox() {
 		return salaCB;

@@ -94,7 +94,7 @@ public class CampiView extends MyComposite
 	{
 		List< ColumnConfig > list = new ArrayList< ColumnConfig >();
 
-		list.add( new ColumnConfig( CampusDTO.PROPERTY_CODIGO, getI18nConstants().codigo(), 100 ) );
+		list.add( new ColumnConfig( CampusDTO.PROPERTY_CODIGO, getI18nConstants().codigoCampus(), 100 ) );
 		list.add( new ColumnConfig( CampusDTO.PROPERTY_NOME, getI18nConstants().nome(), 100 ) );
 		list.add( new ColumnConfig( CampusDTO.PROPERTY_VALOR_CREDITO, getI18nConstants().custoMedioCredito(), 170 ) );
 		list.add( new ColumnConfig( CampusDTO.PROPERTY_ESTADO, getI18nConstants().estado(), 100 ) );

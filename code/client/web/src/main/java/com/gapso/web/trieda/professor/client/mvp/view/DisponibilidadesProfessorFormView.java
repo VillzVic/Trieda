@@ -16,25 +16,26 @@ import com.gapso.web.trieda.shared.util.resources.Resources;
 import com.gapso.web.trieda.shared.util.view.SemanaLetivaDoCenarioGrid;
 import com.gapso.web.trieda.shared.util.view.SimpleModal;
 
-public class DisponibilidadesProfessorFormView extends MyComposite implements DisponibilidadesProfessorFormPresenter.Display {
+public class DisponibilidadesProfessorFormView extends MyComposite implements
+		DisponibilidadesProfessorFormPresenter.Display {
 
 	private SimpleModal simpleModal;
 	private ContentPanel contentPanel;
 	private SemanaLetivaDoCenarioGrid<HorarioDisponivelCenarioDTO> gridPanel;
 	private List<HorarioDisponivelCenarioDTO> horariosDisponiveisProfessor;
 	private ProfessorDTO professorDTO;
-	
-	public DisponibilidadesProfessorFormView(ProfessorDTO professorDTO, List<HorarioDisponivelCenarioDTO> horariosDisponiveisProfessor) {
+
+	public DisponibilidadesProfessorFormView(ProfessorDTO professorDTO,
+			List<HorarioDisponivelCenarioDTO> horariosDisponiveisProfessor) {
 		this.professorDTO = professorDTO;
 		this.horariosDisponiveisProfessor = horariosDisponiveisProfessor;
 		initUI();
 		createGrid();
-		// TODO
-//		initComponent(simpleModal);
 	}
-	
+
 	private void initUI() {
-		simpleModal = new SimpleModal("Disponibilidade de Professor (" + professorDTO.getCpf() + ")", Resources.DEFAULTS.professor16());
+		simpleModal = new SimpleModal("Disponibilidade de Professor ("
+				+ professorDTO.getCpf() + ")", Resources.DEFAULTS.professor16());
 		simpleModal.setHeight(500);
 		simpleModal.setWidth(600);
 	}
@@ -43,8 +44,10 @@ public class DisponibilidadesProfessorFormView extends MyComposite implements Di
 		contentPanel = new ContentPanel(new FitLayout());
 		contentPanel.setHeaderVisible(false);
 		contentPanel.setBodyBorder(false);
-	    gridPanel = new SemanaLetivaDoCenarioGrid<HorarioDisponivelCenarioDTO>(horariosDisponiveisProfessor,HorarioDisponivelCenarioDTO.PROPERTY_ID);
-	    contentPanel.add(gridPanel);
+		gridPanel = new SemanaLetivaDoCenarioGrid<HorarioDisponivelCenarioDTO>(
+				horariosDisponiveisProfessor,
+				HorarioDisponivelCenarioDTO.PROPERTY_ID);
+		contentPanel.add(gridPanel);
 		simpleModal.setContent(contentPanel);
 	}
 
@@ -64,7 +67,8 @@ public class DisponibilidadesProfessorFormView extends MyComposite implements Di
 	}
 
 	@Override
-	public void setProxy(RpcProxy<PagingLoadResult<HorarioDisponivelCenarioDTO>> proxy) {
+	public void setProxy(
+			RpcProxy<PagingLoadResult<HorarioDisponivelCenarioDTO>> proxy) {
 		gridPanel.setProxy(proxy);
 	}
 
@@ -72,7 +76,5 @@ public class DisponibilidadesProfessorFormView extends MyComposite implements Di
 	public ListStore<HorarioDisponivelCenarioDTO> getStore() {
 		return gridPanel.getStore();
 	}
-
-	
 
 }

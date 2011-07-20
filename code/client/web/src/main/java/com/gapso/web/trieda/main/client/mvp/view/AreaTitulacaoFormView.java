@@ -11,25 +11,25 @@ import com.gapso.web.trieda.shared.mvp.view.MyComposite;
 import com.gapso.web.trieda.shared.util.resources.Resources;
 import com.gapso.web.trieda.shared.util.view.SimpleModal;
 
-public class AreaTitulacaoFormView extends MyComposite implements AreaTitulacaoFormPresenter.Display {
+public class AreaTitulacaoFormView extends MyComposite implements
+		AreaTitulacaoFormPresenter.Display {
 
 	private SimpleModal simpleModal;
 	private FormPanel formPanel;
 	private TextField<String> codigoTF;
 	private TextField<String> descricaoTF;
 	private AreaTitulacaoDTO areaTitulacaoDTO;
-	
+
 	public AreaTitulacaoFormView(AreaTitulacaoDTO areaTitulacaoDTO) {
 		this.areaTitulacaoDTO = areaTitulacaoDTO;
 		initUI();
-		// TODO
-//		initComponent(simpleModal);
-//		setParent(null);
 	}
-	
+
 	private void initUI() {
-		String title = (areaTitulacaoDTO.getId() == null)? "Inserção de Área de Titulação" : "Edição de Área de Titulação";
-		simpleModal = new SimpleModal(title, Resources.DEFAULTS.areaTitulacao16());
+		String title = (areaTitulacaoDTO.getId() == null) ? "Inserção de Área de Titulação"
+				: "Edição de Área de Titulação";
+		simpleModal = new SimpleModal(title,
+				Resources.DEFAULTS.areaTitulacao16());
 		simpleModal.setHeight(138);
 		createForm();
 		simpleModal.setContent(formPanel);
@@ -39,7 +39,7 @@ public class AreaTitulacaoFormView extends MyComposite implements AreaTitulacaoF
 		FormData formData = new FormData("-20");
 		formPanel = new FormPanel();
 		formPanel.setHeaderVisible(false);
-		
+
 		codigoTF = new TextField<String>();
 		codigoTF.setName(AreaTitulacaoDTO.PROPERTY_CODIGO);
 		codigoTF.setValue(areaTitulacaoDTO.getCodigo());
@@ -48,7 +48,7 @@ public class AreaTitulacaoFormView extends MyComposite implements AreaTitulacaoF
 		codigoTF.setMaxLength(50);
 		codigoTF.setEmptyText("Preencha o código");
 		formPanel.add(codigoTF, formData);
-		
+
 		descricaoTF = new TextField<String>();
 		descricaoTF.setName(AreaTitulacaoDTO.PROPERTY_DESCRICAO);
 		descricaoTF.setValue(areaTitulacaoDTO.getDescricao());
@@ -56,17 +56,17 @@ public class AreaTitulacaoFormView extends MyComposite implements AreaTitulacaoF
 		descricaoTF.setMaxLength(255);
 		descricaoTF.setEmptyText("Preencha a descrição");
 		formPanel.add(descricaoTF, formData);
-		
+
 		FormButtonBinding binding = new FormButtonBinding(formPanel);
 		binding.addButton(simpleModal.getSalvarBt());
-		
+
 		simpleModal.setFocusWidget(codigoTF);
 	}
-	
+
 	public boolean isValid() {
 		return formPanel.isValid();
 	}
-	
+
 	@Override
 	public Button getSalvarButton() {
 		return simpleModal.getSalvarBt();
@@ -76,7 +76,7 @@ public class AreaTitulacaoFormView extends MyComposite implements AreaTitulacaoF
 	public TextField<String> getCodigoTextField() {
 		return codigoTF;
 	}
-	
+
 	@Override
 	public SimpleModal getSimpleModal() {
 		return simpleModal;
@@ -91,6 +91,5 @@ public class AreaTitulacaoFormView extends MyComposite implements AreaTitulacaoF
 	public AreaTitulacaoDTO getAreaTitulacaoDTO() {
 		return areaTitulacaoDTO;
 	}
-	
 
 }

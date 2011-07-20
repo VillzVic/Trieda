@@ -16,7 +16,8 @@ import com.gapso.web.trieda.shared.util.view.SimpleModal;
 import com.gapso.web.trieda.shared.util.view.UniqueDomain;
 import com.gapso.web.trieda.shared.util.view.UniqueTextField;
 
-public class CurriculoFormView extends MyComposite implements CurriculoFormPresenter.Display {
+public class CurriculoFormView extends MyComposite implements
+		CurriculoFormPresenter.Display {
 
 	private SimpleModal simpleModal;
 	private FormPanel formPanel;
@@ -26,20 +27,20 @@ public class CurriculoFormView extends MyComposite implements CurriculoFormPrese
 	private CurriculoDTO curriculoDTO;
 	private CursoDTO cursoDTO;
 	private CenarioDTO cenarioDTO;
-	
-	public CurriculoFormView(CurriculoDTO curriculoDTO, CursoDTO cursoDTO, CenarioDTO cenarioDTO) {
+
+	public CurriculoFormView(CurriculoDTO curriculoDTO, CursoDTO cursoDTO,
+			CenarioDTO cenarioDTO) {
 		this.curriculoDTO = curriculoDTO;
 		this.cursoDTO = cursoDTO;
 		this.cenarioDTO = cenarioDTO;
 		initUI();
-		// TODO
-//		initComponent(simpleModal);
-//		setParent(null);
 	}
-	
+
 	private void initUI() {
-		String title = (curriculoDTO.getId() == null)? "Inserção de Matriz Curricular" : "Edição de Matriz Curricular";
-		simpleModal = new SimpleModal(title, Resources.DEFAULTS.matrizCurricular16());
+		String title = (curriculoDTO.getId() == null) ? "Inserção de Matriz Curricular"
+				: "Edição de Matriz Curricular";
+		simpleModal = new SimpleModal(title,
+				Resources.DEFAULTS.matrizCurricular16());
 		simpleModal.setHeight(160);
 		createForm();
 		simpleModal.setContent(formPanel);
@@ -49,8 +50,9 @@ public class CurriculoFormView extends MyComposite implements CurriculoFormPrese
 		FormData formData = new FormData("-20");
 		formPanel = new FormPanel();
 		formPanel.setHeaderVisible(false);
-		
-		codigoTF = new UniqueTextField(cenarioDTO, UniqueDomain.MATRIZ_CURRICULAR);
+
+		codigoTF = new UniqueTextField(cenarioDTO,
+				UniqueDomain.MATRIZ_CURRICULAR);
 		codigoTF.setName(CurriculoDTO.PROPERTY_CODIGO);
 		codigoTF.setValue(curriculoDTO.getCodigo());
 		codigoTF.setFieldLabel("Código");
@@ -59,7 +61,7 @@ public class CurriculoFormView extends MyComposite implements CurriculoFormPrese
 		codigoTF.setMaxLength(20);
 		codigoTF.setEmptyText("Preencha o código");
 		formPanel.add(codigoTF, formData);
-		
+
 		cursoCB = new CursoComboBox();
 		cursoCB.setName("curso");
 		cursoCB.setFieldLabel("Curso");
@@ -67,7 +69,7 @@ public class CurriculoFormView extends MyComposite implements CurriculoFormPrese
 		cursoCB.setValue(cursoDTO);
 		cursoCB.setEmptyText("Selecione o curso");
 		formPanel.add(cursoCB, formData);
-		
+
 		descricaoTF = new TextField<String>();
 		descricaoTF.setName(CurriculoDTO.PROPERTY_DESCRICAO);
 		descricaoTF.setValue(curriculoDTO.getDescricao());
@@ -77,17 +79,17 @@ public class CurriculoFormView extends MyComposite implements CurriculoFormPrese
 		descricaoTF.setMaxLength(20);
 		descricaoTF.setEmptyText("Preencha um comentário");
 		formPanel.add(descricaoTF, formData);
-		
+
 		FormButtonBinding binding = new FormButtonBinding(formPanel);
 		binding.addButton(simpleModal.getSalvarBt());
-		
+
 		simpleModal.setFocusWidget(codigoTF);
 	}
-	
+
 	public boolean isValid() {
 		return formPanel.isValid();
 	}
-	
+
 	@Override
 	public Button getSalvarButton() {
 		return simpleModal.getSalvarBt();
@@ -97,7 +99,7 @@ public class CurriculoFormView extends MyComposite implements CurriculoFormPrese
 	public TextField<String> getDescricaoTextField() {
 		return descricaoTF;
 	}
-	
+
 	@Override
 	public SimpleModal getSimpleModal() {
 		return simpleModal;
@@ -107,7 +109,7 @@ public class CurriculoFormView extends MyComposite implements CurriculoFormPrese
 	public TextField<String> getCodigoTextField() {
 		return codigoTF;
 	}
-	
+
 	@Override
 	public CursoComboBox getCursoComboBox() {
 		return cursoCB;
@@ -117,6 +119,5 @@ public class CurriculoFormView extends MyComposite implements CurriculoFormPrese
 	public CurriculoDTO getCurriculoDTO() {
 		return curriculoDTO;
 	}
-	
 
 }

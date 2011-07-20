@@ -28,7 +28,8 @@ import com.gapso.web.trieda.shared.util.resources.Resources;
 import com.gapso.web.trieda.shared.util.view.SimpleModal;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
-public class GrupoSalaAssociarSalaView extends MyComposite implements GrupoSalaAssociarSalaPresenter.Display {
+public class GrupoSalaAssociarSalaView extends MyComposite implements
+		GrupoSalaAssociarSalaPresenter.Display {
 
 	private SimpleModal simpleModal;
 	private ContentPanel contentPanel;
@@ -43,65 +44,64 @@ public class GrupoSalaAssociarSalaView extends MyComposite implements GrupoSalaA
 	private Button adicionaSalasBT;
 	private Button removeSalasBT;
 	private GrupoSalaDTO grupoSalaDTO;
-	
+
 	public GrupoSalaAssociarSalaView(GrupoSalaDTO grupoSalaDTO) {
 		this.grupoSalaDTO = grupoSalaDTO;
 		initUI();
 		createForm();
-		// TODO
-//		initComponent(simpleModal);
 	}
-	
+
 	private void initUI() {
-		simpleModal = new SimpleModal("Associar Sala ao Grupo", Resources.DEFAULTS.sala16());
+		simpleModal = new SimpleModal("Associar Sala ao Grupo",
+				Resources.DEFAULTS.sala16());
 		simpleModal.setHeight(500);
 		simpleModal.setWidth(585);
 	}
 
 	private void createForm() {
-		
+
 		FormData formData = new FormData("100%");
 		FormPanel formPanel = new FormPanel();
 		formPanel.setBodyBorder(false);
 		formPanel.setLabelWidth(100);
 		formPanel.setLabelAlign(LabelAlign.RIGHT);
 		formPanel.setHeaderVisible(false);
-		
+
 		nomeGrupoTF = new TextField<String>();
 		nomeGrupoTF.setValue(grupoSalaDTO.getNome());
 		nomeGrupoTF.setFieldLabel("Nome do Grupo");
 		nomeGrupoTF.setReadOnly(true);
 		formPanel.add(nomeGrupoTF, formData);
-		
+
 		nomeCampusTF = new TextField<String>();
 		nomeCampusTF.setValue(grupoSalaDTO.getCampusString());
 		nomeCampusTF.setFieldLabel("Campus");
 		nomeCampusTF.setReadOnly(true);
 		formPanel.add(nomeCampusTF, formData);
-		
+
 		nomeUnidadeTF = new TextField<String>();
 		nomeUnidadeTF.setValue(grupoSalaDTO.getUnidadeString());
 		nomeUnidadeTF.setFieldLabel("Unidade");
 		nomeUnidadeTF.setReadOnly(true);
 		formPanel.add(nomeUnidadeTF, formData);
-		
+
 		FormButtonBinding binding = new FormButtonBinding(formPanel);
 		binding.addButton(simpleModal.getSalvarBt());
-		
+
 		contentPanel = new ContentPanel(new RowLayout(Orientation.VERTICAL));
 		contentPanel.setHeaderVisible(false);
-		
+
 		contentPanel.add(formPanel);
-		
+
 		panelLists = new ContentPanel();
 		panelLists.setBodyBorder(false);
 		panelLists.setHeaderVisible(false);
-        HBoxLayout layout = new HBoxLayout();  
-        layout.setHBoxLayoutAlign(HBoxLayoutAlign.TOP);  
-        layout.setPadding(new Padding(5));  
-        panelLists.setLayout(layout);
+		HBoxLayout layout = new HBoxLayout();
+		layout.setHBoxLayoutAlign(HBoxLayoutAlign.TOP);
+		layout.setPadding(new Padding(5));
+		panelLists.setLayout(layout);
 		panelLists.setHeight(330);
-		
+
 		ContentPanel andaresListPanel = new ContentPanel(new FitLayout());
 		andaresListPanel.setWidth(95);
 		andaresListPanel.setHeight(320);
@@ -111,7 +111,7 @@ public class GrupoSalaAssociarSalaView extends MyComposite implements GrupoSalaA
 		andaresList = new ListView<SalaDTO>(store);
 		andaresList.setDisplayProperty(SalaDTO.PROPERTY_ANDAR);
 		andaresListPanel.add(andaresList);
-		
+
 		ContentPanel naoAssociadasListPanel = new ContentPanel(new FitLayout());
 		naoAssociadasListPanel.setWidth(190);
 		naoAssociadasListPanel.setHeight(320);
@@ -121,7 +121,7 @@ public class GrupoSalaAssociarSalaView extends MyComposite implements GrupoSalaA
 		salasNaoPertencesList = new ListView<SalaDTO>(store);
 		salasNaoPertencesList.setDisplayProperty(SalaDTO.PROPERTY_CODIGO);
 		naoAssociadasListPanel.add(salasNaoPertencesList);
-		
+
 		ContentPanel associadasListPanel = new ContentPanel(new FitLayout());
 		associadasListPanel.setWidth(190);
 		associadasListPanel.setHeight(320);
@@ -131,15 +131,20 @@ public class GrupoSalaAssociarSalaView extends MyComposite implements GrupoSalaA
 		salasPertencesList = new ListView<SalaDTO>(store);
 		salasPertencesList.setDisplayProperty(SalaDTO.PROPERTY_CODIGO);
 		associadasListPanel.add(salasPertencesList);
-		
-		panelLists.add(andaresListPanel, new HBoxLayoutData(new Margins(0, 0, 0, 0)));
-		panelLists.add(getAtualizaSalasDoAndarButtonsPanel(), new HBoxLayoutData(new Margins(0, 5, 0, 5)));
-		panelLists.add(naoAssociadasListPanel, new HBoxLayoutData(new Margins(0, 0, 0, 0)));
-		panelLists.add(getAtualizaSalasButtonsPanel(), new HBoxLayoutData(new Margins(0, 5, 0, 5)));
-		panelLists.add(associadasListPanel, new HBoxLayoutData(new Margins(0, 0, 0, 0)));
-		
+
+		panelLists.add(andaresListPanel, new HBoxLayoutData(new Margins(0, 0,
+				0, 0)));
+		panelLists.add(getAtualizaSalasDoAndarButtonsPanel(),
+				new HBoxLayoutData(new Margins(0, 5, 0, 5)));
+		panelLists.add(naoAssociadasListPanel, new HBoxLayoutData(new Margins(
+				0, 0, 0, 0)));
+		panelLists.add(getAtualizaSalasButtonsPanel(), new HBoxLayoutData(
+				new Margins(0, 5, 0, 5)));
+		panelLists.add(associadasListPanel, new HBoxLayoutData(new Margins(0,
+				0, 0, 0)));
+
 		contentPanel.add(panelLists);
-		
+
 		simpleModal.setContent(contentPanel);
 	}
 
@@ -149,53 +154,56 @@ public class GrupoSalaAssociarSalaView extends MyComposite implements GrupoSalaA
 		panel.setBodyBorder(false);
 		panel.setBodyStyle("display: table-cell; vertical-align: middle");
 		panel.setLayout(new RowLayout(Orientation.VERTICAL));
-		
+
 		atualizaSalasDoAndarBT = new Button();
 		atualizaSalasDoAndarBT.setSize(30, 50);
-		atualizaSalasDoAndarBT.setIcon(AbstractImagePrototype.create(Resources.DEFAULTS.toRight24()));
-				
+		atualizaSalasDoAndarBT.setIcon(AbstractImagePrototype
+				.create(Resources.DEFAULTS.toRight24()));
+
 		RowData rowData = new RowData(-1, -1, new Margins(4, 0, 4, 0));
-		
+
 		panel.add(atualizaSalasDoAndarBT, rowData);
 		panel.setWidth(30);
 		panel.setHeight(320);
 		return panel;
 	}
-	
+
 	private LayoutContainer getAtualizaSalasButtonsPanel() {
 		ContentPanel panel = new ContentPanel();
 		panel.setHeaderVisible(false);
 		panel.setBodyBorder(false);
 		panel.setBodyStyle("display: table-cell; vertical-align: middle");
 		panel.setLayout(new RowLayout(Orientation.VERTICAL));
-		
+
 		adicionaSalasBT = new Button();
 		adicionaSalasBT.setSize(30, 50);
-		adicionaSalasBT.setIcon(AbstractImagePrototype.create(Resources.DEFAULTS.toRight24()));
-		
+		adicionaSalasBT.setIcon(AbstractImagePrototype
+				.create(Resources.DEFAULTS.toRight24()));
+
 		removeSalasBT = new Button();
 		removeSalasBT.setSize(30, 50);
-		removeSalasBT.setIcon(AbstractImagePrototype.create(Resources.DEFAULTS.toLeft24()));
-		
+		removeSalasBT.setIcon(AbstractImagePrototype.create(Resources.DEFAULTS
+				.toLeft24()));
+
 		RowData rowData = new RowData(-1, -1, new Margins(4, 0, 4, 0));
-		
+
 		panel.add(adicionaSalasBT, rowData);
 		panel.add(removeSalasBT, rowData);
 		panel.setWidth(30);
 		panel.setHeight(320);
 		return panel;
 	}
-	
+
 	@Override
 	public Button getSalvarButton() {
 		return simpleModal.getSalvarBt();
 	}
-	
+
 	@Override
 	public GrupoSalaDTO getGrupoSalaDTO() {
 		return grupoSalaDTO;
 	}
-	
+
 	@Override
 	public SimpleModal getSimpleModal() {
 		return simpleModal;
@@ -220,12 +228,12 @@ public class GrupoSalaAssociarSalaView extends MyComposite implements GrupoSalaA
 	public Button getAtualizaSalasDoAndarBT() {
 		return atualizaSalasDoAndarBT;
 	}
-	
+
 	@Override
 	public Button getAdicionaSalasBT() {
 		return adicionaSalasBT;
 	}
-	
+
 	@Override
 	public Button getRemoveSalasBT() {
 		return removeSalasBT;

@@ -21,7 +21,8 @@ import com.gapso.web.trieda.shared.util.view.DisciplinaComboBox;
 import com.gapso.web.trieda.shared.util.view.SimpleModal;
 import com.gapso.web.trieda.shared.util.view.TurnoComboBox;
 
-public class DemandaFormView extends MyComposite implements DemandaFormPresenter.Display {
+public class DemandaFormView extends MyComposite implements
+		DemandaFormPresenter.Display {
 
 	private SimpleModal simpleModal;
 	private FormPanel formPanel;
@@ -32,15 +33,17 @@ public class DemandaFormView extends MyComposite implements DemandaFormPresenter
 	private TurnoComboBox turnoCB;
 	private DisciplinaComboBox disciplinaCB;
 	private NumberField demandaTF;
-	
+
 	private DemandaDTO demandaDTO;
 	private CampusDTO campusDTO;
 	private CursoDTO cursoDTO;
 	private CurriculoDTO curriculoDTO;
 	private TurnoDTO turnoDTO;
 	private DisciplinaDTO disciplinaDTO;
-	
-	public DemandaFormView(DemandaDTO demandaDTO, CampusDTO campusDTO, CursoDTO cursoDTO, CurriculoDTO curriculoDTO, TurnoDTO turnoDTO, DisciplinaDTO disciplinaDTO) {
+
+	public DemandaFormView(DemandaDTO demandaDTO, CampusDTO campusDTO,
+			CursoDTO cursoDTO, CurriculoDTO curriculoDTO, TurnoDTO turnoDTO,
+			DisciplinaDTO disciplinaDTO) {
 		this.demandaDTO = demandaDTO;
 		this.campusDTO = campusDTO;
 		this.cursoDTO = cursoDTO;
@@ -48,13 +51,11 @@ public class DemandaFormView extends MyComposite implements DemandaFormPresenter
 		this.turnoDTO = turnoDTO;
 		this.disciplinaDTO = disciplinaDTO;
 		initUI();
-		// TODO
-//		initComponent(simpleModal);
-//		setParent(null);
 	}
-	
+
 	private void initUI() {
-		String title = (demandaDTO.getId() == null)? "Inserção de Demanda" : "Edição de Demanda";
+		String title = (demandaDTO.getId() == null) ? "Inserção de Demanda"
+				: "Edição de Demanda";
 		simpleModal = new SimpleModal(title, Resources.DEFAULTS.demanda16());
 		simpleModal.setHeight(280);
 		createForm();
@@ -65,31 +66,31 @@ public class DemandaFormView extends MyComposite implements DemandaFormPresenter
 		FormData formData = new FormData("-20");
 		formPanel = new FormPanel();
 		formPanel.setHeaderVisible(false);
-		
+
 		campusCB = new CampusComboBox();
 		campusCB.setAllowBlank(false);
 		campusCB.setValue(campusDTO);
 		campusCB.setEmptyText("Selecione o campus");
 		formPanel.add(campusCB, formData);
-		
+
 		cursoCB = new CursoComboBox();
 		cursoCB.setAllowBlank(false);
 		cursoCB.setValue(cursoDTO);
 		cursoCB.setEmptyText("Selecione o curso");
 		formPanel.add(cursoCB, formData);
-		
+
 		curriculoCB = new CurriculoComboBox();
 		curriculoCB.setAllowBlank(false);
 		curriculoCB.setValue(curriculoDTO);
 		curriculoCB.setEmptyText("Selecione o curriculo");
 		formPanel.add(curriculoCB, formData);
-		
+
 		turnoCB = new TurnoComboBox();
 		turnoCB.setAllowBlank(false);
 		turnoCB.setValue(turnoDTO);
 		turnoCB.setEmptyText("Selecione o turno");
 		formPanel.add(turnoCB, formData);
-		
+
 		disciplinaCB = new DisciplinaComboBox();
 		disciplinaCB.setAllowBlank(false);
 		disciplinaCB.setValue(disciplinaDTO);
@@ -104,17 +105,17 @@ public class DemandaFormView extends MyComposite implements DemandaFormPresenter
 		demandaTF.setAllowDecimals(false);
 		demandaTF.setEmptyText("Selecione a quantidade");
 		formPanel.add(demandaTF, formData);
-		
+
 		FormButtonBinding binding = new FormButtonBinding(formPanel);
 		binding.addButton(simpleModal.getSalvarBt());
-		
+
 		simpleModal.setFocusWidget(campusCB);
 	}
-	
+
 	public boolean isValid() {
 		return formPanel.isValid();
 	}
-	
+
 	@Override
 	public Button getSalvarButton() {
 		return simpleModal.getSalvarBt();

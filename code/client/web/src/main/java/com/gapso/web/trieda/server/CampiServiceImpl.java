@@ -194,64 +194,54 @@ public class CampiServiceImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public ListLoadResult< CampusDTO > getList( BasePagingLoadConfig loadConfig )
-	{
-		// TODO
-		CenarioDTO cenarioDTO = ConvertBeans.toCenarioDTO(
-			Cenario.findMasterData() );
+	public ListLoadResult<CampusDTO> getList(BasePagingLoadConfig loadConfig) {
+		CenarioDTO cenarioDTO = ConvertBeans.toCenarioDTO(Cenario
+				.findMasterData());
 
-		return getBuscaList( cenarioDTO, null,
-			loadConfig.get( "query" ).toString(), null, null, null, loadConfig );
+		return getBuscaList(cenarioDTO, null, loadConfig.get("query")
+				.toString(), null, null, null, loadConfig);
 	}
 
 	@Override
-	public PagingLoadResult< CampusDTO > getBuscaList( CenarioDTO cenarioDTO,
+	public PagingLoadResult<CampusDTO> getBuscaList(CenarioDTO cenarioDTO,
 			String nome, String codigo, String estadoString, String municipio,
-			String bairro, PagingLoadConfig config )
-	{
-		Cenario cenario = Cenario.find( cenarioDTO.getId() );
+			String bairro, PagingLoadConfig config) {
+		Cenario cenario = Cenario.find(cenarioDTO.getId());
 
-		List< CampusDTO > list = new ArrayList< CampusDTO >();
+		List<CampusDTO> list = new ArrayList<CampusDTO>();
 		String orderBy = config.getSortField();
-		if ( orderBy != null )
-		{
-			if ( config.getSortDir() != null
-					&& config.getSortDir().equals( SortDir.DESC ) )
-			{
+		if (orderBy != null) {
+			if (config.getSortDir() != null
+					&& config.getSortDir().equals(SortDir.DESC)) {
 				orderBy = orderBy + " asc";
-			}
-			else
-			{
+			} else {
 				orderBy = orderBy + " desc";
 			}
 		}
 
 		Estados estadoDomain = null;
-		if ( estadoString != null )
-		{
-			for ( Estados estado : Estados.values() )
-			{
-				if ( estado.name().equals( estadoString ) )
-				{
+		if (estadoString != null) {
+			for (Estados estado : Estados.values()) {
+				if (estado.name().equals(estadoString)) {
 					estadoDomain = estado;
 					break;
 				}
 			}
 		}
 
-		List< Campus > campi = Campus.findBy( cenario, nome, codigo, estadoDomain,
-				municipio, bairro, config.getOffset(), config.getLimit(), orderBy );
+		List<Campus> campi = Campus.findBy(cenario, nome, codigo, estadoDomain,
+				municipio, bairro, config.getOffset(), config.getLimit(),
+				orderBy);
 
-		for ( Campus campus : campi )
-		{
-			list.add( ConvertBeans.toCampusDTO( campus ) );
+		for (Campus campus : campi) {
+			list.add(ConvertBeans.toCampusDTO(campus));
 		}
 
-		BasePagingLoadResult< CampusDTO > result
-			= new BasePagingLoadResult< CampusDTO >( list );
-		result.setOffset( config.getOffset() );
-		result.setTotalLength( Campus.count(
-			cenario, nome, codigo, estadoDomain, municipio, bairro ) );
+		BasePagingLoadResult<CampusDTO> result = new BasePagingLoadResult<CampusDTO>(
+				list);
+		result.setOffset(config.getOffset());
+		result.setTotalLength(Campus.count(cenario, nome, codigo, estadoDomain,
+				municipio, bairro));
 
 		return result;
 	}
@@ -345,10 +335,6 @@ public class CampiServiceImpl extends RemoteServiceServlet implements
 			Integer qtdAlunosNaoAtendidos = 0;
 			Map<Demanda, Integer> qtdAlunosNaoAtendidosDemandaMap = new HashMap<Demanda, Integer>();
 			for (Demanda demanda : demandas) {
-				// System.out.println("DEMANDA: "+demanda.getOferta().getCampus().getNome()+"-"+demanda.getOferta().getCurriculo().getCurso().getNome()+"-"+demanda.getOferta().getCurriculo().getDescricao());//
-				// TODO: retirar
-				// System.out.println("  discp: "+demanda.getDisciplina().getNome()+" ("+demanda.getQuantidade()+")");//
-				// TODO: retirar
 				List<AtendimentoTatico> atendimentos = AtendimentoTatico
 						.findAllByDemanda(demanda);
 				int demandaAlunosCreditosT = demanda.getDisciplina()
@@ -358,8 +344,6 @@ public class CampiServiceImpl extends RemoteServiceServlet implements
 				int demandaAlunosCreditosNeutros = demandaAlunosCreditosT
 						+ demandaAlunosCreditosP;
 				for (AtendimentoTatico atendimento : atendimentos) {
-					// System.out.println("  +at: Turma:"+atendimento.getTurma()+" CP:"+atendimento.getCreditosPratico()+" CT:"+atendimento.getCreditosTeorico()+" qtd:"+atendimento.getQuantidadeAlunos());//
-					// TODO: retirar
 					demandaAlunosCreditosT -= atendimento.getCreditosTeorico()
 							* atendimento.getQuantidadeAlunos();
 					demandaAlunosCreditosP -= atendimento.getCreditosPratico()
@@ -368,14 +352,10 @@ public class CampiServiceImpl extends RemoteServiceServlet implements
 							.getTotalCreditos()
 							* atendimento.getQuantidadeAlunos();
 				}
-				// System.out.println("  discp creds: "+demanda.getDisciplina().getTotalCreditos());//
-				// TODO: retirar
 				int qtdAlunosNaoAtendidosDemanda = 0;
 				if (atendimentos.isEmpty()) {
 					qtdAlunosNaoAtendidos += demanda.getQuantidade();
 					qtdAlunosNaoAtendidosDemanda = demanda.getQuantidade();
-					// System.out.println("  nao atendidos: "+demanda.getQuantidade());//
-					// TODO: retirar
 				} else {
 					if ((demandaAlunosCreditosP > 0)
 							&& !demanda.getDisciplina().getLaboratorio()) {
@@ -386,11 +366,7 @@ public class CampiServiceImpl extends RemoteServiceServlet implements
 							qtdAlunosNaoAtendidosDemanda = demandaAlunosCreditosNeutros
 									/ demanda.getDisciplina()
 											.getTotalCreditos();
-							// System.out.println("  nao atendidosN: "+(demandaAlunosCreditosNeutros/demanda.getDisciplina().getTotalCreditos()));//
-							// TODO: retirar
 						} else if (demandaAlunosCreditosNeutros < 0) {
-							// System.out.println("  sobra: "+demandaAlunosCreditosNeutros);//
-							// TODO: retirar
 						}
 					} else {
 						if (demandaAlunosCreditosT > 0) {
@@ -400,11 +376,7 @@ public class CampiServiceImpl extends RemoteServiceServlet implements
 							qtdAlunosNaoAtendidosDemanda = demandaAlunosCreditosT
 									/ demanda.getDisciplina()
 											.getCreditosTeorico();
-							// System.out.println("  nao atendidosT: "+(demandaAlunosCreditosT/demanda.getDisciplina().getCreditosTeorico()));//
-							// TODO: retirar
 						} else if (demandaAlunosCreditosT < 0) {
-							// System.out.println("  sobra: "+demandaAlunosCreditosT);//
-							// TODO: retirar
 						}
 						if (demandaAlunosCreditosP > 0) {
 							qtdAlunosNaoAtendidos += demandaAlunosCreditosP
@@ -413,18 +385,12 @@ public class CampiServiceImpl extends RemoteServiceServlet implements
 							qtdAlunosNaoAtendidosDemanda = demandaAlunosCreditosP
 									/ demanda.getDisciplina()
 											.getCreditosPratico();
-							// System.out.println("  nao atendidosP: "+(demandaAlunosCreditosP/demanda.getDisciplina().getCreditosPratico()));//
-							// TODO: retirar
 						} else if (demandaAlunosCreditosT < 0) {
-							// System.out.println("  sobra: "+demandaAlunosCreditosP);//
-							// TODO: retirar
 						}
 					}
 				}
 				qtdAlunosNaoAtendidosDemandaMap.put(demanda,
 						qtdAlunosNaoAtendidosDemanda);
-				// System.out.println("  total nao atendidos: "+qtdAlunosNaoAtendidos);//
-				// TODO: retirar
 			}
 			qtdAlunosAtendidos = Demanda.sumDemanda(campus)
 					- qtdAlunosNaoAtendidos;

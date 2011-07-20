@@ -75,17 +75,20 @@ public class DisciplinasView extends MyComposite implements DisciplinasPresenter
 	    panel.add(gridPanel, bld);
 	}
 
-	public List<ColumnConfig> getColumnList() {
-		List<ColumnConfig> list = new ArrayList<ColumnConfig>();
-		list.add(new ColumnConfig(DisciplinaDTO.PROPERTY_NOME, "Nome", 100));
-		list.add(new ColumnConfig(DisciplinaDTO.PROPERTY_CODIGO, "Código", 100));
-		list.add(new ColumnConfig(DisciplinaDTO.PROPERTY_CREDITOS_TEORICO, "Créditos Teóricos", 100));
-		list.add(new ColumnConfig(DisciplinaDTO.PROPERTY_CREDITOS_PRATICO, "Créditos Práticos", 100));
-		list.add(new CheckColumnConfig(DisciplinaDTO.PROPERTY_LABORATORIO, "Usa Laboratório?", 100));
-		list.add(new ColumnConfig(DisciplinaDTO.PROPERTY_TIPO_STRING, "Tipo de disciplina", 100));
-		list.add(new ColumnConfig(DisciplinaDTO.PROPERTY_DIFICULDADE, "Nível de Dificuldade", 100));
-		list.add(new ColumnConfig(DisciplinaDTO.PROPERTY_MAX_ALUNOS_TEORICO, "Max. Alunos - Teórico", 100));
-		list.add(new ColumnConfig(DisciplinaDTO.PROPERTY_MAX_ALUNOS_PRATICO, "Max. Alunos - Prático", 100));
+	public List<ColumnConfig> getColumnList()
+	{
+		List< ColumnConfig > list = new ArrayList< ColumnConfig >();
+
+		list.add( new ColumnConfig( DisciplinaDTO.PROPERTY_NOME, getI18nConstants().nomeDisciplina(), 100 ) );
+		list.add( new ColumnConfig( DisciplinaDTO.PROPERTY_CODIGO, getI18nConstants().codigoDisciplina(), 100 ) );
+		list.add( new ColumnConfig( DisciplinaDTO.PROPERTY_CREDITOS_TEORICO, getI18nConstants().creditosTeoricos(), 100 ) );
+		list.add( new ColumnConfig( DisciplinaDTO.PROPERTY_CREDITOS_PRATICO, getI18nConstants().creditosPraticos(), 100 ) );
+		list.add( new CheckColumnConfig( DisciplinaDTO.PROPERTY_LABORATORIO, getI18nConstants().usaLaboratorio(), 100 ) );
+		list.add( new ColumnConfig( DisciplinaDTO.PROPERTY_TIPO_STRING, getI18nConstants().tipoDisciplina(), 100 ) );
+		list.add( new ColumnConfig( DisciplinaDTO.PROPERTY_DIFICULDADE, getI18nConstants().nivelDificuldade(), 100 ) );
+		list.add( new ColumnConfig( DisciplinaDTO.PROPERTY_MAX_ALUNOS_TEORICO, getI18nConstants().maxAlunosTeorico(), 100 ) );
+		list.add( new ColumnConfig( DisciplinaDTO.PROPERTY_MAX_ALUNOS_PRATICO, getI18nConstants().maxAlunosPratico(), 100 ) );
+
 		return list;
 	}
 
