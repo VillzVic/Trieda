@@ -146,6 +146,10 @@ public class ProfessoresExportExcel extends AbstractExportExcel
 				 cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ],
 				 professor.getAreaTitulacao().getCodigo() );
 
+		/*
+		 * Código relacionado com a issue http://jira.gapso.com.br/browse/TRIEDA-1040
+		 "Acrescentar coluna "Nota Desempenho" na aba "Professores" da planilha de exportação"
+		 */
 		// Nota de Desempenho
 		setCell( row, 9, sheet,
 				 cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ],
