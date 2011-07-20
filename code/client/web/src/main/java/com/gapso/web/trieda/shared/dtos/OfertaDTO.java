@@ -1,11 +1,13 @@
 package com.gapso.web.trieda.shared.dtos;
 
+import com.gapso.web.trieda.main.client.TriedaCurrency;
+import com.gapso.web.trieda.shared.util.TriedaUtil;
 
-
-public class OfertaDTO extends AbstractDTO<String> implements Comparable<OfertaDTO> {
-
+public class OfertaDTO extends AbstractDTO<String>
+	implements Comparable<OfertaDTO>
+{
 	private static final long serialVersionUID = -5134820110949139907L;
-	
+
 	// Propriedades
 	public static final String PROPERTY_ID = "id";
 	public static final String PROPERTY_VERSION = "version";
@@ -25,76 +27,87 @@ public class OfertaDTO extends AbstractDTO<String> implements Comparable<OfertaD
 	public void setId(Long value) {
 		set(PROPERTY_ID, value);
 	}
+
 	public Long getId() {
 		return get(PROPERTY_ID);
 	}
-	
+
 	public void setVersion(Integer value) {
 		set(PROPERTY_VERSION, value);
 	}
+
 	public Integer getVersion() {
 		return get(PROPERTY_VERSION);
 	}
-	
+
 	public Long getCampusId() {
 		return get(PROPERTY_CAMPUS_ID);
 	}
+
 	public void setCampusId(Long value) {
 		set(PROPERTY_CAMPUS_ID, value);
 	}
-	
+
 	public String getCampusString() {
 		return get(PROPERTY_CAMPUS_STRING);
 	}
+
 	public void setCampusString(String value) {
 		set(PROPERTY_CAMPUS_STRING, value);
 	}
-	
+
 	public String getCursoString() {
 		return get(PROPERTY_CURSO_STRING);
 	}
+
 	public void setCursoString(String value) {
 		set(PROPERTY_CURSO_STRING, value);
 	}
-	
-	public void setReceita(Double value) {
-		set(PROPERTY_RECEITA, value);
+
+	public void setReceita(TriedaCurrency value) {
+		set(PROPERTY_RECEITA, value.toString());
 	}
-	public Double getReceita() {
-		return get(PROPERTY_RECEITA);
+
+	public TriedaCurrency getReceita() {
+		return TriedaUtil.parseTriedaCurrency(get(PROPERTY_RECEITA));
 	}
-	
+
 	public Long getMatrizCurricularId() {
 		return get(PROPERTY_MATRIZ_CURRICULAR_ID);
 	}
+
 	public void setMatrizCurricularId(Long value) {
 		set(PROPERTY_MATRIZ_CURRICULAR_ID, value);
 	}
-	
+
 	public String getMatrizCurricularString() {
 		return get(PROPERTY_MATRIZ_CURRICULAR_STRING);
 	}
+
 	public void setMatrizCurricularString(String value) {
 		set(PROPERTY_MATRIZ_CURRICULAR_STRING, value);
 	}
-	
+
 	public Long getTurnoId() {
 		return get(PROPERTY_TURNO_ID);
 	}
+
 	public void setTurnoId(Long value) {
 		set(PROPERTY_TURNO_ID, value);
 	}
-	
+
 	public String getTurnoString() {
 		return get(PROPERTY_TURNO_STRING);
 	}
+
 	public void setTurnoString(String value) {
 		set(PROPERTY_TURNO_STRING, value);
 	}
-	
+
 	@Override
 	public String getNaturalKey() {
-		return getCampusString() + "-" + getCursoString() + "-" + getMatrizCurricularString() + "-" + getTurnoString();
+		return getCampusString() + "-" + getCursoString() + "-"
+				+ getMatrizCurricularString() + "-" + getTurnoString();
 	}
 
 	@Override
@@ -103,12 +116,13 @@ public class OfertaDTO extends AbstractDTO<String> implements Comparable<OfertaD
 		if (result == 0) {
 			result = getCursoString().compareTo(o.getCursoString());
 			if (result == 0) {
-				result = getMatrizCurricularString().compareTo(o.getMatrizCurricularString());
+				result = getMatrizCurricularString().compareTo(
+						o.getMatrizCurricularString());
 				if (result == 0) {
 					result = getTurnoString().compareTo(o.getTurnoString());
 				}
 			}
 		}
 		return result;
-	}	
+	}
 }

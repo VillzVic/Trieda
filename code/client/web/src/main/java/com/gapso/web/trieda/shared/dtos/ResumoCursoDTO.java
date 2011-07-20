@@ -1,8 +1,10 @@
 package com.gapso.web.trieda.shared.dtos;
 
+import com.gapso.web.trieda.main.client.TriedaCurrency;
+import com.gapso.web.trieda.shared.util.TriedaUtil;
+
 public class ResumoCursoDTO extends AbstractTreeDTO<String> implements
 		Comparable<ResumoCursoDTO> {
-
 	private static final long serialVersionUID = -5134820110949139907L;
 
 	// Propriedades
@@ -170,28 +172,29 @@ public class ResumoCursoDTO extends AbstractTreeDTO<String> implements
 		return get(PROPERTY_RATEIO_DOUBLE);
 	}
 
-	public void setCustoDocente(Double value) {
-		set(PROPERTY_CUSTO_DOCENTE_DOUBLE, value);
+	public void setCustoDocente(TriedaCurrency value) {
+		set(PROPERTY_CUSTO_DOCENTE_DOUBLE, value.toString());
 	}
 
-	public Double getCustoDocente() {
-		return get(PROPERTY_CUSTO_DOCENTE_DOUBLE);
+	public TriedaCurrency getCustoDocente() {
+		return TriedaUtil
+				.parseTriedaCurrency(get(PROPERTY_CUSTO_DOCENTE_DOUBLE));
 	}
 
-	public void setReceita(Double value) {
-		set(PROPERTY_RECEITA_DOUBLE, value);
+	public void setReceita(TriedaCurrency value) {
+		set(PROPERTY_RECEITA_DOUBLE, value.toString());
 	}
 
-	public Double getReceita() {
-		return get(PROPERTY_RECEITA_DOUBLE);
+	public TriedaCurrency getReceita() {
+		return TriedaUtil.parseTriedaCurrency(get(PROPERTY_RECEITA_DOUBLE));
 	}
 
-	public void setMargem(Double value) {
-		set(PROPERTY_MARGEM_DOUBLE, value);
+	public void setMargem(TriedaCurrency value) {
+		set(PROPERTY_MARGEM_DOUBLE, value.toString());
 	}
 
-	public Double getMargem() {
-		return get(PROPERTY_MARGEM_DOUBLE);
+	public TriedaCurrency getMargem() {
+		return TriedaUtil.parseTriedaCurrency(get(PROPERTY_MARGEM_DOUBLE));
 	}
 
 	public void setMargemPercente(Double value) {

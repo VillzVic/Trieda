@@ -1,9 +1,9 @@
 package com.gapso.web.trieda.shared.util;
 
-import java.text.NumberFormat;
 import java.util.Date;
 import java.util.List;
 
+import com.gapso.web.trieda.main.client.TriedaCurrency;
 import com.google.gwt.user.client.Window.Location;
 
 public class TriedaUtil
@@ -131,24 +131,24 @@ public class TriedaUtil
 		return ( hour + ":" + minute );
 	}
 
-	static public String parseCurrencyFormat( Double value )
-	{
-		NumberFormat nf = NumberFormat.getCurrencyInstance();
-		nf.setMaximumFractionDigits( 2 );
-		String formatted = nf.format( value == null ? 0.0 : value );
-		return formatted;
+	static public TriedaCurrency parseTriedaCurrency(Double d) {
+		Double doubleValue = ( d == null ? 0.0 : d );
+		return new TriedaCurrency(doubleValue);
 	}
-	
-	static public Double parseDoubleFormat( String str )
-	{
-		Double result = 0.0;
-		
+
+	static public TriedaCurrency parseTriedaCurrency(Object o) {
+		String s = ( o == null ? "" : o.toString() );
+		return TriedaUtil.parseTriedaCurrency(s);
+	}
+
+	static public TriedaCurrency parseTriedaCurrency(String s) {
+		Double d = 0.0;
 		try
 		{
-			result = Double.parseDouble( str );
+			d = Double.parseDouble(s);
 		}
-		catch( Exception e ) { result = 0.0; }
-
-		return result;
+		catch(Exception e) { d = 0.0; }
+		TriedaCurrency tc = new TriedaCurrency(d);
+		return tc;
 	}
 }

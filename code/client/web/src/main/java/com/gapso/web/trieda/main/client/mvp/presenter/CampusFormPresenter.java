@@ -8,6 +8,7 @@ import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.CheckBox;
 import com.extjs.gxt.ui.client.widget.form.NumberField;
 import com.extjs.gxt.ui.client.widget.form.TextField;
+import com.gapso.web.trieda.main.client.TriedaCurrency;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.i18n.ITriedaI18nGateway;
@@ -82,7 +83,7 @@ public class CampusFormPresenter implements Presenter {
 		campusDTO.setCenarioId(cenario.getId());
 		campusDTO.setNome(display.getNomeTextField().getValue());
 		campusDTO.setCodigo(display.getCodigoTextField().getValue());
-		campusDTO.setValorCredito( ( (Double)display.getValorCreditoNumberField().getValue().doubleValue()).toString() );
+		campusDTO.setValorCredito( new TriedaCurrency( display.getValorCreditoNumberField().getValue().doubleValue() ) );
 		campusDTO.setEstado(display.getEstadoComboBox().getValue().getValue().name());
 		campusDTO.setMunicipio(display.getMunicipioTextField().getValue());
 		campusDTO.setBairro(display.getBairroTextField().getValue());

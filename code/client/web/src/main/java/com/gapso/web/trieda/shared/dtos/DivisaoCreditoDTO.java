@@ -1,10 +1,10 @@
 package com.gapso.web.trieda.shared.dtos;
 
-
-public class DivisaoCreditoDTO extends AbstractDTO<String> implements Comparable<DivisaoCreditoDTO> {
-
+public class DivisaoCreditoDTO extends AbstractDTO<String>
+	implements Comparable<DivisaoCreditoDTO>
+{
 	private static final long serialVersionUID = 7603464268140278420L;
-	
+
 	// Propriedades
 	public static final String PROPERTY_ID = "id";
 	public static final String PROPERTY_VERSION = "version";

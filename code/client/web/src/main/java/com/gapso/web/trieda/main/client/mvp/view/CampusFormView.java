@@ -15,12 +15,11 @@ import com.gapso.web.trieda.main.client.mvp.presenter.CampusFormPresenter;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.mvp.view.MyComposite;
-import com.gapso.web.trieda.shared.util.TriedaUtil;
 import com.gapso.web.trieda.shared.util.resources.Resources;
 import com.gapso.web.trieda.shared.util.view.EstadoComboBox;
 import com.gapso.web.trieda.shared.util.view.SimpleModal;
-import com.gapso.web.trieda.shared.util.view.UniqueTextField;
 import com.gapso.web.trieda.shared.util.view.UniqueDomain;
+import com.gapso.web.trieda.shared.util.view.UniqueTextField;
 
 public class CampusFormView extends MyComposite implements CampusFormPresenter.Display {
 
@@ -94,7 +93,7 @@ public class CampusFormView extends MyComposite implements CampusFormPresenter.D
 		
 		valorCreditoNF = new NumberField();
 		valorCreditoNF.setName(CampusDTO.PROPERTY_VALOR_CREDITO);
-		valorCreditoNF.setValue( TriedaUtil.parseDoubleFormat( campusDTO.getValorCredito() ) );
+		valorCreditoNF.setValue( campusDTO.getValorCredito().getDoubleValue() );
 		valorCreditoNF.setFieldLabel("Custo (R$)");
 		valorCreditoNF.setAllowBlank(false);
 		valorCreditoNF.setAllowDecimals(true);

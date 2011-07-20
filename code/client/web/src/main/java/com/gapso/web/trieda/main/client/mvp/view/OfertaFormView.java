@@ -80,7 +80,7 @@ public class OfertaFormView extends MyComposite implements OfertaFormPresenter.D
 		
 		receitaNF = new NumberField();
 		receitaNF.setName(OfertaDTO.PROPERTY_RECEITA);
-		receitaNF.setValue(ofertaDTO.getReceita());
+		receitaNF.setValue(ofertaDTO.getReceita().getDoubleValue());
 		receitaNF.setFieldLabel("Receita (R$)");
 		receitaNF.setAllowBlank(false);
 		receitaNF.setAllowDecimals(true);

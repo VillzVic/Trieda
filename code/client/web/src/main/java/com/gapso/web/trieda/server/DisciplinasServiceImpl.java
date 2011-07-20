@@ -33,6 +33,7 @@ import com.gapso.trieda.domain.Oferta;
 import com.gapso.trieda.domain.Sala;
 import com.gapso.trieda.domain.SemanaLetiva;
 import com.gapso.trieda.domain.TipoDisciplina;
+import com.gapso.web.trieda.main.client.TriedaCurrency;
 import com.gapso.web.trieda.server.util.ConvertBeans;
 import com.gapso.web.trieda.shared.dtos.AbstractDTO;
 import com.gapso.web.trieda.shared.dtos.AtendimentoOperacionalDTO;
@@ -189,7 +190,6 @@ public class DisciplinasServiceImpl extends RemoteServiceServlet
 			disciplina.merge();
 		} else {
 			disciplina.persist();
-			// TODO Pegar a semana letiva do cenario da disciplina
 			Set<HorarioAula> horariosAula = SemanaLetiva.getByOficial()
 					.getHorariosAula();
 			for (HorarioAula horarioAula : horariosAula) {
@@ -276,7 +276,6 @@ public class DisciplinasServiceImpl extends RemoteServiceServlet
 	@Override
 	public ListLoadResult< TipoDisciplinaDTO > getTipoDisciplinaList()
 	{
-		// TODO REMOVER AS LINHAS DE BAIXO
 		if ( TipoDisciplina.count() == 0 )
 		{
 			TipoDisciplina tipo1 = new TipoDisciplina();
@@ -788,10 +787,12 @@ public class DisciplinasServiceImpl extends RemoteServiceServlet
 				Double receita = ofertaAtendimento.getReceita();
 				int qtdAlunos = atendimento.getQuantidadeAlunos();
 				int creditos = atendimento.getTotalCreditos();
-				resumo2DTO.setCustoDocente( creditos * docente * 4.5 * 6 );
-				resumo2DTO.setReceita( receita * creditos * qtdAlunos * 4.5 * 6 );
-				resumo2DTO.setMargem( resumo2DTO.getReceita() - resumo2DTO.getCustoDocente() );
-				resumo2DTO.setMargemPercente( TriedaUtil.roundTwoDecimals( resumo2DTO.getMargem() / resumo2DTO.getReceita() ) );
+				resumo2DTO.setCustoDocente( new TriedaCurrency(creditos * docente * 4.5 * 6) );
+				resumo2DTO.setReceita( new TriedaCurrency(receita * creditos * qtdAlunos * 4.5 * 6) );
+				resumo2DTO.setMargem( new TriedaCurrency(
+					resumo2DTO.getReceita().getDoubleValue()- resumo2DTO.getCustoDocente().getDoubleValue()) );
+				resumo2DTO.setMargemPercente( TriedaUtil.roundTwoDecimals(
+					resumo2DTO.getMargem().getDoubleValue() / resumo2DTO.getReceita().getDoubleValue() ) );
 			}
 		}
 	}
@@ -803,19 +804,26 @@ public class DisciplinasServiceImpl extends RemoteServiceServlet
 		{
 			ResumoDisciplinaDTO rc1 = map1.get( key1 );
 
-			rc1.setCustoDocente( 0.0 );
-			rc1.setReceita( 0.0 );
-			rc1.setMargem( 0.0 );
+			rc1.setCustoDocente( new TriedaCurrency(0.0) );
+			rc1.setReceita( new TriedaCurrency(0.0) );
+			rc1.setMargem( new TriedaCurrency(0.0) );
 			rc1.setMargemPercente( 0.0 );
 
 			for ( String key2 : map2.get( key1 ).keySet() )
 			{
 				ResumoDisciplinaDTO rc2 = map2.get( key1 ).get( key2 );
 
-				rc1.setCustoDocente( rc1.getCustoDocente() + rc2.getCustoDocente() );
-				rc1.setReceita( rc1.getReceita() + rc2.getReceita() );
-				rc1.setMargem( rc1.getMargem() + rc2.getMargem() );
-				rc1.setMargemPercente( TriedaUtil.roundTwoDecimals( rc1.getMargem() / rc1.getReceita() ) );
+				rc1.setCustoDocente( new TriedaCurrency(
+					rc1.getCustoDocente().getDoubleValue() + rc2.getCustoDocente().getDoubleValue()) );
+
+				rc1.setReceita( new TriedaCurrency(
+					rc1.getReceita().getDoubleValue() + rc2.getReceita().getDoubleValue()) );
+
+				rc1.setMargem( new TriedaCurrency(
+					rc1.getMargem().getDoubleValue() + rc2.getMargem().getDoubleValue()) );
+
+				rc1.setMargemPercente( TriedaUtil.roundTwoDecimals(
+					rc1.getMargem().getDoubleValue() / rc1.getReceita().getDoubleValue() ) );
 			}
 		}
 	}

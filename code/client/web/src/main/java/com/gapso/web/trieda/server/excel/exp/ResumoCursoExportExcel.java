@@ -141,18 +141,18 @@ public class ResumoCursoExportExcel extends AbstractExportExcel {
 		// Rateio
 		setCell(row,i++,sheet,cellStyles[ExcelCellStyleReference.PERCENTE.ordinal()],resumoCursoDTO.getRateio());
 		// Custo Docente
-		setCell(row,i++,sheet,cellStyles[ExcelCellStyleReference.DOUBLE.ordinal()],resumoCursoDTO.getCustoDocente());
+		setCell(row,i++,sheet,cellStyles[ExcelCellStyleReference.DOUBLE.ordinal()],resumoCursoDTO.getCustoDocente().getDoubleValue());
 		// Receita
-		setCell(row,i++,sheet,cellStyles[ExcelCellStyleReference.DOUBLE.ordinal()],resumoCursoDTO.getReceita());
+		setCell(row,i++,sheet,cellStyles[ExcelCellStyleReference.DOUBLE.ordinal()],resumoCursoDTO.getReceita().getDoubleValue());
 		// Margem
-		setCell(row,i++,sheet,cellStyles[ExcelCellStyleReference.DOUBLE.ordinal()],resumoCursoDTO.getMargem());
+		setCell(row,i++,sheet,cellStyles[ExcelCellStyleReference.DOUBLE.ordinal()],resumoCursoDTO.getMargem().getDoubleValue());
 		// Margem %
 		setCell(row,i++,sheet,cellStyles[ExcelCellStyleReference.PERCENTE.ordinal()],resumoCursoDTO.getMargemPercente());
-		
+
 		row++;
 		return row;
 	}
-	
+
 	private void fillInCellStyles(HSSFSheet sheet) {
 		for (ExcelCellStyleReference cellStyleReference : ExcelCellStyleReference.values()) {
 			cellStyles[cellStyleReference.ordinal()] = getCell(cellStyleReference.getRow(),cellStyleReference.getCol(),sheet).getCellStyle();

@@ -3,11 +3,11 @@ package com.gapso.web.trieda.shared.dtos;
 import java.util.ArrayList;
 import java.util.List;
 
-
-public class DeslocamentoCampusDTO extends AbstractDTO<String> implements Comparable<DeslocamentoCampusDTO> {
-
+public class DeslocamentoCampusDTO extends AbstractDTO<String>
+	implements Comparable<DeslocamentoCampusDTO>
+{
 	private static final long serialVersionUID = -5134820110949139907L;
-	
+
 	// Propriedades
 	public static final String PROPERTY_ORIGEM_ID = "origemId";
 	public static final String PROPERTY_ORIGEM_STRING = "origemString";

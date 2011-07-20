@@ -10,6 +10,7 @@ import com.gapso.web.trieda.shared.dtos.OfertaDTO;
 import com.gapso.web.trieda.shared.mvp.presenter.Presenter;
 import com.gapso.web.trieda.shared.services.OfertasServiceAsync;
 import com.gapso.web.trieda.shared.services.Services;
+import com.gapso.web.trieda.shared.util.TriedaUtil;
 import com.gapso.web.trieda.shared.util.view.CampusComboBox;
 import com.gapso.web.trieda.shared.util.view.CurriculoComboBox;
 import com.gapso.web.trieda.shared.util.view.SimpleGrid;
@@ -69,21 +70,25 @@ public class OfertaFormPresenter implements Presenter {
 		return display.isValid();
 	}
 	
-	private OfertaDTO getDTO() {
+	private OfertaDTO getDTO()
+	{
 		OfertaDTO ofertaDTO = display.getOfertaDTO();
-		ofertaDTO.setTurnoId(display.getTurnoComboBox().getSelection().get(0).getId());
-		ofertaDTO.setTurnoString(display.getTurnoComboBox().getSelection().get(0).getNome());
-		ofertaDTO.setCampusId(display.getCampusComboBox().getSelection().get(0).getId());
-		ofertaDTO.setCampusString(display.getCampusComboBox().getSelection().get(0).getCodigo());
-		ofertaDTO.setMatrizCurricularId(display.getCurriculoComboBox().getSelection().get(0).getId());
-		ofertaDTO.setMatrizCurricularString(display.getCurriculoComboBox().getSelection().get(0).getCodigo());
-		ofertaDTO.setReceita(display.getReceitaNumberField().getValue().doubleValue());
+
+		ofertaDTO.setTurnoId( display.getTurnoComboBox().getSelection().get( 0 ).getId() );
+		ofertaDTO.setTurnoString( display.getTurnoComboBox().getSelection().get( 0 ).getNome() );
+		ofertaDTO.setCampusId( display.getCampusComboBox().getSelection().get( 0 ).getId() );
+		ofertaDTO.setCampusString( display.getCampusComboBox().getSelection().get( 0 ).getCodigo() );
+		ofertaDTO.setMatrizCurricularId( display.getCurriculoComboBox().getSelection().get( 0 ).getId() );
+		ofertaDTO.setMatrizCurricularString( display.getCurriculoComboBox().getSelection().get( 0 ).getCodigo() );
+		ofertaDTO.setReceita( TriedaUtil.parseTriedaCurrency(
+			display.getReceitaNumberField().getValue().doubleValue() ) );
+
 		return ofertaDTO;
 	}
-	
+
 	@Override
-	public void go(Widget widget) {
+	public void go( Widget widget )
+	{
 		display.getSimpleModal().show();
 	}
-
 }

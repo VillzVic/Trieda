@@ -2,14 +2,14 @@ package com.gapso.web.trieda.shared.dtos;
 
 import java.util.List;
 
-
-public class ParametroDTO extends AbstractDTO<Long> implements Comparable<ParametroDTO> {
-
+public class ParametroDTO extends AbstractDTO<Long>
+	implements Comparable<ParametroDTO>
+{
 	private static final long serialVersionUID = -5134820110949139907L;
-	
+
 	public static final String TATICO = "TATICO";
 	public static final String OPERACIONAL = "OPERACIONAL";
-	
+
 	// Propriedades
 	public static final String PROPERTY_ID = "id";
 	public static final String PROPERTY_VERSION = "version";

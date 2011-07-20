@@ -1,6 +1,7 @@
 package com.gapso.web.trieda.shared.dtos;
 
-
+import com.gapso.web.trieda.main.client.TriedaCurrency;
+import com.gapso.web.trieda.shared.util.TriedaUtil;
 
 public class CampusDTO extends AbstractDTO< String > implements Comparable< CampusDTO >
 {
@@ -64,14 +65,14 @@ public class CampusDTO extends AbstractDTO< String > implements Comparable< Camp
 	public void setEstado(String value) {
 		set(PROPERTY_ESTADO, value);
 	}
-	
+
 	public String getMunicipio() {
 		return get(PROPERTY_MUNICIPIO);
 	}
 	public void setMunicipio(String value) {
 		set(PROPERTY_MUNICIPIO, value);
 	}
-	
+
 	public String getBairro() {
 		return get(PROPERTY_BAIRRO);
 	}
@@ -79,11 +80,12 @@ public class CampusDTO extends AbstractDTO< String > implements Comparable< Camp
 		set(PROPERTY_BAIRRO, value);
 	}
 
-	public void setValorCredito(String value) {
-		set(PROPERTY_VALOR_CREDITO, value);
+	public void setValorCredito(TriedaCurrency value) {
+		set(PROPERTY_VALOR_CREDITO, value.toString());
 	}
-	public String getValorCredito() {
-		return get(PROPERTY_VALOR_CREDITO);
+
+	public TriedaCurrency getValorCredito() {
+		return TriedaUtil.parseTriedaCurrency(get(PROPERTY_VALOR_CREDITO));
 	}
 
 	public void setOtimizadoTatico(Boolean value) {

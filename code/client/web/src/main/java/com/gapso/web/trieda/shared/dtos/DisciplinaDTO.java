@@ -1,9 +1,8 @@
 package com.gapso.web.trieda.shared.dtos;
 
-
-
-public class DisciplinaDTO extends AbstractDTO<String> implements Comparable<DisciplinaDTO> {
-
+public class DisciplinaDTO extends AbstractDTO<String>
+	implements Comparable<DisciplinaDTO>
+{
 	private static final long serialVersionUID = -5134820110949139907L;
 	
 	// Propriedades

@@ -1,10 +1,8 @@
 package com.gapso.web.trieda.shared.dtos;
 
-
-
-
-public class EquivalenciaDTO extends AbstractDTO<String> implements Comparable<EquivalenciaDTO> {
-
+public class EquivalenciaDTO extends AbstractDTO<String>
+	implements Comparable<EquivalenciaDTO>
+{
 	private static final long serialVersionUID = 5815525344760896272L;
 	
 	// Propriedades

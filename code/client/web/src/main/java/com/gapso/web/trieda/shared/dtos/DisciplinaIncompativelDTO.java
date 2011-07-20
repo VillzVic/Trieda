@@ -1,18 +1,17 @@
 package com.gapso.web.trieda.shared.dtos;
 
-
-
-public class DisciplinaIncompativelDTO extends AbstractDTO<String> implements Comparable<DisciplinaIncompativelDTO> {
-
+public class DisciplinaIncompativelDTO extends AbstractDTO<String>
+	implements Comparable<DisciplinaIncompativelDTO>
+{
 	private static final long serialVersionUID = 2804545521094014835L;
-	
+
 	// Propriedades
 	public static final String PROPERTY_DISCIPLINA1_ID = "disciplina1Id";
 	public static final String PROPERTY_DISCIPLINA2_ID = "disciplina2Id";
 	public static final String PROPERTY_DISCIPLINA1_STRING = "disciplina1String";
 	public static final String PROPERTY_DISCIPLINA2_STRING = "disciplina2String";
 	public static final String PROPERTY_INCOMPATIVEL = "incompativel";
-	
+
 	public DisciplinaIncompativelDTO() {
 		super();
 	}

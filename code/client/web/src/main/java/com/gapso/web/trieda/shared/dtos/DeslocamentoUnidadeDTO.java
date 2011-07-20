@@ -3,9 +3,9 @@ package com.gapso.web.trieda.shared.dtos;
 import java.util.ArrayList;
 import java.util.List;
 
-
-public class DeslocamentoUnidadeDTO extends AbstractDTO<String> implements Comparable<DeslocamentoUnidadeDTO> {
-
+public class DeslocamentoUnidadeDTO extends AbstractDTO<String>
+	implements Comparable<DeslocamentoUnidadeDTO>
+{
 	private static final long serialVersionUID = -5134820110949139907L;
 
 	// Propriedades
@@ -16,7 +16,7 @@ public class DeslocamentoUnidadeDTO extends AbstractDTO<String> implements Compa
 	public static final String PROPERTY_DESTINO_STRING = "destinoString";
 	public static final String PROPERTY_DESTINO_TEMPO = "destinoTempo";
 	public static final String PROPERTY_DESTINO_CUSTO = "destinoCusto";
-	
+
 	public DeslocamentoUnidadeDTO() {
 		super();
 		set(PROPERTY_DESTINO_IDS_LIST, new ArrayList<Long>());

@@ -1,8 +1,8 @@
 package com.gapso.web.trieda.shared.dtos;
 
-
-public class FixacaoDTO extends AbstractDTO<String> implements Comparable<FixacaoDTO> {
-
+public class FixacaoDTO extends AbstractDTO<String>
+	implements Comparable<FixacaoDTO>
+{
 	private static final long serialVersionUID = 6642146983954267367L;
 	
 	// Propriedades
