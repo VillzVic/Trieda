@@ -29,57 +29,78 @@ public class IncompatibilidadeGrid extends ContentPanel {
 	private GridCellRenderer<BaseModel> buttonRenderer;
 	private List<String> stringColumns = new ArrayList<String>();
 	
-	public IncompatibilidadeGrid() {
-		super(new FitLayout());
-		setHeaderVisible(false);
+	public IncompatibilidadeGrid()
+	{
+		super( new FitLayout() );
+		setHeaderVisible( false );
 	}
 
-	protected void createGrid() {
-		
-		store = new ListStore<BaseModel>();
-		store.add(models);
-		grid = new EditorGrid<BaseModel>(store, getColumnModel());
-		grid.setBorders(true);
-		
-		buttonRenderer = new GridCellRenderer<BaseModel>() {
+	protected void createGrid()
+	{
+		store = new ListStore< BaseModel >();
+		store.add( models );
+		grid = new EditorGrid< BaseModel >( store, getColumnModel() );
+		grid.setBorders( true );
+
+		buttonRenderer = new GridCellRenderer< BaseModel >() {
 			@Override
-			public Object render(BaseModel model, String property, ColumnData config, final int row, final int col, ListStore<BaseModel> store, Grid<BaseModel> grid) {
-				if(col == 0) return stringColumns.get(row);
-				if(isInferior(row, col)) {
+			public Object render( BaseModel model, String property, ColumnData config,
+				final int row, final int col, ListStore< BaseModel > store, Grid< BaseModel > grid )
+			{
+				if ( col == 0 )
+				{
+					return stringColumns.get( row );
+				}
+
+				if ( isInferior( row, col ) )
+				{
 					config.style = "background-color: #EEEFFF; height: 28px;";
 					return "";
 				}
-				ToggleImageButton tb = new ToggleImageButton(getModel(row, col).getIncompativel(), Resources.DEFAULTS.incompativel(), Resources.DEFAULTS.compativel());;
-				tb.setWidth(69);
-				tb.addSelectionListener(new SelectionListener<ButtonEvent>() {
+
+				ToggleImageButton tb = new ToggleImageButton( getModel( row, col ).getIncompativel(),
+					Resources.DEFAULTS.incompativel(), Resources.DEFAULTS.compativel() );
+
+				tb.setWidth( 69 );
+				tb.addSelectionListener( new SelectionListener< ButtonEvent >()
+				{
 					@Override
-					public void componentSelected(ButtonEvent ce) {
+					public void componentSelected( ButtonEvent ce )
+					{
 						ToggleImageButton tib = (ToggleImageButton) ce.getComponent();
-						getModel(row, col).setIncompativel(tib.isPressed());
+						getModel( row, col ).setIncompativel( tib.isPressed() );
 					}
 				});
+
 				return tb;
 			}
 		};
-		add(grid);
+
+		add( grid );
 	}
-	
+
 	@Override
-	protected void beforeRender() {
+	protected void beforeRender()
+	{
 		super.beforeRender();
 		createGrid();
 	}
 
-	public void updateList(List<DisciplinaIncompativelDTO> models) {
-		this.models = (models != null)? models : new ArrayList<DisciplinaIncompativelDTO>();
+	public void updateList( List< DisciplinaIncompativelDTO > models )
+	{
+		this.models = ( ( models != null )? models : new ArrayList< DisciplinaIncompativelDTO >() );
 		store.removeAll();
-		
+
 		stringColumns.clear();
-		for(DisciplinaIncompativelDTO di : models) {
-			if(!stringColumns.contains(di.getDisciplina1String())) stringColumns.add(di.getDisciplina1String());
+		for ( DisciplinaIncompativelDTO di : models )
+		{
+			if ( !stringColumns.contains( di.getDisciplina1String() ) )
+			{
+				stringColumns.add( di.getDisciplina1String() );
+			}
 		}
-		
-		List<BaseModel> modelsFake = new ArrayList<BaseModel>();
+
+		List< BaseModel > modelsFake = new ArrayList<BaseModel>();
 		modelsFake.add(new BaseModel());
 		for(int i = 0; i < stringColumns.size() - 1; i++) {
 			modelsFake.add(new BaseModel());

@@ -7,7 +7,6 @@ import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.NumberField;
 import com.extjs.gxt.ui.client.widget.form.TextField;
-import com.gapso.trieda.domain.Professor;
 import com.gapso.web.trieda.shared.dtos.AreaTitulacaoDTO;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorDTO;
@@ -112,7 +111,6 @@ public class ProfessorFormPresenter
 	private ProfessorDTO getDTO()
 	{
 		ProfessorDTO professorDTO = display.getProfessorDTO();
-		Professor professorDomain = Professor.find(professorDTO.getId());
 
 		professorDTO.setCpf(display.getCpfTextField().getValue());
 		professorDTO.setNome(display.getNomeTextField().getValue());
@@ -131,7 +129,7 @@ public class ProfessorFormPresenter
 		professorDTO.setAreaTitulacaoId(areaTitulacaoDTO.getId());
 		professorDTO.setAreaTitulacaoString(areaTitulacaoDTO.getCodigo());
 		professorDTO.setCreditoAnterior(display.getCreditoAnteriorNumberField().getValue().intValue());
-		professorDTO.setNotaDesempenho( TriedaUtil.getNotaDesempenhoProfessor(professorDomain).intValue() );
+		professorDTO.setNotaDesempenho( TriedaUtil.getNotaDesempenhoProfessor(professorDTO.getId()).intValue() );
 		professorDTO.setValorCredito( TriedaUtil.parseTriedaCurrency(
 			display.getValorCreditoNumberField().getValue().doubleValue() ) );
 		professorDTO.setCenarioId(cenario.getId());

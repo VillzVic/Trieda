@@ -20,93 +20,101 @@ import com.gapso.web.trieda.shared.util.view.GTabItem;
 import com.gapso.web.trieda.shared.util.view.IncompatibilidadeGrid;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
-public class CompatibilidadesView extends MyComposite implements CompatibilidadesPresenter.Display {
-
+public class CompatibilidadesView extends MyComposite
+	implements CompatibilidadesPresenter.Display
+{
 	private ContentPanel panel;
 	private IncompatibilidadeGrid grid;
 	private ToolBar toolBar;
-	
 	private CursoComboBox cursoCB;
 	private CurriculoComboBox curriculoCB;
-	private SimpleComboBox<Integer> periodoCB;
+	private SimpleComboBox< Integer > periodoCB;
 	private Button salvarBt;
 	private Button cancelarBt;
-	
 	private GTabItem tabItem;
-	
-	public CompatibilidadesView() {
+
+	public CompatibilidadesView()
+	{
 		initUI();
 		createTabItem();
 		createToolBar();
 		createContent();
-		initComponent(tabItem);
+		initComponent( tabItem );
 	}
 
-	private void initUI() {
-		panel = new ContentPanel(new RowLayout(Orientation.VERTICAL));
-		panel.setHeading("Master Data » Compatibilidade entre disciplinas");
-		panel.setBodyStyle("background-color: transparent;");
+	private void initUI()
+	{
+		panel = new ContentPanel( new RowLayout( Orientation.VERTICAL ) );
+		panel.setHeading( "Master Data » Compatibilidade entre disciplinas" );
+		panel.setBodyStyle( "background-color: transparent;" );
 	}
 
-	private void createToolBar() {
+	private void createToolBar()
+	{
 		this.toolBar = new ToolBar();
 		salvarBt = new Button();
-		salvarBt.setIcon(AbstractImagePrototype.create(Resources.DEFAULTS.save16()));
-		salvarBt.setToolTip("Salvar");
-		
+		salvarBt.setIcon( AbstractImagePrototype.create(
+			Resources.DEFAULTS.save16() ) );
+		salvarBt.setToolTip( "Salvar" );
+
 		cancelarBt = new Button();
-		cancelarBt.setIcon(AbstractImagePrototype.create(Resources.DEFAULTS.cancel16()));
-		cancelarBt.setToolTip("Cancelar");
-		
-		this.toolBar.add(salvarBt);
-		this.toolBar.add(cancelarBt);
-		
-		panel.setTopComponent(this.toolBar);
+		cancelarBt.setIcon( AbstractImagePrototype.create(
+			Resources.DEFAULTS.cancel16() ) );
+		cancelarBt.setToolTip( "Cancelar" );
+
+		this.toolBar.add( salvarBt );
+		this.toolBar.add( cancelarBt );
+
+		panel.setTopComponent( this.toolBar );
 	}
-	
-	private void createTabItem() {
-		tabItem = new GTabItem("Compatibilidade entre disciplinas", Resources.DEFAULTS.compatibilidade16());
-		tabItem.setContent(panel);
+
+	private void createTabItem()
+	{
+		tabItem = new GTabItem( "Compatibilidade entre disciplinas",
+				Resources.DEFAULTS.compatibilidade16() );
+
+		tabItem.setContent( panel );
 	}
-	
-	private void createContent() {
-		FormData formData = new FormData("100%");
+
+	private void createContent()
+	{
+		FormData formData = new FormData( "100%" );
 		FormPanel formPanel = new FormPanel();
-		formPanel.setBodyBorder(false);
-		formPanel.setLabelWidth(100);
-		formPanel.setLabelAlign(LabelAlign.RIGHT);
-		formPanel.setHeaderVisible(false);
-		formPanel.setAutoHeight(true);
-		
+		formPanel.setBodyBorder( false );
+		formPanel.setLabelWidth( 100 );
+		formPanel.setLabelAlign( LabelAlign.RIGHT );
+		formPanel.setHeaderVisible( false );
+		formPanel.setAutoHeight( true );
+
 		cursoCB = new CursoComboBox();
-		formPanel.add(cursoCB, formData);
-		
-		curriculoCB = new CurriculoComboBox(cursoCB);
-		formPanel.add(curriculoCB, formData);
-		
-		periodoCB = new SimpleComboBox<Integer>();
-		periodoCB.setFieldLabel("Periodo");
-		periodoCB.setEnabled(false);
-		formPanel.add(periodoCB, formData);
-		
-		panel.add(formPanel, new RowData(1, -1, new Margins(4)));
-		
+		formPanel.add( cursoCB, formData );
+
+		curriculoCB = new CurriculoComboBox( cursoCB );
+		formPanel.add( curriculoCB, formData );
+
+		periodoCB = new SimpleComboBox< Integer >();
+		periodoCB.setFieldLabel( "Periodo" );
+		periodoCB.setEnabled( false );
+		formPanel.add( periodoCB, formData );
+
+		panel.add( formPanel, new RowData( 1, -1, new Margins( 4 ) ) );
+
 		grid = new IncompatibilidadeGrid();
-		grid.setBodyBorder(false);
-		
-		panel.add(grid, new RowData(1, 1, new Margins(0, 5, 5, 5)));
+		grid.setBodyBorder( false );
+
+		panel.add( grid, new RowData( 1, 1, new Margins( 0, 5, 5, 5 ) ) );
 	}
-	
+
 	@Override
 	public Button getSalvarButton() {
 		return salvarBt;
 	}
-	
+
 	@Override
 	public Button getCancelarButton() {
 		return cancelarBt;
 	}
-	
+
 	@Override
 	public CursoComboBox getCursoComboBox() {
 		return cursoCB;
@@ -126,5 +134,4 @@ public class CompatibilidadesView extends MyComposite implements Compatibilidade
 	public SimpleComboBox<Integer> getPeriodoComboBox() {
 		return periodoCB;
 	}
-	
 }

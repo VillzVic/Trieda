@@ -56,485 +56,571 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
 public class DisciplinasAssociarSalaView extends MyComposite implements
-		DisciplinasAssociarSalaPresenter.Display {
-
+		DisciplinasAssociarSalaPresenter.Display
+{
 	private SimpleToolBar toolBar;
 	private ContentPanel panel;
 	private ContentPanel panelLists;
-
 	private CampusComboBox campusCB;
 	private TurnoComboBox turnoCB;
-
 	private UnidadeComboBox unidadeSalaCB;
-	private SimpleComboBox<String> andarCB;
-
+	private SimpleComboBox< String > andarCB;
 	private UnidadeComboBox unidadeGrupoSalaCB;
-
-	private TreeStore<TreeNodeDTO> storeDisciplina;
-	private TreeStore<TreeNodeDTO> storeSala;
-
-	private TreePanel<TreeNodeDTO> disciplinasList;
-	private TreePanel<TreeNodeDTO> salasList;
-
+	private TreeStore< TreeNodeDTO > storeDisciplina;
+	private TreeStore< TreeNodeDTO > storeSala;
+	private TreePanel< TreeNodeDTO > disciplinasList;
+	private TreePanel< TreeNodeDTO > salasList;
 	private ToolButton removeButton;
-
 	private TabPanel tabs;
-
 	private GTabItem tabItem;
 
-	public DisciplinasAssociarSalaView() {
+	public DisciplinasAssociarSalaView()
+	{
 		initUI();
 		createTabItem();
 		createForm();
-		initComponent(tabItem);
+		initComponent( tabItem );
 	}
 
-	private void initUI() {
-		panel = new ContentPanel(new BorderLayout());
-		panel.setHeading("Master Data » Associação de Disciplinas à Salas");
+	private void initUI()
+	{
+		panel = new ContentPanel( new BorderLayout() );
+		panel.setHeading( "Master Data » Associação de Disciplinas à Salas" );
 		createToolBar();
 	}
 
-	private void createTabItem() {
-		tabItem = new GTabItem("Associação de Disciplinas à Salas",
-				Resources.DEFAULTS.associacaoDisciplinaSala16());
-		tabItem.setContent(panel);
+	private void createTabItem()
+	{
+		tabItem = new GTabItem( "Associação de Disciplinas à Salas",
+			Resources.DEFAULTS.associacaoDisciplinaSala16() );
+
+		tabItem.setContent( panel );
 	}
 
-	private void createToolBar() {
-		toolBar = new SimpleToolBar(false, false, false, true, true, this);
-		panel.setTopComponent(toolBar);
+	private void createToolBar()
+	{
+		toolBar = new SimpleToolBar( false, false, false, true, true, this );
+		panel.setTopComponent( toolBar );
 	}
 
-	private void createForm() {
-		FormData formData = new FormData("100%");
+	private void createForm()
+	{
+		FormData formData = new FormData( "100%" );
 		FormPanel formPanel = new FormPanel();
-		formPanel.setBodyBorder(false);
-		formPanel.setLabelWidth(100);
-		formPanel.setLabelAlign(LabelAlign.RIGHT);
-		formPanel.setHeaderVisible(false);
-		formPanel.setAutoHeight(true);
+		formPanel.setBodyBorder( false );
+		formPanel.setLabelWidth( 100 );
+		formPanel.setLabelAlign( LabelAlign.RIGHT );
+		formPanel.setHeaderVisible( false );
+		formPanel.setAutoHeight( true );
 
 		campusCB = new CampusComboBox();
-		campusCB.setFieldLabel("Campus");
-		formPanel.add(campusCB, formData);
+		campusCB.setFieldLabel( "Campus" );
+		formPanel.add( campusCB, formData );
 
-		turnoCB = new TurnoComboBox(campusCB) {
+		turnoCB = new TurnoComboBox( campusCB )
+		{
 			@Override
-			protected void onBlur(ComponentEvent ce) {
-				super.onBlur(ce);
-				if (turnoCB.getValue() == null) {
-					setTabEnabled(false);
+			protected void onBlur( ComponentEvent ce )
+			{
+				super.onBlur( ce );
+
+				if ( turnoCB.getValue() == null )
+				{
+					setTabEnabled( false );
 					getDisciplinasList().getStore().removeAll();
 					getDisciplinasList().disable();
 				}
 			}
 		};
-		turnoCB.setFieldLabel("Turno");
+
+		turnoCB.setFieldLabel( "Turno" );
 		turnoCB.disable();
-		turnoCB.setDisplayField("nome");
-		formPanel.add(turnoCB, formData);
+		turnoCB.setDisplayField( "nome" );
+		formPanel.add( turnoCB, formData );
 
 		tabs = new TabPanel();
 		tabs.disable();
 
 		TabItem salaTabItem = new TabItem();
-		salaTabItem.setBorders(false);
-		salaTabItem.setText("Sala");
-		salaTabItem.setLayout(new FormLayout());
+		salaTabItem.setBorders( false );
+		salaTabItem.setText( "Sala" );
+		salaTabItem.setLayout( new FormLayout() );
 
-		unidadeSalaCB = new UnidadeComboBox(campusCB) {
+		unidadeSalaCB = new UnidadeComboBox( campusCB )
+		{
 			@Override
-			protected void onBlur(ComponentEvent ce) {
-				super.onBlur(ce);
-				if (unidadeSalaCB.getValue() == null) {
-					andarCB.setValue(null);
+			protected void onBlur( ComponentEvent ce )
+			{
+				super.onBlur( ce );
+				if ( unidadeSalaCB.getValue() == null )
+				{
+					andarCB.setValue( null );
 					andarCB.disable();
 				}
 			}
 		};
-		unidadeSalaCB.setFieldLabel("Unidade");
+
+		unidadeSalaCB.setFieldLabel( "Unidade" );
 		unidadeSalaCB.disable();
-		salaTabItem.add(unidadeSalaCB, formData);
-		andarCB = new SimpleComboBox<String>();
-		andarCB.setFieldLabel("Andar");
+		salaTabItem.add( unidadeSalaCB, formData );
+		andarCB = new SimpleComboBox< String >();
+		andarCB.setFieldLabel( "Andar" );
 		andarCB.disable();
-		salaTabItem.add(andarCB, formData);
+		salaTabItem.add( andarCB, formData );
 
 		TabItem grupoSalaTabItem = new TabItem();
-		grupoSalaTabItem.setText("Grupo de Sala");
-		grupoSalaTabItem.setLayout(new FormLayout());
+		grupoSalaTabItem.setText( "Grupo de Sala" );
+		grupoSalaTabItem.setLayout( new FormLayout() );
 
-		unidadeGrupoSalaCB = new UnidadeComboBox(campusCB);
-		unidadeGrupoSalaCB.setFieldLabel("Unidade");
-		grupoSalaTabItem.add(unidadeGrupoSalaCB, formData);
+		unidadeGrupoSalaCB = new UnidadeComboBox( campusCB );
+		unidadeGrupoSalaCB.setFieldLabel( "Unidade" );
+		grupoSalaTabItem.add( unidadeGrupoSalaCB, formData );
 
-		tabs.add(salaTabItem);
-		tabs.add(grupoSalaTabItem);
+		tabs.add( salaTabItem );
+		tabs.add( grupoSalaTabItem );
 
-		formPanel.add(tabs, formData);
+		formPanel.add( tabs, formData );
 
-		BorderLayoutData bld = new BorderLayoutData(LayoutRegion.NORTH);
-		bld.setMargins(new Margins(0, 0, 0, 0));
-		panel.add(formPanel, bld);
+		BorderLayoutData bld = new BorderLayoutData( LayoutRegion.NORTH );
+		bld.setMargins( new Margins( 0, 0, 0, 0 ) );
+		bld.setSize( 153 );
+		panel.add( formPanel, bld );
 
-		panelLists = new ContentPanel(new RowLayout(Orientation.HORIZONTAL));
-		panelLists.setHeaderVisible(false);
-		panelLists.setBodyBorder(false);
+		panelLists = new ContentPanel( new RowLayout( Orientation.HORIZONTAL ) );
+		panelLists.setHeaderVisible( false );
+		panelLists.setBodyBorder( false );
 
-		ContentPanel disciplinasListPanel = new ContentPanel(new FitLayout());
-		disciplinasListPanel.setHeading("Matriz(es) Curricular(es)");
-		disciplinasList = new TreePanel<TreeNodeDTO>(getStoreDisciplina()) {
+		ContentPanel disciplinasListPanel = new ContentPanel( new FitLayout() );
+		disciplinasListPanel.setHeading( "Matriz(es) Curricular(es)" );
+		disciplinasList = new TreePanel< TreeNodeDTO >( getStoreDisciplina() )
+		{
 			@Override
-			protected boolean hasChildren(TreeNodeDTO model) {
-				return !model.getLeaf();
+			protected boolean hasChildren( TreeNodeDTO model )
+			{
+				return ( !model.getLeaf() );
 			}
 		};
-		TreePanelDragSource source = new TreePanelDragSource(disciplinasList);
-		disciplinasList.getStyle()
-				.setLeafIcon(
-						AbstractImagePrototype.create(Resources.DEFAULTS
-								.disciplina16()));
+
+		TreePanelDragSource source = new TreePanelDragSource( disciplinasList );
+		disciplinasList.getStyle().setLeafIcon(
+			AbstractImagePrototype.create( Resources.DEFAULTS.disciplina16() ) );
+
 		disciplinasList.disable();
-		disciplinasList.setDisplayProperty(TreeNodeDTO.PROPERTY_TEXT);
+		disciplinasList.setDisplayProperty( TreeNodeDTO.PROPERTY_TEXT );
 		disciplinasList.getSelectionModel().setSelectionMode(
-				SelectionMode.SINGLE);
-		disciplinasListPanel.add(disciplinasList);
+				SelectionMode.SINGLE );
+		disciplinasListPanel.add( disciplinasList );
 
-		source.setStatusText("{0} Selecionado(s)");
+		source.setStatusText( "{0} Selecionado(s)" );
 
-		ContentPanel salasListPanel = new ContentPanel(new FitLayout());
-		salasListPanel.getHeader().addTool(getRemoveButton());
-		salasListPanel.setHeading("Sala(s)");
-		salasList = new TreePanel<TreeNodeDTO>(getStoreSala()) {
+		ContentPanel salasListPanel = new ContentPanel( new FitLayout() );
+		salasListPanel.getHeader().addTool( getRemoveButton() );
+		salasListPanel.setHeading( "Sala(s)" );
+		salasList = new TreePanel< TreeNodeDTO >( getStoreSala() )
+		{
 			@Override
-			protected boolean hasChildren(TreeNodeDTO model) {
-				return !model.getLeaf();
+			protected boolean hasChildren( TreeNodeDTO model )
+			{
+				return ( !model.getLeaf() );
 			}
 		};
-		salasList.setIconProvider(new ModelIconProvider<TreeNodeDTO>() {
+
+		salasList.setIconProvider( new ModelIconProvider< TreeNodeDTO >()
+		{
 			@Override
-			public AbstractImagePrototype getIcon(TreeNodeDTO model) {
-				if (model.getEmpty() && !model.getLeaf()) {
-					return AbstractImagePrototype.create(Resources.DEFAULTS
-							.folderEmpty16());
+			public AbstractImagePrototype getIcon( TreeNodeDTO model )
+			{
+				if ( model.getEmpty() && !model.getLeaf() )
+				{
+					return AbstractImagePrototype.create(
+						Resources.DEFAULTS.folderEmpty16() );
 				}
+
 				return null;
 			}
 		});
-		TreePanelDropTarget target = new TreePanelDropTarget(salasList) {
+
+		TreePanelDropTarget target = new TreePanelDropTarget( salasList )
+		{
 			@Override
-			protected void onDragDrop(DNDEvent event) {
+			protected void onDragDrop( DNDEvent event ) {
 			}
 		};
-		salasList.getStyle()
-				.setLeafIcon(
-						AbstractImagePrototype.create(Resources.DEFAULTS
-								.disciplina16()));
+
+		salasList.getStyle().setLeafIcon(
+			AbstractImagePrototype.create( Resources.DEFAULTS.disciplina16() ) );
+
 		salasList.disable();
-		salasList.setDisplayProperty(TreeNodeDTO.PROPERTY_TEXT);
-		salasList.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
-		salasList.setCaching(false);
+		salasList.setDisplayProperty( TreeNodeDTO.PROPERTY_TEXT );
+		salasList.getSelectionModel().setSelectionMode( SelectionMode.SINGLE );
+		salasList.setCaching( false );
 
-		salasListPanel.add(salasList);
+		salasListPanel.add( salasList );
 
-		target.setOperation(Operation.COPY);
-		target.addDNDListener(new DNDListener() {
-			@SuppressWarnings("rawtypes")
+		target.setOperation( Operation.COPY );
+		target.addDNDListener( new DNDListener()
+		{
+			@SuppressWarnings( "rawtypes" )
 			@Override
-			public void dragMove(DNDEvent e) {
-				TreeNode nodeTarget = salasList.findNode(e.getTarget());
-				if (nodeTarget != null
-						&& (nodeTarget.getModel() instanceof TreeNodeDTO)) {
-					TreeNodeDTO nodeTargetDTO = (TreeNodeDTO) nodeTarget
-							.getModel();
-					AbstractDTO<?> contentNodeTargetDTO = nodeTargetDTO
-							.getContent();
-					if (!(contentNodeTargetDTO instanceof SalaDTO)
-							&& !(contentNodeTargetDTO instanceof GrupoSalaDTO)) {
-						e.setCancelled(true);
-						e.getStatus().setStatus(false);
+			public void dragMove( DNDEvent e )
+			{
+				TreeNode nodeTarget = salasList.findNode( e.getTarget() );
+
+				if ( nodeTarget != null
+						&& ( nodeTarget.getModel() instanceof TreeNodeDTO  ) )
+				{
+					TreeNodeDTO nodeTargetDTO = (TreeNodeDTO)nodeTarget.getModel();
+
+					AbstractDTO<?> contentNodeTargetDTO = nodeTargetDTO.getContent();
+
+					if ( !( contentNodeTargetDTO instanceof SalaDTO )
+							&& !( contentNodeTargetDTO instanceof GrupoSalaDTO ) )
+					{
+						e.setCancelled( true );
+						e.getStatus().setStatus( false );
+
 						return;
 					}
 				}
-				super.dragMove(e);
+
+				super.dragMove( e );
 			}
 
 			@SuppressWarnings({ "unchecked", "rawtypes" })
 			@Override
-			public void dragDrop(DNDEvent e) {
-				TreePanel<TreeNodeDTO> treePanel = (TreePanel) e.getComponent();
-				TreeNodeDTO selectedNode = treePanel.getSelectionModel()
-						.getSelectedItem();
+			public void dragDrop( DNDEvent e )
+			{
+				TreePanel< TreeNodeDTO > treePanel = (TreePanel) e.getComponent();
+				TreeNodeDTO selectedNode
+					= treePanel.getSelectionModel().getSelectedItem();
+
 				AbstractDTO<?> contentSelectedNode = selectedNode.getContent();
 
 				OfertaDTO ofertaDTO = null;
 				Integer periodo = null;
 				CurriculoDisciplinaDTO cdDTO = null;
 
-				if (contentSelectedNode instanceof OfertaDTO) {
+				if ( contentSelectedNode instanceof OfertaDTO )
+				{
 					ofertaDTO = (OfertaDTO) contentSelectedNode;
-				} else if (contentSelectedNode instanceof CurriculoDisciplinaDTO) {
+				}
+				else if ( contentSelectedNode instanceof CurriculoDisciplinaDTO )
+				{
 					TreeNodeDTO parentNode = selectedNode.getParent();
 					AbstractDTO<?> contentParentNode = parentNode.getContent();
-					if (contentParentNode instanceof OfertaDTO) {
+
+					if ( contentParentNode instanceof OfertaDTO )
+					{
 						ofertaDTO = (OfertaDTO) contentParentNode;
-						periodo = ((CurriculoDisciplinaDTO) contentSelectedNode)
-								.getPeriodo();
-					} else {
-						ofertaDTO = (OfertaDTO) parentNode.getParent()
-								.getContent();
+						periodo = ( (CurriculoDisciplinaDTO) contentSelectedNode ).getPeriodo();
+					}
+					else
+					{
+						ofertaDTO = (OfertaDTO) parentNode.getParent().getContent();
 						cdDTO = (CurriculoDisciplinaDTO) contentSelectedNode;
 						periodo = cdDTO.getPeriodo();
 					}
 				}
 
-				final TreeNodeDTO targetNode = salasList
-						.findNode(e.getTarget()).getModel();
+				final TreeNodeDTO targetNode
+					= salasList.findNode( e.getTarget() ).getModel();
 				AbstractDTO<?> contentTargetNode = targetNode.getContent();
 
-				if (contentTargetNode instanceof SalaDTO) {
+				if ( contentTargetNode instanceof SalaDTO )
+				{
 					SalaDTO salaDTO = (SalaDTO) contentTargetNode;
-					DisciplinasServiceAsync disciplinasService = Services
-							.disciplinas();
-					disciplinasService.saveDisciplinaToSala(ofertaDTO, periodo,
-							cdDTO, salaDTO, new AsyncCallback<Void>() {
-								@Override
-								public void onFailure(Throwable caught) {
-									MessageBox.alert("ERRO!",
-											"Deu falha na conexão", null);
-								}
+					DisciplinasServiceAsync disciplinasService
+						= Services.disciplinas();
 
-								@Override
-								public void onSuccess(Void result) {
-									Info.display("Salvo",
-											"Disciplinas associadas com sucesso!");
-									addItemInFolderEmpty(targetNode, salasList);
-								}
-							});
-				} else {
+					disciplinasService.saveDisciplinaToSala(
+						ofertaDTO, periodo, cdDTO, salaDTO, new AsyncCallback< Void >()
+						{
+							@Override
+							public void onFailure( Throwable caught )
+							{
+								MessageBox.alert( "ERRO!", "Deu falha na conexão", null );
+							}
+							
+							@Override
+							public void onSuccess( Void result )
+							{
+								Info.display("Salvo", "Disciplinas associadas com sucesso!" );
+								addItemInFolderEmpty( targetNode, salasList );
+							}
+						});
+				}
+				else
+				{
 					GrupoSalaDTO grupoSalaDTO = (GrupoSalaDTO) contentTargetNode;
-					DisciplinasServiceAsync disciplinasService = Services
-							.disciplinas();
-					disciplinasService.saveDisciplinaToSala(ofertaDTO, periodo,
-							cdDTO, grupoSalaDTO, new AsyncCallback<Void>() {
-								@Override
-								public void onFailure(Throwable caught) {
-									MessageBox.alert("ERRO!",
-											"Deu falha na conexão", null);
-								}
+					DisciplinasServiceAsync disciplinasService
+						= Services.disciplinas();
 
-								@Override
-								public void onSuccess(Void result) {
-									Info.display("Salvo",
-											"Disciplinas associadas com sucesso!");
-									addItemInFolderEmpty(targetNode, salasList);
-								}
-							});
+					disciplinasService.saveDisciplinaToSala(
+						ofertaDTO, periodo, cdDTO, grupoSalaDTO, new AsyncCallback< Void >()
+						{
+							@Override
+							public void onFailure(Throwable caught)
+							{
+								MessageBox.alert( "ERRO!", "Deu falha na conexão", null );
+							}
+
+							@Override
+							public void onSuccess( Void result )
+							{
+								Info.display( "Salvo", "Disciplinas associadas com sucesso!" );
+								addItemInFolderEmpty( targetNode, salasList );
+							}
+						});
 				}
 			}
 		});
 
-		ContentPanel blankListPanel = new ContentPanel(new BorderLayout());
-		blankListPanel.setHeaderVisible(false);
-		blankListPanel.setBodyBorder(false);
+		ContentPanel blankListPanel = new ContentPanel( new BorderLayout() );
+		blankListPanel.setHeaderVisible( false ); 
+		blankListPanel.setBodyBorder( false );
 
-		panelLists.add(disciplinasListPanel, new RowData(.5, 1, new Margins(0,
-				0, 10, 10)));
-		panelLists.add(blankListPanel, new RowData(10, 1, new Margins(0, 0, 0,
-				0)));
-		panelLists.add(salasListPanel, new RowData(.5, 1, new Margins(0, 10,
-				10, 0)));
+		panelLists.add( disciplinasListPanel,
+			new RowData( 0.5, 1, new Margins( 0, 0, 10, 10 ) ) );
 
-		bld = new BorderLayoutData(LayoutRegion.CENTER);
-		bld.setMargins(new Margins(0, 0, 0, 0));
-		panel.setBodyBorder(false);
-		panelLists.setBodyStyle("background-color: #DFE8F6;");
-		panel.add(panelLists, bld);
+		panelLists.add( blankListPanel,
+			new RowData( 10, 1, new Margins( 0, 0, 0, 0 ) ) );
+
+		panelLists.add( salasListPanel,
+			new RowData( 0.5, 1, new Margins( 0, 10, 10, 0 ) ) );
+
+		bld = new BorderLayoutData( LayoutRegion.CENTER );
+		bld.setMargins( new Margins( 0, 0, 0, 0 ) );
+		panel.setBodyBorder( false );
+		panelLists.setBodyStyle( "background-color: #DFE8F6;" );
+		panel.add( panelLists, bld );
 	}
 
-	public void addItemInFolderEmpty(TreeNodeDTO targetNode,
-			TreePanel<TreeNodeDTO> list) {
-		if (targetNode.getEmpty()) {
-			salasList.setExpanded(targetNode, false);
-			targetNode.setEmpty(false);
+	public void addItemInFolderEmpty( TreeNodeDTO targetNode,
+			TreePanel< TreeNodeDTO > list )
+	{
+		if ( targetNode.getEmpty() )
+		{
+			salasList.setExpanded( targetNode, false );
+			targetNode.setEmpty( false );
 		}
-		salasList.setExpanded(targetNode, true);
+
+		salasList.setExpanded( targetNode, true );
 	}
 
 	@Override
-	public CampusComboBox getCampusComboBox() {
+	public CampusComboBox getCampusComboBox()
+	{
 		return campusCB;
 	}
 
 	@Override
-	public UnidadeComboBox getUnidadeSalaComboBox() {
+	public UnidadeComboBox getUnidadeSalaComboBox()
+	{
 		return unidadeSalaCB;
 	}
 
 	@Override
-	public UnidadeComboBox getUnidadeGrupoSalaComboBox() {
+	public UnidadeComboBox getUnidadeGrupoSalaComboBox()
+	{
 		return unidadeGrupoSalaCB;
 	}
 
 	@Override
-	public TreePanel<TreeNodeDTO> getDisciplinasList() {
+	public TreePanel< TreeNodeDTO > getDisciplinasList()
+	{
 		return disciplinasList;
 	}
 
 	@Override
-	public TreePanel<TreeNodeDTO> getSalasList() {
+	public TreePanel< TreeNodeDTO > getSalasList()
+	{
 		return salasList;
 	}
 
 	@Override
-	public TurnoComboBox getTurnoComboBox() {
+	public TurnoComboBox getTurnoComboBox()
+	{
 		return turnoCB;
 	}
 
 	@Override
-	public SimpleComboBox<String> getAndarComboBox() {
+	public SimpleComboBox< String > getAndarComboBox()
+	{
 		return andarCB;
 	}
 
 	@Override
-	public void setTabEnabled(boolean flag) {
-		if (!flag) {
-			unidadeSalaCB.setValue(null);
+	public void setTabEnabled( boolean flag )
+	{
+		if ( !flag )
+		{
+			unidadeSalaCB.setValue( null );
 			unidadeSalaCB.disable();
-			unidadeGrupoSalaCB.setValue(null);
+			unidadeGrupoSalaCB.setValue( null );
 			unidadeGrupoSalaCB.disable();
-			andarCB.setValue(null);
+			andarCB.setValue( null );
 			andarCB.disable();
-			tabs.setEnabled(flag);
-		} else if (flag != tabs.isEnabled()) {
-			tabs.setEnabled(flag);
+			tabs.setEnabled( flag );
+		}
+		else if ( flag != tabs.isEnabled() )
+		{
+			tabs.setEnabled( flag );
 			unidadeSalaCB.enable();
 			unidadeGrupoSalaCB.enable();
 			andarCB.disable();
 		}
 	}
 
-	public ToolButton getRemoveButton() {
-		if (removeButton == null) {
-			removeButton = new ToolButton("x-tool-close");
+	public ToolButton getRemoveButton()
+	{
+		if ( removeButton == null )
+		{
+			removeButton = new ToolButton( "x-tool-close" );
 		}
+		
 		return removeButton;
 	}
 
-	public void setStoreDisciplina(TreeStore<TreeNodeDTO> storeDisciplina) {
+	public void setStoreDisciplina( TreeStore< TreeNodeDTO > storeDisciplina )
+	{
 		this.storeDisciplina = storeDisciplina;
 	}
 
-	// TODO passar para presenter
-	public TreeStore<TreeNodeDTO> getStoreDisciplina() {
-		if (this.storeDisciplina == null) {
+	public TreeStore< TreeNodeDTO > getStoreDisciplina()
+	{
+		if ( this.storeDisciplina == null )
+		{
 			final DisciplinasServiceAsync service = Services.disciplinas();
-			RpcProxy<List<TreeNodeDTO>> proxy = new RpcProxy<List<TreeNodeDTO>>() {
+
+			RpcProxy< List< TreeNodeDTO > > proxy = new RpcProxy<List< TreeNodeDTO > >()
+			{
 				@Override
-				protected void load(Object loadConfig,
-						AsyncCallback<List<TreeNodeDTO>> callback) {
-					service.getFolderChildren((TreeNodeDTO) loadConfig,
-							callback);
+				protected void load( Object loadConfig,
+						AsyncCallback< List< TreeNodeDTO > > callback )
+				{
+					service.getFolderChildren(
+						(TreeNodeDTO) loadConfig, callback );
 				}
 			};
-			final TreeLoader<TreeNodeDTO> loader = new BaseTreeLoader<TreeNodeDTO>(
-					proxy);
-			TreeStore<TreeNodeDTO> store = new TreeStore<TreeNodeDTO>(loader);
-			setStoreDisciplina(store);
+
+			final TreeLoader<TreeNodeDTO> loader
+				= new BaseTreeLoader<TreeNodeDTO>( proxy );
+
+			TreeStore< TreeNodeDTO > store = new TreeStore< TreeNodeDTO >( loader );
+			setStoreDisciplina( store );
 		}
+
 		return this.storeDisciplina;
 	}
 
-	public void setStoreSala(TreeStore<TreeNodeDTO> storeSala) {
+	public void setStoreSala( TreeStore< TreeNodeDTO > storeSala )
+	{
 		this.storeSala = storeSala;
 	}
 
-	public TreeStore<TreeNodeDTO> getStoreSala() {
-		if (this.storeSala == null) {
+	public TreeStore< TreeNodeDTO > getStoreSala()
+	{
+		if ( this.storeSala == null )
+		{
 			final DisciplinasServiceAsync service = Services.disciplinas();
-			RpcProxy<List<TreeNodeDTO>> proxy = new RpcProxy<List<TreeNodeDTO>>() {
+
+			RpcProxy< List< TreeNodeDTO > > proxy = new RpcProxy< List< TreeNodeDTO > >()
+			{
 				@Override
-				protected void load(Object loadConfig,
-						AsyncCallback<List<TreeNodeDTO>> callback) {
-					if (loadConfig != null) {
-						TreeNodeDTO currentNode = (TreeNodeDTO) loadConfig;
-						AbstractDTO<?> contentCurrentNode = currentNode
-								.getContent();
+				protected void load( Object loadConfig,
+						AsyncCallback< List< TreeNodeDTO > > callback )
+				{
+					if ( loadConfig != null )
+					{
+						TreeNodeDTO currentNode = (TreeNodeDTO)loadConfig;
+						AbstractDTO<?> contentCurrentNode = currentNode.getContent();
 
 						TreeNodeDTO salaTreeNodeDTO = null;
 						TreeNodeDTO grupoSalaTreeNodeDTO = null;
 						TreeNodeDTO ofertaTreeNodeDTO = null;
 						TreeNodeDTO curriculoDisciplinaTreeNodeDTO = null;
 
-						if (contentCurrentNode instanceof SalaDTO) {
-							salaTreeNodeDTO = currentNode;// salaDTO =
-															// (SalaDTO)contentCurrentNode;
-						} else if (contentCurrentNode instanceof GrupoSalaDTO) {
-							grupoSalaTreeNodeDTO = currentNode;// grupoSalaDTO =
-																// (GrupoSalaDTO)contentCurrentNode;
-						} else if (contentCurrentNode instanceof OfertaDTO) {
-							TreeNodeDTO parentNode = currentNode.getParent();
-							AbstractDTO<?> contentParentNode = parentNode
-									.getContent();
-							if (contentParentNode instanceof SalaDTO) {
-								salaTreeNodeDTO = parentNode;// salaDTO =
-																// (SalaDTO)contentParentNode;
-							} else {
-								grupoSalaTreeNodeDTO = parentNode;// grupoSalaDTO
-																	// =
-																	// (GrupoSalaDTO)contentParentNode;
-							}
-							ofertaTreeNodeDTO = currentNode;// ofertaDTO =
-															// (OfertaDTO)contentCurrentNode;
-						} else if (contentCurrentNode instanceof CurriculoDisciplinaDTO) {
-							TreeNodeDTO parentNode = currentNode.getParent();
-							ofertaTreeNodeDTO = parentNode;// ofertaDTO =
-															// (OfertaDTO)parentNode.getContent();
-							TreeNodeDTO parentParentNode = parentNode
-									.getParent();
-							AbstractDTO<?> contentparentParentNode = parentParentNode
-									.getContent();
-							if (contentparentParentNode instanceof SalaDTO) {
-								// salaDTO = (SalaDTO)contentparentParentNode;
-								salaTreeNodeDTO = parentParentNode;
-							} else {
-								grupoSalaTreeNodeDTO = parentParentNode;// grupoSalaDTO
-																		// =
-																		// (GrupoSalaDTO)contentparentParentNode;
-							}
-							curriculoDisciplinaTreeNodeDTO = currentNode;// curriculoDisciplinaDTO
-																			// =
-																			// (CurriculoDisciplinaDTO)contentCurrentNode;
+						if ( contentCurrentNode instanceof SalaDTO )
+						{
+							salaTreeNodeDTO = currentNode;
 						}
-						if (salaTreeNodeDTO != null) {
-							service.getDisciplinasByTreeSalas(salaTreeNodeDTO,
-									ofertaTreeNodeDTO,
-									curriculoDisciplinaTreeNodeDTO, callback);
-						} else if (grupoSalaTreeNodeDTO != null) {
+						else if ( contentCurrentNode instanceof GrupoSalaDTO )
+						{
+							grupoSalaTreeNodeDTO = currentNode;
+						}
+						else if ( contentCurrentNode instanceof OfertaDTO )
+						{
+							TreeNodeDTO parentNode = currentNode.getParent();
+							AbstractDTO<?> contentParentNode = parentNode.getContent();
+
+							if ( contentParentNode instanceof SalaDTO )
+							{
+								salaTreeNodeDTO = parentNode;
+							}
+							else
+							{
+								grupoSalaTreeNodeDTO = parentNode;
+							}
+
+							ofertaTreeNodeDTO = currentNode;
+						}
+						else if ( contentCurrentNode instanceof CurriculoDisciplinaDTO )
+						{
+							TreeNodeDTO parentNode = currentNode.getParent();
+
+							ofertaTreeNodeDTO = parentNode;
+							TreeNodeDTO parentParentNode = parentNode.getParent();
+							AbstractDTO<?> contentparentParentNode = parentParentNode.getContent();
+
+							if ( contentparentParentNode instanceof SalaDTO )
+							{
+								salaTreeNodeDTO = parentParentNode;
+							}
+							else
+							{
+								grupoSalaTreeNodeDTO = parentParentNode;
+							}
+
+							curriculoDisciplinaTreeNodeDTO = currentNode;
+						}
+
+						if ( salaTreeNodeDTO != null )
+						{
+							service.getDisciplinasByTreeSalas(
+								salaTreeNodeDTO, ofertaTreeNodeDTO,
+								curriculoDisciplinaTreeNodeDTO, callback );
+						}
+						else if ( grupoSalaTreeNodeDTO != null )
+						{
 							service.getDisciplinasByTreeGrupoSalas(
-									grupoSalaTreeNodeDTO, ofertaTreeNodeDTO,
-									curriculoDisciplinaTreeNodeDTO, callback);
+								grupoSalaTreeNodeDTO, ofertaTreeNodeDTO,
+								curriculoDisciplinaTreeNodeDTO, callback );
 						}
 					}
 				}
 			};
-			final TreeLoader<TreeNodeDTO> loader = new BaseTreeLoader<TreeNodeDTO>(
-					proxy);
-			TreeStore<TreeNodeDTO> store = new TreeStore<TreeNodeDTO>(loader);
-			setStoreSala(store);
+
+			final TreeLoader< TreeNodeDTO > loader
+				= new BaseTreeLoader< TreeNodeDTO >( proxy );
+
+			TreeStore< TreeNodeDTO > store
+				= new TreeStore< TreeNodeDTO >( loader );
+
+			setStoreSala( store );
 		}
+
 		return this.storeSala;
 	}
 
 	@Override
-	public Button getImportExcelButton() {
+	public Button getImportExcelButton()
+	{
 		return toolBar.getImportExcelButton();
 	}
 
 	@Override
-	public Button getExportExcelButton() {
+	public Button getExportExcelButton()
+	{
 		return toolBar.getExportExcelButton();
 	}
-
 }

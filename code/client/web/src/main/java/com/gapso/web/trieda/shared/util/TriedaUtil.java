@@ -68,12 +68,12 @@ public class TriedaUtil
 
 	static public boolean isBlank( String value )
 	{
-		return ( ( value == null ) || value == "");
+		return ( ( value == null ) || value == "" );
 	}
 
 	static public boolean isBlank( Long value )
 	{
-		return value == null || value == 0;
+		return ( value == null || value == 0 );
 	}
 
 	static public String paramsDebug()
@@ -163,14 +163,23 @@ public class TriedaUtil
 		return tc;
 	}
 
-	static public Double getNotaDesempenhoProfessor(Professor p) {
-		if (p == null || p.getDisciplinas() == null
-				|| p.getDisciplinas().size() == 0) {
+	static public Double getNotaDesempenhoProfessor( Long idProfessor )
+	{
+		Professor p = Professor.find( idProfessor );
+		return TriedaUtil.getNotaDesempenhoProfessor( p );
+	}
+
+	static public Double getNotaDesempenhoProfessor( Professor p )
+	{
+		if ( p == null || p.getDisciplinas() == null
+				|| p.getDisciplinas().size() == 0 )
+		{
 			return 0.0;
 		}
 
 		Double sum = 0.0;
-		for (ProfessorDisciplina pd : p.getDisciplinas()) {
+		for ( ProfessorDisciplina pd : p.getDisciplinas() )
+		{
 			sum += pd.getNota();
 		}
 
