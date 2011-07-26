@@ -29,7 +29,7 @@ public class ExportExcelServlet extends HttpServlet
 		i18nMessages = new GTriedaI18nMessages();
 	}
 
-	private RelatorioVisaoCursoFiltroExcel verificaParametros( HttpServletRequest request )
+	private RelatorioVisaoCursoFiltroExcel verificaParametrosVisaoCurso( HttpServletRequest request )
 	{
 		Long cursoId = null;
 		Long curriculoId = null;
@@ -52,6 +52,28 @@ public class ExportExcelServlet extends HttpServlet
 
 		return filtro;
 	}
+	
+	private RelatorioVisaoSalaFiltroExcel verificaParametrosVisaoSala( HttpServletRequest request )
+	{
+		Long campusId = null;
+		Long unidadeId = null;
+		Long salaId = null;
+		Long turnoId = null;
+
+		try
+		{
+			campusId = Long.parseLong( request.getParameter( "campusId" ) );
+			unidadeId = Long.parseLong( request.getParameter( "unidadeId" ) );
+			salaId = Long.parseLong( request.getParameter( "salaId" ) );
+			turnoId = Long.parseLong( request.getParameter( "turnoId" ) );
+		}
+		catch( Exception ex ) { return null; }
+
+		RelatorioVisaoSalaFiltroExcel filtro = new RelatorioVisaoSalaFiltroExcel(
+			campusId, unidadeId, salaId, turnoId );
+
+		return filtro;
+	}
 
 	@Override
 	protected void doGet( HttpServletRequest request, HttpServletResponse response )
@@ -65,11 +87,16 @@ public class ExportExcelServlet extends HttpServlet
 
 		if ( !informationToBeExported.isEmpty() )
 		{
-			RelatorioVisaoCursoFiltroExcel filter = null;
+			ExportExcelFilter filter = null;
 			if ( informationToBeExported.equals(
-					ExcelInformationType.RELATORIO_VISAO_CURSO.toString() ) )
+				ExcelInformationType.RELATORIO_VISAO_CURSO.toString() ) )
 			{
-				filter = verificaParametros( request );
+				filter = verificaParametrosVisaoCurso( request );
+			}
+			else if ( informationToBeExported.equals(
+				ExcelInformationType.RELATORIO_VISAO_SALA.toString() ) )
+			{
+				filter = verificaParametrosVisaoSala( request );
 			}
 
 			// Get Excel Data
@@ -89,13 +116,13 @@ public class ExportExcelServlet extends HttpServlet
 				for ( String msg : exporter.getWarnings() )
 				{
 					response.getWriter().println(
-							ExcelInformationType.prefixWarning() + msg );
+						ExcelInformationType.prefixWarning() + msg );
 				}
 
 				for ( String msg : exporter.getErrors() )
 				{
 					response.getWriter().println(
-							ExcelInformationType.prefixError() + msg );
+						ExcelInformationType.prefixError() + msg );
 				}
 
 				response.getWriter().flush();

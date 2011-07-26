@@ -255,11 +255,33 @@ public class AtendimentoTatico implements Serializable
 		q.setParameter("cenario", cenario);
 		return q.getResultList();
 	}
+	
+	@SuppressWarnings("unchecked")
+	public static List< AtendimentoTatico > findByCenario(Cenario cenario,
+		Campus campus , Unidade unidade, Sala sala, Turno turno )
+	{
+		Query q = entityManager().createQuery(
+			"SELECT o FROM AtendimentoTatico o " +
+			" WHERE cenario = :cenario" +
+			" AND o.oferta.turno = :turno" +
+			" AND o.oferta.campus = :campus" +
+			" AND o.sala = :sala" +
+			" AND o.sala.unidade = :unidade" );
+
+		q.setParameter( "cenario", cenario );
+		q.setParameter( "campus", campus );
+		q.setParameter( "unidade", unidade );
+		q.setParameter( "sala", sala );
+		q.setParameter( "turno", turno );
+
+		return q.getResultList();
+	}
 
 	@SuppressWarnings("unchecked")
-	public static List<AtendimentoTatico> findAll() {
-		return entityManager().createQuery("SELECT o FROM AtendimentoTatico o")
-				.getResultList();
+	public static List< AtendimentoTatico > findAll()
+	{
+		return entityManager().createQuery(
+			"SELECT o FROM AtendimentoTatico o").getResultList();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -397,89 +419,110 @@ public class AtendimentoTatico implements Serializable
 		return q.getResultList();
 	}
 
-	public Cenario getCenario() {
+	public Cenario getCenario()
+	{
 		return cenario;
 	}
 
-	public void setCenario(Cenario cenario) {
+	public void setCenario( Cenario cenario )
+	{
 		this.cenario = cenario;
 	}
 
-	public String getTurma() {
+	public String getTurma()
+	{
 		return turma;
 	}
 
-	public void setTurma(String turma) {
+	public void setTurma( String turma )
+	{
 		this.turma = turma;
 	}
 
-	public Sala getSala() {
+	public Sala getSala()
+	{
 		return sala;
 	}
 
-	public void setSala(Sala sala) {
+	public void setSala( Sala sala )
+	{
 		this.sala = sala;
 	}
 
-	public Semanas getSemana() {
+	public Semanas getSemana()
+	{
 		return semana;
 	}
 
-	public void setSemana(Semanas semana) {
+	public void setSemana( Semanas semana )
+	{
 		this.semana = semana;
 	}
 
-	public Oferta getOferta() {
+	public Oferta getOferta()
+	{
 		return oferta;
 	}
 
-	public void setOferta(Oferta oferta) {
+	public void setOferta( Oferta oferta )
+	{
 		this.oferta = oferta;
 	}
 
-	public Disciplina getDisciplina() {
+	public Disciplina getDisciplina()
+	{
 		return disciplina;
 	}
 
-	public void setDisciplina(Disciplina disciplina) {
+	public void setDisciplina( Disciplina disciplina )
+	{
 		this.disciplina = disciplina;
 	}
 
-	public Integer getQuantidadeAlunos() {
+	public Integer getQuantidadeAlunos()
+	{
 		return quantidadeAlunos;
 	}
 
-	public void setQuantidadeAlunos(Integer quantidadeAlunos) {
+	public void setQuantidadeAlunos( Integer quantidadeAlunos )
+	{
 		this.quantidadeAlunos = quantidadeAlunos;
 	}
 
-	public Integer getCreditosTeorico() {
+	public Integer getCreditosTeorico()
+	{
 		return creditosTeorico;
 	}
 
-	public void setCreditosTeorico(Integer creditosTeorico) {
+	public void setCreditosTeorico( Integer creditosTeorico )
+	{
 		this.creditosTeorico = creditosTeorico;
 	}
 
-	public Integer getCreditosPratico() {
+	public Integer getCreditosPratico()
+	{
 		return creditosPratico;
 	}
 
-	public void setCreditosPratico(Integer creditosPratico) {
+	public void setCreditosPratico(Integer creditosPratico )
+	{
 		this.creditosPratico = creditosPratico;
 	}
 
-	public Integer getTotalCreditos() {
-		return getCreditosPratico() + getCreditosTeorico();
+	public Integer getTotalCreditos()
+	{
+		return ( getCreditosPratico() + getCreditosTeorico() );
 	}
 
-	public String getNaturalKey() {
+	public String getNaturalKey()
+	{
 		Oferta oferta = getOferta();
 		Curriculo curriculo = oferta.getCurriculo();
+
 		return oferta.getCampus().getId() + "-" + oferta.getTurno().getId()
-				+ "-" + curriculo.getCurso().getId() + "-" + curriculo.getId()
-				+ "-" + curriculo.getPeriodo(getDisciplina()) + "-"
-				+ getDisciplina().getId() + "-" + getTurma() + "-"
-				+ (getCreditosTeorico() > 0);
+			+ "-" + curriculo.getCurso().getId() + "-" + curriculo.getId()
+			+ "-" + curriculo.getPeriodo(getDisciplina()) + "-"
+			+ getDisciplina().getId() + "-" + getTurma()
+			+ "-" + ( getCreditosTeorico() > 0 );
 	}
 }

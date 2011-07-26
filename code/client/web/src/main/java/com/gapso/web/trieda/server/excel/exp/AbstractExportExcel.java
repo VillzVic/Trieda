@@ -169,7 +169,8 @@ public abstract class AbstractExportExcel implements IExportExcel
 		sheet.addMergedRegion( new CellRangeAddress( rowI - 1, rowF - 1, colI - 1, colF - 1 ) );
 	}
 
-	protected void mergeCells( int rowI, int rowF, int colI, int colF, HSSFSheet sheet, HSSFCellStyle style )
+	protected void mergeCells( int rowI, int rowF, int colI,
+		int colF, HSSFSheet sheet, HSSFCellStyle style )
 	{
 		for ( int row = rowI; row <= rowF; row++ )
 		{
@@ -188,12 +189,14 @@ public abstract class AbstractExportExcel implements IExportExcel
 		cell.setCellValue( date );
 	}
 
-	protected void setCell( int row, int col, HSSFSheet sheet, HSSFCellStyle style, int mes, int ano )
+	protected void setCell( int row, int col, HSSFSheet sheet,
+		HSSFCellStyle style, int mes, int ano )
 	{
 		final HSSFCell cell = getCell( row, col, sheet );
 		Calendar date = Calendar.getInstance();
 
-		// utilizado para limpar todas as informações e não escrever no excel hh:mm:ss
+		// Utilizado para limpar todas as
+		// informações e não escrever no excel hh:mm:ss
 		date.clear();
 
 		date.set( ano, mes - 1, 1 );
@@ -207,27 +210,23 @@ public abstract class AbstractExportExcel implements IExportExcel
 		cell.setCellValue( date );
 		cell.setCellStyle( style );
 	}
-	
+
 	protected void setCell(int row, int col, HSSFSheet sheet, HSSFCellStyle style, Date date )
 	{ 
 		final HSSFCell cell = getCell( row, col, sheet );
 		cell.setCellValue( date );
 		cell.setCellStyle( style );
 	}
-	
+
 	protected void setCell( int row, int col, HSSFSheet sheet, String value )
 	{
 		HSSFCell cell = getCell( row, col, sheet );
-
-		//cell.setCellValue( value );
 		cell.setCellValue( new HSSFRichTextString( value ) );
 	}
 
 	protected void setCell( int row, int col, HSSFSheet sheet, HSSFCellStyle style, String value )
 	{
 		HSSFCell cell = getCell( row, col, sheet );
-
-		//cell.setCellValue(value);
 		cell.setCellValue( new HSSFRichTextString( value ) );
 		cell.setCellStyle( style );
 	}
@@ -236,8 +235,6 @@ public abstract class AbstractExportExcel implements IExportExcel
 			HSSFPatriarch patriarch, String value, String comment )
 	{
 		HSSFCell cell = getCell( row, col, sheet );
-
-		//cell.setCellValue(value);
 		cell.setCellValue( new HSSFRichTextString( value ) );
 
 		HSSFComment cellComment = cell.getCellComment();
@@ -248,16 +245,14 @@ public abstract class AbstractExportExcel implements IExportExcel
 			cell.setCellComment( cellComment );
 		}
 
-		cellComment.setString(new HSSFRichTextString(comment));
+		cellComment.setString( new HSSFRichTextString( comment ) );
 		cell.setCellStyle(style);
 	}
-	
+
 	protected void setCell( int row, int col, HSSFSheet sheet, HSSFCellStyle style,
 			Iterator< HSSFComment > itExcelCommentsPool, String value, String comment )
 	{
 		HSSFCell cell = getCell( row, col, sheet );
-
-		//cell.setCellValue(value);
 		cell.setCellValue( new HSSFRichTextString( value ) );
 
 		HSSFComment cellComment = cell.getCellComment();
@@ -277,13 +272,13 @@ public abstract class AbstractExportExcel implements IExportExcel
 
 		cell.setCellStyle( style );
 	}
-	
+
 	protected void setCell( int row, int col, HSSFSheet sheet, double value )
 	{
 		HSSFCell cell = getCell( row, col, sheet );
 		cell.setCellValue( value );
 	}
-	
+
 	protected void setCell( int row, int col, HSSFSheet sheet, HSSFCellStyle style, double value )
 	{
 		HSSFCell cell = getCell(row, col, sheet );

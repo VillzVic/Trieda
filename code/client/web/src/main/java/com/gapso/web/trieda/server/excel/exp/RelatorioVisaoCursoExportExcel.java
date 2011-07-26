@@ -80,9 +80,8 @@ public class RelatorioVisaoCursoExportExcel extends AbstractExportExcel
 		this( removeUnusedSheets, cenario, i18nConstants, i18nMessages, null );
 	}
 	
-	public RelatorioVisaoCursoExportExcel(
-			Cenario cenario, TriedaI18nConstants i18nConstants,
-			TriedaI18nMessages i18nMessages, ExportExcelFilter filter )
+	public RelatorioVisaoCursoExportExcel( Cenario cenario,
+		TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages, ExportExcelFilter filter )
 	{
 		this( true, cenario, i18nConstants, i18nMessages, filter );
 	}

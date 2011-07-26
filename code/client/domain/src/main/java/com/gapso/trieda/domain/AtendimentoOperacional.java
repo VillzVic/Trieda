@@ -233,50 +233,79 @@ public class AtendimentoOperacional implements Serializable
 	}
 
 	@SuppressWarnings("unchecked")
-	public static List<AtendimentoOperacional> findByCenario(Cenario cenario) {
-		Query q = entityManager()
-				.createQuery(
-						"SELECT o FROM AtendimentoOperacional o WHERE cenario = :cenario");
-		q.setParameter("cenario", cenario);
+	public static List<AtendimentoOperacional> findByCenario( Cenario cenario )
+	{
+		Query q = entityManager().createQuery(
+			"SELECT o FROM AtendimentoOperacional o WHERE cenario = :cenario" );
+
+		q.setParameter( "cenario", cenario );
+		return q.getResultList();
+	}
+
+	@SuppressWarnings( "unchecked" )
+	public static List< AtendimentoOperacional > findByCenario( Cenario cenario,
+			Campus campus , Unidade unidade, Sala sala, Turno turno )
+	{
+		Query q = entityManager().createQuery(
+			"SELECT o FROM AtendimentoOperacional o" +
+			" WHERE cenario = :cenario" +
+			" AND o.oferta.turno = :turno" +
+			" AND o.oferta.campus = :campus" +
+			" AND o.sala = :sala" +
+			" AND o.sala.unidade = :unidade" );
+
+		q.setParameter( "cenario", cenario );
+		q.setParameter( "campus", campus );
+		q.setParameter( "unidade", unidade );
+		q.setParameter( "sala", sala );
+		q.setParameter( "turno", turno );
+
 		return q.getResultList();
 	}
 
 	@SuppressWarnings("unchecked")
-	public static List<AtendimentoOperacional> findAll() {
+	public static List< AtendimentoOperacional > findAll()
+	{
 		return entityManager().createQuery(
-				"SELECT o FROM AtendimentoOperacional o").getResultList();
+			"SELECT o FROM AtendimentoOperacional o" ).getResultList();
 	}
 
 	@SuppressWarnings("unchecked")
-	public static List<AtendimentoOperacional> findAllBy(Professor professor,
-			Turno turno) {
-		Query q = entityManager()
-				.createQuery(
-						"SELECT o FROM AtendimentoOperacional o WHERE o.oferta.turno = :turno AND o.professor = :professor");
-		q.setParameter("turno", turno);
-		q.setParameter("professor", professor);
+	public static List< AtendimentoOperacional > findAllBy(
+		Professor professor, Turno turno )
+	{
+		Query q = entityManager().createQuery(
+			"SELECT o FROM AtendimentoOperacional o " +
+			"WHERE o.oferta.turno = :turno AND o.professor = :professor" );
+
+		q.setParameter( "turno", turno );
+		q.setParameter( "professor", professor );
+
 		return q.getResultList();
 	}
 
 	@SuppressWarnings("unchecked")
-	public static List<AtendimentoOperacional> findAllPublicadoBy(
-			Professor professor, Turno turno, boolean isAdmin) {
+	public static List< AtendimentoOperacional > findAllPublicadoBy(
+		Professor professor, Turno turno, boolean isAdmin )
+	{
 		String publicado = "";
-		if (!isAdmin) {
+		if ( !isAdmin )
+		{
 			publicado = " AND o.oferta.campus.publicado = :publicado ";
 		}
 
 		String queryString = "SELECT o FROM AtendimentoOperacional o"
-				+ " WHERE o.oferta.turno = :turno "
-				+ " AND o.professor = :professor " + publicado;
+			+ " WHERE o.oferta.turno = :turno "
+			+ " AND o.professor = :professor " + publicado;
 
-		Query q = entityManager().createQuery(queryString);
+		Query q = entityManager().createQuery( queryString );
 
-		q.setParameter("turno", turno);
-		q.setParameter("professor", professor);
+		q.setParameter( "turno", turno );
+		q.setParameter( "professor", professor );
 
-		if (!isAdmin) {
-			q.setParameter("publicado", true);
+		if ( !isAdmin )
+		{
+			q.setParameter( "publicado", true );
 		}
 
 		return q.getResultList();

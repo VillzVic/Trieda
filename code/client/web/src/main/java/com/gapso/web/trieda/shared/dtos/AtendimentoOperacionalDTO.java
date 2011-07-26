@@ -329,7 +329,6 @@ public class AtendimentoOperacionalDTO extends AbstractDTO< String >
 		return getDisciplinaString() + "<br />"
 			+ TriedaUtil.truncate( getDisciplinaNome(), 12 ) + "<br />"
 			+ "Turma " + getTurma() + "<br />"
-			// + TriedaUtil.truncate( getCursoNome(), 12 ) + "<br />"
 			+ getQuantidadeAlunosString() + " aluno(s)";
 	}
 
@@ -358,9 +357,8 @@ public class AtendimentoOperacionalDTO extends AbstractDTO< String >
 	public String getContentVisaoProfessor()
 	{
 		return getDisciplinaString() + "<br />"
-		+ TriedaUtil.truncate(getDisciplinaNome(),12) + "<br />"
+		+ TriedaUtil.truncate( getDisciplinaNome(), 12 ) + "<br />"
 		+ "Turma " + getTurma() + "<br />"
-		// + TriedaUtil.truncate(getCursoNome(),12) + "<br />"
 		+ getSalaString();
 	}
 
@@ -387,6 +385,7 @@ public class AtendimentoOperacionalDTO extends AbstractDTO< String >
 	{
 		return getDisciplinaNome() + "\n"
 			+ "Turma: "+ getTurma() + "\n"
+			+ "Horário: "+ getHorarioString() + "\n"
 			+ "Crédito(s) " + ( ( getCreditoTeoricoBoolean() )? "Teórico(s)" : "Prático(s)" )
 			+ ": " + getTotalCreditos() + " de " + getTotalCreditos() + "\n"
 			+ "Curso: " + getCursoNome() + "\n"
@@ -406,7 +405,8 @@ public class AtendimentoOperacionalDTO extends AbstractDTO< String >
 			+ "-" + getCurriculoString()
 			+ "-" + getPeriodo()
 			+ "-" + getDisciplinaString()
-			+ "-" + getTurma();
+			+ "-" + getTurma()
+			+ "-" + getHorarioString();
 	}
 
 	@Override
@@ -427,7 +427,7 @@ public class AtendimentoOperacionalDTO extends AbstractDTO< String >
 	}
 
 	static public boolean compatibleByApproach1(
-			AtendimentoOperacionalDTO dto1, AtendimentoOperacionalDTO dto2 )
+		AtendimentoOperacionalDTO dto1, AtendimentoOperacionalDTO dto2 )
 	{
 		return dto1.getDisciplinaId().equals( dto2.getDisciplinaId() )
 			&& !dto1.getSalaId().equals( dto2.getSalaId() )
@@ -437,7 +437,7 @@ public class AtendimentoOperacionalDTO extends AbstractDTO< String >
 	}
 
 	static public boolean compatibleByApproach2(
-			AtendimentoOperacionalDTO dto1, AtendimentoOperacionalDTO dto2 )
+		AtendimentoOperacionalDTO dto1, AtendimentoOperacionalDTO dto2 )
 	{
 		return !dto1.getDisciplinaId().equals( dto2.getDisciplinaId() )
 			&& !dto1.getSalaId().equals( dto2.getSalaId() )
@@ -447,13 +447,14 @@ public class AtendimentoOperacionalDTO extends AbstractDTO< String >
 	}
 
 	static public boolean compatibleSameTime(
-			AtendimentoOperacionalDTO dto1, AtendimentoOperacionalDTO dto2 )
+		AtendimentoOperacionalDTO dto1, AtendimentoOperacionalDTO dto2 )
 	{
 		return dto1.getHorarioId().equals( dto2.getHorarioId() )
 			&& dto1.getSemana().equals( dto2.getSemana() );
 	}
 
-	static public int countListDTOsCreditos( List< AtendimentoOperacionalDTO > listDTOs )
+	static public int countListDTOsCreditos(
+		List< AtendimentoOperacionalDTO > listDTOs )
 	{
 		int count = 0;
 		for ( AtendimentoOperacionalDTO dto : listDTOs )
