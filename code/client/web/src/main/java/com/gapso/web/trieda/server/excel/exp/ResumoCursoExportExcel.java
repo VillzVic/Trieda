@@ -40,81 +40,97 @@ public class ResumoCursoExportExcel extends AbstractExportExcel {
 			return col;
 		}
 	}
+
 	private HSSFCellStyle[] cellStyles;
-	
 	private boolean removeUnusedSheets;
 	private String sheetName;
 	private int initialRow;
-	
-	public ResumoCursoExportExcel(Cenario cenario, TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages) {
-		super(cenario,i18nConstants,i18nMessages);
-		this.cellStyles = new HSSFCellStyle[ExcelCellStyleReference.values().length];
-		this.removeUnusedSheets = true;
-		this.sheetName = ExcelInformationType.RESUMO_CURSO.getSheetName();
-		this.initialRow = 6;
+
+	public ResumoCursoExportExcel( Cenario cenario,
+		TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages )
+	{
+		this( true, cenario, i18nConstants, i18nMessages );
 	}
-	
-	public ResumoCursoExportExcel(boolean removeUnusedSheets, Cenario cenario, TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages) {
-		super(cenario,i18nConstants,i18nMessages);
-		this.cellStyles = new HSSFCellStyle[ExcelCellStyleReference.values().length];
+
+	public ResumoCursoExportExcel( boolean removeUnusedSheets, Cenario cenario,
+		TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages )
+	{
+		super( cenario, i18nConstants, i18nMessages );
+
+		this.cellStyles = new HSSFCellStyle[ ExcelCellStyleReference.values().length ];
 		this.removeUnusedSheets = removeUnusedSheets;
 		this.sheetName = ExcelInformationType.RESUMO_CURSO.getSheetName();
 		this.initialRow = 6;
 	}
 	
 	@Override
-	public String getFileName() {
+	public String getFileName()
+	{
 		return getI18nConstants().resumoCurso();
 	}
 	
 	@Override
-	protected String getPathExcelTemplate() {
+	protected String getPathExcelTemplate()
+	{
 		return "/templateExport.xls";
 	}
 
 	@Override
-	protected String getReportName() {
+	protected String getReportName()
+	{
 		return getI18nConstants().resumoCurso();
 	}
 
 	@Override
-	protected boolean fillInExcel(HSSFWorkbook workbook) {
-		CenarioDTO cenarioDTO = ConvertBeans.toCenarioDTO(getCenario());
-		List<Campus> campi = Campus.findAll();
-		List<CampusDTO> campusDTOList = new ArrayList<CampusDTO>(campi.size());
-		for(Campus campus : campi) {
-			campusDTOList.add(ConvertBeans.toCampusDTO(campus));
+	protected boolean fillInExcel( HSSFWorkbook workbook )
+	{
+		CenarioDTO cenarioDTO = ConvertBeans.toCenarioDTO( getCenario() );
+		List< Campus > campi = Campus.findAll();
+		List< CampusDTO > campusDTOList = new ArrayList< CampusDTO >( campi.size() );
+
+		for ( Campus campus : campi )
+		{
+			campusDTOList.add( ConvertBeans.toCampusDTO( campus ) );
 		}
-		
-		List<ResumoCursoDTO> resumoCursoDTOList = new ArrayList<ResumoCursoDTO>();
-		
+
+		List< ResumoCursoDTO > resumoCursoDTOList = new ArrayList< ResumoCursoDTO >();
 		CursosServiceImpl cursosServiceImpl = new CursosServiceImpl();
-		for(CampusDTO campusDTO : campusDTOList) {
-			resumoCursoDTOList.addAll(cursosServiceImpl.getResumos(cenarioDTO, campusDTO));
+
+		for ( CampusDTO campusDTO : campusDTOList )
+		{
+			resumoCursoDTOList.addAll( cursosServiceImpl.getResumos( cenarioDTO, campusDTO ) );
 		}
-		
-		if (!resumoCursoDTOList.isEmpty()) {
-			if (this.removeUnusedSheets) {
-				removeUnusedSheets(this.sheetName,workbook);
+
+		if ( !resumoCursoDTOList.isEmpty() )
+		{
+			if ( this.removeUnusedSheets )
+			{
+				removeUnusedSheets( this.sheetName, workbook );
 			}
-			HSSFSheet sheet = workbook.getSheet(this.sheetName);
-			fillInCellStyles(sheet);
+
+			HSSFSheet sheet = workbook.getSheet( this.sheetName );
+			fillInCellStyles( sheet );
 			int nextRow = this.initialRow;
-			for(ResumoCursoDTO resumoCursoDTO1 : resumoCursoDTOList) {
-				for(ModelData resumoCursoDTO2 : resumoCursoDTO1.getChildren()) {
-					for(ModelData resumoCursoDTO3 : ((ResumoCursoDTO)resumoCursoDTO2).getChildren()) {
-						nextRow = writeData((ResumoCursoDTO)resumoCursoDTO3 ,nextRow,sheet);
+
+			for ( ResumoCursoDTO resumoCursoDTO1 : resumoCursoDTOList )
+			{
+				for ( ModelData resumoCursoDTO2 : resumoCursoDTO1.getChildren() )
+				{
+					for ( ModelData resumoCursoDTO3 : ((ResumoCursoDTO)resumoCursoDTO2 ).getChildren() )
+					{
+						nextRow = writeData( (ResumoCursoDTO)resumoCursoDTO3, nextRow, sheet );
 					}
 				}
 			}
 
 			return true;
 		}
-		
+
 		return false;
 	}
-	
-	private int writeData(ResumoCursoDTO resumoCursoDTO, int row, HSSFSheet sheet) {
+
+	private int writeData( ResumoCursoDTO resumoCursoDTO, int row, HSSFSheet sheet )
+	{
 		int i = 2;
 		// Campus
 		setCell(row,i++,sheet,cellStyles[ExcelCellStyleReference.TEXT.ordinal()],resumoCursoDTO.getCampusString());

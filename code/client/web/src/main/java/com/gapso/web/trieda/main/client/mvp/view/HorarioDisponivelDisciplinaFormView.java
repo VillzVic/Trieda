@@ -29,17 +29,17 @@ public class HorarioDisponivelDisciplinaFormView extends MyComposite implements 
 		this.horariosDisponiveis = horariosDisponiveis;
 		initUI();
 		createGrid();
-		// TODO
-//		initComponent(simpleModal);
 	}
-	
-	private void initUI() {
+
+	private void initUI()
+	{
 		simpleModal = new SimpleModal("Disponibilidade da Disciplina (" + disciplinaDTO.getCodigo() + ")", Resources.DEFAULTS.disciplina16());
 		simpleModal.setHeight(500);
 		simpleModal.setWidth(600);
 	}
 
-	private void createGrid() {
+	private void createGrid()
+	{
 		contentPanel = new ContentPanel(new FitLayout());
 		contentPanel.setHeaderVisible(false);
 		contentPanel.setBodyBorder(false);

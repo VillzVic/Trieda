@@ -211,8 +211,8 @@ public class ProfessoresServiceImpl extends RemoteService implements
 		else
 		{
 			professor.persist();
-			// TODO - Pegar a semana letiva do cenario do professor
-			Set< HorarioAula > horariosAula = SemanaLetiva.getByOficial().getHorariosAula();
+			Set< HorarioAula > horariosAula
+				= SemanaLetiva.getByOficial().getHorariosAula();
 
 			for ( HorarioAula horarioAula : horariosAula )
 			{
@@ -236,7 +236,6 @@ public class ProfessoresServiceImpl extends RemoteService implements
 
 		for ( ProfessorDTO professorDTO : professorDTOList )
 		{
-			// ConvertBeans.toProfessor(professorDTO).remove();
 			Professor.find( professorDTO.getId() ).remove();
 		}
 	}

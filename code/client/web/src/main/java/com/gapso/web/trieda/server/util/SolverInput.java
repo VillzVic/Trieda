@@ -119,7 +119,8 @@ public class SolverInput {
 	private Parametro parametro;
 	private SemanaLetiva semanaLetiva;
 
-	public SolverInput(Cenario cenario, Parametro parametro, List<Campus> campi, Turno turno) {
+	public SolverInput(Cenario cenario, Parametro parametro,
+			List<Campus> campi, Turno turno) {
 		this.cenario = cenario;
 		this.parametro = parametro;
 		this.campi = campi;
@@ -134,13 +135,13 @@ public class SolverInput {
 		generate(true);
 		return triedaInput;
 	}
-	
+
 	@Transactional
 	public TriedaInput generateOperacionalTriedaInput() {
 		generate(false);
 		return triedaInput;
 	}
-	
+
 	@Transactional
 	private void generate(boolean tatico) {
 		generateCalendario();
@@ -161,7 +162,7 @@ public class SolverInput {
 		generateDemandas();
 		generateParametrosPlanejamento(tatico);
 		generateFixacoes();
-		if(!tatico) {
+		if (!tatico) {
 			generateTaticoInput();
 		}
 	}
@@ -172,44 +173,44 @@ public class SolverInput {
 		SemanaLetiva calendario = SemanaLetiva.getByOficial();
 		itemCalendario.setId(calendario.getId().intValue());
 		itemCalendario.setCodigo(calendario.getCodigo());
-		
+
 		GrupoTurno grupoTurno = of.createGrupoTurno();
-//		Set<Turno> turnos = cenario.getTurnos();
-//		for(Turno turno : turnos) { TODO Depois remover esses comentários para pegar todos os turnos
-			ItemTurno itemTurno = of.createItemTurno();
-			itemTurno.setId(turno.getId().intValue());
-			itemTurno.setNome(turno.getNome());
-			itemTurno.setTempoAula(turno.getTempo());
-			
-			GrupoHorarioAula grupoHorarioAula = of.createGrupoHorarioAula();
-			Set<HorarioAula> horariosAula = turno.getHorariosAula();
-			for(HorarioAula horarioAula : horariosAula) {
-				ItemHorarioAula itemHorarioAula = of.createItemHorarioAula();
-				itemHorarioAula.setId(horarioAula.getId().intValue());
-				itemHorarioAula.setInicio(new XMLGregorianCalendarUtil(horarioAula.getHorario()));
-				
-				GrupoDiaSemana grupoDiasSemana = of.createGrupoDiaSemana();
-				Set<HorarioDisponivelCenario> horariosDisponivelCenario = horarioAula.getHorariosDisponiveisCenario();
-				for(HorarioDisponivelCenario horarioDisponivelCenario : horariosDisponivelCenario) {
-					grupoDiasSemana.getDiaSemana().add(Semanas.toInt(horarioDisponivelCenario.getSemana()));
-				}
-				itemHorarioAula.setDiasSemana(grupoDiasSemana);
-				
-				grupoHorarioAula.getHorarioAula().add(itemHorarioAula);
-				
+		ItemTurno itemTurno = of.createItemTurno();
+		itemTurno.setId(turno.getId().intValue());
+		itemTurno.setNome(turno.getNome());
+		itemTurno.setTempoAula(turno.getTempo());
+		GrupoHorarioAula grupoHorarioAula = of.createGrupoHorarioAula();
+		Set<HorarioAula> horariosAula = turno.getHorariosAula();
+		for (HorarioAula horarioAula : horariosAula) {
+			ItemHorarioAula itemHorarioAula = of.createItemHorarioAula();
+			itemHorarioAula.setId(horarioAula.getId().intValue());
+			itemHorarioAula.setInicio(new XMLGregorianCalendarUtil(horarioAula
+					.getHorario()));
+
+			GrupoDiaSemana grupoDiasSemana = of.createGrupoDiaSemana();
+			Set<HorarioDisponivelCenario> horariosDisponivelCenario = horarioAula
+					.getHorariosDisponiveisCenario();
+			for (HorarioDisponivelCenario horarioDisponivelCenario : horariosDisponivelCenario) {
+				grupoDiasSemana.getDiaSemana().add(
+						Semanas.toInt(horarioDisponivelCenario.getSemana()));
 			}
-			itemTurno.setHorariosAula(grupoHorarioAula);
-			
-			grupoTurno.getTurno().add(itemTurno);
-//		}
+			itemHorarioAula.setDiasSemana(grupoDiasSemana);
+
+			grupoHorarioAula.getHorarioAula().add(itemHorarioAula);
+
+		}
+		itemTurno.setHorariosAula(grupoHorarioAula);
+
+		grupoTurno.getTurno().add(itemTurno);
+		// }
 		itemCalendario.setTurnos(grupoTurno);
 		triedaInput.setCalendario(itemCalendario);
 	}
-	
+
 	private void generateTiposSala() {
 		GrupoTipoSala grupoTipoSala = of.createGrupoTipoSala();
 		List<TipoSala> tipos = TipoSala.findAll();
-		for(TipoSala tipo : tipos) {
+		for (TipoSala tipo : tipos) {
 			ItemTipoSala itemTipoSala = of.createItemTipoSala();
 			itemTipoSala.setId(tipo.getId().intValue());
 			itemTipoSala.setNome(tipo.getNome());
@@ -217,11 +218,11 @@ public class SolverInput {
 		}
 		triedaInput.setTiposSala(grupoTipoSala);
 	}
-	
+
 	private void generateTiposContrato() {
 		GrupoTipoContrato grupoTipoContrato = of.createGrupoTipoContrato();
 		List<TipoContrato> tipos = TipoContrato.findAll();
-		for(TipoContrato tipo : tipos) {
+		for (TipoContrato tipo : tipos) {
 			ItemTipoContrato itemTipoContrato = of.createItemTipoContrato();
 			itemTipoContrato.setId(tipo.getId().intValue());
 			itemTipoContrato.setNome(tipo.getNome());
@@ -229,11 +230,11 @@ public class SolverInput {
 		}
 		triedaInput.setTiposContrato(grupoTipoContrato);
 	}
-	
+
 	private void generateTiposTitulacao() {
 		GrupoTipoTitulacao grupoTipoTitulacao = of.createGrupoTipoTitulacao();
 		List<Titulacao> tipos = Titulacao.findAll();
-		for(Titulacao tipo : tipos) {
+		for (Titulacao tipo : tipos) {
 			ItemTipoTitulacao itemTipoTitulacao = of.createItemTipoTitulacao();
 			itemTipoTitulacao.setId(tipo.getId().intValue());
 			itemTipoTitulacao.setNome(tipo.getNome());
@@ -241,11 +242,11 @@ public class SolverInput {
 		}
 		triedaInput.setTiposTitulacao(grupoTipoTitulacao);
 	}
-	
+
 	private void generateAreasTitulacao() {
 		GrupoAreaTitulacao grupoAreaTitulacao = of.createGrupoAreaTitulacao();
 		List<AreaTitulacao> tipos = AreaTitulacao.findAll();
-		for(AreaTitulacao tipo: tipos) {
+		for (AreaTitulacao tipo : tipos) {
 			ItemAreaTitulacao itemAreaTitulacao = of.createItemAreaTitulacao();
 			itemAreaTitulacao.setId(tipo.getId().intValue());
 			itemAreaTitulacao.setNome(tipo.getCodigo());
@@ -253,34 +254,39 @@ public class SolverInput {
 		}
 		triedaInput.setAreasTitulacao(grupoAreaTitulacao);
 	}
-	
+
 	private void generateTiposDisciplina() {
-		GrupoTipoDisciplina grupoTipoDisciplina = of.createGrupoTipoDisciplina();
+		GrupoTipoDisciplina grupoTipoDisciplina = of
+				.createGrupoTipoDisciplina();
 		List<TipoDisciplina> tipos = TipoDisciplina.findAll();
-		for(TipoDisciplina tipo: tipos) {
-			ItemTipoDisciplina itemTipoDisciplina = of.createItemTipoDisciplina();
+		for (TipoDisciplina tipo : tipos) {
+			ItemTipoDisciplina itemTipoDisciplina = of
+					.createItemTipoDisciplina();
 			itemTipoDisciplina.setId(tipo.getId().intValue());
 			itemTipoDisciplina.setNome(tipo.getNome());
 			grupoTipoDisciplina.getTipoDisciplina().add(itemTipoDisciplina);
 		}
 		triedaInput.setTiposDisciplina(grupoTipoDisciplina);
 	}
-	
+
 	private void generateNiveisDificuldade() {
-		GrupoNivelDificuldade grupoNivelDificuldade = of.createGrupoNivelDificuldade();
-		for(Dificuldades dificuldade : Dificuldades.values()) {
-			ItemNivelDificuldade itemNivelDificuldade = of.createItemNivelDificuldade();
+		GrupoNivelDificuldade grupoNivelDificuldade = of
+				.createGrupoNivelDificuldade();
+		for (Dificuldades dificuldade : Dificuldades.values()) {
+			ItemNivelDificuldade itemNivelDificuldade = of
+					.createItemNivelDificuldade();
 			itemNivelDificuldade.setId(Dificuldades.toInt(dificuldade));
 			itemNivelDificuldade.setNome(dificuldade.name());
-			grupoNivelDificuldade.getNivelDificuldade().add(itemNivelDificuldade);
+			grupoNivelDificuldade.getNivelDificuldade().add(
+					itemNivelDificuldade);
 		}
 		triedaInput.setNiveisDificuldade(grupoNivelDificuldade);
 	}
-	
+
 	private void generateTiposCurso() {
 		GrupoTipoCurso grupoTipoCurso = of.createGrupoTipoCurso();
 		List<TipoCurso> tipos = TipoCurso.findAll();
-		for(TipoCurso tipo : tipos) {
+		for (TipoCurso tipo : tipos) {
 			ItemTipoCurso itemTipoCurso = of.createItemTipoCurso();
 			itemTipoCurso.setId(tipo.getId().intValue());
 			itemTipoCurso.setNome(tipo.getCodigo());
@@ -288,11 +294,12 @@ public class SolverInput {
 		}
 		triedaInput.setTiposCurso(grupoTipoCurso);
 	}
-	
+
 	private void generateDivisoesDeCredito() {
-		GrupoDivisaoCreditos grupoDivisaoCreditos = of.createGrupoDivisaoCreditos();
+		GrupoDivisaoCreditos grupoDivisaoCreditos = of
+				.createGrupoDivisaoCreditos();
 		Set<DivisaoCredito> regras = cenario.getDivisoesCredito();
-		for(DivisaoCredito regra : regras) {
+		for (DivisaoCredito regra : regras) {
 			ItemDivisaoCreditos item = of.createItemDivisaoCreditos();
 			item.setId(regra.getId().intValue());
 			item.setCreditos(regra.getCreditos());
@@ -307,97 +314,120 @@ public class SolverInput {
 		}
 		triedaInput.setRegrasDivisaoCredito(grupoDivisaoCreditos);
 	}
-	
+
 	private void generateCampi(boolean tatico) {
 		GrupoCampus grupoCampus = of.createGrupoCampus();
-//		Set<Campus> campi = cenario.getCampi();
-		for(Campus campus : campi) {
+		// Set<Campus> campi = cenario.getCampi();
+		for (Campus campus : campi) {
 			ItemCampus itemCampus = of.createItemCampus();
 			itemCampus.setId(campus.getId().intValue());
 			itemCampus.setCodigo(campus.getCodigo());
 			itemCampus.setNome(campus.getNome());
-			itemCampus.setHorariosDisponiveis(createGrupoHorario(campus.getHorarios(this.semanaLetiva)));
+			itemCampus.setHorariosDisponiveis(createGrupoHorario(campus
+					.getHorarios(this.semanaLetiva)));
 			itemCampus.setCusto(campus.getValorCredito());
-			
+
 			Set<String> salasJaAssociadasADisciplina = new HashSet<String>();
-			
+
 			// COLETANDO UNIDADES
 			GrupoUnidade grupoUnidade = of.createGrupoUnidade();
 			Set<Unidade> unidades = campus.getUnidades();
-			for(Unidade unidade : unidades) {
+			for (Unidade unidade : unidades) {
 				ItemUnidade itemUnidade = of.createItemUnidade();
 				itemUnidade.setId(unidade.getId().intValue());
 				itemUnidade.setCodigo(unidade.getCodigo());
 				itemUnidade.setNome(unidade.getNome());
-				itemUnidade.setHorariosDisponiveis(createGrupoHorario(unidade.getHorarios(this.semanaLetiva)));
-				
+				itemUnidade.setHorariosDisponiveis(createGrupoHorario(unidade
+						.getHorarios(this.semanaLetiva)));
+
 				GrupoSala grupoSala = of.createGrupoSala();
 				Set<Sala> salas = unidade.getSalas();
-				for(Sala sala : salas) {
+				for (Sala sala : salas) {
 					ItemSala itemSala = of.createItemSala();
 					itemSala.setId(sala.getId().intValue());
 					itemSala.setCodigo(sala.getCodigo());
 					itemSala.setAndar(sala.getAndar());
 					itemSala.setNumero(sala.getNumero());
-					itemSala.setTipoSalaId(sala.getTipoSala().getId().intValue());
+					itemSala.setTipoSalaId(sala.getTipoSala().getId()
+							.intValue());
 					itemSala.setCapacidade(sala.getCapacidade());
-					if(tatico) { // Tático
-						itemSala.setCreditosDisponiveis(createCreditosDisponiveis(createGrupoHorario(sala.getHorarios(this.semanaLetiva))));
+					if (tatico) { // Tático
+						itemSala.setCreditosDisponiveis(createCreditosDisponiveis(createGrupoHorario(sala
+								.getHorarios(this.semanaLetiva))));
 					} else { // Operacional
-						itemSala.setHorariosDisponiveis(createGrupoHorario(sala.getHorarios(this.semanaLetiva)));
+						itemSala.setHorariosDisponiveis(createGrupoHorario(sala
+								.getHorarios(this.semanaLetiva)));
 					}
-					
-					GrupoIdentificador grupoIdentificador = of.createGrupoIdentificador();
-					Set<CurriculoDisciplina> curriculoDisciplinas = sala.getCurriculoDisciplinas();
-					for(CurriculoDisciplina curriculoDisciplina : curriculoDisciplinas) {
-						if(salasJaAssociadasADisciplina.add(curriculoDisciplina.getDisciplina().getId() + "-" +sala.getId())) {
-							grupoIdentificador.getId().add(curriculoDisciplina.getDisciplina().getId().intValue());
+
+					GrupoIdentificador grupoIdentificador = of
+							.createGrupoIdentificador();
+					Set<CurriculoDisciplina> curriculoDisciplinas = sala
+							.getCurriculoDisciplinas();
+					for (CurriculoDisciplina curriculoDisciplina : curriculoDisciplinas) {
+						if (salasJaAssociadasADisciplina
+								.add(curriculoDisciplina.getDisciplina()
+										.getId() + "-" + sala.getId())) {
+							grupoIdentificador.getId().add(
+									curriculoDisciplina.getDisciplina().getId()
+											.intValue());
 						}
 					}
 					itemSala.setDisciplinasAssociadas(grupoIdentificador);
-					
+
 					grupoSala.getSala().add(itemSala);
 				}
 				itemUnidade.setSalas(grupoSala);
-				
+
 				grupoUnidade.getUnidade().add(itemUnidade);
 			}
 			itemCampus.setUnidades(grupoUnidade);
-			
+
 			// COLETANDO PROFESSORES
 			GrupoProfessor grupoProfessor = of.createGrupoProfessor();
 			Set<Professor> professores = campus.getProfessores();
-			for(Professor professor : professores) {
+			for (Professor professor : professores) {
 				ItemProfessor itemProfessor = of.createItemProfessor();
 				itemProfessor.setId(professor.getId().intValue());
 				itemProfessor.setCpf(professor.getCpf());
 				itemProfessor.setNome(professor.getNome());
-				itemProfessor.setTipoContratoId(professor.getTipoContrato().getId().intValue());
+				itemProfessor.setTipoContratoId(professor.getTipoContrato()
+						.getId().intValue());
 				itemProfessor.setChMin(professor.getCargaHorariaMin());
 				itemProfessor.setChMax(professor.getCargaHorariaMax());
-				itemProfessor.setTitulacaoId(professor.getTitulacao().getId().intValue());
-				if(professor.getAreaTitulacao() != null) {
-					itemProfessor.setAreaTitulacaoId(professor.getAreaTitulacao().getId().intValue());
+				itemProfessor.setTitulacaoId(professor.getTitulacao().getId()
+						.intValue());
+				if (professor.getAreaTitulacao() != null) {
+					itemProfessor.setAreaTitulacaoId(professor
+							.getAreaTitulacao().getId().intValue());
 				}
 				itemProfessor.setCredAnterior(professor.getCreditoAnterior());
 				itemProfessor.setValorCred(professor.getValorCredito());
-				itemProfessor.setHorariosDisponiveis(createGrupoHorario(professor.getHorarios(this.semanaLetiva)));
-				
-				GrupoProfessorDisciplina grupoProfessorDisciplina = of.createGrupoProfessorDisciplina();
-				Set<ProfessorDisciplina> professorDisciplinas = professor.getDisciplinas();
-				for(ProfessorDisciplina professorDisciplina : professorDisciplinas) {
-					ItemProfessorDisciplina itemProfessorDisciplina = of.createItemProfessorDisciplina();
-					itemProfessorDisciplina.setNota(professorDisciplina.getNota());
-					itemProfessorDisciplina.setPreferencia(professorDisciplina.getPreferencia());
-					itemProfessorDisciplina.setDisciplinaId(professorDisciplina.getDisciplina().getId().intValue());
-					grupoProfessorDisciplina.getProfessorDisciplina().add(itemProfessorDisciplina);
+				itemProfessor
+						.setHorariosDisponiveis(createGrupoHorario(professor
+								.getHorarios(this.semanaLetiva)));
+
+				GrupoProfessorDisciplina grupoProfessorDisciplina = of
+						.createGrupoProfessorDisciplina();
+				Set<ProfessorDisciplina> professorDisciplinas = professor
+						.getDisciplinas();
+				for (ProfessorDisciplina professorDisciplina : professorDisciplinas) {
+					ItemProfessorDisciplina itemProfessorDisciplina = of
+							.createItemProfessorDisciplina();
+					itemProfessorDisciplina.setNota(professorDisciplina
+							.getNota());
+					itemProfessorDisciplina.setPreferencia(professorDisciplina
+							.getPreferencia());
+					itemProfessorDisciplina.setDisciplinaId(professorDisciplina
+							.getDisciplina().getId().intValue());
+					grupoProfessorDisciplina.getProfessorDisciplina().add(
+							itemProfessorDisciplina);
 				}
 				itemProfessor.setDisciplinas(grupoProfessorDisciplina);
-				
+
 				grupoProfessor.getProfessor().add(itemProfessor);
 			}
 			itemCampus.setProfessores(grupoProfessor);
-			
+
 			grupoCampus.getCampus().add(itemCampus);
 		}
 		triedaInput.setCampi(grupoCampus);
@@ -405,13 +435,15 @@ public class SolverInput {
 
 	private void generateDeslocamentoCampi() {
 		GrupoDeslocamento grupoDeslocamento = of.createGrupoDeslocamento();
-//		Set<Campus> campi = cenario.getCampi();
-		for(Campus campus : campi) {
+		// Set<Campus> campi = cenario.getCampi();
+		for (Campus campus : campi) {
 			Set<DeslocamentoCampus> deslocamentos = campus.getDeslocamentos();
-			for(DeslocamentoCampus deslocamento : deslocamentos) {
+			for (DeslocamentoCampus deslocamento : deslocamentos) {
 				ItemDeslocamento itemDeslocamento = of.createItemDeslocamento();
-				itemDeslocamento.setOrigemId(deslocamento.getOrigem().getId().intValue());
-				itemDeslocamento.setDestinoId(deslocamento.getDestino().getId().intValue());
+				itemDeslocamento.setOrigemId(deslocamento.getOrigem().getId()
+						.intValue());
+				itemDeslocamento.setDestinoId(deslocamento.getDestino().getId()
+						.intValue());
 				itemDeslocamento.setTempo(deslocamento.getTempo());
 				itemDeslocamento.setCusto(deslocamento.getCusto());
 				grupoDeslocamento.getDeslocamento().add(itemDeslocamento);
@@ -419,18 +451,22 @@ public class SolverInput {
 		}
 		triedaInput.setTemposDeslocamentosCampi(grupoDeslocamento);
 	}
-	
+
 	private void generateDeslocamentoUnidades() {
 		GrupoDeslocamento grupoDeslocamento = of.createGrupoDeslocamento();
-//		Set<Campus> campi = cenario.getCampi();
-		for(Campus campus : campi) {
+		// Set<Campus> campi = cenario.getCampi();
+		for (Campus campus : campi) {
 			Set<Unidade> unidades = campus.getUnidades();
-			for(Unidade unidade : unidades) {
-				Set<DeslocamentoUnidade> deslocamentos = unidade.getDeslocamentos();
-				for(DeslocamentoUnidade deslocamento : deslocamentos) {
-					ItemDeslocamento itemDeslocamento = of.createItemDeslocamento();
-					itemDeslocamento.setOrigemId(deslocamento.getOrigem().getId().intValue());
-					itemDeslocamento.setDestinoId(deslocamento.getDestino().getId().intValue());
+			for (Unidade unidade : unidades) {
+				Set<DeslocamentoUnidade> deslocamentos = unidade
+						.getDeslocamentos();
+				for (DeslocamentoUnidade deslocamento : deslocamentos) {
+					ItemDeslocamento itemDeslocamento = of
+							.createItemDeslocamento();
+					itemDeslocamento.setOrigemId(deslocamento.getOrigem()
+							.getId().intValue());
+					itemDeslocamento.setDestinoId(deslocamento.getDestino()
+							.getId().intValue());
 					itemDeslocamento.setTempo(deslocamento.getTempo());
 					itemDeslocamento.setCusto(deslocamento.getCusto());
 					grupoDeslocamento.getDeslocamento().add(itemDeslocamento);
@@ -439,11 +475,11 @@ public class SolverInput {
 		}
 		triedaInput.setTemposDeslocamentosUnidades(grupoDeslocamento);
 	}
-	
+
 	private void generateDisciplinas() {
 		GrupoDisciplina grupoDisciplina = of.createGrupoDisciplina();
 		Set<Disciplina> disciplinas = cenario.getDisciplinas();
-		for(Disciplina disciplina : disciplinas) {
+		for (Disciplina disciplina : disciplinas) {
 			ItemDisciplina itemDisciplina = of.createItemDisciplina();
 			itemDisciplina.setId(disciplina.getId().intValue());
 			itemDisciplina.setCodigo(disciplina.getCodigo());
@@ -451,21 +487,28 @@ public class SolverInput {
 			itemDisciplina.setCredTeoricos(disciplina.getCreditosTeorico());
 			itemDisciplina.setCredPraticos(disciplina.getCreditosPratico());
 			itemDisciplina.setLaboratorio(disciplina.getLaboratorio());
-			itemDisciplina.setMaxAlunosTeorico(disciplina.getMaxAlunosTeorico());
-			itemDisciplina.setMaxAlunosPratico(disciplina.getMaxAlunosPratico());
-			itemDisciplina.setTipoDisciplinaId(disciplina.getTipoDisciplina().getId().intValue());
-			itemDisciplina.setNivelDificuldadeId(Dificuldades.toInt(disciplina.getDificuldade()));
-			
+			itemDisciplina
+					.setMaxAlunosTeorico(disciplina.getMaxAlunosTeorico());
+			itemDisciplina
+					.setMaxAlunosPratico(disciplina.getMaxAlunosPratico());
+			itemDisciplina.setTipoDisciplinaId(disciplina.getTipoDisciplina()
+					.getId().intValue());
+			itemDisciplina.setNivelDificuldadeId(Dificuldades.toInt(disciplina
+					.getDificuldade()));
+
 			DivisaoCredito divisaoCredito = null;
-			
-			if(parametro.getRegrasEspecificasDivisaoCredito()) {
+
+			if (parametro.getRegrasEspecificasDivisaoCredito()) {
 				divisaoCredito = disciplina.getDivisaoCreditos();
 			}
-			if(divisaoCredito == null && parametro.getRegrasGenericasDivisaoCredito()) {
-				divisaoCredito = DivisaoCredito.findByCredito(disciplina.getTotalCreditos());
+			if (divisaoCredito == null
+					&& parametro.getRegrasGenericasDivisaoCredito()) {
+				divisaoCredito = DivisaoCredito.findByCredito(disciplina
+						.getTotalCreditos());
 			}
-			if(divisaoCredito != null) {
-				ItemDivisaoCreditos itemDivisaoCreditos = of.createItemDivisaoCreditos();
+			if (divisaoCredito != null) {
+				ItemDivisaoCreditos itemDivisaoCreditos = of
+						.createItemDivisaoCreditos();
 				itemDivisaoCreditos.setId(divisaoCredito.getId().intValue());
 				itemDivisaoCreditos.setCreditos(divisaoCredito.getCreditos());
 				itemDivisaoCreditos.setDia1(divisaoCredito.getDia1());
@@ -477,124 +520,152 @@ public class SolverInput {
 				itemDivisaoCreditos.setDia7(divisaoCredito.getDia7());
 				itemDisciplina.setDivisaoDeCreditos(itemDivisaoCreditos);
 			}
-			
-			GrupoIdentificador grupoIdentificadorEquivalencias = of.createGrupoIdentificador();
-			if(parametro.getConsiderarEquivalencia()) {
+
+			GrupoIdentificador grupoIdentificadorEquivalencias = of
+					.createGrupoIdentificador();
+			if (parametro.getConsiderarEquivalencia()) {
 				Set<Equivalencia> equivalencias = disciplina.getEquivalencias();
-				for(Equivalencia equivalencia : equivalencias) {
+				for (Equivalencia equivalencia : equivalencias) {
 					Set<Disciplina> eliminas = equivalencia.getElimina();
-					if(eliminas != null && eliminas.size() > 0) {
-						for(Disciplina disciplinaElimina : eliminas) {
-							grupoIdentificadorEquivalencias.getId().add(disciplinaElimina.getId().intValue());
+					if (eliminas != null && eliminas.size() > 0) {
+						for (Disciplina disciplinaElimina : eliminas) {
+							grupoIdentificadorEquivalencias.getId().add(
+									disciplinaElimina.getId().intValue());
 						}
 					}
 				}
 			}
-			itemDisciplina.setDisciplinasEquivalentes(grupoIdentificadorEquivalencias);
-			
-			GrupoIdentificador grupoIdentificadorIncompativeis = of.createGrupoIdentificador();
-			Set<Incompatibilidade> incompatibilidades = disciplina.getIncompatibilidades();
-			for(Incompatibilidade incompatibilidade : incompatibilidades) {
-				grupoIdentificadorIncompativeis.getId().add(incompatibilidade.getDisciplina2().getId().intValue());
+			itemDisciplina
+					.setDisciplinasEquivalentes(grupoIdentificadorEquivalencias);
+
+			GrupoIdentificador grupoIdentificadorIncompativeis = of
+					.createGrupoIdentificador();
+			Set<Incompatibilidade> incompatibilidades = disciplina
+					.getIncompatibilidades();
+			for (Incompatibilidade incompatibilidade : incompatibilidades) {
+				grupoIdentificadorIncompativeis.getId().add(
+						incompatibilidade.getDisciplina2().getId().intValue());
 			}
-			itemDisciplina.setDisciplinasIncompativeis(grupoIdentificadorIncompativeis);
-			
-			itemDisciplina.setHorariosDisponiveis(createGrupoHorario(disciplina.getHorarios(this.semanaLetiva)));
+			itemDisciplina
+					.setDisciplinasIncompativeis(grupoIdentificadorIncompativeis);
+
+			itemDisciplina.setHorariosDisponiveis(createGrupoHorario(disciplina
+					.getHorarios(this.semanaLetiva)));
 			grupoDisciplina.getDisciplina().add(itemDisciplina);
 		}
 		triedaInput.setDisciplinas(grupoDisciplina);
 	}
-	
+
 	private void generateCurso() {
 		GrupoCurso grupoCurso = of.createGrupoCurso();
 		Set<Curso> cursos = cenario.getCursos();
-		for(Curso curso : cursos) {
+		for (Curso curso : cursos) {
 			ItemCurso itemCurso = of.createItemCurso();
 			itemCurso.setId(curso.getId().intValue());
 			itemCurso.setCodigo(curso.getCodigo());
 			itemCurso.setTipoId(curso.getTipoCurso().getId().intValue());
 
-			ItemPercentualMinimo itemPercentualMinimoMestres = of.createItemPercentualMinimo();
+			ItemPercentualMinimo itemPercentualMinimoMestres = of
+					.createItemPercentualMinimo();
 			itemPercentualMinimoMestres.setPercMinimo(curso.getNumMinMestres());
-			itemPercentualMinimoMestres.setTipoTitulacaoId(4); // TODO pegar titulacao pela constante
+			itemPercentualMinimoMestres.setTipoTitulacaoId(4);
 			itemCurso.setRegraPercMinMestres(itemPercentualMinimoMestres);
-			
-			ItemPercentualMinimo itemPercentualMinimoDoutores = of.createItemPercentualMinimo();
-			itemPercentualMinimoDoutores.setPercMinimo(curso.getNumMinDoutores());
-			itemPercentualMinimoDoutores.setTipoTitulacaoId(5); // TODO pegar titulacao pela constante
+
+			ItemPercentualMinimo itemPercentualMinimoDoutores = of
+					.createItemPercentualMinimo();
+			itemPercentualMinimoDoutores.setPercMinimo(curso
+					.getNumMinDoutores());
+			itemPercentualMinimoDoutores.setTipoTitulacaoId(5);
 			itemCurso.setRegraPercMinDoutores(itemPercentualMinimoDoutores);
-			
-			itemCurso.setMinTempoIntegralParcial(curso.getMinTempoIntegralParcial());
+
+			itemCurso.setMinTempoIntegralParcial(curso
+					.getMinTempoIntegralParcial());
 			itemCurso.setMinTempoIntegral(curso.getMinTempoIntegral());
-			
+
 			itemCurso.setQtdMaxProfDisc(curso.getMaxDisciplinasPeloProfessor());
 			itemCurso.setMaisDeUmaDiscPeriodo(curso.getAdmMaisDeUmDisciplina());
-			
-			GrupoIdentificador grupoIdentificadorAreasTitulacao = of.createGrupoIdentificador();
+
+			GrupoIdentificador grupoIdentificadorAreasTitulacao = of
+					.createGrupoIdentificador();
 			Set<AreaTitulacao> areas = curso.getAreasTitulacao();
-			for(AreaTitulacao area : areas) {
-				grupoIdentificadorAreasTitulacao.getId().add(area.getId().intValue());
+			for (AreaTitulacao area : areas) {
+				grupoIdentificadorAreasTitulacao.getId().add(
+						area.getId().intValue());
 			}
 			itemCurso.setAreasTitulacao(grupoIdentificadorAreasTitulacao);
-			
+
 			GrupoCurriculo grupoCurriculo = of.createGrupoCurriculo();
 			Set<Curriculo> curriculos = curso.getCurriculos();
-			for(Curriculo curriculo : curriculos) {
+			for (Curriculo curriculo : curriculos) {
 				ItemCurriculo itemCurriculo = of.createItemCurriculo();
 				itemCurriculo.setId(curriculo.getId().intValue());
 				itemCurriculo.setCodigo(curriculo.getCodigo());
-				
-				GrupoDisciplinaPeriodo grupoDisciplinaPeriodo = of.createGrupoDisciplinaPeriodo();
-				Set<CurriculoDisciplina> curriculoPeriodos = curriculo.getDisciplinas();
-				for(CurriculoDisciplina curriculoPeriodo : curriculoPeriodos) {
-					ItemDisciplinaPeriodo itemDisciplinaPeriodo = of.createItemDisciplinaPeriodo();
-					itemDisciplinaPeriodo.setPeriodo(curriculoPeriodo.getPeriodo());
-					itemDisciplinaPeriodo.setDisciplinaId(curriculoPeriodo.getDisciplina().getId().intValue());
-					grupoDisciplinaPeriodo.getDisciplinaPeriodo().add(itemDisciplinaPeriodo);
+
+				GrupoDisciplinaPeriodo grupoDisciplinaPeriodo = of
+						.createGrupoDisciplinaPeriodo();
+				Set<CurriculoDisciplina> curriculoPeriodos = curriculo
+						.getDisciplinas();
+				for (CurriculoDisciplina curriculoPeriodo : curriculoPeriodos) {
+					ItemDisciplinaPeriodo itemDisciplinaPeriodo = of
+							.createItemDisciplinaPeriodo();
+					itemDisciplinaPeriodo.setPeriodo(curriculoPeriodo
+							.getPeriodo());
+					itemDisciplinaPeriodo.setDisciplinaId(curriculoPeriodo
+							.getDisciplina().getId().intValue());
+					grupoDisciplinaPeriodo.getDisciplinaPeriodo().add(
+							itemDisciplinaPeriodo);
 				}
 				itemCurriculo.setDisciplinasPeriodo(grupoDisciplinaPeriodo);
-				
+
 				grupoCurriculo.getCurriculo().add(itemCurriculo);
 			}
 			itemCurso.setCurriculos(grupoCurriculo);
-			
+
 			grupoCurso.getCurso().add(itemCurso);
 		}
 		triedaInput.setCursos(grupoCurso);
 	}
-	
+
 	private void generateOfertaCursoCampi() {
 		GrupoOfertaCurso grupoOfertaCurso = of.createGrupoOfertaCurso();
-//		Set<Campus> campi = cenario.getCampi();
-		for(Campus campus : campi) {
+		// Set<Campus> campi = cenario.getCampi();
+		for (Campus campus : campi) {
 			Set<Oferta> ofertas = campus.getOfertas();
-			for(Oferta oferta : ofertas) {
-				if(!oferta.getTurno().equals(turno)) continue; // TODO Depois remover esse if para listar todos os turnos 
+			for (Oferta oferta : ofertas) {
+				if (!oferta.getTurno().equals(turno)) {
+					continue;
+				}
+
 				ItemOfertaCurso itemOfertaCurso = of.createItemOfertaCurso();
 				itemOfertaCurso.setId(oferta.getId().intValue());
 				Curriculo curriculo = oferta.getCurriculo();
 				itemOfertaCurso.setCurriculoId(curriculo.getId().intValue());
-				itemOfertaCurso.setCursoId(curriculo.getCurso().getId().intValue());
-				itemOfertaCurso.setTurnoId(oferta.getTurno().getId().intValue());
+				itemOfertaCurso.setCursoId(curriculo.getCurso().getId()
+						.intValue());
+				itemOfertaCurso
+						.setTurnoId(oferta.getTurno().getId().intValue());
 				itemOfertaCurso.setCampusId(campus.getId().intValue());
 				itemOfertaCurso.setReceita(oferta.getReceita());
 				grupoOfertaCurso.getOfertaCurso().add(itemOfertaCurso);
 			}
 		}
+
 		triedaInput.setOfertaCursosCampi(grupoOfertaCurso);
 	}
-	
+
 	private void generateDemandas() {
 		GrupoDemanda grupoDemanda = of.createGrupoDemanda();
-//		Set<Campus> campi = cenario.getCampi();
-		for(Campus campus : campi) {
+
+		for (Campus campus : campi) {
 			Set<Oferta> ofertas = campus.getOfertas();
-			for(Oferta oferta : ofertas) {
+			for (Oferta oferta : ofertas) {
 				Set<Demanda> demandas = oferta.getDemandas();
-				for(Demanda demanda : demandas) {
+				for (Demanda demanda : demandas) {
 					ItemDemanda itemDemanda = of.createItemDemanda();
-					itemDemanda.setOfertaCursoCampiId(oferta.getId().intValue());
-					itemDemanda.setDisciplinaId(demanda.getDisciplina().getId().intValue());
+					itemDemanda
+							.setOfertaCursoCampiId(oferta.getId().intValue());
+					itemDemanda.setDisciplinaId(demanda.getDisciplina().getId()
+							.intValue());
 					itemDemanda.setQuantidade(demanda.getQuantidade());
 					grupoDemanda.getDemanda().add(itemDemanda);
 				}
@@ -602,324 +673,473 @@ public class SolverInput {
 		}
 		triedaInput.setDemandas(grupoDemanda);
 	}
-	
+
 	private void generateParametrosPlanejamento(boolean tatico) {
-		
-//		Parametro parametro = cenario.getParametro();
-		
-		ItemParametrosPlanejamento itemParametrosPlanejamento = of.createItemParametrosPlanejamento();
-		
-		itemParametrosPlanejamento.setModoOtimizacao(tatico ? "TATICO" : "OPERACIONAL");
-		itemParametrosPlanejamento.setFuncaoObjetivo(itemParametrosPlanejamento.getFuncaoObjetivo());
-		
-		CargaHorariaSemanalAluno cargaHorariaSemanalAluno = of.createItemParametrosPlanejamentoCargaHorariaSemanalAluno();
+
+		// Parametro parametro = cenario.getParametro();
+
+		ItemParametrosPlanejamento itemParametrosPlanejamento = of
+				.createItemParametrosPlanejamento();
+
+		itemParametrosPlanejamento.setModoOtimizacao(tatico ? "TATICO"
+				: "OPERACIONAL");
+		itemParametrosPlanejamento.setFuncaoObjetivo(itemParametrosPlanejamento
+				.getFuncaoObjetivo());
+
+		CargaHorariaSemanalAluno cargaHorariaSemanalAluno = of
+				.createItemParametrosPlanejamentoCargaHorariaSemanalAluno();
 		cargaHorariaSemanalAluno.setIndiferente("");
-		if(parametro.getCargaHorariaAluno()) {
-			if(parametro.getCargaHorariaAlunoSel().equals(CargaHoraria.CONCENTRAR.name())) {
+		if (parametro.getCargaHorariaAluno()) {
+			if (parametro.getCargaHorariaAlunoSel().equals(
+					CargaHoraria.CONCENTRAR.name())) {
 				cargaHorariaSemanalAluno.setMinimizarDias("");
-			} else if(parametro.getCargaHorariaAlunoSel().equals(CargaHoraria.DISTRIBUIR.name())) {
+			} else if (parametro.getCargaHorariaAlunoSel().equals(
+					CargaHoraria.DISTRIBUIR.name())) {
 				cargaHorariaSemanalAluno.setEquilibrar("");
 			}
 		}
-		itemParametrosPlanejamento.setCargaHorariaSemanalAluno(cargaHorariaSemanalAluno);
-		itemParametrosPlanejamento.setAlunosMesmoPeriodoNaMesmaSala(parametro.getAlunoDePeriodoMesmaSala());
-		itemParametrosPlanejamento.setPermitirAlunosEmVariosCampi(parametro.getAlunoEmMuitosCampi());
-		itemParametrosPlanejamento.setMinimizarDeslocAluno(parametro.getMinimizarDeslocamentoAluno());
-		
-		
-		CargaHorariaSemanalProfessor cargaHorariaSemanaProfessor = of.createItemParametrosPlanejamentoCargaHorariaSemanalProfessor();
+		itemParametrosPlanejamento
+				.setCargaHorariaSemanalAluno(cargaHorariaSemanalAluno);
+		itemParametrosPlanejamento.setAlunosMesmoPeriodoNaMesmaSala(parametro
+				.getAlunoDePeriodoMesmaSala());
+		itemParametrosPlanejamento.setPermitirAlunosEmVariosCampi(parametro
+				.getAlunoEmMuitosCampi());
+		itemParametrosPlanejamento.setMinimizarDeslocAluno(parametro
+				.getMinimizarDeslocamentoAluno());
+
+		CargaHorariaSemanalProfessor cargaHorariaSemanaProfessor = of
+				.createItemParametrosPlanejamentoCargaHorariaSemanalProfessor();
 		cargaHorariaSemanaProfessor.setIndiferente("");
-		if(parametro.getCargaHorariaProfessor()) {
-			if(parametro.getCargaHorariaProfessorSel().equals(CargaHoraria.CONCENTRAR.name())) {
+		if (parametro.getCargaHorariaProfessor()) {
+			if (parametro.getCargaHorariaProfessorSel().equals(
+					CargaHoraria.CONCENTRAR.name())) {
 				cargaHorariaSemanaProfessor.setMinimizarDias("");
-			} else if(parametro.getCargaHorariaAlunoSel().equals(CargaHoraria.DISTRIBUIR.name())) {
+			} else if (parametro.getCargaHorariaAlunoSel().equals(
+					CargaHoraria.DISTRIBUIR.name())) {
 				cargaHorariaSemanaProfessor.setEquilibrar("");
 			}
 		}
-		itemParametrosPlanejamento.setCargaHorariaSemanalProfessor(cargaHorariaSemanaProfessor);
-		itemParametrosPlanejamento.setPermitirProfessorEmVariosCampi(parametro.getProfessorEmMuitosCampi());
-		itemParametrosPlanejamento.setMinimizarDeslocProfessor(parametro.getMinimizarDeslocamentoProfessor());
-		itemParametrosPlanejamento.setMaxDeslocProfessor(parametro.getMinimizarDeslocamentoProfessorValue());
-		itemParametrosPlanejamento.setMinimizarHorariosVaziosProfessor(parametro.getMinimizarGapProfessor());
-		itemParametrosPlanejamento.setEvitarReducaoCargaHorariaProfValor(parametro.getEvitarReducaoCargaHorariaProfessorValue());
-		itemParametrosPlanejamento.setEvitarReducaoCargaHorariaProf(parametro.getEvitarReducaoCargaHorariaProfessor());
-		itemParametrosPlanejamento.setEvitarProfUltimoPrimeiroHor(parametro.getEvitarUltimoEPrimeiroHorarioProfessor());
-		itemParametrosPlanejamento.setPreferenciaProfessorDisciplina(parametro.getPreferenciaDeProfessores());
-		itemParametrosPlanejamento.setDesempenhoProfDisponibilidade(parametro.getAvaliacaoDesempenhoProfessor());
-		
-		itemParametrosPlanejamento.setConsiderarEquivalencia(parametro.getConsiderarEquivalencia());
-		itemParametrosPlanejamento.setMinAlunosAberturaTurmas(parametro.getMinAlunosParaAbrirTurma());
-		itemParametrosPlanejamento.setMinAlunosAberturaTurmasValor(parametro.getMinAlunosParaAbrirTurmaValue());
+		itemParametrosPlanejamento
+				.setCargaHorariaSemanalProfessor(cargaHorariaSemanaProfessor);
+		itemParametrosPlanejamento.setPermitirProfessorEmVariosCampi(parametro
+				.getProfessorEmMuitosCampi());
+		itemParametrosPlanejamento.setMinimizarDeslocProfessor(parametro
+				.getMinimizarDeslocamentoProfessor());
+		itemParametrosPlanejamento.setMaxDeslocProfessor(parametro
+				.getMinimizarDeslocamentoProfessorValue());
+		itemParametrosPlanejamento
+				.setMinimizarHorariosVaziosProfessor(parametro
+						.getMinimizarGapProfessor());
+		itemParametrosPlanejamento
+				.setEvitarReducaoCargaHorariaProfValor(parametro
+						.getEvitarReducaoCargaHorariaProfessorValue());
+		itemParametrosPlanejamento.setEvitarReducaoCargaHorariaProf(parametro
+				.getEvitarReducaoCargaHorariaProfessor());
+		itemParametrosPlanejamento.setEvitarProfUltimoPrimeiroHor(parametro
+				.getEvitarUltimoEPrimeiroHorarioProfessor());
+		itemParametrosPlanejamento.setPreferenciaProfessorDisciplina(parametro
+				.getPreferenciaDeProfessores());
+		itemParametrosPlanejamento.setDesempenhoProfDisponibilidade(parametro
+				.getAvaliacaoDesempenhoProfessor());
 
-		itemParametrosPlanejamento.setNiveisDificuldadeHorario(of.createGrupoNivelDificuldadeHorario());
-		itemParametrosPlanejamento.setEquilibrarDiversidadeDiscDia(parametro.getCompatibilidadeDisciplinasMesmoDia());
-		itemParametrosPlanejamento.setRegrasGenericasDivisaoCredito(parametro.getRegrasGenericasDivisaoCredito());
-		itemParametrosPlanejamento.setRegrasEspecificasDivisaoCredito(parametro.getRegrasEspecificasDivisaoCredito());
-		
-		itemParametrosPlanejamento.setMaximizarAvaliacaoCursosSel(parametro.getMaximizarNotaAvaliacaoCorpoDocente());
+		itemParametrosPlanejamento.setConsiderarEquivalencia(parametro
+				.getConsiderarEquivalencia());
+		itemParametrosPlanejamento.setMinAlunosAberturaTurmas(parametro
+				.getMinAlunosParaAbrirTurma());
+		itemParametrosPlanejamento.setMinAlunosAberturaTurmasValor(parametro
+				.getMinAlunosParaAbrirTurmaValue());
+
+		itemParametrosPlanejamento.setNiveisDificuldadeHorario(of
+				.createGrupoNivelDificuldadeHorario());
+		itemParametrosPlanejamento.setEquilibrarDiversidadeDiscDia(parametro
+				.getCompatibilidadeDisciplinasMesmoDia());
+		itemParametrosPlanejamento.setRegrasGenericasDivisaoCredito(parametro
+				.getRegrasGenericasDivisaoCredito());
+		itemParametrosPlanejamento.setRegrasEspecificasDivisaoCredito(parametro
+				.getRegrasEspecificasDivisaoCredito());
+
+		itemParametrosPlanejamento.setMaximizarAvaliacaoCursosSel(parametro
+				.getMaximizarNotaAvaliacaoCorpoDocente());
 		GrupoIdentificador cursosAvaliacaoGrupo = of.createGrupoIdentificador();
-		if(parametro.getMaximizarNotaAvaliacaoCorpoDocente()) {
-			for(Curso curso : parametro.getCursosMaxNotaAval()) {
+		if (parametro.getMaximizarNotaAvaliacaoCorpoDocente()) {
+			for (Curso curso : parametro.getCursosMaxNotaAval()) {
 				cursosAvaliacaoGrupo.getId().add(curso.getId().intValue());
 			}
 		}
-		itemParametrosPlanejamento.setMaximizarAvaliacaoCursos(cursosAvaliacaoGrupo);
-		
-		itemParametrosPlanejamento.setMinimizarCustoDocenteCursosSel(parametro.getMinimizarCustoDocenteCursos());
+		itemParametrosPlanejamento
+				.setMaximizarAvaliacaoCursos(cursosAvaliacaoGrupo);
+
+		itemParametrosPlanejamento.setMinimizarCustoDocenteCursosSel(parametro
+				.getMinimizarCustoDocenteCursos());
 		GrupoIdentificador cursosCustoGrupo = of.createGrupoIdentificador();
-		if(parametro.getMinimizarCustoDocenteCursos()) {
-			for(Curso curso : parametro.getCursosMinCust()) {
+		if (parametro.getMinimizarCustoDocenteCursos()) {
+			for (Curso curso : parametro.getCursosMinCust()) {
 				cursosCustoGrupo.getId().add(curso.getId().intValue());
 			}
 		}
-		itemParametrosPlanejamento.setMinimizarCustoDocenteCursos(cursosCustoGrupo);
-		
-		itemParametrosPlanejamento.setPermiteCompartilhamentoTurmaSel(parametro.getCompartilharDisciplinasCampi());
+		itemParametrosPlanejamento
+				.setMinimizarCustoDocenteCursos(cursosCustoGrupo);
+
+		itemParametrosPlanejamento.setPermiteCompartilhamentoTurmaSel(parametro
+				.getCompartilharDisciplinasCampi());
 		GrupoGrupo cursosCompartilharTurmaGrupo = of.createGrupoGrupo();
-		if(parametro.getCompartilharDisciplinasCampi()) {
-			for(CursoDescompartilha cursoDescompartilha : parametro.getCursosDescompartDiscCampi()) {
-				GrupoIdentificador cursosCompartilharTurmas = of.createGrupoIdentificador();
-				cursosCompartilharTurmas.getId().add(cursoDescompartilha.getCurso1().getId().intValue());
-				cursosCompartilharTurmas.getId().add(cursoDescompartilha.getCurso2().getId().intValue());
-				cursosCompartilharTurmaGrupo.getGrupoIdentificador().add(cursosCompartilharTurmas);
+		if (parametro.getCompartilharDisciplinasCampi()) {
+			for (CursoDescompartilha cursoDescompartilha : parametro
+					.getCursosDescompartDiscCampi()) {
+				GrupoIdentificador cursosCompartilharTurmas = of
+						.createGrupoIdentificador();
+				cursosCompartilharTurmas.getId().add(
+						cursoDescompartilha.getCurso1().getId().intValue());
+				cursosCompartilharTurmas.getId().add(
+						cursoDescompartilha.getCurso2().getId().intValue());
+				cursosCompartilharTurmaGrupo.getGrupoIdentificador().add(
+						cursosCompartilharTurmas);
 			}
 		}
-		itemParametrosPlanejamento.setPermiteCompartilhamentoTurma(cursosCompartilharTurmaGrupo);
-		
-		itemParametrosPlanejamento.setPercentuaisMinimoMestres(parametro.getPercentuaisMinimosMestres());
-		itemParametrosPlanejamento.setPercentuaisMinimoDoutores(parametro.getPercentuaisMinimosDoutores());
-		itemParametrosPlanejamento.setAreaTitulacaoProfessorCurso(parametro.getAreaTitulacaoProfessoresECursos());
-		itemParametrosPlanejamento.setMaximoDisciplinasDeUmProfessorPorCurso(parametro.getLimitarMaximoDisciplinaProfessor());
-		
+		itemParametrosPlanejamento
+				.setPermiteCompartilhamentoTurma(cursosCompartilharTurmaGrupo);
+
+		itemParametrosPlanejamento.setPercentuaisMinimoMestres(parametro
+				.getPercentuaisMinimosMestres());
+		itemParametrosPlanejamento.setPercentuaisMinimoDoutores(parametro
+				.getPercentuaisMinimosDoutores());
+		itemParametrosPlanejamento.setAreaTitulacaoProfessorCurso(parametro
+				.getAreaTitulacaoProfessoresECursos());
+		itemParametrosPlanejamento
+				.setMaximoDisciplinasDeUmProfessorPorCurso(parametro
+						.getLimitarMaximoDisciplinaProfessor());
+
 		itemParametrosPlanejamento.setCustoProfDisponibilidade(false);
-	
+
 		triedaInput.setParametrosPlanejamento(itemParametrosPlanejamento);
 	}
-	
+
 	private void generateFixacoes() {
 		int id = 1;
 		GrupoFixacao grupoFixacao = of.createGrupoFixacao();
 
-		List<Fixacao> fixacoes = Fixacao.findAll(); // Pegar fixações do cenário
-		for(Fixacao fixacao : fixacoes) {
-			List<HorarioDisponivelCenario> horarios = fixacao.getHorarios(this.semanaLetiva);
-			if(horarios.size() > 0) {
-				for(HorarioDisponivelCenario horario : horarios) {
-					if(!horario.getHorarioAula().getTurno().equals(turno)) continue; // TODO Depois remover esse if para listar todos os turnos
+		List<Fixacao> fixacoes = Fixacao.findAll();
+		for (Fixacao fixacao : fixacoes) {
+			List<HorarioDisponivelCenario> horarios = fixacao
+					.getHorarios(this.semanaLetiva);
+
+			if (horarios.size() > 0) {
+				for (HorarioDisponivelCenario horario : horarios) {
+					if (!horario.getHorarioAula().getTurno().equals(turno)) {
+						continue;
+					}
+
 					ItemFixacao itemFixacao = of.createItemFixacao();
 					itemFixacao.setId(id++);
-					itemFixacao.setDiaSemana(Semanas.toInt(horario.getSemana()));
-					itemFixacao.setTurnoId(horario.getHorarioAula().getTurno().getId().intValue());
-					itemFixacao.setHorarioAulaId(horario.getHorarioAula().getId().intValue());
-					if(fixacao.getProfessor() != null) {
-						itemFixacao.setProfessorId(fixacao.getProfessor().getId().intValue());
+					itemFixacao
+							.setDiaSemana(Semanas.toInt(horario.getSemana()));
+					itemFixacao.setTurnoId(horario.getHorarioAula().getTurno()
+							.getId().intValue());
+					itemFixacao.setHorarioAulaId(horario.getHorarioAula()
+							.getId().intValue());
+
+					if (fixacao.getProfessor() != null) {
+						itemFixacao.setProfessorId(fixacao.getProfessor()
+								.getId().intValue());
 					}
-					if(fixacao.getDisciplina() != null) {
-						itemFixacao.setDisciplinaId(fixacao.getDisciplina().getId().intValue());
+
+					if (fixacao.getDisciplina() != null) {
+						itemFixacao.setDisciplinaId(fixacao.getDisciplina()
+								.getId().intValue());
 					}
-					if(fixacao.getSala() != null) {
-						itemFixacao.setSalaId(fixacao.getSala().getId().intValue());
+					if (fixacao.getSala() != null) {
+						itemFixacao.setSalaId(fixacao.getSala().getId()
+								.intValue());
 					}
 					grupoFixacao.getFixacao().add(itemFixacao);
 				}
 			} else {
 				ItemFixacao itemFixacao = of.createItemFixacao();
 				itemFixacao.setId(id++);
-				if(fixacao.getProfessor() != null) {
-					itemFixacao.setProfessorId(fixacao.getProfessor().getId().intValue());
+				if (fixacao.getProfessor() != null) {
+					itemFixacao.setProfessorId(fixacao.getProfessor().getId()
+							.intValue());
 				}
-				if(fixacao.getDisciplina() != null) {
-					itemFixacao.setDisciplinaId(fixacao.getDisciplina().getId().intValue());
+				if (fixacao.getDisciplina() != null) {
+					itemFixacao.setDisciplinaId(fixacao.getDisciplina().getId()
+							.intValue());
 				}
-				if(fixacao.getSala() != null) {
+				if (fixacao.getSala() != null) {
 					itemFixacao.setSalaId(fixacao.getSala().getId().intValue());
 				}
 				grupoFixacao.getFixacao().add(itemFixacao);
 			}
-			
+
 		}
-		
+
 		triedaInput.setFixacoes(grupoFixacao);
 	}
-	
+
 	private void generateTaticoInput() {
 		Set<AtendimentoTatico> ats = cenario.getAtendimentosTaticos();
-		for(AtendimentoTatico at : ats) {
-			if(!at.getOferta().getTurno().equals(turno) || !at.getOferta().getCampus().equals(campi.get(0))) {
+		for (AtendimentoTatico at : ats) {
+			if (!at.getOferta().getTurno().equals(turno)
+					|| !at.getOferta().getCampus().equals(campi.get(0))) {
 				continue;
 			}
-			createItemAtendimentoTaticoSolucao(at.getSala(), at.getSemana(), at.getOferta(), at.getDisciplina(), at.getQuantidadeAlunos(), at.getTurma(), at.getCreditosTeorico(), at.getCreditosPratico());
+			createItemAtendimentoTaticoSolucao(at.getSala(), at.getSemana(),
+					at.getOferta(), at.getDisciplina(),
+					at.getQuantidadeAlunos(), at.getTurma(),
+					at.getCreditosTeorico(), at.getCreditosPratico());
 		}
 	}
-	private ItemAtendimentoCampusSolucao getItemAtendimentoCampusSolucao(Campus campus) {
-		if(triedaInput.getAtendimentosTatico() == null) {
-			triedaInput.setAtendimentosTatico(of.createGrupoAtendimentoCampusSolucao());
+
+	private ItemAtendimentoCampusSolucao getItemAtendimentoCampusSolucao(
+			Campus campus) {
+		if (triedaInput.getAtendimentosTatico() == null) {
+			triedaInput.setAtendimentosTatico(of
+					.createGrupoAtendimentoCampusSolucao());
 		}
-		for(ItemAtendimentoCampusSolucao atSolucao : triedaInput.getAtendimentosTatico().getAtendimentoCampus()) {
-			if(atSolucao.getCampusId() == campus.getId().intValue()) {
+		for (ItemAtendimentoCampusSolucao atSolucao : triedaInput
+				.getAtendimentosTatico().getAtendimentoCampus()) {
+			if (atSolucao.getCampusId() == campus.getId().intValue()) {
 				return atSolucao;
 			}
 		}
-		ItemAtendimentoCampusSolucao atSolucao = of.createItemAtendimentoCampusSolucao();
+		ItemAtendimentoCampusSolucao atSolucao = of
+				.createItemAtendimentoCampusSolucao();
 		atSolucao.setCampusId(campus.getId().intValue());
 		atSolucao.setCampusCodigo(campus.getCodigo());
-		triedaInput.getAtendimentosTatico().getAtendimentoCampus().add(atSolucao);
+		triedaInput.getAtendimentosTatico().getAtendimentoCampus()
+				.add(atSolucao);
 		return atSolucao;
 	}
-	private ItemAtendimentoUnidadeSolucao getItemAtendimentoUnidadeSolucao(Unidade unidade) {
-		for(ItemAtendimentoCampusSolucao atCampusSolucao : triedaInput.getAtendimentosTatico().getAtendimentoCampus()) {
-			if(atCampusSolucao.getAtendimentosUnidades() == null) {
-				atCampusSolucao.setAtendimentosUnidades(of.createGrupoAtendimentoUnidadeSolucao());
+
+	private ItemAtendimentoUnidadeSolucao getItemAtendimentoUnidadeSolucao(
+			Unidade unidade) {
+		for (ItemAtendimentoCampusSolucao atCampusSolucao : triedaInput
+				.getAtendimentosTatico().getAtendimentoCampus()) {
+			if (atCampusSolucao.getAtendimentosUnidades() == null) {
+				atCampusSolucao.setAtendimentosUnidades(of
+						.createGrupoAtendimentoUnidadeSolucao());
 			}
-			for(ItemAtendimentoUnidadeSolucao atUnidadeSolucao : atCampusSolucao.getAtendimentosUnidades().getAtendimentoUnidade()) {
-				if(atUnidadeSolucao.getUnidadeId() == unidade.getId().intValue()) {
+			for (ItemAtendimentoUnidadeSolucao atUnidadeSolucao : atCampusSolucao
+					.getAtendimentosUnidades().getAtendimentoUnidade()) {
+				if (atUnidadeSolucao.getUnidadeId() == unidade.getId()
+						.intValue()) {
 					return atUnidadeSolucao;
 				}
 			}
-			
+
 		}
-		ItemAtendimentoUnidadeSolucao atUnidadeSolucao = of.createItemAtendimentoUnidadeSolucao();
+		ItemAtendimentoUnidadeSolucao atUnidadeSolucao = of
+				.createItemAtendimentoUnidadeSolucao();
 		atUnidadeSolucao.setUnidadeId(unidade.getId().intValue());
 		atUnidadeSolucao.setUnidadeCodigo(unidade.getCodigo());
-		ItemAtendimentoCampusSolucao atCampusSolucao = getItemAtendimentoCampusSolucao(unidade.getCampus());
-		if(atCampusSolucao.getAtendimentosUnidades() == null) atCampusSolucao.setAtendimentosUnidades(of.createGrupoAtendimentoUnidadeSolucao());
-		atCampusSolucao.getAtendimentosUnidades().getAtendimentoUnidade().add(atUnidadeSolucao);
+		ItemAtendimentoCampusSolucao atCampusSolucao = getItemAtendimentoCampusSolucao(unidade
+				.getCampus());
+		if (atCampusSolucao.getAtendimentosUnidades() == null)
+			atCampusSolucao.setAtendimentosUnidades(of
+					.createGrupoAtendimentoUnidadeSolucao());
+		atCampusSolucao.getAtendimentosUnidades().getAtendimentoUnidade()
+				.add(atUnidadeSolucao);
 		return atUnidadeSolucao;
 	}
+
 	private ItemAtendimentoSalaSolucao getItemAtendimentoSalaSolucao(Sala sala) {
-		if(triedaInput.getAtendimentosTatico() == null) {
-			triedaInput.setAtendimentosTatico(of.createGrupoAtendimentoCampusSolucao());
+		if (triedaInput.getAtendimentosTatico() == null) {
+			triedaInput.setAtendimentosTatico(of
+					.createGrupoAtendimentoCampusSolucao());
 		}
-		for(ItemAtendimentoCampusSolucao atCampusSolucao : triedaInput.getAtendimentosTatico().getAtendimentoCampus()) {
-			if(atCampusSolucao.getAtendimentosUnidades() == null) {
-				atCampusSolucao.setAtendimentosUnidades(of.createGrupoAtendimentoUnidadeSolucao());
+		for (ItemAtendimentoCampusSolucao atCampusSolucao : triedaInput
+				.getAtendimentosTatico().getAtendimentoCampus()) {
+			if (atCampusSolucao.getAtendimentosUnidades() == null) {
+				atCampusSolucao.setAtendimentosUnidades(of
+						.createGrupoAtendimentoUnidadeSolucao());
 			}
-			for(ItemAtendimentoUnidadeSolucao atUnidadeSolucao : atCampusSolucao.getAtendimentosUnidades().getAtendimentoUnidade()) {
-				if(atUnidadeSolucao.getAtendimentosSalas() == null) {
-					atUnidadeSolucao.setAtendimentosSalas(of.createGrupoAtendimentoSalaSolucao());
+			for (ItemAtendimentoUnidadeSolucao atUnidadeSolucao : atCampusSolucao
+					.getAtendimentosUnidades().getAtendimentoUnidade()) {
+				if (atUnidadeSolucao.getAtendimentosSalas() == null) {
+					atUnidadeSolucao.setAtendimentosSalas(of
+							.createGrupoAtendimentoSalaSolucao());
 				}
-				for(ItemAtendimentoSalaSolucao atSalaSolucao : atUnidadeSolucao.getAtendimentosSalas().getAtendimentoSala()) {
-					if(atSalaSolucao.getSalaId() == sala.getId().intValue()) {
+				for (ItemAtendimentoSalaSolucao atSalaSolucao : atUnidadeSolucao
+						.getAtendimentosSalas().getAtendimentoSala()) {
+					if (atSalaSolucao.getSalaId() == sala.getId().intValue()) {
 						return atSalaSolucao;
 					}
 				}
 			}
 		}
-		ItemAtendimentoSalaSolucao atSalaSolucao = of.createItemAtendimentoSalaSolucao();
+		ItemAtendimentoSalaSolucao atSalaSolucao = of
+				.createItemAtendimentoSalaSolucao();
 		atSalaSolucao.setSalaId(sala.getId().intValue());
 		atSalaSolucao.setSalaNome(sala.getCodigo());
-		ItemAtendimentoUnidadeSolucao atUnidadeSolucao = getItemAtendimentoUnidadeSolucao(sala.getUnidade());
-		if(atUnidadeSolucao.getAtendimentosSalas() == null) atUnidadeSolucao.setAtendimentosSalas(of.createGrupoAtendimentoSalaSolucao());
-		atUnidadeSolucao.getAtendimentosSalas().getAtendimentoSala().add(atSalaSolucao);
+		ItemAtendimentoUnidadeSolucao atUnidadeSolucao = getItemAtendimentoUnidadeSolucao(sala
+				.getUnidade());
+		if (atUnidadeSolucao.getAtendimentosSalas() == null)
+			atUnidadeSolucao.setAtendimentosSalas(of
+					.createGrupoAtendimentoSalaSolucao());
+		atUnidadeSolucao.getAtendimentosSalas().getAtendimentoSala()
+				.add(atSalaSolucao);
 		return atSalaSolucao;
 	}
-	private ItemAtendimentoDiaSemanaSolucao getItemAtendimentoDiaSemanaSolucao(Sala sala, Semanas semana) {
-		if(triedaInput.getAtendimentosTatico() == null) {
-			triedaInput.setAtendimentosTatico(of.createGrupoAtendimentoCampusSolucao());
+
+	private ItemAtendimentoDiaSemanaSolucao getItemAtendimentoDiaSemanaSolucao(
+			Sala sala, Semanas semana) {
+		if (triedaInput.getAtendimentosTatico() == null) {
+			triedaInput.setAtendimentosTatico(of
+					.createGrupoAtendimentoCampusSolucao());
 		}
-		for(ItemAtendimentoCampusSolucao atCampusSolucao : triedaInput.getAtendimentosTatico().getAtendimentoCampus()) {
-			if(atCampusSolucao.getAtendimentosUnidades() == null) {
-				atCampusSolucao.setAtendimentosUnidades(of.createGrupoAtendimentoUnidadeSolucao());
+		for (ItemAtendimentoCampusSolucao atCampusSolucao : triedaInput
+				.getAtendimentosTatico().getAtendimentoCampus()) {
+			if (atCampusSolucao.getAtendimentosUnidades() == null) {
+				atCampusSolucao.setAtendimentosUnidades(of
+						.createGrupoAtendimentoUnidadeSolucao());
 			}
-			for(ItemAtendimentoUnidadeSolucao atUnidadeSolucao : atCampusSolucao.getAtendimentosUnidades().getAtendimentoUnidade()) {
-				if(atUnidadeSolucao.getAtendimentosSalas() == null) {
-					atUnidadeSolucao.setAtendimentosSalas(of.createGrupoAtendimentoSalaSolucao());
+			for (ItemAtendimentoUnidadeSolucao atUnidadeSolucao : atCampusSolucao
+					.getAtendimentosUnidades().getAtendimentoUnidade()) {
+				if (atUnidadeSolucao.getAtendimentosSalas() == null) {
+					atUnidadeSolucao.setAtendimentosSalas(of
+							.createGrupoAtendimentoSalaSolucao());
 				}
-				for(ItemAtendimentoSalaSolucao atSalaSolucao : atUnidadeSolucao.getAtendimentosSalas().getAtendimentoSala()) {
-					if(atSalaSolucao.getSalaId() != sala.getId().intValue()) continue;
-					if(atSalaSolucao.getAtendimentosDiasSemana() == null) {
-						atSalaSolucao.setAtendimentosDiasSemana(of.createGrupoAtendimentoDiaSemanaSolucao());
+				for (ItemAtendimentoSalaSolucao atSalaSolucao : atUnidadeSolucao
+						.getAtendimentosSalas().getAtendimentoSala()) {
+					if (atSalaSolucao.getSalaId() != sala.getId().intValue())
+						continue;
+					if (atSalaSolucao.getAtendimentosDiasSemana() == null) {
+						atSalaSolucao.setAtendimentosDiasSemana(of
+								.createGrupoAtendimentoDiaSemanaSolucao());
 					}
-					for(ItemAtendimentoDiaSemanaSolucao atDiaSemanaSolucao : atSalaSolucao.getAtendimentosDiasSemana().getAtendimentoDiaSemana()) {
-						if(Semanas.get(atDiaSemanaSolucao.getDiaSemana()).equals(semana)) {
+					for (ItemAtendimentoDiaSemanaSolucao atDiaSemanaSolucao : atSalaSolucao
+							.getAtendimentosDiasSemana()
+							.getAtendimentoDiaSemana()) {
+						if (Semanas.get(atDiaSemanaSolucao.getDiaSemana())
+								.equals(semana)) {
 							return atDiaSemanaSolucao;
 						}
 					}
 				}
 			}
 		}
-		ItemAtendimentoDiaSemanaSolucao atDiaSemanaSolucao = of.createItemAtendimentoDiaSemanaSolucao();
+		ItemAtendimentoDiaSemanaSolucao atDiaSemanaSolucao = of
+				.createItemAtendimentoDiaSemanaSolucao();
 		atDiaSemanaSolucao.setDiaSemana(Semanas.toInt(semana));
 		ItemAtendimentoSalaSolucao atSalaSolucao = getItemAtendimentoSalaSolucao(sala);
-		if(atSalaSolucao.getAtendimentosDiasSemana() == null) atSalaSolucao.setAtendimentosDiasSemana(of.createGrupoAtendimentoDiaSemanaSolucao());
-		atSalaSolucao.getAtendimentosDiasSemana().getAtendimentoDiaSemana().add(atDiaSemanaSolucao);
+		if (atSalaSolucao.getAtendimentosDiasSemana() == null)
+			atSalaSolucao.setAtendimentosDiasSemana(of
+					.createGrupoAtendimentoDiaSemanaSolucao());
+		atSalaSolucao.getAtendimentosDiasSemana().getAtendimentoDiaSemana()
+				.add(atDiaSemanaSolucao);
 		return atDiaSemanaSolucao;
 	}
-	private ItemAtendimentoTaticoSolucao createItemAtendimentoTaticoSolucao(Sala sala, Semanas semana, Oferta oferta, Disciplina disciplina, int quantidade, String turma, int qtdCreditosTeoricos, int qtdCreditosPraticos) {
-		ItemAtendimentoDiaSemanaSolucao atDiaSemanaSolucao = getItemAtendimentoDiaSemanaSolucao(sala, semana);
-		
-		ItemAtendimentoOfertaSolucao atOfertaSolucao = of.createItemAtendimentoOfertaSolucao();
+
+	private ItemAtendimentoTaticoSolucao createItemAtendimentoTaticoSolucao(
+			Sala sala, Semanas semana, Oferta oferta, Disciplina disciplina,
+			int quantidade, String turma, int qtdCreditosTeoricos,
+			int qtdCreditosPraticos) {
+		ItemAtendimentoDiaSemanaSolucao atDiaSemanaSolucao = getItemAtendimentoDiaSemanaSolucao(
+				sala, semana);
+
+		ItemAtendimentoOfertaSolucao atOfertaSolucao = of
+				.createItemAtendimentoOfertaSolucao();
 		atOfertaSolucao.setOfertaCursoCampiId(oferta.getId().intValue());
 		atOfertaSolucao.setDisciplinaId(disciplina.getId().intValue());
 		atOfertaSolucao.setQuantidade(quantidade);
 		atOfertaSolucao.setTurma(turma);
-		
-		ItemAtendimentoTaticoSolucao atTaticoSolucao = of.createItemAtendimentoTaticoSolucao();
+
+		ItemAtendimentoTaticoSolucao atTaticoSolucao = of
+				.createItemAtendimentoTaticoSolucao();
 		atTaticoSolucao.setAtendimentoOferta(atOfertaSolucao);
 		atTaticoSolucao.setQtdeCreditosPraticos(qtdCreditosPraticos);
 		atTaticoSolucao.setQtdeCreditosTeoricos(qtdCreditosTeoricos);
-		
-		if(atDiaSemanaSolucao.getAtendimentosTatico() == null) atDiaSemanaSolucao.setAtendimentosTatico(of.createGrupoAtendimentoTaticoSolucao());
-		atDiaSemanaSolucao.getAtendimentosTatico().getAtendimentoTatico().add(atTaticoSolucao);
-		
+
+		if (atDiaSemanaSolucao.getAtendimentosTatico() == null)
+			atDiaSemanaSolucao.setAtendimentosTatico(of
+					.createGrupoAtendimentoTaticoSolucao());
+		atDiaSemanaSolucao.getAtendimentosTatico().getAtendimentoTatico()
+				.add(atTaticoSolucao);
+
 		return atTaticoSolucao;
 	}
-	
+
 	/* **************
 	 * MÉTODOS AUXILIARES
 	 */
-	
-	private GrupoHorario createGrupoHorario(Collection<HorarioDisponivelCenario> horarios) {
-		
+
+	private GrupoHorario createGrupoHorario(
+			Collection<HorarioDisponivelCenario> horarios) {
+
 		GrupoHorario grupoHorario = of.createGrupoHorario();
-		for(HorarioDisponivelCenario horarioDisponivelCenario : horarios) {
+		for (HorarioDisponivelCenario horarioDisponivelCenario : horarios) {
 			HorarioAula horarioAula = horarioDisponivelCenario.getHorarioAula();
 			Semanas semana = horarioDisponivelCenario.getSemana();
 			ItemHorario itemHorarioAux = null;
-			for(ItemHorario itemHorario : grupoHorario.getHorario()) {
-				if(itemHorario.getHorarioAulaId() == horarioAula.getId()) {
+			for (ItemHorario itemHorario : grupoHorario.getHorario()) {
+				if (itemHorario.getHorarioAulaId() == horarioAula.getId()) {
 					itemHorarioAux = itemHorario;
 					break;
 				}
 			}
-			if(itemHorarioAux != null) {
-				itemHorarioAux.getDiasSemana().getDiaSemana().add(Semanas.toInt(semana));
-			} else {
-				if(!horarioAula.getTurno().equals(turno)) continue; // TODO Depois remover esse if para listar todos os turnos
+
+			if ( itemHorarioAux != null )
+			{
+				itemHorarioAux.getDiasSemana().getDiaSemana()
+						.add(Semanas.toInt(semana));
+			}
+			else
+			{
+				if ( !horarioAula.getTurno().equals( turno ) )
+				{
+					continue;
+				}
+
 				itemHorarioAux = of.createItemHorario();
 				itemHorarioAux.setHorarioAulaId(horarioAula.getId().intValue());
-				itemHorarioAux.setTurnoId(horarioAula.getTurno().getId().intValue());
+				itemHorarioAux.setTurnoId(horarioAula.getTurno().getId()
+						.intValue());
 				itemHorarioAux.setDiasSemana(of.createGrupoDiaSemana());
-				itemHorarioAux.getDiasSemana().getDiaSemana().add(Semanas.toInt(semana));
+				itemHorarioAux.getDiasSemana().getDiaSemana()
+						.add(Semanas.toInt(semana));
 				grupoHorario.getHorario().add(itemHorarioAux);
 			}
 		}
+
 		return grupoHorario;
 	}
-	
-	
-	private GrupoCreditoDisponivel createCreditosDisponiveis(GrupoHorario horariosDisponiveis) {
-		GrupoCreditoDisponivel grupoCreditoDisponivel = of.createGrupoCreditoDisponivel();
-		List<ItemHorario> horarios = horariosDisponiveis.getHorario();
-		
-		for(Semanas semana : Semanas.values()) {
-			for(Turno turno : cenario.getTurnos()) {
-				if(!turno.equals(this.turno)) continue; // TODO Depois remover esse if para listar todos os turnos
+
+	private GrupoCreditoDisponivel createCreditosDisponiveis(
+		GrupoHorario horariosDisponiveis )
+	{
+		GrupoCreditoDisponivel grupoCreditoDisponivel
+			= of.createGrupoCreditoDisponivel();
+
+		List< ItemHorario > horarios = horariosDisponiveis.getHorario();
+
+		for ( Semanas semana : Semanas.values() )
+		{
+			for ( Turno turno : cenario.getTurnos() )
+			{
+				if ( !turno.equals( this.turno ) )
+				{
+					continue;
+				}
+
 				ItemCreditoDisponivel itemCD = of.createItemCreditoDisponivel();
 				itemCD.setDiaSemana(Semanas.toInt(semana));
 				itemCD.setTurnoId(turno.getId().intValue());
 				itemCD.setMaxCreditos(0);
-				for(ItemHorario itemHorario : horarios) {
-					if(itemHorario.getTurnoId() == itemCD.getTurnoId() && itemHorario.getDiasSemana().getDiaSemana().contains(Semanas.toInt(semana))) {
+
+				for (ItemHorario itemHorario : horarios) {
+					if (itemHorario.getTurnoId() == itemCD.getTurnoId()
+							&& itemHorario.getDiasSemana().getDiaSemana()
+									.contains(Semanas.toInt(semana))) {
 						itemCD.setMaxCreditos(itemCD.getMaxCreditos() + 1);
 					}
 				}
-				if(itemCD.getMaxCreditos() > 0) {
-					grupoCreditoDisponivel.getCreditoDisponivel().add(itemCD);
+
+				if ( itemCD.getMaxCreditos() > 0 )
+				{
+					grupoCreditoDisponivel.getCreditoDisponivel().add( itemCD );
 				}
 			}
 		}
-		
+
 		return grupoCreditoDisponivel;
 	}
 }

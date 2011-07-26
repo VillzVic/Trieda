@@ -46,9 +46,11 @@ import com.google.gwt.user.client.ui.Widget;
 import com.googlecode.future.FutureResult;
 import com.googlecode.future.FutureSynchronizer;
 
-public class DisciplinasAssociarSalaPresenter implements Presenter {
-
-	public interface Display extends ITriedaI18nGateway {
+public class DisciplinasAssociarSalaPresenter
+	implements Presenter
+{
+	public interface Display extends ITriedaI18nGateway
+	{
 		CampusComboBox getCampusComboBox();
 		TurnoComboBox getTurnoComboBox();
 		UnidadeComboBox getUnidadeSalaComboBox();
@@ -66,13 +68,14 @@ public class DisciplinasAssociarSalaPresenter implements Presenter {
 	private Display display;
 	private Map<String, List<SalaDTO>> andaresSalasMap;
 
-	public DisciplinasAssociarSalaPresenter(Display display) {
+	public DisciplinasAssociarSalaPresenter( Display display )
+	{
 		this.display = display;
 		setListeners();
 	}
 
-	private void setListeners() {
-
+	private void setListeners()
+	{
 		display.getTurnoComboBox().addSelectionChangedListener(
 				new SelectionChangedListener<TurnoDTO>() {
 					@Override
@@ -85,39 +88,40 @@ public class DisciplinasAssociarSalaPresenter implements Presenter {
 								.getValue();
 						TurnoDTO turnoDTO = se.getSelectedItem();
 
-						final FutureResult<ListLoadResult<TreeNodeDTO>> futureOfertaDTOList = new FutureResult<ListLoadResult<TreeNodeDTO>>();
+						final FutureResult<ListLoadResult<TreeNodeDTO>> futureOfertaDTOList
+							= new FutureResult<ListLoadResult<TreeNodeDTO>>();
 
 						Services.ofertas().getListByCampusAndTurno(campusDTO,
 								turnoDTO, futureOfertaDTOList);
 
-						FutureSynchronizer synch = new FutureSynchronizer(
-								futureOfertaDTOList);
-						synch.addCallback(new AsyncCallback<Boolean>() {
+						FutureSynchronizer synch = new FutureSynchronizer( futureOfertaDTOList );
+						synch.addCallback( new AsyncCallback< Boolean >()
+						{
 							@Override
-							public void onFailure(Throwable caught) {
+							public void onFailure( Throwable caught )
+							{
 								display.getTurnoComboBox().disable();
 								caught.printStackTrace();
 								display.getDisciplinasList().unmask();
 							}
 
 							@Override
-							public void onSuccess(Boolean result) {
-								ListLoadResult<TreeNodeDTO> ofertaDTOList = futureOfertaDTOList
-										.result();
-								TreeStore<TreeNodeDTO> treeStore = display
-										.getDisciplinasList().getStore();
+							public void onSuccess( Boolean result )
+							{
+								ListLoadResult<TreeNodeDTO> ofertaDTOList
+									= futureOfertaDTOList.result();
+								TreeStore<TreeNodeDTO> treeStore
+									= display.getDisciplinasList().getStore();
 								treeStore.removeAll();
+
 								treeStore.add(ofertaDTOList.getData(), true);
-								boolean existeOferta = !ofertaDTOList.getData()
-										.isEmpty();
-								display.setTabEnabled(existeOferta);
-								display.getDisciplinasList().setEnabled(
-										existeOferta);
+								boolean existeOferta = !ofertaDTOList.getData().isEmpty();
+								display.setTabEnabled( existeOferta );
+								display.getDisciplinasList().setEnabled( existeOferta );
 								display.getDisciplinasList().unmask();
 							}
 						});
 					}
-
 				});
 		display.getUnidadeSalaComboBox().addSelectionChangedListener(
 				new SelectionChangedListener<UnidadeDTO>() {

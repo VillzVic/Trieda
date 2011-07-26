@@ -97,6 +97,7 @@ public interface TriedaI18nConstants extends Constants {
 	String rateio();
 	String receita();
 	String relatorioVisaoCurso();
+	String relatorioVisaoProfessor();
 	String relatorioVisaoSala();
 	String remover();
 	String resumoDisciplina();

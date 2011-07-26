@@ -54,19 +54,24 @@ public class Oferta implements Serializable, Comparable<Oferta> {
 	@JoinColumn(name = "TUR_ID")
 	private Turno turno;
 
+	@NotNull
+	@ManyToOne(targetEntity = Curso.class)
+	@JoinColumn(name = "CUR_ID")
+	private Curso curso;
+
 	@Column(name = "OFE_RECEITA")
 	@Digits(integer = 6, fraction = 2)
 	private Double receita;
 
 	@NotNull
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "oferta")
-	private Set<Demanda> demandas = new HashSet<Demanda>();
+	private Set< Demanda > demandas = new HashSet< Demanda >();
 
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "oferta")
-	private Set<AtendimentoOperacional> atendimentosOperacionais = new HashSet<AtendimentoOperacional>();
+	private Set< AtendimentoOperacional > atendimentosOperacionais = new HashSet< AtendimentoOperacional >();
 
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "oferta")
-	private Set<AtendimentoTatico> atendimentosTaticos = new HashSet<AtendimentoTatico>();
+	private Set< AtendimentoTatico > atendimentosTaticos = new HashSet< AtendimentoTatico >();
 
 	@PersistenceContext
 	transient EntityManager entityManager;
@@ -305,6 +310,14 @@ public class Oferta implements Serializable, Comparable<Oferta> {
 
 	public void setTurno(Turno turno) {
 		this.turno = turno;
+	}
+
+	public Curso getCurso() {
+		return this.curso;
+	}
+
+	public void setCurso(Curso curso) {
+		this.curso = curso;
 	}
 
 	public Set<Demanda> getDemandas() {

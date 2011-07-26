@@ -29,27 +29,30 @@ public class HorarioDisponivelCampusFormView extends MyComposite implements Hora
 		this.horariosDisponiveis = horariosDisponiveis;
 		initUI();
 		createGrid();
-		// TODO
-//		initComponent(simpleModal);
 	}
 	
-	private void initUI() {
-		simpleModal = new SimpleModal("Disponibilidade de Campus (" + campusDTO.getCodigo() + ")", Resources.DEFAULTS.campus16());
+	private void initUI()
+	{
+		simpleModal = new SimpleModal(
+			"Disponibilidade de Campus (" + campusDTO.getCodigo() + ")", Resources.DEFAULTS.campus16());
 		simpleModal.setHeight(500);
 		simpleModal.setWidth(600);
 	}
 
-	private void createGrid() {
+	private void createGrid()
+	{
 		contentPanel = new ContentPanel(new FitLayout());
 		contentPanel.setHeaderVisible(false);
 		contentPanel.setBodyBorder(false);
-	    gridPanel = new SemanaLetivaDoCenarioGrid<HorarioDisponivelCenarioDTO>(horariosDisponiveis,HorarioDisponivelCenarioDTO.PROPERTY_ID);
+	    gridPanel = new SemanaLetivaDoCenarioGrid<HorarioDisponivelCenarioDTO>(
+	    	horariosDisponiveis,HorarioDisponivelCenarioDTO.PROPERTY_ID);
 	    contentPanel.add(gridPanel);
 		simpleModal.setContent(contentPanel);
 	}
 
 	@Override
-	public Button getSalvarButton() {
+	public Button getSalvarButton()
+	{
 		return simpleModal.getSalvarBt();
 	}
 

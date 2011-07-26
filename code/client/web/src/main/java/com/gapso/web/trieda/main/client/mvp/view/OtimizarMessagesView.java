@@ -15,14 +15,13 @@ public class OtimizarMessagesView extends MyComposite implements OtimizarMessage
 	private ContentPanel messagesWarningPanel;
 	private ContentPanel messagesErrorPanel;
 	
-	public OtimizarMessagesView() {
+	public OtimizarMessagesView()
+	{
 		initUI();
-		// TODO
-//		initComponent(simpleModal);
-//		setParent(null);
 	}
 	
-	private void initUI() {
+	private void initUI()
+	{
 		String title = "Alertas e Erros";
 		simpleModal = new SimpleModal(null, "Fechar", title, Resources.DEFAULTS.serverWarning16());
 		simpleModal.setAutoHeight(true);

@@ -17,6 +17,7 @@ import com.gapso.trieda.domain.AtendimentoOperacional;
 import com.gapso.trieda.domain.AtendimentoTatico;
 import com.gapso.trieda.domain.Campus;
 import com.gapso.trieda.domain.Curriculo;
+import com.gapso.trieda.domain.Curso;
 import com.gapso.trieda.domain.HorarioAula;
 import com.gapso.trieda.domain.Professor;
 import com.gapso.trieda.domain.ProfessorVirtual;
@@ -28,6 +29,7 @@ import com.gapso.web.trieda.shared.dtos.AtendimentoRelatorioDTO;
 import com.gapso.web.trieda.shared.dtos.AtendimentoTaticoDTO;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.CurriculoDTO;
+import com.gapso.web.trieda.shared.dtos.CursoDTO;
 import com.gapso.web.trieda.shared.dtos.ParDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorVirtualDTO;
@@ -269,16 +271,15 @@ public class AtendimentosServiceImpl extends RemoteService
 
 	@Override
 	public ParDTO< List< AtendimentoRelatorioDTO >, List< Integer > > getBusca(
-			CurriculoDTO curriculoDTO, Integer periodo, TurnoDTO turnoDTO,
-			CampusDTO campusDTO )
+		CurriculoDTO curriculoDTO, Integer periodo, TurnoDTO turnoDTO, CampusDTO campusDTO )
 	{
 		ParDTO< List< AtendimentoRelatorioDTO >, List< Integer > > parDTOTempl
-			= new ParDTO<List<AtendimentoRelatorioDTO>, List<Integer>>();
+			= new ParDTO< List< AtendimentoRelatorioDTO >, List< Integer > >();
 
-		parDTOTempl.setPrimeiro( new ArrayList<AtendimentoRelatorioDTO>() );
+		parDTOTempl.setPrimeiro( new ArrayList< AtendimentoRelatorioDTO >() );
 
 		List< AtendimentoTaticoDTO > taticoList = getBuscaTatico(
-			curriculoDTO, periodo, turnoDTO, campusDTO );
+			curriculoDTO, periodo, turnoDTO, campusDTO, null );
 
 		if ( !taticoList.isEmpty() )
 		{
@@ -294,7 +295,7 @@ public class AtendimentosServiceImpl extends RemoteService
 		else
 		{
 			List< AtendimentoOperacionalDTO > operacionalList
-				= getBuscaOperacional( curriculoDTO, periodo, turnoDTO, campusDTO );
+				= getBuscaOperacional( curriculoDTO, periodo, turnoDTO, campusDTO, null );
 
 			ParDTO< List< AtendimentoOperacionalDTO >, List< Integer > > parDTO
 				= montaListaParaVisaoCursoOperacional( turnoDTO, operacionalList );
@@ -309,38 +310,120 @@ public class AtendimentosServiceImpl extends RemoteService
 		return parDTOTempl;
 	}
 
-	public List<AtendimentoTaticoDTO> getBuscaTatico(CurriculoDTO curriculoDTO,
-			Integer periodo, TurnoDTO turnoDTO, CampusDTO campusDTO) {
-		Curriculo curriculo = Curriculo.find(curriculoDTO.getId());
-		Turno turno = Turno.find(turnoDTO.getId());
-		Campus campus = Campus.find(campusDTO.getId());
-		List<AtendimentoTaticoDTO> list = new ArrayList<AtendimentoTaticoDTO>();
-		List<AtendimentoTatico> atendimentosTatico = AtendimentoTatico.findBy(
-				campus, curriculo, periodo, turno);
-		for (AtendimentoTatico atendimentoTatico : atendimentosTatico) {
-			list.add(ConvertBeans.toAtendimentoTaticoDTO(atendimentoTatico));
+	@Override
+	public ParDTO< List< AtendimentoRelatorioDTO >, List< Integer > > getBusca(
+		CurriculoDTO curriculoDTO, Integer periodo, TurnoDTO turnoDTO,
+		CampusDTO campusDTO, CursoDTO cursoDTO )
+	{
+		ParDTO< List< AtendimentoRelatorioDTO >, List< Integer > > parDTOTempl
+			= new ParDTO< List< AtendimentoRelatorioDTO >, List< Integer > >();
+
+		parDTOTempl.setPrimeiro( new ArrayList< AtendimentoRelatorioDTO >() );
+
+		List< AtendimentoTaticoDTO > taticoList = getBuscaTatico(
+			curriculoDTO, periodo, turnoDTO, campusDTO, cursoDTO );
+
+		if ( !taticoList.isEmpty() )
+		{
+			ParDTO< List< AtendimentoTaticoDTO >, List< Integer > > parDTO
+				= montaListaParaVisaoCursoTatico( turnoDTO, taticoList );
+
+			parDTOTempl.setSegundo( parDTO.getSegundo() );
+			for ( AtendimentoTaticoDTO atdto : parDTO.getPrimeiro() )
+			{
+				parDTOTempl.getPrimeiro().add( atdto );
+			}
 		}
+		else
+		{
+			List< AtendimentoOperacionalDTO > operacionalList
+				= getBuscaOperacional( curriculoDTO, periodo, turnoDTO, campusDTO, cursoDTO );
+
+			ParDTO< List< AtendimentoOperacionalDTO >, List< Integer > > parDTO
+				= montaListaParaVisaoCursoOperacional( turnoDTO, operacionalList );
+
+			parDTOTempl.setSegundo( parDTO.getSegundo() );
+			for ( AtendimentoOperacionalDTO atdto : parDTO.getPrimeiro() )
+			{
+				parDTOTempl.getPrimeiro().add( atdto );
+			}
+		}
+
+		return parDTOTempl;
+	}
+	
+	public List< AtendimentoTaticoDTO > getBuscaTatico( CurriculoDTO curriculoDTO,
+		Integer periodo, TurnoDTO turnoDTO, CampusDTO campusDTO, CursoDTO cursoDTO )
+	{
+		Curriculo curriculo = Curriculo.find( curriculoDTO.getId() );
+		Turno turno = Turno.find( turnoDTO.getId() );
+		Campus campus = Campus.find( campusDTO.getId() );
+		Curso curso = null;
+		if ( cursoDTO != null )
+		{
+			curso = Curso.find( cursoDTO.getId() );
+		}
+
+		List< AtendimentoTaticoDTO > list = new ArrayList< AtendimentoTaticoDTO >();
+		
+		List< AtendimentoTatico > atendimentosTatico = null;
+		if ( curso == null )
+		{
+			atendimentosTatico = AtendimentoTatico.findBy(
+				campus, curriculo, periodo, turno );
+		}
+		else
+		{
+			atendimentosTatico = AtendimentoTatico.findBy(
+					campus, curriculo, periodo, turno, curso );
+		}
+
+		for ( AtendimentoTatico atendimentoTatico : atendimentosTatico )
+		{
+			list.add( ConvertBeans.toAtendimentoTaticoDTO( atendimentoTatico ) );
+		}
+
 		return list;
 	}
 
-	public List<AtendimentoOperacionalDTO> getBuscaOperacional(
-			CurriculoDTO curriculoDTO, Integer periodo, TurnoDTO turnoDTO,
-			CampusDTO campusDTO) {
-		Curriculo curriculo = Curriculo.find(curriculoDTO.getId());
-		Turno turno = Turno.find(turnoDTO.getId());
-		Campus campus = Campus.find(campusDTO.getId());
-		List<AtendimentoOperacionalDTO> list = new ArrayList<AtendimentoOperacionalDTO>();
-		List<AtendimentoOperacional> atendimentosOperacional = AtendimentoOperacional
-				.findBy(campus, curriculo, periodo, turno);
-		for (AtendimentoOperacional atendimentoOperacional : atendimentosOperacional) {
-			list.add(ConvertBeans
-					.toAtendimentoOperacionalDTO(atendimentoOperacional));
+	public List< AtendimentoOperacionalDTO > getBuscaOperacional(
+		CurriculoDTO curriculoDTO, Integer periodo,
+		TurnoDTO turnoDTO, CampusDTO campusDTO, CursoDTO cursoDTO )
+	{
+		Curriculo curriculo = Curriculo.find( curriculoDTO.getId() );
+		Turno turno = Turno.find( turnoDTO.getId() );
+		Campus campus = Campus.find( campusDTO.getId() );		
+		Curso curso = null;
+		if ( cursoDTO != null )
+		{
+			curso = Curso.find( cursoDTO.getId() );
 		}
+
+		List< AtendimentoOperacionalDTO > list = new ArrayList< AtendimentoOperacionalDTO >();
+
+		List< AtendimentoOperacional > atendimentosOperacional = null;
+		if ( curso == null )
+		{
+			atendimentosOperacional = AtendimentoOperacional.findBy(
+				campus, curriculo, periodo, turno );
+		}
+		else
+		{
+			atendimentosOperacional = AtendimentoOperacional.findBy(
+				campus, curriculo, periodo, turno, curso );
+		}
+
+		for ( AtendimentoOperacional atendimentoOperacional : atendimentosOperacional )
+		{
+			list.add( ConvertBeans.toAtendimentoOperacionalDTO( atendimentoOperacional ) );
+		}
+
 		return list;
 	}
 
 	private ParDTO<List<AtendimentoTaticoDTO>, List<Integer>> montaListaParaVisaoCursoTatico(
-			TurnoDTO turnoDTO, List<AtendimentoTaticoDTO> list) {
+			TurnoDTO turnoDTO, List<AtendimentoTaticoDTO> list)
+	{
 		// Agrupa os DTOS pelo dia da semana
 		Map<Integer, List<AtendimentoTaticoDTO>> diaSemanaToAtendimentoTaticoDTOMap = new TreeMap<Integer, List<AtendimentoTaticoDTO>>();
 		for (AtendimentoTaticoDTO dto : list) {
@@ -419,73 +502,93 @@ public class AtendimentosServiceImpl extends RemoteService
 		return entry;
 	}
 
-	private ParDTO<List<AtendimentoOperacionalDTO>, List<Integer>> montaListaParaVisaoCursoOperacional(
-			TurnoDTO turnoDTO, List<AtendimentoOperacionalDTO> list) {
-
-		if (!list.isEmpty()
-				&& (list.get(0) instanceof AtendimentoOperacionalDTO)) {
-			List<AtendimentoRelatorioDTO> arList = preMontaListaOperacional(list);
+	private ParDTO< List< AtendimentoOperacionalDTO >, List< Integer > > montaListaParaVisaoCursoOperacional(
+		TurnoDTO turnoDTO, List< AtendimentoOperacionalDTO > list )
+	{
+		if ( !list.isEmpty()
+			&& ( list.get( 0 ) instanceof AtendimentoOperacionalDTO ) )
+		{
+			List< AtendimentoRelatorioDTO > arList = preMontaListaOperacional( list );
 			list.clear();
-			for (AtendimentoRelatorioDTO ar : arList) {
-				list.add((AtendimentoOperacionalDTO) ar);
+
+			for ( AtendimentoRelatorioDTO ar : arList )
+			{
+				list.add( (AtendimentoOperacionalDTO) ar );
 			}
 		}
 
 		// Agrupa os DTOS pelo dia da semana
-		Map<Integer, List<AtendimentoOperacionalDTO>> diaSemanaToAtendimentoOperacionalDTOMap = new TreeMap<Integer, List<AtendimentoOperacionalDTO>>();
-		for (AtendimentoRelatorioDTO dto : list) {
-			List<AtendimentoOperacionalDTO> dtoList = diaSemanaToAtendimentoOperacionalDTOMap
-					.get(dto.getSemana());
-			if (dtoList == null) {
-				dtoList = new ArrayList<AtendimentoOperacionalDTO>();
-				diaSemanaToAtendimentoOperacionalDTOMap.put(dto.getSemana(),
-						dtoList);
+		Map< Integer, List< AtendimentoOperacionalDTO > > diaSemanaToAtendimentoOperacionalDTOMap
+			= new TreeMap< Integer, List< AtendimentoOperacionalDTO > >();
+
+		for ( AtendimentoRelatorioDTO dto : list )
+		{
+			List< AtendimentoOperacionalDTO > dtoList
+				= diaSemanaToAtendimentoOperacionalDTOMap.get( dto.getSemana() );
+
+			if ( dtoList == null )
+			{
+				dtoList = new ArrayList< AtendimentoOperacionalDTO >();
+				diaSemanaToAtendimentoOperacionalDTOMap.put(
+					dto.getSemana(), dtoList );
 			}
-			dtoList.add((AtendimentoOperacionalDTO) dto);
+
+			dtoList.add( (AtendimentoOperacionalDTO) dto );
 		}
 
 		// Preenche entradas nulas do mapa
 		// diaSemanaToAtendimentoOperacionalDTOMap com uma lista vazia.
-		for (int i = 2; i < 8; i++) {
-			if (diaSemanaToAtendimentoOperacionalDTOMap.get(i) == null) {
-				diaSemanaToAtendimentoOperacionalDTOMap.put(i,
-						Collections.<AtendimentoOperacionalDTO> emptyList());
+		for ( int i = 2; i < 8; i++ )
+		{
+			if ( diaSemanaToAtendimentoOperacionalDTOMap.get( i ) == null )
+			{
+				diaSemanaToAtendimentoOperacionalDTOMap.put(
+					i, Collections.< AtendimentoOperacionalDTO > emptyList() );
 			}
 		}
 
-		List<Integer> diaSemanaTamanhoList = new ArrayList<Integer>(8);
-		Collections.addAll(diaSemanaTamanhoList, 1, 1, 1, 1, 1, 1, 1, 1, 1);
-		List<AtendimentoOperacionalDTO> finalProcessedList = new ArrayList<AtendimentoOperacionalDTO>();
+		List< Integer > diaSemanaTamanhoList = new ArrayList< Integer >( 8 );
+		Collections.addAll( diaSemanaTamanhoList, 1, 1, 1, 1, 1, 1, 1, 1, 1 );
+		List< AtendimentoOperacionalDTO > finalProcessedList
+			= new ArrayList< AtendimentoOperacionalDTO >();
 
-		// para cada dia da semana ...
+		// Para cada dia da semana
 		int countSemanaSize = 2;
-		for (Entry<Integer, List<AtendimentoOperacionalDTO>> entry : diaSemanaToAtendimentoOperacionalDTOMap
-				.entrySet()) {
-			List<List<AtendimentoOperacionalDTO>> listListDTO = new ArrayList<List<AtendimentoOperacionalDTO>>();
+		for ( Entry< Integer, List< AtendimentoOperacionalDTO > > entry :
+				diaSemanaToAtendimentoOperacionalDTOMap.entrySet() )
+		{
+			List< List< AtendimentoOperacionalDTO > > listListDTO
+				= new ArrayList< List< AtendimentoOperacionalDTO > >();
 
-			listListDTO = agrupaMesmoHorario(entry);
-
+			listListDTO = agrupaMesmoHorario( entry );
 			int size = 1;
-			for (List<AtendimentoOperacionalDTO> listDTOs : listListDTO) {
 
-				if (listDTOs.size() > size) {
+			for ( List< AtendimentoOperacionalDTO > listDTOs : listListDTO )
+			{
+				if ( listDTOs.size() > size )
+				{
 					size = listDTOs.size();
 				}
 
-				AtendimentoOperacionalDTO dtoMain = listDTOs.get(0);
-				dtoMain.setSemana(countSemanaSize);
-				for (int i = 1; i < listDTOs.size(); i++) {
-					AtendimentoOperacionalDTO dtoCurrent = listDTOs.get(i);
-					dtoCurrent.setSemana(dtoMain.getSemana() + i);
+				AtendimentoOperacionalDTO dtoMain = listDTOs.get( 0 );
+				dtoMain.setSemana( countSemanaSize );
+
+				for ( int i = 1; i < listDTOs.size(); i++ )
+				{
+					AtendimentoOperacionalDTO dtoCurrent = listDTOs.get( i );
+					dtoCurrent.setSemana( dtoMain.getSemana() + i );
 				}
-				finalProcessedList.addAll(listDTOs);
+
+				finalProcessedList.addAll( listDTOs );
 			}
-			diaSemanaTamanhoList.add(entry.getKey(), size);
+
+			diaSemanaTamanhoList.add( entry.getKey(), size );
 			countSemanaSize += size;
 		}
 
-		ParDTO<List<AtendimentoOperacionalDTO>, List<Integer>> entry = new ParDTO<List<AtendimentoOperacionalDTO>, List<Integer>>(
-				finalProcessedList, diaSemanaTamanhoList);
+		ParDTO< List< AtendimentoOperacionalDTO >, List< Integer > > entry
+			= new ParDTO< List< AtendimentoOperacionalDTO >, List< Integer > >(
+				finalProcessedList, diaSemanaTamanhoList );
 
 		return entry;
 	}

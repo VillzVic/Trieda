@@ -366,39 +366,70 @@ public class Sala implements Serializable, Comparable<Sala> {
     }
 	
 	@SuppressWarnings("unchecked")
-	public static List<Sala> findByCenario(Cenario cenario) {
-    	Query q = entityManager().createQuery("SELECT o FROM Sala o WHERE o.unidade.campus.cenario = :cenario");
-    	q.setParameter("cenario", cenario);
+	public static List<Sala> findByCenario( Cenario cenario )
+	{
+    	Query q = entityManager().createQuery(
+    		"SELECT o FROM Sala o WHERE o.unidade.campus.cenario = :cenario" );
+
+    	q.setParameter( "cenario", cenario );
     	return q.getResultList();
     }
-	
-	public static Sala findByCodigo(String codigo) {
+
+	public static Sala findByCodigo( String codigo )
+	{
 		Query q = entityManager().createQuery("SELECT o FROM Sala o WHERE codigo = :codigo");
 		q.setParameter("codigo", codigo);
 		return (Sala) q.getSingleResult();
 	}
 
 	@SuppressWarnings("unchecked")
-	public static List<Sala> findByUnidade(Unidade unidade) {
-		return entityManager().createQuery("SELECT o FROM Sala o WHERE unidade = :unidade")
-		.setParameter("unidade", unidade)
-		.getResultList();
+	public static List< Sala > findByUnidade( Unidade unidade )
+	{
+		return entityManager().createQuery(
+			"SELECT o FROM Sala o WHERE unidade = :unidade")
+			.setParameter( "unidade", unidade )
+			.getResultList();
 	}
-	
-	public static Integer count(Campus campus, Unidade unidade) {
-		String whereString = "";
-		if(campus != null || unidade != null) whereString += " WHERE ";
-		if(campus != null)                    whereString += " o.unidade.campus = :campus ";
-		if(campus != null && unidade != null) whereString += " AND ";
-		if(unidade != null)                   whereString += " o.unidade = :unidade ";
-		
-		Query q = entityManager().createQuery("SELECT COUNT(o) FROM Sala o "+whereString);
 
-		if(campus != null) q.setParameter("campus", campus);
-		if(unidade != null) q.setParameter("unidade", unidade);
-		
-		return ((Number) q.getSingleResult()).intValue();
+	public static Integer count( Campus campus, Unidade unidade )
+	{
+		String whereString = "";
+
+		if ( campus != null || unidade != null )
+		{
+			whereString += " WHERE ";
+		}
+
+		if ( campus != null )
+		{
+			whereString += " o.unidade.campus = :campus ";
+		}
+
+		if ( campus != null && unidade != null )
+		{
+			whereString += " AND ";
+		}
+
+		if ( unidade != null )
+		{
+			whereString += " o.unidade = :unidade ";
+		}
+
+		Query q = entityManager().createQuery( "SELECT COUNT(o) FROM Sala o " + whereString );
+
+		if ( campus != null )
+		{
+			q.setParameter( "campus", campus );
+		}
+
+		if ( unidade != null )
+		{
+			q.setParameter( "unidade", unidade );
+		}
+
+		return ( (Number) q.getSingleResult() ).intValue();
 	}
+
 	@SuppressWarnings("unchecked")
     public static List<Sala> find(Campus campus, Unidade unidade, int firstResult, int maxResults, String orderBy) {
 		orderBy = (orderBy != null)? "ORDER BY o."+orderBy : "";

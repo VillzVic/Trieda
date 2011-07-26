@@ -13,20 +13,26 @@ import com.google.gwt.user.client.ui.RootPanel;
 public class ExportExcelFormSubmit
 {
 	private FormPanel formPanel;
-	private HiddenField< String > hiddenField;
 
 	public ExportExcelFormSubmit( ExcelInformationType infoToBeExported,
 			TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages )
 	{
-		this.hiddenField = new HiddenField<String>();
-		this.hiddenField.setName( ExcelInformationType.getInformationParameterName() );
-		this.hiddenField.setValue( infoToBeExported.toString() );
-
-        this.formPanel = new FormPanel();
-        this.formPanel.add( this.hiddenField );
+		this.formPanel = new FormPanel();
         this.formPanel.setMethod( Method.GET );
         this.formPanel.setAction( GWT.getModuleBaseURL() + "exportExcelServlet" );
         this.formPanel.addListener( Events.Submit, new ExcelFormListener( i18nConstants, i18nMessages ) );
+
+        this.addParameter(
+        	ExcelInformationType.getInformationParameterName(),
+        	infoToBeExported.toString() );
+	}
+
+	public void addParameter( String name, String value )
+	{
+		HiddenField< String > hiddenField = new HiddenField< String >();
+		hiddenField.setName( name );
+		hiddenField.setValue( value );
+		this.formPanel.add( hiddenField );
 	}
 
 	public void submit()

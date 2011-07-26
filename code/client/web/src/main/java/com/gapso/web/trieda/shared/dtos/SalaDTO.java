@@ -108,18 +108,20 @@ public class SalaDTO extends AbstractDTO<String> implements Comparable<SalaDTO> 
 		set(PROPERTY_CONTAINS_CURRICULO_DISCIPLINA, value);
 	}
 	
-	public boolean isLaboratorio() {
-		// TODO MUDAR PARA CONSTANTE DO TIPO DE SALA
+	public boolean isLaboratorio()
+	{
 		return getTipoId() == 2;
-	}
-	
-	@Override
-	public String getNaturalKey() {
-		return getCampusId() + "-" + getUnidadeId() + "-" + getId();
 	}
 
 	@Override
-	public int compareTo(SalaDTO o) {
-		return getCodigo().compareTo(o.getCodigo());
+	public String getNaturalKey()
+	{
+		return ( getCampusId() + "-" + getUnidadeId() + "-" + getId() );
+	}
+
+	@Override
+	public int compareTo(SalaDTO o)
+	{
+		return getCodigo().compareTo( o.getCodigo() );
 	}
 }

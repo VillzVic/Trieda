@@ -39,11 +39,11 @@ public class SemanasLetivaServiceImpl extends RemoteServiceServlet implements Se
 	private static final long serialVersionUID = 5250776996542788849L;
 
 	@Override
-	public SemanaLetivaDTO getSemanaLetiva(CenarioDTO cenario) {
-		// TODO Pegar a semana letiva do cenário
-		return ConvertBeans.toSemanaLetivaDTO(SemanaLetiva.getByOficial());
+	public SemanaLetivaDTO getSemanaLetiva( CenarioDTO cenario )
+	{
+		return ConvertBeans.toSemanaLetivaDTO( SemanaLetiva.getByOficial() );
 	}
-	
+
 	@Override
 	public ListLoadResult<SemanaLetivaDTO> getList(BasePagingLoadConfig loadConfig) {
 		return getBuscaList(loadConfig.get("query").toString(), null, loadConfig);

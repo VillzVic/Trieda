@@ -20,7 +20,6 @@ import com.gapso.web.trieda.shared.i18n.TriedaI18nMessages;
 public class ExportExcelServlet extends HttpServlet
 {	
 	private static final long serialVersionUID = -7987228694777660184L;
-
 	private static TriedaI18nMessages i18nMessages = null;
 	private static TriedaI18nConstants i18nConstants = null;
 
@@ -30,25 +29,52 @@ public class ExportExcelServlet extends HttpServlet
 		i18nMessages = new GTriedaI18nMessages();
 	}
 
+	private RelatorioVisaoCursoFiltroExcel verificaParametros( HttpServletRequest request )
+	{
+		Long cursoId = null;
+		Long curriculoId = null;
+		Long campusId = null;
+		Integer periodoId = null;
+		Long turnoId = null;
+
+		try
+		{
+			cursoId = Long.parseLong( request.getParameter( "cursoId" ) );
+			curriculoId = Long.parseLong( request.getParameter( "curriculoId" ) );
+			campusId = Long.parseLong( request.getParameter( "campusId" ) );
+			periodoId = Integer.parseInt( request.getParameter( "periodoId" ) );
+			turnoId = Long.parseLong( request.getParameter( "turnoId" ) );
+		}
+		catch( Exception ex ) { return null; }
+
+		RelatorioVisaoCursoFiltroExcel filtro = new RelatorioVisaoCursoFiltroExcel(
+			cursoId, curriculoId, campusId, periodoId, turnoId );
+
+		return filtro;
+	}
+
 	@Override
 	protected void doGet( HttpServletRequest request, HttpServletResponse response )
 		throws ServletException, IOException
 	{
-		System.out.println( ">>campiTrabalho>: " + i18nConstants.campiTrabalho() );
-		System.out.println( ">>excelErroArquivoInvalido>: "
-			+ i18nMessages.excelErroArquivoInvalido( "Claudio", "Escudero" ) );
-
 		cenario = Cenario.findMasterData();
-		
+
 		// Obtém os parâmetros
 		String informationToBeExported = request.getParameter(
 				ExcelInformationType.getInformationParameterName() );
 
 		if ( !informationToBeExported.isEmpty() )
 		{
+			RelatorioVisaoCursoFiltroExcel filter = null;
+			if ( informationToBeExported.equals(
+					ExcelInformationType.RELATORIO_VISAO_CURSO.toString() ) )
+			{
+				filter = verificaParametros( request );
+			}
+
 			// Get Excel Data
 			IExportExcel exporter = ExportExcelFactory.createExporter(
-					informationToBeExported, cenario, i18nConstants, i18nMessages );
+				informationToBeExported, cenario, i18nConstants, i18nMessages, filter );
 
 			HSSFWorkbook workbook = exporter.export();
 

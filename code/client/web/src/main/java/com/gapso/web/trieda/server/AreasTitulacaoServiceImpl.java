@@ -82,7 +82,7 @@ public class AreasTitulacaoServiceImpl extends RemoteServiceServlet
 
 		return new BaseListLoadResult<AreaTitulacaoDTO>( listDTO );
 	}
-	
+
 	@Override
 	public void save( AreaTitulacaoDTO areaTitulacaoDTO )
 	{

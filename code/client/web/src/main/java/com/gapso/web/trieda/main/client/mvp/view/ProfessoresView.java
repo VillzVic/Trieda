@@ -26,13 +26,13 @@ import com.gapso.web.trieda.shared.util.view.SimpleToolBar;
 import com.gapso.web.trieda.shared.util.view.TipoContratoComboBox;
 import com.gapso.web.trieda.shared.util.view.TitulacaoComboBox;
 
-public class ProfessoresView extends MyComposite implements
-		ProfessoresPresenter.Display {
-
+public class ProfessoresView extends MyComposite
+	implements ProfessoresPresenter.Display
+{
 	private SimpleToolBar toolBar;
-	private SimpleGrid<ProfessorDTO> gridPanel;
+	private SimpleGrid< ProfessorDTO > gridPanel;
 	private SimpleFilter filter;
-	private TextField<String> cpfBuscaTF;
+	private TextField< String > cpfBuscaTF;
 	private TipoContratoComboBox tipoContratoBuscaCB;
 	private TitulacaoComboBox titulacaoBuscaCB;
 	private AreaTitulacaoComboBox areaTitulacaoBuscaCB;
@@ -40,150 +40,192 @@ public class ProfessoresView extends MyComposite implements
 	private ContentPanel panel;
 	private GTabItem tabItem;
 
-	public ProfessoresView() {
+	public ProfessoresView()
+	{
 		initUI();
 	}
 
-	private void initUI() {
-		panel = new ContentPanel(new BorderLayout());
-		panel.setHeading("Master Data » Professores");
+	private void initUI()
+	{
+		panel = new ContentPanel( new BorderLayout() );
+		panel.setHeading( "Master Data » Professores" );
 		createToolBar();
 		createGrid();
 		createFilter();
 		createTabItem();
-		initComponent(tabItem);
+		initComponent( tabItem );
 	}
 
-	private void createTabItem() {
-		tabItem = new GTabItem("Professores", Resources.DEFAULTS.professor16());
-		tabItem.setContent(panel);
-	}
-
-	private void createToolBar() {
-		toolBar = new SimpleToolBar(this);
-		toolBar.add(new SeparatorToolItem());
-		disponibilidadeBT = toolBar.createButton(
-				"Disponibilidade do Professor",
-				Resources.DEFAULTS.disponibilidade16());
-		toolBar.add(disponibilidadeBT);
-		panel.setTopComponent(toolBar);
-	}
-
-	private void createGrid() {
-		BorderLayoutData bld = new BorderLayoutData(LayoutRegion.CENTER);
-		bld.setMargins(new Margins(5, 5, 5, 5));
-
-		gridPanel = new SimpleGrid<ProfessorDTO>(getColumnList(), this);
-		panel.add(gridPanel, bld);
-	}
-
-	public List<ColumnConfig> getColumnList()
+	private void createTabItem()
 	{
-		List< ColumnConfig > list = new ArrayList< ColumnConfig >();
+		tabItem = new GTabItem(
+			"Professores", Resources.DEFAULTS.professor16() );
 
-		list.add( new ColumnConfig( ProfessorDTO.PROPERTY_CPF, getI18nConstants().cpf(), 100 ) );
-		list.add( new ColumnConfig( ProfessorDTO.PROPERTY_NOME, getI18nConstants().nomeProfessor()	, 100 ) );
-		list.add( new ColumnConfig( ProfessorDTO.PROPERTY_TIPO_CONTRATO_STRING, getI18nConstants().tipoContrato(), 100 ) );
-		list.add( new ColumnConfig( ProfessorDTO.PROPERTY_CARGA_HORARIA_MIN, getI18nConstants().cargaHorariaMin(), 100 ) );
-		list.add( new ColumnConfig( ProfessorDTO.PROPERTY_CARGA_HORARIA_MAX, getI18nConstants().cargaHorariaMax(), 100 ) );
-		list.add( new ColumnConfig( ProfessorDTO.PROPERTY_TITULACAO_STRING, getI18nConstants().titulacao(), 100 ) );
-		list.add( new ColumnConfig( ProfessorDTO.PROPERTY_AREA_TITULACAO_STRING, getI18nConstants().areaTitulacao(), 100 ) );
-		list.add( new ColumnConfig( ProfessorDTO.PROPERTY_NOTA_DESEMPENHO, getI18nConstants().notaDesempenho(), 100 ) );
-		list.add( new ColumnConfig( ProfessorDTO.PROPERTY_CREDITO_ANTERIOR, getI18nConstants().cargaHorariaAnterior(), 100 ) );
-		list.add( new ColumnConfig( ProfessorDTO.PROPERTY_VALOR_CREDITO, getI18nConstants().valorCredito(), 100 ) );
-
-		return list;
+		tabItem.setContent( panel );
 	}
 
-	private void createFilter() {
-		BorderLayoutData bld = new BorderLayoutData(LayoutRegion.EAST);
-		bld.setMargins(new Margins(5, 5, 5, 0));
-		bld.setCollapsible(true);
+	private void createToolBar()
+	{
+		toolBar = new SimpleToolBar( this );
+		toolBar.add( new SeparatorToolItem() );
+		disponibilidadeBT = toolBar.createButton(
+			"Disponibilidade do Professor",
+			Resources.DEFAULTS.disponibilidade16() );
+
+		toolBar.add( disponibilidadeBT );
+		panel.setTopComponent( toolBar );
+	}
+
+	private void createGrid()
+	{
+		BorderLayoutData bld = new BorderLayoutData( LayoutRegion.CENTER );
+		bld.setMargins( new Margins( 5, 5, 5, 5 ) );
+
+		gridPanel = new SimpleGrid< ProfessorDTO >( getColumnList(), this );
+		panel.add( gridPanel, bld );
+	}
+
+	private void createFilter()
+	{
+		BorderLayoutData bld = new BorderLayoutData( LayoutRegion.EAST );
+
+		bld.setMargins( new Margins( 5, 5, 5, 0 ) );
+		bld.setCollapsible( true );
 
 		filter = new SimpleFilter();
 
-		cpfBuscaTF = new TextField<String>();
-		cpfBuscaTF.setFieldLabel("CPF");
+		cpfBuscaTF = new TextField< String >();
+		cpfBuscaTF.setFieldLabel( "CPF" );
 		tipoContratoBuscaCB = new TipoContratoComboBox();
 		titulacaoBuscaCB = new TitulacaoComboBox();
 		areaTitulacaoBuscaCB = new AreaTitulacaoComboBox();
 
-		filter.addField(cpfBuscaTF);
-		filter.addField(tipoContratoBuscaCB);
-		filter.addField(titulacaoBuscaCB);
-		filter.addField(areaTitulacaoBuscaCB);
+		filter.addField( cpfBuscaTF );
+		filter.addField( tipoContratoBuscaCB );
+		filter.addField( titulacaoBuscaCB );
+		filter.addField( areaTitulacaoBuscaCB );
 
-		panel.add(filter, bld);
+		panel.add( filter, bld );
+	}
+
+	public List< ColumnConfig > getColumnList()
+	{
+		List< ColumnConfig > list = new ArrayList< ColumnConfig >();
+
+		list.add( new ColumnConfig(
+			ProfessorDTO.PROPERTY_CPF, getI18nConstants().cpf(), 100 ) );
+
+		list.add( new ColumnConfig(ProfessorDTO.PROPERTY_NOME,
+			getI18nConstants().nomeProfessor(), 100 ) );
+
+		list.add( new ColumnConfig(ProfessorDTO.PROPERTY_TIPO_CONTRATO_STRING,
+			getI18nConstants().tipoContrato(), 100 ) );
+
+		list.add( new ColumnConfig(ProfessorDTO.PROPERTY_CARGA_HORARIA_MIN,
+			getI18nConstants().cargaHorariaMin(), 100 ) );
+
+		list.add( new ColumnConfig(ProfessorDTO.PROPERTY_CARGA_HORARIA_MAX,
+			getI18nConstants().cargaHorariaMax(), 100 ) );
+
+		list.add( new ColumnConfig(ProfessorDTO.PROPERTY_TITULACAO_STRING,
+			getI18nConstants().titulacao(), 100 ) );
+
+		list.add( new ColumnConfig(ProfessorDTO.PROPERTY_AREA_TITULACAO_STRING,
+			getI18nConstants().areaTitulacao(), 100 ) );
+
+		list.add( new ColumnConfig(ProfessorDTO.PROPERTY_NOTA_DESEMPENHO,
+			getI18nConstants().notaDesempenho(), 100 ) );
+
+		list.add( new ColumnConfig(ProfessorDTO.PROPERTY_CREDITO_ANTERIOR,
+			getI18nConstants().cargaHorariaAnterior(), 100 ) );
+
+		list.add( new ColumnConfig(ProfessorDTO.PROPERTY_VALOR_CREDITO,
+			getI18nConstants().valorCredito(), 100 ) );
+
+		return list;
 	}
 
 	@Override
-	public Button getNewButton() {
+	public Button getNewButton()
+	{
 		return toolBar.getNewButton();
 	}
 
 	@Override
-	public Button getEditButton() {
+	public Button getEditButton()
+	{
 		return toolBar.getEditButton();
 	}
 
 	@Override
-	public Button getRemoveButton() {
+	public Button getRemoveButton()
+	{
 		return toolBar.getRemoveButton();
 	}
 
 	@Override
-	public Button getImportExcelButton() {
+	public Button getImportExcelButton()
+	{
 		return toolBar.getImportExcelButton();
 	}
 
 	@Override
-	public Button getExportExcelButton() {
+	public Button getExportExcelButton()
+	{
 		return toolBar.getExportExcelButton();
 	}
 
 	@Override
-	public SimpleGrid<ProfessorDTO> getGrid() {
+	public SimpleGrid< ProfessorDTO > getGrid()
+	{
 		return gridPanel;
 	}
 
 	@Override
-	public void setProxy(RpcProxy<PagingLoadResult<ProfessorDTO>> proxy) {
-		gridPanel.setProxy(proxy);
+	public void setProxy( RpcProxy< PagingLoadResult< ProfessorDTO > > proxy )
+	{
+		gridPanel.setProxy( proxy );
 	}
 
 	@Override
-	public TextField<String> getCpfBuscaTextField() {
+	public TextField< String > getCpfBuscaTextField()
+	{
 		return cpfBuscaTF;
 	}
 
 	@Override
-	public TipoContratoComboBox getTipoContratoBuscaComboBox() {
+	public TipoContratoComboBox getTipoContratoBuscaComboBox()
+	{
 		return tipoContratoBuscaCB;
 	}
 
 	@Override
-	public TitulacaoComboBox getTitulacaoBuscaComboBox() {
+	public TitulacaoComboBox getTitulacaoBuscaComboBox()
+	{
 		return titulacaoBuscaCB;
 	}
 
 	@Override
-	public AreaTitulacaoComboBox getAreaTitulacaoBuscaComboBox() {
+	public AreaTitulacaoComboBox getAreaTitulacaoBuscaComboBox()
+	{
 		return areaTitulacaoBuscaCB;
 	}
 
 	@Override
-	public Button getSubmitBuscaButton() {
+	public Button getSubmitBuscaButton()
+	{
 		return filter.getSubmitButton();
 	}
 
 	@Override
-	public Button getResetBuscaButton() {
+	public Button getResetBuscaButton()
+	{
 		return filter.getResetButton();
 	}
 
 	@Override
-	public Button getDisponibilidadeButton() {
+	public Button getDisponibilidadeButton()
+	{
 		return disponibilidadeBT;
 	}
-
 }

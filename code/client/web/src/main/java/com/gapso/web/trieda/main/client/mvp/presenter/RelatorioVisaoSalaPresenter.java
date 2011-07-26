@@ -19,54 +19,67 @@ import com.gapso.web.trieda.shared.util.view.TurnoComboBox;
 import com.gapso.web.trieda.shared.util.view.UnidadeComboBox;
 import com.google.gwt.user.client.ui.Widget;
 
-public class RelatorioVisaoSalaPresenter implements Presenter {
-
-	public interface Display {
+public class RelatorioVisaoSalaPresenter implements Presenter
+{
+	public interface Display
+	{
 		Button getSubmitBuscaButton();
 		CampusComboBox getCampusComboBox();
 		UnidadeComboBox getUnidadeComboBox();
 		SalaComboBox getSalaComboBox();
 		TurnoComboBox getTurnoComboBox();
-		TextField<String> getCapacidadeTextField();
-		TextField<String> getTipoTextField();
+		TextField< String > getCapacidadeTextField();
+		TextField< String > getTipoTextField();
 		GradeHorariaSalaGrid getGrid();
 		Component getComponent();
 	}
+
 	private Display display; 
-	
-	public RelatorioVisaoSalaPresenter(CenarioDTO cenario, Display display) {
+
+	public RelatorioVisaoSalaPresenter( CenarioDTO cenario, Display display )
+	{
 		this.display = display;
 		setListeners();
 	}
 
-	private void setListeners() {
-		display.getSubmitBuscaButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
-			@Override
-			public void componentSelected(ButtonEvent ce) {
-				display.getGrid().setSalaDTO(display.getSalaComboBox().getValue());
-				display.getGrid().setTurnoDTO(display.getTurnoComboBox().getValue());
-				display.getGrid().requestAtendimentos();
-			}
-		});
-		display.getSalaComboBox().addSelectionChangedListener(new SelectionChangedListener<SalaDTO>(){
-			@Override
-			public void selectionChanged(SelectionChangedEvent<SalaDTO> se) {
-				final SalaDTO salaDTO = se.getSelectedItem();
-				if(salaDTO == null) {
-					display.getCapacidadeTextField().setValue("");
-					display.getTipoTextField().setValue("");
-				} else {
-					display.getCapacidadeTextField().setValue(salaDTO.getCapacidade().toString());
-					display.getTipoTextField().setValue(salaDTO.getTipoString());
+	private void setListeners()
+	{
+		display.getSubmitBuscaButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+			{
+				@Override
+				public void componentSelected( ButtonEvent ce )
+				{
+					display.getGrid().setSalaDTO( display.getSalaComboBox().getValue() );
+					display.getGrid().setTurnoDTO( display.getTurnoComboBox().getValue() );
+					display.getGrid().requestAtendimentos();
 				}
-			}
-		});
+			});
+		display.getSalaComboBox().addSelectionChangedListener(
+			new SelectionChangedListener< SalaDTO >()
+			{
+				@Override
+				public void selectionChanged(SelectionChangedEvent< SalaDTO > se )
+				{
+					final SalaDTO salaDTO = se.getSelectedItem();
+					if ( salaDTO == null )
+					{
+						display.getCapacidadeTextField().setValue( "" );
+						display.getTipoTextField().setValue( "" );
+					}
+					else
+					{
+						display.getCapacidadeTextField().setValue( salaDTO.getCapacidade().toString() );
+						display.getTipoTextField().setValue( salaDTO.getTipoString() );
+					}
+				}
+			});
 	}
 	
 	@Override
-	public void go(Widget widget) {
+	public void go( Widget widget )
+	{
 		GTab tab = (GTab)widget;
-		tab.add((GTabItem)display.getComponent());
+		tab.add( (GTabItem)display.getComponent() );
 	}
-
 }

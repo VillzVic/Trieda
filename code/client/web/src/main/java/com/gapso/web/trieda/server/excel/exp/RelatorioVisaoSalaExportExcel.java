@@ -147,43 +147,53 @@ public class RelatorioVisaoSalaExportExcel extends AbstractExportExcel {
 					nextRow = writeSala(sala,turno,mapNivel2.get(turno),nextRow,sheet,itExcelCommentsPool,codigoDisciplinaToColorMap);
 				}				
 			}
-			
-			//autoSizeColumns((short)1,(short)6,sheet); TODO: rever autoSize pois atualmente o algoritmo do poi interfere na largura do logo
-			
+
 			return true;
 		}
-		
+
 		return false;
 	}
-	
+
 	@SuppressWarnings("unused")
-	private int writeSala(Sala sala, Turno turno, List<AtendimentoRelatorioDTO> atendimentos, int row, HSSFSheet sheet, Iterator<HSSFComment> itExcelCommentsPool, Map<String,HSSFCellStyle> codigoDisciplinaToColorMap) {
-		row = writeHeader(sala,turno,row,sheet);
-		
+	private int writeSala( Sala sala, Turno turno,
+		List< AtendimentoRelatorioDTO > atendimentos, int row, HSSFSheet sheet,
+		Iterator< HSSFComment > itExcelCommentsPool, Map< String,HSSFCellStyle > codigoDisciplinaToColorMap )
+	{
+		row = writeHeader( sala, turno, row, sheet );
+
 		int initialRow = row;
 		int col = 2;
-		
+
 		// preenche grade com créditos e células vazias
 		int maxCreditos = turno.calculaMaxCreditos();
-		for (int indexCredito = 1; indexCredito <= maxCreditos; indexCredito++) {
+		for ( int indexCredito = 1; indexCredito <= maxCreditos; indexCredito++ )
+		{
 			// Créditos
-			setCell(row,col++,sheet,cellStyles[ExcelCellStyleReference.TEXT.ordinal()],indexCredito);
+			setCell( row, col++, sheet,
+				cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ], indexCredito );
+
 			// Dias Semana
-			for (Semanas semanas : Semanas.values()) {
-				setCell(row,col++,sheet,cellStyles[ExcelCellStyleReference.TEXT.ordinal()],"");
+			for ( Semanas semanas : Semanas.values() )
+			{
+				setCell( row, col++, sheet,
+					cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ], "" );
 			}
-			
+
 			row++;
 			col = 2;
 		}
-		
-		// processa os atendimentos lidos do BD para que os mesmos sejam visualizados na visão sala
+
+		// Processa os atendimentos lidos do BD para que os mesmos sejam visualizados na visão sala
 		AtendimentosServiceImpl atendimentosService = new AtendimentosServiceImpl();
-		List<AtendimentoRelatorioDTO> atendimentosParaVisaoSala = atendimentosService.montaListaParaVisaoSala(atendimentos);
-		
-		// agrupa os atendimentos por dia da semana
-		Map<Integer,List<AtendimentoRelatorioDTO>> diaSemanaToAtendimentosMap = new HashMap<Integer,List<AtendimentoRelatorioDTO>>();
-		for (AtendimentoRelatorioDTO atendimento : atendimentosParaVisaoSala) {
+		List< AtendimentoRelatorioDTO > atendimentosParaVisaoSala
+			= atendimentosService.montaListaParaVisaoSala( atendimentos );
+
+		// Agrupa os atendimentos por dia da semana
+		Map< Integer, List< AtendimentoRelatorioDTO > > diaSemanaToAtendimentosMap
+			= new HashMap< Integer, List< AtendimentoRelatorioDTO > >();
+
+		for ( AtendimentoRelatorioDTO atendimento : atendimentosParaVisaoSala )
+		{
 			List<AtendimentoRelatorioDTO> list = diaSemanaToAtendimentosMap.get(atendimento.getSemana());
 			if (list == null) {
 				list = new ArrayList<AtendimentoRelatorioDTO>();

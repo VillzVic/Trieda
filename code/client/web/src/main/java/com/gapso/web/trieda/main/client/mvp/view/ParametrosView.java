@@ -130,12 +130,10 @@ public class ParametrosView extends MyComposite implements ParametrosPresenter.D
 		form.add(funcaoObjetivoCheckBox);
 		
 		campusComboBox = new CampusComboBox();
-		// TODO campusComboBox.setValue(parametroDTO.getCampusId());
 		campusComboBox.setFieldLabel("Campus");
 		form.add(campusComboBox);
 		
 		turnoComboBox = new TurnoComboBox(campusComboBox);
-		// TODO turnoComboBox.setValue(parametroDTO.getTurnoId());
 		turnoComboBox.setFieldLabel("Turno");
 		form.add(turnoComboBox);
 		
@@ -149,30 +147,43 @@ public class ParametrosView extends MyComposite implements ParametrosPresenter.D
 		rowLayout = new RowLayout();
 		rowLayout.setExtraStyle("x-form-item borderBottom");
 		LayoutContainer alunoRight = new LayoutContainer(rowLayout);
-		
-		cargaHorariaAlunoCheckBox = createCheckBox("Distribuição da carga horária semanal do aluno", parametroDTO.getCargaHorariaAluno());
-		alunoDePeriodoMesmaSalaCheckBox = createCheckBox("Manter alunos do mesmo curso-período na mesma sala", parametroDTO.getAlunoDePeriodoMesmaSala());
-		alunoEmMuitosCampiCheckBox = createCheckBox("Permitir que o aluno estude em mais de um Campus", parametroDTO.getAlunoEmMuitosCampi());
+
+		cargaHorariaAlunoCheckBox = createCheckBox(
+			"Distribuição da carga horária semanal do aluno", parametroDTO.getCargaHorariaAluno() );
+
+		alunoDePeriodoMesmaSalaCheckBox = createCheckBox(
+			"Manter alunos do mesmo curso-período na mesma sala", parametroDTO.getAlunoDePeriodoMesmaSala() );
+
+		alunoEmMuitosCampiCheckBox = createCheckBox(
+			"Permitir que o aluno estude em mais de um Campus", parametroDTO.getAlunoEmMuitosCampi() );
+
 		alunoEmMuitosCampiCheckBox.disable();
-		minimizarDeslocamentoAlunoCheckBox = createCheckBox("Minimizar Deslocamento de Alunos entre Campi", parametroDTO.getMinimizarDeslocamentoAluno());
+
+		minimizarDeslocamentoAlunoCheckBox = createCheckBox(
+			"Minimizar Deslocamento de Alunos entre Campi", parametroDTO.getMinimizarDeslocamentoAluno() );
+
 		minimizarDeslocamentoAlunoCheckBox.disable();
-		
+
 		alunoLeft.add(cargaHorariaAlunoCheckBox, formData);
 		alunoLeft.add(alunoDePeriodoMesmaSalaCheckBox, formData);
 		alunoLeft.add(alunoEmMuitosCampiCheckBox, formData);
 		alunoLeft.add(minimizarDeslocamentoAlunoCheckBox, formData);
 		
-		cargaHorariaAlunoComboBox = createComboBox(parametroDTO.getCargaHorariaAlunoSel());
-		alunoRight.add(cargaHorariaAlunoComboBox);
-		
-		for(int i = 0; i<3; i++) {
+		cargaHorariaAlunoComboBox = createComboBox(
+			parametroDTO.getCargaHorariaAlunoSel() );
+
+		alunoRight.add( cargaHorariaAlunoComboBox );
+
+		for ( int i = 0; i<3; i++ )
+		{
 			label = new Label();
 			label.setHeight(22);
 			alunoRight.add(label);
 		}
-		alunoFS.add(alunoLeft, new ColumnData(.5));
-		alunoFS.add(alunoRight, new ColumnData(.4));
-		
+
+		alunoFS.add( alunoLeft, new ColumnData( 0.5 ) );
+		alunoFS.add( alunoRight, new ColumnData( 0.4 ) );
+
 		FieldSet professorFS = new FieldSet();
 		professorFS.setHeading("Preferências do Professor");
 		professorFS.setCollapsible(true);

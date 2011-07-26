@@ -37,15 +37,16 @@ public class TRIEDAImportExcel implements IImportExcel {
 	
 	@Transactional
 	@Override
-	public boolean load(String fileName, InputStream inputStream) {
+	public boolean load( String fileName, InputStream inputStream )
+	{
 		boolean flag = true;
-		try {
-			POIFSFileSystem poifs = new POIFSFileSystem(inputStream);
-			HSSFWorkbook workbook = new HSSFWorkbook(poifs);
-		
-			List<IImportExcel> importers = new ArrayList<IImportExcel>();
-			
-			// TODO Alterar a ordem
+		try
+		{
+			POIFSFileSystem poifs = new POIFSFileSystem( inputStream );
+			HSSFWorkbook workbook = new HSSFWorkbook( poifs );
+
+			List< IImportExcel > importers = new ArrayList< IImportExcel >();
+
 			importers.add(new CampiImportExcel(cenario,i18nConstants,i18nMessages));
 			importers.add(new UnidadesImportExcel(cenario,i18nConstants,i18nMessages));
 			importers.add(new SalasImportExcel(cenario,i18nConstants,i18nMessages));

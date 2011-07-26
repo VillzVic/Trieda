@@ -11,35 +11,36 @@ import com.gapso.web.trieda.shared.mvp.view.MyComposite;
 import com.gapso.web.trieda.shared.util.resources.Resources;
 import com.gapso.web.trieda.shared.util.view.SimpleModal;
 
-public class TipoCursoFormView extends MyComposite implements TipoCursoFormPresenter.Display {
-
+public class TipoCursoFormView extends MyComposite
+	implements TipoCursoFormPresenter.Display
+{
 	private SimpleModal simpleModal;
 	private FormPanel formPanel;
 	private TextField<String> codigoTF;
 	private TextField<String> descricaoTF;
 	private TipoCursoDTO tipoCursoDTO;
 	
-	public TipoCursoFormView(TipoCursoDTO tipoCursoDTO) {
+	public TipoCursoFormView( TipoCursoDTO tipoCursoDTO )
+	{
 		this.tipoCursoDTO = tipoCursoDTO;
 		initUI();
-		// TODO
-//		initComponent(simpleModal);
-//		setParent(null);
 	}
 	
-	private void initUI() {
-		String title = (tipoCursoDTO.getId() == null)? "Inserção de Tipo de Curso" : "Edição de Tipo de Curso";
-		simpleModal = new SimpleModal(title, Resources.DEFAULTS.curso16());
-		simpleModal.setHeight(138);
+	private void initUI()
+	{
+		String title = ( ( tipoCursoDTO.getId() == null ) ? "Inserção de Tipo de Curso" : "Edição de Tipo de Curso" );
+		simpleModal = new SimpleModal( title, Resources.DEFAULTS.curso16() );
+		simpleModal.setHeight( 138 );
 		createForm();
-		simpleModal.setContent(formPanel);
+		simpleModal.setContent( formPanel );
 	}
 
-	private void createForm() {
+	private void createForm()
+	{
 		FormData formData = new FormData("-20");
 		formPanel = new FormPanel();
 		formPanel.setHeaderVisible(false);
-		
+
 		codigoTF = new TextField<String>();
 		codigoTF.setName(TipoCursoDTO.PROPERTY_CODIGO);
 		codigoTF.setValue(tipoCursoDTO.getCodigo());
@@ -48,7 +49,7 @@ public class TipoCursoFormView extends MyComposite implements TipoCursoFormPrese
 		codigoTF.setMaxLength(50);
 		codigoTF.setEmptyText("Preencha o código");
 		formPanel.add(codigoTF, formData);
-		
+
 		descricaoTF = new TextField<String>();
 		descricaoTF.setName(TipoCursoDTO.PROPERTY_DESCRICAO);
 		descricaoTF.setValue(tipoCursoDTO.getDescricao());
@@ -56,41 +57,45 @@ public class TipoCursoFormView extends MyComposite implements TipoCursoFormPrese
 		descricaoTF.setMaxLength(255);
 		descricaoTF.setEmptyText("Preencha uma descrição");
 		formPanel.add(descricaoTF, formData);
-		
+
 		FormButtonBinding binding = new FormButtonBinding(formPanel);
 		binding.addButton(simpleModal.getSalvarBt());
-		
+
 		simpleModal.setFocusWidget(codigoTF);
 	}
-	
-	public boolean isValid() {
+
+	public boolean isValid()
+	{
 		return formPanel.isValid();
 	}
-	
+
 	@Override
-	public Button getSalvarButton() {
+	public Button getSalvarButton()
+	{
 		return simpleModal.getSalvarBt();
 	}
 
 	@Override
-	public TextField<String> getCodigoTextField() {
+	public TextField< String > getCodigoTextField()
+	{
 		return codigoTF;
 	}
-	
+
 	@Override
-	public SimpleModal getSimpleModal() {
+	public SimpleModal getSimpleModal()
+	{
 		return simpleModal;
 	}
 
 	@Override
-	public TextField<String> getDescricaoTextField() {
+	public TextField< String > getDescricaoTextField()
+	{
 		return descricaoTF;
 	}
 
 	@Override
-	public TipoCursoDTO getTipoCursoDTO() {
+	public TipoCursoDTO getTipoCursoDTO()
+	{
 		return tipoCursoDTO;
 	}
-	
-
 }

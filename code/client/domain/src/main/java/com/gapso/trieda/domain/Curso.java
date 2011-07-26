@@ -41,8 +41,8 @@ import org.springframework.transaction.annotation.Transactional;
 @RooEntity(identifierColumn = "CUR_ID")
 @Table(name = "CURSOS", uniqueConstraints = @UniqueConstraint(columnNames = {
 		"CEN_ID", "CUR_CODIGO" }))
-public class Curso implements Serializable, Comparable<Curso> {
-
+public class Curso implements Serializable, Comparable< Curso >
+{
 	@NotNull
 	@ManyToOne(targetEntity = TipoCurso.class)
 	@JoinColumn(name = "TCU_ID")
@@ -97,10 +97,13 @@ public class Curso implements Serializable, Comparable<Curso> {
 	private Boolean admMaisDeUmDisciplina;
 
 	@ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, mappedBy = "cursos")
-	private Set<AreaTitulacao> areasTitulacao = new HashSet<AreaTitulacao>();
+	private Set< AreaTitulacao > areasTitulacao = new HashSet< AreaTitulacao >();
 
 	@OneToMany(mappedBy = "curso")
-	private Set<Curriculo> curriculos = new HashSet<Curriculo>();
+	private Set< Curriculo > curriculos = new HashSet< Curriculo >();
+
+    @OneToMany(mappedBy = "curso")
+    private Set< Oferta > ofertas = new HashSet< Oferta >();
 
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
@@ -126,92 +129,114 @@ public class Curso implements Serializable, Comparable<Curso> {
 		return sb.toString();
 	}
 
-	public TipoCurso getTipoCurso() {
+	public TipoCurso getTipoCurso()
+	{
 		return this.tipoCurso;
 	}
 
-	public void setTipoCurso(TipoCurso tipoCurso) {
+	public void setTipoCurso( TipoCurso tipoCurso )
+	{
 		this.tipoCurso = tipoCurso;
 	}
 
-	public Cenario getCenario() {
+	public Cenario getCenario()
+	{
 		return this.cenario;
 	}
 
-	public void setCenario(Cenario cenario) {
+	public void setCenario( Cenario cenario )
+	{
 		this.cenario = cenario;
 	}
 
-	public String getCodigo() {
+	public String getCodigo()
+	{
 		return this.codigo;
 	}
 
-	public void setCodigo(String codigo) {
+	public void setCodigo( String codigo )
+	{
 		this.codigo = codigo;
 	}
 
-	public String getNome() {
+	public String getNome()
+	{
 		return this.nome;
 	}
 
-	public void setNome(String nome) {
+	public void setNome( String nome )
+	{
 		this.nome = nome;
 	}
 
-	public Integer getNumMinDoutores() {
+	public Integer getNumMinDoutores()
+	{
 		return this.numMinDoutores;
 	}
 
-	public void setNumMinDoutores(Integer numMinDoutores) {
+	public void setNumMinDoutores( Integer numMinDoutores )
+	{
 		this.numMinDoutores = numMinDoutores;
 	}
 
-	public Integer getNumMinMestres() {
+	public Integer getNumMinMestres()
+	{
 		return this.numMinMestres;
 	}
 
-	public void setNumMinMestres(Integer numMinMestres) {
+	public void setNumMinMestres( Integer numMinMestres )
+	{
 		this.numMinMestres = numMinMestres;
 	}
 
-	public Integer getMinTempoIntegralParcial() {
+	public Integer getMinTempoIntegralParcial()
+	{
 		return minTempoIntegralParcial;
 	}
 
-	public void setMinTempoIntegralParcial(Integer minTempoIntegralParcial) {
+	public void setMinTempoIntegralParcial( Integer minTempoIntegralParcial )
+	{
 		this.minTempoIntegralParcial = minTempoIntegralParcial;
 	}
 
-	public Integer getMinTempoIntegral() {
+	public Integer getMinTempoIntegral()
+	{
 		return minTempoIntegral;
 	}
 
-	public void setMinTempoIntegral(Integer minTempoIntegral) {
+	public void setMinTempoIntegral( Integer minTempoIntegral )
+	{
 		this.minTempoIntegral = minTempoIntegral;
 	}
 
-	public Integer getMaxDisciplinasPeloProfessor() {
+	public Integer getMaxDisciplinasPeloProfessor()
+	{
 		return this.maxDisciplinasPeloProfessor;
 	}
 
 	public void setMaxDisciplinasPeloProfessor(
-			Integer maxDisciplinasPeloProfessor) {
+		Integer maxDisciplinasPeloProfessor )
+	{
 		this.maxDisciplinasPeloProfessor = maxDisciplinasPeloProfessor;
 	}
 
-	public Boolean getAdmMaisDeUmDisciplina() {
+	public Boolean getAdmMaisDeUmDisciplina()
+	{
 		return this.admMaisDeUmDisciplina;
 	}
 
-	public void setAdmMaisDeUmDisciplina(Boolean admMaisDeUmDisciplina) {
+	public void setAdmMaisDeUmDisciplina( Boolean admMaisDeUmDisciplina )
+	{
 		this.admMaisDeUmDisciplina = admMaisDeUmDisciplina;
 	}
 
-	public Set<AreaTitulacao> getAreasTitulacao() {
+	public Set< AreaTitulacao > getAreasTitulacao()
+	{
 		return this.areasTitulacao;
 	}
 
-	public void setAreasTitulacao(Set<AreaTitulacao> areasTitulacao) {
+	public void setAreasTitulacao( Set< AreaTitulacao > areasTitulacao )
+	{
 		this.areasTitulacao = areasTitulacao;
 	}
 
@@ -220,8 +245,19 @@ public class Curso implements Serializable, Comparable<Curso> {
 		return curriculos;
 	}
 
-	public void setCurriculos(Set<Curriculo> curriculos) {
+	public void setCurriculos( Set< Curriculo > curriculos )
+	{
 		this.curriculos = curriculos;
+	}
+
+	public Set< Oferta > getOfertas()
+	{
+		return ofertas;
+	}
+
+	public void setOfertas( Set< Oferta > ofertas )
+	{
+		this.ofertas = ofertas;
 	}
 
 	@PersistenceContext
@@ -358,7 +394,8 @@ public class Curso implements Serializable, Comparable<Curso> {
 		if ( em == null )
 		{
 			throw new IllegalStateException(
-					"Entity manager has not been injected (is the Spring Aspects JAR configured as an AJC/AJDT aspects library?)");
+				"Entity manager has not been injected (is the Spring " +
+				"Aspects JAR configured as an AJC/AJDT aspects library?)" );
 		}
 
 		return em;
@@ -367,7 +404,7 @@ public class Curso implements Serializable, Comparable<Curso> {
 	public static int count( Cenario cenario )
 	{
 		Query q = entityManager().createQuery(
-				"SELECT COUNT(o) FROM Curso o WHERE o.cenario = :cenario" );
+			"SELECT COUNT(o) FROM Curso o WHERE o.cenario = :cenario" );
 
 		q.setParameter( "cenario", cenario );
 		return ( (Number) q.getSingleResult() ).intValue();

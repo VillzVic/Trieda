@@ -30,40 +30,45 @@ public class ProfessorDisciplinaFormView extends MyComposite implements Professo
 	private ProfessorDTO professorDTO;
 	private DisciplinaDTO disciplinaDTO;
 	
-	public ProfessorDisciplinaFormView(UsuarioDTO usuario, ProfessorDisciplinaDTO professorDisciplinaDTO, ProfessorDTO professorDTO, DisciplinaDTO disciplinaDTO) {
+	public ProfessorDisciplinaFormView( UsuarioDTO usuario,
+		ProfessorDisciplinaDTO professorDisciplinaDTO,
+		ProfessorDTO professorDTO, DisciplinaDTO disciplinaDTO )
+	{
 		this.usuario = usuario;
 		this.professorDisciplinaDTO = professorDisciplinaDTO;
 		this.professorDTO = professorDTO;
 		this.disciplinaDTO = disciplinaDTO;
 		initUI();
-		// TODO
-//		initComponent(simpleModal);
-//		setParent(null);
-	}
-	
-	private void initUI() {
-		String title = (professorDisciplinaDTO.getId() == null)? "Edição de Habilitação" : "Cadastro de Habilitação do Professore";
-		simpleModal = new SimpleModal(title, Resources.DEFAULTS.professor16());
-		simpleModal.setHeight(200);
-		createForm();
-		simpleModal.setContent(formPanel);
 	}
 
-	private void createForm() {
+	private void initUI()
+	{
+		String title = ( ( professorDisciplinaDTO.getId() == null ) ?
+			"Edição de Habilitação" :
+			"Cadastro de Habilitação do Professore" );
+
+		simpleModal = new SimpleModal( title, Resources.DEFAULTS.professor16() );
+		simpleModal.setHeight( 200 );
+		createForm();
+		simpleModal.setContent( formPanel );
+	}
+
+	private void createForm()
+	{
 		FormData formData = new FormData("-20");
 		formPanel = new FormPanel();
 		formPanel.setHeaderVisible(false);
-		
+
 		professorCB = new ProfessorComboBox(usuario.isProfessor());
 		professorCB.setAllowBlank(false);
 		professorCB.setValue(professorDTO);
 		formPanel.add(professorCB, formData);
-		
+
 		disciplinaCB = new DisciplinaComboBox(usuario.isProfessor());
 		disciplinaCB.setAllowBlank(false);
 		disciplinaCB.setValue(disciplinaDTO);
 		formPanel.add(disciplinaCB, formData);
-		
+
 		preferenciaNF = new NumberField();
 		preferenciaNF.setName(ProfessorDisciplinaDTO.PROPERTY_PREFERENCIA);
 		preferenciaNF.setValue(professorDisciplinaDTO.getPreferencia());
@@ -74,7 +79,7 @@ public class ProfessorDisciplinaFormView extends MyComposite implements Professo
 		preferenciaNF.setMaxValue(10);
 		preferenciaNF.setEmptyText("Preencha de 0 à 10");
 		formPanel.add(preferenciaNF, formData);
-		
+
 		notaDesempenhoNF = new NumberField();
 		notaDesempenhoNF.setName(ProfessorDisciplinaDTO.PROPERTY_NOTA_DESEMPENHO);
 		notaDesempenhoNF.setValue(professorDisciplinaDTO.getNotaDesempenho());
@@ -86,51 +91,57 @@ public class ProfessorDisciplinaFormView extends MyComposite implements Professo
 		notaDesempenhoNF.setEmptyText("Preencha de 0 à 10");
 		notaDesempenhoNF.setReadOnly(usuario.isProfessor());
 		formPanel.add(notaDesempenhoNF, formData);
-		
+
 		FormButtonBinding binding = new FormButtonBinding(formPanel);
 		binding.addButton(simpleModal.getSalvarBt());
-		
+
 		simpleModal.setFocusWidget(professorCB);
 	}
-	
-	public boolean isValid() {
+
+	public boolean isValid()
+	{
 		return formPanel.isValid();
 	}
-	
+
 	@Override
-	public Button getSalvarButton() {
+	public Button getSalvarButton()
+	{
 		return simpleModal.getSalvarBt();
 	}
-	
+
 	@Override
-	public SimpleModal getSimpleModal() {
+	public SimpleModal getSimpleModal()
+	{
 		return simpleModal;
 	}
 
 	@Override
-	public ProfessorComboBox getProfessorComboBox() {
+	public ProfessorComboBox getProfessorComboBox()
+	{
 		return professorCB;
 	}
-	
+
 	@Override
-	public DisciplinaComboBox getDisciplinaComboBox() {
+	public DisciplinaComboBox getDisciplinaComboBox()
+	{
 		return disciplinaCB;
 	}
 
 	@Override
-	public NumberField getPreferenciaNumberField() {
+	public NumberField getPreferenciaNumberField()
+	{
 		return preferenciaNF;
 	}
-	
+
 	@Override
-	public NumberField getNotaDesempenhoNumberField() {
+	public NumberField getNotaDesempenhoNumberField()
+	{
 		return notaDesempenhoNF;
 	}
-	
+
 	@Override
-	public ProfessorDisciplinaDTO getProfessorDisciplinaDTO() {
+	public ProfessorDisciplinaDTO getProfessorDisciplinaDTO()
+	{
 		return professorDisciplinaDTO;
 	}
-	
-
 }

@@ -240,19 +240,24 @@ public class ToolBarPresenter implements Presenter {
 		});
 		toolBar.getCampusDeslocamentoListCampiButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
 			@Override
-			public void componentSelected(ButtonEvent ce) {
-				// TODO ESTE CODIGO CODIGO NÂO PERTENCE AQUI, DEVE FICAR NO CAMPI DESLOCAMENTO
-				// QUANDO EU COLOCO LA, ELE BUGA O HEADER DA TABELA
+			public void componentSelected( ButtonEvent ce )
+			{
 				CampiServiceAsync service = Services.campi();
-				service.getDeslocamentos(new AsyncCallback<List<DeslocamentoCampusDTO>>() {
+				service.getDeslocamentos( new AsyncCallback< List< DeslocamentoCampusDTO > >()
+				{
 					@Override
-					public void onFailure(Throwable caught) {
+					public void onFailure( Throwable caught )
+					{
 						MessageBox.alert("ERRO!", "Deu falha na conexão", null);
 					}
+
 					@Override
-					public void onSuccess(List<DeslocamentoCampusDTO> result) {
-						Presenter presenter = new CampiDeslocamentoPresenter(masterData, new CampiDeslocamentoView(result));
-						presenter.go(gTab);	
+					public void onSuccess( List< DeslocamentoCampusDTO > result )
+					{
+						Presenter presenter = new CampiDeslocamentoPresenter(
+							masterData, new CampiDeslocamentoView( result ) );
+
+						presenter.go( gTab );	
 					}
 				});
 			}
@@ -423,13 +428,10 @@ public class ToolBarPresenter implements Presenter {
 		});
 		toolBar.getParametrosButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
 			@Override
-			public void componentSelected(ButtonEvent ce) {
-				// TODO Temporariamente vai aparecer o modal de selecionar os campi
-//				Presenter presenter = new SelecionarCampiPresenter(masterData, new SelecionarCampiView());
-//				presenter.go(gTab);
-				
-				// TODO ESTE CODIGO NÂO PERTENCE AQUI, DEVE FICAR NO PRESENTATION DE PARAMETROS
-				Services.otimizar().getParametro(masterData, new AsyncCallback<ParametroDTO>() {
+			public void componentSelected( ButtonEvent ce )
+			{
+				Services.otimizar().getParametro(masterData, new AsyncCallback<ParametroDTO>()
+				{
 					@Override
 					public void onFailure(Throwable caught) {
 						MessageBox.alert("ERRO!", "Deu falha na conexão", null);

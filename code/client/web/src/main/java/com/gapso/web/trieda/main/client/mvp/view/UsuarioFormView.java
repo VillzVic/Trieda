@@ -18,8 +18,9 @@ import com.gapso.web.trieda.shared.util.view.SimpleModal;
 import com.gapso.web.trieda.shared.util.view.UniqueDomain;
 import com.gapso.web.trieda.shared.util.view.UniqueTextField;
 
-public class UsuarioFormView extends MyComposite implements UsuarioFormPresenter.Display {
-
+public class UsuarioFormView extends MyComposite
+	implements UsuarioFormPresenter.Display
+{
 	private SimpleModal simpleModal;
 	private FormPanel formPanel;
 	private TextField<String> nomeTF;
@@ -31,29 +32,30 @@ public class UsuarioFormView extends MyComposite implements UsuarioFormPresenter
 	private CenarioDTO cenarioDTO;
 	private ProfessorDTO professorDTO;
 	
-	public UsuarioFormView(CenarioDTO cenarioDTO, UsuarioDTO usuarioDTO, ProfessorDTO professorDTO) {
+	public UsuarioFormView( CenarioDTO cenarioDTO,
+		UsuarioDTO usuarioDTO, ProfessorDTO professorDTO )
+	{
 		this.usuarioDTO = usuarioDTO;
 		this.cenarioDTO = cenarioDTO;
 		this.professorDTO = professorDTO;
 		initUI();
-		// TODO
-//		initComponent(simpleModal);
-//		setParent(null);
 	}
-	
-	private void initUI() {
-		String title = (usuarioDTO.getVersion() == null)? "Inserção de Usuário" : "Edição de Usuário";
+
+	private void initUI()
+	{
+		String title = ( ( usuarioDTO.getVersion() == null )? "Inserção de Usuário" : "Edição de Usuário" );
 		simpleModal = new SimpleModal(title, Resources.DEFAULTS.turno16());
 		simpleModal.setHeight(255);
 		createForm();
 		simpleModal.setContent(formPanel);
 	}
 
-	private void createForm() {
+	private void createForm()
+	{
 		FormData formData = new FormData("-20");
 		formPanel = new FormPanel();
 		formPanel.setHeaderVisible(false);
-		
+
 		nomeTF = new TextField<String>();
 		nomeTF.setValue(usuarioDTO.getNome());
 		nomeTF.setFieldLabel("Nome");
@@ -61,7 +63,7 @@ public class UsuarioFormView extends MyComposite implements UsuarioFormPresenter
 		nomeTF.setMaxLength(20);
 		nomeTF.setEmptyText("Preencha o nome");
 		formPanel.add(nomeTF, formData);
-		
+
 		emailTF = new TextField<String>();
 		emailTF.setValue(usuarioDTO.getEmail());
 		emailTF.setFieldLabel("Email");
@@ -70,7 +72,7 @@ public class UsuarioFormView extends MyComposite implements UsuarioFormPresenter
 		emailTF.setMaxLength(100);
 		emailTF.setEmptyText("Preencha o email");
 		formPanel.add(emailTF, formData);
-		
+
 		usernameTF = new UniqueTextField(cenarioDTO, UniqueDomain.USUARIO);
 		usernameTF.setValue(usuarioDTO.getUsername());
 		usernameTF.setFieldLabel("Username");
@@ -80,7 +82,7 @@ public class UsuarioFormView extends MyComposite implements UsuarioFormPresenter
 		usernameTF.setEmptyText("Preencha o username");
 		usernameTF.setReadOnly(usuarioDTO.getVersion() != null);
 		formPanel.add(usernameTF, formData);
-		
+
 		passwordTF = new TextField<String>();
 		passwordTF.setFieldLabel("Password");
 		passwordTF.setAllowBlank(usuarioDTO.getVersion() != null);
@@ -89,7 +91,7 @@ public class UsuarioFormView extends MyComposite implements UsuarioFormPresenter
 		passwordTF.setEmptyText("Preencha o password");
 		passwordTF.setPassword(true);
 		formPanel.add(passwordTF, formData);
-		
+
 	    FieldSet fieldSet = new FieldSet();
 	    FormLayout layout = new FormLayout();  
 	    layout.setLabelWidth(70);
@@ -97,61 +99,69 @@ public class UsuarioFormView extends MyComposite implements UsuarioFormPresenter
 	    fieldSet.setHeading("Professor?");  
 	    fieldSet.setCheckboxToggle(true);
 	    fieldSet.setExpanded(usuarioDTO.isProfessor());
-	    
+
 	    professorCB = new ProfessorComboBox();
 		professorCB.setValue(professorDTO);
 		fieldSet.add(professorCB, formData);
-		
+
 		formPanel.add(fieldSet);
-		
+
 		FormButtonBinding binding = new FormButtonBinding(formPanel);
 		binding.addButton(simpleModal.getSalvarBt());
-		
+
 		simpleModal.setFocusWidget(nomeTF);
 	}
 	
-	public boolean isValid() {
+	public boolean isValid()
+	{
 		return formPanel.isValid();
 	}
 	
 	@Override
-	public Button getSalvarButton() {
+	public Button getSalvarButton()
+	{
 		return simpleModal.getSalvarBt();
 	}
 
 	@Override
-	public TextField<String> getNomeTextField() {
+	public TextField<String> getNomeTextField()
+	{
 		return nomeTF;
 	}
 	
 	@Override
-	public TextField<String> getEmailTextField() {
+	public TextField<String> getEmailTextField()
+	{
 		return emailTF;
 	}
 	
 	@Override
-	public TextField<String> getUsernameTextField() {
+	public TextField<String> getUsernameTextField()
+	{
 		return usernameTF;
 	}
 	
 	@Override
-	public TextField<String> getPasswordTextField() {
+	public TextField<String> getPasswordTextField()
+	{
 		return passwordTF;
 	}
 	
 	@Override
-	public SimpleModal getSimpleModal() {
+	public SimpleModal getSimpleModal()
+	{
 		return simpleModal;
 	}
 
 	@Override
-	public UsuarioDTO getUsuarioDTO() {
+	public UsuarioDTO getUsuarioDTO()
+	{
 		return usuarioDTO;
 	}
 
 	@Override
-	public ProfessorComboBox getProfessorComboBox() {
+	public ProfessorComboBox getProfessorComboBox()
+	{
 		return professorCB;
 	}
-	
 }

@@ -256,13 +256,13 @@ public class SolverOutput {
 			return professorVirtualAux;
 		}
 
-		for (ItemProfessorVirtual pvAux : triedaOutput.getProfessoresVirtuais()
-				.getProfessorVirtual()) {
-			if (idAux.equals(pvAux.getId() * -1)) {
+		for ( ItemProfessorVirtual pvAux :
+			triedaOutput.getProfessoresVirtuais().getProfessorVirtual() )
+		{
+			if ( idAux.equals( pvAux.getId() * -1 ) )
+			{
 				ProfessorVirtual pv = new ProfessorVirtual();
 
-				// TODO Pendencia futura
-				// pv.setAreaTitulacao(AreaTitulacao.find(pvAux.getAreaTitulacaoId().longValue()));
 				pv.setCargaHorariaMax(pvAux.getChMax());
 				pv.setCargaHorariaMin(pvAux.getChMin());
 

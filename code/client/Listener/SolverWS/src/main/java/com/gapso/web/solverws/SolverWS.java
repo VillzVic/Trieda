@@ -78,18 +78,19 @@ public class SolverWS{
 	@POST
 	@Path("/getContent/{problemName}")
 	public SolverResponse getContent(@PathParam("problemName") String problemName, @QueryParam("round") String roundString) {
-//		roundString = "201105060917440"; // TODO
 		Long round = new Long(roundString);
 		SolverResponse sr = null;
-		try {
-			byte[] fileBytes = fileManager.getContentOutputFile(round);
-			sr = new SolverResponse(true, fileBytes);
-		} catch (IOException e) {
-			e.printStackTrace();
-			sr = new SolverResponse(false, null);
+		try
+		{
+			byte[] fileBytes = fileManager.getContentOutputFile( round );
+			sr = new SolverResponse( true, fileBytes );
 		}
-		
+		catch ( IOException e )
+		{
+			e.printStackTrace();
+			sr = new SolverResponse( false, null );
+		}
+
 		return sr;
 	}
-
 }

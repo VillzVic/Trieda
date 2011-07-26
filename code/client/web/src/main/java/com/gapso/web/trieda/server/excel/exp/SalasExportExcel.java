@@ -81,16 +81,15 @@ public class SalasExportExcel extends AbstractExportExcel {
 			for (Sala s : salas) {
 				nextRow = writeData(s,nextRow,sheet);
 			}
-			
-			//autoSizeColumns((short)1,(short)6,sheet); TODO: rever autoSize pois atualmente o algoritmo do poi interfere na largura do logo
-			
+
 			return true;
 		}
-		
+
 		return false;
 	}
 	
-	private int writeData(Sala sala, int row, HSSFSheet sheet) {
+	private int writeData( Sala sala, int row, HSSFSheet sheet )
+	{
 		// Codigo
 		setCell(row,2,sheet,cellStyles[ExcelCellStyleReference.TEXT.ordinal()],sala.getCodigo());
 		// Tipo

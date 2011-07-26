@@ -35,103 +35,113 @@ public class SelecionarCampiView extends MyComposite implements SelecionarCampiP
 	private Button removeBT;
 	
 	
-	public SelecionarCampiView() {
+	public SelecionarCampiView()
+	{
 		initUI();
-		// TODO
-		// initComponent(simpleModal);
 	}
 
-	private void initUI() {
-		simpleModal = new SimpleModal("Parâmetros de Planejamento", "Cancelar", "Selecionar campus para planejamento", Resources.DEFAULTS.campus16());
-		simpleModal.setWidth(600);
-		simpleModal.setHeight(400);
+	private void initUI()
+	{
+		simpleModal = new SimpleModal( "Parâmetros de Planejamento",
+			"Cancelar", "Selecionar campus para planejamento", Resources.DEFAULTS.campus16() );
+
+		simpleModal.setWidth( 600 );
+		simpleModal.setHeight( 400 );
 		createForm();
-		simpleModal.setContent(panel);
+		simpleModal.setContent( panel );
 	}
 	
-	private void createForm() {
+	private void createForm()
+	{
 		panel = new ContentPanel(new BorderLayout());
 		panel.setHeaderVisible(false);
-		
+
 		panelLists = new ContentPanel(new RowLayout(Orientation.HORIZONTAL));
 		panelLists.setHeaderVisible(false);
 		panelLists.setBodyBorder(false);
-		
+
 		ContentPanel naoSelecionadoListPanel = new ContentPanel(new FitLayout());
 		naoSelecionadoListPanel.setHeading("Campus não selecionado");
 		naoSelecionadoList = new ListView<CampusDTO>();
 		naoSelecionadoList.setDisplayProperty(CampusDTO.PROPERTY_DISPLAY_TEXT);
 		naoSelecionadoList.getSelectionModel().setSelectionMode(SelectionMode.MULTI);
 		naoSelecionadoListPanel.add(naoSelecionadoList);
-		
+
 		ContentPanel selecionadoListPanel = new ContentPanel(new FitLayout());
 		selecionadoListPanel.setHeading("Campus selecionados");
 		selecionadoList = new ListView<CampusDTO>();
 		selecionadoList.setDisplayProperty(CampusDTO.PROPERTY_DISPLAY_TEXT);
 		selecionadoList.getSelectionModel().setSelectionMode(SelectionMode.MULTI);
 		selecionadoListPanel.add(selecionadoList);
-		
+
 		panelLists.add(naoSelecionadoListPanel, new RowData(.5, 1, new Margins(10, 0, 10, 10)));
 		panelLists.add(getAtualizaSalasButtonsPanel(), new RowData(30, 1, new Margins(10, 0, 0, 0)));
 		panelLists.add(selecionadoListPanel, new RowData(.5, 1, new Margins(10, 10, 10, 0)));
-		
+
 		BorderLayoutData bld = new BorderLayoutData(LayoutRegion.CENTER);
 		bld.setMargins(new Margins(0, 0, 0, 0));
 		panel.setBodyBorder(false);
 		panelLists.setBodyStyle("background-color: #DFE8F6;");
 		panel.add(panelLists, bld);
 	}
-	
-	private LayoutContainer getAtualizaSalasButtonsPanel() {
+
+	private LayoutContainer getAtualizaSalasButtonsPanel()
+	{
 		ContentPanel panel = new ContentPanel();
 		panel.setHeaderVisible(false);
 		panel.setBodyBorder(false);
-		panel.setBodyStyle("display: table-cell; vertical-align: middle; background-color: #DFE8F6;");
+		panel.setBodyStyle( "display: table-cell; vertical-align: middle; background-color: #DFE8F6;" );
 		panel.setLayout(new RowLayout(Orientation.VERTICAL));
-		
+
 		adicionaBT = new Button();
 		adicionaBT.setSize(30, 50);
-		adicionaBT.setIcon(AbstractImagePrototype.create(Resources.DEFAULTS.toRight24()));
-		
+		adicionaBT.setIcon( AbstractImagePrototype.create( Resources.DEFAULTS.toRight24() ) );
+
 		removeBT = new Button();
 		removeBT.setSize(30, 50);
-		removeBT.setIcon(AbstractImagePrototype.create(Resources.DEFAULTS.toLeft24()));
-		
+		removeBT.setIcon( AbstractImagePrototype.create( Resources.DEFAULTS.toLeft24() ) );
+
 		RowData rowData = new RowData(-1, -1, new Margins(4, 0, 4, 0));
-		
+
 		panel.add(adicionaBT, rowData);
 		panel.add(removeBT, rowData);
-		
+
 		return panel;
 	}
 
 	@Override
-	public ListView<CampusDTO> getNaoSelecionadoList() {
+	public ListView< CampusDTO > getNaoSelecionadoList()
+	{
 		return naoSelecionadoList;
 	}
 
 	@Override
-	public ListView<CampusDTO> getSelecionadoList() {
+	public ListView< CampusDTO > getSelecionadoList()
+	{
 		return selecionadoList;
 	}
 
 	@Override
-	public Button getAdicionaBT() {
+	public Button getAdicionaBT()
+	{
 		return adicionaBT;
 	}
 
 	@Override
-	public Button getRemoveBT() {
+	public Button getRemoveBT()
+	{
 		return removeBT;
 	}
-	
+
 	@Override
-	public SimpleModal getSimpleModal() {
+	public SimpleModal getSimpleModal()
+	{
 		return simpleModal;
 	}
 
 	@Override
-	public Button getFecharBT() {
+	public Button getFecharBT()
+	{
 		return simpleModal.getSalvarBt();
 	}
 }

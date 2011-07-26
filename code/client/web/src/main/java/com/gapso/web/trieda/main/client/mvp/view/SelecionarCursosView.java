@@ -47,25 +47,26 @@ public class SelecionarCursosView extends MyComposite implements SelecionarCurso
 	private CampusDTO campus;
 	
 	
-	public SelecionarCursosView(CampusDTO campus) {
+	public SelecionarCursosView( CampusDTO campus )
+	{
 		this.campus = campus;
 		initUI();
-		// TODO
-		// initComponent(simpleModal);
 	}
 
-	private void initUI() {
-		simpleModal = new SimpleModal("Fechar", null, "Selecionar cursos", Resources.DEFAULTS.curso16());
-		simpleModal.setHeight(455);
-		simpleModal.setWidth(595);
+	private void initUI()
+	{
+		simpleModal = new SimpleModal( "Fechar", null, "Selecionar cursos", Resources.DEFAULTS.curso16() );
+		simpleModal.setHeight( 455 );
+		simpleModal.setWidth( 595 );
 		createForm();
-		simpleModal.setContent(panel);
+		simpleModal.setContent( panel );
 	}
-	
-	private void createForm() {
+
+	private void createForm()
+	{
 		panel = new ContentPanel(new BorderLayout());
 		panel.setHeaderVisible(false);
-		
+
 		FormData formData = new FormData("100%");
 		FormPanel formPanel = new FormPanel();
 		formPanel.setBodyBorder(false);
@@ -73,34 +74,39 @@ public class SelecionarCursosView extends MyComposite implements SelecionarCurso
 		formPanel.setLabelAlign(LabelAlign.RIGHT);
 		formPanel.setHeaderVisible(false);
 		formPanel.setAutoHeight(true);
-		
+
 		campusCB = new CampusComboBox();
 		campusCB.setValue(campus);
-		if(campus != null) {
+
+		if ( campus != null )
+		{
 			campusCB.disable();
 		}
+
 		formPanel.add(campusCB, formData);
-		
 		panel.setTopComponent(formPanel);
-		
+
 		panelLists = new LayoutContainer();
         HBoxLayout layout2 = new HBoxLayout();  
         layout2.setHBoxLayoutAlign(HBoxLayoutAlign.TOP);  
         layout2.setPadding(new Padding(5));  
         panelLists.setLayout(layout2);
-        
+
 		ContentPanel naoSelecionadoListPanel = new ContentPanel(new FitLayout());
 		naoSelecionadoListPanel.setHeading("Cursos não selecionado");
 		naoSelecionadoListPanel.setWidth(267);
 		naoSelecionadoListPanel.setHeight(320);
 		naoSelecionadoList = new ListView<CursoDTO>();
-		if(campus == null) {
+
+		if ( campus == null )
+		{
 			naoSelecionadoList.disable();
 		}
+
 		naoSelecionadoList.setDisplayProperty(CursoDTO.PROPERTY_DISPLAY_TEXT);
 		naoSelecionadoList.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
 		naoSelecionadoListPanel.add(naoSelecionadoList);
-		
+
 		ContentPanel selecionadoListPanel = new ContentPanel(new FitLayout());
 		selecionadoListPanel.setHeading("Cursos selecionados");
 		selecionadoListPanel.setWidth(267);
@@ -109,78 +115,91 @@ public class SelecionarCursosView extends MyComposite implements SelecionarCurso
 		selecionadoList.setDisplayProperty(CursoDTO.PROPERTY_DISPLAY_TEXT);
 		selecionadoList.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
 		selecionadoListPanel.add(selecionadoList);
-		
+
 		panelLists.add(naoSelecionadoListPanel, new HBoxLayoutData(new Margins(0)));
 		panelLists.add(getAtualizaSalasButtonsPanel(), new HBoxLayoutData(new Margins(0)));
 		panelLists.add(selecionadoListPanel, new HBoxLayoutData(new Margins(0)));
-		
+
 		BorderLayoutData bld = new BorderLayoutData(LayoutRegion.CENTER);
 		bld.setMargins(new Margins(0, 0, 0, 0));
 		panel.setBodyBorder(false);
 		panel.add(panelLists, bld);
 	}
-	
-	private LayoutContainer getAtualizaSalasButtonsPanel() {
+
+	private LayoutContainer getAtualizaSalasButtonsPanel()
+	{
 		ContentPanel panel = new ContentPanel();
 		panel.setHeaderVisible(false);
 		panel.setBodyBorder(false);
 		panel.setBodyStyle("display: table-cell; vertical-align: middle; background-color: #DFE8F6;");
 		panel.setLayout(new RowLayout(Orientation.VERTICAL));
-		
+
 		adicionaBT = new Button();
-		if(campus == null) {
-			adicionaBT.setEnabled(false);
+		if ( campus == null )
+		{
+			adicionaBT.setEnabled( false );
 		}
+
 		adicionaBT.setSize(30, 50);
 		adicionaBT.setIcon(AbstractImagePrototype.create(Resources.DEFAULTS.toRight24()));
 		
 		removeBT = new Button();
-		if(campus == null) {
-			removeBT.setEnabled(false);
+
+		if ( campus == null )
+		{
+			removeBT.setEnabled( false );
 		}
+
 		removeBT.setSize(30, 50);
-		removeBT.setIcon(AbstractImagePrototype.create(Resources.DEFAULTS.toLeft24()));
-		
+		removeBT.setIcon( AbstractImagePrototype.create( Resources.DEFAULTS.toLeft24() ) );
+
 		RowData rowData = new RowData(-1, -1, new Margins(4, 0, 4, 0));
-		
+
 		panel.add(adicionaBT, rowData);
 		panel.add(removeBT, rowData);
-		
+
 		return panel;
 	}
-	
+
 	@Override
-	public CampusComboBox getCampusComboBox() {
+	public CampusComboBox getCampusComboBox()
+	{
 		return campusCB;
 	}
 
 	@Override
-	public ListView<CursoDTO> getNaoSelecionadoList() {
+	public ListView< CursoDTO > getNaoSelecionadoList()
+	{
 		return naoSelecionadoList;
 	}
 
 	@Override
-	public ListView<CursoDTO> getSelecionadoList() {
+	public ListView< CursoDTO > getSelecionadoList()
+	{
 		return selecionadoList;
 	}
 
 	@Override
-	public Button getAdicionaBT() {
+	public Button getAdicionaBT()
+	{
 		return adicionaBT;
 	}
 
 	@Override
-	public Button getRemoveBT() {
+	public Button getRemoveBT()
+	{
 		return removeBT;
 	}
-	
+
 	@Override
-	public SimpleModal getSimpleModal() {
+	public SimpleModal getSimpleModal()
+	{
 		return simpleModal;
 	}
 
 	@Override
-	public Button getFecharBT() {
+	public Button getFecharBT()
+	{
 		return simpleModal.getSalvarBt();
 	}
 }

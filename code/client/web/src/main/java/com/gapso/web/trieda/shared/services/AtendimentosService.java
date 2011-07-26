@@ -9,6 +9,7 @@ import com.gapso.web.trieda.shared.dtos.AtendimentoRelatorioDTO;
 import com.gapso.web.trieda.shared.dtos.AtendimentoTaticoDTO;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.CurriculoDTO;
+import com.gapso.web.trieda.shared.dtos.CursoDTO;
 import com.gapso.web.trieda.shared.dtos.ParDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorVirtualDTO;
@@ -21,12 +22,21 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
  * The client side stub for the RPC service.
  */
 @RemoteServiceRelativePath("atendimentos")
-public interface AtendimentosService extends RemoteService {
-	
-	PagingLoadResult<AtendimentoTaticoDTO> getList();
-	List<AtendimentoRelatorioDTO> getBusca(SalaDTO sala, TurnoDTO turno);
-	ParDTO<List<AtendimentoRelatorioDTO>, List<Integer>> getBusca(CurriculoDTO curriculoDTO, Integer periodo, TurnoDTO turnoDTO, CampusDTO campusDTO);
-	ListLoadResult<ProfessorVirtualDTO> getProfessoresVirtuais(CampusDTO campusDTO);
-	List<AtendimentoOperacionalDTO> getAtendimentosOperacional(ProfessorDTO professorDTO, ProfessorVirtualDTO professorVirtualDTO, TurnoDTO turnoDTO);
-	
+public interface AtendimentosService extends RemoteService
+{
+	PagingLoadResult< AtendimentoTaticoDTO > getList();
+
+	List< AtendimentoRelatorioDTO> getBusca( SalaDTO sala, TurnoDTO turno );
+
+	ParDTO< List< AtendimentoRelatorioDTO >, List< Integer > > getBusca(
+		CurriculoDTO curriculoDTO, Integer periodo, TurnoDTO turnoDTO, CampusDTO campusDTO );
+
+	ListLoadResult< ProfessorVirtualDTO > getProfessoresVirtuais( CampusDTO campusDTO );
+
+	List< AtendimentoOperacionalDTO > getAtendimentosOperacional(
+		ProfessorDTO professorDTO, ProfessorVirtualDTO professorVirtualDTO, TurnoDTO turnoDTO );
+
+	ParDTO< List< AtendimentoRelatorioDTO >, List< Integer > > getBusca(
+		CurriculoDTO curriculoDTO, Integer periodo, TurnoDTO turnoDTO,
+		CampusDTO campusDTO, CursoDTO cursoDTO );
 }

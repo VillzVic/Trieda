@@ -29,21 +29,22 @@ public class HorarioDisponivelSalaFormView extends MyComposite implements Horari
 		this.horariosDisponiveis = horariosDisponiveis;
 		initUI();
 		createGrid();
-		// TODO
-//		initComponent(simpleModal);
 	}
 	
-	private void initUI() {
+	private void initUI()
+	{
 		simpleModal = new SimpleModal("Disponibilidade da Sala (" + salaDTO.getCodigo() + ")", Resources.DEFAULTS.sala16());
 		simpleModal.setHeight(500);
 		simpleModal.setWidth(600);
 	}
 
-	private void createGrid() {
+	private void createGrid()
+	{
 		contentPanel = new ContentPanel(new FitLayout());
 		contentPanel.setHeaderVisible(false);
 		contentPanel.setBodyBorder(false);
-	    gridPanel = new SemanaLetivaDoCenarioGrid<HorarioDisponivelCenarioDTO>(horariosDisponiveis,HorarioDisponivelCenarioDTO.PROPERTY_ID);
+	    gridPanel = new SemanaLetivaDoCenarioGrid<HorarioDisponivelCenarioDTO>(
+	    	horariosDisponiveis,HorarioDisponivelCenarioDTO.PROPERTY_ID);
 	    contentPanel.add(gridPanel);
 		simpleModal.setContent(contentPanel);
 	}

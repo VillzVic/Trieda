@@ -40,45 +40,33 @@ import com.google.gwt.user.client.ui.Widget;
 import com.googlecode.future.FutureResult;
 import com.googlecode.future.FutureSynchronizer;
 
-public class ProfessoresPresenter implements Presenter {
-
-	public interface Display extends ITriedaI18nGateway {
+public class ProfessoresPresenter implements Presenter
+{
+	public interface Display extends ITriedaI18nGateway
+	{
 		Button getNewButton();
-
 		Button getEditButton();
-
 		Button getRemoveButton();
-
 		Button getImportExcelButton();
-
 		Button getExportExcelButton();
-
-		TextField<String> getCpfBuscaTextField();
-
+		TextField< String > getCpfBuscaTextField();
 		TipoContratoComboBox getTipoContratoBuscaComboBox();
-
 		TitulacaoComboBox getTitulacaoBuscaComboBox();
-
 		AreaTitulacaoComboBox getAreaTitulacaoBuscaComboBox();
-
 		Button getSubmitBuscaButton();
-
 		Button getResetBuscaButton();
-
 		Button getDisponibilidadeButton();
-
-		SimpleGrid<ProfessorDTO> getGrid();
-
+		SimpleGrid< ProfessorDTO > getGrid();
 		Component getComponent();
-
-		void setProxy(RpcProxy<PagingLoadResult<ProfessorDTO>> proxy);
+		void setProxy( RpcProxy< PagingLoadResult< ProfessorDTO > > proxy );
 	}
 
 	private CenarioDTO cenario;
 	private Display display;
 	private GTab gTab;
 
-	public ProfessoresPresenter(CenarioDTO cenario, Display display) {
+	public ProfessoresPresenter( CenarioDTO cenario, Display display )
+	{
 		this.cenario = cenario;
 		this.display = display;
 		configureProxy();

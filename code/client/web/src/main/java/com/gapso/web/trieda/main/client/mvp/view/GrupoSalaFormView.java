@@ -38,11 +38,10 @@ public class GrupoSalaFormView extends MyComposite implements GrupoSalaFormPrese
 		this.campusDTO = campusDTO;
 		this.cenarioDTO = cenarioDTO;
 		initUI();
-		// TODO
-//		initComponent(simpleModal);
 	}
 	
-	private void initUI() {
+	private void initUI()
+	{
 		String title = !isEdited()? "Inserção de Grupo de Sala" : "Edição de Grupo de Sala";
 		simpleModal = new SimpleModal(title, Resources.DEFAULTS.sala16());
 		simpleModal.setHeight(190);
@@ -51,11 +50,13 @@ public class GrupoSalaFormView extends MyComposite implements GrupoSalaFormPrese
 		simpleModal.setContent(formPanel);
 	}
 
-	private boolean isEdited() {
-		return grupoSalaDTO.getId() != null;
+	private boolean isEdited()
+	{
+		return ( grupoSalaDTO.getId() != null );
 	}
 	
-	private void createForm() {
+	private void createForm()
+	{
 		FormData formData = new FormData("-20");
 		formPanel = new FormPanel();
 		formPanel.setHeaderVisible(false);

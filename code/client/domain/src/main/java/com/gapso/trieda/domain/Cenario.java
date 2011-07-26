@@ -290,20 +290,26 @@ public class Cenario implements Serializable {
 		return entityManager().find(Cenario.class, id);
 	}
 
-	public static Cenario findMasterData() {
+	public static Cenario findMasterData()
+	{
 		Query q = entityManager().createQuery(
-				"SELECT o FROM Cenario o WHERE o.masterData = :masterData");
-		q.setParameter("masterData", true);
+			"SELECT o FROM Cenario o WHERE o.masterData = :masterData" );
+
+		q.setParameter( "masterData", true );
 		Cenario cenario = null;
-		try {
+
+		try
+		{
 			cenario = (Cenario) q.getSingleResult();
-		} catch (EmptyResultDataAccessException e) {
 		}
+		catch ( EmptyResultDataAccessException e ) { }
+
 		return cenario;
 	}
 
-	public static List<Cenario> find(int firstResult, int maxResults) {
-		return find(firstResult, maxResults, null);
+	public static List< Cenario > find( int firstResult, int maxResults )
+	{
+		return find( firstResult, maxResults, null );
 	}
 
 	@SuppressWarnings("unchecked")

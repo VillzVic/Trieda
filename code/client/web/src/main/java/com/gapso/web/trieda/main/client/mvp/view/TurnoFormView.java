@@ -20,27 +20,27 @@ public class TurnoFormView extends MyComposite implements TurnoFormPresenter.Dis
 	private NumberField tempoTF;
 	private TurnoDTO turnoDTO;
 	
-	public TurnoFormView(TurnoDTO turnoDTO) {
+	public TurnoFormView( TurnoDTO turnoDTO )
+	{
 		this.turnoDTO = turnoDTO;
 		initUI();
-		// TODO
-//		initComponent(simpleModal);
-//		setParent(null);
 	}
 	
-	private void initUI() {
-		String title = (turnoDTO.getId() == null)? "Inserção de Turno" : "Edição de Turno";
-		simpleModal = new SimpleModal(title, Resources.DEFAULTS.turno16());
-		simpleModal.setHeight(138);
+	private void initUI()
+	{
+		String title = ( ( turnoDTO.getId() == null )? "Inserção de Turno" : "Edição de Turno" );
+		simpleModal = new SimpleModal( title, Resources.DEFAULTS.turno16() );
+		simpleModal.setHeight( 138 );
 		createForm();
-		simpleModal.setContent(formPanel);
+		simpleModal.setContent( formPanel );
 	}
 
-	private void createForm() {
+	private void createForm()
+	{
 		FormData formData = new FormData("-20");
 		formPanel = new FormPanel();
 		formPanel.setHeaderVisible(false);
-		
+
 		nomeTF = new TextField<String>();
 		nomeTF.setName(TurnoDTO.PROPERTY_NOME);
 		nomeTF.setValue(turnoDTO.getNome());
@@ -50,7 +50,7 @@ public class TurnoFormView extends MyComposite implements TurnoFormPresenter.Dis
 		nomeTF.setMaxLength(50);
 		nomeTF.setEmptyText("Preencha o nome");
 		formPanel.add(nomeTF, formData);
-		
+
 		tempoTF = new NumberField();
 		tempoTF.setName(TurnoDTO.PROPERTY_TEMPO);
 		tempoTF.setValue(turnoDTO.getTempo());
@@ -62,41 +62,45 @@ public class TurnoFormView extends MyComposite implements TurnoFormPresenter.Dis
 		tempoTF.setMaxValue(1000);
 		tempoTF.setEmptyText("Preencha a duração de aula do turno");
 		formPanel.add(tempoTF, formData);
-		
+
 		FormButtonBinding binding = new FormButtonBinding(formPanel);
 		binding.addButton(simpleModal.getSalvarBt());
-		
+
 		simpleModal.setFocusWidget(nomeTF);
 	}
-	
-	public boolean isValid() {
+
+	public boolean isValid()
+	{
 		return formPanel.isValid();
 	}
-	
+
 	@Override
-	public Button getSalvarButton() {
+	public Button getSalvarButton()
+	{
 		return simpleModal.getSalvarBt();
 	}
 
 	@Override
-	public TextField<String> getNomeTextField() {
+	public TextField<String> getNomeTextField()
+	{
 		return nomeTF;
 	}
-	
+
 	@Override
-	public SimpleModal getSimpleModal() {
+	public SimpleModal getSimpleModal()
+	{
 		return simpleModal;
 	}
 
 	@Override
-	public NumberField getTempoTextField() {
+	public NumberField getTempoTextField()
+	{
 		return tempoTF;
 	}
 
 	@Override
-	public TurnoDTO getTurnoDTO() {
+	public TurnoDTO getTurnoDTO()
+	{
 		return turnoDTO;
 	}
-	
-
 }

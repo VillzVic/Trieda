@@ -136,13 +136,15 @@ public class Services {
 		return service;
 	}
 
-	public static CurriculosServiceAsync curriculos() {
-		CurriculosServiceAsync service = (CurriculosServiceAsync) Registry
-				.get(CURRICULOS);
-		if (service == null) {
-			service = GWT.create(CurriculosService.class);
-			Registry.register(CURRICULOS, service);
+	public static CurriculosServiceAsync curriculos()
+	{
+		CurriculosServiceAsync service = (CurriculosServiceAsync) Registry.get( CURRICULOS );
+		if ( service == null )
+		{
+			service = GWT.create( CurriculosService.class );
+			Registry.register( CURRICULOS, service );
 		}
+
 		return service;
 	}
 
@@ -196,13 +198,15 @@ public class Services {
 		return service;
 	}
 
-	public static AtendimentosServiceAsync atendimentos() {
-		AtendimentosServiceAsync service = (AtendimentosServiceAsync) Registry
-				.get(ATENDIMENTOS);
-		if (service == null) {
-			service = GWT.create(AtendimentosService.class);
-			Registry.register(ATENDIMENTOS, service);
+	public static AtendimentosServiceAsync atendimentos()
+	{
+		AtendimentosServiceAsync service = (AtendimentosServiceAsync) Registry.get(ATENDIMENTOS);
+		if ( service == null )
+		{
+			service = GWT.create( AtendimentosService.class );
+			Registry.register( ATENDIMENTOS, service );
 		}
+
 		return service;
 	}
 

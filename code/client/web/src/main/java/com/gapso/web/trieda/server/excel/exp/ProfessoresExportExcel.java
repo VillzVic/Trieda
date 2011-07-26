@@ -17,7 +17,10 @@ public class ProfessoresExportExcel extends AbstractExportExcel
 {
 	enum ExcelCellStyleReference
 	{
-		TEXT(6, 2), NUMBER_DOUBLE(6, 10), NUMBER_INT(6, 5);
+		TEXT( 6, 2 ),
+		NUMBER_DOUBLE( 6, 10 ),
+		NUMBER_INT( 6, 5 );
+
 		private int row;
 		private int col;
 
@@ -44,18 +47,13 @@ public class ProfessoresExportExcel extends AbstractExportExcel
 	private int initialRow;
 
 	public ProfessoresExportExcel( Cenario cenario,
-			TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages )
+		TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages )
 	{
-		super( cenario, i18nConstants, i18nMessages );
-
-		this.cellStyles = new HSSFCellStyle[ ExcelCellStyleReference.values().length ];
-		this.removeUnusedSheets = true;
-		this.sheetName = ExcelInformationType.PROFESSORES.getSheetName();
-		this.initialRow = 6;
+		this( true, cenario, i18nConstants, i18nMessages );
 	}
 
 	public ProfessoresExportExcel( boolean removeUnusedSheets, Cenario cenario,
-			TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages )
+		TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages )
 	{
 		super( cenario, i18nConstants, i18nMessages );
 

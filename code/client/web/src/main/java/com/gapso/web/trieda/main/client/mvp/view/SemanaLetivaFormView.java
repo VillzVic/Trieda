@@ -32,24 +32,23 @@ public class SemanaLetivaFormView extends MyComposite implements SemanaLetivaFor
 		this.semanaLetivaDTO = semanaLetivaDTO;
 		this.cenarioDTO = cenarioDTO;
 		initUI();
-		// TODO
-//		initComponent(simpleModal);
-//		setParent(null);
 	}
 	
-	private void initUI() {
-		String title = (semanaLetivaDTO.getId() == null)? "Inserção de Semana Letiva" : "Edição de Semana Letiva";
-		simpleModal = new SimpleModal(title, Resources.DEFAULTS.semanaLetiva16());
-		simpleModal.setHeight(158);
+	private void initUI()
+	{
+		String title = ( ( semanaLetivaDTO.getId() == null )? "Inserção de Semana Letiva" : "Edição de Semana Letiva" );
+		simpleModal = new SimpleModal( title, Resources.DEFAULTS.semanaLetiva16() );
+		simpleModal.setHeight( 158 );
 		createForm();
-		simpleModal.setContent(formPanel);
+		simpleModal.setContent( formPanel );
 	}
 
-	private void createForm() {
+	private void createForm()
+	{
 		FormData formData = new FormData("-20");
 		formPanel = new FormPanel();
 		formPanel.setHeaderVisible(false);
-		
+
 		codigoTF = new UniqueTextField(cenarioDTO, UniqueDomain.SEMANA_LETIVA);
 		codigoTF.setName(SemanaLetivaDTO.PROPERTY_CODIGO);
 		codigoTF.setValue(semanaLetivaDTO.getCodigo());
@@ -59,7 +58,7 @@ public class SemanaLetivaFormView extends MyComposite implements SemanaLetivaFor
 		codigoTF.setMaxLength(20);
 		codigoTF.setEmptyText("Preencha o código");
 		formPanel.add(codigoTF, formData);
-		
+
 		descricaoTF = new TextField<String>();
 		descricaoTF.setName(SemanaLetivaDTO.PROPERTY_DESCRICAO);
 		descricaoTF.setValue(semanaLetivaDTO.getDescricao());
@@ -68,52 +67,57 @@ public class SemanaLetivaFormView extends MyComposite implements SemanaLetivaFor
 		descricaoTF.setMaxLength(50);
 		descricaoTF.setEmptyText("Preencha uma descrição");
 		formPanel.add(descricaoTF, formData);
-		
+
 		oficialCB = new CheckBox();
 		oficialCB.setName(SemanaLetivaDTO.PROPERTY_OFICIAL);
 		oficialCB.setValue(semanaLetivaDTO.getOficial());
 		oficialCB.setFieldLabel("Oficial?");
 		formPanel.add(oficialCB, formData);
-		
+
 		FormButtonBinding binding = new FormButtonBinding(formPanel);
 		binding.addButton(simpleModal.getSalvarBt());
-		
+
 		simpleModal.setFocusWidget(codigoTF);
 	}
-	
-	public boolean isValid() {
+
+	public boolean isValid()
+	{
 		return formPanel.isValid();
 	}
-	
+
 	@Override
-	public Button getSalvarButton() {
+	public Button getSalvarButton()
+	{
 		return simpleModal.getSalvarBt();
 	}
 
 	@Override
-	public TextField<String> getCodigoTextField() {
+	public TextField< String > getCodigoTextField()
+	{
 		return codigoTF;
 	}
-	
+
 	@Override
-	public SimpleModal getSimpleModal() {
+	public SimpleModal getSimpleModal()
+	{
 		return simpleModal;
 	}
 
 	@Override
-	public TextField<String> getDescricaoTextField() {
+	public TextField< String > getDescricaoTextField()
+	{
 		return descricaoTF;
 	}
 
 	@Override
-	public SemanaLetivaDTO getSemanaLetivaDTO() {
+	public SemanaLetivaDTO getSemanaLetivaDTO()
+	{
 		return semanaLetivaDTO;
 	}
 
 	@Override
-	public CheckBox getOficialCheckBox() {
+	public CheckBox getOficialCheckBox()
+	{
 		return oficialCB;
 	}
-	
-
 }

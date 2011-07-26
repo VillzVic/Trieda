@@ -41,17 +41,18 @@ public class HorarioDisponivelCenarioFormView extends MyComposite implements Hor
 		this.semanaLetivaDTO = semanaLetivaDTO;
 		initUI();
 		createGrid();
-		// TODO
-//		initComponent(simpleModal);
 	}
-	
-	private void initUI() {
-		simpleModal = new SimpleModal("Dias e Horários de Aula", Resources.DEFAULTS.semanaLetiva16());
+
+	private void initUI()
+	{
+		simpleModal = new SimpleModal(
+			"Dias e Horários de Aula", Resources.DEFAULTS.semanaLetiva16() );
 		simpleModal.setHeight(500);
 		simpleModal.setWidth(600);
 	}
 
-	private void createGrid() {
+	private void createGrid()
+	{
 		gridPanel = new SemanaLetivaGrid<HorarioDisponivelCenarioDTO>();
 		gridPanel.setBodyStyle("background-color: #FFFFFF;");
 		

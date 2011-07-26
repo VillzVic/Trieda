@@ -32,8 +32,8 @@ import org.springframework.transaction.annotation.Transactional;
 @RooToString
 @RooEntity(identifierColumn = "ATP_ID")
 @Table(name = "ATENDIMENTO_OPERACIONAL")
-public class AtendimentoOperacional implements Serializable {
-
+public class AtendimentoOperacional implements Serializable
+{
 	private static final long serialVersionUID = -1061352455612316076L;
 
 	@NotNull
@@ -328,20 +328,27 @@ public class AtendimentoOperacional implements Serializable {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public static List<AtendimentoOperacional> findAllBy(Campus campus,
-			Turno turno) {
-		Query q = entityManager()
-				.createQuery(
-						"SELECT o FROM AtendimentoOperacional o WHERE o.oferta.campus = :campus AND o.oferta.turno = :turno");
-		q.setParameter("campus", campus);
-		q.setParameter("turno", turno);
+	public static List< AtendimentoOperacional > findAllBy(
+		Campus campus, Turno turno )
+	{
+		Query q = entityManager().createQuery(
+			"SELECT o FROM AtendimentoOperacional o " +
+			"WHERE o.oferta.campus = :campus AND o.oferta.turno = :turno" );
+
+		q.setParameter( "campus", campus );
+		q.setParameter( "turno", turno );
+
 		return q.getResultList();
 	}
 
-	public static AtendimentoOperacional find(Long id) {
-		if (id == null)
+	public static AtendimentoOperacional find( Long id )
+	{
+		if ( id == null )
+		{
 			return null;
-		return entityManager().find(AtendimentoOperacional.class, id);
+		}
+
+		return entityManager().find( AtendimentoOperacional.class, id );
 	}
 
 	@SuppressWarnings("unchecked")
@@ -349,7 +356,8 @@ public class AtendimentoOperacional implements Serializable {
 		Sala sala, Turno turno )
 	{
 		Query q = entityManager().createQuery(
-						"SELECT o FROM AtendimentoOperacional o WHERE o.sala = :sala AND o.oferta.turno = :turno" );
+			"SELECT o FROM AtendimentoOperacional o " +
+			"WHERE o.sala = :sala AND o.oferta.turno = :turno" );
 
 		q.setParameter( "sala", sala );
 		q.setParameter( "turno", turno );
@@ -363,12 +371,35 @@ public class AtendimentoOperacional implements Serializable {
 		Query q = entityManager().createQuery(
 			"SELECT o FROM AtendimentoOperacional o WHERE o.oferta.curriculo = :curriculo "
 			+ "AND o.oferta.campus = :campus AND o.oferta.turno = :turno AND o.disciplina "
-			+ "IN (SELECT d.disciplina FROM CurriculoDisciplina d WHERE d.curriculo = :curriculo AND d.periodo = :periodo)" );
+			+ "IN (SELECT d.disciplina FROM CurriculoDisciplina d "
+			+ "WHERE d.curriculo = :curriculo AND d.periodo = :periodo)" );
 
-		q.setParameter("campus", campus);
-		q.setParameter("curriculo", curriculo);
-		q.setParameter("periodo", periodo);
-		q.setParameter("turno", turno);
+		q.setParameter( "campus", campus );
+		q.setParameter( "curriculo", curriculo );
+		q.setParameter( "periodo", periodo );
+		q.setParameter( "turno", turno );
+
+		return q.getResultList();
+	}
+
+	@SuppressWarnings("unchecked")
+	public static List< AtendimentoOperacional > findBy(
+		Campus campus, Curriculo curriculo, Integer periodo, Turno turno, Curso curso )
+	{
+		Query q = entityManager().createQuery(
+			"SELECT o FROM AtendimentoOperacional o WHERE o.oferta.curriculo = :curriculo "
+			+ "AND o.oferta.campus = :campus "
+			+ "AND o.oferta.curso = :curso "
+			+ "AND o.oferta.turno = :turno "
+			+ "AND o.disciplina IN (SELECT d.disciplina FROM CurriculoDisciplina d " +
+									"WHERE d.curriculo = :curriculo AND d.periodo = :periodo)" );
+
+		q.setParameter( "campus", campus );
+		q.setParameter( "curriculo", curriculo );
+		q.setParameter( "periodo", periodo );
+		q.setParameter( "turno", turno );
+		q.setParameter( "curso", curso );
+
 		return q.getResultList();
 	}
 
@@ -405,10 +436,13 @@ public class AtendimentoOperacional implements Serializable {
 		HorarioDisponivelCenario = horarioDisponivelCenario;
 	}
 
-	public Professor getProfessor() {
-		if (professor == null) {
+	public Professor getProfessor()
+	{
+		if ( professor == null )
+		{
 			return new Professor();
 		}
+
 		return professor;
 	}
 
@@ -466,3 +500,4 @@ public class AtendimentoOperacional implements Serializable {
 				+ getCreditoTeorico();
 	}
 }
+	

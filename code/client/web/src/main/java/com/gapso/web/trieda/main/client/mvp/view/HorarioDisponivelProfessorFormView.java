@@ -29,21 +29,22 @@ public class HorarioDisponivelProfessorFormView extends MyComposite implements H
 		this.horariosDisponiveisProfessor = horariosDisponiveisProfessor;
 		initUI();
 		createGrid();
-		// TODO
-//		initComponent(simpleModal);
 	}
 	
-	private void initUI() {
+	private void initUI()
+	{
 		simpleModal = new SimpleModal("Disponibilidade de Professor (" + professorDTO.getCpf() + ")", Resources.DEFAULTS.professor16());
 		simpleModal.setHeight(500);
 		simpleModal.setWidth(600);
 	}
 
-	private void createGrid() {
+	private void createGrid()
+	{
 		contentPanel = new ContentPanel(new FitLayout());
 		contentPanel.setHeaderVisible(false);
 		contentPanel.setBodyBorder(false);
-	    gridPanel = new SemanaLetivaDoCenarioGrid<HorarioDisponivelCenarioDTO>(horariosDisponiveisProfessor,HorarioDisponivelCenarioDTO.PROPERTY_ID);
+	    gridPanel = new SemanaLetivaDoCenarioGrid<HorarioDisponivelCenarioDTO>(
+	    	horariosDisponiveisProfessor,HorarioDisponivelCenarioDTO.PROPERTY_ID);
 	    contentPanel.add(gridPanel);
 		simpleModal.setContent(contentPanel);
 	}

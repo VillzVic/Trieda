@@ -150,115 +150,117 @@ public class CampiPresenter implements Presenter {
 		display.getImportExcelButton().addSelectionListener(
 				new SelectionListener<ButtonEvent>() {
 					@Override
-					public void componentSelected(ButtonEvent ce) {
+					public void componentSelected( ButtonEvent ce )
+					{
 						ImportExcelFormView importExcelFormView = new ImportExcelFormView(
-								ExcelInformationType.CAMPI, display.getGrid());
+								ExcelInformationType.CAMPI, display.getGrid() );
+
 						importExcelFormView.show();
 					}
 				});
 		display.getExportExcelButton().addSelectionListener(
 				new SelectionListener<ButtonEvent>() {
 					@Override
-					public void componentSelected(ButtonEvent ce) {
+					public void componentSelected( ButtonEvent ce )
+					{
 						ExportExcelFormSubmit e = new ExportExcelFormSubmit(
-								ExcelInformationType.CAMPI, display
-										.getI18nConstants(), display
-										.getI18nMessages());
+							ExcelInformationType.CAMPI,
+								display.getI18nConstants(),
+								display.getI18nMessages() );
+
 						e.submit();
 					}
 				});
 		display.getUnidadeDeslocamentosButton().addSelectionListener(
 				new SelectionListener<ButtonEvent>() {
 					@Override
-					public void componentSelected(ButtonEvent ce) {
-
-						// TODO ESTE CODIGO CODIGO NÂO PERTENCE AQUI, DEVE FICAR
-						// NO UNIDADES DESLOCAMENTO
-						// QUANDO EU COLOCO LA, ELE BUGA O HEADER DA TABELA
+					public void componentSelected( ButtonEvent ce )
+					{
 						UnidadesServiceAsync service = Services.unidades();
 						final CampusDTO campusDTO = display.getGrid().getGrid()
 								.getSelectionModel().getSelectedItem();
-						service.getDeslocamento(
-								campusDTO,
-								new AbstractAsyncCallbackWithDefaultOnFailure<List<DeslocamentoUnidadeDTO>>(
-										display) {
-									@Override
-									public void onSuccess(
-											List<DeslocamentoUnidadeDTO> result) {
-										Presenter presenter = new UnidadesDeslocamentoPresenter(
-												new UnidadesDeslocamentoView(
-														campusDTO, result));
-										presenter.go(gTab);
-									}
-								});
+						service.getDeslocamento( campusDTO,
+							new AbstractAsyncCallbackWithDefaultOnFailure< List< DeslocamentoUnidadeDTO > >( display )
+							{
+								@Override
+								public void onSuccess(
+									List<DeslocamentoUnidadeDTO> result )
+								{
+									Presenter presenter = new UnidadesDeslocamentoPresenter(
+										new UnidadesDeslocamentoView( campusDTO, result ) );
 
+									presenter.go( gTab );
+								}
+							});
 					}
 				});
 		display.getDisponibilidadeButton().addSelectionListener(
-				new SelectionListener<ButtonEvent>() {
-					@Override
-					public void componentSelected(ButtonEvent ce) {
-						SemanaLetivaDTO semanaLetivaDTO = new SemanaLetivaDTO();
-						semanaLetivaDTO.setId(cenario.getSemanaLetivaId());
+			new SelectionListener< ButtonEvent >()
+			{
+				@Override
+				public void componentSelected( ButtonEvent ce )
+				{
+					SemanaLetivaDTO semanaLetivaDTO = new SemanaLetivaDTO();
+					semanaLetivaDTO.setId( cenario.getSemanaLetivaId() );
 
-						final CampusDTO campusDTO = display.getGrid().getGrid()
-								.getSelectionModel().getSelectedItem();
-						Services.campi()
-								.getHorariosDisponiveis(
-										campusDTO,
-										semanaLetivaDTO,
-										new AsyncCallback<PagingLoadResult<HorarioDisponivelCenarioDTO>>() {
-											@Override
-											public void onFailure(
-													Throwable caught) {
-												MessageBox.alert("ERRO!",
-														"Deu falha na conexão",
-														null);
-											}
+					final CampusDTO campusDTO
+						= display.getGrid().getGrid().getSelectionModel().getSelectedItem();
 
-											@Override
-											public void onSuccess(
-													PagingLoadResult<HorarioDisponivelCenarioDTO> result) {
-												SemanaLetivaDTO semanaLetiva = new SemanaLetivaDTO();
-												semanaLetiva.setId(cenario
-														.getSemanaLetivaId());
-												Presenter presenter = new HorarioDisponivelCampusFormPresenter(
-														cenario,
-														semanaLetiva,
-														new HorarioDisponivelCampusFormView(
-																campusDTO,
-																result.getData()));
-												presenter.go(null);
-											}
-										});
+					Services.campi().getHorariosDisponiveis( campusDTO, semanaLetivaDTO,
+						new AsyncCallback<PagingLoadResult<HorarioDisponivelCenarioDTO>>()
+						{
+							@Override
+							public void onFailure( Throwable caught )
+							{
+								MessageBox.alert( "ERRO!", "Deu falha na conexão", null );
+							}
 
-					}
-				});
+							@Override
+							public void onSuccess(
+								PagingLoadResult< HorarioDisponivelCenarioDTO > result )
+							{
+								SemanaLetivaDTO semanaLetiva = new SemanaLetivaDTO();
+								semanaLetiva.setId( cenario.getSemanaLetivaId() );
+
+								Presenter presenter = new HorarioDisponivelCampusFormPresenter(
+									cenario, semanaLetiva,
+									new HorarioDisponivelCampusFormView( campusDTO, result.getData() ) );
+
+								presenter.go( null );
+							}
+						});
+				}
+			});
 		display.getResetBuscaButton().addSelectionListener(
-				new SelectionListener<ButtonEvent>() {
-					@Override
-					public void componentSelected(ButtonEvent ce) {
-						display.getNomeBuscaTextField().setValue(null);
-						display.getCodigoBuscaTextField().setValue(null);
-						display.getEstadoBuscaComboBox().setValueField(null);
-						display.getMunicipioBuscaTextField().setValue(null);
-						display.getBairroBuscaTextField().setValue(null);
-						display.getGrid().updateList();
-					}
-				});
+			new SelectionListener< ButtonEvent >()
+			{
+				@Override
+				public void componentSelected( ButtonEvent ce )
+				{
+					display.getNomeBuscaTextField().setValue( null );
+					display.getCodigoBuscaTextField().setValue( null );
+					display.getEstadoBuscaComboBox().setValueField( null );
+					display.getMunicipioBuscaTextField().setValue( null );
+					display.getBairroBuscaTextField().setValue( null );
+
+					display.getGrid().updateList();
+				}
+			});
 		display.getSubmitBuscaButton().addSelectionListener(
-				new SelectionListener<ButtonEvent>() {
-					@Override
-					public void componentSelected(ButtonEvent ce) {
-						display.getGrid().updateList();
-					}
-				});
+			new SelectionListener< ButtonEvent >()
+			{
+				@Override
+				public void componentSelected( ButtonEvent ce )
+				{
+					display.getGrid().updateList();
+				}
+			});
 	}
 
 	@Override
-	public void go(Widget widget) {
+	public void go( Widget widget )
+	{
 		gTab = (GTab) widget;
-		gTab.add((GTabItem) display.getComponent());
+		gTab.add( (GTabItem) display.getComponent() );
 	}
-
 }

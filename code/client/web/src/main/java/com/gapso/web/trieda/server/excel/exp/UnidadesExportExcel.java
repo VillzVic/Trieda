@@ -77,19 +77,19 @@ public class UnidadesExportExcel extends AbstractExportExcel {
 			HSSFSheet sheet = workbook.getSheet(this.sheetName);
 			fillInCellStyles(sheet);
 			int nextRow = this.initialRow;
-			for (Unidade u : unidades) {
-				nextRow = writeData(u,nextRow,sheet);
+			for ( Unidade u : unidades )
+			{
+				nextRow = writeData( u, nextRow, sheet );
 			}
-			
-			//autoSizeColumns((short)1,(short)3,sheet); TODO: rever autoSize pois atualmente o algoritmo do poi interfere na largura do logo
-			
+
 			return true;
 		}
-		
+
 		return false;
 	}
-	
-	private int writeData(Unidade unidade, int row, HSSFSheet sheet) {
+
+	private int writeData( Unidade unidade, int row, HSSFSheet sheet )
+	{
 		// Codigo
 		setCell(row,2,sheet,cellStyles[ExcelCellStyleReference.TEXT.ordinal()],unidade.getCodigo());
 		// Nome

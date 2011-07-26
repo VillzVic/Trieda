@@ -36,12 +36,10 @@ public class OfertaFormView extends MyComposite implements OfertaFormPresenter.D
 		this.campusDTO = campusDTO;
 		this.curriculoDTO = curriculoDTO;
 		initUI();
-		// TODO
-//		initComponent(simpleModal);
-//		setParent(null);
 	}
 	
-	private void initUI() {
+	private void initUI()
+	{
 		String title = (ofertaDTO.getId() == null)? "Inserção de Oferta de Curso em Campus" : "Edição de de Oferta de Curso em Campus";
 		simpleModal = new SimpleModal(title, Resources.DEFAULTS.matrizCurricular16());
 		simpleModal.setHeight(200);
@@ -49,7 +47,8 @@ public class OfertaFormView extends MyComposite implements OfertaFormPresenter.D
 		simpleModal.setContent(formPanel);
 	}
 
-	private void createForm() {
+	private void createForm()
+	{
 		FormData formData = new FormData("-20");
 		formPanel = new FormPanel();
 		formPanel.setHeaderVisible(false);

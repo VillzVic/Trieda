@@ -9,6 +9,7 @@ import com.gapso.web.trieda.shared.dtos.AtendimentoRelatorioDTO;
 import com.gapso.web.trieda.shared.dtos.AtendimentoTaticoDTO;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.CurriculoDTO;
+import com.gapso.web.trieda.shared.dtos.CursoDTO;
 import com.gapso.web.trieda.shared.dtos.ParDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorVirtualDTO;
@@ -26,9 +27,13 @@ public interface AtendimentosServiceAsync
 	void getAtendimentosOperacional( ProfessorDTO professorDTO, ProfessorVirtualDTO professorVirtualDTO,
 		TurnoDTO turnoDTO, AsyncCallback< List< AtendimentoOperacionalDTO > > callback );
 
-	void getBusca( CurriculoDTO curriculoDTO, Integer periodo, TurnoDTO turnoDTO,
-		CampusDTO campusDTO, AsyncCallback< ParDTO< List< AtendimentoRelatorioDTO >, List< Integer > > > callback );
+	void getBusca( CurriculoDTO curriculoDTO, Integer periodo, TurnoDTO turnoDTO, CampusDTO campusDTO,
+		AsyncCallback< ParDTO< List< AtendimentoRelatorioDTO >, List< Integer > > > callback );
 
 	void getProfessoresVirtuais( CampusDTO campusDTO,
 		AsyncCallback< ListLoadResult< ProfessorVirtualDTO > > callback );
+
+	void getBusca( CurriculoDTO curriculoDTO, Integer periodo,
+		TurnoDTO turnoDTO, CampusDTO campusDTO, CursoDTO cursoDTO,
+		AsyncCallback< ParDTO< List< AtendimentoRelatorioDTO >, List< Integer > > > callback );
 }
