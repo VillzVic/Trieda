@@ -8,10 +8,10 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
 import com.gapso.trieda.domain.Cenario;
 import com.gapso.trieda.domain.Professor;
+import com.gapso.trieda.domain.ProfessorDisciplina;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nMessages;
-import com.gapso.web.trieda.shared.util.TriedaUtil;
 
 public class ProfessoresExportExcel extends AbstractExportExcel
 {
@@ -105,6 +105,24 @@ public class ProfessoresExportExcel extends AbstractExportExcel
 		return false;
 	}
 
+	private Double getNotaDesempenho( Professor p )
+	{
+		if ( p == null || p.getDisciplinas() == null
+				|| p.getDisciplinas().size() <= 0 )
+		{
+			return 0.0;
+		}
+
+		Double average = 0.0;
+		for ( ProfessorDisciplina pd : p.getDisciplinas() )
+		{
+			average += pd.getNota();
+		}
+
+		average /= p.getDisciplinas().size();
+		return average;
+	}
+	
 	// CPF | Nome | Tipo | Carga Horária Máx. | Carga Horária Min. |
 	// Titulação | Área de Titulação | Carga Horária Anterior | Crédito (R$)
 	private int writeData( Professor professor, int row, HSSFSheet sheet )
@@ -136,7 +154,7 @@ public class ProfessoresExportExcel extends AbstractExportExcel
 
 		// Titulação
 		setCell( row, 7, sheet,
-				 cellStyles[ExcelCellStyleReference.TEXT.ordinal()],
+				 cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ],
 				 professor.getTitulacao().getNome() );
 
 		// Área de Titulação
@@ -150,8 +168,7 @@ public class ProfessoresExportExcel extends AbstractExportExcel
 		 */
 		// Nota de Desempenho
 		setCell( row, 9, sheet,
-				 cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ],
-				 TriedaUtil.getNotaDesempenhoProfessor( professor ) );
+				 cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ], this.getNotaDesempenho( professor ) );
 
 		// Carga Horária Anterior
 		setCell( row, 10, sheet,

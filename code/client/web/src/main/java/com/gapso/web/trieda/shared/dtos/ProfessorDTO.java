@@ -3,8 +3,9 @@ package com.gapso.web.trieda.shared.dtos;
 import com.gapso.web.trieda.shared.util.TriedaCurrency;
 import com.gapso.web.trieda.shared.util.TriedaUtil;
 
-public class ProfessorDTO extends AbstractDTO<String> implements
-		Comparable<ProfessorDTO> {
+public class ProfessorDTO extends AbstractDTO< String >
+	implements Comparable< ProfessorDTO >
+{
 	private static final long serialVersionUID = 5815525344760896272L;
 
 	// Propriedades
@@ -25,8 +26,7 @@ public class ProfessorDTO extends AbstractDTO<String> implements
 	public static final String PROPERTY_CREDITO_ANTERIOR = "creditoAnterior";
 	public static final String PROPERTY_VALOR_CREDITO = "valorCredito";
 
-	public ProfessorDTO() {
-	}
+	public ProfessorDTO() { }
 
 	public void setId(Long value) {
 		set(PROPERTY_ID, value);

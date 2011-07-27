@@ -87,10 +87,13 @@ import com.gapso.web.trieda.shared.dtos.UsuarioDTO;
 import com.gapso.web.trieda.shared.util.TriedaCurrency;
 import com.gapso.web.trieda.shared.util.TriedaUtil;
 
-public class ConvertBeans {
+public class ConvertBeans
+{
 	// USUÁRIO
-	public static Usuario toUsuario(UsuarioDTO dto) {
+	public static Usuario toUsuario( UsuarioDTO dto )
+	{
 		Usuario domain = new Usuario();
+
 		domain.setVersion(dto.getVersion());
 		domain.setNome(dto.getNome());
 		domain.setEmail(dto.getEmail());
@@ -98,6 +101,7 @@ public class ConvertBeans {
 		domain.setPassword(dto.getPassword());
 		domain.setEnabled(dto.getEnabled());
 		domain.setProfessor(Professor.find(dto.getProfessorId()));
+
 		return domain;
 	}
 
@@ -1319,94 +1323,130 @@ public class ConvertBeans {
 	}
 
 	// DIVISÃO DE CREDITO
-	public static DivisaoCredito toDivisaoCredito(DivisaoCreditoDTO dto) {
+	public static DivisaoCredito toDivisaoCredito( DivisaoCreditoDTO dto )
+	{
 		DivisaoCredito domain = new DivisaoCredito();
-		domain.setId(dto.getId());
-		domain.setVersion(dto.getVersion());
-		if (dto.getDisciplinaId() == null) {
-			domain.getCenario().add(Cenario.find(dto.getCenarioId()));
-		} else {
-			domain.setDisciplina(Disciplina.find(dto.getDisciplinaId()));
+		domain.setId( dto.getId() );
+		domain.setVersion( dto.getVersion() );
+
+		if ( dto.getDisciplinaId() == null )
+		{
+			domain.getCenario().add( Cenario.find( dto.getCenarioId() ) );
 		}
-		domain.setCreditos(dto.getDia1() + dto.getDia2() + dto.getDia3()
-				+ dto.getDia4() + dto.getDia5() + dto.getDia6() + dto.getDia7());
-		domain.setDia1(dto.getDia1());
-		domain.setDia2(dto.getDia2());
-		domain.setDia3(dto.getDia3());
-		domain.setDia4(dto.getDia4());
-		domain.setDia5(dto.getDia5());
-		domain.setDia6(dto.getDia6());
-		domain.setDia7(dto.getDia7());
+		else
+		{
+			domain.setDisciplina( Disciplina.find( dto.getDisciplinaId() ) );
+		}
+
+		domain.setCreditos( dto.getDia1() + dto.getDia2() + dto.getDia3()
+			+ dto.getDia4() + dto.getDia5() + dto.getDia6() + dto.getDia7());
+		domain.setDia1( dto.getDia1() );
+		domain.setDia2( dto.getDia2() );
+		domain.setDia3( dto.getDia3() );
+		domain.setDia4( dto.getDia4() );
+		domain.setDia5( dto.getDia5() );
+		domain.setDia6( dto.getDia6() );
+		domain.setDia7( dto.getDia7() );
+
 		return domain;
 	}
 
-	public static DivisaoCreditoDTO toDivisaoCreditoDTO(DivisaoCredito domain) {
+	public static DivisaoCreditoDTO toDivisaoCreditoDTO( DivisaoCredito domain )
+	{
 		DivisaoCreditoDTO dto = new DivisaoCreditoDTO();
-		dto.setId(domain.getId());
-		dto.setVersion(domain.getVersion());
-		if (domain.getCenario().size() > 0) {
-			dto.setCenarioId((new ArrayList<Cenario>(domain.getCenario())).get(
-					0).getId());
+
+		dto.setId( domain.getId() );
+		dto.setVersion( domain.getVersion() );
+		if ( domain.getCenario().size() > 0 )
+		{
+			dto.setCenarioId( ( new ArrayList< Cenario >( domain.getCenario() ) ).get( 0 ).getId() );
 		}
+
 		Disciplina disciplina = domain.getDisciplina();
-		if (disciplina != null) {
-			dto.setDisciplinaId(disciplina.getId());
-			dto.setDisciplinaString(disciplina.getCodigo() + " ("
-					+ disciplina.getNome() + ")");
+		if ( disciplina != null )
+		{
+			dto.setDisciplinaId( disciplina.getId() );
+			dto.setDisciplinaString(
+				disciplina.getCodigo() + " (" + disciplina.getNome() + ")" );
 		}
-		dto.setDia1(domain.getDia1());
-		dto.setDia2(domain.getDia2());
-		dto.setDia3(domain.getDia3());
-		dto.setDia4(domain.getDia4());
-		dto.setDia5(domain.getDia5());
-		dto.setDia6(domain.getDia6());
-		dto.setDia7(domain.getDia7());
-		dto.setTotalCreditos(dto.getDia1() + dto.getDia2() + dto.getDia3()
-				+ dto.getDia4() + dto.getDia5() + dto.getDia6() + dto.getDia7());
+
+		dto.setDia1( domain.getDia1() );
+		dto.setDia2( domain.getDia2() );
+		dto.setDia3( domain.getDia3() );
+		dto.setDia4( domain.getDia4() );
+		dto.setDia5( domain.getDia5() );
+		dto.setDia6( domain.getDia6() );
+		dto.setDia7( domain.getDia7() );
+		dto.setTotalCreditos( dto.getDia1() + dto.getDia2() + dto.getDia3()
+				+ dto.getDia4() + dto.getDia5() + dto.getDia6() + dto.getDia7() );
+
 		return dto;
 	}
 
 	// PROFESSOR
-	public static Professor toProfessor(ProfessorDTO dto) {
+	public static Professor toProfessor( ProfessorDTO dto )
+	{
 		Professor domain = new Professor();
-		domain.setId(dto.getId());
-		domain.setVersion(dto.getVersion());
-		domain.setCenario(Cenario.find(dto.getCenarioId()));
-		domain.setNome(dto.getNome());
-		domain.setCpf(dto.getCpf());
-		domain.setTipoContrato(TipoContrato.find(dto.getTipoContratoId()));
-		domain.setCargaHorariaMax(dto.getCargaHorariaMax());
-		domain.setCargaHorariaMin(dto.getCargaHorariaMin());
-		domain.setTitulacao(Titulacao.find(dto.getTitulacaoId()));
-		domain.setAreaTitulacao(AreaTitulacao.find(dto.getAreaTitulacaoId()));
-		domain.setCreditoAnterior(dto.getCreditoAnterior());
-		domain.setValorCredito(dto.getValorCredito().getDoubleValue());
+
+		domain.setId( dto.getId() );
+		domain.setVersion( dto.getVersion() );
+		domain.setCenario(Cenario.find( dto.getCenarioId() ) );
+		domain.setNome( dto.getNome() );
+		domain.setCpf( dto.getCpf() );
+		domain.setTipoContrato( TipoContrato.find( dto.getTipoContratoId() ) );
+		domain.setCargaHorariaMax( dto.getCargaHorariaMax() );
+		domain.setCargaHorariaMin( dto.getCargaHorariaMin() );
+		domain.setTitulacao( Titulacao.find( dto.getTitulacaoId() ) );
+		domain.setAreaTitulacao( AreaTitulacao.find( dto.getAreaTitulacaoId() ) );
+		domain.setCreditoAnterior( dto.getCreditoAnterior() );
+		domain.setValorCredito( dto.getValorCredito().getDoubleValue() );
+
 		return domain;
 	}
 
-	public static ProfessorDTO toProfessorDTO(Professor domain) {
+	public static ProfessorDTO toProfessorDTO( Professor domain )
+	{
 		ProfessorDTO dto = new ProfessorDTO();
-		dto.setId(domain.getId());
-		dto.setVersion(domain.getVersion());
-		dto.setCenarioId(domain.getCenario().getId());
-		dto.setNome(domain.getNome());
-		dto.setCpf(domain.getCpf());
-		dto.setTipoContratoId(domain.getTipoContrato().getId());
-		dto.setTipoContratoString(domain.getTipoContrato().getNome());
-		dto.setCargaHorariaMax(domain.getCargaHorariaMax());
-		dto.setCargaHorariaMin(domain.getCargaHorariaMin());
-		dto.setTitulacaoId(domain.getTitulacao().getId());
-		dto.setTitulacaoString(domain.getTitulacao().getNome());
-		dto.setAreaTitulacaoId(domain.getAreaTitulacao().getId());
-		dto.setAreaTitulacaoString(domain.getAreaTitulacao().getCodigo());
-		dto.setCreditoAnterior(domain.getCreditoAnterior());
-		dto.setNotaDesempenho( TriedaUtil.getNotaDesempenhoProfessor(domain).intValue() );
+
+		dto.setId( domain.getId() );
+		dto.setVersion( domain.getVersion() );
+		dto.setCenarioId( domain.getCenario().getId() );
+		dto.setNome( domain.getNome() );
+		dto.setCpf( domain.getCpf() );
+		dto.setTipoContratoId( domain.getTipoContrato().getId() );
+		dto.setTipoContratoString( domain.getTipoContrato().getNome() );
+		dto.setCargaHorariaMax( domain.getCargaHorariaMax() );
+		dto.setCargaHorariaMin( domain.getCargaHorariaMin() );
+		dto.setTitulacaoId( domain.getTitulacao().getId() );
+		dto.setTitulacaoString( domain.getTitulacao().getNome() );
+		dto.setAreaTitulacaoId( domain.getAreaTitulacao().getId() );
+		dto.setAreaTitulacaoString( domain.getAreaTitulacao().getCodigo() );
+		dto.setCreditoAnterior( domain.getCreditoAnterior() );
 		dto.setValorCredito( TriedaUtil.parseTriedaCurrency( domain.getValorCredito() ) );
-		dto.setDisplayText(domain.getNome() + " (" + domain.getCpf() + ")");
+		dto.setDisplayText( domain.getNome() + " (" + domain.getCpf() + ")" );
+		dto.setNotaDesempenho( ConvertBeans.getNotaDesempenho( domain ).intValue() );
 
 		return dto;
 	}
 
+	static private Double getNotaDesempenho( Professor p )
+	{
+		if ( p == null || p.getDisciplinas() == null
+				|| p.getDisciplinas().size() <= 0 )
+		{
+			return 0.0;
+		}
+
+		Double average = 0.0;
+		for ( ProfessorDisciplina pd : p.getDisciplinas() )
+		{
+			average += pd.getNota();
+		}
+
+		average /= p.getDisciplinas().size();
+		return average;
+	}
+	
 	// PROFESSOR-DISCIPLINA
 	public static ProfessorDisciplina toProfessorDisciplina(
 			ProfessorDisciplinaDTO dto) {

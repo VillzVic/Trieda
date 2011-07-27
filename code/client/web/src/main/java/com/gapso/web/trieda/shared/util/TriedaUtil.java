@@ -3,8 +3,6 @@ package com.gapso.web.trieda.shared.util;
 import java.util.Date;
 import java.util.List;
 
-import com.gapso.trieda.domain.Professor;
-import com.gapso.trieda.domain.ProfessorDisciplina;
 import com.google.gwt.user.client.Window.Location;
 
 public class TriedaUtil
@@ -160,29 +158,5 @@ public class TriedaUtil
 
 		TriedaCurrency tc = new TriedaCurrency( d );
 		return tc;
-	}
-
-	static public Double getNotaDesempenhoProfessor( Long idProfessor )
-	{
-		Professor p = Professor.find( idProfessor );
-		return TriedaUtil.getNotaDesempenhoProfessor( p );
-	}
-
-	static public Double getNotaDesempenhoProfessor( Professor p )
-	{
-		if ( p == null || p.getDisciplinas() == null
-				|| p.getDisciplinas().size() == 0 )
-		{
-			return 0.0;
-		}
-
-		Double sum = 0.0;
-		for ( ProfessorDisciplina pd : p.getDisciplinas() )
-		{
-			sum += pd.getNota();
-		}
-
-		Double average = sum / p.getDisciplinas().size();
-		return average;
 	}
 }

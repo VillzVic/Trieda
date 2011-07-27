@@ -44,7 +44,7 @@ public class ProfessorFormPresenter
 		SimpleModal getSimpleModal();
 	}
 
-	private SimpleGrid<ProfessorDTO> gridPanel;
+	private SimpleGrid< ProfessorDTO > gridPanel;
 	private Display display;
 	private CenarioDTO cenario;
 
@@ -54,7 +54,7 @@ public class ProfessorFormPresenter
 	}
 
 	public ProfessorFormPresenter( CenarioDTO cenario, Display display,
-		SimpleGrid<ProfessorDTO> gridPanel )
+		SimpleGrid< ProfessorDTO > gridPanel )
 	{
 		this.gridPanel = gridPanel;
 		this.display = display;
@@ -112,27 +112,26 @@ public class ProfessorFormPresenter
 	{
 		ProfessorDTO professorDTO = display.getProfessorDTO();
 
-		professorDTO.setCpf(display.getCpfTextField().getValue());
-		professorDTO.setNome(display.getNomeTextField().getValue());
+		professorDTO.setCpf( display.getCpfTextField().getValue() );
+		professorDTO.setNome( display.getNomeTextField().getValue() );
 
 		TipoContratoDTO tipoContratoDTO = display.getTipoContratoComboBox().getValue();
-		professorDTO.setTipoContratoId(tipoContratoDTO.getId());
-		professorDTO.setTipoContratoString(tipoContratoDTO.getNome());
-		professorDTO.setCargaHorariaMax(display.getCargaHorariaMaxNumberField().getValue().intValue());
-		professorDTO.setCargaHorariaMin(display.getCargaHorariaMinNumberField().getValue().intValue());
+		professorDTO.setTipoContratoId( tipoContratoDTO.getId() );
+		professorDTO.setTipoContratoString( tipoContratoDTO.getNome() );
+		professorDTO.setCargaHorariaMax( display.getCargaHorariaMaxNumberField().getValue().intValue() );
+		professorDTO.setCargaHorariaMin( display.getCargaHorariaMinNumberField().getValue().intValue() );
 
 		TitulacaoDTO titulacaoDTO = display.getTitulacaoComboBox().getValue();
-		professorDTO.setTitulacaoId(titulacaoDTO.getId());
-		professorDTO.setTitulacaoString(titulacaoDTO.getNome());
+		professorDTO.setTitulacaoId( titulacaoDTO.getId() );
+		professorDTO.setTitulacaoString( titulacaoDTO.getNome() );
 
 		AreaTitulacaoDTO areaTitulacaoDTO = display.getAreaTitulacaoComboBox().getValue();
-		professorDTO.setAreaTitulacaoId(areaTitulacaoDTO.getId());
-		professorDTO.setAreaTitulacaoString(areaTitulacaoDTO.getCodigo());
-		professorDTO.setCreditoAnterior(display.getCreditoAnteriorNumberField().getValue().intValue());
-		professorDTO.setNotaDesempenho( TriedaUtil.getNotaDesempenhoProfessor(professorDTO.getId()).intValue() );
+		professorDTO.setAreaTitulacaoId( areaTitulacaoDTO.getId() );
+		professorDTO.setAreaTitulacaoString( areaTitulacaoDTO.getCodigo() );
+		professorDTO.setCreditoAnterior( display.getCreditoAnteriorNumberField().getValue().intValue() );
 		professorDTO.setValorCredito( TriedaUtil.parseTriedaCurrency(
 			display.getValorCreditoNumberField().getValue().doubleValue() ) );
-		professorDTO.setCenarioId(cenario.getId());
+		professorDTO.setCenarioId( cenario.getId() );
 
 		return professorDTO;
 	}
