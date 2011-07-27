@@ -322,7 +322,7 @@ public class AtendimentoOperacionalDTO extends AbstractDTO< String >
 		setPeriodoString( getPeriodoString() + " / " + other.getPeriodoString() );
 		setQuantidadeAlunosString( getQuantidadeAlunosString() + " / " + other.getQuantidadeAlunosString() );
 		setQuantidadeAlunos( getQuantidadeAlunos() + other.getQuantidadeAlunos() );
-		setTotalLinhas( getTotalLinhas() + other.getTotalLinhas() );  // TODO
+		setTotalLinhas( getTotalLinhas() + other.getTotalLinhas() );
 	}
 
 	public void concatenateVisaoCurso( AtendimentoOperacionalDTO other )
@@ -416,7 +416,7 @@ public class AtendimentoOperacionalDTO extends AbstractDTO< String >
 		+ "Turma: " + getTurma() + "\n"
 		+ "Horario: " + getHorarioString() + "\n"
 		+ "Credito(s) " + ( ( getCreditoTeoricoBoolean() ) ? "Teorico(s)" : "Pratico(s)" )
-		+ ": " + getTotalLinhas() + " de " + getTotalCreditos() + "\n" // TODO
+		+ ": " + getTotalLinhas() + " de " + getTotalCreditos() + "\n"
 		+ "Curso: " + getCursoNome() + "\n"
 		+ "Matriz Curricular: " + getCurriculoString() + "\n"
 		+ "Periodo: " + getPeriodoString() + "\n" 

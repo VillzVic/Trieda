@@ -5,7 +5,6 @@ import java.util.List;
 
 import com.gapso.trieda.domain.Professor;
 import com.gapso.trieda.domain.ProfessorDisciplina;
-import com.gapso.web.trieda.main.client.TriedaCurrency;
 import com.google.gwt.user.client.Window.Location;
 
 public class TriedaUtil

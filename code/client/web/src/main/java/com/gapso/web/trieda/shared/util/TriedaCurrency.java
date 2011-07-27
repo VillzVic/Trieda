@@ -1,4 +1,4 @@
-package com.gapso.web.trieda.main.client;
+package com.gapso.web.trieda.shared.util;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 

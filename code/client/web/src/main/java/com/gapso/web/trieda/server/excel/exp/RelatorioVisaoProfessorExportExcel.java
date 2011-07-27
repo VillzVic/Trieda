@@ -343,7 +343,7 @@ public class RelatorioVisaoProfessorExportExcel
 					atendimento.getExcelContentVisaoProfessor(), atendimento.getExcelCommentVisaoProfessor() );
 
 				// Une células de acordo com a quantidade de créditos
-				mergeCells( row, ( row + atendimento.getTotalLinhas() - 1 ), col, col, sheet, style ); // TODO
+				mergeCells( row, ( row + atendimento.getTotalLinhas() - 1 ), col, col, sheet, style );
 
 				row += atendimento.getTotalLinhas();
 			}

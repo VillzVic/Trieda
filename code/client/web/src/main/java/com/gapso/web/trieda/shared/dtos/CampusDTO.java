@@ -1,6 +1,6 @@
 package com.gapso.web.trieda.shared.dtos;
 
-import com.gapso.web.trieda.main.client.TriedaCurrency;
+import com.gapso.web.trieda.shared.util.TriedaCurrency;
 import com.gapso.web.trieda.shared.util.TriedaUtil;
 
 public class CampusDTO extends AbstractDTO< String > implements Comparable< CampusDTO >
