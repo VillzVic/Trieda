@@ -528,5 +528,22 @@ public class AtendimentoOperacional implements Serializable
 				+ getDisciplina().getId() + "-" + getTurma() + "-"
 				+ getCreditoTeorico();
 	}
+
+	static public List< AtendimentoOperacional > getAtendimentosOperacional(
+		boolean isAdmin, Professor professor, ProfessorVirtual professorVirtual, Turno turno )
+	{
+		List< AtendimentoOperacional > atendimentosOperacional = null;
+		if ( professor != null )
+		{
+			atendimentosOperacional = AtendimentoOperacional
+				.findAllPublicadoBy( professor, turno, isAdmin );
+		}
+		else if ( professorVirtual != null )
+		{
+			atendimentosOperacional = AtendimentoOperacional
+				.findAllPublicadoBy( professorVirtual, turno, isAdmin );
+		}
+
+		return atendimentosOperacional;
+	}
 }
-	
