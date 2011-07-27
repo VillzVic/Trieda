@@ -6,33 +6,43 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import com.gapso.trieda.domain.Usuario;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
-public class RemoteService extends RemoteServiceServlet {
-
+public class RemoteService
+	extends RemoteServiceServlet
+{
 	private static final long serialVersionUID = 5939530994258762775L;
 
-	protected Usuario getUsuario() {
+	protected Usuario getUsuario()
+	{
 		SecurityContext context = SecurityContextHolder.getContext();
 		String username = context.getAuthentication().getName();
-		return Usuario.find(username);
+		return Usuario.find( username );
 	}
-	
-	protected boolean isProfessor() {
-		return getUsuario().getProfessor() != null;
+
+	protected boolean isProfessor()
+	{
+		return ( getUsuario().getProfessor() != null );
 	}
-	protected void onlyProfessor() {
-		if(!isProfessor()) {
-			throw new RuntimeException("Permissão negada, usuário \""+getUsuario().getUsername()+"\" não é de Professor");
+
+	protected void onlyProfessor()
+	{
+		if ( !isProfessor() )
+		{
+			throw new RuntimeException(
+				"Permissão negada, usuário \"" + getUsuario().getUsername() + "\" não é de Professor" );
 		}
 	}
-	
-	protected boolean isAdministrador() {
-		return getUsuario().getProfessor() == null;
+
+	protected boolean isAdministrador()
+	{
+		return ( getUsuario().getProfessor() == null );
 	}
-	protected void onlyAdministrador() {
-		if(!isAdministrador()) {
-			throw new RuntimeException("Permissão negada, usuário \""+getUsuario().getUsername()+"\" não é de Administrador");
+
+	protected void onlyAdministrador()
+	{
+		if ( !isAdministrador() )
+		{
+			throw new RuntimeException(
+				"Permissão negada, usuário \"" + getUsuario().getUsername() + "\" não é de Administrador" );
 		}
 	}
-	
-	
 }

@@ -29,6 +29,117 @@ public class ExportExcelServlet extends HttpServlet
 		i18nMessages = new GTriedaI18nMessages();
 	}
 
+
+
+	@Override
+	protected void doGet( HttpServletRequest request, HttpServletResponse response )
+		throws ServletException, IOException
+	{
+		cenario = Cenario.findMasterData();
+
+		// Obtém os parâmetros
+		String informationToBeExported = request.getParameter(
+				ExcelInformationType.getInformationParameterName() );
+
+		if ( !informationToBeExported.isEmpty() )
+		{
+			ExportExcelFilter filter = null;
+			if ( informationToBeExported.equals(
+				ExcelInformationType.RELATORIO_VISAO_CURSO.toString() ) )
+			{
+				filter = verificaParametrosVisaoCurso( request );
+			}
+			else if ( informationToBeExported.equals(
+				ExcelInformationType.RELATORIO_VISAO_SALA.toString() ) )
+			{
+				filter = verificaParametrosVisaoSala( request );
+			}
+			else if ( informationToBeExported.equals(
+				ExcelInformationType.RELATORIO_VISAO_PROFESSOR.toString() ) )
+			{
+				filter = verificaParametrosVisaoProfessor( request );
+			}
+
+			// Get Excel Data
+			IExportExcel exporter = ExportExcelFactory.createExporter(
+				informationToBeExported, cenario, i18nConstants, i18nMessages, filter );
+
+			HSSFWorkbook workbook = exporter.export();
+
+			if ( exporter.getErrors().isEmpty() )
+			{
+				// Write data on response output stream
+				writeExcelToHttpResponse( exporter.getFileName(), workbook, response );
+			}
+			else
+			{
+				response.setContentType( "text/html" );
+				for ( String msg : exporter.getWarnings() )
+				{
+					response.getWriter().println(
+						ExcelInformationType.prefixWarning() + msg );
+				}
+
+				for ( String msg : exporter.getErrors() )
+				{
+					response.getWriter().println(
+						ExcelInformationType.prefixError() + msg );
+				}
+
+				response.getWriter().flush();
+			}
+		}
+	}
+
+	private void writeExcelToHttpResponse( String excelFileName,
+		HSSFWorkbook excel, HttpServletResponse response ) throws IOException
+	{
+		response.setContentType( "application/vnd.ms-excel" );  
+		response.setHeader( "Content-disposition", "attachment; filename=" + excelFileName + ".xls" );
+
+		ServletOutputStream out = null;
+		try
+		{
+			out = response.getOutputStream();
+			excel.write( out );
+			out.flush();
+		}
+		catch ( IOException e )
+		{
+			throw e;
+		}
+		finally
+		{
+			if ( out != null )
+			{
+		        out.close();
+			}
+		}
+	}
+
+	private RelatorioVisaoProfessorFiltroExcel verificaParametrosVisaoProfessor( HttpServletRequest request )
+	{
+		Long campusId = null;
+		Long turnoId = null;
+		Long professorId = null;
+		Long professorVirtualId = null;
+
+		try
+		{
+			campusId = Long.parseLong( request.getParameter( "campusId" ) );
+			turnoId = Long.parseLong( request.getParameter( "turnoId" ) );
+			professorId = Long.parseLong( request.getParameter( "professorId" ) );
+			professorVirtualId = Long.parseLong( request.getParameter( "professorVirtualId" ) );
+
+		}
+		catch( Exception ex ) { return null; }
+
+		RelatorioVisaoProfessorFiltroExcel filtro = new RelatorioVisaoProfessorFiltroExcel(
+			campusId, turnoId, professorId, professorVirtualId );
+
+		return filtro;
+	}
+
 	private RelatorioVisaoCursoFiltroExcel verificaParametrosVisaoCurso( HttpServletRequest request )
 	{
 		Long cursoId = null;
@@ -73,87 +184,5 @@ public class ExportExcelServlet extends HttpServlet
 			campusId, unidadeId, salaId, turnoId );
 
 		return filtro;
-	}
-
-	@Override
-	protected void doGet( HttpServletRequest request, HttpServletResponse response )
-		throws ServletException, IOException
-	{
-		cenario = Cenario.findMasterData();
-
-		// Obtém os parâmetros
-		String informationToBeExported = request.getParameter(
-				ExcelInformationType.getInformationParameterName() );
-
-		if ( !informationToBeExported.isEmpty() )
-		{
-			ExportExcelFilter filter = null;
-			if ( informationToBeExported.equals(
-				ExcelInformationType.RELATORIO_VISAO_CURSO.toString() ) )
-			{
-				filter = verificaParametrosVisaoCurso( request );
-			}
-			else if ( informationToBeExported.equals(
-				ExcelInformationType.RELATORIO_VISAO_SALA.toString() ) )
-			{
-				filter = verificaParametrosVisaoSala( request );
-			}
-
-			// Get Excel Data
-			IExportExcel exporter = ExportExcelFactory.createExporter(
-				informationToBeExported, cenario, i18nConstants, i18nMessages, filter );
-
-			HSSFWorkbook workbook = exporter.export();
-
-			if ( exporter.getErrors().isEmpty() )
-			{
-				// Write data on response output stream
-				writeExcelToHttpResponse( exporter.getFileName(), workbook, response );
-			}
-			else
-			{
-				response.setContentType( "text/html" );
-				for ( String msg : exporter.getWarnings() )
-				{
-					response.getWriter().println(
-						ExcelInformationType.prefixWarning() + msg );
-				}
-
-				for ( String msg : exporter.getErrors() )
-				{
-					response.getWriter().println(
-						ExcelInformationType.prefixError() + msg );
-				}
-
-				response.getWriter().flush();
-			}
-		}
-	}
-
-	private void writeExcelToHttpResponse( String excelFileName,
-			HSSFWorkbook excel, HttpServletResponse response )
-		throws IOException
-	{
-		response.setContentType( "application/vnd.ms-excel" );  
-		response.setHeader( "Content-disposition", "attachment; filename=" + excelFileName + ".xls" );
-
-		ServletOutputStream out = null;
-		try
-		{
-			out = response.getOutputStream();
-			excel.write( out );
-			out.flush();
-		}
-		catch ( IOException e )
-		{
-			throw e;
-		}
-		finally
-		{
-			if ( out != null )
-			{
-		        out.close();
-			}
-		}
 	}
 }

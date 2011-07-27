@@ -45,131 +45,130 @@ public class AtendimentoOperacionalDTO extends AbstractDTO< String >
 	public static final String PROPERTY_TURMA = "turma";
 	public static final String PROPERTY_QUANTIDADE_ALUNOS = "quantidadeAlunos";
 	public static final String PROPERTY_QUANTIDADE_ALUNOS_STRING = "quantidadeAlunosString";
-	
+
 	private Integer totalLinhas = 1;
-	
-	public AtendimentoOperacionalDTO() {
-	}
-	
+
+	public AtendimentoOperacionalDTO() { }
+
 	public void setId(Long value) {
 		set(PROPERTY_ID, value);
 	}
 	public Long getId() {
 		return get(PROPERTY_ID);
 	}
-	
+
 	public void setVersion(Integer value) {
 		set(PROPERTY_VERSION, value);
 	}
 	public Integer getVersion() {
 		return get(PROPERTY_VERSION);
 	}
-	
+
 	public void setCenarioId(Long value) {
 		set(PROPERTY_CENARIO_ID, value);
 	}
 	public Long getCenarioId() {
 		return get(PROPERTY_CENARIO_ID);
 	}
-	
+
 	public void setCampusId(Long value) {
 		set(PROPERTY_CAMPUS_ID, value);
 	}
 	public Long getCampusId() {
 		return get(PROPERTY_CAMPUS_ID);
 	}
-	
+
 	public String getCampusString() {
 		return get(PROPERTY_CAMPUS_STRING);
 	}
 	public void setCampusString(String value) {
 		set(PROPERTY_CAMPUS_STRING, value);
 	}
-	
+
 	public void setUnidadeId(Long value) {
 		set(PROPERTY_UNIDADE_ID, value);
 	}
 	public Long getUnidadeId() {
 		return get(PROPERTY_UNIDADE_ID);
 	}
-	
+
 	public String getUnidadeString() {
 		return get(PROPERTY_UNIDADE_STRING);
 	}
 	public void setUnidadeString(String value) {
 		set(PROPERTY_UNIDADE_STRING, value);
 	}
-	
+
 	public void setSalaId(Long value) {
 		set(PROPERTY_SALA_ID, value);
 	}
 	public Long getSalaId() {
 		return get(PROPERTY_SALA_ID);
 	}
-	
+
 	public String getSalaString() {
 		return get(PROPERTY_SALA_STRING);
 	}
 	public void setSalaString(String value) {
 		set(PROPERTY_SALA_STRING, value);
 	}
-	
+
 	public void setTurnoId(Long value) {
 		set(PROPERTY_TURNO_ID, value);
 	}
 	public Long getTurnoId() {
 		return get(PROPERTY_TURNO_ID);
 	}
-	
+
 	public void setTurnoString(String value) {
 		set(PROPERTY_TURNO_STRING, value);
 	}
 	public String getTurnoString() {
 		return get(PROPERTY_TURNO_STRING);
 	}
-	
+
 	public void setHorarioId(Long value) {
 		set(PROPERTY_HORARIO_ID, value);
 	}
 	public Long getHorarioId() {
 		return get(PROPERTY_HORARIO_ID);
 	}
-	
+
 	public void setHorarioString(String value) {
 		set(PROPERTY_HORARIO_STRING, value);
 	}
 	public String getHorarioString() {
 		return get(PROPERTY_HORARIO_STRING);
 	}
-	
+
 	public void setProfessorId(Long value) {
 		set(PROPERTY_PROFESSOR_ID, value);
 	}
 	public Long getProfessorId() {
 		return get(PROPERTY_PROFESSOR_ID);
 	}
-	
+
 	public void setProfessorString(String value) {
 		set(PROPERTY_PROFESSOR_STRING, value);
 	}
 	public String getProfessorString() {
 		return get(PROPERTY_PROFESSOR_STRING);
 	}
-	
+
 	public void setProfessorVirtualId(Long value) {
 		set(PROPERTY_PROFESSOR_VIRTUAL_ID, value);
 	}
 	public Long getProfessorVirtualId() {
 		return get(PROPERTY_PROFESSOR_VIRTUAL_ID);
 	}
-	
+
 	public void setProfessorVirtualString(String value) {
 		set(PROPERTY_PROFESSOR_VIRTUAL_STRING, value);
 	}
 	public String getProfessorVirtualString() {
 		return get(PROPERTY_PROFESSOR_VIRTUAL_STRING);
 	}
-	
+
 	public void setCreditoTeoricoBoolean(Boolean value) {
 		set(PROPERTY_CREDITO_TEORICO_BOOLEAN, value);
 	}
@@ -183,84 +182,84 @@ public class AtendimentoOperacionalDTO extends AbstractDTO< String >
 	public Integer getSemana() {
 		return get(PROPERTY_DIA_SEMANA);
 	}
-	
+
 	public void setCursoString(String value) {
 		set(PROPERTY_CURSO_STRING, value);
 	}
 	public String getCursoString() {
 		return get(PROPERTY_CURSO_STRING);
 	}
-	
+
 	public void setCursoNome(String value) {
 		set(PROPERTY_CURSO_NOME, value);
 	}
 	public String getCursoNome() {
 		return get(PROPERTY_CURSO_NOME);
 	}
-	
+
 	public void setCursoId(Long value) {
 		set(PROPERTY_CURSO_ID, value);
 	}
 	public Long getCursoId() {
 		return get(PROPERTY_CURSO_ID);
 	}
-	
+
 	public void setCurricularId(Long value) {
 		set(PROPERTY_CURRICULO_ID, value);
 	}
 	public Long getCurriculoId() {
 		return get(PROPERTY_CURRICULO_ID);
 	}
-	
+
 	public void setCurricularString(String value) {
 		set(PROPERTY_CURRICULO_STRING, value);
 	}
 	public String getCurriculoString() {
 		return get(PROPERTY_CURRICULO_STRING);
 	}
-	
+
 	public void setPeriodo(Integer value) {
 		set(PROPERTY_PERIODO, value);
 	}
 	public Integer getPeriodo() {
 		return get(PROPERTY_PERIODO);
 	}
-	
+
 	public void setPeriodoString(String value) {
 		set(PROPERTY_PERIODO_STRING, value);
 	}
 	public String getPeriodoString() {
 		return get(PROPERTY_PERIODO_STRING);
 	}
-	
+
 	public void setDisciplinaId(Long value) {
 		set(PROPERTY_DISCIPLINA_ID, value);
 	}
 	public Long getDisciplinaId() {
 		return get(PROPERTY_DISCIPLINA_ID);
 	}
-	
+
 	public String getDisciplinaString() {
 		return get(PROPERTY_DISCIPLINA_STRING);
 	}
 	public void setDisciplinaString(String value) {
 		set(PROPERTY_DISCIPLINA_STRING, value);
 	}
-	
+
 	public String getDisciplinaNome() {
 		return get(PROPERTY_DISCIPLINA_NOME);
 	}
 	public void setDisciplinaNome(String value) {
 		set(PROPERTY_DISCIPLINA_NOME, value);
 	}
-	
+
 	public void setTotalCreditos(Integer value) {
 		set(PROPERTY_TOTAL_CRETIDOS, value);
 	}
 	public Integer getTotalCreditos() {
 		return get(PROPERTY_TOTAL_CRETIDOS);
 	}
-	
+
 	public void setTotalCreditoDisciplina(Integer value) {
 		set(PROPERTY_TOTAL_CRETIDOS_DISCIPLINA, value);
 	}
@@ -268,50 +267,62 @@ public class AtendimentoOperacionalDTO extends AbstractDTO< String >
 	public Integer getTotalCreditoDisciplina() {
 		return get(PROPERTY_TOTAL_CRETIDOS_DISCIPLINA);
 	}	
-	
+
 	public void setOfertaId(Long value) {
 		set(PROPERTY_OFERTA_ID, value);
 	}
 	public Long getOfertaId() {
 		return get(PROPERTY_OFERTA_ID);
 	}
-	
+
 	public String getTurma() {
 		return get(PROPERTY_TURMA);
 	}
 	public void setTurma(String value) {
 		set(PROPERTY_TURMA, value);
 	}
-	
+
 	public void setQuantidadeAlunos(Integer value) {
 		set(PROPERTY_QUANTIDADE_ALUNOS, value);
 	}
 	public Integer getQuantidadeAlunos() {
 		return get(PROPERTY_QUANTIDADE_ALUNOS);
 	}
-	
+
 	public void setQuantidadeAlunosString(String value) {
 		set(PROPERTY_QUANTIDADE_ALUNOS_STRING, value);
 	}
 	public String getQuantidadeAlunosString() {
 		return get(PROPERTY_QUANTIDADE_ALUNOS_STRING);
 	}
-	
-	public Integer getTotalLinhas() {
+
+	public Integer getTotalLinhas()
+	{
 		return totalLinhas;
 	}
-	
-	public void setTotalLinhas(Integer value) {
+
+	public void setTotalLinhas( Integer value )
+	{
 		this.totalLinhas = value;
 	}
-	
+
 	public void concatenateVisaoSala( AtendimentoRelatorioDTO other )
 	{
-		setCursoNome(getCursoNome() + " / " + other.getCursoNome());
-		setCurricularString(getCurriculoString() + " / " + other.getCurriculoString());
-		setPeriodoString(getPeriodoString() + " / " + other.getPeriodoString());
-		setQuantidadeAlunosString(getQuantidadeAlunosString() + " / " + other.getQuantidadeAlunosString());
-		setQuantidadeAlunos(getQuantidadeAlunos() + other.getQuantidadeAlunos());
+		setCursoNome( getCursoNome() + " / " + other.getCursoNome() );
+		setCurricularString( getCurriculoString() + " / " + other.getCurriculoString() );
+		setPeriodoString( getPeriodoString() + " / " + other.getPeriodoString() );
+		setQuantidadeAlunosString( getQuantidadeAlunosString() + " / " + other.getQuantidadeAlunosString() );
+		setQuantidadeAlunos( getQuantidadeAlunos() + other.getQuantidadeAlunos() );
+	}
+
+	public void concatenateVisaoProfessor( AtendimentoOperacionalDTO other )
+	{
+		setCursoNome( getCursoNome() + " / " + other.getCursoNome() );
+		setCurricularString( getCurriculoString() + " / " + other.getCurriculoString() );
+		setPeriodoString( getPeriodoString() + " / " + other.getPeriodoString() );
+		setQuantidadeAlunosString( getQuantidadeAlunosString() + " / " + other.getQuantidadeAlunosString() );
+		setQuantidadeAlunos( getQuantidadeAlunos() + other.getQuantidadeAlunos() );
+		setTotalLinhas( getTotalLinhas() + other.getTotalLinhas() );  // TODO
 	}
 
 	public void concatenateVisaoCurso( AtendimentoOperacionalDTO other )
@@ -345,7 +356,7 @@ public class AtendimentoOperacionalDTO extends AbstractDTO< String >
 		}
 
 		return "<b>Turma:</b> " + getTurma() + "<br />"
-			+ "<b>Crédito(s) " + ( ( getCreditoTeoricoBoolean() )? "Teórico(s)" : "Prático(s)" ) + ":</b> "
+			+ "<b>Crédito(s) " + ( ( getCreditoTeoricoBoolean() ) ? "Teórico(s)" : "Prático(s)" ) + ":</b> "
 			+ getTotalCreditos() + " de " + getTotalCreditoDisciplina() + "<br />"
 			+ "<b>Curso:</b> " + getCursoNome() + "<br />"
 			+ "<b>Matriz Curricular:</b> " + getCurriculoString() + "<br />"
@@ -357,26 +368,31 @@ public class AtendimentoOperacionalDTO extends AbstractDTO< String >
 	public String getContentVisaoProfessor()
 	{
 		return getDisciplinaString() + "<br />"
-		+ TriedaUtil.truncate( getDisciplinaNome(), 12 ) + "<br />"
-		+ "Turma " + getTurma() + "<br />"
-		+ getSalaString();
+			+ TriedaUtil.truncate( getDisciplinaNome(), 12 ) + "<br />"
+			+ "Turma " + getTurma() + "<br />"
+			+ getSalaString();
 	}
 
 	public String getContentToolTipVisaoProfessor()
 	{
 		return "<b>Turma:</b> "+ getTurma() + "<br />"
-			+ "<b>Crédito(s) " + ( (getCreditoTeoricoBoolean() )? "Teórico(s)" : "Prático(s)") + ":</b> "
-			+ getTotalLinhas()+" de "+getTotalCreditos() + "<br />"
-			+ "<b>Curso:</b> " + getCursoNome() +"<br />"
+			+ "<b>Credito(s) " + ( ( getCreditoTeoricoBoolean() )? "Teorico(s)" : "Pratico(s)" ) + ":</b> "
+			+ getTotalLinhas() + " de "+getTotalCreditos() + "<br />"
+			+ "<b>Curso:</b> " + getCursoNome() + "<br />"
 			+ "<b>Matriz Curricular:</b> " + getCurriculoString() + "<br />"
-			+ "<b>Período:</b> "+ getPeriodoString() +"<br />" 
-			+ "<b>Quantidade:</b> "+ getQuantidadeAlunosString() +"<br />"
-			+ "<b>Campus:</b> "+ getCampusString() +"<br />"
-			+ "<b>Unidade:</b> "+ getUnidadeString() +"<br />"
-			+ "<b>Sala:</b> "+ getSalaString() +"<br />";
+			+ "<b>Periodo:</b> " + getPeriodoString() + "<br />" 
+			+ "<b>Quantidade:</b> " + getQuantidadeAlunosString() + "<br />"
+			+ "<b>Campus:</b> " + getCampusString() + "<br />"
+			+ "<b>Unidade:</b> " + getUnidadeString() + "<br />"
+			+ "<b>Sala:</b> " + getSalaString() + "<br />";
 	}
-	
+
 	public String getExcelContentVisaoSala()
+	{
+		return getDisciplinaString() + " / " + getTurma();
+	}
+
+	public String getExcelContentVisaoProfessor()
 	{
 		return getDisciplinaString() + " / " + getTurma();
 	}
@@ -384,29 +400,37 @@ public class AtendimentoOperacionalDTO extends AbstractDTO< String >
 	public String getExcelCommentVisaoSala()
 	{
 		return getDisciplinaNome() + "\n"
-			+ "Turma: "+ getTurma() + "\n"
-			+ "Horário: "+ getHorarioString() + "\n"
-			+ "Crédito(s) " + ( ( getCreditoTeoricoBoolean() )? "Teórico(s)" : "Prático(s)" )
+			+ "Turma: " + getTurma() + "\n"
+			+ "Horario: " + getHorarioString() + "\n"
+			+ "Credito(s) " + ( ( getCreditoTeoricoBoolean() ) ? "Teorico(s)" : "Pratico(s)" )
 			+ ": " + getTotalCreditos() + " de " + getTotalCreditos() + "\n"
 			+ "Curso: " + getCursoNome() + "\n"
 			+ "Matriz Curricular: " + getCurriculoString() + "\n"
-			+ "Período: "+ getPeriodoString() + "\n" 
-			+ "Quantidade: "+ getQuantidadeAlunosString();
+			+ "Periodo: " + getPeriodoString() + "\n"
+			+ "Quantidade: " + getQuantidadeAlunosString();
+	}
+
+	public String getExcelCommentVisaoProfessor()
+	{
+		return getDisciplinaNome() + "\n"
+		+ "Turma: " + getTurma() + "\n"
+		+ "Horario: " + getHorarioString() + "\n"
+		+ "Credito(s) " + ( ( getCreditoTeoricoBoolean() ) ? "Teorico(s)" : "Pratico(s)" )
+		+ ": " + getTotalLinhas() + " de " + getTotalCreditos() + "\n" // TODO
+		+ "Curso: " + getCursoNome() + "\n"
+		+ "Matriz Curricular: " + getCurriculoString() + "\n"
+		+ "Periodo: " + getPeriodoString() + "\n" 
+		+ "Quantidade: " + getQuantidadeAlunosString();
 	}
 
 	@Override
 	public String getNaturalKey()
 	{
-		return getCampusString()
-			+ "-" + getUnidadeString()
-			+ "-" + getSalaString()
-			+ "-" + getSemana()
-			+ "-" + getCursoString()
-			+ "-" + getCurriculoString()
-			+ "-" + getPeriodo()
-			+ "-" + getDisciplinaString()
-			+ "-" + getTurma()
-			+ "-" + getHorarioString();
+		return getCampusString() + "-" + getUnidadeString()
+			+ "-" + getSalaString() + "-" + getSemana()
+			+ "-" + getCursoString() + "-" + getCurriculoString()
+			+ "-" + getPeriodo() + "-" + getDisciplinaString()
+			+ "-" + getTurma() + "-" + getHorarioString();
 	}
 
 	@Override

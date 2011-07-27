@@ -635,34 +635,48 @@ public class AtendimentosServiceImpl extends RemoteService
 	}
 
 	private List<List<AtendimentoTaticoDTO>> agrupaAtendimentosAbordagem1(
-			Entry<Integer, List<AtendimentoTaticoDTO>> entry) {
-		List<List<AtendimentoTaticoDTO>> listListDTO = new ArrayList<List<AtendimentoTaticoDTO>>();
-		for (AtendimentoTaticoDTO currentDTO : entry.getValue()) {
-			if (listListDTO.isEmpty()) {
-				listListDTO.add(new ArrayList<AtendimentoTaticoDTO>());
-				listListDTO.get(0).add(currentDTO);
-			} else {
+		Entry< Integer, List< AtendimentoTaticoDTO > > entry )
+	{
+		List< List< AtendimentoTaticoDTO > > listListDTO
+			= new ArrayList< List< AtendimentoTaticoDTO > >();
+
+		for ( AtendimentoTaticoDTO currentDTO : entry.getValue() )
+		{
+			if ( listListDTO.isEmpty() )
+			{
+				listListDTO.add( new ArrayList< AtendimentoTaticoDTO >() );
+				listListDTO.get( 0 ).add( currentDTO );
+			}
+			else
+			{
 				boolean wasDTOProcessed = false;
-				for (List<AtendimentoTaticoDTO> listDTO : listListDTO) {
+				for ( List< AtendimentoTaticoDTO > listDTO : listListDTO )
+				{
 					boolean wasDTORejected = false;
-					for (AtendimentoTaticoDTO dto : listDTO) {
-						if (!AtendimentoTaticoDTO.compatibleByApproach1(
-								currentDTO, dto)) {
+					for ( AtendimentoTaticoDTO dto : listDTO )
+					{
+						if ( !AtendimentoTaticoDTO.compatibleByApproach1( currentDTO, dto ) )
+						{
 							wasDTORejected = true;
 							break;
 						}
 					}
-					if (!wasDTORejected) {
-						listDTO.add(currentDTO);
+
+					if ( !wasDTORejected )
+					{
+						listDTO.add( currentDTO );
 						wasDTOProcessed = true;
 					}
 				}
-				if (!wasDTOProcessed) {
-					listListDTO.add(new ArrayList<AtendimentoTaticoDTO>());
-					listListDTO.get(listListDTO.size() - 1).add(currentDTO);
+
+				if ( !wasDTOProcessed )
+				{
+					listListDTO.add( new ArrayList< AtendimentoTaticoDTO >() );
+					listListDTO.get( listListDTO.size() - 1 ).add( currentDTO );
 				}
 			}
 		}
+
 		return listListDTO;
 	}
 
@@ -721,27 +735,15 @@ public class AtendimentosServiceImpl extends RemoteService
 			ProfessorDTO professorDTO, ProfessorVirtualDTO professorVirtualDTO,
 			TurnoDTO turnoDTO )
 	{
-		Turno turno = Turno.find( turnoDTO.getId() );
-
-		List< AtendimentoOperacional > atendimentosOperacional = null;
-
 		boolean isAdmin = !isAdministrador();
-		if ( professorDTO != null )
-		{
-			Professor professor = Professor.find( professorDTO.getId() );
+		Turno turno = Turno.find( turnoDTO.getId() );
+		Professor professor = ( professorDTO == null ? null :
+			Professor.find( professorDTO.getId() ) );
+		ProfessorVirtual professorVirtual = ( professorVirtualDTO == null ? null :
+			ProfessorVirtual.find( professorVirtualDTO.getId() ) );
 
-			atendimentosOperacional = AtendimentoOperacional.findAllPublicadoBy(
-					professor, turno, isAdmin );
-		}
-
-		if ( professorVirtualDTO != null )
-		{
-			ProfessorVirtual professorVirtual = ProfessorVirtual.find(
-					professorVirtualDTO.getId() );
-
-			atendimentosOperacional = AtendimentoOperacional.findAllPublicadoBy(
-					professorVirtual, turno, isAdmin );
-		}
+		List< AtendimentoOperacional > atendimentosOperacional = AtendimentoOperacional
+			.getAtendimentosOperacional( isAdmin, professor, professorVirtual, turno );
 
 		List< AtendimentoOperacionalDTO > listDTO
 			= new ArrayList< AtendimentoOperacionalDTO >( atendimentosOperacional.size() );
@@ -764,10 +766,8 @@ public class AtendimentosServiceImpl extends RemoteService
 		for ( AtendimentoOperacionalDTO dto : list )
 		{
 			String key = dto.getCursoString()
-					+ "-" + dto.getDisciplinaString()
-					+ "-" + dto.getTurma()
-					+ "-" + dto.getSemana()
-					+ "-" + dto.getSalaId();
+				+ "-" + dto.getDisciplinaString() + "-" + dto.getTurma()
+				+ "-" + dto.getSemana() + "-" + dto.getSalaId();
 
 			List< AtendimentoOperacionalDTO > dtoList
 				= atendimentoOperacionalDTOMap.get( key );
@@ -829,7 +829,7 @@ public class AtendimentosServiceImpl extends RemoteService
 		return processedList;
 	}
 
-	private List< AtendimentoOperacionalDTO > montaListaParaVisaoProfessor(
+	public List< AtendimentoOperacionalDTO > montaListaParaVisaoProfessor(
 			List< AtendimentoOperacionalDTO > list )
 	{
 		// Agrupa os DTOS pela chave [ Disciplina - Turma - DiaSemana - Sala ]
@@ -838,10 +838,8 @@ public class AtendimentosServiceImpl extends RemoteService
 
 		for ( AtendimentoOperacionalDTO dto : list )
 		{
-			String key = dto.getDisciplinaString()
-					+ "-" + dto.getTurma()
-					+ "-" + dto.getSemana()
-					+ "-" + dto.getSalaId();
+			String key = dto.getDisciplinaString() + "-" + dto.getTurma()
+				+ "-" + dto.getSemana() + "-" + dto.getSalaId();
 
 			List< AtendimentoOperacionalDTO > dtoList
 				= atendimentoOperacionalDTOMap.get( key );
@@ -860,7 +858,8 @@ public class AtendimentosServiceImpl extends RemoteService
 		List< AtendimentoOperacionalDTO > processedList
 			= new ArrayList< AtendimentoOperacionalDTO >();
 
-		for ( Entry< String, List< AtendimentoOperacionalDTO > > entry : atendimentoOperacionalDTOMap.entrySet() )
+		for ( Entry< String, List< AtendimentoOperacionalDTO > > entry
+				: atendimentoOperacionalDTOMap.entrySet() )
 		{
 			if ( entry.getValue().size() == 1 )
 			{
@@ -873,8 +872,7 @@ public class AtendimentosServiceImpl extends RemoteService
 				for ( int i = 1; i < entry.getValue().size(); i++ )
 				{
 					AtendimentoOperacionalDTO dtoCurrent = entry.getValue().get( i );
-
-					dtoMain.concatenateVisaoSala( dtoCurrent );
+					dtoMain.concatenateVisaoProfessor( dtoCurrent );
 				}
 
 				processedList.add( dtoMain );
@@ -886,7 +884,7 @@ public class AtendimentosServiceImpl extends RemoteService
 
 	@Override
 	public ListLoadResult< ProfessorVirtualDTO > getProfessoresVirtuais(
-			CampusDTO campusDTO )
+		CampusDTO campusDTO )
 	{
 		Campus campus = Campus.find( campusDTO.getId() );
 
@@ -896,7 +894,7 @@ public class AtendimentosServiceImpl extends RemoteService
 		for ( ProfessorVirtual professorVirtual : professoresVirtuais )
 		{
 			professoresVirtuaisDTO.add(
-					ConvertBeans.toProfessorVirtualDTO( professorVirtual ) );
+				ConvertBeans.toProfessorVirtualDTO( professorVirtual ) );
 		}
 
 		return new BaseListLoadResult< ProfessorVirtualDTO >( professoresVirtuaisDTO );

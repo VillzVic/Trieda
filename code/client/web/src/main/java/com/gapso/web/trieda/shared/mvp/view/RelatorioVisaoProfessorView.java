@@ -21,11 +21,14 @@ import com.gapso.web.trieda.shared.util.view.GTabItem;
 import com.gapso.web.trieda.shared.util.view.GradeHorariaProfessorGrid;
 import com.gapso.web.trieda.shared.util.view.ProfessorComboBox;
 import com.gapso.web.trieda.shared.util.view.ProfessorVirtualComboBox;
+import com.gapso.web.trieda.shared.util.view.SimpleToolBar;
 import com.gapso.web.trieda.shared.util.view.TurnoComboBox;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
-public class RelatorioVisaoProfessorView extends MyComposite implements RelatorioVisaoProfessorPresenter.Display {
-
+public class RelatorioVisaoProfessorView extends MyComposite
+	implements RelatorioVisaoProfessorPresenter.Display
+{
+	private SimpleToolBar toolBar;
 	private GradeHorariaProfessorGrid grid;
 	private Button submitBt;
 	private CampusComboBox campusCB;
@@ -35,41 +38,55 @@ public class RelatorioVisaoProfessorView extends MyComposite implements Relatori
 	private ContentPanel panel;
 	private GTabItem tabItem;
 	private UsuarioDTO usuario;
-	
-	public RelatorioVisaoProfessorView(UsuarioDTO usuario) {
+
+	public RelatorioVisaoProfessorView( UsuarioDTO usuario )
+	{
 		this.usuario = usuario;
 		initUI();
 	}
-	
-	private void initUI() {
-		panel = new ContentPanel(new BorderLayout());
-		panel.setHeading("Master Data » Grade Horária Visão Professor");
+
+	private void createToolBar()
+	{
+		// Exibe apenas o botão 'exportExcel'
+		toolBar = new SimpleToolBar( false, false, false, false, true, this );
+		panel.setTopComponent( toolBar );
+	}
+
+	private void initUI()
+	{
+		panel = new ContentPanel( new BorderLayout() );
+		panel.setHeading( "Master Data » Grade Horária Visão Professor" );
+		createToolBar();
 		createGrid();
 		createFilter();
 		createTabItem();
-		initComponent(tabItem);
+		initComponent( tabItem );
 	}
 
-	private void createTabItem() {
-		tabItem = new GTabItem("Grade Horária Visão Professor", Resources.DEFAULTS.saidaProfessor16());
-		tabItem.setContent(panel);
+	private void createTabItem()
+	{
+		tabItem = new GTabItem( "Grade Horária Visão Professor",
+			Resources.DEFAULTS.saidaProfessor16() );
+		tabItem.setContent( panel );
 	}
-	
-	private void createGrid() {
-		BorderLayoutData bld = new BorderLayoutData(LayoutRegion.CENTER);
-	    bld.setMargins(new Margins(5, 5, 5, 5));
+
+	private void createGrid()
+	{
+		BorderLayoutData bld = new BorderLayoutData( LayoutRegion.CENTER );
+	    bld.setMargins( new Margins( 5, 5, 5, 5 ) );
 	    grid = new GradeHorariaProfessorGrid();
-	    panel.add(grid, bld);
+	    panel.add( grid, bld );
 	}
 
-	private void createFilter() {
+	private void createFilter()
+	{
 		FormData formData = new FormData("100%");
 		FormPanel panel = new FormPanel();
 		panel.setHeaderVisible(true);
 		panel.setHeading("Filtro");
-		
+
 		LayoutContainer main = new LayoutContainer(new ColumnLayout());
-		
+
 		LayoutContainer left = new LayoutContainer(new FormLayout(LabelAlign.RIGHT));
 		LayoutContainer right = new LayoutContainer(new FormLayout(LabelAlign.RIGHT));
 		
@@ -132,10 +149,15 @@ public class RelatorioVisaoProfessorView extends MyComposite implements Relatori
 	public ProfessorComboBox getProfessorComboBox() {
 		return professorCB;
 	}
-	
+
 	@Override
 	public ProfessorVirtualComboBox getProfessorVirtualComboBox() {
 		return professorVirtualCB;
 	}
 
+	@Override
+	public Button getExportExcelButton()
+	{
+		return toolBar.getExportExcelButton();
+	}
 }

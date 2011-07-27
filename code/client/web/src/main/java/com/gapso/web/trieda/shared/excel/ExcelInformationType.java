@@ -17,6 +17,7 @@ public enum ExcelInformationType
 	CAMPI_TRABALHO("Campi de Trabalho"),
 	RELATORIO_VISAO_SALA("Relatorio Visao Sala"),
 	RELATORIO_VISAO_CURSO("Relatorio Visao Curso"),
+	RELATORIO_VISAO_PROFESSOR("Relatorio Visao Professor"),
 	SALAS("Salas"),
 	UNIDADES("Unidades"),
 	RESUMO_CURSO("Resumo por curso"),

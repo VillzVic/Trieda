@@ -313,6 +313,7 @@ public class RelatorioVisaoSalaExportExcel
 
 			List< AtendimentoRelatorioDTO > atedimentosDiaSemana
 				= diaSemanaToAtendimentosMap.get( diaSemanaInt );
+
 			for ( AtendimentoRelatorioDTO atendimento : atedimentosDiaSemana )
 			{
 				HSSFCellStyle style = codigoDisciplinaToColorMap.get( atendimento.getDisciplinaString() );
@@ -368,12 +369,12 @@ public class RelatorioVisaoSalaExportExcel
 		col = 2;
 
 		// Créditos
-		setCell( row, col++, sheet, cellStyles[ ExcelCellStyleReference.HEADER_CENTER_TEXT.ordinal() ], "Créditos" );
+		setCell( row, col++, sheet, cellStyles[ ExcelCellStyleReference.HEADER_CENTER_TEXT.ordinal() ], "Creditos" );
 
 		// Dias Semana
 		for ( Semanas semanas : Semanas.values() )
 		{
-			setCell( row, col++, sheet, cellStyles[ ExcelCellStyleReference.HEADER_CENTER_TEXT.ordinal() ],semanas.name() );
+			setCell( row, col++, sheet, cellStyles[ ExcelCellStyleReference.HEADER_CENTER_TEXT.ordinal() ], semanas.name() );
 		}
 
 		row++;
@@ -419,16 +420,20 @@ public class RelatorioVisaoSalaExportExcel
 	private List< HSSFComment > buildExcelCommentsPool( HSSFWorkbook workbook )
 	{
 		List< HSSFComment > excelCommentsPool = new ArrayList< HSSFComment >();
-		HSSFSheet sheet = workbook.getSheet( ExcelInformationType.RELATORIO_VISAO_SALA.getSheetName() );
+		HSSFSheet sheet = workbook.getSheet(
+			ExcelInformationType.RELATORIO_VISAO_SALA.getSheetName() );
 
 		if ( sheet != null )
 		{
-            for ( int rowIndex = sheet.getFirstRowNum(); rowIndex <= sheet.getLastRowNum(); rowIndex++ )
+            for ( int rowIndex = sheet.getFirstRowNum();
+            	rowIndex <= sheet.getLastRowNum(); rowIndex++ )
             {
             	HSSFRow row = sheet.getRow( rowIndex );
+
             	if ( row != null )
             	{
             		HSSFCell cell = row.getCell( 25 );
+
             		if ( cell != null && cell.getCellComment() != null )
             		{
             			excelCommentsPool.add( cell.getCellComment() );
