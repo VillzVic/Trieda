@@ -20,163 +20,231 @@ import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nMessages;
 
-public class ResumoDisciplinaExportExcel extends AbstractExportExcel {
+public class ResumoDisciplinaExportExcel
+	extends AbstractExportExcel
+{
+	enum ExcelCellStyleReference
+	{
+		TEXT( 6, 2 ),
+		PERCENTE( 6, 11 ),
+		INTEGER( 6, 5 ),
+		DOUBLE( 6, 9 );
 
-	enum ExcelCellStyleReference {
-		TEXT(6, 2), PERCENTE(6, 11), INTEGER(6, 5), DOUBLE(6, 9);
 		private int row;
 		private int col;
 
-		private ExcelCellStyleReference(int row, int col) {
+		private ExcelCellStyleReference( int row, int col )
+		{
 			this.row = row;
 			this.col = col;
 		}
 
-		public int getRow() {
+		public int getRow()
+		{
 			return row;
 		}
 
-		public int getCol() {
+		public int getCol()
+		{
 			return col;
 		}
 	}
 
 	private HSSFCellStyle[] cellStyles;
-
 	private boolean removeUnusedSheets;
 	private String sheetName;
 	private int initialRow;
+	private ResumoDisciplinaFiltroExcel filter;
 
-	public ResumoDisciplinaExportExcel(Cenario cenario,
-			TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages) {
-		super(cenario, i18nConstants, i18nMessages);
-		this.cellStyles = new HSSFCellStyle[ExcelCellStyleReference.values().length];
-		this.removeUnusedSheets = true;
-		this.sheetName = ExcelInformationType.RESUMO_DISCIPLINA.getSheetName();
-		this.initialRow = 6;
+	public ResumoDisciplinaExportExcel( Cenario cenario,
+			TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages )
+	{
+		this( true, cenario, i18nConstants, i18nMessages, null );
 	}
 
-	public ResumoDisciplinaExportExcel(boolean removeUnusedSheets,
-			Cenario cenario, TriedaI18nConstants i18nConstants,
-			TriedaI18nMessages i18nMessages) {
-		super(cenario, i18nConstants, i18nMessages);
-		this.cellStyles = new HSSFCellStyle[ExcelCellStyleReference.values().length];
+	public ResumoDisciplinaExportExcel( boolean removeUnusedSheets, Cenario cenario,
+		TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages )
+	{
+		this( removeUnusedSheets, cenario, i18nConstants, i18nMessages, null );
+	}
+
+	public ResumoDisciplinaExportExcel( Cenario cenario, TriedaI18nConstants i18nConstants,
+		TriedaI18nMessages i18nMessages, ExportExcelFilter filter )
+	{
+		this( true, cenario, i18nConstants, i18nMessages, filter );
+	}
+
+	public ResumoDisciplinaExportExcel( boolean removeUnusedSheets,
+		Cenario cenario, TriedaI18nConstants i18nConstants,
+		TriedaI18nMessages i18nMessages, ExportExcelFilter filter )
+	{
+		super( cenario, i18nConstants, i18nMessages );
+
+		this.cellStyles = new HSSFCellStyle[ ExcelCellStyleReference.values().length ];
 		this.removeUnusedSheets = removeUnusedSheets;
 		this.sheetName = ExcelInformationType.RESUMO_DISCIPLINA.getSheetName();
 		this.initialRow = 6;
+		this.setFilter( filter );
 	}
 
 	@Override
-	public String getFileName() {
+	public String getFileName()
+	{
 		return getI18nConstants().resumoDisciplina();
 	}
 
 	@Override
-	protected String getPathExcelTemplate() {
+	protected String getPathExcelTemplate()
+	{
 		return "/templateExport.xls";
 	}
 
 	@Override
-	protected String getReportName() {
+	protected String getReportName()
+	{
 		return getI18nConstants().resumoDisciplina();
 	}
 
 	@Override
-	protected boolean fillInExcel(HSSFWorkbook workbook) {
-		CenarioDTO cenarioDTO = ConvertBeans.toCenarioDTO(getCenario());
-		List<Campus> campi = Campus.findAll();
-		List<CampusDTO> campusDTOList = new ArrayList<CampusDTO>(campi.size());
-		for (Campus campus : campi) {
-			campusDTOList.add(ConvertBeans.toCampusDTO(campus));
-		}
+	protected boolean fillInExcel( HSSFWorkbook workbook )
+	{
+		boolean result = false;
+		CenarioDTO cenarioDTO = ConvertBeans.toCenarioDTO( getCenario() );
 
-		List<ResumoDisciplinaDTO> resumoDisciplinaDTOList = new ArrayList<ResumoDisciplinaDTO>();
-
-		DisciplinasServiceImpl disciplinasServiceImpl = new DisciplinasServiceImpl();
-		for (CampusDTO campusDTO : campusDTOList) {
-			resumoDisciplinaDTOList.addAll(disciplinasServiceImpl.getResumos(
-					cenarioDTO, campusDTO));
-		}
-
-		if (!resumoDisciplinaDTOList.isEmpty()) {
-			if (this.removeUnusedSheets) {
-				removeUnusedSheets(this.sheetName, workbook);
+		List< CampusDTO > campusDTOList = null;
+		if ( this.getFilter() == null
+			|| this.getFilter().getCampusDTO() == null )
+		{
+			List< Campus > campi = Campus.findAll();
+			campusDTOList = new ArrayList< CampusDTO >( campi.size() );
+			for ( Campus campus : campi )
+			{
+				campusDTOList.add( ConvertBeans.toCampusDTO( campus ) );
 			}
-			HSSFSheet sheet = workbook.getSheet(this.sheetName);
-			fillInCellStyles(sheet);
+		}
+		else
+		{
+			campusDTOList = new ArrayList< CampusDTO >();
+			campusDTOList.add( this.getFilter().getCampusDTO() );
+		}
+
+		List< ResumoDisciplinaDTO > resumoDisciplinaDTOList
+			= new ArrayList< ResumoDisciplinaDTO >();
+		DisciplinasServiceImpl disciplinasServiceImpl = new DisciplinasServiceImpl();
+		for ( CampusDTO campusDTO : campusDTOList )
+		{
+			resumoDisciplinaDTOList.addAll(
+				disciplinasServiceImpl.getResumos( cenarioDTO, campusDTO ) );
+		}
+
+		if ( !resumoDisciplinaDTOList.isEmpty() )
+		{
+			HSSFSheet sheet = workbook.getSheet( this.sheetName );
+			fillInCellStyles( sheet );
 			int nextRow = this.initialRow;
-			for (ResumoDisciplinaDTO resumoDisciplinaDTO1 : resumoDisciplinaDTOList) {
-				for (ModelData resumoDisciplinaDTO2 : resumoDisciplinaDTO1
-						.getChildren()) {
-					nextRow = writeData(
-							(ResumoDisciplinaDTO) resumoDisciplinaDTO2,
-							nextRow, sheet);
+			for ( ResumoDisciplinaDTO resumoDisciplinaDTO1 : resumoDisciplinaDTOList )
+			{
+				for ( ModelData resumoDisciplinaDTO2 : resumoDisciplinaDTO1.getChildren() )
+				{
+					nextRow = writeData( (ResumoDisciplinaDTO) resumoDisciplinaDTO2, nextRow, sheet );
 				}
 			}
 
-			return true;
+			result = true;
 		}
 
-		return false;
+		if ( this.removeUnusedSheets )
+		{
+			removeUnusedSheets( this.sheetName, workbook );
+		}
+
+		return result;
 	}
 
-	private int writeData(ResumoDisciplinaDTO resumoDisciplinaDTO, int row,
-			HSSFSheet sheet) {
+	private int writeData( ResumoDisciplinaDTO resumoDisciplinaDTO, int row, HSSFSheet sheet )
+	{
 		int i = 2;
 		// Disciplina
-		setCell(row, i++, sheet,
-				cellStyles[ExcelCellStyleReference.TEXT.ordinal()],
-				resumoDisciplinaDTO.getDisciplinaString());
+		setCell( row, i++, sheet,
+			cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ],
+			resumoDisciplinaDTO.getDisciplinaString() );
+
 		// Turma
-		setCell(row, i++, sheet,
-				cellStyles[ExcelCellStyleReference.TEXT.ordinal()],
-				resumoDisciplinaDTO.getTurma());
+		setCell( row, i++, sheet,
+			cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ],
+			resumoDisciplinaDTO.getTurma() );
+
 		// Tipo de Crédito
-		String tipoDeCredito = resumoDisciplinaDTO.getTipoCreditoTeorico() ? getI18nConstants()
-				.teorico() : getI18nConstants().pratico();
-		tipoDeCredito = HtmlUtils.htmlUnescape(tipoDeCredito);
-		setCell(row, i++, sheet,
-				cellStyles[ExcelCellStyleReference.TEXT.ordinal()],
-				tipoDeCredito);
+		String tipoDeCredito = resumoDisciplinaDTO.getTipoCreditoTeorico() ?
+			getI18nConstants().teorico() : getI18nConstants().pratico();
+		tipoDeCredito = HtmlUtils.htmlUnescape( tipoDeCredito );
+
+		setCell( row, i++, sheet,
+			cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ], tipoDeCredito);
+
 		// Créditos
-		setCell(row, i++, sheet,
-				cellStyles[ExcelCellStyleReference.INTEGER.ordinal()],
-				resumoDisciplinaDTO.getCreditos());
+		setCell( row, i++, sheet,
+			cellStyles[ ExcelCellStyleReference.INTEGER.ordinal() ],
+			resumoDisciplinaDTO.getCreditos() );
+
 		// Total de Créditos
-		setCell(row, i++, sheet,
-				cellStyles[ExcelCellStyleReference.INTEGER.ordinal()],
-				resumoDisciplinaDTO.getTotalCreditos());
+		setCell( row, i++, sheet,
+			cellStyles[ ExcelCellStyleReference.INTEGER.ordinal() ],
+			resumoDisciplinaDTO.getTotalCreditos() );
+
 		// Qtde. Alunos
-		setCell(row, i++, sheet,
-				cellStyles[ExcelCellStyleReference.INTEGER.ordinal()],
-				resumoDisciplinaDTO.getQuantidadeAlunos());
+		setCell( row, i++, sheet,
+			cellStyles[ ExcelCellStyleReference.INTEGER.ordinal() ],
+			resumoDisciplinaDTO.getQuantidadeAlunos() );
+
 		// Custo Docente
-		setCell(row, i++, sheet,
-				cellStyles[ExcelCellStyleReference.DOUBLE.ordinal()],
-				resumoDisciplinaDTO.getCustoDocente().getDoubleValue());
+		setCell( row, i++, sheet,
+			cellStyles[ ExcelCellStyleReference.DOUBLE.ordinal() ],
+			resumoDisciplinaDTO.getCustoDocente().getDoubleValue() );
+
 		// Receita
-		setCell(row, i++, sheet,
-				cellStyles[ExcelCellStyleReference.DOUBLE.ordinal()],
-				resumoDisciplinaDTO.getReceita().getDoubleValue());
+		setCell( row, i++, sheet,
+			cellStyles[ ExcelCellStyleReference.DOUBLE.ordinal() ],
+			resumoDisciplinaDTO.getReceita().getDoubleValue() );
+
 		// Margem
-		setCell(row, i++, sheet,
-				cellStyles[ExcelCellStyleReference.DOUBLE.ordinal()],
-				resumoDisciplinaDTO.getMargem().getDoubleValue());
+		setCell( row, i++, sheet,
+			cellStyles[ ExcelCellStyleReference.DOUBLE.ordinal() ],
+			resumoDisciplinaDTO.getMargem().getDoubleValue() );
+
 		// Margem %
-		setCell(row, i++, sheet,
-				cellStyles[ExcelCellStyleReference.PERCENTE.ordinal()],
-				resumoDisciplinaDTO.getMargemPercente());
+		setCell( row, i++, sheet,
+			cellStyles[ ExcelCellStyleReference.PERCENTE.ordinal() ],
+			resumoDisciplinaDTO.getMargemPercente() );
 
 		row++;
 		return row;
 	}
 
-	private void fillInCellStyles(HSSFSheet sheet) {
-		for (ExcelCellStyleReference cellStyleReference : ExcelCellStyleReference
-				.values()) {
-			cellStyles[cellStyleReference.ordinal()] = getCell(
-					cellStyleReference.getRow(), cellStyleReference.getCol(),
-					sheet).getCellStyle();
+	private void fillInCellStyles( HSSFSheet sheet )
+	{
+		for ( ExcelCellStyleReference cellStyleReference
+			: ExcelCellStyleReference.values() )
+		{
+			cellStyles[ cellStyleReference.ordinal() ] = getCell(
+				cellStyleReference.getRow(), cellStyleReference.getCol(), sheet ).getCellStyle();
+		}
+	}
+
+	public ResumoDisciplinaFiltroExcel getFilter()
+	{
+		return filter;
+	}
+
+	public void setFilter( ExportExcelFilter filter )
+	{
+		if ( filter != null && filter instanceof ResumoDisciplinaFiltroExcel )
+		{
+			this.filter = (ResumoDisciplinaFiltroExcel) filter;
+		}
+		else
+		{
+			this.filter = null;
 		}
 	}
 }

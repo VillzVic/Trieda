@@ -139,42 +139,50 @@ public class RelatorioVisaoCursoView extends MyComposite
 	}
 
 	@Override
-	public GradeHorariaCursoGrid getGrid() {
+	public GradeHorariaCursoGrid getGrid()
+	{
 		return grid;
 	}
 
 	@Override
-	public Button getSubmitBuscaButton() {
+	public Button getSubmitBuscaButton()
+	{
 		return submitBt;
 	}
 
 	@Override
-	public TurnoComboBox getTurnoComboBox() {
+	public TurnoComboBox getTurnoComboBox()
+	{
 		return turnoCB;
 	}
 
 	@Override
-	public CursoComboBox getCursoComboBox() {
+	public CursoComboBox getCursoComboBox()
+	{
 		return cursoCB;
 	}
 
 	@Override
-	public CurriculoComboBox getCurriculoComboBox() {
+	public CurriculoComboBox getCurriculoComboBox()
+	{
 		return curriculoCB;
 	}
 
 	@Override
-	public SimpleComboBox<Integer> getPeriodoComboBox() {
+	public SimpleComboBox< Integer > getPeriodoComboBox()
+	{
 		return periodoCB;
 	}
 
 	@Override
-	public CampusComboBox getCampusComboBox() {
+	public CampusComboBox getCampusComboBox()
+	{
 		return campusCB;
 	}
 
 	@Override
-	public Button getExportExcelButton() {
+	public Button getExportExcelButton()
+	{
 		return toolBar.getExportExcelButton();
 	}
 }

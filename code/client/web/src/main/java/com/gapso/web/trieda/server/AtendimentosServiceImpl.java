@@ -102,7 +102,8 @@ public class AtendimentosServiceImpl extends RemoteService
 		Turno turno = Turno.find( turnoDTO.getId() );
 
 		List< AtendimentoOperacionalDTO > list = new ArrayList< AtendimentoOperacionalDTO >();
-		List< AtendimentoOperacional > atendimentosOperacional = AtendimentoOperacional.findBySalaAndTurno( sala, turno );
+		List< AtendimentoOperacional > atendimentosOperacional
+			= AtendimentoOperacional.findBySalaAndTurno( sala, turno );
 
 		for ( AtendimentoOperacional atendimentoOperacional : atendimentosOperacional )
 		{
@@ -119,7 +120,8 @@ public class AtendimentosServiceImpl extends RemoteService
 		Turno turno = Turno.find( turnoDTO.getId() );
 
 		List< AtendimentoTaticoDTO > list = new ArrayList< AtendimentoTaticoDTO >();
-		List< AtendimentoTatico > atendimentosTatico = AtendimentoTatico.findBySalaAndTurno( sala, turno );
+		List< AtendimentoTatico > atendimentosTatico
+			= AtendimentoTatico.findBySalaAndTurno( sala, turno );
 
 		for ( AtendimentoTatico atendimentoTatico : atendimentosTatico )
 		{
@@ -140,11 +142,8 @@ public class AtendimentosServiceImpl extends RemoteService
 
 		for ( AtendimentoRelatorioDTO dto : list )
 		{
-			String key = dto.getCursoNome()
-					+ "-" + dto.getDisciplinaString()
-					+ "-" + dto.getTurma()
-					+ "-" + dto.getSemana()
-					+ "-" + dto.getSalaId();
+			String key = dto.getCursoNome() + "-" + dto.getDisciplinaString()
+					+ "-" + dto.getTurma() + "-" + dto.getSemana() + "-" + dto.getSalaId();
 
 			List< AtendimentoRelatorioDTO > dtoList = atendimentoTaticoDTOMap.get( key );
 
@@ -162,7 +161,6 @@ public class AtendimentosServiceImpl extends RemoteService
 
 		for ( Entry< String, List< AtendimentoRelatorioDTO > > entry : atendimentoTaticoDTOMap.entrySet() )
 		{
-
 			List< AtendimentoRelatorioDTO > ordenadoPorHorario
 				= new ArrayList<AtendimentoRelatorioDTO>( entry.getValue() );
 
@@ -229,8 +227,7 @@ public class AtendimentosServiceImpl extends RemoteService
 		for ( AtendimentoRelatorioDTO dto : list )
 		{
 			String key = dto.getDisciplinaString()
-				+ "-" + dto.getTurma()
-				+ "-" + dto.getSemana();
+				+ "-" + dto.getTurma() + "-" + dto.getSemana();
 
 			List< AtendimentoRelatorioDTO > dtoList
 				= atendimentoTaticoDTOMap .get( key );

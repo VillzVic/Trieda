@@ -29,8 +29,6 @@ public class ExportExcelServlet extends HttpServlet
 		i18nMessages = new GTriedaI18nMessages();
 	}
 
-
-
 	@Override
 	protected void doGet( HttpServletRequest request, HttpServletResponse response )
 		throws ServletException, IOException
@@ -58,6 +56,11 @@ public class ExportExcelServlet extends HttpServlet
 				ExcelInformationType.RELATORIO_VISAO_PROFESSOR.toString() ) )
 			{
 				filter = verificaParametrosVisaoProfessor( request );
+			}
+			else if ( informationToBeExported.equals(
+				ExcelInformationType.RESUMO_DISCIPLINA.toString() ) )
+			{
+				filter = verificaParametrosResumoDisciplina( request );
 			}
 
 			// Get Excel Data
@@ -136,7 +139,6 @@ public class ExportExcelServlet extends HttpServlet
 
 		RelatorioVisaoProfessorFiltroExcel filtro = new RelatorioVisaoProfessorFiltroExcel(
 			campusId, turnoId, professorId, professorVirtualId );
-
 		return filtro;
 	}
 
@@ -160,7 +162,6 @@ public class ExportExcelServlet extends HttpServlet
 
 		RelatorioVisaoCursoFiltroExcel filtro = new RelatorioVisaoCursoFiltroExcel(
 			cursoId, curriculoId, campusId, periodoId, turnoId );
-
 		return filtro;
 	}
 	
@@ -170,7 +171,6 @@ public class ExportExcelServlet extends HttpServlet
 		Long unidadeId = null;
 		Long salaId = null;
 		Long turnoId = null;
-
 		try
 		{
 			campusId = Long.parseLong( request.getParameter( "campusId" ) );
@@ -182,7 +182,16 @@ public class ExportExcelServlet extends HttpServlet
 
 		RelatorioVisaoSalaFiltroExcel filtro = new RelatorioVisaoSalaFiltroExcel(
 			campusId, unidadeId, salaId, turnoId );
+		return filtro;
+	}
 
+	private ResumoDisciplinaFiltroExcel verificaParametrosResumoDisciplina( HttpServletRequest request )
+	{
+		Long campusId = null;
+		try { campusId = Long.parseLong( request.getParameter( "campusId" ) ); }
+		catch( Exception ex ) { return null; }
+
+		ResumoDisciplinaFiltroExcel filtro = new ResumoDisciplinaFiltroExcel( campusId );
 		return filtro;
 	}
 }
