@@ -33,7 +33,7 @@ public class ExportExcelFactory {
 			case RELATORIO_VISAO_SALA: exporter = new RelatorioVisaoSalaExportExcel( cenario, i18nConstants, i18nMessages, filter ); break;
 			case RELATORIO_VISAO_PROFESSOR: exporter = new RelatorioVisaoProfessorExportExcel( cenario, i18nConstants, i18nMessages, filter ); break;
 			case RESUMO_DISCIPLINA: exporter = new ResumoDisciplinaExportExcel( cenario, i18nConstants, i18nMessages, filter ); break;
-			case RESUMO_CURSO: exporter = new ResumoCursoExportExcel( cenario, i18nConstants, i18nMessages ); break;
+			case RESUMO_CURSO: exporter = new ResumoCursoExportExcel( cenario, i18nConstants, i18nMessages, filter ); break;
 			case SALAS: exporter = new SalasExportExcel( cenario, i18nConstants, i18nMessages ); break;
 			case TUDO: exporter = new TRIEDAExportExcel( cenario, i18nConstants, i18nMessages ); break;
 			case UNIDADES: exporter = new UnidadesExportExcel( cenario, i18nConstants, i18nMessages ); break;

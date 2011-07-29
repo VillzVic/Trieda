@@ -62,6 +62,11 @@ public class ExportExcelServlet extends HttpServlet
 			{
 				filter = verificaParametrosResumoDisciplina( request );
 			}
+			else if ( informationToBeExported.equals(
+				ExcelInformationType.RESUMO_CURSO.toString() ) )
+			{
+				filter = verificaParametrosResumoCurso( request );
+			}
 
 			// Get Excel Data
 			IExportExcel exporter = ExportExcelFactory.createExporter(
@@ -192,6 +197,16 @@ public class ExportExcelServlet extends HttpServlet
 		catch( Exception ex ) { return null; }
 
 		ResumoDisciplinaFiltroExcel filtro = new ResumoDisciplinaFiltroExcel( campusId );
+		return filtro;
+	}
+
+	private ResumoCursoFiltroExcel verificaParametrosResumoCurso( HttpServletRequest request )
+	{
+		Long campusId = null;
+		try { campusId = Long.parseLong( request.getParameter( "campusId" ) ); }
+		catch( Exception ex ) { return null; }
+
+		ResumoCursoFiltroExcel filtro = new ResumoCursoFiltroExcel( campusId );
 		return filtro;
 	}
 }

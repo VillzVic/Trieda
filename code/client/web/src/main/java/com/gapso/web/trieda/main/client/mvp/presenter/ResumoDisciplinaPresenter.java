@@ -77,7 +77,6 @@ public class ResumoDisciplinaPresenter
 						});
 				}
 			});
-
 		display.getExportExcelButton().addSelectionListener(
 			new SelectionListener< ButtonEvent >()
 			{
