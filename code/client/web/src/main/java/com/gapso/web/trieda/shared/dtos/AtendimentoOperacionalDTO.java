@@ -404,7 +404,7 @@ public class AtendimentoOperacionalDTO extends AbstractDTO< String >
 			+ "<b>Professor:</b> " + professor
 			+ "<br />" + "<b>" + getQuantidadeAlunos()
 			+ " aluno(s)</b><br />" + "<b>Tipo Crédito:</b> "
-			+ ( ( isTeorico() ) ? "Teórico" : "Prático")
+			+ ( ( isTeorico() ) ? "Teórico" : "Prático" )
 			+ "<br />" + "<b>Créditos:</b> "
 			+ getTotalCreditos() + " de "
 			+ getTotalCreditoDisciplina() + "<br />"

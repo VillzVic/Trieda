@@ -284,7 +284,6 @@ public class GradeHorariaCursoGrid extends ContentPanel {
 					return new Html( "" );
 				}
 
-				// TODO
 				final String title = atDTO.getDisciplinaString();
 				final String contentToolTip = atDTO.getContentToolTipVisaoCurso();				
 
@@ -564,6 +563,5 @@ public class GradeHorariaCursoGrid extends ContentPanel {
 		public void setDomingo(String value) {
 			set("domingo", value);
 		}
-
 	}
 }
