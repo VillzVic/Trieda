@@ -9,6 +9,7 @@ public interface AtendimentoRelatorioDTO
 	public Long getDisciplinaId();
 	public String getDisciplinaNome();
 	public String getContentToolTipVisaoSala();
+	public String getContentToolTipVisaoCurso();
 	public String getContentVisaoSala();
 	public Integer getQuantidadeAlunos();
 	public String getDisciplinaString();
@@ -21,7 +22,7 @@ public interface AtendimentoRelatorioDTO
 	public Long getCurriculoId();
 	public String getPeriodoString();
 	public String getQuantidadeAlunosString();
-	public void concatenateVisaoSala(AtendimentoRelatorioDTO other );
+	public void concatenateVisaoSala( AtendimentoRelatorioDTO other );
 	public String getExcelContentVisaoSala();
 	public String getExcelCommentVisaoSala();
 	public Long getSalaId();
@@ -29,8 +30,9 @@ public interface AtendimentoRelatorioDTO
 	public boolean isTeorico();
 	public Integer getTotalCreditoDisciplina();
 	public String getUnidadeString();
-
 	public boolean isTatico();
 	public boolean isProfessorVirtual();
 	public String getProfessorString();
+	public String getCompartilhamentoCursosString();
+	public void setCompartilhamentoCursosString( String s );
 }

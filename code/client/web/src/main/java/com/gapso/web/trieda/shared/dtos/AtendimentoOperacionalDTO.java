@@ -45,6 +45,7 @@ public class AtendimentoOperacionalDTO extends AbstractDTO< String >
 	public static final String PROPERTY_TURMA = "turma";
 	public static final String PROPERTY_QUANTIDADE_ALUNOS = "quantidadeAlunos";
 	public static final String PROPERTY_QUANTIDADE_ALUNOS_STRING = "quantidadeAlunosString";
+	public static final String PROPERTY_COMPARTILHAMENTO_CURSOS = "compartilhamentoCursos";
 
 	private Integer totalLinhas = 1;
 
@@ -296,6 +297,15 @@ public class AtendimentoOperacionalDTO extends AbstractDTO< String >
 		return get(PROPERTY_QUANTIDADE_ALUNOS_STRING);
 	}
 
+	@Override
+	public String getCompartilhamentoCursosString() {
+		return get(PROPERTY_COMPARTILHAMENTO_CURSOS);
+	}
+	@Override
+	public void setCompartilhamentoCursosString( String s ) {
+		set(PROPERTY_COMPARTILHAMENTO_CURSOS, s);
+	}
+
 	public Integer getTotalLinhas()
 	{
 		return totalLinhas;
@@ -356,28 +366,65 @@ public class AtendimentoOperacionalDTO extends AbstractDTO< String >
 		}
 
 		return "<b>Turma:</b> " + getTurma() + "<br />"
-			+ "<b>Crédito(s) " + ( ( getCreditoTeoricoBoolean() ) ? "Teórico(s)" : "Prático(s)" ) + ":</b> "
-			+ getTotalCreditos() + " de " + getTotalCreditoDisciplina() + "<br />"
+			+ "<b>Crédito(s) " + ( ( getCreditoTeoricoBoolean() ) ? "Teórico(s)" : "Prático(s)" )
+			+ ":</b> " + getTotalCreditos() + " de " + getTotalCreditoDisciplina() + "<br />"
 			+ "<b>Curso:</b> " + getCursoNome() + "<br />"
 			+ "<b>Matriz Curricular:</b> " + getCurriculoString() + "<br />"
 			+ "<b>Período:</b> " + getPeriodoString() + "<br />"
 			+ "<b>Horário:</b> " + getHorarioString() + "<br />"
-			+ "<b>Quantidade:</b> " + getQuantidadeAlunosString() + "<br />" + professor;
+			+ "<b>Quantidade:</b> " + getQuantidadeAlunosString()
+			+ "<br />" + professor;
+	}
+
+	public String getContentToolTipVisaoCurso()
+	{
+		// Monta a string de compartilhamento da
+		// sala com alunos de cursos distintos (caso haja)
+		String compartilhamentoSalaCursos = "";
+		if ( getCompartilhamentoCursosString() != null
+			&& !getCompartilhamentoCursosString().equals( "" ) )
+		{
+			compartilhamentoSalaCursos = getCompartilhamentoCursosString();
+		}
+
+		String professor = "";
+		if ( isProfessorVirtual() )
+		{
+			professor = "<b>" + getProfessorVirtualString() + "</b>";
+		}
+		else
+		{
+			professor = "<b>Professor:</b> " + getProfessorString();
+		}
+
+		String contentToolTip = "<b>Nome:</b> "
+			+ getDisciplinaNome() + "<br />"
+			+ "<b>Sala:</b> " + getSalaString() + "<br />"
+			+ "<b>Turma:</b> " + getTurma() + "<br />"
+			+ "<b>Professor:</b> " + professor
+			+ "<br />" + "<b>" + getQuantidadeAlunos()
+			+ " aluno(s)</b><br />" + "<b>Tipo Crédito:</b> "
+			+ ( ( isTeorico() ) ? "Teórico" : "Prático")
+			+ "<br />" + "<b>Créditos:</b> "
+			+ getTotalCreditos() + " de "
+			+ getTotalCreditoDisciplina() + "<br />"
+			+ "<b>Curso(s) nessa aula : </b>" + compartilhamentoSalaCursos  + "<br />";
+
+		return contentToolTip;
 	}
 
 	public String getContentVisaoProfessor()
 	{
 		return getDisciplinaString() + "<br />"
 			+ TriedaUtil.truncate( getDisciplinaNome(), 12 ) + "<br />"
-			+ "Turma " + getTurma() + "<br />"
-			+ getSalaString();
+			+ "Turma " + getTurma() + "<br />" + getSalaString();
 	}
 
 	public String getContentToolTipVisaoProfessor()
 	{
 		return "<b>Turma:</b> "+ getTurma() + "<br />"
-			+ "<b>Credito(s) " + ( ( getCreditoTeoricoBoolean() )? "Teorico(s)" : "Pratico(s)" ) + ":</b> "
-			+ getTotalLinhas() + " de "+getTotalCreditos() + "<br />"
+			+ "<b>Credito(s) " + ( ( getCreditoTeoricoBoolean() )? "Teorico(s)" : "Pratico(s)" )
+			+ ":</b> " + getTotalLinhas() + " de "+getTotalCreditos() + "<br />"
 			+ "<b>Curso:</b> " + getCursoNome() + "<br />"
 			+ "<b>Matriz Curricular:</b> " + getCurriculoString() + "<br />"
 			+ "<b>Periodo:</b> " + getPeriodoString() + "<br />" 
@@ -413,14 +460,14 @@ public class AtendimentoOperacionalDTO extends AbstractDTO< String >
 	public String getExcelCommentVisaoProfessor()
 	{
 		return getDisciplinaNome() + "\n"
-		+ "Turma: " + getTurma() + "\n"
-		+ "Horario: " + getHorarioString() + "\n"
-		+ "Credito(s) " + ( ( getCreditoTeoricoBoolean() ) ? "Teorico(s)" : "Pratico(s)" )
-		+ ": " + getTotalLinhas() + " de " + getTotalCreditos() + "\n"
-		+ "Curso: " + getCursoNome() + "\n"
-		+ "Matriz Curricular: " + getCurriculoString() + "\n"
-		+ "Periodo: " + getPeriodoString() + "\n" 
-		+ "Quantidade: " + getQuantidadeAlunosString();
+			+ "Turma: " + getTurma() + "\n"
+			+ "Horario: " + getHorarioString() + "\n"
+			+ "Credito(s) " + ( ( getCreditoTeoricoBoolean() ) ? "Teorico(s)" : "Pratico(s)" )
+			+ ": " + getTotalLinhas() + " de " + getTotalCreditos() + "\n"
+			+ "Curso: " + getCursoNome() + "\n"
+			+ "Matriz Curricular: " + getCurriculoString() + "\n"
+			+ "Periodo: " + getPeriodoString() + "\n" 
+			+ "Quantidade: " + getQuantidadeAlunosString();
 	}
 
 	@Override

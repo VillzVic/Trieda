@@ -70,8 +70,8 @@ public class HorarioAula implements Serializable
         sb.append( "Version: " ).append( getVersion() ).append( ", " );
         sb.append( "Semana Letiva: " ).append( getSemanaLetiva() ).append( ", " );
         sb.append( "Turno: " ).append( getTurno() ).append( ", " );
-        sb.append( "HorariosDisponiveisCenario: " ).append(
-        		getHorariosDisponiveisCenario() == null ? "null" : getHorariosDisponiveisCenario().size() ).append( ", " );
+        sb.append( "HorariosDisponiveisCenario: " ).append( getHorariosDisponiveisCenario() == null ?
+        	"null" : getHorariosDisponiveisCenario().size() ).append( ", " );
         sb.append( "Horario: ").append( getHorario() );
 
         return sb.toString();
@@ -252,7 +252,8 @@ public class HorarioAula implements Serializable
         String turnoQuery = ( ( turno == null )? "" : "o.turno = :turno AND" );
 
         Query q = entityManager().createQuery(
-        	"SELECT o FROM HorarioAula o WHERE " + horarioQuery + " " + semanaLetivaQuery + " " + turnoQuery + " 1=1 " + orderBy );
+        	"SELECT o FROM HorarioAula o WHERE " + horarioQuery
+        	+ " " + semanaLetivaQuery + " " + turnoQuery + " 1=1 " + orderBy );
 
         if ( horario != null )
         {
@@ -274,7 +275,7 @@ public class HorarioAula implements Serializable
     
     @SuppressWarnings("unchecked")
     public static List< HorarioAula > findHorarioAulasBySemanaLetivaAndTurno(
-    		SemanaLetiva semanaLetiva, Turno turno )
+    	SemanaLetiva semanaLetiva, Turno turno )
     {
     	Query q = entityManager().createQuery(
     		"SELECT o FROM HorarioAula o WHERE o.semanaLetiva = :semanaLetiva AND o.turno = :turno" );
@@ -296,48 +297,40 @@ public class HorarioAula implements Serializable
 		return horariosMap;
 	}
 
-
 	public SemanaLetiva getSemanaLetiva()
     {
         return this.semanaLetiva;
     }
-
 
     public void setSemanaLetiva( SemanaLetiva semanaLetiva )
     {
         this.semanaLetiva = semanaLetiva;
     }
 
-
     public Turno getTurno()
     {
         return this.turno;
     }
-
 
     public void setTurno( Turno turno )
     {
         this.turno = turno;
     }
 
-
     public Date getHorario()
     {
         return this.horario;
     }
-
 
     public void setHorario( Date horario )
     {
         this.horario = horario;
     }
 
-
     public Set< HorarioDisponivelCenario > getHorariosDisponiveisCenario()
 	{
         return this.horariosDisponiveisCenario;
     }
-
 
     public void setHorariosDisponiveisCenario(
 		Set< HorarioDisponivelCenario > horariosDisponiveisCenario )

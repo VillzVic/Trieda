@@ -39,7 +39,8 @@ public class AtendimentoTaticoDTO extends AbstractDTO< String >
 	public static final String PROPERTY_QUANTIDADE_ALUNOS_STRING = "quantidadeAlunosString";
 	public static final String PROPERTY_CREDITOS_TEORICOS = "creditosTeorico";
 	public static final String PROPERTY_CREDITOS_PRATICOS = "creditosPratico";
-	
+	public static final String PROPERTY_COMPARTILHAMENTO_CURSOS = "compartilhamentoCursos";
+
 	public AtendimentoTaticoDTO()
 	{
 		super();
@@ -247,49 +248,86 @@ public class AtendimentoTaticoDTO extends AbstractDTO< String >
 	public Integer getCreditosPratico() {
 		return get(PROPERTY_CREDITOS_PRATICOS);
 	}
-	
-	public boolean isTeorico() {
-		return getCreditosTeorico() > 0;
+
+	@Override
+	public String getCompartilhamentoCursosString()	{
+		return get(PROPERTY_COMPARTILHAMENTO_CURSOS);
 	}
-	
-	public Integer getTotalCreditos() {
-		return getCreditosTeorico() + getCreditosPratico();
+	@Override
+	public void setCompartilhamentoCursosString( String s )	{
+		set(PROPERTY_COMPARTILHAMENTO_CURSOS, s);
 	}
-	
-	public void concatenateVisaoSala(AtendimentoRelatorioDTO other) {
-		setCursoNome(getCursoNome() + " / " + other.getCursoNome());
-		setCurricularString(getCurriculoString() + " / " + other.getCurriculoString());
-		setPeriodoString(getPeriodoString() + " / " + other.getPeriodoString());
-		setQuantidadeAlunosString(getQuantidadeAlunosString() + " / " + other.getQuantidadeAlunosString());
-		setQuantidadeAlunos(getQuantidadeAlunos() + other.getQuantidadeAlunos());
+
+	public boolean isTeorico()
+	{
+		return ( getCreditosTeorico() > 0 );
 	}
-	
-	public void concatenateVisaoCurso(AtendimentoTaticoDTO other) {
-		setDisciplinaString(getDisciplinaString() + "/" + other.getDisciplinaString());
-		setTurma(getTurma() + "/" + other.getTurma());
-		setCampusString(getCampusString() + "/" + other.getCampusString());
-		setUnidadeString(getUnidadeString() + "/" + other.getUnidadeString());
-		setSalaString(getSalaString() + "/" + other.getSalaString());
-		setQuantidadeAlunosString(getQuantidadeAlunosString() + "/" + other.getQuantidadeAlunosString());
+
+	public Integer getTotalCreditos()
+	{
+		return ( getCreditosTeorico() + getCreditosPratico() );
 	}
-	
-	public String getContentVisaoSala() {
+
+	public void concatenateVisaoSala( AtendimentoRelatorioDTO other )
+	{
+		setCursoNome( getCursoNome() + " / " + other.getCursoNome() );
+		setCurricularString( getCurriculoString() + " / " + other.getCurriculoString() );
+		setPeriodoString( getPeriodoString() + " / " + other.getPeriodoString() );
+		setQuantidadeAlunosString( getQuantidadeAlunosString() + " / " + other.getQuantidadeAlunosString() );
+		setQuantidadeAlunos( getQuantidadeAlunos() + other.getQuantidadeAlunos() );
+	}
+
+	public void concatenateVisaoCurso( AtendimentoTaticoDTO other )
+	{
+		setDisciplinaString( getDisciplinaString() + "/" + other.getDisciplinaString() );
+		setTurma( getTurma() + "/" + other.getTurma() );
+		setCampusString( getCampusString() + "/" + other.getCampusString() );
+		setUnidadeString( getUnidadeString() + "/" + other.getUnidadeString() );
+		setSalaString( getSalaString() + "/" + other.getSalaString() );
+		setQuantidadeAlunosString( getQuantidadeAlunosString() + "/" + other.getQuantidadeAlunosString() );
+	}
+
+	public String getContentVisaoSala()
+	{
 		return getDisciplinaString() + "<br />"
-		+ TriedaUtil.truncate(getDisciplinaNome(),12) + "<br />"
+		+ TriedaUtil.truncate( getDisciplinaNome(), 12 ) + "<br />"
 		+ "Turma " + getTurma() + "<br />"
-		//+ TriedaUtil.truncate(getCursoNome(),12) + "<br />"
 		+ getQuantidadeAlunosString() + " aluno(s)";
 	}
-	
+
 	public String getContentToolTipVisaoSala()
 	{
-		return "<b>Turma:</b> "+ getTurma() + "<br />"
-			+ "<b>Crédito(s) " + ((isTeorico())? "Teórico(s)" : "Prático(s)") + ":</b> "
-			+ getTotalCreditos()+" de "+getTotalCreditoDisciplina() + "<br />"
-			+ "<b>Curso:</b> " + getCursoNome() +"<br />"
+		return "<b>Turma:</b> " + getTurma() + "<br />"
+			+ "<b>Crédito(s) " + ( ( isTeorico() ) ? "Teórico(s)" : "Prático(s)" )
+			+ ":</b> " + getTotalCreditos() + " de " + getTotalCreditoDisciplina() + "<br />"
+			+ "<b>Curso:</b> " + getCursoNome() + "<br />"
 			+ "<b>Matriz Curricular:</b> " + getCurriculoString() + "<br />"
-			+ "<b>Período:</b> "+ getPeriodoString() +"<br />" 
-			+ "<b>Quantidade:</b> "+ getQuantidadeAlunosString() +"<br />";
+			+ "<b>Período:</b> " + getPeriodoString() +"<br />" 
+			+ "<b>Quantidade:</b> " + getQuantidadeAlunosString() + "<br />";
+	}
+
+	public String getContentToolTipVisaoCurso()
+	{
+		// Monta a string de compartilhamento da
+		// sala com alunos de cursos distintos (caso haja)
+		String compartilhamentoSalaCursos = "";
+		if ( getCompartilhamentoCursosString() != null
+			&& !getCompartilhamentoCursosString().equals( "" ) )
+		{
+			compartilhamentoSalaCursos = getCompartilhamentoCursosString();
+		}
+		String professor = ( getProfessorString() == null ? "" : getProfessorString() );
+
+		String contentToolTip = "<b>Nome:</b> " + getDisciplinaNome() + "<br />"
+			+ "<b>Sala:</b> " + getSalaString() + "<br />"
+			+ "<b>Turma:</b> " + getTurma() + "<br />"
+			+ "<b>Professor:</b> " + professor
+			+ "<br />" + "<b>" + getQuantidadeAlunos() + " aluno(s)</b><br />"
+			+ "<b>Tipo Crédito:</b> " + ( ( isTeorico() ) ? "Teórico" : "Prático" ) + "<br />"
+			+ "<b>Créditos:</b> " + getTotalCreditos() + " de "	+ getTotalCreditoDisciplina() + "<br />"
+			+ "<b>Curso(s) nessa aula : </b>" + compartilhamentoSalaCursos  + "<br />";
+
+		return contentToolTip;
 	}
 
 	public String getExcelContentVisaoSala()
@@ -300,27 +338,22 @@ public class AtendimentoTaticoDTO extends AbstractDTO< String >
 	public String getExcelCommentVisaoSala()
 	{
 		return getDisciplinaNome() + "\n"
-			+ "Turma: "+ getTurma() + "\n"
-			+ "Crédito(s) " + ((isTeorico())? "Teórico(s)" : "Prático(s)") + ": "
-			+ getTotalCreditos()+" de "+getTotalCreditoDisciplina() + "\n"
+			+ "Turma: " + getTurma() + "\n"
+			+ "Crédito(s) " + ( ( isTeorico() ) ? "Teórico(s)" : "Prático(s)")
+			+ ": " + getTotalCreditos() + " de "+getTotalCreditoDisciplina() + "\n"
 			+ "Curso: " + getCursoNome() + "\n"
 			+ "Matriz Curricular: " + getCurriculoString() + "\n"
-			+ "Período: "+ getPeriodoString() + "\n" 
-			+ "Quantidade: "+ getQuantidadeAlunosString();
+			+ "Período: " + getPeriodoString() + "\n" 
+			+ "Quantidade: " + getQuantidadeAlunosString();
 	}
 	
 	@Override
 	public String getNaturalKey()
 	{
-		return getCampusString()
-			+ "-" + getUnidadeString()
-			+ "-" + getSalaString()
-			+ "-" + getSemana()
-			+ "-" + getCursoString()
-			+ "-" + getCurriculoString()
-			+ "-" + getPeriodo()
-			+ "-" + getDisciplinaString()
-			+ "-" + getTurma();
+		return getCampusString() + "-" + getUnidadeString()
+			+ "-" + getSalaString() + "-" + getSemana()
+			+ "-" + getCursoString() + "-" + getCurriculoString()
+			+ "-" + getPeriodo() + "-" + getDisciplinaString() + "-" + getTurma();
 	}
 
 	@Override
@@ -332,31 +365,32 @@ public class AtendimentoTaticoDTO extends AbstractDTO< String >
 	@Override
 	public String toString()
 	{
-		return getDisciplinaString() + "@" + getTurma() + "@" + getSalaString() + "@" + getSemana();
+		return ( getDisciplinaString() + "@" + getTurma()
+			+ "@" + getSalaString() + "@" + getSemana() );
 	}
 
 	static public boolean compatibleByApproach1(
-			AtendimentoTaticoDTO dto1, AtendimentoTaticoDTO dto2 )
+		AtendimentoTaticoDTO dto1, AtendimentoTaticoDTO dto2 )
 	{
-		return dto1.getDisciplinaId().equals(dto2.getDisciplinaId()) && 
-			   !dto1.getSalaId().equals(dto2.getSalaId()) &&
-			   !dto1.getTurma().equals(dto2.getTurma()) &&
-			   dto1.getTotalCreditos().equals(dto2.getTotalCreditos()) &&
-			   dto1.getSemana().equals(dto2.getSemana());
+		return dto1.getDisciplinaId().equals( dto2.getDisciplinaId() )
+			&& !dto1.getSalaId().equals( dto2.getSalaId() )
+			&& !dto1.getTurma().equals( dto2.getTurma() )
+			&& dto1.getTotalCreditos().equals( dto2.getTotalCreditos() )
+			&& dto1.getSemana().equals( dto2.getSemana() );
 	}
 
 	static public boolean compatibleByApproach2(
-			AtendimentoTaticoDTO dto1, AtendimentoTaticoDTO dto2 )
+		AtendimentoTaticoDTO dto1, AtendimentoTaticoDTO dto2 )
 	{
-		return !dto1.getDisciplinaId().equals(dto2.getDisciplinaId()) && 
-			   !dto1.getSalaId().equals(dto2.getSalaId()) &&
-			   !dto1.getTurma().equals(dto2.getTurma()) &&
-			   dto1.getTotalCreditos().equals(dto2.getTotalCreditos()) &&
-			   dto1.getSemana().equals(dto2.getSemana());
+		return !dto1.getDisciplinaId().equals( dto2.getDisciplinaId() )
+			&& !dto1.getSalaId().equals( dto2.getSalaId() )
+			&& !dto1.getTurma().equals( dto2.getTurma() )
+			&& dto1.getTotalCreditos().equals( dto2.getTotalCreditos() )
+			&& dto1.getSemana().equals( dto2.getSemana() );
 	}
 	
 	static public int countListDTOsCreditos(
-			List< AtendimentoTaticoDTO > listDTOs )
+		List< AtendimentoTaticoDTO > listDTOs )
 	{
 		int count = 0;
 		for ( AtendimentoTaticoDTO dto : listDTOs )
@@ -367,12 +401,13 @@ public class AtendimentoTaticoDTO extends AbstractDTO< String >
 		return count;
 	}
 	
-	static public int countListListDTOsCreditos( List< List< AtendimentoTaticoDTO > > listListDTOs )
+	static public int countListListDTOsCreditos(
+		List< List< AtendimentoTaticoDTO > > listListDTOs )
 	{
 		int count = 0;
-		for ( List<AtendimentoTaticoDTO> listDTOs : listListDTOs )
+		for ( List< AtendimentoTaticoDTO > listDTOs : listListDTOs )
 		{
-			count += listDTOs.get(0).getTotalCreditos();
+			count += listDTOs.get( 0 ).getTotalCreditos();
 		}
 
 		return count;

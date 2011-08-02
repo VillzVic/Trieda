@@ -233,20 +233,34 @@ public class GradeHorariaSalaGrid extends ContentPanel
 				}
 
 				int semana = -1;
-				if (colIndex == 1)
+				if ( colIndex == 1 )
+				{
 					semana = 2;
-				else if (colIndex == 2)
+				}
+				else if ( colIndex == 2 )
+				{
 					semana = 3;
-				else if (colIndex == 3)
+				}
+				else if ( colIndex == 3 )
+				{
 					semana = 4;
-				else if (colIndex == 4)
+				}
+				else if ( colIndex == 4 )
+				{
 					semana = 5;
-				else if (colIndex == 5)
+				}
+				else if ( colIndex == 5 )
+				{
 					semana = 6;
-				else if (colIndex == 6)
+				}
+				else if ( colIndex == 6 )
+				{
 					semana = 7;
-				else if (colIndex == 7)
+				}
+				else if ( colIndex == 7 )
+				{
 					semana = 1;
+				}
 
 				AtendimentoRelatorioDTO atDTO = null;
 				if ( isTatico() )
@@ -260,7 +274,7 @@ public class GradeHorariaSalaGrid extends ContentPanel
 
 				if ( atDTO == null )
 				{
-					return new Html("");
+					return new Html( "" );
 				}
 
 				final String title = atDTO.getDisciplinaNome();
@@ -291,7 +305,8 @@ public class GradeHorariaSalaGrid extends ContentPanel
 					{
 						event.setData( html );
 						event.getStatus().update(
-								El.fly( html.getElement() ).cloneNode( true ) );
+							El.fly( html.getElement() ).cloneNode( true ) );
+
 						quickTip.hide();
 					}
 				};

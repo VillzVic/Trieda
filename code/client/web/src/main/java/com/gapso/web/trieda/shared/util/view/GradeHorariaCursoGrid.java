@@ -156,24 +156,36 @@ public class GradeHorariaCursoGrid extends ContentPanel {
 			});
 	}
 
-	public ListStore<LinhaDeCredito> getListStore() {
-		if (store == null) {
-			store = new ListStore<LinhaDeCredito>();
-		} else {
+	public ListStore< LinhaDeCredito > getListStore()
+	{
+		if ( store == null )
+		{
+			store = new ListStore< LinhaDeCredito >();
+		}
+		else
+		{
 			store.removeAll();
 		}
-		if (turnoDTO != null) {
-			if (isTatico()) {
-				for (Integer i = 1; i <= turnoDTO.getMaxCreditos(); i++) {
-					store.add(new LinhaDeCredito(i.toString()));
+
+		if ( turnoDTO != null )
+		{
+			if ( isTatico() )
+			{
+				for ( Integer i = 1; i <= turnoDTO.getMaxCreditos(); i++ )
+				{
+					store.add( new LinhaDeCredito( i.toString() ) );
 				}
-			} else {
-				for (Long horarioId : turnoDTO.getHorariosStringMap().keySet()) {
-					store.add(new LinhaDeCredito(turnoDTO
-							.getHorariosStringMap().get(horarioId), horarioId));
+			}
+			else
+			{
+				for ( Long horarioId : turnoDTO.getHorariosStringMap().keySet() )
+				{
+					store.add( new LinhaDeCredito(
+						turnoDTO.getHorariosStringMap().get( horarioId ), horarioId ) );
 				}
 			}
 		}
+
 		return store;
 	}
 
@@ -182,88 +194,103 @@ public class GradeHorariaCursoGrid extends ContentPanel {
 		super.onRender(parent, pos);
 	}
 
-	public List<ColumnConfig> getColumnList() {
-		List<ColumnConfig> list = new ArrayList<ColumnConfig>();
+	public List< ColumnConfig > getColumnList()
+	{
+		List< ColumnConfig > list = new ArrayList< ColumnConfig >();
 
-		if (isTatico()) {
-			addColumn(list, "display", "Créditos");
-		} else {
-			addColumn(list, "display", "Horários");
+		if ( isTatico() )
+		{
+			addColumn( list, "display", "Créditos" );
 		}
-		addColumn(list, "segunda", "Segunda");
-		addColumn(list, "terca", "Terça");
-		addColumn(list, "quarta", "Quarta");
-		addColumn(list, "quinta", "Quinta");
-		addColumn(list, "sexta", "Sexta");
-		addColumn(list, "sabado", "Sábado");
-		addColumn(list, "domingo", "Domingo");
+		else
+		{
+			addColumn( list, "display", "Horários" );
+		}
+
+		addColumn( list, "segunda", "Segunda" );
+		addColumn( list, "terca", "Terça" );
+		addColumn( list, "quarta", "Quarta" );
+		addColumn( list, "quinta", "Quinta" );
+		addColumn( list, "sexta", "Sexta" );
+		addColumn( list, "sabado", "Sábado" );
+		addColumn( list, "domingo", "Domingo" );
 
 		int columnsCount = getColumnsCount();
-		for (int i = 8; i < columnsCount; i++) {
-			addColumn(list, "extra" + i, "");
+		for (int i = 8; i < columnsCount; i++ )
+		{
+			addColumn( list, "extra" + i, "" );
 		}
 
 		return list;
 	}
 
-	private int getColumnsCount() {
+	private int getColumnsCount()
+	{
 		int count = 0;
-		if (diaSemanaTamanhoList == null)
+		if ( diaSemanaTamanhoList == null )
+		{
 			return count;
-		for (Integer c : diaSemanaTamanhoList) {
+		}
+
+		for ( Integer c : diaSemanaTamanhoList )
+		{
 			count += c;
 		}
+
 		return count;
 	}
 
-	private void addColumn(List<ColumnConfig> list, String id, String name) {
-
-		GridCellRenderer<LinhaDeCredito> change = new GridCellRenderer<LinhaDeCredito>() {
-			public Html render(LinhaDeCredito model, String property,
-					ColumnData config, int rowIndex, int colIndex,
-					ListStore<LinhaDeCredito> store, Grid<LinhaDeCredito> grid) {
-				if (colIndex == 0)
-					return new Html(model.getDisplay());
-				return content(model, rowIndex, colIndex);
-			}
-
-			private Html content(LinhaDeCredito model, int rowIndex,
-					int colIndex) {
-				if (colIndex == 0)
-					return new Html(String.valueOf(rowIndex + 1));
-				if (atendimentos == null || atendimentos.size() == 0)
-					new Html("");
-
-				int semana = colIndex;
-
-				AtendimentoRelatorioDTO atDTO = null;
-				if (isTatico()) {
-					atDTO = getAtendimento(rowIndex + 1, semana);
-				} else {
-					atDTO = getAtendimento(model.getHorarioId(), semana);
+	private void addColumn( List< ColumnConfig > list, String id, String name )
+	{
+		GridCellRenderer< LinhaDeCredito > change = new GridCellRenderer< LinhaDeCredito >()
+		{
+			public Html render( LinhaDeCredito model, String property,
+				ColumnData config, int rowIndex, int colIndex,
+				ListStore< LinhaDeCredito > store, Grid< LinhaDeCredito > grid )
+			{
+				if ( colIndex == 0 )
+				{
+					return new Html( model.getDisplay() );
 				}
 
-				if (atDTO == null)
-					return new Html("");
+				return content( model, rowIndex, colIndex );
+			}
 
+			private Html content( LinhaDeCredito model, int rowIndex, int colIndex )
+			{
+				if ( colIndex == 0 )
+				{
+					return new Html( String.valueOf( rowIndex + 1 ) );
+				}
+
+				if ( atendimentos == null || atendimentos.size() == 0 )
+				{
+					new Html( "" );
+				}
+
+				int semana = colIndex;
+				AtendimentoRelatorioDTO atDTO = null;
+				if ( isTatico() )
+				{
+					atDTO = getAtendimento( rowIndex + 1, semana );
+				}
+				else
+				{
+					atDTO = getAtendimento( model.getHorarioId(), semana );
+				}
+
+				if ( atDTO == null )
+				{
+					return new Html( "" );
+				}
+
+				// TODO
 				final String title = atDTO.getDisciplinaString();
-
-				String contentToolTipAux = "<b>Nome:</b> "
-						+ atDTO.getDisciplinaNome() + "<br />"
-						+ "<b>Sala:</b> " + atDTO.getSalaString() + "<br />"
-						+ "<b>Turma:</b> " + atDTO.getTurma() + "<br />"
-						+ "<b>Professor:</b> " + atDTO.getProfessorString()
-						+ "<br />" + "<b>" + atDTO.getQuantidadeAlunos()
-						+ " aluno(s)</b><br />" + "<b>Tipo Crédito:</b> "
-						+ ((atDTO.isTeorico()) ? "Teórico" : "Prático")
-						+ "<br />" + "<b>Créditos:</b> "
-						+ atDTO.getTotalCreditos() + " de "
-						+ atDTO.getTotalCreditoDisciplina() + "<br />";
-				final String contentToolTip = contentToolTipAux;
+				final String contentToolTip = atDTO.getContentToolTipVisaoCurso();				
 
 				String content = atDTO.getDisciplinaString() + "<br />";
 
-				content += TriedaUtil.truncate(atDTO.getDisciplinaNome(), 12);
+				content += TriedaUtil.truncate( atDTO.getDisciplinaNome(), 12 );
 				content += "<br />";
 
 				content += atDTO.getUnidadeString();
@@ -275,30 +302,34 @@ public class GradeHorariaCursoGrid extends ContentPanel {
 				content += "Turma " + atDTO.getTurma();
 				content += "<br />";
 
-				final Html html = new Html(content) {
+				final Html html = new Html( content )
+				{
 					@Override
-					protected void onRender(Element target, int index) {
-						super.onRender(target, index);
-						target.setAttribute("qtip", contentToolTip);
-						target.setAttribute("qtitle", title);
-						target.setAttribute("qwidth", "400px");
+					protected void onRender( Element target, int index )
+					{
+						super.onRender( target, index );
+
+						target.setAttribute( "qtip", contentToolTip );
+						target.setAttribute( "qtitle", title );
+						target.setAttribute( "qwidth", "400px" );
 					}
 				};
-				html.addStyleName("horario");
-				html.addStyleName("c" + (rowIndex + 1)); // posiciona na linha
-															// (credito)
-				html.addStyleName("tc" + atDTO.getTotalCreditos()); // altura
-				html.addStyleName("s" + atDTO.getSemana()); // posiciona na
-															// columa (dia
-															// semana)
-				html.addStyleName(getCssDisciplina(atDTO.getDisciplinaId()));
 
-				new DragSource(html) {
+				html.addStyleName( "horario" );
+				html.addStyleName( "c" + ( rowIndex + 1 ) ); // Posiciona na linha (credito)
+				html.addStyleName( "tc" + atDTO.getTotalCreditos() ); // Altura
+				html.addStyleName( "s" + atDTO.getSemana() ); // Posiciona na coluna (dia semana)
+				html.addStyleName( getCssDisciplina( atDTO.getDisciplinaId() ) );
+
+				new DragSource( html )
+				{
 					@Override
-					protected void onDragStart(DNDEvent event) {
-						event.setData(html);
+					protected void onDragStart( DNDEvent event )
+					{
+						event.setData( html );
 						event.getStatus().update(
-								El.fly(html.getElement()).cloneNode(true));
+							El.fly( html.getElement() ).cloneNode( true ) );
+
 						quickTip.hide();
 					}
 				};
@@ -307,16 +338,18 @@ public class GradeHorariaCursoGrid extends ContentPanel {
 			}
 		};
 
-		int width = getWidth(id);
-		if (name.equals("")) {
+		int width = getWidth( id );
+		if ( name.equals("" ) )
+		{
 			width = 0;
 		}
-		ColumnConfig column = new ColumnConfig(id, name, width);
-		column.setRenderer(change);
-		column.setResizable(false);
-		column.setMenuDisabled(true);
-		column.setSortable(false);
-		list.add(column);
+
+		ColumnConfig column = new ColumnConfig( id, name, width );
+		column.setRenderer( change );
+		column.setResizable( false );
+		column.setMenuDisabled( true );
+		column.setSortable( false );
+		list.add( column );
 	}
 
 	private AtendimentoRelatorioDTO getAtendimento(Long horarioId, int semana) {
