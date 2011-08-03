@@ -32,109 +32,131 @@ import com.googlecode.future.FutureSynchronizer;
 /**
  * Entry point classes define <code>onModuleLoad()</code>.
  */
-public class Login implements EntryPoint {
-	
+public class Login implements EntryPoint
+{
 	private Viewport viewport;
 	
 	/**
 	 * This is the entry point method.
 	 */
-	public void onModuleLoad() {
+	public void onModuleLoad()
+	{
 		redirect();
 	}
-	
-	public void redirect() {
+
+	public void redirect()
+	{
 		UsuariosServiceAsync usuarioService = Services.usuarios();
-		final FutureResult<UsuarioDTO> futureUsuarioDTO = new FutureResult<UsuarioDTO>();
-		usuarioService.getCurrentUser(futureUsuarioDTO);
-		FutureSynchronizer synch = new FutureSynchronizer(futureUsuarioDTO);
-		
-		synch.addCallback(new AsyncCallback<Boolean>() {
+		final FutureResult< UsuarioDTO > futureUsuarioDTO = new FutureResult< UsuarioDTO >();
+		usuarioService.getCurrentUser( futureUsuarioDTO );
+		FutureSynchronizer synch = new FutureSynchronizer( futureUsuarioDTO );
+
+		synch.addCallback( new AsyncCallback< Boolean >()
+		{
 			@Override
-			public void onSuccess(Boolean result) {
+			public void onSuccess( Boolean result )
+			{
 				UsuarioDTO usuario = futureUsuarioDTO.result();
-				if(usuario == null) {
+				if ( usuario == null )
+				{
 					loadLogin();
-				} else if(usuario.isAdministrador()) {
-					 Window.open("../trieda/"+TriedaUtil.paramsDebug(), "_self", ""); 
-				} else if(usuario.isProfessor()) {
-					 Window.open("../professor/"+TriedaUtil.paramsDebug(), "_self", ""); 
+				}
+				else if( usuario.isAdministrador() )
+				{
+					 Window.open( "../trieda/" + TriedaUtil.paramsDebug(), "_self", "" ); 
+				}
+				else if ( usuario.isProfessor() )
+				{
+					 Window.open( "../professor/" + TriedaUtil.paramsDebug(), "_self", "" ); 
 				}
 			}
-			
+
 			@Override
-			public void onFailure(Throwable caught) {
-				MessageBox.alert("ERRO!", "Deu falha na conexão", null);
+			public void onFailure( Throwable caught )
+			{
+				MessageBox.alert( "ERRO!", "Deu falha na conexão", null );
 			}
 		});
 	}
-	
-	private void loadLogin() {
+
+	private void loadLogin()
+	{
 		viewport = new Viewport();
-		viewport.setLayout(new FitLayout());
-		ContentPanel panel = new ContentPanel(new CenterLayout());
-		
-		final FormPanel form = new FormPanel() {
+		viewport.setLayout( new FitLayout() );
+		ContentPanel panel = new ContentPanel( new CenterLayout() );
+
+		final FormPanel form = new FormPanel()
+		{
 			@Override
-			protected void onRender(Element target, int index) {
-				super.onRender(target, index);
-				getLayoutTarget().dom.setPropertyString("target", "_self");
+			protected void onRender( Element target, int index )
+			{
+				super.onRender( target, index );
+				getLayoutTarget().dom.setPropertyString( "target", "_self" );
 			}
 		};
-		form.setAction("../resources/j_spring_security_check");
-		form.setMethod(Method.POST);
-		form.setFrame(true);  
-		form.setHeading("Acesso restrito");  
-		form.setWidth(350);  
+
+		form.setAction( "../resources/j_spring_security_check" );
+		form.setMethod( Method.POST );
+		form.setFrame( true );
+		form.setHeading( "Acesso restrito" );  
+		form.setWidth( 350 );
+
 		FormLayout layout = new FormLayout();  
-		layout.setLabelWidth(75);  
-		form.setLayout(layout);  
-		
-		FormData formData = new FormData("-20");  
-		
-		TextField<String> usernameTF = new TextField<String>() {
+		layout.setLabelWidth( 75 );  
+		form.setLayout( layout );  
+
+		FormData formData = new FormData( "-20" );  
+
+		TextField< String > usernameTF = new TextField< String >()
+		{
 			@Override
-			protected void onRender(Element target, int index) {
-				super.onRender(target, index);
-				getInputEl().setElementAttribute("autocomplete", "off");
+			protected void onRender( Element target, int index )
+			{
+				super.onRender( target, index );
+				getInputEl().setElementAttribute( "autocomplete", "off" );
 			}
 		};
-		usernameTF.setName("j_username");
-		usernameTF.setFieldLabel("Usuário");  
-		form.add(usernameTF, formData);  
-		
-		TextField<String> passwordTF = new TextField<String>();  
-		passwordTF.setName("j_password");
-		passwordTF.setFieldLabel("Senha");
-		passwordTF.setPassword(true);
-		form.add(passwordTF, formData);
-		
-		Button enviarBt = new Button("Acessar");
-		enviarBt.addSelectionListener(new SelectionListener<ButtonEvent>() {
+
+		usernameTF.setName( "j_username" );
+		usernameTF.setFieldLabel( "Usuário" );  
+		form.add( usernameTF, formData );
+
+		TextField< String > passwordTF = new TextField< String >();  
+		passwordTF.setName( "j_password" );
+		passwordTF.setFieldLabel( "Senha" );
+		passwordTF.setPassword( true );
+		form.add( passwordTF, formData );
+
+		Button enviarBt = new Button( "Acessar" );
+		enviarBt.addSelectionListener( new SelectionListener< ButtonEvent >()
+		{
 			@Override
-			public void componentSelected(ButtonEvent ce) {
+			public void componentSelected( ButtonEvent ce )
+			{
 				form.submit();
 			}
 		});
-		setDefaultButton(form, enviarBt);
-		form.addButton(enviarBt);
-		
-		
-		panel.add(form);
-		
-		viewport.add(panel);
-		RootPanel.get().add(viewport);
-		RootPanel.get("loading").setVisible(false);
+
+		setDefaultButton( form, enviarBt );
+		form.addButton( enviarBt );
+
+		panel.add( form );
+
+		viewport.add( panel );
+		RootPanel.get().add( viewport );
+		RootPanel.get( "loading" ).setVisible( false );
 	}
-	
-	public void setDefaultButton(Component comp, final Button button) {
-		new KeyNav<ComponentEvent>(comp) {
+
+	public void setDefaultButton( Component comp, final Button button )
+	{
+		new KeyNav< ComponentEvent >( comp )
+		{
 			@Override
-			public void onEnter(ComponentEvent ce) {
-				super.onEnter(ce);
-				button.fireEvent(Events.Select);
+			public void onEnter( ComponentEvent ce )
+			{
+				super.onEnter( ce );
+				button.fireEvent( Events.Select );
 			}
 		};
 	}
-	
 }

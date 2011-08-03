@@ -19,75 +19,109 @@ import com.gapso.web.trieda.shared.util.TriedaUtil;
 /**
  * The server side implementation of the RPC service.
  */
-public class UsuariosServiceImpl extends RemoteService implements UsuariosService {
-
+public class UsuariosServiceImpl extends RemoteService
+	implements UsuariosService
+{
 	private static final long serialVersionUID = 5672570072070386404L;
 
 	@Override
-	public UsuarioDTO getUsuario(String username) {
-		return ConvertBeans.toUsuarioDTO(Usuario.find(username));
+	public UsuarioDTO getUsuario( String username )
+	{
+		return ConvertBeans.toUsuarioDTO( Usuario.find( username ) );
 	}
-	
+
 	@Override
-	public UsuarioDTO getCurrentUser() {
+	public UsuarioDTO getCurrentUser()
+	{
 		Usuario usuario = getUsuario();
-		return (usuario == null) ? null : ConvertBeans.toUsuarioDTO(usuario);
+		return ( ( usuario == null ) ? null : ConvertBeans.toUsuarioDTO( usuario ) );
 	}
-	
+
 	@Override
-	public PagingLoadResult<UsuarioDTO> getBuscaList(String nome, String username, String email, PagingLoadConfig config) {
-		List<UsuarioDTO> list = new ArrayList<UsuarioDTO>();
+	public PagingLoadResult< UsuarioDTO > getBuscaList(
+		String nome, String username, String email, PagingLoadConfig config )
+	{
+		List< UsuarioDTO > list = new ArrayList< UsuarioDTO >();
 		String orderBy = config.getSortField();
-		if(orderBy != null) {
-			if(config.getSortDir() != null && config.getSortDir().equals(SortDir.DESC)) {
-				orderBy = orderBy + " asc";
-			} else {
-				orderBy = orderBy + " desc";
+
+		if ( orderBy != null )
+		{
+			if ( config.getSortDir() != null
+				&& config.getSortDir().equals( SortDir.DESC ) )
+			{
+				orderBy = ( orderBy + " asc" );
+			}
+			else
+			{
+				orderBy = ( orderBy + " desc" );
 			}
 		}
-		List<Usuario> usuarios = Usuario.findAllBy(nome, username, email, config.getOffset(), config.getLimit(), orderBy);
-		for(Usuario usuario : usuarios) {
-			list.add(ConvertBeans.toUsuarioDTO(usuario));
+
+		List< Usuario > usuarios = Usuario.findAllBy(
+			nome, username, email, config.getOffset(), config.getLimit(), orderBy );
+
+		for ( Usuario usuario : usuarios )
+		{
+			list.add( ConvertBeans.toUsuarioDTO(usuario ) );
 		}
-		BasePagingLoadResult<UsuarioDTO> result = new BasePagingLoadResult<UsuarioDTO>(list);
-		result.setOffset(config.getOffset());
-		result.setTotalLength(Usuario.count(nome, username, email));
+
+		BasePagingLoadResult< UsuarioDTO > result
+			= new BasePagingLoadResult< UsuarioDTO >( list );
+		result.setOffset( config.getOffset() );
+		result.setTotalLength( Usuario.count( nome, username, email ) );
+
 		return result;
 	}
 
 	@Override
-	public void save(UsuarioDTO usuarioDTO) {
-//		Usuario usuario = ConvertBeans.toUsuario(usuarioDTO);
-		Usuario usuario = Usuario.find(usuarioDTO.getUsername());
-		if(usuario != null) {
-			usuario.setNome(usuarioDTO.getNome());
-			usuario.setEmail(usuarioDTO.getEmail());
-			if(!TriedaUtil.isBlank(usuarioDTO.getPassword())) {
-				usuario.setPassword(Encryption.toMD5(usuarioDTO.getPassword()));
+	public void save(UsuarioDTO usuarioDTO )
+	{
+		Usuario usuario = Usuario.find( usuarioDTO.getUsername() );
+		if ( usuario != null )
+		{
+			usuario.setNome( usuarioDTO.getNome() );
+			usuario.setEmail( usuarioDTO.getEmail() );
+
+			if ( !TriedaUtil.isBlank( usuarioDTO.getPassword() ) )
+			{
+				usuario.setPassword( Encryption.toMD5( usuarioDTO.getPassword() ) );
 			}
-			if(!TriedaUtil.isBlank(usuarioDTO.getProfessorId())) {
-				usuario.setProfessor(Professor.find(usuarioDTO.getProfessorId()));
+
+			if ( !TriedaUtil.isBlank( usuarioDTO.getProfessorId() ) )
+			{
+				usuario.setProfessor( Professor.find( usuarioDTO.getProfessorId() ) );
 			}
+
 			usuario.merge();
-		} else {
-			usuario = ConvertBeans.toUsuario(usuarioDTO);
-			usuario.setPassword(Encryption.toMD5(usuario.getPassword()));
-			usuario.setEnabled(true);
+		}
+		else
+		{
+			usuario = ConvertBeans.toUsuario( usuarioDTO );
+			usuario.setPassword( Encryption.toMD5( usuario.getPassword() ) );
+			usuario.setEnabled( true );
 			usuario.persist();
-			
+
 			Authority authority = new Authority();
-			authority.setAuthority("ROLE_USER");
-			authority.setUsername(usuario.getUsername());
+			authority.setAuthority( "ROLE_USER" );
+			authority.setUsername( usuario.getUsername() );
 			authority.persist();
 		}
 	}
 	
 	@Override
-	public void remove(List<UsuarioDTO> usuarioDTOList) {
-		for(UsuarioDTO usuarioDTO : usuarioDTOList) {
-			Usuario usuario = Usuario.find(usuarioDTO.getUsername());
+	public void remove( List< UsuarioDTO > usuarioDTOList )
+	{
+		for ( UsuarioDTO usuarioDTO : usuarioDTOList )
+		{
+			Usuario usuario = Usuario.find( usuarioDTO.getUsername() );
 			usuario.remove();
 		}
 	}
 
+	@Override
+	public Boolean avoidSessionExpire()
+	{
+		System.out.println( "Passou aqui!!!" );
+		return true;
+	}
 }

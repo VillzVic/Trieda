@@ -17,49 +17,53 @@ import com.google.gwt.user.client.ui.Widget;
 import com.googlecode.future.FutureResult;
 import com.googlecode.future.FutureSynchronizer;
 
-public class AppPresenter implements Presenter {
-
-	public interface Display extends ITriedaI18nGateway {
+public class AppPresenter
+	implements Presenter
+{
+	public interface Display
+		extends ITriedaI18nGateway
+	{
 		ContentPanel getPanel();
 		GTab getGTab();
 		Widget asWidget();
 		Component getComponent();
 	}
-	
+
 	private Display viewport;
-	
-	public AppPresenter(Display viewport) {
+
+	public AppPresenter( Display viewport )
+	{
 		this.viewport = viewport;
 	}
 
 	@Override
-	public void go(final Widget widget) {
-		
+	public void go( final Widget widget )
+	{
 		CenariosServiceAsync cenarioService = Services.cenarios();
 		UsuariosServiceAsync usuarioService = Services.usuarios();
-		
-		final FutureResult<CenarioDTO> futureCenarioDTO = new FutureResult<CenarioDTO>();
-		final FutureResult<UsuarioDTO> futureUsuarioDTO = new FutureResult<UsuarioDTO>();
-		
-		cenarioService.getMasterData(futureCenarioDTO);
-		usuarioService.getCurrentUser(futureUsuarioDTO);
-		
-		FutureSynchronizer synch = new FutureSynchronizer(futureCenarioDTO, futureUsuarioDTO);
-		
-		synch.addCallback(new AbstractAsyncCallbackWithDefaultOnFailure<Boolean>(viewport) {
+
+		final FutureResult< CenarioDTO > futureCenarioDTO = new FutureResult< CenarioDTO >();
+		final FutureResult< UsuarioDTO > futureUsuarioDTO = new FutureResult< UsuarioDTO >();
+
+		cenarioService.getMasterData( futureCenarioDTO );
+		usuarioService.getCurrentUser( futureUsuarioDTO );
+
+		FutureSynchronizer synch = new FutureSynchronizer( futureCenarioDTO, futureUsuarioDTO );
+
+		synch.addCallback( new AbstractAsyncCallbackWithDefaultOnFailure< Boolean >( viewport )
+		{
 			@Override
-			public void onSuccess(Boolean result) {
+			public void onSuccess( Boolean result )
+			{
 				CenarioDTO cenario = futureCenarioDTO.result();
 				UsuarioDTO usuario = futureUsuarioDTO.result();
-				
+
 				RootPanel rp = (RootPanel) widget;
-				Presenter presenter = new ToolBarPresenter(cenario, usuario, new ToolBarView());
-				presenter.go(viewport.asWidget());
-				rp.add(viewport.asWidget());
-				RootPanel.get("loading").setVisible(false);
+				Presenter presenter = new ToolBarPresenter( cenario, usuario, new ToolBarView() );
+				presenter.go( viewport.asWidget() );
+				rp.add( viewport.asWidget() );
+				RootPanel.get( "loading" ).setVisible( false );
 			}
 		});
-		
 	}
-
 }

@@ -67,12 +67,8 @@ public class OtimizarServiceImpl extends RemoteServiceServlet
 	@Transactional
 	public Long sendInput( ParametroDTO parametroDTO )
 	{
-		// List<Campus> campi = new ArrayList<Campus>(campiDTO.size());
-		// for(CampusDTO campusDTO : campiDTO) {
-		// campi.add(Campus.find(campusDTO.getId()));
-		// }
-
 		Parametro parametro = ConvertBeans.toParametro( parametroDTO );
+
 		parametro.setId( null );
 		parametro.flush();
 		parametro.save();
@@ -82,8 +78,7 @@ public class OtimizarServiceImpl extends RemoteServiceServlet
 		campi.add( parametro.getCampus() );
 		Turno turno = parametro.getTurno();
 
-		SolverInput solverInput = new SolverInput(
-				cenario, parametro, campi, turno );
+		SolverInput solverInput = new SolverInput( cenario, parametro, campi, turno );
 		TriedaInput triedaInput = null;
 		if ( parametro.isTatico() )
 		{
@@ -100,7 +95,7 @@ public class OtimizarServiceImpl extends RemoteServiceServlet
 			final ByteArrayOutputStream temp = new ByteArrayOutputStream();
 
 			JAXBContext jc = JAXBContext.newInstance(
-					"com.gapso.web.trieda.server.xml.input" );
+				"com.gapso.web.trieda.server.xml.input" );
 
 			Marshaller m = jc.createMarshaller();
 			m.setProperty( Marshaller.JAXB_FORMATTED_OUTPUT, true );
@@ -126,7 +121,7 @@ public class OtimizarServiceImpl extends RemoteServiceServlet
 
 	@Override
 	public Map< String, List< String > > saveContent(
-			CenarioDTO cenarioDTO, Long round )
+		CenarioDTO cenarioDTO, Long round )
 	{
 		Cenario cenario = Cenario.find( cenarioDTO.getId() );
 
@@ -146,13 +141,13 @@ public class OtimizarServiceImpl extends RemoteServiceServlet
 			}
 
 			JAXBContext jc = JAXBContext.newInstance(
-					"com.gapso.web.trieda.server.xml.output" );
+				"com.gapso.web.trieda.server.xml.output" );
 
 			Unmarshaller u = jc.createUnmarshaller();
 			StringBuffer xmlStr = new StringBuffer( new String( xmlBytes ) );
 
 			TriedaOutput triedaOutput = ( TriedaOutput ) u.unmarshal(
-					new StreamSource( new StringReader( xmlStr.toString() ) ) );
+				new StreamSource( new StringReader( xmlStr.toString() ) ) );
 
 			for ( ItemError erro : triedaOutput.getErrors().getError() )
 			{
@@ -176,13 +171,13 @@ public class OtimizarServiceImpl extends RemoteServiceServlet
 			{
 				solverOutput.generateAtendimentosTatico();
 				solverOutput.salvarAtendimentosTatico(
-						parametro.getCampus(), parametro.getTurno() );
+					parametro.getCampus(), parametro.getTurno() );
 			}
 			else
 			{
 				solverOutput.generateAtendimentosOperacional();
 				solverOutput.salvarAtendimentosOperacional(
-						parametro.getCampus(), parametro.getTurno());
+					parametro.getCampus(), parametro.getTurno());
 			}
 		}
 		catch ( JAXBException e )

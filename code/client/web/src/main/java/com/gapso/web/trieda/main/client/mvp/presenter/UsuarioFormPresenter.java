@@ -19,72 +19,93 @@ import com.gapso.web.trieda.shared.util.view.SimpleGrid;
 import com.gapso.web.trieda.shared.util.view.SimpleModal;
 import com.google.gwt.user.client.ui.Widget;
 
-public class UsuarioFormPresenter implements Presenter {
-
-	public interface Display extends ITriedaI18nGateway {
+public class UsuarioFormPresenter
+	implements Presenter
+{
+	public interface Display
+		extends ITriedaI18nGateway
+	{
 		Button getSalvarButton();
-		TextField<String> getNomeTextField();
-		TextField<String> getEmailTextField();
-		TextField<String> getUsernameTextField();
-		TextField<String> getPasswordTextField();
+		TextField< String > getNomeTextField();
+		TextField< String > getEmailTextField();
+		TextField< String > getUsernameTextField();
+		TextField< String > getPasswordTextField();
 		ProfessorComboBox getProfessorComboBox();
 		UsuarioDTO getUsuarioDTO();
 		boolean isValid();
-		
+
 		SimpleModal getSimpleModal();
 	}
 
-	private SimpleGrid<UsuarioDTO> gridPanel;
+	private SimpleGrid< UsuarioDTO > gridPanel;
 	private Display display;
 	
-	public UsuarioFormPresenter(CenarioDTO cenario, Display display, SimpleGrid<UsuarioDTO> gridPanel) {
+	public UsuarioFormPresenter( CenarioDTO cenario,
+		Display display, SimpleGrid< UsuarioDTO > gridPanel )
+	{
 		this.gridPanel = gridPanel;
 		this.display = display;
 		setListeners();
 	}
 
-	private void setListeners() {
-		display.getSalvarButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
-			@Override
-			public void componentSelected(ButtonEvent ce) {
-				if(isValid()) {
-					final UsuariosServiceAsync service = Services.usuarios();
-					service.save(getDTO(), new AbstractAsyncCallbackWithDefaultOnFailure<Void>(display) {
-						@Override
-						public void onSuccess(Void result) {
-							display.getSimpleModal().hide();
-							gridPanel.updateList();
-							Info.display("Salvo", "Item salvo com sucesso!");
-						}
-					});
-				} else {
-					MessageBox.alert("ERRO!", "Verifique os campos digitados", null);
+	private void setListeners()
+	{
+		display.getSalvarButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+			{
+				@Override
+				public void componentSelected( ButtonEvent ce )
+				{
+					if ( isValid() )
+					{
+						final UsuariosServiceAsync service = Services.usuarios();
+						service.save( getDTO(),
+							new AbstractAsyncCallbackWithDefaultOnFailure< Void >( display )
+							{
+								@Override
+								public void onSuccess( Void result )
+								{
+									display.getSimpleModal().hide();
+									gridPanel.updateList();
+									Info.display( "Salvo", "Item salvo com sucesso!" );
+								}
+							});
+					}
+					else
+					{
+						MessageBox.alert( "ERRO!", "Verifique os campos digitados", null );
+					}
 				}
-			}
-		});
+			});
 	}
-	
-	private boolean isValid() {
+
+	private boolean isValid()
+	{
 		return display.isValid();
 	}
-	
-	private UsuarioDTO getDTO() {
+
+	private UsuarioDTO getDTO()
+	{
 		UsuarioDTO usuarioDTO = display.getUsuarioDTO();
-		usuarioDTO.setNome(display.getNomeTextField().getValue());
-		usuarioDTO.setEmail(display.getEmailTextField().getValue());
-		usuarioDTO.setUsername(display.getUsernameTextField().getValue());
-		usuarioDTO.setPassword(display.getPasswordTextField().getValue());
+
+		usuarioDTO.setNome( display.getNomeTextField().getValue());
+		usuarioDTO.setEmail( display.getEmailTextField().getValue());
+		usuarioDTO.setUsername( display.getUsernameTextField().getValue());
+		usuarioDTO.setPassword( display.getPasswordTextField().getValue());
 		ProfessorDTO professor = display.getProfessorComboBox().getValue();
-		if(professor != null) {
-			usuarioDTO.setProfessorId(professor.getId());
-			usuarioDTO.setProfessorDisplayText(professor.getNome());
+
+		if ( professor != null )
+		{
+			usuarioDTO.setProfessorId( professor.getId() );
+			usuarioDTO.setProfessorDisplayText( professor.getNome() );
 		}
+
 		return usuarioDTO;
 	}
 	
 	@Override
-	public void go(Widget widget) {
+	public void go( Widget widget )
+	{
 		display.getSimpleModal().show();
 	}
-
 }

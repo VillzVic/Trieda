@@ -37,7 +37,9 @@ import org.springframework.transaction.annotation.Transactional;
 @RooToString
 @RooEntity(identifierColumn = "OFE_ID")
 @Table(name = "OFERTAS")
-public class Oferta implements Serializable, Comparable<Oferta> {
+public class Oferta implements Serializable, Comparable< Oferta >
+{
+	private static final long serialVersionUID = -976299446108675926L;
 
 	@NotNull
 	@ManyToOne(targetEntity = Curriculo.class)
@@ -143,25 +145,36 @@ public class Oferta implements Serializable, Comparable<Oferta> {
 		return merged;
 	}
 
-	public static final EntityManager entityManager() {
+	public static final EntityManager entityManager()
+	{
 		EntityManager em = new Oferta().entityManager;
-		if (em == null)
+		if ( em == null )
+		{
 			throw new IllegalStateException(
-					"Entity manager has not been injected (is the Spring Aspects JAR configured as an AJC/AJDT aspects library?)");
+				"Entity manager has not been injected (is the Spring " +
+				"Aspects JAR configured as an AJC/AJDT aspects library?)" );
+		}
+
 		return em;
 	}
 
 	@SuppressWarnings("unchecked")
-	public static List<Oferta> findAllBy(Sala sala) {
-		Query q = entityManager()
-				.createQuery(
-						"SELECT DISTINCT(o) FROM Oferta o, IN (o.curriculo.disciplinas) dis WHERE dis IN (:disciplinas)");
-		Set<CurriculoDisciplina> curriculoDisciplinas = sala
-				.getCurriculoDisciplinas();
-		q.setParameter("disciplinas", sala.getCurriculoDisciplinas());
-		if (curriculoDisciplinas.isEmpty()) {
-			return Collections.<Oferta> emptyList();
+	public static List< Oferta > findAllBy( Sala sala )
+	{
+		Query q = entityManager().createQuery(
+			"SELECT DISTINCT(o) FROM Oferta o, IN " +
+			"(o.curriculo.disciplinas) dis WHERE dis IN (:disciplinas)" );
+
+		Set< CurriculoDisciplina > curriculoDisciplinas
+			= sala.getCurriculoDisciplinas();
+
+		q.setParameter( "disciplinas", sala.getCurriculoDisciplinas() );
+
+		if ( curriculoDisciplinas.isEmpty() )
+		{
+			return Collections.< Oferta > emptyList();
 		}
+
 		return q.getResultList();
 	}
 
@@ -248,43 +261,58 @@ public class Oferta implements Serializable, Comparable<Oferta> {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static List<Oferta> findBy(Turno turno, Campus campus, Curso curso,
-			Curriculo curriculo, int firstResult, int maxResults, String orderBy) {
+	public static List<Oferta> findBy( Turno turno, Campus campus, Curso curso,
+		Curriculo curriculo, int firstResult, int maxResults, String orderBy )
+	{
+		orderBy = ( ( orderBy != null ) ? "ORDER BY o." + orderBy : "" );
 
-		orderBy = (orderBy != null) ? "ORDER BY o." + orderBy : "";
-
-		String queryTurno = (turno != null) ? " o.turno = :turno AND " : "";
-		String queryCampus = (campus != null) ? " o.campus = :campus AND " : "";
-		String queryCurso = (curso != null) ? " o.curriculo.curso = :curso AND "
-				: "";
-		String queryCurriculo = (curriculo != null) ? " o.curriculo = :curriculo AND "
-				: "";
+		String queryTurno = ( ( turno != null ) ? " o.turno = :turno AND " : "" );
+		String queryCampus = ( ( campus != null ) ? " o.campus = :campus AND " : "" );
+		String queryCurso = ( ( curso != null ) ? " o.curriculo.curso = :curso AND " : "" );
+		String queryCurriculo = ( ( curriculo != null ) ? " o.curriculo = :curriculo AND "	: "" );
 
 		Query q = entityManager().createQuery(
-				"SELECT o FROM Oferta o WHERE " + queryTurno + queryCampus
-						+ queryCurso + queryCurriculo + " 1=1 ");
-		if (turno != null)
-			q.setParameter("turno", turno);
-		if (campus != null)
-			q.setParameter("campus", campus);
-		if (curso != null)
-			q.setParameter("curso", curso);
-		if (curriculo != null)
-			q.setParameter("curriculo", curriculo);
+			"SELECT o FROM Oferta o WHERE " + queryTurno
+				+ queryCampus + queryCurso + queryCurriculo + " 1=1 " );
 
-		return q.setFirstResult(firstResult).setMaxResults(maxResults)
-				.getResultList();
+		if ( turno != null )
+		{
+			q.setParameter( "turno", turno );
+		}
+
+		if ( campus != null )
+		{
+			q.setParameter( "campus", campus );
+		}
+
+		if ( curso != null )
+		{
+			q.setParameter( "curso", curso );
+		}
+
+		if ( curriculo != null )
+		{
+			q.setParameter( "curriculo", curriculo );
+		}
+
+		return q.setFirstResult( firstResult ).setMaxResults( maxResults ).getResultList();
 	}
 
 	public static Map<String, Oferta> buildCampusTurnoCurriculoToOfertaMap(
-			List<Oferta> ofertas) {
-		Map<String, Oferta> ofertasMap = new HashMap<String, Oferta>();
-		for (Oferta oferta : ofertas) {
-			String codigo = oferta.getCampus().getCodigo() + "-";
-			codigo += oferta.getTurno().getNome() + "-";
-			codigo += oferta.getCurriculo().getCodigo();
-			ofertasMap.put(codigo, oferta);
+		List< Oferta > ofertas )
+	{
+		Map< String, Oferta > ofertasMap
+			= new HashMap< String, Oferta >();
+
+		for ( Oferta oferta : ofertas )
+		{
+			String codigo = ( oferta.getCampus().getCodigo() + "-" );
+			codigo += ( oferta.getTurno().getNome() + "-" );
+			codigo += ( oferta.getCurriculo().getCodigo() );
+
+			ofertasMap.put( codigo, oferta );
 		}
+
 		return ofertasMap;
 	}
 
@@ -354,30 +382,31 @@ public class Oferta implements Serializable, Comparable<Oferta> {
 		this.atendimentosTaticos = atendimentosTaticos;
 	}
 
-	private static final long serialVersionUID = -976299446108675926L;
-
-	public String toString() {
+	public String toString()
+	{
 		StringBuilder sb = new StringBuilder();
+
 		sb.append("Id: ").append(getId()).append(", ");
 		sb.append("Version: ").append(getVersion()).append(", ");
-		sb.append("Curriculo: ").append(getCurriculo().getCodigo())
-				.append(", ");
+		sb.append("Curriculo: ").append(getCurriculo().getCodigo()).append(", ");
 		sb.append("Campus: ").append(getCampus().getCodigo()).append(", ");
 		sb.append("Turno: ").append(getTurno().getNome()).append(", ");
 		sb.append("Demandas: ").append(
-				getDemandas() == null ? "null" : getDemandas().size());
+			getDemandas() == null ? "null" : getDemandas().size() );
 		sb.append("Receita: ").append(getReceita()).append(", ");
 		sb.append("Atendimentos Operacionais: ").append(
-				getAtendimentosOperacionais() == null ? "null"
-						: getAtendimentosOperacionais().size());
+			getAtendimentosOperacionais() == null ? "null"
+				: getAtendimentosOperacionais().size() );
 		sb.append("Atendimentos Taticos: ").append(
-				getAtendimentosTaticos() == null ? "null"
-						: getAtendimentosTaticos().size());
+			getAtendimentosTaticos() == null ? "null"
+				: getAtendimentosTaticos().size() );
+
 		return sb.toString();
 	}
 
 	@Override
-	public int compareTo(Oferta o) {
-		return this.getCampus().getNome().compareTo(o.getCampus().getNome());
+	public int compareTo( Oferta o )
+	{
+		return this.getCampus().getNome().compareTo( o.getCampus().getNome() );
 	}
 }

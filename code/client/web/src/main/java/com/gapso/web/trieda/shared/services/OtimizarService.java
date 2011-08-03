@@ -11,12 +11,11 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 /**
  * The client side stub for the RPC service.
  */
-@RemoteServiceRelativePath("otimizar")
-public interface OtimizarService extends RemoteService {
-
-	Long sendInput(ParametroDTO parametroDTO);
-	Boolean isOptimizing(Long round);
-	Map<String, List<String>> saveContent(CenarioDTO cenarioDTO, Long round);
-	ParametroDTO getParametro(CenarioDTO cenarioDTO);
-
+@RemoteServiceRelativePath( "otimizar" )
+public interface OtimizarService extends RemoteService
+{
+	Long sendInput( ParametroDTO parametroDTO );
+	Boolean isOptimizing( Long round );
+	Map< String, List< String > > saveContent( CenarioDTO cenarioDTO, Long round );
+	ParametroDTO getParametro( CenarioDTO cenarioDTO );
 }
