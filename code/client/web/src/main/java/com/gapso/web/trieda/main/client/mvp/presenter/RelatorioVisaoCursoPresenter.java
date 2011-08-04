@@ -49,7 +49,8 @@ public class RelatorioVisaoCursoPresenter
 
 	private Display display; 
 
-	public RelatorioVisaoCursoPresenter( CenarioDTO cenario, Display display )
+	public RelatorioVisaoCursoPresenter(
+		CenarioDTO cenario, Display display )
 	{
 		this.display = display;
 		setListeners();
@@ -67,11 +68,13 @@ public class RelatorioVisaoCursoPresenter
 					display.getGrid().setPeriodo( display.getPeriodoComboBox().getValue().getValue() );
 					display.getGrid().setTurnoDTO( display.getTurnoComboBox().getValue() );
 					display.getGrid().setCampusDTO( display.getCampusComboBox().getValue() );
+					display.getGrid().setCursoDTO( display.getCursoComboBox().getValue() );
 					display.getGrid().requestAtendimentos();
 				}
 		});
 
-		display.getCurriculoComboBox().addSelectionChangedListener( new SelectionChangedListener< CurriculoDTO >()
+		display.getCurriculoComboBox().addSelectionChangedListener(
+			new SelectionChangedListener< CurriculoDTO >()
 		{
 			@Override
 			public void selectionChanged( SelectionChangedEvent< CurriculoDTO > se )

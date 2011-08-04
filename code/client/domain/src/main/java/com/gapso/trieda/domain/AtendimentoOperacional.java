@@ -415,19 +415,24 @@ public class AtendimentoOperacional implements Serializable
 	public static List< AtendimentoOperacional > findBy(
 		Campus campus, Curriculo curriculo, Integer periodo, Turno turno, Curso curso )
 	{
+		String cursoFiltro = ( curso == null ? "" : "AND o.oferta.curso = :curso " );
+
 		Query q = entityManager().createQuery(
 			"SELECT o FROM AtendimentoOperacional o WHERE o.oferta.curriculo = :curriculo "
-			+ "AND o.oferta.campus = :campus "
-			+ "AND o.oferta.curso = :curso "
+			+ "AND o.oferta.campus = :campus " + cursoFiltro
 			+ "AND o.oferta.turno = :turno "
 			+ "AND o.disciplina IN (SELECT d.disciplina FROM CurriculoDisciplina d " +
-									"WHERE d.curriculo = :curriculo AND d.periodo = :periodo)" );
+									"WHERE d.curriculo = :curriculo AND d.periodo = :periodo) " );
 
 		q.setParameter( "campus", campus );
 		q.setParameter( "curriculo", curriculo );
 		q.setParameter( "periodo", periodo );
 		q.setParameter( "turno", turno );
-		q.setParameter( "curso", curso );
+
+		if ( curso != null )
+		{
+			q.setParameter( "curso", curso );
+		}
 
 		return q.getResultList();
 	}

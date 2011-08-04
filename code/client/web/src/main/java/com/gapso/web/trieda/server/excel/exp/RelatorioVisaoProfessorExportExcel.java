@@ -545,7 +545,6 @@ public class RelatorioVisaoProfessorExportExcel
             }
 		}
 
-		removeUnusedSheet( ExcelInformationType.PALETA_CORES.getSheetName(), workbook );
 		return colorPalleteCellStylesList;
 	}
 

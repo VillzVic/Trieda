@@ -6,6 +6,7 @@ import java.util.List;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
 import com.gapso.trieda.domain.Cenario;
+import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nMessages;
 
@@ -57,12 +58,15 @@ public class TRIEDAExportExcel extends AbstractExportExcel
 		exporters.add( new ResumoCursoExportExcel( false, getCenario(), getI18nConstants(), getI18nMessages() ) );
 		exporters.add( new ResumoDisciplinaExportExcel( false, getCenario(), getI18nConstants(), getI18nMessages() ) );
 		exporters.add( new RelatorioVisaoSalaExportExcel( false, getCenario(), getI18nConstants(), getI18nMessages() ) );
-		exporters.add( new RelatorioVisaoCursoExportExcel( false, getCenario(), getI18nConstants(), getI18nMessages() ) );
+		// exporters.add( new RelatorioVisaoCursoExportExcel( false, getCenario(), getI18nConstants(), getI18nMessages() ) );
 
 		for ( IExportExcel exporter : exporters )
 		{
 			exporter.export( workbook );
 		}
+
+		workbook.removeSheetAt( workbook.getSheetIndex(
+			ExcelInformationType.PALETA_CORES.getSheetName() ) );
 
 		return true;
 	}

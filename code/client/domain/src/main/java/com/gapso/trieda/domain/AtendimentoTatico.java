@@ -35,7 +35,8 @@ import com.gapso.trieda.misc.Semanas;
 @RooToString
 @RooEntity(identifierColumn = "ATT_ID")
 @Table(name = "ATENDIMENTO_TATICO")
-public class AtendimentoTatico implements Serializable
+public class AtendimentoTatico
+	implements Serializable
 {
 	private static final long serialVersionUID = 6191028820294903254L;
 
@@ -88,7 +89,8 @@ public class AtendimentoTatico implements Serializable
 	@Max(99L)
 	private Integer creditosPratico;
 
-	public String toString() {
+	public String toString()
+	{
 		StringBuilder sb = new StringBuilder();
 
 		sb.append("Id: ").append(getId()).append(", ");
@@ -99,12 +101,10 @@ public class AtendimentoTatico implements Serializable
 		sb.append("Semana: ").append(getSemana()).append(", ");
 		sb.append("Oferta: ").append(getOferta()).append(", ");
 		sb.append("Disciplina: ").append(getDisciplina()).append(", ");
-		sb.append("QuantidadeAlunos: ").append(getQuantidadeAlunos())
-				.append(", ");
-		sb.append("CreditosTeorico: ").append(getCreditosTeorico())
-				.append(", ");
-		sb.append("CreditosPratico: ").append(getCreditosPratico())
-				.append(", ");
+		sb.append("QuantidadeAlunos: ").append(getQuantidadeAlunos()).append(", ");
+		sb.append("CreditosTeorico: ").append(getCreditosTeorico()).append(", ");
+		sb.append("CreditosPratico: ").append(getCreditosPratico()).append(", ");
+
 		return sb.toString();
 	}
 
@@ -137,10 +137,14 @@ public class AtendimentoTatico implements Serializable
 	}
 
 	@Transactional
-	public void detach() {
-		if (this.entityManager == null)
+	public void detach()
+	{
+		if ( this.entityManager == null )
+		{
 			this.entityManager = entityManager();
-		this.entityManager.detach(this);
+		}
+
+		this.entityManager.detach( this );
 	}
 
 	@Transactional
@@ -176,66 +180,74 @@ public class AtendimentoTatico implements Serializable
 	}
 
 	@Transactional
-	public void flush() {
-		if (this.entityManager == null)
+	public void flush()
+	{
+		if ( this.entityManager == null )
+		{
 			this.entityManager = entityManager();
+		}
+
 		this.entityManager.flush();
 	}
 
 	@Transactional
-	public AtendimentoTatico merge() {
-		if (this.entityManager == null)
+	public AtendimentoTatico merge()
+	{
+		if ( this.entityManager == null )
+		{
 			this.entityManager = entityManager();
-		AtendimentoTatico merged = this.entityManager.merge(this);
+		}
+
+		AtendimentoTatico merged = this.entityManager.merge( this );
 		this.entityManager.flush();
 		return merged;
 	}
 
-	public static final EntityManager entityManager() {
+	public static final EntityManager entityManager()
+	{
 		EntityManager em = new AtendimentoTatico().entityManager;
-		if (em == null)
+		if ( em == null )
+		{
 			throw new IllegalStateException(
-					"Entity manager has not been injected (is the Spring Aspects JAR configured as an AJC/AJDT aspects library?)");
+				"Entity manager has not been injected (is the Spring " +
+				"Aspects JAR configured as an AJC/AJDT aspects library?)");
+		}
+
 		return em;
 	}
 
 	@SuppressWarnings("unchecked")
-	public static List<AtendimentoTatico> findBySalaAndTurno(Sala sala,
-			Turno turno) {
-		Query q = entityManager()
-				.createQuery(
-						"SELECT o FROM AtendimentoTatico o WHERE o.sala = :sala AND o.oferta.turno = :turno");
-		q.setParameter("sala", sala);
-		q.setParameter("turno", turno);
+	public static List< AtendimentoTatico > findBySalaAndTurno(
+		Sala sala, Turno turno )
+	{
+		Query q = entityManager().createQuery(
+			"SELECT o FROM AtendimentoTatico o " +
+			"WHERE o.sala = :sala AND o.oferta.turno = :turno" );
+
+		q.setParameter( "sala", sala );
+		q.setParameter( "turno", turno );
 		return q.getResultList();
+	}
+
+	public static List< AtendimentoTatico > findBy( Campus campus,
+		Curriculo curriculo, Integer periodo, Turno turno )
+	{
+		return AtendimentoTatico.findBy( campus, curriculo, periodo, turno, null );
 	}
 
 	@SuppressWarnings("unchecked")
 	public static List< AtendimentoTatico > findBy( Campus campus,
-		Curriculo curriculo, Integer periodo, Turno turno )
-	{
-		Query q = entityManager().createQuery(
-			"SELECT o FROM AtendimentoTatico o WHERE o.oferta.curriculo = :curriculo AND " +
-			"o.oferta.campus = :campus AND o.oferta.turno = :turno AND o.disciplina IN " +
-			"(SELECT d.disciplina FROM CurriculoDisciplina d WHERE d.curriculo = :curriculo AND d.periodo = :periodo)" );
-
-		q.setParameter( "campus", campus );
-		q.setParameter( "curriculo", curriculo );
-		q.setParameter( "periodo", periodo );
-		q.setParameter( "turno", turno );
-
-		return q.getResultList();
-	}
-
-	@SuppressWarnings("unchecked")
-	public static List<AtendimentoTatico> findBy( Campus campus,
 		Curriculo curriculo, Integer periodo, Turno turno, Curso curso )
 	{
+		String cursoQuery = "";
+		if ( curso != null )
+		{
+			cursoQuery = "AND o.oferta.curso = :curso ";
+		}
+
 		Query q = entityManager().createQuery(
 			"SELECT o FROM AtendimentoTatico o WHERE o.oferta.curriculo = :curriculo AND"
-			+ " o.oferta.campus = :campus "
-			+ "AND o.oferta.curso = :curso "
-			+ "AND o.oferta.turno = :turno "
+			+ " o.oferta.campus = :campus " + cursoQuery + "AND o.oferta.turno = :turno "
 			+ "AND o.disciplina IN (SELECT d.disciplina FROM CurriculoDisciplina d "
 								 + "WHERE d.curriculo = :curriculo AND d.periodo = :periodo)" );
 
@@ -243,7 +255,11 @@ public class AtendimentoTatico implements Serializable
 		q.setParameter( "curriculo", curriculo );
 		q.setParameter( "periodo", periodo );
 		q.setParameter( "turno", turno );
-		q.setParameter( "curso", curso );
+
+		if ( curso != null )
+		{
+			q.setParameter( "curso", curso );
+		}
 
 		return q.getResultList();
 	}
@@ -285,59 +301,76 @@ public class AtendimentoTatico implements Serializable
 	}
 
 	@SuppressWarnings("unchecked")
-	public static List<AtendimentoTatico> findAllBy(Campus campus, Turno turno) {
-		Query q = entityManager()
-				.createQuery(
-						"SELECT o FROM AtendimentoTatico o WHERE o.oferta.campus = :campus AND o.oferta.turno = :turno");
-		q.setParameter("campus", campus);
-		q.setParameter("turno", turno);
+	public static List< AtendimentoTatico > findAllBy(
+		Campus campus, Turno turno )
+	{
+		Query q = entityManager().createQuery(
+			"SELECT o FROM AtendimentoTatico o " +
+			"WHERE o.oferta.campus = :campus AND o.oferta.turno = :turno" );
+
+		q.setParameter( "campus", campus );
+		q.setParameter( "turno", turno );
 		return q.getResultList();
 	}
 
-	public static AtendimentoTatico find(Long id) {
-		if (id == null)
+	public static AtendimentoTatico find( Long id )
+	{
+		if ( id == null )
+		{
 			return null;
-		return entityManager().find(AtendimentoTatico.class, id);
+		}
+
+		return entityManager().find( AtendimentoTatico.class, id );
 	}
 
-	public static int countTurma(Cenario cenario) {
-		Query q = entityManager()
-				.createQuery(
-						"SELECT count(*) FROM AtendimentoTatico o WHERE o.cenario = :cenario GROUP BY o.disciplina, o.turma");
-		q.setParameter("cenario", cenario);
+	public static int countTurma( Cenario cenario )
+	{
+		Query q = entityManager().createQuery(
+			"SELECT count(*) FROM AtendimentoTatico o " +
+			"WHERE o.cenario = :cenario GROUP BY o.disciplina, o.turma" );
+
+		q.setParameter( "cenario", cenario );
 		return q.getResultList().size();
 	}
 
-	public static int countTurma(Campus campus) {
-		Query q = entityManager()
-				.createQuery(
-						"SELECT count(*) FROM AtendimentoTatico o WHERE o.oferta.campus = :campus GROUP BY o.disciplina, o.turma");
-		q.setParameter("campus", campus);
+	public static int countTurma( Campus campus )
+	{
+		Query q = entityManager().createQuery(
+			"SELECT count(*) FROM AtendimentoTatico o " +
+			"WHERE o.oferta.campus = :campus GROUP BY o.disciplina, o.turma" );
+
+		q.setParameter( "campus", campus );
 		return q.getResultList().size();
 	}
 
 	public static int countCreditos(Cenario cenario) {
-		Query qT = entityManager()
-				.createQuery(
-						"SELECT sum(o.creditosTeorico) FROM AtendimentoTatico o WHERE o.cenario = :cenario");
-		Query qP = entityManager()
-				.createQuery(
-						"SELECT sum(o.creditosPratico) FROM AtendimentoTatico o WHERE o.cenario = :cenario");
-		qT.setParameter("cenario", cenario);
-		qP.setParameter("cenario", cenario);
+		Query qT = entityManager().createQuery(
+			"SELECT sum(o.creditosTeorico) " +
+			"FROM AtendimentoTatico o WHERE o.cenario = :cenario" );
+
+		Query qP = entityManager().createQuery(
+			"SELECT sum(o.creditosPratico) " +
+			"FROM AtendimentoTatico o WHERE o.cenario = :cenario" );
+
+		qT.setParameter( "cenario", cenario );
+		qP.setParameter( "cenario", cenario );
 
 		Object srT = qT.getSingleResult();
 		Object srP = qP.getSingleResult();
-		int iT = srT == null ? 0 : ((Number) qT.getSingleResult()).intValue();
-		int iP = srP == null ? 0 : ((Number) qP.getSingleResult()).intValue();
-		return iT + iP;
+
+		int iT = ( ( srT == null ) ? 0 : ( (Number) qT.getSingleResult() ).intValue() );
+		int iP = ( ( srP == null ) ? 0 : ( (Number) qP.getSingleResult() ).intValue() );
+
+		return ( iT + iP );
 	}
 
-	public static int countSalasDeAula(Cenario cenario) {
-		Query q = entityManager()
-				.createQuery(
-						"SELECT count(*) FROM AtendimentoTatico o WHERE o.sala.tipoSala.id = 1 AND o.cenario = :cenario GROUP BY o.sala");
-		q.setParameter("cenario", cenario);
+	public static int countSalasDeAula( Cenario cenario )
+	{
+		Query q = entityManager().createQuery(
+			"SELECT count(*) FROM AtendimentoTatico o " +
+			"WHERE o.sala.tipoSala.id = 1 AND o.cenario = :cenario GROUP BY o.sala" );
+
+		q.setParameter( "cenario", cenario );
 		return q.getResultList().size();
 	}
 

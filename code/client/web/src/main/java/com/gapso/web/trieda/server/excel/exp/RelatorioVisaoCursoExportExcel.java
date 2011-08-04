@@ -17,8 +17,12 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
 import com.gapso.trieda.domain.AtendimentoOperacional;
 import com.gapso.trieda.domain.AtendimentoTatico;
+import com.gapso.trieda.domain.Campus;
 import com.gapso.trieda.domain.Cenario;
+import com.gapso.trieda.domain.Curriculo;
+import com.gapso.trieda.domain.Curso;
 import com.gapso.trieda.domain.Oferta;
+import com.gapso.trieda.domain.Turno;
 import com.gapso.trieda.misc.Semanas;
 import com.gapso.web.trieda.server.AtendimentosServiceImpl;
 import com.gapso.web.trieda.server.util.ConvertBeans;
@@ -32,7 +36,8 @@ import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nMessages;
 
-public class RelatorioVisaoCursoExportExcel extends AbstractExportExcel
+public class RelatorioVisaoCursoExportExcel
+	extends AbstractExportExcel
 {
 	enum ExcelCellStyleReference
 	{
@@ -79,7 +84,7 @@ public class RelatorioVisaoCursoExportExcel extends AbstractExportExcel
 	{
 		this( removeUnusedSheets, cenario, i18nConstants, i18nMessages, null );
 	}
-	
+
 	public RelatorioVisaoCursoExportExcel( Cenario cenario,
 		TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages, ExportExcelFilter filter )
 	{
@@ -143,7 +148,7 @@ public class RelatorioVisaoCursoExportExcel extends AbstractExportExcel
 			= AtendimentoOperacional.findByCenario( cenario );
 
 		List< AtendimentoRelatorioDTO > atdRelatorioList
-			= new ArrayList<AtendimentoRelatorioDTO>(
+			= new ArrayList< AtendimentoRelatorioDTO >(
 				atdTaticoList.size() + atdOperacionalList.size() );
 
 		for ( AtendimentoTatico atdTatico : atdTaticoList )
@@ -201,15 +206,16 @@ public class RelatorioVisaoCursoExportExcel extends AbstractExportExcel
 		return result;
 	}
 
-	private ParDTO< List< List< AtendimentoRelatorioDTO > >, List< List< Integer > > >
-		getAtendimentoRelatorioDTOList( Cenario cenario )
+	private ParDTO< List< List< AtendimentoRelatorioDTO > >,
+		List< List< Integer > > > getAtendimentoRelatorioDTOList( Cenario cenario )
 	{
-		List< List< AtendimentoRelatorioDTO > > atdRelatoriosList = new ArrayList< List< AtendimentoRelatorioDTO > >();
+		List< List< AtendimentoRelatorioDTO > > atdRelatoriosList
+			= new ArrayList< List< AtendimentoRelatorioDTO > >();
 		List< List< Integer > > tamanhosSemanaList = new ArrayList< List< Integer > >();
 
 		AtendimentosServiceImpl atendimentosServiceImpl = new AtendimentosServiceImpl();
-
 		Set< Map< String, Object > > opcoes = opcoesBuscaOperacional( cenario );
+
 		if ( this.relatorioFiltro != null )
 		{
 			opcoes = this.filtraAtendimentos( opcoes );
@@ -217,19 +223,23 @@ public class RelatorioVisaoCursoExportExcel extends AbstractExportExcel
 
 		for ( Map< String, Object > opcao : opcoes )
 		{
-			CurriculoDTO curriculoDTO = new CurriculoDTO();
-			curriculoDTO.setId( (Long) opcao.get( "CurriculoDTO" ) );
+			Long curriculoId = (Long) opcao.get( "CurriculoDTO" );
+			Curriculo curriculo = Curriculo.find( curriculoId );
+			CurriculoDTO curriculoDTO = ConvertBeans.toCurriculoDTO( curriculo );
 
 			Integer periodo = (Integer) opcao.get( "Periodo" );
 
-			TurnoDTO turnoDTO = new TurnoDTO();
-			turnoDTO.setId( (Long) opcao.get( "TurnoDTO" ) );
+			Long turnoId = (Long) opcao.get( "TurnoDTO" );
+			Turno turno = Turno.find( turnoId );
+			TurnoDTO turnoDTO = ConvertBeans.toTurnoDTO( turno );
 
-			CampusDTO campusDTO = new CampusDTO();
-			campusDTO.setId( (Long) opcao.get( "CampusDTO" ) );
+			Long campusId = (Long) opcao.get( "CampusDTO" );
+			Campus campus = Campus.find( campusId );
+			CampusDTO campusDTO = ConvertBeans.toCampusDTO( campus );
 
-			CursoDTO cursoDTO = new CursoDTO(); 
-			cursoDTO.setId( (Long) opcao.get( "CursoDTO" ) );
+			Long cursoId = (Long) opcao.get( "CursoDTO" );
+			Curso curso = Curso.find( cursoId );
+			CursoDTO cursoDTO = ConvertBeans.toCursoDTO( curso );
 
 			ParDTO< List< AtendimentoRelatorioDTO >, List< Integer > > parAtendimentos
 				= atendimentosServiceImpl.getBusca( curriculoDTO, periodo, turnoDTO, campusDTO, cursoDTO );
@@ -332,9 +342,8 @@ public class RelatorioVisaoCursoExportExcel extends AbstractExportExcel
 
 	@SuppressWarnings("unused")
 	private int writeSala( Oferta oferta, Integer periodo,
-		List< AtendimentoRelatorioDTO > atendimentos,
-		List< Integer > tamanhoSemanaList, int row, HSSFSheet sheet,
-		Iterator< HSSFComment > itExcelCommentsPool,
+		List< AtendimentoRelatorioDTO > atendimentos, List< Integer > tamanhoSemanaList,
+		int row, HSSFSheet sheet, Iterator< HSSFComment > itExcelCommentsPool,
 		Map< String, HSSFCellStyle > codigoDisciplinaToColorMap )
 	{
 		row = writeHeader( oferta, periodo, tamanhoSemanaList, row, sheet );
@@ -362,7 +371,7 @@ public class RelatorioVisaoCursoExportExcel extends AbstractExportExcel
 		}
 
 		// Processa os atendimentos lidos do BD para
-		// que os mesmos sejam visualizados na visão sala
+		// que os mesmos sejam visualizados na visão curso
 		AtendimentosServiceImpl atendimentosService = new AtendimentosServiceImpl();
 		List< AtendimentoRelatorioDTO > atendimentosParaVisaoSala
 			= atendimentosService.montaListaParaVisaoSala( atendimentos );
@@ -402,7 +411,8 @@ public class RelatorioVisaoCursoExportExcel extends AbstractExportExcel
 				case DOM: col = 9; break;
 			}
 
-			for ( AtendimentoRelatorioDTO atendimento : diaSemanaToAtendimentosMap.get( diaSemanaInt ) )
+			for ( AtendimentoRelatorioDTO atendimento
+				: diaSemanaToAtendimentosMap.get( diaSemanaInt ) )
 			{
 				HSSFCellStyle style = codigoDisciplinaToColorMap.get(
 					atendimento.getDisciplinaString() );
@@ -420,7 +430,7 @@ public class RelatorioVisaoCursoExportExcel extends AbstractExportExcel
 			}
 		}
 
-		return initialRow + maxCreditos + 1;
+		return ( initialRow + maxCreditos + 1 );
 	}
 
 	private int writeHeader( Oferta oferta, Integer periodo,
@@ -503,7 +513,8 @@ public class RelatorioVisaoCursoExportExcel extends AbstractExportExcel
 	private List< HSSFCellStyle > buildColorPaletteCellStyles( HSSFWorkbook workbook )
 	{
 		List< HSSFCellStyle > colorPalleteCellStylesList = new ArrayList< HSSFCellStyle >();
-		HSSFSheet sheet = workbook.getSheet( ExcelInformationType.PALETA_CORES.getSheetName() );
+		HSSFSheet sheet = workbook.getSheet(
+			ExcelInformationType.PALETA_CORES.getSheetName() );
 
 		if ( sheet != null )
 		{ 
@@ -524,7 +535,6 @@ public class RelatorioVisaoCursoExportExcel extends AbstractExportExcel
 			}
 		}
 
-		removeUnusedSheet( ExcelInformationType.PALETA_CORES.getSheetName(), workbook );
 		return colorPalleteCellStylesList;
 	}
 

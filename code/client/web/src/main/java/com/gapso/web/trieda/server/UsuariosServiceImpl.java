@@ -121,7 +121,6 @@ public class UsuariosServiceImpl extends RemoteService
 	@Override
 	public Boolean avoidSessionExpire()
 	{
-		System.out.println( "Passou aqui!!!" );
 		return true;
 	}
 }

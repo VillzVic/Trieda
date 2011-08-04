@@ -413,7 +413,6 @@ public class RelatorioVisaoSalaExportExcel
             }
 		}
 
-		removeUnusedSheet( ExcelInformationType.PALETA_CORES.getSheetName(), workbook );
 		return colorPalleteCellStylesList;
 	}
 

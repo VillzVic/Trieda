@@ -483,7 +483,7 @@ public class AtendimentoOperacionalDTO extends AbstractDTO< String >
 	@Override
 	public int compareTo( AtendimentoOperacionalDTO o )
 	{
-		return 0;
+		return getNaturalKey().compareTo( o.getNaturalKey() );
 	}
 
 	@Override
