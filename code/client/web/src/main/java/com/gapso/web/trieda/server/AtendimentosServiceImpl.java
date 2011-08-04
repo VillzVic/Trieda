@@ -418,12 +418,9 @@ public class AtendimentosServiceImpl extends RemoteService
 			}
 		}
 
-		// List< Integer > diaSemanaTamanhoList = new ArrayList< Integer >( 8 );
-		// Collections.addAll( diaSemanaTamanhoList, 1, 1, 1, 1, 1, 1, 1, 1, 1 );
-
 		// TODO -- Verificar qual o tamanho correto da lista
-		List< Integer > diaSemanaTamanhoList = new ArrayList< Integer >( 6 );
-		Collections.addAll( diaSemanaTamanhoList, 1, 1, 1, 1, 1, 1 );
+		List< Integer > diaSemanaTamanhoList = new ArrayList< Integer >( 8 );
+		Collections.addAll( diaSemanaTamanhoList, 1, 1, 1, 1, 1, 1, 1, 1, 1 );
 
 		List< AtendimentoTaticoDTO > finalProcessedList
 			= new ArrayList< AtendimentoTaticoDTO >();
@@ -479,7 +476,7 @@ public class AtendimentosServiceImpl extends RemoteService
 				{
 					AtendimentoTaticoDTO dtoCurrent = listDTOs.get( i );
 
-					// TODO
+					// TODO -- O valor de dia da semana está valendo 8 em algum momento
 					// dtoCurrent.setSemana( dtoMain.getSemana() + i );
 					dtoCurrent.setSemana( countSemanaSize );
 				}
@@ -545,12 +542,9 @@ public class AtendimentosServiceImpl extends RemoteService
 			}
 		}
 
-		// List< Integer > diaSemanaTamanhoList = new ArrayList< Integer >( 8 );
-		// Collections.addAll( diaSemanaTamanhoList, 1, 1, 1, 1, 1, 1, 1, 1, 1 );
-
 		// TODO -- Verificar qual o tamanho correto da lista
-		List< Integer > diaSemanaTamanhoList = new ArrayList< Integer >( 6 );
-		Collections.addAll( diaSemanaTamanhoList, 1, 1, 1, 1, 1, 1 );
+		List< Integer > diaSemanaTamanhoList = new ArrayList< Integer >( 8 );
+		Collections.addAll( diaSemanaTamanhoList, 1, 1, 1, 1, 1, 1, 1, 1, 1 );
 
 		List< AtendimentoOperacionalDTO > finalProcessedList
 			= new ArrayList< AtendimentoOperacionalDTO >();
