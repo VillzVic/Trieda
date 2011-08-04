@@ -374,7 +374,7 @@ public class RelatorioVisaoCursoExportExcel
 		// que os mesmos sejam visualizados na visão curso
 		AtendimentosServiceImpl atendimentosService = new AtendimentosServiceImpl();
 		List< AtendimentoRelatorioDTO > atendimentosParaVisaoSala
-			= atendimentosService.montaListaParaVisaoSala( atendimentos );
+			= atendimentosService.montaListaParaVisaoCursoExcel( atendimentos );
 
 		// Agrupa os atendimentos por dia da semana
 		Map< Integer, List< AtendimentoRelatorioDTO > > diaSemanaToAtendimentosMap

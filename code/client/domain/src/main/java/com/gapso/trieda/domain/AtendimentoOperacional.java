@@ -312,28 +312,39 @@ public class AtendimentoOperacional implements Serializable
 	}
 
 	@SuppressWarnings("unchecked")
-	public static List<AtendimentoOperacional> findAllPublicadoBy(
-			ProfessorVirtual professorVirtual, Turno turno, boolean isAdmin) {
+	public static List< AtendimentoOperacional > findAllPublicadoBy(
+		ProfessorVirtual professorVirtual, Turno turno, boolean isAdmin )
+	{
 		String publicado = "";
-		if (!isAdmin)
+		if ( !isAdmin )
+		{
 			publicado = " AND o.oferta.campus.publicado = :publicado ";
-		Query q = entityManager()
-				.createQuery(
-						"SELECT o FROM AtendimentoOperacional o WHERE o.oferta.turno = :turno AND o.professorVirtual = :professorVirtual "
-								+ publicado);
-		q.setParameter("turno", turno);
-		q.setParameter("professorVirtual", professorVirtual);
-		if (!isAdmin)
-			q.setParameter("publicado", true);
+		}
+
+		Query q = entityManager().createQuery(
+			"SELECT o FROM AtendimentoOperacional o " +
+			"WHERE o.oferta.turno = :turno AND o.professorVirtual = " +
+			":professorVirtual " + publicado );
+
+		q.setParameter( "turno", turno );
+		q.setParameter( "professorVirtual", professorVirtual );
+
+		if ( !isAdmin )
+		{
+			q.setParameter( "publicado", true );
+		}
+
 		return q.getResultList();
 	}
 
 	@SuppressWarnings("unchecked")
-	public static List<AtendimentoOperacional> findAllBy(Curso curso) {
-		Query q = entityManager()
-				.createQuery(
-						"SELECT o FROM AtendimentoOperacional o WHERE o.oferta.curriculo.curso = :curso");
-		q.setParameter("curso", curso);
+	public static List< AtendimentoOperacional > findAllBy( Curso curso )
+	{
+		Query q = entityManager().createQuery(
+			"SELECT o FROM AtendimentoOperacional o " +
+			"WHERE o.oferta.curriculo.curso = :curso" );
+
+		q.setParameter( "curso", curso );
 		return q.getResultList();
 	}
 
@@ -395,31 +406,17 @@ public class AtendimentoOperacional implements Serializable
 
 	@SuppressWarnings("unchecked")
 	public static List< AtendimentoOperacional > findBy(
-		Campus campus, Curriculo curriculo, Integer periodo, Turno turno )
-	{
-		Query q = entityManager().createQuery(
-			"SELECT o FROM AtendimentoOperacional o WHERE o.oferta.curriculo = :curriculo "
-			+ "AND o.oferta.campus = :campus AND o.oferta.turno = :turno AND o.disciplina "
-			+ "IN (SELECT d.disciplina FROM CurriculoDisciplina d "
-			+ "WHERE d.curriculo = :curriculo AND d.periodo = :periodo)" );
-
-		q.setParameter( "campus", campus );
-		q.setParameter( "curriculo", curriculo );
-		q.setParameter( "periodo", periodo );
-		q.setParameter( "turno", turno );
-
-		return q.getResultList();
-	}
-
-	@SuppressWarnings("unchecked")
-	public static List< AtendimentoOperacional > findBy(
 		Campus campus, Curriculo curriculo, Integer periodo, Turno turno, Curso curso )
 	{
-		String cursoFiltro = ( curso == null ? "" : "AND o.oferta.curso = :curso " );
+		String cursoQuery = "";
+		if ( curso != null )
+		{
+			cursoQuery = "AND o.oferta.curso = :curso ";
+		}
 
 		Query q = entityManager().createQuery(
 			"SELECT o FROM AtendimentoOperacional o WHERE o.oferta.curriculo = :curriculo "
-			+ "AND o.oferta.campus = :campus " + cursoFiltro
+			+ "AND o.oferta.campus = :campus " + cursoQuery
 			+ "AND o.oferta.turno = :turno "
 			+ "AND o.disciplina IN (SELECT d.disciplina FROM CurriculoDisciplina d " +
 									"WHERE d.curriculo = :curriculo AND d.periodo = :periodo) " );
@@ -524,14 +521,19 @@ public class AtendimentoOperacional implements Serializable
 		this.professorVirtual = professorVirtual;
 	}
 
-	public String getNaturalKey() {
+	public String getNaturalKey()
+	{
 		Oferta oferta = getOferta();
 		Curriculo curriculo = oferta.getCurriculo();
-		return oferta.getCampus().getId() + "-" + oferta.getTurno().getId()
-				+ "-" + curriculo.getCurso().getId() + "-" + curriculo.getId()
-				+ "-" + curriculo.getPeriodo(getDisciplina()) + "-"
-				+ getDisciplina().getId() + "-" + getTurma() + "-"
-				+ getCreditoTeorico();
+
+		return oferta.getCampus().getId()
+			+ "-" + oferta.getTurno().getId()
+			+ "-" + curriculo.getCurso().getId()
+			+ "-" + curriculo.getId()
+			+ "-" + curriculo.getPeriodo( getDisciplina() )
+			+ "-" + getDisciplina().getId()
+			+ "-" + getTurma()
+			+ "-" + getCreditoTeorico();
 	}
 
 	static public List< AtendimentoOperacional > getAtendimentosOperacional(

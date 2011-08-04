@@ -268,6 +268,69 @@ public class AtendimentosServiceImpl extends RemoteService
 		return processedList;
 	}
 
+	public List< AtendimentoRelatorioDTO > montaListaParaVisaoCursoExcel(
+		List< AtendimentoRelatorioDTO > list )
+	{
+		if ( !list.isEmpty()
+			&& ( list.get( 0 ) instanceof AtendimentoOperacionalDTO ) )
+		{
+			List< AtendimentoOperacionalDTO > operacionalList
+				= new ArrayList< AtendimentoOperacionalDTO >( list.size() );
+
+			for ( AtendimentoRelatorioDTO arDTO : list )
+			{
+				operacionalList.add( ( AtendimentoOperacionalDTO ) arDTO );
+			}
+
+			list = preMontaListaOperacional( operacionalList );
+		}
+
+		// Agrupa os DTOS pela chave [Disciplina-Turma-DiaSemana]
+		Map< String, List< AtendimentoRelatorioDTO > > atendimentoTaticoDTOMap
+			= new HashMap< String, List< AtendimentoRelatorioDTO > >();
+
+		for ( AtendimentoRelatorioDTO dto : list )
+		{
+			String key = dto.getDisciplinaString()
+				+ "-" + dto.getTurma() + "-" + dto.getSemana();
+
+			List< AtendimentoRelatorioDTO > dtoList
+				= atendimentoTaticoDTOMap .get( key );
+
+			if ( dtoList == null )
+			{
+				dtoList = new ArrayList< AtendimentoRelatorioDTO >();
+				atendimentoTaticoDTOMap.put( key, dtoList );
+			}
+
+			dtoList.add( dto );
+		}
+
+		// Quando há mais de um DTO por chave [Disciplina-Turma-DiaSemana],
+		// concatena as informações de todos em um único DTO.
+		List< AtendimentoRelatorioDTO > processedList = new ArrayList< AtendimentoRelatorioDTO >();
+		for ( Entry< String, List< AtendimentoRelatorioDTO > > entry : atendimentoTaticoDTOMap.entrySet() )
+		{
+			if ( entry.getValue().size() == 1 )
+			{
+				processedList.addAll( entry.getValue() );
+			}
+			else
+			{
+				AtendimentoRelatorioDTO dtoMain = entry.getValue().get( 0 );
+				for ( int i = 1; i < entry.getValue().size(); i++ )
+				{
+					AtendimentoRelatorioDTO dtoCurrent = entry.getValue().get( i );
+					dtoMain.concatenateVisaoSala( dtoCurrent );
+				}
+
+				processedList.add( dtoMain );
+			}
+		}
+
+		return processedList;
+	}
+
 	@Override
 	public ParDTO< List< AtendimentoRelatorioDTO >, List< Integer > > getBusca(
 		CurriculoDTO curriculoDTO, Integer periodo, TurnoDTO turnoDTO, CampusDTO campusDTO )
@@ -330,18 +393,8 @@ public class AtendimentosServiceImpl extends RemoteService
 		}
 
 		List< AtendimentoTaticoDTO > list = new ArrayList< AtendimentoTaticoDTO >();
-		List< AtendimentoTatico > atendimentosTatico = null;
-
-		if ( curso == null )
-		{
-			atendimentosTatico = AtendimentoTatico.findBy(
-				campus, curriculo, periodo, turno );
-		}
-		else
-		{
-			atendimentosTatico = AtendimentoTatico.findBy(
+		List< AtendimentoTatico > atendimentosTatico = AtendimentoTatico.findBy(
 				campus, curriculo, periodo, turno, curso );
-		}
 
 		for ( AtendimentoTatico atendimentoTatico : atendimentosTatico )
 		{
@@ -357,24 +410,16 @@ public class AtendimentosServiceImpl extends RemoteService
 	{
 		Curriculo curriculo = Curriculo.find( curriculoDTO.getId() );
 		Turno turno = Turno.find( turnoDTO.getId() );
-		Campus campus = Campus.find( campusDTO.getId() );		
+		Campus campus = Campus.find( campusDTO.getId() );
+
 		Curso curso = null;
 		if ( cursoDTO != null )
 		{
 			curso = Curso.find( cursoDTO.getId() );
 		}
 
-		List< AtendimentoOperacional > atendimentosOperacional = null;
-		if ( curso == null )
-		{
-			atendimentosOperacional = AtendimentoOperacional.findBy(
-				campus, curriculo, periodo, turno );
-		}
-		else
-		{
-			atendimentosOperacional = AtendimentoOperacional.findBy(
+		List< AtendimentoOperacional > atendimentosOperacional = AtendimentoOperacional.findBy(
 				campus, curriculo, periodo, turno, curso );
-		}
 
 		List< AtendimentoOperacionalDTO > list = new ArrayList< AtendimentoOperacionalDTO >();
 		for ( AtendimentoOperacional atendimentoOperacional : atendimentosOperacional )
@@ -409,7 +454,7 @@ public class AtendimentosServiceImpl extends RemoteService
 
 		// Preenche entradas nulas do mapa
 		// diaSemanaToAtendimentoTaticoDTOMap com uma lista vazia.
-		for ( int i = 2; i < 8; i++ )
+		for ( int i = 2; i <= 7; i++ )
 		{
 			if ( diaSemanaToAtendimentoTaticoDTOMap.get( i ) == null )
 			{
@@ -418,7 +463,6 @@ public class AtendimentosServiceImpl extends RemoteService
 			}
 		}
 
-		// TODO -- Verificar qual o tamanho correto da lista
 		List< Integer > diaSemanaTamanhoList = new ArrayList< Integer >( 8 );
 		Collections.addAll( diaSemanaTamanhoList, 1, 1, 1, 1, 1, 1, 1, 1, 1 );
 
@@ -475,10 +519,7 @@ public class AtendimentosServiceImpl extends RemoteService
 				for ( int i = 1; i < listDTOs.size(); i++ )
 				{
 					AtendimentoTaticoDTO dtoCurrent = listDTOs.get( i );
-
-					// TODO -- O valor de dia da semana está valendo 8 em algum momento
-					// dtoCurrent.setSemana( dtoMain.getSemana() + i );
-					dtoCurrent.setSemana( countSemanaSize );
+					dtoCurrent.setSemana( dtoMain.getSemana() + i );
 				}
 
 				finalProcessedList.addAll( listDTOs );
@@ -542,7 +583,6 @@ public class AtendimentosServiceImpl extends RemoteService
 			}
 		}
 
-		// TODO -- Verificar qual o tamanho correto da lista
 		List< Integer > diaSemanaTamanhoList = new ArrayList< Integer >( 8 );
 		Collections.addAll( diaSemanaTamanhoList, 1, 1, 1, 1, 1, 1, 1, 1, 1 );
 
@@ -573,10 +613,7 @@ public class AtendimentosServiceImpl extends RemoteService
 				for ( int i = 1; i < listDTOs.size(); i++ )
 				{
 					AtendimentoOperacionalDTO dtoCurrent = listDTOs.get( i );
-
-					// TODO -- O valor de dia da semana está valendo 8 em algum momento
-					// dtoCurrent.setSemana( dtoMain.getSemana() + i );
-					dtoCurrent.setSemana( countSemanaSize );
+					dtoCurrent.setSemana( dtoMain.getSemana() + i );
 				}
 
 				finalProcessedList.addAll( listDTOs );

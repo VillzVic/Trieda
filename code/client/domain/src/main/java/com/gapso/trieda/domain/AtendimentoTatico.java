@@ -229,12 +229,6 @@ public class AtendimentoTatico
 		return q.getResultList();
 	}
 
-	public static List< AtendimentoTatico > findBy( Campus campus,
-		Curriculo curriculo, Integer periodo, Turno turno )
-	{
-		return AtendimentoTatico.findBy( campus, curriculo, periodo, turno, null );
-	}
-
 	@SuppressWarnings("unchecked")
 	public static List< AtendimentoTatico > findBy( Campus campus,
 		Curriculo curriculo, Integer periodo, Turno turno, Curso curso )
