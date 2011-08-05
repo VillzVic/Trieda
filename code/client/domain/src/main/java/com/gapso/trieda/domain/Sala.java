@@ -39,13 +39,12 @@ import org.springframework.transaction.annotation.Transactional;
 @Entity
 @RooJavaBean
 @RooToString
-@RooEntity(identifierColumn = "SAL_ID")
-@Table(
-	name = "SALAS",
-	uniqueConstraints=
-		@UniqueConstraint(columnNames={"UNI_ID", "SAL_CODIGO"})
-)
-public class Sala implements Serializable, Comparable<Sala> {
+@RooEntity( identifierColumn = "SAL_ID" )
+@Table( name = "SALAS", uniqueConstraints =
+@UniqueConstraint( columnNames = { "UNI_ID", "SAL_CODIGO" } ) )
+public class Sala implements Serializable, Comparable< Sala >
+{
+	private static final long serialVersionUID = -2533999449644229682L;
 
     @NotNull
     @ManyToOne(targetEntity = TipoSala.class)
@@ -79,39 +78,46 @@ public class Sala implements Serializable, Comparable<Sala> {
     private Integer capacidade;
 
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, mappedBy = "salas")
-    private Set<HorarioDisponivelCenario> horarios = new HashSet<HorarioDisponivelCenario>();
+    private Set< HorarioDisponivelCenario > horarios = new HashSet< HorarioDisponivelCenario >();
 
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, mappedBy = "salas")
-    private Set<CurriculoDisciplina> curriculoDisciplinas = new HashSet<CurriculoDisciplina>();
+    private Set< CurriculoDisciplina > curriculoDisciplinas = new HashSet< CurriculoDisciplina >();
 
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, mappedBy = "salas")
-    private Set<GrupoSala> gruposSala = new HashSet<GrupoSala>();
+    private Set< GrupoSala > gruposSala = new HashSet< GrupoSala >();
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy="sala")
-    private Set<AtendimentoOperacional> atendimentosOperacionais =  new HashSet<AtendimentoOperacional>();
+    private Set< AtendimentoOperacional > atendimentosOperacionais =  new HashSet< AtendimentoOperacional >();
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy="sala")
-    private Set<AtendimentoTatico> atendimentosTaticos =  new HashSet<AtendimentoTatico>();
-    
+    private Set< AtendimentoTatico > atendimentosTaticos =  new HashSet< AtendimentoTatico >();
+
     @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "sala")
-    private Set<Fixacao> fixacoes = new HashSet<Fixacao>();
-    
-	public String toString() {
+    private Set< Fixacao > fixacoes = new HashSet< Fixacao >();
+
+	public String toString()
+	{
         StringBuilder sb = new StringBuilder();
-        sb.append("Id: ").append(getId()).append(", ");
-        sb.append("Version: ").append(getVersion()).append(", ");
-        sb.append("TipoSala: ").append(getTipoSala()).append(", ");
-        sb.append("Unidade: ").append(getUnidade()).append(", ");
-        sb.append("Codigo: ").append(getCodigo()).append(", ");
-        sb.append("Numero: ").append(getNumero()).append(", ");
-        sb.append("Andar: ").append(getAndar()).append(", ");
-        sb.append("Capacidade: ").append(getCapacidade()).append(", ");
-        sb.append("Horarios: ").append(getHorarios() == null ? "null" : getHorarios().size()).append(", ");
-        sb.append("CurriculoDisciplinas: ").append(getCurriculoDisciplinas() == null ? "null" : getCurriculoDisciplinas().size()).append(", ");
-        sb.append("GruposSala: ").append(getGruposSala() == null ? "null" : getGruposSala().size());
-        sb.append("Atendimentos Operacionais: ").append(getAtendimentosOperacionais() == null ? "null" : getAtendimentosOperacionais().size());
-        sb.append("Atendimentos Taticos: ").append(getAtendimentosTaticos() == null ? "null" : getAtendimentosTaticos().size());
-        sb.append("Fixacoes: ").append(getFixacoes() == null ? "null" : getFixacoes().size());
+
+        sb.append( "Id: " ).append( getId() ).append( ", " );
+        sb.append( "Version: " ).append( getVersion() ).append( ", " );
+        sb.append( "TipoSala: " ).append( getTipoSala() ).append( ", " );
+        sb.append( "Unidade: " ).append( getUnidade() ).append( ", " );
+        sb.append( "Codigo: " ).append( getCodigo() ).append( ", " );
+        sb.append( "Numero: " ).append( getNumero() ).append( ", " );
+        sb.append( "Andar: " ).append( getAndar() ).append( ", " );
+        sb.append( "Capacidade: " ).append( getCapacidade() ).append(", ");
+        sb.append( "Horarios: " ).append( getHorarios() == null ? "null" : getHorarios().size() ).append(", ");
+        sb.append( "CurriculoDisciplinas: " ).append(
+        	getCurriculoDisciplinas() == null ? "null" : getCurriculoDisciplinas().size() ).append(", ");
+        sb.append( "GruposSala: " ).append(
+        	getGruposSala() == null ? "null" : getGruposSala().size() );
+        sb.append( "Atendimentos Operacionais: " ).append(
+        	getAtendimentosOperacionais() == null ? "null" : getAtendimentosOperacionais().size() );
+        sb.append( "Atendimentos Taticos: " ).append(
+        	getAtendimentosTaticos() == null ? "null" : getAtendimentosTaticos().size() );
+        sb.append( "Fixacoes: " ).append( getFixacoes() == null ? "null" : getFixacoes().size() );
+
         return sb.toString();
     }
 
@@ -187,18 +193,29 @@ public class Sala implements Serializable, Comparable<Sala> {
 	}
 
 	@Transactional
-    public void remove()
+	public void remove()
 	{
-        if ( this.entityManager == null)
+		this.remove( true );
+	}
+	
+	@Transactional
+    public void remove( boolean removeHorariosDisponiveisCenario )
+	{
+        if ( this.entityManager == null )
         {
         	this.entityManager = entityManager();
         }
 
         if ( this.entityManager.contains( this ) )
         {
-        	this.removeHorariosDisponivelCenario();
+			if ( removeHorariosDisponiveisCenario )
+        	{
+				this.removeHorariosDisponivelCenario();
+        	}
+
         	this.removeCurriculoDisciplinas();
         	this.removeGruposSala();
+
             this.entityManager.remove( this );
         }
         else
@@ -206,40 +223,55 @@ public class Sala implements Serializable, Comparable<Sala> {
             Sala attached = this.entityManager.find(
             	this.getClass(), this.id );
 
-            attached.removeHorariosDisponivelCenario();
-            attached.removeCurriculoDisciplinas();
-            attached.removeGruposSala();
-            this.entityManager.remove( attached );
+			if ( attached != null )
+			{
+				if ( removeHorariosDisponiveisCenario )
+	        	{
+					attached.removeHorariosDisponivelCenario();
+	        	}
+
+            	attached.removeCurriculoDisciplinas();
+            	attached.removeGruposSala();
+
+            	this.entityManager.remove( attached );
+			}
         }
     }
 
     @Transactional
-    public void removeHorariosDisponivelCenario() {
-    	Set<HorarioDisponivelCenario> horarios = this.getHorarios();
-    	for(HorarioDisponivelCenario horario : horarios) {
-    		horario.getSalas().remove(this);
+    public void removeHorariosDisponivelCenario()
+    {
+    	Set< HorarioDisponivelCenario > horarios = this.getHorarios();
+    	for ( HorarioDisponivelCenario horario : horarios )
+    	{
+    		horario.getSalas().remove( this );
     		horario.merge();
     	}
     }
-	
+
     @Transactional
-    public void removeCurriculoDisciplinas() {
-    	Set<CurriculoDisciplina> curriculoDisciplinas = this.getCurriculoDisciplinas();
-    	for(CurriculoDisciplina curriculoDisciplina : curriculoDisciplinas) {
-    		curriculoDisciplina.getSalas().remove(this);
+    public void removeCurriculoDisciplinas()
+    {
+    	Set< CurriculoDisciplina > curriculoDisciplinas
+    		= this.getCurriculoDisciplinas();
+    	for ( CurriculoDisciplina curriculoDisciplina : curriculoDisciplinas )
+    	{
+    		curriculoDisciplina.getSalas().remove( this );
     		curriculoDisciplina.merge();
     	}
     }
-    
+
     @Transactional
-    public void removeGruposSala() {
-    	Set<GrupoSala> gruposSala = this.getGruposSala();
-    	for(GrupoSala grupoSala : gruposSala) {
-    		grupoSala.getSalas().remove(this);
+    public void removeGruposSala()
+    {
+    	Set< GrupoSala > gruposSala = this.getGruposSala();
+    	for ( GrupoSala grupoSala : gruposSala )
+    	{
+    		grupoSala.getSalas().remove( this );
     		grupoSala.merge();
     	}
     }
-    
+
 	@Transactional
     public void flush()
 	{
@@ -264,109 +296,169 @@ public class Sala implements Serializable, Comparable<Sala> {
         return merged;
     }
 
-	public static final EntityManager entityManager() {
+	public static final EntityManager entityManager()
+	{
         EntityManager em = new Sala().entityManager;
-        if (em == null) throw new IllegalStateException("Entity manager has not been injected (is the Spring Aspects JAR configured as an AJC/AJDT aspects library?)");
+        if ( em == null )
+        {
+        	throw new IllegalStateException(
+        		"Entity manager has not been injected (is the Spring " +
+        		"Aspects JAR configured as an AJC/AJDT aspects library?)" );
+        }
+
         return em;
     }
 	
-	public static int count(Cenario cenario) {
-		Query q = entityManager().createQuery("SELECT COUNT(o) FROM Sala o WHERE o.unidade.campus.cenario = :cenario");
-		q.setParameter("cenario", cenario);
-		return ((Number) q.getSingleResult()).intValue();
+	public static int count( Cenario cenario )
+	{
+		Query q = entityManager().createQuery(
+			"SELECT COUNT(o) FROM Sala o " +
+			"WHERE o.unidade.campus.cenario = :cenario" );
+
+		q.setParameter( "cenario", cenario );
+		return ( (Number) q.getSingleResult() ).intValue();
 	}
 	
-	public static int countLaboratorio(Cenario cenario) {
-		Query q = entityManager().createQuery("SELECT COUNT(o) FROM Sala o WHERE o.tipoSala.id = 2 AND o.unidade.campus.cenario = :cenario");
-		q.setParameter("cenario", cenario);
-		return ((Number) q.getSingleResult()).intValue();
+	public static int countLaboratorio( Cenario cenario )
+	{
+		Query q = entityManager().createQuery(
+			"SELECT COUNT(o) FROM Sala o " +
+			"WHERE o.tipoSala.id = 2 AND o.unidade.campus.cenario = :cenario" );
+
+		q.setParameter( "cenario", cenario );
+		return ( (Number) q.getSingleResult() ).intValue();
 	}
-	
-	public static int countLaboratorio(Campus campus) {
-		Query q = entityManager().createQuery("SELECT COUNT(o) FROM Sala o WHERE o.tipoSala.id = 2 AND o.unidade.campus = :campus");
-		q.setParameter("campus", campus);
-		return ((Number) q.getSingleResult()).intValue();
+
+	public static int countLaboratorio( Campus campus )
+	{
+		Query q = entityManager().createQuery(
+			"SELECT COUNT(o) FROM Sala o " +
+			"WHERE o.tipoSala.id = 2 AND o.unidade.campus = :campus" );
+
+		q.setParameter( "campus", campus );
+		return ( (Number) q.getSingleResult() ).intValue();
 	}
-	
-	public static int countSalaDeAula(Cenario cenario) {
-		Query q = entityManager().createQuery("SELECT COUNT(o) FROM Sala o WHERE o.tipoSala.id = 1 AND o.unidade.campus.cenario = :cenario");
-		q.setParameter("cenario", cenario);
-		return ((Number) q.getSingleResult()).intValue();
+
+	public static int countSalaDeAula( Cenario cenario )
+	{
+		Query q = entityManager().createQuery(
+			"SELECT COUNT(o) FROM Sala o " +
+			"WHERE o.tipoSala.id = 1 AND o.unidade.campus.cenario = :cenario" );
+
+		q.setParameter( "cenario", cenario );
+		return ( (Number) q.getSingleResult() ).intValue();
 	}
-	
-	public static int countSalaDeAula(Campus campus) {
-		Query q = entityManager().createQuery("SELECT COUNT(o) FROM Sala o WHERE o.tipoSala.id = 1 AND o.unidade.campus = :campus");
-		q.setParameter("campus", campus);
-		return ((Number) q.getSingleResult()).intValue();
+
+	public static int countSalaDeAula( Campus campus )
+	{
+		Query q = entityManager().createQuery(
+			"SELECT COUNT(o) FROM Sala o " +
+			"WHERE o.tipoSala.id = 1 AND o.unidade.campus = :campus" );
+
+		q.setParameter( "campus", campus );
+		return ( (Number) q.getSingleResult() ).intValue();
 	}
-	
+
 	@SuppressWarnings("unchecked")
-	public List<Curriculo> getCurriculos() {
-		Query q = entityManager().createQuery("SELECT DISTINCT(cd.curriculo) FROM CurriculoDisciplina cd WHERE :sala IN ELEMENTS(cd.salas)");
-		q.setParameter("sala", this);
+	public List< Curriculo > getCurriculos()
+	{
+		Query q = entityManager().createQuery(
+			"SELECT DISTINCT(cd.curriculo) " +
+			"FROM CurriculoDisciplina cd WHERE :sala IN ELEMENTS(cd.salas)" );
+
+		q.setParameter( "sala", this );
 		return q.getResultList();
 	}
-	
-	public Boolean getContainsCurriculoDisciplina() {
-		Query q = entityManager().createQuery("SELECT COUNT(cd) FROM CurriculoDisciplina cd WHERE :sala IN ELEMENTS(cd.salas)");
-		q.setParameter("sala", this);
-		return ((Number) q.getSingleResult()).intValue() > 0;
+
+	public Boolean getContainsCurriculoDisciplina()
+	{
+		Query q = entityManager().createQuery(
+			"SELECT COUNT(cd) FROM CurriculoDisciplina cd " +
+			"WHERE :sala IN ELEMENTS(cd.salas)" );
+
+		q.setParameter( "sala", this );
+		return ( ( (Number) q.getSingleResult() ).intValue() > 0 );
 	}
-	
-	public static Map<String,Sala> buildSalaCodigoToSalaMap(List<Sala> salas) {
-		Map<String,Sala> salasMap = new HashMap<String,Sala>();
-		for (Sala sala : salas) {
-			salasMap.put(sala.getCodigo(),sala);
+
+	public static Map< String, Sala > buildSalaCodigoToSalaMap( List< Sala > salas )
+	{
+		Map< String, Sala > salasMap = new HashMap< String, Sala >();
+		for ( Sala sala : salas )
+		{
+			salasMap.put( sala.getCodigo(), sala );
 		}
+
 		return salasMap;
 	}
-	
-	public static List<Sala> findAndaresAll()
+
+	public static List< Sala > findAndaresAll()
 	{
 		return findAndaresAll( null );
 	}
 
 	@SuppressWarnings("unchecked")
-	public static List<Sala> findAndaresAll(Unidade unidade) {
-		List<Sala> list;
-		if(unidade == null) {
-			list = entityManager().createQuery("SELECT o FROM Sala o GROUP BY o.andar").getResultList();
-		} else {
-			list = entityManager().createQuery("SELECT o FROM Sala o WHERE o.unidade = :unidade GROUP BY o.andar")
-			.setParameter("unidade", unidade)
-			.getResultList();
+	public static List< Sala > findAndaresAll( Unidade unidade )
+	{
+		List< Sala > list;
+		if ( unidade == null )
+		{
+			list = entityManager().createQuery(
+				"SELECT o FROM Sala o GROUP BY o.andar" ).getResultList();
 		}
+		else
+		{
+			list = entityManager().createQuery(
+				"SELECT o FROM Sala o WHERE o.unidade = :unidade GROUP BY o.andar" )
+				.setParameter("unidade", unidade).getResultList();
+		}
+
 		return list;
 	}
-	
+
 	@SuppressWarnings("unchecked")
-	public static List<Sala> findSalasDoAndarAll(Unidade unidade, List<String> andares) {
-		if(andares.size() == 0) return new ArrayList<Sala>();
+	public static List< Sala > findSalasDoAndarAll( Unidade unidade, List< String > andares )
+	{
+		if ( andares.size() == 0 )
+		{
+			return new ArrayList<Sala>();
+		}
+
 		String whereQuery = "SELECT o FROM Sala o WHERE ( ";
-		for(int i = 1; i < andares.size(); i++) {
-			whereQuery += " o.andar = :andares"+i+" OR ";
+		for ( int i = 1; i < andares.size(); i++ )
+		{
+			whereQuery += ( " o.andar = :andares" + i + " OR " );
 		}
-		whereQuery += " o.andar = :andares0 ) AND o.unidade = :unidade ";
-		Query query = entityManager().createQuery(whereQuery);
-		for(int i = 0; i < andares.size(); i++) {
-			query.setParameter("andares"+i, andares.get(i));
+
+		whereQuery += ( " o.andar = :andares0 ) AND o.unidade = :unidade " );
+		Query query = entityManager().createQuery( whereQuery );
+		for ( int i = 0; i < andares.size(); i++ )
+		{
+			query.setParameter( "andares" + i, andares.get( i ) );
 		}
-		query.setParameter("unidade", unidade);
+
+		query.setParameter( "unidade", unidade );
 		return query.getResultList();
 	}
 
 	@SuppressWarnings("unchecked")
-    public static List<Sala> findAll() {
-        return entityManager().createQuery("SELECT o FROM Sala o").getResultList();
+    public static List< Sala > findAll()
+    {
+        return entityManager().createQuery(
+        	"SELECT o FROM Sala o" ).getResultList();
     }
 
-	public static Sala find(Long id) {
-        if (id == null) return null;
-        return entityManager().find(Sala.class, id);
+	public static Sala find( Long id )
+	{
+        if ( id == null )
+        {
+        	return null;
+        }
+
+        return entityManager().find( Sala.class, id );
     }
-	
+
 	@SuppressWarnings("unchecked")
-	public static List<Sala> findByCenario( Cenario cenario )
+	public static List< Sala > findByCenario( Cenario cenario )
 	{
     	Query q = entityManager().createQuery(
     		"SELECT o FROM Sala o WHERE o.unidade.campus.cenario = :cenario" );
@@ -377,8 +469,10 @@ public class Sala implements Serializable, Comparable<Sala> {
 
 	public static Sala findByCodigo( String codigo )
 	{
-		Query q = entityManager().createQuery("SELECT o FROM Sala o WHERE codigo = :codigo");
-		q.setParameter("codigo", codigo);
+		Query q = entityManager().createQuery(
+			"SELECT o FROM Sala o WHERE codigo = :codigo" );
+
+		q.setParameter( "codigo", codigo );
 		return (Sala) q.getSingleResult();
 	}
 
@@ -387,8 +481,7 @@ public class Sala implements Serializable, Comparable<Sala> {
 	{
 		return entityManager().createQuery(
 			"SELECT o FROM Sala o WHERE unidade = :unidade")
-			.setParameter( "unidade", unidade )
-			.getResultList();
+			.setParameter( "unidade", unidade ).getResultList();
 	}
 
 	public static Integer count( Campus campus, Unidade unidade )
@@ -431,139 +524,199 @@ public class Sala implements Serializable, Comparable<Sala> {
 	}
 
 	@SuppressWarnings("unchecked")
-    public static List<Sala> find(Campus campus, Unidade unidade, int firstResult, int maxResults, String orderBy) {
-		orderBy = (orderBy != null)? "ORDER BY o."+orderBy : "";
-		
+    public static List< Sala > find( Campus campus, Unidade unidade,
+    	int firstResult, int maxResults, String orderBy )
+    {
 		String whereString = "";
-		if(campus != null || unidade != null) whereString += " WHERE ";
-		if(campus != null)                    whereString += " o.unidade.campus = :campus ";
-		if(campus != null && unidade != null) whereString += " AND ";
-		if(unidade != null)                   whereString += " o.unidade = :unidade ";
-		
-		Query q = entityManager().createQuery("SELECT o FROM Sala o "+orderBy+whereString);
+		orderBy = ( ( orderBy != null ) ? "ORDER BY o." + orderBy : "" );
 
-		if(campus != null) q.setParameter("campus", campus);
-		if(unidade != null) q.setParameter("unidade", unidade);
-		
-        return q.setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
+		if ( campus != null || unidade != null )
+		{
+			whereString += " WHERE ";
+		}
+
+		if ( campus != null )
+		{
+			whereString += " o.unidade.campus = :campus ";
+		}
+
+		if ( campus != null && unidade != null )
+		{
+			whereString += " AND ";
+		}
+
+		if ( unidade != null)
+		{
+			whereString += " o.unidade = :unidade ";
+		}
+
+		Query q = entityManager().createQuery(
+			"SELECT o FROM Sala o " + orderBy + whereString );
+
+		if ( campus != null )
+		{
+			q.setParameter( "campus", campus );
+		}
+
+		if ( unidade != null )
+		{
+			q.setParameter( "unidade", unidade );
+		}
+
+        return q.setFirstResult( firstResult ).setMaxResults( maxResults ).getResultList();
     }
 
 	@SuppressWarnings("unchecked")
-	public List<HorarioDisponivelCenario> getHorarios(SemanaLetiva semanaLetiva) {
-		Query q = entityManager().createQuery("SELECT o FROM HorarioDisponivelCenario o, IN (o.salas) c WHERE c = :sala AND o.horarioAula.semanaLetiva = :semanaLetiva");
-		q.setParameter("sala", this);
-		q.setParameter("semanaLetiva", semanaLetiva);
+	public List< HorarioDisponivelCenario > getHorarios( SemanaLetiva semanaLetiva )
+	{
+		Query q = entityManager().createQuery(
+			"SELECT o FROM HorarioDisponivelCenario o, IN (o.salas) c " +
+			"WHERE c = :sala AND o.horarioAula.semanaLetiva = :semanaLetiva" );
+
+		q.setParameter( "sala", this );
+		q.setParameter( "semanaLetiva", semanaLetiva );
 		return q.getResultList();
 	}
-	
-	public static boolean checkCodigoUnique(Cenario cenario, String codigo) {
-		Query q = entityManager().createQuery("SELECT COUNT(o) FROM Sala o WHERE o.unidade.campus.cenario = :cenario AND o.codigo = :codigo");
-		q.setParameter("cenario", cenario);
-		q.setParameter("codigo", codigo);
-		Number size = (Number) q.setMaxResults(1).getSingleResult();
-		return size.intValue() > 0;
+
+	public static boolean checkCodigoUnique( Cenario cenario, String codigo )
+	{
+		Query q = entityManager().createQuery(
+			"SELECT COUNT(o) FROM Sala o " +
+			"WHERE o.unidade.campus.cenario = :cenario AND o.codigo = :codigo" );
+
+		q.setParameter( "cenario", cenario );
+		q.setParameter( "codigo", codigo );
+
+		Number size = (Number) q.setMaxResults( 1 ).getSingleResult();
+		return ( size.intValue() > 0 );
 	}
-	
-	public TipoSala getTipoSala() {
+
+	public TipoSala getTipoSala()
+	{
         return this.tipoSala;
     }
 
-	public void setTipoSala(TipoSala tipoSala) {
+	public void setTipoSala( TipoSala tipoSala )
+	{
         this.tipoSala = tipoSala;
     }
 
-	public Unidade getUnidade() {
+	public Unidade getUnidade()
+	{
         return this.unidade;
     }
 
-	public void setUnidade(Unidade unidade) {
+	public void setUnidade( Unidade unidade )
+	{
         this.unidade = unidade;
     }
 
-	public String getCodigo() {
+	public String getCodigo()
+	{
         return this.codigo;
     }
 
-	public void setCodigo(String codigo) {
+	public void setCodigo( String codigo )
+	{
         this.codigo = codigo;
     }
 
-	public String getNumero() {
+	public String getNumero()
+	{
         return this.numero;
     }
 
-	public void setNumero(String numero) {
+	public void setNumero( String numero )
+	{
         this.numero = numero;
     }
 
-	public String getAndar() {
+	public String getAndar()
+	{
         return this.andar;
     }
 
-	public void setAndar(String andar) {
+	public void setAndar( String andar )
+	{
         this.andar = andar;
     }
 
-	public Integer getCapacidade() {
+	public Integer getCapacidade()
+	{
         return this.capacidade;
     }
 
-	public void setCapacidade(Integer capacidade) {
+	public void setCapacidade( Integer capacidade )
+	{
         this.capacidade = capacidade;
     }
 
-	private Set<HorarioDisponivelCenario> getHorarios() {
+	private Set< HorarioDisponivelCenario > getHorarios()
+	{
         return this.horarios;
     }
 
-	public void setHorarios(Set<HorarioDisponivelCenario> horarios) {
+	public void setHorarios( Set< HorarioDisponivelCenario > horarios )
+	{
         this.horarios = horarios;
     }
 
-	public Set<CurriculoDisciplina> getCurriculoDisciplinas() {
+	public Set< CurriculoDisciplina > getCurriculoDisciplinas()
+	{
         return this.curriculoDisciplinas;
     }
 
-	public void setCurriculoDisciplinas(Set<CurriculoDisciplina> curriculoDisciplinas) {
+	public void setCurriculoDisciplinas(
+		Set< CurriculoDisciplina > curriculoDisciplinas )
+	{
         this.curriculoDisciplinas = curriculoDisciplinas;
     }
 
-	public Set<GrupoSala> getGruposSala() {
+	public Set< GrupoSala > getGruposSala()
+	{
         return this.gruposSala;
     }
 
-	public void setGruposSala(Set<GrupoSala> gruposSala) {
+	public void setGruposSala( Set< GrupoSala > gruposSala )
+	{
         this.gruposSala = gruposSala;
     }
-	
-	public Set<AtendimentoOperacional> getAtendimentosOperacionais() {
+
+	public Set< AtendimentoOperacional > getAtendimentosOperacionais()
+	{
 		return this.atendimentosOperacionais;
 	}
-	
-	public void setAtendimentosOperacionais(Set<AtendimentoOperacional> atendimentosOperacionais) {
+
+	public void setAtendimentosOperacionais(
+		Set< AtendimentoOperacional > atendimentosOperacionais )
+	{
 		this.atendimentosOperacionais = atendimentosOperacionais;
 	}
-	
-	public Set<AtendimentoTatico> getAtendimentosTaticos() {
+
+	public Set< AtendimentoTatico > getAtendimentosTaticos()
+	{
 		return this.atendimentosTaticos;
 	}
-	
-	public void setAtendimentosTaticos(Set<AtendimentoTatico> atendimentosTaticos) {
+
+	public void setAtendimentosTaticos(
+		Set< AtendimentoTatico > atendimentosTaticos )
+	{
 		this.atendimentosTaticos = atendimentosTaticos;
 	}
-	
-	public Set<Fixacao> getFixacoes() {
+
+	public Set< Fixacao > getFixacoes()
+	{
 		return this.fixacoes;
 	}
-	
-	public void setFixacoes(Set<Fixacao> fixacoes) {
+
+	public void setFixacoes( Set< Fixacao > fixacoes )
+	{
 		this.fixacoes = fixacoes;
 	}
-	
-	private static final long serialVersionUID = -2533999449644229682L;
 
 	@Override
-	public int compareTo(Sala o) {
-		return getCodigo().compareTo(o.getCodigo());
+	public int compareTo( Sala o )
+	{
+		return getCodigo().compareTo( o.getCodigo() );
 	}
 }

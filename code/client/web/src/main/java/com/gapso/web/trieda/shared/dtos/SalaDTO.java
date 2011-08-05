@@ -44,7 +44,7 @@ public class SalaDTO extends AbstractDTO<String> implements Comparable<SalaDTO> 
 	public void setCodigo(String value) {
 		set(PROPERTY_CODIGO, value);
 	}
-	
+
 	public Long getCampusId() {
 		return get(PROPERTY_CAMPUS_ID);
 	}

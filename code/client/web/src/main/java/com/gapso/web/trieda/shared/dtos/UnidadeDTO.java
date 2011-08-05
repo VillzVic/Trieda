@@ -1,10 +1,11 @@
 package com.gapso.web.trieda.shared.dtos;
 
 
-public class UnidadeDTO extends AbstractDTO<String> implements Comparable<UnidadeDTO> {
-
+public class UnidadeDTO extends AbstractDTO< String >
+	implements Comparable< UnidadeDTO >
+{
 	private static final long serialVersionUID = -5134820110949139907L;
-	
+
 	// Propriedades
 	public static final String PROPERTY_ID = "id";
 	public static final String PROPERTY_VERSION = "version";
@@ -14,20 +15,23 @@ public class UnidadeDTO extends AbstractDTO<String> implements Comparable<Unidad
 	public static final String PROPERTY_CAMPUS_STRING = "campusString";
 	public static final String PROPERTY_CAPACIDADE_SALAS = "capSalas";
 
-	public UnidadeDTO() {
+	public UnidadeDTO()
+	{
 		super();
 	}
 
-	public UnidadeDTO(Long id, String codigo, String nome, Long campusId, String campusString, Integer capSalas, Integer version) {
-		setId(id);
-		setCodigo(codigo);
-		setNome(nome);
-		setCampusId(campusId);
-		setCampusString(campusString);
-		setCapSalas(capSalas);
-		setVersion(version);
+	public UnidadeDTO( Long id, String codigo, String nome, Long campusId,
+		String campusString, Integer capSalas, Integer version )
+	{
+		setId( id );
+		setCodigo( codigo );
+		setNome( nome );
+		setCampusId( campusId );
+		setCampusString( campusString );
+		setCapSalas( capSalas );
+		setVersion( version );
 	}
-	
+
 	public void setId(Long value) {
 		set(PROPERTY_ID, value);
 	}
@@ -76,14 +80,16 @@ public class UnidadeDTO extends AbstractDTO<String> implements Comparable<Unidad
 	public void setCapSalas(Integer value) {
 		set(PROPERTY_CAPACIDADE_SALAS, value);
 	}
-	
+
 	@Override
-	public String getNaturalKey() {
+	public String getNaturalKey()
+	{
 		return getCodigo();
 	}
-		
+
 	@Override
-	public int compareTo(UnidadeDTO o) {
-		return getNome().compareTo(o.getNome());
+	public int compareTo( UnidadeDTO o )
+	{
+		return getNome().compareTo( o.getNome() );
 	}
 }
