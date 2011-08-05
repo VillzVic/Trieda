@@ -23,8 +23,11 @@ public interface AtendimentoRelatorioDTO
 	public String getPeriodoString();
 	public String getQuantidadeAlunosString();
 	public void concatenateVisaoSala( AtendimentoRelatorioDTO other );
+	public void concatenateVisaoCurso( AtendimentoRelatorioDTO other );
 	public String getExcelContentVisaoSala();
 	public String getExcelCommentVisaoSala();
+	public String getExcelContentVisaoCurso();
+	public String getExcelCommentVisaoCurso();
 	public Long getSalaId();
 	public String getSalaString();
 	public boolean isTeorico();

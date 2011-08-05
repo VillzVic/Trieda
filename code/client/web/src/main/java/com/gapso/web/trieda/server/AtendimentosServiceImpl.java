@@ -133,19 +133,24 @@ public class AtendimentosServiceImpl extends RemoteService
 		return list;
 	}
 
+	/*
+	 * Esse método tem como objetivo agrupar DTO's que
+	 * correspondam a créditos de uma mesma aula, que
+	 * foram armazenadas como linhas distintas no banco de dados.
+	 * */
 	private List< AtendimentoRelatorioDTO > preMontaListaOperacional(
 		List< AtendimentoOperacionalDTO > list )
 	{
 		List< AtendimentoRelatorioDTO > ret = new ArrayList< AtendimentoRelatorioDTO >();
 
-		// Agrupa os DTOS pela chave [Curso-Disciplina-Turma-DiaSemana-Sala]
+		// Agrupa os DTOS pela chave [ Curso - Disciplina - Turma - DiaSemana - Sala ]
 		Map< String, List<AtendimentoRelatorioDTO > > atendimentoTaticoDTOMap
 			= new HashMap< String, List< AtendimentoRelatorioDTO > >();
 
 		for ( AtendimentoRelatorioDTO dto : list )
 		{
 			String key = dto.getCursoNome() + "-" + dto.getDisciplinaString()
-					+ "-" + dto.getTurma() + "-" + dto.getSemana() + "-" + dto.getSalaId();
+				+ "-" + dto.getTurma() + "-" + dto.getSemana() + "-" + dto.getSalaId();
 
 			List< AtendimentoRelatorioDTO > dtoList = atendimentoTaticoDTOMap.get( key );
 
@@ -222,7 +227,7 @@ public class AtendimentosServiceImpl extends RemoteService
 			list = preMontaListaOperacional( operacionalList );
 		}
 
-		// Agrupa os DTOS pela chave [Disciplina-Turma-DiaSemana]
+		// Agrupa os DTOS pela chave [ Disciplina - Turma - DiaSemana ]
 		Map< String, List< AtendimentoRelatorioDTO > > atendimentoTaticoDTOMap
 			= new HashMap< String, List< AtendimentoRelatorioDTO > >();
 
@@ -232,7 +237,7 @@ public class AtendimentosServiceImpl extends RemoteService
 				+ "-" + dto.getTurma() + "-" + dto.getSemana();
 
 			List< AtendimentoRelatorioDTO > dtoList
-				= atendimentoTaticoDTOMap .get( key );
+				= atendimentoTaticoDTOMap.get( key );
 
 			if ( dtoList == null )
 			{
@@ -245,71 +250,10 @@ public class AtendimentosServiceImpl extends RemoteService
 
 		// Quando há mais de um DTO por chave [Disciplina-Turma-DiaSemana],
 		// concatena as informações de todos em um único DTO.
-		List< AtendimentoRelatorioDTO > processedList = new ArrayList< AtendimentoRelatorioDTO >();
-		for ( Entry< String, List< AtendimentoRelatorioDTO > > entry : atendimentoTaticoDTOMap.entrySet() )
-		{
-			if ( entry.getValue().size() == 1 )
-			{
-				processedList.addAll( entry.getValue() );
-			}
-			else
-			{
-				AtendimentoRelatorioDTO dtoMain = entry.getValue().get( 0 );
-				for ( int i = 1; i < entry.getValue().size(); i++ )
-				{
-					AtendimentoRelatorioDTO dtoCurrent = entry.getValue().get( i );
-					dtoMain.concatenateVisaoSala( dtoCurrent );
-				}
-
-				processedList.add( dtoMain );
-			}
-		}
-
-		return processedList;
-	}
-
-	public List< AtendimentoRelatorioDTO > montaListaParaVisaoCursoExcel(
-		List< AtendimentoRelatorioDTO > list )
-	{
-		if ( !list.isEmpty()
-			&& ( list.get( 0 ) instanceof AtendimentoOperacionalDTO ) )
-		{
-			List< AtendimentoOperacionalDTO > operacionalList
-				= new ArrayList< AtendimentoOperacionalDTO >( list.size() );
-
-			for ( AtendimentoRelatorioDTO arDTO : list )
-			{
-				operacionalList.add( ( AtendimentoOperacionalDTO ) arDTO );
-			}
-
-			list = preMontaListaOperacional( operacionalList );
-		}
-
-		// Agrupa os DTOS pela chave [Disciplina-Turma-DiaSemana]
-		Map< String, List< AtendimentoRelatorioDTO > > atendimentoTaticoDTOMap
-			= new HashMap< String, List< AtendimentoRelatorioDTO > >();
-
-		for ( AtendimentoRelatorioDTO dto : list )
-		{
-			String key = dto.getDisciplinaString()
-				+ "-" + dto.getTurma() + "-" + dto.getSemana();
-
-			List< AtendimentoRelatorioDTO > dtoList
-				= atendimentoTaticoDTOMap .get( key );
-
-			if ( dtoList == null )
-			{
-				dtoList = new ArrayList< AtendimentoRelatorioDTO >();
-				atendimentoTaticoDTOMap.put( key, dtoList );
-			}
-
-			dtoList.add( dto );
-		}
-
-		// Quando há mais de um DTO por chave [Disciplina-Turma-DiaSemana],
-		// concatena as informações de todos em um único DTO.
-		List< AtendimentoRelatorioDTO > processedList = new ArrayList< AtendimentoRelatorioDTO >();
-		for ( Entry< String, List< AtendimentoRelatorioDTO > > entry : atendimentoTaticoDTOMap.entrySet() )
+		List< AtendimentoRelatorioDTO > processedList
+			= new ArrayList< AtendimentoRelatorioDTO >();
+		for ( Entry< String, List< AtendimentoRelatorioDTO > > entry
+			: atendimentoTaticoDTOMap.entrySet() )
 		{
 			if ( entry.getValue().size() == 1 )
 			{
@@ -386,6 +330,7 @@ public class AtendimentosServiceImpl extends RemoteService
 		Curriculo curriculo = Curriculo.find( curriculoDTO.getId() );
 		Turno turno = Turno.find( turnoDTO.getId() );
 		Campus campus = Campus.find( campusDTO.getId() );
+
 		Curso curso = null;
 		if ( cursoDTO != null )
 		{

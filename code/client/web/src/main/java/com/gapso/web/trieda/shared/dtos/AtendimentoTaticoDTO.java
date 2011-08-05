@@ -277,6 +277,15 @@ public class AtendimentoTaticoDTO extends AbstractDTO< String >
 		setQuantidadeAlunos( getQuantidadeAlunos() + other.getQuantidadeAlunos() );
 	}
 
+	public void concatenateVisaoCurso( AtendimentoRelatorioDTO other )
+	{
+		setCursoNome( getCursoNome() + " / " + other.getCursoNome() );
+		setCurricularString( getCurriculoString() + " / " + other.getCurriculoString() );
+		setPeriodoString( getPeriodoString() + " / " + other.getPeriodoString() );
+		setQuantidadeAlunosString( getQuantidadeAlunosString() + " / " + other.getQuantidadeAlunosString() );
+		setQuantidadeAlunos( getQuantidadeAlunos() + other.getQuantidadeAlunos() );
+	}
+
 	public void concatenateVisaoCurso( AtendimentoTaticoDTO other )
 	{
 		setDisciplinaString( getDisciplinaString() + "/" + other.getDisciplinaString() );
@@ -335,6 +344,11 @@ public class AtendimentoTaticoDTO extends AbstractDTO< String >
 		return getDisciplinaString() + " / " + getTurma();
 	}
 
+	public String getExcelContentVisaoCurso()
+	{
+		return getDisciplinaString() + " / " + getTurma();
+	}
+
 	public String getExcelCommentVisaoSala()
 	{
 		return getDisciplinaNome() + "\n"
@@ -346,7 +360,19 @@ public class AtendimentoTaticoDTO extends AbstractDTO< String >
 			+ "Período: " + getPeriodoString() + "\n" 
 			+ "Quantidade: " + getQuantidadeAlunosString();
 	}
-	
+
+	public String getExcelCommentVisaoCurso()
+	{
+		return getDisciplinaNome() + "\n"
+			+ "Turma: " + getTurma() + "\n"
+			+ "Crédito(s) " + ( ( isTeorico() ) ? "Teórico(s)" : "Prático(s)")
+			+ ": " + getTotalCreditos() + " de "+getTotalCreditoDisciplina() + "\n"
+			+ "Curso: " + getCursoNome() + "\n"
+			+ "Matriz Curricular: " + getCurriculoString() + "\n"
+			+ "Período: " + getPeriodoString() + "\n" 
+			+ "Quantidade: " + getQuantidadeAlunosString();
+	}
+
 	@Override
 	public String getNaturalKey()
 	{

@@ -325,6 +325,15 @@ public class AtendimentoOperacionalDTO extends AbstractDTO< String >
 		setQuantidadeAlunos( getQuantidadeAlunos() + other.getQuantidadeAlunos() );
 	}
 
+	public void concatenateVisaoCurso( AtendimentoRelatorioDTO other )
+	{
+		setCursoNome( getCursoNome() + " / " + other.getCursoNome() );
+		setCurricularString( getCurriculoString() + " / " + other.getCurriculoString() );
+		setPeriodoString( getPeriodoString() + " / " + other.getPeriodoString() );
+		setQuantidadeAlunosString( getQuantidadeAlunosString() + " / " + other.getQuantidadeAlunosString() );
+		setQuantidadeAlunos( getQuantidadeAlunos() + other.getQuantidadeAlunos() );
+	}
+
 	public void concatenateVisaoProfessor( AtendimentoOperacionalDTO other )
 	{
 		setCursoNome( getCursoNome() + " / " + other.getCursoNome() );
@@ -439,12 +448,30 @@ public class AtendimentoOperacionalDTO extends AbstractDTO< String >
 		return getDisciplinaString() + " / " + getTurma();
 	}
 
+	public String getExcelContentVisaoCurso()
+	{
+		return getDisciplinaString() + " / " + getTurma();
+	}
+
 	public String getExcelContentVisaoProfessor()
 	{
 		return getDisciplinaString() + " / " + getTurma();
 	}
 
 	public String getExcelCommentVisaoSala()
+	{
+		return getDisciplinaNome() + "\n"
+			+ "Turma: " + getTurma() + "\n"
+			+ "Horario: " + getHorarioString() + "\n"
+			+ "Credito(s) " + ( ( getCreditoTeoricoBoolean() ) ? "Teorico(s)" : "Pratico(s)" )
+			+ ": " + getTotalCreditos() + " de " + getTotalCreditos() + "\n"
+			+ "Curso: " + getCursoNome() + "\n"
+			+ "Matriz Curricular: " + getCurriculoString() + "\n"
+			+ "Periodo: " + getPeriodoString() + "\n"
+			+ "Quantidade: " + getQuantidadeAlunosString();
+	}
+
+	public String getExcelCommentVisaoCurso()
 	{
 		return getDisciplinaNome() + "\n"
 			+ "Turma: " + getTurma() + "\n"
@@ -483,7 +510,7 @@ public class AtendimentoOperacionalDTO extends AbstractDTO< String >
 	@Override
 	public int compareTo( AtendimentoOperacionalDTO o )
 	{
-		return getNaturalKey().compareTo( o.getNaturalKey() );
+		return this.getNaturalKey().compareTo( o.getNaturalKey() );
 	}
 
 	@Override

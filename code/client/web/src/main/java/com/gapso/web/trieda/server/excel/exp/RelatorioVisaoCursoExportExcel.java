@@ -370,17 +370,11 @@ public class RelatorioVisaoCursoExportExcel
 			col = 2;
 		}
 
-		// Processa os atendimentos lidos do BD para
-		// que os mesmos sejam visualizados na visão curso
-		AtendimentosServiceImpl atendimentosService = new AtendimentosServiceImpl();
-		List< AtendimentoRelatorioDTO > atendimentosParaVisaoSala
-			= atendimentosService.montaListaParaVisaoCursoExcel( atendimentos );
-
 		// Agrupa os atendimentos por dia da semana
 		Map< Integer, List< AtendimentoRelatorioDTO > > diaSemanaToAtendimentosMap
 			= new HashMap< Integer, List< AtendimentoRelatorioDTO > >();
 
-		for ( AtendimentoRelatorioDTO atendimento : atendimentosParaVisaoSala )
+		for ( AtendimentoRelatorioDTO atendimento : atendimentos )
 		{
 			List< AtendimentoRelatorioDTO > list
 				= diaSemanaToAtendimentosMap.get( atendimento.getSemana() );
@@ -398,18 +392,14 @@ public class RelatorioVisaoCursoExportExcel
 		for ( Integer diaSemanaInt : diaSemanaToAtendimentosMap.keySet() )
 		{
 			row = initialRow;
-
-			Semanas diaSemana = Semanas.get( diaSemanaInt );
-			switch ( diaSemana )
-			{
-				case SEG: col = 3; break;
-				case TER: col = 4; break;
-				case QUA: col = 5; break;
-				case QUI: col = 6; break;
-				case SEX: col = 7; break;
-				case SAB: col = 8; break;
-				case DOM: col = 9; break;
-			}
+			
+			// Obs.: O valor do dia da semana aqui NÃO é interpretado exatamente
+			// como o dia em que a aula é ministrada, mas sim a coluna da planilha
+			// na qual o atendimento será impresso. Quando há mais de 4 créditos
+			// alocados no mesmo dia da semana, a planilha irá utilizar mais de uma
+			// coluna para esse dia da semana. Logo, teremos colunas com valor superior
+			// a 8 (o que não é consistente com o valor de dia da semana.
+			col = diaSemanaInt + 1;
 
 			for ( AtendimentoRelatorioDTO atendimento
 				: diaSemanaToAtendimentosMap.get( diaSemanaInt ) )
@@ -419,8 +409,8 @@ public class RelatorioVisaoCursoExportExcel
 
 				// Escreve célula principal
 				setCell( row, col, sheet, style, itExcelCommentsPool,
-					atendimento.getExcelContentVisaoSala(),
-					atendimento.getExcelCommentVisaoSala() );
+					atendimento.getExcelContentVisaoCurso(),
+					atendimento.getExcelCommentVisaoCurso() );
 
 				// Une células de acordo com a quantidade de créditos
 				mergeCells( row, ( row + atendimento.getTotalCreditos() - 1 ),
