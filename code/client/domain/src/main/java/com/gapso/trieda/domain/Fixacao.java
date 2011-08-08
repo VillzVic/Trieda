@@ -33,10 +33,11 @@ import org.springframework.transaction.annotation.Transactional;
 @Entity
 @RooJavaBean
 @RooToString
-@RooEntity(identifierColumn = "FIX_ID")
-@Table(name = "FIXACOES")
-public class Fixacao implements Serializable {
-
+@RooEntity( identifierColumn = "FIX_ID" )
+@Table( name = "FIXACOES" )
+public class Fixacao
+	implements Serializable
+{
 	private static final long serialVersionUID = -7545908494415718467L;
 
 	@NotNull
@@ -69,9 +70,9 @@ public class Fixacao implements Serializable {
     @JoinColumn(name = "SAL_ID")
     private Sala sala;
     
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, mappedBy = "fixacoes")
-    private Set<HorarioDisponivelCenario> horarios = new HashSet<HorarioDisponivelCenario>();
-    
+    @ManyToMany( cascade = { CascadeType.PERSIST, CascadeType.MERGE }, mappedBy = "fixacoes" )
+    private Set< HorarioDisponivelCenario > horarios = new HashSet< HorarioDisponivelCenario >();
+
     @PersistenceContext
     transient EntityManager entityManager;
 
@@ -101,33 +102,50 @@ public class Fixacao implements Serializable {
     }
 
     @Transactional
-    public void persist() {
-        if (this.entityManager == null) this.entityManager = entityManager();
-        this.entityManager.persist(this);
+    public void persist()
+    {
+        if ( this.entityManager == null )
+        {
+        	this.entityManager = entityManager();
+        }
+
+        this.entityManager.persist( this );
     }
 
     @Transactional
-    public void remove() {
-        if (this.entityManager == null) this.entityManager = entityManager();
-        if (this.entityManager.contains(this)) {
+    public void remove()
+    {
+        if ( this.entityManager == null )
+        {
+        	this.entityManager = entityManager();
+        }
+
+        if ( this.entityManager.contains( this ) )
+        {
         	this.removeHorariosDisponivelCenario();
-            this.entityManager.remove(this);
-        } else {
-            Fixacao attached = this.entityManager.find(this.getClass(), this.id);
+            this.entityManager.remove( this );
+        }
+        else
+        {
+            Fixacao attached = this.entityManager.find(
+            	this.getClass(), this.id );
+
             attached.removeHorariosDisponivelCenario();
-            this.entityManager.remove(attached);
+            this.entityManager.remove( attached );
         }
     }
 
     @Transactional
-    public void removeHorariosDisponivelCenario() {
-    	Set<HorarioDisponivelCenario> horarios = this.getHorarios();
-    	for(HorarioDisponivelCenario horario : horarios) {
-    		horario.getFixacoes().remove(this);
+    public void removeHorariosDisponivelCenario()
+    {
+    	Set< HorarioDisponivelCenario > horarios = this.getHorarios();
+    	for ( HorarioDisponivelCenario horario : horarios )
+    	{
+    		horario.getFixacoes().remove( this );
     		horario.merge();
     	}
     }
-    
+
 	@Transactional
 	public void detach() {
 		if (this.entityManager == null) this.entityManager = entityManager();

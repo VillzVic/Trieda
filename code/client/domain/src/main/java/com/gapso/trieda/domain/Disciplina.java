@@ -44,23 +44,23 @@ import com.gapso.trieda.misc.Dificuldades;
 @Entity
 @RooJavaBean
 @RooToString
-@RooEntity(identifierColumn = "DIS_ID")
-@Table(name = "DISCIPLINAS", uniqueConstraints = @UniqueConstraint(columnNames = {
-		"DIS_CODIGO", "CEN_ID" }))
+@RooEntity( identifierColumn = "DIS_ID" )
+@Table(name = "DISCIPLINAS", uniqueConstraints =
+@UniqueConstraint( columnNames = { "DIS_CODIGO", "CEN_ID" } ) )
 public class Disciplina
 	implements Serializable, Comparable< Disciplina >
 {
 	private static final long serialVersionUID = 7980821696468062987L;
 
 	@NotNull
-	@ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE,
-			CascadeType.REFRESH }, targetEntity = Cenario.class, fetch = FetchType.LAZY)
+	@ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH },
+		targetEntity = Cenario.class, fetch = FetchType.LAZY )
 	@JoinColumn(name = "CEN_ID")
 	private Cenario cenario;
 
 	@NotNull
-	@ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE,
-			CascadeType.REFRESH }, targetEntity = TipoDisciplina.class, fetch = FetchType.LAZY)
+	@ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH },
+		targetEntity = TipoDisciplina.class, fetch = FetchType.LAZY )
 	@JoinColumn(name = "TDI_ID")
 	private TipoDisciplina tipoDisciplina;
 

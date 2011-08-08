@@ -38,10 +38,12 @@ import org.springframework.transaction.annotation.Transactional;
 @Entity
 @RooJavaBean
 @RooToString
-@RooEntity(identifierColumn = "PRF_ID")
-@Table(name = "PROFESSORES", uniqueConstraints = @UniqueConstraint(columnNames = {
-		"PRF_CPF", "CEN_ID" }))
-public class Professor implements Serializable {
+@RooEntity( identifierColumn = "PRF_ID" )
+@Table(name = "PROFESSORES", uniqueConstraints =
+@UniqueConstraint( columnNames = { "PRF_CPF", "CEN_ID" } ) )
+public class Professor
+	implements Serializable
+{
 	private static final long serialVersionUID = 265242535107921721L;
 
 	@NotNull
@@ -316,28 +318,35 @@ public class Professor implements Serializable {
 	}
 
 	@Transactional
-	public void remove() {
-		if (this.entityManager == null) {
+	public void remove()
+	{
+		if ( this.entityManager == null )
+		{
 			this.entityManager = entityManager();
 		}
 
-		if (this.entityManager.contains(this)) {
+		if ( this.entityManager.contains( this ) )
+		{
 			this.removeHorariosDisponivelCenario();
-			this.entityManager.remove(this);
-		} else {
-			Professor attached = this.entityManager.find(this.getClass(),
-					this.id);
+			this.entityManager.remove( this );
+		}
+		else
+		{
+			Professor attached = this.entityManager.find(
+				this.getClass(), this.id );
 
 			attached.removeHorariosDisponivelCenario();
-			this.entityManager.remove(attached);
+			this.entityManager.remove( attached );
 		}
 	}
 
 	@Transactional
-	public void removeHorariosDisponivelCenario() {
-		Set<HorarioDisponivelCenario> horarios = this.getHorarios();
-		for (HorarioDisponivelCenario horario : horarios) {
-			horario.getProfessores().remove(this);
+	public void removeHorariosDisponivelCenario()
+	{
+		Set< HorarioDisponivelCenario > horarios = this.getHorarios();
+		for ( HorarioDisponivelCenario horario : horarios )
+		{
+			horario.getProfessores().remove( this );
 			horario.merge();
 		}
 	}
