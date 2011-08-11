@@ -195,11 +195,12 @@ public class Sala implements Serializable, Comparable< Sala >
 	@Transactional
 	public void remove()
 	{
-		this.remove( true );
+		this.remove( true, true );
 	}
-	
+
 	@Transactional
-    public void remove( boolean removeHorariosDisponiveisCenario )
+    public void remove( boolean removeHorariosDisponiveisCenario,
+    	boolean removeCurriculosDisciplinas )
 	{
         if ( this.entityManager == null )
         {
@@ -213,7 +214,11 @@ public class Sala implements Serializable, Comparable< Sala >
 				this.removeHorariosDisponivelCenario();
         	}
 
-        	this.removeCurriculoDisciplinas();
+			if ( removeCurriculosDisciplinas )
+			{
+				this.removeCurriculoDisciplinas();
+			}
+
         	this.removeGruposSala();
 
             this.entityManager.remove( this );
@@ -230,7 +235,11 @@ public class Sala implements Serializable, Comparable< Sala >
 					attached.removeHorariosDisponivelCenario();
 	        	}
 
-            	attached.removeCurriculoDisciplinas();
+				if ( removeCurriculosDisciplinas )
+				{
+					attached.removeCurriculoDisciplinas();
+				}
+
             	attached.removeGruposSala();
 
             	this.entityManager.remove( attached );
@@ -254,6 +263,7 @@ public class Sala implements Serializable, Comparable< Sala >
     {
     	Set< CurriculoDisciplina > curriculoDisciplinas
     		= this.getCurriculoDisciplinas();
+
     	for ( CurriculoDisciplina curriculoDisciplina : curriculoDisciplinas )
     	{
     		curriculoDisciplina.getSalas().remove( this );

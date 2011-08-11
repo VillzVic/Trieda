@@ -320,6 +320,8 @@ public class Campus implements Serializable, Comparable< Campus >
 
 		if ( this.entityManager.contains( this ) )
 		{
+			removeCurriculoDisciplinas();
+
 			removeProfessores();
 			removeHorariosDisponivelCenario();
 			removeDeslocamentosDestino();
@@ -334,6 +336,8 @@ public class Campus implements Serializable, Comparable< Campus >
 
 			if ( attached != null )
 			{
+				removeCurriculoDisciplinas();
+				
 				attached.removeProfessores();
 				attached.removeHorariosDisponivelCenario();
 				attached.removeDeslocamentosDestino();
@@ -343,6 +347,44 @@ public class Campus implements Serializable, Comparable< Campus >
 			}
 		}
 	}
+	
+    @Transactional
+    private void removeCurriculoDisciplinas()
+    {
+    	Set< CurriculoDisciplina > curriculoDisciplinas
+    		= new HashSet< CurriculoDisciplina >();
+
+    	Set< Sala > salas = new HashSet< Sala >();
+
+    	List< Unidade > listUnidades = Unidade.findByCampus( this );
+
+    	for ( Unidade u : listUnidades )
+    	{
+    		List< Sala > listSalas = Sala.findByUnidade( u );
+    		
+    		for ( Sala s : listSalas )
+    		{
+    			salas.add( s );
+
+        		List< CurriculoDisciplina > listCurriculosDisciplinas
+    				= CurriculoDisciplina.findBySala( s );
+
+    			for ( CurriculoDisciplina cd : listCurriculosDisciplinas )
+    			{
+    				curriculoDisciplinas.add( cd );
+    			}
+    		}
+    	}
+
+    	for ( CurriculoDisciplina cd : curriculoDisciplinas )
+    	{
+    		for ( Sala s : salas )
+    		{
+    			cd.getSalas().remove( s );
+    			cd.merge();
+    		}
+    	}
+    }
 
 	public void preencheHorarios()
 	{
@@ -422,7 +464,7 @@ public class Campus implements Serializable, Comparable< Campus >
 		Set< Unidade > unidades = this.getUnidades();
 		for ( Unidade unidade : unidades )
 		{
-			unidade.remove( false );
+			unidade.remove( false, false );
 		}
 	}
 

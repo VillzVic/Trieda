@@ -129,11 +129,12 @@ public class Unidade implements Serializable
     @Transactional
     public void remove()
     {
-    	this.remove( true );
+    	this.remove( true, true );
     }
 
     @Transactional
-    public void remove( boolean removeHorariosDisponiveisCenario )
+    public void remove( boolean removeHorariosDisponiveisCenario,
+    	boolean removeCurriculosDisciplinas )
     {
         if ( this.entityManager == null )
         {
@@ -147,7 +148,13 @@ public class Unidade implements Serializable
         		this.removeHorariosDisponivelCenario();
         	}
 
-        	this.removeSalas();
+        	if ( removeCurriculosDisciplinas )
+        	{
+        		removeCurriculoDisciplinas();
+        	}
+
+        	this.removeSalas( false );
+
             this.entityManager.remove( this );
         }
         else
@@ -162,11 +169,45 @@ public class Unidade implements Serializable
 					attached.removeHorariosDisponivelCenario();
 				}
 
-            	attached.removeSalas();
+	        	if ( removeCurriculosDisciplinas )
+	        	{
+	        		removeCurriculoDisciplinas();
+	        	}
+
+            	attached.removeSalas( false );
 
             	this.entityManager.remove( attached );
 			}
         }
+    }
+
+    @Transactional
+    private void removeCurriculoDisciplinas()
+    {
+    	Set< CurriculoDisciplina > curriculoDisciplinas
+    		= new HashSet< CurriculoDisciplina >();
+
+    	List< Sala > listSalas = Sala.findByUnidade( this );
+
+    	for ( Sala s : listSalas )
+    	{
+    		List< CurriculoDisciplina > listCurriculosDisciplinas
+    			= CurriculoDisciplina.findBySala( s );
+
+			for ( CurriculoDisciplina cd : listCurriculosDisciplinas )
+			{
+				curriculoDisciplinas.add( cd );
+			}
+    	}
+
+    	for ( CurriculoDisciplina cd : curriculoDisciplinas )
+    	{
+    		for ( Sala s : this.getSalas() )
+    		{
+    			cd.getSalas().remove( s );
+    			cd.merge();
+    		}
+    	}
     }
 
 	private void preencheHorarios()
@@ -207,12 +248,12 @@ public class Unidade implements Serializable
     }
 
 	@Transactional
-	private void removeSalas()
+	private void removeSalas( boolean removeCurriculosDisciplinas )
 	{
 		Set< Sala > salas = this.getSalas();
 		for ( Sala sala : salas )
 		{
-			sala.remove( false );
+			sala.remove( false, removeCurriculosDisciplinas );
 		}
 	}
     

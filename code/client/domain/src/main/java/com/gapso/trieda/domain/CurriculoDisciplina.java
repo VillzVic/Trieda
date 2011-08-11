@@ -245,8 +245,15 @@ public class CurriculoDisciplina implements Serializable {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static List<CurriculoDisciplina> findBy(GrupoSala grupoSala, Oferta oferta, Integer periodo) {
-		Query q = entityManager().createQuery("SELECT o FROM CurriculoDisciplina o, IN (o.gruposSala) grupoSala WHERE o.periodo = :periodo AND o.curriculo = :curriculo AND grupoSala = :grupoSala");
+	public static List<CurriculoDisciplina> findBy( GrupoSala grupoSala, Oferta oferta, Integer periodo )
+	{
+		Query q = entityManager().createQuery(
+			" SELECT o FROM CurriculoDisciplina o, " +
+			" IN ( o.gruposSala ) grupoSala " +
+			" WHERE o.periodo = :periodo " +
+			" AND o.curriculo = :curriculo " +
+			" AND grupoSala = :grupoSala" );
+
 		q.setParameter("periodo", periodo);
 		q.setParameter("curriculo", oferta.getCurriculo());
 		q.setParameter("grupoSala", grupoSala);
@@ -254,14 +261,34 @@ public class CurriculoDisciplina implements Serializable {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public static List<CurriculoDisciplina> findBy(Sala sala, Oferta oferta, Integer periodo) {
-		Query q = entityManager().createQuery("SELECT o FROM CurriculoDisciplina o, IN (o.salas) sala WHERE o.periodo = :periodo AND o.curriculo = :curriculo AND sala = :sala");
-		q.setParameter("periodo", periodo);
-		q.setParameter("curriculo", oferta.getCurriculo());
-		q.setParameter("sala", sala);
+	public static List< CurriculoDisciplina > findBy( Sala sala, Oferta oferta, Integer periodo )
+	{
+		Query q = entityManager().createQuery(
+			" SELECT o FROM CurriculoDisciplina o, " +
+			" IN (o.salas) sala " +
+			" WHERE o.periodo = :periodo " +
+			" AND o.curriculo = :curriculo " +
+			" AND sala = :sala" );
+
+		q.setParameter( "periodo", periodo );
+		q.setParameter( "curriculo", oferta.getCurriculo() );
+		q.setParameter( "sala", sala );
+
 		return q.getResultList();
 	}
-	
+
+	@SuppressWarnings("unchecked")
+	public static List< CurriculoDisciplina > findBySala( Sala sala )
+	{
+		Query q = entityManager().createQuery(
+			" SELECT o FROM CurriculoDisciplina o, " +
+			" IN ( o.salas ) sala " +
+			" WHERE sala = :sala " );
+
+		q.setParameter( "sala", sala );
+		return q.getResultList();
+	}
+
 	@SuppressWarnings("unchecked")
     public static List<CurriculoDisciplina> findAll() {
         return entityManager().createQuery("SELECT o FROM CurriculoDisciplina o").getResultList();
