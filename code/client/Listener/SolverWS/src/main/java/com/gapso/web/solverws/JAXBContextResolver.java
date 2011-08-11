@@ -24,7 +24,6 @@ public class JAXBContextResolver implements ContextResolver<JAXBContext> {
 		this.context = new JSONJAXBContext(types, props);
 	}
 
-	@Override
 	public JAXBContext getContext(Class<?> objectType) {
 		return (types[0].equals(objectType)) ? context : null;
 	}

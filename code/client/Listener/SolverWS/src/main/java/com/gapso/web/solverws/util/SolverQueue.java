@@ -101,6 +101,7 @@ public class SolverQueue {
 		}
 	}
 
+	
 	public Boolean cancelOptimization(Long uniqueID) {
 		final Future<Process> future = tasks.get(uniqueID);
 		final Process runningProcess = runningProcesses.get(uniqueID);

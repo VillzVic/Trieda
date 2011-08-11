@@ -27,27 +27,27 @@ public final class SolverStandAloneImpl implements ISolver {
 		this.solverQueue = new SolverQueue(queueSize, basedir);
 	}
 
-	@Override
+	
 	public String help() {
 		return "Stand Alone Solver Queue";
 	}
 
-	@Override
+	
 	public String version() {
 		return "0.0.1";
 	}
 
-	@Override
+	
 	public boolean isFinished(long round) {
 		return solverQueue.isFinish(round);
 	}
 
-	@Override
+	
 	public boolean hasResult(long round) {
 		return fileManager.isExistOutputFile(round);
 	}
 
-	@Override
+	
 	public long requestOptimization(String[] names, InputStream[] data) {
 		Long uniqueID = UniqueId.createID();
 		int i=0;
@@ -59,7 +59,7 @@ public final class SolverStandAloneImpl implements ISolver {
 		return uniqueID;
 	}
 
-	@Override
+	
 	public InputStream getFinalResult(long round) {
 		ByteArrayInputStream result = null;
 		try {
@@ -71,7 +71,7 @@ public final class SolverStandAloneImpl implements ISolver {
 		return result;
 	}
 
-	@Override
+	
 	public InputStream getFile(String filename, long round) {
 		ByteArrayInputStream result = null;
 		try {
@@ -83,28 +83,28 @@ public final class SolverStandAloneImpl implements ISolver {
 		return result;
 	}
 	
-	@Override
+	
 	public boolean cancelOptimization(long round) {
 		return solverQueue.cancelOptimization(round);
 	}
 
-	@Override
+	
 	public boolean isCanceled(long round) {
 		return false;
 	}
 
-	@Override
+	
 	public boolean cancelAll() {
 		solverQueue.cancelAll();
 		return true;
 	}
 
-	@Override
+	
 	public String[] getQueue() {
 		return solverQueue.getQueue();
 	}
 
-	@Override
+	
 	public String getSolverVersion() {
 		return solverQueue.getSolverVersion(problemName);
 	}
