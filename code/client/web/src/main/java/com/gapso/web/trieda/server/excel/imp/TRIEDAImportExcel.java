@@ -58,9 +58,9 @@ public class TRIEDAImportExcel implements IImportExcel {
 			importers.add(new CurriculosImportExcel(cenario,i18nConstants,i18nMessages));
 			importers.add(new DisciplinasSalasImportExcel(cenario,i18nConstants,i18nMessages));
 			importers.add(new EquivalenciasImportExcel(cenario,i18nConstants,i18nMessages));
-			importers.add(new DemandasImportExcel(cenario,i18nConstants,i18nMessages));
 			importers.add(new CampiTrabalhoImportExcel(cenario,i18nConstants,i18nMessages));
 			importers.add(new HabilitacoesProfessoresImportExcel(cenario,i18nConstants,i18nMessages));
+			importers.add(new DemandasImportExcel(cenario,i18nConstants,i18nMessages));
 			
 			for(IImportExcel importer : importers) {
 				flag = flag && importer.load(fileName, workbook);

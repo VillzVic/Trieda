@@ -26,6 +26,7 @@ public interface TriedaI18nMessages extends Messages
 	String excelErroSintaticoValorNegativo(String linhasComErro, String nomeColuna);
 	String falhaOperacao();
 	String loading();
+	String ofertasNaoCadastradas(String campus);
 	String sucessoImportacaoExcel();
 	String sucessoRemoverDoBD(String codigoItem);
 	String sucessoSalvarNoBD(String codigoItem);

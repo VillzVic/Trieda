@@ -83,7 +83,7 @@ public class OfertasPresenter implements Presenter {
 		display.getNewButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
 			@Override
 			public void componentSelected(ButtonEvent ce) {
-				Presenter presenter = new OfertaFormPresenter(new OfertaFormView(new OfertaDTO(), null, null, null), display.getGrid());
+				Presenter presenter = new OfertaFormPresenter(new OfertaFormView(null, null, null), display.getGrid());
 				presenter.go(null);
 			}
 		});

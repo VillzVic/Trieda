@@ -289,6 +289,7 @@ public class DemandasImportExcel extends AbstractImportExcel<DemandasImportExcel
 				oferta.setCampus(demandasExcel.getCampus());
 				oferta.setTurno(demandasExcel.getTurno());
 				oferta.setCurriculo(demandasExcel.getMatrizCurricular());
+				oferta.setCurso(demandasExcel.getCurso());
 				oferta.persist();
 				Oferta.entityManager().refresh(oferta);
 				ofertasBDMap.put(codigoOferta, oferta);

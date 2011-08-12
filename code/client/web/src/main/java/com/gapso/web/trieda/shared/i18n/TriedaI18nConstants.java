@@ -69,6 +69,7 @@ public interface TriedaI18nConstants extends Constants {
 	String maxAlunosPratico();
 	String maxAlunosTeorico();
 	String maxDisciplinasProfessor();
+	String mensagemAlerta();
 	String mensagemErro();
 	String minPercentualDoutor();
 	String minPercentualMestre();

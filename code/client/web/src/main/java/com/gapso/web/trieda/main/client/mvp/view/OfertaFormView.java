@@ -30,6 +30,14 @@ public class OfertaFormView extends MyComposite implements OfertaFormPresenter.D
 	private CurriculoDTO curriculoDTO;
 	private NumberField receitaNF;
 	
+	public OfertaFormView(TurnoDTO turnoDTO, CampusDTO campusDTO, CurriculoDTO curriculoDTO) {
+		this.ofertaDTO = new OfertaDTO();
+		this.turnoDTO = turnoDTO;
+		this.campusDTO = campusDTO;
+		this.curriculoDTO = curriculoDTO;
+		initUI();
+	}
+	
 	public OfertaFormView(OfertaDTO ofertaDTO, TurnoDTO turnoDTO, CampusDTO campusDTO, CurriculoDTO curriculoDTO) {
 		this.ofertaDTO = ofertaDTO;
 		this.turnoDTO = turnoDTO;
@@ -40,7 +48,7 @@ public class OfertaFormView extends MyComposite implements OfertaFormPresenter.D
 	
 	private void initUI()
 	{
-		String title = (ofertaDTO.getId() == null)? "Inserção de Oferta de Curso em Campus" : "Edição de de Oferta de Curso em Campus";
+		String title = (ofertaDTO.getId() == null)? "Inserção de Oferta de Curso em Campus" : "Edição de Oferta de Curso em Campus";
 		simpleModal = new SimpleModal(title, Resources.DEFAULTS.matrizCurricular16());
 		simpleModal.setHeight(200);
 		createForm();

@@ -15,6 +15,7 @@ import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.store.TreeStore;
 import com.extjs.gxt.ui.client.widget.Component;
 import com.extjs.gxt.ui.client.widget.Info;
+import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.button.ToolButton;
 import com.extjs.gxt.ui.client.widget.form.SimpleComboBox;
@@ -34,6 +35,7 @@ import com.gapso.web.trieda.shared.mvp.presenter.Presenter;
 import com.gapso.web.trieda.shared.services.DisciplinasServiceAsync;
 import com.gapso.web.trieda.shared.services.SalasServiceAsync;
 import com.gapso.web.trieda.shared.services.Services;
+import com.gapso.web.trieda.shared.util.view.AbstractAsyncCallbackWithDefaultOnFailure;
 import com.gapso.web.trieda.shared.util.view.CampusComboBox;
 import com.gapso.web.trieda.shared.util.view.ExportExcelFormSubmit;
 import com.gapso.web.trieda.shared.util.view.GTab;
@@ -76,6 +78,24 @@ public class DisciplinasAssociarSalaPresenter
 
 	private void setListeners()
 	{
+		display.getCampusComboBox().addSelectionChangedListener(new SelectionChangedListener<CampusDTO>() {
+			@Override
+			public void selectionChanged(SelectionChangedEvent<CampusDTO> se) {
+				// obtém o campo selecionado pelo usuário na combobox
+				final CampusDTO selectedCampus = se.getSelectedItem();
+				// verifica se há turnos associados ao campus selecionado (a associação entre turnos e campus ocorre através do cadastro de uma oferta)
+				Services.turnos().getListByCampus(selectedCampus, new AbstractAsyncCallbackWithDefaultOnFailure<ListLoadResult<TurnoDTO>> (display) {
+					@Override
+					public void onSuccess(ListLoadResult<TurnoDTO> result) {
+						// exibe uma msg de alerta caso não haja turnos associados ao campus selecionado
+						if (result.getData().isEmpty()) {
+							MessageBox.alert(display.getI18nConstants().mensagemAlerta(),display.getI18nMessages().ofertasNaoCadastradas(selectedCampus.getNome()),null);
+						}
+					}
+				});
+			}
+		});
+		
 		display.getTurnoComboBox().addSelectionChangedListener(
 				new SelectionChangedListener<TurnoDTO>() {
 					@Override

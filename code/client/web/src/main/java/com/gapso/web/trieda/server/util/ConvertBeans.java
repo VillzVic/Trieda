@@ -1115,6 +1115,7 @@ public class ConvertBeans
 		domain.setVersion( dto.getVersion() );
 		domain.setCampus( Campus.find( dto.getCampusId() ) );
 		domain.setCurriculo( Curriculo.find(dto.getMatrizCurricularId() ) );
+		domain.setCurso(domain.getCurriculo().getCurso());
 		domain.setTurno( Turno.find( dto.getTurnoId() ) );
 		domain.setReceita( dto.getReceita().getDoubleValue() );
 

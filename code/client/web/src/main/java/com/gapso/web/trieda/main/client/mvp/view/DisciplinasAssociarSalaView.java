@@ -135,7 +135,7 @@ public class DisciplinasAssociarSalaView extends MyComposite implements
 
 		turnoCB.setFieldLabel( "Turno" );
 		turnoCB.disable();
-		turnoCB.setDisplayField( "nome" );
+		//turnoCB.setDisplayField( "nome" );
 		formPanel.add( turnoCB, formData );
 
 		tabs = new TabPanel();

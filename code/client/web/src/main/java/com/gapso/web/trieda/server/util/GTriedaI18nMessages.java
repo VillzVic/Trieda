@@ -186,4 +186,10 @@ public class GTriedaI18nMessages implements TriedaI18nMessages {
 	public String erroExclusaoAreaTitulacaoTitle() {
 		return languageManager.getText("erroExclusaoAreaTitulacaoTitle");
 	}
+
+	@Override
+	public String ofertasNaoCadastradas(String campus) {
+		String[] params = { campus };
+		return languageManager.getFormattedText("ofertasNaoCadastradas", params);
+	}
 }

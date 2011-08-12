@@ -630,4 +630,9 @@ public class GTriedaI18nConstants implements TriedaI18nConstants {
 	public String relatorioVisaoProfessor() {
 		return languageManager.getText("relatorioVisaoProfessor");
 	}
+
+	@Override
+	public String mensagemAlerta() {
+		return languageManager.getText("mensagemAlerta");
+	}
 }
