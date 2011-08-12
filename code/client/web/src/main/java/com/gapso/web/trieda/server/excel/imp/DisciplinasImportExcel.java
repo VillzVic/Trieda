@@ -224,18 +224,20 @@ public class DisciplinasImportExcel extends AbstractImportExcel<DisciplinasImpor
 			}
 		}
 	}
-	
-	private void resolveHeaderColumnNames() {
-		if (CODIGO_COLUMN_NAME == null) {
-			CODIGO_COLUMN_NAME = HtmlUtils.htmlUnescape(getI18nConstants().codigo());
-			NOME_COLUMN_NAME = HtmlUtils.htmlUnescape(getI18nConstants().nome());
-			CRED_TEORICOS_COLUMN_NAME = HtmlUtils.htmlUnescape(getI18nConstants().creditosTeoricos());
-			CRED_PRATICOS_COLUMN_NAME = HtmlUtils.htmlUnescape(getI18nConstants().creditosPraticos());
-			USA_LABORATORIO_COLUMN_NAME = HtmlUtils.htmlUnescape(getI18nConstants().usaLaboratorio());
-			TIPO_COLUMN_NAME = HtmlUtils.htmlUnescape(getI18nConstants().tipo());
-			NIVEL_DIFICULDADE_COLUMN_NAME = HtmlUtils.htmlUnescape(getI18nConstants().nivelDificuldade());
-			MAX_ALUNOS_TEORICOS_COLUMN_NAME = HtmlUtils.htmlUnescape(getI18nConstants().maxAlunosTeorico());
-			MAX_ALUNOS_PRATICOS_COLUMN_NAME = HtmlUtils.htmlUnescape(getI18nConstants().maxAlunosPratico());
+
+	private void resolveHeaderColumnNames()
+	{
+		if ( CODIGO_COLUMN_NAME == null )
+		{
+			CODIGO_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().codigoDisciplina() );
+			NOME_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().nomeDisciplina() );
+			CRED_TEORICOS_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().creditosTeoricos() );
+			CRED_PRATICOS_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().creditosPraticos() );
+			USA_LABORATORIO_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().usaLaboratorio() );
+			TIPO_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().tipo() );
+			NIVEL_DIFICULDADE_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().nivelDificuldade() );
+			MAX_ALUNOS_TEORICOS_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().maxAlunosTeorico() );
+			MAX_ALUNOS_PRATICOS_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().maxAlunosPratico() );
 		}
 	}
 }

@@ -31,32 +31,39 @@ public class ProfessoresImportExcel extends AbstractImportExcel<ProfessoresImpor
 	static public String CARGA_HORARIA_MIN_COLUMN_NAME;
 	static public String TITULACAO_COLUMN_NAME;
 	static public String AREA_TITULACAO_COLUMN_NAME;
+	static public String NOTA_DESEMPENHO_COLUMN_NAME;
 	static public String CARGA_HORARIA_ANTERIOR_COLUMN_NAME;
 	static public String VALOR_CREDITO_COLUMN_NAME;
-	
-	private List<String> headerColumnsNames;
-	
-	public ProfessoresImportExcel(Cenario cenario, TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages) {
-		super(cenario,i18nConstants,i18nMessages);
+
+	private List< String > headerColumnsNames;
+
+	public ProfessoresImportExcel( Cenario cenario,
+		TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages )
+	{
+		super( cenario, i18nConstants, i18nMessages );
 		resolveHeaderColumnNames();
-		this.headerColumnsNames = new ArrayList<String>();
-		this.headerColumnsNames.add(CPF_COLUMN_NAME);
-		this.headerColumnsNames.add(NOME_COLUMN_NAME);
-		this.headerColumnsNames.add(TIPO_COLUMN_NAME);
-		this.headerColumnsNames.add(CARGA_HORARIA_MAX_COLUMN_NAME);
-		this.headerColumnsNames.add(CARGA_HORARIA_MIN_COLUMN_NAME);
-		this.headerColumnsNames.add(TITULACAO_COLUMN_NAME);
-		this.headerColumnsNames.add(AREA_TITULACAO_COLUMN_NAME);
-		this.headerColumnsNames.add(CARGA_HORARIA_ANTERIOR_COLUMN_NAME);
-		this.headerColumnsNames.add(VALOR_CREDITO_COLUMN_NAME);
+
+		this.headerColumnsNames = new ArrayList< String >();
+		this.headerColumnsNames.add( CPF_COLUMN_NAME );
+		this.headerColumnsNames.add( NOME_COLUMN_NAME );
+		this.headerColumnsNames.add( TIPO_COLUMN_NAME );
+		this.headerColumnsNames.add( CARGA_HORARIA_MAX_COLUMN_NAME );
+		this.headerColumnsNames.add( CARGA_HORARIA_MIN_COLUMN_NAME );
+		this.headerColumnsNames.add( TITULACAO_COLUMN_NAME );
+		this.headerColumnsNames.add( AREA_TITULACAO_COLUMN_NAME );
+		this.headerColumnsNames.add( NOTA_DESEMPENHO_COLUMN_NAME );
+		this.headerColumnsNames.add( CARGA_HORARIA_ANTERIOR_COLUMN_NAME );
+		this.headerColumnsNames.add( VALOR_CREDITO_COLUMN_NAME );
 	}
 
 	@Override
-	protected boolean sheetMustBeProcessed(int sheetIndex, HSSFSheet sheet, HSSFWorkbook workbook) {
-		String sheetName = workbook.getSheetName(sheetIndex);
-		return ExcelInformationType.PROFESSORES.getSheetName().equals(sheetName);
+	protected boolean sheetMustBeProcessed(
+		int sheetIndex, HSSFSheet sheet, HSSFWorkbook workbook )
+	{
+		String sheetName = workbook.getSheetName( sheetIndex );
+		return ExcelInformationType.PROFESSORES.getSheetName().equals( sheetName );
 	}
-	
+
 	@Override
 	protected List<String> getHeaderColumnsNames(int sheetIndex, HSSFSheet sheet, HSSFWorkbook workbook) {
 		return this.headerColumnsNames;
@@ -226,53 +233,65 @@ public class ProfessoresImportExcel extends AbstractImportExcel<ProfessoresImpor
 	}
 
 	@Transactional
-	private void updateDataBase(String sheetName, List<ProfessoresImportExcelBean> sheetContent) {
-		Map<String,Professor> professoresBDMap = Professor.buildProfessorCpfToProfessorMap(Professor.findByCenario(getCenario()));
-		
-		for (ProfessoresImportExcelBean professorExcel : sheetContent) {
-			Professor professorBD = professoresBDMap.get(professorExcel.getCpfStr());
-			if (professorBD != null) {
-				// update
-				professorBD.setNome(professorExcel.getNomeStr());
-				professorBD.setTipoContrato(professorExcel.getTipo());
-				professorBD.setCargaHorariaMax(professorExcel.getCargaHorariaMax());
-				professorBD.setCargaHorariaMin(professorExcel.getCargaHorariaMin());
-				professorBD.setTitulacao(professorExcel.getTitulacao());
-				professorBD.setAreaTitulacao(professorExcel.getAreaTitulacao());
-				professorBD.setCreditoAnterior(professorExcel.getCargaHorariaAnterior());
-				professorBD.setValorCredito(professorExcel.getValorCredito());
-				
+	private void updateDataBase( String sheetName,
+		List< ProfessoresImportExcelBean > sheetContent )
+	{
+		Map< String, Professor > professoresBDMap = Professor.buildProfessorCpfToProfessorMap(
+			Professor.findByCenario( getCenario() ) );
+
+		for ( ProfessoresImportExcelBean professorExcel : sheetContent )
+		{
+			Professor professorBD = professoresBDMap.get( professorExcel.getCpfStr() );
+
+			if ( professorBD != null )
+			{
+				// Update
+				professorBD.setNome( professorExcel.getNomeStr() );
+				professorBD.setTipoContrato( professorExcel.getTipo() );
+				professorBD.setCargaHorariaMax( professorExcel.getCargaHorariaMax() );
+				professorBD.setCargaHorariaMin( professorExcel.getCargaHorariaMin() );
+				professorBD.setTitulacao( professorExcel.getTitulacao() );
+				professorBD.setAreaTitulacao( professorExcel.getAreaTitulacao() );
+				professorBD.setCreditoAnterior( professorExcel.getCargaHorariaAnterior() );
+				professorBD.setValorCredito( professorExcel.getValorCredito() );
+
 				professorBD.merge();
-			} else {
-				// insert
+			}
+			else
+			{
+				// Insert
 				Professor newProfessor = new Professor();
-				newProfessor.setCenario(getCenario());
-				newProfessor.setCpf(professorExcel.getCpfStr());
-				newProfessor.setNome(professorExcel.getNomeStr());
-				newProfessor.setTipoContrato(professorExcel.getTipo());
-				newProfessor.setCargaHorariaMax(professorExcel.getCargaHorariaMax());
-				newProfessor.setCargaHorariaMin(professorExcel.getCargaHorariaMin());
-				newProfessor.setTitulacao(professorExcel.getTitulacao());
-				newProfessor.setAreaTitulacao(professorExcel.getAreaTitulacao());
-				newProfessor.setCreditoAnterior(professorExcel.getCargaHorariaAnterior());
-				newProfessor.setValorCredito(professorExcel.getValorCredito());
-				
+
+				newProfessor.setCenario( getCenario() );
+				newProfessor.setCpf( professorExcel.getCpfStr() );
+				newProfessor.setNome( professorExcel.getNomeStr() );
+				newProfessor.setTipoContrato( professorExcel.getTipo() );
+				newProfessor.setCargaHorariaMax( professorExcel.getCargaHorariaMax() );
+				newProfessor.setCargaHorariaMin( professorExcel.getCargaHorariaMin() );
+				newProfessor.setTitulacao( professorExcel.getTitulacao() );
+				newProfessor.setAreaTitulacao( professorExcel.getAreaTitulacao() );
+				newProfessor.setCreditoAnterior( professorExcel.getCargaHorariaAnterior() );
+				newProfessor.setValorCredito( professorExcel.getValorCredito() );
+
 				newProfessor.persist();
 			}
 		}
 	}
-	
-	private void resolveHeaderColumnNames() {
-		if (CPF_COLUMN_NAME == null) {
-			CPF_COLUMN_NAME = HtmlUtils.htmlUnescape(getI18nConstants().cpf());
-			NOME_COLUMN_NAME = HtmlUtils.htmlUnescape(getI18nConstants().nome());
-			TIPO_COLUMN_NAME = HtmlUtils.htmlUnescape(getI18nConstants().tipoContrato());
-			CARGA_HORARIA_MAX_COLUMN_NAME = HtmlUtils.htmlUnescape(getI18nConstants().cargaHorariaMax());
-			CARGA_HORARIA_MIN_COLUMN_NAME = HtmlUtils.htmlUnescape(getI18nConstants().cargaHorariaMin());
-			TITULACAO_COLUMN_NAME = HtmlUtils.htmlUnescape(getI18nConstants().titulacao());
-			AREA_TITULACAO_COLUMN_NAME = HtmlUtils.htmlUnescape(getI18nConstants().areaTitulacao());
-			CARGA_HORARIA_ANTERIOR_COLUMN_NAME = HtmlUtils.htmlUnescape(getI18nConstants().cargaHorariaAnterior());
-			VALOR_CREDITO_COLUMN_NAME = HtmlUtils.htmlUnescape(getI18nConstants().valorCredito());	
+
+	private void resolveHeaderColumnNames()
+	{
+		if ( CPF_COLUMN_NAME == null )
+		{
+			CPF_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().cpf() );
+			NOME_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().nomeProfessor() );
+			TIPO_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().tipoContrato() );
+			CARGA_HORARIA_MAX_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().cargaHorariaMax() );
+			CARGA_HORARIA_MIN_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().cargaHorariaMin() );
+			TITULACAO_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().titulacao() );
+			AREA_TITULACAO_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().areaTitulacao() );
+			NOTA_DESEMPENHO_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().notaDesempenho() );
+			CARGA_HORARIA_ANTERIOR_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().cargaHorariaAnterior() );
+			VALOR_CREDITO_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().valorCredito() );	
 		}
 	}
 }

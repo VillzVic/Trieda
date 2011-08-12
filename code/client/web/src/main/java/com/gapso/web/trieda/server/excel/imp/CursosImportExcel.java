@@ -20,8 +20,9 @@ import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nMessages;
 
-public class CursosImportExcel extends AbstractImportExcel<CursosImportExcelBean> {
-	
+public class CursosImportExcel
+	extends AbstractImportExcel< CursosImportExcelBean >
+{
 	static public String CODIGO_COLUMN_NAME;
 	static public String NOME_COLUMN_NAME;
 	static public String TIPO_COLUMN_NAME;
@@ -34,19 +35,23 @@ public class CursosImportExcel extends AbstractImportExcel<CursosImportExcelBean
 	
 	private List<String> headerColumnsNames;
 	
-	public CursosImportExcel(Cenario cenario, TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages) {
-		super(cenario,i18nConstants,i18nMessages);
+	public CursosImportExcel(
+		Cenario cenario, TriedaI18nConstants i18nConstants,
+		TriedaI18nMessages i18nMessages )
+	{
+		super( cenario, i18nConstants, i18nMessages );
 		resolveHeaderColumnNames();
-		this.headerColumnsNames = new ArrayList<String>();
-		this.headerColumnsNames.add(CODIGO_COLUMN_NAME);
-		this.headerColumnsNames.add(NOME_COLUMN_NAME);
-		this.headerColumnsNames.add(TIPO_COLUMN_NAME);
-		this.headerColumnsNames.add(MIN_DOUTOR_COLUMN_NAME);
-		this.headerColumnsNames.add(MIN_MESTRE_COLUMN_NAME);
-		this.headerColumnsNames.add(MIN_TEMPO_INTEGRAL_PARCIAL_COLUMN_NAME);
-		this.headerColumnsNames.add(MIN_TEMPO_INTEGRAL_COLUMN_NAME);
-		this.headerColumnsNames.add(MAX_DISC_PROF_COLUMN_NAME);
-		this.headerColumnsNames.add(MAIS_DE_UMA_DISC_PROF_COLUMN_NAME);
+
+		this.headerColumnsNames = new ArrayList< String >();
+		this.headerColumnsNames.add( CODIGO_COLUMN_NAME );
+		this.headerColumnsNames.add( NOME_COLUMN_NAME );
+		this.headerColumnsNames.add( TIPO_COLUMN_NAME );
+		this.headerColumnsNames.add( MIN_DOUTOR_COLUMN_NAME );
+		this.headerColumnsNames.add( MIN_MESTRE_COLUMN_NAME );
+		this.headerColumnsNames.add( MIN_TEMPO_INTEGRAL_PARCIAL_COLUMN_NAME );
+		this.headerColumnsNames.add( MIN_TEMPO_INTEGRAL_COLUMN_NAME );
+		this.headerColumnsNames.add( MAX_DISC_PROF_COLUMN_NAME );
+		this.headerColumnsNames.add( MAIS_DE_UMA_DISC_PROF_COLUMN_NAME );
 	}
 
 	@Override
@@ -169,22 +174,31 @@ public class CursosImportExcel extends AbstractImportExcel<CursosImportExcelBean
 		}
 	}
 	
-	private void checkNonRegisteredTipoCurso(List<CursosImportExcelBean> sheetContent) {
-		// [CodigoTipoCurso -> TipoCurso]
-		Map<String,TipoCurso> tiposCursoBDMap = TipoCurso.buildTipoCursoCodigoToTipoCursoMap(TipoCurso.findAll());
-		
-		List<Integer> rowsWithErrors = new ArrayList<Integer>();
-		for (CursosImportExcelBean bean : sheetContent) {
-			TipoCurso tipoCurso = tiposCursoBDMap.get(bean.getTipoStr());
-			if (tipoCurso != null) {
-				bean.setTipo(tipoCurso);
-			} else {
-				rowsWithErrors.add(bean.getRow());
+	private void checkNonRegisteredTipoCurso(
+		List< CursosImportExcelBean > sheetContent )
+	{
+		// [ CódigoTipoCurso -> TipoCurso ]
+		Map< String, TipoCurso > tiposCursoBDMap
+			= TipoCurso.buildTipoCursoStrToTipoCursoMap( TipoCurso.findAll() );
+
+		List< Integer > rowsWithErrors = new ArrayList< Integer >();
+		for ( CursosImportExcelBean bean : sheetContent )
+		{
+			TipoCurso tipoCurso = tiposCursoBDMap.get( bean.getTipoStr() );
+			if ( tipoCurso != null )
+			{
+				bean.setTipo( tipoCurso );
+			}
+			else
+			{
+				rowsWithErrors.add( bean.getRow() );
 			}
 		}
 		
-		if (!rowsWithErrors.isEmpty()) {
-			getErrors().add(getI18nMessages().excelErroLogicoEntidadesNaoCadastradas(TIPO_COLUMN_NAME,rowsWithErrors.toString()));
+		if ( !rowsWithErrors.isEmpty() )
+		{
+			getErrors().add( getI18nMessages().excelErroLogicoEntidadesNaoCadastradas(
+				TIPO_COLUMN_NAME, rowsWithErrors.toString() ) );
 		}
 	}
 
@@ -225,17 +239,19 @@ public class CursosImportExcel extends AbstractImportExcel<CursosImportExcelBean
 		}
 	}
 	
-	private void resolveHeaderColumnNames() {
-		if (CODIGO_COLUMN_NAME == null) {
-			CODIGO_COLUMN_NAME = HtmlUtils.htmlUnescape(getI18nConstants().codigo());
-			NOME_COLUMN_NAME = HtmlUtils.htmlUnescape(getI18nConstants().nome());
-			TIPO_COLUMN_NAME = HtmlUtils.htmlUnescape(getI18nConstants().tipo());
-			MIN_DOUTOR_COLUMN_NAME = HtmlUtils.htmlUnescape(getI18nConstants().minPercentualDoutor());
-			MIN_MESTRE_COLUMN_NAME = HtmlUtils.htmlUnescape(getI18nConstants().minPercentualMestre());
-			MIN_TEMPO_INTEGRAL_PARCIAL_COLUMN_NAME = HtmlUtils.htmlUnescape(getI18nConstants().minTempoIntegralParcial());
-			MIN_TEMPO_INTEGRAL_COLUMN_NAME = HtmlUtils.htmlUnescape(getI18nConstants().minTempoIntegral());
-			MAX_DISC_PROF_COLUMN_NAME = HtmlUtils.htmlUnescape(getI18nConstants().maxDisciplinasProfessor());
-			MAIS_DE_UMA_DISC_PROF_COLUMN_NAME = HtmlUtils.htmlUnescape(getI18nConstants().maisDeUmaDisciplinaProfessor());			
+	private void resolveHeaderColumnNames()
+	{
+		if ( CODIGO_COLUMN_NAME == null )
+		{
+			CODIGO_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().codigoCurso() );
+			NOME_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().nomeCurso() );
+			TIPO_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().tipoCurso() );
+			MIN_DOUTOR_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().minPercentualDoutor() );
+			MIN_MESTRE_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().minPercentualMestre() );
+			MIN_TEMPO_INTEGRAL_PARCIAL_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().minTempoIntegralParcial() );
+			MIN_TEMPO_INTEGRAL_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().minTempoIntegral() );
+			MAX_DISC_PROF_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().maxDisciplinasProfessor() );
+			MAIS_DE_UMA_DISC_PROF_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().maisDeUmaDisciplinaProfessor() );			
 		}
 	}
 }

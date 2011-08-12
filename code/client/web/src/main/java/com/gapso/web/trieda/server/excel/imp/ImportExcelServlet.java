@@ -22,11 +22,12 @@ import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nMessages;
 
-public class ImportExcelServlet extends HttpServlet {
-
+public class ImportExcelServlet extends HttpServlet
+{
 	private static final long serialVersionUID = 1889121953846517684L;
 	private static TriedaI18nConstants i18nConstants = null;
 	private static TriedaI18nMessages i18nMessages = null;
+
 	private Cenario cenario = null;
 	{
 		i18nConstants = new GTriedaI18nConstants();
@@ -34,55 +35,85 @@ public class ImportExcelServlet extends HttpServlet {
 	}
 	
 	@Override
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		System.out.println(">>campiTrabalho>: "+i18nConstants.campiTrabalho());
-		System.out.println(">>excelErroArquivoInvalido>: "+i18nMessages.excelErroArquivoInvalido("Claudio", "Escudero"));
-		
+	protected void doPost( HttpServletRequest request, HttpServletResponse response )
+		throws ServletException, IOException
+	{
 		cenario = Cenario.findMasterData();
-		
+
 		FileItemFactory factory = new DiskFileItemFactory();
         ServletFileUpload upload = new ServletFileUpload(factory);
         InputStream inputStream = null;
-        try {
+
+        try
+        {
         	@SuppressWarnings("unchecked")
-			List<FileItem> itens = upload.parseRequest(request);
-        	
+			List<FileItem> itens = upload.parseRequest( request );
+
         	String fileName = null;
         	String informationToBeImported = null;
-			for (FileItem iten : itens) {
-				if (iten.getFieldName().equals(ExcelInformationType.getInformationParameterName())) {
+			for ( FileItem iten : itens )
+			{
+				if ( iten.getFieldName().equals(
+						ExcelInformationType.getInformationParameterName() ) )
+				{
 					informationToBeImported = iten.getString();
-				} else if (iten.getFieldName().equals(ExcelInformationType.getFileParameterName())) {
+				}
+				else if ( iten.getFieldName().equals(
+						ExcelInformationType.getFileParameterName() ) )
+				{
 					fileName = iten.getName();
 					inputStream = iten.getInputStream();
 				}
 			}
-			
-			if (inputStream != null && informationToBeImported != null) {
-				IImportExcel importer = ImportExcelFactory.createImporter(informationToBeImported,cenario,i18nConstants,i18nMessages);
-				if (importer != null) {
-					if (!importer.load(fileName,inputStream)) {
-						response.setContentType("text/html");
-						for (String msg : importer.getWarnings()) {
-							response.getWriter().println(ExcelInformationType.prefixWarning()+msg);
+
+			if ( inputStream != null && informationToBeImported != null )
+			{
+				IImportExcel importer = ImportExcelFactory.createImporter(
+					informationToBeImported, cenario, i18nConstants, i18nMessages );
+
+				if ( importer != null )
+				{
+					if ( !importer.load( fileName, inputStream ) )
+					{
+						response.setContentType( "text/html" );
+
+						for ( String msg : importer.getWarnings() )
+						{
+							response.getWriter().println(
+								ExcelInformationType.prefixWarning() + msg );
 						}
-						for (String msg : importer.getErrors()) {
-							response.getWriter().println(ExcelInformationType.prefixError()+msg);
+						for ( String msg : importer.getErrors() )
+						{
+							response.getWriter().println(
+								ExcelInformationType.prefixError() + msg );
 						}
+
 						response.getWriter().flush();
 					}
-				} else {
-					response.setContentType("text/html");
-					response.getWriter().println(ExcelInformationType.prefixError()+i18nMessages.excelErroImportadorNulo(informationToBeImported));
+				}
+				else
+				{
+					response.setContentType( "text/html" );
+					response.getWriter().println(
+						ExcelInformationType.prefixError() +
+						i18nMessages.excelErroImportadorNulo( informationToBeImported ) );
 				}
 			}
-		} catch (FileUploadException e) {
+		}
+        catch ( FileUploadException e )
+        {
 			e.printStackTrace();
-		} finally {
-			if (inputStream != null) {
-				try {
+		}
+        finally
+        {
+			if ( inputStream != null )
+			{
+				try
+				{
 					inputStream.close();
-				} catch (IOException e) {
+				}
+				catch ( IOException e )
+				{
 					e.printStackTrace();
 				}
 			}

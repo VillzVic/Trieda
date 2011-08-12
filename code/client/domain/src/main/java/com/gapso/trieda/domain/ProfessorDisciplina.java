@@ -31,9 +31,13 @@ import org.springframework.transaction.annotation.Transactional;
 @Entity
 @RooJavaBean
 @RooToString
-@RooEntity(identifierColumn = "DIP_ID")
-@Table(name = "PROFESSORES_DISCIPLINAS")
-public class ProfessorDisciplina implements java.io.Serializable {
+@RooEntity( identifierColumn = "DIP_ID" )
+@Table( name = "PROFESSORES_DISCIPLINAS" )
+public class ProfessorDisciplina
+	implements java.io.Serializable
+{
+	private static final long serialVersionUID = -6254398976446496178L;
+
 	@NotNull
 	@ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE,
 			CascadeType.REFRESH }, targetEntity = Professor.class)
@@ -214,16 +218,19 @@ public class ProfessorDisciplina implements java.io.Serializable {
 		return sb.toString();
 	}
 
-	public static Map<String, ProfessorDisciplina> buildCursoNaturalKeyToProfessorDisciplinaMap(
-			List<ProfessorDisciplina> pds) {
-		Map<String, ProfessorDisciplina> map = new HashMap<String, ProfessorDisciplina>();
-		for (ProfessorDisciplina pd : pds) {
-			map.put(pd.getNaturalKeyString(), pd);
+	public static Map< String, ProfessorDisciplina > buildCursoNaturalKeyToProfessorDisciplinaMap(
+		List< ProfessorDisciplina > pds )
+	{
+		Map< String, ProfessorDisciplina > map
+			= new HashMap< String, ProfessorDisciplina >();
+
+		for ( ProfessorDisciplina pd : pds )
+		{
+			map.put( pd.getNaturalKeyString(), pd );
 		}
+
 		return map;
 	}
-
-	private static final long serialVersionUID = -6254398976446496178L;
 
 	public Professor getProfessor() {
 		return this.professor;
@@ -257,9 +264,12 @@ public class ProfessorDisciplina implements java.io.Serializable {
 		this.preferencia = preferencia;
 	}
 
-	public String getNaturalKeyString() {
+	public String getNaturalKeyString()
+	{
 		Professor professor = getProfessor();
-		return professor.getCpf() + "-" + professor.getNome() + "-"
-				+ getDisciplina().getCodigo();
+
+		return professor.getCpf()
+			+ "-" + professor.getNome()
+			+ "-" + getDisciplina().getCodigo();
 	}
 }

@@ -21,84 +21,124 @@ import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nMessages;
 
-public class CursoAreasTitulacaoImportExcel extends AbstractImportExcel<CursoAreasTitulacaoImportExcelBean> {
-	
+public class CursoAreasTitulacaoImportExcel
+	extends AbstractImportExcel< CursoAreasTitulacaoImportExcelBean >
+{
 	static public String CURSO_COLUMN_NAME;
 	static public String AREA_TITULACAO_COLUMN_NAME;
-	
-	private List<String> headerColumnsNames;
-	
-	public CursoAreasTitulacaoImportExcel(Cenario cenario, TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages) {
-		super(cenario,i18nConstants,i18nMessages);
+
+	private List< String > headerColumnsNames;
+
+	public CursoAreasTitulacaoImportExcel(
+		Cenario cenario, TriedaI18nConstants i18nConstants,
+		TriedaI18nMessages i18nMessages )
+	{
+		super( cenario, i18nConstants, i18nMessages );
 		resolveHeaderColumnNames();
-		this.headerColumnsNames = new ArrayList<String>();
-		this.headerColumnsNames.add(CURSO_COLUMN_NAME);
-		this.headerColumnsNames.add(AREA_TITULACAO_COLUMN_NAME);
+
+		this.headerColumnsNames = new ArrayList< String >();
+		this.headerColumnsNames.add( CURSO_COLUMN_NAME );
+		this.headerColumnsNames.add( AREA_TITULACAO_COLUMN_NAME );
 	}
 
 	@Override
-	protected boolean sheetMustBeProcessed(int sheetIndex, HSSFSheet sheet, HSSFWorkbook workbook) {
-		String sheetName = workbook.getSheetName(sheetIndex);
-		return ExcelInformationType.CURSO_AREAS_TITULACAO.getSheetName().equals(sheetName);
+	protected boolean sheetMustBeProcessed(
+		int sheetIndex, HSSFSheet sheet, HSSFWorkbook workbook )
+	{
+		String sheetName = workbook.getSheetName( sheetIndex );
+		return ExcelInformationType.CURSO_AREAS_TITULACAO.getSheetName().equals( sheetName );
 	}
-	
+
 	@Override
-	protected List<String> getHeaderColumnsNames(int sheetIndex, HSSFSheet sheet, HSSFWorkbook workbook) {
+	protected List< String > getHeaderColumnsNames(
+		int sheetIndex, HSSFSheet sheet, HSSFWorkbook workbook )
+	{
 		return this.headerColumnsNames;
 	}
 
 	@Override
-	protected CursoAreasTitulacaoImportExcelBean createExcelBean(HSSFRow header, HSSFRow row, int sheetIndex, HSSFSheet sheet, HSSFWorkbook workbook) {
-		CursoAreasTitulacaoImportExcelBean bean = new CursoAreasTitulacaoImportExcelBean(row.getRowNum()+1);
-        for (int cellIndex = row.getFirstCellNum(); cellIndex <= row.getLastCellNum(); cellIndex++) {
-            HSSFCell cell = row.getCell(cellIndex);        	
-        	if (cell != null) {
-        		HSSFCell headerCell = header.getCell(cell.getColumnIndex());
-        		if(headerCell != null) {
+	protected CursoAreasTitulacaoImportExcelBean createExcelBean(
+		HSSFRow header, HSSFRow row, int sheetIndex,
+		HSSFSheet sheet, HSSFWorkbook workbook )
+	{
+		CursoAreasTitulacaoImportExcelBean bean
+			= new CursoAreasTitulacaoImportExcelBean( row.getRowNum() + 1 );
+
+        for ( int cellIndex = row.getFirstCellNum();
+              cellIndex <= row.getLastCellNum(); cellIndex++ )
+        {
+            HSSFCell cell = row.getCell( cellIndex );
+
+        	if ( cell != null )
+        	{
+        		HSSFCell headerCell = header.getCell( cell.getColumnIndex() );
+
+        		if ( headerCell != null )
+        		{
         			String columnName = headerCell.getRichStringCellValue().getString();
-					String cellValue = getCellValue(cell);
-					if(CURSO_COLUMN_NAME.equals(columnName)) {
-						bean.setCursoStr(cellValue);
-					} else if(AREA_TITULACAO_COLUMN_NAME.equals(columnName)) {
-						bean.setAreaTitulacaoStr(cellValue);
+					String cellValue = getCellValue( cell );
+
+					if ( CURSO_COLUMN_NAME.equals( columnName ) )
+					{
+						bean.setCursoStr( cellValue );
+					}
+					else if( AREA_TITULACAO_COLUMN_NAME.equals( columnName ) )
+					{
+						bean.setAreaTitulacaoStr(cellValue );
 					}
         		}
         	}
         }
+
 		return bean;
 	}
 
 	@Override
-	protected String getHeaderToString() {
+	protected String getHeaderToString()
+	{
 		return this.headerColumnsNames.toString();
 	}
 
 	@Override
-	public String getSheetName() {
+	public String getSheetName()
+	{
 		return ExcelInformationType.CURSO_AREAS_TITULACAO.getSheetName();
 	}
 	
 	@Override
-	protected void processSheetContent(String sheetName, List<CursoAreasTitulacaoImportExcelBean> sheetContent) {
-		if (doSyntacticValidation(sheetName,sheetContent) && doLogicValidation(sheetName,sheetContent)) {
-			updateDataBase(sheetName,sheetContent);
+	protected void processSheetContent( String sheetName,
+		List< CursoAreasTitulacaoImportExcelBean > sheetContent )
+	{
+		if ( doSyntacticValidation( sheetName, sheetContent )
+			&& doLogicValidation( sheetName, sheetContent ) )
+		{
+			updateDataBase( sheetName, sheetContent );
 		}
 	}
 
-	private boolean doSyntacticValidation(String sheetName, List<CursoAreasTitulacaoImportExcelBean> sheetContent) {
-		// map utilizado para associar um erro às linhas do arquivo onde o mesmo ocorre
-		// [ImportExcelError -> Lista de linhas onde o erro ocorre]
-		Map<ImportExcelError,List<Integer>> syntacticErrorsMap = new HashMap<ImportExcelError,List<Integer>>();
+	private boolean doSyntacticValidation( String sheetName,
+		List< CursoAreasTitulacaoImportExcelBean > sheetContent )
+	{
+		// Map utilizado para associar um erro às linhas do arquivo onde o mesmo ocorre
+		// [ ImportExcelError -> Lista de linhas onde o erro ocorre ]
+		Map< ImportExcelError, List< Integer > > syntacticErrorsMap
+			= new HashMap< ImportExcelError, List< Integer > >();
 
-		for (CursoAreasTitulacaoImportExcelBean bean : sheetContent) {
-			List<ImportExcelError> errorsBean = bean.checkSyntacticErrors();
-			for (ImportExcelError error : errorsBean) {
-				List<Integer> rowsWithErrors = syntacticErrorsMap.get(error);
-				if (rowsWithErrors == null) {
-					rowsWithErrors = new ArrayList<Integer>();
-					syntacticErrorsMap.put(error,rowsWithErrors);
+		for ( CursoAreasTitulacaoImportExcelBean bean : sheetContent )
+		{
+			List< ImportExcelError > errorsBean = bean.checkSyntacticErrors();
+
+			for ( ImportExcelError error : errorsBean )
+			{
+				List< Integer > rowsWithErrors = syntacticErrorsMap.get( error );
+
+				if ( rowsWithErrors == null )
+				{
+					rowsWithErrors = new ArrayList< Integer >();
+					syntacticErrorsMap.put( error, rowsWithErrors );
 				}
-				rowsWithErrors.add(bean.getRow());
+
+				rowsWithErrors.add( bean.getRow() );
 			}
 		}
 		
@@ -111,17 +151,22 @@ public class CursoAreasTitulacaoImportExcel extends AbstractImportExcel<CursoAre
 		return syntacticErrorsMap.isEmpty();
 	}
 
-	private boolean doLogicValidation(String sheetName, List<CursoAreasTitulacaoImportExcelBean> sheetContent) {
-		// verifica se há referência a algum registro não cadastrado
-		checkNonRegisteredCurso(sheetContent);
-		checkNonRegisteredAreaTitulacao(sheetContent);
-		
+	private boolean doLogicValidation(
+		String sheetName, List< CursoAreasTitulacaoImportExcelBean > sheetContent )
+	{
+		// Verifica se há referência a algum registro não cadastrado
+		checkNonRegisteredCurso(sheetContent );
+		checkNonRegisteredAreaTitulacao( sheetContent );
+
 		return getErrors().isEmpty();
 	}
 
-	private void checkNonRegisteredCurso(List<CursoAreasTitulacaoImportExcelBean> sheetContent) {
-		// [CodidoCurso -> Curso]
-		Map<String, Curso> cursosBDMap = Curso.buildCursoCodigoToCursoMap(Curso.findByCenario(getCenario()));
+	private void checkNonRegisteredCurso(
+		List< CursoAreasTitulacaoImportExcelBean > sheetContent )
+	{
+		// [ CódidoCurso -> Curso ]
+		Map<String, Curso> cursosBDMap = Curso.buildCursoCodigoToCursoMap(
+			Curso.findByCenario( getCenario() ) );
 		
 		List<Integer> rowsWithErrors = new ArrayList<Integer>();
 		for (CursoAreasTitulacaoImportExcelBean bean : sheetContent) {
@@ -132,13 +177,20 @@ public class CursoAreasTitulacaoImportExcel extends AbstractImportExcel<CursoAre
 				rowsWithErrors.add(bean.getRow());
 			}
 		}
-		if (!rowsWithErrors.isEmpty()) {
-			getErrors().add(getI18nMessages().excelErroLogicoEntidadesNaoCadastradas(CURSO_COLUMN_NAME,rowsWithErrors.toString()));
+
+		if ( !rowsWithErrors.isEmpty() )
+		{
+			getErrors().add( getI18nMessages().excelErroLogicoEntidadesNaoCadastradas(
+				CURSO_COLUMN_NAME, rowsWithErrors.toString() ) );
 		}
 	}
-	private void checkNonRegisteredAreaTitulacao(List<CursoAreasTitulacaoImportExcelBean> sheetContent) {
-		// [CodidoAreaTitulacao -> AreaTitulacao]
-		Map<String, AreaTitulacao> areasBDMap = AreaTitulacao.buildAreaTitulacaoCodigoToAreaTitulacaoMap(AreaTitulacao.findAll());
+
+	private void checkNonRegisteredAreaTitulacao(
+		List< CursoAreasTitulacaoImportExcelBean > sheetContent )
+	{
+		// [ CódidoAreaTitulacao -> AreaTitulacao ]
+		Map< String, AreaTitulacao > areasBDMap
+			= AreaTitulacao.buildAreaTitulacaoCodigoToAreaTitulacaoMap( AreaTitulacao.findAll() );
 		
 		List<Integer> rowsWithErrors = new ArrayList<Integer>();
 		for (CursoAreasTitulacaoImportExcelBean bean : sheetContent) {
@@ -149,32 +201,40 @@ public class CursoAreasTitulacaoImportExcel extends AbstractImportExcel<CursoAre
 				rowsWithErrors.add(bean.getRow());
 			}
 		}
-		if (!rowsWithErrors.isEmpty()) {
-			getErrors().add(getI18nMessages().excelErroLogicoEntidadesNaoCadastradas(AREA_TITULACAO_COLUMN_NAME,rowsWithErrors.toString()));
+
+		if ( !rowsWithErrors.isEmpty() )
+		{
+			getErrors().add( getI18nMessages().excelErroLogicoEntidadesNaoCadastradas(
+				AREA_TITULACAO_COLUMN_NAME, rowsWithErrors.toString() ) );
 		}
 	}
 
 	@Transactional
-	private void updateDataBase(String sheetName, List<CursoAreasTitulacaoImportExcelBean> sheetContent) {
-		Set<AreaTitulacao> areasMerge = new HashSet<AreaTitulacao>();
-		
-		for (CursoAreasTitulacaoImportExcelBean cursoAreasTitulacaoImportExcelBean : sheetContent) {
+	private void updateDataBase( String sheetName,
+		List< CursoAreasTitulacaoImportExcelBean > sheetContent )
+	{
+		Set< AreaTitulacao > areasMerge = new HashSet< AreaTitulacao >();
+
+		for ( CursoAreasTitulacaoImportExcelBean cursoAreasTitulacaoImportExcelBean : sheetContent )
+		{
 			AreaTitulacao areaTitulacao = cursoAreasTitulacaoImportExcelBean.getAreaTitulacao();
 			Curso curso = cursoAreasTitulacaoImportExcelBean.getCurso();
-			areaTitulacao.getCursos().add(curso);
-			areasMerge.add(areaTitulacao);
+			areaTitulacao.getCursos().add( curso );
+			areasMerge.add( areaTitulacao );
 		}
-		for(AreaTitulacao areaTitulacao : areasMerge) {
+
+		for ( AreaTitulacao areaTitulacao : areasMerge )
+		{
 			areaTitulacao.merge();
 		}
-		
 	}
-	
-	private void resolveHeaderColumnNames() {
-		if (CURSO_COLUMN_NAME == null) {
-			CURSO_COLUMN_NAME = HtmlUtils.htmlUnescape(getI18nConstants().curso());
-			AREA_TITULACAO_COLUMN_NAME = HtmlUtils.htmlUnescape(getI18nConstants().areaTitulacao());
+
+	private void resolveHeaderColumnNames()
+	{
+		if ( CURSO_COLUMN_NAME == null )
+		{
+			CURSO_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().curso() );
+			AREA_TITULACAO_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().areaTitulacao() );
 		}
 	}
-	
 }

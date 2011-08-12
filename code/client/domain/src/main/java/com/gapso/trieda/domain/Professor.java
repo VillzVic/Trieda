@@ -477,12 +477,17 @@ public class Professor
 		return q.getResultList();
 	}
 
-	public static Map<String, Professor> buildProfessorCpfToProfessorMap(
-			List<Professor> professores) {
-		Map<String, Professor> professoresMap = new HashMap<String, Professor>();
-		for (Professor professor : professores) {
-			professoresMap.put(professor.getCpf(), professor);
+	public static Map< String, Professor > buildProfessorCpfToProfessorMap(
+		List< Professor > professores )
+	{
+		Map< String, Professor > professoresMap
+			= new HashMap< String, Professor >();
+
+		for ( Professor professor : professores )
+		{
+			professoresMap.put( professor.getCpf(), professor );
 		}
+
 		return professoresMap;
 	}
 

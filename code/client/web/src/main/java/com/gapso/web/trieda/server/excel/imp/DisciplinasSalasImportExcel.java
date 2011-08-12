@@ -22,25 +22,29 @@ import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nMessages;
 
-public class DisciplinasSalasImportExcel extends AbstractImportExcel<DisciplinasSalasImportExcelBean> {
-	
+public class DisciplinasSalasImportExcel
+	extends AbstractImportExcel< DisciplinasSalasImportExcelBean >
+{
 	static public String SALA_COLUMN_NAME;
 	static public String CURSO_COLUMN_NAME;
 	static public String MATRIZ_CURRICULAR_COLUMN_NAME;
 	static public String PERIODO_COLUMN_NAME;
 	static public String DISCIPLINA_COLUMN_NAME;
+
+	private List< String > headerColumnsNames;
 	
-	private List<String> headerColumnsNames;
-	
-	public DisciplinasSalasImportExcel(Cenario cenario, TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages) {
-		super(cenario,i18nConstants,i18nMessages);
+	public DisciplinasSalasImportExcel(
+		Cenario cenario, TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages )
+	{
+		super( cenario, i18nConstants, i18nMessages );
 		resolveHeaderColumnNames();
-		this.headerColumnsNames = new ArrayList<String>();
-		this.headerColumnsNames.add(SALA_COLUMN_NAME);
-		this.headerColumnsNames.add(CURSO_COLUMN_NAME);
-		this.headerColumnsNames.add(MATRIZ_CURRICULAR_COLUMN_NAME);
-		this.headerColumnsNames.add(PERIODO_COLUMN_NAME);
-		this.headerColumnsNames.add(DISCIPLINA_COLUMN_NAME);
+
+		this.headerColumnsNames = new ArrayList< String >();
+		this.headerColumnsNames.add( SALA_COLUMN_NAME );
+		this.headerColumnsNames.add( CURSO_COLUMN_NAME );
+		this.headerColumnsNames.add( MATRIZ_CURRICULAR_COLUMN_NAME );
+		this.headerColumnsNames.add( PERIODO_COLUMN_NAME );
+		this.headerColumnsNames.add( DISCIPLINA_COLUMN_NAME );
 	}
 
 	@Override
@@ -202,50 +206,77 @@ public class DisciplinasSalasImportExcel extends AbstractImportExcel<Disciplinas
 			getErrors().add(getI18nMessages().excelErroLogicoEntidadesNaoCadastradas(MATRIZ_CURRICULAR_COLUMN_NAME,rowsWithErrors.toString()));
 		}
 	}
-	private void checkNonRegisteredDisciplinaEmCurricular(List<DisciplinasSalasImportExcelBean> sheetContent) {
-		// [ChaveNaturalCurriculo -> Curriculo]
-		Map<String, CurriculoDisciplina> curriculosDisciplinasBDMap = CurriculoDisciplina.buildNaturalKeyToCurriculoDisciplinaMap(CurriculoDisciplina.findByCenario(getCenario()));
-		
-		List<Integer> rowsWithErrors = new ArrayList<Integer>();
-		for (DisciplinasSalasImportExcelBean bean : sheetContent) {
-			CurriculoDisciplina curriculoDisciplina = curriculosDisciplinasBDMap.get(getNaturalKeyStringDeCurriculoDisciplina(bean));
-			if (curriculoDisciplina == null) {
-				rowsWithErrors.add(bean.getRow());
+
+	private void checkNonRegisteredDisciplinaEmCurricular(
+		List< DisciplinasSalasImportExcelBean > sheetContent )
+	{
+		// [ ChaveNaturalCurriculo -> Curriculo ]
+		Map<String, CurriculoDisciplina> curriculosDisciplinasBDMap
+			= CurriculoDisciplina.buildNaturalKeyToCurriculoDisciplinaMap(
+				CurriculoDisciplina.findByCenario( getCenario() ) );
+
+		List< Integer > rowsWithErrors = new ArrayList< Integer >();
+		for ( DisciplinasSalasImportExcelBean bean : sheetContent )
+		{
+			CurriculoDisciplina curriculoDisciplina = curriculosDisciplinasBDMap.get(
+				getNaturalKeyStringDeCurriculoDisciplina( bean ) );
+
+			if ( curriculoDisciplina == null )
+			{
+				rowsWithErrors.add( bean.getRow() );
 			}
 		}
-		if (!rowsWithErrors.isEmpty()) {
-			getErrors().add(getI18nMessages().excelErroLogicoDisciplinaEmMatrizCurricular(DISCIPLINA_COLUMN_NAME,rowsWithErrors.toString()));
+
+		if ( !rowsWithErrors.isEmpty() )
+		{
+			getErrors().add( getI18nMessages().excelErroLogicoDisciplinaEmMatrizCurricular(
+				DISCIPLINA_COLUMN_NAME, rowsWithErrors.toString() ) );
 		}
 	}
 
 	@Transactional
-	private void updateDataBase(String sheetName, List<DisciplinasSalasImportExcelBean> sheetContent) {
-		Map<String,Sala> salasBDMap = Sala.buildSalaCodigoToSalaMap(Sala.findByCenario(getCenario()));
-		Map<String, CurriculoDisciplina> curriculoDisciplinaBDMap = CurriculoDisciplina.buildNaturalKeyToCurriculoDisciplinaMap(CurriculoDisciplina.findByCenario(getCenario()));
-		
-		for (DisciplinasSalasImportExcelBean disciplinasSalasExcel : sheetContent) {
-			Sala salaBD = salasBDMap.get(disciplinasSalasExcel.getSalaStr());
-			CurriculoDisciplina curriculoDisciplinaBD = curriculoDisciplinaBDMap.get(getNaturalKeyStringDeCurriculoDisciplina(disciplinasSalasExcel));
-			
-			curriculoDisciplinaBD.getSalas().add(salaBD);
+	private void updateDataBase( String sheetName, List< DisciplinasSalasImportExcelBean > sheetContent )
+	{
+		Map< String,Sala > salasBDMap = Sala.buildSalaCodigoToSalaMap(
+			Sala.findByCenario( getCenario() ) );
+
+		Map< String, CurriculoDisciplina > curriculoDisciplinaBDMap
+			= CurriculoDisciplina.buildNaturalKeyToCurriculoDisciplinaMap(
+				CurriculoDisciplina.findByCenario( getCenario() ) );
+
+		for ( DisciplinasSalasImportExcelBean disciplinasSalasExcel : sheetContent )
+		{
+			Sala salaBD = salasBDMap.get( disciplinasSalasExcel.getSalaStr() );
+			CurriculoDisciplina curriculoDisciplinaBD = curriculoDisciplinaBDMap.get(
+				getNaturalKeyStringDeCurriculoDisciplina( disciplinasSalasExcel ) );
+
+			curriculoDisciplinaBD.getSalas().add( salaBD );
 		}
-		for(CurriculoDisciplina curriculoDisciplina : curriculoDisciplinaBDMap.values()) {
+
+		for ( CurriculoDisciplina curriculoDisciplina : curriculoDisciplinaBDMap.values() )
+		{
 			curriculoDisciplina.merge();
 		}
 	}
-	
-	private void resolveHeaderColumnNames() {
-		if (SALA_COLUMN_NAME == null) {
-			SALA_COLUMN_NAME = HtmlUtils.htmlUnescape(getI18nConstants().sala());
-			CURSO_COLUMN_NAME = HtmlUtils.htmlUnescape(getI18nConstants().curso());
-			MATRIZ_CURRICULAR_COLUMN_NAME = HtmlUtils.htmlUnescape(getI18nConstants().matrizCurricular());
-			PERIODO_COLUMN_NAME = HtmlUtils.htmlUnescape(getI18nConstants().periodo());
-			DISCIPLINA_COLUMN_NAME = HtmlUtils.htmlUnescape(getI18nConstants().disciplina());
+
+	private void resolveHeaderColumnNames()
+	{
+		if ( SALA_COLUMN_NAME == null )
+		{
+			SALA_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().codigoSala() );
+			CURSO_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().codigoCurso() );
+			MATRIZ_CURRICULAR_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().codigoMatrizCurricular() );
+			PERIODO_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().periodo() );
+			DISCIPLINA_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().codigoDisciplina() );
 		}
 	}
-	
-	private String getNaturalKeyStringDeCurriculoDisciplina(DisciplinasSalasImportExcelBean bean) {
-		return bean.getCursoStr() + "-" + bean.getMatrizCurricularStr() + "-" + bean.getPeriodo() + "-" + bean.getDisciplinaStr();
+
+	private String getNaturalKeyStringDeCurriculoDisciplina(
+		DisciplinasSalasImportExcelBean bean )
+	{
+		return bean.getCursoStr()
+			+ "-" + bean.getMatrizCurricularStr()
+			+ "-" + bean.getPeriodo()
+			+ "-" + bean.getDisciplinaStr();
 	}
-	
 }

@@ -111,7 +111,7 @@ public enum ImportExcelError {
 	DEMANDA_DEMANDA_VALOR_NEGATIVO,
 	DEMANDA_PERIODO_FORMATO_INVALIDO,
 	DEMANDA_DEMANDA_FORMATO_INVALIDO,
-	
+
 	DISCIPLINASALA_SALA_VAZIO,
 	DISCIPLINASALA_CURSO_VAZIO,
 	DISCIPLINASALA_MATRIZ_CURRIULAR_VAZIO,
@@ -119,9 +119,9 @@ public enum ImportExcelError {
 	DISCIPLINASALA_DISCIPLINA_VAZIO,
 	DISCIPLINASALA_PERIODO_VALOR_NEGATIVO,
 	DISCIPLINASALA_PERIODO_FORMATO_INVALIDO,
-	
-	HABILITACOESPROFESSORES_CPF_VAZIO,
-	HABILITACOESPROFESSORES_NOME_VAZIO,
+
+	HABILITACOESPROFESSORES_CODIGO_CAMPUS_VAZIO,
+	HABILITACOESPROFESSORES_CPF_PROFESSOR_VAZIO,
 	HABILITACOESPROFESSORES_DISCIPLINA_VAZIO,
 	HABILITACOESPROFESSORES_PREFERENCIA_VAZIO,
 	HABILITACOESPROFESSORES_NOTA_VAZIO,
@@ -129,16 +129,17 @@ public enum ImportExcelError {
 	HABILITACOESPROFESSORES_PREFERENCIA_VALOR_NEGATIVO,
 	HABILITACOESPROFESSORES_NOTA_FORMATO_INVALIDO,
 	HABILITACOESPROFESSORES_PREFERENCIA_FORMATO_INVALIDO,
-	
+
 	TUDO_VAZIO,
-	
+
 	UNIDADE_CAMPUS_VAZIO,
 	UNIDADE_CODIGO_VAZIO,
 	UNIDADE_NOME_VAZIO;
-	
-	public String getMessage(String param1, TriedaI18nMessages i18nMessages) {
-		
-		switch (this) {
+
+	public String getMessage( String param1, TriedaI18nMessages i18nMessages )
+	{
+		switch ( this )
+		{
 			case CAMPUS_CODIGO_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia(param1,CampiImportExcel.CODIGO_COLUMN_NAME);
 			case CAMPUS_CUSTO_MEDIO_CREDITO_FORMATO_INVALIDO: return i18nMessages.excelErroSintaticoFormatoInvalido(param1,CampiImportExcel.CUSTO_CREDITO_COLUMN_NAME);
 			case CAMPUS_CUSTO_MEDIO_CREDITO_VALOR_NEGATIVO: return i18nMessages.excelErroSintaticoValorNegativo(param1,CampiImportExcel.CUSTO_CREDITO_COLUMN_NAME);
@@ -228,13 +229,14 @@ public enum ImportExcelError {
 			case SALA_NUMERO_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia(param1,SalasImportExcel.NUMERO_COLUMN_NAME);
 			case SALA_TIPO_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia(param1,SalasImportExcel.TIPO_COLUMN_NAME);
 			case SALA_UNIDADE_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia(param1,SalasImportExcel.UNIDADE_COLUMN_NAME);
-			
+
 			case TUDO_VAZIO: return i18nMessages.excelErroSintaticoLinhaVazia(param1);
-			
+
 			case UNIDADE_CAMPUS_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia(param1,UnidadesImportExcel.CAMPUS_COLUMN_NAME);
 			case UNIDADE_CODIGO_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia(param1,UnidadesImportExcel.CODIGO_COLUMN_NAME);
 			case UNIDADE_NOME_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia(param1,UnidadesImportExcel.NOME_COLUMN_NAME);
 		}
+
 		return "";
 	}
 }

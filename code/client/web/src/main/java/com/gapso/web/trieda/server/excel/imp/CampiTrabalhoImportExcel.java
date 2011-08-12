@@ -29,13 +29,16 @@ public class CampiTrabalhoImportExcel extends AbstractImportExcel<CampiTrabalhoI
 	
 	private List<String> headerColumnsNames;
 	
-	public CampiTrabalhoImportExcel(Cenario cenario, TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages) {
-		super(cenario,i18nConstants,i18nMessages);
+	public CampiTrabalhoImportExcel(
+		Cenario cenario, TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages )
+{
+		super( cenario, i18nConstants, i18nMessages );
 		resolveHeaderColumnNames();
-		this.headerColumnsNames = new ArrayList<String>();
-		this.headerColumnsNames.add(CAMPUS_COLUMN_NAME);
-		this.headerColumnsNames.add(CPF_COLUMN_NAME);
-		this.headerColumnsNames.add(PROFESSOR_COLUMN_NAME);
+
+		this.headerColumnsNames = new ArrayList< String >();
+		this.headerColumnsNames.add( CAMPUS_COLUMN_NAME );
+		this.headerColumnsNames.add( CPF_COLUMN_NAME );
+		this.headerColumnsNames.add( PROFESSOR_COLUMN_NAME );
 	}
 
 	@Override
@@ -172,12 +175,13 @@ public class CampiTrabalhoImportExcel extends AbstractImportExcel<CampiTrabalhoI
 		
 	}
 	
-	private void resolveHeaderColumnNames() {
-		if (CAMPUS_COLUMN_NAME == null) {
-			CAMPUS_COLUMN_NAME = HtmlUtils.htmlUnescape(getI18nConstants().campus());
-			CPF_COLUMN_NAME = HtmlUtils.htmlUnescape(getI18nConstants().cpf());
-			PROFESSOR_COLUMN_NAME = HtmlUtils.htmlUnescape(getI18nConstants().professor());
+	private void resolveHeaderColumnNames()
+	{
+		if ( CAMPUS_COLUMN_NAME == null )
+		{
+			CAMPUS_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().codigoCampus() );
+			CPF_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().cpf() );
+			PROFESSOR_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().professor() );
 		}
 	}
-	
 }

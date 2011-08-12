@@ -17,23 +17,28 @@ import com.gapso.trieda.domain.Cenario;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nMessages;
 
-public abstract class AbstractImportExcel<ExcelBeanType> implements IImportExcel {
-	
-	protected List<String> errors;
-	protected List<String> warnings;
+public abstract class AbstractImportExcel< ExcelBeanType >
+	implements IImportExcel
+{
+	protected List< String > errors;
+	protected List< String > warnings;
+
 	private Cenario cenario;
 	private TriedaI18nConstants i18nConstants;
 	private TriedaI18nMessages i18nMessages;
-	
-	protected AbstractImportExcel(Cenario cenario, TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages) {
-		this.errors = new ArrayList<String>();
-		this.warnings = new ArrayList<String>();
-		
+
+	protected AbstractImportExcel( Cenario cenario,
+		TriedaI18nConstants i18nConstants,
+		TriedaI18nMessages i18nMessages )
+	{
+		this.errors = new ArrayList< String >();
+		this.warnings = new ArrayList< String >();
+
 		this.cenario = cenario;
 		this.i18nConstants = i18nConstants;
 		this.i18nMessages = i18nMessages;
 	}
-	
+
 	protected abstract boolean sheetMustBeProcessed(int sheetIndex, HSSFSheet sheet, HSSFWorkbook workbook);
 	protected abstract List<String> getHeaderColumnsNames(int sheetIndex, HSSFSheet sheet, HSSFWorkbook workbook);
 	protected abstract ExcelBeanType createExcelBean(HSSFRow header, HSSFRow row, int sheetIndex, HSSFSheet sheet, HSSFWorkbook workbook);
@@ -41,25 +46,33 @@ public abstract class AbstractImportExcel<ExcelBeanType> implements IImportExcel
 	protected abstract void processSheetContent(String sheetName, List<ExcelBeanType> sheetContent);
 
 	@Override
-	public boolean load(String fileName, HSSFWorkbook workbook) {
+	public boolean load( String fileName, HSSFWorkbook workbook )
+	{
 		errors.clear();
 		warnings.clear();
-		
-		Map<String,List<ExcelBeanType>> excelBeansMap = readInputStream(fileName, null, workbook);
-		if (errors.isEmpty()) {
-			try {
-				for (Entry<String,List<ExcelBeanType>> entry : excelBeansMap.entrySet()) {
-					processSheetContent(entry.getKey(),entry.getValue());
+
+		Map< String, List< ExcelBeanType > > excelBeansMap
+			= readInputStream( fileName, null, workbook );
+
+		if ( errors.isEmpty() )
+		{
+			try
+			{
+				for ( Entry< String, List< ExcelBeanType > > entry : excelBeansMap.entrySet() )
+				{
+					processSheetContent( entry.getKey(), entry.getValue() );
 				}
-			} catch (Exception e) {
+			}
+			catch ( Exception e )
+			{
 				e.printStackTrace();
-				errors.add(getI18nMessages().excelErroBD(fileName,extractMessage(e)));
+				errors.add( getI18nMessages().excelErroBD( fileName, extractMessage( e ) ) );
 			}
 		}
-		
+
 		return errors.isEmpty();
 	}
-	
+
 	@Override
 	public boolean load(String fileName, InputStream inputStream) {
 		errors.clear();
@@ -185,23 +198,33 @@ public abstract class AbstractImportExcel<ExcelBeanType> implements IImportExcel
     	return false;
 	}
 	
-	private String extractMessage(Exception e) {
+	private String extractMessage( Exception e )
+	{
 		StringBuffer msg = new StringBuffer();
-		msg.append(e.getMessage());
-		if (e.getCause() != null) {
-			msg.append(" " + e.getCause().getMessage());
+		msg.append( e.getMessage() );
+
+		if ( e.getCause() != null )
+		{
+			msg.append( " " + e.getCause().getMessage() );
 		}
+
 		return msg.toString();
 	}
-	
-	protected String getCellValue(HSSFCell cell) {
-		switch (cell.getCellType()) {
+
+	protected String getCellValue( HSSFCell cell )
+	{
+		switch ( cell.getCellType() )
+		{
     		case HSSFCell.CELL_TYPE_STRING:
+    		{
     			return cell.getRichStringCellValue().getString().trim();
-    		
+    		}
     		case HSSFCell.CELL_TYPE_NUMERIC:
-    			return Double.toString(cell.getNumericCellValue());
+    		{
+    			return Double.toString( cell.getNumericCellValue() );
+    		}
     	}
+
 		return null;
 	}
 

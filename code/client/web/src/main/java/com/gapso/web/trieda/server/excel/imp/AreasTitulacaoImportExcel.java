@@ -141,29 +141,40 @@ public class AreasTitulacaoImportExcel extends AbstractImportExcel<AreasTitulaca
 	
 
 	@Transactional
-	private void updateDataBase(String sheetName, List<AreasTitulacaoImportExcelBean> sheetContent) {
-		Map<String,AreaTitulacao> areasTitulacaoBDMap = AreaTitulacao.buildAreaTitulacaoCodigoToAreaTitulacaoMap(AreaTitulacao.findAll());
-		
-		for (AreasTitulacaoImportExcelBean areaExcel : sheetContent) {
-			AreaTitulacao areaBD = areasTitulacaoBDMap.get(areaExcel.getCodigoStr());
-			if (areaBD != null) {
-				// update
-				areaBD.setDescricao(areaExcel.getDescricaoStr());
+	private void updateDataBase( String sheetName,
+		List< AreasTitulacaoImportExcelBean > sheetContent )
+	{
+		Map< String, AreaTitulacao > areasTitulacaoBDMap
+			= AreaTitulacao.buildAreaTitulacaoCodigoToAreaTitulacaoMap( AreaTitulacao.findAll() );
+
+		for ( AreasTitulacaoImportExcelBean areaExcel : sheetContent )
+		{
+			AreaTitulacao areaBD = areasTitulacaoBDMap.get( areaExcel.getCodigoStr() );
+
+			if ( areaBD != null )
+			{
+				// Update
+				areaBD.setDescricao( areaExcel.getDescricaoStr() );
 				areaBD.merge();
-			} else {
-				// insert
+			}
+			else
+			{
+				// Insert
 				AreaTitulacao newArea = new AreaTitulacao();
-				newArea.setCodigo(areaExcel.getCodigoStr());
-				newArea.setDescricao(areaExcel.getDescricaoStr());
+
+				newArea.setCodigo( areaExcel.getCodigoStr() );
+				newArea.setDescricao( areaExcel.getDescricaoStr() );
 				newArea.persist();
 			}
 		}
 	}
-	
-	private void resolveHeaderColumnNames() {
-		if (CODIGO_COLUMN_NAME == null) {
-			CODIGO_COLUMN_NAME = HtmlUtils.htmlUnescape(getI18nConstants().codigo());
-			DESCRICAO_COLUMN_NAME = HtmlUtils.htmlUnescape(getI18nConstants().descricao());
+
+	private void resolveHeaderColumnNames()
+	{
+		if ( CODIGO_COLUMN_NAME == null )
+		{
+			CODIGO_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().codigoAreaTitulacao() );
+			DESCRICAO_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().descricao() );
 		}
 	}
 }

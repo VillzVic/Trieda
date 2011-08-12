@@ -35,15 +35,18 @@ public class CurriculosImportExcel extends AbstractImportExcel<CurriculosImportE
 	
 	private List<String> headerColumnsNames;
 	
-	public CurriculosImportExcel(Cenario cenario, TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages) {
-		super(cenario,i18nConstants,i18nMessages);
+	public CurriculosImportExcel(
+		Cenario cenario, TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages )
+	{
+		super( cenario, i18nConstants, i18nMessages );
 		resolveHeaderColumnNames();
-		this.headerColumnsNames = new ArrayList<String>();
-		this.headerColumnsNames.add(CURSO_COLUMN_NAME);
-		this.headerColumnsNames.add(CODIGO_COLUMN_NAME);
-		this.headerColumnsNames.add(DESCRICAO_COLUMN_NAME);
-		this.headerColumnsNames.add(DISCIPLINA_COLUMN_NAME);
-		this.headerColumnsNames.add(PERIODO_COLUMN_NAME);
+
+		this.headerColumnsNames = new ArrayList< String >();
+		this.headerColumnsNames.add( CURSO_COLUMN_NAME );
+		this.headerColumnsNames.add( CODIGO_COLUMN_NAME );
+		this.headerColumnsNames.add( DESCRICAO_COLUMN_NAME );
+		this.headerColumnsNames.add( DISCIPLINA_COLUMN_NAME );
+		this.headerColumnsNames.add( PERIODO_COLUMN_NAME );
 	}
 
 	@Override
@@ -420,9 +423,9 @@ public class CurriculosImportExcel extends AbstractImportExcel<CurriculosImportE
 	{
 		if ( CODIGO_COLUMN_NAME == null )
 		{
-			CURSO_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().curso() );
-			CODIGO_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().codigo() );
-			DESCRICAO_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().descricao() );
+			CURSO_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().codigoCurso() );
+			CODIGO_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().codigoCurriculo() );
+			DESCRICAO_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().descricaoCurriculo() );
 			PERIODO_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().periodo() );
 			DISCIPLINA_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().disciplina() );
 		}

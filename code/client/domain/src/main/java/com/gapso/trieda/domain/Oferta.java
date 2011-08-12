@@ -298,6 +298,16 @@ public class Oferta implements Serializable, Comparable< Oferta >
 		return q.setFirstResult( firstResult ).setMaxResults( maxResults ).getResultList();
 	}
 
+	// Campus + Turno + Matriz Curricular
+	private static String getCodeOferta( Oferta domain )
+	{
+		String codigo = domain.getCampus().getCodigo()
+			+ "-" + domain.getTurno().getNome()
+			+ "-" + domain.getCurriculo().getCodigo();
+
+		return codigo;
+	}
+	
 	public static Map<String, Oferta> buildCampusTurnoCurriculoToOfertaMap(
 		List< Oferta > ofertas )
 	{
@@ -306,10 +316,7 @@ public class Oferta implements Serializable, Comparable< Oferta >
 
 		for ( Oferta oferta : ofertas )
 		{
-			String codigo = ( oferta.getCampus().getCodigo() + "-" );
-			codigo += ( oferta.getTurno().getNome() + "-" );
-			codigo += ( oferta.getCurriculo().getCodigo() );
-
+			String codigo = Oferta.getCodeOferta( oferta );
 			ofertasMap.put( codigo, oferta );
 		}
 

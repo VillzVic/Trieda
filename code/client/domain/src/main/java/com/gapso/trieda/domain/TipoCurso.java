@@ -29,8 +29,9 @@ import org.springframework.transaction.annotation.Transactional;
 @RooToString
 @RooEntity(identifierColumn = "TCU_ID")
 @Table(name = "TIPOS_CURSO")
-public class TipoCurso implements java.io.Serializable {
-
+public class TipoCurso	
+	implements java.io.Serializable
+{
     @NotNull
     @Column(name = "TCU_CODIGO")
     @Size(min = 1, max = 50)
@@ -124,9 +125,17 @@ public class TipoCurso implements java.io.Serializable {
         return merged;
     }
 
-	public static final EntityManager entityManager() {
+	public static final EntityManager entityManager()
+	{
         EntityManager em = new TipoCurso().entityManager;
-        if (em == null) throw new IllegalStateException("Entity manager has not been injected (is the Spring Aspects JAR configured as an AJC/AJDT aspects library?)");
+
+        if ( em == null )
+        {
+        	throw new IllegalStateException(
+        		"Entity manager has not been injected (is the Spring " +
+        		"Aspects JAR configured as an AJC/AJDT aspects library?)" );
+        }
+
         return em;
     }
 
@@ -135,11 +144,33 @@ public class TipoCurso implements java.io.Serializable {
         return entityManager().createQuery("select o from TipoCurso o").getResultList();
     }
 	
-	public static Map<String,TipoCurso> buildTipoCursoCodigoToTipoCursoMap(List<TipoCurso> tiposCurso) {
-		Map<String,TipoCurso> tiposCursoMap = new HashMap<String,TipoCurso>();
-		for (TipoCurso tipoCurso : tiposCurso) {
-			tiposCursoMap.put(tipoCurso.getCodigo(),tipoCurso);
+	public static Map< String, TipoCurso > buildTipoCursoCodigoToTipoCursoMap(
+		List< TipoCurso > tiposCurso )
+	{
+		Map< String, TipoCurso > tiposCursoMap = new HashMap< String, TipoCurso >();
+
+		for ( TipoCurso tipoCurso : tiposCurso )
+		{
+			tiposCursoMap.put( tipoCurso.getCodigo(),tipoCurso );
 		}
+
+		return tiposCursoMap;
+	}
+
+	/*
+	 * Método utilizado na importação por planilha excel
+	 * [ Descrição do Tipo de Curso --> Tipo de Curso ]
+	 * */
+	public static Map< String, TipoCurso > buildTipoCursoStrToTipoCursoMap(
+		List< TipoCurso > tiposCurso )
+	{
+		Map< String, TipoCurso > tiposCursoMap = new HashMap< String, TipoCurso >();
+
+		for ( TipoCurso tipoCurso : tiposCurso )
+		{
+			tiposCursoMap.put( tipoCurso.getDescricao(), tipoCurso );
+		}
+
 		return tiposCursoMap;
 	}
 
@@ -165,7 +196,7 @@ public class TipoCurso implements java.io.Serializable {
 		}
 		
 		String descricaoQuery = (descricao == null)? "" : "AND LOWER(o.descricao) LIKE LOWER(:descricao)";
-		Query q = entityManager().createQuery("SELECT COUNT(o) FROM TipoCurso o WHERE LOWER(o.codigo) LIKE LOWER(:codigo) "+descricaoQuery);
+		Query q = entityManager().createQuery("SELECT COUNT(o) FROM TipoCurso o WHERE LOWER(o.codigo) LIKE LOWER(:codigo) " + descricaoQuery );
 		q.setParameter("codigo", codigo);
 		if(descricao != null) q.setParameter("descricao", descricao);
 		return ((Number)q.getSingleResult()).intValue();

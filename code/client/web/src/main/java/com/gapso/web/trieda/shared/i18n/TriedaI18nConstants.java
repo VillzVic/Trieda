@@ -30,6 +30,7 @@ public interface TriedaI18nConstants extends Constants {
 	String codigoUnidade();
 	String confirmacao();
 	String cpf();
+	String cpfProfessor();
 	String creditos();
 	String creditosPraticos();
 	String creditosTeoricos();

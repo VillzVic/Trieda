@@ -234,20 +234,38 @@ public class Demanda implements Serializable {
     }
 
 	@SuppressWarnings("unchecked")
-    public static List<Demanda> find(int firstResult, int maxResults) {
-        return entityManager().createQuery("SELECT o FROM Demanda o").setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
+    public static List< Demanda > find( int firstResult, int maxResults )
+    {
+        return entityManager().createQuery(
+        	"SELECT o FROM Demanda o" )
+        	.setFirstResult( firstResult )
+        	.setMaxResults( maxResults ).getResultList();
     }
 
-	public static Map<String,Demanda> buildCampusTurnoCurriculoDisciplinaToDemandaMap(List<Demanda> demandas) {
-		Map<String,Demanda> demandasMap = new HashMap<String,Demanda>();
-		for (Demanda demanda : demandas) {
-			String codigo = demanda.getOferta().getCampus().getCodigo() + "-";
-			codigo += demanda.getOferta().getTurno().getNome() + "-";
-			codigo += demanda.getOferta().getCurriculo().getCodigo() + "-";
-			codigo += demanda.getDisciplina().getCodigo();
-			demandasMap.put(codigo,demanda);
+	public static Map< String, Demanda > buildCampusTurnoCurriculoDisciplinaToDemandaMap(
+		List< Demanda > demandas )
+	{
+		Map< String, Demanda > demandasMap
+			= new HashMap< String, Demanda >();
+
+		for ( Demanda demanda : demandas )
+		{
+			String codigo = Demanda.getCodeDemanda( demanda );
+			demandasMap.put( codigo, demanda );
 		}
+
 		return demandasMap;
+	}
+
+	// Campus + Turno + Matriz Curricular + Disciplina
+	private static String getCodeDemanda( Demanda domain )
+	{
+		String codigo = domain.getOferta().getCampus().getCodigo()
+			+ "-" + domain.getOferta().getTurno().getNome()
+			+ "-" + domain.getOferta().getCurriculo().getCodigo()
+			+ "-" + domain.getDisciplina().getCodigo();
+
+		return codigo;
 	}
 	
 	public String toString() {

@@ -189,11 +189,13 @@ public class UnidadesImportExcel extends AbstractImportExcel<UnidadesImportExcel
 		}
 	}
 	
-	private void resolveHeaderColumnNames() {
-		if (CODIGO_COLUMN_NAME == null) {
-			CODIGO_COLUMN_NAME = HtmlUtils.htmlUnescape(getI18nConstants().codigo());
-			NOME_COLUMN_NAME = HtmlUtils.htmlUnescape(getI18nConstants().nome());
-			CAMPUS_COLUMN_NAME = HtmlUtils.htmlUnescape(getI18nConstants().campus());
+	private void resolveHeaderColumnNames()
+	{
+		if ( CODIGO_COLUMN_NAME == null )
+		{
+			CODIGO_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().codigoUnidade() );
+			NOME_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().nome() );
+			CAMPUS_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().codigoCampus() );
 		}
 	}
 }

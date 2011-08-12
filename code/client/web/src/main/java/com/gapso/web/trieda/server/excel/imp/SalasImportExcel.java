@@ -21,66 +21,96 @@ import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nMessages;
 
-public class SalasImportExcel extends AbstractImportExcel<SalasImportExcelBean> {
-	
+public class SalasImportExcel
+	extends AbstractImportExcel< SalasImportExcelBean >
+{
 	static public String CODIGO_COLUMN_NAME;
 	static public String TIPO_COLUMN_NAME;
 	static public String UNIDADE_COLUMN_NAME;
 	static public String NUMERO_COLUMN_NAME;
 	static public String ANDAR_COLUMN_NAME;
 	static public String CAPACIDADE_COLUMN_NAME;
-	
-	private List<String> headerColumnsNames;
-	
-	public SalasImportExcel(Cenario cenario, TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages) {
-		super(cenario,i18nConstants,i18nMessages);
+
+	private List< String > headerColumnsNames;
+
+	public SalasImportExcel( Cenario cenario,
+		TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages )
+	{
+		super( cenario, i18nConstants, i18nMessages );
 		resolveHeaderColumnNames();
-		this.headerColumnsNames = new ArrayList<String>();
-		this.headerColumnsNames.add(CODIGO_COLUMN_NAME);
-		this.headerColumnsNames.add(TIPO_COLUMN_NAME);
-		this.headerColumnsNames.add(UNIDADE_COLUMN_NAME);
-		this.headerColumnsNames.add(NUMERO_COLUMN_NAME);
-		this.headerColumnsNames.add(ANDAR_COLUMN_NAME);
-		this.headerColumnsNames.add(CAPACIDADE_COLUMN_NAME);
+
+		this.headerColumnsNames = new ArrayList< String >();
+		this.headerColumnsNames.add( CODIGO_COLUMN_NAME );
+		this.headerColumnsNames.add( TIPO_COLUMN_NAME );
+		this.headerColumnsNames.add( UNIDADE_COLUMN_NAME );
+		this.headerColumnsNames.add( NUMERO_COLUMN_NAME );
+		this.headerColumnsNames.add( ANDAR_COLUMN_NAME );
+		this.headerColumnsNames.add( CAPACIDADE_COLUMN_NAME );
 	}
 
 	@Override
-	protected boolean sheetMustBeProcessed(int sheetIndex, HSSFSheet sheet, HSSFWorkbook workbook) {
-		String sheetName = workbook.getSheetName(sheetIndex);
-		return ExcelInformationType.SALAS.getSheetName().equals(sheetName);
+	protected boolean sheetMustBeProcessed(
+		int sheetIndex, HSSFSheet sheet, HSSFWorkbook workbook )
+	{
+		String sheetName = workbook.getSheetName( sheetIndex );
+		return ExcelInformationType.SALAS.getSheetName().equals( sheetName );
 	}
-	
+
 	@Override
-	protected List<String> getHeaderColumnsNames(int sheetIndex, HSSFSheet sheet, HSSFWorkbook workbook) {
+	protected List< String > getHeaderColumnsNames(
+		int sheetIndex, HSSFSheet sheet, HSSFWorkbook workbook )
+	{
 		return this.headerColumnsNames;
 	}
 
 	@Override
-	protected SalasImportExcelBean createExcelBean(HSSFRow header, HSSFRow row, int sheetIndex, HSSFSheet sheet, HSSFWorkbook workbook) {
-		SalasImportExcelBean bean = new SalasImportExcelBean(row.getRowNum()+1);
-        for (int cellIndex = row.getFirstCellNum(); cellIndex <= row.getLastCellNum(); cellIndex++) {
-            HSSFCell cell = row.getCell(cellIndex);        	
-        	if (cell != null) {
-        		HSSFCell headerCell = header.getCell(cell.getColumnIndex());
-        		if(headerCell != null){
+	protected SalasImportExcelBean createExcelBean(
+		HSSFRow header, HSSFRow row, int sheetIndex,
+		HSSFSheet sheet, HSSFWorkbook workbook )
+	{
+		SalasImportExcelBean bean = new SalasImportExcelBean( row.getRowNum() + 1 );
+
+        for ( int cellIndex = row.getFirstCellNum();
+        	  cellIndex <= row.getLastCellNum(); cellIndex++ )
+        {
+            HSSFCell cell = row.getCell( cellIndex );        	
+        	if ( cell != null )
+        	{
+        		HSSFCell headerCell = header.getCell( cell.getColumnIndex() );
+
+        		if ( headerCell != null )
+        		{
         			String columnName = headerCell.getRichStringCellValue().getString();
-					String cellValue = getCellValue(cell);
-					if (CODIGO_COLUMN_NAME.equals(columnName)) {
-						bean.setCodigoStr(cellValue);
-					} else if (TIPO_COLUMN_NAME.endsWith(columnName)) {
-						bean.setTipoStr(cellValue);
-					} else if (UNIDADE_COLUMN_NAME.equals(columnName)) {
-						bean.setCodigoUnidadeStr(cellValue);
-					} else if (NUMERO_COLUMN_NAME.endsWith(columnName)) {
-						bean.setNumeroStr(cellValue);
-					} else if (ANDAR_COLUMN_NAME.endsWith(columnName)) {
-						bean.setAndarStr(cellValue);
-					} else if (CAPACIDADE_COLUMN_NAME.endsWith(columnName)) {
-						bean.setCapacidadeStr(cellValue);
+					String cellValue = getCellValue( cell );
+
+					if ( CODIGO_COLUMN_NAME.equals( columnName ) )
+					{
+						bean.setCodigoStr( cellValue );
+					}
+					else if ( TIPO_COLUMN_NAME.endsWith( columnName ) )
+					{
+						bean.setTipoStr( cellValue );
+					}
+					else if ( UNIDADE_COLUMN_NAME.equals( columnName ) )
+					{
+						bean.setCodigoUnidadeStr( cellValue );
+					}
+					else if ( NUMERO_COLUMN_NAME.endsWith( columnName ) )
+					{
+						bean.setNumeroStr( cellValue );
+					}
+					else if ( ANDAR_COLUMN_NAME.endsWith( columnName ) )
+					{
+						bean.setAndarStr( cellValue );
+					}
+					else if ( CAPACIDADE_COLUMN_NAME.endsWith( columnName ) )
+					{
+						bean.setCapacidadeStr( cellValue );
 					}
         		}
         	}
         }
+
 		return bean;
 	}
 
@@ -200,43 +230,54 @@ public class SalasImportExcel extends AbstractImportExcel<SalasImportExcelBean> 
 	}
 
 	@Transactional
-	private void updateDataBase(String sheetName, List<SalasImportExcelBean> sheetContent) {
-		Map<String,Sala> salasBDMap = Sala.buildSalaCodigoToSalaMap(Sala.findByCenario(getCenario()));
-		
-		for (SalasImportExcelBean salaExcel : sheetContent) {
-			Sala salaBD = salasBDMap.get(salaExcel.getCodigoStr());
-			if (salaBD != null) {
-				// update
-				salaBD.setNumero(salaExcel.getNumeroStr());
-				salaBD.setAndar(salaExcel.getAndarStr());
-				salaBD.setCapacidade(salaExcel.getCapacidade());
-				salaBD.setTipoSala(salaExcel.getTipo());
-				salaBD.setUnidade(salaExcel.getUnidade());
-				
+	private void updateDataBase( String sheetName,
+		List< SalasImportExcelBean > sheetContent )
+	{
+		Map< String, Sala > salasBDMap = Sala.buildSalaCodigoToSalaMap(
+			Sala.findByCenario( getCenario() ) );
+
+		for ( SalasImportExcelBean salaExcel : sheetContent )
+		{
+			Sala salaBD = salasBDMap.get( salaExcel.getCodigoStr() );
+
+			if ( salaBD != null )
+			{
+				// Update
+				salaBD.setNumero( salaExcel.getNumeroStr() );
+				salaBD.setAndar( salaExcel.getAndarStr() );
+				salaBD.setCapacidade( salaExcel.getCapacidade() );
+				salaBD.setTipoSala( salaExcel.getTipo() );
+				salaBD.setUnidade( salaExcel.getUnidade() );
+
 				salaBD.merge();
-			} else {
-				// insert
+			}
+			else
+			{
+				// Insert
 				Sala newSala = new Sala();
-				newSala.setCodigo(salaExcel.getCodigoStr());
-				newSala.setNumero(salaExcel.getNumeroStr());
-				newSala.setAndar(salaExcel.getAndarStr());
-				newSala.setCapacidade(salaExcel.getCapacidade());
-				newSala.setTipoSala(salaExcel.getTipo());
-				newSala.setUnidade(salaExcel.getUnidade());
-				
+
+				newSala.setCodigo( salaExcel.getCodigoStr() );
+				newSala.setNumero( salaExcel.getNumeroStr() );
+				newSala.setAndar( salaExcel.getAndarStr() );
+				newSala.setCapacidade( salaExcel.getCapacidade() );
+				newSala.setTipoSala( salaExcel.getTipo() );
+				newSala.setUnidade( salaExcel.getUnidade() );
+
 				newSala.persist();
 			}
 		}
 	}
-	
-	private void resolveHeaderColumnNames() {
-		if (CODIGO_COLUMN_NAME == null) {
-			CODIGO_COLUMN_NAME = HtmlUtils.htmlUnescape(getI18nConstants().codigo());
-			TIPO_COLUMN_NAME = HtmlUtils.htmlUnescape(getI18nConstants().tipo());
-			UNIDADE_COLUMN_NAME = HtmlUtils.htmlUnescape(getI18nConstants().unidade());
-			NUMERO_COLUMN_NAME = HtmlUtils.htmlUnescape(getI18nConstants().numero());
-			ANDAR_COLUMN_NAME = HtmlUtils.htmlUnescape(getI18nConstants().andar());
-			CAPACIDADE_COLUMN_NAME = HtmlUtils.htmlUnescape(getI18nConstants().capacidade());
+
+	private void resolveHeaderColumnNames()
+	{
+		if ( CODIGO_COLUMN_NAME == null )
+		{
+			CODIGO_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().codigoSala() );
+			TIPO_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().tipo() );
+			UNIDADE_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().codigoUnidade() );
+			NUMERO_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().numero() );
+			ANDAR_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().andar() );
+			CAPACIDADE_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().capacidadeAlunos() );
 		}
 	}
 }

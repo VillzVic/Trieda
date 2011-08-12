@@ -100,6 +100,11 @@ public class GTriedaI18nConstants implements TriedaI18nConstants {
 	}
 
 	@Override
+	public String cpfProfessor() {
+		return languageManager.getText("cpfProfessor");
+	}
+
+	@Override
 	public String creditos() {
 		return languageManager.getText("creditos");
 	}
