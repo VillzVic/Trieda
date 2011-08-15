@@ -149,7 +149,7 @@ public class TriedaUtil
 		Double d = 0.0;
 		try
 		{
-			d = Double.parseDouble(s);
+			d = Double.parseDouble( s );
 		}
 		catch ( Exception e )
 		{

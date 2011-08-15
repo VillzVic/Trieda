@@ -64,12 +64,14 @@ public class OfertaDTO extends AbstractDTO<String>
 		set(PROPERTY_CURSO_STRING, value);
 	}
 
-	public void setReceita(TriedaCurrency value) {
-		set(PROPERTY_RECEITA, value.toString());
+	public void setReceita( TriedaCurrency value )
+	{
+		set( PROPERTY_RECEITA, value.toString() );
 	}
 
-	public TriedaCurrency getReceita() {
-		return TriedaUtil.parseTriedaCurrency(get(PROPERTY_RECEITA));
+	public TriedaCurrency getReceita()
+	{
+		return TriedaUtil.parseTriedaCurrency( get( PROPERTY_RECEITA ) );
 	}
 
 	public Long getMatrizCurricularId() {

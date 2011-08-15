@@ -19,9 +19,11 @@ import com.gapso.web.trieda.shared.util.view.TurnoComboBox;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
 
-public class OfertaFormPresenter implements Presenter {
-
-	public interface Display {
+public class OfertaFormPresenter
+	implements Presenter
+{
+	public interface Display
+	{
 		Button getSalvarButton();
 		TurnoComboBox getTurnoComboBox();
 		CampusComboBox getCampusComboBox();
@@ -29,47 +31,63 @@ public class OfertaFormPresenter implements Presenter {
 		OfertaDTO getOfertaDTO();
 		NumberField getReceitaNumberField();
 		boolean isValid();
-		
+
 		SimpleModal getSimpleModal();
 	}
-	private SimpleGrid<OfertaDTO> gridPanel;
+
+	private SimpleGrid< OfertaDTO > gridPanel;
 	private Display display;
-	
-	public OfertaFormPresenter(Display display, SimpleGrid<OfertaDTO> gridPanel) {
+
+	public OfertaFormPresenter( Display display,
+		SimpleGrid< OfertaDTO > gridPanel )
+	{
 		this.gridPanel = gridPanel;
 		this.display = display;
 		setListeners();
 	}
 
-	private void setListeners() {
-		display.getSalvarButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
-			@Override
-			public void componentSelected(ButtonEvent ce) {
-				if(isValid()) {
-					final OfertasServiceAsync service = Services.ofertas();
-					service.save(getDTO(), new AsyncCallback<Void>() {
-						@Override
-						public void onFailure(Throwable caught) {
-							MessageBox.alert("ERRO!", "Deu falha na conexão", null);
-						}
-						@Override
-						public void onSuccess(Void result) {
-							display.getSimpleModal().hide();
-							gridPanel.updateList();
-							Info.display("Salvo", "Item salvo com sucesso!");
-						}
-					});
-				} else {
-					MessageBox.alert("ERRO!", "Verifique os campos digitados", null);
+	private void setListeners()
+	{
+		display.getSalvarButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+			{
+				@Override
+				public void componentSelected(ButtonEvent ce)
+				{
+					if ( isValid() )
+					{
+						final OfertasServiceAsync service = Services.ofertas();
+
+						service.save( getDTO(), new AsyncCallback< Void >()
+						{
+							@Override
+							public void onFailure( Throwable caught )
+							{
+								MessageBox.alert( "ERRO!", "Deu falha na conexão", null );
+							}
+
+							@Override
+							public void onSuccess( Void result )
+							{
+								display.getSimpleModal().hide();
+								gridPanel.updateList();
+								Info.display( "Salvo", "Item salvo com sucesso!" );
+							}
+						});
+					}
+					else
+					{
+						MessageBox.alert( "ERRO!", "Verifique os campos digitados", null );
+					}
 				}
-			}
 		});
 	}
-	
-	private boolean isValid() {
+
+	private boolean isValid()
+	{
 		return display.isValid();
 	}
-	
+
 	private OfertaDTO getDTO()
 	{
 		OfertaDTO ofertaDTO = display.getOfertaDTO();

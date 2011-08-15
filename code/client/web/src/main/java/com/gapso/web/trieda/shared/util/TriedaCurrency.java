@@ -7,42 +7,55 @@ import com.google.gwt.user.client.rpc.IsSerializable;
  * setar diretamente o objeto com o método 'set' da classe 'BaseModel',
  * mas sim setar o string correspondente ao objeto 'TriedaCurrency'
  * */
-public class TriedaCurrency implements IsSerializable {
+public class TriedaCurrency
+	implements IsSerializable
+{
 	private static final long serialVersionUID = -4919776123579824061L;
 	private Double value;
 
-	public TriedaCurrency() {
-		this.setValue(0.0);
+	public TriedaCurrency()
+	{
+		this.setValue( 0.0 );
 	}
 
-	public TriedaCurrency(Double v) {
-		this.setValue(v);
+	public TriedaCurrency( Double v )
+	{
+		this.setValue( v );
 	}
 
 	@Override
-	public int hashCode() {
+	public int hashCode()
+	{
 		return super.hashCode();
 	}
 
 	@Override
-	public boolean equals(Object obj) {
-		return super.equals(obj);
+	public boolean equals( Object obj )
+	{
+		if ( obj == null || !( obj instanceof TriedaCurrency ) )
+		{
+			return false;
+		}
+
+		TriedaCurrency tc = (TriedaCurrency) obj;
+		return this.value.equals( tc.value );
 	}
 
 	@Override
-	public String toString() {
-		long y = (long) (this.value * 100);
-		Double d = ((double) y / 100);
+	public String toString()
+	{
+		Integer y = ((Double) ( this.value * 100 )).intValue();
 
-		Double resto = d * 100;
-		Integer resto2 = resto.intValue() % 100; // Casas decimais
-		String str1 = (resto == 0 ? "00" : ((resto >= 10) ? resto2.toString()
-				: "0" + resto2.toString()));
+		// Casas decimais
+		Integer resto = ( y % 100 );
+		String str1 = ( resto == 0 ? "00" :
+			( ( resto >= 10 ) ? resto.toString() : "0" + resto.toString() ) );
 
+		// Parte inteira do número
 		Integer i = this.value.intValue();
-		String str2 = i.toString(); // Parte inteira do número
+		String str2 = i.toString();
 
-		String result = (str2 + "," + str1);
+		String result = ( str2 + "." + str1 );
 		return result;
 	}
 
@@ -50,11 +63,13 @@ public class TriedaCurrency implements IsSerializable {
 		return this.value;
 	}
 
-	public void setDoubleValue(Double v) {
-		this.setValue(v);
+	public void setDoubleValue( Double v )
+	{
+		this.setValue( v );
 	}
 
-	private void setValue(Double v) {
-		this.value = (v == null ? 0.0 : v);
+	private void setValue( Double v )
+	{
+		this.value = ( v == null ? 0.0 : v );
 	}
 }
