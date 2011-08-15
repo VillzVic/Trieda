@@ -87,45 +87,65 @@ public class Oferta implements Serializable, Comparable< Oferta >
 	@Column(name = "version")
 	private Integer version;
 
-	public Long getId() {
+	public Long getId()
+	{
 		return this.id;
 	}
 
-	public void setId(Long id) {
+	public void setId( Long id )
+	{
 		this.id = id;
 	}
 
-	public Integer getVersion() {
+	public Integer getVersion()
+	{
 		return this.version;
 	}
 
-	public void setVersion(Integer version) {
+	public void setVersion( Integer version )
+	{
 		this.version = version;
 	}
 
 	@Transactional
-	public void detach() {
-		if (this.entityManager == null)
+	public void detach()
+	{
+		if ( this.entityManager == null )
+		{
 			this.entityManager = entityManager();
-		this.entityManager.detach(this);
+		}
+
+		this.entityManager.detach( this );
 	}
 
 	@Transactional
-	public void persist() {
-		if (this.entityManager == null)
+	public void persist()
+	{
+		if ( this.entityManager == null )
+		{
 			this.entityManager = entityManager();
-		this.entityManager.persist(this);
+		}
+
+		this.entityManager.persist( this );
 	}
 
 	@Transactional
-	public void remove() {
-		if (this.entityManager == null)
+	public void remove()
+	{
+		if ( this.entityManager == null )
+		{
 			this.entityManager = entityManager();
-		if (this.entityManager.contains(this)) {
-			this.entityManager.remove(this);
-		} else {
-			Oferta attached = this.entityManager.find(this.getClass(), this.id);
-			this.entityManager.remove(attached);
+		}
+		if ( this.entityManager.contains( this ) )
+		{
+			this.entityManager.remove( this );
+		}
+		else
+		{
+			Oferta attached = this.entityManager.find(
+				this.getClass(), this.id );
+
+			this.entityManager.remove( attached );
 		}
 	}
 
@@ -188,9 +208,10 @@ public class Oferta implements Serializable, Comparable< Oferta >
 
 	@SuppressWarnings("unchecked")
 	public static List<Oferta> findAllBy(GrupoSala grupoSala) {
-		Query q = entityManager()
-				.createQuery(
-						"SELECT DISTINCT(o) FROM Oferta o, IN (o.curriculo.disciplinas) dis WHERE dis IN (:disciplinas)");
+		Query q = entityManager().createQuery(
+			" SELECT DISTINCT ( o ) FROM Oferta o, " +
+			" IN ( o.curriculo.disciplinas ) dis WHERE dis IN ( :disciplinas ) " );
+
 		Set<CurriculoDisciplina> curriculoDisciplinas = grupoSala
 				.getCurriculoDisciplinas();
 		q.setParameter("disciplinas", grupoSala.getCurriculoDisciplinas());

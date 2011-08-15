@@ -30,7 +30,7 @@ public class HabilitacoesProfessoresImportExcel
 	static public String PREFERENCIA_COLUMN_NAME;
 	static public String NOTA_COLUMN_NAME;
 
-	private List<String> headerColumnsNames;
+	private List< String > headerColumnsNames;
 
 	public HabilitacoesProfessoresImportExcel(
 		Cenario cenario, TriedaI18nConstants i18nConstants,
