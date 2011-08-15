@@ -858,6 +858,7 @@ public class DisciplinasServiceImpl extends RemoteServiceServlet
 				resumo2DTO.setMargem( new TriedaCurrency( resumo2DTO.getReceita().getDoubleValue() -
 					resumo2DTO.getCustoDocente().getDoubleValue() ) );
 
+				// Código relacionado com a issue TRIEDA-1050
 				Double margemValue = resumo2DTO.getMargem().getDoubleValue();
 				Double receitaValue = resumo2DTO.getReceita().getDoubleValue();
 				Double margemPercent = ( ( margemValue / receitaValue ) * 100 );
@@ -891,6 +892,7 @@ public class DisciplinasServiceImpl extends RemoteServiceServlet
 				rc1.setMargem( new TriedaCurrency(
 					rc1.getMargem().getDoubleValue() + rc2.getMargem().getDoubleValue()) );
 
+				// Código relacionado com a issue TRIEDA-1050
 				Double margemValue = rc1.getMargem().getDoubleValue();
 				Double receitaValue = rc1.getReceita().getDoubleValue();
 				Double margemPercent = ( ( margemValue / receitaValue ) * 100 );
