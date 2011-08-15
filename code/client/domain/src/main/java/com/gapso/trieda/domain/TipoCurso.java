@@ -157,23 +157,6 @@ public class TipoCurso
 		return tiposCursoMap;
 	}
 
-	/*
-	 * Método utilizado na importação por planilha excel
-	 * [ Descrição do Tipo de Curso --> Tipo de Curso ]
-	 * */
-	public static Map< String, TipoCurso > buildTipoCursoStrToTipoCursoMap(
-		List< TipoCurso > tiposCurso )
-	{
-		Map< String, TipoCurso > tiposCursoMap = new HashMap< String, TipoCurso >();
-
-		for ( TipoCurso tipoCurso : tiposCurso )
-		{
-			tiposCursoMap.put( tipoCurso.getDescricao(), tipoCurso );
-		}
-
-		return tiposCursoMap;
-	}
-
 	public static TipoCurso find(Long id) {
         if (id == null) return null;
         return entityManager().find(TipoCurso.class, id);

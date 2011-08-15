@@ -18,7 +18,8 @@ public class DemandasImportExcelBean extends AbstractImportExcelBean implements 
 	private String periodoStr;
 	private String disciplinaStr;
 	private String demandaStr;
-	
+	private String receitaStr;
+
 	private Campus campus;
 	private Turno turno;
 	private Curso curso;
@@ -26,14 +27,19 @@ public class DemandasImportExcelBean extends AbstractImportExcelBean implements 
 	private Integer periodo;
 	private Disciplina disciplina;
 	private Integer demanda;
+	private Double receita;
 	
 	public DemandasImportExcelBean(int row) {
 		super(row);
 	}
 	
-	public List<ImportExcelError> checkSyntacticErrors() {
-		List<ImportExcelError> erros = new ArrayList<ImportExcelError>();
-		if (!tudoVazio()) {
+	public List< ImportExcelError > checkSyntacticErrors()
+	{
+		List< ImportExcelError > erros
+			= new ArrayList< ImportExcelError >();
+
+		if ( !tudoVazio() )
+		{
 			checkMandatoryField(campusStr,ImportExcelError.DEMANDA_CAMPUS_VAZIO,erros);
 			checkMandatoryField(turnoStr,ImportExcelError.DEMANDA_TURNO_VAZIO,erros);
 			checkMandatoryField(cursoStr,ImportExcelError.DEMANDA_CURSO_VAZIO,erros);
@@ -41,15 +47,27 @@ public class DemandasImportExcelBean extends AbstractImportExcelBean implements 
 			checkMandatoryField(periodoStr,ImportExcelError.DEMANDA_PERIODO_VAZIO,erros);
 			checkMandatoryField(disciplinaStr,ImportExcelError.DEMANDA_DISCIPLINA_VAZIO,erros);
 			checkMandatoryField(demandaStr,ImportExcelError.DEMANDA_DEMANDA_VAZIO,erros);
-			
-			periodo = checkNonNegativeIntegerField(periodoStr,ImportExcelError.DEMANDA_PERIODO_FORMATO_INVALIDO,ImportExcelError.DEMANDA_PERIODO_VALOR_NEGATIVO,erros);
-			demanda = checkNonNegativeIntegerField(demandaStr,ImportExcelError.DEMANDA_DEMANDA_FORMATO_INVALIDO,ImportExcelError.DEMANDA_DEMANDA_VALOR_NEGATIVO,erros);
-		} else {
-			erros.add(ImportExcelError.TUDO_VAZIO);
+
+			receita = checkNonNegativeDoubleField( receitaStr,
+				ImportExcelError.DEMANDA_RECEITA_FORMATO_INVALIDO,
+				ImportExcelError.DEMANDA_RECEITA_VALOR_NEGATIVO, erros );
+
+			periodo = checkNonNegativeIntegerField( periodoStr,
+				ImportExcelError.DEMANDA_PERIODO_FORMATO_INVALIDO,
+				ImportExcelError.DEMANDA_PERIODO_VALOR_NEGATIVO, erros );
+
+			demanda = checkNonNegativeIntegerField( demandaStr,
+				ImportExcelError.DEMANDA_DEMANDA_FORMATO_INVALIDO,
+				ImportExcelError.DEMANDA_DEMANDA_VALOR_NEGATIVO, erros );
 		}
+		else
+		{
+			erros.add( ImportExcelError.TUDO_VAZIO );
+		}
+
 		return erros;
 	}
-	
+
 	private boolean tudoVazio() {
 		return isEmptyField(campusStr) &&
 			isEmptyField(turnoStr) &&
@@ -57,13 +75,30 @@ public class DemandasImportExcelBean extends AbstractImportExcelBean implements 
 			isEmptyField(matrizCurricularStr) &&
 			isEmptyField(periodoStr) &&
 			isEmptyField(disciplinaStr) &&
-			isEmptyField(demandaStr);
+			isEmptyField(demandaStr) &&
+			isEmptyField(receitaStr);
 	}
-	
-	
+
+	public String getReceitaStr() {
+		return receitaStr;
+	}
+
+	public void setReceitaStr(String receitaStr) {
+		this.receitaStr = receitaStr;
+	}
+
+	public Double getReceita() {
+		return receita;
+	}
+
+	public void setReceita(Double receita) {
+		this.receita = receita;
+	}
+
 	public String getCampusStr() {
 		return campusStr;
 	}
+
 	public void setCampusStr(String campusStr) {
 		this.campusStr = campusStr;
 	}
@@ -71,6 +106,7 @@ public class DemandasImportExcelBean extends AbstractImportExcelBean implements 
 	public String getTurnoStr() {
 		return turnoStr;
 	}
+
 	public void setTurnoStr(String turnoStr) {
 		this.turnoStr = turnoStr;
 	}

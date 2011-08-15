@@ -130,17 +130,25 @@ public class Oferta implements Serializable, Comparable< Oferta >
 	}
 
 	@Transactional
-	public void flush() {
-		if (this.entityManager == null)
+	public void flush()
+	{
+		if ( this.entityManager == null )
+		{
 			this.entityManager = entityManager();
+		}
+
 		this.entityManager.flush();
 	}
 
 	@Transactional
-	public Oferta merge() {
-		if (this.entityManager == null)
+	public Oferta merge()
+	{
+		if ( this.entityManager == null )
+		{
 			this.entityManager = entityManager();
-		Oferta merged = this.entityManager.merge(this);
+		}
+
+		Oferta merged = this.entityManager.merge( this );
 		this.entityManager.flush();
 		return merged;
 	}
@@ -163,7 +171,7 @@ public class Oferta implements Serializable, Comparable< Oferta >
 	{
 		Query q = entityManager().createQuery(
 			"SELECT DISTINCT(o) FROM Oferta o, IN " +
-			"(o.curriculo.disciplinas) dis WHERE dis IN (:disciplinas)" );
+			"( o.curriculo.disciplinas ) dis WHERE dis IN (:disciplinas)" );
 
 		Set< CurriculoDisciplina > curriculoDisciplinas
 			= sala.getCurriculoDisciplinas();

@@ -55,131 +55,188 @@ public class CursosImportExcel
 	}
 
 	@Override
-	protected boolean sheetMustBeProcessed(int sheetIndex, HSSFSheet sheet, HSSFWorkbook workbook) {
-		String sheetName = workbook.getSheetName(sheetIndex);
-		return ExcelInformationType.CURSOS.getSheetName().equals(sheetName);
+	protected boolean sheetMustBeProcessed(
+		int sheetIndex, HSSFSheet sheet, HSSFWorkbook workbook )
+	{
+		String sheetName = workbook.getSheetName( sheetIndex );
+		return ExcelInformationType.CURSOS.getSheetName().equals( sheetName );
 	}
-	
+
 	@Override
-	protected List<String> getHeaderColumnsNames(int sheetIndex, HSSFSheet sheet, HSSFWorkbook workbook) {
+	protected List<String> getHeaderColumnsNames(
+		int sheetIndex, HSSFSheet sheet, HSSFWorkbook workbook )
+	{
 		return this.headerColumnsNames;
 	}
 
 	@Override
-	protected CursosImportExcelBean createExcelBean(HSSFRow header, HSSFRow row, int sheetIndex, HSSFSheet sheet, HSSFWorkbook workbook) {
-		CursosImportExcelBean bean = new CursosImportExcelBean(row.getRowNum()+1);
-        for (int cellIndex = row.getFirstCellNum(); cellIndex <= row.getLastCellNum(); cellIndex++) {
-            HSSFCell cell = row.getCell(cellIndex);        	
-        	if (cell != null) {
-        		HSSFCell headerCell = header.getCell(cell.getColumnIndex());
-        		if(headerCell != null){
+	protected CursosImportExcelBean createExcelBean(
+		HSSFRow header, HSSFRow row, int sheetIndex,
+		HSSFSheet sheet, HSSFWorkbook workbook )
+	{
+		CursosImportExcelBean bean = new CursosImportExcelBean( row.getRowNum() + 1 );
+
+        for ( int cellIndex = row.getFirstCellNum();
+         	  cellIndex <= row.getLastCellNum(); cellIndex++ )
+        {
+            HSSFCell cell = row.getCell( cellIndex );
+
+        	if ( cell != null )
+        	{
+        		HSSFCell headerCell = header.getCell( cell.getColumnIndex() );
+
+        		if ( headerCell != null )
+        		{
         			String columnName = headerCell.getRichStringCellValue().getString();
-					String cellValue = getCellValue(cell);
-					if (CODIGO_COLUMN_NAME.equals(columnName)) {
-						bean.setCodigoStr(cellValue);
-					} else if (NOME_COLUMN_NAME.endsWith(columnName)) {
-						bean.setNomeStr(cellValue);
-					} else if (TIPO_COLUMN_NAME.endsWith(columnName)) {
-						bean.setTipoStr(cellValue);
-					} else if (MIN_DOUTOR_COLUMN_NAME.equals(columnName)) {
-						bean.setMinDoutorPrecentStr(cellValue);
-					} else if (MIN_MESTRE_COLUMN_NAME.endsWith(columnName)) {
-						bean.setMinMestrePrecentStr(cellValue);
-					} else if (MIN_TEMPO_INTEGRAL_PARCIAL_COLUMN_NAME.endsWith(columnName)) {
-						bean.setMinTempoIntegralParcialPrecentStr(cellValue);
-					} else if (MIN_TEMPO_INTEGRAL_COLUMN_NAME.endsWith(columnName)) {
-						bean.setMinTempoIntegralPrecentStr(cellValue);
-					} else if (MAX_DISC_PROF_COLUMN_NAME.endsWith(columnName)) {
-						bean.setMaxDisciplinasProfessorStr(cellValue);
-					} else if (MAIS_DE_UMA_DISC_PROF_COLUMN_NAME.endsWith(columnName)) {
-						bean.setMaisDeUmaDisciplinaProfessorStr(cellValue);
+					String cellValue = getCellValue( cell );
+
+					if ( CODIGO_COLUMN_NAME.equals( columnName ) )
+					{
+						bean.setCodigoStr( cellValue );
+					} else if ( NOME_COLUMN_NAME.endsWith( columnName ) )
+					{
+						bean.setNomeStr( cellValue );
+					}
+					else if ( TIPO_COLUMN_NAME.endsWith( columnName ) )
+					{
+						bean.setTipoStr( cellValue );
+					}
+					else if ( MIN_DOUTOR_COLUMN_NAME.equals( columnName ) )
+					{
+						bean.setMinDoutorPrecentStr( cellValue );
+					}
+					else if ( MIN_MESTRE_COLUMN_NAME.endsWith( columnName ) )
+					{
+						bean.setMinMestrePrecentStr( cellValue );
+					}
+					else if ( MIN_TEMPO_INTEGRAL_PARCIAL_COLUMN_NAME.endsWith( columnName ) )
+					{
+						bean.setMinTempoIntegralParcialPrecentStr( cellValue );
+					}
+					else if ( MIN_TEMPO_INTEGRAL_COLUMN_NAME.endsWith( columnName ) )
+					{
+						bean.setMinTempoIntegralPrecentStr( cellValue );
+					}
+					else if ( MAX_DISC_PROF_COLUMN_NAME.endsWith( columnName ) )
+					{
+						bean.setMaxDisciplinasProfessorStr( cellValue );
+					}
+					else if ( MAIS_DE_UMA_DISC_PROF_COLUMN_NAME.endsWith( columnName ) )
+					{
+						bean.setMaisDeUmaDisciplinaProfessorStr( cellValue );
 					}
         		}
         	}
         }
+
 		return bean;
 	}
 
 	@Override
-	protected String getHeaderToString() {
+	protected String getHeaderToString()
+	{
 		return this.headerColumnsNames.toString();
 	}
 
 	@Override
-	public String getSheetName() {
+	public String getSheetName()
+	{
 		return ExcelInformationType.CURSOS.getSheetName();
 	}
-	
+
 	@Override
-	protected void processSheetContent(String sheetName, List<CursosImportExcelBean> sheetContent) {
-		if (doSyntacticValidation(sheetName,sheetContent) && doLogicValidation(sheetName,sheetContent)) {
-			updateDataBase(sheetName,sheetContent);
+	protected void processSheetContent( String sheetName,
+		List< CursosImportExcelBean > sheetContent )
+	{
+		if ( doSyntacticValidation( sheetName, sheetContent )
+			&& doLogicValidation( sheetName, sheetContent ) )
+		{
+			updateDataBase( sheetName, sheetContent );
 		}
 	}
 
-	private boolean doSyntacticValidation(String sheetName, List<CursosImportExcelBean> sheetContent) {
-		// map utilizado para associar um erro às linhas do arquivo onde o mesmo ocorre
-		// [ImportExcelError -> Lista de linhas onde o erro ocorre]
-		Map<ImportExcelError,List<Integer>> syntacticErrorsMap = new HashMap<ImportExcelError,List<Integer>>();
+	private boolean doSyntacticValidation( String sheetName,
+		List< CursosImportExcelBean > sheetContent )
+	{
+		// Map utilizado para associar um erro às linhas do arquivo onde o mesmo ocorre
+		// [ ImportExcelError -> Lista de linhas onde o erro ocorre ]
+		Map< ImportExcelError, List< Integer > > syntacticErrorsMap
+			= new HashMap< ImportExcelError, List< Integer > >();
 
-		for (CursosImportExcelBean bean : sheetContent) {
-			List<ImportExcelError> errorsBean = bean.checkSyntacticErrors();
-			for (ImportExcelError error : errorsBean) {
-				List<Integer> rowsWithErrors = syntacticErrorsMap.get(error);
-				if (rowsWithErrors == null) {
-					rowsWithErrors = new ArrayList<Integer>();
-					syntacticErrorsMap.put(error,rowsWithErrors);
+		for ( CursosImportExcelBean bean : sheetContent )
+		{
+			List< ImportExcelError > errorsBean = bean.checkSyntacticErrors();
+			for ( ImportExcelError error : errorsBean )
+			{
+				List< Integer > rowsWithErrors = syntacticErrorsMap.get( error );
+				if ( rowsWithErrors == null )
+				{
+					rowsWithErrors = new ArrayList< Integer >();
+					syntacticErrorsMap.put( error, rowsWithErrors );
 				}
-				rowsWithErrors.add(bean.getRow());
+
+				rowsWithErrors.add( bean.getRow() );
 			}
 		}
-		
-		// coleta os erros e adiciona os mesmos na lista de mensagens
-		for (ImportExcelError error : syntacticErrorsMap.keySet()) {
-			List<Integer> linhasComErro = syntacticErrorsMap.get(error);
-			getErrors().add(error.getMessage(linhasComErro.toString(),getI18nMessages()));
+
+		// Coleta os erros e adiciona os mesmos na lista de mensagens
+		for ( ImportExcelError error : syntacticErrorsMap.keySet() )
+		{
+			List< Integer > linhasComErro = syntacticErrorsMap.get( error );
+			getErrors().add( error.getMessage( linhasComErro.toString(), getI18nMessages() ) );
 		}
-		
+
 		return syntacticErrorsMap.isEmpty();
 	}
 
-	private boolean doLogicValidation(String sheetName, List<CursosImportExcelBean> sheetContent) {
-		// verifica se algum curso apareceu mais de uma vez no arquivo de entrada
-		checkUniqueness(sheetContent);
-		// verifica se há referência a algum tipo de curso não cadastrado
-		checkNonRegisteredTipoCurso(sheetContent);
+	private boolean doLogicValidation( String sheetName,
+		List< CursosImportExcelBean > sheetContent )
+	{
+		// Verifica se algum curso apareceu mais de uma vez no arquivo de entrada
+		checkUniqueness( sheetContent );
+
+		// Verifica se há referência a algum tipo de curso não cadastrado
+		checkNonRegisteredTipoCurso( sheetContent );
 		
 		return getErrors().isEmpty();
 	}
 
-	private void checkUniqueness(List<CursosImportExcelBean> sheetContent) {
-		// map com os códigos dos cursos e as linhas em que o mesmo aparece no arquivo de entrada
-		// [CódigoCurso -> Lista de Linhas do Arquivo de Entrada]
-		Map<String,List<Integer>> cursoCodigoToRowsMap = new HashMap<String,List<Integer>>();
-		 
-		for (CursosImportExcelBean bean : sheetContent) {
-			List<Integer> rows = cursoCodigoToRowsMap.get(bean.getCodigoStr());
-			if (rows == null) {
-				rows = new ArrayList<Integer>();
-				cursoCodigoToRowsMap.put(bean.getCodigoStr(),rows);
+	private void checkUniqueness( List< CursosImportExcelBean > sheetContent )
+	{
+		// Map com os códigos dos cursos e as linhas em que o mesmo aparece no arquivo de entrada
+		// [ CódigoCurso -> Lista de Linhas do Arquivo de Entrada ]
+		Map< String, List< Integer > > cursoCodigoToRowsMap
+			= new HashMap< String, List< Integer > >();
+
+		for ( CursosImportExcelBean bean : sheetContent )
+		{
+			List< Integer > rows = cursoCodigoToRowsMap.get( bean.getCodigoStr() );
+			if ( rows == null )
+			{
+				rows = new ArrayList< Integer >();
+				cursoCodigoToRowsMap.put( bean.getCodigoStr(), rows );
 			}
-			rows.add(bean.getRow());
+
+			rows.add( bean.getRow() );
 		}
-		
-		// verifica se algum curso apareceu mais de uma vez no arquivo de entrada
-		for (Entry<String,List<Integer>> entry : cursoCodigoToRowsMap.entrySet()) {
-			if (entry.getValue().size() > 1) {
-				getErrors().add(getI18nMessages().excelErroLogicoUnicidadeViolada(entry.getKey(),entry.getValue().toString()));
+
+		// Verifica se algum curso apareceu mais de uma vez no arquivo de entrada
+		for ( Entry< String, List< Integer > > entry : cursoCodigoToRowsMap.entrySet() )
+		{
+			if ( entry.getValue().size() > 1 )
+			{
+				getErrors().add( getI18nMessages().excelErroLogicoUnicidadeViolada(
+					entry.getKey(), entry.getValue().toString() ) );
 			}
 		}
 	}
-	
+
 	private void checkNonRegisteredTipoCurso(
 		List< CursosImportExcelBean > sheetContent )
 	{
 		// [ CódigoTipoCurso -> TipoCurso ]
 		Map< String, TipoCurso > tiposCursoBDMap
-			= TipoCurso.buildTipoCursoStrToTipoCursoMap( TipoCurso.findAll() );
+			= TipoCurso.buildTipoCursoCodigoToTipoCursoMap( TipoCurso.findAll() );
 
 		List< Integer > rowsWithErrors = new ArrayList< Integer >();
 		for ( CursosImportExcelBean bean : sheetContent )
@@ -203,36 +260,43 @@ public class CursosImportExcel
 	}
 
 	@Transactional
-	private void updateDataBase(String sheetName, List<CursosImportExcelBean> sheetContent) {
-		Map<String,Curso> cursosBDMap = Curso.buildCursoCodigoToCursoMap(Curso.findByCenario(getCenario()));
-		
-		for (CursosImportExcelBean cursoExcel : sheetContent) {
-			Curso cursoBD = cursosBDMap.get(cursoExcel.getCodigoStr());
-			if (cursoBD != null) {
-				// update
-				cursoBD.setNome(cursoExcel.getNomeStr());
-				cursoBD.setNumMinDoutores(cursoExcel.getMinDoutorPrecent());
-				cursoBD.setNumMinMestres(cursoExcel.getMinMestrePrecent());
-				cursoBD.setMinTempoIntegralParcial(cursoExcel.getMinTempoIntegralParcialPrecent());
-				cursoBD.setMinTempoIntegral(cursoExcel.getMinTempoIntegralPrecent());
-				cursoBD.setMaxDisciplinasPeloProfessor(cursoExcel.getMaxDisciplinasProfessor());
-				cursoBD.setAdmMaisDeUmDisciplina(cursoExcel.getMaisDeUmaDisciplinaProfessor());
-				cursoBD.setTipoCurso(cursoExcel.getTipo());
-				
+	private void updateDataBase( String sheetName,
+		List< CursosImportExcelBean > sheetContent )
+	{
+		Map<String,Curso> cursosBDMap = Curso.buildCursoCodigoToCursoMap( Curso.findByCenario( getCenario() ) );
+
+		for ( CursosImportExcelBean cursoExcel : sheetContent )
+		{
+			Curso cursoBD = cursosBDMap.get( cursoExcel.getCodigoStr() );
+			if ( cursoBD != null )
+			{
+				// Update
+				cursoBD.setNome( cursoExcel.getNomeStr() );
+				cursoBD.setNumMinDoutores( cursoExcel.getMinDoutorPrecent() );
+				cursoBD.setNumMinMestres( cursoExcel.getMinMestrePrecent() );
+				cursoBD.setMinTempoIntegralParcial( cursoExcel.getMinTempoIntegralParcialPrecent() );
+				cursoBD.setMinTempoIntegral( cursoExcel.getMinTempoIntegralPrecent() );
+				cursoBD.setMaxDisciplinasPeloProfessor( cursoExcel.getMaxDisciplinasProfessor() );
+				cursoBD.setAdmMaisDeUmDisciplina( cursoExcel.getMaisDeUmaDisciplinaProfessor() );
+				cursoBD.setTipoCurso( cursoExcel.getTipo() );
+
 				cursoBD.merge();
-			} else {
-				// insert
+			}
+			else
+			{
+				// Insert
 				Curso newCurso = new Curso();
-				newCurso.setCenario(getCenario());
-				newCurso.setCodigo(cursoExcel.getCodigoStr());
-				newCurso.setNome(cursoExcel.getNomeStr());
-				newCurso.setNumMinDoutores(cursoExcel.getMinDoutorPrecent());
-				newCurso.setNumMinMestres(cursoExcel.getMinMestrePrecent());
-				newCurso.setMinTempoIntegralParcial(cursoExcel.getMinTempoIntegralParcialPrecent());
-				newCurso.setMinTempoIntegral(cursoExcel.getMinTempoIntegralPrecent());
-				newCurso.setMaxDisciplinasPeloProfessor(cursoExcel.getMaxDisciplinasProfessor());
-				newCurso.setAdmMaisDeUmDisciplina(cursoExcel.getMaisDeUmaDisciplinaProfessor());
-				newCurso.setTipoCurso(cursoExcel.getTipo());
+
+				newCurso.setCenario( getCenario() );
+				newCurso.setCodigo( cursoExcel.getCodigoStr() );
+				newCurso.setNome( cursoExcel.getNomeStr() );
+				newCurso.setNumMinDoutores( cursoExcel.getMinDoutorPrecent() );
+				newCurso.setNumMinMestres( cursoExcel.getMinMestrePrecent() );
+				newCurso.setMinTempoIntegralParcial( cursoExcel.getMinTempoIntegralParcialPrecent() );
+				newCurso.setMinTempoIntegral( cursoExcel.getMinTempoIntegralPrecent() );
+				newCurso.setMaxDisciplinasPeloProfessor( cursoExcel.getMaxDisciplinasProfessor() );
+				newCurso.setAdmMaisDeUmDisciplina( cursoExcel.getMaisDeUmaDisciplinaProfessor() );
+				newCurso.setTipoCurso( cursoExcel.getTipo() );
 				
 				newCurso.persist();
 			}

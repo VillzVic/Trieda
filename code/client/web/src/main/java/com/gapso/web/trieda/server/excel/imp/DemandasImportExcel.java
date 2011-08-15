@@ -426,6 +426,7 @@ public class DemandasImportExcel
 				oferta.setTurno( demandasExcel.getTurno() );
 				oferta.setCurriculo( demandasExcel.getMatrizCurricular() );
 				oferta.setCurso( demandasExcel.getCurso() );
+				oferta.setReceita( demandasExcel.getReceita() );
 
 				oferta.persist();
 

@@ -1114,7 +1114,7 @@ public class ConvertBeans
 		domain.setId( dto.getId() );
 		domain.setVersion( dto.getVersion() );
 		domain.setCampus( Campus.find( dto.getCampusId() ) );
-		domain.setCurriculo( Curriculo.find(dto.getMatrizCurricularId() ) );
+		domain.setCurriculo( Curriculo.find( dto.getMatrizCurricularId() ) );
 		domain.setCurso( domain.getCurriculo().getCurso() );
 		domain.setTurno( Turno.find( dto.getTurnoId() ) );
 		domain.setReceita( dto.getReceita().getDoubleValue() );
@@ -1138,7 +1138,7 @@ public class ConvertBeans
 		dto.setTurnoString( domain.getTurno().getNome() );
 		dto.setTurnoId( domain.getTurno().getId() );
 		dto.setReceita( TriedaUtil.parseTriedaCurrency( domain.getReceita() ) );
-		dto.setDisplayText(dto.getMatrizCurricularString() + " (" + curso.getNome() + ")");
+		dto.setDisplayText( dto.getMatrizCurricularString() + " (" + curso.getNome() + ")" );
 
 		return dto;
 	}
