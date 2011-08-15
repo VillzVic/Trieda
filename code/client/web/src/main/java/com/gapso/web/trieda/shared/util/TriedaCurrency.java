@@ -3,9 +3,10 @@ package com.gapso.web.trieda.shared.util;
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 /*
- * Observação : Ao usar essa classe em objetos do tipo 'DTO', não se pode
- * setar diretamente o objeto com o método 'set' da classe 'BaseModel',
- * mas sim setar o string correspondente ao objeto 'TriedaCurrency'
+ * Observação : Ao usar essa classe em objetos do tipo 'DTO',
+ * não se pode setar diretamente o objeto com o método 'set'
+ * da classe 'BaseModel', mas sim setar o string correspondente
+ * ao objeto 'TriedaCurrency' ( utilizando o método toString() )
  * */
 public class TriedaCurrency
 	implements IsSerializable
@@ -44,7 +45,7 @@ public class TriedaCurrency
 	@Override
 	public String toString()
 	{
-		Integer y = ((Double) ( this.value * 100 )).intValue();
+		Integer y = ( (Double) ( this.value * 100 ) ).intValue();
 
 		// Casas decimais
 		Integer resto = ( y % 100 );
@@ -59,7 +60,8 @@ public class TriedaCurrency
 		return result;
 	}
 
-	public Double getDoubleValue() {
+	public Double getDoubleValue()
+	{
 		return this.value;
 	}
 

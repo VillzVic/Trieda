@@ -77,6 +77,7 @@ public class ResumoDisciplinaPresenter
 						});
 				}
 			});
+
 		display.getExportExcelButton().addSelectionListener(
 			new SelectionListener< ButtonEvent >()
 			{
@@ -107,5 +108,4 @@ public class ResumoDisciplinaPresenter
 		GTab tab = (GTab) widget;
 		tab.add( (GTabItem) display.getComponent() );
 	}
-
 }

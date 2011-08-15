@@ -46,6 +46,45 @@ public class AtendimentoTaticoDTO extends AbstractDTO< String >
 		super();
 	}
 
+	public AtendimentoTaticoDTO( AtendimentoTaticoDTO other )
+	{
+		this.copy( other );
+	}
+
+	private void copy( AtendimentoTaticoDTO other )
+	{
+		this.setId( other.getId() );
+		this.setVersion( other.getVersion() );
+		this.setCenarioId( other.getCenarioId() );
+		this.setCampusId( other.getCampusId() );
+		this.setCampusString( other.getCampusString() ); 
+		this.setUnidadeId( other.getUnidadeId() );
+		this.setUnidadeString( other.getUnidadeString() );
+		this.setSalaId( other.getSalaId() );
+		this.setSalaString( other.getSalaString() );
+		this.setSemana( other.getSemana() );
+		this.setCursoString( other.getCursoString() );
+		this.setCursoNome( other.getCursoNome() );
+		this.setCursoId( other.getCursoId() );
+		this.setCurricularId( other.getCurriculoId() );
+		this.setCurricularString( other.getCurriculoString() );
+		this.setPeriodo( other.getPeriodo() );
+		this.setPeriodoString( other.getPeriodoString() );
+		this.setDisciplinaId( other.getDisciplinaId() );
+		this.setDisciplinaString( other.getDisciplinaString() );
+		this.setTurnoId( other.getTurnoId() );
+		this.setTurnoString( other.getTurnoString() );
+		this.setDisciplinaNome( other.getDisciplinaNome() );
+		this.setTotalCreditoDisciplina( other.getTotalCreditoDisciplina() );
+		this.setOfertaId( other.getOfertaId() );
+		this.setTurma( other.getTurma() );
+		this.setQuantidadeAlunos( other.getQuantidadeAlunos() );
+		this.setQuantidadeAlunosString( other.getQuantidadeAlunosString() );
+		this.setCreditosTeorico( other.getCreditosTeorico() );
+		this.setCreditosPratico( other.getCreditosPratico() );
+		this.setCompartilhamentoCursosString( other.getCompartilhamentoCursosString() );
+	}
+
 	public void setId(Long value) {
 		set(PROPERTY_ID, value);
 	}

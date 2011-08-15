@@ -51,6 +51,52 @@ public class AtendimentoOperacionalDTO extends AbstractDTO< String >
 
 	public AtendimentoOperacionalDTO() { }
 
+	public AtendimentoOperacionalDTO( AtendimentoOperacionalDTO other )
+	{
+		this.copy( other );
+	}
+
+	private void copy( AtendimentoOperacionalDTO other )
+	{
+		this.setId( other.getId() );
+		this.setVersion( other.getVersion() );
+		this.setCenarioId( other.getCenarioId() );
+		this.setCampusId( other.getCampusId() );
+		this.setCampusString( other.getCampusString() );
+		this.setUnidadeId( other.getUnidadeId() );
+		this.setUnidadeString( other.getUnidadeString() );
+		this.setSalaId( other.getSalaId() );
+		this.setSalaString( other.getSalaString() );
+		this.setTurnoId( other.getTurnoId() );
+		this.setTurnoString( other.getTurnoString() );
+		this.setHorarioId( other.getHorarioId() );
+		this.setHorarioString( other.getHorarioString() );
+		this.setProfessorId( other.getProfessorId() );
+		this.setProfessorString( other.getProfessorString() );
+		this.setProfessorVirtualId( other.getProfessorVirtualId() );
+		this.setProfessorVirtualString( other.getProfessorVirtualString() );
+		this.setCreditoTeoricoBoolean( other.getCreditoTeoricoBoolean() );
+		this.setSemana( other.getSemana() );
+		this.setCursoString( other.getCursoString() );
+		this.setCursoNome( other.getCursoNome() );
+		this.setCursoId( other.getCursoId() );
+		this.setCurricularId( other.getCurriculoId() );
+		this.setCurricularString( other.getCurriculoString() );
+		this.setPeriodo( other.getPeriodo() );
+		this.setPeriodoString( other.getPeriodoString() );
+		this.setDisciplinaId( other.getDisciplinaId() );
+		this.setDisciplinaString( other.getDisciplinaString() );
+		this.setDisciplinaNome( other.getDisciplinaNome() );
+		this.setTotalCreditos( other.getTotalCreditos() );
+		this.setTotalCreditoDisciplina( other.getTotalCreditoDisciplina() );
+		this.setOfertaId( other.getOfertaId() );
+		this.setTurma( other.getTurma() );
+		this.setQuantidadeAlunos( other.getQuantidadeAlunos() );
+		this.setQuantidadeAlunosString( other.getQuantidadeAlunosString() );
+		this.setCompartilhamentoCursosString( other.getCompartilhamentoCursosString() );
+		this.setTotalLinhas( other.getTotalLinhas() );
+	}
+
 	public void setId(Long value) {
 		set(PROPERTY_ID, value);
 	}

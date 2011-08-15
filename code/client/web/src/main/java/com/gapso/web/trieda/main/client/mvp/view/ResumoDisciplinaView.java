@@ -26,6 +26,7 @@ import com.gapso.web.trieda.main.client.mvp.presenter.ResumoDisciplinaPresenter;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.ResumoDisciplinaDTO;
 import com.gapso.web.trieda.shared.mvp.view.MyComposite;
+import com.gapso.web.trieda.shared.util.TriedaCurrency;
 import com.gapso.web.trieda.shared.util.resources.Resources;
 import com.gapso.web.trieda.shared.util.view.CampusComboBox;
 import com.gapso.web.trieda.shared.util.view.GTabItem;
@@ -75,6 +76,7 @@ public class ResumoDisciplinaView extends MyComposite
 	{
 		tabItem = new GTabItem( "Resumo por Disciplina",
 			Resources.DEFAULTS.resumoDisciplinas16() );
+
 		tabItem.setContent( panel );
 	}
 
@@ -126,9 +128,12 @@ public class ResumoDisciplinaView extends MyComposite
 						return "";
 					}
 
-					return ( ( ( (Double)model.get( property ) ) * 100 ) + "%" );
+					TriedaCurrency tc = new TriedaCurrency( (Double) model.get( property ) );
+					String percent = ( tc.toString() + "%" ); 
+					return ( percent );
 				}
 			};
+
 		GridCellRenderer< ResumoDisciplinaDTO > tipoDeCreditoRenderer =
 			new GridCellRenderer< ResumoDisciplinaDTO >()
 			{
@@ -151,23 +156,40 @@ public class ResumoDisciplinaView extends MyComposite
 		ColumnConfig campusColumnConfig = new ColumnConfig(
 			ResumoDisciplinaDTO.PROPERTY_DISCIPLINA_STRING, getI18nConstants().disciplina(), 80 );
 		campusColumnConfig.setRenderer( new TreeGridCellRenderer< ResumoDisciplinaDTO >() );
+
 		list.add( campusColumnConfig );
-		list.add( new ColumnConfig( ResumoDisciplinaDTO.PROPERTY_TURMA_STRING, getI18nConstants().turma(), 80 ) );
+		list.add( new ColumnConfig( ResumoDisciplinaDTO.PROPERTY_TURMA_STRING,
+			getI18nConstants().turma(), 80 ) );
 
 		ColumnConfig tipoDeCreditoColumnConfig = new ColumnConfig(
-			ResumoDisciplinaDTO.PROPERTY_TIPO_CREDITO_TEORICO_BOOLEAN, getI18nConstants().TipoCredito(), 80 );
+			ResumoDisciplinaDTO.PROPERTY_TIPO_CREDITO_TEORICO_BOOLEAN,
+			getI18nConstants().TipoCredito(), 80 );
+
 		tipoDeCreditoColumnConfig.setRenderer( tipoDeCreditoRenderer );
 		list.add( tipoDeCreditoColumnConfig );
 
-		list.add( new ColumnConfig( ResumoDisciplinaDTO.PROPERTY_CREDITOS_INT, getI18nConstants().totalDecreditos(), 60 ) );
-		list.add( new ColumnConfig( ResumoDisciplinaDTO.PROPERTY_CREDITOS_INT, getI18nConstants().creditos(), 60 ) );
-		list.add( new ColumnConfig( ResumoDisciplinaDTO.PROPERTY_QUANTIDADE_ALUNOS_INT, getI18nConstants().quantidadeAlunos(), 70 ) );
-		list.add( new ColumnConfig( ResumoDisciplinaDTO.PROPERTY_CUSTO_DOCENTE_DOUBLE, getI18nConstants().custoDocente(), 100 ) );
-		list.add( new ColumnConfig( ResumoDisciplinaDTO.PROPERTY_RECEITA_DOUBLE, getI18nConstants().receita(), 100 ) );
-		list.add( new ColumnConfig( ResumoDisciplinaDTO.PROPERTY_MARGEM_DOUBLE, getI18nConstants().margem(), 100 ) );
+		list.add( new ColumnConfig( ResumoDisciplinaDTO.PROPERTY_CREDITOS_INT,
+			getI18nConstants().totalDecreditos(), 60 ) );
+
+		list.add( new ColumnConfig( ResumoDisciplinaDTO.PROPERTY_CREDITOS_INT,
+			getI18nConstants().creditos(), 60 ) );
+
+		list.add( new ColumnConfig( ResumoDisciplinaDTO.PROPERTY_QUANTIDADE_ALUNOS_INT,
+			getI18nConstants().quantidadeAlunos(), 70 ) );
+
+		list.add( new ColumnConfig( ResumoDisciplinaDTO.PROPERTY_CUSTO_DOCENTE_DOUBLE,
+			getI18nConstants().custoDocente(), 100 ) );
+
+		list.add( new ColumnConfig( ResumoDisciplinaDTO.PROPERTY_RECEITA_DOUBLE,
+			getI18nConstants().receita(), 100 ) );
+
+		list.add( new ColumnConfig( ResumoDisciplinaDTO.PROPERTY_MARGEM_DOUBLE,
+			getI18nConstants().margem(), 100 ) );
 
 		ColumnConfig margemPercenteColumnConfig = new ColumnConfig(
-			ResumoDisciplinaDTO.PROPERTY_MARGEM_PERCENTE_DOUBLE, getI18nConstants().margemPercente(), 100 );
+			ResumoDisciplinaDTO.PROPERTY_MARGEM_PERCENTE_DOUBLE,
+			getI18nConstants().margemPercente(), 100 );
+
 		margemPercenteColumnConfig.setRenderer( percenteRenderer );
 		list.add( margemPercenteColumnConfig );
 
