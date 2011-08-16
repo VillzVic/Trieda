@@ -220,12 +220,16 @@ public class Disciplina
 		preencheHorarios();
 	}
 
-	public void preencheHorarios() {
-		for (SemanaLetiva semanaLetiva : SemanaLetiva.findAll()) {
-			for (HorarioAula horarioAula : semanaLetiva.getHorariosAula()) {
-				for (HorarioDisponivelCenario hdc : horarioAula
-						.getHorariosDisponiveisCenario()) {
-					hdc.getDisciplinas().add(this);
+	public void preencheHorarios()
+	{
+		for ( SemanaLetiva semanaLetiva : SemanaLetiva.findAll() )
+		{
+			for ( HorarioAula horarioAula : semanaLetiva.getHorariosAula() )
+			{
+				for ( HorarioDisponivelCenario hdc
+					: horarioAula.getHorariosDisponiveisCenario() )
+				{
+					hdc.getDisciplinas().add( this );
 					hdc.merge();
 				}
 			}
@@ -242,18 +246,11 @@ public class Disciplina
 
 		if ( this.entityManager.contains( this ) )
 		{
-			if ( this.professores != null && this.professores.size() > 0 )
-			{
-				Set< ProfessorDisciplina > dataRemove
-					= new HashSet< ProfessorDisciplina >( this.professores );
-
-				this.professores.removeAll( dataRemove );
-				this.professores.clear();
-			}
-
+			this.removeDisciplinasAssociadasProfessor( this );
 			this.removeProfessoresVirtuais();
 			this.removeHorariosDisponivelCenario();
 			this.removeEliminadasPor();
+
 			this.entityManager.remove( this );
 		}
 		else
@@ -263,20 +260,26 @@ public class Disciplina
 
 			if ( attached != null )
 			{
-				if ( attached.professores != null && attached.professores.size() > 0 )
-				{
-					Set< ProfessorDisciplina > dataRemove
-						= new HashSet< ProfessorDisciplina >( attached.professores );
-
-					attached.professores.removeAll( dataRemove );
-					attached.professores.clear();
-				}
-
+				this.removeDisciplinasAssociadasProfessor( attached );
 				attached.removeProfessoresVirtuais();
 				attached.removeHorariosDisponivelCenario();
 				attached.removeEliminadasPor();
+
 				this.entityManager.remove( attached );
 			}
+		}
+	}
+
+	private void removeDisciplinasAssociadasProfessor( Disciplina d )
+	{
+		if ( d.professores != null && d.professores.size() > 0 )
+		{
+			for( ProfessorDisciplina pd : d.professores )
+			{
+				pd.remove();
+			}
+
+			d.professores.clear();
 		}
 	}
 
@@ -313,12 +316,13 @@ public class Disciplina
 		}
 	}
 
-
 	@Transactional
-	public void removeEliminadasPor() {
-		Set<Equivalencia> eliminadasPor = this.getEliminadaPor();
-		for (Equivalencia equivalencia : eliminadasPor) {
-			equivalencia.getElimina().remove(this);
+	public void removeEliminadasPor()
+	{
+		Set< Equivalencia > eliminadasPor = this.getEliminadaPor();
+		for ( Equivalencia equivalencia : eliminadasPor )
+		{
+			equivalencia.getElimina().remove( this );
 			equivalencia.merge();
 		}
 	}
