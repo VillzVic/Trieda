@@ -14,6 +14,7 @@ import org.apache.poi.hssf.usermodel.HSSFComment;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.springframework.web.util.HtmlUtils;
 
 import com.gapso.trieda.domain.AtendimentoOperacional;
 import com.gapso.trieda.domain.AtendimentoTatico;
@@ -26,7 +27,9 @@ import com.gapso.trieda.domain.Turno;
 import com.gapso.trieda.misc.Semanas;
 import com.gapso.web.trieda.server.AtendimentosServiceImpl;
 import com.gapso.web.trieda.server.util.ConvertBeans;
+import com.gapso.web.trieda.shared.dtos.AtendimentoOperacionalDTO;
 import com.gapso.web.trieda.shared.dtos.AtendimentoRelatorioDTO;
+import com.gapso.web.trieda.shared.dtos.AtendimentoTaticoDTO;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.CurriculoDTO;
 import com.gapso.web.trieda.shared.dtos.CursoDTO;
@@ -410,7 +413,7 @@ public class RelatorioVisaoCursoExportExcel
 				// Escreve célula principal
 				setCell( row, col, sheet, style, itExcelCommentsPool,
 					atendimento.getExcelContentVisaoCurso(),
-					atendimento.getExcelCommentVisaoCurso() );
+					this.getExcelCommentVisaoCurso( atendimento ) );
 
 				// Une células de acordo com a quantidade de créditos
 				mergeCells( row, ( row + atendimento.getTotalCreditos() - 1 ),
@@ -423,6 +426,43 @@ public class RelatorioVisaoCursoExportExcel
 		return ( initialRow + maxCreditos + 1 );
 	}
 
+	private String getExcelCommentVisaoCurso( AtendimentoRelatorioDTO atendimento )
+	{
+		String creditos = HtmlUtils.htmlUnescape( "Cr&eacute;dito(s) " );
+		String teorico = HtmlUtils.htmlUnescape( "Te&oacute;rico(s)" );
+		String pratico = HtmlUtils.htmlUnescape( "Pr&aacute;tico(s)" );
+		String periodo = HtmlUtils.htmlUnescape( "Per&iacute;odo: " );
+		String horario = HtmlUtils.htmlUnescape( "Hor&aacute;rio: " );
+
+		if ( atendimento instanceof AtendimentoTaticoDTO )
+		{
+			return atendimento.getDisciplinaNome() + "\n"
+				+ "Turma: " + atendimento.getTurma() + "\n"
+				+ creditos + ( ( atendimento.isTeorico() ) ? teorico : pratico )
+				+ ": " + atendimento.getTotalCreditos() + " de " + atendimento.getTotalCreditoDisciplina() + "\n"
+				+ "Curso: " + atendimento.getCursoNome() + "\n"
+				+ "Matriz Curricular: " + atendimento.getCurriculoString() + "\n"
+				+ periodo + atendimento.getPeriodoString() + "\n" 
+				+ "Quantidade: " + atendimento.getQuantidadeAlunosString();
+		}
+		else if ( atendimento instanceof AtendimentoOperacionalDTO )
+		{
+			AtendimentoOperacionalDTO atOp = (AtendimentoOperacionalDTO) atendimento;
+
+			return atOp.getDisciplinaNome() + "\n"
+				+ "Turma: " + atOp.getTurma() + "\n"
+				+ horario + atOp.getHorarioString() + "\n"
+				+ creditos + ( ( atOp.getCreditoTeoricoBoolean() ) ? teorico : pratico )
+				+ ": " + atOp.getTotalCreditos() + " de " + atOp.getTotalCreditos() + "\n"
+				+ "Curso: " + atOp.getCursoNome() + "\n"
+				+ "Matriz Curricular: " + atOp.getCurriculoString() + "\n"
+				+ periodo + atOp.getPeriodoString() + "\n"
+				+ "Quantidade: " + atOp.getQuantidadeAlunosString();
+		}
+		
+		return "";
+	}
+	
 	private int writeHeader( Oferta oferta, Integer periodo,
 		List< Integer > tamanhoSemanaList, int row, HSSFSheet sheet )
 	{
@@ -431,7 +471,7 @@ public class RelatorioVisaoCursoExportExcel
 		// Curso
 		setCell( row, col++, sheet,
 			cellStyles[ ExcelCellStyleReference.HEADER_LEFT_TEXT.ordinal() ],
-			ConvertBeans.parseHtmlUtilsString( getI18nConstants().curso() ) );
+			HtmlUtils.htmlUnescape( getI18nConstants().curso() ) );
 
 		setCell( row, col++, sheet,
 			cellStyles[ ExcelCellStyleReference.HEADER_CENTER_VALUE.ordinal() ],
@@ -440,7 +480,7 @@ public class RelatorioVisaoCursoExportExcel
 		// Campus
 		setCell(row, col++, sheet,
 			cellStyles[ ExcelCellStyleReference.HEADER_LEFT_TEXT.ordinal() ],
-			ConvertBeans.parseHtmlUtilsString( getI18nConstants().campus() ) );
+			HtmlUtils.htmlUnescape( getI18nConstants().campus() ) );
 
 		setCell( row, col++, sheet,
 			cellStyles[ ExcelCellStyleReference.HEADER_CENTER_VALUE.ordinal() ],
@@ -449,7 +489,7 @@ public class RelatorioVisaoCursoExportExcel
 		// Turno
 		setCell( row, col++, sheet,
 			cellStyles[ ExcelCellStyleReference.HEADER_LEFT_TEXT.ordinal() ],
-			ConvertBeans.parseHtmlUtilsString( getI18nConstants().turno() ) );
+			HtmlUtils.htmlUnescape( getI18nConstants().turno() ) );
 
 		setCell( row, col++, sheet,
 			cellStyles[ ExcelCellStyleReference.HEADER_CENTER_VALUE.ordinal() ],
@@ -461,7 +501,7 @@ public class RelatorioVisaoCursoExportExcel
 		// Curriculo
 		setCell( row, col++, sheet,
 			cellStyles[ ExcelCellStyleReference.HEADER_LEFT_TEXT.ordinal() ],
-			ConvertBeans.parseHtmlUtilsString( getI18nConstants().matrizCurricular() ) );
+			HtmlUtils.htmlUnescape( getI18nConstants().matrizCurricular() ) );
 
 		setCell( row, col++, sheet,
 			cellStyles[ ExcelCellStyleReference.HEADER_CENTER_VALUE.ordinal() ],
@@ -470,7 +510,7 @@ public class RelatorioVisaoCursoExportExcel
 		// Periodo
 		setCell( row, col++, sheet,
 			cellStyles[ ExcelCellStyleReference.HEADER_LEFT_TEXT.ordinal() ],
-			ConvertBeans.parseHtmlUtilsString( getI18nConstants().periodo() ) );
+			HtmlUtils.htmlUnescape( getI18nConstants().periodo() ) );
 
 		setCell( row, col++, sheet,
 			cellStyles[ ExcelCellStyleReference.HEADER_CENTER_VALUE.ordinal() ], periodo );
@@ -481,7 +521,7 @@ public class RelatorioVisaoCursoExportExcel
 		// Créditos
 		setCell( row, col++, sheet,
 			cellStyles[ ExcelCellStyleReference.HEADER_CENTER_TEXT.ordinal() ],
-			ConvertBeans.parseHtmlUtilsString( getI18nConstants().creditos() ) );
+			HtmlUtils.htmlUnescape( getI18nConstants().creditos() ) );
 
 		// Dias Semana
 		for ( Semanas semanas : Semanas.values() )

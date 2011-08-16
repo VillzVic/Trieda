@@ -13,6 +13,7 @@ import org.apache.poi.hssf.usermodel.HSSFComment;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.springframework.web.util.HtmlUtils;
 
 import com.gapso.trieda.domain.AtendimentoOperacional;
 import com.gapso.trieda.domain.Campus;
@@ -340,7 +341,7 @@ public class RelatorioVisaoProfessorExportExcel
 
 				// Escreve célula principal
 				setCell( row, col, sheet, style, itExcelCommentsPool,
-					atendimento.getExcelContentVisaoProfessor(), atendimento.getExcelCommentVisaoProfessor() );
+					atendimento.getExcelContentVisaoProfessor(), this.getExcelCommentVisaoProfessor( atendimento ) );
 
 				// Une células de acordo com a quantidade de créditos
 				mergeCells( row, ( row + atendimento.getTotalLinhas() - 1 ), col, col, sheet, style );
@@ -352,6 +353,26 @@ public class RelatorioVisaoProfessorExportExcel
 		return ( initialRow + maxCreditos + 1 );
 	}
 	
+	private String getExcelCommentVisaoProfessor( AtendimentoOperacionalDTO atendimento )
+	{
+		String horario = HtmlUtils.htmlUnescape( "Hor&aacute;rio: " );
+		String creditos = HtmlUtils.htmlUnescape( "Cr&eacute;dito(s) " );
+		String teorico = HtmlUtils.htmlUnescape( "Te&oacute;rico(s)" );
+		String pratico = HtmlUtils.htmlUnescape( "Pr&aacute;tico(s)" );
+		String periodo = HtmlUtils.htmlUnescape( "Per&iacute;odo: " );
+	
+		return atendimento.getDisciplinaNome() + "\n"
+			+ "Turma: " + atendimento.getTurma() + "\n"
+			+ horario + atendimento.getHorarioString() + "\n"
+			+ creditos + ( ( atendimento.getCreditoTeoricoBoolean() ) ? teorico : pratico )
+			+ ": " + atendimento.getTotalLinhas() + " de "
+			+ atendimento.getTotalCreditos() + "\n"
+			+ "Curso: " + atendimento.getCursoNome() + "\n"
+			+ "Matriz Curricular: " + atendimento.getCurriculoString() + "\n"
+			+ periodo + atendimento.getPeriodoString() + "\n" 
+			+ "Quantidade: " + atendimento.getQuantidadeAlunosString();
+	}
+
 	private int writeProfessorVirtual( Campus campus, ProfessorVirtual professorVirtual, Turno turno,
 		List< AtendimentoOperacionalDTO > atendimentos, int row, HSSFSheet sheet,
 		Iterator< HSSFComment > itExcelCommentsPool,
@@ -430,7 +451,7 @@ public class RelatorioVisaoProfessorExportExcel
 
 				// Escreve célula principal
 				setCell( row, col, sheet, style, itExcelCommentsPool,
-					atendimento.getExcelContentVisaoProfessor(), atendimento.getExcelCommentVisaoProfessor() );
+					atendimento.getExcelContentVisaoProfessor(), this.getExcelCommentVisaoProfessor( atendimento ) );
 
 				// Une células de acordo com a quantidade de créditos
 				mergeCells( row, ( row + atendimento.getTotalCreditos() - 1 ), col, col, sheet, style );

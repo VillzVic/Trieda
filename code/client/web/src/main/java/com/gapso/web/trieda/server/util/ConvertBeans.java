@@ -12,8 +12,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.springframework.web.util.HtmlUtils;
-
 import com.gapso.trieda.domain.AreaTitulacao;
 import com.gapso.trieda.domain.AtendimentoOperacional;
 import com.gapso.trieda.domain.AtendimentoTatico;
@@ -1862,10 +1860,5 @@ public class ConvertBeans
 		String fim = df.format(fimCal.getTime());
 
 		return inicio + " / " + fim;
-	}
-
-	static public String parseHtmlUtilsString( String s )
-	{
-		return HtmlUtils.htmlUnescape( s );
 	}
 }

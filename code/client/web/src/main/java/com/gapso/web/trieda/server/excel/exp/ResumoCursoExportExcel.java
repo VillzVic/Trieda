@@ -6,6 +6,7 @@ import java.util.List;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.springframework.web.util.HtmlUtils;
 
 import com.extjs.gxt.ui.client.data.ModelData;
 import com.gapso.trieda.domain.Campus;
@@ -193,7 +194,7 @@ public class ResumoCursoExportExcel
 		// Tipo de Crédito
 		String tipoDeCredito = resumoCursoDTO.getTipoCreditoTeorico() ?
 			getI18nConstants().teorico() : getI18nConstants().pratico();
-		tipoDeCredito = ConvertBeans.parseHtmlUtilsString( tipoDeCredito );
+		tipoDeCredito = HtmlUtils.htmlUnescape( tipoDeCredito );
 
 		setCell( row, i++, sheet, cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ], tipoDeCredito );
 

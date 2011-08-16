@@ -13,6 +13,7 @@ import org.apache.poi.hssf.usermodel.HSSFComment;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.springframework.web.util.HtmlUtils;
 
 import com.gapso.trieda.domain.AtendimentoOperacional;
 import com.gapso.trieda.domain.AtendimentoTatico;
@@ -24,7 +25,9 @@ import com.gapso.trieda.domain.Unidade;
 import com.gapso.trieda.misc.Semanas;
 import com.gapso.web.trieda.server.AtendimentosServiceImpl;
 import com.gapso.web.trieda.server.util.ConvertBeans;
+import com.gapso.web.trieda.shared.dtos.AtendimentoOperacionalDTO;
 import com.gapso.web.trieda.shared.dtos.AtendimentoRelatorioDTO;
+import com.gapso.web.trieda.shared.dtos.AtendimentoTaticoDTO;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nMessages;
@@ -320,7 +323,7 @@ public class RelatorioVisaoSalaExportExcel
 
 				// Escreve célula principal
 				setCell( row, col, sheet, style, itExcelCommentsPool,
-					atendimento.getExcelContentVisaoSala(), atendimento.getExcelCommentVisaoSala() );
+					atendimento.getExcelContentVisaoSala(), this.getExcelCommentVisaoSala( atendimento ) );
 
 				// Une células de acordo com a quantidade de créditos
 				mergeCells( row, ( row + atendimento.getTotalCreditos() - 1 ), col, col, sheet, style );
@@ -331,6 +334,45 @@ public class RelatorioVisaoSalaExportExcel
 				
 		return ( initialRow + maxCreditos + 1 );
 	}
+	
+	private String getExcelCommentVisaoSala( AtendimentoRelatorioDTO atendimento )
+	{
+		String creditos = HtmlUtils.htmlUnescape( "Cr&eacute;dito(s) " );
+		String teorico = HtmlUtils.htmlUnescape( "Te&oacute;rico(s)" );
+		String pratico = HtmlUtils.htmlUnescape( "Pr&aacute;tico(s)" );
+		String periodo = HtmlUtils.htmlUnescape( "Per&iacute;odo: " );
+		String horario = HtmlUtils.htmlUnescape( "Hor&aacute;rio: " );
+
+		if ( atendimento instanceof AtendimentoTaticoDTO )
+		{
+			return atendimento.getDisciplinaNome() + "\n"
+				+ "Turma: " + atendimento.getTurma() + "\n"
+				+ creditos + ( ( atendimento.isTeorico() ) ? teorico : pratico )
+				+ ": " + atendimento.getTotalCreditos() + " de "
+				+ atendimento.getTotalCreditoDisciplina() + "\n"
+				+ "Curso: " + atendimento.getCursoNome() + "\n"
+				+ "Matriz Curricular: " + atendimento.getCurriculoString() + "\n"
+				+ periodo + atendimento.getPeriodoString() + "\n" 
+				+ "Quantidade: " + atendimento.getQuantidadeAlunosString();
+		}
+		else if ( atendimento instanceof AtendimentoOperacionalDTO )
+		{
+			AtendimentoOperacionalDTO atOp = (AtendimentoOperacionalDTO) atendimento;
+
+			return atOp.getDisciplinaNome() + "\n"
+				+ "Turma: " + atOp.getTurma() + "\n"
+				+ horario + atOp.getHorarioString() + "\n"
+				+ creditos + ( ( atOp.getCreditoTeoricoBoolean() ) ? teorico : pratico )
+				+ ": " + atOp.getTotalCreditos() + " de "
+				+ atOp.getTotalCreditos() + "\n"
+				+ "Curso: " + atOp.getCursoNome() + "\n"
+				+ "Matriz Curricular: " + atOp.getCurriculoString() + "\n"
+				+ periodo + atOp.getPeriodoString() + "\n"
+				+ "Quantidade: " + atOp.getQuantidadeAlunosString();
+		}
+
+		return "";
+	}
 
 	private int writeHeader( Sala sala, Turno turno, int row, HSSFSheet sheet )
 	{
@@ -338,19 +380,19 @@ public class RelatorioVisaoSalaExportExcel
 
 		// Campus
 		setCell( row, col++, sheet, cellStyles[ ExcelCellStyleReference.HEADER_LEFT_TEXT.ordinal() ],
-			ConvertBeans.parseHtmlUtilsString( getI18nConstants().campus() ) );
+			HtmlUtils.htmlUnescape( getI18nConstants().campus() ) );
 		setCell( row, col++, sheet, cellStyles[ ExcelCellStyleReference.HEADER_CENTER_VALUE.ordinal() ],
 			sala.getUnidade().getCampus().getCodigo() );
 
 		// Sala
 		setCell( row, col++, sheet, cellStyles[ ExcelCellStyleReference.HEADER_LEFT_TEXT.ordinal() ],
-			ConvertBeans.parseHtmlUtilsString( getI18nConstants().sala() ) );
+			HtmlUtils.htmlUnescape( getI18nConstants().sala() ) );
 		setCell( row, col++, sheet, cellStyles[ ExcelCellStyleReference.HEADER_CENTER_VALUE.ordinal() ],
 			sala.getCodigo() );
 
 		// Capacidade
 		setCell( row, col++, sheet, cellStyles[ ExcelCellStyleReference.HEADER_LEFT_TEXT.ordinal() ],
-			ConvertBeans.parseHtmlUtilsString( getI18nConstants().capacidade() ) );
+			HtmlUtils.htmlUnescape( getI18nConstants().capacidade() ) );
 		setCell( row, col++, sheet, cellStyles[ ExcelCellStyleReference.HEADER_CENTER_VALUE.ordinal() ],
 			sala.getCapacidade() );
 
@@ -359,19 +401,19 @@ public class RelatorioVisaoSalaExportExcel
 
 		// Unidade
 		setCell( row, col++, sheet, cellStyles[ ExcelCellStyleReference.HEADER_LEFT_TEXT.ordinal() ],
-			ConvertBeans.parseHtmlUtilsString( getI18nConstants().unidade() ) );
+			HtmlUtils.htmlUnescape( getI18nConstants().unidade() ) );
 		setCell( row, col++, sheet, cellStyles[ ExcelCellStyleReference.HEADER_CENTER_VALUE.ordinal() ],
 			sala.getUnidade().getCodigo() );
 
 		// Turno
 		setCell( row, col++, sheet, cellStyles[ ExcelCellStyleReference.HEADER_LEFT_TEXT.ordinal() ],
-			ConvertBeans.parseHtmlUtilsString( getI18nConstants().turno() ) );
+			HtmlUtils.htmlUnescape( getI18nConstants().turno() ) );
 		setCell( row, col++, sheet, cellStyles[ ExcelCellStyleReference.HEADER_CENTER_VALUE.ordinal() ],
 			turno.getNome() );
 
 		// Tipo
 		setCell( row, col++, sheet, cellStyles[ ExcelCellStyleReference.HEADER_LEFT_TEXT.ordinal() ],
-			ConvertBeans.parseHtmlUtilsString( getI18nConstants().tipo() ) );
+			HtmlUtils.htmlUnescape( getI18nConstants().tipo() ) );
 		setCell( row, col++, sheet, cellStyles[ ExcelCellStyleReference.HEADER_CENTER_VALUE.ordinal() ],
 			sala.getTipoSala().getNome() );
 
@@ -380,12 +422,14 @@ public class RelatorioVisaoSalaExportExcel
 
 		// Créditos
 		setCell( row, col++, sheet, cellStyles[ ExcelCellStyleReference.HEADER_CENTER_TEXT.ordinal() ],
-			ConvertBeans.parseHtmlUtilsString( getI18nConstants().creditos() ) );
+			HtmlUtils.htmlUnescape( getI18nConstants().creditos() ) );
 
 		// Dias Semana
 		for ( Semanas semanas : Semanas.values() )
 		{
-			setCell( row, col++, sheet, cellStyles[ ExcelCellStyleReference.HEADER_CENTER_TEXT.ordinal() ], semanas.name() );
+			setCell( row, col++, sheet,
+				cellStyles[ ExcelCellStyleReference.HEADER_CENTER_TEXT.ordinal() ],
+				semanas.name() );
 		}
 
 		row++;

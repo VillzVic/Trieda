@@ -2,7 +2,6 @@ package com.gapso.web.trieda.shared.dtos;
 
 import java.util.List;
 
-import com.gapso.web.trieda.server.util.ConvertBeans;
 import com.gapso.web.trieda.shared.util.TriedaUtil;
 
 public class AtendimentoOperacionalDTO extends AbstractDTO< String >
@@ -503,63 +502,6 @@ public class AtendimentoOperacionalDTO extends AbstractDTO< String >
 	public String getExcelContentVisaoProfessor()
 	{
 		return getDisciplinaString() + " / " + getTurma();
-	}
-
-	public String getExcelCommentVisaoSala()
-	{
-		String horario = ConvertBeans.parseHtmlUtilsString( "Hor&aacute;rio: " );
-		String creditos = ConvertBeans.parseHtmlUtilsString( "Cr&eacute;dito(s) " );
-		String teorico = ConvertBeans.parseHtmlUtilsString( "Te&oacute;rico(s)" );
-		String pratico = ConvertBeans.parseHtmlUtilsString( "Pr&aacute;tico(s)" );
-		String periodo = ConvertBeans.parseHtmlUtilsString( "Per&iacute;odo: " );
-
-		return getDisciplinaNome() + "\n"
-			+ "Turma: " + getTurma() + "\n"
-			+ horario + getHorarioString() + "\n"
-			+ creditos + ( ( getCreditoTeoricoBoolean() ) ? teorico : pratico )
-			+ ": " + getTotalCreditos() + " de " + getTotalCreditos() + "\n"
-			+ "Curso: " + getCursoNome() + "\n"
-			+ "Matriz Curricular: " + getCurriculoString() + "\n"
-			+ periodo + getPeriodoString() + "\n"
-			+ "Quantidade: " + getQuantidadeAlunosString();
-	}
-
-	public String getExcelCommentVisaoCurso()
-	{
-		String horario = ConvertBeans.parseHtmlUtilsString( "Hor&aacute;rio: " );
-		String creditos = ConvertBeans.parseHtmlUtilsString( "Cr&eacute;dito(s) " );
-		String teorico = ConvertBeans.parseHtmlUtilsString( "Te&oacute;rico(s)" );
-		String pratico = ConvertBeans.parseHtmlUtilsString( "Pr&aacute;tico(s)" );
-		String periodo = ConvertBeans.parseHtmlUtilsString( "Per&iacute;odo: " );
-
-		return getDisciplinaNome() + "\n"
-			+ "Turma: " + getTurma() + "\n"
-			+ horario + getHorarioString() + "\n"
-			+ creditos + ( ( getCreditoTeoricoBoolean() ) ? teorico : pratico )
-			+ ": " + getTotalCreditos() + " de " + getTotalCreditos() + "\n"
-			+ "Curso: " + getCursoNome() + "\n"
-			+ "Matriz Curricular: " + getCurriculoString() + "\n"
-			+ periodo + getPeriodoString() + "\n"
-			+ "Quantidade: " + getQuantidadeAlunosString();
-	}
-
-	public String getExcelCommentVisaoProfessor()
-	{
-		String horario = ConvertBeans.parseHtmlUtilsString( "Hor&aacute;rio: " );
-		String creditos = ConvertBeans.parseHtmlUtilsString( "Cr&eacute;dito(s) " );
-		String teorico = ConvertBeans.parseHtmlUtilsString( "Te&oacute;rico(s)" );
-		String pratico = ConvertBeans.parseHtmlUtilsString( "Pr&aacute;tico(s)" );
-		String periodo = ConvertBeans.parseHtmlUtilsString( "Per&iacute;odo: " );
-
-		return getDisciplinaNome() + "\n"
-			+ "Turma: " + getTurma() + "\n"
-			+ horario + getHorarioString() + "\n"
-			+ creditos + ( ( getCreditoTeoricoBoolean() ) ? teorico : pratico )
-			+ ": " + getTotalLinhas() + " de " + getTotalCreditos() + "\n"
-			+ "Curso: " + getCursoNome() + "\n"
-			+ "Matriz Curricular: " + getCurriculoString() + "\n"
-			+ periodo + getPeriodoString() + "\n" 
-			+ "Quantidade: " + getQuantidadeAlunosString();
 	}
 
 	@Override
