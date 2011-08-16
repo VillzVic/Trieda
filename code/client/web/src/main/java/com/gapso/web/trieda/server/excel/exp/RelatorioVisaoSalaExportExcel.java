@@ -337,39 +337,50 @@ public class RelatorioVisaoSalaExportExcel
 		int col = 3;
 
 		// Campus
-		setCell( row, col++, sheet, cellStyles[ ExcelCellStyleReference.HEADER_LEFT_TEXT.ordinal() ], "Campus" );
+		setCell( row, col++, sheet, cellStyles[ ExcelCellStyleReference.HEADER_LEFT_TEXT.ordinal() ],
+			ConvertBeans.parseHtmlUtilsString( getI18nConstants().campus() ) );
 		setCell( row, col++, sheet, cellStyles[ ExcelCellStyleReference.HEADER_CENTER_VALUE.ordinal() ],
 			sala.getUnidade().getCampus().getCodigo() );
 
 		// Sala
-		setCell( row, col++, sheet, cellStyles[ ExcelCellStyleReference.HEADER_LEFT_TEXT.ordinal() ], "Sala" );
-		setCell( row, col++, sheet, cellStyles[ ExcelCellStyleReference.HEADER_CENTER_VALUE.ordinal() ], sala.getCodigo() );
+		setCell( row, col++, sheet, cellStyles[ ExcelCellStyleReference.HEADER_LEFT_TEXT.ordinal() ],
+			ConvertBeans.parseHtmlUtilsString( getI18nConstants().sala() ) );
+		setCell( row, col++, sheet, cellStyles[ ExcelCellStyleReference.HEADER_CENTER_VALUE.ordinal() ],
+			sala.getCodigo() );
 
 		// Capacidade
-		setCell( row, col++, sheet, cellStyles[ ExcelCellStyleReference.HEADER_LEFT_TEXT.ordinal() ], "Capacidade" );
-		setCell( row, col++, sheet, cellStyles[ ExcelCellStyleReference.HEADER_CENTER_VALUE.ordinal() ], sala.getCapacidade() );
+		setCell( row, col++, sheet, cellStyles[ ExcelCellStyleReference.HEADER_LEFT_TEXT.ordinal() ],
+			ConvertBeans.parseHtmlUtilsString( getI18nConstants().capacidade() ) );
+		setCell( row, col++, sheet, cellStyles[ ExcelCellStyleReference.HEADER_CENTER_VALUE.ordinal() ],
+			sala.getCapacidade() );
 
 		row++;
 		col = 3;
 
 		// Unidade
-		setCell( row, col++, sheet, cellStyles[ ExcelCellStyleReference.HEADER_LEFT_TEXT.ordinal() ], "Unidade" );
+		setCell( row, col++, sheet, cellStyles[ ExcelCellStyleReference.HEADER_LEFT_TEXT.ordinal() ],
+			ConvertBeans.parseHtmlUtilsString( getI18nConstants().unidade() ) );
 		setCell( row, col++, sheet, cellStyles[ ExcelCellStyleReference.HEADER_CENTER_VALUE.ordinal() ],
 			sala.getUnidade().getCodigo() );
 
 		// Turno
-		setCell( row, col++, sheet, cellStyles[ ExcelCellStyleReference.HEADER_LEFT_TEXT.ordinal() ], "Turno" );
-		setCell( row, col++, sheet, cellStyles[ ExcelCellStyleReference.HEADER_CENTER_VALUE.ordinal() ], turno.getNome() );
+		setCell( row, col++, sheet, cellStyles[ ExcelCellStyleReference.HEADER_LEFT_TEXT.ordinal() ],
+			ConvertBeans.parseHtmlUtilsString( getI18nConstants().turno() ) );
+		setCell( row, col++, sheet, cellStyles[ ExcelCellStyleReference.HEADER_CENTER_VALUE.ordinal() ],
+			turno.getNome() );
 
 		// Tipo
-		setCell( row, col++, sheet, cellStyles[ ExcelCellStyleReference.HEADER_LEFT_TEXT.ordinal() ], "Tipo" );
-		setCell( row, col++, sheet, cellStyles[ ExcelCellStyleReference.HEADER_CENTER_VALUE.ordinal() ], sala.getTipoSala().getNome() );
+		setCell( row, col++, sheet, cellStyles[ ExcelCellStyleReference.HEADER_LEFT_TEXT.ordinal() ],
+			ConvertBeans.parseHtmlUtilsString( getI18nConstants().tipo() ) );
+		setCell( row, col++, sheet, cellStyles[ ExcelCellStyleReference.HEADER_CENTER_VALUE.ordinal() ],
+			sala.getTipoSala().getNome() );
 
 		row++;
 		col = 2;
 
 		// Créditos
-		setCell( row, col++, sheet, cellStyles[ ExcelCellStyleReference.HEADER_CENTER_TEXT.ordinal() ], "Creditos" );
+		setCell( row, col++, sheet, cellStyles[ ExcelCellStyleReference.HEADER_CENTER_TEXT.ordinal() ],
+			ConvertBeans.parseHtmlUtilsString( getI18nConstants().creditos() ) );
 
 		// Dias Semana
 		for ( Semanas semanas : Semanas.values() )

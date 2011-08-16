@@ -430,7 +430,8 @@ public class RelatorioVisaoCursoExportExcel
 
 		// Curso
 		setCell( row, col++, sheet,
-			cellStyles[ ExcelCellStyleReference.HEADER_LEFT_TEXT.ordinal() ], getI18nConstants().curso() );
+			cellStyles[ ExcelCellStyleReference.HEADER_LEFT_TEXT.ordinal() ],
+			ConvertBeans.parseHtmlUtilsString( getI18nConstants().curso() ) );
 
 		setCell( row, col++, sheet,
 			cellStyles[ ExcelCellStyleReference.HEADER_CENTER_VALUE.ordinal() ],
@@ -438,7 +439,8 @@ public class RelatorioVisaoCursoExportExcel
 
 		// Campus
 		setCell(row, col++, sheet,
-			cellStyles[ ExcelCellStyleReference.HEADER_LEFT_TEXT.ordinal() ], getI18nConstants().campus() );
+			cellStyles[ ExcelCellStyleReference.HEADER_LEFT_TEXT.ordinal() ],
+			ConvertBeans.parseHtmlUtilsString( getI18nConstants().campus() ) );
 
 		setCell( row, col++, sheet,
 			cellStyles[ ExcelCellStyleReference.HEADER_CENTER_VALUE.ordinal() ],
@@ -446,7 +448,8 @@ public class RelatorioVisaoCursoExportExcel
 
 		// Turno
 		setCell( row, col++, sheet,
-			cellStyles[ ExcelCellStyleReference.HEADER_LEFT_TEXT.ordinal() ], getI18nConstants().turno() );
+			cellStyles[ ExcelCellStyleReference.HEADER_LEFT_TEXT.ordinal() ],
+			ConvertBeans.parseHtmlUtilsString( getI18nConstants().turno() ) );
 
 		setCell( row, col++, sheet,
 			cellStyles[ ExcelCellStyleReference.HEADER_CENTER_VALUE.ordinal() ],
@@ -457,7 +460,8 @@ public class RelatorioVisaoCursoExportExcel
 
 		// Curriculo
 		setCell( row, col++, sheet,
-			cellStyles[ ExcelCellStyleReference.HEADER_LEFT_TEXT.ordinal() ], getI18nConstants().matrizCurricular() );
+			cellStyles[ ExcelCellStyleReference.HEADER_LEFT_TEXT.ordinal() ],
+			ConvertBeans.parseHtmlUtilsString( getI18nConstants().matrizCurricular() ) );
 
 		setCell( row, col++, sheet,
 			cellStyles[ ExcelCellStyleReference.HEADER_CENTER_VALUE.ordinal() ],
@@ -465,7 +469,8 @@ public class RelatorioVisaoCursoExportExcel
 
 		// Periodo
 		setCell( row, col++, sheet,
-			cellStyles[ ExcelCellStyleReference.HEADER_LEFT_TEXT.ordinal() ], getI18nConstants().periodo() );
+			cellStyles[ ExcelCellStyleReference.HEADER_LEFT_TEXT.ordinal() ],
+			ConvertBeans.parseHtmlUtilsString( getI18nConstants().periodo() ) );
 
 		setCell( row, col++, sheet,
 			cellStyles[ ExcelCellStyleReference.HEADER_CENTER_VALUE.ordinal() ], periodo );
@@ -475,7 +480,8 @@ public class RelatorioVisaoCursoExportExcel
 
 		// Créditos
 		setCell( row, col++, sheet,
-			cellStyles[ ExcelCellStyleReference.HEADER_CENTER_TEXT.ordinal() ], getI18nConstants().creditos() );
+			cellStyles[ ExcelCellStyleReference.HEADER_CENTER_TEXT.ordinal() ],
+			ConvertBeans.parseHtmlUtilsString( getI18nConstants().creditos() ) );
 
 		// Dias Semana
 		for ( Semanas semanas : Semanas.values() )

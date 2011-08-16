@@ -2,6 +2,7 @@ package com.gapso.web.trieda.shared.dtos;
 
 import java.util.List;
 
+import com.gapso.web.trieda.server.util.ConvertBeans;
 import com.gapso.web.trieda.shared.util.TriedaUtil;
 
 public class AtendimentoTaticoDTO extends AbstractDTO< String >
@@ -390,25 +391,35 @@ public class AtendimentoTaticoDTO extends AbstractDTO< String >
 
 	public String getExcelCommentVisaoSala()
 	{
+		String creditos = ConvertBeans.parseHtmlUtilsString( "Cr&eacute;dito(s) " );
+		String teorico = ConvertBeans.parseHtmlUtilsString( "Te&oacute;rico(s)" );
+		String pratico = ConvertBeans.parseHtmlUtilsString( "Pr&aacute;tico(s)" );
+		String periodo = ConvertBeans.parseHtmlUtilsString( "Per&iacute;odo: " );
+
 		return getDisciplinaNome() + "\n"
 			+ "Turma: " + getTurma() + "\n"
-			+ "Crédito(s) " + ( ( isTeorico() ) ? "Teórico(s)" : "Prático(s)")
-			+ ": " + getTotalCreditos() + " de "+getTotalCreditoDisciplina() + "\n"
+			+ creditos + ( ( isTeorico() ) ? teorico : pratico )
+			+ ": " + getTotalCreditos() + " de " + getTotalCreditoDisciplina() + "\n"
 			+ "Curso: " + getCursoNome() + "\n"
 			+ "Matriz Curricular: " + getCurriculoString() + "\n"
-			+ "Período: " + getPeriodoString() + "\n" 
+			+ periodo + getPeriodoString() + "\n" 
 			+ "Quantidade: " + getQuantidadeAlunosString();
 	}
 
 	public String getExcelCommentVisaoCurso()
 	{
+		String creditos = ConvertBeans.parseHtmlUtilsString( "Cr&eacute;dito(s) " );
+		String teorico = ConvertBeans.parseHtmlUtilsString( "Te&oacute;rico(s)" );
+		String pratico = ConvertBeans.parseHtmlUtilsString( "Pr&aacute;tico(s)" );
+		String periodo = ConvertBeans.parseHtmlUtilsString( "Per&iacute;odo: " );
+
 		return getDisciplinaNome() + "\n"
 			+ "Turma: " + getTurma() + "\n"
-			+ "Crédito(s) " + ( ( isTeorico() ) ? "Teórico(s)" : "Prático(s)")
-			+ ": " + getTotalCreditos() + " de "+getTotalCreditoDisciplina() + "\n"
+			+ creditos + ( ( isTeorico() ) ? teorico : pratico )
+			+ ": " + getTotalCreditos() + " de " + getTotalCreditoDisciplina() + "\n"
 			+ "Curso: " + getCursoNome() + "\n"
 			+ "Matriz Curricular: " + getCurriculoString() + "\n"
-			+ "Período: " + getPeriodoString() + "\n" 
+			+ periodo + getPeriodoString() + "\n" 
 			+ "Quantidade: " + getQuantidadeAlunosString();
 	}
 
