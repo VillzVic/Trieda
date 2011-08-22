@@ -188,16 +188,19 @@ public class SolverInput
 			itemCalendario.setCodigo( calendario.getCodigo() );
 
 			GrupoTurno grupoTurno = of.createGrupoTurno();
+
 			ItemTurno itemTurno = of.createItemTurno();
 			itemTurno.setId( turno.getId().intValue() );
 			itemTurno.setNome( turno.getNome() );
 			itemTurno.setTempoAula( turno.getTempo() );
-			GrupoHorarioAula grupoHorarioAula = of.createGrupoHorarioAula();
 
+			GrupoHorarioAula grupoHorarioAula = of.createGrupoHorarioAula();
 			Set< HorarioAula > horariosAula = turno.getHorariosAula();
+
 			for ( HorarioAula horarioAula : horariosAula )
 			{
 				ItemHorarioAula itemHorarioAula = of.createItemHorarioAula();
+
 				itemHorarioAula.setId( horarioAula.getId().intValue() );
 				itemHorarioAula.setInicio( new XMLGregorianCalendarUtil(
 					horarioAula.getHorario() ) );
