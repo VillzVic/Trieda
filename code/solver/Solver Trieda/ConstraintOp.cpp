@@ -239,10 +239,8 @@ std::string ConstraintOp::toString()
       ss << "C_MIN_MEST_CURSO"; break;
    case C_MIN_DOUT_CURSO:
       ss << "C_MIN_DOUT_CURSO"; break;
-   case C_ALOC_PROF_CURSO_LESS:
-      ss << "C_ALOC_PROF_CURSO_LESS"; break;
-   case C_ALOC_PROF_CURSO_GREATER:
-      ss << "C_ALOC_PROF_CURSO_GREATER"; break;
+   case C_ALOC_PROF_CURSO:
+      ss << "C_ALOC_PROF_CURSO"; break;
    case C_CARGA_HOR_MIN_PROF:
       ss << "C_CARGA_HOR_MIN_PROF"; break;
    case C_CARGA_HOR_MIN_PROF_SEMANA:
@@ -257,8 +255,6 @@ std::string ConstraintOp::toString()
       ss << "C_MAX_DISC_PROF_CURSO"; break;
    case C_AVALIACAO_CORPO_DOCENTE:
       ss << "C_AVALIACAO_CORPO_DOCENTE"; break;
-   case C_PREF_DISCIPLINAS:
-      ss << "C_PREF_DISCIPLINAS"; break;
    case C_DESLOC_PROF:
       ss << "C_DESLOC_PROF"; break;
    case C_DESLOC_VIAVEL:

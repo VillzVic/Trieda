@@ -33,20 +33,18 @@ public:
       C_DISC_HORARIO_UNICO = 13,
       C_MIN_MEST_CURSO = 14,
       C_MIN_DOUT_CURSO = 15,
-      C_ALOC_PROF_CURSO_LESS = 16,
-      C_ALOC_PROF_CURSO_GREATER = 17,
-      C_CARGA_HOR_MIN_PROF = 18,
-      C_CARGA_HOR_MIN_PROF_SEMANA = 19,
-      C_CARGA_HOR_MAX_PROF_SEMANA = 20,
-      C_DIAS_PROF_MINISTRA_AULA = 21,
-      C_CUSTO_CORPO_DOCENTE = 22,
-      C_MAX_DISC_PROF_CURSO = 23,
-      C_AVALIACAO_CORPO_DOCENTE = 24,
-      C_PREF_DISCIPLINAS = 25,
-      C_DESLOC_PROF = 26,
-      C_DESLOC_VIAVEL = 27,
-      C_ULTIMA_PRIMEIRA_AULA_PROF = 28,
-      C_GAPS_PROFESSORES = 29
+      C_ALOC_PROF_CURSO = 16,
+      C_CARGA_HOR_MIN_PROF = 17,
+      C_CARGA_HOR_MIN_PROF_SEMANA = 18,
+      C_CARGA_HOR_MAX_PROF_SEMANA = 19,
+      C_DIAS_PROF_MINISTRA_AULA = 20,
+      C_CUSTO_CORPO_DOCENTE = 21,
+      C_MAX_DISC_PROF_CURSO = 22,
+      C_AVALIACAO_CORPO_DOCENTE = 23,
+      C_DESLOC_PROF = 25,
+      C_DESLOC_VIAVEL = 26,
+      C_ULTIMA_PRIMEIRA_AULA_PROF = 27,
+      C_GAPS_PROFESSORES = 28
    };
 
    /** Default constructor. */
@@ -59,7 +57,7 @@ public:
    virtual ~ConstraintOp();
 
    /** Assign operator. */
-   ConstraintOp& operator = ( const ConstraintOp & cons );
+   ConstraintOp & operator = ( const ConstraintOp & );
 
    /** Less operator. */
    bool operator < ( const ConstraintOp & ) const;
