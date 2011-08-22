@@ -256,8 +256,6 @@ std::string VariableOp::toString()
         str << "V_F_MAX_DISC_PROF_CURSO"; break;
       case V_AVALIACAO_CORPO_DOCENTE:
         str << "V_AVALIACAO_CORPO_DOCENTE"; break;
-      case V_PREF_DISCIPLINAS:
-        str << "V_PREF_DISCIPLINAS"; break;
       case V_F_ULTIMA_PRIMEIRA_AULA_PROF:
         str << "V_F_ULTIMA_PRIMEIRA_AULA_PROF"; break;
       case V_GAPS_PROFESSORES:

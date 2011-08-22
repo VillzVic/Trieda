@@ -10,8 +10,8 @@ class Curso :
    public OFBase
 {
 public:
-   Curso(void);
-   virtual ~Curso(void);
+   Curso( void );
+   virtual ~Curso( void );
 
    virtual void le_arvore( ItemCurso & );
 
@@ -23,13 +23,13 @@ public:
    std::pair< int, double > regra_min_mestres;
    std::pair< int, double > regra_min_doutores;
 
-   void setCodigo(std::string s) { codigo = s; }
-   void setTipoId(int v) { tipo_id = v; }
-   void setNumPeriodos(int v) { num_periodos = v; }
-   void setQtdMaxProfDisc(int v) { qtd_max_prof_disc = v; }
-   void setMaisDeUma(bool v) { mais_de_uma = v; }
-   void setMinTempoIntegral(double value) { minTempoIntegral = value; }
-   void setMinTempoIntegralParcial(double value) { minTempoIntegralParcial = value; }
+   void setCodigo( std::string s ) { codigo = s; }
+   void setTipoId( int v ) { tipo_id = v; }
+   void setNumPeriodos( int v ) { num_periodos = v; }
+   void setQtdMaxProfDisc( int v ) { qtd_max_prof_disc = v; }
+   void setMaisDeUma( bool v ) { mais_de_uma = v; }
+   void setMinTempoIntegral( double value ) { minTempoIntegral = value; }
+   void setMinTempoIntegralParcial( double value ) { minTempoIntegralParcial = value; }
 
    std::string getCodigo() const { return codigo; }
    int getTipoId() const { return tipo_id; }

@@ -301,14 +301,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="IS_Atendimento_Tatico.cpp" />
-    <ClCompile Include="IS_Bloco_Curricular.cpp" />
-    <ClCompile Include="IS_Campus.cpp" />
-    <ClCompile Include="IS_CjtSala.cpp" />
-    <ClCompile Include="IS_Curso.cpp" />
-    <ClCompile Include="IS_Dia_Semana.cpp" />
-    <ClCompile Include="IS_Sala.cpp" />
-    <ClCompile Include="IS_Unidade.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="AreaTitulacao.cpp" />
     <ClCompile Include="AtendimentoCampusSolucao.cpp" />
@@ -335,7 +327,7 @@
     <ClCompile Include="Magisterio.cpp" />
     <ClCompile Include="NivelDificuldade.cpp" />
     <ClCompile Include="NivelDificuldadeHorario.cpp" />
-    <ClCompile Include="ofbase.cpp" />
+    <ClCompile Include="OFBase.cpp" />
     <ClCompile Include="Oferta.cpp" />
     <ClCompile Include="ParametrosPlanejamento.cpp" />
     <ClCompile Include="ProblemData.cpp" />
@@ -424,18 +416,11 @@
     <ClInclude Include="Horario.h" />
     <ClInclude Include="HorarioAula.h" />
     <ClInclude Include="HorarioDia.h" />
-    <ClInclude Include="IS_Atendimento_Tatico.h" />
-    <ClInclude Include="IS_Bloco_Curricular.h" />
-    <ClInclude Include="IS_Campus.h" />
-    <ClInclude Include="IS_CjtSala.h" />
-    <ClInclude Include="IS_Curso.h" />
-    <ClInclude Include="IS_Dia_Semana.h" />
-    <ClInclude Include="IS_Sala.h" />
-    <ClInclude Include="IS_Unidade.h" />
+    <ClInclude Include="input.h" />
     <ClInclude Include="Magisterio.h" />
     <ClInclude Include="NivelDificuldade.h" />
     <ClInclude Include="NivelDificuldadeHorario.h" />
-    <ClInclude Include="ofbase.h" />
+    <ClInclude Include="OFBase.h" />
     <ClInclude Include="Oferta.h" />
     <ClInclude Include="ParametrosPlanejamento.h" />
     <ClInclude Include="ProblemData.h" />
@@ -465,6 +450,7 @@
     <ClInclude Include="SolutionLoader.h" />
     <ClInclude Include="Tatico.h" />
     <ClInclude Include="TRIEDA-OutputXSD.h" />
+    <ClInclude Include="..\..\..\..\..\..\..\Bibliotecas\codelib\combinatoria.h" />
     <ClInclude Include="$(CODELIB)\CPUTimerWin.h" />
     <ClInclude Include="$(CODELIB)\DateTime.h" />
     <ClInclude Include="$(CODELIB)\codelib\ErrorHandler.h" />

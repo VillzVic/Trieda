@@ -39,14 +39,14 @@ public:
    ProblemData();
    virtual ~ProblemData();
 
-   Calendario * calendario;
+   GGroup< Calendario *, LessPtr< Calendario > > calendarios;
    GGroup< TipoSala * > tipos_sala;
    GGroup< TipoContrato * > tipos_contrato;
    GGroup< TipoTitulacao * > tipos_titulacao;
    GGroup< AreaTitulacao * > areas_titulacao;
    GGroup< TipoDisciplina * > tipos_disciplina;
    GGroup< NivelDificuldade * > niveis_dificuldade;
-   GGroup< TipoCurso * > tipos_curso;
+   GGroup< TipoCurso *, LessPtr< TipoCurso > > tipos_curso;
    GGroup< DivisaoCreditos * > regras_div;
    GGroup< Campus *, LessPtr< Campus > > campi;
    GGroup< Deslocamento * > tempo_campi;

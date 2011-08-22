@@ -39,12 +39,17 @@ int ProblemData::getHorarioDiaIdx( int dia, int horarioId )
 
 void ProblemData::le_arvore( TriedaInput & raiz )
 {
-   calendario = new Calendario();
-   calendario->le_arvore( raiz.calendario() );
+   this->calendarios.clear();
+   LE_SEQ( this->calendarios, raiz.calendarios(), Calendario );
 
-   ITERA_GGROUP_LESSPTR( it_turno, calendario->turnos, Turno )
+   ITERA_GGROUP_LESSPTR( it_calendario, this->calendarios, Calendario )
    {
-	   todos_turnos.add( *it_turno );
+      Calendario * calendario = ( *it_calendario );
+
+      ITERA_GGROUP_LESSPTR( it_turno, calendario->turnos, Turno )
+      {
+	      this->todos_turnos.add( *it_turno );
+      }
    }
 
    ITERA_SEQ( it_campi, raiz.campi(), Campus )

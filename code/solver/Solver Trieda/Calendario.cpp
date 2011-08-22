@@ -1,18 +1,21 @@
 #include "Calendario.h"
+
 #include <iostream>
 
-Calendario::Calendario(void)
+Calendario::Calendario( void )
 {
+
 }
 
-Calendario::~Calendario(void)
+Calendario::~Calendario( void )
 {
+
 }
 
 void Calendario::le_arvore( ItemCalendario & elem ) 
 {
    this->setId( elem.id() );
-   codigo = elem.codigo();
+   this->setCodigo( elem.codigo() );
 
    ITERA_SEQ( it_turno, elem.turnos(), Turno )
    {

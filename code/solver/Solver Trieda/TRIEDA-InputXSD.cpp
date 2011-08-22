@@ -2405,6 +2405,24 @@ disciplinasPeriodo (::std::auto_ptr< disciplinasPeriodo_type > x)
   this->disciplinasPeriodo_.set (x);
 }
 
+const ItemCurriculo::semanaLetivaId_type& ItemCurriculo::
+semanaLetivaId () const
+{
+  return this->semanaLetivaId_.get ();
+}
+
+ItemCurriculo::semanaLetivaId_type& ItemCurriculo::
+semanaLetivaId ()
+{
+  return this->semanaLetivaId_.get ();
+}
+
+void ItemCurriculo::
+semanaLetivaId (const semanaLetivaId_type& x)
+{
+  this->semanaLetivaId_.set (x);
+}
+
 
 // ItemDisciplinaPeriodo
 // 
@@ -3519,6 +3537,28 @@ void ItemNivelDificuldadeHorario::
 horariosAula (::std::auto_ptr< horariosAula_type > x)
 {
   this->horariosAula_.set (x);
+}
+
+
+// GrupoCalendario
+// 
+
+const GrupoCalendario::Calendario_sequence& GrupoCalendario::
+Calendario () const
+{
+  return this->Calendario_;
+}
+
+GrupoCalendario::Calendario_sequence& GrupoCalendario::
+Calendario ()
+{
+  return this->Calendario_;
+}
+
+void GrupoCalendario::
+Calendario (const Calendario_sequence& s)
+{
+  this->Calendario_ = s;
 }
 
 
@@ -4675,28 +4715,28 @@ AtendimentoTatico (const AtendimentoTatico_sequence& s)
 // TriedaInput
 // 
 
-const TriedaInput::calendario_type& TriedaInput::
-calendario () const
+const TriedaInput::calendarios_type& TriedaInput::
+calendarios () const
 {
-  return this->calendario_.get ();
+  return this->calendarios_.get ();
 }
 
-TriedaInput::calendario_type& TriedaInput::
-calendario ()
+TriedaInput::calendarios_type& TriedaInput::
+calendarios ()
 {
-  return this->calendario_.get ();
-}
-
-void TriedaInput::
-calendario (const calendario_type& x)
-{
-  this->calendario_.set (x);
+  return this->calendarios_.get ();
 }
 
 void TriedaInput::
-calendario (::std::auto_ptr< calendario_type > x)
+calendarios (const calendarios_type& x)
 {
-  this->calendario_.set (x);
+  this->calendarios_.set (x);
+}
+
+void TriedaInput::
+calendarios (::std::auto_ptr< calendarios_type > x)
+{
+  this->calendarios_.set (x);
 }
 
 const TriedaInput::tiposSala_type& TriedaInput::
@@ -9146,22 +9186,26 @@ ItemPercentualMinimo::
 ItemCurriculo::
 ItemCurriculo (const id_type& id,
                const codigo_type& codigo,
-               const disciplinasPeriodo_type& disciplinasPeriodo)
+               const disciplinasPeriodo_type& disciplinasPeriodo,
+               const semanaLetivaId_type& semanaLetivaId)
 : ::xml_schema::type (),
   id_ (id, ::xml_schema::flags (), this),
   codigo_ (codigo, ::xml_schema::flags (), this),
-  disciplinasPeriodo_ (disciplinasPeriodo, ::xml_schema::flags (), this)
+  disciplinasPeriodo_ (disciplinasPeriodo, ::xml_schema::flags (), this),
+  semanaLetivaId_ (semanaLetivaId, ::xml_schema::flags (), this)
 {
 }
 
 ItemCurriculo::
 ItemCurriculo (const id_type& id,
                const codigo_type& codigo,
-               ::std::auto_ptr< disciplinasPeriodo_type >& disciplinasPeriodo)
+               ::std::auto_ptr< disciplinasPeriodo_type >& disciplinasPeriodo,
+               const semanaLetivaId_type& semanaLetivaId)
 : ::xml_schema::type (),
   id_ (id, ::xml_schema::flags (), this),
   codigo_ (codigo, ::xml_schema::flags (), this),
-  disciplinasPeriodo_ (disciplinasPeriodo, ::xml_schema::flags (), this)
+  disciplinasPeriodo_ (disciplinasPeriodo, ::xml_schema::flags (), this),
+  semanaLetivaId_ (semanaLetivaId, ::xml_schema::flags (), this)
 {
 }
 
@@ -9172,7 +9216,8 @@ ItemCurriculo (const ItemCurriculo& x,
 : ::xml_schema::type (x, f, c),
   id_ (x.id_, f, this),
   codigo_ (x.codigo_, f, this),
-  disciplinasPeriodo_ (x.disciplinasPeriodo_, f, this)
+  disciplinasPeriodo_ (x.disciplinasPeriodo_, f, this),
+  semanaLetivaId_ (x.semanaLetivaId_, f, this)
 {
 }
 
@@ -9183,7 +9228,8 @@ ItemCurriculo (const ::xercesc::DOMElement& e,
 : ::xml_schema::type (e, f | ::xml_schema::flags::base, c),
   id_ (f, this),
   codigo_ (f, this),
-  disciplinasPeriodo_ (f, this)
+  disciplinasPeriodo_ (f, this),
+  semanaLetivaId_ (f, this)
 {
   if ((f & ::xml_schema::flags::base) == 0)
   {
@@ -9241,6 +9287,17 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
       }
     }
 
+    // semanaLetivaId
+    //
+    if (n.name () == "semanaLetivaId" && n.namespace_ ().empty ())
+    {
+      if (!semanaLetivaId_.present ())
+      {
+        this->semanaLetivaId_.set (semanaLetivaId_traits::create (i, f, this));
+        continue;
+      }
+    }
+
     break;
   }
 
@@ -9262,6 +9319,13 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
   {
     throw ::xsd::cxx::tree::expected_element< char > (
       "disciplinasPeriodo",
+      "");
+  }
+
+  if (!semanaLetivaId_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "semanaLetivaId",
       "");
   }
 }
@@ -10797,6 +10861,76 @@ _clone (::xml_schema::flags f,
 
 ItemNivelDificuldadeHorario::
 ~ItemNivelDificuldadeHorario ()
+{
+}
+
+// GrupoCalendario
+//
+
+GrupoCalendario::
+GrupoCalendario ()
+: ::xml_schema::type (),
+  Calendario_ (::xml_schema::flags (), this)
+{
+}
+
+GrupoCalendario::
+GrupoCalendario (const GrupoCalendario& x,
+                 ::xml_schema::flags f,
+                 ::xml_schema::container* c)
+: ::xml_schema::type (x, f, c),
+  Calendario_ (x.Calendario_, f, this)
+{
+}
+
+GrupoCalendario::
+GrupoCalendario (const ::xercesc::DOMElement& e,
+                 ::xml_schema::flags f,
+                 ::xml_schema::container* c)
+: ::xml_schema::type (e, f | ::xml_schema::flags::base, c),
+  Calendario_ (f, this)
+{
+  if ((f & ::xml_schema::flags::base) == 0)
+  {
+    ::xsd::cxx::xml::dom::parser< char > p (e, true, false);
+    this->parse (p, f);
+  }
+}
+
+void GrupoCalendario::
+parse (::xsd::cxx::xml::dom::parser< char >& p,
+       ::xml_schema::flags f)
+{
+  for (; p.more_elements (); p.next_element ())
+  {
+    const ::xercesc::DOMElement& i (p.cur_element ());
+    const ::xsd::cxx::xml::qualified_name< char > n (
+      ::xsd::cxx::xml::dom::name< char > (i));
+
+    // Calendario
+    //
+    if (n.name () == "Calendario" && n.namespace_ ().empty ())
+    {
+      ::std::auto_ptr< Calendario_type > r (
+        Calendario_traits::create (i, f, this));
+
+      this->Calendario_.push_back (r);
+      continue;
+    }
+
+    break;
+  }
+}
+
+GrupoCalendario* GrupoCalendario::
+_clone (::xml_schema::flags f,
+        ::xml_schema::container* c) const
+{
+  return new class GrupoCalendario (*this, f, c);
+}
+
+GrupoCalendario::
+~GrupoCalendario ()
 {
 }
 
@@ -13984,7 +14118,7 @@ GrupoAtendimentoTaticoSolucao::
 //
 
 TriedaInput::
-TriedaInput (const calendario_type& calendario,
+TriedaInput (const calendarios_type& calendarios,
              const tiposSala_type& tiposSala,
              const tiposContrato_type& tiposContrato,
              const tiposTitulacao_type& tiposTitulacao,
@@ -14003,7 +14137,7 @@ TriedaInput (const calendario_type& calendario,
              const parametrosPlanejamento_type& parametrosPlanejamento,
              const fixacoes_type& fixacoes)
 : ::xml_schema::type (),
-  calendario_ (calendario, ::xml_schema::flags (), this),
+  calendarios_ (calendarios, ::xml_schema::flags (), this),
   tiposSala_ (tiposSala, ::xml_schema::flags (), this),
   tiposContrato_ (tiposContrato, ::xml_schema::flags (), this),
   tiposTitulacao_ (tiposTitulacao, ::xml_schema::flags (), this),
@@ -14026,7 +14160,7 @@ TriedaInput (const calendario_type& calendario,
 }
 
 TriedaInput::
-TriedaInput (::std::auto_ptr< calendario_type >& calendario,
+TriedaInput (::std::auto_ptr< calendarios_type >& calendarios,
              ::std::auto_ptr< tiposSala_type >& tiposSala,
              ::std::auto_ptr< tiposContrato_type >& tiposContrato,
              ::std::auto_ptr< tiposTitulacao_type >& tiposTitulacao,
@@ -14045,7 +14179,7 @@ TriedaInput (::std::auto_ptr< calendario_type >& calendario,
              ::std::auto_ptr< parametrosPlanejamento_type >& parametrosPlanejamento,
              ::std::auto_ptr< fixacoes_type >& fixacoes)
 : ::xml_schema::type (),
-  calendario_ (calendario, ::xml_schema::flags (), this),
+  calendarios_ (calendarios, ::xml_schema::flags (), this),
   tiposSala_ (tiposSala, ::xml_schema::flags (), this),
   tiposContrato_ (tiposContrato, ::xml_schema::flags (), this),
   tiposTitulacao_ (tiposTitulacao, ::xml_schema::flags (), this),
@@ -14072,7 +14206,7 @@ TriedaInput (const TriedaInput& x,
              ::xml_schema::flags f,
              ::xml_schema::container* c)
 : ::xml_schema::type (x, f, c),
-  calendario_ (x.calendario_, f, this),
+  calendarios_ (x.calendarios_, f, this),
   tiposSala_ (x.tiposSala_, f, this),
   tiposContrato_ (x.tiposContrato_, f, this),
   tiposTitulacao_ (x.tiposTitulacao_, f, this),
@@ -14099,7 +14233,7 @@ TriedaInput (const ::xercesc::DOMElement& e,
              ::xml_schema::flags f,
              ::xml_schema::container* c)
 : ::xml_schema::type (e, f | ::xml_schema::flags::base, c),
-  calendario_ (f, this),
+  calendarios_ (f, this),
   tiposSala_ (f, this),
   tiposContrato_ (f, this),
   tiposTitulacao_ (f, this),
@@ -14136,16 +14270,16 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
     const ::xsd::cxx::xml::qualified_name< char > n (
       ::xsd::cxx::xml::dom::name< char > (i));
 
-    // calendario
+    // calendarios
     //
-    if (n.name () == "calendario" && n.namespace_ ().empty ())
+    if (n.name () == "calendarios" && n.namespace_ ().empty ())
     {
-      ::std::auto_ptr< calendario_type > r (
-        calendario_traits::create (i, f, this));
+      ::std::auto_ptr< calendarios_type > r (
+        calendarios_traits::create (i, f, this));
 
-      if (!calendario_.present ())
+      if (!calendarios_.present ())
       {
-        this->calendario_.set (r);
+        this->calendarios_.set (r);
         continue;
       }
     }
@@ -14405,10 +14539,10 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
     break;
   }
 
-  if (!calendario_.present ())
+  if (!calendarios_.present ())
   {
     throw ::xsd::cxx::tree::expected_element< char > (
-      "calendario",
+      "calendarios",
       "");
   }
 

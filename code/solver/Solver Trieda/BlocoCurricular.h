@@ -1,4 +1,4 @@
-#ifndef _BLOCO_CURRICULAR_H_
+   #ifndef _BLOCO_CURRICULAR_H_
 #define _BLOCO_CURRICULAR_H_
 
 #include <map>
@@ -15,7 +15,7 @@ class BlocoCurricular :
    public OFBase
 {
 public:
-   BlocoCurricular(void);
+   BlocoCurricular( void );
    virtual ~BlocoCurricular( void );
 
    Curso * curso;

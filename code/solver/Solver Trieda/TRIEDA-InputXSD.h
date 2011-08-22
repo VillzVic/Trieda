@@ -250,6 +250,7 @@ class ItemDemanda;
 class ItemFixacao;
 class ItemParametrosPlanejamento;
 class ItemNivelDificuldadeHorario;
+class GrupoCalendario;
 class GrupoTurno;
 class GrupoHorarioAula;
 class GrupoDiaSemana;
@@ -2961,15 +2962,31 @@ class ItemCurriculo: public ::xml_schema::type
   void
   disciplinasPeriodo (::std::auto_ptr< disciplinasPeriodo_type > p);
 
+  // semanaLetivaId
+  // 
+  typedef ::xml_schema::int_ semanaLetivaId_type;
+  typedef ::xsd::cxx::tree::traits< semanaLetivaId_type, char > semanaLetivaId_traits;
+
+  const semanaLetivaId_type&
+  semanaLetivaId () const;
+
+  semanaLetivaId_type&
+  semanaLetivaId ();
+
+  void
+  semanaLetivaId (const semanaLetivaId_type& x);
+
   // Constructors.
   //
   ItemCurriculo (const id_type&,
                  const codigo_type&,
-                 const disciplinasPeriodo_type&);
+                 const disciplinasPeriodo_type&,
+                 const semanaLetivaId_type&);
 
   ItemCurriculo (const id_type&,
                  const codigo_type&,
-                 ::std::auto_ptr< disciplinasPeriodo_type >&);
+                 ::std::auto_ptr< disciplinasPeriodo_type >&,
+                 const semanaLetivaId_type&);
 
   ItemCurriculo (const ::xercesc::DOMElement& e,
                  ::xml_schema::flags f = 0,
@@ -2997,6 +3014,7 @@ class ItemCurriculo: public ::xml_schema::type
   ::xsd::cxx::tree::one< id_type > id_;
   ::xsd::cxx::tree::one< codigo_type > codigo_;
   ::xsd::cxx::tree::one< disciplinasPeriodo_type > disciplinasPeriodo_;
+  ::xsd::cxx::tree::one< semanaLetivaId_type > semanaLetivaId_;
 };
 
 class ItemDisciplinaPeriodo: public ::xml_schema::type
@@ -4139,6 +4157,56 @@ class ItemNivelDificuldadeHorario: public ::xml_schema::type
   protected:
   ::xsd::cxx::tree::one< nivelDificuldadeId_type > nivelDificuldadeId_;
   ::xsd::cxx::tree::one< horariosAula_type > horariosAula_;
+};
+
+class GrupoCalendario: public ::xml_schema::type
+{
+  public:
+  // Calendario
+  // 
+  typedef ::ItemCalendario Calendario_type;
+  typedef ::xsd::cxx::tree::sequence< Calendario_type > Calendario_sequence;
+  typedef Calendario_sequence::iterator Calendario_iterator;
+  typedef Calendario_sequence::const_iterator Calendario_const_iterator;
+  typedef ::xsd::cxx::tree::traits< Calendario_type, char > Calendario_traits;
+
+  const Calendario_sequence&
+  Calendario () const;
+
+  Calendario_sequence&
+  Calendario ();
+
+  void
+  Calendario (const Calendario_sequence& s);
+
+  // Constructors.
+  //
+  GrupoCalendario ();
+
+  GrupoCalendario (const ::xercesc::DOMElement& e,
+                   ::xml_schema::flags f = 0,
+                   ::xml_schema::container* c = 0);
+
+  GrupoCalendario (const GrupoCalendario& x,
+                   ::xml_schema::flags f = 0,
+                   ::xml_schema::container* c = 0);
+
+  virtual GrupoCalendario*
+  _clone (::xml_schema::flags f = 0,
+          ::xml_schema::container* c = 0) const;
+
+  virtual 
+  ~GrupoCalendario ();
+
+  // Implementation.
+  //
+  protected:
+  void
+  parse (::xsd::cxx::xml::dom::parser< char >&,
+         ::xml_schema::flags);
+
+  protected:
+  Calendario_sequence Calendario_;
 };
 
 class GrupoTurno: public ::xml_schema::type
@@ -6364,22 +6432,22 @@ class GrupoAtendimentoTaticoSolucao: public ::xml_schema::type
 class TriedaInput: public ::xml_schema::type
 {
   public:
-  // calendario
+  // calendarios
   // 
-  typedef ::ItemCalendario calendario_type;
-  typedef ::xsd::cxx::tree::traits< calendario_type, char > calendario_traits;
+  typedef ::GrupoCalendario calendarios_type;
+  typedef ::xsd::cxx::tree::traits< calendarios_type, char > calendarios_traits;
 
-  const calendario_type&
-  calendario () const;
+  const calendarios_type&
+  calendarios () const;
 
-  calendario_type&
-  calendario ();
-
-  void
-  calendario (const calendario_type& x);
+  calendarios_type&
+  calendarios ();
 
   void
-  calendario (::std::auto_ptr< calendario_type > p);
+  calendarios (const calendarios_type& x);
+
+  void
+  calendarios (::std::auto_ptr< calendarios_type > p);
 
   // tiposSala
   // 
@@ -6693,7 +6761,7 @@ class TriedaInput: public ::xml_schema::type
 
   // Constructors.
   //
-  TriedaInput (const calendario_type&,
+  TriedaInput (const calendarios_type&,
                const tiposSala_type&,
                const tiposContrato_type&,
                const tiposTitulacao_type&,
@@ -6712,7 +6780,7 @@ class TriedaInput: public ::xml_schema::type
                const parametrosPlanejamento_type&,
                const fixacoes_type&);
 
-  TriedaInput (::std::auto_ptr< calendario_type >&,
+  TriedaInput (::std::auto_ptr< calendarios_type >&,
                ::std::auto_ptr< tiposSala_type >&,
                ::std::auto_ptr< tiposContrato_type >&,
                ::std::auto_ptr< tiposTitulacao_type >&,
@@ -6754,7 +6822,7 @@ class TriedaInput: public ::xml_schema::type
          ::xml_schema::flags);
 
   protected:
-  ::xsd::cxx::tree::one< calendario_type > calendario_;
+  ::xsd::cxx::tree::one< calendarios_type > calendarios_;
   ::xsd::cxx::tree::one< tiposSala_type > tiposSala_;
   ::xsd::cxx::tree::one< tiposContrato_type > tiposContrato_;
   ::xsd::cxx::tree::one< tiposTitulacao_type > tiposTitulacao_;

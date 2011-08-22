@@ -1,11 +1,11 @@
 #include "Curriculo.h"
 
-Curriculo::Curriculo()
+Curriculo::Curriculo( void )
 {
 
 }
 
-Curriculo::~Curriculo(void)
+Curriculo::~Curriculo( void )
 {
 
 }
@@ -13,14 +13,15 @@ Curriculo::~Curriculo(void)
 void Curriculo::le_arvore( ItemCurriculo & elem )
 {
 	this->setId( elem.id() );
-	codigo = elem.codigo();
+   this->setSemanaLetivaId( elem.semanaLetivaId() );
+	this->setCodigo( elem.codigo() );
 
 	ITERA_SEQ( it_dp, elem.disciplinasPeriodo(), DisciplinaPeriodo )
 	{
 		int periodo = it_dp->periodo();
 		int disc_id = it_dp->disciplinaId();
 
-		ids_disciplinas_periodo.add( std::make_pair( periodo, disc_id ) );
+		this->ids_disciplinas_periodo.add( std::make_pair( periodo, disc_id ) );
 	}
 }
 
@@ -37,6 +38,7 @@ void Curriculo::refDisciplinaPeriodo(
 
 		GGroup< Disciplina *, LessPtr< Disciplina > >::iterator
 			it_disc = disciplinas.begin();
+
 		for (; it_disc != disciplinas.end(); it_disc++ )
 		{
 			if ( it_disc->getId() == id_disciplina )

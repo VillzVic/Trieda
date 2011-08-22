@@ -7,12 +7,12 @@ class TipoCurso :
    public OFBase
 {
 public:
-   TipoCurso(void);
-   virtual ~TipoCurso(void);
+   TipoCurso( void );
+   virtual ~TipoCurso( void );
 
    virtual void le_arvore( ItemTipoCurso & );
 
-   void setNome(std::string s) { nome  = s; }
+   void setNome( std::string s ) { nome  = s; }
    std::string getNome() const { return nome; }
 
 private:

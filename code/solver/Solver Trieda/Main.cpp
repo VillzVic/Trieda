@@ -98,7 +98,7 @@ int main( int argc, char** argv )
    dataLoader = new ProblemDataLoader( inputFile, data );
    dataLoader->load();
 
-   solution = new ProblemSolution((data->parametros->modo_otimizacao == "TATICO"));
+   solution = new ProblemSolution( ( data->parametros->modo_otimizacao == "TATICO" ) );
 
    // Temporary output file name
    strcat( tempOutput, path );

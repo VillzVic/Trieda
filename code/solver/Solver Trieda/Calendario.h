@@ -8,16 +8,16 @@ class Calendario :
    public OFBase
 {
 public:
-   Calendario(void);
-   virtual ~Calendario(void);
+   Calendario( void );
+   virtual ~Calendario( void );
 
    GGroup< Turno *, LessPtr< Turno > > turnos;
 
-   virtual void le_arvore(ItemCalendario &);
+   virtual void le_arvore( ItemCalendario & );
 
-   void setCodigo(std::string s) { codigo = s; }
-   void setDescricao(std::string s) { descricao = s; }
-   void setTempoAula(int value) { tempo_aula = value; }
+   void setCodigo( std::string s ) { codigo = s; }
+   void setDescricao( std::string s ) { descricao = s; }
+   void setTempoAula( int value ) { tempo_aula = value; }
 
    std::string getCodigo() { return codigo; }
    std::string getDescricao() { return descricao; }

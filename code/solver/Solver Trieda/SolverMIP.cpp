@@ -11364,8 +11364,9 @@ int SolverMIP::criaVariavelProfessorDisciplina()
             v.setType( VariableOp::V_Y_PROF_DISCIPLINA );
 
             v.setDisciplina( discAula ); 
-            v.setProfessor( *itProfessor );
+            v.setProfessor( ( *itProfessor ) );
             v.setTurma( itAula->getTurma() );
+            v.setAula( ( *itAula ) );
 
             //------------------------------------------------------
             // Preferência:
@@ -12487,46 +12488,6 @@ int SolverMIP::criaRestricoesOperacional()
 #endif
 
    lp->updateLP();
-   restricoes += criaRestricaoDeslocamentoViavel();
-
-#ifdef PRINT_cria_restricoes
-   std::cout << "numRest C_DESLOC_VIAVEL: " << ( restricoes - numRestAnterior ) << std::endl;
-   numRestAnterior = restricoes;
-#endif
-
-   lp->updateLP();
-   restricoes += criaRestricaoDeslocamentoProfessor();
-
-#ifdef PRINT_cria_restricoes
-   std::cout << "numRest C_DESLOC_PROF: " << ( restricoes - numRestAnterior ) << std::endl;
-   numRestAnterior = restricoes;
-#endif
-
-   lp->updateLP();
-   restricoes += criaRestricaoAvaliacaoCorpoDocente();
-
-#ifdef PRINT_cria_restricoes
-   std::cout << "numRest C_AVALIACAO_CORPO_DOCENTE: " << ( restricoes - numRestAnterior ) << std::endl;
-   numRestAnterior = restricoes;
-#endif
-
-   lp->updateLP();
-   restricoes += criaRestricaoCustoCorpoDocente();
-
-#ifdef PRINT_cria_restricoes
-   std::cout << "numRest C_CUSTO_CORPO_DOCENTE: " << ( restricoes - numRestAnterior ) << std::endl;
-   numRestAnterior = restricoes;
-#endif
-
-   lp->updateLP();
-   restricoes += criaRestricaoRelacionaVariavelXDiaProf();
-
-#ifdef PRINT_cria_restricoes
-   std::cout << "numRest C_DIAS_PROF_MINISTRA_AULA: " << ( restricoes - numRestAnterior ) << std::endl;
-   numRestAnterior = restricoes;
-#endif
-
-   lp->updateLP();
    restricoes += criaRestricaoDisciplinaHorarioUnico();
 
 #ifdef PRINT_cria_restricoes
@@ -12571,6 +12532,46 @@ int SolverMIP::criaRestricoesOperacional()
 
 #ifdef PRINT_cria_restricoes
    std::cout << "numRest C_FIX_PROF_SALA: " << ( restricoes - numRestAnterior ) << std::endl;
+   numRestAnterior = restricoes;
+#endif
+
+   lp->updateLP();
+   restricoes += criaRestricaoDeslocamentoViavel();
+
+#ifdef PRINT_cria_restricoes
+   std::cout << "numRest C_DESLOC_VIAVEL: " << ( restricoes - numRestAnterior ) << std::endl;
+   numRestAnterior = restricoes;
+#endif
+
+   lp->updateLP();
+   restricoes += criaRestricaoDeslocamentoProfessor();
+
+#ifdef PRINT_cria_restricoes
+   std::cout << "numRest C_DESLOC_PROF: " << ( restricoes - numRestAnterior ) << std::endl;
+   numRestAnterior = restricoes;
+#endif
+
+   lp->updateLP();
+   restricoes += criaRestricaoAvaliacaoCorpoDocente();
+
+#ifdef PRINT_cria_restricoes
+   std::cout << "numRest C_AVALIACAO_CORPO_DOCENTE: " << ( restricoes - numRestAnterior ) << std::endl;
+   numRestAnterior = restricoes;
+#endif
+
+   lp->updateLP();
+   restricoes += criaRestricaoCustoCorpoDocente();
+
+#ifdef PRINT_cria_restricoes
+   std::cout << "numRest C_CUSTO_CORPO_DOCENTE: " << ( restricoes - numRestAnterior ) << std::endl;
+   numRestAnterior = restricoes;
+#endif
+
+   lp->updateLP();
+   restricoes += criaRestricaoRelacionaVariavelXDiaProf();
+
+#ifdef PRINT_cria_restricoes
+   std::cout << "numRest C_DIAS_PROF_MINISTRA_AULA: " << ( restricoes - numRestAnterior ) << std::endl;
    numRestAnterior = restricoes;
 #endif
 
@@ -12638,8 +12639,8 @@ int SolverMIP::criaRestricoesOperacional()
    numRestAnterior = restricoes;
 #endif
 
-   lp->updateLP();
-   restricoes += criaRestricaoGapsProfessores();
+   //lp->updateLP();
+   //restricoes += criaRestricaoGapsProfessores();
 
 #ifdef PRINT_cria_restricoes
    std::cout << "numRest C_GAPS_PROFESSORES: " << ( restricoes - numRestAnterior ) << std::endl;
@@ -13001,22 +13002,25 @@ int SolverMIP::criaRestricaoProfessorDisciplinaUnico()
 int SolverMIP::criaRestricaoProfessorDisciplina()
 {
    int restricoes = 0;
+
    ConstraintOp c;
    VariableOpHash::iterator vit;
    ConstraintOpHash::iterator cit;
-   std::vector<std::pair<int,int> > coeffList;
-   std::vector<double> coeffListVal;
-   std::pair<int,int> auxCoef;
+
+   std::vector<std::pair< int, int > > coeffList;
+   std::vector< double > coeffListVal;
+   std::pair< int, int > auxCoef;
+
    int nnz;
    char name[ 200 ];
 
    vit = vHashOp.begin();
-
-   while (vit != vHashOp.end())
+   while ( vit != vHashOp.end() )
    {
       VariableOp v = vit->first;
 
-      if ( v.getType() != VariableOp::V_Y_PROF_DISCIPLINA && v.getType() != VariableOp::V_X_PROF_AULA_HOR )
+      if ( v.getType() != VariableOp::V_Y_PROF_DISCIPLINA
+            && v.getType() != VariableOp::V_X_PROF_AULA_HOR )
       {
          vit++;
          continue;
@@ -13032,18 +13036,18 @@ int SolverMIP::criaRestricaoProfessorDisciplina()
       {
          c.reset();
          c.setType( ConstraintOp::C_PROF_DISC );
-         c.setProfessor(v.getProfessor());
-         c.setDisciplina(v.getDisciplina());
-         c.setTurma(v.getTurma());
+         c.setProfessor( v.getProfessor() );
+         c.setDisciplina( v.getDisciplina() );
+         c.setTurma( v.getTurma() );
 
-         cit = cHashOp.find(c);
-
+         cit = cHashOp.find( c );
          if ( cit != cHashOp.end() )
          {
             auxCoef.first = cit->second;
             auxCoef.second = vit->second;
-            coeffList.push_back(auxCoef);
-            coeffListVal.push_back(-10.0);
+
+            coeffList.push_back( auxCoef );
+            coeffListVal.push_back( -10.0 );
          }
          else
          {
@@ -13052,7 +13056,7 @@ int SolverMIP::criaRestricaoProfessorDisciplina()
 
             OPT_ROW row( nnz, OPT_ROW::LESS , 0.0, name );
 
-            row.insert(vit->second,-10.0);
+            row.insert( vit->second, -10.0 );
             cHashOp[ c ] = lp->getNumRows();
 
             lp->addRow( row );
@@ -13063,18 +13067,18 @@ int SolverMIP::criaRestricaoProfessorDisciplina()
       {
          c.reset();
          c.setType( ConstraintOp::C_PROF_DISC );
-         c.setProfessor(v.getProfessor());
-         c.setDisciplina(v.getAula()->getDisciplina());
-         c.setTurma(v.getAula()->getTurma());
+         c.setProfessor( v.getProfessor() );
+         c.setDisciplina( v.getAula()->getDisciplina() );
+         c.setTurma( v.getAula()->getTurma() );
 
-         cit = cHashOp.find(c);
-
+         cit = cHashOp.find( c );
          if ( cit != cHashOp.end() )
          {
             auxCoef.first = cit->second;
             auxCoef.second = vit->second;
-            coeffList.push_back(auxCoef);
-            coeffListVal.push_back(1.0);
+
+            coeffList.push_back( auxCoef );
+            coeffListVal.push_back( 1.0 );
          }
          else
          {
@@ -13083,25 +13087,25 @@ int SolverMIP::criaRestricaoProfessorDisciplina()
 
             OPT_ROW row( nnz, OPT_ROW::LESS , 0.0, name );
 
-            row.insert(vit->second,1.0);
+            row.insert( vit->second, 1.0 );
             cHashOp[ c ] = lp->getNumRows();
 
             lp->addRow( row );
             restricoes++;
          }   
       }
-               
+
       vit++;
    }
 
-   chgCoeffList(coeffList,coeffListVal);
-
+   chgCoeffList( coeffList, coeffListVal );
    return restricoes;
 }
 
 int SolverMIP::criaRestricaoFixProfDiscSalaDiaHor()
 {
    int restricoes = 0;
+
    ConstraintOp c;
    VariableOpHash::iterator vit;
    ConstraintOpHash::iterator cit;
@@ -13462,9 +13466,11 @@ int SolverMIP::criaRestricaoFixProfSala()
 int SolverMIP::criaRestricaoDisciplinaMesmoHorario()
 {
    int restricoes = 0;
+
    ConstraintOp c;
    VariableOpHash::iterator vit;
    ConstraintOpHash::iterator cit;
+
    std::vector< std::pair< int, int > > coeffList;
    std::vector< double > coeffListVal;
    std::pair< int, int > auxCoef;
@@ -13556,7 +13562,6 @@ int SolverMIP::criaRestricaoDisciplinaMesmoHorario()
          c.setDia( v.getDia() );
 
          cit = cHashOp.find( c );
-
          if ( cit != cHashOp.end() )
          {
             auxCoef.first = cit->second;
@@ -13568,7 +13573,6 @@ int SolverMIP::criaRestricaoDisciplinaMesmoHorario()
    }
 
    chgCoeffList( coeffList, coeffListVal );
-
    return restricoes;
 }
 
@@ -14077,7 +14081,6 @@ int SolverMIP::criaRestricaoAlocacaoProfessorCurso()
          mapCursoDisciplinas[ oferta->curso ].add( aula->getDisciplina() );
       }
    }
-   ///////
 
    int totalCursos = problemData->cursos.size();
    int totalProfessores = problemData->campi.begin()->professores.size();
@@ -14100,7 +14103,7 @@ int SolverMIP::criaRestricaoAlocacaoProfessorCurso()
 
          if ( vit != vHashOp.end() )
          {
-            // Cria a restriçao de m(p,c) * M >= E( E( y(p,d,i) ) )
+            // Cria a restriçao de m ( p, c ) * M >= E ( E ( y( p, d, i ) ) )
             c.reset();
             c.setType( ConstraintOp::C_ALOC_PROF_CURSO );
 
@@ -14142,7 +14145,6 @@ int SolverMIP::criaRestricaoAlocacaoProfessorCurso()
 
                restricoes++;
             }
-            ///
          }
       }
    }
@@ -14633,7 +14635,7 @@ int SolverMIP::criaRestricaoMaxDiscProfCurso()
                vit = vHashOp.begin();
                for (; vit != vHashOp.end(); vit++ )
                {
-                  if ( vit->first.getType() == VariableOp::V_X_PROF_AULA_HOR
+                  if ( vit->first.getType() == VariableOp::V_Y_PROF_DISCIPLINA
                      && vit->first.getProfessor() == professor
                      && vit->first.getDisciplina() == disciplina )
                   {
@@ -14691,6 +14693,12 @@ int SolverMIP::criaRestricaoDeslocamentoProfessor()
 {
    int restricoes = 0;
 
+   if ( problemData->tempo_campi.size() == 0
+         || problemData->tempo_unidades.size() == 0 )
+   {
+      return restricoes;
+   }
+
    ConstraintOp c;
    VariableOpHash::iterator vit1;
    VariableOpHash::iterator vit2;
@@ -14709,7 +14717,6 @@ int SolverMIP::criaRestricaoDeslocamentoProfessor()
          hashX[ vit1->first ] = vit1->second;
       }
    }
-   ///////
 
    GGroup< Professor *, LessPtr< Professor > > professores
       = problemData->campi.begin()->professores;
@@ -14784,6 +14791,12 @@ int SolverMIP::criaRestricaoDeslocamentoProfessor()
 int SolverMIP::criaRestricaoDeslocamentoViavel()
 {
    int restricoes = 0;
+
+   if ( problemData->tempo_campi.size() == 0
+         || problemData->tempo_unidades.size() == 0 )
+   {
+      return restricoes;
+   }
 
    ConstraintOp c;
    VariableOpHash::iterator vit1;
@@ -15014,7 +15027,9 @@ int SolverMIP::criaRestricaoGapsProfessores()
    VariableOpHash::iterator vit2;
 
    // Horários * Aulas * Dias Letivos
-   int nnz = problemData->horarios_aula_ordenados.size() * problemData->aulas.size() * 5;
+   const int totalHorariosAula
+         = problemData->horarios_aula_ordenados.size();
+   int nnz = ( totalHorariosAula * problemData->aulas.size() * 5 );
    double rhs = 1.0;
    char name[ 200 ];
 
@@ -15027,7 +15042,7 @@ int SolverMIP::criaRestricaoGapsProfessores()
       = problemData->campi.begin()->professores;
 
    GGroup< int > dias_letivos;
-   for ( int i = 2; i <= 6; i++ )
+   for ( int i = 1; i <= 7; i++ )
    {
       dias_letivos.add( i );
    }
@@ -15070,6 +15085,7 @@ int SolverMIP::criaRestricaoGapsProfessores()
                   // Variável do gap
                   row.insert( vit1->second, -1.0 );
 
+                  bool inseriuVariavel = false;
                   vit2 = vHashOp.begin();
                   for (; vit2 != vHashOp.end(); vit2++ )
                   {
@@ -15081,6 +15097,8 @@ int SolverMIP::criaRestricaoGapsProfessores()
                         && v_x.getHorario()->getHorarioAula()->getInicio() >= h1->getInicio()
                         && v_x.getHorario()->getHorarioAula()->getInicio() <= h2->getInicio() )
                      {
+                        inseriuVariavel = true;
+
                         // Variáveis dos horários nos extremos do intervalo
                         if ( v_x.getHorario()->getHorarioAula()->getInicio() == h1->getInicio()
                            || v_x.getHorario()->getHorarioAula()->getInicio() == h2->getInicio() )
@@ -15095,10 +15113,13 @@ int SolverMIP::criaRestricaoGapsProfessores()
                      }
                   }
 
-                  lp->addRow( row );
-
                   cHashOp[ c ] = lp->getNumRows();
-                  restricoes++;
+
+                  if ( inseriuVariavel )
+                  {
+                     lp->addRow( row );
+                     restricoes++;
+                  }
                }
             }
          }
