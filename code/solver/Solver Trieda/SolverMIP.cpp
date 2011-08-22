@@ -3193,6 +3193,7 @@ int SolverMIP::cria_variavel_creditos( void )
 
                std::pair< Curso *, Curriculo * > curso_curriculo
                   = problemData->map_Disc_CursoCurriculo[ disciplina ];
+
                curso = curso_curriculo.first;
                curriculo = curso_curriculo.second;
 
@@ -3233,11 +3234,13 @@ int SolverMIP::cria_variavel_creditos( void )
 
                         if ( problemData->usarProfDispDiscTatico )
                         {
-                           if ( problemData->disc_Dias_Prof_Tatico[v.getDisciplina()->getId()].find( v.getDia() ) == problemData->disc_Dias_Prof_Tatico[v.getDisciplina()->getId()].end() )
+                           if ( problemData->disc_Dias_Prof_Tatico[ v.getDisciplina()->getId() ].find( v.getDia() )
+                                 == problemData->disc_Dias_Prof_Tatico[ v.getDisciplina()->getId() ].end() )
                            {
                               custo = 100.0;
                            }
                         }
+
                         if ( vHash.find( v ) == vHash.end() )
                         {
                            if ( variavel_equivalente )
@@ -3245,7 +3248,7 @@ int SolverMIP::cria_variavel_creditos( void )
                               mapVariaveisDisciplinasEquivalentes[ disc_equi ].push_back( v );
                            }
 
-                           vHash[v] = lp->getNumCols();
+                           vHash[ v ] = lp->getNumCols();
 
                            if ( problemData->parametros->funcao_objetivo == 0 )
                            {
@@ -3267,52 +3270,6 @@ int SolverMIP::cria_variavel_creditos( void )
 
                            num_vars++;
                         }
-                        /*ITERA_GGROUP_LESSPTR( it_prof, itCampus->professores, Professor )
-                        {
-                           // id_professor + id_disciplina
-                           std::pair< int, int > prof_Disc 
-                              ( it_prof->getId(), disciplina->getId() );
-
-                           if ( problemData->prof_Disc_Dias.find( prof_Disc )
-                              != problemData->prof_Disc_Dias.end() )
-                           {
-                              eta = 0;
-                           }
-                           else
-                           {
-                              eta = 10;
-                           }
-
-                           if ( vHash.find( v ) == vHash.end() )
-                           {
-                              if ( variavel_equivalente )
-                              {
-                                 mapVariaveisDisciplinasEquivalentes[ disc_equi ].push_back( v );
-                              }
-
-                              vHash[v] = lp->getNumCols();
-
-                              if ( problemData->parametros->funcao_objetivo == 0 )
-                              {
-                                 OPT_COL col( OPT_COL::VAR_INTEGRAL, eta, 0.0,
-                                              itCjtSala->maxCredsDia( *itDiscSala_Dias ),
-                                              ( char * )v.toString().c_str() );
-
-                                 lp->newCol( col );
-                              }
-                              else if ( problemData->parametros->funcao_objetivo == 1
-                                          || problemData->parametros->funcao_objetivo == 2 )
-                              {
-                                 OPT_COL col( OPT_COL::VAR_INTEGRAL, 0.0, 0.0,
-                                              itCjtSala->maxCredsDia( *itDiscSala_Dias ),
-                                              ( char * )v.toString().c_str() );
-
-                                 lp->newCol( col );
-                              }
-
-                              num_vars++;
-                           }
-                        }*/
                      }
                      else
                      {
@@ -3327,13 +3284,14 @@ int SolverMIP::cria_variavel_creditos( void )
 
                            if ( problemData->usarProfDispDiscTatico )
                            {
-                              if ( problemData->disc_Dias_Prof_Tatico[v.getDisciplina()->getId()].find( v.getDia() ) == problemData->disc_Dias_Prof_Tatico[v.getDisciplina()->getId()].end() )
+                              if ( problemData->disc_Dias_Prof_Tatico[ v.getDisciplina()->getId() ].find( v.getDia() )
+                                    == problemData->disc_Dias_Prof_Tatico[ v.getDisciplina()->getId() ].end() )
                               {
                                  custo = 100.0;
                               }
                            }
 
-                           vHash[v] = lp->getNumCols();
+                           vHash[ v ] = lp->getNumCols();
 
                            OPT_COL col( OPT_COL::VAR_INTEGRAL, custo, 0.0,
                                         itCjtSala->maxCredsDia( *itDiscSala_Dias ),
@@ -11234,13 +11192,6 @@ int SolverMIP::criaVariaveisOperacional()
    numVarsAnterior = numVars;
 #endif
 
-   numVars += criaVariavelPrefDisciplinas();
-
-#ifdef PRINT_cria_variaveis
-   std::cout << "numVars V_PREF_DISCIPLINAS: " << ( numVars - numVarsAnterior ) << std::endl;
-   numVarsAnterior = numVars;
-#endif
-
    numVars += criaVariavelGapsProfessores();
 
 #ifdef PRINT_cria_variaveis
@@ -11301,7 +11252,7 @@ int SolverMIP::criaVariavelProfessorAulaHorario()
                v.reset();
                v.setType( VariableOp::V_X_PROF_AULA_HOR );
 
-               Aula *aula = *itAula;
+               Aula * aula = ( *itAula );
 
                v.setAula( aula ); 
                v.setProfessor( *itProfessor );
@@ -11377,25 +11328,36 @@ int SolverMIP::criaVariavelProfessorDisciplina()
 {
    int num_vars = 0;
 
-   ITERA_GGROUP_LESSPTR( itProfessor, (*problemData->campi.begin())->professores, Professor )
+   double pesoNota = 100;
+   double pesoPreferencia = 100;
+
+   ITERA_GGROUP_LESSPTR( itProfessor, ( *problemData->campi.begin() )->professores, Professor )
    {
       ITERA_GGROUP_LESSPTR( itMagisterio, itProfessor->magisterio, Magisterio )
       {
          Disciplina * discMinistradaProf = itMagisterio->disciplina;
 
-         ITERA_GGROUP_LESSPTR(itAula,problemData->aulas,Aula)
+         int nota = itMagisterio->getNota();
+         int preferencia = itMagisterio->getPreferencia();
+
+         ITERA_GGROUP_LESSPTR( itAula, problemData->aulas, Aula )
          {
             Disciplina * discAula = itAula->getDisciplina();
 
             if ( discMinistradaProf != discAula )
+            {
                continue;
+            }
 
-            std::pair< int, int > chaveGamb ( itProfessor->getId(),
+            std::pair< int, int > prof_disc ( itProfessor->getId(),
                discMinistradaProf->getId() );
 
             // Se o professor e a disciplina da aula em questão se relacionarem:
-            if ( problemData->prof_Disc_Dias.find( chaveGamb ) == problemData->prof_Disc_Dias.end() )
+            if ( problemData->prof_Disc_Dias.find( prof_disc )
+                  == problemData->prof_Disc_Dias.end() )
+            {
                continue;
+            }
 
             VariableOp v;
             v.reset();
@@ -11403,13 +11365,27 @@ int SolverMIP::criaVariavelProfessorDisciplina()
 
             v.setDisciplina( discAula ); 
             v.setProfessor( *itProfessor );
-            v.setTurma((*itAula)->getTurma());
+            v.setTurma( itAula->getTurma() );
 
-            double coeff = 0.0;
+            //------------------------------------------------------
+            // Preferência:
+            // 1  --> Maior preferência
+            // 10 --> Menor preferência
+            //------------------------------------------------------
+            // Nota de desempenho:
+            // 1  --> Menor desempenho
+            // 10 --> Maior desempenho
+            //------------------------------------------------------
+            // Assim, o 'peso' da preferência e da nota
+            // de desempenho na função objetivo variam
+            // entre 0 e 9, sendo 0 o MELHOR CASO e 9 o PIOR CASO
+            //------------------------------------------------------
+            double coeff = ( ( 10 - nota ) * ( pesoNota )
+               + ( preferencia - 1 ) * ( pesoPreferencia ) );
 
             if ( vHashOp.find( v ) == vHashOp.end() )
             {
-               vHashOp[v] = lp->getNumCols();
+               vHashOp[ v ] = lp->getNumCols();
 
                OPT_COL col( OPT_COL::VAR_BINARY, coeff, 0.0, 1.0,
                   ( char * )v.toString().c_str() );
@@ -12331,63 +12307,6 @@ int SolverMIP::criaVariavelAvaliacaoCorpoDocente()
    return num_vars;
 }
 
-int SolverMIP::criaVariavelPrefDisciplinas()
-{
-   int num_vars = 0;
-   double coeff = 0.0;
-   double alfa = 10000.0;
-
-   GGroup< Professor *, LessPtr< Professor > > professores
-      = problemData->campi.begin()->professores;
-
-   GGroup< Disciplina *, LessPtr< Disciplina > > disciplinas
-      = problemData->disciplinas;
-
-   ITERA_GGROUP_LESSPTR( it_prof, professores, Professor )
-   {
-      Professor * professor = ( *it_prof );
-
-      ITERA_GGROUP_LESSPTR( it_disc, disciplinas, Disciplina )
-      {
-         Disciplina * disciplina = ( *it_disc );
-
-         VariableOp v;
-         v.reset();
-         v.setType( VariableOp::V_PREF_DISCIPLINAS );
-
-         v.setProfessor( professor );
-         v.setDisciplina( disciplina );
-
-         if ( vHashOp.find( v ) == vHashOp.end() )
-         {
-            v.setValue( 1.0 );
-
-            double preferencia = 0.0;
-            ITERA_GGROUP_LESSPTR( it_mag, professor->magisterio, Magisterio )
-            {
-               if ( it_mag->disciplina == disciplina )
-               {
-                  preferencia = it_mag->getPreferencia();
-                  break;
-               }
-            }
-
-            coeff = ( ( 10 - preferencia ) * alfa );
-
-            vHashOp[ v ] = lp->getNumCols();
-
-            OPT_COL col( OPT_COL::VAR_BINARY, coeff, 0.0, 1.0,
-               ( char * )v.toString().c_str() );
-
-            lp->newCol( col );
-            num_vars++;
-         }
-      }
-   }
-
-   return num_vars;
-}
-
 int SolverMIP::criaVariavelGapsProfessores()
 {
    int num_vars = 0;
@@ -12716,14 +12635,6 @@ int SolverMIP::criaRestricoesOperacional()
 
 #ifdef PRINT_cria_restricoes
    std::cout << "numRest C_CARGA_HOR_MAX_PROF_SEMANA: " << ( restricoes - numRestAnterior ) << std::endl;
-   numRestAnterior = restricoes;
-#endif
-
-   lp->updateLP();
-   restricoes += criaRestricaoPrefDisciplinas();
-
-#ifdef PRINT_cria_restricoes
-   std::cout << "numRest C_PREF_DISCIPLINAS: " << ( restricoes - numRestAnterior ) << std::endl;
    numRestAnterior = restricoes;
 #endif
 
@@ -13661,16 +13572,17 @@ int SolverMIP::criaRestricaoDisciplinaMesmoHorario()
    return restricoes;
 }
 
-
 int SolverMIP::criaRestricaoCustoCorpoDocente()
 {
    int restricoes = 0;
+
    ConstraintOp c;
    VariableOp v_find;
    VariableOpHash::iterator vit;
    ConstraintOpHash::iterator cit;
+
    int nnz = 0;
-   double rhs = 0.0;
+   double rhs = 1.0;
    char name[ 200 ];
    double M = 1000000;
 
@@ -13714,8 +13626,7 @@ int SolverMIP::criaRestricaoCustoCorpoDocente()
          // corresponde ao lado direito da desigualdade no modelo )
          nnz = mapProfessorVariaveis[ professor ];
 
-         OPT_ROW row1( nnz, OPT_ROW::LESS, rhs, name );
-         OPT_ROW row2( nnz, OPT_ROW::GREATER, rhs, name );
+         OPT_ROW row( nnz, OPT_ROW::GREATER, rhs, name );
 
          // Procura pela variável 'cd' do professor
          v_find.reset();
@@ -13732,8 +13643,7 @@ int SolverMIP::criaRestricaoCustoCorpoDocente()
          VariableOp v = vit->first;
 
          // Insere a variável 'cd' nas restrições
-         row1.insert( vit->second, (-1.0)*M );
-         row2.insert( vit->second, -1.0 );
+         row.insert( vit->second, 1.0 );
          ///////
 
          // Cada varíável 'y' do professor
@@ -13744,17 +13654,14 @@ int SolverMIP::criaRestricaoCustoCorpoDocente()
             if ( vit->first.getType() == VariableOp::V_Y_PROF_DISCIPLINA
                && vit->first.getProfessor() == professor )
             {
-               row1.insert( vit->second, 1.0 );
-               row2.insert( vit->second, 1.0 );
+               row.insert( vit->second, 1.0 );
             }
          }
          ///////
 
          cHashOp[ c ] = lp->getNumRows();
-         lp->addRow( row1 );
-         lp->addRow( row2 );
-
-         restricoes += 2;
+         lp->addRow( row );
+         restricoes++;
       }
    }
 
@@ -13969,6 +13876,7 @@ int SolverMIP::criaRestricaoMinimoMestresCurso()
           it_map++ )
    {
       Curso * curso = it_map->first;
+
       GGroup< Professor *, LessPtr< Professor > > professores_curso
          = it_map->second;
 
@@ -13986,16 +13894,14 @@ int SolverMIP::criaRestricaoMinimoMestresCurso()
          if ( cit == cHashOp.end() )
          {
             sprintf( name, "%s", c.toString().c_str() );
-            nnz = 1;
+            nnz = professores_curso.size();
             rhs = ( ( curso->regra_min_mestres.second * professores_curso.size() ) / 100.0 );
 
             OPT_ROW row( nnz, OPT_ROW::GREATER, rhs, name );
 
             // Recupera os professores que estão associados ao curso, e que são mestres
-            VariableOpHash::iterator vit_find
-               = vHashOp.begin();
+            VariableOpHash::iterator vit_find = vHashOp.begin();
 
-            int cont = 1;
             for (; vit_find != vHashOp.end(); vit_find++ )
             {
                VariableOp v_find = vit_find->first;
@@ -14005,7 +13911,6 @@ int SolverMIP::criaRestricaoMinimoMestresCurso()
                   && v_find.getProfessor() == professor
                   && ( professor->getTitulacaoId() == 4 || professor->getTitulacaoId() == 5 ) )
                {
-                  cont++;
                   row.insert( vit_find->second, 1.0 );
                }
             }
@@ -14022,7 +13927,6 @@ int SolverMIP::criaRestricaoMinimoMestresCurso()
                row.insert( vit->second, 1.0 );
             }
 
-            row.setnnz( cont );
             cHashOp[ c ] = lp->getNumRows();
             lp->addRow( row );
 
@@ -14101,16 +14005,14 @@ int SolverMIP::criaRestricaoMinimoDoutoresCurso()
          if ( cit == cHashOp.end() )
          {
             sprintf( name, "%s", c.toString().c_str() );
-            nnz = 1;
+            nnz = professores_curso.size();
             rhs = ( ( curso->regra_min_doutores.second * professores_curso.size() ) / 100.0 );
 
             OPT_ROW row( nnz, OPT_ROW::GREATER, rhs, name );
 
             // Recupera os professores que estão associados ao curso, e que são mestres
-            VariableOpHash::iterator vit_find
-               = vHashOp.begin();
+            VariableOpHash::iterator vit_find = vHashOp.begin();
 
-            int cont = 1;
             for (; vit_find != vHashOp.end(); vit_find++ )
             {
                VariableOp v_find = vit_find->first;
@@ -14120,7 +14022,6 @@ int SolverMIP::criaRestricaoMinimoDoutoresCurso()
                   && v_find.getProfessor() == professor
                   && professor->getTitulacaoId() == 5 )
                {
-                  cont++;
                   row.insert( vit_find->second, 1.0 );
                }
             }
@@ -14137,7 +14038,6 @@ int SolverMIP::criaRestricaoMinimoDoutoresCurso()
                row.insert( vit->second, 1.0 );
             }
 
-            row.setnnz( cont );
             cHashOp[ c ] = lp->getNumRows();
             lp->addRow( row );
 
@@ -14153,8 +14053,10 @@ int SolverMIP::criaRestricaoMinimoDoutoresCurso()
 int SolverMIP::criaRestricaoAlocacaoProfessorCurso()
 {
    int restricoes = 0;
-   int nnz;
+   int nnz = 0;
+   double rhs = 0.0;
    char name[ 200 ];
+   int bigM = 1000;
 
    ConstraintOp c;
    VariableOpHash::iterator vit;
@@ -14177,6 +14079,9 @@ int SolverMIP::criaRestricaoAlocacaoProfessorCurso()
    }
    ///////
 
+   int totalCursos = problemData->cursos.size();
+   int totalProfessores = problemData->campi.begin()->professores.size();
+
    ITERA_GGROUP_LESSPTR( itProf, problemData->campi.begin()->professores, Professor )
    {
       Professor * professor = ( *itProf );
@@ -14195,57 +14100,9 @@ int SolverMIP::criaRestricaoAlocacaoProfessorCurso()
 
          if ( vit != vHashOp.end() )
          {
-            // Cria a restriçao de m(p,c) <= E( E( y(p,d,i) ) )
+            // Cria a restriçao de m(p,c) * M >= E( E( y(p,d,i) ) )
             c.reset();
-            c.setType( ConstraintOp::C_ALOC_PROF_CURSO_LESS );
-
-            c.setProfessor( professor );
-            c.setCurso( curso );
-
-            cit = cHashOp.find( c );
-
-            if ( cit == cHashOp.end() )
-            {
-               sprintf( name, "%s", c.toString().c_str() );
-               nnz = 1;
-
-               OPT_ROW row( nnz, OPT_ROW::LESS, 0.0, name );
-               row.insert( vit->second, 1.0 );
-
-               VariableOpHash::iterator vit_find
-                  = vHashOp.begin();
-
-               int cont = 1;
-               for (; vit_find != vHashOp.end(); vit_find++ )
-               {
-                  VariableOp v_find = vit_find->first;
-
-                  if ( v_find.getType() == VariableOp::V_Y_PROF_DISCIPLINA 
-                        && v_find.getProfessor() == professor )
-                  {
-                     // Verifica se a disciplina da variável está associada ao curso
-                     GGroup< Disciplina *, LessPtr< Disciplina > >::iterator
-                        it_find = mapCursoDisciplinas[ curso ].find( v_find.getDisciplina() );
-
-                     if ( it_find != mapCursoDisciplinas[ curso ].end() )
-                     {
-                        cont++;
-                        row.insert( vit_find->second, -1.0 );
-                     }
-                  }
-               }
-
-               row.setnnz( cont );
-               cHashOp[ c ] = lp->getNumRows();
-               lp->addRow( row );
-
-               restricoes++;
-            }
-            ///
-
-            // Cria a restriçao de m(p,c) >= E( E( y(p,d,i) ) )
-            c.reset();
-            c.setType( ConstraintOp::C_ALOC_PROF_CURSO_GREATER );
+            c.setType( ConstraintOp::C_ALOC_PROF_CURSO );
 
             c.setProfessor( v.getProfessor() );
             c.setCurso( v.getCurso() );
@@ -14255,15 +14112,13 @@ int SolverMIP::criaRestricaoAlocacaoProfessorCurso()
             if ( cit == cHashOp.end() )
             {
                sprintf( name, "%s", c.toString().c_str() );
-               nnz = 1;
+               nnz = ( totalProfessores + totalCursos );
 
-               OPT_ROW row( nnz, OPT_ROW::GREATER, 0.0, name );
-               row.insert( vit->second, 1.0 );
+               OPT_ROW row( nnz, OPT_ROW::GREATER, rhs, name );
+               row.insert( vit->second, bigM );
 
-               VariableOpHash::iterator vit_find
-                  = vHashOp.begin();
+               VariableOpHash::iterator vit_find = vHashOp.begin();
 
-               int cont = 1;
                for (; vit_find != vHashOp.end(); vit_find++ )
                {
                   VariableOp v_find = vit_find->first;
@@ -14277,13 +14132,11 @@ int SolverMIP::criaRestricaoAlocacaoProfessorCurso()
 
                      if ( it_find != mapCursoDisciplinas[ curso ].end() )
                      {
-                        cont++;
                         row.insert( vit_find->second, -1.0 );
                      }
                   }
                }
 
-               row.setnnz( cont );
                cHashOp[ c ] = lp->getNumRows();
                lp->addRow( row );
 
@@ -14303,6 +14156,11 @@ int SolverMIP::criaRestricaoCargaHorariaMinimaProfessor()
    int nnz = problemData->aulas.size();
    double rhs;
    char name[ 200 ];
+
+   if ( nnz == 0 )
+   {
+      return restricoes;
+   }
 
    ConstraintOp c;
    VariableOpHash::iterator vit;
@@ -14408,6 +14266,11 @@ int SolverMIP::criaRestricaoCargaHorariaMinimaProfessorSemana()
    double rhs;
    char name[ 200 ];
 
+   if ( nnz == 0 )
+   {
+      return restricoes;
+   }
+
    ConstraintOp c;
    VariableOpHash::iterator vit;
    ConstraintOpHash::iterator cit;
@@ -14419,10 +14282,6 @@ int SolverMIP::criaRestricaoCargaHorariaMinimaProfessorSemana()
    {
       Professor * professor = ( *it_prof );
 
-      // Armazena as disciplinas desse professor que já foram consideradas
-      GGroup< Disciplina *, LessPtr< Disciplina > > disciplinas_prof;
-      disciplinas_prof.clear();
-
       c.reset();
       c.setType( ConstraintOp::C_CARGA_HOR_MIN_PROF_SEMANA );
       c.setProfessor( professor );
@@ -14432,7 +14291,7 @@ int SolverMIP::criaRestricaoCargaHorariaMinimaProfessorSemana()
       if ( cit == cHashOp.end() )
       {
          sprintf( name, "%s", c.toString().c_str() );
-         rhs = professor->getChMin();
+         rhs = ( professor->getChMin() > 0 ? professor->getChMin() : 1 );
 
          OPT_ROW row( nnz, OPT_ROW::GREATER, rhs, name );
 
@@ -14443,18 +14302,8 @@ int SolverMIP::criaRestricaoCargaHorariaMinimaProfessorSemana()
             VariableOp v = vit->first;
 
             if ( v.getType() == VariableOp::V_X_PROF_AULA_HOR
-               && v.getProfessor() == professor )
+                  && v.getProfessor() == professor )
             {
-               // Verifica se a disciplina já foi considerada
-               GGroup< Disciplina *, LessPtr< Disciplina > >::iterator
-                  it_find = disciplinas_prof.find( v.getDisciplina() );
-
-               if ( it_find != disciplinas_prof.end() )
-               {
-                  continue;
-               }
-               ///////
-
                // Verifica se o professor está alocado a essa disciplina
                bool encontrou = false;
 
@@ -14473,8 +14322,9 @@ int SolverMIP::criaRestricaoCargaHorariaMinimaProfessorSemana()
 
                if ( encontrou )
                {
-                  double val = ( v.getDisciplina()->getCredTeoricos() + v.getDisciplina()->getCredPraticos() );
-                  row.insert( vit->second, val );
+                  double totalCreditos = ( v.getAula()->getTotalCreditos() );
+
+                  row.insert( vit->second, totalCreditos );
                }
                ///////
             }
@@ -14511,6 +14361,11 @@ int SolverMIP::criaRestricaoCargaHorariaMaximaProfessorSemana()
    double rhs;
    char name[ 200 ];
 
+   if ( nnz == 0 )
+   {
+      return restricoes;
+   }
+
    ConstraintOp c;
    VariableOpHash::iterator vit;
    ConstraintOpHash::iterator cit;
@@ -14522,10 +14377,6 @@ int SolverMIP::criaRestricaoCargaHorariaMaximaProfessorSemana()
    {
       Professor * professor = ( *it_prof );
 
-      // Armazena as disciplinas desse professor que já foram consideradas
-      GGroup< Disciplina *, LessPtr< Disciplina > > disciplinas_prof;
-      disciplinas_prof.clear();
-
       c.reset();
       c.setType( ConstraintOp::C_CARGA_HOR_MAX_PROF_SEMANA );
       c.setProfessor( professor );
@@ -14535,7 +14386,7 @@ int SolverMIP::criaRestricaoCargaHorariaMaximaProfessorSemana()
       if ( cit == cHashOp.end() )
       {
          sprintf( name, "%s", c.toString().c_str() );
-         rhs = professor->getChMax();
+         rhs = ( professor->getChMax() > 0 ? professor->getChMax() : 1 );
 
          OPT_ROW row( nnz, OPT_ROW::LESS, rhs, name );
 
@@ -14548,16 +14399,6 @@ int SolverMIP::criaRestricaoCargaHorariaMaximaProfessorSemana()
             if ( v.getType() == VariableOp::V_X_PROF_AULA_HOR
                && v.getProfessor() == professor )
             {
-               // Verifica se a disciplina já foi considerada
-               GGroup< Disciplina *, LessPtr< Disciplina > >::iterator
-                  it_find = disciplinas_prof.find( v.getDisciplina() );
-
-               if ( it_find != disciplinas_prof.end() )
-               {
-                  continue;
-               }
-               ///////
-
                // Verifica se o professor está alocado a essa disciplina
                bool encontrou = false;
 
@@ -14576,8 +14417,9 @@ int SolverMIP::criaRestricaoCargaHorariaMaximaProfessorSemana()
 
                if ( encontrou )
                {
-                  double val = ( v.getDisciplina()->getCredTeoricos() + v.getDisciplina()->getCredPraticos() );
-                  row.insert( vit->second, val );
+                  double totalCreditos = ( v.getAula()->getTotalCreditos() );
+
+                  row.insert( vit->second, totalCreditos );
                }
                ///////
             }
@@ -14610,12 +14452,14 @@ int SolverMIP::criaRestricaoCargaHorariaMaximaProfessorSemana()
 int SolverMIP::criaRestricaoAvaliacaoCorpoDocente()
 {
    int restricoes = 0;
+
    ConstraintOp c;
    VariableOp v_find;
    VariableOpHash::iterator vit;
    ConstraintOpHash::iterator cit;
+
    int nnz = 0;
-   double rhs = 0.0;
+   double rhs = 1.0;
    char name[ 200 ];
    double M = 1000000;
 
@@ -14629,7 +14473,7 @@ int SolverMIP::criaRestricaoAvaliacaoCorpoDocente()
    ITERA_GGROUP_LESSPTR( it_prof, professores, Professor )
    {
       Professor * professor = ( *it_prof );
-      mapProfessorVariaveis[ professor ] += 1;
+      mapProfessorVariaveis[ professor ] = 1;
 
       vit = vHashOp.begin();
       for (; vit != vHashOp.end(); vit++ )
@@ -14659,8 +14503,12 @@ int SolverMIP::criaRestricaoAvaliacaoCorpoDocente()
          // corresponde ao lado direito da desigualdade no modelo )
          nnz = mapProfessorVariaveis[ professor ];
 
-         OPT_ROW row1( nnz, OPT_ROW::LESS, rhs, name );
-         OPT_ROW row2( nnz, OPT_ROW::GREATER, rhs, name );
+         if ( nnz == 0 )
+         {
+            continue;
+         }
+
+         OPT_ROW row( nnz, OPT_ROW::GREATER, rhs, name );
 
          // Procura pela variável 'l' do professor
          v_find.reset();
@@ -14677,8 +14525,7 @@ int SolverMIP::criaRestricaoAvaliacaoCorpoDocente()
          VariableOp v = vit->first;
 
          // Insere a variável 'l' nas restrições
-         row1.insert( vit->second, (-1.0)*M );
-         row2.insert( vit->second, -1.0 );
+         row.insert( vit->second, 1.0 );
          ///////
 
          // Cada varíável 'y' do professor
@@ -14689,106 +14536,15 @@ int SolverMIP::criaRestricaoAvaliacaoCorpoDocente()
             if ( vit->first.getType() == VariableOp::V_Y_PROF_DISCIPLINA
                && vit->first.getProfessor() == professor )
             {
-               row1.insert( vit->second, 1.0 );
-               row2.insert( vit->second, 1.0 );
+               row.insert( vit->second, 1.0 );
             }
          }
          ///////
 
          cHashOp[ c ] = lp->getNumRows();
-         lp->addRow( row1 );
-         lp->addRow( row2 );
+         lp->addRow( row );
 
-         restricoes += 2;
-      }
-   }
-
-   return restricoes;
-}
-
-int SolverMIP::criaRestricaoPrefDisciplinas()
-{
-   int restricoes = 0;
-
-   ConstraintOp c;
-   VariableOp v_find;
-   VariableOpHash::iterator vit;
-   ConstraintOpHash::iterator cit;
-
-   int nnz = 2;
-   double rhs = 0.0;
-   char name[ 200 ];
-   double M = 1000000.0;
-
-   GGroup< Professor *, LessPtr< Professor > > professores
-      = problemData->campi.begin()->professores;
-
-   GGroup< Disciplina *, LessPtr< Disciplina > > disciplinas
-      = problemData->disciplinas;
-
-   ITERA_GGROUP_LESSPTR( it_prof, professores, Professor )
-   {
-      Professor * professor = ( *it_prof );
-
-      ITERA_GGROUP_LESSPTR( it_disc, disciplinas, Disciplina )
-      {
-         Disciplina * disciplina = ( *it_disc );
-
-         c.reset();
-         c.setType( ConstraintOp::C_PREF_DISCIPLINAS );
-
-         c.setProfessor( professor );
-         c.setDisciplina( disciplina );
-
-         if ( cHashOp.find( c ) == cHashOp.end() )
-         {
-            // Cria duas novas linhas no modelo
-            sprintf( name, "%s", c.toString().c_str() );
-
-            // Procura pela variável 'lp' do professor e disciplina
-            v_find.reset();
-            v_find.setType( VariableOp::V_PREF_DISCIPLINAS );
-
-            v_find.setProfessor( professor );
-            v_find.setDisciplina( disciplina );
-
-            vit = vHashOp.find( v_find );
-
-            if ( vit == vHashOp.end() )
-            {
-               continue;
-            }
-      
-            // Hash da variável 'lp'
-            int idHashVLP = vit->second;
-            ///////
-
-            // Insere as variáveis 'y' do par
-            // professor/disciplina na restrição
-            vit = vHashOp.begin();
-            for (; vit != vHashOp.end(); vit++ )
-            {
-               if ( vit->first.getType() == VariableOp::V_Y_PROF_DISCIPLINA
-                  && vit->first.getDisciplina() == disciplina
-                  && vit->first.getProfessor() == professor )
-               {
-                  OPT_ROW row( nnz, OPT_ROW::GREATER, rhs, name );
-
-                  // Insere a variável 'lp' na restrição
-                  row.insert( idHashVLP, 1.0 );
-
-                  // Insere a variável 'y' na restrição
-                  row.insert( vit->second, -1.0 );
-
-                  // Adiciona a nova restrição no modelo
-                  lp->addRow( row );
-               }
-            }
-            ///////
-
-            cHashOp[ c ] = lp->getNumRows();
-            restricoes++;
-         }
+         restricoes++;
       }
    }
 
@@ -14809,7 +14565,6 @@ int SolverMIP::criaRestricaoMaxDiscProfCurso()
    char name[ 200 ];
    double M = 1000000.0;
 
-   ///////
    GGroup< Professor *, LessPtr< Professor > > professores
       = problemData->campi.begin()->professores;
 
@@ -14821,7 +14576,6 @@ int SolverMIP::criaRestricaoMaxDiscProfCurso()
 
    GGroup< Aula *, LessPtr< Aula > > aulas
       = problemData->aulas;
-   ///////
 
    ITERA_GGROUP_LESSPTR( it_prof, professores, Professor )
    {
@@ -15263,6 +15017,11 @@ int SolverMIP::criaRestricaoGapsProfessores()
    int nnz = problemData->horarios_aula_ordenados.size() * problemData->aulas.size() * 5;
    double rhs = 1.0;
    char name[ 200 ];
+
+   if ( nnz == 0 )
+   {
+      return restricoes;
+   }
 
    GGroup< Professor *, LessPtr< Professor > > professores
       = problemData->campi.begin()->professores;
