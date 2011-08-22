@@ -212,14 +212,13 @@ public class Unidade implements Serializable
 
 	private void preencheHorarios()
 	{
-		for ( SemanaLetiva semanaLetiva : SemanaLetiva.findAll() )
+		List< HorarioDisponivelCenario > listHdcs
+			= this.getCampus().getHorarios( SemanaLetiva.findAll() );
+
+		for ( HorarioDisponivelCenario hdc : listHdcs )
 		{
-			for ( HorarioDisponivelCenario hdc
-				: this.getCampus().getHorarios( semanaLetiva ) )
-			{
-				hdc.getUnidades().add( this );
-				hdc.merge();
-			}
+			hdc.getUnidades().add( this );
+			hdc.merge();
 		}
 	}
 
@@ -429,15 +428,24 @@ public class Unidade implements Serializable
     }
 
 	@SuppressWarnings("unchecked")
-	public List< HorarioDisponivelCenario > getHorarios( SemanaLetiva semanaLetiva )
+	public List< HorarioDisponivelCenario > getHorarios( List< SemanaLetiva > semanasLetivas )
 	{
-		Query q = entityManager().createQuery(
-			"SELECT o FROM HorarioDisponivelCenario o, IN (o.unidades) u " +
-			"WHERE u = :unidade AND o.horarioAula.semanaLetiva = :semanaLetiva" );
+		Set< HorarioDisponivelCenario > horarios
+			= new HashSet< HorarioDisponivelCenario >();
 
-		q.setParameter( "unidade", this );
-		q.setParameter( "semanaLetiva", semanaLetiva );
-		return q.getResultList();
+		for ( SemanaLetiva semanaLetiva : semanasLetivas )
+		{
+			Query q = entityManager().createQuery(
+				"SELECT o FROM HorarioDisponivelCenario o, IN ( o.unidades ) u " +
+				"WHERE u = :unidade AND o.horarioAula.semanaLetiva = :semanaLetiva " );
+
+			q.setParameter( "unidade", this );
+			q.setParameter( "semanaLetiva", semanaLetiva );
+
+			horarios.addAll( q.getResultList() );
+		}
+
+		return new ArrayList< HorarioDisponivelCenario >( horarios ); 
 	}
 
 	public static boolean checkCodigoUnique( Cenario cenario, String codigo )

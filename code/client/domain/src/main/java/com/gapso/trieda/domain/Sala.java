@@ -182,13 +182,13 @@ public class Sala implements Serializable, Comparable< Sala >
 
 	public void preencheHorarios()
 	{
-		for ( SemanaLetiva semanaLetiva : SemanaLetiva.findAll() )
+		List< HorarioDisponivelCenario > listHdcs = 
+			this.getUnidade().getHorarios( SemanaLetiva.findAll() );
+
+		for ( HorarioDisponivelCenario hdc : listHdcs )
 		{
-			for ( HorarioDisponivelCenario hdc : this.getUnidade().getHorarios( semanaLetiva ) )
-			{
-				hdc.getSalas().add( this );
-				hdc.merge();
-			}
+			hdc.getSalas().add( this );
+			hdc.merge();
 		}
 	}
 
@@ -373,8 +373,8 @@ public class Sala implements Serializable, Comparable< Sala >
 	public List< Curriculo > getCurriculos()
 	{
 		Query q = entityManager().createQuery(
-			"SELECT DISTINCT(cd.curriculo) " +
-			"FROM CurriculoDisciplina cd WHERE :sala IN ELEMENTS(cd.salas)" );
+			"SELECT DISTINCT( cd.curriculo ) " +
+			"FROM CurriculoDisciplina cd WHERE :sala IN ELEMENTS( cd.salas )" );
 
 		q.setParameter( "sala", this );
 		return q.getResultList();
@@ -577,15 +577,24 @@ public class Sala implements Serializable, Comparable< Sala >
     }
 
 	@SuppressWarnings("unchecked")
-	public List< HorarioDisponivelCenario > getHorarios( SemanaLetiva semanaLetiva )
+	public List< HorarioDisponivelCenario > getHorarios( List< SemanaLetiva > semanasLetivas )
 	{
-		Query q = entityManager().createQuery(
-			"SELECT o FROM HorarioDisponivelCenario o, IN (o.salas) c " +
-			"WHERE c = :sala AND o.horarioAula.semanaLetiva = :semanaLetiva" );
+		Set< HorarioDisponivelCenario > horarios
+			= new HashSet< HorarioDisponivelCenario >();
 
-		q.setParameter( "sala", this );
-		q.setParameter( "semanaLetiva", semanaLetiva );
-		return q.getResultList();
+		for ( SemanaLetiva semanaLetiva : semanasLetivas )
+		{
+			Query q = entityManager().createQuery(
+				"SELECT o FROM HorarioDisponivelCenario o, IN (o.salas) c " +
+				"WHERE c = :sala AND o.horarioAula.semanaLetiva = :semanaLetiva " );
+
+			q.setParameter( "sala", this );
+			q.setParameter( "semanaLetiva", semanaLetiva );
+
+			horarios.addAll( q.getResultList() );
+		}
+
+		return new ArrayList< HorarioDisponivelCenario >( horarios );
 	}
 
 	public static boolean checkCodigoUnique( Cenario cenario, String codigo )

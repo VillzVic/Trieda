@@ -41,12 +41,11 @@ import org.springframework.transaction.annotation.Transactional;
 @Entity
 @RooJavaBean
 @RooToString
-@RooEntity(identifierColumn = "CEN_ID")
-@Table(name = "CENARIOS")
-public class Cenario implements Serializable
+@RooEntity( identifierColumn = "CEN_ID" )
+@Table( name = "CENARIOS" )
+public class Cenario
+	implements Serializable
 {
-	// @OneToOne(mappedBy="cenario", fetch=FetchType.LAZY)
-	// private Parametro parametro;
 	@OneToMany(mappedBy = "cenario")
 	private Set<Parametro> parametros;
 

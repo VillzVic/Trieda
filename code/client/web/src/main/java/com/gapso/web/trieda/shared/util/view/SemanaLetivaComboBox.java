@@ -10,23 +10,30 @@ import com.gapso.web.trieda.shared.dtos.SemanaLetivaDTO;
 import com.gapso.web.trieda.shared.services.Services;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-public class SemanaLetivaComboBox extends ComboBox<SemanaLetivaDTO> {
+public class SemanaLetivaComboBox
+	extends ComboBox< SemanaLetivaDTO >
+{
 
-	public SemanaLetivaComboBox() {
-		RpcProxy<ListLoadResult<SemanaLetivaDTO>> proxy = new RpcProxy<ListLoadResult<SemanaLetivaDTO>>() {
+	public SemanaLetivaComboBox()
+	{
+		RpcProxy< ListLoadResult< SemanaLetivaDTO > > proxy
+			= new RpcProxy< ListLoadResult< SemanaLetivaDTO > >()
+		{
 			@Override
-			public void load(Object loadConfig, AsyncCallback<ListLoadResult<SemanaLetivaDTO>> callback) {
-				Services.semanasLetiva().getList(callback);
+			public void load( Object loadConfig,
+				AsyncCallback< ListLoadResult< SemanaLetivaDTO > > callback )
+			{
+				Services.semanasLetiva().getList( callback );
 			}
 		};
-		
-		setStore(new ListStore<SemanaLetivaDTO>(new BaseListLoader<BaseListLoadResult<SemanaLetivaDTO>>(proxy)));
-		
-		setFieldLabel("Semana Letiva");
-		setEmptyText("Selecione a semana letiva");
-		setDisplayField(SemanaLetivaDTO.PROPERTY_CODIGO);
-		setEditable(false);
-		setTriggerAction(TriggerAction.ALL);
-	}
 
+		setStore( new ListStore< SemanaLetivaDTO >(
+			new BaseListLoader< BaseListLoadResult< SemanaLetivaDTO > >( proxy ) ) );
+
+		setFieldLabel( "Semana Letiva" );
+		setEmptyText( "Selecione a semana letiva" );
+		setDisplayField( SemanaLetivaDTO.PROPERTY_CODIGO );
+		setEditable( false );
+		setTriggerAction( TriggerAction.ALL );
+	}
 }

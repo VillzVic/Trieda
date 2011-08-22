@@ -10,25 +10,27 @@ import com.gapso.web.trieda.shared.util.view.GTab;
 import com.gapso.web.trieda.shared.util.view.GTabItem;
 import com.google.gwt.user.client.ui.Widget;
 
-public class ResumoCampiPresenter implements Presenter {
-
-	public interface Display {
-		void setStore(TreeStore<TreeNodeDTO> store);
-		TreePanel<TreeNodeDTO> getTree();  
+public class ResumoCampiPresenter
+	implements Presenter
+{
+	public interface Display
+	{
+		void setStore( TreeStore< TreeNodeDTO > store );
+		TreePanel< TreeNodeDTO > getTree();  
 		Component getComponent();
 	}
-//	private CenarioDTO cenario;
+
 	private Display display; 
 	
-	public ResumoCampiPresenter(CenarioDTO cenario, Display display) {
-//		this.cenario = cenario;
+	public ResumoCampiPresenter(
+		CenarioDTO cenario, Display display )
+	{
 		this.display = display;
 	}
 
 	@Override
-	public void go(Widget widget) {
+	public void go( Widget widget ){
 		GTab tab = (GTab)widget;
-		tab.add((GTabItem)display.getComponent());
+		tab.add( (GTabItem)display.getComponent() );
 	}
-
 }

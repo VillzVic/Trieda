@@ -88,11 +88,16 @@ public class CurriculosServiceImpl extends RemoteServiceServlet implements Curri
 	}
 
 	@Override
-	public void save(CurriculoDTO curriculoDTO) {
-		Curriculo curriculo = ConvertBeans.toCurriculo(curriculoDTO);
-		if(curriculo.getId() != null && curriculo.getId() > 0) {
+	public void save( CurriculoDTO curriculoDTO )
+	{
+		Curriculo curriculo = ConvertBeans.toCurriculo( curriculoDTO );
+
+		if ( curriculo.getId() != null && curriculo.getId() > 0 )
+		{
 			curriculo.merge();
-		} else {
+		}
+		else
+		{
 			curriculo.persist();
 		}
 	}

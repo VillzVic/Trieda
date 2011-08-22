@@ -1,6 +1,7 @@
 package com.gapso.trieda.domain;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -562,13 +563,24 @@ public class Disciplina
 
 
 	@SuppressWarnings("unchecked")
-	public List<HorarioDisponivelCenario> getHorarios(SemanaLetiva semanaLetiva) {
-		Query q = entityManager()
-				.createQuery(
-						"SELECT o FROM HorarioDisponivelCenario o, IN (o.disciplinas) c WHERE c = :disciplina AND o.horarioAula.semanaLetiva = :semanaLetiva");
-		q.setParameter("disciplina", this);
-		q.setParameter("semanaLetiva", semanaLetiva);
-		return q.getResultList();
+	public List< HorarioDisponivelCenario > getHorarios( List< SemanaLetiva > semanasLetivas )
+	{
+		Set< HorarioDisponivelCenario > horarios
+			= new HashSet< HorarioDisponivelCenario >();
+
+		for ( SemanaLetiva semanaLetiva : semanasLetivas )
+		{
+			Query q = entityManager().createQuery(
+				" SELECT o FROM HorarioDisponivelCenario o, IN ( o.disciplinas ) c " +
+				" WHERE c = :disciplina AND o.horarioAula.semanaLetiva = :semanaLetiva " );
+
+			q.setParameter( "disciplina", this );
+			q.setParameter( "semanaLetiva", semanaLetiva );
+
+			horarios.addAll( q.getResultList() );
+		}
+
+		return new ArrayList< HorarioDisponivelCenario >( horarios );
 	}
 
 

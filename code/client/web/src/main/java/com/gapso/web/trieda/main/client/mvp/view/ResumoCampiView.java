@@ -24,96 +24,117 @@ import com.gapso.web.trieda.shared.util.resources.Resources;
 import com.gapso.web.trieda.shared.util.view.GTabItem;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-public class ResumoCampiView extends MyComposite implements ResumoCampiPresenter.Display {
-
-	private TreeStore<TreeNodeDTO> store;
-	private TreePanel<TreeNodeDTO> tree;
-
+public class ResumoCampiView extends MyComposite
+	implements ResumoCampiPresenter.Display
+{
+	private TreeStore< TreeNodeDTO > store;
+	private TreePanel< TreeNodeDTO > tree;
 	private ContentPanel panel;
 	private GTabItem tabItem;
-	
 	private CenarioDTO cenario;
-	
-	public ResumoCampiView(CenarioDTO cenario) {
+
+	public ResumoCampiView(
+		CenarioDTO cenario )
+	{
 		this.cenario = cenario;
 		initUI();
 		configureProxy();
 		createGrid();
 		createTabItem();
-		initComponent(tabItem);
+		initComponent( tabItem );
 	}
-	
-	private void initUI() {
-		panel = new ContentPanel(new BorderLayout());
-		panel.setHeading("Master Data » Resultados por Campus");
+
+	private void initUI()
+	{
+		panel = new ContentPanel( new BorderLayout() );
+		panel.setHeading( "Master Data » Resultados por Campus" );
 	}
 
 	@Override
-	protected void beforeRender() {
+	protected void beforeRender()
+	{
 		super.beforeRender();
 	}
 
-	private void createTabItem() {
-		tabItem = new GTabItem("Resumo por Campus", Resources.DEFAULTS.resumoCursos16());
-		tabItem.setContent(panel);
+	private void createTabItem()
+	{
+		tabItem = new GTabItem(
+			"Resumo por Campus", Resources.DEFAULTS.resumoCursos16() );
+
+		tabItem.setContent( panel );
 	}
-	
-	private void createGrid() {
-		tree = new TreePanel<TreeNodeDTO>(getStore());
-		tree.setDisplayProperty(TreeNodeDTO.PROPERTY_TEXT);
+
+	private void createGrid()
+	{
+		tree = new TreePanel< TreeNodeDTO >( getStore() );
+		tree.setDisplayProperty( TreeNodeDTO.PROPERTY_TEXT );
 	    
-	    ContentPanel contentPanel = new ContentPanel(new FitLayout());
-	    contentPanel.setHeaderVisible(false);
-	    contentPanel.add(tree);
-	    
-	    BorderLayoutData bld = new BorderLayoutData(LayoutRegion.CENTER);
-	    bld.setMargins(new Margins(5));
-	    panel.add(contentPanel, bld);
+	    ContentPanel contentPanel = new ContentPanel( new FitLayout() );
+	    contentPanel.setHeaderVisible( false );
+	    contentPanel.add( tree );
+
+	    BorderLayoutData bld = new BorderLayoutData( LayoutRegion.CENTER );
+	    bld.setMargins( new Margins( 5 ) );
+	    panel.add( contentPanel, bld );
 	}
 
 	@Override
-	public void setStore(TreeStore<TreeNodeDTO> store) {
+	public void setStore( TreeStore< TreeNodeDTO > store )
+	{
 		this.store = store;
 	}
 
-	public TreeStore<TreeNodeDTO> getStore() {
+	public TreeStore< TreeNodeDTO > getStore()
+	{
 		return store;
 	}
-	
+
 	@Override
-	public TreePanel<TreeNodeDTO> getTree() {
+	public TreePanel< TreeNodeDTO > getTree()
+	{
 		return tree;
 	}
 
-	private void configureProxy() {
-		RpcProxy<List<TreeNodeDTO>> proxy = new RpcProxy<List<TreeNodeDTO>>() {
+	private void configureProxy()
+	{
+		RpcProxy< List< TreeNodeDTO > > proxy = new RpcProxy< List< TreeNodeDTO > >()
+		{
 			@Override
-			protected void load(Object loadConfig, AsyncCallback<List<TreeNodeDTO>> callback) {
-				Services.campi().getResumos(cenario, (TreeNodeDTO) loadConfig, callback);
+			protected void load( Object loadConfig, AsyncCallback< List< TreeNodeDTO > > callback )
+			{
+				Services.campi().getResumos( cenario, (TreeNodeDTO) loadConfig, callback );
 			}
 		};
-		
-		TreeLoader<TreeNodeDTO> loader = new BaseTreeLoader<TreeNodeDTO>(proxy) {
+
+		TreeLoader< TreeNodeDTO > loader = new BaseTreeLoader< TreeNodeDTO >( proxy )
+		{
 			@Override
-			public boolean hasChildren(TreeNodeDTO parent) {
+			public boolean hasChildren( TreeNodeDTO parent )
+			{
 				return parent.getLeaf();
 			}
 		};
 		
-		store = new TreeStore<TreeNodeDTO>(loader);
+		store = new TreeStore< TreeNodeDTO >( loader );
 		addLoadingListener();
 	}
-	
-	private void addLoadingListener() {
-		store.getLoader().addLoadListener(new LoadListener() {
-			@Override
-			public void loaderBeforeLoad(LoadEvent le) {
-				tree.mask(getI18nMessages().loading(), "loading");
-			}
-			@Override
-			public void loaderLoad(LoadEvent le) {
-				tree.unmask();
-			}
+
+	private void addLoadingListener()
+	{
+		store.getLoader().addLoadListener(
+			new LoadListener()
+			{
+				@Override
+				public void loaderBeforeLoad( LoadEvent le )
+				{
+					tree.mask( getI18nMessages().loading(), "loading" );
+				}
+
+				@Override
+				public void loaderLoad( LoadEvent le )
+				{
+					tree.unmask();
+				}
 		});
 	}
 }

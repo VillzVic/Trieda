@@ -5,13 +5,15 @@ import java.util.Locale;
 import com.gapso.gipe.common.GLanguageManager;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
 
-public class GTriedaI18nConstants implements TriedaI18nConstants {
-
+public class GTriedaI18nConstants
+	implements TriedaI18nConstants
+{
 	private GLanguageManager languageManager = null;
 
-	public GTriedaI18nConstants() {
-		this.languageManager = new GLanguageManager("TriedaI18nConstants",
-				new Locale("pt", "BR"));
+	public GTriedaI18nConstants()
+	{
+		this.languageManager = new GLanguageManager(
+			"TriedaI18nConstants", new Locale( "pt", "BR" ) );
 	}
 
 	@Override
@@ -639,5 +641,15 @@ public class GTriedaI18nConstants implements TriedaI18nConstants {
 	@Override
 	public String mensagemAlerta() {
 		return languageManager.getText("mensagemAlerta");
+	}
+
+	@Override
+	public String periodos() {
+		return languageManager.getText("periodos");
+	}
+
+	@Override
+	public String semanaLetiva() {
+		return languageManager.getText("semanaLetiva");
 	}
 }

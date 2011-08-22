@@ -124,42 +124,56 @@ public class ConvertBeans
 	}
 
 	// CENÁRIO
-	public static Cenario toCenario(CenarioDTO dto) {
+	public static Cenario toCenario( CenarioDTO dto )
+	{
 		Cenario domain = new Cenario();
-		domain.setId(dto.getId());
-		domain.setVersion(dto.getVersion());
-		domain.setNome(dto.getNome());
-		domain.setMasterData(dto.getMasterData());
-		domain.setOficial(dto.getOficial());
-		domain.setAno(dto.getAno());
-		domain.setSemestre(dto.getSemestre());
-		domain.setComentario(dto.getComentario());
-		SemanaLetiva semanaLetiva = SemanaLetiva.find(dto.getSemanaLetivaId());
-		domain.setSemanaLetiva(semanaLetiva);
+
+		domain.setId( dto.getId() );
+		domain.setVersion( dto.getVersion() );
+		domain.setNome( dto.getNome() );
+		domain.setMasterData( dto.getMasterData() );
+		domain.setOficial( dto.getOficial() );
+		domain.setAno( dto.getAno() );
+		domain.setSemestre( dto.getSemestre() );
+		domain.setComentario( dto.getComentario() );
+
+		SemanaLetiva semanaLetiva
+			= SemanaLetiva.find( dto.getSemanaLetivaId() );
+		domain.setSemanaLetiva( semanaLetiva );
+
 		return domain;
 	}
 
-	public static CenarioDTO toCenarioDTO(Cenario domain) {
+	public static CenarioDTO toCenarioDTO( Cenario domain )
+	{
 		CenarioDTO dto = new CenarioDTO();
-		dto.setId(domain.getId());
-		dto.setVersion(domain.getVersion());
-		dto.setNome(domain.getNome());
-		dto.setMasterData(domain.getMasterData());
-		dto.setOficial(domain.getOficial());
-		dto.setAno(domain.getAno());
-		dto.setSemestre(domain.getSemestre());
-		dto.setComentario(domain.getComentario());
-		SemanaLetiva semanaLetiva = null;
 
-		if (!domain.getMasterData()) {
-			semanaLetiva = SemanaLetiva.getByOficial();
-		} else {
-			semanaLetiva = SemanaLetiva.getByOficial();
+		dto.setId( domain.getId() );
+		dto.setVersion( domain.getVersion() );
+		dto.setNome( domain.getNome() );
+		dto.setMasterData( domain.getMasterData() );
+		dto.setOficial( domain.getOficial() );
+		dto.setAno( domain.getAno() );
+		dto.setSemestre( domain.getSemestre() );
+		dto.setComentario( domain.getComentario() );
+
+		// TODO -- o cenário deve ter apenas uma semana letiva ?
+		SemanaLetiva semanaLetiva = null;
+		if ( !domain.getMasterData() )
+		{
+			semanaLetiva = SemanaLetiva.findAll().get( 0 );
+			// semanaLetiva = SemanaLetiva.getByOficial();
+		}
+		else
+		{
+			semanaLetiva = SemanaLetiva.findAll().get( 0 );
+			// semanaLetiva = SemanaLetiva.getByOficial();
 		}
 
-		dto.setSemanaLetivaId(semanaLetiva.getId());
-		dto.setSemanaLetivaString(semanaLetiva.getCodigo());
-		dto.setDisplayText(domain.getNome());
+		dto.setSemanaLetivaId( ( ( semanaLetiva == null ) ? null : semanaLetiva.getId() ) );
+		dto.setSemanaLetivaString( ( ( semanaLetiva == null ) ? "" : semanaLetiva.getCodigo() ) );
+		dto.setDisplayText( domain.getNome() );
+
 		return dto;
 	}
 
@@ -247,38 +261,49 @@ public class ConvertBeans
 	}
 
 	// PROFESSOR CAMPUS
-	public static List<ProfessorCampusDTO> toProfessorCampusDTO(Campus campus) {
-		Set<Professor> professores = campus.getProfessores();
-		List<ProfessorCampusDTO> list = new ArrayList<ProfessorCampusDTO>(
-				professores.size());
-		for (Professor professor : professores) {
+	public static List< ProfessorCampusDTO > toProfessorCampusDTO( Campus campus )
+	{
+		Set< Professor > professores = campus.getProfessores();
+		List< ProfessorCampusDTO > list
+			= new ArrayList< ProfessorCampusDTO >( professores.size() );
+
+		for ( Professor professor : professores )
+		{
 			ProfessorCampusDTO dto = new ProfessorCampusDTO();
-			dto.setProfessorId(professor.getId());
-			dto.setProfessorString(professor.getNome());
-			dto.setProfessorCpf(professor.getCpf());
-			dto.setCampusId(campus.getId());
-			dto.setCampusString(campus.getCodigo());
-			dto.setDisplayText(campus.getCodigo() + "-" + professor.getNome());
-			list.add(dto);
+
+			dto.setProfessorId( professor.getId() );
+			dto.setProfessorString( professor.getNome() );
+			dto.setProfessorCpf( professor.getCpf() );
+			dto.setCampusId( campus.getId() );
+			dto.setCampusString( campus.getCodigo() );
+			dto.setDisplayText( campus.getCodigo() + "-" + professor.getNome() );
+
+			list.add( dto );
 		}
+
 		return list;
 	}
 
-	public static List<ProfessorCampusDTO> toProfessorCampusDTO(
-			Professor professor) {
-		Set<Campus> campi = professor.getCampi();
-		List<ProfessorCampusDTO> list = new ArrayList<ProfessorCampusDTO>(
-				campi.size());
-		for (Campus campus : campi) {
+	public static List< ProfessorCampusDTO > toProfessorCampusDTO( Professor professor )
+	{
+		Set< Campus > campi = professor.getCampi();
+		List< ProfessorCampusDTO > list
+			= new ArrayList< ProfessorCampusDTO >( campi.size() );
+
+		for ( Campus campus : campi )
+		{
 			ProfessorCampusDTO dto = new ProfessorCampusDTO();
-			dto.setProfessorId(professor.getId());
-			dto.setProfessorString(professor.getNome());
-			dto.setProfessorCpf(professor.getCpf());
-			dto.setCampusId(campus.getId());
-			dto.setCampusString(campus.getCodigo());
-			dto.setDisplayText(campus.getCodigo() + "-" + professor.getNome());
-			list.add(dto);
+
+			dto.setProfessorId( professor.getId() );
+			dto.setProfessorString( professor.getNome() );
+			dto.setProfessorCpf( professor.getCpf() );
+			dto.setCampusId( campus.getId() );
+			dto.setCampusString( campus.getCodigo() );
+			dto.setDisplayText( campus.getCodigo() + "-" + professor.getNome() );
+
+			list.add( dto );
 		}
+
 		return list;
 	}
 
@@ -435,25 +460,35 @@ public class ConvertBeans
 	}
 
 	// CALENDÁRIO
-	public static SemanaLetiva toSemanaLetiva(SemanaLetivaDTO dto) {
+	public static SemanaLetiva toSemanaLetiva( SemanaLetivaDTO dto )
+	{
 		SemanaLetiva domain = new SemanaLetiva();
-		domain.setId(dto.getId());
-		domain.setVersion(dto.getVersion());
-		domain.setCodigo(dto.getCodigo());
-		domain.setDescricao(dto.getDescricao());
-		domain.setOficial(dto.getOficial());
+
+		domain.setId( dto.getId() );
+		domain.setVersion( dto.getVersion() );
+		domain.setCodigo( dto.getCodigo() );
+		domain.setDescricao( dto.getDescricao() );
+
+		// TODO -- a coluna 'oficial' continunará existindo ???
+		// domain.setOficial(dto.getOficial());
+
 		return domain;
 	}
 
-	public static SemanaLetivaDTO toSemanaLetivaDTO(SemanaLetiva domain) {
+	public static SemanaLetivaDTO toSemanaLetivaDTO( SemanaLetiva domain )
+	{
 		SemanaLetivaDTO dto = new SemanaLetivaDTO();
-		dto.setId(domain.getId());
-		dto.setVersion(domain.getVersion());
-		dto.setCodigo(domain.getCodigo());
-		dto.setDescricao(domain.getDescricao());
-		dto.setOficial(domain.getOficial());
-		dto.setDisplayText(domain.getCodigo() + " (" + domain.getDescricao()
-				+ ")");
+
+		dto.setId( domain.getId() );
+		dto.setVersion( domain.getVersion() );
+		dto.setCodigo( domain.getCodigo() );
+		dto.setDescricao( domain.getDescricao() );
+
+		// TODO -- a coluna 'oficial' continunará existindo ???
+		// dto.setOficial( domain.getOficial() );
+
+		dto.setDisplayText( domain.getCodigo() + " (" + domain.getDescricao() + ")" );
+
 		return dto;
 	}
 
@@ -1017,16 +1052,24 @@ public class ConvertBeans
 	}
 
 	// CURRICULO (MATRIZ CURRICULAR)
-	public static Curriculo toCurriculo(CurriculoDTO dto) {
+	public static Curriculo toCurriculo( CurriculoDTO dto )
+	{
 		Curriculo domain = new Curriculo();
-		domain.setId(dto.getId());
-		domain.setVersion(dto.getVersion());
-		Cenario cenario = Cenario.find(dto.getCenarioId());
-		domain.setCenario(cenario);
-		domain.setCodigo(dto.getCodigo());
-		domain.setDescricao(dto.getDescricao());
-		Curso curso = Curso.find(dto.getCursoId());
-		domain.setCurso(curso);
+
+		domain.setId( dto.getId() );
+		domain.setVersion( dto.getVersion() );
+
+		Cenario cenario = Cenario.find( dto.getCenarioId() );
+		domain.setCenario( cenario );
+		domain.setCodigo( dto.getCodigo() );
+		domain.setDescricao( dto.getDescricao() );
+
+		Curso curso = Curso.find( dto.getCursoId() );
+		domain.setCurso( curso );
+
+		SemanaLetiva sl = SemanaLetiva.find( dto.getSemanaLetivaId() );
+		domain.setSemanaLetiva( sl );
+
 		return domain;
 	}
 
@@ -1047,18 +1090,23 @@ public class ConvertBeans
 		}
 
 		String periodos = "";
-		for (Integer periodo : periodosSet )
+		for ( Integer periodo : periodosSet )
 		{
-			periodos += periodo + ", ";
+			periodos += ( periodo + ", " );
 		}
 
-		periodos = TriedaUtil.truncate( periodos, periodos.length() - 2, false );
+		periodos = TriedaUtil.truncate( periodos,
+			periodos.length() - 2, false );
 		dto.setPeriodos( periodos );
 
 		Curso curso = domain.getCurso();
 		dto.setCursoId( curso.getId() );
 		dto.setCursoString( curso.getCodigo() + " (" + curso.getNome() + ")" );
 		dto.setDisplayText( domain.getCodigo() + " (" + curso.getNome()	+ ") Periodos: " + periodos );
+
+		SemanaLetiva sl = domain.getSemanaLetiva(); 
+		dto.setSemanaLetivaId( sl == null ? null : sl.getId() );
+		dto.setSemanaLetivaString( sl == null ? "" : sl.getCodigo() );
 
 		return dto;
 	}
@@ -1721,30 +1769,39 @@ public class ConvertBeans
 		return domain;
 	}
 
-	public static ParametroDTO toParametroDTO(Parametro domain) {
+	public static ParametroDTO toParametroDTO( Parametro domain )
+	{
 		ParametroDTO dto = new ParametroDTO();
-		dto.setId(domain.getId());
-		dto.setVersion(domain.getVersion());
-		dto.setCenarioId(domain.getCenario().getId());
-		dto.setModoOtimizacao(domain.getModoOtimizacao());
+
+		dto.setId( domain.getId() );
+		dto.setVersion( domain.getVersion() );
+		dto.setCenarioId( domain.getCenario().getId() );
+		dto.setModoOtimizacao( domain.getModoOtimizacao() );
 
 		SemanaLetiva semanaLetiva = domain.getSemanaLetiva();
-		if (semanaLetiva == null) {
-			semanaLetiva = SemanaLetiva.getByOficial();
+		if ( semanaLetiva == null )
+		{
+			List< SemanaLetiva > list = new ArrayList< SemanaLetiva >(
+				SemanaLetiva.getByOficial( domain.getCampus() ) );
+
+			semanaLetiva = ( ( list == null || list.size() == 0 ) ? null : list.get( 0 ) );
 		}
-		dto.setSemanaLetivaId(semanaLetiva.getId());
-		dto.setSemanaLetivaDisplay(semanaLetiva.getCodigo());
+
+		dto.setSemanaLetivaId( semanaLetiva.getId() );
+		dto.setSemanaLetivaDisplay( semanaLetiva.getCodigo() );
 
 		Campus campus = domain.getCampus();
-		if (campus != null) {
-			dto.setCampusId(campus.getId());
-			dto.setCampusDisplay(campus.getCodigo());
+		if ( campus != null )
+		{
+			dto.setCampusId( campus.getId() );
+			dto.setCampusDisplay( campus.getCodigo() );
 		}
 
 		Turno turno = domain.getTurno();
-		if (turno != null) {
-			dto.setTurnoId(turno.getId());
-			dto.setTurnoDisplay(turno.getNome());
+		if ( turno != null )
+		{
+			dto.setTurnoId( turno.getId() );
+			dto.setTurnoDisplay( turno.getNome() );
 		}
 
 		dto.setCargaHorariaAluno(domain.getCargaHorariaAluno());

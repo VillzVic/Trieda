@@ -62,34 +62,51 @@ public class FixacoesServiceImpl extends RemoteServiceServlet implements Fixacoe
 	}
 	
 	@Override
-	public void save(FixacaoDTO fixacaoDTO, List<HorarioDisponivelCenarioDTO> hdcDTOList) {
+	public void save( FixacaoDTO fixacaoDTO,
+		List< HorarioDisponivelCenarioDTO > hdcDTOList )
+	{
 		Fixacao.entityManager().clear();
-		Fixacao fixacao = ConvertBeans.toFixacao(fixacaoDTO);
-		List<HorarioDisponivelCenario> listSelecionados = ConvertBeans.toHorarioDisponivelCenario(hdcDTOList);
-		List<HorarioDisponivelCenario> adicionarList = new ArrayList<HorarioDisponivelCenario>(listSelecionados);
-		SemanaLetiva semanaLetiva = SemanaLetiva.getByOficial();
-		
-		if(fixacao.getId() != null && fixacao.getId() > 0) {
+		Fixacao fixacao = ConvertBeans.toFixacao( fixacaoDTO );
+
+		List< HorarioDisponivelCenario > listSelecionados	
+			= ConvertBeans.toHorarioDisponivelCenario( hdcDTOList );
+		List< HorarioDisponivelCenario > adicionarList
+			= new ArrayList< HorarioDisponivelCenario >( listSelecionados );
+
+		List< SemanaLetiva > semanasLetivas = SemanaLetiva.findAll();
+
+		if(fixacao.getId() != null && fixacao.getId() > 0)
+		{
 			fixacao.merge();
-		} else {
+		}
+		else
+		{
 			fixacao.persist();
 		}
+
 		long id = fixacao.getId();
-		Fixacao.entityManager().detach(fixacao);
-//		Fixacao.entityManager().refresh(fixacao);
-		
-		fixacao = Fixacao.find(id);
-		
-		adicionarList.removeAll(fixacao.getHorarios(semanaLetiva));
-		for(HorarioDisponivelCenario o : adicionarList) {
-			HorarioDisponivelCenario hdc = HorarioDisponivelCenario.find(o.getId());
-			hdc.getFixacoes().add(fixacao);
+		Fixacao.entityManager().detach( fixacao );
+		fixacao = Fixacao.find( id );
+
+		adicionarList.removeAll( fixacao.getHorarios( semanasLetivas ) );
+
+		for ( HorarioDisponivelCenario o : adicionarList )
+		{
+			HorarioDisponivelCenario hdc
+				= HorarioDisponivelCenario.find( o.getId() );
+
+			hdc.getFixacoes().add( fixacao );
 			hdc.merge();
 		}
-		List<HorarioDisponivelCenario> removerList = new ArrayList<HorarioDisponivelCenario>(fixacao.getHorarios(semanaLetiva));
-		removerList.removeAll(listSelecionados);
-		for(HorarioDisponivelCenario o : removerList) {
-			o.getFixacoes().remove(fixacao);
+
+		List< HorarioDisponivelCenario > removerList
+			= new ArrayList< HorarioDisponivelCenario >(
+				fixacao.getHorarios( semanasLetivas ) );
+
+		removerList.removeAll( listSelecionados );
+		for ( HorarioDisponivelCenario o : removerList )
+		{
+			o.getFixacoes().remove( fixacao );
 			o.merge();
 		}
 	}
@@ -102,87 +119,147 @@ public class FixacoesServiceImpl extends RemoteServiceServlet implements Fixacoe
 	}
 	
 	@Override
-	public List<HorarioDisponivelCenarioDTO> getHorariosSelecionados(FixacaoDTO fixacaoDTO) {
-		Fixacao fixacao = Fixacao.find(fixacaoDTO.getId());
-		SemanaLetiva semanaLetiva = SemanaLetiva.getByOficial();
-		return ConvertBeans.toHorarioDisponivelCenarioDTO(new ArrayList<HorarioDisponivelCenario>(fixacao.getHorarios(semanaLetiva)));
+	public List< HorarioDisponivelCenarioDTO > getHorariosSelecionados( FixacaoDTO fixacaoDTO )
+	{
+		Fixacao fixacao = Fixacao.find( fixacaoDTO.getId() );
+		List< SemanaLetiva > semanasLetivas = SemanaLetiva.findAll();
+		return ConvertBeans.toHorarioDisponivelCenarioDTO(
+			new ArrayList< HorarioDisponivelCenario >( fixacao.getHorarios( semanasLetivas ) ) );
 	}
 
 	@Override
-	public PagingLoadResult<HorarioDisponivelCenarioDTO> getHorariosDisponiveis(ProfessorDTO professorDTO, DisciplinaDTO disciplinaDTO, SalaDTO salaDTO) {
-		if(disciplinaDTO == null && salaDTO == null && professorDTO == null) {
-			return new BasePagingLoadResult<HorarioDisponivelCenarioDTO>(new ArrayList<HorarioDisponivelCenarioDTO>());
+	public PagingLoadResult< HorarioDisponivelCenarioDTO > getHorariosDisponiveis(
+		ProfessorDTO professorDTO, DisciplinaDTO disciplinaDTO, SalaDTO salaDTO )
+	{
+		if( disciplinaDTO == null && salaDTO == null && professorDTO == null )
+		{
+			return new BasePagingLoadResult< HorarioDisponivelCenarioDTO >(
+				new ArrayList< HorarioDisponivelCenarioDTO >() );
 		}
-		SemanaLetiva semanaLetiva = SemanaLetiva.getByOficial();
-		
-		List<HorarioDisponivelCenario> professorHorarios = null;
-		List<HorarioDisponivelCenario> disciplinaHorarios = null;
-		List<HorarioDisponivelCenario> salaHorarios = null;
-		
-		if(professorDTO != null) {
-			Professor professor = Professor.find(professorDTO.getId());
-			professorHorarios = professor.getHorarios(semanaLetiva);
-		}
-		
-		if(disciplinaDTO != null) {
-			Disciplina disciplina = Disciplina.find(disciplinaDTO.getId());
-			disciplinaHorarios = disciplina.getHorarios(semanaLetiva);
-		}
-		
-		if(salaDTO != null) {
-			Sala sala = Sala.find(salaDTO.getId());
-			salaHorarios = sala.getHorarios(semanaLetiva);
-		}
-		
-		List<HorarioDisponivelCenario> list = intercessaoHorarios(professorHorarios, disciplinaHorarios, salaHorarios);
-		List<HorarioDisponivelCenarioDTO> listDTO = ConvertBeans.toHorarioDisponivelCenarioDTO(list);
 
-		Map<String, List<HorarioDisponivelCenarioDTO>> horariosTurnos = new HashMap<String, List<HorarioDisponivelCenarioDTO>>();
-		for(HorarioDisponivelCenarioDTO o : listDTO) {
-			List<HorarioDisponivelCenarioDTO> horarios = horariosTurnos.get(o.getTurnoString());
-			if(horarios == null) {
-				horarios = new ArrayList<HorarioDisponivelCenarioDTO>();
-				horariosTurnos.put(o.getTurnoString(), horarios);
+		List< SemanaLetiva > semanasLetivas = SemanaLetiva.findAll();
+
+		List< HorarioDisponivelCenario > professorHorarios = null;
+		List< HorarioDisponivelCenario > disciplinaHorarios = null;
+		List< HorarioDisponivelCenario > salaHorarios = null;
+
+		if ( professorDTO != null )
+		{
+			Professor professor = Professor.find( professorDTO.getId() );
+			professorHorarios = professor.getHorarios( semanasLetivas );
+		}
+
+		if ( disciplinaDTO != null )
+		{
+			Disciplina disciplina = Disciplina.find( disciplinaDTO.getId() );
+			disciplinaHorarios = disciplina.getHorarios( semanasLetivas );
+		}
+
+		if ( salaDTO != null )
+		{
+			Sala sala = Sala.find( salaDTO.getId() );
+			salaHorarios = sala.getHorarios( semanasLetivas );
+		}
+
+		List< HorarioDisponivelCenario > list = intercessaoHorarios(
+			professorHorarios, disciplinaHorarios, salaHorarios );
+
+		List< HorarioDisponivelCenarioDTO > listDTO
+			= ConvertBeans.toHorarioDisponivelCenarioDTO( list );
+
+		Map< String, List< HorarioDisponivelCenarioDTO > > horariosTurnos
+			= new HashMap< String, List< HorarioDisponivelCenarioDTO > >();
+
+		for ( HorarioDisponivelCenarioDTO o : listDTO )
+		{
+			List< HorarioDisponivelCenarioDTO > horarios
+				= horariosTurnos.get( o.getTurnoString() );
+
+			if ( horarios == null )
+			{
+				horarios = new ArrayList< HorarioDisponivelCenarioDTO >();
+				horariosTurnos.put( o.getTurnoString(), horarios );
 			}
-			horarios.add(o);
+
+			horarios.add( o );
 		}
-		
-		for(Entry<String, List<HorarioDisponivelCenarioDTO>> entry : horariosTurnos.entrySet()) {
-			Collections.sort(entry.getValue());
+
+		for ( Entry< String, List< HorarioDisponivelCenarioDTO > > entry
+			: horariosTurnos.entrySet() )
+		{
+			Collections.sort( entry.getValue() );
 		}
-		
-		Map<Date, List<String>> horariosFinalTurnos = new TreeMap<Date, List<String>>();
-		for(Entry<String, List<HorarioDisponivelCenarioDTO>> entry : horariosTurnos.entrySet()) {
-			Date ultimoHorario = entry.getValue().get(entry.getValue().size()-1).getHorario();
-			List<String> turnos = horariosFinalTurnos.get(ultimoHorario);
-			if (turnos == null) {
-				turnos = new ArrayList<String>();
-				horariosFinalTurnos.put(ultimoHorario,turnos);
+
+		Map< Date, List< String > > horariosFinalTurnos
+			= new TreeMap< Date, List< String > >();
+
+		for ( Entry< String, List< HorarioDisponivelCenarioDTO > > entry
+			: horariosTurnos.entrySet() )
+		{
+			Date ultimoHorario = entry.getValue().get(
+				entry.getValue().size()-1 ).getHorario();
+
+			List< String > turnos = horariosFinalTurnos.get( ultimoHorario );
+			if ( turnos == null )
+			{
+				turnos = new ArrayList< String >();
+				horariosFinalTurnos.put( ultimoHorario, turnos );
 			}
-			turnos.add(entry.getKey());
+
+			turnos.add( entry.getKey() );
 		}
-		
+
 		listDTO.clear();
-		for(Entry<Date, List<String>> entry : horariosFinalTurnos.entrySet()) {
-			for (String turno : entry.getValue()) {
-				listDTO.addAll(horariosTurnos.get(turno));
+		for ( Entry< Date, List< String > > entry
+			: horariosFinalTurnos.entrySet() )
+		{
+			for ( String turno : entry.getValue() )
+			{
+				listDTO.addAll( horariosTurnos.get( turno ) );
 			}
 		}
-		
-		return new BasePagingLoadResult<HorarioDisponivelCenarioDTO>(listDTO);
+
+		return new BasePagingLoadResult< HorarioDisponivelCenarioDTO >( listDTO );
 	}
 
-	private List<HorarioDisponivelCenario> intercessaoHorarios(Collection<HorarioDisponivelCenario> horario1, Collection<HorarioDisponivelCenario> horario2, Collection<HorarioDisponivelCenario> horario3) {
-		List<HorarioDisponivelCenario> horarios = new ArrayList<HorarioDisponivelCenario>();
-		
-		if(horarios.size() == 0 && horario1 != null) horarios.addAll(horario1);
-		if(horarios.size() == 0 && horario2 != null) horarios.addAll(horario2);
-		if(horarios.size() == 0 && horario3 != null) horarios.addAll(horario3);
-		
-		if(horario1 != null) horarios.retainAll(horario1);
-		if(horario2 != null) horarios.retainAll(horario2);
-		if(horario3 != null) horarios.retainAll(horario3);
+	private List< HorarioDisponivelCenario > intercessaoHorarios(
+		Collection< HorarioDisponivelCenario > horario1,
+		Collection< HorarioDisponivelCenario > horario2,
+		Collection< HorarioDisponivelCenario > horario3 )
+	{
+		List< HorarioDisponivelCenario > horarios
+			= new ArrayList< HorarioDisponivelCenario >();
+
+		if ( horarios.size() == 0 && horario1 != null )
+		{
+			horarios.addAll( horario1 );
+		}
+
+		if ( horarios.size() == 0 && horario2 != null )
+		{
+			horarios.addAll( horario2 );
+		}
+
+		if ( horarios.size() == 0 && horario3 != null )
+		{
+			horarios.addAll( horario3 );
+		}
+
+		if ( horario1 != null )
+		{
+			horarios.retainAll( horario1 );
+		}
+
+		if ( horario2 != null )
+		{
+			horarios.retainAll( horario2 );
+		}
+
+		if ( horario3 != null )
+		{
+			horarios.retainAll( horario3 );
+		}
+
 		return horarios;
 	}
-	
 }

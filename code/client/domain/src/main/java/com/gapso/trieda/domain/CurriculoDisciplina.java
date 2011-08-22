@@ -35,9 +35,12 @@ import org.springframework.transaction.annotation.Transactional;
 @Entity
 @RooJavaBean
 @RooToString
-@RooEntity(identifierColumn = "CDI_ID")
-@Table(name = "CURRICULOS_DISCIPLINAS")
-public class CurriculoDisciplina implements Serializable {
+@RooEntity( identifierColumn = "CDI_ID" )
+@Table( name = "CURRICULOS_DISCIPLINAS" )
+public class CurriculoDisciplina
+	implements Serializable
+{
+	private static final long serialVersionUID = -5429743673577487971L;
 
     @NotNull
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH}, targetEntity = Curriculo.class)
@@ -55,12 +58,13 @@ public class CurriculoDisciplina implements Serializable {
     @Max(99L)
     private Integer periodo;
 
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH})
-    private Set<Sala> salas = new HashSet<Sala>();
-    
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH}, mappedBy = "curriculoDisciplinas")
-    private Set<GrupoSala> gruposSala = new HashSet<GrupoSala>();
-    
+    @ManyToMany( cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH } )
+    private Set< Sala > salas = new HashSet< Sala >();
+
+    @ManyToMany( cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH },
+    	mappedBy = "curriculoDisciplinas" )
+    private Set< GrupoSala > gruposSala = new HashSet< GrupoSala >();
+
 	public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("Id: ").append(getId()).append(", ");
@@ -113,11 +117,13 @@ public class CurriculoDisciplina implements Serializable {
         this.gruposSala = gruposSala;
     }
 	
-	public String getNaturalKeyString() {
-		return getCurriculo().getCurso().getCodigo() + "-" + getCurriculo().getCodigo() + "-" + getPeriodo().toString() + "-" + getDisciplina().getCodigo();
+	public String getNaturalKeyString()
+	{
+		return getCurriculo().getCurso().getCodigo()
+			+ "-" + getCurriculo().getCodigo()
+			+ "-" + getPeriodo().toString()
+			+ "-" + getDisciplina().getCodigo();
 	}
-	
-	private static final long serialVersionUID = -5429743673577487971L;
 
 	@PersistenceContext
     transient EntityManager entityManager;

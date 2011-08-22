@@ -80,38 +80,47 @@ public class DisciplinasServiceImpl extends RemoteServiceServlet
 
 	@Override
 	public List< HorarioDisponivelCenarioDTO > getHorariosDisponiveis(
-			DisciplinaDTO disciplinaDTO, SemanaLetivaDTO semanaLetivaDTO )
+		DisciplinaDTO disciplinaDTO, SemanaLetivaDTO semanaLetivaDTO )
 	{
-		SemanaLetiva semanaLetiva = SemanaLetiva.getByOficial();
+		List< SemanaLetiva > semanasLetivas = SemanaLetiva.findAll();
 
 		List< HorarioDisponivelCenario > list = new ArrayList< HorarioDisponivelCenario >(
-				Disciplina.find( disciplinaDTO.getId() ).getHorarios( semanaLetiva ) );
+				Disciplina.find( disciplinaDTO.getId() ).getHorarios( semanasLetivas ) );
 
-		List< HorarioDisponivelCenarioDTO> listDTO
+		List< HorarioDisponivelCenarioDTO > listDTO
 			= ConvertBeans.toHorarioDisponivelCenarioDTO( list );
 
 		return listDTO;
 	}
 
 	@Override
-	public void saveHorariosDisponiveis(DisciplinaDTO disciplinaDTO,
-			List<HorarioDisponivelCenarioDTO> listDTO) {
-		List<HorarioDisponivelCenario> listSelecionados = ConvertBeans
-				.toHorarioDisponivelCenario(listDTO);
-		Disciplina disciplina = Disciplina.find(disciplinaDTO.getId());
-		List<HorarioDisponivelCenario> adicionarList = new ArrayList<HorarioDisponivelCenario>(
-				listSelecionados);
-		SemanaLetiva semanaLetiva = SemanaLetiva.getByOficial();
-		adicionarList.removeAll(disciplina.getHorarios(semanaLetiva));
-		List<HorarioDisponivelCenario> removerList = new ArrayList<HorarioDisponivelCenario>(
-				disciplina.getHorarios(semanaLetiva));
-		removerList.removeAll(listSelecionados);
-		for (HorarioDisponivelCenario o : removerList) {
-			o.getDisciplinas().remove(disciplina);
+	public void saveHorariosDisponiveis( DisciplinaDTO disciplinaDTO,
+		List<HorarioDisponivelCenarioDTO> listDTO )
+	{
+		List< HorarioDisponivelCenario > listSelecionados
+			= ConvertBeans.toHorarioDisponivelCenario( listDTO );
+
+		Disciplina disciplina = Disciplina.find( disciplinaDTO.getId() );
+		List<HorarioDisponivelCenario> adicionarList
+			= new ArrayList<HorarioDisponivelCenario>( listSelecionados );
+
+		List< SemanaLetiva > semanasLetivas = SemanaLetiva.findAll(  );
+		adicionarList.removeAll( disciplina.getHorarios( semanasLetivas ) );
+
+		List< HorarioDisponivelCenario > removerList
+			= new ArrayList< HorarioDisponivelCenario >(
+				disciplina.getHorarios( semanasLetivas ) );
+
+		removerList.removeAll( listSelecionados );
+		for ( HorarioDisponivelCenario o : removerList )
+		{
+			o.getDisciplinas().remove( disciplina );
 			o.merge();
 		}
-		for (HorarioDisponivelCenario o : adicionarList) {
-			o.getDisciplinas().add(disciplina);
+
+		for ( HorarioDisponivelCenario o : adicionarList )
+		{ 
+			o.getDisciplinas().add( disciplina );
 			o.merge();
 		}
 	}
@@ -183,19 +192,34 @@ public class DisciplinasServiceImpl extends RemoteServiceServlet
 	}
 
 	@Override
-	public void save(DisciplinaDTO disciplinaDTO) {
-		Disciplina disciplina = ConvertBeans.toDisciplina(disciplinaDTO);
-		if (disciplina.getId() != null && disciplina.getId() > 0) {
+	public void save( DisciplinaDTO disciplinaDTO )
+	{
+		Disciplina disciplina = ConvertBeans.toDisciplina( disciplinaDTO );
+
+		if ( disciplina.getId() != null && disciplina.getId() > 0 )
+		{
 			disciplina.merge();
-		} else {
+		}
+		else
+		{
 			disciplina.persist();
-			Set<HorarioAula> horariosAula = SemanaLetiva.getByOficial()
-					.getHorariosAula();
-			for (HorarioAula horarioAula : horariosAula) {
-				Set<HorarioDisponivelCenario> horariosDisponiveis = horarioAula
-						.getHorariosDisponiveisCenario();
-				for (HorarioDisponivelCenario horarioDisponivel : horariosDisponiveis) {
-					horarioDisponivel.getDisciplinas().add(disciplina);
+
+			List< SemanaLetiva > semanasLetivas = SemanaLetiva.findAll();
+			Set< HorarioAula > horariosAula = new HashSet< HorarioAula >();
+
+			for ( SemanaLetiva semanaLetiva : semanasLetivas )
+			{
+				horariosAula.addAll( semanaLetiva.getHorariosAula() );
+			}
+
+			for ( HorarioAula horarioAula : horariosAula )
+			{
+				Set< HorarioDisponivelCenario> horariosDisponiveis
+					= horarioAula.getHorariosDisponiveisCenario();
+
+				for ( HorarioDisponivelCenario horarioDisponivel : horariosDisponiveis )
+				{
+					horarioDisponivel.getDisciplinas().add( disciplina );
 					horarioDisponivel.merge();
 				}
 			}

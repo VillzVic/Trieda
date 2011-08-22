@@ -4,9 +4,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.TreeMap;
 
 import com.extjs.gxt.ui.client.Style.SortDir;
@@ -34,14 +36,24 @@ import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 /**
  * The server side implementation of the RPC service.
  */
-public class SemanasLetivaServiceImpl extends RemoteServiceServlet implements SemanasLetivaService {
-
+public class SemanasLetivaServiceImpl extends RemoteServiceServlet
+	implements SemanasLetivaService
+{
 	private static final long serialVersionUID = 5250776996542788849L;
 
 	@Override
 	public SemanaLetivaDTO getSemanaLetiva( CenarioDTO cenario )
 	{
-		return ConvertBeans.toSemanaLetivaDTO( SemanaLetiva.getByOficial() );
+		List< SemanaLetivaDTO > listDTOs = new ArrayList< SemanaLetivaDTO >();
+		List< SemanaLetiva > semanasLetivas = SemanaLetiva.findAll();
+
+		for ( SemanaLetiva semanaLetiva : semanasLetivas )
+		{
+			listDTOs.add( ConvertBeans.toSemanaLetivaDTO( semanaLetiva ) );
+		}
+
+		// TODO -- selecionar a semana letiva correta
+		return listDTOs.get( 0 );
 	}
 
 	@Override
@@ -79,18 +91,29 @@ public class SemanasLetivaServiceImpl extends RemoteServiceServlet implements Se
 	}
 
 	@Override
-	public void save(SemanaLetivaDTO semanaLetivaDTO) {
-		SemanaLetiva semanaLetiva = ConvertBeans.toSemanaLetiva(semanaLetivaDTO);
-		if(semanaLetiva.getId() != null && semanaLetiva.getId() > 0) {
+	public void save( SemanaLetivaDTO semanaLetivaDTO )
+	{
+		SemanaLetiva semanaLetiva
+			= ConvertBeans.toSemanaLetiva( semanaLetivaDTO );
+
+		if ( semanaLetiva.getId() != null && semanaLetiva.getId() > 0 )
+		{
 			semanaLetiva.merge();
-		} else {
+		}
+		else
+		{
 			semanaLetiva.persist();
 		}
-		if(semanaLetiva.getOficial()) {
+
+		// TODO -- a semana letiva deverá considerar o campo 'oficial' ???
+		/*
+		if ( semanaLetiva.getOficial() )
+		{
 			semanaLetiva.markOficial();
 		}
+		*/
 	}
-	
+
 	@Override
 	public void remove(List<SemanaLetivaDTO> semanaLetivaDTOList) {
 		for(SemanaLetivaDTO semanaLetivaDTO : semanaLetivaDTOList) {
@@ -99,13 +122,25 @@ public class SemanasLetivaServiceImpl extends RemoteServiceServlet implements Se
 	}
 	
 	@Override
-	public PagingLoadResult<HorarioDisponivelCenarioDTO> getHorariosDisponiveisCenario(SemanaLetivaDTO semanaLetivaDTO) {
-		SemanaLetiva semanaLetiva = SemanaLetiva.getByOficial();
-		List<HorarioDisponivelCenarioDTO> list = new ArrayList<HorarioDisponivelCenarioDTO>();
-		for(HorarioAula o : semanaLetiva.getHorariosAula()) {
-			list.add(ConvertBeans.toHorarioDisponivelCenarioDTO(o));
-		}
+	public PagingLoadResult< HorarioDisponivelCenarioDTO > getHorariosDisponiveisCenario(
+		SemanaLetivaDTO semanaLetivaDTO )
+	{
+		Set< HorarioAula > horariosAula = new HashSet< HorarioAula >();
+		List< SemanaLetiva > semanasLetivas = SemanaLetiva.findAll();
 		
+		for ( SemanaLetiva semanaLetiva : semanasLetivas )
+		{
+			horariosAula.addAll( semanaLetiva.getHorariosAula() );
+		}
+
+		List< HorarioDisponivelCenarioDTO > list
+			= new ArrayList< HorarioDisponivelCenarioDTO >();
+
+		for ( HorarioAula o : horariosAula )
+		{
+			list.add( ConvertBeans.toHorarioDisponivelCenarioDTO( o ) );
+		}
+
 		Map<String, List<HorarioDisponivelCenarioDTO>> horariosTurnos = new HashMap<String, List<HorarioDisponivelCenarioDTO>>();
 		for(HorarioDisponivelCenarioDTO o : list) {
 			List<HorarioDisponivelCenarioDTO> horarios = horariosTurnos.get(o.getTurnoString());
@@ -137,13 +172,14 @@ public class SemanasLetivaServiceImpl extends RemoteServiceServlet implements Se
 				list.addAll(horariosTurnos.get(turno));
 			}
 		}
-		
-		BasePagingLoadResult<HorarioDisponivelCenarioDTO> result = new BasePagingLoadResult<HorarioDisponivelCenarioDTO>(list);
-		result.setOffset(0);
-		result.setTotalLength(list.size());
+
+		BasePagingLoadResult< HorarioDisponivelCenarioDTO > result
+			= new BasePagingLoadResult< HorarioDisponivelCenarioDTO >(list);
+		result.setOffset( 0 );
+		result.setTotalLength( list.size() );
 		return result;
 	}
-	
+
 	@Override
 	public void saveHorariosDisponiveisCenario(SemanaLetivaDTO semanaLetivaDTO, List<HorarioDisponivelCenarioDTO> listDTO) {
 		List<HorarioDisponivelCenario> listSelecionados = ConvertBeans.toHorarioDisponivelCenario(listDTO);

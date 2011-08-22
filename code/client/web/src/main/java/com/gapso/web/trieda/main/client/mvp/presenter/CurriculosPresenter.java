@@ -32,9 +32,12 @@ import com.gapso.web.trieda.shared.util.view.SimpleGrid;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
 
-public class CurriculosPresenter implements Presenter {
-
-	public interface Display extends ITriedaI18nGateway {
+public class CurriculosPresenter
+	implements Presenter
+{
+	public interface Display
+		extends ITriedaI18nGateway
+	{
 		Button getNewButton();
 		Button getEditButton();
 		Button getRemoveButton();
@@ -42,126 +45,185 @@ public class CurriculosPresenter implements Presenter {
 		Button getExportExcelButton();
 		Button getAssociarDisciplinasButton();
 		CursoComboBox getCursoBuscaComboBox();
-		TextField<String> getCodigoBuscaTextField();
-		TextField<String> getDescricaoBuscaTextField();
+		TextField< String > getCodigoBuscaTextField();
+		TextField< String > getDescricaoBuscaTextField();
 		Button getSubmitBuscaButton();
 		Button getResetBuscaButton();
-		SimpleGrid<CurriculoDTO> getGrid();
+		SimpleGrid< CurriculoDTO > getGrid();
 		Component getComponent();
-		void setProxy(RpcProxy<PagingLoadResult<CurriculoDTO>> proxy);
+		void setProxy( RpcProxy< PagingLoadResult< CurriculoDTO > > proxy );
 	}
+
 	private CenarioDTO cenario;
 	private Display display; 
 	private GTab gTab;
-	
-	public CurriculosPresenter(CenarioDTO cenario, Display display) {
+
+	public CurriculosPresenter( CenarioDTO cenario, Display display )
+	{
 		this.cenario = cenario;
 		this.display = display;
 		configureProxy();
 		setListeners();
 	}
 
-	private void configureProxy() {
+	private void configureProxy()
+	{
 		final CurriculosServiceAsync service = Services.curriculos();
-		RpcProxy<PagingLoadResult<CurriculoDTO>> proxy = new RpcProxy<PagingLoadResult<CurriculoDTO>>() {
+
+		RpcProxy< PagingLoadResult< CurriculoDTO > > proxy = new RpcProxy<PagingLoadResult<CurriculoDTO>>()
+		{
 			@Override
-			public void load(Object loadConfig, AsyncCallback<PagingLoadResult<CurriculoDTO>> callback) {
+			public void load( Object loadConfig, AsyncCallback< PagingLoadResult< CurriculoDTO > > callback )
+			{
 				String codigo = display.getCodigoBuscaTextField().getValue();
 				String descricao = display.getDescricaoBuscaTextField().getValue();
 				CursoDTO cursoDTO = display.getCursoBuscaComboBox().getValue();
-				service.getBuscaList(cursoDTO, codigo, descricao, (PagingLoadConfig)loadConfig, callback);
+
+				service.getBuscaList( cursoDTO, codigo, descricao, (PagingLoadConfig) loadConfig, callback );
 			}
 		};
-		display.setProxy(proxy);
+
+		display.setProxy( proxy );
 	}
 	
-	private void setListeners() {
-		display.getNewButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
-			@Override
-			public void componentSelected(ButtonEvent ce) {
-				Presenter presenter = new CurriculoFormPresenter(cenario, new CurriculoFormView(new CurriculoDTO(), null, cenario), display.getGrid());
-				presenter.go(null);
-			}
+	private void setListeners()
+	{
+		display.getNewButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+			{
+				@Override
+				public void componentSelected( ButtonEvent ce )
+				{
+					Presenter presenter = new CurriculoFormPresenter( cenario,
+						new CurriculoFormView( new CurriculoDTO(), null, cenario ), display.getGrid() );
+
+					presenter.go( null );
+				}
 		});
-		display.getEditButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
-			@Override
-			public void componentSelected(ButtonEvent ce) {
-				final CurriculoDTO curriculoDTO = display.getGrid().getGrid().getSelectionModel().getSelectedItem();
-				final CursosServiceAsync campus = Services.cursos();
-				campus.getCurso(curriculoDTO.getCursoId(), new AsyncCallback<CursoDTO>() {
-					@Override
-					public void onFailure(Throwable caught) {
-						caught.printStackTrace();
-					}
-					@Override
-					public void onSuccess(CursoDTO cursoDTO) {
-						Presenter presenter = new CurriculoFormPresenter(cenario, new CurriculoFormView(curriculoDTO, cursoDTO, cenario), display.getGrid());
-						presenter.go(null);
-					}
-				});
-			}
+
+		display.getEditButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+			{
+				@Override
+				public void componentSelected( ButtonEvent ce )
+				{
+					final CurriculoDTO curriculoDTO = display.getGrid().getGrid().getSelectionModel().getSelectedItem();
+					final CursosServiceAsync campus = Services.cursos();
+
+					campus.getCurso( curriculoDTO.getCursoId(), new AsyncCallback< CursoDTO >()
+					{
+						@Override
+						public void onFailure( Throwable caught )
+						{
+							caught.printStackTrace();
+						}
+
+						@Override
+						public void onSuccess( CursoDTO cursoDTO )
+						{
+							Presenter presenter = new CurriculoFormPresenter( cenario,
+								new CurriculoFormView( curriculoDTO, cursoDTO, cenario ), display.getGrid() );
+
+							presenter.go( null );
+						}
+					});
+				}
 		});
-		display.getRemoveButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
-			@Override
-			public void componentSelected(ButtonEvent ce) {
-				List<CurriculoDTO> list = display.getGrid().getGrid().getSelectionModel().getSelectedItems();
-				final CurriculosServiceAsync service = Services.curriculos();
-				service.remove(list, new AsyncCallback<Void>() {
-					@Override
-					public void onFailure(Throwable caught) {
-						MessageBox.alert("ERRO!", "Deu falha na conexão", null);
-					}
-					@Override
-					public void onSuccess(Void result) {
-						display.getGrid().updateList();
-						Info.display("Removido", "Item removido com sucesso!");
-					}
-				});
-			}
+
+		display.getRemoveButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+			{
+				@Override
+				public void componentSelected( ButtonEvent ce )
+				{
+					List< CurriculoDTO > list = display.getGrid().getGrid().getSelectionModel().getSelectedItems();
+					final CurriculosServiceAsync service = Services.curriculos();
+
+					service.remove( list, new AsyncCallback< Void >()
+					{
+						@Override
+						public void onFailure( Throwable caught )
+						{
+							MessageBox.alert( "ERRO!", "Deu falha na conexão", null );
+						}
+
+						@Override
+						public void onSuccess( Void result )
+						{
+							display.getGrid().updateList();
+							Info.display( "Removido", "Item removido com sucesso!" );
+						}
+					});
+				}
 		});
-		display.getImportExcelButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
-			@Override
-			public void componentSelected(ButtonEvent ce) {
-				ImportExcelFormView importExcelFormView = new ImportExcelFormView(ExcelInformationType.CURRICULOS,display.getGrid());
-				importExcelFormView.show();
-			}
+
+		display.getImportExcelButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+			{
+				@Override
+				public void componentSelected( ButtonEvent ce )
+				{
+					ImportExcelFormView importExcelFormView = new ImportExcelFormView(
+						ExcelInformationType.CURRICULOS,display.getGrid() );
+
+					importExcelFormView.show();
+				}
 		});
-		display.getExportExcelButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
-			@Override
-			public void componentSelected(ButtonEvent ce) {
-				ExportExcelFormSubmit e = new ExportExcelFormSubmit(ExcelInformationType.CURRICULOS,display.getI18nConstants(),display.getI18nMessages());
-				e.submit();
-			}
+
+		display.getExportExcelButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+			{
+				@Override
+				public void componentSelected( ButtonEvent ce )
+				{
+					ExportExcelFormSubmit e = new ExportExcelFormSubmit(
+						ExcelInformationType.CURRICULOS,display.getI18nConstants(),
+						display.getI18nMessages() );
+
+					e.submit();
+				}
 		});
-		display.getResetBuscaButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
-			@Override
-			public void componentSelected(ButtonEvent ce) {
-				display.getCodigoBuscaTextField().setValue(null);
-				display.getDescricaoBuscaTextField().setValue(null);
-				display.getCursoBuscaComboBox().setValue(null);
-				display.getGrid().updateList();
-			}
+
+		display.getResetBuscaButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+			{
+				@Override
+				public void componentSelected( ButtonEvent ce )
+				{
+					display.getCodigoBuscaTextField().setValue( null );
+					display.getDescricaoBuscaTextField().setValue( null );
+					display.getCursoBuscaComboBox().setValue( null );
+					display.getGrid().updateList();
+				}
 		});
-		display.getSubmitBuscaButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
-			@Override
-			public void componentSelected(ButtonEvent ce) {
-				display.getGrid().updateList();
-			}
+
+		display.getSubmitBuscaButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+			{
+				@Override
+				public void componentSelected(ButtonEvent ce )
+				{
+					display.getGrid().updateList();
+				}
 		});
-		display.getAssociarDisciplinasButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
-			@Override
-			public void componentSelected(ButtonEvent ce) {
-				CurriculoDTO curriculoDTO = display.getGrid().getGrid().getSelectionModel().getSelectedItem();
-				Presenter presenter = new CurriculoDisciplinasPresenter(new CurriculoDisciplinasView(curriculoDTO));
-				presenter.go(gTab);
-			}
+
+		display.getAssociarDisciplinasButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+			{
+				@Override
+				public void componentSelected( ButtonEvent ce )
+				{
+					CurriculoDTO curriculoDTO = display.getGrid().getGrid().getSelectionModel().getSelectedItem();
+					Presenter presenter = new CurriculoDisciplinasPresenter( new CurriculoDisciplinasView( curriculoDTO ) );
+					presenter.go( gTab );
+				}
 		});
-	}
-	
-	@Override
-	public void go(Widget widget) {
-		gTab = (GTab)widget;
-		gTab.add((GTabItem)display.getComponent());
 	}
 
+	@Override
+	public void go( Widget widget )
+	{
+		gTab = (GTab)widget;
+		gTab.add( (GTabItem)display.getComponent() );
+	}
 }

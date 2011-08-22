@@ -152,6 +152,8 @@
 				</plugins>
 			</build>
 		</profile>
+
+		<!-- 
 		<profile>
 			<id>outputTRIEDA</id>
 			<build>
@@ -179,6 +181,8 @@
 				</plugins>
 			</build>
 		</profile>
+		-->
+		
 	</profiles>
 	<build>
 		<plugins>

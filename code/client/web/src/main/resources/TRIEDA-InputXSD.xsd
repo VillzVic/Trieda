@@ -1,10 +1,10 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- Created with Liquid XML Studio 1.0.8.0 (http://www.liquid-technologies.com) -->
+<?xml version="1.0" encoding="utf-8" ?>
+<!--Created with Liquid XML Studio 6.1.18.0 (http://www.liquid-technologies.com)-->
 <xs:schema elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
   <xs:element name="TriedaInput">
     <xs:complexType>
       <xs:sequence>
-        <xs:element name="calendario" type="ItemCalendario">
+        <xs:element name="calendarios" type="GrupoCalendario">
           <xs:annotation>
             <xs:documentation>Define o calendário base, isto é, os turnos e horários de aula dos dias da semana que serão considerados no planejamento</xs:documentation>
           </xs:annotation>
@@ -114,6 +114,7 @@
           <xs:documentation>código do calendário, por exemplo, "CAL-01"</xs:documentation>
         </xs:annotation>
       </xs:element>
+      <xs:element name="semanaLetivaId" type="xs:int" />
       <xs:element name="turnos" type="GrupoTurno">
         <xs:annotation>
           <xs:documentation>a lista de turnos que fazem parte do calendário</xs:documentation>
@@ -723,6 +724,7 @@
           <xs:documentation>disciplinas e períodos da matriz curricular</xs:documentation>
         </xs:annotation>
       </xs:element>
+      <xs:element name="semanaLetivaId" type="xs:int" />
     </xs:sequence>
   </xs:complexType>
   <xs:complexType name="ItemDisciplinaPeriodo">
@@ -976,6 +978,11 @@ Maximizar/gerenciar a nota da avaliação institucional média coletiva do corpo
           <xs:documentation>lista de identificadores (ItemHorarioAula) dos horários de aula em que deverão ser evitadas disciplinas de determinado nível de dificuldade</xs:documentation>
         </xs:annotation>
       </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="GrupoCalendario">
+    <xs:sequence minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="Calendario" type="ItemCalendario" />
     </xs:sequence>
   </xs:complexType>
   <xs:complexType name="GrupoTurno">

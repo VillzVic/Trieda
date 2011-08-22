@@ -703,16 +703,24 @@ public class Campus implements Serializable, Comparable< Campus >
 	}
 
 	@SuppressWarnings("unchecked")
-	public List< HorarioDisponivelCenario > getHorarios( SemanaLetiva semanaLetiva )
+	public List< HorarioDisponivelCenario > getHorarios( List< SemanaLetiva > semanasLetivas )
 	{
-		Query q = entityManager().createQuery(
-			"SELECT o FROM HorarioDisponivelCenario o, IN (o.campi) c " +
-			"WHERE c = :campus AND o.horarioAula.semanaLetiva = :semanaLetiva" );
+		Set< HorarioDisponivelCenario > horarios
+			= new HashSet< HorarioDisponivelCenario >();
 
-		q.setParameter( "campus", this );
-		q.setParameter( "semanaLetiva", semanaLetiva );
+		for ( SemanaLetiva semanaLetiva : semanasLetivas )
+		{
+			Query q = entityManager().createQuery(
+				"SELECT o FROM HorarioDisponivelCenario o, IN ( o.campi ) c " +
+				"WHERE c = :campus AND o.horarioAula.semanaLetiva = :semanaLetiva " );
 
-		return q.getResultList();
+			q.setParameter( "campus", this );
+			q.setParameter( "semanaLetiva", semanaLetiva );
+
+			horarios.addAll( q.getResultList() );
+		}
+
+		return new ArrayList< HorarioDisponivelCenario >( horarios );
 	}
 
 	@SuppressWarnings("unchecked")
@@ -767,7 +775,7 @@ public class Campus implements Serializable, Comparable< Campus >
 		q.setParameter( "cenario", cenario );
 		q.setParameter( "codigo", codigo );
 
-		Number size = (Number) q.setMaxResults( 1 ).getSingleResult();
+		Number size = ( (Number) q.setMaxResults( 1 ).getSingleResult() );
 		return ( size.intValue() > 0 );
 	}
 

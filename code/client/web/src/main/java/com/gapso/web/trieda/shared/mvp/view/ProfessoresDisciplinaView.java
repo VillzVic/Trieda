@@ -23,142 +23,179 @@ import com.gapso.web.trieda.shared.util.view.SimpleFilter;
 import com.gapso.web.trieda.shared.util.view.SimpleGrid;
 import com.gapso.web.trieda.shared.util.view.SimpleToolBar;
 
-public class ProfessoresDisciplinaView extends MyComposite implements ProfessoresDisciplinaPresenter.Display {
-
+public class ProfessoresDisciplinaView extends MyComposite
+	implements ProfessoresDisciplinaPresenter.Display
+{
 	private SimpleToolBar toolBar;
-	private SimpleGrid<ProfessorDisciplinaDTO> gridPanel;
+	private SimpleGrid< ProfessorDisciplinaDTO > gridPanel;
 	private SimpleFilter filter;
 	private ProfessorComboBox professorBuscaCB;
 	private DisciplinaComboBox disciplinaBuscaCB;
 	private ContentPanel panel;
 	private GTabItem tabItem;
 	private UsuarioDTO usuario;
-	
-	public ProfessoresDisciplinaView(UsuarioDTO usuario) {
+
+	public ProfessoresDisciplinaView( UsuarioDTO usuario )
+	{
 		this.usuario = usuario;
 		initUI();
 	}
-	
-	private void initUI() {
-		panel = new ContentPanel(new BorderLayout());
+
+	private void initUI()
+	{
+		panel = new ContentPanel( new BorderLayout() );
 		String title = null;
-		if(usuario.isProfessor()) {
+
+		if ( usuario.isProfessor() )
+		{
 			title = "Professor » Habilitação do Professor";
-		} else {
+		}
+		else
+		{
 			title = "Master Data » Habilitação dos Professores";
 		}
-		panel.setHeading(title);
+
+		panel.setHeading( title );
 		createToolBar();
 		createGrid();
-		if(usuario.isAdministrador()) {
+
+		if ( usuario.isAdministrador() )
+		{
 			createFilter();
 		}
+
 		createTabItem();
-		initComponent(tabItem);
-	}
-	
-	private void createTabItem() {
-		tabItem = new GTabItem("Habilitação dos Professores", Resources.DEFAULTS.habilitacaoProfessor16());
-		tabItem.setContent(panel);
-	}
-	
-	private void createToolBar() {
-		if(usuario.isProfessor()) {
-			toolBar = new SimpleToolBar(false, true, false, false, false, this);
-		} else {
-			toolBar = new SimpleToolBar(this);
-		}
-		panel.setTopComponent(toolBar);
-	}
-	
-	private void createGrid() {
-		BorderLayoutData bld = new BorderLayoutData(LayoutRegion.CENTER);
-	    bld.setMargins(new Margins(5, 5, 5, 5));
-	    
-	    gridPanel = new SimpleGrid<ProfessorDisciplinaDTO>(getColumnList(), this);
-	    panel.add(gridPanel, bld);
+		initComponent( tabItem );
 	}
 
-	public List<ColumnConfig> getColumnList() {
-		List<ColumnConfig> list = new ArrayList<ColumnConfig>();
-		list.add(new ColumnConfig(ProfessorDisciplinaDTO.PROPERTY_PROFESSOR_CPF, "CPF", 100));
-		list.add(new ColumnConfig(ProfessorDisciplinaDTO.PROPERTY_PROFESSOR_STRING, "Nome", 100));
-		list.add(new ColumnConfig(ProfessorDisciplinaDTO.PROPERTY_DISCIPLINA_STRING, "Disciplina", 100));
-		list.add(new ColumnConfig(ProfessorDisciplinaDTO.PROPERTY_PREFERENCIA, "Preferência", 100));
-		list.add(new ColumnConfig(ProfessorDisciplinaDTO.PROPERTY_NOTA_DESEMPENHO, "Nota Desempenho", 100));
+	private void createTabItem()
+	{
+		tabItem = new GTabItem(
+			"Habilitação dos Professores",
+			Resources.DEFAULTS.habilitacaoProfessor16() );
+
+		tabItem.setContent( panel );
+	}
+
+	private void createToolBar()
+	{
+		if ( usuario.isProfessor() )
+		{
+			toolBar = new SimpleToolBar(
+				false, true, false, false, false, this );
+		}
+		else
+		{
+			toolBar = new SimpleToolBar( this );
+		}
+
+		panel.setTopComponent( toolBar );
+	}
+
+	private void createGrid()
+	{
+		BorderLayoutData bld = new BorderLayoutData( LayoutRegion.CENTER );
+	    bld.setMargins( new Margins( 5, 5, 5, 5 ) );
+
+	    gridPanel = new SimpleGrid< ProfessorDisciplinaDTO >( getColumnList(), this );
+	    panel.add( gridPanel, bld );
+	}
+
+	public List< ColumnConfig > getColumnList()
+	{
+		List< ColumnConfig > list = new ArrayList< ColumnConfig >();
+
+		list.add( new ColumnConfig( ProfessorDisciplinaDTO.PROPERTY_PROFESSOR_CPF, "CPF", 100 ) );
+		list.add( new ColumnConfig( ProfessorDisciplinaDTO.PROPERTY_PROFESSOR_STRING, "Nome", 100 ) );
+		list.add( new ColumnConfig( ProfessorDisciplinaDTO.PROPERTY_DISCIPLINA_STRING, "Disciplina", 100 ) );
+		list.add( new ColumnConfig( ProfessorDisciplinaDTO.PROPERTY_PREFERENCIA, "Preferência", 100 ) );
+		list.add( new ColumnConfig( ProfessorDisciplinaDTO.PROPERTY_NOTA_DESEMPENHO, "Nota Desempenho", 100 ) );
+
 		return list;
 	}
 
-	private void createFilter() {
-		BorderLayoutData bld = new BorderLayoutData(LayoutRegion.EAST);
-		bld.setMargins(new Margins(5, 5, 5, 0));
-		bld.setCollapsible(true);
-		
+	private void createFilter()
+	{
+		BorderLayoutData bld = new BorderLayoutData( LayoutRegion.EAST );
+		bld.setMargins( new Margins( 5, 5, 5, 0 ) );
+		bld.setCollapsible( true );
+
 		filter = new SimpleFilter();
 		professorBuscaCB = new ProfessorComboBox();
-		professorBuscaCB.setAllowBlank(false);
+		professorBuscaCB.setAllowBlank( false );
 		disciplinaBuscaCB = new DisciplinaComboBox();
-		disciplinaBuscaCB.setAllowBlank(false);
-		
-		filter.addField(professorBuscaCB);
-		filter.addField(disciplinaBuscaCB);
-		
-		panel.add(filter, bld);
+		disciplinaBuscaCB.setAllowBlank( false );
+
+		filter.addField( professorBuscaCB );
+		filter.addField( disciplinaBuscaCB );
+
+		panel.add( filter, bld );
 	}
-	
+
 	@Override
-	public Button getNewButton() {
+	public Button getNewButton()
+	{
 		return toolBar.getNewButton();
 	}
 
 	@Override
-	public Button getEditButton() {
+	public Button getEditButton()
+	{
 		return toolBar.getEditButton();
 	}
 
 	@Override
-	public Button getRemoveButton() {
+	public Button getRemoveButton()
+	{
 		return toolBar.getRemoveButton();
 	}
 
 	@Override
-	public Button getImportExcelButton() {
+	public Button getImportExcelButton()
+	{
 		return toolBar.getImportExcelButton();
 	}
 
 	@Override
-	public Button getExportExcelButton() {
+	public Button getExportExcelButton()
+	{
 		return toolBar.getExportExcelButton();
-	}
-	
-	@Override
-	public SimpleGrid<ProfessorDisciplinaDTO> getGrid() {
-		return gridPanel;
-	}
-	
-	@Override
-	public void setProxy(RpcProxy<PagingLoadResult<ProfessorDisciplinaDTO>> proxy) {
-		gridPanel.setProxy(proxy);
 	}
 
 	@Override
-	public ProfessorComboBox getProfessorBuscaComboBox() {
+	public SimpleGrid< ProfessorDisciplinaDTO > getGrid()
+	{
+		return gridPanel;
+	}
+
+	@Override
+	public void setProxy(
+		RpcProxy< PagingLoadResult< ProfessorDisciplinaDTO > > proxy )
+	{
+		gridPanel.setProxy( proxy );
+	}
+
+	@Override
+	public ProfessorComboBox getProfessorBuscaComboBox()
+	{
 		return professorBuscaCB;
 	}
-	
+
 	@Override
-	public DisciplinaComboBox getDisciplinaBuscaComboBox() {
+	public DisciplinaComboBox getDisciplinaBuscaComboBox()
+	{
 		return disciplinaBuscaCB;
 	}
 
 	@Override
-	public Button getSubmitBuscaButton() {
+	public Button getSubmitBuscaButton()
+	{
 		return filter.getSubmitButton();
 	}
 
 	@Override
-	public Button getResetBuscaButton() {
+	public Button getResetBuscaButton()
+	{
 		return filter.getResetButton();
 	}
-
 }

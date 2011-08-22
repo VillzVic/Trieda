@@ -291,7 +291,7 @@ public class AtendimentoTatico
 	public static List< AtendimentoTatico > findAll()
 	{
 		return entityManager().createQuery(
-			"SELECT o FROM AtendimentoTatico o").getResultList();
+			"SELECT o FROM AtendimentoTatico o" ).getResultList();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -421,11 +421,13 @@ public class AtendimentoTatico
 	}
 
 	@SuppressWarnings("unchecked")
-	public static List<AtendimentoTatico> findAllByCampus(Campus campus) {
-		Query q = entityManager()
-				.createQuery(
-						"SELECT o FROM AtendimentoTatico o WHERE o.oferta.campus = :campus");
-		q.setParameter("campus", campus);
+	public static List<AtendimentoTatico> findAllByCampus( Campus campus )
+	{
+		Query q = entityManager().createQuery(
+			" SELECT o FROM AtendimentoTatico o " +
+			" WHERE o.oferta.campus = :campus" );
+
+		q.setParameter( "campus", campus );
 		return q.getResultList();
 	}
 

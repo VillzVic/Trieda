@@ -28,35 +28,39 @@ import com.gapso.web.trieda.shared.util.view.CampusComboBox;
 import com.gapso.web.trieda.shared.util.view.SimpleModal;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
-public class CampusProfessorFormView extends MyComposite implements
-		CampusProfessorFormPresenter.Display {
-
+public class CampusProfessorFormView extends MyComposite
+	implements CampusProfessorFormPresenter.Display
+{
 	private SimpleModal simpleModal;
 	private LayoutContainer container;
 	private FormPanel formPanel;
 	private LayoutContainer panelLists;
 	private CampusComboBox campusCB;
-	private ListView<ProfessorDTO> professorNaoAssociadoList;
-	private ListView<ProfessorDTO> professorAssociadoList;
+	private ListView< ProfessorDTO > professorNaoAssociadoList;
+	private ListView< ProfessorDTO > professorAssociadoList;
 	private Button adicionaBT;
 	private Button removeBT;
 	private CampusDTO campusDTO;
 
-	public CampusProfessorFormView(CampusDTO campusDTO) {
+	public CampusProfessorFormView( CampusDTO campusDTO )
+	{
 		this.campusDTO = campusDTO;
 		initUI();
 	}
 
-	private void initUI() {
+	private void initUI()
+	{
 		String title = "Professores no campus";
-		simpleModal = new SimpleModal(title, Resources.DEFAULTS.professor16());
-		simpleModal.setHeight(455);
-		simpleModal.setWidth(595);
+		simpleModal = new SimpleModal(
+			title, Resources.DEFAULTS.professor16() );
+		simpleModal.setHeight( 455 );
+		simpleModal.setWidth( 595 );
 		createForm();
-		simpleModal.setContent(container);
+		simpleModal.setContent( container );
 	}
 
-	private void createForm() {
+	private void createForm()
+	{
 		container = new LayoutContainer();
 		VBoxLayout layout = new VBoxLayout();
 		layout.setPadding(new Padding(5));
@@ -120,69 +124,77 @@ public class CampusProfessorFormView extends MyComposite implements
 		simpleModal.setFocusWidget(campusCB);
 	}
 
-	private LayoutContainer getAtualizaProfessoresButtonsPanel() {
+	private LayoutContainer getAtualizaProfessoresButtonsPanel()
+	{
 		LayoutContainer panel = new LayoutContainer();
 		panel.setLayout(new RowLayout(Orientation.VERTICAL));
 
 		adicionaBT = new Button();
 		adicionaBT.setEnabled(false);
 		adicionaBT.setSize(30, 50);
-		adicionaBT.setIcon(AbstractImagePrototype.create(Resources.DEFAULTS
-				.toRight24()));
+		adicionaBT.setIcon( AbstractImagePrototype.create(
+			Resources.DEFAULTS.toRight24() ) );
 
 		removeBT = new Button();
 		removeBT.setEnabled(false);
 		removeBT.setSize(30, 50);
-		removeBT.setIcon(AbstractImagePrototype.create(Resources.DEFAULTS
-				.toLeft24()));
+		removeBT.setIcon( AbstractImagePrototype.create(
+			Resources.DEFAULTS.toLeft24() ) );
 
-		RowData rowData = new RowData(-1, -1, new Margins(4, 0, 4, 0));
+		RowData rowData = new RowData( -1, -1, new Margins( 4, 0, 4, 0 ) );
 
-		panel.add(adicionaBT, rowData);
-		panel.add(removeBT, rowData);
-		panel.setWidth(30);
-		panel.setHeight(320);
+		panel.add( adicionaBT, rowData );
+		panel.add( removeBT, rowData );
+		panel.setWidth( 30 );
+		panel.setHeight( 320 );
 		return panel;
 	}
 
-	public boolean isValid() {
-		return campusCB.getValue() != null
-				&& professorAssociadoList.getStore().getModels().size() > 0;
+	public boolean isValid()
+	{
+		return ( campusCB.getValue() != null )
+			&& ( professorAssociadoList.getStore().getModels().size() > 0 );
 	}
 
 	@Override
-	public Button getSalvarButton() {
+	public Button getSalvarButton()
+	{
 		return simpleModal.getSalvarBt();
 	}
 
 	@Override
-	public CampusComboBox getCampusComboBox() {
+	public CampusComboBox getCampusComboBox()
+	{
 		return campusCB;
 	}
 
 	@Override
-	public SimpleModal getSimpleModal() {
+	public SimpleModal getSimpleModal()
+	{
 		return simpleModal;
 	}
 
 	@Override
-	public ListView<ProfessorDTO> getProfessorNaoAssociadoList() {
+	public ListView< ProfessorDTO > getProfessorNaoAssociadoList()
+	{
 		return professorNaoAssociadoList;
 	}
 
 	@Override
-	public ListView<ProfessorDTO> getProfessorAssociadoList() {
+	public ListView< ProfessorDTO > getProfessorAssociadoList()
+	{
 		return professorAssociadoList;
 	}
 
 	@Override
-	public Button getAdicionaBT() {
+	public Button getAdicionaBT()
+	{
 		return adicionaBT;
 	}
 
 	@Override
-	public Button getRemoveBT() {
+	public Button getRemoveBT()
+	{
 		return removeBT;
 	}
-
 }

@@ -35,84 +35,111 @@ import org.springframework.transaction.annotation.Transactional;
 @Entity
 @RooJavaBean
 @RooToString
-@RooEntity(identifierColumn = "CRC_ID")
-@Table(
-	name = "CURRICULOS",
-	uniqueConstraints=
-		@UniqueConstraint(columnNames={"CRC_COD", "CUR_ID"})
-)
-public class Curriculo implements Serializable {
+@RooEntity( identifierColumn = "CRC_ID" )
+@Table( name = "CURRICULOS", uniqueConstraints =
+@UniqueConstraint( columnNames = { "CRC_COD", "CUR_ID" } ) )
+public class Curriculo
+	implements Serializable
+{
+	private static final long serialVersionUID = -9204016994046445376L;
 
     @NotNull
-    @ManyToOne(targetEntity = Curso.class)
-    @JoinColumn(name = "CUR_ID")
+    @ManyToOne( targetEntity = Curso.class )
+    @JoinColumn( name = "CUR_ID" )
     private Curso curso;
 
     @NotNull
-    @ManyToOne(targetEntity = Cenario.class)
-    @JoinColumn(name = "CEN_ID")
+    @ManyToOne( targetEntity = SemanaLetiva.class )
+    @JoinColumn( name = "SLE_ID" )
+    private SemanaLetiva semanaLetiva;
+
+    @NotNull
+    @ManyToOne( targetEntity = Cenario.class )
+    @JoinColumn( name = "CEN_ID" )
     private Cenario cenario;
 
     @NotNull
-    @Column(name = "CRC_COD")
-    @Size(min = 1, max = 20)
+    @Column( name = "CRC_COD" )
+    @Size( min = 1, max = 20 )
     private String codigo;
 
-    @Column(name = "CRC_DESCRICAO")
-    @Size(max = 255)
+    @Column( name = "CRC_DESCRICAO" )
+    @Size( max = 255 )
     private String descricao;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "curriculo")
-    private Set<CurriculoDisciplina> disciplinas = new HashSet<CurriculoDisciplina>();
+    @OneToMany( cascade = CascadeType.ALL, mappedBy = "curriculo" )
+    private Set< CurriculoDisciplina > disciplinas = new HashSet< CurriculoDisciplina >();
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "curriculo")
-    private Set<Oferta> ofertas = new HashSet<Oferta>();
+    @OneToMany( cascade = CascadeType.ALL, mappedBy = "curriculo" )
+    private Set< Oferta > ofertas = new HashSet< Oferta >();
 
-	public Curso getCurso() {
+	public SemanaLetiva getSemanaLetiva()
+	{
+		return semanaLetiva;
+	}
+
+	public void setSemanaLetiva( SemanaLetiva semanaLetiva )
+	{
+		this.semanaLetiva = semanaLetiva;
+	}
+
+	public Curso getCurso()
+	{
         return this.curso;
     }
 
-	public void setCurso(Curso curso) {
+	public void setCurso( Curso curso )
+	{
         this.curso = curso;
     }
 
-	public Cenario getCenario() {
+	public Cenario getCenario()
+	{
         return this.cenario;
     }
 
-	public void setCenario(Cenario cenario) {
+	public void setCenario( Cenario cenario )
+	{
         this.cenario = cenario;
     }
 
-	public String getCodigo() {
+	public String getCodigo()
+	{
         return this.codigo;
     }
 
-	public void setCodigo(String codigo) {
+	public void setCodigo( String codigo )
+	{
         this.codigo = codigo;
     }
 
-	public String getDescricao() {
+	public String getDescricao()
+	{
         return this.descricao;
     }
 
-	public void setDescricao(String descricao) {
+	public void setDescricao( String descricao )
+	{
         this.descricao = descricao;
     }
 
-	public Set<CurriculoDisciplina> getDisciplinas() {
+	public Set< CurriculoDisciplina > getDisciplinas()
+	{
         return this.disciplinas;
     }
 
-	public void setDisciplinas(Set<CurriculoDisciplina> disciplinas) {
+	public void setDisciplinas( Set< CurriculoDisciplina > disciplinas )
+	{
         this.disciplinas = disciplinas;
     }
 
-	public Set<Oferta> getOfertas() {
+	public Set< Oferta > getOfertas()
+	{
         return this.ofertas;
     }
 
-	public void setOfertas(Set<Oferta> ofertas) {
+	public void setOfertas( Set< Oferta > ofertas )
+	{
         this.ofertas = ofertas;
     }
 
@@ -120,205 +147,321 @@ public class Curriculo implements Serializable {
     transient EntityManager entityManager;
 
 	@Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "CRC_ID")
+    @GeneratedValue( strategy = GenerationType.AUTO )
+    @Column( name = "CRC_ID" )
     private Long id;
 
 	@Version
-    @Column(name = "version")
+    @Column( name = "version" )
     private Integer version;
 
-	public Long getId() {
+	public Long getId()
+	{
         return this.id;
     }
 
-	public void setId(Long id) {
+	public void setId( Long id )
+	{
         this.id = id;
     }
 
-	public Integer getVersion() {
+	public Integer getVersion()
+	{
         return this.version;
     }
 
-	public void setVersion(Integer version) {
+	public void setVersion( Integer version )
+	{
         this.version = version;
-    }
-	
-	@Transactional
-	public void detach() {
-		if (this.entityManager == null) this.entityManager = entityManager();
-		this.entityManager.detach(this);
-	}
-	
-	@Transactional
-    public void persist() {
-        if (this.entityManager == null) this.entityManager = entityManager();
-        this.entityManager.persist(this);
     }
 
 	@Transactional
-    public void remove() {
-        if (this.entityManager == null) this.entityManager = entityManager();
-        if (this.entityManager.contains(this)) {
-            this.entityManager.remove(this);
-        } else {
-            Curriculo attached = this.entityManager.find(this.getClass(), this.id);
-            this.entityManager.remove(attached);
+	public void detach()
+	{
+		if ( this.entityManager == null )
+		{
+			this.entityManager = entityManager();
+		}
+
+		this.entityManager.detach( this );
+	}
+
+	@Transactional
+    public void persist()
+	{
+        if (this.entityManager == null)
+        {
+        	this.entityManager = entityManager();
+        }
+
+        this.entityManager.persist( this );
+    }
+
+	@Transactional
+    public void remove()
+	{
+        if ( this.entityManager == null )
+        {
+        	this.entityManager = entityManager();
+        }
+
+        if ( this.entityManager.contains( this ) )
+        {
+            this.entityManager.remove( this );
+        }
+        else
+        {
+            Curriculo attached = this.entityManager.find(
+            	this.getClass(), this.id );
+
+            this.entityManager.remove( attached );
         }
     }
 
 	@Transactional
-    public void flush() {
-        if (this.entityManager == null) this.entityManager = entityManager();
+    public void flush()
+	{
+        if ( this.entityManager == null )
+        {
+        	this.entityManager = entityManager();
+        }
+
         this.entityManager.flush();
     }
 
 	@Transactional
-    public Curriculo merge() {
-        if (this.entityManager == null) this.entityManager = entityManager();
-        Curriculo merged = this.entityManager.merge(this);
+    public Curriculo merge()
+	{
+        if ( this.entityManager == null )
+        {
+        	this.entityManager = entityManager();
+        }
+
+        Curriculo merged = this.entityManager.merge( this );
         this.entityManager.flush();
         return merged;
     }
 
-	public static final EntityManager entityManager() {
+	public static final EntityManager entityManager()
+	{
         EntityManager em = new Curriculo().entityManager;
-        if (em == null) throw new IllegalStateException("Entity manager has not been injected (is the Spring Aspects JAR configured as an AJC/AJDT aspects library?)");
+        if ( em == null )
+        {
+        	throw new IllegalStateException(
+        		"Entity manager has not been injected (is the Spring " +
+        		"Aspects JAR configured as an AJC/AJDT aspects library?)" );
+        }
+
         return em;
     }
-	
-	public static int count(Cenario cenario) {
-		Query q = entityManager().createQuery("SELECT COUNT(o) FROM Curriculo o WHERE o.cenario = :cenario");
-		q.setParameter("cenario", cenario);
-		return ((Number) q.getSingleResult()).intValue();
+
+	public static int count( Cenario cenario )
+	{
+		Query q = entityManager().createQuery(
+			" SELECT COUNT(o) FROM Curriculo o " +
+			" WHERE o.cenario = :cenario" );
+
+		q.setParameter( "cenario", cenario );
+		return ( (Number) q.getSingleResult() ).intValue();
 	}
-	
+
 	@SuppressWarnings("unchecked")
-    public static List<Curriculo> findAll() {
-        return entityManager().createQuery("select o from Curriculo o").getResultList();
+    public static List< Curriculo > findAll()
+    {
+        return entityManager().createQuery(
+        	"select o from Curriculo o" ).getResultList();
     }
-	
-	public static Map<String,Curriculo> buildCurriculoCodigoToCurriculoMap(List<Curriculo> curriculos) {
-		Map<String,Curriculo> curriculosMap = new HashMap<String,Curriculo>();
-		for (Curriculo curriculo : curriculos) {
-			curriculosMap.put(curriculo.getCodigo(),curriculo);
+
+	public static Map< String, Curriculo > buildCurriculoCodigoToCurriculoMap(
+		List< Curriculo > curriculos )
+	{
+		Map< String, Curriculo > curriculosMap
+			= new HashMap< String, Curriculo >();
+
+		for ( Curriculo curriculo : curriculos )
+		{
+			curriculosMap.put( curriculo.getCodigo(), curriculo );
 		}
+
 		return curriculosMap;
 	}
 	
 	@SuppressWarnings("unchecked")
-	public static List<Curriculo> findByCenario(Cenario cenario) {
-		Query q = entityManager().createQuery("SELECT o FROM Curriculo o WHERE cenario = :cenario");
-    	q.setParameter("cenario", cenario);
+	public static List< Curriculo > findByCenario( Cenario cenario )
+	{
+		Query q = entityManager().createQuery(
+			" SELECT o FROM Curriculo o " +
+			" WHERE cenario = :cenario" );
+
+    	q.setParameter( "cenario", cenario );
     	return q.getResultList();
     }
 
-	public static Curriculo find(Long id) {
-        if (id == null) return null;
-        return entityManager().find(Curriculo.class, id);
+	public static Curriculo find( Long id )
+	{
+        if ( id == null )
+        {
+        	return null;
+        }
+
+        return entityManager().find( Curriculo.class, id );
     }
 
-	public static List<Curriculo> find(int firstResult, int maxResults) {
-		return find(firstResult, maxResults, null);
+	public static List< Curriculo > find(
+		int firstResult, int maxResults )
+	{
+		return find( firstResult, maxResults, null );
 	}
+
 	@SuppressWarnings("unchecked")
-    public static List<Curriculo> find(int firstResult, int maxResults, String orderBy) {
-		orderBy = (orderBy != null) ? "ORDER BY o." + orderBy : "";
-        return entityManager().createQuery("select o from Curriculo o "+orderBy).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
+    public static List< Curriculo > find(
+    	int firstResult, int maxResults, String orderBy )
+    {
+		orderBy = ( ( orderBy != null ) ? "ORDER BY o." + orderBy : "" );
+        return entityManager().createQuery(
+        	"select o from Curriculo o " + orderBy )
+        	.setFirstResult( firstResult)
+        	.setMaxResults( maxResults ).getResultList();
     }
-	
+
 	@SuppressWarnings("unchecked")
-	public static List<Curriculo> findByCampusAndTurno(Campus campus, Turno turno) {
-		Query q = entityManager().createQuery("SELECT o.curriculo FROM Oferta o WHERE o.campus = :campus AND o.turno = :turno");
-		q.setParameter("campus", campus);
-		q.setParameter("turno", turno);
+	public static List< Curriculo > findByCampusAndTurno(
+		Campus campus, Turno turno )
+	{
+		Query q = entityManager().createQuery(
+			" SELECT o.curriculo FROM Oferta o " +
+			" WHERE o.campus = :campus AND o.turno = :turno" );
+
+		q.setParameter( "campus", campus );
+		q.setParameter( "turno", turno );
 		return q.getResultList();
 	}
-	
-	
+
 	@SuppressWarnings("unchecked")
-	public List<CurriculoDisciplina> getCurriculoDisciplinasByPeriodo(Integer periodo) {
-		Query q = entityManager().createQuery("SELECT o FROM CurriculoDisciplina o WHERE o.curriculo = :curriculo AND o.periodo = :periodo");
-		q.setParameter("curriculo", this);
-		q.setParameter("periodo", periodo);
+	public List< CurriculoDisciplina > getCurriculoDisciplinasByPeriodo( Integer periodo )
+	{
+		Query q = entityManager().createQuery(
+			" SELECT o FROM CurriculoDisciplina o " +
+			" WHERE o.curriculo = :curriculo " +
+			" AND o.periodo = :periodo" );
+
+		q.setParameter( "curriculo", this );
+		q.setParameter( "periodo", periodo );
 		return q.getResultList();
 	}
-	
-	public static int count(Curso curso, String codigo, String descricao) {
-		codigo = (codigo == null)? "" : codigo;
-		codigo = "%" + codigo.replace('*', '%') + "%";
-		descricao = (descricao == null)? "" : descricao;
-		descricao = "%" + descricao.replace('*', '%') + "%";
-		
+
+	public static int count(
+		Curso curso, String codigo, String descricao )
+	{
+		codigo = ( ( codigo == null ) ? "" : codigo );
+		codigo = ( "%" + codigo.replace( '*', '%' ) + "%" );
+		descricao = ( ( descricao == null ) ? "" : descricao );
+		descricao = ( "%" + descricao.replace( '*', '%' ) + "%" );
+
 		String queryCurso = "";
-		if(curso != null) {
-			queryCurso = "o.curso = :curso AND";
+		if ( curso != null )
+		{
+			queryCurso = ( "o.curso = :curso AND" );
 		}
-		Query q = entityManager().createQuery("SELECT COUNT(o) FROM Curriculo o WHERE "+queryCurso+" LOWER(o.descricao) LIKE LOWER(:descricao) AND LOWER(o.codigo) LIKE LOWER(:codigo)");
-		if(curso != null) {
-			q.setParameter("curso", curso);
-		}
-		q.setParameter("codigo", codigo);
-		q.setParameter("descricao", descricao);
-		return ((Number)q.getSingleResult()).intValue();
-	}
-	
-    @SuppressWarnings("unchecked")
-	public static List<Curriculo> findBy(Curso curso, String codigo, String descricao, int firstResult, int maxResults, String orderBy) {
 
-        codigo = (codigo == null)? "" : codigo;
-        codigo = "%" + codigo.replace('*', '%') + "%";
-        descricao = (descricao == null)? "" : descricao;
-        descricao = "%" + descricao.replace('*', '%') + "%";
-        
-        orderBy = (orderBy != null) ? "ORDER BY o." + orderBy : "";
+		Query q = entityManager().createQuery(
+			" SELECT COUNT(o) FROM Curriculo o " +
+			" WHERE " + queryCurso + " LOWER ( o.descricao ) " +
+			" LIKE LOWER ( :descricao ) " +
+			" AND LOWER ( o.codigo ) LIKE LOWER ( :codigo ) ");
+
+		if ( curso != null )
+		{
+			q.setParameter( "curso", curso );
+		}
+
+		q.setParameter( "codigo", codigo );
+		q.setParameter( "descricao", descricao );
+		return ( (Number)q.getSingleResult() ).intValue();
+	}
+
+    @SuppressWarnings("unchecked")
+	public static List< Curriculo > findBy( Curso curso, String codigo,
+		String descricao, int firstResult, int maxResults, String orderBy )
+	{
+        codigo = ( ( codigo == null ) ? "" : codigo );
+        codigo = ( "%" + codigo.replace( '*', '%' ) + "%" );
+        descricao = ( ( descricao == null ) ? "" : descricao );
+        descricao = ( "%" + descricao.replace( '*', '%' ) + "%" );
+
+        orderBy = ( ( orderBy != null ) ? "ORDER BY o." + orderBy : "" );
         String queryCurso = "";
-        if(curso != null) {
-        	queryCurso = "o.curso = :curso AND";
+        if ( curso != null )
+        {
+        	queryCurso = ( "o.curso = :curso AND" );
         }
-        Query q = entityManager().createQuery("SELECT o FROM Curriculo o WHERE "+queryCurso+" LOWER(o.descricao) LIKE LOWER(:descricao) AND LOWER(o.codigo) LIKE LOWER(:codigo)");
-        if(curso != null) {
-        	q.setParameter("curso", curso);
+
+        Query q = entityManager().createQuery(
+        	" SELECT o FROM Curriculo o WHERE " + queryCurso +
+        	" LOWER ( o.descricao ) LIKE LOWER ( :descricao ) " +
+        	" AND LOWER ( o.codigo ) LIKE LOWER ( :codigo )" );
+
+        if ( curso != null )
+        {
+        	q.setParameter( "curso", curso );
         }
-        q.setParameter("codigo", codigo);
-        q.setParameter("descricao", descricao);
-        return q.setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
+
+        q.setParameter( "codigo", codigo );
+        q.setParameter( "descricao", descricao );
+        return q.setFirstResult( firstResult ).setMaxResults( maxResults ).getResultList();
     }
 
-    public int getPeriodo(Disciplina disciplina) {
-    	Query q = entityManager().createQuery("SELECT o.periodo FROM CurriculoDisciplina o WHERE o.curriculo = :curriculo AND o.disciplina = :disciplina");
-    	q.setParameter("curriculo", this);
-    	q.setParameter("disciplina", disciplina);
+    public int getPeriodo( Disciplina disciplina )
+    {
+    	Query q = entityManager().createQuery(
+    		" SELECT o.periodo FROM CurriculoDisciplina o " +
+    		" WHERE o.curriculo = :curriculo AND o.disciplina = :disciplina" );
+
+    	q.setParameter( "curriculo", this );
+    	q.setParameter( "disciplina", disciplina );
     	return (Integer) q.getSingleResult();
     }
-    
+
     @SuppressWarnings("unchecked")
-    public List<Integer> getPeriodos() {
-    	Query q = entityManager().createQuery("SELECT DISTINCT(o.periodo) FROM CurriculoDisciplina o WHERE o.curriculo = :curriculo");
-    	q.setParameter("curriculo", this);
-    	return (List<Integer>) q.getResultList();
-    }
-    
-	public static boolean checkCodigoUnique(Cenario cenario, String codigo) {
-		Query q = entityManager().createQuery("SELECT COUNT(o) FROM Curriculo o WHERE o.curso.cenario = :cenario AND o.codigo = :codigo");
-		q.setParameter("cenario", cenario);
-		q.setParameter("codigo", codigo);
-		Number size = (Number) q.setMaxResults(1).getSingleResult();
-		return size.intValue() > 0;
-	}
-    
-	public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("Id: ").append(getId()).append(", ");
-        sb.append("Version: ").append(getVersion()).append(", ");
-        sb.append("Curso: ").append(getCurso()).append(", ");
-        sb.append("Cenario: ").append(getCenario()).append(", ");
-        sb.append("Codigo: ").append(getCodigo()).append(", ");
-        sb.append("Descricao: ").append(getDescricao()).append(", ");
-        sb.append("Disciplinas: ").append(getDisciplinas() == null ? "null" : getDisciplinas().size()).append(", ");
-        sb.append("Ofertas: ").append(getOfertas() == null ? "null" : getOfertas().size());
-        return sb.toString();
+    public List< Integer > getPeriodos()
+    {
+    	Query q = entityManager().createQuery(
+    		" SELECT DISTINCT ( o.periodo ) " +
+    		" FROM CurriculoDisciplina o " +
+    		" WHERE o.curriculo = :curriculo" );
+
+    	q.setParameter( "curriculo", this );
+    	return ( List< Integer > ) q.getResultList();
     }
 
-	private static final long serialVersionUID = -9204016994046445376L;
+	public static boolean checkCodigoUnique( Cenario cenario, String codigo )
+	{
+		Query q = entityManager().createQuery(
+			" SELECT COUNT ( o ) FROM Curriculo o " +
+			" WHERE o.curso.cenario = :cenario " +
+			" AND o.codigo = :codigo" );
+
+		q.setParameter( "cenario", cenario );
+		q.setParameter( "codigo", codigo );
+		Number size = (Number) q.setMaxResults( 1 ).getSingleResult();
+		return ( size.intValue() > 0 );
+	}
+
+	public String toString()
+	{
+        StringBuilder sb = new StringBuilder();
+
+        sb.append( "Id: " ).append( getId() ).append( ", " );
+        sb.append( "Version: " ).append( getVersion() ).append( ", " );
+        sb.append( "Curso: " ).append( getCurso() ).append( ", " );
+        sb.append( "Cenario: " ).append( getCenario() ).append( ", " );
+        sb.append( "Codigo: " ).append( getCodigo() ).append( ", " );
+        sb.append( "Descricao: " ).append( getDescricao() ).append( ", " );
+        sb.append( "Disciplinas: " ).append( getDisciplinas() == null ?
+        	"null" : getDisciplinas().size() ).append( ", " );
+        sb.append( "Ofertas: " ).append( getOfertas() == null ?
+        	"null" : getOfertas().size() );
+
+        return sb.toString();
+    }
 }

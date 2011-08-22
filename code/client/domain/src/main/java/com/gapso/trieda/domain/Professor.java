@@ -1,6 +1,7 @@
 package com.gapso.trieda.domain;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -39,7 +40,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RooJavaBean
 @RooToString
 @RooEntity( identifierColumn = "PRF_ID" )
-@Table(name = "PROFESSORES", uniqueConstraints =
+@Table( name = "PROFESSORES", uniqueConstraints =
 @UniqueConstraint( columnNames = { "PRF_CPF", "CEN_ID" } ) )
 public class Professor
 	implements Serializable
@@ -93,7 +94,7 @@ public class Professor
 	private Double valorCredito;
 
 	@ManyToMany
-	private Set<Campus> campi = new HashSet<Campus>();
+	private Set< Campus > campi = new HashSet< Campus >();
 
 	@ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, mappedBy = "professores")
 	private Set<HorarioDisponivelCenario> horarios = new HashSet<HorarioDisponivelCenario>();
@@ -108,36 +109,29 @@ public class Professor
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "professor")
 	private Set<Usuario> usuario = new HashSet<Usuario>();
 
-	public String toString() {
+	public String toString()
+	{
 		StringBuilder sb = new StringBuilder();
-		sb.append("Id: ").append(getId()).append(", ");
-		sb.append("Version: ").append(getVersion()).append(", ");
-		sb.append("Cenario: ").append(getCenario()).append(", ");
-		sb.append("TipoContrato: ").append(getTipoContrato()).append(", ");
-		sb.append("Titulacao: ").append(getTitulacao()).append(", ");
-		sb.append("AreaTitulacao: ").append(getAreaTitulacao()).append(", ");
-		sb.append("Cpf: ").append(getCpf()).append(", ");
-		sb.append("Nome: ").append(getNome()).append(", ");
-		sb.append("CargaHorariaMin: ").append(getCargaHorariaMin())
-				.append(", ");
-		sb.append("CargaHorariaMax: ").append(getCargaHorariaMax())
-				.append(", ");
-		sb.append("CreditoAnterior: ").append(getCreditoAnterior())
-				.append(", ");
-		sb.append("ValorCredito: ").append(getValorCredito()).append(", ");
-		sb.append("Campi: ")
-				.append(getCampi() == null ? "null" : getCampi().size())
-				.append(", ");
-		sb.append("Horarios: ")
-				.append(getHorarios() == null ? "null" : getHorarios().size())
-				.append(", ");
-		sb.append("Disciplinas: ").append(
-				getDisciplinas() == null ? "null" : getDisciplinas().size());
-		sb.append("Atendimentos Operacionais: ").append(
-				getAtendimentosOperacionais() == null ? "null"
-						: getAtendimentosOperacionais().size());
-		sb.append("Usuario: ").append(
-				getUsuario() == null ? "null" : getUsuario().size());
+
+		sb.append( "Id: " ).append( getId() ).append( ", " );
+		sb.append( "Version: " ).append( getVersion() ).append( ", " );
+		sb.append( "Cenario: " ).append( getCenario() ).append( ", " );
+		sb.append( "TipoContrato: " ).append( getTipoContrato() ).append( ", " );
+		sb.append( "Titulacao: " ).append( getTitulacao() ).append( ", " );
+		sb.append( "AreaTitulacao: " ).append( getAreaTitulacao() ).append( ", " );
+		sb.append( "Cpf: " ).append( getCpf() ).append( ", " );
+		sb.append( "Nome: " ).append( getNome() ).append( ", " );
+		sb.append( "CargaHorariaMin: " ).append( getCargaHorariaMin() ).append( ", " );
+		sb.append( "CargaHorariaMax: " ).append( getCargaHorariaMax() ).append( ", " );
+		sb.append( "CreditoAnterior: " ).append( getCreditoAnterior() ).append( ", " );
+		sb.append( "ValorCredito: " ).append( getValorCredito() ).append( ", " );
+		sb.append( "Campi: " ).append( getCampi() == null ? "null" : getCampi().size() ).append( ", " );
+		sb.append( "Horarios: " ).append( getHorarios() == null ? "null" : getHorarios().size() ).append( ", " );
+		sb.append( "Disciplinas: ").append( getDisciplinas() == null ? "null" : getDisciplinas().size() ).append( ", " );
+		sb.append( "Atendimentos Operacionais: " ).append( getAtendimentosOperacionais() == null ?
+			"null" : getAtendimentosOperacionais().size() ).append( ", " );
+		sb.append( "Usuario: " ).append( getUsuario() == null ? "null" : getUsuario().size() );
+
 		return sb.toString();
 	}
 
@@ -389,6 +383,13 @@ public class Professor
 				.getResultList();
 	}
 
+	@SuppressWarnings("unchecked")
+	public static List< Professor > findByCampus()
+	{
+		return entityManager().createQuery(
+			"SELECT o FROM Professor o" ).getResultList();
+	}
+
 	public static int count(String cpf, TipoContrato tipoContrato,
 			Titulacao titulacao, AreaTitulacao areaTitulacao) {
 		String where = "";
@@ -454,27 +455,45 @@ public class Professor
 				.getResultList();
 	}
 
-	public static Professor find(Long id) {
-		if (id == null)
+	public static Professor find( Long id )
+	{
+		if ( id == null )
+		{
 			return null;
-		return entityManager().find(Professor.class, id);
+		}
+
+		return entityManager().find( Professor.class, id );
 	}
 
 	@SuppressWarnings("unchecked")
-	public static List<Professor> find(int firstResult, int maxResults) {
-		return entityManager().createQuery("SELECT o FROM Professor o")
-				.setFirstResult(firstResult).setMaxResults(maxResults)
-				.getResultList();
+	public static List<Professor> find( int firstResult, int maxResults )
+	{
+		return entityManager().createQuery(
+			"SELECT o FROM Professor o" )
+			.setFirstResult( firstResult )
+			.setMaxResults( maxResults ).getResultList();
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<HorarioDisponivelCenario> getHorarios(SemanaLetiva semanaLetiva) {
-		Query q = entityManager()
-				.createQuery(
-						"SELECT o FROM HorarioDisponivelCenario o, IN (o.professores) c WHERE c = :professor AND o.horarioAula.semanaLetiva = :semanaLetiva");
-		q.setParameter("professor", this);
-		q.setParameter("semanaLetiva", semanaLetiva);
-		return q.getResultList();
+	public List< HorarioDisponivelCenario > getHorarios(
+		List< SemanaLetiva > semanasLetivas )
+	{
+		Set< HorarioDisponivelCenario > horarios
+			= new HashSet< HorarioDisponivelCenario >();
+
+		for ( SemanaLetiva semanaLetiva : semanasLetivas )
+		{
+			Query q = entityManager().createQuery(
+				" SELECT o FROM HorarioDisponivelCenario o, IN ( o.professores ) c " +
+				" WHERE c = :professor AND o.horarioAula.semanaLetiva = :semanaLetiva " );
+
+			q.setParameter( "professor", this );
+			q.setParameter( "semanaLetiva", semanaLetiva );
+
+			horarios.addAll( q.getResultList() );
+		}
+
+		return new ArrayList< HorarioDisponivelCenario >( horarios );
 	}
 
 	public static Map< String, Professor > buildProfessorCpfToProfessorMap(

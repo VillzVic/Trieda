@@ -527,13 +527,9 @@ public class AtendimentoOperacional implements Serializable
 		Curriculo curriculo = oferta.getCurriculo();
 
 		return oferta.getCampus().getId()
-			+ "-" + oferta.getTurno().getId()
-			+ "-" + curriculo.getCurso().getId()
-			+ "-" + curriculo.getId()
-			+ "-" + curriculo.getPeriodo( getDisciplina() )
-			+ "-" + getDisciplina().getId()
-			+ "-" + getTurma()
-			+ "-" + getCreditoTeorico();
+			+ "-" + oferta.getTurno().getId() + "-" + curriculo.getCurso().getId()
+			+ "-" + curriculo.getId() + "-" + curriculo.getPeriodo( getDisciplina() )
+			+ "-" + getDisciplina().getId() + "-" + getTurma() + "-" + getCreditoTeorico();
 	}
 
 	static public List< AtendimentoOperacional > getAtendimentosOperacional(
@@ -552,5 +548,39 @@ public class AtendimentoOperacional implements Serializable
 		}
 
 		return atendimentosOperacional;
+	}
+
+	@SuppressWarnings("unchecked")
+	public static List< AtendimentoOperacional > findAllByDemanda( Demanda demanda )
+	{
+		Query q = entityManager().createQuery(
+			" SELECT o FROM AtendimentoOperacional o " +
+			" WHERE o.oferta = :oferta AND o.disciplina = :disciplina" );
+
+		q.setParameter( "oferta", demanda.getOferta() );
+		q.setParameter( "disciplina", demanda.getDisciplina() );
+
+		return q.getResultList();
+	}
+
+	public static int countTurma( Campus campus )
+	{
+		Query q = entityManager().createQuery(
+			"SELECT count ( * ) FROM AtendimentoOperacional o " +
+			"WHERE o.oferta.campus = :campus GROUP BY o.disciplina, o.turma" );
+
+		q.setParameter( "campus", campus );
+		return q.getResultList().size();
+	}
+
+	@SuppressWarnings("unchecked")
+	public static List< AtendimentoOperacional > findAllByCampus( Campus campus )
+	{
+		Query q = entityManager().createQuery(
+			" SELECT o FROM AtendimentoOperacional o " +
+			" WHERE o.oferta.campus = :campus" );
+
+		q.setParameter( "campus", campus );
+		return q.getResultList();
 	}
 }

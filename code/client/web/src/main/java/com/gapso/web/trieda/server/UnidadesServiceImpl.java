@@ -51,10 +51,16 @@ public class UnidadesServiceImpl extends RemoteServiceServlet implements Unidade
 	}
 	
 	@Override
-	public PagingLoadResult<HorarioDisponivelCenarioDTO> getHorariosDisponiveis(UnidadeDTO unidadeDTO, SemanaLetivaDTO semanaLetivaDTO) {
-		SemanaLetiva semanaLetiva = SemanaLetiva.getByOficial();
-		List<HorarioDisponivelCenario> list = new ArrayList<HorarioDisponivelCenario>(Unidade.find(unidadeDTO.getId()).getHorarios(semanaLetiva));
-		List<HorarioDisponivelCenarioDTO> listDTO = ConvertBeans.toHorarioDisponivelCenarioDTO(list);
+	public PagingLoadResult< HorarioDisponivelCenarioDTO > getHorariosDisponiveis(
+		UnidadeDTO unidadeDTO, SemanaLetivaDTO semanaLetivaDTO )
+	{
+		List< SemanaLetiva > semanasLetivas = SemanaLetiva.findAll();
+
+		List< HorarioDisponivelCenario > list = new ArrayList< HorarioDisponivelCenario >(
+			Unidade.find( unidadeDTO.getId() ).getHorarios( semanasLetivas ) );
+
+		List< HorarioDisponivelCenarioDTO > listDTO
+			= ConvertBeans.toHorarioDisponivelCenarioDTO( list );
 
 		Map<String, List<HorarioDisponivelCenarioDTO>> horariosTurnos = new HashMap<String, List<HorarioDisponivelCenarioDTO>>();
 		for(HorarioDisponivelCenarioDTO o : listDTO) {
@@ -92,29 +98,39 @@ public class UnidadesServiceImpl extends RemoteServiceServlet implements Unidade
 	}
 	
 	@Override
-	public void saveHorariosDisponiveis(UnidadeDTO unidadeDTO, List<HorarioDisponivelCenarioDTO> listDTO) {
-		List<HorarioDisponivelCenario> listSelecionados = ConvertBeans.toHorarioDisponivelCenario(listDTO);
-		Unidade unidade = Unidade.find(unidadeDTO.getId());
-		List<Sala> salas = Sala.findByUnidade(unidade);
-		SemanaLetiva semanaLetiva = SemanaLetiva.getByOficial();
-		
-		List<HorarioDisponivelCenario> removerList = new ArrayList<HorarioDisponivelCenario> (unidade.getHorarios(semanaLetiva));
-		removerList.removeAll(listSelecionados);
-		for(HorarioDisponivelCenario o : removerList) {
-			o.getUnidades().remove(unidade);
-			o.getSalas().removeAll(salas);
+	public void saveHorariosDisponiveis( UnidadeDTO unidadeDTO, List< HorarioDisponivelCenarioDTO > listDTO )
+	{
+		List< HorarioDisponivelCenario > listSelecionados
+			= ConvertBeans.toHorarioDisponivelCenario( listDTO );
+
+		Unidade unidade = Unidade.find( unidadeDTO.getId() );
+		List< Sala > salas = Sala.findByUnidade( unidade );
+		List< SemanaLetiva > semanasLetivas = SemanaLetiva.findAll();
+
+		List< HorarioDisponivelCenario > removerList
+			= new ArrayList< HorarioDisponivelCenario >(
+				unidade.getHorarios( semanasLetivas ) );
+
+		removerList.removeAll( listSelecionados );
+		for ( HorarioDisponivelCenario o : removerList )
+		{
+			o.getUnidades().remove( unidade );
+			o.getSalas().removeAll( salas );
 			o.merge();
 		}
-		
-		List<HorarioDisponivelCenario> adicionarList = new ArrayList<HorarioDisponivelCenario> (listSelecionados);
-		adicionarList.removeAll(unidade.getHorarios(semanaLetiva));
-		for(HorarioDisponivelCenario o : adicionarList) {
-			o.getUnidades().add(unidade);
-			o.getSalas().addAll(salas);
+
+		List< HorarioDisponivelCenario > adicionarList
+			= new ArrayList< HorarioDisponivelCenario >( listSelecionados );
+
+		adicionarList.removeAll( unidade.getHorarios( semanasLetivas ) );
+		for ( HorarioDisponivelCenario o : adicionarList )
+		{
+			o.getUnidades().add( unidade );
+			o.getSalas().addAll( salas );
 			o.merge();
 		}
 	}
-	
+
 	@Override
 	public ListLoadResult<UnidadeDTO> getList(BasePagingLoadConfig loadConfig) {
 		Long campusID = loadConfig.get("campusId");

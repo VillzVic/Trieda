@@ -32,9 +32,13 @@ import org.springframework.transaction.annotation.Transactional;
 @Entity
 @RooJavaBean
 @RooToString
-@RooEntity(identifierColumn = "SLE_ID")
-@Table(name = "SEMANA_LETIVA", uniqueConstraints = @UniqueConstraint(columnNames = { "SLE_CODIGO" }))
-public class SemanaLetiva implements Serializable {
+@RooEntity( identifierColumn = "SLE_ID" )
+@Table( name = "SEMANA_LETIVA", uniqueConstraints =
+@UniqueConstraint( columnNames = { "SLE_CODIGO" } ) )
+public class SemanaLetiva
+	implements Serializable
+{
+	private static final long serialVersionUID = 6807360646327130208L;
 
 	@OneToOne(mappedBy = "semanaLetiva")
 	private Cenario cenario;
@@ -49,22 +53,32 @@ public class SemanaLetiva implements Serializable {
 	@Size(max = 50)
 	private String descricao;
 
-	@Column(name = "SLE_OFICIAL")
-	private Boolean oficial;
+	@OneToMany( cascade = CascadeType.ALL, mappedBy = "semanaLetiva" )
+	private Set< HorarioAula > horariosAula = new HashSet< HorarioAula >();
 
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "semanaLetiva")
-	private Set<HorarioAula> horariosAula = new HashSet<HorarioAula>();
+	@OneToMany( cascade = CascadeType.ALL, mappedBy = "semanaLetiva" )
+	private Set< Parametro > parametros = new HashSet< Parametro >();
 
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "semanaLetiva")
-	private Set<Parametro> parametros = new HashSet<Parametro>();
+	@OneToMany( mappedBy = "semanaLetiva" )
+	private Set< Curriculo > curriculos = new HashSet< Curriculo >();
 
-	private static final long serialVersionUID = 6807360646327130208L;
+	public Set< Curriculo > getCurriculos()
+	{
+		return curriculos;
+	}
 
-	public Cenario getCenario() {
+	public void setCurriculos( Set< Curriculo > curriculos )
+	{
+		this.curriculos = curriculos;
+	}
+
+	public Cenario getCenario()
+	{
 		return this.cenario;
 	}
 
-	public void setCenario(Cenario cenario) {
+	public void setCenario( Cenario cenario )
+	{
 		this.cenario = cenario;
 	}
 
@@ -82,14 +96,6 @@ public class SemanaLetiva implements Serializable {
 
 	public void setDescricao(String descricao) {
 		this.descricao = descricao;
-	}
-
-	public Boolean getOficial() {
-		return this.oficial;
-	}
-
-	public void setOficial(Boolean oficial) {
-		this.oficial = oficial;
 	}
 
 	public Set<HorarioAula> getHorariosAula() {
@@ -179,111 +185,141 @@ public class SemanaLetiva implements Serializable {
 		return merged;
 	}
 
-	public static final EntityManager entityManager() {
+	public static final EntityManager entityManager()
+	{
 		EntityManager em = new SemanaLetiva().entityManager;
-		if (em == null)
+		if ( em == null )
+		{
 			throw new IllegalStateException(
-					"Entity manager has not been injected (is the Spring Aspects JAR configured as an AJC/AJDT aspects library?)");
+				" Entity manager has not been injected (is the Spring " +
+				" Aspects JAR configured as an AJC/AJDT aspects library?)" );
+		}
+
 		return em;
 	}
 
-	public static SemanaLetiva getByOficial() {
-		return (SemanaLetiva) entityManager()
-				.createQuery(
-						"SELECT o FROM SemanaLetiva o WHERE o.oficial = true")
-				.setMaxResults(1).getSingleResult();
-	}
+	public static Set< SemanaLetiva > getByOficial( Campus campus )
+	{
+		Set< Curriculo > curriculosCampus = new HashSet< Curriculo >();
+		for ( Unidade unidade : campus.getUnidades() )
+		{
+			List< Sala > salas = Sala.findByUnidade( unidade );
+			for ( Sala sala : salas )
+			{
+				curriculosCampus.addAll( sala.getCurriculos() );
+			}
+		}
 
-	@Transactional
-	public void markOficial() {
-		Query q = entityManager()
-				.createQuery(
-						"UPDATE SemanaLetiva o SET o.oficial = false WHERE o.oficial = true AND o <> :semanaLetiva");
-		q.setParameter("semanaLetiva", this);
-		q.executeUpdate();
+		Set< SemanaLetiva > semanasLetivas = new HashSet< SemanaLetiva >();
+		for ( Curriculo curriculo : curriculosCampus )
+		{
+			semanasLetivas.add( curriculo.getSemanaLetiva() );
+		}
+
+		return semanasLetivas;
 	}
 
 	@SuppressWarnings("unchecked")
-	public static List<SemanaLetiva> findAll() {
-		return entityManager().createQuery("SELECT o FROM SemanaLetiva o")
-				.getResultList();
+	public static List< SemanaLetiva > findAll()
+	{
+		return entityManager().createQuery(
+			"SELECT o FROM SemanaLetiva o" ).getResultList();
 	}
 
-	public static SemanaLetiva find(Long id) {
-		if (id == null)
+	public static SemanaLetiva find( Long id )
+	{
+		if ( id == null )
+		{
 			return null;
-		return entityManager().find(SemanaLetiva.class, id);
+		}
+
+		return entityManager().find( SemanaLetiva.class, id );
 	}
 
-	public static List<SemanaLetiva> find(int firstResult, int maxResults) {
-		return find(firstResult, maxResults, null);
-	}
-
-	@SuppressWarnings("unchecked")
-	public static List<SemanaLetiva> find(int firstResult, int maxResults,
-			String orderBy) {
-		orderBy = (orderBy != null) ? "ORDER BY o." + orderBy : "";
-		return entityManager()
-				.createQuery("SELECT o FROM SemanaLetiva o " + orderBy)
-				.setFirstResult(firstResult).setMaxResults(maxResults)
-				.getResultList();
-	}
-
-	public static int count(String codigo, String descricao) {
-		codigo = (codigo == null) ? "" : codigo;
-		codigo = "%" + codigo.replace('*', '%') + "%";
-		descricao = (descricao == null) ? "" : descricao;
-		descricao = "%" + descricao.replace('*', '%') + "%";
-
-		EntityManager em = Turno.entityManager();
-		Query q = em
-				.createQuery("SELECT COUNT(o) FROM SemanaLetiva o WHERE LOWER(o.codigo) LIKE LOWER(:codigo) AND LOWER(o.descricao) LIKE LOWER(:descricao) ");
-		q.setParameter("codigo", codigo);
-		q.setParameter("descricao", descricao);
-		return ((Number) q.getSingleResult()).intValue();
+	public static List< SemanaLetiva > find( int firstResult, int maxResults )
+	{
+		return find( firstResult, maxResults, null );
 	}
 
 	@SuppressWarnings("unchecked")
-	public static List<SemanaLetiva> findBy(String codigo, String descricao,
-			int firstResult, int maxResults, String orderBy) {
-		codigo = (codigo == null) ? "" : codigo;
-		codigo = "%" + codigo.replace('*', '%') + "%";
-		descricao = (descricao == null) ? "" : descricao;
-		descricao = "%" + descricao.replace('*', '%') + "%";
+	public static List< SemanaLetiva > find(
+		int firstResult, int maxResults, String orderBy )
+	{
+		orderBy = ( ( orderBy != null ) ? "ORDER BY o." + orderBy : "" );
 
-		EntityManager em = Turno.entityManager();
-		orderBy = (orderBy != null) ? "ORDER BY o." + orderBy : "";
-		Query q = em
-				.createQuery("SELECT o FROM SemanaLetiva o WHERE LOWER(o.codigo) LIKE LOWER(:codigo) AND LOWER(o.descricao) LIKE LOWER(:descricao) "
-						+ orderBy);
-		q.setParameter("codigo", codigo);
-		q.setParameter("descricao", descricao);
-		return q.setFirstResult(firstResult).setMaxResults(maxResults)
-				.getResultList();
+		return entityManager().createQuery(
+			"SELECT o FROM SemanaLetiva o " + orderBy )
+			.setFirstResult( firstResult )
+			.setMaxResults( maxResults ).getResultList();
 	}
 
-	public static boolean checkCodigoUnique(Cenario cenario, String codigo) {
+	public static int count( String codigo, String descricao )
+	{
+		codigo = ( ( codigo == null ) ? "" : codigo );
+		codigo = ( "%" + codigo.replace( '*', '%' ) + "%" );
+		descricao = ( ( descricao == null ) ? "" : descricao );
+		descricao = ( "%" + descricao.replace( '*', '%' ) + "%" );
+
+		EntityManager em = Turno.entityManager();
+		Query q = em.createQuery(
+			" SELECT COUNT ( o ) FROM SemanaLetiva o " +
+			" WHERE LOWER ( o.codigo ) LIKE LOWER ( :codigo ) " +
+			" AND LOWER ( o.descricao ) LIKE LOWER ( :descricao ) " );
+
+		q.setParameter( "codigo", codigo );
+		q.setParameter( "descricao", descricao );
+		return ( (Number) q.getSingleResult() ).intValue();
+	}
+
+	@SuppressWarnings("unchecked")
+	public static List< SemanaLetiva > findBy( String codigo, String descricao,
+		int firstResult, int maxResults, String orderBy )
+	{
+		codigo = ( ( codigo == null ) ? "" : codigo );
+		codigo = ( "%" + codigo.replace( '*', '%' ) + "%" );
+		descricao = ( ( descricao == null ) ? "" : descricao );
+		descricao = ( "%" + descricao.replace( '*', '%' ) + "%" );
+
+		EntityManager em = Turno.entityManager();
+		orderBy = ( ( orderBy != null ) ? "ORDER BY o." + orderBy : "" );
+		Query q = em.createQuery(
+			" SELECT o FROM SemanaLetiva o " +
+			" WHERE LOWER ( o.codigo ) LIKE  LOWER ( :codigo ) " +
+			" AND LOWER ( o.descricao ) LIKE LOWER ( :descricao ) " + orderBy );
+
+		q.setParameter( "codigo", codigo );
+		q.setParameter( "descricao", descricao );
+		return q.setFirstResult( firstResult )
+			.setMaxResults( maxResults ).getResultList();
+	}
+
+	public static boolean checkCodigoUnique( Cenario cenario, String codigo )
+	{
 		Query q = entityManager().createQuery(
-				"SELECT COUNT(o) FROM SemanaLetiva o WHERE o.codigo = :codigo");
-		q.setParameter("codigo", codigo);
-		Number size = (Number) q.setMaxResults(1).getSingleResult();
-		return size.intValue() > 0;
+			" SELECT COUNT ( o ) FROM SemanaLetiva o " +
+			" WHERE o.codigo = :codigo" );
+
+		q.setParameter( "codigo", codigo );
+		Number size = ( (Number) ( q.setMaxResults( 1 ).getSingleResult() ) );
+		return ( size.intValue() > 0 );
 	}
 
-	public String toString() {
+	public String toString()
+	{
 		StringBuilder sb = new StringBuilder();
-		sb.append("Id: ").append(getId()).append(", ");
-		sb.append("Version: ").append(getVersion()).append(", ");
-		sb.append("Cenario: ").append(getCenario()).append(", ");
-		sb.append("Codigo: ").append(getCodigo()).append(", ");
-		sb.append("HorariosAula: ")
-				.append(getHorariosAula() == null ? "null" : getHorariosAula()
-						.size()).append(", ");
-		sb.append("Descricao: ").append(getDescricao());
-		sb.append("Oficial: ").append(getOficial());
-		sb.append("Parametros: ")
-				.append(getParametros() == null ? "null" : getParametros()
-						.size()).append(", ");
+
+		sb.append( "Id: " ).append( getId() ).append( ", " );
+		sb.append( "Version: " ).append(getVersion()).append( ", " );
+		sb.append( "Cenario: " ).append(getCenario()).append( ", " );
+		sb.append( "Codigo: " ).append(getCodigo()).append( ", " );
+		sb.append( "HorariosAula: " ).append(
+			getHorariosAula() == null ? "null" :
+			getHorariosAula().size() ).append( ", " );
+		sb.append( "Descricao: " ).append( getDescricao() );
+		sb.append( "Parametros: " ).append(
+			getParametros() == null ? "null" :
+			getParametros().size() ).append( ", " );
+
 		return sb.toString();
 	}
 }
