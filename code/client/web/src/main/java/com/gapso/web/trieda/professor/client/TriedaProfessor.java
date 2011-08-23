@@ -9,13 +9,15 @@ import com.google.gwt.user.client.ui.RootPanel;
 /**
  * Entry point classes define <code>onModuleLoad()</code>.
  */
-public class TriedaProfessor implements EntryPoint {
-	
+public class TriedaProfessor
+	implements EntryPoint
+{
 	/**
 	 * This is the entry point method.
 	 */
-	public void onModuleLoad() {
-	    Presenter appPresenter = new AppPresenter(new AppView());
-	    appPresenter.go(RootPanel.get());
+	public void onModuleLoad()
+	{
+	    Presenter appPresenter = new AppPresenter( new AppView() );
+	    appPresenter.go( RootPanel.get() );
 	}
 }

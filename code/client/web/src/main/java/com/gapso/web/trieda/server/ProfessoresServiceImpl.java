@@ -1,6 +1,7 @@
 package com.gapso.web.trieda.server;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -104,6 +105,8 @@ public class ProfessoresServiceImpl extends RemoteService
 	public ListLoadResult< ProfessorDTO > getList()
 	{
 		List< ProfessorDTO > list = new ArrayList< ProfessorDTO >();
+		List< Professor > listProfessores = Professor.findAll();
+		Collections.sort( listProfessores );
 
 		for ( Professor professor : Professor.findAll() )
 		{
@@ -264,7 +267,8 @@ public class ProfessoresServiceImpl extends RemoteService
 		onlyAdministrador();
 
 		Campus campus = Campus.find( campusDTO.getId() );
-		Set< Professor > list = campus.getProfessores();
+		List< Professor > list = new ArrayList< Professor >( campus.getProfessores() );
+		Collections.sort( list );
 
 		List< ProfessorDTO > listDTO
 			= new ArrayList< ProfessorDTO >( list.size() );

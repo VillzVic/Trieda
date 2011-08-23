@@ -26,61 +26,96 @@ import com.gapso.web.trieda.shared.util.view.SimpleGrid;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
 
-public class DisponibilidadesProfessorPresenter implements Presenter {
-
-	public interface Display extends ITriedaI18nGateway {
+public class DisponibilidadesProfessorPresenter
+	implements Presenter
+{
+	public interface Display
+		extends ITriedaI18nGateway
+	{
 		Button getDiasDeAulaButton();
-		SimpleGrid<SemanaLetivaDTO> getGrid();
+		SimpleGrid< SemanaLetivaDTO > getGrid();
 		Component getComponent();
-		void setProxy(RpcProxy<PagingLoadResult<SemanaLetivaDTO>> proxy);
+		void setProxy( RpcProxy< PagingLoadResult< SemanaLetivaDTO > > proxy );
 	}
+
 	private Display display; 
 	private CenarioDTO cenario;
 	private UsuarioDTO usuario;
-	
-	public DisponibilidadesProfessorPresenter(CenarioDTO cenario, UsuarioDTO usuario, Display display) {
+	private boolean isVisaoProfessor;
+
+	public DisponibilidadesProfessorPresenter( CenarioDTO cenario,
+		UsuarioDTO usuario, Display display, boolean isVisaoProfessor )
+	{
 		this.display = display;
 		this.cenario = cenario;
 		this.usuario = usuario;
+		this.isVisaoProfessor = isVisaoProfessor;
+
 		configureProxy();
 		setListeners();
 	}
 
-	private void configureProxy() {
+	private void configureProxy()
+	{
 		final SemanasLetivaServiceAsync service = Services.semanasLetiva();
-		RpcProxy<PagingLoadResult<SemanaLetivaDTO>> proxy = new RpcProxy<PagingLoadResult<SemanaLetivaDTO>>() {
+
+		RpcProxy< PagingLoadResult< SemanaLetivaDTO > > proxy
+			= new RpcProxy< PagingLoadResult< SemanaLetivaDTO > >()
+		{
 			@Override
-			public void load(Object loadConfig, AsyncCallback<PagingLoadResult<SemanaLetivaDTO>> callback) {
-				service.getBuscaList("", "", (PagingLoadConfig)loadConfig, callback);
+			public void load( Object loadConfig, AsyncCallback< PagingLoadResult< SemanaLetivaDTO > > callback )
+			{
+				service.getBuscaList( "", "", (PagingLoadConfig) loadConfig, callback );
 			}
 		};
-		display.setProxy(proxy);
+
+		display.setProxy( proxy );
 	}
 	
-	private void setListeners() {
-		display.getDiasDeAulaButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
+	private void setListeners()
+	{
+		display.getDiasDeAulaButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+		{
 			@Override
-			public void componentSelected(ButtonEvent ce) {
+			public void componentSelected( ButtonEvent ce )
+			{
+				final SemanaLetivaDTO semanaLetivaDTO
+					= display.getGrid().getGrid().getSelectionModel().getSelectedItem();
 
-				final SemanaLetivaDTO semanaLetivaDTO = display.getGrid().getGrid().getSelectionModel().getSelectedItem();
 				final ProfessorDTO professorDTO = new ProfessorDTO();
-				professorDTO.setId(usuario.getProfessorId());
-				Services.professores().getHorariosDisponiveis(professorDTO, semanaLetivaDTO, new AbstractAsyncCallbackWithDefaultOnFailure<List<HorarioDisponivelCenarioDTO>>(display) {
+				professorDTO.setId( usuario.getProfessorId() );
+
+				Services.professores().getHorariosDisponiveis( professorDTO, semanaLetivaDTO,
+					new AbstractAsyncCallbackWithDefaultOnFailure< List< HorarioDisponivelCenarioDTO > >( display )
+				{
 					@Override
-					public void onSuccess(List<HorarioDisponivelCenarioDTO> result) {
-						Presenter presenter = new DisponibilidadesProfessorFormPresenter(cenario, semanaLetivaDTO, new DisponibilidadesProfessorFormView(professorDTO, result));
-						presenter.go(null);
+					public void onSuccess( List< HorarioDisponivelCenarioDTO > result )
+					{
+						Presenter presenter = new DisponibilidadesProfessorFormPresenter( cenario,
+							semanaLetivaDTO, new DisponibilidadesProfessorFormView( professorDTO, result ) );
+
+						presenter.go( null );
 					}
 				});
-				
 			}
 		});
 	}
-	
-	@Override
-	public void go(Widget widget) {
-		GTab tab = (GTab)widget;
-		tab.add((GTabItem)display.getComponent());
+
+	public boolean isVisaoProfessor()
+	{
+		return isVisaoProfessor;
 	}
 
+	public void setVisaoProfessor( boolean isVisaoProfessor )
+	{
+		this.isVisaoProfessor = isVisaoProfessor;
+	}
+
+	@Override
+	public void go( Widget widget )
+	{
+		GTab tab = (GTab)widget;
+		tab.add( (GTabItem) display.getComponent() );
+	}
 }

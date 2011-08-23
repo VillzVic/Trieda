@@ -40,14 +40,17 @@ public class RelatorioVisaoProfessorPresenter
 		Button getExportExcelButton(); 
 	}
 
-	private Display display; 
-	private UsuarioDTO usuario; 
+	private Display display;
+	private UsuarioDTO usuario;
+	private boolean isVisaoProfessor;
 
 	public RelatorioVisaoProfessorPresenter( CenarioDTO cenario,
-		UsuarioDTO usuario, Display display )
+		UsuarioDTO usuario, Display display, boolean isVisaoProfessor )
 	{
 		this.usuario = usuario;
 		this.display = display;
+		this.isVisaoProfessor = isVisaoProfessor;
+
 		setListeners();
 	}
 
@@ -63,6 +66,7 @@ public class RelatorioVisaoProfessorPresenter
 					{
 						display.getGrid().setProfessorDTO(
 							display.getProfessorComboBox().getValue() );
+
 						display.getGrid().setProfessorVirtualDTO(
 							display.getProfessorVirtualComboBox().getValue() );
 					}
@@ -75,9 +79,11 @@ public class RelatorioVisaoProfessorPresenter
 
 					display.getGrid().setTurnoDTO(
 						display.getTurnoComboBox().getValue() );
+
 					display.getGrid().requestAtendimentos();
 				}
 			});
+
 		display.getProfessorComboBox().addSelectionChangedListener(
 			new SelectionChangedListener< ProfessorDTO >()
 			{
@@ -88,6 +94,7 @@ public class RelatorioVisaoProfessorPresenter
 					display.getProfessorComboBox().setValue( se.getSelectedItem() );
 				}
 			});
+
 		display.getProfessorVirtualComboBox().addSelectionChangedListener(
 			new SelectionChangedListener< ProfessorVirtualDTO >()
 			{
@@ -98,6 +105,7 @@ public class RelatorioVisaoProfessorPresenter
 					display.getProfessorVirtualComboBox().setValue( se.getSelectedItem() );
 				}
 			});
+
 		display.getExportExcelButton().addSelectionListener(
 				new SelectionListener< ButtonEvent >()
 				{
@@ -132,10 +140,20 @@ public class RelatorioVisaoProfessorPresenter
 				});
 	}
 
+	public boolean isVisaoProfessor()
+	{
+		return this.isVisaoProfessor;
+	}
+
+	public void setVisaoProfessor( boolean isVisaoProfessor )
+	{
+		this.isVisaoProfessor = isVisaoProfessor;
+	}
+
 	@Override
 	public void go( Widget widget )
 	{
 		GTab tab = (GTab)widget;
-		tab.add( (GTabItem)display.getComponent() );
+		tab.add( (GTabItem) display.getComponent() );
 	}
 }

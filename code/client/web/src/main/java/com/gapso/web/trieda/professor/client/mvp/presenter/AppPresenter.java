@@ -12,6 +12,8 @@ import com.gapso.web.trieda.shared.services.Services;
 import com.gapso.web.trieda.shared.services.UsuariosServiceAsync;
 import com.gapso.web.trieda.shared.util.view.AbstractAsyncCallbackWithDefaultOnFailure;
 import com.gapso.web.trieda.shared.util.view.GTab;
+import com.google.gwt.user.client.Timer;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.googlecode.future.FutureResult;
@@ -36,6 +38,37 @@ public class AppPresenter
 		this.viewport = viewport;
 	}
 
+	// Código relacionado com a issue:
+	// http://jira.gapso.com.br/browse/TRIEDA-990
+	private void createThreadAvoidSessionExpire()
+	{
+		final Timer t = new Timer()
+		{
+			@Override
+			public void run()
+			{
+			    UsuariosServiceAsync usuariosService = Services.usuarios();
+				usuariosService.avoidSessionExpire( new AsyncCallback< Boolean >()
+				{
+					@Override
+					public void onFailure( Throwable caught )
+					{
+						System.out.println( "Erro ao conectar-se com mo servidor!!!" );					
+					}
+
+					@Override
+					public void onSuccess( Boolean result )
+					{
+						// Ping realizado com sucesso
+					}
+				});
+			}
+		};
+
+		Integer minutos = 10;
+		t.scheduleRepeating( minutos * 60 * 1000 );
+	}
+
 	@Override
 	public void go( final Widget widget )
 	{
@@ -51,19 +84,24 @@ public class AppPresenter
 		FutureSynchronizer synch = new FutureSynchronizer( futureCenarioDTO, futureUsuarioDTO );
 
 		synch.addCallback( new AbstractAsyncCallbackWithDefaultOnFailure< Boolean >( viewport )
-		{
-			@Override
-			public void onSuccess( Boolean result )
 			{
-				CenarioDTO cenario = futureCenarioDTO.result();
-				UsuarioDTO usuario = futureUsuarioDTO.result();
+				@Override
+				public void onSuccess( Boolean result )
+				{
+					CenarioDTO cenario = futureCenarioDTO.result();
+					UsuarioDTO usuario = futureUsuarioDTO.result();
+	
+					RootPanel rp = (RootPanel) widget;
+					Presenter presenter = new ToolBarPresenter(
+						cenario, usuario, new ToolBarView() );
 
-				RootPanel rp = (RootPanel) widget;
-				Presenter presenter = new ToolBarPresenter( cenario, usuario, new ToolBarView() );
-				presenter.go( viewport.asWidget() );
-				rp.add( viewport.asWidget() );
-				RootPanel.get( "loading" ).setVisible( false );
-			}
-		});
+					presenter.go( viewport.asWidget() );
+					rp.add( viewport.asWidget() );
+					RootPanel.get( "loading" ).setVisible( false );
+	
+					// Enquanto o browser estiver aberto, a sessão não irá expirar
+					createThreadAvoidSessionExpire();
+				}
+			});
 	}
 }

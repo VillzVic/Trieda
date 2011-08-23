@@ -38,11 +38,24 @@ public class RelatorioVisaoProfessorView extends MyComposite
 	private ContentPanel panel;
 	private GTabItem tabItem;
 	private UsuarioDTO usuario;
+	private boolean isVisaoProfessor; 
 
-	public RelatorioVisaoProfessorView( UsuarioDTO usuario )
+	public RelatorioVisaoProfessorView( UsuarioDTO usuario, boolean isVisaoProfessor )
 	{
 		this.usuario = usuario;
+		this.isVisaoProfessor = isVisaoProfessor;
+
 		initUI();
+	}
+
+	public boolean isVisaoProfessor()
+	{
+		return isVisaoProfessor;
+	}
+
+	public void setVisaoProfessor( boolean isVisaoProfessor )
+	{
+		this.isVisaoProfessor = isVisaoProfessor;
 	}
 
 	private void createToolBar()
@@ -74,8 +87,9 @@ public class RelatorioVisaoProfessorView extends MyComposite
 	{
 		BorderLayoutData bld = new BorderLayoutData( LayoutRegion.CENTER );
 	    bld.setMargins( new Margins( 5, 5, 5, 5 ) );
-	    grid = new GradeHorariaProfessorGrid();
-	    panel.add( grid, bld );
+
+	    this.grid = new GradeHorariaProfessorGrid( this.isVisaoProfessor() );
+	    this.panel.add( this.grid, bld );
 	}
 
 	private void createFilter()

@@ -17,64 +17,93 @@ import com.gapso.web.trieda.shared.mvp.view.RelatorioVisaoProfessorView;
 import com.gapso.web.trieda.shared.util.view.GTab;
 import com.google.gwt.user.client.ui.Widget;
 
-public class ToolBarPresenter implements Presenter {
-
-	public interface Display {
+public class ToolBarPresenter
+	implements Presenter
+{
+	public interface Display
+	{
 		Component getComponent();
 		Button getProfessoresCampusListprofessoresBt();
 		Button getRelatorioVisaoProfessorButton();
 		Button getDisponibilidadeProfessorButton();
 		Button getProfessoresDisciplinaListProfessoresButton();
 	}
-	
+
 	private CenarioDTO masterData;
 	private UsuarioDTO usuario;
 	private Display toolBar;
 	private GTab gTab;
-	
-	public ToolBarPresenter(CenarioDTO masterData, UsuarioDTO usuario, Display toolBar) {
+
+	public ToolBarPresenter( CenarioDTO masterData,
+		UsuarioDTO usuario, Display toolBar )
+	{
 		this.masterData = masterData;
 		this.usuario = usuario;
 		this.toolBar = toolBar;
+
 		addListeners();
 	}
 
-	private void addListeners() {
-		toolBar.getProfessoresCampusListprofessoresBt().addSelectionListener(new SelectionListener<ButtonEvent>() {
+	private void addListeners()
+	{
+		toolBar.getProfessoresCampusListprofessoresBt().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+		{
 			@Override
-			public void componentSelected(ButtonEvent ce) {
-				Presenter presenter = new CampusProfessoresPresenter(masterData, usuario, new CampusProfessoresView(usuario));
-				presenter.go(gTab);
+			public void componentSelected( ButtonEvent ce )
+			{
+				Presenter presenter = new CampusProfessoresPresenter(
+					masterData, usuario, new CampusProfessoresView( usuario ), true );
+
+				presenter.go( gTab );
 			}
 		});
-		toolBar.getProfessoresDisciplinaListProfessoresButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
+
+		toolBar.getProfessoresDisciplinaListProfessoresButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+		{
 			@Override
-			public void componentSelected(ButtonEvent ce) {
-				Presenter presenter = new ProfessoresDisciplinaPresenter(masterData, usuario, new ProfessoresDisciplinaView(usuario));
-				presenter.go(gTab);
+			public void componentSelected( ButtonEvent ce )
+			{
+				Presenter presenter = new ProfessoresDisciplinaPresenter(
+					masterData, usuario, new ProfessoresDisciplinaView( usuario ), true );
+
+				presenter.go( gTab );
 			}
 		});
-		toolBar.getDisponibilidadeProfessorButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
+
+		toolBar.getDisponibilidadeProfessorButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+		{
 			@Override
-			public void componentSelected(ButtonEvent ce) {
-				Presenter presenter = new DisponibilidadesProfessorPresenter(masterData, usuario, new DisponibilidadesProfessorView(usuario));
-				presenter.go(gTab);
+			public void componentSelected( ButtonEvent ce )
+			{
+				Presenter presenter = new DisponibilidadesProfessorPresenter(
+					masterData, usuario, new DisponibilidadesProfessorView( usuario ), true );
+
+				presenter.go( gTab );
 			}
 		});
-		toolBar.getRelatorioVisaoProfessorButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
+
+		toolBar.getRelatorioVisaoProfessorButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+		{
 			@Override
-			public void componentSelected(ButtonEvent ce) {
-				Presenter presenter = new RelatorioVisaoProfessorPresenter(masterData, usuario, new RelatorioVisaoProfessorView(usuario));
-				presenter.go(gTab);
+			public void componentSelected( ButtonEvent ce )
+			{
+				Presenter presenter = new RelatorioVisaoProfessorPresenter(
+					masterData, usuario, new RelatorioVisaoProfessorView( usuario, true ), true );
+
+				presenter.go( gTab );
 			}
 		});
-	}
-	
-	@Override
-	public void go(Widget widget) {
-		AppPresenter.Display container = (AppPresenter.Display) widget;
-		this.gTab = container.getGTab();
-		container.getPanel().setTopComponent(toolBar.getComponent());
 	}
 
+	@Override
+	public void go( Widget widget )
+	{
+		AppPresenter.Display container = (AppPresenter.Display) widget;
+		this.gTab = container.getGTab();
+		container.getPanel().setTopComponent( toolBar.getComponent() );
+	}
 }

@@ -286,12 +286,14 @@ public class AtendimentoOperacional implements Serializable
 
 	@SuppressWarnings("unchecked")
 	public static List< AtendimentoOperacional > findAllPublicadoBy(
-		Professor professor, Turno turno, boolean isAdmin )
+		Professor professor, Turno turno, boolean isAdmin, boolean isVisaoProfessor )
 	{
+		final boolean apenasCampusPublicado = ( !isAdmin && isVisaoProfessor ); 
+
 		String publicado = "";
-		if ( !isAdmin )
+		if ( apenasCampusPublicado )
 		{
-			publicado = " AND o.oferta.campus.publicado = :publicado ";
+			publicado = ( " AND o.oferta.campus.publicado = :publicado " );
 		}
 
 		String queryString = "SELECT o FROM AtendimentoOperacional o"
@@ -303,7 +305,7 @@ public class AtendimentoOperacional implements Serializable
 		q.setParameter( "turno", turno );
 		q.setParameter( "professor", professor );
 
-		if ( !isAdmin )
+		if ( apenasCampusPublicado )
 		{
 			q.setParameter( "publicado", true );
 		}
@@ -313,10 +315,12 @@ public class AtendimentoOperacional implements Serializable
 
 	@SuppressWarnings("unchecked")
 	public static List< AtendimentoOperacional > findAllPublicadoBy(
-		ProfessorVirtual professorVirtual, Turno turno, boolean isAdmin )
+		ProfessorVirtual professorVirtual, Turno turno, boolean isAdmin, boolean isVisaoProfessor )
 	{
+		final boolean apenasCampusPublicado = ( !isAdmin && isVisaoProfessor );
+
 		String publicado = "";
-		if ( !isAdmin )
+		if ( apenasCampusPublicado )
 		{
 			publicado = " AND o.oferta.campus.publicado = :publicado ";
 		}
@@ -329,7 +333,7 @@ public class AtendimentoOperacional implements Serializable
 		q.setParameter( "turno", turno );
 		q.setParameter( "professorVirtual", professorVirtual );
 
-		if ( !isAdmin )
+		if ( apenasCampusPublicado )
 		{
 			q.setParameter( "publicado", true );
 		}
@@ -533,18 +537,19 @@ public class AtendimentoOperacional implements Serializable
 	}
 
 	static public List< AtendimentoOperacional > getAtendimentosOperacional(
-		boolean isAdmin, Professor professor, ProfessorVirtual professorVirtual, Turno turno )
+		boolean isAdmin, Professor professor, ProfessorVirtual professorVirtual,
+		Turno turno, boolean isVisaoProfessor )
 	{
 		List< AtendimentoOperacional > atendimentosOperacional = null;
 		if ( professor != null )
 		{
 			atendimentosOperacional = AtendimentoOperacional
-				.findAllPublicadoBy( professor, turno, isAdmin );
+				.findAllPublicadoBy( professor, turno, isAdmin, isVisaoProfessor );
 		}
 		else if ( professorVirtual != null )
 		{
 			atendimentosOperacional = AtendimentoOperacional
-				.findAllPublicadoBy( professorVirtual, turno, isAdmin );
+				.findAllPublicadoBy( professorVirtual, turno, isAdmin, isVisaoProfessor );
 		}
 
 		return atendimentosOperacional;

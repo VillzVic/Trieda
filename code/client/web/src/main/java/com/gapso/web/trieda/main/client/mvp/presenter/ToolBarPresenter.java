@@ -65,27 +65,28 @@ import com.gapso.web.trieda.shared.util.view.ImportExcelFormView;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
 
-public class ToolBarPresenter implements Presenter {
-
-	public interface Display extends ITriedaI18nGateway {
+public class ToolBarPresenter
+	implements Presenter
+{
+	public interface Display
+		extends ITriedaI18nGateway
+	{
 		Component getComponent();
-		
-//		MenuItem getCenariosListMenuItem();
-		
+
 		Button getCampiNovoCampiButton();
 		Button getCampiListCampiButton();
 		Button getCampusDeslocamentoListCampiButton();
 		Button getOfertasListCampiButton();
-		
+
 		Button getUnidadesNovoUnidadesButton();
 		Button getUnidadesListUnidadesButton();
 		Button getUnidadeDeslocamentoListUnidadesButton();
-		
+
 		Button getSalasNovoSalasButton();
 		Button getSalasListSalasButton();
 		Button getGruposSalasListSalasButton();
 		Button getAssociarDisciplinasSalasListSalasButton();
-		
+
 		Button getCursosNovoCursosButton();
 		Button getCurriculosListCursosButton();
 		Button getCursosListCursosButton();
@@ -93,7 +94,7 @@ public class ToolBarPresenter implements Presenter {
 		Button getVincularAreasTitulacaoListCursosButton();
 		Button getTiposCursosListCursosButton();
 		Button getOfertasListCursosButton();
-		
+
 		Button getDisciplinasNovoDisciplinasButton();
 		Button getDisciplinasListDisciplinasButton();
 		Button getDemandasDisciplinasButton();
@@ -102,12 +103,12 @@ public class ToolBarPresenter implements Presenter {
 		Button getDivisaoCreditosListDisciplinasButton();
 		Button getEquivalenciasListDisciplinasButton();
 		Button getCompatibilidadesListDisciplinasButton();
-		
+
 		Button getProfessoresNovoProfessoresButton();
 		Button getProfessoresListProfessoresButton();
 		Button getProfessoresDisciplinaListProfessoresButton();
 		Button getProfessoresCampusListprofessoresBt();
-		
+
 		Button getRelatorioVisaoSalaButton();
 		Button getRelatorioVisaoCursoButton();
 		Button getRelatorioVisaoProfessorButton();
@@ -115,38 +116,35 @@ public class ToolBarPresenter implements Presenter {
 		Button getResumoCampiButton();
 		Button getResumoCursosButton();
 		Button getResumoDisciplinasButton();
-		
+
 		Button getFixacoesListButton();
 		Button getParametrosButton();
 
 		Button getUsuariosListButton();
 		Button getImportarButton();
 		Button getExportarButton();
-		
+
 		Button getSemanasLetivaListCampiButton();
 		Button getTurnosListCampiButton();
 	}
-	
+
 	private CenarioDTO masterData;
 	private UsuarioDTO usuario;
 	private Display toolBar;
 	private GTab gTab;
-	
-	public ToolBarPresenter(CenarioDTO masterData, UsuarioDTO usuario, CenarioPanel cenarioPanel, Display toolBar) {
+
+	public ToolBarPresenter( CenarioDTO masterData, UsuarioDTO usuario,
+		CenarioPanel cenarioPanel, Display toolBar )
+	{
 		this.masterData = masterData;
 		this.usuario = usuario;
 		this.toolBar = toolBar;
+
 		addListeners();
 	}
 
-	private void addListeners() {
-//		toolBar.getCenariosListMenuItem().addSelectionListener(new SelectionListener<MenuEvent>() {
-//			@Override
-//			public void componentSelected(MenuEvent ce) {
-//				Presenter presenter = new CenariosPresenter(cenarioPanel, new CenariosView());
-//				presenter.go(gTab);
-//			}
-//		});
+	private void addListeners()
+	{
 		toolBar.getTurnosListCampiButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
 			@Override
 			public void componentSelected(ButtonEvent ce) {
@@ -154,6 +152,7 @@ public class ToolBarPresenter implements Presenter {
 				presenter.go(gTab);
 			}
 		});
+
 		toolBar.getSemanasLetivaListCampiButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
 			@Override
 			public void componentSelected(ButtonEvent ce) {
@@ -161,6 +160,7 @@ public class ToolBarPresenter implements Presenter {
 				presenter.go(gTab);
 			}
 		});
+
 		toolBar.getCampiNovoCampiButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
 			@Override
 			public void componentSelected(ButtonEvent ce) {
@@ -168,6 +168,7 @@ public class ToolBarPresenter implements Presenter {
 				presenter.go(null);
 			}
 		});
+
 		toolBar.getCampiListCampiButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
 			@Override
 			public void componentSelected(ButtonEvent ce) {
@@ -175,6 +176,7 @@ public class ToolBarPresenter implements Presenter {
 				presenter.go(gTab);
 			}
 		});
+
 		toolBar.getUnidadesNovoUnidadesButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
 			@Override
 			public void componentSelected(ButtonEvent ce) {
@@ -182,6 +184,7 @@ public class ToolBarPresenter implements Presenter {
 				presenter.go(null);
 			}
 		});
+
 		toolBar.getUnidadesListUnidadesButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
 			@Override
 			public void componentSelected(ButtonEvent ce) {
@@ -189,6 +192,7 @@ public class ToolBarPresenter implements Presenter {
 				presenter.go(gTab);
 			}
 		});
+
 		toolBar.getSalasNovoSalasButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
 			@Override
 			public void componentSelected(ButtonEvent ce) {
@@ -196,6 +200,7 @@ public class ToolBarPresenter implements Presenter {
 				presenter.go(null);
 			}
 		});
+
 		toolBar.getSalasListSalasButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
 			@Override
 			public void componentSelected(ButtonEvent ce) {
@@ -203,6 +208,7 @@ public class ToolBarPresenter implements Presenter {
 				presenter.go(gTab);
 			}
 		});
+
 		toolBar.getGruposSalasListSalasButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
 			@Override
 			public void componentSelected(ButtonEvent ce) {
@@ -210,6 +216,7 @@ public class ToolBarPresenter implements Presenter {
 				presenter.go(gTab);
 			}
 		});
+
 		toolBar.getTiposCursosListCursosButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
 			@Override
 			public void componentSelected(ButtonEvent ce) {
@@ -217,6 +224,7 @@ public class ToolBarPresenter implements Presenter {
 				presenter.go(gTab);
 			}
 		});
+
 		toolBar.getAreasTitulacaoListCursosButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
 			@Override
 			public void componentSelected(ButtonEvent ce) {
@@ -224,6 +232,7 @@ public class ToolBarPresenter implements Presenter {
 				presenter.go(gTab);
 			}
 		});
+
 		toolBar.getVincularAreasTitulacaoListCursosButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
 			@Override
 			public void componentSelected(ButtonEvent ce) {
@@ -231,6 +240,7 @@ public class ToolBarPresenter implements Presenter {
 				presenter.go(gTab);
 			}
 		});
+
 		toolBar.getUnidadeDeslocamentoListUnidadesButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
 			@Override
 			public void componentSelected(ButtonEvent ce) {
@@ -238,17 +248,19 @@ public class ToolBarPresenter implements Presenter {
 				presenter.go(gTab);
 			}
 		});
+
 		toolBar.getCampusDeslocamentoListCampiButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
 			@Override
 			public void componentSelected( ButtonEvent ce )
 			{
 				CampiServiceAsync service = Services.campi();
+
 				service.getDeslocamentos( new AsyncCallback< List< DeslocamentoCampusDTO > >()
 				{
 					@Override
 					public void onFailure( Throwable caught )
 					{
-						MessageBox.alert("ERRO!", "Deu falha na conexão", null);
+						MessageBox.alert( "ERRO!", "Deu falha na conexão", null );
 					}
 
 					@Override
@@ -262,6 +274,7 @@ public class ToolBarPresenter implements Presenter {
 				});
 			}
 		});
+
 		toolBar.getCursosNovoCursosButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
 			@Override
 			public void componentSelected(ButtonEvent ce) {
@@ -269,6 +282,7 @@ public class ToolBarPresenter implements Presenter {
 				presenter.go(null);
 			}
 		});
+
 		toolBar.getCursosListCursosButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
 			@Override
 			public void componentSelected(ButtonEvent ce) {
@@ -276,6 +290,7 @@ public class ToolBarPresenter implements Presenter {
 				presenter.go(gTab);
 			}
 		});
+
 		toolBar.getDisciplinasNovoDisciplinasButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
 			@Override
 			public void componentSelected(ButtonEvent ce) {
@@ -283,6 +298,7 @@ public class ToolBarPresenter implements Presenter {
 				presenter.go(null);
 			}
 		});
+
 		toolBar.getDisciplinasListDisciplinasButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
 			@Override
 			public void componentSelected(ButtonEvent ce) {
@@ -290,6 +306,7 @@ public class ToolBarPresenter implements Presenter {
 				presenter.go(gTab);
 			}
 		});
+
 		toolBar.getCurriculosListCursosButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
 			@Override
 			public void componentSelected(ButtonEvent ce) {
@@ -297,6 +314,7 @@ public class ToolBarPresenter implements Presenter {
 				presenter.go(gTab);
 			}
 		});
+
 		toolBar.getCurriculosListDisciplinasButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
 			@Override
 			public void componentSelected(ButtonEvent ce) {
@@ -304,6 +322,7 @@ public class ToolBarPresenter implements Presenter {
 				presenter.go(gTab);
 			}
 		});
+
 		toolBar.getDivisaoCreditosListDisciplinasButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
 			@Override
 			public void componentSelected(ButtonEvent ce) {
@@ -311,6 +330,7 @@ public class ToolBarPresenter implements Presenter {
 				presenter.go(gTab);
 			}
 		});
+
 		toolBar.getEquivalenciasListDisciplinasButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
 			@Override
 			public void componentSelected(ButtonEvent ce) {
@@ -318,6 +338,7 @@ public class ToolBarPresenter implements Presenter {
 				presenter.go(gTab);
 			}
 		});
+
 		toolBar.getFixacoesListButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
 			@Override
 			public void componentSelected(ButtonEvent ce) {
@@ -325,6 +346,7 @@ public class ToolBarPresenter implements Presenter {
 				presenter.go(gTab);
 			}
 		});
+
 		toolBar.getCompatibilidadesListDisciplinasButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
 			@Override
 			public void componentSelected(ButtonEvent ce) {
@@ -332,6 +354,7 @@ public class ToolBarPresenter implements Presenter {
 				presenter.go(gTab);
 			}
 		});
+
 		toolBar.getProfessoresNovoProfessoresButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
 			@Override
 			public void componentSelected(ButtonEvent ce) {
@@ -339,6 +362,7 @@ public class ToolBarPresenter implements Presenter {
 				presenter.go(null);
 			}
 		});
+
 		toolBar.getProfessoresListProfessoresButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
 			@Override
 			public void componentSelected(ButtonEvent ce) {
@@ -346,20 +370,33 @@ public class ToolBarPresenter implements Presenter {
 				presenter.go(gTab);
 			}
 		});
-		toolBar.getProfessoresDisciplinaListProfessoresButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
+
+		toolBar.getProfessoresDisciplinaListProfessoresButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+		{
 			@Override
-			public void componentSelected(ButtonEvent ce) {
-				Presenter presenter = new ProfessoresDisciplinaPresenter(masterData, usuario, new ProfessoresDisciplinaView(usuario));
-				presenter.go(gTab);
+			public void componentSelected( ButtonEvent ce )
+			{
+				Presenter presenter = new ProfessoresDisciplinaPresenter(
+					masterData, usuario, new ProfessoresDisciplinaView( usuario ), false );
+
+				presenter.go( gTab );
 			}
 		});
-		toolBar.getProfessoresCampusListprofessoresBt().addSelectionListener(new SelectionListener<ButtonEvent>() {
+
+		toolBar.getProfessoresCampusListprofessoresBt().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+		{
 			@Override
-			public void componentSelected(ButtonEvent ce) {
-				Presenter presenter = new CampusProfessoresPresenter(masterData, usuario, new CampusProfessoresView(usuario));
-				presenter.go(gTab);
+			public void componentSelected( ButtonEvent ce )
+			{
+				Presenter presenter = new CampusProfessoresPresenter(
+					masterData, usuario, new CampusProfessoresView( usuario ), false );
+
+				presenter.go( gTab );
 			}
 		});
+
 		toolBar.getOfertasListCampiButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
 			@Override
 			public void componentSelected(ButtonEvent ce) {
@@ -367,6 +404,7 @@ public class ToolBarPresenter implements Presenter {
 				presenter.go(gTab);
 			}
 		});
+
 		toolBar.getUsuariosListButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
 			@Override
 			public void componentSelected(ButtonEvent ce) {
@@ -374,6 +412,7 @@ public class ToolBarPresenter implements Presenter {
 				presenter.go(gTab);
 			}
 		});
+
 		toolBar.getImportarButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
 			// Fazendo com que importe todos dados do masterdata.
 			// Lembrando que uma importação nunca exclui dados, apenas modifica e adiciona
@@ -383,14 +422,18 @@ public class ToolBarPresenter implements Presenter {
 				importExcelFormView.show();
 			}
 		});
+
 		toolBar.getExportarButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
 			// Fazendo com que exporte todos dados do masterdata.
 			@Override
 			public void componentSelected(ButtonEvent ce) {
-				ExportExcelFormSubmit e = new ExportExcelFormSubmit(ExcelInformationType.TUDO, toolBar.getI18nConstants(),toolBar.getI18nMessages());
+				ExportExcelFormSubmit e = new ExportExcelFormSubmit(
+					ExcelInformationType.TUDO, toolBar.getI18nConstants(), toolBar.getI18nMessages() );
+
 				e.submit();
 			}
 		});
+
 		toolBar.getOfertasListCursosButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
 			@Override
 			public void componentSelected(ButtonEvent ce) {
@@ -398,6 +441,7 @@ public class ToolBarPresenter implements Presenter {
 				presenter.go(gTab);
 			}
 		});
+
 		toolBar.getAssociarDisciplinasSalasListSalasButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
 			@Override
 			public void componentSelected(ButtonEvent ce) {
@@ -405,6 +449,7 @@ public class ToolBarPresenter implements Presenter {
 				presenter.go(gTab);
 			}
 		});
+
 		toolBar.getAssociarDisciplinasSalasListDisciplinasButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
 			@Override
 			public void componentSelected(ButtonEvent ce) {
@@ -412,6 +457,7 @@ public class ToolBarPresenter implements Presenter {
 				presenter.go(gTab);
 			}
 		});
+
 		toolBar.getDemandasDisciplinasButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
 			@Override
 			public void componentSelected(ButtonEvent ce) {
@@ -419,6 +465,7 @@ public class ToolBarPresenter implements Presenter {
 				presenter.go(gTab);
 			}
 		});
+
 		toolBar.getRelatorioVisaoSalaButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
 			@Override
 			public void componentSelected(ButtonEvent ce) {
@@ -426,6 +473,7 @@ public class ToolBarPresenter implements Presenter {
 				presenter.go(gTab);
 			}
 		});
+
 		toolBar.getParametrosButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
 			@Override
 			public void componentSelected( ButtonEvent ce )
@@ -444,6 +492,7 @@ public class ToolBarPresenter implements Presenter {
 				});
 			}
 		});
+
 		toolBar.getRelatorioVisaoCursoButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
 			@Override
 			public void componentSelected(ButtonEvent ce) {
@@ -451,13 +500,19 @@ public class ToolBarPresenter implements Presenter {
 				presenter.go(gTab);
 			}
 		});
-		toolBar.getRelatorioVisaoProfessorButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
+
+		toolBar.getRelatorioVisaoProfessorButton().addSelectionListener( new SelectionListener< ButtonEvent >()
+		{
 			@Override
-			public void componentSelected(ButtonEvent ce) {
-				Presenter presenter = new RelatorioVisaoProfessorPresenter(masterData, usuario, new RelatorioVisaoProfessorView(usuario));
-				presenter.go(gTab);
+			public void componentSelected( ButtonEvent ce )
+			{
+				Presenter presenter = new RelatorioVisaoProfessorPresenter(
+					masterData, usuario, new RelatorioVisaoProfessorView( usuario, false ), false );
+
+				presenter.go( gTab );
 			}
 		});
+
 		toolBar.getResumoCenarioButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
 			@Override
 			public void componentSelected(ButtonEvent ce) {
@@ -465,6 +520,7 @@ public class ToolBarPresenter implements Presenter {
 				presenter.go(gTab);
 			}
 		});
+
 		toolBar.getResumoCampiButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
 			@Override
 			public void componentSelected(ButtonEvent ce) {
@@ -472,6 +528,7 @@ public class ToolBarPresenter implements Presenter {
 				presenter.go(gTab);
 			}
 		});
+
 		toolBar.getResumoCursosButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
 			@Override
 			public void componentSelected(ButtonEvent ce) {
@@ -479,6 +536,7 @@ public class ToolBarPresenter implements Presenter {
 				presenter.go(gTab);
 			}
 		});
+
 		toolBar.getResumoDisciplinasButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
 			@Override
 			public void componentSelected(ButtonEvent ce) {
@@ -487,12 +545,12 @@ public class ToolBarPresenter implements Presenter {
 			}
 		});
 	}
-	
+
 	@Override
-	public void go(Widget widget) {
+	public void go( Widget widget )
+	{
 		AppPresenter.Display container = (AppPresenter.Display) widget;
 		this.gTab = container.getGTab();
-		container.getPanel().setTopComponent(toolBar.getComponent());
+		container.getPanel().setTopComponent( toolBar.getComponent() );
 	}
-
 }

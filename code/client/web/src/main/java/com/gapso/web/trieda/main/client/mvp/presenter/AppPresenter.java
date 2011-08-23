@@ -85,8 +85,7 @@ public class AppPresenter
 
 		FutureSynchronizer synch = new FutureSynchronizer( futureCenarioDTO, futureUsuarioDTO );
 
-		synch.addCallback(
-			new AbstractAsyncCallbackWithDefaultOnFailure< Boolean >( viewport )
+		synch.addCallback( new AbstractAsyncCallbackWithDefaultOnFailure< Boolean >( viewport )
 			{
 				@Override
 				public void onSuccess( Boolean result )

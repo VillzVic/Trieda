@@ -51,13 +51,16 @@ public class CampusProfessoresPresenter
 	private CenarioDTO cenario;
 	private UsuarioDTO usuario;
 	private Display display; 
+	private boolean isVisaoProfessor;
 
 	public CampusProfessoresPresenter( CenarioDTO cenario,
-		UsuarioDTO usuario, Display display )
+		UsuarioDTO usuario, Display display, boolean isVisaoProfessor )
 	{
 		this.cenario = cenario;
 		this.usuario = usuario;
 		this.display = display;
+		this.isVisaoProfessor = isVisaoProfessor;
+
 		configureProxy();
 		setListeners();
 	}
@@ -181,6 +184,16 @@ public class CampusProfessoresPresenter
 				}
 			});
 		}
+	}
+
+	public boolean isVisaoProfessor()
+	{
+		return isVisaoProfessor;
+	}
+
+	public void setVisaoProfessor( boolean isVisaoProfessor )
+	{
+		this.isVisaoProfessor = isVisaoProfessor;
 	}
 
 	@Override

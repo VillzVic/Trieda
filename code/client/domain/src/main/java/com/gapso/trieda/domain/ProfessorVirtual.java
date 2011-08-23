@@ -1,6 +1,7 @@
 package com.gapso.trieda.domain;
 
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -34,7 +35,8 @@ import org.springframework.transaction.annotation.Transactional;
 @RooToString
 @RooEntity(identifierColumn = "PRV_ID")
 @Table(name = "PROFESSORES_VIRTUAIS")
-public class ProfessorVirtual implements Serializable
+public class ProfessorVirtual
+	implements Serializable, Comparable< ProfessorVirtual >
 {
 	private static final long serialVersionUID = 265242535107921721L;
 
@@ -258,12 +260,23 @@ public class ProfessorVirtual implements Serializable
 	}
 
 	@SuppressWarnings("unchecked")
-	public static List<ProfessorVirtual> findBy( Campus campus )
+	public static List< ProfessorVirtual > findBy( Campus campus )
 	{
 		Query q = entityManager().createQuery(
-						"SELECT DISTINCT o.professorVirtual FROM AtendimentoOperacional o WHERE o.oferta.campus = :campus" );
+			" SELECT DISTINCT o.professorVirtual " +
+			" FROM AtendimentoOperacional o " +
+			" WHERE o.oferta.campus = :campus" );
 
 		q.setParameter( "campus", campus );
-		return q.getResultList();
+		
+		List< ProfessorVirtual > list = q.getResultList(); 
+		Collections.sort( list );
+		return list;
+	}
+
+	@Override
+	public int compareTo( ProfessorVirtual o )
+	{
+		return this.getId().compareTo( o.getId() );
 	}
 }

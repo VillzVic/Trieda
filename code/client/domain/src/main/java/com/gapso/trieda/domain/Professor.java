@@ -43,7 +43,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Table( name = "PROFESSORES", uniqueConstraints =
 @UniqueConstraint( columnNames = { "PRF_CPF", "CEN_ID" } ) )
 public class Professor
-	implements Serializable
+	implements Serializable, Comparable< Professor >
 {
 	private static final long serialVersionUID = 265242535107921721L;
 
@@ -518,5 +518,11 @@ public class Professor
 		q.setParameter("cpf", cpf);
 		Number size = (Number) q.setMaxResults(1).getSingleResult();
 		return size.intValue() > 0;
+	}
+
+	@Override
+	public int compareTo( Professor o )
+	{
+		return this.getNome().compareTo( o.getNome() );
 	}
 }
