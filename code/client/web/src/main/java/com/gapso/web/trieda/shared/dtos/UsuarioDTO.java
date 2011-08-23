@@ -1,14 +1,10 @@
 package com.gapso.web.trieda.shared.dtos;
 
-
-
-
-
-
-public class UsuarioDTO extends AbstractDTO<String> implements Comparable<UsuarioDTO> {
-
+public class UsuarioDTO extends AbstractDTO< String >
+	implements Comparable< UsuarioDTO >
+{
 	private static final long serialVersionUID = 5815525344760896272L;
-	
+
 	// Propriedades
 	public static final String PROPERTY_VERSION = "version";
 	public static final String PROPERTY_NOME = "nime";
@@ -18,80 +14,108 @@ public class UsuarioDTO extends AbstractDTO<String> implements Comparable<Usuari
 	public static final String PROPERTY_ENABLED = "enabled";
 	public static final String PROPERTY_PROFESSOR_ID = "professorId";
 	public static final String PROPERTY_PROFESSOR_DISPLAYTEXT = "professorDisplayText";
-	
-	public UsuarioDTO() {
-	}
-	
-	public void setVersion(Integer value) {
-		set(PROPERTY_VERSION, value);
-	}
-	public Integer getVersion() {
-		return get(PROPERTY_VERSION);
-	}
-	
-	public void setNome(String value) {
-		set(PROPERTY_NOME, value);
-	}
-	public String getNome() {
-		return get(PROPERTY_NOME);
-	}
-	
-	public void setEmail(String value) {
-		set(PROPERTY_EMAIL, value);
-	}
-	public String getEmail() {
-		return get(PROPERTY_EMAIL);
-	}
-	
-	public void setUsername(String value) {
-		set(PROPERTY_USERNAME, value);
-	}
-	public String getUsername() {
-		return get(PROPERTY_USERNAME);
-	}
-	
-	public void setPassword(String value) {
-		set(PROPERTY_PASSWORD, value);
-	}
-	public String getPassword() {
-		return get(PROPERTY_PASSWORD);
+
+	public UsuarioDTO() { }
+
+	public void setVersion( Integer value )
+	{
+		set( PROPERTY_VERSION, value );
 	}
 
-	public void setEnabled(Boolean value) {
-		set(PROPERTY_ENABLED, value);
+	public Integer getVersion()
+	{
+		return get( PROPERTY_VERSION );
 	}
-	public Boolean getEnabled() {
-		return get(PROPERTY_ENABLED);
+
+	public void setNome( String value )
+	{
+		set( PROPERTY_NOME, value );
+	}
+
+	public String getNome()
+	{
+		return get( PROPERTY_NOME );
+	}
+
+	public void setEmail( String value )
+	{
+		set( PROPERTY_EMAIL, value );
+	}
+
+	public String getEmail()
+	{
+		return get( PROPERTY_EMAIL );
 	}
 	
-	public void setProfessorId(Long value) {
-		set(PROPERTY_PROFESSOR_ID, value);
+	public void setUsername( String value )
+	{
+		set( PROPERTY_USERNAME, value );
 	}
-	public Long getProfessorId() {
-		return get(PROPERTY_PROFESSOR_ID);
+
+	public String getUsername()
+	{
+		return get( PROPERTY_USERNAME );
+	}
+
+	public void setPassword( String value )
+	{
+		set( PROPERTY_PASSWORD, value );
+	}
+
+	public String getPassword()
+	{
+		return get( PROPERTY_PASSWORD );
+	}
+
+	public void setEnabled( Boolean value )
+	{
+		set( PROPERTY_ENABLED, value );
+	}
+
+	public Boolean getEnabled()
+	{
+		return get( PROPERTY_ENABLED );
 	}
 	
-	public void setProfessorDisplayText(String value) {
-		set(PROPERTY_PROFESSOR_DISPLAYTEXT, value);
+	public void setProfessorId( Long value )
+	{
+		set( PROPERTY_PROFESSOR_ID, value );
 	}
-	public String getProfessorDisplayText() {
-		return get(PROPERTY_PROFESSOR_DISPLAYTEXT);
+
+	public Long getProfessorId()
+	{
+		return get( PROPERTY_PROFESSOR_ID );
 	}
-	
-	public boolean isProfessor() {
-		return getProfessorId() != null && getProfessorId() > 0;
+
+	public void setProfessorDisplayText( String value )
+	{
+		set( PROPERTY_PROFESSOR_DISPLAYTEXT, value );
 	}
-	public boolean isAdministrador() {
+
+	public String getProfessorDisplayText()
+	{
+		return get( PROPERTY_PROFESSOR_DISPLAYTEXT );
+	}
+
+	public boolean isProfessor()
+	{
+		return ( getProfessorId() != null && getProfessorId() > 0 );
+	}
+
+	public boolean isAdministrador()
+	{
 		return !isProfessor();
 	}
-	
+
 	@Override
-	public String getNaturalKey() {
+	public String getNaturalKey()
+	{
 		return getUsername();
 	}	
 
 	@Override
-	public int compareTo(UsuarioDTO o) {
-		return getNome().compareTo(o.getNome());
+	public int compareTo( UsuarioDTO o )
+	{
+		return getNome().compareTo( o.getNome() );
 	}
 }

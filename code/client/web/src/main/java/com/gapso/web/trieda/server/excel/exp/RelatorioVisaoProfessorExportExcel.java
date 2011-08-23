@@ -65,28 +65,31 @@ public class RelatorioVisaoProfessorExportExcel
 	private String sheetName;
 	private int initialRow;
 	private RelatorioVisaoProfessorFiltroExcel relatorioFiltro;
-	private Campus campus;	
+	private Campus campus;
+	private boolean isVisaoProfessor;
 
 	public RelatorioVisaoProfessorExportExcel( Cenario cenario,
-		TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages )
+		TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages, boolean isVisaoProfessor )
 	{
-		this( true, cenario, i18nConstants, i18nMessages, null );
+		this( true, cenario, i18nConstants, i18nMessages, null, isVisaoProfessor );
 	}
 
 	public RelatorioVisaoProfessorExportExcel( Cenario cenario, TriedaI18nConstants i18nConstants,
-		TriedaI18nMessages i18nMessages, ExportExcelFilter filter )
+		TriedaI18nMessages i18nMessages, ExportExcelFilter filter, boolean isVisaoProfessor )
 	{
-		this( true, cenario, i18nConstants, i18nMessages, filter );
+		this( true, cenario, i18nConstants, i18nMessages, filter, isVisaoProfessor );
 	}
 
 	public RelatorioVisaoProfessorExportExcel(boolean removeUnusedSheets,
-		Cenario cenario, TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages )
+		Cenario cenario, TriedaI18nConstants i18nConstants,
+		TriedaI18nMessages i18nMessages, boolean isVisaoProfessor )
 	{
-		this( removeUnusedSheets, cenario, i18nConstants, i18nMessages, null );
+		this( removeUnusedSheets, cenario, i18nConstants, i18nMessages, null, isVisaoProfessor );
 	}
 
 	public RelatorioVisaoProfessorExportExcel(boolean removeUnusedSheets, Cenario cenario,
-		TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages, ExportExcelFilter filter )
+		TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages,
+		ExportExcelFilter filter, boolean isVisaoProfessor )
 	{
 		super( cenario, i18nConstants, i18nMessages );
 
@@ -94,12 +97,23 @@ public class RelatorioVisaoProfessorExportExcel
 		this.removeUnusedSheets = removeUnusedSheets;
 		this.sheetName = ExcelInformationType.RELATORIO_VISAO_PROFESSOR.getSheetName();
 		this.initialRow = 5;
+		this.isVisaoProfessor = isVisaoProfessor;
 		this.setFilter( filter );
 
 		if ( this.relatorioFiltro != null )
 		{
 			this.campus = Campus.find( this.relatorioFiltro.getCampusDTO().getId() );
 		}
+	}
+
+	public boolean isVisaoProfessor()
+	{
+		return isVisaoProfessor;
+	}
+
+	public void setVisaoProfessor( boolean isVisaoProfessor )
+	{
+		this.isVisaoProfessor = isVisaoProfessor;
 	}
 
 	@Override
@@ -151,7 +165,7 @@ public class RelatorioVisaoProfessorExportExcel
 
 		List< AtendimentoOperacional > atendimentosOperacional
 			= AtendimentoOperacional.getAtendimentosOperacional(
-				idAdmin, professor, professorVirtual, turno );
+				idAdmin, professor, professorVirtual, turno, this.isVisaoProfessor() );
 
 		List< AtendimentoOperacionalDTO > atendimentosOperacionalDTO
 			= new ArrayList< AtendimentoOperacionalDTO >();

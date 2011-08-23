@@ -22,7 +22,8 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
  * The client side stub for the RPC service.
  */
 @RemoteServiceRelativePath("atendimentos")
-public interface AtendimentosService extends RemoteService
+public interface AtendimentosService
+	extends RemoteService
 {
 	PagingLoadResult< AtendimentoTaticoDTO > getList();
 
@@ -34,7 +35,8 @@ public interface AtendimentosService extends RemoteService
 	ListLoadResult< ProfessorVirtualDTO > getProfessoresVirtuais( CampusDTO campusDTO );
 
 	List< AtendimentoOperacionalDTO > getAtendimentosOperacional(
-		ProfessorDTO professorDTO, ProfessorVirtualDTO professorVirtualDTO, TurnoDTO turnoDTO );
+		ProfessorDTO professorDTO, ProfessorVirtualDTO professorVirtualDTO,
+		TurnoDTO turnoDTO, boolean isVisaoProfessor );
 
 	ParDTO< List< AtendimentoRelatorioDTO >, List< Integer > > getBusca(
 		CurriculoDTO curriculoDTO, Integer periodo, TurnoDTO turnoDTO,

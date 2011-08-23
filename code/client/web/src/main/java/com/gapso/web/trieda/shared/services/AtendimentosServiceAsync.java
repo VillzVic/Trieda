@@ -25,7 +25,7 @@ public interface AtendimentosServiceAsync
 		AsyncCallback< List< AtendimentoRelatorioDTO > > callback );
 
 	void getAtendimentosOperacional( ProfessorDTO professorDTO, ProfessorVirtualDTO professorVirtualDTO,
-		TurnoDTO turnoDTO, AsyncCallback< List< AtendimentoOperacionalDTO > > callback );
+		TurnoDTO turnoDTO, boolean isVisaoProfessor, AsyncCallback< List< AtendimentoOperacionalDTO > > callback );
 
 	void getBusca( CurriculoDTO curriculoDTO, Integer periodo, TurnoDTO turnoDTO, CampusDTO campusDTO,
 		AsyncCallback< ParDTO< List< AtendimentoRelatorioDTO >, List< Integer > > > callback );

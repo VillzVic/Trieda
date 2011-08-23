@@ -10,6 +10,9 @@ public class ExportExcelFactory {
 	static public IExportExcel createExporter( String infoToBeExported, Cenario cenario,
 			TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages, ExportExcelFilter filter )
 	{
+		boolean visaoProfessor = ( cenario.getCriadoPor() == null ? true :
+			cenario.getCriadoPor().getProfessor() != null && cenario.getCriadoPor().getProfessor().getId() > 0 );
+
 		IExportExcel exporter = null;
 
 		ExcelInformationType informationToBeExported
@@ -31,11 +34,11 @@ public class ExportExcelFactory {
 			case PROFESSORES: exporter = new ProfessoresExportExcel( cenario, i18nConstants, i18nMessages ); break;
 			case RELATORIO_VISAO_CURSO: exporter = new RelatorioVisaoCursoExportExcel( cenario, i18nConstants, i18nMessages, filter ); break;
 			case RELATORIO_VISAO_SALA: exporter = new RelatorioVisaoSalaExportExcel( cenario, i18nConstants, i18nMessages, filter ); break;
-			case RELATORIO_VISAO_PROFESSOR: exporter = new RelatorioVisaoProfessorExportExcel( cenario, i18nConstants, i18nMessages, filter ); break;
+			case RELATORIO_VISAO_PROFESSOR: exporter = new RelatorioVisaoProfessorExportExcel( cenario, i18nConstants, i18nMessages, filter, visaoProfessor ); break;
 			case RESUMO_DISCIPLINA: exporter = new ResumoDisciplinaExportExcel( cenario, i18nConstants, i18nMessages, filter ); break;
 			case RESUMO_CURSO: exporter = new ResumoCursoExportExcel( cenario, i18nConstants, i18nMessages, filter ); break;
 			case SALAS: exporter = new SalasExportExcel( cenario, i18nConstants, i18nMessages ); break;
-			case TUDO: exporter = new TRIEDAExportExcel( cenario, i18nConstants, i18nMessages ); break;
+			case TUDO: exporter = new TRIEDAExportExcel( cenario, i18nConstants, i18nMessages, visaoProfessor ); break;
 			case UNIDADES: exporter = new UnidadesExportExcel( cenario, i18nConstants, i18nMessages ); break;
 		}
 

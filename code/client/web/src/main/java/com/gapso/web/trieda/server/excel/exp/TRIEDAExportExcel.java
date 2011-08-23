@@ -10,12 +10,27 @@ import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nMessages;
 
-public class TRIEDAExportExcel extends AbstractExportExcel
+public class TRIEDAExportExcel
+	extends AbstractExportExcel
 {
-	public TRIEDAExportExcel( Cenario cenario,
-		TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages )
+	public TRIEDAExportExcel( Cenario cenario, TriedaI18nConstants i18nConstants,
+		TriedaI18nMessages i18nMessages, boolean isVisaoProfessor )
 	{
 		super( cenario, i18nConstants, i18nMessages );
+		
+		this.isVisaoProfessor = isVisaoProfessor;
+	}
+
+	private boolean isVisaoProfessor;
+
+	public boolean isVisaoProfessor()
+	{
+		return isVisaoProfessor;
+	}
+
+	public void setVisaoProfessor( boolean isVisaoProfessor )
+	{
+		this.isVisaoProfessor = isVisaoProfessor;
 	}
 
 	@Override
@@ -58,6 +73,7 @@ public class TRIEDAExportExcel extends AbstractExportExcel
 		exporters.add( new ResumoCursoExportExcel( false, getCenario(), getI18nConstants(), getI18nMessages() ) );
 		exporters.add( new ResumoDisciplinaExportExcel( false, getCenario(), getI18nConstants(), getI18nMessages() ) );
 		exporters.add( new RelatorioVisaoSalaExportExcel( false, getCenario(), getI18nConstants(), getI18nMessages() ) );
+		exporters.add( new RelatorioVisaoProfessorExportExcel( false, getCenario(), getI18nConstants(), getI18nMessages(), this.isVisaoProfessor() ) );
 		exporters.add( new RelatorioVisaoCursoExportExcel( false, getCenario(), getI18nConstants(), getI18nMessages() ) );
 
 		for ( IExportExcel exporter : exporters )

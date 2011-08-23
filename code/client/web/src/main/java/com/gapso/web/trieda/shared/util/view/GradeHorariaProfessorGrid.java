@@ -41,11 +41,24 @@ public class GradeHorariaProfessorGrid
 	private List< Long > disciplinasCores = new ArrayList< Long >();
 	private String emptyTextBeforeSearch = "Preencha o filtro acima";
 	private String emptyTextAfterSearch = "Não foi encontrado nenhuma Grade Horária para este filtro";
+	private boolean isVisaoProfessor;
 
-	public GradeHorariaProfessorGrid()
+	public GradeHorariaProfessorGrid( boolean isVisaoProfessor )
 	{
 		super( new FitLayout() );
+		this.isVisaoProfessor = isVisaoProfessor; 
+
 		setHeaderVisible( false );
+	}
+
+	public boolean isVisaoProfessor()
+	{
+		return isVisaoProfessor;
+	}
+
+	public void setVisaoProfessor( boolean isVisaoProfessor )
+	{
+		this.isVisaoProfessor = isVisaoProfessor;
 	}
 
 	@Override
@@ -58,15 +71,16 @@ public class GradeHorariaProfessorGrid
 
 		grid.setTrackMouseOver( false );
 		grid.setStyleName( "GradeHorariaGrid" );
-		grid.addListener(Events.BeforeSelect,
+
+		grid.addListener( Events.BeforeSelect,
 			new Listener< GridEvent< LinhaDeCredito > >()
+		{
+			@Override
+			public void handleEvent( GridEvent< LinhaDeCredito > be )
 			{
-				@Override
-				public void handleEvent( GridEvent< LinhaDeCredito > be )
-				{
-					be.setCancelled( true );
-				}
-			});
+				be.setCancelled( true );
+			}
+		});
 
 		grid.getView().setEmptyText( emptyTextBeforeSearch );
 		quickTip = new QuickTip( grid );
@@ -85,8 +99,9 @@ public class GradeHorariaProfessorGrid
 		}
 
 		grid.mask( "Carregando os dados, aguarde alguns instantes", "loading" );
+
 		Services.atendimentos().getAtendimentosOperacional(
-			getProfessorDTO(), getProfessorVirtualDTO(), getTurnoDTO(),
+			getProfessorDTO(), getProfessorVirtualDTO(), getTurnoDTO(), this.isVisaoProfessor(),
 			new AsyncCallback< List< AtendimentoOperacionalDTO > >()
 			{
 				@Override
@@ -155,7 +170,7 @@ public class GradeHorariaProfessorGrid
 
 	private void addColumn( List< ColumnConfig > list, String id, String name )
 	{
-		GridCellRenderer< LinhaDeCredito > change = new GridCellRenderer<LinhaDeCredito>()
+		GridCellRenderer< LinhaDeCredito > change = new GridCellRenderer< LinhaDeCredito >()
 		{
 			public Html render( LinhaDeCredito model, String property,
 				ColumnData config, int rowIndex, int colIndex,
@@ -258,7 +273,7 @@ public class GradeHorariaProfessorGrid
 			for ( AtendimentoOperacionalDTO at : atendimentos )
 			{
 				if ( at.getHorarioId().equals( horarioId )
-						&& at.getSemana().equals( semana ) )
+					&& at.getSemana().equals( semana ) )
 				{
 					return at;
 				}
@@ -301,6 +316,7 @@ public class GradeHorariaProfessorGrid
 	public String getCssDisciplina( long id )
 	{
 		int index = disciplinasCores.indexOf( id );
+
 		if ( index < 0 || index > 14 )
 		{
 			return "corDisciplina14";
@@ -312,6 +328,7 @@ public class GradeHorariaProfessorGrid
 	public void preencheCores()
 	{
 		Set< Long > set = new HashSet< Long >();
+
 		for ( AtendimentoOperacionalDTO a : atendimentos )
 		{
 			set.add( a.getDisciplinaId() );

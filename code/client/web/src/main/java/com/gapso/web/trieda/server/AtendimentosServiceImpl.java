@@ -69,7 +69,7 @@ public class AtendimentosServiceImpl extends RemoteService
 
 	@Override
 	public List< AtendimentoRelatorioDTO > getBusca(
-			SalaDTO salaDTO, TurnoDTO turnoDTO )
+		SalaDTO salaDTO, TurnoDTO turnoDTO )
 	{
 		List< AtendimentoRelatorioDTO > arDTOList
 			= new ArrayList< AtendimentoRelatorioDTO >();
@@ -98,7 +98,7 @@ public class AtendimentosServiceImpl extends RemoteService
 	}
 
 	public List< AtendimentoOperacionalDTO > getBuscaOperacional(
-			SalaDTO salaDTO, TurnoDTO turnoDTO )
+		SalaDTO salaDTO, TurnoDTO turnoDTO )
 	{
 		Sala sala = Sala.find( salaDTO.getId() );
 		Turno turno = Turno.find( turnoDTO.getId() );
@@ -116,7 +116,7 @@ public class AtendimentosServiceImpl extends RemoteService
 	}
 
 	public List< AtendimentoTaticoDTO > getBuscaTatico(
-			SalaDTO salaDTO, TurnoDTO turnoDTO )
+		SalaDTO salaDTO, TurnoDTO turnoDTO )
 	{
 		Sala sala = Sala.find( salaDTO.getId() );
 		Turno turno = Turno.find( turnoDTO.getId() );
@@ -673,7 +673,7 @@ public class AtendimentosServiceImpl extends RemoteService
 
 		// Informa que essa aula é compartilhada por mais de um curso
 		for ( Entry< ParDTO< Sala, Integer >, List< AtendimentoTaticoDTO > > entry
-				: mapSalaAtendimentos.entrySet() )
+			: mapSalaAtendimentos.entrySet() )
 		{
 			List< AtendimentoTaticoDTO > list = entry.getValue();
 			montaStringCompartilhamentoSalaCursosTatico( list );
@@ -811,7 +811,7 @@ public class AtendimentosServiceImpl extends RemoteService
 	}
 
 	private List< List< AtendimentoOperacionalDTO > > agrupaMesmoHorario(
-			Entry< Integer, List< AtendimentoOperacionalDTO > > entry )
+		Entry< Integer, List< AtendimentoOperacionalDTO > > entry )
 	{
 		List< List< AtendimentoOperacionalDTO > > listListDTO
 			= new ArrayList< List< AtendimentoOperacionalDTO > >();
@@ -862,17 +862,21 @@ public class AtendimentosServiceImpl extends RemoteService
 
 	@Override
 	public List< AtendimentoOperacionalDTO > getAtendimentosOperacional(
-		ProfessorDTO professorDTO, ProfessorVirtualDTO professorVirtualDTO, TurnoDTO turnoDTO )
+		ProfessorDTO professorDTO, ProfessorVirtualDTO professorVirtualDTO,
+		TurnoDTO turnoDTO, boolean isVisaoProfessor )
 	{
-		boolean isAdmin = !isAdministrador();
+		boolean isAdmin = isAdministrador();
 		Turno turno = Turno.find( turnoDTO.getId() );
+
 		Professor professor = ( professorDTO == null ? null :
 			Professor.find( professorDTO.getId() ) );
+
 		ProfessorVirtual professorVirtual = ( professorVirtualDTO == null ? null :
 			ProfessorVirtual.find( professorVirtualDTO.getId() ) );
 
-		List< AtendimentoOperacional > atendimentosOperacional = AtendimentoOperacional
-			.getAtendimentosOperacional( isAdmin, professor, professorVirtual, turno );
+		List< AtendimentoOperacional > atendimentosOperacional
+			= AtendimentoOperacional.getAtendimentosOperacional(
+				isAdmin, professor, professorVirtual, turno, isVisaoProfessor );
 
 		List< AtendimentoOperacionalDTO > listDTO
 			= new ArrayList< AtendimentoOperacionalDTO >( atendimentosOperacional.size() );
@@ -886,7 +890,7 @@ public class AtendimentosServiceImpl extends RemoteService
 	}
 
 	private List< AtendimentoOperacionalDTO > montaListaParaVisaoProfessor1(
-			List< AtendimentoOperacionalDTO > list )
+		List< AtendimentoOperacionalDTO > list )
 	{
 		// Agrupa os DTOS pela chave [Curso - Disciplina - Turma - DiaSemana - Sala]
 		Map< String, List< AtendimentoOperacionalDTO > > atendimentoOperacionalDTOMap
@@ -959,7 +963,7 @@ public class AtendimentosServiceImpl extends RemoteService
 	}
 
 	public List< AtendimentoOperacionalDTO > montaListaParaVisaoProfessor(
-			List< AtendimentoOperacionalDTO > list )
+		List< AtendimentoOperacionalDTO > list )
 	{
 		// Agrupa os DTOS pela chave [ Disciplina - Turma - DiaSemana - Sala ]
 		Map< String, List< AtendimentoOperacionalDTO > > atendimentoOperacionalDTOMap
