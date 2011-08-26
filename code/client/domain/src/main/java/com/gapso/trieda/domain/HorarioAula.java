@@ -39,24 +39,25 @@ import org.springframework.transaction.annotation.Transactional;
 @RooToString
 @RooEntity(identifierColumn = "HOR_ID")
 @Table(name = "HORARIOS_AULA")
-public class HorarioAula implements Serializable
+public class HorarioAula
+	implements Serializable
 {
 	private static final long serialVersionUID = 6415195416443296422L;
 
     @NotNull
-    @ManyToOne(targetEntity = SemanaLetiva.class)
-    @JoinColumn(name = "SLE_ID")
+    @ManyToOne( targetEntity = SemanaLetiva.class )
+    @JoinColumn( name = "SLE_ID" )
     private SemanaLetiva semanaLetiva;
 
     @NotNull
-    @ManyToOne(targetEntity = Turno.class)
-    @JoinColumn(name = "TUR_ID")
+    @ManyToOne( targetEntity = Turno.class )
+    @JoinColumn( name = "TUR_ID" )
     private Turno turno;
 
     @NotNull
-    @Column(name = "HOR_HORARIO")
-    @Temporal(TemporalType.TIMESTAMP)
-    @DateTimeFormat(style = "--")
+    @Column( name = "HOR_HORARIO" )
+    @Temporal( TemporalType.TIMESTAMP )
+    @DateTimeFormat( style = "--" )
     private Date horario;
 
     @OneToMany( cascade = CascadeType.ALL, mappedBy="horarioAula", orphanRemoval=true )

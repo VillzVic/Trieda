@@ -115,7 +115,7 @@ public class SolverInput
 	private Cenario cenario;
 	private ObjectFactory of;
 	private TriedaInput triedaInput;
-	private List<Campus> campi;
+	private List< Campus > campi;
 	private Turno turno;
 	private Parametro parametro;
 	private List< SemanaLetiva > semanasLetivas;
@@ -189,40 +189,47 @@ public class SolverInput
 
 			GrupoTurno grupoTurno = of.createGrupoTurno();
 
-			ItemTurno itemTurno = of.createItemTurno();
-			itemTurno.setId( turno.getId().intValue() );
-			itemTurno.setNome( turno.getNome() );
-			itemTurno.setTempoAula( turno.getTempo() );
+			List< Turno > turnos = Turno.findByCalendario( calendario );
 
-			GrupoHorarioAula grupoHorarioAula = of.createGrupoHorarioAula();
-			Set< HorarioAula > horariosAula = turno.getHorariosAula();
+			// Lendo turnos
+			for ( Turno turno : turnos )
+			{			
+				ItemTurno itemTurno = of.createItemTurno();
 
-			for ( HorarioAula horarioAula : horariosAula )
-			{
-				ItemHorarioAula itemHorarioAula = of.createItemHorarioAula();
+				itemTurno.setId( turno.getId().intValue() );
+				itemTurno.setNome( turno.getNome() );
+				itemTurno.setTempoAula( turno.getTempo() );
 
-				itemHorarioAula.setId( horarioAula.getId().intValue() );
-				itemHorarioAula.setInicio( new XMLGregorianCalendarUtil(
-					horarioAula.getHorario() ) );
+				// Lendo horários de aula
+				GrupoHorarioAula grupoHorarioAula = of.createGrupoHorarioAula();
+				Set< HorarioAula > horariosAula = turno.getHorariosAula();
 
-				GrupoDiaSemana grupoDiasSemana = of.createGrupoDiaSemana();
-				Set< HorarioDisponivelCenario > horariosDisponivelCenario
-					= horarioAula.getHorariosDisponiveisCenario();
-
-				for ( HorarioDisponivelCenario hdc : horariosDisponivelCenario )
+				for ( HorarioAula horarioAula : horariosAula )
 				{
-					grupoDiasSemana.getDiaSemana().add( Semanas.toInt( hdc.getSemana() ) );
+					ItemHorarioAula itemHorarioAula = of.createItemHorarioAula();
+
+					itemHorarioAula.setId( horarioAula.getId().intValue() );
+					itemHorarioAula.setInicio( new XMLGregorianCalendarUtil(
+						horarioAula.getHorario() ) );
+
+					GrupoDiaSemana grupoDiasSemana = of.createGrupoDiaSemana();
+					Set< HorarioDisponivelCenario > horariosDisponivelCenario
+						= horarioAula.getHorariosDisponiveisCenario();
+
+					for ( HorarioDisponivelCenario hdc : horariosDisponivelCenario )
+					{
+						grupoDiasSemana.getDiaSemana().add( Semanas.toInt( hdc.getSemana() ) );
+					}
+
+					itemHorarioAula.setDiasSemana( grupoDiasSemana );
+					grupoHorarioAula.getHorarioAula().add( itemHorarioAula );
 				}
 
-				itemHorarioAula.setDiasSemana( grupoDiasSemana );
-				grupoHorarioAula.getHorarioAula().add( itemHorarioAula );
-
+				itemTurno.setHorariosAula( grupoHorarioAula );
+				grupoTurno.getTurno().add( itemTurno );
 			}
 
-			itemTurno.setHorariosAula( grupoHorarioAula );
-			grupoTurno.getTurno().add( itemTurno );
 			itemCalendario.setTurnos( grupoTurno );
-
 			grupoCalendario.getCalendario().add( itemCalendario );
 		}
 
@@ -495,8 +502,11 @@ public class SolverInput
 
 				itemProfessor.setCredAnterior( professor.getCreditoAnterior() );
 				itemProfessor.setValorCred( professor.getValorCredito() );
+				
+				List< HorarioDisponivelCenario > horariosCenario
+					=  professor.getHorarios( this.semanasLetivas );
 				itemProfessor.setHorariosDisponiveis(
-					createGrupoHorario( professor.getHorarios( this.semanasLetivas ) ) );
+					createGrupoHorario( horariosCenario ) );
 
 				GrupoProfessorDisciplina grupoProfessorDisciplina	
 					= of.createGrupoProfessorDisciplina();
@@ -768,9 +778,10 @@ public class SolverInput
 
 			for ( Oferta oferta : ofertas )
 			{
-				if (!oferta.getTurno().equals( turno ) )
+				if ( !oferta.getTurno().equals( turno ) )
 				{
-					continue;
+					// TODO -- considerar mais de um turno
+					//continue;
 				}
 
 				ItemOfertaCurso itemOfertaCurso = of.createItemOfertaCurso();
@@ -1229,15 +1240,20 @@ public class SolverInput
 	 */
 
 	private GrupoHorario createGrupoHorario(
-			Collection<HorarioDisponivelCenario> horarios) {
-
+		Collection< HorarioDisponivelCenario > horarios )
+	{
 		GrupoHorario grupoHorario = of.createGrupoHorario();
-		for (HorarioDisponivelCenario horarioDisponivelCenario : horarios) {
+
+		for ( HorarioDisponivelCenario horarioDisponivelCenario : horarios )
+		{
 			HorarioAula horarioAula = horarioDisponivelCenario.getHorarioAula();
 			Semanas semana = horarioDisponivelCenario.getSemana();
 			ItemHorario itemHorarioAux = null;
-			for (ItemHorario itemHorario : grupoHorario.getHorario()) {
-				if (itemHorario.getHorarioAulaId() == horarioAula.getId()) {
+
+			for ( ItemHorario itemHorario : grupoHorario.getHorario() )
+			{
+				if ( itemHorario.getHorarioAulaId() == horarioAula.getId() )
+				{
 					itemHorarioAux = itemHorario;
 					break;
 				}
@@ -1245,24 +1261,25 @@ public class SolverInput
 
 			if ( itemHorarioAux != null )
 			{
-				itemHorarioAux.getDiasSemana().getDiaSemana()
-						.add(Semanas.toInt(semana));
+				itemHorarioAux.getDiasSemana().getDiaSemana().add( Semanas.toInt( semana ) );
 			}
 			else
 			{
 				if ( !horarioAula.getTurno().equals( turno ) )
 				{
-					continue;
+					// TODO -- considerar mais de um turno
+					// continue;
 				}
 
 				itemHorarioAux = of.createItemHorario();
-				itemHorarioAux.setHorarioAulaId(horarioAula.getId().intValue());
-				itemHorarioAux.setTurnoId(horarioAula.getTurno().getId()
-						.intValue());
-				itemHorarioAux.setDiasSemana(of.createGrupoDiaSemana());
-				itemHorarioAux.getDiasSemana().getDiaSemana()
-						.add(Semanas.toInt(semana));
-				grupoHorario.getHorario().add(itemHorarioAux);
+
+				itemHorarioAux.setHorarioAulaId( horarioAula.getId().intValue() );
+				itemHorarioAux.setTurnoId(
+					horarioAula.getTurno().getId().intValue() );
+				itemHorarioAux.setDiasSemana( of.createGrupoDiaSemana() );
+				itemHorarioAux.getDiasSemana().getDiaSemana().add( Semanas.toInt( semana ) );
+
+				grupoHorario.getHorario().add( itemHorarioAux );
 			}
 		}
 
@@ -1287,15 +1304,17 @@ public class SolverInput
 				}
 
 				ItemCreditoDisponivel itemCD = of.createItemCreditoDisponivel();
-				itemCD.setDiaSemana(Semanas.toInt(semana));
-				itemCD.setTurnoId(turno.getId().intValue());
-				itemCD.setMaxCreditos(0);
+				itemCD.setDiaSemana( Semanas.toInt( semana ) );
+				itemCD.setTurnoId( turno.getId().intValue() );
+				itemCD.setMaxCreditos( 0 );
 
-				for (ItemHorario itemHorario : horarios) {
-					if (itemHorario.getTurnoId() == itemCD.getTurnoId()
-							&& itemHorario.getDiasSemana().getDiaSemana()
-									.contains(Semanas.toInt(semana))) {
-						itemCD.setMaxCreditos(itemCD.getMaxCreditos() + 1);
+				for ( ItemHorario itemHorario : horarios )
+				{
+					if ( itemHorario.getTurnoId() == itemCD.getTurnoId()
+						&& itemHorario.getDiasSemana().getDiaSemana().contains(
+							Semanas.toInt( semana ) ) )
+					{
+						itemCD.setMaxCreditos( itemCD.getMaxCreditos() + 1 );
 					}
 				}
 

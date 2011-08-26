@@ -51,20 +51,31 @@ public class TurnosServiceImpl extends RemoteService implements TurnosService {
 	}
 	
 	@Override
-	public ListLoadResult<TurnoDTO> getListOtimizedOnly() {
+	public ListLoadResult< TurnoDTO > getListOtimizedOnly()
+	{
 		onlyProfessor();
-		List<Campus> campi = Campus.findAllOtimized();
-		List<Turno> turnos = null;
-		if(campi.isEmpty()) {
-			turnos = new ArrayList<Turno>(0);
-		} else {
-			turnos = AtendimentoOperacional.findAllTurnosByCursos(campi);
+
+		List< Campus > campi = Campus.findAllOtimized();
+		List< Turno > turnos = null;
+
+		if ( campi.isEmpty() )
+		{
+			turnos = new ArrayList< Turno >( 0 );
 		}
-		List<TurnoDTO> turnosDTO = new ArrayList<TurnoDTO>(turnos.size());
-		for(Turno turno : turnos) {
-			turnosDTO.add(ConvertBeans.toTurnoDTO(turno));
+		else
+		{
+			turnos = AtendimentoOperacional.findAllTurnosByCursos( campi );
 		}
-		return new BaseListLoadResult<TurnoDTO>(turnosDTO);
+
+		List< TurnoDTO > turnosDTO
+			= new ArrayList< TurnoDTO >( turnos.size() );
+
+		for ( Turno turno : turnos )
+		{
+			turnosDTO.add( ConvertBeans.toTurnoDTO( turno ) );
+		}
+
+		return new BaseListLoadResult< TurnoDTO >( turnosDTO );
 	}
 	
 	@Override
@@ -79,47 +90,69 @@ public class TurnosServiceImpl extends RemoteService implements TurnosService {
 	}
 
 	@Override
-	public ListLoadResult<TurnoDTO> getList() {
-		List<TurnoDTO> list = new ArrayList<TurnoDTO>();
-		for(Turno turno : Turno.findAll()) {
-			list.add(ConvertBeans.toTurnoDTO(turno));
+	public ListLoadResult< TurnoDTO > getList()
+	{
+		List< TurnoDTO > list
+			= new ArrayList< TurnoDTO >();
+
+		for ( Turno turno : Turno.findAll() )
+		{
+			list.add( ConvertBeans.toTurnoDTO( turno ) );
 		}
-		return new BaseListLoadResult<TurnoDTO>(list);
+
+		return new BaseListLoadResult< TurnoDTO >( list );
 	}
 
 	@Override
-	public ListLoadResult<TurnoDTO> getList(BasePagingLoadConfig loadConfig) {
-		CampusDTO campusDTO = loadConfig.get("campusDTO");
-		ListLoadResult<TurnoDTO> list = null;
-		if(campusDTO == null) {
-			list = getBuscaList(loadConfig.get("query").toString(), null, loadConfig);
-		} else {
-			Campus campus = Campus.find(campusDTO.getId());
-			List<Turno> turnos = Turno.findBy(campus);
-			List<TurnoDTO> turnosDTO = new ArrayList<TurnoDTO>();
-			for(Turno turno : turnos) {
-				turnosDTO.add(ConvertBeans.toTurnoDTO(turno));
-			}
-			list = new BasePagingLoadResult<TurnoDTO>(turnosDTO);
+	public ListLoadResult< TurnoDTO > getList( BasePagingLoadConfig loadConfig )
+	{
+		CampusDTO campusDTO = loadConfig.get( "campusDTO" );
+		ListLoadResult< TurnoDTO > list = null;
+
+		if ( campusDTO == null )
+		{
+			list = getBuscaList( loadConfig.get(
+				"query" ).toString(), null, loadConfig );
 		}
+		else
+		{
+			Campus campus = Campus.find( campusDTO.getId() );
+			List< Turno > turnos = Turno.findBy( campus );
+			List< TurnoDTO > turnosDTO = new ArrayList< TurnoDTO >();
+
+			for ( Turno turno : turnos )
+			{
+				turnosDTO.add( ConvertBeans.toTurnoDTO( turno ) );
+			}
+
+			list = new BasePagingLoadResult< TurnoDTO >( turnosDTO );
+		}
+
 		return list;
 	}
-	
+
 	@Override
-	public void save(TurnoDTO turnoDTO) {
-		Turno turno = ConvertBeans.toTurno(turnoDTO);
-		if(turno.getId() != null && turno.getId() > 0) {
+	public void save( TurnoDTO turnoDTO )
+	{
+		Turno turno = ConvertBeans.toTurno( turnoDTO );
+
+		if ( turno.getId() != null
+			&& turno.getId() > 0 )
+		{
 			turno.merge();
-		} else {
+		}
+		else
+		{
 			turno.persist();
 		}
 	}
-	
+
 	@Override
-	public void remove(List<TurnoDTO> turnoDTOList) {
-		for(TurnoDTO turnoDTO : turnoDTOList) {
-			ConvertBeans.toTurno(turnoDTO).remove();
+	public void remove( List< TurnoDTO > turnoDTOList )
+	{
+		for ( TurnoDTO turnoDTO : turnoDTOList )
+		{
+			ConvertBeans.toTurno( turnoDTO ).remove();
 		}
 	}
-
 }

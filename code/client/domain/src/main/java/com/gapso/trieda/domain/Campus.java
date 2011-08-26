@@ -531,7 +531,8 @@ public class Campus implements Serializable, Comparable< Campus >
 	public static List< Campus > findAllOtimized()
 	{
 		Query q = entityManager().createQuery(
-			"SELECT DISTINCT(o.oferta.campus) FROM AtendimentoOperacional o" );
+			" SELECT DISTINCT ( o.oferta.campus ) " +
+			" FROM AtendimentoOperacional o" );
 
 		return q.getResultList();
 	}

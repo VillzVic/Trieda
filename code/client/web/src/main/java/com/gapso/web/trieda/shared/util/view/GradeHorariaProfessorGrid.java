@@ -1,6 +1,8 @@
 package com.gapso.web.trieda.shared.util.view;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -134,13 +136,28 @@ public class GradeHorariaProfessorGrid
 			store.removeAll();
 		}
 
+		Set< LinhaDeCredito > setLinhaDeCredito
+			= new HashSet< LinhaDeCredito >();
+
 		if ( turnoDTO != null )
 		{
 			for ( Long horarioId : turnoDTO.getHorariosStringMap().keySet() )
 			{
-				store.add( new LinhaDeCredito( horarioId,
-					turnoDTO.getHorariosStringMap().get( horarioId ) ) );
+				String horarioStr = turnoDTO.getHorariosStringMap().get( horarioId ); 
+				Date horarioInicio = turnoDTO.getHorariosInicioMap().get( horarioId );
+
+				setLinhaDeCredito.add( new LinhaDeCredito( horarioId, horarioStr, horarioInicio ) );
 			}
+		}
+
+		List< LinhaDeCredito > listLinhaDeCredito
+			= new ArrayList< LinhaDeCredito >();
+		listLinhaDeCredito.addAll( setLinhaDeCredito );
+		Collections.sort( listLinhaDeCredito );
+
+		for ( LinhaDeCredito lc : listLinhaDeCredito )
+		{
+			store.add( lc );
 		}
 
 		return store;
@@ -338,16 +355,30 @@ public class GradeHorariaProfessorGrid
 		disciplinasCores.addAll( set );
 	}
 
-	public class LinhaDeCredito extends BaseModel
+	public class LinhaDeCredito
+		extends BaseModel
+		implements Comparable< LinhaDeCredito >
 	{
 		private static final long serialVersionUID = 3996652461744817138L;
 
 		private Long horarioId;
+		private Date horarioInicio;
 
-		public LinhaDeCredito( Long horarioId, String horarioString )
+		public LinhaDeCredito( Long horarioId, String horarioString, Date horarioInicio )
 		{
 			setHorario( horarioString );
 			this.horarioId = horarioId;
+			this.horarioInicio = horarioInicio;
+		}
+
+		public Date getHorarioInicio()
+		{
+			return horarioInicio;
+		}
+
+		public void setHorarioInicio( Date horarioInicio )
+		{
+			this.horarioInicio = horarioInicio;
 		}
 
 		public Long getHorarioId()
@@ -443,6 +474,32 @@ public class GradeHorariaProfessorGrid
 		public void setDomingo( String value )
 		{
 			set( "domingo", value );
+		}
+
+		@Override
+		public int compareTo( LinhaDeCredito o )
+		{
+			if ( o == null )
+			{
+				return 1;
+			}
+
+			if ( this.getHorarioInicio() == null && o.getHorarioInicio() == null )
+			{
+				return -1;
+			}
+
+			if ( this.getHorarioInicio() != null && o.getHorarioInicio() == null )
+			{
+				return 1;
+			}
+
+			if ( this.getHorarioInicio() == null && o.getHorarioInicio() != null )
+			{
+				return -1;
+			}
+
+			return this.getHorarioInicio().compareTo( o.getHorarioInicio() );
 		}
 	}
 }

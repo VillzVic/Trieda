@@ -554,4 +554,26 @@ public class AtendimentoTatico
 			+ getDisciplina().getId() + "-" + getTurma()
 			+ "-" + ( getCreditosTeorico() > 0 );
 	}
+
+	@Override
+	public boolean equals( Object obj )
+	{
+		if ( obj == null || !( obj instanceof AtendimentoTatico ) )
+		{
+			return false;
+		}
+
+		AtendimentoTatico other = ( AtendimentoTatico ) obj;
+
+		boolean validaTurma = ( this.getTurma().equals( other.getTurma() ) );
+		boolean validaSala = ( this.getSala().equals( other.getSala() ) ); 
+		boolean validaSemana = ( this.getSemana().equals( other.getSemana() ) );
+		boolean validaOferta = ( this.getOferta().equals( other.getOferta() ) );
+		boolean validaDisciplina = ( this.getDisciplina().equals( other.getDisciplina() ) );
+		boolean validaCreditoTeorico = ( this.getCreditosTeorico().equals( other.getCreditosTeorico() ) );
+		boolean validaCreditoPratico = ( this.getCreditosPratico().equals( other.getCreditosPratico() ) );
+
+		return ( validaTurma && validaSala && validaSemana && validaOferta
+			&& validaDisciplina &&  validaCreditoTeorico && validaCreditoPratico );
+	}
 }

@@ -322,4 +322,16 @@ public class SemanaLetiva
 
 		return sb.toString();
 	}
+
+	@Override
+	public boolean equals( Object obj )
+	{
+		if ( obj == null || !( obj instanceof SemanaLetiva ) )
+		{
+			return false;
+		}
+
+		SemanaLetiva other = (SemanaLetiva)obj;
+		return this.getId().equals( other.getId() );
+	}
 }

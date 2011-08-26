@@ -405,11 +405,16 @@ public class ConvertBeans
 	}
 
 	// TURNO
-	public static Collection<TurnoDTO> toTurnoDTO(Collection<Turno> domains) {
-		Collection<TurnoDTO> list = new ArrayList<TurnoDTO>(domains.size());
-		for (Turno domain : domains) {
-			list.add(toTurnoDTO(domain));
+	public static Collection< TurnoDTO > toTurnoDTO( Collection< Turno > domains )
+	{
+		Collection< TurnoDTO > list
+			= new ArrayList< TurnoDTO >( domains.size() );
+
+		for ( Turno domain : domains )
+		{
+			list.add( toTurnoDTO( domain ) );
 		}
+
 		return list;
 	}
 
@@ -447,14 +452,24 @@ public class ConvertBeans
 		}
 		dto.setCountHorariosAula(countHorariosAula);
 
-		Map<Long, String> horariosStringMap = new HashMap<Long, String>();
-		for (HorarioAula ha : horarios) {
-			horariosStringMap.put(ha.getId(),
-					dateToString(ha.getHorario(), ha.getTurno().getTempo()));
-		}
-		dto.setHorariosStringMap(horariosStringMap);
+		Map< Long, String > horariosStringMap
+			= new HashMap< Long, String >();
 
-		dto.setDisplayText(domain.getNome() + " (" + domain.getTempo() + "min)");
+		Map< Long, Date > horariosInicioMap
+			= new HashMap< Long, Date >();
+
+		for ( HorarioAula ha : horarios )
+		{
+			horariosStringMap.put( ha.getId(),
+				dateToString( ha.getHorario(), ha.getTurno().getTempo() ) );
+
+			horariosInicioMap.put( ha.getId(), ha.getHorario() );
+		}
+
+		dto.setHorariosStringMap( horariosStringMap );
+		dto.setHorariosInicioMap( horariosInicioMap );
+
+		dto.setDisplayText( domain.getNome() + " (" + domain.getTempo() + "min)" );
 
 		return dto;
 	}

@@ -2,8 +2,8 @@ package com.gapso.web.trieda.shared.dtos;
 
 import java.util.Date;
 
-public class HorarioAulaDTO extends AbstractDTO<String>
-	implements Comparable<HorarioAulaDTO>
+public class HorarioAulaDTO extends AbstractDTO< String >
+	implements Comparable< HorarioAulaDTO >
 {
 	private static final long serialVersionUID = -4670030478798237916L;
 

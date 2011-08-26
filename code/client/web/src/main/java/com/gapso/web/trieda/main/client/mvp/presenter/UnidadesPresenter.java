@@ -85,7 +85,8 @@ public class UnidadesPresenter implements Presenter {
 		display.setProxy(proxy);
 	}
 	
-	private void setListeners() {
+	private void setListeners()
+	{
 		display.getNewButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
 			@Override
 			public void componentSelected(ButtonEvent ce) {
@@ -93,6 +94,7 @@ public class UnidadesPresenter implements Presenter {
 				presenter.go(null);
 			}
 		});
+
 		display.getEditButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
 			@Override
 			public void componentSelected(ButtonEvent ce) {
@@ -111,6 +113,7 @@ public class UnidadesPresenter implements Presenter {
 				});
 			}
 		});
+
 		display.getRemoveButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
 			@Override
 			public void componentSelected(ButtonEvent ce) {
@@ -125,6 +128,7 @@ public class UnidadesPresenter implements Presenter {
 				});
 			}
 		});
+
 		display.getImportExcelButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
 			@Override
 			public void componentSelected(ButtonEvent ce) {
@@ -132,13 +136,20 @@ public class UnidadesPresenter implements Presenter {
 				importExcelFormView.show();
 			}
 		});
-		display.getExportExcelButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
+
+		display.getExportExcelButton().addSelectionListener( new SelectionListener< ButtonEvent >()
+		{
 			@Override
-			public void componentSelected(ButtonEvent ce) {
-				ExportExcelFormSubmit e = new ExportExcelFormSubmit(ExcelInformationType.UNIDADES,display.getI18nConstants(),display.getI18nMessages());
+			public void componentSelected( ButtonEvent ce )
+			{
+				ExportExcelFormSubmit e = new ExportExcelFormSubmit(
+					ExcelInformationType.UNIDADES,
+					display.getI18nConstants(), display.getI18nMessages() );
+
 				e.submit();
 			}
 		});
+
 		display.getResetBuscaButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
 			@Override
 			public void componentSelected(ButtonEvent ce) {
@@ -148,12 +159,16 @@ public class UnidadesPresenter implements Presenter {
 				display.getGrid().updateList();
 			}
 		});
-		display.getSubmitBuscaButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
+
+		display.getSubmitBuscaButton().addSelectionListener( new SelectionListener< ButtonEvent >()
+		{
 			@Override
-			public void componentSelected(ButtonEvent ce) {
+			public void componentSelected( ButtonEvent ce )
+			{
 				display.getGrid().updateList();
 			}
 		});
+
 		display.getSalasButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
 			@Override
 			public void componentSelected(ButtonEvent ce) {
@@ -172,46 +187,63 @@ public class UnidadesPresenter implements Presenter {
 				});
 			}
 		});
-		display.getDisponibilidadeButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
+
+		display.getDisponibilidadeButton().addSelectionListener( new SelectionListener< ButtonEvent >()
+		{
 			@Override
-			public void componentSelected(ButtonEvent ce) {
-				
+			public void componentSelected( ButtonEvent ce )
+			{
 				final SemanaLetivaDTO semanaLetivaDTO = new SemanaLetivaDTO();
-				semanaLetivaDTO.setId(cenario.getSemanaLetivaId());
-				
+				semanaLetivaDTO.setId( cenario.getSemanaLetivaId() );
+
 				final UnidadeDTO unidadeDTO = display.getGrid().getGrid().getSelectionModel().getSelectedItem();
-				
-				final FutureResult<CampusDTO> futureCampusDTO = new FutureResult<CampusDTO>();
-				final FutureResult<PagingLoadResult<HorarioDisponivelCenarioDTO>> futureHorarioDisponivelCenarioDTOList = new FutureResult<PagingLoadResult<HorarioDisponivelCenarioDTO>>();
-				
-				Services.campi().getCampus(unidadeDTO.getCampusId(), futureCampusDTO);
-				Services.unidades().getHorariosDisponiveis(unidadeDTO, semanaLetivaDTO, futureHorarioDisponivelCenarioDTOList);
-				
-				FutureSynchronizer synch = new FutureSynchronizer(futureCampusDTO, futureHorarioDisponivelCenarioDTOList);
-				synch.addCallback(new AsyncCallback<Boolean>() {
-					public void onFailure(Throwable caught) { MessageBox.alert("ERRO!", "Deu falha na conexão", null); }
-					public void onSuccess(Boolean result) {
+				final FutureResult< CampusDTO > futureCampusDTO = new FutureResult< CampusDTO >();
+				final FutureResult< PagingLoadResult< HorarioDisponivelCenarioDTO > > futureHorarioDisponivelCenarioDTOList
+					= new FutureResult< PagingLoadResult< HorarioDisponivelCenarioDTO > >();
+
+				Services.campi().getCampus( unidadeDTO.getCampusId(), futureCampusDTO );
+				Services.unidades().getHorariosDisponiveis( unidadeDTO, semanaLetivaDTO, futureHorarioDisponivelCenarioDTOList );
+				FutureSynchronizer synch = new FutureSynchronizer( futureCampusDTO, futureHorarioDisponivelCenarioDTOList );
+
+				synch.addCallback( new AsyncCallback< Boolean >()
+				{
+					public void onFailure( Throwable caught )
+					{
+						MessageBox.alert( "ERRO!", "Deu falha na conexão", null );
+					}
+
+					public void onSuccess( Boolean result )
+					{
 						CampusDTO campusDTO = futureCampusDTO.result();
-						List<HorarioDisponivelCenarioDTO> horarioDisponivelCenarioDTOList = futureHorarioDisponivelCenarioDTOList.result().getData();
-						Presenter presenter = new HorarioDisponivelUnidadeFormPresenter(campusDTO, semanaLetivaDTO, new HorarioDisponivelUnidadeFormView(unidadeDTO, horarioDisponivelCenarioDTOList));
-						presenter.go(null);
+						List< HorarioDisponivelCenarioDTO > horarioDisponivelCenarioDTOList
+							= futureHorarioDisponivelCenarioDTOList.result().getData();
+
+						Presenter presenter = new HorarioDisponivelUnidadeFormPresenter( campusDTO,	semanaLetivaDTO,
+							new HorarioDisponivelUnidadeFormView( unidadeDTO, horarioDisponivelCenarioDTOList ) );
+
+						presenter.go( null );
 					}
 				});
 			}
 		});
-		display.getDeslocamentoUnidadesButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
+
+		display.getDeslocamentoUnidadesButton().addSelectionListener( new SelectionListener< ButtonEvent >()
+		{
 			@Override
-			public void componentSelected(ButtonEvent ce) {
-				Presenter presenter = new UnidadesDeslocamentoPresenter(new UnidadesDeslocamentoView(null, null));
-				presenter.go(gTab);
+			public void componentSelected( ButtonEvent ce )
+			{
+				Presenter presenter = new UnidadesDeslocamentoPresenter(
+					new UnidadesDeslocamentoView( null, null ) );
+
+				presenter.go( gTab );
 			}
 		});
 	}
-	
-	@Override
-	public void go(Widget widget) {
-		gTab = (GTab)widget;
-		gTab.add((GTabItem)display.getComponent());
-	}
 
+	@Override
+	public void go( Widget widget )
+	{
+		gTab = (GTab)widget;
+		gTab.add( (GTabItem) display.getComponent() );
+	}
 }

@@ -30,9 +30,11 @@ import org.springframework.transaction.annotation.Transactional;
 @Entity
 @RooJavaBean
 @RooToString
-@RooEntity(identifierColumn = "ATP_ID")
-@Table(name = "ATENDIMENTO_OPERACIONAL")
-public class AtendimentoOperacional implements Serializable
+@RooEntity( identifierColumn = "ATP_ID" )
+@Table( name = "ATENDIMENTO_OPERACIONAL" )
+public class AtendimentoOperacional
+	implements Serializable
+	
 {
 	private static final long serialVersionUID = -1061352455612316076L;
 
@@ -88,33 +90,27 @@ public class AtendimentoOperacional implements Serializable
 	@Max(999L)
 	private Integer quantidadeAlunos;
 
-	public String toString() {
+	public String toString()
+	{
 		StringBuilder sb = new StringBuilder();
-		sb.append("Id: ").append(getId()).append(", ");
-		sb.append("Version: ").append(getVersion()).append(", ");
-		sb.append("Cenario: ")
-				.append((getCenario() != null) ? getCenario().getNome()
-						: "null").append(", ");
-		sb.append("Turma: ").append(getTurma()).append(", ");
-		sb.append("Sala: ")
-				.append((getSala() != null) ? getSala().getCodigo() : "null")
-				.append(", ");
-		sb.append("HorarioDisponivelCenario: ")
-				.append((getHorarioDisponivelCenario() != null) ? getHorarioDisponivelCenario()
-						.getHorarioAula().getHorario() : "null").append(", ");
-		sb.append("Professor: ")
-				.append((getProfessor() != null) ? getProfessor().getNome()
-						: "null").append(", ");
-		sb.append("ProfessorVirtual: ")
-				.append((getProfessorVirtual() != null) ? getProfessorVirtual()
-						.getId() : "null").append(", ");
-		sb.append("CreditoTeorico: ").append(getCreditoTeorico()).append(", ");
-		sb.append("Oferta: ").append(getOferta()).append(", ");
-		sb.append("Disciplina: ")
-				.append((getDisciplina() != null) ? getDisciplina().getCodigo()
-						: "null").append(", ");
-		sb.append("QuantidadeAlunos: ").append(getQuantidadeAlunos())
-				.append(", ");
+
+		sb.append( "Id: " ).append( getId() ).append( ", " );
+		sb.append( "Version: " ).append( getVersion() ).append( ", " );
+		sb.append( "Cenario: " ).append( ( getCenario() != null ) ?
+			getCenario().getNome() : "null" ).append( ", " );
+		sb.append( "Turma: " ).append( getTurma() ).append( ", " );
+		sb.append( "Sala: " ).append( ( getSala() != null ) ? getSala().getCodigo() : "null" ).append( ", " );
+		sb.append( "HorarioDisponivelCenario: " ).append( ( getHorarioDisponivelCenario() != null ) ?
+			getHorarioDisponivelCenario().getHorarioAula().getHorario() : "null" ).append( ", " );
+		sb.append( "Professor: " ).append( ( getProfessor() != null ) ? getProfessor().getNome() : "null" ).append( ", " );
+		sb.append( "ProfessorVirtual: " ).append( ( getProfessorVirtual() != null ) ?
+			getProfessorVirtual().getId() : "null" ).append( ", " );
+		sb.append( "CreditoTeorico: " ).append( getCreditoTeorico() ).append( ", " );
+		sb.append( "Oferta: " ).append( getOferta() ).append( ", " );
+		sb.append( "Disciplina: " ).append( ( getDisciplina() != null ) ?
+			getDisciplina().getCodigo()	: "null" ).append( ", " );
+		sb.append( "QuantidadeAlunos: " ).append( getQuantidadeAlunos() ).append( ", " );
+
 		return sb.toString();
 	}
 
@@ -224,11 +220,14 @@ public class AtendimentoOperacional implements Serializable
 	}
 
 	@SuppressWarnings("unchecked")
-	public static List<Turno> findAllTurnosByCursos(List<Campus> campi) {
-		Query q = entityManager()
-				.createQuery(
-						"SELECT DISTINCT o.oferta.turno FROM AtendimentoOperacional o WHERE o.oferta.campus IN (:campi)");
-		q.setParameter("campi", campi);
+	public static List<Turno> findAllTurnosByCursos( List< Campus > campi )
+	{
+		Query q = entityManager().createQuery(
+			" SELECT DISTINCT o.oferta.turno " +
+			" FROM AtendimentoOperacional o " +
+			" WHERE o.oferta.campus IN ( : campi )" );
+
+		q.setParameter( "campi", campi );
 		return q.getResultList();
 	}
 
@@ -587,5 +586,45 @@ public class AtendimentoOperacional implements Serializable
 
 		q.setParameter( "campus", campus );
 		return q.getResultList();
+	}
+
+	@Override
+	public boolean equals( Object obj )
+	{
+		if ( obj == null || !( obj instanceof AtendimentoOperacional ) )
+		{
+			return false;
+		}
+
+		AtendimentoOperacional other = ( AtendimentoOperacional ) obj;
+
+		boolean validaTurma = ( this.getTurma().equals( other.getTurma() ) );
+		boolean validaSala = ( this.getSala().equals( other.getSala() ) ); 
+
+		boolean validaHdc = ( this.getHorarioDisponivelCenario().getHorarioAula().equals(
+			other.getHorarioDisponivelCenario().getHorarioAula() ) );
+		validaHdc = ( validaHdc && this.getHorarioDisponivelCenario().getSemana().equals(
+			other.getHorarioDisponivelCenario().getSemana() ) ); 
+
+		boolean validaOferta = ( this.getOferta().equals( other.getOferta() ) );
+		boolean validaDisciplina = ( this.getDisciplina().equals( other.getDisciplina() ) );
+
+		boolean validaProfessor = true;
+		if ( this.getProfessor() != null )
+		{
+			validaProfessor = ( this.getProfessor().equals( other.getProfessor() ) );
+		}
+
+		boolean validaProfessorVirtual = true;
+		if ( this.getProfessorVirtual() != null )
+		{
+			validaProfessorVirtual = ( this.getProfessorVirtual().equals( other.getProfessorVirtual() ) );
+		}
+
+		boolean validaCreditoTeorico = ( this.getCreditoTeorico().equals( other.getCreditoTeorico() ) );
+
+		return ( validaTurma && validaSala && validaHdc && validaOferta
+			&& validaDisciplina && validaProfessor
+			&&  validaProfessorVirtual &&  validaCreditoTeorico );
 	}
 }

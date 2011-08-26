@@ -1,6 +1,7 @@
 package com.gapso.trieda.domain;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -39,60 +40,68 @@ import com.gapso.trieda.misc.Semanas;
 @Entity
 @RooJavaBean
 @RooToString
-@RooEntity(identifierColumn = "TUR_ID")
-@Table(name = "TURNOS")
-public class Turno implements Serializable {
+@RooEntity( identifierColumn = "TUR_ID" )
+@Table( name = "TURNOS" )
+public class Turno
+	implements Serializable
+{
+	private static final long serialVersionUID = 2608398950191790873L;
 
 	@NotNull
-    @ManyToOne(targetEntity = Cenario.class)
-    @JoinColumn(name = "CEN_ID")
+    @ManyToOne( targetEntity = Cenario.class )
+    @JoinColumn( name = "CEN_ID" )
     private Cenario cenario;
 	
     @NotNull
-    @Column(name = "TUR_NOME")
-    @Size(min = 1, max = 50)
+    @Column( name = "TUR_NOME" )
+    @Size( min = 1, max = 50 )
     private String nome;
 
     @NotNull
-    @Column(name = "TUR_TEMPO")
-    @Min(1L)
-    @Max(1000L)
+    @Column( name = "TUR_TEMPO" )
+    @Min( 1L )
+    @Max( 1000L )
     private Integer tempo;
 
     @NotNull
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "turno")
-    private Set<Oferta> ofertas = new HashSet<Oferta>();
+    @OneToMany( cascade = CascadeType.ALL, mappedBy = "turno" )
+    private Set< Oferta > ofertas = new HashSet< Oferta >();
 
-    @OneToMany(mappedBy="turno")
-    Set<HorarioAula> horariosAula = new HashSet<HorarioAula>();
+    @OneToMany( mappedBy="turno" )
+    Set< HorarioAula > horariosAula = new HashSet< HorarioAula >();
     
-    @OneToMany(cascade = CascadeType.ALL, mappedBy="turno")
-    private Set<Parametro> parametros =  new HashSet<Parametro>();
-    
+    @OneToMany( cascade = CascadeType.ALL, mappedBy="turno" )
+    private Set< Parametro > parametros =  new HashSet< Parametro >();
+
     @PersistenceContext
     transient EntityManager entityManager;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "TUR_ID")
+    @GeneratedValue( strategy = GenerationType.AUTO )
+    @Column( name = "TUR_ID" )
     private Long id;
 
     @Version
-    @Column(name = "version")
+    @Column( name = "version" )
     private Integer version;
     
-    public int calculaMaxCreditos () {
-    	Map<Integer,Integer> countHorariosAula = new HashMap<Integer, Integer>();
-		for (HorarioAula ha : getHorariosAula()) {
-			for (HorarioDisponivelCenario hdc : ha.getHorariosDisponiveisCenario()) {
-				int semanaInt = Semanas.toInt(hdc.getSemana());
-				Integer value = countHorariosAula.get(semanaInt);
-				value = (value == null) ? 0 : value;
-				countHorariosAula.put(semanaInt,value+1);
+    public int calculaMaxCreditos ()
+    {
+    	Map< Integer, Integer > countHorariosAula
+    		= new HashMap< Integer, Integer >();
+
+		for ( HorarioAula ha : getHorariosAula() )
+		{
+			for ( HorarioDisponivelCenario hdc : ha.getHorariosDisponiveisCenario() )
+			{
+				int semanaInt = Semanas.toInt( hdc.getSemana() );
+				Integer value = countHorariosAula.get( semanaInt );
+				value = ( ( value == null ) ? 0 : value );
+				countHorariosAula.put( semanaInt, value + 1 );
 			}
 		}
-		
-		return Collections.max(countHorariosAula.values());
+
+		return Collections.max( countHorariosAula.values() );
     }
 
     public Long getId() {
@@ -148,19 +157,31 @@ public class Turno implements Serializable {
         return merged;
     }
 
-    public static final EntityManager entityManager() {
+    public static final EntityManager entityManager()
+    {
         EntityManager em = new Turno().entityManager;
-        if (em == null) throw new IllegalStateException("Entity manager has not been injected (is the Spring Aspects JAR configured as an AJC/AJDT aspects library?)");
+
+        if ( em == null )
+        {
+        	throw new IllegalStateException(
+        		" Entity manager has not been injected (is the Spring " +
+        		" Aspects JAR configured as an AJC/AJDT aspects library?)" );
+        }
+
         return em;
     }
     
     @SuppressWarnings("unchecked")
-    public static List<Turno> findBy(Campus campus) {
-    	Query q = entityManager().createQuery("SELECT distinct(o.turno) FROM Oferta o WHERE o.campus = :campus");
-    	q.setParameter("campus", campus);
+    public static List< Turno > findBy( Campus campus )
+    {
+    	Query q = entityManager().createQuery(
+    		" SELECT distinct ( o.turno ) " +
+    		" FROM Oferta o WHERE o.campus = :campus" );
+
+    	q.setParameter( "campus", campus );
     	return q.getResultList();
     }
-    
+
     @SuppressWarnings("unchecked")
     public static List<Turno> findByNome(String nome) {
     	Query q = entityManager().createQuery("SELECT o FROM Turno o WHERE o.nome = :nome");
@@ -183,55 +204,110 @@ public class Turno implements Serializable {
     }
 
     @SuppressWarnings("unchecked")
-    public static List<Turno> find(int firstResult, int maxResults, String orderBy) {
-        orderBy = (orderBy != null) ? "ORDER BY o." + orderBy : "";
-        return entityManager().createQuery("SELECT o FROM Turno o " + orderBy).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
+    public static List<Turno> find(int firstResult, int maxResults, String orderBy)
+    {
+        orderBy = ( ( orderBy != null ) ? "ORDER BY o." + orderBy : "" );
+        return entityManager().createQuery(
+        	"SELECT o FROM Turno o " + orderBy )
+        	.setFirstResult( firstResult ).setMaxResults( maxResults ).getResultList();
     }
-    
+
     public static int count(String nome, Integer tempo) {
     	nome = (nome == null || nome.length() == 0)? "" : nome;
     	nome = nome.replace('*', '%');
-    	if (nome == "" || nome.charAt(0) != '%') {
-    		nome = "%" + nome;
+
+    	if ( nome == "" || nome.charAt( 0 ) != '%' )
+    	{
+    		nome = ( "%" + nome );
     	}
-    	if (nome.charAt(nome.length() -1) != '%') {
-    		nome = nome + "%";
+
+    	if ( nome.charAt( nome.length() -1 ) != '%' )
+    	{
+    		nome = ( nome + "%" );
     	}
-    	
-    	String queryTempo = (tempo != null)? "AND o.tempo = :tempo" : "";
-    	Query q = entityManager().createQuery("SELECT COUNT(o) FROM Turno o WHERE LOWER(o.nome) LIKE LOWER(:nome) "+queryTempo);
-    	q.setParameter("nome", nome);
-    	if(tempo != null) q.setParameter("tempo", tempo);
-    	return ((Number)q.getSingleResult()).intValue();
+
+    	String queryTempo = ( ( tempo != null ) ? "AND o.tempo = :tempo" : "" );
+    	Query q = entityManager().createQuery(
+    		" SELECT COUNT ( o ) FROM Turno o " +
+    		" WHERE LOWER ( o.nome ) LIKE LOWER ( :nome ) " + queryTempo );
+
+    	q.setParameter( "nome", nome );
+    	if ( tempo != null )
+    	{
+    		q.setParameter( "tempo", tempo );
+    	}
+
+    	return ( (Number)q.getSingleResult() ).intValue();
     }
 
     @SuppressWarnings("unchecked")
-    public static List<Turno> findBy(String nome, Integer tempo, int firstResult, int maxResults, String orderBy) {
-    	nome = (nome == null || nome.length() == 0)? "" : nome;
-        nome = nome.replace('*', '%');
-        if (nome == "" || nome.charAt(0) != '%') {
-            nome = "%" + nome;
+    public static List< Turno > findBy(String nome, Integer tempo,
+    	int firstResult, int maxResults, String orderBy )
+    {
+    	nome = ( ( nome == null || nome.length() == 0 ) ? "" : nome );
+        nome = nome.replace( '*', '%' );
+
+        if ( nome == "" || nome.charAt( 0 ) != '%' )
+        {
+            nome = ( "%" + nome );
         }
-        if (nome.charAt(nome.length() -1) != '%') {
-            nome = nome + "%";
+
+        if ( nome.charAt( nome.length() - 1 ) != '%' )
+        {
+            nome = ( nome + "%" );
         }
-        
-        String queryTempo = (tempo != null)? "AND turno.tempo = :tempo" : "";
-        orderBy = (orderBy != null) ? "ORDER BY o." + orderBy : "";
-        Query q = entityManager().createQuery("SELECT o FROM Turno o WHERE LOWER(o.nome) LIKE LOWER(:nome) "+queryTempo+" "+orderBy);
-        q.setParameter("nome", nome);
-        if(tempo != null) q.setParameter("tempo", tempo);
-        return q.setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
+
+        String queryTempo = ( ( tempo != null ) ? "AND turno.tempo = :tempo" : "" );
+        orderBy = ( ( orderBy != null ) ? "ORDER BY o." + orderBy : "" );
+
+        Query q = entityManager().createQuery(
+        	" SELECT o FROM Turno o " +
+        	" WHERE LOWER ( o.nome ) LIKE LOWER ( :nome ) " + queryTempo + " " + orderBy );
+
+        q.setParameter( "nome", nome );
+        if ( tempo != null )
+        {
+        	q.setParameter( "tempo", tempo );
+        }
+
+        return q.setFirstResult( firstResult )
+        	.setMaxResults( maxResults ).getResultList();
     }
-    
-	public static Map<String,Turno> buildTurnoNomeToTurnoMap(List<Turno> turnos) {
-		Map<String,Turno> turnosMap = new HashMap<String,Turno>();
-		for (Turno turno : turnos) {
-			turnosMap.put(turno.getNome(),turno);
+
+	public static Map< String, Turno > buildTurnoNomeToTurnoMap( List< Turno > turnos )
+	{
+		Map< String, Turno > turnosMap
+			= new HashMap< String, Turno >();
+
+		for ( Turno turno : turnos )
+		{
+			turnosMap.put( turno.getNome(), turno );
 		}
+
 		return turnosMap;
 	}
-    
+
+	public static List< Turno > findByCalendario( SemanaLetiva calendario )
+	{
+		List< Turno > turnos = Turno.findAll();
+		Set< Turno > turnosDistinct = new HashSet< Turno >();
+		
+		for ( Turno turno : turnos )
+		{
+			for ( HorarioAula ha : turno.getHorariosAula() )
+			{
+				if ( ha.getSemanaLetiva() == calendario )
+				{
+					turnosDistinct.add( turno );
+					break;
+				}
+			}
+		}
+
+		List< Turno > result = new ArrayList< Turno >( turnosDistinct );
+		return result;
+	}
+	
 	public Cenario getCenario() {
         return this.cenario;
     }
@@ -274,18 +350,19 @@ public class Turno implements Serializable {
 		this.parametros = parametros;
 	}
 
-	private static final long serialVersionUID = 2608398950191790873L;
-
-    public String toString() {
+    public String toString()
+    {
         StringBuilder sb = new StringBuilder();
-        sb.append("Id: ").append(getId()).append(", ");
-        sb.append("Version: ").append(getVersion()).append(", ");
-        sb.append("Cenario: ").append(getCenario()).append(", ");
-        sb.append("Nome: ").append(getNome()).append(", ");
-        sb.append("Tempo: ").append(getTempo()).append(", ");
-        sb.append("Oferta: ").append(getOfertas() == null ? "null" : getOfertas().size());
-        sb.append("HorariosAula: ").append(getHorariosAula() == null ? "null" : getHorariosAula().size());
-        sb.append("Parametros: ").append(getParametros() == null ? "null" : getParametros().size()).append(", ");
+
+        sb.append( "Id: " ).append( getId() ).append( ", " );
+        sb.append( "Version: " ).append( getVersion() ).append( ", " );
+        sb.append( "Cenario: " ).append( getCenario() ).append( ", " );
+        sb.append( "Nome: " ).append( getNome() ).append( ", " );
+        sb.append( "Tempo: " ).append( getTempo() ).append( ", " );
+        sb.append( "Oferta: " ).append( getOfertas() == null ? "null" : getOfertas().size() );
+        sb.append( "HorariosAula: " ).append( getHorariosAula() == null ? "null" : getHorariosAula().size() );
+        sb.append( "Parametros: " ).append( getParametros() == null ? "null" : getParametros().size()).append( ", " );
+
         return sb.toString();
     }
 }
