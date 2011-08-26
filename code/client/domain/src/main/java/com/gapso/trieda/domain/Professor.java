@@ -511,13 +511,15 @@ public class Professor
 	}
 
 	public static boolean checkCodigoUnique(Cenario cenario, String cpf) {
-		Query q = entityManager()
-				.createQuery(
-						"SELECT COUNT(o) FROM Professor o WHERE o.cenario = :cenario AND o.cpf = :cpf");
-		q.setParameter("cenario", cenario);
-		q.setParameter("cpf", cpf);
-		Number size = (Number) q.setMaxResults(1).getSingleResult();
-		return size.intValue() > 0;
+		Query q = entityManager().createQuery(
+			" SELECT COUNT ( o ) FROM Professor o " +
+			" WHERE o.cenario = :cenario AND o.cpf = :cpf" );
+
+		q.setParameter( "cenario", cenario );
+		q.setParameter( "cpf", cpf );
+
+		Number size = (Number) q.setMaxResults( 1 ).getSingleResult();
+		return ( size.intValue() > 0 );
 	}
 
 	@Override

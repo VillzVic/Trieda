@@ -243,7 +243,8 @@ public class ProfessorVirtual
 		if ( em == null )
 		{
 			throw new IllegalStateException(
-					"Entity manager has not been injected (is the Spring Aspects JAR configured as an AJC/AJDT aspects library?)");
+				" Entity manager has not been injected (is the Spring " +
+				" Aspects JAR configured as an AJC/AJDT aspects library?)" );
 		}
 
 		return em;
@@ -251,7 +252,7 @@ public class ProfessorVirtual
 
 	public static ProfessorVirtual find(Long id)
 	{
-		if (id == null)
+		if ( id == null )
 		{
 			return null;
 		}
@@ -272,6 +273,13 @@ public class ProfessorVirtual
 		List< ProfessorVirtual > list = q.getResultList(); 
 		Collections.sort( list );
 		return list;
+	}
+
+	@SuppressWarnings("unchecked")
+	public static List< ProfessorVirtual > findAll()
+	{
+		return entityManager().createQuery(
+			"SELECT o FROM ProfessorVirtual o" ).getResultList();
 	}
 
 	@Override

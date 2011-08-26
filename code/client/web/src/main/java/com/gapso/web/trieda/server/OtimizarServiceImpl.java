@@ -72,14 +72,17 @@ public class OtimizarServiceImpl extends RemoteServiceServlet
 		parametro.setId( null );
 		parametro.flush();
 		parametro.save();
+
 		Cenario cenario = parametro.getCenario();
 		cenario.getParametros().add( parametro );
 		List< Campus > campi = new ArrayList< Campus >( 1 );
 		campi.add( parametro.getCampus() );
 		Turno turno = parametro.getTurno();
 
-		SolverInput solverInput = new SolverInput( cenario, parametro, campi, turno );
 		TriedaInput triedaInput = null;
+		SolverInput solverInput = new SolverInput(
+			cenario, parametro, campi, turno );
+
 		if ( parametro.isTatico() )
 		{
 			triedaInput = solverInput.generateTaticoTriedaInput();
@@ -89,7 +92,7 @@ public class OtimizarServiceImpl extends RemoteServiceServlet
 			triedaInput = solverInput.generateOperacionalTriedaInput();
 		}
 
-		byte[] fileBytes = null;
+		byte [] fileBytes = null;
 		try
 		{
 			final ByteArrayOutputStream temp = new ByteArrayOutputStream();

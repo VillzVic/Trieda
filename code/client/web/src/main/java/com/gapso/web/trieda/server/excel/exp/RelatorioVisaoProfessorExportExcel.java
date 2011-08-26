@@ -2,9 +2,11 @@ package com.gapso.web.trieda.server.excel.exp;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 
 import org.apache.poi.hssf.usermodel.HSSFCell;
@@ -155,17 +157,85 @@ public class RelatorioVisaoProfessorExportExcel
 	{
 		boolean idAdmin = true;
 
-		Professor professor = ( relatorioFiltro.getProfessorDTO() == null ? null :
-			Professor.find( relatorioFiltro.getProfessorDTO().getId() ) );
+		List< Professor > professores = null;
+		List< ProfessorVirtual > professoresVirtuais = null;
+		List< Turno > turnos = null;
 
-		ProfessorVirtual professorVirtual = ( relatorioFiltro.getProfessorVirtualDTO() == null ? null :
-			ProfessorVirtual.find( relatorioFiltro.getProfessorVirtualDTO().getId() ) );
+		// Recupera os dados preenchidos nos filtros
+		if ( relatorioFiltro != null )
+		{
+			Professor professor = ( relatorioFiltro.getProfessorDTO() == null ? null :
+				Professor.find( relatorioFiltro.getProfessorDTO().getId() ) );
 
-		Turno turno = Turno.find( relatorioFiltro.getTurnoDTO().getId() );
+			ProfessorVirtual professorVirtual = ( relatorioFiltro.getProfessorVirtualDTO() == null ? null :
+				ProfessorVirtual.find( relatorioFiltro.getProfessorVirtualDTO().getId() ) );
 
-		List< AtendimentoOperacional > atendimentosOperacional
-			= AtendimentoOperacional.getAtendimentosOperacional(
-				idAdmin, professor, professorVirtual, turno, this.isVisaoProfessor() );
+			if ( professor != null )
+			{
+				professores = new ArrayList< Professor >( 1 );
+				professores.add( professor );
+			}
+			else if ( professorVirtual != null )
+			{
+				professoresVirtuais = new ArrayList< ProfessorVirtual >( 1 );
+				professoresVirtuais.add( professorVirtual );
+			}
+
+			Turno turno = ( relatorioFiltro.getTurnoDTO() == null ? null :
+				Turno.find( relatorioFiltro.getTurnoDTO().getId() ) );
+
+			if ( turno == null )
+			{
+				turnos = Turno.findAll();
+			}
+			else
+			{
+				turnos = new ArrayList< Turno >( 1 );
+				turnos.add( turno );
+			}
+		}
+		else
+		{
+			// Relatorio solicitado a partir da opção de 'exportar tudo'
+			professores = Professor.findAll();
+			professoresVirtuais = ProfessorVirtual.findAll();
+			turnos = Turno.findAll();
+		}
+
+		Set< AtendimentoOperacional > atendimentosOperacional
+			= new HashSet< AtendimentoOperacional >();
+
+		// Atendimentos operacionais dos professores
+		if ( professores != null && professores.size() > 0 )
+		{
+			for ( Professor professor : professores )
+			{
+				for ( Turno turno : turnos )
+				{
+					List< AtendimentoOperacional > atendimentos
+						= AtendimentoOperacional.getAtendimentosOperacional(
+							idAdmin, professor, null, turno, this.isVisaoProfessor() );
+
+					atendimentosOperacional.addAll( atendimentos );
+				}
+			}
+		}
+
+		// Atendimentos operacionais dos professores virtuais
+		if ( professoresVirtuais != null && professoresVirtuais.size() > 0 )
+		{
+			for ( ProfessorVirtual professorVirtual : professoresVirtuais )
+			{
+				for ( Turno turno : turnos )
+				{
+					List< AtendimentoOperacional > atendimentos
+						= AtendimentoOperacional.getAtendimentosOperacional(
+							idAdmin, null, professorVirtual, turno, this.isVisaoProfessor() );
+
+					atendimentosOperacional.addAll( atendimentos );
+				}
+			}
+		}
 
 		List< AtendimentoOperacionalDTO > atendimentosOperacionalDTO
 			= new ArrayList< AtendimentoOperacionalDTO >();
@@ -253,6 +323,12 @@ public class RelatorioVisaoProfessorExportExcel
 				Map< Turno, List< AtendimentoOperacionalDTO > > mapNivel2 = mapNivel1.get( profId );
 				for ( Turno turno : mapNivel2.keySet() )
 				{
+					professor = Professor.find( profId );
+					if ( professor == null )
+					{
+						professorVirtual = ProfessorVirtual.find( profId );
+					}
+
 					if ( professor != null )
 					{
 						nextRow = writeProfessor( this.campus, professor, turno, mapNivel2.get( turno ),

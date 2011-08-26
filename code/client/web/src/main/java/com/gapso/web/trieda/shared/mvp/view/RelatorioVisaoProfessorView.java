@@ -40,7 +40,8 @@ public class RelatorioVisaoProfessorView extends MyComposite
 	private UsuarioDTO usuario;
 	private boolean isVisaoProfessor; 
 
-	public RelatorioVisaoProfessorView( UsuarioDTO usuario, boolean isVisaoProfessor )
+	public RelatorioVisaoProfessorView(
+		UsuarioDTO usuario, boolean isVisaoProfessor )
 	{
 		this.usuario = usuario;
 		this.isVisaoProfessor = isVisaoProfessor;
@@ -99,73 +100,87 @@ public class RelatorioVisaoProfessorView extends MyComposite
 		panel.setHeaderVisible(true);
 		panel.setHeading("Filtro");
 
-		LayoutContainer main = new LayoutContainer(new ColumnLayout());
+		LayoutContainer main = new LayoutContainer( new ColumnLayout() );
+		LayoutContainer left = new LayoutContainer( new FormLayout( LabelAlign.RIGHT ) );
+		LayoutContainer right = new LayoutContainer( new FormLayout( LabelAlign.RIGHT ) );
 
-		LayoutContainer left = new LayoutContainer(new FormLayout(LabelAlign.RIGHT));
-		LayoutContainer right = new LayoutContainer(new FormLayout(LabelAlign.RIGHT));
-		
-		if(usuario.isAdministrador()) {
+		if ( usuario.isAdministrador() )
+		{
 			campusCB = new CampusComboBox();
-			left.add(campusCB, formData);
+			left.add( campusCB, formData );
 		}
-		
-		turnoCB = new TurnoComboBox(campusCB, usuario.isProfessor());
-		left.add(turnoCB, formData);
-		
-		if(usuario.isAdministrador()) {
-			professorCB = new ProfessorComboBox(campusCB);
-			right.add(professorCB, formData);
-			professorVirtualCB = new ProfessorVirtualComboBox(campusCB);
-			right.add(professorVirtualCB, formData);
+
+		turnoCB = new TurnoComboBox( campusCB, usuario.isProfessor() );
+		left.add( turnoCB, formData );
+
+		if ( usuario.isAdministrador() )
+		{
+			professorCB = new ProfessorComboBox( campusCB );
+			right.add( professorCB, formData );
+
+			professorVirtualCB = new ProfessorVirtualComboBox( campusCB );
+			right.add( professorVirtualCB, formData );
 		}
-		
-		submitBt = new Button("Filtrar", AbstractImagePrototype.create(Resources.DEFAULTS.filter16()));
-		panel.addButton(submitBt);
-		
-		main.add(left, new ColumnData(.5));
-		main.add(right, new ColumnData(.5));
-		
-		panel.add(main, new FormData("100%"));
-		
-		BorderLayoutData bld = new BorderLayoutData(LayoutRegion.NORTH);
-		bld.setMargins(new Margins(5, 5, 0, 5));
-		bld.setCollapsible(true);
-		if(usuario.isAdministrador()) {
-			bld.setSize(130);
-		} else {
-			bld.setSize(103);
+
+		submitBt = new Button( "Filtrar", AbstractImagePrototype.create(
+			Resources.DEFAULTS.filter16() ) );
+		panel.addButton( submitBt );
+
+		main.add( left, new ColumnData( 0.5 ) );
+		main.add( right, new ColumnData( 0.5 ) );
+
+		panel.add( main, new FormData( "100%" ) );
+
+		BorderLayoutData bld = new BorderLayoutData( LayoutRegion.NORTH );
+
+		bld.setMargins( new Margins( 5, 5, 0, 5 ) );
+		bld.setCollapsible( true );
+
+		if ( usuario.isAdministrador() )
+		{
+			bld.setSize( 130 );
 		}
-		
-		this.panel.add(panel, bld);
+		else
+		{
+			bld.setSize( 103 );
+		}
+
+		this.panel.add( panel, bld );
 	}
-	
+
 	@Override
-	public GradeHorariaProfessorGrid getGrid() {
+	public GradeHorariaProfessorGrid getGrid()
+	{
 		return grid;
 	}
 
 	@Override
-	public Button getSubmitBuscaButton() {
+	public Button getSubmitBuscaButton()
+	{
 		return submitBt;
 	}
 
 	@Override
-	public CampusComboBox getCampusComboBox() {
+	public CampusComboBox getCampusComboBox()
+	{
 		return campusCB;
 	}
-	
+
 	@Override
-	public TurnoComboBox getTurnoComboBox() {
+	public TurnoComboBox getTurnoComboBox()
+	{
 		return turnoCB;
 	}
 
 	@Override
-	public ProfessorComboBox getProfessorComboBox() {
+	public ProfessorComboBox getProfessorComboBox()
+	{
 		return professorCB;
 	}
 
 	@Override
-	public ProfessorVirtualComboBox getProfessorVirtualComboBox() {
+	public ProfessorVirtualComboBox getProfessorVirtualComboBox()
+	{
 		return professorVirtualCB;
 	}
 
