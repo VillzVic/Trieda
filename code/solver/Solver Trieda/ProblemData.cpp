@@ -84,7 +84,7 @@ void ProblemData::le_arvore( TriedaInput & raiz )
    Demanda * demanda = NULL;
    ITERA_GGROUP_LESSPTR( it_demanda, demandas, Demanda )
    {
-	   demanda = *(it_demanda);
+	   demanda = ( *it_demanda );
 	   demanda->setId( id );
 	   id++;
    }
@@ -108,10 +108,10 @@ void ProblemData::le_arvore( TriedaInput & raiz )
 		    i < raiz.atendimentosTatico().get().AtendimentoCampus().size(); i++ )
       {
          ItemAtendimentoCampusSolucao * it_atendimento
-            = &( raiz.atendimentosTatico().get().AtendimentoCampus().at(i) );
+            = &( raiz.atendimentosTatico().get().AtendimentoCampus().at( i ) );
 
          AtendimentoCampusSolucao * item = new AtendimentoCampusSolucao();
-         item->le_arvore( *(it_atendimento) );
+         item->le_arvore( ( *it_atendimento ) );
          atendimentosTatico->add( item );
       }
    }
@@ -387,7 +387,7 @@ bool ProblemData::aulaAtendeCurso( Aula * aula, Curso * curso )
 }
 
 int ProblemData::calculaTempoEntreCampusUnidades( Campus * campus_atual, Campus * campus_anterior,
-                                                  Unidade * unidade_atual, Unidade * unidade_anterior )
+   Unidade * unidade_atual, Unidade * unidade_anterior )
 {
    int distancia = 0;
 
@@ -398,7 +398,7 @@ int ProblemData::calculaTempoEntreCampusUnidades( Campus * campus_atual, Campus 
          = this->tempo_campi.begin();
 
       for (; it_tempo_campi != this->tempo_campi.end();
-			 it_tempo_campi++)
+			    it_tempo_campi++ )
       {
          if ( it_tempo_campi->getOrigemId() == campus_anterior->getId()
 				&& it_tempo_campi->getDestinoId() == campus_atual->getId() )
@@ -434,12 +434,74 @@ int ProblemData::minutosIntervalo( DateTime dt1, DateTime dt2 )
    return minutes;
 }
 
+bool ProblemData::verificaDisponibilidadeDisciplinaHorario(
+   Disciplina * disciplina, HorarioAula * horario_aula )
+{
+   int idCalendarioDisc = -1;
+
+   ITERA_GGROUP_LESSPTR( it_curso, this->cursos, Curso )
+   {
+      Curso * curso = ( *it_curso );
+
+      if ( idCalendarioDisc >= 0 )
+      {
+         break;
+      }
+
+      ITERA_GGROUP_LESSPTR( it_curriculo, curso->curriculos, Curriculo )
+      {
+         Curriculo * curriculo = ( *it_curriculo );
+         
+         if ( idCalendarioDisc >= 0 )
+         {
+            break;
+         }
+
+         GGroup< std::pair< int, Disciplina * > >::iterator it_disc_periodo
+            = curriculo->disciplinas_periodo.begin();
+
+         for (; it_disc_periodo != curriculo->disciplinas_periodo.end();
+                it_disc_periodo++ )
+         {
+            int periodo = ( *it_disc_periodo ).first;
+            Disciplina * d = ( *it_disc_periodo ).second;
+
+            if ( d == disciplina )
+            {
+               idCalendarioDisc = curriculo->getSemanaLetivaId();
+               break;
+            }
+         }
+      }
+   }
+
+   if ( idCalendarioDisc < 0 )
+   {
+      std::cerr << "A disciplina " << disciplina->getCodigo()
+                << " nao esta associada a nenhums matriz curricular. "
+                << std::endl;
+
+      exit( 1 );
+   }
+
+   bool result = ( idCalendarioDisc >= 0 && horario_aula != NULL
+      && horario_aula->getCalendario() != NULL
+      && horario_aula->getCalendario()->getId() == idCalendarioDisc );
+
+   return result;
+}
+
 bool ProblemData::verificaUltimaPrimeiraAulas( HorarioDia * h1, HorarioDia * h2 )
 {
-   if ( abs( h1->getDia() - h2->getDia() ) == 1 )
+   if ( abs( h1->getDia() - h2->getDia() ) == 1
+      && h1->getHorarioAula()->getCalendario() == h2->getHorarioAula()->getCalendario() )
    {
-      HorarioAula * primeiroHorario = this->horarios_aula_ordenados[ 0 ];
-      HorarioAula * ultimoHorario = this->horarios_aula_ordenados[ this->horarios_aula_ordenados.size() - 1 ];
+      Calendario * calendario = h1->getHorarioAula()->getCalendario();
+
+      HorarioAula * primeiroHorario = this->mapCalendarioHorariosAulaOrdenados[ calendario ][ 0 ];
+
+      HorarioAula * ultimoHorario = this->mapCalendarioHorariosAulaOrdenados[ calendario ]
+         [ this->mapCalendarioHorariosAulaOrdenados[ calendario ].size() - 1 ];
 
       if ( ( h1->getHorarioAula() == primeiroHorario && h2->getHorarioAula() == ultimoHorario )
          || ( h2->getHorarioAula() == primeiroHorario && h1->getHorarioAula() == ultimoHorario ) )

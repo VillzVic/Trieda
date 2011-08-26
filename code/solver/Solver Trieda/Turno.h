@@ -9,15 +9,15 @@ class Turno :
    public OFBase
 {
 public:
-   Turno(void);
-   ~Turno(void);
+   Turno( void );
+   virtual ~Turno( void );
 
-   virtual void le_arvore(ItemTurno &);
+   virtual void le_arvore( ItemTurno & );
 
-   GGroup< HorarioAula * > horarios_aula;
+   GGroup< HorarioAula *, LessPtr< HorarioAula > > horarios_aula;
 
-   void setNome(std::string s) { nome = s; }   
-   void setTempoAula(int value) { tempo_aula = value; }
+   void setNome( std::string s ) { nome = s; }   
+   void setTempoAula( int value ) { tempo_aula = value; }
 
    std::string getNome() const { return nome; }
    int getTempoAula() const { return tempo_aula; }
@@ -27,4 +27,4 @@ private:
    int tempo_aula;
 };
 
-#endif // _TURNO_H_
+#endif

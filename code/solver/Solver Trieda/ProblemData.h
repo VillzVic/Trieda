@@ -78,7 +78,20 @@ public:
    // Verifica a ocorrência de última aula do dia (D) e primeira aula do dia (D+1)
    bool verificaUltimaPrimeiraAulas( HorarioDia *, HorarioDia * );
 
+   std::map< Calendario *, std::vector< HorarioAula * > > mapCalendarioHorariosAulaOrdenados;
    std::vector< HorarioAula * > horarios_aula_ordenados;
+
+   // Método que verifica se uma dada disciplina
+   // pertence a uma matriz curricular compatível
+   // com o calendário de um determinado horário de aula
+   // OBS.: Uma condição pressuposta nesse método é a de que
+   // nenhuma disciplina aparecerá em dois ou mais curriculos
+   // distintos que possuam calendários letivos distintos.
+   // Ou seja, uma disciplina não será oferecida com horários
+   // de 40 minutos em uma matriz curricular e em horários de
+   // 50 minutos em outra matriz curricular.
+   bool verificaDisponibilidadeDisciplinaHorario( Disciplina *, HorarioAula * );
+
    GGroup< AtendimentoCampusSolucao * > * atendimentosTatico;
 
    // Para cada dia da semana, informa o

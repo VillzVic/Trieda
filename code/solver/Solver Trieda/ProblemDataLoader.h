@@ -25,6 +25,7 @@ public:
    // Load the XML file
    void load();
 
+   void relacionaCalendarioHorariosAula();
    void geraRefsOfertasDemandas();
    void referenciaDisciplinasEquivalentesIncompativeis();
    void referenciaDisciplinasCurriculos();

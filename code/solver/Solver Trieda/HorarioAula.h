@@ -5,19 +5,24 @@
 #include "GGroup.h"
 #include "DateTime.h"
 
+class Calendario;
+
 class HorarioAula :
    public OFBase
 {
 public:
-   HorarioAula(void);
-   virtual ~HorarioAula(void);
+   HorarioAula( void );
+   virtual ~HorarioAula( void );
 
    virtual void le_arvore( ItemHorarioAula & );
 
    GGroup< int > dias_semana;
 
-   DateTime getInicio() const { return inicio; }
-   void setInicio( DateTime dt ) { inicio = dt; }
+   DateTime getInicio() const { return this->inicio; }
+   Calendario * getCalendario() const { return this->calendario; }
+
+   void setInicio( DateTime dt ) { this->inicio = dt; }
+   void setCalendario( Calendario * c ) { this->calendario = c; }
 
    virtual bool operator < ( HorarioAula const & right ) 
    { 
@@ -36,6 +41,7 @@ public:
 
 private:
    DateTime inicio;
+   Calendario * calendario;
 };
 
 #endif

@@ -1,21 +1,23 @@
 #include "HorarioAula.h"
 
-HorarioAula::HorarioAula(void)
+HorarioAula::HorarioAula( void )
 {
+   this->calendario = NULL;
 }
 
-HorarioAula::~HorarioAula(void)
+HorarioAula::~HorarioAula( void )
 {
+   this->calendario = NULL;
 }
 
-void HorarioAula::le_arvore(ItemHorarioAula& elem)
+void HorarioAula::le_arvore( ItemHorarioAula & elem )
 {
    this->setId( elem.id() );
-   inicio.setHour(elem.inicio().hours());
-   inicio.setMinute(elem.inicio().minutes());
+   this->inicio.setHour( elem.inicio().hours() );
+   this->inicio.setMinute( elem.inicio().minutes() );
 
-   ITERA_NSEQ(it_dia, elem.diasSemana(), diaSemana, DiaSemana)
+   ITERA_NSEQ( it_dia, elem.diasSemana(), diaSemana, DiaSemana )
    {
-      dias_semana.add(*it_dia);
+      this->dias_semana.add( *it_dia );
    }
 }

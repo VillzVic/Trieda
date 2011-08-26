@@ -209,10 +209,8 @@ bool VariableOp::operator == ( const VariableOp & var ) const
 
 std::string VariableOp::toString()
 {
-   std::stringstream str("");
+   std::stringstream str( "" );
    std::string output;
-
-   bool cond_disc = false;
 
    switch ( type )
    {
@@ -310,6 +308,16 @@ std::string VariableOp::toString()
    if ( sala != NULL )
    {
       str << "_(" << sala->getId() << ")";
+   }
+
+   if ( h1 != NULL )
+   {
+      str << "_( h1-" << h1->getId() << ")";
+   }
+
+   if ( h2 != NULL )
+   {
+      str << "_( h2-" << h2->getId() << ")";
    }
 
    str >> output;

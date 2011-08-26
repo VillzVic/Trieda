@@ -2,6 +2,7 @@
 #define _CALENDARIO_H_
 
 #include "ofbase.h"
+#include "GGroup.h"
 #include "Turno.h"
 
 class Calendario :
