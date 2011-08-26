@@ -676,7 +676,7 @@ void SolverMIP::converteCjtSalaEmSala()
             { 
                creditos_Livres_Sala[ ( *it_Sala ) ].push_back(
                   std::make_pair( it_Creds_Disp->getDiaSemana(),
-                  it_Creds_Disp->getMaxCreditos() ) );
+                                  it_Creds_Disp->getMaxCreditos() ) );
             }
          }
       }
@@ -701,7 +701,7 @@ void SolverMIP::converteCjtSalaEmSala()
    {
       disc_Salas_Cont.push_back(
          std::make_pair( it_Disc_Salas_Pref->first->getId(),
-         it_Disc_Salas_Pref->second.size() ) );
+                         it_Disc_Salas_Pref->second.size() ) );
    }
 
    // Ordenando.
@@ -740,6 +740,7 @@ void SolverMIP::converteCjtSalaEmSala()
    // Para cada disciplina da estrutura <disc_Salas> realiza-se alguma alocação
    std::vector< std::pair< int /*Disc id*/, int /*Qtd salas associadas*/ > >::iterator
       it_Disc_Salas = disc_Salas_Cont.begin();
+
    for (; it_Disc_Salas != disc_Salas_Cont.end(); ++it_Disc_Salas )
    {
       // Obtendo uma referencia para a disciplina em questão.
@@ -749,10 +750,10 @@ void SolverMIP::converteCjtSalaEmSala()
       if ( it_Ref_Disciplinas == problemData->refDisciplinas.end() )
       {
          std::cout << "\nOpa. Disciplina inexistente."
-            << "\n(SolverMIP::converteCjtSalaEmSala()) !!!"
-            << "\n\nSaindo." << std::endl;
+                   << "\n(SolverMIP::converteCjtSalaEmSala()) !!!"
+                   << "\n\nSaindo." << std::endl;
 
-         exit(1);
+         exit( 1 );
       }
 
       Disciplina * disciplina = it_Ref_Disciplinas->second;
@@ -776,21 +777,22 @@ void SolverMIP::converteCjtSalaEmSala()
       // 2 - turma
       // 3 - dia
       std::sort( vars_x_Disc.begin(),
-         vars_x_Disc.end(), ordenaVarsX );
+                 vars_x_Disc.end(), ordenaVarsX );
 
       // Estrutura que armazena separadamente, por unidade,
       // turma e tipo de sala, as variaveis x coletadas.
       // --> Unidade, TPS, Turma
       std::map< std::vector< int >,
          std::vector< Variable * > > vars_x_Disc_Und_TPS_Turma;
+
       ITERA_VECTOR( it_Vars_x_Disc, vars_x_Disc, Variable )
       {
          // Unidade, TPS, Turma
          std::vector< int > chave;
 
-         chave.push_back( ( *it_Vars_x_Disc)->getUnidade()->getId() );
-         chave.push_back( ( *it_Vars_x_Disc)->getSubCjtSala()->getId() );
-         chave.push_back( ( *it_Vars_x_Disc)->getTurma() );
+         chave.push_back( ( *it_Vars_x_Disc )->getUnidade()->getId() );
+         chave.push_back( ( *it_Vars_x_Disc )->getSubCjtSala()->getId() );
+         chave.push_back( ( *it_Vars_x_Disc )->getTurma() );
 
          vars_x_Disc_Und_TPS_Turma[ chave ].push_back( *it_Vars_x_Disc );
       }
@@ -866,107 +868,104 @@ void SolverMIP::converteCjtSalaEmSala()
                {
                   std::cout << "Opa. Sala nao encontrada na estrutura\n"
                             << "<creditos_Livres_Sala> (SolverMIP::converteCjtSalaEmSala()) !!!"
-                            << "\n\nSaindo." <<std::endl;
+                            << "\n\nSaindo." << std::endl;
 
-                  exit(1);
+                  exit( 1 );
                }
 
                // Indica se os dias demandados pelas vars x são
                // compatíveis com os dias disponíveis da sala.
                bool dias_Sala_Compativeis = true;
 
-               { // METODO
+               // Iterando em cada variavel X armazenada para o conjunto em questão
+               ITERA_VECTOR( it_Dias_Demandados_Vars_x, it_Vars_x_Disc_Und_TPS_Turma->second, Variable )
+               {
+                  // Iterando nos dias disponiveis da sala
+                  std::vector< std::pair< int /*dia*/, int /*creds. Livres*/ > >::iterator
+                     it_Dia = it_Creditos_Livres_Sala->second.begin();
 
-                  // Iterando em cada variavel X armazenada para o conjunto em questão
-                  ITERA_VECTOR( it_Dias_Demandados_Vars_x, it_Vars_x_Disc_Und_TPS_Turma->second, Variable )
+                  for (; it_Dia != it_Creditos_Livres_Sala->second.end(); ++it_Dia )
                   {
+                     // Se encontrei o dia, testo se tem a qtd de creds livres necessaria. Caso
+                     // nao possua a qtd de creditos livres necessaria, posso parar de tentar
+                     // alocar nessa sala.
+                     if ( it_Dia->first == ( *it_Dias_Demandados_Vars_x )->getDia() )
+                     {
+                        if ( it_Dia->second >= ( *it_Dias_Demandados_Vars_x )->getValue() )
+                        {
+                           // Nao faço nada aqui. A busca pelos outros dias continua.
+                           // Apenas dou um break por eficiência
+                           break;
+                        }
+                        else
+                        {
+                           dias_Sala_Compativeis = false;
+
+                           // Já que o dia é inviável, não
+                           // faz sentido buscar os outros dias.
+                           break;
+                        }
+                     }
+                  }
+
+                  if ( !dias_Sala_Compativeis )
+                  {
+                     // Parando o iterador <it_Dias_Demandados_Vars_x>.
+                     // Já se sabe que a sala não é compatível para o dia em questão. Portanto
+                     // paro a busca pelos demais dias livres que a sala pode ter.
+                     break;
+                  }
+               }
+
+               // Teste para saber se posso alocar na sala em questão.
+               if ( dias_Sala_Compativeis )
+               {
+                  // Iterando em cada variavel X armazenada
+                  ITERA_VECTOR( it_Dias_Demandados_Vars_x,
+                     it_Vars_x_Disc_Und_TPS_Turma->second, Variable )
+                  {
+                     if ( ( *it_Dias_Demandados_Vars_x )->getSala() != NULL )
+                     {
+                        std::cout << "Opa. Fui setar a sala para uma\n"
+                                  << "var x__i_u_tps_t e ja estava setada.\n"
+                                  << "(// Já que o dia e inviável, não faz sentido\n"
+                                  << "buscar os outros dias.) !!!"
+                                  << "\n\nSaindo." << std::endl;
+
+                        exit( 1 );
+                     }
+
+                     // Setando a sala na(s) variavel(eis)
+                     ( *it_Dias_Demandados_Vars_x )->setSala( *it_Salas_Ordenadas );
+
                      // Iterando nos dias disponiveis da sala
                      std::vector< std::pair< int /*dia*/, int /*creds. Livres*/ > >::iterator
                         it_Dia = it_Creditos_Livres_Sala->second.begin();
 
-                     for (; it_Dia != it_Creditos_Livres_Sala->second.end(); ++it_Dia )
+                     for (; it_Dia != it_Creditos_Livres_Sala->second.end(); it_Dia++ )
                      {
-                        // Se encontrei o dia, testo se tem a qtd de creds livres necessaria. Caso
-                        // nao possua a qtd de creditos livres necessaria, posso parar de tentar
-                        // alocar nessa sala.
+                        // Quando encontro o dia correto, atualizo
+                        // a estrutura que armazena  os créditos livres.
                         if ( it_Dia->first == ( *it_Dias_Demandados_Vars_x )->getDia() )
                         {
-                           if ( it_Dia->second >= ( *it_Dias_Demandados_Vars_x )->getValue() )
-                           {
-                              // Nao faço nada aqui. A busca pelos outros dias continua.
-                              // Apenas dou um break por eficiência
-                              break;
-                           }
-                           else
-                           {
-                              dias_Sala_Compativeis = false;
+                           it_Dia->second -= (int) ( *it_Dias_Demandados_Vars_x )->getValue();
 
-                              // Já que o dia é inviável, não
-                              // faz sentido buscar os outros dias.
-                              break;
-                           }
+                           // Apenas por eficiência
+                           break;
                         }
-                     }
-
-                     if ( !dias_Sala_Compativeis )
-                     {
-                        // Parando o iterador <it_Dias_Demandados_Vars_x>.
-                        // Já se sabe que a sala não é compatível para o dia em questão. Portanto
-                        // paro a busca pelos demais dias livres que a sala pode ter.
-                        break;
                      }
                   }
 
-                  // Teste para saber se posso alocar na sala em questão.
-                  if ( dias_Sala_Compativeis )
-                  {
-                     // Iterando em cada variavel X armazenada
-                     ITERA_VECTOR(it_Dias_Demandados_Vars_x,
-                        it_Vars_x_Disc_Und_TPS_Turma->second, Variable)
-                     {
-                        if ( ( *it_Dias_Demandados_Vars_x )->getSala() != NULL )
-                        {
-                           std::cout << "Opa. Fui setar a sala para uma\n"
-                                     << "var x__i_u_tps_t e ja estava setada.\n"
-                                     << "(// Já que o dia e inviável, não faz sentido\n"
-                                     << "buscar os outros dias.) !!!"
-                                     << "\n\nSaindo." << std::endl;
+                  // Setando a FLAG que indica se alocou ou não
+                  alocou = true;
 
-                           exit(1);
-                        }
-
-                        // Setando a sala na(s) variavel(eis)
-                        (*it_Dias_Demandados_Vars_x)->setSala( *it_Salas_Ordenadas );
-
-                        // Iterando nos dias disponiveis da sala
-                        std::vector< std::pair< int /*dia*/, int /*creds. Livres*/ > >::iterator
-                           it_Dia = it_Creditos_Livres_Sala->second.begin();
-
-                        for(; it_Dia != it_Creditos_Livres_Sala->second.end(); ++it_Dia)
-                        {
-                           // Quando encontro o dia correto, atualizo
-                           // a estrutura que armazena  os créditos livres.
-                           if(it_Dia->first == (*it_Dias_Demandados_Vars_x)->getDia())
-                           {
-                              it_Dia->second -= (int) (*it_Dias_Demandados_Vars_x)->getValue();
-
-                              // Apenas por eficiência
-                              break;
-                           }
-                        }
-                     }
-
-                     // Setando a FLAG que indica se alocou ou não
-                     alocou = true;
-
-                     // Parando a busca de salas.
-                     break;
-                  }
-                  else
-                  {
-                     // Nao faço nada. Deixo continuar
-                     // tentando alocar nas outras salas associadas.
-                  }
+                  // Parando a busca de salas.
+                  break;
+               }
+               else
+               {
+                  // Nao faço nada. Deixo continuar
+                  // tentando alocar nas outras salas associadas.
                }
             }
             else
@@ -977,23 +976,18 @@ void SolverMIP::converteCjtSalaEmSala()
          }
 
          // Checando se a alocação foi realizada.
-
          // Abaixo, devemos tratar da possível causa da alocação da turma da disciplina em questão
          // não ter sido realizada.
-
          // 1 - Quando a disciplina foi dividida em mais de 1 dia letivo para realizar um atendimento,
          // pode ser que não se tenha mais nenhuma sala com os dias letivos demandados com créditos livres
          // o suficiente.
-
          // Solução: Por eqto, atendo em quantas salas diferentes forem necessárias, sem um padrão de
          // escolha das salas.
-
          // Tinha outras causas, mas como mudei a heurística pra poder rodar pra todas as salas
          // associadas (pelo usuário e pelo solver), acredito que este seja o único erro.
 
          if ( !alocou )
          {
-
             // Estrutura que armazena separadamente, por unidade,
             // turma, tipo de sala e DIA, as variaveis x coletadas.
 
@@ -1006,21 +1000,21 @@ void SolverMIP::converteCjtSalaEmSala()
             {
                std::vector< int /*Unidade, TPS, Turma, Dia*/ > chave;
 
-               chave.push_back( ( *it_Dias_Demandados_Vars_x)->getUnidade()->getId() );
-               chave.push_back( ( *it_Dias_Demandados_Vars_x)->getSubCjtSala()->getId() );
-               chave.push_back( ( *it_Dias_Demandados_Vars_x)->getTurma() );
-               chave.push_back( ( *it_Dias_Demandados_Vars_x)->getDia() );
+               chave.push_back( ( *it_Dias_Demandados_Vars_x )->getUnidade()->getId() );
+               chave.push_back( ( *it_Dias_Demandados_Vars_x )->getSubCjtSala()->getId() );
+               chave.push_back( ( *it_Dias_Demandados_Vars_x )->getTurma() );
+               chave.push_back( ( *it_Dias_Demandados_Vars_x )->getDia() );
 
                if ( vars_x_Disc_Und_TPS_Turma_DIA.find( chave )
                   != vars_x_Disc_Und_TPS_Turma_DIA.end() )
                {
                   std::cout << "Opa. Fui add um dado na estrutura\n"
-                     << "<vars_x_Disc_Und_TPS_Turma_DIA> e iria\n"
-                     << "sobrescrever um existente. VOLTAR PARA VECTOR.\n"
-                     << "(SolverMIP::converteCjtSalaEmSala()) !!!"
-                     << "\n\nSaindo." << std::endl;
+                            << "<vars_x_Disc_Und_TPS_Turma_DIA> e iria\n"
+                            << "sobrescrever um existente. VOLTAR PARA VECTOR.\n"
+                            << "(SolverMIP::converteCjtSalaEmSala()) !!!"
+                            << "\n\nSaindo." << std::endl;
 
-                  exit(1);
+                  exit( 1 );
                }
 
                vars_x_Disc_Und_TPS_Turma_DIA[ chave ] = ( *it_Dias_Demandados_Vars_x );
@@ -1031,7 +1025,7 @@ void SolverMIP::converteCjtSalaEmSala()
 
             // Iterando em cada variavel da estrutura <vars_x_Disc_Und_TPS_Turma_DIA>
             for(; it_Vars_x_Disc_Und_TPS_Turma_DIA != vars_x_Disc_Und_TPS_Turma_DIA.end(); 
-               it_Vars_x_Disc_Und_TPS_Turma_DIA++ )
+                  it_Vars_x_Disc_Und_TPS_Turma_DIA++ )
             {
                bool continuaBusca = false;
 
@@ -1040,19 +1034,19 @@ void SolverMIP::converteCjtSalaEmSala()
                {
                   // Checando se a sala em questão pertence ao TPS especificado pelo solver
                   if ( it_Vars_x_Disc_Und_TPS_Turma_DIA->second->getSubCjtSala()->salas.find(
-                     ( *it_Salas_Ordenadas )->getId()) != 
+                     ( *it_Salas_Ordenadas )->getId() ) != 
                      it_Vars_x_Disc_Und_TPS_Turma_DIA->second->getSubCjtSala()->salas.end() )
                   {
                      std::map< Sala *, std::vector< std::pair< int /*dia*/, int /*creds. Livres*/ > > >::iterator
                         it_Creditos_Livres_Sala = creditos_Livres_Sala.find( *it_Salas_Ordenadas );
 
-                     if(it_Creditos_Livres_Sala == creditos_Livres_Sala.end())
+                     if ( it_Creditos_Livres_Sala == creditos_Livres_Sala.end() )
                      {
                         std::cout << "Opa. Sala nao encontrada na estrutura <creditos_Livres_Sala>\n"
-                           << "(SolverMIP::converteCjtSalaEmSala()) !!!\n"
-                           << "\n\nSaindo." << std::endl;
+                                  << "(SolverMIP::converteCjtSalaEmSala()) !!!\n"
+                                  << "\n\nSaindo." << std::endl;
 
-                        exit(1);
+                        exit( 1 );
                      }
 
                      // Indica se o dia demandado pela var x em
@@ -1143,19 +1137,18 @@ void SolverMIP::converteCjtSalaEmSala()
                            if ( it_Creditos_Livres_Sala == creditos_Livres_Sala.end() )
                            {
                               std::cout << "Opa. Sala nao encontrada na estrutura\n"
-                                 << "<creditos_Livres_Sala>\n"
-                                 << "(SolverMIP::converteCjtSalaEmSala()) !!!"
-                                 << "\n\nSaindo." << std::endl;
+                                        << "<creditos_Livres_Sala>\n"
+                                        << "(SolverMIP::converteCjtSalaEmSala()) !!!"
+                                        << "\n\nSaindo." << std::endl;
 
-                              exit(1);
+                              exit( 1 );
                            }
 
                            // Iterando nos dias disponiveis da sala
                            std::vector< std::pair< int /*dia*/, int /*creds. Livres*/ > >::iterator
                               it_Dia = ( it_Creditos_Livres_Sala->second.begin() );
 
-                           for (; it_Dia != it_Creditos_Livres_Sala->second.end();
-                              it_Dia++ )
+                           for (; it_Dia != it_Creditos_Livres_Sala->second.end(); it_Dia++ )
                            {
                               // Se encontrei o dia, testo se tem a qtd de creds
                               // livres necessaria. Caso nao possua a qtd de creditos
@@ -1233,7 +1226,8 @@ void SolverMIP::converteCjtSalaEmSala()
                         }
                         else
                         {
-                           // Nao faço nada. Deixo continuar tentando alocar nas outras salas associadas.
+                           // Nao faço nada. Deixo continuar tentando
+                           // alocar nas outras salas associadas.
                         }
                      }
                   }
@@ -1260,7 +1254,7 @@ void SolverMIP::converteCjtSalaEmSala()
                  ( *it_Vars_x )->getSubCjtSala()->getId(),
                  ( *it_Vars_x )->getDia() );
 
-         exit(1);
+         exit( 1 );
       }
 
       std::cout << (*it_Vars_x)->getValue() << "\t\t"
@@ -2034,7 +2028,7 @@ void SolverMIP::getSolutionOperacionalMIP()
 
       if ( !achou )
       {
-         ProfessorVirtualOutput *professor_virtual = new ProfessorVirtualOutput();
+         ProfessorVirtualOutput * professor_virtual = new ProfessorVirtualOutput();
 
          professor_virtual->setId( v->getProfessor()->getId() );
          professor_virtual->setChMin( v->getProfessor()->getChMin() );
@@ -2298,6 +2292,7 @@ void SolverMIP::preencheOutputOperacionalMIP( ProblemSolution *solution )
 
 void SolverMIP::preencheOutputOperacional( ProblemSolution * solution )
 {
+   /*
    Campus * campus = NULL;
    Unidade * unidade = NULL;
    Sala * sala = NULL;
@@ -2328,15 +2323,15 @@ void SolverMIP::preencheOutputOperacional( ProblemSolution * solution )
 
                it_At_DiaSemana->atendimentos_turno = new GGroup< AtendimentoTurno * >();
 
-               vector< vector< Aula * > * >::iterator
+               std::vector< std::vector< Aula * > * >::iterator
                   it_matriz_aulas = matriz_aulas->begin();
 
                for (; it_matriz_aulas != matriz_aulas->end(); it_matriz_aulas++ )
                {
                   int linha_professor = std::distance( matriz_aulas->begin(), it_matriz_aulas );
 
-                  vector< Aula * > * aulas = ( *it_matriz_aulas );
-                  vector< Aula * >::iterator it_aula = aulas->begin();
+                  std::vector< Aula * > * aulas = ( *it_matriz_aulas );
+                  std::vector< Aula * >::iterator it_aula = aulas->begin();
 
                   for (; it_aula != aulas->end(); it_aula++ )
                   {
@@ -2422,6 +2417,7 @@ void SolverMIP::preencheOutputOperacional( ProblemSolution * solution )
          }
       }
    }
+   */
 }
 
 bool SolverMIP::aulaAlocada( Aula * aula, Campus * campus,
@@ -11213,6 +11209,7 @@ int SolverMIP::criaVariaveisOperacional()
 int SolverMIP::criaVariavelProfessorAulaHorario()
 {
    int num_vars = 0;
+   double coeff = 0.0;
 
    ITERA_GGROUP_LESSPTR( itProfessor, ( *problemData->campi.begin() )->professores, Professor )
    {
@@ -11233,7 +11230,8 @@ int SolverMIP::criaVariavelProfessorAulaHorario()
                ( itProfessor->getId(), discMinistradaProf->getId() );
 
             // Se o professor e a disciplina da aula em questão se relacionarem:
-            if ( problemData->prof_Disc_Dias.find( prof_disc ) == problemData->prof_Disc_Dias.end() )
+            if ( problemData->prof_Disc_Dias.find( prof_disc )
+                  == problemData->prof_Disc_Dias.end() )
             {
                continue;
             }
@@ -11262,8 +11260,6 @@ int SolverMIP::criaVariavelProfessorAulaHorario()
                v.setSala( aula->getSala() );
                v.setDia( horarioDia->getDia() );
 
-               double coeff = 0.0;
-
                if ( vHashOp.find( v ) == vHashOp.end() )
                {
                   vHashOp[ v ] = lp->getNumCols();
@@ -11282,7 +11278,7 @@ int SolverMIP::criaVariavelProfessorAulaHorario()
    // Professores virtuais para as aulas
    ITERA_GGROUP_LESSPTR( it_aula, problemData->aulas, Aula )
    {
-      Aula * aula = *it_aula;
+      Aula * aula = ( *it_aula );
       Disciplina * discAula = aula->getDisciplina();
 
       // Retorna lista de horarios possiveis para o professor, aula e sala
@@ -11293,7 +11289,7 @@ int SolverMIP::criaVariavelProfessorAulaHorario()
       for ( std::list< HorarioDia * >::iterator itHor = listaHorarios.begin();
             itHor != listaHorarios.end(); itHor++ )
       {
-         HorarioDia * horarioDia = *itHor;
+         HorarioDia * horarioDia = ( *itHor );
 
          VariableOp v;
          v.reset();
@@ -11328,6 +11324,7 @@ int SolverMIP::criaVariavelProfessorDisciplina()
 {
    int num_vars = 0;
 
+   double coeff = 0.0;
    double pesoNota = 100;
    double pesoPreferencia = 100;
 
@@ -11381,7 +11378,7 @@ int SolverMIP::criaVariavelProfessorDisciplina()
             // de desempenho na função objetivo variam
             // entre 0 e 9, sendo 0 o MELHOR CASO e 9 o PIOR CASO
             //------------------------------------------------------
-            double coeff = ( ( 10 - nota ) * ( pesoNota )
+            coeff = ( ( 10 - nota ) * ( pesoNota )
                + ( preferencia - 1 ) * ( pesoPreferencia ) );
 
             if ( vHashOp.find( v ) == vHashOp.end() )
@@ -11404,6 +11401,7 @@ int SolverMIP::criaVariavelProfessorDisciplina()
 int SolverMIP::criaVariavelDisciplinaHorario()
 {
    int num_vars = 0;
+   double coeff = 0.0;
 
    ITERA_GGROUP_LESSPTR( itAula, problemData->aulas, Aula )
    {
@@ -11414,21 +11412,20 @@ int SolverMIP::criaVariavelDisciplinaHorario()
 
       retornaHorariosPossiveis( NULL, *itAula, listaHorarios );
 
-      for ( std::list< HorarioDia * >::iterator itHor = listaHorarios.begin(); itHor != listaHorarios.end(); itHor++ )
+      for ( std::list< HorarioDia * >::iterator itHor = listaHorarios.begin();
+            itHor != listaHorarios.end(); itHor++ )
       {
-         HorarioDia * horarioDia = *itHor;
+         HorarioDia * horarioDia = ( *itHor );
 
          VariableOp v;
          v.reset();
          v.setType( VariableOp::V_Z_DISCIPLINA_HOR );
 
-         Aula * aula = *itAula;
+         Aula * aula = ( *itAula );
 
          v.setHorarioAula( horarioDia->getHorarioAula() );
          v.setDisciplina( aula->getDisciplina() );
          v.setTurma( aula->getTurma() );
-
-         double coeff = 0.0;
 
          if ( vHashOp.find( v ) == vHashOp.end() )
          {
@@ -11446,7 +11443,8 @@ int SolverMIP::criaVariavelDisciplinaHorario()
    return num_vars;
 }
 
-void SolverMIP::retornaHorariosPossiveis( Professor * prof, Aula * aula, std::list< HorarioDia * > & listaHor )
+void SolverMIP::retornaHorariosPossiveis( Professor * prof,
+   Aula * aula, std::list< HorarioDia * > & listaHor )
 {
    listaHor.clear();
 
@@ -11454,6 +11452,7 @@ void SolverMIP::retornaHorariosPossiveis( Professor * prof, Aula * aula, std::li
    {
       Disciplina * disc = aula->getDisciplina();
       Sala * sala = aula->getSala();
+
       int nCred = aula->getTotalCreditos();
       int diaS = aula->getDiaSemana();
 
@@ -11530,7 +11529,13 @@ void SolverMIP::retornaHorariosPossiveis( Professor * prof, Aula * aula, std::li
 
          if ( horarioOK )
          {
-            listaHor.push_back( horarioDia );
+            bool verificaDisciplinaHorario = this->problemData->verificaDisponibilidadeDisciplinaHorario(
+               aula->getDisciplina(), horarioDia->getHorarioAula() );
+
+            if ( verificaDisciplinaHorario )
+            {
+               listaHor.push_back( horarioDia );
+            }
          }
       }
    }
@@ -11538,6 +11543,7 @@ void SolverMIP::retornaHorariosPossiveis( Professor * prof, Aula * aula, std::li
    {
       Disciplina * disc = aula->getDisciplina();
       Sala * sala = aula->getSala();
+
       int nCred = aula->getTotalCreditos();
       int diaS = aula->getDiaSemana();
 
@@ -11603,7 +11609,13 @@ void SolverMIP::retornaHorariosPossiveis( Professor * prof, Aula * aula, std::li
 
          if ( horarioOK )
          {
-            listaHor.push_back( horarioDia );
+            bool verificaDisciplinaHorario = this->problemData->verificaDisponibilidadeDisciplinaHorario(
+               aula->getDisciplina(), horarioDia->getHorarioAula() );
+
+            if ( verificaDisciplinaHorario )
+            {
+               listaHor.push_back( horarioDia );
+            }
          }
       }
    }
@@ -11612,10 +11624,11 @@ void SolverMIP::retornaHorariosPossiveis( Professor * prof, Aula * aula, std::li
 int SolverMIP::criaVariavelFolgaFixProfDiscSalaDiaHor()
 {
    int num_vars = 0;
+   double coeff = 1000.0;
 
    ITERA_GGROUP_LESSPTR( itFix, problemData->fixacoes_Prof_Disc_Sala_Dia_Horario, Fixacao )
    {
-      Fixacao * fixacao = *itFix;
+      Fixacao * fixacao = ( *itFix );
 
       VariableOp v;
       v.reset();
@@ -11641,9 +11654,7 @@ int SolverMIP::criaVariavelFolgaFixProfDiscSalaDiaHor()
 
       v.setHorario( *itH );
 
-      double coeff = 100000.0;
-
-      if ( vHashOp.find(v) == vHashOp.end() )
+      if ( vHashOp.find( v ) == vHashOp.end() )
       {
          vHashOp[v] = lp->getNumCols();
 
@@ -11661,10 +11672,11 @@ int SolverMIP::criaVariavelFolgaFixProfDiscSalaDiaHor()
 int SolverMIP::criaVariavelFolgaFixProfDiscDiaHor()
 {
    int num_vars = 0;
+   double coeff = 1000.0;
 
    ITERA_GGROUP_LESSPTR( itFix, problemData->fixacoes_Prof_Disc_Dia_Horario, Fixacao )
    {
-      Fixacao * fixacao = *itFix;
+      Fixacao * fixacao = ( *itFix );
 
       VariableOp v;
       v.reset();
@@ -11689,8 +11701,6 @@ int SolverMIP::criaVariavelFolgaFixProfDiscDiaHor()
 
       v.setHorario( *itH );
 
-      double coeff = 100000.0;
-
       if ( vHashOp.find( v ) == vHashOp.end() )
       {
          vHashOp[ v ] = lp->getNumCols();
@@ -11709,18 +11719,17 @@ int SolverMIP::criaVariavelFolgaFixProfDiscDiaHor()
 int SolverMIP::criaVariavelFolgaFixProfDisc()
 {
    int num_vars = 0;
+   double coeff = 1000.0;
 
-   ITERA_GGROUP_LESSPTR(itFix, problemData->fixacoes_Prof_Disc,Fixacao)
+   ITERA_GGROUP_LESSPTR( itFix, problemData->fixacoes_Prof_Disc, Fixacao )
    {
-      Fixacao *fixacao = *itFix;
+      Fixacao * fixacao = ( *itFix );
 
       VariableOp v;
       v.reset();
       v.setType( VariableOp::V_F_FIX_PROF_DISC );
       v.setDisciplina( fixacao->disciplina );
       v.setProfessor( fixacao->professor );
-
-      double coeff = 100000.0;
 
       if ( vHashOp.find( v ) == vHashOp.end() )
       {
@@ -11740,18 +11749,17 @@ int SolverMIP::criaVariavelFolgaFixProfDisc()
 int SolverMIP::criaVariavelFolgaFixProfDiscSala()
 {
    int num_vars = 0;
+   double coeff = 1000.0;
 
-   ITERA_GGROUP_LESSPTR(itFix, problemData->fixacoes_Prof_Disc_Sala,Fixacao)
+   ITERA_GGROUP_LESSPTR( itFix, problemData->fixacoes_Prof_Disc_Sala, Fixacao )
    {
-      Fixacao *fixacao = *itFix;
+      Fixacao * fixacao = ( *itFix );
 
       VariableOp v;
       v.reset();
       v.setType( VariableOp::V_F_FIX_PROF_DISC_SALA );
-      v.setDisciplina(fixacao->disciplina);
-      v.setProfessor(fixacao->professor);
-
-      double coeff = 100000.0;
+      v.setDisciplina( fixacao->disciplina );
+      v.setProfessor( fixacao->professor );
 
       if ( vHashOp.find(v) == vHashOp.end() )
       {
@@ -11808,7 +11816,7 @@ int SolverMIP::criaVariavelFolgaDisciplinaHorario()
       Disciplina * discAula = itAula->getDisciplina();
 
       // Retorna lista de horarios possiveis para o professor, aula e sala
-      std::list<HorarioDia*> listaHorarios;
+      std::list< HorarioDia * > listaHorarios;
 
       retornaHorariosPossiveis( NULL, *itAula, listaHorarios );
 
@@ -11821,7 +11829,7 @@ int SolverMIP::criaVariavelFolgaDisciplinaHorario()
          v.reset();
          v.setType( VariableOp::V_F_DISC_HOR );
 
-         Aula *aula = *itAula;
+         Aula * aula = ( *itAula );
 
          v.setHorarioAula( horarioDia->getHorarioAula() );
          v.setDia( horarioDia->getDia() );
@@ -11921,7 +11929,7 @@ int SolverMIP::criaVariavelCustoCorpoDocente()
 {
    int num_vars = 0;
    double coeff = 0.0;
-   double alfa = 10000.0;
+   double alfa = 1000.0;
 
    GGroup< Professor *, LessPtr< Professor > > professores
       = problemData->campi.begin()->professores;
@@ -11956,7 +11964,7 @@ int SolverMIP::criaVariavelCustoCorpoDocente()
 int SolverMIP::criaVariavelDiasProfessoresMinistramAulas()
 {
    int num_vars = 0;
-   double coeff = 100000.0;
+   double coeff = 1000.0;
 
    GGroup< Professor *, LessPtr< Professor > > professores
       = problemData->campi.begin()->professores;
@@ -12010,7 +12018,7 @@ int SolverMIP::criaVariavelDiasProfessoresMinistramAulas()
 int SolverMIP::criaVariavelFolgaMinimoMestresCurso()
 {
    int num_vars = 0;
-   double coeff = 100000.0;
+   double coeff = 1000.0;
    int ub = problemData->campi.begin()->professores.size();
 
    ITERA_GGROUP_LESSPTR( it_curso, problemData->cursos, Curso )
@@ -12041,7 +12049,7 @@ int SolverMIP::criaVariavelFolgaMinimoMestresCurso()
 int SolverMIP::criaVariavelFolgaMinimoDoutoresCurso()
 {
    int num_vars = 0;
-   double coeff = 100000.0;
+   double coeff = 1000.0;
    int ub = problemData->campi.begin()->professores.size();
 
    ITERA_GGROUP_LESSPTR( it_curso, problemData->cursos, Curso )
@@ -12119,7 +12127,7 @@ int SolverMIP::criaVariavelMaxDiscProfCurso()
 int SolverMIP::criaVariavelFolgaMaxDiscProfCurso()
 {
    int num_vars = 0;
-   double coeff = 1000000.0;
+   double coeff = 1000.0;
 
    GGroup< Professor *, LessPtr< Professor > > professores
       = problemData->campi.begin()->professores;
@@ -12166,7 +12174,7 @@ int SolverMIP::criaVariavelFolgaMaxDiscProfCurso()
 int SolverMIP::criaVariavelFolgaCargaHorariaMinimaProfessor()
 {
    int num_vars = 0;
-   double coeff = 100000.0;
+   double coeff = 1000.0;
    int ub = 168; // Total de horas da semana
 
    GGroup< Professor *, LessPtr< Professor > > professores
@@ -12199,7 +12207,7 @@ int SolverMIP::criaVariavelFolgaCargaHorariaMinimaProfessor()
 int SolverMIP::criaVariavelFolgaCargaHorariaMinimaProfessorSemana()
 {
    int num_vars = 0;
-   double coeff = 100000.0;
+   double coeff = 1000.0;
    int ub = 168; // Total de horas da semana
 
    GGroup< Professor *, LessPtr< Professor > > professores
@@ -12232,7 +12240,7 @@ int SolverMIP::criaVariavelFolgaCargaHorariaMinimaProfessorSemana()
 int SolverMIP::criaVariavelFolgaCargaHorariaMaximaProfessorSemana()
 {
    int num_vars = 0;
-   double coeff = 100000.0;
+   double coeff = 1000.0;
    int ub = 168; // Total de horas da semana
 
    GGroup< Professor *, LessPtr< Professor > > professores
@@ -12266,7 +12274,7 @@ int SolverMIP::criaVariavelAvaliacaoCorpoDocente()
 {
    int num_vars = 0;
    double coeff = 0.0;
-   double alfa = 10000.0;
+   double alfa = 1000.0;
 
    GGroup< Professor *, LessPtr< Professor > > professores
       = problemData->campi.begin()->professores;
@@ -12312,7 +12320,11 @@ int SolverMIP::criaVariavelGapsProfessores()
 {
    int num_vars = 0;
    double coeff = 0.0;
-   double alfa = 10000.0;
+   
+   // Custo da variável do gap, que deve 
+   // multiplicado pelo número de horários
+   // de aula o gap de horários
+   double alfa = 10.0;
 
    GGroup< Professor *, LessPtr< Professor > > professores
       = problemData->campi.begin()->professores;
@@ -12326,16 +12338,24 @@ int SolverMIP::criaVariavelGapsProfessores()
    ITERA_GGROUP_LESSPTR( it_prof, professores, Professor )
    {
       Professor * professor = ( *it_prof );
-      
+
       ITERA_GGROUP_N_PT( it_dia, dias_letivos, int )
       {
          int dia = ( *it_dia );
 
          for ( int ini = 0; ini < (int)problemData->horarios_aula_ordenados.size(); ini++ )
          {
-            for ( int fim = ini+1; fim < (int)problemData->horarios_aula_ordenados.size(); fim++ )
+            for ( int fim = ini + 1; fim < (int)problemData->horarios_aula_ordenados.size(); fim++ )
             {
+               HorarioAula * h1 = problemData->horarios_aula_ordenados[ ini ];
+               HorarioAula * h2 = problemData->horarios_aula_ordenados[ fim ];
+
                if ( abs( fim - ini ) <= 1 )
+               {
+                  continue;
+               }
+
+               if ( h1->getCalendario() != h2->getCalendario() )
                {
                   continue;
                }
@@ -12346,13 +12366,13 @@ int SolverMIP::criaVariavelGapsProfessores()
 
                v.setProfessor( professor );
                v.setDia( dia );
-               v.setH1( problemData->horarios_aula_ordenados[ ini ] );
-               v.setH2( problemData->horarios_aula_ordenados[ fim ] );
+               v.setH1( h1 );
+               v.setH2( h2 );
 
                if ( vHashOp.find( v ) == vHashOp.end() )
                {
                   // Leva em consideração o número de horários no gap
-                  coeff = ( fim - ini )*1000000.0;
+                  coeff = ( fim - ini ) * alfa;
 
                   vHashOp[ v ] = lp->getNumCols();
 
@@ -12374,7 +12394,7 @@ int SolverMIP::criaVariavelFolgaUltimaPrimeiraAulas()
 {
    int num_vars = 0;
    double coeff = 0.0;
-   double alfa = 10000.0;
+   double alfa = 1000.0;
 
    GGroup< Professor *, LessPtr< Professor > > professores
       = problemData->campi.begin()->professores;
@@ -12639,8 +12659,8 @@ int SolverMIP::criaRestricoesOperacional()
    numRestAnterior = restricoes;
 #endif
 
-   //lp->updateLP();
-   //restricoes += criaRestricaoGapsProfessores();
+   lp->updateLP();
+   restricoes += criaRestricaoGapsProfessores();
 
 #ifdef PRINT_cria_restricoes
    std::cout << "numRest C_GAPS_PROFESSORES: " << ( restricoes - numRestAnterior ) << std::endl;
@@ -12651,7 +12671,8 @@ int SolverMIP::criaRestricoesOperacional()
    return restricoes;
 }
 
-void SolverMIP::chgCoeffList( std::vector< std::pair< int, int > > cL, std::vector< double > cLV )
+void SolverMIP::chgCoeffList( std::vector< std::pair< int, int > > cL,
+   std::vector< double > cLV )
 {
    lp->updateLP();
 
@@ -12667,6 +12688,7 @@ void SolverMIP::chgCoeffList( std::vector< std::pair< int, int > > cL, std::vect
    }
 
    lp->chgCoefList( (int)cL.size(), rList, cList, vList );
+
    delete [] rList;
    delete [] cList;
    delete [] vList;
@@ -12675,18 +12697,20 @@ void SolverMIP::chgCoeffList( std::vector< std::pair< int, int > > cL, std::vect
 int SolverMIP::criaRestricaoSalaHorario()
 {
    int restricoes = 0;
+
    ConstraintOp c;
    VariableOpHash::iterator vit;
    ConstraintOpHash::iterator cit;
-   std::vector<std::pair<int,int> > coeffList;
-   std::vector<double> coeffListVal;
-   std::pair<int,int> auxCoef;
+
+   std::vector< std::pair< int, int > > coeffList;
+   std::vector< double > coeffListVal;
+   std::pair< int, int > auxCoef;
+
    int nnz;
    char name[ 200 ];
 
    vit = vHashOp.begin();
-
-   while (vit != vHashOp.end())
+   while ( vit != vHashOp.end() )
    {
       VariableOp v = vit->first;
 
@@ -12697,23 +12721,23 @@ int SolverMIP::criaRestricaoSalaHorario()
       }
 
       int nCred = v.getAula()->getTotalCreditos();
-      int idxHor = problemData->getHorarioDiaIdx(v.getHorario());
+      int idxHor = problemData->getHorarioDiaIdx( v.getHorario() );
 
-      for (int h = idxHor; h < idxHor+nCred; h++)
+      for ( int h = idxHor; h < ( idxHor + nCred ); h++ )
       {
          c.reset();
          c.setType( ConstraintOp::C_SALA_HORARIO );
-         c.setSala(v.getAula()->getSala());
-         c.setHorario(problemData->horariosDiaIdx[h]);
+         c.setSala( v.getAula()->getSala() );
+         c.setHorario( problemData->horariosDiaIdx[ h ] );
 
-         cit = cHashOp.find(c);
-
+         cit = cHashOp.find( c );
          if ( cit != cHashOp.end() )
          {
             auxCoef.first = cit->second;
             auxCoef.second = vit->second;
-            coeffList.push_back(auxCoef);
-            coeffListVal.push_back(1.0);
+
+            coeffList.push_back( auxCoef );
+            coeffListVal.push_back( 1.0 );
          }
          else
          {
@@ -12722,14 +12746,14 @@ int SolverMIP::criaRestricaoSalaHorario()
 
             OPT_ROW row( nnz, OPT_ROW::LESS , 1.0, name );
 
-            row.insert(vit->second,1.0);
+            row.insert( vit->second, 1.0 );
             cHashOp[ c ] = lp->getNumRows();
 
             lp->addRow( row );
             restricoes++;
          }   
       }
-               
+
       vit++;
    }
 
@@ -12740,6 +12764,7 @@ int SolverMIP::criaRestricaoSalaHorario()
 int SolverMIP::criaRestricaoProfessorHorario()
 {
    int restricoes = 0;
+
    ConstraintOp c;
    VariableOpHash::iterator vit;
    ConstraintOpHash::iterator cit;
@@ -12747,16 +12772,17 @@ int SolverMIP::criaRestricaoProfessorHorario()
    std::vector< std::pair< int, int > > coeffList;
    std::vector< double > coeffListVal;
    std::pair< int , int > auxCoef;
+
    int nnz;
    char name[ 200 ];
 
    vit = vHashOp.begin();
-
    while ( vit != vHashOp.end() )
    {
       VariableOp v = vit->first;
 
-      if ( v.getType() != VariableOp::V_X_PROF_AULA_HOR || v.getProfessor() == NULL )
+      if ( v.getType() != VariableOp::V_X_PROF_AULA_HOR
+         || v.getProfessor() == NULL )
       {
          vit++;
          continue;
@@ -12773,7 +12799,6 @@ int SolverMIP::criaRestricaoProfessorHorario()
          c.setHorario( problemData->horariosDiaIdx[ h ] );
 
          cit = cHashOp.find( c );
-
          if ( cit != cHashOp.end() )
          {
             auxCoef.first = cit->second;
@@ -15026,9 +15051,10 @@ int SolverMIP::criaRestricaoGapsProfessores()
    VariableOpHash::iterator vit1;
    VariableOpHash::iterator vit2;
 
-   // Horários * Aulas * Dias Letivos
    const int totalHorariosAula
-         = problemData->horarios_aula_ordenados.size();
+         = problemData->horarios_aula_ordenados .size();
+
+   // Horários * Aulas * Dias Letivos
    int nnz = ( totalHorariosAula * problemData->aulas.size() * 5 );
    double rhs = 1.0;
    char name[ 200 ];

@@ -96,18 +96,18 @@ public class Professor
 	@ManyToMany
 	private Set< Campus > campi = new HashSet< Campus >();
 
-	@ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, mappedBy = "professores")
-	private Set<HorarioDisponivelCenario> horarios = new HashSet<HorarioDisponivelCenario>();
+	@ManyToMany( cascade = { CascadeType.PERSIST, CascadeType.MERGE }, mappedBy = "professores" )
+	private Set< HorarioDisponivelCenario > horarios = new HashSet< HorarioDisponivelCenario >();
 
 	@NotNull
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "professor")
-	private Set<ProfessorDisciplina> disciplinas = new HashSet<ProfessorDisciplina>();
+	@OneToMany( cascade = CascadeType.ALL, mappedBy = "professor" )
+	private Set< ProfessorDisciplina > disciplinas = new HashSet< ProfessorDisciplina >();
 
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "professor")
-	private Set<AtendimentoOperacional> atendimentosOperacionais = new HashSet<AtendimentoOperacional>();
+	@OneToMany( cascade = CascadeType.ALL, mappedBy = "professor" )
+	private Set< AtendimentoOperacional > atendimentosOperacionais = new HashSet< AtendimentoOperacional >();
 
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "professor")
-	private Set<Usuario> usuario = new HashSet<Usuario>();
+	@OneToMany( cascade = CascadeType.ALL, mappedBy = "professor" )
+	private Set< Usuario > usuario = new HashSet< Usuario >();
 
 	public String toString()
 	{
@@ -524,5 +524,17 @@ public class Professor
 	public int compareTo( Professor o )
 	{
 		return this.getNome().compareTo( o.getNome() );
+	}
+
+	@Override
+	public boolean equals( Object obj )
+	{
+		if ( obj == null || !( obj instanceof Professor ) )
+		{
+			return false;
+		}
+
+		Professor other = (Professor)obj;
+		return this.getId().equals( other.getId() );
 	}
 }

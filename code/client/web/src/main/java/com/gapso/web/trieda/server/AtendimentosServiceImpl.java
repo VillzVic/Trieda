@@ -878,10 +878,36 @@ public class AtendimentosServiceImpl extends RemoteService
 			= AtendimentoOperacional.getAtendimentosOperacional(
 				isAdmin, professor, professorVirtual, turno, isVisaoProfessor );
 
-		List< AtendimentoOperacionalDTO > listDTO
-			= new ArrayList< AtendimentoOperacionalDTO >( atendimentosOperacional.size() );
+		List< AtendimentoOperacional > atendimentosOperacionalDistinct
+			= new ArrayList< AtendimentoOperacional >();
 
-		for ( AtendimentoOperacional atendimentoOperacional : atendimentosOperacional )
+		for ( AtendimentoOperacional at : atendimentosOperacional )
+		{
+			boolean encontrou = false;
+
+			for ( AtendimentoOperacional at2 : atendimentosOperacionalDistinct )
+			{
+				if ( at.getHorarioDisponivelCenario().getHorarioAula()
+					== at2.getHorarioDisponivelCenario().getHorarioAula()
+					&& at.getHorarioDisponivelCenario().getSemana()
+					== at2.getHorarioDisponivelCenario().getSemana() )
+				{
+					encontrou = true;
+					break;
+				}
+			}
+
+			if ( !encontrou )
+			{
+				atendimentosOperacionalDistinct.add( at );
+			}
+		}
+		
+
+		List< AtendimentoOperacionalDTO > listDTO
+			= new ArrayList< AtendimentoOperacionalDTO >( atendimentosOperacionalDistinct.size() );
+
+		for ( AtendimentoOperacional atendimentoOperacional : atendimentosOperacionalDistinct )
 		{
 			listDTO.add( ConvertBeans.toAtendimentoOperacionalDTO( atendimentoOperacional ) );
 		}
@@ -892,9 +918,9 @@ public class AtendimentosServiceImpl extends RemoteService
 	private List< AtendimentoOperacionalDTO > montaListaParaVisaoProfessor1(
 		List< AtendimentoOperacionalDTO > list )
 	{
-		// Agrupa os DTOS pela chave [Curso - Disciplina - Turma - DiaSemana - Sala]
+		// Agrupa os DTOS pela chave [ Curso - Disciplina - Turma - DiaSemana - Sala ]
 		Map< String, List< AtendimentoOperacionalDTO > > atendimentoOperacionalDTOMap
-			= new HashMap<String, List<AtendimentoOperacionalDTO > >();
+			= new HashMap< String, List< AtendimentoOperacionalDTO > >();
 
 		for ( AtendimentoOperacionalDTO dto : list )
 		{
