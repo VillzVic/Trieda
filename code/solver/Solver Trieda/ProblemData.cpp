@@ -434,6 +434,7 @@ int ProblemData::minutosIntervalo( DateTime dt1, DateTime dt2 )
    return minutes;
 }
 
+// Método relacionado com a issue TRIEDA-1054
 bool ProblemData::verificaDisponibilidadeDisciplinaHorario(
    Disciplina * disciplina, HorarioAula * horario_aula )
 {

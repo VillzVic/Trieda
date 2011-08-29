@@ -149,6 +149,7 @@ void ProblemDataLoader::load()
    print_stats();
 }
 
+// Método relacionado com a issue TRIEDA-1054
 void ProblemDataLoader::relacionaCalendarioHorariosAula()
 {
    ITERA_GGROUP_LESSPTR( it_calendario, this->problemData->calendarios, Calendario )
@@ -3769,6 +3770,7 @@ void ProblemDataLoader::geraHorariosDia()
 
             delete auxHD;
 
+            // Verificação de disponibilidade, relacionada com a issue TRIEDA-1054
             if ( this->problemData->verificaDisponibilidadeDisciplinaHorario(
                   disciplina, itHorarioAula->getHorarioAula() ) )
             {
