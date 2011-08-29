@@ -674,9 +674,31 @@ void SolverMIP::converteCjtSalaEmSala()
          {
             ITERA_GGROUP( it_Creds_Disp, it_Sala->creditos_disponiveis, CreditoDisponivel )
             { 
-               creditos_Livres_Sala[ ( *it_Sala ) ].push_back(
-                  std::make_pair( it_Creds_Disp->getDiaSemana(),
-                                  it_Creds_Disp->getMaxCreditos() ) );
+               bool encontrou = false;
+
+               std::vector< std::pair< int, int > >::iterator
+                  it_vector = creditos_Livres_Sala[ ( *it_Sala ) ].begin();
+
+               for (; it_vector != creditos_Livres_Sala[ ( *it_Sala ) ].end();
+                      it_vector++ )
+               {
+                  int dia = it_vector->first;
+
+                  if ( dia == it_Creds_Disp->getDiaSemana() )
+                  {
+                     ( *it_vector ).second = ( *it_vector ).second + it_Creds_Disp->getMaxCreditos();
+
+                     encontrou = true;
+                     break;
+                  }
+               }
+
+               if ( !encontrou )
+               {
+                  creditos_Livres_Sala[ ( *it_Sala ) ].push_back(
+                     std::make_pair( it_Creds_Disp->getDiaSemana(),
+                     it_Creds_Disp->getMaxCreditos() ) );
+               }
             }
          }
       }
@@ -1129,7 +1151,7 @@ void SolverMIP::converteCjtSalaEmSala()
                      {
                         // Checando se a sala em questão pertence ao TPS especificado pelo solver
                         if ( pt_Var_x->getSubCjtSala()->salas.find( ( *it_Salas_Ordenadas )->getId() ) != 
-                           pt_Var_x->getSubCjtSala()->salas.end() )
+                             pt_Var_x->getSubCjtSala()->salas.end() )
                         {
                            std::map< Sala *, std::vector< std::pair< int /*dia*/, int /*creds. Livres*/ > > >::iterator
                               it_Creditos_Livres_Sala = creditos_Livres_Sala.find( *it_Salas_Ordenadas );
@@ -2003,25 +2025,32 @@ void SolverMIP::geraProfessoresVirtuaisMIP()
 void SolverMIP::getSolutionOperacionalMIP()
 {
    // Procura variaveis que usem professor virtual
-   for (int i=0; i < (int)solVarsOp.size(); i++)
+   for ( int i = 0; i < (int)solVarsOp.size(); i++ )
    {
-      VariableOp *v = solVarsOp[i];
+      VariableOp * v = solVarsOp[ i ];
 
       if ( v->getType() != VariableOp::V_X_PROF_AULA_HOR )
+      {
          continue;
+      }
 
       if ( v->getProfessor() == NULL || !v->getProfessor()->eVirtual() )
+      {
          continue;
+      }
 
       // Procura virtual
       bool achou = false;
-      ITERA_GGROUP(itProf,*(problemSolution->professores_virtuais),ProfessorVirtualOutput)
+      ITERA_GGROUP( itProf, ( *problemSolution->professores_virtuais ), ProfessorVirtualOutput )
       {
-         ProfessorVirtualOutput *professor_virtual = *itProf;
-         if (professor_virtual->getId() == v->getProfessor()->getId())
+         ProfessorVirtualOutput * professor_virtual = ( *itProf );
+
+         if ( professor_virtual->getId() == v->getProfessor()->getId() )
          {
             achou = true;
-            professor_virtual->disciplinas.add(v->getAula()->getDisciplina()->getId());
+            professor_virtual->disciplinas.add(
+               v->getAula()->getDisciplina()->getId() );
+
             break;
          }
       }
@@ -2036,7 +2065,7 @@ void SolverMIP::getSolutionOperacionalMIP()
          professor_virtual->setTitulacaoId( v->getProfessor()->getTitulacaoId() );
          professor_virtual->setAreaTitulacaoId( v->getProfessor()->getAreaId() );
 
-         professor_virtual->disciplinas.add(v->getAula()->getDisciplina()->getId());
+         professor_virtual->disciplinas.add( v->getAula()->getDisciplina()->getId() );
 
          problemSolution->professores_virtuais->add( professor_virtual );
       }
@@ -2116,7 +2145,6 @@ int SolverMIP::solve()
          status = solveOperacionalMIP();
 
          // Preenche as classes do output operacional
-         //preencheOutputOperacional( problemSolution );
          preencheOutputOperacionalMIP( problemSolution );
       }
       else
@@ -2175,7 +2203,7 @@ int SolverMIP::solve()
    return status;
 }
 
-void SolverMIP::preencheOutputOperacionalMIP( ProblemSolution *solution )
+void SolverMIP::preencheOutputOperacionalMIP( ProblemSolution * solution )
 {
    Campus * campus = NULL;
    Unidade * unidade = NULL;
@@ -2204,20 +2232,26 @@ void SolverMIP::preencheOutputOperacionalMIP( ProblemSolution *solution )
 
                it_At_DiaSemana->atendimentos_turno = new GGroup< AtendimentoTurno * >();
 
-               for (int i=0; i < (int)solVarsOp.size(); i++)
+               for ( int i = 0; i < (int)solVarsOp.size(); i++ )
                {
-                  VariableOp *v = solVarsOp[i];
+                  VariableOp * v = solVarsOp[ i ];
 
                   if ( v->getType() != VariableOp::V_X_PROF_AULA_HOR )
+                  {
                      continue;
+                  }
 
                   if ( v->getAula()->getSala() != sala )
+                  {
                      continue;
+                  }
 
                   if ( v->getAula()->getDiaSemana() != dia_semana )
+                  {
                      continue;
+                  }
 
-                  Aula *aula = v->getAula();
+                  Aula * aula = v->getAula();
 
                   // Procura o turno da aula
                   Oferta * temp = ( *( aula->ofertas.begin() ) );
@@ -2244,13 +2278,13 @@ void SolverMIP::preencheOutputOperacionalMIP( ProblemSolution *solution )
                      it_At_DiaSemana->atendimentos_turno->add( atendimento_turno );
                   }
 
-                  int horIdx = problemData->getHorarioDiaIdx(v->getHorario());
-                  
+                  int horIdx = problemData->getHorarioDiaIdx( v->getHorario() );
+
                   for (int hi = horIdx; hi < horIdx + aula->getTotalCreditos(); hi++)
                   {
                      AtendimentoHorarioAula * atendimento_horario_aula = new AtendimentoHorarioAula();
 
-                     HorarioAula * horario_aula = problemData->horariosDiaIdx[hi]->getHorarioAula();
+                     HorarioAula * horario_aula = problemData->horariosDiaIdx[ hi ]->getHorarioAula();
                      Professor * professor = v->getProfessor();
 
                      atendimento_horario_aula->setId( horario_aula->getId() );
