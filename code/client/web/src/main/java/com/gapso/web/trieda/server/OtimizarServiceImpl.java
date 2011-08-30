@@ -34,25 +34,23 @@ import com.gapso.web.trieda.shared.dtos.ParametroDTO;
 import com.gapso.web.trieda.shared.services.OtimizarService;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
-/**
- * The server side implementation of the RPC service.
- */
 @Transactional
 @Service
 @Repository
-public class OtimizarServiceImpl extends RemoteServiceServlet
+public class OtimizarServiceImpl
+	extends RemoteServiceServlet
 	implements OtimizarService
 {
 	private static final long serialVersionUID = 5716065588362358065L;
-	private static final String linkSolver = "http://localhost:3402/SolverWS";
+	private static final String linkSolverDefault = "http://localhost:3402/SolverWS";
 
 	@Override
 	@Transactional
 	public ParametroDTO getParametro( CenarioDTO cenarioDTO )
 	{
 		Cenario cenario = Cenario.find( cenarioDTO.getId() );
-
 		Parametro parametro = cenario.getUltimoParametro();
+
 		if ( parametro == null )
 		{
 			parametro = new Parametro();
@@ -111,14 +109,14 @@ public class OtimizarServiceImpl extends RemoteServiceServlet
 			e.printStackTrace();
 		}
 
-		SolverClient solverClient = new SolverClient( linkSolver, "trieda" );
+		SolverClient solverClient = new SolverClient( getLinkSolver(), "trieda" );
 		return solverClient.requestOptimization( fileBytes );
 	}
 
 	@Override
 	public Boolean isOptimizing( Long round )
 	{
-		SolverClient solverClient = new SolverClient( linkSolver, "trieda" );
+		SolverClient solverClient = new SolverClient( getLinkSolver(), "trieda" );
 		return ( !solverClient.isFinished( round ) );
 	}
 
@@ -128,13 +126,15 @@ public class OtimizarServiceImpl extends RemoteServiceServlet
 	{
 		Cenario cenario = Cenario.find( cenarioDTO.getId() );
 
-		Map< String, List< String > > ret = new HashMap< String, List< String > >( 2 );
+		Map< String, List< String > > ret
+			= new HashMap< String, List< String > >( 2 );
+
 		ret.put( "warning", new ArrayList< String >() );
 		ret.put( "error", new ArrayList< String >() );
 
 		try
 		{
-			SolverClient solverClient = new SolverClient( linkSolver, "trieda" );
+			SolverClient solverClient = new SolverClient( getLinkSolver(), "trieda" );
 			byte [] xmlBytes = solverClient.getContent( round );
 
 			if ( xmlBytes == null )
@@ -180,16 +180,23 @@ public class OtimizarServiceImpl extends RemoteServiceServlet
 			{
 				solverOutput.generateAtendimentosOperacional();
 				solverOutput.salvarAtendimentosOperacional(
-					parametro.getCampus(), parametro.getTurno());
+					parametro.getCampus(), parametro.getTurno() );
 			}
 		}
 		catch ( JAXBException e )
 		{
 			e.printStackTrace();
-			ret.get( "error" ).add( "Erro ao salvar no banco" );
+			ret.get( "error" ).add( "Erro ao salvar o resultado na base de dados" );
 			return ret;
 		}
 
 		return ret;
+	}
+
+	private String getLinkSolver()
+	{
+		// TODO -- ler o link do solver a partir do arquivo properties
+		String link = OtimizarServiceImpl.linkSolverDefault;
+		return link;
 	}
 }
