@@ -363,12 +363,13 @@ public class RelatorioVisaoSalaExportExcel
 				+ "Turma: " + atOp.getTurma() + "\n"
 				+ horario + atOp.getHorarioString() + "\n"
 				+ creditos + ( ( atOp.getCreditoTeoricoBoolean() ) ? teorico : pratico )
-				+ ": " + atOp.getTotalCreditos() + " de "
-				+ atOp.getTotalCreditos() + "\n"
+				+ ": " + atOp.getTotalCreditos() + " de " + atOp.getTotalCreditoDisciplina() + "\n"
 				+ "Curso: " + atOp.getCursoNome() + "\n"
 				+ "Matriz Curricular: " + atOp.getCurriculoString() + "\n"
 				+ periodo + atOp.getPeriodoString() + "\n"
-				+ "Quantidade: " + atOp.getQuantidadeAlunosString();
+				+ "Quantidade: " + atOp.getQuantidadeAlunosString() + "\n"
+				+ "Sala: " + atOp.getSalaString() + "\n"
+				+ "Professor: " + (atOp.getProfessorId() != null ? atOp.getProfessorString() : atOp.getProfessorVirtualString());
 		}
 
 		return "";

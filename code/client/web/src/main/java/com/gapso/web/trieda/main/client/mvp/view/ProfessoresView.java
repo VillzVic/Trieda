@@ -69,7 +69,7 @@ public class ProfessoresView extends MyComposite
 		toolBar = new SimpleToolBar( this );
 		toolBar.add( new SeparatorToolItem() );
 		disponibilidadeBT = toolBar.createButton(
-			"Disponibilidade do Professor",
+			getI18nConstants().disponibilidadesSemanaLetiva(),
 			Resources.DEFAULTS.disponibilidade16() );
 
 		toolBar.add( disponibilidadeBT );

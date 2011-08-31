@@ -455,12 +455,13 @@ public class RelatorioVisaoProfessorExportExcel
 			+ "Turma: " + atendimento.getTurma() + "\n"
 			+ horario + atendimento.getHorarioString() + "\n"
 			+ creditos + ( ( atendimento.getCreditoTeoricoBoolean() ) ? teorico : pratico )
-			+ ": " + atendimento.getTotalLinhas() + " de "
-			+ atendimento.getTotalCreditos() + "\n"
+			+ ": " + atendimento.getTotalCreditos() + " de " + atendimento.getTotalCreditoDisciplina() + "\n"
 			+ "Curso: " + atendimento.getCursoNome() + "\n"
 			+ "Matriz Curricular: " + atendimento.getCurriculoString() + "\n"
-			+ periodo + atendimento.getPeriodoString() + "\n" 
-			+ "Quantidade: " + atendimento.getQuantidadeAlunosString();
+			+ periodo + atendimento.getPeriodoString() + "\n"
+			+ "Quantidade: " + atendimento.getQuantidadeAlunosString() + "\n"
+			+ "Sala: " + atendimento.getSalaString() + "\n"
+			+ "Professor: " + (atendimento.getProfessorId() != null ? atendimento.getProfessorString() : atendimento.getProfessorVirtualString());
 	}
 
 	private int writeProfessorVirtual( Campus campus, ProfessorVirtual professorVirtual, Turno turno,

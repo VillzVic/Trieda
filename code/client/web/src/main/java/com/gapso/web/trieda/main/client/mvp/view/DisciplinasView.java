@@ -62,7 +62,7 @@ public class DisciplinasView extends MyComposite implements DisciplinasPresenter
 		toolBar.add(new SeparatorToolItem());
 		divisaoCreditoBT = toolBar.createButton("Divisão de Créditos da disciplina", Resources.DEFAULTS.divisaoDeCreditos16());
 		toolBar.add(divisaoCreditoBT);
-		disponibilidadeBT = toolBar.createButton("Disponibilidade da Disciplina", Resources.DEFAULTS.disponibilidade16());
+		disponibilidadeBT = toolBar.createButton(getI18nConstants().disponibilidadesSemanaLetiva(), Resources.DEFAULTS.disponibilidade16());
 		toolBar.add(disponibilidadeBT);
 		panel.setTopComponent(toolBar);
 	}
