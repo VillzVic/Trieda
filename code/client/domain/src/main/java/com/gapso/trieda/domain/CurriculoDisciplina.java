@@ -201,112 +201,234 @@ public class CurriculoDisciplina
         return merged;
     }
 
-	public static final EntityManager entityManager() {
+	public static final EntityManager entityManager()
+	{
         EntityManager em = new CurriculoDisciplina().entityManager;
-        if (em == null) throw new IllegalStateException("Entity manager has not been injected (is the Spring Aspects JAR configured as an AJC/AJDT aspects library?)");
+
+        if ( em == null )
+        {
+        	throw new IllegalStateException(
+        		" Entity manager has not been injected (is the Spring " +
+        		" Aspects JAR configured as an AJC/AJDT aspects library?) " );
+        }
+
         return em;
     }
 
-	public static int count() {
-        return ((Number) entityManager().createQuery("SELECT COUNT(o) FROM CurriculoDisciplina o").getSingleResult()).intValue();
+	public static int count(
+		InstituicaoEnsino instituicaoEnsino )
+	{
+        return ( (Number) entityManager().createQuery(
+        	" SELECT COUNT ( o ) FROM CurriculoDisciplina o " +
+        	" WHERE o.curriculo.curso.tipoCurso.instituicaoEnsino = :instituicaoEnsino " +
+        	" AND o.disciplina.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino " )
+        	.setParameter( "instituicaoEnsino", instituicaoEnsino ).getSingleResult() ).intValue();
     }
-	
-	public static Map<String,CurriculoDisciplina> buildNaturalKeyToCurriculoDisciplinaMap(List<CurriculoDisciplina> curriculosDisciplina) {
-		Map<String,CurriculoDisciplina> curriculosDisciplinaMap = new HashMap<String,CurriculoDisciplina>();
-		for (CurriculoDisciplina curriculoDisciplina : curriculosDisciplina) {
-			curriculosDisciplinaMap.put(curriculoDisciplina.getNaturalKeyString(),curriculoDisciplina);
+
+	public static Map< String, CurriculoDisciplina > buildNaturalKeyToCurriculoDisciplinaMap(
+		List< CurriculoDisciplina > curriculosDisciplina )
+	{
+		Map< String, CurriculoDisciplina > curriculosDisciplinaMap
+			= new HashMap< String, CurriculoDisciplina >();
+
+		for ( CurriculoDisciplina curriculoDisciplina : curriculosDisciplina )
+		{
+			curriculosDisciplinaMap.put(
+				curriculoDisciplina.getNaturalKeyString(), curriculoDisciplina );
 		}
+
 		return curriculosDisciplinaMap;
 	}
-	
+
 	@SuppressWarnings("unchecked")
-	public static List<CurriculoDisciplina> findByCenario(Cenario cenario) {
-		Query q = entityManager().createQuery("SELECT o FROM CurriculoDisciplina o WHERE o.curriculo.cenario = :cenario");
-    	q.setParameter("cenario", cenario);
+	public static List< CurriculoDisciplina > findByCenario(
+		InstituicaoEnsino instituicaoEnsino, Cenario cenario )
+	{
+		Query q = entityManager().createQuery(
+			" SELECT o FROM CurriculoDisciplina o " +
+			" WHERE o.curriculo.cenario = :cenario " +
+			" AND o.curriculo.curso.tipoCurso.instituicaoEnsino = :instituicaoEnsino " +
+        	" AND o.disciplina.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino " );
+
+    	q.setParameter( "cenario", cenario );
+    	q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
     	return q.getResultList();
     }
-	
+
 	@SuppressWarnings("unchecked")
-	public static List<CurriculoDisciplina> findAllPeriodosBy(Sala sala, Oferta oferta) {
-		Query q = entityManager().createQuery("SELECT o FROM CurriculoDisciplina o, IN (o.salas) sala, IN (o.curriculo.ofertas) oferta WHERE sala = :sala AND oferta = :oferta GROUP BY o.periodo");
-		q.setParameter("sala", sala);
-		q.setParameter("oferta", oferta);
+	public static List< CurriculoDisciplina > findAllPeriodosBy(
+		InstituicaoEnsino instituicaoEnsino, Sala sala, Oferta oferta )
+	{
+		Query q = entityManager().createQuery(
+			" SELECT o FROM CurriculoDisciplina o, IN ( o.salas ) sala, IN ( o.curriculo.ofertas ) oferta " +
+			" WHERE sala = :sala " +
+			" AND oferta = :oferta " +
+			" AND o.curriculo.curso.tipoCurso.instituicaoEnsino = :instituicaoEnsino " +
+        	" AND o.disciplina.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino" +
+        	" AND sala.unidade.campus.instituicaoEnsino = :instituicaoEnsino" +
+        	" AND oferta.campus.instituicaoEnsino = :instituicaoEnsino " +
+        	" GROUP BY o.periodo " );
+
+		q.setParameter( "sala", sala );
+		q.setParameter( "oferta", oferta );
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
 		return q.getResultList();		
 	}
 	
 	@SuppressWarnings("unchecked")
-	public static List<CurriculoDisciplina> findAllPeriodosBy(GrupoSala grupoSala, Oferta oferta) {
-		Query q = entityManager().createQuery("SELECT o FROM CurriculoDisciplina o, IN (o.gruposSala) grupoSala, IN (o.curriculo.ofertas) oferta WHERE grupoSala = :grupoSala AND oferta = :oferta GROUP BY o.periodo");
-		q.setParameter("grupoSala", grupoSala);
-		q.setParameter("oferta", oferta);
+	public static List< CurriculoDisciplina > findAllPeriodosBy(
+		InstituicaoEnsino instituicaoEnsino, GrupoSala grupoSala, Oferta oferta )
+	{
+		Query q = entityManager().createQuery(
+			" SELECT o FROM CurriculoDisciplina o, IN ( o.gruposSala ) grupoSala, IN ( o.curriculo.ofertas ) oferta " +
+			" WHERE grupoSala = :grupoSala " +
+			" AND grupoSala.unidade.campus.instituicaoEnsino = :instituicaoEnsino" +
+			" AND oferta.campus.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.disciplina.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.curriculo.curso.tipoCurso.instituicaoEnsino = :instituicaoEnsino " +
+			" AND oferta = :oferta " +
+			" GROUP BY o.periodo " );
+
+		q.setParameter( "grupoSala", grupoSala );
+		q.setParameter( "oferta", oferta );
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
 		return q.getResultList();		
 	}
 	
 	@SuppressWarnings("unchecked")
-	public static List<CurriculoDisciplina> findAllByCurriculoAndPeriodo(Curriculo curriculo, Integer periodo) {
-		Query q = entityManager().createQuery("SELECT o FROM CurriculoDisciplina o WHERE o.curriculo = :curriculo AND o.periodo = :periodo");
-		q.setParameter("curriculo", curriculo);
-		q.setParameter("periodo", periodo);
+	public static List< CurriculoDisciplina > findAllByCurriculoAndPeriodo(
+		InstituicaoEnsino instituicaoEnsino, Curriculo curriculo, Integer periodo )
+	{
+		Query q = entityManager().createQuery(
+			" SELECT o FROM CurriculoDisciplina o " +
+			" WHERE o.curriculo = :curriculo " +
+			" AND o.periodo = :periodo " +
+			" AND o.curriculo.curso.tipoCurso.instituicaoEnsino = :instituicaoEnsino " +
+        	" AND o.disciplina.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino " );
+
+		q.setParameter( "curriculo", curriculo );
+		q.setParameter( "periodo", periodo );
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
 		return q.getResultList();
 	}
 
 	@SuppressWarnings("unchecked")
-	public static List<CurriculoDisciplina> findBy( GrupoSala grupoSala, Oferta oferta, Integer periodo )
+	public static List< CurriculoDisciplina > findBy(
+		InstituicaoEnsino instituicaoEnsino,
+		GrupoSala grupoSala, Oferta oferta, Integer periodo )
 	{
 		Query q = entityManager().createQuery(
-			" SELECT o FROM CurriculoDisciplina o, " +
-			" IN ( o.gruposSala ) grupoSala " +
+			" SELECT o FROM CurriculoDisciplina o, IN ( o.gruposSala ) grupoSala " +
 			" WHERE o.periodo = :periodo " +
 			" AND o.curriculo = :curriculo " +
-			" AND grupoSala = :grupoSala" );
-
-		q.setParameter("periodo", periodo);
-		q.setParameter("curriculo", oferta.getCurriculo());
-		q.setParameter("grupoSala", grupoSala);
-		return q.getResultList();
-	}
-	
-	@SuppressWarnings("unchecked")
-	public static List< CurriculoDisciplina > findBy( Sala sala, Oferta oferta, Integer periodo )
-	{
-		Query q = entityManager().createQuery(
-			" SELECT o FROM CurriculoDisciplina o, " +
-			" IN (o.salas) sala " +
-			" WHERE o.periodo = :periodo " +
-			" AND o.curriculo = :curriculo " +
-			" AND sala = :sala" );
+			" AND grupoSala = :grupoSala " +
+			" AND grupoSala.unidade.campus.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.curriculo.curso.tipoCurso.instituicaoEnsino = :instituicaoEnsino " +
+        	" AND o.disciplina.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino " );
 
 		q.setParameter( "periodo", periodo );
 		q.setParameter( "curriculo", oferta.getCurriculo() );
-		q.setParameter( "sala", sala );
+		q.setParameter( "grupoSala", grupoSala );
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
 
 		return q.getResultList();
 	}
-
+	
 	@SuppressWarnings("unchecked")
-	public static List< CurriculoDisciplina > findBySala( Sala sala )
+	public static List< CurriculoDisciplina > findBy(
+		InstituicaoEnsino instituicaoEnsino,
+		Sala sala, Oferta oferta, Integer periodo )
 	{
 		Query q = entityManager().createQuery(
 			" SELECT o FROM CurriculoDisciplina o, " +
 			" IN ( o.salas ) sala " +
-			" WHERE sala = :sala " );
+			" WHERE o.periodo = :periodo " +
+			" AND o.curriculo.curso.tipoCurso.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.disciplina.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino " +
+			" AND sala.unidade.campus.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.curriculo = :curriculo " +
+			" AND sala = :sala " );
 
+		q.setParameter( "periodo", periodo );
+		q.setParameter( "curriculo", oferta.getCurriculo() );
 		q.setParameter( "sala", sala );
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
 		return q.getResultList();
 	}
 
 	@SuppressWarnings("unchecked")
-    public static List<CurriculoDisciplina> findAll() {
-        return entityManager().createQuery("SELECT o FROM CurriculoDisciplina o").getResultList();
+	public static List< CurriculoDisciplina > findBySala(
+		InstituicaoEnsino instituicaoEnsino, Sala sala )
+	{
+		Query q = entityManager().createQuery(
+			" SELECT o FROM CurriculoDisciplina o, " +
+			" IN ( o.salas ) sala " +
+			" WHERE sala = :sala " +
+			" AND o.curriculo.curso.tipoCurso.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.disciplina.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino " +
+			" AND sala.unidade.campus.instituicaoEnsino = :instituicaoEnsinos " );
+
+		q.setParameter( "sala", sala );
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
+		return q.getResultList();
+	}
+
+	@SuppressWarnings("unchecked")
+    public static List< CurriculoDisciplina > findAll(
+    	InstituicaoEnsino instituicaoEnsino )
+    {
+        return entityManager().createQuery(
+        	" SELECT o FROM CurriculoDisciplina o " +
+        	" WHERE o.curriculo.curso.tipoCurso.instituicaoEnsino = :instituicaoEnsino " +
+        	" AND o.disciplina.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino " )
+        	.setParameter( "instituicaoEnsino", instituicaoEnsino ).getResultList();
     }
 
-	public static CurriculoDisciplina find(Long id) {
-        if (id == null) return null;
-        return entityManager().find(CurriculoDisciplina.class, id);
+	public static CurriculoDisciplina find(
+		Long id, InstituicaoEnsino instituicaoEnsino )
+	{
+        if ( id == null || instituicaoEnsino == null )
+        {
+        	return null;
+        }
+
+        CurriculoDisciplina cd = entityManager().find( CurriculoDisciplina.class, id );
+
+        if ( cd != null && cd.getCurriculo() != null
+        	&& cd.getCurriculo().getCurso() != null
+        	&& cd.getCurriculo().getCurso().getTipoCurso() != null
+        	&& cd.getCurriculo().getCurso().getTipoCurso().getInstituicaoEnsino() == instituicaoEnsino
+        	&& cd.getDisciplina() != null
+        	&& cd.getDisciplina().getTipoDisciplina() != null
+        	&& cd.getDisciplina().getTipoDisciplina().getInstituicaoEnsino() != null
+        	&& cd.getDisciplina().getTipoDisciplina().getInstituicaoEnsino() == instituicaoEnsino )
+        {
+        	return cd;
+        }
+
+        return null;
     }
 
 	@SuppressWarnings("unchecked")
-    public static List<CurriculoDisciplina> find(int firstResult, int maxResults) {
-        return entityManager().createQuery("select o from CurriculoDisciplina o").setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
+    public static List< CurriculoDisciplina > find(
+    	InstituicaoEnsino instituicaoEnsino,
+    	int firstResult, int maxResults )
+    {
+		Query q = entityManager().createQuery(
+			" SELECT o FROM CurriculoDisciplina o " +
+			" WHERE o.curriculo.curso.tipoCurso.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.disciplina.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino " );
+
+		q.setFirstResult( firstResult );
+		q.setMaxResults( maxResults );
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
+        return q.getResultList();
     }
 }

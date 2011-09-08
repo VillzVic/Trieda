@@ -12,6 +12,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.PersistenceContext;
@@ -40,18 +42,21 @@ public class SemanaLetiva
 {
 	private static final long serialVersionUID = 6807360646327130208L;
 
-	@OneToOne(mappedBy = "semanaLetiva")
+	@OneToOne( mappedBy = "semanaLetiva" )
 	private Cenario cenario;
 
 	@NotNull
-	@Column(name = "SLE_CODIGO")
-	@Size(min = 1, max = 20)
+	@Column( name = "SLE_CODIGO" )
+	@Size( min = 1, max = 20 )
 	private String codigo;
 
 	@NotNull
-	@Column(name = "SLE_DESCRICAO")
-	@Size(max = 50)
+	@Column( name = "SLE_DESCRICAO" )
+	@Size( max = 50 )
 	private String descricao;
+
+	@Column( name = "SLE_OFICIAL" )
+	private Boolean oficial;
 
 	@OneToMany( cascade = CascadeType.ALL, mappedBy = "semanaLetiva" )
 	private Set< HorarioAula > horariosAula = new HashSet< HorarioAula >();
@@ -61,6 +66,22 @@ public class SemanaLetiva
 
 	@OneToMany( mappedBy = "semanaLetiva" )
 	private Set< Curriculo > curriculos = new HashSet< Curriculo >();
+
+	@NotNull
+	@ManyToOne( cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH },
+		targetEntity = InstituicaoEnsino.class )
+	@JoinColumn( name = "INS_ID" )
+	private InstituicaoEnsino instituicaoEnsino;
+
+	public InstituicaoEnsino getInstituicaoEnsino()
+	{
+		return instituicaoEnsino;
+	}
+
+	public void setInstituicaoEnsino( InstituicaoEnsino instituicaoEnsino )
+	{
+		this.instituicaoEnsino = instituicaoEnsino;
+	}
 
 	public Set< Curriculo > getCurriculos()
 	{
@@ -82,35 +103,53 @@ public class SemanaLetiva
 		this.cenario = cenario;
 	}
 
-	public String getCodigo() {
+	public String getCodigo()
+	{
 		return this.codigo;
 	}
 
-	public void setCodigo(String codigo) {
+	public void setCodigo( String codigo )
+	{
 		this.codigo = codigo;
 	}
 
-	public String getDescricao() {
+	public String getDescricao()
+	{
 		return this.descricao;
 	}
 
-	public void setDescricao(String descricao) {
+	public void setDescricao( String descricao )
+	{
 		this.descricao = descricao;
 	}
 
-	public Set<HorarioAula> getHorariosAula() {
+	public Boolean getOficial()
+	{
+		return oficial;
+	}
+
+	public void setOficial( Boolean oficial )
+	{
+		this.oficial = oficial;
+	}
+
+	public Set< HorarioAula > getHorariosAula()
+	{
 		return this.horariosAula;
 	}
 
-	public void setHorariosAula(Set<HorarioAula> horariosAula) {
+	public void setHorariosAula( Set< HorarioAula > horariosAula )
+	{
 		this.horariosAula = horariosAula;
 	}
 
-	public Set<Parametro> getParametros() {
+	public Set< Parametro > getParametros()
+	{
 		return parametros;
 	}
 
-	public void setParametros(Set<Parametro> parametros) {
+	public void setParametros( Set< Parametro > parametros )
+	{
 		this.parametros = parametros;
 	}
 
@@ -118,69 +157,100 @@ public class SemanaLetiva
 	transient EntityManager entityManager;
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	@Column(name = "SLE_ID")
+	@GeneratedValue( strategy = GenerationType.AUTO )
+	@Column( name = "SLE_ID" )
 	private Long id;
 
 	@Version
-	@Column(name = "version")
+	@Column( name = "version" )
 	private Integer version;
 
-	public Long getId() {
+	public Long getId()
+	{
 		return this.id;
 	}
 
-	public void setId(Long id) {
+	public void setId( Long id )
+	{
 		this.id = id;
 	}
 
-	public Integer getVersion() {
+	public Integer getVersion()
+	{
 		return this.version;
 	}
 
-	public void setVersion(Integer version) {
+	public void setVersion( Integer version )
+	{
 		this.version = version;
 	}
 
 	@Transactional
-	public void detach() {
-		if (this.entityManager == null)
+	public void detach()
+	{
+		if ( this.entityManager == null )
+		{
 			this.entityManager = entityManager();
-		this.entityManager.detach(this);
+		}
+
+		this.entityManager.detach( this );
 	}
 
 	@Transactional
-	public void persist() {
-		if (this.entityManager == null)
+	public void persist()
+	{
+		if ( this.entityManager == null )
+		{
 			this.entityManager = entityManager();
-		this.entityManager.persist(this);
+		}
+
+		this.entityManager.persist( this );
 	}
 
 	@Transactional
-	public void remove() {
-		if (this.entityManager == null)
+	public void remove()
+	{
+		if ( this.entityManager == null )
+		{
 			this.entityManager = entityManager();
-		if (this.entityManager.contains(this)) {
-			this.entityManager.remove(this);
-		} else {
-			SemanaLetiva attached = this.entityManager.find(this.getClass(),
-					this.id);
-			this.entityManager.remove(attached);
+		}
+
+		if ( this.entityManager.contains( this ) )
+		{
+			this.entityManager.remove( this );
+		}
+		else
+		{
+			SemanaLetiva attached = this.entityManager.find(
+				this.getClass(), this.id );
+
+			if ( attached != null )
+			{
+				this.entityManager.remove( attached );
+			}
 		}
 	}
 
 	@Transactional
-	public void flush() {
-		if (this.entityManager == null)
+	public void flush()
+	{
+		if ( this.entityManager == null )
+		{
 			this.entityManager = entityManager();
+		}
+
 		this.entityManager.flush();
 	}
 
 	@Transactional
-	public SemanaLetiva merge() {
-		if (this.entityManager == null)
+	public SemanaLetiva merge()
+	{
+		if ( this.entityManager == null )
+		{
 			this.entityManager = entityManager();
-		SemanaLetiva merged = this.entityManager.merge(this);
+		}
+
+		SemanaLetiva merged = this.entityManager.merge( this );
 		this.entityManager.flush();
 		return merged;
 	}
@@ -188,6 +258,7 @@ public class SemanaLetiva
 	public static final EntityManager entityManager()
 	{
 		EntityManager em = new SemanaLetiva().entityManager;
+
 		if ( em == null )
 		{
 			throw new IllegalStateException(
@@ -198,19 +269,27 @@ public class SemanaLetiva
 		return em;
 	}
 
-	public static Set< SemanaLetiva > getByOficial( Campus campus )
+	public static Set< SemanaLetiva > getByOficial(
+		InstituicaoEnsino instituicaoEnsino, Campus campus )
 	{
+		if ( campus == null || instituicaoEnsino == null )
+		{
+			return new HashSet< SemanaLetiva >();
+		}
+
 		Set< Curriculo > curriculosCampus = new HashSet< Curriculo >();
 		for ( Unidade unidade : campus.getUnidades() )
 		{
-			List< Sala > salas = Sala.findByUnidade( unidade );
+			List< Sala > salas = Sala.findByUnidade( instituicaoEnsino, unidade );
+
 			for ( Sala sala : salas )
 			{
-				curriculosCampus.addAll( sala.getCurriculos() );
+				curriculosCampus.addAll( sala.getCurriculos( instituicaoEnsino ) );
 			}
 		}
 
 		Set< SemanaLetiva > semanasLetivas = new HashSet< SemanaLetiva >();
+
 		for ( Curriculo curriculo : curriculosCampus )
 		{
 			semanasLetivas.add( curriculo.getSemanaLetiva() );
@@ -220,40 +299,75 @@ public class SemanaLetiva
 	}
 
 	@SuppressWarnings("unchecked")
-	public static List< SemanaLetiva > findAll()
+	public static List< SemanaLetiva > findAll(
+		InstituicaoEnsino instituicaoEnsino )
 	{
-		return entityManager().createQuery(
-			"SELECT o FROM SemanaLetiva o" ).getResultList();
+		Query q = entityManager().createQuery(
+			" SELECT o FROM SemanaLetiva o " +
+			" WHERE o.instituicaoEnsino = :instituicaoEnsino " );
+
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
+		List< SemanaLetiva > result = null;
+
+		try
+		{
+			result = q.getResultList();
+		}
+		catch( Exception e )
+		{
+			result = null;
+		}
+
+		return result;
 	}
 
-	public static SemanaLetiva find( Long id )
+	public static SemanaLetiva find( Long id, InstituicaoEnsino instituicaoEnsino )
 	{
-		if ( id == null )
+		if ( id == null || instituicaoEnsino == null )
 		{
 			return null;
 		}
 
-		return entityManager().find( SemanaLetiva.class, id );
+		SemanaLetiva semanaLetiva
+			= entityManager().find( SemanaLetiva.class, id );
+
+		if ( semanaLetiva != null
+			&& semanaLetiva.getInstituicaoEnsino() != null
+			&& semanaLetiva.getInstituicaoEnsino() == instituicaoEnsino )
+		{
+			return semanaLetiva;
+		}
+
+		return null;
 	}
 
-	public static List< SemanaLetiva > find( int firstResult, int maxResults )
+	public static List< SemanaLetiva > find( InstituicaoEnsino instituicaoEnsino,
+		int firstResult, int maxResults )
 	{
-		return find( firstResult, maxResults, null );
+		return find( instituicaoEnsino, firstResult, maxResults, null );
 	}
 
 	@SuppressWarnings("unchecked")
 	public static List< SemanaLetiva > find(
+		InstituicaoEnsino instituicaoEnsino,
 		int firstResult, int maxResults, String orderBy )
 	{
-		orderBy = ( ( orderBy != null ) ? "ORDER BY o." + orderBy : "" );
+		orderBy = ( ( orderBy != null ) ? " ORDER BY o." + orderBy : "" );
 
-		return entityManager().createQuery(
-			"SELECT o FROM SemanaLetiva o " + orderBy )
-			.setFirstResult( firstResult )
-			.setMaxResults( maxResults ).getResultList();
+		Query q = entityManager().createQuery(
+			" SELECT o FROM SemanaLetiva o " +
+			" WHERE o.instituicaoEnsino = :instituicaoEnsino " + orderBy );
+
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+		q.setFirstResult( firstResult );
+		q.setMaxResults( maxResults );
+
+		return q.getResultList();
 	}
 
-	public static int count( String codigo, String descricao )
+	public static int count( InstituicaoEnsino instituicaoEnsino,
+		String codigo, String descricao )
 	{
 		codigo = ( ( codigo == null ) ? "" : codigo );
 		codigo = ( "%" + codigo.replace( '*', '%' ) + "%" );
@@ -263,17 +377,21 @@ public class SemanaLetiva
 		EntityManager em = Turno.entityManager();
 		Query q = em.createQuery(
 			" SELECT COUNT ( o ) FROM SemanaLetiva o " +
-			" WHERE LOWER ( o.codigo ) LIKE LOWER ( :codigo ) " +
+			" WHERE o.instituicaoEnsino = :instituicaoEnsino " +
+			" AND LOWER ( o.codigo ) LIKE LOWER ( :codigo ) " +
 			" AND LOWER ( o.descricao ) LIKE LOWER ( :descricao ) " );
 
 		q.setParameter( "codigo", codigo );
 		q.setParameter( "descricao", descricao );
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
 		return ( (Number) q.getSingleResult() ).intValue();
 	}
 
 	@SuppressWarnings("unchecked")
-	public static List< SemanaLetiva > findBy( String codigo, String descricao,
-		int firstResult, int maxResults, String orderBy )
+	public static List< SemanaLetiva > findBy(
+		InstituicaoEnsino instituicaoEnsino, String codigo,
+		String descricao, int firstResult, int maxResults, String orderBy )
 	{
 		codigo = ( ( codigo == null ) ? "" : codigo );
 		codigo = ( "%" + codigo.replace( '*', '%' ) + "%" );
@@ -282,26 +400,50 @@ public class SemanaLetiva
 
 		EntityManager em = Turno.entityManager();
 		orderBy = ( ( orderBy != null ) ? "ORDER BY o." + orderBy : "" );
+
 		Query q = em.createQuery(
 			" SELECT o FROM SemanaLetiva o " +
-			" WHERE LOWER ( o.codigo ) LIKE  LOWER ( :codigo ) " +
+			" WHERE o.instituicaoEnsino = :instituicaoEnsino " +
+			" AND LOWER ( o.codigo ) LIKE  LOWER ( :codigo ) " +
 			" AND LOWER ( o.descricao ) LIKE LOWER ( :descricao ) " + orderBy );
 
 		q.setParameter( "codigo", codigo );
 		q.setParameter( "descricao", descricao );
-		return q.setFirstResult( firstResult )
-			.setMaxResults( maxResults ).getResultList();
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+		q.setFirstResult( firstResult );
+		q.setMaxResults( maxResults );
+
+		return q.getResultList();
 	}
 
-	public static boolean checkCodigoUnique( Cenario cenario, String codigo )
+	public static boolean checkCodigoUnique(
+		InstituicaoEnsino instituicaoEnsino,
+		Cenario cenario, String codigo )
 	{
 		Query q = entityManager().createQuery(
 			" SELECT COUNT ( o ) FROM SemanaLetiva o " +
-			" WHERE o.codigo = :codigo" );
+			" WHERE o.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.codigo = :codigo " );
 
 		q.setParameter( "codigo", codigo );
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
 		Number size = ( (Number) ( q.setMaxResults( 1 ).getSingleResult() ) );
 		return ( size.intValue() > 0 );
+	}
+
+	@Transactional
+	public void markOficial( InstituicaoEnsino instituicaoEnsino )
+	{
+		Query q = entityManager().createQuery(
+			" UPDATE SemanaLetiva o SET o.oficial = false " +
+			" WHERE o.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.oficial = true AND o <> :semanaLetiva " );
+
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+		q.setParameter( "semanaLetiva", this );
+
+		q.executeUpdate();
 	}
 
 	public String toString()
@@ -309,16 +451,15 @@ public class SemanaLetiva
 		StringBuilder sb = new StringBuilder();
 
 		sb.append( "Id: " ).append( getId() ).append( ", " );
-		sb.append( "Version: " ).append(getVersion()).append( ", " );
-		sb.append( "Cenario: " ).append(getCenario()).append( ", " );
-		sb.append( "Codigo: " ).append(getCodigo()).append( ", " );
+		sb.append( "Version: " ).append( getVersion() ).append( ", " );
+		sb.append( "Instituicoes de Ensino: " ).append( getInstituicaoEnsino() ).append( ", " );
+		sb.append( "Cenario: " ).append( getCenario() ).append( ", " );
+		sb.append( "Codigo: " ).append( getCodigo() ).append( ", " );
 		sb.append( "HorariosAula: " ).append(
-			getHorariosAula() == null ? "null" :
-			getHorariosAula().size() ).append( ", " );
-		sb.append( "Descricao: " ).append( getDescricao() );
+			getHorariosAula() == null ? "null" : getHorariosAula().size() ).append( ", " );
+		sb.append( "Descricao: " ).append( getDescricao() ).append( ", " );
 		sb.append( "Parametros: " ).append(
-			getParametros() == null ? "null" :
-			getParametros().size() ).append( ", " );
+			getParametros() == null ? "null" : getParametros().size() );
 
 		return sb.toString();
 	}
@@ -331,7 +472,20 @@ public class SemanaLetiva
 			return false;
 		}
 
-		SemanaLetiva other = (SemanaLetiva)obj;
-		return this.getId().equals( other.getId() );
+		SemanaLetiva other = (SemanaLetiva) obj;
+
+		if ( id == null )
+		{
+			if ( other.id != null )
+			{
+				return false;
+			}
+		}
+		else if ( !id.equals( other.id ) )
+		{
+			return false;
+		}
+
+		return true;
 	}
 }

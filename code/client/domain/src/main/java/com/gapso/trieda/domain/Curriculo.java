@@ -245,6 +245,7 @@ public class Curriculo
 	public static final EntityManager entityManager()
 	{
         EntityManager em = new Curriculo().entityManager;
+
         if ( em == null )
         {
         	throw new IllegalStateException(
@@ -255,21 +256,28 @@ public class Curriculo
         return em;
     }
 
-	public static int count( Cenario cenario )
+	public static int count(
+		InstituicaoEnsino instituicaoEnsino, Cenario cenario )
 	{
 		Query q = entityManager().createQuery(
-			" SELECT COUNT(o) FROM Curriculo o " +
-			" WHERE o.cenario = :cenario" );
+			" SELECT COUNT ( o ) FROM Curriculo o " +
+			" WHERE o.curso.tipoCurso.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.cenario = :cenario" );
 
 		q.setParameter( "cenario", cenario );
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
 		return ( (Number) q.getSingleResult() ).intValue();
 	}
 
 	@SuppressWarnings("unchecked")
-    public static List< Curriculo > findAll()
+    public static List< Curriculo > findAll(
+    	InstituicaoEnsino instituicaoEnsino )
     {
         return entityManager().createQuery(
-        	"select o from Curriculo o" ).getResultList();
+        	" SELECT o FROM Curriculo o " +
+        	" WHERE o.curso.tipoCurso.instituicaoEnsino = :instituicaoEnsino " )
+        	.setParameter( "instituicaoEnsino", instituicaoEnsino ).getResultList();
     }
 
 	public static Map< String, Curriculo > buildCurriculoCodigoToCurriculoMap(
@@ -285,72 +293,98 @@ public class Curriculo
 
 		return curriculosMap;
 	}
-	
+
 	@SuppressWarnings("unchecked")
-	public static List< Curriculo > findByCenario( Cenario cenario )
+	public static List< Curriculo > findByCenario(
+		InstituicaoEnsino instituicaoEnsino, Cenario cenario )
 	{
 		Query q = entityManager().createQuery(
 			" SELECT o FROM Curriculo o " +
-			" WHERE cenario = :cenario" );
+			" WHERE o.curso.tipoCurso.instituicaoEnsino = :instituicaoEnsino " +
+			" AND cenario = :cenario " );
 
-    	q.setParameter( "cenario", cenario );
+		q.setParameter( "cenario", cenario );
+    	q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
     	return q.getResultList();
     }
 
-	public static Curriculo find( Long id )
+	public static Curriculo find(
+		Long id, InstituicaoEnsino instituicaoEnsino )
 	{
-        if ( id == null )
+        if ( id == null || instituicaoEnsino == null )
         {
         	return null;
         }
 
-        return entityManager().find( Curriculo.class, id );
+        Curriculo curriculo = entityManager().find( Curriculo.class, id );
+
+        if ( curriculo != null && curriculo.getCurso() != null
+        	&& curriculo.getCurso().getTipoCurso() != null
+        	&& curriculo.getCurso().getTipoCurso().getInstituicaoEnsino() != null
+        	&& curriculo.getCurso().getTipoCurso().getInstituicaoEnsino() == instituicaoEnsino )
+        {
+        	return curriculo;
+        }
+
+        return null;
     }
 
-	public static List< Curriculo > find(
+	public static List< Curriculo > find( InstituicaoEnsino instituicaoEnsino,
 		int firstResult, int maxResults )
 	{
-		return find( firstResult, maxResults, null );
+		return find( instituicaoEnsino, firstResult, maxResults, null );
 	}
 
 	@SuppressWarnings("unchecked")
-    public static List< Curriculo > find(
+    public static List< Curriculo > find( InstituicaoEnsino instituicaoEnsino,
     	int firstResult, int maxResults, String orderBy )
     {
-		orderBy = ( ( orderBy != null ) ? "ORDER BY o." + orderBy : "" );
+		orderBy = ( ( orderBy != null ) ? " ORDER BY o." + orderBy : "" );
+
         return entityManager().createQuery(
-        	"select o from Curriculo o " + orderBy )
-        	.setFirstResult( firstResult)
-        	.setMaxResults( maxResults ).getResultList();
+        	" SELECT o FROM Curriculo o " +
+        	" WHERE o.curso.tipoCurso.instituicaoEnsino = :instituicaoEnsino " + orderBy )
+        	.setParameter( "instituicaoEnsino", instituicaoEnsino )
+        	.setFirstResult( firstResult ).setMaxResults( maxResults ).getResultList();
     }
 
 	@SuppressWarnings("unchecked")
 	public static List< Curriculo > findByCampusAndTurno(
-		Campus campus, Turno turno )
+		InstituicaoEnsino instituicaoEnsino, Campus campus, Turno turno )
 	{
 		Query q = entityManager().createQuery(
 			" SELECT o.curriculo FROM Oferta o " +
-			" WHERE o.campus = :campus AND o.turno = :turno" );
+			" WHERE o.campus.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.campus = :campus " +
+			" AND o.turno = :turno " );
 
 		q.setParameter( "campus", campus );
 		q.setParameter( "turno", turno );
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
 		return q.getResultList();
 	}
 
 	@SuppressWarnings("unchecked")
-	public List< CurriculoDisciplina > getCurriculoDisciplinasByPeriodo( Integer periodo )
+	public List< CurriculoDisciplina > getCurriculoDisciplinasByPeriodo(
+		InstituicaoEnsino instituicaoEnsino, Integer periodo )
 	{
 		Query q = entityManager().createQuery(
 			" SELECT o FROM CurriculoDisciplina o " +
-			" WHERE o.curriculo = :curriculo " +
+			" WHERE o.curriculo.curso.tipoCurso.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.disciplina.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.curriculo = :curriculo " +
 			" AND o.periodo = :periodo" );
 
 		q.setParameter( "curriculo", this );
 		q.setParameter( "periodo", periodo );
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
 		return q.getResultList();
 	}
 
-	public static int count(
+	public static int count( InstituicaoEnsino instituicaoEnsino,
 		Curso curso, String codigo, String descricao )
 	{
 		codigo = ( ( codigo == null ) ? "" : codigo );
@@ -361,12 +395,13 @@ public class Curriculo
 		String queryCurso = "";
 		if ( curso != null )
 		{
-			queryCurso = ( "o.curso = :curso AND" );
+			queryCurso = ( " o.curso = :curso AND " );
 		}
 
 		Query q = entityManager().createQuery(
-			" SELECT COUNT(o) FROM Curriculo o " +
-			" WHERE " + queryCurso + " LOWER ( o.descricao ) " +
+			" SELECT COUNT ( o ) FROM Curriculo o " +
+			" WHERE o.curso.tipoCurso.instituicaoEnsino = :instituicaoEnsino " +
+			" AND " + queryCurso + " LOWER ( o.descricao ) " +
 			" LIKE LOWER ( :descricao ) " +
 			" AND LOWER ( o.codigo ) LIKE LOWER ( :codigo ) ");
 
@@ -377,27 +412,33 @@ public class Curriculo
 
 		q.setParameter( "codigo", codigo );
 		q.setParameter( "descricao", descricao );
-		return ( (Number)q.getSingleResult() ).intValue();
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
+		return ( (Number) q.getSingleResult() ).intValue();
 	}
 
     @SuppressWarnings("unchecked")
-	public static List< Curriculo > findBy( Curso curso, String codigo,
-		String descricao, int firstResult, int maxResults, String orderBy )
+	public static List< Curriculo > findBy( InstituicaoEnsino instituicaoEnsino,
+		Curso curso, String codigo, String descricao,
+		int firstResult, int maxResults, String orderBy )
 	{
         codigo = ( ( codigo == null ) ? "" : codigo );
         codigo = ( "%" + codigo.replace( '*', '%' ) + "%" );
         descricao = ( ( descricao == null ) ? "" : descricao );
         descricao = ( "%" + descricao.replace( '*', '%' ) + "%" );
 
-        orderBy = ( ( orderBy != null ) ? "ORDER BY o." + orderBy : "" );
+        orderBy = ( ( orderBy != null ) ? " ORDER BY o." + orderBy : "" );
         String queryCurso = "";
+
         if ( curso != null )
         {
-        	queryCurso = ( "o.curso = :curso AND" );
+        	queryCurso = ( " o.curso = :curso AND " );
         }
 
         Query q = entityManager().createQuery(
-        	" SELECT o FROM Curriculo o WHERE " + queryCurso +
+        	" SELECT o FROM Curriculo o " +
+        	" WHERE o.curso.tipoCurso.instituicaoEnsino = :instituicaoEnsino " +
+        	" AND " + queryCurso +
         	" LOWER ( o.descricao ) LIKE LOWER ( :descricao ) " +
         	" AND LOWER ( o.codigo ) LIKE LOWER ( :codigo )" );
 
@@ -406,43 +447,63 @@ public class Curriculo
         	q.setParameter( "curso", curso );
         }
 
+        q.setFirstResult( firstResult );
+        q.setMaxResults( maxResults );
         q.setParameter( "codigo", codigo );
         q.setParameter( "descricao", descricao );
-        return q.setFirstResult( firstResult ).setMaxResults( maxResults ).getResultList();
+        q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
+        return q.getResultList();
     }
 
-    public int getPeriodo( Disciplina disciplina )
+    public int getPeriodo(
+    	InstituicaoEnsino instituicaoEnsino, Disciplina disciplina )
     {
     	Query q = entityManager().createQuery(
     		" SELECT o.periodo FROM CurriculoDisciplina o " +
-    		" WHERE o.curriculo = :curriculo AND o.disciplina = :disciplina" );
+    		" WHERE o.curriculo.curso.tipoCurso.instituicaoEnsino = :instituicaoEnsino " +
+    		" AND o.disciplina.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino " +
+    		" AND o.curriculo = :curriculo " +
+    		" AND o.disciplina = :disciplina" );
 
     	q.setParameter( "curriculo", this );
     	q.setParameter( "disciplina", disciplina );
+    	q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
     	return (Integer) q.getSingleResult();
     }
 
     @SuppressWarnings("unchecked")
-    public List< Integer > getPeriodos()
+    public List< Integer > getPeriodos(
+    	InstituicaoEnsino instituicaoEnsino )
     {
     	Query q = entityManager().createQuery(
     		" SELECT DISTINCT ( o.periodo ) " +
     		" FROM CurriculoDisciplina o " +
-    		" WHERE o.curriculo = :curriculo" );
+    		" WHERE o.curriculo.curso.tipoCurso.instituicaoEnsino = :instituicaoEnsino " +
+    		" AND o.disciplina.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino " +
+    		" AND o.curriculo = :curriculo " );
 
     	q.setParameter( "curriculo", this );
+    	q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
     	return ( List< Integer > ) q.getResultList();
     }
 
-	public static boolean checkCodigoUnique( Cenario cenario, String codigo )
+	public static boolean checkCodigoUnique(
+		InstituicaoEnsino instituicaoEnsino,
+		Cenario cenario, String codigo )
 	{
 		Query q = entityManager().createQuery(
 			" SELECT COUNT ( o ) FROM Curriculo o " +
-			" WHERE o.curso.cenario = :cenario " +
-			" AND o.codigo = :codigo" );
+			" WHERE o.curso.tipoCurso.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.curso.cenario = :cenario " +
+			" AND o.codigo = :codigo " );
 
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
 		q.setParameter( "cenario", cenario );
 		q.setParameter( "codigo", codigo );
+
 		Number size = (Number) q.setMaxResults( 1 ).getSingleResult();
 		return ( size.intValue() > 0 );
 	}

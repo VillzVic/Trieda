@@ -133,88 +133,163 @@ public class ProfessorDisciplina
 		return merged;
 	}
 
-	public static final EntityManager entityManager() {
+	public static final EntityManager entityManager()
+	{
 		EntityManager em = new ProfessorDisciplina().entityManager;
-		if (em == null)
+
+		if ( em == null )
+		{
 			throw new IllegalStateException(
-					"Entity manager has not been injected (is the Spring Aspects JAR configured as an AJC/AJDT aspects library?)");
+				" Entity manager has not been injected (is the Spring " +
+				" Aspects JAR configured as an AJC/AJDT aspects library?)" );
+		}
+
 		return em;
 	}
 
 	@SuppressWarnings("unchecked")
-	public static List<ProfessorDisciplina> findAll() {
+	public static List< ProfessorDisciplina > findAll(
+		InstituicaoEnsino instituicaoEnsino )
+	{
 		return entityManager().createQuery(
-				"SELECT o FROM ProfessorDisciplina o").getResultList();
+			" SELECT o FROM ProfessorDisciplina o " +
+			" WHERE o.professor.tipoContrato.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.disciplina.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino " )
+			.setParameter( "instituicaoEnsino", instituicaoEnsino ).getResultList();
 	}
 
-	public static ProfessorDisciplina find(Long id) {
-		if (id == null)
+	public static ProfessorDisciplina find(
+		Long id, InstituicaoEnsino instituicaoEnsino )
+	{
+		if ( id == null || instituicaoEnsino == null )
+		{
 			return null;
-		return entityManager().find(ProfessorDisciplina.class, id);
+		}
+
+		ProfessorDisciplina pd = entityManager().find( ProfessorDisciplina.class, id );
+
+		if ( pd != null && pd.getProfessor() != null && pd.getDisciplina() != null
+			&& pd.getProfessor().getTipoContrato() != null
+			&& pd.getDisciplina().getTipoDisciplina() != null
+			&& pd.getProfessor().getTipoContrato().getInstituicaoEnsino() != null
+			&& pd.getDisciplina().getTipoDisciplina().getInstituicaoEnsino() != null
+			&& pd.getProfessor().getTipoContrato().getInstituicaoEnsino() == instituicaoEnsino
+			&& pd.getDisciplina().getTipoDisciplina().getInstituicaoEnsino() == instituicaoEnsino )
+		{
+			return pd;
+		}
+
+		return null;
 	}
 
 	@SuppressWarnings("unchecked")
-	public static List<ProfessorDisciplina> find(int firstResult, int maxResults) {
-		return entityManager()
-				.createQuery("SELECT o FROM ProfessorDisciplina o")
-				.setFirstResult(firstResult).setMaxResults(maxResults)
-				.getResultList();
+	public static List< ProfessorDisciplina > find(
+		InstituicaoEnsino instituicaoEnsino,
+		int firstResult, int maxResults )
+	{
+		return entityManager().createQuery(
+			" SELECT o FROM ProfessorDisciplina o " +
+			" WHERE o.professor.tipoContrato.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.disciplina.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino " )
+			.setParameter( "instituicaoEnsino", instituicaoEnsino )
+			.setFirstResult( firstResult ).setMaxResults( maxResults ).getResultList();
 	}
 
-	public static int count(Professor professor, Disciplina disciplina) {
-		String where = "";
-		if (professor != null)
-			where += " o.professor = :professor AND ";
-		if (disciplina != null)
-			where += " o.disciplina = :disciplina AND ";
-		if (where.length() > 1)
-			where = " WHERE " + where.substring(0, where.length() - 4);
+	public static int count(
+		InstituicaoEnsino instituicaoEnsino,
+		Professor professor, Disciplina disciplina )
+	{
+		String where = " o.professor.tipoContrato.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.disciplina.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino AND ";
+
+		if ( professor != null )
+		{
+			where += ( " o.professor = :professor AND " );
+		}
+
+		if ( disciplina != null )
+		{
+			where += ( " o.disciplina = :disciplina AND " );
+		}
+		if ( where.length() > 1 )
+		{
+			where = " WHERE " + where.substring( 0, where.length() - 4 );
+		}
 
 		Query q = entityManager().createQuery(
-				"SELECT COUNT(o) FROM ProfessorDisciplina o " + where);
+			" SELECT COUNT ( o ) FROM ProfessorDisciplina o " + where );
 
-		if (professor != null)
-			q.setParameter("professor", professor);
-		if (disciplina != null)
-			q.setParameter("disciplina", disciplina);
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
 
-		return ((Number) q.getSingleResult()).intValue();
+		if ( professor != null )
+		{
+			q.setParameter( "professor", professor );
+		}
+
+		if ( disciplina != null )
+		{
+			q.setParameter( "disciplina", disciplina );
+		}
+
+		return ( (Number) q.getSingleResult() ).intValue();
 	}
 
 	@SuppressWarnings("unchecked")
-	public static List<ProfessorDisciplina> findBy(Professor professor,
-			Disciplina disciplina, int firstResult, int maxResults,
-			String orderBy) {
-		String where = "";
-		if (professor != null)
-			where += " o.professor = :professor AND ";
-		if (disciplina != null)
-			where += " o.disciplina = :disciplina AND ";
-		if (where.length() > 1)
-			where = " WHERE " + where.substring(0, where.length() - 4);
+	public static List< ProfessorDisciplina > findBy(
+		InstituicaoEnsino instituicaoEnsino, Professor professor,
+		Disciplina disciplina, int firstResult, int maxResults,	String orderBy )
+	{
+		String where = " o.professor.tipoContrato.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.disciplina.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino AND ";
 
-		where += (orderBy != null) ? " ORDER BY o." + orderBy : "";
+		if ( professor != null )
+		{
+			where += ( " o.professor = :professor AND " );
+		}
+
+		if ( disciplina != null )
+		{
+			where += ( " o.disciplina = :disciplina AND " );
+		}
+
+		if ( where.length() > 1 )
+		{
+			where = ( " WHERE " + where.substring( 0, where.length() - 4 ) );
+		}
+
+		where += ( ( orderBy != null ) ? " ORDER BY o." + orderBy : "" );
 
 		Query q = entityManager().createQuery(
-				"SELECT o FROM ProfessorDisciplina o " + where);
+			" SELECT o FROM ProfessorDisciplina o " + where );
 
-		if (professor != null)
-			q.setParameter("professor", professor);
-		if (disciplina != null)
-			q.setParameter("disciplina", disciplina);
+		q.setFirstResult( firstResult );
+		q.setMaxResults( maxResults );
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
 
-		return q.setFirstResult(firstResult).setMaxResults(maxResults)
-				.getResultList();
+		if ( professor != null )
+		{
+			q.setParameter( "professor", professor );
+		}
+
+		if ( disciplina != null )
+		{
+			q.setParameter( "disciplina", disciplina );
+		}
+
+		return q.getResultList();
 	}
 
-	public String toString() {
+	public String toString()
+	{
 		StringBuilder sb = new StringBuilder();
-		sb.append("Id: ").append(getId()).append(", ");
-		sb.append("Version: ").append(getVersion()).append(", ");
-		sb.append("Professor: ").append(getProfessor()).append(", ");
-		sb.append("Disciplina: ").append(getDisciplina()).append(", ");
-		sb.append("Nota: ").append(getNota()).append(", ");
-		sb.append("Preferencia: ").append(getPreferencia());
+
+		sb.append( "Id: " ).append( getId() ).append( ", " );
+		sb.append( "Version: " ).append( getVersion() ).append( ", " );
+		sb.append( "Professor: " ).append( getProfessor() ).append( ", " );
+		sb.append( "Disciplina: " ).append( getDisciplina() ).append( ", " );
+		sb.append( "Nota: ").append( getNota() ).append( ", " );
+		sb.append( "Preferencia: " ).append( getPreferencia() );
+
 		return sb.toString();
 	}
 
@@ -232,35 +307,43 @@ public class ProfessorDisciplina
 		return map;
 	}
 
-	public Professor getProfessor() {
+	public Professor getProfessor()
+	{
 		return this.professor;
 	}
 
-	public void setProfessor(Professor professor) {
+	public void setProfessor( Professor professor )
+	{
 		this.professor = professor;
 	}
 
-	public Disciplina getDisciplina() {
+	public Disciplina getDisciplina()
+	{
 		return this.disciplina;
 	}
 
-	public void setDisciplina(Disciplina disciplina) {
+	public void setDisciplina( Disciplina disciplina )
+	{
 		this.disciplina = disciplina;
 	}
 
-	public Integer getNota() {
+	public Integer getNota()
+	{
 		return this.nota;
 	}
 
-	public void setNota(Integer nota) {
+	public void setNota( Integer nota )
+	{
 		this.nota = nota;
 	}
 
-	public Integer getPreferencia() {
+	public Integer getPreferencia()
+	{
 		return this.preferencia;
 	}
 
-	public void setPreferencia(Integer preferencia) {
+	public void setPreferencia( Integer preferencia )
+	{
 		this.preferencia = preferencia;
 	}
 

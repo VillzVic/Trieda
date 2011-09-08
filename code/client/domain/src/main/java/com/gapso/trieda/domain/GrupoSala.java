@@ -32,13 +32,13 @@ import org.springframework.transaction.annotation.Transactional;
 @Entity
 @RooJavaBean
 @RooToString
-@RooEntity(identifierColumn = "GRS_ID")
-@Table(
-	name = "GRUPOS_SALA",
-	uniqueConstraints=
-		@UniqueConstraint(columnNames={"GRS_CODIGO", "UNI_ID"})
-)
-public class GrupoSala implements Serializable {
+@RooEntity( identifierColumn = "GRS_ID" )
+@Table( name = "GRUPOS_SALA", uniqueConstraints =
+@UniqueConstraint( columnNames = { "GRS_CODIGO", "UNI_ID" } ) )
+public class GrupoSala
+	implements Serializable
+{
+	private static final long serialVersionUID = -3068409934520158819L;
 
 	@NotNull
     @ManyToOne(targetEntity = Unidade.class)
@@ -60,8 +60,6 @@ public class GrupoSala implements Serializable {
 
     @ManyToMany
     private Set<CurriculoDisciplina> curriculoDisciplinas = new HashSet<CurriculoDisciplina>();
-
-	private static final long serialVersionUID = -3068409934520158819L;
 
 	public Unidade getUnidade() {
         return this.unidade;
@@ -107,13 +105,14 @@ public class GrupoSala implements Serializable {
 	{
         StringBuilder sb = new StringBuilder();
 
-        sb.append("Id: ").append(getId()).append(", ");
-        sb.append("Version: ").append(getVersion()).append(", ");
-        sb.append("Unidade: ").append(getUnidade()).append(", ");
-        sb.append("Codigo: ").append(getCodigo()).append(", ");
-        sb.append("Nome: ").append(getNome()).append(", ");
-        sb.append("Salas: ").append(getSalas() == null ? "null" : getSalas().size()).append(", ");
-        sb.append("CurriculoDisciplinas: ").append(getCurriculoDisciplinas() == null ? "null" : getCurriculoDisciplinas().size());
+        sb.append( "Id: " ).append( getId() ).append( ", " );
+        sb.append( "Version: " ).append( getVersion() ).append( ", " );
+        sb.append( "Unidade: " ).append( getUnidade() ).append( ", " );
+        sb.append( "Codigo: " ).append( getCodigo() ).append( ", " );
+        sb.append( "Nome: " ).append( getNome() ).append( ", " );
+        sb.append( "Salas: " ).append( getSalas() == null ? "null" : getSalas().size()).append( ", " );
+        sb.append( "CurriculoDisciplinas: " ).append( getCurriculoDisciplinas() == null ?
+        	"null" : getCurriculoDisciplinas().size() );
 
         return sb.toString();
     }
@@ -183,20 +182,34 @@ public class GrupoSala implements Serializable {
         return merged;
     }
 
-	public static final EntityManager entityManager() {
+	public static final EntityManager entityManager()
+	{
         EntityManager em = new GrupoSala().entityManager;
-        if (em == null) throw new IllegalStateException("Entity manager has not been injected (is the Spring Aspects JAR configured as an AJC/AJDT aspects library?)");
+
+        if ( em == null )
+        {
+        	throw new IllegalStateException(
+        		" Entity manager has not been injected (is the Spring " +
+        		" Aspects JAR configured as an AJC/AJDT aspects library?)" );
+        }
+
         return em;
     }
 
 	@SuppressWarnings("unchecked")
-	public static List<GrupoSala> findByUnidade(Unidade unidade) {
-		return entityManager().createQuery("SELECT o FROM GrupoSala o WHERE unidade = :unidade")
-		.setParameter("unidade", unidade)
-		.getResultList();
+	public static List< GrupoSala > findByUnidade(
+		InstituicaoEnsino instituicaoEnsino, Unidade unidade )
+	{
+		return entityManager().createQuery(
+			" SELECT o FROM GrupoSala o " +
+			" WHERE o.unidade.campus.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.unidade = :unidade " )
+			.setParameter( "instituicaoEnsino", instituicaoEnsino )
+			.setParameter( "unidade", unidade ).getResultList();
 	}
-	
-	public static int count( String nome, String codigo, Unidade unidade )
+
+	public static int count( InstituicaoEnsino instituicaoEnsino,
+		String nome, String codigo, Unidade unidade )
 	{
 		nome = ( ( nome == null )? "" : nome );
 		nome = ( "%" + nome.replace( '*', '%' ) + "%" );
@@ -204,34 +217,50 @@ public class GrupoSala implements Serializable {
 		codigo = ( "%" + codigo.replace( '*', '%' ) + "%" );
 
 		String unidadeQuery = ( ( unidade == null ) ? "" : "o.unidade = :unidade AND " );
-		Query q = entityManager().createQuery("SELECT COUNT(o) FROM GrupoSala o WHERE " +
-				"LOWER(o.nome) LIKE LOWER(:nome) AND " +
-				"LOWER(o.codigo) LIKE LOWER(:codigo) AND " + unidadeQuery + " 1=1 ");
-		q.setParameter("nome", nome);
-		q.setParameter("codigo", codigo);
-		if(unidade != null) q.setParameter("unidade", unidade);
-		return ((Number)q.getSingleResult()).intValue();
+
+		Query q = entityManager().createQuery(
+			" SELECT COUNT ( o ) FROM GrupoSala o " +
+			" WHERE o.unidade.campus.instituicaoEnsino = :instituicaoEnsino " +
+			" AND LOWER ( o.nome ) LIKE LOWER ( :nome ) " +
+			" AND LOWER ( o.codigo ) LIKE LOWER ( :codigo ) " +
+			" AND " + unidadeQuery + " 1=1 " );
+
+		q.setParameter( "nome", nome );
+		q.setParameter( "codigo", codigo );
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
+		if ( unidade != null )
+		{
+			q.setParameter( "unidade", unidade );
+		}
+
+		return ( (Number)q.getSingleResult() ).intValue();
 	}
 
     @SuppressWarnings("unchecked")
-    public static List< GrupoSala > findBy( String nome, String codigo, Unidade unidade,
-    		int firstResult, int maxResults, String orderBy )
+    public static List< GrupoSala > findBy( InstituicaoEnsino instituicaoEnsino,
+    	String nome, String codigo, Unidade unidade,
+    	int firstResult, int maxResults, String orderBy )
     {
         nome = ( ( nome == null ) ? "" : nome );
-        nome = "%" + nome.replace('*', '%') + "%";
-        codigo = (codigo == null)? "" : codigo;
-        codigo = "%" + codigo.replace('*', '%') + "%";
+        nome = ( "%" + nome.replace( '*', '%' ) + "%" );
+        codigo = ( ( codigo == null ) ? "" : codigo );
+        codigo = ( "%" + codigo.replace( '*', '%' ) + "%" );
 
         orderBy = ( ( orderBy != null ) ? "ORDER BY o." + orderBy : "" );
         String unidadeQuery = ( ( unidade == null )? "" : "o.unidade = :unidade AND " );
 
         Query q = entityManager().createQuery(
-        		"SELECT o FROM GrupoSala o WHERE " +
-        		"LOWER(o.nome) LIKE LOWER(:nome) AND " +
-        		"LOWER(o.codigo) LIKE LOWER(:codigo) AND " +
-        		unidadeQuery + " 1=1 " + "" + orderBy );
-        q.setParameter("nome", nome);
-        q.setParameter("codigo", codigo);
+        		" SELECT o FROM GrupoSala o " +
+        		" WHERE o.unidade.campus.instituicaoEnsino = :instituicaoEnsino " +
+        		" AND LOWER ( o.nome ) LIKE LOWER ( :nome ) " +
+        		" AND LOWER ( o.codigo ) LIKE LOWER ( :codigo ) " +
+        		" AND " + unidadeQuery + " 1=1 " + "" + orderBy );
+
+        q.setParameter( "nome", nome );
+        q.setParameter( "codigo", codigo );
+        q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
         if ( unidade != null )
         {
         	q.setParameter( "unidade", unidade );
@@ -241,52 +270,84 @@ public class GrupoSala implements Serializable {
     }
 	
 	@SuppressWarnings("unchecked")
-	public List<Curriculo> getCurriculos()
+	public List< Curriculo > getCurriculos(
+		InstituicaoEnsino instituicaoEnsino )
 	{
 		Query q = entityManager().createQuery(
-				"SELECT DISTINCT(cd.curriculo) FROM CurriculoDisciplina cd WHERE :gruposSala IN ELEMENTS(cd.gruposSala)" );
+			" SELECT DISTINCT ( cd.curriculo ) FROM CurriculoDisciplina cd " +
+			" WHERE cd.curriculo.semanaLetiva.instituicaoEnsino = :instituicaoEnsino " +
+			" AND :gruposSala IN ELEMENTS ( cd.gruposSala )" );
 
 		q.setParameter( "gruposSala", this );
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
 		return q.getResultList();
 	}
 
 	@SuppressWarnings("unchecked")
-    public static List< GrupoSala > findAll()
+    public static List< GrupoSala > findAll(
+    	InstituicaoEnsino instituicaoEnsino )
     {
-        return entityManager().createQuery( "select o from GrupoSala o" ).getResultList();
+        return entityManager().createQuery(
+        	" SELECT o FROM GrupoSala o " +
+        	" WHERE o.unidade.campus.instituicaoEnsino = :instituicaoEnsino " )
+        	.setParameter( "instituicaoEnsino", instituicaoEnsino ).getResultList();
     }
 
-	public static GrupoSala find( Long id )
+	public static GrupoSala find(
+		Long id, InstituicaoEnsino instituicaoEnsino )
 	{
-        if ( id == null )
+        if ( id == null || instituicaoEnsino == null )
         {
         	return null;
         }
 
-        return entityManager().find( GrupoSala.class, id );
+        GrupoSala gs = entityManager().find( GrupoSala.class, id );
+        
+        if ( gs != null && gs.getUnidade() != null
+        	&& gs.getUnidade().getCampus() != null
+        	&& gs.getUnidade().getCampus().getInstituicaoEnsino() != null
+        	&& gs.getUnidade().getCampus().getInstituicaoEnsino() == instituicaoEnsino )
+        {
+        	return gs;
+        }
+
+        return null;
     }
 	
-	public static List< GrupoSala > find( int firstResult, int maxResults )
+	public static List< GrupoSala > find(
+		InstituicaoEnsino instituicaoEnsino, int firstResult, int maxResults )
 	{
-		return find( firstResult, maxResults, null );
+		return find( instituicaoEnsino, firstResult, maxResults, null );
 	}
 
 	@SuppressWarnings("unchecked")
-	public static List< GrupoSala > find( int firstResult, int maxResults, String orderBy )
+	public static List< GrupoSala > find( InstituicaoEnsino instituicaoEnsino,
+		int firstResult, int maxResults, String orderBy )
 	{
-		orderBy = ( ( orderBy != null ) ? "ORDER BY o." + orderBy : "" );
-        return entityManager().createQuery( "select o from GrupoSala o " + orderBy )
+		orderBy = ( ( orderBy != null ) ? " ORDER BY o." + orderBy : "" );
+
+        return entityManager().createQuery(
+        	" SELECT o FROM GrupoSala o " +
+        	" WHERE o.unidade.campus.instituicaoEnsino = :instituicaoEnsino " + orderBy )
+        	.setParameter( "instituicaoEnsino", instituicaoEnsino )
         	.setFirstResult( firstResult ).setMaxResults( maxResults ).getResultList();
     }
 
-	public static boolean checkCodigoUnique( Cenario cenario, String codigo )
+	public static boolean checkCodigoUnique(
+		InstituicaoEnsino instituicaoEnsino, Cenario cenario, String codigo )
 	{
 		Query q = entityManager().createQuery(
-				"SELECT COUNT(o) FROM GrupoSala o WHERE o.unidade.campus.cenario = :cenario AND o.codigo = :codigo" );
+			" SELECT COUNT ( o ) FROM GrupoSala o " +
+			" WHERE o.unidade.campus.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.unidade.campus.cenario = :cenario " +
+			" AND o.codigo = :codigo " );
 
 		q.setParameter( "cenario", cenario );
 		q.setParameter( "codigo", codigo );
-		Number size = (Number) q.setMaxResults(1).getSingleResult();
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
+		Number size = (Number) q.setMaxResults( 1 ).getSingleResult();
 		return ( size.intValue() > 0 );
 	}
 }

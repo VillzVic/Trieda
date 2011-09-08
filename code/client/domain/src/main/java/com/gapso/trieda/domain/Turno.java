@@ -51,7 +51,7 @@ public class Turno
     @ManyToOne( targetEntity = Cenario.class )
     @JoinColumn( name = "CEN_ID" )
     private Cenario cenario;
-	
+
     @NotNull
     @Column( name = "TUR_NOME" )
     @Size( min = 1, max = 50 )
@@ -84,7 +84,23 @@ public class Turno
     @Version
     @Column( name = "version" )
     private Integer version;
-    
+
+	@NotNull
+	@ManyToOne( cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH },
+		targetEntity = InstituicaoEnsino.class )
+	@JoinColumn( name = "INS_ID" )
+	private InstituicaoEnsino instituicaoEnsino;
+
+	public InstituicaoEnsino getInstituicaoEnsino()
+	{
+		return instituicaoEnsino;
+	}
+
+	public void setInstituicaoEnsino( InstituicaoEnsino instituicaoEnsino )
+	{
+		this.instituicaoEnsino = instituicaoEnsino;
+	}
+
     public int calculaMaxCreditos ()
     {
     	Map< Integer, Integer > countHorariosAula
@@ -172,66 +188,119 @@ public class Turno
     }
     
     @SuppressWarnings("unchecked")
-    public static List< Turno > findBy( Campus campus )
+    public static List< Turno > findBy(
+    	InstituicaoEnsino instituicaoEnsino, Campus campus )
     {
     	Query q = entityManager().createQuery(
-    		" SELECT distinct ( o.turno ) " +
-    		" FROM Oferta o WHERE o.campus = :campus" );
+    		" SELECT distinct ( o.turno ) FROM Oferta o " +
+    		" WHERE o.turno.instituicaoEnsino = :instituicaoEnsino " +
+    		" AND o.campus.instituicaoEnsino = :instituicaoEnsino " +
+    		" AND o.campus = :campus " );
 
     	q.setParameter( "campus", campus );
+    	q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
     	return q.getResultList();
     }
 
     @SuppressWarnings("unchecked")
-    public static List<Turno> findByNome(String nome) {
-    	Query q = entityManager().createQuery("SELECT o FROM Turno o WHERE o.nome = :nome");
-    	q.setParameter("nome", nome);
-    	return q.getResultList();
-    }
-
-    @SuppressWarnings("unchecked")
-    public static List<Turno> findAll() {
-        return entityManager().createQuery("SELECT o FROM Turno o").getResultList();
-    }
-
-    public static Turno find(Long id) {
-        if (id == null) return null;
-        return entityManager().find(Turno.class, id);
-    }
-
-    public static List<Turno> find(int firstResult, int maxResults) {
-        return find(firstResult, maxResults, null);
-    }
-
-    @SuppressWarnings("unchecked")
-    public static List<Turno> find(int firstResult, int maxResults, String orderBy)
+    public static List< Turno > findByNome(
+    	InstituicaoEnsino instituicaoEnsino, String nome )
     {
-        orderBy = ( ( orderBy != null ) ? "ORDER BY o." + orderBy : "" );
-        return entityManager().createQuery(
-        	"SELECT o FROM Turno o " + orderBy )
-        	.setFirstResult( firstResult ).setMaxResults( maxResults ).getResultList();
+    	Query q = entityManager().createQuery(
+    		" SELECT o FROM Turno o " +
+    		" WHERE o.nome = :nome " +
+    		" AND o.instituicaoEnsino = :instituicaoEnsino " );
+
+    	q.setParameter( "nome", nome );
+    	q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
+    	List< Turno > list = q.getResultList();
+    	return list;
     }
 
-    public static int count(String nome, Integer tempo) {
-    	nome = (nome == null || nome.length() == 0)? "" : nome;
-    	nome = nome.replace('*', '%');
+    @SuppressWarnings("unchecked")
+    public static List< Turno > findAll(
+    	InstituicaoEnsino instituicaoEnsino )
+    {
+    	Query q = entityManager().createQuery(
+    		" SELECT o FROM Turno o " +
+    		" WHERE o.instituicaoEnsino = :instituicaoEnsino" );
+
+    	q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
+    	List< Turno > list = q.getResultList();
+        return list;
+    }
+
+    public static Turno find( Long id, InstituicaoEnsino instituicaoEnsino )
+    {
+        if ( id == null || instituicaoEnsino == null )
+        {
+        	return null;
+        }
+
+        Turno t = entityManager().find( Turno.class, id );
+        if ( t != null
+        	&& t.getInstituicaoEnsino() != null
+        	&& t.getInstituicaoEnsino() == instituicaoEnsino )
+        {
+        	return t;
+        }
+
+        return null;
+    }
+
+    public static List< Turno > find( InstituicaoEnsino instituicaoEnsino,
+    	int firstResult, int maxResults )
+    {
+        return find( instituicaoEnsino, firstResult, maxResults, null );
+    }
+
+    @SuppressWarnings("unchecked")
+    public static List< Turno > find( InstituicaoEnsino instituicaoEnsino,
+    	int firstResult, int maxResults, String orderBy )
+    {
+        orderBy = ( ( orderBy != null ) ? " ORDER BY o." + orderBy : "" );
+
+        Query q = entityManager().createQuery(
+            	" SELECT o FROM Turno o " +
+            	" WHERE o.instituicaoEnsino = :instituicaoEnsino " + orderBy );
+
+        q.setFirstResult( firstResult );
+        q.setMaxResults( maxResults );
+        q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
+        List< Turno > list = q.getResultList();
+        return list;
+    }
+
+    public static int count( String nome, Integer tempo,
+    	InstituicaoEnsino instituicaoEnsino )
+    {
+    	nome = ( ( nome == null || nome.length() == 0 ) ? "" : nome );
+    	nome = nome.replace( '*', '%' );
 
     	if ( nome == "" || nome.charAt( 0 ) != '%' )
     	{
     		nome = ( "%" + nome );
     	}
 
-    	if ( nome.charAt( nome.length() -1 ) != '%' )
+    	if ( nome.charAt( nome.length() - 1 ) != '%' )
     	{
     		nome = ( nome + "%" );
     	}
 
-    	String queryTempo = ( ( tempo != null ) ? "AND o.tempo = :tempo" : "" );
+    	String queryTempo = ( ( tempo != null ) ? " AND o.tempo = :tempo " : "" );
+
     	Query q = entityManager().createQuery(
     		" SELECT COUNT ( o ) FROM Turno o " +
-    		" WHERE LOWER ( o.nome ) LIKE LOWER ( :nome ) " + queryTempo );
+    		" WHERE o.instituicaoEnsino = :instituicaoEnsino " +
+    		" AND LOWER ( o.nome ) LIKE LOWER( :nome ) " + queryTempo );
 
     	q.setParameter( "nome", nome );
+    	q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
     	if ( tempo != null )
     	{
     		q.setParameter( "tempo", tempo );
@@ -241,10 +310,11 @@ public class Turno
     }
 
     @SuppressWarnings("unchecked")
-    public static List< Turno > findBy(String nome, Integer tempo,
-    	int firstResult, int maxResults, String orderBy )
+    public static List< Turno > findBy( InstituicaoEnsino instituicaoEnsino,
+    	String nome, Integer tempo, int firstResult, int maxResults, String orderBy )
     {
     	nome = ( ( nome == null || nome.length() == 0 ) ? "" : nome );
+
         nome = nome.replace( '*', '%' );
 
         if ( nome == "" || nome.charAt( 0 ) != '%' )
@@ -257,21 +327,27 @@ public class Turno
             nome = ( nome + "%" );
         }
 
-        String queryTempo = ( ( tempo != null ) ? "AND turno.tempo = :tempo" : "" );
+        String queryTempo = ( ( tempo != null ) ? " AND turno.tempo = :tempo " : "" );
+
         orderBy = ( ( orderBy != null ) ? "ORDER BY o." + orderBy : "" );
 
         Query q = entityManager().createQuery(
         	" SELECT o FROM Turno o " +
-        	" WHERE LOWER ( o.nome ) LIKE LOWER ( :nome ) " + queryTempo + " " + orderBy );
+        	" WHERE o.instituicaoEnsino = :instituicaoEnsino " +
+        	" AND LOWER ( o.nome ) LIKE LOWER ( :nome ) " + queryTempo + " " + orderBy );
 
         q.setParameter( "nome", nome );
+        q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+        q.setFirstResult( firstResult );
+        q.setMaxResults( maxResults );
+
         if ( tempo != null )
         {
         	q.setParameter( "tempo", tempo );
         }
 
-        return q.setFirstResult( firstResult )
-        	.setMaxResults( maxResults ).getResultList();
+        List< Turno > list = q.getResultList();
+        return list;
     }
 
 	public static Map< String, Turno > buildTurnoNomeToTurnoMap( List< Turno > turnos )
@@ -287,11 +363,12 @@ public class Turno
 		return turnosMap;
 	}
 
-	public static List< Turno > findByCalendario( SemanaLetiva calendario )
+	public static List< Turno > findByCalendario(
+		InstituicaoEnsino instituicaoEnsino, SemanaLetiva calendario )
 	{
-		List< Turno > turnos = Turno.findAll();
 		Set< Turno > turnosDistinct = new HashSet< Turno >();
-		
+		List< Turno > turnos = Turno.findAll( instituicaoEnsino );
+
 		for ( Turno turno : turnos )
 		{
 			for ( HorarioAula ha : turno.getHorariosAula() )
@@ -307,14 +384,14 @@ public class Turno
 		List< Turno > result = new ArrayList< Turno >( turnosDistinct );
 		return result;
 	}
-	
+
 	public Cenario getCenario() {
         return this.cenario;
     }
 	public void setCenario(Cenario cenario) {
         this.cenario = cenario;
     }
-    
+
     public String getNome() {
         return this.nome;
     }
@@ -356,6 +433,7 @@ public class Turno
 
         sb.append( "Id: " ).append( getId() ).append( ", " );
         sb.append( "Version: " ).append( getVersion() ).append( ", " );
+        sb.append( "Instituicao de Ensino: " ).append( getInstituicaoEnsino() ).append( ", " );
         sb.append( "Cenario: " ).append( getCenario() ).append( ", " );
         sb.append( "Nome: " ).append( getNome() ).append( ", " );
         sb.append( "Tempo: " ).append( getTempo() ).append( ", " );

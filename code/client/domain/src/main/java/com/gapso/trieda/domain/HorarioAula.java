@@ -37,8 +37,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Entity
 @RooJavaBean
 @RooToString
-@RooEntity(identifierColumn = "HOR_ID")
-@Table(name = "HORARIOS_AULA")
+@RooEntity( identifierColumn = "HOR_ID" )
+@Table( name = "HORARIOS_AULA" )
 public class HorarioAula
 	implements Serializable
 {
@@ -174,55 +174,81 @@ public class HorarioAula
     public static final EntityManager entityManager()
     {
         EntityManager em = new HorarioAula().entityManager;
+
         if ( em == null )
         {
-        	throw new IllegalStateException( "Entity manager has not been injected (is the Spring"
-        			+ " Aspects JAR configured as an AJC/AJDT aspects library?)" );
+        	throw new IllegalStateException(
+        		"Entity manager has not been injected (is the Spring " +
+        		"Aspects JAR configured as an AJC/AJDT aspects library?)" );
         }
 
         return em;
     }
 
     @SuppressWarnings("unchecked")
-    public static List<HorarioAula> findAll()
+    public static List< HorarioAula > findAll(
+    	InstituicaoEnsino instituicaoEnsino )
     {
         return entityManager().createQuery(
-        	"select o from HorarioAula o").getResultList();
+        	" SELECT o FROM HorarioAula o " +
+        	" WHERE o.semanaLetiva.instituicaoEnsino = :instituicaoEnsino " )
+        	.setParameter( "instituicaoEnsino", instituicaoEnsino ).getResultList();
     }
 
-    public static HorarioAula find( Long id )
+    public static HorarioAula find(
+    	Long id, InstituicaoEnsino instituicaoEnsino )
     {
-        if ( id == null )
+        if ( id == null || instituicaoEnsino == null )
         {
         	return null;
         }
 
-        return entityManager().find( HorarioAula.class, id );
+        HorarioAula ha = entityManager().find( HorarioAula.class, id );
+
+        if ( ha != null && ha.getSemanaLetiva() != null
+        	&& ha.getSemanaLetiva().getInstituicaoEnsino() != null
+        	&& ha.getSemanaLetiva().getInstituicaoEnsino() == instituicaoEnsino )
+        {
+        	return ha;
+        }
+
+        return null;
     }
 
-    public static List<HorarioAula> find( int firstResult, int maxResults )
+    public static List< HorarioAula > find(
+    	InstituicaoEnsino instituicaoEnsino,
+    	int firstResult, int maxResults )
     {
-        return find( firstResult, maxResults, null );
+        return find( instituicaoEnsino, firstResult, maxResults, null );
     }
 
     @SuppressWarnings("unchecked")
-    public static List< HorarioAula > find( int firstResult, int maxResults, String orderBy )
+    public static List< HorarioAula > find(
+   		InstituicaoEnsino instituicaoEnsino,
+   		int firstResult, int maxResults, String orderBy )
     {
-        orderBy = ( ( orderBy != null ) ? "ORDER BY o." + orderBy : "" );
+        orderBy = ( ( orderBy != null ) ? " ORDER BY o." + orderBy : "" );
 
         return entityManager().createQuery(
-        	"select o from HorarioAula o " + orderBy ).setFirstResult(
-        			firstResult ).setMaxResults( maxResults ).getResultList();
+        	" SELECT o FROM HorarioAula o " +
+        	" WHERE o.semanaLetiva.instituicaoEnsino = :instituicaoEnsino" + orderBy )
+        	.setParameter( "instituicaoEnsino", instituicaoEnsino )
+        	.setFirstResult( firstResult ).setMaxResults( maxResults ).getResultList();
     }
 
-    public static int count( SemanaLetiva semanaLetiva, Turno turno, Date horario )
+    public static int count( InstituicaoEnsino instituicaoEnsino,
+    	SemanaLetiva semanaLetiva, Turno turno, Date horario )
     {
-    	String horarioQuery = ( ( horario == null )? "" : "o.horario = :horario AND" );
-    	String semanaLetivaQuery = ( ( semanaLetiva == null )? "" : "o.semanaLetiva = :semanaLetiva AND" );
-    	String turnoQuery = ( ( turno == null )? "" : "o.turno = :turno AND" );
+    	String horarioQuery = ( ( horario == null )? "" : " o.horario = :horario AND " );
+    	String semanaLetivaQuery = ( ( semanaLetiva == null )? "" : " o.semanaLetiva = :semanaLetiva AND " );
+    	String turnoQuery = ( ( turno == null )? "" : " o.turno = :turno AND " );
 
     	Query q = entityManager().createQuery(
-    		"SELECT COUNT(o) FROM HorarioAula o WHERE " + horarioQuery + " " + semanaLetivaQuery + " " + turnoQuery + " 1=1 " );
+    		" SELECT COUNT( o ) FROM HorarioAula o " +
+    		" WHERE o.semanaLetiva.instituicaoEnsino = :instituicaoEnsino " +
+    		" AND " + horarioQuery + " " + semanaLetivaQuery + " " + turnoQuery + " 1=1 " );
+
+    	q.setParameter( "instituicaoEnsino", instituicaoEnsino );
 
     	if ( horario != null )
     	{
@@ -243,18 +269,25 @@ public class HorarioAula
     }
 
     @SuppressWarnings("unchecked")
-    public static List< HorarioAula > findBy( SemanaLetiva semanaLetiva, Turno turno,
-    	Date horario, int firstResult, int maxResults, String orderBy )
+    public static List< HorarioAula > findBy( InstituicaoEnsino instituicaoEnsino,
+    	SemanaLetiva semanaLetiva, Turno turno, Date horario,
+    	int firstResult, int maxResults, String orderBy )
     {
-    	orderBy = ( ( orderBy != null ) ? "ORDER BY o." + orderBy : "" );
+    	orderBy = ( ( orderBy != null ) ? " ORDER BY o." + orderBy : "" );
 
-        String horarioQuery = ( ( horario == null )? "" : "o.horario = :horario AND" );
-        String semanaLetivaQuery = ( ( semanaLetiva == null )? "" : "o.semanaLetiva = :semanaLetiva AND" );
-        String turnoQuery = ( ( turno == null )? "" : "o.turno = :turno AND" );
+        String horarioQuery = ( ( horario == null )? "" : " o.horario = :horario AND " );
+        String semanaLetivaQuery = ( ( semanaLetiva == null )? "" : " o.semanaLetiva = :semanaLetiva AND " );
+        String turnoQuery = ( ( turno == null )? "" : " o.turno = :turno AND " );
 
         Query q = entityManager().createQuery(
-        	"SELECT o FROM HorarioAula o WHERE " + horarioQuery
+        	" SELECT o FROM HorarioAula o " +
+        	" WHERE o.semanaLetiva.instituicaoEnsino = :instituicaoEnsino " +
+        	" AND " + horarioQuery
         	+ " " + semanaLetivaQuery + " " + turnoQuery + " 1=1 " + orderBy );
+
+        q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+        q.setFirstResult( firstResult );
+        q.setMaxResults( maxResults );
 
         if ( horario != null )
         {
@@ -271,25 +304,34 @@ public class HorarioAula
         	q.setParameter( "turno", turno );
         }
 
-        return q.setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
+        return q.getResultList();
     }
-    
+
     @SuppressWarnings("unchecked")
     public static List< HorarioAula > findHorarioAulasBySemanaLetivaAndTurno(
+    	InstituicaoEnsino instituicaoEnsino,
     	SemanaLetiva semanaLetiva, Turno turno )
     {
     	Query q = entityManager().createQuery(
-    		"SELECT o FROM HorarioAula o WHERE o.semanaLetiva = :semanaLetiva AND o.turno = :turno" );
+    		" SELECT o FROM HorarioAula o " +
+    		" WHERE o.semanaLetiva.instituicaoEnsino = :instituicaoEnsino " +
+    		" AND o.semanaLetiva = :semanaLetiva " +
+    		" AND o.turno.instituicaoEnsino = :instituicaoEnsino " +
+    		" AND o.turno = :turno " );
 
     	q.setParameter( "semanaLetiva", semanaLetiva );
     	q.setParameter( "turno", turno );
+    	q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
     	return q.getResultList();
     }
-    
+
 	public static Map< Long, HorarioAula > buildHorarioAulaIdToHorarioAulaMap(
 		List< HorarioAula > horariosAulas )
 	{
-		Map< Long, HorarioAula > horariosMap = new HashMap< Long, HorarioAula >();
+		Map< Long, HorarioAula > horariosMap
+			= new HashMap< Long, HorarioAula >();
+
 		for ( HorarioAula horario : horariosAulas )
 		{
 			horariosMap.put( horario.getId(), horario );

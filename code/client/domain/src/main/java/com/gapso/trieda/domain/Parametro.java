@@ -32,19 +32,16 @@ import org.springframework.transaction.annotation.Transactional;
 @Entity
 @RooJavaBean
 @RooToString
-@RooEntity(identifierColumn = "PAR_ID")
-@Table(name = "PARAMETROS")
-public class Parametro implements Serializable {
-
+@RooEntity( identifierColumn = "PAR_ID" )
+@Table( name = "PARAMETROS" )
+public class Parametro
+	implements Serializable
+{
 	private static final long serialVersionUID = -1310877837088078190L;
-	
+
 	public static final String TATICO = "TATICO";
 	public static final String OPERACIONAL = "OPERACIONAL";
 
-//	@NotNull
-//    @OneToOne
-//    @JoinColumn(name = "CEN_ID")
-//    private Cenario cenario;
     @NotNull
     @ManyToOne
     @JoinColumn(name = "CEN_ID")
@@ -281,40 +278,78 @@ public class Parametro implements Serializable {
         return merged;
     }
 
-    public static final EntityManager entityManager() {
+    public static final EntityManager entityManager()
+    {
         EntityManager em = new Parametro().entityManager;
-        if (em == null) throw new IllegalStateException("Entity manager has not been injected (is the Spring Aspects JAR configured as an AJC/AJDT aspects library?)");
+
+        if ( em == null )
+        {
+        	throw new IllegalStateException(
+        		"Entity manager has not been injected (is the Spring " +
+        		"Aspects JAR configured as an AJC/AJDT aspects library?)" );
+        }
+
         return em;
     }
 
     @SuppressWarnings("unchecked")
-    public static List<Parametro> findAll() {
-        return entityManager().createQuery("SELECT o FROM Parametro o").getResultList();
+    public static List< Parametro > findAll(
+    	InstituicaoEnsino instituicaoEnsino )
+    {
+        return entityManager().createQuery(
+        	" SELECT o FROM Parametro o " +
+        	" WHERE o.semanaLetiva.instituicaoEnsino = :instituicaoEnsino " +
+        	" AND o.turno.instituicaoEnsino = :instituicaoEnsino " )
+        	.setParameter( "instituicaoEnsino", instituicaoEnsino ).getResultList();
     }
 
-    public static Parametro find(Long id) {
-        if (id == null) return null;
-        return entityManager().find(Parametro.class, id);
+    public static Parametro find(
+    	Long id, InstituicaoEnsino instituicaoEnsino )
+    {
+        if ( id == null || instituicaoEnsino == null )
+        {
+        	return null;
+        }
+
+        Parametro parametro = entityManager().find( Parametro.class, id );
+
+        if ( parametro != null  && parametro.getSemanaLetiva() != null
+        	&& parametro.getSemanaLetiva().getInstituicaoEnsino() != null
+        	&& parametro.getSemanaLetiva().getInstituicaoEnsino() == instituicaoEnsino )
+        {
+        	return parametro;
+        }
+
+        return null;
     }
-    
-    public boolean isTatico() {
-    	return getModoOtimizacao().equals(Parametro.TATICO);
+
+    public boolean isTatico()
+    {
+    	return getModoOtimizacao().equals( Parametro.TATICO );
     }
-    public boolean isOperacional() {
-    	return getModoOtimizacao().equals(Parametro.OPERACIONAL);
+
+    public boolean isOperacional()
+    {
+    	return getModoOtimizacao().equals( Parametro.OPERACIONAL );
     }
-    
-	public Cenario getCenario() {
+
+	public Cenario getCenario()
+	{
         return this.cenario;
     }
-	public void setCenario(Cenario cenario) {
+
+	public void setCenario(Cenario cenario )
+	{
         this.cenario = cenario;
     }
 
-	public Boolean getCargaHorariaAluno() {
+	public Boolean getCargaHorariaAluno()
+	{
 		return cargaHorariaAluno;
 	}
-	public void setCargaHorariaAluno(Boolean cargaHorariaAluno) {
+
+	public void setCargaHorariaAluno( Boolean cargaHorariaAluno )
+	{
 		this.cargaHorariaAluno = cargaHorariaAluno;
 	}
 
@@ -579,8 +614,10 @@ public class Parametro implements Serializable {
 		this.modoOtimizacao = modoOtimizacao;
 	}
 
-	public String toString() {
+	public String toString()
+	{
         StringBuilder sb = new StringBuilder();
+
         sb.append("Id: ").append(getId()).append(", ");
         sb.append("Version: ").append(getVersion()).append(", ");
         sb.append("Cenario: ").append(getCenario()).append(", ");
@@ -622,6 +659,7 @@ public class Parametro implements Serializable {
         sb.append("PercentuaisMinimosDoutores: ").append(getPercentuaisMinimosDoutores()).append(", ");
         sb.append("AreaTitulacaoProfessoresECursos: ").append(getAreaTitulacaoProfessoresECursos()).append(", ");
         sb.append("LimitarMaximoDisciplinaProfessor: ").append(getLimitarMaximoDisciplinaProfessor()).append(", ");
+
         return sb.toString();
     }
 }

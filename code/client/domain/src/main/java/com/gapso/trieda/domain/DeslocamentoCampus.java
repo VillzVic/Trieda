@@ -32,7 +32,10 @@ import org.springframework.transaction.annotation.Transactional;
 @RooToString
 @RooEntity(identifierColumn = "DEC_ID")
 @Table(name = "DESLOCAMENTOS_CAMPI")
-public class DeslocamentoCampus implements java.io.Serializable {
+public class DeslocamentoCampus
+	implements java.io.Serializable
+{
+	private static final long serialVersionUID = -7559927105823983148L;
 
     @NotNull
     @ManyToOne(targetEntity = Campus.class, fetch = FetchType.LAZY)
@@ -53,14 +56,17 @@ public class DeslocamentoCampus implements java.io.Serializable {
     @Digits(integer = 4, fraction = 2)
     private Double custo;
 
-	public String toString() {
+	public String toString()
+	{
         StringBuilder sb = new StringBuilder();
-        sb.append("Id: ").append(getId()).append(", ");
-        sb.append("Version: ").append(getVersion()).append(", ");
-        sb.append("Origem: ").append(getOrigem()).append(", ");
-        sb.append("Destino: ").append(getDestino()).append(", ");
-        sb.append("Tempo: ").append(getTempo()).append(", ");
-        sb.append("Custo: ").append(getCusto());
+
+        sb.append( "Id: " ).append( getId() ).append( ", " );
+        sb.append( "Version: " ).append( getVersion() ).append( ", " );
+        sb.append( "Origem: " ).append( getOrigem() ).append( ", " );
+        sb.append( "Destino: " ).append( getDestino() ).append( ", " );
+        sb.append( "Tempo: " ).append( getTempo() ).append( ", " );
+        sb.append( "Custo: " ).append( getCusto() );
+
         return sb.toString();
     }
 
@@ -129,69 +135,124 @@ public class DeslocamentoCampus implements java.io.Serializable {
         return merged;
     }
 
-	public static final EntityManager entityManager() {
+	public static final EntityManager entityManager()
+	{
         EntityManager em = new DeslocamentoCampus().entityManager;
-        if (em == null) throw new IllegalStateException("Entity manager has not been injected (is the Spring Aspects JAR configured as an AJC/AJDT aspects library?)");
+
+        if ( em == null )
+        {
+        	throw new IllegalStateException(
+        		"Entity manager has not been injected (is the Spring " +
+        		"Aspects JAR configured as an AJC/AJDT aspects library?)" );
+        }
+
         return em;
     }
 
-	public static long countDeslocamentoCampuses() {
-        return ((Number) entityManager().createQuery("SELECT count(o) FROM DeslocamentoCampus o").getSingleResult()).longValue();
+	public static long countDeslocamentoCampuses(
+		InstituicaoEnsino instituicaoEnsino )
+	{
+		return findAllDeslocamentoCampuses( instituicaoEnsino ).size();
     }
 
 	@SuppressWarnings("unchecked")
-    public static List<DeslocamentoCampus> findAllDeslocamentoCampuses() {
-        return entityManager().createQuery("SELECT o FROM DeslocamentoCampus o").getResultList();
+    public static List< DeslocamentoCampus > findAllDeslocamentoCampuses(
+    	InstituicaoEnsino instituicaoEnsino )
+    {
+        return entityManager().createQuery(
+        	" SELECT o FROM DeslocamentoCampus o " +
+        	" WHERE o.origem.instituicaoEnsino = :instituicaoEnsino " +
+        	" AND o.destino.instituicaoEnsino = :instituicaoEnsino " )
+        	.setParameter( "instituicaoEnsino", instituicaoEnsino ).getResultList();
     }
 
-	public static DeslocamentoCampus findDeslocamentoCampus(Long id) {
-        if (id == null) return null;
-        return entityManager().find(DeslocamentoCampus.class, id);
+	public static DeslocamentoCampus findDeslocamentoCampus(
+		Long id, InstituicaoEnsino instituicaoEnsino )
+	{
+        if ( id == null || instituicaoEnsino == null )
+        {
+        	return null;
+        }
+
+        DeslocamentoCampus dc = entityManager().find( DeslocamentoCampus.class, id );
+
+        if ( dc != null && dc.getOrigem() != null && dc.getDestino() != null
+        	&& dc.getOrigem().getInstituicaoEnsino() != null
+        	&& dc.getDestino().getInstituicaoEnsino() != null
+        	&& dc.getOrigem().getInstituicaoEnsino() == instituicaoEnsino
+        	&& dc.getDestino().getInstituicaoEnsino() == instituicaoEnsino )
+        {
+        	return dc;
+        }
+        
+        return null;
     }
 
 	@SuppressWarnings("unchecked")
-    public static List<DeslocamentoCampus> findDeslocamentoCampusEntries(int firstResult, int maxResults) {
-        return entityManager().createQuery("SELECT o FROM DeslocamentoCampus o").setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
+    public static List< DeslocamentoCampus > findDeslocamentoCampusEntries(
+    	InstituicaoEnsino instituicaoEnsino, int firstResult, int maxResults )
+    {
+        return entityManager().createQuery(
+        	" SELECT o FROM DeslocamentoCampus o " +
+        	" WHERE o.origem.instituicaoEnsino = :instituicaoEnsino " +
+        	" AND o.destino.instituicaoEnsino = :instituicaoEnsino " )
+        	.setParameter( "instituicaoEnsino", instituicaoEnsino )
+        	.setFirstResult( firstResult ).setMaxResults( maxResults ).getResultList();
     }
 
 	@SuppressWarnings("unchecked")
-    public static List<DeslocamentoCampus> findAllByCampus(Cenario cenario) {
-		Query q = entityManager().createQuery("SELECT o FROM DeslocamentoCampus o WHERE o.origem.cenario = :cenario");
-		q.setParameter("cenario", cenario);
+    public static List< DeslocamentoCampus > findAllByCampus(
+    	InstituicaoEnsino instituicaoEnsino, Cenario cenario )
+    {
+		Query q = entityManager().createQuery(
+			" SELECT o FROM DeslocamentoCampus o " +
+			" WHERE o.origem.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.destino.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.origem.cenario = :cenario " );
+
+		q.setParameter( "cenario", cenario );
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
         return q.getResultList();
     }
-	
-	public Campus getOrigem() {
+
+	public Campus getOrigem()
+	{
         return this.origem;
     }
 
-	public void setOrigem(Campus origem) {
+	public void setOrigem( Campus origem )
+	{
         this.origem = origem;
     }
 
-	public Campus getDestino() {
+	public Campus getDestino()
+	{
         return this.destino;
     }
 
-	public void setDestino(Campus destino) {
+	public void setDestino( Campus destino )
+	{
         this.destino = destino;
     }
 
-	public Integer getTempo() {
+	public Integer getTempo()
+	{
         return this.tempo;
     }
 
-	public void setTempo(Integer tempo) {
+	public void setTempo( Integer tempo )
+	{
         this.tempo = tempo;
     }
 
-	public Double getCusto() {
+	public Double getCusto()
+	{
         return this.custo;
     }
 
-	public void setCusto(Double custo) {
+	public void setCusto( Double custo )
+	{
         this.custo = custo;
     }
-
-	private static final long serialVersionUID = -7559927105823983148L;
 }

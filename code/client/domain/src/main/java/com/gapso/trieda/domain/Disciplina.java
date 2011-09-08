@@ -46,7 +46,7 @@ import com.gapso.trieda.misc.Dificuldades;
 @RooJavaBean
 @RooToString
 @RooEntity( identifierColumn = "DIS_ID" )
-@Table(name = "DISCIPLINAS", uniqueConstraints =
+@Table( name = "DISCIPLINAS", uniqueConstraints =
 @UniqueConstraint( columnNames = { "DIS_CODIGO", "CEN_ID" } ) )
 public class Disciplina
 	implements Serializable, Comparable< Disciplina >
@@ -223,7 +223,13 @@ public class Disciplina
 
 	public void preencheHorarios()
 	{
-		for ( SemanaLetiva semanaLetiva : SemanaLetiva.findAll() )
+		InstituicaoEnsino instituicaoEnsino
+			= this.getTipoDisciplina().getInstituicaoEnsino();
+
+		List< SemanaLetiva > listDomains
+			= SemanaLetiva.findAll( instituicaoEnsino );
+
+		for ( SemanaLetiva semanaLetiva : listDomains )
 		{
 			for ( HorarioAula horarioAula : semanaLetiva.getHorariosAula() )
 			{
@@ -328,14 +334,12 @@ public class Disciplina
 		}
 	}
 
-
 	@Transactional
 	public void flush() {
 		if (this.entityManager == null)
 			this.entityManager = entityManager();
 		this.entityManager.flush();
 	}
-
 
 	@Transactional
 	public Disciplina merge()
@@ -350,27 +354,34 @@ public class Disciplina
 		return merged;
 	}
 
-
 	public static final EntityManager entityManager()
 	{
 		EntityManager em = new Disciplina().entityManager;
+
 		if ( em == null )
 		{
 			throw new IllegalStateException(
-				"Entity manager has not been injected (is the Spring Aspects JAR configured as an AJC/AJDT aspects library?)" );
+				"Entity manager has not been injected (is the Spring " +
+				"Aspects JAR configured as an AJC/AJDT aspects library?)" );
 		}
 
 		return em;
 	}
 
-
-	public Incompatibilidade getIncompatibilidadeWith( Disciplina disciplina )
+	public Incompatibilidade getIncompatibilidadeWith(
+		InstituicaoEnsino instituicaoEnsino, Disciplina disciplina )
 	{
 		Query q = entityManager().createQuery(
-					"SELECT o FROM Incompatibilidade o WHERE o.disciplina1 = :disciplina1 AND o.disciplina2 = :disciplina2" );
+			" SELECT o FROM Incompatibilidade o " +
+			" WHERE o.disciplina1.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.disciplina2.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.disciplina1 = :disciplina1 " +
+			" AND o.disciplina2 = :disciplina2 " );
 
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
 		q.setParameter( "disciplina1", this );
 		q.setParameter( "disciplina2", disciplina );
+
 		Incompatibilidade incomp = null;
 		try
 		{
@@ -384,24 +395,29 @@ public class Disciplina
 		return incomp;
 	}
 
-
-	public static int count( Cenario cenario )
+	public static int count(
+		InstituicaoEnsino instituicaoEnsino, Cenario cenario )
 	{
 		Query q = entityManager().createQuery(
-				"SELECT COUNT(o) FROM Disciplina o WHERE o.cenario = :cenario" );
+			" SELECT COUNT ( o ) FROM Disciplina o " +
+			" WHERE o.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.cenario = :cenario " );
 
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
 		q.setParameter( "cenario", cenario );
+
 		return ( (Number)q.getSingleResult() ).intValue();
 	}
 
-
 	@SuppressWarnings("unchecked")
-	public static List< Disciplina > findAll()
+	public static List< Disciplina > findAll(
+		InstituicaoEnsino instituicaoEnsino )
 	{
 		return entityManager().createQuery(
-				"SELECT o FROM Disciplina o" ).getResultList();
+			" SELECT o FROM Disciplina o " +
+			" WHERE o.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino " )
+			.setParameter( "instituicaoEnsino", instituicaoEnsino ).getResultList();
 	}
-
 
 	public static Map< String, Disciplina > buildDisciplinaCodigoToDisciplinaMap(
 			List< Disciplina > disciplinas )
@@ -417,153 +433,216 @@ public class Disciplina
 		return disciplinasMap;
 	}
 
-
-	public static Disciplina find(Long id) {
-		if (id == null)
-			return null;
-		return entityManager().find(Disciplina.class, id);
-	}
-
-
-	public static List<Disciplina> find(int firstResult, int maxResults) {
-		return find(firstResult, maxResults, null);
-	}
-
-
-	@SuppressWarnings("unchecked")
-	public static List<Disciplina> find(int firstResult, int maxResults,
-			String orderBy) {
-		orderBy = (orderBy != null) ? "ORDER BY o." + orderBy : "";
-		return entityManager()
-				.createQuery("SELECT o FROM Disciplina o " + orderBy)
-				.setFirstResult(firstResult).setMaxResults(maxResults)
-				.getResultList();
-	}
-
-
-	@SuppressWarnings("unchecked")
-	public static List<Disciplina> findByCenario(Cenario cenario) {
-		Query q = entityManager().createQuery(
-				"SELECT o FROM Disciplina o WHERE o.cenario = :cenario");
-		q.setParameter("cenario", cenario);
-		return q.getResultList();
-	}
-
-
-	@SuppressWarnings("unchecked")
-	public static List<Disciplina> findBySalas(List<Sala> salas) {
-		Query q = entityManager()
-				.createQuery(
-						"SELECT DISTINCT(o.disciplina) FROM SalasDisciplinas o WHERE o.sala IN (:salas)")
-				.setParameter("salas", salas);
-		return q.getResultList();
-	}
-
-
-	@SuppressWarnings("unchecked")
-	public static List< Disciplina > findByCursos( List< Curso > cursos )
+	public static Disciplina find(
+		Long id, InstituicaoEnsino instituicaoEnsino )
 	{
-		Query q = entityManager()
-				.createQuery(
-						"SELECT DISTINCT(o.disciplina) FROM CurriculoDisciplina o WHERE o.curriculo IN "
-						+ "(SELECT c FROM Curriculo c WHERE c.curso IN (:cursos))").setParameter( "cursos", cursos );
+		if ( id == null || instituicaoEnsino == null )
+		{
+			return null;
+		}
+
+		Disciplina disciplina = entityManager().find( Disciplina.class, id );
+
+		if ( disciplina != null
+			&& disciplina.getTipoDisciplina() != null
+			&& disciplina.getTipoDisciplina().getInstituicaoEnsino() != null
+			&& disciplina.getTipoDisciplina().getInstituicaoEnsino() == instituicaoEnsino )
+		{
+			return disciplina;
+		}
+
+		return null;
+	}
+
+	public static List< Disciplina > find(
+		InstituicaoEnsino instituicaoEnsino,
+		int firstResult, int maxResults )
+	{
+		return find( instituicaoEnsino, firstResult, maxResults, null );
+	}
+
+	@SuppressWarnings("unchecked")
+	public static List< Disciplina > find(
+		InstituicaoEnsino instituicaoEnsino,
+		int firstResult, int maxResults, String orderBy )
+	{
+		orderBy = ( ( orderBy != null ) ? " ORDER BY o." + orderBy : "" );
+
+		return entityManager().createQuery(
+			" SELECT o FROM Disciplina o " +
+			" WHERE o.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino " + orderBy )
+			.setParameter( "instituicaoEnsino", instituicaoEnsino )
+			.setFirstResult( firstResult ).setMaxResults( maxResults ).getResultList();
+	}
+
+	@SuppressWarnings("unchecked")
+	public static List< Disciplina > findByCenario(
+		InstituicaoEnsino instituicaoEnsino, Cenario cenario )
+	{
+		Query q = entityManager().createQuery(
+			" SELECT o FROM Disciplina o " +
+			" WHERE o.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.cenario = :cenario " );
+
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+		q.setParameter( "cenario", cenario );
 
 		return q.getResultList();
 	}
 
+	@SuppressWarnings("unchecked")
+	public static List< Disciplina > findBySalas(
+		InstituicaoEnsino instituicaoEnsino, List< Sala > salas )
+	{
+		Query q = entityManager().createQuery(
+			" SELECT DISTINCT ( o.disciplina ) FROM SalasDisciplinas o " +
+			" WHERE o.disciplina.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.sala IN ( :salas ) " )
+			.setParameter( "instituicaoEnsino", instituicaoEnsino )
+			.setParameter( "salas", salas );
+
+		return q.getResultList();
+	}
+
+	@SuppressWarnings("unchecked")
+	public static List< Disciplina > findByCursos(
+		InstituicaoEnsino instituicaoEnsino, List< Curso > cursos )
+	{
+		Query q = entityManager().createQuery(
+			" SELECT DISTINCT ( o.disciplina ) FROM CurriculoDisciplina o " +
+			" WHERE o.disciplina.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.curriculo IN " +
+			" ( SELECT c FROM Curriculo c WHERE c.curso IN ( :cursos ) ) " )
+			.setParameter( "instituicaoEnsino", instituicaoEnsino )
+			.setParameter( "cursos", cursos );
+
+		return q.getResultList();
+	}
 
 	@SuppressWarnings("unchecked")
 	public static List< Disciplina > findByCampusAndTurnoAndPeriodo(
+		InstituicaoEnsino instituicaoEnsino,
 		Campus campus, Turno turno, Integer periodo )
 	{
-		Query q = entityManager()
-				.createQuery(
-					"SELECT DISTINCT(o.disciplina) FROM CurriculoDisciplina o "
-					+ "WHERE o.periodo = :periodo AND o.curriculo.turno = :turno"
-					+ " AND o.curriculo.campus = :campus" )
-				.setParameter( "campus", campus ).setParameter( "turno", turno )
-				.setParameter( "periodo", periodo );
+		Query q = entityManager().createQuery(
+			" SELECT DISTINCT ( o.disciplina ) FROM CurriculoDisciplina o " +
+			" WHERE o.disciplina.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.periodo = :periodo " +
+			" AND o.curriculo.turno = :turno " +
+			" AND o.curriculo.campus = :campus " )
+			.setParameter( "instituicaoEnsino", instituicaoEnsino )
+			.setParameter( "campus", campus )
+			.setParameter( "turno", turno )
+			.setParameter( "periodo", periodo );
 
 		return q.getResultList();
 	}
 
-
-	public static Disciplina findByCodigo(String codigo) {
+	public static Disciplina findByCodigo(
+		InstituicaoEnsino instituicaoEnsino, String codigo )
+	{
 		Query q = entityManager().createQuery(
-				"SELECT o FROM Disciplina o WHERE o.codigo = :codigo");
-		q.setParameter("codigo", codigo);
+			" SELECT o FROM Disciplina o " +
+			" WHERE o.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.codigo = :codigo " );
+
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+		q.setParameter( "codigo", codigo );
+
 		return (Disciplina) q.getSingleResult();
 	}
 
-
-	public static int count(String codigo, String nome,
-			TipoDisciplina tipoDisciplina) {
-
-		nome = (nome == null) ? "" : nome;
-		nome = "%" + nome.replace('*', '%') + "%";
-		codigo = (codigo == null) ? "" : codigo;
-		codigo = "%" + codigo.replace('*', '%') + "%";
+	public static int count( InstituicaoEnsino instituicaoEnsino,
+		String codigo, String nome, TipoDisciplina tipoDisciplina )
+	{
+		nome = ( ( nome == null ) ? "" : nome );
+		nome = ( "%" + nome.replace( '*', '%' ) + "%" );
+		codigo = ( ( codigo == null ) ? "" : codigo );
+		codigo = ( "%" + codigo.replace( '*', '%' ) + "%" );
 
 		String queryCampus = "";
-		if (tipoDisciplina != null) {
-			queryCampus = " o.tipoDisciplina = :tipoDisciplina AND ";
+		if ( tipoDisciplina != null )
+		{
+			queryCampus = ( " o.tipoDisciplina = :tipoDisciplina AND " );
 		}
-		Query q = entityManager()
-				.createQuery(
-						"SELECT COUNT(o) FROM Disciplina o WHERE "
-								+ queryCampus
-								+ " LOWER(o.nome) LIKE LOWER(:nome) AND LOWER(o.codigo) LIKE LOWER(:codigo)");
-		if (tipoDisciplina != null) {
-			q.setParameter("tipoDisciplina", tipoDisciplina);
+
+		Query q = entityManager().createQuery(
+			" SELECT COUNT ( o ) FROM Disciplina o " +
+			" WHERE o.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino " +
+			" AND " + queryCampus +
+			" LOWER ( o.nome ) LIKE LOWER ( :nome ) " +
+			" AND LOWER ( o.codigo ) LIKE LOWER ( :codigo ) " );
+
+		if ( tipoDisciplina != null )
+		{
+			q.setParameter( "tipoDisciplina", tipoDisciplina );
 		}
-		q.setParameter("nome", nome);
-		q.setParameter("codigo", codigo);
-		return ((Number) q.getSingleResult()).intValue();
+
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+		q.setParameter( "nome", nome );
+		q.setParameter( "codigo", codigo );
+
+		return ( (Number) q.getSingleResult() ).intValue();
 	}
 
-	
 	@SuppressWarnings("unchecked")
-	public static List<Disciplina> findBy(String codigo, String nome,
-			TipoDisciplina tipoDisciplina, int firstResult, int maxResults,
-			String orderBy) {
+	public static List< Disciplina > findBy( InstituicaoEnsino instituicaoEnsino,
+		String codigo, String nome, TipoDisciplina tipoDisciplina,
+		int firstResult, int maxResults, String orderBy )
+	{
+		nome = ( ( nome == null ) ? "" : nome );
+		nome = ( "%" + nome.replace( '*', '%' ) + "%" );
+		codigo = ( ( codigo == null ) ? "" : codigo );
+		codigo = ( "%" + codigo.replace( '*', '%' ) + "%" );
 
-		nome = (nome == null) ? "" : nome;
-		nome = "%" + nome.replace('*', '%') + "%";
-		codigo = (codigo == null) ? "" : codigo;
-		codigo = "%" + codigo.replace('*', '%') + "%";
+		orderBy = ( ( orderBy != null ) ? " ORDER BY o." + orderBy : "" );
 
-		orderBy = (orderBy != null) ? " ORDER BY o." + orderBy : "";
 		String queryCampus = "";
-		if (tipoDisciplina != null) {
-			queryCampus = " o.tipoDisciplina = :tipoDisciplina AND ";
+		if ( tipoDisciplina != null )
+		{
+			queryCampus = ( " o.tipoDisciplina = :tipoDisciplina AND " );
 		}
-		Query q = entityManager()
-				.createQuery(
-						"SELECT o FROM Disciplina o WHERE "
-								+ queryCampus
-								+ " LOWER(o.nome) LIKE LOWER(:nome) AND LOWER(o.codigo) LIKE LOWER(:codigo)");
-		if (tipoDisciplina != null) {
-			q.setParameter("tipoDisciplina", tipoDisciplina);
+
+		Query q = entityManager().createQuery(
+			" SELECT o FROM Disciplina o " +
+			" WHERE o.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino " +
+			" AND " + queryCampus + " LOWER ( o.nome ) LIKE LOWER ( :nome ) " +
+			" AND LOWER ( o.codigo ) LIKE LOWER ( :codigo ) " );
+
+		if ( tipoDisciplina != null )
+		{
+			q.setParameter( "tipoDisciplina", tipoDisciplina );
 		}
-		q.setParameter("nome", nome);
-		q.setParameter("codigo", codigo);
-		return q.setFirstResult(firstResult).setMaxResults(maxResults)
-				.getResultList();
+
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+		q.setParameter( "nome", nome );
+		q.setParameter( "codigo", codigo );
+		q.setFirstResult( firstResult );
+		q.setMaxResults( maxResults );
+
+		return q.getResultList();
 	}
 
+	public Boolean isIncompativelCom(
+		InstituicaoEnsino instituicaoEnsino, Disciplina disciplina )
+	{
+		Query q = entityManager().createQuery(
+			" SELECT COUNT ( o ) FROM Incompatibilidade o " +
+			" WHERE o.disciplina1.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.disciplina2.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.disciplina1 = :disciplina1 " +
+			" AND o.disciplina2 = :disciplina2 " );
 
-	public Boolean isIncompativelCom(Disciplina disciplina) {
-		Query q = entityManager()
-				.createQuery(
-						"SELECT COUNT(o) FROM Incompatibilidade o WHERE o.disciplina1 = :disciplina1 AND o.disciplina2 = :disciplina2");
-		q.setParameter("disciplina1", this);
-		q.setParameter("disciplina2", disciplina);
-		return ((Number) q.getSingleResult()).intValue() > 0;
+		q.setParameter( "disciplina1", this );
+		q.setParameter( "disciplina2", disciplina );
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
+		return ( ( (Number) q.getSingleResult() ).intValue() > 0 );
 	}
-
 
 	@SuppressWarnings("unchecked")
-	public List< HorarioDisponivelCenario > getHorarios( List< SemanaLetiva > semanasLetivas )
+	public List< HorarioDisponivelCenario > getHorarios(
+		InstituicaoEnsino instituicaoEnsino, List< SemanaLetiva > semanasLetivas )
 	{
 		Set< HorarioDisponivelCenario > horarios
 			= new HashSet< HorarioDisponivelCenario >();
@@ -572,10 +651,14 @@ public class Disciplina
 		{
 			Query q = entityManager().createQuery(
 				" SELECT o FROM HorarioDisponivelCenario o, IN ( o.disciplinas ) c " +
-				" WHERE c = :disciplina AND o.horarioAula.semanaLetiva = :semanaLetiva " );
+				" WHERE c.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino " +
+				" AND c = :disciplina " +
+				" AND o.horarioAula.semanaLetiva = :semanaLetiva " +
+				" AND o.horarioAula.semanaLetiva.instituicaoEnsino = :instituicaoEnsino " );
 
 			q.setParameter( "disciplina", this );
 			q.setParameter( "semanaLetiva", semanaLetiva );
+			q.setParameter( "instituicaoEnsino", instituicaoEnsino );
 
 			horarios.addAll( q.getResultList() );
 		}
@@ -583,233 +666,196 @@ public class Disciplina
 		return new ArrayList< HorarioDisponivelCenario >( horarios );
 	}
 
+	public static boolean checkCodigoUnique(
+		InstituicaoEnsino instituicaoEnsino,
+		Cenario cenario, String codigo )
+	{
+		Query q = entityManager().createQuery(
+			" SELECT COUNT ( o ) FROM Disciplina o " +
+			" WHERE o.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.cenario = :cenario " +
+			" AND o.codigo = :codigo " );
 
-	public static boolean checkCodigoUnique(Cenario cenario, String codigo) {
-		Query q = entityManager()
-				.createQuery(
-						"SELECT COUNT(o) FROM Disciplina o WHERE o.cenario = :cenario AND o.codigo = :codigo");
-		q.setParameter("cenario", cenario);
-		q.setParameter("codigo", codigo);
-		Number size = (Number) q.setMaxResults(1).getSingleResult();
-		return size.intValue() > 0;
+		q.setParameter( "cenario", cenario );
+		q.setParameter( "codigo", codigo );
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
+		Number size = (Number) q.setMaxResults( 1 ).getSingleResult();
+		return ( size.intValue() > 0 );
 	}
-
 
 	public Integer getCreditosTotal() {
 		return getCreditosPratico() + getCreditosTeorico();
 	}
 
-
 	public Cenario getCenario() {
 		return this.cenario;
 	}
-
 
 	public Integer getTotalCreditos() {
 		return getCreditosPratico() + getCreditosTeorico();
 	}
 
-
 	public void setCenario(Cenario cenario) {
 		this.cenario = cenario;
 	}
-
 
 	public TipoDisciplina getTipoDisciplina() {
 		return this.tipoDisciplina;
 	}
 
-
 	public void setTipoDisciplina(TipoDisciplina tipoDisciplina) {
 		this.tipoDisciplina = tipoDisciplina;
 	}
-
 
 	public DivisaoCredito getDivisaoCreditos() {
 		return this.divisaoCreditos;
 	}
 
-
 	public void setDivisaoCreditos(DivisaoCredito divisaoCreditos) {
 		this.divisaoCreditos = divisaoCreditos;
 	}
-
 
 	public String getCodigo() {
 		return this.codigo;
 	}
 
-
 	public void setCodigo(String codigo) {
 		this.codigo = codigo;
 	}
-
 
 	public String getNome() {
 		return this.nome;
 	}
 
-
 	public void setNome(String nome) {
 		this.nome = nome;
 	}
-
 
 	public Integer getCreditosTeorico() {
 		return this.creditosTeorico;
 	}
 
-
 	public void setCreditosTeorico(Integer creditosTeorico) {
 		this.creditosTeorico = creditosTeorico;
 	}
-
 
 	public Integer getCreditosPratico() {
 		return this.creditosPratico;
 	}
 
-
 	public void setCreditosPratico(Integer creditosPratico) {
 		this.creditosPratico = creditosPratico;
 	}
-
 
 	public Boolean getLaboratorio() {
 		return this.laboratorio;
 	}
 
-
 	public void setLaboratorio(Boolean laboratorio) {
 		this.laboratorio = laboratorio;
 	}
-
 
 	public Dificuldades getDificuldade() {
 		return this.dificuldade;
 	}
 
-
 	public void setDificuldade(Dificuldades dificuldade) {
 		this.dificuldade = dificuldade;
 	}
 
-	
 	public Integer getMaxAlunosTeorico() {
 		return this.maxAlunosTeorico;
 	}
-
 
 	public void setMaxAlunosTeorico(Integer maxAlunosTeorico) {
 		this.maxAlunosTeorico = maxAlunosTeorico;
 	}
 
-
 	public Integer getMaxAlunosPratico() {
 		return this.maxAlunosPratico;
 	}
-
 
 	public void setMaxAlunosPratico(Integer maxAlunosPratico) {
 		this.maxAlunosPratico = maxAlunosPratico;
 	}
 
-
 	private Set<HorarioDisponivelCenario> getHorarios() {
 		return this.horarios;
 	}
-
 
 	public void setHorarios(Set<HorarioDisponivelCenario> horarios) {
 		this.horarios = horarios;
 	}
 
-
 	public Set<ProfessorDisciplina> getProfessores() {
 		return this.professores;
 	}
-
 
 	public void setProfessores(Set<ProfessorDisciplina> professores) {
 		this.professores = professores;
 	}
 
-
 	public Set<Incompatibilidade> getIncompatibilidades() {
 		return this.incompatibilidades;
 	}
-
 
 	public void setIncompatibilidades(Set<Incompatibilidade> incompatibilidades) {
 		this.incompatibilidades = incompatibilidades;
 	}
 
-
 	public Set<Equivalencia> getEquivalencias() {
 		return this.equivalencias;
 	}
-
 
 	public void setEquivalencias(Set<Equivalencia> equivalencias) {
 		this.equivalencias = equivalencias;
 	}
 
-
 	public Set<Equivalencia> getEliminadaPor() {
 		return this.eliminadaPor;
 	}
-
 
 	public void setEliminadaPor(Set<Equivalencia> eliminadaPor) {
 		this.eliminadaPor = eliminadaPor;
 	}
 
-
 	public Set<CurriculoDisciplina> getCurriculos() {
 		return this.curriculos;
 	}
-
 
 	public void setCurriculos(Set<CurriculoDisciplina> curriculos) {
 		this.curriculos = curriculos;
 	}
 
-
 	public Set<Demanda> getDemandas() {
 		return this.demandas;
 	}
-
 
 	public void setDemandas(Set<Demanda> demandas) {
 		this.demandas = demandas;
 	}
 
-
 	public Set<Fixacao> getFixacoes() {
 		return this.fixacoes;
 	}
-
 
 	public void setFixacoes(Set<Fixacao> fixacoes) {
 		this.fixacoes = fixacoes;
 	}
 
-
 	public Set<AtendimentoOperacional> getAtendimentosOperacionais() {
 		return this.atendimentosOperacionais;
 	}
-
 
 	public void setAtendimentosOperacionais(
 			Set<AtendimentoOperacional> atendimentosOperacionais) {
 		this.atendimentosOperacionais = atendimentosOperacionais;
 	}
 
-
 	public Set<AtendimentoTatico> getAtendimentosTaticos() {
 		return this.atendimentosTaticos;
 	}
-
 
 	public void setAtendimentosTaticos(
 			Set<AtendimentoTatico> atendimentosTaticos) {
@@ -817,8 +863,8 @@ public class Disciplina
 	}
 
 	@Override
-
-	public int compareTo(Disciplina o) {
-		return getCodigo().compareTo(o.getCodigo());
+	public int compareTo( Disciplina o )
+	{
+		return getCodigo().compareTo( o.getCodigo() );
 	}
 }

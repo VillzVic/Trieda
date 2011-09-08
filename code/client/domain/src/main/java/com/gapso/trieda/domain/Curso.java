@@ -38,11 +38,14 @@ import org.springframework.transaction.annotation.Transactional;
 @Entity
 @RooJavaBean
 @RooToString
-@RooEntity(identifierColumn = "CUR_ID")
-@Table(name = "CURSOS", uniqueConstraints = @UniqueConstraint(columnNames = {
-		"CEN_ID", "CUR_CODIGO" }))
-public class Curso implements Serializable, Comparable< Curso >
+@RooEntity( identifierColumn = "CUR_ID" )
+@Table( name = "CURSOS", uniqueConstraints =
+@UniqueConstraint( columnNames = { "CEN_ID", "CUR_CODIGO" } ) )
+public class Curso
+	implements Serializable, Comparable< Curso >
 {
+	private static final long serialVersionUID = 2645879541329424105L;
+
 	@NotNull
 	@ManyToOne(targetEntity = TipoCurso.class)
 	@JoinColumn(name = "TCU_ID")
@@ -105,8 +108,10 @@ public class Curso implements Serializable, Comparable< Curso >
     @OneToMany(mappedBy = "curso")
     private Set< Oferta > ofertas = new HashSet< Oferta >();
 
-	public String toString() {
+	public String toString()
+	{
 		StringBuilder sb = new StringBuilder();
+
 		sb.append("Id: ").append(getId()).append(", ");
 		sb.append("Version: ").append(getVersion()).append(", ");
 		sb.append("TipoCurso: ").append(getTipoCurso()).append(", ");
@@ -115,17 +120,17 @@ public class Curso implements Serializable, Comparable< Curso >
 		sb.append("Nome: ").append(getNome()).append(", ");
 		sb.append("NumMinDoutores: ").append(getNumMinDoutores()).append(", ");
 		sb.append("NumMinMestres: ").append(getNumMinMestres()).append(", ");
-		sb.append("MinTempoIntegralParcial: ")
-				.append(getMinTempoIntegralParcial()).append(", ");
-		sb.append("MinTempoIntegral: ").append(getMinTempoIntegral())
-				.append(", ");
-		sb.append("MaxDisciplinasPeloProfessor: ")
-				.append(getMaxDisciplinasPeloProfessor()).append(", ");
-		sb.append("AdmMaisDeUmDisciplina: ").append(getAdmMaisDeUmDisciplina())
-				.append(", ");
+		sb.append("MinTempoIntegralParcial: ").append(
+			getMinTempoIntegralParcial()).append(", ");
+		sb.append("MinTempoIntegral: ").append(
+			getMinTempoIntegral()).append(", ");
+		sb.append("MaxDisciplinasPeloProfessor: ").append(
+			getMaxDisciplinasPeloProfessor()).append(", ");
+		sb.append("AdmMaisDeUmDisciplina: ").append(
+			getAdmMaisDeUmDisciplina() ).append(", ");
 		sb.append("AreasTitulacao: ").append(
-				getAreasTitulacao() == null ? "null" : getAreasTitulacao()
-						.size());
+			getAreasTitulacao() == null ? "null" : getAreasTitulacao().size());
+
 		return sb.toString();
 	}
 
@@ -394,32 +399,46 @@ public class Curso implements Serializable, Comparable< Curso >
 		if ( em == null )
 		{
 			throw new IllegalStateException(
-				"Entity manager has not been injected (is the Spring " +
-				"Aspects JAR configured as an AJC/AJDT aspects library?)" );
+				" Entity manager has not been injected (is the Spring " +
+				" Aspects JAR configured as an AJC/AJDT aspects library?) " );
 		}
 
 		return em;
 	}
 
-	public static int count( Cenario cenario )
+	public static int count(
+		InstituicaoEnsino instituicaoEnsino, Cenario cenario )
 	{
 		Query q = entityManager().createQuery(
-			"SELECT COUNT(o) FROM Curso o WHERE o.cenario = :cenario" );
+			" SELECT COUNT ( o ) FROM Curso o " +
+			" WHERE o.tipoCurso.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.cenario = :cenario " );
 
 		q.setParameter( "cenario", cenario );
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
 		return ( (Number) q.getSingleResult() ).intValue();
 	}
 
 	@SuppressWarnings("unchecked")
-	public static List< Curso > findAll()
+	public static List< Curso > findAll(
+		InstituicaoEnsino instituicaoEnsino )
 	{
-		return entityManager().createQuery( "select o from Curso o" ).getResultList();
+		Query q = entityManager().createQuery(
+			" SELECT o FROM Curso o " +
+			" WHERE o.tipoCurso.instituicaoEnsino = :instituicaoEnsino " );
+
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
+		return q.getResultList();
 	}
 
 	public static Map< String, Curso > buildCursoCodigoToCursoMap(
 			List< Curso > cursos )
 	{
-		Map< String, Curso > cursosMap = new HashMap< String, Curso >();
+		Map< String, Curso > cursosMap
+			= new HashMap< String, Curso >();
+
 		for ( Curso curso : cursos )
 		{
 			cursosMap.put( curso.getCodigo(), curso );
@@ -428,137 +447,217 @@ public class Curso implements Serializable, Comparable< Curso >
 		return cursosMap;
 	}
 
-	public static Curso find( Long id )
+	public static Curso find(
+		Long id, InstituicaoEnsino instituicaoEnsino )
 	{
-		if ( id == null )
+		if ( id == null || instituicaoEnsino == null )
 		{
 			return null;
 		}
 
-		return entityManager().find( Curso.class, id );
+		Curso curso = entityManager().find( Curso.class, id );
+
+		if ( curso != null && curso.getTipoCurso() != null
+			&& curso.getTipoCurso().getInstituicaoEnsino() != null
+			&& curso.getTipoCurso().getInstituicaoEnsino() == instituicaoEnsino )
+		{
+			return curso;
+		}
+
+		return null;
 	}
 
-	public static List< Curso > find( int firstResult, int maxResults )
+	public static List< Curso > find(
+		InstituicaoEnsino instituicaoEnsino,
+		int firstResult, int maxResults )
 	{
-		return find( firstResult, maxResults, null );
+		return find( instituicaoEnsino, firstResult, maxResults, null );
 	}
 
 	@SuppressWarnings("unchecked")
-	public static List<Curso> find(int firstResult, int maxResults,
-			String orderBy) {
-		orderBy = (orderBy != null) ? "ORDER BY o." + orderBy : "";
-		return entityManager().createQuery("select o from Curso o " + orderBy)
-				.setFirstResult(firstResult).setMaxResults(maxResults)
-				.getResultList();
-	}
+	public static List< Curso > find(
+		InstituicaoEnsino instituicaoEnsino,
+		int firstResult, int maxResults, String orderBy )
+	{
+		orderBy = ( ( orderBy != null ) ? " ORDER BY o." + orderBy : "" );
 
-	@SuppressWarnings("unchecked")
-	public static List<Curso> findByCampus(Campus campus) {
-		Query q = entityManager()
-				.createQuery(
-						"SELECT o FROM Curso o WHERE o IN (SELECT cc.curriculo.curso FROM Oferta cc WHERE cc.campus = :campus)")
-				.setParameter("campus", campus);
-		return q.getResultList();
-	}
-
-	@SuppressWarnings("unchecked")
-	public static List<Curso> findByCenario(Cenario cenario) {
 		Query q = entityManager().createQuery(
-				"SELECT o FROM Curso o WHERE o.cenario = :cenario");
-		q.setParameter("cenario", cenario);
+			" SELECT o FROM Curso o " +
+			" WHERE o.tipoCurso.instituicaoEnsino = :instituicaoEnsino " + orderBy );
+
+		q.setFirstResult( firstResult );
+		q.setMaxResults( maxResults );
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
 		return q.getResultList();
 	}
 
 	@SuppressWarnings("unchecked")
-	public static List<Curso> findBy(String codigo, String nome,
-			TipoCurso tipoCurso, int firstResult, int maxResults, String orderBy) {
+	public static List< Curso > findByCampus(
+		InstituicaoEnsino instituicaoEnsino, Campus campus )
+	{
+		Query q = entityManager().createQuery(
+			" SELECT o FROM Curso o " +
+			" WHERE o.tipoCurso.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o IN ( SELECT cc.curriculo.curso FROM Oferta cc WHERE cc.campus = :campus )" );
 
-		nome = (nome == null) ? "" : nome;
-		nome = "%" + nome.replace('*', '%') + "%";
-		codigo = (codigo == null) ? "" : codigo;
-		codigo = "%" + codigo.replace('*', '%') + "%";
+		q.setParameter( "campus", campus );
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
 
-		orderBy = (orderBy != null) ? " ORDER BY o." + orderBy : "";
+		return q.getResultList();
+	}
+
+	@SuppressWarnings("unchecked")
+	public static List< Curso > findByCenario(
+		InstituicaoEnsino instituicaoEnsino, Cenario cenario )
+	{
+		Query q = entityManager().createQuery(
+			" SELECT o FROM Curso o " +
+			" WHERE o.tipoCurso.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.cenario = :cenario " );
+
+		q.setParameter( "cenario", cenario );
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
+		return q.getResultList();
+	}
+
+	@SuppressWarnings("unchecked")
+	public static List< Curso > findBy(
+		InstituicaoEnsino instituicaoEnsino, String codigo, String nome,
+		TipoCurso tipoCurso, int firstResult, int maxResults, String orderBy )
+	{
+		nome = ( ( nome == null ) ? "" : nome );
+		nome = ( "%" + nome.replace( '*', '%' ) + "%" );
+		codigo = ( ( codigo == null ) ? "" : codigo );
+		codigo = ( "%" + codigo.replace( '*', '%' ) + "%" );
+
+		orderBy = ( ( orderBy != null ) ? " ORDER BY o." + orderBy : "" );
+
 		String queryCampus = "";
-		if (tipoCurso != null) {
-			queryCampus = " o.tipoCurso = :tipoCurso AND ";
+		if ( tipoCurso != null )
+		{
+			queryCampus = ( " o.tipoCurso = :tipoCurso AND " );
 		}
-		Query q = entityManager()
-				.createQuery(
-						"SELECT o FROM Curso o WHERE "
-								+ queryCampus
-								+ " LOWER(o.nome) LIKE LOWER(:nome) AND LOWER(o.codigo) LIKE LOWER(:codigo)");
-		if (tipoCurso != null) {
-			q.setParameter("tipoCurso", tipoCurso);
+
+		Query q = entityManager().createQuery(
+			" SELECT o FROM Curso o WHERE "	+ queryCampus +
+			" LOWER ( o.nome ) LIKE LOWER ( :nome ) " +
+			" AND o.tipoCurso.instituicaoEnsino = :instituicaoEnsino " +
+			" AND LOWER ( o.codigo ) LIKE LOWER ( :codigo ) " );
+
+		if ( tipoCurso != null )
+		{
+			q.setParameter( "tipoCurso", tipoCurso );
 		}
-		q.setParameter("nome", nome);
-		q.setParameter("codigo", codigo);
-		return q.setFirstResult(firstResult).setMaxResults(maxResults)
-				.getResultList();
+
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+		q.setParameter( "nome", nome );
+		q.setParameter( "codigo", codigo );
+		q.setFirstResult( firstResult );
+		q.setMaxResults( maxResults );
+
+		return q.getResultList();
 	}
 
-	public static int count(String codigo, String nome, TipoCurso tipoCurso) {
-		nome = (nome == null) ? "" : nome;
-		nome = "%" + nome.replace('*', '%') + "%";
-		codigo = (codigo == null) ? "" : codigo;
-		codigo = "%" + codigo.replace('*', '%') + "%";
+	public static int count( InstituicaoEnsino instituicaoEnsino,
+		String codigo, String nome, TipoCurso tipoCurso )
+	{
+		nome = ( ( nome == null ) ? "" : nome );
+		nome = ( "%" + nome.replace( '*', '%' ) + "%" );
+		codigo = ( ( codigo == null ) ? "" : codigo );
+		codigo = ( "%" + codigo.replace( '*', '%' ) + "%" );
 
 		String queryCampus = "";
-		if (tipoCurso != null) {
-			queryCampus = " o.tipoCurso = :tipoCurso AND ";
+		if ( tipoCurso != null )
+		{
+			queryCampus = ( " o.tipoCurso = :tipoCurso AND " );
 		}
-		Query q = entityManager()
-				.createQuery(
-						"SELECT COUNT(o) FROM Curso o WHERE "
-								+ queryCampus
-								+ " LOWER(o.nome) LIKE LOWER(:nome) AND LOWER(o.codigo) LIKE LOWER(:codigo)");
-		if (tipoCurso != null) {
-			q.setParameter("tipoCurso", tipoCurso);
+
+		Query q = entityManager().createQuery(
+			" SELECT COUNT ( o ) FROM Curso o " +
+			" WHERE " + queryCampus	+ " LOWER ( o.nome ) LIKE LOWER ( :nome ) " +
+			" AND o.tipoCurso.instituicaoEnsino = :instituicaoEnsino " +
+			" AND LOWER ( o.codigo ) LIKE LOWER ( :codigo ) " );
+
+		if ( tipoCurso != null )
+		{
+			q.setParameter( "tipoCurso", tipoCurso );
 		}
-		q.setParameter("nome", nome);
-		q.setParameter("codigo", codigo);
-		return ((Number) q.getSingleResult()).intValue();
+
+		q.setParameter( "nome", nome );
+		q.setParameter( "codigo", codigo );
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
+		return ( (Number) q.getSingleResult() ).intValue();
 	}
 
-	public static boolean checkCodigoUnique(Cenario cenario, String codigo) {
-		Query q = entityManager()
-				.createQuery(
-						"SELECT COUNT(o) FROM Curso o WHERE o.cenario = :cenario AND o.codigo = :codigo");
-		q.setParameter("cenario", cenario);
-		q.setParameter("codigo", codigo);
-		Number size = (Number) q.setMaxResults(1).getSingleResult();
-		return size.intValue() > 0;
-	}
+	public static boolean checkCodigoUnique(
+		InstituicaoEnsino instituicaoEnsino,
+		Cenario cenario, String codigo )
+	{
+		Query q = entityManager().createQuery(
+			" SELECT COUNT ( o ) FROM Curso o " +
+			" WHERE o.tipoCurso.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.cenario = :cenario " +
+			" AND o.codigo = :codigo" );
 
-	private static final long serialVersionUID = 2645879541329424105L;
+		q.setParameter( "cenario", cenario );
+		q.setParameter( "codigo", codigo );
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
+		Number size = (Number) q.setMaxResults( 1 ).getSingleResult();
+		return ( size.intValue() > 0 );
+	}
 
 	@Override
-	public int hashCode() {
+	public int hashCode()
+	{
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((id == null) ? 0 : id.hashCode());
+
+		result = ( prime * result + ( ( id == null ) ? 0 : id.hashCode() ) );
 		return result;
 	}
 
 	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
+	public boolean equals( Object obj )
+	{
+		if ( this == obj )
+		{
 			return true;
-		if (obj == null)
+		}
+
+		if ( obj == null )
+		{
 			return false;
-		if (getClass() != obj.getClass())
+		}
+
+		if ( getClass() != obj.getClass() )
+		{
 			return false;
+		}
+
 		Curso other = (Curso) obj;
-		if (id == null) {
-			if (other.id != null)
+
+		if ( id == null )
+		{
+			if ( other.id != null )
+			{
 				return false;
-		} else if (!id.equals(other.id))
+			}
+		}
+		else if ( !id.equals( other.id ) )
+		{
 			return false;
+		}
+
 		return true;
 	}
 
 	@Override
-	public int compareTo(Curso c) {
-		return this.getCodigo().compareTo(c.getCodigo());
+	public int compareTo( Curso c )
+	{
+		return this.getCodigo().compareTo( c.getCodigo() );
 	}
 }

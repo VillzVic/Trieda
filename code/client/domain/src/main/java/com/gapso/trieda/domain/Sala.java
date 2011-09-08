@@ -172,7 +172,10 @@ public class Sala implements Serializable, Comparable< Sala >
         	this.entityManager = entityManager();
         }
 
-        Sala find = Sala.find( this.getId() );
+		InstituicaoEnsino instituicaoEnsino
+			= this.getUnidade().getCampus().getInstituicaoEnsino();
+
+        Sala find = Sala.find( this.getId(), instituicaoEnsino );
         if ( find == null )
         {
         	this.entityManager.persist( this );
@@ -182,8 +185,11 @@ public class Sala implements Serializable, Comparable< Sala >
 
 	public void preencheHorarios()
 	{
-		List< HorarioDisponivelCenario > listHdcs = 
-			this.getUnidade().getHorarios( SemanaLetiva.findAll() );
+		InstituicaoEnsino instituicaoEnsino
+			= this.getUnidade().getCampus().getInstituicaoEnsino();
+
+		List< HorarioDisponivelCenario > listHdcs = this.getUnidade().getHorarios(
+			instituicaoEnsino, SemanaLetiva.findAll( instituicaoEnsino ) );
 
 		for ( HorarioDisponivelCenario hdc : listHdcs )
 		{
@@ -251,6 +257,7 @@ public class Sala implements Serializable, Comparable< Sala >
     public void removeHorariosDisponivelCenario()
     {
     	Set< HorarioDisponivelCenario > horarios = this.getHorarios();
+
     	for ( HorarioDisponivelCenario horario : horarios )
     	{
     		horario.getSalas().remove( this );
@@ -275,6 +282,7 @@ public class Sala implements Serializable, Comparable< Sala >
     public void removeGruposSala()
     {
     	Set< GrupoSala > gruposSala = this.getGruposSala();
+
     	for ( GrupoSala grupoSala : gruposSala )
     	{
     		grupoSala.getSalas().remove( this );
@@ -309,6 +317,7 @@ public class Sala implements Serializable, Comparable< Sala >
 	public static final EntityManager entityManager()
 	{
         EntityManager em = new Sala().entityManager;
+
         if ( em == null )
         {
         	throw new IllegalStateException(
@@ -318,81 +327,118 @@ public class Sala implements Serializable, Comparable< Sala >
 
         return em;
     }
-	
-	public static int count( Cenario cenario )
+
+	public static int count(
+		InstituicaoEnsino instituicaoEnsino, Cenario cenario )
 	{
 		Query q = entityManager().createQuery(
-			"SELECT COUNT(o) FROM Sala o " +
-			"WHERE o.unidade.campus.cenario = :cenario" );
+			" SELECT COUNT ( o ) FROM Sala o " +
+			" WHERE o.unidade.campus.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.unidade.campus.cenario = :cenario " );
 
 		q.setParameter( "cenario", cenario );
-		return ( (Number) q.getSingleResult() ).intValue();
-	}
-	
-	public static int countLaboratorio( Cenario cenario )
-	{
-		Query q = entityManager().createQuery(
-			"SELECT COUNT(o) FROM Sala o " +
-			"WHERE o.tipoSala.id = 2 AND o.unidade.campus.cenario = :cenario" );
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
 
-		q.setParameter( "cenario", cenario );
 		return ( (Number) q.getSingleResult() ).intValue();
 	}
 
-	public static int countLaboratorio( Campus campus )
+	public static int countLaboratorio(
+		InstituicaoEnsino instituicaoEnsino, Cenario cenario )
 	{
 		Query q = entityManager().createQuery(
-			"SELECT COUNT(o) FROM Sala o " +
-			"WHERE o.tipoSala.id = 2 AND o.unidade.campus = :campus" );
+			" SELECT COUNT ( o ) FROM Sala o " +
+			" WHERE o.tipoSala.id = 2 " +
+			" AND o.unidade.campus.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.unidade.campus.cenario = :cenario " );
+
+		q.setParameter( "cenario", cenario );
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
+		return ( (Number) q.getSingleResult() ).intValue();
+	}
+
+	public static int countLaboratorio(
+		InstituicaoEnsino instituicaoEnsino, Campus campus )
+	{
+		Query q = entityManager().createQuery(
+			" SELECT COUNT ( o ) FROM Sala o " +
+			" WHERE o.unidade.campus.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.tipoSala.id = 2 " +
+			" AND o.unidade.campus = :campus " );
 
 		q.setParameter( "campus", campus );
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
 		return ( (Number) q.getSingleResult() ).intValue();
 	}
 
-	public static int countSalaDeAula( Cenario cenario )
+	public static int countSalaDeAula(
+		InstituicaoEnsino instituicaoEnsino, Cenario cenario )
 	{
 		Query q = entityManager().createQuery(
-			"SELECT COUNT(o) FROM Sala o " +
-			"WHERE o.tipoSala.id = 1 AND o.unidade.campus.cenario = :cenario" );
+			" SELECT COUNT ( o ) FROM Sala o " +
+			" WHERE o.unidade.campus.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.tipoSala.id = 1 " +
+			" AND o.unidade.campus.cenario = :cenario " );
 
 		q.setParameter( "cenario", cenario );
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
 		return ( (Number) q.getSingleResult() ).intValue();
 	}
 
-	public static int countSalaDeAula( Campus campus )
+	public static int countSalaDeAula(
+		InstituicaoEnsino instituicaoEnsino, Campus campus )
 	{
 		Query q = entityManager().createQuery(
-			"SELECT COUNT(o) FROM Sala o " +
-			"WHERE o.tipoSala.id = 1 AND o.unidade.campus = :campus" );
+			" SELECT COUNT ( o ) FROM Sala o " +
+			" WHERE o.unidade.campus.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.tipoSala.id = 1 " +
+			" AND o.unidade.campus = :campus " );
 
 		q.setParameter( "campus", campus );
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
 		return ( (Number) q.getSingleResult() ).intValue();
 	}
 
 	@SuppressWarnings("unchecked")
-	public List< Curriculo > getCurriculos()
+	public List< Curriculo > getCurriculos( InstituicaoEnsino instituicaoEnsino )
 	{
 		Query q = entityManager().createQuery(
-			"SELECT DISTINCT( cd.curriculo ) " +
-			"FROM CurriculoDisciplina cd WHERE :sala IN ELEMENTS( cd.salas )" );
+			" SELECT DISTINCT( cd.curriculo ) " +
+			" FROM CurriculoDisciplina cd " +
+			" WHERE cd.curriculo.curso.tipoCurso.instituicaoEnsino = :instituicaoEnsino " +
+			" AND :sala IN ELEMENTS( cd.salas )" );
 
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
 		q.setParameter( "sala", this );
-		return q.getResultList();
+
+		List< Curriculo > list = q.getResultList();
+		return list;
 	}
 
-	public Boolean getContainsCurriculoDisciplina()
+	@SuppressWarnings("unchecked")
+	public Boolean getContainsCurriculoDisciplina(
+		InstituicaoEnsino instituicaoEnsino )
 	{
 		Query q = entityManager().createQuery(
-			"SELECT COUNT(cd) FROM CurriculoDisciplina cd " +
-			"WHERE :sala IN ELEMENTS(cd.salas)" );
+			"SELECT cd FROM CurriculoDisciplina cd " +
+			"WHERE cd.curriculo.curso.tipoCurso.instituicaoEnsino = :instituicaoEnsino " +
+			" AND :sala IN ELEMENTS ( cd.salas ) " );
 
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
 		q.setParameter( "sala", this );
-		return ( ( (Number) q.getSingleResult() ).intValue() > 0 );
+
+		List< CurriculoDisciplina > list = q.getResultList();
+		return ( list.size() > 0 );
 	}
 
 	public static Map< String, Sala > buildSalaCodigoToSalaMap( List< Sala > salas )
 	{
-		Map< String, Sala > salasMap = new HashMap< String, Sala >();
+		Map< String, Sala > salasMap
+			= new HashMap< String, Sala >();
+
 		for ( Sala sala : salas )
 		{
 			salasMap.put( sala.getCodigo(), sala );
@@ -401,39 +447,58 @@ public class Sala implements Serializable, Comparable< Sala >
 		return salasMap;
 	}
 
-	public static List< Sala > findAndaresAll()
+	public static List< Sala > findAndaresAll( InstituicaoEnsino instituicaoEnsino )
 	{
-		return findAndaresAll( null );
+		return findAndaresAll( instituicaoEnsino, null );
 	}
 
 	@SuppressWarnings("unchecked")
-	public static List< Sala > findAndaresAll( Unidade unidade )
+	public static List< Sala > findAndaresAll(
+		InstituicaoEnsino instituicaoEnsino, Unidade unidade )
 	{
 		List< Sala > list;
+		Query q = null;
+
 		if ( unidade == null )
 		{
-			list = entityManager().createQuery(
-				"SELECT o FROM Sala o GROUP BY o.andar" ).getResultList();
+			q = entityManager().createQuery(
+				" SELECT o FROM Sala o " +
+				" WHERE o.unidade.campus.instituicaoEnsino = :instituicaoEnsino " +
+				" GROUP BY o.andar " );
+
+			q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
+			list = q.getResultList();
 		}
 		else
 		{
-			list = entityManager().createQuery(
-				"SELECT o FROM Sala o WHERE o.unidade = :unidade GROUP BY o.andar" )
-				.setParameter("unidade", unidade).getResultList();
+			q = entityManager().createQuery(
+				" SELECT o FROM Sala o " +
+				" WHERE o.unidade.campus.instituicaoEnsino = :instituicaoEnsino " +
+				" AND o.unidade = :unidade GROUP BY o.andar " );
+
+			q.setParameter( "unidade", unidade );
+			q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
+			list = q.getResultList();
 		}
 
 		return list;
 	}
 
 	@SuppressWarnings("unchecked")
-	public static List< Sala > findSalasDoAndarAll( Unidade unidade, List< String > andares )
+	public static List< Sala > findSalasDoAndarAll(
+		InstituicaoEnsino instituicaoEnsino,
+		Unidade unidade, List< String > andares )
 	{
 		if ( andares.size() == 0 )
 		{
-			return new ArrayList<Sala>();
+			return new ArrayList< Sala >();
 		}
 
-		String whereQuery = "SELECT o FROM Sala o WHERE ( ";
+		String whereQuery = " SELECT o FROM Sala o " +
+			" WHERE o.unidade.campus.instituicaoEnsino = :instituicaoEnsino AND ( ";
+
 		for ( int i = 1; i < andares.size(); i++ )
 		{
 			whereQuery += ( " o.andar = :andares" + i + " OR " );
@@ -447,60 +512,96 @@ public class Sala implements Serializable, Comparable< Sala >
 		}
 
 		query.setParameter( "unidade", unidade );
+		query.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
 		return query.getResultList();
 	}
 
 	@SuppressWarnings("unchecked")
-    public static List< Sala > findAll()
+    public static List< Sala > findAll(
+    	InstituicaoEnsino instituicaoEnsino )
     {
-        return entityManager().createQuery(
-        	"SELECT o FROM Sala o" ).getResultList();
+		Query q = entityManager().createQuery(
+	       	" SELECT o FROM Sala o " +
+    		" WHERE o.unidade.campus.instituicaoEnsino = :instituicaoEnsino " );
+
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
+        return q.getResultList();
     }
 
-	public static Sala find( Long id )
+	public static Sala find( Long id, InstituicaoEnsino instituicaoEnsino )
 	{
-        if ( id == null )
+        if ( id == null || instituicaoEnsino == null )
         {
         	return null;
         }
 
-        return entityManager().find( Sala.class, id );
+        Sala sala = entityManager().find( Sala.class, id );
+
+        if ( sala != null && sala.getUnidade() != null
+        	&& sala.getUnidade().getCampus() != null
+        	&& sala.getUnidade().getCampus().getInstituicaoEnsino() != null
+        	&& sala.getUnidade().getCampus().getInstituicaoEnsino() == instituicaoEnsino )
+        {
+        	return sala;
+        }
+
+        return null;
     }
 
 	@SuppressWarnings("unchecked")
-	public static List< Sala > findByCenario( Cenario cenario )
+	public static List< Sala > findByCenario(
+		InstituicaoEnsino instituicaoEnsino, Cenario cenario )
 	{
     	Query q = entityManager().createQuery(
-    		"SELECT o FROM Sala o WHERE o.unidade.campus.cenario = :cenario" );
+    		" SELECT o FROM Sala o " +
+    		" WHERE o.unidade.campus.instituicaoEnsino = :instituicaoEnsino " +
+    		" AND o.unidade.campus.cenario = :cenario " );
 
     	q.setParameter( "cenario", cenario );
+    	q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
     	return q.getResultList();
     }
 
-	public static Sala findByCodigo( String codigo )
+	public static Sala findByCodigo(
+		InstituicaoEnsino instituicaoEnsino, String codigo )
 	{
 		Query q = entityManager().createQuery(
-			"SELECT o FROM Sala o WHERE codigo = :codigo" );
+			" SELECT o FROM Sala o " +
+			" WHERE o.unidade.campus.instituicaoEnsino = :instituicaoEnsino " +
+			" AND codigo = :codigo " );
 
 		q.setParameter( "codigo", codigo );
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
 		return (Sala) q.getSingleResult();
 	}
 
 	@SuppressWarnings("unchecked")
-	public static List< Sala > findByUnidade( Unidade unidade )
+	public static List< Sala > findByUnidade(
+		InstituicaoEnsino instituicaoEnsino, Unidade unidade )
 	{
-		return entityManager().createQuery(
-			"SELECT o FROM Sala o WHERE unidade = :unidade")
-			.setParameter( "unidade", unidade ).getResultList();
+		Query q = entityManager().createQuery(
+			" SELECT o FROM Sala o " +
+			" WHERE o.unidade.campus.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.unidade = :unidade " );
+
+		q.setParameter( "unidade", unidade );
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
+		return q.getResultList();
 	}
 
-	public static Integer count( Campus campus, Unidade unidade )
+	public static Integer count( InstituicaoEnsino instituicaoEnsino,
+		Campus campus, Unidade unidade )
 	{
-		String whereString = "";
+		String whereString = " WHERE o.unidade.campus.instituicaoEnsino = :instituicaoEnsino ";
 
 		if ( campus != null || unidade != null )
 		{
-			whereString += " WHERE ";
+			whereString += " AND ";
 		}
 
 		if ( campus != null )
@@ -518,7 +619,10 @@ public class Sala implements Serializable, Comparable< Sala >
 			whereString += " o.unidade = :unidade ";
 		}
 
-		Query q = entityManager().createQuery( "SELECT COUNT(o) FROM Sala o " + whereString );
+		Query q = entityManager().createQuery(
+			"SELECT COUNT ( o ) FROM Sala o " + whereString );
+
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
 
 		if ( campus != null )
 		{
@@ -534,15 +638,15 @@ public class Sala implements Serializable, Comparable< Sala >
 	}
 
 	@SuppressWarnings("unchecked")
-    public static List< Sala > find( Campus campus, Unidade unidade,
-    	int firstResult, int maxResults, String orderBy )
+    public static List< Sala > find( InstituicaoEnsino instituicaoEnsino,
+    	Campus campus, Unidade unidade, int firstResult, int maxResults, String orderBy )
     {
-		String whereString = "";
-		orderBy = ( ( orderBy != null ) ? "ORDER BY o." + orderBy : "" );
+		String whereString = " WHERE o.unidade.campus.instituicaoEnsino = :instituicaoEnsino ";
+		orderBy = ( ( orderBy != null ) ? " ORDER BY o." + orderBy : "" );
 
 		if ( campus != null || unidade != null )
 		{
-			whereString += " WHERE ";
+			whereString += " AND ";
 		}
 
 		if ( campus != null )
@@ -555,13 +659,17 @@ public class Sala implements Serializable, Comparable< Sala >
 			whereString += " AND ";
 		}
 
-		if ( unidade != null)
+		if ( unidade != null )
 		{
 			whereString += " o.unidade = :unidade ";
 		}
 
 		Query q = entityManager().createQuery(
 			"SELECT o FROM Sala o " + orderBy + whereString );
+
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+		q.setFirstResult( firstResult );
+		q.setMaxResults( maxResults );
 
 		if ( campus != null )
 		{
@@ -573,11 +681,13 @@ public class Sala implements Serializable, Comparable< Sala >
 			q.setParameter( "unidade", unidade );
 		}
 
-        return q.setFirstResult( firstResult ).setMaxResults( maxResults ).getResultList();
+        return q.getResultList();
     }
 
 	@SuppressWarnings("unchecked")
-	public List< HorarioDisponivelCenario > getHorarios( List< SemanaLetiva > semanasLetivas )
+	public List< HorarioDisponivelCenario > getHorarios(
+		InstituicaoEnsino instituicaoEnsino,
+		List< SemanaLetiva > semanasLetivas )
 	{
 		Set< HorarioDisponivelCenario > horarios
 			= new HashSet< HorarioDisponivelCenario >();
@@ -585,11 +695,14 @@ public class Sala implements Serializable, Comparable< Sala >
 		for ( SemanaLetiva semanaLetiva : semanasLetivas )
 		{
 			Query q = entityManager().createQuery(
-				"SELECT o FROM HorarioDisponivelCenario o, IN (o.salas) c " +
-				"WHERE c = :sala AND o.horarioAula.semanaLetiva = :semanaLetiva " );
+				" SELECT o FROM HorarioDisponivelCenario o, IN ( o.salas ) c " +
+				" WHERE c.unidade.campus.instituicaoEnsino = :instituicaoEnsino " +
+				" AND c = :sala " +
+				" AND o.horarioAula.semanaLetiva = :semanaLetiva " );
 
 			q.setParameter( "sala", this );
 			q.setParameter( "semanaLetiva", semanaLetiva );
+			q.setParameter( "instituicaoEnsino", instituicaoEnsino );
 
 			horarios.addAll( q.getResultList() );
 		}
@@ -597,14 +710,19 @@ public class Sala implements Serializable, Comparable< Sala >
 		return new ArrayList< HorarioDisponivelCenario >( horarios );
 	}
 
-	public static boolean checkCodigoUnique( Cenario cenario, String codigo )
+	public static boolean checkCodigoUnique(
+		InstituicaoEnsino instituicaoEnsino,
+		Cenario cenario, String codigo )
 	{
 		Query q = entityManager().createQuery(
-			"SELECT COUNT(o) FROM Sala o " +
-			"WHERE o.unidade.campus.cenario = :cenario AND o.codigo = :codigo" );
+			" SELECT COUNT ( o ) FROM Sala o " +
+			" WHERE o.unidade.campus.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.unidade.campus.cenario = :cenario " +
+			" AND o.codigo = :codigo " );
 
 		q.setParameter( "cenario", cenario );
 		q.setParameter( "codigo", codigo );
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
 
 		Number size = (Number) q.setMaxResults( 1 ).getSingleResult();
 		return ( size.intValue() > 0 );

@@ -31,9 +31,12 @@ import org.springframework.transaction.annotation.Transactional;
 @Entity
 @RooJavaBean
 @RooToString
-@RooEntity(identifierColumn = "EQV_ID")
-@Table(name = "EQUIVALENCIAS")
-public class Equivalencia implements java.io.Serializable {
+@RooEntity( identifierColumn = "EQV_ID" )
+@Table( name = "EQUIVALENCIAS" )
+public class Equivalencia
+	implements java.io.Serializable
+{
+	private static final long serialVersionUID = -8632323368932009356L;
 
     @NotNull
     @ManyToOne(targetEntity = Disciplina.class)
@@ -45,12 +48,15 @@ public class Equivalencia implements java.io.Serializable {
     @JoinColumn(name = "DIS_ELIMINA_ID")
     private Set<Disciplina> elimina = new HashSet<Disciplina>();
 
-	public String toString() {
+	public String toString()
+	{
         StringBuilder sb = new StringBuilder();
-        sb.append("Id: ").append(getId()).append(", ");
-        sb.append("Version: ").append(getVersion()).append(", ");
-        sb.append("Cursou: ").append(getCursou()).append(", ");
-        sb.append("Elimina: ").append(getElimina() == null ? "null" : getElimina().size()).append(", ");
+
+        sb.append( "Id: " ).append( getId() ).append( ", " );
+        sb.append( "Version: " ).append( getVersion() ).append( ", " );
+        sb.append( "Cursou: " ).append( getCursou() ).append( ", " );
+        sb.append( "Elimina: " ).append( getElimina() == null ? "null" : getElimina().size() );
+
         return sb.toString();
     }
 
@@ -69,8 +75,6 @@ public class Equivalencia implements java.io.Serializable {
 	public void setElimina(Set<Disciplina> elimina) {
         this.elimina = elimina;
     }
-
-	private static final long serialVersionUID = -8632323368932009356L;
 
 	@PersistenceContext
     transient EntityManager entityManager;
@@ -137,54 +141,127 @@ public class Equivalencia implements java.io.Serializable {
         return merged;
     }
 
-	public static final EntityManager entityManager() {
+	public static final EntityManager entityManager()
+	{
         EntityManager em = new Equivalencia().entityManager;
-        if (em == null) throw new IllegalStateException("Entity manager has not been injected (is the Spring Aspects JAR configured as an AJC/AJDT aspects library?)");
+
+        if ( em == null )
+        {
+        	throw new IllegalStateException(
+        		"Entity manager has not been injected (is the Spring " +
+        		"Aspects JAR configured as an AJC/AJDT aspects library?)" );
+        }
+
         return em;
     }
 
 	@SuppressWarnings("unchecked")
-    public static List<Equivalencia> findAll() {
-        return entityManager().createQuery("SELECT o FROM Equivalencia o").getResultList();
+    public static List< Equivalencia > findAll(
+    	InstituicaoEnsino instituicaoEnsino )
+    {
+        return entityManager().createQuery(
+        	" SELECT o FROM Equivalencia o " +
+        	" WHERE o.cursou.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino " )
+        	.setParameter( "instituicaoEnsino", instituicaoEnsino ).getResultList();
     }
 
-	public static Equivalencia find(Long id) {
-        if (id == null) return null;
-        return entityManager().find(Equivalencia.class, id);
-    }
-	
-	public static int count(Disciplina disciplina) {
-		String where = (disciplina == null)? "" : " WHERE disciplina = :disciplina ";
-		
-		Query q = entityManager().createQuery("SELECT COUNT(o) FROM Equivalencia o"+where);
-		
-		if(disciplina != null) q.setParameter("disciplina", disciplina);
-		
-		return ((Number)q.getSingleResult()).intValue();
-	}
-	
-	@SuppressWarnings("unchecked")
-	public static List<Equivalencia> findBy(Disciplina disciplina, int firstResult, int maxResults, String orderBy) {
-		orderBy = (orderBy != null) ? " ORDER BY o." + orderBy : "";
-		String where = (disciplina == null)? "" : " WHERE disciplina = :disciplina ";
-		
-		Query q = entityManager().createQuery("SELECT o FROM Equivalencia o"+where+orderBy);
-		
-		if(disciplina != null) q.setParameter("disciplina", disciplina);
-		
-		return q.setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
-	}
+	public static Equivalencia find(
+		Long id, InstituicaoEnsino instituicaoEnsino )
+	{
+        if ( id == null || instituicaoEnsino == null )
+        {
+        	return null;
+        }
 
-	@SuppressWarnings("unchecked")
-    public static List<Equivalencia> find(int firstResult, int maxResults) {
-        return entityManager().createQuery("SELECT o FROM Equivalencia o").setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
+        Equivalencia equivalencia
+        	= entityManager().find( Equivalencia.class, id );
+
+        if ( equivalencia != null && equivalencia.getCursou() != null
+        	&& equivalencia.getCursou().getTipoDisciplina() != null
+        	&& equivalencia.getCursou().getTipoDisciplina().getInstituicaoEnsino() != null
+        	&& equivalencia.getCursou().getTipoDisciplina().getInstituicaoEnsino() == instituicaoEnsino )
+        {
+        	return equivalencia;
+        }
+
+        return null;
     }
 	
-	public static Map<String, Equivalencia> buildEquivalenciaCursouCodigoToEquivalenciaMap(List<Equivalencia> equivalencias) {
-		Map<String, Equivalencia> equivalenciasMap = new HashMap<String, Equivalencia>();
-		for (Equivalencia equivalencia : equivalencias) {
-			equivalenciasMap.put(equivalencia.getCursou().getCodigo(), equivalencia);
+	public static int count(
+		InstituicaoEnsino instituicaoEnsino, Disciplina disciplina )
+	{
+		String where = " WHERE o.cursou.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino ";
+
+		if ( disciplina != null )
+		{
+			where += ( " AND o.cursou = :disciplina " );
 		}
+
+		Query q = entityManager().createQuery(
+			" SELECT COUNT ( o ) FROM Equivalencia o " + where );
+
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
+		if ( disciplina != null )
+		{
+			q.setParameter( "disciplina", disciplina );
+		}
+
+		return ( (Number)q.getSingleResult() ).intValue();
+	}
+
+	@SuppressWarnings("unchecked")
+	public static List< Equivalencia > findBy( InstituicaoEnsino instituicaoEnsino,
+		Disciplina disciplina, int firstResult, int maxResults, String orderBy )
+	{
+		orderBy = ( ( orderBy != null ) ? " ORDER BY o." + orderBy : "" );
+
+		String where = " WHERE o.cursou.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino ";
+
+		if ( disciplina != null )
+		{
+			where += ( " AND o.cursou = :disciplina " );
+		}
+
+		Query q = entityManager().createQuery(
+			" SELECT o FROM Equivalencia o " + where + orderBy );
+
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+		q.setFirstResult( firstResult );
+		q.setMaxResults( maxResults );
+
+		if ( disciplina != null )
+		{
+			q.setParameter( "disciplina", disciplina );
+		}
+
+		return q.getResultList();
+	}
+
+	@SuppressWarnings("unchecked")
+    public static List< Equivalencia > find(
+    	InstituicaoEnsino instituicaoEnsino,
+    	int firstResult, int maxResults )
+    {
+        return entityManager().createQuery(
+        	" SELECT o FROM Equivalencia o " +
+        	" WHERE o.cursou.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino " )
+        	.setParameter( "instituicaoEnsino", instituicaoEnsino )
+        	.setFirstResult( firstResult )
+        	.setMaxResults( maxResults ).getResultList();
+    }
+
+	public static Map< String, Equivalencia > buildEquivalenciaCursouCodigoToEquivalenciaMap(
+		List< Equivalencia > equivalencias )
+	{
+		Map< String, Equivalencia > equivalenciasMap
+			= new HashMap< String, Equivalencia >();
+
+		for ( Equivalencia equivalencia : equivalencias )
+		{
+			equivalenciasMap.put( equivalencia.getCursou().getCodigo(), equivalencia );
+		}
+
 		return equivalenciasMap;
 	}
 }

@@ -89,21 +89,38 @@ public class AtendimentoTatico
 	@Max(99L)
 	private Integer creditosPratico;
 
+	@NotNull
+	@ManyToOne( cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH },
+		targetEntity = InstituicaoEnsino.class )
+	@JoinColumn( name = "INS_ID" )
+	private InstituicaoEnsino instituicaoEnsino;
+
+	public InstituicaoEnsino getInstituicaoEnsino()
+	{
+		return instituicaoEnsino;
+	}
+
+	public void setInstituicaoEnsino( InstituicaoEnsino instituicaoEnsino )
+	{
+		this.instituicaoEnsino = instituicaoEnsino;
+	}
+
 	public String toString()
 	{
 		StringBuilder sb = new StringBuilder();
 
-		sb.append("Id: ").append(getId()).append(", ");
-		sb.append("Version: ").append(getVersion()).append(", ");
-		sb.append("Cenario: ").append(getCenario()).append(", ");
-		sb.append("Turma: ").append(getTurma()).append(", ");
-		sb.append("Sala: ").append(getSala()).append(", ");
-		sb.append("Semana: ").append(getSemana()).append(", ");
-		sb.append("Oferta: ").append(getOferta()).append(", ");
-		sb.append("Disciplina: ").append(getDisciplina()).append(", ");
-		sb.append("QuantidadeAlunos: ").append(getQuantidadeAlunos()).append(", ");
-		sb.append("CreditosTeorico: ").append(getCreditosTeorico()).append(", ");
-		sb.append("CreditosPratico: ").append(getCreditosPratico()).append(", ");
+		sb.append( "Id: " ).append(getId()).append(", ");
+		sb.append( "Version: " ).append(getVersion()).append(", ");
+		sb.append( "Instituicoes de Ensino: " ).append( getInstituicaoEnsino() ).append( ", " );
+		sb.append( "Cenario: " ).append(getCenario()).append(", ");
+		sb.append( "Turma: " ).append(getTurma()).append(", ");
+		sb.append( "Sala: " ).append(getSala()).append(", ");
+		sb.append( "Semana: " ).append(getSemana()).append(", ");
+		sb.append( "Oferta: " ).append(getOferta()).append(", ");
+		sb.append( "Disciplina: " ).append(getDisciplina()).append(", ");
+		sb.append( "QuantidadeAlunos: " ).append(getQuantidadeAlunos()).append(", ");
+		sb.append( "CreditosTeorico: " ).append(getCreditosTeorico()).append(", ");
+		sb.append( "CreditosPratico: " ).append(getCreditosPratico());
 
 		return sb.toString();
 	}
@@ -206,11 +223,12 @@ public class AtendimentoTatico
 	public static final EntityManager entityManager()
 	{
 		EntityManager em = new AtendimentoTatico().entityManager;
+
 		if ( em == null )
 		{
 			throw new IllegalStateException(
-				"Entity manager has not been injected (is the Spring " +
-				"Aspects JAR configured as an AJC/AJDT aspects library?)");
+				" Entity manager has not been injected (is the Spring " +
+				" Aspects JAR configured as an AJC/AJDT aspects library?) " );
 		}
 
 		return em;
@@ -218,20 +236,24 @@ public class AtendimentoTatico
 
 	@SuppressWarnings("unchecked")
 	public static List< AtendimentoTatico > findBySalaAndTurno(
-		Sala sala, Turno turno )
+		InstituicaoEnsino instituicaoEnsino, Sala sala, Turno turno )
 	{
 		Query q = entityManager().createQuery(
-			"SELECT o FROM AtendimentoTatico o " +
-			"WHERE o.sala = :sala AND o.oferta.turno = :turno" );
+			" SELECT o FROM AtendimentoTatico o " +
+			" WHERE o.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.sala = :sala " +
+			" AND o.oferta.turno = :turno " );
 
 		q.setParameter( "sala", sala );
 		q.setParameter( "turno", turno );
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
 		return q.getResultList();
 	}
 
 	@SuppressWarnings("unchecked")
-	public static List< AtendimentoTatico > findBy( Campus campus,
-		Curriculo curriculo, Integer periodo, Turno turno, Curso curso )
+	public static List< AtendimentoTatico > findBy( InstituicaoEnsino instituicaoEnsino,
+		Campus campus, Curriculo curriculo, Integer periodo, Turno turno, Curso curso )
 	{
 		String cursoQuery = "";
 		if ( curso != null )
@@ -240,15 +262,19 @@ public class AtendimentoTatico
 		}
 
 		Query q = entityManager().createQuery(
-			"SELECT o FROM AtendimentoTatico o WHERE o.oferta.curriculo = :curriculo AND"
-			+ " o.oferta.campus = :campus " + cursoQuery + "AND o.oferta.turno = :turno "
-			+ "AND o.disciplina IN (SELECT d.disciplina FROM CurriculoDisciplina d "
-								 + "WHERE d.curriculo = :curriculo AND d.periodo = :periodo)" );
+			" SELECT o FROM AtendimentoTatico o " +
+			" WHERE o.oferta.curriculo = :curriculo " +
+			" AND o.oferta.campus = :campus " + cursoQuery +
+			" AND o.oferta.turno = :turno " +
+			" AND o.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.disciplina IN (  SELECT d.disciplina FROM CurriculoDisciplina d "
+								 + " WHERE d.curriculo = :curriculo AND d.periodo = :periodo ) " );
 
 		q.setParameter( "campus", campus );
 		q.setParameter( "curriculo", curriculo );
 		q.setParameter( "periodo", periodo );
 		q.setParameter( "turno", turno );
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
 
 		if ( curso != null )
 		{
@@ -259,20 +285,29 @@ public class AtendimentoTatico
 	}
 
 	@SuppressWarnings("unchecked")
-	public static List<AtendimentoTatico> findByCenario(Cenario cenario) {
+	public static List< AtendimentoTatico > findByCenario(
+		InstituicaoEnsino instituicaoEnsino, Cenario cenario )
+	{
 		Query q = entityManager().createQuery(
-				"SELECT o FROM AtendimentoTatico o WHERE cenario = :cenario");
-		q.setParameter("cenario", cenario);
+			" SELECT o FROM AtendimentoTatico o " +
+			" WHERE o.instituicaoEnsino = :instituicaoEnsino " +
+			" AND cenario = :cenario " );
+
+		q.setParameter( "cenario", cenario );
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
 		return q.getResultList();
 	}
 	
 	@SuppressWarnings("unchecked")
-	public static List< AtendimentoTatico > findByCenario(Cenario cenario,
+	public static List< AtendimentoTatico > findByCenario(
+		InstituicaoEnsino instituicaoEnsino, Cenario cenario,
 		Campus campus , Unidade unidade, Sala sala, Turno turno )
 	{
 		Query q = entityManager().createQuery(
 			"SELECT o FROM AtendimentoTatico o " +
 			" WHERE cenario = :cenario" +
+			" AND o.instituicaoEnsino = :instituicaoEnsino " +
 			" AND o.oferta.turno = :turno" +
 			" AND o.oferta.campus = :campus" +
 			" AND o.sala = :sala" +
@@ -283,71 +318,109 @@ public class AtendimentoTatico
 		q.setParameter( "unidade", unidade );
 		q.setParameter( "sala", sala );
 		q.setParameter( "turno", turno );
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
 
 		return q.getResultList();
 	}
 
 	@SuppressWarnings("unchecked")
-	public static List< AtendimentoTatico > findAll()
+	public static List< AtendimentoTatico > findAll(
+		InstituicaoEnsino instituicaoEnsino )
 	{
-		return entityManager().createQuery(
-			"SELECT o FROM AtendimentoTatico o" ).getResultList();
+		Query q = entityManager().createQuery(
+			" SELECT o FROM AtendimentoTatico o " +
+			" WHERE o.instituicaoEnsino = :instituicaoEnsino " ); 
+
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
+		return q.getResultList();
 	}
 
 	@SuppressWarnings("unchecked")
 	public static List< AtendimentoTatico > findAllBy(
-		Campus campus, Turno turno )
+		InstituicaoEnsino instituicaoEnsino, Campus campus, Turno turno )
 	{
 		Query q = entityManager().createQuery(
-			"SELECT o FROM AtendimentoTatico o " +
-			"WHERE o.oferta.campus = :campus AND o.oferta.turno = :turno" );
+			" SELECT o FROM AtendimentoTatico o " +
+			" WHERE o.oferta.campus = :campus " +
+			" AND o.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.oferta.turno = :turno " );
 
 		q.setParameter( "campus", campus );
 		q.setParameter( "turno", turno );
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
 		return q.getResultList();
 	}
 
-	public static AtendimentoTatico find( Long id )
+	public static AtendimentoTatico find(
+		Long id, InstituicaoEnsino instituicaoEnsino )
 	{
-		if ( id == null )
+		if ( id == null || instituicaoEnsino == null )
 		{
 			return null;
 		}
 
-		return entityManager().find( AtendimentoTatico.class, id );
+		AtendimentoTatico at = entityManager().find( AtendimentoTatico.class, id );
+
+		if ( at != null
+			&& at.getInstituicaoEnsino() != null 
+			&& at.getInstituicaoEnsino() == instituicaoEnsino )
+		{
+			return at;
+		}
+
+		return null;
 	}
 
-	public static int countTurma( Cenario cenario )
+	public static int countTurma(
+		InstituicaoEnsino instituicaoEnsino, Cenario cenario )
 	{
 		Query q = entityManager().createQuery(
-			"SELECT count(*) FROM AtendimentoTatico o " +
-			"WHERE o.cenario = :cenario GROUP BY o.disciplina, o.turma" );
+			" SELECT count ( * ) FROM AtendimentoTatico o " +
+			" WHERE o.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.cenario = :cenario GROUP BY o.disciplina, o.turma " );
 
 		q.setParameter( "cenario", cenario );
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
 		return q.getResultList().size();
 	}
 
-	public static int countTurma( Campus campus )
+	public static int countTurma(
+		InstituicaoEnsino instituicaoEnsino, Campus campus )
 	{
 		Query q = entityManager().createQuery(
-			"SELECT count(*) FROM AtendimentoTatico o " +
-			"WHERE o.oferta.campus = :campus GROUP BY o.disciplina, o.turma" );
+			" SELECT count ( * ) FROM AtendimentoTatico o " +
+			" WHERE o.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.oferta.campus = :campus GROUP BY o.disciplina, o.turma " );
 
 		q.setParameter( "campus", campus );
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
 		return q.getResultList().size();
 	}
 
-	public static int countCreditos(Cenario cenario) {
+	public static int countCreditos(
+		InstituicaoEnsino instituicaoEnsino, Cenario cenario )
+	{
 		Query qT = entityManager().createQuery(
-			"SELECT sum(o.creditosTeorico) " +
-			"FROM AtendimentoTatico o WHERE o.cenario = :cenario" );
+			" SELECT sum ( o.creditosTeorico ) " +
+			" FROM AtendimentoTatico o " +
+			" WHERE o.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.cenario = :cenario " );
 
 		Query qP = entityManager().createQuery(
-			"SELECT sum(o.creditosPratico) " +
-			"FROM AtendimentoTatico o WHERE o.cenario = :cenario" );
+			" SELECT sum ( o.creditosPratico ) " +
+			" FROM AtendimentoTatico o " +
+			" WHERE o.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.cenario = :cenario " );
 
 		qT.setParameter( "cenario", cenario );
+		qT.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
 		qP.setParameter( "cenario", cenario );
+		qP.setParameter( "instituicaoEnsino", instituicaoEnsino );
 
 		Object srT = qT.getSingleResult();
 		Object srP = qP.getSingleResult();
@@ -358,93 +431,159 @@ public class AtendimentoTatico
 		return ( iT + iP );
 	}
 
-	public static int countSalasDeAula( Cenario cenario )
+	public static int countSalasDeAula(
+		InstituicaoEnsino instituicaoEnsino, Cenario cenario )
 	{
 		Query q = entityManager().createQuery(
-			"SELECT count(*) FROM AtendimentoTatico o " +
-			"WHERE o.sala.tipoSala.id = 1 AND o.cenario = :cenario GROUP BY o.sala" );
+			" SELECT count ( * ) FROM AtendimentoTatico o " +
+			" WHERE o.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.sala.tipoSala.id = 1 " +
+			" AND o.cenario = :cenario GROUP BY o.sala " );
 
 		q.setParameter( "cenario", cenario );
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
 		return q.getResultList().size();
-	}
-
-	public static int countSalasDeAula(Campus campus) {
-		Query q = entityManager()
-				.createQuery(
-						"SELECT count(*) FROM AtendimentoTatico o WHERE o.sala.tipoSala.id = 1 AND o.oferta.campus = :campus GROUP BY o.sala");
-		q.setParameter("campus", campus);
-		return q.getResultList().size();
-	}
-
-	public static int countLaboratorios(Cenario cenario) {
-		Query q = entityManager()
-				.createQuery(
-						"SELECT count(*) FROM AtendimentoTatico o WHERE o.sala.tipoSala.id = 2 AND o.cenario = :cenario GROUP BY o.sala");
-		q.setParameter("cenario", cenario);
-		return q.getResultList().size();
-	}
-
-	public static int countLaboratorios(Campus campus) {
-		Query q = entityManager()
-				.createQuery(
-						"SELECT count(*) FROM AtendimentoTatico o WHERE o.sala.tipoSala.id = 2 AND o.oferta.campus = :campus GROUP BY o.sala");
-		q.setParameter("campus", campus);
-		return q.getResultList().size();
-	}
-
-	public static int countDemandas(Cenario cenario) {
-		Query q = entityManager()
-				.createQuery(
-						"SELECT sum(o.quantidadeAlunos) FROM AtendimentoTatico o WHERE o.cenario = :cenario");
-		q.setParameter("cenario", cenario);
-		Object sr = q.getSingleResult();
-		return sr == null ? 0 : ((Number) q.getSingleResult()).intValue();
-	}
-
-	public static int countDemandas(Campus campus) {
-		Query q = entityManager()
-				.createQuery(
-						"SELECT sum(o.quantidadeAlunos) FROM AtendimentoTatico o WHERE o.oferta.campus = :campus");
-		q.setParameter("campus", campus);
-		Object sr = q.getSingleResult();
-		return sr == null ? 0 : ((Number) q.getSingleResult()).intValue();
 	}
 
 	@SuppressWarnings("unchecked")
-	public static List<AtendimentoTatico> findAllByDemanda(Demanda demanda) {
-		Query q = entityManager()
-				.createQuery(
-						"SELECT o FROM AtendimentoTatico o WHERE o.oferta = :oferta AND o.disciplina = :disciplina");
-		q.setParameter("oferta", demanda.getOferta());
-		q.setParameter("disciplina", demanda.getDisciplina());
-		return q.getResultList();
+	public static int countSalasDeAula(
+		InstituicaoEnsino instituicaoEnsino, Campus campus )
+	{
+		Query q = entityManager().createQuery(
+			" SELECT count ( * ) FROM AtendimentoTatico o " +
+			" WHERE o.sala.tipoSala.id = 1 " +
+			" AND o.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.oferta.campus = :campus GROUP BY o.sala " );
+
+		q.setParameter( "campus", campus );
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
+		List< AtendimentoTatico > list = q.getResultList();
+		return list.size();
+	}
+
+	public static int countLaboratorios( 
+		InstituicaoEnsino instituicaoEnsino, Cenario cenario )
+	{
+		Query q = entityManager().createQuery(
+			" SELECT count ( * ) FROM AtendimentoTatico o " +
+			" WHERE o.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.sala.tipoSala.id = 2 " +
+			" AND o.cenario = :cenario GROUP BY o.sala" );
+
+		q.setParameter( "cenario", cenario );
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
+		return q.getResultList().size();
+	}
+
+	public static int countLaboratorios(
+		InstituicaoEnsino instituicaoEnsino, Campus campus )
+	{
+		Query q = entityManager().createQuery(
+			" SELECT count ( * ) FROM AtendimentoTatico o " +
+			" WHERE o.sala.tipoSala.id = 2 " +
+			" AND o.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.oferta.campus = :campus GROUP BY o.sala " );
+
+		q.setParameter( "campus", campus );
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
+		return q.getResultList().size();
+	}
+
+	public static int countDemandas( 
+		InstituicaoEnsino instituicaoEnsino , Cenario cenario)
+	{
+		Query q = entityManager().createQuery(
+			" SELECT sum ( o.quantidadeAlunos ) " +
+			" FROM AtendimentoTatico o " +
+			" WHERE o.cenario = :cenario " +
+			" AND o.instituicaoEnsino = :instituicaoEnsino " );
+
+		q.setParameter( "cenario", cenario );
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
+		Object sr = q.getSingleResult();
+		return ( sr == null ? 0 : ( (Number) q.getSingleResult() ).intValue() );
+	}
+
+	public static int countDemandas(
+		InstituicaoEnsino instituicaoEnsino, Campus campus )
+	{
+		Query q = entityManager().createQuery(
+			" SELECT sum ( o.quantidadeAlunos ) " +
+			" FROM AtendimentoTatico o " +
+			" WHERE o.oferta.campus = :campus " +
+			" AND o.instituicaoEnsino = :instituicaoEnsino " );
+
+		q.setParameter( "campus", campus );
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
+		Object sr = q.getSingleResult();
+		return ( sr == null ? 0 : ( (Number) q.getSingleResult() ).intValue() );
 	}
 
 	@SuppressWarnings("unchecked")
-	public static List<AtendimentoTatico> findAllByCampus( Campus campus )
+	public static List< AtendimentoTatico > findAllByDemanda(
+		InstituicaoEnsino instituicaoEnsino, Demanda demanda )
 	{
 		Query q = entityManager().createQuery(
 			" SELECT o FROM AtendimentoTatico o " +
-			" WHERE o.oferta.campus = :campus" );
+			" WHERE o.oferta = :oferta " +
+			" AND o.disciplina = :disciplina " +
+			" AND o.instituicaoEnsino = :instituicaoEnsino " );
+
+		q.setParameter( "oferta", demanda.getOferta() );
+		q.setParameter( "disciplina", demanda.getDisciplina() );
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
+		return q.getResultList();
+	}
+
+	@SuppressWarnings("unchecked")
+	public static List< AtendimentoTatico > findAllByCampus(
+		InstituicaoEnsino instituicaoEnsino, Campus campus )
+	{
+		Query q = entityManager().createQuery(
+			" SELECT o FROM AtendimentoTatico o " +
+			" WHERE o.oferta.campus = :campus " +
+			" AND o.instituicaoEnsino = :instituicaoEnsino " );
 
 		q.setParameter( "campus", campus );
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
 		return q.getResultList();
 	}
 
 	@SuppressWarnings("unchecked")
-	public static List<AtendimentoTatico> findAllBy(Curso curso) {
-		Query q = entityManager()
-				.createQuery(
-						"SELECT o FROM AtendimentoTatico o WHERE o.oferta.curriculo.curso = :curso");
-		q.setParameter("curso", curso);
-		return q.getResultList();
-	}
-
-	@SuppressWarnings("unchecked")
-	public static List<AtendimentoTatico> findAllBy(Oferta oferta) {
+	public static List< AtendimentoTatico > findAllBy(
+		InstituicaoEnsino instituicaoEnsino, Curso curso )
+	{
 		Query q = entityManager().createQuery(
-				"SELECT o FROM AtendimentoTatico o WHERE o.oferta = :oferta");
-		q.setParameter("oferta", oferta);
+			" SELECT o FROM AtendimentoTatico o " +
+			" WHERE o.oferta.curriculo.curso = :curso " +
+			" AND o.instituicaoEnsino = :instituicaoEnsino " );
+
+		q.setParameter( "curso", curso );
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
+		return q.getResultList();
+	}
+
+	@SuppressWarnings("unchecked")
+	public static List< AtendimentoTatico > findAllBy(
+		InstituicaoEnsino instituicaoEnsino, Oferta oferta )
+	{
+		Query q = entityManager().createQuery(
+			" SELECT o FROM AtendimentoTatico o " +
+			" WHERE o.oferta = :oferta " +
+			" AND o.instituicaoEnsino = :instituicaoEnsino " );
+
+		q.setParameter( "oferta", oferta );
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
 		return q.getResultList();
 	}
 
@@ -533,7 +672,7 @@ public class AtendimentoTatico
 		return creditosPratico;
 	}
 
-	public void setCreditosPratico(Integer creditosPratico )
+	public void setCreditosPratico( Integer creditosPratico )
 	{
 		this.creditosPratico = creditosPratico;
 	}
@@ -550,7 +689,7 @@ public class AtendimentoTatico
 
 		return oferta.getCampus().getId() + "-" + oferta.getTurno().getId()
 			+ "-" + curriculo.getCurso().getId() + "-" + curriculo.getId()
-			+ "-" + curriculo.getPeriodo(getDisciplina()) + "-"
+			+ "-" + curriculo.getPeriodo( this.getInstituicaoEnsino(), getDisciplina() ) + "-"
 			+ getDisciplina().getId() + "-" + getTurma()
 			+ "-" + ( getCreditosTeorico() > 0 );
 	}
@@ -572,8 +711,9 @@ public class AtendimentoTatico
 		boolean validaDisciplina = ( this.getDisciplina().equals( other.getDisciplina() ) );
 		boolean validaCreditoTeorico = ( this.getCreditosTeorico().equals( other.getCreditosTeorico() ) );
 		boolean validaCreditoPratico = ( this.getCreditosPratico().equals( other.getCreditosPratico() ) );
+		boolean validaInstituicaoEnsino = ( this.getInstituicaoEnsino().equals( other.getInstituicaoEnsino() ) );
 
-		return ( validaTurma && validaSala && validaSemana && validaOferta
-			&& validaDisciplina &&  validaCreditoTeorico && validaCreditoPratico );
+		return ( validaTurma && validaSala && validaSemana && validaOferta && validaDisciplina
+			&&  validaCreditoTeorico && validaCreditoPratico && validaInstituicaoEnsino );
 	}
 }

@@ -32,7 +32,10 @@ import org.springframework.transaction.annotation.Transactional;
 @RooToString
 @RooEntity(identifierColumn = "DEU_ID")
 @Table(name = "DESLOCAMENTOS_UNIDADES")
-public class DeslocamentoUnidade implements java.io.Serializable {
+public class DeslocamentoUnidade
+	implements java.io.Serializable
+{
+	private static final long serialVersionUID = -8847212098556601964L;
 
     @NotNull
     @ManyToOne(targetEntity = Unidade.class, fetch = FetchType.LAZY)
@@ -150,48 +153,101 @@ public class DeslocamentoUnidade implements java.io.Serializable {
         return merged;
     }
 
-	public static final EntityManager entityManager() {
+	public static final EntityManager entityManager()
+	{
         EntityManager em = new DeslocamentoUnidade().entityManager;
-        if (em == null) throw new IllegalStateException("Entity manager has not been injected (is the Spring Aspects JAR configured as an AJC/AJDT aspects library?)");
+
+        if ( em == null )
+        {
+        	throw new IllegalStateException(
+        		" Entity manager has not been injected (is the Spring " +
+        		" Aspects JAR configured as an AJC/AJDT aspects library?) " );
+        }
+
         return em;
     }
 
-	public static long count() {
-        return ((Number) entityManager().createQuery("SELECT count(o) FROM DeslocamentoUnidade o").getSingleResult()).intValue();
+	public static long count(
+		InstituicaoEnsino instituicaoEnsino )
+	{
+        return findAll( instituicaoEnsino ).size();
     }
 
 	@SuppressWarnings("unchecked")
-    public static List<DeslocamentoUnidade> findAll() {
-        return entityManager().createQuery("SELECT o FROM DeslocamentoUnidade o").getResultList();
+    public static List< DeslocamentoUnidade > findAll(
+    	InstituicaoEnsino instituicaoEnsino )
+    {
+        return entityManager().createQuery(
+        	" SELECT o FROM DeslocamentoUnidade o " +
+        	" WHERE o.origem.campus.instituicaoEnsino = :instituicaoEnsino " +
+        	" AND o.destino.campus.instituicaoEnsino = :instituicaoEnsino " )
+        	.setParameter( "instituicaoEnsino", instituicaoEnsino ).getResultList();
     }
 
-	public static DeslocamentoUnidade find(Long id) {
-        if (id == null) return null;
-        return entityManager().find(DeslocamentoUnidade.class, id);
+	public static DeslocamentoUnidade find(
+		Long id, InstituicaoEnsino instituicaoEnsino )
+	{
+        if ( id == null || instituicaoEnsino == null )
+        {
+        	return null;
+        }
+
+        DeslocamentoUnidade du = entityManager().find( DeslocamentoUnidade.class, id );
+        
+        if ( du != null && du.getOrigem() != null && du.getDestino() != null
+       		&& du.getOrigem().getCampus() != null
+       		&& du.getDestino().getCampus() != null
+       		&& du.getOrigem().getCampus().getInstituicaoEnsino() != null
+       		&& du.getDestino().getCampus().getInstituicaoEnsino() != null
+       		&& du.getOrigem().getCampus().getInstituicaoEnsino() == instituicaoEnsino
+       		&& du.getDestino().getCampus().getInstituicaoEnsino() == instituicaoEnsino )
+        {
+        	return du;
+        }
+
+        return null;
     }
 
 	@SuppressWarnings("unchecked")
-    public static List<DeslocamentoUnidade> find(int firstResult, int maxResults) {
-        return entityManager().createQuery("SELECT o FROM DeslocamentoUnidade o").setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
+    public static List< DeslocamentoUnidade > find(
+    	InstituicaoEnsino instituicaoEnsino,
+    	int firstResult, int maxResults )
+    {
+        return entityManager().createQuery(
+        	" SELECT o FROM DeslocamentoUnidade o " +
+        	" WHERE o.origem.campus.instituicaoEnsino = :instituicaoEnsino " +
+        	" AND o.destino.campus.instituicaoEnsino = :instituicaoEnsino " )
+        	.setParameter( "instituicaoEnsino", instituicaoEnsino )
+        	.setFirstResult( firstResult ).setMaxResults( maxResults ).getResultList();
     }
 
 	@SuppressWarnings("unchecked")
-    public static List<DeslocamentoUnidade> findAllByCampus(Campus campus) {
-		Query q = entityManager().createQuery("SELECT o FROM DeslocamentoUnidade o WHERE o.origem.campus = :campus");
-		q.setParameter("campus", campus);
+    public static List< DeslocamentoUnidade > findAllByCampus(
+    	InstituicaoEnsino instituicaoEnsino, Campus campus )
+    {
+		Query q = entityManager().createQuery(
+			" SELECT o FROM DeslocamentoUnidade o " +
+			" WHERE o.origem.campus = :campus " +
+			" AND o.origem.campus.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.destino.campus.instituicaoEnsino = :instituicaoEnsino " );
+
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+		q.setParameter( "campus", campus );
+
         return q.getResultList();
     }
-	
-	private static final long serialVersionUID = -8847212098556601964L;
 
-	public String toString() {
+	public String toString()
+	{
         StringBuilder sb = new StringBuilder();
-        sb.append("Id: ").append(getId()).append(", ");
-        sb.append("Version: ").append(getVersion()).append(", ");
-        sb.append("Origem: ").append(getOrigem()).append(", ");
-        sb.append("Destino: ").append(getDestino()).append(", ");
-        sb.append("Custo: ").append(getCusto()).append(", ");
-        sb.append("Tempo: ").append(getTempo());
+
+        sb.append( "Id: " ).append( getId() ).append( ", " );
+        sb.append( "Version: " ).append( getVersion() ).append( ", " );
+        sb.append( "Origem: " ).append( getOrigem() ).append( ", " );
+        sb.append( "Destino: " ).append( getDestino() ).append( ", " );
+        sb.append( "Custo: " ).append( getCusto() ).append( ", " );
+        sb.append( "Tempo: " ).append( getTempo() );
+
         return sb.toString();
     }
 }

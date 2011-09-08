@@ -46,85 +46,90 @@ import org.springframework.transaction.annotation.Transactional;
 public class Cenario
 	implements Serializable
 {
-	@OneToMany(mappedBy = "cenario")
-	private Set<Parametro> parametros;
+	private static final long serialVersionUID = -8610380359760552949L;
 
-	@ManyToOne(targetEntity = Usuario.class)
-	@JoinColumn(name = "USU_CRIACAO_ID")
+	@OneToMany( mappedBy = "cenario" )
+	private Set< Parametro > parametros;
+
+	@ManyToOne( targetEntity = Usuario.class )
+	@JoinColumn( name = "USU_CRIACAO_ID" )
 	private Usuario criadoPor;
 
-	@ManyToOne(targetEntity = Usuario.class)
-	@JoinColumn(name = "USU_ATUALIZACAO_ID")
+	@ManyToOne( targetEntity = Usuario.class )
+	@JoinColumn( name = "USU_ATUALIZACAO_ID" )
 	private Usuario atualizadoPor;
 
 	@NotNull
-	@Column(name = "CEN_MASTERDATA")
+	@Column( name = "CEN_MASTERDATA" )
 	private Boolean masterData;
 
 	@NotNull
-	@Column(name = "CEN_NOME")
-	@Size(min = 1, max = 50)
+	@Column( name = "CEN_NOME" )
+	@Size( min = 1, max = 50 )
 	private String nome;
 
-	@Column(name = "CEN_ANO")
-	@Min(1L)
-	@Max(9999L)
+	@Column( name = "CEN_ANO" )
+	@Min( 1L )
+	@Max( 9999L )
 	private Integer ano;
 
-	@Column(name = "CEN_SEMESTRE")
-	@Min(1L)
-	@Max(12L)
+	@Column( name = "CEN_SEMESTRE" )
+	@Min( 1L )
+	@Max( 12L )
 	private Integer semestre;
 
-	@Column(name = "CEN_DT_CRIACAO")
-	@Temporal(TemporalType.TIMESTAMP)
-	@DateTimeFormat(style = "S-")
+	@Column( name = "CEN_DT_CRIACAO" )
+	@Temporal( TemporalType.TIMESTAMP )
+	@DateTimeFormat( style = "S-" )
 	private Date dataCriacao;
 
-	@Column(name = "CEN_DT_ATUALIZACAO")
-	@Temporal(TemporalType.TIMESTAMP)
-	@DateTimeFormat(style = "S-")
+	@Column( name = "CEN_DT_ATUALIZACAO" )
+	@Temporal( TemporalType.TIMESTAMP )
+	@DateTimeFormat( style = "S-" )
 	private Date dataAtualizacao;
 
-	@Column(name = "CEN_COMENTARIO")
+	@Column( name = "CEN_COMENTARIO" )
 	private String comentario;
 
-	@Column(name = "CEN_OFICIAL")
+	@Column( name = "CEN_OFICIAL" )
 	private Boolean oficial;
 
+	@NotNull
 	@OneToOne
-	@JoinColumn(name = "SLE_ID")
+	@JoinColumn( name = "SLE_ID" )
 	private SemanaLetiva semanaLetiva;
 
-	@ManyToMany(cascade = CascadeType.ALL, mappedBy = "cenario")
-	private Set<DivisaoCredito> divisoesCredito = new HashSet<DivisaoCredito>();
+	@ManyToMany( cascade = CascadeType.ALL, mappedBy = "cenario" )
+	private Set< DivisaoCredito > divisoesCredito = new HashSet< DivisaoCredito >();
 
-	@OneToMany(mappedBy = "cenario")
-	private Set<Turno> turnos = new HashSet<Turno>();
+	@OneToMany( mappedBy = "cenario" )
+	private Set< Turno > turnos = new HashSet< Turno >();
 
-	@OneToMany(mappedBy = "cenario")
-	private Set<Curso> cursos = new HashSet<Curso>();
+	@OneToMany( mappedBy = "cenario" )
+	private Set< Curso > cursos = new HashSet< Curso >();
 
-	@OneToMany(mappedBy = "cenario")
-	private Set<Campus> campi = new HashSet<Campus>();
+	@OneToMany( mappedBy = "cenario" )
+	private Set< Campus > campi = new HashSet< Campus >();
 
-	@OneToMany(mappedBy = "cenario")
-	private Set<Disciplina> disciplinas = new HashSet<Disciplina>();
+	@OneToMany( mappedBy = "cenario" )
+	private Set< Disciplina > disciplinas = new HashSet< Disciplina >();
 
-	@OneToMany(mappedBy = "cenario")
-	private Set<Professor> professores = new HashSet<Professor>();
+	@OneToMany( mappedBy = "cenario" )
+	private Set< Professor > professores = new HashSet< Professor >();
 
-	@OneToMany(mappedBy = "cenario")
-	private Set<Curriculo> curriculos = new HashSet<Curriculo>();
+	@OneToMany( mappedBy = "cenario" )
+	private Set< Curriculo > curriculos = new HashSet< Curriculo >();
 
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "cenario")
-	private Set<AtendimentoOperacional> atendimentosOperacionais = new HashSet<AtendimentoOperacional>();
+	@OneToMany( cascade = CascadeType.ALL, mappedBy = "cenario" )
+	private Set< AtendimentoOperacional > atendimentosOperacionais = new HashSet< AtendimentoOperacional >();
 
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "cenario")
-	private Set<AtendimentoTatico> atendimentosTaticos = new HashSet<AtendimentoTatico>();
+	@OneToMany( cascade = CascadeType.ALL, mappedBy = "cenario" )
+	private Set< AtendimentoTatico > atendimentosTaticos = new HashSet< AtendimentoTatico >();
 
-	public String toString() {
+	public String toString()
+	{
 		StringBuilder sb = new StringBuilder();
+
 		sb.append("Id: ").append(getId()).append(", ");
 		sb.append("Version: ").append(getVersion()).append(", ");
 		sb.append("CriadoPor: ").append(getCriadoPor()).append(", ");
@@ -162,6 +167,7 @@ public class Cenario
 						: getAtendimentosTaticos().size());
 		sb.append("Parametros: ").append(
 				getParametros() == null ? "null" : getParametros().size());
+
 		return sb.toString();
 	}
 
@@ -247,106 +253,183 @@ public class Cenario
 		return merged;
 	}
 
-	public static final EntityManager entityManager() {
+	public static final EntityManager entityManager()
+	{
 		EntityManager em = new Cenario().entityManager;
-		if (em == null)
+
+		if ( em == null )
+		{
 			throw new IllegalStateException(
-					"Entity manager has not been injected (is the Spring Aspects JAR configured as an AJC/AJDT aspects library?)");
+				" Entity manager has not been injected (is the Spring " +
+				" Aspects JAR configured as an AJC/AJDT aspects library?)" );
+		}
+
 		return em;
 	}
 
-	public static int count() {
-		return ((Number) entityManager().createQuery(
-				"SELECT count(o) FROM Cenario o").getSingleResult()).intValue();
+	public static int count(
+		InstituicaoEnsino instituicaoEnsino )
+	{
+		return ( (Number) entityManager().createQuery(
+			" SELECT count( o ) FROM Cenario o " +
+			" WHERE o.semanaLetiva.instituicaoEnsino = :instituicaoEnsino " )
+			.setParameter( "instituicaoEnsino", instituicaoEnsino )
+			.getSingleResult() ).intValue();
 	}
 
-	public Parametro getUltimoParametro() {
-		int i = ((Number) entityManager()
-				.createQuery(
-						"SELECT count(o) FROM Parametro o WHERE o.cenario = :cenario")
-				.setParameter("cenario", this).getSingleResult()).intValue();
-		if (i > 0) {
-			return (Parametro) entityManager()
-					.createQuery(
-							"SELECT o FROM Parametro o WHERE o.cenario = :cenario ORDER BY o.id DESC")
-					.setParameter("cenario", this).setMaxResults(1)
-					.getSingleResult();
+	public Parametro getUltimoParametro(
+		InstituicaoEnsino instituicaoEnsino )
+	{
+		int parametrosCenario = ( (Number) entityManager().createQuery(
+			" SELECT count ( o ) FROM Parametro o " +
+			" WHERE o.cenario.semanaLetiva.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.cenario = :cenario " )
+			.setParameter( "instituicaoEnsino", instituicaoEnsino )
+			.setParameter( "cenario", this ).getSingleResult() ).intValue();
+
+		if ( parametrosCenario > 0 )
+		{
+			return (Parametro) entityManager().createQuery(
+				" SELECT o FROM Parametro o " +
+				" WHERE o.cenario.semanaLetiva.instituicaoEnsino = :instituicaoEnsino " +
+				" AND o.cenario = :cenario ORDER BY o.id DESC " )
+				.setParameter( "instituicaoEnsino", instituicaoEnsino )
+				.setParameter( "cenario", this ).setMaxResults( 1 ).getSingleResult();
 		}
+
 		return null;
 	}
 
 	@SuppressWarnings("unchecked")
-	public static List<Cenario> findAll() {
+	public static List< Cenario > findAll(
+		InstituicaoEnsino instituicaoEnsino )
+	{
 		Query q = entityManager().createQuery(
-				"SELECT o FROM Cenario o WHERE o.masterData = :masterData");
-		q.setParameter("masterData", false);
+			" SELECT o FROM Cenario o " +
+			" WHERE o.semanaLetiva.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.masterData = :masterData " );
+
+		q.setParameter( "masterData", false );
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
 		return q.getResultList();
 	}
 
-	public static Cenario find(Long id) {
-		if (id == null)
+	public static Cenario find(
+		Long id, InstituicaoEnsino instituicaoEnsino )
+	{
+		if ( id == null || instituicaoEnsino == null )
+		{
 			return null;
-		return entityManager().find(Cenario.class, id);
+		}
+
+		Cenario cenario = entityManager().find( Cenario.class, id );
+		
+		if ( cenario != null
+			&& cenario.getSemanaLetiva().getInstituicaoEnsino() != null
+			&& cenario.getSemanaLetiva().getInstituicaoEnsino() == instituicaoEnsino )
+		{
+			return cenario;
+		}
+
+		return null;
 	}
 
-	public static Cenario findMasterData()
+	@SuppressWarnings("unchecked")
+	public static Cenario findMasterData(
+		InstituicaoEnsino instituicaoEnsino )
 	{
 		Query q = entityManager().createQuery(
-			"SELECT o FROM Cenario o WHERE o.masterData = :masterData" );
+			" SELECT o FROM Cenario o " +
+			" WHERE o.semanaLetiva.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.masterData = :masterData " );
 
 		q.setParameter( "masterData", true );
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
 		Cenario cenario = null;
 
 		try
 		{
-			cenario = (Cenario) q.getSingleResult();
+			List< Cenario > listCenarios = q.getResultList(); 
+
+			if ( listCenarios != null && listCenarios.size() > 0 )
+			{
+				cenario = listCenarios.get( 0 );
+			}
 		}
 		catch ( EmptyResultDataAccessException e ) { }
 
 		return cenario;
 	}
 
-	public static List< Cenario > find( int firstResult, int maxResults )
+	public static List< Cenario > find(
+		InstituicaoEnsino instituicaoEnsino, int firstResult, int maxResults )
 	{
-		return find( firstResult, maxResults, null );
+		return find( instituicaoEnsino, firstResult, maxResults, null );
 	}
 
 	@SuppressWarnings("unchecked")
-	public static List<Cenario> find(int firstResult, int maxResults,
-			String orderBy) {
-		orderBy = (orderBy != null) ? "ORDER BY o." + orderBy : "";
+	public static List< Cenario > find( InstituicaoEnsino instituicaoEnsino,
+		int firstResult, int maxResults, String orderBy )
+	{
+		orderBy = ( ( orderBy != null ) ? " ORDER BY o." + orderBy : "" );
+
 		Query q = entityManager().createQuery(
-				"SELECT o FROM Cenario o WHERE o.masterData = :masterData "
-						+ orderBy);
-		q.setParameter("masterData", false);
-		return q.setFirstResult(firstResult).setMaxResults(maxResults)
-				.getResultList();
+			" SELECT o FROM Cenario o " +
+			" WHERE o.semanaLetiva.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.masterData = :masterData " + orderBy );
+
+		q.setParameter( "masterData", false );
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+		q.setFirstResult( firstResult );
+		q.setMaxResults( maxResults );
+
+		return q.getResultList();
 	}
 
 	@SuppressWarnings("unchecked")
-	public static List<Cenario> findByAnoAndSemestre(Integer ano,
-			Integer semestre, int firstResult, int maxResults, String orderBy) {
-		orderBy = (orderBy != null) ? "ORDER BY o." + orderBy : "";
+	public static List< Cenario > findByAnoAndSemestre(
+		InstituicaoEnsino instituicaoEnsino, Integer ano,
+		Integer semestre, int firstResult, int maxResults, String orderBy )
+	{
+		orderBy = ( ( orderBy != null ) ? " ORDER BY o." + orderBy : "" );
 
 		String queryAno = "";
 		String querySemestre = "";
-		if (ano != null)
-			queryAno = "o.ano = :ano AND ";
-		if (ano != null)
-			querySemestre = "o.semestre = :semestre AND ";
+
+		if ( ano != null )
+		{
+			queryAno = " o.ano = :ano AND ";
+		}
+
+		if ( ano != null )
+		{
+			querySemestre = " o.semestre = :semestre AND ";
+		}
 
 		Query q = entityManager().createQuery(
-				"SELECT o FROM Cenario o WHERE " + queryAno + querySemestre
-						+ " o.masterData = :masterData ");
+			" SELECT o FROM Cenario o " +
+			" WHERE " + queryAno + querySemestre +
+			" o.masterData = :masterData " +
+			" AND o.semanaLetiva.instituicaoEnsino = :instituicaoEnsino " );
 
-		q.setParameter("masterData", false);
-		if (ano != null)
-			q.setParameter("ano", semestre);
-		if (semestre != null)
-			q.setParameter("ano", semestre);
+		q.setParameter( "masterData", false );
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+		q.setFirstResult( firstResult );
+		q.setMaxResults( maxResults );
 
-		return q.setFirstResult(firstResult).setMaxResults(maxResults)
-				.getResultList();
+		if ( ano != null )
+		{
+			q.setParameter( "ano", semestre );
+		}
+
+		if ( semestre != null )
+		{
+			q.setParameter( "ano", semestre );
+		}
+
+		return q.getResultList();
 	}
 
 	public Usuario getCriadoPor() {
@@ -519,5 +602,28 @@ public class Cenario
 		this.parametros = parametros;
 	}
 
-	private static final long serialVersionUID = -8610380359760552949L;
+	@Override
+	public boolean equals( Object obj )
+	{
+		if ( obj == null || !( obj instanceof Cenario ) )
+		{
+			return false;
+		}
+
+		Cenario other = (Cenario) obj;
+
+		if ( id == null )
+		{
+			if ( other.id != null )
+			{
+				return false;
+			}
+		}
+		else if ( !id.equals( other.id ) )
+		{
+			return false;
+		}
+
+		return true;
+	}
 }

@@ -102,6 +102,22 @@ public class Fixacao
         this.version = version;
     }
 
+	@NotNull
+	@ManyToOne( cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH },
+		targetEntity = InstituicaoEnsino.class )
+	@JoinColumn( name = "INS_ID" )
+	private InstituicaoEnsino instituicaoEnsino;
+
+	public InstituicaoEnsino getInstituicaoEnsino()
+	{
+		return instituicaoEnsino;
+	}
+
+	public void setInstituicaoEnsino( InstituicaoEnsino instituicaoEnsino )
+	{
+		this.instituicaoEnsino = instituicaoEnsino;
+	}
+
     @Transactional
     public void persist()
     {
@@ -167,62 +183,134 @@ public class Fixacao
         return merged;
     }
 
-    public static final EntityManager entityManager() {
+    public static final EntityManager entityManager()
+    {
         EntityManager em = new Fixacao().entityManager;
-        if (em == null) throw new IllegalStateException("Entity manager has not been injected (is the Spring Aspects JAR configured as an AJC/AJDT aspects library?)");
+
+        if ( em == null )
+        {
+        	throw new IllegalStateException(
+        		"Entity manager has not been injected (is the Spring " +
+        		"Aspects JAR configured as an AJC/AJDT aspects library?)" );
+        }
+
         return em;
     }
 
-    public static int count() {
-        return ((Number) entityManager().createQuery("SELECT COUNT(o) FROM Fixacao o").getSingleResult()).intValue();
+    public static int count( InstituicaoEnsino instituicaoEnsino )
+    {
+    	List< Fixacao > list = Fixacao.findAll( instituicaoEnsino );
+        return ( list == null ? 0 : list.size() );
     }
 
     @SuppressWarnings("unchecked")
-    public static List<Fixacao> findAll() {
-        return entityManager().createQuery("SELECT o FROM Fixacao o").getResultList();
+    public static List< Fixacao > findAll( InstituicaoEnsino instituicaoEnsino )
+    {
+        Query q = entityManager().createQuery(
+        	" SELECT o FROM Fixacao o " +
+        	" WHERE o.instituicaoEnsino = :instituicaoEnsino " );
+
+        q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
+        List< Fixacao > list = q.getResultList();
+        return list;
     }
 
-    public static Fixacao find(Long id) {
-        if (id == null) return null;
-        return entityManager().find(Fixacao.class, id);
-    }
-
-    public static List<Fixacao> find(int firstResult, int maxResults) {
-        return find(firstResult, maxResults, null);
-    }
-
-    @SuppressWarnings("unchecked")
-    public static List<Fixacao> find(int firstResult, int maxResults, String orderBy) {
-        orderBy = (orderBy != null) ? "ORDER BY o." + orderBy : "";
-        return entityManager().createQuery("SELECT o FROM Fixacao o " + orderBy).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
-    }
-    
-    @SuppressWarnings("unchecked")
-    public static List<Fixacao> findAllBy(Disciplina disciplina) {
-        Query q = entityManager().createQuery("SELECT o FROM Fixacao o WHERE o.disciplina = :disciplina");
-        q.setParameter("disciplina", disciplina);
-        return q.getResultList();
-    }
-    
-    @SuppressWarnings("unchecked")
-    public static List<Fixacao> findBy(String codigo, int firstResult, int maxResults, String orderBy) {
-    	codigo = (codigo == null || codigo.length() == 0)? "" : codigo;
-        codigo = codigo.replace('*', '%');
-        if (codigo == "" || codigo.charAt(0) != '%') {
-            codigo = "%" + codigo;
+    public static Fixacao find( Long id, InstituicaoEnsino instituicaoEnsino )
+    {
+        if ( id == null || instituicaoEnsino == null )
+        {
+        	return null;
         }
-        if (codigo.charAt(codigo.length() -1) != '%') {
-            codigo = codigo + "%";
+
+        Fixacao f = entityManager().find( Fixacao.class, id );
+
+        if ( f != null
+        	&& f.getInstituicaoEnsino() != null
+        	&& f.getInstituicaoEnsino() == instituicaoEnsino )
+        {
+        	return f;
         }
+
+        return null;
+    }
+
+    public static List< Fixacao > find( InstituicaoEnsino instituicaoEnsino,
+        int firstResult, int maxResults )
+    {
+        return find( instituicaoEnsino, firstResult, maxResults, null );
+    }
+
+    @SuppressWarnings("unchecked")
+    public static List< Fixacao > find( InstituicaoEnsino instituicaoEnsino,
+    	int firstResult, int maxResults, String orderBy )
+    {
+        orderBy = ( ( orderBy != null ) ? " ORDER BY o." + orderBy : "" );
+
+        Query q = entityManager().createQuery(
+        	"SELECT o FROM Fixacao o " +
+        	"WHERE o.instituicaoEnsino = :instituicaoEnsino " + orderBy );
+
+        q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+        q.setFirstResult( firstResult );
+        q.setMaxResults( maxResults );
         
-        orderBy = (orderBy != null) ? "ORDER BY o." + orderBy : "";
-        Query q = entityManager().createQuery("SELECT o FROM Fixacao o WHERE LOWER(o.codigo) LIKE LOWER(:codigo) "+orderBy);
-        q.setParameter("codigo", codigo);
-        return q.setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
+        List< Fixacao > list = q.getResultList();
+        return list;
+    }
+
+    @SuppressWarnings("unchecked")
+    public static List< Fixacao > findAllBy(
+    	InstituicaoEnsino instituicaoEnsino, Disciplina disciplina )
+    {
+        Query q = entityManager().createQuery(
+        	" SELECT o FROM Fixacao o " +
+        	" WHERE o.disciplina = :disciplina " +
+        	" AND o.instituicaoEnsino = :instituicaoEnsino " );
+
+        q.setParameter( "disciplina", disciplina );
+        q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
+        List< Fixacao > list = q.getResultList();
+        return list;
+    }
+    
+    @SuppressWarnings("unchecked")
+    public static List< Fixacao > findBy( InstituicaoEnsino instituicaoEnsino,
+    	String codigo, int firstResult, int maxResults, String orderBy )
+    {
+    	codigo = ( ( codigo == null || codigo.length() == 0 ) ? "" : codigo );
+        codigo = codigo.replace( '*', '%' );
+
+        if ( codigo == "" || codigo.charAt( 0 ) != '%' )
+        {
+            codigo = ( "%" + codigo );
+        }
+
+        if ( codigo.charAt( codigo.length() - 1 ) != '%' )
+        {
+            codigo = ( codigo + "%" );
+        }
+
+        orderBy = ( ( orderBy != null ) ? " ORDER BY o." + orderBy : "" );
+
+        Query q = entityManager().createQuery(
+        	" SELECT o FROM Fixacao o WHERE " +
+        	" LOWER ( o.codigo ) LIKE LOWER ( :codigo ) " +
+        	" AND o.instituicaoEnsino = :instituicaoEnsino " + orderBy );
+
+        q.setParameter( "codigo", codigo );
+        q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+        q.setFirstResult( firstResult );
+        q.setMaxResults( maxResults );
+
+        List< Fixacao > list = q.getResultList();
+        return list;
     }
 
 	@SuppressWarnings("unchecked")
-	public List< HorarioDisponivelCenario > getHorarios( List< SemanaLetiva > semanasLetivas )
+	public List< HorarioDisponivelCenario > getHorarios(
+		InstituicaoEnsino instituicaoEnsino, List< SemanaLetiva > semanasLetivas )
 	{
 		Set< HorarioDisponivelCenario > horarios
 			= new HashSet< HorarioDisponivelCenario >();
@@ -231,10 +319,14 @@ public class Fixacao
 		{
 			Query q = entityManager().createQuery(
 				" SELECT o FROM HorarioDisponivelCenario o, IN ( o.fixacoes ) c " +
-				" WHERE c = :fixacao AND o.horarioAula.semanaLetiva = :semanaLetiva " );
+				" WHERE c = :fixacao " +
+				" AND c.instituicaoEnsino = :instituicaoEnsino " +
+				" AND o.horarioAula.semanaLetiva = :semanaLetiva " +
+				" AND o.horarioAula.semanaLetiva.instituicaoEnsino = :instituicaoEnsino " );
 
 			q.setParameter( "fixacao", this );
 			q.setParameter( "semanaLetiva", semanaLetiva );
+			q.setParameter( "instituicaoEnsino", instituicaoEnsino );
 
 			horarios.addAll( q.getResultList() );
 		}
@@ -299,51 +391,81 @@ public class Fixacao
         this.horarios = horarios;
     }
 	
-    public String toString() {
+	public String toString()
+	{
         StringBuilder sb = new StringBuilder();
-        sb.append("Id: ").append(getId()).append(", ");
-        sb.append("Version: ").append(getVersion()).append(", ");
-        sb.append("Codigo: ").append(getCodigo()).append(", ");
-        sb.append("Professor: ").append(getProfessor()).append(", ");
-        sb.append("Descricao: ").append(getDescricao()).append(", ");
-        sb.append("Disciplina: ").append(getDisciplina()).append(", ");
-        sb.append("Campus: ").append(getCampus()).append(", ");
-        sb.append("Unidade: ").append(getUnidade()).append(", ");
-        sb.append("Sala: ").append(getSala()).append(", ");
-        sb.append("Horarios: ").append(getHorarios() == null ? "null" : getHorarios().size()).append(", ");
+
+        sb.append( "Id: " ).append( getId() ).append( ", " );
+        sb.append( "Version: " ).append( getVersion() ).append( ", " );
+        sb.append( "Instituicao de Ensino: " ).append( getInstituicaoEnsino() ).append( ", " );
+        sb.append( "Codigo: " ).append( getCodigo() ).append( ", " );
+        sb.append( "Professor: " ).append( getProfessor() ).append( ", " );
+        sb.append( "Descricao: " ).append( getDescricao() ).append( ", " );
+        sb.append( "Disciplina: " ).append( getDisciplina() ).append( ", " );
+        sb.append( "Campus: " ).append( getCampus() ).append( ", " );
+        sb.append( "Unidade: " ).append( getUnidade() ).append( ", " );
+        sb.append( "Sala: " ).append( getSala() ).append( ", " );
+        sb.append( "Horarios: " ).append( getHorarios() == null ?
+        	"null" : getHorarios().size() ).append( ", " );
+
         return sb.toString();
     }
 
 	@Override
-	public int hashCode() {
+	public int hashCode()
+	{
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((id == null) ? 0 : id.hashCode());
-		result = prime * result + ((version == null) ? 0 : version.hashCode());
+
+		result = ( prime * result + ( ( id == null) ? 0 : id.hashCode() ) );
+		result = ( prime * result + ( ( version == null ) ? 0 : version.hashCode() ) );
+
 		return result;
 	}
 
 	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
+	public boolean equals( Object obj )
+	{
+		if ( this == obj )
+		{
 			return true;
-		if (obj == null)
+		}
+
+		if ( obj == null )
+		{
 			return false;
-		if (getClass() != obj.getClass())
+		}
+
+		if ( getClass() != obj.getClass() )
+		{
 			return false;
+		}
+
 		Fixacao other = (Fixacao) obj;
-		if (id == null) {
-			if (other.id != null)
+		if ( id == null )
+		{
+			if ( other.id != null )
+			{
 				return false;
-		} else if (!id.equals(other.id))
+			}
+		}
+		else if ( !id.equals( other.id ) )
+		{
 			return false;
-		if (version == null) {
-			if (other.version != null)
+		}
+
+		if ( version == null )
+		{
+			if ( other.version != null )
+			{
 				return false;
-		} else if (!version.equals(other.version))
+			}
+		}
+		else if ( !version.equals( other.version ) )
+		{
 			return false;
+		}
+
 		return true;
 	}
-    
-    
 }

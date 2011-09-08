@@ -35,7 +35,10 @@ import org.springframework.transaction.annotation.Transactional;
 @RooToString
 @RooEntity(identifierColumn = "DEM_ID")
 @Table(name = "DEMANDAS")
-public class Demanda implements Serializable {
+public class Demanda
+	implements Serializable
+{
+	private static final long serialVersionUID = -3935898184270072639L;
 
     @NotNull
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH}, targetEntity = Oferta.class, fetch = FetchType.LAZY)
@@ -138,108 +141,285 @@ public class Demanda implements Serializable {
     public Demanda merge() {
         if (this.entityManager == null) this.entityManager = entityManager();
         Demanda merged = this.entityManager.merge(this);
-//        this.entityManager.flush();
+        //this.entityManager.flush();
         return merged;
     }
 
-	public static final EntityManager entityManager() {
+	public static final EntityManager entityManager()
+	{
         EntityManager em = new Demanda().entityManager;
-        if (em == null) throw new IllegalStateException("Entity manager has not been injected (is the Spring Aspects JAR configured as an AJC/AJDT aspects library?)");
+
+        if ( em == null )
+        {
+        	throw new IllegalStateException(
+        		" Entity manager has not been injected (is the Spring " +
+        		" Aspects JAR configured as an AJC/AJDT aspects library?) " );
+        }
+
         return em;
     }
 
-	public static int count(Cenario cenario) {
-		Query q = entityManager().createQuery("SELECT COUNT(o) FROM Demanda o WHERE o.disciplina.cenario = :cenario");
-		q.setParameter("cenario", cenario);
-		return ((Number) q.getSingleResult()).intValue();
+	public static int count(
+		InstituicaoEnsino instituicaoEnsino, Cenario cenario )
+	{
+		Query q = entityManager().createQuery(
+			" SELECT COUNT ( o ) FROM Demanda o " +
+			" WHERE o.oferta.campus.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.disciplina.cenario = :cenario " );
+
+		q.setParameter( "cenario", cenario );
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
+		return ( (Number) q.getSingleResult() ).intValue();
 	}
-	
-	public static int count(Campus campus) {
-		Query q = entityManager().createQuery("SELECT COUNT(o) FROM Demanda o WHERE o.oferta.campus = :campus");
-		q.setParameter("campus", campus);
-		return ((Number) q.getSingleResult()).intValue();
+
+	public static int count(
+		InstituicaoEnsino instituicaoEnsino, Campus campus )
+	{
+		Query q = entityManager().createQuery(
+			" SELECT COUNT ( o ) FROM Demanda o " +
+			" WHERE o.oferta.campus = :campus " +
+			" AND o.oferta.campus.instituicaoEnsino = :instituicaoEnsino " );
+
+		q.setParameter( "campus", campus );
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
+		return ( (Number) q.getSingleResult() ).intValue();
 	}
-	
-	public static int sumDemanda(Cenario cenario) {
-		Query q = entityManager().createQuery("SELECT SUM(o.quantidade) FROM Demanda o WHERE o.disciplina.cenario = :cenario");
-		q.setParameter("cenario", cenario);
-		return ((Number) q.getSingleResult()).intValue();
+
+	public static int sumDemanda(
+		InstituicaoEnsino instituicaoEnsino, Cenario cenario )
+	{
+		Query q = entityManager().createQuery(
+			" SELECT SUM ( o.quantidade ) FROM Demanda o " +
+			" WHERE o.oferta.campus.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.disciplina.cenario = :cenario " );
+
+		q.setParameter( "cenario", cenario );
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
+		return ( (Number) q.getSingleResult() ).intValue();
 	}
-	
-	public static int sumDemanda(Campus campus) {
-		Query q = entityManager().createQuery("SELECT SUM(o.quantidade) FROM Demanda o WHERE o.oferta.campus = :campus");
-		q.setParameter("campus", campus);
+
+	public static int sumDemanda(
+		InstituicaoEnsino instituicaoEnsino, Campus campus )
+	{
+		Query q = entityManager().createQuery(
+			" SELECT SUM ( o.quantidade ) FROM Demanda o " +
+			" WHERE o.oferta.campus.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.oferta.campus = :campus " );
+
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+		q.setParameter( "campus", campus );
+
 		Object rs = q.getSingleResult();
-		return rs == null ? 0 : ((Number) rs).intValue();
+		return ( rs == null ? 0 : ( (Number) rs).intValue() );
 	}
 	
 	@SuppressWarnings("unchecked")
-    public static List<Demanda> findAll() {
-        return entityManager().createQuery("SELECT o FROM Demanda o").getResultList();
+    public static List< Demanda > findAll(
+    	InstituicaoEnsino instituicaoEnsino )
+    {
+        return entityManager().createQuery(
+        	" SELECT o FROM Demanda o " +
+        	" WHERE o.oferta.campus.instituicaoEnsino = :instituicaoEnsino " )
+        	.setParameter( "instituicaoEnsino", instituicaoEnsino ).getResultList();
     }
-	
+
 	@SuppressWarnings("unchecked")
-	public static List<Demanda> findAllByCampus(Campus campus) {
-		Query q = entityManager().createQuery("SELECT o FROM Demanda o WHERE o.oferta.campus = :campus");
-		q.setParameter("campus", campus);
+	public static List< Demanda > findAllByCampus(
+		InstituicaoEnsino instituicaoEnsino, Campus campus )
+	{
+		Query q = entityManager().createQuery(
+			" SELECT o FROM Demanda o " +
+			" WHERE o.oferta.campus.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.oferta.campus = :campus " );
+
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+		q.setParameter( "campus", campus );
+
 		return q.getResultList();
 	}
 	
-	public static int count(Campus campus, Curso curso, Curriculo curriculo, Turno turno, Disciplina disciplina) {
-		String queryCampus 		= (campus == null)? "" : " o.oferta.campus = :campus AND ";
-		String queryCurso 		= (curso == null)? "" : " o.oferta.curriculo.curso = :curso AND ";
-		String queryCurriculo	= (curriculo == null)? "" : " o.oferta.curriculo = :curriculo AND ";
-		String queryTurno 		= (turno == null)? "" : " o.oferta.turno = :turno AND ";
-		String queryDisciplina	= (disciplina == null)? "" : " o.disciplina = :disciplina AND ";
-		
+	public static int count( InstituicaoEnsino instituicaoEnsino,
+		Campus campus, Curso curso, Curriculo curriculo,
+		Turno turno, Disciplina disciplina )
+	{
+		String queryCampus = "";
+		if ( campus != null )
+		{
+			queryCampus	= " o.oferta.campus = :campus AND ";
+		}
+
+		String queryCurso = "";
+		if ( curso != null )
+		{
+			queryCurso = " o.oferta.curriculo.curso = :curso AND ";
+		}
+
+		String queryCurriculo = "";
+		if ( curriculo != null )
+		{
+			queryCurriculo = " o.oferta.curriculo = :curriculo AND ";
+		}
+
+		String queryTurno = "";
+		if ( turno != null )
+		{
+			queryTurno = " o.oferta.turno = :turno AND ";
+		}
+
+		String queryDisciplina = "";
+		if ( disciplina != null )
+		{
+			queryDisciplina	= " o.disciplina = :disciplina AND ";
+		}
+
 		String queryString = queryCampus + queryCurso + queryCurriculo + queryTurno + queryDisciplina;
-		
-		Query q = entityManager().createQuery("SELECT COUNT(o) FROM Demanda o WHERE "+queryString+" 1=1");
-		
-		if(campus != null)		q.setParameter("campus", campus);
-		if(curso != null)		q.setParameter("curso", curso);
-		if(curriculo != null)	q.setParameter("curriculo", curriculo);
-		if(turno != null)		q.setParameter("turno", turno);
-		if(disciplina != null)	q.setParameter("disciplina", disciplina);
-		
-		return ((Number)q.getSingleResult()).intValue();
+
+		Query q = entityManager().createQuery(
+			" SELECT COUNT ( o ) FROM Demanda o " +
+			" WHERE o.oferta.campus.instituicaoEnsino = :instituicaoEnsino " +
+			" AND" + queryString + " 1=1 " );
+
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
+		if ( campus != null )
+		{
+			q.setParameter( "campus", campus );
+		}
+
+		if ( curso != null )
+		{
+			q.setParameter( "curso", curso );
+		}
+
+		if ( curriculo != null )
+		{
+			q.setParameter( "curriculo", curriculo );
+		}
+
+		if ( turno != null )
+		{
+			q.setParameter( "turno", turno );
+		}
+
+		if ( disciplina != null )
+		{
+			q.setParameter( "disciplina", disciplina );
+		}
+
+		return ( (Number)q.getSingleResult() ).intValue();
 	}
 
     @SuppressWarnings("unchecked")
-	public static List<Demanda> findBy(Campus campus, Curso curso, Curriculo curriculo, Turno turno, Disciplina disciplina, int firstResult, int maxResults, String orderBy) {
-        orderBy = (orderBy != null) ? "ORDER BY o." + orderBy : "";
-        
-        String queryCampus 		= (campus == null)? "" : " o.oferta.campus = :campus AND ";
-        String queryCurso 		= (curso == null)? "" : " o.oferta.curriculo.curso = :curso AND ";
-        String queryCurriculo	= (curriculo == null)? "" : " o.oferta.curriculo = :curriculo AND ";
-        String queryTurno 		= (turno == null)? "" : " o.oferta.turno = :turno AND ";
-        String queryDisciplina	= (disciplina == null)? "" : " o.disciplina = :disciplina AND ";
-        
+	public static List< Demanda > findBy( InstituicaoEnsino instituicaoEnsino,
+		Campus campus, Curso curso, Curriculo curriculo,
+		Turno turno, Disciplina disciplina,
+		int firstResult, int maxResults, String orderBy )
+	{
+        orderBy = ( ( orderBy != null ) ? " ORDER BY o." + orderBy : "" );
+
+		String queryCampus = "";
+		if ( campus != null )
+		{
+			queryCampus	= " o.oferta.campus = :campus AND ";
+		}
+
+		String queryCurso = "";
+		if ( curso != null )
+		{
+			queryCurso = " o.oferta.curriculo.curso = :curso AND ";
+		}
+
+		String queryCurriculo = "";
+		if ( curriculo != null )
+		{
+			queryCurriculo = " o.oferta.curriculo = :curriculo AND ";
+		}
+
+		String queryTurno = "";
+		if ( turno != null )
+		{
+			queryTurno = " o.oferta.turno = :turno AND ";
+		}
+
+		String queryDisciplina = "";
+		if ( disciplina != null )
+		{
+			queryDisciplina	= " o.disciplina = :disciplina AND ";
+		}
+
         String queryString = queryCampus + queryCurso + queryCurriculo + queryTurno + queryDisciplina;
-        
-        Query q = entityManager().createQuery("SELECT o FROM Demanda o WHERE "+queryString+" 1=1");
-        
-        if(campus != null)		q.setParameter("campus", campus);
-        if(curso != null)		q.setParameter("curso", curso);
-        if(curriculo != null)	q.setParameter("curriculo", curriculo);
-        if(turno != null)		q.setParameter("turno", turno);
-        if(disciplina != null)	q.setParameter("disciplina", disciplina);
-        
-        return q.setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
+
+        Query q = entityManager().createQuery(
+        	" SELECT o FROM Demanda o " +
+        	" WHERE o.oferta.campus.instituicaoEnsino = :instituicaoEnsino " +
+        	" AND " + queryString + " 1=1 " );
+
+        q.setFirstResult( firstResult );
+        q.setMaxResults( maxResults );
+        q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
+        if ( campus != null )
+        {
+        	q.setParameter( "campus", campus );
+        }
+
+        if ( curso != null )
+        {
+        	q.setParameter( "curso", curso );
+        }
+
+        if ( curriculo != null )
+        {
+        	q.setParameter( "curriculo", curriculo );
+        }
+
+        if ( turno != null )
+        {
+        	q.setParameter( "turno", turno );
+        }
+
+        if ( disciplina != null )
+        {
+        	q.setParameter( "disciplina", disciplina );
+        }
+
+        return q.getResultList();
     }
-	
-	public static Demanda find(Long id) {
-        if (id == null) return null;
-        return entityManager().find(Demanda.class, id);
+
+	public static Demanda find(
+		Long id, InstituicaoEnsino instituicaoEnsino )
+	{
+        if ( id == null || instituicaoEnsino == null )
+        {
+        	return null;
+        }
+
+        Demanda demanda = entityManager().find( Demanda.class, id );
+
+        if ( demanda != null && demanda.getOferta() != null
+        	&& demanda.getOferta().getCampus() != null
+        	&& demanda.getOferta().getCampus().getInstituicaoEnsino() != null
+        	&& demanda.getOferta().getCampus().getInstituicaoEnsino() == instituicaoEnsino )
+        {
+        	return demanda;
+        }
+
+        return null;
     }
 
 	@SuppressWarnings("unchecked")
-    public static List< Demanda > find( int firstResult, int maxResults )
+    public static List< Demanda > find(
+    	InstituicaoEnsino instituicaoEnsino,
+    	int firstResult, int maxResults )
     {
         return entityManager().createQuery(
-        	"SELECT o FROM Demanda o" )
-        	.setFirstResult( firstResult )
-        	.setMaxResults( maxResults ).getResultList();
+        	" SELECT o FROM Demanda o " +
+        	" WHERE o.oferta.campus.instituicaoEnsino = :instituicaoEnsino " )
+        	.setParameter( "instituicaoEnsino", instituicaoEnsino )
+        	.setFirstResult( firstResult ).setMaxResults( maxResults ).getResultList();
     }
 
 	public static Map< String, Demanda > buildCampusTurnoCurriculoDisciplinaToDemandaMap(
@@ -257,7 +437,7 @@ public class Demanda implements Serializable {
 		return demandasMap;
 	}
 
-	// Campus + Turno + Matriz Curricular + Disciplina
+	// [ Campus + Turno + Matriz Curricular + Disciplina ]
 	private static String getCodeDemanda( Demanda domain )
 	{
 		String codigo = domain.getOferta().getCampus().getCodigo()
@@ -268,15 +448,16 @@ public class Demanda implements Serializable {
 		return codigo;
 	}
 	
-	public String toString() {
+	public String toString()
+	{
         StringBuilder sb = new StringBuilder();
-        sb.append("Id: ").append(getId()).append(", ");
-        sb.append("Version: ").append(getVersion()).append(", ");
-        sb.append("Oferta: ").append(getOferta()).append(", ");
-        sb.append("Disciplina: ").append(getDisciplina()).append(", ");
-        sb.append("Quantidade: ").append(getQuantidade());
+
+        sb.append( "Id: " ).append( getId() ).append( ", " );
+        sb.append( "Version: " ).append( getVersion() ).append( ", " );
+        sb.append( "Oferta: " ).append( getOferta() ).append( ", " );
+        sb.append( "Disciplina: " ).append( getDisciplina() ).append( ", " );
+        sb.append( "Quantidade: " ).append( getQuantidade() );
+
         return sb.toString();
     }
-
-	private static final long serialVersionUID = -3935898184270072639L;
 }

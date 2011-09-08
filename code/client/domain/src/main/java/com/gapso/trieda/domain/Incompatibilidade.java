@@ -27,7 +27,10 @@ import org.springframework.transaction.annotation.Transactional;
 @RooToString
 @RooEntity(identifierColumn = "INC_ID")
 @Table(name = "INCOMPATIBILIDADES")
-public class Incompatibilidade implements java.io.Serializable {
+public class Incompatibilidade
+	implements java.io.Serializable
+{
+	private static final long serialVersionUID = -6796413707742091455L;
 
     @NotNull
     @ManyToOne(targetEntity = Disciplina.class)
@@ -104,41 +107,80 @@ public class Incompatibilidade implements java.io.Serializable {
         return merged;
     }
 
-	public static final EntityManager entityManager() {
+	public static final EntityManager entityManager()
+	{
         EntityManager em = new Incompatibilidade().entityManager;
-        if (em == null) throw new IllegalStateException("Entity manager has not been injected (is the Spring Aspects JAR configured as an AJC/AJDT aspects library?)");
+
+        if ( em == null )
+        {
+        	throw new IllegalStateException(
+        		"Entity manager has not been injected (is the Spring " +
+        		"Aspects JAR configured as an AJC/AJDT aspects library?)" );
+        }
+
         return em;
     }
 
-	public static int count() {
-        return ((Number) entityManager().createQuery("SELECT COUNT(o) FROM Incompatibilidade o").getSingleResult()).intValue();
+	public static int count(
+		InstituicaoEnsino instituicaoEnsino )
+	{
+        return findAll( instituicaoEnsino ).size();
     }
 
 	@SuppressWarnings("unchecked")
-    public static List<Incompatibilidade> findAll() {
-        return entityManager().createQuery("SELECT o FROM Incompatibilidade o").getResultList();
+    public static List< Incompatibilidade > findAll(
+    	InstituicaoEnsino instituicaoEnsino )
+    {
+        return entityManager().createQuery(
+        	" SELECT o FROM Incompatibilidade o " +
+        	" WHERE o.disciplina1.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino " )
+        	.setParameter( "instituicaoEnsino", instituicaoEnsino ).getResultList();
     }
 
-	public static Incompatibilidade find(Long id) {
-        if (id == null) return null;
-        return entityManager().find(Incompatibilidade.class, id);
+	public static Incompatibilidade find(
+		Long id, InstituicaoEnsino instituicaoEnsino )
+	{
+        if ( id == null || instituicaoEnsino == null )
+        {
+        	return null;
+        }
+
+        Incompatibilidade incompatibilidade	
+        	= entityManager().find( Incompatibilidade.class, id );  
+
+        if ( incompatibilidade != null && incompatibilidade.getDisciplina1() != null
+        	&& incompatibilidade.getDisciplina1().getTipoDisciplina() != null
+        	&& incompatibilidade.getDisciplina1().getTipoDisciplina().getInstituicaoEnsino() != null
+        	&& incompatibilidade.getDisciplina1().getTipoDisciplina().getInstituicaoEnsino() == instituicaoEnsino )
+        {
+        	return incompatibilidade;
+        }
+
+        return null;
     }
 
 	@SuppressWarnings("unchecked")
-    public static List<Incompatibilidade> find(int firstResult, int maxResults) {
-        return entityManager().createQuery("SELECT o FROM Incompatibilidade o").setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
+    public static List< Incompatibilidade > find(
+    	InstituicaoEnsino instituicaoEnsino, int firstResult, int maxResults )
+    {
+        return entityManager().createQuery(
+        	" SELECT o FROM Incompatibilidade o " +
+        	" WHERE o.disciplina1.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino ")
+        	.setParameter( "instituicaoEnsino", instituicaoEnsino )
+        	.setFirstResult( firstResult ).setMaxResults( maxResults ).getResultList();
     }
 
-	public String toString() {
+	public String toString()
+	{
         StringBuilder sb = new StringBuilder();
-        sb.append("Id: ").append(getId()).append(", ");
-        sb.append("Version: ").append(getVersion()).append(", ");
-        sb.append("Disciplina1: ").append(getDisciplina1()).append(", ");
-        sb.append("Disciplina2: ").append(getDisciplina2());
+
+        sb.append( "Id: " ).append( getId() ).append( ", " );
+        sb.append( "Version: " ).append( getVersion() ).append( ", " );
+        sb.append( "Disciplina1: " ).append( getDisciplina1() ).append( ", " );
+        sb.append( "Disciplina2: " ).append( getDisciplina2() );
+
         return sb.toString();
     }
-
-	private static final long serialVersionUID = -6796413707742091455L;
 
 	public Disciplina getDisciplina1() {
         return this.disciplina1;

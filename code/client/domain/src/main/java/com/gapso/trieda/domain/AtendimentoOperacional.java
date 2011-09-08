@@ -34,7 +34,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Table( name = "ATENDIMENTO_OPERACIONAL" )
 public class AtendimentoOperacional
 	implements Serializable
-	
 {
 	private static final long serialVersionUID = -1061352455612316076L;
 
@@ -90,12 +89,29 @@ public class AtendimentoOperacional
 	@Max(999L)
 	private Integer quantidadeAlunos;
 
+	@NotNull
+	@ManyToOne( cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH },
+		targetEntity = InstituicaoEnsino.class )
+	@JoinColumn( name = "INS_ID" )
+	private InstituicaoEnsino instituicaoEnsino;
+
+	public InstituicaoEnsino getInstituicaoEnsino()
+	{
+		return instituicaoEnsino;
+	}
+
+	public void setInstituicaoEnsino( InstituicaoEnsino instituicaoEnsino )
+	{
+		this.instituicaoEnsino = instituicaoEnsino;
+	}
+
 	public String toString()
 	{
 		StringBuilder sb = new StringBuilder();
 
 		sb.append( "Id: " ).append( getId() ).append( ", " );
 		sb.append( "Version: " ).append( getVersion() ).append( ", " );
+		sb.append( "Instituicao de Ensino: " ).append( getInstituicaoEnsino() ).append( ", " );
 		sb.append( "Cenario: " ).append( ( getCenario() != null ) ?
 			getCenario().getNome() : "null" ).append( ", " );
 		sb.append( "Turma: " ).append( getTurma() ).append( ", " );
@@ -213,71 +229,96 @@ public class AtendimentoOperacional
 		if ( em == null )
 		{
 			throw new IllegalStateException(
-					"Entity manager has not been injected (is the Spring Aspects JAR configured as an AJC/AJDT aspects library?)");
+				" Entity manager has not been injected (is the Spring " +
+				" Aspects JAR configured as an AJC/AJDT aspects library?) " );
 		}
 
 		return em;
 	}
 
 	@SuppressWarnings("unchecked")
-	public static List<Turno> findAllTurnosByCursos( List< Campus > campi )
+	public static List< Turno > findAllTurnosByCursos(
+		InstituicaoEnsino instituicaoEnsino, List< Campus > campi )
 	{
 		Query q = entityManager().createQuery(
 			" SELECT DISTINCT o.oferta.turno " +
 			" FROM AtendimentoOperacional o " +
-			" WHERE o.oferta.campus IN ( : campi )" );
+			" WHERE o.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.oferta.campus.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.oferta.campus IN ( :campi ) " );
 
 		q.setParameter( "campi", campi );
-		return q.getResultList();
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
+		List< Turno > list = q.getResultList();
+		return list;
 	}
 
 	@SuppressWarnings("unchecked")
-	public static List<AtendimentoOperacional> findByCenario( Cenario cenario )
+	public static List< AtendimentoOperacional > findByCenario(
+		Cenario cenario, InstituicaoEnsino instituicaoEnsino )
 	{
 		Query q = entityManager().createQuery(
-			"SELECT o FROM AtendimentoOperacional o WHERE cenario = :cenario" );
+			" SELECT o FROM AtendimentoOperacional o " +
+			" WHERE cenario = :cenario " +
+			" AND o.instituicaoEnsino = :instituicaoEnsino" );
 
 		q.setParameter( "cenario", cenario );
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
 		return q.getResultList();
 	}
 
 	@SuppressWarnings( "unchecked" )
-	public static List< AtendimentoOperacional > findByCenario( Cenario cenario,
-			Campus campus , Unidade unidade, Sala sala, Turno turno )
+	public static List< AtendimentoOperacional > findByCenario(
+		InstituicaoEnsino instituicaoEnsino, Cenario cenario,
+		Campus campus, Unidade unidade, Sala sala, Turno turno )
 	{
 		Query q = entityManager().createQuery(
-			"SELECT o FROM AtendimentoOperacional o" +
-			" WHERE cenario = :cenario" +
-			" AND o.oferta.turno = :turno" +
-			" AND o.oferta.campus = :campus" +
-			" AND o.sala = :sala" +
-			" AND o.sala.unidade = :unidade" );
+			"SELECT o FROM AtendimentoOperacional o "
+			+ " WHERE cenario = :cenario "
+			+ " AND o.oferta.turno = :turno "
+			+ " AND o.oferta.campus = :campus "
+			+ " AND o.sala = :sala "
+			+ " AND o.instituicaoEnsino = :instituicaoEnsino "
+			+ " AND o.sala.unidade = :unidade " );
 
 		q.setParameter( "cenario", cenario );
 		q.setParameter( "campus", campus );
 		q.setParameter( "unidade", unidade );
 		q.setParameter( "sala", sala );
 		q.setParameter( "turno", turno );
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
 
 		return q.getResultList();
 	}
 
 	@SuppressWarnings("unchecked")
-	public static List< AtendimentoOperacional > findAll()
+	public static List< AtendimentoOperacional > findAll(
+		InstituicaoEnsino instituicaoEnsino )
 	{
-		return entityManager().createQuery(
-			"SELECT o FROM AtendimentoOperacional o" ).getResultList();
+		Query q = entityManager().createQuery(
+			"SELECT o FROM AtendimentoOperacional o " +
+			"WHERE o.instituicaoEnsino = :instituicaoEnsino " );
+
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
+		List< AtendimentoOperacional > list = q.getResultList();
+		return list;
 	}
 
 	@SuppressWarnings("unchecked")
 	public static List< AtendimentoOperacional > findAllBy(
-		Professor professor, Turno turno )
+		InstituicaoEnsino instituicaoEnsino, Professor professor, Turno turno )
 	{
 		Query q = entityManager().createQuery(
-			"SELECT o FROM AtendimentoOperacional o " +
-			"WHERE o.oferta.turno = :turno AND o.professor = :professor" );
+			" SELECT o FROM AtendimentoOperacional o " +
+			" WHERE o.oferta.turno = :turno " +
+			" AND o.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.professor = :professor " );
 
 		q.setParameter( "turno", turno );
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
 		q.setParameter( "professor", professor );
 
 		return q.getResultList();
@@ -285,7 +326,8 @@ public class AtendimentoOperacional
 
 	@SuppressWarnings("unchecked")
 	public static List< AtendimentoOperacional > findAllPublicadoBy(
-		Professor professor, Turno turno, boolean isAdmin, boolean isVisaoProfessor )
+		Professor professor, Turno turno, boolean isAdmin,
+		boolean isVisaoProfessor, InstituicaoEnsino instituicaoEnsino )
 	{
 		final boolean apenasCampusPublicado = ( !isAdmin && isVisaoProfessor ); 
 
@@ -297,12 +339,14 @@ public class AtendimentoOperacional
 
 		String queryString = "SELECT o FROM AtendimentoOperacional o"
 			+ " WHERE o.oferta.turno = :turno "
+			+ " AND o.instituicaoEnsino = :instituicaoEnsino "
 			+ " AND o.professor = :professor " + publicado;
 
 		Query q = entityManager().createQuery( queryString );
 
 		q.setParameter( "turno", turno );
 		q.setParameter( "professor", professor );
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
 
 		if ( apenasCampusPublicado )
 		{
@@ -314,7 +358,8 @@ public class AtendimentoOperacional
 
 	@SuppressWarnings("unchecked")
 	public static List< AtendimentoOperacional > findAllPublicadoBy(
-		ProfessorVirtual professorVirtual, Turno turno, boolean isAdmin, boolean isVisaoProfessor )
+		ProfessorVirtual professorVirtual, Turno turno, boolean isAdmin,
+		boolean isVisaoProfessor, InstituicaoEnsino instituicaoEnsino )
 	{
 		final boolean apenasCampusPublicado = ( !isAdmin && isVisaoProfessor );
 
@@ -325,12 +370,14 @@ public class AtendimentoOperacional
 		}
 
 		Query q = entityManager().createQuery(
-			"SELECT o FROM AtendimentoOperacional o " +
-			"WHERE o.oferta.turno = :turno AND o.professorVirtual = " +
-			":professorVirtual " + publicado );
+			" SELECT o FROM AtendimentoOperacional o " +
+			" WHERE o.oferta.turno = :turno " +
+			" AND o.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.professorVirtual = :professorVirtual " + publicado );
 
 		q.setParameter( "turno", turno );
 		q.setParameter( "professorVirtual", professorVirtual );
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
 
 		if ( apenasCampusPublicado )
 		{
@@ -341,93 +388,129 @@ public class AtendimentoOperacional
 	}
 
 	@SuppressWarnings("unchecked")
-	public static List< AtendimentoOperacional > findAllBy( Curso curso )
+	public static List< AtendimentoOperacional > findAllBy(
+		Curso curso, InstituicaoEnsino instituicaoEnsino )
 	{
 		Query q = entityManager().createQuery(
-			"SELECT o FROM AtendimentoOperacional o " +
-			"WHERE o.oferta.curriculo.curso = :curso" );
+			" SELECT o FROM AtendimentoOperacional o " +
+			" WHERE o.oferta.curriculo.curso = :curso " +
+			" AND o.instituicaoEnsino = :instituicaoEnsino " );
 
 		q.setParameter( "curso", curso );
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
 		return q.getResultList();
 	}
 
 	@SuppressWarnings("unchecked")
-	public static List<AtendimentoOperacional> findAllBy(Oferta oferta) {
-		Query q = entityManager()
-				.createQuery(
-						"SELECT o FROM AtendimentoOperacional o WHERE o.oferta = :oferta");
-		q.setParameter("oferta", oferta);
-		return q.getResultList();
-	}
-
-	@SuppressWarnings("unchecked")
-	public static List< AtendimentoOperacional > findAll( Campus campus )
+	public static List< AtendimentoOperacional > findAllBy(
+		Oferta oferta, InstituicaoEnsino instituicaoEnsino )
 	{
 		Query q = entityManager().createQuery(
-				"SELECT o FROM AtendimentoOperacional o WHERE o.oferta.campus = :campus" );
+			" SELECT o FROM AtendimentoOperacional o " +
+			" WHERE o.oferta = :oferta " +
+			" AND o.instituicaoEnsino = :instituicaoEnsino" );
+
+		q.setParameter( "oferta", oferta );
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
+		return q.getResultList();
+	}
+
+	@SuppressWarnings( "unchecked" )
+	public static List< AtendimentoOperacional > findAll(
+		Campus campus, InstituicaoEnsino instituicaoEnsino )
+	{
+		Query q = entityManager().createQuery(
+			" SELECT o FROM AtendimentoOperacional o " +
+			" WHERE o.oferta.campus = :campus " +
+			" AND o.instituicaoEnsino = :instituicaoEnsino" );
 
 		q.setParameter( "campus", campus );
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
 		return q.getResultList();
 	}
 	
 	@SuppressWarnings("unchecked")
 	public static List< AtendimentoOperacional > findAllBy(
-		Campus campus, Turno turno )
+		Campus campus, Turno turno, InstituicaoEnsino instituicaoEnsino )
 	{
 		Query q = entityManager().createQuery(
-			"SELECT o FROM AtendimentoOperacional o " +
-			"WHERE o.oferta.campus = :campus AND o.oferta.turno = :turno" );
+			" SELECT o FROM AtendimentoOperacional o " +
+			" WHERE o.oferta.campus = :campus " +
+			" AND o.instituicaoEnsino = :instituicaoEnsino" +
+			" AND o.oferta.turno = :turno" );
 
 		q.setParameter( "campus", campus );
 		q.setParameter( "turno", turno );
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
 
 		return q.getResultList();
 	}
 
-	public static AtendimentoOperacional find( Long id )
+	public static AtendimentoOperacional find(
+		Long id, InstituicaoEnsino instituicaoEnsino )
 	{
-		if ( id == null )
+		if ( id == null || instituicaoEnsino == null )
 		{
 			return null;
 		}
 
-		return entityManager().find( AtendimentoOperacional.class, id );
+		AtendimentoOperacional at = entityManager().find( AtendimentoOperacional.class, id );
+
+		if ( at != null
+			&& at.getInstituicaoEnsino() != null 
+			&& at.getInstituicaoEnsino() == instituicaoEnsino )
+		{
+			return at;
+		}
+
+		return null;
 	}
 
 	@SuppressWarnings("unchecked")
 	public static List< AtendimentoOperacional > findBySalaAndTurno(
-		Sala sala, Turno turno )
+		Sala sala, Turno turno, InstituicaoEnsino instituicaoEnsino )
 	{
 		Query q = entityManager().createQuery(
-			"SELECT o FROM AtendimentoOperacional o " +
-			"WHERE o.sala = :sala AND o.oferta.turno = :turno" );
+			" SELECT o FROM AtendimentoOperacional o " +
+			" WHERE o.sala = :sala " +
+			" AND o.instituicaoEnsino = :instituicaoEnsino" +
+			" AND o.oferta.turno = :turno" );
 
 		q.setParameter( "sala", sala );
 		q.setParameter( "turno", turno );
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
 		return q.getResultList();
 	}
 
 	@SuppressWarnings("unchecked")
 	public static List< AtendimentoOperacional > findBy(
-		Campus campus, Curriculo curriculo, Integer periodo, Turno turno, Curso curso )
+		InstituicaoEnsino instituicaoEnsino, Campus campus,
+		Curriculo curriculo, Integer periodo, Turno turno, Curso curso )
 	{
 		String cursoQuery = "";
 		if ( curso != null )
 		{
-			cursoQuery = "AND o.oferta.curso = :curso ";
+			cursoQuery = " AND o.oferta.curso = :curso ";
 		}
 
 		Query q = entityManager().createQuery(
-			"SELECT o FROM AtendimentoOperacional o WHERE o.oferta.curriculo = :curriculo "
-			+ "AND o.oferta.campus = :campus " + cursoQuery
-			+ "AND o.oferta.turno = :turno "
-			+ "AND o.disciplina IN (SELECT d.disciplina FROM CurriculoDisciplina d " +
-									"WHERE d.curriculo = :curriculo AND d.periodo = :periodo) " );
+			" SELECT o FROM AtendimentoOperacional o " +
+			" WHERE o.oferta.curriculo = :curriculo " +
+			" AND o.oferta.campus = :campus " + cursoQuery +
+			" AND o.oferta.turno = :turno " +
+			" AND o.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.disciplina IN ( SELECT d.disciplina FROM CurriculoDisciplina d " +
+								  " WHERE d.curriculo = :curriculo AND d.periodo = :periodo ) " );
 
 		q.setParameter( "campus", campus );
 		q.setParameter( "curriculo", curriculo );
 		q.setParameter( "periodo", periodo );
 		q.setParameter( "turno", turno );
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
 
 		if ( curso != null )
 		{
@@ -437,36 +520,44 @@ public class AtendimentoOperacional
 		return q.getResultList();
 	}
 
-	public Cenario getCenario() {
+	public Cenario getCenario()
+	{
 		return cenario;
 	}
 
-	public void setCenario(Cenario cenario) {
+	public void setCenario( Cenario cenario )
+	{
 		this.cenario = cenario;
 	}
 
-	public String getTurma() {
+	public String getTurma()
+	{
 		return turma;
 	}
 
-	public void setTurma(String turma) {
+	public void setTurma( String turma )
+	{
 		this.turma = turma;
 	}
 
-	public Sala getSala() {
+	public Sala getSala()
+	{
 		return sala;
 	}
 
-	public void setSala(Sala sala) {
+	public void setSala( Sala sala )
+	{
 		this.sala = sala;
 	}
 
-	public HorarioDisponivelCenario getHorarioDisponivelCenario() {
+	public HorarioDisponivelCenario getHorarioDisponivelCenario()
+	{
 		return HorarioDisponivelCenario;
 	}
 
 	public void setHorarioDisponivelCenario(
-			HorarioDisponivelCenario horarioDisponivelCenario) {
+		HorarioDisponivelCenario horarioDisponivelCenario )
+	{
 		HorarioDisponivelCenario = horarioDisponivelCenario;
 	}
 
@@ -480,47 +571,58 @@ public class AtendimentoOperacional
 		return professor;
 	}
 
-	public void setProfessor(Professor professor) {
+	public void setProfessor( Professor professor )
+	{
 		this.professor = professor;
 	}
 
-	public Boolean getCreditoTeorico() {
+	public Boolean getCreditoTeorico()
+	{
 		return this.creditoTeorico;
 	}
 
-	public void setCreditoTeorico(Boolean creditoTeorico) {
+	public void setCreditoTeorico( Boolean creditoTeorico )
+	{
 		this.creditoTeorico = creditoTeorico;
 	}
 
-	public Oferta getOferta() {
+	public Oferta getOferta()
+	{
 		return oferta;
 	}
 
-	public void setOferta(Oferta oferta) {
+	public void setOferta( Oferta oferta )
+	{
 		this.oferta = oferta;
 	}
 
-	public Disciplina getDisciplina() {
+	public Disciplina getDisciplina()
+	{
 		return disciplina;
 	}
 
-	public void setDisciplina(Disciplina disciplina) {
+	public void setDisciplina( Disciplina disciplina )
+	{
 		this.disciplina = disciplina;
 	}
 
-	public Integer getQuantidadeAlunos() {
+	public Integer getQuantidadeAlunos()
+	{
 		return quantidadeAlunos;
 	}
 
-	public void setQuantidadeAlunos(Integer quantidadeAlunos) {
+	public void setQuantidadeAlunos( Integer quantidadeAlunos )
+	{
 		this.quantidadeAlunos = quantidadeAlunos;
 	}
 
-	public ProfessorVirtual getProfessorVirtual() {
+	public ProfessorVirtual getProfessorVirtual()
+	{
 		return professorVirtual;
 	}
 
-	public void setProfessorVirtual(ProfessorVirtual professorVirtual) {
+	public void setProfessorVirtual( ProfessorVirtual professorVirtual )
+	{
 		this.professorVirtual = professorVirtual;
 	}
 
@@ -531,60 +633,67 @@ public class AtendimentoOperacional
 
 		return oferta.getCampus().getId()
 			+ "-" + oferta.getTurno().getId() + "-" + curriculo.getCurso().getId()
-			+ "-" + curriculo.getId() + "-" + curriculo.getPeriodo( getDisciplina() )
+			+ "-" + curriculo.getId() + "-" + curriculo.getPeriodo( this.getInstituicaoEnsino(), getDisciplina() )
 			+ "-" + getDisciplina().getId() + "-" + getTurma() + "-" + getCreditoTeorico();
 	}
 
 	static public List< AtendimentoOperacional > getAtendimentosOperacional(
-		boolean isAdmin, Professor professor, ProfessorVirtual professorVirtual,
-		Turno turno, boolean isVisaoProfessor )
+		InstituicaoEnsino instituicaoEnsino, boolean isAdmin, Professor professor,
+		ProfessorVirtual professorVirtual, Turno turno, boolean isVisaoProfessor )
 	{
 		List< AtendimentoOperacional > atendimentosOperacional = null;
 		if ( professor != null )
 		{
-			atendimentosOperacional = AtendimentoOperacional
-				.findAllPublicadoBy( professor, turno, isAdmin, isVisaoProfessor );
+			atendimentosOperacional = AtendimentoOperacional.findAllPublicadoBy(
+				professor, turno, isAdmin, isVisaoProfessor, instituicaoEnsino );
 		}
 		else if ( professorVirtual != null )
 		{
-			atendimentosOperacional = AtendimentoOperacional
-				.findAllPublicadoBy( professorVirtual, turno, isAdmin, isVisaoProfessor );
+			atendimentosOperacional = AtendimentoOperacional.findAllPublicadoBy(
+				professorVirtual, turno, isAdmin, isVisaoProfessor, instituicaoEnsino );
 		}
 
 		return atendimentosOperacional;
 	}
 
 	@SuppressWarnings("unchecked")
-	public static List< AtendimentoOperacional > findAllByDemanda( Demanda demanda )
+	public static List< AtendimentoOperacional > findAllByDemanda(
+		InstituicaoEnsino instituicaoEnsino, Demanda demanda )
 	{
 		Query q = entityManager().createQuery(
 			" SELECT o FROM AtendimentoOperacional o " +
-			" WHERE o.oferta = :oferta AND o.disciplina = :disciplina" );
+			" WHERE o.oferta = :oferta " +
+			" AND o.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.disciplina = :disciplina " );
 
 		q.setParameter( "oferta", demanda.getOferta() );
 		q.setParameter( "disciplina", demanda.getDisciplina() );
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
 
 		return q.getResultList();
 	}
 
-	public static int countTurma( Campus campus )
+	public static int countTurma( InstituicaoEnsino instituicaoEnsino, Campus campus )
 	{
-		Query q = entityManager().createQuery(
-			"SELECT count ( * ) FROM AtendimentoOperacional o " +
-			"WHERE o.oferta.campus = :campus GROUP BY o.disciplina, o.turma" );
+		List< AtendimentoOperacional > listAtendimentos
+			= AtendimentoOperacional.findAllByCampus( instituicaoEnsino, campus );
 
-		q.setParameter( "campus", campus );
-		return q.getResultList().size();
+		return ( listAtendimentos == null ? 0 : listAtendimentos.size() );
 	}
 
 	@SuppressWarnings("unchecked")
-	public static List< AtendimentoOperacional > findAllByCampus( Campus campus )
+	public static List< AtendimentoOperacional > findAllByCampus(
+		InstituicaoEnsino instituicaoEnsino, Campus campus )
 	{
 		Query q = entityManager().createQuery(
 			" SELECT o FROM AtendimentoOperacional o " +
-			" WHERE o.oferta.campus = :campus" );
+			" WHERE o.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.oferta.campus = :campus " +
+			" AND o.oferta.campus.instituicaoEnsino = :instituicaoEnsino " );
 
 		q.setParameter( "campus", campus );
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
 		return q.getResultList();
 	}
 
@@ -623,8 +732,10 @@ public class AtendimentoOperacional
 
 		boolean validaCreditoTeorico = ( this.getCreditoTeorico().equals( other.getCreditoTeorico() ) );
 
+		boolean validaInstituicaoEnsino = ( this.getInstituicaoEnsino().equals( other.getInstituicaoEnsino() ) );
+
 		return ( validaTurma && validaSala && validaHdc && validaOferta
-			&& validaDisciplina && validaProfessor
-			&&  validaProfessorVirtual &&  validaCreditoTeorico );
+			&& validaDisciplina && validaProfessor &&  validaProfessorVirtual
+			&&  validaCreditoTeorico && validaInstituicaoEnsino );
 	}
 }

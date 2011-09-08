@@ -35,8 +35,8 @@ import com.gapso.trieda.misc.Semanas;
 @Entity
 @RooJavaBean
 @RooToString
-@RooEntity(identifierColumn = "HDC_ID")
-@Table(name = "HORARIO_DISPONIVEL_CENARIO")
+@RooEntity( identifierColumn = "HDC_ID" )
+@Table( name = "HORARIO_DISPONIVEL_CENARIO" )
 public class HorarioDisponivelCenario
 	implements Serializable
 {
@@ -172,6 +172,7 @@ public class HorarioDisponivelCenario
 	public static final EntityManager entityManager()
 	{
         EntityManager em = new HorarioDisponivelCenario().entityManager;
+
         if ( em == null )
         {
         	throw new IllegalStateException(
@@ -182,39 +183,61 @@ public class HorarioDisponivelCenario
         return em;
     }
 
-	public static long countHorarioDisponivelCenarios()
+	public static long countHorarioDisponivelCenarios(
+		InstituicaoEnsino instituicaoEnsino )
 	{
         return ( (Number) entityManager().createQuery(
-        	"SELECT COUNT(o) FROM HorarioDisponivelCenario o" ).getSingleResult() ).longValue();
+        	" SELECT COUNT ( o ) FROM HorarioDisponivelCenario o " +
+        	" WHERE o.horarioAula.semanaLetiva.instituicaoEnsino = :instituicaoEnsino " )
+        	.setParameter( "instituicaoEnsino", instituicaoEnsino ).getSingleResult() ).longValue();
     }
 
 	@SuppressWarnings("unchecked")
-    public static List< HorarioDisponivelCenario > findAll()
+    public static List< HorarioDisponivelCenario > findAll(
+    	InstituicaoEnsino instituicaoEnsino )
     {
         return entityManager().createQuery(
-        	"SELECT o FROM HorarioDisponivelCenario o" ).getResultList();
+        	" SELECT o FROM HorarioDisponivelCenario o " +
+        	" WHERE o.horarioAula.semanaLetiva.instituicaoEnsino = :instituicaoEnsino " )
+        	.setParameter( "instituicaoEnsino", instituicaoEnsino ).getResultList();
     }
-
-	public static HorarioDisponivelCenario find( Long id )
+	
+	public static HorarioDisponivelCenario find(
+		Long id, InstituicaoEnsino instituicaoEnsino )
 	{
-        if ( id == null )
+        if ( id == null || instituicaoEnsino == null )
         {
         	return null;
         }
 
-        return entityManager().find(
-        	HorarioDisponivelCenario.class, id );
+        HorarioDisponivelCenario hdc = entityManager().find(
+            HorarioDisponivelCenario.class, id );
+
+        if ( hdc != null && hdc.getHorarioAula() != null
+        	&& hdc.getHorarioAula().getSemanaLetiva() != null
+        	&& hdc.getHorarioAula().getSemanaLetiva().getInstituicaoEnsino() != null
+        	&& hdc.getHorarioAula().getSemanaLetiva().getInstituicaoEnsino() == instituicaoEnsino )
+        {
+        	return hdc;
+        }
+        
+        return null;
     }
 
     public static HorarioDisponivelCenario findBy(
+    	InstituicaoEnsino instituicaoEnsino,
     	HorarioAula horarioAula, Semanas semana )
     {
 		Query q = entityManager().createQuery(
-			"SELECT o FROM HorarioDisponivelCenario o " +
-			"WHERE o.horarioAula = :horarioAula AND o.semana = :semana" );
+			" SELECT o FROM HorarioDisponivelCenario o " +
+			" WHERE o.horarioAula.semanaLetiva.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.horarioAula = :horarioAula " +
+			" AND o.semana = :semana " );
 
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
 		q.setParameter( "horarioAula", horarioAula );
 		q.setParameter( "semana", semana );
+
 		return (HorarioDisponivelCenario) q.getSingleResult();
 	}
 	
@@ -359,6 +382,7 @@ public class HorarioDisponivelCenario
 		}
 
 		HorarioDisponivelCenario other = (HorarioDisponivelCenario) obj;
+
 		if ( id == null )
 		{
 			if ( other.id != null )

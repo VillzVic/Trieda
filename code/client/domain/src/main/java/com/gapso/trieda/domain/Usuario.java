@@ -29,12 +29,13 @@ import org.springframework.transaction.annotation.Transactional;
 @Entity
 @RooJavaBean
 @RooToString
-@RooEntity(identifierColumn = "USERNAME")
-@Table(name = "users")
-public class Usuario implements Serializable {
-
+@RooEntity( identifierColumn = "USERNAME" )
+@Table( name = "users" )
+public class Usuario
+	implements Serializable
+{
 	private static final long serialVersionUID = 2505879126546359228L;
-	
+
     @NotNull
     @Column(name = "USU_NOME")
     @Size(min = 1, max = 50)
@@ -59,13 +60,31 @@ public class Usuario implements Serializable {
     @Column(name = "ENABLED")
     private Boolean enabled;
     
-    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH}, fetch=FetchType.LAZY)
-    @JoinColumn(name = "PRF_ID")
+    @ManyToOne( cascade = {
+    	CascadeType.PERSIST, CascadeType.DETACH,
+    	CascadeType.MERGE, CascadeType.REFRESH }, fetch=FetchType.LAZY )
+    @JoinColumn( name = "PRF_ID" )
     private Professor professor;
-    
+
     @OneToOne(targetEntity = Authority.class, fetch=FetchType.LAZY)
     @JoinColumn(name = "USERNAME")
     private Authority authority;
+
+	@NotNull
+	@ManyToOne( cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH },
+		targetEntity = InstituicaoEnsino.class )
+	@JoinColumn( name = "INS_ID" )
+	private InstituicaoEnsino instituicaoEnsino;
+
+	public InstituicaoEnsino getInstituicaoEnsino()
+	{
+		return instituicaoEnsino;
+	}
+
+	public void setInstituicaoEnsino( InstituicaoEnsino instituicaoEnsino )
+	{
+		this.instituicaoEnsino = instituicaoEnsino;
+	}
 
 	public String getNome() {
         return this.nome;
@@ -116,16 +135,20 @@ public class Usuario implements Serializable {
 		this.authority = authority;
 	}
 	
-	public String toString() {
+	public String toString()
+	{
         StringBuilder sb = new StringBuilder();
-        sb.append("Version: ").append(getVersion()).append(", ");
-        sb.append("Nome: ").append(getNome()).append(", ");
-        sb.append("Email: ").append(getEmail()).append(", ");
-        sb.append("Username: ").append(getUsername()).append(", ");
-        sb.append("Password: ").append(getPassword());
-        sb.append("Enabled: ").append(getEnabled());
-        sb.append("Professor: ").append(getProfessor());
-        sb.append("Authority: ").append(getAuthority());
+
+        sb.append( "Version: " ).append( getVersion() ).append(", ");
+        sb.append( "Instituicoes de Ensino: " ).append( getInstituicaoEnsino() ).append( ", " );
+        sb.append( "Nome: " ).append( getNome() ).append(", ");
+        sb.append( "Email: " ).append( getEmail() ).append(", ");
+        sb.append( "Username: " ).append( getUsername() ).append(", ");
+        sb.append( "Password: " ).append( getPassword() ).append(", ");
+        sb.append( "Enabled: " ).append( getEnabled() ).append(", ");
+        sb.append( "Professor: " ).append( getProfessor() ).append(", ");
+        sb.append( "Authority: " ).append( getAuthority() );
+
         return sb.toString();
     }
 
@@ -177,58 +200,92 @@ public class Usuario implements Serializable {
         return merged;
     }
 
-	public static final EntityManager entityManager() {
+	public static final EntityManager entityManager()
+	{
         EntityManager em = new Usuario().entityManager;
-        if (em == null) throw new IllegalStateException("Entity manager has not been injected (is the Spring Aspects JAR configured as an AJC/AJDT aspects library?)");
+
+        if ( em == null )
+        {
+        	throw new IllegalStateException(
+        		" Entity manager has not been injected (is the Spring " +
+        		" Aspects JAR configured as an AJC/AJDT aspects library?)" );
+        }
+
         return em;
     }
-	
-	public static int count(String nome, String username, String email) {
-		Query q = entityManager().createQuery("SELECT COUNT(o) FROM Usuario o WHERE" +
-				" LOWER(o.nome) LIKE LOWER(:nome) AND " +
-				" LOWER(o.username) LIKE LOWER(:username) AND " +
-				" LOWER(o.email) LIKE LOWER(:email) ");
-		
+
+	public static int count( String nome, String username,
+		String email, InstituicaoEnsino instituicaoEnsino )
+	{
+		Query q = entityManager().createQuery(
+			" SELECT COUNT ( o ) FROM Usuario o " +
+			" WHERE o.instituicaoEnsino = :instituicaoEnsino " +
+			" AND LOWER ( o.nome ) LIKE LOWER ( :nome ) " +
+			" AND LOWER ( o.username ) LIKE LOWER ( :username ) " +
+			" AND LOWER ( o.email ) LIKE LOWER ( :email ) ");
+
 		nome = "%" + nome.replace('*', '%') + "%";
 		username = "%" + username.replace('*', '%') + "%";
 		email = "%" + email.replace('*', '%') + "%";
-		
-		q.setParameter("nome", nome);
-		q.setParameter("username", username);
-		q.setParameter("email", email);
-        return ((Number) q.getSingleResult()).intValue();
+
+		q.setParameter( "nome", nome );
+		q.setParameter( "username", username );
+		q.setParameter( "email", email );
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
+        return ( (Number) q.getSingleResult() ).intValue();
     }
 
 	@SuppressWarnings("unchecked")
-    public static List<Usuario> findAllBy(String nome, String username, String email, int firstResult, int maxResults, String orderBy) {
-		
-		orderBy = (orderBy != null) ? "ORDER BY o." + orderBy : "";
-		
-		Query q = entityManager().createQuery("SELECT o FROM Usuario o WHERE" +
-				" LOWER(o.nome) LIKE LOWER(:nome) AND " +
-				" LOWER(o.username) LIKE LOWER(:username) AND " +
-				" LOWER(o.email) LIKE LOWER(:email) " + orderBy);
+    public static List< Usuario > findAllBy( String nome, String username,
+    	String email, int firstResult, int maxResults,
+    	String orderBy, InstituicaoEnsino instituicaoEnsino )
+    {
+		orderBy = ( ( orderBy != null ) ? "ORDER BY o." + orderBy : "" );
+
+		Query q = entityManager().createQuery(
+			" SELECT o FROM Usuario o WHERE" +
+			" LOWER( o.nome ) LIKE LOWER ( :nome ) AND " +
+			" LOWER( o.username ) LIKE LOWER( :username ) AND " +
+			" o.instituicaoEnsino = :instituicaoEnsino AND " +
+			" LOWER( o.email ) LIKE LOWER ( :email ) " + orderBy );
 
 		nome = "%" + nome.replace('*', '%') + "%";
 		username = "%" + username.replace('*', '%') + "%";
 		email = "%" + email.replace('*', '%') + "%";
-		
-		q.setParameter("nome", nome);
-		q.setParameter("username", username);
-		q.setParameter("email", email);
-        return q.setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
+
+		q.setParameter( "nome", nome );
+		q.setParameter( "username", username );
+		q.setParameter( "email", email );
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
+        return q.setFirstResult( firstResult ).setMaxResults( maxResults ).getResultList();
     }
 
-	public static Usuario find(String username) {
-        if (username == null) return null;
-        return entityManager().<Usuario>find(Usuario.class, username);
+	public static Usuario find( String username )
+	{
+        if ( username == null )
+        {
+        	return null;
+        }
+
+        Usuario usuario = entityManager().< Usuario >find( Usuario.class, username );
+       	return usuario;
     }
-	
-	public static boolean checkUsernameUnique(Cenario cenario, String username) {
-		Query q = entityManager().createQuery("SELECT COUNT(o) FROM Usuario o WHERE o.username = :username");
-		q.setParameter("username", username);
-		Number size = (Number) q.setMaxResults(1).getSingleResult();
-		return size.intValue() > 0;
+
+	public static boolean checkUsernameUnique(
+		Cenario cenario, String username,
+		InstituicaoEnsino instituicaoEnsino )
+	{
+		Query q = entityManager().createQuery(
+			" SELECT COUNT ( o ) FROM Usuario o " +
+			" WHERE o.username = :username " +
+			" AND o.instituicaoEnsino = :instituicaoEnsino" );
+
+		q.setParameter( "username", username );
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
+		Number size = (Number) q.setMaxResults( 1 ).getSingleResult();
+		return ( size.intValue() > 0 );
 	}
-	
 }

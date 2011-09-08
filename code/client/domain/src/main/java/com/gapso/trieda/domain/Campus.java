@@ -41,9 +41,9 @@ import com.gapso.trieda.misc.Estados;
 @Entity
 @RooJavaBean
 @RooToString
-@RooEntity(identifierColumn = "CAM_ID")
-@Table(name = "CAMPI", uniqueConstraints =
-@UniqueConstraint(columnNames = { "CAM_CODIGO", "CEN_ID" }))
+@RooEntity( identifierColumn = "CAM_ID" )
+@Table( name = "CAMPI", uniqueConstraints =
+@UniqueConstraint( columnNames = { "CAM_CODIGO", "CEN_ID" } ) )
 public class Campus implements Serializable, Comparable< Campus >
 {
 	private static final long serialVersionUID = 6690100103369325015L;
@@ -103,6 +103,22 @@ public class Campus implements Serializable, Comparable< Campus >
 
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "campus")
 	private Set< Parametro > parametros = new HashSet< Parametro >();
+
+	@NotNull
+	@ManyToOne( cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH },
+		targetEntity = InstituicaoEnsino.class )
+	@JoinColumn( name = "INS_ID" )
+	private InstituicaoEnsino instituicaoEnsino;
+
+	public InstituicaoEnsino getInstituicaoEnsino()
+	{
+		return instituicaoEnsino;
+	}
+
+	public void setInstituicaoEnsino( InstituicaoEnsino instituicaoEnsino )
+	{
+		this.instituicaoEnsino = instituicaoEnsino;
+	}
 
 	public Cenario getCenario()
 	{
@@ -356,18 +372,20 @@ public class Campus implements Serializable, Comparable< Campus >
 
     	Set< Sala > salas = new HashSet< Sala >();
 
-    	List< Unidade > listUnidades = Unidade.findByCampus( this );
+    	List< Unidade > listUnidades = Unidade.findByCampus(
+    		this.getInstituicaoEnsino(), this );
 
-    	for ( Unidade u : listUnidades )
+    	for ( Unidade unidade : listUnidades )
     	{
-    		List< Sala > listSalas = Sala.findByUnidade( u );
-    		
+    		List< Sala > listSalas = Sala.findByUnidade(
+    			this.getInstituicaoEnsino(), unidade );
+
     		for ( Sala s : listSalas )
     		{
     			salas.add( s );
 
         		List< CurriculoDisciplina > listCurriculosDisciplinas
-    				= CurriculoDisciplina.findBySala( s );
+    				= CurriculoDisciplina.findBySala( this.getInstituicaoEnsino(), s );
 
     			for ( CurriculoDisciplina cd : listCurriculosDisciplinas )
     			{
@@ -388,11 +406,14 @@ public class Campus implements Serializable, Comparable< Campus >
 
 	public void preencheHorarios()
 	{
-		for ( SemanaLetiva semanaLetiva : SemanaLetiva.findAll() )
+		List< SemanaLetiva > listDomains
+			= SemanaLetiva.findAll( this.getInstituicaoEnsino() );
+
+		for ( SemanaLetiva semanaLetiva : listDomains )
 		{
 			for ( HorarioAula horarioAula : semanaLetiva.getHorariosAula() )
 			{
-				for (HorarioDisponivelCenario hdc : horarioAula.getHorariosDisponiveisCenario() )
+				for ( HorarioDisponivelCenario hdc : horarioAula.getHorariosDisponiveisCenario() )
 				{
 					hdc.getCampi().add( this );
 					hdc.merge();
@@ -405,6 +426,7 @@ public class Campus implements Serializable, Comparable< Campus >
 	public void removeProfessores()
 	{
 		Set< Professor > professores = this.getProfessores();
+
 		for ( Professor professor : professores )
 		{
 			professor.getCampi().remove( this );
@@ -415,7 +437,13 @@ public class Campus implements Serializable, Comparable< Campus >
 	@Transactional
 	public void removeHorariosDisponivelCenario()
 	{
-		List< HorarioDisponivelCenario > horarios = HorarioDisponivelCenario.findAll();
+		List< HorarioDisponivelCenario > horarios
+			= HorarioDisponivelCenario.findAll( this.getInstituicaoEnsino() );
+
+		if ( horarios == null || horarios.size() == 0 )
+		{
+			return;
+		}
 
 		List< Sala > salasCampus = new ArrayList< Sala >();
 		for ( Unidade u : this.getUnidades() )
@@ -462,6 +490,7 @@ public class Campus implements Serializable, Comparable< Campus >
 	public void removeUnidades()
 	{
 		Set< Unidade > unidades = this.getUnidades();
+
 		for ( Unidade unidade : unidades )
 		{
 			unidade.remove( false, false );
@@ -495,61 +524,83 @@ public class Campus implements Serializable, Comparable< Campus >
 	public static final EntityManager entityManager()
 	{
 		EntityManager em = new Campus().entityManager;
+
 		if ( em == null )
 		{
 			throw new IllegalStateException(
-				"Entity manager has not been injected (is the Spring " +
-				"Aspects JAR configured as an AJC/AJDT aspects library?)" );
+				" Entity manager has not been injected (is the Spring " +
+				" Aspects JAR configured as an AJC/AJDT aspects library?) " );
 		}
 
 		return em;
 	}
 
-	public static int count()
+	public static int count( InstituicaoEnsino instituicaoEnsino )
 	{
-		return ( (Number) entityManager().createQuery(
-			"SELECT COUNT(o) FROM Campus o" ).getSingleResult() ).intValue();
+		return Campus.findAll( instituicaoEnsino ).size();
 	}
 
-	public static int count( Cenario cenario )
+	public static int count(
+		InstituicaoEnsino instituicaoEnsino, Cenario cenario )
 	{
 		Query q = entityManager().createQuery(
-			"SELECT COUNT(o) FROM Campus o WHERE o.cenario = :cenario" );
+			" SELECT COUNT ( o ) FROM Campus o " +
+			" WHERE o.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.cenario = :cenario" );
 
 		q.setParameter( "cenario", cenario );
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
 		return ( (Number) q.getSingleResult() ).intValue();
 	}
 
 	@SuppressWarnings("unchecked")
-	public static List< Campus> findAll()
+	public static List< Campus > findAll(
+		InstituicaoEnsino instituicaoEnsino )
 	{ 
 		return entityManager().createQuery(
-			"SELECT o FROM Campus o" ).getResultList();
+			" SELECT o FROM Campus o " +
+			" WHERE o.instituicaoEnsino = :instituicaoEnsino" )
+			.setParameter( "instituicaoEnsino", instituicaoEnsino )
+			.getResultList();
 	}
 
 	@SuppressWarnings("unchecked")
-	public static List< Campus > findAllOtimized()
+	public static List< Campus > findAllOtimized(
+		InstituicaoEnsino instituicaoEnsino )
 	{
 		Query q = entityManager().createQuery(
 			" SELECT DISTINCT ( o.oferta.campus ) " +
-			" FROM AtendimentoOperacional o" );
+			" FROM AtendimentoOperacional o " +
+			" WHERE o.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.oferta.campus.instituicaoEnsino = :instituicaoEnsino " );
+
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
 
 		return q.getResultList();
 	}
 
 	@SuppressWarnings("unchecked")
-	public static List< Campus > findByCenario( Cenario cenario )
+	public static List< Campus > findByCenario(
+		InstituicaoEnsino instituicaoEnsino, Cenario cenario )
 	{
 		Query q = entityManager().createQuery(
-			"SELECT o FROM Campus o WHERE cenario = :cenario" );
+			" SELECT o FROM Campus o " +
+			" WHERE o.instituicaoEnsino = :instituicaoEnsino " +
+			" AND cenario = :cenario " );
 
 		q.setParameter( "cenario", cenario );
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
 		return q.getResultList();
 	}
 
-	public static Map< String, Campus > buildCampusCodigoToCampusMap( List< Campus > campi )
+	public static Map< String, Campus > buildCampusCodigoToCampusMap( 
+		List< Campus > campi )
 	{
-		Map< String, Campus > campusMap = new HashMap< String, Campus >();
+		Map< String, Campus > campusMap
+			= new HashMap< String, Campus >();
+
 		for ( Campus campus : campi )
 		{
 			campusMap.put( campus.getCodigo(), campus );
@@ -558,77 +609,103 @@ public class Campus implements Serializable, Comparable< Campus >
 		return campusMap;
 	}
 
-	public static Campus find( Long id )
+	public static Campus find(
+		Long id, InstituicaoEnsino instituicaoEnsino )
 	{
-		if ( id == null )
+		if ( id == null || instituicaoEnsino == null )
 		{
 			return null;
 		}
 
-		return entityManager().find( Campus.class, id );
+		Campus campus = entityManager().find( Campus.class, id );
+
+		if ( campus != null
+			&& campus.getInstituicaoEnsino() != null
+			&& campus.getInstituicaoEnsino() == instituicaoEnsino )
+		{
+			return campus;
+		}
+
+		return null;
 	}
 
-	public static List< Campus > find( int firstResult, int maxResults )
+	public static List< Campus > find(
+		InstituicaoEnsino instituicaoEnsino,
+		int firstResult, int maxResults )
 	{
-		return find( firstResult, maxResults, null );
+		return find( instituicaoEnsino, firstResult, maxResults, null );
 	}
 
 	@SuppressWarnings("unchecked")
 	public static List< Campus > find(
+		InstituicaoEnsino instituicaoEnsino,
 		int firstResult, int maxResults, String orderBy )
 	{
-		orderBy = ( ( orderBy != null ) ? "ORDER BY o." + orderBy : "" );
+		orderBy = ( ( orderBy != null ) ? " ORDER BY o." + orderBy : "" );
+
 		return entityManager().createQuery(
-			"SELECT o FROM Campus o " + orderBy )
+			" SELECT o FROM Campus o " +
+			" WHERE o.instituicaoEnsino = :instituicaoEnsino " + orderBy )
+			.setParameter( "instituicaoEnsino", instituicaoEnsino )
 			.setFirstResult( firstResult )
 			.setMaxResults( maxResults ).getResultList();
 	}
 
-	public static Campus getByCodigo( Cenario cenario, String codigo )
+	public static Campus getByCodigo(
+		InstituicaoEnsino instituicaoEnsino,
+		Cenario cenario, String codigo )
 	{
 		Query q = entityManager().createQuery(
-			"SELECT o FROM Campus o WHERE cenario = :cenario AND codigo = :codigo" );
+			" SELECT o FROM Campus o " +
+			" WHERE o.instituicaoEnsino = :instituicaoEnsino " +
+			" AND cenario = :cenario " +
+			" AND codigo = :codigo " );
 
 		q.setParameter( "cenario", cenario );
 		q.setParameter( "codigo", codigo );
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
 		return (Campus) q.getSingleResult();
 	}
 
-	public static int count( Cenario cenario, String nome, String codigo,
+	public static int count( InstituicaoEnsino instituicaoEnsino,
+		Cenario cenario, String nome, String codigo,
 		Estados estado, String municipio, String bairro )
 	{
 		nome = ( ( nome == null ) ? "" : nome );
-		nome = ( "%" + nome.replace( '*', '%' ) + "%");
+		nome = ( "%" + nome.replace( '*', '%' ) + "%" );
 		codigo = ( ( codigo == null ) ? "" : codigo );
-		codigo = ( "%" + codigo.replace( '*', '%' ) + "%");
+		codigo = ( "%" + codigo.replace( '*', '%' ) + "%" );
 
 		String municipioQuery = "";
 		if ( municipio != null )
 		{
-			municipioQuery = " LOWER(o.municipio) LIKE LOWER(:municipio) AND ";
+			municipioQuery = " LOWER ( o.municipio ) LIKE LOWER ( :municipio ) AND ";
 			municipio = ( "%" + municipio.replace( '*', '%' ) + "%" );
 		}
 
 		String bairroQuery = "";
 		if ( bairro != null )
 		{
-			bairroQuery = " LOWER(o.bairro) LIKE LOWER(:bairro) AND ";
+			bairroQuery = " LOWER ( o.bairro ) LIKE LOWER ( :bairro ) AND ";
 			bairro = ( "%" + bairro.replace( '*', '%' ) + "%" );
 		}
 
 		EntityManager em = Campus.entityManager();
-		String estadoQuery = ( ( estado == null ) ? "" : "o.estado = :estado AND " );
+		String estadoQuery = ( ( estado == null ) ? "" : " o.estado = :estado AND " );
 
 		Query q = em.createQuery(
-			"SELECT COUNT(o) FROM Campus o WHERE " +
-			"LOWER(o.nome) LIKE LOWER(:nome) AND " +
-			"LOWER(o.codigo) LIKE LOWER(:codigo) AND " +
-			"o.cenario = :cenario AND " + estadoQuery +
-			bairroQuery + municipioQuery + " 1=1 " );
+			" SELECT COUNT ( o ) FROM Campus o " +
+			" WHERE o.instituicaoEnsino = :instituicaoEnsino " +
+			" AND LOWER ( o.nome ) LIKE LOWER ( :nome ) " +
+			" AND LOWER ( o.codigo ) LIKE LOWER ( :codigo ) " +
+			" AND o.cenario = :cenario " +
+			" AND " + estadoQuery +	bairroQuery + municipioQuery + " 1=1 " );
 
 		q.setParameter( "nome", nome );
 		q.setParameter( "codigo", codigo );
 		q.setParameter( "cenario", cenario );
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
 
 		if ( estado != null )
 		{
@@ -649,9 +726,9 @@ public class Campus implements Serializable, Comparable< Campus >
 	}
 
 	@SuppressWarnings("unchecked")
-	public static List< Campus > findBy( Cenario cenario, String nome,
-		String codigo, Estados estado, String municipio, String bairro,
-		int firstResult, int maxResults, String orderBy )
+	public static List< Campus > findBy( InstituicaoEnsino instituicaoEnsino,
+		Cenario cenario, String nome, String codigo, Estados estado,
+		String municipio, String bairro, int firstResult, int maxResults, String orderBy )
 	{
 		nome = ( ( nome == null ) ? "" : nome );
 		nome = ( "%" + nome.replace( '*', '%' ) + "%" );
@@ -661,33 +738,36 @@ public class Campus implements Serializable, Comparable< Campus >
 		String municipioQuery = "";
 		if ( municipio != null )
 		{
-			municipioQuery = " LOWER(o.municipio) LIKE LOWER(:municipio) AND ";
+			municipioQuery = " LOWER ( o.municipio ) LIKE LOWER ( :municipio ) AND ";
 			municipio = ( "%" + municipio.replace( '*', '%' ) + "%" );
 		}
 
 		String bairroQuery = "";
 		if ( bairro != null )
 		{
-			bairroQuery = ( " LOWER(o.bairro) LIKE LOWER(:bairro) AND " );
+			bairroQuery = ( " LOWER ( o.bairro ) LIKE LOWER ( :bairro ) AND " );
 			bairro = ( "%" + bairro.replace( '*', '%' ) + "%" );
 		}
 
 		EntityManager em = Campus.entityManager();
-		orderBy = ( ( orderBy != null ) ? "ORDER BY o." + orderBy : "" );
-		String estadoQuery = ( ( estado == null ) ? "" : "o.estado = :estado AND " );
-		Query q = em.createQuery( "SELECT o FROM Campus o WHERE "
-			+ "LOWER(o.nome) LIKE LOWER(:nome) AND "
-			+ "LOWER(o.codigo) LIKE LOWER(:codigo) AND "
-			+ "o.cenario = :cenario AND " + estadoQuery + bairroQuery
-			+ municipioQuery + " 1=1 " + orderBy );
+		orderBy = ( ( orderBy != null ) ? " ORDER BY o." + orderBy : "" );
+		String estadoQuery = ( ( estado == null ) ? "" : " o.estado = :estado AND " );
+		Query q = em.createQuery(
+			" SELECT o FROM Campus o " +
+			" WHERE o.instituicaoEnsino = :instituicaoEnsino " +
+			" AND LOWER ( o.nome ) LIKE LOWER ( :nome ) " +
+			" AND LOWER ( o.codigo ) LIKE LOWER ( :codigo ) " +
+			" AND o.cenario = :cenario " +
+			" AND " + estadoQuery + bairroQuery + municipioQuery + " 1=1 " + orderBy );
 
 		q.setParameter( "nome", nome );
 		q.setParameter( "codigo", codigo );
 		q.setParameter( "cenario", cenario );
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
 
 		if ( estado != null )
 		{
-			q.setParameter("estado", estado );
+			q.setParameter( "estado", estado );
 		}
 
 		if ( municipio != null )
@@ -704,7 +784,8 @@ public class Campus implements Serializable, Comparable< Campus >
 	}
 
 	@SuppressWarnings("unchecked")
-	public List< HorarioDisponivelCenario > getHorarios( List< SemanaLetiva > semanasLetivas )
+	public List< HorarioDisponivelCenario > getHorarios(
+		InstituicaoEnsino instituicaoEnsino, List< SemanaLetiva > semanasLetivas )
 	{
 		Set< HorarioDisponivelCenario > horarios
 			= new HashSet< HorarioDisponivelCenario >();
@@ -712,11 +793,15 @@ public class Campus implements Serializable, Comparable< Campus >
 		for ( SemanaLetiva semanaLetiva : semanasLetivas )
 		{
 			Query q = entityManager().createQuery(
-				"SELECT o FROM HorarioDisponivelCenario o, IN ( o.campi ) c " +
-				"WHERE c = :campus AND o.horarioAula.semanaLetiva = :semanaLetiva " );
+				" SELECT o FROM HorarioDisponivelCenario o, IN ( o.campi ) c " +
+				" WHERE c.instituicaoEnsino = :instituicaoEnsino " +
+				" AND c = :campus " +
+				" AND o.horarioAula.semanaLetiva = :semanaLetiva " +
+				" AND o.horarioAula.semanaLetiva.instituicaoEnsino = :instituicaoEnsino " );
 
 			q.setParameter( "campus", this );
 			q.setParameter( "semanaLetiva", semanaLetiva );
+			q.setParameter( "instituicaoEnsino", instituicaoEnsino );
 
 			horarios.addAll( q.getResultList() );
 		}
@@ -725,56 +810,79 @@ public class Campus implements Serializable, Comparable< Campus >
 	}
 
 	@SuppressWarnings("unchecked")
-	public static List< Campus > findByCurriculo( Curriculo curriculo )
+	public static List< Campus > findByCurriculo(
+		InstituicaoEnsino instituicaoEnsino, Curriculo curriculo )
 	{
 		Query q = entityManager().createQuery(
-			"SELECT c FROM Campus c, IN (c.ofertas) o " +
-			"WHERE o.curriculo = :curriculo" );
+			" SELECT c FROM Campus c, IN ( c.ofertas ) o " +
+			" WHERE c.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.curriculo = :curriculo " +
+			" AND o.campus.instituicaoEnsino = :instituicaoEnsino " );
 
 		q.setParameter( "curriculo", curriculo );
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
 		return q.getResultList();
 	}
 
-	public boolean isOtimizadoTatico()
+	public boolean isOtimizadoTatico(
+		InstituicaoEnsino instituicaoEnsino )
 	{
 		Query q = entityManager().createQuery(
-			"SELECT COUNT(o) FROM AtendimentoTatico o " +
-			"WHERE o.oferta.campus = :campus" );
+			" SELECT COUNT ( o ) FROM AtendimentoTatico o " +
+			" WHERE o.oferta.campus.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.oferta.campus = :campus " );
 
 		q.setParameter( "campus", this );
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
 		Number size = (Number) q.setMaxResults( 1 ).getSingleResult();
 		return ( size.intValue() > 0 );
 	}
 
-	public boolean isOtimizadoOperacional()
+	public boolean isOtimizadoOperacional(
+		InstituicaoEnsino instituicaoEnsino )
 	{
 		Query q = entityManager().createQuery(
-			"SELECT COUNT(o) FROM AtendimentoOperacional o " +
-			"WHERE o.oferta.campus = :campus" );
+			" SELECT COUNT ( o ) FROM AtendimentoOperacional o " +
+			" WHERE o.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.oferta.campus.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.oferta.campus = :campus" );
 
 		q.setParameter( "campus", this );
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
 		Number size = (Number) q.setMaxResults( 1 ).getSingleResult();
 		return ( size.intValue() > 0 );
 	}
 
-	public boolean isOtimizadoTotal()
+	public boolean isOtimizadoTotal(
+		InstituicaoEnsino instituicaoEnsino )
 	{
-		return ( isOtimizadoTatico() && isOtimizadoOperacional() );
+		return ( isOtimizadoTatico( instituicaoEnsino )
+			&& isOtimizadoOperacional( instituicaoEnsino ) );
 	}
 
-	public boolean isOtimizado()
+	public boolean isOtimizado(
+		InstituicaoEnsino instituicaoEnsino )
 	{
-		return ( isOtimizadoTatico() || isOtimizadoOperacional() );
+		return ( isOtimizadoTatico( instituicaoEnsino )
+			|| isOtimizadoOperacional( instituicaoEnsino ) );
 	}
 
-	public static boolean checkCodigoUnique( Cenario cenario, String codigo )
+	public static boolean checkCodigoUnique( InstituicaoEnsino instituicaoEnsino,
+		Cenario cenario, String codigo )
 	{
 		Query q = entityManager().createQuery(
-			"SELECT COUNT(o) FROM Campus o " +
-			"WHERE o.cenario = :cenario AND o.codigo = :codigo" );
+			" SELECT COUNT ( o ) FROM Campus o " +
+			" WHERE o.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.cenario = :cenario " +
+			" AND o.codigo = :codigo" );
 
 		q.setParameter( "cenario", cenario );
 		q.setParameter( "codigo", codigo );
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
 
 		Number size = ( (Number) q.setMaxResults( 1 ).getSingleResult() );
 		return ( size.intValue() > 0 );
@@ -786,6 +894,7 @@ public class Campus implements Serializable, Comparable< Campus >
 
 		sb.append( "Id: " ).append( getId() ).append( ", " );
 		sb.append( "Version: " ).append( getVersion() ).append( ", " );
+		sb.append( "Instituicao de Ensino: " ).append( getInstituicaoEnsino() ).append( ", " );
 		sb.append( "Cenario: " ).append( getCenario() ).append( ", " );
 		sb.append( "Codigo: " ).append( getCodigo() ).append( ", " );
 		sb.append( "Nome: " ).append( getNome() ).append( ", " );
@@ -810,6 +919,31 @@ public class Campus implements Serializable, Comparable< Campus >
 			getParametros() == null ? "null" : getParametros().size() ).append(", ");
 
 		return sb.toString();
+	}
+
+	@Override
+	public boolean equals( Object obj )
+	{
+		if ( obj == null || !( obj instanceof Campus ) )
+		{
+			return false;
+		}
+
+		Campus other = (Campus) obj;
+
+		if ( id == null )
+		{
+			if ( other.id != null )
+			{
+				return false;
+			}
+		}
+		else if ( !id.equals( other.id ) )
+		{
+			return false;
+		}
+
+		return true;
 	}
 
 	@Override

@@ -2,10 +2,13 @@ package com.gapso.trieda.domain;
 
 import java.io.Serializable;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
@@ -21,9 +24,12 @@ import org.springframework.transaction.annotation.Transactional;
 @Entity
 @RooJavaBean
 @RooToString
-@RooEntity(identifierColumn = "USERNAME")
-@Table(name = "AUTHORITIES")
-public class Authority implements Serializable {
+@RooEntity( identifierColumn = "USERNAME" )
+@Table( name = "AUTHORITIES" )
+public class Authority
+	implements Serializable
+{
+	private static final long serialVersionUID = 8739246006672184100L;
 
     @NotNull
     @Id
@@ -34,7 +40,21 @@ public class Authority implements Serializable {
     @Column(name = "AUTHORITY")
     private String authority;
 
-	private static final long serialVersionUID = 8739246006672184100L;
+	@NotNull
+	@ManyToOne( cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH },
+		targetEntity = InstituicaoEnsino.class )
+	@JoinColumn( name = "INS_ID" )
+	private InstituicaoEnsino instituicaoEnsino;
+
+	public InstituicaoEnsino getInstituicaoEnsino()
+	{
+		return instituicaoEnsino;
+	}
+
+	public void setInstituicaoEnsino( InstituicaoEnsino instituicaoEnsino )
+	{
+		this.instituicaoEnsino = instituicaoEnsino;
+	}
 
 	@PersistenceContext
     transient EntityManager entityManager;
@@ -70,31 +90,48 @@ public class Authority implements Serializable {
         return merged;
     }
 
-	public static final EntityManager entityManager() {
+	public static final EntityManager entityManager()
+	{
         EntityManager em = new Authority().entityManager;
-        if (em == null) throw new IllegalStateException("Entity manager has not been injected (is the Spring Aspects JAR configured as an AJC/AJDT aspects library?)");
+
+        if ( em == null )
+        {
+        	throw new IllegalStateException(
+        		" Entity manager has not been injected (is the Spring " +
+        		" Aspects JAR configured as an AJC/AJDT aspects library?) " );
+        }
+
         return em;
     }
 
-	public String toString() {
+	public String toString()
+	{
         StringBuilder sb = new StringBuilder();
-        sb.append("Username: ").append(getUsername()).append(", ");
-        sb.append("Authority: ").append(getAuthority()).append(", ");
+
+        sb.append( "Username: " ).append( getUsername() ).append( ", " );
+        sb.append( "Authority: " ).append( getAuthority() ).append( ", " );
+        sb.append( "Instituicao de Ensino: " ).append( getInstituicaoEnsino() );
+
         return sb.toString();
     }
 
-	public String getUsername() {
+	public String getUsername()
+	{
         return this.username;
     }
-	public void setUsername(String username) {
+
+	public void setUsername( String username )
+	{
         this.username = username;
     }
 	
-	public String getAuthority() {
+	public String getAuthority()
+	{
 		return this.authority;
 	}
-	public void setAuthority(String authority) {
+
+	public void setAuthority( String authority )
+	{
 		this.authority = authority;
 	}
-
 }

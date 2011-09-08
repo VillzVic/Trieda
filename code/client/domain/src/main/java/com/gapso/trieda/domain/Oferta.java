@@ -176,6 +176,7 @@ public class Oferta implements Serializable, Comparable< Oferta >
 	public static final EntityManager entityManager()
 	{
 		EntityManager em = new Oferta().entityManager;
+
 		if ( em == null )
 		{
 			throw new IllegalStateException(
@@ -187,16 +188,20 @@ public class Oferta implements Serializable, Comparable< Oferta >
 	}
 
 	@SuppressWarnings("unchecked")
-	public static List< Oferta > findAllBy( Sala sala )
+	public static List< Oferta > findAllBy(
+		InstituicaoEnsino instituicaoEnsino, Sala sala )
 	{
 		Query q = entityManager().createQuery(
-			"SELECT DISTINCT(o) FROM Oferta o, IN " +
-			"( o.curriculo.disciplinas ) dis WHERE dis IN (:disciplinas)" );
+			"SELECT DISTINCT ( o ) FROM Oferta o, IN " +
+			"( o.curriculo.disciplinas ) dis " +
+			" WHERE o.campus.instituicaoEnsino = :instituicaoEnsino " +
+			" AND dis IN ( :disciplinas ) " );
 
 		Set< CurriculoDisciplina > curriculoDisciplinas
 			= sala.getCurriculoDisciplinas();
 
 		q.setParameter( "disciplinas", sala.getCurriculoDisciplinas() );
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
 
 		if ( curriculoDisciplinas.isEmpty() )
 		{
@@ -207,102 +212,126 @@ public class Oferta implements Serializable, Comparable< Oferta >
 	}
 
 	@SuppressWarnings("unchecked")
-	public static List<Oferta> findAllBy(GrupoSala grupoSala) {
+	public static List< Oferta > findAllBy(
+		InstituicaoEnsino instituicaoEnsino, GrupoSala grupoSala )
+	{
 		Query q = entityManager().createQuery(
 			" SELECT DISTINCT ( o ) FROM Oferta o, " +
-			" IN ( o.curriculo.disciplinas ) dis WHERE dis IN ( :disciplinas ) " );
+			" IN ( o.curriculo.disciplinas ) dis " +
+			" WHERE o.campus.instituicaoEnsino = :instituicaoEnsino " +
+			" AND dis IN ( :disciplinas ) " );
 
-		Set<CurriculoDisciplina> curriculoDisciplinas = grupoSala
-				.getCurriculoDisciplinas();
-		q.setParameter("disciplinas", grupoSala.getCurriculoDisciplinas());
-		if (curriculoDisciplinas.isEmpty()) {
-			return Collections.<Oferta> emptyList();
+		Set< CurriculoDisciplina > curriculoDisciplinas
+			= grupoSala.getCurriculoDisciplinas();
+
+		q.setParameter( "disciplinas", grupoSala.getCurriculoDisciplinas() );
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
+		if ( curriculoDisciplinas.isEmpty() )
+		{
+			return Collections.< Oferta > emptyList();
 		}
+
 		return q.getResultList();
 	}
 
 	@SuppressWarnings("unchecked")
-	public static List<Oferta> findByCampusAndTurno(Campus campus, Turno turno) {
-		Query q = entityManager()
-				.createQuery(
-						"SELECT o FROM Oferta o WHERE o.campus = :campus AND o.turno = :turno");
-		q.setParameter("campus", campus);
-		q.setParameter("turno", turno);
-		return q.getResultList();
-	}
-
-	@SuppressWarnings("unchecked")
-	public static List<Oferta> findByCenario(Cenario cenario) {
-		Query q = entityManager().createQuery(
-				"SELECT o FROM Oferta o WHERE o.campus.cenario = :cenario");
-		q.setParameter("cenario", cenario);
-		return q.getResultList();
-	}
-
-	@SuppressWarnings("unchecked")
-	public static List<Oferta> findAll() {
-		return entityManager().createQuery("select o from Oferta o")
-				.getResultList();
-	}
-
-	public static Oferta find(Long id) {
-		if (id == null)
-			return null;
-		return entityManager().find(Oferta.class, id);
-	}
-
-	public static List<Oferta> find(int firstResult, int maxResults) {
-		return find(firstResult, maxResults, null);
-	}
-
-	@SuppressWarnings("unchecked")
-	public static List<Oferta> find(int firstResult, int maxResults,
-			String orderBy) {
-		orderBy = (orderBy != null) ? "ORDER BY o." + orderBy : "";
-		return entityManager().createQuery("select o from Oferta o " + orderBy)
-				.setFirstResult(firstResult).setMaxResults(maxResults)
-				.getResultList();
-	}
-
-	public static int count(Turno turno, Campus campus, Curso curso,
-			Curriculo curriculo) {
-
-		String queryTurno = (turno != null) ? " o.turno = :turno AND " : "";
-		String queryCampus = (campus != null) ? " o.campus = :campus AND " : "";
-		String queryCurso = (curso != null) ? " o.curriculo.curso = :curso AND "
-				: "";
-		String queryCurriculo = (curriculo != null) ? " o.curriculo = :curriculo AND "
-				: "";
-
-		Query q = entityManager().createQuery(
-				"SELECT COUNT(o) FROM Oferta o WHERE " + queryTurno
-						+ queryCampus + queryCurso + queryCurriculo + " 1=1 ");
-		if (turno != null)
-			q.setParameter("turno", turno);
-		if (campus != null)
-			q.setParameter("campus", campus);
-		if (curso != null)
-			q.setParameter("curso", curso);
-		if (curriculo != null)
-			q.setParameter("curriculo", curriculo);
-
-		return ((Number) q.getSingleResult()).intValue();
-	}
-
-	@SuppressWarnings("unchecked")
-	public static List<Oferta> findBy( Turno turno, Campus campus, Curso curso,
-		Curriculo curriculo, int firstResult, int maxResults, String orderBy )
+	public static List< Oferta > findByCampusAndTurno(
+		InstituicaoEnsino instituicaoEnsino, Campus campus, Turno turno )
 	{
-		orderBy = ( ( orderBy != null ) ? "ORDER BY o." + orderBy : "" );
+		Query q = entityManager().createQuery(
+			" SELECT o FROM Oferta o " +
+			" WHERE o.campus.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.campus = :campus " +
+			" AND o.turno = :turno " );
 
+		q.setParameter( "campus", campus );
+		q.setParameter( "turno", turno );
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
+		return q.getResultList();
+	}
+
+	@SuppressWarnings("unchecked")
+	public static List< Oferta > findByCenario(
+		InstituicaoEnsino instituicaoEnsino, Cenario cenario )
+	{
+		Query q = entityManager().createQuery(
+			" SELECT o FROM Oferta o " +
+			" WHERE o.campus.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.campus.cenario = :cenario " );
+
+		q.setParameter( "cenario", cenario );
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
+		return q.getResultList();
+	}
+
+	@SuppressWarnings("unchecked")
+	public static List< Oferta > findAll(
+		InstituicaoEnsino instituicaoEnsino )
+	{
+		return entityManager().createQuery(
+			" SELECT o FROM Oferta o " +
+			" WHERE o.campus.instituicaoEnsino = :instituicaoEnsino ")
+			.setParameter( "instituicaoEnsino", instituicaoEnsino ).getResultList();
+	}
+
+	public static Oferta find(
+		Long id, InstituicaoEnsino instituicaoEnsino )
+	{
+		if ( id == null || instituicaoEnsino == null )
+		{
+			return null;
+		}
+
+		Oferta oferta = entityManager().find( Oferta.class, id );
+
+		if ( oferta != null && oferta.getCampus() != null
+			&& oferta.getCampus().getInstituicaoEnsino() != null
+			&& oferta.getCampus().getInstituicaoEnsino() == instituicaoEnsino )
+		{
+			return oferta;
+		}
+
+		return null;
+	}
+
+	public static List< Oferta > find(
+		InstituicaoEnsino instituicaoEnsino,
+		int firstResult, int maxResults )
+	{
+		return find( instituicaoEnsino, firstResult, maxResults, null );
+	}
+
+	@SuppressWarnings("unchecked")
+	public static List< Oferta > find(
+		InstituicaoEnsino instituicaoEnsino,
+		int firstResult, int maxResults, String orderBy )
+	{
+		orderBy = ( ( orderBy != null ) ? " ORDER BY o." + orderBy : "" );
+
+		return entityManager().createQuery(
+			" SELECT o FROM Oferta o " +
+			" WHERE o.campus.instituicaoEnsino = :instituicaoEnsino " + orderBy )
+			.setParameter( "instituicaoEnsino", instituicaoEnsino )
+			.setFirstResult( firstResult ).setMaxResults( maxResults ).getResultList();
+	}
+
+	public static int count( InstituicaoEnsino instituicaoEnsino,
+		Turno turno, Campus campus, Curso curso, Curriculo curriculo )
+	{
 		String queryTurno = ( ( turno != null ) ? " o.turno = :turno AND " : "" );
 		String queryCampus = ( ( campus != null ) ? " o.campus = :campus AND " : "" );
 		String queryCurso = ( ( curso != null ) ? " o.curriculo.curso = :curso AND " : "" );
-		String queryCurriculo = ( ( curriculo != null ) ? " o.curriculo = :curriculo AND "	: "" );
+		String queryCurriculo = ( ( curriculo != null ) ? " o.curriculo = :curriculo AND " : "" );
 
 		Query q = entityManager().createQuery(
-			"SELECT o FROM Oferta o WHERE " + queryTurno
-				+ queryCampus + queryCurso + queryCurriculo + " 1=1 " );
+			" SELECT COUNT ( o ) FROM Oferta o " +
+			" WHERE o.campus.instituicaoEnsino = :instituicaoEnsino " +
+			" AND " + queryTurno + queryCampus + queryCurso + queryCurriculo + " 1=1 " );
+
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
 
 		if ( turno != null )
 		{
@@ -324,10 +353,54 @@ public class Oferta implements Serializable, Comparable< Oferta >
 			q.setParameter( "curriculo", curriculo );
 		}
 
-		return q.setFirstResult( firstResult ).setMaxResults( maxResults ).getResultList();
+		return ( (Number) q.getSingleResult() ).intValue();
 	}
 
-	// Campus + Turno + Matriz Curricular
+	@SuppressWarnings("unchecked")
+	public static List<Oferta> findBy( InstituicaoEnsino instituicaoEnsino,
+		Turno turno, Campus campus, Curso curso, Curriculo curriculo,
+		int firstResult, int maxResults, String orderBy )
+	{
+		orderBy = ( ( orderBy != null ) ? " ORDER BY o." + orderBy : "" );
+
+		String queryTurno = ( ( turno != null ) ? " o.turno = :turno AND " : "" );
+		String queryCampus = ( ( campus != null ) ? " o.campus = :campus AND " : "" );
+		String queryCurso = ( ( curso != null ) ? " o.curriculo.curso = :curso AND " : "" );
+		String queryCurriculo = ( ( curriculo != null ) ? " o.curriculo = :curriculo AND "	: "" );
+
+		Query q = entityManager().createQuery(
+			" SELECT o FROM Oferta o " +
+			" WHERE o.campus.instituicaoEnsino = :instituicaoEnsino " +
+			" AND " + queryTurno + queryCampus + queryCurso + queryCurriculo + " 1=1 " );
+
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+		q.setFirstResult( firstResult );
+		q.setMaxResults( maxResults );
+
+		if ( turno != null )
+		{
+			q.setParameter( "turno", turno );
+		}
+
+		if ( campus != null )
+		{
+			q.setParameter( "campus", campus );
+		}
+
+		if ( curso != null )
+		{
+			q.setParameter( "curso", curso );
+		}
+
+		if ( curriculo != null )
+		{
+			q.setParameter( "curriculo", curriculo );
+		}
+
+		return q.getResultList();
+	}
+
+	// [ Campus + Turno + Matriz Curricular ]
 	private static String getCodeOferta( Oferta domain )
 	{
 		String codigo = domain.getCampus().getCodigo()

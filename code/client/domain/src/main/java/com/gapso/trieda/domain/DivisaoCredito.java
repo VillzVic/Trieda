@@ -12,7 +12,9 @@ import javax.persistence.EntityManager;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
@@ -35,7 +37,10 @@ import org.springframework.transaction.annotation.Transactional;
 @RooToString
 @RooEntity(identifierColumn = "DCR_ID")
 @Table(name = "DIVISOES_CREDITO")
-public class DivisaoCredito implements Serializable {
+public class DivisaoCredito
+	implements Serializable
+{
+	private static final long serialVersionUID = 4185000264330934580L;
 
     @NotNull
     @Column(name = "DRC_CREDITOS")
@@ -86,7 +91,7 @@ public class DivisaoCredito implements Serializable {
     private Integer dia7;
 
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
-    private Set<Cenario> cenario = new HashSet<Cenario>();
+    private Set< Cenario > cenario = new HashSet< Cenario >();
 
     @OneToOne(cascade = CascadeType.ALL, targetEntity = Disciplina.class, mappedBy = "divisaoCreditos")
     private Disciplina disciplina;
@@ -118,6 +123,22 @@ public class DivisaoCredito implements Serializable {
 	public void setVersion(Integer version) {
         this.version = version;
     }
+
+	@NotNull
+	@ManyToOne( cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH },
+		targetEntity = InstituicaoEnsino.class )
+	@JoinColumn( name = "INS_ID" )
+	private InstituicaoEnsino instituicaoEnsino;
+
+	public InstituicaoEnsino getInstituicaoEnsino()
+	{
+		return instituicaoEnsino;
+	}
+
+	public void setInstituicaoEnsino( InstituicaoEnsino instituicaoEnsino )
+	{
+		this.instituicaoEnsino = instituicaoEnsino;
+	}
 
 	@Transactional
 	public void detach() {
@@ -166,53 +187,110 @@ public class DivisaoCredito implements Serializable {
         return merged;
     }
 
-	public static final EntityManager entityManager() {
+	public static final EntityManager entityManager()
+	{
         EntityManager em = new DivisaoCredito().entityManager;
-        if (em == null) throw new IllegalStateException("Entity manager has not been injected (is the Spring Aspects JAR configured as an AJC/AJDT aspects library?)");
+
+        if ( em == null )
+        {
+        	throw new IllegalStateException(
+        		" Entity manager has not been injected (is the Spring " +
+        		" Aspects JAR configured as an AJC/AJDT aspects library?)" );
+        }
+
         return em;
     }
 
-	public static int count(Cenario cenario) {
-		Query q = entityManager().createQuery("SELECT COUNT(o) FROM DivisaoCredito o, IN(o.cenario) c WHERE c = :cenario AND o.disciplina is null");
-		q.setParameter("cenario", cenario);
-        return ((Number) q.getSingleResult()).intValue();
+	public static int count( Cenario cenario, InstituicaoEnsino instituicaoEnsino )
+	{
+		Query q = entityManager().createQuery(
+			" SELECT COUNT ( o ) FROM DivisaoCredito o, IN ( o.cenario ) c " +
+			" WHERE c = :cenario " +
+			" AND o.disciplina is null " +
+			" AND o.instituicaoEnsino = :instituicaoEnsino " );
+
+		q.setParameter( "cenario", cenario );
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
+        return ( (Number) q.getSingleResult() ).intValue();
     }
 
-	public static DivisaoCredito find(Long id) {
-        if (id == null) return null;
-        return entityManager().find(DivisaoCredito.class, id);
+	public static DivisaoCredito find( Long id, InstituicaoEnsino instituicaoEnsino )
+	{
+        if ( id == null || instituicaoEnsino == null )
+        {
+        	return null;
+        }
+
+        DivisaoCredito dc = entityManager().find( DivisaoCredito.class, id );
+
+        if ( dc != null
+        	&& dc.getInstituicaoEnsino() != null 
+        	&& dc.getInstituicaoEnsino() == instituicaoEnsino )
+        {
+        	return dc;
+        }
+
+        return null;
     }
 	
-	public static DivisaoCredito findByCredito(Integer credito) {
-		Query q = entityManager().createQuery("SELECT o FROM DivisaoCredito o WHERE o.creditos = :credito");
-		q.setParameter("credito", credito);
-		try {
-			return (DivisaoCredito) q.setMaxResults(1).getSingleResult();
-		} catch (EmptyResultDataAccessException e) { }
+	public static DivisaoCredito findByCredito(
+		Integer credito, InstituicaoEnsino instituicaoEnsino )
+	{ 
+		Query q = entityManager().createQuery(
+			" SELECT o FROM DivisaoCredito o " +
+			" WHERE o.creditos = :credito " +
+			" AND o.instituicaoEnsino = :instituicaoEnsino" );
+
+		q.setParameter( "credito", credito );
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
+		try
+		{
+			return (DivisaoCredito) q.setMaxResults( 1 ).getSingleResult();
+		}
+		catch ( EmptyResultDataAccessException e ) { }
+
 		return null;
 	}
 
 	@SuppressWarnings("unchecked")
-    public static List<DivisaoCredito> findWithoutDisciplina(Cenario cenario, int firstResult, int maxResults) {
-        Query q = entityManager().createQuery("SELECT o FROM DivisaoCredito o, IN(o.cenario) c WHERE c = :cenario ORDER BY o.creditos ASC");
-        q.setParameter("cenario", cenario);
-        return q.setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
+    public static List< DivisaoCredito > findWithoutDisciplina(
+    	Cenario cenario, int firstResult,
+    	int maxResults, InstituicaoEnsino instituicaoEnsino )
+    {
+        Query q = entityManager().createQuery(
+        	" SELECT o FROM DivisaoCredito o, IN ( o.cenario ) c " +
+        	" WHERE c = :cenario " +
+        	" AND o.instituicaoEnsino = :instituicaoEnsino " +
+        	" ORDER BY o.creditos ASC " );
+
+        q.setParameter( "cenario", cenario );
+        q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+        q.setFirstResult( firstResult );
+        q.setMaxResults( maxResults );
+
+        return q.getResultList();
     }
 
-	public String toString() {
+	public String toString()
+	{
         StringBuilder sb = new StringBuilder();
-        sb.append("Id: ").append(getId()).append(", ");
-        sb.append("Version: ").append(getVersion()).append(", ");
-        sb.append("Creditos: ").append(getCreditos()).append(", ");
-        sb.append("Dia1: ").append(getDia1()).append(", ");
-        sb.append("Dia2: ").append(getDia2()).append(", ");
-        sb.append("Dia3: ").append(getDia3()).append(", ");
-        sb.append("Dia4: ").append(getDia4()).append(", ");
-        sb.append("Dia5: ").append(getDia5()).append(", ");
-        sb.append("Dia6: ").append(getDia6()).append(", ");
-        sb.append("Dia7: ").append(getDia7()).append(", ");
-        sb.append("Disciplina: ").append(getDisciplina()).append(", ");
-        sb.append("Cenario: ").append(getCenario() == null ? "null" : getCenario().size());
+
+        sb.append( "Id: " ).append( getId() ).append( ", " );
+        sb.append( "Version: " ).append( getVersion() ).append(", " );
+        sb.append( "Inetituicao de Ensino: " ).append( getInstituicaoEnsino() ).append(", " );
+        sb.append( "Creditos: " ).append( getCreditos() ).append(", " );
+        sb.append( "Dia1: " ).append( getDia1() ).append( ", " );
+        sb.append( "Dia2: " ).append( getDia2() ).append( ", " );
+        sb.append( "Dia3: " ).append( getDia3() ).append( ", " );
+        sb.append( "Dia4: " ).append( getDia4() ).append( ", " );
+        sb.append( "Dia5: " ).append( getDia5() ).append( ", " );
+        sb.append( "Dia6: " ).append( getDia6() ).append( ", " );
+        sb.append( "Dia7: " ).append( getDia7() ).append( ", " );
+        sb.append( "Disciplina: " ).append( getDisciplina() ).append( ", " );
+        sb.append( "Cenario: " ).append( getCenario() == null ? "null" : getCenario().size() );
+
         return sb.toString();
     }
 
@@ -295,6 +373,4 @@ public class DivisaoCredito implements Serializable {
 	public void setDisciplina(Disciplina disciplina) {
 		this.disciplina = disciplina;
 	}
-
-	private static final long serialVersionUID = 4185000264330934580L;
 }

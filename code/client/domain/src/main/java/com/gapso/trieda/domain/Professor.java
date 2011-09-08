@@ -99,7 +99,6 @@ public class Professor
 	@ManyToMany( cascade = { CascadeType.PERSIST, CascadeType.MERGE }, mappedBy = "professores" )
 	private Set< HorarioDisponivelCenario > horarios = new HashSet< HorarioDisponivelCenario >();
 
-	@NotNull
 	@OneToMany( cascade = CascadeType.ALL, mappedBy = "professor" )
 	private Set< ProfessorDisciplina > disciplinas = new HashSet< ProfessorDisciplina >();
 
@@ -285,26 +284,41 @@ public class Professor
 	}
 
 	@Transactional
-	public void detach() {
-		if (this.entityManager == null)
+	public void detach()
+	{
+		if ( this.entityManager == null )
+		{
 			this.entityManager = entityManager();
-		this.entityManager.detach(this);
+		}
+
+		this.entityManager.detach( this );
 	}
 
 	@Transactional
-	public void persist() {
-		if (this.entityManager == null)
+	public void persist()
+	{
+		if ( this.entityManager == null )
+		{
 			this.entityManager = entityManager();
-		this.entityManager.persist(this);
+		}
+
+		this.entityManager.persist( this );
 		preencheHorarios();
 	}
 
-	public void preencheHorarios() {
-		for (SemanaLetiva semanaLetiva : SemanaLetiva.findAll()) {
-			for (HorarioAula horarioAula : semanaLetiva.getHorariosAula()) {
-				for (HorarioDisponivelCenario hdc : horarioAula
-						.getHorariosDisponiveisCenario()) {
-					hdc.getProfessores().add(this);
+	public void preencheHorarios()
+	{
+		List< SemanaLetiva > listDomains
+			= SemanaLetiva.findAll( this.getTipoContrato().getInstituicaoEnsino() );
+
+		for ( SemanaLetiva semanaLetiva : listDomains )
+		{
+			for ( HorarioAula horarioAula : semanaLetiva.getHorariosAula() )
+			{
+				for ( HorarioDisponivelCenario hdc :
+						horarioAula.getHorariosDisponiveisCenario() )
+				{
+					hdc.getProfessores().add( this );
 					hdc.merge();
 				}
 			}
@@ -345,138 +359,235 @@ public class Professor
 		}
 	}
 
-	@SuppressWarnings("unchecked")
-	public static List<Professor> findByCenario(Cenario cenario) {
-		Query q = entityManager().createQuery(
-				"SELECT o FROM Professor o WHERE o.cenario = :cenario");
-		q.setParameter("cenario", cenario);
-		return q.getResultList();
-	}
-
 	@Transactional
-	public void flush() {
-		if (this.entityManager == null)
+	public void flush()
+	{
+		if ( this.entityManager == null )
+		{
 			this.entityManager = entityManager();
+		}
+
 		this.entityManager.flush();
 	}
 
 	@Transactional
-	public Professor merge() {
-		if (this.entityManager == null)
+	public Professor merge()
+	{
+		if ( this.entityManager == null )
+		{
 			this.entityManager = entityManager();
-		Professor merged = this.entityManager.merge(this);
+		}
+
+		Professor merged = this.entityManager.merge( this );
 		this.entityManager.flush();
 		return merged;
 	}
 
-	public static final EntityManager entityManager() {
+	public static final EntityManager entityManager()
+	{
 		EntityManager em = new Professor().entityManager;
-		if (em == null)
+
+		if ( em == null )
+		{
 			throw new IllegalStateException(
-					"Entity manager has not been injected (is the Spring Aspects JAR configured as an AJC/AJDT aspects library?)");
+				" Entity manager has not been injected (is the Spring " +
+				" Aspects JAR configured as an AJC/AJDT aspects library?)" );
+		}
+
 		return em;
 	}
 
 	@SuppressWarnings("unchecked")
-	public static List<Professor> findAll() {
-		return entityManager().createQuery("SELECT o FROM Professor o")
-				.getResultList();
-	}
-
-	@SuppressWarnings("unchecked")
-	public static List< Professor > findByCampus()
+	public static List< Professor > findAll(
+		InstituicaoEnsino instituicaoEnsino )
 	{
 		return entityManager().createQuery(
-			"SELECT o FROM Professor o" ).getResultList();
-	}
-
-	public static int count(String cpf, TipoContrato tipoContrato,
-			Titulacao titulacao, AreaTitulacao areaTitulacao) {
-		String where = "";
-
-		if (cpf != null)
-			where += " o.cpf = :cpf AND ";
-		if (tipoContrato != null)
-			where += " o.tipoContrato = :tipoContrato AND ";
-		if (titulacao != null)
-			where += " o.titulacao = :titulacao AND ";
-		if (areaTitulacao != null)
-			where += " o.areaTitulacao = :areaTitulacao AND ";
-		if (where.length() > 1)
-			where = " WHERE " + where.substring(0, where.length() - 4);
-
-		Query q = entityManager().createQuery(
-				"SELECT COUNT(o) FROM Professor o " + where);
-
-		if (cpf != null)
-			q.setParameter("cpf", cpf);
-		if (tipoContrato != null)
-			q.setParameter("tipoContrato", tipoContrato);
-		if (titulacao != null)
-			q.setParameter("titulacao", titulacao);
-		if (areaTitulacao != null)
-			q.setParameter("areaTitulacao", areaTitulacao);
-
-		return ((Number) q.getSingleResult()).intValue();
+			" SELECT o FROM Professor o " +
+			" WHERE o.tipoContrato.instituicaoEnsino = :instituicaoEnsino " )
+			.setParameter( "instituicaoEnsino", instituicaoEnsino ).getResultList();
 	}
 
 	@SuppressWarnings("unchecked")
-	public static List<Professor> findBy(String cpf, TipoContrato tipoContrato,
-			Titulacao titulacao, AreaTitulacao areaTitulacao, int firstResult,
-			int maxResults, String orderBy) {
-		String where = "";
-
-		if (cpf != null)
-			where += " o.cpf = :cpf AND ";
-		if (tipoContrato != null)
-			where += " o.tipoContrato = :tipoContrato AND ";
-		if (titulacao != null)
-			where += " o.titulacao = :titulacao AND ";
-		if (areaTitulacao != null)
-			where += " o.areaTitulacao = :areaTitulacao AND ";
-		if (where.length() > 1)
-			where = " WHERE " + where.substring(0, where.length() - 4);
-
-		where += (orderBy != null) ? " ORDER BY o." + orderBy : "";
-
-		Query q = entityManager().createQuery(
-				"SELECT o FROM Professor o " + where);
-
-		if (cpf != null)
-			q.setParameter("cpf", cpf);
-		if (tipoContrato != null)
-			q.setParameter("tipoContrato", tipoContrato);
-		if (titulacao != null)
-			q.setParameter("titulacao", titulacao);
-		if (areaTitulacao != null)
-			q.setParameter("areaTitulacao", areaTitulacao);
-
-		return q.setFirstResult(firstResult).setMaxResults(maxResults)
-				.getResultList();
+	public static List< Professor > findByCampus(
+		InstituicaoEnsino instituicaoEnsino )
+	{
+		return entityManager().createQuery(
+			" SELECT o FROM Professor o " +
+			" WHERE o.tipoContrato.instituicaoEnsino = :instituicaoEnsino " )
+			.setParameter( "instituicaoEnsino", instituicaoEnsino ).getResultList();
 	}
 
-	public static Professor find( Long id )
+	@SuppressWarnings("unchecked")
+	public static List< Professor > findByCenario(
+		InstituicaoEnsino instituicaoEnsino, Cenario cenario )
 	{
-		if ( id == null )
+		Query q = entityManager().createQuery(
+			" SELECT o FROM Professor o " +
+			" WHERE o.tipoContrato.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.cenario = :cenario " );
+
+		q.setParameter( "cenario", cenario );
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
+		return q.getResultList();
+	}
+
+	public static int count( InstituicaoEnsino instituicaoEnsino, String cpf,
+		TipoContrato tipoContrato, Titulacao titulacao, AreaTitulacao areaTitulacao )
+	{
+		String where = " o.tipoContrato.instituicaoEnsino = :instituicaoEnsino AND ";
+
+		if ( cpf != null )
+		{
+			where += " o.cpf = :cpf AND ";
+		}
+
+		if ( tipoContrato != null )
+		{
+			where += " o.tipoContrato = :tipoContrato AND ";
+		}
+
+		if ( titulacao != null )
+		{
+			where += " o.titulacao = :titulacao AND ";
+		}
+		
+		if ( areaTitulacao != null )
+		{
+			where += " o.areaTitulacao = :areaTitulacao AND ";
+		}
+
+		if ( where.length() > 1 )
+		{
+			where = " WHERE " + where.substring( 0, where.length() - 4 );
+		}
+
+		Query q = entityManager().createQuery(
+			" SELECT COUNT ( o ) FROM Professor o " + where );
+
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
+		if ( cpf != null )
+		{
+			q.setParameter( "cpf", cpf );
+		}
+
+		if ( tipoContrato != null )
+		{
+			q.setParameter( "tipoContrato", tipoContrato );
+		}
+
+		if ( titulacao != null )
+		{
+			q.setParameter( "titulacao", titulacao );
+		}
+
+		if ( areaTitulacao != null )
+		{
+			q.setParameter( "areaTitulacao", areaTitulacao );
+		}
+
+		return ( (Number) q.getSingleResult() ).intValue();
+	}
+
+	@SuppressWarnings("unchecked")
+	public static List< Professor > findBy( InstituicaoEnsino instituicaoEnsino,
+		String cpf, TipoContrato tipoContrato, Titulacao titulacao,
+		AreaTitulacao areaTitulacao, int firstResult, int maxResults, String orderBy )
+	{
+		String where = " o.tipoContrato.instituicaoEnsino = :instituicaoEnsino AND ";
+
+		if ( cpf != null )
+		{
+			where += " o.cpf = :cpf AND ";
+		}
+
+		if ( tipoContrato != null )
+		{
+			where += " o.tipoContrato = :tipoContrato AND ";
+		}
+
+		if ( titulacao != null )
+		{
+			where += " o.titulacao = :titulacao AND ";
+		}
+
+		if ( areaTitulacao != null )
+		{
+			where += " o.areaTitulacao = :areaTitulacao AND ";
+		}
+
+		if ( where.length() > 1 )
+		{
+			where = " WHERE " + where.substring( 0, where.length() - 4 );
+		}
+
+		where += ( ( orderBy != null ) ? " ORDER BY o." + orderBy : "" );
+
+		Query q = entityManager().createQuery(
+			" SELECT o FROM Professor o " + where );
+
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+		q.setFirstResult( firstResult );
+		q.setMaxResults( maxResults );
+
+		if ( cpf != null )
+		{
+			q.setParameter( "cpf", cpf );
+		}
+
+		if ( tipoContrato != null )
+		{
+			q.setParameter( "tipoContrato", tipoContrato );
+		}
+
+		if ( titulacao != null )
+		{
+			q.setParameter( "titulacao", titulacao );
+		}
+
+		if ( areaTitulacao != null )
+		{
+			q.setParameter( "areaTitulacao", areaTitulacao );
+		}
+
+		return q.getResultList();
+	}
+
+	public static Professor find( Long id, InstituicaoEnsino instituicaoEnsino )
+	{
+		if ( id == null || instituicaoEnsino == null )
 		{
 			return null;
 		}
 
-		return entityManager().find( Professor.class, id );
+		Professor professor = entityManager().find( Professor.class, id );
+
+		if ( professor != null && professor.getTipoContrato() != null
+			&& professor.getTipoContrato().getInstituicaoEnsino() != null
+			&& professor.getTipoContrato().getInstituicaoEnsino() == instituicaoEnsino )
+		{
+			return professor;
+		}
+
+		return null;
 	}
 
 	@SuppressWarnings("unchecked")
-	public static List<Professor> find( int firstResult, int maxResults )
+	public static List< Professor > find(
+		InstituicaoEnsino instituicaoEnsino,
+		int firstResult, int maxResults )
 	{
 		return entityManager().createQuery(
-			"SELECT o FROM Professor o" )
-			.setFirstResult( firstResult )
-			.setMaxResults( maxResults ).getResultList();
+			" SELECT o FROM Professor o " +
+			" WHERE o.tipoContrato.instituicaoEnsino = :instituicaoEnsino " )
+			.setParameter( "instituicaoEnsino", instituicaoEnsino )
+			.setFirstResult( firstResult ).setMaxResults( maxResults ).getResultList();
 	}
 
 	@SuppressWarnings("unchecked")
 	public List< HorarioDisponivelCenario > getHorarios(
-		List< SemanaLetiva > semanasLetivas )
+		InstituicaoEnsino instituicaoEnsino, List< SemanaLetiva > semanasLetivas )
 	{
 		Set< HorarioDisponivelCenario > horarios
 			= new HashSet< HorarioDisponivelCenario >();
@@ -485,10 +596,13 @@ public class Professor
 		{
 			Query q = entityManager().createQuery(
 				" SELECT o FROM HorarioDisponivelCenario o, IN ( o.professores ) c " +
-				" WHERE c = :professor AND o.horarioAula.semanaLetiva = :semanaLetiva " );
+				" WHERE c.tipoContrato.instituicaoEnsino = :instituicaoEnsino " +
+				" AND c = :professor " +
+				" AND o.horarioAula.semanaLetiva = :semanaLetiva " );
 
 			q.setParameter( "professor", this );
 			q.setParameter( "semanaLetiva", semanaLetiva );
+			q.setParameter( "instituicaoEnsino", instituicaoEnsino );
 
 			horarios.addAll( q.getResultList() );
 		}
@@ -510,12 +624,17 @@ public class Professor
 		return professoresMap;
 	}
 
-	public static boolean checkCodigoUnique(Cenario cenario, String cpf) {
+	public static boolean checkCodigoUnique( InstituicaoEnsino instituicaoEnsino,
+		Cenario cenario, String cpf )
+	{
 		Query q = entityManager().createQuery(
 			" SELECT COUNT ( o ) FROM Professor o " +
-			" WHERE o.cenario = :cenario AND o.cpf = :cpf" );
+			" WHERE o.tipoContrato.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.cenario = :cenario " +
+			" AND o.cpf = :cpf " );
 
 		q.setParameter( "cenario", cenario );
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
 		q.setParameter( "cpf", cpf );
 
 		Number size = (Number) q.setMaxResults( 1 ).getSingleResult();
@@ -536,7 +655,20 @@ public class Professor
 			return false;
 		}
 
-		Professor other = (Professor)obj;
-		return this.getId().equals( other.getId() );
+		Professor other = (Professor) obj;
+
+		if ( id == null )
+		{
+			if ( other.id != null )
+			{
+				return false;
+			}
+		}
+		else if ( !id.equals( other.id ) )
+		{
+			return false;
+		}
+
+		return true;
 	}
 }

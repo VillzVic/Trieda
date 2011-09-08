@@ -1,7 +1,6 @@
 package com.gapso.trieda.domain;
 
 import java.io.Serializable;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -22,6 +21,7 @@ import javax.persistence.Query;
 import javax.persistence.Table;
 import javax.persistence.Version;
 import javax.validation.constraints.Max;
+import javax.validation.constraints.NotNull;
 
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.roo.addon.entity.RooEntity;
@@ -62,12 +62,29 @@ public class ProfessorVirtual
 	@OneToMany(mappedBy = "professorVirtual", cascade = CascadeType.ALL)
 	private Set< AtendimentoOperacional > atendimentos = new HashSet< AtendimentoOperacional >();
 
+	@NotNull
+	@ManyToOne( cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH },
+		targetEntity = InstituicaoEnsino.class )
+	@JoinColumn( name = "INS_ID" )
+	private InstituicaoEnsino instituicaoEnsino;
+
+	public InstituicaoEnsino getInstituicaoEnsino()
+	{
+		return instituicaoEnsino;
+	}
+
+	public void setInstituicaoEnsino( InstituicaoEnsino instituicaoEnsino )
+	{
+		this.instituicaoEnsino = instituicaoEnsino;
+	}
+
 	public String toString()
 	{
 		StringBuilder sb = new StringBuilder();
 
 		sb.append( "Id: " ).append( getId() ).append( ", " );
 		sb.append( "Version: " ).append( getVersion() ).append( ", " );
+		sb.append( "Instituicao de Ensino: " ).append( getInstituicaoEnsino() ).append( ", " );
 		sb.append( "Titulacao: " ).append( getTitulacao() ).append( ", " );
 		sb.append( "AreaTitulacao: " ).append( getAreaTitulacao() ).append( ", " );
 		sb.append( "CargaHorariaMin: " ).append( getCargaHorariaMin() ).append( ", " );
@@ -240,6 +257,7 @@ public class ProfessorVirtual
 	public static final EntityManager entityManager()
 	{
 		EntityManager em = new ProfessorVirtual().entityManager;
+
 		if ( em == null )
 		{
 			throw new IllegalStateException(
@@ -250,36 +268,54 @@ public class ProfessorVirtual
 		return em;
 	}
 
-	public static ProfessorVirtual find(Long id)
+	public static ProfessorVirtual find(
+		Long id, InstituicaoEnsino instituicaoEnsino )
 	{
-		if ( id == null )
+		if ( id == null || instituicaoEnsino == null )
 		{
 			return null;
 		}
 
-		return entityManager().find( ProfessorVirtual.class, id );
+		ProfessorVirtual pf = entityManager().find( ProfessorVirtual.class, id );
+
+		if ( pf != null
+			&& pf.getInstituicaoEnsino() != null 
+			&& pf.getInstituicaoEnsino() == instituicaoEnsino )
+		{
+			return pf;
+		}
+		
+		return null;
 	}
 
 	@SuppressWarnings("unchecked")
-	public static List< ProfessorVirtual > findBy( Campus campus )
+	public static List< ProfessorVirtual > findBy(
+		InstituicaoEnsino instituicaoEnsino, Campus campus )
 	{
 		Query q = entityManager().createQuery(
 			" SELECT DISTINCT o.professorVirtual " +
 			" FROM AtendimentoOperacional o " +
-			" WHERE o.oferta.campus = :campus" );
+			" WHERE o.oferta.campus = :campus " +
+			" AND o.instituicaoEnsino = :instituicaoEnsino " );
 
 		q.setParameter( "campus", campus );
-		
-		List< ProfessorVirtual > list = q.getResultList(); 
-		Collections.sort( list );
-		return list;
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
+		return q.getResultList();
 	}
 
 	@SuppressWarnings("unchecked")
-	public static List< ProfessorVirtual > findAll()
+	public static List< ProfessorVirtual > findAll(
+		InstituicaoEnsino instituicaoEnsino )
 	{
-		return entityManager().createQuery(
-			"SELECT o FROM ProfessorVirtual o" ).getResultList();
+		Query q = entityManager().createQuery(
+			" SELECT o FROM ProfessorVirtual o " +
+			" WHERE o.instituicaoEnsino = :instituicaoEnsino " );
+
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
+		List< ProfessorVirtual > list = q.getResultList();
+		return list;
 	}
 
 	@Override
