@@ -98,7 +98,7 @@ public class AtendimentoTaticoDTO extends AbstractDTO< String >
 	public Integer getVersion() {
 		return get(PROPERTY_VERSION);
 	}
-	
+
 	public void setCenarioId(Long value) {
 		set(PROPERTY_CENARIO_ID, value);
 	}

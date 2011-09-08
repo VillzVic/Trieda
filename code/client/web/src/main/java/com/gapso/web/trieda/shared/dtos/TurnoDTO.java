@@ -16,6 +16,8 @@ public class TurnoDTO extends AbstractDTO< String >
 	public static final String PROPERTY_NOME = "nome";
 	public static final String PROPERTY_TEMPO = "tempo";
 	public static final String PROPERTY_MAX_CREDITOS = "maxCreditos";
+	public static final String PROPERTY_INSTITUICAO_ENSINO_ID = "instituicaoEnsinoId";
+	public static final String PROPERTY_INSTITUICAO_ENSINO_STRING = "instituicaoEnsinoString";
 
 	private Map< Integer, Integer > countHorariosAula;
 	private Map< Long, String > horariosStringMap;

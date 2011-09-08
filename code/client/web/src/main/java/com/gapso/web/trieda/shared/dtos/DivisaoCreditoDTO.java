@@ -20,7 +20,9 @@ public class DivisaoCreditoDTO extends AbstractDTO<String>
 	public static final String PROPERTY_DIA6 = "dia6";
 	public static final String PROPERTY_DIA7 = "dia7";
 
-	public DivisaoCreditoDTO() {
+	public DivisaoCreditoDTO()
+	{
+		super();
 	}
 
 	public void setId(Long value) {
@@ -36,7 +38,7 @@ public class DivisaoCreditoDTO extends AbstractDTO<String>
 	public Integer getVersion() {
 		return get(PROPERTY_VERSION);
 	}
-	
+
 	public void setCenarioId(Long value) {
 		set(PROPERTY_CENARIO_ID, value);
 	}

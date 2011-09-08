@@ -26,7 +26,10 @@ public class ProfessorDTO extends AbstractDTO< String >
 	public static final String PROPERTY_CREDITO_ANTERIOR = "creditoAnterior";
 	public static final String PROPERTY_VALOR_CREDITO = "valorCredito";
 
-	public ProfessorDTO() { }
+	public ProfessorDTO()
+	{
+		super();
+	}
 
 	public void setId(Long value) {
 		set(PROPERTY_ID, value);

@@ -17,9 +17,10 @@ public class DeslocamentoUnidadeDTO extends AbstractDTO<String>
 	public static final String PROPERTY_DESTINO_TEMPO = "destinoTempo";
 	public static final String PROPERTY_DESTINO_CUSTO = "destinoCusto";
 
-	public DeslocamentoUnidadeDTO() {
+	public DeslocamentoUnidadeDTO()
+	{
 		super();
-		set(PROPERTY_DESTINO_IDS_LIST, new ArrayList<Long>());
+		set( PROPERTY_DESTINO_IDS_LIST, new ArrayList< Long >() );
 	}
 
 	public void setOrigemId(Long value) {
@@ -35,7 +36,7 @@ public class DeslocamentoUnidadeDTO extends AbstractDTO<String>
 	public String getOrigemString() {
 		return get(PROPERTY_ORIGEM_STRING);
 	}
-	
+
 	// Adicionando um destino, não existe um set/get de cada destino pq a quantidade é dinamica.
 	public void addDestino(Long destinoId, String destinoString, Integer destinoTempo, Double destinoCusto) {
 		List<Long> listIdList = get(PROPERTY_DESTINO_IDS_LIST);

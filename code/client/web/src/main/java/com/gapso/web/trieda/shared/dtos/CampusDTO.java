@@ -21,7 +21,9 @@ public class CampusDTO extends AbstractDTO< String > implements Comparable< Camp
 	public static final String PROPERTY_OTIMIZADO_OPERACIONAL = "otimizadoOperacional";
 	public static final String PROPERTY_PUBLICADO = "publicado";
 
-	public CampusDTO() {
+	public CampusDTO()
+	{
+		super();
 	}
 
 	public void setId(Long value) {
@@ -37,7 +39,7 @@ public class CampusDTO extends AbstractDTO< String > implements Comparable< Camp
 	public Integer getVersion() {
 		return get(PROPERTY_VERSION);
 	}
-	
+
 	public void setCenarioId(Long value) {
 		set(PROPERTY_CENARIO_ID, value);
 	}

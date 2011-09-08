@@ -20,7 +20,8 @@ public class DisciplinaDTO extends AbstractDTO<String>
 	public static final String PROPERTY_MAX_ALUNOS_TEORICO = "maxAlunosTeorico";
 	public static final String PROPERTY_MAX_ALUNOS_PRATICO = "maxAlunosPratico";
 
-	public DisciplinaDTO() {
+	public DisciplinaDTO()
+	{
 		super();
 	}
 
@@ -37,7 +38,7 @@ public class DisciplinaDTO extends AbstractDTO<String>
 	public Integer getVersion() {
 		return get(PROPERTY_VERSION);
 	}
-	
+
 	public void setCenarioId(Long value) {
 		set(PROPERTY_CENARIO_ID, value);
 	}

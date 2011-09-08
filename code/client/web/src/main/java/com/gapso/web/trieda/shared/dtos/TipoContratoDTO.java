@@ -10,16 +10,19 @@ public class TipoContratoDTO extends AbstractDTO<String> implements Comparable<T
 	public static final String PROPERTY_VERSION = "version";
 	public static final String PROPERTY_NOME = "nome";
 
-	public TipoContratoDTO() {
+	public TipoContratoDTO()
+	{
 		super();
 	}
 
-	public TipoContratoDTO(Long id, String nome, Integer version) {
-		setId(id);
-		setNome(nome);
-		setVersion(version);
+	public TipoContratoDTO(
+		Long id, String nome, Integer version )
+	{
+		setId( id );
+		setNome( nome );
+		setVersion( version );
 	}
-	
+
 	public void setId(Long value) {
 		set(PROPERTY_ID, value);
 	}
@@ -33,7 +36,7 @@ public class TipoContratoDTO extends AbstractDTO<String> implements Comparable<T
 	public Integer getVersion() {
 		return get(PROPERTY_VERSION);
 	}
-	
+
 	public String getNome() {
 		return get(PROPERTY_NOME);
 	}

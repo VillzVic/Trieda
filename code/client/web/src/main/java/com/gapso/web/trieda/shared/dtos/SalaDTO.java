@@ -2,10 +2,11 @@ package com.gapso.web.trieda.shared.dtos;
 
 
 
-public class SalaDTO extends AbstractDTO<String> implements Comparable<SalaDTO> {
-
+public class SalaDTO extends AbstractDTO< String >
+	implements Comparable< SalaDTO >
+{
 	private static final long serialVersionUID = -5134820110949139907L;
-	
+
 	// Propriedades
 	public static final String PROPERTY_ID = "id";
 	public static final String PROPERTY_VERSION = "version";
@@ -19,8 +20,11 @@ public class SalaDTO extends AbstractDTO<String> implements Comparable<SalaDTO> 
 	public static final String PROPERTY_TIPO_STRING = "tipoString";
 	public static final String PROPERTY_CAPACIDADE = "capacidade";
 	public static final String PROPERTY_CONTAINS_CURRICULO_DISCIPLINA = "containsCurriculoDisciplina";
+	public static final String PROPERTY_INSTITUICAO_ENSINO_ID = "instituicaoEnsinoId";
+	public static final String PROPERTY_INSTITUICAO_ENSINO_STRING = "instituicaoEnsinoString";
 
-	public SalaDTO() {
+	public SalaDTO()
+	{
 		super();
 	}
 	
@@ -37,7 +41,7 @@ public class SalaDTO extends AbstractDTO<String> implements Comparable<SalaDTO> 
 	public Integer getVersion() {
 		return get(PROPERTY_VERSION);
 	}
-	
+
 	public String getCodigo() {
 		return get(PROPERTY_CODIGO);
 	}

@@ -25,7 +25,8 @@ public class CenarioDTO extends AbstractDTO<String> implements
 	public static final String PROPERTY_ATUALIZADO_USUARIO_DATE = "atualizadoUsuarioDate";
 	public static final String PROPERTY_COMENTARIO = "comentario";
 
-	public CenarioDTO() {
+	public CenarioDTO()
+	{
 		super();
 	}
 

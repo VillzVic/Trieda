@@ -19,6 +19,8 @@ public class OfertaDTO extends AbstractDTO<String>
 	public static final String PROPERTY_MATRIZ_CURRICULAR_STRING = "matrizCurricularString";
 	public static final String PROPERTY_TURNO_ID = "turnoId";
 	public static final String PROPERTY_TURNO_STRING = "turnoString";
+	public static final String PROPERTY_INSTITUICAO_ENSINO_ID = "instituicaoEnsinoId";
+	public static final String PROPERTY_INSTITUICAO_ENSINO_STRING = "instituicaoEnsinoString";
 
 	public OfertaDTO() {
 		super();

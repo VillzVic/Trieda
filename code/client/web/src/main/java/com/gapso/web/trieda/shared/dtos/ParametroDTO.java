@@ -52,6 +52,8 @@ public class ParametroDTO extends AbstractDTO<Long>
 	public static final String PROPERTY_AREATITULACAOPROFESSORESECURSOS = "areatitulacaoprofessoresecursos";
 	public static final String PROPERTY_LIMITARMAXIMODISCIPLINAPROFESSOR = "limitarmaximodisciplinaprofessor";
 	public static final String PROPERTY_FUNCAOOBJETIVO = "funcaoObjetivo";
+	public static final String PROPERTY_INSTITUICAO_ENSINO_ID = "instituicaoEnsinoId";
+	public static final String PROPERTY_INSTITUICAO_ENSINO_STRING = "instituicaoEnsinoString";
 
 	public ParametroDTO() {
 		super();
@@ -69,7 +71,7 @@ public class ParametroDTO extends AbstractDTO<Long>
 		}
 		return getModoOtimizacao().equals(TATICO);
 	}
-	
+
 	public void setId(Long value) {
 		set(PROPERTY_ID, value);
 	}

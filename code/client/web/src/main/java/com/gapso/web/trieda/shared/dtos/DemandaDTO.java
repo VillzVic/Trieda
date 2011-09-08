@@ -21,6 +21,8 @@ public class DemandaDTO extends AbstractDTO<String>
 	public static final String PROPERTY_DISCIPLINA_ID = "disciplinaId";
 	public static final String PROPERTY_DISCIPLINA_STRING = "disciplinaString";
 	public static final String PROPERTY_DEMANDA = "demanda";
+	public static final String PROPERTY_INSTITUICAO_ENSINO_ID = "instituicaoEnsinoId";
+	public static final String PROPERTY_INSTITUICAO_ENSINO_STRING = "instituicaoEnsinoString";
 
 	public DemandaDTO() {
 	}

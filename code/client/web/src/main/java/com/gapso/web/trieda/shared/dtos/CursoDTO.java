@@ -20,7 +20,8 @@ public class CursoDTO extends AbstractDTO<String>
 	public static final String PROPERTY_MAX_DISCIPLINAS_PELO_PROFESSOR = "maxDisciplinasPeloProfessor";
 	public static final String PROPERTY_ADM_MAIS_DE_UMA_DISCIPLINA = "admMaisDeUmDisciplina";
 
-	public CursoDTO() {
+	public CursoDTO()
+	{
 		super();
 	}
 

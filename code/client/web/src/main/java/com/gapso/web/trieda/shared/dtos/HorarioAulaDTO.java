@@ -17,7 +17,9 @@ public class HorarioAulaDTO extends AbstractDTO< String >
 	public static final String PROPERTY_INICIO = "inicio";
 	public static final String PROPERTY_FIM = "fim";
 
-	public HorarioAulaDTO() {
+	public HorarioAulaDTO()
+	{
+		super();
 	}
 
 	public HorarioAulaDTO(Long id, Long semanaLetivaId,

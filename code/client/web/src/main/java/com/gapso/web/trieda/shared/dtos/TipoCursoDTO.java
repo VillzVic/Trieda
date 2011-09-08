@@ -10,6 +10,8 @@ public class TipoCursoDTO extends AbstractDTO<String> implements Comparable<Tipo
 	public static final String PROPERTY_VERSION = "version";
 	public static final String PROPERTY_CODIGO = "codigo";
 	public static final String PROPERTY_DESCRICAO = "descricao";
+	public static final String PROPERTY_INSTITUICAO_ENSINO_ID = "instituicaoEnsinoId";
+	public static final String PROPERTY_INSTITUICAO_ENSINO_STRING = "instituicaoEnsinoString";
 
 	public TipoCursoDTO() {
 		super();
@@ -35,7 +37,7 @@ public class TipoCursoDTO extends AbstractDTO<String> implements Comparable<Tipo
 	public Integer getVersion() {
 		return get(PROPERTY_VERSION);
 	}
-	
+
 	public String getCodigo() {
 		return get(PROPERTY_CODIGO);
 	}

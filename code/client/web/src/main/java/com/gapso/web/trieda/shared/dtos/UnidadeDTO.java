@@ -45,7 +45,7 @@ public class UnidadeDTO extends AbstractDTO< String >
 	public Integer getVersion() {
 		return get(PROPERTY_VERSION);
 	}
-	
+
 	public String getCodigo() {
 		return get(PROPERTY_CODIGO);
 	}

@@ -20,8 +20,9 @@ public class FixacaoDTO extends AbstractDTO<String>
 	public static final String PROPERTY_UNIDADE_STRING = "unidadeString";
 	public static final String PROPERTY_SALA_ID = "salaId";
 	public static final String PROPERTY_SALA_STRING = "salaString";
-	
-	public void setId(Long value) {
+
+	public void setId(Long value)
+	{
 		set(PROPERTY_ID, value);
 	}
 	public Long getId() {
@@ -34,7 +35,7 @@ public class FixacaoDTO extends AbstractDTO<String>
 	public Integer getVersion() {
 		return get(PROPERTY_VERSION);
 	}
-	
+
 	public void setCodigo(String value) {
 		set(PROPERTY_CODIGO, value);
 	}

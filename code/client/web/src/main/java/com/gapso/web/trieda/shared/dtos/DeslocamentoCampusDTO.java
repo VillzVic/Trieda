@@ -17,9 +17,10 @@ public class DeslocamentoCampusDTO extends AbstractDTO<String>
 	public static final String PROPERTY_DESTINO_TEMPO = "destinoTempo";
 	public static final String PROPERTY_DESTINO_CUSTO = "destinoCusto";
 
-	public DeslocamentoCampusDTO() {
+	public DeslocamentoCampusDTO()
+	{
 		super();
-		set(PROPERTY_DESTINO_IDS_LIST, new ArrayList<Long>());
+		set( PROPERTY_DESTINO_IDS_LIST, new ArrayList< Long >() );
 	}
 
 	public void setOrigemId(Long value) {

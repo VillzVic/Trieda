@@ -1,7 +1,7 @@
 package com.gapso.web.trieda.shared.dtos;
 
-public class GrupoSalaDTO extends AbstractDTO<String>
-	implements Comparable<GrupoSalaDTO>
+public class GrupoSalaDTO extends AbstractDTO< String >
+	implements Comparable< GrupoSalaDTO >
 {
 	private static final long serialVersionUID = -5134820110949139907L;
 
@@ -16,7 +16,8 @@ public class GrupoSalaDTO extends AbstractDTO<String>
 	public static final String PROPERTY_CAMPUS_STRING = "campusString";
 	public static final String PROPERTY_SALAS_STRING = "salasString";
 
-	public GrupoSalaDTO() {
+	public GrupoSalaDTO()
+	{
 		super();
 	}
 
@@ -44,7 +45,7 @@ public class GrupoSalaDTO extends AbstractDTO<String>
 	public Integer getVersion() {
 		return get(PROPERTY_VERSION);
 	}
-	
+
 	public String getCodigo() {
 		return get(PROPERTY_CODIGO);
 	}
