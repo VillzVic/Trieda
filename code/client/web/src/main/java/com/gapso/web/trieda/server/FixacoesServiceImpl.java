@@ -27,37 +27,49 @@ import com.gapso.web.trieda.shared.dtos.HorarioDisponivelCenarioDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorDTO;
 import com.gapso.web.trieda.shared.dtos.SalaDTO;
 import com.gapso.web.trieda.shared.services.FixacoesService;
-import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
-/**
- * The server side implementation of the RPC service.
- */
-public class FixacoesServiceImpl extends RemoteServiceServlet implements FixacoesService {
-
+public class FixacoesServiceImpl
+	extends RemoteService implements FixacoesService
+{
 	private static final long serialVersionUID = -594991176048559553L;
 
 	@Override
 	public FixacaoDTO getFixacao(Long id) {
-		return ConvertBeans.toFixacaoDTO(Fixacao.find(id));
+		return ConvertBeans.toFixacaoDTO(Fixacao.find(id, getInstituicaoEnsinoUser()));
 	}
-	
+
 	@Override
-	public PagingLoadResult<FixacaoDTO> getBuscaList(String codigo, PagingLoadConfig config) {
+	public PagingLoadResult<FixacaoDTO> getBuscaList(
+		String codigo, PagingLoadConfig config )
+	{
 		String orderBy = config.getSortField();
-		if(orderBy != null) {
-			if(config.getSortDir() != null && config.getSortDir().equals(SortDir.DESC)) {
-				orderBy = orderBy + " asc";
-			} else {
-				orderBy = orderBy + " desc";
+		if ( orderBy != null )
+		{
+			if ( config.getSortDir() != null
+				&& config.getSortDir().equals( SortDir.DESC ) )
+			{
+				orderBy = ( orderBy + " asc" );
+			}
+			else
+			{
+				orderBy = ( orderBy + " desc" );
 			}
 		}
-		List<FixacaoDTO> list = new ArrayList<FixacaoDTO>();
-		for(Fixacao fixacao : Fixacao.findBy(codigo, config.getOffset(), config.getLimit(), orderBy)) {
-			list.add(ConvertBeans.toFixacaoDTO(fixacao));
+
+		List< FixacaoDTO > list = new ArrayList< FixacaoDTO >();
+		List< Fixacao > listDomains = Fixacao.findBy(
+			getInstituicaoEnsinoUser(), codigo, config.getOffset(), config.getLimit(), orderBy );
+
+		for ( Fixacao fixacao : listDomains )
+		{
+			list.add( ConvertBeans.toFixacaoDTO( fixacao ) );
 		}
-		BasePagingLoadResult<FixacaoDTO> result = new BasePagingLoadResult<FixacaoDTO>(list);
-		result.setOffset(config.getOffset());
-		result.setTotalLength(Fixacao.count());
+
+		BasePagingLoadResult< FixacaoDTO > result
+			= new BasePagingLoadResult< FixacaoDTO >( list );
+		result.setOffset( config.getOffset() );
+		result.setTotalLength( Fixacao.count( getInstituicaoEnsinoUser() ) );
+
 		return result;
 	}
 	
@@ -73,7 +85,8 @@ public class FixacoesServiceImpl extends RemoteServiceServlet implements Fixacoe
 		List< HorarioDisponivelCenario > adicionarList
 			= new ArrayList< HorarioDisponivelCenario >( listSelecionados );
 
-		List< SemanaLetiva > semanasLetivas = SemanaLetiva.findAll();
+		List< SemanaLetiva > semanasLetivas
+			= SemanaLetiva.findAll( getInstituicaoEnsinoUser() );
 
 		if(fixacao.getId() != null && fixacao.getId() > 0)
 		{
@@ -86,22 +99,27 @@ public class FixacoesServiceImpl extends RemoteServiceServlet implements Fixacoe
 
 		long id = fixacao.getId();
 		Fixacao.entityManager().detach( fixacao );
-		fixacao = Fixacao.find( id );
+		fixacao = Fixacao.find( id, getInstituicaoEnsinoUser() );
 
-		adicionarList.removeAll( fixacao.getHorarios( semanasLetivas ) );
+		adicionarList.removeAll( fixacao.getHorarios(
+			getInstituicaoEnsinoUser(), semanasLetivas ) );
 
 		for ( HorarioDisponivelCenario o : adicionarList )
 		{
 			HorarioDisponivelCenario hdc
-				= HorarioDisponivelCenario.find( o.getId() );
+				= HorarioDisponivelCenario.find(
+					o.getId(), getInstituicaoEnsinoUser() );
 
-			hdc.getFixacoes().add( fixacao );
-			hdc.merge();
+			if ( hdc != null )
+			{
+				hdc.getFixacoes().add( fixacao );
+				hdc.merge();
+			}
 		}
 
 		List< HorarioDisponivelCenario > removerList
 			= new ArrayList< HorarioDisponivelCenario >(
-				fixacao.getHorarios( semanasLetivas ) );
+				fixacao.getHorarios( getInstituicaoEnsinoUser(), semanasLetivas ) );
 
 		removerList.removeAll( listSelecionados );
 		for ( HorarioDisponivelCenario o : removerList )
@@ -112,19 +130,26 @@ public class FixacoesServiceImpl extends RemoteServiceServlet implements Fixacoe
 	}
 
 	@Override
-	public void remove(List<FixacaoDTO> fixacaoDTOList) {
-		for(FixacaoDTO fixacaoDTO : fixacaoDTOList) {
-			Fixacao.find(fixacaoDTO.getId()).remove();
+	public void remove( List< FixacaoDTO > fixacaoDTOList )
+	{
+		for ( FixacaoDTO fixacaoDTO : fixacaoDTOList )
+		{
+			Fixacao.find( fixacaoDTO.getId(), getInstituicaoEnsinoUser() ).remove();
 		}
 	}
-	
+
 	@Override
 	public List< HorarioDisponivelCenarioDTO > getHorariosSelecionados( FixacaoDTO fixacaoDTO )
 	{
-		Fixacao fixacao = Fixacao.find( fixacaoDTO.getId() );
-		List< SemanaLetiva > semanasLetivas = SemanaLetiva.findAll();
+		Fixacao fixacao = Fixacao.find(
+			fixacaoDTO.getId(), getInstituicaoEnsinoUser() );
+
+		List< SemanaLetiva > semanasLetivas
+			= SemanaLetiva.findAll( getInstituicaoEnsinoUser() );
+
 		return ConvertBeans.toHorarioDisponivelCenarioDTO(
-			new ArrayList< HorarioDisponivelCenario >( fixacao.getHorarios( semanasLetivas ) ) );
+			new ArrayList< HorarioDisponivelCenario >(
+				fixacao.getHorarios( getInstituicaoEnsinoUser(), semanasLetivas ) ) );
 	}
 
 	@Override
@@ -137,7 +162,8 @@ public class FixacoesServiceImpl extends RemoteServiceServlet implements Fixacoe
 				new ArrayList< HorarioDisponivelCenarioDTO >() );
 		}
 
-		List< SemanaLetiva > semanasLetivas = SemanaLetiva.findAll();
+		List< SemanaLetiva > semanasLetivas
+			= SemanaLetiva.findAll( getInstituicaoEnsinoUser() );
 
 		List< HorarioDisponivelCenario > professorHorarios = null;
 		List< HorarioDisponivelCenario > disciplinaHorarios = null;
@@ -145,20 +171,26 @@ public class FixacoesServiceImpl extends RemoteServiceServlet implements Fixacoe
 
 		if ( professorDTO != null )
 		{
-			Professor professor = Professor.find( professorDTO.getId() );
-			professorHorarios = professor.getHorarios( semanasLetivas );
+			Professor professor = Professor.find( professorDTO.getId(), getInstituicaoEnsinoUser() );
+			professorHorarios = professor.getHorarios( getInstituicaoEnsinoUser(), semanasLetivas );
 		}
 
 		if ( disciplinaDTO != null )
 		{
-			Disciplina disciplina = Disciplina.find( disciplinaDTO.getId() );
-			disciplinaHorarios = disciplina.getHorarios( semanasLetivas );
+			Disciplina disciplina = Disciplina.find(
+				disciplinaDTO.getId(), getInstituicaoEnsinoUser() );
+
+			if ( disciplina != null )
+			{
+				disciplinaHorarios = disciplina.getHorarios(
+					getInstituicaoEnsinoUser(), semanasLetivas );
+			}
 		}
 
 		if ( salaDTO != null )
 		{
-			Sala sala = Sala.find( salaDTO.getId() );
-			salaHorarios = sala.getHorarios( semanasLetivas );
+			Sala sala = Sala.find( salaDTO.getId(), getInstituicaoEnsinoUser() );
+			salaHorarios = sala.getHorarios( getInstituicaoEnsinoUser(), semanasLetivas );
 		}
 
 		List< HorarioDisponivelCenario > list = intercessaoHorarios(

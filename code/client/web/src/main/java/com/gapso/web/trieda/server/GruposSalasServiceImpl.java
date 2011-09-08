@@ -21,27 +21,29 @@ import com.gapso.web.trieda.shared.dtos.GrupoSalaDTO;
 import com.gapso.web.trieda.shared.dtos.SalaDTO;
 import com.gapso.web.trieda.shared.dtos.UnidadeDTO;
 import com.gapso.web.trieda.shared.services.GruposSalasService;
-import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
-/**
- * The server side implementation of the RPC service.
- */
 @Transactional
-public class GruposSalasServiceImpl extends RemoteServiceServlet implements
-		GruposSalasService {
-
+public class GruposSalasServiceImpl
+	extends RemoteService implements GruposSalasService
+{
 	private static final long serialVersionUID = 5250776996542788849L;
 
 	@Override
-	public ListLoadResult<GrupoSalaDTO> getListByUnidade(UnidadeDTO unidadeDTO) {
-		Unidade unidade = Unidade.find(unidadeDTO.getId());
-		Set<GrupoSala> gruposSalas = unidade.getGruposSalas();
-		List<GrupoSalaDTO> gruposSalasDTO = new ArrayList<GrupoSalaDTO>(
-				gruposSalas.size());
-		for (GrupoSala gs : gruposSalas) {
-			gruposSalasDTO.add(ConvertBeans.toGrupoSalaDTO(gs));
+	public ListLoadResult< GrupoSalaDTO > getListByUnidade( UnidadeDTO unidadeDTO )
+	{
+		Unidade unidade = Unidade.find(
+			unidadeDTO.getId(), getInstituicaoEnsinoUser() );
+
+		Set< GrupoSala > gruposSalas = unidade.getGruposSalas();
+		List< GrupoSalaDTO > gruposSalasDTO
+			= new ArrayList<GrupoSalaDTO>( gruposSalas.size() );
+
+		for ( GrupoSala gs : gruposSalas )
+		{
+			gruposSalasDTO.add( ConvertBeans.toGrupoSalaDTO( gs ) );
 		}
-		return new BaseListLoadResult<GrupoSalaDTO>(gruposSalasDTO);
+
+		return new BaseListLoadResult< GrupoSalaDTO >( gruposSalasDTO );
 	}
 
 	@Override
@@ -51,22 +53,33 @@ public class GruposSalasServiceImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public GrupoSalaDTO getGrupoSala(Long id) {
-		return ConvertBeans.toGrupoSalaDTO(GrupoSala.find(id));
+	public GrupoSalaDTO getGrupoSala( Long id )
+	{
+		return ConvertBeans.toGrupoSalaDTO(
+			GrupoSala.find( id, getInstituicaoEnsinoUser() ) );
 	}
 
 	@Override
-	public GrupoSalaDTO save(GrupoSalaDTO grupoSalaDTO) {
-		GrupoSala grupoSala = ConvertBeans.toGrupoSala(grupoSalaDTO);
-		if (grupoSala.getId() != null && grupoSala.getId() > 0) {
-			grupoSala = GrupoSala.find(grupoSalaDTO.getId());
-			grupoSala.setCodigo(grupoSalaDTO.getCodigo());
-			grupoSala.setNome(grupoSalaDTO.getNome());
+	public GrupoSalaDTO save( GrupoSalaDTO grupoSalaDTO )
+	{
+		GrupoSala grupoSala = ConvertBeans.toGrupoSala( grupoSalaDTO );
+
+		if ( grupoSala.getId() != null && grupoSala.getId() > 0 )
+		{
+			grupoSala = GrupoSala.find(
+				grupoSalaDTO.getId(), getInstituicaoEnsinoUser() );
+
+			grupoSala.setCodigo( grupoSalaDTO.getCodigo() );
+			grupoSala.setNome( grupoSalaDTO.getNome() );
+
 			grupoSala.merge();
-		} else {
+		}
+		else
+		{
 			grupoSala.persist();
 		}
-		return ConvertBeans.toGrupoSalaDTO(grupoSala);
+
+		return ConvertBeans.toGrupoSalaDTO( grupoSala );
 	}
 
 	@Override
@@ -77,15 +90,18 @@ public class GruposSalasServiceImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public ListLoadResult<SalaDTO> getSalas(GrupoSalaDTO grupoSalaDTO) {
-		GrupoSala grupoSala = GrupoSala.find(grupoSalaDTO.getId());
+	public ListLoadResult< SalaDTO > getSalas( GrupoSalaDTO grupoSalaDTO )
+	{
+		GrupoSala grupoSala = GrupoSala.find(
+			grupoSalaDTO.getId(), getInstituicaoEnsinoUser() );
 
-		List<SalaDTO> list = new ArrayList<SalaDTO>();
-		for (Sala sala : grupoSala.getSalas()) {
-			list.add(ConvertBeans.toSalaDTO(sala));
+		List< SalaDTO > list = new ArrayList< SalaDTO >();
+		for ( Sala sala : grupoSala.getSalas() )
+		{
+			list.add( ConvertBeans.toSalaDTO( sala ) );
 		}
 
-		return new BaseListLoadResult<SalaDTO>(list);
+		return new BaseListLoadResult< SalaDTO >( list );
 	}
 
 	@Override
@@ -137,26 +153,36 @@ public class GruposSalasServiceImpl extends RemoteServiceServlet implements
 		if (unidadeDTO != null) {
 			unidade = ConvertBeans.toUnidade(unidadeDTO);
 		}
-		List<GrupoSala> listGruposSalas = GrupoSala.findBy(nome, codigo,
-				unidade, config.getOffset(), config.getLimit(), orderBy);
-		for (GrupoSala grupoSala : listGruposSalas) {
+
+		List< GrupoSala > listGruposSalas = GrupoSala.findBy(
+			getInstituicaoEnsinoUser(), nome, codigo, unidade,
+			config.getOffset(), config.getLimit(), orderBy );
+
+		for ( GrupoSala grupoSala : listGruposSalas )
+		{
 			String salasString = "";
-			Set<Sala> salas = grupoSala.getSalas();
-			for (Sala sala : salas) {
+			Set< Sala > salas = grupoSala.getSalas();
+
+			for ( Sala sala : salas )
+			{
 				salasString += sala.getCodigo() + " (Num. " + sala.getNumero()
-						+ " | Cap." + sala.getCapacidade() + "), ";
+					+ " | Cap." + sala.getCapacidade() + "), ";
 			}
-			GrupoSalaDTO gsDTO = ConvertBeans.toGrupoSalaDTO(grupoSala);
-			gsDTO.setSalasString(salasString);
-			gsDTO.setCampusString(grupoSala.getUnidade().getCampus()
-					.getCodigo());
-			list.add(gsDTO);
+
+			GrupoSalaDTO gsDTO = ConvertBeans.toGrupoSalaDTO( grupoSala );
+			gsDTO.setSalasString( salasString );
+			gsDTO.setCampusString( grupoSala.getUnidade().getCampus().getCodigo() );
+
+			list.add( gsDTO );
 		}
-		BasePagingLoadResult<GrupoSalaDTO> result = new BasePagingLoadResult<GrupoSalaDTO>(
-				list);
-		result.setOffset(config.getOffset());
-		result.setTotalLength(GrupoSala.count(nome, codigo, unidade));
+
+		BasePagingLoadResult< GrupoSalaDTO > result
+			= new BasePagingLoadResult< GrupoSalaDTO >( list );
+
+		result.setOffset( config.getOffset() );
+		result.setTotalLength( GrupoSala.count(
+			getInstituicaoEnsinoUser(), nome, codigo, unidade ) );
+
 		return result;
 	}
-
 }

@@ -49,13 +49,9 @@ import com.gapso.web.trieda.shared.dtos.TreeNodeDTO;
 import com.gapso.web.trieda.shared.dtos.TurnoDTO;
 import com.gapso.web.trieda.shared.services.CampiService;
 import com.gapso.web.trieda.shared.util.TriedaUtil;
-import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
-/**
- * The server side implementation of the RPC service.
- */
 @Transactional
-public class CampiServiceImpl extends RemoteServiceServlet
+public class CampiServiceImpl extends RemoteService
 	implements CampiService
 {
 	private static final long serialVersionUID = 5250776996542788849L;
@@ -68,19 +64,39 @@ public class CampiServiceImpl extends RemoteServiceServlet
 			return null;
 		}
 
-		return ConvertBeans.toCampusDTO( Campus.find( id ) );
+		Campus campus = Campus.find(
+			id, this.getInstituicaoEnsinoUser() );
+
+		if ( campus == null )
+		{
+			return null;
+		}
+
+		return ConvertBeans.toCampusDTO( campus );
 	}
 
 	@Override
 	public PagingLoadResult< HorarioDisponivelCenarioDTO > getHorariosDisponiveis(
 		CampusDTO campusDTO, SemanaLetivaDTO semanaLetivaDTO )
 	{
-		Campus campus = Campus.find( campusDTO.getId() );
+		Campus campus = Campus.find( campusDTO.getId(), this.getInstituicaoEnsinoUser() );
 		List< SemanaLetiva > semanasLetivas = new ArrayList< SemanaLetiva >(
-			SemanaLetiva.getByOficial( campus ) );
+			SemanaLetiva.getByOficial( getInstituicaoEnsinoUser(), campus ) );
 
-		List< HorarioDisponivelCenario > list = new ArrayList< HorarioDisponivelCenario>(
-			Campus.find( campusDTO.getId() ).getHorarios( semanasLetivas ) );
+		List< HorarioDisponivelCenario > list = new ArrayList< HorarioDisponivelCenario>();
+		
+		Campus c = Campus.find( campusDTO.getId(), this.getInstituicaoEnsinoUser() );
+
+		if ( c != null )
+		{
+			List< HorarioDisponivelCenario > listHorarios
+				= c.getHorarios( this.getInstituicaoEnsinoUser(), semanasLetivas ); 
+			
+			if ( listHorarios != null )
+			{
+				list.addAll( listHorarios );
+			}
+		}
 
 		List< HorarioDisponivelCenarioDTO > listDTO
 			= ConvertBeans.toHorarioDisponivelCenarioDTO( list );
@@ -147,21 +163,24 @@ public class CampiServiceImpl extends RemoteServiceServlet
 		List<HorarioDisponivelCenario> listSelecionados
 			= ConvertBeans.toHorarioDisponivelCenario( listDTO );
 
-		Campus campus = Campus.find( campusDTO.getId() );
-		List< SemanaLetiva > semanasLetivas = new ArrayList< SemanaLetiva >(
-			SemanaLetiva.getByOficial( campus ) );
+		Campus campus = Campus.find( campusDTO.getId(), this.getInstituicaoEnsinoUser() );
 
-		List< Unidade > unidades = Unidade.findByCampus( campus );
+		List< SemanaLetiva > semanasLetivas = new ArrayList< SemanaLetiva >(
+			SemanaLetiva.getByOficial( getInstituicaoEnsinoUser(), campus ) );
+
+		List< Unidade > unidades = Unidade.findByCampus(
+			getInstituicaoEnsinoUser(), campus );
+
 		List< Sala > salas = new ArrayList< Sala >();
 
 		for ( Unidade unidade : unidades )
 		{
-			salas.addAll( Sala.findByUnidade( unidade ) );
+			salas.addAll( Sala.findByUnidade( getInstituicaoEnsinoUser(), unidade ) );
 		}
 
 		List< HorarioDisponivelCenario > removerList
 			= new ArrayList< HorarioDisponivelCenario >(
-				campus.getHorarios( semanasLetivas ) );
+				campus.getHorarios( this.getInstituicaoEnsinoUser(), semanasLetivas ) );
 
 		removerList.removeAll( listSelecionados );
 		for ( HorarioDisponivelCenario o : removerList )
@@ -175,7 +194,9 @@ public class CampiServiceImpl extends RemoteServiceServlet
 		List< HorarioDisponivelCenario > adicionarList
 			= new ArrayList< HorarioDisponivelCenario >( listSelecionados );
 
-		adicionarList.removeAll( campus.getHorarios( semanasLetivas ) );
+		adicionarList.removeAll( campus.getHorarios(
+			this.getInstituicaoEnsinoUser(), semanasLetivas ) );
+
 		for ( HorarioDisponivelCenario o : adicionarList )
 		{
 			o.getCampi().add( campus );
@@ -189,9 +210,12 @@ public class CampiServiceImpl extends RemoteServiceServlet
 	public ListLoadResult<CampusDTO> getListByCurriculo(
 		CurriculoDTO curriculoDTO )
 	{
-		Curriculo curriculo = Curriculo.find( curriculoDTO.getId() );
+		Curriculo curriculo = Curriculo.find(
+			curriculoDTO.getId(), getInstituicaoEnsinoUser() );
+
 		List< CampusDTO > campiDTO = new ArrayList< CampusDTO >();
-		List< Campus > campi = Campus.findByCurriculo( curriculo );
+		List< Campus > campi = Campus.findByCurriculo(
+			this.getInstituicaoEnsinoUser(), curriculo );
 
 		for ( Campus c : campi )
 		{
@@ -204,7 +228,7 @@ public class CampiServiceImpl extends RemoteServiceServlet
 	public ListLoadResult< CampusDTO > getListAll()
 	{
 		List< CampusDTO > campiDTO = new ArrayList< CampusDTO >();
-		List< Campus > campi = Campus.findAll();
+		List< Campus > campi = Campus.findAll( this.getInstituicaoEnsinoUser() );
 
 		for ( Campus c : campi )
 		{
@@ -226,39 +250,58 @@ public class CampiServiceImpl extends RemoteServiceServlet
 				orderBy = orderBy + " desc";
 			}
 		}
-		for (Campus campus : Campus.find(config.getOffset(), config.getLimit(),
-				orderBy)) {
-			list.add(ConvertBeans.toCampusDTO(campus));
+		
+		List< Campus > listDomains = Campus.find(
+			this.getInstituicaoEnsinoUser(),
+			config.getOffset(), config.getLimit(),	orderBy ); 
+
+		if ( listDomains != null )
+		{
+			for ( Campus campus : listDomains )
+			{
+				list.add( ConvertBeans.toCampusDTO( campus ) );
+			}
 		}
-		BasePagingLoadResult<CampusDTO> result = new BasePagingLoadResult<CampusDTO>(
-				list);
-		result.setOffset(config.getOffset());
-		result.setTotalLength(Campus.count());
+
+		BasePagingLoadResult< CampusDTO > result
+			= new BasePagingLoadResult< CampusDTO >( list );
+
+		result.setOffset( config.getOffset() );
+		result.setTotalLength( Campus.count( this.getInstituicaoEnsinoUser() ) );
+
 		return result;
 	}
 
 	@Override
-	public ListLoadResult<CampusDTO> getList(BasePagingLoadConfig loadConfig) {
-		CenarioDTO cenarioDTO = ConvertBeans.toCenarioDTO(Cenario
-				.findMasterData());
+	public ListLoadResult< CampusDTO > getList( BasePagingLoadConfig loadConfig )
+	{
+		CenarioDTO cenarioDTO = ConvertBeans.toCenarioDTO(
+			Cenario.findMasterData( this.getInstituicaoEnsinoUser() ) );
 
 		return getBuscaList(cenarioDTO, null, loadConfig.get("query")
 				.toString(), null, null, null, loadConfig);
 	}
 
 	@Override
-	public PagingLoadResult<CampusDTO> getBuscaList(CenarioDTO cenarioDTO,
-			String nome, String codigo, String estadoString, String municipio,
-			String bairro, PagingLoadConfig config) {
-		Cenario cenario = Cenario.find(cenarioDTO.getId());
+	public PagingLoadResult< CampusDTO > getBuscaList( CenarioDTO cenarioDTO,
+		String nome, String codigo, String estadoString, String municipio,
+		String bairro, PagingLoadConfig config )
+	{
+		Cenario cenario = Cenario.find(
+			cenarioDTO.getId(), this.getInstituicaoEnsinoUser() );
 
-		List<CampusDTO> list = new ArrayList<CampusDTO>();
+		List< CampusDTO > list = new ArrayList< CampusDTO >();
 		String orderBy = config.getSortField();
-		if (orderBy != null) {
-			if (config.getSortDir() != null
-					&& config.getSortDir().equals(SortDir.DESC)) {
+
+		if ( orderBy != null )
+		{
+			if ( config.getSortDir() != null
+				&& config.getSortDir().equals( SortDir.DESC ) )
+			{
 				orderBy = orderBy + " asc";
-			} else {
+			}
+			else
+			{
 				orderBy = orderBy + " desc";
 			}
 		}
@@ -273,30 +316,39 @@ public class CampiServiceImpl extends RemoteServiceServlet
 			}
 		}
 
-		List<Campus> campi = Campus.findBy(cenario, nome, codigo, estadoDomain,
-				municipio, bairro, config.getOffset(), config.getLimit(),
-				orderBy);
+		List< Campus > campi = Campus.findBy(
+			this.getInstituicaoEnsinoUser(), cenario, nome, codigo, estadoDomain,
+			municipio, bairro, config.getOffset(), config.getLimit(), orderBy );
 
-		for (Campus campus : campi) {
-			list.add(ConvertBeans.toCampusDTO(campus));
+		for ( Campus campus : campi )
+		{
+			list.add( ConvertBeans.toCampusDTO( campus ) );
 		}
 
-		BasePagingLoadResult<CampusDTO> result = new BasePagingLoadResult<CampusDTO>(
-				list);
-		result.setOffset(config.getOffset());
-		result.setTotalLength(Campus.count(cenario, nome, codigo, estadoDomain,
-				municipio, bairro));
+		BasePagingLoadResult< CampusDTO > result
+			= new BasePagingLoadResult< CampusDTO >( list );
+
+		result.setOffset( config.getOffset() );
+		result.setTotalLength( Campus.count(
+			this.getInstituicaoEnsinoUser(), cenario,
+			nome, codigo, estadoDomain, municipio, bairro ) );
 
 		return result;
 	}
 
 	@Override
-	public ListLoadResult<CampusDTO> getList() {
-		List<CampusDTO> list = new ArrayList<CampusDTO>();
-		for (Campus campus : Campus.findAll()) {
-			list.add(ConvertBeans.toCampusDTO(campus));
+	public ListLoadResult< CampusDTO > getList()
+	{
+		List< CampusDTO > list = new ArrayList< CampusDTO >();
+		List< Campus > listDomains =  Campus.findAll(
+			this.getInstituicaoEnsinoUser() );
+
+		for ( Campus campus : listDomains )
+		{
+			list.add( ConvertBeans.toCampusDTO( campus ) );
 		}
-		return new BaseListLoadResult<CampusDTO>(list);
+
+		return new BaseListLoadResult< CampusDTO >( list );
 	}
 
 	@Override
@@ -317,35 +369,55 @@ public class CampiServiceImpl extends RemoteServiceServlet
 	}
 
 	@Override
-	public List<DeslocamentoCampusDTO> getDeslocamentos() {
-		List<DeslocamentoCampusDTO> list = new ArrayList<DeslocamentoCampusDTO>();
-		List<Campus> listCampi = Campus.findAll();
-		for (Campus unidade : listCampi) {
-			list.add(ConvertBeans.toDeslocamentoCampusDTO(unidade, listCampi));
+	public List<DeslocamentoCampusDTO> getDeslocamentos()
+	{
+		List< DeslocamentoCampusDTO > list
+			= new ArrayList< DeslocamentoCampusDTO >();
+
+		List< Campus > listCampi
+			= Campus.findAll( this.getInstituicaoEnsinoUser() );
+
+		for ( Campus unidade : listCampi )
+		{
+			list.add( ConvertBeans.toDeslocamentoCampusDTO( unidade, listCampi ) );
 		}
-		Collections.sort(list, new Comparator<DeslocamentoCampusDTO>() {
+
+		Collections.sort(list, new Comparator< DeslocamentoCampusDTO >()
+		{
 			@Override
-			public int compare(DeslocamentoCampusDTO o1,
-					DeslocamentoCampusDTO o2) {
-				return o1.get("origemString").toString()
-						.compareToIgnoreCase(o2.get("origemString").toString());
+			public int compare( DeslocamentoCampusDTO o1,
+				DeslocamentoCampusDTO o2 )
+			{
+				return o1.get( "origemString" ).toString()
+					.compareToIgnoreCase( o2.get( "origemString" ).toString() );
 			}
 		});
+
 		return list;
 	}
 
 	@Override
-	public void saveDeslocamento(CenarioDTO cenarioDTO,
-			List<DeslocamentoCampusDTO> list) {
-		List<DeslocamentoCampus> deslocamentos = DeslocamentoCampus
-				.findAllByCampus(Cenario.find(cenarioDTO.getId()));
-		for (DeslocamentoCampus deslocamento : deslocamentos) {
+	public void saveDeslocamento( CenarioDTO cenarioDTO,
+		List< DeslocamentoCampusDTO > list )
+	{
+		Cenario cenario = Cenario.find(
+			cenarioDTO.getId(), this.getInstituicaoEnsinoUser() );
+
+		List< DeslocamentoCampus > deslocamentos = DeslocamentoCampus.findAllByCampus(
+			this.getInstituicaoEnsinoUser(), cenario );
+
+		for ( DeslocamentoCampus deslocamento : deslocamentos )
+		{
 			deslocamento.remove();
 		}
-		for (DeslocamentoCampusDTO deslocamentoCampusDTO : list) {
-			List<DeslocamentoCampus> deslCamList = ConvertBeans
-					.toDeslocamentoCampus(deslocamentoCampusDTO);
-			for (DeslocamentoCampus desl : deslCamList) {
+
+		for ( DeslocamentoCampusDTO deslocamentoCampusDTO : list )
+		{
+			List< DeslocamentoCampus > deslCamList
+				= ConvertBeans.toDeslocamentoCampus( deslocamentoCampusDTO );
+
+			for ( DeslocamentoCampus desl : deslCamList )
+			{
 				desl.persist();
 			}
 		}
@@ -359,8 +431,12 @@ public class CampiServiceImpl extends RemoteServiceServlet
 
 		if ( currentNode == null )
 		{
-			Cenario cenario = Cenario.find( cenarioDTO.getId() );
-			List< Campus > campi = new ArrayList< Campus >( cenario.getCampi() );
+			Cenario cenario = Cenario.find(
+				cenarioDTO.getId(), this.getInstituicaoEnsinoUser() );
+
+			List< Campus > campi
+				= new ArrayList< Campus >( cenario.getCampi() );
+
 			Collections.sort( campi );
 
 			for ( Campus campus : campi )
@@ -373,7 +449,9 @@ public class CampiServiceImpl extends RemoteServiceServlet
 		}
 		else
 		{
-			List< AtendimentoTatico > listTatico = AtendimentoTatico.findAll();
+			List< AtendimentoTatico > listTatico
+				= AtendimentoTatico.findAll( getInstituicaoEnsinoUser() );
+
 			boolean tatico = ( listTatico == null ? false : listTatico.size() > 0 );
 
 			if ( tatico )
@@ -390,111 +468,121 @@ public class CampiServiceImpl extends RemoteServiceServlet
 	}
 
 	private List< TreeNodeDTO > getResumosTatico(
-			CenarioDTO cenarioDTO, TreeNodeDTO currentNode )
+		CenarioDTO cenarioDTO, TreeNodeDTO currentNode )
 	{
 		List< TreeNodeDTO > list = new ArrayList< TreeNodeDTO >();
 
 		AbstractDTO< ? > contentCurrentNode = currentNode.getContent();
-		Campus campus = Campus.find( ( (CampusDTO) contentCurrentNode ).getId() );
+
+		Campus campus = Campus.find( ( (CampusDTO) contentCurrentNode ).getId(),
+			this.getInstituicaoEnsinoUser() );
+
 		Double custoCredito = ( ( campus.getValorCredito() != null ) ?
 			campus.getValorCredito() : 0.0 );
 
-		Integer qtdTurma = AtendimentoTatico.countTurma( campus );
-		List< Demanda > demandas = Demanda.findAllByCampus( campus );
+		Integer qtdTurma = AtendimentoTatico.countTurma(
+			getInstituicaoEnsinoUser(), campus );
+
+		List< Demanda > demandas = Demanda.findAllByCampus(
+			getInstituicaoEnsinoUser(), campus );
 
 		Integer qtdAlunosAtendidos = 0;
 		Integer qtdAlunosNaoAtendidos = 0;
 
 		Map< Demanda, Integer > qtdAlunosNaoAtendidosDemandaMap
 			= new HashMap< Demanda, Integer >();
-		for ( Demanda demanda : demandas )
+
+		if ( demandas != null && demandas.size() > 0 )
 		{
-			List< AtendimentoTatico > atendimentos
-				= AtendimentoTatico.findAllByDemanda( demanda );
-
-			int demandaAlunosCreditosT
-				= ( demanda.getDisciplina().getCreditosTeorico() * demanda.getQuantidade() );
-
-			int demandaAlunosCreditosP
-				= ( demanda.getDisciplina().getCreditosPratico() * demanda.getQuantidade() );
-
-			int demandaAlunosCreditosNeutros = ( demandaAlunosCreditosT + demandaAlunosCreditosP );
-
-			for ( AtendimentoTatico atendimento : atendimentos )
+			for ( Demanda demanda : demandas )
 			{
-				demandaAlunosCreditosT -= ( atendimento.getCreditosTeorico()
-					* atendimento.getQuantidadeAlunos() );
-
-				demandaAlunosCreditosP -= ( atendimento.getCreditosPratico()
-					* atendimento.getQuantidadeAlunos() );
-
-				demandaAlunosCreditosNeutros -= ( atendimento.getTotalCreditos()
-					* atendimento.getQuantidadeAlunos() );
-			}
-
-			int qtdAlunosNaoAtendidosDemanda = 0;
-
-			if ( atendimentos.isEmpty() )
-			{
-				qtdAlunosNaoAtendidos += demanda.getQuantidade();
-				qtdAlunosNaoAtendidosDemanda = demanda.getQuantidade();
-			}
-			else
-			{
-				if ( ( demandaAlunosCreditosP > 0 )
-					&& !demanda.getDisciplina().getLaboratorio() )
+				List< AtendimentoTatico > atendimentos
+					= AtendimentoTatico.findAllByDemanda( getInstituicaoEnsinoUser(), demanda );
+		
+				int demandaAlunosCreditosT
+					= ( demanda.getDisciplina().getCreditosTeorico() * demanda.getQuantidade() );
+		
+				int demandaAlunosCreditosP
+					= ( demanda.getDisciplina().getCreditosPratico() * demanda.getQuantidade() );
+		
+				int demandaAlunosCreditosNeutros = ( demandaAlunosCreditosT + demandaAlunosCreditosP );
+		
+				for ( AtendimentoTatico atendimento : atendimentos )
 				{
-					if ( demandaAlunosCreditosNeutros > 0 )
-					{
-						qtdAlunosNaoAtendidos += demandaAlunosCreditosNeutros
-								/ demanda.getDisciplina().getTotalCreditos();
-
-						qtdAlunosNaoAtendidosDemanda = demandaAlunosCreditosNeutros
-								/ demanda.getDisciplina().getTotalCreditos();
-					}
-					else if ( demandaAlunosCreditosNeutros < 0 )
-					{
-
-					}
+					demandaAlunosCreditosT -= ( atendimento.getCreditosTeorico()
+						* atendimento.getQuantidadeAlunos() );
+		
+					demandaAlunosCreditosP -= ( atendimento.getCreditosPratico()
+						* atendimento.getQuantidadeAlunos() );
+		
+					demandaAlunosCreditosNeutros -= ( atendimento.getTotalCreditos()
+						* atendimento.getQuantidadeAlunos() );
+				}
+		
+				int qtdAlunosNaoAtendidosDemanda = 0;
+		
+				if ( atendimentos.isEmpty() )
+				{
+					qtdAlunosNaoAtendidos += demanda.getQuantidade();
+					qtdAlunosNaoAtendidosDemanda = demanda.getQuantidade();
 				}
 				else
 				{
-					if ( demandaAlunosCreditosT > 0 )
+					if ( ( demandaAlunosCreditosP > 0 )
+						&& !demanda.getDisciplina().getLaboratorio() )
 					{
-						qtdAlunosNaoAtendidos += demandaAlunosCreditosT
-								/ demanda.getDisciplina().getCreditosTeorico();
-
-						qtdAlunosNaoAtendidosDemanda = demandaAlunosCreditosT
-								/ demanda.getDisciplina().getCreditosTeorico();
+						if ( demandaAlunosCreditosNeutros > 0 )
+						{
+							qtdAlunosNaoAtendidos += demandaAlunosCreditosNeutros
+									/ demanda.getDisciplina().getTotalCreditos();
+		
+							qtdAlunosNaoAtendidosDemanda = demandaAlunosCreditosNeutros
+									/ demanda.getDisciplina().getTotalCreditos();
+						}
+						else if ( demandaAlunosCreditosNeutros < 0 )
+						{
+		
+						}
 					}
-					else if ( demandaAlunosCreditosT < 0 )
+					else
 					{
-
-					}
-
-					if ( demandaAlunosCreditosP > 0 )
-					{
-						qtdAlunosNaoAtendidos += demandaAlunosCreditosP
-								/ demanda.getDisciplina().getCreditosPratico();
-
-						qtdAlunosNaoAtendidosDemanda = demandaAlunosCreditosP
-								/ demanda.getDisciplina().getCreditosPratico();
-					}
-					else if ( demandaAlunosCreditosT < 0 )
-					{
-
+						if ( demandaAlunosCreditosT > 0 )
+						{
+							qtdAlunosNaoAtendidos += demandaAlunosCreditosT
+									/ demanda.getDisciplina().getCreditosTeorico();
+		
+							qtdAlunosNaoAtendidosDemanda = demandaAlunosCreditosT
+									/ demanda.getDisciplina().getCreditosTeorico();
+						}
+						else if ( demandaAlunosCreditosT < 0 )
+						{
+		
+						}
+		
+						if ( demandaAlunosCreditosP > 0 )
+						{
+							qtdAlunosNaoAtendidos += demandaAlunosCreditosP
+									/ demanda.getDisciplina().getCreditosPratico();
+		
+							qtdAlunosNaoAtendidosDemanda = demandaAlunosCreditosP
+									/ demanda.getDisciplina().getCreditosPratico();
+						}
+						else if ( demandaAlunosCreditosT < 0 )
+						{
+		
+						}
 					}
 				}
+		
+				qtdAlunosNaoAtendidosDemandaMap.put(
+					demanda, qtdAlunosNaoAtendidosDemanda );
 			}
-
-			qtdAlunosNaoAtendidosDemandaMap.put(
-				demanda, qtdAlunosNaoAtendidosDemanda );
 		}
 
-		qtdAlunosAtendidos = ( Demanda.sumDemanda( campus ) - qtdAlunosNaoAtendidos );
+		qtdAlunosAtendidos = ( Demanda.sumDemanda( getInstituicaoEnsinoUser(), campus ) - qtdAlunosNaoAtendidos );
 
 		List< AtendimentoTatico > atendimentoTaticoList
-			= AtendimentoTatico.findAllByCampus( campus );
+			= AtendimentoTatico.findAllByCampus( getInstituicaoEnsinoUser(), campus );
 
 		Set< Sala > salas = new HashSet< Sala >();
 		Set< Turno > turnos = new HashSet< Turno >();
@@ -577,17 +665,23 @@ public class CampiServiceImpl extends RemoteServiceServlet
 	}
 
 	private List< TreeNodeDTO > getResumosOperacional(
-			CenarioDTO cenarioDTO, TreeNodeDTO currentNode )
+		CenarioDTO cenarioDTO, TreeNodeDTO currentNode )
 	{
 		List< TreeNodeDTO > list = new ArrayList< TreeNodeDTO >();
 
 		AbstractDTO< ? > contentCurrentNode = currentNode.getContent();
-		Campus campus = Campus.find( ( (CampusDTO) contentCurrentNode ).getId() );
+
+		Campus campus = Campus.find( ( (CampusDTO) contentCurrentNode ).getId(),
+			this.getInstituicaoEnsinoUser() );
+
 		Double custoCredito = ( ( campus.getValorCredito() != null ) ?
 			campus.getValorCredito() : 0.0 );
 
-		Integer qtdTurma = AtendimentoOperacional.countTurma( campus );
-		List< Demanda > demandas = Demanda.findAllByCampus( campus );
+		Integer qtdTurma = AtendimentoOperacional.countTurma(
+			getInstituicaoEnsinoUser(), campus );
+
+		List< Demanda > demandas = Demanda.findAllByCampus(
+			getInstituicaoEnsinoUser(), campus );
 
 		Integer qtdAlunosAtendidos = 0;
 		Integer qtdAlunosNaoAtendidos = 0;
@@ -595,99 +689,102 @@ public class CampiServiceImpl extends RemoteServiceServlet
 		Map< Demanda, Integer > qtdAlunosNaoAtendidosDemandaMap
 			= new HashMap< Demanda, Integer >();
 
-		for ( Demanda demanda : demandas )
+		if ( demandas !=null && demandas.size() > 0 )
 		{
-			List< AtendimentoOperacional > atendimentos
-				= AtendimentoOperacional.findAllByDemanda( demanda );
-
-			int demandaAlunosCreditosT
-				= ( demanda.getDisciplina().getCreditosTeorico() * demanda.getQuantidade() );
-
-			int demandaAlunosCreditosP
-				= ( demanda.getDisciplina().getCreditosPratico() * demanda.getQuantidade() );
-
-			int demandaCredNeutros = ( demandaAlunosCreditosT + demandaAlunosCreditosP );
-
-			for ( AtendimentoOperacional atendimento : atendimentos )
+			for ( Demanda demanda : demandas )
 			{
-				Integer qtd = atendimento.getQuantidadeAlunos();
-				boolean creditosTeoricos = atendimento.getCreditoTeorico();
-
-				if ( creditosTeoricos )
+				List< AtendimentoOperacional > atendimentos
+					= AtendimentoOperacional.findAllByDemanda( getInstituicaoEnsinoUser(), demanda );
+	
+				int demandaAlunosCreditosT
+					= ( demanda.getDisciplina().getCreditosTeorico() * demanda.getQuantidade() );
+	
+				int demandaAlunosCreditosP
+					= ( demanda.getDisciplina().getCreditosPratico() * demanda.getQuantidade() );
+	
+				int demandaCredNeutros = ( demandaAlunosCreditosT + demandaAlunosCreditosP );
+	
+				for ( AtendimentoOperacional atendimento : atendimentos )
 				{
-					demandaAlunosCreditosT -= qtd;
+					Integer qtd = atendimento.getQuantidadeAlunos();
+					boolean creditosTeoricos = atendimento.getCreditoTeorico();
+	
+					if ( creditosTeoricos )
+					{
+						demandaAlunosCreditosT -= qtd;
+					}
+					else
+					{
+						demandaAlunosCreditosP -= qtd;
+					}
+	
+					demandaCredNeutros -= qtd;
+				}
+	
+				int qtdAlunosNaoAtendidosDemanda = 0;
+	
+				if ( atendimentos.isEmpty() )
+				{
+					qtdAlunosNaoAtendidos += demanda.getQuantidade();
+					qtdAlunosNaoAtendidosDemanda = demanda.getQuantidade();
 				}
 				else
 				{
-					demandaAlunosCreditosP -= qtd;
-				}
-
-				demandaCredNeutros -= qtd;
-			}
-
-			int qtdAlunosNaoAtendidosDemanda = 0;
-
-			if ( atendimentos.isEmpty() )
-			{
-				qtdAlunosNaoAtendidos += demanda.getQuantidade();
-				qtdAlunosNaoAtendidosDemanda = demanda.getQuantidade();
-			}
-			else
-			{
-				if ( ( demandaAlunosCreditosP > 0 )
-					&& !demanda.getDisciplina().getLaboratorio() )
-				{
-					if ( demandaCredNeutros > 0 )
+					if ( ( demandaAlunosCreditosP > 0 )
+						&& !demanda.getDisciplina().getLaboratorio() )
 					{
-						qtdAlunosNaoAtendidos += demandaCredNeutros
-								/ demanda.getDisciplina().getTotalCreditos();
-
-						qtdAlunosNaoAtendidosDemanda = demandaCredNeutros
-								/ demanda.getDisciplina().getTotalCreditos();
+						if ( demandaCredNeutros > 0 )
+						{
+							qtdAlunosNaoAtendidos += demandaCredNeutros
+									/ demanda.getDisciplina().getTotalCreditos();
+	
+							qtdAlunosNaoAtendidosDemanda = demandaCredNeutros
+									/ demanda.getDisciplina().getTotalCreditos();
+						}
+						else if ( demandaCredNeutros < 0 )
+						{
+	
+						}
 					}
-					else if ( demandaCredNeutros < 0 )
+					else
 					{
-
-					}
-				}
-				else
-				{
-					if ( demandaAlunosCreditosT > 0 )
-					{
-						qtdAlunosNaoAtendidos += demandaAlunosCreditosT
-								/ demanda.getDisciplina().getCreditosTeorico();
-
-						qtdAlunosNaoAtendidosDemanda = demandaAlunosCreditosT
-								/ demanda.getDisciplina().getCreditosTeorico();
-					}
-					else if ( demandaAlunosCreditosT < 0 )
-					{
-
-					}
-
-					if ( demandaAlunosCreditosP > 0 )
-					{
-						qtdAlunosNaoAtendidos += demandaAlunosCreditosP
-								/ demanda.getDisciplina().getCreditosPratico();
-
-						qtdAlunosNaoAtendidosDemanda = demandaAlunosCreditosP
-								/ demanda.getDisciplina().getCreditosPratico();
-					}
-					else if ( demandaAlunosCreditosT < 0 )
-					{
-
+						if ( demandaAlunosCreditosT > 0 )
+						{
+							qtdAlunosNaoAtendidos += demandaAlunosCreditosT
+									/ demanda.getDisciplina().getCreditosTeorico();
+	
+							qtdAlunosNaoAtendidosDemanda = demandaAlunosCreditosT
+									/ demanda.getDisciplina().getCreditosTeorico();
+						}
+						else if ( demandaAlunosCreditosT < 0 )
+						{
+	
+						}
+	
+						if ( demandaAlunosCreditosP > 0 )
+						{
+							qtdAlunosNaoAtendidos += demandaAlunosCreditosP
+									/ demanda.getDisciplina().getCreditosPratico();
+	
+							qtdAlunosNaoAtendidosDemanda = demandaAlunosCreditosP
+									/ demanda.getDisciplina().getCreditosPratico();
+						}
+						else if ( demandaAlunosCreditosT < 0 )
+						{
+	
+						}
 					}
 				}
+	
+				qtdAlunosNaoAtendidosDemandaMap.put(
+					demanda, qtdAlunosNaoAtendidosDemanda );
 			}
-
-			qtdAlunosNaoAtendidosDemandaMap.put(
-				demanda, qtdAlunosNaoAtendidosDemanda );
 		}
 
-		qtdAlunosAtendidos = ( Demanda.sumDemanda( campus ) - qtdAlunosNaoAtendidos );
+		qtdAlunosAtendidos = ( Demanda.sumDemanda( getInstituicaoEnsinoUser(), campus ) - qtdAlunosNaoAtendidos );
 
 		List< AtendimentoOperacional > atendimentoOperacionalList
-			= AtendimentoOperacional.findAllByCampus( campus );
+			= AtendimentoOperacional.findAllByCampus( getInstituicaoEnsinoUser(), campus );
 
 		Set< Sala > salas = new HashSet< Sala >();
 		Set< Turno > turnos = new HashSet< Turno >();

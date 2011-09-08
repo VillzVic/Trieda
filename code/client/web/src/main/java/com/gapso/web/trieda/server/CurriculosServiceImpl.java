@@ -21,40 +21,53 @@ import com.gapso.web.trieda.shared.dtos.CurriculoDTO;
 import com.gapso.web.trieda.shared.dtos.CurriculoDisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.CursoDTO;
 import com.gapso.web.trieda.shared.services.CurriculosService;
-import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
-/**
- * The server side implementation of the RPC service.
- */
 @Transactional
-public class CurriculosServiceImpl extends RemoteServiceServlet implements CurriculosService {
-
+public class CurriculosServiceImpl
+	extends RemoteService implements CurriculosService
+{
 	private static final long serialVersionUID = 5250776996542788849L;
 
 	@Override
-	public CurriculoDTO getCurriculo(Long id) {
-		return ConvertBeans.toCurriculoDTO(Curriculo.find(id));
+	public CurriculoDTO getCurriculo( Long id )
+	{
+		return ConvertBeans.toCurriculoDTO(
+			Curriculo.find( id, getInstituicaoEnsinoUser() ) );
+	}
+
+	@Override
+	public ListLoadResult< CurriculoDTO > getListAll()
+	{
+		List< Curriculo > curriculos
+			= Curriculo.findAll( getInstituicaoEnsinoUser() );
+
+		List< CurriculoDTO > curriculosDTO
+			= new ArrayList<CurriculoDTO>( curriculos.size() );
+
+		for ( Curriculo curriculo : curriculos )
+		{
+			curriculosDTO.add(
+				ConvertBeans.toCurriculoDTO( curriculo ) );
+		}
+
+		return new BaseListLoadResult< CurriculoDTO >( curriculosDTO );
 	}
 	
 	@Override
-	public ListLoadResult<CurriculoDTO> getListAll() {
-		List<Curriculo> curriculos = Curriculo.findAll();
-		List<CurriculoDTO> curriculosDTO = new ArrayList<CurriculoDTO>(curriculos.size());
-		for(Curriculo curriculo : curriculos) {
-			curriculosDTO.add(ConvertBeans.toCurriculoDTO(curriculo));
+	public ListLoadResult< CurriculoDTO > getListByCurso( CursoDTO cursoDTO )
+	{
+		Curso curso = Curso.find( cursoDTO.getId(), getInstituicaoEnsinoUser() );
+
+		Set< Curriculo > curriculos = curso.getCurriculos();
+		List< CurriculoDTO > curriculosDTO
+			= new ArrayList< CurriculoDTO >( curriculos.size() );
+
+		for ( Curriculo curriculo : curriculos )
+		{
+			curriculosDTO.add( ConvertBeans.toCurriculoDTO( curriculo ) );
 		}
-		return new BaseListLoadResult<CurriculoDTO>(curriculosDTO);
-	}
-	
-	@Override
-	public ListLoadResult<CurriculoDTO> getListByCurso(CursoDTO cursoDTO) {
-		Curso curso = Curso.find(cursoDTO.getId());
-		Set<Curriculo> curriculos = curso.getCurriculos();
-		List<CurriculoDTO> curriculosDTO = new ArrayList<CurriculoDTO>(curriculos.size());
-		for(Curriculo curriculo : curriculos) {
-			curriculosDTO.add(ConvertBeans.toCurriculoDTO(curriculo));
-		}
-		return new BaseListLoadResult<CurriculoDTO>(curriculosDTO);
+
+		return new BaseListLoadResult< CurriculoDTO >( curriculosDTO );
 	}
 
 	@Override
@@ -64,26 +77,46 @@ public class CurriculosServiceImpl extends RemoteServiceServlet implements Curri
 	}
 	
 	@Override
-	public PagingLoadResult<CurriculoDTO> getBuscaList(CursoDTO cursoDTO, String codigo, String descricao, PagingLoadConfig config) {
-		List<CurriculoDTO> list = new ArrayList<CurriculoDTO>();
+	public PagingLoadResult< CurriculoDTO > getBuscaList( CursoDTO cursoDTO,
+		String codigo, String descricao, PagingLoadConfig config )
+	{
+		List< CurriculoDTO > list = new ArrayList< CurriculoDTO >();
 		String orderBy = config.getSortField();
-		if(orderBy != null) {
-			if(config.getSortDir() != null && config.getSortDir().equals(SortDir.DESC)) {
-				orderBy = orderBy + " asc";
-			} else {
-				orderBy = orderBy + " desc";
+
+		if ( orderBy != null )
+		{
+			if ( config.getSortDir() != null
+				&& config.getSortDir().equals( SortDir.DESC ) )
+			{
+				orderBy = ( orderBy + " asc" );
+			}
+			else
+			{
+				orderBy = ( orderBy + " desc" );
 			}
 		}
+
 		Curso curso = null;
-		if(cursoDTO != null) {
-			curso = ConvertBeans.toCurso(cursoDTO);
+		if ( cursoDTO != null )
+		{
+			curso = ConvertBeans.toCurso( cursoDTO );
 		}
-		for(Curriculo curriculo : Curriculo.findBy(curso, codigo, descricao, config.getOffset(), config.getLimit(), orderBy)) {
-			list.add(ConvertBeans.toCurriculoDTO(curriculo));
+
+		List< Curriculo > listCurriculos = Curriculo.findBy( getInstituicaoEnsinoUser(),
+			curso, codigo, descricao, config.getOffset(), config.getLimit(), orderBy );
+
+		for ( Curriculo curriculo : listCurriculos )
+		{
+			list.add( ConvertBeans.toCurriculoDTO( curriculo ) );
 		}
-		BasePagingLoadResult<CurriculoDTO> result = new BasePagingLoadResult<CurriculoDTO>(list);
-		result.setOffset(config.getOffset());
-		result.setTotalLength(Curriculo.count(curso, codigo, descricao));
+
+		BasePagingLoadResult< CurriculoDTO > result
+			= new BasePagingLoadResult< CurriculoDTO >( list );
+
+		result.setOffset( config.getOffset() );
+		result.setTotalLength( Curriculo.count(
+			getInstituicaoEnsinoUser(), curso, codigo, descricao ) );
+
 		return result;
 	}
 
@@ -110,27 +143,50 @@ public class CurriculosServiceImpl extends RemoteServiceServlet implements Curri
 	}
 	
 	@Override
-	public ListLoadResult<CurriculoDisciplinaDTO> getDisciplinasList(CurriculoDTO curriculoDTO) {
-		Curriculo curriculo = Curriculo.find(curriculoDTO.getId());
-		List<CurriculoDisciplinaDTO> listCurriculoDisciplinaDTO = new ArrayList<CurriculoDisciplinaDTO>();
-		Set<CurriculoDisciplina> listCurriculoDisciplina = curriculo.getDisciplinas();
-		for(CurriculoDisciplina cd : listCurriculoDisciplina) {
-			listCurriculoDisciplinaDTO.add(ConvertBeans.toCurriculoDisciplinaDTO(cd));
+	public ListLoadResult< CurriculoDisciplinaDTO > getDisciplinasList( CurriculoDTO curriculoDTO )
+	{
+		Curriculo curriculo = Curriculo.find(
+			curriculoDTO.getId(), getInstituicaoEnsinoUser() );
+
+		List< CurriculoDisciplinaDTO > listCurriculoDisciplinaDTO
+			= new ArrayList< CurriculoDisciplinaDTO >();
+
+		Set< CurriculoDisciplina > listCurriculoDisciplina
+			= curriculo.getDisciplinas();
+
+		for ( CurriculoDisciplina cd : listCurriculoDisciplina )
+		{
+			listCurriculoDisciplinaDTO.add( ConvertBeans.toCurriculoDisciplinaDTO( cd ) );
 		}
-		return new BaseListLoadResult<CurriculoDisciplinaDTO>(listCurriculoDisciplinaDTO);
+
+		return new BaseListLoadResult< CurriculoDisciplinaDTO >( listCurriculoDisciplinaDTO );
 	}
 	
 	@Override
-	public List<Integer> getPeriodos(CurriculoDTO curriculoDTO) {
-		Curriculo curriculo = Curriculo.find(curriculoDTO.getId());
-		return curriculo.getPeriodos();
+	public List< Integer > getPeriodos( CurriculoDTO curriculoDTO )
+	{
+		Curriculo curriculo = Curriculo.find(
+			curriculoDTO.getId(), getInstituicaoEnsinoUser() );
+
+		if ( curriculo == null )
+		{
+			return new ArrayList< Integer >();
+		}
+
+		return curriculo.getPeriodos( getInstituicaoEnsinoUser() );
 	}
 	
 	@Override
-	public void saveDisciplina(CurriculoDTO curriculoDTO, CurriculoDisciplinaDTO curriculoDisciplinaDTO) {
-		CurriculoDisciplina curriculoDisciplina = ConvertBeans.toCurriculoDisciplina(curriculoDisciplinaDTO);
-		Curriculo curriculo = Curriculo.find(curriculoDTO.getId());
-		curriculoDisciplina.setCurriculo(curriculo);
+	public void saveDisciplina( CurriculoDTO curriculoDTO,
+		CurriculoDisciplinaDTO curriculoDisciplinaDTO )
+	{
+		CurriculoDisciplina curriculoDisciplina
+			= ConvertBeans.toCurriculoDisciplina( curriculoDisciplinaDTO );
+
+		Curriculo curriculo = Curriculo.find(
+			curriculoDTO.getId(), getInstituicaoEnsinoUser() );
+
+		curriculoDisciplina.setCurriculo( curriculo );
 		curriculoDisciplina.persist();
 	}
 	

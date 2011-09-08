@@ -7,9 +7,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
-import java.util.Map.Entry;
 
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,46 +34,65 @@ import com.gapso.web.trieda.shared.dtos.SemanaLetivaDTO;
 import com.gapso.web.trieda.shared.dtos.UnidadeDTO;
 import com.gapso.web.trieda.shared.services.UnidadesService;
 import com.gapso.web.trieda.shared.util.view.TriedaException;
-import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
-/**
- * The server side implementation of the RPC service.
- */
 @Transactional
-public class UnidadesServiceImpl extends RemoteServiceServlet implements UnidadesService {
-
+public class UnidadesServiceImpl
+	extends RemoteService implements UnidadesService
+{
 	private static final long serialVersionUID = 5250776996542788849L;
 
 	@Override
-	public UnidadeDTO getUnidade(Long id) {
-		if(id == null) return null;
-		return ConvertBeans.toUnidadeDTO(Unidade.find(id));
+	public UnidadeDTO getUnidade( Long id )
+	{
+		if ( id == null )
+		{
+			return null;
+		}
+
+		return ConvertBeans.toUnidadeDTO(
+			Unidade.find( id, getInstituicaoEnsinoUser() ) );
 	}
 	
 	@Override
 	public PagingLoadResult< HorarioDisponivelCenarioDTO > getHorariosDisponiveis(
 		UnidadeDTO unidadeDTO, SemanaLetivaDTO semanaLetivaDTO )
 	{
-		List< SemanaLetiva > semanasLetivas = SemanaLetiva.findAll();
+		List< SemanaLetiva > semanasLetivas
+			= SemanaLetiva.findAll( getInstituicaoEnsinoUser() );
 
-		List< HorarioDisponivelCenario > list = new ArrayList< HorarioDisponivelCenario >(
-			Unidade.find( unidadeDTO.getId() ).getHorarios( semanasLetivas ) );
+		List< HorarioDisponivelCenario > list = new ArrayList< HorarioDisponivelCenario >();
+
+		Unidade unidade = Unidade.find(	unidadeDTO.getId(), getInstituicaoEnsinoUser() );
+
+		if ( unidade != null )
+		{
+			list.addAll( unidade.getHorarios(
+				getInstituicaoEnsinoUser(), semanasLetivas ) );
+		}
 
 		List< HorarioDisponivelCenarioDTO > listDTO
 			= ConvertBeans.toHorarioDisponivelCenarioDTO( list );
 
-		Map<String, List<HorarioDisponivelCenarioDTO>> horariosTurnos = new HashMap<String, List<HorarioDisponivelCenarioDTO>>();
-		for(HorarioDisponivelCenarioDTO o : listDTO) {
-			List<HorarioDisponivelCenarioDTO> horarios = horariosTurnos.get(o.getTurnoString());
-			if(horarios == null) {
-				horarios = new ArrayList<HorarioDisponivelCenarioDTO>();
-				horariosTurnos.put(o.getTurnoString(), horarios);
+		Map< String, List< HorarioDisponivelCenarioDTO > > horariosTurnos
+			= new HashMap< String, List< HorarioDisponivelCenarioDTO > >();
+
+		for ( HorarioDisponivelCenarioDTO o : listDTO )
+		{
+			List< HorarioDisponivelCenarioDTO > horarios
+				= horariosTurnos.get( o.getTurnoString() );
+
+			if ( horarios == null )
+			{
+				horarios = new ArrayList< HorarioDisponivelCenarioDTO >();
+				horariosTurnos.put( o.getTurnoString(), horarios );
 			}
-			horarios.add(o);
+
+			horarios.add( o );
 		}
-		
-		for(Entry<String, List<HorarioDisponivelCenarioDTO>> entry : horariosTurnos.entrySet()) {
-			Collections.sort(entry.getValue());
+
+		for ( Entry< String, List< HorarioDisponivelCenarioDTO > > entry : horariosTurnos.entrySet() )
+		{
+			Collections.sort( entry.getValue() );
 		}
 		
 		Map<Date, List<String>> horariosFinalTurnos = new TreeMap<Date, List<String>>();
@@ -98,18 +117,24 @@ public class UnidadesServiceImpl extends RemoteServiceServlet implements Unidade
 	}
 	
 	@Override
-	public void saveHorariosDisponiveis( UnidadeDTO unidadeDTO, List< HorarioDisponivelCenarioDTO > listDTO )
+	public void saveHorariosDisponiveis( UnidadeDTO unidadeDTO,
+		List< HorarioDisponivelCenarioDTO > listDTO )
 	{
 		List< HorarioDisponivelCenario > listSelecionados
 			= ConvertBeans.toHorarioDisponivelCenario( listDTO );
 
-		Unidade unidade = Unidade.find( unidadeDTO.getId() );
-		List< Sala > salas = Sala.findByUnidade( unidade );
-		List< SemanaLetiva > semanasLetivas = SemanaLetiva.findAll();
+		Unidade unidade = Unidade.find(
+			unidadeDTO.getId(), getInstituicaoEnsinoUser() );
+
+		List< Sala > salas = Sala.findByUnidade(
+			getInstituicaoEnsinoUser(), unidade );
+
+		List< SemanaLetiva > semanasLetivas
+			= SemanaLetiva.findAll( getInstituicaoEnsinoUser() );
 
 		List< HorarioDisponivelCenario > removerList
 			= new ArrayList< HorarioDisponivelCenario >(
-				unidade.getHorarios( semanasLetivas ) );
+				unidade.getHorarios( getInstituicaoEnsinoUser(), semanasLetivas ) );
 
 		removerList.removeAll( listSelecionados );
 		for ( HorarioDisponivelCenario o : removerList )
@@ -122,7 +147,9 @@ public class UnidadesServiceImpl extends RemoteServiceServlet implements Unidade
 		List< HorarioDisponivelCenario > adicionarList
 			= new ArrayList< HorarioDisponivelCenario >( listSelecionados );
 
-		adicionarList.removeAll( unidade.getHorarios( semanasLetivas ) );
+		adicionarList.removeAll( unidade.getHorarios(
+			getInstituicaoEnsinoUser(), semanasLetivas ) );
+
 		for ( HorarioDisponivelCenario o : adicionarList )
 		{
 			o.getUnidades().add( unidade );
@@ -132,14 +159,21 @@ public class UnidadesServiceImpl extends RemoteServiceServlet implements Unidade
 	}
 
 	@Override
-	public ListLoadResult<UnidadeDTO> getList(BasePagingLoadConfig loadConfig) {
-		Long campusID = loadConfig.get("campusId");
-		System.out.println("Buscando: "+ campusID);
+	public ListLoadResult< UnidadeDTO > getList(
+		BasePagingLoadConfig loadConfig )
+	{
+		Long campusID = loadConfig.get( "campusId" );
+		System.out.println( "Buscando: "+ campusID );
 		CampusDTO campusDTO = null;
-		if(campusID != null) {
-			campusDTO = ConvertBeans.toCampusDTO(Campus.find(campusID));
+
+		if ( campusID != null )
+		{
+			campusDTO = ConvertBeans.toCampusDTO(
+				Campus.find( campusID, this.getInstituicaoEnsinoUser() ) );
 		}
-		return getBuscaList(campusDTO, null, loadConfig.get("query").toString(), loadConfig);
+
+		return getBuscaList( campusDTO, null,
+			loadConfig.get( "query" ).toString(), loadConfig );
 	}
 	
 	@Override
@@ -157,35 +191,61 @@ public class UnidadesServiceImpl extends RemoteServiceServlet implements Unidade
 		if(campusDTO != null) {
 			campus = ConvertBeans.toCampus(campusDTO);
 		}
-		for(Unidade unidade : Unidade.findBy(campus, nome, codigo, config.getOffset(), config.getLimit(), orderBy)) {
-			UnidadeDTO unidadeDTO = ConvertBeans.toUnidadeDTO(unidade);
-			unidadeDTO.setCapSalas(Unidade.getCapacidadeMedia(unidade));
-			list.add(unidadeDTO);
+
+		List< Unidade > listUnidades = Unidade.findBy(
+			getInstituicaoEnsinoUser(), campus, nome,
+			codigo, config.getOffset(), config.getLimit(), orderBy );
+
+		for ( Unidade unidade : listUnidades )
+		{
+			UnidadeDTO unidadeDTO = ConvertBeans.toUnidadeDTO( unidade );
+
+			unidadeDTO.setCapSalas( Unidade.getCapacidadeMedia(
+				getInstituicaoEnsinoUser(), unidade ) );
+
+			list.add( unidadeDTO );
 		}
-		BasePagingLoadResult<UnidadeDTO> result = new BasePagingLoadResult<UnidadeDTO>(list);
-		result.setOffset(config.getOffset());
-		result.setTotalLength(Unidade.count(campus, nome, codigo));
+
+		BasePagingLoadResult< UnidadeDTO > result
+			= new BasePagingLoadResult< UnidadeDTO >( list );
+		result.setOffset( config.getOffset() );
+		result.setTotalLength( Unidade.count(
+			getInstituicaoEnsinoUser(), campus, nome, codigo ) );
+
 		return result;
 	}
 	
 	@Override
-	public ListLoadResult<UnidadeDTO> getListByCampus(CampusDTO campusDTO) {
-		List<UnidadeDTO> list = new ArrayList<UnidadeDTO>();
-		Campus campus = Campus.find(campusDTO.getId());
-		List<Unidade> unidades = Unidade.findByCampus(campus);
-		for(Unidade unidade : unidades) {
-			list.add(ConvertBeans.toUnidadeDTO(unidade));
+	public ListLoadResult<UnidadeDTO> getListByCampus( CampusDTO campusDTO )
+	{
+		List< UnidadeDTO > list = new ArrayList< UnidadeDTO >();
+		Campus campus = Campus.find(
+			campusDTO.getId(), this.getInstituicaoEnsinoUser() );
+
+		List< Unidade > unidades = Unidade.findByCampus(
+			getInstituicaoEnsinoUser(), campus );
+
+		for ( Unidade unidade : unidades )
+		{
+			list.add( ConvertBeans.toUnidadeDTO( unidade ) );
 		}
-		return new BaseListLoadResult<UnidadeDTO>(list);
+
+		return new BaseListLoadResult< UnidadeDTO >( list );
 	}
 	
 	@Override
-	public ListLoadResult<UnidadeDTO> getList() {
-		List<UnidadeDTO> list = new ArrayList<UnidadeDTO>();
-		for(Unidade unidade : Unidade.findAll()) {
-			list.add(ConvertBeans.toUnidadeDTO(unidade));
+	public ListLoadResult< UnidadeDTO > getList()
+	{
+		List< UnidadeDTO > list = new ArrayList< UnidadeDTO >();
+		List< Unidade > listDomains
+			= Unidade.findAll( getInstituicaoEnsinoUser() );
+
+		for ( Unidade unidade : listDomains )
+		{
+			list.add( ConvertBeans.toUnidadeDTO( unidade ) );
 		}
-		return new BaseListLoadResult<UnidadeDTO>(list);
+
+		return new BaseListLoadResult< UnidadeDTO >( list );
 	}
 	
 	@Override
@@ -211,32 +271,68 @@ public class UnidadesServiceImpl extends RemoteServiceServlet implements Unidade
 	
 	@Override
 	public List<DeslocamentoUnidadeDTO> getDeslocamento(CampusDTO campusDTO) {
-		List<DeslocamentoUnidadeDTO> list = new ArrayList<DeslocamentoUnidadeDTO>();
-		if(campusDTO != null) {
-			Campus campus = Campus.find(campusDTO.getId());
-			Set<Unidade> listUnidades = campus.getUnidades();
-			for(Unidade unidade : listUnidades) {
-				list.add(ConvertBeans.toDeslocamentoUnidadeDTO(unidade, listUnidades));
+		List< DeslocamentoUnidadeDTO > list
+			= new ArrayList< DeslocamentoUnidadeDTO >();
+
+		if ( campusDTO != null )
+		{
+			Campus campus = Campus.find(
+				campusDTO.getId(), this.getInstituicaoEnsinoUser() );
+
+			Set< Unidade > listUnidades = campus.getUnidades();
+
+			for ( Unidade unidade : listUnidades )
+			{
+				list.add( ConvertBeans.toDeslocamentoUnidadeDTO(
+					unidade, listUnidades ) );
 			}
 		}
-		Collections.sort(list, new Comparator<DeslocamentoUnidadeDTO>() {
+
+		Collections.sort( list, new Comparator< DeslocamentoUnidadeDTO >()
+		{
 			@Override
-			public int compare(DeslocamentoUnidadeDTO o1, DeslocamentoUnidadeDTO o2) {
-				return o1.get("origemString").toString().compareToIgnoreCase(o2.get("origemString").toString());
+			public int compare( DeslocamentoUnidadeDTO o1,
+				DeslocamentoUnidadeDTO o2 )
+			{
+				return o1.get( "origemString" ).toString()
+					.compareToIgnoreCase( o2.get( "origemString" ).toString() );
 			}
 		});
+
 		return list;
 	}
-	
+
 	@Override
-	public void saveDeslocamento(CampusDTO campusDTO, List<DeslocamentoUnidadeDTO> list) {
-		List<DeslocamentoUnidade> deslocamentos = DeslocamentoUnidade.findAllByCampus(Campus.find(campusDTO.getId()));
-		for(DeslocamentoUnidade deslocamento : deslocamentos) {
-			deslocamento.remove();
+	public void saveDeslocamento( CampusDTO campusDTO,
+		List< DeslocamentoUnidadeDTO > list )
+	{
+		Campus campus = Campus.find(
+			campusDTO.getId(), this.getInstituicaoEnsinoUser() );
+
+		if ( campus == null )
+		{
+			return;
 		}
-		for(DeslocamentoUnidadeDTO deslocamentoUnidadeDTO : list) {
-			List<DeslocamentoUnidade> deslUniList = ConvertBeans.toDeslocamentoUnidade(deslocamentoUnidadeDTO);
-			for(DeslocamentoUnidade desl : deslUniList) {
+
+		List< DeslocamentoUnidade > deslocamentos
+			= DeslocamentoUnidade.findAllByCampus(
+				this.getInstituicaoEnsinoUser(), campus );
+
+		if ( deslocamentos != null && deslocamentos.size() > 0 )
+		{
+			for ( DeslocamentoUnidade deslocamento : deslocamentos )
+			{
+				deslocamento.remove();
+			}
+		}
+
+		for ( DeslocamentoUnidadeDTO deslocamentoUnidadeDTO : list )
+		{
+			List< DeslocamentoUnidade > deslUniList
+				= ConvertBeans.toDeslocamentoUnidade( deslocamentoUnidadeDTO );
+
+			for ( DeslocamentoUnidade desl : deslUniList )
+			{
 				desl.persist();
 			}
 		}

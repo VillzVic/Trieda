@@ -15,41 +15,62 @@ import com.gapso.web.trieda.shared.dtos.DisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorDisciplinaDTO;
 import com.gapso.web.trieda.shared.services.ProfessoresDisciplinaService;
-import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
-/**
- * The server side implementation of the RPC service.
- */
-public class ProfessoresDisciplinaServiceImpl extends RemoteServiceServlet implements ProfessoresDisciplinaService {
+public class ProfessoresDisciplinaServiceImpl
+	extends RemoteService implements ProfessoresDisciplinaService
+{
 
 	private static final long serialVersionUID = -7562720011162342660L;
 
 	@Override
-	public ProfessorDisciplinaDTO getProfessorDisciplina(Long id) {
-		return ConvertBeans.toProfessorDisciplinaDTO(ProfessorDisciplina.find(id));
+	public ProfessorDisciplinaDTO getProfessorDisciplina( Long id )
+	{
+		return ConvertBeans.toProfessorDisciplinaDTO(
+			ProfessorDisciplina.find( id, getInstituicaoEnsinoUser() ) );
 	}
 	
 	@Override
 	public PagingLoadResult<ProfessorDisciplinaDTO> getBuscaList(ProfessorDTO professorDTO, DisciplinaDTO disciplinaDTO, PagingLoadConfig config) {
-		Professor professor = (professorDTO == null)? null : Professor.find(professorDTO.getId());
-		Disciplina disciplina = (disciplinaDTO == null)? null : Disciplina.find(disciplinaDTO.getId());
-		
+		Professor professor = (professorDTO == null)? null :
+			Professor.find( professorDTO.getId(), getInstituicaoEnsinoUser() );
+
+		Disciplina disciplina = ( disciplinaDTO == null ) ? null :
+			Disciplina.find( disciplinaDTO.getId(), getInstituicaoEnsinoUser() );
+
 		String orderBy = config.getSortField();
-		if(orderBy != null) {
-			if(config.getSortDir() != null && config.getSortDir().equals(SortDir.DESC)) {
-				orderBy = orderBy + " asc";
-			} else {
-				orderBy = orderBy + " desc";
+
+		if ( orderBy != null )
+		{
+			if ( config.getSortDir() != null
+				&& config.getSortDir().equals( SortDir.DESC ) )
+			{
+				orderBy = ( orderBy + " asc" );
+			}
+			else
+			{
+				orderBy = ( orderBy + " desc" );
 			}
 		}
-		
-		List<ProfessorDisciplinaDTO> list = new ArrayList<ProfessorDisciplinaDTO>();
-		for(ProfessorDisciplina professorDisciplina : ProfessorDisciplina.findBy(professor, disciplina, config.getOffset(), config.getLimit(), orderBy)) {
-			list.add(ConvertBeans.toProfessorDisciplinaDTO(professorDisciplina));
+
+		List< ProfessorDisciplinaDTO > list	
+			= new ArrayList< ProfessorDisciplinaDTO >();
+
+		List< ProfessorDisciplina > listDomains = ProfessorDisciplina.findBy(
+			getInstituicaoEnsinoUser(), professor, disciplina,
+			config.getOffset(), config.getLimit(), orderBy );
+
+		for ( ProfessorDisciplina professorDisciplina : listDomains )
+		{
+			list.add( ConvertBeans.toProfessorDisciplinaDTO( professorDisciplina ) );
 		}
-		BasePagingLoadResult<ProfessorDisciplinaDTO> result = new BasePagingLoadResult<ProfessorDisciplinaDTO>(list);
-		result.setOffset(config.getOffset());
-		result.setTotalLength(ProfessorDisciplina.count(professor, disciplina));
+
+		BasePagingLoadResult< ProfessorDisciplinaDTO > result
+			= new BasePagingLoadResult< ProfessorDisciplinaDTO >( list );
+
+		result.setOffset( config.getOffset() );
+		result.setTotalLength( ProfessorDisciplina.count(
+			getInstituicaoEnsinoUser(), professor, disciplina ) );
+
 		return result;
 	}
 
@@ -69,5 +90,4 @@ public class ProfessoresDisciplinaServiceImpl extends RemoteServiceServlet imple
 			ConvertBeans.toProfessorDisciplina(professorDisciplinaDTO).remove();
 		}
 	}
-
 }

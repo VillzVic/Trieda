@@ -18,35 +18,60 @@ import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.TurnoDTO;
 import com.gapso.web.trieda.shared.services.TurnosService;
 
-/**
- * The server side implementation of the RPC service.
- */
-public class TurnosServiceImpl extends RemoteService implements TurnosService {
-
+public class TurnosServiceImpl
+	extends RemoteService implements TurnosService
+{
 	private static final long serialVersionUID = 5250776996542788849L;
 
 	@Override
-	public TurnoDTO getTurno(Long id) {
-		return ConvertBeans.toTurnoDTO(Turno.find(id));
+	public TurnoDTO getTurno( Long id )
+	{
+		Turno turno  = Turno.find(
+			id, getInstituicaoEnsinoUser() );
+		
+		if ( turno == null )
+		{
+			return null;
+		}
+
+		return ConvertBeans.toTurnoDTO( turno );
 	}
-	
+
 	@Override
-	public PagingLoadResult<TurnoDTO> getBuscaList(String nome, Integer tempo, PagingLoadConfig config) {
-		List<TurnoDTO> list = new ArrayList<TurnoDTO>();
+	public PagingLoadResult< TurnoDTO > getBuscaList(
+		String nome, Integer tempo, PagingLoadConfig config )
+	{
+		List< TurnoDTO > list = new ArrayList< TurnoDTO >();
 		String orderBy = config.getSortField();
-		if(orderBy != null) {
-			if(config.getSortDir() != null && config.getSortDir().equals(SortDir.DESC)) {
-				orderBy = orderBy + " asc";
-			} else {
-				orderBy = orderBy + " desc";
+
+		if ( orderBy != null )
+		{
+			if ( config.getSortDir() != null
+				&& config.getSortDir().equals( SortDir.DESC ) )
+			{
+				orderBy = ( orderBy + " asc" );
+			}
+			else
+			{
+				orderBy = ( orderBy + " desc" );
 			}
 		}
-		for(Turno turno : Turno.findBy(nome, tempo, config.getOffset(), config.getLimit(), orderBy)) {
-			list.add(ConvertBeans.toTurnoDTO(turno));
+
+		List< Turno > listTurnos = Turno.findBy( getInstituicaoEnsinoUser(),
+			nome, tempo, config.getOffset(), config.getLimit(), orderBy );
+
+		for ( Turno turno : listTurnos )
+		{
+			list.add( ConvertBeans.toTurnoDTO( turno ) );
 		}
-		BasePagingLoadResult<TurnoDTO> result = new BasePagingLoadResult<TurnoDTO>(list);
-		result.setOffset(config.getOffset());
-		result.setTotalLength(Turno.count(nome, tempo));
+
+		BasePagingLoadResult< TurnoDTO > result
+			= new BasePagingLoadResult< TurnoDTO >( list );
+
+		result.setOffset( config.getOffset() );
+		result.setTotalLength( Turno.count(
+			nome, tempo, getInstituicaoEnsinoUser() ) );
+
 		return result;
 	}
 	
@@ -55,7 +80,9 @@ public class TurnosServiceImpl extends RemoteService implements TurnosService {
 	{
 		onlyProfessor();
 
-		List< Campus > campi = Campus.findAllOtimized();
+		List< Campus > campi = Campus.findAllOtimized(
+			this.getInstituicaoEnsinoUser() );
+
 		List< Turno > turnos = null;
 
 		if ( campi.isEmpty() )
@@ -64,7 +91,8 @@ public class TurnosServiceImpl extends RemoteService implements TurnosService {
 		}
 		else
 		{
-			turnos = AtendimentoOperacional.findAllTurnosByCursos( campi );
+			turnos = AtendimentoOperacional.findAllTurnosByCursos(
+				getInstituicaoEnsinoUser(), campi );
 		}
 
 		List< TurnoDTO > turnosDTO
@@ -77,30 +105,40 @@ public class TurnosServiceImpl extends RemoteService implements TurnosService {
 
 		return new BaseListLoadResult< TurnoDTO >( turnosDTO );
 	}
-	
-	@Override
-	public ListLoadResult<TurnoDTO> getListByCampus(CampusDTO campusDTO) {
-		List<TurnoDTO> list = new ArrayList<TurnoDTO>();
-		Campus campus = Campus.find(campusDTO.getId());
-		List<Turno> turnos = Turno.findBy(campus);
-		for(Turno turno : turnos) {
-			list.add(ConvertBeans.toTurnoDTO(turno));
-		}
-		return new BaseListLoadResult<TurnoDTO>(list);
-	}
 
 	@Override
-	public ListLoadResult< TurnoDTO > getList()
+	public ListLoadResult< TurnoDTO > getListByCampus( CampusDTO campusDTO )
 	{
-		List< TurnoDTO > list
-			= new ArrayList< TurnoDTO >();
+		List< TurnoDTO > list = new ArrayList< TurnoDTO >();
+		Campus campus = Campus.find(
+			campusDTO.getId(), this.getInstituicaoEnsinoUser() );
 
-		for ( Turno turno : Turno.findAll() )
+		List< Turno > turnos = Turno.findBy(
+			getInstituicaoEnsinoUser(), campus );
+
+		for ( Turno turno : turnos )
 		{
 			list.add( ConvertBeans.toTurnoDTO( turno ) );
 		}
 
 		return new BaseListLoadResult< TurnoDTO >( list );
+	}
+
+	@Override
+	public ListLoadResult< TurnoDTO > getList()
+	{
+		List< Turno > list
+			= Turno.findAll( getInstituicaoEnsinoUser() );
+
+		List< TurnoDTO > listDTO
+			= new ArrayList< TurnoDTO >();
+
+		for ( Turno turno : list )
+		{
+			listDTO.add( ConvertBeans.toTurnoDTO( turno ) );
+		}
+
+		return new BaseListLoadResult< TurnoDTO >( listDTO );
 	}
 
 	@Override
@@ -116,8 +154,12 @@ public class TurnosServiceImpl extends RemoteService implements TurnosService {
 		}
 		else
 		{
-			Campus campus = Campus.find( campusDTO.getId() );
-			List< Turno > turnos = Turno.findBy( campus );
+			Campus campus = Campus.find(
+				campusDTO.getId(), this.getInstituicaoEnsinoUser() );
+
+			List< Turno > turnos = Turno.findBy(
+				getInstituicaoEnsinoUser(), campus );
+
 			List< TurnoDTO > turnosDTO = new ArrayList< TurnoDTO >();
 
 			for ( Turno turno : turnos )

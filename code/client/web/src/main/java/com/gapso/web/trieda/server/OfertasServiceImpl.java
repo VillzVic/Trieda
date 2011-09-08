@@ -25,21 +25,25 @@ import com.gapso.web.trieda.shared.dtos.OfertaDTO;
 import com.gapso.web.trieda.shared.dtos.TreeNodeDTO;
 import com.gapso.web.trieda.shared.dtos.TurnoDTO;
 import com.gapso.web.trieda.shared.services.OfertasService;
-import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
-/**
- * The server side implementation of the RPC service.
- */
 @Transactional
-public class OfertasServiceImpl extends RemoteServiceServlet
-	implements OfertasService
+public class OfertasServiceImpl
+	extends RemoteService implements OfertasService
 {
 	private static final long serialVersionUID = -3010939181486905949L;
 
 	@Override
 	public OfertaDTO getOferta( Long id )
 	{
-		return ConvertBeans.toOfertaDTO( Oferta.find( id ) );
+		Oferta oferta = Oferta.find(
+			id, getInstituicaoEnsinoUser() );
+		
+		if ( oferta == null )
+		{
+			return null;
+		}
+
+		return ConvertBeans.toOfertaDTO( oferta );
 	}
 
 	@Override
@@ -68,7 +72,7 @@ public class OfertasServiceImpl extends RemoteServiceServlet
 		Curso curso = ( ( cursoDTO != null ) ? ConvertBeans.toCurso( cursoDTO ) : null );
 		Curriculo curriculo = ( ( curriculoDTO != null ) ? ConvertBeans.toCurriculo( curriculoDTO ) : null );
 
-		List< Oferta > listOfertas = Oferta.findBy(
+		List< Oferta > listOfertas = Oferta.findBy( getInstituicaoEnsinoUser(),
 			turno, campus, curso, curriculo, config.getOffset(), config.getLimit(), orderBy );
 
 		for ( Oferta oferta : listOfertas )
@@ -80,8 +84,8 @@ public class OfertasServiceImpl extends RemoteServiceServlet
 			= new BasePagingLoadResult< OfertaDTO >( list );
 
 		result.setOffset( config.getOffset() );
-		result.setTotalLength(
-			Oferta.count( turno, campus, curso, curriculo ) );
+		result.setTotalLength( Oferta.count(
+			getInstituicaoEnsinoUser(), turno, campus, curso, curriculo ) );
 
 		return result;
 	}
@@ -95,7 +99,10 @@ public class OfertasServiceImpl extends RemoteServiceServlet
 		Campus campus = ( campusDTO == null ) ? null : ConvertBeans.toCampus( campusDTO );
 		Turno turno = ( turnoDTO == null ) ? null : ConvertBeans.toTurno( turnoDTO );
 
-		for ( Oferta oferta : Oferta.findByCampusAndTurno( campus, turno ) )
+		List< Oferta > listDomains = Oferta.findByCampusAndTurno(
+			getInstituicaoEnsinoUser(), campus, turno );
+
+		for ( Oferta oferta : listDomains )
 		{
 			OfertaDTO ofertaDTO = ConvertBeans.toOfertaDTO( oferta );
 			treeNodesList.add( new TreeNodeDTO( ofertaDTO ) );

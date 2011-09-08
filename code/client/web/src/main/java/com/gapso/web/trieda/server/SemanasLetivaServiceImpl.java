@@ -22,6 +22,7 @@ import com.gapso.trieda.domain.Campus;
 import com.gapso.trieda.domain.Disciplina;
 import com.gapso.trieda.domain.HorarioAula;
 import com.gapso.trieda.domain.HorarioDisponivelCenario;
+import com.gapso.trieda.domain.InstituicaoEnsino;
 import com.gapso.trieda.domain.Professor;
 import com.gapso.trieda.domain.Sala;
 import com.gapso.trieda.domain.SemanaLetiva;
@@ -31,29 +32,36 @@ import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.HorarioDisponivelCenarioDTO;
 import com.gapso.web.trieda.shared.dtos.SemanaLetivaDTO;
 import com.gapso.web.trieda.shared.services.SemanasLetivaService;
-import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
-/**
- * The server side implementation of the RPC service.
- */
-public class SemanasLetivaServiceImpl extends RemoteServiceServlet
-	implements SemanasLetivaService
+public class SemanasLetivaServiceImpl
+	extends RemoteService implements SemanasLetivaService
 {
 	private static final long serialVersionUID = 5250776996542788849L;
 
 	@Override
 	public SemanaLetivaDTO getSemanaLetiva( CenarioDTO cenario )
 	{
-		List< SemanaLetivaDTO > listDTOs = new ArrayList< SemanaLetivaDTO >();
-		List< SemanaLetiva > semanasLetivas = SemanaLetiva.findAll();
-
-		for ( SemanaLetiva semanaLetiva : semanasLetivas )
+		// Verifica se o cenário já tem uma semana letiva associada
+		if ( cenario.getSemanaLetivaId() != null )
 		{
-			listDTOs.add( ConvertBeans.toSemanaLetivaDTO( semanaLetiva ) );
+			SemanaLetiva semanaLetivaCenario = SemanaLetiva.find(
+				cenario.getSemanaLetivaId(), getInstituicaoEnsinoUser() );
+			
+			if ( semanaLetivaCenario != null )
+			{
+				return ConvertBeans.toSemanaLetivaDTO( semanaLetivaCenario );
+			}
 		}
 
-		// TODO -- selecionar a semana letiva correta
-		return listDTOs.get( 0 );
+		List< SemanaLetiva > semanasLetivas
+			= SemanaLetiva.findAll( getInstituicaoEnsinoUser() );
+
+		if ( semanasLetivas != null && semanasLetivas.size() > 0 )
+		{
+			ConvertBeans.toSemanaLetivaDTO( semanasLetivas.get( 0 ) );
+		}
+
+		return null;
 	}
 
 	@Override
@@ -72,22 +80,36 @@ public class SemanasLetivaServiceImpl extends RemoteServiceServlet
 				orderBy = orderBy + " desc";
 			}
 		}
-		for(SemanaLetiva semanaLetiva : SemanaLetiva.findBy(codigo, descricao, config.getOffset(), config.getLimit(), orderBy)) {
-			list.add(ConvertBeans.toSemanaLetivaDTO(semanaLetiva));
+
+		List< SemanaLetiva > listDomains = SemanaLetiva.findBy(
+			getInstituicaoEnsinoUser(), codigo, descricao,
+			config.getOffset(), config.getLimit(), orderBy );
+
+		for ( SemanaLetiva semanaLetiva : listDomains )
+		{
+			list.add( ConvertBeans.toSemanaLetivaDTO( semanaLetiva ) );
 		}
-		BasePagingLoadResult<SemanaLetivaDTO> result = new BasePagingLoadResult<SemanaLetivaDTO>(list);
-		result.setOffset(config.getOffset());
-		result.setTotalLength(SemanaLetiva.count(codigo, descricao));
+
+		BasePagingLoadResult< SemanaLetivaDTO > result
+			= new BasePagingLoadResult< SemanaLetivaDTO >( list );
+		result.setOffset( config.getOffset() );
+		result.setTotalLength( SemanaLetiva.count(
+			getInstituicaoEnsinoUser(), codigo, descricao ) );
 		return result;
 	}
 	
 	@Override
-	public ListLoadResult<SemanaLetivaDTO> getList() {
-		List<SemanaLetivaDTO> list = new ArrayList<SemanaLetivaDTO>();
-		for(SemanaLetiva semanaLetiva : SemanaLetiva.findAll()) {
-			list.add(ConvertBeans.toSemanaLetivaDTO(semanaLetiva));
+	public ListLoadResult< SemanaLetivaDTO > getList()
+	{
+		List< SemanaLetivaDTO > list = new ArrayList< SemanaLetivaDTO >();
+		List< SemanaLetiva > listDomains = SemanaLetiva.findAll( getInstituicaoEnsinoUser() );
+
+		for ( SemanaLetiva semanaLetiva : listDomains )
+		{
+			list.add( ConvertBeans.toSemanaLetivaDTO( semanaLetiva ) );
 		}
-		return new BaseListLoadResult<SemanaLetivaDTO>(list);
+
+		return new BaseListLoadResult< SemanaLetivaDTO >( list );
 	}
 
 	@Override
@@ -105,29 +127,32 @@ public class SemanasLetivaServiceImpl extends RemoteServiceServlet
 			semanaLetiva.persist();
 		}
 
-		// TODO -- a semana letiva deverá considerar o campo 'oficial' ???
-		/*
+		InstituicaoEnsino instituicaoEnsino = InstituicaoEnsino.find(
+			semanaLetivaDTO.getInstituicaoEnsinoId() );
+
 		if ( semanaLetiva.getOficial() )
 		{
-			semanaLetiva.markOficial();
+			semanaLetiva.markOficial( instituicaoEnsino );
 		}
-		*/
 	}
 
 	@Override
-	public void remove(List<SemanaLetivaDTO> semanaLetivaDTOList) {
-		for(SemanaLetivaDTO semanaLetivaDTO : semanaLetivaDTOList) {
-			ConvertBeans.toSemanaLetiva(semanaLetivaDTO).remove();
+	public void remove( List< SemanaLetivaDTO > semanaLetivaDTOList )
+	{
+		for ( SemanaLetivaDTO semanaLetivaDTO : semanaLetivaDTOList )
+		{
+			ConvertBeans.toSemanaLetiva( semanaLetivaDTO ).remove();
 		}
 	}
-	
+
 	@Override
 	public PagingLoadResult< HorarioDisponivelCenarioDTO > getHorariosDisponiveisCenario(
 		SemanaLetivaDTO semanaLetivaDTO )
 	{
 		Set< HorarioAula > horariosAula = new HashSet< HorarioAula >();
-		List< SemanaLetiva > semanasLetivas = SemanaLetiva.findAll();
-		
+		List< SemanaLetiva > semanasLetivas
+			= SemanaLetiva.findAll( getInstituicaoEnsinoUser() );
+
 		for ( SemanaLetiva semanaLetiva : semanasLetivas )
 		{
 			horariosAula.addAll( semanaLetiva.getHorariosAula() );
@@ -141,79 +166,110 @@ public class SemanasLetivaServiceImpl extends RemoteServiceServlet
 			list.add( ConvertBeans.toHorarioDisponivelCenarioDTO( o ) );
 		}
 
-		Map<String, List<HorarioDisponivelCenarioDTO>> horariosTurnos = new HashMap<String, List<HorarioDisponivelCenarioDTO>>();
-		for(HorarioDisponivelCenarioDTO o : list) {
-			List<HorarioDisponivelCenarioDTO> horarios = horariosTurnos.get(o.getTurnoString());
-			if(horarios == null) {
-				horarios = new ArrayList<HorarioDisponivelCenarioDTO>();
-				horariosTurnos.put(o.getTurnoString(), horarios);
+		Map< String, List< HorarioDisponivelCenarioDTO > > horariosTurnos
+			= new HashMap< String, List< HorarioDisponivelCenarioDTO > >();
+
+		for ( HorarioDisponivelCenarioDTO o : list )
+		{
+			List< HorarioDisponivelCenarioDTO > horarios
+				= horariosTurnos.get( o.getTurnoString() );
+
+			if ( horarios == null )
+			{
+				horarios = new ArrayList< HorarioDisponivelCenarioDTO >();
+				horariosTurnos.put( o.getTurnoString(), horarios );
 			}
-			horarios.add(o);
+
+			horarios.add( o );
 		}
-		
-		for(Entry<String, List<HorarioDisponivelCenarioDTO>> entry : horariosTurnos.entrySet()) {
-			Collections.sort(entry.getValue());
+
+		for ( Entry< String, List< HorarioDisponivelCenarioDTO > > entry : horariosTurnos.entrySet() )
+		{
+			Collections.sort( entry.getValue() );
 		}
-		
-		Map<Date, List<String>> horariosFinalTurnos = new TreeMap<Date, List<String>>();
-		for(Entry<String, List<HorarioDisponivelCenarioDTO>> entry : horariosTurnos.entrySet()) {
-			Date ultimoHorario = entry.getValue().get(entry.getValue().size()-1).getHorario();
-			List<String> turnos = horariosFinalTurnos.get(ultimoHorario);
-			if (turnos == null) {
-				turnos = new ArrayList<String>();
-				horariosFinalTurnos.put(ultimoHorario,turnos);
+
+		Map< Date, List< String > > horariosFinalTurnos
+			= new TreeMap< Date, List< String > >();
+
+		for ( Entry< String, List< HorarioDisponivelCenarioDTO > > entry : horariosTurnos.entrySet() )
+		{
+			Date ultimoHorario = entry.getValue().get(
+				entry.getValue().size() - 1 ).getHorario();
+
+			List< String > turnos = horariosFinalTurnos.get( ultimoHorario );
+
+			if ( turnos == null )
+			{
+				turnos = new ArrayList< String >();
+				horariosFinalTurnos.put( ultimoHorario, turnos );
 			}
-			turnos.add(entry.getKey());
+
+			turnos.add( entry.getKey() );
 		}
-		
+
 		list.clear();
-		for(Entry<Date, List<String>> entry : horariosFinalTurnos.entrySet()) {
-			for (String turno : entry.getValue()) {
-				list.addAll(horariosTurnos.get(turno));
+		for ( Entry< Date, List< String > > entry : horariosFinalTurnos.entrySet() )
+		{
+			for ( String turno : entry.getValue() )
+			{
+				list.addAll( horariosTurnos.get( turno ) );
 			}
 		}
 
 		BasePagingLoadResult< HorarioDisponivelCenarioDTO > result
-			= new BasePagingLoadResult< HorarioDisponivelCenarioDTO >(list);
+			= new BasePagingLoadResult< HorarioDisponivelCenarioDTO >( list );
+
 		result.setOffset( 0 );
 		result.setTotalLength( list.size() );
+
 		return result;
 	}
 
 	@Override
-	public void saveHorariosDisponiveisCenario(SemanaLetivaDTO semanaLetivaDTO, List<HorarioDisponivelCenarioDTO> listDTO) {
-		List<HorarioDisponivelCenario> listSelecionados = ConvertBeans.toHorarioDisponivelCenario(listDTO);
-		SemanaLetiva semanaLetiva = SemanaLetiva.find(semanaLetivaDTO.getId());
-		
+	public void saveHorariosDisponiveisCenario(
+		SemanaLetivaDTO semanaLetivaDTO, List< HorarioDisponivelCenarioDTO > listDTO )
+	{
+		List< HorarioDisponivelCenario > listSelecionados
+			= ConvertBeans.toHorarioDisponivelCenario( listDTO );
+
+		SemanaLetiva semanaLetiva = SemanaLetiva.find(
+			semanaLetivaDTO.getId(), getInstituicaoEnsinoUser() );
+
 		List<HorarioDisponivelCenario> todosQueJaTinhamList = new ArrayList<HorarioDisponivelCenario>();
 		for(HorarioAula horarioAula : semanaLetiva.getHorariosAula()) {
 			todosQueJaTinhamList.addAll(horarioAula.getHorariosDisponiveisCenario());
 		}
-		
-		List<HorarioDisponivelCenario> removerList = new ArrayList<HorarioDisponivelCenario>(todosQueJaTinhamList);
-		removerList.removeAll(listSelecionados);
 
-		for(HorarioAula horariosAula : semanaLetiva.getHorariosAula()) {
-			horariosAula.getHorariosDisponiveisCenario().removeAll(removerList);
+		List< HorarioDisponivelCenario > removerList
+			= new ArrayList< HorarioDisponivelCenario >( todosQueJaTinhamList );
+		removerList.removeAll( listSelecionados );
+
+		for ( HorarioAula horariosAula : semanaLetiva.getHorariosAula() )
+		{
+			horariosAula.getHorariosDisponiveisCenario().removeAll( removerList );
 			horariosAula.merge();
 		}
-		
-		List<HorarioDisponivelCenario> adicionarList = new ArrayList<HorarioDisponivelCenario> (listSelecionados);
-		adicionarList.removeAll(todosQueJaTinhamList);
-		
-		List<Campus> campi = Campus.findAll();
-		List<Unidade> unidades = Unidade.findAll();
-		List<Sala> salas = Sala.findAll();
-		List<Disciplina> disciplinas = Disciplina.findAll();
-		List<Professor> professores = Professor.findAll();
-		for(HorarioDisponivelCenario o : adicionarList) {
-			o.getCampi().addAll(campi);
-			o.getUnidades().addAll(unidades);
-			o.getSalas().addAll(salas);
-			o.getDisciplinas().addAll(disciplinas);
-			o.getProfessores().addAll(professores);
+
+		List< HorarioDisponivelCenario > adicionarList
+			= new ArrayList< HorarioDisponivelCenario >( listSelecionados );
+
+		adicionarList.removeAll( todosQueJaTinhamList );
+
+		List< Campus > campi = Campus.findAll( this.getInstituicaoEnsinoUser() );
+		List< Unidade > unidades = Unidade.findAll( getInstituicaoEnsinoUser() );
+		List< Sala > salas = Sala.findAll( getInstituicaoEnsinoUser() );
+		List< Disciplina > disciplinas = Disciplina.findAll( getInstituicaoEnsinoUser() );
+		List< Professor > professores = Professor.findAll( getInstituicaoEnsinoUser() );
+
+		for ( HorarioDisponivelCenario o : adicionarList )
+		{
+			o.getCampi().addAll( campi );
+			o.getUnidades().addAll( unidades );
+			o.getSalas().addAll( salas );
+			o.getDisciplinas().addAll( disciplinas );
+			o.getProfessores().addAll( professores );
+
 			o.merge();
 		}
 	}
-	
 }

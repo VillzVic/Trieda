@@ -20,10 +20,12 @@ import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.gapso.trieda.domain.Campus;
 import com.gapso.trieda.domain.GrupoSala;
 import com.gapso.trieda.domain.HorarioDisponivelCenario;
+import com.gapso.trieda.domain.InstituicaoEnsino;
 import com.gapso.trieda.domain.Sala;
 import com.gapso.trieda.domain.SemanaLetiva;
 import com.gapso.trieda.domain.TipoSala;
 import com.gapso.trieda.domain.Unidade;
+import com.gapso.trieda.domain.Usuario;
 import com.gapso.web.trieda.server.util.ConvertBeans;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.GrupoSalaDTO;
@@ -33,36 +35,37 @@ import com.gapso.web.trieda.shared.dtos.SemanaLetivaDTO;
 import com.gapso.web.trieda.shared.dtos.TipoSalaDTO;
 import com.gapso.web.trieda.shared.dtos.UnidadeDTO;
 import com.gapso.web.trieda.shared.services.SalasService;
-import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
-/**
- * The server side implementation of the RPC service.
- */
 @Transactional
-public class SalasServiceImpl extends RemoteServiceServlet implements
-		SalasService {
-
+public class SalasServiceImpl
+	extends RemoteService
+	implements SalasService
+{
 	private static final long serialVersionUID = -5850050305078103981L;
 
 	@Override
-	public SalaDTO getSala(Long id) {
-		if (id == null)
+	public SalaDTO getSala(Long id)
+	{
+		if ( id == null )
+		{
 			return null;
-		return ConvertBeans.toSalaDTO(Sala.find(id));
+		}
+
+		return ConvertBeans.toSalaDTO( Sala.find( id, getCurrentInstituicaoEnsino() ) );
 	}
 
 	@Override
 	public List< HorarioDisponivelCenarioDTO > getHorariosDisponiveis(
 		SalaDTO salaDTO, SemanaLetivaDTO semanaLetivaDTO )
 	{
-		Sala sala = Sala.find( salaDTO.getId() );
+		Sala sala = Sala.find( salaDTO.getId(), getCurrentInstituicaoEnsino() );
 		Campus campus = sala.getUnidade().getCampus();
 
 		List< SemanaLetiva > semanasLetivas = new ArrayList< SemanaLetiva >(
-			SemanaLetiva.getByOficial( campus ) );
+			SemanaLetiva.getByOficial( getCurrentInstituicaoEnsino(), campus ) );
 
 		List<HorarioDisponivelCenario> list = new ArrayList< HorarioDisponivelCenario >(
-			sala.getHorarios( semanasLetivas ) );
+			sala.getHorarios( getCurrentInstituicaoEnsino(), semanasLetivas ) );
 
 		List<HorarioDisponivelCenarioDTO> listDTO = ConvertBeans
 				.toHorarioDisponivelCenarioDTO(list);
@@ -114,11 +117,12 @@ public class SalasServiceImpl extends RemoteServiceServlet implements
 	public void saveHorariosDisponiveis(
 		SalaDTO salaDTO, List< HorarioDisponivelCenarioDTO > listDTO )
 	{
-		Sala sala = Sala.find(salaDTO.getId());
+		Sala sala = Sala.find( salaDTO.getId(), getCurrentInstituicaoEnsino() );
+
 		Campus campus = sala.getUnidade().getCampus();
 
 		List< SemanaLetiva > semanasLetivas = new ArrayList< SemanaLetiva >(
-			SemanaLetiva.getByOficial( campus ) );
+			SemanaLetiva.getByOficial( getCurrentInstituicaoEnsino(), campus ) );
 
 		List< HorarioDisponivelCenario > listSelecionados
 			= ConvertBeans.toHorarioDisponivelCenario( listDTO );
@@ -126,9 +130,12 @@ public class SalasServiceImpl extends RemoteServiceServlet implements
 		List< HorarioDisponivelCenario > adicionarList
 			= new ArrayList< HorarioDisponivelCenario >( listSelecionados );
 
-		adicionarList.removeAll( sala.getHorarios( semanasLetivas ) );
+		adicionarList.removeAll( sala.getHorarios(
+			getCurrentInstituicaoEnsino(), semanasLetivas ) );
+
 		List< HorarioDisponivelCenario > removerList
-			= new ArrayList< HorarioDisponivelCenario >( sala.getHorarios( semanasLetivas ) );
+			= new ArrayList< HorarioDisponivelCenario >( sala.getHorarios(
+				getCurrentInstituicaoEnsino(), semanasLetivas ) );
 
 		removerList.removeAll( listSelecionados );
 		for ( HorarioDisponivelCenario o : removerList )
@@ -145,48 +152,73 @@ public class SalasServiceImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public TipoSalaDTO getTipoSala(Long id) {
-		return ConvertBeans.toTipoSalaDTO(TipoSala.find(id));
+	public TipoSalaDTO getTipoSala( Long id )
+	{
+		return ConvertBeans.toTipoSalaDTO(
+			TipoSala.find( id, getCurrentInstituicaoEnsino() ) );
 	}
 
 	@Override
-	public ListLoadResult<SalaDTO> getBuscaList(UnidadeDTO unidadeDTO) {
-		Unidade unidade = Unidade.find(unidadeDTO.getId());
-		List<SalaDTO> listDTO = new ArrayList<SalaDTO>();
-		List<Sala> list = Sala.findByUnidade(unidade);
-		for (Sala sala : list) {
-			listDTO.add(ConvertBeans.toSalaDTO(sala));
+	public ListLoadResult< SalaDTO > getBuscaList( UnidadeDTO unidadeDTO )
+	{
+		Unidade unidade = Unidade.find(
+			unidadeDTO.getId(), getCurrentInstituicaoEnsino() );
+
+		List< SalaDTO > listDTO = new ArrayList< SalaDTO >();
+
+		List< Sala > list = Sala.findByUnidade(
+			getCurrentInstituicaoEnsino(), unidade );
+
+		for ( Sala sala : list )
+		{
+			listDTO.add( ConvertBeans.toSalaDTO( sala ) );
 		}
-		BaseListLoadResult<SalaDTO> result = new BaseListLoadResult<SalaDTO>(
-				listDTO);
+
+		BaseListLoadResult< SalaDTO > result
+			= new BaseListLoadResult< SalaDTO >( listDTO );
+
 		return result;
 	}
 
 	@Override
-	public PagingLoadResult<SalaDTO> getList(CampusDTO campusDTO,
-			UnidadeDTO unidadeDTO, PagingLoadConfig config) {
-		List<SalaDTO> list = new ArrayList<SalaDTO>();
+	public PagingLoadResult< SalaDTO > getList( CampusDTO campusDTO,
+		UnidadeDTO unidadeDTO, PagingLoadConfig config )
+	{
+		List< SalaDTO > list = new ArrayList< SalaDTO >();
 		String orderBy = config.getSortField();
-		if (orderBy != null) {
-			if (config.getSortDir() != null
-					&& config.getSortDir().equals(SortDir.DESC)) {
-				orderBy = orderBy + " asc";
-			} else {
-				orderBy = orderBy + " desc";
+
+		if ( orderBy != null )
+		{
+			if ( config.getSortDir() != null
+				&& config.getSortDir().equals( SortDir.DESC ) )
+			{
+				orderBy = ( orderBy + " asc" );
+			}
+			else
+			{
+				orderBy = ( orderBy + " desc" );
 			}
 		}
-		Campus campus = campusDTO == null ? null : Campus.find(campusDTO
-				.getId());
-		Unidade unidade = unidadeDTO == null ? null : Unidade.find(unidadeDTO
-				.getId());
-		for (Sala sala : Sala.find(campus, unidade, config.getOffset(),
-				config.getLimit(), orderBy)) {
-			list.add(ConvertBeans.toSalaDTO(sala));
+
+		Campus campus = campusDTO == null ? null :
+			Campus.find( campusDTO.getId(), getCurrentInstituicaoEnsino() );
+
+		Unidade unidade = unidadeDTO == null ? null :
+			Unidade.find( unidadeDTO.getId(), getCurrentInstituicaoEnsino() );
+
+		List< Sala > listDomains = Sala.find( getCurrentInstituicaoEnsino(),
+			campus, unidade, config.getOffset(), config.getLimit(), orderBy );
+
+		for ( Sala sala : listDomains )
+		{
+			list.add( ConvertBeans.toSalaDTO( sala ) );
 		}
-		BasePagingLoadResult<SalaDTO> result = new BasePagingLoadResult<SalaDTO>(
-				list);
-		result.setOffset(config.getOffset());
-		result.setTotalLength(Sala.count(campus, unidade));
+
+		BasePagingLoadResult< SalaDTO > result
+			= new BasePagingLoadResult< SalaDTO >( list );
+		result.setOffset( config.getOffset() );
+		result.setTotalLength( Sala.count(
+			getCurrentInstituicaoEnsino(), campus, unidade ) );
 		return result;
 	}
 
@@ -196,56 +228,92 @@ public class SalasServiceImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public ListLoadResult<SalaDTO> getAndaresList(Long unidadeId) {
-		List<SalaDTO> list = new ArrayList<SalaDTO>();
-		Unidade unidade = Unidade.find(unidadeId);
-		for (Sala sala : Sala.findAndaresAll(unidade)) {
-			list.add(ConvertBeans.toSalaDTO(sala));
+	public ListLoadResult< SalaDTO > getAndaresList( Long unidadeId )
+	{
+		Unidade unidade = Unidade.find(
+			unidadeId, getCurrentInstituicaoEnsino() );
+
+		List< Sala > listDomains = Sala.findAndaresAll(
+			getCurrentInstituicaoEnsino(), unidade );
+
+		List< SalaDTO > list = new ArrayList< SalaDTO >();
+
+		for ( Sala sala : listDomains )
+		{
+			list.add( ConvertBeans.toSalaDTO( sala ) );
 		}
-		return new BaseListLoadResult<SalaDTO>(list);
+
+		return new BaseListLoadResult< SalaDTO >( list );
 	}
 
 	@Override
-	public ListLoadResult<SalaDTO> getSalasDoAndareList(UnidadeDTO unidadeDTO,
-			List<String> andares) {
-		Unidade unidade = Unidade.find(unidadeDTO.getId());
-		List<SalaDTO> list = new ArrayList<SalaDTO>();
-		for (Sala sala : Sala.findSalasDoAndarAll(unidade, andares)) {
-			list.add(ConvertBeans.toSalaDTO(sala));
+	public ListLoadResult<SalaDTO> getSalasDoAndareList(
+		UnidadeDTO unidadeDTO, List< String > andares )
+	{
+		Unidade unidade = Unidade.find(
+			unidadeDTO.getId(), getCurrentInstituicaoEnsino() );
+
+		List< Sala > listDomain = Sala.findSalasDoAndarAll(
+			getCurrentInstituicaoEnsino(), unidade, andares );
+		List< SalaDTO > list = new ArrayList< SalaDTO >();
+
+		for ( Sala sala : listDomain )
+		{
+			list.add( ConvertBeans.toSalaDTO( sala ) );
 		}
-		return new BaseListLoadResult<SalaDTO>(list);
+
+		return new BaseListLoadResult< SalaDTO >( list );
 	}
 
 	@Override
-	public Map<String, List<SalaDTO>> getSalasEAndareMap(Long unidadeId) {
-		Unidade unidade = Unidade.find(unidadeId);
-		List<Sala> salas = Sala.findByUnidade(unidade);
-		Map<String, List<SalaDTO>> map = new HashMap<String, List<SalaDTO>>();
-		for (Sala sala : salas) {
-			if (!map.containsKey(sala.getAndar())) {
-				map.put(sala.getAndar(), new ArrayList<SalaDTO>());
+	public Map< String, List< SalaDTO > > getSalasEAndareMap( Long unidadeId )
+	{
+		Unidade unidade = Unidade.find(
+			unidadeId, getCurrentInstituicaoEnsino() );
+
+		List< Sala > salas = Sala.findByUnidade( getCurrentInstituicaoEnsino(), unidade );
+		Map< String, List< SalaDTO > > map = new HashMap< String, List< SalaDTO > >();
+
+		for ( Sala sala : salas )
+		{
+			if ( !map.containsKey( sala.getAndar() ) )
+			{
+				map.put( sala.getAndar(), new ArrayList< SalaDTO >() );
 			}
-			SalaDTO salaDTO = ConvertBeans.toSalaDTO(sala);
-			map.get(sala.getAndar()).add(salaDTO);
+
+			SalaDTO salaDTO = ConvertBeans.toSalaDTO( sala );
+			map.get( sala.getAndar() ).add( salaDTO );
 		}
+
 		return map;
 	}
 
 	@Override
-	public ListLoadResult<SalaDTO> getList() {
-		List<SalaDTO> list = new ArrayList<SalaDTO>();
-		for (Sala sala : Sala.findAll()) {
-			list.add(ConvertBeans.toSalaDTO(sala));
+	public ListLoadResult< SalaDTO > getList()
+	{
+		List< Sala > listDomain = Sala.findAll( getCurrentInstituicaoEnsino() );
+		List< SalaDTO > list = new ArrayList< SalaDTO >();
+
+		for ( Sala sala : listDomain )
+		{
+			list.add( ConvertBeans.toSalaDTO( sala ) );
 		}
-		return new BaseListLoadResult<SalaDTO>(list);
+
+		return new BaseListLoadResult< SalaDTO >( list );
 	}
 
 	@Override
 	public List< GrupoSalaDTO > getGruposDeSalas( Long unidadeId )
 	{
-		Unidade unidade = Unidade.find( unidadeId );
-		List< GrupoSala > grupoSalas = GrupoSala.findByUnidade( unidade );
-		List< GrupoSalaDTO > grupoSalasDTO = new ArrayList< GrupoSalaDTO >();
+		Unidade unidade = Unidade.find(
+			unidadeId, getCurrentInstituicaoEnsino() );
+
+		List< GrupoSala > grupoSalas = GrupoSala.findByUnidade(
+			getInstituicaoEnsinoUser(), unidade );
+
+		List< GrupoSalaDTO > grupoSalasDTO
+			= new ArrayList< GrupoSalaDTO >();
+
 		for ( GrupoSala gs : grupoSalas )
 		{
 			GrupoSalaDTO gsDTO = ConvertBeans.toGrupoSalaDTO( gs );
@@ -274,37 +342,51 @@ public class SalasServiceImpl extends RemoteServiceServlet implements
 	{
 		for ( SalaDTO salaDTO : salaDTOList )
 		{
-			Sala.find( salaDTO.getId() ).remove();
+			Sala.find( salaDTO.getId(), getCurrentInstituicaoEnsino() ).remove();
 		}
 	}
 
 	@Override
 	public ListLoadResult< TipoSalaDTO > getTipoSalaList()
 	{
-		if ( TipoSala.count() == 0 )
+		InstituicaoEnsino instituicaoEnsino = getCurrentInstituicaoEnsino();
+		List< TipoSala > list = TipoSala.findAll( getCurrentInstituicaoEnsino() );
+
+		if ( list.size() == 0 )
 		{
 			TipoSala tipo1 = new TipoSala();
 			tipo1.setNome( "Sala de Aula" );
 			tipo1.setDescricao( "Sala de Aula" );
+			tipo1.setInstituicaoEnsino( instituicaoEnsino );
 			tipo1.persist();
 
 			TipoSala tipo2 = new TipoSala();
 			tipo2.setNome( "Laboratório" );
 			tipo2.setDescricao( "Laboratório" );
+			tipo2.setInstituicaoEnsino( instituicaoEnsino );
 			tipo2.persist();
 
 			TipoSala tipo3 = new TipoSala();
 			tipo3.setNome( "Auditório" );
 			tipo3.setDescricao( "Auditório" );
+			tipo3.setInstituicaoEnsino( instituicaoEnsino );
 			tipo3.persist();
+
+			list = TipoSala.findAll( getCurrentInstituicaoEnsino() );
 		}
 
-		List< TipoSalaDTO > list = new ArrayList< TipoSalaDTO >();
-		for ( TipoSala tipo : TipoSala.findAll() )
+		List< TipoSalaDTO > listDTO = new ArrayList< TipoSalaDTO >();
+		for ( TipoSala tipo : list )
 		{
-			list.add( ConvertBeans.toTipoSalaDTO( tipo ) );
+			listDTO.add( ConvertBeans.toTipoSalaDTO( tipo ) );
 		}
 
-		return new BaseListLoadResult< TipoSalaDTO >( list );
+		return new BaseListLoadResult< TipoSalaDTO >( listDTO );
+	}
+	
+	private InstituicaoEnsino getCurrentInstituicaoEnsino()
+	{
+		Usuario usuario = this.getUsuario();
+		return ( usuario == null ? null : usuario.getInstituicaoEnsino() );
 	}
 }

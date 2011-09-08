@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.gapso.trieda.domain.Campus;
 import com.gapso.trieda.domain.Cenario;
+import com.gapso.trieda.domain.InstituicaoEnsino;
 import com.gapso.trieda.domain.Parametro;
 import com.gapso.trieda.domain.Turno;
 import com.gapso.web.trieda.server.util.ConvertBeans;
@@ -32,14 +33,12 @@ import com.gapso.web.trieda.server.xml.output.TriedaOutput;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.ParametroDTO;
 import com.gapso.web.trieda.shared.services.OtimizarService;
-import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 @Transactional
 @Service
 @Repository
 public class OtimizarServiceImpl
-	extends RemoteServiceServlet
-	implements OtimizarService
+	extends RemoteService implements OtimizarService
 {
 	private static final long serialVersionUID = 5716065588362358065L;
 	private static final String linkSolverDefault = "http://localhost:3402/SolverWS";
@@ -48,19 +47,35 @@ public class OtimizarServiceImpl
 	@Transactional
 	public ParametroDTO getParametro( CenarioDTO cenarioDTO )
 	{
-		Cenario cenario = Cenario.find( cenarioDTO.getId() );
-		Parametro parametro = cenario.getUltimoParametro();
+		InstituicaoEnsino instituicaoEnsino = this.getInstituicaoEnsinoUser();
+
+		Cenario cenario = Cenario.find( cenarioDTO.getId(), instituicaoEnsino );
+		Parametro parametro = cenario.getUltimoParametro( instituicaoEnsino );
 
 		if ( parametro == null )
 		{
-			parametro = new Parametro();
-			parametro.setCenario( cenario );
+			parametro = this.getParametroDefault( instituicaoEnsino, cenario );
 		}
 
 		ParametroDTO parametroDTO = ConvertBeans.toParametroDTO( parametro );
 		return parametroDTO;
 	}
 
+	private Parametro getParametroDefault(
+		InstituicaoEnsino instituicaoEnsino, Cenario cenario )
+	{
+		Parametro parametro = new Parametro();
+
+		List< Campus > listCampus = Campus.findAll( instituicaoEnsino );
+		List< Turno > listTurnos = Turno.findAll( instituicaoEnsino );
+
+		parametro.setCenario( cenario );
+		parametro.setCampus( ( listCampus == null || listCampus.size() == 0 ? null : listCampus.get( 0 ) ) );
+		parametro.setTurno( ( listTurnos == null || listTurnos.size() == 0 ? null : listTurnos.get( 0 ) ) );
+
+		return parametro;
+	}
+	
 	@Override
 	@Transactional
 	public Long sendInput( ParametroDTO parametroDTO )
@@ -79,7 +94,7 @@ public class OtimizarServiceImpl
 
 		TriedaInput triedaInput = null;
 		SolverInput solverInput = new SolverInput(
-			cenario, parametro, campi, turno );
+			getInstituicaoEnsinoUser(), cenario, parametro, campi, turno );
 
 		if ( parametro.isTatico() )
 		{
@@ -124,7 +139,8 @@ public class OtimizarServiceImpl
 	public Map< String, List< String > > saveContent(
 		CenarioDTO cenarioDTO, Long round )
 	{
-		Cenario cenario = Cenario.find( cenarioDTO.getId() );
+		Cenario cenario = Cenario.find(
+			cenarioDTO.getId(), this.getInstituicaoEnsinoUser() );
 
 		Map< String, List< String > > ret
 			= new HashMap< String, List< String > >( 2 );
@@ -167,10 +183,13 @@ public class OtimizarServiceImpl
 				return ret;
 			}
 
-			Parametro parametro = cenario.getUltimoParametro();
-			SolverOutput solverOutput = new SolverOutput( cenario, triedaOutput );
+			Parametro parametro = cenario.getUltimoParametro(
+				this.getInstituicaoEnsinoUser() );
 
-			if ( cenario.getUltimoParametro().isTatico() )
+			SolverOutput solverOutput = new SolverOutput(
+				getInstituicaoEnsinoUser(), cenario, triedaOutput );
+
+			if ( cenario.getUltimoParametro( this.getInstituicaoEnsinoUser() ).isTatico() )
 			{
 				solverOutput.generateAtendimentosTatico();
 				solverOutput.salvarAtendimentosTatico(

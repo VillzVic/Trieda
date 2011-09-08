@@ -29,6 +29,7 @@ import com.gapso.trieda.domain.GrupoSala;
 import com.gapso.trieda.domain.HorarioAula;
 import com.gapso.trieda.domain.HorarioDisponivelCenario;
 import com.gapso.trieda.domain.Incompatibilidade;
+import com.gapso.trieda.domain.InstituicaoEnsino;
 import com.gapso.trieda.domain.Oferta;
 import com.gapso.trieda.domain.Sala;
 import com.gapso.trieda.domain.SemanaLetiva;
@@ -56,14 +57,10 @@ import com.gapso.web.trieda.shared.dtos.TipoDisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.TreeNodeDTO;
 import com.gapso.web.trieda.shared.services.DisciplinasService;
 import com.gapso.web.trieda.shared.util.TriedaCurrency;
-import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
-/**
- * The server side implementation of the RPC service.
- */
 @Transactional
-public class DisciplinasServiceImpl extends RemoteServiceServlet
-	implements DisciplinasService
+public class DisciplinasServiceImpl
+	extends RemoteService implements DisciplinasService
 {
 	private static final long serialVersionUID = -4850774141421616870L;
 
@@ -75,43 +72,78 @@ public class DisciplinasServiceImpl extends RemoteServiceServlet
 			return null;
 		}
 
-		return ConvertBeans.toDisciplinaDTO( Disciplina.find( id ) );
+		Disciplina disciplina = Disciplina.find(
+			id, getInstituicaoEnsinoUser() );
+
+		if ( disciplina == null )
+		{
+			return null;
+		}
+
+		return ConvertBeans.toDisciplinaDTO( disciplina );
 	}
 
 	@Override
 	public List< HorarioDisponivelCenarioDTO > getHorariosDisponiveis(
 		DisciplinaDTO disciplinaDTO, SemanaLetivaDTO semanaLetivaDTO )
 	{
-		List< SemanaLetiva > semanasLetivas = SemanaLetiva.findAll();
+		List< SemanaLetiva > semanasLetivas
+			= SemanaLetiva.findAll( getInstituicaoEnsinoUser() );
 
-		List< HorarioDisponivelCenario > list = new ArrayList< HorarioDisponivelCenario >(
-				Disciplina.find( disciplinaDTO.getId() ).getHorarios( semanasLetivas ) );
+		Disciplina disciplina = Disciplina.find(
+			disciplinaDTO.getId(), getInstituicaoEnsinoUser() ); 
 
 		List< HorarioDisponivelCenarioDTO > listDTO
-			= ConvertBeans.toHorarioDisponivelCenarioDTO( list );
+			= new ArrayList< HorarioDisponivelCenarioDTO >();
+
+		if ( disciplina == null )
+		{
+			return listDTO;
+		}
+
+		List< HorarioDisponivelCenario > list = new ArrayList< HorarioDisponivelCenario >(
+			disciplina.getHorarios( getInstituicaoEnsinoUser(), semanasLetivas ) );
+
+		listDTO.addAll( ConvertBeans.toHorarioDisponivelCenarioDTO( list ) );
 
 		return listDTO;
 	}
 
 	@Override
 	public void saveHorariosDisponiveis( DisciplinaDTO disciplinaDTO,
-		List<HorarioDisponivelCenarioDTO> listDTO )
+		List< HorarioDisponivelCenarioDTO > listDTO )
 	{
 		List< HorarioDisponivelCenario > listSelecionados
 			= ConvertBeans.toHorarioDisponivelCenario( listDTO );
 
-		Disciplina disciplina = Disciplina.find( disciplinaDTO.getId() );
-		List<HorarioDisponivelCenario> adicionarList
-			= new ArrayList<HorarioDisponivelCenario>( listSelecionados );
+		Disciplina disciplina = Disciplina.find(
+			disciplinaDTO.getId(), getInstituicaoEnsinoUser() );
 
-		List< SemanaLetiva > semanasLetivas = SemanaLetiva.findAll(  );
-		adicionarList.removeAll( disciplina.getHorarios( semanasLetivas ) );
+		if ( disciplina == null )
+		{
+			return;
+		}
+
+		List< HorarioDisponivelCenario > adicionarList
+			= new ArrayList< HorarioDisponivelCenario >( listSelecionados );
+
+		List< SemanaLetiva > semanasLetivas
+			= SemanaLetiva.findAll( getInstituicaoEnsinoUser() );
 
 		List< HorarioDisponivelCenario > removerList
-			= new ArrayList< HorarioDisponivelCenario >(
-				disciplina.getHorarios( semanasLetivas ) );
+			= new ArrayList< HorarioDisponivelCenario >();
+
+		if ( semanasLetivas != null && semanasLetivas.size() > 0 )
+		{
+			List< HorarioDisponivelCenario > listTemp
+				= disciplina.getHorarios( getInstituicaoEnsinoUser(), semanasLetivas );
+
+			adicionarList.removeAll( listTemp );
+			removerList.addAll(	listTemp );
+		}
 
 		removerList.removeAll( listSelecionados );
+
 		for ( HorarioDisponivelCenario o : removerList )
 		{
 			o.getDisciplinas().remove( disciplina );
@@ -126,31 +158,50 @@ public class DisciplinasServiceImpl extends RemoteServiceServlet
 	}
 
 	@Override
-	public ListLoadResult<DisciplinaDTO> getListByCursos(
-			List<CursoDTO> cursosDTO) {
-		List<DisciplinaDTO> list = new ArrayList<DisciplinaDTO>();
-		List<Curso> cursos = new ArrayList<Curso>();
-		for (CursoDTO cursoDTO : cursosDTO) {
-			cursos.add(ConvertBeans.toCurso(cursoDTO));
+	public ListLoadResult< DisciplinaDTO > getListByCursos(
+		List< CursoDTO > cursosDTO )
+	{
+		List< DisciplinaDTO > list = new ArrayList< DisciplinaDTO >();
+		List< Curso > cursos = new ArrayList< Curso >();
+
+		for ( CursoDTO cursoDTO : cursosDTO )
+		{
+			cursos.add( ConvertBeans.toCurso( cursoDTO ) );
 		}
-		List<Disciplina> disciplinas = Disciplina.findByCursos(cursos);
-		for (Disciplina disciplina : disciplinas) {
-			list.add(ConvertBeans.toDisciplinaDTO(disciplina));
+
+		List< Disciplina > disciplinas
+			= Disciplina.findByCursos( getInstituicaoEnsinoUser(), cursos );
+
+		for ( Disciplina disciplina : disciplinas )
+		{
+			list.add( ConvertBeans.toDisciplinaDTO( disciplina ) );
 		}
-		return new BaseListLoadResult<DisciplinaDTO>(list);
+
+		return new BaseListLoadResult< DisciplinaDTO >( list );
 	}
 
-	public ListLoadResult<DisciplinaDTO> getListBySalas(List<SalaDTO> salasDTO) {
-		List<DisciplinaDTO> list = new ArrayList<DisciplinaDTO>();
-		List<Sala> salas = new ArrayList<Sala>();
-		for (SalaDTO salaDTO : salasDTO) {
-			salas.add(ConvertBeans.toSala(salaDTO));
+	public ListLoadResult< DisciplinaDTO > getListBySalas(
+		List< SalaDTO > salasDTO )
+	{
+		List< DisciplinaDTO > list
+			= new ArrayList< DisciplinaDTO >();
+
+		List< Sala > salas = new ArrayList< Sala >();
+
+		for ( SalaDTO salaDTO : salasDTO )
+		{
+			salas.add( ConvertBeans.toSala( salaDTO ) );
 		}
-		List<Disciplina> disciplinas = Disciplina.findBySalas(salas);
-		for (Disciplina disciplina : disciplinas) {
-			list.add(ConvertBeans.toDisciplinaDTO(disciplina));
+
+		List< Disciplina > disciplinas
+			= Disciplina.findBySalas( getInstituicaoEnsinoUser(), salas );
+
+		for ( Disciplina disciplina : disciplinas )
+		{
+			list.add( ConvertBeans.toDisciplinaDTO( disciplina ) );
 		}
-		return new BaseListLoadResult<DisciplinaDTO>(list);
+
+		return new BaseListLoadResult< DisciplinaDTO >( list );
 	}
 
 	@Override
@@ -173,21 +224,30 @@ public class DisciplinasServiceImpl extends RemoteServiceServlet
 				orderBy = orderBy + " desc";
 			}
 		}
+
 		TipoDisciplina tipoDisciplina = null;
 		if (tipoDisciplinaDTO != null) {
 			tipoDisciplina = ConvertBeans.toTipoDisciplina(tipoDisciplinaDTO);
 		}
-		List<Disciplina> disciplinas = Disciplina.findBy(codigo, nome,
-				tipoDisciplina, config.getOffset(), config.getLimit(), orderBy);
-		for (Disciplina disciplina : disciplinas) {
-			DisciplinaDTO disciplinaDTO = ConvertBeans
-					.toDisciplinaDTO(disciplina);
-			list.add(disciplinaDTO);
+
+		List< Disciplina > disciplinas = Disciplina.findBy( getInstituicaoEnsinoUser(),
+			codigo, nome, tipoDisciplina, config.getOffset(), config.getLimit(), orderBy );
+
+		for ( Disciplina disciplina : disciplinas )
+		{
+			DisciplinaDTO disciplinaDTO
+				= ConvertBeans.toDisciplinaDTO( disciplina );
+
+			list.add( disciplinaDTO );
 		}
-		BasePagingLoadResult<DisciplinaDTO> result = new BasePagingLoadResult<DisciplinaDTO>(
-				list);
-		result.setOffset(config.getOffset());
-		result.setTotalLength(Disciplina.count(codigo, nome, tipoDisciplina));
+
+		BasePagingLoadResult< DisciplinaDTO > result
+			= new BasePagingLoadResult< DisciplinaDTO >( list );
+
+		result.setOffset( config.getOffset() );
+		result.setTotalLength( Disciplina.count(
+			getInstituicaoEnsinoUser(), codigo, nome, tipoDisciplina ) );
+
 		return result;
 	}
 
@@ -204,7 +264,9 @@ public class DisciplinasServiceImpl extends RemoteServiceServlet
 		{
 			disciplina.persist();
 
-			List< SemanaLetiva > semanasLetivas = SemanaLetiva.findAll();
+			List< SemanaLetiva > semanasLetivas
+				= SemanaLetiva.findAll( getInstituicaoEnsinoUser() );
+
 			Set< HorarioAula > horariosAula = new HashSet< HorarioAula >();
 
 			for ( SemanaLetiva semanaLetiva : semanasLetivas )
@@ -231,10 +293,12 @@ public class DisciplinasServiceImpl extends RemoteServiceServlet
 	{
 		for ( DisciplinaDTO disciplinaDTO : disciplinaDTOList )
 		{
-			Disciplina disc = Disciplina.find( disciplinaDTO.getId() );
-			if ( disc != null )
+			Disciplina disciplina = Disciplina.find(
+				disciplinaDTO.getId(), getInstituicaoEnsinoUser() );
+
+			if ( disciplina != null )
 			{
-				disc.remove();
+				disciplina.remove();
 			}
 		}
 	}
@@ -242,7 +306,9 @@ public class DisciplinasServiceImpl extends RemoteServiceServlet
 	@Override
 	public DivisaoCreditoDTO getDivisaoCredito( DisciplinaDTO disciplinaDTO )
 	{
-		Disciplina disciplina = Disciplina.find( disciplinaDTO.getId() );
+		Disciplina disciplina = Disciplina.find(
+			disciplinaDTO.getId(), getInstituicaoEnsinoUser() );
+
 		DivisaoCredito dc = disciplina.getDivisaoCreditos();
 
 		if ( dc == null )
@@ -257,8 +323,11 @@ public class DisciplinasServiceImpl extends RemoteServiceServlet
 	public void salvarDivisaoCredito( DisciplinaDTO disciplinaDTO,
 		DivisaoCreditoDTO divisaoCreditoDTO )
 	{
-		Disciplina disciplina = Disciplina.find( disciplinaDTO.getId() );
-		DivisaoCredito divisaoCredito = disciplina.getDivisaoCreditos();
+		Disciplina disciplina = Disciplina.find(
+			disciplinaDTO.getId(), getInstituicaoEnsinoUser() );
+
+		DivisaoCredito divisaoCredito
+			= disciplina.getDivisaoCreditos();
 
 		if ( divisaoCredito != null )
 		{
@@ -293,82 +362,116 @@ public class DisciplinasServiceImpl extends RemoteServiceServlet
 	@Override
 	public TipoDisciplinaDTO getTipoDisciplina( Long id )
 	{
-		return ConvertBeans.toTipoDisciplinaDTO( TipoDisciplina.find( id ) );
+		return ConvertBeans.toTipoDisciplinaDTO(
+			TipoDisciplina.find( id, getUsuario().getInstituicaoEnsino() ) );
 	}
 
 	@Override
 	public ListLoadResult< TipoDisciplinaDTO > getTipoDisciplinaList()
 	{
-		if ( TipoDisciplina.count() == 0 )
+		InstituicaoEnsino instituicaoEnsino
+		= getUsuario().getInstituicaoEnsino(); 
+
+		List< TipoDisciplina > listTiposDisciplinas
+			= TipoDisciplina.findAll( instituicaoEnsino );
+
+		if ( listTiposDisciplinas.size() == 0 )
 		{
 			TipoDisciplina tipo1 = new TipoDisciplina();
 			tipo1.setNome( "Presencial" );
+			tipo1.setInstituicaoEnsino( instituicaoEnsino );
 			tipo1.persist();
 
 			TipoDisciplina tipo2 = new TipoDisciplina();
 			tipo2.setNome( "Telepresencial" );
+			tipo2.setInstituicaoEnsino( instituicaoEnsino );
 			tipo2.persist();
 
 			TipoDisciplina tipo3 = new TipoDisciplina();
 			tipo3.setNome( "Online" );
+			tipo3.setInstituicaoEnsino( instituicaoEnsino );
 			tipo3.persist();
+
+			listTiposDisciplinas
+				= TipoDisciplina.findAll( instituicaoEnsino );
 		}
 
-		List< TipoDisciplinaDTO > list = new ArrayList< TipoDisciplinaDTO >();
-		for ( TipoDisciplina tipo : TipoDisciplina.findAll() )
+		List< TipoDisciplinaDTO > listDTO
+			= new ArrayList< TipoDisciplinaDTO >();
+
+		for ( TipoDisciplina tipo : listTiposDisciplinas )
 		{
-			list.add( ConvertBeans.toTipoDisciplinaDTO( tipo ) );
+			listDTO.add( ConvertBeans.toTipoDisciplinaDTO( tipo ) );
 		}
 
-		return new BaseListLoadResult< TipoDisciplinaDTO >( list );
+		return new BaseListLoadResult< TipoDisciplinaDTO >( listDTO );
 	}
 
 	@Override
 	@Transactional
-	public List<TreeNodeDTO> getFolderChildren(TreeNodeDTO currentNode) {
-		List<TreeNodeDTO> currentNodeChildren = new ArrayList<TreeNodeDTO>();
-		if (currentNode != null) {
-			AbstractDTO<?> contentNode = currentNode.getContent();
-			if (contentNode != null) {
-				if (contentNode instanceof OfertaDTO) {
-					OfertaDTO ofertaDTOContentNode = (OfertaDTO) contentNode;
-					Curriculo curriculo = Curriculo.find(ofertaDTOContentNode
-							.getMatrizCurricularId());
+	public List< TreeNodeDTO > getFolderChildren( TreeNodeDTO currentNode )
+	{
+		List< TreeNodeDTO > currentNodeChildren
+			= new ArrayList< TreeNodeDTO >();
 
-					Set<Integer> periodos = new HashSet<Integer>();
-					for (CurriculoDisciplina cd : curriculo.getDisciplinas()) {
-						if (periodos.add(cd.getPeriodo())) {
-							CurriculoDisciplinaDTO curriculoDisciplinaDTO = ConvertBeans
-									.toCurriculoDisciplinaDTO(cd);
+		if ( currentNode != null )
+		{
+			AbstractDTO< ? > contentNode = currentNode.getContent();
+
+			if ( contentNode != null )
+			{
+				if ( contentNode instanceof OfertaDTO )
+				{
+					OfertaDTO ofertaDTOContentNode = (OfertaDTO) contentNode;
+					Curriculo curriculo = Curriculo.find(
+						ofertaDTOContentNode.getMatrizCurricularId(), getInstituicaoEnsinoUser() );
+
+					Set< Integer > periodos = new HashSet< Integer >();
+					for ( CurriculoDisciplina cd : curriculo.getDisciplinas() )
+					{
+						if ( periodos.add( cd.getPeriodo() ) )
+						{
+							CurriculoDisciplinaDTO curriculoDisciplinaDTO
+								= ConvertBeans.toCurriculoDisciplinaDTO( cd );
+
 							TreeNodeDTO newChildNode = new TreeNodeDTO(
-									curriculoDisciplinaDTO, currentNode);
-							newChildNode.setText("Periodo "
-									+ curriculoDisciplinaDTO.getPeriodo()
-											.toString());
-							currentNodeChildren.add(newChildNode);
+								curriculoDisciplinaDTO, currentNode );
+
+							newChildNode.setText( "Periodo " +
+								curriculoDisciplinaDTO.getPeriodo().toString() );
+
+							currentNodeChildren.add( newChildNode );
 						}
 					}
-				} else if (contentNode instanceof CurriculoDisciplinaDTO) {
-					CurriculoDisciplinaDTO curricDiscDTOContentNode = (CurriculoDisciplinaDTO) contentNode;
-					Curriculo curriculo = Curriculo
-							.find(curricDiscDTOContentNode.getCurriculoId());
+				}
+				else if ( contentNode instanceof CurriculoDisciplinaDTO )
+				{
+					CurriculoDisciplinaDTO curricDiscDTOContentNode
+						= (CurriculoDisciplinaDTO) contentNode;
 
-					for (CurriculoDisciplina cd : curriculo.getDisciplinas()) {
-						if (cd.getPeriodo().equals(
-								curricDiscDTOContentNode.getPeriodo())) {
-							CurriculoDisciplinaDTO curriculoDisciplinaDTO = ConvertBeans
-									.toCurriculoDisciplinaDTO(cd);
+					Curriculo curriculo = Curriculo.find(
+						curricDiscDTOContentNode.getCurriculoId(), getInstituicaoEnsinoUser() );
+
+					for ( CurriculoDisciplina cd : curriculo.getDisciplinas() )
+					{
+						if ( cd.getPeriodo().equals(
+								curricDiscDTOContentNode.getPeriodo() ) )
+						{
+							CurriculoDisciplinaDTO curriculoDisciplinaDTO
+								= ConvertBeans.toCurriculoDisciplinaDTO( cd );
+
 							TreeNodeDTO newChildNode = new TreeNodeDTO(
-									curriculoDisciplinaDTO, currentNode);
-							newChildNode.setLeaf(true);
-							currentNodeChildren.add(newChildNode);
+								curriculoDisciplinaDTO, currentNode );
+
+							newChildNode.setLeaf( true );
+							currentNodeChildren.add( newChildNode );
 						}
 					}
 				}
 			}
 		}
 
-		Collections.sort(currentNodeChildren);
+		Collections.sort( currentNodeChildren );
 
 		return currentNodeChildren;
 	}
@@ -377,97 +480,117 @@ public class DisciplinasServiceImpl extends RemoteServiceServlet
 		List<TreeNodeDTO> nodeChildrenList = new ArrayList<TreeNodeDTO>();
 
 		SalaDTO salaDTO = (SalaDTO) salaTreeNodeDTO.getContent();
-		Sala sala = Sala.find(salaDTO.getId());
-		List<Oferta> ofertas = Oferta.findAllBy(sala);
+		Sala sala = Sala.find( salaDTO.getId(), getInstituicaoEnsinoUser() );
+		List< Oferta > ofertas = Oferta.findAllBy(
+			getInstituicaoEnsinoUser(), sala);
 
-		for (Oferta oferta : ofertas) {
-			OfertaDTO ofertaDTO = ConvertBeans.toOfertaDTO(oferta);
-			TreeNodeDTO nodeDTO = new TreeNodeDTO(ofertaDTO, salaTreeNodeDTO);
-			nodeDTO.setEmpty(false);
-			nodeChildrenList.add(nodeDTO);
+		for ( Oferta oferta : ofertas )
+		{
+			OfertaDTO ofertaDTO = ConvertBeans.toOfertaDTO( oferta );
+			TreeNodeDTO nodeDTO = new TreeNodeDTO( ofertaDTO, salaTreeNodeDTO );
+			nodeDTO.setEmpty( false );
+			nodeChildrenList.add( nodeDTO );
 		}
 
-		Collections.sort(nodeChildrenList);
+		Collections.sort( nodeChildrenList );
 
 		return nodeChildrenList;
 	}
 
-	public List<TreeNodeDTO> getPeriodosByTreeSalas(
-			TreeNodeDTO salaTreeNodeDTO, TreeNodeDTO ofertaTreeNodeDTO) {
-		List<TreeNodeDTO> nodeChildrenList = new ArrayList<TreeNodeDTO>();
+	public List< TreeNodeDTO > getPeriodosByTreeSalas(
+		TreeNodeDTO salaTreeNodeDTO, TreeNodeDTO ofertaTreeNodeDTO )
+	{
+		List< TreeNodeDTO > nodeChildrenList = new ArrayList< TreeNodeDTO >();
 
 		SalaDTO salaDTO = (SalaDTO) salaTreeNodeDTO.getContent();
-		Sala sala = Sala.find(salaDTO.getId());
+		Sala sala = Sala.find( salaDTO.getId(), getInstituicaoEnsinoUser() );
 		OfertaDTO ofertaDTO = (OfertaDTO) ofertaTreeNodeDTO.getContent();
-		Oferta oferta = Oferta.find(ofertaDTO.getId());
-		List<CurriculoDisciplina> curriculoDisciplinas = CurriculoDisciplina
-				.findAllPeriodosBy(sala, oferta);
+		Oferta oferta = Oferta.find( ofertaDTO.getId(), getInstituicaoEnsinoUser() );
 
-		for (CurriculoDisciplina cd : curriculoDisciplinas) {
-			CurriculoDisciplinaDTO cdDTO = ConvertBeans
-					.toCurriculoDisciplinaDTO(cd);
-			TreeNodeDTO nodeDTO = new TreeNodeDTO(cdDTO, ofertaTreeNodeDTO);
-			nodeDTO.setText("Periodo " + cdDTO.getPeriodo());
-			nodeDTO.setEmpty(false);
-			nodeChildrenList.add(nodeDTO);
+		List< CurriculoDisciplina > curriculoDisciplinas
+			= CurriculoDisciplina.findAllPeriodosBy(
+				getInstituicaoEnsinoUser(), sala, oferta );
+
+		for ( CurriculoDisciplina cd : curriculoDisciplinas )
+		{
+			CurriculoDisciplinaDTO cdDTO = ConvertBeans.toCurriculoDisciplinaDTO( cd );
+			TreeNodeDTO nodeDTO = new TreeNodeDTO( cdDTO, ofertaTreeNodeDTO );
+
+			nodeDTO.setText( "Periodo " + cdDTO.getPeriodo() );
+			nodeDTO.setEmpty( false );
+			nodeChildrenList.add( nodeDTO );
 		}
 
-		Collections.sort(nodeChildrenList);
+		Collections.sort( nodeChildrenList );
 
 		return nodeChildrenList;
 	}
 
 	@Override
-	public List<TreeNodeDTO> getDisciplinasByTreeSalas(
-			TreeNodeDTO salaTreeNodeDTO, TreeNodeDTO ofertaTreeNodeDTO,
-			TreeNodeDTO curriculoDisciplinaTreeNodeDTO) {
-		if (ofertaTreeNodeDTO == null)
-			return getOfertasByTreeSalas(salaTreeNodeDTO);
-		if (curriculoDisciplinaTreeNodeDTO == null)
-			return getPeriodosByTreeSalas(salaTreeNodeDTO, ofertaTreeNodeDTO);
-
-		List<TreeNodeDTO> nodeChildrenList = new ArrayList<TreeNodeDTO>();
-
-		SalaDTO salaDTO = (SalaDTO) salaTreeNodeDTO.getContent();
-		Sala sala = Sala.find(salaDTO.getId());
-		OfertaDTO ofertaDTO = (OfertaDTO) ofertaTreeNodeDTO.getContent();
-		Oferta oferta = Oferta.find(ofertaDTO.getId());
-		CurriculoDisciplinaDTO curriculoDisciplinaDTO = (CurriculoDisciplinaDTO) curriculoDisciplinaTreeNodeDTO
-				.getContent();
-		List<CurriculoDisciplina> curriculoDisciplinas = CurriculoDisciplina
-				.findBy(sala, oferta, curriculoDisciplinaDTO.getPeriodo());
-
-		for (CurriculoDisciplina cd : curriculoDisciplinas) {
-			CurriculoDisciplinaDTO cdDTO = ConvertBeans
-					.toCurriculoDisciplinaDTO(cd);
-			TreeNodeDTO nodeDTO = new TreeNodeDTO(cdDTO,
-					curriculoDisciplinaTreeNodeDTO);
-			nodeDTO.setLeaf(true);
-			nodeChildrenList.add(nodeDTO);
+	public List< TreeNodeDTO > getDisciplinasByTreeSalas(
+		TreeNodeDTO salaTreeNodeDTO, TreeNodeDTO ofertaTreeNodeDTO,
+		TreeNodeDTO curriculoDisciplinaTreeNodeDTO )
+	{
+		if ( ofertaTreeNodeDTO == null )
+		{
+			return getOfertasByTreeSalas( salaTreeNodeDTO );
 		}
 
-		Collections.sort(nodeChildrenList);
+		if ( curriculoDisciplinaTreeNodeDTO == null )
+		{
+			return getPeriodosByTreeSalas( salaTreeNodeDTO, ofertaTreeNodeDTO );
+		}
+
+		List< TreeNodeDTO > nodeChildrenList = new ArrayList< TreeNodeDTO >();
+
+		SalaDTO salaDTO = (SalaDTO) salaTreeNodeDTO.getContent();
+		Sala sala = Sala.find( salaDTO.getId(), getInstituicaoEnsinoUser() );
+		OfertaDTO ofertaDTO = (OfertaDTO) ofertaTreeNodeDTO.getContent();
+		Oferta oferta = Oferta.find(
+			ofertaDTO.getId(), getInstituicaoEnsinoUser() );
+
+		CurriculoDisciplinaDTO curriculoDisciplinaDTO
+			= (CurriculoDisciplinaDTO) curriculoDisciplinaTreeNodeDTO.getContent();
+
+		List< CurriculoDisciplina > curriculoDisciplinas = CurriculoDisciplina.findBy(
+			getInstituicaoEnsinoUser(), sala, oferta, curriculoDisciplinaDTO.getPeriodo() );
+
+		for ( CurriculoDisciplina cd : curriculoDisciplinas )
+		{
+			CurriculoDisciplinaDTO cdDTO = ConvertBeans.toCurriculoDisciplinaDTO( cd );
+			TreeNodeDTO nodeDTO = new TreeNodeDTO( cdDTO, curriculoDisciplinaTreeNodeDTO );
+
+			nodeDTO.setLeaf( true );
+			nodeChildrenList.add( nodeDTO );
+		}
+
+		Collections.sort( nodeChildrenList );
 
 		return nodeChildrenList;
 	}
 
-	public List<TreeNodeDTO> getOfertasByTreeGrupoSalas(
-			TreeNodeDTO grupoSalaTreeNodeDTO) {
-		List<TreeNodeDTO> nodeChildrenList = new ArrayList<TreeNodeDTO>();
+	public List< TreeNodeDTO > getOfertasByTreeGrupoSalas(
+		TreeNodeDTO grupoSalaTreeNodeDTO )
+	{
+		List< TreeNodeDTO > nodeChildrenList
+			= new ArrayList< TreeNodeDTO >();
 
-		GrupoSalaDTO grupoSalaDTO = (GrupoSalaDTO) grupoSalaTreeNodeDTO
-				.getContent();
-		GrupoSala grupoSala = GrupoSala.find(grupoSalaDTO.getId());
-		List<Oferta> ofertas = Oferta.findAllBy(grupoSala);
+		GrupoSalaDTO grupoSalaDTO = (GrupoSalaDTO) grupoSalaTreeNodeDTO.getContent();
+		GrupoSala grupoSala = GrupoSala.find(
+			grupoSalaDTO.getId(), getInstituicaoEnsinoUser() );
 
-		for (Oferta oferta : ofertas) {
-			OfertaDTO ofertaDTO = ConvertBeans.toOfertaDTO(oferta);
-			TreeNodeDTO nodeDTO = new TreeNodeDTO(ofertaDTO,
-					grupoSalaTreeNodeDTO);
-			nodeChildrenList.add(nodeDTO);
+		List< Oferta > ofertas = Oferta.findAllBy(
+			getInstituicaoEnsinoUser(), grupoSala );
+
+		for ( Oferta oferta : ofertas )
+		{
+			OfertaDTO ofertaDTO = ConvertBeans.toOfertaDTO( oferta );
+			TreeNodeDTO nodeDTO = new TreeNodeDTO( ofertaDTO, grupoSalaTreeNodeDTO );
+
+			nodeChildrenList.add( nodeDTO );
 		}
 
-		Collections.sort(nodeChildrenList);
+		Collections.sort( nodeChildrenList );
 
 		return nodeChildrenList;
 	}
@@ -478,20 +601,28 @@ public class DisciplinasServiceImpl extends RemoteServiceServlet
 		List< TreeNodeDTO > nodeChildrenList = new ArrayList< TreeNodeDTO >();
 
 		GrupoSalaDTO grupoSalaDTO = (GrupoSalaDTO) grupoSalaTreeNodeDTO.getContent();
-		GrupoSala grupoSala = GrupoSala.find( grupoSalaDTO.getId() );
+		GrupoSala grupoSala = GrupoSala.find(
+			grupoSalaDTO.getId(), getInstituicaoEnsinoUser() );
+
 		OfertaDTO ofertaDTO = (OfertaDTO) ofertaTreeNodeDTO.getContent();
-		Oferta oferta = Oferta.find( ofertaDTO.getId() );
-		List< CurriculoDisciplina > curriculoDisciplinas
-			= CurriculoDisciplina.findAllPeriodosBy( grupoSala, oferta );
+		Oferta oferta = Oferta.find(
+			ofertaDTO.getId(), getInstituicaoEnsinoUser() );
 
-		for ( CurriculoDisciplina cd : curriculoDisciplinas )
+		if ( oferta != null && grupoSala != null )
 		{
-			CurriculoDisciplinaDTO cdDTO
-				= ConvertBeans.toCurriculoDisciplinaDTO( cd );
-
-			TreeNodeDTO nodeDTO = new TreeNodeDTO( cdDTO, ofertaTreeNodeDTO );
-			nodeDTO.setText( "Periodo " + cdDTO.getPeriodo() );
-			nodeChildrenList.add( nodeDTO );
+			List< CurriculoDisciplina > curriculoDisciplinas
+				= CurriculoDisciplina.findAllPeriodosBy(
+					getInstituicaoEnsinoUser(), grupoSala, oferta );
+	
+			for ( CurriculoDisciplina cd : curriculoDisciplinas )
+			{
+				CurriculoDisciplinaDTO cdDTO
+					= ConvertBeans.toCurriculoDisciplinaDTO( cd );
+	
+				TreeNodeDTO nodeDTO = new TreeNodeDTO( cdDTO, ofertaTreeNodeDTO );
+				nodeDTO.setText( "Periodo " + cdDTO.getPeriodo() );
+				nodeChildrenList.add( nodeDTO );
+			}
 		}
 
 		Collections.sort( nodeChildrenList );
@@ -510,26 +641,37 @@ public class DisciplinasServiceImpl extends RemoteServiceServlet
 
 		List<TreeNodeDTO> nodeChildrenList = new ArrayList<TreeNodeDTO>();
 
-		GrupoSalaDTO grupoSalaDTO = (GrupoSalaDTO) grupoSalaTreeNodeDTO
-				.getContent();
-		GrupoSala grupoSala = GrupoSala.find(grupoSalaDTO.getId());
-		OfertaDTO ofertaDTO = (OfertaDTO) ofertaTreeNodeDTO.getContent();
-		Oferta oferta = Oferta.find(ofertaDTO.getId());
-		CurriculoDisciplinaDTO curriculoDisciplinaDTO = (CurriculoDisciplinaDTO) curriculoDisciplinaTreeNodeDTO
-				.getContent();
-		List<CurriculoDisciplina> curriculoDisciplinas = CurriculoDisciplina
-				.findBy(grupoSala, oferta, curriculoDisciplinaDTO.getPeriodo());
+		GrupoSalaDTO grupoSalaDTO = (GrupoSalaDTO) grupoSalaTreeNodeDTO.getContent();
+		GrupoSala grupoSala = GrupoSala.find(
+			grupoSalaDTO.getId(), getInstituicaoEnsinoUser() );
 
-		for (CurriculoDisciplina cd : curriculoDisciplinas) {
-			CurriculoDisciplinaDTO cdDTO = ConvertBeans
-					.toCurriculoDisciplinaDTO(cd);
-			TreeNodeDTO nodeDTO = new TreeNodeDTO(cdDTO,
-					curriculoDisciplinaTreeNodeDTO);
-			nodeDTO.setLeaf(true);
-			nodeChildrenList.add(nodeDTO);
+		OfertaDTO ofertaDTO = (OfertaDTO) ofertaTreeNodeDTO.getContent();
+		Oferta oferta = Oferta.find(
+			ofertaDTO.getId(), getInstituicaoEnsinoUser() );
+
+		CurriculoDisciplinaDTO curriculoDisciplinaDTO
+			= (CurriculoDisciplinaDTO) curriculoDisciplinaTreeNodeDTO.getContent();
+
+		if ( oferta != null && grupoSala != null )
+		{
+			List< CurriculoDisciplina > curriculoDisciplinas
+				= CurriculoDisciplina.findBy( getInstituicaoEnsinoUser(),
+					grupoSala, oferta, curriculoDisciplinaDTO.getPeriodo() );
+
+			for ( CurriculoDisciplina cd : curriculoDisciplinas )
+			{
+				CurriculoDisciplinaDTO cdDTO
+					= ConvertBeans.toCurriculoDisciplinaDTO( cd );
+
+				TreeNodeDTO nodeDTO = new TreeNodeDTO(
+					cdDTO, curriculoDisciplinaTreeNodeDTO );
+
+				nodeDTO.setLeaf( true );
+				nodeChildrenList.add( nodeDTO );
+			}
 		}
 
-		Collections.sort(nodeChildrenList);
+		Collections.sort( nodeChildrenList );
 
 		return nodeChildrenList;
 	}
@@ -538,25 +680,36 @@ public class DisciplinasServiceImpl extends RemoteServiceServlet
 	public void saveDisciplinaToSala( OfertaDTO ofertaDTO, Integer periodo,
 		CurriculoDisciplinaDTO cdDTO, SalaDTO salaDTO )
 	{
-		Sala sala = Sala.find( salaDTO.getId() );
+		Sala sala = Sala.find( salaDTO.getId(), getInstituicaoEnsinoUser() );
 		Set< CurriculoDisciplina > list = new HashSet< CurriculoDisciplina >();
 
 		if ( ofertaDTO != null && periodo == null && cdDTO == null )
 		{
-			Oferta oferta = Oferta.find(ofertaDTO.getId());
-			list.addAll(oferta.getCurriculo().getDisciplinas());
+			Oferta oferta = Oferta.find(
+				ofertaDTO.getId(), getInstituicaoEnsinoUser() );
+			
+			if ( oferta != null )
+			{
+				list.addAll( oferta.getCurriculo().getDisciplinas() );
+			}
 		}
 		else if ( ofertaDTO != null && periodo != null && cdDTO == null )
 		{
 			// Informou o periodo inteiro somente
-			Oferta oferta = Oferta.find( ofertaDTO.getId() );
-			list.addAll( CurriculoDisciplina.findAllByCurriculoAndPeriodo(
-				oferta.getCurriculo(), periodo ) );
+			Oferta oferta = Oferta.find(
+				ofertaDTO.getId(), getInstituicaoEnsinoUser() );
+
+			if ( oferta != null )
+			{
+				list.addAll( CurriculoDisciplina.findAllByCurriculoAndPeriodo(
+					getInstituicaoEnsinoUser(), oferta.getCurriculo(), periodo ) );
+			}
 		}
 		else if ( ofertaDTO != null && periodo != null && cdDTO != null )
 		{
 			// Informou a disciplina somente
-			list.add( CurriculoDisciplina.find( cdDTO.getId() ) );
+			list.add( CurriculoDisciplina.find(
+				cdDTO.getId(), getInstituicaoEnsinoUser() ) );
 		}
 
 		for ( CurriculoDisciplina curriculoDisciplina : list )
@@ -570,25 +723,38 @@ public class DisciplinasServiceImpl extends RemoteServiceServlet
 	public void saveDisciplinaToSala( OfertaDTO ofertaDTO, Integer periodo,
 		CurriculoDisciplinaDTO cdDTO, GrupoSalaDTO grupoSalaDTO )
 	{
-		GrupoSala grupoSala = GrupoSala.find( grupoSalaDTO.getId() );
+		GrupoSala grupoSala = GrupoSala.find(
+			grupoSalaDTO.getId(), getInstituicaoEnsinoUser() );
+
 		Set< CurriculoDisciplina > list = new HashSet< CurriculoDisciplina >();
 
 		if ( ofertaDTO != null && periodo == null && cdDTO == null )
 		{
-			Oferta oferta = Oferta.find( ofertaDTO.getId() );
-			list.addAll( oferta.getCurriculo().getDisciplinas() );
+			Oferta oferta = Oferta.find(
+				ofertaDTO.getId(), getInstituicaoEnsinoUser() );
+
+			if ( oferta != null )
+			{
+				list.addAll( oferta.getCurriculo().getDisciplinas() );
+			}
 		}
 		else if ( ofertaDTO != null && periodo != null && cdDTO == null )
 		{
 			// Informou o periodo inteiro somente
-			Oferta oferta = Oferta.find( ofertaDTO.getId() );
-			list.addAll(CurriculoDisciplina.findAllByCurriculoAndPeriodo(
-				oferta.getCurriculo(), periodo ) );
+			Oferta oferta = Oferta.find(
+				ofertaDTO.getId(), getInstituicaoEnsinoUser() );
+
+			if ( oferta != null )
+			{
+				list.addAll( CurriculoDisciplina.findAllByCurriculoAndPeriodo(
+					getInstituicaoEnsinoUser(), oferta.getCurriculo(), periodo ) );
+			}
 		}
 		else if ( ofertaDTO != null && periodo != null && cdDTO != null )
 		{
 			// Informou a disciplina somente
-			list.add( CurriculoDisciplina.find( cdDTO.getId() ) );
+			list.add( CurriculoDisciplina.find(
+				cdDTO.getId(), getInstituicaoEnsinoUser() ) );
 		}
 
 		grupoSala.getCurriculoDisciplinas().addAll( list );
@@ -599,9 +765,12 @@ public class DisciplinasServiceImpl extends RemoteServiceServlet
 	public void removeDisciplinaToSala( GrupoSalaDTO grupoSalaDTO,
 		CurriculoDisciplinaDTO cdDTO )
 	{
-		GrupoSala grupoSala = GrupoSala.find( grupoSalaDTO.getId() );
+		GrupoSala grupoSala = GrupoSala.find(
+			grupoSalaDTO.getId(), getInstituicaoEnsinoUser() );
+
 		CurriculoDisciplina curriculoDisciplina
-			= CurriculoDisciplina.find( cdDTO.getId() );
+			= CurriculoDisciplina.find(
+				cdDTO.getId(), getInstituicaoEnsinoUser() );
 
 		grupoSala.getCurriculoDisciplinas().remove( curriculoDisciplina );
 		grupoSala.merge();
@@ -611,9 +780,10 @@ public class DisciplinasServiceImpl extends RemoteServiceServlet
 	public void removeDisciplinaToSala( SalaDTO salaDTO,
 		CurriculoDisciplinaDTO cdDTO )
 	{
-		Sala sala = Sala.find( salaDTO.getId() );
+		Sala sala = Sala.find( salaDTO.getId(), getInstituicaoEnsinoUser() );
 		CurriculoDisciplina curriculoDisciplina
-			= CurriculoDisciplina.find( cdDTO.getId() );
+			= CurriculoDisciplina.find(
+				cdDTO.getId(), getInstituicaoEnsinoUser() );
 
 		curriculoDisciplina.getSalas().remove( sala );
 		curriculoDisciplina.merge();
@@ -623,11 +793,20 @@ public class DisciplinasServiceImpl extends RemoteServiceServlet
 	public List< DisciplinaIncompativelDTO > getDisciplinasIncompativeis(
 		CurriculoDTO curriculoDTO, Integer periodo )
 	{
-		List< DisciplinaIncompativelDTO > list = new ArrayList< DisciplinaIncompativelDTO >();
+		List< DisciplinaIncompativelDTO > list
+			= new ArrayList< DisciplinaIncompativelDTO >();
 
-		Curriculo curriculo = Curriculo.find( curriculoDTO.getId() );
+		Curriculo curriculo = Curriculo.find(
+			curriculoDTO.getId(), getInstituicaoEnsinoUser() );
+
+		if ( curriculo == null )
+		{
+			return list;
+		}
+
 		List< CurriculoDisciplina > curriculoDisciplinas
-			= curriculo.getCurriculoDisciplinasByPeriodo(periodo);
+			= curriculo.getCurriculoDisciplinasByPeriodo(
+				getInstituicaoEnsinoUser(), periodo );
 
 		for ( CurriculoDisciplina cd1 : curriculoDisciplinas )
 		{
@@ -639,20 +818,25 @@ public class DisciplinasServiceImpl extends RemoteServiceServlet
 				}
 
 				DisciplinaIncompativelDTO di = new DisciplinaIncompativelDTO();
-				if ( containsDisciplinaIncompativelDTO( list,
-						cd1.getDisciplina(), cd2.getDisciplina() ) )
+
+				if ( containsDisciplinaIncompativelDTO(
+					list, cd1.getDisciplina(), cd2.getDisciplina() ) )
 				{
 					continue;
 				}
 
 				di.setDisciplina1Id( cd1.getDisciplina().getId() );
-				di.setDisciplina1String(
-					cd1.getDisciplina().getCodigo() + " (" + cd1.getDisciplina().getNome() + ")" );
+
+				di.setDisciplina1String( cd1.getDisciplina().getCodigo() +
+					" (" + cd1.getDisciplina().getNome() + ")" );
+
 				di.setDisciplina2Id( cd2.getDisciplina().getId() );
-				di.setDisciplina2String(
-					cd2.getDisciplina().getCodigo() + " (" + cd2.getDisciplina().getNome() + ")" );
-				di.setIncompativel(
-					cd1.getDisciplina().isIncompativelCom( cd2.getDisciplina() ) );
+
+				di.setDisciplina2String( cd2.getDisciplina().getCodigo() +
+					" (" + cd2.getDisciplina().getNome() + ")" );
+
+				di.setIncompativel(cd1.getDisciplina().isIncompativelCom(
+					getInstituicaoEnsinoUser(), cd2.getDisciplina() ) );
 
 				list.add( di );
 			}
@@ -668,13 +852,13 @@ public class DisciplinasServiceImpl extends RemoteServiceServlet
 		for ( DisciplinaIncompativelDTO disciplinaIncompativelDTO : list )
 		{
 			Disciplina disciplina1 = Disciplina.find(
-					disciplinaIncompativelDTO.getDisciplina1Id() );
+					disciplinaIncompativelDTO.getDisciplina1Id(), getInstituicaoEnsinoUser() );
 
 			Disciplina disciplina2 = Disciplina.find(
-					disciplinaIncompativelDTO.getDisciplina2Id() );
+					disciplinaIncompativelDTO.getDisciplina2Id(), getInstituicaoEnsinoUser() );
 
 			Incompatibilidade incompatibilidade
-				= disciplina1.getIncompatibilidadeWith( disciplina2 );
+				= disciplina1.getIncompatibilidadeWith( getInstituicaoEnsinoUser(), disciplina2 );
 
 			if ( incompatibilidade == null )
 			{
@@ -722,11 +906,15 @@ public class DisciplinasServiceImpl extends RemoteServiceServlet
 	public List< ResumoDisciplinaDTO > getResumos(
 		CenarioDTO cenarioDTO, CampusDTO campusDTO )
 	{
-		Campus campus = Campus.find( campusDTO.getId() );
+		Campus campus = Campus.find(
+			campusDTO.getId(), this.getInstituicaoEnsinoUser() );
 
      	// Juntando os atendimentos tático e operacional
-		List< AtendimentoTatico > listTatico = AtendimentoTatico.findAllByCampus( campus );
-		List< AtendimentoTaticoDTO > listTaticoDTO = new ArrayList< AtendimentoTaticoDTO >();
+		List< AtendimentoTatico > listTatico
+			= AtendimentoTatico.findAllByCampus( getInstituicaoEnsinoUser(), campus );
+
+		List< AtendimentoTaticoDTO > listTaticoDTO
+			= new ArrayList< AtendimentoTaticoDTO >();
 
 		for ( AtendimentoTatico att : listTatico )
 		{
@@ -734,7 +922,7 @@ public class DisciplinasServiceImpl extends RemoteServiceServlet
 			listTaticoDTO.add( dto );
 		}
 
-		List< AtendimentoOperacional > listOperacional = AtendimentoOperacional.findAll( campus );
+		List< AtendimentoOperacional > listOperacional = AtendimentoOperacional.findAll( campus, getInstituicaoEnsinoUser() );
 		List< AtendimentoOperacionalDTO > listOperacionalDTO = new ArrayList< AtendimentoOperacionalDTO >();
 
 		for ( AtendimentoOperacional atop : listOperacional )
@@ -776,7 +964,9 @@ public class DisciplinasServiceImpl extends RemoteServiceServlet
 
 			list.add( atendimento );
 
-			Disciplina disciplina = Disciplina.find( atendimento.getDisciplinaId() );
+			Disciplina disciplina = Disciplina.find(
+				atendimento.getDisciplinaId(), getInstituicaoEnsinoUser() );
+
 			ResumoDisciplinaDTO resumoDTO = new ResumoDisciplinaDTO();
 
 			resumoDTO.setDisciplinaId( disciplina.getId() );
@@ -866,11 +1056,19 @@ public class DisciplinasServiceImpl extends RemoteServiceServlet
 				AtendimentoRelatorioDTO atendimento
 					= concatenaAtendimentosResumoDisciplina( atendimentosMap.get( key2 ) );
 
-				Oferta ofertaAtendimento = Oferta.find( atendimento.getOfertaId() );
+				Oferta ofertaAtendimento = Oferta.find(
+					atendimento.getOfertaId(), getInstituicaoEnsinoUser() );
 
-				Campus campus = ofertaAtendimento.getCampus();
-				Double docente = campus.getValorCredito();
-				Double receita = ofertaAtendimento.getReceita();
+				Campus campus = null;
+				Double docente = 0.0;
+				Double receita = 0.0;
+
+				if ( ofertaAtendimento != null )
+				{
+					campus = ofertaAtendimento.getCampus();
+					docente = campus.getValorCredito();
+					receita = ofertaAtendimento.getReceita();
+				}
 
 				int qtdAlunos = atendimento.getQuantidadeAlunos();
 				int creditos = atendimento.getTotalCreditos();

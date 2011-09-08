@@ -8,19 +8,18 @@ import com.extjs.gxt.ui.client.data.BasePagingLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.gapso.trieda.domain.Authority;
+import com.gapso.trieda.domain.InstituicaoEnsino;
 import com.gapso.trieda.domain.Professor;
 import com.gapso.trieda.domain.Usuario;
 import com.gapso.web.trieda.server.util.ConvertBeans;
 import com.gapso.web.trieda.server.util.Encryption;
+import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
 import com.gapso.web.trieda.shared.dtos.UsuarioDTO;
 import com.gapso.web.trieda.shared.services.UsuariosService;
 import com.gapso.web.trieda.shared.util.TriedaUtil;
 
-/**
- * The server side implementation of the RPC service.
- */
-public class UsuariosServiceImpl extends RemoteService
-	implements UsuariosService
+public class UsuariosServiceImpl
+	extends RemoteService implements UsuariosService
 {
 	private static final long serialVersionUID = 5672570072070386404L;
 
@@ -57,8 +56,12 @@ public class UsuariosServiceImpl extends RemoteService
 			}
 		}
 
+		InstituicaoEnsino instituicaoEnsino
+			= this.getUsuario().getInstituicaoEnsino();
+
 		List< Usuario > usuarios = Usuario.findAllBy(
-			nome, username, email, config.getOffset(), config.getLimit(), orderBy );
+			nome, username, email, config.getOffset(),
+			config.getLimit(), orderBy, instituicaoEnsino );
 
 		for ( Usuario usuario : usuarios )
 		{
@@ -67,16 +70,18 @@ public class UsuariosServiceImpl extends RemoteService
 
 		BasePagingLoadResult< UsuarioDTO > result
 			= new BasePagingLoadResult< UsuarioDTO >( list );
+
 		result.setOffset( config.getOffset() );
-		result.setTotalLength( Usuario.count( nome, username, email ) );
+		result.setTotalLength( Usuario.count( nome, username, email, instituicaoEnsino ) );
 
 		return result;
 	}
 
 	@Override
-	public void save(UsuarioDTO usuarioDTO )
+	public void save( UsuarioDTO usuarioDTO )
 	{
 		Usuario usuario = Usuario.find( usuarioDTO.getUsername() );
+
 		if ( usuario != null )
 		{
 			usuario.setNome( usuarioDTO.getNome() );
@@ -89,7 +94,8 @@ public class UsuariosServiceImpl extends RemoteService
 
 			if ( !TriedaUtil.isBlank( usuarioDTO.getProfessorId() ) )
 			{
-				usuario.setProfessor( Professor.find( usuarioDTO.getProfessorId() ) );
+				usuario.setProfessor( Professor.find(
+					usuarioDTO.getProfessorId(), getInstituicaoEnsinoUser() ) );
 			}
 
 			usuario.merge();
@@ -107,14 +113,18 @@ public class UsuariosServiceImpl extends RemoteService
 			authority.persist();
 		}
 	}
-	
+
 	@Override
 	public void remove( List< UsuarioDTO > usuarioDTOList )
 	{
 		for ( UsuarioDTO usuarioDTO : usuarioDTOList )
 		{
 			Usuario usuario = Usuario.find( usuarioDTO.getUsername() );
-			usuario.remove();
+
+			if ( usuario != null )
+			{
+				usuario.remove();
+			}
 		}
 	}
 
@@ -122,5 +132,14 @@ public class UsuariosServiceImpl extends RemoteService
 	public Boolean avoidSessionExpire()
 	{
 		return true;
+	}
+
+	@Override
+	public InstituicaoEnsinoDTO getInstituicaoEnsinoUserDTO()
+	{
+		InstituicaoEnsino instituicaoEnsino = this.getInstituicaoEnsinoUser();
+
+		return ( instituicaoEnsino == null ? null :
+			ConvertBeans.toInstituicaoEnsinoDTO( instituicaoEnsino ) );
 	}
 }

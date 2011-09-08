@@ -14,26 +14,26 @@ import com.gapso.web.trieda.server.util.ConvertBeans;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.DivisaoCreditoDTO;
 import com.gapso.web.trieda.shared.services.DivisoesCreditosService;
-import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
-/**
- * The server side implementation of the RPC service.
- */
-public class DivisoesCreditosServiceImpl extends RemoteServiceServlet implements DivisoesCreditosService {
-
+public class DivisoesCreditosServiceImpl
+	extends RemoteService implements DivisoesCreditosService
+{
 	private static final long serialVersionUID = 245474536841101290L;
 
 	@Override
-	public DivisaoCreditoDTO getDivisaoCredito(Long id) {
-		return ConvertBeans.toDivisaoCreditoDTO(DivisaoCredito.find(id));
+	public DivisaoCreditoDTO getDivisaoCredito( Long id )
+	{
+		return ConvertBeans.toDivisaoCreditoDTO(
+			DivisaoCredito.find( id, getInstituicaoEnsinoUser() ) );
 	}
-	
+
 	@Override
 	public PagingLoadResult<DivisaoCreditoDTO> getList(CenarioDTO cenarioDTO, PagingLoadConfig config) {
-		Cenario cenario = Cenario.find(cenarioDTO.getId());
+		Cenario cenario = Cenario.find(cenarioDTO.getId(), this.getInstituicaoEnsinoUser());
 		List<DivisaoCreditoDTO> list = new ArrayList<DivisaoCreditoDTO>();
-		List<DivisaoCredito> divisoesCreditos = DivisaoCredito.findWithoutDisciplina(cenario, config.getOffset(), config.getLimit());
-		
+		List<DivisaoCredito> divisoesCreditos = DivisaoCredito.findWithoutDisciplina(
+			cenario, config.getOffset(), config.getLimit(), getInstituicaoEnsinoUser() );
+
 		for(DivisaoCredito divisaoCredito : divisoesCreditos) {
 			list.add(ConvertBeans.toDivisaoCreditoDTO(divisaoCredito));
 		}
@@ -43,10 +43,13 @@ public class DivisoesCreditosServiceImpl extends RemoteServiceServlet implements
 				return d1.getTotalCreditos().compareTo(d2.getTotalCreditos());
 			}
 		});
-		
-		BasePagingLoadResult<DivisaoCreditoDTO> result = new BasePagingLoadResult<DivisaoCreditoDTO>(list);
+
+		BasePagingLoadResult<DivisaoCreditoDTO> result
+			= new BasePagingLoadResult<DivisaoCreditoDTO>(list);
 		result.setOffset(config.getOffset());
-		result.setTotalLength(DivisaoCredito.count(cenario));
+		result.setTotalLength(DivisaoCredito.count(
+			cenario, getInstituicaoEnsinoUser()));
+
 		return result;
 	}
 	
@@ -66,5 +69,4 @@ public class DivisoesCreditosServiceImpl extends RemoteServiceServlet implements
 			ConvertBeans.toDivisaoCredito(divisaoCreditoDTO).remove();
 		}
 	}
-
 }

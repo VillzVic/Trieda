@@ -17,20 +17,17 @@ import com.gapso.web.trieda.server.util.ConvertBeans;
 import com.gapso.web.trieda.shared.dtos.AreaTitulacaoDTO;
 import com.gapso.web.trieda.shared.dtos.CursoDTO;
 import com.gapso.web.trieda.shared.services.AreasTitulacaoService;
-import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
-/**
- * The server side implementation of the RPC service.
- */
-public class AreasTitulacaoServiceImpl extends RemoteServiceServlet
-	implements AreasTitulacaoService
+public class AreasTitulacaoServiceImpl
+	extends RemoteService implements AreasTitulacaoService
 {
 	private static final long serialVersionUID = 5250776996542788849L;
 
 	@Override
 	public AreaTitulacaoDTO getAreaTitulacao( Long id )
 	{
-		return ConvertBeans.toAreaTitulacaoDTO( AreaTitulacao.find( id ) );
+		return ConvertBeans.toAreaTitulacaoDTO(
+			AreaTitulacao.find( id, this.getInstituicaoEnsinoUser() ) );
 	}
 
 	@Override
@@ -54,7 +51,8 @@ public class AreasTitulacaoServiceImpl extends RemoteServiceServlet
 		}
 
 		List< AreaTitulacao > listAreaTitulacao = AreaTitulacao.findBy(
-				nome, descricao, config.getOffset(), config.getLimit(), orderBy );
+			this.getInstituicaoEnsinoUser(), nome, descricao,
+			config.getOffset(), config.getLimit(), orderBy );
 
 		for ( AreaTitulacao areaTitulacao : listAreaTitulacao )
 		{
@@ -65,7 +63,9 @@ public class AreasTitulacaoServiceImpl extends RemoteServiceServlet
 			= new BasePagingLoadResult< AreaTitulacaoDTO >( list );
 
 		result.setOffset( config.getOffset() );
-		result.setTotalLength( AreaTitulacao.count( nome, descricao ) );
+		result.setTotalLength( AreaTitulacao.count(
+			this.getInstituicaoEnsinoUser(), nome, descricao ) );
+
 		return result;
 	}
 
@@ -73,7 +73,8 @@ public class AreasTitulacaoServiceImpl extends RemoteServiceServlet
 	public ListLoadResult< AreaTitulacaoDTO > getListAll()
 	{
 		List< AreaTitulacaoDTO > listDTO = new ArrayList< AreaTitulacaoDTO >();
-		List< AreaTitulacao > list = AreaTitulacao.findAll();
+		List< AreaTitulacao > list = AreaTitulacao.findAll(
+			this.getInstituicaoEnsinoUser() );
 
 		for ( AreaTitulacao areaTitulacao : list )
 		{
@@ -122,14 +123,17 @@ public class AreasTitulacaoServiceImpl extends RemoteServiceServlet
 			return Collections.< AreaTitulacaoDTO >emptyList();
 		}
 
-		Curso curso = Curso.find( cursoDTO.getId() );
+		Curso curso = Curso.find(
+			cursoDTO.getId(), this.getInstituicaoEnsinoUser() );
+
 		Set< AreaTitulacao > areaTitulacaoList = curso.getAreasTitulacao();
 		List< AreaTitulacaoDTO > areaTitulacaoDTOList
-			= new ArrayList<AreaTitulacaoDTO>( areaTitulacaoList.size() );
+			= new ArrayList< AreaTitulacaoDTO >( areaTitulacaoList.size() );
 
 		for ( AreaTitulacao areaTitulacao : areaTitulacaoList )
 		{
-			areaTitulacaoDTOList.add( ConvertBeans.toAreaTitulacaoDTO( areaTitulacao ) );
+			areaTitulacaoDTOList.add(
+				ConvertBeans.toAreaTitulacaoDTO( areaTitulacao ) );
 		}
 
 		return areaTitulacaoDTOList;
@@ -143,16 +147,22 @@ public class AreasTitulacaoServiceImpl extends RemoteServiceServlet
 			return Collections.< AreaTitulacaoDTO >emptyList();
 		}
 
-		Curso curso = Curso.find( cursoDTO.getId() );
+		Curso curso = Curso.find(
+			cursoDTO.getId(), this.getInstituicaoEnsinoUser() );
+
 		Set< AreaTitulacao > areaTitulacaoList = curso.getAreasTitulacao();
-		List< AreaTitulacao > naoAssociadasList = AreaTitulacao.findAll();
+		List< AreaTitulacao > naoAssociadasList
+			= AreaTitulacao.findAll( this.getInstituicaoEnsinoUser() );
+
 		naoAssociadasList.removeAll( areaTitulacaoList );
 
 		List< AreaTitulacaoDTO > areaTitulacaoDTOList
 			= new ArrayList< AreaTitulacaoDTO >( naoAssociadasList.size() );
+
 		for ( AreaTitulacao areaTitulacao : naoAssociadasList )
 		{
-			areaTitulacaoDTOList.add( ConvertBeans.toAreaTitulacaoDTO( areaTitulacao ) );
+			areaTitulacaoDTOList.add(
+				ConvertBeans.toAreaTitulacaoDTO( areaTitulacao ) );
 		}
 
 		return areaTitulacaoDTOList;
@@ -161,11 +171,14 @@ public class AreasTitulacaoServiceImpl extends RemoteServiceServlet
 	@Override
 	public void vincula( CursoDTO cursoDTO, List< AreaTitulacaoDTO > areasTitulacaoDTO )
 	{
-		Curso curso = Curso.find( cursoDTO.getId() );
+		Curso curso = Curso.find(
+			cursoDTO.getId(), this.getInstituicaoEnsinoUser() );
 
 		for ( AreaTitulacaoDTO areaTitulacaoDTO : areasTitulacaoDTO )
 		{
-			AreaTitulacao area = AreaTitulacao.find( areaTitulacaoDTO.getId() );
+			AreaTitulacao area = AreaTitulacao.find(
+				areaTitulacaoDTO.getId(), this.getInstituicaoEnsinoUser() );
+
 			area.getCursos().add( curso );
 			area.merge();
 		}
@@ -174,11 +187,13 @@ public class AreasTitulacaoServiceImpl extends RemoteServiceServlet
 	@Override
 	public void desvincula( CursoDTO cursoDTO, List< AreaTitulacaoDTO > areasTitulacaoDTO )
 	{
-		Curso curso = Curso.find( cursoDTO.getId() );
+		Curso curso = Curso.find(
+			cursoDTO.getId(), this.getInstituicaoEnsinoUser() );
 
 		for ( AreaTitulacaoDTO areaTitulacaoDTO : areasTitulacaoDTO )
 		{
-			AreaTitulacao area = AreaTitulacao.find( areaTitulacaoDTO.getId() );
+			AreaTitulacao area = AreaTitulacao.find(
+				areaTitulacaoDTO.getId(), this.getInstituicaoEnsinoUser() );
 			area.getCursos().remove( curso );
 			area.merge();
 		}

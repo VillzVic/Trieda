@@ -32,31 +32,33 @@ import com.gapso.web.trieda.shared.dtos.TipoCursoDTO;
 import com.gapso.web.trieda.shared.services.CursosService;
 import com.gapso.web.trieda.shared.util.TriedaCurrency;
 import com.gapso.web.trieda.shared.util.TriedaUtil;
-import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
-/**
- * The server side implementation of the RPC service.
- */
 @Transactional
-public class CursosServiceImpl extends RemoteServiceServlet implements
-		CursosService {
-
+public class CursosServiceImpl
+	extends RemoteService implements CursosService
+{
 	private static final long serialVersionUID = 5250776996542788849L;
 
 	@Override
-	public CursoDTO getCurso(Long id) {
-		return ConvertBeans.toCursoDTO(Curso.find(id));
+	public CursoDTO getCurso( Long id )
+	{
+		return ConvertBeans.toCursoDTO(
+			Curso.find( id, getInstituicaoEnsinoUser() ) );
 	}
 
 	@Override
-	public ListLoadResult<CursoDTO> getListAll() {
-		List<CursoDTO> list = new ArrayList<CursoDTO>();
-		List<Curso> cursos = Curso.findAll();
-		for (Curso curso : cursos) {
-			CursoDTO cursoDTO = ConvertBeans.toCursoDTO(curso);
-			list.add(cursoDTO);
+	public ListLoadResult< CursoDTO > getListAll()
+	{
+		List< CursoDTO > list = new ArrayList< CursoDTO >();
+		List< Curso > cursos = Curso.findAll( getInstituicaoEnsinoUser() );
+
+		for ( Curso curso : cursos )
+		{
+			CursoDTO cursoDTO = ConvertBeans.toCursoDTO( curso );
+			list.add( cursoDTO );
 		}
-		return new BasePagingLoadResult<CursoDTO>(list);
+
+		return new BasePagingLoadResult< CursoDTO >( list );
 	}
 
 	@Override
@@ -66,31 +68,48 @@ public class CursosServiceImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public PagingLoadResult<CursoDTO> getBuscaList(String nome, String codigo,
-			TipoCursoDTO tipoCursoDTO, PagingLoadConfig config) {
-		List<CursoDTO> list = new ArrayList<CursoDTO>();
+	public PagingLoadResult< CursoDTO > getBuscaList( String nome, String codigo,
+		TipoCursoDTO tipoCursoDTO, PagingLoadConfig config )
+	{
+		List< CursoDTO > list = new ArrayList< CursoDTO >();
 		String orderBy = config.getSortField();
-		if (orderBy != null) {
-			if (config.getSortDir() != null
-					&& config.getSortDir().equals(SortDir.DESC)) {
-				orderBy = orderBy + " asc";
-			} else {
-				orderBy = orderBy + " desc";
+
+		if ( orderBy != null )
+		{
+			if ( config.getSortDir() != null
+				&& config.getSortDir().equals( SortDir.DESC ) )
+			{
+				orderBy = ( orderBy + " asc" );
+			}
+			else
+			{
+				orderBy = ( orderBy + " desc" );
 			}
 		}
+
 		TipoCurso tipoCurso = null;
-		if (tipoCursoDTO != null) {
-			tipoCurso = ConvertBeans.toTipoCurso(tipoCursoDTO);
+		if ( tipoCursoDTO != null )
+		{
+			tipoCurso = ConvertBeans.toTipoCurso( tipoCursoDTO );
 		}
-		for (Curso curso : Curso.findBy(codigo, nome, tipoCurso,
-				config.getOffset(), config.getLimit(), orderBy)) {
-			CursoDTO cursoDTO = ConvertBeans.toCursoDTO(curso);
-			list.add(cursoDTO);
+
+		List< Curso > listDomains = Curso.findBy( getInstituicaoEnsinoUser(),
+			codigo, nome, tipoCurso, config.getOffset(), config.getLimit(), orderBy );
+
+		for ( Curso curso : listDomains )
+		{
+			CursoDTO cursoDTO = ConvertBeans.toCursoDTO( curso );
+
+			list.add( cursoDTO );
 		}
-		BasePagingLoadResult<CursoDTO> result = new BasePagingLoadResult<CursoDTO>(
-				list);
-		result.setOffset(config.getOffset());
-		result.setTotalLength(Curso.count(codigo, nome, tipoCurso));
+
+		BasePagingLoadResult< CursoDTO > result
+			= new BasePagingLoadResult< CursoDTO >( list );
+
+		result.setOffset( config.getOffset() );
+		result.setTotalLength( Curso.count(
+			getInstituicaoEnsinoUser(), codigo, nome, tipoCurso ) );
+
 		return result;
 	}
 
@@ -99,16 +118,22 @@ public class CursosServiceImpl extends RemoteServiceServlet implements
 			List<CursoDTO> retirarCursosDTO) {
 		List<CursoDTO> list = new ArrayList<CursoDTO>();
 
-		Campus campus = (campusDTO == null) ? null : ConvertBeans
-				.toCampus(campusDTO);
+		Campus campus = (campusDTO == null) ? null :
+			ConvertBeans.toCampus( campusDTO );
 
-		for (Curso curso : Curso.findByCampus(campus)) {
-			list.add(ConvertBeans.toCursoDTO(curso));
+		List< Curso > listDomains = Curso.findByCampus(
+			getInstituicaoEnsinoUser(), campus );
+
+		for ( Curso curso : listDomains )
+		{
+			list.add( ConvertBeans.toCursoDTO( curso ) );
 		}
 
-		list.removeAll(retirarCursosDTO);
+		list.removeAll( retirarCursosDTO );
 
-		ListLoadResult<CursoDTO> result = new BaseListLoadResult<CursoDTO>(list);
+		ListLoadResult< CursoDTO > result
+			= new BaseListLoadResult< CursoDTO >( list );
+
 		return result;
 	}
 
@@ -131,45 +156,56 @@ public class CursosServiceImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public List<ResumoCursoDTO> getResumos(CenarioDTO cenarioDTO,
-			CampusDTO campusDTO) {
-		// Cenario cenario = Cenario.find(cenarioDTO.getId());
-		Campus campus = Campus.find(campusDTO.getId());
+	public List<ResumoCursoDTO> getResumos(
+		CenarioDTO cenarioDTO, CampusDTO campusDTO )
+	{
+		Campus campus = Campus.find(
+			campusDTO.getId(), this.getInstituicaoEnsinoUser() );
 
-		List<Oferta> ofertas = new ArrayList<Oferta>(campus.getOfertas());
-		Collections.sort(ofertas);
+		List< Oferta > ofertas
+			= new ArrayList< Oferta >( campus.getOfertas() );
+		Collections.sort( ofertas );
 
-		List<ResumoCursoDTO> resumoCursoDTOList = new ArrayList<ResumoCursoDTO>();
+		List< ResumoCursoDTO > resumoCursoDTOList
+			= new ArrayList< ResumoCursoDTO >();
 
-		Map<String, ResumoCursoDTO> nivel1Map = new HashMap<String, ResumoCursoDTO>();
+		Map< String, ResumoCursoDTO > nivel1Map
+			= new HashMap< String, ResumoCursoDTO >();
 
-		Map<String, Map<String, ResumoCursoDTO>> nivel2Map = new HashMap<String, Map<String, ResumoCursoDTO>>();
+		Map< String, Map< String, ResumoCursoDTO > > nivel2Map
+			= new HashMap< String, Map< String, ResumoCursoDTO > >();
 
-		Map<String, Map<String, Map<String, ResumoCursoDTO>>> nivel3Map = new HashMap<String, Map<String, Map<String, ResumoCursoDTO>>>();
+		Map< String, Map< String, Map< String, ResumoCursoDTO > > > nivel3Map
+			= new HashMap< String, Map< String, Map< String, ResumoCursoDTO > > >();
 
-		for (Oferta oferta : ofertas) {
-			List<AtendimentoRelatorioDTO> atendimentoRelatorioDTOList = new ArrayList<AtendimentoRelatorioDTO>();
+		for ( Oferta oferta : ofertas )
+		{
+			List< AtendimentoRelatorioDTO > atendimentoRelatorioDTOList
+				= new ArrayList< AtendimentoRelatorioDTO >();
 
-			List<AtendimentoTatico> atendimentoTaticoList = AtendimentoTatico
-					.findAllBy(oferta);
+			List< AtendimentoTatico > atendimentoTaticoList
+				= AtendimentoTatico.findAllBy( getInstituicaoEnsinoUser(), oferta );
 
 			if (!atendimentoTaticoList.isEmpty()) {
 				for (AtendimentoTatico atendimentoTatico : atendimentoTaticoList) {
 					atendimentoRelatorioDTOList.add(ConvertBeans
 							.toAtendimentoTaticoDTO(atendimentoTatico));
 				}
-			} else {
-				List<AtendimentoOperacional> atendimentoOperacionalList = AtendimentoOperacional
-						.findAllBy(oferta);
+			}
+			else
+			{
+				List< AtendimentoOperacional > atendimentoOperacionalList
+					= AtendimentoOperacional.findAllBy( oferta, getInstituicaoEnsinoUser() );
 
-				for (AtendimentoOperacional atendimentoOperacional : atendimentoOperacionalList) {
-					atendimentoRelatorioDTOList
-							.add(ConvertBeans
-									.toAtendimentoOperacionalDTO(atendimentoOperacional));
+				for ( AtendimentoOperacional atendimentoOperacional : atendimentoOperacionalList )
+				{
+					atendimentoRelatorioDTOList.add(
+						ConvertBeans.toAtendimentoOperacionalDTO( atendimentoOperacional ) );
 				}
 			}
 
-			for (AtendimentoRelatorioDTO atendimentoRelatorioDTO : atendimentoRelatorioDTOList) {
+			for ( AtendimentoRelatorioDTO atendimentoRelatorioDTO : atendimentoRelatorioDTOList )
+			{
 				ResumoCursoDTO resumoDTO = new ResumoCursoDTO();
 
 				resumoDTO.setOfertaId(oferta.getId());

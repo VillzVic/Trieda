@@ -24,63 +24,95 @@ import com.gapso.web.trieda.shared.dtos.HorarioAulaDTO;
 import com.gapso.web.trieda.shared.dtos.SemanaLetivaDTO;
 import com.gapso.web.trieda.shared.dtos.TurnoDTO;
 import com.gapso.web.trieda.shared.services.HorariosAulaService;
-import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
-/**
- * The server side implementation of the RPC service.
- */
-public class HorariosAulaServiceImpl extends RemoteServiceServlet implements HorariosAulaService {
-
+public class HorariosAulaServiceImpl
+	extends RemoteService implements HorariosAulaService
+{
 	private static final long serialVersionUID = 5250776996542788849L;
 
 	@Override
-	public PagingLoadResult<HorarioAulaDTO> getBuscaList(SemanaLetivaDTO semanaLetivaDTO, TurnoDTO turnoDTO, Date horario, PagingLoadConfig config) {
-		List<HorarioAulaDTO> list = new ArrayList<HorarioAulaDTO>();
+	public PagingLoadResult< HorarioAulaDTO > getBuscaList( SemanaLetivaDTO semanaLetivaDTO,
+		TurnoDTO turnoDTO, Date horario, PagingLoadConfig config )
+	{
+		List< HorarioAulaDTO > list = new ArrayList< HorarioAulaDTO >();
 		String orderBy = config.getSortField();
-		if(orderBy != null) {
-			if(config.getSortDir() != null && config.getSortDir().equals(SortDir.DESC)) {
-				orderBy = orderBy + " asc";
-			} else {
-				orderBy = orderBy + " desc";
+
+		if ( orderBy != null )
+		{
+			if ( config.getSortDir() != null
+				&& config.getSortDir().equals( SortDir.DESC ) )
+			{
+				orderBy = ( orderBy + " asc" );
+			}
+			else
+			{
+				orderBy = ( orderBy + " desc" );
 			}
 		}
-		SemanaLetiva semanaLetiva = (semanaLetivaDTO == null)? null : ConvertBeans.toSemanaLetiva(semanaLetivaDTO);
-		Turno turno = (turnoDTO == null)? null : ConvertBeans.toTurno(turnoDTO);
-		for(HorarioAula horarioAula : HorarioAula.findBy(semanaLetiva, turno, horario, config.getOffset(), config.getLimit(), orderBy)) {
-			list.add(ConvertBeans.toHorarioAulaDTO(horarioAula));
+
+		SemanaLetiva semanaLetiva = ( semanaLetivaDTO == null ) ? null :
+			ConvertBeans.toSemanaLetiva( semanaLetivaDTO );
+
+		Turno turno = ( turnoDTO == null ) ? null : ConvertBeans.toTurno( turnoDTO );
+
+		List< HorarioAula > listHorariosAula = HorarioAula.findBy( getInstituicaoEnsinoUser(),
+			semanaLetiva, turno, horario, config.getOffset(), config.getLimit(), orderBy );
+
+		for ( HorarioAula horarioAula : listHorariosAula )
+		{
+			list.add( ConvertBeans.toHorarioAulaDTO( horarioAula ) );
 		}
-		BasePagingLoadResult<HorarioAulaDTO> result = new BasePagingLoadResult<HorarioAulaDTO>(list);
-		result.setOffset(config.getOffset());
-		result.setTotalLength(HorarioAula.count(semanaLetiva, turno, horario));
+
+		BasePagingLoadResult< HorarioAulaDTO > result
+			= new BasePagingLoadResult< HorarioAulaDTO >( list );
+
+		result.setOffset( config.getOffset() );
+		result.setTotalLength( HorarioAula.count(
+			getInstituicaoEnsinoUser(), semanaLetiva, turno, horario ) );
+
 		return result;
 	}
 
 	@Override
-	public void save(HorarioAulaDTO horarioAulaDTO) {
-		HorarioAula horarioDeAula = ConvertBeans.toHorarioAula(horarioAulaDTO);
-		if(horarioDeAula.getId() != null && horarioDeAula.getId() > 0) {
+	public void save( HorarioAulaDTO horarioAulaDTO )
+	{
+		HorarioAula horarioDeAula
+			= ConvertBeans.toHorarioAula( horarioAulaDTO );
+
+		if ( horarioDeAula.getId() != null
+			&& horarioDeAula.getId() > 0 )
+		{
 			horarioDeAula.merge();
-		} else {
+		}
+		else
+		{
 			horarioDeAula.persist();
 
-		    List<Campus> campi = Campus.findAll();
-		    List<Unidade> unidades = Unidade.findAll();
-		    List<Sala> salas = Sala.findAll();
-		    List<Disciplina> disciplinas = Disciplina.findAll();
-		    List<Professor> professores = Professor.findAll();
-			
-			for(Semanas semana : Semanas.values()) {
-				if(semana == Semanas.SAB || semana == Semanas.DOM) continue;
+		    List< Campus > campi = Campus.findAll( this.getInstituicaoEnsinoUser() );
+		    List< Unidade > unidades = Unidade.findAll( getInstituicaoEnsinoUser() );
+		    List< Sala > salas = Sala.findAll( getInstituicaoEnsinoUser() );
+		    List< Disciplina > disciplinas = Disciplina.findAll( getInstituicaoEnsinoUser() );
+		    List< Professor > professores = Professor.findAll( getInstituicaoEnsinoUser() );
+
+			for ( Semanas semana : Semanas.values() )
+			{
+				if ( semana == Semanas.SAB
+					|| semana == Semanas.DOM )
+				{
+					continue;
+				}
+
 				HorarioDisponivelCenario hdc = new HorarioDisponivelCenario();
-				hdc.setSemana(semana);
-				hdc.setHorarioAula(horarioDeAula);
-				
-				hdc.getCampi().addAll(campi);
-				hdc.getUnidades().addAll(unidades);
-				hdc.getSalas().addAll(salas);
-				hdc.getDisciplinas().addAll(disciplinas);
-				hdc.getProfessores().addAll(professores);
-				
+
+				hdc.setSemana( semana );
+				hdc.setHorarioAula( horarioDeAula );
+
+				hdc.getCampi().addAll( campi );
+				hdc.getUnidades().addAll( unidades );
+				hdc.getSalas().addAll( salas );
+				hdc.getDisciplinas().addAll( disciplinas );
+				hdc.getProfessores().addAll( professores );
+
 				hdc.persist();
 			}
 		}
@@ -92,21 +124,33 @@ public class HorariosAulaServiceImpl extends RemoteServiceServlet implements Hor
 			ConvertBeans.toHorarioAula(horarioAulaDTO).remove();
 		}
 	}
-	
+
 	@Override
-	public void removeWithHorario(HorarioAulaDTO horarioAulaDTO) {
-		SemanaLetiva semanaLetiva = SemanaLetiva.find(horarioAulaDTO.getSemanaLetivaId());
-		Turno turno = Turno.find(horarioAulaDTO.getTurnoId());
+	public void removeWithHorario( HorarioAulaDTO horarioAulaDTO )
+	{
+		SemanaLetiva semanaLetiva = SemanaLetiva.find(
+			horarioAulaDTO.getSemanaLetivaId(), getInstituicaoEnsinoUser() );
+
+		Turno turno = Turno.find( horarioAulaDTO.getTurnoId(),
+			getInstituicaoEnsinoUser() );
+
 		Calendar cal1 = Calendar.getInstance();
-		cal1.setTime(horarioAulaDTO.getInicio());
-		
-		for(HorarioAula horarioAula : HorarioAula.findHorarioAulasBySemanaLetivaAndTurno(semanaLetiva, turno)) {
+		cal1.setTime( horarioAulaDTO.getInicio() );
+
+		List< HorarioAula > listHorariosAula
+			= HorarioAula.findHorarioAulasBySemanaLetivaAndTurno(
+				getInstituicaoEnsinoUser(), semanaLetiva, turno );
+
+		for ( HorarioAula horarioAula : listHorariosAula )
+		{
 			Calendar cal2 = Calendar.getInstance();
-			cal2.setTime(horarioAula.getHorario());
-			if(cal1.get(Calendar.HOUR) == cal2.get(Calendar.HOUR) && cal1.get(Calendar.MINUTE) == cal2.get(Calendar.MINUTE)) {
+			cal2.setTime( horarioAula.getHorario() );
+
+			if ( cal1.get( Calendar.HOUR ) == cal2.get( Calendar.HOUR )
+				&& cal1.get( Calendar.MINUTE ) == cal2.get( Calendar.MINUTE ) )
+			{
 				horarioAula.remove();
 			}
 		}
 	}
-
 }

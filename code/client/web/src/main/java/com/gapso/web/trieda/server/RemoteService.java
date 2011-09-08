@@ -3,6 +3,7 @@ package com.gapso.web.trieda.server;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 
+import com.gapso.trieda.domain.InstituicaoEnsino;
 import com.gapso.trieda.domain.Usuario;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
@@ -11,7 +12,13 @@ public class RemoteService
 {
 	private static final long serialVersionUID = 5939530994258762775L;
 
-	protected Usuario getUsuario()
+	final public InstituicaoEnsino getInstituicaoEnsinoUser()
+	{
+		Usuario usuario = this.getUsuario();
+		return ( usuario == null ? null : usuario.getInstituicaoEnsino() );
+	}
+
+	final protected Usuario getUsuario()
 	{
 		SecurityContext context = SecurityContextHolder.getContext();
 		String username = context.getAuthentication().getName();

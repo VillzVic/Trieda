@@ -31,11 +31,8 @@ import com.gapso.web.trieda.shared.dtos.TipoContratoDTO;
 import com.gapso.web.trieda.shared.dtos.TitulacaoDTO;
 import com.gapso.web.trieda.shared.services.ProfessoresService;
 
-/**
- * The server side implementation of the RPC service.
- */
-public class ProfessoresServiceImpl extends RemoteService
-	implements ProfessoresService
+public class ProfessoresServiceImpl
+	extends RemoteService implements ProfessoresService
 {
 	private static final long serialVersionUID = -1972558331232685995L;
 
@@ -47,18 +44,21 @@ public class ProfessoresServiceImpl extends RemoteService
 			return null;
 		}
 
-		return ConvertBeans.toProfessorDTO( Professor.find( id ) );
+		return ConvertBeans.toProfessorDTO( Professor.find( id, getInstituicaoEnsinoUser() ) );
 	}
 
 	@Override
 	public List< HorarioDisponivelCenarioDTO > getHorariosDisponiveis(
 		ProfessorDTO professorDTO, SemanaLetivaDTO semanaLetivaDTO )
 	{
-		Professor professor = Professor.find( professorDTO.getId() );
-		List< SemanaLetiva > semanasLetivas = SemanaLetiva.findAll();
+		Professor professor = Professor.find(
+			professorDTO.getId(), getInstituicaoEnsinoUser() );
 
-		List< HorarioDisponivelCenario > list
-			= professor.getHorarios( semanasLetivas );
+		List< SemanaLetiva > semanasLetivas
+			= SemanaLetiva.findAll( getInstituicaoEnsinoUser() );
+
+		List< HorarioDisponivelCenario > list = professor.getHorarios(
+			getInstituicaoEnsinoUser(), semanasLetivas );
 
 		List< HorarioDisponivelCenarioDTO > listDTO
 			= ConvertBeans.toHorarioDisponivelCenarioDTO( list );
@@ -71,20 +71,26 @@ public class ProfessoresServiceImpl extends RemoteService
 		SemanaLetivaDTO semanaLetivaDTO, List< HorarioDisponivelCenarioDTO > listDTO )
 	{
 		List< SemanaLetiva > semanasLetivas = new ArrayList< SemanaLetiva >();
-		SemanaLetiva semanaLetiva = SemanaLetiva.find( semanaLetivaDTO.getId() );
+		SemanaLetiva semanaLetiva = SemanaLetiva.find(
+			semanaLetivaDTO.getId(), getInstituicaoEnsinoUser() );
+
 		semanasLetivas.add( semanaLetiva );
 
 		List< HorarioDisponivelCenario > listSelecionados
 			= ConvertBeans.toHorarioDisponivelCenario( listDTO );
-		Professor professor = Professor.find( professorDTO.getId() );
+
+		Professor professor = Professor.find(
+			professorDTO.getId(), getInstituicaoEnsinoUser() );
 
 		List< HorarioDisponivelCenario > adicionarList
 			= new ArrayList< HorarioDisponivelCenario >( listSelecionados );
-		adicionarList.removeAll( professor.getHorarios( semanasLetivas ) );
+
+		adicionarList.removeAll( professor.getHorarios(
+			getInstituicaoEnsinoUser(), semanasLetivas ) );
 
 		List< HorarioDisponivelCenario > removerList
-			= new ArrayList< HorarioDisponivelCenario >(
-				professor.getHorarios( semanasLetivas ) );
+			= new ArrayList< HorarioDisponivelCenario >( professor.getHorarios(
+				getInstituicaoEnsinoUser(), semanasLetivas ) );
 
 		removerList.removeAll( listSelecionados );
 
@@ -105,10 +111,12 @@ public class ProfessoresServiceImpl extends RemoteService
 	public ListLoadResult< ProfessorDTO > getList()
 	{
 		List< ProfessorDTO > list = new ArrayList< ProfessorDTO >();
-		List< Professor > listProfessores = Professor.findAll();
+		List< Professor > listProfessores
+			= Professor.findAll( getInstituicaoEnsinoUser() );
+
 		Collections.sort( listProfessores );
 
-		for ( Professor professor : Professor.findAll() )
+		for ( Professor professor : listProfessores )
 		{
 			list.add( ConvertBeans.toProfessorDTO( professor ) );
 		}
@@ -122,13 +130,13 @@ public class ProfessoresServiceImpl extends RemoteService
 		AreaTitulacaoDTO areaTitulacaoDTO, PagingLoadConfig config )
 	{
 		TipoContrato tipoContrato = ( tipoContratoDTO == null ) ? null
-			: TipoContrato.find( tipoContratoDTO.getId() );
+			: TipoContrato.find( tipoContratoDTO.getId(), getInstituicaoEnsinoUser() );
 
 		Titulacao titulacao = ( titulacaoDTO == null ) ? null
-			: Titulacao.find( titulacaoDTO.getId() );
+			: Titulacao.find( titulacaoDTO.getId(), this.getInstituicaoEnsinoUser() );
 
 		AreaTitulacao areaTitulacao = ( areaTitulacaoDTO == null ) ? null
-			: AreaTitulacao.find( areaTitulacaoDTO.getId() );
+			: AreaTitulacao.find( areaTitulacaoDTO.getId(), this.getInstituicaoEnsinoUser() );
 
 		String orderBy = config.getSortField();
 
@@ -146,12 +154,16 @@ public class ProfessoresServiceImpl extends RemoteService
 		}
 
 		List< ProfessorDTO > list = new ArrayList< ProfessorDTO >();
+		List< Professor > listDomains = Professor.findBy( getInstituicaoEnsinoUser(),
+			cpf, tipoContrato, titulacao, areaTitulacao, config.getOffset(),
+			config.getLimit(), orderBy );
 
-		for ( Professor professor : Professor.findBy( cpf, tipoContrato,
-				titulacao, areaTitulacao, config.getOffset(),
-				config.getLimit(), orderBy ) )
+		if ( listDomains != null )
 		{
-			list.add( ConvertBeans.toProfessorDTO( professor ) );
+			for ( Professor professor : listDomains )
+			{
+				list.add( ConvertBeans.toProfessorDTO( professor ) );
+			}
 		}
 
 		BasePagingLoadResult< ProfessorDTO > result
@@ -160,7 +172,7 @@ public class ProfessoresServiceImpl extends RemoteService
 		result.setOffset( config.getOffset() );
 
 		result.setTotalLength( Professor.count(
-			cpf, tipoContrato, titulacao, areaTitulacao ) );
+				getInstituicaoEnsinoUser(), cpf, tipoContrato, titulacao, areaTitulacao ) );
 
 		return result;
 	}
@@ -168,16 +180,18 @@ public class ProfessoresServiceImpl extends RemoteService
 	@Override
 	public TipoContratoDTO getTipoContrato( Long id )
 	{
-		return ConvertBeans.toTipoContratoDTO( TipoContrato.find( id ) );
+		return ConvertBeans.toTipoContratoDTO(
+			TipoContrato.find( id, getInstituicaoEnsinoUser() ) );
 	}
 
 	@Override
 	public ListLoadResult< TipoContratoDTO > getTiposContratoAll()
 	{
 		List< TipoContratoDTO > listDTO = new ArrayList< TipoContratoDTO >();
-		List< TipoContrato > list = TipoContrato.findAll();
+		List< TipoContrato > listTiposContrato
+			= TipoContrato.findAll( getInstituicaoEnsinoUser() );
 
-		for ( TipoContrato tipoContrato : list )
+		for ( TipoContrato tipoContrato : listTiposContrato )
 		{
 			listDTO.add( ConvertBeans.toTipoContratoDTO( tipoContrato ) );
 		}
@@ -188,14 +202,19 @@ public class ProfessoresServiceImpl extends RemoteService
 	@Override
 	public TitulacaoDTO getTitulacao( Long id )
 	{
-		return ConvertBeans.toTitulacaoDTO( Titulacao.find( id ) );
+		Titulacao titulacao = Titulacao.find(
+			id, this.getInstituicaoEnsinoUser() );
+
+		return ( titulacao == null ? null :
+			ConvertBeans.toTitulacaoDTO( titulacao ) );
 	}
 
 	@Override
 	public ListLoadResult< TitulacaoDTO > getTitulacoesAll()
 	{
 		List< TitulacaoDTO > listDTO = new ArrayList< TitulacaoDTO >();
-		List< Titulacao > list = Titulacao.findAll();
+		List< Titulacao > list
+			= Titulacao.findAll( this.getInstituicaoEnsinoUser() );
 
 		for ( Titulacao titulacao : list )
 		{
@@ -220,11 +239,21 @@ public class ProfessoresServiceImpl extends RemoteService
 			professor.persist();
 
 			Set< HorarioAula > horariosAula = new HashSet< HorarioAula >();
-			Set< Campus > campiProfessor = Professor.find( professorDTO.getId() ).getCampi();
+
+			Professor p = Professor.find(
+				professorDTO.getId(), getInstituicaoEnsinoUser() );
+
+			Set< Campus > campiProfessor = new HashSet< Campus >();
+			if ( p != null )
+			{
+				campiProfessor = Professor.find(
+					professorDTO.getId(), getInstituicaoEnsinoUser() ).getCampi();
+			}
 
 			for ( Campus campus : campiProfessor )
 			{
-				Set< SemanaLetiva > semanasLetivas = SemanaLetiva.getByOficial( campus );
+				Set< SemanaLetiva > semanasLetivas
+					= SemanaLetiva.getByOficial( getInstituicaoEnsinoUser(), campus );
 
 				if ( semanasLetivas != null && semanasLetivas.size() > 0 )
 				{
@@ -256,7 +285,13 @@ public class ProfessoresServiceImpl extends RemoteService
 
 		for ( ProfessorDTO professorDTO : professorDTOList )
 		{
-			Professor.find( professorDTO.getId() ).remove();
+			Professor p = Professor.find(
+				professorDTO.getId(), getInstituicaoEnsinoUser() );
+
+			if ( p != null )
+			{
+				p.remove();
+			}
 		}
 	}
 
@@ -266,7 +301,7 @@ public class ProfessoresServiceImpl extends RemoteService
 	{
 		onlyAdministrador();
 
-		Campus campus = Campus.find( campusDTO.getId() );
+		Campus campus = Campus.find( campusDTO.getId(), this.getInstituicaoEnsinoUser() );
 		List< Professor > list = new ArrayList< Professor >( campus.getProfessores() );
 		Collections.sort( list );
 
@@ -286,9 +321,9 @@ public class ProfessoresServiceImpl extends RemoteService
 	{
 		onlyAdministrador();
 
-		Campus campus = Campus.find( campusDTO.getId() );
+		Campus campus = Campus.find( campusDTO.getId(), this.getInstituicaoEnsinoUser() );
 		Set< Professor > listAssociados = campus.getProfessores();
-		List< Professor > list = Professor.findAll();
+		List< Professor > list = Professor.findAll( getInstituicaoEnsinoUser() );
 		list.removeAll( listAssociados );
 
 		List< ProfessorDTO > listDTO
@@ -323,26 +358,35 @@ public class ProfessoresServiceImpl extends RemoteService
 		if ( campusDTO != null && professorDTO == null )
 		{
 			list = ConvertBeans.toProfessorCampusDTO(
-					Campus.find( campusDTO.getId() ) );
+				Campus.find( campusDTO.getId(), this.getInstituicaoEnsinoUser() ) );
 		}
 		else if ( campusDTO == null && professorDTO != null )
 		{
-			list = ConvertBeans.toProfessorCampusDTO(
-					Professor.find( professorDTO.getId() ) );
+			Professor p = Professor.find(
+				professorDTO.getId(), getInstituicaoEnsinoUser() );
+
+			if ( p != null )
+			{
+				list = ConvertBeans.toProfessorCampusDTO( p );
+			}
 		}
 		else if ( campusDTO == null && professorDTO == null )
 		{
 			list = new ArrayList< ProfessorCampusDTO >();
 
-			for ( Campus campus : Campus.findAll() )
+			List< Campus > listDomains
+				= Campus.findAll( this.getInstituicaoEnsinoUser() );
+
+			for ( Campus campus : listDomains )
 			{
 				list.addAll( ConvertBeans.toProfessorCampusDTO( campus ) );
 			}
 		}
 		else if ( campusDTO != null && professorDTO != null )
 		{
-			Campus campus = Campus.find( campusDTO.getId() );
-			Professor professor = Professor.find( professorDTO.getId() );
+			Campus campus = Campus.find( campusDTO.getId(), this.getInstituicaoEnsinoUser() );
+			Professor professor = Professor.find(
+				professorDTO.getId(), getInstituicaoEnsinoUser() );
 
 			for ( Campus c : professor.getCampi() )
 			{
@@ -372,13 +416,15 @@ public class ProfessoresServiceImpl extends RemoteService
 	{
 		onlyAdministrador();
 
-		Campus campus = Campus.find( campusDTO.getId() );
+		Campus campus = Campus.find( campusDTO.getId(),
+			this.getInstituicaoEnsinoUser() );
+
 		List< Professor > professorList = new ArrayList< Professor >(
 				professorDTOList.size() );
 
 		for ( ProfessorDTO professorDTO : professorDTOList )
 		{
-			professorList.add( Professor.find( professorDTO.getId() ) );
+			professorList.add( Professor.find( professorDTO.getId(), getInstituicaoEnsinoUser() ) );
 		}
 
 		// Remove os que não estão na lista
@@ -410,11 +456,17 @@ public class ProfessoresServiceImpl extends RemoteService
 
 		for ( ProfessorCampusDTO pcDTO : professorCampusDTOList )
 		{
-			Professor professor = Professor.find( pcDTO.getProfessorId() );
-			Campus campus = Campus.find( pcDTO.getCampusId() );
+			Professor professor = Professor.find(
+				pcDTO.getProfessorId(), getInstituicaoEnsinoUser() );
 
-			professor.getCampi().remove( campus );
-			professor.merge();
+			Campus campus = Campus.find( pcDTO.getCampusId(),
+				this.getInstituicaoEnsinoUser() );
+
+			if ( campus != null )
+			{
+				professor.getCampi().remove( campus );
+				professor.merge();
+			}
 		}
 	}
 }

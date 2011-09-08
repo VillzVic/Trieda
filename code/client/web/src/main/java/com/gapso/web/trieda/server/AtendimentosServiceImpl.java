@@ -39,11 +39,8 @@ import com.gapso.web.trieda.shared.dtos.SalaDTO;
 import com.gapso.web.trieda.shared.dtos.TurnoDTO;
 import com.gapso.web.trieda.shared.services.AtendimentosService;
 
-/**
- * The server side implementation of the RPC service.
- */
-public class AtendimentosServiceImpl extends RemoteService
-	implements AtendimentosService
+public class AtendimentosServiceImpl
+	extends RemoteService implements AtendimentosService
 {
 	private static final long serialVersionUID = -1505176338607927637L;
 
@@ -51,7 +48,8 @@ public class AtendimentosServiceImpl extends RemoteService
 	public PagingLoadResult< AtendimentoTaticoDTO > getList()
 	{
 		List< AtendimentoTaticoDTO > list = new ArrayList< AtendimentoTaticoDTO >();
-		List< AtendimentoTatico > atendimentosTatico = AtendimentoTatico.findAll();
+		List< AtendimentoTatico > atendimentosTatico
+			= AtendimentoTatico.findAll( getInstituicaoEnsinoUser() );
 
 		for ( AtendimentoTatico atendimentoTatico : atendimentosTatico )
 		{
@@ -100,12 +98,12 @@ public class AtendimentosServiceImpl extends RemoteService
 	public List< AtendimentoOperacionalDTO > getBuscaOperacional(
 		SalaDTO salaDTO, TurnoDTO turnoDTO )
 	{
-		Sala sala = Sala.find( salaDTO.getId() );
-		Turno turno = Turno.find( turnoDTO.getId() );
+		Sala sala = Sala.find( salaDTO.getId(), getInstituicaoEnsinoUser() );
+		Turno turno = Turno.find( turnoDTO.getId(), getInstituicaoEnsinoUser() );
 
 		List< AtendimentoOperacionalDTO > list = new ArrayList< AtendimentoOperacionalDTO >();
 		List< AtendimentoOperacional > atendimentosOperacional
-			= AtendimentoOperacional.findBySalaAndTurno( sala, turno );
+			= AtendimentoOperacional.findBySalaAndTurno( sala, turno, getInstituicaoEnsinoUser() );
 
 		for ( AtendimentoOperacional atendimentoOperacional : atendimentosOperacional )
 		{
@@ -118,12 +116,12 @@ public class AtendimentosServiceImpl extends RemoteService
 	public List< AtendimentoTaticoDTO > getBuscaTatico(
 		SalaDTO salaDTO, TurnoDTO turnoDTO )
 	{
-		Sala sala = Sala.find( salaDTO.getId() );
-		Turno turno = Turno.find( turnoDTO.getId() );
+		Sala sala = Sala.find( salaDTO.getId(), getInstituicaoEnsinoUser() );
+		Turno turno = Turno.find( turnoDTO.getId(), getInstituicaoEnsinoUser() );
 
 		List< AtendimentoTaticoDTO > list = new ArrayList< AtendimentoTaticoDTO >();
-		List< AtendimentoTatico > atendimentosTatico
-			= AtendimentoTatico.findBySalaAndTurno( sala, turno );
+		List< AtendimentoTatico > atendimentosTatico = AtendimentoTatico.findBySalaAndTurno(
+			getInstituicaoEnsinoUser(), sala, turno );
 
 		for ( AtendimentoTatico atendimentoTatico : atendimentosTatico )
 		{
@@ -164,9 +162,11 @@ public class AtendimentosServiceImpl extends RemoteService
 		}
 
 		final Map< Long, HorarioAula > horarios
-			= HorarioAula.buildHorarioAulaIdToHorarioAulaMap( HorarioAula.findAll() );
+			= HorarioAula.buildHorarioAulaIdToHorarioAulaMap(
+				HorarioAula.findAll( getInstituicaoEnsinoUser() ) );
 
-		for ( Entry< String, List< AtendimentoRelatorioDTO > > entry : atendimentoTaticoDTOMap.entrySet() )
+		for ( Entry< String, List< AtendimentoRelatorioDTO > > entry
+			: atendimentoTaticoDTOMap.entrySet() )
 		{
 			List< AtendimentoRelatorioDTO > ordenadoPorHorario
 				= new ArrayList< AtendimentoRelatorioDTO >( entry.getValue() );
@@ -327,19 +327,22 @@ public class AtendimentosServiceImpl extends RemoteService
 	public List< AtendimentoTaticoDTO > getBuscaTatico( CurriculoDTO curriculoDTO,
 		Integer periodo, TurnoDTO turnoDTO, CampusDTO campusDTO, CursoDTO cursoDTO )
 	{
-		Curriculo curriculo = Curriculo.find( curriculoDTO.getId() );
-		Turno turno = Turno.find( turnoDTO.getId() );
-		Campus campus = Campus.find( campusDTO.getId() );
+		Curriculo curriculo = Curriculo.find( curriculoDTO.getId(), getInstituicaoEnsinoUser() );
+		Turno turno = Turno.find( turnoDTO.getId(), getInstituicaoEnsinoUser() );
+		Campus campus = Campus.find( campusDTO.getId(), this.getInstituicaoEnsinoUser() );
 
 		Curso curso = null;
 		if ( cursoDTO != null )
 		{
-			curso = Curso.find( cursoDTO.getId() );
+			curso = Curso.find(
+				cursoDTO.getId(), getInstituicaoEnsinoUser() );
 		}
 
-		List< AtendimentoTaticoDTO > list = new ArrayList< AtendimentoTaticoDTO >();
+		List< AtendimentoTaticoDTO > list
+			= new ArrayList< AtendimentoTaticoDTO >();
+
 		List< AtendimentoTatico > atendimentosTatico = AtendimentoTatico.findBy(
-				campus, curriculo, periodo, turno, curso );
+			getInstituicaoEnsinoUser(), campus, curriculo, periodo, turno, curso );
 
 		for ( AtendimentoTatico atendimentoTatico : atendimentosTatico )
 		{
@@ -353,20 +356,23 @@ public class AtendimentosServiceImpl extends RemoteService
 		CurriculoDTO curriculoDTO, Integer periodo,
 		TurnoDTO turnoDTO, CampusDTO campusDTO, CursoDTO cursoDTO )
 	{
-		Curriculo curriculo = Curriculo.find( curriculoDTO.getId() );
-		Turno turno = Turno.find( turnoDTO.getId() );
-		Campus campus = Campus.find( campusDTO.getId() );
+		Curriculo curriculo = Curriculo.find( curriculoDTO.getId(), getInstituicaoEnsinoUser() );
+		Turno turno = Turno.find( turnoDTO.getId(), getInstituicaoEnsinoUser() );
+		Campus campus = Campus.find( campusDTO.getId(), this.getInstituicaoEnsinoUser() );
 
 		Curso curso = null;
 		if ( cursoDTO != null )
 		{
-			curso = Curso.find( cursoDTO.getId() );
+			curso = Curso.find(
+				cursoDTO.getId(), getInstituicaoEnsinoUser() );
 		}
 
-		List< AtendimentoOperacional > atendimentosOperacional = AtendimentoOperacional.findBy(
-				campus, curriculo, periodo, turno, curso );
+		List< AtendimentoOperacionalDTO > list
+			= new ArrayList< AtendimentoOperacionalDTO >();
 
-		List< AtendimentoOperacionalDTO > list = new ArrayList< AtendimentoOperacionalDTO >();
+		List< AtendimentoOperacional > atendimentosOperacional = AtendimentoOperacional.findBy(
+			getInstituicaoEnsinoUser(), campus, curriculo, periodo, turno, curso );
+
 		for ( AtendimentoOperacional atendimentoOperacional : atendimentosOperacional )
 		{
 			list.add( ConvertBeans.toAtendimentoOperacionalDTO( atendimentoOperacional ) );
@@ -587,7 +593,7 @@ public class AtendimentosServiceImpl extends RemoteService
 
 		for ( AtendimentoOperacionalDTO atendimento : atendimentos )
 		{
-			Sala sala = Sala.find( atendimento.getSalaId() );
+			Sala sala = Sala.find( atendimento.getSalaId(), getInstituicaoEnsinoUser() );
 			Integer dia = atendimento.getSemana();
 			Long horario = atendimento.getHorarioId();
 
@@ -616,7 +622,8 @@ public class AtendimentosServiceImpl extends RemoteService
 		}
 	}
 
-	private void montaStringCompartilhamentoSalaCursosOperacional( List< AtendimentoOperacionalDTO > list )
+	private void montaStringCompartilhamentoSalaCursosOperacional(
+		List< AtendimentoOperacionalDTO > list )
 	{
 		if ( list != null && list.size() > 0 )
 		{
@@ -625,14 +632,28 @@ public class AtendimentosServiceImpl extends RemoteService
 			{
 				idsCursos.add( atendimento.getCursoId() );
 			}
+
 			List< Long > listIds = new ArrayList< Long >( idsCursos );
 
-			Curso curso = Curso.find( listIds.get( 0 ) );
-			String nomeCursos = curso.getNome();
+			Curso curso = Curso.find( listIds.get( 0 ),
+				getInstituicaoEnsinoUser() );
+
+			String nomeCursos = "";
+
+			if ( curso != null )
+			{
+				nomeCursos = curso.getNome();
+			}
+
 			for ( int i = 1; i < listIds.size(); i++ )
 			{
-				curso = Curso.find( listIds.get( i ) );
-				nomeCursos += ", " + curso.getNome();
+				curso = Curso.find( listIds.get( i ),
+					getInstituicaoEnsinoUser() );
+
+				if ( curso != null )
+				{			
+					nomeCursos += ( ", " + curso.getNome() );
+				}
 			}
 
 			for ( AtendimentoOperacionalDTO atendimento : list )
@@ -644,14 +665,15 @@ public class AtendimentosServiceImpl extends RemoteService
 
 	// Implementaçao da verifição relacionada com a issue
 	// http://jira.gapso.com.br/browse/TRIEDA-979
-	private void adicionaDadosCompartilhamentoSalaCursoTatico( List< AtendimentoTaticoDTO > atendimentos )
+	private void adicionaDadosCompartilhamentoSalaCursoTatico(
+		List< AtendimentoTaticoDTO > atendimentos )
 	{
 		Map< ParDTO< Sala, Integer >, List< AtendimentoTaticoDTO > > mapSalaAtendimentos
 			= new HashMap< ParDTO< Sala, Integer >, List< AtendimentoTaticoDTO > >();
 
 		for ( AtendimentoTaticoDTO atendimento : atendimentos )
 		{
-			Sala sala = Sala.find( atendimento.getSalaId() );
+			Sala sala = Sala.find( atendimento.getSalaId(), getInstituicaoEnsinoUser() );
 			Integer dia = atendimento.getSemana();
 
 			// No modelo tático, consideramos apenas a
@@ -680,7 +702,8 @@ public class AtendimentosServiceImpl extends RemoteService
 		}
 	}
 
-	private void montaStringCompartilhamentoSalaCursosTatico( List< AtendimentoTaticoDTO > list )
+	private void montaStringCompartilhamentoSalaCursosTatico(
+		List< AtendimentoTaticoDTO > list )
 	{
 		if ( list != null && list.size() > 0 )
 		{
@@ -689,14 +712,28 @@ public class AtendimentosServiceImpl extends RemoteService
 			{
 				idsCursos.add( atendimento.getCursoId() );
 			}
+
 			List< Long > listIds = new ArrayList< Long >( idsCursos );
 
-			Curso curso = Curso.find( listIds.get( 0 ) );
-			String nomeCursos = curso.getNome();
+			Curso curso = Curso.find( listIds.get( 0 ),
+				getInstituicaoEnsinoUser() );
+
+			String nomeCursos = "";
+			
+			if ( curso != null )
+			{
+				nomeCursos = curso.getNome();
+			}
+
 			for ( int i = 1; i < listIds.size(); i++ )
 			{
-				curso = Curso.find( listIds.get( i ) );
-				nomeCursos += ", " + curso.getNome();
+				curso = Curso.find( listIds.get( i ),
+					this.getInstituicaoEnsinoUser() );
+
+				if ( curso != null )
+				{
+					nomeCursos += ( ", " + curso.getNome() );
+				}
 			}
 
 			for ( AtendimentoTaticoDTO atendimento : list )
@@ -711,6 +748,7 @@ public class AtendimentosServiceImpl extends RemoteService
 	{
 		List< List<AtendimentoTaticoDTO > > listListDTO
 			= new ArrayList< List< AtendimentoTaticoDTO > >();
+
 		List< AtendimentoTaticoDTO > sortedDTOs
 			= new ArrayList< AtendimentoTaticoDTO >( entry.getValue() );
 
@@ -866,17 +904,18 @@ public class AtendimentosServiceImpl extends RemoteService
 		TurnoDTO turnoDTO, boolean isVisaoProfessor )
 	{
 		boolean isAdmin = isAdministrador();
-		Turno turno = Turno.find( turnoDTO.getId() );
+		Turno turno = Turno.find( turnoDTO.getId(), getInstituicaoEnsinoUser() );
 
 		Professor professor = ( professorDTO == null ? null :
-			Professor.find( professorDTO.getId() ) );
+			Professor.find( professorDTO.getId(), getInstituicaoEnsinoUser() ) );
 
 		ProfessorVirtual professorVirtual = ( professorVirtualDTO == null ? null :
-			ProfessorVirtual.find( professorVirtualDTO.getId() ) );
+			ProfessorVirtual.find( professorVirtualDTO.getId(), getInstituicaoEnsinoUser() ) );
 
 		List< AtendimentoOperacional > atendimentosOperacional
 			= AtendimentoOperacional.getAtendimentosOperacional(
-				isAdmin, professor, professorVirtual, turno, isVisaoProfessor );
+				getInstituicaoEnsinoUser(), isAdmin, professor,
+				professorVirtual, turno, isVisaoProfessor );
 
 		List< AtendimentoOperacional > atendimentosOperacionalDistinct
 			= new ArrayList< AtendimentoOperacional >();
@@ -941,7 +980,8 @@ public class AtendimentosServiceImpl extends RemoteService
 		}
 
 		final Map< Long, HorarioAula > horarios
-			= HorarioAula.buildHorarioAulaIdToHorarioAulaMap( HorarioAula.findAll() );
+			= HorarioAula.buildHorarioAulaIdToHorarioAulaMap(
+				HorarioAula.findAll( getInstituicaoEnsinoUser() ) );
 
 		// Quando há mais de um DTO por chave
 		// [Curso - Disciplina - Turma - DiaSemana - Sala], concatena as informações
@@ -1044,9 +1084,11 @@ public class AtendimentosServiceImpl extends RemoteService
 	@Override
 	public ListLoadResult< ProfessorVirtualDTO > getProfessoresVirtuais( CampusDTO campusDTO )
 	{
-		Campus campus = Campus.find( campusDTO.getId() );
+		Campus campus = Campus.find( campusDTO.getId(), this.getInstituicaoEnsinoUser() );
 
-		List< ProfessorVirtual > professoresVirtuais = ProfessorVirtual.findBy( campus );
+		List< ProfessorVirtual > professoresVirtuais
+			= ProfessorVirtual.findBy( getInstituicaoEnsinoUser(), campus );
+
 		List< ProfessorVirtualDTO > professoresVirtuaisDTO = new ArrayList< ProfessorVirtualDTO >();
 
 		for ( ProfessorVirtual professorVirtual : professoresVirtuais )
