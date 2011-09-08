@@ -1977,7 +1977,7 @@ public class ConvertBeans
 
 		HorarioAula ha = hdc.getHorarioAula();
 		dto.setHorarioId( ha.getId() );
-		dto.setHorarioString( TriedaUtil.shortTimeString(ha.getHorario() ) );
+		dto.setHorarioString( TriedaUtil.shortTimeString( ha.getHorario() ) );
 		dto.setTurnoId( ha.getTurno().getId() );
 		dto.setTurnoString( ha.getTurno().getNome() );
 

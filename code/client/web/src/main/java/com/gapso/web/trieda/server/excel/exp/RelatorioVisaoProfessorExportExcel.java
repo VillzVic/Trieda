@@ -343,11 +343,12 @@ public class RelatorioVisaoProfessorExportExcel
 					}
 					else if ( professorVirtual != null )
 					{
-						nextRow = writeProfessorVirtual( this.campus, professorVirtual, turno, mapNivel2.get( turno ),
-							nextRow, sheet, itExcelCommentsPool, codigoDisciplinaToColorMap );
+						nextRow = writeProfessorVirtual( this.campus, professorVirtual,
+							turno, mapNivel2.get( turno ), nextRow, sheet,
+							itExcelCommentsPool, codigoDisciplinaToColorMap );
 					}
-				}				
-			}			
+				}
+			}
 
 			result = true;
 		}
@@ -389,7 +390,8 @@ public class RelatorioVisaoProfessorExportExcel
 			col = 2;
 		}
 
-		// Processa os atendimentos lidos do BD para que os mesmos sejam visualizados na visão professor
+		// Processa os atendimentos lidos do BD para que
+		// os mesmos sejam visualizados na visão professor
 		AtendimentosServiceImpl atendimentosService = new AtendimentosServiceImpl();
 		List< AtendimentoOperacionalDTO > atendimentosParaVisaoProfessor
 			= atendimentosService.montaListaParaVisaoProfessor( atendimentos );
@@ -468,7 +470,8 @@ public class RelatorioVisaoProfessorExportExcel
 			+ periodo + atendimento.getPeriodoString() + "\n"
 			+ "Quantidade: " + atendimento.getQuantidadeAlunosString() + "\n"
 			+ "Sala: " + atendimento.getSalaString() + "\n"
-			+ "Professor: " + (atendimento.getProfessorId() != null ? atendimento.getProfessorString() : atendimento.getProfessorVirtualString());
+			+ "Professor: " + ( atendimento.getProfessorId() != null ?
+				atendimento.getProfessorString() : atendimento.getProfessorVirtualString() );
 	}
 
 	private int writeProfessorVirtual( Campus campus, ProfessorVirtual professorVirtual, Turno turno,

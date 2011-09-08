@@ -382,11 +382,12 @@ public class AtendimentoOperacionalDTO extends AbstractDTO< String >
 
 	public void concatenateVisaoProfessor( AtendimentoOperacionalDTO other )
 	{
-		setCursoNome( getCursoNome() + " / " + other.getCursoNome() );
-		setCurricularString( getCurriculoString() + " / " + other.getCurriculoString() );
-		setPeriodoString( getPeriodoString() + " / " + other.getPeriodoString() );
-		setQuantidadeAlunosString( getQuantidadeAlunosString() + " / " + other.getQuantidadeAlunosString() );
-		setQuantidadeAlunos( getQuantidadeAlunos() + other.getQuantidadeAlunos() );
+		// setCursoNome( getCursoNome() + " / " + other.getCursoNome() );
+		// setCurricularString( getCurriculoString() + " / " + other.getCurriculoString() );
+		// setPeriodoString( getPeriodoString() + " / " + other.getPeriodoString() );
+		// setQuantidadeAlunos( getQuantidadeAlunos() + other.getQuantidadeAlunos() );
+		// setQuantidadeAlunosString( getQuantidadeAlunosString() + " / " + other.getQuantidadeAlunosString() );
+
 		setTotalLinhas( getTotalLinhas() + other.getTotalLinhas() );
 	}
 

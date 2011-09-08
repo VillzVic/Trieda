@@ -304,6 +304,7 @@ public class RelatorioVisaoSalaExportExcel
 		{
 			List< AtendimentoRelatorioDTO > list
 				= diaSemanaToAtendimentosMap.get( atendimento.getSemana() );
+
 			if ( list == null )
 			{
 				list = new ArrayList< AtendimentoRelatorioDTO >();

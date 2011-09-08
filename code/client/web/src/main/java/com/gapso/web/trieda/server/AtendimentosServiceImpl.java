@@ -38,6 +38,7 @@ import com.gapso.web.trieda.shared.dtos.ProfessorVirtualDTO;
 import com.gapso.web.trieda.shared.dtos.SalaDTO;
 import com.gapso.web.trieda.shared.dtos.TurnoDTO;
 import com.gapso.web.trieda.shared.services.AtendimentosService;
+import com.gapso.web.trieda.shared.util.TriedaUtil;
 
 public class AtendimentosServiceImpl
 	extends RemoteService implements AtendimentosService
@@ -984,42 +985,63 @@ public class AtendimentosServiceImpl
 				HorarioAula.findAll( getInstituicaoEnsinoUser() ) );
 
 		// Quando há mais de um DTO por chave
-		// [Curso - Disciplina - Turma - DiaSemana - Sala], concatena as informações
-		// de todos em um único DTO.
+		// [ Curso - Disciplina - Turma - DiaSemana - Sala ],
+		// concatena as informações de todos em um único DTO.
 		List< AtendimentoOperacionalDTO > processedList
 			= new ArrayList< AtendimentoOperacionalDTO >();
 
-		for ( Entry< String, List< AtendimentoOperacionalDTO > > entry : atendimentoOperacionalDTOMap.entrySet() )
+		for ( Entry< String, List< AtendimentoOperacionalDTO > > entry
+			: atendimentoOperacionalDTOMap.entrySet() )
 		{
 			List< AtendimentoOperacionalDTO > ordenadoPorHorario
 				= new ArrayList< AtendimentoOperacionalDTO >( entry.getValue() );
 
 			Collections.sort( ordenadoPorHorario,
-					new Comparator< AtendimentoOperacionalDTO >()
-					{
-						@Override
-						public int compare( AtendimentoOperacionalDTO arg1,
-											AtendimentoOperacionalDTO arg2 )
-						{
-							HorarioAula h1 = horarios.get( arg1.getHorarioId() );
-							HorarioAula h2 = horarios.get( arg2.getHorarioId() );
+				new Comparator< AtendimentoOperacionalDTO >()
+			{
+				@Override
+				public int compare( AtendimentoOperacionalDTO arg1,
+									AtendimentoOperacionalDTO arg2 )
+				{
+					HorarioAula h1 = horarios.get( arg1.getHorarioId() );
+					HorarioAula h2 = horarios.get( arg2.getHorarioId() );
 
-							return h1.getHorario().compareTo( h2.getHorario() );
-						}
-					});
+					return h1.getHorario().compareTo( h2.getHorario() );
+				}
+			});
 
 			if ( ordenadoPorHorario.size() == 1 )
 			{
-				processedList.addAll( ordenadoPorHorario );
+				AtendimentoOperacionalDTO dto = ordenadoPorHorario.get( 0 );
+				dto.setTotalCreditos( 1 );
+				processedList.add( dto );
 			}
 			else
 			{
-				AtendimentoOperacionalDTO dtoMain = ordenadoPorHorario.get( 0 );
+				AtendimentoOperacionalDTO dtoMain = ordenadoPorHorario.get( 0 ) ;
+
+				// Procura pelo horário correspondente ao início da aula
+				HorarioAula menorHorario = horarios.get( dtoMain.getHorarioId() );
+				for ( AtendimentoOperacionalDTO dto : ordenadoPorHorario )
+				{
+					HorarioAula h = horarios.get( dto.getHorarioId() );
+
+					if ( h.getHorario().compareTo( menorHorario.getHorario() ) < 0 )
+					{
+						menorHorario = h;
+					}
+				}
+				////
 
 				for ( int i = 1; i < ordenadoPorHorario.size(); i++ )
 				{
-					dtoMain.setTotalLinhas( dtoMain.getTotalLinhas() + 1 );
+					AtendimentoOperacionalDTO dtoCurrent = ordenadoPorHorario.get( i );
+					dtoMain.concatenateVisaoProfessor( dtoCurrent );
 				}
+
+				dtoMain.setHorarioId( menorHorario.getId() );
+				dtoMain.setHorarioString( TriedaUtil.shortTimeString( menorHorario.getHorario() ) );
+				dtoMain.setTotalCreditos( entry.getValue().size() );
 
 				processedList.add( dtoMain );
 			}
@@ -1052,21 +1074,41 @@ public class AtendimentosServiceImpl
 			dtoList.add( dto );
 		}
 
-		// Quando há mais de um DTO por chave [ Disciplina - Turma - DiaSemana - Sala],
+		final Map< Long, HorarioAula > horarios
+			= HorarioAula.buildHorarioAulaIdToHorarioAulaMap(
+				HorarioAula.findAll( getInstituicaoEnsinoUser() ) );
+
+		// Quando há mais de um DTO por chave
+		// [ Disciplina - Turma - DiaSemana - Sala ],
 		// concatena as informações de todos em um único DTO.
 		List< AtendimentoOperacionalDTO > processedList
 			= new ArrayList< AtendimentoOperacionalDTO >();
 
 		for ( Entry< String, List< AtendimentoOperacionalDTO > > entry
-				: atendimentoOperacionalDTOMap.entrySet() )
+			: atendimentoOperacionalDTOMap.entrySet() )
 		{
 			if ( entry.getValue().size() == 1 )
 			{
-				processedList.addAll( entry.getValue() );
+				AtendimentoOperacionalDTO dto = entry.getValue().get( 0 );
+				dto.setTotalCreditos( 1 );
+				processedList.add( dto );
 			}
 			else
 			{
 				AtendimentoOperacionalDTO dtoMain = entry.getValue().get( 0 );
+
+				// Procura pelo horário correspondente ao início da aula
+				HorarioAula menorHorario = horarios.get( dtoMain.getHorarioId() );
+				for ( AtendimentoOperacionalDTO dto : entry.getValue() )
+				{
+					HorarioAula h = horarios.get( dto.getHorarioId() );
+
+					if ( h.getHorario().compareTo( menorHorario.getHorario() ) < 0 )
+					{
+						menorHorario = h;
+					}
+				}
+				////
 
 				for ( int i = 1; i < entry.getValue().size(); i++ )
 				{
@@ -1074,6 +1116,9 @@ public class AtendimentosServiceImpl
 					dtoMain.concatenateVisaoProfessor( dtoCurrent );
 				}
 
+				dtoMain.setHorarioId( menorHorario.getId() );
+				dtoMain.setHorarioString( TriedaUtil.shortTimeString( menorHorario.getHorario() ) );
+				dtoMain.setTotalCreditos( entry.getValue().size() );
 				processedList.add( dtoMain );
 			}
 		}
@@ -1084,12 +1129,14 @@ public class AtendimentosServiceImpl
 	@Override
 	public ListLoadResult< ProfessorVirtualDTO > getProfessoresVirtuais( CampusDTO campusDTO )
 	{
-		Campus campus = Campus.find( campusDTO.getId(), this.getInstituicaoEnsinoUser() );
+		Campus campus = Campus.find(
+			campusDTO.getId(), this.getInstituicaoEnsinoUser() );
 
 		List< ProfessorVirtual > professoresVirtuais
 			= ProfessorVirtual.findBy( getInstituicaoEnsinoUser(), campus );
 
-		List< ProfessorVirtualDTO > professoresVirtuaisDTO = new ArrayList< ProfessorVirtualDTO >();
+		List< ProfessorVirtualDTO > professoresVirtuaisDTO
+			= new ArrayList< ProfessorVirtualDTO >();
 
 		for ( ProfessorVirtual professorVirtual : professoresVirtuais )
 		{
