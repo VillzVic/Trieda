@@ -17,6 +17,7 @@ import com.gapso.web.trieda.main.client.mvp.view.CurriculoFormView;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.CurriculoDTO;
 import com.gapso.web.trieda.shared.dtos.CursoDTO;
+import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 import com.gapso.web.trieda.shared.i18n.ITriedaI18nGateway;
 import com.gapso.web.trieda.shared.mvp.presenter.Presenter;
@@ -24,6 +25,7 @@ import com.gapso.web.trieda.shared.services.CurriculosServiceAsync;
 import com.gapso.web.trieda.shared.services.CursosServiceAsync;
 import com.gapso.web.trieda.shared.services.Services;
 import com.gapso.web.trieda.shared.util.view.CursoComboBox;
+import com.gapso.web.trieda.shared.util.view.ExcelParametros;
 import com.gapso.web.trieda.shared.util.view.ExportExcelFormSubmit;
 import com.gapso.web.trieda.shared.util.view.GTab;
 import com.gapso.web.trieda.shared.util.view.GTabItem;
@@ -54,14 +56,18 @@ public class CurriculosPresenter
 		void setProxy( RpcProxy< PagingLoadResult< CurriculoDTO > > proxy );
 	}
 
+	private InstituicaoEnsinoDTO instituicaoEnsinoDTO;
 	private CenarioDTO cenario;
 	private Display display; 
 	private GTab gTab;
 
-	public CurriculosPresenter( CenarioDTO cenario, Display display )
+	public CurriculosPresenter( InstituicaoEnsinoDTO instituicaoEnsinoDTO,
+		CenarioDTO cenario, Display display )
 	{
+		this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;
 		this.cenario = cenario;
 		this.display = display;
+
 		configureProxy();
 		setListeners();
 	}
@@ -94,7 +100,7 @@ public class CurriculosPresenter
 				@Override
 				public void componentSelected( ButtonEvent ce )
 				{
-					Presenter presenter = new CurriculoFormPresenter( cenario,
+					Presenter presenter = new CurriculoFormPresenter( instituicaoEnsinoDTO, cenario,
 						new CurriculoFormView( new CurriculoDTO(), null, cenario ), display.getGrid() );
 
 					presenter.go( null );
@@ -121,7 +127,7 @@ public class CurriculosPresenter
 						@Override
 						public void onSuccess( CursoDTO cursoDTO )
 						{
-							Presenter presenter = new CurriculoFormPresenter( cenario,
+							Presenter presenter = new CurriculoFormPresenter( instituicaoEnsinoDTO, cenario,
 								new CurriculoFormView( curriculoDTO, cursoDTO, cenario ), display.getGrid() );
 
 							presenter.go( null );
@@ -163,8 +169,11 @@ public class CurriculosPresenter
 				@Override
 				public void componentSelected( ButtonEvent ce )
 				{
-					ImportExcelFormView importExcelFormView = new ImportExcelFormView(
-						ExcelInformationType.CURRICULOS,display.getGrid() );
+					ExcelParametros parametros = new ExcelParametros(
+						ExcelInformationType.CURRICULOS, instituicaoEnsinoDTO );
+
+					ImportExcelFormView importExcelFormView
+						= new ImportExcelFormView( parametros, display.getGrid() );
 
 					importExcelFormView.show();
 				}
@@ -176,9 +185,11 @@ public class CurriculosPresenter
 				@Override
 				public void componentSelected( ButtonEvent ce )
 				{
+					ExcelParametros parametros = new ExcelParametros(
+						ExcelInformationType.CURRICULOS, instituicaoEnsinoDTO );
+
 					ExportExcelFormSubmit e = new ExportExcelFormSubmit(
-						ExcelInformationType.CURRICULOS,display.getI18nConstants(),
-						display.getI18nMessages() );
+						parametros,display.getI18nConstants(), display.getI18nMessages() );
 
 					e.submit();
 				}
@@ -214,7 +225,8 @@ public class CurriculosPresenter
 				public void componentSelected( ButtonEvent ce )
 				{
 					CurriculoDTO curriculoDTO = display.getGrid().getGrid().getSelectionModel().getSelectedItem();
-					Presenter presenter = new CurriculoDisciplinasPresenter( new CurriculoDisciplinasView( curriculoDTO ) );
+					Presenter presenter = new CurriculoDisciplinasPresenter( instituicaoEnsinoDTO,
+						new CurriculoDisciplinasView( curriculoDTO ) );
 					presenter.go( gTab );
 				}
 		});

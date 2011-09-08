@@ -13,6 +13,7 @@ import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.gapso.web.trieda.main.client.mvp.view.TipoCursoFormView;
+import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
 import com.gapso.web.trieda.shared.dtos.TipoCursoDTO;
 import com.gapso.web.trieda.shared.mvp.presenter.Presenter;
 import com.gapso.web.trieda.shared.services.Services;
@@ -23,97 +24,142 @@ import com.gapso.web.trieda.shared.util.view.SimpleGrid;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
 
-public class TiposCursosPresenter implements Presenter {
-
-	public interface Display {
+public class TiposCursosPresenter	
+	implements Presenter
+{
+	public interface Display
+	{
 		Button getNewButton();
 		Button getEditButton();
 		Button getRemoveButton();
 		Button getImportExcelButton();
 		Button getExportExcelButton();
-		TextField<String> getCodigoBuscaTextField();
-		TextField<String> getDescricaoBuscaTextField();
+		TextField< String > getCodigoBuscaTextField();
+		TextField< String > getDescricaoBuscaTextField();
 		Button getSubmitBuscaButton();
 		Button getResetBuscaButton();
-		SimpleGrid<TipoCursoDTO> getGrid();
+		SimpleGrid< TipoCursoDTO > getGrid();
 		Component getComponent();
-		void setProxy(RpcProxy<PagingLoadResult<TipoCursoDTO>> proxy);
+		void setProxy( RpcProxy< PagingLoadResult< TipoCursoDTO > > proxy );
 	}
+
 	private Display display; 
-	
-	public TiposCursosPresenter(Display display) {
+	private InstituicaoEnsinoDTO instituicaoEnsinoDTO;
+
+	public TiposCursosPresenter(
+		InstituicaoEnsinoDTO instituicaoEnsinoDTO, Display display )
+	{
 		this.display = display;
+		this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;
+
 		configureProxy();
 		setListeners();
 	}
 
-	private void configureProxy() {
+	private void configureProxy()
+	{
 		final TiposCursosServiceAsync service = Services.tiposCursos();
-		RpcProxy<PagingLoadResult<TipoCursoDTO>> proxy = new RpcProxy<PagingLoadResult<TipoCursoDTO>>() {
+
+		RpcProxy< PagingLoadResult< TipoCursoDTO > > proxy
+			= new RpcProxy< PagingLoadResult< TipoCursoDTO > >()
+		{
 			@Override
-			public void load(Object loadConfig, AsyncCallback<PagingLoadResult<TipoCursoDTO>> callback) {
+			public void load( Object loadConfig,
+				AsyncCallback< PagingLoadResult< TipoCursoDTO > > callback )
+			{
 				String codigo = display.getCodigoBuscaTextField().getValue();
 				String descricao = display.getDescricaoBuscaTextField().getValue();
-				service.getBuscaList(codigo, descricao, (PagingLoadConfig)loadConfig, callback);
+
+				service.getBuscaList( codigo, descricao, (PagingLoadConfig) loadConfig, callback );
 			}
 		};
-		display.setProxy(proxy);
+
+		display.setProxy( proxy );
 	}
-	
-	private void setListeners() {
-		display.getNewButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
+
+	private void setListeners()
+	{
+		display.getNewButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+		{
 			@Override
-			public void componentSelected(ButtonEvent ce) {
-				Presenter presenter = new TipoCursoFormPresenter(new TipoCursoFormView(new TipoCursoDTO()), display.getGrid());
-				presenter.go(null);
+			public void componentSelected( ButtonEvent ce )
+			{
+				Presenter presenter = new TipoCursoFormPresenter( instituicaoEnsinoDTO,
+					new TipoCursoFormView(instituicaoEnsinoDTO, new TipoCursoDTO() ), display.getGrid() );
+
+				presenter.go( null );
 			}
 		});
-		display.getEditButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
+
+		display.getEditButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+		{
 			@Override
-			public void componentSelected(ButtonEvent ce) {
+			public void componentSelected( ButtonEvent ce )
+			{
 				TipoCursoDTO tipoCursoDTO = display.getGrid().getGrid().getSelectionModel().getSelectedItem();
-				Presenter presenter = new TipoCursoFormPresenter(new TipoCursoFormView(tipoCursoDTO), display.getGrid());
-				presenter.go(null);
+				Presenter presenter = new TipoCursoFormPresenter( instituicaoEnsinoDTO,
+					new TipoCursoFormView( instituicaoEnsinoDTO, tipoCursoDTO ), display.getGrid() );
+
+				presenter.go( null );
 			}
 		});
-		display.getRemoveButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
+
+		display.getRemoveButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+		{
 			@Override
-			public void componentSelected(ButtonEvent ce) {
-				List<TipoCursoDTO> list = display.getGrid().getGrid().getSelectionModel().getSelectedItems();
+			public void componentSelected( ButtonEvent ce )
+			{
+				List< TipoCursoDTO > list = display.getGrid().getGrid().getSelectionModel().getSelectedItems();
 				final TiposCursosServiceAsync service = Services.tiposCursos();
-				service.remove(list, new AsyncCallback<Void>() {
+
+				service.remove( list, new AsyncCallback< Void >()
+				{
 					@Override
-					public void onFailure(Throwable caught) {
-						MessageBox.alert("ERRO!", "Deu falha na conexão", null);
+					public void onFailure( Throwable caught )
+					{
+						MessageBox.alert( "ERRO!", "Deu falha na conexão", null );
 					}
+
 					@Override
-					public void onSuccess(Void result) {
+					public void onSuccess( Void result )
+					{
 						display.getGrid().updateList();
-						Info.display("Removido", "Item removido com sucesso!");
+						Info.display( "Removido", "Item removido com sucesso!" );
 					}
 				});
 			}
 		});
-		display.getResetBuscaButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
+
+		display.getResetBuscaButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+		{
 			@Override
-			public void componentSelected(ButtonEvent ce) {
-				display.getCodigoBuscaTextField().setValue(null);
-				display.getDescricaoBuscaTextField().setValue(null);
+			public void componentSelected( ButtonEvent ce )
+			{
+				display.getCodigoBuscaTextField().setValue( null );
+				display.getDescricaoBuscaTextField().setValue( null );
 				display.getGrid().updateList();
 			}
 		});
-		display.getSubmitBuscaButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
+
+		display.getSubmitBuscaButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+		{
 			@Override
-			public void componentSelected(ButtonEvent ce) {
+			public void componentSelected( ButtonEvent ce )
+			{
 				display.getGrid().updateList();
 			}
 		});
-	}
-	
-	@Override
-	public void go(Widget widget) {
-		GTab tab = (GTab)widget;
-		tab.add((GTabItem)display.getComponent());
 	}
 
+	@Override
+	public void go( Widget widget )
+	{
+		GTab tab = (GTab)widget;
+		tab.add( (GTabItem)display.getComponent() );
+	}
 }

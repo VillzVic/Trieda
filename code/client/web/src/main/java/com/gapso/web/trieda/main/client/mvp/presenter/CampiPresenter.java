@@ -19,6 +19,7 @@ import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.DeslocamentoUnidadeDTO;
 import com.gapso.web.trieda.shared.dtos.HorarioDisponivelCenarioDTO;
+import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
 import com.gapso.web.trieda.shared.dtos.SemanaLetivaDTO;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 import com.gapso.web.trieda.shared.i18n.ITriedaI18nGateway;
@@ -28,6 +29,7 @@ import com.gapso.web.trieda.shared.services.Services;
 import com.gapso.web.trieda.shared.services.UnidadesServiceAsync;
 import com.gapso.web.trieda.shared.util.view.AbstractAsyncCallbackWithDefaultOnFailure;
 import com.gapso.web.trieda.shared.util.view.EstadoComboBox;
+import com.gapso.web.trieda.shared.util.view.ExcelParametros;
 import com.gapso.web.trieda.shared.util.view.ExportExcelFormSubmit;
 import com.gapso.web.trieda.shared.util.view.GTab;
 import com.gapso.web.trieda.shared.util.view.GTabItem;
@@ -36,51 +38,43 @@ import com.gapso.web.trieda.shared.util.view.SimpleGrid;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
 
-public class CampiPresenter implements Presenter {
-
-	public interface Display extends ITriedaI18nGateway {
+public class CampiPresenter
+	implements Presenter
+{
+	public interface Display
+		extends ITriedaI18nGateway
+	{
 		Button getNewButton();
-
 		Button getEditButton();
-
 		Button getRemoveButton();
-
 		Button getImportExcelButton();
-
 		Button getExportExcelButton();
-
 		Button getUnidadeDeslocamentosButton();
-
 		Button getDisponibilidadeButton();
-
-		TextField<String> getCodigoBuscaTextField();
-
-		TextField<String> getNomeBuscaTextField();
-
+		TextField< String > getCodigoBuscaTextField();
+		TextField< String > getNomeBuscaTextField();
 		EstadoComboBox getEstadoBuscaComboBox();
-
-		TextField<String> getMunicipioBuscaTextField();
-
-		TextField<String> getBairroBuscaTextField();
-
+		TextField< String > getMunicipioBuscaTextField();
+		TextField< String > getBairroBuscaTextField();
 		Button getSubmitBuscaButton();
-
 		Button getResetBuscaButton();
-
-		SimpleGrid<CampusDTO> getGrid();
-
+		SimpleGrid< CampusDTO > getGrid();
 		Component getComponent();
-
-		void setProxy(RpcProxy<PagingLoadResult<CampusDTO>> proxy);
+		void setProxy( RpcProxy< PagingLoadResult< CampusDTO > > proxy );
 	}
 
+	private InstituicaoEnsinoDTO instituicaoEnsinoDTO;
 	private CenarioDTO cenario;
 	private Display display;
 	private GTab gTab;
 
-	public CampiPresenter(CenarioDTO cenario, Display display) {
+	public CampiPresenter( InstituicaoEnsinoDTO instituicaoEnsinoDTO,
+		CenarioDTO cenario, Display display )
+	{
+		this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;
 		this.cenario = cenario;
 		this.display = display;
+
 		configureProxy();
 		setListeners();
 	}
@@ -104,29 +98,37 @@ public class CampiPresenter implements Presenter {
 		display.setProxy(proxy);
 	}
 
-	private void setListeners() {
+	private void setListeners()
+	{
 		display.getNewButton().addSelectionListener(
-				new SelectionListener<ButtonEvent>() {
-					@Override
-					public void componentSelected(ButtonEvent ce) {
-						Presenter presenter = new CampusFormPresenter(cenario,
-								new CampusFormView(cenario, new CampusDTO()),
-								display.getGrid());
-						presenter.go(null);
-					}
-				});
+			new SelectionListener< ButtonEvent >()
+			{
+				@Override
+				public void componentSelected( ButtonEvent ce )
+				{
+					Presenter presenter = new CampusFormPresenter(
+						cenario, new CampusFormView( cenario, new CampusDTO() ), display.getGrid() );
+
+					presenter.go( null );
+				}
+		});
+
 		display.getEditButton().addSelectionListener(
-				new SelectionListener<ButtonEvent>() {
-					@Override
-					public void componentSelected(ButtonEvent ce) {
-						CampusDTO campusDTO = display.getGrid().getGrid()
-								.getSelectionModel().getSelectedItem();
-						Presenter presenter = new CampusFormPresenter(cenario,
-								new CampusFormView(cenario, campusDTO), display
-										.getGrid());
-						presenter.go(null);
-					}
-				});
+			new SelectionListener< ButtonEvent >()
+			{
+				@Override
+				public void componentSelected( ButtonEvent ce )
+				{
+					CampusDTO campusDTO = display.getGrid().getGrid()
+						.getSelectionModel().getSelectedItem();
+
+					Presenter presenter = new CampusFormPresenter( cenario,
+						new CampusFormView( cenario, campusDTO ), display.getGrid() );
+
+					presenter.go( null );
+				}
+		});
+
 		display.getRemoveButton().addSelectionListener(
 				new SelectionListener<ButtonEvent>() {
 					@Override
@@ -152,8 +154,11 @@ public class CampiPresenter implements Presenter {
 					@Override
 					public void componentSelected( ButtonEvent ce )
 					{
-						ImportExcelFormView importExcelFormView = new ImportExcelFormView(
-								ExcelInformationType.CAMPI, display.getGrid() );
+						ExcelParametros parametros = new ExcelParametros(
+							ExcelInformationType.CAMPI, instituicaoEnsinoDTO );
+
+						ImportExcelFormView importExcelFormView
+							= new ImportExcelFormView( parametros, display.getGrid() );
 
 						importExcelFormView.show();
 					}
@@ -163,10 +168,11 @@ public class CampiPresenter implements Presenter {
 					@Override
 					public void componentSelected( ButtonEvent ce )
 					{
+						ExcelParametros parametros = new ExcelParametros(
+							ExcelInformationType.CAMPI, instituicaoEnsinoDTO );
+
 						ExportExcelFormSubmit e = new ExportExcelFormSubmit(
-							ExcelInformationType.CAMPI,
-								display.getI18nConstants(),
-								display.getI18nMessages() );
+							parametros, display.getI18nConstants(), display.getI18nMessages() );
 
 						e.submit();
 					}
@@ -223,7 +229,7 @@ public class CampiPresenter implements Presenter {
 								semanaLetiva.setId( cenario.getSemanaLetivaId() );
 
 								Presenter presenter = new HorarioDisponivelCampusFormPresenter(
-									cenario, semanaLetiva,
+									instituicaoEnsinoDTO, cenario, semanaLetiva,
 									new HorarioDisponivelCampusFormView( campusDTO, result.getData() ) );
 
 								presenter.go( null );

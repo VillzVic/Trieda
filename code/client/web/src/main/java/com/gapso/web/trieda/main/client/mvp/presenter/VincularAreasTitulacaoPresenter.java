@@ -19,6 +19,7 @@ import com.extjs.gxt.ui.client.widget.ListView;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.gapso.web.trieda.shared.dtos.AreaTitulacaoDTO;
 import com.gapso.web.trieda.shared.dtos.CursoDTO;
+import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 import com.gapso.web.trieda.shared.i18n.ITriedaI18nGateway;
 import com.gapso.web.trieda.shared.mvp.presenter.Presenter;
@@ -26,6 +27,7 @@ import com.gapso.web.trieda.shared.services.AreasTitulacaoServiceAsync;
 import com.gapso.web.trieda.shared.services.Services;
 import com.gapso.web.trieda.shared.util.view.AbstractAsyncCallbackWithDefaultOnFailure;
 import com.gapso.web.trieda.shared.util.view.CursoComboBox;
+import com.gapso.web.trieda.shared.util.view.ExcelParametros;
 import com.gapso.web.trieda.shared.util.view.ExportExcelFormSubmit;
 import com.gapso.web.trieda.shared.util.view.GTab;
 import com.gapso.web.trieda.shared.util.view.GTabItem;
@@ -45,9 +47,15 @@ public class VincularAreasTitulacaoPresenter implements Presenter {
 		Button getExportExcelButton();
 		Component getComponent();
 	}
+
 	private Display display;
-	
-	public VincularAreasTitulacaoPresenter(Display display) {
+	private InstituicaoEnsinoDTO instituicaoEnsinoDTO;
+
+	public VincularAreasTitulacaoPresenter(
+		InstituicaoEnsinoDTO instituicaoEnsinoDTO, Display display )
+	{
+		this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;
+
 		this.display = display;
 		configureProxy();
 		setListeners();
@@ -133,15 +141,28 @@ public class VincularAreasTitulacaoPresenter implements Presenter {
 		});
 		display.getImportExcelButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
 			@Override
-			public void componentSelected(ButtonEvent ce) {
-				ImportExcelFormView importExcelFormView = new ImportExcelFormView(ExcelInformationType.CURSO_AREAS_TITULACAO, null);
+			public void componentSelected( ButtonEvent ce )
+			{
+				ExcelParametros parametros = new ExcelParametros(
+					ExcelInformationType.CURSO_AREAS_TITULACAO, instituicaoEnsinoDTO );
+
+				ImportExcelFormView importExcelFormView
+					= new ImportExcelFormView( parametros, null );
+
 				importExcelFormView.show();
 			}
 		});
+
 		display.getExportExcelButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
 			@Override
 			public void componentSelected(ButtonEvent ce) {
-				ExportExcelFormSubmit e = new ExportExcelFormSubmit(ExcelInformationType.CURSO_AREAS_TITULACAO, display.getI18nConstants(), display.getI18nMessages());
+				
+				ExcelParametros parametros = new ExcelParametros(
+					ExcelInformationType.CURSO_AREAS_TITULACAO, instituicaoEnsinoDTO );
+
+				ExportExcelFormSubmit e = new ExportExcelFormSubmit(
+					parametros, display.getI18nConstants(), display.getI18nMessages() );
+
 				e.submit();
 			}
 		});

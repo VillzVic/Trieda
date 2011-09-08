@@ -13,6 +13,7 @@ import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.DisciplinaDTO;
+import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorDisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.UsuarioDTO;
@@ -24,6 +25,7 @@ import com.gapso.web.trieda.shared.services.ProfessoresDisciplinaServiceAsync;
 import com.gapso.web.trieda.shared.services.ProfessoresServiceAsync;
 import com.gapso.web.trieda.shared.services.Services;
 import com.gapso.web.trieda.shared.util.view.DisciplinaComboBox;
+import com.gapso.web.trieda.shared.util.view.ExcelParametros;
 import com.gapso.web.trieda.shared.util.view.ExportExcelFormSubmit;
 import com.gapso.web.trieda.shared.util.view.GTab;
 import com.gapso.web.trieda.shared.util.view.GTabItem;
@@ -55,14 +57,16 @@ public class ProfessoresDisciplinaPresenter
 		void setProxy( RpcProxy< PagingLoadResult< ProfessorDisciplinaDTO > > proxy );
 	}
 
+	private InstituicaoEnsinoDTO instituicaoEnsinoDTO;
 	private GTab gTab;
 	private Display display;
 	private UsuarioDTO usuario;
 	private boolean isVisaoProfessor;
 
-	public ProfessoresDisciplinaPresenter( CenarioDTO cenario,
-		UsuarioDTO usuario, Display display, boolean isVisaoProfessor )
+	public ProfessoresDisciplinaPresenter( InstituicaoEnsinoDTO instituicaoEnsinoDTO,
+		CenarioDTO cenario, UsuarioDTO usuario, Display display, boolean isVisaoProfessor )
 	{
+		this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;
 		this.display = display;
 		this.usuario = usuario;
 		this.isVisaoProfessor = isVisaoProfessor;
@@ -111,9 +115,9 @@ public class ProfessoresDisciplinaPresenter
 				@Override
 				public void componentSelected( ButtonEvent ce )
 				{
-					Presenter presenter = new ProfessorDisciplinaFormPresenter(
-						usuario, new ProfessorDisciplinaFormView(
-							usuario, new ProfessorDisciplinaDTO(), null, null ), display.getGrid() );
+					Presenter presenter = new ProfessorDisciplinaFormPresenter( instituicaoEnsinoDTO,
+						usuario, new ProfessorDisciplinaFormView( usuario,
+							new ProfessorDisciplinaDTO(), null, null ), display.getGrid() );
 
 					presenter.go( null );
 				}
@@ -153,9 +157,8 @@ public class ProfessoresDisciplinaPresenter
 						ProfessorDTO professorDTO = futureProfessorDTO.result();
 						DisciplinaDTO disciplinaDTO = futureDisciplinaDTO.result();
 
-						Presenter presenter = new ProfessorDisciplinaFormPresenter(
-							usuario, new ProfessorDisciplinaFormView(
-								usuario, professorDisciplinaDTO,
+						Presenter presenter = new ProfessorDisciplinaFormPresenter( instituicaoEnsinoDTO,
+							usuario, new ProfessorDisciplinaFormView( usuario, professorDisciplinaDTO,
 								professorDTO, disciplinaDTO), display.getGrid() );
 
 						presenter.go( null );
@@ -220,8 +223,11 @@ public class ProfessoresDisciplinaPresenter
 				@Override
 				public void componentSelected( ButtonEvent ce )
 				{
-					ExportExcelFormSubmit e = new ExportExcelFormSubmit( ExcelInformationType.HABILITACAO_PROFESSORES,
-						display.getI18nConstants(), display.getI18nMessages() );
+					ExcelParametros parametros = new ExcelParametros(
+							ExcelInformationType.HABILITACAO_PROFESSORES, instituicaoEnsinoDTO );
+
+					ExportExcelFormSubmit e = new ExportExcelFormSubmit(
+						parametros,	display.getI18nConstants(), display.getI18nMessages() );
 
 					e.submit();
 				}
@@ -232,8 +238,11 @@ public class ProfessoresDisciplinaPresenter
 				@Override
 				public void componentSelected( ButtonEvent ce )
 				{
-					ImportExcelFormView importExcelFormView = new ImportExcelFormView(
-						ExcelInformationType.HABILITACAO_PROFESSORES, display.getGrid() );
+					ExcelParametros parametros = new ExcelParametros(
+						ExcelInformationType.HABILITACAO_PROFESSORES, instituicaoEnsinoDTO );
+
+					ImportExcelFormView importExcelFormView
+						= new ImportExcelFormView( parametros, display.getGrid() );
 
 					importExcelFormView.show();
 				}

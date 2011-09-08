@@ -17,6 +17,7 @@ import com.gapso.web.trieda.main.client.mvp.view.CurriculosView;
 import com.gapso.web.trieda.main.client.mvp.view.CursoFormView;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.CursoDTO;
+import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
 import com.gapso.web.trieda.shared.dtos.TipoCursoDTO;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 import com.gapso.web.trieda.shared.i18n.ITriedaI18nGateway;
@@ -24,6 +25,7 @@ import com.gapso.web.trieda.shared.mvp.presenter.Presenter;
 import com.gapso.web.trieda.shared.services.CursosServiceAsync;
 import com.gapso.web.trieda.shared.services.Services;
 import com.gapso.web.trieda.shared.services.TiposCursosServiceAsync;
+import com.gapso.web.trieda.shared.util.view.ExcelParametros;
 import com.gapso.web.trieda.shared.util.view.ExportExcelFormSubmit;
 import com.gapso.web.trieda.shared.util.view.GTab;
 import com.gapso.web.trieda.shared.util.view.GTabItem;
@@ -33,34 +35,40 @@ import com.gapso.web.trieda.shared.util.view.TipoCursoComboBox;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
 
-public class CursosPresenter implements Presenter {
-
-	public interface Display extends ITriedaI18nGateway {
+public class CursosPresenter
+	implements Presenter
+{
+	public interface Display
+		extends ITriedaI18nGateway
+	{
 		Button getNewButton();
 		Button getEditButton();
 		Button getRemoveButton();
 		Button getImportExcelButton();
 		Button getExportExcelButton();
 		Button getCurriculosButton();
-		
-		TextField<String> getNomeBuscaTextField();
-		TextField<String> getCodigoBuscaTextField();
+		TextField< String > getNomeBuscaTextField();
+		TextField< String > getCodigoBuscaTextField();
 		TipoCursoComboBox getTipoCursoBuscaComboBox();
-		
 		Button getSubmitBuscaButton();
 		Button getResetBuscaButton();
-		
-		SimpleGrid<CursoDTO> getGrid();
+		SimpleGrid< CursoDTO > getGrid();
 		Component getComponent();
-		void setProxy(RpcProxy<PagingLoadResult<CursoDTO>> proxy);
+		void setProxy( RpcProxy< PagingLoadResult< CursoDTO > > proxy );
 	}
+
+	private InstituicaoEnsinoDTO instituicaoEnsinoDTO;
 	private CenarioDTO cenario;
 	private Display display; 
 	private GTab gTab;
-	
-	public CursosPresenter(CenarioDTO cenario, Display display) {
+
+	public CursosPresenter( InstituicaoEnsinoDTO instituicaoEnsinoDTO,
+		CenarioDTO cenario, Display display )
+	{
+		this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;
 		this.cenario = cenario;
 		this.display = display;
+
 		configureProxy();
 		setListeners();
 	}
@@ -83,28 +91,42 @@ public class CursosPresenter implements Presenter {
 		display.getNewButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
 			@Override
 			public void componentSelected(ButtonEvent ce) {
-				Presenter presenter = new CursoFormPresenter(cenario, new CursoFormView(cenario), display.getGrid());
+				Presenter presenter = new CursoFormPresenter( instituicaoEnsinoDTO,
+					cenario, new CursoFormView( cenario ), display.getGrid() );
+
 				presenter.go(null);
 			}
 		});
-		display.getEditButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
+
+		display.getEditButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+		{
 			@Override
-			public void componentSelected(ButtonEvent ce) {
+			public void componentSelected( ButtonEvent ce )
+			{
 				final CursoDTO cursoDTO = display.getGrid().getGrid().getSelectionModel().getSelectedItem();
 				final TiposCursosServiceAsync service = Services.tiposCursos();
-				service.getTipoCurso(cursoDTO.getTipoId(), new AsyncCallback<TipoCursoDTO>() {
+
+				service.getTipoCurso( cursoDTO.getTipoId(), new AsyncCallback< TipoCursoDTO >()
+				{
 					@Override
-					public void onFailure(Throwable caught) {
+					public void onFailure( Throwable caught )
+					{
 						caught.printStackTrace();
 					}
+
 					@Override
-					public void onSuccess(TipoCursoDTO tipoCursoDTO) {
-						Presenter presenter = new CursoFormPresenter(cenario, new CursoFormView(cursoDTO, tipoCursoDTO, cenario), display.getGrid());
-						presenter.go(null);
+					public void onSuccess( TipoCursoDTO tipoCursoDTO )
+					{
+						Presenter presenter = new CursoFormPresenter( instituicaoEnsinoDTO, cenario,
+							new CursoFormView( cursoDTO, tipoCursoDTO, cenario ), display.getGrid() );
+
+						presenter.go( null );
 					}
 				});
 			}
 		});
+
 		display.getRemoveButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
 			@Override
 			public void componentSelected(ButtonEvent ce) {
@@ -123,17 +145,31 @@ public class CursosPresenter implements Presenter {
 				});
 			}
 		});
-		display.getImportExcelButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
+		display.getImportExcelButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+		{
 			@Override
-			public void componentSelected(ButtonEvent ce) {
-				ImportExcelFormView importExcelFormView = new ImportExcelFormView(ExcelInformationType.CURSOS,display.getGrid());
+			public void componentSelected( ButtonEvent ce )
+			{
+				ExcelParametros parametros = new ExcelParametros(
+					ExcelInformationType.CURSOS, instituicaoEnsinoDTO );
+
+				ImportExcelFormView importExcelFormView
+					= new ImportExcelFormView( parametros, display.getGrid() );
+
 				importExcelFormView.show();
 			}
 		});
 		display.getExportExcelButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
 			@Override
-			public void componentSelected(ButtonEvent ce) {
-				ExportExcelFormSubmit e = new ExportExcelFormSubmit(ExcelInformationType.CURSOS,display.getI18nConstants(),display.getI18nMessages());
+			public void componentSelected( ButtonEvent ce )
+			{
+				ExcelParametros parametros = new ExcelParametros(
+					ExcelInformationType.CURSOS, instituicaoEnsinoDTO );
+
+				ExportExcelFormSubmit e = new ExportExcelFormSubmit(
+					parametros, display.getI18nConstants(), display.getI18nMessages() );
+
 				e.submit();
 			}
 		});
@@ -152,20 +188,26 @@ public class CursosPresenter implements Presenter {
 				display.getGrid().updateList();
 			}
 		});
-		display.getCurriculosButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
+		display.getCurriculosButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+		{
 			@Override
-			public void componentSelected(ButtonEvent ce) {
+			public void componentSelected( ButtonEvent ce )
+			{
 				final CursoDTO cursoDTO = display.getGrid().getGrid().getSelectionModel().getSelectedItem();
-				Presenter presenter = new CurriculosPresenter(cenario, new CurriculosView(cursoDTO));
-				presenter.go(gTab);
+
+				Presenter presenter = new CurriculosPresenter(
+					instituicaoEnsinoDTO, cenario, new CurriculosView( cursoDTO ) );
+
+				presenter.go( gTab );
 			}
 		});
 	}
-	
-	@Override
-	public void go(Widget widget) {
-		gTab = (GTab)widget;
-		gTab.add((GTabItem)display.getComponent());
-	}
 
+	@Override
+	public void go( Widget widget )
+	{
+		gTab = (GTab)widget;
+		gTab.add( (GTabItem)display.getComponent() );
+	}
 }

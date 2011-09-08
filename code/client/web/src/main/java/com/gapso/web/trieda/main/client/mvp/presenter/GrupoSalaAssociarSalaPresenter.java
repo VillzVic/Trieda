@@ -203,18 +203,15 @@ public class GrupoSalaAssociarSalaPresenter implements Presenter {
 				Info.display("Removida", "Salas removidas da lista!");
 			}
 		});
-		
 	}
 
-	
 	private GrupoSalaDTO getDTO() {
 		GrupoSalaDTO grupoSalaDTO = display.getGrupoSalaDTO();
 		return grupoSalaDTO;
 	}
-	
+
 	@Override
 	public void go(Widget widget) {
 		display.getSimpleModal().show();
 	}
-
 }

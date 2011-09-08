@@ -4,6 +4,7 @@ import com.extjs.gxt.ui.client.widget.Component;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
 import com.gapso.web.trieda.main.client.mvp.view.ToolBarView;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
+import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
 import com.gapso.web.trieda.shared.dtos.UsuarioDTO;
 import com.gapso.web.trieda.shared.i18n.ITriedaI18nGateway;
 import com.gapso.web.trieda.shared.mvp.presenter.Presenter;
@@ -79,22 +80,26 @@ public class AppPresenter
 
 		final FutureResult< CenarioDTO > futureCenarioDTO = new FutureResult< CenarioDTO >();
 		final FutureResult< UsuarioDTO > futureUsuarioDTO = new FutureResult< UsuarioDTO >();
+		final FutureResult< InstituicaoEnsinoDTO > futureInstituicaoEnsinoDTO = new FutureResult< InstituicaoEnsinoDTO >();
 
 		cenarioService.getMasterData( futureCenarioDTO );
 		usuarioService.getCurrentUser( futureUsuarioDTO );
+		cenarioService.getInstituicaoEnsinoDTO( futureInstituicaoEnsinoDTO );
 
-		FutureSynchronizer synch = new FutureSynchronizer( futureCenarioDTO, futureUsuarioDTO );
+		FutureSynchronizer synch = new FutureSynchronizer(
+			futureCenarioDTO, futureUsuarioDTO, futureInstituicaoEnsinoDTO );
 
 		synch.addCallback( new AbstractAsyncCallbackWithDefaultOnFailure< Boolean >( viewport )
-			{
+		{
 				@Override
 				public void onSuccess( Boolean result )
 				{
 					CenarioDTO cenario = futureCenarioDTO.result();
 					UsuarioDTO usuario = futureUsuarioDTO.result();
+					InstituicaoEnsinoDTO instituicaoEnsino =  futureInstituicaoEnsinoDTO.result();
 
 					RootPanel rp = (RootPanel) widget;
-					Presenter presenter = new ToolBarPresenter(
+					Presenter presenter = new ToolBarPresenter( instituicaoEnsino,
 						cenario, usuario, viewport.getCenarioPanel(), new ToolBarView() );
 
 					presenter.go( viewport.asWidget() );
@@ -104,6 +109,6 @@ public class AppPresenter
 					// Enquanto o browser estiver aberto, a sessão não irá expirar
 					createThreadAvoidSessionExpire();
 				}
-			});
+		});
 	}
 }

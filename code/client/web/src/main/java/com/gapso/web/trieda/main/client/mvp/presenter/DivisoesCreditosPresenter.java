@@ -14,6 +14,7 @@ import com.extjs.gxt.ui.client.widget.button.Button;
 import com.gapso.web.trieda.main.client.mvp.view.DivisaoCreditosFormView;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.DivisaoCreditoDTO;
+import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
 import com.gapso.web.trieda.shared.mvp.presenter.Presenter;
 import com.gapso.web.trieda.shared.services.DivisoesCreditosServiceAsync;
 import com.gapso.web.trieda.shared.services.Services;
@@ -35,10 +36,15 @@ public class DivisoesCreditosPresenter implements Presenter {
 		Component getComponent();
 		void setProxy(RpcProxy<PagingLoadResult<DivisaoCreditoDTO>> proxy);
 	}
+
+	private InstituicaoEnsinoDTO instituicaoEnsinoDTO;
 	private CenarioDTO cenario;
 	private Display display; 
 	
-	public DivisoesCreditosPresenter(CenarioDTO cenario, Display display) {
+	public DivisoesCreditosPresenter( InstituicaoEnsinoDTO instituicaoEnsinoDTO,
+		CenarioDTO cenario, Display display )
+	{
+		this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;
 		this.cenario = cenario;
 		this.display = display;
 		configureProxy();
@@ -59,16 +65,20 @@ public class DivisoesCreditosPresenter implements Presenter {
 	private void setListeners() {
 		display.getNewButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
 			@Override
-			public void componentSelected(ButtonEvent ce) {
-				Presenter presenter = new DivisaoCreditosFormPresenter(cenario, new DivisaoCreditosFormView(new DivisaoCreditoDTO()), display.getGrid());
-				presenter.go(null);
+			public void componentSelected( ButtonEvent ce )
+			{
+				Presenter presenter = new DivisaoCreditosFormPresenter(
+					instituicaoEnsinoDTO, cenario, new DivisaoCreditosFormView( new DivisaoCreditoDTO() ), display.getGrid() );
+
+				presenter.go( null );
 			}
 		});
 		display.getEditButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
 			@Override
 			public void componentSelected(ButtonEvent ce) {
 				DivisaoCreditoDTO divisaoCreditoDTO = display.getGrid().getGrid().getSelectionModel().getSelectedItem();
-				Presenter presenter = new DivisaoCreditosFormPresenter(cenario, new DivisaoCreditosFormView(divisaoCreditoDTO), display.getGrid());
+				Presenter presenter = new DivisaoCreditosFormPresenter( instituicaoEnsinoDTO,
+					cenario, new DivisaoCreditosFormView(divisaoCreditoDTO), display.getGrid());
 				presenter.go(null);
 			}
 		});

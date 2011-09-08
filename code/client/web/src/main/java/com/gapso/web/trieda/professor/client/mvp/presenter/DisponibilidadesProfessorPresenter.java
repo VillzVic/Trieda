@@ -12,6 +12,7 @@ import com.extjs.gxt.ui.client.widget.button.Button;
 import com.gapso.web.trieda.professor.client.mvp.view.DisponibilidadesProfessorFormView;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.HorarioDisponivelCenarioDTO;
+import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorDTO;
 import com.gapso.web.trieda.shared.dtos.SemanaLetivaDTO;
 import com.gapso.web.trieda.shared.dtos.UsuarioDTO;
@@ -38,14 +39,17 @@ public class DisponibilidadesProfessorPresenter
 		void setProxy( RpcProxy< PagingLoadResult< SemanaLetivaDTO > > proxy );
 	}
 
+	private InstituicaoEnsinoDTO instituicaoEnsinoDTO;
 	private Display display; 
 	private CenarioDTO cenario;
 	private UsuarioDTO usuario;
 	private boolean isVisaoProfessor;
 
-	public DisponibilidadesProfessorPresenter( CenarioDTO cenario,
+	public DisponibilidadesProfessorPresenter(
+		InstituicaoEnsinoDTO instituicaoEnsinoDTO, CenarioDTO cenario,
 		UsuarioDTO usuario, Display display, boolean isVisaoProfessor )
 	{
+		this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;
 		this.display = display;
 		this.cenario = cenario;
 		this.usuario = usuario;
@@ -92,8 +96,9 @@ public class DisponibilidadesProfessorPresenter
 					@Override
 					public void onSuccess( List< HorarioDisponivelCenarioDTO > result )
 					{
-						Presenter presenter = new DisponibilidadesProfessorFormPresenter( cenario,
-							semanaLetivaDTO, new DisponibilidadesProfessorFormView( professorDTO, result ) );
+						Presenter presenter = new DisponibilidadesProfessorFormPresenter(
+							instituicaoEnsinoDTO, cenario, semanaLetivaDTO,
+							new DisponibilidadesProfessorFormView( professorDTO, result ) );
 
 						presenter.go( null );
 					}

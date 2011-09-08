@@ -25,32 +25,39 @@ import com.gapso.web.trieda.shared.util.view.GTabItem;
 import com.gapso.web.trieda.shared.util.view.IncompatibilidadeGrid;
 import com.google.gwt.user.client.ui.Widget;
 
-public class CompatibilidadesPresenter implements Presenter {
-
-	public interface Display extends ITriedaI18nGateway {
+public class CompatibilidadesPresenter
+	implements Presenter
+{
+	public interface Display	
+		extends ITriedaI18nGateway
+	{
 		Button getSalvarButton();
 		Button getCancelarButton();
 		CursoComboBox getCursoComboBox();
 		CurriculoComboBox getCurriculoComboBox();
-		SimpleComboBox<Integer> getPeriodoComboBox();
+		SimpleComboBox< Integer > getPeriodoComboBox();
 		IncompatibilidadeGrid getGrid();
 		Component getComponent();
 	}
+
 	private Display display;
-//	private CenarioDTO cenario;
-	
-	public CompatibilidadesPresenter(CenarioDTO cenario, Display display) {
+
+	public CompatibilidadesPresenter(
+		CenarioDTO cenario, Display display )
+	{
 		this.display = display;
-//		this.cenario = cenario;
+
 		configureProxy();
 		setListeners();
 	}
 
-	private void configureProxy() {
-	}
-	
-	private void setListeners() {
+	private void configureProxy()
+	{
 
+	}
+
+	private void setListeners()
+	{
 		display.getCurriculoComboBox().addSelectionChangedListener(new SelectionChangedListener<CurriculoDTO>(){
 			@Override
 			public void selectionChanged(SelectionChangedEvent<CurriculoDTO> se) {
@@ -67,7 +74,7 @@ public class CompatibilidadesPresenter implements Presenter {
 				}
 			}
 		});
-	
+
 		display.getPeriodoComboBox().addSelectionChangedListener(new SelectionChangedListener<SimpleComboValue<Integer>>(){
 			@Override
 			public void selectionChanged(SelectionChangedEvent<SimpleComboValue<Integer>> se) {
@@ -85,7 +92,7 @@ public class CompatibilidadesPresenter implements Presenter {
 				});
 			}
 		});
-		
+
 		display.getSalvarButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
 			@Override
 			public void componentSelected(ButtonEvent ce) {
@@ -100,6 +107,7 @@ public class CompatibilidadesPresenter implements Presenter {
 				});
 			}
 		});
+
 		display.getCancelarButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
 			@Override
 			public void componentSelected(ButtonEvent ce) {
@@ -117,11 +125,10 @@ public class CompatibilidadesPresenter implements Presenter {
 		});
 	}
 
-	
 	@Override
-	public void go(Widget widget) {
+	public void go( Widget widget )
+	{
 		GTab gTab = (GTab)widget;
-		gTab.add((GTabItem)display.getComponent());
+		gTab.add( (GTabItem)display.getComponent() );
 	}
-
 }

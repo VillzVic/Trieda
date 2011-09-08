@@ -6,6 +6,7 @@ import com.extjs.gxt.ui.client.widget.Component;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.gapso.web.trieda.professor.client.mvp.view.DisponibilidadesProfessorView;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
+import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
 import com.gapso.web.trieda.shared.dtos.UsuarioDTO;
 import com.gapso.web.trieda.shared.mvp.presenter.CampusProfessoresPresenter;
 import com.gapso.web.trieda.shared.mvp.presenter.Presenter;
@@ -29,14 +30,16 @@ public class ToolBarPresenter
 		Button getProfessoresDisciplinaListProfessoresButton();
 	}
 
+	private InstituicaoEnsinoDTO instituicaoEnsinoDTO;
 	private CenarioDTO masterData;
 	private UsuarioDTO usuario;
 	private Display toolBar;
 	private GTab gTab;
 
-	public ToolBarPresenter( CenarioDTO masterData,
-		UsuarioDTO usuario, Display toolBar )
+	public ToolBarPresenter( InstituicaoEnsinoDTO instituicaoEnsinoDTO,
+		CenarioDTO masterData, UsuarioDTO usuario, Display toolBar )
 	{
+		this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;
 		this.masterData = masterData;
 		this.usuario = usuario;
 		this.toolBar = toolBar;
@@ -53,7 +56,8 @@ public class ToolBarPresenter
 			public void componentSelected( ButtonEvent ce )
 			{
 				Presenter presenter = new CampusProfessoresPresenter(
-					masterData, usuario, new CampusProfessoresView( usuario ), true );
+					instituicaoEnsinoDTO, masterData, usuario,
+					new CampusProfessoresView( usuario ), true );
 
 				presenter.go( gTab );
 			}
@@ -66,7 +70,8 @@ public class ToolBarPresenter
 			public void componentSelected( ButtonEvent ce )
 			{
 				Presenter presenter = new ProfessoresDisciplinaPresenter(
-					masterData, usuario, new ProfessoresDisciplinaView( usuario ), true );
+					instituicaoEnsinoDTO, masterData, usuario,
+					new ProfessoresDisciplinaView( usuario ), true );
 
 				presenter.go( gTab );
 			}
@@ -78,7 +83,7 @@ public class ToolBarPresenter
 			@Override
 			public void componentSelected( ButtonEvent ce )
 			{
-				Presenter presenter = new DisponibilidadesProfessorPresenter(
+				Presenter presenter = new DisponibilidadesProfessorPresenter( instituicaoEnsinoDTO,
 					masterData, usuario, new DisponibilidadesProfessorView( usuario ), true );
 
 				presenter.go( gTab );
@@ -92,7 +97,8 @@ public class ToolBarPresenter
 			public void componentSelected( ButtonEvent ce )
 			{
 				Presenter presenter = new RelatorioVisaoProfessorPresenter(
-					masterData, usuario, new RelatorioVisaoProfessorView( usuario, true ), true );
+					instituicaoEnsinoDTO, masterData, usuario,
+					new RelatorioVisaoProfessorView( usuario, true ), true );
 
 				presenter.go( gTab );
 			}

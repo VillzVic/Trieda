@@ -17,6 +17,7 @@ import com.gapso.web.trieda.main.client.mvp.view.ProfessorFormView;
 import com.gapso.web.trieda.shared.dtos.AreaTitulacaoDTO;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.HorarioDisponivelCenarioDTO;
+import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorDTO;
 import com.gapso.web.trieda.shared.dtos.SemanaLetivaDTO;
 import com.gapso.web.trieda.shared.dtos.TipoContratoDTO;
@@ -28,6 +29,7 @@ import com.gapso.web.trieda.shared.services.AreasTitulacaoServiceAsync;
 import com.gapso.web.trieda.shared.services.ProfessoresServiceAsync;
 import com.gapso.web.trieda.shared.services.Services;
 import com.gapso.web.trieda.shared.util.view.AreaTitulacaoComboBox;
+import com.gapso.web.trieda.shared.util.view.ExcelParametros;
 import com.gapso.web.trieda.shared.util.view.ExportExcelFormSubmit;
 import com.gapso.web.trieda.shared.util.view.GTab;
 import com.gapso.web.trieda.shared.util.view.GTabItem;
@@ -61,14 +63,18 @@ public class ProfessoresPresenter implements Presenter
 		void setProxy( RpcProxy< PagingLoadResult< ProfessorDTO > > proxy );
 	}
 
+	private InstituicaoEnsinoDTO instituicaoEnsinoDTO;
 	private CenarioDTO cenario;
 	private Display display;
 	private GTab gTab;
 
-	public ProfessoresPresenter( CenarioDTO cenario, Display display )
+	public ProfessoresPresenter( InstituicaoEnsinoDTO instituicaoEnsinoDTO,
+		CenarioDTO cenario, Display display )
 	{
+		this.instituicaoEnsinoDTO  = instituicaoEnsinoDTO;
 		this.cenario = cenario;
 		this.display = display;
+
 		configureProxy();
 		setListeners();
 	}
@@ -96,16 +102,18 @@ public class ProfessoresPresenter implements Presenter
 
 	private void setListeners() {
 		display.getNewButton().addSelectionListener(
-				new SelectionListener<ButtonEvent>() {
-					@Override
-					public void componentSelected(ButtonEvent ce) {
-						Presenter presenter = new ProfessorFormPresenter(
-								cenario, new ProfessorFormView(
-										new ProfessorDTO(), null, null, null,
-										cenario), display.getGrid());
-						presenter.go(null);
-					}
-				});
+			new SelectionListener< ButtonEvent >()
+		{
+			@Override
+			public void componentSelected( ButtonEvent ce )
+			{
+				Presenter presenter = new ProfessorFormPresenter( instituicaoEnsinoDTO, cenario,
+					new ProfessorFormView( new ProfessorDTO(), null, null, null, cenario ), display.getGrid() );
+
+				presenter.go( null );
+			}
+		});
+
 		display.getEditButton().addSelectionListener(
 				new SelectionListener<ButtonEvent>() {
 					@Override
@@ -145,24 +153,28 @@ public class ProfessoresPresenter implements Presenter
 							}
 
 							@Override
-							public void onSuccess(Boolean result) {
-								TipoContratoDTO tipoContratoDTO = futureTipoContratoDTO
-										.result();
-								TitulacaoDTO titulacaoDTO = futureTitulacaoDTO
-										.result();
-								AreaTitulacaoDTO areaTitulacaoDTO = futureAreaTitulacaoDTO
-										.result();
+							public void onSuccess( Boolean result )
+							{
+								TipoContratoDTO tipoContratoDTO
+									= futureTipoContratoDTO.result();
+
+								TitulacaoDTO titulacaoDTO
+									= futureTitulacaoDTO.result();
+
+								AreaTitulacaoDTO areaTitulacaoDTO
+									= futureAreaTitulacaoDTO.result();
 
 								Presenter presenter = new ProfessorFormPresenter(
-										cenario, new ProfessorFormView(
-												professorDTO, tipoContratoDTO,
-												titulacaoDTO, areaTitulacaoDTO,
-												cenario), display.getGrid());
-								presenter.go(null);
+									instituicaoEnsinoDTO, cenario,
+									new ProfessorFormView( professorDTO, tipoContratoDTO,
+									titulacaoDTO, areaTitulacaoDTO, cenario ), display.getGrid() );
+
+								presenter.go( null );
 							}
 						});
 					}
 				});
+
 		display.getDisponibilidadeButton().addSelectionListener(
 				new SelectionListener<ButtonEvent>() {
 					@Override
@@ -188,17 +200,16 @@ public class ProfessoresPresenter implements Presenter
 
 											@Override
 											public void onSuccess(
-													List<HorarioDisponivelCenarioDTO> result) {
+												List< HorarioDisponivelCenarioDTO > result )
+											{
 												SemanaLetivaDTO semanaLetiva = new SemanaLetivaDTO();
-												semanaLetiva.setId(cenario
-														.getSemanaLetivaId());
+												semanaLetiva.setId( cenario.getSemanaLetivaId() );
+
 												Presenter presenter = new HorarioDisponivelProfessorFormPresenter(
-														cenario,
-														semanaLetiva,
-														new HorarioDisponivelProfessorFormView(
-																professorDTO,
-																result));
-												presenter.go(null);
+													instituicaoEnsinoDTO, cenario, semanaLetiva,
+													new HorarioDisponivelProfessorFormView( professorDTO, result ) );
+
+												presenter.go( null );
 											}
 										});
 
@@ -229,23 +240,30 @@ public class ProfessoresPresenter implements Presenter
 					}
 				});
 		display.getImportExcelButton().addSelectionListener(
-				new SelectionListener<ButtonEvent>() {
-					@Override
-					public void componentSelected(ButtonEvent ce) {
-						ImportExcelFormView importExcelFormView = new ImportExcelFormView(
-								ExcelInformationType.PROFESSORES, display
-										.getGrid());
-						importExcelFormView.show();
-					}
-				});
+			new SelectionListener<ButtonEvent>()
+		{
+			@Override
+			public void componentSelected( ButtonEvent ce )
+			{
+				ExcelParametros parametros = new ExcelParametros(
+					ExcelInformationType.PROFESSORES, instituicaoEnsinoDTO );
+
+				ImportExcelFormView importExcelFormView
+					= new ImportExcelFormView( parametros, display.getGrid() );
+
+				importExcelFormView.show();
+			}
+		});
 		display.getExportExcelButton().addSelectionListener(
 				new SelectionListener<ButtonEvent>() {
 					@Override
 					public void componentSelected( ButtonEvent ce )
 					{
+						ExcelParametros parametros = new ExcelParametros(
+							ExcelInformationType.PROFESSORES, instituicaoEnsinoDTO );
+
 						ExportExcelFormSubmit e = new ExportExcelFormSubmit(
-								ExcelInformationType.PROFESSORES,
-								display.getI18nConstants(), display.getI18nMessages() );
+							parametros, display.getI18nConstants(), display.getI18nMessages() );
 
 						e.submit();
 					}

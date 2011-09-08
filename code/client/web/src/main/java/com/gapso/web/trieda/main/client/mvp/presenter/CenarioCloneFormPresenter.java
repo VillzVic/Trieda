@@ -9,6 +9,7 @@ import com.extjs.gxt.ui.client.widget.form.CheckBox;
 import com.extjs.gxt.ui.client.widget.form.NumberField;
 import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
+import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
 import com.gapso.web.trieda.shared.mvp.presenter.Presenter;
 import com.gapso.web.trieda.shared.services.CenariosServiceAsync;
 import com.gapso.web.trieda.shared.services.Services;
@@ -17,26 +18,33 @@ import com.gapso.web.trieda.shared.util.view.SimpleModal;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
 
-public class CenarioCloneFormPresenter implements Presenter {
-
-	public interface Display {
+public class CenarioCloneFormPresenter
+	implements Presenter
+{
+	public interface Display
+	{
 		Button getSalvarButton();
 		CheckBox getOficialCheckBox();
-		TextField<String> getNomeTextField();
+		TextField< String > getNomeTextField();
 		NumberField getAnoTextField();
 		NumberField getSemestreTextField();
-		TextField<String> getComentarioTextField();
+		TextField< String > getComentarioTextField();
 		CenarioDTO getCenarioDTO();
 		boolean isValid();
-		
 		SimpleModal getSimpleModal();
 	}
+
+	private InstituicaoEnsinoDTO instituicaoEnsinoDTO;
 	private SimpleGrid<CenarioDTO> gridPanel;
 	private Display display;
 	
-	public CenarioCloneFormPresenter(Display display, SimpleGrid<CenarioDTO> gridPanel) {
+	public CenarioCloneFormPresenter( InstituicaoEnsinoDTO instituicaoEnsinoDTO,
+		Display display, SimpleGrid< CenarioDTO > gridPanel )
+	{
+		this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;
 		this.gridPanel = gridPanel;
 		this.display = display;
+
 		setListeners();
 	}
 
@@ -69,8 +77,11 @@ public class CenarioCloneFormPresenter implements Presenter {
 		return display.isValid();
 	}
 	
-	private CenarioDTO getDTO() {
+	private CenarioDTO getDTO()
+	{
 		CenarioDTO cenarioDTO = display.getCenarioDTO();
+
+		cenarioDTO.setInstituicaoEnsinoId( instituicaoEnsinoDTO.getId() );
 		cenarioDTO.setMasterData(false);
 		cenarioDTO.setOficial(display.getOficialCheckBox().getValue());
 		cenarioDTO.setNome(display.getNomeTextField().getValue());

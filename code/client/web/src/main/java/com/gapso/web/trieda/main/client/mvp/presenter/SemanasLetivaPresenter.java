@@ -15,6 +15,7 @@ import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.gapso.web.trieda.main.client.mvp.view.HorarioDisponivelCenarioFormView;
 import com.gapso.web.trieda.main.client.mvp.view.SemanaLetivaFormView;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
+import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
 import com.gapso.web.trieda.shared.dtos.SemanaLetivaDTO;
 import com.gapso.web.trieda.shared.mvp.presenter.Presenter;
 import com.gapso.web.trieda.shared.services.SemanasLetivaServiceAsync;
@@ -25,63 +26,92 @@ import com.gapso.web.trieda.shared.util.view.SimpleGrid;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
 
-public class SemanasLetivaPresenter implements Presenter {
-
-	public interface Display {
+public class SemanasLetivaPresenter
+	implements Presenter
+{
+	public interface Display
+	{
 		Button getNewButton();
 		Button getEditButton();
 		Button getRemoveButton();
 		Button getImportExcelButton();
 		Button getExportExcelButton();
 		Button getDiasDeAulaButton();
-		TextField<String> getCodigoBuscaTextField();
-		TextField<String> getDescricaoBuscaTextField();
+		TextField< String > getCodigoBuscaTextField();
+		TextField< String > getDescricaoBuscaTextField();
 		Button getSubmitBuscaButton();
 		Button getResetBuscaButton();
-		SimpleGrid<SemanaLetivaDTO> getGrid();
+		SimpleGrid< SemanaLetivaDTO > getGrid();
 		Component getComponent();
-		void setProxy(RpcProxy<PagingLoadResult<SemanaLetivaDTO>> proxy);
+		void setProxy( RpcProxy< PagingLoadResult< SemanaLetivaDTO > > proxy );
 	}
+
+	private InstituicaoEnsinoDTO instituicaoEnsinoDTO;
 	private Display display; 
-	private CenarioDTO cenario; 
-	
-	public SemanasLetivaPresenter(CenarioDTO cenario, Display display) {
+	private CenarioDTO cenario;
+
+	public SemanasLetivaPresenter( InstituicaoEnsinoDTO instituicaoEnsinoDTO,
+		CenarioDTO cenario, Display display )
+	{
+		this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;
 		this.display = display;
 		this.cenario = cenario;
+
 		configureProxy();
 		setListeners();
 	}
 
-	private void configureProxy() {
+	private void configureProxy()
+	{
 		final SemanasLetivaServiceAsync service = Services.semanasLetiva();
-		RpcProxy<PagingLoadResult<SemanaLetivaDTO>> proxy = new RpcProxy<PagingLoadResult<SemanaLetivaDTO>>() {
+
+		RpcProxy< PagingLoadResult< SemanaLetivaDTO > > proxy
+			= new RpcProxy< PagingLoadResult< SemanaLetivaDTO > >()
+		{
 			@Override
-			public void load(Object loadConfig, AsyncCallback<PagingLoadResult<SemanaLetivaDTO>> callback) {
-//				service.getList((PagingLoadConfig)loadConfig, callback);
+			public void load( Object loadConfig,
+				AsyncCallback< PagingLoadResult< SemanaLetivaDTO > > callback )
+			{
 				String codigo = display.getCodigoBuscaTextField().getValue();
 				String descricao = display.getDescricaoBuscaTextField().getValue();
-				service.getBuscaList(codigo, descricao, (PagingLoadConfig)loadConfig, callback);
+
+				service.getBuscaList( codigo, descricao, (PagingLoadConfig) loadConfig, callback );
 			}
 		};
-		display.setProxy(proxy);
+
+		display.setProxy( proxy );
 	}
-	
-	private void setListeners() {
-		display.getNewButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
+
+	private void setListeners()
+	{
+		display.getNewButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+		{
 			@Override
-			public void componentSelected(ButtonEvent ce) {
-				Presenter presenter = new SemanaLetivaFormPresenter(new SemanaLetivaFormView(cenario), display.getGrid());
-				presenter.go(null);
+			public void componentSelected( ButtonEvent ce )
+			{
+				Presenter presenter = new SemanaLetivaFormPresenter( instituicaoEnsinoDTO,
+					new SemanaLetivaFormView( cenario ), display.getGrid() );
+
+				presenter.go( null );
 			}
 		});
-		display.getEditButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
+
+		display.getEditButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+		{
 			@Override
-			public void componentSelected(ButtonEvent ce) {
+			public void componentSelected( ButtonEvent ce )
+			{
 				SemanaLetivaDTO dto = display.getGrid().getGrid().getSelectionModel().getSelectedItem();
-				Presenter presenter = new SemanaLetivaFormPresenter(new SemanaLetivaFormView(dto, cenario), display.getGrid());
-				presenter.go(null);
+
+				Presenter presenter = new SemanaLetivaFormPresenter( instituicaoEnsinoDTO,
+					new SemanaLetivaFormView( dto, cenario ), display.getGrid() );
+
+				presenter.go( null );
 			}
 		});
+
 		display.getRemoveButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
 			@Override
 			public void componentSelected(ButtonEvent ce) {
@@ -100,15 +130,20 @@ public class SemanasLetivaPresenter implements Presenter {
 				});
 			}
 		});
-		display.getDiasDeAulaButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
+
+		display.getDiasDeAulaButton().addSelectionListener(new SelectionListener<ButtonEvent>()
+		{
 			@Override
-			public void componentSelected(ButtonEvent ce) {
-//				Dispatcher.forwardEvent(AppEvents.SemanaLetivaView);
+			public void componentSelected(ButtonEvent ce)
+			{
 				SemanaLetivaDTO dto = display.getGrid().getGrid().getSelectionModel().getSelectedItem();
-				Presenter presenter = new HorarioDisponivelCenarioFormPresenter(dto, new HorarioDisponivelCenarioFormView(dto));
+				Presenter presenter = new HorarioDisponivelCenarioFormPresenter(
+						instituicaoEnsinoDTO, dto, new HorarioDisponivelCenarioFormView(dto ) );
+
 				presenter.go(null);
 			}
 		});
+
 		display.getResetBuscaButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
 			@Override
 			public void componentSelected(ButtonEvent ce) {

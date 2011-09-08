@@ -13,6 +13,7 @@ import com.extjs.gxt.ui.client.widget.grid.Grid;
 import com.gapso.web.trieda.main.client.mvp.view.CurriculoDisciplinaFormView;
 import com.gapso.web.trieda.shared.dtos.CurriculoDTO;
 import com.gapso.web.trieda.shared.dtos.CurriculoDisciplinaDTO;
+import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
 import com.gapso.web.trieda.shared.i18n.ITriedaI18nGateway;
 import com.gapso.web.trieda.shared.mvp.presenter.Presenter;
 import com.gapso.web.trieda.shared.services.CurriculosServiceAsync;
@@ -33,11 +34,17 @@ public class CurriculoDisciplinasPresenter implements Presenter {
 		Component getComponent();
 		void setProxy(RpcProxy<ListLoadResult<CurriculoDisciplinaDTO>> proxy);
 	}
+	
+	private InstituicaoEnsinoDTO instituicaoEnsinoDTO;
 	private Display display; 
 	private GTab gTab;
 	
-	public CurriculoDisciplinasPresenter(Display display) {
+	public CurriculoDisciplinasPresenter(
+		InstituicaoEnsinoDTO instituicaoEnsinoDTO, Display display )
+	{
+		this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;
 		this.display = display;
+
 		configureProxy();
 		setListeners();
 	}
@@ -51,17 +58,25 @@ public class CurriculoDisciplinasPresenter implements Presenter {
 				service.getDisciplinasList(curriculoDTO, callback);
 			}
 		};
-		display.setProxy(proxy);
+
+		display.setProxy( proxy );
 	}
-	
-	private void setListeners() {
-		display.getNewButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
+
+	private void setListeners()
+	{
+		display.getNewButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+		{
 			@Override
-			public void componentSelected(ButtonEvent ce) {
-				Presenter presenter = new CurriculoDisciplinaFormPresenter(new CurriculoDisciplinaFormView(new CurriculoDisciplinaDTO(), display.getCurriculoDTO()), display.getGrid());
-				presenter.go(null);
+			public void componentSelected( ButtonEvent ce )
+			{
+				Presenter presenter = new CurriculoDisciplinaFormPresenter( instituicaoEnsinoDTO,
+					new CurriculoDisciplinaFormView( new CurriculoDisciplinaDTO(), display.getCurriculoDTO() ), display.getGrid() );
+
+				presenter.go( null );
 			}
 		});
+
 		display.getRemoveButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
 			@Override
 			public void componentSelected(ButtonEvent ce) {

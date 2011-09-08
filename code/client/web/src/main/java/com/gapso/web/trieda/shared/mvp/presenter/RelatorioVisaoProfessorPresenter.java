@@ -8,6 +8,7 @@ import com.extjs.gxt.ui.client.widget.Component;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
+import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorVirtualDTO;
 import com.gapso.web.trieda.shared.dtos.TurnoDTO;
@@ -15,6 +16,7 @@ import com.gapso.web.trieda.shared.dtos.UsuarioDTO;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 import com.gapso.web.trieda.shared.i18n.ITriedaI18nGateway;
 import com.gapso.web.trieda.shared.util.view.CampusComboBox;
+import com.gapso.web.trieda.shared.util.view.ExcelParametros;
 import com.gapso.web.trieda.shared.util.view.ExportExcelFormSubmit;
 import com.gapso.web.trieda.shared.util.view.GTab;
 import com.gapso.web.trieda.shared.util.view.GTabItem;
@@ -40,13 +42,15 @@ public class RelatorioVisaoProfessorPresenter
 		Button getExportExcelButton(); 
 	}
 
+	private InstituicaoEnsinoDTO instituicaoEnsinoDTO;
 	private Display display;
 	private UsuarioDTO usuario;
 	private boolean isVisaoProfessor;
 
-	public RelatorioVisaoProfessorPresenter( CenarioDTO cenario,
-		UsuarioDTO usuario, Display display, boolean isVisaoProfessor )
+	public RelatorioVisaoProfessorPresenter( InstituicaoEnsinoDTO instituicaoEnsinoDTO,
+		CenarioDTO cenario, UsuarioDTO usuario, Display display, boolean isVisaoProfessor )
 	{
+		this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;
 		this.usuario = usuario;
 		this.display = display;
 		this.isVisaoProfessor = isVisaoProfessor;
@@ -112,9 +116,11 @@ public class RelatorioVisaoProfessorPresenter
 					@Override
 					public void componentSelected( ButtonEvent ce )
 					{
+						ExcelParametros parametros = new ExcelParametros(
+							ExcelInformationType.RELATORIO_VISAO_PROFESSOR, instituicaoEnsinoDTO );
+
 						ExportExcelFormSubmit e = new ExportExcelFormSubmit(
-							ExcelInformationType.RELATORIO_VISAO_PROFESSOR,
-							display.getI18nConstants(), display.getI18nMessages() );
+							parametros, display.getI18nConstants(), display.getI18nMessages() );
 
 						CampusDTO campusDTO = display.getCampusComboBox().getValue();
 						TurnoDTO turnoDTO = display.getTurnoComboBox().getValue();
@@ -123,6 +129,7 @@ public class RelatorioVisaoProfessorPresenter
 
 						e.addParameter( "campusId", campusDTO.getId().toString() );
 						e.addParameter( "turnoId", turnoDTO.getId().toString() );
+						e.addParameter( "instituicaoEnsinoId", turnoDTO.getInstituicaoEnsinoId().toString() );
 
 						if ( professorDTO == null )
 						{

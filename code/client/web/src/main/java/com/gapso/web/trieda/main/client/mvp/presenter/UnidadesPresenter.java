@@ -19,6 +19,7 @@ import com.gapso.web.trieda.main.client.mvp.view.UnidadesDeslocamentoView;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.HorarioDisponivelCenarioDTO;
+import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
 import com.gapso.web.trieda.shared.dtos.SemanaLetivaDTO;
 import com.gapso.web.trieda.shared.dtos.UnidadeDTO;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
@@ -29,6 +30,7 @@ import com.gapso.web.trieda.shared.services.Services;
 import com.gapso.web.trieda.shared.services.UnidadesServiceAsync;
 import com.gapso.web.trieda.shared.util.view.AbstractAsyncCallbackWithDefaultOnFailure;
 import com.gapso.web.trieda.shared.util.view.CampusComboBox;
+import com.gapso.web.trieda.shared.util.view.ExcelParametros;
 import com.gapso.web.trieda.shared.util.view.ExportExcelFormSubmit;
 import com.gapso.web.trieda.shared.util.view.GTab;
 import com.gapso.web.trieda.shared.util.view.GTabItem;
@@ -39,9 +41,12 @@ import com.google.gwt.user.client.ui.Widget;
 import com.googlecode.future.FutureResult;
 import com.googlecode.future.FutureSynchronizer;
 
-public class UnidadesPresenter implements Presenter {
-
-	public interface Display extends ITriedaI18nGateway {
+public class UnidadesPresenter
+	implements Presenter
+{
+	public interface Display
+		extends ITriedaI18nGateway
+	{
 		Button getNewButton();
 		Button getEditButton();
 		Button getRemoveButton();
@@ -50,65 +55,93 @@ public class UnidadesPresenter implements Presenter {
 		Button getDeslocamentoUnidadesButton();
 		Button getSalasButton();
 		Button getDisponibilidadeButton();
-		TextField<String> getNomeBuscaTextField();
-		TextField<String> getCodigoBuscaTextField();
+		TextField< String > getNomeBuscaTextField();
+		TextField< String > getCodigoBuscaTextField();
 		CampusComboBox getCampusBuscaComboBox();
 		Button getSubmitBuscaButton();
 		Button getResetBuscaButton();
-		SimpleGrid<UnidadeDTO> getGrid();
+		SimpleGrid< UnidadeDTO > getGrid();
 		Component getComponent();
-		void setProxy(RpcProxy<PagingLoadResult<UnidadeDTO>> proxy);
+		void setProxy( RpcProxy< PagingLoadResult< UnidadeDTO > > proxy );
 	}
+
+	private InstituicaoEnsinoDTO instituicaoEnsinoDTO;
 	private Display display; 
 	private CenarioDTO cenario; 
 	private GTab gTab;
 	
-	public UnidadesPresenter(CenarioDTO cenario, Display display) {
+	public UnidadesPresenter( InstituicaoEnsinoDTO instituicaoEnsinoDTO,
+		CenarioDTO cenario, Display display )
+	{
+		this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;
 		this.display = display;
 		this.cenario = cenario;
+
 		configureProxy();
 		setListeners();
 	}
 
-	private void configureProxy() {
+	private void configureProxy()
+	{
 		final UnidadesServiceAsync service = Services.unidades();
-		RpcProxy<PagingLoadResult<UnidadeDTO>> proxy = new RpcProxy<PagingLoadResult<UnidadeDTO>>() {
+
+		RpcProxy< PagingLoadResult< UnidadeDTO > > proxy
+			= new RpcProxy< PagingLoadResult< UnidadeDTO > >()
+		{
 			@Override
-			public void load(Object loadConfig, AsyncCallback<PagingLoadResult<UnidadeDTO>> callback) {
-//				service.getList((PagingLoadConfig)loadConfig, callback);
+			public void load( Object loadConfig,
+				AsyncCallback< PagingLoadResult< UnidadeDTO > > callback )
+			{
 				String nome = display.getNomeBuscaTextField().getValue();
 				String codigo = display.getCodigoBuscaTextField().getValue();
 				CampusDTO campusDTO = display.getCampusBuscaComboBox().getValue();
-				service.getBuscaList(campusDTO, nome, codigo, (PagingLoadConfig)loadConfig, callback);
+			
+				service.getBuscaList( campusDTO, nome, codigo, (PagingLoadConfig)loadConfig, callback );
 			}
 		};
-		display.setProxy(proxy);
+
+		display.setProxy( proxy );
 	}
 	
 	private void setListeners()
 	{
-		display.getNewButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
+		display.getNewButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+		{
 			@Override
-			public void componentSelected(ButtonEvent ce) {
-				Presenter presenter = new UnidadeFormPresenter(new UnidadeFormView(cenario), display.getGrid());
-				presenter.go(null);
+			public void componentSelected( ButtonEvent ce )
+			{
+				Presenter presenter = new UnidadeFormPresenter(
+					new UnidadeFormView( cenario ), display.getGrid() );
+
+				presenter.go( null );
 			}
 		});
 
-		display.getEditButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
+		display.getEditButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+		{
 			@Override
-			public void componentSelected(ButtonEvent ce) {
+			public void componentSelected( ButtonEvent ce )
+			{
 				final UnidadeDTO unidadeDTO = display.getGrid().getGrid().getSelectionModel().getSelectedItem();
 				final CampiServiceAsync campus = Services.campi();
-				campus.getCampus(unidadeDTO.getCampusId(), new AsyncCallback<CampusDTO>() {
+
+				campus.getCampus( unidadeDTO.getCampusId(), new AsyncCallback< CampusDTO >()
+				{
 					@Override
-					public void onFailure(Throwable caught) {
+					public void onFailure( Throwable caught )
+					{
 						caught.printStackTrace();
 					}
+
 					@Override
-					public void onSuccess(CampusDTO campusDTO) {
-						Presenter presenter = new UnidadeFormPresenter(new UnidadeFormView(unidadeDTO, campusDTO, cenario), display.getGrid());
-						presenter.go(null);
+					public void onSuccess( CampusDTO campusDTO )
+					{
+						Presenter presenter = new UnidadeFormPresenter(
+							new UnidadeFormView( unidadeDTO, campusDTO, cenario ), display.getGrid() );
+
+						presenter.go( null );
 					}
 				});
 			}
@@ -131,8 +164,14 @@ public class UnidadesPresenter implements Presenter {
 
 		display.getImportExcelButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
 			@Override
-			public void componentSelected(ButtonEvent ce) {
-				ImportExcelFormView importExcelFormView = new ImportExcelFormView(ExcelInformationType.UNIDADES,display.getGrid());
+			public void componentSelected( ButtonEvent ce )
+			{
+				ExcelParametros parametros = new ExcelParametros(
+						ExcelInformationType.UNIDADES, instituicaoEnsinoDTO );
+
+				ImportExcelFormView importExcelFormView
+					= new ImportExcelFormView( parametros,display.getGrid() );
+
 				importExcelFormView.show();
 			}
 		});
@@ -142,9 +181,11 @@ public class UnidadesPresenter implements Presenter {
 			@Override
 			public void componentSelected( ButtonEvent ce )
 			{
+				ExcelParametros parametros = new ExcelParametros(
+					ExcelInformationType.UNIDADES, instituicaoEnsinoDTO );
+
 				ExportExcelFormSubmit e = new ExportExcelFormSubmit(
-					ExcelInformationType.UNIDADES,
-					display.getI18nConstants(), display.getI18nMessages() );
+					parametros,	display.getI18nConstants(), display.getI18nMessages() );
 
 				e.submit();
 			}
@@ -169,26 +210,37 @@ public class UnidadesPresenter implements Presenter {
 			}
 		});
 
-		display.getSalasButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
+		display.getSalasButton().addSelectionListener( new SelectionListener< ButtonEvent >()
+		{
 			@Override
-			public void componentSelected(ButtonEvent ce) {
+			public void componentSelected( ButtonEvent ce )
+			{
 				final UnidadeDTO unidadeDTO = display.getGrid().getGrid().getSelectionModel().getSelectedItem();
 				final CampiServiceAsync campus = Services.campi();
-				campus.getCampus(unidadeDTO.getCampusId(), new AsyncCallback<CampusDTO>() {
+
+				campus.getCampus( unidadeDTO.getCampusId(), new AsyncCallback< CampusDTO >()
+				{
 					@Override
-					public void onFailure(Throwable caught) {
+					public void onFailure( Throwable caught )
+					{
 						caught.printStackTrace();
 					}
+
 					@Override
-					public void onSuccess(CampusDTO campusDTO) {
-						Presenter presenter = new SalasPresenter(cenario, new SalasView(campusDTO, unidadeDTO));
-						presenter.go(gTab);
+					public void onSuccess( CampusDTO campusDTO )
+					{
+						Presenter presenter = new SalasPresenter(
+							instituicaoEnsinoDTO, cenario,
+							new SalasView( campusDTO, unidadeDTO ) );
+
+						presenter.go( gTab );
 					}
 				});
 			}
 		});
 
-		display.getDisponibilidadeButton().addSelectionListener( new SelectionListener< ButtonEvent >()
+		display.getDisponibilidadeButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
 		{
 			@Override
 			public void componentSelected( ButtonEvent ce )
@@ -218,7 +270,7 @@ public class UnidadesPresenter implements Presenter {
 						List< HorarioDisponivelCenarioDTO > horarioDisponivelCenarioDTOList
 							= futureHorarioDisponivelCenarioDTOList.result().getData();
 
-						Presenter presenter = new HorarioDisponivelUnidadeFormPresenter( campusDTO,	semanaLetivaDTO,
+						Presenter presenter = new HorarioDisponivelUnidadeFormPresenter( instituicaoEnsinoDTO, campusDTO,	semanaLetivaDTO,
 							new HorarioDisponivelUnidadeFormView( unidadeDTO, horarioDisponivelCenarioDTOList ) );
 
 						presenter.go( null );

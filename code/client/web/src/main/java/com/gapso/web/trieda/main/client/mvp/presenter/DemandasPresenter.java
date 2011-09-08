@@ -17,6 +17,7 @@ import com.gapso.web.trieda.shared.dtos.CurriculoDTO;
 import com.gapso.web.trieda.shared.dtos.CursoDTO;
 import com.gapso.web.trieda.shared.dtos.DemandaDTO;
 import com.gapso.web.trieda.shared.dtos.DisciplinaDTO;
+import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
 import com.gapso.web.trieda.shared.dtos.TurnoDTO;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 import com.gapso.web.trieda.shared.i18n.ITriedaI18nGateway;
@@ -33,6 +34,7 @@ import com.gapso.web.trieda.shared.util.view.CampusComboBox;
 import com.gapso.web.trieda.shared.util.view.CurriculoComboBox;
 import com.gapso.web.trieda.shared.util.view.CursoComboBox;
 import com.gapso.web.trieda.shared.util.view.DisciplinaComboBox;
+import com.gapso.web.trieda.shared.util.view.ExcelParametros;
 import com.gapso.web.trieda.shared.util.view.ExportExcelFormSubmit;
 import com.gapso.web.trieda.shared.util.view.GTab;
 import com.gapso.web.trieda.shared.util.view.GTabItem;
@@ -63,10 +65,16 @@ public class DemandasPresenter implements Presenter {
 		Component getComponent();
 		void setProxy(RpcProxy<PagingLoadResult<DemandaDTO>> proxy);
 	}
+	
+	private InstituicaoEnsinoDTO instituicaoEnsinoDTO;
 	private Display display; 
 	
-	public DemandasPresenter(CenarioDTO cenario, Display display) {
+	public DemandasPresenter( InstituicaoEnsinoDTO instituicaoEnsinoDTO,
+		CenarioDTO cenario, Display display )
+	{
+		this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;
 		this.display = display;
+
 		configureProxy();
 		setListeners();
 	}
@@ -92,9 +100,12 @@ public class DemandasPresenter implements Presenter {
 
 		display.getNewButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
 			@Override
-			public void componentSelected(ButtonEvent ce) {
-				Presenter presenter = new DemandaFormPresenter(new DemandaFormView(new DemandaDTO(), null, null, null, null, null), display.getGrid());
-				presenter.go(null);
+			public void componentSelected( ButtonEvent ce )
+			{
+				Presenter presenter = new DemandaFormPresenter( instituicaoEnsinoDTO,
+					new DemandaFormView( new DemandaDTO(), null, null, null, null, null ), display.getGrid() );
+
+				presenter.go( null );
 			}
 		});
 		display.getEditButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
@@ -131,8 +142,10 @@ public class DemandasPresenter implements Presenter {
 						TurnoDTO turnoDTO = futureTurnoDTO.result();
 						DisciplinaDTO disciplinaDTO = futureDisciplinaDTO.result();
 						
-						Presenter presenter = new DemandaFormPresenter(new DemandaFormView(demandaDTO, campusDTO, cursoDTO, curriculoDTO, turnoDTO, disciplinaDTO), display.getGrid());
-						presenter.go(null);	
+						Presenter presenter = new DemandaFormPresenter( instituicaoEnsinoDTO,
+							new DemandaFormView( demandaDTO, campusDTO, cursoDTO, curriculoDTO, turnoDTO, disciplinaDTO ), display.getGrid() );
+
+						presenter.go( null );	
 					}
 				});
 			}
@@ -154,14 +167,25 @@ public class DemandasPresenter implements Presenter {
 		display.getImportExcelButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
 			@Override
 			public void componentSelected(ButtonEvent ce) {
-				ImportExcelFormView importExcelFormView = new ImportExcelFormView(ExcelInformationType.DEMANDAS,display.getGrid());
+				ExcelParametros parametros = new ExcelParametros(
+						ExcelInformationType.DEMANDAS, instituicaoEnsinoDTO );
+
+				ImportExcelFormView importExcelFormView
+					= new ImportExcelFormView( parametros,display.getGrid() );
+
 				importExcelFormView.show();
 			}
 		});
 		display.getExportExcelButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
 			@Override
-			public void componentSelected(ButtonEvent ce) {
-				ExportExcelFormSubmit e = new ExportExcelFormSubmit(ExcelInformationType.DEMANDAS,display.getI18nConstants(),display.getI18nMessages());
+			public void componentSelected( ButtonEvent ce )
+			{
+				ExcelParametros parametros = new ExcelParametros(
+					ExcelInformationType.DEMANDAS, instituicaoEnsinoDTO );
+
+				ExportExcelFormSubmit e = new ExportExcelFormSubmit(
+					parametros, display.getI18nConstants(), display.getI18nMessages() );
+
 				e.submit();
 			}
 		});

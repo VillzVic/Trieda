@@ -140,6 +140,7 @@ public class ParametrosPresenter
 							{
 								CampusDTO campusDTO = futureCampusDTO.result();
 								TurnoDTO turnoDTO = futureTurnoDTO.result();
+
 								display.getCampusComboBox().setValue( campusDTO );
 								display.getTurnoComboBox().setValue( turnoDTO );
 							}
@@ -344,7 +345,9 @@ public class ParametrosPresenter
 		dto.setProfessorEmMuitosCampi( display.getProfessorEmMuitosCampiCheckBox().getValue() );
 		dto.setMinimizarDeslocamentoProfessor( display.getMinimizarDeslocamentoProfessorCheckBox().getValue() );
 
-		Number minimizarDeslocamentoProfessorValue = display.getMinimizarDeslocamentoProfessorNumberField().getValue();
+		Number minimizarDeslocamentoProfessorValue
+			= display.getMinimizarDeslocamentoProfessorNumberField().getValue();
+
 		if ( minimizarDeslocamentoProfessorValue == null )
 		{
 			minimizarDeslocamentoProfessorValue = 0;
@@ -356,6 +359,7 @@ public class ParametrosPresenter
 
 		Number evitarReducaoCargaHorariaProfessorValue
 			= display.getEvitarReducaoCargaHorariaProfessorNumberField().getValue();
+
 		if ( evitarReducaoCargaHorariaProfessorValue == null )
 		{
 			evitarReducaoCargaHorariaProfessorValue = 0;
@@ -376,6 +380,7 @@ public class ParametrosPresenter
 
 		Number minAlunosParaAbrirTurmaValue
 			= display.getMinAlunosParaAbrirTurmaValueNumberField().getValue();
+
 		if ( minAlunosParaAbrirTurmaValue == null )
 		{
 			minAlunosParaAbrirTurmaValue = 0;
@@ -395,6 +400,7 @@ public class ParametrosPresenter
 	{
 		display.getSubmitButton().setIcon(
 			AbstractImagePrototype.create( Resources.DEFAULTS.ajax16() ) );
+
 		display.getSubmitButton().disable();
 	}
 

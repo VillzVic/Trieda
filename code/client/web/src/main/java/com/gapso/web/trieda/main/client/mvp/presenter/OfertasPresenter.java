@@ -15,6 +15,7 @@ import com.gapso.web.trieda.main.client.mvp.view.OfertaFormView;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.CurriculoDTO;
 import com.gapso.web.trieda.shared.dtos.CursoDTO;
+import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
 import com.gapso.web.trieda.shared.dtos.OfertaDTO;
 import com.gapso.web.trieda.shared.dtos.TurnoDTO;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
@@ -28,6 +29,7 @@ import com.gapso.web.trieda.shared.services.TurnosServiceAsync;
 import com.gapso.web.trieda.shared.util.view.CampusComboBox;
 import com.gapso.web.trieda.shared.util.view.CurriculoComboBox;
 import com.gapso.web.trieda.shared.util.view.CursoComboBox;
+import com.gapso.web.trieda.shared.util.view.ExcelParametros;
 import com.gapso.web.trieda.shared.util.view.ExportExcelFormSubmit;
 import com.gapso.web.trieda.shared.util.view.GTab;
 import com.gapso.web.trieda.shared.util.view.GTabItem;
@@ -56,9 +58,15 @@ public class OfertasPresenter implements Presenter {
 		Component getComponent();
 		void setProxy(RpcProxy<PagingLoadResult<OfertaDTO>> proxy);
 	}
+
+	private InstituicaoEnsinoDTO instituicaoEnsinoDTO;
 	private Display display; 
-	
-	public OfertasPresenter(Display display) {
+
+	public OfertasPresenter(
+		InstituicaoEnsinoDTO instituicaoEnsinoDTO,Display display )
+	{
+		this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;
+
 		this.display = display;
 		configureProxy();
 		setListeners();
@@ -76,17 +84,25 @@ public class OfertasPresenter implements Presenter {
 				service.getBuscaList(turnoDTO, campusDTO, cursoDTO, curriculoDTO, (PagingLoadConfig)loadConfig, callback);
 			}
 		};
-		display.setProxy(proxy);
+
+		display.setProxy( proxy );
 	}
-	
-	private void setListeners() {
-		display.getNewButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
+
+	private void setListeners()
+	{
+		display.getNewButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+		{
 			@Override
-			public void componentSelected(ButtonEvent ce) {
-				Presenter presenter = new OfertaFormPresenter(new OfertaFormView(null, null, null), display.getGrid());
-				presenter.go(null);
+			public void componentSelected( ButtonEvent ce )
+			{
+				Presenter presenter = new OfertaFormPresenter( instituicaoEnsinoDTO, 
+					new OfertaFormView(null, null, null), display.getGrid() );
+
+				presenter.go( null );
 			}
 		});
+
 		display.getEditButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
 			@Override
 			public void componentSelected(ButtonEvent ce) {
@@ -105,18 +121,25 @@ public class OfertasPresenter implements Presenter {
 				curriculosService.getCurriculo(ofertaDTO.getMatrizCurricularId(), futureCurriculoDTO);
 				
 				FutureSynchronizer synch = new FutureSynchronizer(futureTurnoDTO, futureCampusDTO, futureCurriculoDTO);
-				synch.addCallback(new AsyncCallback<Boolean>() {
+				synch.addCallback( new AsyncCallback< Boolean >()
+				{
 					@Override
-					public void onFailure(Throwable caught) {
-						MessageBox.alert("ERRO!", "Deu falha na conexão", null);
+					public void onFailure( Throwable caught )
+					{
+						MessageBox.alert( "ERRO!", "Deu falha na conexão", null );
 					}
+
 					@Override
-					public void onSuccess(Boolean result) {
+					public void onSuccess( Boolean result )
+					{
 						TurnoDTO turnoDTO = futureTurnoDTO.result();
 						CampusDTO campusDTO = futureCampusDTO.result();
 						CurriculoDTO curriculoDTO = futureCurriculoDTO.result();
-						Presenter presenter = new OfertaFormPresenter(new OfertaFormView(ofertaDTO, turnoDTO, campusDTO, curriculoDTO), display.getGrid());
-						presenter.go(null);	
+
+						Presenter presenter = new OfertaFormPresenter( instituicaoEnsinoDTO,
+							new OfertaFormView( ofertaDTO, turnoDTO, campusDTO, curriculoDTO ), display.getGrid() );
+
+						presenter.go( null );	
 					}
 				});
 			}
@@ -148,8 +171,14 @@ public class OfertasPresenter implements Presenter {
 		});
 		display.getExportExcelButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
 			@Override
-			public void componentSelected(ButtonEvent ce) {
-				ExportExcelFormSubmit e = new ExportExcelFormSubmit(ExcelInformationType.DEMANDAS,display.getI18nConstants(),display.getI18nMessages());
+			public void componentSelected( ButtonEvent ce )
+			{
+				ExcelParametros parametros = new ExcelParametros(
+					ExcelInformationType.DEMANDAS, instituicaoEnsinoDTO );
+
+				ExportExcelFormSubmit e = new ExportExcelFormSubmit(
+					parametros,display.getI18nConstants(),display.getI18nMessages() );
+
 				e.submit();
 			}
 		});

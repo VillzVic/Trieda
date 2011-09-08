@@ -17,6 +17,7 @@ import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
+import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorCampusDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorDTO;
 import com.gapso.web.trieda.shared.i18n.ITriedaI18nGateway;
@@ -44,14 +45,19 @@ public class CampusProfessorFormPresenter
 		SimpleModal getSimpleModal();
 	}
 
+	@SuppressWarnings("unused")
+	private InstituicaoEnsinoDTO instituicaoEnsinoDTO;
+
 	private SimpleGrid< ProfessorCampusDTO > gridPanel;
 	private Display display;
-	
-	public CampusProfessorFormPresenter( CenarioDTO cenario,
-		Display display, SimpleGrid< ProfessorCampusDTO > gridPanel )
+
+	public CampusProfessorFormPresenter( InstituicaoEnsinoDTO instituicaoEnsinoDTO,
+		CenarioDTO cenario, Display display, SimpleGrid< ProfessorCampusDTO > gridPanel )
 	{
+		this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;
 		this.gridPanel = gridPanel;
 		this.display = display;
+
 		configureProxy();
 		setListeners();
 	}
@@ -118,8 +124,10 @@ public class CampusProfessorFormPresenter
 							Info.display( "Salvo", "Item salvo com sucesso!" );
 						}
 					});
-				} else {
-					MessageBox.alert("ERRO!", "Nenhum professor ou campus foi selecionado", null);
+				}
+				else
+				{
+					MessageBox.alert( "ERRO!", "Nenhum professor ou campus foi selecionado", null );
 				}
 			}
 		});

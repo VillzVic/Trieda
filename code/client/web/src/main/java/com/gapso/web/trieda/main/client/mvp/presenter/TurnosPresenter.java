@@ -15,6 +15,7 @@ import com.extjs.gxt.ui.client.widget.form.NumberField;
 import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.gapso.web.trieda.main.client.mvp.view.TurnoFormView;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
+import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
 import com.gapso.web.trieda.shared.dtos.TurnoDTO;
 import com.gapso.web.trieda.shared.mvp.presenter.Presenter;
 import com.gapso.web.trieda.shared.services.Services;
@@ -25,62 +26,87 @@ import com.gapso.web.trieda.shared.util.view.SimpleGrid;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
 
-public class TurnosPresenter implements Presenter {
-
-	public interface Display {
+public class TurnosPresenter
+	implements Presenter
+{
+	public interface Display
+	{
 		Button getNewButton();
 		Button getEditButton();
 		Button getRemoveButton();
 		Button getImportExcelButton();
 		Button getExportExcelButton();
-		TextField<String> getNomeBuscaTextField();
+		TextField< String > getNomeBuscaTextField();
 		NumberField getTempoBuscaTextField();
 		Button getSubmitBuscaButton();
 		Button getResetBuscaButton();
-		SimpleGrid<TurnoDTO> getGrid();
+		SimpleGrid< TurnoDTO > getGrid();
 		Component getComponent();
-		void setProxy(RpcProxy<PagingLoadResult<TurnoDTO>> proxy);
+		void setProxy( RpcProxy< PagingLoadResult< TurnoDTO > > proxy );
 	}
+
+	private InstituicaoEnsinoDTO instituicaoEnsinoDTO;
 	private CenarioDTO cenario;
 	private Display display; 
-	
-	public TurnosPresenter(CenarioDTO cenario, Display display) {
+
+	public TurnosPresenter( InstituicaoEnsinoDTO instituicaoEnsinoDTO,
+		CenarioDTO cenario, Display display )
+	{
 		this.cenario = cenario;
 		this.display = display;
+		this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;
+
 		configureProxy();
 		setListeners();
 	}
 
-	private void configureProxy() {
+	private void configureProxy()
+	{
 		final TurnosServiceAsync service = Services.turnos();
-		RpcProxy<PagingLoadResult<TurnoDTO>> proxy = new RpcProxy<PagingLoadResult<TurnoDTO>>() {
+
+		RpcProxy< PagingLoadResult< TurnoDTO > > proxy
+			= new RpcProxy< PagingLoadResult< TurnoDTO > >()
+		{
 			@Override
-			public void load(Object loadConfig, AsyncCallback<PagingLoadResult<TurnoDTO>> callback) {
-//				service.getList((PagingLoadConfig)loadConfig, callback);
+			public void load( Object loadConfig,
+				AsyncCallback< PagingLoadResult< TurnoDTO > > callback )
+			{
 				String nome = display.getNomeBuscaTextField().getValue();
 				Number tempo = display.getTempoBuscaTextField().getValue();
-				service.getBuscaList(nome, (tempo==null)?null:tempo.intValue(), (PagingLoadConfig)loadConfig, callback);
+				service.getBuscaList( nome, ( tempo == null ) ? null :
+					tempo.intValue(), (PagingLoadConfig) loadConfig, callback );
 			}
 		};
+
 		display.setProxy(proxy);
 	}
 	
-	private void setListeners() {
+	private void setListeners()
+	{
 		display.getNewButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
 			@Override
 			public void componentSelected(ButtonEvent ce) {
-				Presenter presenter = new TurnoFormPresenter(cenario, new TurnoFormView(new TurnoDTO()), display.getGrid());
-				presenter.go(null);
+				Presenter presenter = new TurnoFormPresenter( instituicaoEnsinoDTO, cenario,
+					new TurnoFormView( new TurnoDTO() ), display.getGrid() );
+
+				presenter.go( null );
 			}
 		});
-		display.getEditButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
+
+		display.getEditButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+		{
 			@Override
-			public void componentSelected(ButtonEvent ce) {
+			public void componentSelected( ButtonEvent ce )
+			{
 				TurnoDTO turnoDTO = display.getGrid().getGrid().getSelectionModel().getSelectedItem();
-				Presenter presenter = new TurnoFormPresenter(cenario, new TurnoFormView(turnoDTO), display.getGrid());
-				presenter.go(null);
+				Presenter presenter = new TurnoFormPresenter( instituicaoEnsinoDTO,
+					cenario, new TurnoFormView( turnoDTO ), display.getGrid() );
+
+				presenter.go( null );
 			}
 		});
+
 		display.getRemoveButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
 			@Override
 			public void componentSelected(ButtonEvent ce) {

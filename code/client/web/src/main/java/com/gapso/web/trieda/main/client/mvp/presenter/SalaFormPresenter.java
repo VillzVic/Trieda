@@ -7,6 +7,7 @@ import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.NumberField;
 import com.extjs.gxt.ui.client.widget.form.TextField;
+import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
 import com.gapso.web.trieda.shared.dtos.SalaDTO;
 import com.gapso.web.trieda.shared.mvp.presenter.Presenter;
 import com.gapso.web.trieda.shared.services.SalasServiceAsync;
@@ -35,12 +36,14 @@ public class SalaFormPresenter implements Presenter
 		SimpleModal getSimpleModal();
 	}
 
+	private InstituicaoEnsinoDTO instituicaoEnsinoDTO;
 	private SimpleGrid< SalaDTO > gridPanel;
 	private Display display;
 
-	public SalaFormPresenter( Display display )
+	public SalaFormPresenter( InstituicaoEnsinoDTO instituicaoEnsinoDTO, Display display )
 	{
 		this( display, null );
+		this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;
 	}
 
 	public SalaFormPresenter( Display display, SimpleGrid< SalaDTO > gridPanel )
@@ -107,6 +110,7 @@ public class SalaFormPresenter implements Presenter
 		salaDTO.setTipoString( display.getTipoComboBox().getSelection().get( 0 ).getNome() );
 		salaDTO.setUnidadeId( display.getUnidadeComboBox().getSelection().get( 0 ).getId() );
 		salaDTO.setUnidadeString( display.getUnidadeComboBox().getSelection().get( 0 ).getCodigo() );
+		salaDTO.setInstituicaoEnsinoId( instituicaoEnsinoDTO.getId() );
 
 		return salaDTO;
 	}

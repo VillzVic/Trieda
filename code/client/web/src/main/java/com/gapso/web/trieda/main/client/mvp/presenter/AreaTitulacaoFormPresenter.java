@@ -7,6 +7,7 @@ import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.gapso.web.trieda.shared.dtos.AreaTitulacaoDTO;
+import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
 import com.gapso.web.trieda.shared.i18n.ITriedaI18nGateway;
 import com.gapso.web.trieda.shared.mvp.presenter.Presenter;
 import com.gapso.web.trieda.shared.services.AreasTitulacaoServiceAsync;
@@ -16,23 +17,31 @@ import com.gapso.web.trieda.shared.util.view.SimpleGrid;
 import com.gapso.web.trieda.shared.util.view.SimpleModal;
 import com.google.gwt.user.client.ui.Widget;
 
-public class AreaTitulacaoFormPresenter implements Presenter {
-
-	public interface Display extends ITriedaI18nGateway {
+public class AreaTitulacaoFormPresenter
+	implements Presenter
+{
+	public interface Display
+		extends ITriedaI18nGateway
+	{
 		Button getSalvarButton();
-		TextField<String> getCodigoTextField();
-		TextField<String> getDescricaoTextField();
+		TextField< String > getCodigoTextField();
+		TextField< String > getDescricaoTextField();
 		AreaTitulacaoDTO getAreaTitulacaoDTO();
 		boolean isValid();
-		
 		SimpleModal getSimpleModal();
 	}
-	private SimpleGrid<AreaTitulacaoDTO> gridPanel;
+
+	private InstituicaoEnsinoDTO instituicaoEnsinoDTO;
+	private SimpleGrid< AreaTitulacaoDTO > gridPanel;
 	private Display display;
-	
-	public AreaTitulacaoFormPresenter(Display display, SimpleGrid<AreaTitulacaoDTO> gridPanel) {
+
+	public AreaTitulacaoFormPresenter( InstituicaoEnsinoDTO instituicaoEnsinoDTO,
+		Display display, SimpleGrid< AreaTitulacaoDTO > gridPanel )
+	{
+		this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;
 		this.gridPanel = gridPanel;
 		this.display = display;
+
 		setListeners();
 	}
 
@@ -61,10 +70,14 @@ public class AreaTitulacaoFormPresenter implements Presenter {
 		return display.isValid();
 	}
 	
-	private AreaTitulacaoDTO getDTO() {
+	private AreaTitulacaoDTO getDTO()
+	{
 		AreaTitulacaoDTO areaTitulacaoDTO = display.getAreaTitulacaoDTO();
-		areaTitulacaoDTO.setCodigo(display.getCodigoTextField().getValue());
-		areaTitulacaoDTO.setDescricao(display.getDescricaoTextField().getValue());
+
+		areaTitulacaoDTO.setInstituicaoEnsinoId( instituicaoEnsinoDTO.getId() );
+		areaTitulacaoDTO.setCodigo( display.getCodigoTextField().getValue() );
+		areaTitulacaoDTO.setDescricao( display.getDescricaoTextField().getValue() );
+
 		return areaTitulacaoDTO;
 	}
 	

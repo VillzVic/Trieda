@@ -12,6 +12,7 @@ import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.treegrid.TreeGrid;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
+import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
 import com.gapso.web.trieda.shared.dtos.ResumoCursoDTO;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 import com.gapso.web.trieda.shared.i18n.ITriedaI18nGateway;
@@ -19,6 +20,7 @@ import com.gapso.web.trieda.shared.mvp.presenter.Presenter;
 import com.gapso.web.trieda.shared.services.Services;
 import com.gapso.web.trieda.shared.util.view.AbstractAsyncCallbackWithDefaultOnFailure;
 import com.gapso.web.trieda.shared.util.view.CampusComboBox;
+import com.gapso.web.trieda.shared.util.view.ExcelParametros;
 import com.gapso.web.trieda.shared.util.view.ExportExcelFormSubmit;
 import com.gapso.web.trieda.shared.util.view.GTab;
 import com.gapso.web.trieda.shared.util.view.GTabItem;
@@ -37,13 +39,17 @@ public class ResumoCursosPresenter
 		Button getExportExcelButton();
 	}
 
+	private InstituicaoEnsinoDTO instituicaoEnsinoDTO;
 	private CenarioDTO cenario;
 	private Display display;
 
-	public ResumoCursosPresenter( CenarioDTO cenario, Display display )
+	public ResumoCursosPresenter( InstituicaoEnsinoDTO instituicaoEnsinoDTO,
+		CenarioDTO cenario, Display display )
 	{
 		this.cenario = cenario;
 		this.display = display;
+		this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;
+
 		setListeners();
 	}
 
@@ -81,9 +87,11 @@ public class ResumoCursosPresenter
 				@Override
 				public void componentSelected( ButtonEvent ce )
 				{
+					ExcelParametros parametros = new ExcelParametros(
+						ExcelInformationType.RESUMO_CURSO, instituicaoEnsinoDTO );
+
 					ExportExcelFormSubmit e = new ExportExcelFormSubmit(
-						ExcelInformationType.RESUMO_CURSO,
-						display.getI18nConstants(), display.getI18nMessages() );
+						parametros,	display.getI18nConstants(), display.getI18nMessages() );
 
 					if ( display.getCampusComboBox() == null
 						|| display.getCampusComboBox().getValue() == null
@@ -94,6 +102,7 @@ public class ResumoCursosPresenter
 
 					String campusId = display.getCampusComboBox().getValue().getId().toString();
 					e.addParameter( "campusId", campusId );
+
 					e.submit();
 				}
 			});

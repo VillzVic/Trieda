@@ -25,6 +25,7 @@ import com.gapso.web.trieda.shared.dtos.AbstractDTO;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.CurriculoDisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.GrupoSalaDTO;
+import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
 import com.gapso.web.trieda.shared.dtos.SalaDTO;
 import com.gapso.web.trieda.shared.dtos.TreeNodeDTO;
 import com.gapso.web.trieda.shared.dtos.TurnoDTO;
@@ -37,6 +38,7 @@ import com.gapso.web.trieda.shared.services.SalasServiceAsync;
 import com.gapso.web.trieda.shared.services.Services;
 import com.gapso.web.trieda.shared.util.view.AbstractAsyncCallbackWithDefaultOnFailure;
 import com.gapso.web.trieda.shared.util.view.CampusComboBox;
+import com.gapso.web.trieda.shared.util.view.ExcelParametros;
 import com.gapso.web.trieda.shared.util.view.ExportExcelFormSubmit;
 import com.gapso.web.trieda.shared.util.view.GTab;
 import com.gapso.web.trieda.shared.util.view.GTabItem;
@@ -67,11 +69,15 @@ public class DisciplinasAssociarSalaPresenter
 		Component getComponent();
 	}
 
+	private InstituicaoEnsinoDTO instituicaoEnsinoDTO;
 	private Display display;
 	private Map<String, List<SalaDTO>> andaresSalasMap;
 
-	public DisciplinasAssociarSalaPresenter( Display display )
+	public DisciplinasAssociarSalaPresenter(
+		InstituicaoEnsinoDTO instituicaoEnsinoDTO, Display display )
 	{
+		this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;
+
 		this.display = display;
 		setListeners();
 	}
@@ -319,22 +325,32 @@ public class DisciplinasAssociarSalaPresenter
 					}
 				});
 		display.getImportExcelButton().addSelectionListener(
-				new SelectionListener<ButtonEvent>() {
-					@Override
-					public void componentSelected(ButtonEvent ce) {
-						ImportExcelFormView importExcelFormView = new ImportExcelFormView(
-								ExcelInformationType.DISCIPLINAS_SALAS, null);
-						importExcelFormView.show();
-					}
-				});
+			new SelectionListener< ButtonEvent >()
+		{
+			@Override
+				public void componentSelected( ButtonEvent ce )
+			{
+				ExcelParametros parametros = new ExcelParametros(
+					ExcelInformationType.DISCIPLINAS_SALAS, instituicaoEnsinoDTO );
+
+				ImportExcelFormView importExcelFormView
+					= new ImportExcelFormView( parametros, null );
+
+				importExcelFormView.show();
+			}
+		});
+
 		display.getExportExcelButton().addSelectionListener(
 				new SelectionListener<ButtonEvent>() {
 					@Override
-					public void componentSelected(ButtonEvent ce) {
+					public void componentSelected( ButtonEvent ce )
+					{
+						ExcelParametros parametros = new ExcelParametros(
+							ExcelInformationType.DISCIPLINAS_SALAS, instituicaoEnsinoDTO );
+
 						ExportExcelFormSubmit e = new ExportExcelFormSubmit(
-								ExcelInformationType.DISCIPLINAS_SALAS, display
-										.getI18nConstants(), display
-										.getI18nMessages());
+							parametros, display.getI18nConstants(), display.getI18nMessages() );
+
 						e.submit();
 					}
 				});

@@ -20,6 +20,7 @@ import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.DisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.DivisaoCreditoDTO;
 import com.gapso.web.trieda.shared.dtos.HorarioDisponivelCenarioDTO;
+import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
 import com.gapso.web.trieda.shared.dtos.SemanaLetivaDTO;
 import com.gapso.web.trieda.shared.dtos.TipoDisciplinaDTO;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
@@ -28,6 +29,7 @@ import com.gapso.web.trieda.shared.mvp.presenter.Presenter;
 import com.gapso.web.trieda.shared.services.DisciplinasServiceAsync;
 import com.gapso.web.trieda.shared.services.Services;
 import com.gapso.web.trieda.shared.util.view.AbstractAsyncCallbackWithDefaultOnFailure;
+import com.gapso.web.trieda.shared.util.view.ExcelParametros;
 import com.gapso.web.trieda.shared.util.view.ExportExcelFormSubmit;
 import com.gapso.web.trieda.shared.util.view.GTab;
 import com.gapso.web.trieda.shared.util.view.GTabItem;
@@ -37,9 +39,12 @@ import com.gapso.web.trieda.shared.util.view.TipoDisciplinaComboBox;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
 
-public class DisciplinasPresenter implements Presenter {
-
-	public interface Display extends ITriedaI18nGateway {
+public class DisciplinasPresenter	
+implements Presenter
+{
+	public interface Display
+		extends ITriedaI18nGateway
+	{
 		Button getNewButton();
 		Button getEditButton();
 		Button getRemoveButton();
@@ -47,25 +52,28 @@ public class DisciplinasPresenter implements Presenter {
 		Button getExportExcelButton();
 		Button getDivisaoCreditoButton();
 		Button getDisponibilidadeButton();
-		
-		TextField<String> getNomeBuscaTextField();
-		TextField<String> getCodigoBuscaTextField();
+		TextField< String > getNomeBuscaTextField();
+		TextField< String > getCodigoBuscaTextField();
 		TipoDisciplinaComboBox getTipoDisciplinaBuscaComboBox();
-		
 		Button getSubmitBuscaButton();
 		Button getResetBuscaButton();
-		
-		SimpleGrid<DisciplinaDTO> getGrid();
+		SimpleGrid< DisciplinaDTO > getGrid();
 		Component getComponent();
-		void setProxy(RpcProxy<PagingLoadResult<DisciplinaDTO>> proxy);
+		void setProxy( RpcProxy< PagingLoadResult< DisciplinaDTO > > proxy );
 	}
+
+	private InstituicaoEnsinoDTO instituicaoEnsinoDTO;
 	private CenarioDTO cenario;
 	private Display display; 
 	private GTab gTab;
-	
-	public DisciplinasPresenter(CenarioDTO cenario, Display display) {
+
+	public DisciplinasPresenter( InstituicaoEnsinoDTO instituicaoEnsinoDTO,
+		CenarioDTO cenario, Display display )
+	{
+		this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;
 		this.cenario = cenario;
 		this.display = display;
+
 		configureProxy();
 		setListeners();
 	}
@@ -84,28 +92,45 @@ public class DisciplinasPresenter implements Presenter {
 		display.setProxy(proxy);
 	}
 	
-	private void setListeners() {
-		display.getNewButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
+	private void setListeners()
+	{
+		display.getNewButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+		{
 			@Override
-			public void componentSelected(ButtonEvent ce) {
-				Presenter presenter = new DisciplinaFormPresenter(cenario, new DisciplinaFormView(new DisciplinaDTO(), null, cenario), display.getGrid());
-				presenter.go(null);
+			public void componentSelected( ButtonEvent ce )
+			{
+				Presenter presenter = new DisciplinaFormPresenter( instituicaoEnsinoDTO, cenario,
+					new DisciplinaFormView( new DisciplinaDTO(), null, cenario ), display.getGrid() );
+
+				presenter.go( null );
 			}
 		});
-		display.getEditButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
+
+		display.getEditButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+		{
 			@Override
-			public void componentSelected(ButtonEvent ce) {
+			public void componentSelected( ButtonEvent ce )
+			{
 				final DisciplinaDTO disciplinaDTO = display.getGrid().getGrid().getSelectionModel().getSelectedItem();
 				final DisciplinasServiceAsync service = Services.disciplinas();
-				service.getTipoDisciplina(disciplinaDTO.getTipoId(), new AsyncCallback<TipoDisciplinaDTO>() {
+
+				service.getTipoDisciplina( disciplinaDTO.getTipoId(), new AsyncCallback< TipoDisciplinaDTO >()
+				{
 					@Override
-					public void onFailure(Throwable caught) {
+					public void onFailure( Throwable caught )
+					{
 						caught.printStackTrace();
 					}
+
 					@Override
-					public void onSuccess(TipoDisciplinaDTO tipoDisciplinaDTO) {
-						Presenter presenter = new DisciplinaFormPresenter(cenario, new DisciplinaFormView(disciplinaDTO, tipoDisciplinaDTO, cenario), display.getGrid());
-						presenter.go(null);
+					public void onSuccess( TipoDisciplinaDTO tipoDisciplinaDTO )
+					{
+						Presenter presenter = new DisciplinaFormPresenter( instituicaoEnsinoDTO, cenario,
+							new DisciplinaFormView( disciplinaDTO, tipoDisciplinaDTO, cenario ), display.getGrid() );
+
+						presenter.go( null );
 					}
 				});
 			}
@@ -130,15 +155,27 @@ public class DisciplinasPresenter implements Presenter {
 		});
 		display.getImportExcelButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
 			@Override
-			public void componentSelected(ButtonEvent ce) {
-				ImportExcelFormView importExcelFormView = new ImportExcelFormView(ExcelInformationType.DISCIPLINAS,display.getGrid());
+			public void componentSelected( ButtonEvent ce )
+			{
+				ExcelParametros parametros = new ExcelParametros(
+					ExcelInformationType.DISCIPLINAS, instituicaoEnsinoDTO );
+
+				ImportExcelFormView importExcelFormView
+					= new ImportExcelFormView( parametros, display.getGrid() );
+
 				importExcelFormView.show();
 			}
 		});
 		display.getExportExcelButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
 			@Override
-			public void componentSelected(ButtonEvent ce) {
-				ExportExcelFormSubmit e = new ExportExcelFormSubmit(ExcelInformationType.DISCIPLINAS,display.getI18nConstants(),display.getI18nMessages());
+			public void componentSelected( ButtonEvent ce )
+			{
+				ExcelParametros parametros = new ExcelParametros(
+					ExcelInformationType.DISCIPLINAS, instituicaoEnsinoDTO );
+
+				ExportExcelFormSubmit e = new ExportExcelFormSubmit(
+					parametros, display.getI18nConstants(), display.getI18nMessages() );
+
 				e.submit();
 			}
 		});
@@ -158,7 +195,11 @@ public class DisciplinasPresenter implements Presenter {
 					public void onSuccess(List<HorarioDisponivelCenarioDTO> result) {
 						SemanaLetivaDTO semanaLetiva = new SemanaLetivaDTO();
 						semanaLetiva.setId(cenario.getSemanaLetivaId());
-						Presenter presenter = new HorarioDisponivelDisciplinaFormPresenter(cenario, semanaLetiva, new HorarioDisponivelDisciplinaFormView(disciplinaDTO, result));
+
+						Presenter presenter = new HorarioDisponivelDisciplinaFormPresenter(
+							instituicaoEnsinoDTO, cenario, semanaLetiva,
+							new HorarioDisponivelDisciplinaFormView( disciplinaDTO, result ) );
+
 						presenter.go(null);
 					}
 				});
@@ -171,7 +212,9 @@ public class DisciplinasPresenter implements Presenter {
 				Services.disciplinas().getDivisaoCredito(disciplinaDTO, new AbstractAsyncCallbackWithDefaultOnFailure<DivisaoCreditoDTO>(display) {
 					@Override
 					public void onSuccess(DivisaoCreditoDTO result) {
-						Presenter presenter = new DivisaoCreditoDisciplinaFormPresenter(cenario, new DivisaoCreditoDisciplinaFormView(result, disciplinaDTO));
+						Presenter presenter = new DivisaoCreditoDisciplinaFormPresenter(
+							instituicaoEnsinoDTO, cenario, new DivisaoCreditoDisciplinaFormView(result, disciplinaDTO ) );
+
 						presenter.go(null);
 					}
 				});

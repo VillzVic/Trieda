@@ -11,6 +11,7 @@ import com.extjs.gxt.ui.client.widget.Info;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
+import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorCampusDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorDTO;
 import com.gapso.web.trieda.shared.dtos.UsuarioDTO;
@@ -20,6 +21,7 @@ import com.gapso.web.trieda.shared.mvp.view.CampusProfessorFormView;
 import com.gapso.web.trieda.shared.services.Services;
 import com.gapso.web.trieda.shared.util.view.AbstractAsyncCallbackWithDefaultOnFailure;
 import com.gapso.web.trieda.shared.util.view.CampusComboBox;
+import com.gapso.web.trieda.shared.util.view.ExcelParametros;
 import com.gapso.web.trieda.shared.util.view.ExportExcelFormSubmit;
 import com.gapso.web.trieda.shared.util.view.GTab;
 import com.gapso.web.trieda.shared.util.view.GTabItem;
@@ -48,14 +50,16 @@ public class CampusProfessoresPresenter
 		Component getComponent();
 	}
 
+	private InstituicaoEnsinoDTO instituicaoEnsinoDTO;
 	private CenarioDTO cenario;
 	private UsuarioDTO usuario;
 	private Display display; 
 	private boolean isVisaoProfessor;
 
-	public CampusProfessoresPresenter( CenarioDTO cenario,
-		UsuarioDTO usuario, Display display, boolean isVisaoProfessor )
+	public CampusProfessoresPresenter( InstituicaoEnsinoDTO instituicaoEnsinoDTO,
+		CenarioDTO cenario, UsuarioDTO usuario, Display display, boolean isVisaoProfessor )
 	{
+		this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;
 		this.cenario = cenario;
 		this.usuario = usuario;
 		this.display = display;
@@ -98,7 +102,7 @@ public class CampusProfessoresPresenter
 				@Override
 				public void componentSelected( ButtonEvent ce )
 				{
-					Presenter presenter = new CampusProfessorFormPresenter(
+					Presenter presenter = new CampusProfessorFormPresenter( instituicaoEnsinoDTO,
 						cenario, new CampusProfessorFormView( null ), display.getGrid() );
 
 					presenter.go( null );
@@ -117,7 +121,9 @@ public class CampusProfessoresPresenter
 					campusDTO.setCodigo( pcDTO.getCampusString() );
 
 					Presenter presenter = new CampusProfessorFormPresenter(
-						cenario, new CampusProfessorFormView( campusDTO ), display.getGrid() );
+						instituicaoEnsinoDTO, cenario,
+						new CampusProfessorFormView( campusDTO ), display.getGrid() );
+
 					presenter.go( null );
 				}
 			});
@@ -165,8 +171,11 @@ public class CampusProfessoresPresenter
 				@Override
 				public void componentSelected( ButtonEvent ce )
 				{
+					ExcelParametros parametros = new ExcelParametros(
+						ExcelInformationType.CAMPI_TRABALHO, instituicaoEnsinoDTO );
+
 					ImportExcelFormView importExcelFormView = new ImportExcelFormView(
-						ExcelInformationType.CAMPI_TRABALHO,display.getGrid() );
+						parametros,display.getGrid() );
 
 					importExcelFormView.show();
 				}
@@ -177,7 +186,10 @@ public class CampusProfessoresPresenter
 				@Override
 				public void componentSelected( ButtonEvent ce )
 				{
-					ExportExcelFormSubmit e = new ExportExcelFormSubmit( ExcelInformationType.CAMPI_TRABALHO,
+					ExcelParametros parametros = new ExcelParametros(
+						ExcelInformationType.CAMPI_TRABALHO, instituicaoEnsinoDTO );
+
+					ExportExcelFormSubmit e = new ExportExcelFormSubmit( parametros,
 						display.getI18nConstants(), display.getI18nMessages() );
 
 					e.submit();

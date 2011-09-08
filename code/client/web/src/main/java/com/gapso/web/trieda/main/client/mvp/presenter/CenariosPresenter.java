@@ -16,6 +16,7 @@ import com.gapso.web.trieda.main.client.mvp.view.CenarioCloneFormView;
 import com.gapso.web.trieda.main.client.mvp.view.CenarioCriarFormView;
 import com.gapso.web.trieda.main.client.mvp.view.CenarioEditarFormView;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
+import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
 import com.gapso.web.trieda.shared.mvp.presenter.Presenter;
 import com.gapso.web.trieda.shared.services.CenariosServiceAsync;
 import com.gapso.web.trieda.shared.services.Services;
@@ -26,9 +27,11 @@ import com.gapso.web.trieda.shared.util.view.SimpleGrid;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
 
-public class CenariosPresenter implements Presenter {
-
-	public interface Display {
+public class CenariosPresenter
+	implements Presenter
+{
+	public interface Display
+	{
 		Button getNewButton();
 		Button getEditButton();
 		Button getRemoveButton();
@@ -42,19 +45,26 @@ public class CenariosPresenter implements Presenter {
 		Component getComponent();
 		void setProxy(RpcProxy<PagingLoadResult<CenarioDTO>> proxy);
 	}
+
+	private InstituicaoEnsinoDTO instituicaoEnsinoDTO;
 	private Display display; 
 	private GTab gTab;
 	private CenarioPanel cenarioPanel;
 	
-	public CenariosPresenter(CenarioPanel cenarioPanel, Display display) {
+	public CenariosPresenter( InstituicaoEnsinoDTO instituicaoEnsinoDTO,
+		CenarioPanel cenarioPanel, Display display )
+	{
+		this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;
 		this.display = display;
 		this.cenarioPanel = cenarioPanel;
 		configureProxy();
 		setListeners();
 	}
 
-	private void configureProxy() {
+	private void configureProxy()
+	{
 		final CenariosServiceAsync service = Services.cenarios();
+
 		RpcProxy<PagingLoadResult<CenarioDTO>> proxy = new RpcProxy<PagingLoadResult<CenarioDTO>>() {
 			@Override
 			public void load(Object loadConfig, AsyncCallback<PagingLoadResult<CenarioDTO>> callback) {
@@ -63,22 +73,36 @@ public class CenariosPresenter implements Presenter {
 				service.getBuscaList(ano, semestre, (PagingLoadConfig)loadConfig, callback);
 			}
 		};
+
 		display.setProxy(proxy);
 	}
-	
-	private void setListeners() {
-		display.getNewButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
+
+	private void setListeners()
+	{
+		display.getNewButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+		{
 			@Override
-			public void componentSelected(ButtonEvent ce) {
-				Presenter presenter = new CenarioCriarFormPresenter(new CenarioCriarFormView(new CenarioDTO()), display.getGrid());
-				presenter.go(null);
+			public void componentSelected( ButtonEvent ce )
+			{
+				Presenter presenter = new CenarioCriarFormPresenter( instituicaoEnsinoDTO,
+					new CenarioCriarFormView( new CenarioDTO() ), display.getGrid() );
+
+				presenter.go( null );
 			}
 		});
-		display.getEditButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
+
+		display.getEditButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+		{
 			@Override
-			public void componentSelected(ButtonEvent ce) {
+			public void componentSelected( ButtonEvent ce )
+			{
 				CenarioDTO cenarioDTO = display.getGrid().getGrid().getSelectionModel().getSelectedItem();
-				Presenter presenter = new CenarioEditarFormPresenter(new CenarioEditarFormView(cenarioDTO), display.getGrid());
+
+				Presenter presenter = new CenarioEditarFormPresenter( instituicaoEnsinoDTO,
+					new CenarioEditarFormView(cenarioDTO), display.getGrid() );
+
 				presenter.go(null);
 			}
 		});
@@ -123,10 +147,14 @@ public class CenariosPresenter implements Presenter {
 		});
 		display.getClonarCenarioButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
 			@Override
-			public void componentSelected(ButtonEvent ce) {
+			public void componentSelected( ButtonEvent ce )
+			{
 				CenarioDTO cenarioDTO = display.getGrid().getGrid().getSelectionModel().getSelectedItem();
-				Presenter presenter = new CenarioCloneFormPresenter(new CenarioCloneFormView(cenarioDTO), display.getGrid());
-				presenter.go(null);
+
+				Presenter presenter = new CenarioCloneFormPresenter( instituicaoEnsinoDTO,
+					new CenarioCloneFormView( cenarioDTO ), display.getGrid() );
+
+				presenter.go( null );
 			}
 		});
 	}

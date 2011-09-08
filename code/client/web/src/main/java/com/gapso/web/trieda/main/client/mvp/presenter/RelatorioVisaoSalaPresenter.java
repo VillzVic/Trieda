@@ -9,6 +9,7 @@ import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
+import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
 import com.gapso.web.trieda.shared.dtos.SalaDTO;
 import com.gapso.web.trieda.shared.dtos.TurnoDTO;
 import com.gapso.web.trieda.shared.dtos.UnidadeDTO;
@@ -16,6 +17,7 @@ import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 import com.gapso.web.trieda.shared.i18n.ITriedaI18nGateway;
 import com.gapso.web.trieda.shared.mvp.presenter.Presenter;
 import com.gapso.web.trieda.shared.util.view.CampusComboBox;
+import com.gapso.web.trieda.shared.util.view.ExcelParametros;
 import com.gapso.web.trieda.shared.util.view.ExportExcelFormSubmit;
 import com.gapso.web.trieda.shared.util.view.GTab;
 import com.gapso.web.trieda.shared.util.view.GTabItem;
@@ -41,10 +43,13 @@ public class RelatorioVisaoSalaPresenter implements Presenter
 		Button getExportExcelButton();
 	}
 
+	private InstituicaoEnsinoDTO instituicaoEnsinoDTO;
 	private Display display; 
 
-	public RelatorioVisaoSalaPresenter( CenarioDTO cenario, Display display )
+	public RelatorioVisaoSalaPresenter( InstituicaoEnsinoDTO instituicaoEnsinoDTO,
+		CenarioDTO cenario, Display display )
 	{
+		this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;
 		this.display = display;
 		setListeners();
 	}
@@ -62,6 +67,7 @@ public class RelatorioVisaoSalaPresenter implements Presenter
 					display.getGrid().requestAtendimentos();
 				}
 			});
+
 		display.getSalaComboBox().addSelectionChangedListener(
 			new SelectionChangedListener< SalaDTO >()
 			{
@@ -88,9 +94,11 @@ public class RelatorioVisaoSalaPresenter implements Presenter
 					@Override
 					public void componentSelected( ButtonEvent ce )
 					{
+						ExcelParametros parametros = new ExcelParametros(
+							ExcelInformationType.RELATORIO_VISAO_SALA, instituicaoEnsinoDTO );
+
 						ExportExcelFormSubmit e = new ExportExcelFormSubmit(
-							ExcelInformationType.RELATORIO_VISAO_SALA,
-							display.getI18nConstants(), display.getI18nMessages() );
+							parametros, display.getI18nConstants(), display.getI18nMessages() );
 
 						CampusDTO campusDTO = display.getCampusComboBox().getValue();
 						UnidadeDTO unidadeDTO = display.getUnidadeComboBox().getValue();

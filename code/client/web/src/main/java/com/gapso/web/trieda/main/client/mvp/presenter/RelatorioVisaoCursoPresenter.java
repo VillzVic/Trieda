@@ -14,6 +14,7 @@ import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.CurriculoDTO;
 import com.gapso.web.trieda.shared.dtos.CursoDTO;
+import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
 import com.gapso.web.trieda.shared.dtos.TurnoDTO;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 import com.gapso.web.trieda.shared.i18n.ITriedaI18nGateway;
@@ -23,6 +24,7 @@ import com.gapso.web.trieda.shared.services.Services;
 import com.gapso.web.trieda.shared.util.view.CampusComboBox;
 import com.gapso.web.trieda.shared.util.view.CurriculoComboBox;
 import com.gapso.web.trieda.shared.util.view.CursoComboBox;
+import com.gapso.web.trieda.shared.util.view.ExcelParametros;
 import com.gapso.web.trieda.shared.util.view.ExportExcelFormSubmit;
 import com.gapso.web.trieda.shared.util.view.GTab;
 import com.gapso.web.trieda.shared.util.view.GTabItem;
@@ -47,11 +49,14 @@ public class RelatorioVisaoCursoPresenter
 		Button getExportExcelButton();
 	}
 
+	private InstituicaoEnsinoDTO instituicaoEnsinoDTO;
 	private Display display; 
 
 	public RelatorioVisaoCursoPresenter(
+		InstituicaoEnsinoDTO instituicaoEnsinoDTO,
 		CenarioDTO cenario, Display display )
 	{
+		this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;
 		this.display = display;
 		setListeners();
 	}
@@ -114,9 +119,11 @@ public class RelatorioVisaoCursoPresenter
 				@Override
 				public void componentSelected( ButtonEvent ce )
 				{
+					ExcelParametros parametros = new ExcelParametros(
+						ExcelInformationType.RELATORIO_VISAO_CURSO , instituicaoEnsinoDTO );
+
 					ExportExcelFormSubmit e = new ExportExcelFormSubmit(
-						ExcelInformationType.RELATORIO_VISAO_CURSO,
-						display.getI18nConstants(), display.getI18nMessages() );
+						parametros, display.getI18nConstants(), display.getI18nMessages() );
 
 					CursoDTO cursoDTO = display.getCursoComboBox().getValue();
 					CurriculoDTO curriculoDTO = display.getCurriculoComboBox().getValue();

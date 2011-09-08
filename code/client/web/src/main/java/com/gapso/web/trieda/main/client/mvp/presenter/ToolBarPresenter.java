@@ -45,6 +45,7 @@ import com.gapso.web.trieda.main.client.mvp.view.UsuariosView;
 import com.gapso.web.trieda.main.client.mvp.view.VincularAreasTitulacaoView;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.DeslocamentoCampusDTO;
+import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
 import com.gapso.web.trieda.shared.dtos.ParametroDTO;
 import com.gapso.web.trieda.shared.dtos.UsuarioDTO;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
@@ -59,6 +60,7 @@ import com.gapso.web.trieda.shared.mvp.view.RelatorioVisaoProfessorView;
 import com.gapso.web.trieda.shared.services.CampiServiceAsync;
 import com.gapso.web.trieda.shared.services.Services;
 import com.gapso.web.trieda.shared.util.view.CenarioPanel;
+import com.gapso.web.trieda.shared.util.view.ExcelParametros;
 import com.gapso.web.trieda.shared.util.view.ExportExcelFormSubmit;
 import com.gapso.web.trieda.shared.util.view.GTab;
 import com.gapso.web.trieda.shared.util.view.ImportExcelFormView;
@@ -128,128 +130,198 @@ public class ToolBarPresenter
 		Button getTurnosListCampiButton();
 	}
 
-	private CenarioDTO masterData;
-	private UsuarioDTO usuario;
+	private InstituicaoEnsinoDTO instituicaoEnsinoDTO;
+	private CenarioDTO cenarioDTO;
+	private UsuarioDTO usuarioDTO;
 	private Display toolBar;
 	private GTab gTab;
 
-	public ToolBarPresenter( CenarioDTO masterData, UsuarioDTO usuario,
+	public ToolBarPresenter( InstituicaoEnsinoDTO instituicaoEnsinoDTO,
+		CenarioDTO masterData, UsuarioDTO usuario,
 		CenarioPanel cenarioPanel, Display toolBar )
 	{
-		this.masterData = masterData;
-		this.usuario = usuario;
+		this.cenarioDTO = masterData;
+		this.usuarioDTO = usuario;
 		this.toolBar = toolBar;
+		this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;
 
 		addListeners();
 	}
 
 	private void addListeners()
 	{
-		toolBar.getTurnosListCampiButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
+		toolBar.getTurnosListCampiButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+		{
 			@Override
-			public void componentSelected(ButtonEvent ce) {
-				Presenter presenter = new TurnosPresenter(masterData, new TurnosView());
-				presenter.go(gTab);
+			public void componentSelected( ButtonEvent ce )
+			{
+				Presenter presenter = new TurnosPresenter(
+					instituicaoEnsinoDTO, cenarioDTO, new TurnosView() );
+
+				presenter.go( gTab );
 			}
 		});
 
-		toolBar.getSemanasLetivaListCampiButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
+		toolBar.getSemanasLetivaListCampiButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+		{
 			@Override
-			public void componentSelected(ButtonEvent ce) {
-				Presenter presenter = new SemanasLetivaPresenter(masterData, new SemanasLetivaView());
-				presenter.go(gTab);
+			public void componentSelected( ButtonEvent ce )
+			{
+				Presenter presenter = new SemanasLetivaPresenter(
+					instituicaoEnsinoDTO,  cenarioDTO, new SemanasLetivaView() );
+
+				presenter.go( gTab );
 			}
 		});
 
-		toolBar.getCampiNovoCampiButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
+		toolBar.getCampiNovoCampiButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+		{
 			@Override
-			public void componentSelected(ButtonEvent ce) {
-				Presenter presenter = new CampusFormPresenter(masterData, new CampusFormView(masterData));
-				presenter.go(null);
+			public void componentSelected( ButtonEvent ce )
+			{
+				Presenter presenter = new CampusFormPresenter( instituicaoEnsinoDTO,
+					cenarioDTO, new CampusFormView( cenarioDTO ) );
+
+				presenter.go( null );
 			}
 		});
 
-		toolBar.getCampiListCampiButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
+		toolBar.getCampiListCampiButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+		{
 			@Override
-			public void componentSelected(ButtonEvent ce) {
-				Presenter presenter = new CampiPresenter(masterData, new CampiView());
-				presenter.go(gTab);
+			public void componentSelected( ButtonEvent ce )
+			{
+				Presenter presenter = new CampiPresenter(
+					instituicaoEnsinoDTO, cenarioDTO, new CampiView() );
+
+				presenter.go( gTab );
 			}
 		});
 
-		toolBar.getUnidadesNovoUnidadesButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
+		toolBar.getUnidadesNovoUnidadesButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+		{
 			@Override
-			public void componentSelected(ButtonEvent ce) {
-				Presenter presenter = new UnidadeFormPresenter(new UnidadeFormView(masterData));
-				presenter.go(null);
+			public void componentSelected( ButtonEvent ce )
+			{
+				Presenter presenter = new UnidadeFormPresenter(
+					instituicaoEnsinoDTO, new UnidadeFormView( cenarioDTO ) );
+
+				presenter.go( null );
 			}
 		});
 
-		toolBar.getUnidadesListUnidadesButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
+		toolBar.getUnidadesListUnidadesButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+		{
 			@Override
-			public void componentSelected(ButtonEvent ce) {
-				Presenter presenter = new UnidadesPresenter(masterData, new UnidadesView());
-				presenter.go(gTab);
+			public void componentSelected( ButtonEvent ce )
+			{
+				Presenter presenter = new UnidadesPresenter(
+					instituicaoEnsinoDTO, cenarioDTO, new UnidadesView() );
+
+				presenter.go( gTab );
 			}
 		});
 
-		toolBar.getSalasNovoSalasButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
+		toolBar.getSalasNovoSalasButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+		{
 			@Override
-			public void componentSelected(ButtonEvent ce) {
-				Presenter presenter = new SalaFormPresenter(new SalaFormView(masterData));
-				presenter.go(null);
+			public void componentSelected( ButtonEvent ce )
+			{
+				Presenter presenter = new SalaFormPresenter(
+					instituicaoEnsinoDTO, new SalaFormView( cenarioDTO ) );
+
+				presenter.go( null );
 			}
 		});
 
-		toolBar.getSalasListSalasButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
+		toolBar.getSalasListSalasButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+		{
 			@Override
-			public void componentSelected(ButtonEvent ce) {
-				Presenter presenter = new SalasPresenter(masterData, new SalasView());
-				presenter.go(gTab);
+			public void componentSelected( ButtonEvent ce )
+			{
+				Presenter presenter = new SalasPresenter(
+					instituicaoEnsinoDTO, cenarioDTO, new SalasView() );
+
+				presenter.go( gTab );
 			}
 		});
 
-		toolBar.getGruposSalasListSalasButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
+		toolBar.getGruposSalasListSalasButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+		{
 			@Override
-			public void componentSelected(ButtonEvent ce) {
-				Presenter presenter = new GruposSalasPresenter(masterData, new GruposSalasView());
-				presenter.go(gTab);
+			public void componentSelected( ButtonEvent ce )
+			{
+				Presenter presenter = new GruposSalasPresenter(
+					instituicaoEnsinoDTO, cenarioDTO, new GruposSalasView() );
+
+				presenter.go( gTab );
 			}
 		});
 
-		toolBar.getTiposCursosListCursosButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
+		toolBar.getTiposCursosListCursosButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+		{
 			@Override
-			public void componentSelected(ButtonEvent ce) {
-				Presenter presenter = new TiposCursosPresenter(new TiposCursosView());
-				presenter.go(gTab);
+			public void componentSelected( ButtonEvent ce )
+			{
+				Presenter presenter = new TiposCursosPresenter(
+					instituicaoEnsinoDTO, new TiposCursosView() );
+
+				presenter.go( gTab );
 			}
 		});
 
-		toolBar.getAreasTitulacaoListCursosButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
+		toolBar.getAreasTitulacaoListCursosButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+		{
 			@Override
-			public void componentSelected(ButtonEvent ce) {
-				Presenter presenter = new AreasTitulacaoPresenter(new AreasTitulacaoView());
-				presenter.go(gTab);
+			public void componentSelected( ButtonEvent ce )
+			{
+				Presenter presenter = new AreasTitulacaoPresenter(
+					instituicaoEnsinoDTO, new AreasTitulacaoView() );
+
+				presenter.go( gTab );
 			}
 		});
 
-		toolBar.getVincularAreasTitulacaoListCursosButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
+		toolBar.getVincularAreasTitulacaoListCursosButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+		{
 			@Override
-			public void componentSelected(ButtonEvent ce) {
-				Presenter presenter = new VincularAreasTitulacaoPresenter(new VincularAreasTitulacaoView());
-				presenter.go(gTab);
+			public void componentSelected( ButtonEvent ce )
+			{
+				Presenter presenter = new VincularAreasTitulacaoPresenter(
+						instituicaoEnsinoDTO, new VincularAreasTitulacaoView() );
+
+				presenter.go( gTab );
 			}
 		});
 
-		toolBar.getUnidadeDeslocamentoListUnidadesButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
+		toolBar.getUnidadeDeslocamentoListUnidadesButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+		{
 			@Override
-			public void componentSelected(ButtonEvent ce) {
-				Presenter presenter = new UnidadesDeslocamentoPresenter(new UnidadesDeslocamentoView(null, null));
-				presenter.go(gTab);
+			public void componentSelected( ButtonEvent ce )
+			{
+				Presenter presenter = new UnidadesDeslocamentoPresenter(
+					new UnidadesDeslocamentoView( null, null ) );
+
+				presenter.go( gTab );
 			}
 		});
 
-		toolBar.getCampusDeslocamentoListCampiButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
+		toolBar.getCampusDeslocamentoListCampiButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+		{
 			@Override
 			public void componentSelected( ButtonEvent ce )
 			{
@@ -267,7 +339,7 @@ public class ToolBarPresenter
 					public void onSuccess( List< DeslocamentoCampusDTO > result )
 					{
 						Presenter presenter = new CampiDeslocamentoPresenter(
-							masterData, new CampiDeslocamentoView( result ) );
+							cenarioDTO, new CampiDeslocamentoView( result ) );
 
 						presenter.go( gTab );	
 					}
@@ -275,99 +347,159 @@ public class ToolBarPresenter
 			}
 		});
 
-		toolBar.getCursosNovoCursosButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
+		toolBar.getCursosNovoCursosButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+		{
 			@Override
-			public void componentSelected(ButtonEvent ce) {
-				Presenter presenter = new CursoFormPresenter(masterData, new CursoFormView(masterData));
-				presenter.go(null);
+			public void componentSelected( ButtonEvent ce )
+			{
+				Presenter presenter = new CursoFormPresenter( instituicaoEnsinoDTO,
+					cenarioDTO, new CursoFormView( cenarioDTO ) );
+
+				presenter.go( null );
 			}
 		});
 
-		toolBar.getCursosListCursosButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
+		toolBar.getCursosListCursosButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+		{
+				@Override
+				public void componentSelected( ButtonEvent ce )
+				{
+					Presenter presenter = new CursosPresenter(
+						instituicaoEnsinoDTO,  cenarioDTO, new CursosView() );
+
+					presenter.go( gTab );
+				}
+		});
+
+		toolBar.getDisciplinasNovoDisciplinasButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+		{
 			@Override
-			public void componentSelected(ButtonEvent ce) {
-				Presenter presenter = new CursosPresenter(masterData, new CursosView());
+			public void componentSelected( ButtonEvent ce )
+			{
+				Presenter presenter = new DisciplinaFormPresenter( instituicaoEnsinoDTO,
+						cenarioDTO, new DisciplinaFormView( cenarioDTO ) );
+
+				presenter.go( null );
+			}
+		});
+
+		toolBar.getDisciplinasListDisciplinasButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+		{
+			@Override
+			public void componentSelected( ButtonEvent ce )
+			{
+				Presenter presenter = new DisciplinasPresenter(
+					instituicaoEnsinoDTO, cenarioDTO, new DisciplinasView() );
+
+				presenter.go( gTab );
+			}
+		});
+
+		toolBar.getCurriculosListCursosButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+		{
+			@Override
+			public void componentSelected( ButtonEvent ce )
+			{
+				Presenter presenter = new CurriculosPresenter(
+					instituicaoEnsinoDTO, cenarioDTO, new CurriculosView() );
+
+				presenter.go( gTab );
+			}
+		});
+
+		toolBar.getCurriculosListDisciplinasButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+		{
+			@Override
+			public void componentSelected( ButtonEvent ce )
+			{
+				Presenter presenter = new CurriculosPresenter(
+					instituicaoEnsinoDTO, cenarioDTO, new CurriculosView() );
+
+				presenter.go( gTab );
+			}
+		});
+
+		toolBar.getDivisaoCreditosListDisciplinasButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+		{
+			@Override
+			public void componentSelected( ButtonEvent ce )
+			{
+				Presenter presenter = new DivisoesCreditosPresenter(
+					instituicaoEnsinoDTO, cenarioDTO, new DivisoesCreditosView() );
+
 				presenter.go(gTab);
 			}
 		});
 
-		toolBar.getDisciplinasNovoDisciplinasButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
+		toolBar.getEquivalenciasListDisciplinasButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+		{
 			@Override
-			public void componentSelected(ButtonEvent ce) {
-				Presenter presenter = new DisciplinaFormPresenter(masterData, new DisciplinaFormView(masterData));
-				presenter.go(null);
+			public void componentSelected( ButtonEvent ce )
+			{
+				Presenter presenter = new EquivalenciasPresenter(
+					instituicaoEnsinoDTO, cenarioDTO, new EquivalenciasView() );
+
+				presenter.go( gTab );
 			}
 		});
 
-		toolBar.getDisciplinasListDisciplinasButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
+		toolBar.getFixacoesListButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+		{
 			@Override
-			public void componentSelected(ButtonEvent ce) {
-				Presenter presenter = new DisciplinasPresenter(masterData, new DisciplinasView());
-				presenter.go(gTab);
+			public void componentSelected( ButtonEvent ce )
+			{
+				Presenter presenter = new FixacoesPresenter(
+					instituicaoEnsinoDTO, cenarioDTO, new FixacoesView() );
+
+				presenter.go( gTab );
 			}
 		});
 
-		toolBar.getCurriculosListCursosButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
+		toolBar.getCompatibilidadesListDisciplinasButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+		{
 			@Override
-			public void componentSelected(ButtonEvent ce) {
-				Presenter presenter = new CurriculosPresenter(masterData, new CurriculosView());
-				presenter.go(gTab);
+			public void componentSelected( ButtonEvent ce )
+			{
+				Presenter presenter = new CompatibilidadesPresenter(
+						cenarioDTO, new CompatibilidadesView() );
+
+				presenter.go( gTab );
 			}
 		});
 
-		toolBar.getCurriculosListDisciplinasButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
+		toolBar.getProfessoresNovoProfessoresButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+		{
 			@Override
-			public void componentSelected(ButtonEvent ce) {
-				Presenter presenter = new CurriculosPresenter(masterData, new CurriculosView());
-				presenter.go(gTab);
+			public void componentSelected( ButtonEvent ce )
+			{
+				Presenter presenter = new ProfessorFormPresenter( instituicaoEnsinoDTO,
+					cenarioDTO, new ProfessorFormView( cenarioDTO ) );
+
+				presenter.go( null );
 			}
 		});
 
-		toolBar.getDivisaoCreditosListDisciplinasButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
+		toolBar.getProfessoresListProfessoresButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+		{
 			@Override
-			public void componentSelected(ButtonEvent ce) {
-				Presenter presenter = new DivisoesCreditosPresenter(masterData, new DivisoesCreditosView());
-				presenter.go(gTab);
-			}
-		});
+			public void componentSelected( ButtonEvent ce )
+			{
+				Presenter presenter = new ProfessoresPresenter(
+					instituicaoEnsinoDTO, cenarioDTO, new ProfessoresView() );
 
-		toolBar.getEquivalenciasListDisciplinasButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
-			@Override
-			public void componentSelected(ButtonEvent ce) {
-				Presenter presenter = new EquivalenciasPresenter(masterData, new EquivalenciasView());
-				presenter.go(gTab);
-			}
-		});
-
-		toolBar.getFixacoesListButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
-			@Override
-			public void componentSelected(ButtonEvent ce) {
-				Presenter presenter = new FixacoesPresenter(masterData, new FixacoesView());
-				presenter.go(gTab);
-			}
-		});
-
-		toolBar.getCompatibilidadesListDisciplinasButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
-			@Override
-			public void componentSelected(ButtonEvent ce) {
-				Presenter presenter = new CompatibilidadesPresenter(masterData, new CompatibilidadesView());
-				presenter.go(gTab);
-			}
-		});
-
-		toolBar.getProfessoresNovoProfessoresButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
-			@Override
-			public void componentSelected(ButtonEvent ce) {
-				Presenter presenter = new ProfessorFormPresenter(masterData, new ProfessorFormView(masterData));
-				presenter.go(null);
-			}
-		});
-
-		toolBar.getProfessoresListProfessoresButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
-			@Override
-			public void componentSelected(ButtonEvent ce) {
-				Presenter presenter = new ProfessoresPresenter(masterData, new ProfessoresView());
-				presenter.go(gTab);
+				presenter.go( gTab );
 			}
 		});
 
@@ -378,7 +510,8 @@ public class ToolBarPresenter
 			public void componentSelected( ButtonEvent ce )
 			{
 				Presenter presenter = new ProfessoresDisciplinaPresenter(
-					masterData, usuario, new ProfessoresDisciplinaView( usuario ), false );
+					instituicaoEnsinoDTO, cenarioDTO, usuarioDTO,
+					new ProfessoresDisciplinaView( usuarioDTO ), false );
 
 				presenter.go( gTab );
 			}
@@ -391,25 +524,36 @@ public class ToolBarPresenter
 			public void componentSelected( ButtonEvent ce )
 			{
 				Presenter presenter = new CampusProfessoresPresenter(
-					masterData, usuario, new CampusProfessoresView( usuario ), false );
+					instituicaoEnsinoDTO, cenarioDTO, usuarioDTO,
+					new CampusProfessoresView( usuarioDTO ), false );
 
 				presenter.go( gTab );
 			}
 		});
 
-		toolBar.getOfertasListCampiButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
+		toolBar.getOfertasListCampiButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+		{
 			@Override
-			public void componentSelected(ButtonEvent ce) {
-				Presenter presenter = new OfertasPresenter(new OfertasView());
-				presenter.go(gTab);
+			public void componentSelected( ButtonEvent ce )
+			{
+				Presenter presenter = new OfertasPresenter(
+					instituicaoEnsinoDTO, new OfertasView() );
+
+				presenter.go( gTab );
 			}
 		});
 
-		toolBar.getUsuariosListButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
+		toolBar.getUsuariosListButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+		{
 			@Override
-			public void componentSelected(ButtonEvent ce) {
-				Presenter presenter = new UsuariosPresenter(masterData, new UsuariosView());
-				presenter.go(gTab);
+			public void componentSelected( ButtonEvent ce )
+			{
+				Presenter presenter = new UsuariosPresenter(
+					instituicaoEnsinoDTO, cenarioDTO, new UsuariosView() );
+
+				presenter.go( gTab );
 			}
 		});
 
@@ -417,8 +561,14 @@ public class ToolBarPresenter
 			// Fazendo com que importe todos dados do masterdata.
 			// Lembrando que uma importação nunca exclui dados, apenas modifica e adiciona
 			@Override
-			public void componentSelected(ButtonEvent ce) {
-				ImportExcelFormView importExcelFormView = new ImportExcelFormView(ExcelInformationType.TUDO, null);
+			public void componentSelected( ButtonEvent ce )
+			{
+				ExcelParametros parametros = new ExcelParametros(
+					ExcelInformationType.TUDO, instituicaoEnsinoDTO );
+
+				ImportExcelFormView importExcelFormView
+					= new ImportExcelFormView( parametros, null );
+
 				importExcelFormView.show();
 			}
 		});
@@ -426,122 +576,186 @@ public class ToolBarPresenter
 		toolBar.getExportarButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
 			// Fazendo com que exporte todos dados do masterdata.
 			@Override
-			public void componentSelected(ButtonEvent ce) {
+			public void componentSelected( ButtonEvent ce )
+			{
+				ExcelParametros parametros = new ExcelParametros(
+					ExcelInformationType.TUDO, instituicaoEnsinoDTO );
+
 				ExportExcelFormSubmit e = new ExportExcelFormSubmit(
-					ExcelInformationType.TUDO, toolBar.getI18nConstants(), toolBar.getI18nMessages() );
+					parametros, toolBar.getI18nConstants(), toolBar.getI18nMessages() );
 
 				e.submit();
 			}
 		});
 
-		toolBar.getOfertasListCursosButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
-			@Override
-			public void componentSelected(ButtonEvent ce) {
-				Presenter presenter = new OfertasPresenter(new OfertasView());
-				presenter.go(gTab);
-			}
-		});
-
-		toolBar.getAssociarDisciplinasSalasListSalasButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
-			@Override
-			public void componentSelected(ButtonEvent ce) {
-				Presenter presenter = new DisciplinasAssociarSalaPresenter(new DisciplinasAssociarSalaView());
-				presenter.go(gTab);
-			}
-		});
-
-		toolBar.getAssociarDisciplinasSalasListDisciplinasButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
-			@Override
-			public void componentSelected(ButtonEvent ce) {
-				Presenter presenter = new DisciplinasAssociarSalaPresenter(new DisciplinasAssociarSalaView());
-				presenter.go(gTab);
-			}
-		});
-
-		toolBar.getDemandasDisciplinasButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
-			@Override
-			public void componentSelected(ButtonEvent ce) {
-				Presenter presenter = new DemandasPresenter(masterData, new DemandasView());
-				presenter.go(gTab);
-			}
-		});
-
-		toolBar.getRelatorioVisaoSalaButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
-			@Override
-			public void componentSelected(ButtonEvent ce) {
-				Presenter presenter = new RelatorioVisaoSalaPresenter(masterData, new RelatorioVisaoSalaView());
-				presenter.go(gTab);
-			}
-		});
-
-		toolBar.getParametrosButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
-			@Override
-			public void componentSelected( ButtonEvent ce )
-			{
-				Services.otimizar().getParametro(masterData, new AsyncCallback<ParametroDTO>()
-				{
-					@Override
-					public void onFailure(Throwable caught) {
-						MessageBox.alert("ERRO!", "Deu falha na conexão", null);
-					}
-					@Override
-					public void onSuccess(ParametroDTO parametroDTO) {
-						Presenter presenter = new ParametrosPresenter(masterData, new ParametrosView(parametroDTO));
-						presenter.go(gTab);
-					}
-				});
-			}
-		});
-
-		toolBar.getRelatorioVisaoCursoButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
-			@Override
-			public void componentSelected(ButtonEvent ce) {
-				Presenter presenter = new RelatorioVisaoCursoPresenter(masterData, new RelatorioVisaoCursoView());
-				presenter.go(gTab);
-			}
-		});
-
-		toolBar.getRelatorioVisaoProfessorButton().addSelectionListener( new SelectionListener< ButtonEvent >()
+		toolBar.getOfertasListCursosButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
 		{
 			@Override
 			public void componentSelected( ButtonEvent ce )
 			{
-				Presenter presenter = new RelatorioVisaoProfessorPresenter(
-					masterData, usuario, new RelatorioVisaoProfessorView( usuario, false ), false );
+				Presenter presenter = new OfertasPresenter(
+					instituicaoEnsinoDTO, new OfertasView() );
 
 				presenter.go( gTab );
 			}
 		});
 
-		toolBar.getResumoCenarioButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
+		toolBar.getAssociarDisciplinasSalasListSalasButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+		{
 			@Override
-			public void componentSelected(ButtonEvent ce) {
-				Presenter presenter = new ResumoCenarioPresenter(masterData, new ResumoCenarioView(masterData));
-				presenter.go(gTab);
+			public void componentSelected( ButtonEvent ce )
+			{
+				Presenter presenter = new DisciplinasAssociarSalaPresenter(
+					instituicaoEnsinoDTO, new DisciplinasAssociarSalaView() );
+
+				presenter.go( gTab );
 			}
 		});
 
-		toolBar.getResumoCampiButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
+		toolBar.getAssociarDisciplinasSalasListDisciplinasButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+		{
 			@Override
-			public void componentSelected(ButtonEvent ce) {
-				Presenter presenter = new ResumoCampiPresenter(masterData, new ResumoCampiView(masterData));
-				presenter.go(gTab);
+			public void componentSelected( ButtonEvent ce )
+			{
+				Presenter presenter = new DisciplinasAssociarSalaPresenter(
+					instituicaoEnsinoDTO, new DisciplinasAssociarSalaView() );
+
+				presenter.go( gTab );
 			}
 		});
 
-		toolBar.getResumoCursosButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
+		toolBar.getDemandasDisciplinasButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+		{
 			@Override
-			public void componentSelected(ButtonEvent ce) {
-				Presenter presenter = new ResumoCursosPresenter(masterData, new ResumoCursosView(masterData));
-				presenter.go(gTab);
+			public void componentSelected( ButtonEvent ce )
+			{
+				Presenter presenter = new DemandasPresenter(
+					instituicaoEnsinoDTO, cenarioDTO, new DemandasView() );
+
+				presenter.go( gTab );
 			}
 		});
 
-		toolBar.getResumoDisciplinasButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
+		toolBar.getRelatorioVisaoSalaButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+		{
 			@Override
-			public void componentSelected(ButtonEvent ce) {
-				Presenter presenter = new ResumoDisciplinaPresenter(masterData, new ResumoDisciplinaView(masterData));
-				presenter.go(gTab);
+			public void componentSelected( ButtonEvent ce )
+			{
+				Presenter presenter = new RelatorioVisaoSalaPresenter(
+					instituicaoEnsinoDTO, cenarioDTO, new RelatorioVisaoSalaView() );
+
+				presenter.go( gTab );
+			}
+		});
+
+		toolBar.getParametrosButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+		{
+			@Override
+			public void componentSelected( ButtonEvent ce )
+			{
+				Services.otimizar().getParametro(
+					cenarioDTO, new AsyncCallback< ParametroDTO >()
+				{
+					@Override
+					public void onFailure( Throwable caught )
+					{
+						MessageBox.alert( "ERRO!", "Deu falha na conexão", null );
+					}
+
+					@Override
+					public void onSuccess( ParametroDTO parametroDTO )
+					{
+						Presenter presenter = new ParametrosPresenter(
+							cenarioDTO, new ParametrosView( parametroDTO ) );
+
+						presenter.go( gTab );
+					}
+				});
+			}
+		});
+
+		toolBar.getRelatorioVisaoCursoButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+		{
+			@Override
+			public void componentSelected( ButtonEvent ce )
+			{
+				Presenter presenter = new RelatorioVisaoCursoPresenter(
+					instituicaoEnsinoDTO, cenarioDTO, new RelatorioVisaoCursoView() );
+
+				presenter.go( gTab );
+			}
+		});
+
+		toolBar.getRelatorioVisaoProfessorButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+		{
+			@Override
+			public void componentSelected( ButtonEvent ce )
+			{
+				Presenter presenter = new RelatorioVisaoProfessorPresenter(
+					instituicaoEnsinoDTO, cenarioDTO, usuarioDTO,
+					new RelatorioVisaoProfessorView( usuarioDTO, false ), false );
+
+				presenter.go( gTab );
+			}
+		});
+
+		toolBar.getResumoCenarioButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+		{
+			@Override
+			public void componentSelected( ButtonEvent ce )
+			{
+				Presenter presenter = new ResumoCenarioPresenter(
+					cenarioDTO, new ResumoCenarioView( cenarioDTO ) );
+
+				presenter.go( gTab );
+			}
+		});
+
+		toolBar.getResumoCampiButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+		{
+			@Override
+			public void componentSelected( ButtonEvent ce )
+			{
+				Presenter presenter = new ResumoCampiPresenter(
+					cenarioDTO, new ResumoCampiView( cenarioDTO ) );
+
+				presenter.go( gTab );
+			}
+		});
+
+		toolBar.getResumoCursosButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+		{
+			@Override
+			public void componentSelected( ButtonEvent ce )
+			{
+				Presenter presenter = new ResumoCursosPresenter( instituicaoEnsinoDTO,
+					cenarioDTO, new ResumoCursosView( cenarioDTO ) );
+
+				presenter.go( gTab );
+			}
+		});
+
+		toolBar.getResumoDisciplinasButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+		{
+			@Override
+			public void componentSelected( ButtonEvent ce )
+			{
+				Presenter presenter = new ResumoDisciplinaPresenter( instituicaoEnsinoDTO,
+						cenarioDTO, new ResumoDisciplinaView( cenarioDTO ) );
+
+				presenter.go( gTab );
 			}
 		});
 	}

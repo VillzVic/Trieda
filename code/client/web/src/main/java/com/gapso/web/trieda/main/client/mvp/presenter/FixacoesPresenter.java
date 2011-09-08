@@ -18,6 +18,7 @@ import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.DisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.FixacaoDTO;
 import com.gapso.web.trieda.shared.dtos.HorarioDisponivelCenarioDTO;
+import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorDTO;
 import com.gapso.web.trieda.shared.dtos.SalaDTO;
 import com.gapso.web.trieda.shared.dtos.UnidadeDTO;
@@ -46,12 +47,18 @@ public class FixacoesPresenter implements Presenter {
 		Component getComponent();
 		void setProxy(RpcProxy<PagingLoadResult<FixacaoDTO>> proxy);
 	}
+	
+	private InstituicaoEnsinoDTO instituicaoEnsinoDTO;
 	private CenarioDTO cenario;
 	private Display display; 
 	
-	public FixacoesPresenter(CenarioDTO cenario, Display display) {
+	public FixacoesPresenter( InstituicaoEnsinoDTO instituicaoEnsinoDTO,
+		CenarioDTO cenario, Display display )
+	{
+		this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;
 		this.cenario = cenario;
 		this.display = display;
+
 		configureProxy();
 		setListeners();
 	}
@@ -70,9 +77,12 @@ public class FixacoesPresenter implements Presenter {
 	private void setListeners() {
 		display.getNewButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
 			@Override
-			public void componentSelected(ButtonEvent ce) {
-				Presenter presenter = new FixacaoFormPresenter(cenario, new FixacaoFormView(new FixacaoDTO(), null, null, null, null, null, null, false), display.getGrid());
-				presenter.go(null);
+			public void componentSelected( ButtonEvent ce )
+			{
+				Presenter presenter = new FixacaoFormPresenter( instituicaoEnsinoDTO,
+					cenario, new FixacaoFormView( new FixacaoDTO(), null, null, null, null, null, null, false ), display.getGrid() );
+
+				presenter.go( null );
 			}
 		});
 		display.getEditButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
@@ -111,8 +121,11 @@ public class FixacoesPresenter implements Presenter {
 						SalaDTO salaDTO = futureSalaDTO.result();
 						List<HorarioDisponivelCenarioDTO> horariosDTOList = futureHorariosDTO.result();
 						
-						Presenter presenter = new FixacaoFormPresenter(cenario, new FixacaoFormView(fixacaoDTO, professorDTO, disciplinaDTO, campusDTO, unidadeDTO, salaDTO, horariosDTOList, false), display.getGrid());
-						presenter.go(null);
+						Presenter presenter = new FixacaoFormPresenter( instituicaoEnsinoDTO,
+							cenario, new FixacaoFormView( fixacaoDTO, professorDTO, disciplinaDTO,
+								campusDTO, unidadeDTO, salaDTO, horariosDTOList, false ), display.getGrid() );
+
+						presenter.go( null );
 					}
 				});
 				
