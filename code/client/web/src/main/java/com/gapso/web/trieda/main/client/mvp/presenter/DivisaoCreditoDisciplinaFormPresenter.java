@@ -9,6 +9,7 @@ import com.extjs.gxt.ui.client.widget.form.NumberField;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.DisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.DivisaoCreditoDTO;
+import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
 import com.gapso.web.trieda.shared.i18n.ITriedaI18nGateway;
 import com.gapso.web.trieda.shared.mvp.presenter.Presenter;
 import com.gapso.web.trieda.shared.services.Services;
@@ -16,9 +17,12 @@ import com.gapso.web.trieda.shared.util.view.AbstractAsyncCallbackWithDefaultOnF
 import com.gapso.web.trieda.shared.util.view.SimpleModal;
 import com.google.gwt.user.client.ui.Widget;
 
-public class DivisaoCreditoDisciplinaFormPresenter implements Presenter {
-
-	public interface Display extends ITriedaI18nGateway {
+public class DivisaoCreditoDisciplinaFormPresenter
+	implements Presenter
+{
+	public interface Display
+		extends ITriedaI18nGateway
+	{
 		Button getSalvarButton();
 		NumberField getDia1NumberField();
 		NumberField getDia2NumberField();
@@ -30,15 +34,21 @@ public class DivisaoCreditoDisciplinaFormPresenter implements Presenter {
 		DivisaoCreditoDTO getDivisaoCreditoDTO();
 		DisciplinaDTO getDisciplinaDTO();
 		boolean isValid();
-		
 		SimpleModal getSimpleModal();
 	}
+
+	private InstituicaoEnsinoDTO instituicaoEnsinoDTO;
 	private CenarioDTO cenario;
 	private Display display;
-	
-	public DivisaoCreditoDisciplinaFormPresenter(CenarioDTO cenario, Display display) {
+
+	public DivisaoCreditoDisciplinaFormPresenter(
+		InstituicaoEnsinoDTO instituicaoEnsinoDTO,
+		CenarioDTO cenario, Display display )
+	{
+		this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;
 		this.cenario = cenario;
 		this.display = display;
+
 		setListeners();
 	}
 
@@ -66,10 +76,13 @@ public class DivisaoCreditoDisciplinaFormPresenter implements Presenter {
 		return display.isValid();
 	}
 	
-	private DivisaoCreditoDTO getDTO() {
+	private DivisaoCreditoDTO getDTO()
+	{
 		DivisaoCreditoDTO divisaoCreditoDTO = display.getDivisaoCreditoDTO();
-		divisaoCreditoDTO.setCenarioId(cenario.getId());
-		
+
+		divisaoCreditoDTO.setInstituicaoEnsinoId( instituicaoEnsinoDTO.getId() );
+		divisaoCreditoDTO.setCenarioId( cenario.getId() );
+
 		Number value1 = display.getDia1NumberField().getValue();
 		int dia1 = value1 == null ? 0 : value1.intValue();
 		

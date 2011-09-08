@@ -10,6 +10,7 @@ import com.extjs.gxt.ui.client.widget.form.NumberField;
 import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.DisciplinaDTO;
+import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
 import com.gapso.web.trieda.shared.mvp.presenter.Presenter;
 import com.gapso.web.trieda.shared.services.DisciplinasServiceAsync;
 import com.gapso.web.trieda.shared.services.Services;
@@ -20,12 +21,14 @@ import com.gapso.web.trieda.shared.util.view.TipoDisciplinaComboBox;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
 
-public class DisciplinaFormPresenter implements Presenter {
-
-	public interface Display {
+public class DisciplinaFormPresenter
+	implements Presenter
+{
+	public interface Display
+	{
 		Button getSalvarButton();
-		TextField<String> getNomeTextField();
-		TextField<String> getCodigoTextField();
+		TextField< String > getNomeTextField();
+		TextField< String > getCodigoTextField();
 		NumberField getCreditosTeoricoTextField();
 		NumberField getCreditosPraticoTextField();
 		CheckBox getLaboratorioCheckBox();
@@ -35,24 +38,33 @@ public class DisciplinaFormPresenter implements Presenter {
 		NumberField getMaxAlunosPraticoTextField();
 		DisciplinaDTO getDisciplinaDTO();
 		boolean isValid();
-		
 		SimpleModal getSimpleModal();
 	}
+
+	private InstituicaoEnsinoDTO instituicaoEnsinoDTO;
 	private CenarioDTO cenario;
-	private SimpleGrid<DisciplinaDTO> gridPanel;
+	private SimpleGrid< DisciplinaDTO > gridPanel;
 	private Display display;
-	
-	public DisciplinaFormPresenter(CenarioDTO cenario, Display display) {
-		this(cenario, display, null);
+
+	public DisciplinaFormPresenter( InstituicaoEnsinoDTO instituicaoEnsinoDTO,
+		CenarioDTO cenario, Display display )
+	{
+		this( instituicaoEnsinoDTO, cenario, display, null );
 	}
-	public DisciplinaFormPresenter(CenarioDTO cenario, Display display, SimpleGrid<DisciplinaDTO> gridPanel) {
+
+	public DisciplinaFormPresenter( InstituicaoEnsinoDTO instituicaoEnsinoDTO,
+		CenarioDTO cenario, Display display, SimpleGrid< DisciplinaDTO > gridPanel )
+	{
+		this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;
 		this.cenario = cenario;
 		this.gridPanel = gridPanel;
 		this.display = display;
+
 		setListeners();
 	}
 
-	private void setListeners() {
+	private void setListeners()
+	{
 		display.getSalvarButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
 			@Override
 			public void componentSelected(ButtonEvent ce) {
@@ -83,8 +95,11 @@ public class DisciplinaFormPresenter implements Presenter {
 		return display.isValid();
 	}
 	
-	private DisciplinaDTO getDTO() {
+	private DisciplinaDTO getDTO()
+	{
 		DisciplinaDTO disciplinaDTO = display.getDisciplinaDTO();
+
+		disciplinaDTO.setInstituicaoEnsinoId( instituicaoEnsinoDTO.getId() );
 		disciplinaDTO.setCenarioId(cenario.getId());
 		disciplinaDTO.setNome(display.getNomeTextField().getValue());
 		disciplinaDTO.setCodigo(display.getCodigoTextField().getValue());
@@ -96,12 +111,13 @@ public class DisciplinaFormPresenter implements Presenter {
 		disciplinaDTO.setDificuldade(display.getDificuldadeComboBox().getValue().getValue().name());
 		disciplinaDTO.setMaxAlunosTeorico(display.getMaxAlunosTeoricoTextField().getValue().intValue());
 		disciplinaDTO.setMaxAlunosPratico(display.getMaxAlunosPraticoTextField().getValue().intValue());
+
 		return disciplinaDTO;
 	}
-	
+
 	@Override
-	public void go(Widget widget) {
+	public void go( Widget widget )
+	{
 		display.getSimpleModal().show();
 	}
-
 }

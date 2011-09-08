@@ -31,13 +31,14 @@ public class UsuarioFormView extends MyComposite
 	private UsuarioDTO usuarioDTO;
 	private CenarioDTO cenarioDTO;
 	private ProfessorDTO professorDTO;
-	
+
 	public UsuarioFormView( CenarioDTO cenarioDTO,
 		UsuarioDTO usuarioDTO, ProfessorDTO professorDTO )
 	{
 		this.usuarioDTO = usuarioDTO;
 		this.cenarioDTO = cenarioDTO;
 		this.professorDTO = professorDTO;
+
 		initUI();
 	}
 
@@ -73,7 +74,7 @@ public class UsuarioFormView extends MyComposite
 		emailTF.setEmptyText("Preencha o email");
 		formPanel.add(emailTF, formData);
 
-		usernameTF = new UniqueTextField(cenarioDTO, UniqueDomain.USUARIO);
+		usernameTF = new UniqueTextField( cenarioDTO, UniqueDomain.USUARIO );
 		usernameTF.setValue(usuarioDTO.getUsername());
 		usernameTF.setFieldLabel("Username");
 		usernameTF.setAllowBlank(false);

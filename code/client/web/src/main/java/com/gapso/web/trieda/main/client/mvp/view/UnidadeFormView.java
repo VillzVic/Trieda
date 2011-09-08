@@ -39,6 +39,7 @@ public class UnidadeFormView extends MyComposite
 		this.unidadeDTO = unidadeDTO;
 		this.campusDTO = campusDTO;
 		this.cenarioDTO = cenarioDTO;
+
 		initUI();
 	}
 
@@ -60,7 +61,7 @@ public class UnidadeFormView extends MyComposite
 		formPanel = new FormPanel();
 		formPanel.setHeaderVisible(false);
 
-		codigoTF = new UniqueTextField(cenarioDTO, UniqueDomain.UNIDADE);
+		codigoTF = new UniqueTextField( cenarioDTO, UniqueDomain.UNIDADE );
 		codigoTF.setName(UnidadeDTO.PROPERTY_CODIGO);
 		codigoTF.setValue(unidadeDTO.getCodigo());
 		codigoTF.setFieldLabel(getI18nConstants().codigo());

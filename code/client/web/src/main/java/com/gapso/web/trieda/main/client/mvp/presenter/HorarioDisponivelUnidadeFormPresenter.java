@@ -11,6 +11,7 @@ import com.extjs.gxt.ui.client.widget.Info;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.HorarioDisponivelCenarioDTO;
+import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
 import com.gapso.web.trieda.shared.dtos.SemanaLetivaDTO;
 import com.gapso.web.trieda.shared.dtos.UnidadeDTO;
 import com.gapso.web.trieda.shared.mvp.presenter.Presenter;
@@ -19,23 +20,31 @@ import com.gapso.web.trieda.shared.util.view.SimpleModal;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
 
-public class HorarioDisponivelUnidadeFormPresenter implements Presenter {
-
-	public interface Display {
+public class HorarioDisponivelUnidadeFormPresenter
+	implements Presenter
+{
+	public interface Display
+	{
 		Button getSalvarButton();
 		SimpleModal getSimpleModal();
 		UnidadeDTO getUnidadeDTO();
-		void setProxy(RpcProxy<PagingLoadResult<HorarioDisponivelCenarioDTO>> proxy);
-		ListStore<HorarioDisponivelCenarioDTO> getStore();
+		void setProxy( RpcProxy< PagingLoadResult< HorarioDisponivelCenarioDTO > > proxy );
+		ListStore< HorarioDisponivelCenarioDTO > getStore();
 	}
+
+	private InstituicaoEnsinoDTO instituicaoEnsinoDTO;
 	private Display display;
 	private CampusDTO campus;
 	private SemanaLetivaDTO semanaLetiva;
 	
-	public HorarioDisponivelUnidadeFormPresenter(CampusDTO campus, SemanaLetivaDTO semanaLetiva, Display display) {
+	public HorarioDisponivelUnidadeFormPresenter( InstituicaoEnsinoDTO instituicaoEnsinoDTO,
+		CampusDTO campus, SemanaLetivaDTO semanaLetiva, Display display )
+	{
+		this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;
 		this.campus = campus;
 		this.semanaLetiva = semanaLetiva;
 		this.display = display;
+
 		configureProxy();
 		setListeners();
 	}
@@ -74,11 +83,13 @@ public class HorarioDisponivelUnidadeFormPresenter implements Presenter {
 		
 	}
 
-	
-	private UnidadeDTO getDTO() {
-		return display.getUnidadeDTO();
+	private UnidadeDTO getDTO()
+	{
+		UnidadeDTO dto = display.getUnidadeDTO();
+		dto.setInstituicaoEnsinoId( instituicaoEnsinoDTO.getId() );
+		return dto;
 	}
-	
+
 	@Override
 	public void go(Widget widget) {
 		display.getSimpleModal().show();

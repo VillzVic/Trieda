@@ -8,6 +8,7 @@ import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.gapso.web.trieda.main.client.mvp.view.GrupoSalaAssociarSalaView;
 import com.gapso.web.trieda.shared.dtos.GrupoSalaDTO;
+import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
 import com.gapso.web.trieda.shared.i18n.ITriedaI18nGateway;
 import com.gapso.web.trieda.shared.mvp.presenter.Presenter;
 import com.gapso.web.trieda.shared.services.GruposSalasServiceAsync;
@@ -33,14 +34,17 @@ public class GrupoSalaFormPresenter
 		SimpleModal getSimpleModal();
 	}
 
+	private InstituicaoEnsinoDTO instituicaoEnsinoDTO;
 	private SimpleGrid< GrupoSalaDTO > gridPanel;
 	private Display display;
 
-	public GrupoSalaFormPresenter(
+	public GrupoSalaFormPresenter( InstituicaoEnsinoDTO instituicaoEnsinoDTO,
 		Display display, SimpleGrid< GrupoSalaDTO > gridPanel )
 	{
+		this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;
 		this.gridPanel = gridPanel;
 		this.display = display;
+
 		setListeners();
 	}
 
@@ -114,6 +118,7 @@ public class GrupoSalaFormPresenter
 	{
 		GrupoSalaDTO grupoSalaDTO = display.getSalaDTO();
 
+		grupoSalaDTO.setInstituicaoEnsinoId( instituicaoEnsinoDTO.getId() );
 		grupoSalaDTO.setCodigo( display.getCodigoTextField().getValue() );
 		grupoSalaDTO.setNome( display.getNomeTextField().getValue() );
 		grupoSalaDTO.setUnidadeId(

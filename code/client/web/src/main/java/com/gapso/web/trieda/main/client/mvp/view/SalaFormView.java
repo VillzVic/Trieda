@@ -51,17 +51,19 @@ public class SalaFormView extends MyComposite implements
 		this.unidadeDTO = unidadeDTO;
 		this.tipoSalaDTO = tipoSalaDTO;
 		this.cenarioDTO = cenarioDTO;
+
 		initUI();
 	}
 
 	private void initUI()
 	{
 		String title = (salaDTO.getId() == null) ?
-				  ( getI18nConstants().insercaoDe() + getI18nConstants().sala() )
-				: ( getI18nConstants().edicaoDe() + getI18nConstants().sala() );
+			( getI18nConstants().insercaoDe() + getI18nConstants().sala() ) :
+			( getI18nConstants().edicaoDe() + getI18nConstants().sala() );
 
 		simpleModal = new SimpleModal( title, Resources.DEFAULTS.sala16() );
 		simpleModal.setHeight( 265 );
+
 		createForm();
 		simpleModal.setContent( formPanel );
 	}

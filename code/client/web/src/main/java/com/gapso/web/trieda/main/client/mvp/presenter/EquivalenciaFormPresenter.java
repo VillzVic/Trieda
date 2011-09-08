@@ -14,6 +14,7 @@ import com.extjs.gxt.ui.client.widget.button.Button;
 import com.gapso.web.trieda.shared.dtos.CursoDTO;
 import com.gapso.web.trieda.shared.dtos.DisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.EquivalenciaDTO;
+import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
 import com.gapso.web.trieda.shared.mvp.presenter.Presenter;
 import com.gapso.web.trieda.shared.services.Services;
 import com.gapso.web.trieda.shared.util.view.CursoComboBox;
@@ -25,29 +26,36 @@ import com.google.gwt.user.client.ui.Widget;
 import com.googlecode.future.FutureResult;
 import com.googlecode.future.FutureSynchronizer;
 
-public class EquivalenciaFormPresenter implements Presenter {
-
-	public interface Display {
+public class EquivalenciaFormPresenter
+	implements Presenter
+{
+	public interface Display
+	{
 		Button getSalvarButton();
 		CursoComboBox getCursoComboBox();
 		DisciplinaComboBox getDisciplinaComboBox();
-		ListView<CursoDTO> getCursosList();
-		ListView<DisciplinaDTO> getDisciplinasNaoPertencesList();
-		ListView<DisciplinaDTO> getDisciplinasPertencesList();
+		ListView< CursoDTO > getCursosList();
+		ListView< DisciplinaDTO > getDisciplinasNaoPertencesList();
+		ListView< DisciplinaDTO > getDisciplinasPertencesList();
 		Button getAtualizaDisciplinasDoCursoBT();
 		Button getAdicionaDisciplinasBT();
 		Button getRemoveDisciplinasBT();
 		EquivalenciaDTO getEquivalenciaDTO();
 		boolean isValid();
-		
 		SimpleModal getSimpleModal();
 	}
-	private SimpleGrid<EquivalenciaDTO> gridPanel;
+
+	private InstituicaoEnsinoDTO instituicaoEnsinoDTO; 
+	private SimpleGrid< EquivalenciaDTO > gridPanel;
 	private Display display;
-	
-	public EquivalenciaFormPresenter(Display display, SimpleGrid<EquivalenciaDTO> gridPanel) {
+
+	public EquivalenciaFormPresenter( InstituicaoEnsinoDTO instituicaoEnsinoDTO,
+		Display display, SimpleGrid< EquivalenciaDTO > gridPanel )
+	{
+		this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;
 		this.gridPanel = gridPanel;
 		this.display = display;
+
 		setListeners();
 		populaListas();
 	}
@@ -72,7 +80,7 @@ public class EquivalenciaFormPresenter implements Presenter {
 			}
 		});
 	}
-	
+
 	private void setListeners() {
 		display.getSalvarButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
 			@Override
@@ -163,25 +171,31 @@ public class EquivalenciaFormPresenter implements Presenter {
 			}
 		});
 	}
-	
-	private boolean isValid() {
+
+	private boolean isValid()
+	{
 		return display.isValid();
 	}
-	
-	private EquivalenciaDTO getDTO() {
+
+	private EquivalenciaDTO getDTO()
+	{
 		EquivalenciaDTO equivalenciaDTO = display.getEquivalenciaDTO();
-		equivalenciaDTO.setCursouId(display.getDisciplinaComboBox().getValue().getId());
-		equivalenciaDTO.setCursouString(display.getDisciplinaComboBox().getValue().getCodigo());
+
+		equivalenciaDTO.setInstituicaoEnsinoId( instituicaoEnsinoDTO.getId() );
+		equivalenciaDTO.setCursouId( display.getDisciplinaComboBox().getValue().getId() );
+		equivalenciaDTO.setCursouString( display.getDisciplinaComboBox().getValue().getCodigo() );
+
 		return equivalenciaDTO;
 	}
 	
-	private List<DisciplinaDTO> getDisciplinasSelecionadas() {
+	private List< DisciplinaDTO > getDisciplinasSelecionadas()
+	{
 		return display.getDisciplinasPertencesList().getStore().getModels();
 	}
 	
 	@Override
-	public void go(Widget widget) {
+	public void go( Widget widget )
+	{
 		display.getSimpleModal().show();
 	}
-
 }

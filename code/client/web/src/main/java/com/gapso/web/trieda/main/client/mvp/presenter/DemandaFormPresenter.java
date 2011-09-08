@@ -7,6 +7,7 @@ import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.NumberField;
 import com.gapso.web.trieda.shared.dtos.DemandaDTO;
+import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
 import com.gapso.web.trieda.shared.mvp.presenter.Presenter;
 import com.gapso.web.trieda.shared.services.DemandasServiceAsync;
 import com.gapso.web.trieda.shared.services.Services;
@@ -20,9 +21,11 @@ import com.gapso.web.trieda.shared.util.view.TurnoComboBox;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
 
-public class DemandaFormPresenter implements Presenter {
-
-	public interface Display {
+public class DemandaFormPresenter
+	implements Presenter
+{
+	public interface Display
+	{
 		Button getSalvarButton();
 		CampusComboBox getCampusComboBox();
 		CursoComboBox getCursoComboBox();
@@ -32,15 +35,20 @@ public class DemandaFormPresenter implements Presenter {
 		NumberField getDemandaTextField();
 		DemandaDTO getDemandaDTO();
 		boolean isValid();
-		
 		SimpleModal getSimpleModal();
 	}
-	private SimpleGrid<DemandaDTO> gridPanel;
+
+	private InstituicaoEnsinoDTO instituicaoEnsinoDTO;
+	private SimpleGrid< DemandaDTO > gridPanel;
 	private Display display;
-	
-	public DemandaFormPresenter(Display display, SimpleGrid<DemandaDTO> gridPanel) {
+
+	public DemandaFormPresenter( InstituicaoEnsinoDTO instituicaoEnsinoDTO,
+		Display display, SimpleGrid< DemandaDTO > gridPanel )
+	{
+		this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;
 		this.gridPanel = gridPanel;
 		this.display = display;
+
 		setListeners();
 	}
 
@@ -73,9 +81,11 @@ public class DemandaFormPresenter implements Presenter {
 		return display.isValid();
 	}
 	
-	private DemandaDTO getDTO() {
+	private DemandaDTO getDTO()
+	{
 		DemandaDTO demandaDTO = display.getDemandaDTO();
 
+		demandaDTO.setInstituicaoEnsinoId( instituicaoEnsinoDTO.getId() );
 		demandaDTO.setCampusId(display.getCampusComboBox().getSelection().get(0).getId());
 		demandaDTO.setCampusString(display.getCampusComboBox().getSelection().get(0).getCodigo());
 		demandaDTO.setCursoId(display.getCursoComboBox().getSelection().get(0).getId());

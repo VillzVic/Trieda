@@ -6,6 +6,7 @@ import com.extjs.gxt.ui.client.widget.Info;
 import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.NumberField;
+import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
 import com.gapso.web.trieda.shared.dtos.OfertaDTO;
 import com.gapso.web.trieda.shared.mvp.presenter.Presenter;
 import com.gapso.web.trieda.shared.services.OfertasServiceAsync;
@@ -35,12 +36,14 @@ public class OfertaFormPresenter
 		SimpleModal getSimpleModal();
 	}
 
+	private InstituicaoEnsinoDTO instituicaoEnsinoDTO;
 	private SimpleGrid< OfertaDTO > gridPanel;
 	private Display display;
 
-	public OfertaFormPresenter( Display display,
-		SimpleGrid< OfertaDTO > gridPanel )
+	public OfertaFormPresenter( InstituicaoEnsinoDTO instituicaoEnsinoDTO,
+		Display display, SimpleGrid< OfertaDTO > gridPanel )
 	{
+		this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;
 		this.gridPanel = gridPanel;
 		this.display = display;
 		setListeners();
@@ -92,6 +95,7 @@ public class OfertaFormPresenter
 	{
 		OfertaDTO ofertaDTO = display.getOfertaDTO();
 
+		ofertaDTO.setInstituicaoEnsinoId( instituicaoEnsinoDTO.getId() );
 		ofertaDTO.setTurnoId( display.getTurnoComboBox().getSelection().get( 0 ).getId() );
 		ofertaDTO.setTurnoString( display.getTurnoComboBox().getSelection().get( 0 ).getNome() );
 		ofertaDTO.setCampusId( display.getCampusComboBox().getSelection().get( 0 ).getId() );

@@ -21,8 +21,10 @@ import com.gapso.web.trieda.shared.util.view.TitulacaoComboBox;
 import com.gapso.web.trieda.shared.util.view.UniqueDomain;
 import com.gapso.web.trieda.shared.util.view.UniqueTextField;
 
-public class ProfessorFormView extends MyComposite implements ProfessorFormPresenter.Display {
-
+public class ProfessorFormView
+	extends MyComposite
+		implements ProfessorFormPresenter.Display
+{
 	private SimpleModal simpleModal;
 	private FormPanel formPanel;
 
@@ -41,16 +43,21 @@ public class ProfessorFormView extends MyComposite implements ProfessorFormPrese
 	private TitulacaoDTO titulacaoDTO;
 	private AreaTitulacaoDTO areaTitulacaoDTO;
 	private CenarioDTO cenarioDTO;
-	
-	public ProfessorFormView(CenarioDTO cenarioDTO) {
-		this(new ProfessorDTO(), null, null, null, cenarioDTO);
+
+	public ProfessorFormView( CenarioDTO cenarioDTO )
+	{
+		this( new ProfessorDTO(), null, null, null, cenarioDTO );
 	}
-	public ProfessorFormView(ProfessorDTO professorDTO, TipoContratoDTO tipoContratoDTO, TitulacaoDTO titulacaoDTO, AreaTitulacaoDTO areaTitulacaoDTO, CenarioDTO cenarioDTO) {
+
+	public ProfessorFormView( ProfessorDTO professorDTO, TipoContratoDTO tipoContratoDTO,
+		TitulacaoDTO titulacaoDTO, AreaTitulacaoDTO areaTitulacaoDTO, CenarioDTO cenarioDTO )
+	{
 		this.professorDTO = professorDTO;
 		this.tipoContratoDTO = tipoContratoDTO;
 		this.titulacaoDTO = titulacaoDTO;
 		this.areaTitulacaoDTO = areaTitulacaoDTO;
 		this.cenarioDTO = cenarioDTO;
+
 		initUI();
 	}
 	
@@ -69,7 +76,7 @@ public class ProfessorFormView extends MyComposite implements ProfessorFormPrese
 		formPanel = new FormPanel();
 		formPanel.setHeaderVisible(false);
 
-		cpfTF = new UniqueTextField(cenarioDTO, UniqueDomain.PROFESSOR);
+		cpfTF = new UniqueTextField( cenarioDTO, UniqueDomain.PROFESSOR );
 		cpfTF.setName(ProfessorDTO.PROPERTY_CPF);
 		cpfTF.setValue(professorDTO.getCpf());
 		cpfTF.setFieldLabel("CPF");
@@ -213,6 +220,4 @@ public class ProfessorFormView extends MyComposite implements ProfessorFormPrese
 	public ProfessorDTO getProfessorDTO() {
 		return professorDTO;
 	}
-	
-
 }

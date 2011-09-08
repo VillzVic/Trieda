@@ -6,6 +6,7 @@ import com.extjs.gxt.ui.client.widget.form.FormPanel;
 import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.extjs.gxt.ui.client.widget.layout.FormData;
 import com.gapso.web.trieda.main.client.mvp.presenter.TipoCursoFormPresenter;
+import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
 import com.gapso.web.trieda.shared.dtos.TipoCursoDTO;
 import com.gapso.web.trieda.shared.mvp.view.MyComposite;
 import com.gapso.web.trieda.shared.util.resources.Resources;
@@ -16,19 +17,25 @@ public class TipoCursoFormView extends MyComposite
 {
 	private SimpleModal simpleModal;
 	private FormPanel formPanel;
-	private TextField<String> codigoTF;
-	private TextField<String> descricaoTF;
+	private TextField< String > codigoTF;
+	private TextField< String > descricaoTF;
 	private TipoCursoDTO tipoCursoDTO;
-	
-	public TipoCursoFormView( TipoCursoDTO tipoCursoDTO )
+
+	public TipoCursoFormView( InstituicaoEnsinoDTO instituicaoEnsinoDTO,
+		TipoCursoDTO tipoCursoDTO )
 	{
 		this.tipoCursoDTO = tipoCursoDTO;
+		this.tipoCursoDTO.setInstituicaoEnsinoId( instituicaoEnsinoDTO.getId() );
+		this.tipoCursoDTO.setInstituicaoEnsinoString( instituicaoEnsinoDTO.getNomeInstituicao() );
+
 		initUI();
 	}
-	
+
 	private void initUI()
 	{
-		String title = ( ( tipoCursoDTO.getId() == null ) ? "Inserção de Tipo de Curso" : "Edição de Tipo de Curso" );
+		String title = ( ( tipoCursoDTO.getId() == null ) ?
+			"Inserção de Tipo de Curso" : "Edição de Tipo de Curso" );
+
 		simpleModal = new SimpleModal( title, Resources.DEFAULTS.curso16() );
 		simpleModal.setHeight( 138 );
 		createForm();

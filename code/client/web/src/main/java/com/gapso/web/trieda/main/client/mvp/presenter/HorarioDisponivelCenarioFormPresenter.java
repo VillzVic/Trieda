@@ -12,6 +12,7 @@ import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.gapso.web.trieda.shared.dtos.HorarioAulaDTO;
 import com.gapso.web.trieda.shared.dtos.HorarioDisponivelCenarioDTO;
+import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
 import com.gapso.web.trieda.shared.dtos.SemanaLetivaDTO;
 import com.gapso.web.trieda.shared.i18n.ITriedaI18nGateway;
 import com.gapso.web.trieda.shared.mvp.presenter.Presenter;
@@ -36,12 +37,19 @@ public class HorarioDisponivelCenarioFormPresenter implements Presenter {
 		TurnoComboBox getTurnoCB();
 		TextField<String> getHorarioInicioTF();
 	}
+
+	private InstituicaoEnsinoDTO instituicaoEnsinoDTO;
 	private Display display;
 	private SemanaLetivaDTO semanaLetiva;
-	
-	public HorarioDisponivelCenarioFormPresenter(SemanaLetivaDTO semanaLetiva, Display display) {
+
+	public HorarioDisponivelCenarioFormPresenter(
+		InstituicaoEnsinoDTO instituicaoEnsinoDTO,
+		SemanaLetivaDTO semanaLetiva, Display display )
+	{
+		this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;
 		this.semanaLetiva = semanaLetiva;
 		this.display = display;
+
 		configureProxy();
 		setListeners();
 	}
@@ -98,23 +106,31 @@ public class HorarioDisponivelCenarioFormPresenter implements Presenter {
 			}
 		});
 	}
-	
-	private SemanaLetivaDTO getDTO() {
-		return display.getSemanaLetivaDTO();
+
+	private SemanaLetivaDTO getDTO()
+	{
+		SemanaLetivaDTO dto = display.getSemanaLetivaDTO();
+		dto.setInstituicaoEnsinoId( semanaLetiva.getInstituicaoEnsinoId() );
+		return dto;
 	}
-	
-	private HorarioAulaDTO getHorarioAulaDTO() {
+
+	private HorarioAulaDTO getHorarioAulaDTO()
+	{
 		HorarioAulaDTO dto = new HorarioAulaDTO();
-		dto.setSemanaLetivaId(semanaLetiva.getId());
-		dto.setTurnoId(display.getTurnoCB().getSelection().get(0).getId());
-		DateTimeFormat df = DateTimeFormat.getFormat("HH:mm");
-		dto.setInicio(df.parse(display.getHorarioInicioTF().getValue()));
+
+		dto.setInstituicaoEnsinoId( instituicaoEnsinoDTO.getId() );
+		dto.setSemanaLetivaId( semanaLetiva.getId() );
+		dto.setTurnoId( display.getTurnoCB().getSelection().get(0).getId() );
+
+		DateTimeFormat df = DateTimeFormat.getFormat( "HH:mm" );
+		dto.setInicio( df.parse( display.getHorarioInicioTF().getValue() ) );
+
 		return dto;
 	}
 	
 	@Override
-	public void go(Widget widget) {
+	public void go( Widget widget )
+	{
 		display.getSimpleModal().show();
 	}
-
 }

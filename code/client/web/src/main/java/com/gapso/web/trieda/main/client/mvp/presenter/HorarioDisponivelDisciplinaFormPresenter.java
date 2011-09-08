@@ -12,6 +12,7 @@ import com.extjs.gxt.ui.client.widget.button.Button;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.DisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.HorarioDisponivelCenarioDTO;
+import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
 import com.gapso.web.trieda.shared.dtos.SemanaLetivaDTO;
 import com.gapso.web.trieda.shared.mvp.presenter.Presenter;
 import com.gapso.web.trieda.shared.services.Services;
@@ -28,15 +29,22 @@ public class HorarioDisponivelDisciplinaFormPresenter implements Presenter {
 		void setProxy(RpcProxy<PagingLoadResult<HorarioDisponivelCenarioDTO>> proxy);
 		ListStore<HorarioDisponivelCenarioDTO> getStore();
 	}
-	private Display display;
+
 	@SuppressWarnings("unused")
 	private CenarioDTO cenario;
+
+	private InstituicaoEnsinoDTO instituicaoEnsinoDTO;
+	private Display display;
 	private SemanaLetivaDTO semanaLetiva;
 	
-	public HorarioDisponivelDisciplinaFormPresenter(CenarioDTO cenario, SemanaLetivaDTO semanaLetiva, Display display) {
+	public HorarioDisponivelDisciplinaFormPresenter( InstituicaoEnsinoDTO instituicaoEnsinoDTO,
+		CenarioDTO cenario, SemanaLetivaDTO semanaLetiva, Display display )
+	{
+		this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;
 		this.cenario = cenario;
 		this.semanaLetiva = semanaLetiva;
 		this.display = display;
+
 		configureProxy();
 		setListeners();
 	}
@@ -75,13 +83,16 @@ public class HorarioDisponivelDisciplinaFormPresenter implements Presenter {
 		
 	}
 
-	
-	private DisciplinaDTO getDTO() {
-		return display.getDisciplinaDTO();
+	private DisciplinaDTO getDTO()
+	{
+		DisciplinaDTO dto = display.getDisciplinaDTO();
+		dto.setInstituicaoEnsinoId( instituicaoEnsinoDTO.getId() );
+		return dto;
 	}
-	
+
 	@Override
-	public void go(Widget widget) {
+	public void go( Widget widget )
+	{
 		display.getSimpleModal().show();
 	}
 }

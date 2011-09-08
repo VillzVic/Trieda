@@ -21,20 +21,22 @@ import com.gapso.web.trieda.shared.util.view.SimpleModal;
 import com.gapso.web.trieda.shared.util.view.UniqueDomain;
 import com.gapso.web.trieda.shared.util.view.UniqueTextField;
 
-public class CampusFormView extends MyComposite implements CampusFormPresenter.Display {
-
+public class CampusFormView
+	extends MyComposite
+	implements CampusFormPresenter.Display
+{
 	private SimpleModal simpleModal;
 	private FormPanel formPanel;
-	private TextField<String> nomeTF;
-	private TextField<String> codigoTF;
+	private TextField< String > nomeTF;
+	private TextField< String > codigoTF;
 	private EstadoComboBox estadoCB;
-	private TextField<String> municipioTF;
-	private TextField<String> bairroTF;
+	private TextField< String > municipioTF;
+	private TextField< String > bairroTF;
 	private NumberField valorCreditoNF;
 	private CheckBox publicadoCB;
 	private CenarioDTO cenarioDTO;
 	private CampusDTO campusDTO;
-	
+
 	public CampusFormView( CenarioDTO cenarioDTO )
 	{
 		this( cenarioDTO, new CampusDTO() );
@@ -44,6 +46,7 @@ public class CampusFormView extends MyComposite implements CampusFormPresenter.D
 	{
 		this.cenarioDTO = cenarioDTO;
 		this.campusDTO = campusDTO;
+
 		initUI();
 	}
 	
@@ -71,7 +74,7 @@ public class CampusFormView extends MyComposite implements CampusFormPresenter.D
 		geralFS.setLayout(formLayout);
 		geralFS.setHeading("Informações Gerais");
 		
-		codigoTF = new UniqueTextField(cenarioDTO, UniqueDomain.CAMPI);
+		codigoTF = new UniqueTextField( cenarioDTO, UniqueDomain.CAMPI );
 		codigoTF.setName(CampusDTO.PROPERTY_CODIGO);
 		codigoTF.setValue(campusDTO.getCodigo());
 		codigoTF.setFieldLabel("Código");

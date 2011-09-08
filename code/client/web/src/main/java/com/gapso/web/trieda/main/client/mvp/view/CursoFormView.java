@@ -18,13 +18,14 @@ import com.gapso.web.trieda.shared.util.view.TipoCursoComboBox;
 import com.gapso.web.trieda.shared.util.view.UniqueDomain;
 import com.gapso.web.trieda.shared.util.view.UniqueTextField;
 
-public class CursoFormView extends MyComposite implements
-		CursoFormPresenter.Display {
-
+public class CursoFormView
+	extends MyComposite
+	implements CursoFormPresenter.Display
+{
 	private SimpleModal simpleModal;
 	private FormPanel formPanel;
-	private TextField<String> nomeTF;
-	private TextField<String> codigoTF;
+	private TextField< String > nomeTF;
+	private TextField< String > codigoTF;
 	private TipoCursoComboBox tipoCursoCB;
 	private NumberField numMinDoutoresTF;
 	private NumberField numMinMestresTF;
@@ -36,15 +37,18 @@ public class CursoFormView extends MyComposite implements
 	private TipoCursoDTO tipoCursoDTO;
 	private CenarioDTO cenarioDTO;
 
-	public CursoFormView(CenarioDTO cenarioDTO) {
-		this(new CursoDTO(), null, cenarioDTO);
+	public CursoFormView( CenarioDTO cenarioDTO )
+	{
+		this( new CursoDTO(), null, cenarioDTO );
 	}
 
-	public CursoFormView(CursoDTO cursoDTO, TipoCursoDTO tipoCursoDTO,
-			CenarioDTO cenarioDTO) {
+	public CursoFormView( CursoDTO cursoDTO,
+		TipoCursoDTO tipoCursoDTO, CenarioDTO cenarioDTO )
+	{
 		this.cursoDTO = cursoDTO;
 		this.tipoCursoDTO = tipoCursoDTO;
 		this.cenarioDTO = cenarioDTO;
+
 		initUI();
 	}
 
@@ -57,12 +61,13 @@ public class CursoFormView extends MyComposite implements
 		simpleModal.setContent(formPanel);
 	}
 
-	private void createForm() {
+	private void createForm()
+	{
 		FormData formData = new FormData("-20");
 		formPanel = new FormPanel();
 		formPanel.setHeaderVisible(false);
 
-		codigoTF = new UniqueTextField(cenarioDTO, UniqueDomain.CURSO);
+		codigoTF = new UniqueTextField( cenarioDTO, UniqueDomain.CURSO );
 		codigoTF.setName(CursoDTO.PROPERTY_CODIGO);
 		codigoTF.setValue(cursoDTO.getCodigo());
 		codigoTF.setFieldLabel("Código");

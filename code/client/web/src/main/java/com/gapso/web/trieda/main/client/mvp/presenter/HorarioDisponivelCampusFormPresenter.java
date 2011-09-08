@@ -12,6 +12,7 @@ import com.extjs.gxt.ui.client.widget.button.Button;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.HorarioDisponivelCenarioDTO;
+import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
 import com.gapso.web.trieda.shared.dtos.SemanaLetivaDTO;
 import com.gapso.web.trieda.shared.mvp.presenter.Presenter;
 import com.gapso.web.trieda.shared.services.Services;
@@ -28,15 +29,22 @@ public class HorarioDisponivelCampusFormPresenter implements Presenter {
 		void setProxy(RpcProxy<PagingLoadResult<HorarioDisponivelCenarioDTO>> proxy);
 		ListStore<HorarioDisponivelCenarioDTO> getStore();
 	}
-	private Display display;
+
 	@SuppressWarnings("unused")
 	private CenarioDTO cenario;
+
+	private InstituicaoEnsinoDTO instituicaoEnsinoDTO;
+	private Display display;
 	private SemanaLetivaDTO semanaLetiva;
 	
-	public HorarioDisponivelCampusFormPresenter(CenarioDTO cenario, SemanaLetivaDTO semanaLetiva, Display display) {
+	public HorarioDisponivelCampusFormPresenter( InstituicaoEnsinoDTO instituicaoEnsinoDTO,
+		CenarioDTO cenario, SemanaLetivaDTO semanaLetiva, Display display )
+	{
+		this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;
 		this.cenario = cenario;
 		this.semanaLetiva = semanaLetiva;
 		this.display = display;
+
 		configureProxy();
 		setListeners();
 	}
@@ -68,20 +76,22 @@ public class HorarioDisponivelCampusFormPresenter implements Presenter {
 						Info.display("Atualizado", "Horários atualizados com sucesso!");
 						display.getSimpleModal().hide();
 					}
-					
 				});
 			}
 		});
 		
 	}
 
-	
-	private CampusDTO getDTO() {
-		return display.getCampusDTO();
+	private CampusDTO getDTO()
+	{
+		CampusDTO dto = display.getCampusDTO();
+		dto.setInstituicaoEnsinoId( instituicaoEnsinoDTO.getId() );
+		return dto;
 	}
-	
+
 	@Override
-	public void go(Widget widget) {
+	public void go( Widget widget )
+	{
 		display.getSimpleModal().show();
 	}
 }

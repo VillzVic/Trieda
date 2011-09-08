@@ -8,6 +8,7 @@ import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.CurriculoDTO;
+import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
 import com.gapso.web.trieda.shared.mvp.presenter.Presenter;
 import com.gapso.web.trieda.shared.services.CurriculosServiceAsync;
 import com.gapso.web.trieda.shared.services.Services;
@@ -33,16 +34,19 @@ public class CurriculoFormPresenter
 		SimpleModal getSimpleModal();
 	}
 
+	private InstituicaoEnsinoDTO instituicaoEnsinoDTO; 
 	private CenarioDTO cenario;
 	private SimpleGrid< CurriculoDTO > gridPanel;
 	private Display display;
 
-	public CurriculoFormPresenter( CenarioDTO cenario,
-		Display display, SimpleGrid< CurriculoDTO > gridPanel )
+	public CurriculoFormPresenter( InstituicaoEnsinoDTO instituicaoEnsinoDTO,
+		CenarioDTO cenario, Display display, SimpleGrid< CurriculoDTO > gridPanel )
 	{
+		this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;
 		this.cenario = cenario;
 		this.gridPanel = gridPanel;
 		this.display = display;
+
 		setListeners();
 	}
 
@@ -91,6 +95,7 @@ public class CurriculoFormPresenter
 	{
 		CurriculoDTO curriculoDTO = display.getCurriculoDTO();
 
+		curriculoDTO.setInstituicaoEnsinoId( instituicaoEnsinoDTO.getId() );
 		curriculoDTO.setCenarioId( cenario.getId() );
 		curriculoDTO.setCodigo( display.getCodigoTextField().getValue() );
 		curriculoDTO.setDescricao( display.getDescricaoTextField().getValue() );

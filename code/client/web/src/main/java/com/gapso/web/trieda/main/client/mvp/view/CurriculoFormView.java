@@ -60,8 +60,7 @@ public class CurriculoFormView extends MyComposite
 		formPanel = new FormPanel();
 		formPanel.setHeaderVisible( false );
 
-		codigoTF = new UniqueTextField(
-			cenarioDTO, UniqueDomain.MATRIZ_CURRICULAR );
+		codigoTF = new UniqueTextField( cenarioDTO, UniqueDomain.MATRIZ_CURRICULAR );
 		codigoTF.setName( CurriculoDTO.PROPERTY_CODIGO );
 		codigoTF.setValue( curriculoDTO.getCodigo() );
 		codigoTF.setFieldLabel( "Código" );

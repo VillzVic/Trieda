@@ -10,6 +10,7 @@ import com.extjs.gxt.ui.client.widget.form.NumberField;
 import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.CursoDTO;
+import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
 import com.gapso.web.trieda.shared.mvp.presenter.Presenter;
 import com.gapso.web.trieda.shared.services.CursosServiceAsync;
 import com.gapso.web.trieda.shared.services.Services;
@@ -19,9 +20,11 @@ import com.gapso.web.trieda.shared.util.view.TipoCursoComboBox;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
 
-public class CursoFormPresenter implements Presenter {
-
-	public interface Display {
+public class CursoFormPresenter
+	implements Presenter
+{
+	public interface Display
+	{
 		Button getSalvarButton();
 		TextField<String> getNomeTextField();
 		TextField<String> getCodigoTextField();
@@ -34,20 +37,28 @@ public class CursoFormPresenter implements Presenter {
 		CheckBox getAdmMaisDeUmDisciplinaCheckBox();
 		CursoDTO getCursoDTO();
 		boolean isValid();
-		
 		SimpleModal getSimpleModal();
 	}
+
+	private InstituicaoEnsinoDTO instituicaoEnsinoDTO;
 	private CenarioDTO cenario;
-	private SimpleGrid<CursoDTO> gridPanel;
+	private SimpleGrid< CursoDTO > gridPanel;
 	private Display display;
-	
-	public CursoFormPresenter(CenarioDTO cenario, Display display) {
-		this(cenario, display, null);
+
+	public CursoFormPresenter( InstituicaoEnsinoDTO instituicaoEnsinoDTO,
+		CenarioDTO cenario, Display display )
+	{
+		this( instituicaoEnsinoDTO, cenario, display, null );
 	}
-	public CursoFormPresenter(CenarioDTO cenario, Display display, SimpleGrid<CursoDTO> gridPanel) {
+
+	public CursoFormPresenter( InstituicaoEnsinoDTO instituicaoEnsinoDTO,
+		CenarioDTO cenario, Display display, SimpleGrid< CursoDTO > gridPanel )
+	{
+		this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;
 		this.cenario = cenario;
 		this.gridPanel = gridPanel;
 		this.display = display;
+
 		setListeners();
 	}
 
@@ -82,8 +93,11 @@ public class CursoFormPresenter implements Presenter {
 		return display.isValid();
 	}
 	
-	private CursoDTO getDTO() {
+	private CursoDTO getDTO()
+	{
 		CursoDTO cursoDTO = display.getCursoDTO();
+
+		cursoDTO.setInstituicaoEnsinoId( instituicaoEnsinoDTO.getId() );
 		cursoDTO.setCenarioId(cenario.getId());
 		cursoDTO.setNome(display.getNomeTextField().getValue());
 		cursoDTO.setCodigo(display.getCodigoTextField().getValue());
@@ -95,12 +109,13 @@ public class CursoFormPresenter implements Presenter {
 		cursoDTO.setAdmMaisDeUmDisciplina(display.getAdmMaisDeUmDisciplinaCheckBox().getValue());
 		cursoDTO.setTipoId(display.getTipoCursoComboBox().getSelection().get(0).getId());
 		cursoDTO.setTipoString(display.getTipoCursoComboBox().getSelection().get(0).getCodigo());
+
 		return cursoDTO;
 	}
-	
+
 	@Override
-	public void go(Widget widget) {
+	public void go( Widget widget )
+	{
 		display.getSimpleModal().show();
 	}
-
 }

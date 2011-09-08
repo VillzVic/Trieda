@@ -19,9 +19,10 @@ import com.gapso.web.trieda.shared.util.view.TipoDisciplinaComboBox;
 import com.gapso.web.trieda.shared.util.view.UniqueDomain;
 import com.gapso.web.trieda.shared.util.view.UniqueTextField;
 
-public class DisciplinaFormView extends MyComposite implements
-		DisciplinaFormPresenter.Display {
-
+public class DisciplinaFormView
+	extends MyComposite
+	implements DisciplinaFormPresenter.Display
+{
 	private SimpleModal simpleModal;
 	private FormPanel formPanel;
 	private TextField<String> nomeTF;
@@ -37,15 +38,18 @@ public class DisciplinaFormView extends MyComposite implements
 	private TipoDisciplinaDTO tipoDisciplinaDTO;
 	private CenarioDTO cenarioDTO;
 
-	public DisciplinaFormView(CenarioDTO cenarioDTO) {
-		this(new DisciplinaDTO(), null, cenarioDTO);
+	public DisciplinaFormView( CenarioDTO cenarioDTO )
+	{
+		this( new DisciplinaDTO(), null, cenarioDTO );
 	}
 
-	public DisciplinaFormView(DisciplinaDTO disciplinaDTO,
-			TipoDisciplinaDTO tipoDisciplinaDTO, CenarioDTO cenarioDTO) {
+	public DisciplinaFormView( DisciplinaDTO disciplinaDTO,
+		TipoDisciplinaDTO tipoDisciplinaDTO, CenarioDTO cenarioDTO )
+	{
 		this.disciplinaDTO = disciplinaDTO;
 		this.tipoDisciplinaDTO = tipoDisciplinaDTO;
 		this.cenarioDTO = cenarioDTO;
+
 		initUI();
 	}
 
@@ -63,7 +67,7 @@ public class DisciplinaFormView extends MyComposite implements
 		formPanel = new FormPanel();
 		formPanel.setHeaderVisible(false);
 
-		codigoTF = new UniqueTextField(cenarioDTO, UniqueDomain.DISCIPLINA);
+		codigoTF = new UniqueTextField( cenarioDTO, UniqueDomain.DISCIPLINA );
 		codigoTF.setName(DisciplinaDTO.PROPERTY_CODIGO);
 		codigoTF.setValue(disciplinaDTO.getCodigo());
 		codigoTF.setFieldLabel("Código");

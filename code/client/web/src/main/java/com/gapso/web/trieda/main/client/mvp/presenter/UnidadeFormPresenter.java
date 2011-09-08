@@ -6,6 +6,7 @@ import com.extjs.gxt.ui.client.widget.Info;
 import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.TextField;
+import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
 import com.gapso.web.trieda.shared.dtos.UnidadeDTO;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nMessages;
@@ -18,27 +19,33 @@ import com.gapso.web.trieda.shared.util.view.SimpleModal;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
 
-public class UnidadeFormPresenter implements Presenter {
-
-	public interface Display {
+public class UnidadeFormPresenter
+	implements Presenter
+{
+	public interface Display
+	{
 		Button getSalvarButton();
 		TextField<String> getNomeTextField();
 		TextField<String> getCodigoTextField();
 		CampusComboBox getCampusComboBox();
 		UnidadeDTO getUnidadeDTO();
 		boolean isValid();
-		
 		SimpleModal getSimpleModal();
-		
 		TriedaI18nConstants getI18nConstants();
 		TriedaI18nMessages getI18nMessages();
 	}
-	private SimpleGrid<UnidadeDTO> gridPanel;
+
+	private InstituicaoEnsinoDTO instituicaoEnsinoDTO;
+	private SimpleGrid< UnidadeDTO > gridPanel;
 	private Display display;
-	
-	public UnidadeFormPresenter(Display display) {
-		this(display, null);
+
+	public UnidadeFormPresenter(
+		InstituicaoEnsinoDTO instituicaoEnsinoDTO, Display display )
+	{
+		this( display, null );
+		this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;
 	}
+
 	public UnidadeFormPresenter(Display display, SimpleGrid<UnidadeDTO> gridPanel) {
 		this.gridPanel = gridPanel;
 		this.display = display;
@@ -75,23 +82,28 @@ public class UnidadeFormPresenter implements Presenter {
 			}
 		});
 	}
-	
-	private boolean isValid() {
+
+	private boolean isValid()
+	{
 		return display.isValid();
 	}
-	
-	private UnidadeDTO getDTO() {
+
+	private UnidadeDTO getDTO()
+	{
 		UnidadeDTO unidadeDTO = display.getUnidadeDTO();
-		unidadeDTO.setNome(display.getNomeTextField().getValue());
-		unidadeDTO.setCodigo(display.getCodigoTextField().getValue());
-		unidadeDTO.setCampusId(display.getCampusComboBox().getSelection().get(0).getId());
-		unidadeDTO.setCampusString(display.getCampusComboBox().getSelection().get(0).getCodigo());
+
+		unidadeDTO.setNome( display.getNomeTextField().getValue() );
+		unidadeDTO.setCodigo( display.getCodigoTextField().getValue() );
+		unidadeDTO.setCampusId( display.getCampusComboBox().getSelection().get(0).getId() );
+		unidadeDTO.setCampusString( display.getCampusComboBox().getSelection().get(0).getCodigo() );
+		unidadeDTO.setInstituicaoEnsinoId( instituicaoEnsinoDTO.getId() );
+
 		return unidadeDTO;
 	}
-	
+
 	@Override
-	public void go(Widget widget) {
+	public void go( Widget widget )
+	{
 		display.getSimpleModal().show();
 	}
-
 }

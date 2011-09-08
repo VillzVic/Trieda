@@ -11,6 +11,7 @@ import com.extjs.gxt.ui.client.widget.Info;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.HorarioDisponivelCenarioDTO;
+import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorDTO;
 import com.gapso.web.trieda.shared.dtos.SemanaLetivaDTO;
 import com.gapso.web.trieda.shared.mvp.presenter.Presenter;
@@ -28,15 +29,22 @@ public class DisponibilidadesProfessorFormPresenter implements Presenter {
 		void setProxy(RpcProxy<PagingLoadResult<HorarioDisponivelCenarioDTO>> proxy);
 		ListStore<HorarioDisponivelCenarioDTO> getStore();
 	}
-	private Display display;
+
 	@SuppressWarnings("unused")
 	private CenarioDTO cenario;
+
+	private InstituicaoEnsinoDTO instituicaoEnsinoDTO;
+	private Display display;
 	private SemanaLetivaDTO semanaLetiva;
-	
-	public DisponibilidadesProfessorFormPresenter(CenarioDTO cenario, SemanaLetivaDTO semanaLetiva, Display display) {
+
+	public DisponibilidadesProfessorFormPresenter( InstituicaoEnsinoDTO instituicaoEnsinoDTO,
+		CenarioDTO cenario, SemanaLetivaDTO semanaLetiva, Display display )
+	{
+		this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;
 		this.cenario = cenario;
 		this.semanaLetiva = semanaLetiva;
 		this.display = display;
+
 		configureProxy();
 		setListeners();
 	}
@@ -50,7 +58,7 @@ public class DisponibilidadesProfessorFormPresenter implements Presenter {
 		};
 		display.setProxy(proxy);
 	}
-	
+
 	private void setListeners() {
 		display.getSalvarButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
 			@Override
@@ -72,14 +80,15 @@ public class DisponibilidadesProfessorFormPresenter implements Presenter {
 				});
 			}
 		});
-		
 	}
 
-	
-	private ProfessorDTO getDTO() {
-		return display.getProfessorDTO();
+	private ProfessorDTO getDTO()
+	{
+		ProfessorDTO dto = display.getProfessorDTO();
+		dto.setInstituicaoEnsinoId( instituicaoEnsinoDTO.getId() );
+		return dto;
 	}
-	
+
 	@Override
 	public void go(Widget widget) {
 		display.getSimpleModal().show();

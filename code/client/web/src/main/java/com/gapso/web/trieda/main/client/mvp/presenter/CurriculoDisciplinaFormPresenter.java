@@ -9,6 +9,7 @@ import com.extjs.gxt.ui.client.widget.form.NumberField;
 import com.extjs.gxt.ui.client.widget.grid.Grid;
 import com.gapso.web.trieda.shared.dtos.CurriculoDTO;
 import com.gapso.web.trieda.shared.dtos.CurriculoDisciplinaDTO;
+import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
 import com.gapso.web.trieda.shared.mvp.presenter.Presenter;
 import com.gapso.web.trieda.shared.services.CurriculosServiceAsync;
 import com.gapso.web.trieda.shared.services.Services;
@@ -17,28 +18,36 @@ import com.gapso.web.trieda.shared.util.view.SimpleModal;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
 
-public class CurriculoDisciplinaFormPresenter implements Presenter {
-
-	public interface Display {
+public class CurriculoDisciplinaFormPresenter
+	implements Presenter
+{
+	public interface Display
+	{
 		Button getSalvarButton();
 		DisciplinaComboBox getDisciplinaComboBox();
 		NumberField getPeriodoTextField();
 		CurriculoDTO getCurriculoDTO();
 		CurriculoDisciplinaDTO getCurriculoDisciplinaDTO();
 		boolean isValid();
-		
 		SimpleModal getSimpleModal();
 	}
-	private Grid<CurriculoDisciplinaDTO> grid;
+
+	private InstituicaoEnsinoDTO instituicaoEnsinoDTO;
+	private Grid< CurriculoDisciplinaDTO > grid;
 	private Display display;
-	
-	public CurriculoDisciplinaFormPresenter(Display display, Grid<CurriculoDisciplinaDTO> grid) {
+
+	public CurriculoDisciplinaFormPresenter( InstituicaoEnsinoDTO instituicaoEnsinoDTO,
+		Display display, Grid< CurriculoDisciplinaDTO > grid )
+	{
+		this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;
 		this.grid = grid;
 		this.display = display;
+
 		setListeners();
 	}
 
-	private void setListeners() {
+	private void setListeners()
+	{
 		display.getSalvarButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
 			@Override
 			public void componentSelected(ButtonEvent ce) {
@@ -67,8 +76,11 @@ public class CurriculoDisciplinaFormPresenter implements Presenter {
 		return display.isValid();
 	}
 	
-	private CurriculoDisciplinaDTO getDTO() {
+	private CurriculoDisciplinaDTO getDTO()
+	{
 		CurriculoDisciplinaDTO curriculoDisciplinaDTO = display.getCurriculoDisciplinaDTO();
+
+		curriculoDisciplinaDTO.setInstituicaoEnsinoId( instituicaoEnsinoDTO.getId() );
 		curriculoDisciplinaDTO.setDisciplinaId(display.getDisciplinaComboBox().getValue().getId());
 		curriculoDisciplinaDTO.setDisciplinaString(display.getDisciplinaComboBox().getValue().getCodigo());
 		curriculoDisciplinaDTO.setPeriodo(display.getPeriodoTextField().getValue().intValue());

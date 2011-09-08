@@ -10,6 +10,7 @@ import com.extjs.gxt.ui.client.store.ListStore;
 import com.extjs.gxt.ui.client.widget.Info;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.gapso.web.trieda.shared.dtos.HorarioDisponivelCenarioDTO;
+import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
 import com.gapso.web.trieda.shared.dtos.SalaDTO;
 import com.gapso.web.trieda.shared.dtos.SemanaLetivaDTO;
 import com.gapso.web.trieda.shared.dtos.UnidadeDTO;
@@ -28,14 +29,20 @@ public class HorarioDisponivelSalaFormPresenter implements Presenter {
 		void setProxy(RpcProxy<PagingLoadResult<HorarioDisponivelCenarioDTO>> proxy);
 		ListStore<HorarioDisponivelCenarioDTO> getStore();
 	}
+
+	private InstituicaoEnsinoDTO instituicaoEnsinoDTO;
 	private Display display;
 	private UnidadeDTO unidade;
 	private SemanaLetivaDTO semanaLetiva;
-	
-	public HorarioDisponivelSalaFormPresenter(UnidadeDTO unidade, SemanaLetivaDTO semanaLetiva, Display display) {
+
+	public HorarioDisponivelSalaFormPresenter( InstituicaoEnsinoDTO instituicaoEnsinoDTO,
+		UnidadeDTO unidade, SemanaLetivaDTO semanaLetiva, Display display )
+	{
+		this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;
 		this.unidade = unidade;
 		this.semanaLetiva = semanaLetiva;
 		this.display = display;
+
 		configureProxy();
 		setListeners();
 	}
@@ -74,13 +81,16 @@ public class HorarioDisponivelSalaFormPresenter implements Presenter {
 		
 	}
 
-	
-	private SalaDTO getDTO() {
-		return display.getSalaDTO();
+	private SalaDTO getDTO()
+	{
+		SalaDTO dto = display.getSalaDTO();
+		dto.setInstituicaoEnsinoId( instituicaoEnsinoDTO.getId() );
+		return dto;
 	}
-	
+
 	@Override
-	public void go(Widget widget) {
+	public void go( Widget widget )
+	{
 		display.getSimpleModal().show();
 	}
 }

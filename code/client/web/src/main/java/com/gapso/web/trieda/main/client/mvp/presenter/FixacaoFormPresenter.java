@@ -17,6 +17,7 @@ import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.DisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.FixacaoDTO;
 import com.gapso.web.trieda.shared.dtos.HorarioDisponivelCenarioDTO;
+import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorDTO;
 import com.gapso.web.trieda.shared.dtos.SalaDTO;
 import com.gapso.web.trieda.shared.dtos.UnidadeDTO;
@@ -33,9 +34,11 @@ import com.gapso.web.trieda.shared.util.view.UnidadeComboBox;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
 
-public class FixacaoFormPresenter implements Presenter {
-
-	public interface Display {
+public class FixacaoFormPresenter
+	implements Presenter
+{
+	public interface Display
+	{
 		Button getSalvarButton();
 		TextField<String> getCodigoTextField();
 		TextField<String> getDescricaoTextField();
@@ -44,18 +47,27 @@ public class FixacaoFormPresenter implements Presenter {
 		UnidadeComboBox getUnidadeComboBox();
 		SalaComboBox getSalaComboBox();
 		FixacaoDTO getFixacaoDTO();
-		SemanaLetivaDoCenarioGrid<HorarioDisponivelCenarioDTO> getGrid();
+		SemanaLetivaDoCenarioGrid< HorarioDisponivelCenarioDTO > getGrid();
 		boolean isValid();
-		
 		SimpleModal getSimpleModal();
 		ProfessorComboBox getProfessorComboBox();
 	}
-	private SimpleGrid<FixacaoDTO> gridPanel;
+
+	@SuppressWarnings("unused")
+	private CenarioDTO cenario;
+
+	private InstituicaoEnsinoDTO instituicaoEnsinoDTO;
+	private SimpleGrid< FixacaoDTO > gridPanel;
 	private Display display;
-	
-	public FixacaoFormPresenter(CenarioDTO cenario, Display display, SimpleGrid<FixacaoDTO> gridPanel) {
+
+	public FixacaoFormPresenter( InstituicaoEnsinoDTO instituicaoEnsinoDTO,
+		CenarioDTO cenario, Display display, SimpleGrid< FixacaoDTO > gridPanel )
+	{
+		this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;
+		this.cenario = cenario;
 		this.gridPanel = gridPanel;
 		this.display = display;
+
 		configureProxy();
 		setListeners();
 	}
@@ -120,8 +132,12 @@ public class FixacaoFormPresenter implements Presenter {
 		return display.isValid();
 	}
 	
-	private FixacaoDTO getDTO() {
+	private FixacaoDTO getDTO()
+	{
 		FixacaoDTO fixacaoDTO = display.getFixacaoDTO();
+
+		fixacaoDTO.setInstituicaoEnsinoId( instituicaoEnsinoDTO.getId() );
+
 		fixacaoDTO.setCodigo(display.getCodigoTextField().getValue());
 		fixacaoDTO.setDescricao(display.getDescricaoTextField().getValue());
 		ProfessorDTO professor = display.getProfessorComboBox().getValue();

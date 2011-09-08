@@ -9,6 +9,7 @@ import com.extjs.gxt.ui.client.widget.form.NumberField;
 import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.gapso.web.trieda.shared.dtos.AreaTitulacaoDTO;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
+import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorDTO;
 import com.gapso.web.trieda.shared.dtos.TipoContratoDTO;
 import com.gapso.web.trieda.shared.dtos.TitulacaoDTO;
@@ -44,21 +45,25 @@ public class ProfessorFormPresenter
 		SimpleModal getSimpleModal();
 	}
 
+	private InstituicaoEnsinoDTO instituicaoEnsinoDTO;
 	private SimpleGrid< ProfessorDTO > gridPanel;
 	private Display display;
 	private CenarioDTO cenario;
 
-	public ProfessorFormPresenter( CenarioDTO cenario, Display display )
+	public ProfessorFormPresenter( InstituicaoEnsinoDTO instituicaoEnsinoDTO,
+		CenarioDTO cenario, Display display )
 	{
-		this( cenario, display, null );
+		this( instituicaoEnsinoDTO, cenario, display, null );
 	}
 
-	public ProfessorFormPresenter( CenarioDTO cenario, Display display,
-		SimpleGrid< ProfessorDTO > gridPanel )
+	public ProfessorFormPresenter( InstituicaoEnsinoDTO instituicaoEnsinoDTO,
+		CenarioDTO cenario, Display display, SimpleGrid< ProfessorDTO > gridPanel )
 	{
+		this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;
 		this.gridPanel = gridPanel;
 		this.display = display;
 		this.cenario = cenario;
+
 		setListeners();
 	}
 
@@ -111,6 +116,8 @@ public class ProfessorFormPresenter
 	private ProfessorDTO getDTO()
 	{
 		ProfessorDTO professorDTO = display.getProfessorDTO();
+
+		professorDTO.setInstituicaoEnsinoId( instituicaoEnsinoDTO.getId() );
 
 		professorDTO.setCpf( display.getCpfTextField().getValue() );
 		professorDTO.setNome( display.getNomeTextField().getValue() );

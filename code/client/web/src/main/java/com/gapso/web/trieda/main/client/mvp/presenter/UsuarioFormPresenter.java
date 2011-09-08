@@ -7,6 +7,7 @@ import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
+import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorDTO;
 import com.gapso.web.trieda.shared.dtos.UsuarioDTO;
 import com.gapso.web.trieda.shared.i18n.ITriedaI18nGateway;
@@ -33,16 +34,21 @@ public class UsuarioFormPresenter
 		ProfessorComboBox getProfessorComboBox();
 		UsuarioDTO getUsuarioDTO();
 		boolean isValid();
-
 		SimpleModal getSimpleModal();
 	}
 
+	@SuppressWarnings("unused")
+	private CenarioDTO cenario;
+
+	private InstituicaoEnsinoDTO instituicaoEnsinoDTO;
 	private SimpleGrid< UsuarioDTO > gridPanel;
 	private Display display;
 	
-	public UsuarioFormPresenter( CenarioDTO cenario,
-		Display display, SimpleGrid< UsuarioDTO > gridPanel )
+	public UsuarioFormPresenter( InstituicaoEnsinoDTO instituicaoEnsinoDTO,
+		CenarioDTO cenario, Display display, SimpleGrid< UsuarioDTO > gridPanel )
 	{
+		this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;
+		this.cenario = cenario;
 		this.gridPanel = gridPanel;
 		this.display = display;
 		setListeners();
@@ -92,6 +98,7 @@ public class UsuarioFormPresenter
 		usuarioDTO.setEmail( display.getEmailTextField().getValue());
 		usuarioDTO.setUsername( display.getUsernameTextField().getValue());
 		usuarioDTO.setPassword( display.getPasswordTextField().getValue());
+		usuarioDTO.setInstituicaoEnsinoId( instituicaoEnsinoDTO.getId() );
 		ProfessorDTO professor = display.getProfessorComboBox().getValue();
 
 		if ( professor != null )

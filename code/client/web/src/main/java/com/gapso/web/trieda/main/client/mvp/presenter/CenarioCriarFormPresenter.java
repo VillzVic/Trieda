@@ -14,6 +14,7 @@ import com.extjs.gxt.ui.client.widget.form.NumberField;
 import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
+import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
 import com.gapso.web.trieda.shared.dtos.SemanaLetivaDTO;
 import com.gapso.web.trieda.shared.mvp.presenter.Presenter;
 import com.gapso.web.trieda.shared.services.CenariosServiceAsync;
@@ -40,12 +41,18 @@ public class CenarioCriarFormPresenter implements Presenter {
 		
 		SimpleModal getSimpleModal();
 	}
+
+	private InstituicaoEnsinoDTO instituicaoEnsinoDTO;
 	private SimpleGrid<CenarioDTO> gridPanel;
 	private Display display;
 	
-	public CenarioCriarFormPresenter(Display display, SimpleGrid<CenarioDTO> gridPanel) {
+	public CenarioCriarFormPresenter( InstituicaoEnsinoDTO instituicaoEnsinoDTO,
+		Display display, SimpleGrid< CenarioDTO > gridPanel )
+	{
+		this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;
 		this.gridPanel = gridPanel;
 		this.display = display;
+
 		setListeners();
 	}
 
@@ -80,8 +87,11 @@ public class CenarioCriarFormPresenter implements Presenter {
 		return display.isValid();
 	}
 	
-	private CenarioDTO getDTO() {
+	private CenarioDTO getDTO()
+	{
 		CenarioDTO cenarioDTO = display.getCenarioDTO();
+
+		cenarioDTO.setInstituicaoEnsinoId( instituicaoEnsinoDTO.getId() );
 		cenarioDTO.setMasterData(false);
 		cenarioDTO.setOficial(display.getOficialCheckBox().getValue());
 		cenarioDTO.setNome(display.getNomeTextField().getValue());

@@ -31,23 +31,27 @@ public class GrupoSalaFormView extends MyComposite implements GrupoSalaFormPrese
 	private CampusDTO campusDTO;
 	private CenarioDTO cenarioDTO;
 	private Button salvarEAssociarBT;
-	
-	public GrupoSalaFormView(GrupoSalaDTO grupoSalaDTO, CampusDTO campusDTO, UnidadeDTO unidadeDTO, CenarioDTO cenarioDTO) {
+
+	public GrupoSalaFormView( GrupoSalaDTO grupoSalaDTO, CampusDTO campusDTO,
+		UnidadeDTO unidadeDTO, CenarioDTO cenarioDTO )
+	{
 		this.grupoSalaDTO = grupoSalaDTO;
 		this.unidadeDTO = unidadeDTO;
 		this.campusDTO = campusDTO;
 		this.cenarioDTO = cenarioDTO;
+
 		initUI();
 	}
 	
 	private void initUI()
 	{
-		String title = !isEdited()? "Inserção de Grupo de Sala" : "Edição de Grupo de Sala";
-		simpleModal = new SimpleModal(title, Resources.DEFAULTS.sala16());
-		simpleModal.setHeight(190);
-		simpleModal.setWidth(350);
+		String title = ( !isEdited()? "Inserção de Grupo de Sala" : "Edição de Grupo de Sala" );
+		simpleModal = new SimpleModal( title, Resources.DEFAULTS.sala16() );
+		simpleModal.setHeight( 190 );
+		simpleModal.setWidth( 350 );
+
 		createForm();
-		simpleModal.setContent(formPanel);
+		simpleModal.setContent( formPanel );
 	}
 
 	private boolean isEdited()
@@ -60,8 +64,8 @@ public class GrupoSalaFormView extends MyComposite implements GrupoSalaFormPrese
 		FormData formData = new FormData("-20");
 		formPanel = new FormPanel();
 		formPanel.setHeaderVisible(false);
-		
-		codigoTF = new UniqueTextField(cenarioDTO, UniqueDomain.GRUPO_SALA);
+
+		codigoTF = new UniqueTextField(	cenarioDTO, UniqueDomain.GRUPO_SALA );
 		codigoTF.setName(GrupoSalaDTO.PROPERTY_CODIGO);
 		codigoTF.setValue(grupoSalaDTO.getCodigo());
 		codigoTF.setFieldLabel("Código");
