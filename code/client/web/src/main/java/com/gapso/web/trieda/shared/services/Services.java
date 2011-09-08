@@ -29,6 +29,7 @@ public class Services
 	private static final String EQUIVALENCIAS = "equivalencias";
 	private static final String FIXACOES = "fixacoes";
 	private static final String UNIQUES = "uniques";
+	private static final String INSTITUICAO_ENSINO = "instituicaoEnsino";
 
 	public static OtimizarServiceAsync otimizar()
 	{
@@ -317,6 +318,18 @@ public class Services
 		{
 			service = GWT.create( UniquesService.class );
 			Registry.register( UNIQUES, service );
+		}
+
+		return service;
+	}
+
+	public static InstituicaoEnsinoServiceAsync instituicoesEnsino()
+	{
+		InstituicaoEnsinoServiceAsync service = (InstituicaoEnsinoServiceAsync) Registry.get( INSTITUICAO_ENSINO );
+		if ( service == null )
+		{
+			service = GWT.create( InstituicaoEnsinoService.class );
+			Registry.register( INSTITUICAO_ENSINO, service );
 		}
 
 		return service;
